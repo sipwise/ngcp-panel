@@ -1,10 +1,2 @@
-<div id="masthead">
-    <div class="container">
-        <div class="masthead-pad">
-            <div class="masthead-text">
-                <h2>Resellers</h2>
-            </div>
-        </div>
-    </div>
-</div>
+[% META title = 'Resellers' %]
 [% # vim: set tabstop=4 syntax=html expandtab: -%]
