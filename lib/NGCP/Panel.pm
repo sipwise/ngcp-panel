@@ -40,6 +40,20 @@ __PACKAGE__->config(
     # Disable deprecated behavior needed by old applications
     disable_component_resolution_regex_fallback => 1,
     enable_catalyst_header => 1, # Send X-Catalyst header
+
+    'View::HTML' => {
+        INCLUDE_PATH => [
+            __PACKAGE__->path_to('share', 'templates'),
+            __PACKAGE__->path_to('share', 'layout'),
+        ]
+    },
+
+    'Plugin::Static::Simple' => {
+        logging => 1,
+        include_path => [
+            __PACKAGE__->path_to('share', 'static'),
+        ],
+    },
 );
 
 # Start the application
@@ -74,3 +88,5 @@ it under the same terms as Perl itself.
 =cut
 
 1;
+
+# vim: set tabstop=4 expandtab:

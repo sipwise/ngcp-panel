@@ -33,6 +33,18 @@ sub index :Path :Args(0) {
     $c->response->body( $c->welcome_message );
 }
 
+=head2 test
+
+Some test method
+
+=cut
+
+sub test :Path('/test') {
+    my ( $self, $c ) = @_;
+    
+    $c->stash(template => 'test.tt');
+}
+
 =head2 default
 
 Standard 404 error page
@@ -67,3 +79,5 @@ it under the same terms as Perl itself.
 __PACKAGE__->meta->make_immutable;
 
 1;
+
+# vim: set tabstop=4 expandtab:

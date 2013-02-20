@@ -1,0 +1,181 @@
+<div id="wrapper">
+    <div id="topbar">
+        <div class="container">
+
+            <a href="javascript:;" id="menu-trigger" class="dropdown-toggle" data-toggle="dropdown" data-target="#">
+                <i class="icon-cog"></i>
+            </a>
+
+            <div id="top-nav">
+                <ul>
+                    <li class="dropdown">
+                        <a href="javascript:;" class="dropdown-toggle" data-toggle="dropdown">
+                            View Your Site
+                            <b class="caret"></b>
+                        </a>
+                        <ul class="dropdown-menu pull-right">
+                            <li><a href="javascript:;">View Site #1</a></li>
+                            <li><a href="javascript:;">View Site #2</a></li>
+                            <li class="dropdown-submenu">
+                                <a tabindex="-1" href="#">Dropdown menu</a>
+                                <ul class="dropdown-menu">
+                                    <li><a tabindex="-1" href="#">Second level link</a></li>
+                                    <li><a tabindex="-1" href="#">Second level link</a></li>
+                                    <li><a tabindex="-1" href="#">Second level link</a></li>
+                                </ul>
+                            </li>
+                        </ul>
+                    </li>
+                </ul>
+
+                <ul class="pull-right">
+                    <li><a href="javascript:;"><i class="icon-user"></i> Logged in as John Doe</a></li>
+                    <li><a href="javascript:;"><span class="badge badge-primary">1</span> New Message</a></li>
+                    <li class="dropdown">
+                        <a href="./pages/settings.html" class="dropdown-toggle" data-toggle="dropdown">
+                            Settings
+                            <b class="caret"></b>
+                        </a>
+                        <ul class="dropdown-menu pull-right">
+                            <li><a href="javascript:;">Settings #1</a></li>
+                            <li><a href="javascript:;">Settings #2</a></li>
+                            <li class="dropdown-submenu">
+                                <a tabindex="-1" href="#">Dropdown menu</a>
+                                <ul class="dropdown-menu">
+                                    <li><a tabindex="-1" href="#">Second level link</a></li>
+                                    <li><a tabindex="-1" href="#">Second level link</a></li>
+                                    <li><a tabindex="-1" href="#">Second level link</a></li>
+                                </ul>
+                            </li>
+                        </ul>
+                    </li>
+                    <li><a href="sipwise_login.html">Logout</a></li>
+                </ul>
+            </div> <!-- /#top-nav -->
+        </div> <!-- /.container -->
+    </div> <!-- /#topbar -->
+
+    <div id="header">
+        <div class="container">
+            <a href="./index.html" class="brand">Dashboard Admin</a>
+            <a href="javascript:;" class="btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+                <i class="icon-reorder"></i>
+            </a>
+            <div class="nav-collapse">
+                <ul id="main-nav" class="nav pull-right">
+
+                    <li class="nav-icon">
+                        <a href="./index.html">
+                            <i class="icon-home"></i>
+                            <span>Home</span>
+                        </a>
+                    </li>
+
+                    <li class="dropdown">
+                        <a href="javascript:;" class="dropdown-toggle" data-toggle="dropdown">
+                            <i class="icon-th"></i>
+                            <span>Components</span>
+                            <b class="caret"></b>
+                        </a>
+                        <ul class="dropdown-menu">
+                            <li><a href="./elements.html">Elements</a></li>
+                            <li><a href="./validation.html">Validation</a></li>
+                            <li><a href="./jqueryui.html">jQuery UI</a></li>
+                            <li><a href="./charts.html">Charts</a></li>
+                            <li><a href="./bonus.html">Bonus Elements</a></li>
+                            <li class="dropdown-submenu">
+                                <a tabindex="-1" href="#">Dropdown menu</a>
+                                <ul class="dropdown-menu">
+                                    <li><a tabindex="-1" href="#">Second level link</a></li>
+                                    <li><a tabindex="-1" href="#">Second level link</a></li>
+                                    <li><a tabindex="-1" href="#">Second level link</a></li>
+                                </ul>
+                            </li>
+                        </ul>
+                    </li>
+                    <li class="dropdown active">
+                        <a href="javascript:;" class="dropdown-toggle" data-toggle="dropdown">
+                            <i class="icon-copy"></i>
+                            <span>Sample Pages</span>
+                            <b class="caret"></b>
+                        </a>
+                        <ul class="dropdown-menu">
+                            <li><a href="./faq.html">FAQ</a></li>
+                            <li><a href="./gallery.html">Image Gallery</a></li>
+                            <li><a href="./pricing.html">Pricing Plans</a></li>
+                            <li><a href="./reports.html">Reports</a></li>
+                            <li><a href="./settings.html">Settings</a></li>
+                        </ul>
+                    </li>
+                    <li class="dropdown">
+                        <a href="javascript:;" class="dropdown-toggle" data-toggle="dropdown">
+                            <i class="icon-external-link"></i>
+                            <span>Extras</span>
+                            <b class="caret"></b>
+                        </a>
+                        <ul class="dropdown-menu">
+                            <li><a href="./login.html">Login</a></li>
+                            <li><a href="./signup.html">Signup</a></li>
+                            <li><a href="./error.html">Error</a></li>
+                            <li><a href="./skins.html">Skins</a></li>
+                            <li><a href="./sticky.html">Sticky Footer</a></li>
+                        </ul>
+                    </li>
+                </ul> <!-- /.dropdown-menu -->
+            </div> <!-- /.nav-collapse -->
+        </div> <!-- /.container -->
+    </div> <!-- /#header -->
+[% content %]
+</div> <!-- /#wrapper -->
+
+<div id="footer">
+    <div class="container">
+        <div class="row">
+            <div class="span6">
+                © 2013 <a href="http://www.sipwise.com">Sipwise GmbH</a>, all rights reserved.
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="js/libs/jquery-1.7.2.min.js"></script>
+<script src="js/libs/jquery-ui-1.8.21.custom.min.js"></script>
+<script src="js/libs/jquery.ui.touch-punch.min.js"></script>
+<script src="js/libs/bootstrap/bootstrap.min.js"></script>
+<script src="js/Theme.js"></script>
+<script src="js/plugins/validate/jquery.validate.js"></script>
+<script src="js/demos/demo.validation.js"></script>
+
+<script>
+$(function () {
+    Theme.init ();
+
+    $('.sw_actions').hide();
+    $('.sw_action_row').hover(
+        function() { $(this).find('.sw_actions').show(); },
+        function() { $(this).find('.sw_actions').hide(); }
+    ); 
+
+    $('a[data-confirm]').click(function(ev) {
+        var href = $(this).attr('href');
+        if (!$('#dataConfirmModal').length) {
+            $('body').append(
+                '<div id="dataConfirmModal" class="modal" role="dialog" aria-labelledby="dataConfirmLabel" aria-hidden="true">'+
+                '<div class="modal-header">'+
+                  '<h3 id="dataConfirmLabel">Are you sure?</h3>'+
+                '</div>'+
+                '<div class="modal-footer">'+
+                  '<button class="btn" data-dismiss="modal" aria-hidden="true">Cancel</button>'+
+                  '<a class="btn btn-primary" id="dataConfirmOK">OK</a>'+
+                '</div>'+
+              '</div>'
+            );
+        } 
+        $('#dataConfirmOK').attr('href', href);
+        $('#dataConfirmOK').text($(this).attr('data-confirm'));
+        $('#dataConfirmModal').modal({show:true});
+        return false;
+    });
+});
+</script>
+[% # vim: set tabstop=4 syntax=html expandtab: -%]
