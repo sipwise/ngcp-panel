@@ -27,13 +27,16 @@ Dashboard index
 sub index :Path :Args(0) {
     my ( $self, $c ) = @_;
 
-    my $widgets = NGCP::Panel::Widget->widgets($c, '*Overview.pm');
-    foreach(@{ $widgets }) {
-        $_->handle($c);
+    my $widget_templates = [];
+    my $finder = NGCP::Panel::Widget->new;
+    foreach($finder->list_plugins) {
+        my $widget = NGCP::Panel::Widget->new;
+        $widget->load_plugin($_);
+        $widget->handle($c);
+        push @{ $widget_templates }, $widget->template; 
     }
-    my @widget_templates = map { $_->template } @{ $widgets };
     
-    $c->stash(widgets => \@widget_templates);
+    $c->stash(widgets => $widget_templates);
     $c->stash(template => 'dashboard.tt');
 }
 

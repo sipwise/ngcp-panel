@@ -3,7 +3,7 @@
         <div class="plan-header">
             <div class="plan-title">Resellers</div>
             <div class="plan-price">
-                <span>[% resellers.size %]</span>
+                <span>4</span>
                 <span class="term">Resellers</span>
             </div>
         </div>
