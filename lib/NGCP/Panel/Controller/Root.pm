@@ -29,20 +29,7 @@ The root page (/)
 sub index :Path :Args(0) {
     my ( $self, $c ) = @_;
 
-    # Hello World
-    $c->response->body( $c->welcome_message );
-}
-
-=head2 test
-
-Some test method
-
-=cut
-
-sub test :Path('/test') {
-    my ( $self, $c ) = @_;
-    
-    $c->stash(template => 'test.tt');
+    $c->response->redirect($c->uri_for('/dashboard'));
 }
 
 =head2 default

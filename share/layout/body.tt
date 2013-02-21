@@ -134,7 +134,11 @@
 		    </div>
 	    </div>
     </div>
-[% content %]
+    <div id="content">
+        <div class="container">
+            [% content %]
+        </div>
+    </div>
 </div> <!-- /#wrapper -->
 
 <div id="footer">

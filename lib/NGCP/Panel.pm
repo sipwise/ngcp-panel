@@ -45,11 +45,11 @@ __PACKAGE__->config(
         INCLUDE_PATH => [
             __PACKAGE__->path_to('share', 'templates'),
             __PACKAGE__->path_to('share', 'layout'),
-        ]
+        ],
+        ABSOLUTE => 1,
     },
 
     'Plugin::Static::Simple' => {
-        logging => 1,
         include_path => [
             __PACKAGE__->path_to('share', 'static'),
         ],
