@@ -9,7 +9,9 @@ $(function () {
       validateCheckbox: { required: true, minlength: 2},
       validateRadio: { required: true },
 
-      bilprof_select: { required: true }
+      bilprof_select: { required: true },
+      username: { minlength: 4, required: true },
+      password: { minlength: 4, required: true },
     }
   };
   var validationObj = $.extend (rules, Theme.validationRules);

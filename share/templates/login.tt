@@ -1,0 +1,56 @@
+<body class="login">
+    <div class="account-container login stacked">
+        <div class="content clearfix">
+            <form method="post" action="[% c.uri_for("/login/$realm") %]" novalidate="novalidate">
+                <h1>Sign In</h1>
+                <div class="login-fields">
+                    <p>Sign in with your [% realm %] credentials:</p>
+                    <div class="field">
+                        <label for="username">Username:</label>
+                        <input type="text" id="username" name="username" value="" placeholder="Username" class="login username-field" />
+                    </div>
+                    <div class="field">
+                        <label for="password">Password:</label>
+                        <input type="password" id="password" name="password" value="" placeholder="Password" class="login password-field"/>
+                    </div>
+                </div>
+                <div class="login-actions">
+                    <span class="login-checkbox">
+                        <input id="Field" name="Field" type="checkbox" class="field login-checkbox" value="First Choice" tabindex="4" />
+                        <label class="choice" for="Field">Keep me signed in</label>
+                    </span>
+                    <button class="button btn btn-primary btn-large">Sign In</button>
+                </div>
+            </form>
+        </div>
+    </div>
+    [% IF realm == 'subscriber' -%]
+    <div class="login-extra">
+        Go to 
+        <a href="[% c.uri_for('/login/admin') %]">Admin</a> or 
+        <a href="[% c.uri_for('/login/reseller') %]">Reseller</a> 
+        login.<br/>
+    </div>
+    [% END -%]
+
+[%#
+    TODO: load this only if a signup plugin is installed      
+    <div class="login-extra">
+        Don't have an account? <a href="signup.html">Sign Up</a><br/>
+    </div>
+%]
+
+    <script src="/js/libs/jquery-1.7.2.min.js"></script>
+    <script src="/js/libs/jquery-ui-1.8.21.custom.min.js"></script>
+    <script src="/js/libs/jquery.ui.touch-punch.min.js"></script>
+    <script src="/js/libs/bootstrap/bootstrap.min.js"></script>
+    <script src="/js/Theme.js"></script>
+    <script src="/js/signin.js"></script>
+
+    <script>
+        $(function () {
+            Theme.init();
+        });
+    </script>
+</body>
+[% # vim: set tabstop=4 syntax=html expandtab: -%]

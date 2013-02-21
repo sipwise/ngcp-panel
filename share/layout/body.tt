@@ -1,3 +1,4 @@
+<body>
 <div id="wrapper">
     <div id="topbar">
         <div class="container">
@@ -27,9 +28,8 @@
                         </ul>
                     </li>
                 </ul>
-
                 <ul class="pull-right">
-                    <li><a href="javascript:;"><i class="icon-user"></i> Logged in as John Doe</a></li>
+                    <li><a href="javascript:;"><i class="icon-user"></i> Logged in as [% c.user.id %]</a></li>
                     <li><a href="javascript:;"><span class="badge badge-primary">1</span> New Message</a></li>
                     <li class="dropdown">
                         <a href="./pages/settings.html" class="dropdown-toggle" data-toggle="dropdown">
@@ -49,7 +49,7 @@
                             </li>
                         </ul>
                     </li>
-                    <li><a href="sipwise_login.html">Logout</a></li>
+                    <li><a href="[% c.uri_for('/logout') %]">Logout</a></li>
                 </ul>
             </div> <!-- /#top-nav -->
         </div> <!-- /.container -->
@@ -151,13 +151,13 @@
     </div>
 </div>
 
-<script src="js/libs/jquery-1.7.2.min.js"></script>
-<script src="js/libs/jquery-ui-1.8.21.custom.min.js"></script>
-<script src="js/libs/jquery.ui.touch-punch.min.js"></script>
-<script src="js/libs/bootstrap/bootstrap.min.js"></script>
-<script src="js/Theme.js"></script>
-<script src="js/plugins/validate/jquery.validate.js"></script>
-<script src="js/demos/demo.validation.js"></script>
+<script src="/js/libs/jquery-1.7.2.min.js"></script>
+<script src="/js/libs/jquery-ui-1.8.21.custom.min.js"></script>
+<script src="/js/libs/jquery.ui.touch-punch.min.js"></script>
+<script src="/js/libs/bootstrap/bootstrap.min.js"></script>
+<script src="/js/Theme.js"></script>
+<script src="/js/plugins/validate/jquery.validate.js"></script>
+<script src="/js/demos/demo.validation.js"></script>
 
 <script>
 $(function () {
@@ -191,4 +191,5 @@ $(function () {
     });
 });
 </script>
+</body>
 [% # vim: set tabstop=4 syntax=html expandtab: -%]

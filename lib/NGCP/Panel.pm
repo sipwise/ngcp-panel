@@ -20,6 +20,10 @@ use Catalyst qw/
     -Debug
     ConfigLoader
     Static::Simple
+    Authentication
+    Session
+    Session::Store::FastMmap
+    Session::State::Cookie
 /;
 
 extends 'Catalyst';
@@ -57,11 +61,82 @@ __PACKAGE__->config(
             woff => 'application/x-font-woff',
         },
     },
+
+    session => {
+        flash_to_stash => 1,
+        expires => 3600,
+    }, 
+
+    'Plugin::Authentication' => {
+        default => {
+            credential => {
+                class => 'Password',
+                password_field => 'password',
+                password_type => 'clear'
+            },
+            store => {
+                class => 'Minimal',
+                users => {
+                }
+            }
+        },
+        subscriber => {
+            credential => {
+                class => 'Password',
+                password_field => 'password',
+                password_type => 'clear'
+            },
+            store => {
+                class => 'Minimal',
+                users => {
+                    subscriberadmin => {
+                        password => 'subscriberadmin',
+                        roles => [qw/subscriberadmin subscriber/],
+                    },
+                    subscriber => {
+                        password => 'subscriber',
+                        roles => [qw/subscriber/],
+                    },
+                }
+            }
+        },
+        reseller => {
+            credential => {
+                class => 'Password',
+                password_field => 'password',
+                password_type => 'clear'
+            },
+            store => {
+                class => 'Minimal',
+                users => {
+                    reseller => {
+                        password => 'reseller',
+                        roles => [qw/reseller/],
+                    }
+                }
+            }
+        },
+        admin => {
+            credential => {
+                class => 'Password',
+                password_field => 'password',
+                password_type => 'clear'
+            },
+            store => {
+                class => 'Minimal',
+                users => {
+                    administrator => {
+                        password => 'administrator',
+                        roles => [qw/administrator/],
+                    },
+                }
+            }
+        }
+    }
 );
 
 # Start the application
 __PACKAGE__->setup();
-
 
 =head1 NAME
 
