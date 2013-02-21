@@ -53,6 +53,9 @@ __PACKAGE__->config(
         include_path => [
             __PACKAGE__->path_to('share', 'static'),
         ],
+        mime_types => {
+            woff => 'application/x-font-woff',
+        },
     },
 );
 
