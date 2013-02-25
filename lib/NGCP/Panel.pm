@@ -65,7 +65,7 @@ __PACKAGE__->config(
     session => {
         flash_to_stash => 1,
         expires => 3600,
-    }, 
+    },
 
     'Plugin::Authentication' => {
         default => {

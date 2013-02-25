@@ -1,4 +1,9 @@
 <body class="login">
+    [% IF error.message -%]
+    <div class="alert alert-error">
+        <span>[% error.message -%]</span>
+    </div>
+    [% END -%]
     <div class="account-container login stacked">
         <div class="content clearfix">
             <form method="post" action="[% c.uri_for("/login/$realm") %]" novalidate="novalidate">

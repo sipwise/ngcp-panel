@@ -1,7 +1,7 @@
 package NGCP::Panel::Controller::Login;
+
 use Moose;
 use namespace::autoclean;
-
 BEGIN { extends 'Catalyst::Controller'; }
 
 =head1 NAME
@@ -21,18 +21,18 @@ Catalyst Controller.
 
 =cut
 
-sub index :Path {
+sub index :Path Form {
     my ( $self, $c, $realm ) = @_;
 
     $c->log->debug("*** Login::index");
-
-    my $user = $c->req->params->{username};
-    my $pass = $c->req->params->{password};
-
     $realm = 'subscriber' 
         unless($realm and ($realm eq 'admin' or $realm eq 'reseller'));
 
-    if($user and $pass) {
+    my $user = $c->request->param('username');
+    my $pass = $c->request->param('password');
+    $c->log->debug("*** Login::index user=$user, pass=$pass, realm=$realm");
+
+    if($user && $pass) {
         $c->log->debug("*** Login::index user=$user, pass=$pass, realm=$realm");
         if($c->authenticate({ username => $user, password => $pass }, $realm)) {
             # auth ok
@@ -42,9 +42,12 @@ sub index :Path {
             $c->response->redirect($target);
         } else {
             $c->log->debug("*** Login::index auth failed");
+            $c->stash->{error}->{message} = 'login failed';
         }
     } else {
-        $c->log->debug("*** Login::index incomplete creds");
+        if($user || $pass) {
+            $c->stash->{error}->{message} = 'invalid form';
+        }
     }
 
     $c->stash(realm => $realm);
