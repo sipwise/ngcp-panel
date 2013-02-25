@@ -4,6 +4,8 @@ use Moose;
 use namespace::autoclean;
 BEGIN { extends 'Catalyst::Controller'; }
 
+use NGCP::Panel::Form::Login;
+
 =head1 NAME
 
 NGCP::Panel::Controller::Login - Catalyst Controller
@@ -28,11 +30,16 @@ sub index :Path Form {
     $realm = 'subscriber' 
         unless($realm and ($realm eq 'admin' or $realm eq 'reseller'));
 
-    my $user = $c->request->param('username');
-    my $pass = $c->request->param('password');
-    $c->log->debug("*** Login::index user=$user, pass=$pass, realm=$realm");
+    my $form = NGCP::Panel::Form::Login->new;
+    $form->process(
+        posted => ($c->req->method eq 'POST'),
+        params => $c->request->params,
+    );
 
-    if($user && $pass) {
+    if($form->validated) {
+        print ">>>>>> login form validated\n";
+        my $user = $form->field('username');
+        my $pass = $form->field('password');
         $c->log->debug("*** Login::index user=$user, pass=$pass, realm=$realm");
         if($c->authenticate({ username => $user, password => $pass }, $realm)) {
             # auth ok
@@ -44,12 +51,14 @@ sub index :Path Form {
             $c->log->debug("*** Login::index auth failed");
             $c->stash->{error}->{message} = 'login failed';
         }
+    } elsif($c->req->method eq 'POST') {
+        print ">>>>>> login form NOT validated\n";
+        $c->stash->{error}->{message} = 'invalid form';
     } else {
-        if($user || $pass) {
-            $c->stash->{error}->{message} = 'invalid form';
-        }
+        # initial get
     }
 
+    $c->stash(form => $form);
     $c->stash(realm => $realm);
     $c->stash(template => 'login.tt');
 }
