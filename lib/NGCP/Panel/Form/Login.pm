@@ -12,8 +12,8 @@ has_field 'username' => (
     required => 1,
     element_attr => { placeholder => 'Username' },
     element_class => [qw/login username-field/],
-    wrapper_class => [qw/field/],
-    error_class => [qw/foobar error/],
+    wrapper_class => [qw/field control-group/],
+    error_class => [qw/error/],
     messages => { 
         required => 'Please provide a username' 
     },
@@ -24,8 +24,8 @@ has_field 'password' => (
     required => 1,
     element_attr => { placeholder => 'Password' },
     element_class => [qw/login password-field/],
-    wrapper_class => [qw/field/],
-    error_class => [qw/foobar error/],
+    wrapper_class => [qw/field control-group/],
+    error_class => [qw/error/],
     messages => { 
         required => 'Please provide a password' 
     },
