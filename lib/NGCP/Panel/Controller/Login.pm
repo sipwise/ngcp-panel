@@ -34,7 +34,7 @@ sub index :Path Form {
     $form->process(
         posted => ($c->req->method eq 'POST'),
         params => $c->request->params,
-        action => $c->uri_for($c->controller('Login')->action_for('index')),
+        action => $c->uri_for('/login/'.$realm),
     );
 
     if($form->validated) {
@@ -52,9 +52,6 @@ sub index :Path Form {
             $c->log->debug("*** Login::index auth failed");
             $form->add_form_error('Invalid username/password');
         }
-    } elsif($c->req->method eq 'POST') {
-        print ">>>>>> login form NOT validated\n";
-        $c->stash->{error}->{message} = 'invalid form';
     } else {
         # initial get
     }
