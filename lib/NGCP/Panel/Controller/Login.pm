@@ -34,12 +34,13 @@ sub index :Path Form {
     $form->process(
         posted => ($c->req->method eq 'POST'),
         params => $c->request->params,
+        action => $c->uri_for($c->controller('Login')->action_for('index')),
     );
 
     if($form->validated) {
         print ">>>>>> login form validated\n";
-        my $user = $form->field('username');
-        my $pass = $form->field('password');
+        my $user = $form->field('username')->value;
+        my $pass = $form->field('password')->value;
         $c->log->debug("*** Login::index user=$user, pass=$pass, realm=$realm");
         if($c->authenticate({ username => $user, password => $pass }, $realm)) {
             # auth ok
@@ -49,7 +50,7 @@ sub index :Path Form {
             $c->response->redirect($target);
         } else {
             $c->log->debug("*** Login::index auth failed");
-            $c->stash->{error}->{message} = 'login failed';
+            $form->add_form_error('Invalid username/password');
         }
     } elsif($c->req->method eq 'POST') {
         print ">>>>>> login form NOT validated\n";

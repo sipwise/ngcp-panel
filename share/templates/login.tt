@@ -1,29 +1,8 @@
 <body class="login">
-<!--
-[% 
-USE Dumper;
-Dumper.dump(form);
-%]
--->
-    [% IF error.message -%]
-    <div class="alert alert-error">
-        <span>[% error.message -%]</span>
-    </div>
-    [% END -%]
     <div class="account-container login stacked">
         <div class="content clearfix">
-            <form method="post" action="[% c.uri_for("/login/$realm") %]">
-                <h1>Sign In</h1>
-                <div class="login-fields">
-                    <p>Sign in with your [% realm %] credentials:</p>
-                    [% FOREACH f IN form.sorted_fields -%]
-                        [% f.render -%]
-                    [% END -%]
-                </div>
-                <div class="login-actions">
-                    <button id="submit" name="submit" class="button btn btn-primary btn-large">Sign In</button>
-                </div>
-            </form>
+            <h1>Sign In</h1>
+            [% form.render %]
         </div>
     </div>
     [% IF realm == 'subscriber' -%]
