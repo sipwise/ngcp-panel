@@ -24,7 +24,7 @@ Catalyst Controller.
 =cut
 
 sub reseller : Path Chained('/') CaptureArgs(0) {
-    my ( $self, $c ) = @_;
+    my ($self, $c) = @_;
 
     my $resellers = [
         {id => 1, contract_id => 1, name => 'reseller 1', status => 'active'},
@@ -40,7 +40,7 @@ sub reseller : Path Chained('/') CaptureArgs(0) {
 
 
 sub edit : Chained('reseller') PathPart('edit') :Args(1) {
-    my ( $self, $c, $reseller_id ) = @_;
+    my ($self, $c, $reseller_id) = @_;
 
     my $reseller;
     if($c->flash->{reseller}) {
@@ -57,6 +57,11 @@ sub edit : Chained('reseller') PathPart('edit') :Args(1) {
     );
     $c->stash(form => $form);
     $c->stash(edit => $reseller);
+}
+
+sub create : Chained('reseller') PathPart('create') :Args(0) {
+    my ($self, $c) = @_;
+    $c->response->redirect($c->uri_for('/reseller'));
 }
 
 sub save : Path('/reseller/save') :Args(1) {
@@ -80,7 +85,13 @@ sub save : Path('/reseller/save') :Args(1) {
 }
 
 sub delete : Path('/reseller/delete') :Args(1) {
-    my ( $self, $c, $reseller_id) = @_;
+    my ($self, $c, $reseller_id) = @_;
+    $c->response->redirect($c->uri_for('/reseller'));
+}
+
+sub search : Path('/reseller/search') :Args(0) {
+    my ($self, $c) = @_;
+    $c->response->redirect($c->uri_for('/reseller'));
 }
 
 =head1 AUTHOR

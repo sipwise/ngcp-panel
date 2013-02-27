@@ -1,0 +1,52 @@
+<div class="row">
+    <a class="btn btn-primary btn-large" href="[% c.uri_for_action("/${helper.controller}/create") %]"><i class="icon-star"></i> Create [% helper.name %]</a>
+    <a class="btn btn-primary btn-large" href="[% c.uri_for_action("/${helper.controller}/search") %]"><i class="icon-search"></i> Search [% helper.name %]</a>
+</div>
+<div class="row">
+    <table class="table table-bordered table-striped table-highlight table-hover">
+        <thead>
+            <tr>
+                [% FOREACH t IN helper.column_titles -%]
+                <th>[% t %]</th>
+                [% END -%]
+                [% # one for actions -%]
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+        [% FOREACH set IN helper.data -%]
+            <tr class="sw_action_row">
+                [% FOREACH field IN helper.column_fields -%]
+                <td>[% set.$field %]</td>
+                [% END -%]
+                <td class="span3">
+                    <div class="sw_actions pull-right">
+                        <a class="btn btn-small btn-primary" href="[% c.uri_for_action("/${helper.controller}/edit", set.id) %]"><i class="icon-edit" style="line-height:1em;margin-top:2px"></i> Edit</a>
+                        <a class="btn btn-small btn-secondary" href="[% c.uri_for_action("/${helper.controller}/delete", set.id) %]" data-confirm="Delete"><i class="icon-trash" style="line-height:1em;margin-top:2px"></i> Delete</a>
+                    </div>
+                </td>
+            </tr>
+        [% END -%]
+        </tbody>
+    </table>
+</div>
+[% IF helper.edit_object -%]
+<div id="mod_edit" class="modal hide" style="display:block">
+    <div class="modal-header">
+        <button id="mod_close" type="button" class="close">×</button>
+        <h3>Edit [% helper.form_title %]</h3>
+    </div>
+    [% helper.form_object.render %]
+</div>
+<script>
+    $(function () {
+        $('#mod_edit').modal({keyboard: false, backdrop: 'static'});
+        $('#mod_close').click(function(event) {
+            window.location.href="[% c.uri_for("/${helper.controller}") %]";
+        });
+
+    });
+</script>
+[% END -%]
+[% # vim: set tabstop=4 syntax=html expandtab: -%]
+

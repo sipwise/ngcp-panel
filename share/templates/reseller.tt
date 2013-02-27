@@ -1,55 +1,14 @@
 [% META title = 'Resellers' -%]
-<div class="row">
-    <a class="btn btn-primary btn-large" data-toggle="modal" href="#mod_create" ><i class="icon-star"></i> Create Reseller</a>
-    <a href="#" class="btn btn-primary btn-large"><i class="icon-search"></i> Search Reseller</a>
-</div>
-<div class="row">
-    <table class="table table-bordered table-striped table-highlight table-hover">
-        <thead>
-            <tr>
-                <th>#</th>
-                <th>Name</th>
-                <th>Contract #</th>
-                <th>Status</th>
-                <th></th>
-            </tr>
-        </thead>
-        <tbody>
-        [% FOREACH r IN resellers -%]
-            <tr class="sw_action_row">
-                <td>[% r.id %]</td>
-                <td>[% r.name %]</td>
-                <td>[% r.contract_id %]</td>
-                <td>[% r.status %]</td>
-                <td class="span3">
-                    <div class="sw_actions pull-right">
-                        <a class="btn btn-small btn-primary" href="[% c.uri_for_action('/reseller/edit', r.id) %]"><i class="icon-edit" style="line-height:1em;margin-top:2px"></i> Edit</a>
-                        <a class="btn btn-small btn-secondary" href="[% c.uri_for_action('/reseller/delete', r.id) %]" data-confirm="Delete"><i class="icon-trash" style="line-height:1em;margin-top:2px"></i> Delete</a>
-                    </div>
-                </td>
-            </tr>
-        [% END -%]
-        </tbody>
-    </table>
-</div>
+[%
+    helper.name = 'Reseller';
+    helper.controller = 'reseller';
+    helper.data = resellers;
+    helper.column_titles = [ '#', 'Name', 'Contract #', 'Status' ];
+    helper.column_fields = [ 'id', 'name', 'contract_id', 'status' ];
 
-[% IF edit.defined -%]
-<div id="mod_edit" class="modal hide" style="display:block">
-    <div class="modal-header">
-        <button id="mod_close" type="button" class="close">×</button>
-        <h3>Edit Reseller</h3>
-    </div>
-    [% form.render %]
-</div>
-<script>
-    $(function () {
-        $('#mod_edit').modal({keyboard: false, backdrop: 'static'});
-        $('#mod_close').click(function(event) {
-            window.location.href="[% c.uri_for('/reseller') %]";
-        });
+    helper.edit_object = edit;
+    helper.form_object = form;
 
-    });
-</script>
-[% END -%]
-
+    PROCESS 'helpers/table_form.tt';
+-%]
 [% # vim: set tabstop=4 syntax=html expandtab: -%]
