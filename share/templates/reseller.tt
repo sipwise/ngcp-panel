@@ -34,7 +34,7 @@
 </div>
 
 [% IF edit.defined -%]
-<div id="mod_edit" class="modal fade hide" style="display:block">
+<div id="mod_edit" class="modal hide" style="display:block">
     <div class="modal-header"><h3>Edit Reseller</h3></div>
     [% form.render %]
 </div>

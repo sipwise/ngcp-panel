@@ -8,6 +8,7 @@ use HTML::FormHandler::Widget::Block::Bootstrap;
 
 has '+widget_wrapper' => ( default => 'Bootstrap' );
 sub build_render_list {[qw/fields actions/]}
+sub build_form_element_class { [qw/form-horizontal/] }
 
 has_field 'name' => (
     type => 'Text',
