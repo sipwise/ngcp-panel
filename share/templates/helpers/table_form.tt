@@ -21,8 +21,8 @@
                 [% END -%]
                 <td class="span3">
                     <div class="sw_actions pull-right">
-                        <a class="btn btn-small btn-primary" href="[% c.uri_for_action("/${helper.controller}/edit", set.id) %]"><i class="icon-edit" style="line-height:1em;margin-top:2px"></i> Edit</a>
-                        <a class="btn btn-small btn-secondary" href="[% c.uri_for_action("/${helper.controller}/delete", set.id) %]" data-confirm="Delete"><i class="icon-trash" style="line-height:1em;margin-top:2px"></i> Delete</a>
+                        <a class="btn btn-small btn-primary" href="[% c.uri_for_action("/${helper.controller}/edit", set.id) %]" style="display:inline;line-height:16px;"><i class="icon-edit" style="line-height:1em;margin-top:2px"></i> Edit</a>
+                        <a class="btn btn-small btn-secondary" href="[% c.uri_for_action("/${helper.controller}/delete", set.id) %]" data-confirm="Delete" style="display:inline;line-height:16px;"><i class="icon-trash" style="line-height:1em;margin-top:2px"></i> Delete</a>
                     </div>
                 </td>
             </tr>
