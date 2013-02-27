@@ -2088,6 +2088,12 @@ Layout: Content
 #content form {
   margin: 0;
 }
+
+#content .modal-footer .form-actions {
+  padding: 0;
+  margin: 0;
+  border: none;
+}
 /*------------------------------------------------------------------
  
 Layout: Footer
