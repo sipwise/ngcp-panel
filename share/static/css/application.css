@@ -2084,6 +2084,10 @@ Layout: Content
 #content .row:first-child {
   margin-top: 0;
 }
+
+#content form {
+  margin: 0;
+}
 /*------------------------------------------------------------------
  
 Layout: Footer

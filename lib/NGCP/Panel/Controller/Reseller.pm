@@ -35,8 +35,6 @@ sub reseller : Path Chained('/') CaptureArgs(0) {
         {id => 6, contract_id => 6, name => 'reseller 6', status => 'active'},
     ];
     $c->stash(resellers => $resellers);
-
-
     $c->stash(template => 'reseller.tt');
 }
 
@@ -44,21 +42,41 @@ sub reseller : Path Chained('/') CaptureArgs(0) {
 sub edit : Chained('reseller') PathPart('edit') :Args(1) {
     my ( $self, $c, $reseller_id ) = @_;
 
-    my @reseller = grep { $_->{id} == $reseller_id } @{ $c->stash->{resellers} };
-    use Data::Printer;
-    p @reseller;
+    my $reseller;
+    if($c->flash->{reseller}) {
+        $reseller = $c->flash->{reseller};
+    } else {
+        my @rfilter = grep { $_->{id} == $reseller_id } @{ $c->stash->{resellers} };
+        $reseller = shift @rfilter;
+    }
+
+    my $form = NGCP::Panel::Form::Reseller->new;
+    $form->process(
+        params => $reseller,
+        action => $c->uri_for('/reseller/save', $reseller_id),
+    );
+    $c->stash(form => $form);
+    $c->stash(edit => $reseller);
+}
+
+sub save : Path('/reseller/save') :Args(1) {
+    my ($self, $c, $reseller_id) = @_;
+
     my $form = NGCP::Panel::Form::Reseller->new;
     $form->process(
         posted => ($c->req->method eq 'POST'),
-        params => $reseller[0],
-        action => $c->uri_for('/reseller/save'),
+        params => $c->request->params,
     );
-    $c->stash(form => $form);
-    $c->stash(edit => $reseller[0]);
-}
-
-sub save : Path('/reseller/save') :Args(0) {
-    my ( $self, $c) = @_;
+    if($form->validated) {
+        $c->log->debug(">>>>>> reseller data validated");
+        $c->response->redirect($c->uri_for('/reseller/base'));
+        # TODO: success message
+    } else {
+        $c->log->debug(">>>>>> reseller data NOT validated");
+        $c->flash(reseller => $c->request->params);
+        $c->response->redirect($c->uri_for('/reseller/edit', $reseller_id));
+        # TODO: error message
+    }
 }
 
 sub delete : Path('/reseller/delete') :Args(1) {

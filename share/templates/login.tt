@@ -2,6 +2,7 @@
     <div class="account-container login stacked">
         <div class="content clearfix">
             <h1>Sign In</h1>
+            <p>Sign in using your [% realm %] credentials:</p>
             [% form.render %]
         </div>
     </div>
