@@ -28,7 +28,7 @@ has_field 'status' => (
 has_field 'save' => (
     type => 'Submit',
     value => 'Save',
-    element_class => [qw/btn btn-primary pull-right/],
+    element_class => [qw/btn btn-primary/],
     label => '',
 );
 

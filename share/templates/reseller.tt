@@ -35,12 +35,19 @@
 
 [% IF edit.defined -%]
 <div id="mod_edit" class="modal hide" style="display:block">
-    <div class="modal-header"><h3>Edit Reseller</h3></div>
+    <div class="modal-header">
+        <button id="mod_close" type="button" class="close">×</button>
+        <h3>Edit Reseller</h3>
+    </div>
     [% form.render %]
 </div>
 <script>
     $(function () {
         $('#mod_edit').modal({keyboard: false, backdrop: 'static'});
+        $('#mod_close').click(function(event) {
+            window.location.href="[% c.uri_for('/reseller') %]";
+        });
+
     });
 </script>
 [% END -%]

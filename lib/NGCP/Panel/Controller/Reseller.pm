@@ -69,7 +69,7 @@ sub save : Path('/reseller/save') :Args(1) {
     );
     if($form->validated) {
         $c->log->debug(">>>>>> reseller data validated");
-        $c->response->redirect($c->uri_for('/reseller/base'));
+        $c->response->redirect($c->uri_for('/reseller'));
         # TODO: success message
     } else {
         $c->log->debug(">>>>>> reseller data NOT validated");
