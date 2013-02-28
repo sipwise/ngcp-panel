@@ -2079,7 +2079,7 @@ Layout: Content
   margin-bottom: 8em;
 }
 #content .row {
-  margin-top: 5em;
+  margin-top: 1em;
 }
 #content .row:first-child {
   margin-top: 0;

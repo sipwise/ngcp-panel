@@ -10,6 +10,10 @@ has '+widget_wrapper' => ( default => 'Bootstrap' );
 sub build_render_list {[qw/fields actions/]}
 sub build_form_element_class { [qw/form-horizontal/] }
 
+has_field 'id' => (
+    type => 'Hidden',
+);
+
 has_field 'name' => (
     type => 'Text',
     required => 1,
@@ -35,7 +39,7 @@ has_field 'save' => (
 has_block 'fields' => (
     tag => 'div',
     class => [qw/modal-body/],
-    render_list => [qw/contract_id name status/],
+    render_list => [qw/id contract_id name status/],
 );
 
 has_block 'actions' => (

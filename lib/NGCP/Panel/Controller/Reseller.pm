@@ -1,6 +1,7 @@
 package NGCP::Panel::Controller::Reseller;
 use Moose;
 use namespace::autoclean;
+use Data::Dumper;
 
 BEGIN { extends 'Catalyst::Controller'; }
 
@@ -18,13 +19,10 @@ Catalyst Controller.
 
 =cut
 
-
-=head2 index
-
-=cut
-
-sub reseller : Path Chained('/') CaptureArgs(0) {
+sub list :Chained('/') :PathPart('reseller') :CaptureArgs(0) {
     my ($self, $c) = @_;
+
+    $c->log->debug("++++ Reseller::list");
 
     my $resellers = [
         {id => 1, contract_id => 1, name => 'reseller 1', status => 'active'},
@@ -35,64 +33,95 @@ sub reseller : Path Chained('/') CaptureArgs(0) {
         {id => 6, contract_id => 6, name => 'reseller 6', status => 'active'},
     ];
     $c->stash(resellers => $resellers);
-    $c->stash(template => 'reseller.tt');
+    $c->stash(template => 'reseller/list.tt');
 }
 
-
-sub edit : Chained('reseller') PathPart('edit') :Args(1) {
-    my ($self, $c, $reseller_id) = @_;
-
-    my $reseller;
-    if($c->flash->{reseller}) {
-        $reseller = $c->flash->{reseller};
-    } else {
-        my @rfilter = grep { $_->{id} == $reseller_id } @{ $c->stash->{resellers} };
-        $reseller = shift @rfilter;
-    }
-
-    my $form = NGCP::Panel::Form::Reseller->new;
-    $form->process(
-        params => $reseller,
-        action => $c->uri_for('/reseller/save', $reseller_id),
-    );
-    $c->stash(form => $form);
-    $c->stash(edit => $reseller);
-}
-
-sub create : Chained('reseller') PathPart('create') :Args(0) {
+sub root :Chained('list') :PathPart('') :Args(0) {
     my ($self, $c) = @_;
-    $c->response->redirect($c->uri_for('/reseller'));
+
+    $c->log->debug("++++ Reseller::root");
 }
 
-sub save : Path('/reseller/save') :Args(1) {
-    my ($self, $c, $reseller_id) = @_;
+sub create :Chained('list') :PathPart('create') :Args(0) {
+    my ($self, $c) = @_;
+
+    $c->log->debug("++++ Reseller::create");
 
     my $form = NGCP::Panel::Form::Reseller->new;
     $form->process(
-        posted => ($c->req->method eq 'POST'),
+        posted => ($c->request->method eq 'POST'),
         params => $c->request->params,
+        action => $c->uri_for('create'),
     );
     if($form->validated) {
-        $c->log->debug(">>>>>> reseller data validated");
-        $c->response->redirect($c->uri_for('/reseller'));
-        # TODO: success message
-    } else {
-        $c->log->debug(">>>>>> reseller data NOT validated");
-        $c->flash(reseller => $c->request->params);
-        $c->response->redirect($c->uri_for('/reseller/edit', $reseller_id));
-        # TODO: error message
+        $c->log->debug("---- Reseller::create validated");
+        $c->flash(messages => [{type => 'success', text => 'Reseller successfully created!'}]);
+        $c->response->redirect($c->uri_for());
+        return;
     }
+
+    $c->stash(create_flag => 1);
+    $c->stash(form => $form);
 }
 
-sub delete : Path('/reseller/delete') :Args(1) {
-    my ($self, $c, $reseller_id) = @_;
-    $c->response->redirect($c->uri_for('/reseller'));
-}
-
-sub search : Path('/reseller/search') :Args(0) {
+sub search :Chained('list') :PathPart('search') Args(0) {
     my ($self, $c) = @_;
-    $c->response->redirect($c->uri_for('/reseller'));
+
+    $c->log->debug("++++ Reseller::search");
+
+    $c->flash(messages => [{type => 'info', text => 'Reseller search not implemented!'}]);
+
+    $c->response->redirect($c->uri_for());
 }
+
+sub base :Chained('/reseller/list') :PathPart('') :CaptureArgs(1) {
+    my ($self, $c, $reseller_id) = @_;
+
+    $c->log->debug("++++ Reseller::base");
+
+    unless($reseller_id && $reseller_id =~ /^\d+$/) {
+        $c->log->debug("---- invalid reseller_id '$reseller_id', going back");
+        # TODO: error message
+        $c->response->redirect($c->uri_for());
+        return;
+    }
+
+    # TODO: fetch details of reseller from model
+    my @rfilter = grep { $_->{id} == $reseller_id } @{ $c->stash->{resellers} };
+    $c->stash(reseller =>  shift @rfilter);
+}
+
+sub edit :Chained('base') :PathPart('edit') :Args(0) {
+    my ($self, $c) = @_;
+
+    $c->log->debug("++++ Reseller::edit");
+
+    my $posted = ($c->request->method eq 'POST');
+    my $form = NGCP::Panel::Form::Reseller->new;
+    $form->process(
+        posted => 1,
+        params => $posted ? $c->request->params : $c->stash->{reseller},
+        action => $c->uri_for($c->stash->{reseller}->{id}, 'edit'),
+    );
+    if($posted && $form->validated) {
+        $c->log->debug("---- Reseller::edit validated");
+        $c->flash(messages => [{type => 'success', text => 'Reseller successfully changed!'}]);
+        $c->response->redirect($c->uri_for());
+        return;
+    }
+    $c->stash(form => $form);
+}
+
+sub delete :Chained('base') :PathPart('delete') :Args(0) {
+    my ($self, $c) = @_;
+
+    # TODO: perform deletion
+    # $c->model('Provisioning')->reseller($c->stash->{reseller}->{id})->delete;
+    $c->flash(messages => [{type => 'info', text => 'Reseller delete not implemented!'}]);
+
+    $c->response->redirect($c->uri_for());
+}
+
 
 =head1 AUTHOR
 

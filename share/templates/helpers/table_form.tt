@@ -1,7 +1,14 @@
 <div class="row">
-    <a class="btn btn-primary btn-large" href="[% c.uri_for_action("/${helper.controller}/create") %]"><i class="icon-star"></i> Create [% helper.name %]</a>
-    <a class="btn btn-primary btn-large" href="[% c.uri_for_action("/${helper.controller}/search") %]"><i class="icon-search"></i> Search [% helper.name %]</a>
+    <a class="btn btn-primary btn-large" href="[% c.uri_for(c.action, c.req.captures, 'create') %]"><i class="icon-star"></i> Create [% helper.name %]</a>
+    <a class="btn btn-primary btn-large" href="[% c.uri_for(c.action, c.req.captures, 'search') %]"><i class="icon-search"></i> Search [% helper.name %]</a>
 </div>
+[% IF helper.messages -%]
+<div class="row">
+    [% FOREACH m IN helper.messages -%]
+        <div class="alert alert-[% m.type %]">[% m.text %]</div>
+    [% END -%]
+</div>
+[% END -%]
 <div class="row">
     <table class="table table-bordered table-striped table-highlight table-hover">
         <thead>
@@ -21,8 +28,8 @@
                 [% END -%]
                 <td class="span3">
                     <div class="sw_actions pull-right">
-                        <a class="btn btn-small btn-primary" href="[% c.uri_for_action("/${helper.controller}/edit", set.id) %]" style="display:inline;line-height:16px;"><i class="icon-edit" style="line-height:1em;margin-top:2px"></i> Edit</a>
-                        <a class="btn btn-small btn-secondary" href="[% c.uri_for_action("/${helper.controller}/delete", set.id) %]" data-confirm="Delete" style="display:inline;line-height:16px;"><i class="icon-trash" style="line-height:1em;margin-top:2px"></i> Delete</a>
+                        <a class="btn btn-small btn-primary" href="[% c.uri_for(set.id, 'edit') %]" style="display:inline;line-height:16px;"><i class="icon-edit" style="line-height:1em;margin-top:2px"></i> Edit</a>
+                        <a class="btn btn-small btn-secondary" href="[% c.uri_for(set.id, 'delete') %]" data-confirm="Delete" style="display:inline;line-height:16px;"><i class="icon-trash" style="line-height:1em;margin-top:2px"></i> Delete</a>
                     </div>
                 </td>
             </tr>
@@ -30,11 +37,11 @@
         </tbody>
     </table>
 </div>
-[% IF helper.edit_object -%]
+[% IF helper.edit_object || helper.create_flag == 1 -%]
 <div id="mod_edit" class="modal hide" style="display:block">
     <div class="modal-header">
         <button id="mod_close" type="button" class="close">×</button>
-        <h3>Edit [% helper.name %]</h3>
+        <h3>[% helper.create_flag == 1 ? 'Create' : 'Edit' %] [% helper.name %]</h3>
     </div>
     [% helper.form_object.render %]
 </div>
@@ -42,7 +49,7 @@
     $(function () {
         $('#mod_edit').modal({keyboard: false, backdrop: 'static'});
         $('#mod_close').click(function(event) {
-            window.location.href="[% c.uri_for("/${helper.controller}") %]";
+            window.location.href="[% c.uri_for() %]";
         });
 
     });
