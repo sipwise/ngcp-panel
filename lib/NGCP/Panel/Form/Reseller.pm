@@ -20,7 +20,8 @@ has_field 'name' => (
 );
 
 has_field 'contract_id' => (
-    type => 'Integer',
+    type => '+NGCP::Panel::Field::Contract',
+    label => 'Contract',
     required => 1,
 );
 
