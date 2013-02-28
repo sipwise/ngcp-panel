@@ -5,6 +5,7 @@ use namespace::autoclean;
 BEGIN { extends 'Catalyst::Controller'; }
 
 use NGCP::Panel::Widget;
+use Data::Dumper;
 
 =head1 NAME
 
@@ -25,15 +26,18 @@ Dashboard index
 =cut
 
 sub index :Path :Args(0) {
-    my ( $self, $c ) = @_;
+    my ($self, $c) = @_;
+
+    print ">>>>>>>>>> user:\n";
+    print Dumper $c->user;
+    print ">>>>>>>>>> end user\n";
+
 
     my $widget_templates = [];
     my $finder = NGCP::Panel::Widget->new;
-    foreach($finder->list_plugins) {
-        my $widget = NGCP::Panel::Widget->new;
-        $widget->load_plugin($_);
-        $widget->handle($c);
-        push @{ $widget_templates }, $widget->template; 
+    foreach($finder->instantiate_plugins($c)) {
+        $_->handle($c);
+        push @{ $widget_templates }, $_->template; 
     }
     
     $c->stash(widgets => $widget_templates);

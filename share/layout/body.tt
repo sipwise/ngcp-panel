@@ -57,7 +57,7 @@
 
     <div id="header">
         <div class="container">
-            <a href="./index.html" class="brand">Dashboard Admin</a>
+            <a href="[% c.uri_for('/dashboard') %]" class="brand">Dashboard</a>
             <a href="javascript:;" class="btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
                 <i class="icon-reorder"></i>
             </a>

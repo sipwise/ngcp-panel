@@ -8,9 +8,19 @@ has 'template' => (
 );
 
 around handle => sub {
-    my ($self, $c) = @_;
+    my ($foo, $self, $c) = @_;
 
     print "++++ ResellerOverview::handle\n";
+    return;
+};
+
+around filter => sub {
+    my ($foo, $self, $c) = @_;
+
+    return $self if(
+        $c->check_user_roles(qw/administrator/) &&
+        ref $c->controller eq 'NGCP::Panel::Controller::Dashboard'
+    );
     return;
 };
 
