@@ -28,11 +28,6 @@ Dashboard index
 sub index :Path :Args(0) {
     my ($self, $c) = @_;
 
-    print ">>>>>>>>>> user:\n";
-    print Dumper $c->user;
-    print ">>>>>>>>>> end user\n";
-
-
     my $widget_templates = [];
     my $finder = NGCP::Panel::Widget->new;
     foreach($finder->instantiate_plugins($c)) {
