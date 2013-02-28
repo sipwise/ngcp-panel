@@ -1,0 +1,21 @@
+<div class="plan-container">
+    <div class="plan">
+        <div class="plan-header">
+            <div class="plan-title">Domains</div>
+            <div class="plan-price">
+                <span>7</span>
+                <span class="term">Domains</span>
+            </div>
+        </div>
+        <div class="plan-features" style="min-height:135px;"><!-- 3 rows -->
+            <ul>
+                <li><strong>4674</strong> Accounts</li>
+                <li><strong>12456</strong> Subscribers</li>
+            </ul>
+        </div>
+        <div class="plan-actions">
+            <a href="/domain" class="btn">Configure</a>
+        </div>
+    </div>
+</div>
+[% # vim: set tabstop=4 syntax=html expandtab: -%]

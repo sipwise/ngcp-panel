@@ -1,16 +1,16 @@
-package NGCP::Panel::Widget::Plugin::PeeringOverview;
+package NGCP::Panel::Widget::Plugin::AdminBillingOverview;
 use Moose::Role;
 
 has 'template' => (
     is  => 'ro',
     isa => 'Str',
-    default => 'widgets/peering_overview.tt'
+    default => 'widgets/admin_billing_overview.tt'
 );
 
 around handle => sub {
     my ($foo, $self, $c) = @_;
 
-    print "++++ PeeringOverview::handle\n";
+    print "++++ AdminBillingOverview::handle\n";
     return;
 };
 

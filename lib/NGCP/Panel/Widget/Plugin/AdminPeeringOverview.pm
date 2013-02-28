@@ -1,16 +1,16 @@
-package NGCP::Panel::Widget::Plugin::SystemOverview;
+package NGCP::Panel::Widget::Plugin::AdminPeeringOverview;
 use Moose::Role;
 
 has 'template' => (
     is  => 'ro',
     isa => 'Str',
-    default => 'widgets/system_overview.tt'
+    default => 'widgets/admin_peering_overview.tt'
 );
 
 around handle => sub {
     my ($foo, $self, $c) = @_;
 
-    print "++++ SystemOverview::handle\n";
+    print "++++ AdminPeeringOverview::handle\n";
     return;
 };
 

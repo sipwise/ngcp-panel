@@ -1,16 +1,16 @@
-package NGCP::Panel::Widget::Plugin::BillingOverview;
+package NGCP::Panel::Widget::Plugin::AdminResellerOverview;
 use Moose::Role;
 
 has 'template' => (
     is  => 'ro',
     isa => 'Str',
-    default => 'widgets/billing_overview.tt'
+    default => 'widgets/admin_reseller_overview.tt'
 );
 
 around handle => sub {
     my ($foo, $self, $c) = @_;
 
-    print "++++ BillingOverview::handle\n";
+    print "++++ AdminResellerOverview::handle\n";
     return;
 };
 
