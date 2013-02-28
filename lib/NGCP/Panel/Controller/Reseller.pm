@@ -22,8 +22,6 @@ Catalyst Controller.
 sub list :Chained('/') :PathPart('reseller') :CaptureArgs(0) {
     my ($self, $c) = @_;
 
-    $c->log->debug("++++ Reseller::list");
-
     my $resellers = [
         {id => 1, contract_id => 1, name => 'reseller 1', status => 'active'},
         {id => 2, contract_id => 2, name => 'reseller 2', status => 'active'},
@@ -38,14 +36,10 @@ sub list :Chained('/') :PathPart('reseller') :CaptureArgs(0) {
 
 sub root :Chained('list') :PathPart('') :Args(0) {
     my ($self, $c) = @_;
-
-    $c->log->debug("++++ Reseller::root");
 }
 
 sub create :Chained('list') :PathPart('create') :Args(0) {
     my ($self, $c) = @_;
-
-    $c->log->debug("++++ Reseller::create");
 
     my $form = NGCP::Panel::Form::Reseller->new;
     $form->process(
@@ -54,7 +48,6 @@ sub create :Chained('list') :PathPart('create') :Args(0) {
         action => $c->uri_for('create'),
     );
     if($form->validated) {
-        $c->log->debug("---- Reseller::create validated");
         $c->flash(messages => [{type => 'success', text => 'Reseller successfully created!'}]);
         $c->response->redirect($c->uri_for());
         return;
@@ -67,21 +60,15 @@ sub create :Chained('list') :PathPart('create') :Args(0) {
 sub search :Chained('list') :PathPart('search') Args(0) {
     my ($self, $c) = @_;
 
-    $c->log->debug("++++ Reseller::search");
-
     $c->flash(messages => [{type => 'info', text => 'Reseller search not implemented!'}]);
-
     $c->response->redirect($c->uri_for());
 }
 
 sub base :Chained('/reseller/list') :PathPart('') :CaptureArgs(1) {
     my ($self, $c, $reseller_id) = @_;
 
-    $c->log->debug("++++ Reseller::base");
-
     unless($reseller_id && $reseller_id =~ /^\d+$/) {
-        $c->log->debug("---- invalid reseller_id '$reseller_id', going back");
-        # TODO: error message
+        $c->flash(messages => [{type => 'error', text => 'Invalid reseller id detected!'}]);
         $c->response->redirect($c->uri_for());
         return;
     }
@@ -94,8 +81,6 @@ sub base :Chained('/reseller/list') :PathPart('') :CaptureArgs(1) {
 sub edit :Chained('base') :PathPart('edit') :Args(0) {
     my ($self, $c) = @_;
 
-    $c->log->debug("++++ Reseller::edit");
-
     my $posted = ($c->request->method eq 'POST');
     my $form = NGCP::Panel::Form::Reseller->new;
     $form->process(
@@ -104,21 +89,19 @@ sub edit :Chained('base') :PathPart('edit') :Args(0) {
         action => $c->uri_for($c->stash->{reseller}->{id}, 'edit'),
     );
     if($posted && $form->validated) {
-        $c->log->debug("---- Reseller::edit validated");
         $c->flash(messages => [{type => 'success', text => 'Reseller successfully changed!'}]);
         $c->response->redirect($c->uri_for());
         return;
     }
+
     $c->stash(form => $form);
 }
 
 sub delete :Chained('base') :PathPart('delete') :Args(0) {
     my ($self, $c) = @_;
 
-    # TODO: perform deletion
     # $c->model('Provisioning')->reseller($c->stash->{reseller}->{id})->delete;
     $c->flash(messages => [{type => 'info', text => 'Reseller delete not implemented!'}]);
-
     $c->response->redirect($c->uri_for());
 }
 
