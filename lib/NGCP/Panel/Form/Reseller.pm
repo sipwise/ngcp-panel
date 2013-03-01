@@ -10,8 +10,10 @@ has '+widget_wrapper' => ( default => 'Bootstrap' );
 sub build_render_list {[qw/fields actions/]}
 sub build_form_element_class { [qw/form-horizontal/] }
 
-has_field 'id' => (
-    type => 'Hidden',
+has_field 'contract' => (
+    type => '+NGCP::Panel::Field::Contract',
+    label => 'Contract',
+    not_nullable => 1,
 );
 
 has_field 'name' => (
@@ -19,11 +21,6 @@ has_field 'name' => (
     required => 1,
 );
 
-has_field 'contract_id' => (
-    type => '+NGCP::Panel::Field::Contract',
-    label => 'Contract',
-    required => 1,
-);
 
 has_field 'status' => (
     type => 'Text',
@@ -40,7 +37,7 @@ has_field 'save' => (
 has_block 'fields' => (
     tag => 'div',
     class => [qw/modal-body/],
-    render_list => [qw/id contract_id name status/],
+    render_list => [qw/contract name status/],
 );
 
 has_block 'actions' => (

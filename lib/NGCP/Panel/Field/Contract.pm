@@ -1,22 +1,20 @@
 package NGCP::Panel::Field::Contract;
-use Moose;
-extends 'HTML::FormHandler::Field::Select';
+use HTML::FormHandler::Moose;
+extends 'HTML::FormHandler::Field::Compound';
 
-use Data::Dumper;
+has_field 'foo' => (
+    type => '+NGCP::Panel::Field::ContractSelect',
+    label => 'Contract',
+    required => 1,
+);
 
-sub build_options {
-    my ($self) = @_;
-
-    return [ 
-        { label => 'Select...', value => '' },
-        { label => '1', value => 1 },
-        { label => '2', value => 2 },
-        { label => '3', value => 3 },
-        { label => '4', value => 4 },
-        { label => '5', value => 5 },
-        { label => '6', value => 6 },
-    ];
-}
+has_field 'create' => (
+    type => 'Button',
+    label => 'or',
+    value => 'Create Contract',
+    element_attr => { onclick => 'window.location=\'/contract/create\'' },
+    element_class => [qw/btn btn-tertiary/],
+);
 
 1;
 
