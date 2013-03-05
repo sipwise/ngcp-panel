@@ -23,12 +23,12 @@ sub list :Chained('/') :PathPart('reseller') :CaptureArgs(0) {
     my ($self, $c) = @_;
 
     my $resellers = [
-        {id => 1, contract_id => 1, name => 'reseller 1', status => 'active'},
-        {id => 2, contract_id => 2, name => 'reseller 2', status => 'active'},
-        {id => 3, contract_id => 3, name => 'reseller 3', status => 'active'},
-        {id => 4, contract_id => 4, name => 'reseller 4', status => 'locked'},
-        {id => 5, contract_id => 5, name => 'reseller 5', status => 'terminated'},
-        {id => 6, contract_id => 6, name => 'reseller 6', status => 'active'},
+        {id => 1, contract => 1, name => 'reseller 1', status => 'active'},
+        {id => 2, contract => 2, name => 'reseller 2', status => 'active'},
+        {id => 3, contract => 3, name => 'reseller 3', status => 'active'},
+        {id => 4, contract => 4, name => 'reseller 4', status => 'locked'},
+        {id => 5, contract => 5, name => 'reseller 5', status => 'terminated'},
+        {id => 6, contract => 6, name => 'reseller 6', status => 'active'},
     ];
     $c->stash(resellers => $resellers);
     $c->stash(template => 'reseller/list.tt');
@@ -40,6 +40,12 @@ sub root :Chained('list') :PathPart('') :Args(0) {
 
 sub create :Chained('list') :PathPart('create') :Args(0) {
     my ($self, $c) = @_;
+
+    # TODO: check if some create-button is clicked, then set
+    # $c->session(redirect_target => $c->uri_for()); # <-- redirect back to here
+    # somehow save form in session(?) so we can continue from here,
+    # or maybe post from the redirect_target back here, with all values filled in already?
+
 
     my $form = NGCP::Panel::Form::Reseller->new;
     $form->process(

@@ -52,6 +52,7 @@
             window.location.href="[% c.uri_for() %]";
         });
 
+        $('button').trigger('submit');
     });
 </script>
 [% END -%]

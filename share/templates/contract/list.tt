@@ -1,0 +1,15 @@
+[% META title = 'Contracts' -%]
+[%
+    helper.name = 'Contract';
+    helper.data = contracts;
+    helper.messages = messages;
+    helper.column_titles = [ '#', 'Contact #', 'Billing Profile #', 'Status' ];
+    helper.column_fields = [ 'id', 'contact_id', 'billing_profile_id', 'status' ];
+
+    helper.create_flag = create_flag;
+    helper.edit_object = contract;
+    helper.form_object = form;
+
+    PROCESS 'helpers/table_form.tt';
+-%]
+[% # vim: set tabstop=4 syntax=html expandtab: -%]

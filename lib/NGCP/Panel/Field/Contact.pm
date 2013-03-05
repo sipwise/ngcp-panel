@@ -1,18 +1,18 @@
-package NGCP::Panel::Field::Contract;
+package NGCP::Panel::Field::Contact;
 use HTML::FormHandler::Moose;
 extends 'HTML::FormHandler::Field::Compound';
 
-has_field 'contract' => (
-    type => '+NGCP::Panel::Field::ContractSelect',
-    label => 'Contract',
+has_field 'foo' => (
+    type => '+NGCP::Panel::Field::ContactSelect',
+    label => 'Contact',
     required => 1,
 );
 
 has_field 'create' => (
     type => 'Button',
     label => 'or',
-    value => 'Create Contract',
-    #element_attr => { onclick => 'window.location=\'/contract/create\'' },
+    value => 'Create Contact',
+    element_attr => { onclick => 'window.location=\'/contact/create\'' },
     element_class => [qw/btn btn-tertiary/],
 );
 
