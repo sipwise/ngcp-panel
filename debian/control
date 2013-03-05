@@ -1,0 +1,19 @@
+Source: ngcp-panel
+Section: admin
+Priority: extra
+Maintainer: Sipwise Development Team <support@sipwise.com>
+Build-Depends: debhelper (>= 8),
+               libcatalyst-devel-perl,
+               libcatalyst-modules-perl,
+               libcatalyst-view-tt-perl,
+               libhtml-formhandler-perl,
+               libmodule-install-perl,
+               libmoosex-object-pluggable-perl
+Standards-Version: 3.9.4
+Homepage: http://sipwise.com/
+
+Package: ngcp-panel
+Architecture: all
+Depends: ${misc:Depends}
+Description: Catalyst based application
+ TODO
