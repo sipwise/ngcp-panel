@@ -1,7 +1,7 @@
 [%
     IF template.name.match('(\.html$|\.css$|\.js$|\.txt$)');
         content;
-    ELSIF template.name.match('^login\.tt$');
+    ELSIF template.name.match('^login\/login\.tt$');
        content WRAPPER html.tt;
     ELSE;
        content WRAPPER html.tt + body.tt;

@@ -58,7 +58,7 @@ sub index :Path Form {
 
     $c->stash(form => $form);
     $c->stash(realm => $realm);
-    $c->stash(template => 'login.tt');
+    $c->stash(template => 'login/login.tt');
 }
 
 
