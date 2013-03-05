@@ -40,11 +40,6 @@ sub root :Chained('list') :PathPart('') :Args(0) {
 
 sub create :Chained('list') :PathPart('create') :Args(0) {
     my ($self, $c) = @_;
-    if($c->session->{redirect_targets}) {
-        $c->stash(close_target => shift @{ $c->session->{redirect_targets} });
-    } else {
-        $c->stash(close_target => $c->uri_for());
-    }
 
     my $form = NGCP::Panel::Form::Contract->new;
     $form->process(
@@ -53,9 +48,10 @@ sub create :Chained('list') :PathPart('create') :Args(0) {
         action => $c->uri_for('create'),
     );
     if($form->validated) {
-        if($c->session->{redirect_targets}) {
+        if($c->session->{redirect_targets} && @{ $c->session->{redirect_targets} }) {
             # TODO: set created contract in flash to be selected at target
-            $c->response->redirect($c->stash->{close_target});
+            my $target = shift @{ $c->session->{redirect_targets} };
+            $c->response->redirect($target);
             return;
         }
         $c->flash(messages => [{type => 'success', text => 'Contract successfully created!'}]);
@@ -63,6 +59,11 @@ sub create :Chained('list') :PathPart('create') :Args(0) {
         return;
     }
 
+    if($c->session->{redirect_targets} && @{ $c->session->{redirect_targets} }) {
+        $c->stash(close_target => ${ $c->session->{redirect_targets} }[0]);
+    } else {
+        $c->stash(close_target => $c->uri_for());
+    }
     $c->stash(create_flag => 1);
     $c->stash(form => $form);
 }
