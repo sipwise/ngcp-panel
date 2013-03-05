@@ -53,6 +53,7 @@ sub create :Chained('list') :PathPart('create') :Args(0) {
         return;
     }
 
+    $c->stash(close_target => $c->uri_for());
     $c->stash(create_flag => 1);
     $c->stash(form => $form);
 }
@@ -94,6 +95,7 @@ sub edit :Chained('base') :PathPart('edit') :Args(0) {
         return;
     }
 
+    $c->stash(close_target => $c->uri_for());
     $c->stash(form => $form);
 }
 

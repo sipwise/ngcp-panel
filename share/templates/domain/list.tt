@@ -6,6 +6,7 @@
     helper.column_titles = [ '#', 'Domain' ];
     helper.column_fields = [ 'id', 'domain' ];
 
+    helper.close_target = close_target;
     helper.create_flag = create_flag;
     helper.edit_object = domain;
     helper.form_object = form;

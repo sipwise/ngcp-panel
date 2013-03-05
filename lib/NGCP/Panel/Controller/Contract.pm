@@ -23,12 +23,12 @@ sub list :Chained('/') :PathPart('contract') :CaptureArgs(0) {
     my ($self, $c) = @_;
 
     my $contracts = [
-        {id => 1, contact_id => 1, billing_profile_id => 1, status => 'active'},
-        {id => 2, contact_id => 2, billing_profile_id => 2, status => 'pending'},
-        {id => 3, contact_id => 3, billing_profile_id => 3, status => 'active'},
-        {id => 4, contact_id => 4, billing_profile_id => 4, status => 'terminated'},
-        {id => 5, contact_id => 5, billing_profile_id => 5, status => 'locked'},
-        {id => 6, contact_id => 6, billing_profile_id => 6, status => 'active'},
+        {id => 1, contact => 1, billing_profile => 1, status => 'active'},
+        {id => 2, contact => 2, billing_profile => 2, status => 'pending'},
+        {id => 3, contact => 3, billing_profile => 3, status => 'active'},
+        {id => 4, contact => 4, billing_profile => 4, status => 'terminated'},
+        {id => 5, contact => 5, billing_profile => 5, status => 'locked'},
+        {id => 6, contact => 6, billing_profile => 6, status => 'active'},
     ];
     $c->stash(contracts => $contracts);
     $c->stash(template => 'contract/list.tt');
@@ -40,6 +40,11 @@ sub root :Chained('list') :PathPart('') :Args(0) {
 
 sub create :Chained('list') :PathPart('create') :Args(0) {
     my ($self, $c) = @_;
+    if($c->session->{redirect_targets}) {
+        $c->stash(close_target => shift @{ $c->session->{redirect_targets} });
+    } else {
+        $c->stash(close_target => $c->uri_for());
+    }
 
     my $form = NGCP::Panel::Form::Contract->new;
     $form->process(
@@ -48,13 +53,13 @@ sub create :Chained('list') :PathPart('create') :Args(0) {
         action => $c->uri_for('create'),
     );
     if($form->validated) {
-        $c->flash(messages => [{type => 'success', text => 'Contract successfully created!'}]);
-        if($c->session->{redirect_target}) {
-            # TODO: post back to redirect-target, so we can continue processing their form?
-            $c->response->redirect($c->session->{redirect_target});
+        if($c->session->{redirect_targets}) {
+            # TODO: set created contract in flash to be selected at target
+            $c->response->redirect($c->stash->{close_target});
             return;
         }
-        $c->response->redirect($c->uri_for());
+        $c->flash(messages => [{type => 'success', text => 'Contract successfully created!'}]);
+        $c->response->redirect($c->stash->{close_target});
         return;
     }
 
@@ -99,6 +104,7 @@ sub edit :Chained('base') :PathPart('edit') :Args(0) {
         return;
     }
 
+    $c->stash(close_target => $c->uri_for());
     $c->stash(form => $form);
 }
 

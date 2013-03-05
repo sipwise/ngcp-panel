@@ -6,6 +6,7 @@
     helper.column_titles = [ '#', 'Contact #', 'Billing Profile #', 'Status' ];
     helper.column_fields = [ 'id', 'contact_id', 'billing_profile_id', 'status' ];
 
+    helper.close_target = close_target;
     helper.create_flag = create_flag;
     helper.edit_object = contract;
     helper.form_object = form;

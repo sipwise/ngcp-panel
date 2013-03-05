@@ -23,8 +23,8 @@ has_field 'billing_profile' => (
 
 
 has_field 'status' => (
-    type => 'Text',
-    required => 1,
+    type => '+NGCP::Panel::Field::ContractStatus',
+    not_nullable => 1,
 );
 
 has_field 'save' => (

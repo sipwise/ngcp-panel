@@ -4,8 +4,9 @@
     helper.data = resellers;
     helper.messages = messages;
     helper.column_titles = [ '#', 'Name', 'Contract #', 'Status' ];
-    helper.column_fields = [ 'id', 'name', 'contract_id', 'status' ];
+    helper.column_fields = [ 'id', 'name', 'contract.id', 'status' ];
 
+    helper.close_target = close_target;
     helper.create_flag = create_flag;
     helper.edit_object = reseller;
     helper.form_object = form;

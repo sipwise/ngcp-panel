@@ -49,10 +49,15 @@
     $(function () {
         $('#mod_edit').modal({keyboard: false, backdrop: 'static'});
         $('#mod_close').click(function(event) {
-            window.location.href="[% c.uri_for() %]";
+            window.location.href="[% helper.close_target %]";
         });
 
-        $('button').trigger('submit');
+        // on clicking a button within the form, add a hidden field "submitid"
+        // determining the name of the button being clicked
+        $('input[type=button]').click(function() {
+            $(this).parents('form').find('#submitid').attr('value', $(this).attr('name'));
+            $(this).parents('form').submit();
+        });
     });
 </script>
 [% END -%]

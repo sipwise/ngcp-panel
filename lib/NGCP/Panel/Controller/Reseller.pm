@@ -23,12 +23,12 @@ sub list :Chained('/') :PathPart('reseller') :CaptureArgs(0) {
     my ($self, $c) = @_;
 
     my $resellers = [
-        {id => 1, contract => 1, name => 'reseller 1', status => 'active'},
-        {id => 2, contract => 2, name => 'reseller 2', status => 'active'},
-        {id => 3, contract => 3, name => 'reseller 3', status => 'active'},
-        {id => 4, contract => 4, name => 'reseller 4', status => 'locked'},
-        {id => 5, contract => 5, name => 'reseller 5', status => 'terminated'},
-        {id => 6, contract => 6, name => 'reseller 6', status => 'active'},
+        {id => 1, 'contract.id' => 1, name => 'reseller 1', status => 'active'},
+        {id => 2, 'contract.id' => 2, name => 'reseller 2', status => 'locked'},
+        {id => 3, 'contract.id' => 3, name => 'reseller 3', status => 'terminated'},
+        {id => 4, 'contract.id' => 4, name => 'reseller 4', status => 'active'},
+        {id => 5, 'contract.id' => 5, name => 'reseller 5', status => 'locked'},
+        {id => 6, 'contract.id' => 6, name => 'reseller 6', status => 'terminated'},
     ];
     $c->stash(resellers => $resellers);
     $c->stash(template => 'reseller/list.tt');
@@ -41,18 +41,27 @@ sub root :Chained('list') :PathPart('') :Args(0) {
 sub create :Chained('list') :PathPart('create') :Args(0) {
     my ($self, $c) = @_;
 
-    # TODO: check if some create-button is clicked, then set
-    # $c->session(redirect_target => $c->uri_for()); # <-- redirect back to here
-    # somehow save form in session(?) so we can continue from here,
-    # or maybe post from the redirect_target back here, with all values filled in already?
+    # TODO: check in session if contract has just been created, and set it
+    # as default value
 
-
+    my $posted = ($c->request->method eq 'POST');
     my $form = NGCP::Panel::Form::Reseller->new;
     $form->process(
-        posted => ($c->request->method eq 'POST'),
+        posted => $posted,
         params => $c->request->params,
         action => $c->uri_for('create'),
     );
+    if($posted && $form->field('submitid') && 
+            $form->field('submitid')->value eq 'contract.create') {
+        if($c->session->{redirect_targets}) {
+            push @{ $c->session->{redirect_targets} }, $c->uri_for('create');
+        } else {
+            $c->session->{redirect_targets} = [ $c->uri_for('create') ];
+        }
+        $c->response->redirect($c->uri_for('/contract/create'));
+        return;
+    }
+    
     if($form->validated) {
         $c->flash(messages => [{type => 'success', text => 'Reseller successfully created!'}]);
         $c->response->redirect($c->uri_for());
@@ -60,6 +69,7 @@ sub create :Chained('list') :PathPart('create') :Args(0) {
     }
 
     $c->stash(create_flag => 1);
+    $c->stash(close_target => $c->uri_for());
     $c->stash(form => $form);
 }
 
@@ -87,6 +97,8 @@ sub base :Chained('/reseller/list') :PathPart('') :CaptureArgs(1) {
 sub edit :Chained('base') :PathPart('edit') :Args(0) {
     my ($self, $c) = @_;
 
+    print Dumper $c->stash->{reseller};
+
     my $posted = ($c->request->method eq 'POST');
     my $form = NGCP::Panel::Form::Reseller->new;
     $form->process(
@@ -94,12 +106,23 @@ sub edit :Chained('base') :PathPart('edit') :Args(0) {
         params => $posted ? $c->request->params : $c->stash->{reseller},
         action => $c->uri_for($c->stash->{reseller}->{id}, 'edit'),
     );
+    if($posted && $form->field('submitid') && 
+            $form->field('submitid')->value eq 'contract.create') {
+        if($c->session->{redirect_targets}) {
+            push @{ $c->session->{redirect_targets} }, $c->uri_for($c->stash->{reseller}->{id}, 'edit');
+        } else {
+            $c->session->{redirect_targets} = [ $c->uri_for($c->stash->{reseller}->{id}, 'edit') ];
+        }
+        $c->response->redirect($c->uri_for('/contract/create'));
+        return;
+    }
     if($posted && $form->validated) {
         $c->flash(messages => [{type => 'success', text => 'Reseller successfully changed!'}]);
         $c->response->redirect($c->uri_for());
         return;
     }
 
+    $c->stash(close_target => $c->uri_for());
     $c->stash(form => $form);
 }
 
