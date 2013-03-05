@@ -5,6 +5,7 @@ use Test::More;
 
 use Catalyst::Test 'NGCP::Panel';
 
-ok( request('/')->is_success, 'Request should succeed' );
+my $response = request('/');
+ok( $response->is_success || $response->is_redirect , 'Request should succeed' );
 
 done_testing();
