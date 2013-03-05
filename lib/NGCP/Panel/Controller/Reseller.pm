@@ -32,6 +32,10 @@ sub list :Chained('/') :PathPart('reseller') :CaptureArgs(0) {
     ];
     $c->stash(resellers => $resellers);
     $c->stash(template => 'reseller/list.tt');
+
+    # this is the root of a target chain for creating resellers->contracts->contacts,
+    # so clear chain here.
+    delete $c->session->{redirect_targets};
 }
 
 sub root :Chained('list') :PathPart('') :Args(0) {
@@ -58,6 +62,8 @@ sub create :Chained('list') :PathPart('create') :Args(0) {
         } else {
             $c->session->{redirect_targets} = [ $c->uri_for('create') ];
         }
+        # TODO: preserve the current "reseller" object for continuing editing
+        # when coming back from /contract/create
         $c->response->redirect($c->uri_for('/contract/create'));
         return;
     }

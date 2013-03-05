@@ -49,7 +49,7 @@
     $(function () {
         $('#mod_edit').modal({keyboard: false, backdrop: 'static'});
         $('#mod_close').click(function(event) {
-            window.location.href="[% helper.close_target %]";
+            window.location.href="[% helper.close_target ? helper.close_target : c.uri_for() %]";
         });
 
         // on clicking a button within the form, add a hidden field "submitid"

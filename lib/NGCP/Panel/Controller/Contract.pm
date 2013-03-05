@@ -32,6 +32,15 @@ sub list :Chained('/') :PathPart('contract') :CaptureArgs(0) {
     ];
     $c->stash(contracts => $contracts);
     $c->stash(template => 'contract/list.tt');
+
+    if($c->session->{redirect_targets} && @{ $c->session->{redirect_targets} }) {
+        my $target = ${ $c->session->{redirect_targets} }[0];
+        if('/'.$c->request->path eq $target->path) {
+            shift @{$c->session->{redirect_targets}};
+        } else {
+            $c->stash(close_target => $target);
+        }
+    }
 }
 
 sub root :Chained('list') :PathPart('') :Args(0) {
@@ -48,10 +57,9 @@ sub create :Chained('list') :PathPart('create') :Args(0) {
         action => $c->uri_for('create'),
     );
     if($form->validated) {
-        if($c->session->{redirect_targets} && @{ $c->session->{redirect_targets} }) {
+        if($c->stash->{close_target}) {
             # TODO: set created contract in flash to be selected at target
-            my $target = shift @{ $c->session->{redirect_targets} };
-            $c->response->redirect($target);
+            $c->response->redirect($c->stash->{close_target});
             return;
         }
         $c->flash(messages => [{type => 'success', text => 'Contract successfully created!'}]);
@@ -59,11 +67,6 @@ sub create :Chained('list') :PathPart('create') :Args(0) {
         return;
     }
 
-    if($c->session->{redirect_targets} && @{ $c->session->{redirect_targets} }) {
-        $c->stash(close_target => ${ $c->session->{redirect_targets} }[0]);
-    } else {
-        $c->stash(close_target => $c->uri_for());
-    }
     $c->stash(create_flag => 1);
     $c->stash(form => $form);
 }
@@ -105,7 +108,6 @@ sub edit :Chained('base') :PathPart('edit') :Args(0) {
         return;
     }
 
-    $c->stash(close_target => $c->uri_for());
     $c->stash(form => $form);
 }
 
