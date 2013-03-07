@@ -128,22 +128,25 @@ sub delete :Chained('base') :PathPart('delete') :Args(0) {
     $c->response->redirect($c->uri_for());
 }
 
-sub ajax :Chained('/reseller/list') :PathPart('ajax') :Args(0) {
+sub ajax :Chained('list') :PathPart('ajax') :Args(0) {
     my ($self, $c) = @_;
     
-    #TODO: filtering, pagination
+    #TODO: pagination
     #TODO: when user is not logged in, this gets forwarded to login page
     
     #Process Arguments
     my $sEcho = $c->request->params->{sEcho};
     my $sSearch = $c->request->params->{sSearch};
-    my $iSortCol_0 = $c->request->params->{iSortCol_0};
     my $iDisplayStart = $c->request->params->{iDisplayStart};
     my $iDisplayLength = $c->request->params->{iDisplayLength};
     
     if(! $sEcho ) {
         $sEcho = "1";
     }
+    if(! $sSearch ) {
+        $sSearch = "";
+    }
+    
     $c->stash(sEcho => $sEcho);
     
     #Parse resellers into aaData (for datatables)
@@ -151,10 +154,12 @@ sub ajax :Chained('/reseller/list') :PathPart('ajax') :Args(0) {
     my $aaData = [];
     
     for my $row (@$resellers) {
-        push @$aaData, [$row->{id},
-                        $row->{name},
-                        $row->{"contract.id"},
-                        $row->{status}];
+        if (index($row->{name}, $sSearch) >= 0) {
+            push @$aaData, [$row->{id},
+                            $row->{name},
+                            $row->{"contract.id"},
+                            $row->{status}];
+        }
     }
     
     $c->stash(aaData => $aaData,
@@ -162,7 +167,13 @@ sub ajax :Chained('/reseller/list') :PathPart('ajax') :Args(0) {
           iTotalDisplayRecords => scalar(@$aaData));
     
     $c->detach( $c->view("JSON") );
-   }
+}
+
+sub listdt :Chained('list') :PathPart('listdt') :Args(0) {
+    my ($self, $c) = @_;
+    
+    $c->stash(template => 'reseller/listdt.tt');
+}
 
 =head1 AUTHOR
 
