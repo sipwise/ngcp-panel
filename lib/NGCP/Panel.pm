@@ -53,6 +53,11 @@ __PACKAGE__->config(
         ],
         ABSOLUTE => 1,
     },
+    'View::JSON' => {
+        #Set the stash keys to be exposed to a JSON response
+        #(sEcho iTotalRecords iTotalDisplayRecords aaData) for datatables
+        expose_stash    => [ qw(sEcho iTotalRecords iTotalDisplayRecords aaData) ],
+    },
 
     'Plugin::Static::Simple' => {
         include_path => [
@@ -135,6 +140,7 @@ __PACKAGE__->config(
         }
     }
 );
+__PACKAGE__->config( default_view => 'HTML' );
 
 __PACKAGE__->log(Log::Log4perl::Catalyst->new('ngcp_panel.conf'));
 
