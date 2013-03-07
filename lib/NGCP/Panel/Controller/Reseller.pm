@@ -128,6 +128,41 @@ sub delete :Chained('base') :PathPart('delete') :Args(0) {
     $c->response->redirect($c->uri_for());
 }
 
+sub ajax :Chained('/reseller/list') :PathPart('ajax') :Args(0) {
+    my ($self, $c) = @_;
+    
+    #TODO: filtering, pagination
+    #TODO: when user is not logged in, this gets forwarded to login page
+    
+    #Process Arguments
+    my $sEcho = $c->request->params->{sEcho};
+    my $sSearch = $c->request->params->{sSearch};
+    my $iSortCol_0 = $c->request->params->{iSortCol_0};
+    my $iDisplayStart = $c->request->params->{iDisplayStart};
+    my $iDisplayLength = $c->request->params->{iDisplayLength};
+    
+    if(! $sEcho ) {
+        $sEcho = "1";
+    }
+    $c->stash(sEcho => $sEcho);
+    
+    #Parse resellers into aaData (for datatables)
+    my $resellers = $c->stash->{resellers};
+    my $aaData = [];
+    
+    for my $row (@$resellers) {
+        push @$aaData, [$row->{id},
+                        $row->{name},
+                        $row->{"contract.id"},
+                        $row->{status}];
+    }
+    
+    $c->stash(aaData => $aaData,
+          iTotalRecords => scalar(@$aaData),
+          iTotalDisplayRecords => scalar(@$aaData));
+    
+    $c->detach( $c->view("JSON") );
+   }
 
 =head1 AUTHOR
 
