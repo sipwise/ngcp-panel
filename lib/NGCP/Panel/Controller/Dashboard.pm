@@ -37,6 +37,7 @@ sub index :Path :Args(0) {
     
     $c->stash(widgets => $widget_templates);
     $c->stash(template => 'dashboard.tt');
+    delete $c->session->{redirect_targets};
 }
 
 =head1 AUTHOR

@@ -6,6 +6,7 @@ use Data::Dumper;
 BEGIN { extends 'Catalyst::Controller'; }
 
 use NGCP::Panel::Form::Contract;
+use NGCP::Panel::Utils;
 
 =head1 NAME
 
@@ -33,14 +34,7 @@ sub list :Chained('/') :PathPart('contract') :CaptureArgs(0) {
     $c->stash(contracts => $contracts);
     $c->stash(template => 'contract/list.tt');
 
-    if($c->session->{redirect_targets} && @{ $c->session->{redirect_targets} }) {
-        my $target = ${ $c->session->{redirect_targets} }[0];
-        if('/'.$c->request->path eq $target->path) {
-            shift @{$c->session->{redirect_targets}};
-        } else {
-            $c->stash(close_target => $target);
-        }
-    }
+    NGCP::Panel::Utils::check_redirect_chain(c => $c);
 }
 
 sub root :Chained('list') :PathPart('') :Args(0) {
@@ -55,6 +49,10 @@ sub create :Chained('list') :PathPart('create') :Args(0) {
         posted => ($c->request->method eq 'POST'),
         params => $c->request->params,
         action => $c->uri_for('create'),
+    );
+    return if NGCP::Panel::Utils::check_form_buttons(
+        c => $c, form => $form, fields => [qw/contact.create/], 
+        back_uri => $c->uri_for('create')
     );
     if($form->validated) {
         if($c->stash->{close_target}) {
@@ -101,6 +99,10 @@ sub edit :Chained('base') :PathPart('edit') :Args(0) {
         posted => 1,
         params => $posted ? $c->request->params : $c->stash->{contract},
         action => $c->uri_for($c->stash->{contract}->{id}, 'edit'),
+    );
+    return if NGCP::Panel::Utils::check_form_buttons(
+        c => $c, form => $form, fields => [qw/contact.create/], 
+        back_uri => $c->uri_for($c->stash->{contract}->{id}, 'edit')
     );
     if($posted && $form->validated) {
         $c->flash(messages => [{type => 'success', text => 'Contract successfully changed!'}]);

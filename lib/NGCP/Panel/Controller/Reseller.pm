@@ -6,6 +6,7 @@ use Data::Dumper;
 BEGIN { extends 'Catalyst::Controller'; }
 
 use NGCP::Panel::Form::Reseller;
+use NGCP::Panel::Utils;
 
 =head1 NAME
 
@@ -33,9 +34,7 @@ sub list :Chained('/') :PathPart('reseller') :CaptureArgs(0) {
     $c->stash(resellers => $resellers);
     $c->stash(template => 'reseller/list.tt');
 
-    # this is the root of a target chain for creating resellers->contracts->contacts,
-    # so clear chain here.
-    delete $c->session->{redirect_targets};
+    NGCP::Panel::Utils::check_redirect_chain(c => $c);
 }
 
 sub root :Chained('list') :PathPart('') :Args(0) {
@@ -55,19 +54,13 @@ sub create :Chained('list') :PathPart('create') :Args(0) {
         params => $c->request->params,
         action => $c->uri_for('create'),
     );
-    if($posted && $form->field('submitid') && 
-            $form->field('submitid')->value eq 'contract.create') {
-        if($c->session->{redirect_targets}) {
-            push @{ $c->session->{redirect_targets} }, $c->uri_for('create');
-        } else {
-            $c->session->{redirect_targets} = [ $c->uri_for('create') ];
-        }
-        # TODO: preserve the current "reseller" object for continuing editing
-        # when coming back from /contract/create
-        $c->response->redirect($c->uri_for('/contract/create'));
-        return;
-    }
-    
+    return if NGCP::Panel::Utils::check_form_buttons(
+        c => $c, form => $form, fields => [qw/contract.create/], 
+        back_uri => $c->uri_for('create')
+    );
+    # TODO: preserve the current "reseller" object for continuing editing
+    # when coming back from /contract/create
+
     if($form->validated) {
         $c->flash(messages => [{type => 'success', text => 'Reseller successfully created!'}]);
         $c->response->redirect($c->uri_for());
@@ -112,16 +105,11 @@ sub edit :Chained('base') :PathPart('edit') :Args(0) {
         params => $posted ? $c->request->params : $c->stash->{reseller},
         action => $c->uri_for($c->stash->{reseller}->{id}, 'edit'),
     );
-    if($posted && $form->field('submitid') && 
-            $form->field('submitid')->value eq 'contract.create') {
-        if($c->session->{redirect_targets}) {
-            push @{ $c->session->{redirect_targets} }, $c->uri_for($c->stash->{reseller}->{id}, 'edit');
-        } else {
-            $c->session->{redirect_targets} = [ $c->uri_for($c->stash->{reseller}->{id}, 'edit') ];
-        }
-        $c->response->redirect($c->uri_for('/contract/create'));
-        return;
-    }
+    return if NGCP::Panel::Utils::check_form_buttons(
+        c => $c, form => $form, fields => [qw/contract.create/], 
+        back_uri => $c->uri_for($c->stash->{reseller}->{id}, 'edit')
+    );
+
     if($posted && $form->validated) {
         $c->flash(messages => [{type => 'success', text => 'Reseller successfully changed!'}]);
         $c->response->redirect($c->uri_for());
