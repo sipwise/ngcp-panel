@@ -117,6 +117,55 @@ sub delete :Chained('base') :PathPart('delete') :Args(0) {
     $c->response->redirect($c->uri_for());
 }
 
+sub ajax :Chained('list') :PathPart('ajax') :Args(0) {
+    my ($self, $c) = @_;
+    
+    #TODO: when user is not logged in, this gets forwarded to login page
+    
+    #Process Arguments
+    my $sEcho = $c->request->params->{sEcho};
+    my $sSearch = $c->request->params->{sSearch};
+    my $iDisplayStart = $c->request->params->{iDisplayStart};
+    my $iDisplayLength = $c->request->params->{iDisplayLength};
+    
+    if(! $sEcho ) {
+        $sEcho = "1";
+    }
+    if(! $sSearch ) {
+        $sSearch = "";
+    }
+    
+    $c->stash(sEcho => $sEcho);
+    
+    #Parse contacts into aaData (for datatables)
+    my $data = $c->stash->{contacts};
+    my $aaData = [];
+    
+    for my $row (@$data) {
+        if (index($row->{firstname}, $sSearch) >= 0 ||
+            index($row->{lastname}, $sSearch) >= 0 ||
+            index($row->{email}, $sSearch) >= 0) {
+            push @$aaData, [$row->{id},
+                            $row->{firstname},
+                            $row->{lastname},
+                            $row->{email}];
+        }
+    }
+    my $totalRecords = scalar(@$aaData);
+    #Pagination
+    if($iDisplayStart || $iDisplayLength ) {
+        my $endIndex = $iDisplayLength+$iDisplayStart-1;
+        $endIndex = $#$aaData if $endIndex > $#$aaData;
+        @$aaData = @$aaData[$iDisplayStart .. $endIndex];
+    }
+    
+    $c->stash(aaData => $aaData,
+          iTotalRecords => $totalRecords,
+          iTotalDisplayRecords => $totalRecords);
+    
+    $c->detach( $c->view("JSON") );
+}
+
 
 =head1 AUTHOR
 

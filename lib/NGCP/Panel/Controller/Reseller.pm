@@ -131,7 +131,6 @@ sub delete :Chained('base') :PathPart('delete') :Args(0) {
 sub ajax :Chained('list') :PathPart('ajax') :Args(0) {
     my ($self, $c) = @_;
     
-    #TODO: pagination
     #TODO: when user is not logged in, this gets forwarded to login page
     
     #Process Arguments
