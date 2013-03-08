@@ -10,12 +10,20 @@ $(document).ready(function() {
 		"bLengthChange": false,
 		"bSort": false,
 		"bInfo": true,
-		"sAjaxSource": "ajax/",
+		"iDisplayLength": 5,
+		"sAjaxSource": "[% c.uri_for( c.controller.action_for('ajax') ) %]",
 		
 		"aoColumns": [
 		    [% FOREACH f IN helper.column_fields -%]
 		    { "sName": "[% f %]" },
 		    [% END -%]
+		    {   "mRender": function ( data, type, full ) {
+                    return '<a class="btn btn-small btn-primary" href="[% c.uri_for( c.controller.action_for("") ) %]/' +full[0]+'/edit"><i class="icon-edit" style="line-height:1em;margin-top:2px"></i>Edit</a>'+
+                    ' <a class="btn btn-small btn-secondary" href="[% c.uri_for( c.controller.action_for("") ) %]/' +full[0]+'/delete"><i class="icon-trash" style="line-height:1em;margin-top:2px"></i>Delete</a>';
+                },
+                "mData": null,
+                "sWidth": "132px"
+            }
 		],
 	} );
 	
@@ -40,14 +48,14 @@ $(document).ready(function() {
                 [% FOREACH t IN helper.column_titles -%]
                 <th>[% t %]</th>
                 [% END -%]
+                [% # one for actions -%]
+                <th></th>
             </tr>
         </thead>
         <tbody>
-        [% FOREACH set IN helper.data -%]
             <tr class="sw_action_row">
                 <td>Loading</td>
             </tr>
-        [% END -%]
         </tbody>
     </table>
 </div>

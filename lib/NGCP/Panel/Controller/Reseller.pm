@@ -32,7 +32,7 @@ sub list :Chained('/') :PathPart('reseller') :CaptureArgs(0) {
         {id => 6, 'contract.id' => 6, name => 'reseller 6', status => 'terminated'},
     ];
     $c->stash(resellers => $resellers);
-    $c->stash(template => 'reseller/list.tt');
+    $c->stash(template => 'reseller/listdt.tt');
 
     NGCP::Panel::Utils::check_redirect_chain(c => $c);
 }
@@ -161,10 +161,17 @@ sub ajax :Chained('list') :PathPart('ajax') :Args(0) {
                             $row->{status}];
         }
     }
+    my $totalRecords = scalar(@$aaData);
+    #Pagination
+    if($iDisplayStart || $iDisplayLength ) {
+        my $endIndex = $iDisplayLength+$iDisplayStart-1;
+        $endIndex = $#$aaData if $endIndex > $#$aaData;
+        @$aaData = @$aaData[$iDisplayStart .. $endIndex];
+    }
     
     $c->stash(aaData => $aaData,
-          iTotalRecords => scalar(@$aaData),
-          iTotalDisplayRecords => scalar(@$aaData));
+          iTotalRecords => $totalRecords,
+          iTotalDisplayRecords => $totalRecords);
     
     $c->detach( $c->view("JSON") );
 }
