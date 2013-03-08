@@ -101,14 +101,27 @@ sub ajax_process :Private {
     my $sSearch = $c->request->params->{sSearch} // ""; #/
     my $iDisplayStart = $c->request->params->{iDisplayStart};
     my $iDisplayLength = $c->request->params->{iDisplayLength};
+    my $iSortCol_0 = $c->request->params->{iSortCol_0};
+    my $sSortDir_0 = $c->request->params->{sSortDir_0};
     
     #parse $data into $aaData
     my $aaData = [];
     
     for my $row (@$data) {
         my @aaRow = @$row{@$columns};
+        #my %aaRow = %$row; #in case of using mData
         if (grep /$sSearch/, @aaRow[@$searchable]) {
             push @$aaData, \@aaRow;
+        }
+    }
+    #Sorting
+    if(defined($iSortCol_0) && defined($sSortDir_0)) {
+        if($sSortDir_0 eq "asc") {
+            @$aaData = sort {$a->[$iSortCol_0] cmp
+                             $b->[$iSortCol_0]} @$aaData;
+        } else {
+            @$aaData = sort {$b->[$iSortCol_0] cmp
+                             $a->[$iSortCol_0]} @$aaData;
         }
     }
     my $totalRecords = scalar(@$aaData);

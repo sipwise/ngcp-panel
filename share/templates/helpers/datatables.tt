@@ -8,7 +8,7 @@ $(document).ready(function() {
 		"bServerSide": true,
 		"bPaginate": true,
 		"bLengthChange": false,
-		"bSort": false,
+		"bSort": true,
 		"bInfo": true,
 		"iDisplayLength": 5,
 		"sAjaxSource": "[% c.uri_for( c.controller.action_for('ajax') ) %]",
@@ -22,7 +22,8 @@ $(document).ready(function() {
                     ' <a class="btn btn-small btn-secondary" href="[% c.uri_for( c.controller.action_for("") ) %]/' +full[0]+'/delete"><i class="icon-trash" style="line-height:1em;margin-top:2px"></i>Delete</a>';
                 },
                 "mData": null,
-                "sWidth": "132px"
+                "sWidth": "132px",
+                "bSortable": false
             }
 		],
 	} );
