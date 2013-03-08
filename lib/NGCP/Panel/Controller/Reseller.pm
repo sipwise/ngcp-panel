@@ -133,53 +133,15 @@ sub ajax :Chained('list') :PathPart('ajax') :Args(0) {
     
     #TODO: when user is not logged in, this gets forwarded to login page
     
-    #Process Arguments
-    my $sEcho = $c->request->params->{sEcho};
-    my $sSearch = $c->request->params->{sSearch};
-    my $iDisplayStart = $c->request->params->{iDisplayStart};
-    my $iDisplayLength = $c->request->params->{iDisplayLength};
-    
-    if(! $sEcho ) {
-        $sEcho = "1";
-    }
-    if(! $sSearch ) {
-        $sSearch = "";
-    }
-    
-    $c->stash(sEcho => $sEcho);
-    
-    #Parse resellers into aaData (for datatables)
     my $resellers = $c->stash->{resellers};
-    my $aaData = [];
     
-    for my $row (@$resellers) {
-        if (index($row->{name}, $sSearch) >= 0) {
-            push @$aaData, [$row->{id},
-                            $row->{name},
-                            $row->{"contract.id"},
-                            $row->{status}];
-        }
-    }
-    my $totalRecords = scalar(@$aaData);
-    #Pagination
-    if($iDisplayStart || $iDisplayLength ) {
-        my $endIndex = $iDisplayLength+$iDisplayStart-1;
-        $endIndex = $#$aaData if $endIndex > $#$aaData;
-        @$aaData = @$aaData[$iDisplayStart .. $endIndex];
-    }
-    
-    $c->stash(aaData => $aaData,
-          iTotalRecords => $totalRecords,
-          iTotalDisplayRecords => $totalRecords);
+    $c->forward( "/ajax_process", [$resellers,
+                 ["id","name","contract.id","status"],
+                 [1,3]]);
     
     $c->detach( $c->view("JSON") );
 }
 
-sub listdt :Chained('list') :PathPart('listdt') :Args(0) {
-    my ($self, $c) = @_;
-    
-    $c->stash(template => 'reseller/listdt.tt');
-}
 
 =head1 AUTHOR
 

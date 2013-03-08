@@ -91,6 +91,42 @@ Attempt to render a view, if needed.
 
 sub end : ActionClass('RenderView') {}
 
+sub ajax_process :Private {
+    my ($self,$c,@arguments) = @_;
+    
+    my ($data,$columns,$searchable) = @arguments;
+    
+    #Process Arguments
+    my $sEcho = $c->request->params->{sEcho} // "1"; #/
+    my $sSearch = $c->request->params->{sSearch} // ""; #/
+    my $iDisplayStart = $c->request->params->{iDisplayStart};
+    my $iDisplayLength = $c->request->params->{iDisplayLength};
+    
+    #parse $data into $aaData
+    my $aaData = [];
+    
+    for my $row (@$data) {
+        my @aaRow = @$row{@$columns};
+        if (grep /$sSearch/, @aaRow[@$searchable]) {
+            push @$aaData, \@aaRow;
+        }
+    }
+    my $totalRecords = scalar(@$aaData);
+    #Pagination
+    if($iDisplayStart || $iDisplayLength ) {
+        my $endIndex = $iDisplayLength+$iDisplayStart-1;
+        $endIndex = $#$aaData if $endIndex > $#$aaData;
+        @$aaData = @$aaData[$iDisplayStart .. $endIndex];
+    }
+    
+    $c->stash(aaData => $aaData,
+          iTotalRecords => $totalRecords,
+          iTotalDisplayRecords => $totalRecords);
+    
+    
+    $c->stash(sEcho => $sEcho);
+}
+
 =head1 AUTHOR
 
 Andreas Granig,,,
