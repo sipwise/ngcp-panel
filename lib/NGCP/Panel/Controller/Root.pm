@@ -34,12 +34,20 @@ sub auto :Private {
     if($c->controller =~ /::Root\b/
         or $c->controller =~ /::Login\b/) {
         
-        $c->log->debug("*** Root::auto grant access to root and login controller");
+        $c->log->debug("*** Root::auto grant access to " . $c->request->path);
         return 1;
     }
-
+    
     unless($c->user_exists) {
         $c->log->debug("*** Root::auto user not authenticated");
+        
+        # don't redirect to login page for ajax uris
+        if($c->request->path =~ /\/ajax$/) {
+            $c->response->body("403 - Permission denied");
+            $c->response->status(403);
+            return;
+        }
+        
         # store uri for redirect after login
         my $target = undef;
         if($c->request->method eq 'GET') {
@@ -125,6 +133,7 @@ sub ajax_process :Private {
         }
     }
     my $totalRecords = scalar(@$aaData);
+    my $totalDisplayRecords = scalar(@$data);
     #Pagination
     if($iDisplayStart || $iDisplayLength ) {
         my $endIndex = $iDisplayLength+$iDisplayStart-1;
@@ -134,7 +143,7 @@ sub ajax_process :Private {
     
     $c->stash(aaData => $aaData,
           iTotalRecords => $totalRecords,
-          iTotalDisplayRecords => $totalRecords);
+          iTotalDisplayRecords => $totalDisplayRecords);
     
     
     $c->stash(sEcho => $sEcho);

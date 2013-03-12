@@ -18,14 +18,31 @@ $(document).ready(function() {
 		    { "sName": "[% f %]" },
 		    [% END -%]
 		    {   "mRender": function ( data, type, full ) {
-                    return '<a class="btn btn-small btn-primary" href="[% c.uri_for( c.controller.action_for("") ) %]/' +full[0]+'/edit"><i class="icon-edit" style="line-height:1em;margin-top:2px"></i>Edit</a>'+
-                    ' <a class="btn btn-small btn-secondary" href="[% c.uri_for( c.controller.action_for("") ) %]/' +full[0]+'/delete"><i class="icon-trash" style="line-height:1em;margin-top:2px"></i>Delete</a>';
+                    return '' +
+                    '<div class="sw_actions pull-right">' +
+                      '<a style="display:inline;line-height:16px;" class="btn btn-small btn-primary" href="[% c.uri_for( c.controller.action_for("") ) %]/' + full[0] + '/edit">' +
+                        '<i class="icon-edit" style="line-height:1em;margin-top:2px"></i> Edit' +
+                      '</a>' +
+                      '<a style="display:inline;line-height:16px;margin-left:5px;" class="btn btn-small btn-secondary" href="[% c.uri_for( c.controller.action_for("") ) %]/' + full[0] + '/delete">' +
+                        '<i class="icon-trash" style="line-height:1em;margin-top:2px"></i> Delete' +
+                      '</a>' +
+                    '</div>';
                 },
                 "mData": null,
-                "sWidth": "132px",
                 "bSortable": false
             }
 		],
+		"fnDrawCallback": function( oSettings ) {
+                $('.sw_actions').hide();
+                $('.sw_action_row').hover(
+                    function() { $(this).find('.sw_actions').show(); },
+                    function() { $(this).find('.sw_actions').hide(); }
+                );
+        },
+        "fnRowCallback": function(nRow, aData, iDisplayIndex) {
+            nRow.className = "sw_action_row";
+            return nRow;
+        },
 	} );
 	
 } );
@@ -50,7 +67,7 @@ $(document).ready(function() {
                 <th>[% t %]</th>
                 [% END -%]
                 [% # one for actions -%]
-                <th></th>
+                <th class="span3"></th>
             </tr>
         </thead>
         <tbody>
