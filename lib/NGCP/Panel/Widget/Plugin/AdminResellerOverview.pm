@@ -10,7 +10,7 @@ has 'template' => (
 around handle => sub {
     my ($foo, $self, $c) = @_;
 
-    print "++++ AdminResellerOverview::handle\n";
+    $c->log->debug("AdminResellerOverview::handle");
     return;
 };
 

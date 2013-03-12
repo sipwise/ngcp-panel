@@ -38,7 +38,7 @@ sub index :Path Form {
     );
 
     if($form->validated) {
-        print ">>>>>> login form validated\n";
+        $c->log->debug("login form validated");
         my $user = $form->field('username')->value;
         my $pass = $form->field('password')->value;
         $c->log->debug("*** Login::index user=$user, pass=$pass, realm=$realm");

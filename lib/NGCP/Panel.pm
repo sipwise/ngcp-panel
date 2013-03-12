@@ -25,6 +25,7 @@ use Catalyst qw/
     Session::Store::FastMmap
     Session::State::Cookie
 /;
+use Log::Log4perl::Catalyst qw();
 
 extends 'Catalyst';
 
@@ -134,6 +135,8 @@ __PACKAGE__->config(
         }
     }
 );
+
+__PACKAGE__->log(Log::Log4perl::Catalyst->new('ngcp_panel.conf'));
 
 # Start the application
 __PACKAGE__->setup();

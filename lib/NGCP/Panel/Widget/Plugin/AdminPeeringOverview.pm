@@ -10,7 +10,7 @@ has 'template' => (
 around handle => sub {
     my ($foo, $self, $c) = @_;
 
-    print "++++ AdminPeeringOverview::handle\n";
+    $c->log->debug("AdminPeeringOverview::handle");
     return;
 };
 
