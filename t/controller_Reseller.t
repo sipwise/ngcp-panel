@@ -42,7 +42,6 @@ if($returndata->{aaData}->[0]->[1] eq "reseller 1") { #using mock data
     ok($returndata->{aaData}->[0]->[0] == 1, "check id field");
     ok($returndata->{aaData}->[0]->[2] == 1, "check contract.id field");
     ok($returndata->{aaData}->[0]->[3] eq "active", "check status field");
-
     ok($returndata->{iTotalRecords} == 6, "iTotalRecords (all mock data) should be 6");
     ok($returndata->{iTotalDisplayRecords} == 4, "iTotalDisplayRecords (filtered mock data) should be 4");
     ok($returndata->{sEcho} eq "1337");
