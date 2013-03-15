@@ -1,20 +1,95 @@
 [% PROCESS "helpers/defines.tt" %]
 
 [% ifndef_include_dt %]
+
+<script src="/js/libs/datatables-bootstrap-paging.js"></script>
+<style>
+div.dataTables_length label {
+    width: 460px;
+    float: left;
+    text-align: left;
+}
+ 
+div.dataTables_length select {
+    width: 75px;
+}
+ 
+div.dataTables_filter label {
+    float: right;
+}
+ 
+div.dataTables_info {
+    padding-top: 8px;
+}
+ 
+div.dataTables_paginate {
+    float: right;
+    margin: 0;
+}
+ 
+table {
+    margin: 1em 0;
+    clear: both;
+}
+
+table .header {
+    cursor: pointer;
+}
+
+table .header:after {
+  content: "";
+  float: right;
+  margin-top: 7px;
+  border-width: 0 4px 4px;
+  border-style: solid;
+  border-color: #fff transparent;
+  visibility: hidden;
+}
+table .header:hover:after {
+  visibility: visible;
+}
+table .headerSortDown:after, table .headerSortDown:hover:after {
+  visibility: visible;
+  filter: alpha(opacity=60);
+  -moz-opacity: 0.6;
+  opacity: 0.6;
+}
+table .headerSortUp:after {
+  border-bottom: none;
+  border-left: 4px solid transparent;
+  border-right: 4px solid transparent;
+  border-top: 4px solid #fff;
+  visibility: visible;
+  -webkit-box-shadow: none;
+  -moz-box-shadow: none;
+  box-shadow: none;
+  filter: alpha(opacity=60);
+  -moz-opacity: 0.6;
+  opacity: 0.6;
+}
+
+</style>
 <script type="text/javascript">
+
+$.extend( $.fn.dataTableExt.oStdClasses, {
+                "sSortAsc": "header headerSortDown",
+                "sSortDesc": "header headerSortUp",
+                "sSortable": "header"
+            } );
 
 $(document).ready(function() {
 	$('#maintable')
 	    .dataTable( {
-		"bProcessing": true,
-		"bServerSide": true,
-		"bPaginate": true,
-		"bLengthChange": false,
-		"bSort": true,
-		"bInfo": true,
+        "sDom": "<'row'<'span6'r><'span6'f>>t<'row'<'span6'i><'span6'p>>",
+        "bProcessing": true,
+        "bServerSide": true,
+        "bPaginate": true,
+        "sPaginationType": "bootstrap",
+        "bLengthChange": true,
+        "bSort": true,
+        "bInfo": true,
 		"iDisplayLength": 5,
 		"sAjaxSource": "[% c.uri_for( c.controller.action_for('ajax') ) %]",
-		
 		"aoColumns": [
 		    [% FOREACH f IN helper.column_fields -%]
 		    { "sName": "[% f %]" },
@@ -61,24 +136,26 @@ $(document).ready(function() {
     [% END -%]
 </div>
 [% END -%]
-<div class="row">
-    <table class="table table-bordered table-striped table-highlight table-hover" id="maintable">
-        <thead>
-            <tr>
-                [% FOREACH t IN helper.column_titles -%]
-                <th>[% t %]</th>
-                [% END -%]
-                [% # one for actions -%]
-                <th class="span3"></th>
-            </tr>
-        </thead>
-        <tbody>
-            <tr class="sw_action_row">
-                <td>Loading</td>
-            </tr>
-        </tbody>
-    </table>
-</div>
+
+<div style="margin-top:10px;"></div>
+
+<table class="table table-bordered table-striped table-highlight table-hover" id="maintable">
+    <thead>
+        <tr>
+            [% FOREACH t IN helper.column_titles -%]
+            <th>[% t %]</th>
+            [% END -%]
+            [% # one for actions -%]
+            <th class="span3"></th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr class="sw_action_row">
+            <td colspan="[% helper.column_titles.size + 1 %]">Loading...</td>
+        </tr>
+    </tbody>
+</table>
+
 [% IF helper.edit_object || helper.create_flag == 1 -%]
 <div id="mod_edit" class="modal hide" style="display:block">
     <div class="modal-header">
