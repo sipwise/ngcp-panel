@@ -3,7 +3,10 @@ use Moose;
 use Template;
 extends 'HTML::FormHandler::Field';
 
-has 'template' => ( isa => 'Str', is => 'rw' );
+has '+widget' => (default => ''); # leave this empty, as there is no widget ...
+has 'template' => ( isa => 'Str',
+                    is => 'rw',
+                    default => 'share/templates/helpers/datatables_field.tt' );
 has 'ajax_src' => ( isa => 'Str', is => 'rw' );
 has 'table_fields' => ( isa => 'ArrayRef', is => 'rw' );
 
