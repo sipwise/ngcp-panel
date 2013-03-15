@@ -2,11 +2,11 @@
 <script type="text/javascript">
 
 $(document).ready(function() {
-    var selectedRow = [% value or 0 %];
     
     $('#[% table_id %] tr td input[type="checkbox"]').live( "click", function() {
     
-        selectedRow = $(this).parents("tr").find("td:first").text();
+        $("#[% hidden_id %]").val( $(this).parents("tr")
+                        .find("td:first").text() );
         if($(this).attr("checked") == "checked") {
             $(this).parents("tr").siblings().find("td input[type='checkbox']").attr("checked", false);
         }
@@ -30,7 +30,7 @@ $(document).ready(function() {
 		    		    { "sName": "contract.id" },
 		    		    { "sName": "status" },
 		    		    { "mRender": function ( data, type, full ) {
-                                return '<input type="checkbox" name="[% checkbox_name %]" value="' + full[0] + '"></input>';
+                                return '<input type="checkbox" value="' + full[0] + '"></input>';
                             },
                           "mData": null,
                           "bSortable": false
@@ -38,7 +38,7 @@ $(document).ready(function() {
 		],
         "fnRowCallback": function(nRow, aData, iDisplayIndex) {
             nRow.className = "sw_action_row";
-            if($(nRow).find("td:first").text() == selectedRow)
+            if($(nRow).find("td:first").text() == $("#[% hidden_id %]").val())
             {
                 $(nRow).find("td input[type='checkbox']").attr("checked", "checked");
             }
@@ -49,6 +49,7 @@ $(document).ready(function() {
 } );
 </script>
     
+    <input type="hidden" name="[% field_name %]" value="[% value %]" id="[% hidden_id %]"></input>
      <table class="table table-bordered table-striped table-highlight table-hover" id="[% table_id %]">
         <thead>
             <tr>

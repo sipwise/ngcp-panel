@@ -14,8 +14,9 @@ sub render_element {
     (my $tablename = $self->html_name) =~ s!\.!!g;
 
     my $vars = {
-        checkbox_name => $self->html_name,
+        field_name => $self->html_name,
         table_id => $tablename . "table",
+        hidden_id => $tablename . "hidden",
         value => $self->value,
         ajax_src => $self->ajax_src,
         table_fields => $self->table_fields,
