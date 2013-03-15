@@ -1,4 +1,3 @@
-[% PROCESS "helpers/create_form.tt" %]
 [% PROCESS "helpers/defines.tt" %]
 
 [% ifndef_include_dt %]
@@ -86,9 +85,7 @@ $(document).ready(function() {
         <button id="mod_close" type="button" class="close">×</button>
         <h3>[% helper.create_flag == 1 ? 'Create' : 'Edit' %] [% helper.name %]</h3>
     </div>
-    [% cf_render( cf_form=helper.form_object,
-                  cf_contract_titles=helper.contract_titles,
-                  cf_contact_titles=helper.contact_titles ) %]
+    [% helper.form_object.render -%]
 </div>
 <script>
     $(function () {

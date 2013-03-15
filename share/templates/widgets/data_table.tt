@@ -1,2 +1,0 @@
-Yeah!
-[% c.log.debug("****** am in widgets/data_table.tt now ****** ") %]

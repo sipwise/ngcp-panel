@@ -6,8 +6,6 @@
     helper.column_titles = [ '#', 'Name', 'Contract #', 'Status' ];
     helper.column_fields = [ 'id', 'name', 'contract.id', 'status' ];
 
-    helper.contract_titles = [ '#', 'Contact #', 'Billing Profile #', 'Status' ];
-
     helper.close_target = close_target;
     helper.create_flag = create_flag;
     helper.edit_object = reseller;

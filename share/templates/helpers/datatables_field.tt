@@ -2,7 +2,18 @@
 <script type="text/javascript">
 
 $(document).ready(function() {
-	$('#myformtable')
+    var selectedRow = [% value or 0 %];
+    
+    $('#[% table_id %] tr td input[type="checkbox"]').live( "click", function() {
+    
+        selectedRow = $(this).parents("tr").find("td:first").text();
+        if($(this).attr("checked") == "checked") {
+            $(this).parents("tr").siblings().find("td input[type='checkbox']").attr("checked", false);
+        }
+    
+    });
+
+	$('#[% table_id %]')
 	    .dataTable( {
 		"bProcessing": true,
 		"bServerSide": true,
@@ -10,38 +21,27 @@ $(document).ready(function() {
 		"bLengthChange": false,
 		"bSort": true,
 		"bInfo": true,
-		"iDisplayLength": 5,
-		"sAjaxSource": "http://localhost:5000/reseller/ajax",
+		"iDisplayLength": 4,
+		"sAjaxSource": "[% ajax_src %]",
 		
 		"aoColumns": [
 		    		    { "sName": "id" },
 		    		    { "sName": "name" },
 		    		    { "sName": "contract.id" },
 		    		    { "sName": "status" },
-		    		    {   "mRender": function ( data, type, full ) {
-                    return '' +
-                    '<div class="sw_actions pull-right">' +
-                      '<a style="display:inline;line-height:16px;" class="btn btn-small btn-primary" href="http://localhost:5000/reseller/' + full[0] + '/edit">' +
-                        '<i class="icon-edit" style="line-height:1em;margin-top:2px"></i> Edit' +
-                      '</a>' +
-                      '<a style="display:inline;line-height:16px;margin-left:5px;" class="btn btn-small btn-secondary" href="http://localhost:5000/reseller/' + full[0] + '/delete">' +
-                        '<i class="icon-trash" style="line-height:1em;margin-top:2px"></i> Delete' +
-                      '</a>' +
-                    '</div>';
-                },
-                "mData": null,
-                "bSortable": false
-            }
+		    		    { "mRender": function ( data, type, full ) {
+                                return '<input type="checkbox" name="[% checkbox_name %]" value="' + full[0] + '"></input>';
+                            },
+                          "mData": null,
+                          "bSortable": false
+                        }
 		],
-		"fnDrawCallback": function( oSettings ) {
-                $('.sw_actions').hide();
-                $('.sw_action_row').hover(
-                    function() { $(this).find('.sw_actions').show(); },
-                    function() { $(this).find('.sw_actions').hide(); }
-                );
-        },
         "fnRowCallback": function(nRow, aData, iDisplayIndex) {
             nRow.className = "sw_action_row";
+            if($(nRow).find("td:first").text() == selectedRow)
+            {
+                $(nRow).find("td input[type='checkbox']").attr("checked", "checked");
+            }
             return nRow;
         },
 	} );
@@ -49,14 +49,13 @@ $(document).ready(function() {
 } );
 </script>
     
-     <table class="table table-bordered table-striped table-highlight table-hover" id="myformtable">
+     <table class="table table-bordered table-striped table-highlight table-hover" id="[% table_id %]">
         <thead>
             <tr>
-                                <th>#</th>
-                                <th>Name</th>
-                                <th>Contract #</th>
-                                <th>Status</th>
-                                                <th class="span3"></th>
+                [% FOREACH t IN table_fields %]
+                    <th>[% t %]</th>
+                [% END %]
+                <th class="span"></th>
             </tr>
         </thead>
         <tbody>

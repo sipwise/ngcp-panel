@@ -1,4 +1,3 @@
-[% PROCESS "helpers/create_form.tt" %]
 [% PROCESS "helpers/defines.tt" %]
 
 <div class="row">
@@ -46,10 +45,7 @@
         <button id="mod_close" type="button" class="close">×</button>
         <h3>[% helper.create_flag == 1 ? 'Create' : 'Edit' %] [% helper.name %]</h3>
     </div>
-    [% # helper.form_object.render %]
-    [% cf_render( cf_form=helper.form_object,
-                  cf_contract_fields=helper.contract_fields,
-                  cf_contact_titles=helper.contact_titles ) %]
+    [% helper.form_object.render -%]
 </div>
 <script>
     $(function () {

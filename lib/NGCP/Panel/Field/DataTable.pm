@@ -3,37 +3,29 @@ use Moose;
 use Template;
 extends 'HTML::FormHandler::Field';
 
-sub build_options {
-    my ($self) = @_;
-
-    return [ 
-        { label => 'Select...', value => '' },
-        { label => '1', value => 1 },
-        { label => '2', value => 2 },
-        { label => '3', value => 3 },
-        { label => '4', value => 4 },
-        { label => '5', value => 5 },
-        #{ label => '6', value => 6 },
-    ];
-}
-
 has 'template' => ( isa => 'Str', is => 'rw' );
+has 'ajax_src' => ( isa => 'Str', is => 'rw' );
+has 'table_fields' => ( isa => 'ArrayRef', is => 'rw' );
 
 sub render_element {
     my ($self) = @_;
-    my $output;
+    my $output = '';
 
-    
+    (my $tablename = $self->html_name) =~ s!\.!!g;
 
-    my $vars = { 
-        # url => $c->uri_for(".."), fields => [qw/id name/] 
+    my $vars = {
+        checkbox_name => $self->html_name,
+        table_id => $tablename . "table",
+        value => $self->value,
+        ajax_src => $self->ajax_src,
+        table_fields => $self->table_fields,
     };
-    #my $t = new Template({});
+    my $t = new Template({});
 
-    use Data::Dumper;
-    print Dumper $self->template;
-    #$t->process($self->template, $vars, $output);
-    return "foo"; #$output;
+    $t->process($self->template, $vars, \$output) || 
+        print ">>>>>>>>>>>>>>>>> failed to process tt: ".$t->error()."\n";
+
+    return $output;
 }
  
 sub render {
@@ -41,7 +33,7 @@ sub render {
     $result ||= $self->result;
     die "No result for form field '" . $self->full_name . "'. Field may be inactive." unless $result;
     my $output = $self->render_element( $result );
-    return $output; #$self->wrap_field( $result, $output );
+    return $self->wrap_field( $result, $output );
 }
 
 

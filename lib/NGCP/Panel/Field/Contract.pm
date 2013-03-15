@@ -4,12 +4,13 @@ extends 'HTML::FormHandler::Field::Compound';
 
 has_field 'id' => (
     type => '+NGCP::Panel::Field::DataTable',
-    #type => 'Text',
     label => 'Contract',
-    do_label => 1,
+    do_label => 0,
+    do_wrapper => 0,
     required => 1,
-    #widget => '+NGCP::Panel::Widget::DataTable',
-    template => 'share/templates/helper/datatables_field.tt',
+    template => 'share/templates/helpers/datatables_field.tt',
+    ajax_src => '/contract/ajax',
+    table_fields => ['#', 'Contact #', 'Billing Profile #', 'Status'],
 );
 
 has_field 'create' => (
