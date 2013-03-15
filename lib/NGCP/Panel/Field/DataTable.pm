@@ -40,6 +40,12 @@ sub render {
     return $self->wrap_field( $result, $output );
 }
 
+sub wrap_field {
+    my ( $self, $result, $rendered_widget ) = @_;
+    return $rendered_widget;
+
+}
+
 
 1;
 

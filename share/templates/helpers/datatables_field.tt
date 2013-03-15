@@ -1,4 +1,4 @@
-<script type="text/javascript" language="javascript" src="http://localhost:5000/js/libs/jquery.dataTables.min.js"></script>
+<script type="text/javascript" language="javascript" src="/js/libs/jquery.dataTables.min.js"></script>
 <script type="text/javascript">
 
 $(document).ready(function() {
