@@ -1,0 +1,68 @@
+<script type="text/javascript" language="javascript" src="http://localhost:5000/js/libs/jquery.dataTables.min.js"></script>
+<script type="text/javascript">
+
+$(document).ready(function() {
+	$('#myformtable')
+	    .dataTable( {
+		"bProcessing": true,
+		"bServerSide": true,
+		"bPaginate": true,
+		"bLengthChange": false,
+		"bSort": true,
+		"bInfo": true,
+		"iDisplayLength": 5,
+		"sAjaxSource": "http://localhost:5000/reseller/ajax",
+		
+		"aoColumns": [
+		    		    { "sName": "id" },
+		    		    { "sName": "name" },
+		    		    { "sName": "contract.id" },
+		    		    { "sName": "status" },
+		    		    {   "mRender": function ( data, type, full ) {
+                    return '' +
+                    '<div class="sw_actions pull-right">' +
+                      '<a style="display:inline;line-height:16px;" class="btn btn-small btn-primary" href="http://localhost:5000/reseller/' + full[0] + '/edit">' +
+                        '<i class="icon-edit" style="line-height:1em;margin-top:2px"></i> Edit' +
+                      '</a>' +
+                      '<a style="display:inline;line-height:16px;margin-left:5px;" class="btn btn-small btn-secondary" href="http://localhost:5000/reseller/' + full[0] + '/delete">' +
+                        '<i class="icon-trash" style="line-height:1em;margin-top:2px"></i> Delete' +
+                      '</a>' +
+                    '</div>';
+                },
+                "mData": null,
+                "bSortable": false
+            }
+		],
+		"fnDrawCallback": function( oSettings ) {
+                $('.sw_actions').hide();
+                $('.sw_action_row').hover(
+                    function() { $(this).find('.sw_actions').show(); },
+                    function() { $(this).find('.sw_actions').hide(); }
+                );
+        },
+        "fnRowCallback": function(nRow, aData, iDisplayIndex) {
+            nRow.className = "sw_action_row";
+            return nRow;
+        },
+	} );
+	
+} );
+</script>
+    
+     <table class="table table-bordered table-striped table-highlight table-hover" id="myformtable">
+        <thead>
+            <tr>
+                                <th>#</th>
+                                <th>Name</th>
+                                <th>Contract #</th>
+                                <th>Status</th>
+                                                <th class="span3"></th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr class="sw_action_row">
+                <td>Loading</td>
+            </tr>
+        </tbody>
+    </table>
+[% # vim: set tabstop=4 syntax=html expandtab: -%]

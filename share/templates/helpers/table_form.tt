@@ -1,3 +1,6 @@
+[% PROCESS "helpers/create_form.tt" %]
+[% PROCESS "helpers/defines.tt" %]
+
 <div class="row">
     <a class="btn btn-primary btn-large" href="[% c.uri_for(c.action, c.req.captures, 'create') %]"><i class="icon-star"></i> Create [% helper.name %]</a>
     <a class="btn btn-primary btn-large" href="[% c.uri_for(c.action, c.req.captures, 'search') %]"><i class="icon-search"></i> Search [% helper.name %]</a>
@@ -43,7 +46,10 @@
         <button id="mod_close" type="button" class="close">×</button>
         <h3>[% helper.create_flag == 1 ? 'Create' : 'Edit' %] [% helper.name %]</h3>
     </div>
-    [% helper.form_object.render %]
+    [% # helper.form_object.render %]
+    [% cf_render( cf_form=helper.form_object,
+                  cf_contract_fields=helper.contract_fields,
+                  cf_contact_titles=helper.contact_titles ) %]
 </div>
 <script>
     $(function () {

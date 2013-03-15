@@ -1,4 +1,7 @@
-<script type="text/javascript" language="javascript" src="[% c.uri_for('/js/libs/jquery.dataTables.min.js') %]"></script>
+[% PROCESS "helpers/create_form.tt" %]
+[% PROCESS "helpers/defines.tt" %]
+
+[% ifndef_include_dt %]
 <script type="text/javascript">
 
 $(document).ready(function() {
@@ -83,7 +86,9 @@ $(document).ready(function() {
         <button id="mod_close" type="button" class="close">×</button>
         <h3>[% helper.create_flag == 1 ? 'Create' : 'Edit' %] [% helper.name %]</h3>
     </div>
-    [% helper.form_object.render %]
+    [% cf_render( cf_form=helper.form_object,
+                  cf_contract_titles=helper.contract_titles,
+                  cf_contact_titles=helper.contact_titles ) %]
 </div>
 <script>
     $(function () {
