@@ -1,7 +1,3 @@
-[% PROCESS "helpers/defines.tt" %]
-
-[% ifndef_include_dt %]
-
 <script src="/js/libs/datatables-bootstrap-paging.js"></script>
 <style>
 div.modal {

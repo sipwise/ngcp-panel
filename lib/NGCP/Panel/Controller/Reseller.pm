@@ -32,7 +32,7 @@ sub list :Chained('/') :PathPart('reseller') :CaptureArgs(0) {
         {id => 6, 'contract.id' => 6, name => 'reseller 6', status => 'terminated'},
     ];
     $c->stash(resellers => $resellers);
-    $c->stash(template => 'reseller/listdt.tt');
+    $c->stash(template => 'reseller/list.tt');
 
     NGCP::Panel::Utils::check_redirect_chain(c => $c);
 }

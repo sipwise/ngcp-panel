@@ -11,6 +11,6 @@
     helper.edit_object = contract;
     helper.form_object = form;
 
-    PROCESS 'helpers/table_form.tt';
+    PROCESS 'helpers/datatables.tt';
 -%]
 [% # vim: set tabstop=4 syntax=html expandtab: -%]

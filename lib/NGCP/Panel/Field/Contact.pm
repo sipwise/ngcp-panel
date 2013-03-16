@@ -2,13 +2,16 @@ package NGCP::Panel::Field::Contact;
 use HTML::FormHandler::Moose;
 extends 'HTML::FormHandler::Field::Compound';
 
-has_field 'contact' => (
+has_field 'id' => (
     type => '+NGCP::Panel::Field::DataTable',
     label => 'Contact',
-    required => 1,
+    do_label => 0,
     do_wrapper => 0,
+    required => 1,
+    template => 'share/templates/helpers/datatables_field.tt',
     ajax_src => '/contact/ajax',
-    table_fields => ['#', 'First Name', 'Last Name', 'Email'],
+    table_titles => ['#', 'First Name', 'Last Name', 'Email'],
+    table_fields => ['id', 'firstname', 'lastname', 'email'],
 );
 
 has_field 'create' => (

@@ -1,8 +1,0 @@
-[% MACRO ifndef_include_dt BLOCK -%]
-
-    [% # UNLESS global.ifndef_include_dt_flag ;
-       # global.ifndef_include_dt_flag="true" %]
-<script type="text/javascript" language="javascript" src="[% c.uri_for('/js/libs/jquery.dataTables.min.js') %]"></script>
-    [% # END %]
-
-[%- END %]
