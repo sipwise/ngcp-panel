@@ -1,0 +1,3 @@
+- DataTable field doesn't preserve checked value correctly if other
+  fields don't validate (id gets set to 1 for all rows, and all boxes
+  are checked).
