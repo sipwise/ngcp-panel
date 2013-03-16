@@ -1,5 +1,5 @@
 package NGCP::Panel::Field::DataTable;
-use Moose;
+use HTML::FormHandler::Moose;
 use Template;
 extends 'HTML::FormHandler::Field';
 
@@ -26,6 +26,7 @@ sub render_element {
         ajax_src => $self->ajax_src,
         table_fields => $self->table_fields,
         table_titles => $self->table_titles,
+        errors => $self->errors,
     };
     my $t = new Template({});
 
@@ -34,21 +35,22 @@ sub render_element {
 
     return $output;
 }
- 
+
 sub render {
     my ( $self, $result ) = @_;
     $result ||= $self->result;
     die "No result for form field '" . $self->full_name . "'. Field may be inactive." unless $result;
-    my $output = $self->render_element( $result );
-    return $self->wrap_field( $result, $output );
+    return $self->render_element( $result );
 }
 
-sub wrap_field {
-    my ( $self, $result, $rendered_widget ) = @_;
-    return $rendered_widget;
-
+sub validate {
+    my ( $self ) = @_;
+    return $self->add_error($self->label . " is invalid")
+        if($self->required and (
+            !defined $self->value or !length($self->value)
+        ));
+    return 1;
 }
-
 
 1;
 

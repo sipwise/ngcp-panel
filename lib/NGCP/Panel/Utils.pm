@@ -35,7 +35,7 @@ sub check_form_buttons {
     if($posted && $form->field('submitid')) {
         my $val = $form->field('submitid')->value;
 
-        if(grep {/^$val$/} @{ $fields }) {
+        if(defined $val and grep {/^$val$/} @{ $fields }) {
             my $target = '/'.$val;
             $target =~ s/\./\//g; 
             if($c->session->{redirect_targets}) {

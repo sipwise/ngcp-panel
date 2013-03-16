@@ -10,6 +10,10 @@ div.modal .table thead tr th, div.modal .table tbody tr td {
     padding-bottom: 4px;
 }
 
+div.modal .help-inline {
+    clear: both;
+    float: left;
+}
 
 div.dataTables_length label {
     width: 460px;
