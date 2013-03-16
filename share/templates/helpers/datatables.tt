@@ -75,12 +75,25 @@ table .headerSortUp:after {
   opacity: 0.6;
 }
 
-/*
+div.modal .dataTables_wrapper {
+    padding: 5px;
+}
+
+div.modal .control-group.error .dataTables_wrapper {
+    border: 1px solid #B94A48;
+    border-radius: 3px;
+    -webkit-border-radius: 3px;
+    -mozilla-border-radius: 3px;
+}
+
 div.modal .dataTables_wrapper input[type="text"] {
     line-height: 10px;
     height: 10px;
 }
-*/
+
+div.modal .control-group.error .dataTables_wrapper input[type="text"] {
+    border: 1px solid #cccccc;
+}
 
 </style>
 <script type="text/javascript">
