@@ -5,17 +5,19 @@ div.modal {
     margin: -250px 0 0 -408px
 }
 
+div.modal .table thead tr th, div.modal .table tbody tr td {
+    padding-top: 4px;
+    padding-bottom: 4px;
+}
+
+
 div.dataTables_length label {
     width: 460px;
     float: left;
     text-align: left;
 }
  
-div.dataTables_length select {
-    width: 75px;
-}
- 
-div.dataTables_filter label {
+div.dataTables_filter, div.dataTables_paginate {
     float: right;
 }
  
@@ -69,13 +71,20 @@ table .headerSortUp:after {
   opacity: 0.6;
 }
 
+/*
+div.modal .dataTables_wrapper input[type="text"] {
+    line-height: 10px;
+    height: 10px;
+}
+*/
+
 </style>
 <script type="text/javascript">
 
 $.extend( $.fn.dataTableExt.oStdClasses, {
                 "sSortAsc": "header headerSortDown",
                 "sSortDesc": "header headerSortUp",
-                "sSortable": "header"
+                "sSortable": "header",
             } );
 
 $(document).ready(function() {

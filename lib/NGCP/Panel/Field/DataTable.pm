@@ -18,6 +18,7 @@ sub render_element {
     (my $tablename = $self->html_name) =~ s!\.!!g;
 
     my $vars = {
+        label => $self->label,
         field_name => $self->html_name,
         table_id => $tablename . "table",
         hidden_id => $tablename . "hidden",

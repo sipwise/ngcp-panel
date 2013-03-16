@@ -14,7 +14,7 @@ $(document).ready(function() {
 
 	$('#[% table_id %]')
 	    .dataTable( {
-        "sDom": "<'row'<'span4'r><'span4'f>>t<'row'<'span4'i><'span4'p>>",
+        "sDom": "<'row'<'span2'r><'span4'f>>t<'row'<'span3'i><'span3'p>>",
 		"bProcessing": true,
 		"bServerSide": true,
 		"bPaginate": true,
@@ -45,24 +45,29 @@ $(document).ready(function() {
             return nRow;
         },
 	} );
-	
+
 } );
 </script>
-    
-    <input type="hidden" name="[% field_name %]" value="[% value %]" id="[% hidden_id %]"></input>
-     <table class="table table-bordered table-striped table-highlight table-hover" id="[% table_id %]">
-        <thead>
-            <tr>
-                [% FOREACH t IN table_titles %]
-                    <th>[% t %]</th>
-                [% END %]
-                <th class="span"></th>
-            </tr>
-        </thead>
-        <tbody>
-            <tr class="sw_action_row">
-                <td>Loading</td>
-            </tr>
-        </tbody>
-    </table>
+ 
+<div class="control-group">
+     <label class="control-label" for="[% table_id %]">[% label %]</label>
+     <div class="controls">
+         <input type="hidden" name="[% field_name %]" value="[% value %]" id="[% hidden_id %]"></input>
+         <table class="table table-bordered table-striped table-highlight table-hover" id="[% table_id %]">
+            <thead>
+                <tr>
+                    [% FOREACH t IN table_titles %]
+                        <th>[% t %]</th>
+                    [% END %]
+                    <th class="span"></th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr class="sw_action_row">
+                    <td>Loading</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
 [% # vim: set tabstop=4 syntax=html expandtab: -%]
