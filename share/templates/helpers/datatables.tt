@@ -4,6 +4,11 @@
 
 <script src="/js/libs/datatables-bootstrap-paging.js"></script>
 <style>
+div.modal {
+    width: 816px;
+    margin: -250px 0 0 -408px
+}
+
 div.dataTables_length label {
     width: 460px;
     float: left;

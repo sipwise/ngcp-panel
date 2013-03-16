@@ -9,6 +9,7 @@ has 'template' => ( isa => 'Str',
                     default => 'share/templates/helpers/datatables_field.tt' );
 has 'ajax_src' => ( isa => 'Str', is => 'rw' );
 has 'table_fields' => ( isa => 'ArrayRef', is => 'rw' );
+has 'table_titles' => ( isa => 'ArrayRef', is => 'rw' );
 
 sub render_element {
     my ($self) = @_;
@@ -23,11 +24,12 @@ sub render_element {
         value => $self->value,
         ajax_src => $self->ajax_src,
         table_fields => $self->table_fields,
+        table_titles => $self->table_titles,
     };
     my $t = new Template({});
 
-    $t->process($self->template, $vars, \$output) || 
-        print ">>>>>>>>>>>>>>>>> failed to process tt: ".$t->error()."\n";
+    $t->process($self->template, $vars, \$output) or
+        die "Failed to process Datatables field template: ".$t->error();
 
     return $output;
 }

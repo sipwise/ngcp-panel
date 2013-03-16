@@ -15,9 +15,11 @@ $(document).ready(function() {
 
 	$('#[% table_id %]')
 	    .dataTable( {
+        "sDom": "<'row'<'span4'r><'span4'f>>t<'row'<'span4'i><'span4'p>>",
 		"bProcessing": true,
 		"bServerSide": true,
 		"bPaginate": true,
+        "sPaginationType": "bootstrap",
 		"bLengthChange": false,
 		"bSort": true,
 		"bInfo": true,
@@ -25,10 +27,9 @@ $(document).ready(function() {
 		"sAjaxSource": "[% ajax_src %]",
 		
 		"aoColumns": [
-		    		    { "sName": "id" },
-		    		    { "sName": "name" },
-		    		    { "sName": "contract.id" },
-		    		    { "sName": "status" },
+                        [% FOREACH f IN table_fields -%]
+		    		    { "sName": "[% f %]" },
+                        [% END -%]
 		    		    { "mRender": function ( data, type, full ) {
                                 return '<input type="checkbox" value="' + full[0] + '"></input>';
                             },
@@ -53,7 +54,7 @@ $(document).ready(function() {
      <table class="table table-bordered table-striped table-highlight table-hover" id="[% table_id %]">
         <thead>
             <tr>
-                [% FOREACH t IN table_fields %]
+                [% FOREACH t IN table_titles %]
                     <th>[% t %]</th>
                 [% END %]
                 <th class="span"></th>
