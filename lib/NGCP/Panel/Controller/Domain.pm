@@ -107,6 +107,17 @@ sub delete :Chained('base') :PathPart('delete') :Args(0) {
     $c->response->redirect($c->uri_for());
 }
 
+sub ajax :Chained('list') :PathPart('ajax') :Args(0) {
+    my ($self, $c) = @_;
+    
+    my $resellers = $c->stash->{domains};
+    
+    $c->forward( "/ajax_process", [$resellers,
+                 ["id", "domain"],
+                 [0,1]]);
+    
+    $c->detach( $c->view("JSON") );
+}
 
 =head1 AUTHOR
 

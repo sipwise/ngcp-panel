@@ -5,7 +5,7 @@
         <b class="caret"></b>
     </a>
     <ul class="dropdown-menu">
-        <li><a href="./elements.html">Foo</a></li>
+        <li><a href="[% c.uri_for('/domain') %]">Domains</a></li>
         <li><a href="./validation.html">Validation</a></li>
         <li><a href="./jqueryui.html">jQuery UI</a></li>
         <li><a href="./charts.html">Charts</a></li>
