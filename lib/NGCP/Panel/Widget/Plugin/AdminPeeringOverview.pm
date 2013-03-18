@@ -13,6 +13,12 @@ has 'type' => (
     default => 'dashboard_widgets',
 );
 
+has 'priority' => (
+    is  => 'ro',
+    isa => 'Int',
+    default => 12,
+);
+
 around handle => sub {
     my ($foo, $self, $c) = @_;
 
