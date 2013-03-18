@@ -24,9 +24,9 @@ sub list :Chained('/') :PathPart('contact') :CaptureArgs(0) {
 
     my $contacts = [
         {id => 1, firstname => 'Foo1', lastname => '1Bar', email => 'foo1@example.org' },
-        {id => 1, firstname => 'Foo2', lastname => '2Bar', email => 'foo2@example.org' },
-        {id => 1, firstname => 'Foo3', lastname => '3Bar', email => 'foo3@example.org' },
-        {id => 1, firstname => 'Foo4', lastname => '4Bar', email => 'foo4@example.org' },
+        {id => 2, firstname => 'Foo2', lastname => '2Bar', email => 'foo2@example.org' },
+        {id => 3, firstname => 'Foo3', lastname => '3Bar', email => 'foo3@example.org' },
+        {id => 4, firstname => 'Foo4', lastname => '4Bar', email => 'foo4@example.org' },
     ];
     $c->stash(contacts => $contacts);
     $c->stash(template => 'contact/list.tt');

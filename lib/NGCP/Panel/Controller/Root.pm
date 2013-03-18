@@ -4,6 +4,8 @@ use namespace::autoclean;
 
 BEGIN { extends 'Catalyst::Controller' }
 
+use NGCP::Panel::Widget;
+
 #
 # Sets the actions in this controller to be registered with no prefix
 # so they function identically to actions created in MyApp.pm
@@ -64,6 +66,16 @@ sub auto :Private {
     }
 
     $c->log->debug("*** Root::auto grant access for authenticated user");
+
+    # load top menu widgets
+    my $plugin_finder = NGCP::Panel::Widget->new;
+    my $topmenu_templates = [];
+    foreach($plugin_finder->instantiate_plugins($c, 'topmenu_widgets')) {
+        $_->handle($c);
+        push @{ $topmenu_templates }, $_->template; 
+    }
+    $c->stash(topmenu => $topmenu_templates);
+
     return 1;
 }
 

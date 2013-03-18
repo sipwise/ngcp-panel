@@ -105,7 +105,7 @@ $.extend( $.fn.dataTableExt.oStdClasses, {
             } );
 
 $(document).ready(function() {
-	$('#maintable')
+	$('#[% helper.name.remove('[\s+\.]') %]_table')
 	    .dataTable( {
         "sDom": "<'row'<'span6'r><'span6'f>>t<'row'<'span6'i><'span6'p>>",
         "bProcessing": true,
@@ -166,7 +166,7 @@ $(document).ready(function() {
 
 <div style="margin-top:10px;"></div>
 
-<table class="table table-bordered table-striped table-highlight table-hover" id="maintable">
+<table class="table table-bordered table-striped table-highlight table-hover" id="[% helper.name.remove('[\s+\.]') %]_table">
     <thead>
         <tr>
             [% FOREACH t IN helper.column_titles -%]

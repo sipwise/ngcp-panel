@@ -1,5 +1,2 @@
-- DataTable field doesn't preserve checked value correctly if other
-  fields don't validate (id gets set to 1 for all rows, and all boxes
-  are checked).
 - Modal needs more flexible width. It breaks when making screen narrower
   than 816px, and if no DataTable field is there, it can be narrower also.

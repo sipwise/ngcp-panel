@@ -28,14 +28,15 @@ Dashboard index
 sub index :Path :Args(0) {
     my ($self, $c) = @_;
 
+    my $plugin_finder = NGCP::Panel::Widget->new;
+
     my $widget_templates = [];
-    my $finder = NGCP::Panel::Widget->new;
-    foreach($finder->instantiate_plugins($c)) {
+    foreach($plugin_finder->instantiate_plugins($c, 'dashboard_widgets')) {
         $_->handle($c);
         push @{ $widget_templates }, $_->template; 
     }
-    
     $c->stash(widgets => $widget_templates);
+
     $c->stash(template => 'dashboard.tt');
     delete $c->session->{redirect_targets};
 }
