@@ -1,19 +1,27 @@
 <body class="login">
     <div class="account-container login stacked">
         <div class="content clearfix">
-            <h1>Sign In</h1>
+            <h1>[% realm FILTER ucfirst %] Sign In</h1>
             <p>Sign in using your [% realm %] credentials:</p>
             [% form.render %]
         </div>
     </div>
-    [% IF realm == 'subscriber' -%]
     <div class="login-extra">
         Go to 
-        <a href="[% c.uri_for('/login/admin') %]">Admin</a> or 
-        <a href="[% c.uri_for('/login/reseller') %]">Reseller</a> 
-        login.<br/>
+        [% 
+            realms = ['subscriber', 'admin', 'reseller'];
+            links = [];
+            FOREACH r IN realms;
+                UNLESS realm == r;
+                    link = '<a href="' _ c.uri_for('/login/' _ r ) _ '">' _ r.ucfirst _ '</a>'; 
+                    links.push(link);
+                END;
+            END;
+            links.join(' or ');
+        -%]
+        login.
+        <br/>
     </div>
-    [% END -%]
 
 [%#
     TODO: load this only if a signup plugin is installed      
