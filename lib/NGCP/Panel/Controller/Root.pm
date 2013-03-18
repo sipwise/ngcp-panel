@@ -99,8 +99,7 @@ Standard 404 error page
 
 sub default :Path {
     my ( $self, $c ) = @_;
-    $c->response->body( 'Page not found' );
-    $c->response->status(404);
+    $c->detach( '/error_page' );
 }
 
 =head2 end
@@ -159,6 +158,14 @@ sub ajax_process :Private {
     
     
     $c->stash(sEcho => $sEcho);
+}
+
+sub error_page :Private {
+    my ($self,$c) = @_;
+    
+    $c->stash(template => 'error_page.tt');
+    #$c->response->body( 'Page not found' );
+    $c->response->status(404);
 }
 
 =head1 AUTHOR
