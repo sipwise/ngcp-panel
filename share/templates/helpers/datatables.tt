@@ -1,8 +1,16 @@
 <script src="/js/libs/datatables-bootstrap-paging.js"></script>
 <style>
 div.modal {
-    width: 816px;
-    margin: -250px 0 0 -408px
+    max-width: 816px;
+    width: 100%;
+    margin: -250px 0 0 -408px;
+    top: 50%;
+    left: 50%; /* override responsive css (bootstrap-responsive.css) */
+}
+@media (max-width: 830px) {
+    div.modal {
+        margin-left: -50%;
+    }
 }
 
 div.modal .table thead tr th, div.modal .table tbody tr td {
