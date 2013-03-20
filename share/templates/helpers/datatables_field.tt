@@ -44,6 +44,9 @@ $(document).ready(function() {
             }
             return nRow;
         },
+        "fnServerParams": function ( aoData ) {
+            aoData.push( {"name":"iIdOnTop","value":"[% value %]"} );
+        },
 	} );
 
 } );

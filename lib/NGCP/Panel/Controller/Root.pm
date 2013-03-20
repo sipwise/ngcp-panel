@@ -122,6 +122,7 @@ sub ajax_process :Private {
     my $iDisplayLength = $c->request->params->{iDisplayLength};
     my $iSortCol_0 = $c->request->params->{iSortCol_0};
     my $sSortDir_0 = $c->request->params->{sSortDir_0};
+    my $iIdOnTop = $c->request->params->{iIdOnTop};
     
     #parse $data into $aaData
     my $aaData = [];
@@ -143,8 +144,18 @@ sub ajax_process :Private {
                              $a->[$iSortCol_0]} @$aaData;
         }
     }
-    my $totalRecords = scalar(@$aaData);
-    my $totalDisplayRecords = scalar(@$data);
+    #potentially selected Id (search it (col 0) and move on top)
+    if( defined($iIdOnTop) ) {
+        my $elem;
+        for (my $i=0; $i<@$aaData; $i++) {
+            if(@$aaData[$i]->[0] == $iIdOnTop) {
+                $elem = splice(@$aaData, $i, 1);
+                unshift(@$aaData, $elem);
+            }
+        }
+    }
+    my $totalRecords = scalar(@$data);
+    my $totalDisplayRecords = scalar(@$aaData);
     #Pagination
     if($iDisplayStart || $iDisplayLength ) {
         my $endIndex = $iDisplayLength+$iDisplayStart-1;
