@@ -32,6 +32,11 @@ div.dataTables_length label {
 div.dataTables_filter, div.dataTables_paginate {
     float: right;
 }
+@media (max-width: 300px) {
+    div.dataTables_filter {
+        float: none;
+    }
+}
  
 div.dataTables_info {
     padding-top: 8px;
@@ -41,6 +46,12 @@ div.dataTables_paginate {
     float: right;
     margin: 0;
 }
+@media (min-width: 767px) {
+    div.dataTables_paginate {
+        width: 227px;
+    }
+}
+
  
 table {
     margin: 1em 0;
