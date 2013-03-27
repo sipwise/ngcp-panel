@@ -146,7 +146,7 @@ $(document).ready(function() {
                       '<a style="display:inline;line-height:16px;" class="btn btn-small btn-primary" href="[% c.uri_for( c.controller.action_for("") ) %]/' + full[0] + '/edit">' +
                         '<i class="icon-edit" style="line-height:1em;margin-top:2px"></i> Edit' +
                       '</a>' +
-                      '<a style="display:inline;line-height:16px;margin-left:5px;" class="btn btn-small btn-secondary" href="[% c.uri_for( c.controller.action_for("") ) %]/' + full[0] + '/delete">' +
+                      '<a style="display:inline;line-height:16px;margin-left:5px;" class="btn btn-small btn-secondary" href="[% c.uri_for( c.controller.action_for("") ) %]/' + full[0] + '/delete" data-confirm="Delete">' +
                         '<i class="icon-trash" style="line-height:1em;margin-top:2px"></i> Delete' +
                       '</a>' +
                     '</div>';
