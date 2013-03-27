@@ -23,12 +23,13 @@ sub list :Chained('/') :PathPart('domain') :CaptureArgs(0) {
     my ($self, $c) = @_;
 
     my $domains = [
-        {id => 1, domain => '1.example.org'},
-        {id => 2, domain => '2.example.org'},
-        {id => 3, domain => '3.example.org'},
-        {id => 4, domain => '4.example.org'},
-        {id => 5, domain => '5.example.org'},
-        {id => 6, domain => '6.example.org'},
+    map { +{ id => $_->id, domain => $_->domain } } $c->model('billing')->resultset('domains')->all
+#        {id => 1, domain => '1.example.org'},
+#        {id => 2, domain => '2.example.org'},
+#        {id => 3, domain => '3.example.org'},
+#        {id => 4, domain => '4.example.org'},
+#        {id => 5, domain => '5.example.org'},
+#        {id => 6, domain => '6.example.org'},
     ];
     $c->stash(domains => $domains);
     $c->stash(template => 'domain/list.tt');
