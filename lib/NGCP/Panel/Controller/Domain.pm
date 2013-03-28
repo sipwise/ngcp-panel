@@ -49,6 +49,15 @@ sub create :Chained('list') :PathPart('create') :Args(0) {
         action => $c->uri_for('create'),
     );
     if($form->validated) {
+        $c->model('billing')->resultset('domains')->create({
+            domain => $form->field('domain')->value, });
+#        $c->model('billing')->schema->create_domain(
+#            {
+#                domain => $form->field('domain')->value,
+#                #id => 1,
+#            },
+#            1
+#        );
         $c->flash(messages => [{type => 'success', text => 'Domain successfully created!'}]);
         $c->response->redirect($c->uri_for());
         return;
@@ -91,6 +100,13 @@ sub edit :Chained('base') :PathPart('edit') :Args(0) {
         action => $c->uri_for($c->stash->{domain}->{id}, 'edit'),
     );
     if($posted && $form->validated) {
+        
+        $c->model('billing')->resultset('domains')->search({
+                id => $c->stash->{domain}->{id},
+            }
+          )->update({
+              domain => $form->field('domain')->value,
+          });
         $c->flash(messages => [{type => 'success', text => 'Domain successfully changed!'}]);
         $c->response->redirect($c->uri_for());
         return;
@@ -103,8 +119,17 @@ sub edit :Chained('base') :PathPart('edit') :Args(0) {
 sub delete :Chained('base') :PathPart('delete') :Args(0) {
     my ($self, $c) = @_;
 
-    # $c->model('Provisioning')->domain($c->stash->{domain}->{id})->delete;
-    $c->flash(messages => [{type => 'info', text => 'Domain delete not implemented!'}]);
+    $c->model('billing')->resultset('domains')->search({
+            id => $c->stash->{domain}->{id},
+        })->delete;
+#    $c->model('billing')->schema->delete_domain(
+#        {
+#            domain => $c->stash->{domain}->{domain},
+#            id => $c->stash->{domain}->{id},
+#        },
+#        #1
+#        );
+    $c->flash(messages => [{type => 'success', text => 'Domain successfully deleted!'}]);
     $c->response->redirect($c->uri_for());
 }
 
