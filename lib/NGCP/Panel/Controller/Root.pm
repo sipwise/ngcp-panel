@@ -178,13 +178,14 @@ sub ajax_process_resultset :Private {
     my ($rs,$columns,$searchable) = @arguments;
 
     #Process Arguments
-    my $sEcho = $c->request->params->{sEcho} // "1"; #/
-    my $sSearch = $c->request->params->{sSearch} // ""; #/
-    my $iDisplayStart = $c->request->params->{iDisplayStart};
+    my $sEcho          = $c->request->params->{sEcho}   // "1";    #/
+    my $sSearch        = $c->request->params->{sSearch} // "";     #/
+    my $iDisplayStart  = $c->request->params->{iDisplayStart};
     my $iDisplayLength = $c->request->params->{iDisplayLength};
-    my $iSortCol_0 = $c->request->params->{iSortCol_0};
-    my $sSortDir_0 = $c->request->params->{sSortDir_0};
-    my $iIdOnTop = $c->request->params->{iIdOnTop};
+    my $iSortCol_0     = $c->request->params->{iSortCol_0};
+    my $sSortDir_0     = $c->request->params->{sSortDir_0};
+    my $iIdOnTop       = $c->request->params->{iIdOnTop};
+
     
     #will contain final data to be sent
     my $aaData = [];
@@ -192,53 +193,55 @@ sub ajax_process_resultset :Private {
     my $totalRecords = $rs->count;
     
     my @searchdata = map{ +{ $_ => { like => '%'.$sSearch.'%' } } } @$columns[@$searchable];
-
-    my $filtered_rs = $rs->search(\@searchdata);
-    use Data::Dumper;
-    #die Dumper($filtered_rs->all);
+    $rs = $rs->search(\@searchdata);
     
-    for my $row ($filtered_rs->all) {
-        my %tmpRow = $row->get_columns;
-        my @aaRow = @tmpRow{@$columns};
-        #my %aaRow = %$row; #in case of using mData
-        #if (grep /$sSearch/, @aaRow[@$searchable]) {
-            push @$aaData, \@aaRow;
-        #}
+    #potentially selected Id as first element
+    if (defined($iIdOnTop)) {
+        my $topRow = $rs->find($iIdOnTop);
+        if (defined($topRow)) {
+            my %tmpTopRow      = $topRow->get_columns;
+            my @tmpTopRowArray = @tmpTopRow{@$columns};
+            push @$aaData, \@tmpTopRowArray;
+            
+            $rs = $rs->search({ id => { '!=', $iIdOnTop}});
+        }
     }
+    #TODO: influences pagination, as there is now one additional row
+    
     #Sorting
     if(defined($iSortCol_0) && defined($sSortDir_0)) {
-        if($sSortDir_0 eq "asc") {
-            @$aaData = sort {$a->[$iSortCol_0] cmp
-                             $b->[$iSortCol_0]} @$aaData;
-        } else {
-            @$aaData = sort {$b->[$iSortCol_0] cmp
-                             $a->[$iSortCol_0]} @$aaData;
-        }
+        my $sortdata = {
+            order_by => {
+                "-".$sSortDir_0 => $columns->[$iSortCol_0],
+            }};
+        $rs = $rs->search(undef, $sortdata);
     }
-    #potentially selected Id (search it (col 0) and move on top)
-    if( defined($iIdOnTop) ) {
-        my $elem;
-        for (my $i=0; $i<@$aaData; $i++) {
-            if(@$aaData[$i]->[0] == $iIdOnTop) {
-                $elem = splice(@$aaData, $i, 1);
-                unshift(@$aaData, $elem);
-            }
-        }
-    }
-    my $totalDisplayRecords = scalar(@$aaData);
+    
+    my $totalDisplayRecords = $rs->count;
+    
     #Pagination
-    if($iDisplayStart || $iDisplayLength ) {
-        my $endIndex = $iDisplayLength+$iDisplayStart-1;
-        $endIndex = $#$aaData if $endIndex > $#$aaData;
-        @$aaData = @$aaData[$iDisplayStart .. $endIndex];
+    if (defined($iDisplayStart) && $iDisplayLength) {
+        $rs = $rs->search(
+            undef,
+            {
+                offset => $iDisplayStart,
+                rows   => $iDisplayLength,
+            });
     }
     
-    $c->stash(aaData => $aaData,
-          iTotalRecords => $totalRecords,
-          iTotalDisplayRecords => $totalDisplayRecords);
+    for my $row ($rs->all) {
+        my %tmpRow = $row->get_columns;
+        my @aaRow = @tmpRow{@$columns};
+        push @$aaData, \@aaRow;
+    }
     
-    
+    $c->stash(
+        aaData               => $aaData,
+        iTotalRecords        => $totalRecords,
+        iTotalDisplayRecords => $totalDisplayRecords
+    );
     $c->stash(sEcho => $sEcho);
+
 }
 
 sub error_page :Private {
