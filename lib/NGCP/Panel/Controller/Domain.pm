@@ -136,9 +136,9 @@ sub delete :Chained('base') :PathPart('delete') :Args(0) {
 sub ajax :Chained('list') :PathPart('ajax') :Args(0) {
     my ($self, $c) = @_;
     
-    my $resellers = $c->stash->{domains};
+    my $resultset = $c->model('billing')->resultset('domains');
     
-    $c->forward( "/ajax_process", [$resellers,
+    $c->forward( "/ajax_process_resultset", [$resultset,
                  ["id", "domain"],
                  [0,1]]);
     

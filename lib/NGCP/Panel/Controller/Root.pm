@@ -171,6 +171,76 @@ sub ajax_process :Private {
     $c->stash(sEcho => $sEcho);
 }
 
+sub ajax_process_resultset :Private {
+
+    my ($self,$c,@arguments) = @_;
+    
+    my ($rs,$columns,$searchable) = @arguments;
+
+    #Process Arguments
+    my $sEcho = $c->request->params->{sEcho} // "1"; #/
+    my $sSearch = $c->request->params->{sSearch} // ""; #/
+    my $iDisplayStart = $c->request->params->{iDisplayStart};
+    my $iDisplayLength = $c->request->params->{iDisplayLength};
+    my $iSortCol_0 = $c->request->params->{iSortCol_0};
+    my $sSortDir_0 = $c->request->params->{sSortDir_0};
+    my $iIdOnTop = $c->request->params->{iIdOnTop};
+    
+    #will contain final data to be sent
+    my $aaData = [];
+    
+    my $totalRecords = $rs->count;
+    
+    my @searchdata = map{ +{ $_ => { like => '%'.$sSearch.'%' } } } @$columns[@$searchable];
+
+    my $filtered_rs = $rs->search(\@searchdata);
+    use Data::Dumper;
+    #die Dumper($filtered_rs->all);
+    
+    for my $row ($filtered_rs->all) {
+        my %tmpRow = $row->get_columns;
+        my @aaRow = @tmpRow{@$columns};
+        #my %aaRow = %$row; #in case of using mData
+        #if (grep /$sSearch/, @aaRow[@$searchable]) {
+            push @$aaData, \@aaRow;
+        #}
+    }
+    #Sorting
+    if(defined($iSortCol_0) && defined($sSortDir_0)) {
+        if($sSortDir_0 eq "asc") {
+            @$aaData = sort {$a->[$iSortCol_0] cmp
+                             $b->[$iSortCol_0]} @$aaData;
+        } else {
+            @$aaData = sort {$b->[$iSortCol_0] cmp
+                             $a->[$iSortCol_0]} @$aaData;
+        }
+    }
+    #potentially selected Id (search it (col 0) and move on top)
+    if( defined($iIdOnTop) ) {
+        my $elem;
+        for (my $i=0; $i<@$aaData; $i++) {
+            if(@$aaData[$i]->[0] == $iIdOnTop) {
+                $elem = splice(@$aaData, $i, 1);
+                unshift(@$aaData, $elem);
+            }
+        }
+    }
+    my $totalDisplayRecords = scalar(@$aaData);
+    #Pagination
+    if($iDisplayStart || $iDisplayLength ) {
+        my $endIndex = $iDisplayLength+$iDisplayStart-1;
+        $endIndex = $#$aaData if $endIndex > $#$aaData;
+        @$aaData = @$aaData[$iDisplayStart .. $endIndex];
+    }
+    
+    $c->stash(aaData => $aaData,
+          iTotalRecords => $totalRecords,
+          iTotalDisplayRecords => $totalDisplayRecords);
+    
+    
+    $c->stash(sEcho => $sEcho);
+}
+
 sub error_page :Private {
     my ($self,$c) = @_;
     
