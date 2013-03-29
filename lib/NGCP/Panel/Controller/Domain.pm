@@ -76,9 +76,12 @@ sub base :Chained('/domain/list') :PathPart('') :CaptureArgs(1) {
 
     my $res = $c->model('billing')->resultset('domains')->find($domain_id);
     unless(defined($res)) {
-        #TODO: error: id not found
+        $c->flash(messages => [{type => 'error', text => 'Domain does not exist!'}]);
+        $c->response->redirect($c->uri_for());
+        return;
     }
-    $c->stash(domain => {id => $res->id, domain => $res->domain});
+    $c->stash(domain => {$res->get_columns});
+    $c->stash(domain_result => $res);
 }
 
 sub edit :Chained('base') :PathPart('edit') :Args(0) {
@@ -93,12 +96,13 @@ sub edit :Chained('base') :PathPart('edit') :Args(0) {
     );
     if($posted && $form->validated) {
         
-        $c->model('billing')->resultset('domains')->search({
-                id => $c->stash->{domain}->{id},
-            }
-          )->update({
+#        $c->model('billing')->resultset('domains')->search({
+#                id => $c->stash->{domain}->{id},
+#            })
+        $c->stash->{'domain_result'}->update({
               domain => $form->field('domain')->value,
           });
+
         $c->flash(messages => [{type => 'success', text => 'Domain successfully changed!'}]);
         $c->response->redirect($c->uri_for());
         return;
@@ -111,9 +115,10 @@ sub edit :Chained('base') :PathPart('edit') :Args(0) {
 sub delete :Chained('base') :PathPart('delete') :Args(0) {
     my ($self, $c) = @_;
 
-    $c->model('billing')->resultset('domains')->search({
-            id => $c->stash->{domain}->{id},
-        })->delete;
+    $c->stash->{'domain_result'}->delete;
+#    $c->model('billing')->resultset('domains')->search({
+#            id => $c->stash->{domain}->{id},
+#        })->delete;
 #    $c->model('billing')->schema->delete_domain(
 #        {
 #            domain => $c->stash->{domain}->{domain},
