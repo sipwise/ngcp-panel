@@ -22,16 +22,6 @@ Catalyst Controller.
 sub list :Chained('/') :PathPart('domain') :CaptureArgs(0) {
     my ($self, $c) = @_;
 
-    my $domains = [
-    map { +{ id => $_->id, domain => $_->domain } } $c->model('billing')->resultset('domains')->all
-#        {id => 1, domain => '1.example.org'},
-#        {id => 2, domain => '2.example.org'},
-#        {id => 3, domain => '3.example.org'},
-#        {id => 4, domain => '4.example.org'},
-#        {id => 5, domain => '5.example.org'},
-#        {id => 6, domain => '6.example.org'},
-    ];
-    $c->stash(domains => $domains);
     $c->stash(template => 'domain/list.tt');
 }
 
@@ -84,9 +74,11 @@ sub base :Chained('/domain/list') :PathPart('') :CaptureArgs(1) {
         return;
     }
 
-    # TODO: fetch details of domain from model
-    my @rfilter = grep { $_->{id} == $domain_id } @{ $c->stash->{domains} };
-    $c->stash(domain =>  shift @rfilter);
+    my $res = $c->model('billing')->resultset('domains')->find($domain_id);
+    unless(defined($res)) {
+        #TODO: error: id not found
+    }
+    $c->stash(domain => {id => $res->id, domain => $res->domain});
 }
 
 sub edit :Chained('base') :PathPart('edit') :Args(0) {
@@ -127,7 +119,7 @@ sub delete :Chained('base') :PathPart('delete') :Args(0) {
 #            domain => $c->stash->{domain}->{domain},
 #            id => $c->stash->{domain}->{id},
 #        },
-#        #1
+#        1,
 #        );
     $c->flash(messages => [{type => 'success', text => 'Domain successfully deleted!'}]);
     $c->response->redirect($c->uri_for());
