@@ -39,15 +39,17 @@ sub create :Chained('list') :PathPart('create') :Args(0) {
         action => $c->uri_for('create'),
     );
     if($form->validated) {
-        $c->model('billing')->resultset('domains')->create({
-            domain => $form->field('domain')->value, });
-#        $c->model('billing')->schema->create_domain(
-#            {
-#                domain => $form->field('domain')->value,
-#                #id => 1,
-#            },
-#            1
-#        );
+#        $c->model('billing')->resultset('domains')->create({
+#            domain => $form->field('domain')->value, });
+        my $schema = $c->model('billing')->schema;
+        $schema->provisioning($c->model('provisioning')->schema->connect);
+        $schema->create_domain(
+            {
+                domain => $form->field('domain')->value,
+                #id => 1,
+            },
+            1
+        );
         $c->flash(messages => [{type => 'success', text => 'Domain successfully created!'}]);
         $c->response->redirect($c->uri_for());
         return;
@@ -114,18 +116,25 @@ sub edit :Chained('base') :PathPart('edit') :Args(0) {
 
 sub delete :Chained('base') :PathPart('delete') :Args(0) {
     my ($self, $c) = @_;
+    
+    unless ( defined($c->stash->{'domain_result'}) ) {
+        return;
+    }
 
     $c->stash->{'domain_result'}->delete;
 #    $c->model('billing')->resultset('domains')->search({
 #            id => $c->stash->{domain}->{id},
 #        })->delete;
-#    $c->model('billing')->schema->delete_domain(
-#        {
+    
+#    my $schema = $c->model('billing')->schema;
+#    $schema->provisioning($c->model('provisioning')->schema->connect);
+#    $schema->delete_domain({
 #            domain => $c->stash->{domain}->{domain},
-#            id => $c->stash->{domain}->{id},
+#            id     => $c->stash->{domain}->{id},
 #        },
 #        1,
-#        );
+#    );
+
     $c->flash(messages => [{type => 'success', text => 'Domain successfully deleted!'}]);
     $c->response->redirect($c->uri_for());
 }
