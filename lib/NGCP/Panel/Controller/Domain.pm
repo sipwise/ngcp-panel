@@ -6,6 +6,7 @@ use Data::Dumper;
 BEGIN { extends 'Catalyst::Controller'; }
 
 use NGCP::Panel::Form::Domain;
+use NGCP::Panel::Form::Preferences;
 
 =head1 NAME
 
@@ -159,6 +160,13 @@ sub preferences :Chained('base') :PathPart('preferences') :Args(0) {
     unless ( defined($c->stash->{'domain_result'}) ) {
         return;
     }
+    
+    my $rs = $c->model('provisioning')->resultset('voip_preferences');
+    my $pref_form = NGCP::Panel::Form::Preferences->new({pref_rs => $rs});
+    $pref_form->create_my_fields();
+    $pref_form->process();
+    
+    $c->stash(pref_form => $pref_form);
     
     $c->stash(template => 'domain/preferences.tt');
 }
