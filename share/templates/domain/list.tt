@@ -10,6 +10,8 @@
     helper.create_flag = create_flag;
     helper.edit_object = domain;
     helper.form_object = form;
+    helper.has_edit = has_edit;
+    helper.has_preferences = has_preferences;
 
     PROCESS 'helpers/datatables.tt';
 -%]

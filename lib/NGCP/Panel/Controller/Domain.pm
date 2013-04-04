@@ -22,6 +22,8 @@ Catalyst Controller.
 sub list :Chained('/') :PathPart('domain') :CaptureArgs(0) {
     my ($self, $c) = @_;
 
+    $c->stash(has_edit => 0);
+    $c->stash(has_preferences => 1);
     $c->stash(template => 'domain/list.tt');
 }
 
@@ -149,6 +151,16 @@ sub ajax :Chained('list') :PathPart('ajax') :Args(0) {
                  [0,1]]);
     
     $c->detach( $c->view("JSON") );
+}
+
+sub preferences :Chained('base') :PathPart('preferences') :Args(0) {
+    my ($self, $c) = @_;
+
+    unless ( defined($c->stash->{'domain_result'}) ) {
+        return;
+    }
+    
+    $c->stash(template => 'domain/preferences.tt');
 }
 
 =head1 AUTHOR

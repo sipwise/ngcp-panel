@@ -143,9 +143,11 @@ $(document).ready(function() {
 		    {   "mRender": function ( data, type, full ) {
                     return '' +
                     '<div class="sw_actions pull-right">' +
+                    [%- IF helper.has_edit != 0 %]
                       '<a style="display:inline;line-height:16px;" class="btn btn-small btn-primary" href="[% c.uri_for( c.controller.action_for("") ) %]/' + full[0] + '/edit">' +
                         '<i class="icon-edit" style="line-height:1em;margin-top:2px"></i> Edit' +
                       '</a>' +
+                    [%- END %]
                       '<a style="display:inline;line-height:16px;margin-left:5px;" class="btn btn-small btn-secondary" href="[% c.uri_for( c.controller.action_for("") ) %]/' + full[0] + '/delete" data-confirm="Delete">' +
                         '<i class="icon-trash" style="line-height:1em;margin-top:2px"></i> Delete' +
                       '</a>' +
@@ -155,6 +157,18 @@ $(document).ready(function() {
                 "bSortable": false
             }
 		],
+		"aoColumnDefs": [
+    		[%- IF helper.has_preferences %]
+		        {
+		            "aTargets": [ 0 ],
+		            "mRender": function ( data, type, full ) {
+                        return '<a href="[% c.uri_for( c.controller.action_for("") ) %]/'+
+                            full[0]+
+                            '/preferences">'+data+'</a>';
+                    }
+                },
+            [%- END %]
+	    ],
 		"fnDrawCallback": function( oSettings ) {
                 $('.sw_actions').hide();
                 $('.sw_action_row').hover(
