@@ -1,5 +1,8 @@
 [% META title = 'Domain Preferences' -%]
 
-[% pref_form.render() %]
+[% helper.name = 'Domain'; -%]
+[% helper.rows = c.stash.pref_rows; -%]
+
+[% PROCESS 'helpers/pref_table.tt' -%]
 
 [% # vim: set tabstop=4 syntax=html expandtab: -%]

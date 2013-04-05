@@ -1,0 +1,42 @@
+<table class="table table-bordered table-striped table-highlight table-hover" id="preferences_table">
+    <thead>
+        <tr>
+            <th>Name</th>
+            <th>Value</th>
+            <th>Description</th>
+            [% # one for actions -%]
+            <th class="span3"></th>
+        </tr>
+    </thead>
+    <tbody>
+        [% FOREACH r IN helper.rows %]
+            <tr class="sw_action_row">
+                <td>[% r.attribute %]</td>
+                <td>nothing yet[%  %]</td>
+                <td>[% r.description %]</td>
+                <td>Edit Button here</td>
+            </tr>
+        [% END %]
+    </tbody>
+</table>
+
+[% IF helper.edit_preference -%]
+<div id="mod_edit" class="modal hide" style="display:block">
+    <div class="modal-header">
+        <button id="mod_close" type="button" class="close">×</button>
+        <h3>Edit Preference</h3>
+    </div>
+    [% helper.form_object.render -%]
+</div>
+<script>
+    $(function () {
+        $('#mod_edit').modal({keyboard: false, backdrop: 'static'});
+        $('#mod_close').click(function(event) {
+            window.location.href="[% c.uri_for(c.stash.domain.id, 'preferences') %]";
+        });
+
+    });
+</script>
+[% END -%]
+[% # vim: set tabstop=4 syntax=html expandtab: -%]
+

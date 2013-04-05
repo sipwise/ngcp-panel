@@ -162,13 +162,28 @@ sub preferences :Chained('base') :PathPart('preferences') :Args(0) {
     }
     
     my $rs = $c->model('provisioning')->resultset('voip_preferences');
+    my @pref_rows = $rs->all();
+    $c->stash(pref_rows => \@pref_rows);
+    
+    $c->stash(template => 'domain/preferences.tt');
+}
+
+sub preference_form :Chained('base') :PathPart('preferences_form') :Args(0) {
+    my ($self, $c) = @_;
+
+    unless ( defined($c->stash->{'domain_result'}) ) {
+        return;
+    }
+    
+    my $rs = $c->model('provisioning')->resultset('voip_preferences');
     my $pref_form = NGCP::Panel::Form::Preferences->new({pref_rs => $rs});
+    $pref_form->readonly(1);
     $pref_form->create_my_fields();
     $pref_form->process();
     
     $c->stash(pref_form => $pref_form);
     
-    $c->stash(template => 'domain/preferences.tt');
+    $c->stash(template => 'domain/preference_form.tt');
 }
 
 =head1 AUTHOR
