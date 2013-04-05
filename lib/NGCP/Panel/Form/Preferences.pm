@@ -9,19 +9,40 @@ use HTML::Entities qw/encode_entities/;
 use HTML::FormHandler::Widget::Block::Bootstrap;
 
 has '+widget_wrapper' => ( default => 'Bootstrap' );
-sub build_render_list {[qw/fields actions/]}
+sub build_render_list {[qw/myfields actions/]}
 sub build_form_element_class { [qw/form-horizontal/] }
 
-has 'pref_rs' => (is => 'rw');
 has 'readonly' => (is   => 'rw',
                    isa  => 'Int',
                    default => 0,);
+has 'fields_data' => (is => 'rw');
+has_block 'myfields' => (
+    tag => 'div',
+    #class => [qw/accordion/],
+    #render_list => [],
+    #type => 'HTML::FormHandler::Widget::Block::Bootstrap',
+);
+
+sub field_list {
+    my $self = shift;
+    
+    my @field_list;
+    my $fields_data = $self->fields_data;
+    
+    foreach my $row (@$fields_data) {
+        my $field_structure = $self->create_one_field($row);
+        push @field_list, @$field_structure;
+    }
+    
+    return \@field_list;
+}
 
 sub create_my_fields {
     my $self = shift;
     
     my @field_list = ();
     
+    #TODO: will not work anymore
     foreach my $preference ($self->pref_rs->all) {
         $self->create_one_field($preference);
         push @field_list, $preference->attribute;
@@ -34,14 +55,11 @@ sub create_structure {
     my $self = shift;
     my $field_list = shift;
     
-    has_block 'fields' => (
-        tag => 'div',
-        #class => [qw/accordion/],
-        render_list => $field_list,
-    );
+    $self->block('myfields')->render_list($field_list);
 }
 
 sub create_one_field {
+
     my $self = shift;
     my $preference = shift;
     
@@ -57,11 +75,12 @@ sub create_one_field {
         $field_type = "Select";
     }
     
-    has_field $preference->attribute => (
+    return [$preference->attribute => {
         type => $field_type,
         element_attr => { title => encode_entities($preference->description),
             $self->readonly ? (readonly => 1) : (), },
-    );
+    }];
+    
 }
 
 has_field 'save' => (

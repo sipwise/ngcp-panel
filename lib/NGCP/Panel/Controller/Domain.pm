@@ -154,18 +154,35 @@ sub ajax :Chained('list') :PathPart('ajax') :Args(0) {
     $c->detach( $c->view("JSON") );
 }
 
-sub preferences :Chained('base') :PathPart('preferences') :Args(0) {
+sub preferences :Chained('base') :PathPart('preferences') :CaptureArgs(0) {
     my ($self, $c) = @_;
-
-    unless ( defined($c->stash->{'domain_result'}) ) {
-        return;
-    }
     
     my $rs = $c->model('provisioning')->resultset('voip_preferences');
     my @pref_rows = $rs->all();
     $c->stash(pref_rows => \@pref_rows);
     
     $c->stash(template => 'domain/preferences.tt');
+}
+
+sub preferences_edit :Chained('preferences') :PathPart('edit') :Args(1) {
+    my ($self, $c, $pref_name) = @_;
+    
+    $c->stash(edit_preference => 1);
+    $c->stash(selected_preference => $pref_name);
+    
+    my $rs = $c->model('provisioning')->resultset('voip_preferences');
+    my $row = $rs->find({attribute => $pref_name});
+    my $pref_form = NGCP::Panel::Form::Preferences->new({
+        fields_data => [$row],
+        #pref_rs => $rs,
+    });
+    
+    $pref_form->create_structure([$pref_name]);
+    $c->stash(pref_form => $pref_form);
+}
+
+sub preferences_show :Chained('preferences') :PathPart('') :Args(0) {
+    my ($self, $c) = @_;
 }
 
 sub preference_form :Chained('base') :PathPart('preferences_form') :Args(0) {
@@ -180,6 +197,9 @@ sub preference_form :Chained('base') :PathPart('preferences_form') :Args(0) {
     $pref_form->readonly(1);
     $pref_form->create_my_fields();
     $pref_form->process();
+    try {
+        
+    }
     
     $c->stash(pref_form => $pref_form);
     

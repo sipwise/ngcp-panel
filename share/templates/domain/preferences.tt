@@ -1,7 +1,11 @@
 [% META title = 'Domain Preferences' -%]
 
 [% helper.name = 'Domain'; -%]
-[% helper.rows = c.stash.pref_rows; -%]
+[% helper.rows = pref_rows; -%]
+[% helper.edit_preference = edit_preference; -%]
+[% helper.preference = selected_preference; -%]
+[% helper.pref_form = pref_form; -%]
+[% helper.domain_id = domain.id %]
 
 [% PROCESS 'helpers/pref_table.tt' -%]
 

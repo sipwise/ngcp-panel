@@ -14,7 +14,7 @@
                 <td>[% r.attribute %]</td>
                 <td>nothing yet[%  %]</td>
                 <td>[% r.description %]</td>
-                <td>Edit Button here</td>
+                <td><a href="[% c.uri_for(helper.domain_id,'preferences') %]/edit/[% r.attribute %]">Edit</a></td>
             </tr>
         [% END %]
     </tbody>
@@ -24,15 +24,15 @@
 <div id="mod_edit" class="modal hide" style="display:block">
     <div class="modal-header">
         <button id="mod_close" type="button" class="close">×</button>
-        <h3>Edit Preference</h3>
+        <h3>Edit Preference [% helper.preference %]</h3>
     </div>
-    [% helper.form_object.render -%]
+    [% helper.pref_form.render -%]
 </div>
 <script>
     $(function () {
         $('#mod_edit').modal({keyboard: false, backdrop: 'static'});
         $('#mod_close').click(function(event) {
-            window.location.href="[% c.uri_for(c.stash.domain.id, 'preferences') %]";
+            window.location.href="[% c.uri_for(helper.domain_id, 'preferences') %]";
         });
 
     });
