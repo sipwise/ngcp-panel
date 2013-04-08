@@ -31,6 +31,9 @@
         <script src="/js/libs/bootstrap/bootstrap.min.js"></script>
         <script src="/js/libs/jquery.dataTables.min.js"></script>
         <script src="/js/libs/datatables-bootstrap-paging.js"></script>
+
+        <script type="text/javascript" src="/js/plugins/msgbox/jquery.msgbox.js"></script>
+        <link rel="stylesheet" type="text/css" href="/js/plugins/msgbox/jquery.msgbox.css" />
     </head>
     [% content %]
 </html>
