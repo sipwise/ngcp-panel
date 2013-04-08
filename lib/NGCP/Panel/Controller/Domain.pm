@@ -2,6 +2,7 @@ package NGCP::Panel::Controller::Domain;
 use Moose;
 use namespace::autoclean;
 use Data::Dumper;
+use Data::Printer;
 
 BEGIN { extends 'Catalyst::Controller'; }
 
@@ -157,10 +158,36 @@ sub ajax :Chained('list') :PathPart('ajax') :Args(0) {
 sub preferences :Chained('base') :PathPart('preferences') :CaptureArgs(0) {
     my ($self, $c) = @_;
     
-    my $rs = $c->model('provisioning')->resultset('voip_preferences');
-    my @pref_rows = $rs->all();
-    $c->stash(pref_rows => \@pref_rows);
-    
+    my @dom_prefs = $c->model('provisioning')
+        ->resultset('voip_preferences')
+        ->search({ dom_pref => 1, internal => 0})
+        ->all;
+
+    my $dom_pref_values = $c->model('provisioning')
+        ->resultset('voip_domains')
+        ->single({domain => $c->stash->{domain}->{domain}})
+        ->voip_dom_preferences;
+
+    foreach my $pref(@dom_prefs) {
+        # TODO: do we do an unnecessary query again?
+        my $val = $dom_pref_values->search({attribute_id => $pref->id});
+        if($pref->data_type eq "enum") {
+            $pref->{enums} = [];
+            push @{ $pref->{enums} }, 
+                $pref->voip_preferences_enums->search({dom_pref => 1})->all;
+        }
+        next unless(defined $val);
+        if($pref->max_occur != 1) {
+            $pref->{value} = [];
+            while(my $v = $val->next) {
+               push @{ $pref->{value} }, $v->value; 
+            }
+        } else {
+            $pref->{value} = defined $val->first ? $val->first->value : undef;
+        }
+    }
+
+    $c->stash(pref_rows => \@dom_prefs);
     $c->stash(template => 'domain/preferences.tt');
 }
 

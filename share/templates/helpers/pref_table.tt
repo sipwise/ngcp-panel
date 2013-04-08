@@ -12,7 +12,27 @@
         [% FOREACH r IN helper.rows %]
             <tr class="sw_action_row">
                 <td>[% r.attribute %]</td>
-                <td>nothing yet[%  %]</td>
+                <td>
+                    [% IF r.data_type == "boolean" %]
+                        <input type="checkbox" disabled="disabled"
+                            [% IF r.value == "yes" %]selected="selected"[% END %]/>
+                    [% ELSIF r.data_type == "string" || r.data_type == "int" %]
+                        [% IF r.max_occur == 1 %]
+                            [% r.value %]
+                        [% ELSE %]
+                            [% FOR value IN r.value %]
+                                [% r.value %]<br/>
+                            [% END %]
+                        [% END %]
+                    [% ELSIF r.data_type == "enum" %]
+                        [% USE Dumper %]
+                        <select>
+                        [% FOREACH e IN r.enums %]
+                            <option [% IF r.value == e.value || (!r.value.defined && e.default_val == 1) %]selected="selected"[% END %]>[% e.label %]</option>
+                        [% END %]
+                        </select>
+                    [% END %]
+                </td>
                 <td>[% r.description %]</td>
                 <td><a href="[% c.uri_for(helper.domain_id,'preferences') %]/edit/[% r.attribute %]">Edit</a></td>
             </tr>
