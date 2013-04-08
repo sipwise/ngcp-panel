@@ -38,8 +38,7 @@
                             [% END %]
                         [% END %]
                     [% ELSIF r.data_type == "enum" %]
-                        [% USE Dumper %]
-                        <select>
+                        <select disabled="disabled">
                         [% FOREACH e IN r.enums %]
                             <option [% IF r.value == e.value || (!r.value.defined && e.default_val == 1) %]selected="selected"[% END %]>[% e.label %]</option>
                         [% END %]
