@@ -24,7 +24,7 @@
             <tr class="sw_action_row">
                 <td>
                     <a href="#" onclick="$.msgbox(
-                        '[% r.description %]',
+                        '[% r.description | html %]',
                         {
                             type:'info', 
                             buttons:[

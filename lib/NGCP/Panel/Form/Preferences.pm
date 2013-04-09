@@ -4,7 +4,6 @@ use HTML::FormHandler::Moose;
 use Moose;
 extends 'HTML::FormHandler';
 use Moose::Util::TypeConstraints;
-use HTML::Entities qw/encode_entities/;
 
 use HTML::FormHandler::Widget::Block::Bootstrap;
 
