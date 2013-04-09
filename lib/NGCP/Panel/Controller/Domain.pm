@@ -21,7 +21,7 @@ Catalyst Controller.
 
 =cut
 
-sub list :Chained('/') :PathPart('domain') :CaptureArgs(0) {
+sub list :Chained('/') :PathPart('domain') :CaptureArgs(0) :Args(0) {
     my ($self, $c) = @_;
 
     $c->stash(has_edit => 0);
@@ -71,7 +71,7 @@ sub search :Chained('list') :PathPart('search') Args(0) {
     $c->response->redirect($c->uri_for());
 }
 
-sub base :Chained('/domain/list') :PathPart('') :CaptureArgs(1) {
+sub base :Chained('/domain/list') :PathPart('') :CaptureArgs(1) :Args(0) {
     my ($self, $c, $domain_id) = @_;
 
     unless($domain_id && $domain_id =~ /^\d+$/) {
@@ -155,9 +155,9 @@ sub ajax :Chained('list') :PathPart('ajax') :Args(0) {
     $c->detach( $c->view("JSON") );
 }
 
-sub preferences :Chained('base') :PathPart('preferences') :CaptureArgs(0) {
+sub preferences :Chained('base') :PathPart('preferences') :Args(0) {
     my ($self, $c) = @_;
-    
+
     my @dom_prefs = $c->model('provisioning')
         ->resultset('voip_preferences')
         ->search({ dom_pref => 1, internal => 0})
@@ -191,46 +191,38 @@ sub preferences :Chained('base') :PathPart('preferences') :CaptureArgs(0) {
     $c->stash(template => 'domain/preferences.tt');
 }
 
-sub preferences_edit :Chained('preferences') :PathPart('edit') :Args(1) {
-    my ($self, $c, $pref_name) = @_;
-    
+sub preferences_detail :Chained('base') :PathPart('preferences') :CaptureArgs(1) :Args(0) {
+    my ($self, $c, $pref_id) = @_;
+
+    $c->stash->{preference_meta} = $c->model('provisioning')
+        ->resultset('voip_preferences')
+        ->single({id => $pref_id});
+    $c->log->debug(p $c->stash->{preference_meta});
+
+    # TODO this can return more than one row
+    $c->stash->{preference} = $c->model('provisioning')
+        ->resultset('voip_dom_preferences')
+        ->single({attribute_id => $pref_id, domain_id => $c->stash->{domain}->{id}});
+    $c->log->debug(p $c->stash->{preference});
+    $c->stash(template => 'domain/preferences.tt');
+}
+
+sub preferences_edit :Chained('preferences_detail') :PathPart('edit') :Args(0) {
+    my ($self, $c) = @_;
+   
     $c->stash(edit_preference => 1);
-    $c->stash(selected_preference => $pref_name);
-    
-    my $rs = $c->model('provisioning')->resultset('voip_preferences');
-    my $row = $rs->find({attribute => $pref_name});
+
+    my @enums = $c->stash->{preference_meta}
+        ->voip_preferences_enums
+        ->search({dom_pref => 1})
+        ->all;
+
     my $pref_form = NGCP::Panel::Form::Preferences->new({
-        fields_data => [$row],
-        #pref_rs => $rs,
+        fields_data => [{data => $c->stash->{preference_meta}, enums => \@enums}],
     });
     
-    $pref_form->create_structure([$pref_name]);
+    $pref_form->create_structure([$c->stash->{preference_meta}->attribute]);
     $c->stash(pref_form => $pref_form);
-}
-
-sub preferences_show :Chained('preferences') :PathPart('') :Args(0) {
-    my ($self, $c) = @_;
-}
-
-sub preference_form :Chained('base') :PathPart('preferences_form') :Args(0) {
-    my ($self, $c) = @_;
-
-    unless ( defined($c->stash->{'domain_result'}) ) {
-        return;
-    }
-    
-    my $rs = $c->model('provisioning')->resultset('voip_preferences');
-    my $pref_form = NGCP::Panel::Form::Preferences->new({pref_rs => $rs});
-    $pref_form->readonly(1);
-    $pref_form->create_my_fields();
-    $pref_form->process();
-    try {
-        
-    }
-    
-    $c->stash(pref_form => $pref_form);
-    
-    $c->stash(template => 'domain/preference_form.tt');
 }
 
 =head1 AUTHOR

@@ -1,12 +1,15 @@
 [% META title = 'Domain Preferences' -%]
 
-[% helper.name = 'Domain'; -%]
-[% helper.rows = pref_rows; -%]
-[% helper.edit_preference = edit_preference; -%]
-[% helper.preference = selected_preference; -%]
-[% helper.pref_form = pref_form; -%]
-[% helper.domain_id = domain.id %]
+[% 
+    helper.name = 'Domain';
+    helper.rows = pref_rows;
+    helper.edit_preference = edit_preference;
+    helper.preference = preference;
+    helper.preference_meta = preference_meta;
+    helper.pref_form = pref_form;
+    helper.domain_id = domain.id;
 
-[% PROCESS 'helpers/pref_table.tt' -%]
+    PROCESS 'helpers/pref_table.tt';
+%]
 
 [% # vim: set tabstop=4 syntax=html expandtab: -%]

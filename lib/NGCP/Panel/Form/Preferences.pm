@@ -8,6 +8,8 @@ use HTML::Entities qw/encode_entities/;
 
 use HTML::FormHandler::Widget::Block::Bootstrap;
 
+use Data::Printer;
+
 has '+widget_wrapper' => ( default => 'Bootstrap' );
 sub build_render_list {[qw/myfields actions/]}
 sub build_form_element_class { [qw/form-horizontal/] }
@@ -15,12 +17,11 @@ sub build_form_element_class { [qw/form-horizontal/] }
 has 'readonly' => (is   => 'rw',
                    isa  => 'Int',
                    default => 0,);
+
 has 'fields_data' => (is => 'rw');
+
 has_block 'myfields' => (
     tag => 'div',
-    #class => [qw/accordion/],
-    #render_list => [],
-    #type => 'HTML::FormHandler::Widget::Block::Bootstrap',
 );
 
 sub field_list {
@@ -28,60 +29,50 @@ sub field_list {
     
     my @field_list;
     my $fields_data = $self->fields_data;
-    
+   
     foreach my $row (@$fields_data) {
-        my $field_structure = $self->create_one_field($row);
-        push @field_list, @$field_structure;
+        my $data = $row->{data};
+        my $enums = $row->{enums};
+        my $field;
+        if($data->data_type eq "enum") {
+            my @options = map {{label => $_->label, value => $_->value}} @{ $enums };
+            $field = { 
+                name => $data->attribute, 
+                type => 'Select', 
+                options => \@options,
+            };
+        } elsif($data->data_type eq "boolean") {
+            $field = {
+                name => $data->attribute,
+                type => 'Boolean',
+            };
+        } elsif($data->data_type eq "int") {
+            $field = {
+                name => $data->attribute,
+                type => 'Integer',
+            };
+        } else { # string
+            if($data->max_occur == 1) {
+                $field = {
+                    name => $data->attribute,
+                    type => 'Text',
+                };
+            } else {
+                # TODO: needs to be a list of values with the option
+                # to delete old, add new
+                $field = {
+                    name => $data->attribute,
+                    type => 'Text',
+                };
+            }
+        }
+        push @field_list, $field;
     }
     
     return \@field_list;
 }
 
-sub create_my_fields {
-    my $self = shift;
-    
-    my @field_list = ();
-    
-    #TODO: will not work anymore
-    foreach my $preference ($self->pref_rs->all) {
-        $self->create_one_field($preference);
-        push @field_list, $preference->attribute;
-    }
-    
-    $self->create_structure(\@field_list);
-}
 
-sub create_structure {
-    my $self = shift;
-    my $field_list = shift;
-    
-    $self->block('myfields')->render_list($field_list);
-}
-
-sub create_one_field {
-
-    my $self = shift;
-    my $preference = shift;
-    
-    my $field_type;
-    if($preference->data_type eq "string") {
-        $field_type = "Text";
-    } elsif ($preference->data_type eq "boolean") {
-        $field_type = "Boolean";
-    } else {
-        $field_type = "Boolean";
-    }
-    if($preference->max_occur == 0) {
-        $field_type = "Select";
-    }
-    
-    return [$preference->attribute => {
-        type => $field_type,
-        element_attr => { title => encode_entities($preference->description),
-            $self->readonly ? (readonly => 1) : (), },
-    }];
-    
-}
 
 has_field 'save' => (
     type => 'Submit',
@@ -92,9 +83,16 @@ has_field 'save' => (
 
 has_block 'actions' => (
     tag => 'div',
-    #class => [qw/modal-footer/],
+    class => [qw/modal-footer/],
     render_list => [qw/save/],
 );
+
+sub create_structure {
+    my $self = shift;
+    my $field_list = shift;
+    
+    $self->block('myfields')->render_list($field_list);
+}
 
 1;
 # vim: set tabstop=4 expandtab:

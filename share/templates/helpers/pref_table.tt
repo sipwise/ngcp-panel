@@ -59,7 +59,7 @@
 <div id="mod_edit" class="modal hide" style="display:block">
     <div class="modal-header">
         <button id="mod_close" type="button" class="close">×</button>
-        <h3>Edit Preference [% helper.preference %]</h3>
+        <h3>Edit Preference [% helper.preference_meta.attribute %]</h3>
     </div>
     [% helper.pref_form.render -%]
 </div>
