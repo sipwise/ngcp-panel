@@ -1,5 +1,0 @@
-[% META title = 'Domain Preferences (Backup)' -%]
-
-[% pref_form.render() %]
-
-[% # vim: set tabstop=4 syntax=html expandtab: -%]

@@ -5,19 +5,8 @@
         <b class="caret"></b>
     </a>
     <ul class="dropdown-menu">
+        <li><a href="[% c.uri_for('/reseller') %]">Resellers</a></li>
         <li><a href="[% c.uri_for('/domain') %]">Domains</a></li>
-        <li><a href="./validation.html">Validation</a></li>
-        <li><a href="./jqueryui.html">jQuery UI</a></li>
-        <li><a href="./charts.html">Charts</a></li>
-        <li><a href="./bonus.html">Bonus Elements</a></li>
-        <li class="dropdown-submenu">
-            <a tabindex="-1" href="#">Dropdown menu</a>
-            <ul class="dropdown-menu">
-                <li><a tabindex="-1" href="#">Second level link</a></li>
-                <li><a tabindex="-1" href="#">Second level link</a></li>
-                <li><a tabindex="-1" href="#">Second level link</a></li>
-            </ul>
-        </li>
     </ul>
 </li>
 [% # vim: set tabstop=4 syntax=html expandtab: -%]
