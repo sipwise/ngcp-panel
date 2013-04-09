@@ -1,3 +1,13 @@
+[% IF helper.messages -%]
+<div class="row">
+    [% FOREACH m IN helper.messages -%]
+        <div class="alert alert-[% m.type %]">[% m.text %]</div>
+    [% END -%]
+</div>
+[% END -%]
+
+<div style="margin-top:10px;"></div>
+
 <table class="table table-bordered table-striped table-highlight table-hover" id="preferences_table">
     <thead>
         <tr>
