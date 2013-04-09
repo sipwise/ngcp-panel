@@ -158,6 +158,89 @@ sub ajax :Chained('list') :PathPart('ajax') :Args(0) {
 sub preferences :Chained('base') :PathPart('preferences') :Args(0) {
     my ($self, $c) = @_;
 
+    $self->load_preference_list($c);
+    $c->stash(template => 'domain/preferences.tt');
+}
+
+sub preferences_detail :Chained('base') :PathPart('preferences') :CaptureArgs(1) :Args(0) {
+    my ($self, $c, $pref_id) = @_;
+
+    $self->load_preference_list($c);
+
+    $c->stash->{preference_meta} = $c->model('provisioning')
+        ->resultset('voip_preferences')
+        ->single({id => $pref_id});
+    $c->stash->{provisioning_domain_id} = $c->model('provisioning')
+        ->resultset('voip_domains')
+        ->single({domain => $c->stash->{domain}->{domain}})->id;
+
+    # TODO this can return more than one row
+    $c->stash->{preference} = $c->model('provisioning')
+        ->resultset('voip_dom_preferences')
+        ->search({attribute_id => $pref_id, domain_id => $c->stash->{provisioning_domain_id}});
+    my @values = ();
+    while(my $p = $c->stash->{preference}->next()) {
+        push @values, $p->value;
+    }
+    $c->stash->{preference_values} = \@values;
+    $c->stash(template => 'domain/preferences.tt');
+}
+
+sub preferences_edit :Chained('preferences_detail') :PathPart('edit') :Args(0) {
+    my ($self, $c) = @_;
+   
+    $c->stash(edit_preference => 1);
+
+    my @enums = $c->stash->{preference_meta}
+        ->voip_preferences_enums
+        ->search({dom_pref => 1})
+        ->all;
+
+    my $form = NGCP::Panel::Form::Preferences->new({
+        fields_data => [{
+            meta => $c->stash->{preference_meta},
+            enums => \@enums,
+        }],
+    });
+    $form->create_structure([$c->stash->{preference_meta}->attribute]);
+
+    $form->process(
+        posted => ($c->request->method eq 'POST'),
+        params => $c->request->params || { $c->stash->{preference_meta}->attribute => $c->stash->{preference_values}->[0] },
+        action => $c->uri_for($c->stash->{domain}->{id}, 'preferences', $c->stash->{preference_meta}->id, 'edit'),
+    );
+    if($form->validated) {
+        # TODO: if meta->max_occur=0 insert, otherwise insert_or_update
+        my $preference_id = $c->stash->{preference}->first ? $c->stash->{preference}->first->id : undef;
+        my $rs = $c->model('provisioning')
+            ->resultset('voip_dom_preferences')
+            ->new_result({
+                id => $preference_id,
+                attribute_id => $c->stash->{preference_meta}->id,
+                domain_id => $c->stash->{provisioning_domain_id},
+                value => $form->field($c->stash->{preference_meta}->attribute)->value,
+              });
+        if($preference_id) {
+            $rs->update();
+        } else {
+            $rs->insert();
+        }
+        $c->flash(messages => [{type => 'success', text => 'Preference '.$c->stash->{preference_meta}->attribute.' successfully updated.'}]);
+        $c->response->redirect($c->uri_for($c->stash->{domain}->{id}, 'preferences'));
+        return;
+    }
+
+    print "~~~~~~~~~~~~~~~~~~~~~~~~~\n";
+    print "".(p $form->field($c->stash->{preference_meta}->attribute))."\n";
+    print ">>>>>> ".$form->field($c->stash->{preference_meta}->attribute)->value."\n";
+    
+
+    $c->stash(form => $form);
+}
+
+sub load_preference_list : Private {
+    my ($self, $c) = @_;
+
     my @dom_prefs = $c->model('provisioning')
         ->resultset('voip_preferences')
         ->search({ dom_pref => 1, internal => 0})
@@ -186,43 +269,7 @@ sub preferences :Chained('base') :PathPart('preferences') :Args(0) {
             $pref->{value} = defined $val->first ? $val->first->value : undef;
         }
     }
-
     $c->stash(pref_rows => \@dom_prefs);
-    $c->stash(template => 'domain/preferences.tt');
-}
-
-sub preferences_detail :Chained('base') :PathPart('preferences') :CaptureArgs(1) :Args(0) {
-    my ($self, $c, $pref_id) = @_;
-
-    $c->stash->{preference_meta} = $c->model('provisioning')
-        ->resultset('voip_preferences')
-        ->single({id => $pref_id});
-    $c->log->debug(p $c->stash->{preference_meta});
-
-    # TODO this can return more than one row
-    $c->stash->{preference} = $c->model('provisioning')
-        ->resultset('voip_dom_preferences')
-        ->single({attribute_id => $pref_id, domain_id => $c->stash->{domain}->{id}});
-    $c->log->debug(p $c->stash->{preference});
-    $c->stash(template => 'domain/preferences.tt');
-}
-
-sub preferences_edit :Chained('preferences_detail') :PathPart('edit') :Args(0) {
-    my ($self, $c) = @_;
-   
-    $c->stash(edit_preference => 1);
-
-    my @enums = $c->stash->{preference_meta}
-        ->voip_preferences_enums
-        ->search({dom_pref => 1})
-        ->all;
-
-    my $pref_form = NGCP::Panel::Form::Preferences->new({
-        fields_data => [{data => $c->stash->{preference_meta}, enums => \@enums}],
-    });
-    
-    $pref_form->create_structure([$c->stash->{preference_meta}->attribute]);
-    $c->stash(pref_form => $pref_form);
 }
 
 =head1 AUTHOR

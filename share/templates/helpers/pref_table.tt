@@ -61,7 +61,7 @@
         <button id="mod_close" type="button" class="close">×</button>
         <h3>Edit Preference [% helper.preference_meta.attribute %]</h3>
     </div>
-    [% helper.pref_form.render -%]
+    [% helper.form.render -%]
 </div>
 <script>
     $(function () {

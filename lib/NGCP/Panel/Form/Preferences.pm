@@ -22,6 +22,7 @@ has 'fields_data' => (is => 'rw');
 
 has_block 'myfields' => (
     tag => 'div',
+    class => [qw/modal-body/],
 );
 
 sub field_list {
@@ -31,37 +32,37 @@ sub field_list {
     my $fields_data = $self->fields_data;
    
     foreach my $row (@$fields_data) {
-        my $data = $row->{data};
+        my $meta = $row->{meta};
         my $enums = $row->{enums};
         my $field;
-        if($data->data_type eq "enum") {
+        if($meta->data_type eq "enum") {
             my @options = map {{label => $_->label, value => $_->value}} @{ $enums };
             $field = { 
-                name => $data->attribute, 
+                name => $meta->attribute, 
                 type => 'Select', 
                 options => \@options,
             };
-        } elsif($data->data_type eq "boolean") {
+        } elsif($meta->data_type eq "boolean") {
             $field = {
-                name => $data->attribute,
+                name => $meta->attribute,
                 type => 'Boolean',
             };
-        } elsif($data->data_type eq "int") {
+        } elsif($meta->data_type eq "int") {
             $field = {
-                name => $data->attribute,
+                name => $meta->attribute,
                 type => 'Integer',
             };
         } else { # string
-            if($data->max_occur == 1) {
+            if($meta->max_occur == 1) {
                 $field = {
-                    name => $data->attribute,
+                    name => $meta->attribute,
                     type => 'Text',
                 };
             } else {
                 # TODO: needs to be a list of values with the option
                 # to delete old, add new
                 $field = {
-                    name => $data->attribute,
+                    name => $meta->attribute,
                     type => 'Text',
                 };
             }
