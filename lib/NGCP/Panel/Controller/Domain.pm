@@ -204,36 +204,27 @@ sub preferences_edit :Chained('preferences_detail') :PathPart('edit') :Args(0) {
     });
     $form->create_structure([$c->stash->{preference_meta}->attribute]);
 
+    my $posted = ($c->request->method eq 'POST');
     $form->process(
-        posted => ($c->request->method eq 'POST'),
-        params => $c->request->params || { $c->stash->{preference_meta}->attribute => $c->stash->{preference_values}->[0] },
+        posted => 1,
+        params => $posted ? $c->request->params : { $c->stash->{preference_meta}->attribute => $c->stash->{preference_values}->[0] },
         action => $c->uri_for($c->stash->{domain}->{id}, 'preferences', $c->stash->{preference_meta}->id, 'edit'),
     );
-    if($form->validated) {
+    if($posted && $form->validated) {
         # TODO: if meta->max_occur=0 insert, otherwise insert_or_update
         my $preference_id = $c->stash->{preference}->first ? $c->stash->{preference}->first->id : undef;
         my $rs = $c->model('provisioning')
             ->resultset('voip_dom_preferences')
-            ->new_result({
+            ->update_or_create({
                 id => $preference_id,
                 attribute_id => $c->stash->{preference_meta}->id,
                 domain_id => $c->stash->{provisioning_domain_id},
                 value => $form->field($c->stash->{preference_meta}->attribute)->value,
               });
-        if($preference_id) {
-            $rs->update();
-        } else {
-            $rs->insert();
-        }
         $c->flash(messages => [{type => 'success', text => 'Preference '.$c->stash->{preference_meta}->attribute.' successfully updated.'}]);
         $c->response->redirect($c->uri_for($c->stash->{domain}->{id}, 'preferences'));
         return;
     }
-
-    print "~~~~~~~~~~~~~~~~~~~~~~~~~\n";
-    print "".(p $form->field($c->stash->{preference_meta}->attribute))."\n";
-    print ">>>>>> ".$form->field($c->stash->{preference_meta}->attribute)->value."\n";
-    
 
     $c->stash(form => $form);
 }
