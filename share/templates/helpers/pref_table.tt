@@ -56,7 +56,7 @@
                     [% END %]
                 </td>
                 <td>
-                    <div class="sw_actions pull-right">
+                    <div class="sw_actions pull-right" style="display:none;">
                         <a style="display:inline;line-height:16px;" class="btn btn-small btn-primary" href="[% c.uri_for(helper.domain_id,'preferences', r.id, 'edit') %]"><i class="icon-edit" style="line-height:1em;margin-top:2px"></i> Edit</i></a>
                     </div>
                 </td>
@@ -71,6 +71,13 @@
         <button id="mod_close" type="button" class="close">×</button>
         <h3>Edit Preference [% helper.preference_meta.attribute %]</h3>
     </div>
+    [% IF helper.preference_meta.max_occur != 1 %]
+        [% FOREACH v IN helper.preference.all %]
+            <input type="text" value="[% v.value %]" disabled="disabled"></input>
+            <a href="?delete=[% v.id %]">Delete</a>
+            <br />
+        [% END %]
+    [% END %]
     [% helper.form.render -%]
 </div>
 <script>
