@@ -38,13 +38,13 @@
                 <td>
                     [% IF r.data_type == "boolean" %]
                         <input type="checkbox" disabled="disabled"
-                            [% IF r.value == "yes" %]selected="selected"[% END %]/>
+                            [% IF r.value %]checked="checked"[% END %]/>
                     [% ELSIF r.data_type == "string" || r.data_type == "int" %]
                         [% IF r.max_occur == 1 %]
                             [% r.value %]
                         [% ELSE %]
                             [% FOR value IN r.value %]
-                                [% r.value %]<br/>
+                                [% value %]<br/>
                             [% END %]
                         [% END %]
                     [% ELSIF r.data_type == "enum" %]
@@ -57,7 +57,7 @@
                 </td>
                 <td>
                     <div class="sw_actions pull-right">
-                        <a style="display:inline;line-height:16px;" class="btn btn-small btn-primary" href="[% c.uri_for(helper.domain_id,'preferences') %]/[% r.id %]/edit"><i class="icon-edit" style="line-height:1em;margin-top:2px"></i> Edit</i></a>
+                        <a style="display:inline;line-height:16px;" class="btn btn-small btn-primary" href="[% c.uri_for(helper.domain_id,'preferences', r.id, 'edit') %]"><i class="icon-edit" style="line-height:1em;margin-top:2px"></i> Edit</i></a>
                     </div>
                 </td>
             </tr>
