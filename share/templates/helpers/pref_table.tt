@@ -1,4 +1,8 @@
 <style type="text/css" scoped="scoped">
+body {
+    overflow-y: scroll;
+}
+
 .entry-disabled {
 	text-decoration: line-through;
 }
@@ -13,7 +17,16 @@
 
 <div style="margin-top:10px;"></div>
 
-<table class="table table-bordered table-striped table-highlight table-hover" id="preferences_table">
+<div class="accordion" id="preference_groups">
+[% FOREACH group IN helper.pref_groups %]
+<div class="accordion-group">
+    <div class="accordion-heading">
+        <a class="accordion-toggle" data-toggle="collapse" data-parent="#preference_groups" href="#collapse[% group.id %]">[% group.name %]</a>
+    </div>
+    <div class="accordion-body collapse" id="collapse[% group.id %]">
+    <div class="accordion-inner">
+
+<table class="table table-bordered table-striped table-highlight table-hover" id="preferences_table[% group.id %]">
     <thead>
         <tr>
             [% # one for description -%]
@@ -26,6 +39,7 @@
     </thead>
     <tbody>
         [% FOREACH r IN helper.rows %]
+            [% NEXT IF r.voip_preference_groups_id != group.id %]
             <tr class="sw_action_row">
                 <td>
                     <a href="#" onclick="$.msgbox(
@@ -74,6 +88,25 @@
         [% END %]
     </tbody>
 </table>
+    </div>
+    </div>
+</div>
+[% END %]
+</div>
+
+<script type="text/javascript">
+$(function() {
+  $('#preference_groups').on('shown', function (e) {
+    localStorage.setItem('lastTab', $("#preference_groups .in").attr('id'));
+  });
+
+  //go to the latest tab, if it exists:
+  var lastTab = localStorage.getItem('lastTab');
+  if (lastTab) {
+      $('#'+lastTab).addClass("in");//collapse("show"); collapse does annoying animation
+  }
+});
+</script>
 
 [% IF helper.edit_preference -%]
 <div id="mod_edit" class="modal hide" style="display:block">

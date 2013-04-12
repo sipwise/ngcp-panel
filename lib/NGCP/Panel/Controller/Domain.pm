@@ -301,6 +301,10 @@ sub load_preference_list : Private {
         }
     }
     $c->stash(pref_rows => \@dom_prefs);
+
+    my $pref_groups_rs = $c->model('provisioning')->resultset('voip_preference_groups');
+    my @pref_groups = $pref_groups_rs->all;
+    $c->stash(pref_groups => \@pref_groups);
 }
 
 =head1 AUTHOR
