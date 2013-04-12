@@ -1,3 +1,8 @@
+<style>
+.entry-disabled {
+	text-decoration: line-through;
+}
+</style>
 [% IF helper.messages -%]
 <div class="row">
     [% FOREACH m IN helper.messages -%]
@@ -30,7 +35,7 @@
                             buttons:[
                                 {type:'cancel',value:'Close'}
                             ]
-                        });"><i class="icon-question-sign"></i></a>
+                        }); return false;"><i class="icon-question-sign"></i></a>
                 </td>
                 <td>
                   [% r.attribute %]
@@ -43,8 +48,13 @@
                         [% IF r.max_occur == 1 %]
                             [% r.value %]
                         [% ELSE %]
-                            [% FOR value IN r.value %]
-                                [% value %]<br/>
+                            [% FOR value IN r.value -%]
+                                [% IF value.substr(0,1) == '#' -%]
+                                    <span class="entry-disabled">[% value.substr(1) %]</span>
+                                [% ELSE -%]
+                                    [% value %]
+                                [% END -%]
+                                <br/>
                             [% END %]
                         [% END %]
                     [% ELSIF r.data_type == "enum" %]
@@ -73,7 +83,11 @@
     </div>
     [% IF helper.preference_meta.max_occur != 1 %]
         [% FOREACH v IN helper.preference.all %]
-            <input type="text" value="[% v.value %]" disabled="disabled"></input>
+            [% IF v.value.substr(0,1) == '#' %]
+                <input type="text" value="[% v.value.substr(1) %]" disabled="disabled" class="entry-disabled"></input>
+            [% ELSE %]
+                <input type="text" value="[% v.value %]" disabled="disabled"></input>
+            [% END %]
             <a href="?delete=[% v.id %]"><i class="icon-trash"></i></a>
             [% IF v.value.substr(0,1) == '#' %]
                 <a href="?activate=[% v.id %]"><i class="icon-ok"></i></a>
