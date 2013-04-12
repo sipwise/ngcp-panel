@@ -82,6 +82,7 @@
         <h3>Edit Preference [% helper.preference_meta.attribute %]</h3>
     </div>
     [% IF helper.preference_meta.max_occur != 1 %]
+        <div class="modal-body">
         [% FOREACH v IN helper.preference.all %]
             [% IF v.value.substr(0,1) == '#' %]
                 <input type="text" value="[% v.value.substr(1) %]" disabled="disabled" class="entry-disabled"></input>
@@ -96,8 +97,14 @@
             [% END %]
             <br />
         [% END %]
+        <form action="[% helper.form.action %]" method="post">
+            [% helper.form.fields.2.render %]
+            <span class="">[% helper.form.field("add").render %]</span>
+        </form>
+        </div>
+    [% ELSE %]
+        [% helper.form.render -%]
     [% END %]
-    [% helper.form.render -%]
 </div>
 <script>
     $(function () {

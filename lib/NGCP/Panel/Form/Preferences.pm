@@ -63,9 +63,12 @@ sub field_list {
                 $field = {
                     name => $meta->attribute,
                     type => 'Text',
+                    do_label => 0,
+                    do_wrapper => 0,
                 };
             }
         }
+        $field->{label} = $meta->attribute;
         push @field_list, $field;
     }
     
@@ -79,6 +82,14 @@ has_field 'save' => (
     value => 'Save',
     element_class => [qw/btn btn-primary/],
     label => '',
+);
+
+has_field 'add' => (
+    type => 'Submit',
+    value => 'Add',
+    element_class => [qw/btn btn-primary/],
+    do_label => 0,
+    do_wrapper => 0,
 );
 
 has_block 'actions' => (
