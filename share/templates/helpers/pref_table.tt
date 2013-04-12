@@ -74,7 +74,12 @@
     [% IF helper.preference_meta.max_occur != 1 %]
         [% FOREACH v IN helper.preference.all %]
             <input type="text" value="[% v.value %]" disabled="disabled"></input>
-            <a href="?delete=[% v.id %]">Delete</a>
+            <a href="?delete=[% v.id %]"><i class="icon-trash"></i></a>
+            [% IF v.value.substr(0,1) == '#' %]
+                <a href="?activate=[% v.id %]"><i class="icon-ok"></i></a>
+            [% ELSE %]
+                <a href="?deactivate=[% v.id %]"><i class="icon-ban-circle"></i></a>
+            [% END %]
             <br />
         [% END %]
     [% END %]

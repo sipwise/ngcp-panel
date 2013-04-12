@@ -243,6 +243,28 @@ sub preferences_edit :Chained('preferences_detail') :PathPart('edit') :Args(0) {
             return;
          }
     }
+    
+    my $delete_param = $c->request->params->{delete};
+    my $deactivate_param = $c->request->params->{deactivate};
+    my $activate_param = $c->request->params->{activate};
+    my $param_id = $delete_param || $deactivate_param || $activate_param;
+    # only one parameter is processed at a time (?)
+    if($param_id) {
+        my $rs = $c->model('provisioning')
+            ->resultset('voip_dom_preferences')
+            ->find($param_id);
+        if($rs->attribute_id != $c->stash->{preference_meta}->id) {
+            # Invalid param (dom_pref does not belong to current pref)
+        } elsif($delete_param) {
+            $rs->delete();
+        } elsif ($deactivate_param) {
+            $rs->update({value => "#".$rs->value});
+        } elsif ($activate_param) {
+            my $new_value = $rs->value;
+            $new_value =~ s/^#//;
+            $rs->update({value => $new_value});
+        }
+    }
 
     $c->stash(form => $form);
 }
