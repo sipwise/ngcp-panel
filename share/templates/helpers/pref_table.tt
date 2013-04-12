@@ -1,4 +1,4 @@
-<style>
+<style type="text/css" scoped="scoped">
 .entry-disabled {
 	text-decoration: line-through;
 }
@@ -29,7 +29,7 @@
             <tr class="sw_action_row">
                 <td>
                     <a href="#" onclick="$.msgbox(
-                        '[% r.description | html %]',
+                        '[% r.description.squote | html %]',
                         {
                             type:'info', 
                             buttons:[
@@ -67,7 +67,7 @@
                 </td>
                 <td>
                     <div class="sw_actions pull-right" style="display:none;">
-                        <a style="display:inline;line-height:16px;" class="btn btn-small btn-primary" href="[% c.uri_for(helper.domain_id,'preferences', r.id, 'edit') %]"><i class="icon-edit" style="line-height:1em;margin-top:2px"></i> Edit</i></a>
+                        <a style="display:inline;line-height:16px;" class="btn btn-small btn-primary" href="[% c.uri_for(helper.domain_id,'preferences', r.id, 'edit') %]"><i class="icon-edit" style="line-height:1em;margin-top:2px"></i> Edit</a>
                     </div>
                 </td>
             </tr>
