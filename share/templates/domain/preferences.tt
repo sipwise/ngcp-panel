@@ -1,4 +1,4 @@
-[% META title = 'Domain Preferences' -%]
+[% site_config.title = 'Domain "' _ domain.domain _ '" – Preferences' -%]
 
 [% 
     helper.name = 'Domain';

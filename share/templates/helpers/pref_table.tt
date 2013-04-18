@@ -9,10 +9,6 @@ body {
 </style>
 
 <a href="[% c.uri_for() %]">&lt; Back</a>
-<span class="pull-right">
-    Current Domain:
-    <strong>[% helper.domain_name %]</strong>
-</span>
 
 [% IF helper.messages -%]
 <div class="row">
