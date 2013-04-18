@@ -4,7 +4,6 @@
     helper.name = 'Domain';
     helper.messages = messages;
     
-    helper.rows = pref_rows;
     helper.edit_preference = edit_preference;
     helper.preference = preference;
     helper.preference_meta = preference_meta;

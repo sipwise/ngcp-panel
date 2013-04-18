@@ -45,7 +45,7 @@ body {
         </tr>
     </thead>
     <tbody>
-        [% FOREACH r IN helper.rows %]
+        [% FOREACH r IN group.prefs %]
             [% NEXT IF r.voip_preference_groups_id != group.id %]
             <tr class="sw_action_row">
                 <td>

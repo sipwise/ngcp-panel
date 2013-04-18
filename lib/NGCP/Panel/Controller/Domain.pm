@@ -157,6 +157,10 @@ sub ajax :Chained('list') :PathPart('ajax') :Args(0) {
 
 sub preferences :Chained('base') :PathPart('preferences') :Args(0) {
     my ($self, $c) = @_;
+    
+    $c->stash->{provisioning_domain_id} = $c->model('provisioning')
+        ->resultset('voip_domains')
+        ->single({domain => $c->stash->{domain}->{domain}})->id;
 
     $self->load_preference_list($c);
     $c->stash(template => 'domain/preferences.tt');
@@ -272,39 +276,54 @@ sub preferences_edit :Chained('preferences_detail') :PathPart('edit') :Args(0) {
 sub load_preference_list : Private {
     my ($self, $c) = @_;
 
-    my @dom_prefs = $c->model('provisioning')
-        ->resultset('voip_preferences')
-        ->search({ dom_pref => 1, internal => 0})
+    my @dom_pref_groups = $c->model('provisioning')
+        ->resultset('voip_preference_groups')
+        ->search({ 'voip_preferences.dom_pref' => 1, 'voip_preferences.internal' => 0,
+            }, {
+                prefetch => {'voip_preferences' => 'voip_preferences_enums'},
+            })
         ->all;
-
+    
     my $dom_pref_values = $c->model('provisioning')
-        ->resultset('voip_domains')
-        ->single({domain => $c->stash->{domain}->{domain}})
-        ->voip_dom_preferences;
-
-    foreach my $pref(@dom_prefs) {
-        # TODO: do we do an unnecessary query again?
-        my $val = $dom_pref_values->search({attribute_id => $pref->id});
-        if($pref->data_type eq "enum") {
-            $pref->{enums} = [];
-            push @{ $pref->{enums} }, 
-                $pref->voip_preferences_enums->search({dom_pref => 1})->all;
-        }
-        next unless(defined $val);
-        if($pref->max_occur != 1) {
-            $pref->{value} = [];
-            while(my $v = $val->next) {
-               push @{ $pref->{value} }, $v->value; 
-            }
-        } else {
-            $pref->{value} = defined $val->first ? $val->first->value : undef;
-        }
+        ->resultset('voip_preferences')
+        ->search({
+                domain => $c->stash->{domain}->{domain}
+            },{
+                prefetch => {'voip_dom_preferences' => 'domain'},
+            });
+        
+    my %pref_values;
+    foreach my $value($dom_pref_values->all) {
+    
+        $pref_values{$value->attribute} = [
+            map {$_->value} $value->voip_dom_preferences->all
+        ];
     }
-    $c->stash(pref_rows => \@dom_prefs);
 
-    my $pref_groups_rs = $c->model('provisioning')->resultset('voip_preference_groups');
-    my @pref_groups = $pref_groups_rs->all;
-    $c->stash(pref_groups => \@pref_groups);
+    foreach my $group(@dom_pref_groups) {
+        my @group_prefs = $group->voip_preferences->all;
+        
+        foreach my $pref(@group_prefs) {
+            if($pref->data_type eq "enum") {
+                $pref->{enums} = [];
+                push @{ $pref->{enums} },
+                    $pref->voip_preferences_enums->search({dom_pref => 1})->all;
+            }
+            my @values = @{
+                exists $pref_values{$pref->attribute}
+                    ? $pref_values{$pref->attribute}
+                    : []
+            };
+            next unless(scalar @values);
+            if($pref->max_occur != 1) {
+                $pref->{value} = \@values;
+            } else {
+                $pref->{value} = $values[0];
+            }
+        }
+        $group->{prefs} = \@group_prefs;
+    }
+    $c->stash(pref_groups => \@dom_pref_groups);
 }
 
 =head1 AUTHOR
