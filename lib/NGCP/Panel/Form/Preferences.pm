@@ -106,4 +106,44 @@ sub create_structure {
 }
 
 1;
+
+__END__
+
+=head1 NAME
+
+NGCP::Panel::Form::Preferences
+
+=head1 DESCRIPTION
+
+Preferences Form.
+
+=head1 METHODS
+
+=head2 build_render_list
+
+Specifies the order, form elements are rendered.
+
+=head2 build_form_element_class
+
+for styling
+
+=head2 field_list
+
+This is automatically called by the constructor, it allows you to create a number of fields that should be created.
+
+=head2 create_structure
+
+The field list given to this method will be rendered.
+
+=head1 AUTHOR
+
+Gerhard Jungwirth
+
+=head1 LICENSE
+
+This library is free software. You can redistribute it and/or modify
+it under the same terms as Perl itself.
+
+=cut
+
 # vim: set tabstop=4 expandtab:
