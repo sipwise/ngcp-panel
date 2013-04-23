@@ -12,3 +12,7 @@ method findclick(Str $scheme, Str $query) {
     $elem->click;
     return 1;
 }
+
+method findtext(Str $text, Any $ignore) {
+    return $self->find(xpath => "//*[contains(text(),\"$text\")]");
+}

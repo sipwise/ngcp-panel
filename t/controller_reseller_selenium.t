@@ -38,26 +38,27 @@ is($d->find(css => '#Reseller_table tr:nth-of-type(1) > td:nth-of-type(1)')->get
 
 #the rest is not yet ported to webdriver:
 
-#$sel->type_ok($searchfield, '');
-#$sel->type_keys_ok($searchfield, 'asdfasdfasdf');
+$d->findclick_ok(link_text => 'Create Reseller');
+$d->findclick_ok(id => 'save');
+$d->findtext_ok("Contract field is required");
+$d->findtext_ok("Name field is required");
+$d->findtext_ok("Status field is required");
+$d->findclick_ok(id => 'mod_close');
 
-#$sel->click_ok('//a[contains(text(),"Create Reseller")]');
-#$sel->wait_for_page_to_load_ok(2000);
-#$sel->click_ok('save');
-#$sel->wait_for_page_to_load_ok(2000);
-#$sel->click_ok('mod_close');
-#$sel->wait_for_page_to_load_ok(2000);
-#$sel->mouse_over_ok('css=#Reseller_table tr:nth-of-type(1)');
-#$sel->click_ok('css=#Reseller_table tr:nth-of-type(1) a.btn-primary');
-#$sel->wait_for_page_to_load_ok(2000);
-#$sel->click_ok('mod_close');
-#$sel->wait_for_page_to_load_ok(2000);
-#$sel->mouse_over_ok('css=#Reseller_table tr:nth-of-type(1)');
-#$sel->click_ok('css=#Reseller_table tr:nth-of-type(1) a.btn-secondary');
-#$sel->wait_for_page_to_load_ok(2000);
-#$sel->text_is('css=div.alert-info', 'Reseller delete not implemented!');
+#workaround to make the button visible
+$d->execute_script('$(".sw_actions").removeAttr("style").delay(500);');
+$d->execute_script('$(".sw_actions").attr("style", "display:block")');
+$d->findclick_ok(xpath => '//*[@id="Reseller_table"]/tbody/tr[1]//a[contains(text(),"Edit")]');
+is($d->find(id => "name")->get_attribute("value"), "reseller 1");
+$d->findclick_ok(id => 'mod_close');
 
-#$sel->debug();
-#<STDIN>; # pause
+#same workaround
+$d->execute_script('$(".sw_actions").removeAttr("style").delay(500);');
+$d->execute_script('$(".sw_actions").attr("style", "display:block")');
+$d->findclick_ok(xpath => '//*[@id="Reseller_table"]/tbody/tr[1]//a[contains(@class,"btn-secondary")]');
+$d->findtext_ok("Are you sure?");
+$d->findclick_ok(xpath => '//div[@id="dataConfirmModal"]//a[contains(text(),"Delete")]');
+is($d->find(css => 'div.alert-info')->get_text, 'Reseller delete not implemented!');
+
 done_testing;
 # vim: filetype=perl

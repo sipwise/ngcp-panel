@@ -7,7 +7,7 @@ my $d = Test::WebDriver::Sipwise->new;
 $d->get_ok($ENV{CATALYST_SERVER} || 'http://localhost:3000');
 $d->set_implicit_wait_timeout(1000);
 
-#$sel->is_text_present_ok('Subscriber Sign In');
+$d->findtext_ok('Subscriber Sign In');
 
 $d->findclick_ok(link_text => 'Admin');
 $d->find(name => 'username')->send_keys('administrator');
@@ -16,6 +16,7 @@ $d->findclick_ok(name => 'submit');
 
 $d->text_is('//title', 'Dashboard');
 
+$d->findclick_ok(xpath => '//*[@id="main-nav"]//*[contains(text(),"Settings")]');
 $d->find_ok(xpath => '//a[contains(@href,"/domain")]');
 $d->findclick_ok(link_text => "Domains");
 
@@ -24,13 +25,24 @@ $d->findclick_ok(xpath => "/html/body/div/div[4]/div/div[3]/table/tbody/tr/td/a"
 
 $d->location_like(qr!domain/\d+/preferences!); #/
 $d->findclick_ok(link_text => "Access Restrictions");
-my $edit_link = $d->find(xpath => '//table/tbody/tr/td[normalize-space(text()) = "concurrent_max"]/../td/*/a');
+my $edit_link = $d->find(xpath => '(//table/tbody/tr/td[normalize-space(text()) = "concurrent_max"]/../td//a)[2]');
 ok($edit_link);
-$d->move_to(element => $edit_link);
-#if this doesen't work update your Selenium::Remote::Driver (still not working)
-#$edit_link->hover;
-#$edit_link->click;
-#$d->click('LEFT');
+#workaround to make the button visible
+$d->execute_script('$(".sw_actions").removeAttr("style")');
+$edit_link->click;
+
+my $formfield = $d->find('id' => 'concurrent_max');
+ok($formfield);
+$formfield->clear;
+$formfield->send_keys('thisisnonumber');
+$d->findclick_ok(id => 'save');
+
+$d->findtext_ok('Value must be an integer');
+$formfield = $d->find('id' => 'concurrent_max');
+ok($formfield);
+$formfield->clear;
+$formfield->send_keys('789');
+$d->findclick_ok(id => 'save');
 
 done_testing;
 # vim: filetype=perl
