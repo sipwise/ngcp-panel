@@ -16,3 +16,13 @@ method findclick(Str $scheme, Str $query) {
 method findtext(Str $text, Any $ignore) {
     return $self->find(xpath => "//*[contains(text(),\"$text\")]");
 }
+
+method save_screenshot() {
+    use MIME::Base64;
+    local *FH;
+    open(FH,'>','screenshot.png');
+    binmode FH;
+    my $png_base64 = $self->screenshot();
+    print FH decode_base64($png_base64);
+    close FH;
+}
