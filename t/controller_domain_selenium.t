@@ -3,7 +3,10 @@ use lib 't/lib';
 use Test::More import => [qw(done_testing is ok)];
 use Test::WebDriver::Sipwise qw();
 
-my $d = Test::WebDriver::Sipwise->new;
+my $browsername = $ENV{BROWSER_NAME} || ""; #possible values: htmlunit, chrome
+my $d = Test::WebDriver::Sipwise->new (browser_name => $browsername,
+    'proxy' => {'proxyType' => 'system'});
+$d->set_window_size(800,1280) if ($browsername ne "htmlunit");
 my $uri = $ENV{CATALYST_SERVER} || 'http://localhost:3000';
 $d->get_ok("$uri/logout"); #make sure we are logged out
 $d->get_ok("$uri/login");

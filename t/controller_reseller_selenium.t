@@ -5,7 +5,10 @@ use Test::WebDriver::Sipwise qw();
 
 #my $sel = Test::WWW::Selenium::Catalyst->start({default_names => 1});
 
-my $d = Test::WebDriver::Sipwise->new;
+my $browsername = $ENV{BROWSER_NAME} || ""; #possible values: htmlunit, chrome
+my $d = Test::WebDriver::Sipwise->new (browser_name => $browsername,
+    'proxy' => {'proxyType' => 'system'});
+$d->set_window_size(800,1280) if ($browsername ne "htmlunit");
 my $uri = $ENV{CATALYST_SERVER} || 'http://localhost:3000';
 $d->get_ok("$uri/logout"); #make sure we are logged out
 $d->get_ok("$uri/login");
@@ -37,7 +40,7 @@ is($elem->get_text,'No matching records found');
 $searchfield->clear();
 $searchfield->send_keys('1');
 $d->find_ok(css => '#Reseller_table tr.sw_action_row');
-is($d->find(css => '#Reseller_table tr:nth-of-type(1) > td:nth-of-type(1)')->get_text,'1');
+is($d->find(xpath => '//table[@id="Reseller_table"]//tr[1]/td[1]')->get_text,'1');
 
 $d->findclick_ok(link_text => 'Create Reseller');
 $d->findclick_ok(id => 'save');
