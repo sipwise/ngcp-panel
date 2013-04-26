@@ -1,6 +1,9 @@
 package Local::Module::Build;
 use Sipwise::Base;
 use Moose qw(around);
+use Child qw(child);
+use TryCatch;
+use MooseX::Method::Signatures;
 extends 'Module::Build';
 
 our ($plackup, $webdriver, @cover_opt);

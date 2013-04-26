@@ -6,3 +6,6 @@ override_dh_install:
 	dh_install
 	# remove all *.pl scripts, they are for development usage only
 	rm -rf ./debian/ngcp-panel/usr/bin
+
+override_dh_auto_test:
+	echo "TODO / FIXME  - skipping dh_auto_test"
