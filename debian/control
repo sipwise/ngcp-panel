@@ -8,7 +8,10 @@ Build-Depends: debhelper (>= 8),
                libcatalyst-view-tt-perl,
                libhtml-formhandler-perl,
                libmodule-install-perl,
-               libmoosex-object-pluggable-perl
+               libmoosex-object-pluggable-perl,
+               libperl5i-perl,
+               libsipwise-base-perl,
+               libstrictures-perl
 Standards-Version: 3.9.4
 Homepage: http://sipwise.com/
 
