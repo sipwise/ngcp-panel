@@ -247,6 +247,7 @@ sub ajax_process_resultset :Private {
 sub error_page :Private {
     my ($self,$c) = @_;
     
+    $c->log->info( 'Failed to find: ' . $c->request->path );
     $c->stash(template => 'error_page.tt');
     #$c->response->body( 'Page not found' );
     $c->response->status(404);

@@ -1,0 +1,17 @@
+[% META title = 'Billing Profiles' -%]
+[%
+    helper.name = 'Billing Profiles';
+    helper.messages = messages;
+    helper.column_titles = [ '#', 'Profile' ];
+    helper.column_fields = [ 'id', 'name' ];
+
+    helper.close_target = close_target;
+    helper.create_flag = create_flag;
+    helper.edit_object = profile;
+    helper.form_object = form;
+    helper.has_edit = has_edit;
+    helper.has_preferences = has_preferences;
+
+    PROCESS 'helpers/datatables.tt';
+-%]
+[% # vim: set tabstop=4 syntax=html expandtab: -%]
