@@ -109,10 +109,10 @@
 $(function () {
     Theme.init ();
 
-    $('.sw_actions').hide();
+    $('.sw_actions').css('visibility','hidden');
     $('.sw_action_row').hover(
-        function() { $(this).find('.sw_actions').show(); },
-        function() { $(this).find('.sw_actions').hide(); }
+                    function() { $(this).find('.sw_actions').css('visibility','visible'); },
+                    function() { $(this).find('.sw_actions').css('visibility','hidden'); }
     ); 
 
     $('a[data-confirm]').live("click", function(ev) {

@@ -4,7 +4,7 @@ use namespace::autoclean;
 
 BEGIN { extends 'Catalyst::Controller'; }
 
-
+use NGCP::Panel::Form::BillingProfile;
 
 sub list :Chained('/') :PathPart('billing') :CaptureArgs(0) :Args(0) {
     my ( $self, $c ) = @_;
@@ -41,7 +41,7 @@ sub base :Chained('list') :PathPart('') :CaptureArgs(1) :Args(0) {
 
     my $res = $c->model('billing')->resultset('billing_profiles')->find($profile_id);
     unless(defined($res)) {
-        $c->flash(messages => [{type => 'error', text => 'Domain does not exist!'}]);
+        $c->flash(messages => [{type => 'error', text => 'Billing Profile does not exist!'}]);
         $c->response->redirect($c->uri_for());
         return;
     }
@@ -52,6 +52,21 @@ sub base :Chained('list') :PathPart('') :CaptureArgs(1) :Args(0) {
 sub edit :Chained('base') :PathPart('edit') {
     my ($self, $c) = @_;
     
+    my $posted = ($c->request->method eq 'POST');
+    my $form = NGCP::Panel::Form::BillingProfile->new;
+    $form->process(
+        posted => 1,
+        params => $posted ? $c->request->params : $c->stash->{profile},
+        action => $c->uri_for($c->stash->{profile}->{id}, 'edit'),
+    );
+    if($posted && $form->validated) {
+        #do the database update here
+        $c->flash(messages => [{type => 'success', text => 'Billing Profile successfully changed!'}]);
+        $c->response->redirect($c->uri_for());
+        return;
+    }
+    
+    $c->stash(form => $form);
 }
 
 __PACKAGE__->meta->make_immutable;

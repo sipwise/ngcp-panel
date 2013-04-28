@@ -83,7 +83,7 @@ body {
                     [% END %]
                 </td>
                 <td>
-                    <div class="sw_actions pull-right" style="display:none;">
+                    <div class="sw_actions pull-right" style="visibility:hidden;">
                         <a style="display:inline;line-height:16px;" class="btn btn-small btn-primary" href="[% c.uri_for(helper.domain_id,'preferences', r.id, 'edit') %]"><i class="icon-edit" style="line-height:1em;margin-top:2px"></i> Edit</a>
                     </div>
                 </td>

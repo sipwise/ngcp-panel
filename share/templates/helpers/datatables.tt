@@ -1,5 +1,4 @@
-<script src="/js/libs/datatables-bootstrap-paging.js"></script>
-<style>
+<style scoped="scoped">
 div.modal {
     max-width: 816px;
     width: 100%;
@@ -114,7 +113,12 @@ div.modal .control-group.error .dataTables_wrapper input[type="text"] {
     border: 1px solid #cccccc;
 }
 
+.actions-column { /* TODO: use responsive design */
+    white-space: nowrap;
+}
+
 </style>
+<script src="/js/libs/datatables-bootstrap-paging.js"></script>
 <script type="text/javascript">
 
 $.extend( $.fn.dataTableExt.oStdClasses, {
@@ -151,10 +155,19 @@ $(document).ready(function() {
                       '<a style="display:inline;line-height:16px;margin-left:5px;" class="btn btn-small btn-secondary" href="[% c.uri_for( c.controller.action_for("") ) %]/' + full[0] + '/delete" data-confirm="Delete">' +
                         '<i class="icon-trash" style="line-height:1em;margin-top:2px"></i> Delete' +
                       '</a>' +
+                    [%- IF helper.extra_buttons.size > 0 %]
+                        [% FOR b IN helper.extra_buttons %]
+                            '<a style="display:inline;line-height:16px;margin-left:5px;" class="btn btn-small btn-tertiary" href="[% c.uri_for( c.controller.action_for("") ) %]/' + full[0] + '/' +
+                            '[% b.1 %]' + '">' +
+                            '[% b.0 %]' +
+                            '</a>' +
+                        [% END %]
+                    [% END %]
                     '</div>';
                 },
                 "mData": null,
-                "bSortable": false
+                "bSortable": false,
+                "sClass": "actions-column",
             }
 		],
 		"aoColumnDefs": [
@@ -170,10 +183,10 @@ $(document).ready(function() {
             [%- END %]
 	    ],
 		"fnDrawCallback": function( oSettings ) {
-                $('.sw_actions').hide();
+                $('.sw_actions').css('visibility','hidden');
                 $('.sw_action_row').hover(
-                    function() { $(this).find('.sw_actions').show(); },
-                    function() { $(this).find('.sw_actions').hide(); }
+                    function() { $(this).find('.sw_actions').css('visibility','visible'); },
+                    function() { $(this).find('.sw_actions').css('visibility','hidden'); }
                 );
         },
         "fnRowCallback": function(nRow, aData, iDisplayIndex) {
@@ -206,7 +219,7 @@ $(document).ready(function() {
             <th>[% t %]</th>
             [% END -%]
             [% # one for actions -%]
-            <th class="span3"></th>
+            <th class="actions-column"></th>
         </tr>
     </thead>
     <tbody>

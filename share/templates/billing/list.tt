@@ -12,6 +12,11 @@
     helper.has_edit = has_edit;
     helper.has_preferences = has_preferences;
 
+    helper.extra_buttons = [
+        [ 'Edit Fees', 'fees'],
+        [ 'Edit Peak Times', 'peaktimes'],
+    ];
+
     PROCESS 'helpers/datatables.tt';
 -%]
 [% # vim: set tabstop=4 syntax=html expandtab: -%]

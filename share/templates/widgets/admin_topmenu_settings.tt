@@ -7,6 +7,7 @@
     <ul class="dropdown-menu">
         <li><a href="[% c.uri_for('/reseller') %]">Resellers</a></li>
         <li><a href="[% c.uri_for('/domain') %]">Domains</a></li>
+        <li><a href="[% c.uri_for('/billing') %]">Billing</a></li>
     </ul>
 </li>
 [% # vim: set tabstop=4 syntax=html expandtab: -%]
