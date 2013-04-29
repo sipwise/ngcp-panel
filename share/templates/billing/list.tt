@@ -11,6 +11,8 @@
     helper.form_object = form;
     helper.has_edit = has_edit;
     helper.has_preferences = has_preferences;
+    helper.ajax_uri = c.uri_for( c.controller.action_for('ajax') );
+    helper.base_uri = c.uri_for( c.controller.action_for("") );
 
     helper.extra_buttons = [
         [ 'Edit Fees', 'fees'],

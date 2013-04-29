@@ -5,6 +5,7 @@ use namespace::autoclean;
 BEGIN { extends 'Catalyst::Controller'; }
 
 use NGCP::Panel::Form::BillingProfile;
+use NGCP::Panel::Form::BillingFee;
 
 sub list :Chained('/') :PathPart('billing') :CaptureArgs(0) :Args(0) {
     my ( $self, $c ) = @_;
@@ -60,13 +61,123 @@ sub edit :Chained('base') :PathPart('edit') {
         action => $c->uri_for($c->stash->{profile}->{id}, 'edit'),
     );
     if($posted && $form->validated) {
-        #do the database update here
+        $c->model('billing')->resultset('billing_profiles')
+            ->find($form->field('id')->value)
+            ->update($form->fif() );
         $c->flash(messages => [{type => 'success', text => 'Billing Profile successfully changed!'}]);
         $c->response->redirect($c->uri_for());
         return;
     }
     
     $c->stash(form => $form);
+}
+
+sub create :Chained('list') :PathPart('create') :Args(0) {
+    my ($self, $c) = @_;
+
+    my $form = NGCP::Panel::Form::BillingProfile->new;
+    $form->process(
+        posted => ($c->request->method eq 'POST'),
+        params => $c->request->params,
+        action => $c->uri_for('create'),
+    );
+    if($form->validated) {
+        $c->model('billing')->resultset('billing_profiles')->create(
+             $form->fif() );
+        $c->flash(messages => [{type => 'success', text => 'Billing profile successfully created!'}]);
+        $c->response->redirect($c->uri_for());
+        return;
+    }
+
+    $c->stash(close_target => $c->uri_for());
+    $c->stash(create_flag => 1);
+    $c->stash(form => $form);
+}
+
+sub delete :Chained('base') :PathPart('delete') :Args(0) {
+    my ($self, $c) = @_;
+    
+    unless ( defined($c->stash->{'profile_result'}) ) {
+        $c->flash(messages => [{type => 'error', text => 'Billing profile not found!'}]);
+        return;
+    }
+    $c->stash->{'profile_result'}->delete;
+
+    $c->flash(messages => [{type => 'success', text => 'Billing profile successfully deleted!'}]);
+    $c->response->redirect($c->uri_for);
+}
+
+sub fees_list :Chained('base') :PathPart('fees') :CaptureArgs(0) {
+    my ($self, $c) = @_;
+    
+    $c->stash(has_edit => 1);
+    $c->stash(has_preferences => 0);
+    $c->stash(template => 'billing/fees.tt');
+    
+    
+}
+
+sub fees :Chained('fees_list') :PathPart('') :Args(0) {
+    my ($self, $c) = @_;
+
+}
+
+sub fees_base :Chained('fees_list') :PathPart('') :CaptureArgs(1) {
+    my ($self, $c) = @_;
+
+}
+
+sub fees_ajax :Chained('fees_list') :PathPart('ajax') :Args(0) {
+    my ($self, $c) = @_;
+
+    my $resultset = $c->stash->{'profile_result'}->billing_fees
+        ->search(undef, {
+            join => 'billing_zone',
+            columns => [
+                {'zone' => 'billing_zone.zone'},
+               'id','source','destination','direction'
+            ]
+        });
+    
+    $c->forward( "/ajax_process_resultset", [$resultset,
+                 ["id", "source", "destination", "direction", 'zone'],
+                 [1,2,3]]);
+    
+    $c->detach( $c->view("JSON") );
+}
+
+sub fees_create :Chained('fees_list') :PathPart('create') :Args(0) {
+    my ($self, $c) = @_;
+
+    my $form = NGCP::Panel::Form::BillingFee->new;
+    $form->process(
+        posted => ($c->request->method eq 'POST'),
+        params => $c->request->params,
+        action => $c->uri_for($c->stash->{profile}->{id}, 'fees', 'create'),
+    );
+    if($form->validated) {
+        $c->stash->{'profile_result'}->billing_fees
+            ->create(
+                 $form->fif()
+             );
+        $c->flash(messages => [{type => 'success', text => 'Billing Fee successfully created!'}]);
+        $c->response->redirect($c->uri_for($c->stash->{profile}->{id}, 'fees'));
+        return;
+    }
+
+    $c->stash(close_target => $c->uri_for($c->stash->{profile}->{id}, 'fees'));
+    $c->stash(create_flag => 1);
+    $c->stash(form => $form);
+}
+
+sub fees_edit :Chained('fees_base') :PathPart('edit') :Args(0) {
+
+
+}
+
+sub fees_delete :Chained('fees_base') :PathPart('delete') :Args(0) {
+
+
 }
 
 __PACKAGE__->meta->make_immutable;
@@ -91,7 +202,7 @@ basis for the billing controller
 
 =head2 root
 
-just shows a list of billing profiles
+just shows a list of billing profiles using datatables
 
 =head2 ajax
 
@@ -104,6 +215,39 @@ Fetch a billing_profile by its id.
 =head2 edit
 
 Show a modal to edit one billing_profile.
+
+=head2 create
+
+Show a modal to add a new billing_profile.
+
+=head2 delete
+
+Delete a billing_profile identified by base.
+
+=head2 fees_list
+
+basis for the billing_fees logic. for a certain billing_profile identified
+by base.
+
+=head2 fees
+
+Shows a list of billing_fees for one billing_profile using datatables.
+
+=head2 fees_base
+
+Fetch a billing_fee (identified by id).
+
+=head2 fees_ajax
+
+Get billing_fees and output them as JSON.
+
+=head2 fees_create
+
+Show a modal to add a new billing_fee.
+
+=head2 fees_edit
+
+=head2 fees_delete
 
 =head1 AUTHOR
 

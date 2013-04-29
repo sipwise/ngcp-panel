@@ -139,7 +139,7 @@ $(document).ready(function() {
         "bSort": true,
         "bInfo": true,
 		"iDisplayLength": 5,
-		"sAjaxSource": "[% c.uri_for( c.controller.action_for('ajax') ) %]",
+		"sAjaxSource": "[% helper.ajax_uri %]",
 		"aoColumns": [
 		    [% FOREACH f IN helper.column_fields -%]
 		    { "sName": "[% f %]" },
@@ -148,16 +148,16 @@ $(document).ready(function() {
                     return '' +
                     '<div class="sw_actions pull-right">' +
                     [%- IF helper.has_edit != 0 %]
-                      '<a style="display:inline;line-height:16px;" class="btn btn-small btn-primary" href="[% c.uri_for( c.controller.action_for("") ) %]/' + full[0] + '/edit">' +
+                      '<a style="display:inline;line-height:16px;" class="btn btn-small btn-primary" href="[% helper.base_uri %]/' + full[0] + '/edit">' +
                         '<i class="icon-edit" style="line-height:1em;margin-top:2px"></i> Edit' +
                       '</a>' +
                     [%- END %]
-                      '<a style="display:inline;line-height:16px;margin-left:5px;" class="btn btn-small btn-secondary" href="[% c.uri_for( c.controller.action_for("") ) %]/' + full[0] + '/delete" data-confirm="Delete">' +
+                      '<a style="display:inline;line-height:16px;margin-left:5px;" class="btn btn-small btn-secondary" href="[% helper.base_uri %]/' + full[0] + '/delete" data-confirm="Delete">' +
                         '<i class="icon-trash" style="line-height:1em;margin-top:2px"></i> Delete' +
                       '</a>' +
                     [%- IF helper.extra_buttons.size > 0 %]
                         [% FOR b IN helper.extra_buttons %]
-                            '<a style="display:inline;line-height:16px;margin-left:5px;" class="btn btn-small btn-tertiary" href="[% c.uri_for( c.controller.action_for("") ) %]/' + full[0] + '/' +
+                            '<a style="display:inline;line-height:16px;margin-left:5px;" class="btn btn-small btn-tertiary" href="[% helper.base_uri %]/' + full[0] + '/' +
                             '[% b.1 %]' + '">' +
                             '[% b.0 %]' +
                             '</a>' +
@@ -175,7 +175,7 @@ $(document).ready(function() {
 		        {
 		            "aTargets": [ 0 ],
 		            "mRender": function ( data, type, full ) {
-                        return '<a href="[% c.uri_for( c.controller.action_for("") ) %]/'+
+                        return '<a href="[% helper.base_uri %]/'+
                             full[0]+
                             '/preferences">'+data+'</a>';
                     }

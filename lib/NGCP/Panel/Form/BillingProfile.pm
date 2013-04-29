@@ -10,9 +10,9 @@ has '+widget_wrapper' => ( default => 'Bootstrap' );
 sub build_render_list {[qw/fields actions/]}
 sub build_form_element_class { [qw/form-horizontal/] }
 
-#has_field 'submitid' => (
-#    type => 'Hidden'
-#);
+has_field 'id' => (
+    type => 'Hidden'
+);
 
 has_field 'name' => (
     type => 'Text',
@@ -105,7 +105,7 @@ has_block 'fields' => (
     render_list => [qw/name interval_charge interval_free_time interval_free_cash 
         fraud_interval_limit fraud_interval_lock fraud_interval_notify
         fraud_daily_limit fraud_daily_lock fraud_daily_notify
-        currency vat_rate vat_included/],
+        currency vat_rate vat_included id/],
 );
 
 has_block 'actions' => (

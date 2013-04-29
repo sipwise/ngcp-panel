@@ -10,6 +10,8 @@
     helper.create_flag = create_flag;
     helper.edit_object = contact;
     helper.form_object = form;
+    helper.ajax_uri = c.uri_for( c.controller.action_for('ajax') );
+    helper.base_uri = c.uri_for( c.controller.action_for("") );
 
     PROCESS 'helpers/datatables.tt';
 -%]
