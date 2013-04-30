@@ -229,7 +229,7 @@ $(document).ready(function() {
     </tbody>
 </table>
 
-[% IF helper.edit_object || helper.create_flag == 1 -%]
+[% IF helper.edit_flag || helper.create_flag == 1 -%]
 <div id="mod_edit" class="modal hide" style="display:block">
     <div class="modal-header">
         <button id="mod_close" type="button" class="close">×</button>

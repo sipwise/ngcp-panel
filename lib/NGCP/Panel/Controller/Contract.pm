@@ -111,6 +111,7 @@ sub edit :Chained('base') :PathPart('edit') :Args(0) {
     }
 
     $c->stash(form => $form);
+    $c->stash(edit_flag => 1);
 }
 
 sub delete :Chained('base') :PathPart('delete') :Args(0) {

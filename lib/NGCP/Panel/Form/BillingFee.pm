@@ -5,6 +5,7 @@ extends 'HTML::FormHandler';
 use Moose::Util::TypeConstraints;
 
 use HTML::FormHandler::Widget::Block::Bootstrap;
+use NGCP::Panel::Field::BillingZone;
 
 has '+widget_wrapper' => ( default => 'Bootstrap' );
 sub build_render_list {[qw/fields actions/]}
@@ -31,6 +32,12 @@ has_field 'direction' => (
         { value => 'in', label => 'inbound' },
         { value => 'out', label => 'outbound' },
     ],
+);
+
+has_field 'billing_zone' => (
+    type => '+NGCP::Panel::Field::BillingZone',
+    label => 'Zone',
+    not_nullable => 1,
 );
 
 has_field 'onpeak_init_rate' => (
@@ -79,7 +86,7 @@ has_field 'save' => (
 has_block 'fields' => (
     tag => 'div',
     class => [qw/modal-body/],
-    render_list => [qw/id source destination direction
+    render_list => [qw/id source destination direction billing_zone
         onpeak_init_rate onpeak_init_interval onpeak_follow_rate
         onpeak_follow_interval offpeak_init_rate offpeak_init_interval
         offpeak_follow_rate offpeak_follow_interval use_free_time/],
@@ -90,6 +97,16 @@ has_block 'actions' => (
     class => [qw/modal-footer/],
     render_list => [qw/save/],
 );
+
+sub custom_get_values {
+    my ($self) = @_;
+    #TODO: this has sideeffects: the value remains changed, is this bad?
+    my $hashvalues = $self->value;
+    foreach my $val(values %$hashvalues) {
+        $val = '' unless defined($val);
+    }
+    return $hashvalues;
+}
 
 1;
 # vim: set tabstop=4 expandtab:
