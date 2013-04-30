@@ -35,7 +35,7 @@ build.com
 ._*
 cover_db
 covered
-META.yml
+META.*
 MYMETA.*
 SIGNATURE
 NGCP-Panel-*
