@@ -100,11 +100,23 @@ has_block 'actions' => (
 
 sub custom_get_values {
     my ($self) = @_;
-    #TODO: this has sideeffects: the value remains changed, is this bad?
-    my $hashvalues = $self->value;
+    my $hashvalues = {%{$self->value}}; #prevents sideeffects
     foreach my $val(values %$hashvalues) {
         $val = '' unless defined($val);
     }
+    return $hashvalues;
+}
+
+sub custom_get_values_to_update {
+    my ($self) = @_;
+    my $hashvalues = { %{$self->value} }; #prevents sideeffects
+    foreach my $val(values %$hashvalues) {
+        $val = '' unless defined($val);
+    }
+    $hashvalues->{billing_zone_id} = defined $hashvalues->{billing_zone}->{id} ?
+        $hashvalues->{billing_zone}->{id}+0 :
+        '';
+    delete $hashvalues->{billing_zone};
     return $hashvalues;
 }
 

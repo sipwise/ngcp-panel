@@ -139,7 +139,8 @@ sub fees_base :Chained('fees_list') :PathPart('') :CaptureArgs(1) {
         return;
     }
     $c->stash(fee => {$res->get_columns}); #get_columns should not be used
-    $c->stash->{fee}->{'billing_zone.id'} = $res->billing_zone->id;
+    $c->stash->{fee}->{'billing_zone.id'} = $res->billing_zone->id
+        if (defined $res->billing_zone);
     $c->stash(fee_result => $res);
 }
 
@@ -199,7 +200,7 @@ sub fees_edit :Chained('fees_base') :PathPart('edit') :Args(0) {
     );
     if($posted && $form->validated) {
         $c->stash->{'fee_result'}
-            ->update($form->fif() );
+            ->update($form->custom_get_values_to_update() );
         $c->flash(messages => [{type => 'success', text => 'Billing Profile successfully changed!'}]);
         $c->response->redirect($c->uri_for($c->stash->{profile}->{id}, 'fees'));
         return;
@@ -307,7 +308,19 @@ Show a modal to add a new billing_fee.
 
 =head2 fees_edit
 
+Show a modal to edit a billing_fee.
+
 =head2 fees_delete
+
+Delete a billing_fee.
+
+=head2 zones_list
+
+basis for billing zones. part of a certain billing profile.
+
+=head2 zones_ajax
+
+sends a JSON representation of billing_zones und the current billing profile.
 
 =head1 AUTHOR
 
