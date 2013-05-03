@@ -1,6 +1,6 @@
 use Sipwise::Base;
 use lib 't/lib';
-use Test::More import => [qw(done_testing is ok)];
+use Test::More import => [qw(done_testing is ok diag)];
 use Test::WebDriver::Sipwise qw();
 
 my $browsername = $ENV{BROWSER_NAME} || ""; #possible values: htmlunit, chrome
@@ -14,6 +14,7 @@ $d->set_implicit_wait_timeout(1000);
 
 $d->findtext_ok('Subscriber Sign In');
 
+diag("Go to Admin Login");
 $d->findclick_ok(link_text => 'Admin');
 $d->find(name => 'username')->send_keys('administrator');
 $d->find(name => 'password')->send_keys('administrator');
@@ -21,16 +22,20 @@ $d->findclick_ok(name => 'submit');
 
 $d->title_is('Dashboard');
 
+diag("Go to Domains page");
 $d->findclick_ok(xpath => '//*[@id="main-nav"]//*[contains(text(),"Settings")]');
 $d->find_ok(xpath => '//a[contains(@href,"/domain")]');
 $d->findclick_ok(link_text => "Domains");
 
+diag("Open Preferences of first Domain");
 $d->title_is("Domains");
 $d->findclick_ok(xpath => '//table[@id="Domain_table"]/tbody/tr[1]/td[1]/a');
 
+diag('Open the tab "Access Restrictions"');
 $d->location_like(qr!domain/\d+/preferences!); #/
 $d->findclick_ok(link_text => "Access Restrictions");
 
+diag("Click edit for the preference concurrent_max");
 my $row = $d->find(xpath => '//table/tbody/tr/td[normalize-space(text()) = "concurrent_max"]');
 ok($row);
 my $edit_link = $d->find_child_element($row, '(./../td//a)[2]');
@@ -38,12 +43,14 @@ ok($edit_link);
 $d->move_to(element => $row);
 $edit_link->click;
 
+diag("Try to change this to a value which is not a number");
 my $formfield = $d->find('id' => 'concurrent_max');
 ok($formfield);
 $formfield->clear;
 $formfield->send_keys('thisisnonumber');
 $d->findclick_ok(id => 'save');
 
+diag('Type 789 and click Save');
 $d->findtext_ok('Value must be an integer');
 $formfield = $d->find('id' => 'concurrent_max');
 ok($formfield);
