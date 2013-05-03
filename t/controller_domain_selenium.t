@@ -26,7 +26,7 @@ $d->find_ok(xpath => '//a[contains(@href,"/domain")]');
 $d->findclick_ok(link_text => "Domains");
 
 $d->title_is("Domains");
-$d->findclick_ok(xpath => "/html/body/div/div[4]/div/div[3]/table/tbody/tr/td/a");
+$d->findclick_ok(xpath => '//table[@id="Domain_table"]/tbody/tr[1]/td[1]/a');
 
 $d->location_like(qr!domain/\d+/preferences!); #/
 $d->findclick_ok(link_text => "Access Restrictions");
