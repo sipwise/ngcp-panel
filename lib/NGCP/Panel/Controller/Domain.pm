@@ -31,14 +31,11 @@ sub create :Chained('list') :PathPart('create') :Args(0) {
         action => $c->uri_for('create'),
     );
     if($form->validated) {
-#        $c->model('billing')->resultset('domains')->create({
-#            domain => $form->field('domain')->value, });
         my $schema = $c->model('billing')->schema;
         $schema->provisioning($c->model('provisioning')->schema->connect);
         $schema->create_domain(
             {
                 domain => $form->field('domain')->value,
-                #id => 1,
             },
             1
         );
@@ -90,9 +87,6 @@ sub edit :Chained('base') :PathPart('edit') :Args(0) {
     );
     if($posted && $form->validated) {
         
-#        $c->model('billing')->resultset('domains')->search({
-#                id => $c->stash->{domain}->{id},
-#            })
         $c->stash->{'domain_result'}->update({
               domain => $form->field('domain')->value,
           });
@@ -115,9 +109,6 @@ sub delete :Chained('base') :PathPart('delete') :Args(0) {
     }
 
     $c->stash->{'domain_result'}->delete;
-#    $c->model('billing')->resultset('domains')->search({
-#            id => $c->stash->{domain}->{id},
-#        })->delete;
     
 #    my $schema = $c->model('billing')->schema;
 #    $schema->provisioning($c->model('provisioning')->schema->connect);
@@ -171,10 +162,7 @@ sub preferences_detail :Chained('base') :PathPart('preferences') :CaptureArgs(1)
     $c->stash->{preference} = $c->model('provisioning')
         ->resultset('voip_dom_preferences')
         ->search({attribute_id => $pref_id, domain_id => $c->stash->{provisioning_domain_id}});
-    my @values = ();
-    while(my $p = $c->stash->{preference}->next()) {
-        push @values, $p->value;
-    }
+    my @values = $c->stash->{preference}->get_column("value")->all;
     $c->stash->{preference_values} = \@values;
     $c->stash(template => 'domain/preferences.tt');
 }

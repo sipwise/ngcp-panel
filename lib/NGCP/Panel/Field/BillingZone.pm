@@ -21,13 +21,6 @@ has_field 'create' => (
     element_class => [qw/btn btn-tertiary/],
 );
 
-#sub validate {
-#    my $field = shift;
-#    my $value = $field->value;
-#    $field->value($field->value->{'id'});
-#    return $field;
-#}
-
 1;
 
 # vim: set tabstop=4 expandtab:
