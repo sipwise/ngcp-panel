@@ -15,6 +15,10 @@ has_field 'id' => (
     type => 'Hidden'
 );
 
+has_field 'submitid' => (
+    type => 'Hidden'
+);
+
 has_field 'source' => (
     type => 'Text', #Regexp
     maxlength => 255,
@@ -89,7 +93,8 @@ has_block 'fields' => (
     render_list => [qw/id source destination direction billing_zone
         onpeak_init_rate onpeak_init_interval onpeak_follow_rate
         onpeak_follow_interval offpeak_init_rate offpeak_init_interval
-        offpeak_follow_rate offpeak_follow_interval use_free_time/],
+        offpeak_follow_rate offpeak_follow_interval use_free_time
+        submitid /],
 );
 
 has_block 'actions' => (
@@ -104,15 +109,13 @@ sub custom_get_values {
     foreach my $val(values %$hashvalues) {
         $val = '' unless defined($val);
     }
+    delete $hashvalues->{submitid};
     return $hashvalues;
 }
 
 sub custom_get_values_to_update {
     my ($self) = @_;
-    my $hashvalues = { %{$self->value} }; #prevents sideeffects
-    foreach my $val(values %$hashvalues) {
-        $val = '' unless defined($val);
-    }
+    my $hashvalues = $self->custom_get_values;
     $hashvalues->{billing_zone_id} = defined $hashvalues->{billing_zone}->{id} ?
         $hashvalues->{billing_zone}->{id}+0 :
         '';

@@ -29,6 +29,7 @@ sub check_form_buttons {
     my $fields = $params{fields};
     my $form = $params{form};
     my $back_uri = $params{back_uri};
+    my $redir_uri = $params{redir_uri};
 
     my $posted = ($c->request->method eq 'POST');
 
@@ -43,7 +44,11 @@ sub check_form_buttons {
             } else {
                 $c->session->{redirect_targets} = [ $back_uri ];
             }
-            $c->response->redirect($c->uri_for($target));
+            if (defined $redir_uri) {
+                $c->response->redirect($redir_uri);
+            } else {
+                $c->response->redirect($c->uri_for($target));
+            }
             return 1;
         }
     }

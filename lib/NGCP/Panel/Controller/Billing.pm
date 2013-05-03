@@ -6,9 +6,13 @@ BEGIN { extends 'Catalyst::Controller'; }
 
 use NGCP::Panel::Form::BillingProfile;
 use NGCP::Panel::Form::BillingFee;
+use NGCP::Panel::Form::BillingZone;
+use NGCP::Panel::Utils;
 
 sub list :Chained('/') :PathPart('billing') :CaptureArgs(0) :Args(0) {
     my ( $self, $c ) = @_;
+    
+    NGCP::Panel::Utils::check_redirect_chain(c => $c);
 
     $c->stash(has_edit => 1);
     $c->stash(has_preferences => 0);
@@ -198,6 +202,11 @@ sub fees_edit :Chained('fees_base') :PathPart('edit') :Args(0) {
         params => $posted ? $c->request->params : $c->stash->{fee},
         action => $c->uri_for($c->stash->{profile}->{id},'fees',$c->stash->{fee}->{id}, 'edit'),
     );
+    return if NGCP::Panel::Utils::check_form_buttons(
+        c => $c, form => $form, fields => [qw/billing_zone.create/],
+        back_uri => $c->req->uri,
+        redir_uri => $c->uri_for($c->stash->{profile}->{id}, 'zones', 'create'),
+    );
     if($posted && $form->validated) {
         $c->stash->{'fee_result'}
             ->update($form->custom_get_values_to_update() );
@@ -225,8 +234,11 @@ sub fees_delete :Chained('fees_base') :PathPart('delete') :Args(0) {
 }
 
 sub zones_list :Chained('base') :PathPart('zones') :CaptureArgs(0) {
-
-
+    my ($self, $c) = @_;
+    
+    $c->stash(has_edit => 0);
+    $c->stash(has_preferences => 0);
+    $c->stash(template => 'billing/zones.tt');
 }
 
 sub zones_ajax :Chained('zones_list') :PathPart('ajax') :Args(0) {
@@ -239,6 +251,35 @@ sub zones_ajax :Chained('zones_list') :PathPart('ajax') :Args(0) {
                  [1,2]]);
     
     $c->detach( $c->view("JSON") );
+}
+
+sub zones_create :Chained('zones_list') :PathPart('create') :Args(0) {
+    my ($self, $c) = @_;
+    
+    my $form = NGCP::Panel::Form::BillingZone->new;
+    $form->process(
+        posted => ($c->request->method eq 'POST'),
+        params => $c->request->params,
+        action => $c->uri_for($c->stash->{profile}->{id}, 'zones', 'create'),
+    );
+    if($form->validated) {
+        $c->stash->{'profile_result'}->billing_zones
+            ->create(
+                 $form->fif,
+             );
+        if($c->stash->{close_target}) {
+            # TODO: set created zone in flash to be selected at target
+            $c->response->redirect($c->stash->{close_target});
+            return;
+        }
+        $c->flash(messages => [{type => 'success', text => 'Billing Zone successfully created!'}]);
+        #$c->response->redirect($c->uri_for($c->stash->{profile}->{id}, 'fees'));
+        return;
+    }
+
+    #$c->stash(close_target => $c->uri_for($c->stash->{profile}->{id}, 'fees'));
+    $c->stash(form => $form);
+    $c->stash(create_flag => 1);
 }
 
 __PACKAGE__->meta->make_immutable;

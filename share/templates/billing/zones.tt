@@ -1,0 +1,19 @@
+[% META title = 'Billing Zones' -%]
+[%
+    helper.name = 'Billing Zones';
+    helper.messages = messages;
+    helper.column_titles = [ '#', 'Zone', 'Zone Detail' ];
+    helper.column_fields = [ 'id', 'zone', 'detail' ];
+
+    helper.close_target = close_target;
+    helper.create_flag = create_flag;
+    helper.edit_flag = edit_fee_flag;
+    helper.form_object = form;
+    helper.has_edit = has_edit;
+    helper.has_preferences = has_preferences;
+    helper.ajax_uri = c.uri_for( c.action, c.req.captures, 'ajax' );
+    helper.base_uri = c.uri_for( profile.id, 'zones');
+
+    PROCESS 'helpers/datatables.tt';
+-%]
+[% # vim: set tabstop=4 syntax=html expandtab: -%]
