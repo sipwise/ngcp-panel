@@ -56,7 +56,6 @@ sub create :Chained('list') :PathPart('create') :Args(0) {
     );
     if($form->validated) {
         if($c->stash->{close_target}) {
-            # TODO: set created contract in flash to be selected at target
             $c->response->redirect($c->stash->{close_target});
             return;
         }

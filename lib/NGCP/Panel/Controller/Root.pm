@@ -206,7 +206,6 @@ sub ajax_process_resultset :Private {
             $rs = $rs->search({ id => { '!=', $iIdOnTop}});
         }
     }
-    #TODO: influences pagination, as there is now one additional row
     
     #Sorting
     if(defined($iSortCol_0) && defined($sSortDir_0)) {

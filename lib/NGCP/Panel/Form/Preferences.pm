@@ -58,8 +58,7 @@ sub field_list {
                     type => 'Text',
                 };
             } else {
-                # TODO: needs to be a list of values with the option
-                # to delete old, add new
+                # is only used to add a new field
                 $field = {
                     name => $meta->attribute,
                     type => 'Text',

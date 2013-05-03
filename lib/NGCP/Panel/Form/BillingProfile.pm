@@ -33,7 +33,7 @@ has_field 'interval_free_cash' => (
 );
 
 has_field 'fraud_interval_limit' => (
-    type => 'Integer', #TODO: ???
+    type => 'Integer',
     label => 'Fraud Monthly Limit',
 );
 
@@ -56,7 +56,7 @@ has_field 'fraud_interval_notify' => (
 );
 
 has_field 'fraud_daily_limit' => (
-    type => 'Integer', #???
+    type => 'Integer',
 );
 
 has_field 'fraud_daily_lock' => (

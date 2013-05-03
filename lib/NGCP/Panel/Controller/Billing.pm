@@ -268,7 +268,6 @@ sub zones_create :Chained('zones_list') :PathPart('create') :Args(0) {
                  $form->fif,
              );
         if($c->stash->{close_target}) {
-            # TODO: set created zone in flash to be selected at target
             $c->response->redirect($c->stash->{close_target});
             return;
         }

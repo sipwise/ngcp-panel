@@ -158,7 +158,6 @@ sub preferences_detail :Chained('base') :PathPart('preferences') :CaptureArgs(1)
         ->resultset('voip_domains')
         ->single({domain => $c->stash->{domain}->{domain}})->id;
 
-    # TODO this can return more than one row
     $c->stash->{preference} = $c->model('provisioning')
         ->resultset('voip_dom_preferences')
         ->search({attribute_id => $pref_id, domain_id => $c->stash->{provisioning_domain_id}});
@@ -200,7 +199,6 @@ sub preferences_edit :Chained('preferences_detail') :PathPart('edit') :Args(0) {
         );
     }
     if($posted && $form->validated) {
-        # TODO: if meta->max_occur=0 insert, otherwise insert_or_update
         my $preference_id = $c->stash->{preference}->first ? $c->stash->{preference}->first->id : undef;
         if ($c->stash->{preference_meta}->max_occur != 1) {
             $c->model('provisioning')
