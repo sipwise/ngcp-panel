@@ -35,7 +35,7 @@ $(document).ready(function() {
                       '<a class="btn btn-small btn-secondary" href="[% helper.base_uri %]/' + full[0] + '/delete" data-confirm="Delete">' +
                         '<i class="icon-trash"></i> Delete' +
                       '</a>' +
-                    [%- IF helper.extra_buttons.size > 0 %]
+                    [%- IF helper.extra_buttons.size %]
                         [% FOR b IN helper.extra_buttons %]
                             '<a class="btn btn-small btn-tertiary" href="[% helper.base_uri %]/' + full[0] + '/' +
                             '[% b.1 %]' + '">' +
