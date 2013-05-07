@@ -33,6 +33,7 @@
 
         <script type="text/javascript" src="/js/plugins/msgbox/jquery.msgbox.js"></script>
         <link rel="stylesheet" type="text/css" href="/js/plugins/msgbox/jquery.msgbox.css" />
+        <link rel="stylesheet" type="text/css" href="/css/main.css" />
     </head>
     [% content %]
 </html>

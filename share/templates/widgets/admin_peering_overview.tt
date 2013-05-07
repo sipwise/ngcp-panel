@@ -7,7 +7,7 @@
                 <span class="term">Peering Groups</span>
             </div>
         </div>
-        <div class="plan-features" style="min-height:135px;"><!-- 3 rows -->
+        <div class="plan-features">
             <ul>
                 <li><strong>12</strong> Peering Servers</li>
                 <li><strong>24</strong> Peering Rules</li>

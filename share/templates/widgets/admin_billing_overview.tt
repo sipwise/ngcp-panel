@@ -7,7 +7,7 @@
                 <span class="term">Billing Profiles</span>
             </div>
         </div>
-        <div class="plan-features" style="min-height:135px;"><!-- 3 rows -->
+        <div class="plan-features">
             <ul>
                 <li><strong>€2000</strong> Peering Costs</li>
                 <li><strong>€5000</strong> Reseller Revenue</li>

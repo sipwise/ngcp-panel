@@ -1,13 +1,3 @@
-<style type="text/css" scoped="scoped">
-body {
-    overflow-y: scroll;
-}
-
-.entry-disabled {
-	text-decoration: line-through;
-}
-</style>
-
 <a href="[% c.uri_for() %]">&lt; Back</a>
 
 [% IF helper.messages -%]
@@ -18,7 +8,7 @@ body {
 </div>
 [% END -%]
 
-<div style="margin-top:10px;"></div>
+<div class="ngcp-separator"></div>
 
 <div class="accordion" id="preference_groups">
 [% FOREACH group IN helper.pref_groups %]
@@ -67,7 +57,7 @@ body {
                         [% ELSE %]
                             [% FOR value IN r.value -%]
                                 [% IF value.substr(0,1) == '#' -%]
-                                    <span class="entry-disabled">[% value.substr(1) %]</span>
+                                    <span class="ngcp-entry-disabled">[% value.substr(1) %]</span>
                                 [% ELSE -%]
                                     [% value %]
                                 [% END -%]
@@ -83,8 +73,8 @@ body {
                     [% END %]
                 </td>
                 <td>
-                    <div class="sw_actions pull-right" style="visibility:hidden;">
-                        <a style="display:inline;line-height:16px;" class="btn btn-small btn-primary" href="[% c.uri_for(helper.domain_id,'preferences', r.id, 'edit') %]"><i class="icon-edit" style="line-height:1em;margin-top:2px"></i> Edit</a>
+                    <div class="sw_actions pull-right">
+                        <a class="btn btn-small btn-primary" href="[% c.uri_for(helper.domain_id,'preferences', r.id, 'edit') %]"><i class="icon-edit"></i> Edit</a>
                     </div>
                 </td>
             </tr>
@@ -112,7 +102,7 @@ $(function() {
 </script>
 
 [% IF helper.edit_preference -%]
-<div id="mod_edit" class="modal hide" style="display:block">
+<div id="mod_edit" class="modal hide ngcp-modal">
     <div class="modal-header">
         <button id="mod_close" type="button" class="close">×</button>
         <h3>Edit Preference [% helper.preference_meta.attribute %]</h3>
@@ -121,7 +111,7 @@ $(function() {
         <div class="modal-body">
         [% FOREACH v IN helper.preference.all %]
             [% IF v.value.substr(0,1) == '#' %]
-                <input type="text" value="[% v.value.substr(1) %]" disabled="disabled" class="entry-disabled"></input>
+                <input type="text" value="[% v.value.substr(1) %]" disabled="disabled" class="ngcp-entry-disabled"></input>
             [% ELSE %]
                 <input type="text" value="[% v.value %]" disabled="disabled"></input>
             [% END %]

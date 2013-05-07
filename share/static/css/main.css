@@ -1,0 +1,188 @@
+/* ---------
+  Globals
+------------*/
+
+body {
+    overflow-y: scroll;
+}
+
+/* ---------
+  The modal
+------------*/
+
+div.ngcp-modal {
+    max-width: 816px;
+    width: 100%;
+    margin: -250px 0 0 -408px;
+    top: 50%;
+    left: 50%; /* override responsive css (bootstrap-responsive.css) */
+    display: block;
+}
+@media (max-width: 830px) {
+    div.ngcp-modal {
+        margin-left: -50%;
+    }
+}
+
+div.ngcp-modal .table thead tr th, div.modal .table tbody tr td {
+    padding-top: 4px;
+    padding-bottom: 4px;
+}
+
+div.ngcp-modal .help-inline {
+    clear: both;
+    float: left;
+}
+
+/* ---------
+  Datatable (main one)
+------------*/
+
+table.ngcp-datatable {
+    margin: 1em 0;
+    clear: both;
+}
+
+table.ngcp-datatable .header {
+    cursor: pointer;
+}
+
+table.ngcp-datatable .header:after {
+  content: "";
+  float: right;
+  margin-top: 7px;
+  border-width: 0 4px 4px;
+  border-style: solid;
+  border-color: #fff transparent;
+  visibility: hidden;
+}
+table.ngcp-datatable .header:hover:after {
+  visibility: visible;
+}
+table.ngcp-datatable .headerSortDown:after, table.ngcp-datatable .headerSortDown:hover:after {
+  visibility: visible;
+  filter: alpha(opacity=60);
+  -moz-opacity: 0.6;
+  opacity: 0.6;
+}
+table.ngcp-datatable .headerSortUp:after {
+  border-bottom: none;
+  border-left: 4px solid transparent;
+  border-right: 4px solid transparent;
+  border-top: 4px solid #fff;
+  visibility: visible;
+  -webkit-box-shadow: none;
+  -moz-box-shadow: none;
+  box-shadow: none;
+  filter: alpha(opacity=60);
+  -moz-opacity: 0.6;
+  opacity: 0.6;
+}
+
+.ngcp-actions-column { /* TODO: use responsive design */
+    white-space: nowrap;
+}
+
+div.ngcp-separator {
+    margin-top:10px;
+}
+
+/* ---------
+  sw_actions (Action Buttons)
+------------*/
+
+div.sw_actions {
+    visibility: hidden;
+}
+
+div.sw_actions a {
+    display:inline;
+    line-height:16px;
+    margin-left:5px;
+}
+
+div.sw_actions a:first-child {
+    margin-left:0px;
+}
+
+div.sw_actions a i {
+    line-height:1em;
+    margin-top:2px;
+}
+
+/* ---------
+  Datatable (without closer spec)
+------------*/
+
+div.dataTables_length label {
+    width: 460px;
+    float: left;
+    text-align: left;
+}
+ 
+div.dataTables_filter, div.dataTables_paginate {
+    float: right;
+}
+@media (max-width: 300px) {
+    div.dataTables_filter {
+        float: none;
+    }
+}
+ 
+div.dataTables_info {
+    padding-top: 8px;
+}
+ 
+div.dataTables_paginate {
+    float: right;
+    margin: 0;
+}
+@media (min-width: 767px) {
+    div.dataTables_paginate {
+        width: 227px;
+    }
+}
+
+/* ---------
+  Datatable Field (inside modal)
+------------*/
+
+div.ngcp-modal .dataTables_wrapper {
+    padding: 5px;
+}
+
+div.ngcp-modal .control-group.error .dataTables_wrapper {
+    border: 1px solid #B94A48;
+    border-radius: 3px;
+    -webkit-border-radius: 3px;
+    -mozilla-border-radius: 3px;
+}
+
+div.ngcp-modal .dataTables_wrapper input[type="text"] {
+    line-height: 10px;
+    height: 10px;
+}
+
+div.ngcp-modal .control-group.error .dataTables_wrapper input[type="text"] {
+    border: 1px solid #cccccc;
+}
+
+/* ---------
+  Preferences view
+------------*/
+
+.ngcp-entry-disabled {
+	text-decoration: line-through;
+}
+
+/* ---------
+  Widgets
+------------*/
+
+.plan .plan-features {
+    min-height:135px; /* 3 rows */
+}
+
+.plan .ngcp-green-ok {
+    color:#0f0;
+}

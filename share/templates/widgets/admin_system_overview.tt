@@ -3,11 +3,11 @@
         <div class="plan-header">
             <div class="plan-title">System Status</div>
             <div class="plan-price">
-                <span style="color:#0f0;">&#9702;</span>
+                <span class="ngcp-green-ok">&#9702;</span>
                 <span class="term">All services running</span>
             </div>
         </div>
-        <div class="plan-features" style="min-height:135px;"><!-- 3 rows -->
+        <div class="plan-features">
             <ul>
                 <li>Applications <strong>Ok</strong></li>
                 <li>System <strong>Ok</strong></li>
