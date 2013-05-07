@@ -1,5 +1,5 @@
 package NGCP::Panel::Controller::Billing;
-use Moose;
+{use Sipwise::Base;}
 use namespace::autoclean;
 
 BEGIN { extends 'Catalyst::Controller'; }
@@ -9,7 +9,7 @@ use NGCP::Panel::Form::BillingFee;
 use NGCP::Panel::Form::BillingZone;
 use NGCP::Panel::Utils;
 
-sub list :Chained('/') :PathPart('billing') :CaptureArgs(0) :Args(0) {
+sub profile_list :Chained('/') :PathPart('billing') :CaptureArgs(0) :Args(0) {
     my ( $self, $c ) = @_;
     
     NGCP::Panel::Utils::check_redirect_chain(c => $c);
@@ -19,11 +19,11 @@ sub list :Chained('/') :PathPart('billing') :CaptureArgs(0) :Args(0) {
     $c->stash(template => 'billing/list.tt');
 }
 
-sub root :Chained('list') :PathPart('') :Args(0) {
+sub root :Chained('profile_list') :PathPart('') :Args(0) {
     my ($self, $c) = @_;
 }
 
-sub ajax :Chained('list') :PathPart('ajax') :Args(0) {
+sub ajax :Chained('profile_list') :PathPart('ajax') :Args(0) {
     my ($self, $c) = @_;
     
     my $resultset = $c->model('billing')->resultset('billing_profiles');
@@ -35,7 +35,7 @@ sub ajax :Chained('list') :PathPart('ajax') :Args(0) {
     $c->detach( $c->view("JSON") );
 }
 
-sub base :Chained('list') :PathPart('') :CaptureArgs(1) :Args(0) {
+sub base :Chained('profile_list') :PathPart('') :CaptureArgs(1) :Args(0) {
     my ($self, $c, $profile_id) = @_;
 
     unless($profile_id && $profile_id =~ /^\d+$/) {
@@ -77,7 +77,7 @@ sub edit :Chained('base') :PathPart('edit') {
     $c->stash(edit_flag => 1);
 }
 
-sub create :Chained('list') :PathPart('create') :Args(0) {
+sub create :Chained('profile_list') :PathPart('create') :Args(0) {
     my ($self, $c) = @_;
 
     my $form = NGCP::Panel::Form::BillingProfile->new;
@@ -128,7 +128,7 @@ sub fees :Chained('fees_list') :PathPart('') :Args(0) {
 sub fees_base :Chained('fees_list') :PathPart('') :CaptureArgs(1) {
     my ($self, $c, $fee_id) = @_;
 
-        unless($fee_id && $fee_id =~ /^\d+$/) {
+    unless($fee_id && $fee_id =~ /^\d+$/) {
         $c->flash(messages => [{type => 'error', text => 'Invalid billing fee id detected!'}]);
         $c->response->redirect($c->uri_for($c->stash->{profile}->{id}, 'fees'));
         return;
@@ -236,6 +236,10 @@ sub fees_delete :Chained('fees_base') :PathPart('delete') :Args(0) {
 sub zones_list :Chained('base') :PathPart('zones') :CaptureArgs(0) {
     my ($self, $c) = @_;
     
+    $c->stash( zones_root_uri =>
+        $c->uri_for_action('/billing/zones', [$c->req->captures->[0]])
+    );
+    
     $c->stash(has_edit => 0);
     $c->stash(has_preferences => 0);
     $c->stash(template => 'billing/zones.tt');
@@ -281,6 +285,42 @@ sub zones_create :Chained('zones_list') :PathPart('create') :Args(0) {
     $c->stash(create_flag => 1);
 }
 
+sub zones :Chained('zones_list') :PathPart('') :Args(0) {
+}
+
+sub zones_base :Chained('zones_list') :PathPart('') :CaptureArgs(1) {
+    my ($self, $c, $zone_id) = @_;
+    
+    unless($zone_id && $zone_id =~ /^\d+$/) {
+        $c->flash(messages => [{type => 'error', text => 'Invalid billing zone id detected!'}]);
+        $c->response->redirect($c->stash->{zones_root_uri});
+        return;
+    }
+    
+    my $res = $c->stash->{'profile_result'}->billing_zones
+        ->find($zone_id);
+    unless(defined($res)) {
+        $c->flash(messages => [{type => 'error', text => 'Billing Zone does not exist!'}]);
+        $c->response->redirect($c->stash->{zones_root_uri});
+        return;
+    }
+    $c->stash(zone_result => $res);
+}
+
+sub zones_delete :Chained('zones_base') :PathPart('delete') :Args(0) {
+    my ($self, $c) = @_;
+    
+    try {
+        $c->stash->{zone_result}->delete;
+    } catch (DBIx::Class::Exception $e) {
+        $c->flash(messages => [{type => 'error', text => 'Delete failed.'}]);
+    } catch ($e) {
+        throw $e; #Other exception
+    }
+
+    $c->response->redirect($c->stash->{zones_root_uri});
+}
+
 __PACKAGE__->meta->make_immutable;
 
 1;
@@ -297,7 +337,7 @@ Catalyst Controller.
 
 =head1 METHODS
 
-=head2 list
+=head2 profile_list
 
 basis for the billing controller
 
@@ -360,7 +400,23 @@ basis for billing zones. part of a certain billing profile.
 
 =head2 zones_ajax
 
-sends a JSON representation of billing_zones und the current billing profile.
+sends a JSON representation of billing_zones under the current billing profile.
+
+=head2 zones_create
+
+Show a modal to create a new billing_zone in the current billing profile.
+
+=head2 zones
+
+Show a datatables list of billing_zones in the current billing profile.
+
+=head2 zones_base
+
+Fetch a billing_zone (identified by id).
+
+=head2 zones_delete
+
+Delete a billing_zone (defined by zones_base).
 
 =head1 AUTHOR
 
