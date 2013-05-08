@@ -1,4 +1,6 @@
 [% META title = 'Billing Fees' -%]
+
+<a href="[% c.uri_for_action('/billing/zones',[c.req.captures.0]) %]" class="btn btn-tertiary btn-large">Edit Zones</a>
 [%
     helper.name = 'Billing Fees';
     helper.messages = messages;
@@ -11,7 +13,7 @@
     helper.form_object = form;
     helper.has_edit = has_edit;
     helper.has_preferences = has_preferences;
-    helper.ajax_uri = c.uri_for( c.action, c.req.captures, 'ajax' );
+    helper.ajax_uri = c.uri_for_action('/billing/fees_ajax', [c.req.captures.0]);
     helper.base_uri = c.uri_for( profile.id, 'fees');
 
     PROCESS 'helpers/datatables.tt';

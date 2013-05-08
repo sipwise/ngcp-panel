@@ -176,6 +176,11 @@ sub fees_create :Chained('fees_list') :PathPart('create') :Args(0) {
         params => $c->request->params,
         action => $c->uri_for($c->stash->{profile}->{id}, 'fees', 'create'),
     );
+    return if NGCP::Panel::Utils::check_form_buttons(
+        c => $c, form => $form, fields => [qw/billing_zone.create/],
+        back_uri => $c->req->uri,
+        redir_uri => $c->uri_for($c->stash->{profile}->{id}, 'zones', 'create'),
+    );
     if($form->validated) {
         $c->stash->{'profile_result'}->billing_fees
             ->create(
@@ -276,11 +281,11 @@ sub zones_create :Chained('zones_list') :PathPart('create') :Args(0) {
             return;
         }
         $c->flash(messages => [{type => 'success', text => 'Billing Zone successfully created!'}]);
-        #$c->response->redirect($c->uri_for($c->stash->{profile}->{id}, 'fees'));
+        $c->response->redirect($c->stash->{zones_root_uri});
         return;
     }
 
-    #$c->stash(close_target => $c->uri_for($c->stash->{profile}->{id}, 'fees'));
+    $c->stash(close_target => $c->stash->{zones_root_uri});
     $c->stash(form => $form);
     $c->stash(create_flag => 1);
 }
