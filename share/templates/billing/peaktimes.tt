@@ -47,6 +47,20 @@
 
 <h3>Dates</h3>
 
+[%
+    helper.name = 'Billing Profiles';
+    helper.column_titles = [ '#', 'Date', 'Start-End' ];
+    helper.column_fields = [ 'id', 'date', 'startend' ];
+
+    helper.create_flag = 0;
+    helper.edit_flag = 0;
+    helper.has_edit = 1;
+    helper.has_preferences = 0;
+    helper.ajax_uri = c.uri_for_action("/billing/peaktime_specials_ajax", [c.req.captures.0]);
+    helper.base_uri = "";
+
+    PROCESS 'helpers/datatables.tt';
+-%]
 
 [% IF edit_flag -%]
 [% 

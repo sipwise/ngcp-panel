@@ -419,6 +419,26 @@ sub load_weekdays {
     $c->stash(weekdays => \@weekdays);
 }
 
+sub peaktime_specials_ajax :Chained('peaktimes_list') :PathPart('ajax') :Args(0) {
+    my ($self, $c) = @_;
+
+    my $resultset = $c->stash->{'profile_result'}->billing_peaktime_specials;
+
+    $c->forward( "/ajax_process_resultset", [$resultset,
+                 ["id", "start", "end",],
+                 [1,2]]);
+    
+    for my $row (@{ $c->stash->{aaData} }) {
+        my $date = $row->[1]->date;
+        my $start = $row->[1]->hms;
+        my $end = $row->[2]->hms;
+        $row->[1] = $date;
+        $row->[2] = $start . ' - ' . $end;
+    }
+    
+    $c->detach( $c->view("JSON") );
+}
+
 __PACKAGE__->meta->make_immutable;
 
 1;
@@ -536,6 +556,14 @@ Show a modal to edit one weekday.
 
 creates a weekdays structure from the stash variable weekdays_result
 puts the result under weekdays on stash (will be used by template)
+
+=head2 peaktime_specials_ajax
+
+Returns an ajax representation of billing_peaktime_specials under the current
+billing_profile. The rows are modified so that the final form will be
+(id, date, startend).
+
+This depends on inflation being activated in the schema.
 
 =head1 AUTHOR
 

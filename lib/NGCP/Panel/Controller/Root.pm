@@ -229,7 +229,7 @@ sub ajax_process_resultset :Private {
     }
     
     for my $row ($rs->all) {
-        my %tmpRow = $row->get_columns;
+        my %tmpRow = $row->get_inflated_columns;
         my @aaRow = @tmpRow{@$columns};
         push @$aaData, \@aaRow;
     }
