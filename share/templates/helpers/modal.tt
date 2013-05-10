@@ -1,0 +1,34 @@
+[% MACRO modal_header BLOCK -%]
+
+<div id="mod_edit" class="modal hide ngcp-modal">
+    <div class="modal-header">
+        <button id="mod_close" type="button" class="close">×</button>
+        <h3>[% m.create_flag == 1 ? 'Create' : 'Edit' %] [% m.name %]</h3>
+    </div>
+
+[% END -%]
+
+[% MACRO modal_footer BLOCK -%]
+</div>
+[% END -%]
+
+[% MACRO modal_script BLOCK %]
+<script>
+    $(function () {
+        $('#mod_edit').modal({keyboard: false, backdrop: 'static'});
+        $('#mod_close').click(function(event) {
+            window.location.href="[% m.close_target ? m.close_target : c.uri_for() %]";
+        });
+
+        // on clicking a button within the form, add a hidden field "submitid"
+        // determining the name of the button being clicked
+        $('input[type=button]').click(function() {
+            $(this).parents('form').find('#submitid').attr('value', $(this).attr('name'));
+            $(this).parents('form').submit();
+        });
+    });
+</script>
+[% END -%]
+
+[% # vim: set tabstop=4 syntax=html expandtab: -%]
+

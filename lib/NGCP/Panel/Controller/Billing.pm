@@ -7,7 +7,10 @@ BEGIN { extends 'Catalyst::Controller'; }
 use NGCP::Panel::Form::BillingProfile;
 use NGCP::Panel::Form::BillingFee;
 use NGCP::Panel::Form::BillingZone;
+use NGCP::Panel::Form::BillingPeaktimeWeekdays;
 use NGCP::Panel::Utils;
+
+my @WEEKDAYS = qw(Monday Tuesday Wednesday Thursday Friday Saturday Sunday);
 
 sub profile_list :Chained('/') :PathPart('billing') :CaptureArgs(0) :Args(0) {
     my ( $self, $c ) = @_;
@@ -324,6 +327,60 @@ sub zones_delete :Chained('zones_base') :PathPart('delete') :Args(0) {
     }
 
     $c->response->redirect($c->stash->{zones_root_uri});
+}
+
+sub peaktimes_list :Chained('base') :PathPart('peaktimes') :CaptureArgs(0) {
+    my ($self, $c) = @_;
+    
+    my @weekdays;
+    for(0 .. 6) {
+        $weekdays[$_] = {
+            name => $WEEKDAYS[$_],
+            ranges => [],
+            edit_link => $c->uri_for_action("/billing/peaktime_weekdays_edit",
+                [$c->req->captures->[0], $_]),
+        };
+    }
+    
+    my $rs = $c->stash->{profile_result}->billing_peaktime_weekdays;
+    
+    foreach my $range ($rs->all) {
+        push @{ $weekdays[$range->weekday]->{ranges} }, {
+            start => $range->start,
+            end => $range->end,
+            id => $range->id,
+        }
+    }
+    
+    $c->stash(weekdays => \@weekdays);
+    $c->stash(template => 'billing/peaktimes.tt');
+}
+
+sub peaktimes :Chained('peaktimes_list') :PathPart('') :Args(0) {
+    my ($self, $c) = @_;
+}
+
+sub peaktime_weekdays_base :Chained('peaktimes_list') :PathPart('weekday') :CaptureArgs(1) {
+    my ($self, $c, $weekday_id) = @_;
+    unless (defined $weekday_id && $weekday_id >= 0 && $weekday_id <= 6) {
+        $c->flash(messages => [{
+            type => 'error',
+            text => 'This weekday does not exist.'
+        }]);
+        $c->response->redirect($c->uri_for_action(
+            "/billing/peaktimes", [$c->req->captures->[0]],
+        ));
+    }
+    $c->stash(weekday => $c->stash->{weekdays}->[$weekday_id]);
+}
+
+sub peaktime_weekdays_edit :Chained('peaktime_weekdays_base') :PathPart('edit') :Args(0) {
+    my ($self, $c) = @_;
+    
+    my $form = NGCP::Panel::Form::BillingPeaktimeWeekdays->new;
+    
+    $c->stash(form => $form);
+    $c->stash(edit_flag => 1);
 }
 
 __PACKAGE__->meta->make_immutable;

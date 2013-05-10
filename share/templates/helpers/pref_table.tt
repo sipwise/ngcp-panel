@@ -102,11 +102,13 @@ $(function() {
 </script>
 
 [% IF helper.edit_preference -%]
-<div id="mod_edit" class="modal hide ngcp-modal">
-    <div class="modal-header">
-        <button id="mod_close" type="button" class="close">×</button>
-        <h3>Edit Preference [% helper.preference_meta.attribute %]</h3>
-    </div>
+
+[%
+    PROCESS "helpers/modal.tt";
+    modal_header(m.create_flag=0,
+                 m.name = "Preference " _ helper.preference_meta.attribute);
+-%]
+
     [% IF helper.preference_meta.max_occur != 1 %]
         <div class="modal-body">
         [% FOREACH v IN helper.preference.all %]
@@ -131,7 +133,9 @@ $(function() {
     [% ELSE %]
         [% helper.form.render -%]
     [% END %]
-</div>
+[%
+    modal_footer();
+-%]
 <script>
     $(function () {
         $('#mod_edit').modal({keyboard: false, backdrop: 'static'});

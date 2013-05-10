@@ -80,6 +80,7 @@ table.ngcp-datatable .headerSortUp:after {
 }
 
 .ngcp-actions-column { /* TODO: use responsive design */
+    width: 10px;
     white-space: nowrap;
 }
 

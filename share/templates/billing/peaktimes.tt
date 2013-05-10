@@ -1,0 +1,76 @@
+[% site_config.title = 'Off-peak-times for ' _ profile.name -%]
+
+<a href="[% c.uri_for() %]">&lt; Back</a>
+
+[% IF messages -%]
+<div class="row">
+    [% FOREACH m IN messages -%]
+        <div class="alert alert-[% m.type %]">[% m.text %]</div>
+    [% END -%]
+</div>
+[% END -%]
+
+<div class="ngcp-separator"></div>
+
+<h3>Weekdays</h3>
+
+<table class="table table-bordered table-striped table-highlight table-hover">
+    <thead>
+        <tr>
+            <th>Weekday</th>
+            <th>Start - End</th>
+            <th class="ngcp-actions-column"></th>[% #Actions %]
+        </tr>
+    </thead>
+    <tbody>
+    [% FOR w IN weekdays %]
+        <tr class="sw_action_row">
+            <td>[% w.name %]</td>
+            <td>
+            [% FOR r IN w.ranges %]
+                [% r.start %] – [% r.end %] <br/>
+            [% END %]
+            </td>
+            <td class="ngcp-actions-column">
+            [% IF w.edit_link %]
+                <div class="sw_actions pull-right">
+                    <a class="btn btn-small btn-primary" href="[% w.edit_link %]">
+                        <i class="icon-edit"></i> Edit
+                    </a>
+                </div>
+            [% END %]
+            </td>
+        </tr>
+    [% END %]
+    </tbody>
+</table>
+
+<h3>Dates</h3>
+
+
+[% IF edit_flag -%]
+[% 
+    PROCESS "helpers/modal.tt";
+    modal_header(m.name = weekday.name);
+-%]
+
+<div class="modal-body">
+    [% FOREACH r IN weekday.ranges %]
+        <input type="text" value="[% r.start %]" disabled="disabled"> –
+        <input type="text" value="[% r.end %]" disabled="disabled">
+        <a href="?delete=[% r.id %]"><i class="icon-trash"></i></a>
+        <br />
+    [% END %]
+    <form action="[% form.action || c.uri_for(c.action,c.req.captures) %]" method="POST">
+        [% form.field('start').render %] –
+        [% form.field('end').render %]
+        [% form.field('add').render %]
+    </form>
+</div>
+
+[%        
+    modal_footer();
+    modal_script(m.close_target = c.uri_for_action('/billing/peaktimes', [c.req.captures.0]));
+-%]
+[% END -%]
+[% # vim: set tabstop=4 syntax=html expandtab: -%]

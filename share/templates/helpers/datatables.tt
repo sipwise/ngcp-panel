@@ -110,28 +110,14 @@ $(document).ready(function() {
 </table>
 
 [% IF helper.edit_flag || helper.create_flag == 1 -%]
-<div id="mod_edit" class="modal hide ngcp-modal">
-    <div class="modal-header">
-        <button id="mod_close" type="button" class="close">×</button>
-        <h3>[% helper.create_flag == 1 ? 'Create' : 'Edit' %] [% helper.name %]</h3>
-    </div>
-    [% helper.form_object.render -%]
-</div>
-<script>
-    $(function () {
-        $('#mod_edit').modal({keyboard: false, backdrop: 'static'});
-        $('#mod_close').click(function(event) {
-            window.location.href="[% helper.close_target ? helper.close_target : c.uri_for() %]";
-        });
-
-        // on clicking a button within the form, add a hidden field "submitid"
-        // determining the name of the button being clicked
-        $('input[type=button]').click(function() {
-            $(this).parents('form').find('#submitid').attr('value', $(this).attr('name'));
-            $(this).parents('form').submit();
-        });
-    });
-</script>
+[%
+    PROCESS "helpers/modal.tt";
+    modal_header(m.create_flag=helper.create_flag,
+                 m.name = helper.name);
+        helper.form_object.render;
+    modal_footer();
+    modal_script(m.close_target = helper.close_target);
+-%]
 [% END -%]
 [% # vim: set tabstop=4 syntax=html expandtab: -%]
 
