@@ -332,32 +332,15 @@ sub zones_delete :Chained('zones_base') :PathPart('delete') :Args(0) {
 sub peaktimes_list :Chained('base') :PathPart('peaktimes') :CaptureArgs(0) {
     my ($self, $c) = @_;
     
-    my @weekdays;
-    for(0 .. 6) {
-        $weekdays[$_] = {
-            name => $WEEKDAYS[$_],
-            ranges => [],
-            edit_link => $c->uri_for_action("/billing/peaktime_weekdays_edit",
-                [$c->req->captures->[0], $_]),
-        };
-    }
-    
     my $rs = $c->stash->{profile_result}->billing_peaktime_weekdays;
-    
-    foreach my $range ($rs->all) {
-        push @{ $weekdays[$range->weekday]->{ranges} }, {
-            start => $range->start,
-            end => $range->end,
-            id => $range->id,
-        }
-    }
-    
-    $c->stash(weekdays => \@weekdays);
+    $rs = $rs->search(undef, {order_by => 'start'});
+    $c->stash(weekdays_result => $rs);
     $c->stash(template => 'billing/peaktimes.tt');
 }
 
 sub peaktimes :Chained('peaktimes_list') :PathPart('') :Args(0) {
     my ($self, $c) = @_;
+    $self->load_weekdays($c);
 }
 
 sub peaktime_weekdays_base :Chained('peaktimes_list') :PathPart('weekday') :CaptureArgs(1) {
@@ -371,16 +354,69 @@ sub peaktime_weekdays_base :Chained('peaktimes_list') :PathPart('weekday') :Capt
             "/billing/peaktimes", [$c->req->captures->[0]],
         ));
     }
-    $c->stash(weekday => $c->stash->{weekdays}->[$weekday_id]);
+    $c->stash(weekday_id => $weekday_id);
 }
 
 sub peaktime_weekdays_edit :Chained('peaktime_weekdays_base') :PathPart('edit') :Args(0) {
     my ($self, $c) = @_;
     
     my $form = NGCP::Panel::Form::BillingPeaktimeWeekdays->new;
+    $form->process(
+        posted => ($c->request->method eq 'POST'),
+        params => $c->request->params,
+    );
+    if($form->validated) {
+        $c->stash->{'weekdays_result'}
+            ->create({
+                %{ $form->fif },
+                weekday => $c->stash->{weekday_id},
+             });
+    }
     
+    my $delete_param = $c->request->params->{delete};
+    if($delete_param) {
+        my $rs = $c->stash->{weekdays_result}
+            ->find($delete_param);
+        unless ($rs) {
+            $c->flash(messages => [{
+                type => 'error',
+                text => 'The timerange you wanted to delete does not exist.'
+            }]);
+            $c->response->redirect($c->uri_for_action(
+                "/billing/peaktimes", [$c->req->captures->[0]],
+            ));
+            return;
+        }
+        $rs->delete();
+    }
+    $self->load_weekdays($c);
+    $c->stash(weekday => $c->stash->{weekdays}->[$c->stash->{weekday_id}]);
     $c->stash(form => $form);
     $c->stash(edit_flag => 1);
+}
+
+sub load_weekdays {
+    my ($self, $c) = @_;
+
+    my @weekdays;
+    for(0 .. 6) {
+        $weekdays[$_] = {
+            name => $WEEKDAYS[$_],
+            ranges => [],
+            edit_link => $c->uri_for_action("/billing/peaktime_weekdays_edit",
+                [$c->req->captures->[0], $_]),
+        };
+    }
+    
+    foreach my $range ($c->stash->{weekdays_result}->all) {
+        push @{ $weekdays[$range->weekday]->{ranges} }, {
+            start => $range->start,
+            end => $range->end,
+            id => $range->id,
+        }
+    }
+    
+    $c->stash(weekdays => \@weekdays);
 }
 
 __PACKAGE__->meta->make_immutable;
@@ -479,6 +515,27 @@ Fetch a billing_zone (identified by id).
 =head2 zones_delete
 
 Delete a billing_zone (defined by zones_base).
+
+=head2 peaktimes_list
+
+basis for billing_peaktime_* time definitions. part of a certain billing_profile.
+
+=head2 peaktimes
+
+show a list with peaktime weekdays and peaktime dates.
+
+=head2 peaktime_weekdays_base
+
+Define a certain weekday by id (for further processing in chain).
+
+=head2 peaktime_weekdays_edit
+
+Show a modal to edit one weekday.
+
+=head2 load_weekdays
+
+creates a weekdays structure from the stash variable weekdays_result
+puts the result under weekdays on stash (will be used by template)
 
 =head1 AUTHOR
 
