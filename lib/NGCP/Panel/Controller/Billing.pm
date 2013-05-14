@@ -1,5 +1,5 @@
 package NGCP::Panel::Controller::Billing;
-{use Sipwise::Base;}
+use Sipwise::Base;
 use namespace::autoclean;
 
 BEGIN { extends 'Catalyst::Controller'; }
@@ -69,8 +69,8 @@ sub edit :Chained('base') :PathPart('edit') {
     );
     if($posted && $form->validated) {
         $c->model('billing')->resultset('billing_profiles')
-            ->find($form->field('id')->value)
-            ->update($form->fif() );
+          ->find($form->field('id')->value)->update($form->fif);
+
         $c->flash(messages => [{type => 'success', text => 'Billing Profile successfully changed!'}]);
         $c->response->redirect($c->uri_for());
         return;
@@ -185,10 +185,9 @@ sub fees_create :Chained('fees_list') :PathPart('create') :Args(0) {
         redir_uri => $c->uri_for($c->stash->{profile}->{id}, 'zones', 'create'),
     );
     if($form->validated) {
-        $c->stash->{'profile_result'}->billing_fees
-            ->create(
-                 $form->custom_get_values()
-             );
+        $c->stash->{'profile_result'}
+          ->billing_fees->create($form->custom_get_values());
+
         $c->flash(messages => [{type => 'success', text => 'Billing Fee successfully created!'}]);
         $c->response->redirect($c->uri_for($c->stash->{profile}->{id}, 'fees'));
         return;
@@ -275,10 +274,7 @@ sub zones_create :Chained('zones_list') :PathPart('create') :Args(0) {
         action => $c->uri_for($c->stash->{profile}->{id}, 'zones', 'create'),
     );
     if($form->validated) {
-        $c->stash->{'profile_result'}->billing_zones
-            ->create(
-                 $form->fif,
-             );
+        $c->stash->{'profile_result'}->billing_zones->create($form->fif);
         if($c->stash->{close_target}) {
             $c->response->redirect($c->stash->{close_target});
             return;
@@ -323,8 +319,8 @@ sub zones_delete :Chained('zones_base') :PathPart('delete') :Args(0) {
     } catch (DBIx::Class::Exception $e) {
         $c->flash(messages => [{type => 'error', text => 'Delete failed.'}]);
     } catch ($e) {
-        throw $e; #Other exception
-    }
+        $e->throw; #Other exception
+    };
 
     $c->response->redirect($c->stash->{zones_root_uri});
 }
