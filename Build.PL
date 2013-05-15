@@ -33,6 +33,7 @@ my $builder = Local::Module::Build->new(
         'HTML::FormHandler::Moose' => 0,
         'HTML::FormHandler::Widget::Block::Bootstrap' => 0,
         'Log::Log4perl::Catalyst' => 0,
+        'Module::Runtime' => 0,
         'Moose' => 2,
         'Moose::Role' => 0,
         'Moose::Util::TypeConstraints' => 0,
