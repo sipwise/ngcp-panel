@@ -9,6 +9,7 @@ use NGCP::Panel::Form::BillingFee;
 use NGCP::Panel::Form::BillingZone;
 use NGCP::Panel::Form::BillingPeaktimeWeekdays;
 use NGCP::Panel::Utils;
+use NGCP::Panel::Form::BillingPeaktimeSpecial;
 
 my @WEEKDAYS = qw(Monday Tuesday Wednesday Thursday Friday Saturday Sunday);
 
@@ -327,6 +328,9 @@ sub zones_delete :Chained('zones_base') :PathPart('delete') :Args(0) {
 
 sub peaktimes_list :Chained('base') :PathPart('peaktimes') :CaptureArgs(0) {
     my ($self, $c) = @_;
+    $c->stash(peaktimes_root_uri =>
+        $c->uri_for_action('/billing/peaktimes', [$c->req->captures->[0]])
+    );
     
     my $rs = $c->stash->{profile_result}->billing_peaktime_weekdays;
     $rs = $rs->search(undef, {order_by => 'start'});
@@ -433,6 +437,87 @@ sub peaktime_specials_ajax :Chained('peaktimes_list') :PathPart('ajax') :Args(0)
     }
     
     $c->detach( $c->view("JSON") );
+}
+
+sub peaktime_specials_base :Chained('peaktimes_list') :PathPart('date') :CaptureArgs(1) {
+    my ($self, $c, $special_id) = @_;
+    
+        unless($special_id && $special_id =~ /^\d+$/) {
+        $c->flash(messages => [{type => 'error', text => 'Invalid peaktime date id detected!'}]);
+        $c->response->redirect($c->stash->{peaktimes_root_uri});
+        return;
+    }
+    
+    my $res = $c->stash->{'profile_result'}->billing_peaktime_specials
+        ->find($special_id);
+    unless(defined($res)) {
+        $c->flash(messages => [{type => 'error', text => 'Peaktime date does not exist!'}]);
+        $c->response->redirect($c->stash->{peaktimes_root_uri});
+        return;
+    }
+    $self->load_weekdays($c);
+    $c->stash(special_result => $res);
+}
+
+sub peaktime_specials_edit :Chained('peaktime_specials_base') :PathPart('edit') :Args(0) {
+    my ($self, $c) = @_;
+
+    my $data_res = $c->stash->{special_result};
+    my $data = {
+        date => $data_res->start->date,
+        'time.start' => $data_res->start->hms,
+        'time.end' => $data_res->end->hms
+    };
+    my $posted = ($c->request->method eq 'POST');
+    my $form = NGCP::Panel::Form::BillingPeaktimeSpecial->new;
+    $form->process(
+        posted => 1,
+        params => $posted ? $c->request->params : $data,
+        action => $c->uri_for_action('/billing/peaktime_specials_edit', $c->req->captures),
+    );
+    if($posted && $form->validated) {
+        my $dates = $form->get_dates;
+        $c->stash->{special_result}->update( $dates );
+
+        $c->flash(messages => [{type => 'success', text => 'Peaktime date successfully changed!'}]);
+        $c->response->redirect($c->stash->{peaktimes_root_uri});
+        return;
+    }
+
+    $c->stash(peaktimes_special_editflag => 1);
+    $c->stash(close_target => $c->stash->{peaktimes_root_uri});
+    $c->stash(peaktimes_special_form => $form);
+}
+
+sub peaktime_specials_delete :Chained('peaktime_specials_base') :PathPart('delete') :Args(0) {
+    my ($self, $c) = @_;
+    $c->stash->{special_result}->delete;
+}
+
+sub peaktime_specials_create :Chained('peaktimes_list') :PathPart('create') :Args(0) {
+    my ($self, $c) = @_;
+    $self->load_weekdays($c);
+    
+    my $posted = ($c->request->method eq 'POST');
+    my $form = NGCP::Panel::Form::BillingPeaktimeSpecial->new;
+    $form->process(
+        posted => $posted,
+        params => $c->request->params,
+        action => $c->uri_for_action('/billing/peaktime_specials_create', $c->req->captures),
+    );
+    if($form->validated) {
+        my $dates = $form->get_dates;
+        $c->stash->{'profile_result'}->billing_peaktime_specials
+            ->create( $dates );
+
+        $c->flash(messages => [{type => 'success', text => 'Peaktime date successfully created!'}]);
+        $c->response->redirect($c->stash->{peaktimes_root_uri});
+        return;
+    }
+
+    $c->stash(close_target => $c->stash->{peaktimes_root_uri});
+    $c->stash(peaktimes_special_form => $form);
+    $c->stash(peaktimes_special_createflag => 1);
 }
 
 __PACKAGE__->meta->make_immutable;
@@ -560,6 +645,24 @@ billing_profile. The rows are modified so that the final form will be
 (id, date, startend).
 
 This depends on inflation being activated in the schema.
+
+=head2 peaktime_specials_base
+
+Get one billing_peaktime_special from the database for further processing.
+
+=head2 peaktime_specials_edit
+
+Edit one billing_peaktime_special per modal and the form
+NGCP::Panel::Form::BillingPeaktimeSpecial.
+
+=head2 peaktime_specials_delete
+
+Delete a billing_peaktime_special.
+
+=head2 peaktime_specials_create
+
+Create a new billing_peaktime_special under the current billing_profile.
+Uses NGCP::Panel::Form::BillingPeaktimeSpecial.
 
 =head1 AUTHOR
 

@@ -48,16 +48,18 @@
 <h3>Dates</h3>
 
 [%
-    helper.name = 'Billing Profiles';
+    helper.name = 'Date Definitions';
     helper.column_titles = [ '#', 'Date', 'Start-End' ];
     helper.column_fields = [ 'id', 'date', 'startend' ];
 
-    helper.create_flag = 0;
-    helper.edit_flag = 0;
+    helper.create_flag = peaktimes_special_createflag;
+    helper.edit_flag = peaktimes_special_editflag;
     helper.has_edit = 1;
     helper.has_preferences = 0;
     helper.ajax_uri = c.uri_for_action("/billing/peaktime_specials_ajax", [c.req.captures.0]);
-    helper.base_uri = "";
+    helper.base_uri = c.uri_for(c.req.captures.0, "peaktimes","date");
+    helper.form_object = peaktimes_special_form;
+    helper.close_target = close_target;
 
     PROCESS 'helpers/datatables.tt';
 -%]
