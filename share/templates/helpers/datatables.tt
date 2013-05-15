@@ -32,9 +32,11 @@ $(document).ready(function() {
                         '<i class="icon-edit"></i> Edit' +
                       '</a>' +
                     [%- END %]
+                    [%- IF helper.has_delete != 0 %]
                       '<a class="btn btn-small btn-secondary" href="[% helper.base_uri %]/' + full[0] + '/delete" data-confirm="Delete">' +
                         '<i class="icon-trash"></i> Delete' +
                       '</a>' +
+                    [%- END %]
                     [%- IF helper.extra_buttons.size %]
                         [% FOR b IN helper.extra_buttons %]
                             '<a class="btn btn-small btn-tertiary" href="[% helper.base_uri %]/' + full[0] + '/' +

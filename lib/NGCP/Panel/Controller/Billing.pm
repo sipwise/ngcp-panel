@@ -19,6 +19,7 @@ sub profile_list :Chained('/') :PathPart('billing') :CaptureArgs(0) :Args(0) {
     NGCP::Panel::Utils::check_redirect_chain(c => $c);
 
     $c->stash(has_edit => 1);
+    $c->stash(has_delete => 0);
     $c->stash(template => 'billing/list.tt');
 }
 
@@ -100,19 +101,6 @@ sub create :Chained('profile_list') :PathPart('create') :Args(0) {
     $c->stash(close_target => $c->uri_for());
     $c->stash(create_flag => 1);
     $c->stash(form => $form);
-}
-
-sub delete :Chained('base') :PathPart('delete') :Args(0) {
-    my ($self, $c) = @_;
-    
-    unless ( defined($c->stash->{'profile_result'}) ) {
-        $c->flash(messages => [{type => 'error', text => 'Billing profile not found!'}]);
-        return;
-    }
-    $c->stash->{'profile_result'}->delete;
-
-    $c->flash(messages => [{type => 'success', text => 'Billing profile successfully deleted!'}]);
-    $c->response->redirect($c->uri_for);
 }
 
 sub fees_list :Chained('base') :PathPart('fees') :CaptureArgs(0) {
@@ -556,10 +544,6 @@ Show a modal to edit one billing_profile.
 =head2 create
 
 Show a modal to add a new billing_profile.
-
-=head2 delete
-
-Delete a billing_profile identified by base.
 
 =head2 fees_list
 
