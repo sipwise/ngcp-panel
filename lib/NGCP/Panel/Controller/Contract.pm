@@ -1,10 +1,7 @@
 package NGCP::Panel::Controller::Contract;
 use Moose;
 use namespace::autoclean;
-use Data::Dumper;
-
 BEGIN { extends 'Catalyst::Controller'; }
-
 use NGCP::Panel::Form::Contract;
 use NGCP::Panel::Utils;
 

@@ -1,8 +1,6 @@
 package NGCP::Panel::Controller::Domain;
 use Moose;
 use namespace::autoclean;
-use Data::Dumper;
-use Data::Printer;
 
 BEGIN { extends 'Catalyst::Controller'; }
 

@@ -1,10 +1,7 @@
 package NGCP::Panel::Controller::Reseller;
 use Moose;
 use namespace::autoclean;
-use Data::Dumper;
-
 BEGIN { extends 'Catalyst::Controller'; }
-
 use NGCP::Panel::Form::Reseller;
 use NGCP::Panel::Utils;
 
@@ -95,8 +92,6 @@ sub base :Chained('/reseller/list') :PathPart('') :CaptureArgs(1) {
 
 sub edit :Chained('base') :PathPart('edit') :Args(0) {
     my ($self, $c) = @_;
-
-    print Dumper $c->stash->{reseller};
 
     my $posted = ($c->request->method eq 'POST');
     my $form = NGCP::Panel::Form::Reseller->new;

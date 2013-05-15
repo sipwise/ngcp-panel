@@ -2,8 +2,6 @@ package NGCP::Panel::Utils;
 use strict;
 use warnings;
 
-use Data::Dumper;
-
 sub check_redirect_chain {
     my %params = @_;
 

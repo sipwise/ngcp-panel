@@ -1,10 +1,7 @@
 package NGCP::Panel::Controller::Contact;
 use Moose;
 use namespace::autoclean;
-use Data::Dumper;
-
 BEGIN { extends 'Catalyst::Controller'; }
-
 use NGCP::Panel::Form::Contact;
 
 =head1 NAME

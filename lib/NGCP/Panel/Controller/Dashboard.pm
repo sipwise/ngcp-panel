@@ -1,11 +1,8 @@
 package NGCP::Panel::Controller::Dashboard;
 use Moose;
 use namespace::autoclean;
-
 BEGIN { extends 'Catalyst::Controller'; }
-
 use NGCP::Panel::Widget;
-use Data::Dumper;
 
 =head1 NAME
 

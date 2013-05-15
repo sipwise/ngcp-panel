@@ -3,9 +3,6 @@ use warnings;
 use Test::More;
 use JSON::Parse 'valid_json';
 use JSON qw( from_json );
-use Data::Dumper;
-
-
 use Catalyst::Test 'NGCP::Panel';
 use NGCP::Panel::Controller::Reseller;
 

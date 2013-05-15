@@ -7,8 +7,6 @@ use Moose::Util::TypeConstraints;
 
 use HTML::FormHandler::Widget::Block::Bootstrap;
 
-use Data::Printer;
-
 has '+widget_wrapper' => ( default => 'Bootstrap' );
 sub build_render_list {[qw/myfields actions/]}
 sub build_form_element_class { [qw/form-horizontal/] }

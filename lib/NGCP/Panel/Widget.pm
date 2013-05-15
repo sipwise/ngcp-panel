@@ -2,8 +2,6 @@ package NGCP::Panel::Widget;
 use Moose;
 with 'MooseX::Object::Pluggable';
 
-use Data::Dumper;
-
 sub handle {
     my ($self, $c) = @_;
     return;
