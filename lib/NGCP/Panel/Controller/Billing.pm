@@ -19,7 +19,6 @@ sub profile_list :Chained('/') :PathPart('billing') :CaptureArgs(0) :Args(0) {
     NGCP::Panel::Utils::check_redirect_chain(c => $c);
 
     $c->stash(has_edit => 1);
-    $c->stash(has_preferences => 0);
     $c->stash(template => 'billing/list.tt');
 }
 
@@ -120,7 +119,6 @@ sub fees_list :Chained('base') :PathPart('fees') :CaptureArgs(0) {
     my ($self, $c) = @_;
     
     $c->stash(has_edit => 1);
-    $c->stash(has_preferences => 0);
     $c->stash(template => 'billing/fees.tt');
 }
 
@@ -249,7 +247,6 @@ sub zones_list :Chained('base') :PathPart('zones') :CaptureArgs(0) {
     );
     
     $c->stash(has_edit => 0);
-    $c->stash(has_preferences => 0);
     $c->stash(template => 'billing/zones.tt');
 }
 

@@ -50,18 +50,6 @@ $(document).ready(function() {
                 "sClass": "ngcp-actions-column",
             }
 		],
-		"aoColumnDefs": [
-    		[%- IF helper.has_preferences %]
-		        {
-		            "aTargets": [ 0 ],
-		            "mRender": function ( data, type, full ) {
-                        return '<a href="[% helper.base_uri %]/'+
-                            full[0]+
-                            '/preferences">'+data+'</a>';
-                    }
-                },
-            [%- END %]
-	    ],
 		"fnDrawCallback": function( oSettings ) {
                 $('.sw_actions').css('visibility','hidden');
                 $('.sw_action_row').hover(

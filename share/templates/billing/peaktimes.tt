@@ -55,7 +55,6 @@
     helper.create_flag = peaktimes_special_createflag;
     helper.edit_flag = peaktimes_special_editflag;
     helper.has_edit = 1;
-    helper.has_preferences = 0;
     helper.ajax_uri = c.uri_for_action("/billing/peaktime_specials_ajax", [c.req.captures.0]);
     helper.base_uri = c.uri_for(c.req.captures.0, "peaktimes","date");
     helper.form_object = peaktimes_special_form;

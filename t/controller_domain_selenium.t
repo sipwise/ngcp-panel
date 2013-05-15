@@ -29,16 +29,22 @@ $d->findclick_ok(link_text => "Domains");
 
 diag("Open Preferences of first Domain");
 $d->title_is("Domains");
-$d->findclick_ok(xpath => '//table[@id="Domain_table"]/tbody/tr[1]/td[1]/a');
+sleep 1;
+my $row = $d->find(xpath => '//table[@id="Domain_table"]/tbody/tr[1]');
+ok($row);
+my $edit_link = $d->find_child_element($row, '(./td//a)[contains(text(),"Preferences")]');
+ok($edit_link);
+$d->move_to(element => $row);
+$edit_link->click;
 
 diag('Open the tab "Access Restrictions"');
 $d->location_like(qr!domain/\d+/preferences!); #/
 $d->findclick_ok(link_text => "Access Restrictions");
 
 diag("Click edit for the preference concurrent_max");
-my $row = $d->find(xpath => '//table/tbody/tr/td[normalize-space(text()) = "concurrent_max"]');
+$row = $d->find(xpath => '//table/tbody/tr/td[normalize-space(text()) = "concurrent_max"]');
 ok($row);
-my $edit_link = $d->find_child_element($row, '(./../td//a)[2]');
+$edit_link = $d->find_child_element($row, '(./../td//a)[2]');
 ok($edit_link);
 $d->move_to(element => $row);
 $edit_link->click;

@@ -11,7 +11,6 @@ sub list :Chained('/') :PathPart('domain') :CaptureArgs(0) :Args(0) {
     my ($self, $c) = @_;
 
     $c->stash(has_edit => 0);
-    $c->stash(has_preferences => 1);
     $c->stash(template => 'domain/list.tt');
 }
 
