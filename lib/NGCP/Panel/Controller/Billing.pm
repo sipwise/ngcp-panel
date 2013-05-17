@@ -2,6 +2,7 @@ package NGCP::Panel::Controller::Billing;
 use Sipwise::Base;
 use namespace::autoclean;
 use Text::CSV_XS;
+use I18N::Langinfo qw(langinfo DAY_1 DAY_2 DAY_3 DAY_4 DAY_5 DAY_6 DAY_7);
 
 BEGIN { extends 'Catalyst::Controller'; }
 
@@ -13,7 +14,8 @@ use NGCP::Panel::Utils;
 use NGCP::Panel::Form::BillingPeaktimeSpecial;
 use NGCP::Panel::Form::BillingFeeUpload;
 
-my @WEEKDAYS = qw(Monday Tuesday Wednesday Thursday Friday Saturday Sunday);
+my @WEEKDAYS = map { langinfo($_) } (DAY_2, DAY_3, DAY_4, DAY_5, DAY_6, DAY_7, DAY_1);
+#Monday Tuesday Wednesday Thursday Friday Saturday Sunday
 
 sub profile_list :Chained('/') :PathPart('billing') :CaptureArgs(0) :Args(0) {
     my ( $self, $c ) = @_;

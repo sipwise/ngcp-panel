@@ -9,6 +9,7 @@ method find(Str $scheme, Str $query) {
 method findclick(Str $scheme, Str $query) {
     my $elem = $self->find($scheme, $query);
     return 0 unless $elem;
+    return 0 unless $elem->is_displayed;
     $elem->click;
     return 1;
 }
@@ -25,4 +26,14 @@ method save_screenshot() {
     my $png_base64 = $self->screenshot();
     print FH decode_base64($png_base64);
     close FH;
+}
+
+method fill_element(ArrayRef $options, Any $ignore) {
+    my ($scheme, $query, $filltext) = @$options;
+    my $elem = $self->find($scheme => $query);
+    return 0 unless $elem;
+    return 0 unless $elem->is_displayed;
+    $elem->clear;
+    $elem->send_keys($filltext);
+    return 1;
 }
