@@ -42,6 +42,7 @@ my $builder = Local::Module::Build->new(
         'strict' => 0,
         'Template' => 0,
         'warnings' => 0,
+        'Text::CSV_XS' => 0,
     },
     test_requires => {
         'Catalyst::Test' => 0,

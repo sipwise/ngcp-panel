@@ -1,6 +1,7 @@
 package NGCP::Panel::Controller::Billing;
 use Sipwise::Base;
 use namespace::autoclean;
+use Text::CSV_XS;
 
 BEGIN { extends 'Catalyst::Controller'; }
 
@@ -10,6 +11,7 @@ use NGCP::Panel::Form::BillingZone;
 use NGCP::Panel::Form::BillingPeaktimeWeekdays;
 use NGCP::Panel::Utils;
 use NGCP::Panel::Form::BillingPeaktimeSpecial;
+use NGCP::Panel::Form::BillingFeeUpload;
 
 my @WEEKDAYS = qw(Monday Tuesday Wednesday Thursday Friday Saturday Sunday);
 
@@ -176,6 +178,50 @@ sub fees_create :Chained('fees_list') :PathPart('create') :Args(0) {
           ->billing_fees->create($form->custom_get_values());
 
         $c->flash(messages => [{type => 'success', text => 'Billing Fee successfully created!'}]);
+        $c->response->redirect($c->uri_for($c->stash->{profile}->{id}, 'fees'));
+        return;
+    }
+
+    $c->stash(close_target => $c->uri_for($c->stash->{profile}->{id}, 'fees'));
+    $c->stash(create_flag => 1);
+    $c->stash(form => $form);
+}
+
+sub fees_upload :Chained('fees_list') :PathPart('upload') :Args(0) {
+    my ($self, $c) = @_;
+    
+    my $form = NGCP::Panel::Form::BillingFeeUpload->new;
+    my $upload = $c->req->upload('upload_fees');
+    my $posted = $c->req->method eq 'POST';
+    my @params = (
+        upload_fees => $posted ? $upload : undef,
+        );
+    $form->process(
+        posted => $posted,
+        params => { @params },
+        action => $c->uri_for_action('/billing/fees_upload', $c->req->captures),
+    );
+    if($form->validated) {
+        my $csv = Text::CSV_XS->new({allow_whitespace => 1, binary => 1});
+        my @cols = $c->config->{fees_csv}->{element_order};
+        $csv->column_names (@cols);
+        if ($c->req->params->{purge_existing}) {
+            $c->stash->{'profile_result'}->billing_fees->delete_all;
+        }
+        while (my $row = $csv->getline_hr($upload->fh)) {
+            my $zone = $c->stash->{'profile_result'}
+                ->billing_zones
+                ->find_or_create({
+                    zone => $row->{zone},
+                    detail => $row->{zone_detail}
+                });
+            $row->{billing_zone_id} = $zone->id;
+            delete $row->{zone};
+            delete $row->{zone_detail};
+            $c->stash->{'profile_result'}
+                ->billing_fees->create($row);
+        }
+        $c->flash(messages => [{type => 'success', text => 'Billing Fee successfully uploaded!'}]);
         $c->response->redirect($c->uri_for($c->stash->{profile}->{id}, 'fees'));
         return;
     }
@@ -505,7 +551,7 @@ sub peaktime_specials_create :Chained('peaktimes_list') :PathPart('create') :Arg
     $c->stash(peaktimes_special_createflag => 1);
 }
 
-__PACKAGE__->meta->make_immutable;
+$CLASS->meta->make_immutable;
 
 1;
 
@@ -565,6 +611,11 @@ Get billing_fees and output them as JSON.
 =head2 fees_create
 
 Show a modal to add a new billing_fee.
+
+=head2 fees_upload
+
+Show a modal to upload a CSV file of billing_fees and add them to the
+Database.
 
 =head2 fees_edit
 

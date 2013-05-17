@@ -1,6 +1,8 @@
 [% META title = 'Billing Fees' -%]
 
 <a href="[% c.uri_for_action('/billing/zones',[c.req.captures.0]) %]" class="btn btn-tertiary btn-large">Edit Zones</a>
+
+<a href="[% c.uri_for_action('/billing/fees_upload',[c.req.captures.0]) %]" class="btn btn-tertiary btn-large">Upload CSV Fees</a>
 [%
     helper.name = 'Billing Fees';
     helper.messages = messages;
