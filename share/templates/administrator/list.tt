@@ -1,0 +1,18 @@
+[% META title = 'Administrators' -%]
+[%
+    helper.name = 'Administrator';
+    helper.data = admins;
+    helper.messages = messages;
+    helper.column_titles = [ '#', 'Reseller', 'Login', 'Master', 'Superuser', 'Active', 'Read only', 'Show passwords', 'Call data', 'Lawful intercept' ];
+    helper.column_fields = [ 'id', 'reseller_id', 'login', 'is_master', 'is_superuser', 'is_active', 'read_only', 'show_passwords', 'call_data', 'lawful_intercept' ];
+
+    helper.close_target = close_target;
+    helper.create_flag = create_flag;
+    helper.edit_flag = edit_flag;
+    helper.form_object = form;
+    helper.ajax_uri = c.uri_for( c.controller.action_for('ajax') );
+    helper.base_uri = c.uri_for( c.controller.action_for("") );
+
+    PROCESS 'helpers/datatables.tt';
+-%]
+
