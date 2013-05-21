@@ -1,5 +1,5 @@
 package NGCP::Panel::Controller::Domain;
-use Moose;
+use Sipwise::Base;
 use namespace::autoclean;
 
 BEGIN { extends 'Catalyst::Controller'; }
@@ -7,18 +7,18 @@ BEGIN { extends 'Catalyst::Controller'; }
 use NGCP::Panel::Form::Domain;
 use NGCP::Panel::Form::Preferences;
 
-sub list :Chained('/') :PathPart('domain') :CaptureArgs(0) :Args(0) {
+sub dom_list :Chained('/') :PathPart('domain') :CaptureArgs(0) :Args(0) {
     my ($self, $c) = @_;
 
     $c->stash(has_edit => 0);
     $c->stash(template => 'domain/list.tt');
 }
 
-sub root :Chained('list') :PathPart('') :Args(0) {
+sub root :Chained('dom_list') :PathPart('') :Args(0) {
     my ($self, $c) = @_;
 }
 
-sub create :Chained('list') :PathPart('create') :Args(0) {
+sub create :Chained('dom_list') :PathPart('create') :Args(0) {
     my ($self, $c) = @_;
 
     my $form = NGCP::Panel::Form::Domain->new;
@@ -46,17 +46,10 @@ sub create :Chained('list') :PathPart('create') :Args(0) {
     $c->stash(form => $form);
 }
 
-sub search :Chained('list') :PathPart('search') Args(0) {
-    my ($self, $c) = @_;
-
-    $c->flash(messages => [{type => 'info', text => 'Domain search not implemented!'}]);
-    $c->response->redirect($c->uri_for());
-}
-
-sub base :Chained('/domain/list') :PathPart('') :CaptureArgs(1) :Args(0) {
+sub base :Chained('/domain/dom_list') :PathPart('') :CaptureArgs(1) :Args(0) {
     my ($self, $c, $domain_id) = @_;
 
-    unless($domain_id && $domain_id =~ /^\d+$/) {
+    unless($domain_id && $domain_id->is_integer) {
         $c->flash(messages => [{type => 'error', text => 'Invalid domain id detected!'}]);
         $c->response->redirect($c->uri_for());
         return;
@@ -120,7 +113,7 @@ sub delete :Chained('base') :PathPart('delete') :Args(0) {
     $c->response->redirect($c->uri_for());
 }
 
-sub ajax :Chained('list') :PathPart('ajax') :Args(0) {
+sub ajax :Chained('dom_list') :PathPart('ajax') :Args(0) {
     my ($self, $c) = @_;
     
     my $resultset = $c->model('billing')->resultset('domains');
@@ -135,15 +128,17 @@ sub ajax :Chained('list') :PathPart('ajax') :Args(0) {
 sub preferences :Chained('base') :PathPart('preferences') :Args(0) {
     my ($self, $c) = @_;
     
+    my $domain_name = $c->stash->{domain}->{domain};
     $c->stash->{provisioning_domain_id} = $c->model('provisioning')
         ->resultset('voip_domains')
-        ->single({domain => $c->stash->{domain}->{domain}})->id;
+        ->single({domain => $domain_name})->id;
+
 
     $self->load_preference_list($c);
     $c->stash(template => 'domain/preferences.tt');
 }
 
-sub preferences_detail :Chained('base') :PathPart('preferences') :CaptureArgs(1) :Args(0) {
+sub preferences_base :Chained('base') :PathPart('preferences') :CaptureArgs(1) :Args(0) {
     my ($self, $c, $pref_id) = @_;
 
     $self->load_preference_list($c);
@@ -151,19 +146,23 @@ sub preferences_detail :Chained('base') :PathPart('preferences') :CaptureArgs(1)
     $c->stash->{preference_meta} = $c->model('provisioning')
         ->resultset('voip_preferences')
         ->single({id => $pref_id});
+    my $domain_name = $c->stash->{domain}->{domain};
     $c->stash->{provisioning_domain_id} = $c->model('provisioning')
         ->resultset('voip_domains')
-        ->single({domain => $c->stash->{domain}->{domain}})->id;
+        ->single({domain => $domain_name})->id;
 
     $c->stash->{preference} = $c->model('provisioning')
         ->resultset('voip_dom_preferences')
-        ->search({attribute_id => $pref_id, domain_id => $c->stash->{provisioning_domain_id}});
+        ->search({
+            attribute_id => $pref_id,
+            domain_id => $c->stash->{provisioning_domain_id}
+        });
     my @values = $c->stash->{preference}->get_column("value")->all;
     $c->stash->{preference_values} = \@values;
     $c->stash(template => 'domain/preferences.tt');
 }
 
-sub preferences_edit :Chained('preferences_detail') :PathPart('edit') :Args(0) {
+sub preferences_edit :Chained('preferences_base') :PathPart('edit') :Args(0) {
     my ($self, $c) = @_;
    
     $c->stash(edit_preference => 1);
@@ -314,7 +313,7 @@ Catalyst Controller.
 
 =head1 METHODS
 
-=head2 list
+=head2 dom_list
 
 basis for the domain controller
 
@@ -352,7 +351,7 @@ Show a table view of preferences.
 
 Data that is put on stash: provisioning_domain_id
 
-=head2 preferences_detail
+=head2 preferences_base
 
 Get details about one preference for further editing.
 

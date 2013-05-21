@@ -12,22 +12,6 @@ use NGCP::Panel::Widget;
 #
 __PACKAGE__->config(namespace => '');
 
-=head1 NAME
-
-NGCP::Panel::Controller::Root - Root Controller for NGCP::Panel
-
-=head1 DESCRIPTION
-
-[enter your description here]
-
-=head1 METHODS
-
-=head2 auto
-
-Verify user is logged in.
-
-=cut
-
 sub auto :Private {
     my($self, $c) = @_;
 
@@ -79,34 +63,16 @@ sub auto :Private {
     return 1;
 }
 
-=head2 index
-
-The root page (/)
-
-=cut
-
 sub index :Path :Args(0) {
     my ( $self, $c ) = @_;
 
     $c->response->redirect($c->uri_for('/dashboard'));
 }
 
-=head2 default
-
-Standard 404 error page
-
-=cut
-
 sub default :Path {
     my ( $self, $c ) = @_;
     $c->detach( '/error_page' );
 }
-
-=head2 end
-
-Attempt to render a view, if needed.
-
-=cut
 
 sub end : ActionClass('RenderView') {}
 
@@ -252,6 +218,63 @@ sub error_page :Private {
     $c->response->status(404);
 }
 
+__PACKAGE__->meta->make_immutable;
+
+1;
+
+__END__
+
+=head1 NAME
+
+NGCP::Panel::Controller::Root - Root Controller for NGCP::Panel
+
+=head1 DESCRIPTION
+
+[enter your description here]
+
+=head1 METHODS
+
+=head2 auto
+
+Verify user is logged in.
+Check user roles.
+Load top menu widgets.
+
+=head2 index
+
+The root page (/)
+
+=head2 default
+
+Standard 404 error page
+
+=head2 end
+
+Attempt to render a view, if needed.
+
+=head2 ajax_process
+
+Processes http arguments and prepare data from other controllers to be used
+with the JSON view. The items exposed to stash are namely:
+
+* sEcho
+* aaData
+* iTotalRecords
+* iTotalDisplayRecords
+
+They are intended for use with datatables.
+
+=head2 ajax_process_resultset
+
+Similar to L</ajax_process>, but takes a L<ResultSet|DBIx::Class::ResultSet>
+as argument.
+
+Arguments: $resultset, \%columns, \%searchable
+
+=head2 error_page
+
+should be called if the intended page could not be found (404).
+
 =head1 AUTHOR
 
 Andreas Granig,,,
@@ -262,9 +285,5 @@ This library is free software. You can redistribute it and/or modify
 it under the same terms as Perl itself.
 
 =cut
-
-__PACKAGE__->meta->make_immutable;
-
-1;
 
 # vim: set tabstop=4 expandtab:

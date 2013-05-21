@@ -46,7 +46,7 @@ sub ajax :Chained('profile_list') :PathPart('ajax') :Args(0) {
 sub base :Chained('profile_list') :PathPart('') :CaptureArgs(1) :Args(0) {
     my ($self, $c, $profile_id) = @_;
 
-    unless($profile_id && $profile_id =~ /^\d+$/) {
+    unless($profile_id && $profile_id->is_integer) {
         $c->flash(messages => [{type => 'error', text => 'Invalid profile id detected!'}]);
         $c->response->redirect($c->uri_for());
         return;
@@ -122,7 +122,7 @@ sub fees :Chained('fees_list') :PathPart('') :Args(0) {
 sub fees_base :Chained('fees_list') :PathPart('') :CaptureArgs(1) {
     my ($self, $c, $fee_id) = @_;
 
-    unless($fee_id && $fee_id =~ /^\d+$/) {
+    unless($fee_id && $fee_id->is_integer) {
         $c->flash(messages => [{type => 'error', text => 'Invalid billing fee id detected!'}]);
         $c->response->redirect($c->uri_for($c->stash->{profile}->{id}, 'fees'));
         return;
@@ -329,7 +329,7 @@ sub zones :Chained('zones_list') :PathPart('') :Args(0) {
 sub zones_base :Chained('zones_list') :PathPart('') :CaptureArgs(1) {
     my ($self, $c, $zone_id) = @_;
     
-    unless($zone_id && $zone_id =~ /^\d+$/) {
+    unless($zone_id && $zone_id->is_integer) {
         $c->flash(messages => [{type => 'error', text => 'Invalid billing zone id detected!'}]);
         $c->response->redirect($c->stash->{zones_root_uri});
         return;
@@ -475,7 +475,7 @@ sub peaktime_specials_ajax :Chained('peaktimes_list') :PathPart('ajax') :Args(0)
 sub peaktime_specials_base :Chained('peaktimes_list') :PathPart('date') :CaptureArgs(1) {
     my ($self, $c, $special_id) = @_;
     
-        unless($special_id && $special_id =~ /^\d+$/) {
+        unless($special_id && $special_id->is_integer) {
         $c->flash(messages => [{type => 'error', text => 'Invalid peaktime date id detected!'}]);
         $c->response->redirect($c->stash->{peaktimes_root_uri});
         return;
@@ -496,6 +496,7 @@ sub peaktime_specials_edit :Chained('peaktime_specials_base') :PathPart('edit') 
     my ($self, $c) = @_;
 
     my $data_res = $c->stash->{special_result};
+    return unless (defined $data_res);
     my $data = {
         date => $data_res->start->date,
         'time.start' => $data_res->start->hms,
@@ -524,6 +525,7 @@ sub peaktime_specials_edit :Chained('peaktime_specials_base') :PathPart('edit') 
 
 sub peaktime_specials_delete :Chained('peaktime_specials_base') :PathPart('delete') :Args(0) {
     my ($self, $c) = @_;
+    return unless (defined $c->stash->{special_result});
     $c->stash->{special_result}->delete;
 }
 
