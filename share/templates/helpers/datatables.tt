@@ -70,7 +70,7 @@ $(document).ready(function() {
 
 
 <div class="row">
-    <a class="btn btn-primary btn-large" href="[% c.uri_for(c.action, c.req.captures, 'create') %]"><i class="icon-star"></i> Create [% helper.name %]</a>
+    <a class="btn btn-primary btn-large" href="[% helper.base_uri _ '/create' %]"><i class="icon-star"></i> Create [% helper.name %]</a>
 </div>
 [% IF helper.messages -%]
 <div class="row">

@@ -1,0 +1,43 @@
+[% site_config.title = 'SIP Peering Group ' _ group.name -%]
+[%
+    helper.name = 'Peering Servers';
+    helper.messages = messages;
+    helper.column_titles = [ '#', 'Name', 'IP Address', 'Hostname', 'Port', 'Protocol', 'Weight' ];
+    helper.column_fields = [ 'id', 'name', 'ip', 'host', 'port', 'transport', 'weight' ];
+
+    helper.close_target = close_target;
+    helper.create_flag = servers_create_flag;
+    helper.edit_flag = servers_edit_flag;
+    helper.form_object = servers_form;
+    helper.has_edit = 1;
+    helper.has_delete = 1;
+    helper.ajax_uri = c.uri_for_action( "/peering/servers_ajax", [c.req.captures.0] );
+    helper.base_uri = c.uri_for_action( "/peering/servers_root", [c.req.captures.0] );
+
+    helper.extra_buttons = [
+        [ 'Preferences', 'preferences'],
+    ];
+
+    PROCESS 'helpers/datatables.tt';
+-%]
+
+[%
+    helper.name = 'Peering Rules';
+    helper.messages = rules_messages;
+    helper.column_titles = [ '#', 'Callee Prefix', 'Callee Pattern', 'Caller Pattern', 'Description' ];
+    helper.column_fields = [ 'id', 'callee_prefix', 'callee_pattern', 'caller_pattern', 'description' ];
+
+    helper.close_target = close_target;
+    helper.create_flag = rules_create_flag;
+    helper.edit_flag = rules_edit_flag;
+    helper.form_object = rules_form;
+    helper.has_edit = 1;
+    helper.has_delete = 1;
+    helper.ajax_uri = c.uri_for_action( "/peering/rules_ajax", [c.req.captures.0] );
+    helper.base_uri = c.uri_for( group.id, "rules" );
+    
+    helper.extra_buttons = undef;
+
+    PROCESS 'helpers/datatables.tt';
+-%]
+[% # vim: set tabstop=4 syntax=html expandtab: -%]

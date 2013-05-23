@@ -529,7 +529,7 @@ sub peaktime_specials_delete :Chained('peaktime_specials_base') :PathPart('delet
     $c->stash->{special_result}->delete;
 }
 
-sub peaktime_specials_create :Chained('peaktimes_list') :PathPart('create') :Args(0) {
+sub peaktime_specials_create :Chained('peaktimes_list') :PathPart('date/create') :Args(0) {
     my ($self, $c) = @_;
     $self->load_weekdays($c);
     
