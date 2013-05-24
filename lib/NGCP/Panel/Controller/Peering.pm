@@ -245,8 +245,74 @@ sub servers_delete :Chained('servers_base') :PathPart('delete') :Args(0) {
     $c->response->redirect($c->stash->{sr_list_uri});
 }
 
-sub servers_preferences :Chained('servers_base') :PathPart('preferences') :Args(0) {
+sub servers_preferences_list :Chained('servers_base') :PathPart('preferences') :CaptureArgs(0) {
+    my ($self, $c) = @_;
+      
+    my $x_pref_values = $c->model('provisioning')
+        ->resultset('voip_preferences')
+        ->search({
+                'peer_host.id' => $c->stash->{server}->{id}
+            },{
+                prefetch => {'voip_peer_preferences' => 'peer_host'},
+            });
+            
+    my %pref_values;
+    foreach my $value($x_pref_values->all) {
+    
+        $pref_values{$value->attribute} = [
+            map {$_->value} $value->voip_peer_preferences->all
+        ];
+    }
+    
+    NGCP::Panel::Utils::load_preference_list( c => $c,
+        pref_values => \%pref_values,
+        peer_pref => 1,
+    );
+    
+    $c->stash(template => 'peering/preferences.tt');
+}
 
+sub servers_preferences_root :Chained('servers_preferences_list') :PathPart('') :Args(0) {
+
+}
+
+sub servers_preferences_base :Chained('servers_preferences_list') :PathPart('') :CaptureArgs(1) {
+    my ($self, $c, $pref_id) = @_;
+    
+    $c->stash->{preference_meta} = $c->model('provisioning')
+        ->resultset('voip_preferences')
+        ->search({
+            -or => ['voip_preferences_enums.peer_pref' => 1,
+                'voip_preferences_enums.peer_pref' => undef]
+        },{
+            prefetch => 'voip_preferences_enums',
+        })
+        ->find({id => $pref_id});
+
+    $c->stash->{preference} = $c->model('provisioning')
+        ->resultset('voip_peer_preferences')
+        ->search({
+            attribute_id => $pref_id,
+            'peer_host.id' => $c->stash->{server}->{id},
+        },{
+            prefetch => 'peer_host',
+        });
+    my @values = $c->stash->{preference}->get_column("value")->all;
+    $c->stash->{preference_values} = \@values;
+}
+
+sub servers_preferences_edit :Chained('servers_preferences_base') :PathPart('edit') :Args(0) {
+    my ($self, $c) = @_;
+   
+    $c->stash(edit_preference => 1);
+    
+    my $pref_rs = $c->stash->{server_result}->voip_peer_preferences;
+
+    NGCP::Panel::Utils::create_preference_form( c => $c,
+        pref_rs => $pref_rs,
+        base_uri => $c->uri_for_action('/peering/servers_preferences_root', [@{ $c->req->captures }[0,1]]),
+        edit_uri => $c->uri_for_action('/peering/servers_preferences_edit', $c->req->captures),
+    );
 }
 
 sub rules_list :Chained('base') :PathPart('rules') :CaptureArgs(0) {
@@ -439,9 +505,23 @@ Show a modal to edit a peering server.
 
 Delete a peering server.
 
-=head2 servers_preferences
+=head2 servers_preferences_list
 
-Not yet implemented.
+Basis to show preferences for a given peering host/sever.
+
+=head2 servers_preferences_root
+
+Shows the preferences.
+
+=head2 servers_preferences_base
+
+Load preference, preference_meta and preference_values for a captured
+id to stash. Will be used by L</servers_preferences_edit>.
+
+=head2 servers_preferences_edit
+
+Show a modal to edit one preference. Mainly uses
+NGCP::Panel::Utils::create_preference_form.
 
 =head2 rules_list
 

@@ -5,7 +5,6 @@ use namespace::autoclean;
 BEGIN { extends 'Catalyst::Controller'; }
 
 use NGCP::Panel::Form::Domain;
-use NGCP::Panel::Form::Preferences;
 
 sub dom_list :Chained('/') :PathPart('domain') :CaptureArgs(0) :Args(0) {
     my ($self, $c) = @_;
@@ -166,94 +165,18 @@ sub preferences_edit :Chained('preferences_base') :PathPart('edit') :Args(0) {
     my ($self, $c) = @_;
    
     $c->stash(edit_preference => 1);
-
-    my @enums = $c->stash->{preference_meta}
-        ->voip_preferences_enums
-        ->search({dom_pref => 1})
-        ->all;
-
-    my $form = NGCP::Panel::Form::Preferences->new({
-        fields_data => [{
-            meta => $c->stash->{preference_meta},
-            enums => \@enums,
-        }],
-    });
-    $form->create_structure([$c->stash->{preference_meta}->attribute]);
-
-    my $posted = ($c->request->method eq 'POST');
-    if($c->stash->{preference_meta}->max_occur == 1){
-        $form->process(
-            posted => 1,
-            params => $posted ? $c->request->params : { $c->stash->{preference_meta}->attribute => $c->stash->{preference_values}->[0] },
-            action => $c->uri_for($c->stash->{domain}->{id}, 'preferences', $c->stash->{preference_meta}->id, 'edit'),
-        );
-    } else {
-        $form->process(
-            posted => 1,
-            params => $posted ? $c->request->params : {},
-            action => $c->uri_for($c->stash->{domain}->{id}, 'preferences', $c->stash->{preference_meta}->id, 'edit'),
-        );
-    }
-    if($posted && $form->validated) {
-        my $preference_id = $c->stash->{preference}->first ? $c->stash->{preference}->first->id : undef;
-        if ($c->stash->{preference_meta}->max_occur != 1) {
-            $c->model('provisioning')
-                ->resultset('voip_dom_preferences')
-                ->create({
-                    attribute_id => $c->stash->{preference_meta}->id,
-                    domain_id => $c->stash->{provisioning_domain_id},
-                    value => $form->field($c->stash->{preference_meta}->attribute)->value,
-                });
-        } else {
-            my $rs = $c->model('provisioning')
-                ->resultset('voip_dom_preferences')
-                ->update_or_create({
-                    id => $preference_id,
-                    attribute_id => $c->stash->{preference_meta}->id,
-                    domain_id => $c->stash->{provisioning_domain_id},
-                    value => $form->field($c->stash->{preference_meta}->attribute)->value,
-                  });
-            $c->flash(messages => [{type => 'success', text => 'Preference '.$c->stash->{preference_meta}->attribute.' successfully updated.'}]);
-            $c->response->redirect($c->uri_for($c->stash->{domain}->{id}, 'preferences'));
-            return;
-         }
-    }
     
-    my $delete_param = $c->request->params->{delete};
-    my $deactivate_param = $c->request->params->{deactivate};
-    my $activate_param = $c->request->params->{activate};
-    my $param_id = $delete_param || $deactivate_param || $activate_param;
-    # only one parameter is processed at a time (?)
-    if($param_id) {
-        my $rs = $c->model('provisioning')
-            ->resultset('voip_dom_preferences')
-            ->find($param_id);
-        if($rs->attribute_id != $c->stash->{preference_meta}->id) {
-            # Invalid param (dom_pref does not belong to current pref)
-        } elsif($delete_param) {
-            $rs->delete();
-        } elsif ($deactivate_param) {
-            $rs->update({value => "#".$rs->value});
-        } elsif ($activate_param) {
-            my $new_value = $rs->value;
-            $new_value =~ s/^#//;
-            $rs->update({value => $new_value});
-        }
-    }
+    my $pref_rs = $c->stash->{preference};
 
-    $c->stash(form => $form);
+    NGCP::Panel::Utils::create_preference_form( c => $c,
+        pref_rs => $pref_rs,
+        base_uri => $c->uri_for_action('/domain/preferences', [$c->req->captures->[0]]),
+        edit_uri => $c->uri_for_action('/domain/preferences_edit', $c->req->captures),
+    );
 }
 
 sub load_preference_list : Private {
     my ($self, $c) = @_;
-
-    my @dom_pref_groups = $c->model('provisioning')
-        ->resultset('voip_preference_groups')
-        ->search({ 'voip_preferences.dom_pref' => 1, 'voip_preferences.internal' => 0,
-            }, {
-                prefetch => {'voip_preferences' => 'voip_preferences_enums'},
-            })
-        ->all;
     
     my $dom_pref_values = $c->model('provisioning')
         ->resultset('voip_preferences')
@@ -271,30 +194,10 @@ sub load_preference_list : Private {
         ];
     }
 
-    foreach my $group(@dom_pref_groups) {
-        my @group_prefs = $group->voip_preferences->all;
-        
-        foreach my $pref(@group_prefs) {
-            if($pref->data_type eq "enum") {
-                $pref->{enums} = [];
-                push @{ $pref->{enums} },
-                    $pref->voip_preferences_enums->search({dom_pref => 1})->all;
-            }
-            my @values = @{
-                exists $pref_values{$pref->attribute}
-                    ? $pref_values{$pref->attribute}
-                    : []
-            };
-            next unless(scalar @values);
-            if($pref->max_occur != 1) {
-                $pref->{value} = \@values;
-            } else {
-                $pref->{value} = $values[0];
-            }
-        }
-        $group->{prefs} = \@group_prefs;
-    }
-    $c->stash(pref_groups => \@dom_pref_groups);
+    NGCP::Panel::Utils::load_preference_list( c => $c,
+        pref_values => \%pref_values,
+        dom_pref => 1,
+    );
 }
 
 __PACKAGE__->meta->make_immutable;

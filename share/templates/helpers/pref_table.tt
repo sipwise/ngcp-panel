@@ -74,7 +74,7 @@
                 </td>
                 <td>
                     <div class="sw_actions pull-right">
-                        <a class="btn btn-small btn-primary" href="[% c.uri_for(helper.domain_id,'preferences', r.id, 'edit') %]"><i class="icon-edit"></i> Edit</a>
+                        <a class="btn btn-small btn-primary" href="[% helper.base_uri _ "/" _ r.id _ "/edit" %]"><i class="icon-edit"></i> Edit</a>
                     </div>
                 </td>
             </tr>
@@ -140,7 +140,7 @@ $(function() {
     $(function () {
         $('#mod_edit').modal({keyboard: false, backdrop: 'static'});
         $('#mod_close').click(function(event) {
-            window.location.href="[% c.uri_for(helper.domain_id, 'preferences') %]";
+            window.location.href="[% helper.base_uri %]";
         });
 
     });
