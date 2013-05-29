@@ -9,7 +9,7 @@ has_field 'id' => (
     do_wrapper => 0,
     required => 1,
     template => 'share/templates/helpers/datatables_field.tt',
-    ajax_src => '/contract/ajax',
+    ajax_src => '/contract/peering/ajax',
     table_titles => ['#', 'Contact #', 'Billing Profile #', 'Status'],
     table_fields => ['id', 'contact.id', 'billing_profile.id', 'status'],
 );

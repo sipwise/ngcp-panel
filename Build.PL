@@ -43,6 +43,8 @@ my $builder = Local::Module::Build->new(
         'Template' => 0,
         'warnings' => 0,
         'Text::CSV_XS' => 0,
+        'DBIx::Class::ResultSet::RecursiveUpdate' => 0.30,
+        #patch to set foreign key instead of relation, install from github until its available on cpan
     },
     test_requires => {
         'Catalyst::Test' => 0,
