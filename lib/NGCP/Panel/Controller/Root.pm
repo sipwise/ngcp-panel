@@ -161,6 +161,8 @@ sub ajax_process_resultset :Private {
     my @searchdata = map{ +{ $_ => { like => '%'.$sSearch.'%' } } } @$columns[@$searchable];
     $rs = $rs->search(\@searchdata);
     
+    my $totalDisplayRecords = $rs->count;
+    
     #potentially selected Id as first element
     if (defined($iIdOnTop)) {
         my $topRow = $rs->find($iIdOnTop);
@@ -169,7 +171,7 @@ sub ajax_process_resultset :Private {
             my @tmpTopRowArray = @tmpTopRow{@$columns};
             push @$aaData, \@tmpTopRowArray;
             
-            $rs = $rs->search({ id => { '!=', $iIdOnTop}});
+            $rs = $rs->search({ 'me.id' => { '!=', $iIdOnTop}});
         }
     }
     
@@ -181,8 +183,6 @@ sub ajax_process_resultset :Private {
             }};
         $rs = $rs->search(undef, $sortdata);
     }
-    
-    my $totalDisplayRecords = $rs->count;
     
     #Pagination
     if (defined($iDisplayStart) && $iDisplayLength) {

@@ -7,7 +7,34 @@ use NGCP::Panel::Utils;
 
 sub contract_list :Chained('/') :PathPart('contract') :CaptureArgs(0) {
     my ($self, $c) = @_;
+    
+    my $mapping_rs = $c->model('billing')->resultset('billing_mappings');
+    my $rs = $c->model('billing')->resultset('contracts')
+        ->search({
+            'billing_mappings.id' => {
+                '=' => $mapping_rs->search({
+                    contract_id => { -ident => 'me.id' },
+                    start_date => [ -or =>
+                        { '<=' => {-ident => 'now()'}},
+                        { -is  => undef },
+                    ],
+                    end_date => [ -or =>
+                        { '>=' => {-ident => 'now()'}},
+                        { -is  => undef },
+                    ],
+                },{
+                    alias => 'sub_query',
+                    rows => 1,
+                    order_by => {-desc => ['start_date', 'id']},
+                })->get_column('id')->as_query,
+            },
+        },{
+            'join' => 'billing_mappings',
+            '+select' => 'billing_mappings.billing_profile_id',
+            '+as' => 'billing_profile',
+        });
 
+    $c->stash(contract_select_rs => $rs);
     $c->stash(ajax_uri => $c->uri_for_action("/contract/ajax"));
     $c->stash(template => 'contract/list.tt');
 
@@ -118,12 +145,7 @@ sub delete :Chained('base') :PathPart('delete') :Args(0) {
 sub ajax :Chained('contract_list') :PathPart('ajax') :Args(0) {
     my ($self, $c) = @_;
     
-    my $rs = $c->model('billing')->resultset('contracts')
-        ->search(undef, {
-            'join' => 'billing_mappings',
-            '+select' => 'billing_mappings.billing_profile_id',
-            '+as' => 'billing_profile',
-        });
+    my $rs = $c->stash->{contract_select_rs};
     
     $c->forward( "/ajax_process_resultset", [$rs,
                  ["id","contact_id","billing_profile","status"],
@@ -145,13 +167,11 @@ sub peering_root :Chained('peering_list') :PathPart('') :Args(0) {
 sub peering_ajax :Chained('peering_list') :PathPart('ajax') :Args(0) {
     my ($self, $c) = @_;
     
-    my $rs = $c->model('billing')->resultset('contracts')
-        ->search({
+    my $base_rs = $c->stash->{contract_select_rs};
+    my $rs = $base_rs->search({
             'product.class' => 'sippeering',
         }, {
             'join' => {'billing_mappings' => 'product'},
-            '+select' => 'billing_mappings.billing_profile_id',
-            '+as' => 'billing_profile',
         });
     
     $c->forward( "/ajax_process_resultset", [$rs,
