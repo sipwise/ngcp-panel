@@ -47,13 +47,20 @@ sub root :Chained('contract_list') :PathPart('') :Args(0) {
 
 sub create :Chained('contract_list') :PathPart('create') :Args(0) {
     my ($self, $c) = @_;
+    
+    my $item = $c->model('billing')->resultset('billing_mappings')->new_result({});
+    if($c->session->{create_peering_contract}){
+        $item->product(
+            $c->model('billing')->resultset('products')->find({class => 'sippeering'})
+        );
+    }
 
     my $form = NGCP::Panel::Form::Contract->new;
     $form->process(
         posted => ($c->request->method eq 'POST'),
         params => $c->request->params,
         action => $c->uri_for('create'),
-        item => $c->model('billing')->resultset('billing_mappings')->new_result({}),
+        item => $item,
     );
     return if NGCP::Panel::Utils::check_form_buttons(
         c => $c, form => $form, fields => [qw/contact.create/], 
@@ -61,6 +68,7 @@ sub create :Chained('contract_list') :PathPart('create') :Args(0) {
     );
     if($form->validated) {
         $c->flash(messages => [{type => 'success', text => 'Contract successfully created!'}]);
+        $c->session(create_peering_contract => 0);
         
         if($c->stash->{close_target}) {
             $c->response->redirect($c->stash->{close_target});
@@ -84,11 +92,10 @@ sub base :Chained('contract_list') :PathPart('') :CaptureArgs(1) {
         return;
     }
 
-    my $res = $c->model('billing')->resultset('contracts')
+    my $res = $c->stash->{contract_select_rs}
         ->search(undef, {
-            'join' => 'billing_mappings',
-            '+select' => 'billing_mappings.billing_profile_id',
-            '+as' => 'billing_profile',
+            '+select' => 'billing_mappings.id',
+            '+as' => 'bmid',
         })
         ->find($contract_id);
     
@@ -108,11 +115,22 @@ sub edit :Chained('base') :PathPart('edit') :Args(0) {
     my ($self, $c) = @_;
 
     my $posted = ($c->request->method eq 'POST');
+    
+    my $contr = $c->stash->{contract_result};
+    my $item = $contr->billing_mappings->find($contr->get_column('bmid'));
+    if ($posted) {
+        if($item->billing_profile_id != $c->req->params->{'billing_profile.id'}) {
+            $item = $c->stash->{contract_result}->billing_mappings->new_result({});
+            $item->start_date(time);
+        }
+    } else {
+    }
+    
     my $form = NGCP::Panel::Form::Contract->new;
     $form->process(
         posted => $posted,
         params => $c->req->params,
-        item => $c->stash->{contract_result}->billing_mappings->first,
+        item => $item,
         action => $c->uri_for($c->stash->{contract}->{id}, 'edit'),
     );
     return if NGCP::Panel::Utils::check_form_buttons(

@@ -67,10 +67,13 @@ sub edit :Chained('base') :PathPart('edit') {
         params => $posted ? $c->request->params : $c->stash->{group},
         action => $c->uri_for_action('/peering/edit', [$c->req->captures->[0]])
     );
-    return if NGCP::Panel::Utils::check_form_buttons(
+    if (NGCP::Panel::Utils::check_form_buttons(
         c => $c, form => $form, fields => [qw/contract.create/],
         back_uri => $c->req->uri,
-    );
+    )) {
+        $c->session(create_peering_contract => 1);
+        return;
+    }
     if($posted && $form->validated) {
         try {
             $c->stash->{group_result}->update($form->custom_get_values);
@@ -109,10 +112,13 @@ sub create :Chained('group_list') :PathPart('create') :Args(0) {
         params => $c->request->params,
         action => $c->uri_for('create'),
     );
-    return if NGCP::Panel::Utils::check_form_buttons(
+    if (NGCP::Panel::Utils::check_form_buttons(
         c => $c, form => $form, fields => [qw/contract.create/],
         back_uri => $c->req->uri,
-    );
+    )) {
+        $c->session(create_peering_contract => 1);
+        return;
+    }
     if($form->validated) {
         my $formdata = $form->custom_get_values;
         try {
