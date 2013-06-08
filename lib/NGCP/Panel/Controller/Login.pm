@@ -42,7 +42,7 @@ sub index :Path Form {
         my $user = $form->field('username')->value;
         my $pass = $form->field('password')->value;
         $c->log->debug("*** Login::index user=$user, pass=$pass, realm=$realm");
-        my $res; my @roles = ();
+        my $res;
         if($realm eq 'admin') {
             $res = $c->authenticate(
                 {
