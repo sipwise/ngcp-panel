@@ -36,6 +36,10 @@ sub ajax :Chained('list_admin') :PathPart('ajax') :Args(0) {
 
 sub create :Chained('list_admin') :PathPart('create') :Args(0) {
     my ($self, $c) = @_;
+
+    $c->detach('/denied_page')
+    	unless($c->user->{is_master});
+
     my $form = NGCP::Panel::Form::Administrator->new;
     $form->process(
         posted => $c->request->method eq 'POST',
@@ -49,6 +53,8 @@ sub create :Chained('list_admin') :PathPart('create') :Args(0) {
         back_uri => $c->uri_for('create')
     );
     if ($form->validated) {
+    	# TODO: check if reseller, and if so, auto-set contract;
+	# also, only show admins within reseller_id if reseller
         try {
             delete $form->params->{save};
 	    $form->params->{md5pass} = md5_hex($form->params->{md5pass});

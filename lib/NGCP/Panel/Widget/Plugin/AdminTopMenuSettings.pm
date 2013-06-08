@@ -23,7 +23,7 @@ sub filter {
 
     return $self if(
         $type eq $self->type &&
-        $c->check_user_roles(qw/administrator/)
+        $c->user_in_realm('admin')
     );
     return;
 }

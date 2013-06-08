@@ -29,9 +29,10 @@ around handle => sub {
 sub filter {
     my ($self, $c, $type) = @_;
 
+    use Data::Printer; p $c->user;
     return $self if(
         $type eq $self->type &&
-        $c->check_user_roles(qw/administrator/) &&
+        $c->user_in_realm('admin') &&
         ref $c->controller eq 'NGCP::Panel::Controller::Dashboard'
     );
     return;

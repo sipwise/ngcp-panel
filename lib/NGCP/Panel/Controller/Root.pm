@@ -218,6 +218,14 @@ sub error_page :Private {
     $c->response->status(404);
 }
 
+sub denied_page :Private {
+    my ($self,$c) = @_;
+    
+    $c->log->info('Access to path denied: ' . $c->request->path );
+    $c->stash(template => 'denied_page.tt');
+    $c->response->status(403);
+}
+
 __PACKAGE__->meta->make_immutable;
 
 1;
