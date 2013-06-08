@@ -42,7 +42,42 @@ sub index :Path Form {
         my $user = $form->field('username')->value;
         my $pass = $form->field('password')->value;
         $c->log->debug("*** Login::index user=$user, pass=$pass, realm=$realm");
-        if($c->authenticate({ username => $user, password => $pass }, $realm)) {
+        my $res;
+        if($realm eq 'admin') {
+            $res = $c->authenticate(
+                {
+                    login => $user, 
+                    md5pass => $pass,
+                    'dbix_class' => {
+                        searchargs => [{
+                            -and => [
+                                login => $user,
+                                is_active => 1, 
+                                reseller_id => 1 
+                            ],
+                        }],
+                    }
+                }, 
+                $realm);
+        } elsif($realm eq 'reseller') {
+            $res = $c->authenticate(
+                {
+                    login => $user, 
+                    md5pass => $pass,
+                    'dbix_class' => {
+                        searchargs => [{
+                            -and => [ 
+                                login => $user,
+                                is_active => 1, 
+                                reseller_id => { '>' => 1 } 
+                            ],
+                        }],
+                    }
+                }, 
+                $realm);
+        }
+
+        if($res) {
             # auth ok
             my $target = $c->session->{'target'} || '/';
             delete $c->session->{target};

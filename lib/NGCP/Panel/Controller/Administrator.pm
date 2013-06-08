@@ -4,6 +4,7 @@ use namespace::sweep;
 BEGIN { extends 'Catalyst::Controller'; }
 use NGCP::Panel::Form::Administrator qw();
 use NGCP::Panel::Utils qw();
+use Digest::MD5 qw(md5_hex);
 
 sub list_admin :PathPart('administrator') :Chained('/') :CaptureArgs(0) {
     my ($self, $c) = @_;
@@ -50,6 +51,7 @@ sub create :Chained('list_admin') :PathPart('create') :Args(0) {
     if ($form->validated) {
         try {
             delete $form->params->{save};
+	    $form->params->{md5pass} = md5_hex($form->params->{md5pass});
             $c->model('billing')->resultset('admins')->create($form->params);
             $c->flash(messages => [{type => 'success', text => 'Administrator created.'}]);
             $c->response->redirect($c->uri_for);
@@ -93,6 +95,9 @@ sub edit :Chained('base') :PathPart('edit') :Args(0) {
             # flatten nested hashref instead of recursive update
             $form_values->{reseller_id} = delete $form_values->{reseller}{id};
             delete $form_values->{reseller};
+	    if($form_values->{md5pass} and length $form_values->{md5pass}) {
+	    	$form_values->{md5pass} = md5_hex($form_values->{md5pass});
+	    }
             $c->stash->{admins}->search_rs({ id => $form_values->{id} })->update($form_values);
             $c->flash(messages => [{type => 'success', text => 'Administrator changed.'}]);
         } catch($e) {

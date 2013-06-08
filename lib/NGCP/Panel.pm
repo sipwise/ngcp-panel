@@ -109,33 +109,27 @@ __PACKAGE__->config(
         reseller => {
             credential => {
                 class => 'Password',
-                password_field => 'password',
-                password_type => 'clear'
+                password_field => 'md5pass',
+                password_type => 'hashed',
+                password_hash_type => 'MD5'
             },
             store => {
-                class => 'Minimal',
-                users => {
-                    reseller => {
-                        password => 'reseller',
-                        roles => [qw/reseller/],
-                    }
-                }
+                class => 'DBIx::Class',
+                user_model => 'billing::admins',
+                id_field => 'id',
             }
         },
         admin => {
             credential => {
                 class => 'Password',
-                password_field => 'password',
-                password_type => 'clear'
+                password_field => 'md5pass',
+                password_type => 'hashed',
+                password_hash_type => 'MD5'
             },
             store => {
-                class => 'Minimal',
-                users => {
-                    administrator => {
-                        password => 'administrator',
-                        roles => [qw/administrator/],
-                    },
-                }
+                class => 'DBIx::Class',
+                user_model => 'billing::admins',
+                id_field => 'id',
             }
         }
     }
