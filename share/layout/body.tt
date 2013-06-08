@@ -29,7 +29,6 @@
                     </li>
                 </ul>
                 <ul class="pull-right">
-                <!-- [% USE Dumper; Dumper.dump(c.user); %] -->
                     <li><a href="javascript:;"><i class="icon-user"></i> Logged in as [% c.user.login %]</a></li>
                     <li><a href="javascript:;"><span class="badge badge-primary">1</span> New Message</a></li>
                     <li class="dropdown">

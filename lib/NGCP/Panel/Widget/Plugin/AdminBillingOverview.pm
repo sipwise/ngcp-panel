@@ -29,7 +29,6 @@ around handle => sub {
 sub filter {
     my ($self, $c, $type) = @_;
 
-    use Data::Printer; p $c->user;
     return $self if(
         $type eq $self->type &&
         $c->user_in_realm('admin') &&
