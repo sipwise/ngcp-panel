@@ -130,7 +130,6 @@ sub ajax :Chained('list') :PathPart('ajax') :Args(0) {
     $c->detach( $c->view("JSON") );
 }
 
-
 =head1 AUTHOR
 
 Andreas Granig,,,

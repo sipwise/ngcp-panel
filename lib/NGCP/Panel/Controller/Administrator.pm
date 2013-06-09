@@ -13,7 +13,7 @@ sub list_admin :PathPart('administrator') :Chained('/') :CaptureArgs(0) {
     $c->stash(
         admins => $c->model('billing')
 		    ->resultset('admins')
-		    ->search_rs(is_superuser => 1),
+		    ->search_rs({is_superuser => 1}),
         template => 'administrator/list.tt'
     );
     return;

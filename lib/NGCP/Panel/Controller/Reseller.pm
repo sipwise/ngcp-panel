@@ -24,11 +24,9 @@ sub list_reseller :Chained('/') :PathPart('reseller') :CaptureArgs(0) {
 
     $c->stash(
         resellers => $c->model('billing')
-            ->resultset('resellers')
-            ->search_rs({id => { '>' => 1}}),
+            ->resultset('resellers'),
         template => 'reseller/list.tt'
     );
-
     NGCP::Panel::Utils::check_redirect_chain(c => $c);
 }
 
@@ -81,7 +79,7 @@ sub create :Chained('list_reseller') :PathPart('create') :Args(0) {
             $c->flash(messages => [{type => 'success', text => 'Reseller successfully created.'}]);
         } catch($e) {
             $c->log->error($e);
-            $c->flash(messages => [{type => 'error', text => 'Creating reseller failed'}]);
+            $c->flash(messages => [{type => 'error', text => 'Creating reseller failed.'}]);
         }
         $c->response->redirect($c->uri_for());
         return;
@@ -96,7 +94,7 @@ sub base :Chained('list_reseller') :PathPart('') :CaptureArgs(1) {
     my ($self, $c, $reseller_id) = @_;
 
     unless($reseller_id && $reseller_id =~ /^\d+$/) {
-        $c->flash(messages => [{type => 'error', text => 'Invalid reseller id detected!'}]);
+        $c->flash(messages => [{type => 'error', text => 'Invalid reseller id detected.'}]);
         $c->response->redirect($c->uri_for());
         return;
     }
@@ -126,9 +124,10 @@ sub edit :Chained('base') :PathPart('edit') :Args(0) {
             delete $form_values->{contract};
             $c->stash->{reseller}->update($form_values);            
             $c->flash(messages => [{type => 'success', text => 'Reseller successfully changed.'}]);
+            delete $c->session->{contract_id};
         } catch($e) {
             $c->log->error($e);
-            $c->flash(messages => [{type => 'error', text => 'Updating reseller failed'}]);
+            $c->flash(messages => [{type => 'error', text => 'Updating reseller failed.'}]);
         }
         $c->response->redirect($c->uri_for());
     }
@@ -136,15 +135,49 @@ sub edit :Chained('base') :PathPart('edit') :Args(0) {
     $c->stash(close_target => $c->uri_for());
     $c->stash(form => $form);
     $c->stash(edit_flag => 1);
+
+    $c->session(contract_id => $c->stash->{reseller}->get_column('contract_id'));
+
     return;
 }
 
 sub delete :Chained('base') :PathPart('delete') :Args(0) {
     my ($self, $c) = @_;
 
-    # $c->model('Provisioning')->reseller($c->stash->{reseller}->{id})->delete;
-    $c->flash(messages => [{type => 'info', text => 'Reseller delete not implemented!'}]);
+    try {
+        $c->stash->{reseller}->delete;
+        $c->flash(messages => [{type => 'success', text => 'Reseller successfully deleted.'}]);
+    } catch($e) {
+        $c->log->error($e);
+        $c->flash(messages => [{type => 'error', text => 'Deleting reseller failed.'}]);
+    }
     $c->response->redirect($c->uri_for());
+}
+
+sub ajax_contract :Chained('list_reseller') :PathPart('ajax_contract') :Args(0) {
+    my ($self, $c) = @_;
+  
+    my $contract_id = $c->session->{contract_id};
+
+    my @used_contracts = map { 
+        $_->get_column('contract_id') unless(
+            $contract_id && 
+            $contract_id == $_->get_column('contract_id')
+        )
+    } $c->stash->{resellers}->all;
+    my $free_contracts = $c->model('billing')
+        ->resultset('contracts')
+        ->search_rs({
+            id => { 'not in' => \@used_contracts }
+        });
+    
+    $c->forward("/ajax_process_resultset", [ 
+        $free_contracts,
+        ["id","contact_id","external_id","status"],
+        [1,2,3]
+    ]);
+    
+    $c->detach( $c->view("JSON") );
 }
 
 =head1 AUTHOR
