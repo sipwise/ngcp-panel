@@ -6,10 +6,14 @@ use NGCP::Panel::Form::Administrator qw();
 use NGCP::Panel::Utils qw();
 use Digest::MD5 qw(md5_hex);
 
+# TODO: reject any access from non-admins
+
 sub list_admin :PathPart('administrator') :Chained('/') :CaptureArgs(0) {
     my ($self, $c) = @_;
     $c->stash(
-        admins => $c->model('billing')->resultset('admins'),
+        admins => $c->model('billing')
+		    ->resultset('admins')
+		    ->search_rs(is_superuser => 1),
         template => 'administrator/list.tt'
     );
     return;
@@ -26,8 +30,8 @@ sub ajax :Chained('list_admin') :PathPart('ajax') :Args(0) {
     $c->forward(
         '/ajax_process_resultset', [
             $admins,
-            [qw(id reseller_id login is_master is_superuser is_active read_only show_passwords call_data lawful_intercept)],
-            [ 1, 2 ]
+            [qw(id login is_master is_active read_only show_passwords call_data lawful_intercept)],
+            [ 1 ]
         ]
     );
     $c->detach($c->view('JSON'));
@@ -37,8 +41,9 @@ sub ajax :Chained('list_admin') :PathPart('ajax') :Args(0) {
 sub create :Chained('list_admin') :PathPart('create') :Args(0) {
     my ($self, $c) = @_;
 
-    $c->detach('/denied_page')
-    	unless($c->user->{is_master});
+#    use Data::Printer; p $c->user;
+#    $c->detach('/denied_page')
+#    	unless($c->user->{is_master});
 
     my $form = NGCP::Panel::Form::Administrator->new;
     $form->process(
@@ -53,11 +58,13 @@ sub create :Chained('list_admin') :PathPart('create') :Args(0) {
         back_uri => $c->uri_for('create')
     );
     if ($form->validated) {
-    	# TODO: check if reseller, and if so, auto-set contract;
-	# also, only show admins within reseller_id if reseller
+        # TODO: check if reseller, and if so, auto-set contract;
+        # also, only show admins within reseller_id if reseller
         try {
             delete $form->params->{save};
-	    $form->params->{md5pass} = md5_hex($form->params->{md5pass});
+            $form->params->{is_superuser} = 1;
+            $form->params->{reseller_id} = 1;
+            $form->params->{md5pass} = md5_hex($form->params->{md5pass});
             $c->model('billing')->resultset('admins')->create($form->params);
             $c->flash(messages => [{type => 'success', text => 'Administrator created.'}]);
             $c->response->redirect($c->uri_for);
@@ -90,20 +97,24 @@ sub edit :Chained('base') :PathPart('edit') :Args(0) {
     my $posted = $c->request->method eq 'POST';
     my $form = NGCP::Panel::Form::Administrator->new;
     $c->stash->{administrator}->{'reseller.id'} = delete $c->stash->{administrator}->{reseller_id};
+    $form->field('md5pass')->{required} = 0;
     $form->process(
         posted => 1,
         params => $posted ? $c->request->params : $c->stash->{administrator},
         action => $c->uri_for($c->stash->{administrator}->{id}, 'edit'),
     );
+    # TODO: if pass is empty, don't update it
     if ($posted && $form->validated) {
         try {
             my $form_values = $form->value;
             # flatten nested hashref instead of recursive update
             $form_values->{reseller_id} = delete $form_values->{reseller}{id};
             delete $form_values->{reseller};
-	    if($form_values->{md5pass} and length $form_values->{md5pass}) {
-	    	$form_values->{md5pass} = md5_hex($form_values->{md5pass});
-	    }
+            if($form_values->{md5pass} and length $form_values->{md5pass}) {
+                $form_values->{md5pass} = md5_hex($form_values->{md5pass});
+            } else {
+                delete $form_values->{md5pass};
+            }
             $c->stash->{admins}->search_rs({ id => $form_values->{id} })->update($form_values);
             $c->flash(messages => [{type => 'success', text => 'Administrator changed.'}]);
         } catch($e) {
@@ -178,3 +189,5 @@ Lars Dieckow C<< <ldieckow@sipwise.com> >>
 
 This library is free software. You can redistribute it and/or modify
 it under the same terms as Perl itself.
+
+# vim: set tabstop=4 expandtab:

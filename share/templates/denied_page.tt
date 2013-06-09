@@ -4,7 +4,7 @@
 		
 		<div class="error-container">
 			
-			<h1>Oops!</h1>
+			<h1>Nope!</h1>
 			
 			<h2>[% c.response.status %] Denied</h2>
 			

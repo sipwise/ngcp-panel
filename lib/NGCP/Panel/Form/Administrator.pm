@@ -14,7 +14,10 @@ has_field 'reseller' => (
 );
 has_field 'login' => (type => 'Text', required => 1,);
 has_field 'md5pass' => (type => 'Password', required => 1, label => 'Password');
-for (qw(is_master is_superuser is_active read_only show_passwords call_data lawful_intercept)) {
+for (qw(is_active show_passwords call_data)) {
+    has_field $_ => (type => 'Boolean', default => 1);
+}
+for (qw(is_master read_only lawful_intercept)) {
     has_field $_ => (type => 'Boolean',);
 }
 has_field 'save' => (type => 'Submit', element_class => [qw(btn btn-primary)],);
@@ -22,7 +25,7 @@ has_block 'fields' => (
     tag => 'div',
     class => [qw(modal-body)],
     render_list => [qw(
-        reseller login md5pass is_master is_superuser is_active read_only show_passwords call_data lawful_intercept
+        login md5pass is_master is_active read_only show_passwords call_data lawful_intercept
     )],
 );
 has_block 'actions' => (tag => 'div', class => [qw(modal-footer)], render_list => [qw(save)],);

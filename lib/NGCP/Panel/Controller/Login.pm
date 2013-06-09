@@ -53,7 +53,7 @@ sub index :Path Form {
                             -and => [
                                 login => $user,
                                 is_active => 1, 
-                                reseller_id => 1 
+                                is_superuser => 1,
                             ],
                         }],
                     }
@@ -69,7 +69,8 @@ sub index :Path Form {
                             -and => [ 
                                 login => $user,
                                 is_active => 1, 
-                                reseller_id => { '>' => 1 } 
+                                is_superuser => 0,
+                                reseller_id => { '>' => 1 },
                             ],
                         }],
                     }
