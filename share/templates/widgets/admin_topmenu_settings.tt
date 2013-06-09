@@ -5,6 +5,7 @@
         <b class="caret"></b>
     </a>
     <ul class="dropdown-menu">
+        <li><a href="[% c.uri_for('/administrator') %]">Administrators</a></li>
         <li><a href="[% c.uri_for('/reseller') %]">Resellers</a></li>
         <li><a href="[% c.uri_for('/domain') %]">Domains</a></li>
         <li><a href="[% c.uri_for('/billing') %]">Billing</a></li>
