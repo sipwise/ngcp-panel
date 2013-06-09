@@ -1,9 +1,11 @@
 package NGCP::Panel::Controller::Reseller;
-use Moose;
-use namespace::autoclean;
+use Sipwise::Base;
+use namespace::sweep;
 BEGIN { extends 'Catalyst::Controller'; }
 use NGCP::Panel::Form::Reseller;
 use NGCP::Panel::Utils;
+
+use Data::Printer;
 
 =head1 NAME
 
@@ -17,34 +19,44 @@ Catalyst Controller.
 
 =cut
 
-sub list :Chained('/') :PathPart('reseller') :CaptureArgs(0) {
+sub list_reseller :Chained('/') :PathPart('reseller') :CaptureArgs(0) {
     my ($self, $c) = @_;
 
-    my $resellers = [
-        {id => 1, 'contract.id' => 1, name => 'reseller 1', status => 'active'},
-        {id => 2, 'contract.id' => 2, name => 'reseller 2', status => 'locked'},
-        {id => 3, 'contract.id' => 3, name => 'reseller 3', status => 'terminated'},
-        {id => 4, 'contract.id' => 4, name => 'reseller 4', status => 'active'},
-        {id => 5, 'contract.id' => 5, name => 'reseller 5', status => 'locked'},
-        {id => 6, 'contract.id' => 6, name => 'reseller 6', status => 'terminated'},
-    ];
-    $c->stash(resellers => $resellers);
-    $c->stash(template => 'reseller/list.tt');
+    $c->stash(
+        resellers => $c->model('billing')
+            ->resultset('resellers')
+            ->search_rs({id => { '>' => 1}}),
+        template => 'reseller/list.tt'
+    );
 
     NGCP::Panel::Utils::check_redirect_chain(c => $c);
 }
 
-sub root :Chained('list') :PathPart('') :Args(0) {
+sub root :Chained('list_reseller') :PathPart('') :Args(0) {
     my ($self, $c) = @_;
 }
 
-sub create :Chained('list') :PathPart('create') :Args(0) {
+sub ajax :Chained('list_reseller') :PathPart('ajax') :Args(0) {
+    my ($self, $c) = @_;
+    my $resellers = $c->stash->{resellers};
+    $c->forward(
+        '/ajax_process_resultset', [
+            $resellers,
+            [qw(id contract_id name status)],
+            [ 1, 2, 3 ]
+        ]
+    );
+    $c->detach($c->view('JSON'));
+    return;
+}
+
+sub create :Chained('list_reseller') :PathPart('create') :Args(0) {
     my ($self, $c) = @_;
 
     # TODO: check in session if contract has just been created, and set it
     # as default value
 
-    my $posted = ($c->request->method eq 'POST');
+    my $posted = $c->request->method eq 'POST';
     my $form = NGCP::Panel::Form::Reseller->new;
     $form->process(
         posted => $posted,
@@ -52,14 +64,25 @@ sub create :Chained('list') :PathPart('create') :Args(0) {
         action => $c->uri_for('create'),
     );
     return if NGCP::Panel::Utils::check_form_buttons(
-        c => $c, form => $form, fields => [qw/contract.create/], 
+        c => $c, 
+        form => $form, 
+        fields => [qw/contract.create/], 
         back_uri => $c->uri_for('create')
     );
     # TODO: preserve the current "reseller" object for continuing editing
     # when coming back from /contract/create
 
     if($form->validated) {
-        $c->flash(messages => [{type => 'success', text => 'Reseller successfully created!'}]);
+        try {
+            delete $form->params->{save};
+            $form->params->{contract_id} = delete $form->params->{contract}->{id};
+            delete $form->params->{contract};
+            $c->model('billing')->resultset('resellers')->create($form->params);
+            $c->flash(messages => [{type => 'success', text => 'Reseller successfully created.'}]);
+        } catch($e) {
+            $c->log->error($e);
+            $c->flash(messages => [{type => 'error', text => 'Creating reseller failed'}]);
+        }
         $c->response->redirect($c->uri_for());
         return;
     }
@@ -69,14 +92,7 @@ sub create :Chained('list') :PathPart('create') :Args(0) {
     $c->stash(form => $form);
 }
 
-sub search :Chained('list') :PathPart('search') Args(0) {
-    my ($self, $c) = @_;
-
-    $c->flash(messages => [{type => 'info', text => 'Reseller search not implemented!'}]);
-    $c->response->redirect($c->uri_for());
-}
-
-sub base :Chained('/reseller/list') :PathPart('') :CaptureArgs(1) {
+sub base :Chained('list_reseller') :PathPart('') :CaptureArgs(1) {
     my ($self, $c, $reseller_id) = @_;
 
     unless($reseller_id && $reseller_id =~ /^\d+$/) {
@@ -85,35 +101,42 @@ sub base :Chained('/reseller/list') :PathPart('') :CaptureArgs(1) {
         return;
     }
 
-    # TODO: fetch details of reseller from model
-    my @rfilter = grep { $_->{id} == $reseller_id } @{ $c->stash->{resellers} };
-    $c->stash(reseller =>  shift @rfilter);
+    $c->stash(reseller => $c->stash->{resellers}->find({id => $reseller_id}));
 }
 
 sub edit :Chained('base') :PathPart('edit') :Args(0) {
     my ($self, $c) = @_;
 
-    my $posted = ($c->request->method eq 'POST');
+    my $posted = $c->request->method eq 'POST';
     my $form = NGCP::Panel::Form::Reseller->new;
     $form->process(
         posted => 1,
-        params => $posted ? $c->request->params : $c->stash->{reseller},
-        action => $c->uri_for($c->stash->{reseller}->{id}, 'edit'),
+        params => $posted ? $c->request->params : {$c->stash->{reseller}->get_inflated_columns},
+        action => $c->uri_for($c->stash->{reseller}->get_column('id'), 'edit'),
     );
     return if NGCP::Panel::Utils::check_form_buttons(
         c => $c, form => $form, fields => [qw/contract.create/], 
-        back_uri => $c->uri_for($c->stash->{reseller}->{id}, 'edit')
+        back_uri => $c->uri_for($c->stash->{reseller}->get_column('id'), 'edit')
     );
 
     if($posted && $form->validated) {
-        $c->flash(messages => [{type => 'success', text => 'Reseller successfully changed!'}]);
+        try {
+            my $form_values = $form->value;
+            $form_values->{contract_id} = delete $form_values->{contract}{id};
+            delete $form_values->{contract};
+            $c->stash->{reseller}->update($form_values);            
+            $c->flash(messages => [{type => 'success', text => 'Reseller successfully changed.'}]);
+        } catch($e) {
+            $c->log->error($e);
+            $c->flash(messages => [{type => 'error', text => 'Updating reseller failed'}]);
+        }
         $c->response->redirect($c->uri_for());
-        return;
     }
 
     $c->stash(close_target => $c->uri_for());
     $c->stash(form => $form);
     $c->stash(edit_flag => 1);
+    return;
 }
 
 sub delete :Chained('base') :PathPart('delete') :Args(0) {
@@ -123,21 +146,6 @@ sub delete :Chained('base') :PathPart('delete') :Args(0) {
     $c->flash(messages => [{type => 'info', text => 'Reseller delete not implemented!'}]);
     $c->response->redirect($c->uri_for());
 }
-
-sub ajax :Chained('list') :PathPart('ajax') :Args(0) {
-    my ($self, $c) = @_;
-    
-    #TODO: when user is not logged in, this gets forwarded to login page
-    
-    my $resellers = $c->stash->{resellers};
-    
-    $c->forward( "/ajax_process", [$resellers,
-                 ["id","name","contract.id","status"],
-                 [1,3]]);
-    
-    $c->detach( $c->view("JSON") );
-}
-
 
 =head1 AUTHOR
 

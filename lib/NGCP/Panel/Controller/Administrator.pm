@@ -67,12 +67,11 @@ sub create :Chained('list_admin') :PathPart('create') :Args(0) {
             $form->params->{md5pass} = md5_hex($form->params->{md5pass});
             $c->model('billing')->resultset('admins')->create($form->params);
             $c->flash(messages => [{type => 'success', text => 'Administrator created.'}]);
-            $c->response->redirect($c->uri_for);
         } catch($e) {
             $c->log->error($e);
             $c->flash(messages => [{type => 'error', text => 'Creating administrator failed'}]);
-            $c->response->redirect($c->uri_for);
-        };
+        }
+        $c->response->redirect($c->uri_for);
         return;
     }
     $c->stash({
