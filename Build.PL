@@ -30,6 +30,7 @@ my $builder = Local::Module::Build->new(
         'HTML::FormHandler::Field' => 0,
         'HTML::FormHandler::Field::Compound' => 0,
         'HTML::FormHandler::Field::Select' => 0,
+        'HTML::FormHandler::Model::DBIC' => 0,
         'HTML::FormHandler::Moose' => 0,
         'HTML::FormHandler::Widget::Block::Bootstrap' => 0,
         'Log::Log4perl::Catalyst' => 0,
