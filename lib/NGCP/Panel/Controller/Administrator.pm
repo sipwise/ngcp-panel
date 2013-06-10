@@ -4,7 +4,6 @@ use namespace::sweep;
 BEGIN { extends 'Catalyst::Controller'; }
 use NGCP::Panel::Form::Administrator qw();
 use NGCP::Panel::Utils qw();
-use Digest::MD5 qw(md5_hex);
 
 # TODO: reject any access from non-admins
 
@@ -64,7 +63,6 @@ sub create :Chained('list_admin') :PathPart('create') :Args(0) {
             delete $form->params->{save};
             $form->params->{is_superuser} = 1;
             $form->params->{reseller_id} = 1;
-            $form->params->{md5pass} = md5_hex($form->params->{md5pass});
             $c->model('billing')->resultset('admins')->create($form->params);
             $c->flash(messages => [{type => 'success', text => 'Administrator created.'}]);
         } catch($e) {
@@ -109,12 +107,8 @@ sub edit :Chained('base') :PathPart('edit') :Args(0) {
             # flatten nested hashref instead of recursive update
             $form_values->{reseller_id} = delete $form_values->{reseller}{id};
             delete $form_values->{reseller};
-            if($form_values->{md5pass} and length $form_values->{md5pass}) {
-                $form_values->{md5pass} = md5_hex($form_values->{md5pass});
-            } else {
-                delete $form_values->{md5pass};
-            }
-            $c->stash->{admins}->search_rs({ id => $form_values->{id} })->update($form_values);
+            delete $form_values->{md5pass} unless length $form_values->{md5pass};
+            $c->stash->{admins}->search_rs({ id => $form_values->{id} })->update_all($form_values);
             $c->flash(messages => [{type => 'success', text => 'Administrator changed.'}]);
         } catch($e) {
             $c->log->error($e);
