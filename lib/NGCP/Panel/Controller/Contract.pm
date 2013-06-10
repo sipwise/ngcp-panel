@@ -199,8 +199,6 @@ sub peering_ajax :Chained('peering_list') :PathPart('ajax') :Args(0) {
     $c->detach( $c->view("JSON") );
 }
 
-<<<<<<< HEAD
-=======
 __PACKAGE__->meta->make_immutable;
 
 1;
@@ -258,7 +256,6 @@ Display contracts through F<contract/list.tt> template. Use L</peering_ajax> as 
 
 Similar to L</ajax>. Only select contracts, where billing.product is of class "sippeering".
 
->>>>>>> Implement Create/Show/Update/Delete of Contracts
 =head1 AUTHOR
 
 Andreas Granig,,,
