@@ -20,12 +20,12 @@ has_field 'submitid' => (
 );
 
 has_field 'source' => (
-    type => 'Text', #Regexp
+    type => '+NGCP::Panel::Field::Regexp',
     maxlength => 255,
 );
 
 has_field 'destination' => (
-    type => 'Text', #Regexp nonepty
+    type => '+NGCP::Panel::Field::Regexp',
     maxlength => 255,
     required => 1,
 );

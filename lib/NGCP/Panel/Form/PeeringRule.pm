@@ -16,11 +16,11 @@ has_field 'callee_prefix' => (
 );
 
 has_field 'callee_pattern' => (
-    type => 'Text',
+    type => '+NGCP::Panel::Field::Regexp',
 );
 
 has_field 'caller_pattern' => (
-    type => 'Text',
+    type => '+NGCP::Panel::Field::Regexp',
 );
 
 has_field 'description' => (

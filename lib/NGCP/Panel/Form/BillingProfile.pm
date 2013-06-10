@@ -50,7 +50,7 @@ has_field 'fraud_interval_lock' => (
 );
 
 has_field 'fraud_interval_notify' => (
-    type => 'Text', #Email?
+    type => '+NGCP::Panel::Field::EmailList',
     label => 'Fraud Monthly Notify',
     maxlength => 255,
 );
@@ -71,7 +71,7 @@ has_field 'fraud_daily_lock' => (
 );
 
 has_field 'fraud_daily_notify' => (
-    type => 'Text', #Email?
+    type => '+NGCP::Panel::Field::EmailList',
     maxlength => 255,
 );
 
