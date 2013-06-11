@@ -7,7 +7,7 @@ BEGIN { extends 'Catalyst::Controller'; }
 use NGCP::Panel::Form::Domain;
 
 sub dom_list :Chained('/') :PathPart('domain') :CaptureArgs(0) :Args(0)
-  :Does(ACL) :ACLDetachTo(/denied_page) :AllowedRole(admin) :AllowedRole(reseller) {
+  :Does(ACL) :ACLDetachTo('/denied_page') :AllowedRole(admin) :AllowedRole(reseller) {
     my ($self, $c) = @_;
 
     $c->stash(has_edit => 0);
@@ -15,12 +15,12 @@ sub dom_list :Chained('/') :PathPart('domain') :CaptureArgs(0) :Args(0)
 }
 
 sub root :Chained('dom_list') :PathPart('') :Args(0)
-  :Does(ACL) :ACLDetachTo(/denied_page) :AllowedRole(admin) :AllowedRole(reseller) {
+  :Does(ACL) :ACLDetachTo('/denied_page') :AllowedRole(admin) :AllowedRole(reseller) {
     my ($self, $c) = @_;
 }
 
 sub create :Chained('dom_list') :PathPart('create') :Args(0)
-  :Does(ACL) :ACLDetachTo(/denied_page) :AllowedRole(admin) :AllowedRole(reseller) {
+  :Does(ACL) :ACLDetachTo('/denied_page') :AllowedRole(admin) :AllowedRole(reseller) {
     my ($self, $c) = @_;
 
     my $form = NGCP::Panel::Form::Domain->new;
@@ -49,7 +49,7 @@ sub create :Chained('dom_list') :PathPart('create') :Args(0)
 }
 
 sub base :Chained('/domain/dom_list') :PathPart('') :CaptureArgs(1) :Args(0)
-  :Does(ACL) :ACLDetachTo(/denied_page) :AllowedRole(admin) :AllowedRole(reseller) {
+  :Does(ACL) :ACLDetachTo('/denied_page') :AllowedRole(admin) :AllowedRole(reseller) {
     my ($self, $c, $domain_id) = @_;
 
     unless($domain_id && $domain_id->is_integer) {
@@ -69,7 +69,7 @@ sub base :Chained('/domain/dom_list') :PathPart('') :CaptureArgs(1) :Args(0)
 }
 
 sub edit :Chained('base') :PathPart('edit') :Args(0)
-  :Does(ACL) :ACLDetachTo(/denied_page) :AllowedRole(admin) :AllowedRole(reseller) {
+  :Does(ACL) :ACLDetachTo('/denied_page') :AllowedRole(admin) :AllowedRole(reseller) {
     my ($self, $c) = @_;
 
     my $posted = ($c->request->method eq 'POST');
@@ -96,7 +96,7 @@ sub edit :Chained('base') :PathPart('edit') :Args(0)
 }
 
 sub delete :Chained('base') :PathPart('delete') :Args(0)
-  :Does(ACL) :ACLDetachTo(/denied_page) :AllowedRole(admin) :AllowedRole(reseller) {
+  :Does(ACL) :ACLDetachTo('/denied_page') :AllowedRole(admin) :AllowedRole(reseller) {
     my ($self, $c) = @_;
     
     unless ( defined($c->stash->{'domain_result'}) ) {
@@ -119,7 +119,7 @@ sub delete :Chained('base') :PathPart('delete') :Args(0)
 }
 
 sub ajax :Chained('dom_list') :PathPart('ajax') :Args(0)
-  :Does(ACL) :ACLDetachTo(/denied_page) :AllowedRole(admin) :AllowedRole(reseller) {
+  :Does(ACL) :ACLDetachTo('/denied_page') :AllowedRole(admin) :AllowedRole(reseller) {
     my ($self, $c) = @_;
     
     my $resultset = $c->model('billing')->resultset('domains');
@@ -132,7 +132,7 @@ sub ajax :Chained('dom_list') :PathPart('ajax') :Args(0)
 }
 
 sub preferences :Chained('base') :PathPart('preferences') :Args(0)
-  :Does(ACL) :ACLDetachTo(/denied_page) :AllowedRole(admin) :AllowedRole(reseller) {
+  :Does(ACL) :ACLDetachTo('/denied_page') :AllowedRole(admin) :AllowedRole(reseller) {
     my ($self, $c) = @_;
     
     my $domain_name = $c->stash->{domain}->{domain};
@@ -146,7 +146,7 @@ sub preferences :Chained('base') :PathPart('preferences') :Args(0)
 }
 
 sub preferences_base :Chained('base') :PathPart('preferences') :CaptureArgs(1) :Args(0)
-  :Does(ACL) :ACLDetachTo(/denied_page) :AllowedRole(admin) :AllowedRole(reseller) {
+  :Does(ACL) :ACLDetachTo('/denied_page') :AllowedRole(admin) :AllowedRole(reseller) {
     my ($self, $c, $pref_id) = @_;
 
     $self->load_preference_list($c);
@@ -171,7 +171,7 @@ sub preferences_base :Chained('base') :PathPart('preferences') :CaptureArgs(1) :
 }
 
 sub preferences_edit :Chained('preferences_base') :PathPart('edit') :Args(0)
-  :Does(ACL) :ACLDetachTo(/denied_page) :AllowedRole(admin) :AllowedRole(reseller) {
+  :Does(ACL) :ACLDetachTo('/denied_page') :AllowedRole(admin) :AllowedRole(reseller) {
     my ($self, $c) = @_;
    
     $c->stash(edit_preference => 1);
@@ -186,7 +186,7 @@ sub preferences_edit :Chained('preferences_base') :PathPart('edit') :Args(0)
 }
 
 sub load_preference_list : Private
-  :Does(ACL) :ACLDetachTo(/denied_page) :AllowedRole(admin) :AllowedRole(reseller) {
+  :Does(ACL) :ACLDetachTo('/denied_page') :AllowedRole(admin) :AllowedRole(reseller) {
     my ($self, $c) = @_;
     
     my $dom_pref_values = $c->model('provisioning')
