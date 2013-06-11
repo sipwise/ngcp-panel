@@ -121,14 +121,32 @@ sub delete :Chained('base') :PathPart('delete') :Args(0)
 sub ajax :Chained('dom_list') :PathPart('ajax') :Args(0)
   :Does(ACL) :ACLDetachTo('/denied_page') :AllowedRole(admin) :AllowedRole(reseller) {
     my ($self, $c) = @_;
-    
-    my $resultset = $c->model('billing')->resultset('domains');
-    
+    my $dispatch_to = '_ajax_resultset_' . $c->user->auth_realm;
+    my $resultset = $self->$dispatch_to($c);
     $c->forward( "/ajax_process_resultset", [$resultset,
                  ["id", "domain"],
-                 [0,1]]);
-    
+                 [1]]);
     $c->detach( $c->view("JSON") );
+}
+
+sub _ajax_resultset_admin {
+    my ($self, $c) = @_;
+    return $c->model('billing')->resultset('domains');
+}
+
+sub _ajax_resultset_reseller {
+    my ($self, $c) = @_;
+    return $c->model('billing')->resultset('domains')->search_rs(
+        {
+            'admins.id' => $c->user->id,
+        },
+        {
+            join => {domain_resellers => {reseller => 'admins'}},
+            id => {-ident => 'domain_resellers.id'},
+            'domain_resellers.reseller_id' => {-ident => 'resellers.id'},
+            'resellers.id' => {-ident => 'admins.reseller_id'},
+        }
+    );
 }
 
 sub preferences :Chained('base') :PathPart('preferences') :Args(0)
