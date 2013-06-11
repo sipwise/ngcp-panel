@@ -14,6 +14,7 @@ my $builder = Local::Module::Build->new(
     requires => {
         'base' => 0,
         'Catalyst::Action::RenderView' => 0,
+        'Catalyst::ActionRole::ACL' => 0,
         'Catalyst::Model::DBIC::Schema' => 0,
         'Catalyst::Plugin::ConfigLoader' => 0,
         'Catalyst::Plugin::Static::Simple' => 0,
