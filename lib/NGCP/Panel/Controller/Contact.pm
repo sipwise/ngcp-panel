@@ -16,6 +16,12 @@ Catalyst Controller.
 
 =cut
 
+sub auto :Does(ACL) :ACLDetachTo('/denied_page') :AllowedRole(admin) :AllowedRole(reseller) {
+    my ($self, $c) = @_;
+    $c->log->debug(__PACKAGE__ . '::auto');
+    return 1;
+}
+
 sub list :Chained('/') :PathPart('contact') :CaptureArgs(0) {
     my ($self, $c) = @_;
 

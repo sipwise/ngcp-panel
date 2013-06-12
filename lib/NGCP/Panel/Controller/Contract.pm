@@ -5,6 +5,12 @@ BEGIN { extends 'Catalyst::Controller'; }
 use NGCP::Panel::Form::Contract;
 use NGCP::Panel::Utils;
 
+sub auto :Does(ACL) :ACLDetachTo('/denied_page') :AllowedRole(admin) :AllowedRole(reseller) {
+    my ($self, $c) = @_;
+    $c->log->debug(__PACKAGE__ . '::auto');
+    return 1;
+}
+
 sub contract_list :Chained('/') :PathPart('contract') :CaptureArgs(0) {
     my ($self, $c) = @_;
     

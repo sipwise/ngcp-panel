@@ -6,21 +6,24 @@ BEGIN { extends 'Catalyst::Controller'; }
 
 use NGCP::Panel::Form::Domain;
 
-sub dom_list :Chained('/') :PathPart('domain') :CaptureArgs(0) :Args(0)
-  :Does(ACL) :ACLDetachTo('/denied_page') :AllowedRole(admin) :AllowedRole(reseller) {
+sub auto :Does(ACL) :ACLDetachTo('/denied_page') :AllowedRole(admin) :AllowedRole(reseller) {
+    my ($self, $c) = @_;
+    $c->log->debug(__PACKAGE__ . '::auto');
+    return 1;
+}
+
+sub dom_list :Chained('/') :PathPart('domain') :CaptureArgs(0) :Args(0) {
     my ($self, $c) = @_;
 
     $c->stash(has_edit => 0);
     $c->stash(template => 'domain/list.tt');
 }
 
-sub root :Chained('dom_list') :PathPart('') :Args(0)
-  :Does(ACL) :ACLDetachTo('/denied_page') :AllowedRole(admin) :AllowedRole(reseller) {
+sub root :Chained('dom_list') :PathPart('') :Args(0) {
     my ($self, $c) = @_;
 }
 
-sub create :Chained('dom_list') :PathPart('create') :Args(0)
-  :Does(ACL) :ACLDetachTo('/denied_page') :AllowedRole(admin) :AllowedRole(reseller) {
+sub create :Chained('dom_list') :PathPart('create') :Args(0) {
     my ($self, $c) = @_;
 
     my $form = NGCP::Panel::Form::Domain->new;
@@ -48,8 +51,7 @@ sub create :Chained('dom_list') :PathPart('create') :Args(0)
     $c->stash(form => $form);
 }
 
-sub base :Chained('/domain/dom_list') :PathPart('') :CaptureArgs(1) :Args(0)
-  :Does(ACL) :ACLDetachTo('/denied_page') :AllowedRole(admin) :AllowedRole(reseller) {
+sub base :Chained('/domain/dom_list') :PathPart('') :CaptureArgs(1) :Args(0) {
     my ($self, $c, $domain_id) = @_;
 
     unless($domain_id && $domain_id->is_integer) {
@@ -68,8 +70,7 @@ sub base :Chained('/domain/dom_list') :PathPart('') :CaptureArgs(1) :Args(0)
     $c->stash(domain_result => $res);
 }
 
-sub edit :Chained('base') :PathPart('edit') :Args(0)
-  :Does(ACL) :ACLDetachTo('/denied_page') :AllowedRole(admin) :AllowedRole(reseller) {
+sub edit :Chained('base') :PathPart('edit') :Args(0) {
     my ($self, $c) = @_;
 
     my $posted = ($c->request->method eq 'POST');
@@ -95,8 +96,7 @@ sub edit :Chained('base') :PathPart('edit') :Args(0)
     $c->stash(edit_flag => 1);
 }
 
-sub delete :Chained('base') :PathPart('delete') :Args(0)
-  :Does(ACL) :ACLDetachTo('/denied_page') :AllowedRole(admin) :AllowedRole(reseller) {
+sub delete :Chained('base') :PathPart('delete') :Args(0) {
     my ($self, $c) = @_;
     
     unless ( defined($c->stash->{'domain_result'}) ) {
@@ -118,8 +118,7 @@ sub delete :Chained('base') :PathPart('delete') :Args(0)
     $c->response->redirect($c->uri_for());
 }
 
-sub ajax :Chained('dom_list') :PathPart('ajax') :Args(0)
-  :Does(ACL) :ACLDetachTo('/denied_page') :AllowedRole(admin) :AllowedRole(reseller) {
+sub ajax :Chained('dom_list') :PathPart('ajax') :Args(0) {
     my ($self, $c) = @_;
     my $dispatch_to = '_ajax_resultset_' . $c->user->auth_realm;
     my $resultset = $self->$dispatch_to($c);
@@ -149,8 +148,7 @@ sub _ajax_resultset_reseller {
     );
 }
 
-sub preferences :Chained('base') :PathPart('preferences') :Args(0)
-  :Does(ACL) :ACLDetachTo('/denied_page') :AllowedRole(admin) :AllowedRole(reseller) {
+sub preferences :Chained('base') :PathPart('preferences') :Args(0) {
     my ($self, $c) = @_;
     
     my $domain_name = $c->stash->{domain}->{domain};
@@ -163,8 +161,7 @@ sub preferences :Chained('base') :PathPart('preferences') :Args(0)
     $c->stash(template => 'domain/preferences.tt');
 }
 
-sub preferences_base :Chained('base') :PathPart('preferences') :CaptureArgs(1) :Args(0)
-  :Does(ACL) :ACLDetachTo('/denied_page') :AllowedRole(admin) :AllowedRole(reseller) {
+sub preferences_base :Chained('base') :PathPart('preferences') :CaptureArgs(1) :Args(0) {
     my ($self, $c, $pref_id) = @_;
 
     $self->load_preference_list($c);
@@ -188,8 +185,7 @@ sub preferences_base :Chained('base') :PathPart('preferences') :CaptureArgs(1) :
     $c->stash(template => 'domain/preferences.tt');
 }
 
-sub preferences_edit :Chained('preferences_base') :PathPart('edit') :Args(0)
-  :Does(ACL) :ACLDetachTo('/denied_page') :AllowedRole(admin) :AllowedRole(reseller) {
+sub preferences_edit :Chained('preferences_base') :PathPart('edit') :Args(0) {
     my ($self, $c) = @_;
    
     $c->stash(edit_preference => 1);
@@ -203,8 +199,7 @@ sub preferences_edit :Chained('preferences_base') :PathPart('edit') :Args(0)
     );
 }
 
-sub load_preference_list : Private
-  :Does(ACL) :ACLDetachTo('/denied_page') :AllowedRole(admin) :AllowedRole(reseller) {
+sub load_preference_list :Private {
     my ($self, $c) = @_;
     
     my $dom_pref_values = $c->model('provisioning')

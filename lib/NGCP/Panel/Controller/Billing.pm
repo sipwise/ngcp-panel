@@ -17,6 +17,12 @@ use NGCP::Panel::Form::BillingFeeUpload;
 my @WEEKDAYS = map { langinfo($_) } (DAY_2, DAY_3, DAY_4, DAY_5, DAY_6, DAY_7, DAY_1);
 #Monday Tuesday Wednesday Thursday Friday Saturday Sunday
 
+sub auto :Does(ACL) :ACLDetachTo('/denied_page') :AllowedRole(admin) :AllowedRole(reseller) {
+    my ($self, $c) = @_;
+    $c->log->debug(__PACKAGE__ . '::auto');
+    return 1;
+}
+
 sub profile_list :Chained('/') :PathPart('billing') :CaptureArgs(0) :Args(0) {
     my ( $self, $c ) = @_;
     

@@ -7,6 +7,12 @@ BEGIN { extends 'Catalyst::Controller'; }
 use NGCP::Panel::Form::RewriteRuleSet;
 use NGCP::Panel::Form::RewriteRule;
 
+sub auto :Does(ACL) :ACLDetachTo('/denied_page') :AllowedRole(admin) :AllowedRole(reseller) {
+    my ($self, $c) = @_;
+    $c->log->debug(__PACKAGE__ . '::auto');
+    return 1;
+}
+
 sub set_list :Chained('/') :PathPart('rewrite') :CaptureArgs(0) {
     my ( $self, $c ) = @_;
 
