@@ -12,7 +12,7 @@ sub auto :Does(ACL) :ACLDetachTo('/denied_page') :AllowedRole(admin) :AllowedRol
     return 1;
 }
 
-sub dom_list :Chained('/') :PathPart('domain') :CaptureArgs(0) :Args(0) {
+sub dom_list :Chained('/') :PathPart('domain') :CaptureArgs(0) {
     my ($self, $c) = @_;
 
     $c->stash(has_edit => 0);
@@ -51,7 +51,7 @@ sub create :Chained('dom_list') :PathPart('create') :Args(0) {
     $c->stash(form => $form);
 }
 
-sub base :Chained('/domain/dom_list') :PathPart('') :CaptureArgs(1) :Args(0) {
+sub base :Chained('/domain/dom_list') :PathPart('') :CaptureArgs(1) {
     my ($self, $c, $domain_id) = @_;
 
     unless($domain_id && $domain_id->is_integer) {
@@ -161,7 +161,7 @@ sub preferences :Chained('base') :PathPart('preferences') :Args(0) {
     $c->stash(template => 'domain/preferences.tt');
 }
 
-sub preferences_base :Chained('base') :PathPart('preferences') :CaptureArgs(1) :Args(0) {
+sub preferences_base :Chained('base') :PathPart('preferences') :CaptureArgs(1) {
     my ($self, $c, $pref_id) = @_;
 
     $self->load_preference_list($c);

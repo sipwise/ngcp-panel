@@ -23,7 +23,7 @@ sub auto :Does(ACL) :ACLDetachTo('/denied_page') :AllowedRole(admin) :AllowedRol
     return 1;
 }
 
-sub profile_list :Chained('/') :PathPart('billing') :CaptureArgs(0) :Args(0) {
+sub profile_list :Chained('/') :PathPart('billing') :CaptureArgs(0) {
     my ( $self, $c ) = @_;
     
     NGCP::Panel::Utils::check_redirect_chain(c => $c);
@@ -49,7 +49,7 @@ sub ajax :Chained('profile_list') :PathPart('ajax') :Args(0) {
     $c->detach( $c->view("JSON") );
 }
 
-sub base :Chained('profile_list') :PathPart('') :CaptureArgs(1) :Args(0) {
+sub base :Chained('profile_list') :PathPart('') :CaptureArgs(1) {
     my ($self, $c, $profile_id) = @_;
 
     unless($profile_id && $profile_id->is_integer) {

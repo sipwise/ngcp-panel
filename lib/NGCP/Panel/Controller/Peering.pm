@@ -15,7 +15,7 @@ sub auto :Does(ACL) :ACLDetachTo('/denied_page') :AllowedRole(admin) {
     return 1;
 }
 
-sub group_list :Chained('/') :PathPart('peering') :CaptureArgs(0) :Args(0) {
+sub group_list :Chained('/') :PathPart('peering') :CaptureArgs(0) {
     my ( $self, $c ) = @_;
     
     NGCP::Panel::Utils::check_redirect_chain(c => $c);
@@ -41,7 +41,7 @@ sub ajax :Chained('group_list') :PathPart('ajax') :Args(0) {
     $c->detach( $c->view("JSON") );
 }
 
-sub base :Chained('group_list') :PathPart('') :CaptureArgs(1) :Args(0) {
+sub base :Chained('group_list') :PathPart('') :CaptureArgs(1) {
     my ($self, $c, $group_id) = @_;
 
     unless($group_id && $group_id->is_integer) {
