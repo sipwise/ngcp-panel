@@ -1,0 +1,92 @@
+[% site_config.title = 'Rewrite Rules for ' _ set_result.name -%]
+
+<a href="[% c.uri_for() %]">&lt; Back</a>
+
+<div class="row">
+    <a class="btn btn-primary btn-large" href="[% c.uri_for_action('/rewrite/rules_create', [c.req.captures.0]) %]"><i class="icon-star"></i> Create Rewrite Rule</a>
+</div>
+
+[% IF messages -%]
+<div class="row">
+    [% FOREACH m IN messages -%]
+        <div class="alert alert-[% m.type %]">[% m.text %]</div>
+    [% END -%]
+</div>
+[% END -%]
+
+<div class="ngcp-separator"></div>
+
+[% MACRO show_rules BLOCK -%]
+<table class="table table-bordered table-striped table-highlight table-hover">
+    <thead>
+        <tr>
+            <th></th>
+            <th>Match Pattern</th>
+            <th>Replacement Pattern</th>
+            <th>Description</th>
+            <th class="ngcp-actions-column"></th>
+        </tr>
+    </thead>
+    <tbody>
+    [% FOR r IN m_rules %]
+        <tr class="sw_action_row">
+            <td>
+                    <a href="[% c.uri_for_action('/rewrite/rules_root',[set_result.id], 'move' => r.id, 'where' => 'up') %]">
+                        <i class="icon-arrow-up"></i>
+                    </a>
+                    <a href="[% c.uri_for_action('/rewrite/rules_root',[set_result.id], 'move' => r.id, 'where' => 'down') %]">
+                        <i class="icon-arrow-down"></i>
+                    </a>
+            </td>
+            <td>[% r.match_pattern %]</td>
+            <td>[% r.replace_pattern %]</td>
+            <td>[% r.description %]</td>
+            <td class="ngcp-actions-column">
+                <div class="sw_actions pull-right">
+                    <a class="btn btn-small btn-primary" href="[% c.uri_for_action('/rewrite/rules_edit',[set_result.id, r.id]) %]">
+                        <i class="icon-edit"></i> Edit
+                    </a>
+                    <a class="btn btn-small btn-secondary" href="[% c.uri_for_action('/rewrite/rules_delete',[set_result.id, r.id]) %]">
+                        <i class="icon-trash"></i> Delete
+                    </a>
+                </div>
+            </td>
+        </tr>
+    [% END %]
+    </tbody>
+</table>
+[% END -%]
+
+<h3>Inbound Rewrite Rules for Caller</h3>
+
+[% show_rules(m_rules = rules.caller_in) %]
+
+<h3>Inbound Rewrite Rules for Callee</h3>
+
+[% show_rules(m_rules = rules.callee_in) %]
+
+<h3>Outbound Rewrite Rules for Caller</h3>
+
+[% show_rules(m_rules = rules.caller_out) %]
+
+<h3>Outbound Rewrite Rules for Callee</h3>
+
+[% show_rules(m_rules = rules.callee_out) %]
+
+[% IF edit_flag || create_flag -%]
+[%
+    PROCESS "helpers/modal.tt";
+    modal_header(m.name = 'Rule',
+                 m.create_flag = create_flag);
+-%]
+
+[% form.render() %]
+
+[%
+    modal_footer();
+    modal_script(m.close_target = rules_uri);
+-%]
+[% END -%]
+
+
+[% # vim: set tabstop=4 syntax=html expandtab: -%]
