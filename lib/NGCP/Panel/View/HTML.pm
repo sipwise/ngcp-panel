@@ -7,7 +7,7 @@ extends 'Catalyst::View::TT';
 __PACKAGE__->config(
     TEMPLATE_EXTENSION => '.tt',
     render_die => 1,
-
+    ENCODING => 'UTF-8',
     WRAPPER => 'wrapper.tt'
 );
 
