@@ -1,4 +1,4 @@
-[% META title = 'SIP Peering Groups' -%]
+[% META title = 'Rewrite Rule Sets' -%]
 [%
     helper.name = 'Rewrite Rule Sets';
     helper.messages = messages;
