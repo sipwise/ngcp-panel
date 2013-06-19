@@ -16,12 +16,26 @@ sub auto :Does(ACL) :ACLDetachTo('/denied_page') :AllowedRole(admin) :AllowedRol
 sub levels_list :Chained('/') :PathPart('ncos') :CaptureArgs(0) {
     my ( $self, $c ) = @_;
     
-    my $levels_rs = $c->model('billing')->resultset('ncos_levels');
+    my $dispatch_to = '_levels_resultset_' . $c->user->auth_realm;
+    my $levels_rs = $self->$dispatch_to($c);
     $c->stash(levels_rs => $levels_rs);
 
     $c->stash(has_edit => 1);
     $c->stash(has_delete => 1);
     $c->stash(template => 'ncos/list.tt');
+}
+
+sub _levels_resultset_admin {
+    my ($self, $c) = @_;
+    my $rs = $c->model('billing')->resultset('ncos_levels');
+    return $rs;
+}
+
+sub _levels_resultset_reseller {
+    my ($self, $c) = @_;
+    my $rs = $c->model('billing')->resultset('admins')
+        ->find($c->user->id)->reseller->ncos_levels;
+    return $rs;
 }
 
 sub root :Chained('levels_list') :PathPart('') :Args(0) {
