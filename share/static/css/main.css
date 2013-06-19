@@ -187,3 +187,7 @@ div.ngcp-modal .control-group.error .dataTables_wrapper input[type="text"] {
 .plan .ngcp-green-ok {
     color:#0f0;
 }
+
+.ngcp-quickform div.form-actions {
+    padding-left: 0px;
+}

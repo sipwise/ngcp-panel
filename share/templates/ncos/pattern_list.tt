@@ -19,4 +19,7 @@
 
     PROCESS 'helpers/datatables.tt';
 -%]
+
+[% local_ac_form.render() %]
+
 [% # vim: set tabstop=4 syntax=html expandtab: -%]

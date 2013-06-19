@@ -6,6 +6,7 @@ BEGIN { extends 'Catalyst::Controller'; }
 
 use NGCP::Panel::Form::NCOSLevel;
 use NGCP::Panel::Form::NCOSPattern;
+use HTML::FormHandler;
 
 sub auto :Does(ACL) :ACLDetachTo('/denied_page') :AllowedRole(admin) :AllowedRole(reseller) {
     my ($self, $c) = @_;
@@ -136,6 +137,25 @@ sub pattern_list :Chained('base') :PathPart('pattern') :CaptureArgs(0) {
     $c->stash(pattern_rs => $pattern_rs);
     $c->stash(pattern_base_uri =>
         $c->uri_for_action("/ncos/pattern_root", [$c->req->captures->[0]]));
+    
+    my $local_ac_form = HTML::FormHandler::Model::DBIC->new(field_list => [
+        local_ac => { type => 'Boolean', label => 'Include local area code'},
+        save => { type => 'Submit', value => 'Set', element_class => ['btn']},
+        ],
+        'widget_wrapper' => 'Bootstrap',
+        form_element_class => ['form-horizontal', 'ngcp-quickform'],
+    );
+    $local_ac_form->process(
+        posted => ($c->request->method eq 'POST'),
+        params => $c->request->params,
+        item   => $c->stash->{level_result}
+    );
+    $c->stash(local_ac_form => $local_ac_form);
+    if($local_ac_form->validated) {
+        $c->response->redirect($c->stash->{pattern_base_uri});
+        $c->detach;
+        return;
+    }
 
     $c->stash(has_edit => 1);
     $c->stash(has_delete => 1);
