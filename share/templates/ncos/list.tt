@@ -1,0 +1,23 @@
+[% META title = 'NCOS Levels' -%]
+[%
+    helper.name = 'NCOS Levels';
+    helper.messages = messages;
+    helper.column_titles = [ '#', 'Level', 'Mode', 'Description' ];
+    helper.column_fields = [ 'id', 'level', 'mode', 'description' ];
+
+    helper.close_target = close_target;
+    helper.create_flag = create_flag;
+    helper.edit_flag = edit_flag;
+    helper.form_object = form;
+    helper.has_edit = has_edit;
+    helper.has_delete = has_delete;
+    helper.ajax_uri = c.uri_for_action( "/ncos/ajax" );
+    helper.base_uri = c.uri_for_action( "/ncos/root" );
+
+    helper.extra_buttons = [
+        [ 'Patterns', 'pattern'],
+    ];
+
+    PROCESS 'helpers/datatables.tt';
+-%]
+[% # vim: set tabstop=4 syntax=html expandtab: -%]
