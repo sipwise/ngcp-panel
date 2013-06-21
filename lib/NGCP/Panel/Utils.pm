@@ -29,26 +29,30 @@ sub check_form_buttons {
     my $fields = $params{fields};
     my $form = $params{form};
     my $back_uri = $params{back_uri};
-    my $redir_uri = $params{redir_uri};
+    
+    $fields = { map {($_, undef)} @$fields }
+        if (ref($fields) eq "ARRAY");
 
     my $posted = ($c->request->method eq 'POST');
 
     if($posted && $form->field('submitid')) {
         my $val = $form->field('submitid')->value;
-
-        if(defined $val and grep {/^$val$/} @{ $fields }) {
-            my $target = '/'.$val;
-            $target =~ s/\./\//g; 
+    
+        if(defined $val and exists($fields->{$val}) ) {
+            my $target;
+            if (defined $fields->{$val}) {
+                $target = $fields->{$val};
+            } else {
+                $target = '/'.$val;
+                $target =~ s/\./\//g;
+                $target = $c->uri_for($target);
+            }
             if($c->session->{redirect_targets}) {
                 unshift @{ $c->session->{redirect_targets} }, $back_uri;
             } else {
                 $c->session->{redirect_targets} = [ $back_uri ];
             }
-            if (defined $redir_uri) {
-                $c->response->redirect($redir_uri);
-            } else {
-                $c->response->redirect($c->uri_for($target));
-            }
+            $c->response->redirect($target);
             return 1;
         }
     }
@@ -204,10 +208,10 @@ Puts close_target to stash, which will be read by the templates.
 
 Parameters:
     c
-    fields
+    fields - either an arrayref of fieldnames or a hashref with fieldnames
+        key and redirect target as value (where it should redirect to)
     form
     back_uri - the uri we come from
-    redir_uri (optional) - the uri we go to, used for any button
 
 Checks the hidden field "submitid" and redirects to its "value" when it
 matches a field.

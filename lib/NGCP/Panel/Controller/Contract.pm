@@ -55,11 +55,6 @@ sub create :Chained('contract_list') :PathPart('create') :Args(0) {
     my ($self, $c) = @_;
     
     my $item = $c->model('billing')->resultset('billing_mappings')->new_result({});
-    if($c->session->{create_peering_contract}){
-        $item->product(
-            $c->model('billing')->resultset('products')->find({class => 'sippeering'})
-        );
-    }
 
     my $form = NGCP::Panel::Form::Contract->new;
     if($form->process(
@@ -123,12 +118,13 @@ sub create :Chained('contract_list') :PathPart('create') :Args(0) {
         # TODO: catch insert error and roll back billing_mapping and contracts entry
     } 
     return if NGCP::Panel::Utils::check_form_buttons(
-        c => $c, form => $form, fields => [qw/contact.create/], 
+        c => $c, form => $form,
+        fields => {'contract.contact.create' => $c->uri_for('/contact/create'),
+                   'billing_profile.create'  => $c->uri_for('/billing/create')},
         back_uri => $c->uri_for('create')
     );
     if($form->validated) {
         $c->flash(messages => [{type => 'success', text => 'Contract successfully created!'}]);
-        $c->session(create_peering_contract => 0);
         
         if($c->stash->{close_target}) {
             $c->response->redirect($c->stash->{close_target});
@@ -194,7 +190,9 @@ sub edit :Chained('base') :PathPart('edit') :Args(0) {
         action => $c->uri_for($c->stash->{contract}->{id}, 'edit'),
     );
     return if NGCP::Panel::Utils::check_form_buttons(
-        c => $c, form => $form, fields => [qw/contact.create/], 
+        c => $c, form => $form,
+        fields => {'contract.contact.create' => $c->uri_for('/contact/create'),
+                   'billing_profile.create'  => $c->uri_for('/billing/create')},
         back_uri => $c->uri_for($c->stash->{contract}->{id}, 'edit')
     );
     if($posted && $form->validated) {
@@ -259,6 +257,41 @@ sub peering_ajax :Chained('peering_list') :PathPart('ajax') :Args(0) {
     $c->detach( $c->view("JSON") );
 }
 
+sub peering_create :Chained('peering_list') :PathPart('create') :Args(0) {
+    my ($self, $c) = @_;
+    
+    my $item = $c->model('billing')->resultset('billing_mappings')->new_result({});
+    $item->product(
+        $c->model('billing')->resultset('products')->find({class => 'sippeering'})
+    );
+
+    my $form = NGCP::Panel::Form::Contract->new;
+    $form->process(
+        posted => ($c->request->method eq 'POST'),
+        params => $c->request->params,
+        item => $item,
+    );
+    return if NGCP::Panel::Utils::check_form_buttons(
+        c => $c, form => $form,
+        fields => {'contract.contact.create' => $c->uri_for('/contact/create'),
+                   'billing_profile.create'  => $c->uri_for('/billing/create')},
+        back_uri => $c->uri_for('create')
+    );
+    if($form->validated) {
+        $c->flash(messages => [{type => 'success', text => 'Contract successfully created!'}]);
+        
+        if($c->stash->{close_target}) {
+            $c->response->redirect($c->stash->{close_target});
+            return;
+        }
+        $c->response->redirect($c->uri_for_action('/contract/root'));
+        return;
+    }
+
+    $c->stash(create_flag => 1);
+    $c->stash(form => $form);
+}
+
 __PACKAGE__->meta->make_immutable;
 
 1;
@@ -315,6 +348,11 @@ Display contracts through F<contract/list.tt> template. Use L</peering_ajax> as 
 =head2 peering_ajax
 
 Similar to L</ajax>. Only select contracts, where billing.product is of class "sippeering".
+
+=head2 peering_create
+
+Similar to L</create> but sets product_id of billing_mapping to match the
+product of class "sippeering".
 
 =head1 AUTHOR
 

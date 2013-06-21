@@ -74,10 +74,10 @@ sub edit :Chained('base') :PathPart('edit') {
         action => $c->uri_for_action('/peering/edit', [$c->req->captures->[0]])
     );
     if (NGCP::Panel::Utils::check_form_buttons(
-        c => $c, form => $form, fields => [qw/contract.create/],
+        c => $c, form => $form,
+        fields => {'contract.create' => $c->uri_for('/contract/peering/create')},
         back_uri => $c->req->uri,
     )) {
-        $c->session(create_peering_contract => 1);
         return;
     }
     if($posted && $form->validated) {
@@ -119,10 +119,10 @@ sub create :Chained('group_list') :PathPart('create') :Args(0) {
         action => $c->uri_for('create'),
     );
     if (NGCP::Panel::Utils::check_form_buttons(
-        c => $c, form => $form, fields => [qw/contract.create/],
+        c => $c, form => $form,
+        fields => {'contract.create' => $c->uri_for('/contract/peering/create')},
         back_uri => $c->req->uri,
     )) {
-        $c->session(create_peering_contract => 1);
         return;
     }
     if($form->validated) {

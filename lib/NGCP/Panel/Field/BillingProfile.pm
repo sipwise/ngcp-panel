@@ -17,7 +17,7 @@ has_field 'id' => (
 has_field 'create' => (
     type => 'Button',
     label => 'or',
-    value => 'Create Contract',
+    value => 'Create Billing Profile',
     element_class => [qw/btn btn-tertiary/],
 );
 

@@ -170,16 +170,17 @@ sub fees_ajax :Chained('fees_list') :PathPart('ajax') :Args(0) {
 sub fees_create :Chained('fees_list') :PathPart('create') :Args(0) {
     my ($self, $c) = @_;
 
+    my $profile_id = $c->stash->{profile}->{id};
     my $form = NGCP::Panel::Form::BillingFee->new;
     $form->process(
         posted => ($c->request->method eq 'POST'),
         params => $c->request->params,
-        action => $c->uri_for($c->stash->{profile}->{id}, 'fees', 'create'),
+        action => $c->uri_for($profile_id, 'fees', 'create'),
     );
     return if NGCP::Panel::Utils::check_form_buttons(
-        c => $c, form => $form, fields => [qw/billing_zone.create/],
+        c => $c, form => $form,
+        fields => {'billing_zone.create' => $c->uri_for("$profile_id/zones/create")},
         back_uri => $c->req->uri,
-        redir_uri => $c->uri_for($c->stash->{profile}->{id}, 'zones', 'create'),
     );
     if($form->validated) {
         $c->stash->{'profile_result'}
@@ -242,18 +243,19 @@ sub fees_upload :Chained('fees_list') :PathPart('upload') :Args(0) {
 sub fees_edit :Chained('fees_base') :PathPart('edit') :Args(0) {
     my ($self, $c) = @_;
     
+    my $profile_id = $c->stash->{profile}->{id};
     my $posted = ($c->request->method eq 'POST');
     my $form = NGCP::Panel::Form::BillingFee->new;
     $form->field('billing_zone')->field('id')->ajax_src('../../zones/ajax');
     $form->process(
         posted => 1,
         params => $posted ? $c->request->params : $c->stash->{fee},
-        action => $c->uri_for($c->stash->{profile}->{id},'fees',$c->stash->{fee}->{id}, 'edit'),
+        action => $c->uri_for($profile_id,'fees',$c->stash->{fee}->{id}, 'edit'),
     );
     return if NGCP::Panel::Utils::check_form_buttons(
-        c => $c, form => $form, fields => [qw/billing_zone.create/],
+        c => $c, form => $form,
+        fields => {'billing_zone.create' => $c->uri_for("$profile_id/zones/create")},
         back_uri => $c->req->uri,
-        redir_uri => $c->uri_for($c->stash->{profile}->{id}, 'zones', 'create'),
     );
     if($posted && $form->validated) {
         $c->stash->{'fee_result'}
