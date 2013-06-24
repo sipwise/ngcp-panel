@@ -62,12 +62,66 @@ sub create :Chained('contract_list') :PathPart('create') :Args(0) {
     }
 
     my $form = NGCP::Panel::Form::Contract->new;
-    $form->process(
+    if($form->process(
         posted => ($c->request->method eq 'POST'),
         params => $c->request->params,
         action => $c->uri_for('create'),
         item => $item,
-    );
+    )) {
+        # insert ok, populate contract_balance table
+        my $profile = $item->billing_profile;
+
+        my ($cash_balance, $cash_balance_interval,
+            $free_time_balance, $free_time_balance_interval) = (0,0,0,0);
+
+        # first, calculate start and end time of current billing profile
+        # (we assume billing interval of 1 month)
+        my ($cyear, $cmonth, $cday) = (localtime time)[5,4,3];
+        $cyear += 1900; $cmonth += 1;
+        my $stime = DateTime->new(year => $cyear, month => $cmonth, day => 1, 
+                                  hour => 0, minute => 0, second => 0, nanosecond => 0)
+                                  ->epoch();
+        my $eyear = $cyear;
+        my $emonth = $cmonth + 1; # next month
+        if($emonth == 12) {
+            $emonth = 0;
+            $eyear++;
+        }
+        my $etime = DateTime->new(year => $eyear, month => $emonth, day => 1, 
+                                  hour => 0, minute => 0, second => 0, nanosecond => 0)
+                                  ->epoch();
+        $etime--;
+
+        # calculate free_time/cash ratio
+        my $free_time = $profile->interval_free_time || 0;
+        my $free_cash = $profile->interval_free_cash || 0;
+        if($free_time or $free_cash) {
+            $etime++;
+            my $ctime = DateTime->new(year => $cyear, month => $cmonth, day => $cday, 
+                                      hour => 0, minute => 0, second => 0, nanosecond => 0)
+                                      ->epoch();
+            my $ratio = ($etime - $ctime) / ($etime - $stime);
+            
+            $cash_balance = sprintf("%.4f", $free_cash * $ratio);
+            $cash_balance_interval = 0;
+
+            $free_time_balance = sprintf("%.0f", $free_time * $ratio);
+            $free_time_balance_interval = 0;
+            $etime--;
+        }
+
+        $c->model('billing')->resultset('contract_balances')->create({
+            contract_id => $item->contract->id,
+            cash_balance => $cash_balance,
+            cash_balance_interval => $cash_balance_interval,
+            free_time_balance => $free_time_balance,
+            free_time_balance_interval => $free_time_balance_interval,
+            start => DateTime->from_epoch(epoch => $stime),
+            end => DateTime->from_epoch(epoch => $etime),
+        });
+
+        # TODO: catch insert error and roll back billing_mapping and contracts entry
+    } 
     return if NGCP::Panel::Utils::check_form_buttons(
         c => $c, form => $form, fields => [qw/contact.create/], 
         back_uri => $c->uri_for('create')
