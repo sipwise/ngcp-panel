@@ -6,7 +6,8 @@ use I18N::Langinfo qw(langinfo DAY_1 DAY_2 DAY_3 DAY_4 DAY_5 DAY_6 DAY_7);
 
 BEGIN { extends 'Catalyst::Controller'; }
 
-use NGCP::Panel::Form::BillingProfile;
+use NGCP::Panel::Form::BillingProfile_admin;
+use NGCP::Panel::Form::BillingProfile_reseller;
 use NGCP::Panel::Form::BillingFee;
 use NGCP::Panel::Form::BillingZone;
 use NGCP::Panel::Form::BillingPeaktimeWeekdays;
@@ -27,10 +28,27 @@ sub profile_list :Chained('/') :PathPart('billing') :CaptureArgs(0) {
     my ( $self, $c ) = @_;
     
     NGCP::Panel::Utils::check_redirect_chain(c => $c);
+    
+    my $dispatch_to = '_profile_resultset_' . $c->user->auth_realm;
+    my $profiles_rs = $self->$dispatch_to($c);
+    $c->stash(profiles_rs => $profiles_rs);
 
     $c->stash(has_edit => 1);
     $c->stash(has_delete => 0);
     $c->stash(template => 'billing/list.tt');
+}
+
+sub _profile_resultset_admin {
+    my ($self, $c) = @_;
+    my $rs = $c->model('billing')->resultset('billing_profiles');
+    return $rs;
+}
+
+sub _profile_resultset_reseller {
+    my ($self, $c) = @_;
+    my $rs = $c->model('billing')->resultset('admins')
+        ->find($c->user->id)->reseller->billing_profiles;
+    return $rs;
 }
 
 sub root :Chained('profile_list') :PathPart('') :Args(0) {
@@ -40,7 +58,7 @@ sub root :Chained('profile_list') :PathPart('') :Args(0) {
 sub ajax :Chained('profile_list') :PathPart('ajax') :Args(0) {
     my ($self, $c) = @_;
     
-    my $resultset = $c->model('billing')->resultset('billing_profiles');
+    my $resultset = $c->stash->{profiles_rs};
     
     $c->forward( "/ajax_process_resultset", [$resultset,
                  ["id", "name"],
@@ -58,7 +76,7 @@ sub base :Chained('profile_list') :PathPart('') :CaptureArgs(1) {
         return;
     }
 
-    my $res = $c->model('billing')->resultset('billing_profiles')->find($profile_id);
+    my $res = $c->stash->{profiles_rs}->find($profile_id);
     unless(defined($res)) {
         $c->flash(messages => [{type => 'error', text => 'Billing Profile does not exist!'}]);
         $c->response->redirect($c->uri_for());
@@ -72,15 +90,15 @@ sub edit :Chained('base') :PathPart('edit') {
     my ($self, $c) = @_;
     
     my $posted = ($c->request->method eq 'POST');
-    my $form = NGCP::Panel::Form::BillingProfile->new;
+    my $dispatch_to = 'NGCP::Panel::Form::BillingProfile_' . $c->user->auth_realm;
+    my $form = $dispatch_to->new;
     $form->process(
-        posted => 1,
-        params => $posted ? $c->request->params : $c->stash->{profile},
+        posted => $posted,
+        params => $c->request->params,
         action => $c->uri_for($c->stash->{profile}->{id}, 'edit'),
+        item   => $c->stash->{profile_result},
     );
     if($posted && $form->validated) {
-        $c->model('billing')->resultset('billing_profiles')
-          ->find($form->field('id')->value)->update($form->fif);
 
         $c->flash(messages => [{type => 'success', text => 'Billing Profile successfully changed!'}]);
         $c->response->redirect($c->uri_for());
@@ -94,15 +112,15 @@ sub edit :Chained('base') :PathPart('edit') {
 sub create :Chained('profile_list') :PathPart('create') :Args(0) {
     my ($self, $c) = @_;
 
-    my $form = NGCP::Panel::Form::BillingProfile->new;
+    my $dispatch_to = 'NGCP::Panel::Form::BillingProfile_' . $c->user->auth_realm;
+    my $form = $dispatch_to->new;
     $form->process(
         posted => ($c->request->method eq 'POST'),
         params => $c->request->params,
         action => $c->uri_for('create'),
+        item   => $c->stash->{profiles_rs}->new_result({}),
     );
     if($form->validated) {
-        $c->model('billing')->resultset('billing_profiles')->create(
-             $form->fif() );
         $c->flash(messages => [{type => 'success', text => 'Billing profile successfully created!'}]);
         $c->response->redirect($c->uri_for());
         return;

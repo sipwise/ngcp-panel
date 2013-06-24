@@ -1,7 +1,7 @@
-package NGCP::Panel::Form::BillingProfile;
+package NGCP::Panel::Form::BillingProfile_reseller;
 
 use HTML::FormHandler::Moose;
-extends 'HTML::FormHandler';
+extends 'HTML::FormHandler::Model::DBIC';
 use Moose::Util::TypeConstraints;
 
 use HTML::FormHandler::Widget::Block::Bootstrap;
@@ -18,6 +18,11 @@ has_field 'name' => (
     type => 'Text',
     required => 1,
     maxlength => 31,
+);
+
+has_field 'handle' => (
+    type => 'Text',
+    required => 1,
 );
 
 has_field 'interval_charge' => (
@@ -102,7 +107,7 @@ has_field 'save' => (
 has_block 'fields' => (
     tag => 'div',
     class => [qw/modal-body/],
-    render_list => [qw/name interval_charge interval_free_time interval_free_cash 
+    render_list => [qw/handle name interval_charge interval_free_time interval_free_cash 
         fraud_interval_limit fraud_interval_lock fraud_interval_notify
         fraud_daily_limit fraud_daily_lock fraud_daily_notify
         currency vat_rate vat_included id/],
@@ -113,6 +118,13 @@ has_block 'actions' => (
     class => [qw/modal-footer/],
     render_list => [qw/save/],
 );
+
+before 'update_model' => sub {
+    my $self = shift;
+    foreach my $val(values $self->value) {
+        $val = '' unless defined($val);
+    }
+};
 
 1;
 # vim: set tabstop=4 expandtab:
