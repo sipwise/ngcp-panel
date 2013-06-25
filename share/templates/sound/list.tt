@@ -1,0 +1,23 @@
+[% META title = 'Sound Sets' -%]
+[%
+    helper.name = 'Sound Sets';
+    helper.messages = messages;
+    helper.column_titles = [ '#', 'Name', 'Description' ];
+    helper.column_fields = [ 'id', 'name', 'description' ];
+
+    helper.close_target = close_target;
+    helper.create_flag = create_flag;
+    helper.edit_flag = edit_flag;
+    helper.form_object = form;
+    helper.has_edit = has_edit;
+    helper.has_delete = has_delete;
+    helper.ajax_uri = c.uri_for_action( "/sound/ajax" );
+    helper.base_uri = c.uri_for_action( "/sound/root" );
+
+    helper.extra_buttons = [
+        [ 'Files', 'handles'],
+    ];
+
+    PROCESS 'helpers/datatables.tt';
+-%]
+[% # vim: set tabstop=4 syntax=html expandtab: -%]

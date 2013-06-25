@@ -1,0 +1,110 @@
+[% site_config.title = 'Manage Sound Set ' _ set_result.name -%]
+
+<a href="[% c.uri_for() %]">&lt; Back</a>
+
+[% IF messages -%]
+<div class="row">
+    [% FOREACH m IN messages -%]
+        <div class="alert alert-[% m.type %]">[% m.text %]</div>
+    [% END -%]
+</div>
+[% END -%]
+
+<div class="ngcp-separator"></div>
+
+<div class="accordion" id="sound_groups">
+[% FOREACH group IN sound_groups.pairs %]
+<div class="accordion-group">
+    <div class="accordion-heading">
+        <a class="accordion-toggle" data-toggle="collapse" data-parent="#sound_groups" href="#collapse[% group.key %]">[% group.key %]</a>
+    </div>
+    <div class="accordion-body collapse" id="collapse[% group.key %]">
+    <div class="accordion-inner">
+
+<table class="table table-bordered table-striped table-highlight table-hover" id="sounds_table[% group.key %]">
+    <thead>
+        <tr>
+            [% # one for description -%]
+            <th></th>
+            <th>Name</th>
+            <th>Filename</th>
+            <th>Loop</th>
+            [% # one for actions -%]
+            <th class="span3"></th>
+        </tr>
+    </thead>
+    <tbody>
+        [% FOREACH r IN group.value %]
+            <tr class="sw_action_row">
+                <td>
+                    <a href="#" onclick="$.msgbox(
+                        '[% r.description.squote | html %]',
+                        {
+                            type:'info', 
+                            buttons:[
+                                {type:'cancel',value:'Close'}
+                            ]
+                        }); return false;"><i class="icon-question-sign"></i></a>
+                </td>
+                <td>
+                  [% r.get_column("handlename") %]
+                </td>
+                <td>
+                  [% r.get_column("filename") %]
+                </td>
+                <td>
+                    <input type="checkbox" disabled="disabled" [% r.get_column('loopplay') ? 'checked="checked"' : '' %]>
+                </td>
+                <td>
+                    <div class="sw_actions pull-right">
+                        <a class="btn btn-small btn-primary" href="[% handles_base_uri _ "/" _ r.get_column("handleid") _ "/edit" %]"><i class="icon-edit"></i> Upload</a>
+                        <a class="btn btn-small btn-secondary" href="[% handles_base_uri _ "/" _ r.get_column("handleid") _ "/delete" %]"><i class="icon-edit"></i> Delete</a>
+                    </div>
+                </td>
+            </tr>
+        [% END %]
+    </tbody>
+</table>
+    </div>
+    </div>
+</div>
+[% END %]
+</div>
+
+<script type="text/javascript">
+$(function() {
+  $('#sound_groups').on('shown', function (e) {
+    localStorage.setItem('lastTab', $("#sound_groups .in").attr('id'));
+  });
+
+  //go to the latest tab, if it exists:
+  var lastTab = localStorage.getItem('lastTab');
+  if (lastTab) {
+      $('#'+lastTab).addClass("in");//collapse("show"); collapse does annoying animation
+  }
+});
+</script>
+
+[% IF edit_flag -%]
+
+[%
+    PROCESS "helpers/modal.tt";
+    modal_header(m.create_flag=0,
+                 m.name = "Preference " _ file_result.handle.name );
+-%]
+    [% form.render -%]
+[%
+    modal_footer();
+-%]
+<script>
+    $(function () {
+        $('#mod_edit').modal({keyboard: false, backdrop: 'static'});
+        $('#mod_close').click(function(event) {
+            window.location.href="[% handles_base_uri %]";
+        });
+
+    });
+</script>
+[% END -%]
+[% # vim: set tabstop=4 syntax=html expandtab: -%]
+
