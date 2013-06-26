@@ -134,13 +134,12 @@ sub ajax_process_resultset :Private {
     }
     
     #Pagination
-    if (defined($iDisplayStart) && $iDisplayLength) {
-        $rs = $rs->search(
-            undef,
-            {
-                offset => $iDisplayStart,
-                rows   => $iDisplayLength,
-            });
+    # $iDisplayLength will be -1 if bPaginate is false
+    if (defined $iDisplayStart && $iDisplayLength && $iDisplayLength > 0) {
+        $rs = $rs->search(undef, {
+            offset => $iDisplayStart,
+            rows   => $iDisplayLength,
+        });
     }
     
     for my $row ($rs->all) {
