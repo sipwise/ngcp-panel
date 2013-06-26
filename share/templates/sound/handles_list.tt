@@ -50,7 +50,9 @@
                   [% r.get_column("handlename") %]
                 </td>
                 <td>
-                  [% r.get_column("filename") %]
+                  <a href="[% c.uri_for_action('/sound/handles_download', [c.req.captures.0, r.get_column('handleid')]) %]">
+                    [% r.get_column("filename") %]
+                  </a>
                 </td>
                 <td>
                     <input type="checkbox" disabled="disabled" [% r.get_column('loopplay') ? 'checked="checked"' : '' %]>
@@ -58,7 +60,7 @@
                 <td>
                     <div class="sw_actions pull-right">
                         <a class="btn btn-small btn-primary" href="[% handles_base_uri _ "/" _ r.get_column("handleid") _ "/edit" %]"><i class="icon-edit"></i> Upload</a>
-                        <a class="btn btn-small btn-secondary" href="[% handles_base_uri _ "/" _ r.get_column("handleid") _ "/delete" %]"><i class="icon-edit"></i> Delete</a>
+                        <a class="btn btn-small btn-secondary" data-confirm="Delete" href="[% handles_base_uri _ "/" _ r.get_column("handleid") _ "/delete" %]"><i class="icon-edit"></i> Delete</a>
                     </div>
                 </td>
             </tr>

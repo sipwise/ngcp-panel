@@ -239,6 +239,18 @@ sub handles_delete :Chained('handles_base') :PathPart('delete') {
     $c->response->redirect($c->stash->{handles_base_uri});
 }
 
+sub handles_download :Chained('handles_base') :PathPart('download') :Args(0) {
+    my ($self, $c) = @_;
+    
+    my %codec_mapping = (WAV => 'audio/x-wav');
+    
+    my $file_result = $c->stash->{file_result};
+    $c->response->header ('Content-Disposition' => 'attachment; filename="' . $file_result->filename . '"');
+    $c->response->content_type(
+        $codec_mapping{$file_result->codec} // 'application/octet-stream'); #'
+    $c->response->body($file_result->data);
+}
+
 __PACKAGE__->meta->make_immutable;
 
 1;
