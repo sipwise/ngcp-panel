@@ -31,6 +31,7 @@ diag("Create a billing profile");
 $d->title_is("Billing Profiles");
 $d->findclick_ok(link_text => 'Create Billing Profiles');
 $d->find(id => 'name')->send_keys('mytestprofile');
+$d->fill_element_ok(['name', 'handle', 'mytestprofile']);
 $d->find_ok(id => 'fraud_interval_lock');
 $d->findclick_ok(xpath => '//select[@id="fraud_interval_lock"]/option[contains(text(),"foreign calls")]');
 $d->findclick_ok(xpath => '//div[contains(@class,"modal")]//input[@type="submit"]');
