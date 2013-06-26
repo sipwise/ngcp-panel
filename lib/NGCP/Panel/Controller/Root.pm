@@ -106,10 +106,11 @@ sub ajax_process_resultset :Private {
     my $aaData = [];
     
     my $totalRecords = $rs->count;
-    
-    my @searchdata = map{ +{ $_ => { like => '%'.$sSearch.'%' } } } @$columns[@$searchable];
-    $rs = $rs->search(\@searchdata);
-    
+
+    if ($sSearch) {
+        $rs = $rs->search([ map{ +{ $_ => { like => '%'.$sSearch.'%' } } } @$columns[@$searchable] ]);
+    }
+
     my $totalDisplayRecords = $rs->count;
     
     #potentially selected Id as first element
