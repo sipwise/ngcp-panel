@@ -83,12 +83,22 @@ sub ajax_process_resultset :Private {
     my ($rs,$columns,$searchable) = @arguments;
 
     #Process Arguments
-    my $sEcho          = $c->request->params->{sEcho}   // "1";    #/
+    my $sEcho = int($c->request->params->{sEcho} // 1); #/
+    # http://datatables.net/usage/server-side#sEcho
     my $sSearch        = $c->request->params->{sSearch} // "";     #/
     my $iDisplayStart  = $c->request->params->{iDisplayStart};
     my $iDisplayLength = $c->request->params->{iDisplayLength};
     my $iSortCol_0     = $c->request->params->{iSortCol_0};
     my $sSortDir_0     = $c->request->params->{sSortDir_0};
+
+    if (defined $sSortDir_0) {
+        if ('desc' eq lc $sSortDir_0) {
+            $sSortDir_0 = 'desc';
+        } else {
+            $sSortDir_0 = 'asc';
+        }
+    }
+
     my $iIdOnTop       = $c->request->params->{iIdOnTop};
 
     
