@@ -78,10 +78,7 @@ sub default :Path {
 sub end : ActionClass('RenderView') {}
 
 sub ajax_process_resultset :Private {
-
-    my ($self,$c,@arguments) = @_;
-    
-    my ($rs,$columns,$searchable) = @arguments;
+    my ($self, $c, $rs, $columns, $searchable) = @_;
 
     #Process Arguments
     my $sEcho = int($c->request->params->{sEcho} // 1); #/
@@ -102,10 +99,9 @@ sub ajax_process_resultset :Private {
 
     my $iIdOnTop       = $c->request->params->{iIdOnTop};
 
-    
     #will contain final data to be sent
     my $aaData = [];
-    
+
     my $totalRecords = $rs->count;
 
     if ($sSearch) {
@@ -113,7 +109,7 @@ sub ajax_process_resultset :Private {
     }
 
     my $totalDisplayRecords = $rs->count;
-    
+
     #potentially selected Id as first element
     if (defined $iIdOnTop) {
         if (defined(my $row = $rs->find($iIdOnTop))) {
@@ -123,16 +119,16 @@ sub ajax_process_resultset :Private {
             $c->log->error("iIdOnTop $iIdOnTop not found in resultset " . ref $rs);
         };
     }
-    
+
     #Sorting
-    if(defined($iSortCol_0) && defined($sSortDir_0)) {
-        my $sortdata = {
+    if (defined $iSortCol_0 && defined $sSortDir_0) {
+        $rs = $rs->search(undef, {
             order_by => {
-                "-".$sSortDir_0 => $columns->[$iSortCol_0],
-            }};
-        $rs = $rs->search(undef, $sortdata);
+                "-$sSortDir_0" => $columns->[$iSortCol_0],
+            }
+        });
     }
-    
+
     #Pagination
     # $iDisplayLength will be -1 if bPaginate is false
     if (defined $iDisplayStart && $iDisplayLength && $iDisplayLength > 0) {
@@ -141,18 +137,17 @@ sub ajax_process_resultset :Private {
             rows   => $iDisplayLength,
         });
     }
-    
+
     for my $row ($rs->all) {
         push @{ $aaData }, _prune_row($columns, $row->get_inflated_columns);
     }
-    
+
     $c->stash(
         aaData               => $aaData,
         iTotalRecords        => $totalRecords,
-        iTotalDisplayRecords => $totalDisplayRecords
+        iTotalDisplayRecords => $totalDisplayRecords,
+        sEcho                => $sEcho,
     );
-    $c->stash(sEcho => $sEcho);
-
 }
 
 sub _prune_row {
