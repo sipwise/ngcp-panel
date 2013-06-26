@@ -1,6 +1,7 @@
 [% META title = 'Contacts' -%]
 [%
     helper.name = 'Contact';
+    helper.show_create_button = 1;
     helper.data = contacts;
     helper.messages = messages;
     helper.column_titles = [ '#', 'First Name', 'Last Name', 'Email' ];

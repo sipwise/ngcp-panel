@@ -1,6 +1,7 @@
 [% META title = 'Billing Profiles' -%]
 [%
     helper.name = 'Billing Profiles';
+    helper.show_create_button = 1;
     helper.messages = messages;
     helper.column_titles = [ '#', 'Profile' ];
     helper.column_fields = [ 'id', 'name' ];

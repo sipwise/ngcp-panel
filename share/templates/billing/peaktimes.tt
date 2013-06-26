@@ -53,6 +53,7 @@
 
 [%
     helper.name = 'Date Definitions';
+    helper.show_create_button = 1;
     helper.column_titles = [ '#', 'Date', 'Start-End' ];
     helper.column_fields = [ 'id', 'date', 'startend' ];
 

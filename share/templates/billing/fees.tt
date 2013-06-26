@@ -2,6 +2,7 @@
 
 [%
     helper.name = 'Billing Fees';
+    helper.show_create_button = 1;
     helper.messages = messages;
     helper.column_titles = [ '#', 'Source', 'Destination', 'Direction', 'Zone' ];
     helper.column_fields = [ 'id', 'source', 'destination', 'direction', 'zone' ];

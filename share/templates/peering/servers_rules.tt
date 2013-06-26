@@ -1,6 +1,7 @@
 [% site_config.title = 'SIP Peering Group ' _ group.name -%]
 [%
     helper.name = 'Peering Servers';
+    helper.show_create_button = 1;
     helper.messages = messages;
     helper.column_titles = [ '#', 'Name', 'IP Address', 'Hostname', 'Port', 'Protocol', 'Weight' ];
     helper.column_fields = [ 'id', 'name', 'ip', 'host', 'port', 'transport', 'weight' ];
@@ -26,6 +27,7 @@
 
 [%
     helper.name = 'Peering Rules';
+    helper.show_create_button = 1;
     helper.messages = rules_messages;
     helper.column_titles = [ '#', 'Callee Prefix', 'Callee Pattern', 'Caller Pattern', 'Description' ];
     helper.column_fields = [ 'id', 'callee_prefix', 'callee_pattern', 'caller_pattern', 'description' ];

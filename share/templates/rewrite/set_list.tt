@@ -1,6 +1,7 @@
 [% META title = 'Rewrite Rule Sets' -%]
 [%
     helper.name = 'Rewrite Rule Sets';
+    helper.show_create_button = 1;
     helper.messages = messages;
     helper.column_titles = [ '#', 'Name', 'Description' ];
     helper.column_fields = [ 'id', 'name', 'description' ];

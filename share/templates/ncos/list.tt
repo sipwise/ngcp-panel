@@ -1,6 +1,7 @@
 [% META title = 'NCOS Levels' -%]
 [%
     helper.name = 'NCOS Levels';
+    helper.show_create_button = 1;
     helper.messages = messages;
     helper.column_titles = [ '#', 'Level', 'Mode', 'Description' ];
     helper.column_fields = [ 'id', 'level', 'mode', 'description' ];

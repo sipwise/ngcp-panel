@@ -1,6 +1,7 @@
 [% META title = 'Administrators' -%]
 [%
     helper.name = 'Administrator';
+    helper.show_create_button = 1;
     helper.data = admins;
     helper.messages = messages;
     helper.column_titles = [ '#', 'Login', 'Master', 'Active', 'Read only', 'Show passwords', 'Call data', 'Lawful intercept' ];

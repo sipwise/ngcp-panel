@@ -1,6 +1,7 @@
 [% META title = 'Contracts' -%]
 [%
     helper.name = 'Contract';
+    helper.show_create_button = 1;
     helper.data = contracts;
     helper.messages = messages;
     helper.column_titles = [ '#', 'Contact #', 'Billing Profile #', 'Status' ];

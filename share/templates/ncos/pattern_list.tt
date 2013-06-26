@@ -2,6 +2,7 @@
 
 [%
     helper.name = 'Number Pattern';
+    helper.show_create_button = 1;
     helper.messages = messages;
     helper.column_titles = [ '#', 'Pattern', 'Description' ];
     helper.column_fields = [ 'id', 'pattern', 'description' ];

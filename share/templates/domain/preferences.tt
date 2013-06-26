@@ -2,6 +2,7 @@
 
 [% 
     helper.name = 'Domain';
+    helper.show_create_button = 1;
     helper.messages = messages;
     
     helper.edit_preference = edit_preference;

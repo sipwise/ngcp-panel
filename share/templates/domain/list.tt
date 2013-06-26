@@ -1,6 +1,7 @@
 [% META title = 'Domains' -%]
 [%
     helper.name = 'Domain';
+    helper.show_create_button = 1;
     helper.data = domains;
     helper.messages = messages;
     helper.column_titles = [ '#', 'Domain' ];
