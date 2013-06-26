@@ -18,6 +18,7 @@
     ];
     helper.top_buttons = [
         { name = 'Create Reseller', uri = c.uri_for('/reseller/create'), icon = 'icon-star' },
+        { name = 'Create Reseller with default values', uri = c.uri_for('/reseller/create_defaults'), icon = 'icon-star' },
     ];
 
     PROCESS 'helpers/datatables.tt';

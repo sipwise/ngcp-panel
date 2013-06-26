@@ -2,22 +2,10 @@ package NGCP::Panel::Controller::Reseller;
 use Sipwise::Base;
 use namespace::sweep;
 BEGIN { extends 'Catalyst::Controller'; }
+use DateTime qw();
+use HTTP::Status qw(HTTP_SEE_OTHER);
 use NGCP::Panel::Form::Reseller;
 use NGCP::Panel::Utils;
-
-use Data::Printer;
-
-=head1 NAME
-
-NGCP::Panel::Controller::Reseller - Catalyst Controller
-
-=head1 DESCRIPTION
-
-Catalyst Controller.
-
-=head1 METHODS
-
-=cut
 
 sub auto :Does(ACL) :ACLDetachTo('/denied_page') :AllowedRole(admin) {
     my ($self, $c) = @_;
@@ -108,6 +96,63 @@ sub base :Chained('list_reseller') :PathPart('') :CaptureArgs(1) {
     $c->stash(reseller => $c->stash->{resellers}->find({id => $reseller_id}));
 }
 
+sub reseller_contacts :Chained('base') :PathPart('contacts') :Args(0) {
+    my ($self, $c) = @_;
+    $c->forward(
+        '/ajax_process_resultset', [
+            $c->model('billing')->resultset('contacts')
+              ->search_rs({ id => $c->stash->{reseller}->related_resultset('contract')->find(
+                $c->stash->{resellers}->find($c->req->captures->[0])->contract_id
+              )->contact_id }),
+            [qw(id firstname lastname email create_timestamp)],
+            [ 1, ]
+        ]
+    );
+    $c->detach($c->view('JSON'));
+    return;
+}
+
+sub reseller_contracts :Chained('base') :PathPart('contracts') :Args(0) {
+    my ($self, $c) = @_;
+    $c->forward(
+        '/ajax_process_resultset', [
+            $c->stash->{reseller}->search_related_rs(
+                'contract', { id => $c->stash->{resellers}->find($c->req->captures->[0])->contract_id }
+            ),
+            [qw(id contact_id)],
+            [ 1, ]
+        ]
+    );
+    $c->detach($c->view('JSON'));
+    return;
+}
+
+sub reseller_single :Chained('base') :PathPart('single') :Args(0) {
+    my ($self, $c) = @_;
+    $c->forward(
+        '/ajax_process_resultset', [
+            $c->stash->{resellers}->search_rs({ id => $c->req->captures->[0] }),
+            [qw(id contract_id name status)],
+            [ 1, ]
+        ]
+    );
+    $c->detach($c->view('JSON'));
+    return;
+}
+
+sub reseller_admin :Chained('base') :PathPart('admin') :Args(0) {
+    my ($self, $c) = @_;
+    $c->forward(
+        '/ajax_process_resultset', [
+            $c->stash->{reseller}->related_resultset('admins')->search_rs({ reseller_id => $c->req->captures->[0] }),
+            [qw(id reseller_id login)],
+            [ 1, ]
+        ]
+    );
+    $c->detach($c->view('JSON'));
+    return;
+}
+
 sub edit :Chained('base') :PathPart('edit') :Args(0) {
     my ($self, $c) = @_;
 
@@ -160,6 +205,12 @@ sub delete :Chained('base') :PathPart('delete') :Args(0) {
     $c->response->redirect($c->uri_for());
 }
 
+sub details :Chained('base') :PathPart('details') :Args(0) {
+    my ($self, $c) = @_;
+    $c->stash(template => 'reseller/details.tt');
+    return;
+}
+
 sub ajax_contract :Chained('list_reseller') :PathPart('ajax_contract') :Args(0) {
     my ($self, $c) = @_;
   
@@ -186,6 +237,107 @@ sub ajax_contract :Chained('list_reseller') :PathPart('ajax_contract') :Args(0) 
     $c->detach( $c->view("JSON") );
 }
 
+sub create_defaults :Path('create_defaults') :Args(0) {
+    my ($self, $c) = @_;
+    $c->detach('/denied_page') unless $c->request->method eq 'POST';
+    my $now = DateTime->now;
+    my %defaults = (
+        contacts => {
+            firstname => 'Default',
+            lastname => 'Contact',
+            email => 'default_contact@example.invalid', # RFC 2606
+            create_timestamp => $now,
+        },
+        contracts => {
+            status => 'active',
+            create_timestamp => $now,
+            activate_timestamp => $now,
+        },
+        resellers => {
+            name => 'Default reseller' . sprintf('%04d', rand 10000),
+            status => 'active',
+        },
+        billing_mappings => {
+            start_date => $now,
+        },
+        admins => {
+            md5pass => 'defaultresellerpassword',
+            is_active => 1,
+            show_passwords => 1,
+            call_data => 1,
+        },
+    );
+    my $billing = $c->model('billing');
+    my %r;
+    try {
+        $billing->txn_do(sub {
+            $r{contacts} = $billing->resultset('contacts')->create({ %{ $defaults{contacts} } });
+            $r{contracts} = $billing->resultset('contracts')->create({
+                %{ $defaults{contracts} },
+                contact_id => $r{contacts}->id,
+            });
+            $r{resellers} = $billing->resultset('resellers')->create({
+                %{ $defaults{resellers} },
+                contract_id => $r{contracts}->id,
+            });
+            $r{billing_mappings} = $billing->resultset('billing_mappings')->create({
+                %{ $defaults{billing_mappings} },
+                billing_profile_id => 1,
+                contract_id => $r{contracts}->id,
+                product_id => $billing->resultset('products')->search({ class => 'reseller' })->first->id,
+            });
+            $r{admins} = $billing->resultset('admins')->create({
+                %{ $defaults{admins} },
+                reseller_id => $r{resellers}->id,
+                login => $r{resellers}->name =~ tr/A-Za-z0-9//cdr,
+            });
+        });
+    } catch($e) {
+        $c->log->error($e);
+        $c->flash(messages => [{type => 'error', text => 'Creating reseller failed.'}]);
+    };
+    $c->flash(messages => [{type => 'success', text => 'Reseller successfully created, review:'}]);
+    $c->res->redirect(sprintf('/reseller/%d/details', $r{resellers}->id), HTTP_SEE_OTHER);
+    $c->detach;
+    return;
+}
+
+__PACKAGE__->meta->make_immutable;
+
+__END__
+
+=encoding UTF-8
+
+=head1 NAME
+
+NGCP::Panel::Controller::Reseller - Catalyst Controller
+
+=head1 DESCRIPTION
+
+Catalyst Controller.
+
+=head1 METHODS
+
+=head2 C<reseller_contacts>
+
+=head2 C<reseller_contracts>
+
+=head2 C<reseller_single>
+
+=head2 C<reseller_admin>
+
+These are Ajax actions called from L</details>, rendering datatables with a single result each.
+
+=head2 C<details>
+
+Renders the F<reseller/details.tt> template, whose datatables relate to and are derived from a reseller id in the
+captures.
+
+=head2 C<create_defaults>
+
+Creates a reseller with all dependent contract, contact, billing mapping, admin login in a single step with default
+values. Redirects to L</details>.
+
 =head1 AUTHOR
 
 Andreas Granig,,,
@@ -194,11 +346,3 @@ Andreas Granig,,,
 
 This library is free software. You can redistribute it and/or modify
 it under the same terms as Perl itself.
-
-=cut
-
-__PACKAGE__->meta->make_immutable;
-
-1;
-
-# vim: set tabstop=4 expandtab:

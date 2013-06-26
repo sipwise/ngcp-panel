@@ -13,7 +13,8 @@ $(document).ready(function() {
         "sDom": "<'row'<'span6'r><'span6'f>>t<'row'<'span6'i><'span6'p>>",
         "bProcessing": true,
         "bServerSide": true,
-        "bPaginate": true,
+        "bPaginate": [% helper.paginate || 'true' %],
+        "bFilter": [% helper.filter || 'true' %],
         "sPaginationType": "bootstrap",
         "bLengthChange": true,
         "bSort": true,
@@ -52,7 +53,6 @@ $(document).ready(function() {
             return nRow;
         },
 	} );
-	
 } );
 </script>
 

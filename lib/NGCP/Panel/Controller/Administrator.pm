@@ -10,10 +10,8 @@ use NGCP::Panel::Utils qw();
 sub list_admin :PathPart('administrator') :Chained('/') :CaptureArgs(0) {
     my ($self, $c) = @_;
     $c->stash(
-        admins => $c->model('billing')
-		    ->resultset('admins')
-		    ->search_rs({is_superuser => 1}),
-        template => 'administrator/list.tt'
+        admins => $c->model('billing')->resultset('admins'),
+        template => 'administrator/list.tt',
     );
     return;
 }
