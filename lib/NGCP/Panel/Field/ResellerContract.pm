@@ -11,7 +11,7 @@ has_field 'id' => (
     template => 'share/templates/helpers/datatables_field.tt',
     ajax_src => '/reseller/ajax_contract',
     table_titles => ['#', 'Contact #', 'External #', 'Status'],
-    table_fields => ['id', 'contact.id', 'external_id', 'status'],
+    table_fields => ['id', 'contact_id', 'external_id', 'status'],
 );
 
 has_field 'create' => (

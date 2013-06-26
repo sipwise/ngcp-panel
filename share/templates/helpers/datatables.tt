@@ -22,7 +22,7 @@ $(document).ready(function() {
 		"sAjaxSource": "[% helper.ajax_uri %]",
 		"aoColumns": [
 		    [% FOREACH f IN helper.column_fields -%]
-		    { "sName": "[% f %]" },
+		    { "mData": "[% f %]" },
 		    [% END -%]
 		    {   "mRender": function ( data, type, full ) {
                     return '' +

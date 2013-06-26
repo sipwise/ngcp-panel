@@ -27,10 +27,10 @@ $(document).ready(function() {
 		
 		"aoColumns": [
                         [% FOREACH f IN table_fields -%]
-		    		    { "sName": "[% f %]" },
+		    		    { "mData": "[% f %]" },
                         [% END -%]
 		    		    { "mRender": function ( data, type, full ) {
-                                return '<input type="checkbox" value="' + full[0] + '"></input>';
+                                return '<input type="checkbox" value="' + full.id + '"></input>';
                             },
                           "mData": null,
                           "bSortable": false

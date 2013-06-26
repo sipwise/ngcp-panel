@@ -5,6 +5,7 @@ use namespace::autoclean;
 BEGIN { extends 'Catalyst::Controller' }
 
 use NGCP::Panel::Widget;
+use Scalar::Util qw(blessed);
 
 #
 # Sets the actions in this controller to be registered with no prefix
@@ -114,15 +115,13 @@ sub ajax_process_resultset :Private {
     my $totalDisplayRecords = $rs->count;
     
     #potentially selected Id as first element
-    if (defined($iIdOnTop)) {
-        my $topRow = $rs->find($iIdOnTop);
-        if (defined($topRow)) {
-            my %tmpTopRow      = $topRow->get_columns;
-            my @tmpTopRowArray = @tmpTopRow{@$columns};
-            push @$aaData, \@tmpTopRowArray;
-            
-            $rs = $rs->search({ 'me.id' => { '!=', $iIdOnTop}});
-        }
+    if (defined $iIdOnTop) {
+        if (defined(my $row = $rs->find($iIdOnTop))) {
+            push @{ $aaData }, _prune_row($columns, $row->get_inflated_columns);
+            $rs = $rs->search({ 'me.id' => { '!=', $iIdOnTop} });
+        } else {
+            $c->log->error("iIdOnTop $iIdOnTop not found in resultset " . ref $rs);
+        };
     }
     
     #Sorting
@@ -145,9 +144,7 @@ sub ajax_process_resultset :Private {
     }
     
     for my $row ($rs->all) {
-        my %tmpRow = $row->get_inflated_columns;
-        my @aaRow = @tmpRow{@$columns};
-        push @$aaData, \@aaRow;
+        push @{ $aaData }, _prune_row($columns, $row->get_inflated_columns);
     }
     
     $c->stash(
@@ -157,6 +154,18 @@ sub ajax_process_resultset :Private {
     );
     $c->stash(sEcho => $sEcho);
 
+}
+
+sub _prune_row {
+    my ($columns, %row) = @_;
+    while (my ($k,$v) = each %row) {
+        unless ($k ~~ $columns) {
+            delete $row{$k};
+            next;
+        }
+        $row{$k} = $v->datetime if blessed($v) && $v->isa('DateTime');
+    }
+    return { %row };
 }
 
 sub error_page :Private {

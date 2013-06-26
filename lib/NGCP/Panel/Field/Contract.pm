@@ -11,7 +11,7 @@ has_field 'id' => (
     template => 'share/templates/helpers/datatables_field.tt',
     ajax_src => '/contract/peering/ajax',
     table_titles => ['#', 'Contact #', 'Billing Profile #', 'Status'],
-    table_fields => ['id', 'contact.id', 'billing_profile.id', 'status'],
+    table_fields => ['id', 'contact_id', 'billing_profile', 'status'],
 );
 
 has_field 'create' => (
