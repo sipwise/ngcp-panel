@@ -7,6 +7,7 @@ BEGIN { extends 'Catalyst::Controller'; }
 use NGCP::Panel::Form::SoundSet;
 use NGCP::Panel::Form::SoundFile;
 use File::Type;
+use IPC::System::Simple qw/capturex/;
 
 sub auto :Does(ACL) :ACLDetachTo('/denied_page') :AllowedRole(admin) :AllowedRole(reseller) {
     my ($self, $c) = @_;
@@ -198,18 +199,40 @@ sub handles_edit :Chained('handles_base') :PathPart('edit') {
         params => \%params,
         item   => $file_result,
     );
-        if($form->validated) {
-        
-            if (defined $upload) {
+    
+    if($form->validated) {
+        if (defined $upload) {
             my $soundfile = eval { $upload->slurp };
             my $filename = eval { $upload->filename };
             
             my $ft = File::Type->new();
             unless ($ft->checktype_contents($soundfile) eq 'audio/x-wav') {
-            $c->flash(messages => [{type => 'error', text => 'Invalid File Type detected!'}]);
-            $c->response->redirect($c->stash->{handles_base_uri});
+                $c->flash(messages => [{type => 'error', text => 'Invalid File Type detected!'}]);
+                $c->response->redirect($c->stash->{handles_base_uri});
                 return;
             }
+            
+            my $target_codec = 'WAV';
+            
+            if($file_result->handle->group->name eq 'calling_card') {
+                #$self->_clear_audio_cache($data->{set_id}, $handle->{name});
+            }
+
+            if ($file_result->handle->name eq 'music_on_hold') {
+                $target_codec = 'PCMA';
+                $filename =~ s/\.[^.]+$/.pcma/;
+            }
+
+            try {
+                $soundfile = $self->_transcode_sound_file(
+                    $upload->tempname, 'WAV', $target_codec);
+            } catch ($error) {
+                $c->flash(messages => [{type => 'error', text => 'Transcode of audio file failed!'}]);
+                $c->log->info("Transcode failed: $error");
+                $c->response->redirect($c->stash->{handles_base_uri});
+                return;
+            }
+            
             $file_result->update({
                 filename => $filename,
                 data => $soundfile,
@@ -249,6 +272,36 @@ sub handles_download :Chained('handles_base') :PathPart('download') :Args(0) {
     $c->response->content_type(
         $codec_mapping{$file_result->codec} // 'application/octet-stream'); #'
     $c->response->body($file_result->data);
+}
+
+sub _transcode_sound_file {
+    my ($self, $tmpfile, $source_codec, $target_codec) = @_;
+
+    my $out;
+    my @conv_args;
+    
+    ## quite snappy, but breaks SOAP (sigpipe's) and the catalyst devel server
+    ## need instead to redirect like below
+
+    given ($target_codec) {
+        when ('PCMA') {
+            @conv_args = ($tmpfile, qw/--type raw --bits 8 --channels 1 -A - rate 8k/);
+        }
+        when ('WAV') {
+            if ($source_codec eq 'PCMA') {
+                # this can actually only come from inside
+                # certain files will be stored as PCMA (for handles with name "music_on_hold")
+                @conv_args = ( qw/-A --rate 8k --channels 1 --type raw/, $tmpfile, "--type", "wav", "-");
+            }
+            else {
+                @conv_args = ($tmpfile, qw/--type wav --bits 16 - rate 8k/);
+            }
+        }
+    }
+    
+    $out = capturex([0], "/usr/bin/sox", @conv_args);
+    
+    return $out;
 }
 
 __PACKAGE__->meta->make_immutable;
@@ -334,6 +387,16 @@ L<NGCP::Panel::Form::SoundFile>.
 =head2 handles_delete
 
 Delete the Sound File determined by L</base>.
+
+=head2 _transcode_sound_file
+
+Transcodes the given sound file specified by a (temporary) filename.
+This is ported from ossbss/lib/Sipwise/Provisioning/Voip.pm
+
+For $target_codec 'PCMA' returns is RAW 8bit, 8kHz PCMA.
+For $target_codec 'WAV' returns is WAV 16bit, 8kHz.
+
+Will die if transcoding doesn't work.
 
 =head1 AUTHOR
 
