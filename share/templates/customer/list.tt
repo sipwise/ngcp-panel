@@ -1,0 +1,18 @@
+[% META title = 'Customers' -%]
+[%
+    helper.name = 'Customers';
+    helper.data = customers;
+    helper.messages = messages;
+    helper.column_titles = [ '#', 'Contract #', 'Name', 'Status' ];
+    helper.column_fields = [ 'id', 'contract_id', 'name', 'status' ];
+
+    helper.close_target = close_target;
+    helper.create_flag = create_flag;
+    helper.edit_flag = edit_flag;
+    helper.form_object = form;
+    helper.ajax_uri = c.uri_for( c.controller.action_for('ajax') );
+    helper.base_uri = c.uri_for( c.controller.action_for("") );
+
+    PROCESS 'helpers/datatables.tt';
+-%]
+
