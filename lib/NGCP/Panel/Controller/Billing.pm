@@ -229,12 +229,22 @@ sub fees_upload :Chained('fees_list') :PathPart('upload') :Args(0) {
         action => $c->uri_for_action('/billing/fees_upload', $c->req->captures),
     );
     if($form->validated) {
+
+        # TODO: check by formhandler?
+        unless($upload) {
+            $c->flash(messages => [{type => 'error', text => 'No Billing Fee file specified!'}]);
+            $c->response->redirect($c->uri_for($c->stash->{profile}->{id}, 'fees'));
+            return;
+        }
+
         my $csv = Text::CSV_XS->new({allow_whitespace => 1, binary => 1});
         my @cols = $c->config->{fees_csv}->{element_order};
         $csv->column_names (@cols);
         if ($c->req->params->{purge_existing}) {
             $c->stash->{'profile_result'}->billing_fees->delete_all;
         }
+
+
         while (my $row = $csv->getline_hr($upload->fh)) {
             my $zone = $c->stash->{'profile_result'}
                 ->billing_zones
