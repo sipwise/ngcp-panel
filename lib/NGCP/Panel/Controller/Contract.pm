@@ -4,6 +4,7 @@ use namespace::autoclean;
 BEGIN { extends 'Catalyst::Controller'; }
 use NGCP::Panel::Form::Contract;
 use NGCP::Panel::Utils;
+use NGCP::Panel::Utils::Contract;
 
 sub auto :Does(ACL) :ACLDetachTo('/denied_page') :AllowedRole(admin) :AllowedRole(reseller) {
     my ($self, $c) = @_;
@@ -64,43 +65,20 @@ sub create :Chained('contract_list') :PathPart('create') :Args(0) {
         item => $item,
     )) {
         # insert ok, populate contract_balance table
-        my $profile = $item->billing_profile;
-
-        my ($cash_balance, $cash_balance_interval,
-            $free_time_balance, $free_time_balance_interval) = (0,0,0,0);
-
-        # first, calculate start and end time of current billing profile
-        # (we assume billing interval of 1 month)
-        my $stime = DateTime->now->truncate(to => 'month');
-        my $etime = $stime->clone->add(months => 1)->subtract(seconds => 1);
-
-        # calculate free_time/cash ratio
-        my $free_time = $profile->interval_free_time || 0;
-        my $free_cash = $profile->interval_free_cash || 0;
-        if($free_time or $free_cash) {
-            $etime->add(seconds => 1);
-            my $ctime = DateTime->now->truncate(to => 'day');
-            my $ratio = ($etime->epoch - $ctime->epoch) / ($etime->epoch - $stime->epoch);
-            
-            $cash_balance = sprintf("%.4f", $free_cash * $ratio);
-            $cash_balance_interval = 0;
-
-            $free_time_balance = sprintf("%.0f", $free_time * $ratio);
-            $free_time_balance_interval = 0;
-            $etime->subtract(seconds => 1);
+        try {
+            NGCP::Panel::Utils::Contract::create_contract_balance(
+                c => $c,
+                profile => $item->billing_profile,
+                contract => $item->contract,
+            );
+        } catch($e) {
+            # TODO: roll back contract and billing_mappings creation and
+            # redirect to correct entry point
+            $c->log->error($e);
+            $c->flash(messages => [{type => 'error', text => 'Failed to create contract balance!'}]);
+            $c->response->redirect($c->uri_for_action('/contract/root'));
+            return;
         }
-
-        $c->model('billing')->resultset('contract_balances')->create({
-            contract_id => $item->contract->id,
-            cash_balance => $cash_balance,
-            cash_balance_interval => $cash_balance_interval,
-            free_time_balance => $free_time_balance,
-            free_time_balance_interval => $free_time_balance_interval,
-            start => $stime,
-            end => $etime,
-        });
-
-        # TODO: catch insert error and roll back billing_mapping and contracts entry
     } 
     return if NGCP::Panel::Utils::check_form_buttons(
         c => $c, form => $form,
