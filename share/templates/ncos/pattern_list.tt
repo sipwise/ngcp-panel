@@ -1,7 +1,5 @@
 [% site_config.title = 'Number Patterns for ' _ level_result.level -%]
 
-<a href="[% c.uri_for() %]">&lt; Back</a>
-
 [%
     helper.name = 'Number Pattern';
     helper.messages = messages;
@@ -12,10 +10,17 @@
     helper.create_flag = create_flag;
     helper.edit_flag = edit_flag;
     helper.form_object = form;
-    helper.has_edit = has_edit;
-    helper.has_delete = has_delete;
     helper.ajax_uri = c.uri_for_action( "/ncos/pattern_ajax", [c.req.captures.0] );
-    helper.base_uri = c.uri_for_action( "/ncos/pattern_root", [c.req.captures.0] );
+
+    helper.tmpuri = c.uri_for_action( "/ncos/pattern_root", [c.req.captures.0] )
+    helper.dt_buttons = [
+        { name = 'Edit', uri = helper.tmpuri _ "/'+full[0]+'/edit", class = 'btn-small btn-primary', icon = 'icon-edit' },
+        { name = 'Delete', uri = helper.tmpuri _ "/'+full[0]+'/delete", class = 'btn-small btn-secondary', icon = 'icon-trash' },
+    ];
+    helper.top_buttons = [
+        { name = 'Back', uri = c.uri_for(), icon = 'icon-arrow-left' },
+        { name = 'Create Pattern Entry', uri = c.uri_for_action( "/ncos/pattern_root", [c.req.captures.0] ) _ "/create", icon = 'icon-star' },
+    ];
 
     PROCESS 'helpers/datatables.tt';
 -%]

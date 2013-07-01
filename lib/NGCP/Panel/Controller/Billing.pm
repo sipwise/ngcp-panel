@@ -33,8 +33,6 @@ sub profile_list :Chained('/') :PathPart('billing') :CaptureArgs(0) {
     my $profiles_rs = $self->$dispatch_to($c);
     $c->stash(profiles_rs => $profiles_rs);
 
-    $c->stash(has_edit => 1);
-    $c->stash(has_delete => 0);
     $c->stash(template => 'billing/list.tt');
 }
 
@@ -134,7 +132,6 @@ sub create :Chained('profile_list') :PathPart('create') :Args(0) {
 sub fees_list :Chained('base') :PathPart('fees') :CaptureArgs(0) {
     my ($self, $c) = @_;
     
-    $c->stash(has_edit => 1);
     $c->stash(template => 'billing/fees.tt');
 }
 
@@ -318,7 +315,6 @@ sub zones_list :Chained('base') :PathPart('zones') :CaptureArgs(0) {
         $c->uri_for_action('/billing/zones', [$c->req->captures->[0]])
     );
     
-    $c->stash(has_edit => 0);
     $c->stash(template => 'billing/zones.tt');
 }
 

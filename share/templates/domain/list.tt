@@ -10,10 +10,15 @@
     helper.create_flag = create_flag;
     helper.edit_flag = edit_flag;
     helper.form_object = form;
-    helper.has_edit = has_edit;
     helper.ajax_uri = c.uri_for( c.controller.action_for('ajax') );
-    helper.base_uri = c.uri_for( c.controller.action_for("") );
-    helper.extra_buttons = [["Preferences", "preferences"]];
+
+    helper.dt_buttons = [
+        { name = 'Delete', uri = "/domain/'+full[0]+'/delete", class = 'btn-small btn-secondary', icon = 'icon-trash' },
+        { name = 'Preferences', uri = "/domain/'+full[0]+'/preferences", class = 'btn-small btn-tertiary', icon = 'icon-list' },
+    ];
+    helper.top_buttons = [
+        { name = 'Create Domain', uri = c.uri_for('/domain/create'), icon = 'icon-star' },
+    ];
 
     PROCESS 'helpers/datatables.tt';
 -%]

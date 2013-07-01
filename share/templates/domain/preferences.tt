@@ -11,6 +11,10 @@
     helper.form = form;
     helper.base_uri = c.uri_for(domain.id,'preferences');
 
+    helper.top_buttons = [
+        { name = 'Back', uri = c.uri_for(), icon = 'icon-arrow-left' },
+    ];
+
     PROCESS 'helpers/pref_table.tt';
 %]
 

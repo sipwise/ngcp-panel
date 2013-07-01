@@ -9,8 +9,6 @@
     helper.create_flag = servers_create_flag;
     helper.edit_flag = servers_edit_flag;
     helper.form_object = servers_form;
-    helper.has_edit = 1;
-    helper.has_delete = 1;
     helper.ajax_uri = c.uri_for_action( "/peering/servers_ajax", [c.req.captures.0] );
 
     helper.tmpuri = c.uri_for_action("/peering/servers_root", [c.req.captures.0]);
@@ -36,8 +34,6 @@
     helper.create_flag = rules_create_flag;
     helper.edit_flag = rules_edit_flag;
     helper.form_object = rules_form;
-    helper.has_edit = 1;
-    helper.has_delete = 1;
     helper.ajax_uri = c.uri_for_action( "/peering/rules_ajax", [c.req.captures.0] );
 
     helper.tmpuri = c.uri_for(group.id, "rules");

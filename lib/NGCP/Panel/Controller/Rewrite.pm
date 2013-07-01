@@ -16,8 +16,6 @@ sub auto :Does(ACL) :ACLDetachTo('/denied_page') :AllowedRole(admin) :AllowedRol
 sub set_list :Chained('/') :PathPart('rewrite') :CaptureArgs(0) {
     my ( $self, $c ) = @_;
 
-    $c->stash(has_edit => 1);
-    $c->stash(has_delete => 1);
     $c->stash(template => 'rewrite/set_list.tt');
 }
 
@@ -119,8 +117,6 @@ sub rules_list :Chained('set_base') :PathPart('rules') :CaptureArgs(0) {
     $c->stash(rules_rs => $rules_rs);
     $c->stash(rules_uri => $c->uri_for_action("/rewrite/rules_root", [$c->req->captures->[0]]));
 
-    $c->stash(has_edit => 1);
-    $c->stash(has_delete => 1);
     $c->stash(template => 'rewrite/rules_list.tt');
 }
 

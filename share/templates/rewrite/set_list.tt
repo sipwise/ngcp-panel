@@ -9,13 +9,16 @@
     helper.create_flag = create_flag;
     helper.edit_flag = edit_flag;
     helper.form_object = form;
-    helper.has_edit = has_edit;
-    helper.has_delete = has_delete;
     helper.ajax_uri = c.uri_for_action( "/rewrite/set_ajax" );
     helper.base_uri = c.uri_for_action( "/rewrite/set_root" );
 
-    helper.extra_buttons = [
-        [ 'Rules', 'rules'],
+    helper.dt_buttons = [
+        { name = 'Edit', uri = "/rewrite/'+full[0]+'/edit", class = 'btn-small btn-primary', icon = 'icon-edit' },
+        { name = 'Delete', uri = "/rewrite/'+full[0]+'/delete", class = 'btn-small btn-secondary', icon = 'icon-trash' },
+        { name = 'Rules', uri = "/rewrite/'+full[0]+'/rules", class = 'btn-small btn-tertiary', icon = 'icon-list' },
+    ];
+    helper.top_buttons = [
+        { name = 'Create Rewrite Rule Set', uri = c.uri_for('/rewrite/create'), icon = 'icon-star' },
     ];
 
     PROCESS 'helpers/datatables.tt';

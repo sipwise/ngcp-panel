@@ -9,8 +9,6 @@
     helper.create_flag = create_flag;
     helper.edit_flag = edit_flag;
     helper.form_object = form;
-    helper.has_edit = has_edit;
-    helper.has_delete = has_delete;
     helper.ajax_uri = c.uri_for_action( "/peering/ajax" );
 
     helper.dt_buttons = [

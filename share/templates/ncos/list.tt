@@ -9,13 +9,15 @@
     helper.create_flag = create_flag;
     helper.edit_flag = edit_flag;
     helper.form_object = form;
-    helper.has_edit = has_edit;
-    helper.has_delete = has_delete;
     helper.ajax_uri = c.uri_for_action( "/ncos/ajax" );
-    helper.base_uri = c.uri_for_action( "/ncos/root" );
 
-    helper.extra_buttons = [
-        [ 'Patterns', 'pattern'],
+    helper.dt_buttons = [
+        { name = 'Edit', uri = "/ncos/'+full[0]+'/edit", class = 'btn-small btn-primary', icon = 'icon-edit' },
+        { name = 'Delete', uri = "/ncos/'+full[0]+'/delete", class = 'btn-small btn-secondary', icon = 'icon-trash' },
+        { name = 'Patterns', uri = "/ncos/'+full[0]+'/pattern", class = 'btn-small btn-tertiary', icon = 'icon-list' },
+    ];
+    helper.top_buttons = [
+        { name = 'Create NCOS Level', uri = c.uri_for('/ncos/create'), icon = 'icon-star' },
     ];
 
     PROCESS 'helpers/datatables.tt';

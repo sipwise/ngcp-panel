@@ -20,8 +20,6 @@ sub group_list :Chained('/') :PathPart('peering') :CaptureArgs(0) {
     
     NGCP::Panel::Utils::check_redirect_chain(c => $c);
 
-    $c->stash(has_edit => 1);
-    $c->stash(has_delete => 1);
     $c->stash(template => 'peering/list.tt');
 }
 

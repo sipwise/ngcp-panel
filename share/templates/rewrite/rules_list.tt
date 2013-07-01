@@ -1,9 +1,12 @@
 [% site_config.title = 'Rewrite Rules for ' _ set_result.name -%]
 
-<a href="[% c.uri_for() %]">&lt; Back</a>
-
 <div class="row">
+    <span>
+        <a class="btn btn-primary btn-large" href="[% c.uri_for() %]"><i class="icon-arrow-left"></i> Back</a>
+    </span>
+    <span>
     <a class="btn btn-primary btn-large" href="[% c.uri_for_action('/rewrite/rules_create', [c.req.captures.0]) %]"><i class="icon-star"></i> Create Rewrite Rule</a>
+    </span>
 </div>
 
 [% IF messages -%]

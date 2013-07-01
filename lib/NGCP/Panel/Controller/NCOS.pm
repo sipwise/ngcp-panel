@@ -21,8 +21,6 @@ sub levels_list :Chained('/') :PathPart('ncos') :CaptureArgs(0) {
     my $levels_rs = $self->$dispatch_to($c);
     $c->stash(levels_rs => $levels_rs);
 
-    $c->stash(has_edit => 1);
-    $c->stash(has_delete => 1);
     $c->stash(template => 'ncos/list.tt');
 }
 
@@ -157,8 +155,6 @@ sub pattern_list :Chained('base') :PathPart('pattern') :CaptureArgs(0) {
         return;
     }
 
-    $c->stash(has_edit => 1);
-    $c->stash(has_delete => 1);
     $c->stash(template => 'ncos/pattern_list.tt');
 }
 

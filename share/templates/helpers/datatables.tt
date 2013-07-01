@@ -28,7 +28,8 @@ $(document).ready(function() {
                     return '' +
                     '<div class="sw_actions pull-right">' 
                     [% FOR button IN helper.dt_buttons -%]
-                      + '<a class="btn [% button.class %]" href="[% button.uri %]">' +
+                      [% confirm_delete = 'data-confirm="Delete"' IF button.name == "Delete" -%]
+                      + '<a class="btn [% button.class %]" href="[% button.uri %]" [% confirm_delete %]>' +
                           '<i class="[% button.icon %]"></i> [% button.name %]' +
                         '</a>'
                     [% END -%]

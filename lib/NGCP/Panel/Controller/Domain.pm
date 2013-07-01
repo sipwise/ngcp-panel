@@ -15,7 +15,6 @@ sub auto :Does(ACL) :ACLDetachTo('/denied_page') :AllowedRole(admin) :AllowedRol
 sub dom_list :Chained('/') :PathPart('domain') :CaptureArgs(0) {
     my ($self, $c) = @_;
 
-    $c->stash(has_edit => 0);
     $c->stash(template => 'domain/list.tt');
 }
 
