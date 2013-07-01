@@ -76,6 +76,11 @@ sub create :Chained('contract_list') :PathPart('create') :Args(0) {
             # redirect to correct entry point
             $c->log->error($e);
             $c->flash(messages => [{type => 'error', text => 'Failed to create contract balance!'}]);
+
+            if($c->stash->{close_target}) {
+                $c->response->redirect($c->stash->{close_target});
+                return;
+            }
             $c->response->redirect($c->uri_for_action('/contract/root'));
             return;
         }
@@ -229,11 +234,31 @@ sub peering_create :Chained('peering_list') :PathPart('create') :Args(0) {
     );
 
     my $form = NGCP::Panel::Form::Contract->new;
-    $form->process(
+    if($form->process(
         posted => ($c->request->method eq 'POST'),
         params => $c->request->params,
         item => $item,
-    );
+    )) {
+        # insert ok, populate contract_balance table
+        try {
+            NGCP::Panel::Utils::Contract::create_contract_balance(
+                c => $c,
+                profile => $item->billing_profile,
+                contract => $item->contract,
+            );
+        } catch($e) {
+            # TODO: roll back contract and billing_mappings creation and
+            # redirect to correct entry point
+            $c->log->error($e);
+            $c->flash(messages => [{type => 'error', text => 'Failed to create contract balance!'}]);
+            if($c->stash->{close_target}) {
+                $c->response->redirect($c->stash->{close_target});
+                return;
+            }
+            $c->response->redirect($c->uri_for_action('/contract/root'));
+            return;
+        }
+    }
     return if NGCP::Panel::Utils::check_form_buttons(
         c => $c, form => $form,
         fields => {'contract.contact.create' => $c->uri_for('/contact/create'),
