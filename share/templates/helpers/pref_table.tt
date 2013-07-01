@@ -1,4 +1,10 @@
-<a href="[% c.uri_for() %]">&lt; Back</a>
+<div class="row">
+    [% FOR button IN helper.top_buttons -%]
+    <span>
+    <a class="btn btn-primary btn-large" href="[% button.uri %]"><i class="[% button.icon %]"></i> [% button.name %]</a>
+    </span>
+    [% END -%]
+</div>
 
 [% IF helper.messages -%]
 <div class="row">

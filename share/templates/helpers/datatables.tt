@@ -26,26 +26,13 @@ $(document).ready(function() {
 		    [% END -%]
 		    {   "mRender": function ( data, type, full ) {
                     return '' +
-                    '<div class="sw_actions pull-right">' +
-                    [%- IF helper.has_edit != 0 %]
-                      '<a class="btn btn-small btn-primary" href="[% helper.base_uri %]/' + full[0] + '/edit">' +
-                        '<i class="icon-edit"></i> Edit' +
-                      '</a>' +
-                    [%- END %]
-                    [%- IF helper.has_delete != 0 %]
-                      '<a class="btn btn-small btn-secondary" href="[% helper.base_uri %]/' + full[0] + '/delete" data-confirm="Delete">' +
-                        '<i class="icon-trash"></i> Delete' +
-                      '</a>' +
-                    [%- END %]
-                    [%- IF helper.extra_buttons.size %]
-                        [% FOR b IN helper.extra_buttons %]
-                            '<a class="btn btn-small btn-tertiary" href="[% helper.base_uri %]/' + full[0] + '/' +
-                            '[% b.1 %]' + '">' +
-                            '[% b.0 %]' +
-                            '</a>' +
-                        [% END %]
-                    [% END %]
-                    '</div>';
+                    '<div class="sw_actions pull-right">' 
+                    [% FOR button IN helper.dt_buttons -%]
+                      + '<a class="btn [% button.class %]" href="[% button.uri %]">' +
+                          '<i class="[% button.icon %]"></i> [% button.name %]' +
+                        '</a>'
+                    [% END -%]
+                    + '</div>';
                 },
                 "mData": null,
                 "bSortable": false,
@@ -70,7 +57,11 @@ $(document).ready(function() {
 
 
 <div class="row">
-    <a class="btn btn-primary btn-large" href="[% helper.base_uri _ '/create' %]"><i class="icon-star"></i> Create [% helper.name %]</a>
+    [% FOR button IN helper.top_buttons -%]
+    <span>
+    <a class="btn btn-primary btn-large" href="[% button.uri %]"><i class="[% button.icon %]"></i> [% button.name %]</a>
+    </span>
+    [% END -%]
 </div>
 [% IF helper.messages -%]
 <div class="row">

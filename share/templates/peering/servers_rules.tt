@@ -12,10 +12,14 @@
     helper.has_edit = 1;
     helper.has_delete = 1;
     helper.ajax_uri = c.uri_for_action( "/peering/servers_ajax", [c.req.captures.0] );
-    helper.base_uri = c.uri_for_action( "/peering/servers_root", [c.req.captures.0] );
 
-    helper.extra_buttons = [
-        [ 'Preferences', 'preferences'],
+    helper.dt_buttons = [
+        { name = 'Edit', uri = "/peering/" _ c.req.captures.0 _ "/servers/'+full[0]+'/edit", class = 'btn-small btn-primary', icon = 'icon-edit' },
+        { name = 'Delete', uri = "/peering/" _ c.req.captures.0 _ "/servers/'+full[0]+'/delete", class = 'btn-small btn-secondary', icon = 'icon-trash' },
+        { name = 'Preferences', uri = "/peering/" _ c.req.captures.0 _ "/servers/'+full[0]+'/preferences", class = 'btn-small btn-tertiary', icon = 'icon-list' },
+    ];
+    helper.top_buttons = [
+        { name = 'Create Peering Server', uri = "/peering/" _ c.req.captures.0 _ "/servers/create", icon = 'icon-star' },
     ];
 
     PROCESS 'helpers/datatables.tt';
@@ -34,10 +38,15 @@
     helper.has_edit = 1;
     helper.has_delete = 1;
     helper.ajax_uri = c.uri_for_action( "/peering/rules_ajax", [c.req.captures.0] );
-    helper.base_uri = c.uri_for( group.id, "rules" );
-    
-    helper.extra_buttons = undef;
 
+    helper.dt_buttons = [
+        { name = 'Edit', uri = "/peering/" _ c.req.captures.0 _ "/rules/'+full[0]+'/edit", class = 'btn-small btn-primary', icon = 'icon-edit' },
+        { name = 'Delete', uri = "/peering/" _ c.req.captures.0 _ "/rules/'+full[0]+'/delete", class = 'btn-small btn-secondary', icon = 'icon-trash' },
+    ];
+    helper.top_buttons = [
+        { name = 'Create Peering Rule', uri = "/peering/" _ c.req.captures.0 _ "/rules/create", icon = 'icon-star' },
+    ];
+    
     PROCESS 'helpers/datatables.tt';
 -%]
 [% # vim: set tabstop=4 syntax=html expandtab: -%]

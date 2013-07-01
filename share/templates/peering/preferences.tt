@@ -1,7 +1,6 @@
 [% site_config.title = 'Peer Host "' _ server.name _ '" – Preferences' -%]
 
 [%
-    #helper.name = 'Domain';
     helper.messages = messages;
     
     helper.edit_preference = edit_preference;
@@ -11,6 +10,13 @@
     helper.form = form;
     helper.base_uri = c.uri_for_action("/peering/servers_preferences_root",
         [c.req.captures.0, c.req.captures.1]);
+
+    helper.dt_buttons = [
+        { name = 'Edit', uri = "/peering/servers_preferences_root/" _ c.req.captures.0 _ "/" _ c.req.captures.1, class = 'btn-small btn-primary', icon = 'icon-edit' },
+    ];
+    helper.top_buttons = [
+        { name = 'Back', uri = "/peering/" _ c.req.captures.0 _ "/servers/", icon = 'icon-arrow-left' },
+    ];
 
     PROCESS 'helpers/pref_table.tt';
 %]
