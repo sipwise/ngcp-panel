@@ -1,6 +1,10 @@
 [% site_config.title = 'Off-peak-times for ' _ profile.name -%]
 
-<a href="[% c.uri_for() %]">&lt; Back</a>
+<div class="row">
+    <span>
+        <a class="btn btn-primary btn-large" href="[% c.uri_for() %]"><i class="icon-arrow-left"></i> Back</a>
+    </span>
+</div>
 
 [% IF messages -%]
 <div class="row">

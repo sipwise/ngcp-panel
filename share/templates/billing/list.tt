@@ -9,14 +9,15 @@
     helper.create_flag = create_flag;
     helper.edit_flag = edit_flag;
     helper.form_object = form;
-    helper.has_edit = has_edit;
-    helper.has_delete = has_delete;
     helper.ajax_uri = c.uri_for( c.controller.action_for('ajax') );
-    helper.base_uri = c.uri_for( c.controller.action_for("") );
-
-    helper.extra_buttons = [
-        [ 'Edit Fees', 'fees'],
-        [ 'Edit Peak Times', 'peaktimes'],
+    
+    helper.dt_buttons = [
+        { name = 'Edit', uri = "/billing/'+full[0]+'/edit", class = 'btn-small btn-primary', icon = 'icon-edit' },
+        { name = 'Fees', uri = "/billing/'+full[0]+'/fees", class = 'btn-small btn-tertiary', icon = 'icon-shopping-cart' },
+        { name = 'Peaktimes', uri = "/billing/'+full[0]+'/peaktimes", class = 'btn-small btn-tertiary', icon = 'icon-time' },
+    ];
+    helper.top_buttons = [
+        { name = 'Create Billing Profile', uri = c.uri_for('/billing/create'), icon = 'icon-star' },
     ];
 
     PROCESS 'helpers/datatables.tt';

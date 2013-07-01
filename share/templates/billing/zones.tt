@@ -11,7 +11,15 @@
     helper.form_object = form;
     helper.has_edit = has_edit;
     helper.ajax_uri = c.uri_for_action( '/billing/zones_ajax',[c.req.captures.0] );
-    helper.base_uri = c.uri_for( profile.id, 'zones');
+
+    helper.tmpuri = c.uri_for( profile.id, 'zones');
+    helper.dt_buttons = [
+        { name = 'Edit', uri = helper.tmpuri _ "/'+full[0]+'/edit", class = 'btn-small btn-primary', icon = 'icon-edit' },
+        { name = 'Delete', uri = helper.tmpuri _ "/'+full[0]+'/delete", class = 'btn-small btn-secondary', icon = 'icon-trash' },
+    ];
+    helper.top_buttons = [
+        { name = 'Back', uri = c.uri_for(profile.id, 'fees'), icon = 'icon-arrow-left' },
+    ];
 
     PROCESS 'helpers/datatables.tt';
 -%]
