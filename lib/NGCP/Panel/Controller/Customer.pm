@@ -9,7 +9,7 @@ use Data::Printer;
 
 =head1 NAME
 
-NGCP::Panel::Controller::Reseller - Catalyst Controller
+NGCP::Panel::Controller::Customer - Catalyst Controller
 
 =head1 DESCRIPTION
 
@@ -29,23 +29,21 @@ sub list_customer :Chained('/') :PathPart('customer') :CaptureArgs(0) {
     my ($self, $c) = @_;
 
     $c->stash(
-        customers => $c->model('billing')->resultset('contracts')
-            ->,
-        template => 'reseller/list.tt'
+        template => 'customer/list.tt'
     );
     NGCP::Panel::Utils::check_redirect_chain(c => $c);
 }
 
-sub root :Chained('list_reseller') :PathPart('') :Args(0) {
+sub root :Chained('list_customer') :PathPart('') :Args(0) {
     my ($self, $c) = @_;
 }
 
-sub ajax :Chained('list_reseller') :PathPart('ajax') :Args(0) {
+sub ajax :Chained('list_customer') :PathPart('ajax') :Args(0) {
     my ($self, $c) = @_;
-    my $resellers = $c->stash->{resellers};
+    my $customers = $c->stash->{customers};
     $c->forward(
         '/ajax_process_resultset', [
-            $resellers,
+            $customers,
             [qw(id contract_id name status)],
             [ 1, 2, 3 ]
         ]
@@ -54,7 +52,7 @@ sub ajax :Chained('list_reseller') :PathPart('ajax') :Args(0) {
     return;
 }
 
-sub create :Chained('list_reseller') :PathPart('create') :Args(0) {
+sub create :Chained('list_customer') :PathPart('create') :Args(0) {
     my ($self, $c) = @_;
 
     # TODO: check in session if contract has just been created, and set it
@@ -73,7 +71,7 @@ sub create :Chained('list_reseller') :PathPart('create') :Args(0) {
         fields => [qw/contract.create/], 
         back_uri => $c->uri_for('create')
     );
-    # TODO: preserve the current "reseller" object for continuing editing
+    # TODO: preserve the current "customer" object for continuing editing
     # when coming back from /contract/create
 
     if($form->validated) {

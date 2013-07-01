@@ -280,6 +280,86 @@ sub peering_create :Chained('peering_list') :PathPart('create') :Args(0) {
     $c->stash(form => $form);
 }
 
+sub customer_list :Chained('contract_list') :PathPart('customer') :CaptureArgs(0) {
+    my ($self, $c) = @_;
+
+    $c->stash(ajax_uri => $c->uri_for_action("/contract/customer_ajax"));
+}
+
+sub customer_root :Chained('customer_list') :PathPart('') :Args(0) {
+
+}
+
+sub customer_ajax :Chained('customer_list') :PathPart('ajax') :Args(0) {
+    my ($self, $c) = @_;
+    
+    my $base_rs = $c->stash->{contract_select_rs};
+    my $rs = $base_rs->search({
+            'product_id' => undef,
+        }, {
+            'join' => {'billing_mappings' => 'product'},
+        });
+    
+    $c->forward( "/ajax_process_resultset", [$rs,
+                 ["id","contact_id","billing_profile","status"],
+                 [3]]);
+    
+    $c->detach( $c->view("JSON") );
+}
+
+sub customer_create :Chained('customer_list') :PathPart('create') :Args(0) {
+    my ($self, $c) = @_;
+    
+    my $item = $c->model('billing')->resultset('billing_mappings')->new_result({});
+    $item->product(undef);
+
+    my $form = NGCP::Panel::Form::Contract->new;
+    if($form->process(
+        posted => ($c->request->method eq 'POST'),
+        params => $c->request->params,
+        item => $item,
+    )) {
+        # insert ok, populate contract_balance table
+        try {
+            NGCP::Panel::Utils::Contract::create_contract_balance(
+                c => $c,
+                profile => $item->billing_profile,
+                contract => $item->contract,
+            );
+        } catch($e) {
+            # TODO: roll back contract and billing_mappings creation and
+            # redirect to correct entry point
+            $c->log->error($e);
+            $c->flash(messages => [{type => 'error', text => 'Failed to create contract balance!'}]);
+            if($c->stash->{close_target}) {
+                $c->response->redirect($c->stash->{close_target});
+                return;
+            }
+            $c->response->redirect($c->uri_for_action('/contract/root'));
+            return;
+        }
+    }
+    return if NGCP::Panel::Utils::check_form_buttons(
+        c => $c, form => $form,
+        fields => {'contract.contact.create' => $c->uri_for('/contact/create'),
+                   'billing_profile.create'  => $c->uri_for('/billing/create')},
+        back_uri => $c->uri_for('create')
+    );
+    if($form->validated) {
+        $c->flash(messages => [{type => 'success', text => 'Contract successfully created!'}]);
+        
+        if($c->stash->{close_target}) {
+            $c->response->redirect($c->stash->{close_target});
+            return;
+        }
+        $c->response->redirect($c->uri_for_action('/contract/root'));
+        return;
+    }
+
+    $c->stash(create_flag => 1);
+    $c->stash(form => $form);
+}
+
 __PACKAGE__->meta->make_immutable;
 
 1;
