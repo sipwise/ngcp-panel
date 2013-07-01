@@ -13,13 +13,14 @@
     helper.has_delete = 1;
     helper.ajax_uri = c.uri_for_action( "/peering/servers_ajax", [c.req.captures.0] );
 
+    helper.tmpuri = c.uri_for_action("/peering/servers_root", [c.req.captures.0]);
     helper.dt_buttons = [
-        { name = 'Edit', uri = "/peering/" _ c.req.captures.0 _ "/servers/'+full[0]+'/edit", class = 'btn-small btn-primary', icon = 'icon-edit' },
-        { name = 'Delete', uri = "/peering/" _ c.req.captures.0 _ "/servers/'+full[0]+'/delete", class = 'btn-small btn-secondary', icon = 'icon-trash' },
-        { name = 'Preferences', uri = "/peering/" _ c.req.captures.0 _ "/servers/'+full[0]+'/preferences", class = 'btn-small btn-tertiary', icon = 'icon-list' },
+        { name = 'Edit', uri = helper.tmpuri _ "/'+full[0]+'/edit", class = 'btn-small btn-primary', icon = 'icon-edit' },
+        { name = 'Delete', uri = helper.tmpuri _ "/'+full[0]+'/delete", class = 'btn-small btn-secondary', icon = 'icon-trash' },
+        { name = 'Preferences', uri = helper.tmpuri _ "/'+full[0]+'/preferences", class = 'btn-small btn-tertiary', icon = 'icon-list' },
     ];
     helper.top_buttons = [
-        { name = 'Create Peering Server', uri = "/peering/" _ c.req.captures.0 _ "/servers/create", icon = 'icon-star' },
+        { name = 'Create Peering Server', uri = helper.tmpuri _ "/create", icon = 'icon-star' },
     ];
 
     PROCESS 'helpers/datatables.tt';
@@ -39,12 +40,13 @@
     helper.has_delete = 1;
     helper.ajax_uri = c.uri_for_action( "/peering/rules_ajax", [c.req.captures.0] );
 
+    helper.tmpuri = c.uri_for(group.id, "rules");
     helper.dt_buttons = [
-        { name = 'Edit', uri = "/peering/" _ c.req.captures.0 _ "/rules/'+full[0]+'/edit", class = 'btn-small btn-primary', icon = 'icon-edit' },
-        { name = 'Delete', uri = "/peering/" _ c.req.captures.0 _ "/rules/'+full[0]+'/delete", class = 'btn-small btn-secondary', icon = 'icon-trash' },
+        { name = 'Edit', uri = helper.tmpuri _ "/'+full[0]+'/edit", class = 'btn-small btn-primary', icon = 'icon-edit' },
+        { name = 'Delete', uri = helper.tmpuri _ "/'+full[0]+'/delete", class = 'btn-small btn-secondary', icon = 'icon-trash' },
     ];
     helper.top_buttons = [
-        { name = 'Create Peering Rule', uri = "/peering/" _ c.req.captures.0 _ "/rules/create", icon = 'icon-star' },
+        { name = 'Create Peering Rule', uri = helper.tmpuri _ "/create", icon = 'icon-star' },
     ];
     
     PROCESS 'helpers/datatables.tt';
