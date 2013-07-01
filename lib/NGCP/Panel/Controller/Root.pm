@@ -76,67 +76,6 @@ sub default :Path {
 
 sub end : ActionClass('RenderView') {}
 
-sub ajax_process :Private {
-    my ($self,$c,@arguments) = @_;
-    
-    my ($data,$columns,$searchable) = @arguments;
-    
-    #Process Arguments
-    my $sEcho = $c->request->params->{sEcho} // "1"; #/
-    my $sSearch = $c->request->params->{sSearch} // ""; #/
-    my $iDisplayStart = $c->request->params->{iDisplayStart};
-    my $iDisplayLength = $c->request->params->{iDisplayLength};
-    my $iSortCol_0 = $c->request->params->{iSortCol_0};
-    my $sSortDir_0 = $c->request->params->{sSortDir_0};
-    my $iIdOnTop = $c->request->params->{iIdOnTop};
-    
-    #parse $data into $aaData
-    my $aaData = [];
-    
-    for my $row (@$data) {
-        my @aaRow = @$row{@$columns};
-        #my %aaRow = %$row; #in case of using mData
-        if (grep /$sSearch/, @aaRow[@$searchable]) {
-            push @$aaData, \@aaRow;
-        }
-    }
-    #Sorting
-    if(defined($iSortCol_0) && defined($sSortDir_0)) {
-        if($sSortDir_0 eq "asc") {
-            @$aaData = sort {$a->[$iSortCol_0] cmp
-                             $b->[$iSortCol_0]} @$aaData;
-        } else {
-            @$aaData = sort {$b->[$iSortCol_0] cmp
-                             $a->[$iSortCol_0]} @$aaData;
-        }
-    }
-    #potentially selected Id (search it (col 0) and move on top)
-    if( defined($iIdOnTop) ) {
-        my $elem;
-        for (my $i=0; $i<@$aaData; $i++) {
-            if(@$aaData[$i]->[0] == $iIdOnTop) {
-                $elem = splice(@$aaData, $i, 1);
-                unshift(@$aaData, $elem);
-            }
-        }
-    }
-    my $totalRecords = scalar(@$data);
-    my $totalDisplayRecords = scalar(@$aaData);
-    #Pagination
-    if($iDisplayStart || $iDisplayLength ) {
-        my $endIndex = $iDisplayLength+$iDisplayStart-1;
-        $endIndex = $#$aaData if $endIndex > $#$aaData;
-        @$aaData = @$aaData[$iDisplayStart .. $endIndex];
-    }
-    
-    $c->stash(aaData => $aaData,
-          iTotalRecords => $totalRecords,
-          iTotalDisplayRecords => $totalDisplayRecords);
-    
-    
-    $c->stash(sEcho => $sEcho);
-}
-
 sub ajax_process_resultset :Private {
 
     my ($self,$c,@arguments) = @_;
@@ -260,9 +199,9 @@ Standard 404 error page
 
 Attempt to render a view, if needed.
 
-=head2 ajax_process
+=head2 ajax_process_resultset
 
-Processes http arguments and prepare data from other controllers to be used
+Processes a L<ResultSet|DBIx::Class::ResultSet> and prepares data from other controllers to be used
 with the JSON view. The items exposed to stash are namely:
 
 * sEcho
@@ -272,12 +211,7 @@ with the JSON view. The items exposed to stash are namely:
 
 They are intended for use with datatables.
 
-=head2 ajax_process_resultset
-
-Similar to L</ajax_process>, but takes a L<ResultSet|DBIx::Class::ResultSet>
-as argument.
-
-Arguments: $resultset, \%columns, \%searchable
+Arguments: $resultset, \@columns, \@searchable
 
 =head2 error_page
 
