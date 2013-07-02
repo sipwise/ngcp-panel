@@ -18,7 +18,7 @@
         { name = 'Details', uri = "/customer/'+full[0]+'/details", class = 'btn-small btn-tertiary', icon = 'icon-list' },
     ];
     helper.top_buttons = [
-        { name = 'Create Customer', uri = c.uri_for('/customer/create'), icon = 'icon-star' },
+        { name = 'Create Customer', uri = c.uri_for_action('/contract/customer_create'), icon = 'icon-star' },
     ];
 
     PROCESS 'helpers/datatables.tt';

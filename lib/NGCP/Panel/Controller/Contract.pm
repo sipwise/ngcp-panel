@@ -335,7 +335,7 @@ sub customer_create :Chained('customer_list') :PathPart('create') :Args(0) {
                 $c->response->redirect($c->stash->{close_target});
                 return;
             }
-            $c->response->redirect($c->uri_for_action('/contract/root'));
+            $c->response->redirect($c->uri_for('/customer'));
             return;
         }
     }
@@ -347,12 +347,7 @@ sub customer_create :Chained('customer_list') :PathPart('create') :Args(0) {
     );
     if($form->validated) {
         $c->flash(messages => [{type => 'success', text => 'Contract successfully created!'}]);
-        
-        if($c->stash->{close_target}) {
-            $c->response->redirect($c->stash->{close_target});
-            return;
-        }
-        $c->response->redirect($c->uri_for_action('/contract/root'));
+        $c->response->redirect($c->uri_for_action('/customer/details', [$item->contract->id]));
         return;
     }
 
