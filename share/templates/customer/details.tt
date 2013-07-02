@@ -26,6 +26,8 @@
 
 <div class="ngcp-separator"></div>
 
+<h3>TODO: Contract Details?</h3>
+
 <h3>Subscribers</h3>
 
 <table class="table table-bordered table-striped table-highlight table-hover">
@@ -59,7 +61,7 @@
     </tbody>
 </table>
 
-<h3>Account Balance</h3>
+<h3>Contract Balance</h3>
 
 <table class="table table-bordered table-striped table-highlight table-hover">
     <thead>

@@ -1,0 +1,27 @@
+[% site_config.title = 'Subscriber' -%]
+
+[% IF messages -%]
+<div class="row">
+    [% FOREACH m IN messages -%]
+        <div class="alert alert-[% m.type %]">[% m.text %]</div>
+    [% END -%]
+</div>
+[% END -%]
+
+<div class="ngcp-separator"></div>
+
+<h3>Master Data</h3>
+
+[% IF edit_flag == 1 -%]
+[%
+    PROCESS "helpers/modal.tt";
+    modal_header(m.create_flag=0,
+                 m.name = "Subscriber Master Data");
+    form.render;
+    modal_footer();
+    modal_script(m.close_target = close_target);
+-%]
+[% END -%]
+
+
+[% # vim: set tabstop=4 syntax=html expandtab: -%]
