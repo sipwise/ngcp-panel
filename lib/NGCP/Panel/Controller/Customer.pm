@@ -3,7 +3,6 @@ use Sipwise::Base;
 use namespace::sweep;
 BEGIN { extends 'Catalyst::Controller'; }
 use NGCP::Panel::Utils::Contract;
-use NGCP::Panel::Form::Customer;
 use NGCP::Panel::Form::CustomerMonthlyFraud;
 use NGCP::Panel::Form::CustomerDailyFraud;
 use NGCP::Panel::Form::CustomerBalance;
