@@ -2,9 +2,11 @@ package NGCP::Panel::Controller::Customer;
 use Sipwise::Base;
 use namespace::sweep;
 BEGIN { extends 'Catalyst::Controller'; }
+use NGCP::Panel::Utils::Contract;
 use NGCP::Panel::Form::Customer;
 use NGCP::Panel::Form::CustomerMonthlyFraud;
 use NGCP::Panel::Form::CustomerDailyFraud;
+use NGCP::Panel::Form::CustomerBalance;
 use NGCP::Panel::Utils;
 
 use Data::Printer;
@@ -52,6 +54,48 @@ sub base :Chained('list_customer') :PathPart('') :CaptureArgs(1) {
     my $contract = $c->model('billing')->resultset('contracts')
         ->find($contract_id);
 
+    my $stime = DateTime->now->truncate(to => 'month');
+    my $etime = $stime->clone->add(months => 1);
+    my $balance = $contract->contract_balances
+        ->find({
+            start => { '>=' => $stime },
+            end => { '<' => $etime },
+            });
+    unless($balance) {
+        try {
+            NGCP::Panel::Utils::Contract::create_contract_balance(
+                c => $c,
+                profile => $contract->billing_mappings->search({
+                    -and => [
+                        -or => [
+                            start_date => undef,
+                            start_date => { '<=' => DateTime->now },
+                        ],
+                        -or => [
+                            end_date => undef,
+                            end_date => { '>=' => DateTime->now },
+                        ]
+                    ],
+                },
+                {
+                    order_by => { -desc => 'start_time', -desc => 'id' }
+                })->first->billing_profile,
+                contract => $contract,
+            );
+        } catch($e) {
+            $c->log->error("Failed to create contract balance: $e");
+            $c->flash(messages => [{type => 'error', text => 'Failed to create contract balance!'}]);
+            $c->response->redirect($c->uri_for());
+            return;
+        }
+        $balance = $contract->contract_balances
+            ->find({
+                start => { '>=' => $stime },
+                end => { '<' => $etime },
+                });
+    }
+
+    $c->stash(balance => $balance);
     $c->stash(fraud => $contract->contract_fraud_preference);
     $c->stash(template => 'customer/details.tt'); 
     $c->stash(contract => $contract);
@@ -127,6 +171,29 @@ sub delete_fraud :Chained('base') :PathPart('fraud/delete') :Args(1) {
     $c->flash(messages => [{type => 'success', text => "Successfully cleared fraud interval!"}]);
     $c->response->redirect($c->uri_for_action("/customer/details", [$c->stash->{contract}->id]));
     return;
+}
+
+sub edit_balance :Chained('base') :PathPart('balance/edit') :Args(0) {
+    my ($self, $c) = @_;
+
+    my $posted = ($c->request->method eq 'POST');
+    my $form = NGCP::Panel::Form::CustomerBalance->new;
+
+    $form->process(
+        posted => $posted,
+        params => $c->request->params,
+        action => $c->uri_for_action("/customer/edit_balance", [$c->stash->{contract}->id]),
+        item => $c->stash->{balance},
+    );
+    if($posted && $form->validated) {
+        $c->flash(messages => [{type => 'success', text => 'Account balance successfully changed!'}]);
+        $c->response->redirect($c->uri_for_action("/customer/details", [$c->stash->{contract}->id]));
+        return;
+    }
+
+    $c->stash(close_target => $c->uri_for_action("/customer/details", [$c->stash->{contract}->id]));
+    $c->stash(form => $form);
+    $c->stash(edit_flag => 1);
 }
 
 =head1 AUTHOR

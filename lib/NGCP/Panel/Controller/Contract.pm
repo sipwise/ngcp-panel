@@ -74,7 +74,7 @@ sub create :Chained('contract_list') :PathPart('create') :Args(0) {
         } catch($e) {
             # TODO: roll back contract and billing_mappings creation and
             # redirect to correct entry point
-            $c->log->error($e);
+            $c->log->error("Failed to create contract balance: $e");
             $c->flash(messages => [{type => 'error', text => 'Failed to create contract balance!'}]);
 
             if($c->stash->{close_target}) {
