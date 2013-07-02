@@ -109,6 +109,10 @@
 $(function () {
     Theme.init ();
 
+    //$('[rel="tooltip"]').tooltip({ container: '.modal-body' });
+    $('[rel="tooltip"]').tooltip();
+    //$('input').tooltip({'container': '#mod_edit', 'title': 'fooo', 'trigger':'hover' });
+
     $('.sw_actions').css('visibility','hidden');
     $('.sw_action_row').hover(
                     function() { $(this).find('.sw_actions').css('visibility','visible'); },

@@ -15,11 +15,19 @@ sub build_form_element_class { [qw/form-horizontal/] }
 has_field 'webusername' => (
     type => 'Text',
     label => 'Web Username',
+    element_attr => { 
+        rel => ['tooltip'], 
+        title => ['The username to log into the CSC Panel'] 
+    },
 );
 
 has_field 'webpassword' => (
     type => 'Password',
     label => 'Web Password',
+    element_attr => { 
+        rel => ['tooltip'], 
+        title => ['The password to log into the CSC Panel'] 
+    },
 );
 
 has_field 'e164' => (
@@ -33,7 +41,11 @@ has_field 'e164' => (
 has_field 'e164.cc' => (
     type => 'PosInteger',
     label => 'cc:',
-    element_attr => { class => ['ngcp_e164_cc'] },
+    element_attr => { 
+        class => ['ngcp_e164_cc'], 
+        rel => ['tooltip'], 
+        title => ['Country Code, e.g. 1 for US or 43 for Austria'] 
+    },
     do_label => 0,
     do_wrapper => 0,
 );
@@ -41,7 +53,11 @@ has_field 'e164.cc' => (
 has_field 'e164.ac' => (
     type => 'PosInteger',
     label => 'ac:',
-    element_attr => { class => ['ngcp_e164_ac'] },
+    element_attr => { 
+        class => ['ngcp_e164_ac'], 
+        rel => ['tooltip'], 
+        title => ['Area Code, e.g. 212 for NYC or 1 for Vienna'] 
+    },
     do_label => 0,
     do_wrapper => 0,
 );
@@ -49,7 +65,11 @@ has_field 'e164.ac' => (
 has_field 'e164.sn' => (
     type => 'PosInteger',
     label => 'sn:',
-    element_attr => { class => ['ngcp_e164_sn'] },
+    element_attr => { 
+        class => ['ngcp_e164_sn'], 
+        rel => ['tooltip'], 
+        title => ['Subscriber Number, e.g. 12345678'] 
+    },
     do_label => 0,
     do_wrapper => 0,
 );
@@ -58,6 +78,10 @@ has_field 'sipusername' => (
     type => 'Text',
     label => 'SIP Username',
     noupdate => 1,
+    element_attr => { 
+        rel => ['tooltip'], 
+        title => ['The SIP username for the User-Agents'] 
+    },
 );
 
 has_field 'sipdomain' => (
@@ -69,17 +93,29 @@ has_field 'sipdomain' => (
 has_field 'sippassword' => (
     type => 'Password',
     label => 'SIP Password',
+    element_attr => { 
+        rel => ['tooltip'], 
+        title => ['The SIP password for the User-Agents'] 
+    },
 );
 
 has_field 'administrative' => (
     type => 'Boolean',
     label => 'Administrative',
+    element_attr => { 
+        rel => ['tooltip'], 
+        title => ['Subscriber can configure other subscribers within the Customer Account'] 
+    },
 );
 
 
 has_field 'external_id' => (
     type => 'Text',
     label => 'External ID',
+    element_attr => { 
+        rel => ['tooltip'], 
+        title => ['An external id, e.g. provided by a 3rd party provisioning'] 
+    },
 );
 
 

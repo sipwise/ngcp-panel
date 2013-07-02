@@ -34,6 +34,11 @@ div.ngcp-modal .help-inline {
     float: left;
 }
 
+.tooltip {
+    /* make sure to put the tooltip over the modal */
+    z-index: 2000 !important;
+}
+
 /* ---------
   Datatable (main one)
 ------------*/
