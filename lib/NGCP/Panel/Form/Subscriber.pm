@@ -33,7 +33,7 @@ has_field 'e164' => (
 has_field 'e164.cc' => (
     type => 'PosInteger',
     label => 'cc:',
-    element_attr => { class => ['e164_cc'] },
+    element_attr => { class => ['ngcp_e164_cc'] },
     do_label => 0,
     do_wrapper => 0,
 );
@@ -41,7 +41,7 @@ has_field 'e164.cc' => (
 has_field 'e164.ac' => (
     type => 'PosInteger',
     label => 'ac:',
-    element_attr => { class => ['e164_ac'] },
+    element_attr => { class => ['ngcp_e164_ac'] },
     do_label => 0,
     do_wrapper => 0,
 );
@@ -49,7 +49,7 @@ has_field 'e164.ac' => (
 has_field 'e164.sn' => (
     type => 'PosInteger',
     label => 'sn:',
-    element_attr => { class => ['e164_sn'] },
+    element_attr => { class => ['ngcp_e164_sn'] },
     do_label => 0,
     do_wrapper => 0,
 );
@@ -94,7 +94,7 @@ has_field 'save' => (
 has_block 'fields' => (
     tag => 'div',
     class => [qw/modal-body/],
-    render_list => [qw/webusername webpassword e164 sipusername sipdomain sippassword administrative external_id/],
+    render_list => [qw/webusername webpassword e164 sipusername sipdomain sippassword external_id administrative/ ],
 );
 
 has_block 'actions' => (

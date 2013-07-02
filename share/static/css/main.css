@@ -14,7 +14,7 @@ div.ngcp-modal {
     max-width: 816px;
     width: 100%;
     margin: -250px 0 0 -408px;
-    top: 50%;
+    /*top: 50%;*/
     left: 50%; /* override responsive css (bootstrap-responsive.css) */
     display: block;
 }
@@ -190,4 +190,17 @@ div.ngcp-modal .control-group.error .dataTables_wrapper input[type="text"] {
 
 .ngcp-quickform div.form-actions {
     padding-left: 0px;
+}
+
+/* -------------
+  Various form fields
+----------------*/
+input.ngcp_e164_cc {
+    width: 4em;
+}
+input.ngcp_e164_ac {
+    width: 4em;
+}
+input.ngcp_e164_sn {
+    width: 15em;
 }

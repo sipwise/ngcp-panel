@@ -17,6 +17,7 @@ has_field 'id' => (
 has_field 'domain' => (
     type => 'Text',
     required => 1,
+    label => 'SIP Domain',
 );
 
 has_field 'save' => (
