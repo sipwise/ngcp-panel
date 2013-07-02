@@ -15,7 +15,7 @@
     helper.dt_buttons = [
         { name = 'Edit', uri = "/contract/'+full[0]+'/edit", class = 'btn-small btn-primary', icon = 'icon-edit' },
         { name = 'Delete', uri = "/contract/'+full[0]+'/delete", class = 'btn-small btn-secondary', icon = 'icon-trash' },
-        { name = 'Details', uri = "/customer/'+full[0]+'/details", class = 'btn-small btn-tertiary' },
+        { name = 'Details', uri = "/customer/'+full[0]+'/details", class = 'btn-small btn-tertiary', icon = 'icon-list' },
     ];
     helper.top_buttons = [
         { name = 'Create Customer', uri = c.uri_for('/customer/create'), icon = 'icon-star' },

@@ -1,0 +1,110 @@
+[% site_config.title = 'Account Details' -%]
+
+<div class="row">
+    <span>
+        <a class="btn btn-primary btn-large" href="[% c.uri_for() %]"><i class="icon-arrow-left"></i> Back</a>
+    </span>
+</div>
+
+[% IF messages -%]
+<div class="row">
+    [% FOREACH m IN messages -%]
+        <div class="alert alert-[% m.type %]">[% m.text %]</div>
+    [% END -%]
+</div>
+[% END -%]
+
+<div class="ngcp-separator"></div>
+
+<h3>Subscribers</h3>
+
+<table class="table table-bordered table-striped table-highlight table-hover">
+    <thead>
+        <tr>
+            <th>SIP URI</th>
+            <th>Primary Number</th>
+            <th>Registered Devices</th>
+            <th class="ngcp-actions-column"></th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>testuser1@example.org</td>
+            <td>4312345</td>
+            <td>Fooagent 1/0 something very long in version 20130702 foooooooooo</td>
+            <td class="ngcp-actions-column"></th>
+        </tr>
+        <tr>
+            <td>testuser2@example.org</td>
+            <td>4312346</td>
+            <td>Fooagent 1/0 something very long in version 20130702 foooooooooo</td>
+            <td class="ngcp-actions-column"></th>
+        </tr>
+        <tr>
+            <td>testuser1@example.org</td>
+            <td>4312345</td>
+            <td>Baragent</td>
+            <td class="ngcp-actions-column"></th>
+        </tr>
+    </tbody>
+</table>
+
+<h3>Account Balance</h3>
+
+<table class="table table-bordered table-striped table-highlight table-hover">
+    <thead>
+        <tr>
+            <th></th>
+            <th>Cash</th>
+            <th>Free time</th>
+            <th class="ngcp-actions-column"></th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>Current totals</td>
+            <td>0</td>
+            <td>0</td>
+            <td class="ngcp-actions-column"></th>
+        </tr>
+        <tr>
+            <td>Spent this interval</td>
+            <td>0</td>
+            <td>0</td>
+            <td class="ngcp-actions-column"></th>
+        </tr>
+    </tbody>
+</table>
+
+<h3>Fraud Limits</h3>
+
+<table class="table table-bordered table-striped table-highlight table-hover">
+    <thead>
+        <tr>
+            <th></th>
+            <th>Limit</th>
+            <th>Lock Level</th>
+            <th>Notify</th>
+            <th class="ngcp-actions-column"></th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>Monthly Settings</td>
+            <td>billing profile default</td>
+            <td>billing profile default</td>
+            <td>billing profile default</td>
+            <td class="ngcp-actions-column"></th>
+        </tr>
+        <tr>
+            <td>Daily Settings</td>
+            <td>billing profile default</td>
+            <td>billing profile default</td>
+            <td>billing profile default</td>
+            <td class="ngcp-actions-column"></th>
+        </tr>
+    </tbody>
+</table>
+
+
+[% # vim: set tabstop=4 syntax=html expandtab: -%]
