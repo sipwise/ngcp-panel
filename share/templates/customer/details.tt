@@ -1,5 +1,15 @@
 [% site_config.title = 'Account Details' -%]
 
+[%
+    lock_levels = [
+        { level = 0, text = "none" },
+        { level = 1, text = "foreign calls" },
+        { level = 2, text = "all outgoing calls" },
+        { level = 3, text = "incoming and outgoing" },
+        { level = 4, text = "global (including web login)" },
+    ];
+-%]
+
 <div class="row">
     <span>
         <a class="btn btn-primary btn-large" href="[% c.uri_for() %]"><i class="icon-arrow-left"></i> Back</a>
@@ -32,7 +42,7 @@
             <td>testuser1@example.org</td>
             <td>4312345</td>
             <td>Fooagent 1/0 something very long in version 20130702 foooooooooo</td>
-            <td class="ngcp-actions-column"></th>
+            <td class="ngcp-actions-column"> </th>
         </tr>
         <tr>
             <td>testuser2@example.org</td>
@@ -89,22 +99,76 @@
         </tr>
     </thead>
     <tbody>
-        <tr>
+        <tr class="sw_action_row">
             <td>Monthly Settings</td>
-            <td>billing profile default</td>
-            <td>billing profile default</td>
-            <td>billing profile default</td>
-            <td class="ngcp-actions-column"></th>
+            [% fraud_def_message = (fraud.fraud_interval_limit.defined ? "none" : "billing profile default") %]
+            <td>[% fraud.fraud_interval_limit.defined ? fraud.fraud_interval_limit : fraud_def_message %]</td>
+            <td>
+                [% IF fraud.fraud_interval_lock.defined -%]
+                    <select disabled="disabled">
+                       [% FOR l IN lock_levels -%]
+                       <option [% fraud.fraud_interval_lock == l.level ? 'selected="selected"' : '' %]>[% l.text %]</option>
+                       [% END -%]
+                    </select>
+                [% ELSE -%]
+                   [% fraud_def_message %]
+                [% END -%]
+            </td>
+            <td>[% fraud.fraud_interval_notify.defined ? fraud.fraud_interval_notify : fraud_def_message %]</td>
+            <td class="ngcp-actions-column">
+                <div class="sw_actions pull-right">
+                    <a class="btn btn-small btn-primary" 
+                       href="[% c.uri_for_action("/customer/edit_fraud", [c.req.captures.0], "month") %]">
+                        <i class="icon-edit"></i> Edit</i>
+                    </a>
+                    <a class="btn btn-small btn-secondary" data-confirm="Delete" 
+                       href="[% c.uri_for_action("/customer/delete_fraud", [c.req.captures.0], "month") %]">
+                        <i class="icon-trash"></i> Delete</i>
+                    </a>
+                </div>
+            </td>
         </tr>
-        <tr>
+        <tr class="sw_action_row">
             <td>Daily Settings</td>
-            <td>billing profile default</td>
-            <td>billing profile default</td>
-            <td>billing profile default</td>
-            <td class="ngcp-actions-column"></th>
+            [% fraud_def_message = (fraud.fraud_daily_limit.defined ? "none" : "billing profile default") %]
+            <td>[% fraud.fraud_daily_limit.defined ? fraud.fraud_daily_limit : fraud_def_message %]</td>
+            <td>
+                [% IF fraud.fraud_daily_lock.defined -%]
+                    <select disabled="disabled">
+                       [% FOR l IN lock_levels -%]
+                       <option [% fraud.fraud_daily_lock == l.level ? 'selected="selected"' : '' %]>[% l.text %]</option>
+                       [% END -%]
+                    </select>
+                [% ELSE -%]
+                   [% fraud_def_message %]
+                [% END -%]
+            </td>
+            <td>[% fraud.fraud_daily_notify.defined ? fraud.fraud_daily_notify : fraud_def_message %]</td>
+            <td class="ngcp-actions-column">
+                <div class="sw_actions pull-right">
+                    <a class="btn btn-small btn-primary" 
+                       href="[% c.uri_for_action("/customer/edit_fraud", [c.req.captures.0], "day") %]">
+                        <i class="icon-edit"></i> Edit</i>
+                    </a>
+                    <a class="btn btn-small btn-secondary" data-confirm="Delete" 
+                       href="[% c.uri_for_action("/customer/delete_fraud", [c.req.captures.0], "day") %]">
+                        <i class="icon-trash"></i> Delete</i>
+                    </a>
+                </div>
+            </td>
         </tr>
     </tbody>
 </table>
+[% IF edit_flag == 1 -%]
+[%
+    PROCESS "helpers/modal.tt";
+    modal_header(m.create_flag=0,
+                 m.name = "Fraud Settings");
+    form.render;
+    modal_footer();
+    modal_script(m.close_target = close_target);
+-%]
+[% END -%]
 
 
 [% # vim: set tabstop=4 syntax=html expandtab: -%]
