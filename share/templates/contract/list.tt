@@ -11,7 +11,14 @@
     helper.edit_flag = edit_flag;
     helper.form_object = form;
     helper.ajax_uri = ajax_uri;
-    helper.base_uri = c.uri_for( c.controller.action_for("") );
+
+    helper.dt_buttons = [
+        { name = 'Edit', uri = "/contract/'+full[0]+'/edit", class = 'btn-small btn-primary', icon = 'icon-edit' },
+        { name = 'Delete', uri = "/contract/'+full[0]+'/delete", class = 'btn-small btn-secondary', icon = 'icon-trash' },
+    ];
+    helper.top_buttons = [
+        { name = 'Create Contract', uri = c.uri_for('/contract/create'), icon = 'icon-star' },
+    ];
 
     PROCESS 'helpers/datatables.tt';
 -%]
