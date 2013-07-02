@@ -1,4 +1,4 @@
-[% site_config.title = 'Account Details' -%]
+[% site_config.title = 'Customer Details' -%]
 
 [%
     lock_levels = [
