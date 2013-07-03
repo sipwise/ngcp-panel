@@ -14,7 +14,7 @@ $(document).ready(function() {
 
 	$('#[% table_id %]')
 	    .dataTable( {
-        "sDom": "<'row'<'span2'r><'span4'f>>t<'row-fluid'<'pull-left'i><'pull-right'p>>",
+        "sDom": "<'row-fluid'<'pull-left'r><'pull-right'f>>t<'row-fluid'<'pull-left'i><'pull-right'p>>",
 		"bProcessing": true,
 		"bServerSide": true,
 		"bPaginate": true,
