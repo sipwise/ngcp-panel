@@ -16,9 +16,9 @@ has_field 'id' => (
 
 has_field 'create' => (
     type => 'Button',
-    label => 'or',
+    do_label => 0,
     value => 'Create Zone',
-    element_class => [qw/btn btn-tertiary/],
+    element_class => [qw/btn btn-tertiary pull-right/],
 );
 
 1;
