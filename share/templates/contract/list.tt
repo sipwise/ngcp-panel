@@ -14,8 +14,8 @@
     helper.ajax_uri = ajax_uri;
 
     helper.dt_buttons = [
-        { name = 'Edit', uri = "/contract/'+full[0]+'/edit", class = 'btn-small btn-primary', icon = 'icon-edit' },
-        { name = 'Delete', uri = "/contract/'+full[0]+'/delete", class = 'btn-small btn-secondary', icon = 'icon-trash' },
+        { name = 'Edit', uri = "/contract/'+full[\"id\"]+'/edit", class = 'btn-small btn-primary', icon = 'icon-edit' },
+        { name = 'Delete', uri = "/contract/'+full[\"id\"]+'/delete", class = 'btn-small btn-secondary', icon = 'icon-trash' },
     ];
     helper.top_buttons = [
         { name = 'Create Contract', uri = c.uri_for('/contract/create'), icon = 'icon-star' },

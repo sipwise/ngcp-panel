@@ -14,8 +14,8 @@
     helper.ajax_uri = c.uri_for( c.controller.action_for('ajax') );
 
     helper.dt_buttons = [
-        { name = 'Edit', uri = "/administrator/'+full[0]+'/edit", class = 'btn-small btn-primary', icon = 'icon-edit' },
-        { name = 'Delete', uri = "/administrator/'+full[0]+'/delete", class = 'btn-small btn-secondary', icon = 'icon-trash' },
+        { name = 'Edit', uri = "/administrator/'+full[\"id\"]+'/edit", class = 'btn-small btn-primary', icon = 'icon-edit' },
+        { name = 'Delete', uri = "/administrator/'+full[\"id\"]+'/delete", class = 'btn-small btn-secondary', icon = 'icon-trash' },
     ];
     helper.top_buttons = [
         { name = 'Create Administrator', uri = c.uri_for('/administrator/create'), icon = 'icon-star' },

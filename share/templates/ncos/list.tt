@@ -13,9 +13,9 @@
     helper.ajax_uri = c.uri_for_action( "/ncos/ajax" );
 
     helper.dt_buttons = [
-        { name = 'Edit', uri = "/ncos/'+full[0]+'/edit", class = 'btn-small btn-primary', icon = 'icon-edit' },
-        { name = 'Delete', uri = "/ncos/'+full[0]+'/delete", class = 'btn-small btn-secondary', icon = 'icon-trash' },
-        { name = 'Patterns', uri = "/ncos/'+full[0]+'/pattern", class = 'btn-small btn-tertiary', icon = 'icon-list' },
+        { name = 'Edit', uri = "/ncos/'+full[\"id\"]+'/edit", class = 'btn-small btn-primary', icon = 'icon-edit' },
+        { name = 'Delete', uri = "/ncos/'+full[\"id\"]+'/delete", class = 'btn-small btn-secondary', icon = 'icon-trash' },
+        { name = 'Patterns', uri = "/ncos/'+full[\"id\"]+'/pattern", class = 'btn-small btn-tertiary', icon = 'icon-list' },
     ];
     helper.top_buttons = [
         { name = 'Create NCOS Level', uri = c.uri_for('/ncos/create'), icon = 'icon-star' },

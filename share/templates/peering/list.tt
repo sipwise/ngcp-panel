@@ -13,9 +13,9 @@
     helper.ajax_uri = c.uri_for_action( "/peering/ajax" );
 
     helper.dt_buttons = [
-        { name = 'Edit', uri = "/peering/'+full[0]+'/edit", class = 'btn-small btn-primary', icon = 'icon-edit' },
-        { name = 'Delete', uri = "/peering/'+full[0]+'/delete", class = 'btn-small btn-secondary', icon = 'icon-trash' },
-        { name = 'Details', uri = "/peering/'+full[0]+'/servers", class = 'btn-small btn-tertiary', icon = 'icon-list' },
+        { name = 'Edit', uri = "/peering/'+full[\"id\"]+'/edit", class = 'btn-small btn-primary', icon = 'icon-edit' },
+        { name = 'Delete', uri = "/peering/'+full[\"id\"]+'/delete", class = 'btn-small btn-secondary', icon = 'icon-trash' },
+        { name = 'Details', uri = "/peering/'+full[\"id\"]+'/servers", class = 'btn-small btn-tertiary', icon = 'icon-list' },
     ];
     helper.top_buttons = [
         { name = 'Create Peering Group', uri = c.uri_for('/peering/create'), icon = 'icon-star' },
