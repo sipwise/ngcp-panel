@@ -13,7 +13,8 @@ Build-Depends: debhelper (>= 8),
                libperl5i-perl,
                libsipwise-base-perl,
                libstrictures-perl,
-               libtrycatch-perl
+               libtrycatch-perl,
+               libdatetime-format-iso8601-perl
 Standards-Version: 3.9.4
 Homepage: http://sipwise.com/
 

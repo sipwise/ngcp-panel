@@ -3,6 +3,7 @@ use Sipwise::Base;
 use namespace::autoclean;
 use Text::CSV_XS;
 use I18N::Langinfo qw(langinfo DAY_1 DAY_2 DAY_3 DAY_4 DAY_5 DAY_6 DAY_7);
+use DateTime::Format::ISO8601;
 
 BEGIN { extends 'Catalyst::Controller'; }
 
@@ -494,11 +495,11 @@ sub peaktime_specials_ajax :Chained('peaktimes_list') :PathPart('ajax') :Args(0)
                  ["start", "end"]]);
     
     for my $row (@{ $c->stash->{aaData} }) {
-        my $date = $row->[1]->date;
-        my $start = $row->[1]->hms;
-        my $end = $row->[2]->hms;
-        $row->[1] = $date;
-        $row->[2] = $start . ' - ' . $end;
+        $row->{date} = DateTime::Format::ISO8601->parse_datetime($row->{start})->date;
+        $row->{startend} = 
+            DateTime::Format::ISO8601->parse_datetime($row->{start})->hms
+            . " - " . 
+            DateTime::Format::ISO8601->parse_datetime($row->{end})->hms;
     }
     
     $c->detach( $c->view("JSON") );

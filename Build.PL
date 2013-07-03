@@ -54,6 +54,7 @@ my $builder = Local::Module::Build->new(
         'Data::Validate::IP' => 0,
         'Email::Valid' => 0,
         'Regexp::Parser' => 0,
+	'DateTime::Format::ISO8601' => 0,
     },
     test_requires => {
         'Catalyst::Test' => 0,
