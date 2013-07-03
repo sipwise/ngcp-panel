@@ -105,7 +105,7 @@ sub ajax_process_resultset :Private {
     my $totalRecords = $rs->count;
 
     if ($sSearch) {
-        $rs = $rs->search([ map{ +{ $_ => { like => '%'.$sSearch.'%' } } } @$columns[@$searchable] ]);
+        $rs = $rs->search([ map{ +{ $_ => { like => '%'.$sSearch.'%' } } } @$searchable ]);
     }
 
     my $totalDisplayRecords = $rs->count;

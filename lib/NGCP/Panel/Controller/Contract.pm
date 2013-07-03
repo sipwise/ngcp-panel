@@ -41,10 +41,10 @@ sub contract_list :Chained('/') :PathPart('contract') :CaptureArgs(0) {
              },
             '+select' => [
                 'billing_mappings.billing_profile_id',
-                'billing_profile.name as billing_profile_name',
+                'billing_profile.name',
             ],
             '+as' => [
-                'billing_profile',
+                'billing_profile_id',
                 'billing_profile_name',
             ],
         });
@@ -197,15 +197,11 @@ sub delete :Chained('base') :PathPart('delete') :Args(0) {
 sub ajax :Chained('contract_list') :PathPart('ajax') :Args(0) {
     my ($self, $c) = @_;
     
-    my $rs = $c->stash->{contract_select_rs}->search({},{
-        '+select' => 'billing_profile.name',
-        '+as' => 'billing_profile_name',
-        'join' => {billing_mappings => 'billing_profile'},
-        });
+    my $rs = $c->stash->{contract_select_rs};
     
     $c->forward( "/ajax_process_resultset", [$rs,
                  ["id","contact_id","billing_profile_name","status"],
-                 [2, 3]]);
+                 ["billing_profile.name", "status"]]);
     
     $c->detach( $c->view("JSON") );
 }
@@ -231,8 +227,8 @@ sub peering_ajax :Chained('peering_list') :PathPart('ajax') :Args(0) {
         });
     
     $c->forward( "/ajax_process_resultset", [$rs,
-                 ["id","contact_id","billing_profile","status"],
-                 []]);
+                 ["id","contact_id","billing_profile_name","status"],
+                 ["billing_profile.name", "status"]]);
     
     $c->detach( $c->view("JSON") );
 }
@@ -316,7 +312,7 @@ sub customer_ajax :Chained('customer_list') :PathPart('ajax') :Args(0) {
 
     $c->forward( "/ajax_process_resultset", [$rs,
                  ["id","contact_id","billing_profile_name","status"],
-                 [2, 3]]);
+                 ["billing_profile.name", "status"]]);
     
     $c->detach( $c->view("JSON") );
 }
