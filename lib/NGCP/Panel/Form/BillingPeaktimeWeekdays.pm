@@ -13,18 +13,29 @@ has_field 'start' => (
     type => 'Text',
     do_label => 0,
     do_wrapper => 0,
+    element_attr => {
+        class => ['ngcp_time_range'],
+        rel => ['tooltip'],
+        title => ['The start time in format hh:mm:ss']
+    },
+
 );
 
 has_field 'end' => (
     type => 'Text',
     do_label => 0,
     do_wrapper => 0,
+    element_attr => {
+        class => ['ngcp_time_range'],
+        rel => ['tooltip'],
+        title => ['The end time in format hh:mm:ss']
+    },
 );
 
 has_field 'add' => (
     type => 'Submit',
     value => 'Add',
-    element_class => [qw/btn btn-primary/],
+    element_class => [qw/btn btn-primary pull-right/],
     do_label => 0,
     do_wrapper => 0,
 );

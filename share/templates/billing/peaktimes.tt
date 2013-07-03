@@ -83,16 +83,19 @@
 
 <div class="modal-body">
     [% FOREACH r IN weekday.ranges %]
-        <input type="text" value="[% r.start %]" disabled="disabled"> –
-        <input type="text" value="[% r.end %]" disabled="disabled">
-        <a href="?delete=[% r.id %]"><i class="icon-trash"></i></a>
-        <br />
+    <div class="row-fluid">
+        <input type="text" value="[% r.start %]" disabled="disabled" class="ngcp_time_range"> –
+        <input type="text" value="[% r.end %]" disabled="disabled" class="ngcp_time_range">
+        <a class="btn btn-primary pull-right" href="?delete=[% r.id %]"><i class="icon-trash"></i></a>
+    </div>
     [% END %]
+    <div class="row-fluid">
     <form action="[% form.action || c.uri_for(c.action,c.req.captures) %]" method="POST">
         [% form.field('start').render %] –
         [% form.field('end').render %]
         [% form.field('add').render %]
     </form>
+    </div>
 </div>
 
 [%        

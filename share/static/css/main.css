@@ -215,4 +215,8 @@ div.ngcp-modal .control-group.error .dataTables_wrapper input[type="text"] {
 .modal-body .control-group .controls input.ngcp_e164_sn {
     width: 67%;
     float: right;
+    width: 43%;
+}
+.modal-body .control-group .controls input.ngcp_time_range {
+    width: 43%;
 }
