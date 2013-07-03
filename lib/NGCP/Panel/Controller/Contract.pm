@@ -36,9 +36,17 @@ sub contract_list :Chained('/') :PathPart('contract') :CaptureArgs(0) {
                 })->get_column('id')->as_query,
             },
         },{
-            'join' => 'billing_mappings',
-            '+select' => 'billing_mappings.billing_profile_id',
-            '+as' => 'billing_profile',
+            'join' => {
+                'billing_mappings' => 'billing_profile',
+             },
+            '+select' => [
+                'billing_mappings.billing_profile_id',
+                'billing_profile.name as billing_profile_name',
+            ],
+            '+as' => [
+                'billing_profile',
+                'billing_profile_name',
+            ],
         });
 
     $c->stash(contract_select_rs => $rs);
@@ -189,11 +197,15 @@ sub delete :Chained('base') :PathPart('delete') :Args(0) {
 sub ajax :Chained('contract_list') :PathPart('ajax') :Args(0) {
     my ($self, $c) = @_;
     
-    my $rs = $c->stash->{contract_select_rs};
+    my $rs = $c->stash->{contract_select_rs}->search({},{
+        '+select' => 'billing_profile.name',
+        '+as' => 'billing_profile_name',
+        'join' => {billing_mappings => 'billing_profile'},
+        });
     
     $c->forward( "/ajax_process_resultset", [$rs,
-                 ["id","contact_id","billing_profile","status"],
-                 []]);
+                 ["id","contact_id","billing_profile_name","status"],
+                 [2, 3]]);
     
     $c->detach( $c->view("JSON") );
 }
@@ -297,12 +309,14 @@ sub customer_ajax :Chained('customer_list') :PathPart('ajax') :Args(0) {
     my $rs = $base_rs->search({
             'product_id' => undef,
         }, {
-            'join' => {'billing_mappings' => 'product'},
+            'join' => {
+                'billing_mappings' => 'product',
+             },
         });
-    
+
     $c->forward( "/ajax_process_resultset", [$rs,
-                 ["id","contact_id","billing_profile","status"],
-                 [3]]);
+                 ["id","contact_id","billing_profile_name","status"],
+                 [2, 3]]);
     
     $c->detach( $c->view("JSON") );
 }
