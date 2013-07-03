@@ -144,7 +144,7 @@ sub pattern_list :Chained('base') :PathPart('pattern') :CaptureArgs(0) {
         form_element_class => ['form-horizontal', 'ngcp-quickform'],
     );
     $local_ac_form->process(
-        posted => ($c->request->method eq 'POST'),
+        posted => ($c->request->method eq 'POST') && defined $c->req->params->{local_ac},
         params => $c->request->params,
         item   => $c->stash->{level_result}
     );
@@ -236,7 +236,7 @@ sub pattern_create :Chained('pattern_list') :PathPart('create') :Args(0) {
     $form->process(
         posted => ($c->request->method eq 'POST'),
         params => $c->request->params,
-        action => $c->uri_for_action('/ncos/pattern_create'),
+        action => $c->uri_for_action('/ncos/pattern_create', $c->req->captures),
         item   => $c->stash->{pattern_rs}->new_result({}),
     );
     if($form->validated) {

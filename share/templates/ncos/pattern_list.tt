@@ -20,7 +20,7 @@
     ];
     helper.top_buttons = [
         { name = 'Back', uri = c.uri_for(), icon = 'icon-arrow-left' },
-        { name = 'Create Pattern Entry', uri = c.uri_for_action( "/ncos/pattern_root", [c.req.captures.0] ) _ "/create", icon = 'icon-star' },
+        { name = 'Create Pattern Entry', uri = c.uri_for_action( "/ncos/pattern_create", [c.req.captures.0] ), icon = 'icon-star' },
     ];
 
     PROCESS 'helpers/datatables.tt';
