@@ -60,7 +60,7 @@ sub ajax :Chained('profile_list') :PathPart('ajax') :Args(0) {
     
     $c->forward( "/ajax_process_resultset", [$resultset,
                  ["id", "name"],
-                 [0,1]]);
+                 ["id", "name"]]);
     
     $c->detach( $c->view("JSON") );
 }
@@ -176,8 +176,8 @@ sub fees_ajax :Chained('fees_list') :PathPart('ajax') :Args(0) {
         });
     
     $c->forward( "/ajax_process_resultset", [$resultset,
-                 ["id", "source", "destination", "direction", 'zone'],
-                 [1,2,3]]);
+                 ["id", "source", "destination", "direction", "zone"],
+                 ["source", "destination", "direction"]]);
     
     $c->detach( $c->view("JSON") );
 }
@@ -325,7 +325,7 @@ sub zones_ajax :Chained('zones_list') :PathPart('ajax') :Args(0) {
     
     $c->forward( "/ajax_process_resultset", [$resultset,
                  ["id", "zone", "detail",],
-                 [1,2]]);
+                 ["zone", "detail"]]);
     
     $c->detach( $c->view("JSON") );
 }
@@ -491,7 +491,7 @@ sub peaktime_specials_ajax :Chained('peaktimes_list') :PathPart('ajax') :Args(0)
 
     $c->forward( "/ajax_process_resultset", [$resultset,
                  ["id", "start", "end",],
-                 [1,2]]);
+                 ["start", "end"]]);
     
     for my $row (@{ $c->stash->{aaData} }) {
         my $date = $row->[1]->date;
