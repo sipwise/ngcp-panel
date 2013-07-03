@@ -56,15 +56,20 @@ $(document).ready(function() {
 } );
 </script>
 
-[% IF helper.show_create_button %]
 <div class="row">
     [% FOR button IN helper.top_buttons -%]
-    <span>
-    <a class="btn btn-primary btn-large" href="[% button.uri %]"><i class="[% button.icon %]"></i> [% button.name %]</a>
-    </span>
+        [% IF button.method == "post" -%]
+            <form method="post" action="[% button.uri %]" style="float:left; margin:0 5px 0 5px;">
+                <button class="btn btn-primary btn-large" style="height:42px;"><i class="[% button.icon %]"></i> [% button.name %]</button>
+            </form>
+        [% ELSE -%]
+            <span class="pull-left" style="margin:0 5px 0 5px;">
+                <a class="btn btn-primary btn-large" href="[% button.uri %]"><i class="[% button.icon %]"></i> [% button.name %]</a>
+            </span>
+        [% END -%]
     [% END -%]
 </div>
-[% END %]
+
 [% IF helper.messages -%]
 <div class="row">
     [% FOREACH m IN helper.messages -%]

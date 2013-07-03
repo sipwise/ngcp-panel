@@ -1,8 +1,17 @@
 [% META title = 'Reseller Details' -%]
 
+<div class="row">
+    <span>
+        <a class="btn btn-primary btn-large" href="[% c.uri_for() %]"><i class="icon-arrow-left"></i> Back</a>
+    </span>
+</div>
+
+<div class="ngcp-separator"></div>
+
 [% FOREACH m IN messages -%]
     <div class="alert alert-[% m.type %]">[% m.text %]</div>
 [% END -%]
+
 
 <div class="accordion" id="reseller_details">
     <div class="accordion-group">
