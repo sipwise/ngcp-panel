@@ -35,7 +35,7 @@ sub ajax :Chained('list_reseller') :PathPart('ajax') :Args(0) {
         '/ajax_process_resultset', [
             $resellers,
             [qw(id contract_id name status)],
-            [ 1, 2, 3 ]
+            [ "contract_id", "name", "status" ]
         ]
     );
     $c->detach($c->view('JSON'));
@@ -105,7 +105,7 @@ sub reseller_contacts :Chained('base') :PathPart('contacts') :Args(0) {
                 $c->stash->{resellers}->find($c->req->captures->[0])->contract_id
               )->contact_id }),
             [qw(id firstname lastname email create_timestamp)],
-            [ 1, ]
+            [ "firstname", "lastname", "email" ]
         ]
     );
     $c->detach($c->view('JSON'));
@@ -120,7 +120,7 @@ sub reseller_contracts :Chained('base') :PathPart('contracts') :Args(0) {
                 'contract', { id => $c->stash->{resellers}->find($c->req->captures->[0])->contract_id }
             ),
             [qw(id contact_id)],
-            [ 1, ]
+            [ "contact_id" ]
         ]
     );
     $c->detach($c->view('JSON'));
@@ -133,7 +133,7 @@ sub reseller_single :Chained('base') :PathPart('single') :Args(0) {
         '/ajax_process_resultset', [
             $c->stash->{resellers}->search_rs({ id => $c->req->captures->[0] }),
             [qw(id contract_id name status)],
-            [ 1, ]
+            [ "contract_id", "name", "status" ]
         ]
     );
     $c->detach($c->view('JSON'));
@@ -146,7 +146,7 @@ sub reseller_admin :Chained('base') :PathPart('admin') :Args(0) {
         '/ajax_process_resultset', [
             $c->stash->{reseller}->related_resultset('admins')->search_rs({ reseller_id => $c->req->captures->[0] }),
             [qw(id reseller_id login)],
-            [ 1, ]
+            [ "reseller_id", "login" ]
         ]
     );
     $c->detach($c->view('JSON'));
@@ -230,8 +230,8 @@ sub ajax_contract :Chained('list_reseller') :PathPart('ajax_contract') :Args(0) 
     
     $c->forward("/ajax_process_resultset", [ 
         $free_contracts,
-        ["id","contact_id","external_id","status"],
-        [1,2,3]
+        ["id", "contact_id", "external_id", "status"],
+        ["contact_id", "external_id", "status"]
     ]);
     
     $c->detach( $c->view("JSON") );

@@ -34,7 +34,7 @@ sub ajax :Chained('group_list') :PathPart('ajax') :Args(0) {
     
     $c->forward( "/ajax_process_resultset", [$resultset,
                  ["id", "name", "priority", "description", "peering_contract_id"],
-                 [1,2,4]]);
+                 ["name", "priority", "description", "peering_contract_id"]]);
     
     $c->detach( $c->view("JSON") );
 }

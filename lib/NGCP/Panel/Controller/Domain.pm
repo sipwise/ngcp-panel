@@ -123,7 +123,7 @@ sub ajax :Chained('dom_list') :PathPart('ajax') :Args(0) {
     my $resultset = $self->$dispatch_to($c);
     $c->forward( "/ajax_process_resultset", [$resultset,
                  ["id", "domain"],
-                 [1]]);
+                 ["domain"]]);
     $c->detach( $c->view("JSON") );
 }
 

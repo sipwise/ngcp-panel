@@ -28,7 +28,7 @@ sub ajax :Chained('list_admin') :PathPart('ajax') :Args(0) {
         '/ajax_process_resultset', [
             $admins,
             [qw(id login is_master is_active read_only show_passwords call_data lawful_intercept)],
-            [ 1 ]
+            [ qw(login) ]
         ]
     );
     $c->detach($c->view('JSON'));

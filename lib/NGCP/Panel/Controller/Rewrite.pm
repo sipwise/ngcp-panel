@@ -30,7 +30,7 @@ sub set_ajax :Chained('set_list') :PathPart('ajax') :Args(0) {
     
     $c->forward( "/ajax_process_resultset", [$resultset,
                  ["id", "name", "description"],
-                 [1,2]]);
+                 ["name", "description"]]);
     
     $c->detach( $c->view("JSON") );
 }

@@ -48,7 +48,7 @@ sub ajax :Chained('levels_list') :PathPart('ajax') :Args(0) {
     
     $c->forward( "/ajax_process_resultset", [$resultset,
                  ["id", "level", "mode", "description"],
-                 [1,2,3]]);
+                 ["level", "mode", "description"]]);
     
     $c->detach( $c->view("JSON") );
 }
@@ -169,7 +169,7 @@ sub pattern_ajax :Chained('pattern_list') :PathPart('ajax') :Args(0) {
     
     $c->forward( "/ajax_process_resultset", [$resultset,
                  ["id", "pattern", "description"],
-                 [1,2]]);
+                 ["pattern", "description"]]);
     
     $c->detach( $c->view("JSON") );
 }
