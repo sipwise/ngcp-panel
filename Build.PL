@@ -57,6 +57,7 @@ my $builder = Local::Module::Build->new(
 	'DateTime::Format::ISO8601' => 0,
         'File::Type' => 0,
         'IPC::System::Simple' => 0,
+        'Net::HTTP' => 0,
     },
     test_requires => {
         'Catalyst::Test' => 0,
