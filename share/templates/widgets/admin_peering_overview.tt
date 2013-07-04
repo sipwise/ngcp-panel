@@ -3,14 +3,14 @@
         <div class="plan-header">
             <div class="plan-title">Peerings</div>
             <div class="plan-price">
-                <span>7</span>
-                <span class="term">Peering Groups</span>
+                <span>[% groups.count %]</span>
+                <span class="term">Peering Group[% groups.count == 1 ? "" : "s" %]</span>
             </div>
         </div>
         <div class="plan-features">
             <ul>
-                <li><strong>12</strong> Peering Servers</li>
-                <li><strong>24</strong> Peering Rules</li>
+                <li><strong>[% hosts.count %]</strong> Peering Server[% hosts.count == 1 ? "" : "s" %]</li>
+                <li><strong>[% rules.count %]</strong> Peering Rule[% rules.count == 1 ? "" : "s" %]</li>
             </ul>
         </div>
         <div class="plan-actions">

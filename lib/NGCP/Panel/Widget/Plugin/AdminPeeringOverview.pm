@@ -22,7 +22,16 @@ has 'priority' => (
 around handle => sub {
     my ($foo, $self, $c) = @_;
 
-    $c->log->debug("AdminPeeringOverview::handle");
+    my $peer_groups = $c->model('provisioning')->resultset('voip_peer_groups')->search_rs({});
+    my $peer_hosts = $peer_groups->search_related_rs('voip_peer_hosts');
+    my $peer_rules = $peer_groups->search_related_rs('voip_peer_rules');
+
+    $c->stash(
+        groups => $peer_groups,
+        hosts => $peer_hosts,
+        rules => $peer_rules,
+    );
+
     return;
 };
 

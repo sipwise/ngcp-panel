@@ -4,14 +4,14 @@
             <div class="plan-title">Resellers</div>
             <div class="plan-price">
                 <span>[% resellers.count %]</span>
-                <span class="term">Resellers</span>
+                <span class="term">Reseller[% resellers.count == 1 ? "" : "s" %]</span>
             </div>
         </div>
         <div class="plan-features">
             <ul>
-                <li><strong>[% domains.count %]</strong> Domains</li>
-                <li><strong>[% customers.count %]</strong> Customers</li>
-                <li><strong>[% subscribers.count %]</strong> Subscribers</li>
+                <li><strong>[% domains.count %]</strong> Domain[% domains.count == 1 ? "" : "s" %]</li>
+                <li><strong>[% customers.count %]</strong> Customer[% customers.count == 1 ? "" : "s" %]</li>
+                <li><strong>[% subscribers.count %]</strong> Subscriber[% subscribers.count == 1 ? "" : "s" %]</li>
             </ul>
         </div>
         <div class="plan-actions">
