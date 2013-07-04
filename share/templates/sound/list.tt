@@ -10,13 +10,19 @@
     helper.create_flag = create_flag;
     helper.edit_flag = edit_flag;
     helper.form_object = form;
-    helper.has_edit = has_edit;
-    helper.has_delete = has_delete;
     helper.ajax_uri = c.uri_for_action( "/sound/ajax" );
-    helper.base_uri = c.uri_for_action( "/sound/root" );
 
     helper.extra_buttons = [
         [ 'Files', 'handles'],
+    ];
+
+    helper.dt_buttons = [
+        { name = 'Edit', uri = "/sound/'+full[\"id\"]+'/edit", class = 'btn-small btn-primary', icon = 'icon-edit' },
+        { name = 'Delete', uri = "/sound/'+full[\"id\"]+'/delete", class = 'btn-small btn-secondary', icon = 'icon-trash' },
+        { name = 'Files', uri = "/sound/'+full[\"id\"]+'/handles", class = 'btn-small btn-tertiary', icon = 'icon-list' },
+    ];
+    helper.top_buttons = [
+        { name = 'Create Sound Set', uri = c.uri_for('/sound/create'), icon = 'icon-star' },
     ];
 
     PROCESS 'helpers/datatables.tt';
