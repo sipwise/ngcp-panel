@@ -21,8 +21,39 @@ has 'priority' => (
 
 around handle => sub {
     my ($foo, $self, $c) = @_;
+    my $stime = DateTime->now->truncate(to => 'month');
+    my $etime = $stime->clone->add(months => 1);
 
-    $c->log->debug("AdminBillingOverview::handle");
+    $c->stash(
+        profiles => $c->model('billing')->resultset('billing_profiles')->search_rs({}),
+        peering_sum => $c->model('billing')->resultset('contract_balances')->search_rs({
+            'start' => { '>=' => $stime },
+            'end' => { '<' => $etime},
+            'product.class' => 'sippeering',
+        }, {
+            join => {
+                'contract' => { 'billing_mappings' => 'product' },
+            },
+        })->get_column('cash_balance_interval')->sum,
+        reseller_sum => $c->model('billing')->resultset('contract_balances')->search_rs({
+            'start' => { '>=' => $stime },
+            'end' => { '<' => $etime},
+            'product.class' => 'reseller',
+        }, {
+            join => {
+                'contract' => { 'billing_mappings' => 'product' },
+            },
+        })->get_column('cash_balance_interval')->sum,
+        customer_sum => $c->model('billing')->resultset('contract_balances')->search_rs({
+            'start' => { '>=' => $stime },
+            'end' => { '<' => $etime},
+            'billing_mappings.product_id' => undef,
+        }, {
+            join => {
+                'contract' => 'billing_mappings',
+            },
+        })->get_column('cash_balance_interval')->sum,
+    );
     return;
 };
 

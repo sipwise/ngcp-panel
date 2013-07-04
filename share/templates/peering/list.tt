@@ -1,7 +1,6 @@
 [% META title = 'SIP Peering Groups' -%]
 [%
     helper.name = 'SIP Peering Groups';
-    helper.show_create_button = 1;
     helper.messages = messages;
     helper.column_titles = [ '#', 'Name', 'Priority', 'Description', 'Contract #' ];
     helper.column_fields = [ 'id', 'name', 'priority', 'description', 'peering_contract_id' ];

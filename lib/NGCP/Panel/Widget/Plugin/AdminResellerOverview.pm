@@ -22,7 +22,16 @@ has 'priority' => (
 around handle => sub {
     my ($foo, $self, $c) = @_;
 
-    $c->log->debug("AdminResellerOverview::handle");
+    $c->stash(
+        resellers => $c->model('billing')->resultset('resellers')->search_rs({}),
+        domains => $c->model('billing')->resultset('resellers')->search_rs({}),
+        customers => $c->model('billing')->resultset('contracts')->search_rs({
+            product_id => undef,
+        }, {
+            join => 'billing_mappings',
+        }),
+        subscribers => $c->model('provisioning')->resultset('voip_subscribers')->search_rs({}),
+    );
     return;
 };
 

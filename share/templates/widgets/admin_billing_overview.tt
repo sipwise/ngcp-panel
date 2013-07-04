@@ -3,14 +3,15 @@
         <div class="plan-header">
             <div class="plan-title">Billing</div>
             <div class="plan-price">
-                <span>28</span>
+                <span>[% profiles.count %]</span>
                 <span class="term">Billing Profiles</span>
             </div>
         </div>
         <div class="plan-features">
             <ul>
-                <li><strong>€2000</strong> Peering Costs</li>
-                <li><strong>€5000</strong> Reseller Revenue</li>
+                <li><strong>[% FILTER format("%.02f") %][% peering_sum / 100.0 %][% END %]</strong> Peering Costs</li>
+                <li><strong>[% FILTER format("%.02f") %][% reseller_sum / 100.0 %][% END %]</strong> Reseller Revenue</li>
+                <li><strong>[% FILTER format("%.02f") %][% customer_sum / 100.0 %][% END %]</strong> Customer Revenue</li>
             </ul>
         </div>
         <div class="plan-actions">

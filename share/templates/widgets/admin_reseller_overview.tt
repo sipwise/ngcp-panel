@@ -3,15 +3,15 @@
         <div class="plan-header">
             <div class="plan-title">Resellers</div>
             <div class="plan-price">
-                <span>4</span>
+                <span>[% resellers.count %]</span>
                 <span class="term">Resellers</span>
             </div>
         </div>
         <div class="plan-features">
             <ul>
-                <li><strong>13</strong> Domains</li>
-                <li><strong>22745</strong> Accounts</li>
-                <li><strong>49355</strong> Subscribers</li>
+                <li><strong>[% domains.count %]</strong> Domains</li>
+                <li><strong>[% customers.count %]</strong> Customers</li>
+                <li><strong>[% subscribers.count %]</strong> Subscribers</li>
             </ul>
         </div>
         <div class="plan-actions">
