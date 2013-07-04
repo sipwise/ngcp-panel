@@ -16,6 +16,10 @@ sub build_form_element_class { [qw/form-horizontal/] }
 
 has_field 'date' => ( 
     type => 'Text',
+    element_attr => {
+        rel => ['tooltip'],
+        title => ['YYYY-MM-DD']
+    },
 );
 
 has_field 'time' => (
@@ -23,11 +27,19 @@ has_field 'time' => (
 );
 
 has_field 'time.start' => (
-    type => 'Text'
+    type => 'Text',
+    element_attr => {
+        rel => ['tooltip'],
+        title => ['hh:mm:ss']
+    },
 );
 
 has_field 'time.end' => (
-    type => 'Text'
+    type => 'Text',
+    element_attr => {
+        rel => ['tooltip'],
+        title => ['hh:mm:ss']
+    },
 );
 
 has_field 'save' => (
@@ -70,6 +82,17 @@ sub get_dates {
     };
 }
 
+sub validate {
+    my $self = shift;
+    my $dates = $self->get_dates();
+
+    if ($dates->{end} < $dates->{start}) {
+        my $err_msg = 'End time must be later than start time.';
+        $self->field('time.start')->add_error($err_msg);
+        $self->field('time.end')->add_error($err_msg);
+    }
+}
+
 1;
 
 __END__
@@ -88,6 +111,10 @@ Preferences Form.
 
 Returns a hashref with {start => DateTime, end => DateTime} as required
 by the database.
+
+=head2 validate
+
+Checks if start time comes before end time.
 
 =head1 AUTHOR
 
