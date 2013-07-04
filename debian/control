@@ -3,6 +3,7 @@ Section: admin
 Priority: extra
 Maintainer: Sipwise Development Team <support@sipwise.com>
 Build-Depends: debhelper (>= 8),
+               libcarp-fix-1-25-perl,
                libcatalyst-devel-perl,
                libcatalyst-modules-perl,
                libcatalyst-view-tt-perl,
