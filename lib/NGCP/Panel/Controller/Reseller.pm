@@ -18,7 +18,7 @@ sub list_reseller :Chained('/') :PathPart('reseller') :CaptureArgs(0) {
 
     $c->stash(
         resellers => $c->model('billing')
-            ->resultset('resellers'),
+            ->resultset('resellers')->search_rs({}),
         template => 'reseller/list.tt'
     );
     NGCP::Panel::Utils::check_redirect_chain(c => $c);
@@ -70,6 +70,7 @@ sub create :Chained('list_reseller') :PathPart('create') :Args(0) {
             $form->params->{contract_id} = delete $form->params->{contract}->{id};
             delete $form->params->{contract};
             $c->model('billing')->resultset('resellers')->create($form->params);
+
             $c->flash(messages => [{type => 'success', text => 'Reseller successfully created.'}]);
         } catch($e) {
             $c->log->error($e);
@@ -93,17 +94,14 @@ sub base :Chained('list_reseller') :PathPart('') :CaptureArgs(1) {
         return;
     }
 
-    $c->stash(reseller => $c->stash->{resellers}->find({id => $reseller_id}));
+    $c->stash(reseller => $c->stash->{resellers}->search_rs({id => $reseller_id}));
 }
 
 sub reseller_contacts :Chained('base') :PathPart('contacts') :Args(0) {
     my ($self, $c) = @_;
     $c->forward(
         '/ajax_process_resultset', [
-            $c->model('billing')->resultset('contacts')
-              ->search_rs({ id => $c->stash->{reseller}->related_resultset('contract')->find(
-                $c->stash->{resellers}->find($c->req->captures->[0])->contract_id
-              )->contact_id }),
+            $c->stash->{reseller}->first->contract->search_related_rs('contact'),
             [qw(id firstname lastname email create_timestamp)],
             [ "firstname", "lastname", "email" ]
         ]
@@ -116,9 +114,7 @@ sub reseller_contracts :Chained('base') :PathPart('contracts') :Args(0) {
     my ($self, $c) = @_;
     $c->forward(
         '/ajax_process_resultset', [
-            $c->stash->{reseller}->search_related_rs(
-                'contract', { id => $c->stash->{resellers}->find($c->req->captures->[0])->contract_id }
-            ),
+            $c->stash->{reseller}->first->search_related_rs('contract'),
             [qw(id contact_id)],
             [ "contact_id" ]
         ]
@@ -129,9 +125,10 @@ sub reseller_contracts :Chained('base') :PathPart('contracts') :Args(0) {
 
 sub reseller_single :Chained('base') :PathPart('single') :Args(0) {
     my ($self, $c) = @_;
+
     $c->forward(
         '/ajax_process_resultset', [
-            $c->stash->{resellers}->search_rs({ id => $c->req->captures->[0] }),
+            $c->stash->{reseller},
             [qw(id contract_id name status)],
             [ "contract_id", "name", "status" ]
         ]
@@ -140,11 +137,11 @@ sub reseller_single :Chained('base') :PathPart('single') :Args(0) {
     return;
 }
 
-sub reseller_admin :Chained('base') :PathPart('admin') :Args(0) {
+sub reseller_admin :Chained('base') :PathPart('admins') :Args(0) {
     my ($self, $c) = @_;
     $c->forward(
         '/ajax_process_resultset', [
-            $c->stash->{reseller}->related_resultset('admins')->search_rs({ reseller_id => $c->req->captures->[0] }),
+            $c->stash->{reseller}->first->search_related_rs('admins'),
             [qw(id reseller_id login)],
             [ "reseller_id", "login" ]
         ]
@@ -267,6 +264,8 @@ sub create_defaults :Path('create_defaults') :Args(0) {
             call_data => 1,
         },
     );
+    $defaults{admins}->{login} = $defaults{resellers}->{name} =~ tr/A-Za-z0-9//cdr,
+
     my $billing = $c->model('billing');
     my %r;
     try {
@@ -289,14 +288,18 @@ sub create_defaults :Path('create_defaults') :Args(0) {
             $r{admins} = $billing->resultset('admins')->create({
                 %{ $defaults{admins} },
                 reseller_id => $r{resellers}->id,
-                login => $r{resellers}->name =~ tr/A-Za-z0-9//cdr,
             });
+            NGCP::Panel::Utils::Contract::create_contract_balance(
+                c => $c,
+                profile => $r{billing_mappings}->billing_profile,
+                contract => $r{contracts},
+            );
         });
     } catch($e) {
         $c->log->error($e);
         $c->flash(messages => [{type => 'error', text => 'Creating reseller failed.'}]);
     };
-    $c->flash(messages => [{type => 'success', text => 'Reseller successfully created, review:'}]);
+    $c->flash(messages => [{type => 'success', text => "Reseller successfully created with login '".$defaults{admins}->{login}."' and password '".$defaults{admins}->{md5pass}."', please change your settings below!" }]);
     $c->res->redirect(sprintf('/reseller/%d/details', $r{resellers}->id), HTTP_SEE_OTHER);
     $c->detach;
     return;
@@ -346,3 +349,5 @@ Andreas Granig,,,
 
 This library is free software. You can redistribute it and/or modify
 it under the same terms as Perl itself.
+
+# vim: set tabstop=4 expandtab:
