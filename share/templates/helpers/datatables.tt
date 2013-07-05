@@ -10,7 +10,7 @@ $.extend( $.fn.dataTableExt.oStdClasses, {
 $(document).ready(function() {
 	$('#[% helper.name.remove('[\s+\.]') %]_table')
 	    .dataTable( {
-        "sDom": "<'row'<'span6'r><'span6'f>>t<'row'<'span6'i><'span6'p>>",
+        "sDom": "<'row-fluid'<'pull-left'r><'pull-right'f>>t<'row-fluid'<'pull-left'i><'pull-right'p>>",
         "bProcessing": true,
         "bServerSide": true,
         "bPaginate": [% helper.paginate || 'true' %],
