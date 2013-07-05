@@ -60,6 +60,5 @@ Depends: libcatalyst-actionrole-acl-perl,
          ngcp-schema,
          ${misc:Depends},
          ${perl:Depends}
-
 Description: Catalyst based application
  TODO
