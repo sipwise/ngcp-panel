@@ -8,6 +8,7 @@ use NGCP::Panel::Form::SoundSet;
 use NGCP::Panel::Form::SoundFile;
 use File::Type;
 use IPC::System::Simple qw/capturex/;
+use NGCP::Panel::Utils::XMLDispatcher;
 
 sub auto :Does(ACL) :ACLDetachTo('/denied_page') :AllowedRole(admin) :AllowedRole(reseller) {
     my ($self, $c) = @_;
@@ -215,7 +216,13 @@ sub handles_edit :Chained('handles_base') :PathPart('edit') {
             my $target_codec = 'WAV';
             
             if($file_result->handle->group->name eq 'calling_card') {
-                #$self->_clear_audio_cache($data->{set_id}, $handle->{name});
+                try {
+                    $self->_clear_audio_cache($file_result->set_id, $file_result->handle->name);
+                } catch ($e) {
+                    $c->flash(messages => [{type => 'error', text => 'Failed to clear audio cache!'}]);
+                    $c->response->redirect($c->stash->{handles_base_uri});
+                    return;
+                }
             }
 
             if ($file_result->handle->name eq 'music_on_hold') {
@@ -302,6 +309,46 @@ sub _transcode_sound_file {
     $out = capturex([0], "/usr/bin/sox", @conv_args);
     
     return $out;
+}
+
+sub _clear_audio_cache {
+    my ($self, $sound_set_id, $handle_name) = @_;
+
+    my $dispatcher = NGCP::Panel::Utils::XMLDispatcher->new;
+
+    my @ret = $dispatcher->dispatch("appserver", 1, 1, <<EOF );
+<?xml version="1.0"?>
+  <methodCall>
+    <methodName>postDSMEvent</methodName>
+    <params>
+      <param>
+        <value><string>sw_audio</string></value>
+      </param>
+      <param>
+        <value><array><data>
+          <value><array><data>
+            <value><string>cmd</string></value>
+            <value><string>clearFile</string></value>
+          </data></array></value>
+          <value><array><data>
+          <value><string>audio_id</string></value>
+            <value><string>$handle_name</string></value>
+         </data></array></value>
+         <value><array><data>
+           <value><string>sound_set_id</string></value>
+           <value><string>$sound_set_id</string></value>
+         </data></array></value>
+       </data></array></value>
+     </param>
+   </params>
+  </methodCall>
+EOF
+
+    if(grep { $$_[1] != 1 or $$_[2] !~ m#<value>OK</value># } @ret) {  # error
+        die "failed to clear SEMS audio cache";
+    }
+
+    return 1;
 }
 
 __PACKAGE__->meta->make_immutable;
@@ -397,6 +444,12 @@ For $target_codec 'PCMA' returns is RAW 8bit, 8kHz PCMA.
 For $target_codec 'WAV' returns is WAV 16bit, 8kHz.
 
 Will die if transcoding doesn't work.
+
+=head2 _clear_audio_cache
+
+Ported from ossbss.
+
+tells our application server to clear a specific audio file
 
 =head1 AUTHOR
 

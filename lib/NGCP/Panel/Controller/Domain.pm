@@ -40,6 +40,7 @@ sub create :Chained('dom_list') :PathPart('create') :Args(0) {
             },
             1
         );
+        $self->_sip_domain_reload;
         $c->flash(messages => [{type => 'success', text => 'Domain successfully created!'}]);
         $c->response->redirect($c->uri_for());
         return;
@@ -84,6 +85,7 @@ sub edit :Chained('base') :PathPart('edit') :Args(0) {
         $c->stash->{'domain_result'}->update({
               domain => $form->field('domain')->value,
           });
+        $self->_sip_domain_reload;
 
         $c->flash(messages => [{type => 'success', text => 'Domain successfully changed!'}]);
         $c->response->redirect($c->uri_for());
@@ -103,6 +105,7 @@ sub delete :Chained('base') :PathPart('delete') :Args(0) {
     }
 
     $c->stash->{'domain_result'}->delete;
+    $self->_sip_domain_reload;
     
 #    my $schema = $c->model('billing')->schema;
 #    $schema->provisioning($c->model('provisioning')->schema->connect);
@@ -223,6 +226,20 @@ sub load_preference_list :Private {
     );
 }
 
+sub _sip_domain_reload {
+    my ($self) = @_;
+    my $dispatcher = NGCP::Panel::Utils::XMLDispatcher->new;
+    $dispatcher->dispatch("proxy-ng", 1, 1, <<EOF );
+<?xml version="1.0" ?>
+<methodCall>
+<methodName>domain.reload</methodName>
+<params/>
+</methodCall>
+EOF
+
+    return 1;
+}
+
 __PACKAGE__->meta->make_immutable;
 
 1;
@@ -294,6 +311,12 @@ Data that is put on stash: edit_preference, form
 Retrieves and processes a datastructure containing preference groups, preferences and their values, to be used in rendering the preference list.
 
 Data that is put on stash: pref_groups
+
+=head2 _sip_domain_reload
+
+Ported from ossbss
+
+reloads domain cache of sip proxies
 
 =head1 AUTHOR
 
