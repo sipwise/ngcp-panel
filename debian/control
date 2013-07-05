@@ -4,19 +4,29 @@ Priority: extra
 Maintainer: Sipwise Development Team <support@sipwise.com>
 Build-Depends: debhelper (>= 8),
                libcarp-fix-1-25-perl,
+               libcatalyst-actionrole-acl-perl,
                libcatalyst-devel-perl,
                libcatalyst-modules-perl,
+               libcatalyst-perl,
                libcatalyst-view-tt-perl,
+               libdata-validate-ip-perl,
                libdatetime-format-iso8601-perl,
+               libdbix-class-resultset-recursiveupdate-perl,
+               libdevel-cover-perl,
+               libfile-type-perl,
                libhash-storediterator-perl,
+               libhtml-formhandler-model-dbic-perl,
                libhtml-formhandler-perl,
                libmodule-install-perl,
                libmoosex-method-signatures-perl,
                libmoosex-object-pluggable-perl,
                libperl5i-perl,
+               libregexp-parser-perl,
                libsipwise-base-perl,
                libstrictures-perl,
-               libtrycatch-perl
+               libtext-csv-xs-perl,
+               libtrycatch-perl,
+               ngcp-schema
 Standards-Version: 3.9.4
 Homepage: http://sipwise.com/
 
