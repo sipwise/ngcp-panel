@@ -150,6 +150,22 @@ sub reseller_admin :Chained('base') :PathPart('admins') :Args(0) {
     return;
 }
 
+sub reseller_customers :Chained('base') :PathPart('customers') :Args(0)
+{
+    my ($self, $c) = @_;
+
+    $c->forward(
+        '/ajax_process_resultset', [
+            $c->stash->{reseller}->first->search_related_rs('contracts'),
+            # TODO: also external_id (same in Customer list)
+            [qw(id contact_id status)],
+            [ "contact_id", "status" ]
+        ]
+    );
+    $c->detach($c->view('JSON'));
+    return;
+}
+
 sub edit :Chained('base') :PathPart('edit') :Args(0) {
     my ($self, $c) = @_;
 

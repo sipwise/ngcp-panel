@@ -8,8 +8,6 @@ use NGCP::Panel::Form::CustomerDailyFraud;
 use NGCP::Panel::Form::CustomerBalance;
 use NGCP::Panel::Utils;
 
-use Data::Printer;
-
 =head1 NAME
 
 NGCP::Panel::Controller::Customer - Catalyst Controller
@@ -51,11 +49,11 @@ sub base :Chained('list_customer') :PathPart('') :CaptureArgs(1) {
     }
 
     my $contract = $c->model('billing')->resultset('contracts')
-        ->find($contract_id);
+        ->search_rs(id => $contract_id);
 
     my $stime = DateTime->now->truncate(to => 'month');
     my $etime = $stime->clone->add(months => 1);
-    my $balance = $contract->contract_balances
+    my $balance = $contract->first->contract_balances
         ->find({
             start => { '>=' => $stime },
             end => { '<' => $etime },
@@ -64,7 +62,7 @@ sub base :Chained('list_customer') :PathPart('') :CaptureArgs(1) {
         try {
             NGCP::Panel::Utils::Contract::create_contract_balance(
                 c => $c,
-                profile => $contract->billing_mappings->search({
+                profile => $contract->first->billing_mappings->search({
                     -and => [
                         -or => [
                             start_date => undef,
@@ -79,7 +77,7 @@ sub base :Chained('list_customer') :PathPart('') :CaptureArgs(1) {
                 {
                     order_by => { -desc => 'start_time', -desc => 'id' }
                 })->first->billing_profile,
-                contract => $contract,
+                contract => $contract->first,
             );
         } catch($e) {
             $c->log->error("Failed to create contract balance: $e");
@@ -87,7 +85,7 @@ sub base :Chained('list_customer') :PathPart('') :CaptureArgs(1) {
             $c->response->redirect($c->uri_for());
             return;
         }
-        $balance = $contract->contract_balances
+        $balance = $contract->first->contract_balances
             ->find({
                 start => { '>=' => $stime },
                 end => { '<' => $etime },
@@ -95,13 +93,18 @@ sub base :Chained('list_customer') :PathPart('') :CaptureArgs(1) {
     }
 
     $c->stash(balance => $balance);
-    $c->stash(fraud => $contract->contract_fraud_preference);
+    $c->stash(fraud => $contract->first->contract_fraud_preference);
     $c->stash(template => 'customer/details.tt'); 
-    $c->stash(contract => $contract);
+    $c->stash(contract => $contract->first);
+    $c->stash(contract_rs => $contract);
 }
 
 sub details :Chained('base') :PathPart('details') :Args(0) {
     my ($self, $c) = @_;
+
+    $c->stash(
+        subscribers => $c->stash->{contract}->voip_subscribers,
+    );
 }
 
 sub edit_fraud :Chained('base') :PathPart('fraud/edit') :Args(1) {

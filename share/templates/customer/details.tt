@@ -40,24 +40,14 @@
         </tr>
     </thead>
     <tbody>
+        [% FOR subscriber IN subscribers -%]
         <tr>
-            <td>testuser1@example.org</td>
-            <td>4312345</td>
-            <td>Fooagent 1/0 something very long in version 20130702 foooooooooo</td>
-            <td class="ngcp-actions-column"> </td>
-        </tr>
-        <tr>
-            <td>testuser2@example.org</td>
-            <td>4312346</td>
-            <td>Fooagent 1/0 something very long in version 20130702 foooooooooo</td>
+            <td>[% subscriber.username %]@[% subscriber.domain.domain %]</td>
+            <td>[% subscriber.primary_number.cc %] [% subscriber.primary_number.ac %] [% subscriber.primary_number.sn %]</td>
+            <td>TODO[% # subscriber.provisioning_voip_subscriber.password %]</td>
             <td class="ngcp-actions-column"></td>
         </tr>
-        <tr>
-            <td>testuser1@example.org</td>
-            <td>4312345</td>
-            <td>Baragent</td>
-            <td class="ngcp-actions-column"></td>
-        </tr>
+        [% END -%]
     </tbody>
 </table>
 
