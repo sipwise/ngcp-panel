@@ -6,6 +6,7 @@ BEGIN { extends 'Catalyst::Controller'; }
 
 use NGCP::Panel::Form::RewriteRuleSet;
 use NGCP::Panel::Form::RewriteRule;
+use NGCP::Panel::Utils::XMLDispatcher;
 
 sub auto :Does(ACL) :ACLDetachTo('/denied_page') :AllowedRole(admin) :AllowedRole(reseller) {
     my ($self, $c) = @_;
@@ -225,6 +226,7 @@ sub rules_edit :Chained('rules_base') :PathPart('edit') {
         item   => $c->stash->{rule_result},
     );
     if($form->validated) {
+        $self->_sip_dialplan_reload();
         $c->flash(messages => [{type => 'success', text => 'Rewrite Rule successfully changed!'}]);
         $c->response->redirect($c->stash->{rules_uri});
         return;
@@ -239,6 +241,7 @@ sub rules_delete :Chained('rules_base') :PathPart('delete') {
     
     try {
         $c->stash->{rule_result}->delete;
+        $self->_sip_dialplan_reload();
         $c->flash(messages => [{type => 'success', text => 'Rewrite Rule successfully deleted!'}]);
     } catch (DBIx::Class::Exception $e) {
         $c->flash(messages => [{type => 'error', text => 'Delete failed.'}]);
@@ -258,6 +261,7 @@ sub rules_create :Chained('rules_list') :PathPart('create') :Args(0) {
         item   => $c->stash->{rules_rs}->new_result({}),
     );
     if($form->validated) {
+        $self->_sip_dialplan_reload();
         $c->flash(messages => [{type => 'success', text => 'Rewrite Rule successfully created!'}]);
         $c->response->redirect($c->stash->{rules_uri});
         return;
@@ -265,6 +269,20 @@ sub rules_create :Chained('rules_list') :PathPart('create') :Args(0) {
 
     $c->stash(create_flag => 1);
     $c->stash(form => $form);
+}
+
+sub _sip_dialplan_reload {
+    my ($self) = @_;
+    my $dispatcher = NGCP::Panel::Utils::XMLDispatcher->new;
+    $dispatcher->dispatch("proxy-ng", 1, 1, <<EOF );
+<?xml version="1.0" ?>
+<methodCall>
+<methodName>dialplan.reload</methodName>
+<params/>
+</methodCall>
+EOF
+
+    return 1;
 }
 
 __PACKAGE__->meta->make_immutable;
@@ -349,6 +367,12 @@ Delete a rewrite rule determined by L</rules_base>.
 
 Show a modal to create a new rewrite rule using the form
 L<NGCP::Panel::Form::RewriteRule>.
+
+=head2 _sip_dialplan_reload
+
+This is ported from ossbss.
+
+Reloads dialplan cache of sip proxies.
 
 =head1 AUTHOR
 
