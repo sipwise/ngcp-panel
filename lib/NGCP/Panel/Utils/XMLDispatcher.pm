@@ -1,7 +1,7 @@
 package NGCP::Panel::Utils::XMLDispatcher;
 
 use Sipwise::Base;
-use NGCP::Schema::provisioning;
+use NGCP::Schema;
 use Moose;
 use Net::HTTP;
 use Errno;
@@ -9,7 +9,7 @@ use Errno;
 has 'schema' => (
     is => 'rw',
     isa => 'DBIx::Class::Schema',
-    default => sub { return NGCP::Schema::provisioning->connect() },
+    default => sub { return NGCP::Schema->connect() },
 );
 
 sub dispatch {

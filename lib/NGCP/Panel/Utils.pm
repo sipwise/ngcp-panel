@@ -68,7 +68,7 @@ sub load_preference_list {
     my $dom_pref = $params{dom_pref};
     my $usr_pref = $params{usr_pref};
     
-    my @pref_groups = $c->model('provisioning')
+    my @pref_groups = $c->model('DB')
         ->resultset('voip_preference_groups')
         ->search({ 'voip_preferences.internal' => 0,
             $peer_pref ? ('voip_preferences.peer_pref' => 1,

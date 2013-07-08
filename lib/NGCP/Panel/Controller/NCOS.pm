@@ -26,13 +26,13 @@ sub levels_list :Chained('/') :PathPart('ncos') :CaptureArgs(0) {
 
 sub _levels_resultset_admin {
     my ($self, $c) = @_;
-    my $rs = $c->model('billing')->resultset('ncos_levels');
+    my $rs = $c->model('DB')->resultset('ncos_levels');
     return $rs;
 }
 
 sub _levels_resultset_reseller {
     my ($self, $c) = @_;
-    my $rs = $c->model('billing')->resultset('admins')
+    my $rs = $c->model('DB')->resultset('admins')
         ->find($c->user->id)->reseller->ncos_levels;
     return $rs;
 }

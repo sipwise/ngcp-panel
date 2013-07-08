@@ -22,7 +22,7 @@ has 'priority' => (
 around handle => sub {
     my ($foo, $self, $c) = @_;
 
-    my $peer_groups = $c->model('provisioning')->resultset('voip_peer_groups')->search_rs({});
+    my $peer_groups = $c->model('DB')->resultset('voip_peer_groups')->search_rs({});
     my $peer_hosts = $peer_groups->search_related_rs('voip_peer_hosts');
     my $peer_rules = $peer_groups->search_related_rs('voip_peer_rules');
 

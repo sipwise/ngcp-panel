@@ -19,7 +19,7 @@ sub auto :Does(ACL) :ACLDetachTo('/denied_page') :AllowedRole(admin) :AllowedRol
 sub sets_list :Chained('/') :PathPart('sound') :CaptureArgs(0) {
     my ( $self, $c ) = @_;
     
-    my $sets_rs = $c->model('provisioning')->resultset('voip_sound_sets');
+    my $sets_rs = $c->model('DB')->resultset('voip_sound_sets');
     $c->stash(sets_rs => $sets_rs);
 
     $c->stash(has_edit => 1);
@@ -126,7 +126,7 @@ sub handles_list :Chained('base') :PathPart('handles') :CaptureArgs(0) {
     $c->stash(handles_base_uri =>
         $c->uri_for_action("/sound/handles_root", [$c->req->captures->[0]]));
     
-    my $handles_rs = $c->model('provisioning')->resultset('voip_sound_groups')
+    my $handles_rs = $c->model('DB')->resultset('voip_sound_groups')
         ->search({
         },{
             select => ['groups.name', \'handles.name', \'handles.id', 'files.filename', 'files.loopplay', 'files.codec'],

@@ -23,14 +23,14 @@ around handle => sub {
     my ($foo, $self, $c) = @_;
 
     $c->stash(
-        resellers => $c->model('billing')->resultset('resellers')->search_rs({}),
-        domains => $c->model('billing')->resultset('resellers')->search_rs({}),
-        customers => $c->model('billing')->resultset('contracts')->search_rs({
+        resellers => $c->model('DB')->resultset('resellers')->search_rs({}),
+        domains => $c->model('DB')->resultset('resellers')->search_rs({}),
+        customers => $c->model('DB')->resultset('contracts')->search_rs({
             product_id => undef,
         }, {
             join => 'billing_mappings',
         }),
-        subscribers => $c->model('provisioning')->resultset('voip_subscribers')->search_rs({}),
+        subscribers => $c->model('DB')->resultset('provisioning_voip_subscribers')->search_rs({}),
     );
     return;
 };

@@ -48,7 +48,7 @@ sub base :Chained('list_customer') :PathPart('') :CaptureArgs(1) {
          return;
     }
 
-    my $contract = $c->model('billing')->resultset('contracts')
+    my $contract = $c->model('DB')->resultset('contracts')
         ->search_rs(id => $contract_id);
 
     my $stime = DateTime->now->truncate(to => 'month');
@@ -123,7 +123,7 @@ sub edit_fraud :Chained('base') :PathPart('fraud/edit') :Args(1) {
     }
 
     my $fraud_prefs = $c->stash->{fraud} ||
-        $c->model('billing')->resultset('contract_fraud_preferences')
+        $c->model('DB')->resultset('contract_fraud_preferences')
             ->new_result({ contract_id => $c->stash->{contract}->id});
     $form->process(
         posted => $posted,

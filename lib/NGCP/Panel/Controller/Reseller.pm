@@ -17,7 +17,7 @@ sub list_reseller :Chained('/') :PathPart('reseller') :CaptureArgs(0) {
     my ($self, $c) = @_;
 
     $c->stash(
-        resellers => $c->model('billing')
+        resellers => $c->model('DB')
             ->resultset('resellers')->search_rs({}),
         template => 'reseller/list.tt'
     );
@@ -69,7 +69,7 @@ sub create :Chained('list_reseller') :PathPart('create') :Args(0) {
             delete $form->params->{save};
             $form->params->{contract_id} = delete $form->params->{contract}->{id};
             delete $form->params->{contract};
-            $c->model('billing')->resultset('resellers')->create($form->params);
+            $c->model('DB')->resultset('resellers')->create($form->params);
 
             $c->flash(messages => [{type => 'success', text => 'Reseller successfully created.'}]);
         } catch($e) {
@@ -235,7 +235,7 @@ sub ajax_contract :Chained('list_reseller') :PathPart('ajax_contract') :Args(0) 
             $contract_id == $_->get_column('contract_id')
         )
     } $c->stash->{resellers}->all;
-    my $free_contracts = $c->model('billing')
+    my $free_contracts = $c->model('DB')
         ->resultset('contracts')
         ->search_rs({
             id => { 'not in' => \@used_contracts }
@@ -282,7 +282,7 @@ sub create_defaults :Path('create_defaults') :Args(0) {
     );
     $defaults{admins}->{login} = $defaults{resellers}->{name} =~ tr/A-Za-z0-9//cdr,
 
-    my $billing = $c->model('billing');
+    my $billing = $c->model('DB');
     my %r;
     try {
         $billing->txn_do(sub {

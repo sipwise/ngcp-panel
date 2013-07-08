@@ -25,8 +25,8 @@ around handle => sub {
     my $etime = $stime->clone->add(months => 1);
 
     $c->stash(
-        profiles => $c->model('billing')->resultset('billing_profiles')->search_rs({}),
-        peering_sum => $c->model('billing')->resultset('contract_balances')->search_rs({
+        profiles => $c->model('DB')->resultset('billing_profiles')->search_rs({}),
+        peering_sum => $c->model('DB')->resultset('contract_balances')->search_rs({
             'start' => { '>=' => $stime },
             'end' => { '<' => $etime},
             'product.class' => 'sippeering',
@@ -35,7 +35,7 @@ around handle => sub {
                 'contract' => { 'billing_mappings' => 'product' },
             },
         })->get_column('cash_balance_interval')->sum,
-        reseller_sum => $c->model('billing')->resultset('contract_balances')->search_rs({
+        reseller_sum => $c->model('DB')->resultset('contract_balances')->search_rs({
             'start' => { '>=' => $stime },
             'end' => { '<' => $etime},
             'product.class' => 'reseller',
@@ -44,7 +44,7 @@ around handle => sub {
                 'contract' => { 'billing_mappings' => 'product' },
             },
         })->get_column('cash_balance_interval')->sum,
-        customer_sum => $c->model('billing')->resultset('contract_balances')->search_rs({
+        customer_sum => $c->model('DB')->resultset('contract_balances')->search_rs({
             'start' => { '>=' => $stime },
             'end' => { '<' => $etime},
             'billing_mappings.product_id' => undef,

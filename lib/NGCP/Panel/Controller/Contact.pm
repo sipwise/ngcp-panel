@@ -125,7 +125,7 @@ sub ajax :Chained('list') :PathPart('ajax') :Args(0) {
     
     #TODO: when user is not logged in, this gets forwarded to login page
     
-    my $contacts = $c->model('billing')->resultset('contacts')->search_rs({});
+    my $contacts = $c->model('DB')->resultset('contacts')->search_rs({});
     
     $c->forward( "/ajax_process_resultset", [$contacts,
                  ["id", "firstname", "lastname", "email"],

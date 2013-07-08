@@ -15,8 +15,8 @@ sub auto :Does(ACL) :ACLDetachTo('/denied_page') :AllowedRole(admin) :AllowedRol
 sub contract_list :Chained('/') :PathPart('contract') :CaptureArgs(0) {
     my ($self, $c) = @_;
     
-    my $mapping_rs = $c->model('billing')->resultset('billing_mappings');
-    my $rs = $c->model('billing')->resultset('contracts')
+    my $mapping_rs = $c->model('DB')->resultset('billing_mappings');
+    my $rs = $c->model('DB')->resultset('contracts')
         ->search({
             'billing_mappings.id' => {
                 '=' => $mapping_rs->search({
@@ -63,7 +63,7 @@ sub root :Chained('contract_list') :PathPart('') :Args(0) {
 sub create :Chained('contract_list') :PathPart('create') :Args(0) {
     my ($self, $c) = @_;
     
-    my $item = $c->model('billing')->resultset('billing_mappings')->new_result({});
+    my $item = $c->model('DB')->resultset('billing_mappings')->new_result({});
 
     my $form = NGCP::Panel::Form::Contract->new;
     if($form->process(
@@ -236,9 +236,9 @@ sub peering_ajax :Chained('peering_list') :PathPart('ajax') :Args(0) {
 sub peering_create :Chained('peering_list') :PathPart('create') :Args(0) {
     my ($self, $c) = @_;
     
-    my $item = $c->model('billing')->resultset('billing_mappings')->new_result({});
+    my $item = $c->model('DB')->resultset('billing_mappings')->new_result({});
     $item->product(
-        $c->model('billing')->resultset('products')->find({class => 'sippeering'})
+        $c->model('DB')->resultset('products')->find({class => 'sippeering'})
     );
 
     my $form = NGCP::Panel::Form::Contract->new;
@@ -320,7 +320,7 @@ sub customer_ajax :Chained('customer_list') :PathPart('ajax') :Args(0) {
 sub customer_create :Chained('customer_list') :PathPart('create') :Args(0) {
     my ($self, $c) = @_;
     
-    my $item = $c->model('billing')->resultset('billing_mappings')->new_result({});
+    my $item = $c->model('DB')->resultset('billing_mappings')->new_result({});
     $item->product(undef);
 
     my $form = NGCP::Panel::Form::Contract->new;

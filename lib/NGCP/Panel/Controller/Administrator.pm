@@ -10,7 +10,7 @@ use NGCP::Panel::Utils qw();
 sub list_admin :PathPart('administrator') :Chained('/') :CaptureArgs(0) {
     my ($self, $c) = @_;
     $c->stash(
-        admins => $c->model('billing')->resultset('admins'),
+        admins => $c->model('DB')->resultset('admins'),
         template => 'administrator/list.tt',
     );
     return;
@@ -61,7 +61,7 @@ sub create :Chained('list_admin') :PathPart('create') :Args(0) {
             delete $form->params->{save};
             $form->params->{is_superuser} = 1;
             $form->params->{reseller_id} = 1;
-            $c->model('billing')->resultset('admins')->create($form->params);
+            $c->model('DB')->resultset('admins')->create($form->params);
             $c->flash(messages => [{type => 'success', text => 'Administrator created.'}]);
         } catch($e) {
             $c->log->error($e);
@@ -125,7 +125,7 @@ sub edit :Chained('base') :PathPart('edit') :Args(0) {
 sub delete :Chained('base') :PathPart('delete') :Args(0) {
     my ($self, $c) = @_;
     try {
-        $c->model('billing')->resultset('admins')->find($c->stash->{administrator}->{id})->delete;
+        $c->model('DB')->resultset('admins')->find($c->stash->{administrator}->{id})->delete;
         $c->flash(messages => [{type => 'success', text => 'Administrator deleted.'}]);
     } catch($e) {
         $c->log->error($e);

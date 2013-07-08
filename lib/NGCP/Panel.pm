@@ -115,7 +115,7 @@ __PACKAGE__->config(
             },
             store => {
                 class => 'DBIx::Class',
-                user_model => 'billing::admins',
+                user_model => 'DB::admins',
                 id_field => 'id',
                 store_user_class => 'NGCP::Panel::AuthenticationStore::RoleFromRealm',
             }
@@ -129,7 +129,7 @@ __PACKAGE__->config(
             },
             store => {
                 class => 'DBIx::Class',
-                user_model => 'billing::admins',
+                user_model => 'DB::admins',
                 id_field => 'id',
                 store_user_class => 'NGCP::Panel::AuthenticationStore::RoleFromRealm',
             }

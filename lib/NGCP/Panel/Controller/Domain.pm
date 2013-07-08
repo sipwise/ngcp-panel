@@ -32,14 +32,9 @@ sub create :Chained('dom_list') :PathPart('create') :Args(0) {
         action => $c->uri_for('create'),
     );
     if($form->validated) {
-        my $schema = $c->model('billing')->schema;
-        $schema->provisioning($c->model('provisioning')->schema->connect);
-        $schema->create_domain(
-            {
-                domain => $form->field('domain')->value,
-            },
-            1
-        );
+
+        #TODO: create domain
+
         $self->_sip_domain_reload;
         $c->flash(messages => [{type => 'success', text => 'Domain successfully created!'}]);
         $c->response->redirect($c->uri_for());
@@ -60,7 +55,7 @@ sub base :Chained('/domain/dom_list') :PathPart('') :CaptureArgs(1) {
         return;
     }
 
-    my $res = $c->model('billing')->resultset('domains')->find($domain_id);
+    my $res = $c->model('DB')->resultset('domains')->find($domain_id);
     unless(defined($res)) {
         $c->flash(messages => [{type => 'error', text => 'Domain does not exist!'}]);
         $c->response->redirect($c->uri_for());
@@ -107,14 +102,7 @@ sub delete :Chained('base') :PathPart('delete') :Args(0) {
     $c->stash->{'domain_result'}->delete;
     $self->_sip_domain_reload;
     
-#    my $schema = $c->model('billing')->schema;
-#    $schema->provisioning($c->model('provisioning')->schema->connect);
-#    $schema->delete_domain({
-#            domain => $c->stash->{domain}->{domain},
-#            id     => $c->stash->{domain}->{id},
-#        },
-#        1,
-#    );
+    #TODO: correctly delete domain
 
     $c->flash(messages => [{type => 'success', text => 'Domain successfully deleted!'}]);
     $c->response->redirect($c->uri_for());
@@ -132,12 +120,12 @@ sub ajax :Chained('dom_list') :PathPart('ajax') :Args(0) {
 
 sub _ajax_resultset_admin {
     my ($self, $c) = @_;
-    return $c->model('billing')->resultset('domains');
+    return $c->model('DB')->resultset('domains');
 }
 
 sub _ajax_resultset_reseller {
     my ($self, $c) = @_;
-    return $c->model('billing')->resultset('domains')->search_rs(
+    return $c->model('DB')->resultset('domains')->search_rs(
         {
             'admins.id' => $c->user->id,
         },
@@ -154,7 +142,7 @@ sub preferences :Chained('base') :PathPart('preferences') :Args(0) {
     my ($self, $c) = @_;
     
     my $domain_name = $c->stash->{domain}->{domain};
-    $c->stash->{provisioning_domain_id} = $c->model('provisioning')
+    $c->stash->{provisioning_domain_id} = $c->model('DB')
         ->resultset('voip_domains')
         ->single({domain => $domain_name})->id;
 
@@ -168,15 +156,15 @@ sub preferences_base :Chained('base') :PathPart('preferences') :CaptureArgs(1) {
 
     $self->load_preference_list($c);
 
-    $c->stash->{preference_meta} = $c->model('provisioning')
+    $c->stash->{preference_meta} = $c->model('DB')
         ->resultset('voip_preferences')
         ->single({id => $pref_id});
     my $domain_name = $c->stash->{domain}->{domain};
-    $c->stash->{provisioning_domain_id} = $c->model('provisioning')
+    $c->stash->{provisioning_domain_id} = $c->model('DB')
         ->resultset('voip_domains')
         ->single({domain => $domain_name})->id;
 
-    $c->stash->{preference} = $c->model('provisioning')
+    $c->stash->{preference} = $c->model('DB')
         ->resultset('voip_dom_preferences')
         ->search({
             attribute_id => $pref_id,
@@ -204,7 +192,7 @@ sub preferences_edit :Chained('preferences_base') :PathPart('edit') :Args(0) {
 sub load_preference_list :Private {
     my ($self, $c) = @_;
     
-    my $dom_pref_values = $c->model('provisioning')
+    my $dom_pref_values = $c->model('DB')
         ->resultset('voip_preferences')
         ->search({
                 domain => $c->stash->{domain}->{domain}

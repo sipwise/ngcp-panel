@@ -31,7 +31,7 @@ sub root :Chained('group_list') :PathPart('') :Args(0) {
 sub ajax :Chained('group_list') :PathPart('ajax') :Args(0) {
     my ($self, $c) = @_;
     
-    my $resultset = $c->model('provisioning')->resultset('voip_peer_groups');
+    my $resultset = $c->model('DB')->resultset('voip_peer_groups');
     
     $c->forward( "/ajax_process_resultset", [$resultset,
                  ["id", "name", "priority", "description", "peering_contract_id"],
@@ -50,7 +50,7 @@ sub base :Chained('group_list') :PathPart('') :CaptureArgs(1) {
         return;
     }
 
-    my $res = $c->model('provisioning')->resultset('voip_peer_groups')->find($group_id);
+    my $res = $c->model('DB')->resultset('voip_peer_groups')->find($group_id);
     unless(defined($res)) {
         $c->flash(messages => [{type => 'error', text => 'Peering Group does not exist!'}]);
         $c->response->redirect($c->uri_for());
@@ -129,7 +129,7 @@ sub create :Chained('group_list') :PathPart('create') :Args(0) {
     if($form->validated) {
         my $formdata = $form->custom_get_values;
         try {
-            $c->model('provisioning')->resultset('voip_peer_groups')->create(
+            $c->model('DB')->resultset('voip_peer_groups')->create(
                 $formdata );
             $self->_sip_lcr_reload;
             $c->flash(messages => [{type => 'success', text => 'Peering group successfully created!'}]);
@@ -265,7 +265,7 @@ sub servers_delete :Chained('servers_base') :PathPart('delete') :Args(0) {
 sub servers_preferences_list :Chained('servers_base') :PathPart('preferences') :CaptureArgs(0) {
     my ($self, $c) = @_;
       
-    my $x_pref_values = $c->model('provisioning')
+    my $x_pref_values = $c->model('DB')
         ->resultset('voip_preferences')
         ->search({
                 'peer_host.id' => $c->stash->{server}->{id}
@@ -296,7 +296,7 @@ sub servers_preferences_root :Chained('servers_preferences_list') :PathPart('') 
 sub servers_preferences_base :Chained('servers_preferences_list') :PathPart('') :CaptureArgs(1) {
     my ($self, $c, $pref_id) = @_;
     
-    $c->stash->{preference_meta} = $c->model('provisioning')
+    $c->stash->{preference_meta} = $c->model('DB')
         ->resultset('voip_preferences')
         ->search({
             -or => ['voip_preferences_enums.peer_pref' => 1,
@@ -306,7 +306,7 @@ sub servers_preferences_base :Chained('servers_preferences_list') :PathPart('') 
         })
         ->find({id => $pref_id});
 
-    $c->stash->{preference} = $c->model('provisioning')
+    $c->stash->{preference} = $c->model('DB')
         ->resultset('voip_peer_preferences')
         ->search({
             attribute_id => $pref_id,

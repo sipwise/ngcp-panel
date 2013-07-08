@@ -27,7 +27,7 @@ sub set_root :Chained('set_list') :PathPart('') :Args(0) {
 sub set_ajax :Chained('set_list') :PathPart('ajax') :Args(0) {
     my ($self, $c) = @_;
     
-    my $resultset = $c->model('provisioning')->resultset('voip_rewrite_rule_sets');
+    my $resultset = $c->model('DB')->resultset('voip_rewrite_rule_sets');
     
     $c->forward( "/ajax_process_resultset", [$resultset,
                  ["id", "name", "description"],
@@ -46,7 +46,7 @@ sub set_base :Chained('set_list') :PathPart('') :CaptureArgs(1) {
         return;
     }
 
-    my $res = $c->model('provisioning')->resultset('voip_rewrite_rule_sets')->find($set_id);
+    my $res = $c->model('DB')->resultset('voip_rewrite_rule_sets')->find($set_id);
     unless(defined($res)) {
         $c->flash(messages => [{type => 'error', text => 'Rewrite rule set does not exist!'}]);
         $c->response->redirect($c->uri_for());
@@ -98,7 +98,7 @@ sub set_create :Chained('set_list') :PathPart('create') :Args(0) {
         posted => ($c->request->method eq 'POST'),
         params => $c->request->params,
         action => $c->uri_for_action('/rewrite/set_create'),
-        item   => $c->model('provisioning')->resultset('voip_rewrite_rule_sets')->new_result({}),
+        item   => $c->model('DB')->resultset('voip_rewrite_rule_sets')->new_result({}),
     );
     if($form->validated) {
         $c->flash(messages => [{type => 'success', text => 'Rewrite Rule Set successfully created!'}]);

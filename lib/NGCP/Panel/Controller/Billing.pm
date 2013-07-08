@@ -39,13 +39,13 @@ sub profile_list :Chained('/') :PathPart('billing') :CaptureArgs(0) {
 
 sub _profile_resultset_admin {
     my ($self, $c) = @_;
-    my $rs = $c->model('billing')->resultset('billing_profiles');
+    my $rs = $c->model('DB')->resultset('billing_profiles');
     return $rs;
 }
 
 sub _profile_resultset_reseller {
     my ($self, $c) = @_;
-    my $rs = $c->model('billing')->resultset('admins')
+    my $rs = $c->model('DB')->resultset('admins')
         ->find($c->user->id)->reseller->billing_profiles;
     return $rs;
 }

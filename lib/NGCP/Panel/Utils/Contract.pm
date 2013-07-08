@@ -37,7 +37,7 @@ sub create_contract_balance {
     }
 
     try {
-        $c->model('billing')->resultset('contract_balances')->create({
+        $c->model('DB')->resultset('contract_balances')->create({
             contract_id => $contract->id,
             cash_balance => $cash_balance,
             cash_balance_interval => $cash_balance_interval,
