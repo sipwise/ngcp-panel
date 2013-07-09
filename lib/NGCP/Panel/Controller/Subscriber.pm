@@ -56,11 +56,6 @@ sub create_list :Chained('sub_list') :PathPart('create') :Args(0) {
         back_uri => $c->uri_for('/subscriber/create'),
     );
     if($form->validated) {
-        # TODO: save subscriber
-
-        $c->log->debug(">>>>>>>>>>>>>>>>>>>>>>>>>> subscriber validated");
-
-        # TODO: use transaction
         my $schema = $c->model('DB');
         try {
             $schema->txn_do(sub {
@@ -136,15 +131,14 @@ sub base :Chained('/subscriber/sub_list') :PathPart('') :CaptureArgs(1) {
         return;
     }
 
-    my $res = $c->model('DB')->resultset('voip_subscribers')->find($subscriber_id);
-    unless(defined($res)) {
+    my $res = $c->model('DB')->resultset('voip_subscribers')->find({ id => $subscriber_id });
+    unless(defined $res) {
         $c->flash(messages => [{type => 'error', text => 'Subscriber does not exist!'}]);
-        $c->response->redirect($c->uri_for());
-        return;
+        $c->response->redirect($c->uri_for('/subscriber'));
+        $c->detach;
     }
 
-    $c->stash(subscriber => {$res->get_columns});
-    $c->stash(subscriber_result => $res);
+    $c->stash(subscriber => $res);
 }
 
 sub ajax :Chained('sub_list') :PathPart('ajax') :Args(0) {
@@ -152,8 +146,8 @@ sub ajax :Chained('sub_list') :PathPart('ajax') :Args(0) {
     my $dispatch_to = '_ajax_resultset_' . $c->user->auth_realm;
     my $resultset = $self->$dispatch_to($c);
     $c->forward( "/ajax_process_resultset", [$resultset,
-                  ["id", "username", "domain_id"],
-                  ["username", "domain_id"]]);
+                  ["id", "username", "domain_id", "status",],
+                  ["username", "domain_id", "status",]]);
     $c->detach( $c->view("JSON") );
 }
 
@@ -167,6 +161,29 @@ sub _ajax_resultset_reseller {
 
     # TODO: filter for reseller
     return $c->model('DB')->resultset('voip_subscribers');
+}
+
+sub terminate :Chained('base') :PathPart('terminate') :Args(0) {
+    my ($self, $c) = @_;
+
+    my $subscriber = $c->stash->{subscriber};
+    my $schema = $c->model('DB');
+    try {
+        $schema->txn_do(sub {
+            use Data::Printer;
+            p $subscriber;
+            $subscriber->provisioning_voip_subscriber->delete;
+            $subscriber->update({ status => 'terminated' });
+        });
+        $c->flash(messages => [{type => 'success', text => 'Successfully terminated subscriber'}]);
+        $c->response->redirect($c->uri_for());
+        return;
+    } catch($e) {
+        $c->log->error("Failed to terminate subscriber: $e");
+        $c->flash(messages => [{type => 'error', text => 'Failed to terminate subscriber'}]);
+        $c->response->redirect($c->uri_for());
+        return;
+    }
 }
 
 sub master :Chained('/') :PathPart('subscriber') :Args(1) {

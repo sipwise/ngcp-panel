@@ -3,8 +3,8 @@
     helper.name = 'Subscriber';
     helper.data = subscribers;
     helper.messages = messages;
-    helper.column_titles = [ '#', 'Username', 'Domain #' ];
-    helper.column_fields = [ 'id', 'username', 'domain_id' ];
+    helper.column_titles = [ '#', 'Username', 'Domain #', 'Status' ];
+    helper.column_fields = [ 'id', 'username', 'domain_id', 'status' ];
 
     helper.close_target = close_target;
     helper.create_flag = create_flag;
@@ -13,8 +13,8 @@
     helper.ajax_uri = c.uri_for( c.controller.action_for('ajax') );
 
     helper.dt_buttons = [
-        { name = 'Delete', uri = "/subscriber/'+full[\"id\"]+'/delete", class = 'btn-small btn-secondary', icon = 'icon-trash' },
-        { name = 'Preferences', uri = "/subscriber/'+full[\"id\"]+'/preferences", class = 'btn-small btn-tertiary', icon = 'icon-list' },
+        { name = 'Terminate', uri = "/subscriber/'+full.id+'/terminate", class = 'btn-small btn-secondary', icon = 'icon-trash', condition = 'full.status != "terminated"' },
+        { name = 'Preferences', uri = "/subscriber/'+full.id+'/preferences", class = 'btn-small btn-tertiary', icon = 'icon-list', condition = 'full.status != "terminated"' },
     ];
     helper.top_buttons = [
         { name = 'Create Subscriber', uri = c.uri_for_action('/subscriber/create_list'), icon = 'icon-star' },

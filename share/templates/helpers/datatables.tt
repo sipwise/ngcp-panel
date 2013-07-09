@@ -26,15 +26,23 @@ $(document).ready(function() {
 		    { "mData": "[% f %]" },
 		    [% END -%]
 		    {   "mRender": function ( data, type, full ) {
-                    return '' +
-                    '<div class="sw_actions pull-right">' 
+                    var html = '' +
+                    '<div class="sw_actions pull-right">';
                     [% FOR button IN helper.dt_buttons -%]
                       [% confirm_delete = 'data-confirm="Delete"' IF button.name == "Delete" -%]
-                      + '<a class="btn [% button.class %]" href="[% button.uri %]" [% confirm_delete %]>' +
-                          '<i class="[% button.icon %]"></i> [% button.name %]' +
-                        '</a>'
+                      [% IF button.condition -%]
+                        if([% button.condition %]) {
+                      [% END -%]
+                        html +=
+                           '<a class="btn [% button.class %]" href="[% button.uri %]" [% confirm_delete %]>' +
+                              '<i class="[% button.icon %]"></i> [% button.name %]' +
+                            '</a>';
+                      [% IF button.condition -%]
+                        }
+                      [% END -%]
                     [% END -%]
-                    + '</div>';
+                    html += '</div>';
+                    return html;
                 },
                 "mData": null,
                 "bSortable": false,
