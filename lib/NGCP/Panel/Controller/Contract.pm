@@ -311,8 +311,8 @@ sub customer_ajax :Chained('customer_list') :PathPart('ajax') :Args(0) {
         });
 
     $c->forward( "/ajax_process_resultset", [$rs,
-                 ["id","contact_id", "billing_profile_id", "billing_profile_name","status"],
-                 ["billing_profile.name", "status"]]);
+                 ["id","contact_id", "external_id", "billing_profile_id", "billing_profile_name","status"],
+                 ["external_id", "billing_profile.name", "status"]]);
     
     $c->detach( $c->view("JSON") );
 }

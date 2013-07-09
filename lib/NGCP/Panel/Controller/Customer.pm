@@ -101,10 +101,6 @@ sub base :Chained('list_customer') :PathPart('') :CaptureArgs(1) {
 
 sub details :Chained('base') :PathPart('details') :Args(0) {
     my ($self, $c) = @_;
-
-    $c->stash(
-        subscribers => $c->stash->{contract}->voip_subscribers,
-    );
 }
 
 sub edit_fraud :Chained('base') :PathPart('fraud/edit') :Args(1) {
