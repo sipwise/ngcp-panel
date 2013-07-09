@@ -15,7 +15,26 @@ sub auto :Does(ACL) :ACLDetachTo('/denied_page') :AllowedRole(admin) :AllowedRol
 sub dom_list :Chained('/') :PathPart('domain') :CaptureArgs(0) {
     my ($self, $c) = @_;
 
-    $c->stash(template => 'domain/list.tt');
+    my $dispatch_to = '_dom_resultset_' . $c->user->auth_realm;
+    my $dom_rs = $self->$dispatch_to($c);
+
+    $c->stash(dom_rs   => $dom_rs,
+              template => 'domain/list.tt');
+}
+
+sub _dom_resultset_admin {
+    my ($self, $c) = @_;
+    return $c->model('DB')->resultset('domains');
+}
+
+sub _dom_resultset_reseller {
+    my ($self, $c) = @_;
+
+    return $c->model('DB')->resultset('admins')->find(
+            { id => $c->user->id, } )
+        ->reseller
+        ->domain_resellers
+        ->search_related('domain');
 }
 
 sub root :Chained('dom_list') :PathPart('') :Args(0) {
@@ -33,7 +52,27 @@ sub create :Chained('dom_list') :PathPart('create') :Args(0) {
     );
     if($form->validated) {
 
-        #TODO: create domain
+        try {
+            $c->model('DB')->schema->txn_do( sub {
+                $c->model('DB')->resultset('voip_domains')
+                    ->create({domain => $form->value->{domain}});
+                my $new_dom = $c->stash->{dom_rs}
+                    ->create({domain => $form->value->{domain}});
+
+                if( $c->user->auth_realm eq 'reseller' ) {
+                    my $reseller = $c->model('DB')->resultset('admins')
+                        ->find($c->user->id)->reseller;
+                    $new_dom->create_related('domain_resellers', {
+                        reseller => $reseller
+                    });
+                }
+            });
+        } catch ($e) {
+            $c->flash(messages => [{type => 'error', text => 'Creation of Domain failed!'}]);
+            $c->log->error("Create failed: $e");
+            $c->response->redirect($c->uri_for());
+            return;
+        }
 
         $self->_sip_domain_reload;
         $c->flash(messages => [{type => 'success', text => 'Domain successfully created!'}]);
@@ -52,17 +91,24 @@ sub base :Chained('/domain/dom_list') :PathPart('') :CaptureArgs(1) {
     unless($domain_id && $domain_id->is_integer) {
         $c->flash(messages => [{type => 'error', text => 'Invalid domain id detected!'}]);
         $c->response->redirect($c->uri_for());
+        $c->detach;
         return;
     }
 
-    my $res = $c->model('DB')->resultset('domains')->find($domain_id);
+    my $res = $c->stash->{dom_rs}->find($domain_id);
     unless(defined($res)) {
         $c->flash(messages => [{type => 'error', text => 'Domain does not exist!'}]);
         $c->response->redirect($c->uri_for());
+        $c->detach;
         return;
     }
-    $c->stash(domain => {$res->get_columns});
-    $c->stash(domain_result => $res);
+
+    $c->stash(provisioning_domain_result => $c->model('DB')
+        ->resultset('voip_domains')
+        ->find({domain => $res->domain}) );
+
+    $c->stash(domain        => {$res->get_columns},
+              domain_result => $res);
 }
 
 sub edit :Chained('base') :PathPart('edit') :Args(0) {
@@ -76,10 +122,23 @@ sub edit :Chained('base') :PathPart('edit') :Args(0) {
         action => $c->uri_for($c->stash->{domain}->{id}, 'edit'),
     );
     if($posted && $form->validated) {
-        
-        $c->stash->{'domain_result'}->update({
-              domain => $form->field('domain')->value,
-          });
+
+        try {
+            $c->model('DB')->schema->txn_do( sub {
+                $c->stash->{'domain_result'}->update({
+                    domain => $form->value->{domain},
+                });
+                $c->stash->{'provisioning_domain_result'}->update({
+                    domain => $form->value->{domain},
+                });
+            });
+        } catch ($e) {
+            $c->flash(messages => [{type => 'error', text => 'Update of Domain failed!'}]);
+            $c->log->error("Update failed: $e");
+            $c->response->redirect($c->uri_for());
+            return;
+        }
+
         $self->_sip_domain_reload;
 
         $c->flash(messages => [{type => 'success', text => 'Domain successfully changed!'}]);
@@ -94,15 +153,20 @@ sub edit :Chained('base') :PathPart('edit') :Args(0) {
 
 sub delete :Chained('base') :PathPart('delete') :Args(0) {
     my ($self, $c) = @_;
-    
-    unless ( defined($c->stash->{'domain_result'}) ) {
+
+    try {
+        $c->model('DB')->schema->txn_do( sub {
+            $c->stash->{'domain_result'}->delete;
+            $c->stash->{'provisioning_domain_result'}->delete;
+        });
+    } catch ($e) {
+        $c->flash(messages => [{type => 'error', text => 'Delete failed!'}]);
+        $c->log->error("Delete failed: $e");
+        $c->response->redirect($c->uri_for());
         return;
     }
 
-    $c->stash->{'domain_result'}->delete;
     $self->_sip_domain_reload;
-    
-    #TODO: correctly delete domain
 
     $c->flash(messages => [{type => 'success', text => 'Domain successfully deleted!'}]);
     $c->response->redirect($c->uri_for());
@@ -110,42 +174,20 @@ sub delete :Chained('base') :PathPart('delete') :Args(0) {
 
 sub ajax :Chained('dom_list') :PathPart('ajax') :Args(0) {
     my ($self, $c) = @_;
-    my $dispatch_to = '_ajax_resultset_' . $c->user->auth_realm;
-    my $resultset = $self->$dispatch_to($c);
+
+    my $resultset = $c->stash->{dom_rs};
+
     $c->forward( "/ajax_process_resultset", [$resultset,
                  ["id", "domain"],
                  ["domain"]]);
     $c->detach( $c->view("JSON") );
 }
 
-sub _ajax_resultset_admin {
-    my ($self, $c) = @_;
-    return $c->model('DB')->resultset('domains');
-}
-
-sub _ajax_resultset_reseller {
-    my ($self, $c) = @_;
-    return $c->model('DB')->resultset('domains')->search_rs(
-        {
-            'admins.id' => $c->user->id,
-        },
-        {
-            join => {domain_resellers => {reseller => 'admins'}},
-            id => {-ident => 'domain_resellers.id'},
-            'domain_resellers.reseller_id' => {-ident => 'resellers.id'},
-            'resellers.id' => {-ident => 'admins.reseller_id'},
-        }
-    );
-}
-
 sub preferences :Chained('base') :PathPart('preferences') :Args(0) {
     my ($self, $c) = @_;
-    
-    my $domain_name = $c->stash->{domain}->{domain};
-    $c->stash->{provisioning_domain_id} = $c->model('DB')
-        ->resultset('voip_domains')
-        ->single({domain => $domain_name})->id;
 
+    $c->stash->{provisioning_domain_id} = $c->stash
+        ->{provisioning_domain_result}->id;
 
     $self->load_preference_list($c);
     $c->stash(template => 'domain/preferences.tt');
