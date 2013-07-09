@@ -118,15 +118,12 @@ sub create_preference_form {
     my $pref_rs = $params{pref_rs};
     my $base_uri = $params{base_uri};
     my $edit_uri = $params{edit_uri};
-    
-    my @enums = $c->stash->{preference_meta}
-        ->voip_preferences_enums
-        ->all;
+    my $enums    = $params{enums};
 
     my $form = NGCP::Panel::Form::Preferences->new({
         fields_data => [{
             meta => $c->stash->{preference_meta},
-            enums => \@enums,
+            enums => $enums,
         }],
     });
     $form->create_structure([$c->stash->{preference_meta}->attribute]);
@@ -233,6 +230,7 @@ Put them to stash as "pref_groups". This will be used in F<helpers/pref_table.tt
 Parameters:
     c - set this to $c
     pref_rs - a resultset for voip_x_preferences with the specific "x" already set
+    enums - arrayref of all relevant enum rows (already filtered by eg. dom_pref)
     base_uri - string, uri of the preferences list
     edit_uri - string, uri to show the preferences edit modal
 

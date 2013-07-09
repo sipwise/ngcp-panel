@@ -322,11 +322,16 @@ sub servers_preferences_edit :Chained('servers_preferences_base') :PathPart('edi
     my ($self, $c) = @_;
    
     $c->stash(edit_preference => 1);
+
+    my @enums = $c->stash->{preference_meta}
+        ->voip_preferences_enums
+        ->all;
     
     my $pref_rs = $c->stash->{server_result}->voip_peer_preferences;
 
     NGCP::Panel::Utils::create_preference_form( c => $c,
         pref_rs => $pref_rs,
+        enums   => \@enums,
         base_uri => $c->uri_for_action('/peering/servers_preferences_root', [@{ $c->req->captures }[0,1]]),
         edit_uri => $c->uri_for_action('/peering/servers_preferences_edit', $c->req->captures),
     );

@@ -222,10 +222,16 @@ sub preferences_edit :Chained('preferences_base') :PathPart('edit') :Args(0) {
    
     $c->stash(edit_preference => 1);
     
+    my @enums = $c->stash->{preference_meta}
+        ->voip_preferences_enums
+        ->search({dom_pref => 1})
+        ->all;
+
     my $pref_rs = $c->stash->{preference};
 
     NGCP::Panel::Utils::create_preference_form( c => $c,
         pref_rs => $pref_rs,
+        enums   => \@enums,
         base_uri => $c->uri_for_action('/domain/preferences', [$c->req->captures->[0]]),
         edit_uri => $c->uri_for_action('/domain/preferences_edit', $c->req->captures),
     );
