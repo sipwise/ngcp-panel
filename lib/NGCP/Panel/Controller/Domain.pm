@@ -186,9 +186,6 @@ sub ajax :Chained('dom_list') :PathPart('ajax') :Args(0) {
 sub preferences :Chained('base') :PathPart('preferences') :Args(0) {
     my ($self, $c) = @_;
 
-    $c->stash->{provisioning_domain_id} = $c->stash
-        ->{provisioning_domain_result}->id;
-
     $self->load_preference_list($c);
     $c->stash(template => 'domain/preferences.tt');
 }
@@ -202,7 +199,7 @@ sub preferences_base :Chained('base') :PathPart('preferences') :CaptureArgs(1) {
         ->resultset('voip_preferences')
         ->single({id => $pref_id});
     my $domain_name = $c->stash->{domain}->{domain};
-    $c->stash->{provisioning_domain_id} = $c->model('DB')
+    my $provisioning_domain_id = $c->model('DB')
         ->resultset('voip_domains')
         ->single({domain => $domain_name})->id;
 
@@ -210,7 +207,7 @@ sub preferences_base :Chained('base') :PathPart('preferences') :CaptureArgs(1) {
         ->resultset('voip_dom_preferences')
         ->search({
             attribute_id => $pref_id,
-            domain_id => $c->stash->{provisioning_domain_id}
+            domain_id => $provisioning_domain_id,
         });
     my @values = $c->stash->{preference}->get_column("value")->all;
     $c->stash->{preference_values} = \@values;
@@ -328,13 +325,11 @@ Get domains and output them as JSON.
 
 Show a table view of preferences.
 
-Data that is put on stash: provisioning_domain_id
-
 =head2 preferences_base
 
 Get details about one preference for further editing.
 
-Data that is put on stash: preference_meta, provisioning_domain_id, preference, preference_values
+Data that is put on stash: preference_meta, preference, preference_values
 
 =head2 preferences_edit
 
