@@ -64,22 +64,23 @@ sub create_list :Chained('sub_list') :PathPart('create') :Args(0) {
                 UUID::unparse($uuid_bin, $uuid_string);
 
                 # TODO: check if we find a reseller and contract and domains
-                my $reseller = $c->model('DB')->resultset('resellers')
+                my $reseller = $schema->resultset('resellers')
                     ->find($c->request->params->{'reseller.id'});
-                my $contract = $c->model('DB')->resultset('contracts')
+                my $contract = $schema->resultset('contracts')
                     ->find($c->request->params->{'contract.id'});
-                my $prov_domain = $c->model('DB')->resultset('voip_domains')
+                my $prov_domain = $schema->resultset('voip_domains')
                     ->find($c->request->params->{'domain.id'});
-                my $billing_domain = $c->model('DB')->resultset('domains')
+                my $billing_domain = $schema->resultset('domains')
                     ->find({domain => $prov_domain->domain});
 
                 my $number;
-                if(defined $c->request->params->{'e164.cc'} && $c->request->params->{'e164.cc'} ne '') {
-                    # TODO: must have sn set!
+                if(defined $c->request->params->{'e164.cc'} && 
+                   $c->request->params->{'e164.cc'} ne '') {
+
                     $number = $reseller->voip_numbers->create({
                         cc => $c->request->params->{'e164.cc'},
                         ac => $c->request->params->{'e164.ac'} || '',
-                        sn => $c->request->params->{'e164.sn'} || '',
+                        sn => $c->request->params->{'e164.sn'},
                         status => 'active',
                     });
                 }
@@ -94,16 +95,51 @@ sub create_list :Chained('sub_list') :PathPart('create') :Args(0) {
                     $number->update({ subscriber_id => $billing_subscriber->id });
                 }
 
-                $c->model('DB')->resultset('provisioning_voip_subscribers')->create({
+                my $prov_subscriber = $schema->resultset('provisioning_voip_subscribers')->create({
                     uuid => $uuid_string,
                     username => $c->request->params->{username},
                     password => $c->request->params->{password},
-                    webusername => $c->request->params->{webusername},
+                    webusername => $c->request->params->{webusername} || $c->request->params->{username},
                     webpassword => $c->request->params->{webpassword},
                     admin => $c->request->params->{administrative} || 0,
                     account_id => $contract->id,
                     domain_id => $prov_domain->id,
                 });
+
+                my $voip_preferences = $schema->resultset('voip_preferences')->search({
+                    'usr_pref' => 1,
+                });
+                $voip_preferences->find({ 'attribute' => 'account_id' })
+                    ->voip_usr_preferences->create({ 
+                        'subscriber_id' => $prov_subscriber->id,
+                        'value' => $prov_subscriber->contract->id,
+                    });
+                $voip_preferences->find({ 'attribute' => 'ac' })
+                    ->voip_usr_preferences->create({ 
+                        'subscriber_id' => $prov_subscriber->id,
+                        'value' => $c->request->params->{'e164.ac'},
+                    }) if (defined $c->request->params->{'e164.ac'} && 
+                           length($c->request->params->{'e164.ac'}) > 0);
+                if(defined $c->request->params->{'e164.cc'} &&
+                   length($c->request->params->{'e164.cc'}) > 0) {
+
+                        $voip_preferences->find({ 'attribute' => 'cc' })
+                            ->voip_usr_preferences->create({ 
+                                'subscriber_id' => $prov_subscriber->id,
+                                'value' => $c->request->params->{'e164.cc'},
+                            });
+                        my $cli = $c->request->params->{'e164.cc'} .
+                                  (defined $c->request->params->{'e164.ac'} &&
+                                   length($c->request->params->{'e164.ac'}) > 0 ?
+                                   $c->request->params->{'e164.ac'} : ''
+                                  ) .
+                                  $c->request->params->{'e164.sn'};
+                        $voip_preferences->find({ 'attribute' => 'cli' })
+                            ->voip_usr_preferences->create({ 
+                                'subscriber_id' => $prov_subscriber->id,
+                                'value' => $cli,
+                            });
+                }
             });
             $c->flash(messages => [{type => 'success', text => 'Subscriber successfully created!'}]);
             $c->response->redirect($c->uri_for('/subscriber'));

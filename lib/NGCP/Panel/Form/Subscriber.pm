@@ -57,7 +57,6 @@ has_field 'e164' => (
 
 has_field 'e164.cc' => (
     type => 'PosInteger',
-    label => 'cc:',
     element_attr => { 
         class => ['ngcp_e164_cc'], 
         rel => ['tooltip'], 
@@ -69,7 +68,6 @@ has_field 'e164.cc' => (
 
 has_field 'e164.ac' => (
     type => 'PosInteger',
-    label => 'ac:',
     element_attr => { 
         class => ['ngcp_e164_ac'], 
         rel => ['tooltip'], 
@@ -81,7 +79,6 @@ has_field 'e164.ac' => (
 
 has_field 'e164.sn' => (
     type => 'PosInteger',
-    label => 'sn:',
     element_attr => { 
         class => ['ngcp_e164_sn'], 
         rel => ['tooltip'], 
@@ -165,6 +162,20 @@ has_block 'actions' => (
     class => [qw/modal-footer/],
     render_list => [qw/save/],
 );
+
+sub validate {
+    my $self = shift;
+    my $cc = $self->field('e164.cc')->value;
+    my $sn = $self->field('e164.sn')->value;
+
+    if (defined $cc && $cc ne '' && (!defined $sn || $sn eq '')) {
+        my $err_msg = 'Subscriber Number required if Country Code is set';
+        $self->field('e164')->add_error($err_msg);
+    } elsif(defined $sn && $sn ne '' && (!defined $cc || $cc eq '')) {
+        my $err_msg = 'Country Code required if Subscriber Number is set';
+        $self->field('e164')->add_error($err_msg);
+    }
+}
 
 1;
 
