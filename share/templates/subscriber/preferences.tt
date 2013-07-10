@@ -13,11 +13,98 @@
     helper.rewrite_rule_sets = rwr_sets;
     helper.ncos_levels = ncos_levels;
     helper.sound_sets = sound_sets;
+    helper.skip_head = 1;
+%]
 
-    helper.top_buttons = [
-        { name = 'Back', uri = c.uri_for(), icon = 'icon-arrow-left' },
-    ];
+<div class="row">
+    <span>
+    <a class="btn btn-primary btn-large" href="[% c.uri_for() %]"><i class="icon-arrow-left"></i> Back</a>
+    </span>
+</div>
 
+[% IF helper.messages -%]
+<div class="row">
+    [% FOREACH m IN helper.messages -%]
+        <div class="alert alert-[% m.type %]">[% m.text %]</div>
+    [% END -%]
+</div>
+[% END -%]
+
+<div class="ngcp-separator"></div>
+
+<div class="accordion" id="preference_groups">
+    <div class="accordion-group">
+        <div class="accordion-heading">
+            <a class="accordion-toggle" data-toggle="collapse" data-parent="#preference_groups" href="#collapse_cf">Test</a>
+        </div>
+        <div class="accordion-body collapse" id="collapse_cf">
+            <div class="accordion-inner">
+
+                <table class="table table-bordered table-striped table-highlight table-hover" id="preferences_table[% group.id %]">
+                    <thead>
+                        <tr>
+                            <th>Type</th>
+                            <th>Answer Timeout</th>
+                            <th>Destinations</th>
+                            <th>Period</th>
+                            [% # one for actions -%]
+                            <th class="span3"></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Call Forward Unconditional</td>
+                            <td></td>
+                            <td>
+                                4312345<br/>
+                                foo@bar.com<br/>
+                                voicebox
+                            </td>
+                            <td>always</td>
+                            <td class="span3"></td>
+                        </tr>
+                        <tr>
+                            <td>Call Forward Busy</td>
+                            <td></td>
+                            <td>
+                                4312345<br/>
+                                foo@bar.com<br/>
+                                voicebox
+                            </td>
+                            <td>always</td>
+                            <td class="span3"></td>
+                        </tr>
+                        <tr>
+                            <td>Call Forward Timeout</td>
+                            <td>15s</td>
+                            <td>
+                                4312345<br/>
+                                foo@bar.com<br/>
+                                voicebox
+                            </td>
+                            <td>always</td>
+                            <td class="span3"></td>
+                        </tr>
+                        <tr>
+                            <td>Call Forward Unavailable</td>
+                            <td></td>
+                            <td>
+                                4312345<br/>
+                                foo@bar.com<br/>
+                                voicebox
+                            </td>
+                            <td>always</td>
+                            <td class="span3"></td>
+                        </tr>
+                    </tbody>
+                </table>
+
+            </div>
+        </div>
+    </div>
+
+
+[% 
     PROCESS 'helpers/pref_table.tt';
 %]
 

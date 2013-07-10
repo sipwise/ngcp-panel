@@ -1,3 +1,4 @@
+[% UNLESS helper.skip_head == 1 -%]
 <div class="row">
     [% FOR button IN helper.top_buttons -%]
     <span>
@@ -17,6 +18,8 @@
 <div class="ngcp-separator"></div>
 
 <div class="accordion" id="preference_groups">
+[% END -%]
+
 [% FOREACH group IN helper.pref_groups %]
 <div class="accordion-group">
     <div class="accordion-heading">
