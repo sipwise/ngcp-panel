@@ -37,6 +37,7 @@ sub field_list {
         if($meta->attribute eq "rewrite_rule_set") {
             my @options = map {{label => $_->name, value => $_->id}}
                 defined $rwrs_rs ? $rwrs_rs->all : ();
+            unshift @options, {label => '', value => ''};
             $field = {
                 name => $meta->attribute,
                 type => 'Select',
@@ -45,6 +46,7 @@ sub field_list {
         } elsif ($meta->attribute eq "ncos" || $meta->attribute eq "adm_ncos") {
             my @options = map {{label => $_->level, value => $_->id}}
                 defined $ncos_rs ? $ncos_rs->all : ();
+            unshift @options, {label => '', value => ''};
             $field = {
                 name => $meta->attribute,
                 type => 'Select',

@@ -221,6 +221,93 @@ sub terminate :Chained('base') :PathPart('terminate') :Args(0) {
     }
 }
 
+sub preferences :Chained('base') :PathPart('preferences') :Args(0) {
+    my ($self, $c) = @_;
+
+    $self->load_preference_list($c);
+    $c->stash(template => 'subscriber/preferences.tt');
+}
+
+sub preferences_base :Chained('base') :PathPart('preferences') :CaptureArgs(1) {
+    my ($self, $c, $pref_id) = @_;
+
+    $self->load_preference_list($c);
+
+    $c->stash->{preference_meta} = $c->model('DB')
+        ->resultset('voip_preferences')
+        ->single({id => $pref_id});
+
+    $c->stash->{preference} = $c->model('DB')
+        ->resultset('voip_usr_preferences')
+        ->search({
+            attribute_id => $pref_id,
+            subscriber_id => $c->stash->{subscriber}->provisioning_voip_subscriber->id
+        });
+    my @values = $c->stash->{preference}->get_column("value")->all;
+    $c->stash->{preference_values} = \@values;
+    $c->stash(template => 'subscriber/preferences.tt');
+}
+
+sub preferences_edit :Chained('preferences_base') :PathPart('edit') :Args(0) {
+    my ($self, $c) = @_;
+
+    $c->stash(edit_preference => 1);
+
+    my @enums = $c->stash->{preference_meta}
+        ->voip_preferences_enums
+        ->search({usr_pref => 1})
+        ->all;
+
+    my $pref_rs = $c->model('DB')
+        ->resultset('voip_usr_preferences')
+        ->search({
+            subscriber_id => $c->stash->{subscriber}->provisioning_voip_subscriber->id
+        });
+
+    NGCP::Panel::Utils::create_preference_form( c => $c,
+        pref_rs => $pref_rs,
+        enums   => \@enums,
+        base_uri => $c->uri_for_action('/subscriber/preferences', [$c->req->captures->[0]]),
+        edit_uri => $c->uri_for_action('/subscriber/preferences_edit', $c->req->captures),
+    );
+}
+
+
+sub load_preference_list :Private {
+    my ($self, $c) = @_;
+
+    my $usr_pref_values = $c->model('DB')
+        ->resultset('voip_preferences')
+        ->search({
+                'subscriber.id' => $c->stash->{subscriber}->provisioning_voip_subscriber->id
+            },{
+                prefetch => {'voip_usr_preferences' => 'subscriber'},
+            });
+
+    my %pref_values;
+    foreach my $value($usr_pref_values->all) {
+
+        $pref_values{$value->attribute} = [
+            map {$_->value} $value->voip_usr_preferences->all
+        ];
+    }
+
+    my $rewrite_rule_sets_rs = $c->model('DB')
+        ->resultset('voip_rewrite_rule_sets');
+    $c->stash(rwr_sets_rs => $rewrite_rule_sets_rs,
+              rwr_sets    => [$rewrite_rule_sets_rs->all]);
+
+    my $ncos_levels_rs = $c->model('DB')
+        ->resultset('ncos_levels');
+    $c->stash(ncos_levels_rs => $ncos_levels_rs,
+              ncos_levels    => [$ncos_levels_rs->all]);
+
+    NGCP::Panel::Utils::load_preference_list( c => $c,
+        pref_values => \%pref_values,
+        usr_pref => 1,
+    );
+}
+
 sub master :Chained('/') :PathPart('subscriber') :Args(1) {
     my ($self, $c, $subscriber_id) = @_;
 

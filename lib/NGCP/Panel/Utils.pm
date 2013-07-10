@@ -217,18 +217,35 @@ sub create_preference_form {
             );
             my $attribute_id = $c->model('DB')->resultset('voip_preferences')
                 ->find({attribute => $attribute."_id"})->id;
-            $pref_rs->update_or_create({
-                attribute_id => $attribute_id,
-            })->update({ value => $selected_level->id });
+
+
+            my $preference = $pref_rs->search({ attribute_id => $attribute_id });
+            if(!defined $selected_level) {
+                $preference->first->delete if $preference->first;
+            } elsif($preference->first) {
+                $preference->first->update({ value => $selected_level->id });
+            } else {
+                $preference->create({ value => $selected_level->id });
+            }
+
             $c->flash(messages => [{type => 'success', text => "Preference $attribute successfully updated."}]);
             $c->response->redirect($base_uri);
             return;
         } else {
-            $pref_rs->update_or_create({
-                id => $preference_id,
-                attribute_id => $c->stash->{preference_meta}->id,
-                value => $form->field($attribute)->value,
-            });
+            if($form->field($attribute)->value eq '') {
+                my $preference = $pref_rs->find($preference_id);
+                $preference->delete if $preference;
+            } elsif($c->stash->{preference_meta}->data_type eq 'boolean' && 
+                    $form->field($attribute)->value == 0) {
+                my $preference = $pref_rs->find($preference_id);
+                $preference->delete if $preference;
+            } else {
+                $pref_rs->update_or_create({
+                    id => $preference_id,
+                    attribute_id => $c->stash->{preference_meta}->id,
+                    value => $form->field($attribute)->value,
+                });
+            }
             $c->flash(messages => [{type => 'success', text => "Preference $attribute successfully updated."}]);
             $c->response->redirect($base_uri);
             return;
@@ -255,6 +272,7 @@ sub create_preference_form {
         }
     }
 
+    $form->process if $posted;
     $c->stash(form => $form);
 }
 
@@ -265,15 +283,22 @@ sub _set_rewrite_preferences {
     my $rwrs_result   = $params{rwrs_result};
     my $pref_rs       = $params{pref_rs};
 
-    for my $foo ("callee_in_dpid", "caller_in_dpid",
+    for my $rules ("callee_in_dpid", "caller_in_dpid",
                  "callee_out_dpid", "caller_out_dpid") {
 
         my $attribute_id = $c->model('DB')->resultset('voip_preferences')
-            ->find({attribute => "rewrite_$foo"})->id;
+            ->find({attribute => "rewrite_$rules"})->id;
         my $preference = $pref_rs->search({
             attribute_id => $attribute_id,
-        })->update_or_create({});
-        $preference->update({ value => $rwrs_result->$foo });
+        });
+
+        if(!defined $rwrs_result) {
+            $preference->first->delete if $preference->first;
+        } elsif($preference->first) {
+            $preference->first->update({ value => $rwrs_result->$rules });
+        } else {
+            $preference->create({ value => $rwrs_result->$rules });
+        }
     }
 
 }

@@ -140,22 +140,23 @@ $(function() {
     [% IF helper.preference_meta.max_occur != 1 %]
         <div class="modal-body">
         [% FOREACH v IN helper.preference.all %]
+            <div class="row-fluid">
             [% IF v.value.substr(0,1) == '#' %]
                 <input type="text" value="[% v.value.substr(1) %]" disabled="disabled" class="ngcp-entry-disabled"></input>
             [% ELSE %]
                 <input type="text" value="[% v.value %]" disabled="disabled"></input>
             [% END %]
-            <a href="?delete=[% v.id %]"><i class="icon-trash"></i></a>
+            <a class="btn btn-primary pull-right" href="?delete=[% v.id %]"><i class="icon-trash"></i></a>
             [% IF v.value.substr(0,1) == '#' %]
-                <a href="?activate=[% v.id %]"><i class="icon-ok"></i></a>
+                <a class="btn btn-primary pull-right" href="?activate=[% v.id %]"><i class="icon-ok"></i></a>
             [% ELSE %]
-                <a href="?deactivate=[% v.id %]"><i class="icon-ban-circle"></i></a>
+                <a class="btn btn-primary pull-right" href="?deactivate=[% v.id %]"><i class="icon-ban-circle"></i></a>
             [% END %]
-            <br />
+          </div>
         [% END %]
         <form action="[% helper.form.action %]" method="post">
             [% helper.form.fields.2.render %]
-            <span class="">[% helper.form.field("add").render %]</span>
+            <span class="pull-right">[% helper.form.field("add").render %]</span>
         </form>
         </div>
     [% ELSE %]

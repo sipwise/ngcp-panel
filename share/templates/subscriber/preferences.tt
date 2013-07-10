@@ -1,7 +1,7 @@
-[% site_config.title = 'Domain "' _ domain.domain _ '" – Preferences' -%]
+[% site_config.title = 'Subscriber "' _ subscriber.username _ '@' _ subscriber.domain.domain _ '" – Preferences' -%]
 
 [% 
-    helper.name = 'Domain';
+    helper.name = 'Subscriber';
     helper.messages = messages;
     
     helper.edit_preference = edit_preference;
@@ -9,7 +9,7 @@
     helper.preference_meta = preference_meta;
     helper.pref_groups = pref_groups;
     helper.form = form;
-    helper.base_uri = c.uri_for(domain.id,'preferences');
+    helper.base_uri = c.uri_for(subscriber.id,'preferences');
     helper.rewrite_rule_sets = rwr_sets;
     helper.ncos_levels = ncos_levels;
 
