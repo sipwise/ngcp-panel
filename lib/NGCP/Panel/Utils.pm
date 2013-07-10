@@ -139,6 +139,42 @@ sub create_preference_form {
     my $edit_uri = $params{edit_uri};
     my $enums    = $params{enums};
 
+    my $preselected_value = undef;
+    if ($c->stash->{preference_meta}->attribute eq "rewrite_rule_set") {
+        my $rewrite_caller_in_dpid = $pref_rs->search({
+                'attribute.attribute' => 'rewrite_caller_in_dpid'
+            },{
+                join => 'attribute'
+            })->first;
+        if (defined $rewrite_caller_in_dpid) {
+            $preselected_value = $c->stash->{rwr_sets_rs}->search({
+                    caller_in_dpid => $rewrite_caller_in_dpid->value,
+                })->first->id;
+        }
+    } elsif ($c->stash->{preference_meta}->attribute eq "ncos") {
+        my $ncos_id_preference = $pref_rs->search({
+                'attribute.attribute' => 'ncos_id'
+            },{
+                join => 'attribute'
+            })->first;
+        if (defined $ncos_id_preference) {
+            $preselected_value = $ncos_id_preference->value;
+        }
+    } elsif ($c->stash->{preference_meta}->attribute eq "adm_ncos") {
+        my $ncos_id_preference = $pref_rs->search({
+                'attribute.attribute' => 'adm_ncos_id'
+            },{
+                join => 'attribute'
+            })->first;
+        if (defined $ncos_id_preference) {
+            $preselected_value = $ncos_id_preference->value;
+        }
+    } elsif ($c->stash->{preference_meta}->max_occur == 1) {
+        $preselected_value = $c->stash->{preference_values}->[0];
+    }
+
+    $c->log->debug("Preselected value: $preselected_value");
+
     my $form = NGCP::Panel::Form::Preferences->new({
         fields_data => [{
             meta => $c->stash->{preference_meta},
@@ -150,19 +186,11 @@ sub create_preference_form {
     $form->create_structure([$c->stash->{preference_meta}->attribute]);
 
     my $posted = ($c->request->method eq 'POST');
-    if($c->stash->{preference_meta}->max_occur == 1){
-        $form->process(
-            posted => 1,
-            params => $posted ? $c->request->params : { $c->stash->{preference_meta}->attribute => $c->stash->{preference_values}->[0] },
-            action => $edit_uri,
-        );
-    } else {
-        $form->process(
-            posted => 1,
-            params => $posted ? $c->request->params : {},
-            action => $edit_uri,
-        );
-    }
+    $form->process(
+        posted => 1,
+        params => $posted ? $c->request->params : { $c->stash->{preference_meta}->attribute => $preselected_value },
+        action => $edit_uri,
+    );
     if($posted && $form->validated) {
         my $preference_id = $c->stash->{preference}->first ? $c->stash->{preference}->first->id : undef;
         my $attribute = $c->stash->{preference_meta}->attribute;
