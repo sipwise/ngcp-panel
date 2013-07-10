@@ -43,6 +43,7 @@ $(document).ready(function() {
                     '<div class="sw_actions pull-right">';
                     [% FOR button IN helper.dt_buttons -%]
                       [% confirm_delete = 'data-confirm="Delete"' IF button.name == "Delete" -%]
+                      [% confirm_delete = 'data-confirm="Terminate"' IF button.name == "Terminate" -%]
                       [% IF button.condition -%]
                         if([% button.condition %]) {
                       [% END -%]
