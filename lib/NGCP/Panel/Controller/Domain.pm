@@ -262,6 +262,11 @@ sub load_preference_list :Private {
     $c->stash(rwr_sets_rs => $rewrite_rule_sets_rs,
               rwr_sets    => [$rewrite_rule_sets_rs->all]);
 
+    my $ncos_levels_rs = $c->model('DB')
+        ->resultset('ncos_levels');
+    $c->stash(ncos_levels_rs => $ncos_levels_rs,
+              ncos_levels    => [$ncos_levels_rs->all]);
+
     NGCP::Panel::Utils::load_preference_list( c => $c,
         pref_values => \%pref_values,
         dom_pref => 1,

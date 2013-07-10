@@ -12,6 +12,7 @@
     helper.form = form;
     helper.base_uri = c.uri_for(domain.id,'preferences');
     helper.rewrite_rule_sets = rwr_sets;
+    helper.ncos_levels = ncos_levels;
 
     helper.top_buttons = [
         { name = 'Back', uri = c.uri_for(), icon = 'icon-arrow-left' },

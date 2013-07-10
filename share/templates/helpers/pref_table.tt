@@ -61,6 +61,20 @@
                             <option [% (r.rwrs_id.defined && r.rwrs_id == set.id) ? 'selected="selected"' : '' %]>[% set.name %]</option>
                         [% END -%]
                         </select>
+                    [% ELSIF r.attribute == "ncos" -%]
+                        <select disabled="disabled">
+                            <option>&nbsp;</option>
+                        [% FOR level IN helper.ncos_levels -%]
+                            <option [% (r.ncos_id.defined && r.ncos_id == level.id) ? 'selected="selected"' : '' %]>[% level.level %]</option>
+                        [% END -%]
+                        </select>
+                    [% ELSIF r.attribute == "adm_ncos" -%]
+                        <select disabled="disabled">
+                            <option>&nbsp;</option>
+                        [% FOR level IN helper.ncos_levels -%]
+                            <option [% (r.adm_ncos_id.defined && r.adm_ncos_id == level.id) ? 'selected="selected"' : '' %]>[% level.level %]</option>
+                        [% END -%]
+                        </select>
 
                     [% ELSIF r.data_type == "boolean" %]
                         <input type="checkbox" disabled="disabled"

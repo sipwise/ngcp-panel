@@ -32,11 +32,19 @@ sub field_list {
         my $meta = $row->{meta};
         my $enums = $row->{enums};
         my $rwrs_rs = $row->{rwrs_rs};
+        my $ncos_rs = $row->{ncos_rs};
         my $field;
         if($meta->attribute eq "rewrite_rule_set") {
             my @options = map {{label => $_->name, value => $_->id}}
-                defined $rwrs_rs ? $rwrs_rs->all
-                                 : ("Could not fetch rewrite rule sets");
+                defined $rwrs_rs ? $rwrs_rs->all : ();
+            $field = {
+                name => $meta->attribute,
+                type => 'Select',
+                options => \@options,
+            };
+        } elsif ($meta->attribute eq "ncos" || $meta->attribute eq "adm_ncos") {
+            my @options = map {{label => $_->level, value => $_->id}}
+                defined $ncos_rs ? $ncos_rs->all : ();
             $field = {
                 name => $meta->attribute,
                 type => 'Select',

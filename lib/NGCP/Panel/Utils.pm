@@ -96,6 +96,18 @@ sub load_preference_list {
                     })->first->id
                     : undef;
             }
+            elsif($pref->attribute eq "ncos") {
+                $pref->{ncos_id} = $pref_values->{ncos_id} ?
+                    $c->stash->{ncos_levels_rs}
+                        ->find($pref_values->{ncos_id})->id
+                    : undef;
+            }
+            elsif($pref->attribute eq "adm_ncos") {
+                $pref->{adm_ncos_id} = $pref_values->{adm_ncos_id} ?
+                    $c->stash->{ncos_levels_rs}
+                        ->find($pref_values->{adm_ncos_id})->id
+                    : undef;
+            }
             if($pref->data_type eq "enum") {
                 $pref->{enums} = [];
                 push @{ $pref->{enums} },
@@ -132,6 +144,7 @@ sub create_preference_form {
             meta => $c->stash->{preference_meta},
             enums => $enums,
             rwrs_rs => $c->stash->{rwr_sets_rs},
+            ncos_rs => $c->stash->{ncos_levels_rs},
         }],
     });
     $form->create_structure([$c->stash->{preference_meta}->attribute]);
@@ -152,30 +165,43 @@ sub create_preference_form {
     }
     if($posted && $form->validated) {
         my $preference_id = $c->stash->{preference}->first ? $c->stash->{preference}->first->id : undef;
+        my $attribute = $c->stash->{preference_meta}->attribute;
         if ($c->stash->{preference_meta}->max_occur != 1) {
             $pref_rs->create({
                 attribute_id => $c->stash->{preference_meta}->id,
                 value => $form->field($c->stash->{preference_meta}->attribute)->value,
             });
-        } elsif ($c->stash->{preference_meta}->attribute eq "rewrite_rule_set") {
+        } elsif ($attribute eq "rewrite_rule_set") {
             my $selected_rwrs = $c->stash->{rwr_sets_rs}->find(
-                $form->field($c->stash->{preference_meta}->attribute)->value
+                $form->field($attribute)->value
             );
             _set_rewrite_preferences(
                 c             => $c,
                 rwrs_result   => $selected_rwrs,
                 pref_rs       => $pref_rs,
             );
-            $c->flash(messages => [{type => 'success', text => 'Preference '.$c->stash->{preference_meta}->attribute.' successfully updated.'}]);
+            $c->flash(messages => [{type => 'success', text => "Preference $attribute successfully updated."}]);
+            $c->response->redirect($base_uri);
+            return;
+        } elsif ($attribute eq "ncos" || $attribute eq "adm_ncos") {
+            my $selected_level = $c->stash->{ncos_levels_rs}->find(
+                $form->field($attribute)->value
+            );
+            my $attribute_id = $c->model('DB')->resultset('voip_preferences')
+                ->find({attribute => $attribute."_id"})->id;
+            $pref_rs->update_or_create({
+                attribute_id => $attribute_id,
+            })->update({ value => $selected_level->id });
+            $c->flash(messages => [{type => 'success', text => "Preference $attribute successfully updated."}]);
             $c->response->redirect($base_uri);
             return;
         } else {
             $pref_rs->update_or_create({
                 id => $preference_id,
                 attribute_id => $c->stash->{preference_meta}->id,
-                value => $form->field($c->stash->{preference_meta}->attribute)->value,
+                value => $form->field($attribute)->value,
             });
-            $c->flash(messages => [{type => 'success', text => 'Preference '.$c->stash->{preference_meta}->attribute.' successfully updated.'}]);
+            $c->flash(messages => [{type => 'success', text => "Preference $attribute successfully updated."}]);
             $c->response->redirect($base_uri);
             return;
          }
@@ -265,7 +291,7 @@ Parameters:
 Load preferences and groups. Fill them with pref_values.
 Put them to stash as "pref_groups". This will be used in F<helpers/pref_table.tt>.
 
-Also see "Special case rewrite_rule_set".
+Also see "Special case rewrite_rule_set" and "Special case ncos and adm_ncos".
 
 =head2 create_preference_form
 
@@ -286,7 +312,8 @@ Put the form to stash as "form".
 In order to display the preference rewrite_rule_set correctly, the calling
 controller must put rwr_sets_rs (as DBIx::Class::ResultSet) and rwr_sets
 (for rendering in the template) to stash. A html select will then be displayed
-with all the rewrite_rule_sets.
+with all the rewrite_rule_sets. Also helper.rewrite_rule_sets needs to be
+set in the template (to be used by F<helpers/pref_table.tt>).
 
 On update 4 voip_*_preferences will be created with the attributes
 rewrite_callee_in_dpid, rewrite_caller_in_dpid, rewrite_callee_out_dpid
@@ -295,6 +322,18 @@ and rewrite_caller_out_dpid (using the helper method _set_rewrite_preferences).
 For compatibility with ossbss and the www_admin panel, no preference with
 the attribute rewrite_rule_set is created and caller_in_dpid is used to
 check which rewrite_rule_set is currently set.
+
+=head3 Special case ncos and adm_ncos
+
+Very similar to rewrite_rule_set (see above). The stashed variables are
+ncos_levels_rs and ncos_levels. In the template helper.ncos_levels needs to
+be set.
+
+The updated preferences are called ncos_id and adm_ncos_id.
+
+=head2 _set_rewrite_preferences
+
+See "Special case rewrite_rule_set".
 
 =head1 AUTHOR
 
