@@ -70,7 +70,7 @@ sub load_preference_list {
     
     my @pref_groups = $c->model('DB')
         ->resultset('voip_preference_groups')
-        ->search({ 'voip_preferences.internal' => 0,
+        ->search({ 'voip_preferences.internal' => { '<=' => 0 },
             $peer_pref ? ('voip_preferences.peer_pref' => 1,
                 -or => ['voip_preferences_enums.peer_pref' => 1,
                     'voip_preferences_enums.peer_pref' => undef]) : (),
@@ -84,11 +84,18 @@ sub load_preference_list {
                 prefetch => {'voip_preferences' => 'voip_preferences_enums'},
             })
         ->all;
-    
+
     foreach my $group(@pref_groups) {
         my @group_prefs = $group->voip_preferences->all;
         
         foreach my $pref(@group_prefs) {
+            if($pref->attribute eq "rewrite_rule_set") {
+                $pref->{rwrs_id} = $pref_values->{rewrite_caller_in_dpid} ?
+                    $c->stash->{rwr_sets_rs}->search({
+                        caller_in_dpid =>$pref_values->{rewrite_caller_in_dpid}
+                    })->first->id
+                    : undef;
+            }
             if($pref->data_type eq "enum") {
                 $pref->{enums} = [];
                 push @{ $pref->{enums} },
@@ -124,6 +131,7 @@ sub create_preference_form {
         fields_data => [{
             meta => $c->stash->{preference_meta},
             enums => $enums,
+            rwrs_rs => $c->stash->{rwr_sets_rs},
         }],
     });
     $form->create_structure([$c->stash->{preference_meta}->attribute]);
@@ -149,6 +157,18 @@ sub create_preference_form {
                 attribute_id => $c->stash->{preference_meta}->id,
                 value => $form->field($c->stash->{preference_meta}->attribute)->value,
             });
+        } elsif ($c->stash->{preference_meta}->attribute eq "rewrite_rule_set") {
+            my $selected_rwrs = $c->stash->{rwr_sets_rs}->find(
+                $form->field($c->stash->{preference_meta}->attribute)->value
+            );
+            _set_rewrite_preferences(
+                c             => $c,
+                rwrs_result   => $selected_rwrs,
+                pref_rs       => $pref_rs,
+            );
+            $c->flash(messages => [{type => 'success', text => 'Preference '.$c->stash->{preference_meta}->attribute.' successfully updated.'}]);
+            $c->response->redirect($base_uri);
+            return;
         } else {
             $pref_rs->update_or_create({
                 id => $preference_id,
@@ -182,6 +202,26 @@ sub create_preference_form {
     }
 
     $c->stash(form => $form);
+}
+
+sub _set_rewrite_preferences {
+    my %params = @_;
+
+    my $c             = $params{c};
+    my $rwrs_result   = $params{rwrs_result};
+    my $pref_rs       = $params{pref_rs};
+
+    for my $foo ("callee_in_dpid", "caller_in_dpid",
+                 "callee_out_dpid", "caller_out_dpid") {
+
+        my $attribute_id = $c->model('DB')->resultset('voip_preferences')
+            ->find({attribute => "rewrite_$foo"})->id;
+        my $preference = $pref_rs->search({
+            attribute_id => $attribute_id,
+        })->update_or_create({});
+        $preference->update({ value => $rwrs_result->$foo });
+    }
+
 }
 
 1;
@@ -225,6 +265,8 @@ Parameters:
 Load preferences and groups. Fill them with pref_values.
 Put them to stash as "pref_groups". This will be used in F<helpers/pref_table.tt>.
 
+Also see "Special case rewrite_rule_set".
+
 =head2 create_preference_form
 
 Parameters:
@@ -238,6 +280,21 @@ Use preference and preference_meta from stash and create a form. Process that
 form in case the request has be POSTed. Also parse the GET params "delete",
 "activate" and "deactivate" in order to operate on maxoccur != 1 preferences.
 Put the form to stash as "form".
+
+=head3 Special case rewrite_rule_set
+
+In order to display the preference rewrite_rule_set correctly, the calling
+controller must put rwr_sets_rs (as DBIx::Class::ResultSet) and rwr_sets
+(for rendering in the template) to stash. A html select will then be displayed
+with all the rewrite_rule_sets.
+
+On update 4 voip_*_preferences will be created with the attributes
+rewrite_callee_in_dpid, rewrite_caller_in_dpid, rewrite_callee_out_dpid
+and rewrite_caller_out_dpid (using the helper method _set_rewrite_preferences).
+
+For compatibility with ossbss and the www_admin panel, no preference with
+the attribute rewrite_rule_set is created and caller_in_dpid is used to
+check which rewrite_rule_set is currently set.
 
 =head1 AUTHOR
 

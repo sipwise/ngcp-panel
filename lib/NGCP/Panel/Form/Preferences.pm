@@ -31,8 +31,18 @@ sub field_list {
     foreach my $row (@$fields_data) {
         my $meta = $row->{meta};
         my $enums = $row->{enums};
+        my $rwrs_rs = $row->{rwrs_rs};
         my $field;
-        if($meta->data_type eq "enum") {
+        if($meta->attribute eq "rewrite_rule_set") {
+            my @options = map {{label => $_->name, value => $_->id}}
+                defined $rwrs_rs ? $rwrs_rs->all
+                                 : ("Could not fetch rewrite rule sets");
+            $field = {
+                name => $meta->attribute,
+                type => 'Select',
+                options => \@options,
+            };
+        } elsif($meta->data_type eq "enum") {
             my @options = map {{label => $_->label, value => $_->value}} @{ $enums };
             $field = { 
                 name => $meta->attribute, 

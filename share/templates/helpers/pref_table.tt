@@ -54,7 +54,15 @@
                   [% r.attribute %]
                 </td>
                 <td>
-                    [% IF r.data_type == "boolean" %]
+                    [% IF r.attribute == "rewrite_rule_set" -%]
+                        <select disabled="disabled">
+                            <option>&nbsp;</option>
+                        [% FOR set IN helper.rewrite_rule_sets -%]
+                            <option [% (r.rwrs_id.defined && r.rwrs_id == set.id) ? 'selected="selected"' : '' %]>[% set.name %]</option>
+                        [% END -%]
+                        </select>
+
+                    [% ELSIF r.data_type == "boolean" %]
                         <input type="checkbox" disabled="disabled"
                             [% IF r.value %]checked="checked"[% END %]/>
                     [% ELSIF r.data_type == "string" || r.data_type == "int" %]

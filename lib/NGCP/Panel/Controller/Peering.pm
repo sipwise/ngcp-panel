@@ -280,7 +280,12 @@ sub servers_preferences_list :Chained('servers_base') :PathPart('preferences') :
             map {$_->value} $value->voip_peer_preferences->all
         ];
     }
-    
+
+    my $rewrite_rule_sets_rs = $c->model('DB')
+        ->resultset('voip_rewrite_rule_sets');
+    $c->stash(rwr_sets_rs => $rewrite_rule_sets_rs,
+              rwr_sets    => [$rewrite_rule_sets_rs->all]);
+
     NGCP::Panel::Utils::load_preference_list( c => $c,
         pref_values => \%pref_values,
         peer_pref => 1,

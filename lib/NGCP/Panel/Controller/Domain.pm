@@ -224,7 +224,11 @@ sub preferences_edit :Chained('preferences_base') :PathPart('edit') :Args(0) {
         ->search({dom_pref => 1})
         ->all;
 
-    my $pref_rs = $c->stash->{preference};
+    my $pref_rs = $c->model('DB')
+        ->resultset('voip_dom_preferences')
+        ->search({
+            domain_id => $c->stash->{provisioning_domain_id}
+        });
 
     NGCP::Panel::Utils::create_preference_form( c => $c,
         pref_rs => $pref_rs,
@@ -252,6 +256,11 @@ sub load_preference_list :Private {
             map {$_->value} $value->voip_dom_preferences->all
         ];
     }
+
+    my $rewrite_rule_sets_rs = $c->model('DB')
+        ->resultset('voip_rewrite_rule_sets');
+    $c->stash(rwr_sets_rs => $rewrite_rule_sets_rs,
+              rwr_sets    => [$rewrite_rule_sets_rs->all]);
 
     NGCP::Panel::Utils::load_preference_list( c => $c,
         pref_values => \%pref_values,

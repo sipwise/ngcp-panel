@@ -10,6 +10,7 @@
     helper.form = form;
     helper.base_uri = c.uri_for_action("/peering/servers_preferences_root",
         [c.req.captures.0, c.req.captures.1]);
+    helper.rewrite_rule_sets = rwr_sets;
 
     helper.dt_buttons = [
         { name = 'Edit', uri = c.uri_for_action("/peering/servers_preferences_root", [c.req.captures.0, c.req.captures.1]), class = 'btn-small btn-primary', icon = 'icon-edit' },
