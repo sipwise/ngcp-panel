@@ -21,6 +21,19 @@ $(document).ready(function() {
         "bInfo": true,
 		"iDisplayLength": 5,
 		"sAjaxSource": "[% helper.ajax_uri %]",
+        [% IF helper.column_sort -%]
+            "aaSorting": [
+            [% 
+                FOR f IN helper.column_fields;
+                    IF helper.column_sort == f; 
+            -%]
+                [ [% loop.index %], "asc" ],
+            [%
+                    END;
+                END;
+            -%]
+            ],
+        [% END -%]
 		"aoColumns": [
 		    [% FOREACH f IN helper.column_fields -%]
 		    { "mData": "[% f %]" },

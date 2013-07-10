@@ -152,7 +152,6 @@ sub create_list :Chained('sub_list') :PathPart('create') :Args(0) {
         }
     }
 
-    $c->log->debug(">>>>>>>>>>>>>>>>>>>>>>>>>> subscriber NOT validated");
     $c->stash(close_target => $c->uri_for());
     $c->stash(create_flag => 1);
     $c->stash(form => $form)
@@ -182,8 +181,8 @@ sub ajax :Chained('sub_list') :PathPart('ajax') :Args(0) {
     my $dispatch_to = '_ajax_resultset_' . $c->user->auth_realm;
     my $resultset = $self->$dispatch_to($c);
     $c->forward( "/ajax_process_resultset", [$resultset,
-                  ["id", "username", "domain_id", "status",],
-                  ["username", "domain_id", "status",]]);
+                  ["id", "username", "domain_id", "contract_id", "status",],
+                  ["username", "domain_id", "contract_id", "status",]]);
     $c->detach( $c->view("JSON") );
 }
 

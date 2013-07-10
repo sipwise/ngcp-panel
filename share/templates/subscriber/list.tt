@@ -3,8 +3,9 @@
     helper.name = 'Subscriber';
     helper.data = subscribers;
     helper.messages = messages;
-    helper.column_titles = [ '#', 'Username', 'Domain #', 'Status' ];
-    helper.column_fields = [ 'id', 'username', 'domain_id', 'status' ];
+    helper.column_titles = [ '#', 'Username', 'Domain #', 'Contract #', 'Status' ];
+    helper.column_fields = [ 'id', 'username', 'domain_id', 'contract_id', 'status' ];
+    helper.column_sort = 'status';
 
     helper.close_target = close_target;
     helper.create_flag = create_flag;
