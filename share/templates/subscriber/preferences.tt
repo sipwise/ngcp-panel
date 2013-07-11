@@ -35,7 +35,7 @@
 <div class="accordion" id="preference_groups">
     <div class="accordion-group">
         <div class="accordion-heading">
-            <a class="accordion-toggle" data-toggle="collapse" data-parent="#preference_groups" href="#collapse_cf">Test</a>
+            <a class="accordion-toggle" data-toggle="collapse" data-parent="#preference_groups" href="#collapse_cf">Call Forwards</a>
         </div>
         <div class="accordion-body collapse" id="collapse_cf">
             <div class="accordion-inner">
@@ -48,11 +48,11 @@
                             <th>Destinations</th>
                             <th>Period</th>
                             [% # one for actions -%]
-                            <th class="span3"></th>
+                            <th class="ngcp-actions-column"></th>
                         </tr>
                     </thead>
                     <tbody>
-                        <tr>
+                        <tr class="sw_action_row">
                             <td>Call Forward Unconditional</td>
                             <td></td>
                             <td>
@@ -61,9 +61,14 @@
                                 voicebox
                             </td>
                             <td>always</td>
-                            <td class="span3"></td>
+                            <td class="ngcp-actions-column">
+                                <div class="sw_actions pull-right">
+                                    <a class="btn btn-primary btn-small" href="[% c.uri_for_action("/subscriber/preferences_callforward", [c.req.captures.0, "cfu"]) %]"><i class="icon-edit"></i> Edit</a>
+                                </div>
+
+                            </td>
                         </tr>
-                        <tr>
+                        <tr class="sw_action_row">
                             <td>Call Forward Busy</td>
                             <td></td>
                             <td>
@@ -72,9 +77,14 @@
                                 voicebox
                             </td>
                             <td>always</td>
-                            <td class="span3"></td>
+                            <td class="ngcp-actions-column">
+                                <div class="sw_actions pull-right">
+                                    <a class="btn btn-primary btn-small" href="[% c.uri_for_action("/subscriber/preferences_callforward", [c.req.captures.0, "cfb"]) %]"><i class="icon-edit"></i> Edit</a>
+                                </div>
+
+                            </td>
                         </tr>
-                        <tr>
+                        <tr class="sw_action_row">
                             <td>Call Forward Timeout</td>
                             <td>15s</td>
                             <td>
@@ -83,9 +93,13 @@
                                 voicebox
                             </td>
                             <td>always</td>
-                            <td class="span3"></td>
+                            <td class="ngcp-actions-column">
+                                <div class="sw_actions pull-right">
+                                    <a class="btn btn-primary btn-small" href="[% c.uri_for_action("/subscriber/preferences_callforward", [c.req.captures.0, "cft"]) %]"><i class="icon-edit"></i> Edit</a>
+                                </div>
+                            </td>
                         </tr>
-                        <tr>
+                        <tr class="sw_action_row">
                             <td>Call Forward Unavailable</td>
                             <td></td>
                             <td>
@@ -94,7 +108,12 @@
                                 voicebox
                             </td>
                             <td>always</td>
-                            <td class="span3"></td>
+                            <td class="ngcp-actions-column">
+                                <div class="sw_actions pull-right">
+                                    <a class="btn btn-primary btn-small" href="[% c.uri_for_action("/subscriber/preferences_callforward", [c.req.captures.0, "cfna"]) %]"><i class="icon-edit"></i> Edit</a>
+                                </div>
+
+                            </td>
                         </tr>
                     </tbody>
                 </table>
@@ -107,5 +126,19 @@
 [% 
     PROCESS 'helpers/pref_table.tt';
 %]
+
+[% IF edit_cf_flag -%]
+[%
+    PROCESS "helpers/modal.tt";
+    modal_header(m.name = "Call Forward " _ cf_description);
+-%]
+
+[% cf_form.render(); %]
+
+[%
+    modal_footer();
+    modal_script(m.close_target = c.uri_for_action('/subscriber/preferences', [c.req.captures.0]));
+-%]
+[% END -%]
 
 [% # vim: set tabstop=4 syntax=html expandtab: -%]

@@ -4,6 +4,8 @@ use namespace::sweep;
 BEGIN { extends 'Catalyst::Controller'; }
 use NGCP::Panel::Utils::Contract;
 use NGCP::Panel::Form::Subscriber;
+use NGCP::Panel::Form::SubscriberCFSimple;
+use NGCP::Panel::Form::SubscriberCFTSimple;
 use UUID;
 
 use Data::Printer;
@@ -270,6 +272,39 @@ sub preferences_edit :Chained('preferences_base') :PathPart('edit') :Args(0) {
         base_uri => $c->uri_for_action('/subscriber/preferences', [$c->req->captures->[0]]),
         edit_uri => $c->uri_for_action('/subscriber/preferences_edit', $c->req->captures),
     );
+}
+
+sub preferences_callforward :Chained('base') :PathPart('preferences/callforward') :Args(1) {
+    my ($self, $c, $cf_type) = @_;
+
+    my $cf_desc;
+    given($cf_type) {
+        when("cfu") { $cf_desc = "Unconditional" }
+        when("cfb") { $cf_desc = "Busy" }
+        when("cft") { $cf_desc = "Timeout" }
+        when("cfna") { $cf_desc = "Unavailable" }
+        default {
+            $c->flash(messages => [{type => 'error', text => 'Invalid Call Forward type'}]);
+            $c->response->redirect($c->uri_for_action('/subscriber/preferences', [$c->req->captures->[0]]));
+            return;
+        }
+    }
+
+    my $cf_form;
+    if($cf_type eq "cft") {
+        $cf_form = NGCP::Panel::Form::SubscriberCFTSimple->new;
+    } else {
+        $cf_form = NGCP::Panel::Form::SubscriberCFSimple->new;
+    }
+
+    $self->load_preference_list($c);
+    $c->stash(template => 'subscriber/preferences.tt');
+    $c->stash(
+        edit_cf_flag => 1,
+        cf_description => $cf_desc,
+        cf_form => $cf_form,
+    );
+
 }
 
 
