@@ -455,9 +455,13 @@ sub peaktime_weekdays_edit :Chained('peaktime_weekdays_base') :PathPart('edit') 
         }
         $rs->delete();
     }
+
+    $form = NGCP::Panel::Form::BillingPeaktimeWeekdays->new
+        unless $form->has_errors;
+
     $self->load_weekdays($c);
     $c->stash(weekday => $c->stash->{weekdays}->[$c->stash->{weekday_id}]);
-    $c->stash(form => NGCP::Panel::Form::BillingPeaktimeWeekdays->new);
+    $c->stash(form => $form);
     $c->stash(edit_flag => 1);
 }
 

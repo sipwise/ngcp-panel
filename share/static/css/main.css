@@ -216,6 +216,12 @@ div.ngcp-modal .control-group.error .dataTables_wrapper input[type="text"] {
     width: 67%;
     float: right;
 }
-.modal-body .control-group .controls input.ngcp_time_range {
-    width: 43%;
+.modal-body div.ngcp_field_inline {
+    display: inline-block;
+    *display: inline;
+    width: 218px;
+}
+.modal-body div.ngcp_field_inline input {
+    width: 206px !important;
+    padding: 4px 6px !important;
 }
