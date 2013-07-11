@@ -5,7 +5,11 @@ BEGIN { extends 'Catalyst::Controller'; }
 use NGCP::Panel::Form::Administrator qw();
 use NGCP::Panel::Utils qw();
 
-# TODO: reject any access from non-admins
+sub auto :Does(ACL) :ACLDetachTo('/denied_page') :AllowedRole(admin) {
+    my ($self, $c) = @_;
+    $c->log->debug(__PACKAGE__ . '::auto');
+    return 1;
+}
 
 sub list_admin :PathPart('administrator') :Chained('/') :CaptureArgs(0) {
     my ($self, $c) = @_;
