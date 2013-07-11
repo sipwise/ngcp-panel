@@ -75,6 +75,13 @@
                             <option [% (r.adm_ncos_id.defined && r.adm_ncos_id == level.id) ? 'selected="selected"' : '' %]>[% level.level %]</option>
                         [% END -%]
                         </select>
+                    [% ELSIF r.attribute == "sound_set" -%]
+                        <select disabled="disabled">
+                            <option>&nbsp;</option>
+                        [% FOR set IN helper.sound_sets -%]
+                            <option [% (r.value.defined && r.value == set.id) ? 'selected="selected"' : '' %]>[% set.name %]</option>
+                        [% END -%]
+                        </select>
 
                     [% ELSIF r.data_type == "boolean" %]
                         <input type="checkbox" disabled="disabled"

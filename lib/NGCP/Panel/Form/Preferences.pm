@@ -33,6 +33,7 @@ sub field_list {
         my $enums = $row->{enums};
         my $rwrs_rs = $row->{rwrs_rs};
         my $ncos_rs = $row->{ncos_rs};
+        my $sound_rs = $row->{sound_rs};
         my $field;
         if($meta->attribute eq "rewrite_rule_set") {
             my @options = map {{label => $_->name, value => $_->id}}
@@ -46,6 +47,15 @@ sub field_list {
         } elsif ($meta->attribute eq "ncos" || $meta->attribute eq "adm_ncos") {
             my @options = map {{label => $_->level, value => $_->id}}
                 defined $ncos_rs ? $ncos_rs->all : ();
+            unshift @options, {label => '', value => ''};
+            $field = {
+                name => $meta->attribute,
+                type => 'Select',
+                options => \@options,
+            };
+        } elsif ($meta->attribute eq "sound_set") {
+            my @options = map {{label => $_->name, value => $_->id}}
+                defined $sound_rs ? $sound_rs->all : ();
             unshift @options, {label => '', value => ''};
             $field = {
                 name => $meta->attribute,

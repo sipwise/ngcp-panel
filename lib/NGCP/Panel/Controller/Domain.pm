@@ -199,9 +199,7 @@ sub preferences_base :Chained('base') :PathPart('preferences') :CaptureArgs(1) {
         ->resultset('voip_preferences')
         ->single({id => $pref_id});
     my $domain_name = $c->stash->{domain}->{domain};
-    my $provisioning_domain_id = $c->model('DB')
-        ->resultset('voip_domains')
-        ->single({domain => $domain_name})->id;
+    my $provisioning_domain_id = $c->stash->{provisioning_domain_result}->id;
 
     $c->stash->{preference} = $c->model('DB')
         ->resultset('voip_dom_preferences')
@@ -227,7 +225,7 @@ sub preferences_edit :Chained('preferences_base') :PathPart('edit') :Args(0) {
     my $pref_rs = $c->model('DB')
         ->resultset('voip_dom_preferences')
         ->search({
-            domain_id => $c->stash->{provisioning_domain_id}
+            domain_id => $c->stash->{provisioning_domain_result}->id,
         });
 
     NGCP::Panel::Utils::create_preference_form( c => $c,
@@ -266,6 +264,11 @@ sub load_preference_list :Private {
         ->resultset('ncos_levels');
     $c->stash(ncos_levels_rs => $ncos_levels_rs,
               ncos_levels    => [$ncos_levels_rs->all]);
+
+    my $sound_sets_rs = $c->model('DB')
+        ->resultset('voip_sound_sets');
+    $c->stash(sound_sets_rs => $sound_sets_rs,
+              sound_sets    => [$sound_sets_rs->all]);
 
     NGCP::Panel::Utils::load_preference_list( c => $c,
         pref_values => \%pref_values,

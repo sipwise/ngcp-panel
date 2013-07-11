@@ -302,6 +302,11 @@ sub load_preference_list :Private {
     $c->stash(ncos_levels_rs => $ncos_levels_rs,
               ncos_levels    => [$ncos_levels_rs->all]);
 
+    my $sound_sets_rs = $c->model('DB')
+        ->resultset('voip_sound_sets');
+    $c->stash(sound_sets_rs => $sound_sets_rs,
+              sound_sets    => [$sound_sets_rs->all]);
+
     NGCP::Panel::Utils::load_preference_list( c => $c,
         pref_values => \%pref_values,
         usr_pref => 1,
