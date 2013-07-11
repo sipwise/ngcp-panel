@@ -18,28 +18,52 @@ has_field 'name' => (
     type => 'Text',
     required => 1,
     maxlength => 31,
+    element_attr => {
+        rel => ['tooltip'],
+        title => ['human readable profile name']
+    },
 );
 
 has_field 'handle' => (
     type => 'Text',
     required => 1,
+    element_attr => {
+        rel => ['tooltip'],
+        title => ['unique identifier string']
+    },
 );
 
 has_field 'interval_charge' => (
     type => 'Money',
+    element_attr => {
+        rel => ['tooltip'],
+        title => ['base fee charged per billing interval, float, specifying Euro']
+    },
 );
 
 has_field 'interval_free_time' => (
     type => 'Integer',
+    element_attr => {
+        rel => ['tooltip'],
+        title => ['included time per billing interval, integer, specifying seconds']
+    },
 );
 
 has_field 'interval_free_cash' => (
     type => 'Money',
+    element_attr => {
+        rel => ['tooltip'],
+        title => ['included money per billing interval, float, specifying EUR, USD, etc.']
+    },
 );
 
 has_field 'fraud_interval_limit' => (
     type => 'Integer',
     label => 'Fraud Monthly Limit',
+    element_attr => {
+        rel => ['tooltip'],
+        title => ['fraud detection threshold, per month, float, specifying EUR, USD, etc.']
+    },
 );
 
 has_field 'fraud_interval_lock' => (
@@ -52,16 +76,28 @@ has_field 'fraud_interval_lock' => (
         { value => 3, label => 'incoming and outgoing' },
         { value => 4, label => 'global (including CSC)' },
     ],
+    element_attr => {
+        rel => ['tooltip'],
+        title => ['lock accounts if the monthly limit is exceeded']
+    },
 );
 
 has_field 'fraud_interval_notify' => (
     type => '+NGCP::Panel::Field::EmailList',
     label => 'Fraud Monthly Notify',
     maxlength => 255,
+    element_attr => {
+        rel => ['tooltip'],
+        title => ['where e-mail notifications are sent, a list of e-mail addreses separated by comma']
+    },
 );
 
 has_field 'fraud_daily_limit' => (
     type => 'Integer',
+    element_attr => {
+        rel => ['tooltip'],
+        title => ['fraud detection threshold, per day, float, specifying EUR, USD, etc.']
+    },
 );
 
 has_field 'fraud_daily_lock' => (
@@ -73,16 +109,28 @@ has_field 'fraud_daily_lock' => (
         { value => 3, label => 'incoming and outgoing' },
         { value => 4, label => 'global (including CSC)' },
     ],
+    element_attr => {
+        rel => ['tooltip'],
+        title => ['lock accounts if the daily limit is exceeded']
+    },
 );
 
 has_field 'fraud_daily_notify' => (
     type => '+NGCP::Panel::Field::EmailList',
     maxlength => 255,
+    element_attr => {
+        rel => ['tooltip'],
+        title => ['where e-mail notifications are sent, a list of e-mail addreses separated by comma']
+    },
 );
 
 has_field 'currency' => (
     type => 'Text',
     maxlength => 31,
+    element_attr => {
+        rel => ['tooltip'],
+        title => ['currency symbol or ISO code, string, will be used on invoices and webinterfaces']
+    },
 );
 
 has_field 'vat_rate' => (
@@ -90,11 +138,19 @@ has_field 'vat_rate' => (
     label => 'VAT Rate',
     range_start => 0,
     range_end => 100,
+    element_attr => {
+        rel => ['tooltip'],
+        title => ['integer, specifying the percentage']
+    },
 );
 
 has_field 'vat_included' => (
     type => 'Boolean',
     label => 'VAT Included',
+    element_attr => {
+        rel => ['tooltip'],
+        title => ['check if fees are inclusive VAT']
+    },
 );
 
 has_field 'save' => (

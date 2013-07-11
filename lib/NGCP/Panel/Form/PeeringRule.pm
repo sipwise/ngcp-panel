@@ -13,18 +13,34 @@ sub build_form_element_class { [qw/form-horizontal/] }
 
 has_field 'callee_prefix' => ( 
     type => 'Text',
+    element_attr => {
+        rel => ['tooltip'],
+        title => ['Callee prefix, eg: 43']
+    },
 );
 
 has_field 'callee_pattern' => (
     type => '+NGCP::Panel::Field::Regexp',
+    element_attr => {
+        rel => ['tooltip'],
+        title => [q!A POSIX regex matching against the full Request-URI (e.g. '^sip:.+@example\.org$' or '^sip:431')!]
+    },
 );
 
 has_field 'caller_pattern' => (
     type => '+NGCP::Panel::Field::Regexp',
+    element_attr => {
+        rel => ['tooltip'],
+        title => [q!A POSIX regex matching against 'sip:user@domain' (e.g. '^sip:.+@example\.org$' matching the whole URI, or '999' matching if the URI contains '999')!]
+    },
 );
 
 has_field 'description' => (
     type => 'Text',
+    element_attr => {
+        rel => ['tooltip'],
+        title => ['string, rule description']
+    },
 );
 
 has_field 'save' => (

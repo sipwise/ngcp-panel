@@ -22,12 +22,20 @@ has_field 'submitid' => (
 has_field 'source' => (
     type => '+NGCP::Panel::Field::Regexp',
     maxlength => 255,
+    element_attr => {
+        rel => ['tooltip'],
+        title => ['string, empty or POSIX regular expression, e.g.: ^431.+$']
+    },
 );
 
 has_field 'destination' => (
     type => '+NGCP::Panel::Field::Regexp',
     maxlength => 255,
     required => 1,
+    element_attr => {
+        rel => ['tooltip'],
+        title => ['string, POSIX regular expression, e.g.: ^431.+$']
+    },
 );
 
 has_field 'direction' => (
@@ -46,38 +54,74 @@ has_field 'billing_zone' => (
 
 has_field 'onpeak_init_rate' => (
     type => 'Float',
+    element_attr => {
+        rel => ['tooltip'],
+        title => ['double precision float, e.g.: 0.15']
+    },
 );
 
 has_field 'onpeak_init_interval' => (
     type => 'Integer',
+    element_attr => {
+        rel => ['tooltip'],
+        title => ['integer, e.g.: 60']
+    },
 );
 
 has_field 'onpeak_follow_rate' => (
     type => 'Float',
+    element_attr => {
+        rel => ['tooltip'],
+        title => ['double precision float, e.g.: 0.15']
+    },
 );
 
 has_field 'onpeak_follow_interval' => (
     type => 'Integer',
+    element_attr => {
+        rel => ['tooltip'],
+        title => ['integer, e.g.: 30']
+    },
 );
 
 has_field 'offpeak_init_rate' => (
     type => 'Float',
+    element_attr => {
+        rel => ['tooltip'],
+        title => ['double precision float, e.g.: 0.1']
+    },
 );
 
 has_field 'offpeak_init_interval' => (
     type => 'Integer',
+    element_attr => {
+        rel => ['tooltip'],
+        title => ['integer, e.g.: 60']
+    },
 );
 
 has_field 'offpeak_follow_rate' => (
     type => 'Float',
+    element_attr => {
+        rel => ['tooltip'],
+        title => ['double precision float, e.g.: 0.1']
+    },
 );
 
 has_field 'offpeak_follow_interval' => (
     type => 'Integer',
+    element_attr => {
+        rel => ['tooltip'],
+        title => ['integer, e.g.: 30']
+    },
 );
 
 has_field 'use_free_time' => (
     type => 'Boolean',
+    element_attr => {
+        rel => ['tooltip'],
+        title => ['free minutes may be used when calling this destination']
+    },
 );
 
 has_field 'save' => (

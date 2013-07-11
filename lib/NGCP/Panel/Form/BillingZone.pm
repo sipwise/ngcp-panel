@@ -18,11 +18,19 @@ has_field 'zone' => (
     type => 'Text',
     maxlength => 127,
     required => 1,
+    element_attr => {
+        rel => ['tooltip'],
+        title => ['string, e.g.: on-net']
+    },
 );
 
 has_field 'detail' => (
     type => 'Text',
     maxlength => 127,
+    element_attr => {
+        rel => ['tooltip'],
+        title => ['string, e.g.: voicebox']
+    },
 );
 
 has_field 'save' => (
