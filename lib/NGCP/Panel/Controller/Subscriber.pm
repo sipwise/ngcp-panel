@@ -231,17 +231,19 @@ sub preferences :Chained('base') :PathPart('preferences') :Args(0) {
 
     my $prov_subscriber = $c->stash->{subscriber}->provisioning_voip_subscriber;
     my $cfs = {};
+    my $mappings = {};
     for my $type(qw/cfu cfna cft cfb/) {
-        $c->stash('cf_mappings_'.$type => $prov_subscriber->voip_cf_mappings
-            ->find({ type => $type }));
-        if(defined $c->stash->{'cf_mappings_'.$type}) {
-            $cfs->{$type} = [ $c->stash->{'cf_mappings_'.$type}
+        $mappings->{$type} = $prov_subscriber->voip_cf_mappings
+            ->find({ type => $type });
+        if(defined $mappings->{$type}) {
+            $cfs->{$type} = [ $mappings->{$type}
                 ->destination_set
                 ->voip_cf_destinations->search({}, 
                     { order_by => { -asc => 'priority' }}
                 )->all ];
         }
     }
+    $c->stash(cf_mappings => $mappings);
     $c->stash(cf_destinations => $cfs);
     my $ringtimeout_preference = $c->model('DB')->resultset('voip_preferences')->search({
             attribute => 'ringtimeout', 'usr_pref' => 1,
@@ -446,17 +448,21 @@ sub preferences_callforward :Chained('base') :PathPart('preferences/callforward'
         cf_description => $cf_desc,
         cf_form => $cf_form,
     );
-
-
-
-
-
-
-
-
-
 }
 
+sub preferences_callforward_delete :Chained('base') :PathPart('preferences/callforward/delete') :Args(1) {
+    my ($self, $c, $cfmap_id) = @_;
+
+    try {
+        $c->model('DB')->resultset('voip_cf_mappings')->find($cfmap_id)->delete;
+        $c->flash(messages => [{type => 'success', text => 'Successfully deleted Call Forward'}]);
+    } catch($e) {
+        $c->log->error("failed to delete call forward mapping: $e");
+        $c->flash(messages => [{type => 'error', text => 'Failed to deleted Call Forward'}]);
+    }
+
+    $c->response->redirect($c->uri_for_action('/subscriber/preferences', [$c->req->captures->[0]]));
+}
 
 sub load_preference_list :Private {
     my ($self, $c) = @_;

@@ -7,7 +7,15 @@ extends 'HTML::FormHandler';
 has '+widget_wrapper' => (default => 'Bootstrap');
 has_field 'id' => (type => 'Hidden');
 
-has_field 'destination' => (type => 'Text', required => 1,);
+has_field 'destination' => (
+    type => 'Text', 
+    required => 1,
+    element_attr => {
+        rel => ['tooltip'],
+        title => ['Either a number (e.g. &ldquo;431234&rdquo;), a SIP user (e.g. &ldquo;peter&rdquo; or a full SIP URI (e.g. &ldquo;sip:peter@example.org&rdquo;)']
+    },
+);
+
 has_field 'save' => (type => 'Submit', element_class => [qw(btn btn-primary)],);
 has_block 'fields' => (
     tag => 'div',

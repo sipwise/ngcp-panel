@@ -8,6 +8,10 @@ has_field 'ringtimeout' => (
 	type => 'PosInteger', 
 	required => 1,
 	label => 'after ring timeout',
+    element_attr => {
+        rel => ['tooltip'],
+        title => ['Seconds to wait for pick-up until engaging Call Forward (e.g. &ldquo;10&rdquo;)']
+    },
 );
 has_block 'fields' => (
     tag => 'div',

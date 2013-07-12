@@ -58,7 +58,7 @@
                                    { type = "cfna", desc = "Unavailable" } ] -%]
                         <tr class="sw_action_row">
                             <td>Call Forward [% cf.desc %]</td>
-                            <td>[% cf_ringtimeout IF cf.type == "cft" && cf_destinations.${cf.type}.size %]</td>
+                            <td>[% cf_ringtimeout _ 's' IF cf.type == "cft" && cf_destinations.${cf.type}.size %]</td>
                             <td>
                                 [% FOR d IN cf_destinations.${cf.type} -%]
                                     [% d.destination %] <span class="pull-right">for [% d.timeout %]s</span><br/>
@@ -66,8 +66,11 @@
                             </td>
                             <td>[% 'always' IF cf_destinations.${cf.type}.size %]</td>
                             <td class="ngcp-actions-column">
-                                <div class="sw_actions pull-right">
+                                <div class="sw_actions">
                                     <a class="btn btn-primary btn-small" href="[% c.uri_for_action("/subscriber/preferences_callforward", [c.req.captures.0, cf.type]) %]"><i class="icon-edit"></i> Edit</a>
+                                    [% IF cf_mappings.${cf.type}.id -%]
+                                    <a class="btn btn-secondary btn-small" data-confirm="Delete" href="[% c.uri_for_action("/subscriber/preferences_callforward_delete", [c.req.captures.0, cf_mappings.${cf.type}.id]) %]"><i class="icon-edit"></i> Delete</a>
+                                    [% END -%]
                                 </div>
 
                             </td>
