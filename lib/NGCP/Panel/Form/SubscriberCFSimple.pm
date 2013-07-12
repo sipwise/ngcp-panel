@@ -24,4 +24,15 @@ sub build_form_element_class {
     return [qw(form-horizontal)];
 }
 
+sub validate_destination {
+    my ($self, $field) = @_;
+
+    # TODO: proper SIP URI check!
+    if($field->value !~ /^sip:.+\@.+$/) {
+        my $err_msg = 'Destination must be a valid SIP URI in format "sip:user@domain"';
+        $field->add_error($err_msg);
+    }
+}
 1;
+
+# vim: set tabstop=4 expandtab:

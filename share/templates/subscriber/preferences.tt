@@ -52,69 +52,27 @@
                         </tr>
                     </thead>
                     <tbody>
+                    [% FOR cf IN [ { type = "cfu", desc = "Unconditional" },
+                                   { type = "cfb", desc = "Busy" },
+                                   { type = "cft", desc = "Timeout" },
+                                   { type = "cfna", desc = "Unavailable" } ] -%]
                         <tr class="sw_action_row">
-                            <td>Call Forward Unconditional</td>
-                            <td></td>
+                            <td>Call Forward [% cf.desc %]</td>
+                            <td>[% cf_ringtimeout IF cf.type == "cft" && cf_destinations.${cf.type}.size %]</td>
                             <td>
-                                4312345<br/>
-                                foo@bar.com<br/>
-                                voicebox
+                                [% FOR d IN cf_destinations.${cf.type} -%]
+                                    [% d.destination %] <span class="pull-right">for [% d.timeout %]s</span><br/>
+                                [% END -%]
                             </td>
-                            <td>always</td>
+                            <td>[% 'always' IF cf_destinations.${cf.type}.size %]</td>
                             <td class="ngcp-actions-column">
                                 <div class="sw_actions pull-right">
-                                    <a class="btn btn-primary btn-small" href="[% c.uri_for_action("/subscriber/preferences_callforward", [c.req.captures.0, "cfu"]) %]"><i class="icon-edit"></i> Edit</a>
+                                    <a class="btn btn-primary btn-small" href="[% c.uri_for_action("/subscriber/preferences_callforward", [c.req.captures.0, cf.type]) %]"><i class="icon-edit"></i> Edit</a>
                                 </div>
 
                             </td>
                         </tr>
-                        <tr class="sw_action_row">
-                            <td>Call Forward Busy</td>
-                            <td></td>
-                            <td>
-                                4312345<br/>
-                                foo@bar.com<br/>
-                                voicebox
-                            </td>
-                            <td>always</td>
-                            <td class="ngcp-actions-column">
-                                <div class="sw_actions pull-right">
-                                    <a class="btn btn-primary btn-small" href="[% c.uri_for_action("/subscriber/preferences_callforward", [c.req.captures.0, "cfb"]) %]"><i class="icon-edit"></i> Edit</a>
-                                </div>
-
-                            </td>
-                        </tr>
-                        <tr class="sw_action_row">
-                            <td>Call Forward Timeout</td>
-                            <td>15s</td>
-                            <td>
-                                4312345<br/>
-                                foo@bar.com<br/>
-                                voicebox
-                            </td>
-                            <td>always</td>
-                            <td class="ngcp-actions-column">
-                                <div class="sw_actions pull-right">
-                                    <a class="btn btn-primary btn-small" href="[% c.uri_for_action("/subscriber/preferences_callforward", [c.req.captures.0, "cft"]) %]"><i class="icon-edit"></i> Edit</a>
-                                </div>
-                            </td>
-                        </tr>
-                        <tr class="sw_action_row">
-                            <td>Call Forward Unavailable</td>
-                            <td></td>
-                            <td>
-                                4312345<br/>
-                                foo@bar.com<br/>
-                                voicebox
-                            </td>
-                            <td>always</td>
-                            <td class="ngcp-actions-column">
-                                <div class="sw_actions pull-right">
-                                    <a class="btn btn-primary btn-small" href="[% c.uri_for_action("/subscriber/preferences_callforward", [c.req.captures.0, "cfna"]) %]"><i class="icon-edit"></i> Edit</a>
-                                </div>
-
-                            </td>
-                        </tr>
+                    [% END -%]
                     </tbody>
                 </table>
 

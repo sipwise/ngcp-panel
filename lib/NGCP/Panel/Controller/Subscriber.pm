@@ -228,6 +228,27 @@ sub preferences :Chained('base') :PathPart('preferences') :Args(0) {
 
     $self->load_preference_list($c);
     $c->stash(template => 'subscriber/preferences.tt');
+
+    my $prov_subscriber = $c->stash->{subscriber}->provisioning_voip_subscriber;
+    my $cfs = {};
+    for my $type(qw/cfu cfna cft cfb/) {
+        $c->stash('cf_mappings_'.$type => $prov_subscriber->voip_cf_mappings
+            ->find({ type => $type }));
+        if(defined $c->stash->{'cf_mappings_'.$type}) {
+            $cfs->{$type} = [ $c->stash->{'cf_mappings_'.$type}
+                ->destination_set
+                ->voip_cf_destinations->search({}, 
+                    { order_by => { -asc => 'priority' }}
+                )->all ];
+        }
+    }
+    $c->stash(cf_destinations => $cfs);
+    my $ringtimeout_preference = $c->model('DB')->resultset('voip_preferences')->search({
+            attribute => 'ringtimeout', 'usr_pref' => 1,
+        })->first->voip_usr_preferences->find({
+            subscriber_id => $prov_subscriber->id,
+        });
+    $c->stash(cf_ringtimeout => $ringtimeout_preference ? $ringtimeout_preference->value : undef);
 }
 
 sub preferences_base :Chained('base') :PathPart('preferences') :CaptureArgs(1) {
@@ -290,11 +311,132 @@ sub preferences_callforward :Chained('base') :PathPart('preferences/callforward'
         }
     }
 
+    my $posted = ($c->request->method eq 'POST');
+
+    my $voip_preferences = $c->model('DB')->resultset('voip_preferences')->search({
+        'usr_pref' => 1,
+    });
+    my $cf_preference = $voip_preferences->find({ 'attribute' => $cf_type })
+        ->voip_usr_preferences;
+    my $ringtimeout_preference = $voip_preferences->find({ 'attribute' => 'ringtimeout' })
+        ->voip_usr_preferences;
+    my $billing_subscriber = $c->stash->{subscriber};
+    my $prov_subscriber = $billing_subscriber->provisioning_voip_subscriber;
+    my $cf_mapping = $prov_subscriber->voip_cf_mappings->find({ type => $cf_type });
+    my $destination;
+    if($cf_mapping && 
+       $cf_mapping->destination_set && 
+       $cf_mapping->destination_set->voip_cf_destinations->first) {
+
+        $destination = $cf_mapping->destination_set->voip_cf_destinations->first;
+    }
+
+    my $params = {};
+    if($destination) {
+        $params->{destination} = $destination->destination;
+        if($cf_type eq 'cft') {
+            my $rt = $ringtimeout_preference->find({ subscriber_id => $prov_subscriber->id });
+            if($rt) {
+                $params->{ringtimeout} = $rt->value;
+            } else {
+                $params->{ringtimeout} = 15;
+            }
+        }
+    }
+    if($posted) {
+        $params = $c->request->params;
+        if($params->{destination} !~ /\@/) {
+            $params->{destination} .= '@'.$billing_subscriber->domain->domain;
+        }
+        if($params->{destination} !~ /^sip:/) {
+            $params->{destination} = 'sip:' . $params->{destination};
+        }
+    }
+
     my $cf_form;
     if($cf_type eq "cft") {
         $cf_form = NGCP::Panel::Form::SubscriberCFTSimple->new;
     } else {
         $cf_form = NGCP::Panel::Form::SubscriberCFSimple->new;
+    }
+
+    # TODO: if more than one entry in $cf_mapping->voip_cf_destination_set->voip_cf_destinations,
+    # show advanced mode and list them all; same for time sets
+
+    $cf_form->process(
+        params => $params,
+        action => $c->uri_for_action('/subscriber/preferences', [$c->req->captures->[0], $c->req->captures->[1]])
+    );
+
+    if($posted && $cf_form->validated) {
+        try {
+            $c->model('DB')->schema->txn_do( sub {
+                my $dest_set = $c->model('DB')->resultset('voip_cf_destination_sets')->find({
+                    subscriber_id => $prov_subscriber->id,
+                    name => 'quickset_'.$cf_type,
+                });
+                unless($dest_set) {
+                    $dest_set = $c->model('DB')->resultset('voip_cf_destination_sets')->create({
+                        name => 'quickset_'.$cf_type,
+                        subscriber_id => $prov_subscriber->id,
+                    });
+                } else {
+                    my @all = $dest_set->voip_cf_destinations->all;
+                    foreach my $dest(@all) {
+                        $dest->delete;
+                    }
+                }
+                my $dest = $dest_set->voip_cf_destinations->create({
+                    priority => 1,
+                    timeout => 300,
+                    destination => $c->request->params->{destination},
+                });
+
+                unless(defined $cf_mapping) {
+                    $cf_mapping = $prov_subscriber->voip_cf_mappings->create({
+                        type => $cf_type,
+                        # subscriber_id => $prov_subscriber->id,
+                        destination_set_id => $dest_set->id,
+                        time_set_id => undef, #$time_set_id,
+                    });
+                }
+                my $cf_preference_row = $cf_preference->find({ 
+                    subscriber_id => $prov_subscriber->id 
+                });
+                if($cf_preference_row) {
+                    $cf_preference_row->update({ value => $cf_mapping->id });
+                } else {
+                    $cf_preference->create({
+                        subscriber_id => $prov_subscriber->id,
+                        value => $cf_mapping->id,
+                    });
+                }
+                if($cf_type eq 'cft') {
+                    my $ringtimeout_preference_row = $ringtimeout_preference->find({ 
+                        subscriber_id => $prov_subscriber->id 
+                    });
+                    if($ringtimeout_preference_row) {
+                        $ringtimeout_preference_row->update({ 
+                            value => $c->request->params->{ringtimeout}
+                        });
+                    } else {
+                        $ringtimeout_preference->create({
+                            subscriber_id => $prov_subscriber->id,
+                            value => $c->request->params->{ringtimeout},
+                        });
+                    }
+                }
+            });
+        } catch($e) {
+            $c->log->error("failed to save call-forward: $e");
+            $c->flash(messages => [{type => 'error', text => 'Failed to save Call Forward'}]);
+            $c->response->redirect($c->uri_for_action('/subscriber/preferences', [$c->req->captures->[0]]));
+            return;
+        }
+        
+        $c->flash(messages => [{type => 'success', text => 'Successfully saved Call Forward'}]);
+        $c->response->redirect($c->uri_for_action('/subscriber/preferences', [$c->req->captures->[0]]));
+        return;
     }
 
     $self->load_preference_list($c);
@@ -304,6 +446,14 @@ sub preferences_callforward :Chained('base') :PathPart('preferences/callforward'
         cf_description => $cf_desc,
         cf_form => $cf_form,
     );
+
+
+
+
+
+
+
+
 
 }
 
