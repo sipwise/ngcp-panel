@@ -390,9 +390,6 @@ sub preferences_callforward :Chained('base') :PathPart('preferences/callforward'
         params => $params,
     );
 
-    # TODO: if more than one entry in $cf_mapping->voip_cf_destination_set->voip_cf_destinations,
-    # show advanced mode and list them all; same for time sets
-
     return if NGCP::Panel::Utils::check_form_buttons(
         c => $c, form => $cf_form,
         fields => {
@@ -487,8 +484,6 @@ sub preferences_callforward :Chained('base') :PathPart('preferences/callforward'
 sub preferences_callforward_advanced :Chained('base') :PathPart('preferences/callforward') :Args(2) {
     my ($self, $c, $cf_type, $advanced) = @_;
 
-    say ">>>>>>>>>>>>>>>>>>>>>> preferences_callforward_advanced";
-
     # TODO bail out of $advanced ne "advanced"
     if(defined $advanced && $advanced eq 'advanced') {
         $advanced = 1;
@@ -527,20 +522,28 @@ sub preferences_callforward_advanced :Chained('base') :PathPart('preferences/cal
     my $posted = ($c->request->method eq 'POST');
 
     my $cf_form;
-#    my $params = {};
     if($cf_type eq "cft") {
         $cf_form = NGCP::Panel::Form::SubscriberCFTAdvanced->new(ctx => $c);
     } else {
         $cf_form = NGCP::Panel::Form::SubscriberCFAdvanced->new(ctx => $c);
     }
+
+    # TODO: handle ring-rimeout
+    my @maps = ();
+    foreach my $map($cf_mapping->all) {
+        push @maps, {
+            destination_set => $map->destination_set->id,
+            time_set => $map->time_set ? $map->time_set->id : undef,
+        };
+          
+    }
+    my $params = { active_callforward => \@maps };
+
     $cf_form->process(
-        params => $posted ? $c->request->params : {}
+        params => $posted ? $c->request->params : $params,
     );
 
 
-    my $back_uri = $c->uri_for_action('/subscriber/preferences_callforward_advanced',
-                [$c->req->captures->[0]], $cf_type, 'advanced');
-    say ">>>>>>>>>>>>>>>>>>>>>>>> check_form_buttons, back_uri=$back_uri";
     return if NGCP::Panel::Utils::check_form_buttons(
         c => $c, form => $cf_form,
         fields => {
@@ -561,8 +564,6 @@ sub preferences_callforward_advanced :Chained('base') :PathPart('preferences/cal
             [$c->req->captures->[0]], $cf_type, 'advanced'),
     );
 
-
-    say ">>>>>>>>>>>>>>>>>>>>>>>> after check_form_buttons";
 
     if($posted && $cf_form->validated) {
         try {
