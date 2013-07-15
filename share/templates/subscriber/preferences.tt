@@ -57,25 +57,51 @@
                                    { type = "cft", desc = "Timeout" },
                                    { type = "cfna", desc = "Unavailable" } ] -%]
                         <tr class="sw_action_row">
+                            [% # let's count the lines of dest/period per map for proper alignment: -%]
+                            [% 
+                                FOR maps IN cf_destinations.${cf.type};
+                                    destinations.${loop.index} = maps.destinations.size;
+                                    periods.${loop.index} = maps.periods.size;
+                                END;
+                            -%]
                             <td>Call Forward [% cf.desc %]</td>
-                            <td>[% cf_ringtimeout _ 's' IF cf.type == "cft" && cf_destinations.${cf.type}.size %]</td>
                             <td>
+                                [% cf_ringtimeout _ 's' IF cf.type == "cft" && cf_destinations.${cf.type}.size %]
+                            </td>
+                            <td>
+                                [% idx = 0 -%]
                                 [% FOR maps IN cf_destinations.${cf.type} -%]
+                                    [% jdx = 0 -%]
                                     [% FOR d IN maps.destinations -%]
                                         [% d.destination %] <span class="pull-right">for [% d.timeout %]s</span><br/>
+                                        [% jdx = jdx + 1 %]
                                     [% END -%]
-                                    <br/>
+                                    [% WHILE jdx < periods.${idx} -%]
+                                        <br/>
+                                        [% jdx = jdx + 1 %]
+                                    [% END -%]
+                                    [% idx = idx + 1 -%]
+                                    [% '<br/>' UNLESS loop.index == loop.max -%]
                                 [% END -%]
                             </td>
                             <td>
+                                [% idx = 0 -%]
                                 [% FOR maps IN cf_destinations.${cf.type} -%]
+                                    [% jdx = 0 -%]
                                     [% UNLESS maps.periods.size -%]
                                         always<br/>
+                                        [% jdx = jdx + 1 %]
                                     [% END -%]
                                     [% FOR p IN maps.periods -%]
-                                        p.year p.month p.mday p.wday p.hour p.minute<br/>
+                                        [% jdx %]: [% p.year %] [% p.month %] [% p.mday %] [% p.wday %] [% p.hour %] [% p.minute %]<br/>
+                                        [% jdx = jdx + 1 %]
                                     [% END -%]
-                                    <br/>
+                                    [% WHILE jdx < destinations.${idx} -%]
+                                        <br/>
+                                        [% jdx = jdx + 1 %]
+                                    [% END -%]
+                                    [% idx = idx + 1 -%]
+                                    [% '<br/>' UNLESS loop.index == loop.max -%]
                                 [% END -%]
                             </td>
                             <td class="ngcp-actions-column">
