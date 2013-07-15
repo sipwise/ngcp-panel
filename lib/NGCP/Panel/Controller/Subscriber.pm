@@ -500,6 +500,27 @@ sub preferences_callforward_advanced :Chained('base') :PathPart('preferences/cal
         }
     }
 
+    my $billing_subscriber = $c->stash->{subscriber};
+    my $prov_subscriber = $billing_subscriber->provisioning_voip_subscriber;
+    my $cf_mapping = $prov_subscriber->voip_cf_mappings->find({ type => $cf_type });
+    if($cf_mapping) {
+        $c->stash->{cf_active_destination_set} = $cf_mapping->destination_set
+            if($cf_mapping->destination_set);
+        $c->stash->{cf_destination_sets} = $prov_subscriber->voip_cf_destination_sets;
+        $c->stash->{cf_active_time_set} = $cf_mapping->time_set
+            if($cf_mapping->time_set);
+        $c->stash->{cf_time_sets} = $prov_subscriber->voip_cf_time_sets;
+    }
+
+    my $destination;
+    if($cf_mapping && 
+       $cf_mapping->destination_set && 
+       $cf_mapping->destination_set->voip_cf_destinations->first) {
+
+        $destination = $cf_mapping->destination_set->voip_cf_destinations->first;
+    }
+
+
     my $posted = ($c->request->method eq 'POST');
 
     my $cf_form;
@@ -507,7 +528,7 @@ sub preferences_callforward_advanced :Chained('base') :PathPart('preferences/cal
 #    if($cf_type eq "cft") {
 #        $cf_form = NGCP::Panel::Form::SubscriberCFTAdvanced->new;
 #    } else {
-        $cf_form = NGCP::Panel::Form::SubscriberCFAdvanced->new;
+        $cf_form = NGCP::Panel::Form::SubscriberCFAdvanced->new(ctx => $c);
 #    }
     $cf_form->process(
         params => $posted ? $c->request->params : {}

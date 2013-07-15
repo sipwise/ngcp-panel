@@ -16,7 +16,6 @@ has_field 'submitid' => (
 has_field 'active_callforward' => (
     type => 'Repeatable',
     setup_for_js => 1,
-    #do_wrapper => 0,
     do_wrapper => 1,
     do_label => 0,
     tags => { 
@@ -26,65 +25,36 @@ has_field 'active_callforward' => (
 );
 
 has_field 'active_callforward.destination_set' => (
-    type => 'Select',
+    type => '+NGCP::Panel::Field::SubscriberDestinationSet',
     label => 'Destination Set',
     wrapper_class => [qw/hfh-rep-field/],
 
 );
 
 has_field 'active_callforward.time_set' => (
-    type => 'Select',
+    type => '+NGCP::Panel::Field::SubscriberTimeSet',
     label => 'during Time Set',
     wrapper_class => [qw/hfh-rep-field/],
 );
 
-has_field 'add_active_callforward' => (
+has_field 'active_callforward.rm' => (
+    type => 'RmElement',
+    value => 'Remove',
+    element_class => [qw/btn btn-primary pull-right/],
+);
+
+
+has_field 'callforward_controls_add' => (
     type => 'AddElement',
     repeatable => 'active_callforward',
     value => 'Add more',
     element_class => [qw/btn btn-primary pull-right/],
 );
 
-#has_field 'rm_active_callforward' => (
-#    type => 'RmElement',
-#    repeatable => 'active_callforward',
-#    value => 'Remove last',
-#    element_class => [qw/btn btn-primary pull-right/],
-#);
-
-=pod
-has_field 'destination_set.foo' => (
-    type => 'Select',
-    label => 'Destination Set',
-);
-
-has_field 'add_element' => (
-    type => '+NGCP::Panel::Field::AddElement',
-    repeatable => 'destination_set.foo',
-    value => 'Add more',
-);
-
-has_field 'destination_set' => (
-    type => 'Repeatable', 
-);
-
-has_field 'destination_set.foo' => (
-    type => 'Select',
-    label => 'Destination Set',
-);
-
-has_field 'add_element' => (
-    type => '+NGCP::Panel::Field::AddElement',
-    repeatable => 'destination_set.foo',
-    value => 'Add more',
-);
-=cut
-
 has_block 'fields' => (
     tag => 'div',
     class => [qw(modal-body)],
-    #render_list => [qw(submitid active_callforward add_active_callforward rm_active_callforward)],
-    render_list => [qw(submitid active_callforward add_active_callforward )],
+    render_list => [qw(submitid active_callforward callforward_controls_add)],
 );
 
 has_field 'simple' => (
