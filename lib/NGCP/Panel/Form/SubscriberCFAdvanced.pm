@@ -1,11 +1,11 @@
 package NGCP::Panel::Form::SubscriberCFAdvanced;
 use HTML::FormHandler::Moose;
 use HTML::FormHandler::Widget::Block::Bootstrap;
-#use NGCP::Panel::Render::RepeatableJs;
-#use Moose::Util::TypeConstraints;
+use Moose::Util::TypeConstraints;
 extends 'HTML::FormHandler';
 
-with 'HTML::FormHandler::Render::RepeatableJs';
+with 'NGCP::Panel::Render::RepeatableJs';
+#with 'HTML::FormHandler::Render::RepeatableJs';
 
 has '+widget_wrapper' => (default => 'Bootstrap');
 
@@ -41,6 +41,9 @@ has_field 'active_callforward.rm' => (
     type => 'RmElement',
     value => 'Remove',
     element_class => [qw/btn btn-primary pull-right/],
+#    tags => {
+#        "data-confirm" => "Delete",
+#    },
 );
 
 
