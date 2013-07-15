@@ -60,22 +60,53 @@ has_block 'fields' => (
     render_list => [qw(submitid active_callforward callforward_controls_add)],
 );
 
-has_field 'simple' => (
-    type => 'Button', 
+has_field 'cf_actions' => (
+    type => 'Compound',
     do_label => 0,
-    value => 'Simple',
-    element_class => [qw(btn btn-tertiary)],
+    do_wrapper => 1,
+    wrapper_class => [qw(row pull-right)],
 );
 
-has_field 'save' => (
-    type => 'Submit',
+
+has_field 'cf_actions.save' => (
+    type => 'Button',
+    do_label => 0,
+    value => 'Save',
     element_class => [qw(btn btn-primary)],
+    wrapper_class => [qw(pull-right)],
 );
+
+has_field 'cf_actions.simple' => (
+    type => 'Button', 
+    do_label => 0,
+    value => 'Simple View',
+    element_class => [qw(btn btn-tertiary)],
+    wrapper_class => [qw(pull-right)],
+);
+
+has_field 'cf_actions.edit_time_sets' => (
+    type => 'Button', 
+    do_label => 0,
+    value => 'Manage Time Sets',
+    element_class => [qw(btn btn-tertiary)],
+    wrapper_class => [qw(pull-right)],
+);
+
+has_field 'cf_actions.edit_destination_sets' => (
+    type => 'Button', 
+    do_label => 0,
+    value => 'Manage Destination Sets',
+    element_class => [qw(btn btn-tertiary)],
+    wrapper_class => [qw(pull-right)],
+);
+
+
 
 has_block 'actions' => (
     tag => 'div',
     class => [qw(modal-footer)],
-    render_list => [qw(simple save)],
+    #render_list => [qw(save simple edit_time_sets edit_destination_sets)],
+    render_list => [qw(cf_actions)],
 );
 
 sub build_render_list {

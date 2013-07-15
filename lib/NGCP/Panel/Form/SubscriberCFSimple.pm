@@ -24,20 +24,35 @@ has_field 'destination' => (
     },
 );
 
-has_field 'advanced' => (
+has_field 'cf_actions' => (
+    type => 'Compound',
+    do_label => 0,
+    do_wrapper => 1,
+    wrapper_class => [qw(row pull-right)],
+);
+
+has_field 'cf_actions.save' => (
+    type => 'Button',
+    do_label => 0,
+    value => 'Save',
+    element_class => [qw(btn btn-primary)],
+    wrapper_class => [qw(pull-right)],
+);
+
+has_field 'cf_actions.advanced' => (
     type => 'Button', 
     do_label => 0,
-    value => 'Advanced',
+    value => 'Advanced View',
     element_class => [qw(btn btn-tertiary)],
+    wrapper_class => [qw(pull-right)],
 );
-has_field 'save' => (type => 'Submit', element_class => [qw(btn btn-primary)],);
 
 has_block 'fields' => (
     tag => 'div',
     class => [qw(modal-body)],
     render_list => [qw(submitid destination)],
 );
-has_block 'actions' => (tag => 'div', class => [qw(modal-footer)], render_list => [qw(advanced save)],);
+has_block 'actions' => (tag => 'div', class => [qw(modal-footer)], render_list => [qw(cf_actions)],);
 
 sub build_render_list {
     return [qw(id fields actions)];

@@ -39,6 +39,8 @@ div.ngcp-modal .help-inline {
     z-index: 2000 !important;
 }
 
+/* remove left margin for repeatable elements */
+
 div.ngcp-modal div.modal-body div.control-group.hfh-rep {
     margin-left: 0;
 }
@@ -49,6 +51,12 @@ div.ngcp-modal div.modal-body div.control-group.hfh-rep div.controls {
 
 div.ngcp-modal div.modal-body div.control-group.hfh-rep div.controls div.hfh-rep-field .controls {
     margin-left: 180px;
+}
+
+/* align buttons in one row in modal-footer */
+
+div.modal-footer div.control-group div.controls {
+    margin-left: 5px;
 }
 
 /*

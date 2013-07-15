@@ -376,24 +376,16 @@ sub preferences_callforward :Chained('base') :PathPart('preferences/callforward'
     # TODO: if more than one entry in $cf_mapping->voip_cf_destination_set->voip_cf_destinations,
     # show advanced mode and list them all; same for time sets
 
-    say ">>>>>>>>>>>>>>>>>>>>>>>> check_form_buttons";
     return if NGCP::Panel::Utils::check_form_buttons(
         c => $c, form => $cf_form,
         fields => {
-            'advanced' => 
+            'cf_actions.advanced' => 
                 $c->uri_for_action('/subscriber/preferences_callforward_advanced', 
                     [$c->req->captures->[0]], $cf_type, 'advanced'
-                ),
-            'simple' => 
-                $c->uri_for_action('/subscriber/preferences_callforward', 
-                    [$c->req->captures->[0]], $cf_type
                 ),
         },
         back_uri => $c->uri_for($c->action, $c->req->captures)
     );
-
-
-    say ">>>>>>>>>>>>>>>>>>>>>>>> after check_form_buttons";
 
     if($posted && $cf_form->validated) {
         try {
@@ -539,7 +531,7 @@ sub preferences_callforward_advanced :Chained('base') :PathPart('preferences/cal
     return if NGCP::Panel::Utils::check_form_buttons(
         c => $c, form => $cf_form,
         fields => {
-            'simple' => 
+            'cf_actions.simple' => 
                 $c->uri_for_action('/subscriber/preferences_callforward', 
                     [$c->req->captures->[0], $cf_type],
                 ),
