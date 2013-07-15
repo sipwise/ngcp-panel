@@ -235,20 +235,23 @@ sub preferences :Chained('base') :PathPart('preferences') :Args(0) {
 
     my $prov_subscriber = $c->stash->{subscriber}->provisioning_voip_subscriber;
     my $cfs = {};
-    my $mappings = {};
-    for my $type(qw/cfu cfna cft cfb/) {
-        $mappings->{$type} = $prov_subscriber->voip_cf_mappings
-            ->find({ type => $type });
-        if(defined $mappings->{$type}) {
-            $cfs->{$type} = [ $mappings->{$type}
-                ->destination_set
-                ->voip_cf_destinations->search({}, 
-                    { order_by => { -asc => 'priority' }}
-                )->all ];
+
+    foreach my $type(qw/cfu cfna cft cfb/) {
+        my $maps = $prov_subscriber->voip_cf_mappings
+            ->search({ type => $type });
+        $cfs->{$type} = [];
+        foreach my $map($maps->all) {
+            my @dset = map { { $_->get_columns } } $map->destination_set->voip_cf_destinations->search({},
+                { order_by => { -asc => 'priority' }})->all;
+            my @tset = ();
+            if($map->time_set) {
+                @tset = map { { $_->get_columns } } $map->time_set->voip_cf_periods->all;
+            }
+            push @{ $cfs->{$type} }, { destinations => \@dset, periods => \@tset };
         }
     }
-    $c->stash(cf_mappings => $mappings);
     $c->stash(cf_destinations => $cfs);
+
     my $ringtimeout_preference = $c->model('DB')->resultset('voip_preferences')->search({
             attribute => 'ringtimeout', 'usr_pref' => 1,
         })->first->voip_usr_preferences->find({
@@ -304,8 +307,6 @@ sub preferences_edit :Chained('preferences_base') :PathPart('edit') :Args(0) {
 sub preferences_callforward :Chained('base') :PathPart('preferences/callforward') :Args(1) {
     my ($self, $c, $cf_type) = @_;
 
-    say ">>>>>>>>>>>>>>>>>>>>>> preferences_callforward";
-
     my $cf_desc;
     given($cf_type) {
         when("cfu") { $cf_desc = "Call Forward Unconditional" }
@@ -331,16 +332,24 @@ sub preferences_callforward :Chained('base') :PathPart('preferences/callforward'
         ->voip_usr_preferences;
     my $billing_subscriber = $c->stash->{subscriber};
     my $prov_subscriber = $billing_subscriber->provisioning_voip_subscriber;
-    my $cf_mapping = $prov_subscriber->voip_cf_mappings->find({ type => $cf_type });
+    my $cf_mapping = $prov_subscriber->voip_cf_mappings->search_rs({ type => $cf_type });
     my $destination;
-    if($cf_mapping && 
-       $cf_mapping->destination_set && 
-       $cf_mapping->destination_set->voip_cf_destinations->first) {
+    if($cf_mapping->count > 1) {
+        # there is more than one mapping,
+        # which can only be handled in advanced mode
+        $c->response->redirect( 
+            $c->uri_for_action('/subscriber/preferences_callforward_advanced', 
+                [$c->req->captures->[0]], $cf_type, 'advanced'
+            )
+       );
+       return;
+    } elsif($cf_mapping->first->destination_set && 
+            $cf_mapping->first->destination_set->voip_cf_destinations->first) {
 
         # there are more than one destinations or a time set, so
         # which can only be handled in advanced mode
-        if($cf_mapping->destination_set->voip_cf_destinations->count > 1 ||
-           $cf_mapping->time_set) {
+        if($cf_mapping->first->destination_set->voip_cf_destinations->count > 1 ||
+           $cf_mapping->first->time_set) {
 
             $c->response->redirect( 
                 $c->uri_for_action('/subscriber/preferences_callforward_advanced', 
@@ -349,7 +358,7 @@ sub preferences_callforward :Chained('base') :PathPart('preferences/callforward'
            );
            return;
         }
-        $destination = $cf_mapping->destination_set->voip_cf_destinations->first;
+        $destination = $cf_mapping->first->destination_set->voip_cf_destinations->first;
     }
 
     my $params = {};
@@ -425,6 +434,7 @@ sub preferences_callforward :Chained('base') :PathPart('preferences/callforward'
                     destination => $c->request->params->{destination},
                 });
 
+                $cf_mapping = $cf_mapping->first; 
                 unless(defined $cf_mapping) {
                     $cf_mapping = $prov_subscriber->voip_cf_mappings->create({
                         type => $cf_type,

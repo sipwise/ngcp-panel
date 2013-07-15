@@ -60,11 +60,24 @@
                             <td>Call Forward [% cf.desc %]</td>
                             <td>[% cf_ringtimeout _ 's' IF cf.type == "cft" && cf_destinations.${cf.type}.size %]</td>
                             <td>
-                                [% FOR d IN cf_destinations.${cf.type} -%]
-                                    [% d.destination %] <span class="pull-right">for [% d.timeout %]s</span><br/>
+                                [% FOR maps IN cf_destinations.${cf.type} -%]
+                                    [% FOR d IN maps.destinations -%]
+                                        [% d.destination %] <span class="pull-right">for [% d.timeout %]s</span><br/>
+                                    [% END -%]
+                                    <br/>
                                 [% END -%]
                             </td>
-                            <td>[% 'always' IF cf_destinations.${cf.type}.size %]</td>
+                            <td>
+                                [% FOR maps IN cf_destinations.${cf.type} -%]
+                                    [% UNLESS maps.periods.size -%]
+                                        always<br/>
+                                    [% END -%]
+                                    [% FOR p IN maps.periods -%]
+                                        p.year p.month p.mday p.wday p.hour p.minute<br/>
+                                    [% END -%]
+                                    <br/>
+                                [% END -%]
+                            </td>
                             <td class="ngcp-actions-column">
                                 <div class="sw_actions">
                                     <a class="btn btn-primary btn-small" href="[% c.uri_for_action("/subscriber/preferences_callforward", [c.req.captures.0], cf.type) %]"><i class="icon-edit"></i> Edit</a>
