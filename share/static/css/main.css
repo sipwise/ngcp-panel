@@ -39,6 +39,25 @@ div.ngcp-modal .help-inline {
     z-index: 2000 !important;
 }
 
+div.ngcp-modal div.modal-body div.control-group.hfh-rep {
+    margin-left: 0;
+}
+
+div.ngcp-modal div.modal-body div.control-group.hfh-rep div.controls {
+    margin-left: 0;
+}
+
+div.ngcp-modal div.modal-body div.control-group.hfh-rep div.controls div.hfh-rep-field .controls {
+    margin-left: 180px;
+}
+
+/*
+div.ngcp-modal .control-group.hfh-rep .controls {
+    margin-left: 0;
+    border: 1px solid green;
+}
+*/
+
 /* ---------
   Datatable (main one)
 ------------*/
@@ -225,3 +244,5 @@ div.ngcp-modal .control-group.error .dataTables_wrapper input[type="text"] {
     width: 206px !important;
     padding: 4px 6px !important;
 }
+
+/* vim: set tabstop=4 syntax=css expandtab: */

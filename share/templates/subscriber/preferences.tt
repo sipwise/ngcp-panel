@@ -67,7 +67,7 @@
                             <td>[% 'always' IF cf_destinations.${cf.type}.size %]</td>
                             <td class="ngcp-actions-column">
                                 <div class="sw_actions">
-                                    <a class="btn btn-primary btn-small" href="[% c.uri_for_action("/subscriber/preferences_callforward", [c.req.captures.0, cf.type]) %]"><i class="icon-edit"></i> Edit</a>
+                                    <a class="btn btn-primary btn-small" href="[% c.uri_for_action("/subscriber/preferences_callforward", [c.req.captures.0], cf.type) %]"><i class="icon-edit"></i> Edit</a>
                                     [% IF cf_mappings.${cf.type}.id -%]
                                     <a class="btn btn-secondary btn-small" data-confirm="Delete" href="[% c.uri_for_action("/subscriber/preferences_callforward_delete", [c.req.captures.0, cf_mappings.${cf.type}.id]) %]"><i class="icon-edit"></i> Delete</a>
                                     [% END -%]
@@ -94,7 +94,10 @@
     modal_header(m.name = "Call Forward " _ cf_description);
 -%]
 
-[% cf_form.render(); %]
+[% IF cf_form.has_for_js -%]
+[% cf_form.render_repeatable_js %]
+[% END -%]
+[% cf_form.render %]
 
 [%
     modal_footer();

@@ -52,6 +52,7 @@ __PACKAGE__->config(
             __PACKAGE__->path_to('share', 'layout'),
         ],
         ABSOLUTE => 1,
+        EVAL_PERL => 1,
     },
     'View::JSON' => {
         #Set the stash keys to be exposed to a JSON response

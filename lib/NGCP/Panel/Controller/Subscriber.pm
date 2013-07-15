@@ -6,6 +6,8 @@ use NGCP::Panel::Utils::Contract;
 use NGCP::Panel::Form::Subscriber;
 use NGCP::Panel::Form::SubscriberCFSimple;
 use NGCP::Panel::Form::SubscriberCFTSimple;
+use NGCP::Panel::Form::SubscriberCFAdvanced;
+#use NGCP::Panel::Form::SubscriberCFTAdvanced;
 use UUID;
 
 use Data::Printer;
@@ -300,6 +302,8 @@ sub preferences_edit :Chained('preferences_base') :PathPart('edit') :Args(0) {
 sub preferences_callforward :Chained('base') :PathPart('preferences/callforward') :Args(1) {
     my ($self, $c, $cf_type) = @_;
 
+    say ">>>>>>>>>>>>>>>>>>>>>> preferences_callforward";
+
     my $cf_desc;
     given($cf_type) {
         when("cfu") { $cf_desc = "Unconditional" }
@@ -307,6 +311,7 @@ sub preferences_callforward :Chained('base') :PathPart('preferences/callforward'
         when("cft") { $cf_desc = "Timeout" }
         when("cfna") { $cf_desc = "Unavailable" }
         default {
+            $c->log->error("Invalid call-forward type '$cf_type'");
             $c->flash(messages => [{type => 'error', text => 'Invalid Call Forward type'}]);
             $c->response->redirect($c->uri_for_action('/subscriber/preferences', [$c->req->captures->[0]]));
             return;
@@ -347,11 +352,13 @@ sub preferences_callforward :Chained('base') :PathPart('preferences/callforward'
     }
     if($posted) {
         $params = $c->request->params;
-        if($params->{destination} !~ /\@/) {
-            $params->{destination} .= '@'.$billing_subscriber->domain->domain;
-        }
-        if($params->{destination} !~ /^sip:/) {
-            $params->{destination} = 'sip:' . $params->{destination};
+        if(!defined($c->request->params->{submitid})) {
+            if($params->{destination} !~ /\@/) {
+                $params->{destination} .= '@'.$billing_subscriber->domain->domain;
+            }
+            if($params->{destination} !~ /^sip:/) {
+                $params->{destination} = 'sip:' . $params->{destination};
+            }
         }
     }
 
@@ -362,13 +369,31 @@ sub preferences_callforward :Chained('base') :PathPart('preferences/callforward'
         $cf_form = NGCP::Panel::Form::SubscriberCFSimple->new;
     }
 
+    $cf_form->process(
+        params => $params,
+    );
+
     # TODO: if more than one entry in $cf_mapping->voip_cf_destination_set->voip_cf_destinations,
     # show advanced mode and list them all; same for time sets
 
-    $cf_form->process(
-        params => $params,
-        action => $c->uri_for_action('/subscriber/preferences', [$c->req->captures->[0], $c->req->captures->[1]])
+    say ">>>>>>>>>>>>>>>>>>>>>>>> check_form_buttons";
+    return if NGCP::Panel::Utils::check_form_buttons(
+        c => $c, form => $cf_form,
+        fields => {
+            'advanced' => 
+                $c->uri_for_action('/subscriber/preferences_callforward_advanced', 
+                    [$c->req->captures->[0]], $cf_type, 'advanced'
+                ),
+            'simple' => 
+                $c->uri_for_action('/subscriber/preferences_callforward', 
+                    [$c->req->captures->[0]], $cf_type
+                ),
+        },
+        back_uri => $c->uri_for($c->action, $c->req->captures)
     );
+
+
+    say ">>>>>>>>>>>>>>>>>>>>>>>> after check_form_buttons";
 
     if($posted && $cf_form->validated) {
         try {
@@ -440,6 +465,143 @@ sub preferences_callforward :Chained('base') :PathPart('preferences/callforward'
         $c->response->redirect($c->uri_for_action('/subscriber/preferences', [$c->req->captures->[0]]));
         return;
     }
+
+    $self->load_preference_list($c);
+    $c->stash(template => 'subscriber/preferences.tt');
+    $c->stash(
+        edit_cf_flag => 1,
+        cf_description => $cf_desc,
+        cf_form => $cf_form,
+    );
+}
+
+sub preferences_callforward_advanced :Chained('base') :PathPart('preferences/callforward') :Args(2) {
+    my ($self, $c, $cf_type, $advanced) = @_;
+
+    say ">>>>>>>>>>>>>>>>>>>>>> preferences_callforward_advanced";
+
+    if(defined $advanced && $advanced eq 'advanced') {
+        $advanced = 1;
+    } else {
+        $advanced = 0;
+    }
+
+    my $cf_desc;
+    given($cf_type) {
+        when("cfu") { $cf_desc = "Unconditional" }
+        when("cfb") { $cf_desc = "Busy" }
+        when("cft") { $cf_desc = "Timeout" }
+        when("cfna") { $cf_desc = "Unavailable" }
+        default {
+            $c->log->error("Invalid call-forward type '$cf_type'");
+            $c->flash(messages => [{type => 'error', text => 'Invalid Call Forward type'}]);
+            $c->response->redirect($c->uri_for_action('/subscriber/preferences', [$c->req->captures->[0]]));
+            return;
+        }
+    }
+
+    my $posted = ($c->request->method eq 'POST');
+
+    my $cf_form;
+#    my $params = {};
+#    if($cf_type eq "cft") {
+#        $cf_form = NGCP::Panel::Form::SubscriberCFTAdvanced->new;
+#    } else {
+        $cf_form = NGCP::Panel::Form::SubscriberCFAdvanced->new;
+#    }
+    $cf_form->process(
+        params => $posted ? $c->request->params : {}
+    );
+
+
+    say ">>>>>>>>>>>>>>>>>>>>>>>> check_form_buttons";
+    return if NGCP::Panel::Utils::check_form_buttons(
+        c => $c, form => $cf_form,
+        fields => {
+            'simple' => 
+                $c->uri_for_action('/subscriber/preferences_callforward', 
+                    [$c->req->captures->[0], $cf_type],
+                ),
+        },
+        back_uri => $c->uri_for($c->action, $c->req->captures)
+    );
+
+
+    say ">>>>>>>>>>>>>>>>>>>>>>>> after check_form_buttons";
+
+=pod
+    if($posted && $cf_form->validated) {
+        try {
+            $c->model('DB')->schema->txn_do( sub {
+                my $dest_set = $c->model('DB')->resultset('voip_cf_destination_sets')->find({
+                    subscriber_id => $prov_subscriber->id,
+                    name => 'quickset_'.$cf_type,
+                });
+                unless($dest_set) {
+                    $dest_set = $c->model('DB')->resultset('voip_cf_destination_sets')->create({
+                        name => 'quickset_'.$cf_type,
+                        subscriber_id => $prov_subscriber->id,
+                    });
+                } else {
+                    my @all = $dest_set->voip_cf_destinations->all;
+                    foreach my $dest(@all) {
+                        $dest->delete;
+                    }
+                }
+                my $dest = $dest_set->voip_cf_destinations->create({
+                    priority => 1,
+                    timeout => 300,
+                    destination => $c->request->params->{destination},
+                });
+
+                unless(defined $cf_mapping) {
+                    $cf_mapping = $prov_subscriber->voip_cf_mappings->create({
+                        type => $cf_type,
+                        # subscriber_id => $prov_subscriber->id,
+                        destination_set_id => $dest_set->id,
+                        time_set_id => undef, #$time_set_id,
+                    });
+                }
+                my $cf_preference_row = $cf_preference->find({ 
+                    subscriber_id => $prov_subscriber->id 
+                });
+                if($cf_preference_row) {
+                    $cf_preference_row->update({ value => $cf_mapping->id });
+                } else {
+                    $cf_preference->create({
+                        subscriber_id => $prov_subscriber->id,
+                        value => $cf_mapping->id,
+                    });
+                }
+                if($cf_type eq 'cft') {
+                    my $ringtimeout_preference_row = $ringtimeout_preference->find({ 
+                        subscriber_id => $prov_subscriber->id 
+                    });
+                    if($ringtimeout_preference_row) {
+                        $ringtimeout_preference_row->update({ 
+                            value => $c->request->params->{ringtimeout}
+                        });
+                    } else {
+                        $ringtimeout_preference->create({
+                            subscriber_id => $prov_subscriber->id,
+                            value => $c->request->params->{ringtimeout},
+                        });
+                    }
+                }
+            });
+        } catch($e) {
+            $c->log->error("failed to save call-forward: $e");
+            $c->flash(messages => [{type => 'error', text => 'Failed to save Call Forward'}]);
+            $c->response->redirect($c->uri_for_action('/subscriber/preferences', [$c->req->captures->[0]]));
+            return;
+        }
+        
+        $c->flash(messages => [{type => 'success', text => 'Successfully saved Call Forward'}]);
+        $c->response->redirect($c->uri_for_action('/subscriber/preferences', [$c->req->captures->[0]]));
+        return;
+    }
+
+=cut
 
     $self->load_preference_list($c);
     $c->stash(template => 'subscriber/preferences.tt');
