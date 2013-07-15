@@ -91,13 +91,59 @@
 [% IF edit_cf_flag -%]
 [%
     PROCESS "helpers/modal.tt";
-    modal_header(m.name = "Call Forward " _ cf_description);
+    modal_header(m.name = cf_description);
 -%]
 
 [% IF cf_form.has_for_js -%]
 [% cf_form.render_repeatable_js %]
 [% END -%]
 [% cf_form.render %]
+
+[%
+    modal_footer();
+    modal_script(m.close_target = c.uri_for_action('/subscriber/preferences', [c.req.captures.0]));
+-%]
+[% ELSIF edit_cfset_flag -%]
+[%
+    PROCESS "helpers/modal.tt";
+    modal_header(m.name = cf_description);
+-%]
+
+    <div class="modal-body">
+    [% IF cf_sets -%]
+    <table class="table table-bordered table-striped table-highlight table-hover">
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Values</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+        [% FOREACH set IN cf_sets -%]
+            <tr class="sw_action_row">
+                <td>[% set.name %]</td>
+                <td>
+                    [% FOREACH d IN set.destinations -%]
+                        [% d.destination %] <span class="pull-right">after [% d.timeout %]s</span><br/>
+                    [% END -%]
+                </td>
+                <td class="ngcp-actions-column">
+                    <div class="sw_actions pull-right">
+                        <a class="btn btn-small btn-primary" href="[% c.uri_for_action('/subscriber/preferences_callforward_destinationset_edit', [ c.req.captures.0, set.id ]) %]">
+                            <i class="icon-edit"></i> Edit
+                        </a>
+                        <a class="btn btn-small btn-secondary" data-confirm="Delete" href="[% c.uri_for_action('/subscriber/preferences_callforward_destinationset_delete', [ c.req.captures.0, set.id ]) %]">
+                            <i class="icon-trash"></i> Delete
+                        </a>
+                    </div>
+                </td>
+            </tr>
+        [% END -%]
+        </tbody>
+    </table>
+    [% END -%]
+    </div>
 
 [%
     modal_footer();

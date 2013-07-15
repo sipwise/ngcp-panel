@@ -12,6 +12,7 @@ sub build_options {
     my $time_sets = $form->ctx->stash->{cf_time_sets};
 
     my @all = ({label => '<always>', value => undef});
+    return \@all unless($time_sets);
     foreach my $set($time_sets->all) {
         my $entry = {};
         $entry->{label} = $set->name;

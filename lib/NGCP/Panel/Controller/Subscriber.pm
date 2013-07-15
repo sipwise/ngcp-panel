@@ -7,7 +7,8 @@ use NGCP::Panel::Form::Subscriber;
 use NGCP::Panel::Form::SubscriberCFSimple;
 use NGCP::Panel::Form::SubscriberCFTSimple;
 use NGCP::Panel::Form::SubscriberCFAdvanced;
-#use NGCP::Panel::Form::SubscriberCFTAdvanced;
+use NGCP::Panel::Form::SubscriberCFTAdvanced;
+use NGCP::Panel::Form::DestinationSet;
 use UUID;
 
 use Data::Printer;
@@ -36,6 +37,7 @@ sub sub_list :Chained('/') :PathPart('subscriber') :CaptureArgs(0) {
     $c->stash(
         template => 'subscriber/list.tt',
     );
+    #NGCP::Panel::Utils::check_redirect_chain(c => $c);
 
 }
 
@@ -306,10 +308,10 @@ sub preferences_callforward :Chained('base') :PathPart('preferences/callforward'
 
     my $cf_desc;
     given($cf_type) {
-        when("cfu") { $cf_desc = "Unconditional" }
-        when("cfb") { $cf_desc = "Busy" }
-        when("cft") { $cf_desc = "Timeout" }
-        when("cfna") { $cf_desc = "Unavailable" }
+        when("cfu") { $cf_desc = "Call Forward Unconditional" }
+        when("cfb") { $cf_desc = "Call Forward Busy" }
+        when("cft") { $cf_desc = "Call Forward Timeout" }
+        when("cfna") { $cf_desc = "Call Forward Unavailable" }
         default {
             $c->log->error("Invalid call-forward type '$cf_type'");
             $c->flash(messages => [{type => 'error', text => 'Invalid Call Forward type'}]);
@@ -335,6 +337,18 @@ sub preferences_callforward :Chained('base') :PathPart('preferences/callforward'
        $cf_mapping->destination_set && 
        $cf_mapping->destination_set->voip_cf_destinations->first) {
 
+        # there are more than one destinations or a time set, so
+        # which can only be handled in advanced mode
+        if($cf_mapping->destination_set->voip_cf_destinations->count > 1 ||
+           $cf_mapping->time_set) {
+
+            $c->response->redirect( 
+                $c->uri_for_action('/subscriber/preferences_callforward_advanced', 
+                    [$c->req->captures->[0]], $cf_type, 'advanced'
+                )
+           );
+           return;
+        }
         $destination = $cf_mapping->destination_set->voip_cf_destinations->first;
     }
 
@@ -352,7 +366,10 @@ sub preferences_callforward :Chained('base') :PathPart('preferences/callforward'
     }
     if($posted) {
         $params = $c->request->params;
-        if(!defined($c->request->params->{submitid})) {
+        if(length($params->{destination}) && 
+           (!$c->request->params->{submitid} || 
+            $c->request->params->{submitid} eq "cf_actions.save")
+           ) {
             if($params->{destination} !~ /\@/) {
                 $params->{destination} .= '@'.$billing_subscriber->domain->domain;
             }
@@ -472,6 +489,7 @@ sub preferences_callforward_advanced :Chained('base') :PathPart('preferences/cal
 
     say ">>>>>>>>>>>>>>>>>>>>>> preferences_callforward_advanced";
 
+    # TODO bail out of $advanced ne "advanced"
     if(defined $advanced && $advanced eq 'advanced') {
         $advanced = 1;
     } else {
@@ -480,10 +498,10 @@ sub preferences_callforward_advanced :Chained('base') :PathPart('preferences/cal
 
     my $cf_desc;
     given($cf_type) {
-        when("cfu") { $cf_desc = "Unconditional" }
-        when("cfb") { $cf_desc = "Busy" }
-        when("cft") { $cf_desc = "Timeout" }
-        when("cfna") { $cf_desc = "Unavailable" }
+        when("cfu") { $cf_desc = "Call Forward Unconditional" }
+        when("cfb") { $cf_desc = "Call Forward Busy" }
+        when("cft") { $cf_desc = "Call Forward Timeout" }
+        when("cfna") { $cf_desc = "Call Forward Unavailable" }
         default {
             $c->log->error("Invalid call-forward type '$cf_type'");
             $c->flash(messages => [{type => 'error', text => 'Invalid Call Forward type'}]);
@@ -494,40 +512,35 @@ sub preferences_callforward_advanced :Chained('base') :PathPart('preferences/cal
 
     my $billing_subscriber = $c->stash->{subscriber};
     my $prov_subscriber = $billing_subscriber->provisioning_voip_subscriber;
-    my $cf_mapping = $prov_subscriber->voip_cf_mappings->find({ type => $cf_type });
-    if($cf_mapping) {
-        $c->stash->{cf_active_destination_set} = $cf_mapping->destination_set
-            if($cf_mapping->destination_set);
-        $c->stash->{cf_destination_sets} = $prov_subscriber->voip_cf_destination_sets;
-        $c->stash->{cf_active_time_set} = $cf_mapping->time_set
-            if($cf_mapping->time_set);
-        $c->stash->{cf_time_sets} = $prov_subscriber->voip_cf_time_sets;
+    my $cf_mapping = $prov_subscriber->voip_cf_mappings->search_rs({ type => $cf_type });
+
+    # TODO: we can have more than one active, no?
+    if($cf_mapping->count) {
+        $c->stash->{cf_active_destination_set} = $cf_mapping->first->destination_set
+            if($cf_mapping->first->destination_set);
+        $c->stash->{cf_active_time_set} = $cf_mapping->first->time_set
+            if($cf_mapping->first->time_set);
     }
-
-    my $destination;
-    if($cf_mapping && 
-       $cf_mapping->destination_set && 
-       $cf_mapping->destination_set->voip_cf_destinations->first) {
-
-        $destination = $cf_mapping->destination_set->voip_cf_destinations->first;
-    }
-
+    $c->stash->{cf_destination_sets} = $prov_subscriber->voip_cf_destination_sets;
+    $c->stash->{cf_time_sets} = $prov_subscriber->voip_cf_time_sets;
 
     my $posted = ($c->request->method eq 'POST');
 
     my $cf_form;
 #    my $params = {};
-#    if($cf_type eq "cft") {
-#        $cf_form = NGCP::Panel::Form::SubscriberCFTAdvanced->new;
-#    } else {
+    if($cf_type eq "cft") {
+        $cf_form = NGCP::Panel::Form::SubscriberCFTAdvanced->new(ctx => $c);
+    } else {
         $cf_form = NGCP::Panel::Form::SubscriberCFAdvanced->new(ctx => $c);
-#    }
+    }
     $cf_form->process(
         params => $posted ? $c->request->params : {}
     );
 
 
-    say ">>>>>>>>>>>>>>>>>>>>>>>> check_form_buttons";
+    my $back_uri = $c->uri_for_action('/subscriber/preferences_callforward_advanced',
+                [$c->req->captures->[0]], $cf_type, 'advanced');
+    say ">>>>>>>>>>>>>>>>>>>>>>>> check_form_buttons, back_uri=$back_uri";
     return if NGCP::Panel::Utils::check_form_buttons(
         c => $c, form => $cf_form,
         fields => {
@@ -535,72 +548,52 @@ sub preferences_callforward_advanced :Chained('base') :PathPart('preferences/cal
                 $c->uri_for_action('/subscriber/preferences_callforward', 
                     [$c->req->captures->[0], $cf_type],
                 ),
+            'cf_actions.edit_destination_sets' => 
+                $c->uri_for_action('/subscriber/preferences_callforward_destinationset', 
+                    [$c->req->captures->[0]],
+                ),
+#            'cf_actions.edit_time_sets' => 
+#                $c->uri_for_action('/subscriber/preferences_callforward_timeset', 
+#                    [$c->req->captures->[0]],
+#                ),
         },
-        back_uri => $c->uri_for($c->action, $c->req->captures)
+        back_uri => $c->uri_for_action('/subscriber/preferences_callforward_advanced',
+            [$c->req->captures->[0]], $cf_type, 'advanced'),
     );
 
 
     say ">>>>>>>>>>>>>>>>>>>>>>>> after check_form_buttons";
 
-=pod
     if($posted && $cf_form->validated) {
         try {
             $c->model('DB')->schema->txn_do( sub {
-                my $dest_set = $c->model('DB')->resultset('voip_cf_destination_sets')->find({
-                    subscriber_id => $prov_subscriber->id,
-                    name => 'quickset_'.$cf_type,
-                });
-                unless($dest_set) {
-                    $dest_set = $c->model('DB')->resultset('voip_cf_destination_sets')->create({
-                        name => 'quickset_'.$cf_type,
-                        subscriber_id => $prov_subscriber->id,
-                    });
-                } else {
-                    my @all = $dest_set->voip_cf_destinations->all;
-                    foreach my $dest(@all) {
-                        $dest->delete;
+                my @active = $cf_form->field('active_callforward')->fields;
+                if($cf_mapping->count) {
+                    foreach my $map($cf_mapping->all) {
+                        $map->delete;
+                    }
+                    unless(@active) {
+                        $c->flash(messages => [{type => 'success', text => 'Successfully cleared Call Forward'}]);
+                        $c->response->redirect(
+                            $c->uri_for_action('/subscriber/preferences', 
+                                [$c->req->captures->[0]])
+                        );
+                        return;
                     }
                 }
-                my $dest = $dest_set->voip_cf_destinations->create({
-                    priority => 1,
-                    timeout => 300,
-                    destination => $c->request->params->{destination},
-                });
-
-                unless(defined $cf_mapping) {
-                    $cf_mapping = $prov_subscriber->voip_cf_mappings->create({
+                foreach my $map(@active) {
+                    $cf_mapping->create({
                         type => $cf_type,
-                        # subscriber_id => $prov_subscriber->id,
-                        destination_set_id => $dest_set->id,
-                        time_set_id => undef, #$time_set_id,
+                        destination_set_id => $map->field('destination_set')->value,
+                        time_set_id => $map->field('time_set')->value,
                     });
                 }
-                my $cf_preference_row = $cf_preference->find({ 
-                    subscriber_id => $prov_subscriber->id 
-                });
-                if($cf_preference_row) {
-                    $cf_preference_row->update({ value => $cf_mapping->id });
-                } else {
-                    $cf_preference->create({
-                        subscriber_id => $prov_subscriber->id,
-                        value => $cf_mapping->id,
-                    });
-                }
-                if($cf_type eq 'cft') {
-                    my $ringtimeout_preference_row = $ringtimeout_preference->find({ 
-                        subscriber_id => $prov_subscriber->id 
-                    });
-                    if($ringtimeout_preference_row) {
-                        $ringtimeout_preference_row->update({ 
-                            value => $c->request->params->{ringtimeout}
-                        });
-                    } else {
-                        $ringtimeout_preference->create({
-                            subscriber_id => $prov_subscriber->id,
-                            value => $c->request->params->{ringtimeout},
-                        });
-                    }
-                }
+                $c->flash(messages => [{type => 'success', text => 'Successfully saved Call Forward'}]);
+                $c->response->redirect(
+                    $c->uri_for_action('/subscriber/preferences', 
+                        [$c->req->captures->[0]])
+                );
+                return;
             });
         } catch($e) {
             $c->log->error("failed to save call-forward: $e");
@@ -608,13 +601,8 @@ sub preferences_callforward_advanced :Chained('base') :PathPart('preferences/cal
             $c->response->redirect($c->uri_for_action('/subscriber/preferences', [$c->req->captures->[0]]));
             return;
         }
-        
-        $c->flash(messages => [{type => 'success', text => 'Successfully saved Call Forward'}]);
-        $c->response->redirect($c->uri_for_action('/subscriber/preferences', [$c->req->captures->[0]]));
-        return;
     }
 
-=cut
 
     $self->load_preference_list($c);
     $c->stash(template => 'subscriber/preferences.tt');
@@ -623,6 +611,148 @@ sub preferences_callforward_advanced :Chained('base') :PathPart('preferences/cal
         cf_description => $cf_desc,
         cf_form => $cf_form,
     );
+}
+
+sub preferences_callforward_destinationset :Chained('base') :PathPart('preferences/destinationset') :Args(0) {
+    my ($self, $c, $type) = @_;
+
+    my $billing_subscriber = $c->stash->{subscriber};
+    my $prov_subscriber = $billing_subscriber->provisioning_voip_subscriber;
+
+    my @sets;
+    if($prov_subscriber->voip_cf_destination_sets) {
+        foreach my $set($prov_subscriber->voip_cf_destination_sets->all) {
+            if($set->voip_cf_destinations) {
+                my @dests = ();
+                foreach my $dest($set->voip_cf_destinations->search({},
+                  { order_by => { -asc => 'priority' }})->all) {
+                    my %cols = $dest->get_columns;
+                    push @dests, \%cols;
+                }
+                push @sets, { name => $set->name, id => $set->id, destinations => \@dests };
+            }
+        }
+    }
+    $c->stash->{cf_sets} = \@sets;
+
+    my $cf_form = undef;
+
+    $c->stash(template => 'subscriber/preferences.tt');
+    $c->stash(
+        edit_cfset_flag => 1,
+        cf_description => "Destination Sets",
+        cf_form => $cf_form,
+    );
+}
+
+sub preferences_callforward_destinationset_base :Chained('base') :PathPart('preferences/destinationset') :CaptureArgs(1) {
+    my ($self, $c, $set_id) = @_;
+
+    $c->stash(destination_set => $c->stash->{subscriber}
+        ->provisioning_voip_subscriber
+        ->voip_cf_destination_sets
+        ->find($set_id));
+
+    $c->stash(template => 'subscriber/preferences.tt');
+}
+
+sub preferences_callforward_destinationset_edit :Chained('preferences_callforward_destinationset_base') :PathPart('edit') :Args(0) {
+    my ($self, $c) = @_;
+
+    my $form = NGCP::Panel::Form::DestinationSet->new;
+
+    my $posted = ($c->request->method eq 'POST');
+
+    my $set =  $c->stash->{destination_set};
+    my $params;
+    unless($posted) {
+        p $set;
+        $params->{name} = $set->name;
+        my @destinations;
+        for my $dest($set->voip_cf_destinations->all) {
+            push @destinations, { 
+                destination => $dest->destination, 
+                timeout => $dest->timeout,
+                priority => $dest->priority,
+                id => $dest->id,
+            };
+        }
+        $params->{destination} = \@destinations;
+    }
+
+    $form->process(
+        params => $posted ? $c->req->params : $params
+    );
+
+    if($posted && $form->validated) {
+        say ">>>>>>>>>>>>>>>>>>>> dset form validated";
+
+        try {
+            my $schema = $c->model('DB');
+            $schema->txn_do(sub {
+                # delete whole set and mapping if empty
+                my @fields = $form->field('destination')->fields;
+                unless(@fields) {
+                    foreach my $mapping($set->voip_cf_mappings) {
+                        $mapping->delete;
+                    }
+                    $set->delete;
+
+                    $c->response->redirect(
+                        $c->uri_for_action('/subscriber/preferences_callforward_destinationset', 
+                            [$c->req->captures->[0]])
+                    );
+                    return;
+                }
+                if($form->field('name')->value ne $set->name) {
+                    $set->update({name => $form->field('name')->value});
+                }
+                foreach my $dest($set->voip_cf_destinations->all) {
+                    $dest->delete;
+                }
+                foreach my $dest($form->field('destination')->fields) {
+                    my $d = $dest->field('destination')->value;
+                    if($d !~ /\@/) {
+                        $d .= '@'.$c->stash->{subscriber}->domain->domain;
+                    }
+                    if($d !~ /^sip:/) {
+                        $d = 'sip:' . $d;
+                    }
+                    $set->voip_cf_destinations->create({
+                        destination => $d,
+                        timeout => $dest->field('timeout')->value,
+                        priority => $dest->field('priority')->value,
+                    });
+                }
+                $c->response->redirect(
+                    $c->uri_for_action('/subscriber/preferences_callforward_destinationset', 
+                        [$c->req->captures->[0]])
+                );
+                return;
+            });
+        } catch($e) {
+            $c->log->error("failed to update destination set: $e");
+            $c->response->redirect(
+                $c->uri_for_action('/subscriber/preferences_callforward_destinationset', 
+                    [$c->req->captures->[0]])
+            );
+            return;
+        }
+    }
+
+    $c->stash(
+        edit_cf_flag => 1,
+        cf_description => "Destination Set",
+        cf_form => $form,
+    );
+
+}
+
+sub preferences_callforward_destinationset_delete :Chained('preferences_callforward_destinationset_base') :PathPart('delete') :Args(0) {
+    my ($self, $c) = @_;
+
+
+
 }
 
 sub preferences_callforward_delete :Chained('base') :PathPart('preferences/callforward/delete') :Args(1) {

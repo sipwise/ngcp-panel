@@ -1,13 +1,13 @@
-package NGCP::Panel::Form::SubscriberCFTSimple;
+package NGCP::Panel::Form::SubscriberCFTAdvanced;
 use HTML::FormHandler::Moose;
 use HTML::FormHandler::Widget::Block::Bootstrap;
 use Moose::Util::TypeConstraints;
-extends 'NGCP::Panel::Form::SubscriberCFSimple';
+extends 'NGCP::Panel::Form::SubscriberCFAdvanced';
 
 has_field 'ringtimeout' => (
-	type => 'PosInteger', 
-	required => 1,
-	label => 'after ring timeout',
+    type => 'PosInteger',
+    required => 1,
+    label => 'after ring timeout',
     element_attr => {
         rel => ['tooltip'],
         title => ['Seconds to wait for pick-up until engaging Call Forward (e.g. &ldquo;10&rdquo;)']
@@ -17,8 +17,9 @@ has_field 'ringtimeout' => (
 has_block 'fields' => (
     tag => 'div',
     class => [qw(modal-body)],
-    render_list => [qw(submitid destination ringtimeout)],
+    render_list => [qw(submitid active_callforward callforward_controls_add ringtimeout)],
 );
+
 
 sub validate_ringtimeout {
     my ($self, $field) = @_;
@@ -30,4 +31,4 @@ sub validate_ringtimeout {
 }
 
 1;
-# vim: set tabstop=4 expandtab:
+

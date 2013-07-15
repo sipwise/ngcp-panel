@@ -1,2 +1,4 @@
 - Modal needs more flexible width. It breaks when making screen narrower
   than 816px, and if no DataTable field is there, it can be narrower also.
+
+- check what is displayed in time sets of subscriber preferences when more mappings are active at
