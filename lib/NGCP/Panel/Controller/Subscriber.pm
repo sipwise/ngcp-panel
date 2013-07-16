@@ -965,7 +965,7 @@ sub preferences_callforward_timeset_delete :Chained('preferences_callforward_tim
         my $schema = $c->model('DB');
         $schema->txn_do(sub {
             foreach my $map($set->voip_cf_mappings->all) {
-                $map->update({ destination_set_id => undef });
+                $map->update({ time_set_id => undef });
             }
             $set->delete;
         });
