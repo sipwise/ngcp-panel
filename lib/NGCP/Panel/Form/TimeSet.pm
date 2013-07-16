@@ -2,10 +2,7 @@ package NGCP::Panel::Form::TimeSet;
 use HTML::FormHandler::Moose;
 use HTML::FormHandler::Widget::Block::Bootstrap;
 use Moose::Util::TypeConstraints;
-use DateTime;
 extends 'HTML::FormHandler';
-
-# TODO: set all default values to empty! there was a special field setting for selects
 
 with 'NGCP::Panel::Render::RepeatableJs';
 
