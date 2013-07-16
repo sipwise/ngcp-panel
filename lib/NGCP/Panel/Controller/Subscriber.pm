@@ -333,6 +333,7 @@ sub preferences_callforward :Chained('base') :PathPart('preferences/callforward'
     if($cf_mapping->count > 1) {
         # there is more than one mapping,
         # which can only be handled in advanced mode
+
         $c->response->redirect( 
             $c->uri_for_action('/subscriber/preferences_callforward_advanced', 
                 [$c->req->captures->[0]], $cf_type, 'advanced'
@@ -551,7 +552,7 @@ sub preferences_callforward_advanced :Chained('base') :PathPart('preferences/cal
                 ),
             'cf_actions.edit_destination_sets' => 
                 $c->uri_for_action('/subscriber/preferences_callforward_destinationset', 
-                    [$c->req->captures->[0]],
+                    [$c->req->captures->[0]], $cf_type,
                 ),
 #            'cf_actions.edit_time_sets' => 
 #                $c->uri_for_action('/subscriber/preferences_callforward_timeset', 
@@ -613,8 +614,8 @@ sub preferences_callforward_advanced :Chained('base') :PathPart('preferences/cal
     );
 }
 
-sub preferences_callforward_destinationset :Chained('base') :PathPart('preferences/destinationset') :Args(0) {
-    my ($self, $c, $type) = @_;
+sub preferences_callforward_destinationset :Chained('base') :PathPart('preferences/destinationset') :Args(1) {
+    my ($self, $c, $cf_type) = @_;
 
     my $prov_subscriber = $c->stash->{subscriber}->provisioning_voip_subscriber;
 
@@ -636,11 +637,15 @@ sub preferences_callforward_destinationset :Chained('base') :PathPart('preferenc
 
     my $cf_form = undef;
 
+    $self->load_preference_list($c);
     $c->stash(template => 'subscriber/preferences.tt');
     $c->stash(
         edit_cfset_flag => 1,
         cf_description => "Destination Sets",
         cf_form => $cf_form,
+        close_target => $c->uri_for_action('/subscriber/preferences_callforward_advanced', 
+                    [$c->req->captures->[0]], $cf_type, 'advanced'),
+        cf_type => $cf_type,
     );
 }
 
@@ -652,11 +657,12 @@ sub preferences_callforward_destinationset_base :Chained('base') :PathPart('pref
         ->voip_cf_destination_sets
         ->find($set_id));
 
+    $self->load_preference_list($c);
     $c->stash(template => 'subscriber/preferences.tt');
 }
 
-sub preferences_callforward_destinationset_edit :Chained('preferences_callforward_destinationset_base') :PathPart('edit') :Args(0) {
-    my ($self, $c) = @_;
+sub preferences_callforward_destinationset_edit :Chained('preferences_callforward_destinationset_base') :PathPart('edit') :Args(1) {
+    my ($self, $c, $cf_type) = @_;
 
     my $form = NGCP::Panel::Form::DestinationSet->new;
 
@@ -698,7 +704,7 @@ sub preferences_callforward_destinationset_edit :Chained('preferences_callforwar
 
                     $c->response->redirect(
                         $c->uri_for_action('/subscriber/preferences_callforward_destinationset', 
-                            [$c->req->captures->[0]])
+                            [$c->req->captures->[0]], $cf_type)
                     );
                     return;
                 }
@@ -724,7 +730,7 @@ sub preferences_callforward_destinationset_edit :Chained('preferences_callforwar
                 }
                 $c->response->redirect(
                     $c->uri_for_action('/subscriber/preferences_callforward_destinationset', 
-                        [$c->req->captures->[0]])
+                        [$c->req->captures->[0]], $cf_type)
                 );
                 return;
             });
@@ -732,7 +738,7 @@ sub preferences_callforward_destinationset_edit :Chained('preferences_callforwar
             $c->log->error("failed to update destination set: $e");
             $c->response->redirect(
                 $c->uri_for_action('/subscriber/preferences_callforward_destinationset', 
-                    [$c->req->captures->[0]])
+                    [$c->req->captures->[0]], $cf_type)
             );
             return;
         }
@@ -742,12 +748,14 @@ sub preferences_callforward_destinationset_edit :Chained('preferences_callforwar
         edit_cf_flag => 1,
         cf_description => "Destination Set",
         cf_form => $form,
+        close_target => $c->uri_for_action('/subscriber/preferences_callforward_destinationset', 
+                    [$c->req->captures->[0]], $cf_type),
     );
 
 }
 
-sub preferences_callforward_destinationset_delete :Chained('preferences_callforward_destinationset_base') :PathPart('delete') :Args(0) {
-    my ($self, $c) = @_;
+sub preferences_callforward_destinationset_delete :Chained('preferences_callforward_destinationset_base') :PathPart('delete') :Args(1) {
+    my ($self, $c, $cf_type) = @_;
 
     # TODO: also delete/update voip_usr_preference!
 
