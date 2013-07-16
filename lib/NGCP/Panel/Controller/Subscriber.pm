@@ -214,8 +214,6 @@ sub terminate :Chained('base') :PathPart('terminate') :Args(0) {
     my $schema = $c->model('DB');
     try {
         $schema->txn_do(sub {
-            use Data::Printer;
-            p $subscriber;
             $subscriber->provisioning_voip_subscriber->delete;
             $subscriber->update({ status => 'terminated' });
         });
@@ -763,7 +761,6 @@ sub preferences_callforward_destinationset_edit :Chained('preferences_callforwar
     my $set =  $c->stash->{destination_set};
     my $params;
     unless($posted) {
-        p $set;
         $params->{name} = $set->name;
         my @destinations;
         for my $dest($set->voip_cf_destinations->all) {
