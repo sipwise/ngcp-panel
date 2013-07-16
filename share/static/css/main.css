@@ -170,11 +170,6 @@ div.dataTables_paginate {
     float: right;
     margin: 0;
 }
-@media (min-width: 767px) {
-    div.dataTables_paginate {
-        width: 227px;
-    }
-}
 
 /* ---------
   Datatable Field (inside modal)
