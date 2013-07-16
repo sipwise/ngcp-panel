@@ -2,7 +2,10 @@ package NGCP::Panel::Form::TimeSet;
 use HTML::FormHandler::Moose;
 use HTML::FormHandler::Widget::Block::Bootstrap;
 use Moose::Util::TypeConstraints;
+use DateTime;
 extends 'HTML::FormHandler';
+
+# TODO: set all default values to empty! there was a special field setting for selects
 
 with 'NGCP::Panel::Render::RepeatableJs';
 
@@ -33,35 +36,141 @@ has_field 'period' => (
 has_field 'period.id' => (
     type => 'Hidden',
 );
-has_field 'period.year' => (
-    type => 'Text',
+
+has_field 'period.row' => (
+    type => 'Compound',
+    label => 'Period',
+    do_label => 1,
+    tags => {
+        before_element => '<div class="ngcp-timeset-row">',
+        after_element => '</div>',
+    },
+);
+
+has_field 'period.row.year' => (
+    type => 'Compound',
+    do_label => 0,
+    tags => {
+        before_element => '<div class="ngcp-timeset-widget">',
+        after_element => '</div>',
+    },
+);
+has_field 'period.row.year.from' => (
+    type => 'Year',
     label => 'Year',
-    wrapper_class => [qw/hfh-rep-field/],
+    empty_select => '',
+    wrapper_class => [qw/hfh-rep-field ngcp-timeset-field/],
 );
-has_field 'period.month' => (
-    type => 'Text',
+has_field 'period.row.year.to' => (
+    type => 'Year',
+    label => 'through',
+    empty_select => '',
+    wrapper_class => [qw/hfh-rep-field ngcp-timeset-field/],
+);
+
+has_field 'period.row.month' => (
+    type => 'Compound',
+    do_label => 0,
+    tags => {
+        before_element => '<div class="ngcp-timeset-widget">',
+        after_element => '</div>',
+    },
+);
+has_field 'period.row.month.from' => (
+    type => 'MonthName',
     label => 'Month',
-    wrapper_class => [qw/hfh-rep-field/],
+    empty_select => '',
+    wrapper_class => [qw/hfh-rep-field ngcp-timeset-field/],
 );
-has_field 'period.mday' => (
-    type => 'Text',
-    label => 'Day of Month',
-    wrapper_class => [qw/hfh-rep-field/],
+has_field 'period.row.month.to' => (
+    type => 'MonthName',
+    label => 'through',
+    empty_select => '',
+    wrapper_class => [qw/hfh-rep-field ngcp-timeset-field/],
 );
-has_field 'period.wday' => (
-    type => 'Text',
-    label => 'Day of Week',
-    wrapper_class => [qw/hfh-rep-field/],
+
+has_field 'period.row.mday' => (
+    type => 'Compound',
+    do_label => 0,
+    tags => {
+        before_element => '<div class="ngcp-timeset-widget">',
+        after_element => '</div>',
+    },
 );
-has_field 'period.hour' => (
-    type => 'Text',
+has_field 'period.row.mday.from' => (
+    type => 'MonthDay',
+    label => 'Day',
+    empty_select => '',
+    wrapper_class => [qw/hfh-rep-field ngcp-timeset-field/],
+);
+has_field 'period.row.mday.to' => (
+    type => 'MonthDay',
+    label => 'through',
+    empty_select => '',
+    wrapper_class => [qw/hfh-rep-field ngcp-timeset-field/],
+);
+
+has_field 'period.row.wday' => (
+    type => 'Compound',
+    do_label => 0,
+    tags => {
+        before_element => '<div class="ngcp-timeset-widget">',
+        after_element => '</div>',
+    },
+);
+has_field 'period.row.wday.from' => (
+    type => 'Weekday',
+    label => 'Weekday',
+    empty_select => '',
+    wrapper_class => [qw/hfh-rep-field ngcp-timeset-field/],
+);
+has_field 'period.row.wday.to' => (
+    type => 'Weekday',
+    label => 'through',
+    empty_select => '',
+    wrapper_class => [qw/hfh-rep-field ngcp-timeset-field/],
+);
+
+has_field 'period.row.hour' => (
+    type => 'Compound',
+    do_label => 0,
+    tags => {
+        before_element => '<div class="ngcp-timeset-widget">',
+        after_element => '</div>',
+    },
+);
+has_field 'period.row.hour.from' => (
+    type => 'Hour',
     label => 'Hour',
-    wrapper_class => [qw/hfh-rep-field/],
+    empty_select => '',
+    wrapper_class => [qw/hfh-rep-field ngcp-timeset-field/],
 );
-has_field 'period.minute' => (
-    type => 'Text',
+has_field 'period.row.hour.to' => (
+    type => 'Hour',
+    label => 'trough',
+    empty_select => '',
+    wrapper_class => [qw/hfh-rep-field ngcp-timeset-field/],
+);
+
+has_field 'period.row.minute' => (
+    type => 'Compound',
+    do_label => 0,
+    tags => {
+        before_element => '<div class="ngcp-timeset-widget">',
+        after_element => '</div>',
+    },
+);
+has_field 'period.row.minute.from' => (
+    type => 'Minute',
     label => 'Minute',
-    wrapper_class => [qw/hfh-rep-field/],
+    empty_select => '',
+    wrapper_class => [qw/hfh-rep-field ngcp-timeset-field/],
+);
+has_field 'period.row.minute.to' => (
+    type => 'Minute',
+    label => 'through',
+    empty_select => '',
+    wrapper_class => [qw/hfh-rep-field ngcp-timeset-field/],
 );
 
 has_field 'period.rm' => (

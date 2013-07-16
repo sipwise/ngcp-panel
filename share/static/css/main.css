@@ -44,6 +44,9 @@ div.ngcp-modal .help-inline {
 div.ngcp-modal div.modal-body div.control-group.hfh-rep {
     margin-left: 0;
 }
+div.ngcp-modal div.modal-body div.control-group.hfh-rep {
+    margin-left: 0;
+}
 
 div.ngcp-modal div.modal-body div.control-group.hfh-rep div.controls {
     margin-left: 0;
@@ -53,18 +56,48 @@ div.ngcp-modal div.modal-body div.control-group.hfh-rep div.controls div.hfh-rep
     margin-left: 180px;
 }
 
+/* align timeset elements in one row */
+
+div.ngcp-timeset-row {
+    margin-left: 180px;
+}
+
+div.ngcp-timeset-row label {
+    margin: 0 0 5px 0;
+    display: block;
+    width: 100% !important;
+    text-align: center !important;
+}
+
+div.ngcp-timeset-widget {
+    width: 86px;
+    position: relative;
+    float: left;
+    margin: 0 5px 10px 0;
+    padding: 3px;
+    border: 1px solid #eeeeee;
+}
+
+div.ngcp-timeset-widget:last-of-type  {
+    margin-right: 0;
+}
+
+div.ngcp-timeset-field {
+    width: 100%;
+    margin: 0 !important;
+    position: relative;
+    display: block;
+}
+
+div.ngcp-timeset-field div.controls {
+    margin: 0 !important;
+}
+
 /* align buttons in one row in modal-footer */
 
 div.modal-footer div.control-group div.controls {
     margin-left: 5px;
 }
-
-/*
-div.ngcp-modal .control-group.hfh-rep .controls {
-    margin-left: 0;
-    border: 1px solid green;
-}
-*/
 
 /* ---------
   Datatable (main one)
