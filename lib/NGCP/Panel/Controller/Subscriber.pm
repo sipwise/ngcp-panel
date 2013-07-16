@@ -665,6 +665,72 @@ sub preferences_callforward_destinationset :Chained('base') :PathPart('preferenc
     );
 }
 
+sub preferences_callforward_destinationset_create :Chained('base') :PathPart('preferences/destinationset/create') :Args(1) {
+    my ($self, $c, $cf_type) = @_;
+
+    my $prov_subscriber = $c->stash->{subscriber}->provisioning_voip_subscriber;
+
+    my $form = NGCP::Panel::Form::DestinationSet->new;
+
+    my $posted = ($c->request->method eq 'POST');
+
+    $form->process(
+        posted => $posted,
+        params => $c->req->params,
+    );
+
+    if($posted && $form->validated) {
+        try {
+            my $schema = $c->model('DB');
+            $schema->txn_do(sub {
+                my @fields = $form->field('destination')->fields;
+                if(@fields) {
+                    my $set = $prov_subscriber->voip_cf_destination_sets->create({
+                        name => $form->field('name')->value,
+                    });
+                    foreach my $dest(@fields) {
+                        my $d = $dest->field('destination')->value;
+                        if($d !~ /\@/) {
+                            $d .= '@'.$c->stash->{subscriber}->domain->domain;
+                        }
+                        if($d !~ /^sip:/) {
+                            $d = 'sip:' . $d;
+                        }
+                        $set->voip_cf_destinations->create({
+                            destination => $d,
+                            timeout => $dest->field('timeout')->value,
+                            priority => $dest->field('priority')->value,
+                        });
+                    }
+                    $c->response->redirect(
+                        $c->uri_for_action('/subscriber/preferences_callforward_destinationset', 
+                            [$c->req->captures->[0]], $cf_type)
+                    );
+                    return;
+                }
+            });
+        } catch($e) {
+            $c->log->error("failed to create new destination set: $e");
+            $c->response->redirect($c->uri_for_action('/subscriber/preferences_callforward_destinationset', 
+                    [$c->req->captures->[0]], $cf_type)
+            );
+            return;
+        }
+
+    }
+
+    $self->load_preference_list($c);
+    $c->stash(template => 'subscriber/preferences.tt');
+    $c->stash(
+        edit_cf_flag => 1,
+        cf_description => "Destination Set",
+        cf_form => $form,
+        cf_type => $cf_type,
+        close_target => $c->uri_for_action('/subscriber/preferences_callforward_destinationset', 
+                    [$c->req->captures->[0]], $cf_type),
+    );
+}
+
 sub preferences_callforward_destinationset_base :Chained('base') :PathPart('preferences/destinationset') :CaptureArgs(1) {
     my ($self, $c, $set_id) = @_;
 
@@ -852,6 +918,68 @@ sub preferences_callforward_timeset :Chained('base') :PathPart('preferences/time
         close_target => $c->uri_for_action('/subscriber/preferences_callforward_advanced', 
                     [$c->req->captures->[0]], $cf_type, 'advanced'),
         cf_type => $cf_type,
+    );
+}
+
+sub preferences_callforward_timeset_create :Chained('base') :PathPart('preferences/timeset/create') :Args(1) {
+    my ($self, $c, $cf_type) = @_;
+
+    my $prov_subscriber = $c->stash->{subscriber}->provisioning_voip_subscriber;
+
+    my $form = NGCP::Panel::Form::TimeSet->new;
+
+    my $posted = ($c->request->method eq 'POST');
+
+    $form->process(
+        posted => $posted,
+        params => $c->req->params,
+    );
+
+    if($posted && $form->validated) {
+        try {
+            my $schema = $c->model('DB');
+            $schema->txn_do(sub {
+                my @fields = $form->field('period')->fields;
+                if(@fields) {
+                    my $set = $prov_subscriber->voip_cf_time_sets->create({
+                        name => $form->field('name')->value,
+                    });
+                    foreach my $period(@fields) {
+                        $set->voip_cf_periods->create({
+                            year => $period->field('year')->value,
+                            month => $period->field('month')->value,
+                            mday => $period->field('mday')->value,
+                            wday => $period->field('wday')->value,
+                            hour => $period->field('hour')->value,
+                            minute => $period->field('minute')->value,
+                        });
+                    }
+                    $c->response->redirect(
+                        $c->uri_for_action('/subscriber/preferences_callforward_timeset', 
+                            [$c->req->captures->[0]], $cf_type)
+                    );
+                    return;
+                }
+            });
+        } catch($e) {
+            $c->log->error("failed to create new time set: $e");
+            $c->response->redirect($c->uri_for_action('/subscriber/preferences_callforward_timeset', 
+                    [$c->req->captures->[0]], $cf_type)
+            );
+            return;
+        }
+
+    }
+
+    $self->load_preference_list($c);
+    $c->stash(template => 'subscriber/preferences.tt');
+    $c->stash(
+        edit_cf_flag => 1,
+        cf_description => "Time Set",
+        cf_form => $form,
+        cf_type => $cf_type,
+        close_target => $c->uri_for_action('/subscriber/preferences_callforward_timeset', 
+                    [$c->req->captures->[0]], $cf_type),
     );
 }
 

@@ -149,7 +149,11 @@
 -%]
 
     <div class="modal-body">
-    [% IF cf_sets -%]
+    <div class="row" style="margin-left: 10px">
+        <a class="btn btn-primary btn-medium" href="[% c.uri_for_action('/subscriber/preferences_callforward_destinationset_create', [c.req.captures.0], cf_type) %]"><i class="icon-star"></i>Create New</a>
+    </div>
+    <div class="ngcp-separator"></div>
+    [% IF cf_sets.size -%]
     <table class="table table-bordered table-striped table-highlight table-hover">
         <thead>
             <tr>
@@ -195,7 +199,11 @@
 -%]
 
     <div class="modal-body">
-    [% IF cf_sets -%]
+    <div class="row" style="margin-left: 10px">
+        <a class="btn btn-primary btn-medium" href="[% c.uri_for_action('/subscriber/preferences_callforward_timeset_create', [c.req.captures.0], cf_type) %]"><i class="icon-star"></i>Create New</a>
+    </div>
+    <div class="ngcp-separator"></div>
+    [% IF cf_sets.size -%]
     <table class="table table-bordered table-striped table-highlight table-hover">
         <thead>
             <tr>

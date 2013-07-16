@@ -13,8 +13,7 @@ sub build_options {
 
     my @all;
     return \@all unless($time_sets);
-    push @all, { label => '', value => undef}
-        unless($active_time_set);
+    push @all, { label => '<always>', value => undef};
     foreach my $set($time_sets->all) {
         my $entry = {};
         $entry->{label} = $set->name;
