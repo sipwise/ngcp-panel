@@ -784,10 +784,40 @@ sub preferences_callforward_destinationset_edit :Chained('preferences_callforwar
 sub preferences_callforward_destinationset_delete :Chained('preferences_callforward_destinationset_base') :PathPart('delete') :Args(1) {
     my ($self, $c, $cf_type) = @_;
 
-    # TODO: also delete/update voip_usr_preference!
+    my $cf_preference = NGCP::Panel::Utils::Subscriber::get_usr_preference_rs(
+        c => $c, prov_subscriber => $c->stash->{subscriber}->provisioning_voip_subscriber,
+        attribute => $cf_type,
+    );
+    my $ringtimeout_preference = NGCP::Panel::Utils::Subscriber::get_usr_preference_rs(
+        c => $c, prov_subscriber => $c->stash->{subscriber}->provisioning_voip_subscriber,
+        attribute => 'ringtimeout',
+    );
+    my $set =  $c->stash->{destination_set};
+    my $prov_subscriber = $c->stash->{subscriber}->provisioning_voip_subscriber;
 
-    # To be implemented
+    try {
+        my $schema = $c->model('DB');
+        $schema->txn_do(sub {
+            foreach my $map($set->voip_cf_mappings->all) {
+                my $cf = $cf_preference->find({ value => $map->id });
+                $cf->delete if $cf;
+                $map->delete;
+            }
+            if($cf_type eq "cft" && 
+               $prov_subscriber->voip_cf_mappings->search_rs({ type => $cf_type})->count == 0) {
+                $ringtimeout_preference->first->delete;
+            }
+            $set->delete;
+        });
+    } catch($e) {
+        $c->log->error("failed to delete destination set: $e");
+    }
 
+    $c->response->redirect(
+        $c->uri_for_action('/subscriber/preferences_callforward_destinationset', 
+            [$c->req->captures->[0]], $cf_type)
+    );
+    return;
 }
 
 sub preferences_callforward_delete :Chained('base') :PathPart('preferences/callforward/delete') :Args(1) {
