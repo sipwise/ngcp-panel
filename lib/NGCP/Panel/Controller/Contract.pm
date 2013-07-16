@@ -3,7 +3,7 @@ use Sipwise::Base;
 use namespace::autoclean;
 BEGIN { extends 'Catalyst::Controller'; }
 use NGCP::Panel::Form::Contract;
-use NGCP::Panel::Utils;
+use NGCP::Panel::Utils::Navigation;
 use NGCP::Panel::Utils::Contract;
 
 sub auto :Does(ACL) :ACLDetachTo('/denied_page') :AllowedRole(admin) :AllowedRole(reseller) {
@@ -53,7 +53,7 @@ sub contract_list :Chained('/') :PathPart('contract') :CaptureArgs(0) {
     $c->stash(ajax_uri => $c->uri_for_action("/contract/ajax"));
     $c->stash(template => 'contract/list.tt');
 
-    NGCP::Panel::Utils::check_redirect_chain(c => $c);
+    NGCP::Panel::Utils::Navigation::check_redirect_chain(c => $c);
 }
 
 sub root :Chained('contract_list') :PathPart('') :Args(0) {
@@ -93,7 +93,7 @@ sub create :Chained('contract_list') :PathPart('create') :Args(0) {
             return;
         }
     } 
-    return if NGCP::Panel::Utils::check_form_buttons(
+    return if NGCP::Panel::Utils::Navigation::check_form_buttons(
         c => $c, form => $form,
         fields => {'contract.contact.create' => $c->uri_for('/contact/create'),
                    'billing_profile.create'  => $c->uri_for('/billing/create')},
@@ -150,7 +150,7 @@ sub edit :Chained('base') :PathPart('edit') :Args(0) {
     
     my $contr = $c->stash->{contract_result};
     my $item = $contr->billing_mappings->find($contr->get_column('bmid'));
-    if ($posted) {
+    if ($posted && $item->billing_profile_id) {
         if($item->billing_profile_id != $c->req->params->{'billing_profile.id'}) {
             $item = $c->stash->{contract_result}->billing_mappings->new_result({});
             $item->start_date(time);
@@ -165,7 +165,7 @@ sub edit :Chained('base') :PathPart('edit') :Args(0) {
         item => $item,
         action => $c->uri_for($c->stash->{contract}->{id}, 'edit'),
     );
-    return if NGCP::Panel::Utils::check_form_buttons(
+    return if NGCP::Panel::Utils::Navigation::check_form_buttons(
         c => $c, form => $form,
         fields => {'contract.contact.create' => $c->uri_for('/contact/create'),
                    'billing_profile.create'  => $c->uri_for('/billing/create')},
@@ -267,7 +267,7 @@ sub peering_create :Chained('peering_list') :PathPart('create') :Args(0) {
             return;
         }
     }
-    return if NGCP::Panel::Utils::check_form_buttons(
+    return if NGCP::Panel::Utils::Navigation::check_form_buttons(
         c => $c, form => $form,
         fields => {'contract.contact.create' => $c->uri_for('/contact/create'),
                    'billing_profile.create'  => $c->uri_for('/billing/create')},
@@ -349,7 +349,7 @@ sub customer_create :Chained('customer_list') :PathPart('create') :Args(0) {
             return;
         }
     }
-    return if NGCP::Panel::Utils::check_form_buttons(
+    return if NGCP::Panel::Utils::Navigation::check_form_buttons(
         c => $c, form => $form,
         fields => {'contract.contact.create' => $c->uri_for('/contact/create'),
                    'billing_profile.create'  => $c->uri_for('/billing/create')},
