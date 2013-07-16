@@ -5,7 +5,7 @@ BEGIN { extends 'Catalyst::Controller'; }
 use DateTime qw();
 use HTTP::Status qw(HTTP_SEE_OTHER);
 use NGCP::Panel::Form::Reseller;
-use NGCP::Panel::Utils;
+use NGCP::Panel::Utils::Navigation;
 
 sub auto :Does(ACL) :ACLDetachTo('/denied_page') :AllowedRole(admin) {
     my ($self, $c) = @_;
@@ -21,7 +21,7 @@ sub list_reseller :Chained('/') :PathPart('reseller') :CaptureArgs(0) {
             ->resultset('resellers')->search_rs({}),
         template => 'reseller/list.tt'
     );
-    NGCP::Panel::Utils::check_redirect_chain(c => $c);
+    NGCP::Panel::Utils::Navigation::check_redirect_chain(c => $c);
 }
 
 sub root :Chained('list_reseller') :PathPart('') :Args(0) {
@@ -55,7 +55,7 @@ sub create :Chained('list_reseller') :PathPart('create') :Args(0) {
         params => $c->request->params,
         action => $c->uri_for('create'),
     );
-    return if NGCP::Panel::Utils::check_form_buttons(
+    return if NGCP::Panel::Utils::Navigation::check_form_buttons(
         c => $c, 
         form => $form, 
         fields => [qw/contract.create/], 
@@ -176,7 +176,7 @@ sub edit :Chained('base') :PathPart('edit') :Args(0) {
         params => $posted ? $c->request->params : {$c->stash->{reseller}->get_inflated_columns},
         action => $c->uri_for($c->stash->{reseller}->get_column('id'), 'edit'),
     );
-    return if NGCP::Panel::Utils::check_form_buttons(
+    return if NGCP::Panel::Utils::Navigation::check_form_buttons(
         c => $c, form => $form, fields => [qw/contract.create/], 
         back_uri => $c->uri_for($c->stash->{reseller}->get_column('id'), 'edit')
     );

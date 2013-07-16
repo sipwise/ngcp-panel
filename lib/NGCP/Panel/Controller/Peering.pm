@@ -4,7 +4,7 @@ use namespace::autoclean;
 
 BEGIN { extends 'Catalyst::Controller'; }
 
-use NGCP::Panel::Utils;
+use NGCP::Panel::Utils::Navigation;
 use NGCP::Panel::Form::PeeringGroup;
 use NGCP::Panel::Form::PeeringRule;
 use NGCP::Panel::Form::PeeringServer;
@@ -19,7 +19,7 @@ sub auto :Does(ACL) :ACLDetachTo('/denied_page') :AllowedRole(admin) {
 sub group_list :Chained('/') :PathPart('peering') :CaptureArgs(0) {
     my ( $self, $c ) = @_;
     
-    NGCP::Panel::Utils::check_redirect_chain(c => $c);
+    NGCP::Panel::Utils::Navigation::check_redirect_chain(c => $c);
 
     $c->stash(template => 'peering/list.tt');
 }
@@ -72,7 +72,7 @@ sub edit :Chained('base') :PathPart('edit') {
         params => $posted ? $c->request->params : $c->stash->{group},
         action => $c->uri_for_action('/peering/edit', [$c->req->captures->[0]])
     );
-    if (NGCP::Panel::Utils::check_form_buttons(
+    if (NGCP::Panel::Utils::Navigation::check_form_buttons(
         c => $c, form => $form,
         fields => {'contract.create' => $c->uri_for('/contract/peering/create')},
         back_uri => $c->req->uri,
@@ -119,7 +119,7 @@ sub create :Chained('group_list') :PathPart('create') :Args(0) {
         params => $c->request->params,
         action => $c->uri_for('create'),
     );
-    if (NGCP::Panel::Utils::check_form_buttons(
+    if (NGCP::Panel::Utils::Navigation::check_form_buttons(
         c => $c, form => $form,
         fields => {'contract.create' => $c->uri_for('/contract/peering/create')},
         back_uri => $c->req->uri,

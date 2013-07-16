@@ -24,7 +24,7 @@ sub get_usr_preference_rs {
 
 =head1 NAME
 
-NGCP::Panel::Utils::Contract
+NGCP::Panel::Utils::Subscriber
 
 =head1 DESCRIPTION
 

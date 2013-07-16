@@ -3,7 +3,7 @@ use Sipwise::Base;
 use namespace::sweep;
 BEGIN { extends 'Catalyst::Controller'; }
 use NGCP::Panel::Form::Administrator qw();
-use NGCP::Panel::Utils qw();
+use NGCP::Panel::Utils::Navigation;
 
 sub auto :Does(ACL) :ACLDetachTo('/denied_page') :AllowedRole(admin) {
     my ($self, $c) = @_;
@@ -52,7 +52,7 @@ sub create :Chained('list_admin') :PathPart('create') :Args(0) {
         params => $c->request->params,
         action => $c->uri_for('create'),
     );
-    return if NGCP::Panel::Utils::check_form_buttons(
+    return if NGCP::Panel::Utils::Navigation::check_form_buttons(
         c => $c,
         form => $form,
         fields => [qw(administrator.create)],

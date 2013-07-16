@@ -6,7 +6,7 @@ use NGCP::Panel::Utils::Contract;
 use NGCP::Panel::Form::CustomerMonthlyFraud;
 use NGCP::Panel::Form::CustomerDailyFraud;
 use NGCP::Panel::Form::CustomerBalance;
-use NGCP::Panel::Utils;
+use NGCP::Panel::Utils::Navigation;
 
 =head1 NAME
 
@@ -32,7 +32,7 @@ sub list_customer :Chained('/') :PathPart('customer') :CaptureArgs(0) {
     $c->stash(
         template => 'customer/list.tt'
     );
-    NGCP::Panel::Utils::check_redirect_chain(c => $c);
+    NGCP::Panel::Utils::Navigation::check_redirect_chain(c => $c);
 }
 
 sub root :Chained('list_customer') :PathPart('') :Args(0) {

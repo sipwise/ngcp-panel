@@ -2,6 +2,7 @@ package NGCP::Panel::Controller::Subscriber;
 use Sipwise::Base;
 use namespace::sweep;
 BEGIN { extends 'Catalyst::Controller'; }
+use NGCP::Panel::Utils::Navigation;
 use NGCP::Panel::Utils::Contract;
 use NGCP::Panel::Utils::Subscriber;
 use NGCP::Panel::Form::Subscriber;
@@ -39,7 +40,7 @@ sub sub_list :Chained('/') :PathPart('subscriber') :CaptureArgs(0) {
     $c->stash(
         template => 'subscriber/list.tt',
     );
-    #NGCP::Panel::Utils::check_redirect_chain(c => $c);
+    #NGCP::Panel::Utils::Navigation::check_redirect_chain(c => $c);
 
 }
 
@@ -57,7 +58,7 @@ sub create_list :Chained('sub_list') :PathPart('create') :Args(0) {
         params => $c->request->params,
         action => $c->uri_for('/subscriber/create'),
     );
-    return if NGCP::Panel::Utils::check_form_buttons(
+    return if NGCP::Panel::Utils::Navigation::check_form_buttons(
         c => $c,
         form => $form,
         fields => [qw/domain.create/],
@@ -397,7 +398,7 @@ sub preferences_callforward :Chained('base') :PathPart('preferences/callforward'
         params => $params,
     );
 
-    return if NGCP::Panel::Utils::check_form_buttons(
+    return if NGCP::Panel::Utils::Navigation::check_form_buttons(
         c => $c, form => $cf_form,
         fields => {
             'cf_actions.advanced' => 
@@ -546,7 +547,7 @@ sub preferences_callforward_advanced :Chained('base') :PathPart('preferences/cal
     );
 
 
-    return if NGCP::Panel::Utils::check_form_buttons(
+    return if NGCP::Panel::Utils::Navigation::check_form_buttons(
         c => $c, form => $cf_form,
         fields => {
             'cf_actions.simple' => 
