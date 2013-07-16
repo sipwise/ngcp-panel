@@ -2,6 +2,7 @@ package NGCP::Panel::Controller::Subscriber;
 use Sipwise::Base;
 use namespace::sweep;
 BEGIN { extends 'Catalyst::Controller'; }
+use NGCP::Panel::Utils;
 use NGCP::Panel::Utils::Navigation;
 use NGCP::Panel::Utils::Contract;
 use NGCP::Panel::Utils::Subscriber;
