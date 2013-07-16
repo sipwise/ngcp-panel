@@ -534,9 +534,11 @@ sub preferences_callforward_advanced :Chained('base') :PathPart('preferences/cal
             destination_set => $map->destination_set->id,
             time_set => $map->time_set ? $map->time_set->id : undef,
         };
-          
     }
-    my $params = { active_callforward => \@maps };
+    my $params = { 
+        active_callforward => \@maps, 
+        ringtimeout =>  $ringtimeout_preference->first ? $ringtimeout_preference->first->value : 15,
+    };
 
     $cf_form->process(
         params => $posted ? $c->request->params : $params,
@@ -571,9 +573,13 @@ sub preferences_callforward_advanced :Chained('base') :PathPart('preferences/cal
                 if($cf_mapping->count) {
                     foreach my $map($cf_mapping->all) {
                         $map->delete;
-                        # TODO: also delete/update voip_usr_preference!
+                        foreach my $cf($cf_preference->all) {
+                            $cf->delete;
+                        }
                     }
                     unless(@active) {
+                        $ringtimeout_preference->first->delete 
+                            if($cf_type eq "cft" &&  $ringtimeout_preference->first);
                         $c->flash(messages => [{type => 'success', text => 'Successfully cleared Call Forward'}]);
                         $c->response->redirect(
                             $c->uri_for_action('/subscriber/preferences', 
@@ -583,12 +589,21 @@ sub preferences_callforward_advanced :Chained('base') :PathPart('preferences/cal
                     }
                 }
                 foreach my $map(@active) {
-                    $cf_mapping->create({
+                    my $m = $cf_mapping->create({
                         type => $cf_type,
                         destination_set_id => $map->field('destination_set')->value,
                         time_set_id => $map->field('time_set')->value,
                     });
+                    $cf_preference->create({ value => $m->id });
                 }
+                if($cf_type eq "cft") {
+                    if($ringtimeout_preference->first) {
+                        $ringtimeout_preference->first->update({ value => $cf_form->field('ringtimeout')->value });
+                    } else {
+                        $ringtimeout_preference->create({ value => $cf_form->field('ringtimeout')->value });
+                    }
+                }
+
                 $c->flash(messages => [{type => 'success', text => 'Successfully saved Call Forward'}]);
                 $c->response->redirect(
                     $c->uri_for_action('/subscriber/preferences', 
@@ -668,6 +683,15 @@ sub preferences_callforward_destinationset_edit :Chained('preferences_callforwar
 
     my $posted = ($c->request->method eq 'POST');
 
+    my $cf_preference = NGCP::Panel::Utils::Subscriber::get_usr_preference_rs(
+        c => $c, prov_subscriber => $c->stash->{subscriber}->provisioning_voip_subscriber,
+        attribute => $cf_type,
+    );
+    my $ringtimeout_preference = NGCP::Panel::Utils::Subscriber::get_usr_preference_rs(
+        c => $c, prov_subscriber => $c->stash->{subscriber}->provisioning_voip_subscriber,
+        attribute => 'ringtimeout',
+    );
+
     my $set =  $c->stash->{destination_set};
     my $params;
     unless($posted) {
@@ -697,8 +721,11 @@ sub preferences_callforward_destinationset_edit :Chained('preferences_callforwar
                 my @fields = $form->field('destination')->fields;
                 unless(@fields) {
                     foreach my $mapping($set->voip_cf_mappings) {
+                        my $cf = $cf_preference->find({ value => $mapping->id });
+                        $cf->delete if $cf;
+                        $ringtimeout_preference->first->delete 
+                            if($cf_type eq "cft" && $ringtimeout_preference->first);
                         $mapping->delete;
-                        # TODO: also delete/update voip_usr_preference!
                     }
                     $set->delete;
 
