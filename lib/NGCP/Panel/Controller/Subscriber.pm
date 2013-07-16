@@ -3,6 +3,7 @@ use Sipwise::Base;
 use namespace::sweep;
 BEGIN { extends 'Catalyst::Controller'; }
 use NGCP::Panel::Utils::Contract;
+use NGCP::Panel::Utils::Subscriber;
 use NGCP::Panel::Form::Subscriber;
 use NGCP::Panel::Form::SubscriberCFSimple;
 use NGCP::Panel::Form::SubscriberCFTSimple;
@@ -252,11 +253,9 @@ sub preferences :Chained('base') :PathPart('preferences') :Args(0) {
     }
     $c->stash(cf_destinations => $cfs);
 
-    my $ringtimeout_preference = $c->model('DB')->resultset('voip_preferences')->search({
-            attribute => 'ringtimeout', 'usr_pref' => 1,
-        })->first->voip_usr_preferences->find({
-            subscriber_id => $prov_subscriber->id,
-        });
+    my $ringtimeout_preference = NGCP::Panel::Utils::Subscriber::get_usr_preference_rs(
+            c => $c, attribute => 'ringtimeout', prov_subscriber => $prov_subscriber)
+        ->first;
     $c->stash(cf_ringtimeout => $ringtimeout_preference ? $ringtimeout_preference->value : undef);
 }
 
@@ -323,17 +322,14 @@ sub preferences_callforward :Chained('base') :PathPart('preferences/callforward'
 
     my $posted = ($c->request->method eq 'POST');
 
-    my $voip_preferences = $c->model('DB')->resultset('voip_preferences')->search({
-        'usr_pref' => 1,
-    });
-    my $cf_preference = $voip_preferences->find({ 'attribute' => $cf_type })
-        ->voip_usr_preferences;
-    my $ringtimeout_preference = $voip_preferences->find({ 'attribute' => 'ringtimeout' })
-        ->voip_usr_preferences;
-    my $billing_subscriber = $c->stash->{subscriber};
-    my $prov_subscriber = $billing_subscriber->provisioning_voip_subscriber;
+    my $prov_subscriber = $c->stash->{subscriber}->provisioning_voip_subscriber;
+    my $cf_preference = NGCP::Panel::Utils::Subscriber::get_usr_preference_rs(
+            c => $c, prov_subscriber => $prov_subscriber, attribute => $cf_type);
+    my $ringtimeout_preference = NGCP::Panel::Utils::Subscriber::get_usr_preference_rs(
+            c => $c, prov_subscriber => $prov_subscriber, attribute => 'ringtimeout');
     my $cf_mapping = $prov_subscriber->voip_cf_mappings->search_rs({ type => $cf_type });
     my $destination;
+
     if($cf_mapping->count > 1) {
         # there is more than one mapping,
         # which can only be handled in advanced mode
@@ -343,7 +339,7 @@ sub preferences_callforward :Chained('base') :PathPart('preferences/callforward'
             )
        );
        return;
-    } elsif($cf_mapping->first->destination_set && 
+    } elsif($cf_mapping->first && $cf_mapping->first->destination_set && 
             $cf_mapping->first->destination_set->voip_cf_destinations->first) {
 
         # there are more than one destinations or a time set, so
@@ -365,7 +361,7 @@ sub preferences_callforward :Chained('base') :PathPart('preferences/callforward'
     if($destination) {
         $params->{destination} = $destination->destination;
         if($cf_type eq 'cft') {
-            my $rt = $ringtimeout_preference->find({ subscriber_id => $prov_subscriber->id });
+            my $rt = $ringtimeout_preference->first;
             if($rt) {
                 $params->{ringtimeout} = $rt->value;
             } else {
@@ -380,7 +376,7 @@ sub preferences_callforward :Chained('base') :PathPart('preferences/callforward'
             $c->request->params->{submitid} eq "cf_actions.save")
            ) {
             if($params->{destination} !~ /\@/) {
-                $params->{destination} .= '@'.$billing_subscriber->domain->domain;
+                $params->{destination} .= '@'.$c->stash->{subscriber}->domain->domain;
             }
             if($params->{destination} !~ /^sip:/) {
                 $params->{destination} = 'sip:' . $params->{destination};
@@ -443,28 +439,17 @@ sub preferences_callforward :Chained('base') :PathPart('preferences/callforward'
                         time_set_id => undef, #$time_set_id,
                     });
                 }
-                my $cf_preference_row = $cf_preference->find({ 
-                    subscriber_id => $prov_subscriber->id 
-                });
-                if($cf_preference_row) {
-                    $cf_preference_row->update({ value => $cf_mapping->id });
-                } else {
-                    $cf_preference->create({
-                        subscriber_id => $prov_subscriber->id,
-                        value => $cf_mapping->id,
-                    });
+                foreach my $pref($cf_preference->all) {
+                    $pref->delete;
                 }
+                $cf_preference->create({ value => $cf_mapping->id });
                 if($cf_type eq 'cft') {
-                    my $ringtimeout_preference_row = $ringtimeout_preference->find({ 
-                        subscriber_id => $prov_subscriber->id 
-                    });
-                    if($ringtimeout_preference_row) {
-                        $ringtimeout_preference_row->update({ 
+                    if($ringtimeout_preference->first) {
+                        $ringtimeout_preference->first->update({ 
                             value => $c->request->params->{ringtimeout}
                         });
                     } else {
                         $ringtimeout_preference->create({
-                            subscriber_id => $prov_subscriber->id,
                             value => $c->request->params->{ringtimeout},
                         });
                     }
@@ -515,9 +500,12 @@ sub preferences_callforward_advanced :Chained('base') :PathPart('preferences/cal
         }
     }
 
-    my $billing_subscriber = $c->stash->{subscriber};
-    my $prov_subscriber = $billing_subscriber->provisioning_voip_subscriber;
+    my $prov_subscriber = $c->stash->{subscriber}->provisioning_voip_subscriber;
     my $cf_mapping = $prov_subscriber->voip_cf_mappings->search_rs({ type => $cf_type });
+    my $cf_preference = NGCP::Panel::Utils::Subscriber::get_usr_preference_rs(
+            c => $c, prov_subscriber => $prov_subscriber, attribute => $cf_type);
+    my $ringtimeout_preference = NGCP::Panel::Utils::Subscriber::get_usr_preference_rs(
+            c => $c, prov_subscriber => $prov_subscriber, attribute => 'ringtimeout');
 
     # TODO: we can have more than one active, no?
     if($cf_mapping->count) {
@@ -582,6 +570,7 @@ sub preferences_callforward_advanced :Chained('base') :PathPart('preferences/cal
                 if($cf_mapping->count) {
                     foreach my $map($cf_mapping->all) {
                         $map->delete;
+                        # TODO: also delete/update voip_usr_preference!
                     }
                     unless(@active) {
                         $c->flash(messages => [{type => 'success', text => 'Successfully cleared Call Forward'}]);
@@ -627,8 +616,7 @@ sub preferences_callforward_advanced :Chained('base') :PathPart('preferences/cal
 sub preferences_callforward_destinationset :Chained('base') :PathPart('preferences/destinationset') :Args(0) {
     my ($self, $c, $type) = @_;
 
-    my $billing_subscriber = $c->stash->{subscriber};
-    my $prov_subscriber = $billing_subscriber->provisioning_voip_subscriber;
+    my $prov_subscriber = $c->stash->{subscriber}->provisioning_voip_subscriber;
 
     my @sets;
     if($prov_subscriber->voip_cf_destination_sets) {
@@ -696,8 +684,6 @@ sub preferences_callforward_destinationset_edit :Chained('preferences_callforwar
     );
 
     if($posted && $form->validated) {
-        say ">>>>>>>>>>>>>>>>>>>> dset form validated";
-
         try {
             my $schema = $c->model('DB');
             $schema->txn_do(sub {
@@ -706,6 +692,7 @@ sub preferences_callforward_destinationset_edit :Chained('preferences_callforwar
                 unless(@fields) {
                     foreach my $mapping($set->voip_cf_mappings) {
                         $mapping->delete;
+                        # TODO: also delete/update voip_usr_preference!
                     }
                     $set->delete;
 
@@ -762,16 +749,20 @@ sub preferences_callforward_destinationset_edit :Chained('preferences_callforwar
 sub preferences_callforward_destinationset_delete :Chained('preferences_callforward_destinationset_base') :PathPart('delete') :Args(0) {
     my ($self, $c) = @_;
 
+    # TODO: also delete/update voip_usr_preference!
 
+    # To be implemented
 
 }
 
 sub preferences_callforward_delete :Chained('base') :PathPart('preferences/callforward/delete') :Args(1) {
-    my ($self, $c, $cfmap_id) = @_;
+    my ($self, $c, $cf_type) = @_;
 
     try {
-        $c->model('DB')->resultset('voip_cf_mappings')->find($cfmap_id)->delete;
-        $c->flash(messages => [{type => 'success', text => 'Successfully deleted Call Forward'}]);
+        #$c->model('DB')->resultset('voip_cf_mappings')->find($cfmap_id)->delete;
+        # TODO: we need to delete all mappings for the cf_type here!
+        # also, we need to delete all usr_preferences of cf_type!
+        $c->flash(messages => [{type => 'error', text => 'TODO: Successfully deleted Call Forward'}]);
     } catch($e) {
         $c->log->error("failed to delete call forward mapping: $e");
         $c->flash(messages => [{type => 'error', text => 'Failed to deleted Call Forward'}]);
