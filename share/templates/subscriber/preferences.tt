@@ -93,7 +93,7 @@
                                         [% jdx = jdx + 1 %]
                                     [% END -%]
                                     [% FOR p IN maps.periods -%]
-                                        [% jdx %]: [% p.year %] [% p.month %] [% p.mday %] [% p.wday %] [% p.hour %] [% p.minute %]<br/>
+                                        [% p.year %] [% p.month %] [% p.mday %] [% p.wday %] [% p.hour %] [% p.minute %]<br/>
                                         [% jdx = jdx + 1 %]
                                     [% END -%]
                                     [% WHILE jdx < destinations.${idx} -%]
@@ -173,6 +173,52 @@
                             <i class="icon-edit"></i> Edit
                         </a>
                         <a class="btn btn-small btn-secondary" data-confirm="Delete" href="[% c.uri_for_action('/subscriber/preferences_callforward_destinationset_delete', [ c.req.captures.0, set.id ], cf_type) %]">
+                            <i class="icon-trash"></i> Delete
+                        </a>
+                    </div>
+                </td>
+            </tr>
+        [% END -%]
+        </tbody>
+    </table>
+    [% END -%]
+    </div>
+
+[%
+    modal_footer();
+    modal_script(m.close_target = close_target ? close_target : c.uri_for_action('/subscriber/preferences', [c.req.captures.0]));
+-%]
+[% ELSIF edit_timeset_flag -%]
+[%
+    PROCESS "helpers/modal.tt";
+    modal_header(m.name = cf_description);
+-%]
+
+    <div class="modal-body">
+    [% IF cf_sets -%]
+    <table class="table table-bordered table-striped table-highlight table-hover">
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Values</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+        [% FOREACH set IN cf_sets -%]
+            <tr class="sw_action_row">
+                <td>[% set.name %]</td>
+                <td>
+                    [% FOREACH p IN set.periods -%]
+                        [% p.year %] [% p.month %] [% p.mday %] [% p.wday %] [% p.hour %] [% p.minute %]<br/>
+                    [% END -%]
+                </td>
+                <td class="ngcp-actions-column">
+                    <div class="sw_actions pull-right">
+                        <a class="btn btn-small btn-primary" href="[% c.uri_for_action('/subscriber/preferences_callforward_timeset_edit', [ c.req.captures.0, set.id ], cf_type) %]">
+                            <i class="icon-edit"></i> Edit
+                        </a>
+                        <a class="btn btn-small btn-secondary" data-confirm="Delete" href="[% c.uri_for_action('/subscriber/preferences_callforward_timeset_delete', [ c.req.captures.0, set.id ], cf_type) %]">
                             <i class="icon-trash"></i> Delete
                         </a>
                     </div>

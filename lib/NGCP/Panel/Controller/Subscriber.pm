@@ -10,6 +10,7 @@ use NGCP::Panel::Form::SubscriberCFTSimple;
 use NGCP::Panel::Form::SubscriberCFAdvanced;
 use NGCP::Panel::Form::SubscriberCFTAdvanced;
 use NGCP::Panel::Form::DestinationSet;
+use NGCP::Panel::Form::TimeSet;
 use UUID;
 
 use Data::Printer;
@@ -556,10 +557,10 @@ sub preferences_callforward_advanced :Chained('base') :PathPart('preferences/cal
                 $c->uri_for_action('/subscriber/preferences_callforward_destinationset', 
                     [$c->req->captures->[0]], $cf_type,
                 ),
-#            'cf_actions.edit_time_sets' => 
-#                $c->uri_for_action('/subscriber/preferences_callforward_timeset', 
-#                    [$c->req->captures->[0]],
-#                ),
+            'cf_actions.edit_time_sets' => 
+                $c->uri_for_action('/subscriber/preferences_callforward_timeset', 
+                    [$c->req->captures->[0]], $cf_type,
+                ),
         },
         back_uri => $c->uri_for_action('/subscriber/preferences_callforward_advanced',
             [$c->req->captures->[0]], $cf_type, 'advanced'),
@@ -815,6 +816,165 @@ sub preferences_callforward_destinationset_delete :Chained('preferences_callforw
 
     $c->response->redirect(
         $c->uri_for_action('/subscriber/preferences_callforward_destinationset', 
+            [$c->req->captures->[0]], $cf_type)
+    );
+    return;
+}
+
+sub preferences_callforward_timeset :Chained('base') :PathPart('preferences/timeset') :Args(1) {
+    my ($self, $c, $cf_type) = @_;
+
+    my $prov_subscriber = $c->stash->{subscriber}->provisioning_voip_subscriber;
+
+    my @sets;
+    if($prov_subscriber->voip_cf_time_sets) {
+        foreach my $set($prov_subscriber->voip_cf_time_sets->all) {
+            if($set->voip_cf_periods) {
+                my @periods = ();
+                foreach my $period($set->voip_cf_periods->all) {
+                    my %cols = $period->get_columns;
+                    push @periods, \%cols;
+                }
+                push @sets, { name => $set->name, id => $set->id, periods => \@periods};
+            }
+        }
+    }
+    $c->stash->{cf_sets} = \@sets;
+
+    my $cf_form = undef;
+
+    $self->load_preference_list($c);
+    $c->stash(template => 'subscriber/preferences.tt');
+    $c->stash(
+        edit_timeset_flag => 1,
+        cf_description => "Time Sets",
+        cf_form => $cf_form,
+        close_target => $c->uri_for_action('/subscriber/preferences_callforward_advanced', 
+                    [$c->req->captures->[0]], $cf_type, 'advanced'),
+        cf_type => $cf_type,
+    );
+}
+
+sub preferences_callforward_timeset_base :Chained('base') :PathPart('preferences/timeset') :CaptureArgs(1) {
+    my ($self, $c, $set_id) = @_;
+
+    $c->stash(time_set => $c->stash->{subscriber}
+        ->provisioning_voip_subscriber
+        ->voip_cf_time_sets
+        ->find($set_id));
+
+    $self->load_preference_list($c);
+    $c->stash(template => 'subscriber/preferences.tt');
+}
+
+sub preferences_callforward_timeset_edit :Chained('preferences_callforward_timeset_base') :PathPart('edit') :Args(1) {
+    my ($self, $c, $cf_type) = @_;
+
+    my $form = NGCP::Panel::Form::TimeSet->new;
+
+    my $posted = ($c->request->method eq 'POST');
+
+    my $set =  $c->stash->{time_set};
+    my $params;
+    unless($posted) {
+        $params->{name} = $set->name;
+        my @periods;
+        for my $period($set->voip_cf_periods->all) {
+            push @periods, { 
+                year => $period->year, 
+                month => $period->month, 
+                mday => $period->mday, 
+                wday => $period->wday, 
+                hour => $period->hour, 
+                minute => $period->minute, 
+                id => $period->id,
+            };
+        }
+        $params->{period} = \@periods;
+    }
+
+    $form->process(
+        params => $posted ? $c->req->params : $params
+    );
+
+    if($posted && $form->validated) {
+        try {
+            my $schema = $c->model('DB');
+            $schema->txn_do(sub {
+                my @fields = $form->field('period')->fields;
+                unless(@fields) {
+                    foreach my $mapping($set->voip_cf_mappings) {
+                        $mapping->update({ time_set_id => undef });
+                    }
+                    $set->delete;
+
+                    $c->response->redirect(
+                        $c->uri_for_action('/subscriber/preferences_callforward_timeset', 
+                            [$c->req->captures->[0]], $cf_type)
+                    );
+                    return;
+                }
+                if($form->field('name')->value ne $set->name) {
+                    $set->update({name => $form->field('name')->value});
+                }
+                foreach my $period($set->voip_cf_periods->all) {
+                    $period->delete;
+                }
+                foreach my $period($form->field('period')->fields) {
+                    $set->voip_cf_periods->create({
+                        year => $period->field('year')->value,
+                        month => $period->field('month')->value,
+                        mday => $period->field('mday')->value,
+                        wday => $period->field('wday')->value,
+                        hour => $period->field('hour')->value,
+                        minute => $period->field('minute')->value,
+                    });
+                }
+                $c->response->redirect(
+                    $c->uri_for_action('/subscriber/preferences_callforward_timeset', 
+                        [$c->req->captures->[0]], $cf_type)
+                );
+                return;
+            });
+        } catch($e) {
+            $c->log->error("failed to update time set: $e");
+            $c->response->redirect(
+                $c->uri_for_action('/subscriber/preferences_callforward_timeset', 
+                    [$c->req->captures->[0]], $cf_type)
+            );
+            return;
+        }
+    }
+
+    $c->stash(
+        edit_cf_flag => 1,
+        cf_description => "Time Set",
+        cf_form => $form,
+        close_target => $c->uri_for_action('/subscriber/preferences_callforward_timeset', 
+                    [$c->req->captures->[0]], $cf_type),
+    );
+
+}
+
+sub preferences_callforward_timeset_delete :Chained('preferences_callforward_timeset_base') :PathPart('delete') :Args(1) {
+    my ($self, $c, $cf_type) = @_;
+
+    my $set =  $c->stash->{time_set};
+
+    try {
+        my $schema = $c->model('DB');
+        $schema->txn_do(sub {
+            foreach my $map($set->voip_cf_mappings->all) {
+                $map->update({ destination_set_id => undef });
+            }
+            $set->delete;
+        });
+    } catch($e) {
+        $c->log->error("failed to delete time set: $e");
+    }
+
+    $c->response->redirect(
+        $c->uri_for_action('/subscriber/preferences_callforward_timeset', 
             [$c->req->captures->[0]], $cf_type)
     );
     return;
