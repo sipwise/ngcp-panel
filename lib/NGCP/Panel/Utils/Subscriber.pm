@@ -52,6 +52,33 @@ sub period_as_string {
     return $string;
 }
 
+sub destination_as_string {
+    my $destination = shift;
+    my $dest = $destination->{destination};
+
+    if($dest =~ /\@voicebox\.local$/) {
+        return "VoiceMail";
+    } elsif($dest =~ /\@fax2mail\.local$/) {
+        return "Fax2Mail";
+    } elsif($dest =~ /\@conference\.local$/) {
+        return "Conference";
+    } elsif($dest =~ /^sip:callingcard\@app\.local$/) {
+        return "CallingCard";
+    } elsif($dest =~ /^sip:callthrough\@app\.local$/) {
+        return "CallThrough";
+    } elsif($dest =~ /^sip:localuser\@.+\.local$/) {
+        return "Local Subscriber";
+    } else {
+        my $d = $dest;
+        $d =~ s/sip:(.+)\@.+$/$1/;
+        if($d =~ /^\d+$/) {
+            return $d;
+        } else {
+            return $dest;
+        }
+    }
+}
+
 1;
 
 =head1 NAME

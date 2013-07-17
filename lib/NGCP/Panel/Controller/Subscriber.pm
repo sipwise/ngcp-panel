@@ -245,6 +245,9 @@ sub preferences :Chained('base') :PathPart('preferences') :Args(0) {
         foreach my $map($maps->all) {
             my @dset = map { { $_->get_columns } } $map->destination_set->voip_cf_destinations->search({},
                 { order_by => { -asc => 'priority' }})->all;
+            foreach my $d(@dset) {
+                $d->{as_string} = NGCP::Panel::Utils::Subscriber::destination_as_string($d);
+            }
             my @tset = ();
             if($map->time_set) {
                 @tset = map { { $_->get_columns } } $map->time_set->voip_cf_periods->all;
@@ -642,11 +645,10 @@ sub preferences_callforward_destinationset :Chained('base') :PathPart('preferenc
     if($prov_subscriber->voip_cf_destination_sets) {
         foreach my $set($prov_subscriber->voip_cf_destination_sets->all) {
             if($set->voip_cf_destinations) {
-                my @dests = ();
-                foreach my $dest($set->voip_cf_destinations->search({},
-                  { order_by => { -asc => 'priority' }})->all) {
-                    my %cols = $dest->get_columns;
-                    push @dests, \%cols;
+                my @dests = map { { $_->get_columns } } $set->voip_cf_destinations->search({},
+                    { order_by => { -asc => 'priority' }})->all;
+                foreach my $d(@dests) {
+                    $d->{as_string} = NGCP::Panel::Utils::Subscriber::destination_as_string($d);
                 }
                 push @sets, { name => $set->name, id => $set->id, destinations => \@dests };
             }
@@ -805,8 +807,12 @@ sub preferences_callforward_destinationset_edit :Chained('preferences_callforwar
             my $t = $dest->timeout;
             if($d =~ /\@voicebox\.local$/) {
                 $d = 'voicebox';
+            } elsif($d =~ /\@fax2mail\.local$/) {
+                $d = 'fax2mail';
             } elsif($d =~ /\@conference\.local$/) {
                 $d = 'conference';
+            } elsif($d =~ /\@fax2mail\.local$/) {
+                $d = 'fax2mail';
             } elsif($d =~ /^sip:callingcard\@app\.local$/) {
                 $d = 'callingcard';
             } elsif($d =~ /^sip:callingthrough\@app\.local$/) {

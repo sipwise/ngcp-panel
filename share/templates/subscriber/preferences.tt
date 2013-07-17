@@ -73,7 +73,7 @@
                                 [% FOR maps IN cf_destinations.${cf.type} -%]
                                     [% jdx = 0 -%]
                                     [% FOR d IN maps.destinations -%]
-                                        [% d.destination %] <span class="pull-right">for [% d.timeout %]s</span><br/>
+                                        [% d.as_string %] <span class="pull-right">for [% d.timeout %]s</span><br/>
                                         [% jdx = jdx + 1 %]
                                     [% END -%]
                                     [% WHILE jdx < periods.${idx} -%]
@@ -168,7 +168,7 @@
                 <td>[% set.name %]</td>
                 <td>
                     [% FOREACH d IN set.destinations -%]
-                        [% d.destination %] <span class="pull-right">for [% d.timeout %]s</span><br/>
+                        [% d.as_string %] <span class="pull-right">for [% d.timeout %]s</span><br/>
                     [% END -%]
                 </td>
                 <td class="ngcp-actions-column">
