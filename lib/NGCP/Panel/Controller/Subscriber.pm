@@ -943,16 +943,26 @@ sub preferences_callforward_timeset_create :Chained('base') :PathPart('preferenc
                     my $set = $prov_subscriber->voip_cf_time_sets->create({
                         name => $form->field('name')->value,
                     });
-                    foreach my $period(@fields) {
-                        $set->voip_cf_periods->create({
-                            year => $period->field('year')->value,
-                            month => $period->field('month')->value,
-                            mday => $period->field('mday')->value,
-                            wday => $period->field('wday')->value,
-                            hour => $period->field('hour')->value,
-                            minute => $period->field('minute')->value,
-                        });
+
+                    foreach my $period($form->field('period')->fields) {
+                        my $fields = {};
+                        for my $type (qw/year month mday wday hour minute/) {
+                            my $row = $period->field("row");
+                            my $from = $row->field($type)->field("from")->value;
+                            my $to = $row->field($type)->field("to")->value;
+                            if($type eq "wday") {
+                                $from = int($from)+1 if defined($from);
+                                $to = int($to)+1 if defined($to);
+                            }
+                            if(defined $from) {
+                                $fields->{$type} = $from .
+                                    (defined $to ?
+                                        '-'.$to : '');
+                            }
+                        }
+                        $set->voip_cf_periods->create($fields);
                     }
+
                     $c->response->redirect(
                         $c->uri_for_action('/subscriber/preferences_callforward_timeset', 
                             [$c->req->captures->[0]], $cf_type)
@@ -1007,15 +1017,20 @@ sub preferences_callforward_timeset_edit :Chained('preferences_callforward_times
         $params->{name} = $set->name;
         my @periods;
         for my $period($set->voip_cf_periods->all) {
-            push @periods, { 
-                year => $period->year, 
-                month => $period->month, 
-                mday => $period->mday, 
-                wday => $period->wday, 
-                hour => $period->hour, 
-                minute => $period->minute, 
-                id => $period->id,
-            };
+            my $p = {};
+            foreach my $type(qw/year month mday wday hour minute/) {
+                my $val = $period->$type;
+                if(defined $val) {
+                    my ($from, $to) = split/\-/, $val;
+                    if($type eq "wday") {
+                        $from = int($from)-1 if defined($from);
+                        $to = int($to)-1 if defined($to);
+                    }
+                    $p->{row}->{$type}->{from} = $from;
+                    $p->{row}->{$type}->{to} = $to if defined($to);
+                }
+            }
+            push @periods, $p;
         }
         $params->{period} = \@periods;
     }
@@ -1048,14 +1063,22 @@ sub preferences_callforward_timeset_edit :Chained('preferences_callforward_times
                     $period->delete;
                 }
                 foreach my $period($form->field('period')->fields) {
-                    $set->voip_cf_periods->create({
-                        year => $period->field('year')->value,
-                        month => $period->field('month')->value,
-                        mday => $period->field('mday')->value,
-                        wday => $period->field('wday')->value,
-                        hour => $period->field('hour')->value,
-                        minute => $period->field('minute')->value,
-                    });
+                    my $fields = {};
+                    for my $type (qw/year month mday wday hour minute/) {
+                        my $row = $period->field("row");
+                        my $from = $row->field($type)->field("from")->value;
+                        my $to = $row->field($type)->field("to")->value;
+                        if($type eq "wday") {
+                            $from = int($from)+1 if defined($from);
+                            $to = int($to)+1 if defined($to);
+                        }
+                        if(defined $from) {
+                            $fields->{$type} = $from .
+                                (defined $to ?
+                                    '-'.$to : '');
+                        }
+                    }
+                    $set->voip_cf_periods->create($fields);
                 }
                 $c->response->redirect(
                     $c->uri_for_action('/subscriber/preferences_callforward_timeset', 
