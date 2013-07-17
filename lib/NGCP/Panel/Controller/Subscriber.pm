@@ -248,6 +248,9 @@ sub preferences :Chained('base') :PathPart('preferences') :Args(0) {
             my @tset = ();
             if($map->time_set) {
                 @tset = map { { $_->get_columns } } $map->time_set->voip_cf_periods->all;
+                foreach my $t(@tset) {
+                    $t->{as_string} = NGCP::Panel::Utils::Subscriber::period_as_string($t);
+                }
             }
             push @{ $cfs->{$type} }, { destinations => \@dset, periods => \@tset };
         }
@@ -895,10 +898,9 @@ sub preferences_callforward_timeset :Chained('base') :PathPart('preferences/time
     if($prov_subscriber->voip_cf_time_sets) {
         foreach my $set($prov_subscriber->voip_cf_time_sets->all) {
             if($set->voip_cf_periods) {
-                my @periods = ();
-                foreach my $period($set->voip_cf_periods->all) {
-                    my %cols = $period->get_columns;
-                    push @periods, \%cols;
+                my @periods = map { { $_->get_columns } } $set->voip_cf_periods->all;
+                foreach my $p(@periods) {
+                    $p->{as_string} = NGCP::Panel::Utils::Subscriber::period_as_string($p);
                 }
                 push @sets, { name => $set->name, id => $set->id, periods => \@periods};
             }

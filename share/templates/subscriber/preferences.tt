@@ -93,7 +93,7 @@
                                         [% jdx = jdx + 1 %]
                                     [% END -%]
                                     [% FOR p IN maps.periods -%]
-                                        [% p.year %] [% p.month %] [% p.mday %] [% p.wday %] [% p.hour %] [% p.minute %]<br/>
+                                        [% p.as_string %]<br/>
                                         [% jdx = jdx + 1 %]
                                     [% END -%]
                                     [% WHILE jdx < destinations.${idx} -%]
@@ -218,7 +218,7 @@
                 <td>[% set.name %]</td>
                 <td>
                     [% FOREACH p IN set.periods -%]
-                        [% p.year %] [% p.month %] [% p.mday %] [% p.wday %] [% p.hour %] [% p.minute %]<br/>
+                        [% p.as_string %]<br/>
                     [% END -%]
                 </td>
                 <td class="ngcp-actions-column">

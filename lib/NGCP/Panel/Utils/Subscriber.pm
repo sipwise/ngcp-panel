@@ -20,6 +20,38 @@ sub get_usr_preference_rs {
     return $preference;
 }
 
+sub period_as_string {
+    my $set = shift;
+
+    my @wdays = (qw/
+        invalid Sunday Monday Tuesday Wednesday Thursday Friday Saturday    
+    /);
+    my @months = (qw/
+        invalid January February March April May June July August September October November December
+    /);
+
+    my $string = "";
+    foreach my $type(qw/year month mday wday hour minute/) {
+        my $s = $set->{$type};
+        if(defined $s) {
+            given($type) {
+                when(/^month$/) { 
+                    my ($from, $to) = split /\-/, $s;
+                    $s = $months[$from];
+                    $s .= '-'.$months[$to] if defined($to);
+                }
+                when(/^wday$/) { 
+                    my ($from, $to) = split /\-/, $s;
+                    $s = $wdays[$from];
+                    $s .= '-'.$wdays[$to] if defined($to);
+                }
+            }
+        }
+        $string .= "$type { $s } " if defined($s);
+    }
+    return $string;
+}
+
 1;
 
 =head1 NAME
