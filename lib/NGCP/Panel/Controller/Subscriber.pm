@@ -78,10 +78,10 @@ sub create_list :Chained('sub_list') :PathPart('create') :Args(0) {
                     ->find($c->request->params->{'reseller.id'});
                 my $contract = $schema->resultset('contracts')
                     ->find($c->request->params->{'contract.id'});
-                my $prov_domain = $schema->resultset('voip_domains')
-                    ->find($c->request->params->{'domain.id'});
                 my $billing_domain = $schema->resultset('domains')
-                    ->find({domain => $prov_domain->domain});
+                    ->find($c->request->params->{'domain.id'});
+                my $prov_domain = $schema->resultset('voip_domains')
+                    ->find({domain => $billing_domain->domain});
 
                 my $number;
                 if(defined $c->request->params->{'e164.cc'} && 
@@ -191,14 +191,23 @@ sub ajax :Chained('sub_list') :PathPart('ajax') :Args(0) {
     my $dispatch_to = '_ajax_resultset_' . $c->user->auth_realm;
     my $resultset = $self->$dispatch_to($c);
     $c->forward( "/ajax_process_resultset", [$resultset,
-                  ["id", "username", "domain_id", "contract_id", "status",],
-                  ["username", "domain_id", "contract_id", "status",]]);
+                  ["id", "username", "domain_name", "contract_id", "status",],
+                  ["username", "domain.domain", "contract_id", "status",]]);
     $c->detach( $c->view("JSON") );
 }
 
 sub _ajax_resultset_admin {
     my ($self, $c) = @_;
-    return $c->model('DB')->resultset('voip_subscribers');
+    return $c->model('DB')->resultset('voip_subscribers')->search_rs({},
+    {
+        'join' => 'domain',
+        '+select' => [
+            'domain.domain',
+        ],
+        '+as' => [
+            'domain_name',
+        ]
+    });
 }
 
 sub _ajax_resultset_reseller {

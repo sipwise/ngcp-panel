@@ -1,4 +1,4 @@
-[% site_config.title = 'Subscriber "' _ subscriber.username _ '@' _ subscriber.domain.domain _ '" – Preferences' -%]
+[% site_config.title = 'Subscriber Preferences for ' _ subscriber.username _ '@' _ subscriber.domain.domain  -%]
 
 [% 
     helper.name = 'Subscriber';
