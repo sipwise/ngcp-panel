@@ -90,6 +90,18 @@ div.ngcp-timeset-field div.controls {
     margin: 0 !important;
 }
 
+/* align cf destination radio group */
+
+div.ngcp-destination-row {
+    margin-left: 180px !important;
+}
+
+input.ngcp-destination-field {
+    width: 30%;
+}
+
+
+
 /* align buttons in one row in modal-footer */
 
 div.modal-footer div.control-group div.controls {

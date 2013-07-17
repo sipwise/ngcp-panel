@@ -677,6 +677,11 @@ sub preferences_callforward_destinationset_create :Chained('base') :PathPart('pr
 
     my $posted = ($c->request->method eq 'POST');
 
+    if($posted) {
+        say ">>>>>>>>>>>>>>>>> posted";
+
+    }
+
     $form->process(
         posted => $posted,
         params => $c->req->params,
@@ -691,17 +696,46 @@ sub preferences_callforward_destinationset_create :Chained('base') :PathPart('pr
                     my $set = $prov_subscriber->voip_cf_destination_sets->create({
                         name => $form->field('name')->value,
                     });
+                    my $number = $c->stash->{subscriber}->primary_number;
+                    my $numberstr = "";
+                    if(defined $number) {
+                        $numberstr .= $number->cc;
+                        $numberstr .= $number->ac if defined($number->ac);
+                        $numberstr .= $number->sn;
+                    } else {
+                        $numberstr = $c->stash->{subscriber}->uuid;
+                    }
                     foreach my $dest(@fields) {
                         my $d = $dest->field('destination')->value;
-                        if($d !~ /\@/) {
-                            $d .= '@'.$c->stash->{subscriber}->domain->domain;
+                        my $t = 300;
+                        if($d eq "voicebox") {
+                            $d = "sip:vmu$numberstr\@voicebox.local";
+                        } elsif($d eq "fax2mail") {
+                            $d = "sip:$numberstr\@fax2mail.local";
+                        } elsif($d eq "conference") {
+                            $d = "sip:conf=$numberstr\@conference.local";
+                        } elsif($d eq "callingcard") {
+                            $d = "sip:callingcard\@app.local";
+                        } elsif($d eq "callthrough") {
+                            $d = "sip:callthrough\@app.local";
+                        } elsif($d eq "localuser") {
+                            $d = "sip:localuser\@app.local";
+                        } elsif($d eq "uri") {
+                            $d = $dest->field('uri_destination')->value->[1];
+                            # TODO: check for valid dest here
+                            if($d !~ /\@/) {
+                                $d .= '@'.$c->stash->{subscriber}->domain->domain;
+                            }
+                            if($d !~ /^sip:/) {
+                                $d = 'sip:' . $d;
+                            }
+                            $t = $dest->field('uri_timeout')->value->[1];
+                            # TODO: check for valid timeout here
                         }
-                        if($d !~ /^sip:/) {
-                            $d = 'sip:' . $d;
-                        }
+
                         $set->voip_cf_destinations->create({
                             destination => $d,
-                            timeout => $dest->field('timeout')->value,
+                            timeout => $t,
                             priority => $dest->field('priority')->value,
                         });
                     }
@@ -749,8 +783,6 @@ sub preferences_callforward_destinationset_base :Chained('base') :PathPart('pref
 sub preferences_callforward_destinationset_edit :Chained('preferences_callforward_destinationset_base') :PathPart('edit') :Args(1) {
     my ($self, $c, $cf_type) = @_;
 
-    my $form = NGCP::Panel::Form::DestinationSet->new;
-
     my $posted = ($c->request->method eq 'POST');
 
     my $cf_preference = NGCP::Panel::Utils::Subscriber::get_usr_preference_rs(
@@ -768,9 +800,27 @@ sub preferences_callforward_destinationset_edit :Chained('preferences_callforwar
         $params->{name} = $set->name;
         my @destinations;
         for my $dest($set->voip_cf_destinations->all) {
+            my $d = $dest->destination;
+            my $duri = undef;
+            my $t = $dest->timeout;
+            if($d =~ /\@voicebox\.local$/) {
+                $d = 'voicebox';
+            } elsif($d =~ /\@conference\.local$/) {
+                $d = 'conference';
+            } elsif($d =~ /^sip:callingcard\@app\.local$/) {
+                $d = 'callingcard';
+            } elsif($d =~ /^sip:callingthrough\@app\.local$/) {
+                $d = 'callingcard';
+            } elsif($d =~ /^sip:localuser\@.+\.local$/) {
+                $d = 'localuser';
+            } else {
+                $duri = $d;
+                $d = 'uri';
+            }
             push @destinations, { 
-                destination => $dest->destination, 
-                timeout => $dest->timeout,
+                destination => $d,
+                uri_timeout => $t,
+                uri_destination => $duri,
                 priority => $dest->priority,
                 id => $dest->id,
             };
@@ -778,9 +828,12 @@ sub preferences_callforward_destinationset_edit :Chained('preferences_callforwar
         $params->{destination} = \@destinations;
     }
 
+    $c->stash->{cf_tmp_params} = $params;
+    my $form = NGCP::Panel::Form::DestinationSet->new(ctx => $c);
     $form->process(
         params => $posted ? $c->req->params : $params
     );
+    delete $c->stash->{cf_tmp_params};
 
     if($posted && $form->validated) {
         try {
@@ -810,20 +863,51 @@ sub preferences_callforward_destinationset_edit :Chained('preferences_callforwar
                 foreach my $dest($set->voip_cf_destinations->all) {
                     $dest->delete;
                 }
+
+                my $number = $c->stash->{subscriber}->primary_number;
+                my $numberstr = "";
+                if(defined $number) {
+                    $numberstr .= $number->cc;
+                    $numberstr .= $number->ac if defined($number->ac);
+                    $numberstr .= $number->sn;
+                } else {
+                    $numberstr = $c->stash->{subscriber}->uuid;
+                }
                 foreach my $dest($form->field('destination')->fields) {
                     my $d = $dest->field('destination')->value;
-                    if($d !~ /\@/) {
-                        $d .= '@'.$c->stash->{subscriber}->domain->domain;
+                    my $t = 300;
+                    if($d eq "voicebox") {
+                        $d = "sip:vmu$numberstr\@voicebox.local";
+                    } elsif($d eq "fax2mail") {
+                        $d = "sip:$numberstr\@fax2mail.local";
+                    } elsif($d eq "conference") {
+                        $d = "sip:conf=$numberstr\@conference.local";
+                    } elsif($d eq "callingcard") {
+                        $d = "sip:callingcard\@app.local";
+                    } elsif($d eq "callthrough") {
+                        $d = "sip:callthrough\@app.local";
+                    } elsif($d eq "localuser") {
+                        $d = "sip:localuser\@app.local";
+                    } elsif($d eq "uri") {
+                        $d = $dest->field('uri_destination')->value->[1];
+                        # TODO: check for valid dest here
+                        if($d !~ /\@/) {
+                            $d .= '@'.$c->stash->{subscriber}->domain->domain;
+                        }
+                        if($d !~ /^sip:/) {
+                            $d = 'sip:' . $d;
+                        }
+                        $t = $dest->field('uri_timeout')->value->[1];
+                        # TODO: check for valid timeout here
                     }
-                    if($d !~ /^sip:/) {
-                        $d = 'sip:' . $d;
-                    }
+
                     $set->voip_cf_destinations->create({
                         destination => $d,
-                        timeout => $dest->field('timeout')->value,
+                        timeout => $t,
                         priority => $dest->field('priority')->value,
                     });
                 }
+
                 $c->response->redirect(
                     $c->uri_for_action('/subscriber/preferences_callforward_destinationset', 
                         [$c->req->captures->[0]], $cf_type)

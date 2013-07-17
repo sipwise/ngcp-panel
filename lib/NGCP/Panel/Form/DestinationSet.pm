@@ -33,23 +33,69 @@ has_field 'destination' => (
 has_field 'destination.id' => (
     type => 'Hidden',
 );
+
+# dummy fields to provide accessors for our manually created ones
+# in &set_destination_groups below
+has_field 'destination.uri_destination' => (
+    type => 'Hidden',
+    value => undef,
+);
+has_field 'destination.uri_timeout' => (
+    type => 'Hidden',
+    value => undef,
+);
+
 has_field 'destination.destination' => (
-    type => 'Text',
+    type => 'Select',
+    widget => 'RadioGroup',
     label => 'Destination',
-    wrapper_class => [qw/hfh-rep-field/],
-    required => 1,
+    do_label => 1,
+    options_method => \&set_destination_groups,
+    tags => {
+        before_element => '<div class="ngcp-destination-row">',
+        after_element => '</div>',
+    },
 );
-has_field 'destination.timeout' => (
-    type => 'PosInteger',
-    label => 'Ring for (sec)',
-    wrapper_class => [qw/hfh-rep-field/],
-    default => 300,
-);
+
+sub set_destination_groups {
+    my($self) = @_;
+    my @options = ();
+
+    my $parent_id = $self->parent->name;
+    my $uri_d = "";
+    my $uri_t = 300;
+    if($parent_id =~ /^\d+$/ && 
+       defined $self->form->ctx && 
+       defined $self->form->ctx->stash->{cf_tmp_params}) {
+        my $d = $self->form->ctx->stash->{cf_tmp_params}->{destination}->[$parent_id];
+        $uri_d = $d->{uri_destination} if defined($d);
+        $uri_t = $d->{uri_timeout} if defined($d);
+    }
+
+    push @options, { label => 'Voicemail', value => 'voicebox' };
+    push @options, { label => 'Conference', value => 'conference' };
+    push @options, { label => 'Fax2Mail', value => 'fax2mail' };
+    push @options, { label => 'Calling Card', value => 'callingcard' };
+    push @options, { label => 'Call Trough', value => 'callthrough' };
+    push @options, { label => 'Local Subscriber', value => 'localuser' };
+    push @options, { 
+        label => 'URI/Number <input type="text" class="ngcp-destination-field" name="destination.'.$self->parent->name.'.uri_destination" value="'.$uri_d.'"/>'.
+                 '<span> for </span>'.
+                 '<input type="text" class="ngcp-destination-field" name="destination.'.$self->parent->name.'.uri_timeout" value="'.$uri_t.'"/>'.
+                 '<span> seconds</span>',
+        value => 'uri',
+        selected => 1,
+    };
+
+    return \@options;
+}
+
 has_field 'destination.priority' => (
     type => 'PosInteger',
     label => 'Priority',
     wrapper_class => [qw/hfh-rep-field/],
     default => 1,
+    required => 1,
 );
 
 has_field 'destination.rm' => (

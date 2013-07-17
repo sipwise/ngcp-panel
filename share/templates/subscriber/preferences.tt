@@ -168,7 +168,7 @@
                 <td>[% set.name %]</td>
                 <td>
                     [% FOREACH d IN set.destinations -%]
-                        [% d.destination %] <span class="pull-right">after [% d.timeout %]s</span><br/>
+                        [% d.destination %] <span class="pull-right">for [% d.timeout %]s</span><br/>
                     [% END -%]
                 </td>
                 <td class="ngcp-actions-column">
