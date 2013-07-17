@@ -679,11 +679,6 @@ sub preferences_callforward_destinationset_create :Chained('base') :PathPart('pr
 
     my $posted = ($c->request->method eq 'POST');
 
-    if($posted) {
-        say ">>>>>>>>>>>>>>>>> posted";
-
-    }
-
     $form->process(
         posted => $posted,
         params => $c->req->params,
