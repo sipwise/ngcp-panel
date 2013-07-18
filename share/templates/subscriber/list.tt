@@ -3,15 +3,23 @@
     helper.name = 'Subscriber';
     helper.data = subscribers;
     helper.messages = messages;
-    helper.column_titles = [ '#', 'Username', 'Domain', 'Contract #', 'Status' ];
-    helper.column_fields = [ 'id', 'username', 'domain_name', 'contract_id', 'status' ];
-    helper.column_sort = 'status';
+    #helper.column_titles = [ '#', 'Username', 'Domain', 'Contract #', 'Status' ];
+    #helper.column_fields = [ 'id', 'username', 'domain_name', 'contract_id', 'status' ];
+    #helper.column_sort = 'status';
+    helper.column_titles = [];
+    helper.column_fields = [];
+
+    FOR col IN dt_columns;
+       NEXT UNLESS col.title;
+       helper.column_titles.push(col.title);
+       helper.column_fields.push(col.accessor);
+    END;
 
     helper.close_target = close_target;
     helper.create_flag = create_flag;
     helper.edit_flag = edit_flag;
     helper.form_object = form;
-    helper.ajax_uri = c.uri_for( c.controller.action_for('ajax') );
+    helper.ajax_uri = c.uri_for_action('/subscriber/ajax');
 
     helper.dt_buttons = [
         { name = 'Terminate', uri = "/subscriber/'+full.id+'/terminate", class = 'btn-small btn-secondary', icon = 'icon-trash', condition = 'full.status != "terminated"' },

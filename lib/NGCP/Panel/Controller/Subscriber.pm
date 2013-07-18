@@ -6,6 +6,7 @@ use NGCP::Panel::Utils;
 use NGCP::Panel::Utils::Navigation;
 use NGCP::Panel::Utils::Contract;
 use NGCP::Panel::Utils::Subscriber;
+use NGCP::Panel::Utils::Datatables;
 use NGCP::Panel::Form::Subscriber;
 use NGCP::Panel::Form::SubscriberCFSimple;
 use NGCP::Panel::Form::SubscriberCFTSimple;
@@ -41,6 +42,14 @@ sub sub_list :Chained('/') :PathPart('subscriber') :CaptureArgs(0) {
     $c->stash(
         template => 'subscriber/list.tt',
     );
+
+    NGCP::Panel::Utils::Datatables::set_columns($c, [
+        { name => "id", title => "#" },
+        { name => "username", "search" => 1, title => 'Username' },
+        { name => "domain.domain", "search" => 1, title => 'Domain' },
+        { name => "contract.status", "search" => 1, title => 'Contract Status' },
+        { name => "status", "search" => 1, title => 'Status' },
+    ]);
     #NGCP::Panel::Utils::Navigation::check_redirect_chain(c => $c);
 
 }
@@ -190,24 +199,16 @@ sub ajax :Chained('sub_list') :PathPart('ajax') :Args(0) {
     my ($self, $c) = @_;
     my $dispatch_to = '_ajax_resultset_' . $c->user->auth_realm;
     my $resultset = $self->$dispatch_to($c);
-    $c->forward( "/ajax_process_resultset", [$resultset,
-                  ["id", "username", "domain_name", "contract_id", "status",],
-                  ["username", "domain.domain", "contract_id", "status",]]);
+
+    
+    NGCP::Panel::Utils::Datatables::process($c, $resultset);
+
     $c->detach( $c->view("JSON") );
 }
 
 sub _ajax_resultset_admin {
     my ($self, $c) = @_;
-    return $c->model('DB')->resultset('voip_subscribers')->search_rs({},
-    {
-        'join' => 'domain',
-        '+select' => [
-            'domain.domain',
-        ],
-        '+as' => [
-            'domain_name',
-        ]
-    });
+    return $c->model('DB')->resultset('voip_subscribers')->search;
 }
 
 sub _ajax_resultset_reseller {
