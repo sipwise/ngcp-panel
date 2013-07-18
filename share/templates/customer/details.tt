@@ -40,11 +40,15 @@
         </tr>
     </thead>
     <tbody>
-        [% FOR subscriber IN contract.voip_subscribers -%]
+        [% FOR subscriber IN subscribers -%]
         <tr>
-            <td>[% subscriber.username %]@[% subscriber.domain.domain %]</td>
+            <td>[% subscriber.username %]@[% subscriber.domain %]</td>
             <td>[% subscriber.primary_number.cc %] [% subscriber.primary_number.ac %] [% subscriber.primary_number.sn %]</td>
-            <td>[% subscriber.provisioning_voip_subscriber.password %]</td>
+            <td>
+                [% FOR location IN subscriber.locations -%]
+                    [% location.user_agent %]<br/>
+                [% END -%]
+            </td>
             <td class="ngcp-actions-column"></td>
         </tr>
         [% END -%]

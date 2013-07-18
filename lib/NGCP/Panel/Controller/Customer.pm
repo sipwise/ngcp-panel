@@ -92,6 +92,20 @@ sub base :Chained('list_customer') :PathPart('') :CaptureArgs(1) {
                 });
     }
 
+    my @subscribers = ();
+    foreach my $s($contract->first->voip_subscribers->search_rs({ status => 'active' })->all) {
+        my $sub = { $s->get_columns };
+        $sub->{domain} = $s->domain->domain;
+        $sub->{primary_number} = {$s->primary_number->get_columns} if(defined $s->primary_number);
+        $sub->{locations} = [ map { { $_->get_columns } } $c->model('DB')->resultset('location')->
+            search({
+                username => $s->username,
+                domain => $s->domain->domain,
+            })->all ];
+        push @subscribers, $sub;
+    }
+    $c->stash->{subscribers} = \@subscribers;
+
     $c->stash(balance => $balance);
     $c->stash(fraud => $contract->first->contract_fraud_preference);
     $c->stash(template => 'customer/details.tt'); 
