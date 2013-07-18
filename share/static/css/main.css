@@ -213,6 +213,10 @@ div.dataTables_paginate {
     margin: 0;
 }
 
+div.dataTables_paginate a.btn {
+    margin-left: 3px;
+}
+
 /* ---------
   Datatable Field (inside modal)
 ------------*/

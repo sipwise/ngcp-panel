@@ -23,6 +23,7 @@ $(document).ready(function() {
 		"bSort": true,
 		"bInfo": true,
 		"iDisplayLength": 4,
+        'iShowPages': 5,
 		"sAjaxSource": "[% ajax_src %]",
 		
 		"aoColumns": [
