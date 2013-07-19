@@ -6,7 +6,9 @@ use NGCP::Panel::Utils::Contract;
 use NGCP::Panel::Form::CustomerMonthlyFraud;
 use NGCP::Panel::Form::CustomerDailyFraud;
 use NGCP::Panel::Form::CustomerBalance;
+use NGCP::Panel::Form::CustomerSubscriber;
 use NGCP::Panel::Utils::Navigation;
+use UUID qw/generate unparse/;
 
 =head1 NAME
 
@@ -115,6 +117,120 @@ sub base :Chained('list_customer') :PathPart('') :CaptureArgs(1) {
 
 sub details :Chained('base') :PathPart('details') :Args(0) {
     my ($self, $c) = @_;
+}
+
+sub subscriber_create :Chained('base') :PathPart('subscriber/create') :Args(0) {
+    my ($self, $c) = @_;
+
+    my $form = NGCP::Panel::Form::CustomerSubscriber->new;
+    $form->process(
+        posted => ($c->request->method eq 'POST'),
+        params => $c->request->params,
+    );
+    return if NGCP::Panel::Utils::Navigation::check_form_buttons(
+        c => $c,
+        form => $form,
+        fields => [qw/domain.create/],
+        back_uri => $c->uri_for_action('/customer/subscriber_create', [ $c->req->captures->[0]]),
+    );
+    if($form->validated) {
+        my $schema = $c->model('DB');
+        my $contract = $c->stash->{contract};
+        my $reseller = $contract->reseller;
+        my $billing_domain = $schema->resultset('domains')
+            ->find($c->request->params->{'domain.id'});
+        my $prov_domain = $schema->resultset('voip_domains')
+            ->find({domain => $billing_domain->domain});
+        try {
+            $schema->txn_do(sub {
+                my ($uuid_bin, $uuid_string);
+                UUID::generate($uuid_bin);
+                UUID::unparse($uuid_bin, $uuid_string);
+
+                # TODO: check if we find a reseller and contract and domains
+
+                my $number;
+                if(defined $c->request->params->{'e164.cc'} && 
+                   $c->request->params->{'e164.cc'} ne '') {
+
+                    $number = $reseller->voip_numbers->create({
+                        cc => $c->request->params->{'e164.cc'},
+                        ac => $c->request->params->{'e164.ac'} || '',
+                        sn => $c->request->params->{'e164.sn'},
+                        status => 'active',
+                    });
+                }
+                my $billing_subscriber = $contract->voip_subscribers->create({
+                    uuid => $uuid_string,
+                    username => $c->request->params->{username},
+                    domain_id => $billing_domain->id,
+                    status => $c->request->params->{status},
+                    primary_number_id => defined $number ? $number->id : undef,
+                });
+                if(defined $number) {
+                    $number->update({ subscriber_id => $billing_subscriber->id });
+                }
+
+                my $prov_subscriber = $schema->resultset('provisioning_voip_subscribers')->create({
+                    uuid => $uuid_string,
+                    username => $c->request->params->{username},
+                    password => $c->request->params->{password},
+                    webusername => $c->request->params->{webusername} || $c->request->params->{username},
+                    webpassword => $c->request->params->{webpassword},
+                    admin => $c->request->params->{administrative} || 0,
+                    account_id => $contract->id,
+                    domain_id => $prov_domain->id,
+                });
+
+                my $voip_preferences = $schema->resultset('voip_preferences')->search({
+                    'usr_pref' => 1,
+                });
+                $voip_preferences->find({ 'attribute' => 'account_id' })
+                    ->voip_usr_preferences->create({ 
+                        'subscriber_id' => $prov_subscriber->id,
+                        'value' => $contract->id,
+                    });
+                $voip_preferences->find({ 'attribute' => 'ac' })
+                    ->voip_usr_preferences->create({ 
+                        'subscriber_id' => $prov_subscriber->id,
+                        'value' => $c->request->params->{'e164.ac'},
+                    }) if (defined $c->request->params->{'e164.ac'} && 
+                           length($c->request->params->{'e164.ac'}) > 0);
+                if(defined $c->request->params->{'e164.cc'} &&
+                   length($c->request->params->{'e164.cc'}) > 0) {
+
+                        $voip_preferences->find({ 'attribute' => 'cc' })
+                            ->voip_usr_preferences->create({ 
+                                'subscriber_id' => $prov_subscriber->id,
+                                'value' => $c->request->params->{'e164.cc'},
+                            });
+                        my $cli = $c->request->params->{'e164.cc'} .
+                                  (defined $c->request->params->{'e164.ac'} &&
+                                   length($c->request->params->{'e164.ac'}) > 0 ?
+                                   $c->request->params->{'e164.ac'} : ''
+                                  ) .
+                                  $c->request->params->{'e164.sn'};
+                        $voip_preferences->find({ 'attribute' => 'cli' })
+                            ->voip_usr_preferences->create({ 
+                                'subscriber_id' => $prov_subscriber->id,
+                                'value' => $cli,
+                            });
+                }
+            });
+            $c->flash(messages => [{type => 'success', text => 'Subscriber successfully created!'}]);
+            $c->response->redirect($c->uri_for_action('/customer/details', [$contract->id]));
+            return;
+        } catch($e) {
+            $c->log->error("Failed to create subscriber: $e");
+            $c->flash(messages => [{type => 'error', text => 'Creating subscriber failed!'}]);
+            $c->response->redirect($c->uri_for_action('/customer/details', [$contract->id]));
+            return;
+        }
+    }
+
+    $c->stash(close_target => $c->uri_for());
+    $c->stash(create_flag => 1);
+    $c->stash(form => $form)
 }
 
 sub edit_fraud :Chained('base') :PathPart('fraud/edit') :Args(1) {

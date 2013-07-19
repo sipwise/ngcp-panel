@@ -44,11 +44,11 @@ sub sub_list :Chained('/') :PathPart('subscriber') :CaptureArgs(0) {
     );
 
     NGCP::Panel::Utils::Datatables::set_columns($c, [
-        { name => "id", title => "#" },
-        { name => "username", "search" => 1, title => 'Username' },
-        { name => "domain.domain", "search" => 1, title => 'Domain' },
-        { name => "contract.status", "search" => 1, title => 'Contract Status' },
-        { name => "status", "search" => 1, title => 'Status' },
+        { name => "id", search => 1, title => "#" },
+        { name => "username", search => 1, title => "Username" },
+        { name => "domain.domain", search => 1, title => "Domain" },
+        { name => "status", search => 1, title => "Status" },
+        { name => "contract_id", search => 1, title => "Contract #"},
     ]);
     #NGCP::Panel::Utils::Navigation::check_redirect_chain(c => $c);
 

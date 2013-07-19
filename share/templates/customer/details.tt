@@ -26,11 +26,40 @@
 
 <div class="ngcp-separator"></div>
 
-<h3>TODO: Contract Details?</h3>
+<h3>Billing Profiles</h3>
+
+<table class="table table-bordered table-striped table-highlight table-hover">
+    <thead>
+        <tr>
+            <th>Type</th>
+            <th>Billing Profile</th>
+            <th class="ngcp-actions-column"></th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr class="sw_action_row">
+            <td>Active Billing Profile</td>
+            <td>fooo</td>
+            <td class="ngcp-actions-column"></td>
+        </tr>
+        <tr class="sw_action_row">
+            <td>Other Billing Profiles</td>
+            <td>
+                2013-04-28 18:00:00 - 2013-04-09 23:59:59: bar<br/>
+                2013-06-25 00:00:00 - 2013-07-01 23:59:59: blub
+            </td>
+            <td class="ngcp-actions-column"></td>
+        </tr>
+    </tbody>
+</table>
 
 <h3>Subscribers</h3>
 
-<table class="table table-bordered table-striped table-highlight table-hover">
+<div class="row">
+    <a class="btn btn-large btn-primary" href="[% c.uri_for_action('/customer/subscriber_create', [ c.req.captures.0 ]) %]"><i class="icon-star"></i> Create Subscriber</a>
+</div>
+<div class="ngcp-separator"></div>
+<table class="table table-bordered table-striped table-highlight table-hover" id="subscribers_table">
     <thead>
         <tr>
             <th>SIP URI</th>
@@ -41,7 +70,7 @@
     </thead>
     <tbody>
         [% FOR subscriber IN subscribers -%]
-        <tr>
+        <tr class="sw_action_row">
             <td>[% subscriber.username %]@[% subscriber.domain %]</td>
             <td>[% subscriber.primary_number.cc %] [% subscriber.primary_number.ac %] [% subscriber.primary_number.sn %]</td>
             <td>
@@ -49,7 +78,11 @@
                     [% location.user_agent %]<br/>
                 [% END -%]
             </td>
-            <td class="ngcp-actions-column"></td>
+            <td class="ngcp-actions-column">
+                <div class="sw_actions">
+                    <a class="btn btn-primary btn-small" href="[% c.uri_for_action("/subscriber/preferences", [subscriber.id]) %]"><i class="icon-list"></i> Preferences</a>
+                </div>
+            </td>
         </tr>
         [% END -%]
     </tbody>
@@ -162,7 +195,16 @@
         </tr>
     </tbody>
 </table>
-[% IF edit_flag == 1 -%]
+[% IF create_flag == 1 -%]
+[%
+    PROCESS "helpers/modal.tt";
+    modal_header(m.create_flag=create_flag,
+                 m.name = "Subscriber");
+    form.render;
+    modal_footer();
+    modal_script(m.close_target = close_target);
+-%]
+[% ELSIF edit_flag == 1 -%]
 [%
     PROCESS "helpers/modal.tt";
     modal_header(m.create_flag=0,
