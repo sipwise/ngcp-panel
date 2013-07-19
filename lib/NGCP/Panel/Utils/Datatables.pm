@@ -7,9 +7,7 @@ use List::Util qw/first/;
 use Scalar::Util qw/blessed/;
 
 sub process {
-    my ($c, $rs) = @_;
-
-    my $cols = $c->stash->{dt_columns};
+    my ($c, $rs, $cols) = @_;
 
     my $aaData = [];
     my $totalRecords = $rs->count;
@@ -114,7 +112,7 @@ sub set_columns {
         $c->{accessor} = $c->{name};
         $c->{accessor} =~ s/\./_/g;
     }
-    $c->stash->{dt_columns} = $cols;
+    return $cols;
 }
 
 sub _prune_row {
@@ -124,7 +122,10 @@ sub _prune_row {
             delete $row{$k};
             next;
         }
-        $row{$k} = $v->datetime if blessed($v) && $v->isa('DateTime');
+        if(blessed($v) && $v->isa('DateTime')) {
+            $row{$k} = $v->datetime;
+            $row{$k} .= '.'.$v->millisecond if $v->millisecond > 0.0;
+        }
     }
     return { %row };
 }

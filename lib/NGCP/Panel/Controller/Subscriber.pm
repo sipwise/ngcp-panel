@@ -43,7 +43,7 @@ sub sub_list :Chained('/') :PathPart('subscriber') :CaptureArgs(0) {
         template => 'subscriber/list.tt',
     );
 
-    NGCP::Panel::Utils::Datatables::set_columns($c, [
+    $c->stash->{dt_columns} = NGCP::Panel::Utils::Datatables::set_columns($c, [
         { name => "id", search => 1, title => "#" },
         { name => "username", search => 1, title => "Username" },
         { name => "domain.domain", search => 1, title => "Domain" },
@@ -201,7 +201,7 @@ sub ajax :Chained('sub_list') :PathPart('ajax') :Args(0) {
     my $resultset = $self->$dispatch_to($c);
 
     
-    NGCP::Panel::Utils::Datatables::process($c, $resultset);
+    NGCP::Panel::Utils::Datatables::process($c, $resultset, $c->stash->{dt_columns});
 
     $c->detach( $c->view("JSON") );
 }
@@ -1283,14 +1283,42 @@ sub load_preference_list :Private {
     );
 }
 
-sub master :Chained('/') :PathPart('subscriber') :Args(1) {
-    my ($self, $c, $subscriber_id) = @_;
+sub master :Chained('base') :PathPart('details') :CaptureArgs(0) {
+    my ($self, $c) = @_;
+
+    $c->stash->{calls_dt_columns} = NGCP::Panel::Utils::Datatables::set_columns($c, [
+        { name => "source_user", search => 1, title => "Caller" },
+        { name => "destination_user", search => 1, title => "Callee" },
+        { name => "call_status", search => 1, title => "Status" },
+        { name => "start_time", search => 1, title => "Start Time" },
+        { name => "duration", search => 1, title => "Duration" },
+    ]);
 
     $c->stash(
         template => 'subscriber/master.tt',
     );
-
 }
+
+sub details :Chained('master') :PathPart('') :Args(0) {
+    my ($self, $c) = @_;
+}
+
+sub ajax_calls :Chained('master') :PathPart('calls/ajax') :Args(0) {
+    my ($self, $c) = @_;
+
+    my $out_rs = $c->model('DB')->resultset('cdr')->search({
+        source_user_id => $c->stash->{subscriber}->uuid,
+    });
+    my $in_rs = $c->model('DB')->resultset('cdr')->search({
+        destination_user_id => $c->stash->{subscriber}->uuid,
+    });
+    my $rs = $out_rs->union($in_rs);
+
+    NGCP::Panel::Utils::Datatables::process($c, $rs, $c->stash->{calls_dt_columns});
+
+    $c->detach( $c->view("JSON") );
+}
+
 =head1 AUTHOR
 
 Andreas Granig,,,

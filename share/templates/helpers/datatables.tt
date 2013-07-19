@@ -2,7 +2,7 @@
     IF helper.dt_columns;
         helper.column_titles = [];
         helper.column_fields = [];
-        FOR col IN dt_columns;
+        FOR col IN helper.dt_columns;
             NEXT UNLESS col.title;
             helper.column_titles.push(col.title);
             helper.column_fields.push(col.accessor);
