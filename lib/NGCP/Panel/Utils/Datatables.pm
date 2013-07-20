@@ -5,6 +5,7 @@ use warnings;
 use Sipwise::Base;
 use List::Util qw/first/;
 use Scalar::Util qw/blessed/;
+use DateTime::Format::Strptime;
 
 sub process {
     my ($c, $rs, $cols) = @_;
@@ -28,7 +29,7 @@ sub process {
         }
     }
 
-    # searching
+    # generic searching
     my @searchColumns = ();
     foreach my $c(@{ $cols }) {
         # avoid amigious column names if we have the same column in different joined tables
@@ -38,6 +39,34 @@ sub process {
     my $searchString = $c->request->params->{sSearch} // "";
     if($searchString) {
         $rs = $rs->search([ map{ +{ $_ => { like => '%'.$searchString.'%' } } } @searchColumns ]);
+    }
+
+    # data-range searching
+    my $from_date = $c->request->params->{sSearch_0} // "";
+    my $to_date = $c->request->params->{sSearch_1} // "";
+    my $parser = DateTime::Format::Strptime->new(
+        pattern => '%Y-%m-%d %H:%M',
+    );
+    if($from_date) {
+        $from_date = $parser->parse_datetime($from_date);
+    }
+    if($to_date) {
+        $to_date = $parser->parse_datetime($to_date);
+    }
+    @searchColumns = ();
+    foreach my $c(@{ $cols }) {
+        # avoid amigious column names if we have the same column in different joined tables
+        my $name = $c->{name} =~ /\./ ? $c->{name} : 'me.'.$c->{name};
+        if($c->{search_from_epoch} && $from_date) {
+            $rs = $rs->search({
+                $name => { '>=' => $from_date->epoch },
+            });
+        }
+        if($c->{search_to_epoch} && $to_date) {
+            $rs = $rs->search({
+                $name => { '<=' => $to_date->epoch },
+            });
+        }
     }
 
     $displayRecords = $rs->count;
@@ -123,7 +152,7 @@ sub _prune_row {
             next;
         }
         if(blessed($v) && $v->isa('DateTime')) {
-            $row{$k} = $v->datetime;
+            $row{$k} = $v->ymd('-') . ' ' . $v->hms(':');
             $row{$k} .= '.'.$v->millisecond if $v->millisecond > 0.0;
         }
     }

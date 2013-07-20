@@ -11,6 +11,7 @@
 -%]
 
 <script src="/js/libs/datatables-bootstrap-paging.js"></script>
+<script src="/js/libs/jquery-ui-timepicker-addon.js"></script>
 <script type="text/javascript">
 
 $.extend( $.fn.dataTableExt.oStdClasses, {
@@ -20,7 +21,7 @@ $.extend( $.fn.dataTableExt.oStdClasses, {
             } );
 
 $(document).ready(function() {
-	$('#[% helper.name.remove('[\s+\.]') %]_table')
+	var [% helper.name.remove('[\s+\.]') %]_table = $('#[% helper.name.remove('[\s+\.]') %]_table')
 	    .dataTable( {
         "sDom": "<'row-fluid'<'pull-left'r><'pull-right'f>>t<'row-fluid'<'pull-left'i><'pull-right'p>>",
         "bProcessing": true,
@@ -88,6 +89,43 @@ $(document).ready(function() {
             return nRow;
         },
 	} );
+
+    [% has_from = 0; has_to = 0; -%]
+    [% FOR c IN helper.dt_columns -%]
+      [% IF c.search_from_epoch && !has_from -%]
+        var f = '<label>From Date: <input type="text" id="[% helper.name.remove('[\s+\.]') %]_datepicker_start" class="ngcp-datepicker" rel="tooltip" data-original-title="YYYY-MM-DD hh:mm"/></label>';
+        $('#[% helper.name.remove('[\s+\.]') %]_table_filter').prepend(f);
+        $('#[% helper.name.remove('[\s+\.]') %]_datepicker_start').datetimepicker({
+            "dateFormat": "yy-mm-dd",
+            "timeFormat": "HH:mm",
+            "onSelect": function(date) {
+                [% helper.name.remove('[\s+\.]') %]_table.fnFilter(date, 0);
+            }
+        }).keyup( function () {
+            [% helper.name.remove('[\s+\.]') %]_table.fnFilter(this.value, 0);    
+        });
+        [% has_from = 1 -%]
+      [% END -%]
+      [% IF c.search_to_epoch && !has_to -%]
+
+        var t = '<label>To Date: <input type="text" id="[% helper.name.remove('[\s+\.]') %]_datepicker_end" class="ngcp-datepicker" rel="tooltip" data-original-title="YYYY-MM-DD hh:mm"/></label>';
+        if($('#[% helper.name.remove('[\s+\.]') %]_datepicker_start').length > 0) {
+            $('#[% helper.name.remove('[\s+\.]') %]_datepicker_start').parent().after(t);
+        } else {
+            $('#[% helper.name.remove('[\s+\.]') %]_table_filter').prepend(t);
+        }
+        $('#[% helper.name.remove('[\s+\.]') %]_datepicker_end').datetimepicker({
+            "dateFormat": "yy-mm-dd",
+            "timeFormat": "HH:mm",
+            "onSelect": function(date) {
+                [% helper.name.remove('[\s+\.]') %]_table.fnFilter(date, 1);
+            }
+        }).keyup( function () {
+            [% helper.name.remove('[\s+\.]') %]_table.fnFilter(this.value, 1);    
+        });
+        [% has_to = 1-%]
+      [% END -%]
+    [% END %]
 } );
 </script>
 

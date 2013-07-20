@@ -1290,7 +1290,7 @@ sub master :Chained('base') :PathPart('details') :CaptureArgs(0) {
         { name => "source_user", search => 1, title => "Caller" },
         { name => "destination_user", search => 1, title => "Callee" },
         { name => "call_status", search => 1, title => "Status" },
-        { name => "start_time", search => 1, title => "Start Time" },
+        { name => "start_time", search_from_epoch => 1, search_to_epoch => 1, title => "Start Time" },
         { name => "duration", search => 1, title => "Duration" },
     ]);
 

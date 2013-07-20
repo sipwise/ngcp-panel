@@ -39,6 +39,23 @@ div.ngcp-modal .help-inline {
     z-index: 2000 !important;
 }
 
+div.ui-datepicker {
+    /* make sure to put the datepicker over the header */
+    z-index: 2000 !important;
+}
+
+dt.ui_tpicker_time_label,
+dt.ui_tpicker_hour_label,
+dt.ui_tpicker_minute_label,
+dd.ui_tpicker_time
+{
+    color: gray;
+}
+
+button.ui-datepicker-current.ui-state-hover {
+    border: 5px solid blue;
+}
+
 /* remove left margin for repeatable elements */
 
 div.ngcp-modal div.modal-body div.control-group.hfh-rep {
@@ -198,6 +215,16 @@ div.dataTables_length label {
 div.dataTables_filter, div.dataTables_paginate {
     float: right;
 }
+
+div.dataTables_filter label {
+    float: left;
+    margin-left: 5px;
+}
+
+input.ngcp-datepicker {
+    width: 9em;
+}
+
 @media (max-width: 300px) {
     div.dataTables_filter {
         float: none;
