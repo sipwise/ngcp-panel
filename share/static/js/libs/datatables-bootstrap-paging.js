@@ -59,6 +59,9 @@ $.fn.dataTableExt.oPagination.bootstrap = {
  
         // Update stateful properties
         this.fnUpdateState(oSettings);
+
+	console.log(oSettings);
+	var totalPages = Math.ceil(oSettings._iRecordsDisplay / oSettings._iDisplayLength);
  
         if (oSettings._iCurrentPage === 1) {
             $('.paging_first', tableWrapper).attr('disabled', true);
@@ -68,7 +71,7 @@ $.fn.dataTableExt.oPagination.bootstrap = {
             $('.paging_prev', tableWrapper).removeAttr('disabled');
         }
  
-        if (oSettings._iTotalPages === 0 || oSettings._iCurrentPage === oSettings._iTotalPages) {
+        if (totalPages === 0 || oSettings._iCurrentPage === totalPages) {
             $('.paging_next', tableWrapper).attr('disabled', true);
             $('.paging_last', tableWrapper).attr('disabled', true);
         } else {
@@ -77,11 +80,13 @@ $.fn.dataTableExt.oPagination.bootstrap = {
         }
  
         var i, oNumber, oNumbers = $('.paging_num', tableWrapper);
+
+	var lastPage = totalPages < oSettings._iLastPage ? totalPages : oSettings._iLastPage;
  
         // Erase
         oNumbers.html('');
  
-        for (i = oSettings._iFirstPage; i <= oSettings._iLastPage; i++) {
+        for (i = oSettings._iFirstPage; i <= lastPage; i++) {
             oNumber = $('<a class="btn btn-small">' + oSettings.fnFormatNumber(i) + '</a>');
  
             if (oSettings._iCurrentPage === i) {
@@ -99,7 +104,7 @@ $.fn.dataTableExt.oPagination.bootstrap = {
             oNumbers.prepend('<span class="' + oClasses.sPageEllipsis + '">...</span>');
         }
  
-        if (oSettings._iLastPage < oSettings._iTotalPages) {
+        if (oSettings._iLastPage < totalPages) {
             oNumbers.append('<span class="' + oClasses.sPageEllipsis + '">...</span>');
         }
     },
