@@ -55,9 +55,7 @@
 
 <h3>Subscribers</h3>
 
-<div class="row">
-    <a class="btn btn-large btn-primary" href="[% c.uri_for_action('/customer/subscriber_create', [ c.req.captures.0 ]) %]"><i class="icon-star"></i> Create Subscriber</a>
-</div>
+<a class="btn btn-large btn-primary" href="[% c.uri_for_action('/customer/subscriber_create', [ c.req.captures.0 ]) %]"><i class="icon-star"></i> Create Subscriber</a>
 <div class="ngcp-separator"></div>
 <table class="table table-bordered table-striped table-highlight table-hover" id="subscribers_table">
     <thead>

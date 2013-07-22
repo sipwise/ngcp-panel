@@ -8,6 +8,7 @@ use NGCP::Panel::Utils::Contract;
 use NGCP::Panel::Utils::Subscriber;
 use NGCP::Panel::Utils::Datatables;
 use NGCP::Panel::Form::Subscriber;
+use NGCP::Panel::Form::SubscriberEdit;
 use NGCP::Panel::Form::SubscriberCFSimple;
 use NGCP::Panel::Form::SubscriberCFTSimple;
 use NGCP::Panel::Form::SubscriberCFAdvanced;
@@ -1307,6 +1308,83 @@ sub master :Chained('base') :PathPart('details') :CaptureArgs(0) {
 
 sub details :Chained('master') :PathPart('') :Args(0) {
     my ($self, $c) = @_;
+}
+
+sub edit_master :Chained('master') :PathPart('edit') {
+    my ($self, $c, $attribute) = @_;
+
+    my $form = NGCP::Panel::Form::SubscriberEdit->new;
+    my $posted = ($c->request->method eq 'POST');
+    my $subscriber = $c->stash->{subscriber};
+    my $prov_subscriber = $subscriber->provisioning_voip_subscriber;
+
+    my $params;
+    my $lock = NGCP::Panel::Utils::Subscriber::get_usr_preference_rs(
+        c => $c,
+        attribute => 'lock',
+        prov_subscriber => $prov_subscriber,
+    );
+
+    unless($posted) {
+        $params->{webusername} = $prov_subscriber->webusername;
+        $params->{webpassword} = $prov_subscriber->webpassword;
+        $params->{password} = $prov_subscriber->password;
+        $params->{administrative} = $prov_subscriber->admin;
+
+        $params->{e164}->{cc} = $subscriber->primary_number->cc;
+        $params->{e164}->{ac} = $subscriber->primary_number->ac;
+        $params->{e164}->{sn} = $subscriber->primary_number->sn;
+        $params->{status} = $subscriber->status;
+        $params->{external_id} = $subscriber->external_id;
+
+        $params->{lock} = $lock->first ? $lock->first->value : undef;
+    }
+
+    $form->process(
+        params => $posted ? $c->request->params : $params
+    );
+
+    if($posted && $form->validated) {
+        my $schema = $c->model('DB');
+        try {
+            $schema->txn_do(sub {
+                $prov_subscriber->update({
+                    webusername => $form->field('webusername')->value,
+                    webpassword => $form->field('webpassword')->value,
+                    password => $form->field('password')->value,
+                    admin => $form->field('administrative')->value,
+                });
+                $subscriber->update({
+                    status => $form->field('status')->value,
+                    external_id => $form->field('external_id')->value,
+                });
+                # TODO: check for availablity of cc and sn
+                $subscriber->primary_number->update({
+                    cc => $form->field('e164')->field('cc')->value,
+                    ac => $form->field('e164')->field('ac')->value,
+                    sn => $form->field('e164')->field('sn')->value,
+                });
+                if($lock->first) {
+                    $lock->first->update({ value => $form->field('lock')->value });
+                } else {
+                    $lock->create({ value => $form->field('lock')->value });
+                }
+            });
+            $c->flash(messages => [{type => 'success', text => 'Successfully updated subscriber'}]);
+        } catch($e) {
+            $c->log->error("failed to update subscriber: $e");
+            $c->flash(messages => [{type => 'error', text => 'Failed to update subscriber'}]);
+        }
+
+        $c->response->redirect($c->uri_for_action('/subscriber/details', [$c->req->captures->[0]]));
+        return;
+    }
+
+    $c->stash(
+        edit_flag => 1,
+        form => $form,
+    );
+
 }
 
 sub ajax_calls :Chained('master') :PathPart('calls/ajax') :Args(0) {

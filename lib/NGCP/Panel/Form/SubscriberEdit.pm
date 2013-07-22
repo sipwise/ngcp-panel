@@ -1,4 +1,4 @@
-package NGCP::Panel::Form::Subscriber;
+package NGCP::Panel::Form::SubscriberEdit;
 
 use HTML::FormHandler::Moose;
 extends 'HTML::FormHandler';
@@ -10,6 +10,8 @@ use NGCP::Panel::Field::Domain;
 use NGCP::Panel::Field::CustomerContract;
 use NGCP::Panel::Field::Reseller;
 
+with 'NGCP::Panel::Render::RepeatableJs';
+
 has '+widget_wrapper' => ( default => 'Bootstrap' );
 sub build_render_list {[qw/fields actions/]}
 sub build_form_element_class { [qw/form-horizontal/] }
@@ -17,12 +19,6 @@ sub build_form_element_class { [qw/form-horizontal/] }
 has_field 'reseller' => (
     type => '+NGCP::Panel::Field::Reseller',
     label => 'Reseller',
-    not_nullable => 1,
-);
-
-has_field 'contract' => (
-    type => '+NGCP::Panel::Field::CustomerContract',
-    label => 'Customer',
     not_nullable => 1,
 );
 
@@ -88,21 +84,76 @@ has_field 'e164.sn' => (
     do_wrapper => 0,
 );
 
-has_field 'username' => (
-    type => 'Text',
-    label => 'SIP Username',
-    required => 1,
-    noupdate => 1,
-    element_attr => { 
-        rel => ['tooltip'], 
-        title => ['The SIP username for the User-Agents'] 
+has_field 'alias_number' => (
+    type => 'Repeatable',
+    setup_for_js => 1,
+    do_wrapper => 1,
+    do_label => 0,
+    tags => { 
+        controls_div => 1,
     },
+    wrapper_class => [qw/hfh-rep/],
 );
 
-has_field 'domain' => (
-    type => '+NGCP::Panel::Field::Domain',
-    label => 'SIP Domain',
-    not_nullable => 1,
+has_field 'alias_number.id' => (
+    type => 'Hidden',
+);
+
+has_field 'alias_number.e164' => (
+    type => 'Compound', 
+    order => 99,
+    required => 0,
+    label => 'Alias Number',
+    do_label => 1,
+    do_wrapper => 1,
+    wrapper_class => [qw/hfh-rep-field/],
+);
+
+has_field 'alias_number.e164.cc' => (
+    type => 'PosInteger',
+    element_attr => { 
+        class => ['ngcp_e164_cc'], 
+        rel => ['tooltip'], 
+        title => ['Country Code, e.g. 1 for US or 43 for Austria'] 
+    },
+    do_label => 0,
+    do_wrapper => 0,
+);
+
+has_field 'alias_number.e164.ac' => (
+    type => 'PosInteger',
+    element_attr => { 
+        class => ['ngcp_e164_ac'], 
+        rel => ['tooltip'], 
+        title => ['Area Code, e.g. 212 for NYC or 1 for Vienna'] 
+    },
+    do_label => 0,
+    do_wrapper => 0,
+);
+
+has_field 'alias_number.e164.sn' => (
+    type => 'PosInteger',
+    element_attr => { 
+        class => ['ngcp_e164_sn'], 
+        rel => ['tooltip'], 
+        title => ['Subscriber Number, e.g. 12345678'] 
+    },
+    do_label => 0,
+    do_wrapper => 0,
+);
+
+has_field 'alias_number.rm' => (
+    type => 'RmElement',
+    value => 'Remove',
+    order => 100,
+    element_class => [qw/btn btn-primary pull-right/],
+);
+
+has_field 'alias_number_add' => (
+    type => 'AddElement',
+    repeatable => 'alias_number',
+    value => 'Add another number',
+    element_class => [qw/btn btn-primary pull-right/],
 );
 
 has_field 'password' => (
@@ -113,6 +164,12 @@ has_field 'password' => (
         rel => ['tooltip'], 
         title => ['The SIP password for the User-Agents'] 
     },
+);
+
+has_field 'lock' => (
+    type => '+NGCP::Panel::Field::SubscriberLockSelect',
+    label => 'Lock Level',
+    not_nullable => 1,
 );
 
 has_field 'status' => (
@@ -154,7 +211,7 @@ has_field 'save' => (
 has_block 'fields' => (
     tag => 'div',
     class => [qw/modal-body/],
-    render_list => [qw/reseller contract webusername webpassword e164 username domain password status external_id administrative/ ],
+    render_list => [qw/webusername webpassword e164 alias_number alias_number_add password lock status external_id administrative/ ],
 );
 
 has_block 'actions' => (

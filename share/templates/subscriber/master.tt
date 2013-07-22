@@ -25,104 +25,41 @@
         <div class="accordion-body collapse" id="collapse_master">
             <div class="accordion-inner">
 
+                <a class="btn btn-tertiary btn-large" href="[% c.uri_for_action('/subscriber/edit_master', [ subscriber.id ]) %]"><i class="icon-edit"></i> Edit</a>
+                <div class="ngcp-separator"></div>
+
                 <table class="table table-bordered table-striped table-highlight table-hover" id="subscribers_table">
                     <thead>
                         <tr>
                             <th>Setting</th>
                             <th>Values</th>
-                            <th class="ngcp-actions-column"></th>
                         </tr>
                     </thead>
                     <tbody>
                         <tr class="sw_action_row">
                             <td>Customer #</td>
                             <td>[% subscriber.contract.id %]</td>
-                            <td class="ngcp-actions-column">
-                                <div class="sw_actions">
-                                    <a class="btn btn-primary btn-small" href="[% c.uri_for_action("/customer/details", [subscriber.contract_id]) %]"><i class="icon-user"></i> Customer</a>
-                                </div>
-                            </td>
                         </tr>
-                        <tr class="sw_action_row">
-                            <td>CSC Username</td>
-                            <td>[% subscriber.webusername %]</td>
-                            <td class="ngcp-actions-column">
-                                <div class="sw_actions">
-                                    <a class="btn btn-primary btn-small" href="[% c.uri_for_action("/subscriber/preferences", [subscriber.id]) %]"><i class="icon-list"></i> Preferences</a>
-                                </div>
-                            </td>
-                        </tr>
-                        <tr class="sw_action_row">
-                            <td>CSC Password</td>
-                            <td>[% subscriber.webpassword%]</td>
-                            <td class="ngcp-actions-column">
-                                <div class="sw_actions">
-                                    <a class="btn btn-primary btn-small" href="[% c.uri_for_action("/subscriber/preferences", [subscriber.id]) %]"><i class="icon-list"></i> Preferences</a>
-                                </div>
-                            </td>
-                        </tr>
-                        <tr class="sw_action_row">
-                            <td>SIP URI</td>
-                            <td>[% subscriber.username %]@[% subscriber.domain.domain %]</td>
-                            <td class="ngcp-actions-column">
-                                <div class="sw_actions">
-                                    <a class="btn btn-primary btn-small" href="[% c.uri_for_action("/subscriber/preferences", [subscriber.id]) %]"><i class="icon-list"></i> Preferences</a>
-                                </div>
-                            </td>
-                        </tr>
-                        <tr class="sw_action_row">
-                            <td>SIP Password</td>
-                            <td>[% subscriber.password %]</td>
-                            <td class="ngcp-actions-column">
-                                <div class="sw_actions">
-                                    <a class="btn btn-primary btn-small" href="[% c.uri_for_action("/subscriber/preferences", [subscriber.id]) %]"><i class="icon-list"></i> Preferences</a>
-                                </div>
-                            </td>
-                        </tr>
-                        <tr class="sw_action_row">
-                            <td>Primary Number</td>
-                            <td>[% subscriber.primary_number.cc %] [% subscriber.primary_number.ac %] [% subscriber.primary_number.sn %]</td>
-                            <td class="ngcp-actions-column">
-                                <div class="sw_actions">
-                                    <a class="btn btn-primary btn-small" href="[% c.uri_for_action("/subscriber/preferences", [subscriber.id]) %]"><i class="icon-list"></i> Preferences</a>
-                                </div>
-                            </td>
-                        </tr>
-                        <tr class="sw_action_row">
-                            <td>Alias Numbers</td>
-                            <td>[% subscriber.primary_number.cc %] [% subscriber.primary_number.ac %] [% subscriber.primary_number.sn %]</td>
-                            <td class="ngcp-actions-column">
-                                <div class="sw_actions">
-                                    <a class="btn btn-primary btn-small" href="[% c.uri_for_action("/subscriber/preferences", [subscriber.id]) %]"><i class="icon-list"></i> Preferences</a>
-                                </div>
-                            </td>
-                        </tr>
-                        <tr class="sw_action_row">
-                            <td>Administrative</td>
-                            <td>[% subscriber.administrative ? 'yes' : 'no' %]</td>
-                            <td class="ngcp-actions-column">
-                                <div class="sw_actions">
-                                    <a class="btn btn-primary btn-small" href="[% c.uri_for_action("/subscriber/preferences", [subscriber.id]) %]"><i class="icon-list"></i> Preferences</a>
-                                </div>
-                            </td>
-                        </tr>
-                        <tr class="sw_action_row">
+                        [% 
+                            elements = [
+                                { value = subscriber.provisioning_voip_subscriber.webusername, desc = 'CSC Username'},
+                                { value = subscriber.provisioning_voip_subscriber.webpassword, desc = 'CSC Password'},
+                                { value = subscriber.username _ '@' _ subscriber.domain.domain, desc = 'SIP URI'},
+                                { value = subscriber.primary_number.cc _ ' ' _ subscriber.primary_number.ac _ ' ' _ subscriber.primary_number.sn, desc = 'Primary Number'},
+                                { value = 'TODO', desc = 'Alias Numbers'},
+                                { value = subscriber.provisioning_voip_subscriber.admin ? 'yes' : 'no', desc = 'Administrative'},
+                                { value = subscriber.external_id, desc = 'External #'},
+                            ]
+                        -%]
+                        [% FOR elem IN elements -%]
+                            <tr>
+                                <td>[% elem.desc %]</td>
+                                <td>[% elem.value %]</td>
+                            </tr>
+                        [% END -%]
+                        <tr>
                             <td>UUID</td>
                             <td>[% subscriber.uuid %]</td>
-                            <td class="ngcp-actions-column">
-                                <div class="sw_actions">
-                                    <a class="btn btn-primary btn-small" href="[% c.uri_for_action("/subscriber/preferences", [subscriber.id]) %]"><i class="icon-list"></i> Preferences</a>
-                                </div>
-                            </td>
-                        </tr>
-                        <tr class="sw_action_row">
-                            <td>External #</td>
-                            <td>[% subscriber.external_id %]</td>
-                            <td class="ngcp-actions-column">
-                                <div class="sw_actions">
-                                    <a class="btn btn-primary btn-small" href="[% c.uri_for_action("/subscriber/preferences", [subscriber.id]) %]"><i class="icon-list"></i> Preferences</a>
-                                </div>
-                            </td>
                         </tr>
                     </tbody>
                 </table>
@@ -189,6 +126,9 @@
 
 [% IF edit_flag == 1 -%]
 [%
+    IF form.has_for_js;
+        form.render_repeatable_js;
+    END;
     PROCESS "helpers/modal.tt";
     modal_header(m.create_flag=0,
                  m.name = "Subscriber Master Data");
