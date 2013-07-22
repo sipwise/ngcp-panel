@@ -1293,6 +1293,12 @@ sub master :Chained('base') :PathPart('details') :CaptureArgs(0) {
         { name => "start_time", search_from_epoch => 1, search_to_epoch => 1, title => "Start Time" },
         { name => "duration", search => 1, title => "Duration" },
     ]);
+    $c->stash->{vm_dt_columns} = NGCP::Panel::Utils::Datatables::set_columns($c, [
+        { name => "id", search => 1, title => "#" },
+        { name => "callerid", search => 1, title => "Caller" },
+        { name => "origtime", search_from_epoch => 1, search_to_epoch => 1, title => "Time" },
+        { name => "duration", search => 1, title => "Duration" },
+    ]);
 
     $c->stash(
         template => 'subscriber/master.tt',
@@ -1306,6 +1312,7 @@ sub details :Chained('master') :PathPart('') :Args(0) {
 sub ajax_calls :Chained('master') :PathPart('calls/ajax') :Args(0) {
     my ($self, $c) = @_;
 
+    # CDRs
     my $out_rs = $c->model('DB')->resultset('cdr')->search({
         source_user_id => $c->stash->{subscriber}->uuid,
     });
@@ -1313,10 +1320,61 @@ sub ajax_calls :Chained('master') :PathPart('calls/ajax') :Args(0) {
         destination_user_id => $c->stash->{subscriber}->uuid,
     });
     my $rs = $out_rs->union($in_rs);
-
     NGCP::Panel::Utils::Datatables::process($c, $rs, $c->stash->{calls_dt_columns});
 
     $c->detach( $c->view("JSON") );
+}
+
+sub ajax_voicemails :Chained('master') :PathPart('voicemails/ajax') :Args(0) {
+    my ($self, $c) = @_;
+
+    my $vm_rs = $c->model('DB')->resultset('voicemail_spool')->search({
+        mailboxuser => $c->stash->{subscriber}->uuid,
+    });
+    NGCP::Panel::Utils::Datatables::process($c, $vm_rs, $c->stash->{vm_dt_columns});
+
+    $c->detach( $c->view("JSON") );
+}
+
+sub voicemail :Chained('master') :PathPart('voicemail') :CaptureArgs(1) {
+    my ($self, $c, $vm_id) = @_;
+
+    my $rs = $c->model('DB')->resultset('voicemail_spool')->search({
+         mailboxuser => $c->stash->{subscriber}->uuid,
+         id => $vm_id,
+    });
+    unless($rs->first) {
+        $c->log->error("no such voicemail file with id '$vm_id' for uuid ".$c->stash->{subscriber}->uuid);
+        $c->flash(messages => [{type => 'error', text => 'No such voicemail file to play'}]);
+        $c->response->redirect($c->uri_for_action('/subscriber/details', [$c->req->captures->[0]]));
+        return;
+    }
+    $c->stash->{voicemail} = $rs->first;
+}
+
+sub play_voicemail :Chained('voicemail') :PathPart('play') :Args(0) {
+    my ($self, $c) = @_;
+
+    my $file = $c->stash->{voicemail};
+
+    # TODO: doesn't properly play wav49!
+    $c->response->header('Content-Disposition' => 'attachment; filename="'.$file->msgnum.'.wav"');
+    $c->response->content_type('audio/x-wav');
+    $c->response->body($file->recording);
+}
+
+sub delete_voicemail :Chained('voicemail') :PathPart('delete') :Args(0) {
+    my ($self, $c) = @_;
+
+    try {
+        $c->stash->{voicemail}->delete;
+        $c->flash(messages => [{type => 'success', text => 'Successfully deleted voicemail'}]);
+    } catch($e) {
+        $c->log->error("failed to delete voicemail message: $e");
+        $c->flash(messages => [{type => 'error', text => 'Failed to delete voicemail'}]);
+    }
+
+    $c->response->redirect($c->uri_for_action('/subscriber/details', [$c->req->captures->[0]]));
 }
 
 =head1 AUTHOR

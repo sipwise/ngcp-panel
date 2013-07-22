@@ -45,7 +45,8 @@ sub process {
     my $from_date = $c->request->params->{sSearch_0} // "";
     my $to_date = $c->request->params->{sSearch_1} // "";
     my $parser = DateTime::Format::Strptime->new(
-        pattern => '%Y-%m-%d %H:%M',
+        #pattern => '%Y-%m-%d %H:%M',
+        pattern => '%Y-%m-%d',
     );
     if($from_date) {
         $from_date = $parser->parse_datetime($from_date);

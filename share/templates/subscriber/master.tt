@@ -163,8 +163,25 @@
         </div>
         <div class="accordion-body collapse" id="collapse_voicemail">
             <div class="accordion-inner">
+[%
+    helper.name = 'Voicemails';
+    helper.column_sort = 'origtime';
+    helper.dt_columns = vm_dt_columns;
 
-                [% # render vm DT here %]
+    helper.close_target = close_target;
+    helper.create_flag = create_flag;
+    helper.edit_flag = edit_flag;
+    helper.form_object = form;
+    helper.ajax_uri = c.uri_for_action('/subscriber/ajax_voicemails', [c.req.captures.0]);
+
+    helper.dt_buttons = [
+        { name = 'Play', uri = "details/voicemail/'+full.id+'/play", class = 'btn-small btn-tertiary', icon = 'icon-play' },
+        { name = 'Delete', uri = "details/voicemail/'+full.id+'/delete", class = 'btn-small btn-secondary', icon = 'icon-trash' },
+    ];
+   
+
+    PROCESS 'helpers/datatables.tt';
+%]
             </div>
         </div>
     </div>
