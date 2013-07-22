@@ -12,10 +12,6 @@
     helper.form_object = form;
     helper.ajax_uri = c.uri_for_action( "/sound/ajax" );
 
-    helper.extra_buttons = [
-        [ 'Files', 'handles'],
-    ];
-
     helper.dt_buttons = [
         { name = 'Edit', uri = "/sound/'+full[\"id\"]+'/edit", class = 'btn-small btn-primary', icon = 'icon-edit' },
         { name = 'Delete', uri = "/sound/'+full[\"id\"]+'/delete", class = 'btn-small btn-secondary', icon = 'icon-trash' },

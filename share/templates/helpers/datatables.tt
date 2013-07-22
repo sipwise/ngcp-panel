@@ -56,8 +56,8 @@ $(document).ready(function() {
                     var html = '' +
                     '<div class="sw_actions pull-right">';
                     [% FOR button IN helper.dt_buttons -%]
-                      [% confirm_delete = 'data-confirm="Delete"' IF button.name == "Delete" -%]
-                      [% confirm_delete = 'data-confirm="Terminate"' IF button.name == "Terminate" -%]
+                      [% confirm_delete = button.name == "Delete" ? 'data-confirm="Delete"' : '' -%]
+                      [% confirm_delete = button.name == "Terminate" ? 'data-confirm="Terminate"' : confirm_delete -%]
                       [% IF button.condition -%]
                         if([% button.condition %]) {
                       [% END -%]

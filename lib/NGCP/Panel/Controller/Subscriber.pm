@@ -1356,11 +1356,22 @@ sub play_voicemail :Chained('voicemail') :PathPart('play') :Args(0) {
     my ($self, $c) = @_;
 
     my $file = $c->stash->{voicemail};
+    my $recording = $file->recording;
+    my $data;
 
-    # TODO: doesn't properly play wav49!
+    try {
+        $data= NGCP::Panel::Utils::Sounds::transcode_data(
+            $recording, 'WAV', 'WAV');
+    } catch ($error) {
+        $c->flash(messages => [{type => 'error', text => 'Transcode of audio file failed!'}]);
+        $c->log->info("Transcode failed: $error");
+        $c->response->redirect($c->uri_for_action('/subscriber/details', [$c->req->captures->[0]]));
+        return;
+    }
+
     $c->response->header('Content-Disposition' => 'attachment; filename="'.$file->msgnum.'.wav"');
     $c->response->content_type('audio/x-wav');
-    $c->response->body($file->recording);
+    $c->response->body($data);
 }
 
 sub delete_voicemail :Chained('voicemail') :PathPart('delete') :Args(0) {

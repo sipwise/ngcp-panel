@@ -1,6 +1,6 @@
 [% site_config.title = 'Manage Sound Set ' _ set_result.name -%]
 
-<a href="[% c.uri_for() %]">&lt; Back</a>
+<a class="btn btn-large btn-primary" href="[% c.uri_for() %]"><i class="icon-arrow-left"></i> Back</a>
 
 [% IF messages -%]
 <div class="row">
@@ -25,34 +25,21 @@
     <thead>
         <tr>
             [% # one for description -%]
-            <th></th>
             <th>Name</th>
             <th>Filename</th>
             <th>Loop</th>
             [% # one for actions -%]
-            <th class="span3"></th>
+            <th></th>
         </tr>
     </thead>
     <tbody>
         [% FOREACH r IN group.value %]
             <tr class="sw_action_row">
                 <td>
-                    <a href="#" onclick="$.msgbox(
-                        '[% r.description.squote | html %]',
-                        {
-                            type:'info', 
-                            buttons:[
-                                {type:'cancel',value:'Close'}
-                            ]
-                        }); return false;"><i class="icon-question-sign"></i></a>
-                </td>
-                <td>
                   [% r.get_column("handlename") %]
                 </td>
                 <td>
-                  <a href="[% c.uri_for_action('/sound/handles_download', [c.req.captures.0, r.get_column('handleid')]) %]">
                     [% r.get_column("filename") %]
-                  </a>
                 </td>
                 <td>
                     <input type="checkbox" disabled="disabled" [% r.get_column('loopplay') ? 'checked="checked"' : '' %]>
@@ -60,7 +47,10 @@
                 <td>
                     <div class="sw_actions pull-right">
                         <a class="btn btn-small btn-primary" href="[% handles_base_uri _ "/" _ r.get_column("handleid") _ "/edit" %]"><i class="icon-edit"></i> Upload</a>
+                        [% IF r.get_column("filename").size -%]
                         <a class="btn btn-small btn-secondary" data-confirm="Delete" href="[% handles_base_uri _ "/" _ r.get_column("handleid") _ "/delete" %]"><i class="icon-edit"></i> Delete</a>
+                        <a class="btn btn-small btn-tertiary" href="[% c.uri_for_action('/sound/handles_download', [c.req.captures.0, r.get_column('handleid')]) %]"><i class="icon-play"></i> Play</a>
+                        [% END -%]
                     </div>
                 </td>
             </tr>
