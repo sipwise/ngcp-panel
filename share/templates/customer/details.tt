@@ -80,7 +80,8 @@
             </td>
             <td class="ngcp-actions-column">
                 <div class="sw_actions">
-                    <a class="btn btn-primary btn-small" href="[% c.uri_for_action("/subscriber/preferences", [subscriber.id]) %]"><i class="icon-list"></i> Preferences</a>
+                    <a class="btn btn-primary btn-small" href="[% c.uri_for_action("/subscriber/details", [subscriber.id]) %]"><i class="icon-th-list"></i> Details</a>
+                    <a class="btn btn-tertiary btn-small" href="[% c.uri_for_action("/subscriber/preferences", [subscriber.id]) %]"><i class="icon-list"></i> Preferences</a>
                 </div>
             </td>
         </tr>

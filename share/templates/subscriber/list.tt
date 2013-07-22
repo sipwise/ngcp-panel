@@ -14,7 +14,7 @@
 
     helper.dt_buttons = [
         { name = 'Terminate', uri = "/subscriber/'+full.id+'/terminate", class = 'btn-small btn-secondary', icon = 'icon-trash', condition = 'full.status != "terminated"' },
-        { name = 'Preferences', uri = "/subscriber/'+full.id+'/preferences", class = 'btn-small btn-tertiary', icon = 'icon-list', condition = 'full.status != "terminated"' },
+        { name = 'Details', uri = "/subscriber/'+full.id+'/details", class = 'btn-small btn-tertiary', icon = 'icon-th-list', condition = 'full.status != "terminated"' },
         { name = 'Customer', uri = "/customer/'+full.contract_id+'/details", class = 'btn-small btn-tertiary', icon = 'icon-user' },
     ];
     helper.top_buttons = [

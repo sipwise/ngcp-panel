@@ -1,5 +1,12 @@
 [% site_config.title = 'Subscriber ' _ subscriber.username _ '@' _ subscriber.domain.domain  -%]
 
+<div class="row">
+    <span class="pull-left" style="margin:0 5px 0 5px;">
+        <a class="btn btn-primary btn-large" href="[% c.uri_for_action('/subscriber/preferences', [ subscriber.id ]) %]"><i class="icon-list"></i> Preferences</a>
+        <a class="btn btn-primary btn-large" href="[% c.uri_for_action('/customer/details', [ subscriber.contract_id ]) %]"><i class="icon-user"></i> Customer</a>
+    </span>
+</div>
+
 [% IF messages -%]
 <div class="row">
     [% FOREACH m IN messages -%]
@@ -32,7 +39,7 @@
                             <td>[% subscriber.contract.id %]</td>
                             <td class="ngcp-actions-column">
                                 <div class="sw_actions">
-                                    <a class="btn btn-primary btn-small" href="[% c.uri_for_action("/customer/details", [subscriber.contract_id]) %]"><i class="icon-list"></i> Customer Details</a>
+                                    <a class="btn btn-primary btn-small" href="[% c.uri_for_action("/customer/details", [subscriber.contract_id]) %]"><i class="icon-user"></i> Customer</a>
                                 </div>
                             </td>
                         </tr>
