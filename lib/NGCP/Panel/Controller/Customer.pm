@@ -149,9 +149,12 @@ sub subscriber_create :Chained('base') :PathPart('subscriber/create') :Args(0) {
 
                 # TODO: check if we find a reseller and contract and domains
 
-                my $number;
+                my $number; my $cli = 0;
                 if(defined $c->request->params->{'e164.cc'} && 
                    $c->request->params->{'e164.cc'} ne '') {
+                    $cli = $c->request->params->{'e164.cc'} .
+                           ($c->request->params->{'e164.ac'} || '') .
+                           $c->request->params->{'e164.sn'};
 
                     $number = $reseller->voip_numbers->create({
                         cc => $c->request->params->{'e164.cc'},
@@ -204,7 +207,7 @@ sub subscriber_create :Chained('base') :PathPart('subscriber/create') :Args(0) {
                                 'subscriber_id' => $prov_subscriber->id,
                                 'value' => $c->request->params->{'e164.cc'},
                             });
-                        my $cli = $c->request->params->{'e164.cc'} .
+                        $cli = $c->request->params->{'e164.cc'} .
                                   (defined $c->request->params->{'e164.ac'} &&
                                    length($c->request->params->{'e164.ac'}) > 0 ?
                                    $c->request->params->{'e164.ac'} : ''
@@ -216,6 +219,14 @@ sub subscriber_create :Chained('base') :PathPart('subscriber/create') :Args(0) {
                                 'value' => $cli,
                             });
                 }
+
+                $schema->resultset('voicemail_users')->create({
+                    customer_id => $uuid_string,
+                    mailbox => $cli,
+                    password => sprintf("%04d", int(rand 10000)),
+                    email => '',
+                });
+
             });
             $c->flash(messages => [{type => 'success', text => 'Subscriber successfully created!'}]);
             $c->response->redirect($c->uri_for_action('/customer/details', [$contract->id]));

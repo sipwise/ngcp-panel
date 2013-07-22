@@ -15,6 +15,10 @@ use NGCP::Panel::Form::SubscriberCFAdvanced;
 use NGCP::Panel::Form::SubscriberCFTAdvanced;
 use NGCP::Panel::Form::DestinationSet;
 use NGCP::Panel::Form::TimeSet;
+use NGCP::Panel::Form::Voicemail::Pin;
+use NGCP::Panel::Form::Voicemail::Email;
+use NGCP::Panel::Form::Voicemail::Attach;
+use NGCP::Panel::Form::Voicemail::Delete;
 use UUID;
 
 use Data::Printer;
@@ -126,6 +130,7 @@ sub create_list :Chained('sub_list') :PathPart('create') :Args(0) {
                     domain_id => $prov_domain->id,
                 });
 
+                my $cli = 0;
                 my $voip_preferences = $schema->resultset('voip_preferences')->search({
                     'usr_pref' => 1,
                 });
@@ -148,7 +153,7 @@ sub create_list :Chained('sub_list') :PathPart('create') :Args(0) {
                                 'subscriber_id' => $prov_subscriber->id,
                                 'value' => $c->request->params->{'e164.cc'},
                             });
-                        my $cli = $c->request->params->{'e164.cc'} .
+                        $cli = $c->request->params->{'e164.cc'} .
                                   (defined $c->request->params->{'e164.ac'} &&
                                    length($c->request->params->{'e164.ac'}) > 0 ?
                                    $c->request->params->{'e164.ac'} : ''
@@ -160,6 +165,12 @@ sub create_list :Chained('sub_list') :PathPart('create') :Args(0) {
                                 'value' => $cli,
                             });
                 }
+                $schema->resultset('voicemail_users')->create({
+                    customer_id => $uuid_string,
+                    mailbox => $cli,
+                    password => sprintf("%04d", int(rand 10000)),
+                    email => '',
+                });
             });
             $c->flash(messages => [{type => 'success', text => 'Subscriber successfully created!'}]);
             $c->response->redirect($c->uri_for('/subscriber'));
@@ -1310,8 +1321,8 @@ sub details :Chained('master') :PathPart('') :Args(0) {
     my ($self, $c) = @_;
 }
 
-sub edit_master :Chained('master') :PathPart('edit') {
-    my ($self, $c, $attribute) = @_;
+sub edit_master :Chained('master') :PathPart('edit') :Args(0) {
+    my ($self, $c) = @_;
 
     my $form = NGCP::Panel::Form::SubscriberEdit->new;
     my $posted = ($c->request->method eq 'POST');
@@ -1424,6 +1435,88 @@ sub edit_master :Chained('master') :PathPart('edit') {
         form => $form,
     );
 
+}
+
+sub edit_voicebox :Chained('base') :PathPart('preferences/voicebox/edit') :Args(1) {
+    my ($self, $c, $attribute) = @_;
+
+    my $form;
+    my $posted = ($c->request->method eq 'POST');
+    my $vm_user = $c->stash->{subscriber}->provisioning_voip_subscriber->voicemail_user;
+    unless($vm_user) {
+        $c->log->error("no voicemail user found for subscriber uuid ".$c->stash->{subscriber}->uuid);
+        $c->flash(messages => [{type => 'error', text => 'Failed to find voicemail user'}]);
+        $c->response->redirect($c->uri_for_action('/subscriber/preferences', [$c->req->captures->[0]]));
+        return;
+        # TODO: we could create one instead?
+    }
+    my $params;
+
+    try {
+        given($attribute) {
+            when('pin') { 
+                $form = NGCP::Panel::Form::Voicemail::Pin->new;
+                $params = { 'pin' => $vm_user->password };
+                $form->process(params => $posted ? $c->req->params : $params);
+                if($posted && $form->validated) {
+                    $vm_user->update({ password => $form->field('pin')->value });
+                }
+            }
+            when('email') { 
+                $form = NGCP::Panel::Form::Voicemail::Email->new; 
+                $params = { 'email' => $vm_user->email };
+                $form->process(params => $posted ? $c->req->params : $params);
+                if($posted && $form->validated) {
+                    $vm_user->update({ email => $form->field('email')->value });
+                }
+            }
+            when('attach') { 
+                $form = NGCP::Panel::Form::Voicemail::Attach->new; 
+                $params = { 'attach' => $vm_user->attach eq 'yes' ? 1 : 0 };
+                $form->process(params => $posted ? $c->req->params : $params);
+                if($posted && $form->validated) {
+                    $vm_user->update({ attach => $form->field('attach')->value ? 'yes' : 'no' });
+                }
+            }
+            when('delete') { 
+                $form = NGCP::Panel::Form::Voicemail::Delete->new; 
+                $params = { 'delete' => $vm_user->get_column('delete') eq 'yes' ? 1 : 0 };
+                $form->process(params => $posted ? $c->req->params : $params);
+                if($posted && $form->validated) {
+                    $vm_user->update({ 
+                        # TODO: which accessor?
+                        column_delete => $form->field('delete')->value ? 'yes' : 'no',
+                        # force attach if delete flag is set, otherwise message will be lost
+                        'attach' => $form->field('delete')->value ? 'yes' : $vm_user->attach,
+                    });
+                }
+            }
+            default {
+                $c->log->error("trying to set invalid voicemail param '$attribute' for subscriber uuid ".$c->stash->{subscriber}->uuid);
+                $c->flash(messages => [{type => 'error', text => 'Invalid voicemail setting'}]);
+                $c->response->redirect($c->uri_for_action('/subscriber/preferences', [$c->req->captures->[0]]));
+                return;
+            }
+        }
+        if($posted && $form->validated) {
+            $c->flash(messages => [{type => 'success', text => 'Successfully updated voicemail setting'}]);
+            $c->response->redirect($c->uri_for_action('/subscriber/preferences', [$c->req->captures->[0]]));
+            return;
+        }
+    } catch($e) {
+        $c->log->error("updating voicemail setting failed: $e");
+        $c->flash(messages => [{type => 'error', text => 'Failed to update voicemail setting'}]);
+        $c->response->redirect($c->uri_for_action('/subscriber/preferences', [$c->req->captures->[0]]));
+        return;
+    }
+
+    $c->stash(
+        template => 'subscriber/preferences.tt',
+        edit_cf_flag => 1,
+        cf_description => $attribute,
+        cf_form => $form,
+        close_target => $c->uri_for_action('/subscriber/preferences', [$c->req->captures->[0]]),
+    );
 }
 
 sub ajax_calls :Chained('master') :PathPart('calls/ajax') :Args(0) {

@@ -108,7 +108,7 @@
                                 <div class="sw_actions">
                                     <a class="btn btn-primary btn-small" href="[% c.uri_for_action("/subscriber/preferences_callforward", [c.req.captures.0], cf.type) %]"><i class="icon-edit"></i> Edit</a>
                                     [% IF cf_mappings.${cf.type}.id -%]
-                                    <a class="btn btn-secondary btn-small" data-confirm="Delete" href="[% c.uri_for_action("/subscriber/preferences_callforward_delete", [c.req.captures.0, cf_mappings.${cf.type}.id], cf.type) %]"><i class="icon-edit"></i> Delete</a>
+                                    <a class="btn btn-secondary btn-small" data-confirm="Delete" href="[% c.uri_for_action("/subscriber/preferences_callforward_delete", [c.req.captures.0, cf_mappings.${cf.type}.id], cf.type) %]"><i class="icon-delete"></i> Delete</a>
                                     [% END -%]
                                 </div>
 
@@ -122,6 +122,77 @@
         </div>
     </div>
 
+    <div class="accordion-group">
+        <div class="accordion-heading">
+            <a class="accordion-toggle" data-toggle="collapse" data-parent="#preference_groups" href="#collapse_vm">Voicemail and Voicebox</a>
+        </div>
+        <div class="accordion-body collapse" id="collapse_vm">
+            <div class="accordion-inner">
+
+                <table class="table table-bordered table-striped table-highlight table-hover" id="preferences_table[% group.id %]">
+                    <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>Value</th>
+                            [% # one for actions -%]
+                            <th class="ngcp-actions-column"></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr class="sw_action_row">
+                            <td>PIN</td>
+                            <td>
+                                [% subscriber.provisioning_voip_subscriber.voicemail_user.password %]
+                            </td>
+                            <td class="ngcp-actions-column">
+                                <div class="sw_actions">
+                                    <a class="btn btn-primary btn-small" href="[% c.uri_for_action("/subscriber/edit_voicebox", [c.req.captures.0], 'pin') %]"><i class="icon-edit"></i> Edit</a>
+                                </div>
+
+                            </td>
+                        </tr>
+                        <tr class="sw_action_row">
+                            <td>Email</td>
+                            <td>
+                                [% subscriber.provisioning_voip_subscriber.voicemail_user.email %]
+                            </td>
+                            <td class="ngcp-actions-column">
+                                <div class="sw_actions">
+                                    <a class="btn btn-primary btn-small" href="[% c.uri_for_action("/subscriber/edit_voicebox", [c.req.captures.0], 'email') %]"><i class="icon-edit"></i> Edit</a>
+                                </div>
+
+                            </td>
+                        </tr>
+                        <tr class="sw_action_row">
+                            <td>Delete after sending Email</td>
+                            <td>
+                                [% subscriber.provisioning_voip_subscriber.voicemail_user.get_column('delete') %]
+                            </td>
+                            <td class="ngcp-actions-column">
+                                <div class="sw_actions">
+                                    <a class="btn btn-primary btn-small" href="[% c.uri_for_action("/subscriber/edit_voicebox", [c.req.captures.0], 'delete') %]"><i class="icon-edit"></i> Edit</a>
+                                </div>
+
+                            </td>
+                        </tr>
+                        <tr class="sw_action_row">
+                            <td>Attach WAV in Email</td>
+                            <td>
+                                [% subscriber.provisioning_voip_subscriber.voicemail_user.attach %]
+                            </td>
+                            <td class="ngcp-actions-column">
+                                <div class="sw_actions">
+                                    <a class="btn btn-primary btn-small" href="[% c.uri_for_action("/subscriber/edit_voicebox", [c.req.captures.0], 'attach') %]"><i class="icon-edit"></i> Edit</a>
+                                </div>
+
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+
+            </div>
+        </div>
+    </div>
 
 [% 
     PROCESS 'helpers/pref_table.tt';
