@@ -46,7 +46,6 @@
                                 { value = subscriber.provisioning_voip_subscriber.webpassword, desc = 'CSC Password'},
                                 { value = subscriber.username _ '@' _ subscriber.domain.domain, desc = 'SIP URI'},
                                 { value = subscriber.primary_number.cc _ ' ' _ subscriber.primary_number.ac _ ' ' _ subscriber.primary_number.sn, desc = 'Primary Number'},
-                                { value = 'TODO', desc = 'Alias Numbers'},
                                 { value = subscriber.provisioning_voip_subscriber.admin ? 'yes' : 'no', desc = 'Administrative'},
                                 { value = subscriber.external_id, desc = 'External #'},
                             ]
@@ -60,6 +59,15 @@
                         <tr>
                             <td>UUID</td>
                             <td>[% subscriber.uuid %]</td>
+                        </tr>
+                        <tr>
+                            <td>Alias Numbers</td>
+                            <td>
+                                [% FOR num IN subscriber.voip_numbers.all -%]
+                                    [% NEXT IF num.id == subscriber.primary_number.id -%]
+                                    [% num.cc %] [% num.ac %] [% num.sn %]<br/>
+                                [% END -%]
+                            </td>
                         </tr>
                     </tbody>
                 </table>

@@ -1330,10 +1330,18 @@ sub edit_master :Chained('master') :PathPart('edit') {
         $params->{webpassword} = $prov_subscriber->webpassword;
         $params->{password} = $prov_subscriber->password;
         $params->{administrative} = $prov_subscriber->admin;
-
-        $params->{e164}->{cc} = $subscriber->primary_number->cc;
-        $params->{e164}->{ac} = $subscriber->primary_number->ac;
-        $params->{e164}->{sn} = $subscriber->primary_number->sn;
+        if($subscriber->primary_number) {
+            $params->{e164}->{cc} = $subscriber->primary_number->cc;
+            $params->{e164}->{ac} = $subscriber->primary_number->ac;
+            $params->{e164}->{sn} = $subscriber->primary_number->sn;
+        }
+        my @alias_nums = ();
+        for my $num($subscriber->voip_numbers->all) {
+            next if $subscriber->primary_number && 
+                $num->id == $subscriber->primary_number->id;
+            push @alias_nums, { e164 => { cc => $num->cc, ac => $num->ac, sn => $num->sn } };
+        }
+        $params->{alias_number} = \@alias_nums;
         $params->{status} = $subscriber->status;
         $params->{external_id} = $subscriber->external_id;
 
@@ -1358,12 +1366,43 @@ sub edit_master :Chained('master') :PathPart('edit') {
                     status => $form->field('status')->value,
                     external_id => $form->field('external_id')->value,
                 });
+
+                for my $num($subscriber->voip_numbers->all) {
+                    next if($subscriber->primary_number && $num->id == $subscriber->primary_number->id);
+                    $num->delete;
+                }
+
                 # TODO: check for availablity of cc and sn
-                $subscriber->primary_number->update({
-                    cc => $form->field('e164')->field('cc')->value,
-                    ac => $form->field('e164')->field('ac')->value,
-                    sn => $form->field('e164')->field('sn')->value,
-                });
+                if($subscriber->primary_number) {
+                    if(!$form->field('e164')->field('cc')->value &&
+                       !$form->field('e164')->field('ac')->value &&
+                       !$form->field('e164')->field('sn')->value) {
+                        $subscriber->primary_number->delete;
+                    } else {
+                        $subscriber->primary_number->update({
+                            cc => $form->field('e164')->field('cc')->value,
+                            ac => $form->field('e164')->field('ac')->value,
+                            sn => $form->field('e164')->field('sn')->value,
+                        });
+                    }
+                } else {
+                    my $num = $schema->resultset('voip_numbers')->create({
+                        subscriber_id => $subscriber->id,
+                        reseller_id => $subscriber->contract->reseller_id,
+                        cc => $form->field('e164')->field('cc')->value,
+                        ac => $form->field('e164')->field('ac')->value,
+                        sn => $form->field('e164')->field('sn')->value,
+                    });
+                    $subscriber->update({ primary_number_id => $num->id });
+                }
+                for my $alias($form->field('alias_number')->fields) {
+                    $subscriber->voip_numbers->create({
+                        cc => $alias->field('e164')->field('cc')->value,
+                        ac => $alias->field('e164')->field('ac')->value,
+                        sn => $alias->field('e164')->field('sn')->value,
+                    });
+                }
+
                 if($lock->first) {
                     $lock->first->update({ value => $form->field('lock')->value });
                 } else {
