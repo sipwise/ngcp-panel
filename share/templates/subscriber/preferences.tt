@@ -194,6 +194,43 @@
         </div>
     </div>
 
+    <div class="accordion-group">
+        <div class="accordion-heading">
+            <a class="accordion-toggle" data-toggle="collapse" data-parent="#preference_groups" href="#collapse_rm">Reminder</a>
+        </div>
+        <div class="accordion-body collapse" id="collapse_rm">
+            <div class="accordion-inner">
+
+                <table class="table table-bordered table-striped table-highlight table-hover" id="preferences_table[% group.id %]">
+                    <thead>
+                        <tr>
+                            <th>Time</th>
+                            <th>Recurrence</th>
+                            [% # one for actions -%]
+                            <th class="ngcp-actions-column"></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr class="sw_action_row">
+                            <td>
+                                [% subscriber.provisioning_voip_subscriber.voip_reminder.get_column('time') %]
+                            </td>
+                            <td>
+                                [% subscriber.provisioning_voip_subscriber.voip_reminder.recur %]
+                            </td>
+                            <td class="ngcp-actions-column">
+                                <div class="sw_actions">
+                                    <a class="btn btn-primary btn-small" href="[% c.uri_for_action("/subscriber/edit_reminder", [c.req.captures.0]) %]"><i class="icon-edit"></i> Edit</a>
+                                </div>
+
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+
+            </div>
+        </div>
+    </div>
 [% 
     PROCESS 'helpers/pref_table.tt';
 %]

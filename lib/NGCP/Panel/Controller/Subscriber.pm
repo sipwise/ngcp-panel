@@ -19,6 +19,7 @@ use NGCP::Panel::Form::Voicemail::Pin;
 use NGCP::Panel::Form::Voicemail::Email;
 use NGCP::Panel::Form::Voicemail::Attach;
 use NGCP::Panel::Form::Voicemail::Delete;
+use NGCP::Panel::Form::Reminder;
 use UUID;
 
 use Data::Printer;
@@ -1514,6 +1515,64 @@ sub edit_voicebox :Chained('base') :PathPart('preferences/voicebox/edit') :Args(
         template => 'subscriber/preferences.tt',
         edit_cf_flag => 1,
         cf_description => $attribute,
+        cf_form => $form,
+        close_target => $c->uri_for_action('/subscriber/preferences', [$c->req->captures->[0]]),
+    );
+}
+
+sub edit_reminder :Chained('base') :PathPart('preferences/reminder/edit') {
+    my ($self, $c, $attribute) = @_;
+
+    my $posted = ($c->request->method eq 'POST');
+    my $reminder = $c->stash->{subscriber}->provisioning_voip_subscriber->voip_reminder;
+    my $params = {};
+    
+    if(!$posted && $reminder) {
+        $params = { 'time' => $reminder->column_time, recur => $reminder->recur};
+    }
+
+    my $form = NGCP::Panel::Form::Reminder->new;
+    $form->process(
+        params => $posted ? $c->req->params : $params
+    );
+
+    if($posted && $form->validated) {
+
+        try {
+            if($form->field('time')->value) {
+                my $t = $form->field('time')->value;
+                $t =~ s/^(\d+:\d+)(:\d+)?$/$1/; # strip seconds
+                if($reminder) {
+                    $reminder->update({
+                        time => $t,
+                        recur => $form->field('recur')->value,
+                    });
+                } else {
+                    $c->model('DB')->resultset('voip_reminder')->create({
+                        subscriber_id => $c->stash->{subscriber}->provisioning_voip_subscriber->id,
+                        time => $t,
+                        recur => $form->field('recur')->value,
+                    });
+                }
+            } elsif($reminder) {
+                $reminder->delete;
+            }
+
+            $c->flash(messages => [{type => 'success', text => 'Successfully updated reminder setting'}]);
+            $c->response->redirect($c->uri_for_action('/subscriber/preferences', [$c->req->captures->[0]]));
+            return;
+        } catch($e) {
+            $c->log->error("updating reminder setting failed: $e");
+            $c->flash(messages => [{type => 'error', text => 'Failed to update reminder setting'}]);
+            $c->response->redirect($c->uri_for_action('/subscriber/preferences', [$c->req->captures->[0]]));
+            return;
+        }
+    }
+
+    $c->stash(
+        template => 'subscriber/preferences.tt',
+        edit_cf_flag => 1,
+        cf_description => 'Reminder',
         cf_form => $form,
         close_target => $c->uri_for_action('/subscriber/preferences', [$c->req->captures->[0]]),
     );
