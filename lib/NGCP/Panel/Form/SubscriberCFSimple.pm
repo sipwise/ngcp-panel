@@ -54,14 +54,9 @@ sub set_destination_groups {
     my $uri_t = 300;
     if(defined $self->form->ctx && 
        defined $self->form->ctx->stash->{cf_tmp_params}) {
-        print ">>>>>>>>>>>>>>>>>>>>>>> we have cf_tmp_params\n";
-        use Data::Printer;
-        p $self->form->ctx->stash->{cf_tmp_params};
         my $d = $self->form->ctx->stash->{cf_tmp_params};
-        p $d;
         $uri_d = $d->{uri_destination} if defined($d);
         $uri_t = $d->{uri_timeout} if defined($d);
-        print ">>>>>>>>>>>>>>>>>>>>>>> uri_destination=$uri_d, uri_timeout=$uri_t\n";
     }
 
     push @options, { label => 'Voicemail', value => 'voicebox' };
