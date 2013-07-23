@@ -130,6 +130,16 @@ sub create_list :Chained('sub_list') :PathPart('create') :Args(0) {
                     account_id => $contract->id,
                     domain_id => $prov_domain->id,
                 });
+                if($number) {
+                    $schema->resultset('dbaliases')->create({
+                        alias_username => $number->cc .
+                                          ($number->ac || '').
+                                          $number->sn,
+                        alias_domain => $prov_subscriber->domain->domain,
+                        username => $prov_subscriber->username,
+                        domain => $prov_subscriber->domain->domain,
+                    });
+                }
 
                 my $cli = 0;
                 my $voip_preferences = $schema->resultset('voip_preferences')->search({
@@ -504,6 +514,7 @@ sub preferences_callforward :Chained('base') :PathPart('preferences/callforward'
         edit_cf_flag => 1,
         cf_description => $cf_desc,
         cf_form => $cf_form,
+        close_target => $c->uri_for_action('/subscriber/preferences', [$c->req->captures->[0]]),
     );
 }
 
@@ -1384,34 +1395,94 @@ sub edit_master :Chained('master') :PathPart('edit') :Args(0) {
                     $num->delete;
                 }
 
+                for my $alias($schema->resultset('dbaliases')->search({
+                                    username => $prov_subscriber->username,
+                                    domain => $prov_subscriber->domain->domain,
+                                })->all) {
+                    $alias->delete;
+                }
+
                 # TODO: check for availablity of cc and sn
+                my $num;
                 if($subscriber->primary_number) {
                     if(!$form->field('e164')->field('cc')->value &&
                        !$form->field('e164')->field('ac')->value &&
                        !$form->field('e164')->field('sn')->value) {
                         $subscriber->primary_number->delete;
+                        $prov_subscriber->voicemail_user->update({ mailbox => '0' });
                     } else {
-                        $subscriber->primary_number->update({
+                        # check if cc and sn are set if cc is there
+                        $num = $subscriber->primary_number->update({
                             cc => $form->field('e164')->field('cc')->value,
-                            ac => $form->field('e164')->field('ac')->value,
+                            ac => $form->field('e164')->field('ac')->value || '',
                             sn => $form->field('e164')->field('sn')->value,
                         });
+                        my $cli = $num->cc.($num->ac || '').$num->sn;
+                        for my $cfset($prov_subscriber->voip_cf_destination_sets->all) {
+                            for my $cf($cfset->voip_cf_destinations->all) {
+                                if($cf->destination =~ /\@voicebox\.local$/) {
+                                    $cf->update({ destination => 'sip:vmu'.$cli.'@voicebox.local' });
+                                } elsif($cf->destination =~ /\@fax2mail\.local$/) {
+                                    $cf->update({ destination => 'sip:'.$cli.'@fax2mail.local' });
+                                } elsif($cf->destination =~ /\@conference\.local$/) {
+                                    $cf->update({ destination => 'sip:conf='.$cli.'@conference.local' });
+                                }
+                            }
+                        }
+                        $prov_subscriber->voicemail_user->update({ mailbox => $cli });
                     }
                 } else {
-                    my $num = $schema->resultset('voip_numbers')->create({
-                        subscriber_id => $subscriber->id,
-                        reseller_id => $subscriber->contract->reseller_id,
-                        cc => $form->field('e164')->field('cc')->value,
-                        ac => $form->field('e164')->field('ac')->value,
-                        sn => $form->field('e164')->field('sn')->value,
+                    if($form->field('e164')->field('cc')->value &&
+                       $form->field('e164')->field('sn')->value) {
+                        $num = $schema->resultset('voip_numbers')->create({
+                            subscriber_id => $subscriber->id,
+                            reseller_id => $subscriber->contract->reseller_id,
+                            cc => $form->field('e164')->field('cc')->value,
+                            ac => $form->field('e164')->field('ac')->value || '',
+                            sn => $form->field('e164')->field('sn')->value,
+                        });
+                        $subscriber->update({ primary_number_id => $num->id });
+                        $prov_subscriber->voicemail_user->update({ mailbox => 
+                            $form->field('e164')->field('cc')->value .
+                            ($form->field('e164')->field('ac')->value || '').
+                            $form->field('e164')->field('sn')->value,
+                        });
+                    } else {
+                        $prov_subscriber->voicemail_user->update({ mailbox => '0' });
+                    }
+
+                }
+                if($num) {
+                    $schema->resultset('dbaliases')->create({
+                        alias_username => $num->cc.($num->ac || '').$num->sn,
+                        alias_domain => $prov_subscriber->domain->domain,
+                        username => $prov_subscriber->username,
+                        domain => $prov_subscriber->domain->domain,
                     });
-                    $subscriber->update({ primary_number_id => $num->id });
+                    my $cli = $num->cc.($num->ac || '').$num->sn;
+                    for my $cfset($prov_subscriber->voip_cf_destination_sets->all) {
+                        for my $cf($cfset->voip_cf_destinations->all) {
+                            if($cf->destination =~ /\@voicebox\.local$/) {
+                                $cf->update({ destination => 'sip:vmu'.$cli.'@voicebox.local' });
+                            } elsif($cf->destination =~ /\@fax2mail\.local$/) {
+                                $cf->update({ destination => 'sip:'.$cli.'@fax2mail.local' });
+                            } elsif($cf->destination =~ /\@conference\.local$/) {
+                                $cf->update({ destination => 'sip:conf='.$cli.'@conference.local' });
+                            }
+                        }
+                    }
                 }
                 for my $alias($form->field('alias_number')->fields) {
-                    $subscriber->voip_numbers->create({
+                    $num = $subscriber->voip_numbers->create({
                         cc => $alias->field('e164')->field('cc')->value,
                         ac => $alias->field('e164')->field('ac')->value,
                         sn => $alias->field('e164')->field('sn')->value,
+                    });
+                    $schema->resultset('dbaliases')->create({
+                        alias_username => $num->cc.($num->ac || '').$num->sn,
+                        alias_domain => $prov_subscriber->domain->domain,
+                        username => $prov_subscriber->username,
+                        domain => $prov_subscriber->domain->domain,
                     });
                 }
 
@@ -1434,6 +1505,7 @@ sub edit_master :Chained('master') :PathPart('edit') :Args(0) {
     $c->stash(
         edit_flag => 1,
         form => $form,
+        close_target => $c->uri_for_action('/subscriber/details', [$c->req->captures->[0]]),
     );
 
 }
@@ -1485,8 +1557,7 @@ sub edit_voicebox :Chained('base') :PathPart('preferences/voicebox/edit') :Args(
                 $form->process(params => $posted ? $c->req->params : $params);
                 if($posted && $form->validated) {
                     $vm_user->update({ 
-                        # TODO: which accessor?
-                        column_delete => $form->field('delete')->value ? 'yes' : 'no',
+                        delete => $form->field('delete')->value ? 'yes' : 'no',
                         # force attach if delete flag is set, otherwise message will be lost
                         'attach' => $form->field('delete')->value ? 'yes' : $vm_user->attach,
                     });

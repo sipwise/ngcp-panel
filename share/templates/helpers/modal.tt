@@ -2,7 +2,7 @@
 
 <div id="mod_edit" class="modal hide ngcp-modal">
     <div class="modal-header">
-        <button id="mod_close" type="button" class="close">×</button>
+        <button id="mod_close" type="button" class="close mod_close">×</button>
         <h3>[% m.create_flag == 1 ? 'Create' : 'Edit' %] [% m.name %]</h3>
     </div>
 
@@ -16,7 +16,8 @@
 <script>
     $(function () {
         $('#mod_edit').modal({keyboard: false, backdrop: 'static'});
-        $('#mod_close').click(function(event) {
+        $('.mod_close').click(function(event) {
+            console.log("redirecting to [% m.close_target ? m.close_target : c.uri_for() %]");
             window.location.href="[% m.close_target ? m.close_target : c.uri_for() %]";
         });
 

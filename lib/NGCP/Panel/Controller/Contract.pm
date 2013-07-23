@@ -22,11 +22,11 @@ sub contract_list :Chained('/') :PathPart('contract') :CaptureArgs(0) {
                 '=' => $mapping_rs->search({
                     contract_id => { -ident => 'me.id' },
                     start_date => [ -or =>
-                        { '<=' => {-ident => 'now()'}},
+                        { '<=' => DateTime->now },
                         { -is  => undef },
                     ],
                     end_date => [ -or =>
-                        { '>=' => {-ident => 'now()'}},
+                        { '>=' => DateTime->now },
                         { -is  => undef },
                     ],
                 },{
