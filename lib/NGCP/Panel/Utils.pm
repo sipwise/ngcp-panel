@@ -4,7 +4,6 @@ use warnings;
 
 use NGCP::Panel::Form::Preferences;
 
-
 sub load_preference_list {
     my %params = @_;
 

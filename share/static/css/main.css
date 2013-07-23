@@ -122,7 +122,6 @@ input.ngcp-destination-field {
 }
 
 
-
 /* align buttons in one row in modal-footer */
 
 div.modal-footer div.control-group div.controls {
@@ -181,6 +180,29 @@ table.ngcp-datatable .headerSortUp:after {
 
 div.ngcp-separator {
     margin-top:10px;
+}
+
+/* make inline-form inline *sic* */
+form.form-inline div.control-group {
+    float: left;
+}
+form.form-inline div.control-group label.control-label {
+    float: left;
+    margin-right: 5px;
+    padding-top: 5px;
+}
+form.form-inline div.control-group div.controls {
+    float: left;
+    margin-right: 20px;
+}
+
+/* shift statistics canvas a bit to the right */
+div.ngcp-statistics {
+    margin: 30px 0 0 30px;
+}
+
+div.ngcp-plot {
+    margin-bottom: 30px;
 }
 
 /* ---------

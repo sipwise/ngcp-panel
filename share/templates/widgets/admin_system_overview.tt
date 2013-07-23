@@ -15,7 +15,7 @@
             </ul>
         </div>
         <div class="plan-actions">
-            <a href="javascript:;" class="btn">View Statistics</a>
+            <a href="[% c.uri_for_action('/statistics/index', []) %]" class="btn">View Statistics</a>
         </div>
     </div>
 </div>
