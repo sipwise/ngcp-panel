@@ -22,8 +22,6 @@ sub get_host_list {
                     ->maxdepth( 1 )
                     ->in('/var/lib/collectd/rrd');
     @hosts = sort {$a cmp $b} apply { s|.*/|| } @hosts;
-    print ">>>>>>>>>>>>>>> get_host_list:\n";
-    use Data::Printer; p @hosts;
     return \@hosts;
 }
 
@@ -35,8 +33,6 @@ sub get_host_subdirs {
                     ->maxdepth( 1 )
                     ->in('/var/lib/collectd/rrd/' . $host);
     @dirs = sort {$a cmp $b} apply { s|.*/|| } @dirs;
-    print ">>>>>>>>>>>>>>> get_host_subdirs:\n";
-    use Data::Printer; p @dirs;
     return \@dirs;
 }
 
@@ -71,8 +67,6 @@ sub get_rrd {
     close($RRD);
     return $content;
 }
-
-
 
 1;
 

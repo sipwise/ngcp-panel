@@ -277,7 +277,6 @@ sub handles_download :Chained('handles_base') :PathPart('download') :Args(0) {
     $filename =~ s/\.\w+$/.wav/;
     my $data;
 
-    say ">>>>>>>>>>>>>>>>> download ".$file->filename." with codec ".$file->codec;
     if($file->codec ne 'WAV') {
         try {
             $data = NGCP::Panel::Utils::Sounds::transcode_data(
