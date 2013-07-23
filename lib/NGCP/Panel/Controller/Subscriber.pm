@@ -399,18 +399,8 @@ sub preferences_callforward :Chained('base') :PathPart('preferences/callforward'
     }
 
     my $params = {};
-    if($destination) {
-        $params->{destination} = $destination->destination;
-        if($cf_type eq 'cft') {
-            my $rt = $ringtimeout_preference->first;
-            if($rt) {
-                $params->{ringtimeout} = $rt->value;
-            } else {
-                $params->{ringtimeout} = 15;
-            }
-        }
-    }
     if($posted) {
+        # TODO: normalize
         $params = $c->request->params;
         if(length($params->{destination}) && 
            (!$c->request->params->{submitid} || 
@@ -423,13 +413,50 @@ sub preferences_callforward :Chained('base') :PathPart('preferences/callforward'
                 $params->{destination} = 'sip:' . $params->{destination};
             }
         }
+    } else {
+        my $ringtimeout = 15;
+        if($cf_type eq 'cft') {
+            my $rt = $ringtimeout_preference->first;
+            if($rt) {
+                $ringtimeout = $rt->value;
+            }
+        }
+        my $d = $destination ? $destination->destination : "";
+        my $duri = undef;
+        my $t = $destination ? ($destination->timeout || 300) : 300;
+        if($d =~ /\@voicebox\.local$/) {
+            $d = 'voicebox';
+        } elsif($d =~ /\@fax2mail\.local$/) {
+            $d = 'fax2mail';
+        } elsif($d =~ /\@conference\.local$/) {
+            $d = 'conference';
+        } elsif($d =~ /\@fax2mail\.local$/) {
+            $d = 'fax2mail';
+        } elsif($d =~ /^sip:callingcard\@app\.local$/) {
+            $d = 'callingcard';
+        } elsif($d =~ /^sip:callthrough\@app\.local$/) {
+            $d = 'callthrough';
+        } elsif($d =~ /^sip:localuser\@.+\.local$/) {
+            $d = 'localuser';
+        } else {
+            $duri = $d;
+            $d = 'uri';
+            $c->stash->{cf_tmp_params} = {
+                uri_destination => $duri,
+                uri_timeout => $t,
+                id => $destination ? $destination->id : undef,
+            };
+        }
+        $params = $c->stash->{cf_tmp_params};
+        $params->{destination} = { destination => $d };
+        $params->{ringtimeout} = $ringtimeout;
     }
 
     my $cf_form;
     if($cf_type eq "cft") {
-        $cf_form = NGCP::Panel::Form::SubscriberCFTSimple->new;
+        $cf_form = NGCP::Panel::Form::SubscriberCFTSimple->new(ctx => $c);
     } else {
-        $cf_form = NGCP::Panel::Form::SubscriberCFSimple->new;
+        $cf_form = NGCP::Panel::Form::SubscriberCFSimple->new(ctx => $c);
     }
 
     $cf_form->process(
@@ -465,10 +492,48 @@ sub preferences_callforward :Chained('base') :PathPart('preferences/callforward'
                         $dest->delete;
                     }
                 }
-                my $dest = $dest_set->voip_cf_destinations->create({
+
+                my $numberstr = "";
+                my $number = $c->stash->{subscriber}->primary_number;
+                if(defined $number) {
+                    $numberstr .= $number->cc;
+                    $numberstr .= $number->ac if defined($number->ac);
+                    $numberstr .= $number->sn;
+                } else {
+                    $numberstr = $c->stash->{subscriber}->uuid;
+                }
+                my $dest = $cf_form->field('destination');
+                my $d = $dest->field('destination')->value;
+                my $t = 300;
+                if($d eq "voicebox") {
+                    $d = "sip:vmu$numberstr\@voicebox.local";
+                } elsif($d eq "fax2mail") {
+                    $d = "sip:$numberstr\@fax2mail.local";
+                } elsif($d eq "conference") {
+                    $d = "sip:conf=$numberstr\@conference.local";
+                } elsif($d eq "callingcard") {
+                    $d = "sip:callingcard\@app.local";
+                } elsif($d eq "callthrough") {
+                    $d = "sip:callthrough\@app.local";
+                } elsif($d eq "localuser") {
+                    $d = "sip:localuser\@app.local";
+                } elsif($d eq "uri") {
+                    $d = $dest->field('uri_destination')->value->[1];
+                    # TODO: check for valid dest here
+                    if($d !~ /\@/) {
+                        $d .= '@'.$c->stash->{subscriber}->domain->domain;
+                    }
+                    if($d !~ /^sip:/) {
+                        $d = 'sip:' . $d;
+                    }
+                    $t = $dest->field('uri_timeout')->value->[1];
+                    # TODO: check for valid timeout here
+                }
+
+                $dest_set->voip_cf_destinations->create({
+                    destination => $d,
+                    timeout => $t,
                     priority => 1,
-                    timeout => 300,
-                    destination => $c->request->params->{destination},
                 });
 
                 $cf_mapping = $cf_mapping->first; 
@@ -844,8 +909,8 @@ sub preferences_callforward_destinationset_edit :Chained('preferences_callforwar
                 $d = 'fax2mail';
             } elsif($d =~ /^sip:callingcard\@app\.local$/) {
                 $d = 'callingcard';
-            } elsif($d =~ /^sip:callingthrough\@app\.local$/) {
-                $d = 'callingcard';
+            } elsif($d =~ /^sip:callthrough\@app\.local$/) {
+                $d = 'callthrough';
             } elsif($d =~ /^sip:localuser\@.+\.local$/) {
                 $d = 'localuser';
             } else {

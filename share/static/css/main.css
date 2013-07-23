@@ -113,6 +113,10 @@ div.ngcp-destination-row {
     margin-left: 180px !important;
 }
 
+div.ngcp-destination-row-simple {
+    margin-left: 0px !important;
+}
+
 input.ngcp-destination-field {
     width: 30%;
 }

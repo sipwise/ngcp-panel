@@ -16,13 +16,71 @@ has_field 'submitid' => (
 );
 
 has_field 'destination' => (
-    type => 'Text', 
-    required => 1,
-    element_attr => {
-        rel => ['tooltip'],
-        title => ['Either a number (e.g. &ldquo;431234&rdquo;), a SIP user (e.g. &ldquo;peter&rdquo; or a full SIP URI (e.g. &ldquo;sip:peter@example.org&rdquo;)']
+    type => 'Compound', 
+);
+
+has_field 'destination.id' => (
+    type => 'Hidden',
+);
+
+# dummy fields to provide accessors for our manually created ones
+# in &set_destination_groups below
+has_field 'destination.uri_destination' => (
+    type => 'Hidden',
+    value => undef,
+);
+has_field 'destination.uri_timeout' => (
+    type => 'Hidden',
+    value => undef,
+);
+
+has_field 'destination.destination' => (
+    type => 'Select',
+    widget => 'RadioGroup',
+    label => 'Destination',
+    do_label => 1,
+    options_method => \&set_destination_groups,
+    tags => {
+        before_element => '<div class="ngcp-destination-row-simple">',
+        after_element => '</div>',
     },
 );
+
+sub set_destination_groups {
+    my($self) = @_;
+    my @options = ();
+
+    my $uri_d = "";
+    my $uri_t = 300;
+    if(defined $self->form->ctx && 
+       defined $self->form->ctx->stash->{cf_tmp_params}) {
+        print ">>>>>>>>>>>>>>>>>>>>>>> we have cf_tmp_params\n";
+        use Data::Printer;
+        p $self->form->ctx->stash->{cf_tmp_params};
+        my $d = $self->form->ctx->stash->{cf_tmp_params};
+        p $d;
+        $uri_d = $d->{uri_destination} if defined($d);
+        $uri_t = $d->{uri_timeout} if defined($d);
+        print ">>>>>>>>>>>>>>>>>>>>>>> uri_destination=$uri_d, uri_timeout=$uri_t\n";
+    }
+
+    push @options, { label => 'Voicemail', value => 'voicebox' };
+    push @options, { label => 'Conference', value => 'conference' };
+    push @options, { label => 'Fax2Mail', value => 'fax2mail' };
+    push @options, { label => 'Calling Card', value => 'callingcard' };
+    push @options, { label => 'Call Trough', value => 'callthrough' };
+    push @options, { label => 'Local Subscriber', value => 'localuser' };
+    push @options, { 
+        label => 'URI/Number <input type="text" class="ngcp-destination-field" name="destination.uri_destination" value="'.$uri_d.'"/>'.
+                 '<span> for </span>'.
+                 '<input type="text" class="ngcp-destination-field" name="destination.uri_timeout" value="'.$uri_t.'"/>'.
+                 '<span> seconds</span>',
+        value => 'uri',
+        selected => 1,
+    };
+
+    return \@options;
+}
 
 has_field 'cf_actions' => (
     type => 'Compound',
@@ -62,15 +120,6 @@ sub build_form_element_class {
     return [qw(form-horizontal)];
 }
 
-sub validate_destination {
-    my ($self, $field) = @_;
-
-    # TODO: proper SIP URI check!
-    if($field->value !~ /^sip:.+\@.+$/) {
-        my $err_msg = 'Destination must be a valid SIP URI in format "sip:user@domain"';
-        $field->add_error($err_msg);
-    }
-}
 1;
 
 # vim: set tabstop=4 expandtab:
