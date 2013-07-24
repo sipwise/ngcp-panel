@@ -21,6 +21,8 @@ use NGCP::Panel::Form::Voicemail::Attach;
 use NGCP::Panel::Form::Voicemail::Delete;
 use NGCP::Panel::Form::Reminder;
 use NGCP::Panel::Form::Subscriber::TrustedSource;
+use NGCP::Panel::Form::Subscriber::Location;
+use NGCP::Panel::Utils::XMLDispatcher;
 use UUID;
 
 use Data::Printer;
@@ -1389,6 +1391,12 @@ sub master :Chained('base') :PathPart('details') :CaptureArgs(0) {
         { name => "origtime", search_from_epoch => 1, search_to_epoch => 1, title => "Time" },
         { name => "duration", search => 1, title => "Duration" },
     ]);
+    $c->stash->{reg_dt_columns} = NGCP::Panel::Utils::Datatables::set_columns($c, [
+        { name => "id", search => 1, title => "#" },
+        { name => "user_agent", search => 1, title => "User Agent" },
+        { name => "contact", search => 1, title => "Contact" },
+        { name => "expires", search => 1, title => "Expires" },
+    ]);
 
     $c->stash(
         template => 'subscriber/master.tt',
@@ -1570,6 +1578,7 @@ sub edit_master :Chained('master') :PathPart('edit') :Args(0) {
 
     $c->stash(
         edit_flag => 1,
+        description => 'Subscriber Master Data',
         form => $form,
         close_target => $c->uri_for_action('/subscriber/details', [$c->req->captures->[0]]),
     );
@@ -1731,6 +1740,19 @@ sub ajax_calls :Chained('master') :PathPart('calls/ajax') :Args(0) {
     $c->detach( $c->view("JSON") );
 }
 
+sub ajax_registered :Chained('master') :PathPart('registered/ajax') :Args(0) {
+    my ($self, $c) = @_;
+
+    my $s = $c->stash->{subscriber}->provisioning_voip_subscriber;
+    my $reg_rs = $c->model('DB')->resultset('location')->search({
+        username => $s->username,
+        domain => $s->domain->domain,
+    });
+    NGCP::Panel::Utils::Datatables::process($c, $reg_rs, $c->stash->{reg_dt_columns});
+
+    $c->detach( $c->view("JSON") );
+}
+
 sub ajax_voicemails :Chained('master') :PathPart('voicemails/ajax') :Args(0) {
     my ($self, $c) = @_;
 
@@ -1792,6 +1814,114 @@ sub delete_voicemail :Chained('voicemail') :PathPart('delete') :Args(0) {
     }
 
     $c->response->redirect($c->uri_for_action('/subscriber/details', [$c->req->captures->[0]]));
+}
+
+sub registered :Chained('master') :PathPart('registered') :CaptureArgs(1) {
+    my ($self, $c, $reg_id) = @_;
+
+    my $s = $c->stash->{subscriber}->provisioning_voip_subscriber;
+    $c->stash->{registered} = $c->model('DB')->resultset('location')->find({
+        id => $reg_id,
+        username => $s->username,
+        domain => $s->domain->domain,
+    });
+    unless($c->stash->{registered}) {
+        $c->log->error("failed to find location id '$reg_id' for subscriber uuid " . $s->uuid);
+        $c->flash(messages => [{type => 'error', text => 'Failed to find registered device'}]);
+        $c->response->redirect($c->uri_for_action('/subscriber/details', [$c->req->captures->[0]]));
+        return;
+    }
+}
+
+sub delete_registered :Chained('registered') :PathPart('delete') :Args(0) {
+    my ($self, $c) = @_;
+    my $ret;
+
+    try {
+        my $s = $c->stash->{subscriber}->provisioning_voip_subscriber;
+        my $aor = $s->username . '@' . $s->domain->domain;
+        my $contact = $c->stash->{registered}->contact;
+        my $dispatcher = NGCP::Panel::Utils::XMLDispatcher->new;
+        $ret = $dispatcher->dispatch("proxy-ng", 1, 1, <<EOF );
+<?xml version="1.0" ?>
+<methodCall>
+<methodName>ul.rm_contact</methodName>
+<params>
+<param><value><string>location</string></value></param>
+<param><value><string>$aor</string></value></param>
+<param><value><string>$contact</string></value></param>
+</params>
+</methodCall>
+EOF
+    } catch($e) {
+        $c->log->error("failed to delete registered device: $e");
+        $c->flash(messages => [{type => 'error', text => 'Failed to delete registered device'}]);
+    }
+
+# TODO: how to determine if $ret was ok?
+#    unless($ret) {
+#        $c->log->error("failed to delete registered device: $e");
+#        $c->flash(messages => [{type => 'error', text => 'Failed to delete registered device'}]);
+#    }
+
+    $c->flash(messages => [{type => 'success', text => 'Successfully deleted registered device'}]);
+    $c->response->redirect($c->uri_for_action('/subscriber/details', [$c->req->captures->[0]]));
+}
+
+sub create_registered :Chained('master') :PathPart('registered/create') :Args(0) {
+    my ($self, $c) = @_;
+
+    my $s = $c->stash->{subscriber}->provisioning_voip_subscriber;
+    my $posted = ($c->request->method eq 'POST');
+    my $ret;
+
+    my $form = NGCP::Panel::Form::Subscriber::Location->new;
+    $form->process(
+        posted => $posted,
+        params => $c->request->params
+    );
+    if($posted && $form->validated) {
+        try {
+            my $s = $c->stash->{subscriber}->provisioning_voip_subscriber;
+            my $aor = $s->username . '@' . $s->domain->domain;
+            my $contact = $form->field('contact')->value;
+            my $path = $c->config->{sip}->{path} || '<sip:127.0.0.1:5060;lr>';
+            my $dispatcher = NGCP::Panel::Utils::XMLDispatcher->new;
+            $ret = $dispatcher->dispatch("proxy-ng", 1, 1, <<EOF );
+<?xml version="1.0" ?>
+<methodCall>
+<methodName>ul.add</methodName>
+<params>
+<param><value><string>location</string></value></param>
+<param><value><string>$aor</string></value></param>
+<param><value><string>$contact</string></value></param>
+<param><value><int>0</int></value></param>
+<param><value><double>1.00</double></value></param>
+<param><value><string><![CDATA[$path]]></string></value></param>
+<param><value><int>0</int></value></param>
+<param><value><int>0</int></value></param>
+<param><value><int>4294967295</int></value></param>
+</params>
+</methodCall>
+EOF
+            # TODO: error check
+            $c->flash(messages => [{type => 'success', text => 'Successfully added registered device'}]);
+            $c->response->redirect($c->uri_for_action('/subscriber/details', [$c->req->captures->[0]]));
+            return;
+        } catch($e) {
+            $c->log->error("failed to add registered device: $e");
+            $c->flash(messages => [{type => 'error', text => 'Failed to add registered device'}]);
+            $c->response->redirect($c->uri_for_action('/subscriber/details', [$c->req->captures->[0]]));
+            return;
+        }
+    }
+
+    $c->stash(
+        edit_flag => 1,
+        description => 'Registered Device',
+        form => $form,
+        close_target => $c->uri_for_action('/subscriber/details', [$c->req->captures->[0]]),
+    );
 }
 
 sub create_trusted :Chained('base') :PathPart('preferences/trusted/create') :Args(0) {

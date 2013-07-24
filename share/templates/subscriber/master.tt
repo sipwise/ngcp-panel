@@ -130,6 +130,40 @@
             </div>
         </div>
     </div>
+
+
+    <div class="accordion-group">
+        <div class="accordion-heading">
+            <a class="accordion-toggle" data-toggle="collapse" data-parent="#subscriber_data" href="#collapse_regdev">Registered Devices</a>
+        </div>
+        <div class="accordion-body collapse" id="collapse_regdev">
+            <div class="accordion-inner">
+
+            <a class="btn btn-tertiary btn-large" href="[% c.uri_for_action('/subscriber/create_registered', [c.req.captures.0]) %]"><i class="icon-star"></i> Create Permanent Registration</a>
+[%
+    helper.name = 'Registered Devices';
+    #helper.column_sort = 'origtime';
+    helper.dt_columns = reg_dt_columns;
+
+    helper.close_target = close_target;
+    helper.create_flag = create_flag;
+    helper.edit_flag = edit_flag;
+    helper.form_object = form;
+    helper.ajax_uri = c.uri_for_action('/subscriber/ajax_registered', [c.req.captures.0]);
+
+    helper.dt_buttons = [
+        { name = 'Delete', uri = "details/registered/'+full.id+'/delete", class = 'btn-small btn-secondary', icon = 'icon-trash' },
+    ];
+   
+
+    PROCESS 'helpers/datatables.tt';
+%]
+            </div>
+        </div>
+    </div>
+
+
+
 </div>
 
 [% IF edit_flag == 1 -%]
