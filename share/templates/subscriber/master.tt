@@ -85,13 +85,8 @@
             
 [%
     helper.name = 'Calls';
-    helper.column_sort = 'status';
     helper.dt_columns = calls_dt_columns;
     helper.column_sort = 'start_time';
-
-    helper.close_target = close_target;
-    helper.create_flag = create_flag;
-    helper.edit_flag = edit_flag;
     helper.form_object = form;
     helper.ajax_uri = c.uri_for_action('/subscriber/ajax_calls', [c.req.captures.0]);
 
@@ -113,9 +108,6 @@
     helper.column_sort = 'origtime';
     helper.dt_columns = vm_dt_columns;
 
-    helper.close_target = close_target;
-    helper.create_flag = create_flag;
-    helper.edit_flag = edit_flag;
     helper.form_object = form;
     helper.ajax_uri = c.uri_for_action('/subscriber/ajax_voicemails', [c.req.captures.0]);
 

@@ -22,6 +22,7 @@ use NGCP::Panel::Form::Voicemail::Delete;
 use NGCP::Panel::Form::Reminder;
 use NGCP::Panel::Form::Subscriber::TrustedSource;
 use NGCP::Panel::Form::Subscriber::Location;
+use NGCP::Panel::Form::Subscriber::SpeedDial;
 use NGCP::Panel::Form::Faxserver::Name;
 use NGCP::Panel::Form::Faxserver::Password;
 use NGCP::Panel::Form::Faxserver::Active;
@@ -226,6 +227,12 @@ sub base :Chained('/subscriber/sub_list') :PathPart('') :CaptureArgs(1) {
     }
 
     $c->stash(subscriber => $res);
+
+    $c->stash->{sd_dt_columns} = NGCP::Panel::Utils::Datatables::set_columns($c, [
+        { name => "id", search => 1, title => "#" },
+        { name => "slot", search => 1, title => "Slot" },
+        { name => "destination", search => 1, title => "Destination" },
+    ]);
 }
 
 sub ajax :Chained('sub_list') :PathPart('ajax') :Args(0) {
@@ -1898,7 +1905,7 @@ sub voicemail :Chained('master') :PathPart('voicemail') :CaptureArgs(1) {
     });
     unless($rs->first) {
         $c->log->error("no such voicemail file with id '$vm_id' for uuid ".$c->stash->{subscriber}->uuid);
-        $c->flash(messages => [{type => 'error', text => 'No such voicemail file to play'}]);
+        $c->flash(messages => [{type => 'error', text => 'No such voicemail file'}]);
         $c->response->redirect($c->uri_for_action('/subscriber/details', [$c->req->captures->[0]]));
         return;
     }
@@ -2165,6 +2172,140 @@ sub delete_trusted :Chained('trusted_base') :PathPart('delete') :Args(0) {
 
     $c->response->redirect($c->uri_for_action('/subscriber/preferences', [$c->req->captures->[0]]));
 }
+
+
+sub ajax_speeddial :Chained('base') :PathPart('preferences/speeddial/ajax') :Args(0) {
+    my ($self, $c) = @_;
+
+    my $prov_subscriber = $c->stash->{subscriber}->provisioning_voip_subscriber;
+    my $sd_rs = $prov_subscriber->voip_speed_dials;
+    NGCP::Panel::Utils::Datatables::process($c, $sd_rs, $c->stash->{sd_dt_columns});
+
+    $c->detach( $c->view("JSON") );
+}
+
+sub create_speeddial :Chained('base') :PathPart('preferences/speeddial/create') :Args(0) {
+    my ($self, $c) = @_;
+
+    my $posted = ($c->request->method eq 'POST');
+    my $prov_subscriber = $c->stash->{subscriber}->provisioning_voip_subscriber;
+    my $slots = $prov_subscriber->voip_speed_dials;
+    $c->stash->{used_sd_slots} = $slots;
+    my $form = NGCP::Panel::Form::Subscriber::SpeedDial->new(ctx => $c);
+
+    $form->process(params => $c->req->params);
+    if($posted && $form->validated) {
+        try {
+            my $d = $form->field('destination')->value;
+            if($d !~ /\@/) {
+                $d .= '@'.$prov_subscriber->domain->domain;
+            }
+            if($d !~ /^sip:/) {
+                $d = 'sip:' . $d;
+            }
+            $slots->create({
+                slot => $form->field('slot')->value,
+                destination => $d,
+            });
+            $c->flash(messages => [{type => 'success', text => 'Successfully created speed dial slot'}]);
+            $c->response->redirect($c->uri_for_action('/subscriber/preferences', [$c->req->captures->[0]]));
+            return;
+        } catch($e) {
+            $c->log->error("failed to create speed dial slot: $e");
+            $c->flash(messages => [{type => 'error', text => 'Failed to created speed dial slot'}]);
+            $c->response->redirect($c->uri_for_action('/subscriber/preferences', [$c->req->captures->[0]]));
+            return;
+        }
+    }
+
+    delete $c->stash->{used_sd_slots};
+    $c->stash(
+        template => 'subscriber/preferences.tt',
+        edit_cf_flag => 1,
+        cf_description => "Speed Dial Slot",
+        cf_form => $form,
+        close_target => $c->uri_for_action('/subscriber/preferences', [$c->req->captures->[0]]),
+    );
+}
+
+sub speeddial :Chained('base') :PathPart('preferences/speeddial') :CaptureArgs(1) {
+    my ($self, $c, $sd_id) = @_;
+
+    my $sd = $c->stash->{subscriber}->provisioning_voip_subscriber->voip_speed_dials
+                ->find($sd_id);
+    unless($sd) {
+        $c->log->error("no such speed dial slot with id '$sd_id' for uuid ".$c->stash->{subscriber}->uuid);
+        $c->flash(messages => [{type => 'error', text => 'No such speed dial id'}]);
+        $c->response->redirect($c->uri_for_action('/subscriber/preferences', [$c->req->captures->[0]]));
+        return;
+    }
+    $c->stash->{speeddial} = $sd;
+}
+
+sub delete_speeddial :Chained('speeddial') :PathPart('delete') :Args(0) {
+    my ($self, $c) = @_;
+
+    try {
+        $c->stash->{speeddial}->delete;
+        $c->flash(messages => [{type => 'success', text => 'Successfully deleted speed dial slot'}]);
+    } catch($e) {
+        $c->log->error("failed to delete speed dial slot: $e");
+        $c->flash(messages => [{type => 'error', text => 'Failed to delete speed dial slot'}]);
+    }
+
+    $c->response->redirect($c->uri_for_action('/subscriber/preferences', [$c->req->captures->[0]]));
+}
+
+sub edit_speeddial :Chained('speeddial') :PathPart('edit') :Args(0) {
+    my ($self, $c) = @_;
+
+    my $posted = ($c->request->method eq 'POST');
+    my $prov_subscriber = $c->stash->{subscriber}->provisioning_voip_subscriber;
+    my $slots = $prov_subscriber->voip_speed_dials;
+    $c->stash->{used_sd_slots} = $slots;
+    my $form = NGCP::Panel::Form::Subscriber::SpeedDial->new(ctx => $c);
+
+    my $params;
+    unless($posted) {
+        $params->{slot} = $c->stash->{speeddial}->slot;
+        $params->{destination} = $c->stash->{speeddial}->destination;
+    }
+
+    $form->process(params => $posted ? $c->req->params : $params);
+    if($posted && $form->validated) {
+        try {
+            my $d = $form->field('destination')->value;
+            if($d !~ /\@/) {
+                $d .= '@'.$prov_subscriber->domain->domain;
+            }
+            if($d !~ /^sip:/) {
+                $d = 'sip:' . $d;
+            }
+            $c->stash->{speeddial}->update({
+                slot => $form->field('slot')->value,
+                destination => $d,
+            });
+            $c->flash(messages => [{type => 'success', text => 'Successfully updated speed dial slot'}]);
+            $c->response->redirect($c->uri_for_action('/subscriber/preferences', [$c->req->captures->[0]]));
+            return;
+        } catch($e) {
+            $c->log->error("failed to update speed dial slot: $e");
+            $c->flash(messages => [{type => 'error', text => 'Failed to update speed dial slot'}]);
+            $c->response->redirect($c->uri_for_action('/subscriber/preferences', [$c->req->captures->[0]]));
+            return;
+        }
+    }
+
+    delete $c->stash->{used_sd_slots};
+    $c->stash(
+        template => 'subscriber/preferences.tt',
+        edit_cf_flag => 1,
+        cf_description => "Speed Dial Slot",
+        cf_form => $form,
+        close_target => $c->uri_for_action('/subscriber/preferences', [$c->req->captures->[0]]),
+    );
+}
+
 
 =head1 AUTHOR
 

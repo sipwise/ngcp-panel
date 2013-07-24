@@ -298,6 +298,32 @@
 
     <div class="accordion-group">
         <div class="accordion-heading">
+            <a class="accordion-toggle" data-toggle="collapse" data-parent="#preference_groups" href="#collapse_speed">Speed Dial</a>
+        </div>
+        <div class="accordion-body collapse" id="collapse_speed">
+            <div class="accordion-inner">
+
+                <a class="btn btn-tertiary button-large" href="[% c.uri_for_action('/subscriber/create_speeddial', [c.req.captures.0]) %]"><i class="icon-star"></i> Create Slot</a>
+[%
+    helper.messages = '';
+    helper.name = 'Speeddial';
+    helper.column_sort = 'slot';
+    helper.dt_columns = sd_dt_columns;
+    helper.ajax_uri = c.uri_for_action('/subscriber/ajax_speeddial', [c.req.captures.0]);
+
+    helper.dt_buttons = [
+        { name = 'Edit', uri = "preferences/speeddial/'+full.id+'/edit", class = 'btn-small btn-primary', icon = 'icon-edit' },
+        { name = 'Delete', uri = "preferences/speeddial/'+full.id+'/delete", class = 'btn-small btn-secondary', icon = 'icon-trash' },
+    ];
+
+    PROCESS 'helpers/datatables.tt';
+%]
+            </div>
+        </div>
+    </div>
+
+    <div class="accordion-group">
+        <div class="accordion-heading">
             <a class="accordion-toggle" data-toggle="collapse" data-parent="#preference_groups" href="#collapse_rm">Reminder</a>
         </div>
         <div class="accordion-body collapse" id="collapse_rm">
