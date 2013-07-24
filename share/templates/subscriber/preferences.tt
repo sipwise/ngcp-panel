@@ -40,7 +40,7 @@
         <div class="accordion-body collapse" id="collapse_cf">
             <div class="accordion-inner">
 
-                <table class="table table-bordered table-striped table-highlight table-hover" id="preferences_table[% group.id %]">
+                <table class="table table-bordered table-striped table-highlight table-hover" id="preferences_table_cf">
                     <thead>
                         <tr>
                             <th>Type</th>
@@ -129,7 +129,7 @@
         <div class="accordion-body collapse" id="collapse_vm">
             <div class="accordion-inner">
 
-                <table class="table table-bordered table-striped table-highlight table-hover" id="preferences_table[% group.id %]">
+                <table class="table table-bordered table-striped table-highlight table-hover" id="preferences_table_vm">
                     <thead>
                         <tr>
                             <th>Name</th>
@@ -201,7 +201,7 @@
         <div class="accordion-body collapse" id="collapse_rm">
             <div class="accordion-inner">
 
-                <table class="table table-bordered table-striped table-highlight table-hover" id="preferences_table[% group.id %]">
+                <table class="table table-bordered table-striped table-highlight table-hover" id="preferences_table_rm">
                     <thead>
                         <tr>
                             <th>Time</th>
@@ -231,6 +231,57 @@
             </div>
         </div>
     </div>
+
+    <div class="accordion-group">
+        <div class="accordion-heading">
+            <a class="accordion-toggle" data-toggle="collapse" data-parent="#preference_groups" href="#collapse_ts">Trusted Sources</a>
+        </div>
+        <div class="accordion-body collapse" id="collapse_ts">
+            <div class="accordion-inner">
+
+                <a class="btn btn-tertiary btn-large" href="[% c.uri_for_action("/subscriber/create_trusted", [c.req.captures.0]) %]"><i class="icon-star"></i> Create</a>
+                <div class="ngcp-separator"></div>
+
+                <table class="table table-bordered table-striped table-highlight table-hover" id="preferences_table_ts">
+                    <thead>
+                        <tr>
+                            <th>Source IP</th>
+                            <th>Protocol</th>
+                            <th>From-Pattern</th>
+                            [% # one for actions -%]
+                            <th class="ngcp-actions-column"></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        [% FOR trusted IN subscriber.provisioning_voip_subscriber.voip_trusted_sources.all -%]
+                        <tr class="sw_action_row">
+                            <td>
+                                [% trusted.src_ip %]
+                            </td>
+                            <td>
+                                [% trusted.protocol %]
+                            </td>
+                            <td>
+                                [% trusted.from_pattern %]
+                            </td>
+                            <td class="ngcp-actions-column">
+                                <div class="sw_actions">
+                                    <a class="btn btn-primary btn-small" href="[% c.uri_for_action("/subscriber/edit_trusted", [c.req.captures.0, trusted.id]) %]"><i class="icon-edit"></i> Edit</a>
+                                    <a class="btn btn-secondary btn-small" href="[% c.uri_for_action("/subscriber/delete_trusted", [c.req.captures.0, trusted.id]) %]" data-confirm="Delete"><i class="icon-trash"></i> Delete</a>
+                                </div>
+
+                            </td>
+                        </tr>
+                        [% END %]
+                    </tbody>
+                </table>
+
+            </div>
+        </div>
+    </div>
+
+
+
 [% 
     PROCESS 'helpers/pref_table.tt';
 %]

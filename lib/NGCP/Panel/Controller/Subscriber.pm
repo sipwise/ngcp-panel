@@ -20,6 +20,7 @@ use NGCP::Panel::Form::Voicemail::Email;
 use NGCP::Panel::Form::Voicemail::Attach;
 use NGCP::Panel::Form::Voicemail::Delete;
 use NGCP::Panel::Form::Reminder;
+use NGCP::Panel::Form::Subscriber::TrustedSource;
 use UUID;
 
 use Data::Printer;
@@ -1791,6 +1792,123 @@ sub delete_voicemail :Chained('voicemail') :PathPart('delete') :Args(0) {
     }
 
     $c->response->redirect($c->uri_for_action('/subscriber/details', [$c->req->captures->[0]]));
+}
+
+sub create_trusted :Chained('base') :PathPart('preferences/trusted/create') :Args(0) {
+    my ($self, $c) = @_;
+
+    my $posted = ($c->request->method eq 'POST');
+    my $trusted_rs = $c->stash->{subscriber}->provisioning_voip_subscriber->voip_trusted_sources;
+    my $params = {};
+    
+    my $form = NGCP::Panel::Form::Subscriber::TrustedSource->new;
+    $form->process(
+        posted => $posted,
+        params => $posted ? $c->req->params : {}
+    );
+
+    if($posted && $form->validated) {
+        try {
+            $trusted_rs->create({
+                uuid => $c->stash->{subscriber}->uuid,
+                src_ip => $form->field('src_ip')->value,
+                protocol => $form->field('protocol')->value,
+                from_pattern => $form->field('from_pattern') ? $form->field('from_pattern')->value : undef,
+            });
+            $c->flash(messages => [{type => 'success', text => 'Successfully created trusted source'}]);
+            $c->response->redirect($c->uri_for_action('/subscriber/preferences', [$c->req->captures->[0]]));
+            return;
+        } catch($e) {
+            $c->log->error("creating trusted source failed: $e");
+            $c->flash(messages => [{type => 'error', text => 'Failed to create trusted source'}]);
+            $c->response->redirect($c->uri_for_action('/subscriber/preferences', [$c->req->captures->[0]]));
+            return;
+        }
+    }
+
+    $c->stash(
+        template => 'subscriber/preferences.tt',
+        edit_cf_flag => 1,
+        cf_description => 'Trusted Source',
+        cf_form => $form,
+        close_target => $c->uri_for_action('/subscriber/preferences', [$c->req->captures->[0]]),
+    );
+}
+
+sub trusted_base :Chained('base') :PathPart('preferences/trusted') :CaptureArgs(1) {
+    my ($self, $c, $trusted_id) = @_;
+
+    $c->stash->{trusted} = $c->stash->{subscriber}->provisioning_voip_subscriber
+                            ->voip_trusted_sources->find($trusted_id);
+
+    unless($c->stash->{trusted}) {
+        $c->log->error("trusted source id '$trusted_id' not found for subscriber uuid ".$c->stash->{subscriber}->uuid);
+        $c->flash(messages => [{type => 'error', text => 'Trusted source entry not found'}]);
+        $c->response->redirect($c->uri_for_action('/subscriber/preferences', [$c->req->captures->[0]]));
+        return;
+    }
+}
+
+sub edit_trusted :Chained('trusted_base') :PathPart('edit') {
+    my ($self, $c) = @_;
+
+    my $posted = ($c->request->method eq 'POST');
+    my $trusted = $c->stash->{trusted};
+    my $params = {};
+    
+    if(!$posted && $trusted) {
+        $params = { 
+            'src_ip' => $trusted->src_ip,
+            'protocol' => $trusted->protocol,
+            'from_pattern' => $trusted->from_pattern,
+        };
+    }
+
+    my $form = NGCP::Panel::Form::Subscriber::TrustedSource->new;
+    $form->process(
+        params => $posted ? $c->req->params : $params
+    );
+
+    if($posted && $form->validated) {
+        try {
+            $trusted->update({
+                src_ip => $form->field('src_ip')->value,
+                protocol => $form->field('protocol')->value,
+                from_pattern => $form->field('from_pattern') ? $form->field('from_pattern')->value : undef,
+            });
+
+            $c->flash(messages => [{type => 'success', text => 'Successfully updated trusted source'}]);
+            $c->response->redirect($c->uri_for_action('/subscriber/preferences', [$c->req->captures->[0]]));
+            return;
+        } catch($e) {
+            $c->log->error("updating trusted source failed: $e");
+            $c->flash(messages => [{type => 'error', text => 'Failed to update trusted source'}]);
+            $c->response->redirect($c->uri_for_action('/subscriber/preferences', [$c->req->captures->[0]]));
+            return;
+        }
+    }
+
+    $c->stash(
+        template => 'subscriber/preferences.tt',
+        edit_cf_flag => 1,
+        cf_description => 'Trusted Source',
+        cf_form => $form,
+        close_target => $c->uri_for_action('/subscriber/preferences', [$c->req->captures->[0]]),
+    );
+}
+
+sub delete_trusted :Chained('trusted_base') :PathPart('delete') :Args(0) {
+    my ($self, $c) = @_;
+
+    try {
+        $c->stash->{trusted}->delete;
+        $c->flash(messages => [{type => 'success', text => 'Successfully deleted trusted source'}]);
+    } catch($e) {
+        $c->log->error("failed to delete trusted source: $e");
+        $c->flash(messages => [{type => 'error', text => 'Failed to delete trusted source'}]);
+    }
+
+    $c->response->redirect($c->uri_for_action('/subscriber/preferences', [$c->req->captures->[0]]));
 }
 
 =head1 AUTHOR
