@@ -196,6 +196,108 @@
 
     <div class="accordion-group">
         <div class="accordion-heading">
+            <a class="accordion-toggle" data-toggle="collapse" data-parent="#preference_groups" href="#collapse_fax">Fax2Mail and Sendfax</a>
+        </div>
+        <div class="accordion-body collapse" id="collapse_fax">
+            <div class="accordion-inner">
+
+                <table class="table table-bordered table-striped table-highlight table-hover" id="preferences_table_fax">
+                    <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>Value</th>
+                            [% # one for actions -%]
+                            <th class="ngcp-actions-column"></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        [% 
+                            faxpref = subscriber.provisioning_voip_subscriber.voip_fax_preference;
+                            faxdests = subscriber.provisioning_voip_subscriber.voip_fax_destinations.all; 
+                        -%]
+                        <tr class="sw_action_row">
+                            <td>Name in Fax Header for Sendfax</td>
+                            <td>
+                                [% faxpref.name %]
+                            </td>
+                            <td class="ngcp-actions-column">
+                                <div class="sw_actions">
+                                    <a class="btn btn-primary btn-small" href="[% c.uri_for_action("/subscriber/edit_fax", [c.req.captures.0], 'name') %]"><i class="icon-edit"></i> Edit</a>
+                                </div>
+
+                            </td>
+                        </tr>
+                        <tr class="sw_action_row">
+                            <td>Password for Sendfax</td>
+                            <td>
+                                [% faxpref.password %]
+                            </td>
+                            <td class="ngcp-actions-column">
+                                <div class="sw_actions">
+                                    <a class="btn btn-primary btn-small" href="[% c.uri_for_action("/subscriber/edit_fax", [c.req.captures.0], 'password') %]"><i class="icon-edit"></i> Edit</a>
+                                </div>
+
+                            </td>
+                        </tr>
+                        <tr class="sw_action_row">
+                            <td>Active</td>
+                            <td>
+                                [% faxpref.active ? 'yes' : 'no' %]
+                            </td>
+                            <td class="ngcp-actions-column">
+                                <div class="sw_actions">
+                                    <a class="btn btn-primary btn-small" href="[% c.uri_for_action("/subscriber/edit_fax", [c.req.captures.0], 'active') %]"><i class="icon-edit"></i> Edit</a>
+                                </div>
+
+                            </td>
+                        </tr>
+                        <tr class="sw_action_row">
+                            <td>Send Reports</td>
+                            <td>
+                                [% faxpref.send_status ? 'yes' : 'no' %]
+                            </td>
+                            <td class="ngcp-actions-column">
+                                <div class="sw_actions">
+                                    <a class="btn btn-primary btn-small" href="[% c.uri_for_action("/subscriber/edit_fax", [c.req.captures.0], 'send_status') %]"><i class="icon-edit"></i> Edit</a>
+                                </div>
+
+                            </td>
+                        </tr>
+                        <tr class="sw_action_row">
+                            <td>Send Copies</td>
+                            <td>
+                                [% faxpref.send_copy ? 'yes' : 'no' %]
+                            </td>
+                            <td class="ngcp-actions-column">
+                                <div class="sw_actions">
+                                    <a class="btn btn-primary btn-small" href="[% c.uri_for_action("/subscriber/edit_fax", [c.req.captures.0], 'send_copy') %]"><i class="icon-edit"></i> Edit</a>
+                                </div>
+
+                            </td>
+                        </tr>
+                        <tr class="sw_action_row">
+                            <td>Destinations</td>
+                            <td>
+                                [% FOR faxdest IN faxdests -%]
+                                    [% faxdest.destination %] as [% faxdest.filetype %]<br/>
+                                [% END -%]
+                            </td>
+                            <td class="ngcp-actions-column">
+                                <div class="sw_actions">
+                                    <a class="btn btn-primary btn-small" href="[% c.uri_for_action("/subscriber/edit_fax", [c.req.captures.0], 'destinations') %]"><i class="icon-edit"></i> Edit</a>
+                                </div>
+
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+
+            </div>
+        </div>
+    </div>
+
+    <div class="accordion-group">
+        <div class="accordion-heading">
             <a class="accordion-toggle" data-toggle="collapse" data-parent="#preference_groups" href="#collapse_rm">Reminder</a>
         </div>
         <div class="accordion-body collapse" id="collapse_rm">

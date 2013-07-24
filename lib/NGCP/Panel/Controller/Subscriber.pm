@@ -22,6 +22,13 @@ use NGCP::Panel::Form::Voicemail::Delete;
 use NGCP::Panel::Form::Reminder;
 use NGCP::Panel::Form::Subscriber::TrustedSource;
 use NGCP::Panel::Form::Subscriber::Location;
+use NGCP::Panel::Form::Faxserver::Name;
+use NGCP::Panel::Form::Faxserver::Password;
+use NGCP::Panel::Form::Faxserver::Active;
+use NGCP::Panel::Form::Faxserver::SendStatus;
+use NGCP::Panel::Form::Faxserver::SendCopy;
+use NGCP::Panel::Form::Faxserver::Destination;
+
 use NGCP::Panel::Utils::XMLDispatcher;
 use UUID;
 
@@ -1653,6 +1660,124 @@ sub edit_voicebox :Chained('base') :PathPart('preferences/voicebox/edit') :Args(
     } catch($e) {
         $c->log->error("updating voicemail setting failed: $e");
         $c->flash(messages => [{type => 'error', text => 'Failed to update voicemail setting'}]);
+        $c->response->redirect($c->uri_for_action('/subscriber/preferences', [$c->req->captures->[0]]));
+        return;
+    }
+
+    $c->stash(
+        template => 'subscriber/preferences.tt',
+        edit_cf_flag => 1,
+        cf_description => $attribute,
+        cf_form => $form,
+        close_target => $c->uri_for_action('/subscriber/preferences', [$c->req->captures->[0]]),
+    );
+}
+
+sub edit_fax :Chained('base') :PathPart('preferences/fax/edit') :Args(1) {
+    my ($self, $c, $attribute) = @_;
+
+    my $form;
+    my $posted = ($c->request->method eq 'POST');
+    my $prov_subscriber = $c->stash->{subscriber}->provisioning_voip_subscriber;
+    my $faxpref = $prov_subscriber->voip_fax_preference;
+    my $params = {};
+    my $faxpref_rs = $c->model('DB')->resultset('voip_fax_preferences')->search({
+                            subscriber_id => $prov_subscriber->id
+                        });
+    if(!$faxpref) {
+        $faxpref = $faxpref_rs->create({});
+    }
+
+    try {
+        given($attribute) {
+            when('name') { 
+                $form = NGCP::Panel::Form::Faxserver::Name->new;
+                $params = { 'name' => $faxpref->name };
+                $form->process(params => $posted ? $c->req->params : $params);
+                if($posted && $form->validated) {
+                    $faxpref->update({ name => $form->field('name')->value });
+                }
+            }
+            when('password') { 
+                $form = NGCP::Panel::Form::Faxserver::Password->new;
+                $params = { 'password' => $faxpref->password };
+                $form->process(params => $posted ? $c->req->params : $params);
+                if($posted && $form->validated) {
+                    $faxpref->update({ password => $form->field('password')->value });
+                }
+            }
+            when('active') { 
+                $form = NGCP::Panel::Form::Faxserver::Active->new;
+                $params = { 'active' => $faxpref->active };
+                $form->process(params => $posted ? $c->req->params : $params);
+                if($posted && $form->validated) {
+                    $faxpref->update({ active => $form->field('active')->value });
+                }
+            }
+            when('send_status') { 
+                $form = NGCP::Panel::Form::Faxserver::SendStatus->new;
+                $params = { 'send_status' => $faxpref->send_status };
+                $form->process(params => $posted ? $c->req->params : $params);
+                if($posted && $form->validated) {
+                    $faxpref->update({ send_status => $form->field('send_status')->value });
+                }
+            }
+            when('send_copy') { 
+                $form = NGCP::Panel::Form::Faxserver::SendCopy->new;
+                $params = { 'send_copy' => $faxpref->send_copy };
+                $form->process(params => $posted ? $c->req->params : $params);
+                if($posted && $form->validated) {
+                    $faxpref->update({ send_copy => $form->field('send_copy')->value });
+                }
+            }
+            when('destinations') { 
+                $form = NGCP::Panel::Form::Faxserver::Destination->new;
+                unless($posted) {
+                    my @dests = ();
+                    for my $dest($prov_subscriber->voip_fax_destinations->all) {
+                        push @dests, {
+                            destination => $dest->destination,
+                            filetype => $dest->filetype,
+                            cc => $dest->cc,
+                            incoming => $dest->incoming,
+                            outgoing => $dest->outgoing,
+                            status => $dest->status,
+                        }
+                    }
+                    $params->{destination} = \@dests;
+                }
+                $form->process(params => $posted ? $c->req->params : $params);
+                if($posted && $form->validated) {
+                    for my $dest($prov_subscriber->voip_fax_destinations->all) {
+                        $dest->delete;
+                    }
+                    for my $dest($form->field('destination')->fields) {
+                        $prov_subscriber->voip_fax_destinations->create({
+                            destination => $dest->field('destination')->value,
+                            filetype => $dest->field('filetype')->value,
+                            cc => $dest->field('cc')->value,
+                            incoming => $dest->field('incoming')->value,
+                            outgoing => $dest->field('outgoing')->value,
+                            status => $dest->field('status')->value,
+                        });
+                    }
+                }
+            }
+            default {
+                $c->log->error("trying to set invalid fax param '$attribute' for subscriber uuid ".$c->stash->{subscriber}->uuid);
+                $c->flash(messages => [{type => 'error', text => 'Invalid fax setting'}]);
+                $c->response->redirect($c->uri_for_action('/subscriber/preferences', [$c->req->captures->[0]]));
+                return;
+            }
+        }
+        if($posted && $form->validated) {
+            $c->flash(messages => [{type => 'success', text => 'Successfully updated fax setting'}]);
+            $c->response->redirect($c->uri_for_action('/subscriber/preferences', [$c->req->captures->[0]]));
+            return;
+        }
+    } catch($e) {
+        $c->log->error("updating fax setting failed: $e");
+        $c->flash(messages => [{type => 'error', text => 'Failed to update fax setting'}]);
         $c->response->redirect($c->uri_for_action('/subscriber/preferences', [$c->req->captures->[0]]));
         return;
     }
