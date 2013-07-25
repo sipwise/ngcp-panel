@@ -8,8 +8,9 @@ use Moose::Util::TypeConstraints;
 use HTML::FormHandler::Widget::Block::Bootstrap;
 
 has '+widget_wrapper' => ( default => 'Bootstrap' );
-sub build_render_list {[qw/myfields actions/]}
-sub build_form_element_class { [qw/form-horizontal/] }
+has_field 'submitid' => ( type => 'Hidden' );
+sub build_render_list {[qw/submitid fields actions/]}
+sub build_form_element_class {[qw(form-horizontal)]}
 
 has 'readonly' => (is   => 'rw',
                    isa  => 'Int',
@@ -17,7 +18,7 @@ has 'readonly' => (is   => 'rw',
 
 has 'fields_data' => (is => 'rw');
 
-has_block 'myfields' => (
+has_block 'fields' => (
     tag => 'div',
     class => [qw/modal-body/],
 );
@@ -129,7 +130,7 @@ sub create_structure {
     my $self = shift;
     my $field_list = shift;
     
-    $self->block('myfields')->render_list($field_list);
+    $self->block('fields')->render_list($field_list);
 }
 
 1;

@@ -7,13 +7,9 @@ use Moose::Util::TypeConstraints;
 use HTML::FormHandler::Widget::Block::Bootstrap;
 
 has '+widget_wrapper' => ( default => 'Bootstrap' );
-#sub build_render_list {[qw/submitid fields actions/]}
-sub build_render_list {[qw/fields actions/]}
+has_field 'submitid' => ( type => 'Hidden' );
+sub build_render_list {[qw/submitid fields actions/]}
 sub build_form_element_class { [qw/form-horizontal/] }
-
-#has_field 'submitid' => (
-#    type => 'Hidden'
-#);
 
 has_field 'contract' => (
     type => '+NGCP::Panel::Field::ResellerContract',

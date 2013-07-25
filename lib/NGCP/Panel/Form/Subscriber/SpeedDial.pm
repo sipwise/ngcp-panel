@@ -9,7 +9,8 @@ use HTML::FormHandler::Widget::Block::Bootstrap;
 with 'NGCP::Panel::Render::RepeatableJs';
 
 has '+widget_wrapper' => ( default => 'Bootstrap' );
-sub build_render_list {[qw/fields actions/]}
+has_field 'submitid' => ( type => 'Hidden' );
+sub build_render_list {[qw/submitid fields actions/]}
 sub build_form_element_class { [qw/form-horizontal/] }
 
 has_field 'slot' => (

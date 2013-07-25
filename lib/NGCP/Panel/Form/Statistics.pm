@@ -7,7 +7,9 @@ use Moose::Util::TypeConstraints;
 use HTML::FormHandler::Widget::Block::Bootstrap;
 
 has '+widget_wrapper' => ( default => 'Bootstrap' );
-sub build_form_element_class { [qw/form-inline/] }
+has_field 'submitid' => ( type => 'Hidden' );
+sub build_render_list {[qw/submitid host folder select/]}
+sub build_form_element_class {[qw(form-horizontal)]}
 
 has_field 'host' => (
     type => 'Select',
@@ -55,8 +57,6 @@ has_field 'select' => (
     element_class => [qw/btn btn-primary/],
     label => '',
 );
-
-sub build_render_list {[qw/host folder select/]}
 
 1;
 # vim: set tabstop=4 expandtab:

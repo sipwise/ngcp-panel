@@ -1,11 +1,9 @@
 [% META title = 'Contacts' -%]
 [%
     helper.name = 'Contact';
-    helper.show_create_button = 1;
     helper.data = contacts;
     helper.messages = messages;
-    helper.column_titles = [ '#', 'First Name', 'Last Name', 'Email' ];
-    helper.column_fields = [ 'id', 'firstname', 'lastname', 'email' ];
+    helper.dt_columns = contact_dt_columns;
 
     helper.close_target = close_target;
     helper.create_flag = create_flag;
@@ -13,13 +11,15 @@
     helper.form_object = form;
     helper.ajax_uri = c.uri_for( c.controller.action_for('ajax') );
 
-    helper.dt_buttons = [
-        { name = 'Edit', uri = "/contact/'+full[\"id\"]+'/edit", class = 'btn-small btn-primary', icon = 'icon-edit' },
-        { name = 'Delete', uri = "/contact/'+full[\"id\"]+'/delete", class = 'btn-small btn-secondary', icon = 'icon-trash' },
-    ];
-    helper.top_buttons = [
-        { name = 'Create Contact', uri = c.uri_for('/contact/create'), icon = 'icon-star' },
-    ];
+    UNLESS c.user.read_only;
+        helper.dt_buttons = [
+            { name = 'Edit', uri = "/contact/'+full.id+'/edit", class = 'btn-small btn-primary', icon = 'icon-edit' },
+            { name = 'Delete', uri = "/contact/'+full.id+'/delete", class = 'btn-small btn-secondary', icon = 'icon-trash' },
+        ];
+        helper.top_buttons = [
+            { name = 'Create Contact', uri = c.uri_for('/contact/create'), icon = 'icon-star' },
+        ];
+    END;
 
     PROCESS 'helpers/datatables.tt';
 -%]

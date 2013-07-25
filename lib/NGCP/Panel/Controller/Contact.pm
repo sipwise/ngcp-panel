@@ -62,8 +62,9 @@ sub create :Chained('list_contact') :PathPart('create') :Args(0) {
         try {
             delete $form->params->{submitid};
             delete $form->params->{save};
-            $c->stash->{contacts}->create($form->params);
+            my $contact = $c->stash->{contacts}->create($form->params);
             if($c->stash->{close_target}) {
+                $c->session->{created_object} = { contact => { id => $contact->id } };
                 $c->response->redirect($c->stash->{close_target});
                 return;
             }

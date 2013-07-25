@@ -16,7 +16,7 @@ has_block 'fields' => (
     tag => 'div',
     class => [qw(modal-body)],
     render_list => [qw(
-        reseller login md5pass is_superuser is_master is_active read_only show_passwords call_data lawful_intercept
+        id reseller login md5pass is_superuser is_master is_active read_only show_passwords call_data lawful_intercept
     )],
 );
 

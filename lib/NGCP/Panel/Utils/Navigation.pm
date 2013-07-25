@@ -37,7 +37,8 @@ sub check_form_buttons {
     my $posted = ($c->request->method eq 'POST');
 
     if($posted && $form->field('submitid')) {
-        my $val = $form->field('submitid')->value;
+        my $val = $form->value->{submitid};
+        delete $form->params->{submitid};
         if(defined $val and exists($fields->{$val}) ) {
             my $target;
             if (defined $fields->{$val}) {

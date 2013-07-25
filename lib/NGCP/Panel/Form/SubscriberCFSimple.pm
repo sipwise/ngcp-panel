@@ -5,14 +5,13 @@ use Moose::Util::TypeConstraints;
 extends 'HTML::FormHandler';
 
 has '+widget_wrapper' => (default => 'Bootstrap');
+has_field 'submitid' => ( type => 'Hidden' );
+sub build_render_list {[qw/submitid fields actions/]}
+sub build_form_element_class {[qw(form-horizontal)]}
 
 has_field 'id' => (
     type => 'Hidden',
     noupdate => 1,
-);
-
-has_field 'submitid' => (
-    type => 'Hidden',
 );
 
 has_field 'destination' => (
@@ -106,14 +105,6 @@ has_block 'fields' => (
     render_list => [qw(submitid destination)],
 );
 has_block 'actions' => (tag => 'div', class => [qw(modal-footer)], render_list => [qw(cf_actions)],);
-
-sub build_render_list {
-    return [qw(id fields actions)];
-}
-
-sub build_form_element_class {
-    return [qw(form-horizontal)];
-}
 
 1;
 

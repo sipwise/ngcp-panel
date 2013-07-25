@@ -8,8 +8,9 @@ use HTML::FormHandler::Widget::Block::Bootstrap;
 
 has '+enctype' => ( default => 'multipart/form-data');
 has '+widget_wrapper' => ( default => 'Bootstrap' );
-sub build_render_list {[qw/fields actions/]}
-sub build_form_element_class { [qw/form-horizontal/] }
+has_field 'submitid' => ( type => 'Hidden' );
+sub build_render_list {[qw/submitid fields actions/]}
+sub build_form_element_class {[qw(form-horizontal)]}
 
 has_field 'loopplay' => (
     type => 'Boolean',

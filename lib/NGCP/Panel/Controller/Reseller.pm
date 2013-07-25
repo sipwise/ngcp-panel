@@ -21,6 +21,14 @@ sub list_reseller :Chained('/') :PathPart('reseller') :CaptureArgs(0) {
             ->resultset('resellers')->search_rs({}),
         template => 'reseller/list.tt'
     );
+
+    $c->stash->{reseller_dt_columns} = NGCP::Panel::Utils::Datatables::set_columns($c, [
+        { name => "id", search => 1, title => "#" },
+        { name => "contract_id", search => 1, title => "Contract #" },
+        { name => "name", search => 1, title => "Name" },
+        { name => "status", search => 1, title => "Status" },
+    ]);
+
     NGCP::Panel::Utils::Navigation::check_redirect_chain(c => $c);
 }
 
@@ -31,13 +39,7 @@ sub root :Chained('list_reseller') :PathPart('') :Args(0) {
 sub ajax :Chained('list_reseller') :PathPart('ajax') :Args(0) {
     my ($self, $c) = @_;
     my $resellers = $c->stash->{resellers};
-    $c->forward(
-        '/ajax_process_resultset', [
-            $resellers,
-            [qw(id contract_id name status)],
-            [ "contract_id", "name", "status" ]
-        ]
-    );
+    NGCP::Panel::Utils::Datatables::process($c, $resellers, $c->stash->{reseller_dt_columns});
     $c->detach($c->view('JSON'));
     return;
 }
@@ -45,13 +47,16 @@ sub ajax :Chained('list_reseller') :PathPart('ajax') :Args(0) {
 sub create :Chained('list_reseller') :PathPart('create') :Args(0) {
     my ($self, $c) = @_;
 
-    # TODO: check in session if contract has just been created, and set it
-    # as default value
+    $c->detach('/denied_page')
+    	if($c->user->read_only);
+
+    my $params = delete $c->session->{created_object} || {};
 
     my $posted = $c->request->method eq 'POST';
     my $form = NGCP::Panel::Form::Reseller->new;
     $form->process(
         posted => $posted,
+        item => $params,
         params => $c->request->params,
         action => $c->uri_for('create'),
     );
@@ -61,8 +66,6 @@ sub create :Chained('list_reseller') :PathPart('create') :Args(0) {
         fields => [qw/contract.create/], 
         back_uri => $c->uri_for('create')
     );
-    # TODO: preserve the current "reseller" object for continuing editing
-    # when coming back from /contract/create
 
     if($form->validated) {
         try {
@@ -88,13 +91,16 @@ sub create :Chained('list_reseller') :PathPart('create') :Args(0) {
 sub base :Chained('list_reseller') :PathPart('') :CaptureArgs(1) {
     my ($self, $c, $reseller_id) = @_;
 
+    $c->detach('/denied_page')
+    	if($c->user->read_only);
+
     unless($reseller_id && $reseller_id =~ /^\d+$/) {
         $c->flash(messages => [{type => 'error', text => 'Invalid reseller id detected.'}]);
         $c->response->redirect($c->uri_for());
         return;
     }
 
-    $c->stash(reseller => $c->stash->{resellers}->search_rs({id => $reseller_id}));
+    $c->stash(reseller => $c->stash->{resellers}->find($reseller_id));
 }
 
 sub reseller_contacts :Chained('base') :PathPart('contacts') :Args(0) {
@@ -171,9 +177,11 @@ sub edit :Chained('base') :PathPart('edit') :Args(0) {
 
     my $posted = $c->request->method eq 'POST';
     my $form = NGCP::Panel::Form::Reseller->new;
+    my $params = delete $c->session->{created_object} || {};
     $form->process(
-        posted => 1,
-        params => $posted ? $c->request->params : {$c->stash->{reseller}->get_inflated_columns},
+        posted => $posted,
+        item => $params,
+        params => $c->request->params,
         action => $c->uri_for($c->stash->{reseller}->get_column('id'), 'edit'),
     );
     return if NGCP::Panel::Utils::Navigation::check_form_buttons(
@@ -253,6 +261,8 @@ sub ajax_contract :Chained('list_reseller') :PathPart('ajax_contract') :Args(0) 
 sub create_defaults :Path('create_defaults') :Args(0) {
     my ($self, $c) = @_;
     $c->detach('/denied_page') unless $c->request->method eq 'POST';
+    $c->detach('/denied_page')
+    	if($c->user->read_only);
     my $now = DateTime->now;
     my %defaults = (
         contacts => {
@@ -315,7 +325,7 @@ sub create_defaults :Path('create_defaults') :Args(0) {
         $c->log->error($e);
         $c->flash(messages => [{type => 'error', text => 'Creating reseller failed.'}]);
     };
-    $c->flash(messages => [{type => 'success', text => "Reseller successfully created with login '".$defaults{admins}->{login}."' and password '".$defaults{admins}->{md5pass}."', please change your settings below!" }]);
+    $c->flash(messages => [{type => 'success', text => "Reseller successfully created with login <b>".$defaults{admins}->{login}."</b> and password <b>".$defaults{admins}->{md5pass}."</b>, please review your settings below!" }]);
     $c->res->redirect(sprintf('/reseller/%d/details', $r{resellers}->id), HTTP_SEE_OTHER);
     $c->detach;
     return;

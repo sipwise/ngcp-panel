@@ -13,8 +13,9 @@ use NGCP::Panel::Field::Reseller;
 with 'NGCP::Panel::Render::RepeatableJs';
 
 has '+widget_wrapper' => ( default => 'Bootstrap' );
-sub build_render_list {[qw/fields actions/]}
-sub build_form_element_class { [qw/form-horizontal/] }
+has_field 'submitid' => ( type => 'Hidden' );
+sub build_render_list {[qw/submitid fields actions/]}
+sub build_form_element_class {[qw(form-horizontal)]}
 
 has_field 'reseller' => (
     type => '+NGCP::Panel::Field::Reseller',
@@ -235,26 +236,5 @@ sub validate {
 }
 
 1;
-
-=head1 NAME
-
-NGCP::Panel::Form::Subscriber
-
-=head1 DESCRIPTION
-
-Form to modify a subscriber.
-
-=head1 METHODS
-
-=head1 AUTHOR
-
-Gerhard Jungwirth
-
-=head1 LICENSE
-
-This library is free software. You can redistribute it and/or modify
-it under the same terms as Perl itself.
-
-=cut
 
 # vim: set tabstop=4 expandtab:

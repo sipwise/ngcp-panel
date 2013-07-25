@@ -7,10 +7,9 @@ extends 'HTML::FormHandler';
 with 'NGCP::Panel::Render::RepeatableJs';
 
 has '+widget_wrapper' => (default => 'Bootstrap');
-
-has_field 'submitid' => (
-    type => 'Hidden',
-);
+has_field 'submitid' => ( type => 'Hidden' );
+sub build_render_list {[qw/submitid fields actions/]}
+sub build_form_element_class {[qw(form-horizontal)]}
 
 has_field 'name' => (
     type => 'Text',
@@ -190,7 +189,7 @@ has_field 'period_add' => (
 has_block 'fields' => (
     tag => 'div',
     class => [qw(modal-body)],
-    render_list => [qw(submitid name period period_add)],
+    render_list => [qw(name period period_add)],
 );
 
 has_field 'save' => (
@@ -205,24 +204,6 @@ has_block 'actions' => (
     class => [qw(modal-footer)],
     render_list => [qw(save)],
 );
-
-sub build_render_list {
-    return [qw(fields actions)];
-}
-
-sub build_form_element_class {
-    return [qw(form-horizontal)];
-}
-
-#sub validate_destination {
-#    my ($self, $field) = @_;
-#
-#    # TODO: proper SIP URI check!
-#    if($field->value !~ /^sip:.+\@.+$/) {
-#        my $err_msg = 'Destination must be a valid SIP URI in format "sip:user@domain"';
-#        $field->add_error($err_msg);
-#    }
-#}
 
 1;
 

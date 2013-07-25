@@ -240,7 +240,6 @@ sub ajax :Chained('sub_list') :PathPart('ajax') :Args(0) {
     my $dispatch_to = '_ajax_resultset_' . $c->user->auth_realm;
     my $resultset = $self->$dispatch_to($c);
 
-    
     NGCP::Panel::Utils::Datatables::process($c, $resultset, $c->stash->{dt_columns});
 
     $c->detach( $c->view("JSON") );

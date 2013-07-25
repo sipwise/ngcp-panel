@@ -8,14 +8,11 @@ use HTML::FormHandler::Widget::Block::Bootstrap;
 use NGCP::Panel::Field::BillingZone;
 
 has '+widget_wrapper' => ( default => 'Bootstrap' );
-sub build_render_list {[qw/fields actions/]}
+has_field 'submitid' => ( type => 'Hidden' );
+sub build_render_list {[qw/submitid fields actions/]}
 sub build_form_element_class { [qw/form-horizontal/] }
 
 has_field 'id' => (
-    type => 'Hidden'
-);
-
-has_field 'submitid' => (
     type => 'Hidden'
 );
 
@@ -138,7 +135,7 @@ has_block 'fields' => (
         onpeak_init_rate onpeak_init_interval onpeak_follow_rate
         onpeak_follow_interval offpeak_init_rate offpeak_init_interval
         offpeak_follow_rate offpeak_follow_interval use_free_time
-        submitid /],
+        /],
 );
 
 has_block 'actions' => (
@@ -153,7 +150,6 @@ sub custom_get_values {
     foreach my $val(values %$hashvalues) {
         $val = '' unless defined($val);
     }
-    delete $hashvalues->{submitid};
     return $hashvalues;
 }
 

@@ -65,6 +65,8 @@ sub create :Chained('contract_list') :PathPart('create') :Args(0) {
     
     my $item = $c->model('DB')->resultset('billing_mappings')->new_result({});
 
+    my $params = delete $c->session->{created_object} || {};
+    # TODO: where to store created contact and billing profile?
     my $form = NGCP::Panel::Form::Contract->new;
     if($form->process(
         posted => ($c->request->method eq 'POST'),
@@ -79,6 +81,7 @@ sub create :Chained('contract_list') :PathPart('create') :Args(0) {
                 profile => $item->billing_profile,
                 contract => $item->contract,
             );
+            $c->session->{created_object} = { contract => { id => $item->contract->id } };
         } catch($e) {
             # TODO: roll back contract and billing_mappings creation and
             # redirect to correct entry point

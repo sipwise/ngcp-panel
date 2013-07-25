@@ -8,14 +8,11 @@ use HTML::FormHandler::Widget::Block::Bootstrap;
 use NGCP::Panel::Field::BillingZone;
 
 has '+widget_wrapper' => ( default => 'Bootstrap' );
-sub build_render_list {[qw/fields actions/]}
-sub build_form_element_class { [qw/form-horizontal/] }
+has_field 'submitid' => ( type => 'Hidden' );
+sub build_render_list {[qw/submitid fields actions/]}
+sub build_form_element_class {[qw(form-horizontal)]}
 
 has_field 'id' => (
-    type => 'Hidden'
-);
-
-has_field 'submitid' => (
     type => 'Hidden'
 );
 
@@ -50,7 +47,7 @@ has_field 'save' => (
 has_block 'fields' => (
     tag => 'div',
     class => [qw/modal-body/],
-    render_list => [qw/id name priority description contract submitid/],
+    render_list => [qw/id name priority description contract/],
 );
 
 has_block 'actions' => (
