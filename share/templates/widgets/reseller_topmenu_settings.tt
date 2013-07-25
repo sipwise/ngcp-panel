@@ -1,0 +1,11 @@
+<li class="dropdown">
+    <a href="javascript:;" class="dropdown-toggle" data-toggle="dropdown">
+        <i class="icon-th"></i>
+        <span>Settings</span>
+        <b class="caret"></b>
+    </a>
+    <ul class="dropdown-menu">
+        <li><a href="[% c.uri_for('/administrator') %]">Administrators</a></li>
+    </ul>
+</li>
+[% # vim: set tabstop=4 syntax=html expandtab: -%]
