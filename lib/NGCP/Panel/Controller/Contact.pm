@@ -1,20 +1,9 @@
 package NGCP::Panel::Controller::Contact;
-use Moose;
-use namespace::autoclean;
+use Sipwise::Base;
+use namespace::sweep;
 BEGIN { extends 'Catalyst::Controller'; }
+
 use NGCP::Panel::Form::Contact;
-
-=head1 NAME
-
-NGCP::Panel::Controller::Contact - Catalyst Controller
-
-=head1 DESCRIPTION
-
-Catalyst Controller.
-
-=head1 METHODS
-
-=cut
 
 sub auto :Does(ACL) :ACLDetachTo('/denied_page') :AllowedRole(admin) :AllowedRole(reseller) {
     my ($self, $c) = @_;
@@ -22,18 +11,30 @@ sub auto :Does(ACL) :ACLDetachTo('/denied_page') :AllowedRole(admin) :AllowedRol
     return 1;
 }
 
-sub list :Chained('/') :PathPart('contact') :CaptureArgs(0) {
+sub list_contact :Chained('/') :PathPart('contact') :CaptureArgs(0) {
     my ($self, $c) = @_;
 
-    my $contacts = [
-        {id => 1, firstname => 'Foo1', lastname => '1Bar', email => 'foo1@example.org' },
-        {id => 2, firstname => 'Foo2', lastname => '2Bar', email => 'foo2@example.org' },
-        {id => 3, firstname => 'Foo3', lastname => '3Bar', email => 'foo3@example.org' },
-        {id => 4, firstname => 'Foo4', lastname => '4Bar', email => 'foo4@example.org' },
-    ];
+    my $contacts;
+    if($c->user->auth_realm eq "reseller") {
+        $contacts = $c->model('DB')->resultset('contracts')->search({
+            reseller_id => $c->user->reseller_id
+        })->search_related_rs('contact');
+    } else {
+        $contacts = $c->model('DB')->resultset('contacts');
+    }
+
     $c->stash(contacts => $contacts);
     $c->stash(template => 'contact/list.tt');
 
+    $c->stash->{contact_dt_columns} = NGCP::Panel::Utils::Datatables::set_columns($c, [
+        { name => "id", search => 1, title => "#" },
+        { name => "firstname", search => 1, title => "First Name" },
+        { name => "lastname", search => 1, title => "Last Name" },
+        { name => "company", search => 1, title => "Company" },
+        { name => "email", search => 1, title => "Email" },
+    ]);
+
+    # TODO: wtf?
     if($c->session->{redirect_targets} && @{ $c->session->{redirect_targets} }) {
         my $target = ${ $c->session->{redirect_targets} }[0];
         if('/'.$c->request->path eq $target->path) {
@@ -44,11 +45,11 @@ sub list :Chained('/') :PathPart('contact') :CaptureArgs(0) {
     }
 }
 
-sub root :Chained('list') :PathPart('') :Args(0) {
+sub root :Chained('list_contact') :PathPart('') :Args(0) {
     my ($self, $c) = @_;
 }
 
-sub create :Chained('list') :PathPart('create') :Args(0) {
+sub create :Chained('list_contact') :PathPart('create') :Args(0) {
     my ($self, $c) = @_;
 
     my $form = NGCP::Panel::Form::Contact->new;
@@ -58,27 +59,34 @@ sub create :Chained('list') :PathPart('create') :Args(0) {
         action => $c->uri_for('create'),
     );
     if($form->validated) {
-        if($c->stash->{close_target}) {
-            $c->response->redirect($c->stash->{close_target});
+        try {
+            delete $form->params->{submitid};
+            delete $form->params->{save};
+            $c->stash->{contacts}->create($form->params);
+            if($c->stash->{close_target}) {
+                $c->response->redirect($c->stash->{close_target});
+                return;
+            }
+            $c->flash(messages => [{type => 'success', text => 'Contact successfully created'}]);
+            $c->response->redirect($c->uri_for_action('/contact/root'));
+            return;
+        } catch($e) {
+            $c->log->error("failed to create contact: $e");
+            if($c->stash->{close_target}) {
+                $c->response->redirect($c->stash->{close_target});
+                return;
+            }
+            $c->flash(messages => [{type => 'error', text => 'Failed to create contact'}]);
+            $c->response->redirect($c->uri_for_action('/contact/root'));
             return;
         }
-        $c->flash(messages => [{type => 'success', text => 'Contact successfully created!'}]);
-        $c->response->redirect($c->stash->{close_target});
-        return;
     }
 
     $c->stash(create_flag => 1);
     $c->stash(form => $form);
 }
 
-sub search :Chained('list') :PathPart('search') Args(0) {
-    my ($self, $c) = @_;
-
-    $c->flash(messages => [{type => 'info', text => 'Contact search not implemented!'}]);
-    $c->response->redirect($c->uri_for());
-}
-
-sub base :Chained('/contact/list') :PathPart('') :CaptureArgs(1) {
+sub base :Chained('list_contact') :PathPart('') :CaptureArgs(1) {
     my ($self, $c, $contact_id) = @_;
 
     unless($contact_id && $contact_id =~ /^\d+$/) {
@@ -87,9 +95,7 @@ sub base :Chained('/contact/list') :PathPart('') :CaptureArgs(1) {
         return;
     }
 
-    # TODO: fetch details of contact from model
-    my @rfilter = grep { $_->{id} == $contact_id } @{ $c->stash->{contacts} };
-    $c->stash(contact =>  shift @rfilter);
+    $c->stash(contact => $c->stash->{contacts}->find($contact_id));
 }
 
 sub edit :Chained('base') :PathPart('edit') :Args(0) {
@@ -98,38 +104,48 @@ sub edit :Chained('base') :PathPart('edit') :Args(0) {
     my $posted = ($c->request->method eq 'POST');
     my $form = NGCP::Panel::Form::Contact->new;
     $form->process(
-        posted => 1,
-        params => $posted ? $c->request->params : $c->stash->{contact},
-        action => $c->uri_for($c->stash->{contact}->{id}, 'edit'),
+        posted => $posted,
+        params => $c->request->params,
+        item => $c->stash->{contact},
+        action => $c->uri_for($c->stash->{contact}->id, 'edit'),
     );
     if($posted && $form->validated) {
-        $c->flash(messages => [{type => 'success', text => 'Contact successfully changed!'}]);
-        $c->response->redirect($c->uri_for());
-        return;
+        try {
+            delete $form->params->{submitid};
+            delete $form->params->{save};
+            $c->stash->{contact}->update($form->params);
+            $c->flash(messages => [{type => 'success', text => 'Contact successfully changed'}]);
+            $c->response->redirect($c->uri_for_action('/contact/root'));
+            return;
+        } catch($e) {
+            $c->log->error("failed to update contact: $e");
+            $c->flash(messages => [{type => 'error', text => 'Failed to update contact'}]);
+            $c->response->redirect($c->uri_for_action('/contact/root'));
+            return;
+        }
     }
 
-    $c->stash(form => $form);
-    $c->stash(edit_flag => 1);
+    $c->stash(
+        form => $form,
+        edit_flag => 1,
+    );
 }
 
 sub delete :Chained('base') :PathPart('delete') :Args(0) {
     my ($self, $c) = @_;
 
-    # $c->model('Provisioning')->contact($c->stash->{contact}->{id})->delete;
-    $c->flash(messages => [{type => 'info', text => 'Contact delete not implemented!'}]);
+    $c->stash->{contact}->delete;
+    $c->flash(messages => [{type => 'success', text => 'Contact successfully deleted'}]);
     $c->response->redirect($c->uri_for());
 }
 
-sub ajax :Chained('list') :PathPart('ajax') :Args(0) {
+sub ajax :Chained('list_contact') :PathPart('ajax') :Args(0) {
     my ($self, $c) = @_;
     
     #TODO: when user is not logged in, this gets forwarded to login page
     
     my $contacts = $c->model('DB')->resultset('contacts')->search_rs({});
-    
-    $c->forward( "/ajax_process_resultset", [$contacts,
-                 ["id", "firstname", "lastname", "email"],
-                 ["firstname", "lastname", "email"]]);
+    NGCP::Panel::Utils::Datatables::process($c, $c->stash->{contacts}, $c->stash->{contact_dt_columns});
     
     $c->detach( $c->view("JSON") );
 }
