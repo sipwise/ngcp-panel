@@ -6,24 +6,14 @@ BEGIN { extends 'Catalyst::Controller'; }
 use Sipwise::Base;
 use NGCP::Panel::Utils::Statistics;
 use NGCP::Panel::Form::Statistics;
+use NGCP::Panel::Utils::Navigation;
 
 use Sys::Hostname;
-
-=head1 NAME
-
-NGCP::Panel::Controller::Statistics - Catalyst Controller
-
-=head1 DESCRIPTION
-
-Catalyst Controller.
-
-=head1 METHODS
-
-=cut
 
 sub auto :Does(ACL) :ACLDetachTo('/denied_page') :AllowedRole(admin) {
     my ($self, $c) = @_;
     $c->log->debug(__PACKAGE__ . '::auto');
+    NGCP::Panel::Utils::Navigation::check_redirect_chain(c => $c);
     return 1;
 }
 

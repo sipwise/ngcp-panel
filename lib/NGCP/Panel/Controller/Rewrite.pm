@@ -7,10 +7,12 @@ BEGIN { extends 'Catalyst::Controller'; }
 use NGCP::Panel::Form::RewriteRuleSet;
 use NGCP::Panel::Form::RewriteRule;
 use NGCP::Panel::Utils::XMLDispatcher;
+use NGCP::Panel::Utils::Navigation;
 
 sub auto :Does(ACL) :ACLDetachTo('/denied_page') :AllowedRole(admin) :AllowedRole(reseller) {
     my ($self, $c) = @_;
     $c->log->debug(__PACKAGE__ . '::auto');
+    NGCP::Panel::Utils::Navigation::check_redirect_chain(c => $c);
     return 1;
 }
 

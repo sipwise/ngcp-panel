@@ -22,13 +22,12 @@ my @WEEKDAYS = map { langinfo($_) } (DAY_2, DAY_3, DAY_4, DAY_5, DAY_6, DAY_7, D
 sub auto :Does(ACL) :ACLDetachTo('/denied_page') :AllowedRole(admin) :AllowedRole(reseller) {
     my ($self, $c) = @_;
     $c->log->debug(__PACKAGE__ . '::auto');
+    NGCP::Panel::Utils::Navigation::check_redirect_chain(c => $c);
     return 1;
 }
 
 sub profile_list :Chained('/') :PathPart('billing') :CaptureArgs(0) {
     my ( $self, $c ) = @_;
-    
-    NGCP::Panel::Utils::Navigation::check_redirect_chain(c => $c);
     
     my $dispatch_to = '_profile_resultset_' . $c->user->auth_realm;
     my $profiles_rs = $self->$dispatch_to($c);
@@ -193,7 +192,7 @@ sub fees_create :Chained('fees_list') :PathPart('create') :Args(0) {
         params => $c->request->params,
         action => $c->uri_for($profile_id, 'fees', 'create'),
     );
-    return if NGCP::Panel::Utils::Navigation::check_form_buttons(
+    NGCP::Panel::Utils::Navigation::check_form_buttons(
         c => $c, form => $form,
         fields => {'billing_zone.create' => $c->uri_for("$profile_id/zones/create")},
         back_uri => $c->req->uri,
@@ -278,7 +277,7 @@ sub fees_edit :Chained('fees_base') :PathPart('edit') :Args(0) {
         params => $posted ? $c->request->params : $c->stash->{fee},
         action => $c->uri_for($profile_id,'fees',$c->stash->{fee}->{id}, 'edit'),
     );
-    return if NGCP::Panel::Utils::Navigation::check_form_buttons(
+    NGCP::Panel::Utils::Navigation::check_form_buttons(
         c => $c, form => $form,
         fields => {'billing_zone.create' => $c->uri_for("$profile_id/zones/create")},
         back_uri => $c->req->uri,

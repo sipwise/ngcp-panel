@@ -35,6 +35,7 @@ sub check_form_buttons {
         if (ref($fields) eq "ARRAY");
 
     my $posted = ($c->request->method eq 'POST');
+    delete $form->params->{save} if $posted;
 
     if($posted && $form->field('submitid')) {
         my $val = $form->value->{submitid};
@@ -54,10 +55,16 @@ sub check_form_buttons {
                 $c->session->{redirect_targets} = [ $back_uri ];
             }
             $c->response->redirect($target);
-            return 1;
+            $c->detach();
         }
     }
-    return;
+}
+
+sub back_or {
+    my ($c, $alternative_target) = @_;
+    my $target = $c->stash->{close_target} || $alternative_target || $c->req->uri;
+    $c->response->redirect($target);
+    $c->detach();
 }
 
 1;

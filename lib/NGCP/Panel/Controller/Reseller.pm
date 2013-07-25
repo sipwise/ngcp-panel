@@ -10,6 +10,7 @@ use NGCP::Panel::Utils::Navigation;
 sub auto :Does(ACL) :ACLDetachTo('/denied_page') :AllowedRole(admin) {
     my ($self, $c) = @_;
     $c->log->debug(__PACKAGE__ . '::auto');
+    NGCP::Panel::Utils::Navigation::check_redirect_chain(c => $c);
     return 1;
 }
 
@@ -28,8 +29,6 @@ sub list_reseller :Chained('/') :PathPart('reseller') :CaptureArgs(0) {
         { name => "name", search => 1, title => "Name" },
         { name => "status", search => 1, title => "Status" },
     ]);
-
-    NGCP::Panel::Utils::Navigation::check_redirect_chain(c => $c);
 }
 
 sub root :Chained('list_reseller') :PathPart('') :Args(0) {
@@ -60,16 +59,15 @@ sub create :Chained('list_reseller') :PathPart('create') :Args(0) {
         params => $c->request->params,
         action => $c->uri_for('create'),
     );
-    return if NGCP::Panel::Utils::Navigation::check_form_buttons(
+    NGCP::Panel::Utils::Navigation::check_form_buttons(
         c => $c, 
         form => $form, 
         fields => [qw/contract.create/], 
-        back_uri => $c->uri_for('create')
+        back_uri => $c->req->uri,
     );
 
     if($form->validated) {
         try {
-            delete $form->params->{save};
             $form->params->{contract_id} = delete $form->params->{contract}->{id};
             delete $form->params->{contract};
             $c->model('DB')->resultset('resellers')->create($form->params);
@@ -100,7 +98,7 @@ sub base :Chained('list_reseller') :PathPart('') :CaptureArgs(1) {
         return;
     }
 
-    $c->stash(reseller => $c->stash->{resellers}->find($reseller_id));
+    $c->stash(reseller => $c->stash->{resellers}->search_rs({ id => $reseller_id }));
 }
 
 sub reseller_contacts :Chained('base') :PathPart('contacts') :Args(0) {
@@ -177,24 +175,28 @@ sub edit :Chained('base') :PathPart('edit') :Args(0) {
 
     my $posted = $c->request->method eq 'POST';
     my $form = NGCP::Panel::Form::Reseller->new;
-    my $params = delete $c->session->{created_object} || {};
+    my $params = { $c->stash->{reseller}->first->get_inflated_columns };
+    $params->{contract}{id} = delete $params->{contract_id};
+    if($c->session->{created_object}) { # got a contract id from next step
+        use Hash::Merge;
+        $params = Hash::Merge->new('RIGHT_PRECEDENT')->merge($params, delete $c->session->{created_object});
+    }
     $form->process(
         posted => $posted,
-        item => $params,
         params => $c->request->params,
-        action => $c->uri_for($c->stash->{reseller}->get_column('id'), 'edit'),
+        item => $params,
+        action => $c->request->uri,
     );
-    return if NGCP::Panel::Utils::Navigation::check_form_buttons(
+    NGCP::Panel::Utils::Navigation::check_form_buttons(
         c => $c, form => $form, fields => [qw/contract.create/], 
-        back_uri => $c->uri_for($c->stash->{reseller}->get_column('id'), 'edit')
+        back_uri => $c->req->uri,
     );
 
     if($posted && $form->validated) {
         try {
-            my $form_values = $form->value;
-            $form_values->{contract_id} = delete $form_values->{contract}{id};
-            delete $form_values->{contract};
-            $c->stash->{reseller}->update($form_values);            
+            $form->params->{contract_id} = delete $form->params->{contract}{id};
+            delete $form->params->{contract};
+            $c->stash->{reseller}->first->update($form->params);            
             $c->flash(messages => [{type => 'success', text => 'Reseller successfully changed.'}]);
             delete $c->session->{contract_id};
         } catch($e) {
@@ -208,7 +210,7 @@ sub edit :Chained('base') :PathPart('edit') :Args(0) {
     $c->stash(form => $form);
     $c->stash(edit_flag => 1);
 
-    $c->session(contract_id => $c->stash->{reseller}->get_column('contract_id'));
+    $c->session(contract_id => $c->stash->{reseller}->first->get_column('contract_id'));
 
     return;
 }
@@ -217,7 +219,7 @@ sub delete :Chained('base') :PathPart('delete') :Args(0) {
     my ($self, $c) = @_;
 
     try {
-        $c->stash->{reseller}->delete;
+        $c->stash->{reseller}->first->delete;
         $c->flash(messages => [{type => 'success', text => 'Reseller successfully deleted.'}]);
     } catch($e) {
         $c->log->error($e);

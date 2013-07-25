@@ -50,6 +50,7 @@ Catalyst Controller.
 sub auto :Does(ACL) :ACLDetachTo('/denied_page') :AllowedRole(admin) :AllowedRole(reseller) {
     my ($self, $c) = @_;
     $c->log->debug(__PACKAGE__ . '::auto');
+    NGCP::Panel::Utils::Navigation::check_redirect_chain(c => $c);
     return 1;
 }
 
@@ -67,8 +68,6 @@ sub sub_list :Chained('/') :PathPart('subscriber') :CaptureArgs(0) {
         { name => "status", search => 1, title => "Status" },
         { name => "contract_id", search => 1, title => "Contract #"},
     ]);
-    #NGCP::Panel::Utils::Navigation::check_redirect_chain(c => $c);
-
 }
 
 sub root :Chained('sub_list') :PathPart('') :Args(0) {
@@ -85,11 +84,11 @@ sub create_list :Chained('sub_list') :PathPart('create') :Args(0) {
         params => $c->request->params,
         action => $c->uri_for('/subscriber/create'),
     );
-    return if NGCP::Panel::Utils::Navigation::check_form_buttons(
+    NGCP::Panel::Utils::Navigation::check_form_buttons(
         c => $c,
         form => $form,
         fields => [qw/domain.create/],
-        back_uri => $c->uri_for('/subscriber/create'),
+        back_uri => $c->req->uri,
     );
     if($form->validated) {
         my $schema = $c->model('DB');
@@ -479,7 +478,7 @@ sub preferences_callforward :Chained('base') :PathPart('preferences/callforward'
         params => $params,
     );
 
-    return if NGCP::Panel::Utils::Navigation::check_form_buttons(
+    NGCP::Panel::Utils::Navigation::check_form_buttons(
         c => $c, form => $cf_form,
         fields => {
             'cf_actions.advanced' => 
@@ -487,7 +486,7 @@ sub preferences_callforward :Chained('base') :PathPart('preferences/callforward'
                     [$c->req->captures->[0]], $cf_type, 'advanced'
                 ),
         },
-        back_uri => $c->uri_for($c->action, $c->req->captures)
+        back_uri => $c->req->uri,
     );
 
     if($posted && $cf_form->validated) {
@@ -667,7 +666,7 @@ sub preferences_callforward_advanced :Chained('base') :PathPart('preferences/cal
     );
 
 
-    return if NGCP::Panel::Utils::Navigation::check_form_buttons(
+    NGCP::Panel::Utils::Navigation::check_form_buttons(
         c => $c, form => $cf_form,
         fields => {
             'cf_actions.simple' => 
@@ -683,8 +682,7 @@ sub preferences_callforward_advanced :Chained('base') :PathPart('preferences/cal
                     [$c->req->captures->[0]], $cf_type,
                 ),
         },
-        back_uri => $c->uri_for_action('/subscriber/preferences_callforward_advanced',
-            [$c->req->captures->[0]], $cf_type, 'advanced'),
+        back_uri => $c->req->uri,
     );
 
 

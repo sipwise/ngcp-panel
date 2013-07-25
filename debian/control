@@ -30,6 +30,7 @@ Build-Depends: debhelper (>= 8),
                libsys-sig-perl,
                libtext-csv-xs-perl,
                libtrycatch-perl,
+               libhash-merge-perl,
                ngcp-schema
 Standards-Version: 3.9.4
 Homepage: http://sipwise.com/

@@ -9,10 +9,12 @@ use NGCP::Panel::Form::SoundFile;
 use File::Type;
 use NGCP::Panel::Utils::XMLDispatcher;
 use NGCP::Panel::Utils::Sounds;
+use NGCP::Panel::Utils::Navigation;
 
 sub auto :Does(ACL) :ACLDetachTo('/denied_page') :AllowedRole(admin) :AllowedRole(reseller) {
     my ($self, $c) = @_;
     $c->log->debug(__PACKAGE__ . '::auto');
+    NGCP::Panel::Utils::Navigation::check_redirect_chain(c => $c);
     return 1;
 }
 

@@ -9,6 +9,7 @@ use NGCP::Panel::Utils::Contract;
 sub auto :Does(ACL) :ACLDetachTo('/denied_page') :AllowedRole(admin) :AllowedRole(reseller) {
     my ($self, $c) = @_;
     $c->log->debug(__PACKAGE__ . '::auto');
+    NGCP::Panel::Utils::Navigation::check_redirect_chain(c => $c);
     return 1;
 }
 
@@ -52,8 +53,6 @@ sub contract_list :Chained('/') :PathPart('contract') :CaptureArgs(0) {
     $c->stash(contract_select_rs => $rs);
     $c->stash(ajax_uri => $c->uri_for_action("/contract/ajax"));
     $c->stash(template => 'contract/list.tt');
-
-    NGCP::Panel::Utils::Navigation::check_redirect_chain(c => $c);
 }
 
 sub root :Chained('contract_list') :PathPart('') :Args(0) {
@@ -87,30 +86,18 @@ sub create :Chained('contract_list') :PathPart('create') :Args(0) {
             # redirect to correct entry point
             $c->log->error("Failed to create contract balance: $e");
             $c->flash(messages => [{type => 'error', text => 'Failed to create contract balance!'}]);
-
-            if($c->stash->{close_target}) {
-                $c->response->redirect($c->stash->{close_target});
-                return;
-            }
-            $c->response->redirect($c->uri_for_action('/contract/root'));
-            return;
+            NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for_action('/contract/root'));
         }
     } 
-    return if NGCP::Panel::Utils::Navigation::check_form_buttons(
+    NGCP::Panel::Utils::Navigation::check_form_buttons(
         c => $c, form => $form,
         fields => {'contract.contact.create' => $c->uri_for('/contact/create'),
                    'billing_profile.create'  => $c->uri_for('/billing/create')},
-        back_uri => $c->uri_for('create')
+        back_uri => $c->req->uri,
     );
     if($form->validated) {
         $c->flash(messages => [{type => 'success', text => 'Contract successfully created!'}]);
-        
-        if($c->stash->{close_target}) {
-            $c->response->redirect($c->stash->{close_target});
-            return;
-        }
-        $c->response->redirect($c->uri_for_action('/contract/root'));
-        return;
+        NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for_action('/contract/root'));
     }
 
     $c->stash(create_flag => 1);
@@ -122,9 +109,7 @@ sub base :Chained('contract_list') :PathPart('') :CaptureArgs(1) {
 
     unless($contract_id && $contract_id->is_integer) {
         $c->flash(messages => [{type => 'error', text => 'Invalid contract id detected!'}]);
-        $c->response->redirect($c->uri_for());
-        $c->detach;
-        return;
+        NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for);
     }
 
     my $res = $c->stash->{contract_select_rs}
@@ -136,9 +121,7 @@ sub base :Chained('contract_list') :PathPart('') :CaptureArgs(1) {
     
     unless(defined($res)) {
         $c->flash(messages => [{type => 'error', text => 'Contract does not exist!'}]);
-        $c->response->redirect($c->uri_for());
-        $c->detach;
-        return;
+        NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for);
     }
     
     $c->stash(contract => {$res->get_inflated_columns});
@@ -168,16 +151,15 @@ sub edit :Chained('base') :PathPart('edit') :Args(0) {
         item => $item,
         action => $c->uri_for($c->stash->{contract}->{id}, 'edit'),
     );
-    return if NGCP::Panel::Utils::Navigation::check_form_buttons(
+    NGCP::Panel::Utils::Navigation::check_form_buttons(
         c => $c, form => $form,
         fields => {'contract.contact.create' => $c->uri_for('/contact/create'),
                    'billing_profile.create'  => $c->uri_for('/billing/create')},
-        back_uri => $c->uri_for($c->stash->{contract}->{id}, 'edit')
+        back_uri => $c->req->uri,
     );
     if($posted && $form->validated) {
         $c->flash(messages => [{type => 'success', text => 'Contract successfully changed!'}]);
-        $c->response->redirect($c->uri_for());
-        return;
+        NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for);
     }
 
     $c->stash(form => $form);
@@ -194,7 +176,7 @@ sub delete :Chained('base') :PathPart('delete') :Args(0) {
         $c->flash(messages => [{type => 'error', text => 'Delete failed.'}]);
         $c->log->info("Delete failed: " . $e);
     };
-    $c->response->redirect($c->uri_for());
+    NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for);
 }
 
 sub ajax :Chained('contract_list') :PathPart('ajax') :Args(0) {
@@ -262,29 +244,18 @@ sub peering_create :Chained('peering_list') :PathPart('create') :Args(0) {
             # redirect to correct entry point
             $c->log->error($e);
             $c->flash(messages => [{type => 'error', text => 'Failed to create contract balance!'}]);
-            if($c->stash->{close_target}) {
-                $c->response->redirect($c->stash->{close_target});
-                return;
-            }
-            $c->response->redirect($c->uri_for_action('/contract/root'));
-            return;
+            NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for_action('/contract/root'));
         }
     }
-    return if NGCP::Panel::Utils::Navigation::check_form_buttons(
+    NGCP::Panel::Utils::Navigation::check_form_buttons(
         c => $c, form => $form,
         fields => {'contract.contact.create' => $c->uri_for('/contact/create'),
                    'billing_profile.create'  => $c->uri_for('/billing/create')},
-        back_uri => $c->uri_for('create')
+        back_uri => $c->req->uri,
     );
     if($form->validated) {
         $c->flash(messages => [{type => 'success', text => 'Contract successfully created!'}]);
-        
-        if($c->stash->{close_target}) {
-            $c->response->redirect($c->stash->{close_target});
-            return;
-        }
-        $c->response->redirect($c->uri_for_action('/contract/root'));
-        return;
+        NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for_action('/contract/root'));    
     }
 
     $c->stash(create_flag => 1);
@@ -344,24 +315,18 @@ sub customer_create :Chained('customer_list') :PathPart('create') :Args(0) {
             # redirect to correct entry point
             $c->log->error($e);
             $c->flash(messages => [{type => 'error', text => 'Failed to create contract balance!'}]);
-            if($c->stash->{close_target}) {
-                $c->response->redirect($c->stash->{close_target});
-                return;
-            }
-            $c->response->redirect($c->uri_for('/customer'));
-            return;
+            NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for('/customer'));
         }
     }
-    return if NGCP::Panel::Utils::Navigation::check_form_buttons(
+    NGCP::Panel::Utils::Navigation::check_form_buttons(
         c => $c, form => $form,
         fields => {'contract.contact.create' => $c->uri_for('/contact/create'),
                    'billing_profile.create'  => $c->uri_for('/billing/create')},
-        back_uri => $c->uri_for('create')
+        back_uri => $c->req->uri,
     );
     if($form->validated) {
         $c->flash(messages => [{type => 'success', text => 'Contract successfully created!'}]);
-        $c->response->redirect($c->uri_for_action('/customer/details', [$item->contract->id]));
-        return;
+        NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for_action('/customer/details', [$item->contract->id]));
     }
 
     $c->stash(create_flag => 1);

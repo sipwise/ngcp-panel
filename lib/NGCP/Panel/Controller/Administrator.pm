@@ -9,6 +9,7 @@ use NGCP::Panel::Utils::Navigation;
 sub auto :Does(ACL) :ACLDetachTo('/denied_page') :AllowedRole(admin) :AllowedRole(reseller) {
     my ($self, $c) = @_;
     $c->log->debug(__PACKAGE__ . '::auto');
+    NGCP::Panel::Utils::Navigation::check_redirect_chain(c => $c);
     return 1;
 }
 
@@ -84,11 +85,11 @@ sub create :Chained('list_admin') :PathPart('create') :Args(0) {
         params => $c->request->params,
         action => $c->uri_for('create'),
     );
-    return if NGCP::Panel::Utils::Navigation::check_form_buttons(
+    NGCP::Panel::Utils::Navigation::check_form_buttons(
         c => $c,
         form => $form,
         fields => [qw(administrator.create)],
-        back_uri => $c->uri_for('create')
+        back_uri => $c->req->uri,
     );
     if ($form->validated) {
         try {
