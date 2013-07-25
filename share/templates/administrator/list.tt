@@ -4,8 +4,7 @@
     helper.show_create_button = 1;
     helper.data = admins;
     helper.messages = messages;
-    helper.column_titles = [ '#', 'Login', 'Master', 'Active', 'Read only', 'Show passwords', 'Call data', 'Lawful intercept' ];
-    helper.column_fields = [ 'id', 'login', 'is_master', 'is_active', 'read_only', 'show_passwords', 'call_data', 'lawful_intercept' ];
+    helper.dt_columns = admin_dt_columns;
 
     helper.close_target = close_target;
     helper.create_flag = create_flag;
@@ -13,14 +12,17 @@
     helper.form_object = form;
     helper.ajax_uri = c.uri_for( c.controller.action_for('ajax') );
 
-    helper.dt_buttons = [
-        { name = 'Edit', uri = "/administrator/'+full[\"id\"]+'/edit", class = 'btn-small btn-primary', icon = 'icon-edit' },
-        { name = 'Delete', uri = "/administrator/'+full[\"id\"]+'/delete", class = 'btn-small btn-secondary', icon = 'icon-trash' },
-    ];
-    helper.top_buttons = [
-        { name = 'Create Administrator', uri = c.uri_for('/administrator/create'), icon = 'icon-star' },
-    ];
+    IF c.user.is_master;
+        helper.dt_buttons = [
+            { name = 'Edit', uri = "/administrator/'+full[\"id\"]+'/edit", class = 'btn-small btn-primary', icon = 'icon-edit' },
+            { name = 'Delete', uri = "/administrator/'+full[\"id\"]+'/delete", class = 'btn-small btn-secondary', icon = 'icon-trash' },
+        ];
+
+        helper.top_buttons = [
+            { name = 'Create Administrator', uri = c.uri_for('/administrator/create'), icon = 'icon-star' },
+        ];
+    END;
 
     PROCESS 'helpers/datatables.tt';
 -%]
-
+[% # vim: set tabstop=4 syntax=html expandtab: -%]

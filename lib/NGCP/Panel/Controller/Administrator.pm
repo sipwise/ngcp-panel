@@ -2,10 +2,11 @@ package NGCP::Panel::Controller::Administrator;
 use Sipwise::Base;
 use namespace::sweep;
 BEGIN { extends 'Catalyst::Controller'; }
-use NGCP::Panel::Form::Administrator qw();
+use NGCP::Panel::Form::Administrator::Reseller;
+use NGCP::Panel::Form::Administrator::Admin;
 use NGCP::Panel::Utils::Navigation;
 
-sub auto :Does(ACL) :ACLDetachTo('/denied_page') :AllowedRole(admin) {
+sub auto :Does(ACL) :ACLDetachTo('/denied_page') :AllowedRole(admin) :AllowedRole(reseller) {
     my ($self, $c) = @_;
     $c->log->debug(__PACKAGE__ . '::auto');
     return 1;
@@ -13,11 +14,43 @@ sub auto :Does(ACL) :ACLDetachTo('/denied_page') :AllowedRole(admin) {
 
 sub list_admin :PathPart('administrator') :Chained('/') :CaptureArgs(0) {
     my ($self, $c) = @_;
+
+    my $dispatch_to = '_admin_resultset_' . $c->user->auth_realm;
     $c->stash(
-        admins => $c->model('DB')->resultset('admins'),
+        admins => $self->$dispatch_to($c),
         template => 'administrator/list.tt',
     );
+    my $cols = [
+        { name => "id", search => 1, title => "#" },
+    ];
+    if($c->user->is_superuser) {
+        @{ $cols } =  (@{ $cols }, { name => "reseller.name", search => 1, title => "Reseller" });
+    }
+    @{ $cols } =  (@{ $cols }, 
+        { name => "login", search => 1, title => "Login" },
+        { name => "is_master", title => "Master" },
+        { name => "is_active", title => "Active" },
+        { name => "read_only", title => "Read Only" },
+        { name => "show_passwords", title => "Show Passwords" },
+        { name => "call_data", title => "Show CDRs" },
+    );
+    if($c->user->is_superuser) {
+        @{ $cols } =  (@{ $cols },  { name => "lawful_intercept", title => "Lawful Intercept" });
+    }
+    $c->stash->{admin_dt_columns} = NGCP::Panel::Utils::Datatables::set_columns($c, $cols);
     return;
+}
+
+sub _admin_resultset_admin {
+    my ($self, $c) = @_;
+    return $c->model('DB')->resultset('admins');
+}
+
+sub _admin_resultset_reseller {
+    my ($self, $c) = @_;
+    return $c->model('DB')->resultset('admins')->search({
+        reseller_id => $c->user->reseller_id,
+    });
 }
 
 sub root :Chained('list_admin') :PathPart('') :Args(0) {
@@ -28,13 +61,7 @@ sub root :Chained('list_admin') :PathPart('') :Args(0) {
 sub ajax :Chained('list_admin') :PathPart('ajax') :Args(0) {
     my ($self, $c) = @_;
     my $admins = $c->stash->{admins};
-    $c->forward(
-        '/ajax_process_resultset', [
-            $admins,
-            [qw(id login is_master is_active read_only show_passwords call_data lawful_intercept)],
-            [ qw(login) ]
-        ]
-    );
+    NGCP::Panel::Utils::Datatables::process($c, $admins, $c->stash->{admin_dt_columns});
     $c->detach($c->view('JSON'));
     return;
 }
@@ -42,11 +69,16 @@ sub ajax :Chained('list_admin') :PathPart('ajax') :Args(0) {
 sub create :Chained('list_admin') :PathPart('create') :Args(0) {
     my ($self, $c) = @_;
 
-#    use Data::Printer; p $c->user;
-#    $c->detach('/denied_page')
-#    	unless($c->user->{is_master});
+    $c->detach('/denied_page')
+    	unless($c->user->is_master);
 
-    my $form = NGCP::Panel::Form::Administrator->new;
+    my $form;
+    if($c->user->auth_realm eq "admin") {
+        $form = NGCP::Panel::Form::Administrator::Admin->new;
+    } else {
+        $form = NGCP::Panel::Form::Administrator::Reseller->new;
+        $c->request->params->{reseller}{id} = $c->user->reseller_id,
+    }
     $form->process(
         posted => $c->request->method eq 'POST',
         params => $c->request->params,
@@ -59,12 +91,11 @@ sub create :Chained('list_admin') :PathPart('create') :Args(0) {
         back_uri => $c->uri_for('create')
     );
     if ($form->validated) {
-        # TODO: check if reseller, and if so, auto-set contract;
-        # also, only show admins within reseller_id if reseller
         try {
+            $form->params->{reseller_id} = delete $form->params->{reseller}{id};
+            delete $form->params->{reseller};
             delete $form->params->{save};
-            $form->params->{is_superuser} = 1;
-            $form->params->{reseller_id} = 1;
+            delete $form->params->{id};
             $c->model('DB')->resultset('admins')->create($form->params);
             $c->flash(messages => [{type => 'success', text => 'Administrator created.'}]);
         } catch($e) {
@@ -83,6 +114,10 @@ sub create :Chained('list_admin') :PathPart('create') :Args(0) {
 
 sub base :Chained('list_admin') :PathPart('') :CaptureArgs(1) {
     my ($self, $c, $administrator_id) = @_;
+
+    $c->detach('/denied_page')
+    	unless($c->user->is_master);
+
     unless ($administrator_id && $administrator_id->is_integer) {
         $c->flash(messages => [{type => 'error', text => 'invalid administrator id'}]);
         $c->response->redirect($c->uri_for);
@@ -94,9 +129,16 @@ sub base :Chained('list_admin') :PathPart('') :CaptureArgs(1) {
 sub edit :Chained('base') :PathPart('edit') :Args(0) {
     my ($self, $c) = @_;
     my $posted = $c->request->method eq 'POST';
-    my $form = NGCP::Panel::Form::Administrator->new;
-    $c->stash->{administrator}->{'reseller.id'} = delete $c->stash->{administrator}->{reseller_id};
+    my $form;
+    if($c->user->auth_realm eq "admin") {
+        $form = NGCP::Panel::Form::Administrator::Admin->new;
+        $c->stash->{administrator}->{reseller}{id} = 
+            delete $c->stash->{administrator}->{reseller_id};
+    } else {
+        $form = NGCP::Panel::Form::Administrator::Reseller->new;
+    }
     $form->field('md5pass')->{required} = 0;
+
     $form->process(
         posted => 1,
         params => $posted ? $c->request->params : $c->stash->{administrator},
@@ -106,8 +148,17 @@ sub edit :Chained('base') :PathPart('edit') :Args(0) {
     if ($posted && $form->validated) {
         try {
             my $form_values = $form->value;
+
+            # don't allow to take away own master rights, otherwise he'll not be
+            # able to manage any more admins
+            if($form_values->{id} == $c->user->id) {
+                delete $form_values->{is_master};
+                delete $form_values->{is_active};
+            }
+
             # flatten nested hashref instead of recursive update
-            $form_values->{reseller_id} = delete $form_values->{reseller}{id};
+            $form_values->{reseller_id} = delete $form_values->{reseller}{id}
+                if($form_values->{reseller}{id});
             delete $form_values->{reseller};
             delete $form_values->{md5pass} unless length $form_values->{md5pass};
             $c->stash->{admins}->search_rs({ id => $form_values->{id} })->update_all($form_values);
