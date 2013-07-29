@@ -37,14 +37,17 @@ sub create_contract_balance {
     }
 
     try {
-        $c->model('DB')->resultset('contract_balances')->create({
-            contract_id => $contract->id,
-            cash_balance => $cash_balance,
-            cash_balance_interval => $cash_balance_interval,
-            free_time_balance => $free_time_balance,
-            free_time_balance_interval => $free_time_balance_interval,
-            start => $stime,
-            end => $etime,
+        my $schema = $c->model('DB');
+        $schema->txn_do(sub {
+            $schema->resultset('contract_balances')->create({
+                contract_id => $contract->id,
+                cash_balance => $cash_balance,
+                cash_balance_interval => $cash_balance_interval,
+                free_time_balance => $free_time_balance,
+                free_time_balance_interval => $free_time_balance_interval,
+                start => $stime,
+                end => $etime,
+            });
         });
     } catch($e) {
         $c->log->error("Creating contract balance failed: " . $e);

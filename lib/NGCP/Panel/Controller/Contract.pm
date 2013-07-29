@@ -2,6 +2,7 @@ package NGCP::Panel::Controller::Contract;
 use Sipwise::Base;
 use namespace::autoclean;
 BEGIN { extends 'Catalyst::Controller'; }
+use Hash::Merge;
 use NGCP::Panel::Form::Contract;
 use NGCP::Panel::Utils::Navigation;
 use NGCP::Panel::Utils::Contract;
@@ -15,8 +16,20 @@ sub auto :Does(ACL) :ACLDetachTo('/denied_page') :AllowedRole(admin) :AllowedRol
 
 sub contract_list :Chained('/') :PathPart('contract') :CaptureArgs(0) {
     my ($self, $c) = @_;
-    
+
+    $c->stash->{contract_dt_columns} = NGCP::Panel::Utils::Datatables::set_columns($c, [
+        { name => "id", search => 1, title => "#" },
+        { name => "external_id", search => 1, title => "External #" },
+        { name => "contact.reseller.name", search => 1, title => "Reseller" },
+        { name => "contact.email", search => 1, title => "Contact Email" },
+        { name => "billing_mappings.billing_profile.name", search => 1, title => "Billing Profile" },
+        { name => "status", search => 1, title => "Status" },
+    ]);
+
     my $mapping_rs = $c->model('DB')->resultset('billing_mappings');
+
+    # TODO: also order by end_date desc (also in rate-o-mat etc?)
+    #       leave it as is currently to preserve backwards-compatibility
     my $rs = $c->model('DB')->resultset('contracts')
         ->search({
             'billing_mappings.id' => {
@@ -37,20 +50,24 @@ sub contract_list :Chained('/') :PathPart('contract') :CaptureArgs(0) {
                 })->get_column('id')->as_query,
             },
         },{
-            'join' => {
-                'billing_mappings' => 'billing_profile',
-             },
+            'join' => 'billing_mappings',
             '+select' => [
-                'billing_mappings.billing_profile_id',
-                'billing_profile.name',
+                'billing_mappings.id',
             ],
             '+as' => [
-                'billing_profile_id',
-                'billing_profile_name',
+                'billing_mapping_id',
             ],
         });
 
+    unless($c->user->is_superuser) {
+        $rs = $rs->search({
+            'contact.reseller_id' => $c->user->reseller_id,
+        }, {
+            join => 'contact',
+        });
+    }
     $c->stash(contract_select_rs => $rs);
+
     $c->stash(ajax_uri => $c->uri_for_action("/contract/ajax"));
     $c->stash(template => 'contract/list.tt');
 }
@@ -62,43 +79,52 @@ sub root :Chained('contract_list') :PathPart('') :Args(0) {
 sub create :Chained('contract_list') :PathPart('create') :Args(0) {
     my ($self, $c) = @_;
     
-    my $item = $c->model('DB')->resultset('billing_mappings')->new_result({});
-
-    my $params = delete $c->session->{created_object} || {};
+    my $posted = ($c->request->method eq 'POST');
+    my $params = {};
+    Hash::Merge->new('RIGHT_PRECEDENT')->merge($params, delete $c->session->{created_object});
     # TODO: where to store created contact and billing profile?
-    my $form = NGCP::Panel::Form::Contract->new;
-    if($form->process(
-        posted => ($c->request->method eq 'POST'),
+    my $form;
+    $form = NGCP::Panel::Form::Contract->new;
+    $form->process(
+        posted => $posted,
         params => $c->request->params,
-        action => $c->uri_for('create'),
-        item => $item,
-    )) {
-        # insert ok, populate contract_balance table
-        try {
-            NGCP::Panel::Utils::Contract::create_contract_balance(
-                c => $c,
-                profile => $item->billing_profile,
-                contract => $item->contract,
-            );
-            $c->session->{created_object} = { contract => { id => $item->contract->id } };
-        } catch($e) {
-            # TODO: roll back contract and billing_mappings creation and
-            # redirect to correct entry point
-            $c->log->error("Failed to create contract balance: $e");
-            $c->flash(messages => [{type => 'error', text => 'Failed to create contract balance!'}]);
-            NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for_action('/contract/root'));
-        }
-    } 
+        item => $params
+    );
     NGCP::Panel::Utils::Navigation::check_form_buttons(
-        c => $c, form => $form,
-        fields => {'contract.contact.create' => $c->uri_for('/contact/create'),
+        c => $c,
+        form => $form,
+        fields => {'contact.create' => $c->uri_for('/contact/create'),
                    'billing_profile.create'  => $c->uri_for('/billing/create')},
         back_uri => $c->req->uri,
     );
-    if($form->validated) {
-        $c->flash(messages => [{type => 'success', text => 'Contract successfully created!'}]);
+    if($posted && $form->validated) {
+        try {
+            my $schema = $c->model('DB');
+            $schema->txn_do(sub {
+                $form->params->{contact_id} = $form->params->{contact}{id};
+                delete $form->params->{contract};
+                my $bprof_id = $form->params->{billing_profile}{id};
+                delete $form->params->{billing_profile};
+                my $contract = $schema->resultset('contracts')->create($form->params);
+                my $billing_profile = $schema->resultset('billing_profiles')->find($bprof_id);
+                $contract->billing_mappings->create({
+                    billing_profile_id => $bprof_id,
+                });
+                
+                NGCP::Panel::Utils::Contract::create_contract_balance(
+                    c => $c,
+                    profile => $billing_profile,
+                    contract => $contract,
+                );
+                $c->flash(messages => [{type => 'success', text => 'Contract successfully created!'}]);
+            });
+        } catch($e) {
+            $c->log->error("Failed to create contract: $e");
+            $c->flash(messages => [{type => 'error', text => 'Failed to create contract'}]);
+            NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for_action('/contract/root'));
+        }
         NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for_action('/contract/root'));
-    }
+    } 
 
     $c->stash(create_flag => 1);
     $c->stash(form => $form);
@@ -112,15 +138,15 @@ sub base :Chained('contract_list') :PathPart('') :CaptureArgs(1) {
         NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for);
     }
 
-    my $res = $c->stash->{contract_select_rs}
-        ->search(undef, {
+    my $res = $c->stash->{contract_select_rs};
+    $res = $res->search(undef, {
             '+select' => 'billing_mappings.id',
             '+as' => 'bmid',
         })
         ->find($contract_id);
-    
+
     unless(defined($res)) {
-        $c->flash(messages => [{type => 'error', text => 'Contract does not exist!'}]);
+        $c->flash(messages => [{type => 'error', text => 'Contract does not exist'}]);
         NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for);
     }
     
@@ -134,22 +160,23 @@ sub edit :Chained('base') :PathPart('edit') :Args(0) {
 
     my $posted = ($c->request->method eq 'POST');
     
-    my $contr = $c->stash->{contract_result};
-    my $item = $contr->billing_mappings->find($contr->get_column('bmid'));
-    if ($posted && $item->billing_profile_id) {
-        if($item->billing_profile_id != $c->req->params->{'billing_profile.id'}) {
-            $item = $c->stash->{contract_result}->billing_mappings->new_result({});
-            $item->start_date(time);
-        }
-    } else {
+    my $contract = $c->stash->{contract_result};
+    my $billing_mapping = $contract->billing_mappings->find($contract->get_column('bmid'));
+    my $params = {};
+    unless($posted) {
+        $params->{billing_profile}{id} = $billing_mapping->billing_profile->id;
+        $params->{contact}{id} = $contract->contact_id;
+        $params->{external_id} = $contract->external_id;
+        $params->{status} = $contract->status;
     }
-    
+
+    # TODO: handle created contact/bilprof
+
     my $form = NGCP::Panel::Form::Contract->new;
     $form->process(
         posted => $posted,
         params => $c->req->params,
-        item => $item,
-        action => $c->uri_for($c->stash->{contract}->{id}, 'edit'),
+        item => $params,
     );
     NGCP::Panel::Utils::Navigation::check_form_buttons(
         c => $c, form => $form,
@@ -158,7 +185,27 @@ sub edit :Chained('base') :PathPart('edit') :Args(0) {
         back_uri => $c->req->uri,
     );
     if($posted && $form->validated) {
-        $c->flash(messages => [{type => 'success', text => 'Contract successfully changed!'}]);
+        try {
+            my $schema = $c->model('DB');
+            $schema->txn_do(sub {
+                if($form->values->{billing_profile}{id} != $billing_mapping->billing_profile->id) {
+                    say ">>>>>>>> billing profile changed, update mapping";
+                    $contract->billing_mappings->create({
+                        start_date => DateTime->now(),
+                        billing_profile_id => $form->values->{billing_profile}{id},
+                    });
+                }
+                delete $form->values->{billing_profile};
+                $form->values->{contact_id} = $form->values->{contact}{id};
+                delete $form->values->{contact};
+                $contract->update($form->values);
+            });
+            $c->flash(messages => [{type => 'success', text => 'Contract successfully changed!'}]);
+        } catch($e) {
+            $c->log->error("failed to update contract: $e");
+            $c->flash(messages => [{type => 'error', text => 'Failed to update contract'}]);
+            NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for);
+        }
         NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for);
     }
 
@@ -166,15 +213,28 @@ sub edit :Chained('base') :PathPart('edit') :Args(0) {
     $c->stash(edit_flag => 1);
 }
 
+sub terminate :Chained('base') :PathPart('terminate') :Args(0) {
+    my ($self, $c) = @_;
+
+    try {
+        $c->stash->{contract_result}->update({ status => 'terminated' });
+        $c->flash(messages => [{type => 'success', text => 'Contract successfully terminated'}]);
+    } catch (DBIx::Class::Exception $e) {
+        $c->log->info("failed to terminate contract: $e");
+        $c->flash(messages => [{type => 'error', text => 'Failed to terminate contract'}]);
+    };
+    NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for);
+}
+
 sub delete :Chained('base') :PathPart('delete') :Args(0) {
     my ($self, $c) = @_;
 
     try {
         $c->stash->{contract_result}->delete;
-        $c->flash(messages => [{type => 'success', text => 'Contract successfully deleted!'}]);
+        $c->flash(messages => [{type => 'success', text => 'Contract successfully deleted'}]);
     } catch (DBIx::Class::Exception $e) {
-        $c->flash(messages => [{type => 'error', text => 'Delete failed.'}]);
-        $c->log->info("Delete failed: " . $e);
+        $c->log->info("failed to delete contract: $e");
+        $c->flash(messages => [{type => 'error', text => 'Failed to delete contract'}]);
     };
     NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for);
 }
@@ -182,11 +242,12 @@ sub delete :Chained('base') :PathPart('delete') :Args(0) {
 sub ajax :Chained('contract_list') :PathPart('ajax') :Args(0) {
     my ($self, $c) = @_;
     
-    my $rs = $c->stash->{contract_select_rs};
+    my $res = $c->stash->{contract_select_rs};
+    NGCP::Panel::Utils::Datatables::process($c, $res, $c->stash->{contract_dt_columns});
     
-    $c->forward( "/ajax_process_resultset", [$rs,
-                 ["id", "contact_id", "billing_profile_name", "billing_profile_id", "status"],
-                 ["billing_profile.name", "status"]]);
+#    $c->forward( "/ajax_process_resultset", [$rs,
+#                 ["id", "contact_id", "billing_profile_name", "billing_profile_id", "status"],
+#                 ["billing_profile.name", "status"]]);
     
     $c->detach( $c->view("JSON") );
 }

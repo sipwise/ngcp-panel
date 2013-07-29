@@ -3,6 +3,7 @@ use Sipwise::Base;
 use namespace::sweep;
 BEGIN { extends 'Catalyst::Controller'; }
 use DateTime qw();
+use Hash::Merge;
 use HTTP::Status qw(HTTP_SEE_OTHER);
 use NGCP::Panel::Form::Reseller;
 use NGCP::Panel::Utils::Navigation;
@@ -178,7 +179,6 @@ sub edit :Chained('base') :PathPart('edit') :Args(0) {
     my $params = { $c->stash->{reseller}->first->get_inflated_columns };
     $params->{contract}{id} = delete $params->{contract_id};
     if($c->session->{created_object}) { # got a contract id from next step
-        use Hash::Merge;
         $params = Hash::Merge->new('RIGHT_PRECEDENT')->merge($params, delete $c->session->{created_object});
     }
     $form->process(

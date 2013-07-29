@@ -95,7 +95,6 @@ sub create :Chained('list_admin') :PathPart('create') :Args(0) {
         try {
             $form->params->{reseller_id} = delete $form->params->{reseller}{id};
             delete $form->params->{reseller};
-            delete $form->params->{save};
             delete $form->params->{id};
             $c->model('DB')->resultset('admins')->create($form->params);
             $c->flash(messages => [{type => 'success', text => 'Administrator created.'}]);
@@ -131,7 +130,7 @@ sub edit :Chained('base') :PathPart('edit') :Args(0) {
     my ($self, $c) = @_;
     my $posted = $c->request->method eq 'POST';
     my $form;
-    if($c->user->auth_realm eq "admin") {
+    if($c->user->is_superuser) {
         $form = NGCP::Panel::Form::Administrator::Admin->new;
         $c->stash->{administrator}->{reseller}{id} = 
             delete $c->stash->{administrator}->{reseller_id};
@@ -145,7 +144,11 @@ sub edit :Chained('base') :PathPart('edit') :Args(0) {
         params => $posted ? $c->request->params : $c->stash->{administrator},
         action => $c->uri_for($c->stash->{administrator}->{id}, 'edit'),
     );
-    # TODO: if pass is empty, don't update it
+    NGCP::Panel::Utils::Navigation::check_form_buttons(
+        c => $c,
+        form => $form,
+        fields => {},
+    );
     if ($posted && $form->validated) {
         try {
             my $form_values = $form->value;

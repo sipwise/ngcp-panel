@@ -15,6 +15,7 @@ use NGCP::Panel::Form::BillingPeaktimeWeekdays;
 use NGCP::Panel::Form::BillingPeaktimeSpecial;
 use NGCP::Panel::Form::BillingFeeUpload;
 use NGCP::Panel::Utils::Navigation;
+use NGCP::Panel::Utils::Datatables;
 
 my @WEEKDAYS = map { langinfo($_) } (DAY_2, DAY_3, DAY_4, DAY_5, DAY_6, DAY_7, DAY_1);
 #Monday Tuesday Wednesday Thursday Friday Saturday Sunday
@@ -32,6 +33,11 @@ sub profile_list :Chained('/') :PathPart('billing') :CaptureArgs(0) {
     my $dispatch_to = '_profile_resultset_' . $c->user->auth_realm;
     my $profiles_rs = $self->$dispatch_to($c);
     $c->stash(profiles_rs => $profiles_rs);
+    $c->stash->{profile_dt_columns} = NGCP::Panel::Utils::Datatables::set_columns($c, [
+        { name => "id", "search" => 1, "title" => "#" },
+        { name => "name", "search" => 1, "title" => "Name" },
+        { name => "reseller.name", "search" => 1, "title" => "Reseller" },
+    ]);
 
     $c->stash(template => 'billing/list.tt');
 }
@@ -57,10 +63,7 @@ sub ajax :Chained('profile_list') :PathPart('ajax') :Args(0) {
     my ($self, $c) = @_;
     
     my $resultset = $c->stash->{profiles_rs};
-    
-    $c->forward( "/ajax_process_resultset", [$resultset,
-                 ["id", "name"],
-                 ["id", "name"]]);
+    NGCP::Panel::Utils::Datatables::process($c, $resultset, $c->stash->{profile_dt_columns});
     
     $c->detach( $c->view("JSON") );
 }
@@ -110,18 +113,36 @@ sub edit :Chained('base') :PathPart('edit') {
 sub create :Chained('profile_list') :PathPart('create') :Args(0) {
     my ($self, $c) = @_;
 
+    my $posted = ($c->request->method eq 'POST'),
     my $dispatch_to = 'NGCP::Panel::Form::BillingProfile_' . $c->user->auth_realm;
     my $form = $dispatch_to->new;
     $form->process(
-        posted => ($c->request->method eq 'POST'),
+        posted => $posted,
         params => $c->request->params,
         action => $c->uri_for('create'),
-        item   => $c->stash->{profiles_rs}->new_result({}),
     );
-    if($form->validated) {
-        $c->flash(messages => [{type => 'success', text => 'Billing profile successfully created!'}]);
-        $c->response->redirect($c->uri_for());
-        return;
+    NGCP::Panel::Utils::Navigation::check_form_buttons(
+        c => $c,
+        form => $form,
+        fields => {},
+        back_uri => $c->req->uri,
+    );
+    if($posted && $form->validated) {
+        try {
+            if($c->user->is_superuser) {
+                $form->values->{reseller_id} = $form->values->{reseller}{id};   
+            } else {
+                $form->values->{reseller_id} = $c->user->reseller_id;
+            }
+            delete $form->values->{reseller};
+            $c->model('DB')->resultset('billing_profiles')->create($form->values);
+            $c->flash(messages => [{type => 'success', text => 'Billing profile successfully created'}]);
+        } catch($e) {
+            $c->log->error("failed to create billing profile: $e");
+            $c->flash(messages => [{type => 'error', text => 'Failed to create billing profile'}]);
+            NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for);
+        }
+        NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for);
     }
 
     $c->stash(close_target => $c->uri_for());

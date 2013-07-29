@@ -1,7 +1,7 @@
 package NGCP::Panel::Form::BillingProfile_reseller;
 
 use HTML::FormHandler::Moose;
-extends 'HTML::FormHandler::Model::DBIC';
+extends 'HTML::FormHandler';
 use Moose::Util::TypeConstraints;
 
 use HTML::FormHandler::Widget::Block::Bootstrap;
@@ -34,12 +34,18 @@ has_field 'handle' => (
     },
 );
 
+has_field 'prepaid' => (
+    type => 'Boolean',
+    default => 0,
+);
+
 has_field 'interval_charge' => (
     type => 'Money',
     element_attr => {
         rel => ['tooltip'],
         title => ['base fee charged per billing interval, float, specifying Euro']
     },
+    default => '0',
 );
 
 has_field 'interval_free_time' => (
@@ -48,6 +54,7 @@ has_field 'interval_free_time' => (
         rel => ['tooltip'],
         title => ['included time per billing interval, integer, specifying seconds']
     },
+    default => '0',
 );
 
 has_field 'interval_free_cash' => (
@@ -56,6 +63,7 @@ has_field 'interval_free_cash' => (
         rel => ['tooltip'],
         title => ['included money per billing interval, float, specifying EUR, USD, etc.']
     },
+    default => '0',
 );
 
 has_field 'fraud_interval_limit' => (
@@ -99,6 +107,8 @@ has_field 'fraud_daily_limit' => (
         rel => ['tooltip'],
         title => ['fraud detection threshold, per day, float, specifying EUR, USD, etc.']
     },
+    required => 0,
+    default => undef,
 );
 
 has_field 'fraud_daily_lock' => (
@@ -152,6 +162,7 @@ has_field 'vat_included' => (
         rel => ['tooltip'],
         title => ['check if fees are inclusive VAT']
     },
+    default => 0,
 );
 
 has_field 'save' => (
@@ -164,7 +175,7 @@ has_field 'save' => (
 has_block 'fields' => (
     tag => 'div',
     class => [qw/modal-body/],
-    render_list => [qw/handle name interval_charge interval_free_time interval_free_cash 
+    render_list => [qw/handle name prepaid interval_charge interval_free_time interval_free_cash 
         fraud_interval_limit fraud_interval_lock fraud_interval_notify
         fraud_daily_limit fraud_daily_lock fraud_daily_notify
         currency vat_rate vat_included id/],
@@ -175,13 +186,6 @@ has_block 'actions' => (
     class => [qw/modal-footer/],
     render_list => [qw/save/],
 );
-
-before 'update_model' => sub {
-    my $self = shift;
-    foreach my $val(values $self->value) {
-        $val = '' unless defined($val);
-    }
-};
 
 1;
 # vim: set tabstop=4 expandtab:

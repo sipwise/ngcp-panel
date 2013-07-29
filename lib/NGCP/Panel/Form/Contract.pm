@@ -1,7 +1,7 @@
 package NGCP::Panel::Form::Contract;
 
 use HTML::FormHandler::Moose;
-extends 'HTML::FormHandler::Model::DBIC';
+extends 'HTML::FormHandler';
 use Moose::Util::TypeConstraints;
 
 use HTML::FormHandler::Widget::Block::Bootstrap;
@@ -11,11 +11,7 @@ has_field 'submitid' => ( type => 'Hidden' );
 sub build_render_list {[qw/submitid fields actions/]}
 sub build_form_element_class { [qw/form-horizontal/] }
 
-has_field 'contract' => (
-    type => 'Compound',
-);
-
-has_field 'contract.contact' => (
+has_field 'contact' => (
     type => '+NGCP::Panel::Field::Contact',
     label => 'Contact',
     not_nullable => 1,
@@ -26,10 +22,15 @@ has_field 'billing_profile' => (
     not_nullable => 1,
 );
 
-
-has_field 'contract.status' => (
+has_field 'status' => (
     type => '+NGCP::Panel::Field::ContractStatusSelect',
     not_nullable => 1,
+);
+
+has_field 'external_id' => (
+    type => 'Text',
+    label => 'External #',
+    required => 0,
 );
 
 has_field 'save' => (
@@ -42,7 +43,7 @@ has_field 'save' => (
 has_block 'fields' => (
     tag => 'div',
     class => [qw/modal-body/],
-    render_list => [qw/contract.contact billing_profile contract.status/],
+    render_list => [qw/contact billing_profile status external_id/],
 );
 
 has_block 'actions' => (

@@ -1,25 +1,25 @@
 [% META title = 'Billing Profiles' -%]
 [%
     helper.name = 'Billing Profiles';
-    helper.show_create_button = 1;
     helper.messages = messages;
-    helper.column_titles = [ '#', 'Profile' ];
-    helper.column_fields = [ 'id', 'name' ];
+    helper.dt_columns = profile_dt_columns;
 
     helper.close_target = close_target;
     helper.create_flag = create_flag;
     helper.edit_flag = edit_flag;
     helper.form_object = form;
     helper.ajax_uri = c.uri_for( c.controller.action_for('ajax') );
-    
-    helper.dt_buttons = [
-        { name = 'Edit', uri = "/billing/'+full[\"id\"]+'/edit", class = 'btn-small btn-primary', icon = 'icon-edit' },
-        { name = 'Fees', uri = "/billing/'+full[\"id\"]+'/fees", class = 'btn-small btn-tertiary', icon = 'icon-shopping-cart' },
-        { name = 'Peaktimes', uri = "/billing/'+full[\"id\"]+'/peaktimes", class = 'btn-small btn-tertiary', icon = 'icon-time' },
-    ];
-    helper.top_buttons = [
-        { name = 'Create Billing Profile', uri = c.uri_for('/billing/create'), icon = 'icon-star' },
-    ];
+
+    UNLESS c.user.read_only;
+        helper.dt_buttons = [
+            { name = 'Edit', uri = "/billing/'+full[\"id\"]+'/edit", class = 'btn-small btn-primary', icon = 'icon-edit' },
+            { name = 'Fees', uri = "/billing/'+full[\"id\"]+'/fees", class = 'btn-small btn-tertiary', icon = 'icon-shopping-cart' },
+            { name = 'Peaktimes', uri = "/billing/'+full[\"id\"]+'/peaktimes", class = 'btn-small btn-tertiary', icon = 'icon-time' },
+        ];
+        helper.top_buttons = [
+            { name = 'Create Billing Profile', uri = c.uri_for('/billing/create'), icon = 'icon-star' },
+        ];
+    END;
 
     PROCESS 'helpers/datatables.tt';
 -%]

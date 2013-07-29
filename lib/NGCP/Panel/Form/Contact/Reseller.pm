@@ -1,4 +1,4 @@
-package NGCP::Panel::Form::Contact;
+package NGCP::Panel::Form::Contact::Reseller;
 
 use HTML::FormHandler::Moose;
 extends 'HTML::FormHandler';
@@ -14,15 +14,17 @@ sub build_form_element_class { [qw/form-horizontal/] }
 has_field 'firstname' => (
     type => 'Text',
     label => 'First Name',
-    required => 1,
 );
 
 has_field 'lastname' => (
     type => 'Text',
     label => 'Last Name',
-    required => 1,
 );
 
+has_field 'company' => (
+    type => 'Text',
+    label => 'Company',
+);
 
 has_field 'email' => (
     type => 'Email',
@@ -39,7 +41,7 @@ has_field 'save' => (
 has_block 'fields' => (
     tag => 'div',
     class => [qw/modal-body/],
-    render_list => [qw/firstname lastname email/],
+    render_list => [qw/firstname lastname email company/],
 );
 
 has_block 'actions' => (

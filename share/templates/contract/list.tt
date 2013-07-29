@@ -1,11 +1,9 @@
 [% META title = 'Contracts' -%]
 [%
     helper.name = 'Contract';
-    helper.show_create_button = 1;
     helper.data = contracts;
     helper.messages = messages;
-    helper.column_titles = [ '#', 'Contact #', 'Billing Profile', 'Status' ];
-    helper.column_fields = [ 'id', 'contact_id', 'billing_profile_name', 'status' ];
+    helper.dt_columns = contract_dt_columns;
 
     helper.close_target = close_target;
     helper.create_flag = create_flag;
@@ -13,13 +11,16 @@
     helper.form_object = form;
     helper.ajax_uri = ajax_uri;
 
-    helper.dt_buttons = [
-        { name = 'Edit', uri = "/contract/'+full[\"id\"]+'/edit", class = 'btn-small btn-primary', icon = 'icon-edit' },
-        { name = 'Delete', uri = "/contract/'+full[\"id\"]+'/delete", class = 'btn-small btn-secondary', icon = 'icon-trash' },
-    ];
-    helper.top_buttons = [
-        { name = 'Create Contract', uri = c.uri_for('/contract/create'), icon = 'icon-star' },
-    ];
+    UNLESS c.user.read_only;
+        helper.dt_buttons = [
+            { name = 'Edit', uri = "/contract/'+full.id+'/edit", class = 'btn-small btn-primary', icon = 'icon-edit' },
+            { name = 'Terminate', uri = "/contract/'+full.id+'/terminate", class = 'btn-small btn-primary', icon = 'icon-remove' },
+            { name = 'Delete', uri = "/contract/'+full.id+'/delete", class = 'btn-small btn-secondary', icon = 'icon-trash' },
+        ];
+        helper.top_buttons = [
+            { name = 'Create Contract', uri = c.uri_for('/contract/create'), icon = 'icon-star' },
+        ];
+    END;
 
     PROCESS 'helpers/datatables.tt';
 -%]
