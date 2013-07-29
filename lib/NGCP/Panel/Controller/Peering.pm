@@ -20,6 +20,14 @@ sub auto :Does(ACL) :ACLDetachTo('/denied_page') :AllowedRole(admin) {
 
 sub group_list :Chained('/') :PathPart('peering') :CaptureArgs(0) {
     my ( $self, $c ) = @_;
+
+    $c->stash->{peering_group_dt_columns} = NGCP::Panel::Utils::Datatables::set_columns($c, [
+        { name => 'id', search => 1, title => '#' },
+        { name => 'contract.contact.email', search => 1, title => 'Contact Email' },
+        { name => 'name', search => 1, title => 'Name' },
+        { name => 'priority', search => 1, title => 'Priority' },
+        { name => 'description', search => 1, title => 'Description' },
+    ]);
     
     $c->stash(template => 'peering/list.tt');
 }
@@ -32,10 +40,7 @@ sub ajax :Chained('group_list') :PathPart('ajax') :Args(0) {
     my ($self, $c) = @_;
     
     my $resultset = $c->model('DB')->resultset('voip_peer_groups');
-    
-    $c->forward( "/ajax_process_resultset", [$resultset,
-                 ["id", "name", "priority", "description", "peering_contract_id"],
-                 ["name", "priority", "description", "peering_contract_id"]]);
+    NGCP::Panel::Utils::Datatables::process($c, $resultset, $c->stash->{peering_group_dt_columns});
     
     $c->detach( $c->view("JSON") );
 }
@@ -44,7 +49,7 @@ sub base :Chained('group_list') :PathPart('') :CaptureArgs(1) {
     my ($self, $c, $group_id) = @_;
 
     unless($group_id && $group_id->is_integer) {
-        $c->flash(messages => [{type => 'error', text => 'Invalid group id detected!'}]);
+        $c->flash(messages => [{type => 'error', text => 'Invalid group id detected'}]);
         $c->response->redirect($c->uri_for());
         $c->detach;
         return;
@@ -52,7 +57,7 @@ sub base :Chained('group_list') :PathPart('') :CaptureArgs(1) {
 
     my $res = $c->model('DB')->resultset('voip_peer_groups')->find($group_id);
     unless(defined($res)) {
-        $c->flash(messages => [{type => 'error', text => 'Peering Group does not exist!'}]);
+        $c->flash(messages => [{type => 'error', text => 'Peering group does not exist'}]);
         $c->response->redirect($c->uri_for());
         $c->detach;
         return;
@@ -111,18 +116,25 @@ sub delete :Chained('base') :PathPart('delete') {
 sub create :Chained('group_list') :PathPart('create') :Args(0) {
     my ($self, $c) = @_;
 
+    my $posted = ($c->request->method eq 'POST');
     my $form = NGCP::Panel::Form::PeeringGroup->new;
+    my $params = {};
+    say ">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> created objects in peering/create is:";
+    use Data::Printer; p $c->session->{created_object};
+    $params = Hash::Merge->new('RIGHT_PRECEDENT')->merge($params, delete $c->session->{created_object});
+    say ">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> got new contract:";
+    use Data::Printer; p $params;
     $form->process(
-        posted => ($c->request->method eq 'POST'),
+        posted => $posted,
         params => $c->request->params,
-        action => $c->uri_for('create'),
+        item => $params,
     );
     NGCP::Panel::Utils::Navigation::check_form_buttons(
         c => $c, form => $form,
         fields => {'contract.create' => $c->uri_for('/contract/peering/create')},
         back_uri => $c->req->uri,
     );
-    if($form->validated) {
+    if($posted && $form->validated) {
         my $formdata = $form->custom_get_values;
         try {
             $c->model('DB')->resultset('voip_peer_groups')->create(

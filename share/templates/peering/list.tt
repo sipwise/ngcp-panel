@@ -2,8 +2,7 @@
 [%
     helper.name = 'SIP Peering Groups';
     helper.messages = messages;
-    helper.column_titles = [ '#', 'Name', 'Priority', 'Description', 'Contract #' ];
-    helper.column_fields = [ 'id', 'name', 'priority', 'description', 'peering_contract_id' ];
+    helper.dt_columns = peering_group_dt_columns;
 
     helper.close_target = close_target;
     helper.create_flag = create_flag;
@@ -11,14 +10,20 @@
     helper.form_object = form;
     helper.ajax_uri = c.uri_for_action( "/peering/ajax" );
 
-    helper.dt_buttons = [
-        { name = 'Edit', uri = "/peering/'+full[\"id\"]+'/edit", class = 'btn-small btn-primary', icon = 'icon-edit' },
-        { name = 'Delete', uri = "/peering/'+full[\"id\"]+'/delete", class = 'btn-small btn-secondary', icon = 'icon-trash' },
-        { name = 'Details', uri = "/peering/'+full[\"id\"]+'/servers", class = 'btn-small btn-tertiary', icon = 'icon-list' },
-    ];
-    helper.top_buttons = [
-        { name = 'Create Peering Group', uri = c.uri_for('/peering/create'), icon = 'icon-star' },
-    ];
+    UNLESS c.user.read_only;
+        helper.dt_buttons = [
+            { name = 'Edit', uri = "/peering/'+full.id+'/edit", class = 'btn-small btn-primary', icon = 'icon-edit' },
+            { name = 'Delete', uri = "/peering/'+full.id+'/delete", class = 'btn-small btn-secondary', icon = 'icon-trash' },
+            { name = 'Details', uri = "/peering/'+full.id+'/servers", class = 'btn-small btn-tertiary', icon = 'icon-list' },
+        ];
+        helper.top_buttons = [
+            { name = 'Create Peering Group', uri = c.uri_for('/peering/create'), icon = 'icon-star' },
+        ];
+    ELSE;
+        helper.dt_buttons = [
+            { name = 'Details', uri = "/peering/'+full.id+'/servers", class = 'btn-small btn-tertiary', icon = 'icon-list' },
+        ];
+    END;
 
     PROCESS 'helpers/datatables.tt';
 -%]

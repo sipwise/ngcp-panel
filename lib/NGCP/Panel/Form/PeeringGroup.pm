@@ -16,6 +16,13 @@ has_field 'id' => (
     type => 'Hidden'
 );
 
+has_field 'contract' => (
+    type => '+NGCP::Panel::Field::Contract',
+    label => 'Contract',
+    not_nullable => 1,
+);
+
+
 has_field 'name' => (
     type => 'Text',
     required => 1,
@@ -29,12 +36,6 @@ has_field 'priority' => (
 
 has_field 'description' => (
     type => 'Text',
-);
-
-has_field 'contract' => (
-    type => '+NGCP::Panel::Field::Contract',
-    label => 'Contract',
-    not_nullable => 1,
 );
 
 has_field 'save' => (

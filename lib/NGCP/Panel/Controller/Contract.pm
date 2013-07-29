@@ -27,9 +27,6 @@ sub contract_list :Chained('/') :PathPart('contract') :CaptureArgs(0) {
     ]);
 
     my $mapping_rs = $c->model('DB')->resultset('billing_mappings');
-
-    # TODO: also order by end_date desc (also in rate-o-mat etc?)
-    #       leave it as is currently to preserve backwards-compatibility
     my $rs = $c->model('DB')->resultset('contracts')
         ->search({
             'billing_mappings.id' => {
@@ -44,19 +41,22 @@ sub contract_list :Chained('/') :PathPart('contract') :CaptureArgs(0) {
                         { -is  => undef },
                     ],
                 },{
-                    alias => 'sub_query',
+                    alias => 'bilmap',
                     rows => 1,
-                    order_by => {-desc => ['start_date', 'id']},
+                    order_by => {-desc => ['bilmap.start_date', 'bilmap.id']},
                 })->get_column('id')->as_query,
             },
         },{
             'join' => 'billing_mappings',
             '+select' => [
                 'billing_mappings.id',
+                'billing_mappings.start_date',
             ],
             '+as' => [
                 'billing_mapping_id',
+                'billing_mapping_start_date',
             ],
+            alias => 'me',
         });
 
     unless($c->user->is_superuser) {
@@ -81,7 +81,7 @@ sub create :Chained('contract_list') :PathPart('create') :Args(0) {
     
     my $posted = ($c->request->method eq 'POST');
     my $params = {};
-    Hash::Merge->new('RIGHT_PRECEDENT')->merge($params, delete $c->session->{created_object});
+    $params = Hash::Merge->new('RIGHT_PRECEDENT')->merge($params, delete $c->session->{created_object});
     # TODO: where to store created contact and billing profile?
     my $form;
     $form = NGCP::Panel::Form::Contract->new;
@@ -271,53 +271,66 @@ sub peering_ajax :Chained('peering_list') :PathPart('ajax') :Args(0) {
         }, {
             'join' => {'billing_mappings' => 'product'},
         });
-    
-    $c->forward( "/ajax_process_resultset", [$rs,
-                 ["id","contact_id","billing_profile_id", "billing_profile_name","status"],
-                 ["billing_profile.name", "status"]]);
-    
+   
+    NGCP::Panel::Utils::Datatables::process($c, $rs,  $c->stash->{contract_dt_columns});
     $c->detach( $c->view("JSON") );
 }
 
 sub peering_create :Chained('peering_list') :PathPart('create') :Args(0) {
     my ($self, $c) = @_;
-    
-    my $item = $c->model('DB')->resultset('billing_mappings')->new_result({});
-    $item->product(
-        $c->model('DB')->resultset('products')->find({class => 'sippeering'})
-    );
 
+    my $posted = ($c->request->method eq 'POST');
+    my $params = {};
+    $params = Hash::Merge->new('RIGHT_PRECEDENT')->merge($params, delete $c->session->{created_object});
+    # TODO: where to store created contact and billing profile?
+    say ">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> ";
+    use Data::Printer; p $params;
     my $form = NGCP::Panel::Form::Contract->new;
-    if($form->process(
-        posted => ($c->request->method eq 'POST'),
+    $form->process(
+        posted => $posted,
         params => $c->request->params,
-        item => $item,
-    )) {
-        # insert ok, populate contract_balance table
-        try {
-            NGCP::Panel::Utils::Contract::create_contract_balance(
-                c => $c,
-                profile => $item->billing_profile,
-                contract => $item->contract,
-            );
-        } catch($e) {
-            # TODO: roll back contract and billing_mappings creation and
-            # redirect to correct entry point
-            $c->log->error($e);
-            $c->flash(messages => [{type => 'error', text => 'Failed to create contract balance!'}]);
-            NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for_action('/contract/root'));
-        }
-    }
+        item => $params
+    );
     NGCP::Panel::Utils::Navigation::check_form_buttons(
-        c => $c, form => $form,
-        fields => {'contract.contact.create' => $c->uri_for('/contact/create'),
+        c => $c,
+        form => $form,
+        fields => {'contact.create' => $c->uri_for('/contact/create'),
                    'billing_profile.create'  => $c->uri_for('/billing/create')},
         back_uri => $c->req->uri,
     );
-    if($form->validated) {
-        $c->flash(messages => [{type => 'success', text => 'Contract successfully created!'}]);
-        NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for_action('/contract/root'));    
-    }
+    if($posted && $form->validated) {
+        try {
+            my $schema = $c->model('DB');
+            $schema->txn_do(sub {
+                $form->params->{contact_id} = $form->params->{contact}{id};
+                delete $form->params->{contract};
+                my $bprof_id = $form->params->{billing_profile}{id};
+                delete $form->params->{billing_profile};
+                my $contract = $schema->resultset('contracts')->create($form->params);
+                my $billing_profile = $schema->resultset('billing_profiles')->find($bprof_id);
+                my $product = $schema->resultset('products')->find({ class => 'sippeering' }); 
+                $contract->billing_mappings->create({
+                    billing_profile_id => $bprof_id,
+                    product_id => $product->id,
+                });
+                
+                NGCP::Panel::Utils::Contract::create_contract_balance(
+                    c => $c,
+                    profile => $billing_profile,
+                    contract => $contract,
+                );
+                $c->session->{created_object} = { contract => { id => $contract->id }};
+                say ">>>>>>>>>>>>>>>>>> setting created contract object:";
+                use Data::Printer; p $c->session->{created_object};
+                $c->flash(messages => [{type => 'success', text => 'Contract successfully created'}]);
+            });
+        } catch($e) {
+            $c->log->error("Failed to create contract: $e");
+            $c->flash(messages => [{type => 'error', text => 'Failed to create contract'}]);
+            NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for_action('/contract/root'));
+        }
+        NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for_action('/contract/root'));
+    } 
 
     $c->stash(create_flag => 1);
     $c->stash(form => $form);
