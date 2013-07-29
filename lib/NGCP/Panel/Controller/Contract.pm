@@ -117,6 +117,7 @@ sub create :Chained('contract_list') :PathPart('create') :Args(0) {
                 );
                 delete $c->session->{created_objects}->{contact};
                 delete $c->session->{created_objects}->{billing_profile};
+                $c->session->{created_objects}->{contract} = { id => $contract->id };
                 $c->flash(messages => [{type => 'success', text => 'Contract successfully created!'}]);
             });
         } catch($e) {

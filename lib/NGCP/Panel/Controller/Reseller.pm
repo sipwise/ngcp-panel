@@ -50,15 +50,15 @@ sub create :Chained('list_reseller') :PathPart('create') :Args(0) {
     $c->detach('/denied_page')
     	if($c->user->read_only);
 
-    my $params = delete $c->session->{created_object} || {};
+    my $params = {};
+    $params = Hash::Merge->new('RIGHT_PRECEDENT')->merge($params, $c->session->{created_objects});
 
     my $posted = $c->request->method eq 'POST';
     my $form = NGCP::Panel::Form::Reseller->new;
     $form->process(
         posted => $posted,
-        item => $params,
         params => $c->request->params,
-        action => $c->uri_for('create'),
+        item => $params,
     );
     NGCP::Panel::Utils::Navigation::check_form_buttons(
         c => $c, 
@@ -72,6 +72,7 @@ sub create :Chained('list_reseller') :PathPart('create') :Args(0) {
             $form->params->{contract_id} = delete $form->params->{contract}->{id};
             delete $form->params->{contract};
             $c->model('DB')->resultset('resellers')->create($form->params);
+            delete $c->session->{created_objects}->{contract};
 
             $c->flash(messages => [{type => 'success', text => 'Reseller successfully created.'}]);
         } catch($e) {
@@ -178,14 +179,11 @@ sub edit :Chained('base') :PathPart('edit') :Args(0) {
     my $form = NGCP::Panel::Form::Reseller->new;
     my $params = { $c->stash->{reseller}->first->get_inflated_columns };
     $params->{contract}{id} = delete $params->{contract_id};
-    if($c->session->{created_object}) { # got a contract id from next step
-        $params = Hash::Merge->new('RIGHT_PRECEDENT')->merge($params, delete $c->session->{created_object});
-    }
+    $params = Hash::Merge->new('RIGHT_PRECEDENT')->merge($params, $c->session->{created_objects});
     $form->process(
         posted => $posted,
         params => $c->request->params,
         item => $params,
-        action => $c->request->uri,
     );
     NGCP::Panel::Utils::Navigation::check_form_buttons(
         c => $c, form => $form, fields => [qw/contract.create/], 
@@ -197,8 +195,8 @@ sub edit :Chained('base') :PathPart('edit') :Args(0) {
             $form->params->{contract_id} = delete $form->params->{contract}{id};
             delete $form->params->{contract};
             $c->stash->{reseller}->first->update($form->params);            
+            delete $c->session->{created_objects}->{contract};
             $c->flash(messages => [{type => 'success', text => 'Reseller successfully changed.'}]);
-            delete $c->session->{contract_id};
         } catch($e) {
             $c->log->error($e);
             $c->flash(messages => [{type => 'error', text => 'Updating reseller failed.'}]);
