@@ -36,6 +36,7 @@ sub index :Path :Args(0) {
 
     $c->stash(template => 'dashboard.tt');
     delete $c->session->{redirect_targets};
+    delete $c->session->{created_objects};
 }
 
 =head1 AUTHOR

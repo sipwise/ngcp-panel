@@ -81,8 +81,7 @@ sub create :Chained('contract_list') :PathPart('create') :Args(0) {
     
     my $posted = ($c->request->method eq 'POST');
     my $params = {};
-    $params = Hash::Merge->new('RIGHT_PRECEDENT')->merge($params, delete $c->session->{created_object});
-    # TODO: where to store created contact and billing profile?
+    $params = Hash::Merge->new('RIGHT_PRECEDENT')->merge($params, $c->session->{created_objects});
     my $form;
     $form = NGCP::Panel::Form::Contract->new;
     $form->process(
@@ -116,6 +115,8 @@ sub create :Chained('contract_list') :PathPart('create') :Args(0) {
                     profile => $billing_profile,
                     contract => $contract,
                 );
+                delete $c->session->{created_objects}->{contact};
+                delete $c->session->{created_objects}->{billing_profile};
                 $c->flash(messages => [{type => 'success', text => 'Contract successfully created!'}]);
             });
         } catch($e) {
@@ -163,6 +164,7 @@ sub edit :Chained('base') :PathPart('edit') :Args(0) {
     my $contract = $c->stash->{contract_result};
     my $billing_mapping = $contract->billing_mappings->find($contract->get_column('bmid'));
     my $params = {};
+    $params = Hash::Merge->new('RIGHT_PRECEDENT')->merge($params, $c->session->{created_objects});
     unless($posted) {
         $params->{billing_profile}{id} = $billing_mapping->billing_profile->id;
         $params->{contact}{id} = $contract->contact_id;
@@ -199,6 +201,8 @@ sub edit :Chained('base') :PathPart('edit') :Args(0) {
                 $form->values->{contact_id} = $form->values->{contact}{id};
                 delete $form->values->{contact};
                 $contract->update($form->values);
+                delete $c->session->{created_objects}->{contact};
+                delete $c->session->{created_objects}->{billing_profile};
             });
             $c->flash(messages => [{type => 'success', text => 'Contract successfully changed!'}]);
         } catch($e) {
@@ -281,7 +285,7 @@ sub peering_create :Chained('peering_list') :PathPart('create') :Args(0) {
 
     my $posted = ($c->request->method eq 'POST');
     my $params = {};
-    $params = Hash::Merge->new('RIGHT_PRECEDENT')->merge($params, delete $c->session->{created_object});
+    $params = Hash::Merge->new('RIGHT_PRECEDENT')->merge($params, $c->session->{created_objects});
     # TODO: where to store created contact and billing profile?
     say ">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> ";
     use Data::Printer; p $params;
@@ -319,9 +323,9 @@ sub peering_create :Chained('peering_list') :PathPart('create') :Args(0) {
                     profile => $billing_profile,
                     contract => $contract,
                 );
-                $c->session->{created_object} = { contract => { id => $contract->id }};
-                say ">>>>>>>>>>>>>>>>>> setting created contract object:";
-                use Data::Printer; p $c->session->{created_object};
+                $c->session->{created_objects}->{contract} = { id => $contract->id };
+                delete $c->session->{created_objects}->{contact};
+                delete $c->session->{created_objects}->{billing_profile};
                 $c->flash(messages => [{type => 'success', text => 'Contract successfully created'}]);
             });
         } catch($e) {

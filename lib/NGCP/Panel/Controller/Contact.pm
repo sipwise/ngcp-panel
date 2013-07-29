@@ -64,7 +64,7 @@ sub create :Chained('list_contact') :PathPart('create') :Args(0) {
     if($posted && $form->validated) {
         try {
             my $contact = $c->stash->{contacts}->create($form->values);
-            $c->session->{created_object} = { contact => { id => $contact->id } };
+            $c->session->{created_objects}->{contact} = { id => $contact->id };
             $c->flash(messages => [{type => 'success', text => 'Contact successfully created'}]);
         } catch($e) {
             $c->log->error("failed to create contact: $e");

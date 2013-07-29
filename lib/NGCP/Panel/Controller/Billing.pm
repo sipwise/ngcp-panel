@@ -135,7 +135,9 @@ sub create :Chained('profile_list') :PathPart('create') :Args(0) {
                 $form->values->{reseller_id} = $c->user->reseller_id;
             }
             delete $form->values->{reseller};
-            $c->model('DB')->resultset('billing_profiles')->create($form->values);
+            my $profile = $c->model('DB')->resultset('billing_profiles')->create($form->values);
+            $c->session->{created_objects}->{billing_profile} = { id => $profile->id };
+
             $c->flash(messages => [{type => 'success', text => 'Billing profile successfully created'}]);
         } catch($e) {
             $c->log->error("failed to create billing profile: $e");

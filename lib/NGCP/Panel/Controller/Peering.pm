@@ -72,10 +72,12 @@ sub edit :Chained('base') :PathPart('edit') {
     
     my $posted = ($c->request->method eq 'POST');
     my $form = NGCP::Panel::Form::PeeringGroup->new;
+    my $params = {};
+    $params = Hash::Merge->new('RIGHT_PRECEDENT')->merge($params, $c->session->{created_objects});
     $form->process(
-        posted => 1,
-        params => $posted ? $c->request->params : $c->stash->{group},
-        action => $c->uri_for_action('/peering/edit', [$c->req->captures->[0]])
+        posted => $posted,
+        params => $c->request->params,
+        item => $params,
     );
     NGCP::Panel::Utils::Navigation::check_form_buttons(
         c => $c, form => $form,
@@ -86,6 +88,7 @@ sub edit :Chained('base') :PathPart('edit') {
         try {
             $c->stash->{group_result}->update($form->custom_get_values);
             $self->_sip_lcr_reload;
+            delete $c->session->{created_objects}->{contract};
             $c->flash(messages => [{type => 'success', text => 'Peering Group successfully changed!'}]);
         } catch (DBIx::Class::Exception $e) {
             $c->flash(messages => [{type => 'error', text => 'Update of peering group failed.'}]);
@@ -119,9 +122,7 @@ sub create :Chained('group_list') :PathPart('create') :Args(0) {
     my $posted = ($c->request->method eq 'POST');
     my $form = NGCP::Panel::Form::PeeringGroup->new;
     my $params = {};
-    say ">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> created objects in peering/create is:";
-    use Data::Printer; p $c->session->{created_object};
-    $params = Hash::Merge->new('RIGHT_PRECEDENT')->merge($params, delete $c->session->{created_object});
+    $params = Hash::Merge->new('RIGHT_PRECEDENT')->merge($params, $c->session->{created_objects});
     say ">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> got new contract:";
     use Data::Printer; p $params;
     $form->process(
@@ -140,6 +141,7 @@ sub create :Chained('group_list') :PathPart('create') :Args(0) {
             $c->model('DB')->resultset('voip_peer_groups')->create(
                 $formdata );
             $self->_sip_lcr_reload;
+            delete $c->session->{created_objects}->{contract};
             $c->flash(messages => [{type => 'success', text => 'Peering group successfully created!'}]);
         } catch (DBIx::Class::Exception $e) {
             $c->flash(rules_messages => [{type => 'error', text => 'Creation of peering group failed.'}]);
