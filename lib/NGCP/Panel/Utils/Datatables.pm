@@ -24,8 +24,14 @@ sub process {
                 '+select' => [ $c->{name} ],
                 '+as' => [ $c->{accessor} ],
             });
-        } elsif(@parts > 2) {
-            # TODO throw an error for now as we only support one level
+        } elsif(@parts == 3) {
+            $rs = $rs->search_rs(undef, {
+                join => { $parts[0] => $parts[1] },
+                '+select' => [ $parts[1].'.'.$parts[2] ],
+                '+as' => [ $c->{accessor} ],
+            });
+        } elsif(@parts > 3) {
+            # TODO throw an error for now as we only support one and two levels
         }
     }
 
@@ -33,7 +39,7 @@ sub process {
     my @searchColumns = ();
     foreach my $c(@{ $cols }) {
         # avoid amigious column names if we have the same column in different joined tables
-        my $name = $c->{name} =~ /\./ ? $c->{name} : 'me.'.$c->{name};
+        my $name = _get_joined_column_name($c->{name});
         push @searchColumns, $name if $c->{search};
     }
     my $searchString = $c->request->params->{sSearch} // "";
@@ -57,7 +63,8 @@ sub process {
     @searchColumns = ();
     foreach my $c(@{ $cols }) {
         # avoid amigious column names if we have the same column in different joined tables
-        my $name = $c->{name} =~ /\./ ? $c->{name} : 'me.'.$c->{name};
+        my $name = _get_joined_column_name($c->{name});
+
         if($c->{search_from_epoch} && $from_date) {
             $rs = $rs->search({
                 $name => { '>=' => $from_date->epoch },
@@ -98,8 +105,7 @@ sub process {
         my @displayedFields = ();
         for my $c(@{ $cols }) {
             next unless $c->{title};
-            # again, add 'me' to avoid ambiguous column names
-            my $name = $c->{name} =~ /\./ ? $c->{name} : 'me.'.$c->{name};
+            my $name = _get_joined_column_name($c->{name});
             push @displayedFields, $name;
         }
         # ... and pick the name defined by the dt index
@@ -158,6 +164,24 @@ sub _prune_row {
         }
     }
     return { %row };
+}
+
+sub _get_joined_column_name {
+    my $cname = shift;
+    my $name;
+    if($cname !~ /\./) {
+        $name = 'me.'.$cname;
+    } else {
+        my @parts = split /\./, $cname;
+        if(@parts == 2) {
+            $name = $cname;
+        } elsif(@parts == 3) {
+            $name = $parts[1].'.'.$parts[2];
+        } else {
+            # TODO throw an error for now as we only support one and two level
+        }
+    }
+    return $name;
 }
 
 
