@@ -61,6 +61,9 @@ sub auto :Private {
     }
     $c->stash(topmenu => $topmenu_templates);
 
+
+    $c->session->{created_objects} = {} unless(defined $c->session->{created_objects});
+
     return 1;
 }
 

@@ -7,8 +7,8 @@ use DateTime::Format::ISO8601;
 
 BEGIN { extends 'Catalyst::Controller'; }
 
-use NGCP::Panel::Form::BillingProfile_admin;
-use NGCP::Panel::Form::BillingProfile_reseller;
+use NGCP::Panel::Form::BillingProfile::Admin;
+use NGCP::Panel::Form::BillingProfile::Reseller;
 use NGCP::Panel::Form::BillingFee;
 use NGCP::Panel::Form::BillingZone;
 use NGCP::Panel::Form::BillingPeaktimeWeekdays;
@@ -111,15 +111,22 @@ sub edit :Chained('base') :PathPart('edit') {
 }
 
 sub create :Chained('profile_list') :PathPart('create') :Args(0) {
-    my ($self, $c) = @_;
+    my ($self, $c, $no_reseller) = @_;
 
-    my $posted = ($c->request->method eq 'POST'),
-    my $dispatch_to = 'NGCP::Panel::Form::BillingProfile_' . $c->user->auth_realm;
-    my $form = $dispatch_to->new;
+    my $posted = ($c->request->method eq 'POST');
+    my $form;
+    my $params = {};
+    if($c->user->is_superuser && $no_reseller) {
+        $form = NGCP::Panel::Form::BillingProfile::Reseller->new;
+    } elsif($c->user->is_superuser) {
+        $form = NGCP::Panel::Form::BillingProfile::Admin->new;
+    } else {
+        $form = NGCP::Panel::Form::BillingProfile::Reseller->new;
+    }
     $form->process(
         posted => $posted,
         params => $c->request->params,
-        action => $c->uri_for('create'),
+        item => $params,
     );
     NGCP::Panel::Utils::Navigation::check_form_buttons(
         c => $c,
@@ -129,7 +136,9 @@ sub create :Chained('profile_list') :PathPart('create') :Args(0) {
     );
     if($posted && $form->validated) {
         try {
-            if($c->user->is_superuser) {
+            if($c->user->is_superuser && $no_reseller) {
+                $form->values->{reseller_id} = $c->user->reseller_id;
+            } elsif($c->user->is_superuser) {
                 $form->values->{reseller_id} = $form->values->{reseller}{id};   
             } else {
                 $form->values->{reseller_id} = $c->user->reseller_id;
@@ -151,6 +160,13 @@ sub create :Chained('profile_list') :PathPart('create') :Args(0) {
     $c->stash(create_flag => 1);
     $c->stash(form => $form);
 }
+
+sub create_without_reseller :Chained('profile_list') :PathPart('create/noreseller') :Args(0) {
+    my ($self, $c) = @_;
+
+    $self->create($c, 1); 
+}
+
 
 sub fees_list :Chained('base') :PathPart('fees') :CaptureArgs(0) {
     my ($self, $c) = @_;

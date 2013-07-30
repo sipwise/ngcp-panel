@@ -3,8 +3,7 @@
     helper.name = 'Customers';
     helper.data = contracts;
     helper.messages = messages;
-    helper.column_titles = [ '#', 'Contact #', 'Billing Profile', 'Status' ];
-    helper.column_fields = [ 'id', 'contact_id', 'billing_profile_name', 'status' ];
+    helper.dt_columns = contract_dt_columns;
 
     helper.close_target = close_target;
     helper.create_flag = create_flag;
@@ -12,15 +11,21 @@
     helper.form_object = form;
     helper.ajax_uri = c.uri_for('/contract/customer/ajax');
 
-    helper.dt_buttons = [
-        { name = 'Edit', uri = "/contract/'+full[\"id\"]+'/edit", class = 'btn-small btn-primary', icon = 'icon-edit' },
-        { name = 'Delete', uri = "/contract/'+full[\"id\"]+'/delete", class = 'btn-small btn-secondary', icon = 'icon-trash' },
-        { name = 'Details', uri = "/customer/'+full[\"id\"]+'/details", class = 'btn-small btn-tertiary', icon = 'icon-list' },
-    ];
-    helper.top_buttons = [
-        { name = 'Create Customer', uri = c.uri_for_action('/contract/customer_create'), icon = 'icon-star' },
-    ];
+    UNLESS c.user.read_only;
+        helper.dt_buttons = [
+            { name = 'Edit', uri = "/contract/'+full.id+'/edit", class = 'btn-small btn-primary', icon = 'icon-edit' },
+            { name = 'Delete', uri = "/contract/'+full.id+'/delete", class = 'btn-small btn-secondary', icon = 'icon-trash' },
+            { name = 'Details', uri = "/customer/'+full.id+'/details", class = 'btn-small btn-tertiary', icon = 'icon-list' },
+        ];
+        helper.top_buttons = [
+            { name = 'Create Customer', uri = c.uri_for_action('/contract/customer_create'), icon = 'icon-star' },
+        ];
+    ELSE;
+        helper.dt_buttons = [
+            { name = 'Details', uri = "/customer/'+full.id+'/details", class = 'btn-small btn-tertiary', icon = 'icon-list' },
+        ];
+    END;
 
     PROCESS 'helpers/datatables.tt';
 -%]
-
+[% # vim: set tabstop=4 syntax=html expandtab: -%]

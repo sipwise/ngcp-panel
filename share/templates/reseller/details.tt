@@ -15,67 +15,17 @@
 
 
 <div class="accordion" id="reseller_details">
-    <div class="accordion-group">
-        <div class="accordion-heading">
-            <a class="accordion-toggle" data-toggle="collapse" data-parent="#reseller_details" href="#collapse_contact">Contact</a>
-        </div>
-        <div class="accordion-body collapse" id="collapse_contact">
-            <div class="accordion-inner">
-[%
-    helper.name = 'Contact';
-    helper.messages = messages;
-    helper.column_titles = [ '#', 'First name', 'Last name', 'Email address', 'created' ];
-    helper.column_fields = [ 'id', 'firstname', 'lastname', 'email', 'create_timestamp' ];
-    helper.paginate = 'false';
-    helper.filter = 'false';
-    helper.close_target = c.uri_for('');
-    helper.create_flag = create_flag;
-    helper.edit_flag = edit_flag;
-    helper.form_object = form;
-    helper.ajax_uri = c.uri_for_action('/reseller/reseller_contacts', c.req.captures );
-    helper.base_uri = c.uri_for_action('/contact/root');
 
-    PROCESS 'helpers/datatables.tt';
--%]
-            </div>
-        </div>
-    </div>
     <div class="accordion-group">
         <div class="accordion-heading">
-            <a class="accordion-toggle" data-toggle="collapse" data-parent="#reseller_details" href="#collapse_contract">Contract</a>
-        </div>
-        <div class="accordion-body collapse" id="collapse_contract">
-            <div class="accordion-inner">
-[%
-    helper.name = 'Contract';
-    helper.messages = messages;
-    helper.column_titles = [ '#', 'Contact #'];
-    helper.column_fields = [ 'id', 'contact_id'];
-    helper.paginate = 'false';
-    helper.filter = 'false';
-    helper.close_target = close_target;
-    helper.create_flag = create_flag;
-    helper.edit_flag = edit_flag;
-    helper.form_object = form;
-    helper.ajax_uri = c.uri_for_action('/reseller/reseller_contracts', c.req.captures );
-    helper.base_uri = c.uri_for_action('/contract/root');
-
-    PROCESS 'helpers/datatables.tt';
--%]
-            </div>
-        </div>
-    </div>
-    <div class="accordion-group">
-        <div class="accordion-heading">
-            <a class="accordion-toggle" data-toggle="collapse" data-parent="#reseller_details" href="#collapse_reseller">Reseller</a>
+            <a class="accordion-toggle" data-toggle="collapse" data-parent="#reseller_details" href="#collapse_reseller">Reseller Base Information</a>
         </div>
         <div class="accordion-body collapse" id="collapse_reseller">
             <div class="accordion-inner">
 [%
     helper.name = 'Reseller';
     helper.messages = messages;
-    helper.column_titles = [ '#', 'Contract #', 'Name', 'Status' ];
-    helper.column_fields = [ 'id', 'contract_id', 'name', 'status' ];
+    helper.dt_columns = reseller_dt_columns;
     helper.paginate = 'false';
     helper.filter = 'false';
     helper.close_target = close_target;
@@ -90,19 +40,67 @@
             </div>
         </div>
     </div>
+
     <div class="accordion-group">
         <div class="accordion-heading">
-            <a class="accordion-toggle" data-toggle="collapse" data-parent="#reseller_details" href="#collapse_admin">Administrator</a>
+            <a class="accordion-toggle" data-toggle="collapse" data-parent="#reseller_details" href="#collapse_contract">Reseller Contract</a>
+        </div>
+        <div class="accordion-body collapse" id="collapse_contract">
+            <div class="accordion-inner">
+[%
+    helper.name = 'Contract';
+    helper.messages = messages;
+    helper.dt_columns = contract_dt_columns;
+    helper.close_target = close_target;
+    helper.create_flag = create_flag;
+    helper.edit_flag = edit_flag;
+    helper.form_object = form;
+    helper.paginate = 'false';
+    helper.filter = 'false';
+    helper.ajax_uri = c.uri_for_action('/reseller/reseller_contracts', c.req.captures );
+    helper.base_uri = c.uri_for_action('/contract/root');
+
+    PROCESS 'helpers/datatables.tt';
+-%]
+            </div>
+        </div>
+    </div>
+
+    <div class="accordion-group">
+        <div class="accordion-heading">
+            <a class="accordion-toggle" data-toggle="collapse" data-parent="#reseller_details" href="#collapse_contact">Reseller Contact</a>
+        </div>
+        <div class="accordion-body collapse" id="collapse_contact">
+            <div class="accordion-inner">
+[%
+    helper.name = 'Contact';
+    helper.messages = messages;
+    helper.dt_columns = contact_dt_columns;
+    helper.close_target = c.uri_for('');
+    helper.create_flag = create_flag;
+    helper.edit_flag = edit_flag;
+    helper.form_object = form;
+    helper.paginate = 'false';
+    helper.filter = 'false';
+    helper.ajax_uri = c.uri_for_action('/reseller/reseller_contacts', c.req.captures );
+    helper.base_uri = c.uri_for_action('/contact/root');
+
+    PROCESS 'helpers/datatables.tt';
+-%]
+            </div>
+        </div>
+    </div>
+
+    <div class="accordion-group">
+        <div class="accordion-heading">
+            <a class="accordion-toggle" data-toggle="collapse" data-parent="#reseller_details" href="#collapse_admin">Administrator Logins</a>
         </div>
         <div class="accordion-body collapse" id="collapse_admin">
             <div class="accordion-inner">
 [%
     helper.name = 'Administrator';
     helper.messages = messages;
-    helper.column_titles = [ '#', 'Reseller #', 'Login' ];
-    helper.column_fields = [ 'id', 'reseller_id', 'login' ];
-    helper.paginate = 'false';
-    helper.filter = 'false';
+    helper.dt_columns = admin_dt_columns;
     helper.close_target = close_target;
     helper.create_flag = create_flag;
     helper.edit_flag = edit_flag;
@@ -124,8 +122,7 @@
 [%
     helper.name = 'Customer';
     helper.messages = messages;
-    helper.column_titles = [ '#', 'Contact #', 'Status' ];
-    helper.column_fields = [ 'id', 'contact_id', 'status' ];
+    helper.dt_columns = customer_dt_columns;
     helper.paginate = 'true';
     helper.filter = 'true';
     helper.close_target = close_target;
@@ -134,11 +131,17 @@
     helper.form_object = form;
     helper.ajax_uri = c.uri_for_action('/reseller/reseller_customers', c.req.captures );
 
-    helper.dt_buttons = [
-        { name = 'Edit', uri = "/contract/'+full[\"id\"]+'/edit", class = 'btn-small btn-primary', icon = 'icon-edit' },
-        { name = 'Delete', uri = "/contract/'+full[\"id\"]+'/delete", class = 'btn-small btn-secondary', icon = 'icon-trash' },
-        { name = 'Details', uri = "/customer/'+full[\"id\"]+'/details", class = 'btn-small btn-tertiary', icon = 'icon-list' },
-    ];
+    UNLESS c.user.read_only;
+        helper.dt_buttons = [
+            { name = 'Edit', uri = "/contract/'+full.id+'/edit", class = 'btn-small btn-primary', icon = 'icon-edit' },
+            { name = 'Delete', uri = "/contract/'+full.id+'/delete", class = 'btn-small btn-secondary', icon = 'icon-trash' },
+            { name = 'Details', uri = "/customer/'+full.id+'/details", class = 'btn-small btn-tertiary', icon = 'icon-list' },
+        ];
+    ELSE;
+        helper.dt_buttons = [
+            { name = 'Details', uri = "/customer/'+full.id+'/details", class = 'btn-small btn-tertiary', icon = 'icon-list' },
+        ];
+    END;
 
     PROCESS 'helpers/datatables.tt';
 -%]
@@ -146,3 +149,4 @@
         </div>
     </div>
 </div>
+[% # vim: set tabstop=4 syntax=html expandtab: -%]

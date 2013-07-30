@@ -32,6 +32,15 @@ sub auto :Does(ACL) :ACLDetachTo('/denied_page') :AllowedRole(admin) :AllowedRol
 sub list_customer :Chained('/') :PathPart('customer') :CaptureArgs(0) {
     my ($self, $c) = @_;
 
+    $c->stash->{contract_dt_columns} = NGCP::Panel::Utils::Datatables::set_columns($c, [
+        { name => "id", search => 1, title => "#" },
+        { name => "external_id", search => 1, title => "External #" },
+        { name => "contact.reseller.name", search => 1, title => "Reseller" },
+        { name => "contact.email", search => 1, title => "Contact Email" },
+        { name => "billing_mappings.billing_profile.name", search => 1, title => "Billing Profile" },
+        { name => "status", search => 1, title => "Status" },
+    ]);
+
     $c->stash(
         template => 'customer/list.tt'
     );

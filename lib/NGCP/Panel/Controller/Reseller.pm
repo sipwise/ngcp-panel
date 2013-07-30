@@ -30,6 +30,15 @@ sub list_reseller :Chained('/') :PathPart('reseller') :CaptureArgs(0) {
         { name => "name", search => 1, title => "Name" },
         { name => "status", search => 1, title => "Status" },
     ]);
+
+    # we need this in ajax_contracts also
+    $c->stash->{contract_dt_columns} = NGCP::Panel::Utils::Datatables::set_columns($c, [
+        { name => "id", search => 1, title => "#" },
+        { name => "external_id", search => 1, title => "External #" },
+        { name => "contact.email", search => 1, title => "Contact Email" },
+        { name => "billing_mappings.billing_profile.name", search => 1, title => "Billing Profile" },
+        { name => "status", search => 1, title => "Status" },
+    ]);
 }
 
 sub root :Chained('list_reseller') :PathPart('') :Args(0) {
@@ -63,7 +72,7 @@ sub create :Chained('list_reseller') :PathPart('create') :Args(0) {
     NGCP::Panel::Utils::Navigation::check_form_buttons(
         c => $c, 
         form => $form, 
-        fields => [qw/contract.create/], 
+        fields => {'contract.create' => $c->uri_for('/contract/create/noreseller') },
         back_uri => $c->req->uri,
     );
 
@@ -71,13 +80,13 @@ sub create :Chained('list_reseller') :PathPart('create') :Args(0) {
         try {
             $form->params->{contract_id} = delete $form->params->{contract}->{id};
             delete $form->params->{contract};
-            $c->model('DB')->resultset('resellers')->create($form->params);
+            my $reseller = $c->model('DB')->resultset('resellers')->create($form->params);
             delete $c->session->{created_objects}->{contract};
 
-            $c->flash(messages => [{type => 'success', text => 'Reseller successfully created.'}]);
+            $c->flash(messages => [{type => 'success', text => 'Reseller successfully created'}]);
         } catch($e) {
             $c->log->error($e);
-            $c->flash(messages => [{type => 'error', text => 'Creating reseller failed.'}]);
+            $c->flash(messages => [{type => 'error', text => 'Failed to create reseller'}]);
         }
         $c->response->redirect($c->uri_for());
         return;
@@ -91,40 +100,56 @@ sub create :Chained('list_reseller') :PathPart('create') :Args(0) {
 sub base :Chained('list_reseller') :PathPart('') :CaptureArgs(1) {
     my ($self, $c, $reseller_id) = @_;
 
-    $c->detach('/denied_page')
-    	if($c->user->read_only);
-
     unless($reseller_id && $reseller_id =~ /^\d+$/) {
-        $c->flash(messages => [{type => 'error', text => 'Invalid reseller id detected.'}]);
+        $c->flash(messages => [{type => 'error', text => 'Invalid reseller id detected'}]);
         $c->response->redirect($c->uri_for());
         return;
     }
+    $c->stash->{contact_dt_columns} = NGCP::Panel::Utils::Datatables::set_columns($c, [
+        { name => "id", search => 1, title => "#" },
+        { name => "firstname", search => 1, title => "First Name" },
+        { name => "lastname", search => 1, title => "Last Name" },
+        { name => "company", search => 1, title => "Company" },
+        { name => "email", search => 1, title => "Email" },     
+    ]);
+    $c->stash->{reseller_dt_columns} = NGCP::Panel::Utils::Datatables::set_columns($c, [
+        { name => "id", search => 1, title => "#" },
+        { name => "name", search => 1, title => "Name" },
+        { name => "status", search => 1, title => "Status" },
+    ]);
+    $c->stash->{admin_dt_columns} = NGCP::Panel::Utils::Datatables::set_columns($c, [
+        { name => "id", search => 1, title => "#" },
+        { name => "login", search => 1, title => "Name" },
+        { name => "is_master", title => "Master" },
+        { name => "is_active", title => "Active" },
+        { name => "read_only", title => "Read-Only" },
+        { name => "show_passwords", title => "Show Passwords" },
+        { name => "call_data", title => "Show CDRs" },
+    ]);
+    $c->stash->{customer_dt_columns} = NGCP::Panel::Utils::Datatables::set_columns($c, [
+        { name => "id", search => 1, title => "#" },
+        { name => "external_id", search => 1, title => "External #" },
+        { name => "contact.email", search => 1, title => "Contact Email" },
+        { name => "status", search => 1, title => "Status" },
+    ]);
 
     $c->stash(reseller => $c->stash->{resellers}->search_rs({ id => $reseller_id }));
 }
 
 sub reseller_contacts :Chained('base') :PathPart('contacts') :Args(0) {
     my ($self, $c) = @_;
-    $c->forward(
-        '/ajax_process_resultset', [
-            $c->stash->{reseller}->first->contract->search_related_rs('contact'),
-            [qw(id firstname lastname email create_timestamp)],
-            [ "firstname", "lastname", "email" ]
-        ]
-    );
+    use Data::Printer;
+    p $c->stash->{contact_dt_columns};
+    my $rs = $c->stash->{reseller}->first->contract->search_related_rs('contact');
+    NGCP::Panel::Utils::Datatables::process($c, $rs, $c->stash->{contact_dt_columns});
     $c->detach($c->view('JSON'));
     return;
 }
 
 sub reseller_contracts :Chained('base') :PathPart('contracts') :Args(0) {
     my ($self, $c) = @_;
-    $c->forward(
-        '/ajax_process_resultset', [
-            $c->stash->{reseller}->first->search_related_rs('contract'),
-            [qw(id contact_id)],
-            [ "contact_id" ]
-        ]
-    );
+    my $rs = $c->stash->{reseller}->first->search_related_rs('contract');
+    NGCP::Panel::Utils::Datatables::process($c, $rs, $c->stash->{contract_dt_columns});
     $c->detach($c->view('JSON'));
     return;
 }
@@ -132,42 +157,28 @@ sub reseller_contracts :Chained('base') :PathPart('contracts') :Args(0) {
 sub reseller_single :Chained('base') :PathPart('single') :Args(0) {
     my ($self, $c) = @_;
 
-    $c->forward(
-        '/ajax_process_resultset', [
-            $c->stash->{reseller},
-            [qw(id contract_id name status)],
-            [ "contract_id", "name", "status" ]
-        ]
-    );
+    NGCP::Panel::Utils::Datatables::process($c, $c->stash->{reseller}, $c->stash->{reseller_dt_columns});
     $c->detach($c->view('JSON'));
     return;
 }
 
 sub reseller_admin :Chained('base') :PathPart('admins') :Args(0) {
     my ($self, $c) = @_;
-    $c->forward(
-        '/ajax_process_resultset', [
-            $c->stash->{reseller}->first->search_related_rs('admins'),
-            [qw(id reseller_id login)],
-            [ "reseller_id", "login" ]
-        ]
-    );
+    my $rs = $c->stash->{reseller}->first->search_related_rs('admins');
+    NGCP::Panel::Utils::Datatables::process($c, $rs, $c->stash->{admin_dt_columns});
     $c->detach($c->view('JSON'));
     return;
 }
 
-sub reseller_customers :Chained('base') :PathPart('customers') :Args(0)
-{
+sub reseller_customers :Chained('base') :PathPart('customers') :Args(0) {
     my ($self, $c) = @_;
 
-    $c->forward(
-        '/ajax_process_resultset', [
-            $c->stash->{reseller}->first->search_related_rs('contracts'),
-            # TODO: also external_id (same in Customer list)
-            [qw(id contact_id status)],
-            [ "contact_id", "status" ]
-        ]
-    );
+    my $rs = $c->model('DB')->resultset('contracts')->search({
+        'contact.reseller_id' => $c->stash->{reseller}->first->id
+    }, {
+        join => 'contact'
+    });
+    NGCP::Panel::Utils::Datatables::process($c, $rs, $c->stash->{customer_dt_columns}); 
     $c->detach($c->view('JSON'));
     return;
 }
@@ -175,8 +186,15 @@ sub reseller_customers :Chained('base') :PathPart('customers') :Args(0)
 sub edit :Chained('base') :PathPart('edit') :Args(0) {
     my ($self, $c) = @_;
 
+    $c->detach('/denied_page')
+    	if($c->user->read_only);
+
     my $posted = $c->request->method eq 'POST';
     my $form = NGCP::Panel::Form::Reseller->new;
+
+    # we need this in the ajax call to not filter it as used contract
+    $c->session->{edit_contract_id} = $c->stash->{reseller}->first->contract_id;
+
     my $params = { $c->stash->{reseller}->first->get_inflated_columns };
     $params->{contract}{id} = delete $params->{contract_id};
     $params = Hash::Merge->new('RIGHT_PRECEDENT')->merge($params, $c->session->{created_objects});
@@ -196,10 +214,11 @@ sub edit :Chained('base') :PathPart('edit') :Args(0) {
             delete $form->params->{contract};
             $c->stash->{reseller}->first->update($form->params);            
             delete $c->session->{created_objects}->{contract};
-            $c->flash(messages => [{type => 'success', text => 'Reseller successfully changed.'}]);
+            delete $c->session->{edit_contract_id};
+            $c->flash(messages => [{type => 'success', text => 'Reseller successfully updated'}]);
         } catch($e) {
             $c->log->error($e);
-            $c->flash(messages => [{type => 'error', text => 'Updating reseller failed.'}]);
+            $c->flash(messages => [{type => 'error', text => 'Failed to update reseller'}]);
         }
         $c->response->redirect($c->uri_for());
     }
@@ -208,20 +227,21 @@ sub edit :Chained('base') :PathPart('edit') :Args(0) {
     $c->stash(form => $form);
     $c->stash(edit_flag => 1);
 
-    $c->session(contract_id => $c->stash->{reseller}->first->get_column('contract_id'));
-
     return;
 }
 
 sub delete :Chained('base') :PathPart('delete') :Args(0) {
     my ($self, $c) = @_;
 
+    $c->detach('/denied_page')
+    	if($c->user->read_only);
+
     try {
         $c->stash->{reseller}->first->delete;
-        $c->flash(messages => [{type => 'success', text => 'Reseller successfully deleted.'}]);
+        $c->flash(messages => [{type => 'success', text => 'Reseller successfully deleted'}]);
     } catch($e) {
         $c->log->error($e);
-        $c->flash(messages => [{type => 'error', text => 'Deleting reseller failed.'}]);
+        $c->flash(messages => [{type => 'error', text => 'Failed to delete reseller'}]);
     }
     $c->response->redirect($c->uri_for());
 }
@@ -234,27 +254,18 @@ sub details :Chained('base') :PathPart('details') :Args(0) {
 
 sub ajax_contract :Chained('list_reseller') :PathPart('ajax_contract') :Args(0) {
     my ($self, $c) = @_;
-  
-    my $contract_id = $c->session->{contract_id};
-
+ 
+    my $edit_contract_id = $c->session->{edit_contract_id};
     my @used_contracts = map { 
-        $_->get_column('contract_id') unless(
-            $contract_id && 
-            $contract_id == $_->get_column('contract_id')
-        )
+        $_->get_column('contract_id') 
+            unless($edit_contract_id && $edit_contract_id == $_->get_column('contract_id'))
     } $c->stash->{resellers}->all;
     my $free_contracts = $c->model('DB')
         ->resultset('contracts')
         ->search_rs({
-            id => { 'not in' => \@used_contracts }
+            'me.id' => { 'not in' => \@used_contracts }
         });
-    
-    $c->forward("/ajax_process_resultset", [ 
-        $free_contracts,
-        ["id", "contact_id", "external_id", "status"],
-        ["contact_id", "external_id", "status"]
-    ]);
-    
+    NGCP::Panel::Utils::Datatables::process($c, $free_contracts, $c->stash->{contract_dt_columns});
     $c->detach( $c->view("JSON") );
 }
 
@@ -323,9 +334,9 @@ sub create_defaults :Path('create_defaults') :Args(0) {
         });
     } catch($e) {
         $c->log->error($e);
-        $c->flash(messages => [{type => 'error', text => 'Creating reseller failed.'}]);
+        $c->flash(messages => [{type => 'error', text => 'Failed to create reseller'}]);
     };
-    $c->flash(messages => [{type => 'success', text => "Reseller successfully created with login <b>".$defaults{admins}->{login}."</b> and password <b>".$defaults{admins}->{md5pass}."</b>, please review your settings below!" }]);
+    $c->flash(messages => [{type => 'success', text => "Reseller successfully created with login <b>".$defaults{admins}->{login}."</b> and password <b>".$defaults{admins}->{md5pass}."</b>, please review your settings below" }]);
     $c->res->redirect(sprintf('/reseller/%d/details', $r{resellers}->id), HTTP_SEE_OTHER);
     $c->detach;
     return;

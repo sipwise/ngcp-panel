@@ -40,12 +40,16 @@ sub root :Chained('list_contact') :PathPart('') :Args(0) {
 }
 
 sub create :Chained('list_contact') :PathPart('create') :Args(0) {
-    my ($self, $c) = @_;
+    my ($self, $c, $no_reseller) = @_;
 
     my $posted = ($c->request->method eq 'POST');
     my $form;
     my $params = {};
-    if($c->user->is_superuser) {
+    if($c->user->is_superuser && $no_reseller) {
+        $form = NGCP::Panel::Form::Contact::Reseller->new;
+        $params->{reseller}{id} = $c->user->reseller_id;
+        # we'll delete this after validation, as we don't need the reseller in this case
+    } elsif($c->user->is_superuser) {
         $form = NGCP::Panel::Form::Contact::Admin->new;
     } else {
         $form = NGCP::Panel::Form::Contact::Reseller->new;
@@ -63,6 +67,9 @@ sub create :Chained('list_contact') :PathPart('create') :Args(0) {
     );
     if($posted && $form->validated) {
         try {
+            if($c->user->is_superuser && $no_reseller) {
+                delete $form->values->{reseller};
+            }
             my $contact = $c->stash->{contacts}->create($form->values);
             $c->session->{created_objects}->{contact} = { id => $contact->id };
             $c->flash(messages => [{type => 'success', text => 'Contact successfully created'}]);
@@ -76,6 +83,12 @@ sub create :Chained('list_contact') :PathPart('create') :Args(0) {
 
     $c->stash(create_flag => 1);
     $c->stash(form => $form);
+}
+
+sub create_without_reseller :Chained('list_contact') :PathPart('create/noreseller') :Args(0) {
+    my ($self, $c) = @_;
+
+    $self->create($c, 1); 
 }
 
 sub base :Chained('list_contact') :PathPart('') :CaptureArgs(1) {

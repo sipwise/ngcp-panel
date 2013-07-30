@@ -1,4 +1,4 @@
-package NGCP::Panel::Form::BillingProfile_reseller;
+package NGCP::Panel::Form::BillingProfile::Reseller;
 
 use HTML::FormHandler::Moose;
 extends 'HTML::FormHandler';

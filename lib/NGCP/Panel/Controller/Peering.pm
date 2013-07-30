@@ -81,7 +81,7 @@ sub edit :Chained('base') :PathPart('edit') {
     );
     NGCP::Panel::Utils::Navigation::check_form_buttons(
         c => $c, form => $form,
-        fields => {'contract.create' => $c->uri_for('/contract/peering/create')},
+        fields => {'contract.create' => $c->uri_for('/contract/peering/create/noreseller')},
         back_uri => $c->req->uri,
     );
     if($posted && $form->validated) {
@@ -89,9 +89,9 @@ sub edit :Chained('base') :PathPart('edit') {
             $c->stash->{group_result}->update($form->custom_get_values);
             $self->_sip_lcr_reload;
             delete $c->session->{created_objects}->{contract};
-            $c->flash(messages => [{type => 'success', text => 'Peering Group successfully changed!'}]);
+            $c->flash(messages => [{type => 'success', text => 'Peering group successfully updated'}]);
         } catch (DBIx::Class::Exception $e) {
-            $c->flash(messages => [{type => 'error', text => 'Update of peering group failed.'}]);
+            $c->flash(messages => [{type => 'error', text => 'Failed to update peering group'}]);
             $c->log->info("Update failed: " . $e);
         };
         $c->response->redirect($c->uri_for());
@@ -108,9 +108,9 @@ sub delete :Chained('base') :PathPart('delete') {
     try {
         $c->stash->{group_result}->delete;
         $self->_sip_lcr_reload;
-        $c->flash(messages => [{type => 'success', text => 'Peering Group successfully deleted!'}]);
+        $c->flash(messages => [{type => 'success', text => 'Peering Group successfully deleted'}]);
     } catch (DBIx::Class::Exception $e) {
-        $c->flash(messages => [{type => 'error', text => 'Delete failed.'}]);
+        $c->flash(messages => [{type => 'error', text => 'Failed to delete peering group'}]);
         $c->log->info("Delete failed: " . $e);
     };
     $c->response->redirect($c->uri_for());
@@ -123,8 +123,6 @@ sub create :Chained('group_list') :PathPart('create') :Args(0) {
     my $form = NGCP::Panel::Form::PeeringGroup->new;
     my $params = {};
     $params = Hash::Merge->new('RIGHT_PRECEDENT')->merge($params, $c->session->{created_objects});
-    say ">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> got new contract:";
-    use Data::Printer; p $params;
     $form->process(
         posted => $posted,
         params => $c->request->params,
@@ -142,9 +140,9 @@ sub create :Chained('group_list') :PathPart('create') :Args(0) {
                 $formdata );
             $self->_sip_lcr_reload;
             delete $c->session->{created_objects}->{contract};
-            $c->flash(messages => [{type => 'success', text => 'Peering group successfully created!'}]);
+            $c->flash(messages => [{type => 'success', text => 'Peering group successfully created'}]);
         } catch (DBIx::Class::Exception $e) {
-            $c->flash(rules_messages => [{type => 'error', text => 'Creation of peering group failed.'}]);
+            $c->flash(rules_messages => [{type => 'error', text => 'Failed to create peering group'}]);
             $c->log->info("Create failed: " . $e);
         };
         $c->response->redirect($c->uri_for_action('/peering/root'));
@@ -194,9 +192,9 @@ sub servers_create :Chained('servers_list') :PathPart('create') :Args(0) {
         try {
             $c->stash->{group_result}->voip_peer_hosts->create( $form->fif );
             $self->_sip_lcr_reload;
-            $c->flash(messages => [{type => 'success', text => 'Peering server successfully created!'}]);
+            $c->flash(messages => [{type => 'success', text => 'Peering server successfully created'}]);
         } catch (DBIx::Class::Exception $e) {
-            $c->flash(messages => [{type => 'error', text => 'Creation of Peering server failed.'}]);
+            $c->flash(messages => [{type => 'error', text => 'Failed to create peering server'}]);
             $c->log->info("Create failed: " . $e);
         };
         $c->response->redirect($c->stash->{sr_list_uri});
@@ -212,7 +210,7 @@ sub servers_base :Chained('servers_list') :PathPart('') :CaptureArgs(1) {
     my ($self, $c, $server_id) = @_;
 
     unless($server_id && $server_id->is_integer) {
-        $c->flash(messages => [{type => 'error', text => 'Invalid peering sever (host) id detected!'}]);
+        $c->flash(messages => [{type => 'error', text => 'Invalid peering server id'}]);
         $c->response->redirect($c->stash->{sr_list_uri});
         $c->detach;
         return;
@@ -220,7 +218,7 @@ sub servers_base :Chained('servers_list') :PathPart('') :CaptureArgs(1) {
 
     my $res = $c->stash->{group_result}->voip_peer_hosts->find($server_id);
     unless(defined($res)) {
-        $c->flash(messages => [{type => 'error', text => 'Peering Server does not exist!'}]);
+        $c->flash(messages => [{type => 'error', text => 'Peering server does not exist'}]);
         $c->response->redirect($c->stash->{sr_list_uri});
         $c->detach;
         return;
@@ -243,9 +241,9 @@ sub servers_edit :Chained('servers_base') :PathPart('edit') :Args(0) {
         try {
             $c->stash->{server_result}->update($form->fif);
             $self->_sip_lcr_reload;
-            $c->flash(messages => [{type => 'success', text => 'Peering Server successfully changed!'}]);
+            $c->flash(messages => [{type => 'success', text => 'Peering server successfully updated'}]);
         } catch (DBIx::Class::Exception $e) {
-            $c->flash(messages => [{type => 'error', text => 'Updating of Peering server failed.'}]);
+            $c->flash(messages => [{type => 'error', text => 'Failed to update peering server'}]);
             $c->log->info("Update failed: " . $e);
         };
         
@@ -264,9 +262,9 @@ sub servers_delete :Chained('servers_base') :PathPart('delete') :Args(0) {
     try {
         $c->stash->{server_result}->delete;
         $self->_sip_lcr_reload;
-        $c->flash(messages => [{type => 'success', text => 'Peering Server successfully deleted!'}]);
+        $c->flash(messages => [{type => 'success', text => 'Peering server successfully deleted'}]);
     } catch (DBIx::Class::Exception $e) {
-        $c->flash(rules_messages => [{type => 'error', text => 'Delete failed.'}]);
+        $c->flash(rules_messages => [{type => 'error', text => 'Failed to delete peering server'}]);
         $c->log->info("Delete failed: " . $e);
     };
     $c->response->redirect($c->stash->{sr_list_uri});
@@ -386,9 +384,9 @@ sub rules_create :Chained('rules_list') :PathPart('create') :Args(0) {
         try {
             $c->stash->{group_result}->voip_peer_rules->create( $form->fif );
             $self->_sip_lcr_reload;
-            $c->flash(rules_messages => [{type => 'success', text => 'Peering rule successfully created!'}]);
+            $c->flash(rules_messages => [{type => 'success', text => 'Peering rule successfully created'}]);
         } catch (DBIx::Class::Exception $e) {
-            $c->flash(rules_messages => [{type => 'error', text => 'Create failed.'}]);
+            $c->flash(rules_messages => [{type => 'error', text => 'Failed to create peering rule'}]);
             $c->log->info("Create failed: " . $e);
         };
         $c->response->redirect($c->stash->{sr_list_uri});
@@ -404,7 +402,7 @@ sub rules_base :Chained('rules_list') :PathPart('') :CaptureArgs(1) {
     my ($self, $c, $rule_id) = @_;
 
     unless($rule_id && $rule_id->is_integer) {
-        $c->flash(rules_messages => [{type => 'error', text => 'Invalid peering rule id detected!'}]);
+        $c->flash(rules_messages => [{type => 'error', text => 'Invalid peering rule id detected'}]);
         $c->response->redirect($c->stash->{sr_list_uri});
         $c->detach;
         return;
@@ -412,7 +410,7 @@ sub rules_base :Chained('rules_list') :PathPart('') :CaptureArgs(1) {
 
     my $res = $c->stash->{group_result}->voip_peer_rules->find($rule_id);
     unless(defined($res)) {
-        $c->flash(rules_messages => [{type => 'error', text => 'Peering Rule does not exist!'}]);
+        $c->flash(rules_messages => [{type => 'error', text => 'Peering Rule does not exist'}]);
         $c->response->redirect($c->stash->{sr_list_uri});
         $c->detach;
         return;
@@ -435,9 +433,9 @@ sub rules_edit :Chained('rules_base') :PathPart('edit') :Args(0) {
         try {
             $c->stash->{rule_result}->update($form->fif);
             $self->_sip_lcr_reload;
-            $c->flash(rules_messages => [{type => 'success', text => 'Peering Rule successfully changed!'}]);
+            $c->flash(rules_messages => [{type => 'success', text => 'Peering rule successfully changed'}]);
         } catch (DBIx::Class::Exception $e) {
-            $c->flash(rules_messages => [{type => 'error', text => 'Edit failed.'}]);
+            $c->flash(rules_messages => [{type => 'error', text => 'Failed to update peering rule'}]);
             $c->log->info("Update failed: " . $e);
         };
         $c->response->redirect($c->stash->{sr_list_uri});
@@ -455,9 +453,9 @@ sub rules_delete :Chained('rules_base') :PathPart('delete') :Args(0) {
     try {
         $c->stash->{rule_result}->delete;
         $self->_sip_lcr_reload;
-        $c->flash(rules_messages => [{type => 'success', text => 'Peering Rule successfully deleted!'}]);
+        $c->flash(rules_messages => [{type => 'success', text => 'Peering rule successfully deleted'}]);
     } catch (DBIx::Class::Exception $e) {
-        $c->flash(rules_messages => [{type => 'error', text => 'Delete failed.'}]);
+        $c->flash(rules_messages => [{type => 'error', text => 'Failed to delete peering rule'}]);
         $c->log->info("Delete failed: " . $e);
     };
     $c->response->redirect($c->stash->{sr_list_uri});
