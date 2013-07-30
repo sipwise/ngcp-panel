@@ -24,7 +24,7 @@ has_field 'webusername' => (
 );
 
 has_field 'webpassword' => (
-    type => 'Password',
+    type => 'Text',
     label => 'Web Password',
     required => 0,
     element_attr => { 
@@ -93,7 +93,7 @@ has_field 'domain' => (
 );
 
 has_field 'password' => (
-    type => 'Password',
+    type => 'Text',
     label => 'SIP Password',
     required => 1,
     element_attr => { 

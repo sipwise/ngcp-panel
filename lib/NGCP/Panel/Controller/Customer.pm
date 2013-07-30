@@ -145,7 +145,7 @@ sub subscriber_create :Chained('base') :PathPart('subscriber/create') :Args(0) {
     if($form->validated) {
         my $schema = $c->model('DB');
         my $contract = $c->stash->{contract};
-        my $reseller = $contract->reseller;
+        my $reseller = $contract->contact->reseller;
         my $billing_domain = $schema->resultset('domains')
             ->find($c->request->params->{'domain.id'});
         my $prov_domain = $schema->resultset('voip_domains')
