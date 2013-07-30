@@ -156,10 +156,6 @@ sub create :Chained('group_list') :PathPart('create') :Args(0) {
 
 sub servers_list :Chained('base') :PathPart('servers') :CaptureArgs(0) {
     my ($self, $c) = @_;
-
-    my $sr_list_uri = $c->uri_for_action(
-        '/peering/servers_root', [$c->req->captures->[0]]);
-    $c->stash(sr_list_uri => $sr_list_uri);
     $c->stash(template => 'peering/servers_rules.tt');
 }
 
@@ -182,28 +178,35 @@ sub servers_ajax :Chained('servers_list') :PathPart('s_ajax') :Args(0) {
 sub servers_create :Chained('servers_list') :PathPart('create') :Args(0) {
     my ($self, $c) = @_;
     
+    my $posted = ($c->request->method eq 'POST');
     my $form = NGCP::Panel::Form::PeeringServer->new;
     $form->process(
-        posted => ($c->request->method eq 'POST'),
+        posted => $posted,
         params => $c->request->params,
-        action => $c->uri_for_action('/peering/servers_create', [$c->req->captures->[0]]),
     );
-    if($form->validated) {
+    NGCP::Panel::Utils::Navigation::check_form_buttons(
+        c => $c,
+        form => $form,
+        fields => {},
+        back_uri => $c->req->uri
+    );
+    if($posted && $form->validated) {
         try {
-            $c->stash->{group_result}->voip_peer_hosts->create( $form->fif );
+            $c->stash->{group_result}->voip_peer_hosts->create($form->values);
             $self->_sip_lcr_reload;
             $c->flash(messages => [{type => 'success', text => 'Peering server successfully created'}]);
         } catch (DBIx::Class::Exception $e) {
+            $c->log->error("failed to create peering server: $e");
             $c->flash(messages => [{type => 'error', text => 'Failed to create peering server'}]);
-            $c->log->info("Create failed: " . $e);
         };
-        $c->response->redirect($c->stash->{sr_list_uri});
-        return;
+        NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for_action('/peering/servers_root', [$c->req->captures->[0]]));
     }
 
-    $c->stash(close_target => $c->stash->{sr_list_uri});
-    $c->stash(servers_create_flag => 1);
-    $c->stash(servers_form => $form);
+    $c->stash(
+        close_target => $c->uri_for_action('/peering/servers_root', [$c->req->captures->[0]]),
+        servers_create_flag => 1,
+        servers_form => $form
+    );
 }
 
 sub servers_base :Chained('servers_list') :PathPart('') :CaptureArgs(1) {
@@ -233,27 +236,33 @@ sub servers_edit :Chained('servers_base') :PathPart('edit') :Args(0) {
     my $posted = ($c->request->method eq 'POST');
     my $form = NGCP::Panel::Form::PeeringServer->new;
     $form->process(
-        posted => 1,
-        params => $posted ? $c->request->params : $c->stash->{server},
-        action => $c->uri_for_action('/peering/servers_edit', $c->req->captures)
+        posted => $posted,
+        params => $c->request->params,
+        item => $c->stash->{server},
+    );
+    NGCP::Panel::Utils::Navigation::check_form_buttons(
+        c => $c,
+        form => $form,
+        fields => {},
+        back_uri => $c->req->uri
     );
     if($posted && $form->validated) {
         try {
-            $c->stash->{server_result}->update($form->fif);
+            $c->stash->{server_result}->update($form->values);
             $self->_sip_lcr_reload;
             $c->flash(messages => [{type => 'success', text => 'Peering server successfully updated'}]);
         } catch (DBIx::Class::Exception $e) {
+            $c->log->info("failed to update peering server: $e");
             $c->flash(messages => [{type => 'error', text => 'Failed to update peering server'}]);
-            $c->log->info("Update failed: " . $e);
         };
-        
-        $c->response->redirect($c->stash->{sr_list_uri});
-        return;
+        NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for_action('/peering/servers_root', [$c->req->captures->[0]]));
     }
 
-    $c->stash(close_target => $c->stash->{sr_list_uri});
-    $c->stash(servers_form => $form);
-    $c->stash(servers_edit_flag => 1);
+    $c->stash(
+        close_target => $c->uri_for_action('/peering/servers_root', [$c->req->captures->[0]]),
+        servers_form => $form,
+        servers_edit_flag => 1
+    );
 }
 
 sub servers_delete :Chained('servers_base') :PathPart('delete') :Args(0) {
@@ -264,10 +273,10 @@ sub servers_delete :Chained('servers_base') :PathPart('delete') :Args(0) {
         $self->_sip_lcr_reload;
         $c->flash(messages => [{type => 'success', text => 'Peering server successfully deleted'}]);
     } catch (DBIx::Class::Exception $e) {
+        $c->log->error("failed to delete peering server: $e");
         $c->flash(rules_messages => [{type => 'error', text => 'Failed to delete peering server'}]);
-        $c->log->info("Delete failed: " . $e);
     };
-    $c->response->redirect($c->stash->{sr_list_uri});
+    NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for_action('/peering/servers_root', [$c->req->captures->[0]]));
 }
 
 sub servers_preferences_list :Chained('servers_base') :PathPart('preferences') :CaptureArgs(0) {
@@ -373,29 +382,36 @@ sub rules_ajax :Chained('rules_list') :PathPart('r_ajax') :Args(0) {
 
 sub rules_create :Chained('rules_list') :PathPart('create') :Args(0) {
     my ($self, $c) = @_;
-    
+   
+    my $posted = ($c->request->method eq 'POST');
     my $form = NGCP::Panel::Form::PeeringRule->new;
     $form->process(
-        posted => ($c->request->method eq 'POST'),
+        posted => $posted,
         params => $c->request->params,
-        action => $c->uri_for_action('/peering/rules_create', [$c->req->captures->[0]]),
     );
-    if($form->validated) {
+    NGCP::Panel::Utils::Navigation::check_form_buttons(
+        c => $c,
+        form => $form,
+        fields => {},
+        back_uri => $c->req->uri
+    );
+    if($posted && $form->validated) {
         try {
-            $c->stash->{group_result}->voip_peer_rules->create( $form->fif );
+            $c->stash->{group_result}->voip_peer_rules->create($form->values);
             $self->_sip_lcr_reload;
             $c->flash(rules_messages => [{type => 'success', text => 'Peering rule successfully created'}]);
         } catch (DBIx::Class::Exception $e) {
+            $c->log->error("failed to create peering rule: $e");
             $c->flash(rules_messages => [{type => 'error', text => 'Failed to create peering rule'}]);
-            $c->log->info("Create failed: " . $e);
         };
-        $c->response->redirect($c->stash->{sr_list_uri});
-        return;
+        NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for_action('/peering/servers_root', [$c->req->captures->[0]]));
     }
 
-    $c->stash(close_target => $c->stash->{sr_list_uri});
-    $c->stash(rules_create_flag => 1);
-    $c->stash(rules_form => $form);
+    $c->stash(
+        close_target => $c->uri_for_action('/peering/servers_root', [$c->req->captures->[0]]),
+        rules_create_flag => 1,
+        rules_form => $form,
+    );
 }
 
 sub rules_base :Chained('rules_list') :PathPart('') :CaptureArgs(1) {
@@ -425,26 +441,33 @@ sub rules_edit :Chained('rules_base') :PathPart('edit') :Args(0) {
     my $posted = ($c->request->method eq 'POST');
     my $form = NGCP::Panel::Form::PeeringRule->new;
     $form->process(
-        posted => 1,
-        params => $posted ? $c->request->params : $c->stash->{rule},
-        action => $c->uri_for_action('/peering/rules_edit', $c->req->captures)
+        posted => $posted,
+        params => $c->request->params,
+        item => $c->stash->{rule},
+    );
+    NGCP::Panel::Utils::Navigation::check_form_buttons(
+        c => $c,
+        form => $form,
+        fields => {},
+        back_uri => $c->req->uri
     );
     if($posted && $form->validated) {
         try {
-            $c->stash->{rule_result}->update($form->fif);
+            $c->stash->{rule_result}->update($form->values);
             $self->_sip_lcr_reload;
             $c->flash(rules_messages => [{type => 'success', text => 'Peering rule successfully changed'}]);
         } catch (DBIx::Class::Exception $e) {
+            $c->log->error("failed to update peering rule: $e");
             $c->flash(rules_messages => [{type => 'error', text => 'Failed to update peering rule'}]);
-            $c->log->info("Update failed: " . $e);
         };
-        $c->response->redirect($c->stash->{sr_list_uri});
-        return;
+        NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for_action('/peering/servers_root', [$c->req->captures->[0]]));
     }
 
-    $c->stash(close_target => $c->stash->{sr_list_uri});
-    $c->stash(rules_form => $form);
-    $c->stash(rules_edit_flag => 1);
+    $c->stash(
+        close_target => $c->uri_for_action('/peering/servers_root', [$c->req->captures->[0]]),
+        rules_form => $form,
+        rules_edit_flag => 1,
+    );
 }
 
 sub rules_delete :Chained('rules_base') :PathPart('delete') :Args(0) {
@@ -455,10 +478,10 @@ sub rules_delete :Chained('rules_base') :PathPart('delete') :Args(0) {
         $self->_sip_lcr_reload;
         $c->flash(rules_messages => [{type => 'success', text => 'Peering rule successfully deleted'}]);
     } catch (DBIx::Class::Exception $e) {
+        $c->log->info("failed to delete peering rule: $e");
         $c->flash(rules_messages => [{type => 'error', text => 'Failed to delete peering rule'}]);
-        $c->log->info("Delete failed: " . $e);
     };
-    $c->response->redirect($c->stash->{sr_list_uri});
+    NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for_action('/peering/servers_root', [$c->req->captures->[0]]));
 }
 
 sub _sip_lcr_reload {

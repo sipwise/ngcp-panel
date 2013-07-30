@@ -32,6 +32,7 @@ has_field 'port' => (
     type => 'PosInteger',
     max_range => 65535,
     default => '5060',
+    required => 1,
 );
 
 has_field 'transport' => (
@@ -46,7 +47,9 @@ has_field 'transport' => (
 
 has_field 'weight' => (
     type => 'PosInteger',
+    required => 1,
     max_range => 25,
+    default => 1,
 );
 
 has_field 'save' => (

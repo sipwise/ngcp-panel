@@ -212,7 +212,20 @@ sub edit :Chained('base') :PathPart('edit') :Args(0) {
         try {
             $form->params->{contract_id} = delete $form->params->{contract}{id};
             delete $form->params->{contract};
-            $c->stash->{reseller}->first->update($form->params);            
+            $c->stash->{reseller}->first->update($form->params);
+
+            # if a reseller is terminated, we need to terminate all customers
+            # and subscribers
+            if($c->stash->{reseller}->first->status eq "terminated") {
+                for my $customer($c->stash->{reseller}->first->contracts->all) {
+                    $customer->update({ status => 'terminated' });
+                    for my $subscriber($customer->voip_subscribers->all) {
+                        $subscriber->update({ status => 'terminated' });
+                        $subscriber->provisioning_voip_subscriber->delete;
+                    }
+                }
+            }
+
             delete $c->session->{created_objects}->{contract};
             delete $c->session->{edit_contract_id};
             $c->flash(messages => [{type => 'success', text => 'Reseller successfully updated'}]);
@@ -228,22 +241,6 @@ sub edit :Chained('base') :PathPart('edit') :Args(0) {
     $c->stash(edit_flag => 1);
 
     return;
-}
-
-sub delete :Chained('base') :PathPart('delete') :Args(0) {
-    my ($self, $c) = @_;
-
-    $c->detach('/denied_page')
-    	if($c->user->read_only);
-
-    try {
-        $c->stash->{reseller}->first->delete;
-        $c->flash(messages => [{type => 'success', text => 'Reseller successfully deleted'}]);
-    } catch($e) {
-        $c->log->error($e);
-        $c->flash(messages => [{type => 'error', text => 'Failed to delete reseller'}]);
-    }
-    $c->response->redirect($c->uri_for());
 }
 
 sub details :Chained('base') :PathPart('details') :Args(0) {
