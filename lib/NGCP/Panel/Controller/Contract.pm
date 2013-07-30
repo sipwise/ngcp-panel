@@ -212,6 +212,17 @@ sub edit :Chained('base') :PathPart('edit') :Args(0) {
                 $form->values->{contact_id} = $form->values->{contact}{id};
                 delete $form->values->{contact};
                 $contract->update($form->values);
+
+                # terminate all voip subscribers if contract is terminated
+                if($contract->status eq "terminated") {
+                    for my $subscriber($contract->voip_subscribers->all) {
+                        $subscriber->update({ status => 'terminated' });
+                        $subscriber->provisioning_voip_subscriber->delete;
+                    }
+                }
+
+                # TODO: what about terminating a peering contract?
+
                 delete $c->session->{created_objects}->{contact};
                 delete $c->session->{created_objects}->{billing_profile};
             });
