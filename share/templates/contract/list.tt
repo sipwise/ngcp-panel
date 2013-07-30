@@ -15,7 +15,6 @@
         helper.dt_buttons = [
             { name = 'Edit', uri = "/contract/'+full.id+'/edit", class = 'btn-small btn-primary', icon = 'icon-edit' },
             { name = 'Terminate', uri = "/contract/'+full.id+'/terminate", class = 'btn-small btn-primary', icon = 'icon-remove' },
-            { name = 'Delete', uri = "/contract/'+full.id+'/delete", class = 'btn-small btn-secondary', icon = 'icon-trash' },
         ];
         helper.top_buttons = [
             { name = 'Create Contract', uri = c.uri_for('/contract/create'), icon = 'icon-star' },

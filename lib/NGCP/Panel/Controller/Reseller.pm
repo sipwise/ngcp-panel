@@ -7,6 +7,7 @@ use Hash::Merge;
 use HTTP::Status qw(HTTP_SEE_OTHER);
 use NGCP::Panel::Form::Reseller;
 use NGCP::Panel::Utils::Navigation;
+use NGCP::Panel::Utils::Contract;
 
 sub auto :Does(ACL) :ACLDetachTo('/denied_page') :AllowedRole(admin) {
     my ($self, $c) = @_;
@@ -210,21 +211,21 @@ sub edit :Chained('base') :PathPart('edit') :Args(0) {
 
     if($posted && $form->validated) {
         try {
-            $form->params->{contract_id} = delete $form->params->{contract}{id};
-            delete $form->params->{contract};
-            $c->stash->{reseller}->first->update($form->params);
+            $c->model('DB')->txn_do(sub {
+                $form->params->{contract_id} = delete $form->params->{contract}{id};
+                delete $form->params->{contract};
+                my $old_status = $c->stash->{reseller}->first->status;
+                $c->stash->{reseller}->first->update($form->params);
 
-            # if a reseller is terminated, we need to terminate all customers
-            # and subscribers
-            if($c->stash->{reseller}->first->status eq "terminated") {
-                for my $customer($c->stash->{reseller}->first->contracts->all) {
-                    $customer->update({ status => 'terminated' });
-                    for my $subscriber($customer->voip_subscribers->all) {
-                        $subscriber->update({ status => 'terminated' });
-                        $subscriber->provisioning_voip_subscriber->delete;
-                    }
+                if($c->stash->{reseller}->first->status ne $old_status) {
+                    my $contract = $c->stash->{reseller}->first->contract;
+                    $contract->update({ status => $c->stash->{reseller}->first->status });
+                    NGCP::Panel::Utils::Contract::recursively_lock_contract(
+                        c => $c,
+                        contract => $contract,
+                    );
                 }
-            }
+            });
 
             delete $c->session->{created_objects}->{contract};
             delete $c->session->{edit_contract_id};
@@ -233,7 +234,7 @@ sub edit :Chained('base') :PathPart('edit') :Args(0) {
             $c->log->error($e);
             $c->flash(messages => [{type => 'error', text => 'Failed to update reseller'}]);
         }
-        $c->response->redirect($c->uri_for());
+        NGCP::Utils::Navigation::back_or($c, $c->uri_for);
     }
 
     $c->stash(close_target => $c->uri_for());
@@ -241,6 +242,32 @@ sub edit :Chained('base') :PathPart('edit') :Args(0) {
     $c->stash(edit_flag => 1);
 
     return;
+}
+
+sub terminate :Chained('base') :PathPart('terminate') :Args(0) {
+    my ($self, $c) = @_;
+
+    try {
+        $c->model('DB')->txn_do(sub {
+            my $reseller = $c->stash->{reseller}->first;
+            my $old_status = $reseller->status;
+            $reseller->update({ status => 'terminated' });
+
+            if($reseller->status ne $old_status) {
+                my $contract = $reseller->contract;
+                $contract->update({ status => $c->stash->{reseller}->first->status });
+                NGCP::Panel::Utils::Contract::recursively_lock_contract(
+                    c => $c,
+                    contract => $contract,
+                );
+            }
+        });
+        $c->flash(messages => [{type => 'success', text => 'Successfully terminated reseller'}]);
+    } catch($e) {
+        $c->log->error("failed to terminate reseller: $e");
+        $c->flash(messages => [{type => 'error', text => 'Failed to terminate reseller'}]);
+    }
+    NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for);
 }
 
 sub details :Chained('base') :PathPart('details') :Args(0) {

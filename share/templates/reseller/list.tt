@@ -13,13 +13,17 @@
 
     UNLESS c.user.read_only;
         helper.dt_buttons = [
-            { name = 'Edit', uri = "/reseller/'+full[\"id\"]+'/edit", class = 'btn-small btn-primary', icon = 'icon-edit' },
-            { name = 'Delete', uri = "/reseller/'+full[\"id\"]+'/delete", class = 'btn-small btn-secondary', icon = 'icon-trash' },
-            { name = 'Details', uri = "/reseller/'+full[\"id\"]+'/details", class = 'btn-small btn-tertiary', icon = 'icon-list' },
+            { name = 'Edit', uri = "/reseller/'+full.id+'/edit", class = 'btn-small btn-primary', icon = 'icon-edit' },
+            { name = 'Terminate', uri = "/reseller/'+full.id+'/terminate", class = 'btn-small btn-secondary', icon = 'icon-remove' },
+            { name = 'Details', uri = "/reseller/'+full.id+'/details", class = 'btn-small btn-tertiary', icon = 'icon-list' },
         ];
         helper.top_buttons = [
             { name = 'Create Reseller', uri = c.uri_for('/reseller/create'), icon = 'icon-star' },
             { name = 'Create Reseller with default values', uri = c.uri_for('/reseller/create_defaults'), icon = 'icon-star', method = 'post' },
+        ];
+    ELSE;
+        helper.dt_buttons = [
+            { name = 'Details', uri = "/reseller/'+full.id+'/details", class = 'btn-small btn-tertiary', icon = 'icon-list' },
         ];
     END;
 

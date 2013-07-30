@@ -79,6 +79,36 @@ sub destination_as_string {
     }
 }
 
+sub lock_provisoning_voip_subscriber {
+    my %params = @_;
+
+    my $c = $params{c};
+    my $prov_subscriber= $params{prov_subscriber};
+    my $level = $params{level};
+
+    return unless $prov_subscriber;
+
+    my $rs = get_usr_preference_rs(
+        c => $c, 
+        prov_subscriber => $prov_subscriber, 
+        attribute => 'lock'
+    );
+    try {
+        if($rs->first) {
+            if($level == 0) {
+                $rs->first->delete;
+            } else {
+                $rs->first->update({ value => $level });
+            }
+        } elsif($level > 0) { # nothing to do for level 0, if no lock is set yet
+            $rs->create({ value => $level });
+        }
+    } catch($e) {
+        $c->log->error("failed to set provisioning_voip_subscriber lock: $e");
+        $e->rethrow;
+    }
+}
+
 1;
 
 =head1 NAME

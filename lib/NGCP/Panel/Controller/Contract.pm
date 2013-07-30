@@ -6,6 +6,7 @@ use Hash::Merge;
 use NGCP::Panel::Form::Contract;
 use NGCP::Panel::Utils::Navigation;
 use NGCP::Panel::Utils::Contract;
+use NGCP::Panel::Utils::Subscriber;
 
 sub auto :Does(ACL) :ACLDetachTo('/denied_page') :AllowedRole(admin) :AllowedRole(reseller) {
     my ($self, $c) = @_;
@@ -208,20 +209,19 @@ sub edit :Chained('base') :PathPart('edit') :Args(0) {
                         billing_profile_id => $form->values->{billing_profile}{id},
                     });
                 }
+                my $old_status = $contract->status;
                 delete $form->values->{billing_profile};
                 $form->values->{contact_id} = $form->values->{contact}{id};
                 delete $form->values->{contact};
                 $contract->update($form->values);
 
-                # terminate all voip subscribers if contract is terminated
-                if($contract->status eq "terminated") {
-                    for my $subscriber($contract->voip_subscribers->all) {
-                        $subscriber->update({ status => 'terminated' });
-                        $subscriber->provisioning_voip_subscriber->delete;
-                    }
+                # if status changed, populate it down the chain
+                if($contract->status ne $old_status) {
+                    NGCP::Panel::Utils::Contract::recursively_lock_contract(
+                        c => $c,
+                        contract => $contract,
+                    );
                 }
-
-                # TODO: what about terminating a peering contract?
 
                 delete $c->session->{created_objects}->{contact};
                 delete $c->session->{created_objects}->{billing_profile};
@@ -243,24 +243,20 @@ sub terminate :Chained('base') :PathPart('terminate') :Args(0) {
     my ($self, $c) = @_;
 
     try {
-        $c->stash->{contract_result}->update({ status => 'terminated' });
+        my $contract = $c->stash->{contract_result};
+        my $old_status = $contract->status;
+        $contract->update({ status => 'terminated' });
+        # if status changed, populate it down the chain
+        if($contract->status ne $old_status) {
+            NGCP::Panel::Utils::Contract::recursively_lock_contract(
+                c => $c,
+                contract => $contract,
+            );
+        }
         $c->flash(messages => [{type => 'success', text => 'Contract successfully terminated'}]);
     } catch (DBIx::Class::Exception $e) {
         $c->log->info("failed to terminate contract: $e");
         $c->flash(messages => [{type => 'error', text => 'Failed to terminate contract'}]);
-    };
-    NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for);
-}
-
-sub delete :Chained('base') :PathPart('delete') :Args(0) {
-    my ($self, $c) = @_;
-
-    try {
-        $c->stash->{contract_result}->delete;
-        $c->flash(messages => [{type => 'success', text => 'Contract successfully deleted'}]);
-    } catch (DBIx::Class::Exception $e) {
-        $c->log->info("failed to delete contract: $e");
-        $c->flash(messages => [{type => 'error', text => 'Failed to delete contract'}]);
     };
     NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for);
 }
@@ -270,11 +266,6 @@ sub ajax :Chained('contract_list') :PathPart('ajax') :Args(0) {
     
     my $res = $c->stash->{contract_select_rs};
     NGCP::Panel::Utils::Datatables::process($c, $res, $c->stash->{contract_dt_columns});
-    
-#    $c->forward( "/ajax_process_resultset", [$rs,
-#                 ["id", "contact_id", "billing_profile_name", "billing_profile_id", "status"],
-#                 ["billing_profile.name", "status"]]);
-    
     $c->detach( $c->view("JSON") );
 }
 

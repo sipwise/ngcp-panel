@@ -55,6 +55,77 @@ sub create_contract_balance {
     }
 }
 
+sub recursively_lock_contract {
+    my %params = @_;
+
+    my $c = $params{c};
+    my $contract = $params{contract};
+    my $status = $contract->status;
+
+    # first, change all voip subscribers, in case there are any
+    for my $subscriber($contract->voip_subscribers->all) {
+        $subscriber->update({ status => $status });
+        if($status eq 'terminated') {
+            $subscriber->provisioning_voip_subscriber->delete;
+        } elsif($status eq 'locked') {
+            NGCP::Panel::Utils::Subscriber::lock_provisoning_voip_subscriber(
+                c => $c,
+                prov_subscriber => $subscriber->provisioning_voip_subscriber,
+                level => 4,
+            );
+        } elsif($status eq 'active') {
+            NGCP::Panel::Utils::Subscriber::lock_provisoning_voip_subscriber(
+                c => $c,
+                prov_subscriber => $subscriber->provisioning_voip_subscriber,
+                level => 0,
+            );
+        }
+    }
+
+    # then, check all child contracts in case of reseller
+    my $resellers = $c->model('DB')->resultset('resellers')->search({
+        contract_id => $contract->id
+    });
+    for my $reseller($resellers->all) {
+
+        # remove domains in case of reseller termination
+        if($status eq 'terminated') {
+            for my $domain($reseller->domain_resellers->all) {
+                $domain->delete;
+            }
+        }
+
+        # fetch sub-contracts of this contract
+        my $customers = $c->model('DB')->resultset('contracts')->search({
+                'contact.reseller_id' => $reseller->id,
+            }, {
+                join => 'contact',
+            }
+        );
+        for my $customer($customers->all) {
+            $customer->update({ status => $status });
+            for my $subscriber($customer->voip_subscribers->all) {
+                $subscriber->update({ status => $status });
+                if($status eq 'terminated') {
+                    $subscriber->provisioning_voip_subscriber->delete;
+                } elsif($status eq 'locked') {
+                    NGCP::Panel::Utils::Subscriber::lock_provisoning_voip_subscriber(
+                        c => $c,
+                        prov_subscriber => $subscriber->provisioning_voip_subscriber,
+                        level => 4,
+                    );
+                } elsif($status eq 'active') {
+                    NGCP::Panel::Utils::Subscriber::lock_provisoning_voip_subscriber(
+                        c => $c,
+                        prov_subscriber => $subscriber->provisioning_voip_subscriber,
+                        level => 0,
+                    );
+                }
+            }
+        }
+    }
+}
+
 1;
 
 =head1 NAME
