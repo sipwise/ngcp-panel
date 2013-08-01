@@ -129,9 +129,8 @@ sub create :Chained('contract_list') :PathPart('create') :Args(0) {
         } catch($e) {
             $c->log->error("Failed to create contract: $e");
             $c->flash(messages => [{type => 'error', text => 'Failed to create contract'}]);
-            NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for_action('/contract/root'));
         }
-        NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for_action('/contract/root'));
+        NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for('/contract'));
     } 
 
     $c->stash(create_flag => 1);
@@ -148,7 +147,7 @@ sub base :Chained('contract_list') :PathPart('') :CaptureArgs(1) {
 
     unless($contract_id && $contract_id->is_integer) {
         $c->flash(messages => [{type => 'error', text => 'Invalid contract id detected!'}]);
-        NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for);
+        NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for('/contract'));
     }
 
     my $res = $c->stash->{contract_select_rs};
@@ -160,7 +159,7 @@ sub base :Chained('contract_list') :PathPart('') :CaptureArgs(1) {
 
     unless(defined($res)) {
         $c->flash(messages => [{type => 'error', text => 'Contract does not exist'}]);
-        NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for);
+        NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for('/contract'));
     }
     
     $c->stash(contract => {$res->get_inflated_columns});
@@ -229,9 +228,8 @@ sub edit :Chained('base') :PathPart('edit') :Args(0) {
         } catch($e) {
             $c->log->error("failed to update contract: $e");
             $c->flash(messages => [{type => 'error', text => 'Failed to update contract'}]);
-            NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for);
         }
-        NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for);
+        NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for('/contract'));
     }
 
     $c->stash(form => $form);
@@ -257,7 +255,7 @@ sub terminate :Chained('base') :PathPart('terminate') :Args(0) {
         $c->log->info("failed to terminate contract: $e");
         $c->flash(messages => [{type => 'error', text => 'Failed to terminate contract'}]);
     };
-    NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for);
+    NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for('/contract'));
 }
 
 sub ajax :Chained('contract_list') :PathPart('ajax') :Args(0) {
@@ -340,9 +338,8 @@ sub peering_create :Chained('peering_list') :PathPart('create') :Args(0) {
         } catch($e) {
             $c->log->error("Failed to create contract: $e");
             $c->flash(messages => [{type => 'error', text => 'Failed to create contract'}]);
-            NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for_action('/contract/root'));
         }
-        NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for_action('/contract/root'));
+        NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for('/contract'));
     } 
 
     $c->stash(create_flag => 1);
@@ -419,9 +416,8 @@ sub customer_create :Chained('customer_list') :PathPart('create') :Args(0) {
         } catch($e) {
             $c->log->error("Failed to create contract: $e");
             $c->flash(messages => [{type => 'error', text => 'Failed to create contract'}]);
-            NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for_action('/contract/root'));
         }
-        NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for_action('/contract/root'));
+        NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for('/contract'));
     } 
 
     $c->stash(create_flag => 1);

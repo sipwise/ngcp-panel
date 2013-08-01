@@ -150,9 +150,8 @@ sub create :Chained('profile_list') :PathPart('create') :Args(0) {
         } catch($e) {
             $c->log->error("failed to create billing profile: $e");
             $c->flash(messages => [{type => 'error', text => 'Failed to create billing profile'}]);
-            NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for);
         }
-        NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for);
+        NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for('/billing'));
     }
 
     $c->stash(close_target => $c->uri_for());

@@ -85,11 +85,8 @@ sub process {
         if(defined(my $row = $rs->find($topId))) {
             push @{ $aaData }, _prune_row($cols, $row->get_inflated_columns);
             $rs = $rs->search({ 'me.id' => { '!=', $topId} });
-        } else {
-            $c->log->error("iIdOnTop id $topId not found in resultset " . ref $rs);
         }
     }
-
 
     # sorting
     my $sortColumn = $c->request->params->{iSortCol_0};

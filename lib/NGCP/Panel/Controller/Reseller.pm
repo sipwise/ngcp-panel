@@ -20,7 +20,9 @@ sub list_reseller :Chained('/') :PathPart('reseller') :CaptureArgs(0) {
 
     $c->stash(
         resellers => $c->model('DB')
-            ->resultset('resellers')->search_rs({}),
+            ->resultset('resellers')->search({
+                status => { '!=' => 'terminated' }
+            }),
         template => 'reseller/list.tt'
     );
 
@@ -89,7 +91,7 @@ sub create :Chained('list_reseller') :PathPart('create') :Args(0) {
             $c->log->error($e);
             $c->flash(messages => [{type => 'error', text => 'Failed to create reseller'}]);
         }
-        NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for());
+        NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for('/reseller'));
     }
 
     $c->stash(create_flag => 1);
@@ -138,8 +140,6 @@ sub base :Chained('list_reseller') :PathPart('') :CaptureArgs(1) {
 
 sub reseller_contacts :Chained('base') :PathPart('contacts') :Args(0) {
     my ($self, $c) = @_;
-    use Data::Printer;
-    p $c->stash->{contact_dt_columns};
     my $rs = $c->stash->{reseller}->first->contract->search_related_rs('contact');
     NGCP::Panel::Utils::Datatables::process($c, $rs, $c->stash->{contact_dt_columns});
     $c->detach($c->view('JSON'));
@@ -233,7 +233,7 @@ sub edit :Chained('base') :PathPart('edit') :Args(0) {
             $c->log->error($e);
             $c->flash(messages => [{type => 'error', text => 'Failed to update reseller'}]);
         }
-        NGCP::Utils::Navigation::back_or($c, $c->uri_for);
+        NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for('/reseller'));
     }
 
     $c->stash(close_target => $c->uri_for());
@@ -254,7 +254,7 @@ sub terminate :Chained('base') :PathPart('terminate') :Args(0) {
 
             if($reseller->status ne $old_status) {
                 my $contract = $reseller->contract;
-                $contract->update({ status => $c->stash->{reseller}->first->status });
+                $contract->update({ status => $reseller->status });
                 NGCP::Panel::Utils::Contract::recursively_lock_contract(
                     c => $c,
                     contract => $contract,
@@ -266,7 +266,7 @@ sub terminate :Chained('base') :PathPart('terminate') :Args(0) {
         $c->log->error("failed to terminate reseller: $e");
         $c->flash(messages => [{type => 'error', text => 'Failed to terminate reseller'}]);
     }
-    NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for);
+    NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for('/reseller'));
 }
 
 sub details :Chained('base') :PathPart('details') :Args(0) {

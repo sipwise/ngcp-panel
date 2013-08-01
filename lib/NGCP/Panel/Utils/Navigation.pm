@@ -10,16 +10,6 @@ sub check_redirect_chain {
     # TODO: check for missing fields
     my $c = $params{c};
 
-    if($c->session->{redirect_targets} && @{ $c->session->{redirect_targets} }) {
-        my $target = ${ $c->session->{redirect_targets} }[0];
-        if('/'.$c->request->path eq $target->path) {
-            shift @{$c->session->{redirect_targets}};
-            $c->stash(close_target => ${ $c->session->{redirect_targets} }[0]);
-        } else {
-            $c->stash(close_target => $target);
-        }
-    }
-
     if($c->request->params->{back}) {
         my $back_uri = URI->new(uri_decode($c->request->params->{back}));
         $back_uri->query_param_delete('back');
@@ -28,6 +18,16 @@ sub check_redirect_chain {
             unshift @{ $c->session->{redirect_targets} }, $back_uri;
         } else {
             $c->session->{redirect_targets} = [ $back_uri ];
+        }
+    }
+
+    if(@{ $c->session->{redirect_targets} }) {
+        my $target = ${ $c->session->{redirect_targets} }[0];
+        if('/'.$c->request->path eq $target->path) {
+            shift @{$c->session->{redirect_targets}};
+            $c->stash(close_target => ${ $c->session->{redirect_targets} }[0]);
+        } else {
+            $c->stash(close_target => $target);
         }
     }
 }

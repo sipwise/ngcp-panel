@@ -148,6 +148,7 @@ sub edit :Chained('base') :PathPart('edit') :Args(0) {
         c => $c,
         form => $form,
         fields => {},
+        back_uri => $c->req->uri,
     );
     if ($posted && $form->validated) {
         try {

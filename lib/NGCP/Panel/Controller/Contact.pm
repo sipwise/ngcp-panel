@@ -45,6 +45,7 @@ sub create :Chained('list_contact') :PathPart('create') :Args(0) {
     my $posted = ($c->request->method eq 'POST');
     my $form;
     my $params = {};
+    $params = $params->merge($c->session->{created_objects});
     if($c->user->is_superuser && $no_reseller) {
         $form = NGCP::Panel::Form::Contact::Reseller->new;
         $params->{reseller}{id} = $c->user->reseller_id;
@@ -63,7 +64,10 @@ sub create :Chained('list_contact') :PathPart('create') :Args(0) {
     NGCP::Panel::Utils::Navigation::check_form_buttons(
         c => $c,
         form => $form,
-        fields => {},
+        fields => {
+            'reseller.create' => $c->uri_for('/reseller/create'),
+        },
+        back_uri => $c->req->uri,
     );
     if($posted && $form->validated) {
         try {
@@ -71,14 +75,14 @@ sub create :Chained('list_contact') :PathPart('create') :Args(0) {
                 delete $form->values->{reseller};
             }
             my $contact = $c->stash->{contacts}->create($form->values);
+            delete $c->session->{created_objects}->{reseller};
             $c->session->{created_objects}->{contact} = { id => $contact->id };
             $c->flash(messages => [{type => 'success', text => 'Contact successfully created'}]);
         } catch($e) {
             $c->log->error("failed to create contact: $e");
             $c->flash(messages => [{type => 'error', text => 'Failed to create contact'}]);
-            NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for_action('/contact/root'));
         }
-        NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for_action('/contact/root'));
+        NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for('/contact'));
     }
 
     $c->stash(create_flag => 1);
@@ -96,7 +100,7 @@ sub base :Chained('list_contact') :PathPart('') :CaptureArgs(1) {
 
     unless($contact_id && $contact_id->is_int) {
         $c->flash(messages => [{type => 'error', text => 'Invalid contact id detected!'}]);
-        NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for());
+        NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for('/contact'));
     }
     my $res = $c->stash->{contacts};
     $c->stash(contact => $res->find($contact_id));
@@ -119,11 +123,11 @@ sub edit :Chained('base') :PathPart('edit') :Args(0) {
             delete $form->params->{save};
             $c->stash->{contact}->update($form->params);
             $c->flash(messages => [{type => 'success', text => 'Contact successfully changed'}]);
-            NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for_action('/contact/root'));
+            NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for('/contact'));
         } catch($e) {
             $c->log->error("failed to update contact: $e");
             $c->flash(messages => [{type => 'error', text => 'Failed to update contact'}]);
-            NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for_action('/contact/root'));
+            NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for('/contact'));
         }
     }
 
@@ -143,7 +147,7 @@ sub delete :Chained('base') :PathPart('delete') :Args(0) {
         $c->log->error("failed to delete contact: $e");
         $c->flash(messages => [{type => 'error', text => 'Failed to delete contact'}]);
     }
-    NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for);
+    NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for('/contact'));
 }
 
 sub ajax :Chained('list_contact') :PathPart('ajax') :Args(0) {
