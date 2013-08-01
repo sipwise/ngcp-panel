@@ -60,7 +60,6 @@ $.fn.dataTableExt.oPagination.bootstrap = {
         // Update stateful properties
         this.fnUpdateState(oSettings);
 
-	console.log(oSettings);
 	var totalPages = Math.ceil(oSettings._iRecordsDisplay / oSettings._iDisplayLength);
  
         if (oSettings._iCurrentPage === 1) {

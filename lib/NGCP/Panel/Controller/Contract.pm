@@ -1,8 +1,7 @@
 package NGCP::Panel::Controller::Contract;
 use Sipwise::Base;
-use namespace::autoclean;
+
 BEGIN { extends 'Catalyst::Controller'; }
-use Hash::Merge;
 use NGCP::Panel::Form::Contract;
 use NGCP::Panel::Utils::Navigation;
 use NGCP::Panel::Utils::Contract;
@@ -83,7 +82,7 @@ sub create :Chained('contract_list') :PathPart('create') :Args(0) {
     
     my $posted = ($c->request->method eq 'POST');
     my $params = {};
-    $params = Hash::Merge->new('RIGHT_PRECEDENT')->merge($params, $c->session->{created_objects});
+    $params = $params->merge($c->session->{created_objects});
     my $form;
     $form = NGCP::Panel::Form::Contract->new;
     $form->process(
@@ -177,7 +176,7 @@ sub edit :Chained('base') :PathPart('edit') :Args(0) {
     my $contract = $c->stash->{contract_result};
     my $billing_mapping = $contract->billing_mappings->find($contract->get_column('bmid'));
     my $params = {};
-    $params = Hash::Merge->new('RIGHT_PRECEDENT')->merge($params, $c->session->{created_objects});
+    $params = $params->merge($c->session->{created_objects});
     unless($posted) {
         $params->{billing_profile}{id} = $billing_mapping->billing_profile->id;
         $params->{contact}{id} = $contract->contact_id;
@@ -298,7 +297,7 @@ sub peering_create :Chained('peering_list') :PathPart('create') :Args(0) {
 
     my $posted = ($c->request->method eq 'POST');
     my $params = {};
-    $params = Hash::Merge->new('RIGHT_PRECEDENT')->merge($params, $c->session->{created_objects});
+    $params = $params->merge($c->session->{created_objects});
     my $form = NGCP::Panel::Form::Contract->new;
     $form->process(
         posted => $posted,
@@ -379,7 +378,7 @@ sub customer_create :Chained('customer_list') :PathPart('create') :Args(0) {
 
     my $posted = ($c->request->method eq 'POST');
     my $params = {};
-    $params = Hash::Merge->new('RIGHT_PRECEDENT')->merge($params, $c->session->{created_objects});
+    $params = $params->merge($c->session->{created_objects});
     my $form = NGCP::Panel::Form::Contract->new;
     $form->process(
         posted => $posted,

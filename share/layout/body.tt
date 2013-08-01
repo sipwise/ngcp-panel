@@ -98,6 +98,31 @@ $(function () {
         $('#dataConfirmModal').modal({show:true});
         return false;
     });
+
+    [%
+        backuri = c.req.uri;
+        tmp = backuri.query_param_delete('back');
+    -%]
+    $('a').each(function() {
+        var _text = $(this).text().trim();
+        if(_text == "Back" || 
+           $(this).hasClass('accordion-toggle') ||
+           $(this).parents('#footer').length ||
+           $(this).parents('#topbar').length)  {
+
+            return true;
+        }
+        var _href = $(this).attr('href');
+        var _back = 'back=[% backuri | uri %]';
+        if(_href == null) {
+            // ignore 
+        } else if(_href.match(/\?/)) {
+            $(this).attr('href', _href + '&' + _back);
+        } else {
+            $(this).attr('href', _href + '?' + _back);
+        }
+        return true;
+    });
 });
 </script>
 </body>

@@ -1,6 +1,6 @@
 package NGCP::Panel::Controller::Root;
 use Moose;
-use namespace::autoclean;
+
 
 BEGIN { extends 'Catalyst::Controller' }
 
@@ -71,6 +71,25 @@ sub index :Path :Args(0) {
     my ( $self, $c ) = @_;
 
     $c->response->redirect($c->uri_for('/dashboard'));
+}
+
+sub back :Path('/back') :Args(0) {
+    my ( $self, $c ) = @_;
+    my $target;
+    my $ref_uri = URI->new($c->req->referer) || $c->uri_for('/dashboard');
+    if($c->session->{redirect_targets}) {
+        while(@{ $c->session->{redirect_targets} }) {
+            $target = shift @{ $c->session->{redirect_targets} };
+            last unless($ref_uri->path eq $target->path);
+        }
+        if($ref_uri->path eq $target->path) {
+            $target = $c->uri_for('/dashboard');
+        }
+    } else {
+        $target = $c->uri_for('/dashboard');
+    }
+    $c->response->redirect($target);
+    $c->detach;
 }
 
 sub default :Path {

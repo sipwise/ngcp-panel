@@ -1,6 +1,5 @@
 package NGCP::Panel::Controller::Billing;
 use Sipwise::Base;
-use namespace::autoclean;
 use Text::CSV_XS;
 use I18N::Langinfo qw(langinfo DAY_1 DAY_2 DAY_3 DAY_4 DAY_5 DAY_6 DAY_7);
 use DateTime::Format::ISO8601;

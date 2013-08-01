@@ -78,16 +78,23 @@ sub root :Chained('sub_list') :PathPart('') :Args(0) {
 sub create_list :Chained('sub_list') :PathPart('create') :Args(0) {
     my ($self, $c) = @_;
 
+    my $posted = ($c->request->method eq 'POST');
+    my $params = {};
+    $params = $params->merge($c->session->{created_objects});
     my $form = NGCP::Panel::Form::Subscriber->new;
     $form->process(
-        posted => ($c->request->method eq 'POST'),
+        posted => $posted,
         params => $c->request->params,
-        action => $c->uri_for('/subscriber/create'),
+        item => $params,
     );
     NGCP::Panel::Utils::Navigation::check_form_buttons(
         c => $c,
         form => $form,
-        fields => [qw/domain.create/],
+        fields => {
+            'domain.create' => $c->uri_for('/domain/create'),
+            'reseller.create' => $c->uri_for('/reseller/create'),
+            'contract.create' => $c->uri_for('/contract/customer/create'),
+        },
         back_uri => $c->req->uri,
     );
     if($form->validated) {
@@ -192,6 +199,10 @@ sub create_list :Chained('sub_list') :PathPart('create') :Args(0) {
                     password => sprintf("%04d", int(rand 10000)),
                     email => '',
                 });
+
+                delete $c->session->{created_objects}->{reseller};
+                delete $c->session->{created_objects}->{contract};
+                delete $c->session->{created_objects}->{domain};
             });
             $c->flash(messages => [{type => 'success', text => 'Subscriber successfully created!'}]);
             $c->response->redirect($c->uri_for('/subscriber'));
@@ -796,6 +807,12 @@ sub preferences_callforward_destinationset_create :Chained('base') :PathPart('pr
         posted => $posted,
         params => $c->req->params,
     );
+    NGCP::Panel::Utils::Navigation::check_form_buttons(
+        c => $c,
+        form => $form,
+        fields => {},
+        back_uri => $c->req->uri,
+    );
 
     if($posted && $form->validated) {
         try {
@@ -946,6 +963,12 @@ sub preferences_callforward_destinationset_edit :Chained('preferences_callforwar
     my $form = NGCP::Panel::Form::DestinationSet->new(ctx => $c);
     $form->process(
         params => $posted ? $c->req->params : $params
+    );
+    NGCP::Panel::Utils::Navigation::check_form_buttons(
+        c => $c,
+        form => $form,
+        fields => {},
+        back_uri => $c->req->uri,
     );
     delete $c->stash->{cf_tmp_params};
 
@@ -1133,6 +1156,12 @@ sub preferences_callforward_timeset_create :Chained('base') :PathPart('preferenc
         posted => $posted,
         params => $c->req->params,
     );
+    NGCP::Panel::Utils::Navigation::check_form_buttons(
+        c => $c,
+        form => $form,
+        fields => {},
+        back_uri => $c->req->uri,
+    );
 
     if($posted && $form->validated) {
         try {
@@ -1237,6 +1266,12 @@ sub preferences_callforward_timeset_edit :Chained('preferences_callforward_times
 
     $form->process(
         params => $posted ? $c->req->params : $params
+    );
+    NGCP::Panel::Utils::Navigation::check_form_buttons(
+        c => $c,
+        form => $form,
+        fields => {},
+        back_uri => $c->req->uri,
     );
 
     if($posted && $form->validated) {
@@ -1459,6 +1494,12 @@ sub edit_master :Chained('master') :PathPart('edit') :Args(0) {
     $form->process(
         params => $posted ? $c->request->params : $params
     );
+    NGCP::Panel::Utils::Navigation::check_form_buttons(
+        c => $c,
+        form => $form,
+        fields => {},
+        back_uri => $c->req->uri,
+    );
 
     if($posted && $form->validated) {
         my $schema = $c->model('DB');
@@ -1617,6 +1658,9 @@ sub edit_voicebox :Chained('base') :PathPart('preferences/voicebox/edit') :Args(
                 $form = NGCP::Panel::Form::Voicemail::Pin->new;
                 $params = { 'pin' => $vm_user->password };
                 $form->process(params => $posted ? $c->req->params : $params);
+                NGCP::Panel::Utils::Navigation::check_form_buttons(
+                    c => $c, form => $form, fields => {}, back_uri => $c->req->uri,
+                );
                 if($posted && $form->validated) {
                     $vm_user->update({ password => $form->field('pin')->value });
                 }
@@ -1625,6 +1669,9 @@ sub edit_voicebox :Chained('base') :PathPart('preferences/voicebox/edit') :Args(
                 $form = NGCP::Panel::Form::Voicemail::Email->new; 
                 $params = { 'email' => $vm_user->email };
                 $form->process(params => $posted ? $c->req->params : $params);
+                NGCP::Panel::Utils::Navigation::check_form_buttons(
+                    c => $c, form => $form, fields => {}, back_uri => $c->req->uri,
+                );
                 if($posted && $form->validated) {
                     $vm_user->update({ email => $form->field('email')->value });
                 }
@@ -1633,6 +1680,9 @@ sub edit_voicebox :Chained('base') :PathPart('preferences/voicebox/edit') :Args(
                 $form = NGCP::Panel::Form::Voicemail::Attach->new; 
                 $params = { 'attach' => $vm_user->attach eq 'yes' ? 1 : 0 };
                 $form->process(params => $posted ? $c->req->params : $params);
+                NGCP::Panel::Utils::Navigation::check_form_buttons(
+                    c => $c, form => $form, fields => {}, back_uri => $c->req->uri,
+                );
                 if($posted && $form->validated) {
                     $vm_user->update({ attach => $form->field('attach')->value ? 'yes' : 'no' });
                 }
@@ -1641,6 +1691,9 @@ sub edit_voicebox :Chained('base') :PathPart('preferences/voicebox/edit') :Args(
                 $form = NGCP::Panel::Form::Voicemail::Delete->new; 
                 $params = { 'delete' => $vm_user->get_column('delete') eq 'yes' ? 1 : 0 };
                 $form->process(params => $posted ? $c->req->params : $params);
+                NGCP::Panel::Utils::Navigation::check_form_buttons(
+                    c => $c, form => $form, fields => {}, back_uri => $c->req->uri,
+                );
                 if($posted && $form->validated) {
                     $vm_user->update({ 
                         delete => $form->field('delete')->value ? 'yes' : 'no',
@@ -1698,6 +1751,9 @@ sub edit_fax :Chained('base') :PathPart('preferences/fax/edit') :Args(1) {
                 $form = NGCP::Panel::Form::Faxserver::Name->new;
                 $params = { 'name' => $faxpref->name };
                 $form->process(params => $posted ? $c->req->params : $params);
+                NGCP::Panel::Utils::Navigation::check_form_buttons(
+                    c => $c, form => $form, fields => {}, back_uri => $c->req->uri,
+                );
                 if($posted && $form->validated) {
                     $faxpref->update({ name => $form->field('name')->value });
                 }
@@ -1706,6 +1762,9 @@ sub edit_fax :Chained('base') :PathPart('preferences/fax/edit') :Args(1) {
                 $form = NGCP::Panel::Form::Faxserver::Password->new;
                 $params = { 'password' => $faxpref->password };
                 $form->process(params => $posted ? $c->req->params : $params);
+                NGCP::Panel::Utils::Navigation::check_form_buttons(
+                    c => $c, form => $form, fields => {}, back_uri => $c->req->uri,
+                );
                 if($posted && $form->validated) {
                     $faxpref->update({ password => $form->field('password')->value });
                 }
@@ -1714,6 +1773,9 @@ sub edit_fax :Chained('base') :PathPart('preferences/fax/edit') :Args(1) {
                 $form = NGCP::Panel::Form::Faxserver::Active->new;
                 $params = { 'active' => $faxpref->active };
                 $form->process(params => $posted ? $c->req->params : $params);
+                NGCP::Panel::Utils::Navigation::check_form_buttons(
+                    c => $c, form => $form, fields => {}, back_uri => $c->req->uri,
+                );
                 if($posted && $form->validated) {
                     $faxpref->update({ active => $form->field('active')->value });
                 }
@@ -1722,6 +1784,9 @@ sub edit_fax :Chained('base') :PathPart('preferences/fax/edit') :Args(1) {
                 $form = NGCP::Panel::Form::Faxserver::SendStatus->new;
                 $params = { 'send_status' => $faxpref->send_status };
                 $form->process(params => $posted ? $c->req->params : $params);
+                NGCP::Panel::Utils::Navigation::check_form_buttons(
+                    c => $c, form => $form, fields => {}, back_uri => $c->req->uri,
+                );
                 if($posted && $form->validated) {
                     $faxpref->update({ send_status => $form->field('send_status')->value });
                 }
@@ -1730,6 +1795,9 @@ sub edit_fax :Chained('base') :PathPart('preferences/fax/edit') :Args(1) {
                 $form = NGCP::Panel::Form::Faxserver::SendCopy->new;
                 $params = { 'send_copy' => $faxpref->send_copy };
                 $form->process(params => $posted ? $c->req->params : $params);
+                NGCP::Panel::Utils::Navigation::check_form_buttons(
+                    c => $c, form => $form, fields => {}, back_uri => $c->req->uri,
+                );
                 if($posted && $form->validated) {
                     $faxpref->update({ send_copy => $form->field('send_copy')->value });
                 }
@@ -1751,6 +1819,9 @@ sub edit_fax :Chained('base') :PathPart('preferences/fax/edit') :Args(1) {
                     $params->{destination} = \@dests;
                 }
                 $form->process(params => $posted ? $c->req->params : $params);
+                NGCP::Panel::Utils::Navigation::check_form_buttons(
+                    c => $c, form => $form, fields => {}, back_uri => $c->req->uri,
+                );
                 if($posted && $form->validated) {
                     for my $dest($prov_subscriber->voip_fax_destinations->all) {
                         $dest->delete;
@@ -1809,6 +1880,12 @@ sub edit_reminder :Chained('base') :PathPart('preferences/reminder/edit') {
     my $form = NGCP::Panel::Form::Reminder->new;
     $form->process(
         params => $posted ? $c->req->params : $params
+    );
+    NGCP::Panel::Utils::Navigation::check_form_buttons(
+        c => $c,
+        form => $form,
+        fields => {},
+        back_uri => $c->req->uri,
     );
 
     if($posted && $form->validated) {
@@ -2009,6 +2086,12 @@ sub create_registered :Chained('master') :PathPart('registered/create') :Args(0)
         posted => $posted,
         params => $c->request->params
     );
+    NGCP::Panel::Utils::Navigation::check_form_buttons(
+        c => $c,
+        form => $form,
+        fields => {},
+        back_uri => $c->req->uri,
+    );
     if($posted && $form->validated) {
         try {
             my $s = $c->stash->{subscriber}->provisioning_voip_subscriber;
@@ -2064,6 +2147,12 @@ sub create_trusted :Chained('base') :PathPart('preferences/trusted/create') :Arg
     $form->process(
         posted => $posted,
         params => $posted ? $c->req->params : {}
+    );
+    NGCP::Panel::Utils::Navigation::check_form_buttons(
+        c => $c,
+        form => $form,
+        fields => {},
+        back_uri => $c->req->uri,
     );
 
     if($posted && $form->validated) {
@@ -2126,6 +2215,12 @@ sub edit_trusted :Chained('trusted_base') :PathPart('edit') {
     my $form = NGCP::Panel::Form::Subscriber::TrustedSource->new;
     $form->process(
         params => $posted ? $c->req->params : $params
+    );
+    NGCP::Panel::Utils::Navigation::check_form_buttons(
+        c => $c,
+        form => $form,
+        fields => {},
+        back_uri => $c->req->uri,
     );
 
     if($posted && $form->validated) {
@@ -2191,6 +2286,12 @@ sub create_speeddial :Chained('base') :PathPart('preferences/speeddial/create') 
     my $form = NGCP::Panel::Form::Subscriber::SpeedDial->new(ctx => $c);
 
     $form->process(params => $c->req->params);
+    NGCP::Panel::Utils::Navigation::check_form_buttons(
+        c => $c,
+        form => $form,
+        fields => {},
+        back_uri => $c->req->uri,
+    );
     if($posted && $form->validated) {
         try {
             my $d = $form->field('destination')->value;
@@ -2269,6 +2370,12 @@ sub edit_speeddial :Chained('speeddial') :PathPart('edit') :Args(0) {
     }
 
     $form->process(params => $posted ? $c->req->params : $params);
+    NGCP::Panel::Utils::Navigation::check_form_buttons(
+        c => $c,
+        form => $form,
+        fields => {},
+        back_uri => $c->req->uri,
+    );
     if($posted && $form->validated) {
         try {
             my $d = $form->field('destination')->value;

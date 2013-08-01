@@ -1,6 +1,5 @@
 package NGCP::Panel;
 use Moose;
-use namespace::autoclean;
 
 use Catalyst::Runtime 5.80;
 

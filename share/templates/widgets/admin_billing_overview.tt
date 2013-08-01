@@ -15,7 +15,7 @@
             </ul>
         </div>
         <div class="plan-actions">
-            <a href="/billing" class="btn">Configure</a>
+            <a href="[% c.uri_for('/billing') %]" class="btn">Configure</a>
         </div>
     </div>
 </div>

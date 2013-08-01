@@ -30,7 +30,7 @@ Build-Depends: debhelper (>= 8),
                libsys-sig-perl,
                libtext-csv-xs-perl,
                libtrycatch-perl,
-               libhash-merge-perl,
+               libhash-merge-simple-perl,
                ngcp-schema
 Standards-Version: 3.9.4
 Homepage: http://sipwise.com/
@@ -59,13 +59,13 @@ Depends: libcatalyst-actionrole-acl-perl,
          libmoosex-fileattribute-perl,
          libmoosex-object-pluggable-perl,
          libmoosex-singleton-perl,
-         libnamespace-autoclean-perl,
          libnamespace-sweep-perl,
          libnet-http-perl,
          libregexp-parser-perl,
          libsys-sig-perl,
          libtemplate-perl,
          libtext-csv-xs-perl,
+         libhash-merge-simple-perl,
          ngcp-schema,
          ${misc:Depends},
          ${perl:Depends}

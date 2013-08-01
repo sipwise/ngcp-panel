@@ -71,7 +71,7 @@ sub destination_as_string {
     } else {
         my $d = $dest;
         $d =~ s/sip:(.+)\@.+$/$1/;
-        if($d =~ /^\d+$/) {
+        if($d->is_int) {
             return $d;
         } else {
             return $dest;

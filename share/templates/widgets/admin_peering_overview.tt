@@ -14,7 +14,7 @@
             </ul>
         </div>
         <div class="plan-actions">
-            <a href="[% c.uri_for_action("/peering/root") %]" class="btn">Configure</a>
+            <a href="[% c.uri_for('/peering') %]" class="btn">Configure</a>
         </div>
     </div>
 </div>

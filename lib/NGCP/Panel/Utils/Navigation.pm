@@ -1,9 +1,8 @@
 package NGCP::Panel::Utils::Navigation;
-use strict;
-use warnings;
 
 use Sipwise::Base;
 use DBIx::Class::Exception;
+use URI::Encode qw(uri_decode);
 
 sub check_redirect_chain {
     my %params = @_;
@@ -20,6 +19,17 @@ sub check_redirect_chain {
             $c->stash(close_target => $target);
         }
     }
+
+    if($c->request->params->{back}) {
+        my $back_uri = URI->new(uri_decode($c->request->params->{back}));
+        $back_uri->query_param_delete('back');
+        delete $c->request->params->{back};
+        if($c->session->{redirect_targets}) {
+            unshift @{ $c->session->{redirect_targets} }, $back_uri;
+        } else {
+            $c->session->{redirect_targets} = [ $back_uri ];
+        }
+    }
 }
 
 sub check_form_buttons {
@@ -30,6 +40,7 @@ sub check_form_buttons {
     my $fields = $params{fields};
     my $form = $params{form};
     my $back_uri = $params{back_uri};
+    $back_uri->query_param_delete('back');
     
     $fields = { map {($_, undef)} @$fields }
         if (ref($fields) eq "ARRAY");

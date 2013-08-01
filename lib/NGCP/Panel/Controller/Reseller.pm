@@ -3,7 +3,6 @@ use Sipwise::Base;
 use namespace::sweep;
 BEGIN { extends 'Catalyst::Controller'; }
 use DateTime qw();
-use Hash::Merge;
 use HTTP::Status qw(HTTP_SEE_OTHER);
 use NGCP::Panel::Form::Reseller;
 use NGCP::Panel::Utils::Navigation;
@@ -61,7 +60,7 @@ sub create :Chained('list_reseller') :PathPart('create') :Args(0) {
     	if($c->user->read_only);
 
     my $params = {};
-    $params = Hash::Merge->new('RIGHT_PRECEDENT')->merge($params, $c->session->{created_objects});
+    $params = $params->merge($c->session->{created_objects});
 
     my $posted = $c->request->method eq 'POST';
     my $form = NGCP::Panel::Form::Reseller->new;
@@ -83,14 +82,14 @@ sub create :Chained('list_reseller') :PathPart('create') :Args(0) {
             delete $form->params->{contract};
             my $reseller = $c->model('DB')->resultset('resellers')->create($form->params);
             delete $c->session->{created_objects}->{contract};
+            $c->session->{created_objects}->{reseller} = { id => $reseller->id };
 
             $c->flash(messages => [{type => 'success', text => 'Reseller successfully created'}]);
         } catch($e) {
             $c->log->error($e);
             $c->flash(messages => [{type => 'error', text => 'Failed to create reseller'}]);
         }
-        $c->response->redirect($c->uri_for());
-        return;
+        NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for());
     }
 
     $c->stash(create_flag => 1);
@@ -101,7 +100,7 @@ sub create :Chained('list_reseller') :PathPart('create') :Args(0) {
 sub base :Chained('list_reseller') :PathPart('') :CaptureArgs(1) {
     my ($self, $c, $reseller_id) = @_;
 
-    unless($reseller_id && $reseller_id =~ /^\d+$/) {
+    unless($reseller_id && $reseller_id->is_int) {
         $c->flash(messages => [{type => 'error', text => 'Invalid reseller id detected'}]);
         $c->response->redirect($c->uri_for());
         return;
@@ -198,7 +197,7 @@ sub edit :Chained('base') :PathPart('edit') :Args(0) {
 
     my $params = { $c->stash->{reseller}->first->get_inflated_columns };
     $params->{contract}{id} = delete $params->{contract_id};
-    $params = Hash::Merge->new('RIGHT_PRECEDENT')->merge($params, $c->session->{created_objects});
+    $params = $params->merge($c->session->{created_objects});
     $form->process(
         posted => $posted,
         params => $c->request->params,
@@ -361,7 +360,7 @@ sub create_defaults :Path('create_defaults') :Args(0) {
         $c->flash(messages => [{type => 'error', text => 'Failed to create reseller'}]);
     };
     $c->flash(messages => [{type => 'success', text => "Reseller successfully created with login <b>".$defaults{admins}->{login}."</b> and password <b>".$defaults{admins}->{md5pass}."</b>, please review your settings below" }]);
-    $c->res->redirect(sprintf('/reseller/%d/details', $r{resellers}->id), HTTP_SEE_OTHER);
+    $c->res->redirect($c->uri_for_action('/reseller/details', [$r{resellers}->id]));
     $c->detach;
     return;
 }

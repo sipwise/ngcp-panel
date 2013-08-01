@@ -1,7 +1,7 @@
 package NGCP::Panel::Controller::Login;
 
 use Moose;
-use namespace::autoclean;
+
 BEGIN { extends 'Catalyst::Controller'; }
 
 use NGCP::Panel::Form::Login;

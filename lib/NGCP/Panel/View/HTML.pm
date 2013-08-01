@@ -1,6 +1,5 @@
 package NGCP::Panel::View::HTML;
 use Moose;
-use namespace::autoclean;
 
 extends 'Catalyst::View::TT';
 

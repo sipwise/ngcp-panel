@@ -1,6 +1,6 @@
 package NGCP::Panel::Controller::Statistics;
 use Moose;
-use namespace::autoclean;
+
 BEGIN { extends 'Catalyst::Controller'; }
 
 use Sipwise::Base;

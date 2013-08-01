@@ -1,6 +1,6 @@
 package NGCP::Panel::Controller::Sound;
 use Sipwise::Base;
-use namespace::autoclean;
+
 
 BEGIN { extends 'Catalyst::Controller'; }
 

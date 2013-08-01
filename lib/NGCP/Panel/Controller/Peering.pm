@@ -1,6 +1,6 @@
 package NGCP::Panel::Controller::Peering;
 use Sipwise::Base;
-use namespace::autoclean;
+
 
 BEGIN { extends 'Catalyst::Controller'; }
 
@@ -73,7 +73,7 @@ sub edit :Chained('base') :PathPart('edit') {
     my $posted = ($c->request->method eq 'POST');
     my $form = NGCP::Panel::Form::PeeringGroup->new;
     my $params = {};
-    $params = Hash::Merge->new('RIGHT_PRECEDENT')->merge($params, $c->session->{created_objects});
+    $params = $params->merge($c->session->{created_objects});
     $form->process(
         posted => $posted,
         params => $c->request->params,
@@ -122,7 +122,7 @@ sub create :Chained('group_list') :PathPart('create') :Args(0) {
     my $posted = ($c->request->method eq 'POST');
     my $form = NGCP::Panel::Form::PeeringGroup->new;
     my $params = {};
-    $params = Hash::Merge->new('RIGHT_PRECEDENT')->merge($params, $c->session->{created_objects});
+    $params = $params->merge($c->session->{created_objects});
     $form->process(
         posted => $posted,
         params => $c->request->params,

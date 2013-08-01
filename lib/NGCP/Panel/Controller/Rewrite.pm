@@ -1,6 +1,6 @@
 package NGCP::Panel::Controller::Rewrite;
 use Sipwise::Base;
-use namespace::autoclean;
+
 
 BEGIN { extends 'Catalyst::Controller'; }
 

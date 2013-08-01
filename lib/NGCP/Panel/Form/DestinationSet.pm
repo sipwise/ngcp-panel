@@ -63,7 +63,7 @@ sub set_destination_groups {
     my $parent_id = $self->parent->name;
     my $uri_d = "";
     my $uri_t = 300;
-    if($parent_id =~ /^\d+$/ && 
+    if($parent_id->is_int &&
        defined $self->form->ctx && 
        defined $self->form->ctx->stash->{cf_tmp_params}) {
         my $d = $self->form->ctx->stash->{cf_tmp_params}->{destination}->[$parent_id];

@@ -94,7 +94,7 @@ sub create_without_reseller :Chained('list_contact') :PathPart('create/noreselle
 sub base :Chained('list_contact') :PathPart('') :CaptureArgs(1) {
     my ($self, $c, $contact_id) = @_;
 
-    unless($contact_id && $contact_id =~ /^\d+$/) {
+    unless($contact_id && $contact_id->is_int) {
         $c->flash(messages => [{type => 'error', text => 'Invalid contact id detected!'}]);
         NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for());
     }

@@ -1,6 +1,6 @@
 package NGCP::Panel::Controller::Logout;
 use Moose;
-use namespace::autoclean;
+
 
 BEGIN { extends 'Catalyst::Controller'; }
 
