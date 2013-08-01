@@ -1,10 +1,23 @@
-The design is based on "Dashboard Admin" copyright 2012 http://jumpstartui.com/.
-An Extended License has been purchased from here:
-	https://wrapbootstrap.com/theme/dashboard-admin-WB0164888?l=e
-
-The license details are as follows:
-
-Item: Dashboard Admin (Extended License)
-Item#: WB0164888
-License: Extended License
-License ID: 9890cae9-cadf-4b2a-9c86-840570356df5
+Upstream Author: The Sipwise Team - http://sipwise.com
+Copyright: 2013, Sipwise GmbH, Austria
+License: GPL-3+
+ This program is free software; you can redistribute it
+ and/or modify it under the terms of the GNU General Public
+ License as published by the Free Software Foundation; either
+ version 3 of the License, or (at your option) any later
+ version.
+ .
+ This program is distributed in the hope that it will be
+ useful, but WITHOUT ANY WARRANTY; without even the implied
+ warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
+ PURPOSE.  See the GNU General Public License for more
+ details.
+ .
+ You should have received a copy of the GNU General Public
+ License along with this package; if not, write to the Free
+ Software Foundation, Inc., 51 Franklin St, Fifth Floor,
+ Boston, MA  02110-1301 USA
+ .
+ On Debian systems, the full text of the GNU General Public
+ License version 3 can be found in the file
+ `/usr/share/common-licenses/GPL-3'.
