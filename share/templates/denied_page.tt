@@ -14,7 +14,7 @@
 			</div> <!-- /error-details -->
 			
 			<div class="error-actions">
-				<a href="[% c.uri_for() %]" class="btn btn-large btn-primary">
+				<a href="[% c.uri_for('/back') %]" class="btn btn-large btn-primary">
 					<i class="icon-chevron-left"></i>
 					&nbsp;
 					Back

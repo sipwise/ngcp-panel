@@ -6,6 +6,13 @@
     </a>
     <ul class="dropdown-menu">
         <li><a href="[% c.uri_for('/administrator') %]">Administrators</a></li>
+        <li><a href="[% c.uri_for('/customer') %]">Customers</a></li>
+        <li><a href="[% c.uri_for('/domain') %]">Domains</a></li>
+        <li><a href="[% c.uri_for('/subscriber') %]">Subscribers</a></li>
+        <li><a href="[% c.uri_for('/billing') %]">Billing</a></li>
+        <li><a href="[% c.uri_for('/rewrite') %]">Rewrite Rule Sets</a></li>
+        <li><a href="[% c.uri_for('/ncos') %]">NCOS Levels</a></li>
+        <li><a href="[% c.uri_for('/sound') %]">Sound Sets</a></li>
     </ul>
 </li>
 [% # vim: set tabstop=4 syntax=html expandtab: -%]
