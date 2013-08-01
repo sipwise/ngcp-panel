@@ -9,7 +9,6 @@ has_field 'submitid' => ( type => 'Hidden' );
 sub build_render_list {[qw/submitid fields actions/]}
 sub build_form_element_class {[qw(form-horizontal)]}
 
-has_field 'id' => (type => 'Hidden');
 has_field 'login' => (type => 'Text', required => 1, minlength => 5);
 has_field 'md5pass' => (type => 'Password', required => 1, label => 'Password', minlength => 6);
 for (qw(is_active show_passwords call_data)) {
@@ -23,7 +22,7 @@ has_block 'fields' => (
     tag => 'div',
     class => [qw(modal-body)],
     render_list => [qw(
-        id login md5pass is_master is_active read_only show_passwords call_data
+        login md5pass is_master is_active read_only show_passwords call_data
     )],
 );
 has_block 'actions' => (tag => 'div', class => [qw(modal-footer)], render_list => [qw(save)],);

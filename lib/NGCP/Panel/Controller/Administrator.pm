@@ -74,42 +74,48 @@ sub create :Chained('list_admin') :PathPart('create') :Args(0) {
     	unless($c->user->is_master);
 
     my $form;
-    if($c->user->auth_realm eq "admin") {
+    my $params = {};
+    $params = $params->merge($c->session->{created_objects});
+    if($c->user->is_superuser) {
         $form = NGCP::Panel::Form::Administrator::Admin->new;
     } else {
         $form = NGCP::Panel::Form::Administrator::Reseller->new;
-        $c->request->params->{reseller}{id} = $c->user->reseller_id,
     }
     $form->process(
-        posted => $c->request->method eq 'POST',
+        posted => ($c->request->method eq 'POST'),
         params => $c->request->params,
-        action => $c->uri_for('create'),
+        item => $params,
     );
     NGCP::Panel::Utils::Navigation::check_form_buttons(
         c => $c,
         form => $form,
-        fields => [qw(administrator.create)],
+        fields => {
+            'reseller.create' => $c->uri_for('/reseller/create'),
+        },
         back_uri => $c->req->uri,
     );
     if ($form->validated) {
         try {
-            $form->params->{reseller_id} = delete $form->params->{reseller}{id};
-            delete $form->params->{reseller};
-            delete $form->params->{id};
-            $c->model('DB')->resultset('admins')->create($form->params);
-            $c->flash(messages => [{type => 'success', text => 'Administrator created.'}]);
+            if($c->user->is_superuser) {
+                $form->values->{reseller_id} = $form->values->{reseller}{id};
+                delete $form->values->{reseller};
+            } else {
+                $form->values->{reseller_id} = $c->user->reseller_id;
+            }
+            $c->stash->{admins}->create($form->values);
+            delete $c->session->{created_objects}->{reseller};
+            $c->flash(messages => [{type => 'success', text => 'Administrator successfully created'}]);
         } catch($e) {
-            $c->log->error($e);
-            $c->flash(messages => [{type => 'error', text => 'Creating administrator failed'}]);
+            $c->log->error("failed to create administrator: $e");
+            $c->flash(messages => [{type => 'error', text => 'Failed to create administrator'}]);
         }
-        $c->response->redirect($c->uri_for);
-        return;
+        NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for('/administrator'));
     }
-    $c->stash({
+
+    $c->stash(
         create_flag => 1,
-        close_target => $c->uri_for,
         form => $form,
-    });
+    );
 }
 
 sub base :Chained('list_admin') :PathPart('') :CaptureArgs(1) {
@@ -119,80 +125,83 @@ sub base :Chained('list_admin') :PathPart('') :CaptureArgs(1) {
     	unless($c->user->is_master);
 
     unless ($administrator_id && $administrator_id->is_integer) {
-        $c->flash(messages => [{type => 'error', text => 'invalid administrator id'}]);
-        $c->response->redirect($c->uri_for);
-        return;
+        $c->flash(messages => [{type => 'error', text => 'Invalid administrator id detected'}]);
+        NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for('/administrator'));
     }
-    $c->stash(administrator => {$c->stash->{admins}->find($administrator_id)->get_inflated_columns});
+    $c->stash(administrator => $c->stash->{admins}->find($administrator_id));
+    unless($c->stash->{administrator}) {
+        $c->flash(messages => [{type => 'error', text => 'Administrator not found'}]);
+        NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for('/administrator'));
+    }
 }
 
 sub edit :Chained('base') :PathPart('edit') :Args(0) {
     my ($self, $c) = @_;
     my $posted = $c->request->method eq 'POST';
     my $form;
+    my $params = { $c->stash->{administrator}->get_inflated_columns };
+    $params->{reseller}{id} = delete $params->{reseller_id};
+    $params = $params->merge($c->session->{created_objects});
     if($c->user->is_superuser) {
         $form = NGCP::Panel::Form::Administrator::Admin->new;
-        $c->stash->{administrator}->{reseller}{id} = 
-            delete $c->stash->{administrator}->{reseller_id};
     } else {
         $form = NGCP::Panel::Form::Administrator::Reseller->new;
     }
     $form->field('md5pass')->{required} = 0;
 
     $form->process(
-        posted => 1,
-        params => $posted ? $c->request->params : $c->stash->{administrator},
-        action => $c->uri_for($c->stash->{administrator}->{id}, 'edit'),
+        posted => $posted,
+        params => $c->request->params,
+        item => $params,
     );
     NGCP::Panel::Utils::Navigation::check_form_buttons(
         c => $c,
         form => $form,
-        fields => {},
+        fields => {
+            'reseller.create' => $c->uri_for('/reseller/create'),
+        },
         back_uri => $c->req->uri,
     );
     if ($posted && $form->validated) {
         try {
-            my $form_values = $form->value;
-
             # don't allow to take away own master rights, otherwise he'll not be
             # able to manage any more admins
-            if($form_values->{id} == $c->user->id) {
-                delete $form_values->{is_master};
-                delete $form_values->{is_active};
+            if($c->stash->{administrator}->id == $c->user->id) {
+                delete $form->values->{is_master};
+                delete $form->values->{is_active};
             }
 
-            # flatten nested hashref instead of recursive update
-            $form_values->{reseller_id} = delete $form_values->{reseller}{id}
-                if($form_values->{reseller}{id});
-            delete $form_values->{reseller};
-            delete $form_values->{md5pass} unless length $form_values->{md5pass};
-            $c->stash->{admins}->search_rs({ id => $form_values->{id} })->update_all($form_values);
-            $c->flash(messages => [{type => 'success', text => 'Administrator changed.'}]);
+            if($c->user->is_superuser) {
+                $form->values->{reseller_id} = $form->values->{reseller}{id};
+                delete $form->values->{reseller};
+            }
+            delete $form->values->{md5pass} unless length $form->values->{md5pass};
+            $c->stash->{administrator}->update($form->values);
+            delete $c->session->{created_objects}->{reseller};
+            $c->flash(messages => [{type => 'success', text => 'Administrator successfully updated'}]);
         } catch($e) {
-            $c->log->error($e);
-            $c->flash(messages => [{type => 'error', text => 'Updating administrator failed'}]);
+            $c->log->error("failed to update administrator: $e");
+            $c->flash(messages => [{type => 'error', text => 'Failed to update administrator'}]);
         };
-        $c->response->redirect($c->uri_for);
+        NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for('/administrator'));
     }
-    $c->stash({
-        close_target => $c->uri_for,
+
+    $c->stash(
         form => $form,
         edit_flag => 1,
-    });
-    return;
+    );
 }
 
 sub delete :Chained('base') :PathPart('delete') :Args(0) {
     my ($self, $c) = @_;
     try {
-        $c->model('DB')->resultset('admins')->find($c->stash->{administrator}->{id})->delete;
-        $c->flash(messages => [{type => 'success', text => 'Administrator deleted.'}]);
+        $c->stash->{administrator}->delete;
+        $c->flash(messages => [{type => 'success', text => 'Administrator successfully deleted'}]);
     } catch($e) {
-        $c->log->error($e);
-        $c->flash(messages => [{type => 'error', text => 'Deleting administrator failed'}]);
+        $c->log->error("failed to delete administrator: $e");
+        $c->flash(messages => [{type => 'error', text => 'Failed to delete administrator'}]);
     };
-    $c->response->redirect($c->uri_for);
-    return;
+    NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for('/administrator'));
 }
 
 $CLASS->meta->make_immutable;
