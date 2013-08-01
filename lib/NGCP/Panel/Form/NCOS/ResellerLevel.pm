@@ -1,7 +1,7 @@
-package NGCP::Panel::Form::NCOSPattern;
+package NGCP::Panel::Form::NCOS::ResellerLevel;
 
 use HTML::FormHandler::Moose;
-extends 'HTML::FormHandler::Model::DBIC';
+extends 'HTML::FormHandler';
 use Moose::Util::TypeConstraints;
 
 use HTML::FormHandler::Widget::Block::Bootstrap;
@@ -11,9 +11,18 @@ has_field 'submitid' => ( type => 'Hidden' );
 sub build_render_list {[qw/submitid fields actions/]}
 sub build_form_element_class {[qw(form-horizontal)]}
 
-has_field 'pattern' => (
-    type => '+NGCP::Panel::Field::Regexp',
+has_field 'level' => (
+    type => 'Text',
+    label => 'Level Name',
     required => 1,
+);
+
+has_field 'mode' => (
+    type => 'Select',
+    options => [
+        {value => 'whitelist', label => 'whitelist'},
+        {value => 'blacklist', label => 'blacklist'},
+    ],
 );
 
 has_field 'description' => (
@@ -30,7 +39,7 @@ has_field 'save' => (
 has_block 'fields' => (
     tag => 'div',
     class => [qw/modal-body/],
-    render_list => [qw/pattern description/],
+    render_list => [qw/level mode description/],
 );
 
 has_block 'actions' => (
@@ -43,11 +52,11 @@ has_block 'actions' => (
 
 =head1 NAME
 
-NGCP::Panel::Form::NCOSPattern
+NGCP::Panel::Form::NCOSLevel
 
 =head1 DESCRIPTION
 
-Form to modify a billing.ncos_pattern_list row.
+Form to modify a billing.ncos_levels row.
 
 =head1 METHODS
 

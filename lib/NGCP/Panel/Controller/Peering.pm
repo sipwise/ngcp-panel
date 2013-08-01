@@ -72,7 +72,8 @@ sub edit :Chained('base') :PathPart('edit') {
     
     my $posted = ($c->request->method eq 'POST');
     my $form = NGCP::Panel::Form::PeeringGroup->new;
-    my $params = {};
+    my $params = { $c->stash->{group_result}->get_inflated_columns };
+    $params->{contract}{id} = delete $params->{peering_contract_id};
     $params = $params->merge($c->session->{created_objects});
     $form->process(
         posted => $posted,
@@ -81,7 +82,7 @@ sub edit :Chained('base') :PathPart('edit') {
     );
     NGCP::Panel::Utils::Navigation::check_form_buttons(
         c => $c, form => $form,
-        fields => {'contract.create' => $c->uri_for('/contract/peering/create/noreseller')},
+        fields => {'contract.create' => $c->uri_for('/contract/peering/create')},
         back_uri => $c->req->uri,
     );
     if($posted && $form->validated) {

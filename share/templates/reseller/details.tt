@@ -36,6 +36,13 @@
     helper.ajax_uri = c.uri_for_action('/reseller/reseller_single', c.req.captures );
     helper.base_uri = c.uri_for_action('/reseller/root');
 
+    UNLESS c.user.read_only;
+        helper.dt_buttons = [
+            { name = 'Edit', uri = "/reseller/'+full.id+'/edit", class = 'btn-small btn-primary', icon = 'icon-edit' },
+            { name = 'Terminate', uri = "/reseller/'+full.id+'/terminate", class = 'btn-small btn-secondary', icon = 'icon-remove' },
+        ];
+    END;
+
     PROCESS 'helpers/datatables.tt';
 -%]
             </div>
@@ -107,7 +114,13 @@
     helper.edit_flag = edit_flag;
     helper.form_object = form;
     helper.ajax_uri = c.uri_for_action('/reseller/reseller_admin', c.req.captures );
-    helper.base_uri = c.uri_for_action('/administrator/root');
+
+    UNLESS c.user.read_only;
+        helper.dt_buttons = [
+            { name = 'Edit', uri = "/administrator/'+full.id+'/edit", class = 'btn-small btn-primary', icon = 'icon-edit' },
+            { name = 'Delete', uri = "/administrator/'+full.id+'/delete", class = 'btn-small btn-secondary', icon = 'icon-trash' },
+        ];
+    END;
 
     PROCESS 'helpers/datatables.tt';
 -%]

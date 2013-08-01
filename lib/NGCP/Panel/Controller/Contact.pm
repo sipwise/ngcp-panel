@@ -117,6 +117,7 @@ sub edit :Chained('base') :PathPart('edit') :Args(0) {
         item => $c->stash->{contact},
         action => $c->uri_for($c->stash->{contact}->id, 'edit'),
     );
+    # TODO: use values instead of params, chain reseller creation, add check_form_buttons
     if($posted && $form->validated) {
         try {
             delete $form->params->{submitid};

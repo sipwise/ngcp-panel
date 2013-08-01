@@ -1,12 +1,14 @@
 package NGCP::Panel::Controller::NCOS;
 use Sipwise::Base;
 
-
 BEGIN { extends 'Catalyst::Controller'; }
 
-use NGCP::Panel::Form::NCOSLevel;
-use NGCP::Panel::Form::NCOSPattern;
+use NGCP::Panel::Form::NCOS::ResellerLevel;
+use NGCP::Panel::Form::NCOS::AdminLevel;
+use NGCP::Panel::Form::NCOS::Pattern;
 use NGCP::Panel::Utils::Navigation;
+use NGCP::Panel::Utils::Datatables;
+
 use HTML::FormHandler;
 
 sub auto :Does(ACL) :ACLDetachTo('/denied_page') :AllowedRole(admin) :AllowedRole(reseller) {
@@ -22,6 +24,14 @@ sub levels_list :Chained('/') :PathPart('ncos') :CaptureArgs(0) {
     my $dispatch_to = '_levels_resultset_' . $c->user->auth_realm;
     my $levels_rs = $self->$dispatch_to($c);
     $c->stash(levels_rs => $levels_rs);
+
+    $c->stash->{level_dt_columns} = NGCP::Panel::Utils::Datatables::set_columns($c, [
+        { name => 'id', search => 1, title => '#' },
+        { name => 'reseller.name', search => 1, title => 'Reseller' },
+        { name => 'level', search => 1, title => 'Level Name' },
+        { name => 'mode', search => 1, title => 'Mode' },
+        { name => 'description', search => 1, title => 'Description' },
+    ]);
 
     $c->stash(template => 'ncos/list.tt');
 }
@@ -47,11 +57,7 @@ sub ajax :Chained('levels_list') :PathPart('ajax') :Args(0) {
     my ($self, $c) = @_;
     
     my $resultset = $c->stash->{levels_rs};
-    
-    $c->forward( "/ajax_process_resultset", [$resultset,
-                 ["id", "level", "mode", "description"],
-                 ["level", "mode", "description"]]);
-    
+    NGCP::Panel::Utils::Datatables::process($c, $resultset, $c->stash->{level_dt_columns});
     $c->detach( $c->view("JSON") );
 }
 
@@ -59,18 +65,14 @@ sub base :Chained('levels_list') :PathPart('') :CaptureArgs(1) {
     my ($self, $c, $level_id) = @_;
 
     unless($level_id && $level_id->is_integer) {
-        $c->flash(messages => [{type => 'error', text => 'Invalid NCOS Level id detected!'}]);
-        $c->response->redirect($c->uri_for());
-        $c->detach;
-        return;
+        $c->flash(messages => [{type => 'error', text => 'Invalid NCOS level id detected'}]);
+        NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for);
     }
 
     my $res = $c->stash->{levels_rs}->find($level_id);
     unless(defined($res)) {
-        $c->flash(messages => [{type => 'error', text => 'NCOS Level does not exist!'}]);
-        $c->response->redirect($c->uri_for());
-        $c->detach;
-        return;
+        $c->flash(messages => [{type => 'error', text => 'NCOS level does not exist'}]);
+        NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for);
     }
     $c->stash(level_result => $res);
 }
@@ -79,21 +81,48 @@ sub edit :Chained('base') :PathPart('edit') {
     my ($self, $c) = @_;
 
     my $posted = ($c->request->method eq 'POST');
-    my $form = NGCP::Panel::Form::NCOSLevel->new;
+    my $form;
+    my $level = $c->stash->{level_result};
+    my $params = { $level->get_inflated_columns };
+    $params->{reseller}{id} = delete $params->{reseller_id};
+    $params = $params->merge($c->session->{created_objects});
+    if($c->user->is_superuser) {
+        $form = NGCP::Panel::Form::NCOS::AdminLevel->new;
+    } else {
+        $form = NGCP::Panel::Form::NCOS::ResellerLevel->new;
+    }
     $form->process(
         posted => $posted,
         params => $c->request->params,
-        action => $c->uri_for_action('/ncos/edit'),
-        item   => $c->stash->{level_result},
+        item => $params,
     );
-    if($form->validated) {
-        $c->flash(messages => [{type => 'success', text => 'NCOS Level successfully changed!'}]);
-        $c->response->redirect($c->uri_for());
-        return;
+    NGCP::Panel::Utils::Navigation::check_form_buttons(
+        c => $c,
+        form => $form,
+        fields => {
+            'reseller.create' => $c->uri_for('/reseller/create'),
+        },
+        back_uri => $c->req->uri,
+    );
+    if($posted && $form->validated) {
+        try {
+            $form->values->{reseller_id} = $form->values->{reseller}{id};
+            delete $form->values->{reseller};
+            $level->update($form->values);
+            delete $c->session->{created_objects}->{reseller};
+            $c->flash(messages => [{type => 'success', text => 'NCOS level successfully updated'}]);
+        } catch($e) {
+            $c->log->error("failed to update ncos level: $e");
+            $c->flash(messages => [{type => 'error', text => 'Failed to update NCOS level'}]);
+        }
+        NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for('/ncos'));
     }
 
-    $c->stash(form => $form);
-    $c->stash(edit_flag => 1);
+    $c->stash(
+        close_target => $c->uri_for,
+        edit_flag => 1,
+        form => $form,
+    );
 }
 
 sub delete :Chained('base') :PathPart('delete') {
@@ -101,10 +130,10 @@ sub delete :Chained('base') :PathPart('delete') {
 
     try {
         $c->stash->{level_result}->delete;
-        $c->flash(messages => [{type => 'success', text => 'NCOS Level successfully deleted!'}]);
+        $c->flash(messages => [{type => 'success', text => 'NCOS level successfully deleted'}]);
     } catch (DBIx::Class::Exception $e) {
-        $c->flash(messages => [{type => 'error', text => 'Delete failed.'}]);
-        $c->log->info("Delete failed: " . $e);
+        $c->flash(messages => [{type => 'error', text => 'Failed to delete NCOS level'}]);
+        $c->log->error("failed to delete ncos level: $e");
     };
     $c->response->redirect($c->uri_for());
 }
@@ -112,22 +141,49 @@ sub delete :Chained('base') :PathPart('delete') {
 sub create :Chained('levels_list') :PathPart('create') :Args(0) {
     my ($self, $c) = @_;
 
-    my $form = NGCP::Panel::Form::NCOSLevel->new;
+    my $posted = ($c->request->method eq 'POST');
+    my $form;
+    my $params = {};
+    $params = $params->merge($c->session->{created_objects});
+    if($c->user->is_superuser) {
+        $form = NGCP::Panel::Form::NCOS::AdminLevel->new;
+    } else {
+        $form = NGCP::Panel::Form::NCOS::ResellerLevel->new;
+    }
     $form->process(
-        posted => ($c->request->method eq 'POST'),
+        posted => $posted,
         params => $c->request->params,
-        action => $c->uri_for_action('/ncos/create'),
-        item   => $c->stash->{levels_rs}->new_result({}),
+        item => $params,
     );
-    if($form->validated) {
-        $c->flash(messages => [{type => 'success', text => 'NCOS Level successfully created!'}]);
-        $c->response->redirect($c->uri_for_action('/ncos/root'));
-        return;
+    NGCP::Panel::Utils::Navigation::check_form_buttons(
+        c => $c,
+        form => $form,
+        fields => {
+            'reseller.create' => $c->uri_for('/reseller/create'),
+        },
+        back_uri => $c->req->uri,
+    );
+    if($posted && $form->validated) {
+        try {
+            my $level = $c->stash->{levels_rs};
+            unless($c->user->is_superuser) {
+                $form->values->{reseller}{id} = $c->user->reseller_id;
+            }
+            $level->create($form->values);
+            delete $c->session->{created_objects}->{reseller};
+            $c->flash(messages => [{type => 'success', text => 'NCOS level successfully created'}]);
+        } catch($e) {
+            $c->log->error("failed to create ncos level: $e");
+            $c->flash(messages => [{type => 'error', text => 'Failed to create NCOS level'}]);
+        }
+        NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for('/ncos'));
     }
 
-    $c->stash(close_target => $c->uri_for());
-    $c->stash(create_flag => 1);
-    $c->stash(form => $form);
+    $c->stash(
+        close_target => $c->uri_for,
+        create_flag => 1,
+        form => $form,
+    );
 }
 
 sub pattern_list :Chained('base') :PathPart('pattern') :CaptureArgs(0) {
@@ -137,6 +193,12 @@ sub pattern_list :Chained('base') :PathPart('pattern') :CaptureArgs(0) {
     $c->stash(pattern_rs => $pattern_rs);
     $c->stash(pattern_base_uri =>
         $c->uri_for_action("/ncos/pattern_root", [$c->req->captures->[0]]));
+
+    $c->stash->{pattern_dt_columns} = NGCP::Panel::Utils::Datatables::set_columns($c, [
+        { name => 'id', search => 1, title => '#' },
+        { name => 'pattern', search => 1, title => 'Pattern' },
+        { name => 'description', search => 1, title => 'Description' },
+    ]);
     
     my $local_ac_form = HTML::FormHandler::Model::DBIC->new(field_list => [
         local_ac => { type => 'Boolean', label => 'Include local area code'},
@@ -150,11 +212,24 @@ sub pattern_list :Chained('base') :PathPart('pattern') :CaptureArgs(0) {
         params => $c->request->params,
         item   => $c->stash->{level_result}
     );
+    NGCP::Panel::Utils::Navigation::check_form_buttons(
+        c => $c,
+        form => $local_ac_form,
+        fields => {},
+        back_uri => $c->req->uri,
+    );
     $c->stash(local_ac_form => $local_ac_form);
     if($local_ac_form->validated) {
-        $c->response->redirect($c->stash->{pattern_base_uri});
-        $c->detach;
-        return;
+        try {
+            $c->stash->{pattern_rs}->first->update({
+                local_ac => $local_ac_form->values->{local_ac},
+            });
+            $c->flash(messages => [{type => 'success', text => 'Successfully updated NCOS pattern'}]);
+        } catch($e) {
+            $c->log->error("failed to update local-ac for ncos: $e");
+            $c->flash(messages => [{type => 'success', text => 'Successfully updated NCOS pattern'}]);
+        }
+        NGCP::Panel::Utils::Navigation::back_or($c, $c->stash->{pattern_base_uri});
     }
 
     $c->stash(template => 'ncos/pattern_list.tt');
@@ -168,11 +243,7 @@ sub pattern_ajax :Chained('pattern_list') :PathPart('ajax') :Args(0) {
     my ($self, $c) = @_;
     
     my $resultset = $c->stash->{pattern_rs};
-    
-    $c->forward( "/ajax_process_resultset", [$resultset,
-                 ["id", "pattern", "description"],
-                 ["pattern", "description"]]);
-    
+    NGCP::Panel::Utils::Datatables::process($c, $resultset, $c->stash->{pattern_dt_columns});
     $c->detach( $c->view("JSON") );
 }
 
@@ -180,18 +251,14 @@ sub pattern_base :Chained('pattern_list') :PathPart('') :CaptureArgs(1) {
     my ($self, $c, $pattern_id) = @_;
 
     unless($pattern_id && $pattern_id->is_integer) {
-        $c->flash(messages => [{type => 'error', text => 'Invalid NCOS Pattern id detected!'}]);
-        $c->response->redirect($c->stash->{pattern_base_uri});
-        $c->detach;
-        return;
+        $c->flash(messages => [{type => 'error', text => 'Invalid NCOS pattern id detected'}]);
+        NGCP::Panel::Utils::Navigation::back_or($c, $c->stash->{pattern_base_uri});
     }
 
     my $res = $c->stash->{pattern_rs}->find($pattern_id);
     unless(defined($res)) {
-        $c->flash(messages => [{type => 'error', text => 'Pattern does not exist!'}]);
-        $c->response->redirect($c->stash->{pattern_base_uri});
-        $c->detach;
-        return;
+        $c->flash(messages => [{type => 'error', text => 'NCOS pattern does not exist'}]);
+        NGCP::Panel::Utils::Navigation::back_or($c, $c->stash->{pattern_base_uri});
     }
     $c->stash(pattern_result => $res);
 }
@@ -200,22 +267,34 @@ sub pattern_edit :Chained('pattern_base') :PathPart('edit') {
     my ($self, $c) = @_;
 
     my $posted = ($c->request->method eq 'POST');
-    my $form = NGCP::Panel::Form::NCOSPattern->new;
+    my $form = NGCP::Panel::Form::NCOS::Pattern->new;
     $form->process(
         posted => $posted,
         params => $c->request->params,
-        action => $c->uri_for_action('/ncos/pattern_edit', $c->req->captures),
         item   => $c->stash->{pattern_result},
     );
-    if($form->validated) {
-        $c->flash(messages => [{type => 'success', text => 'Pattern successfully changed!'}]);
-        $c->response->redirect($c->stash->{pattern_base_uri});
-        return;
+    NGCP::Panel::Utils::Navigation::check_form_buttons(
+        c => $c,
+        form => $form,
+        fields => {},
+        back_uri => $c->req->uri,
+    );
+    if($posted && $form->validated) {
+        try {
+            $c->stash->{pattern_result}->update($form->values);
+            $c->flash(messages => [{type => 'success', text => 'NCOS pattern successfully updated'}]);
+        } catch($e) {
+            $c->log->error("failed to update ncos pattern: $e");
+            $c->flash(messages => [{type => 'error', text => 'Failed to update NCOS pattern'}]);
+        }
+        NGCP::Panel::Utils::Navigation::back_or($c, $c->stash->{pattern_base_uri});
     }
 
-    $c->stash(close_target => $c->stash->{pattern_base_uri});
-    $c->stash(form => $form);
-    $c->stash(edit_flag => 1);
+    $c->stash(
+        close_target => $c->stash->{pattern_base_uri},
+        form => $form,
+        edit_flag => 1
+    );
 }
 
 sub pattern_delete :Chained('pattern_base') :PathPart('delete') {
@@ -223,33 +302,45 @@ sub pattern_delete :Chained('pattern_base') :PathPart('delete') {
 
     try {
         $c->stash->{pattern_result}->delete;
-        $c->flash(messages => [{type => 'success', text => 'Pattern successfully deleted!'}]);
+        $c->flash(messages => [{type => 'success', text => 'NCOS pattern successfully deleted'}]);
     } catch (DBIx::Class::Exception $e) {
-        $c->flash(messages => [{type => 'error', text => 'Delete failed.'}]);
-        $c->log->info("Delete failed: " . $e);
+        $c->log->error("failed to delete ncos pattern: $e");
+        $c->flash(messages => [{type => 'error', text => 'Failed to delete NCOS pattern'}]);
     };
-    $c->response->redirect($c->stash->{pattern_base_uri});
+    NGCP::Panel::Utils::Navigation::back_or($c->stash->{pattern_base_uri});
 }
 
 sub pattern_create :Chained('pattern_list') :PathPart('create') :Args(0) {
     my ($self, $c) = @_;
 
-    my $form = NGCP::Panel::Form::NCOSPattern->new;
+    my $posted = ($c->request->method eq 'POST');
+    my $form = NGCP::Panel::Form::NCOS::Pattern->new;
     $form->process(
-        posted => ($c->request->method eq 'POST'),
+        posted => $posted,
         params => $c->request->params,
-        action => $c->uri_for_action('/ncos/pattern_create', $c->req->captures),
-        item   => $c->stash->{pattern_rs}->new_result({}),
     );
-    if($form->validated) {
-        $c->flash(messages => [{type => 'success', text => 'Pattern successfully created!'}]);
-        $c->response->redirect($c->stash->{pattern_base_uri});
-        return;
+    NGCP::Panel::Utils::Navigation::check_form_buttons(
+        c => $c,
+        form => $form,
+        fields => {},
+        back_uri => $c->req->uri,
+    );
+    if($posted && $form->validated) {
+        try {
+            $c->stash->{pattern_rs}->create($form->values);
+            $c->flash(messages => [{type => 'success', text => 'NCOS pattern successfully created'}]);
+        } catch($e) {
+            $c->log->error("failed to create ncos pattern: $e");
+            $c->flash(messages => [{type => 'error', text => 'Failed to create NCOS pattern'}]);
+        }
+        NGCP::Panel::Utils::Navigation::back_or($c, $c->stash->{pattern_base_uri});
     }
 
-    $c->stash(close_target => $c->stash->{pattern_base_uri});
-    $c->stash(create_flag => 1);
-    $c->stash(form => $form);
+    $c->stash(
+        close_target => $c->stash->{pattern_base_uri},
+        form => $form,
+        create_flag => 1
+    );
 }
 
 
