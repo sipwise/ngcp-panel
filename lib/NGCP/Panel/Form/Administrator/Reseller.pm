@@ -10,8 +10,8 @@ sub build_render_list {[qw/submitid fields actions/]}
 sub build_form_element_class {[qw(form-horizontal)]}
 
 has_field 'id' => (type => 'Hidden');
-has_field 'login' => (type => 'Text', required => 1,);
-has_field 'md5pass' => (type => 'Password', required => 1, label => 'Password');
+has_field 'login' => (type => 'Text', required => 1, minlength => 5);
+has_field 'md5pass' => (type => 'Password', required => 1, label => 'Password', minlength => 6);
 for (qw(is_active show_passwords call_data)) {
     has_field $_ => (type => 'Boolean', default => 1);
 }
