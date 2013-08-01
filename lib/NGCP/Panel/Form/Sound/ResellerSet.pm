@@ -1,7 +1,7 @@
-package NGCP::Panel::Form::SoundSet;
+package NGCP::Panel::Form::Sound::ResellerSet;
 
 use HTML::FormHandler::Moose;
-extends 'HTML::FormHandler::Model::DBIC';
+extends 'HTML::FormHandler';
 use Moose::Util::TypeConstraints;
 
 use HTML::FormHandler::Widget::Block::Bootstrap;

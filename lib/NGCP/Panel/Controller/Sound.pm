@@ -4,8 +4,9 @@ use Sipwise::Base;
 
 BEGIN { extends 'Catalyst::Controller'; }
 
-use NGCP::Panel::Form::SoundSet;
-use NGCP::Panel::Form::SoundFile;
+use NGCP::Panel::Form::Sound::AdminSet;
+use NGCP::Panel::Form::Sound::ResellerSet;
+use NGCP::Panel::Form::Sound::File;
 use File::Type;
 use NGCP::Panel::Utils::XMLDispatcher;
 use NGCP::Panel::Utils::Sounds;
@@ -22,10 +23,18 @@ sub sets_list :Chained('/') :PathPart('sound') :CaptureArgs(0) {
     my ( $self, $c ) = @_;
     
     my $sets_rs = $c->model('DB')->resultset('voip_sound_sets');
-    $c->stash(sets_rs => $sets_rs);
+    unless($c->user->is_superuser) {
+        $sets_rs = $sets_rs->search({ reseller_id => $c->user->reseller_id });
+    }
 
-    $c->stash(has_edit => 1);
-    $c->stash(has_delete => 1);
+    $c->stash->{soundset_dt_columns} = NGCP::Panel::Utils::Datatables::set_columns($c, [
+        { name => 'id', search => 1, title => '#' },
+        { name => 'reseller.name', search => 1, title => 'Reseller' },
+        { name => 'name', search => 1, title => 'Name' },
+        { name => 'description', search => 1, title => 'Description' },
+    ]);
+
+    $c->stash(sets_rs => $sets_rs);
     $c->stash(template => 'sound/list.tt');
 }
 
@@ -37,11 +46,7 @@ sub ajax :Chained('sets_list') :PathPart('ajax') :Args(0) {
     my ($self, $c) = @_;
     
     my $resultset = $c->stash->{sets_rs};
-    
-    $c->forward( "/ajax_process_resultset", [$resultset,
-                 ["id", "name", "description"],
-                 [1,2]]);
-    
+    NGCP::Panel::Utils::Datatables::process($c, $resultset, $c->stash->{soundset_dt_columns});
     $c->detach( $c->view("JSON") );
 }
 
@@ -49,18 +54,14 @@ sub base :Chained('sets_list') :PathPart('') :CaptureArgs(1) {
     my ($self, $c, $set_id) = @_;
 
     unless($set_id && $set_id->is_integer) {
-        $c->flash(messages => [{type => 'error', text => 'Invalid Sound Set id detected!'}]);
-        $c->response->redirect($c->uri_for());
-        $c->detach;
-        return;
+        $c->flash(messages => [{type => 'error', text => 'Invalid sound set id detected'}]);
+        NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for('/sound'));
     }
 
     my $res = $c->stash->{sets_rs}->find($set_id);
     unless(defined($res)) {
-        $c->flash(messages => [{type => 'error', text => 'Sound Set does not exist!'}]);
-        $c->response->redirect($c->uri_for());
-        $c->detach;
-        return;
+        $c->flash(messages => [{type => 'error', text => 'Sound set does not exist'}]);
+        NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for('/sound'));
     }
     $c->stash(set_result => $res);
 }
@@ -69,21 +70,48 @@ sub edit :Chained('base') :PathPart('edit') {
     my ($self, $c) = @_;
 
     my $posted = ($c->request->method eq 'POST');
-    my $form = NGCP::Panel::Form::SoundSet->new;
+    my $form;
+    my $params = { $c->stash->{set_result}->get_inflated_columns };
+    $params->{reseller}{id} = delete $params->{reseller_id};
+    $params = $params->merge($c->session->{created_objects});
+    if($c->user->is_superuser) {
+        $form = NGCP::Panel::Form::Sound::AdminSet->new;
+    } else {
+        $form = NGCP::Panel::Form::Sound::ResellerSet->new;
+    }
     $form->process(
         posted => $posted,
         params => $c->request->params,
-        action => $c->uri_for_action('/sound/edit'),
-        item   => $c->stash->{set_result},
+        item   => $params,
     );
-    if($form->validated) {
-        $c->flash(messages => [{type => 'success', text => 'Sound Set successfully changed!'}]);
-        $c->response->redirect($c->uri_for());
-        return;
+    NGCP::Panel::Utils::Navigation::check_form_buttons(
+        c => $c,
+        form => $form,
+        fields => {
+            'reseller.create' => $c->uri_for('/reseller/create'),
+        },
+        back_uri => $c->req->uri,
+    );
+    if($posted && $form->validated) {
+        try {
+            if($c->user->is_superuser) {
+                $form->values->{reseller_id} = $form->values->{reseller}{id};
+            }
+            delete $form->values->{reseller};
+            $c->stash->{set_result}->update($form->values);
+            delete $c->session->{created_objects}->{reseller};
+            $c->flash(messages => [{type => 'success', text => 'Sound set successfully updated'}]);
+        } catch($e) {
+            $c->log->error("failed to update sound set: $e");
+            $c->flash(messages => [{type => 'error', text => 'Sound set successfully updated'}]);
+        }
+        NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for('/sound'));
     }
 
-    $c->stash(form => $form);
-    $c->stash(edit_flag => 1);
+    $c->stash(
+        form => $form,
+        edit_flag => 1,
+    );
 }
 
 sub delete :Chained('base') :PathPart('delete') {
@@ -91,33 +119,61 @@ sub delete :Chained('base') :PathPart('delete') {
 
     try {
         $c->stash->{set_result}->delete;
-        $c->flash(messages => [{type => 'success', text => 'Sound Set successfully deleted!'}]);
-    } catch (DBIx::Class::Exception $e) {
+        $c->flash(messages => [{type => 'success', text => 'Sound set successfully deleted'}]);
+    } catch($e) {
+        $c->log->error("failed to delete sound set: $e");
         $c->flash(messages => [{type => 'error', text => 'Delete failed.'}]);
-        $c->log->info("Delete failed: " . $e);
     };
-    $c->response->redirect($c->uri_for());
+    NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for('/sound'));
 }
 
 sub create :Chained('sets_list') :PathPart('create') :Args(0) {
     my ($self, $c) = @_;
 
-    my $form = NGCP::Panel::Form::SoundSet->new;
+    my $posted = ($c->request->method eq 'POST');
+    my $form;
+    my $params = {};
+    $params = $params->merge($c->session->{created_objects});
+    if($c->user->is_superuser) {
+        $form = NGCP::Panel::Form::Sound::AdminSet->new;
+    } else {
+        $form = NGCP::Panel::Form::Sound::ResellerSet->new;
+    }
     $form->process(
-        posted => ($c->request->method eq 'POST'),
+        posted => $posted,
         params => $c->request->params,
-        action => $c->uri_for_action('/sound/create'),
-        item   => $c->stash->{sets_rs}->new_result({}),
+        item   => $params,
     );
-    if($form->validated) {
-        $c->flash(messages => [{type => 'success', text => 'Sound Set successfully created!'}]);
-        $c->response->redirect($c->uri_for_action('/sound/root'));
-        return;
+    NGCP::Panel::Utils::Navigation::check_form_buttons(
+        c => $c,
+        form => $form,
+        fields => {
+            'reseller.create' => $c->uri_for('/reseller/create'),
+        },
+        back_uri => $c->req->uri,
+    );
+    if($posted && $form->validated) {
+        try {
+            if($c->user->is_superuser) {
+                $form->values->{reseller_id} = $form->values->{reseller}{id};
+                delete $form->values->{reseller};
+            } else {
+                $form->values->{reseller_id} = $c->user->reseller_id;
+            }
+            $c->stash->{sets_rs}->create($form->values);
+            delete $c->session->{created_objects}->{reseller};
+            $c->flash(messages => [{type => 'success', text => 'Sound set successfully created'}]);
+        } catch($e) {
+            $c->log->error("failed to create sound set: $e");
+            $c->flash(messages => [{type => 'error', text => 'Failed to create sound set'}]);
+        }
+        NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for('/sound'));
     }
 
-    $c->stash(close_target => $c->uri_for());
-    $c->stash(create_flag => 1);
-    $c->stash(form => $form);
+    $c->stash(
+        form => $form,
+        create_flag => 1,
+    );
 }
 
 sub handles_list :Chained('base') :PathPart('handles') :CaptureArgs(0) {
@@ -170,18 +226,14 @@ sub handles_base :Chained('handles_list') :PathPart('') :CaptureArgs(1) {
     my ($self, $c, $handle_id) = @_;
 
     unless($handle_id && $handle_id->is_integer) {
-        $c->flash(messages => [{type => 'error', text => 'Invalid Sound Handle id detected!'}]);
-        $c->response->redirect($c->stash->{handles_base_uri});
-        $c->detach;
-        return;
+        $c->flash(messages => [{type => 'error', text => 'Invalid sound handle id detected'}]);
+        NGCP::Panel::Utils::Navigation::back_or($c, $c->stash->{handles_base_uri});
     }
 
-    my $res = $c->stash->{files_rs}->find_or_new(handle_id => $handle_id);
-    unless(defined($res)) {
-        $c->flash(messages => [{type => 'error', text => 'Sound File could not be found/created!'}]);
-        $c->response->redirect($c->stash->{handles_base_uri});
-        $c->detach;
-        return;
+    my $res = $c->stash->{files_rs}->find_or_create(handle_id => $handle_id);
+    unless(defined $res ) {
+        $c->flash(messages => [{type => 'error', text => 'Sound handle not found'}]);
+        NGCP::Panel::Utils::Navigation::back_or($c, $c->stash->{handles_base_uri});
     }
     $c->stash(file_result => $res);
 }
@@ -196,23 +248,28 @@ sub handles_edit :Chained('handles_base') :PathPart('edit') {
         soundfile => $posted ? $upload : undef,
     );
     my $file_result = $c->stash->{file_result};
-    my $form = NGCP::Panel::Form::SoundFile->new;
+    my $form = NGCP::Panel::Form::Sound::File->new;
     $form->process(
         posted => $posted,
         params => \%params,
         item   => $file_result,
     );
+    NGCP::Panel::Utils::Navigation::check_form_buttons(
+        c => $c,
+        form => $form,
+        fields => {},
+        back_uri => $c->req->uri,
+    );
     
-    if($form->validated) {
+    if($posted && $form->validated) {
         if (defined $upload) {
             my $soundfile = eval { $upload->slurp };
             my $filename = eval { $upload->filename };
             
             my $ft = File::Type->new();
             unless ($ft->checktype_contents($soundfile) eq 'audio/x-wav') {
-                $c->flash(messages => [{type => 'error', text => 'Invalid File Type detected!'}]);
-                $c->response->redirect($c->stash->{handles_base_uri});
-                return;
+                $c->flash(messages => [{type => 'error', text => 'Invalid file type detected, only WAV supported'}]);
+                NGCP::Panel::Utils::Navigation::back_or($c, $c->stash->{handles_base_uri});
             }
             
             my $target_codec = 'WAV';
@@ -221,9 +278,8 @@ sub handles_edit :Chained('handles_base') :PathPart('edit') {
                 try {
                     $self->_clear_audio_cache($file_result->set_id, $file_result->handle->name);
                 } catch ($e) {
-                    $c->flash(messages => [{type => 'error', text => 'Failed to clear audio cache!'}]);
-                    $c->response->redirect($c->stash->{handles_base_uri});
-                    return;
+                    $c->flash(messages => [{type => 'error', text => 'Failed to clear audio cache'}]);
+                    NGCP::Panel::Utils::Navigation::back_or($c, $c->stash->{handles_base_uri});
                 }
             }
 
@@ -235,23 +291,36 @@ sub handles_edit :Chained('handles_base') :PathPart('edit') {
             try {
                 $soundfile = NGCP::Panel::Utils::Sounds::transcode_file(
                     $upload->tempname, 'WAV', $target_codec);
-            } catch ($error) {
-                $c->flash(messages => [{type => 'error', text => 'Transcode of audio file failed!'}]);
-                $c->log->info("Transcode failed: $error");
-                $c->response->redirect($c->stash->{handles_base_uri});
-                return;
+            } catch ($e) {
+                $c->flash(messages => [{type => 'error', text => 'Transcoding audio file failed'}]);
+                $c->log->error("failed to transcode audio file: $e");
+                NGCP::Panel::Utils::Navigation::back_or($c, $c->stash->{handles_base_uri});
             }
-            
-            $file_result->update({
-                filename => $filename,
-                data => $soundfile,
-                codec => $target_codec,
-            });
+           
+            try {
+                $file_result->update({
+                    loopplay => $form->values->{loopplay},
+                    filename => $filename,
+                    data => $soundfile,
+                    codec => $target_codec,
+                });
+                $c->flash(messages => [{type => 'success', text => 'Sound handle successfully uploaded'}]);
+            } catch($e) {
+                $c->log->error("failed to update sound handle with data: $e");
+                $c->flash(messages => [{type => 'error', text => 'Failed to update sound handle upload'}]);
+            }
+        } else {
+            try {
+                $file_result->update({
+                    loopplay => $form->values->{loopplay},
+                });
+                $c->flash(messages => [{type => 'success', text => 'Sound handle successfully updated'}]);
+            } catch($e) {
+                $c->log->error("failed to update sound handle: $e");
+                $c->flash(messages => [{type => 'error', text => 'Failed to update sound handle'}]);
+            }
         }
-    
-        $c->flash(messages => [{type => 'success', text => 'Sound File successfully changed!'}]);
-        $c->response->redirect($c->stash->{handles_base_uri});
-        return;
+        NGCP::Panel::Utils::Navigation::back_or($c, $c->stash->{handles_base_uri});
     }
 
     $c->stash(form => $form);
@@ -263,12 +332,12 @@ sub handles_delete :Chained('handles_base') :PathPart('delete') {
     
     try {
         $c->stash->{file_result}->delete;
-        $c->flash(messages => [{type => 'success', text => 'Sound File successfully deleted!'}]);
-    } catch (DBIx::Class::Exception $e) {
-        $c->flash(messages => [{type => 'error', text => 'Delete failed.'}]);
-        $c->log->info("Delete failed: " . $e);
+        $c->flash(messages => [{type => 'success', text => 'Sound handle successfully deleted'}]);
+    } catch($e) {
+        $c->log->error("failed to delete sound handle: $e");
+        $c->flash(messages => [{type => 'error', text => 'Failed to delete sound handle'}]);
     };
-    $c->response->redirect($c->stash->{handles_base_uri});
+    NGCP::Panel::Utils::Navigation::back_or($c, $c->stash->{handles_base_uri});
 }
 
 sub handles_download :Chained('handles_base') :PathPart('download') :Args(0) {
@@ -283,18 +352,17 @@ sub handles_download :Chained('handles_base') :PathPart('download') :Args(0) {
         try {
             $data = NGCP::Panel::Utils::Sounds::transcode_data(
                 $file->data, $file->codec, 'WAV');
-        } catch ($error) {
-            $c->flash(messages => [{type => 'error', text => 'Transcode of audio file failed!'}]);
-            $c->log->info("Transcode failed: $error");
-            $c->response->redirect($c->stash->{handles_base_uri});
-            return;
+        } catch($e) {
+            $c->log->error("failed to transcode audio file: $e");
+            $c->flash(messages => [{type => 'error', text => 'Failed to transcode audio file'}]);
+            NGCP::Panel::Utils::Navigation::back_or($c, $c->stash->{handles_base_uri});
         }
     } else {
         $data = $file->data;
     }
     
     $c->response->header ('Content-Disposition' => 'attachment; filename="' . $filename . '"');
-    $c->response->content_type('audio/x-wav'); #'
+    $c->response->content_type('audio/x-wav');
     $c->response->body($data);
 }
 

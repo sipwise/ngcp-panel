@@ -1,6 +1,7 @@
 [% site_config.title = 'Manage Sound Set ' _ set_result.name -%]
 
-<a class="btn btn-large btn-primary" href="[% c.uri_for() %]"><i class="icon-arrow-left"></i> Back</a>
+<a class="btn btn-large btn-primary" href="[% c.uri_for('/back') %]"><i class="icon-arrow-left"></i> Back</a>
+[% back_created = 1 -%]
 
 [% IF messages -%]
 <div class="row">
@@ -46,10 +47,14 @@
                 </td>
                 <td>
                     <div class="sw_actions pull-right">
-                        <a class="btn btn-small btn-primary" href="[% handles_base_uri _ "/" _ r.get_column("handleid") _ "/edit" %]"><i class="icon-edit"></i> Upload</a>
                         [% IF r.get_column("filename").size -%]
-                        <a class="btn btn-small btn-secondary" data-confirm="Delete" href="[% handles_base_uri _ "/" _ r.get_column("handleid") _ "/delete" %]"><i class="icon-edit"></i> Delete</a>
-                        <a class="btn btn-small btn-tertiary" href="[% c.uri_for_action('/sound/handles_download', [c.req.captures.0, r.get_column('handleid')]) %]"><i class="icon-play"></i> Play</a>
+                            [% UNLESS c.user.read_only -%]
+                            <a class="btn btn-small btn-primary" href="[% handles_base_uri _ "/" _ r.get_column("handleid") _ "/edit" %]"><i class="icon-edit"></i> Edit</a>
+                            <a class="btn btn-small btn-secondary" data-confirm="Delete" href="[% handles_base_uri _ "/" _ r.get_column("handleid") _ "/delete" %]"><i class="icon-edit"></i> Delete</a>
+                            [% END -%]
+                            <a class="btn btn-small btn-tertiary" href="[% c.uri_for_action('/sound/handles_download', [c.req.captures.0, r.get_column('handleid')]) %]"><i class="icon-play"></i> Play</a>
+                        [% ELSIF !c.user.read_only -%]
+                            <a class="btn btn-small btn-primary" href="[% handles_base_uri _ "/" _ r.get_column("handleid") _ "/edit" %]"><i class="icon-edit"></i> Upload</a>
                         [% END -%]
                     </div>
                 </td>
@@ -82,7 +87,7 @@ $(function() {
 [%
     PROCESS "helpers/modal.tt";
     modal_header(m.create_flag=0,
-                 m.name = "Preference " _ file_result.handle.name );
+                 m.name = file_result.handle.name );
 -%]
     [% form.render -%]
 [%
