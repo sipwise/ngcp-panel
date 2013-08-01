@@ -3,8 +3,7 @@
     helper.name = 'Domain';
     helper.data = domains;
     helper.messages = messages;
-    helper.column_titles = [ '#', 'Domain' ];
-    helper.column_fields = [ 'id', 'domain' ];
+    helper.dt_columns = domain_dt_columns;
 
     helper.close_target = close_target;
     helper.create_flag = create_flag;
@@ -12,13 +11,19 @@
     helper.form_object = form;
     helper.ajax_uri = c.uri_for( c.controller.action_for('ajax') );
 
-    helper.dt_buttons = [
-        { name = 'Delete', uri = "/domain/'+full.id+'/delete", class = 'btn-small btn-secondary', icon = 'icon-trash' },
-        { name = 'Preferences', uri = "/domain/'+full.id+'/preferences", class = 'btn-small btn-tertiary', icon = 'icon-list' },
-    ];
-    helper.top_buttons = [
-        { name = 'Create Domain', uri = c.uri_for('/domain/create'), icon = 'icon-star' },
-    ];
+    UNLESS c.user.read_only;
+        helper.dt_buttons = [
+            { name = 'Delete', uri = "/domain/'+full.id+'/delete", class = 'btn-small btn-secondary', icon = 'icon-trash' },
+            { name = 'Preferences', uri = "/domain/'+full.id+'/preferences", class = 'btn-small btn-tertiary', icon = 'icon-list' },
+        ];
+        helper.top_buttons = [
+            { name = 'Create Domain', uri = c.uri_for('/domain/create'), icon = 'icon-star' },
+        ];
+    ELSE;
+        helper.dt_buttons = [
+            { name = 'Preferences', uri = "/domain/'+full.id+'/preferences", class = 'btn-small btn-tertiary', icon = 'icon-list' },
+        ];
+    END;
 
     PROCESS 'helpers/datatables.tt';
 -%]

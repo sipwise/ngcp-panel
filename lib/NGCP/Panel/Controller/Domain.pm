@@ -4,7 +4,8 @@ use Sipwise::Base;
 
 BEGIN { extends 'Catalyst::Controller'; }
 
-use NGCP::Panel::Form::Domain;
+use NGCP::Panel::Form::Domain::Reseller;
+use NGCP::Panel::Form::Domain::Admin;
 use NGCP::Panel::Utils::Navigation;
 
 sub auto :Does(ACL) :ACLDetachTo('/denied_page') :AllowedRole(admin) :AllowedRole(reseller) {
@@ -19,6 +20,12 @@ sub dom_list :Chained('/') :PathPart('domain') :CaptureArgs(0) {
 
     my $dispatch_to = '_dom_resultset_' . $c->user->auth_realm;
     my $dom_rs = $self->$dispatch_to($c);
+
+    $c->stash->{domain_dt_columns} = NGCP::Panel::Utils::Datatables::set_columns($c, [
+        { name => 'id', search => 1, title => '#' },
+        { name => 'domain', search => 1, title => 'Domain' },
+        { name => 'domain_resellers.reseller.name', search => 1, title => 'Reseller' },
+    ]);
 
     $c->stash(dom_rs   => $dom_rs,
               template => 'domain/list.tt');
@@ -46,45 +53,51 @@ sub root :Chained('dom_list') :PathPart('') :Args(0) {
 sub create :Chained('dom_list') :PathPart('create') :Args(0) {
     my ($self, $c) = @_;
 
-    my $form = NGCP::Panel::Form::Domain->new;
+    my $posted = ($c->request->method eq 'POST');
+    my $form;
+    if($c->user->is_superuser) {
+        $form = NGCP::Panel::Form::Domain::Admin->new;
+    } else {
+        $form = NGCP::Panel::Form::Domain::Reseller->new;
+    }
+    my $params = {};
+    $params = $params->merge($c->session->{created_objects});
     $form->process(
-        posted => ($c->request->method eq 'POST'),
+        posted => $posted,
         params => $c->request->params,
-        action => $c->uri_for('create'),
+        item => $params,
     );
-    if($form->validated) {
-
+    if($posted && $form->validated) {
         try {
             $c->model('DB')->schema->txn_do( sub {
                 $c->model('DB')->resultset('voip_domains')
                     ->create({domain => $form->value->{domain}});
                 my $new_dom = $c->stash->{dom_rs}
                     ->create({domain => $form->value->{domain}});
+                my $reseller_id = $c->user->is_superuser ? $form->values->{reseller}{id} :
+                    $c->user->reseller_id;
 
-                if( $c->user->auth_realm eq 'reseller' ) {
-                    my $reseller = $c->model('DB')->resultset('admins')
-                        ->find($c->user->id)->reseller;
-                    $new_dom->create_related('domain_resellers', {
-                        reseller => $reseller
+                $new_dom->create_related('domain_resellers', {
+                    reseller_id => $reseller_id
                     });
-                }
+                delete $c->session->{created_objects}->{reseller};
             });
         } catch ($e) {
-            $c->flash(messages => [{type => 'error', text => 'Creation of Domain failed!'}]);
-            $c->log->error("Create failed: $e");
-            $c->response->redirect($c->uri_for());
-            return;
+            $c->flash(messages => [{type => 'error', text => 'Failed to create domain'}]);
+            $c->log->error("failed to create domain: $e");
+            NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for('/domain'));
         }
 
         $self->_sip_domain_reload;
-        $c->flash(messages => [{type => 'success', text => 'Domain successfully created!'}]);
-        $c->response->redirect($c->uri_for());
-        return;
+        $c->flash(messages => [{type => 'success', text => 'Domain successfully created'}]);
+        NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for('/domain'));
     }
 
-    $c->stash(close_target => $c->uri_for());
-    $c->stash(create_flag => 1);
-    $c->stash(form => $form);
+    $c->stash(
+        close_target => $c->uri_for,
+        create_flag => 1,
+        form => $form
+    );
 }
 
 sub base :Chained('/domain/dom_list') :PathPart('') :CaptureArgs(1) {
@@ -178,10 +191,7 @@ sub ajax :Chained('dom_list') :PathPart('ajax') :Args(0) {
     my ($self, $c) = @_;
 
     my $resultset = $c->stash->{dom_rs};
-
-    $c->forward( "/ajax_process_resultset", [$resultset,
-                 ["id", "domain"],
-                 ["domain"]]);
+    NGCP::Panel::Utils::Datatables::process($c, $resultset, $c->stash->{domain_dt_columns});
     $c->detach( $c->view("JSON") );
 }
 

@@ -91,8 +91,14 @@ sub recursively_lock_contract {
         # remove domains in case of reseller termination
         if($status eq 'terminated') {
             for my $domain($reseller->domain_resellers->all) {
+                $domain->domain->delete;
                 $domain->delete;
             }
+        }
+
+        # remove admin logins in case of reseller termination
+        for my $admin($reseller->admins->all) {
+            $admin->delete;
         }
 
         # fetch sub-contracts of this contract

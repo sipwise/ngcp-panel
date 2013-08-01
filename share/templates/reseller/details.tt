@@ -1,10 +1,11 @@
-[% META title = 'Reseller Details' -%]
+[% site_config.title = 'Reseller Details for ' _ reseller.first.name -%]
 
 <div class="row">
     <span>
         <a class="btn btn-primary btn-large" href="[% c.uri_for('/back') %]"><i class="icon-arrow-left"></i> Back</a>
     </span>
 </div>
+[% back_created = 1 -%]
 
 <div class="ngcp-separator"></div>
 
@@ -113,6 +114,42 @@
             </div>
         </div>
     </div>
+
+    <div class="accordion-group">
+        <div class="accordion-heading">
+            <a class="accordion-toggle" data-toggle="collapse" data-parent="#reseller_details" href="#collapse_domain">Domains</a>
+        </div>
+        <div class="accordion-body collapse" id="collapse_domain">
+            <div class="accordion-inner">
+[%
+    helper.name = 'Domain';
+    helper.messages = messages;
+    helper.dt_columns = domain_dt_columns;
+    helper.paginate = 'true';
+    helper.filter = 'true';
+    helper.close_target = close_target;
+    helper.create_flag = create_flag;
+    helper.edit_flag = edit_flag;
+    helper.form_object = form;
+    helper.ajax_uri = c.uri_for('/domain/ajax');
+
+    UNLESS c.user.read_only;
+        helper.dt_buttons = [
+            { name = 'Delete', uri = "/domain/'+full.id+'/delete", class = 'btn-small btn-secondary', icon = 'icon-trash' },
+            { name = 'Preferences', uri = "/domain/'+full.id+'/preferences", class = 'btn-small btn-tertiary', icon = 'icon-list' },
+        ];
+    ELSE;
+        helper.dt_buttons = [
+            { name = 'Preferences', uri = "/domain/'+full.id+'/preferences", class = 'btn-small btn-tertiary', icon = 'icon-list' },
+        ];
+    END;
+
+    PROCESS 'helpers/datatables.tt';
+-%]
+            </div>
+        </div>
+    </div>
+
     <div class="accordion-group">
         <div class="accordion-heading">
             <a class="accordion-toggle" data-toggle="collapse" data-parent="#reseller_details" href="#collapse_customer">Customers</a>
@@ -148,5 +185,6 @@
             </div>
         </div>
     </div>
+
 </div>
 [% # vim: set tabstop=4 syntax=html expandtab: -%]

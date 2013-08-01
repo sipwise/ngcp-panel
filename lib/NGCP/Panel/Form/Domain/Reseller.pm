@@ -1,4 +1,4 @@
-package NGCP::Panel::Form::Domain;
+package NGCP::Panel::Form::Domain::Reseller;
 
 use HTML::FormHandler::Moose;
 extends 'HTML::FormHandler';

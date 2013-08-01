@@ -134,6 +134,11 @@ sub base :Chained('list_reseller') :PathPart('') :CaptureArgs(1) {
         { name => "contact.email", search => 1, title => "Contact Email" },
         { name => "status", search => 1, title => "Status" },
     ]);
+    $c->stash->{domain_dt_columns} = NGCP::Panel::Utils::Datatables::set_columns($c, [
+        { name => "id", search => 1, title => "#" },
+        { name => "domain", search => 1, title => "Domain" },
+        { name => "domain_resellers.reseller.name", search => 1, title => "Reseller" },
+    ]);
 
     $c->stash(reseller => $c->stash->{resellers}->search_rs({ id => $reseller_id }));
 }
@@ -259,6 +264,9 @@ sub terminate :Chained('base') :PathPart('terminate') :Args(0) {
                     c => $c,
                     contract => $contract,
                 );
+                for my $admin($reseller->admins->all) {
+                    $admin->delete;
+                }
             }
         });
         $c->flash(messages => [{type => 'success', text => 'Successfully terminated reseller'}]);

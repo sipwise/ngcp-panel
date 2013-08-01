@@ -9,6 +9,8 @@ sub check_redirect_chain {
 
     # TODO: check for missing fields
     my $c = $params{c};
+    $c->session->{redirect_targets} = []
+        unless(defined $c->session->{redirect_targets});
 
     if($c->request->params->{back}) {
         my $back_uri = URI->new(uri_decode($c->request->params->{back}));
