@@ -1,4 +1,5 @@
 [% site_config.title = 'SIP Peering Group ' _ group.name -%]
+<h3>Peering Servers</h3>
 [%
     helper.name = 'Peering Servers';
     helper.show_create_button = 1;
@@ -25,6 +26,8 @@
     PROCESS 'helpers/datatables.tt';
 -%]
 
+<div class="ngcp-separator"></div>
+<h3>Peering Rules</h3>
 [%
     helper.name = 'Peering Rules';
     helper.show_create_button = 1;
