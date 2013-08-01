@@ -1,7 +1,7 @@
-package NGCP::Panel::Form::RewriteRule;
+package NGCP::Panel::Form::RewriteRule::Rule;
 
 use HTML::FormHandler::Moose;
-extends 'HTML::FormHandler::Model::DBIC';
+extends 'HTML::FormHandler';
 use Moose::Util::TypeConstraints;
 
 use HTML::FormHandler::Widget::Block::Bootstrap;

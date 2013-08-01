@@ -2,11 +2,14 @@
 
 <div class="row">
     <span>
-        <a class="btn btn-primary btn-large" href="[% c.uri_for() %]"><i class="icon-arrow-left"></i> Back</a>
+        <a class="btn btn-primary btn-large" href="[% c.uri_for('/back') %]"><i class="icon-arrow-left"></i> Back</a>
     </span>
+    [% back_created = 1 -%]
+    [% UNLESS c.user.read_only -%]
     <span>
     <a class="btn btn-primary btn-large" href="[% c.uri_for_action('/rewrite/rules_create', [c.req.captures.0]) %]"><i class="icon-star"></i> Create Rewrite Rule</a>
     </span>
+    [% END -%]
 </div>
 
 [% IF messages -%]
@@ -45,6 +48,7 @@
             <td>[% r.replace_pattern %]</td>
             <td>[% r.description %]</td>
             <td class="ngcp-actions-column">
+            [% UNLESS c.user.read_only -%]
                 <div class="sw_actions pull-right">
                     <a class="btn btn-small btn-primary" href="[% c.uri_for_action('/rewrite/rules_edit',[set_result.id, r.id]) %]">
                         <i class="icon-edit"></i> Edit
@@ -53,6 +57,7 @@
                         <i class="icon-trash"></i> Delete
                     </a>
                 </div>
+            [% END -%]
             </td>
         </tr>
     [% END %]
@@ -60,21 +65,48 @@
 </table>
 [% END -%]
 
-<h3>Inbound Rewrite Rules for Caller</h3>
-
-[% show_rules(m_rules = rules.caller_in) %]
-
-<h3>Inbound Rewrite Rules for Callee</h3>
-
-[% show_rules(m_rules = rules.callee_in) %]
-
-<h3>Outbound Rewrite Rules for Caller</h3>
-
-[% show_rules(m_rules = rules.caller_out) %]
-
-<h3>Outbound Rewrite Rules for Callee</h3>
-
-[% show_rules(m_rules = rules.callee_out) %]
+<div class="accordion" id="rewrite_rules">
+    <div class="accordion-group">
+        <div class="accordion-heading">
+            <a class="accordion-toggle" data-toggle="collapse" data-parent="#rewrite_rules" href="#collapse_icaller">Inbound Rewrite Rules for Caller</a>
+        </div>
+        <div class="accordion-body collapse" id="collapse_icaller">
+            <div class="accordion-inner">
+                [% show_rules(m_rules = rules.caller_in) %]
+            </div>
+        </div>
+    </div>
+    <div class="accordion-group">
+        <div class="accordion-heading">
+            <a class="accordion-toggle" data-toggle="collapse" data-parent="#rewrite_rules" href="#collapse_icallee">Inbound Rewrite Rules for Callee</a>
+        </div>
+        <div class="accordion-body collapse" id="collapse_icallee">
+            <div class="accordion-inner">
+                [% show_rules(m_rules = rules.callee_in) %]
+            </div>
+        </div>
+    </div>
+    <div class="accordion-group">
+        <div class="accordion-heading">
+            <a class="accordion-toggle" data-toggle="collapse" data-parent="#rewrite_rules" href="#collapse_ocaller">Outbound Rewrite Rules for Caller</a>
+        </div>
+        <div class="accordion-body collapse" id="collapse_ocaller">
+            <div class="accordion-inner">
+                [% show_rules(m_rules = rules.caller_out) %]
+            </div>
+        </div>
+    </div>
+    <div class="accordion-group">
+        <div class="accordion-heading">
+            <a class="accordion-toggle" data-toggle="collapse" data-parent="#rewrite_rules" href="#collapse_ocallee">Outbound Rewrite Rules for Callee</a>
+        </div>
+        <div class="accordion-body collapse" id="collapse_ocallee">
+            <div class="accordion-inner">
+                [% show_rules(m_rules = rules.callee_out) %]
+            </div>
+        </div>
+    </div>
+</div>
 
 [% IF edit_flag || create_flag -%]
 [%

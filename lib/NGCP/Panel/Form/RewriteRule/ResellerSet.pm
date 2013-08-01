@@ -1,7 +1,7 @@
-package NGCP::Panel::Form::RewriteRuleSet;
+package NGCP::Panel::Form::RewriteRule::ResellerSet;
 
 use HTML::FormHandler::Moose;
-extends 'HTML::FormHandler::Model::DBIC';
+extends 'HTML::FormHandler';
 use Moose::Util::TypeConstraints;
 
 use HTML::FormHandler::Widget::Block::Bootstrap;
@@ -41,26 +41,5 @@ has_block 'actions' => (
 );
 
 1;
-
-=head1 NAME
-
-NGCP::Panel::Form::RewriteRuleSet
-
-=head1 DESCRIPTION
-
-Form to modify a provisioning.rewrite_rule_sets row.
-
-=head1 METHODS
-
-=head1 AUTHOR
-
-Gerhard Jungwirth
-
-=head1 LICENSE
-
-This library is free software. You can redistribute it and/or modify
-it under the same terms as Perl itself.
-
-=cut
 
 # vim: set tabstop=4 expandtab:
