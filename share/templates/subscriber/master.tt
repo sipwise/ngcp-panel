@@ -2,10 +2,12 @@
 
 <div class="row">
     <span class="pull-left" style="margin:0 5px 0 5px;">
+        <a class="btn btn-primary btn-large" href="[% c.uri_for('/back') %]"><i class="icon-arrow-left"></i> Back</a>
         <a class="btn btn-primary btn-large" href="[% c.uri_for_action('/subscriber/preferences', [ subscriber.id ]) %]"><i class="icon-list"></i> Preferences</a>
         <a class="btn btn-primary btn-large" href="[% c.uri_for_action('/customer/details', [ subscriber.contract_id ]) %]"><i class="icon-user"></i> Customer</a>
     </span>
 </div>
+[% back_created = 1 -%]
 
 [% IF messages -%]
 <div class="row">

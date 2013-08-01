@@ -130,9 +130,12 @@ $(document).ready(function() {
 </script>
 
 <div class="row">
+    [% UNLESS back_created -%]
     <span class="pull-left" style="margin:0 5px 0 5px;">
         <a class="btn btn-primary btn-large" href="[% c.uri_for('/back') %]"><i class="icon-arrow-left"></i> Back</a>
     </span>
+    [% back_created = 1 -%]
+    [% END -%]
     [% FOR button IN helper.top_buttons -%]
         [% IF button.method == "post" -%]
             <form method="post" action="[% button.uri %]" style="float:left; margin:0 5px 0 5px;">
