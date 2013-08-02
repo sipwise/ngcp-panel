@@ -58,6 +58,7 @@ my $builder = Local::Module::Build->new(
         'Text::CSV_XS' => 0,
         'UUID' => 0,
 	'Hash::Merge::Simple' => 0,
+	'URI::Encode' => 0,
         'warnings' => 0,
     },
     test_requires => {

@@ -31,6 +31,7 @@ Build-Depends: debhelper (>= 8),
                libtext-csv-xs-perl,
                libtrycatch-perl,
                libhash-merge-simple-perl,
+               liburi-encode-perl,
                ngcp-schema
 Standards-Version: 3.9.4
 Homepage: http://sipwise.com/
@@ -66,6 +67,7 @@ Depends: libcatalyst-actionrole-acl-perl,
          libtemplate-perl,
          libtext-csv-xs-perl,
          libhash-merge-simple-perl,
+         liburi-encode-perl,
          ngcp-schema,
          ${misc:Depends},
          ${perl:Depends}
