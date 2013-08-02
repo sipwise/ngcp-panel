@@ -31,25 +31,20 @@
 <table class="table table-bordered table-striped table-highlight table-hover">
     <thead>
         <tr>
-            <th>Type</th>
-            <th>Billing Profile</th>
-            <th class="ngcp-actions-column"></th>
+            <th>Date</th>
+            <th>Billing Profile Name</th>
         </tr>
     </thead>
     <tbody>
+        [% FOR mapping IN contract.billing_mappings.all -%]
+        [% bprof = mapping.billing_profile -%]
         <tr class="sw_action_row">
-            <td>Active Billing Profile</td>
-            <td>fooo</td>
-            <td class="ngcp-actions-column"></td>
-        </tr>
-        <tr class="sw_action_row">
-            <td>Other Billing Profiles</td>
             <td>
-                2013-04-28 18:00:00 - 2013-04-09 23:59:59: bar<br/>
-                2013-06-25 00:00:00 - 2013-07-01 23:59:59: blub
+                [% bprof.start_date ? bprof.start_date : 'NULL' %] - [% bprof.end_date ? bprof.end_date : 'NULL' %]
             </td>
-            <td class="ngcp-actions-column"></td>
+            <td>[% bprof.name %]</td>
         </tr>
+        [% END -%]
     </tbody>
 </table>
 
