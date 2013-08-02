@@ -1609,9 +1609,13 @@ sub edit_master :Chained('master') :PathPart('edit') :Args(0) {
                 }
 
                 if($lock->first) {
-                    $lock->first->update({ value => $form->field('lock')->value });
-                } else {
-                    $lock->create({ value => $form->field('lock')->value });
+                    if ($form->values->{lock} == 0) {
+                        $lock->delete;
+                    } else {
+                        $lock->first->update({ value => $form->values->{lock} });
+                    }
+                } elsif($form->values->{lock} > 0) {
+                    $lock->create({ value => $form->values->{lock} });
                 }
             });
             $c->flash(messages => [{type => 'success', text => 'Successfully updated subscriber'}]);

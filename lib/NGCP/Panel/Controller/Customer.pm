@@ -60,7 +60,7 @@ sub base :Chained('list_customer') :PathPart('') :CaptureArgs(1) {
     }
 
     my $contract = $c->model('DB')->resultset('contracts')
-        ->search_rs(id => $contract_id);
+        ->search('me.id' => $contract_id);
     unless($c->user->is_superuser) {
         $contract = $contract->search({
             'contact.reseller_id' => $c->user->reseller_id,

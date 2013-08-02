@@ -175,16 +175,13 @@ sub edit :Chained('base') :PathPart('edit') :Args(0) {
     my $contract = $c->stash->{contract_result};
     my $billing_mapping = $contract->billing_mappings->find($contract->get_column('bmid'));
     my $params = {};
-    $params = $params->merge($c->session->{created_objects});
     unless($posted) {
         $params->{billing_profile}{id} = $billing_mapping->billing_profile->id;
         $params->{contact}{id} = $contract->contact_id;
         $params->{external_id} = $contract->external_id;
         $params->{status} = $contract->status;
     }
-
-    # TODO: handle created contact/bilprof
-
+    $params = $params->merge($c->session->{created_objects});
     my $form = NGCP::Panel::Form::Contract->new;
     $form->process(
         posted => $posted,
@@ -193,7 +190,7 @@ sub edit :Chained('base') :PathPart('edit') :Args(0) {
     );
     NGCP::Panel::Utils::Navigation::check_form_buttons(
         c => $c, form => $form,
-        fields => {'contract.contact.create' => $c->uri_for('/contact/create'),
+        fields => {'contact.create' => $c->uri_for('/contact/create'),
                    'billing_profile.create'  => $c->uri_for('/billing/create')},
         back_uri => $c->req->uri,
     );

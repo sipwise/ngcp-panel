@@ -9,10 +9,15 @@
 
 <div class="ngcp-separator"></div>
 
-[% FOREACH m IN messages -%]
-    <div class="alert alert-[% m.type %]">[% m.text %]</div>
-[% END -%]
+<div class="row">
+    [% FOREACH m IN messages -%]
+        <div class="alert alert-[% m.type %]">[% m.text %]</div>
+    [% END -%]
+    [% IF reseller.first.status != "active" -%]
+        <div class="alert">Reseller is <b>[% reseller.first.status %]</b></div>
+    [% END -%]
 [% messages = [] -%]
+</div>
 
 
 <div class="accordion" id="reseller_details">

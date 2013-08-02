@@ -9,13 +9,14 @@
 </div>
 [% back_created = 1 -%]
 
-[% IF messages -%]
 <div class="row">
     [% FOREACH m IN messages -%]
         <div class="alert alert-[% m.type %]">[% m.text %]</div>
     [% END -%]
+    [% IF subscriber.status != "active" -%]
+        <div class="alert">Subscriber is <b>[% subscriber.status %]</b></div>
+    [% END -%]
 </div>
-[% END -%]
 
 <div class="ngcp-separator"></div>
 
@@ -44,6 +45,7 @@
                         </tr>
                         [% 
                             elements = [
+                                { value = subscriber.status, desc = 'Status'},
                                 { value = subscriber.provisioning_voip_subscriber.webusername, desc = 'CSC Username'},
                                 { value = subscriber.provisioning_voip_subscriber.webpassword, desc = 'CSC Password'},
                                 { value = subscriber.username _ '@' _ subscriber.domain.domain, desc = 'SIP URI'},

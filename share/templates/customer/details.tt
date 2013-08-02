@@ -14,19 +14,54 @@
     <span>
         <a class="btn btn-primary btn-large" href="[% c.uri_for('/back') %]"><i class="icon-arrow-left"></i> Back</a>
     </span>
+    [% UNLESS c.user.read_only -%]
+    <span>
+        <a class="btn btn-primary btn-large" href="[% c.uri_for_action('/contract/edit', [ contract.id ]) %]"><i class="icon-edit"></i> Edit</a>
+    </span>
+    [% END -%]
 </div>
+[% back_created = 1 -%]
 
-[% IF messages -%]
 <div class="row">
     [% FOREACH m IN messages -%]
         <div class="alert alert-[% m.type %]">[% m.text %]</div>
     [% END -%]
+    [% IF contract.status != "active" -%]
+        <div class="alert">Customer is <b>[% contract.status %]</b></div>
+    [% END -%]
 </div>
-[% END -%]
 
 <div class="ngcp-separator"></div>
 
 <div class="accordion" id="customer_details">
+
+    [% IF c.user.is_superuser -%]
+    <div class="accordion-group">
+        <div class="accordion-heading">
+            <a class="accordion-toggle" data-toggle="collapse" data-parent="#customer_details" href="#collapse_reseller">Reseller</a>
+        </div>
+        <div class="accordion-body collapse" id="collapse_reseller">
+            <div class="accordion-inner">
+                <table class="table table-bordered table-striped table-highlight table-hover">
+                    <thead>
+                        <th>Name</th>
+                        <th>Value</th>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>#</td>
+                            <td>[% contract.contact.reseller.id %]</td>
+                        </tr>
+                        <tr>
+                            <td>Name</td>
+                            <td>[% contract.contact.reseller.name %]</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    [% END -%]
 
     <div class="accordion-group">
         <div class="accordion-heading">
@@ -89,12 +124,11 @@
                     </thead>
                     <tbody>
                         [% FOR mapping IN contract.billing_mappings.all -%]
-                        [% bprof = mapping.billing_profile -%]
                         <tr class="sw_action_row">
                             <td>
-                                [% bprof.start_date ? bprof.start_date : 'NULL' %] - [% bprof.end_date ? bprof.end_date : 'NULL' %]
+                                [% mapping.start_date ? mapping.start_date : 'NULL' %] - [% mapping.end_date.defined ? mapping.end_date : 'NULL' %]
                             </td>
-                            <td>[% bprof.name %]</td>
+                            <td>[% mapping.billing_profile.name %]</td>
                         </tr>
                         [% END -%]
                     </tbody>
