@@ -1,10 +1,8 @@
 [% META title = 'Billing Zones' -%]
 [%
     helper.name = 'Billing Zones';
-    helper.show_create_button = 1;
     helper.messages = messages;
-    helper.column_titles = [ '#', 'Zone', 'Zone Detail' ];
-    helper.column_fields = [ 'id', 'zone', 'detail' ];
+    helper.dt_columns = zone_dt_columns;
 
     helper.close_target = close_target;
     helper.create_flag = create_flag;
@@ -13,13 +11,14 @@
     helper.ajax_uri = c.uri_for_action( '/billing/zones_ajax',[c.req.captures.0] );
 
     helper.tmpuri = c.uri_for( profile.id, 'zones');
-    helper.dt_buttons = [
-        { name = 'Edit', uri = helper.tmpuri _ "/'+full[\"id\"]+'/edit", class = 'btn-small btn-primary', icon = 'icon-edit' },
-        { name = 'Delete', uri = helper.tmpuri _ "/'+full[\"id\"]+'/delete", class = 'btn-small btn-secondary', icon = 'icon-trash' },
-    ];
-    helper.top_buttons = [
-        { name = 'Back', uri = c.uri_for(profile.id, 'fees'), icon = 'icon-arrow-left' },
-    ];
+    UNLESS c.user.read_only;
+        helper.dt_buttons = [
+            { name = 'Delete', uri = helper.tmpuri _ "/'+full.id+'/delete", class = 'btn-small btn-secondary', icon = 'icon-trash' },
+        ];
+        helper.top_buttons = [
+            { name = 'Create', uri = c.uri_for(profile.id, 'zones', 'create'), icon = 'icon-star' },
+        ];
+    END;
 
     PROCESS 'helpers/datatables.tt';
 -%]

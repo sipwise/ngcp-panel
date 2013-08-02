@@ -12,10 +12,6 @@ has_field 'submitid' => ( type => 'Hidden' );
 sub build_render_list {[qw/submitid fields actions/]}
 sub build_form_element_class { [qw/form-horizontal/] }
 
-has_field 'id' => (
-    type => 'Hidden'
-);
-
 has_field 'source' => (
     type => '+NGCP::Panel::Field::Regexp',
     maxlength => 255,
@@ -41,6 +37,8 @@ has_field 'direction' => (
         { value => 'in', label => 'inbound' },
         { value => 'out', label => 'outbound' },
     ],
+    default => 'out',
+    required => 1,
 );
 
 has_field 'billing_zone' => (
@@ -53,72 +51,81 @@ has_field 'onpeak_init_rate' => (
     type => 'Float',
     element_attr => {
         rel => ['tooltip'],
-        title => ['double precision float, e.g.: 0.15']
+        title => ['The cost of the init interval in cents (e.g 0.90)']
     },
+    default => 0,
 );
 
 has_field 'onpeak_init_interval' => (
     type => 'Integer',
     element_attr => {
         rel => ['tooltip'],
-        title => ['integer, e.g.: 60']
+        title => ['The length of the first interval']
     },
+    default => 60,
 );
 
 has_field 'onpeak_follow_rate' => (
     type => 'Float',
     element_attr => {
         rel => ['tooltip'],
-        title => ['double precision float, e.g.: 0.15']
+        title => ['The cost of each following interval in cents (e.g 0.90)']
     },
+    default => 0,
 );
 
 has_field 'onpeak_follow_interval' => (
     type => 'Integer',
     element_attr => {
         rel => ['tooltip'],
-        title => ['integer, e.g.: 30']
+        title => ['The length of the following intervals']
     },
+    default => 60,
 );
 
 has_field 'offpeak_init_rate' => (
     type => 'Float',
     element_attr => {
         rel => ['tooltip'],
-        title => ['double precision float, e.g.: 0.1']
+        title => ['The cost of the init interval in cents (e.g 0.90)']
     },
+    default => 0,
 );
 
 has_field 'offpeak_init_interval' => (
     type => 'Integer',
     element_attr => {
         rel => ['tooltip'],
-        title => ['integer, e.g.: 60']
+        title => ['The length of the first interval']
     },
+    default => 60,
 );
 
 has_field 'offpeak_follow_rate' => (
     type => 'Float',
     element_attr => {
         rel => ['tooltip'],
-        title => ['double precision float, e.g.: 0.1']
+        title => ['The cost of each following interval in cents (e.g 0.90)']
     },
+    default => 0,
 );
 
 has_field 'offpeak_follow_interval' => (
     type => 'Integer',
     element_attr => {
         rel => ['tooltip'],
-        title => ['integer, e.g.: 30']
+        title => ['The length of the following intervals']
     },
+    default => 60,
 );
 
 has_field 'use_free_time' => (
     type => 'Boolean',
     element_attr => {
         rel => ['tooltip'],
-        title => ['free minutes may be used when calling this destination']
+        title => ['Free minutes may be used when calling this destination']
     },
+    default => 0,
 );
 
 has_field 'save' => (
@@ -131,7 +138,7 @@ has_field 'save' => (
 has_block 'fields' => (
     tag => 'div',
     class => [qw/modal-body/],
-    render_list => [qw/id source destination direction billing_zone
+    render_list => [qw/billing_zone source destination direction
         onpeak_init_rate onpeak_init_interval onpeak_follow_rate
         onpeak_follow_interval offpeak_init_rate offpeak_init_interval
         offpeak_follow_rate offpeak_follow_interval use_free_time
@@ -143,25 +150,6 @@ has_block 'actions' => (
     class => [qw/modal-footer/],
     render_list => [qw/save/],
 );
-
-sub custom_get_values {
-    my ($self) = @_;
-    my $hashvalues = {%{$self->value}}; #prevents sideeffects
-    foreach my $val(values %$hashvalues) {
-        $val = '' unless defined($val);
-    }
-    return $hashvalues;
-}
-
-sub custom_get_values_to_update {
-    my ($self) = @_;
-    my $hashvalues = $self->custom_get_values;
-    $hashvalues->{billing_zone_id} = defined $hashvalues->{billing_zone}->{id} ?
-        $hashvalues->{billing_zone}->{id}+0 :
-        '';
-    delete $hashvalues->{billing_zone};
-    return $hashvalues;
-}
 
 1;
 # vim: set tabstop=4 expandtab:

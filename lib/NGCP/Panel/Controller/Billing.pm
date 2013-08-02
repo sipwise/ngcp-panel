@@ -76,37 +76,66 @@ sub base :Chained('profile_list') :PathPart('') :CaptureArgs(1) {
         return;
     }
 
+    $c->stash->{zone_dt_columns} = NGCP::Panel::Utils::Datatables::set_columns($c, [
+        { name => 'id', search => 1, title => '#' },
+        { name => 'zone', search => 1, title => 'Zone' },
+        { name => 'detail', search => 1, title => 'Zone Details' },
+    ]);
+    
     my $res = $c->stash->{profiles_rs}->find($profile_id);
     unless(defined($res)) {
         $c->flash(messages => [{type => 'error', text => 'Billing Profile does not exist!'}]);
         $c->response->redirect($c->uri_for());
         return;
     }
-    $c->stash(profile => {$res->get_columns});
+    $c->stash(profile => {$res->get_inflated_columns});
     $c->stash(profile_result => $res);
 }
 
 sub edit :Chained('base') :PathPart('edit') {
     my ($self, $c) = @_;
-    
+
     my $posted = ($c->request->method eq 'POST');
-    my $dispatch_to = 'NGCP::Panel::Form::BillingProfile_' . $c->user->auth_realm;
-    my $form = $dispatch_to->new;
+    my $form;
+    my $params = $c->stash->{profile};
+    $params->{reseller}{id} = delete $params->{reseller_id};
+    $params = $params->merge($c->session->{created_objects});
+    if($c->user->is_superuser) {
+        $form = NGCP::Panel::Form::BillingProfile::Admin->new;
+    } else {
+        $form = NGCP::Panel::Form::BillingProfile::Reseller->new;
+    }
     $form->process(
         posted => $posted,
         params => $c->request->params,
-        action => $c->uri_for($c->stash->{profile}->{id}, 'edit'),
-        item   => $c->stash->{profile_result},
+        item => $params,
+    );
+    NGCP::Panel::Utils::Navigation::check_form_buttons(
+        c => $c,
+        form => $form,
+        fields => {},
+        back_uri => $c->req->uri,
     );
     if($posted && $form->validated) {
+        try {
+            if($c->user->is_superuser) {
+                $form->values->{reseller_id} = $form->values->{reseller}{id};   
+            } else {
+                $form->values->{reseller_id} = $c->user->reseller_id;
+            }
+            delete $form->values->{reseller};
+            $c->stash->{profile_result}->update($form->values);
 
-        $c->flash(messages => [{type => 'success', text => 'Billing Profile successfully changed!'}]);
-        $c->response->redirect($c->uri_for());
-        return;
+            $c->flash(messages => [{type => 'success', text => 'Billing profile successfully updated'}]);
+        } catch($e) {
+            $c->log->error("failed to update billing profile: $e");
+            $c->flash(messages => [{type => 'error', text => 'Failed to update billing profile'}]);
+        }
+        NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for('/billing'));
     }
-    
-    $c->stash(form => $form);
+
     $c->stash(edit_flag => 1);
+    $c->stash(form => $form);
 }
 
 sub create :Chained('profile_list') :PathPart('create') :Args(0) {
@@ -115,6 +144,8 @@ sub create :Chained('profile_list') :PathPart('create') :Args(0) {
     my $posted = ($c->request->method eq 'POST');
     my $form;
     my $params = {};
+    $params->{reseller}{id} = delete $params->{reseller_id};
+    $params = $params->merge($c->session->{created_objects});
     if($c->user->is_superuser && $no_reseller) {
         $form = NGCP::Panel::Form::BillingProfile::Reseller->new;
     } elsif($c->user->is_superuser) {
@@ -154,7 +185,6 @@ sub create :Chained('profile_list') :PathPart('create') :Args(0) {
         NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for('/billing'));
     }
 
-    $c->stash(close_target => $c->uri_for());
     $c->stash(create_flag => 1);
     $c->stash(form => $form);
 }
@@ -222,12 +252,15 @@ sub fees_ajax :Chained('fees_list') :PathPart('ajax') :Args(0) {
 sub fees_create :Chained('fees_list') :PathPart('create') :Args(0) {
     my ($self, $c) = @_;
 
+    my $posted = ($c->request->method eq 'POST');
+    my $params = {};
+    $params = $params->merge($c->session->{created_objects});
     my $profile_id = $c->stash->{profile}->{id};
     my $form = NGCP::Panel::Form::BillingFee->new;
     $form->process(
-        posted => ($c->request->method eq 'POST'),
+        posted => $posted,
         params => $c->request->params,
-        action => $c->uri_for($profile_id, 'fees', 'create'),
+        item => $params,
     );
     NGCP::Panel::Utils::Navigation::check_form_buttons(
         c => $c, form => $form,
@@ -235,15 +268,16 @@ sub fees_create :Chained('fees_list') :PathPart('create') :Args(0) {
         back_uri => $c->req->uri,
     );
     if($form->validated) {
+        $form->values->{source} ||= '.';
         $c->stash->{'profile_result'}
-          ->billing_fees->create($form->custom_get_values());
+          ->billing_fees->create($form->values);
+        delete $c->session->{created_objects}->{billing_zone};
 
         $c->flash(messages => [{type => 'success', text => 'Billing Fee successfully created!'}]);
         $c->response->redirect($c->uri_for($c->stash->{profile}->{id}, 'fees'));
         return;
     }
 
-    $c->stash(close_target => $c->uri_for($c->stash->{profile}->{id}, 'fees'));
     $c->stash(create_flag => 1);
     $c->stash(form => $form);
 }
@@ -297,7 +331,6 @@ sub fees_upload :Chained('fees_list') :PathPart('upload') :Args(0) {
         return;
     }
 
-    $c->stash(close_target => $c->uri_for($c->stash->{profile}->{id}, 'fees'));
     $c->stash(create_flag => 1);
     $c->stash(form => $form);
 }
@@ -307,12 +340,15 @@ sub fees_edit :Chained('fees_base') :PathPart('edit') :Args(0) {
     
     my $profile_id = $c->stash->{profile}->{id};
     my $posted = ($c->request->method eq 'POST');
+    my $params = $c->stash->{fee};
+    $params->{billing_zone}{id} = delete $params->{billing_zone_id};
+    $params = $params->merge($c->session->{created_objects});
     my $form = NGCP::Panel::Form::BillingFee->new;
     $form->field('billing_zone')->field('id')->ajax_src('../../zones/ajax');
     $form->process(
-        posted => 1,
-        params => $posted ? $c->request->params : $c->stash->{fee},
-        action => $c->uri_for($profile_id,'fees',$c->stash->{fee}->{id}, 'edit'),
+        posted => $posted,
+        params => $c->request->params,
+        item => $params,
     );
     NGCP::Panel::Utils::Navigation::check_form_buttons(
         c => $c, form => $form,
@@ -320,8 +356,12 @@ sub fees_edit :Chained('fees_base') :PathPart('edit') :Args(0) {
         back_uri => $c->req->uri,
     );
     if($posted && $form->validated) {
+        $form->values->{source} ||= '.';
+        $form->values->{billing_zone_id} = $form->values->{billing_zone}{id};
+        delete $form->values->{billing_zone};
         $c->stash->{'fee_result'}
-            ->update($form->custom_get_values_to_update() );
+            ->update($form->values);
+        delete $c->session->{created_objects}->{billing_zone};
         $c->flash(messages => [{type => 'success', text => 'Billing Profile successfully changed!'}]);
         $c->response->redirect($c->uri_for($c->stash->{profile}->{id}, 'fees'));
         return;
@@ -329,7 +369,6 @@ sub fees_edit :Chained('fees_base') :PathPart('edit') :Args(0) {
     
     $c->stash(edit_fee_flag => 1);
     $c->stash(form => $form);
-    $c->stash(close_target => $c->uri_for($c->stash->{profile}->{id}, 'fees'));
 }
 
 sub fees_delete :Chained('fees_base') :PathPart('delete') :Args(0) {
@@ -351,7 +390,6 @@ sub zones_list :Chained('base') :PathPart('zones') :CaptureArgs(0) {
     $c->stash( zones_root_uri =>
         $c->uri_for_action('/billing/zones', [$c->req->captures->[0]])
     );
-    
     $c->stash(template => 'billing/zones.tt');
 }
 
@@ -359,11 +397,7 @@ sub zones_ajax :Chained('zones_list') :PathPart('ajax') :Args(0) {
     my ($self, $c) = @_;
 
     my $resultset = $c->stash->{'profile_result'}->billing_zones;
-    
-    $c->forward( "/ajax_process_resultset", [$resultset,
-                 ["id", "zone", "detail",],
-                 ["zone", "detail"]]);
-    
+    NGCP::Panel::Utils::Datatables::process($c, $resultset, $c->stash->{zone_dt_columns});
     $c->detach( $c->view("JSON") );
 }
 
@@ -371,23 +405,30 @@ sub zones_create :Chained('zones_list') :PathPart('create') :Args(0) {
     my ($self, $c) = @_;
     
     my $form = NGCP::Panel::Form::BillingZone->new;
+    my $posted = ($c->request->method eq 'POST');
     $form->process(
-        posted => ($c->request->method eq 'POST'),
+        posted => $posted,
         params => $c->request->params,
-        action => $c->uri_for($c->stash->{profile}->{id}, 'zones', 'create'),
     );
-    if($form->validated) {
-        $c->stash->{'profile_result'}->billing_zones->create($form->fif);
-        if($c->stash->{close_target}) {
-            $c->response->redirect($c->stash->{close_target});
-            return;
+    NGCP::Panel::Utils::Navigation::check_form_buttons(
+        c => $c,
+        form => $form,
+        fields => {},
+        back_uri => $c->req->uri,
+    );
+
+    if($posted && $form->validated) {
+        try {
+            my $zone = $c->stash->{'profile_result'}->billing_zones->create($form->values);
+            $c->session->{created_objects}->{billing_zone} = { id => $zone->id };
+            $c->flash(messages => [{type => 'success', text => 'Billing Zone successfully created'}]);
+        } catch($e) {
+            $c->log->error("failed to create billing zone: $e");
+            $c->flash(messages => [{type => 'error', text => 'Failed to create billing zone'}]);
         }
-        $c->flash(messages => [{type => 'success', text => 'Billing Zone successfully created!'}]);
-        $c->response->redirect($c->stash->{zones_root_uri});
-        return;
+        NGCP::Panel::Utils::Navigation::back_or($c, $c->stash->{zones_root_uri});
     }
 
-    $c->stash(close_target => $c->stash->{zones_root_uri});
     $c->stash(form => $form);
     $c->stash(create_flag => 1);
 }
@@ -399,17 +440,15 @@ sub zones_base :Chained('zones_list') :PathPart('') :CaptureArgs(1) {
     my ($self, $c, $zone_id) = @_;
     
     unless($zone_id && $zone_id->is_integer) {
-        $c->flash(messages => [{type => 'error', text => 'Invalid billing zone id detected!'}]);
-        $c->response->redirect($c->stash->{zones_root_uri});
-        return;
+        $c->flash(messages => [{type => 'error', text => 'Invalid billing zone id detected'}]);
+        NGCP::Panel::Utils::Navigation::back_or($c, $c->stash->{zones_root_uri});
     }
     
     my $res = $c->stash->{'profile_result'}->billing_zones
         ->find($zone_id);
     unless(defined($res)) {
-        $c->flash(messages => [{type => 'error', text => 'Billing Zone does not exist!'}]);
-        $c->response->redirect($c->stash->{zones_root_uri});
-        return;
+        $c->flash(messages => [{type => 'error', text => 'Billing zone does not exist!'}]);
+        NGCP::Panel::Utils::Navigation::back_or($c, $c->stash->{zones_root_uri});
     }
     $c->stash(zone_result => $res);
 }
@@ -419,13 +458,12 @@ sub zones_delete :Chained('zones_base') :PathPart('delete') :Args(0) {
     
     try {
         $c->stash->{zone_result}->delete;
-    } catch (DBIx::Class::Exception $e) {
-        $c->flash(messages => [{type => 'error', text => 'Delete failed.'}]);
-    } catch ($e) {
-        $e->throw; #Other exception
-    };
-
-    $c->response->redirect($c->stash->{zones_root_uri});
+        $c->flash(messages => [{type => 'success', text => 'Billing zone successfully deleted'}]);
+    } catch($e) {
+        $c->log->error("failed to delete billing zone: $e");
+        $c->flash(messages => [{type => 'error', text => 'Failed to delete billing zone'}]);
+    }
+    NGCP::Panel::Utils::Navigation::back_or($c, $c->stash->{zones_root_uri});
 }
 
 sub peaktimes_list :Chained('base') :PathPart('peaktimes') :CaptureArgs(0) {
@@ -592,7 +630,6 @@ sub peaktime_specials_edit :Chained('peaktime_specials_base') :PathPart('edit') 
     }
 
     $c->stash(peaktimes_special_editflag => 1);
-    $c->stash(close_target => $c->stash->{peaktimes_root_uri});
     $c->stash(peaktimes_special_form => $form);
 }
 
@@ -623,7 +660,6 @@ sub peaktime_specials_create :Chained('peaktimes_list') :PathPart('date/create')
         return;
     }
 
-    $c->stash(close_target => $c->stash->{peaktimes_root_uri});
     $c->stash(peaktimes_special_form => $form);
     $c->stash(peaktimes_special_createflag => 1);
 }
