@@ -61,6 +61,13 @@ sub base :Chained('list_customer') :PathPart('') :CaptureArgs(1) {
 
     my $contract = $c->model('DB')->resultset('contracts')
         ->search_rs(id => $contract_id);
+    unless($c->user->is_superuser) {
+        $contract = $contract->search({
+            'contact.reseller_id' => $c->user->reseller_id,
+        }, {
+            join => 'contact',
+        });
+    }
 
     my $stime = DateTime->now->truncate(to => 'month');
     my $etime = $stime->clone->add(months => 1);
@@ -126,6 +133,8 @@ sub base :Chained('list_customer') :PathPart('') :CaptureArgs(1) {
 
 sub details :Chained('base') :PathPart('details') :Args(0) {
     my ($self, $c) = @_;
+
+    $c->stash->{contact_hash} = { $c->stash->{contract}->contact->get_inflated_columns };
 }
 
 sub subscriber_create :Chained('base') :PathPart('subscriber/create') :Args(0) {

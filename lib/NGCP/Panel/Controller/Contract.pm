@@ -21,7 +21,6 @@ sub contract_list :Chained('/') :PathPart('contract') :CaptureArgs(0) {
         { name => "id", search => 1, title => "#" },
         { name => "external_id", search => 1, title => "External #" },
         { name => "contact.reseller.name", search => 1, title => "Reseller" },
-        { name => "contact.reseller.name", search => 1, title => "Reseller" },
         { name => "contact.email", search => 1, title => "Contact Email" },
         { name => "billing_mappings.billing_profile.name", search => 1, title => "Billing Profile" },
         { name => "status", search => 1, title => "Status" },
@@ -30,6 +29,7 @@ sub contract_list :Chained('/') :PathPart('contract') :CaptureArgs(0) {
     my $mapping_rs = $c->model('DB')->resultset('billing_mappings');
     my $rs = $c->model('DB')->resultset('contracts')
         ->search({
+            'me.status' => { '!=' => 'terminated' },
             'billing_mappings.id' => {
                 '=' => $mapping_rs->search({
                     contract_id => { -ident => 'me.id' },

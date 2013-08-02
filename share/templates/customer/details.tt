@@ -26,169 +26,247 @@
 
 <div class="ngcp-separator"></div>
 
-<h3>Billing Profiles</h3>
+<div class="accordion" id="customer_details">
 
-<table class="table table-bordered table-striped table-highlight table-hover">
-    <thead>
-        <tr>
-            <th>Date</th>
-            <th>Billing Profile Name</th>
-        </tr>
-    </thead>
-    <tbody>
-        [% FOR mapping IN contract.billing_mappings.all -%]
-        [% bprof = mapping.billing_profile -%]
-        <tr class="sw_action_row">
-            <td>
-                [% bprof.start_date ? bprof.start_date : 'NULL' %] - [% bprof.end_date ? bprof.end_date : 'NULL' %]
-            </td>
-            <td>[% bprof.name %]</td>
-        </tr>
-        [% END -%]
-    </tbody>
-</table>
+    <div class="accordion-group">
+        <div class="accordion-heading">
+            <a class="accordion-toggle" data-toggle="collapse" data-parent="#customer_details" href="#collapse_contact">Contact Details</a>
+        </div>
+        <div class="accordion-body collapse" id="collapse_contact">
+            <div class="accordion-inner">
+                <table class="table table-bordered table-striped table-highlight table-hover">
+                    <thead>
+                        <th>Name</th>
+                        <th>Value</th>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Email</td>
+                            <td>[% contact_hash.email%]</td>
+                        </tr>
+                        <tr>
+                            <td>Name</td>
+                            <td>[% contact_hash.firstname %] [% contact_hash.lastname %]</td>
+                        </tr>
+                        <tr>
+                            <td>Company</td>
+                            <td>[% contact_hash.company%]</td>
+                        </tr>
+                        <tr>
+                            <td>Address</td>
+                            <td>
+                                [% contact_hash.street %]<br/>
+                                [% contact_hash.postcode %] [% contact_hash.city %]<br/>
+                                [% contact_hash.country %]
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>Phone/Fax</td>
+                            <td>
+                                Mobile: [% contact_hash.mobilenumber %]<br/>
+                                Fixed: [% contact_hash.phonenumber %]<br/>
+                                Fax: [% contact_hash.faxnumber %]<br/>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
 
-<h3>Subscribers</h3>
+    <div class="accordion-group">
+        <div class="accordion-heading">
+            <a class="accordion-toggle" data-toggle="collapse" data-parent="#customer_details" href="#collapse_bilprofs">Billing Profiles</a>
+        </div>
+        <div class="accordion-body collapse" id="collapse_bilprofs">
+            <div class="accordion-inner">
+                <table class="table table-bordered table-striped table-highlight table-hover">
+                    <thead>
+                        <tr>
+                            <th>Date</th>
+                            <th>Billing Profile Name</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        [% FOR mapping IN contract.billing_mappings.all -%]
+                        [% bprof = mapping.billing_profile -%]
+                        <tr class="sw_action_row">
+                            <td>
+                                [% bprof.start_date ? bprof.start_date : 'NULL' %] - [% bprof.end_date ? bprof.end_date : 'NULL' %]
+                            </td>
+                            <td>[% bprof.name %]</td>
+                        </tr>
+                        [% END -%]
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
 
-<a class="btn btn-large btn-primary" href="[% c.uri_for_action('/customer/subscriber_create', [ c.req.captures.0 ]) %]"><i class="icon-star"></i> Create Subscriber</a>
-<div class="ngcp-separator"></div>
-<table class="table table-bordered table-striped table-highlight table-hover" id="subscribers_table">
-    <thead>
-        <tr>
-            <th>SIP URI</th>
-            <th>Primary Number</th>
-            <th>Registered Devices</th>
-            <th class="ngcp-actions-column"></th>
-        </tr>
-    </thead>
-    <tbody>
-        [% FOR subscriber IN subscribers -%]
-        <tr class="sw_action_row">
-            <td>[% subscriber.username %]@[% subscriber.domain %]</td>
-            <td>[% subscriber.primary_number.cc %] [% subscriber.primary_number.ac %] [% subscriber.primary_number.sn %]</td>
-            <td>
-                [% FOR location IN subscriber.locations -%]
-                    [% location.user_agent %]<br/>
-                [% END -%]
-            </td>
-            <td class="ngcp-actions-column">
-                <div class="sw_actions">
-                    <a class="btn btn-primary btn-small" href="[% c.uri_for_action("/subscriber/details", [subscriber.id]) %]"><i class="icon-th-list"></i> Details</a>
-                    <a class="btn btn-tertiary btn-small" href="[% c.uri_for_action("/subscriber/preferences", [subscriber.id]) %]"><i class="icon-list"></i> Preferences</a>
-                </div>
-            </td>
-        </tr>
-        [% END -%]
-    </tbody>
-</table>
+    <div class="accordion-group">
+        <div class="accordion-heading">
+            <a class="accordion-toggle" data-toggle="collapse" data-parent="#customer_details" href="#collapse_subs">Subscribers</a>
+        </div>
+        <div class="accordion-body collapse" id="collapse_subs">
+            <div class="accordion-inner">
+                <a class="btn btn-large btn-primary" href="[% c.uri_for_action('/customer/subscriber_create', [ c.req.captures.0 ]) %]"><i class="icon-star"></i> Create Subscriber</a>
+                <div class="ngcp-separator"></div>
+                <table class="table table-bordered table-striped table-highlight table-hover" id="subscribers_table">
+                    <thead>
+                        <tr>
+                            <th>SIP URI</th>
+                            <th>Primary Number</th>
+                            <th>Registered Devices</th>
+                            <th class="ngcp-actions-column"></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        [% FOR subscriber IN subscribers -%]
+                        <tr class="sw_action_row">
+                            <td>[% subscriber.username %]@[% subscriber.domain %]</td>
+                            <td>[% subscriber.primary_number.cc %] [% subscriber.primary_number.ac %] [% subscriber.primary_number.sn %]</td>
+                            <td>
+                                [% FOR location IN subscriber.locations -%]
+                                    [% location.user_agent %]<br/>
+                                [% END -%]
+                            </td>
+                            <td class="ngcp-actions-column">
+                                <div class="sw_actions">
+                                    <a class="btn btn-primary btn-small" href="[% c.uri_for_action("/subscriber/details", [subscriber.id]) %]"><i class="icon-th-list"></i> Details</a>
+                                    <a class="btn btn-tertiary btn-small" href="[% c.uri_for_action("/subscriber/preferences", [subscriber.id]) %]"><i class="icon-list"></i> Preferences</a>
+                                </div>
+                            </td>
+                        </tr>
+                        [% END -%]
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
 
-<h3>Contract Balance</h3>
+    <div class="accordion-group">
+        <div class="accordion-heading">
+            <a class="accordion-toggle" data-toggle="collapse" data-parent="#customer_details" href="#collapse_balance">Contract Balance</a>
+        </div>
+        <div class="accordion-body collapse" id="collapse_balance">
+            <div class="accordion-inner">
+                <table class="table table-bordered table-striped table-highlight table-hover">
+                    <thead>
+                        <tr>
+                            <th></th>
+                            <th>Cash</th>
+                            <th>Free time</th>
+                            <th class="ngcp-actions-column"></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr class="sw_action_row">
+                            <td>Current totals</td>
+                            <td>[% balance.cash_balance %]</td>
+                            <td>[% balance.free_time_balance %]</td>
+                            <td class="ngcp-actions-column">
+                                <div class="sw_actions pull-right">
+                                    <a class="btn btn-small btn-primary" 
+                                       href="[% c.uri_for_action("/customer/edit_balance", [contract.id]) %]">
+                                        <i class="icon-edit"></i> Edit</i>
+                                    </a>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>Spent this interval</td>
+                            <td>[% balance.cash_balance_interval %]</td>
+                            <td>[% balance.free_time_balance_interval %]</td>
+                            <td></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
 
-<table class="table table-bordered table-striped table-highlight table-hover">
-    <thead>
-        <tr>
-            <th></th>
-            <th>Cash</th>
-            <th>Free time</th>
-            <th class="ngcp-actions-column"></th>
-        </tr>
-    </thead>
-    <tbody>
-        <tr class="sw_action_row">
-            <td>Current totals</td>
-            <td>[% balance.cash_balance %]</td>
-            <td>[% balance.free_time_balance %]</td>
-            <td class="ngcp-actions-column">
-                <div class="sw_actions pull-right">
-                    <a class="btn btn-small btn-primary" 
-                       href="[% c.uri_for_action("/customer/edit_balance", [contract.id]) %]">
-                        <i class="icon-edit"></i> Edit</i>
-                    </a>
-                </div>
-            </td>
-        </tr>
-        <tr>
-            <td>Spent this interval</td>
-            <td>[% balance.cash_balance_interval %]</td>
-            <td>[% balance.free_time_balance_interval %]</td>
-            <td></td>
-        </tr>
-    </tbody>
-</table>
+    <div class="accordion-group">
+        <div class="accordion-heading">
+            <a class="accordion-toggle" data-toggle="collapse" data-parent="#customer_details" href="#collapse_fraud">Fraud Limits</a>
+        </div>
+        <div class="accordion-body collapse" id="collapse_fraud">
+            <div class="accordion-inner">
+                <table class="table table-bordered table-striped table-highlight table-hover">
+                    <thead>
+                        <tr>
+                            <th></th>
+                            <th>Limit</th>
+                            <th>Lock Level</th>
+                            <th>Notify</th>
+                            <th class="ngcp-actions-column"></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr class="sw_action_row">
+                            <td>Monthly Settings</td>
+                            [% fraud_def_message = (fraud.fraud_interval_limit.defined ? "none" : "billing profile default") %]
+                            <td>[% fraud.fraud_interval_limit.defined ? fraud.fraud_interval_limit : fraud_def_message %]</td>
+                            <td>
+                                [% IF fraud.fraud_interval_lock.defined -%]
+                                    <select disabled="disabled">
+                                       [% FOR l IN lock_levels -%]
+                                       <option [% fraud.fraud_interval_lock == l.level ? 'selected="selected"' : '' %]>[% l.text %]</option>
+                                       [% END -%]
+                                    </select>
+                                [% ELSE -%]
+                                   [% fraud_def_message %]
+                                [% END -%]
+                            </td>
+                            <td>[% fraud.fraud_interval_notify.defined ? fraud.fraud_interval_notify : fraud_def_message %]</td>
+                            <td class="ngcp-actions-column">
+                                <div class="sw_actions pull-right">
+                                    <a class="btn btn-small btn-primary" 
+                                       href="[% c.uri_for_action("/customer/edit_fraud", [c.req.captures.0], "month") %]">
+                                        <i class="icon-edit"></i> Edit</i>
+                                    </a>
+                                    <a class="btn btn-small btn-secondary" data-confirm="Delete" 
+                                       href="[% c.uri_for_action("/customer/delete_fraud", [c.req.captures.0], "month") %]">
+                                        <i class="icon-trash"></i> Delete</i>
+                                    </a>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr class="sw_action_row">
+                            <td>Daily Settings</td>
+                            [% fraud_def_message = (fraud.fraud_daily_limit.defined ? "none" : "billing profile default") %]
+                            <td>[% fraud.fraud_daily_limit.defined ? fraud.fraud_daily_limit : fraud_def_message %]</td>
+                            <td>
+                                [% IF fraud.fraud_daily_lock.defined -%]
+                                    <select disabled="disabled">
+                                       [% FOR l IN lock_levels -%]
+                                       <option [% fraud.fraud_daily_lock == l.level ? 'selected="selected"' : '' %]>[% l.text %]</option>
+                                       [% END -%]
+                                    </select>
+                                [% ELSE -%]
+                                   [% fraud_def_message %]
+                                [% END -%]
+                            </td>
+                            <td>[% fraud.fraud_daily_notify.defined ? fraud.fraud_daily_notify : fraud_def_message %]</td>
+                            <td class="ngcp-actions-column">
+                                <div class="sw_actions pull-right">
+                                    <a class="btn btn-small btn-primary" 
+                                       href="[% c.uri_for_action("/customer/edit_fraud", [c.req.captures.0], "day") %]">
+                                        <i class="icon-edit"></i> Edit</i>
+                                    </a>
+                                    <a class="btn btn-small btn-secondary" data-confirm="Delete" 
+                                       href="[% c.uri_for_action("/customer/delete_fraud", [c.req.captures.0], "day") %]">
+                                        <i class="icon-trash"></i> Delete</i>
+                                    </a>
+                                </div>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
 
-<h3>Fraud Limits</h3>
-
-<table class="table table-bordered table-striped table-highlight table-hover">
-    <thead>
-        <tr>
-            <th></th>
-            <th>Limit</th>
-            <th>Lock Level</th>
-            <th>Notify</th>
-            <th class="ngcp-actions-column"></th>
-        </tr>
-    </thead>
-    <tbody>
-        <tr class="sw_action_row">
-            <td>Monthly Settings</td>
-            [% fraud_def_message = (fraud.fraud_interval_limit.defined ? "none" : "billing profile default") %]
-            <td>[% fraud.fraud_interval_limit.defined ? fraud.fraud_interval_limit : fraud_def_message %]</td>
-            <td>
-                [% IF fraud.fraud_interval_lock.defined -%]
-                    <select disabled="disabled">
-                       [% FOR l IN lock_levels -%]
-                       <option [% fraud.fraud_interval_lock == l.level ? 'selected="selected"' : '' %]>[% l.text %]</option>
-                       [% END -%]
-                    </select>
-                [% ELSE -%]
-                   [% fraud_def_message %]
-                [% END -%]
-            </td>
-            <td>[% fraud.fraud_interval_notify.defined ? fraud.fraud_interval_notify : fraud_def_message %]</td>
-            <td class="ngcp-actions-column">
-                <div class="sw_actions pull-right">
-                    <a class="btn btn-small btn-primary" 
-                       href="[% c.uri_for_action("/customer/edit_fraud", [c.req.captures.0], "month") %]">
-                        <i class="icon-edit"></i> Edit</i>
-                    </a>
-                    <a class="btn btn-small btn-secondary" data-confirm="Delete" 
-                       href="[% c.uri_for_action("/customer/delete_fraud", [c.req.captures.0], "month") %]">
-                        <i class="icon-trash"></i> Delete</i>
-                    </a>
-                </div>
-            </td>
-        </tr>
-        <tr class="sw_action_row">
-            <td>Daily Settings</td>
-            [% fraud_def_message = (fraud.fraud_daily_limit.defined ? "none" : "billing profile default") %]
-            <td>[% fraud.fraud_daily_limit.defined ? fraud.fraud_daily_limit : fraud_def_message %]</td>
-            <td>
-                [% IF fraud.fraud_daily_lock.defined -%]
-                    <select disabled="disabled">
-                       [% FOR l IN lock_levels -%]
-                       <option [% fraud.fraud_daily_lock == l.level ? 'selected="selected"' : '' %]>[% l.text %]</option>
-                       [% END -%]
-                    </select>
-                [% ELSE -%]
-                   [% fraud_def_message %]
-                [% END -%]
-            </td>
-            <td>[% fraud.fraud_daily_notify.defined ? fraud.fraud_daily_notify : fraud_def_message %]</td>
-            <td class="ngcp-actions-column">
-                <div class="sw_actions pull-right">
-                    <a class="btn btn-small btn-primary" 
-                       href="[% c.uri_for_action("/customer/edit_fraud", [c.req.captures.0], "day") %]">
-                        <i class="icon-edit"></i> Edit</i>
-                    </a>
-                    <a class="btn btn-small btn-secondary" data-confirm="Delete" 
-                       href="[% c.uri_for_action("/customer/delete_fraud", [c.req.captures.0], "day") %]">
-                        <i class="icon-trash"></i> Delete</i>
-                    </a>
-                </div>
-            </td>
-        </tr>
-    </tbody>
-</table>
 [% IF create_flag == 1 -%]
 [%
     PROCESS "helpers/modal.tt";

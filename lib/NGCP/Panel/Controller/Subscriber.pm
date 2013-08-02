@@ -61,12 +61,24 @@ sub sub_list :Chained('/') :PathPart('subscriber') :CaptureArgs(0) {
         template => 'subscriber/list.tt',
     );
 
+    $c->stash->{subscribers_rs} = $c->model('DB')->resultset('voip_subscribers')->search({
+        'me.status' => { '!=' => 'terminated' },
+    });
+    unless($c->user->is_superuser) {
+        $c->stash->{subscribers_rs} = $c->stash->{subscribers_rs}->search({
+            'contact.reseller_id' => $c->user->reseller_id,
+        },{
+            join => { 'contract' => 'contact'},
+        });
+    }
+
     $c->stash->{dt_columns} = NGCP::Panel::Utils::Datatables::set_columns($c, [
         { name => "id", search => 1, title => "#" },
+        { name => "contract_id", search => 1, title => "Contract #"},
+        { name => "contract.contact.email", search => 1, title => "Contact Email" },
         { name => "username", search => 1, title => "Username" },
         { name => "domain.domain", search => 1, title => "Domain" },
         { name => "status", search => 1, title => "Status" },
-        { name => "contract_id", search => 1, title => "Contract #"},
     ]);
 }
 
@@ -105,20 +117,20 @@ sub create_list :Chained('sub_list') :PathPart('create') :Args(0) {
                 UUID::generate($uuid_bin);
                 UUID::unparse($uuid_bin, $uuid_string);
 
-                # TODO: check if we find a reseller and contract and domains
-                my $reseller = $schema->resultset('resellers')
-                    ->find($c->request->params->{'reseller.id'});
                 my $contract = $schema->resultset('contracts')
-                    ->find($c->request->params->{'contract.id'});
+                    ->find($form->params->{contract}{id});
                 my $billing_domain = $schema->resultset('domains')
-                    ->find($c->request->params->{'domain.id'});
+                    ->find($form->params->{domain}{id});
                 my $prov_domain = $schema->resultset('voip_domains')
                     ->find({domain => $billing_domain->domain});
+
+                my $reseller = $contract->contact->reseller;
 
                 my $number;
                 if(defined $c->request->params->{'e164.cc'} && 
                    $c->request->params->{'e164.cc'} ne '') {
 
+                    
                     $number = $reseller->voip_numbers->create({
                         cc => $c->request->params->{'e164.cc'},
                         ac => $c->request->params->{'e164.ac'} || '',
@@ -224,16 +236,14 @@ sub base :Chained('/subscriber/sub_list') :PathPart('') :CaptureArgs(1) {
     my ($self, $c, $subscriber_id) = @_;
 
     unless($subscriber_id && $subscriber_id->is_integer) {
-        $c->flash(messages => [{type => 'error', text => 'Invalid subscriber id detected!'}]);
-        $c->response->redirect($c->uri_for());
-        return;
+        $c->flash(messages => [{type => 'error', text => 'Invalid subscriber id detected'}]);
+        NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for('/subscriber'));
     }
 
-    my $res = $c->model('DB')->resultset('voip_subscribers')->find({ id => $subscriber_id });
+    my $res = $c->stash->{subscribers_rs}->find({ id => $subscriber_id });
     unless(defined $res) {
-        $c->flash(messages => [{type => 'error', text => 'Subscriber does not exist!'}]);
-        $c->response->redirect($c->uri_for('/subscriber'));
-        $c->detach;
+        $c->flash(messages => [{type => 'error', text => 'Subscriber does not exist'}]);
+        NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for('/subscriber'));
     }
 
     $c->stash(subscriber => $res);
@@ -247,24 +257,10 @@ sub base :Chained('/subscriber/sub_list') :PathPart('') :CaptureArgs(1) {
 
 sub ajax :Chained('sub_list') :PathPart('ajax') :Args(0) {
     my ($self, $c) = @_;
-    my $dispatch_to = '_ajax_resultset_' . $c->user->auth_realm;
-    my $resultset = $self->$dispatch_to($c);
 
+    my $resultset = $c->stash->{subscribers_rs};
     NGCP::Panel::Utils::Datatables::process($c, $resultset, $c->stash->{dt_columns});
-
     $c->detach( $c->view("JSON") );
-}
-
-sub _ajax_resultset_admin {
-    my ($self, $c) = @_;
-    return $c->model('DB')->resultset('voip_subscribers')->search;
-}
-
-sub _ajax_resultset_reseller {
-    my ($self, $c) = @_;
-
-    # TODO: filter for reseller
-    return $c->model('DB')->resultset('voip_subscribers');
 }
 
 sub terminate :Chained('base') :PathPart('terminate') :Args(0) {

@@ -15,12 +15,6 @@ has_field 'submitid' => ( type => 'Hidden' );
 sub build_render_list {[qw/submitid fields actions/]}
 sub build_form_element_class {[qw(form-horizontal)]}
 
-has_field 'reseller' => (
-    type => '+NGCP::Panel::Field::Reseller',
-    label => 'Reseller',
-    not_nullable => 1,
-);
-
 has_field 'contract' => (
     type => '+NGCP::Panel::Field::CustomerContract',
     label => 'Customer',
@@ -157,7 +151,7 @@ has_field 'save' => (
 has_block 'fields' => (
     tag => 'div',
     class => [qw/modal-body/],
-    render_list => [qw/reseller contract webusername webpassword e164 username domain password status external_id administrative/ ],
+    render_list => [qw/contract webusername webpassword e164 username domain password status external_id administrative/ ],
 );
 
 has_block 'actions' => (
