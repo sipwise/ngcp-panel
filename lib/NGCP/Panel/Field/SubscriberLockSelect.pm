@@ -9,7 +9,7 @@ sub build_options {
         { label => 'none', value => undef },
         { label => 'foreign', value => 1 },
         { label => 'outgoing', value => 2 },
-        { label => 'incoming', value => 3 },
+        { label => 'all calls', value => 3 },
         { label => 'global', value => 4 },
     ];
 }

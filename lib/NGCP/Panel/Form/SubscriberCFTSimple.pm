@@ -12,12 +12,13 @@ has_field 'ringtimeout' => (
         rel => ['tooltip'],
         title => ['Seconds to wait for pick-up until engaging Call Forward (e.g. &ldquo;10&rdquo;)']
     },
+    default => 15,
 );
 
 has_block 'fields' => (
     tag => 'div',
     class => [qw(modal-body)],
-    render_list => [qw(submitid destination ringtimeout)],
+    render_list => [qw(destination ringtimeout)],
 );
 
 sub validate_ringtimeout {

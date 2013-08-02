@@ -23,8 +23,8 @@ sub dom_list :Chained('/') :PathPart('domain') :CaptureArgs(0) {
 
     $c->stash->{domain_dt_columns} = NGCP::Panel::Utils::Datatables::set_columns($c, [
         { name => 'id', search => 1, title => '#' },
-        { name => 'domain', search => 1, title => 'Domain' },
         { name => 'domain_resellers.reseller.name', search => 1, title => 'Reseller' },
+        { name => 'domain', search => 1, title => 'Domain' },
     ]);
 
     $c->stash(dom_rs   => $dom_rs,

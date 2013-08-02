@@ -9,29 +9,34 @@ sub check_redirect_chain {
 
     # TODO: check for missing fields
     my $c = $params{c};
+
+    return if($c->req->uri->path =~ /ajax/);
+
     $c->session->{redirect_targets} = []
         unless(defined $c->session->{redirect_targets});
 
+    my $back_uri;
     if($c->request->params->{back}) {
-        my $back_uri = URI->new(uri_decode($c->request->params->{back}));
+        $back_uri = URI->new(uri_decode($c->request->params->{back}));
         $back_uri->query_param_delete('back');
         delete $c->request->params->{back};
-        if($c->session->{redirect_targets}) {
-            unshift @{ $c->session->{redirect_targets} }, $back_uri;
+        if(@{ $c->session->{redirect_targets} }) {
+            unshift @{ $c->session->{redirect_targets} }, $back_uri
+                # in case you press F5 with a back-uri in the url
+                unless(${ $c->session->{redirect_targets} }[0]->path eq $back_uri->path);
         } else {
             $c->session->{redirect_targets} = [ $back_uri ];
         }
-    }
-
-    if(@{ $c->session->{redirect_targets} }) {
-        my $target = ${ $c->session->{redirect_targets} }[0];
-        if('/'.$c->request->path eq $target->path) {
-            shift @{$c->session->{redirect_targets}};
-            $c->stash(close_target => ${ $c->session->{redirect_targets} }[0]);
-        } else {
-            $c->stash(close_target => $target);
+        $c->stash(close_target => $back_uri);
+    } elsif(@{ $c->session->{redirect_targets} }) {
+        print "checking if we at '".$c->req->uri->path."' are the first '".@{ $c->session->{redirect_targets} }[0]->path."'\n";
+        if($c->req->uri->path eq @{ $c->session->{redirect_targets} }[0]->path) {
+            print "first entry in redirect chain is us, remove\n";
+            shift @{ $c->session->{redirect_targets} }
         }
-    }
+        my $target = @{ $c->session->{redirect_targets} }[0];
+        $c->stash(close_target => $target);
+    } 
 }
 
 sub check_form_buttons {
@@ -64,7 +69,7 @@ sub check_form_buttons {
                 $target =~ s/\./\//g;
                 $target = $c->uri_for($target);
             }
-            if($c->session->{redirect_targets}) {
+            if(defined $c->session->{redirect_targets} && @{ $c->session->{redirect_targets} }) {
                 unshift @{ $c->session->{redirect_targets} }, $back_uri;
             } else {
                 $c->session->{redirect_targets} = [ $back_uri ];
@@ -76,10 +81,10 @@ sub check_form_buttons {
 }
 
 sub back_or {
-    my ($c, $alternative_target) = @_;
+    my ($c, $alternative_target, $nodetach) = @_;
     my $target = $c->stash->{close_target} || $alternative_target || $c->req->uri;
     $c->response->redirect($target);
-    $c->detach;
+    $c->detach unless($nodetach);
 }
 
 1;

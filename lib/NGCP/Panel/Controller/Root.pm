@@ -82,7 +82,7 @@ sub back :Path('/back') :Args(0) {
             $target = shift @{ $c->session->{redirect_targets} };
             last unless($ref_uri->path eq $target->path);
         }
-        if($ref_uri->path eq $target->path) {
+        if(!defined $target || $ref_uri->path eq $target->path) {
             $target = $c->uri_for('/dashboard');
         }
     } else {

@@ -5,6 +5,14 @@ use warnings;
 use Sipwise::Base;
 use DBIx::Class::Exception;
 
+my %LOCK = (
+    0, 'none',
+    1, 'foreign',
+    2, 'outgoing',
+    3, 'incoming and outgoing',
+    4, 'global',
+);
+
 sub get_usr_preference_rs {
     my %params = @_;
 
@@ -107,6 +115,11 @@ sub lock_provisoning_voip_subscriber {
         $c->log->error("failed to set provisioning_voip_subscriber lock: $e");
         $e->rethrow;
     }
+}
+
+sub get_lock_string {
+    my $level = shift;
+    return $LOCK{$level};
 }
 
 1;

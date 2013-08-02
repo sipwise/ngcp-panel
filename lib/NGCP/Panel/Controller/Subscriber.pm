@@ -217,17 +217,13 @@ sub create_list :Chained('sub_list') :PathPart('create') :Args(0) {
                 delete $c->session->{created_objects}->{domain};
             });
             $c->flash(messages => [{type => 'success', text => 'Subscriber successfully created!'}]);
-            $c->response->redirect($c->uri_for('/subscriber'));
-            return;
         } catch($e) {
             $c->log->error("Failed to create subscriber: $e");
             $c->flash(messages => [{type => 'error', text => 'Creating subscriber failed!'}]);
-            $c->response->redirect($c->uri_for('/subscriber'));
-            return;
         }
+        NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for('/subscriber'));
     }
 
-    $c->stash(close_target => $c->uri_for());
     $c->stash(create_flag => 1);
     $c->stash(form => $form)
 }
@@ -271,17 +267,15 @@ sub terminate :Chained('base') :PathPart('terminate') :Args(0) {
     try {
         $schema->txn_do(sub {
             $subscriber->provisioning_voip_subscriber->delete;
+            $subscriber->voip_numbers->delete_all;
             $subscriber->update({ status => 'terminated' });
         });
         $c->flash(messages => [{type => 'success', text => 'Successfully terminated subscriber'}]);
-        $c->response->redirect($c->uri_for());
-        return;
     } catch($e) {
         $c->log->error("Failed to terminate subscriber: $e");
         $c->flash(messages => [{type => 'error', text => 'Failed to terminate subscriber'}]);
-        $c->response->redirect($c->uri_for());
-        return;
     }
+    NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for('/subscriber'));
 }
 
 sub preferences :Chained('base') :PathPart('preferences') :Args(0) {
@@ -377,8 +371,8 @@ sub preferences_callforward :Chained('base') :PathPart('preferences/callforward'
         default {
             $c->log->error("Invalid call-forward type '$cf_type'");
             $c->flash(messages => [{type => 'error', text => 'Invalid Call Forward type'}]);
-            $c->response->redirect($c->uri_for_action('/subscriber/preferences', [$c->req->captures->[0]]));
-            return;
+            NGCP::Panel::Utils::Navigation::back_or($c, 
+                $c->uri_for_action('/subscriber/preferences', [$c->req->captures->[0]]));
         }
     }
 
@@ -464,25 +458,29 @@ sub preferences_callforward :Chained('base') :PathPart('preferences/callforward'
             $duri = $d;
             $d = 'uri';
             $c->stash->{cf_tmp_params} = {
-                uri_destination => $duri,
-                uri_timeout => $t,
+                uri => {
+                    destination => $duri,
+                    timeout => $t,
+                },
                 id => $destination ? $destination->id : undef,
             };
         }
-        $params = $c->stash->{cf_tmp_params};
-        $params->{destination} = { destination => $d };
+        $params = { destination => $c->stash->{cf_tmp_params} };
+        $params->{destination}{destination} = $d;
         $params->{ringtimeout} = $ringtimeout;
     }
 
     my $cf_form;
     if($cf_type eq "cft") {
-        $cf_form = NGCP::Panel::Form::SubscriberCFTSimple->new(ctx => $c);
+        $cf_form = NGCP::Panel::Form::SubscriberCFTSimple->new;
     } else {
-        $cf_form = NGCP::Panel::Form::SubscriberCFSimple->new(ctx => $c);
+        $cf_form = NGCP::Panel::Form::SubscriberCFSimple->new;
     }
 
     $cf_form->process(
+        posted => $posted,
         params => $params,
+        item => $params,
     );
 
     NGCP::Panel::Utils::Navigation::check_form_buttons(
@@ -540,16 +538,14 @@ sub preferences_callforward :Chained('base') :PathPart('preferences/callforward'
                 } elsif($d eq "localuser") {
                     $d = "sip:localuser\@app.local";
                 } elsif($d eq "uri") {
-                    $d = $dest->field('uri_destination')->value->[1];
-                    # TODO: check for valid dest here
+                    $d = $dest->field('uri')->field('destination')->value;
                     if($d !~ /\@/) {
                         $d .= '@'.$c->stash->{subscriber}->domain->domain;
                     }
                     if($d !~ /^sip:/) {
                         $d = 'sip:' . $d;
                     }
-                    $t = $dest->field('uri_timeout')->value->[1];
-                    # TODO: check for valid timeout here
+                    $t = $dest->field('uri')->field('timeout')->value;
                 }
 
                 $dest_set->voip_cf_destinations->create({
@@ -583,16 +579,14 @@ sub preferences_callforward :Chained('base') :PathPart('preferences/callforward'
                     }
                 }
             });
+            $c->flash(messages => [{type => 'success', text => 'Successfully saved Call Forward'}]);
         } catch($e) {
             $c->log->error("failed to save call-forward: $e");
             $c->flash(messages => [{type => 'error', text => 'Failed to save Call Forward'}]);
-            $c->response->redirect($c->uri_for_action('/subscriber/preferences', [$c->req->captures->[0]]));
-            return;
         }
         
-        $c->flash(messages => [{type => 'success', text => 'Successfully saved Call Forward'}]);
-        $c->response->redirect($c->uri_for_action('/subscriber/preferences', [$c->req->captures->[0]]));
-        return;
+        NGCP::Panel::Utils::Navigation::back_or($c, 
+            $c->uri_for_action('/subscriber/preferences', [$c->req->captures->[0]]));
     }
 
     $self->load_preference_list($c);
@@ -601,7 +595,6 @@ sub preferences_callforward :Chained('base') :PathPart('preferences/callforward'
         edit_cf_flag => 1,
         cf_description => $cf_desc,
         cf_form => $cf_form,
-        close_target => $c->uri_for_action('/subscriber/preferences', [$c->req->captures->[0]]),
     );
 }
 
@@ -624,8 +617,8 @@ sub preferences_callforward_advanced :Chained('base') :PathPart('preferences/cal
         default {
             $c->log->error("Invalid call-forward type '$cf_type'");
             $c->flash(messages => [{type => 'error', text => 'Invalid Call Forward type'}]);
-            $c->response->redirect($c->uri_for_action('/subscriber/preferences', [$c->req->captures->[0]]));
-            return;
+            NGCP::Panel::Utils::Navigation::back_or($c, 
+                $c->uri_for_action('/subscriber/preferences', [$c->req->captures->[0]]));
         }
     }
 
@@ -655,7 +648,6 @@ sub preferences_callforward_advanced :Chained('base') :PathPart('preferences/cal
         $cf_form = NGCP::Panel::Form::SubscriberCFAdvanced->new(ctx => $c);
     }
 
-    # TODO: handle ring-rimeout
     my @maps = ();
     foreach my $map($cf_mapping->all) {
         push @maps, {
@@ -708,9 +700,9 @@ sub preferences_callforward_advanced :Chained('base') :PathPart('preferences/cal
                         $ringtimeout_preference->first->delete 
                             if($cf_type eq "cft" &&  $ringtimeout_preference->first);
                         $c->flash(messages => [{type => 'success', text => 'Successfully cleared Call Forward'}]);
-                        $c->response->redirect(
+                        NGCP::Panel::Utils::Navigation::back_or($c, 
                             $c->uri_for_action('/subscriber/preferences', 
-                                [$c->req->captures->[0]])
+                                [$c->req->captures->[0]]), 1
                         );
                         return;
                     }
@@ -732,18 +724,13 @@ sub preferences_callforward_advanced :Chained('base') :PathPart('preferences/cal
                 }
 
                 $c->flash(messages => [{type => 'success', text => 'Successfully saved Call Forward'}]);
-                $c->response->redirect(
-                    $c->uri_for_action('/subscriber/preferences', 
-                        [$c->req->captures->[0]])
-                );
-                return;
             });
         } catch($e) {
             $c->log->error("failed to save call-forward: $e");
             $c->flash(messages => [{type => 'error', text => 'Failed to save Call Forward'}]);
-            $c->response->redirect($c->uri_for_action('/subscriber/preferences', [$c->req->captures->[0]]));
-            return;
         }
+        NGCP::Panel::Utils::Navigation::back_or($c,
+            $c->uri_for_action('/subscriber/preferences', [$c->req->captures->[0]]));
     }
 
 
@@ -784,8 +771,6 @@ sub preferences_callforward_destinationset :Chained('base') :PathPart('preferenc
         edit_cfset_flag => 1,
         cf_description => "Destination Sets",
         cf_form => $cf_form,
-        close_target => $c->uri_for_action('/subscriber/preferences_callforward_advanced', 
-                    [$c->req->captures->[0]], $cf_type, 'advanced'),
         cf_type => $cf_type,
     );
 }
@@ -844,7 +829,7 @@ sub preferences_callforward_destinationset_create :Chained('base') :PathPart('pr
                         } elsif($d eq "localuser") {
                             $d = "sip:localuser\@app.local";
                         } elsif($d eq "uri") {
-                            $d = $dest->field('uri_destination')->value->[1];
+                            $d = $dest->field('uri')->field('destination')->value;
                             # TODO: check for valid dest here
                             if($d !~ /\@/) {
                                 $d .= '@'.$c->stash->{subscriber}->domain->domain;
@@ -852,7 +837,7 @@ sub preferences_callforward_destinationset_create :Chained('base') :PathPart('pr
                             if($d !~ /^sip:/) {
                                 $d = 'sip:' . $d;
                             }
-                            $t = $dest->field('uri_timeout')->value->[1];
+                            $t = $dest->field('uri')->field('timeout')->value;
                             # TODO: check for valid timeout here
                         }
 
@@ -862,21 +847,15 @@ sub preferences_callforward_destinationset_create :Chained('base') :PathPart('pr
                             priority => $dest->field('priority')->value,
                         });
                     }
-                    $c->response->redirect(
-                        $c->uri_for_action('/subscriber/preferences_callforward_destinationset', 
-                            [$c->req->captures->[0]], $cf_type)
-                    );
-                    return;
                 }
             });
         } catch($e) {
             $c->log->error("failed to create new destination set: $e");
-            $c->response->redirect($c->uri_for_action('/subscriber/preferences_callforward_destinationset', 
+        }
+        NGCP::Panel::Utils::Navigation::back_uri($c, 
+            $c->uri_for_action('/subscriber/preferences_callforward_destinationset', 
                     [$c->req->captures->[0]], $cf_type)
             );
-            return;
-        }
-
     }
 
     $self->load_preference_list($c);
@@ -886,8 +865,6 @@ sub preferences_callforward_destinationset_create :Chained('base') :PathPart('pr
         cf_description => "Destination Set",
         cf_form => $form,
         cf_type => $cf_type,
-        close_target => $c->uri_for_action('/subscriber/preferences_callforward_destinationset', 
-                    [$c->req->captures->[0]], $cf_type),
     );
 }
 
@@ -905,6 +882,8 @@ sub preferences_callforward_destinationset_base :Chained('base') :PathPart('pref
 
 sub preferences_callforward_destinationset_edit :Chained('preferences_callforward_destinationset_base') :PathPart('edit') :Args(1) {
     my ($self, $c, $cf_type) = @_;
+    my $fallback = $c->uri_for_action('/subscriber/preferences_callforward_destinationset', 
+                    [$c->req->captures->[0]], $cf_type);
 
     my $posted = ($c->request->method eq 'POST');
 
@@ -946,8 +925,7 @@ sub preferences_callforward_destinationset_edit :Chained('preferences_callforwar
             }
             push @destinations, { 
                 destination => $d,
-                uri_timeout => $t,
-                uri_destination => $duri,
+                uri => {timeout => $t, destination => $duri},
                 priority => $dest->priority,
                 id => $dest->id,
             };
@@ -983,19 +961,13 @@ sub preferences_callforward_destinationset_edit :Chained('preferences_callforwar
                         $mapping->delete;
                     }
                     $set->delete;
-
-                    $c->response->redirect(
-                        $c->uri_for_action('/subscriber/preferences_callforward_destinationset', 
-                            [$c->req->captures->[0]], $cf_type)
-                    );
+                    NGCP::Panel::Utils::Navigation::back_or($c, $fallback, 1);
                     return;
                 }
                 if($form->field('name')->value ne $set->name) {
                     $set->update({name => $form->field('name')->value});
                 }
-                foreach my $dest($set->voip_cf_destinations->all) {
-                    $dest->delete;
-                }
+                $set->voip_cf_destinations->delete_all;
 
                 my $number = $c->stash->{subscriber}->primary_number;
                 my $numberstr = "";
@@ -1022,7 +994,7 @@ sub preferences_callforward_destinationset_edit :Chained('preferences_callforwar
                     } elsif($d eq "localuser") {
                         $d = "sip:localuser\@app.local";
                     } elsif($d eq "uri") {
-                        $d = $dest->field('uri_destination')->value->[1];
+                        $d = $dest->field('uri')->field('destination')->value;
                         # TODO: check for valid dest here
                         if($d !~ /\@/) {
                             $d .= '@'.$c->stash->{subscriber}->domain->domain;
@@ -1030,7 +1002,7 @@ sub preferences_callforward_destinationset_edit :Chained('preferences_callforwar
                         if($d !~ /^sip:/) {
                             $d = 'sip:' . $d;
                         }
-                        $t = $dest->field('uri_timeout')->value->[1];
+                        $t = $dest->field('uri')->field('timeout')->value;
                         # TODO: check for valid timeout here
                     }
 
@@ -1040,29 +1012,17 @@ sub preferences_callforward_destinationset_edit :Chained('preferences_callforwar
                         priority => $dest->field('priority')->value,
                     });
                 }
-
-                $c->response->redirect(
-                    $c->uri_for_action('/subscriber/preferences_callforward_destinationset', 
-                        [$c->req->captures->[0]], $cf_type)
-                );
-                return;
             });
         } catch($e) {
             $c->log->error("failed to update destination set: $e");
-            $c->response->redirect(
-                $c->uri_for_action('/subscriber/preferences_callforward_destinationset', 
-                    [$c->req->captures->[0]], $cf_type)
-            );
-            return;
         }
+        NGCP::Panel::Utils::Navigation::back_or($c, $fallback);
     }
 
     $c->stash(
         edit_cf_flag => 1,
         cf_description => "Destination Set",
         cf_form => $form,
-        close_target => $c->uri_for_action('/subscriber/preferences_callforward_destinationset', 
-                    [$c->req->captures->[0]], $cf_type),
     );
 
 }
@@ -1099,11 +1059,10 @@ sub preferences_callforward_destinationset_delete :Chained('preferences_callforw
         $c->log->error("failed to delete destination set: $e");
     }
 
-    $c->response->redirect(
+    NGCP::Panel::Utils::Navigation::back_or($c,
         $c->uri_for_action('/subscriber/preferences_callforward_destinationset', 
             [$c->req->captures->[0]], $cf_type)
     );
-    return;
 }
 
 sub preferences_callforward_timeset :Chained('base') :PathPart('preferences/timeset') :Args(1) {
@@ -1133,8 +1092,6 @@ sub preferences_callforward_timeset :Chained('base') :PathPart('preferences/time
         edit_timeset_flag => 1,
         cf_description => "Time Sets",
         cf_form => $cf_form,
-        close_target => $c->uri_for_action('/subscriber/preferences_callforward_advanced', 
-                    [$c->req->captures->[0]], $cf_type, 'advanced'),
         cf_type => $cf_type,
     );
 }
@@ -1187,22 +1144,15 @@ sub preferences_callforward_timeset_create :Chained('base') :PathPart('preferenc
                         }
                         $set->voip_cf_periods->create($fields);
                     }
-
-                    $c->response->redirect(
-                        $c->uri_for_action('/subscriber/preferences_callforward_timeset', 
-                            [$c->req->captures->[0]], $cf_type)
-                    );
-                    return;
                 }
             });
         } catch($e) {
             $c->log->error("failed to create new time set: $e");
-            $c->response->redirect($c->uri_for_action('/subscriber/preferences_callforward_timeset', 
-                    [$c->req->captures->[0]], $cf_type)
-            );
-            return;
         }
-
+        NGCP::Panel::Utils::Navigation::back_or($c,
+            $c->uri_for_action('/subscriber/preferences_callforward_timeset', 
+                    [$c->req->captures->[0]], $cf_type)
+        );
     }
 
     $self->load_preference_list($c);
@@ -1212,8 +1162,6 @@ sub preferences_callforward_timeset_create :Chained('base') :PathPart('preferenc
         cf_description => "Time Set",
         cf_form => $form,
         cf_type => $cf_type,
-        close_target => $c->uri_for_action('/subscriber/preferences_callforward_timeset', 
-                    [$c->req->captures->[0]], $cf_type),
     );
 }
 
@@ -1281,9 +1229,9 @@ sub preferences_callforward_timeset_edit :Chained('preferences_callforward_times
                     }
                     $set->delete;
 
-                    $c->response->redirect(
+                    NGCP::Panel::Utils::Navigation::back_or($c,
                         $c->uri_for_action('/subscriber/preferences_callforward_timeset', 
-                            [$c->req->captures->[0]], $cf_type)
+                            [$c->req->captures->[0]], $cf_type), 1
                     );
                     return;
                 }
@@ -1311,28 +1259,20 @@ sub preferences_callforward_timeset_edit :Chained('preferences_callforward_times
                     }
                     $set->voip_cf_periods->create($fields);
                 }
-                $c->response->redirect(
-                    $c->uri_for_action('/subscriber/preferences_callforward_timeset', 
-                        [$c->req->captures->[0]], $cf_type)
-                );
-                return;
             });
         } catch($e) {
             $c->log->error("failed to update time set: $e");
-            $c->response->redirect(
+        }
+        NGCP::Panel::Utils::Navigation::back_or($c,
                 $c->uri_for_action('/subscriber/preferences_callforward_timeset', 
                     [$c->req->captures->[0]], $cf_type)
-            );
-            return;
-        }
+        );
     }
 
     $c->stash(
         edit_cf_flag => 1,
         cf_description => "Time Set",
         cf_form => $form,
-        close_target => $c->uri_for_action('/subscriber/preferences_callforward_timeset', 
-                    [$c->req->captures->[0]], $cf_type),
     );
 
 }
@@ -1354,11 +1294,10 @@ sub preferences_callforward_timeset_delete :Chained('preferences_callforward_tim
         $c->log->error("failed to delete time set: $e");
     }
 
-    $c->response->redirect(
+    NGCP::Panel::Utils::Navigation::back_or($c,
         $c->uri_for_action('/subscriber/preferences_callforward_timeset', 
             [$c->req->captures->[0]], $cf_type)
     );
-    return;
 }
 
 sub preferences_callforward_delete :Chained('base') :PathPart('preferences/callforward/delete') :Args(1) {
@@ -1374,7 +1313,8 @@ sub preferences_callforward_delete :Chained('base') :PathPart('preferences/callf
         $c->flash(messages => [{type => 'error', text => 'Failed to deleted Call Forward'}]);
     }
 
-    $c->response->redirect($c->uri_for_action('/subscriber/preferences', [$c->req->captures->[0]]));
+    NGCP::Panel::Utils::Navigation::back_or($c, 
+        $c->uri_for_action('/subscriber/preferences', [$c->req->captures->[0]]));
 }
 
 sub load_preference_list :Private {
@@ -1443,10 +1383,27 @@ sub master :Chained('base') :PathPart('details') :CaptureArgs(0) {
     $c->stash(
         template => 'subscriber/master.tt',
     );
+
+    $c->stash->{prov_lock} = NGCP::Panel::Utils::Subscriber::get_usr_preference_rs(
+        c => $c,
+        attribute => 'lock',
+        prov_subscriber => $c->stash->{subscriber}->provisioning_voip_subscriber,
+    );
+    $c->stash(
+        template => 'subscriber/master.tt',
+    );
 }
 
 sub details :Chained('master') :PathPart('') :Args(0) {
     my ($self, $c) = @_;
+
+    $c->stash->{prov_lock} = NGCP::Panel::Utils::Subscriber::get_usr_preference_rs(
+        c => $c,
+        attribute => 'lock',
+        prov_subscriber => $c->stash->{subscriber}->provisioning_voip_subscriber,
+    );
+    my $locklevel = $c->stash->{prov_lock}->first ? $c->stash->{prov_lock}->first->value : 0;
+    $c->stash->{prov_lock_string} = NGCP::Panel::Utils::Subscriber::get_lock_string($locklevel);
 }
 
 sub edit_master :Chained('master') :PathPart('edit') :Args(0) {
@@ -1458,11 +1415,7 @@ sub edit_master :Chained('master') :PathPart('edit') :Args(0) {
     my $prov_subscriber = $subscriber->provisioning_voip_subscriber;
 
     my $params;
-    my $lock = NGCP::Panel::Utils::Subscriber::get_usr_preference_rs(
-        c => $c,
-        attribute => 'lock',
-        prov_subscriber => $prov_subscriber,
-    );
+    my $lock = $c->stash->{prov_lock};
 
     unless($posted) {
         $params->{webusername} = $prov_subscriber->webusername;
@@ -1498,6 +1451,11 @@ sub edit_master :Chained('master') :PathPart('edit') :Args(0) {
     );
 
     if($posted && $form->validated) {
+        my $old_status = $subscriber->status;
+        if($form->values->{status} eq 'terminated' && $old_status ne $form->values->{status}) {
+            $self->terminate($c);
+            # we never return from here
+        }
         my $schema = $c->model('DB');
         try {
             $schema->txn_do(sub {
@@ -1511,18 +1469,21 @@ sub edit_master :Chained('master') :PathPart('edit') :Args(0) {
                     status => $form->field('status')->value,
                     external_id => $form->field('external_id')->value,
                 });
+                if($subscriber->status eq 'locked') {
+                    $form->values->{lock} = 4; # update lock below
+                } elsif($old_status eq 'locked' && $subscriber->status eq 'active') {
+                    $form->values->{lock} ||= 0; # update lock below
+                }
 
                 for my $num($subscriber->voip_numbers->all) {
                     next if($subscriber->primary_number && $num->id == $subscriber->primary_number->id);
                     $num->delete;
                 }
 
-                for my $alias($schema->resultset('dbaliases')->search({
+                $schema->resultset('dbaliases')->search({
                                     username => $prov_subscriber->username,
                                     domain => $prov_subscriber->domain->domain,
-                                })->all) {
-                    $alias->delete;
-                }
+                                })->delete_all;
 
                 # TODO: check for availablity of cc and sn
                 my $num;
@@ -1558,7 +1519,7 @@ sub edit_master :Chained('master') :PathPart('edit') :Args(0) {
                        $form->field('e164')->field('sn')->value) {
                         $num = $schema->resultset('voip_numbers')->create({
                             subscriber_id => $subscriber->id,
-                            reseller_id => $subscriber->contract->reseller_id,
+                            reseller_id => $subscriber->contract->contact->reseller_id,
                             cc => $form->field('e164')->field('cc')->value,
                             ac => $form->field('e164')->field('ac')->value || '',
                             sn => $form->field('e164')->field('sn')->value,
@@ -1608,6 +1569,7 @@ sub edit_master :Chained('master') :PathPart('edit') :Args(0) {
                     });
                 }
 
+                $form->values->{lock} ||= 0;
                 if($lock->first) {
                     if ($form->values->{lock} == 0) {
                         $lock->delete;
@@ -1624,8 +1586,7 @@ sub edit_master :Chained('master') :PathPart('edit') :Args(0) {
             $c->flash(messages => [{type => 'error', text => 'Failed to update subscriber'}]);
         }
 
-        $c->response->redirect($c->uri_for_action('/subscriber/details', [$c->req->captures->[0]]));
-        return;
+        NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for_action('/subscriber/details', [$c->req->captures->[0]]));
     }
 
     $c->stash(
@@ -1646,9 +1607,8 @@ sub edit_voicebox :Chained('base') :PathPart('preferences/voicebox/edit') :Args(
     unless($vm_user) {
         $c->log->error("no voicemail user found for subscriber uuid ".$c->stash->{subscriber}->uuid);
         $c->flash(messages => [{type => 'error', text => 'Failed to find voicemail user'}]);
-        $c->response->redirect($c->uri_for_action('/subscriber/preferences', [$c->req->captures->[0]]));
-        return;
-        # TODO: we could create one instead?
+        NGCP::Panel::Utils::Navigation::back_or($c, 
+            $c->uri_for_action('/subscriber/preferences', [$c->req->captures->[0]]));
     }
     my $params;
 
@@ -1705,20 +1665,22 @@ sub edit_voicebox :Chained('base') :PathPart('preferences/voicebox/edit') :Args(
             default {
                 $c->log->error("trying to set invalid voicemail param '$attribute' for subscriber uuid ".$c->stash->{subscriber}->uuid);
                 $c->flash(messages => [{type => 'error', text => 'Invalid voicemail setting'}]);
-                $c->response->redirect($c->uri_for_action('/subscriber/preferences', [$c->req->captures->[0]]));
+                NGCP::Panel::Utils::Navigation::back_or($c, 
+                    $c->uri_for_action('/subscriber/preferences', [$c->req->captures->[0]]), 1);
                 return;
             }
         }
         if($posted && $form->validated) {
             $c->flash(messages => [{type => 'success', text => 'Successfully updated voicemail setting'}]);
-            $c->response->redirect($c->uri_for_action('/subscriber/preferences', [$c->req->captures->[0]]));
+            NGCP::Panel::Utils::Navigation::back_or($c, 
+                $c->uri_for_action('/subscriber/preferences', [$c->req->captures->[0]]), 1);
             return;
         }
     } catch($e) {
         $c->log->error("updating voicemail setting failed: $e");
         $c->flash(messages => [{type => 'error', text => 'Failed to update voicemail setting'}]);
-        $c->response->redirect($c->uri_for_action('/subscriber/preferences', [$c->req->captures->[0]]));
-        return;
+        NGCP::Panel::Utils::Navigation::back_or($c, 
+            $c->uri_for_action('/subscriber/preferences', [$c->req->captures->[0]]));
     }
 
     $c->stash(
@@ -1726,7 +1688,6 @@ sub edit_voicebox :Chained('base') :PathPart('preferences/voicebox/edit') :Args(
         edit_cf_flag => 1,
         cf_description => $attribute,
         cf_form => $form,
-        close_target => $c->uri_for_action('/subscriber/preferences', [$c->req->captures->[0]]),
     );
 }
 
@@ -1841,20 +1802,22 @@ sub edit_fax :Chained('base') :PathPart('preferences/fax/edit') :Args(1) {
             default {
                 $c->log->error("trying to set invalid fax param '$attribute' for subscriber uuid ".$c->stash->{subscriber}->uuid);
                 $c->flash(messages => [{type => 'error', text => 'Invalid fax setting'}]);
-                $c->response->redirect($c->uri_for_action('/subscriber/preferences', [$c->req->captures->[0]]));
+                NGCP::Panel::Utils::Navigation::back_or($c, 
+                    $c->uri_for_action('/subscriber/preferences', [$c->req->captures->[0]]), 1);
                 return;
             }
         }
         if($posted && $form->validated) {
             $c->flash(messages => [{type => 'success', text => 'Successfully updated fax setting'}]);
-            $c->response->redirect($c->uri_for_action('/subscriber/preferences', [$c->req->captures->[0]]));
+            NGCP::Panel::Utils::Navigation::back_or($c, 
+                $c->uri_for_action('/subscriber/preferences', [$c->req->captures->[0]]), 1);
             return;
         }
     } catch($e) {
         $c->log->error("updating fax setting failed: $e");
         $c->flash(messages => [{type => 'error', text => 'Failed to update fax setting'}]);
-        $c->response->redirect($c->uri_for_action('/subscriber/preferences', [$c->req->captures->[0]]));
-        return;
+        NGCP::Panel::Utils::Navigation::back_or($c, 
+            $c->uri_for_action('/subscriber/preferences', [$c->req->captures->[0]]));
     }
 
     $c->stash(
@@ -1862,7 +1825,6 @@ sub edit_fax :Chained('base') :PathPart('preferences/fax/edit') :Args(1) {
         edit_cf_flag => 1,
         cf_description => $attribute,
         cf_form => $form,
-        close_target => $c->uri_for_action('/subscriber/preferences', [$c->req->captures->[0]]),
     );
 }
 
@@ -1911,14 +1873,12 @@ sub edit_reminder :Chained('base') :PathPart('preferences/reminder/edit') {
             }
 
             $c->flash(messages => [{type => 'success', text => 'Successfully updated reminder setting'}]);
-            $c->response->redirect($c->uri_for_action('/subscriber/preferences', [$c->req->captures->[0]]));
-            return;
         } catch($e) {
             $c->log->error("updating reminder setting failed: $e");
             $c->flash(messages => [{type => 'error', text => 'Failed to update reminder setting'}]);
-            $c->response->redirect($c->uri_for_action('/subscriber/preferences', [$c->req->captures->[0]]));
-            return;
         }
+        NGCP::Panel::Utils::Navigation::back_or($c, 
+            $c->uri_for_action('/subscriber/preferences', [$c->req->captures->[0]]));
     }
 
     $c->stash(
@@ -1926,7 +1886,6 @@ sub edit_reminder :Chained('base') :PathPart('preferences/reminder/edit') {
         edit_cf_flag => 1,
         cf_description => 'Reminder',
         cf_form => $form,
-        close_target => $c->uri_for_action('/subscriber/preferences', [$c->req->captures->[0]]),
     );
 }
 
@@ -1980,8 +1939,8 @@ sub voicemail :Chained('master') :PathPart('voicemail') :CaptureArgs(1) {
     unless($rs->first) {
         $c->log->error("no such voicemail file with id '$vm_id' for uuid ".$c->stash->{subscriber}->uuid);
         $c->flash(messages => [{type => 'error', text => 'No such voicemail file'}]);
-        $c->response->redirect($c->uri_for_action('/subscriber/details', [$c->req->captures->[0]]));
-        return;
+        NGCP::Panel::Utils::Navigation::back_or($c, 
+            $c->uri_for_action('/subscriber/details', [$c->req->captures->[0]]));
     }
     $c->stash->{voicemail} = $rs->first;
 }
@@ -1999,8 +1958,8 @@ sub play_voicemail :Chained('voicemail') :PathPart('play') :Args(0) {
     } catch ($error) {
         $c->flash(messages => [{type => 'error', text => 'Transcode of audio file failed!'}]);
         $c->log->info("Transcode failed: $error");
-        $c->response->redirect($c->uri_for_action('/subscriber/details', [$c->req->captures->[0]]));
-        return;
+        NGCP::Panel::Utils::Navigation::back_or($c, 
+            $c->uri_for_action('/subscriber/details', [$c->req->captures->[0]]));
     }
 
     $c->response->header('Content-Disposition' => 'attachment; filename="'.$file->msgnum.'.wav"');
@@ -2018,8 +1977,8 @@ sub delete_voicemail :Chained('voicemail') :PathPart('delete') :Args(0) {
         $c->log->error("failed to delete voicemail message: $e");
         $c->flash(messages => [{type => 'error', text => 'Failed to delete voicemail'}]);
     }
-
-    $c->response->redirect($c->uri_for_action('/subscriber/details', [$c->req->captures->[0]]));
+    NGCP::Panel::Utils::Navigation::back_or($c, 
+        $c->uri_for_action('/subscriber/details', [$c->req->captures->[0]]));
 }
 
 sub registered :Chained('master') :PathPart('registered') :CaptureArgs(1) {
@@ -2034,8 +1993,8 @@ sub registered :Chained('master') :PathPart('registered') :CaptureArgs(1) {
     unless($c->stash->{registered}) {
         $c->log->error("failed to find location id '$reg_id' for subscriber uuid " . $s->uuid);
         $c->flash(messages => [{type => 'error', text => 'Failed to find registered device'}]);
-        $c->response->redirect($c->uri_for_action('/subscriber/details', [$c->req->captures->[0]]));
-        return;
+        NGCP::Panel::Utils::Navigation::back_or($c, 
+            $c->uri_for_action('/subscriber/details', [$c->req->captures->[0]]));
     }
 }
 
@@ -2071,7 +2030,8 @@ EOF
 #    }
 
     $c->flash(messages => [{type => 'success', text => 'Successfully deleted registered device'}]);
-    $c->response->redirect($c->uri_for_action('/subscriber/details', [$c->req->captures->[0]]));
+    NGCP::Panel::Utils::Navigation::back_or($c, 
+        $c->uri_for_action('/subscriber/details', [$c->req->captures->[0]]));
 }
 
 sub create_registered :Chained('master') :PathPart('registered/create') :Args(0) {
@@ -2118,21 +2078,18 @@ sub create_registered :Chained('master') :PathPart('registered/create') :Args(0)
 EOF
             # TODO: error check
             $c->flash(messages => [{type => 'success', text => 'Successfully added registered device'}]);
-            $c->response->redirect($c->uri_for_action('/subscriber/details', [$c->req->captures->[0]]));
-            return;
         } catch($e) {
             $c->log->error("failed to add registered device: $e");
             $c->flash(messages => [{type => 'error', text => 'Failed to add registered device'}]);
-            $c->response->redirect($c->uri_for_action('/subscriber/details', [$c->req->captures->[0]]));
-            return;
         }
+        NGCP::Panel::Utils::Navigation::back_or($c, 
+            $c->uri_for_action('/subscriber/details', [$c->req->captures->[0]]));
     }
 
     $c->stash(
         edit_flag => 1,
         description => 'Registered Device',
         form => $form,
-        close_target => $c->uri_for_action('/subscriber/details', [$c->req->captures->[0]]),
     );
 }
 
@@ -2164,14 +2121,12 @@ sub create_trusted :Chained('base') :PathPart('preferences/trusted/create') :Arg
                 from_pattern => $form->field('from_pattern') ? $form->field('from_pattern')->value : undef,
             });
             $c->flash(messages => [{type => 'success', text => 'Successfully created trusted source'}]);
-            $c->response->redirect($c->uri_for_action('/subscriber/preferences', [$c->req->captures->[0]]));
-            return;
         } catch($e) {
             $c->log->error("creating trusted source failed: $e");
             $c->flash(messages => [{type => 'error', text => 'Failed to create trusted source'}]);
-            $c->response->redirect($c->uri_for_action('/subscriber/preferences', [$c->req->captures->[0]]));
-            return;
         }
+        NGCP::Panel::Utils::Navigation::back_or($c, 
+            $c->uri_for_action('/subscriber/preferences', [$c->req->captures->[0]]));
     }
 
     $c->stash(
@@ -2179,7 +2134,6 @@ sub create_trusted :Chained('base') :PathPart('preferences/trusted/create') :Arg
         edit_cf_flag => 1,
         cf_description => 'Trusted Source',
         cf_form => $form,
-        close_target => $c->uri_for_action('/subscriber/preferences', [$c->req->captures->[0]]),
     );
 }
 
@@ -2192,8 +2146,8 @@ sub trusted_base :Chained('base') :PathPart('preferences/trusted') :CaptureArgs(
     unless($c->stash->{trusted}) {
         $c->log->error("trusted source id '$trusted_id' not found for subscriber uuid ".$c->stash->{subscriber}->uuid);
         $c->flash(messages => [{type => 'error', text => 'Trusted source entry not found'}]);
-        $c->response->redirect($c->uri_for_action('/subscriber/preferences', [$c->req->captures->[0]]));
-        return;
+        NGCP::Panel::Utils::Navigation::back_or($c, 
+            $c->uri_for_action('/subscriber/preferences', [$c->req->captures->[0]]));
     }
 }
 
@@ -2232,14 +2186,12 @@ sub edit_trusted :Chained('trusted_base') :PathPart('edit') {
             });
 
             $c->flash(messages => [{type => 'success', text => 'Successfully updated trusted source'}]);
-            $c->response->redirect($c->uri_for_action('/subscriber/preferences', [$c->req->captures->[0]]));
-            return;
         } catch($e) {
             $c->log->error("updating trusted source failed: $e");
             $c->flash(messages => [{type => 'error', text => 'Failed to update trusted source'}]);
-            $c->response->redirect($c->uri_for_action('/subscriber/preferences', [$c->req->captures->[0]]));
-            return;
         }
+        NGCP::Panel::Utils::Navigation::back_or($c, 
+            $c->uri_for_action('/subscriber/preferences', [$c->req->captures->[0]]));
     }
 
     $c->stash(
@@ -2247,7 +2199,6 @@ sub edit_trusted :Chained('trusted_base') :PathPart('edit') {
         edit_cf_flag => 1,
         cf_description => 'Trusted Source',
         cf_form => $form,
-        close_target => $c->uri_for_action('/subscriber/preferences', [$c->req->captures->[0]]),
     );
 }
 
@@ -2262,7 +2213,8 @@ sub delete_trusted :Chained('trusted_base') :PathPart('delete') :Args(0) {
         $c->flash(messages => [{type => 'error', text => 'Failed to delete trusted source'}]);
     }
 
-    $c->response->redirect($c->uri_for_action('/subscriber/preferences', [$c->req->captures->[0]]));
+    NGCP::Panel::Utils::Navigation::back_or($c, 
+        $c->uri_for_action('/subscriber/preferences', [$c->req->captures->[0]]));
 }
 
 
@@ -2306,14 +2258,12 @@ sub create_speeddial :Chained('base') :PathPart('preferences/speeddial/create') 
                 destination => $d,
             });
             $c->flash(messages => [{type => 'success', text => 'Successfully created speed dial slot'}]);
-            $c->response->redirect($c->uri_for_action('/subscriber/preferences', [$c->req->captures->[0]]));
-            return;
         } catch($e) {
             $c->log->error("failed to create speed dial slot: $e");
             $c->flash(messages => [{type => 'error', text => 'Failed to created speed dial slot'}]);
-            $c->response->redirect($c->uri_for_action('/subscriber/preferences', [$c->req->captures->[0]]));
-            return;
         }
+        NGCP::Panel::Utils::Navigation::back_or($c, 
+            $c->uri_for_action('/subscriber/preferences', [$c->req->captures->[0]]));
     }
 
     delete $c->stash->{used_sd_slots};
@@ -2322,7 +2272,6 @@ sub create_speeddial :Chained('base') :PathPart('preferences/speeddial/create') 
         edit_cf_flag => 1,
         cf_description => "Speed Dial Slot",
         cf_form => $form,
-        close_target => $c->uri_for_action('/subscriber/preferences', [$c->req->captures->[0]]),
     );
 }
 
@@ -2334,8 +2283,8 @@ sub speeddial :Chained('base') :PathPart('preferences/speeddial') :CaptureArgs(1
     unless($sd) {
         $c->log->error("no such speed dial slot with id '$sd_id' for uuid ".$c->stash->{subscriber}->uuid);
         $c->flash(messages => [{type => 'error', text => 'No such speed dial id'}]);
-        $c->response->redirect($c->uri_for_action('/subscriber/preferences', [$c->req->captures->[0]]));
-        return;
+        NGCP::Panel::Utils::Navigation::back_or($c, 
+            $c->uri_for_action('/subscriber/preferences', [$c->req->captures->[0]]));
     }
     $c->stash->{speeddial} = $sd;
 }
@@ -2350,8 +2299,8 @@ sub delete_speeddial :Chained('speeddial') :PathPart('delete') :Args(0) {
         $c->log->error("failed to delete speed dial slot: $e");
         $c->flash(messages => [{type => 'error', text => 'Failed to delete speed dial slot'}]);
     }
-
-    $c->response->redirect($c->uri_for_action('/subscriber/preferences', [$c->req->captures->[0]]));
+    NGCP::Panel::Utils::Navigation::back_or($c, 
+        $c->uri_for_action('/subscriber/preferences', [$c->req->captures->[0]]));
 }
 
 sub edit_speeddial :Chained('speeddial') :PathPart('edit') :Args(0) {
@@ -2390,14 +2339,12 @@ sub edit_speeddial :Chained('speeddial') :PathPart('edit') :Args(0) {
                 destination => $d,
             });
             $c->flash(messages => [{type => 'success', text => 'Successfully updated speed dial slot'}]);
-            $c->response->redirect($c->uri_for_action('/subscriber/preferences', [$c->req->captures->[0]]));
-            return;
         } catch($e) {
             $c->log->error("failed to update speed dial slot: $e");
             $c->flash(messages => [{type => 'error', text => 'Failed to update speed dial slot'}]);
-            $c->response->redirect($c->uri_for_action('/subscriber/preferences', [$c->req->captures->[0]]));
-            return;
         }
+        NGCP::Panel::Utils::Navigation::back_or($c, 
+            $c->uri_for_action('/subscriber/preferences', [$c->req->captures->[0]]));
     }
 
     delete $c->stash->{used_sd_slots};
@@ -2406,7 +2353,6 @@ sub edit_speeddial :Chained('speeddial') :PathPart('edit') :Args(0) {
         edit_cf_flag => 1,
         cf_description => "Speed Dial Slot",
         cf_form => $form,
-        close_target => $c->uri_for_action('/subscriber/preferences', [$c->req->captures->[0]]),
     );
 }
 
