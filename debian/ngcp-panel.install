@@ -1,2 +1,2 @@
-share/*			usr/share/
+share/*			usr/share/ngcp-panel/
 ngcp_panel.conf		etc/ngcp-panel/
