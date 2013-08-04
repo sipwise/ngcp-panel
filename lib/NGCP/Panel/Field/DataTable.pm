@@ -6,7 +6,8 @@ extends 'HTML::FormHandler::Field';
 has '+widget' => (default => ''); # leave this empty, as there is no widget ...
 has 'template' => ( isa => 'Str',
                     is => 'rw',
-                    default => 'share/templates/helpers/datatables_field.tt' );
+                    # TODO: not found in real environment!
+                    default => '/usr/share/ngcp-panel/templates/helpers/datatables_field.tt' );
 has 'ajax_src' => ( isa => 'Str', is => 'rw' );
 has 'table_fields' => ( isa => 'ArrayRef', is => 'rw' );
 has 'table_titles' => ( isa => 'ArrayRef', is => 'rw' );
