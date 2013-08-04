@@ -143,7 +143,7 @@ sub base :Chained('list_reseller') :PathPart('') :CaptureArgs(1) {
     $c->stash(reseller => $c->stash->{resellers}->search_rs({ id => $reseller_id }));
 }
 
-sub reseller_contacts :Chained('base') :PathPart('contacts') :Args(0) {
+sub reseller_contacts :Chained('base') :PathPart('contacts/ajax') :Args(0) {
     my ($self, $c) = @_;
     my $rs = $c->stash->{reseller}->first->contract->search_related_rs('contact');
     NGCP::Panel::Utils::Datatables::process($c, $rs, $c->stash->{contact_dt_columns});
@@ -151,7 +151,7 @@ sub reseller_contacts :Chained('base') :PathPart('contacts') :Args(0) {
     return;
 }
 
-sub reseller_contracts :Chained('base') :PathPart('contracts') :Args(0) {
+sub reseller_contracts :Chained('base') :PathPart('contracts/ajax') :Args(0) {
     my ($self, $c) = @_;
     my $rs = $c->stash->{reseller}->first->search_related_rs('contract');
     NGCP::Panel::Utils::Datatables::process($c, $rs, $c->stash->{contract_dt_columns});
@@ -159,7 +159,7 @@ sub reseller_contracts :Chained('base') :PathPart('contracts') :Args(0) {
     return;
 }
 
-sub reseller_single :Chained('base') :PathPart('single') :Args(0) {
+sub reseller_single :Chained('base') :PathPart('single/ajax') :Args(0) {
     my ($self, $c) = @_;
 
     NGCP::Panel::Utils::Datatables::process($c, $c->stash->{reseller}, $c->stash->{reseller_dt_columns});
@@ -167,7 +167,7 @@ sub reseller_single :Chained('base') :PathPart('single') :Args(0) {
     return;
 }
 
-sub reseller_admin :Chained('base') :PathPart('admins') :Args(0) {
+sub reseller_admin :Chained('base') :PathPart('admins/ajax') :Args(0) {
     my ($self, $c) = @_;
     my $rs = $c->stash->{reseller}->first->search_related_rs('admins');
     NGCP::Panel::Utils::Datatables::process($c, $rs, $c->stash->{admin_dt_columns});
@@ -175,7 +175,7 @@ sub reseller_admin :Chained('base') :PathPart('admins') :Args(0) {
     return;
 }
 
-sub reseller_customers :Chained('base') :PathPart('customers') :Args(0) {
+sub reseller_customers :Chained('base') :PathPart('customers/ajax') :Args(0) {
     my ($self, $c) = @_;
 
     my $rs = $c->model('DB')->resultset('contracts')->search({
