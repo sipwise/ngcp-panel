@@ -24,13 +24,13 @@ around handle => sub {
 
     $c->stash(
         resellers => $c->model('DB')->resultset('resellers')->search_rs({}),
-        domains => $c->model('DB')->resultset('resellers')->search_rs({}),
+        domains => $c->model('DB')->resultset('domain_resellers')->search_rs({}),
         customers => $c->model('DB')->resultset('contracts')->search_rs({
             product_id => undef,
         }, {
             join => 'billing_mappings',
         }),
-        subscribers => $c->model('DB')->resultset('provisioning_voip_subscribers')->search_rs({}),
+        subscribers => $c->model('DB')->resultset('voip_subscribers')->search_rs({}),
     );
     return;
 };
