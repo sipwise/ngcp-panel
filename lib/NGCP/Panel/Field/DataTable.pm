@@ -29,7 +29,7 @@ sub render_element {
         table_titles => $self->table_titles,
         errors => $self->errors,
     };
-    my $t = new Template({});
+    my $t = new Template({ ABSOLUTE => 1, });
 
     $t->process($self->template, $vars, \$output) or
         die "Failed to process Datatables field template: ".$t->error();
