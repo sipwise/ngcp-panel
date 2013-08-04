@@ -45,8 +45,13 @@ __PACKAGE__->config(
     disable_component_resolution_regex_fallback => 1,
     enable_catalyst_header => 1, # Send X-Catalyst header
     encoding => 'UTF-8',
+    'Plugin::ConfigLoader' => {
+        file => '/etc/ngcp-panel/ngcp_panel.conf',
+    },
     'View::HTML' => {
         INCLUDE_PATH => [
+            '/usr/share/ngcp-panel/templates',
+            '/usr/share/ngcp-panel/layout',
             __PACKAGE__->path_to('share', 'templates'),
             __PACKAGE__->path_to('share', 'layout'),
         ],
@@ -61,6 +66,7 @@ __PACKAGE__->config(
 
     'Plugin::Static::Simple' => {
         include_path => [
+            '/usr/share/ngcp-panel/static',
             __PACKAGE__->path_to('share', 'static'),
         ],
         mime_types => {
