@@ -74,7 +74,7 @@ sub create :Chained('list_reseller') :PathPart('create') :Args(0) {
     NGCP::Panel::Utils::Navigation::check_form_buttons(
         c => $c, 
         form => $form, 
-        fields => {'contract.create' => $c->uri_for('/contract/create/noreseller') },
+        fields => {'contract.create' => $c->uri_for('/contract/reseller/create') },
         back_uri => $c->req->uri,
     );
 
