@@ -48,7 +48,7 @@ has_field 'save' => (
 has_block 'fields' => (
     tag => 'div',
     class => [qw/modal-body/],
-    render_list => [qw/id name priority description contract/],
+    render_list => [qw/id contract name priority description/],
 );
 
 has_block 'actions' => (
