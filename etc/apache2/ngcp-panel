@@ -1,0 +1,24 @@
+Listen 3443
+PerlSwitches -I/usr/share/perl5
+<VirtualHost *:3443>
+        ServerAdmin support@sipwise.com
+        ServerName myserver
+	
+        SSLEngine on
+        SSLCertificateFile /etc/apache2/ssl/myserver.crt
+        SSLCertificateKeyFile /etc/apache2/ssl/myserver.pem
+	
+
+        PerlModule Apache2::RequestUtil NGCP::Panel
+
+        # always keep "Location /" at the top!
+        # it will be overridden by later more specific locations
+        <Location />
+                SetHandler modperl
+                PerlResponseHandler NGCP::Panel
+        </Location>
+
+        LogLevel info
+        ErrorLog syslog:local7
+        CustomLog "|/usr/bin/logger -p daemon.info -t ngcp-panel" combined
+</VirtualHost>
