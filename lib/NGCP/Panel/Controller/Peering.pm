@@ -398,6 +398,7 @@ sub rules_create :Chained('rules_list') :PathPart('create') :Args(0) {
     );
     if($posted && $form->validated) {
         try {
+            $form->values->{callee_prefix} //= '';
             $c->stash->{group_result}->voip_peer_rules->create($form->values);
             $self->_sip_lcr_reload;
             $c->flash(rules_messages => [{type => 'success', text => 'Peering rule successfully created'}]);
@@ -454,6 +455,7 @@ sub rules_edit :Chained('rules_base') :PathPart('edit') :Args(0) {
     );
     if($posted && $form->validated) {
         try {
+            $form->values->{callee_prefix} //= '';
             $c->stash->{rule_result}->update($form->values);
             $self->_sip_lcr_reload;
             $c->flash(rules_messages => [{type => 'success', text => 'Peering rule successfully changed'}]);
