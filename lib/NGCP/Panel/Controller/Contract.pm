@@ -263,7 +263,7 @@ sub peering_list :Chained('contract_list') :PathPart('peering') :CaptureArgs(0) 
     my ($self, $c) = @_;
 
     my $base_rs = $c->stash->{contract_select_rs};
-    my $rs = $base_rs->search({
+    $c->stash->{peering_rs} = $base_rs->search({
             'product.class' => 'sippeering',
         }, {
             'join' => {'billing_mappings' => 'product'},
@@ -278,7 +278,8 @@ sub peering_root :Chained('peering_list') :PathPart('') :Args(0) {
 
 sub peering_ajax :Chained('peering_list') :PathPart('ajax') :Args(0) {
     my ($self, $c) = @_;
-    
+   
+    my $rs = $c->stash->{peering_rs}; 
     NGCP::Panel::Utils::Datatables::process($c, $rs,  $c->stash->{contract_dt_columns});
     $c->detach( $c->view("JSON") );
 }
@@ -343,7 +344,7 @@ sub customer_list :Chained('contract_list') :PathPart('customer') :CaptureArgs(0
     my ($self, $c) = @_;
 
     my $base_rs = $c->stash->{contract_select_rs};
-    my $rs = $base_rs->search({
+    $c->stash->{customer_rs} = $base_rs->search({
             'product_id' => undef,
         }, {
             'join' => {'billing_mappings' => 'product'},
@@ -359,6 +360,7 @@ sub customer_root :Chained('customer_list') :PathPart('') :Args(0) {
 sub customer_ajax :Chained('customer_list') :PathPart('ajax') :Args(0) {
     my ($self, $c) = @_;
     
+    my $rs = $c->stash->{customer_rs}; 
     NGCP::Panel::Utils::Datatables::process($c, $rs,  $c->stash->{contract_dt_columns});
     $c->detach( $c->view("JSON") );
 }
@@ -421,7 +423,7 @@ sub reseller_list :Chained('contract_list') :PathPart('reseller') :CaptureArgs(0
     my ($self, $c) = @_;
 
     my $base_rs = $c->stash->{contract_select_rs};
-    my $rs = $base_rs->search({
+    $c->stash->{reseller_rs} = $base_rs->search({
             'product.class' => 'reseller',
         }, {
             'join' => {'billing_mappings' => 'product'},
@@ -437,6 +439,7 @@ sub reseller_root :Chained('reseller_list') :PathPart('') :Args(0) {
 sub reseller_ajax :Chained('reseller_list') :PathPart('ajax') :Args(0) {
     my ($self, $c) = @_;
     
+    my $rs = $c->stash->{reseller_rs}; 
     NGCP::Panel::Utils::Datatables::process($c, $rs,  $c->stash->{contract_dt_columns});
     $c->detach( $c->view("JSON") );
 }
