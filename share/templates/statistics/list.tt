@@ -17,6 +17,14 @@
         });
     </script>
 
+    <div class="row">
+        <span>
+            <a class="btn btn-primary btn-large" href="[% c.uri_for('/back') %]"><i class="icon-arrow-left"></i> Back</a>
+        </span>
+    </div>
+    [% back_created = 1 -%]
+    <div class="ngcp-separator"></div>
+
     <div class="row-fluid">
         [% form.render %]
     </div>
