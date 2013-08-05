@@ -307,7 +307,7 @@ sub pattern_delete :Chained('pattern_base') :PathPart('delete') {
         $c->log->error("failed to delete ncos pattern: $e");
         $c->flash(messages => [{type => 'error', text => 'Failed to delete NCOS pattern'}]);
     };
-    NGCP::Panel::Utils::Navigation::back_or($c->stash->{pattern_base_uri});
+    NGCP::Panel::Utils::Navigation::back_or($c, $c->stash->{pattern_base_uri});
 }
 
 sub pattern_create :Chained('pattern_list') :PathPart('create') :Args(0) {
