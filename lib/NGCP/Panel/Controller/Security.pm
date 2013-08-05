@@ -4,6 +4,7 @@ use Sipwise::Base;
 BEGIN { extends 'Catalyst::Controller'; }
 
 use XML::Mini::Document;
+use URI::Encode;
 use NGCP::Panel::Utils::Navigation;
 use NGCP::Panel::Utils::XMLDispatcher;
 
@@ -104,7 +105,10 @@ EOF
             push @users, {
                 username => $key,
                 auth_count => $usr->{$key}->{auth_count},
-                last_auth => $usr->{$key}->{last_auth},
+                last_auth => DateTime->from_epoch(
+                                 epoch => $usr->{$key}->{last_auth},
+                                 time_zone => DateTime::TimeZone->new(name => 'local')
+		),
             } if($usr->{$key}->{auth_count} >= $c->config->{security}->{failed_auth_attempts});
         }
     }
@@ -118,7 +122,8 @@ EOF
 
 sub ip_base :Chained('/') :PathPart('security/ip') :CaptureArgs(1) {
     my ( $self, $c, $ip ) = @_;
-    $c->stash->{ip} = $ip;
+    my $decoder = URI::Encode->new;
+    $c->stash->{ip} = $decoder->decode($ip);
 }
 
 sub ip_unban :Chained('ip_base') :PathPart('unban') :Args(0) {
@@ -139,12 +144,14 @@ EOF
 
     $dispatcher->dispatch("loadbalancer", 1, 1, $xml);
 
+    $c->flash(messages => [{type => 'success', text => 'IP successfully unbanned'}]);
     NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for('/security'));
 }
 
 sub user_base :Chained('/') :PathPart('security/user') :CaptureArgs(1) {
     my ( $self, $c, $user ) = @_;
-    $c->stash->{user} = $user;
+    my $decoder = URI::Encode->new;
+    $c->stash->{user} = $decoder->decode($user);
 }
 
 sub user_unban :Chained('user_base') :PathPart('unban') :Args(0) {
@@ -152,19 +159,23 @@ sub user_unban :Chained('user_base') :PathPart('unban') :Args(0) {
     my $dispatcher = NGCP::Panel::Utils::XMLDispatcher->new;
     my $user = $c->stash->{user};
 
-    my $xml = <<"EOF";
+    my @keys = ($user.'::auth_count', $user.'::last_auth');
+    foreach my $key (@keys) {
+        my $xml = <<"EOF";
 <?xml version="1.0" ?>
 <methodCall>
     <methodName>htable.delete</methodName>
     <params>
         <param><value><string>auth</string></value></param>
-        <param><value><string>$user</string></value></param>
+        <param><value><string>$key</string></value></param>
     </params>
 </methodCall>
 EOF
 
-    $dispatcher->dispatch("loadbalancer", 1, 1, $xml);
+        $dispatcher->dispatch("loadbalancer", 1, 1, $xml);
+    }
 
+    $c->flash(messages => [{type => 'success', text => 'User successfully unbanned'}]);
     NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for('/security'));
 }
 

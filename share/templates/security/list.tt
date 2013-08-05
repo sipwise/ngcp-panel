@@ -33,12 +33,13 @@
                     </thead>
                     <tbody>
                     [% FOR ip IN banned_ips -%]
+                        [% enc_ip = ip.ip | uri -%]
                         <tr class="sw_action_row">
                             <td>[% ip.ip %]</td>
                             <td class="ngcp-actions-column">
                                 <div class="sw_actions pull-right">
                                     <a class="btn btn-small btn-primary" 
-                                        href="[% c.uri_for_action("/security/ip_unban", [ip.ip]) %]">
+                                        href="[% c.uri_for_action("/security/ip_unban", [enc_ip]) %]">
                                         <i class="icon-remove"></i> Unban
                                     </a>
                                 </div>
@@ -69,6 +70,7 @@
                     </thead>
                     <tbody>
                     [% FOR user IN banned_users -%]
+                        [% enc_user = user.username | uri -%]
                         <tr class="sw_action_row">
                             <td>[% user.username %]</td>
                             <td>[% user.auth_count %]</td>
@@ -76,7 +78,7 @@
                             <td class="ngcp-actions-column">
                                 <div class="sw_actions pull-right">
                                     <a class="btn btn-small btn-primary" 
-                                        href="[% c.uri_for_action("/security/user_unban", [ip.ip]) %]">
+                                        href="[% c.uri_for_action("/security/user_unban", [enc_user]) %]">
                                         <i class="icon-remove"></i> Unban
                                     </a>
                                 </div>
