@@ -1,0 +1,94 @@
+[% site_config.title = 'Security Bans'  -%]
+
+<div class="row">
+    <span class="pull-left" style="margin:0 5px 0 5px;">
+        <a class="btn btn-primary btn-large" href="[% c.uri_for('/back') %]"><i class="icon-arrow-left"></i> Back</a>
+    </span>
+</div>
+[% back_created = 1 -%]
+
+<div class="row">
+    [% FOREACH m IN messages -%]
+        <div class="alert alert-[% m.type %]">[% m.text %]</div>
+    [% END -%]
+</div>
+
+<div class="ngcp-separator"></div>
+
+<div class="accordion" id="security_data">
+
+    <div class="accordion-group">
+        <div class="accordion-heading">
+            <a class="accordion-toggle" data-toggle="collapse" data-parent="#security_data" href="#collapse_ips">Banned IPs</a>
+        </div>
+        <div class="accordion-body collapse" id="collapse_ips">
+            <div class="accordion-inner">
+
+                <table class="table table-bordered table-striped table-highlight table-hover" id="subscribers_table">
+                    <thead>
+                        <tr>
+                            <th>IP</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    [% FOR ip IN banned_ips -%]
+                        <tr class="sw_action_row">
+                            <td>[% ip.ip %]</td>
+                            <td class="ngcp-actions-column">
+                                <div class="sw_actions pull-right">
+                                    <a class="btn btn-small btn-primary" 
+                                        href="[% c.uri_for_action("/security/ip_unban", [ip.ip]) %]">
+                                        <i class="icon-remove"></i> Unban
+                                    </a>
+                                </div>
+                            </td>
+                        </tr>
+                    [% END -%]
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <div class="accordion-group">
+        <div class="accordion-heading">
+            <a class="accordion-toggle" data-toggle="collapse" data-parent="#security_data" href="#collapse_users">Banned Users</a>
+        </div>
+        <div class="accordion-body collapse" id="collapse_users">
+            <div class="accordion-inner">
+
+                <table class="table table-bordered table-striped table-highlight table-hover" id="subscribers_table">
+                    <thead>
+                        <tr>
+                            <th>User</th>
+                            <th>Fail Count</th>
+                            <th>Last Attempt</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    [% FOR user IN banned_users -%]
+                        <tr class="sw_action_row">
+                            <td>[% user.username %]</td>
+                            <td>[% user.auth_count %]</td>
+                            <td>[% user.last_auth %]</td>
+                            <td class="ngcp-actions-column">
+                                <div class="sw_actions pull-right">
+                                    <a class="btn btn-small btn-primary" 
+                                        href="[% c.uri_for_action("/security/user_unban", [ip.ip]) %]">
+                                        <i class="icon-remove"></i> Unban
+                                    </a>
+                                </div>
+                            </td>
+                        </tr>
+                    [% END -%]
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+[% # vim: set tabstop=4 syntax=html expandtab: -%]
