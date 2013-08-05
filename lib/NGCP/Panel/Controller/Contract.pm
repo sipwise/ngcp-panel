@@ -106,6 +106,7 @@ sub create :Chained('contract_list') :PathPart('create') :Args(0) {
                 delete $form->params->{contract};
                 my $bprof_id = $form->params->{billing_profile}{id};
                 delete $form->params->{billing_profile};
+                $form->{create_timestamp} = $form->{modify_timestamp} = DateTime->now;
                 my $contract = $schema->resultset('contracts')->create($form->params);
                 my $billing_profile = $schema->resultset('billing_profiles')->find($bprof_id);
                 $contract->billing_mappings->create({
@@ -204,6 +205,7 @@ sub edit :Chained('base') :PathPart('edit') :Args(0) {
                 delete $form->values->{billing_profile};
                 $form->values->{contact_id} = $form->values->{contact}{id};
                 delete $form->values->{contact};
+                $form->{modify_timestamp} = DateTime->now;
                 $contract->update($form->values);
 
                 # if status changed, populate it down the chain
@@ -311,6 +313,7 @@ sub peering_create :Chained('peering_list') :PathPart('create') :Args(0) {
                 delete $form->params->{contract};
                 my $bprof_id = $form->params->{billing_profile}{id};
                 delete $form->params->{billing_profile};
+                $form->{create_timestamp} = $form->{modify_timestamp} = DateTime->now;
                 my $contract = $schema->resultset('contracts')->create($form->params);
                 my $billing_profile = $schema->resultset('billing_profiles')->find($bprof_id);
                 my $product = $schema->resultset('products')->find({ class => 'sippeering' }); 
@@ -392,6 +395,7 @@ sub customer_create :Chained('customer_list') :PathPart('create') :Args(0) {
                 delete $form->params->{contract};
                 my $bprof_id = $form->params->{billing_profile}{id};
                 delete $form->params->{billing_profile};
+                $form->{create_timestamp} = $form->{modify_timestamp} = DateTime->now;
                 my $contract = $schema->resultset('contracts')->create($form->params);
                 my $billing_profile = $schema->resultset('billing_profiles')->find($bprof_id);
                 $contract->billing_mappings->create({
@@ -471,6 +475,7 @@ sub reseller_create :Chained('reseller_list') :PathPart('create') :Args(0) {
                 delete $form->params->{contract};
                 my $bprof_id = $form->params->{billing_profile}{id};
                 delete $form->params->{billing_profile};
+                $form->{create_timestamp} = $form->{modify_timestamp} = DateTime->now;
                 my $contract = $schema->resultset('contracts')->create($form->params);
                 my $billing_profile = $schema->resultset('billing_profiles')->find($bprof_id);
                 my $product = $schema->resultset('products')->find({ class => 'reseller' }); 
