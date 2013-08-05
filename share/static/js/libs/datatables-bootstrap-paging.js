@@ -33,7 +33,7 @@ $.fn.dataTableExt.oPagination.bootstrap = {
  
         $.extend(oSettings, {
             _iShowPages: iShowPages,
-            _iShowPagesHalf: iShowPagesHalf,
+            _iShowPagesHalf: iShowPagesHalf
         });
  
         var oFirst = $('<a class="btn btn-small paging_first">&lArr;</a>'),

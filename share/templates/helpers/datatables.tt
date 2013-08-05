@@ -19,7 +19,7 @@
 $.extend( $.fn.dataTableExt.oStdClasses, {
                 "sSortAsc": "header headerSortDown",
                 "sSortDesc": "header headerSortUp",
-                "sSortable": "header",
+                "sSortable": "header"
             } );
 
 $(document).ready(function() {
@@ -76,7 +76,7 @@ $(document).ready(function() {
                 },
                 "mData": null,
                 "bSortable": false,
-                "sClass": "ngcp-actions-column",
+                "sClass": "ngcp-actions-column"
             }
 		],
 		"fnDrawCallback": function( oSettings ) {
