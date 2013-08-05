@@ -1,4 +1,4 @@
-<!doctype html>
+<!DOCTYPE HTML>
 <!--[if lt IE 7]> <html class="no-js lt-ie9 lt-ie8 lt-ie7" lang="en"> <![endif]-->
 <!--[if IE 7]>    <html class="no-js lt-ie9 lt-ie8" lang="en"> <![endif]-->
 <!--[if IE 8]>    <html class="no-js lt-ie9" lang="en"> <![endif]-->
@@ -16,8 +16,8 @@
         <link rel="stylesheet" href="/css/font-opensans.css">
         <link rel="stylesheet" href="/css/font-awesome.css">
 
-        <link rel="stylesheet" href="/css/bootstrap.css">
-        <link rel="stylesheet" href="/css/bootstrap-responsive.css">
+        <link rel="stylesheet" href="/css/bootstrap/bootstrap.css">
+        <link rel="stylesheet" href="/css/bootstrap/bootstrap-responsive.css">
 
         <link rel="stylesheet" href="/css/ui-lightness/jquery-ui-1.8.21.custom.css">
         <link rel="stylesheet" href="/css/application.css">
@@ -30,7 +30,7 @@
         <script src="/js/libs/bootstrap/bootstrap.min.js"></script>
         <script src="/js/libs/bootstrap/tooltip.js"></script>
         <script src="/js/libs/jquery.dataTables.min.js"></script>
-        <script src="/js/libs/datatables-bootstrap-paging.js"></script>
+        <script src="/js/libs/bootstrap/datatables-paging.js"></script>
 
         <script type="text/javascript" src="/js/plugins/msgbox/jquery.msgbox.js"></script>
         <link rel="stylesheet" type="text/css" href="/js/plugins/msgbox/jquery.msgbox.css" />
