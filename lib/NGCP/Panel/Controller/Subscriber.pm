@@ -2364,7 +2364,7 @@ sub callflow_base :Chained('base') :PathPart('callflow') :CaptureArgs(1) {
     $c->stash->{callid} = $decoder->decode($callid);
 }
 
-sub generate_pcap :Chained('callflow_base') :PathPart('pcap') :Args(0) {
+sub get_pcap :Chained('callflow_base') :PathPart('pcap') :Args(0) {
     my ($self, $c) = @_;
     my $cid = $c->stash->{callid};
 
@@ -2383,6 +2383,24 @@ sub generate_pcap :Chained('callflow_base') :PathPart('pcap') :Args(0) {
     
 }
 
+sub get_png :Chained('callflow_base') :PathPart('png') :Args(0) {
+    my ($self, $c) = @_;
+    my $cid = $c->stash->{callid};
+
+    my $calls_rs = $c->model('DB')->resultset('messages')->search({
+        'me.call_id' => { -in => [ $cid, $cid.'_b2b-1' ] },
+    }, {
+        order_by => { -asc => 'timestamp' },
+    });
+
+    my $calls = [ $calls_rs->all ];
+    my $png = NGCP::Panel::Utils::Callflow::generate_callmap_png($c, $calls);
+
+    $c->response->header ('Content-Disposition' => 'attachment; filename="' . $cid . '.png"');
+    $c->response->content_type('image/png');
+    $c->response->body($png);
+
+}
 
 =head1 AUTHOR
 

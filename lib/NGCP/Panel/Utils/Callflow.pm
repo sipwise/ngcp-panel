@@ -107,30 +107,30 @@ sub process_callmap {
 
     ### gather all involved elements
     foreach my $packet(@{$packets}) {
-      if(exists($int_uas{$packet->{src_ip}.':'.$packet->{src_port}})) {
-        #print "skipping internal elem ".$packet->{src_ip}.':'.$packet->{src_port}." (".$int_uas{$packet->{src_ip}.':'.$packet->{src_port}}.")\n";
+      if(exists($int_uas{$packet->src_ip.':'.$packet->src_port})) {
+        #print "skipping internal elem ".$packet->src_ip.':'.$packet->src_port." (".$int_uas{$packet->src_ip.':'.$packet->src_port}.")\n";
       }
-      elsif(exists($ext_uas{$packet->{src_ip}.':'.$packet->{src_port}})) {
-        #print "skipping known external elem ".$packet->{src_ip}.':'.$packet->{src_port}."\n";
+      elsif(exists($ext_uas{$packet->src_ip.':'.$packet->src_port})) {
+        #print "skipping known external elem ".$packet->src_ip.':'.$packet->src_port."\n";
       }
       else {
-        #print "adding new src elem ".$packet->{src_ip}.':'.$packet->{src_port}."\n";
-        $ext_uas{$packet->{src_ip}.':'.$packet->{src_port}} = 1;
+        #print "adding new src elem ".$packet->src_ip.':'.$packet->src_port."\n";
+        $ext_uas{$packet->src_ip.':'.$packet->src_port} = 1;
         # TODO: prefix "proto:" as well
-        push @uas, $packet->{src_ip}.':'.$packet->{src_port};
+        push @uas, $packet->src_ip.':'.$packet->src_port;
       }
 
-      if(exists($int_uas{$packet->{dst_ip}.':'.$packet->{dst_port}})) {
-        #print "skipping internal elem ".$packet->{dst_ip}.':'.$packet->{dst_port}." (".$int_uas{$packet->{dst_ip}.':'.$packet->{dst_port}}.")\n";
+      if(exists($int_uas{$packet->dst_ip.':'.$packet->dst_port})) {
+        #print "skipping internal elem ".$packet->dst_ip.':'.$packet->dst_port." (".$int_uas{$packet->dst_ip.':'.$packet->dst_port}.")\n";
       }
-      elsif(exists($ext_uas{$packet->{dst_ip}.':'.$packet->{dst_port}})) {
-        #print "skipping known external elem ".$packet->{dst_ip}.':'.$packet->{dst_port}."\n";
+      elsif(exists($ext_uas{$packet->dst_ip.':'.$packet->dst_port})) {
+        #print "skipping known external elem ".$packet->dst_ip.':'.$packet->dst_port."\n";
       }
       else {
-        #print "adding new dst elem ".$packet->{dst_ip}.':'.$packet->{dst_port}."\n";
-        $ext_uas{$packet->{dst_ip}.':'.$packet->{dst_port}} = 1;
+        #print "adding new dst elem ".$packet->dst_ip.':'.$packet->dst_port."\n";
+        $ext_uas{$packet->dst_ip.':'.$packet->dst_port} = 1;
         # TODO: prefix "proto:" as well
-        push @uas, $packet->{dst_ip}.':'.$packet->{dst_port};
+        push @uas, $packet->dst_ip.':'.$packet->dst_port;
       }
     }
     push @uas, ('lb', 'sbc', 'proxy', 'app');
@@ -175,16 +175,16 @@ sub process_callmap {
     my $y_offset = $canvas_margin + $canvas_pkg_distance;
     $i = 1;
     foreach my $packet(@{$packets}) {
-      my $time_offset = defined $last_timestamp ? ($packet->{timestamp} - $last_timestamp) : 0;
-      $last_timestamp = $packet->{timestamp};
-      my $from_x = $uas_pos_x{$packet->{src_ip}.':'.$packet->{src_port}};
-      my $to_x = $uas_pos_x{$packet->{dst_ip}.':'.$packet->{dst_port}};
-      #print "arrow from ".$packet->{src_ip}.':'.$packet->{src_port}." to ".$packet->{dst_ip}.':'.$packet->{dst_port}.": $from_x - $to_x\n";
+      my $time_offset = defined $last_timestamp ? ($packet->timestamp - $last_timestamp) : 0;
+      $last_timestamp = $packet->timestamp;
+      my $from_x = $uas_pos_x{$packet->src_ip.':'.$packet->src_port};
+      my $to_x = $uas_pos_x{$packet->dst_ip.':'.$packet->dst_port};
+      #print "arrow from ".$packet->src_ip.':'.$packet->src_port." to ".$packet->dst_ip.':'.$packet->dst_port.": $from_x - $to_x\n";
       draw_arrow($canvas, $from_x, $y_offset, $to_x, $y_offset, $canvas_pkg_line_width,
-      	$canvas_pkg_line_colors{$packet->{transport}} || $canvas_pkg_line_color);
-      $packet->{payload} =~ /\ncseq:\s*(\d+)\s+[a-zA-Z]+/i;
+      	$canvas_pkg_line_colors{$packet->transport} || $canvas_pkg_line_color);
+      $packet->payload =~ /\ncseq:\s*(\d+)\s+[a-zA-Z]+/i;
       my $cseq = $1 ? $1 : '?';
-      my $txt = sprintf($i.'. '.$packet->{method}.' ('.$cseq.', +%0.3fs)', $time_offset);
+      my $txt = sprintf($i.'. '.$packet->get_column('method').' ('.$cseq.', +%0.3fs)', $time_offset);
       my @bounds = $canvas->stringBounds($txt); # get bounds for text centering
       if($from_x < $to_x) {
         $from_x = $from_x+int($canvas_elem_distance/2)-int($bounds[0]/2);
@@ -195,7 +195,7 @@ sub process_callmap {
       }
       draw_text($canvas, $from_x, $y_offset-int(abs($bounds[1])/2), $canvas_pkg_font, $canvas_pkg_font_size, $canvas_pkg_font_color, $txt);
 
-      push @{$r_info->{areas}}, {"id", $packet->{id}, "coords", ($from_x-$html_padding).','.($y_offset-abs($bounds[1])-$html_padding).','.($from_x+abs($bounds[0])+$html_padding).','.($y_offset)};
+      push @{$r_info->{areas}}, {"id", $packet->id, "coords", ($from_x-$html_padding).','.($y_offset-abs($bounds[1])-$html_padding).','.($from_x+abs($bounds[0])+$html_padding).','.($y_offset)};
 
       $y_offset += $canvas_pkg_distance;
       ++$i;
