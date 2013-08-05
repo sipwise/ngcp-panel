@@ -26,7 +26,7 @@ has_field 'replace_pattern' => (
 
 has_field 'description' => (
     type => 'Text',
-    required => 0,
+    required => 1,
 );
 
 has_field 'direction' => (
