@@ -6,8 +6,7 @@ extends 'HTML::FormHandler::Field';
 has '+widget' => (default => ''); # leave this empty, as there is no widget ...
 has 'template' => ( isa => 'Str',
                     is => 'rw',
-                    # TODO: not found in real environment!
-                    default => '/usr/share/ngcp-panel/templates/helpers/datatables_field.tt' );
+                    default => 'helpers/datatables_field.tt' );
 has 'ajax_src' => ( isa => 'Str', is => 'rw' );
 has 'table_fields' => ( isa => 'ArrayRef', is => 'rw' );
 has 'table_titles' => ( isa => 'ArrayRef', is => 'rw' );
@@ -29,7 +28,13 @@ sub render_element {
         table_titles => $self->table_titles,
         errors => $self->errors,
     };
-    my $t = new Template({ ABSOLUTE => 1, });
+    my $t = new Template({ 
+        ABSOLUTE => 1, 
+        INCLUDE_PATH => [
+            '/usr/share/ngcp-panel/templates',
+            'share/templates',
+        ],
+    });
 
     $t->process($self->template, $vars, \$output) or
         die "Failed to process Datatables field template: ".$t->error();

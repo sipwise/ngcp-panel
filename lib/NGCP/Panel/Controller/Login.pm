@@ -27,8 +27,12 @@ sub index :Path Form {
     my ( $self, $c, $realm ) = @_;
 
     $c->log->debug("*** Login::index");
+=pod
     $realm = 'subscriber' 
         unless($realm and ($realm eq 'admin' or $realm eq 'reseller'));
+=cut
+    $realm = 'admin' 
+        unless($realm and ($realm eq 'reseller'));
 
     my $form = NGCP::Panel::Form::Login->new;
     $form->process(

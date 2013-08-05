@@ -472,9 +472,9 @@ sub preferences_callforward :Chained('base') :PathPart('preferences/callforward'
 
     my $cf_form;
     if($cf_type eq "cft") {
-        $cf_form = NGCP::Panel::Form::SubscriberCFTSimple->new;
+        $cf_form = NGCP::Panel::Form::SubscriberCFTSimple->new(ctx => $c);
     } else {
-        $cf_form = NGCP::Panel::Form::SubscriberCFSimple->new;
+        $cf_form = NGCP::Panel::Form::SubscriberCFSimple->new(ctx => $c);
     }
 
     $cf_form->process(

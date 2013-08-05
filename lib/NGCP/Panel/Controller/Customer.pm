@@ -141,9 +141,12 @@ sub subscriber_create :Chained('base') :PathPart('subscriber/create') :Args(0) {
     my ($self, $c) = @_;
 
     my $form = NGCP::Panel::Form::CustomerSubscriber->new;
+    my $params = {};
+    $params = $params->merge($c->session->{created_objects});
     $form->process(
         posted => ($c->request->method eq 'POST'),
         params => $c->request->params,
+        item => $params,
     );
     NGCP::Panel::Utils::Navigation::check_form_buttons(
         c => $c,
@@ -244,6 +247,18 @@ sub subscriber_create :Chained('base') :PathPart('subscriber/create') :Args(0) {
                     password => sprintf("%04d", int(rand 10000)),
                     email => '',
                 });
+                if($number) {
+                    $schema->resultset('dbaliases')->create({
+                        alias_username => $number->cc .
+                                          ($number->ac || '').
+                                          $number->sn,
+                        alias_domain => $prov_subscriber->domain->domain,
+                        username => $prov_subscriber->username,
+                        domain => $prov_subscriber->domain->domain,
+                    });
+                }
+
+                delete $c->session->{created_objects}->{domain};
 
             });
             $c->flash(messages => [{type => 'success', text => 'Subscriber successfully created!'}]);

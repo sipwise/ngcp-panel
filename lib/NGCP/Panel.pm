@@ -30,14 +30,13 @@ extends 'Catalyst';
 
 our $VERSION = '0.01';
 
-# Configure the application.
-#
-# Note that settings in ngcp_panel.conf (or other external
-# configuration file that you set up manually) take precedence
-# over this when using ConfigLoader. Thus configuration
-# details given here can function as a default configuration,
-# with an external configuration file acting as an override for
-# local deployment.
+my $panel_config;
+for my $path(qw#/etc/ngcp-panel/ngcp_panel.conf etc/ngcp_panel.conf ngcp_panel.conf#) {
+    if(-f $path) {
+        $panel_config = $path;
+    }
+}
+$panel_config //= 'ngcp_panel.conf';
 
 __PACKAGE__->config(
     name => 'NGCP::Panel',
@@ -46,7 +45,7 @@ __PACKAGE__->config(
     enable_catalyst_header => 1, # Send X-Catalyst header
     encoding => 'UTF-8',
     'Plugin::ConfigLoader' => {
-        file => '/etc/ngcp-panel/ngcp_panel.conf',
+        file => $panel_config,
     },
     'View::HTML' => {
         INCLUDE_PATH => [
@@ -89,26 +88,6 @@ __PACKAGE__->config(
             store => {
                 class => 'Minimal',
                 users => {
-                }
-            }
-        },
-        subscriber => {
-            credential => {
-                class => 'Password',
-                password_field => 'password',
-                password_type => 'clear'
-            },
-            store => {
-                class => 'Minimal',
-                users => {
-                    subscriberadmin => {
-                        password => 'subscriberadmin',
-                        roles => [qw/subscriberadmin subscriber/],
-                    },
-                    subscriber => {
-                        password => 'subscriber',
-                        roles => [qw/subscriber/],
-                    },
                 }
             }
         },

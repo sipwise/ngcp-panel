@@ -38,21 +38,36 @@ has_field 'destination.destination' => (
     widget => 'RadioGroup',
     label => 'Destination',
     do_label => 1,
-    options => [
-        { label => 'Voicemail', value => 'voicebox' },
-        { label => 'Conference', value => 'conference' },
-        { label => 'Fax2Mail', value => 'fax2mail' },
-        { label => 'Calling Card', value => 'callingcard' },
-        { label => 'Call Trough', value => 'callthrough' },
-        { label => 'Local Subscriber', value => 'localuser' },
-        { label => 'URI/Number', value => 'uri' },
-    ],
+    options_method => \&build_destinations,
     default => 'uri',
     tags => {
         before_element => '<div class="ngcp-destination-row">',
         after_element => '</div>',
     },
 );
+
+sub build_destinations {
+    my ($self) = @_;
+
+    my @options = ();
+    push @options, { label => 'Voicemail', value => 'voicebox' };
+    my $c = $self->form->ctx;
+    if(defined $c) {
+        push @options, { label => 'Conference', value => 'conference' }
+            if($c->config->{features}->{conference});
+        push @options, { label => 'Fax2Mail', value => 'fax2mail' }
+            if($c->config->{features}->{faxserver});
+        push @options, { label => 'Calling Card', value => 'callingcard' }
+            if($c->config->{features}->{callingcard});
+        push @options, { label => 'Call Trough', value => 'callthrough' }
+            if($c->config->{features}->{callthrough});
+        push @options, { label => 'Local Subscriber', value => 'localuser' }
+            if($c->config->{features}->{callthrough} || $c->config->{features}->{callingcard} );
+    }
+    push @options, { label => 'URI/Number', value => 'uri' };
+
+    return \@options;
+}
 
 has_field 'destination.uri' => (
     type => 'Compound',
