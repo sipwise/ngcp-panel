@@ -99,43 +99,74 @@ sub base :Chained('list_contact') :PathPart('') :CaptureArgs(1) {
     my ($self, $c, $contact_id) = @_;
 
     unless($contact_id && $contact_id->is_int) {
-        $c->flash(messages => [{type => 'error', text => 'Invalid contact id detected!'}]);
+        $c->flash(messages => [{type => 'error', text => 'Invalid contact id detected'}]);
         NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for('/contact'));
     }
     my $res = $c->stash->{contacts};
     $c->stash(contact => $res->find($contact_id));
+    unless($c->stash->{contact}) {
+        $c->flash(messages => [{type => 'error', text => 'Contact not found'}]);
+        NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for('/contact'));
+    }
 }
 
 sub edit :Chained('base') :PathPart('edit') :Args(0) {
-    my ($self, $c) = @_;
+    my ($self, $c, $no_reseller) = @_;
 
     my $posted = ($c->request->method eq 'POST');
-    my $form = NGCP::Panel::Form::Contact->new;
+    my $form;
+    my $params = { $c->stash->{contact}->get_inflated_columns };
+    $params = $params->merge($c->session->{created_objects});
+    if($c->user->is_superuser && $no_reseller) {
+        $form = NGCP::Panel::Form::Contact::Reseller->new;
+        $params->{reseller}{id} = $c->user->reseller_id;
+    } elsif($c->user->is_superuser) {
+        $form = NGCP::Panel::Form::Contact::Admin->new;
+    } else {
+        $form = NGCP::Panel::Form::Contact::Reseller->new;
+    }
+
     $form->process(
         posted => $posted,
         params => $c->request->params,
-        item => $c->stash->{contact},
-        action => $c->uri_for($c->stash->{contact}->id, 'edit'),
+        item => $params,
     );
-    # TODO: use values instead of params, chain reseller creation, add check_form_buttons
+    NGCP::Panel::Utils::Navigation::check_form_buttons(
+        c => $c,
+        form => $form,
+        fields => {
+            'reseller.create' => $c->uri_for('/reseller/create'),
+        },
+        back_uri => $c->req->uri,
+    );
     if($posted && $form->validated) {
         try {
-            delete $form->params->{submitid};
-            delete $form->params->{save};
-            $c->stash->{contact}->update($form->params);
+            if($c->user->is_superuser && $no_reseller) {
+                delete $form->values->{reseller};
+            } elsif($c->user->is_superuser) {
+                $form->values->{reseller_id} = $form->values->{reseller}{id};
+            }
+            delete $form->values->{reseller};
+            $c->stash->{contact}->update($form->values);
             $c->flash(messages => [{type => 'success', text => 'Contact successfully changed'}]);
-            NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for('/contact'));
+            delete $c->session->{created_objects}->{reseller};
         } catch($e) {
             $c->log->error("failed to update contact: $e");
             $c->flash(messages => [{type => 'error', text => 'Failed to update contact'}]);
-            NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for('/contact'));
         }
+        NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for('/contact'));
     }
 
     $c->stash(
         form => $form,
         edit_flag => 1,
     );
+}
+
+sub edit_without_reseller :Chained('base') :PathPart('edit/noreseller') :Args(0) {
+    my ($self, $c) = @_;
+
+    $self->edit($c, 1); 
 }
 
 sub delete :Chained('base') :PathPart('delete') :Args(0) {

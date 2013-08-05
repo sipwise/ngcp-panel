@@ -141,6 +141,10 @@ sub base :Chained('list_reseller') :PathPart('') :CaptureArgs(1) {
     ]);
 
     $c->stash(reseller => $c->stash->{resellers}->search_rs({ id => $reseller_id }));
+    unless($c->stash->{reseller}->first) {
+        $c->flash(messages => [{type => 'error', text => 'Reseller not found'}]);
+        NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for('/reseller'));
+    }
 }
 
 sub reseller_contacts :Chained('base') :PathPart('contacts/ajax') :Args(0) {

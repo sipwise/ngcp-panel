@@ -44,7 +44,6 @@
     UNLESS c.user.read_only;
         helper.dt_buttons = [
             { name = 'Edit', uri = "/reseller/'+full.id+'/edit", class = 'btn-small btn-primary', icon = 'icon-edit' },
-            { name = 'Terminate', uri = "/reseller/'+full.id+'/terminate", class = 'btn-small btn-secondary', icon = 'icon-remove' },
         ];
     END;
 
@@ -73,6 +72,12 @@
     helper.ajax_uri = c.uri_for_action('/reseller/reseller_contracts', c.req.captures );
     helper.base_uri = c.uri_for_action('/contract/root');
 
+    UNLESS c.user.read_only;
+        helper.dt_buttons = [
+            { name = 'Edit', uri = "/contract/'+full.id+'/edit", class = 'btn-small btn-primary', icon = 'icon-edit' },
+        ];
+    END;
+
     PROCESS 'helpers/datatables.tt';
 -%]
             </div>
@@ -97,6 +102,12 @@
     helper.filter = 'false';
     helper.ajax_uri = c.uri_for_action('/reseller/reseller_contacts', c.req.captures );
     helper.base_uri = c.uri_for_action('/contact/root');
+
+    UNLESS c.user.read_only;
+        helper.dt_buttons = [
+            { name = 'Edit', uri = "/contact/'+full.id+'/edit/noreseller", class = 'btn-small btn-primary', icon = 'icon-edit' },
+        ];
+    END;
 
     PROCESS 'helpers/datatables.tt';
 -%]
