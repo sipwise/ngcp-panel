@@ -12,7 +12,7 @@
     tmp = backuri.query_param_delete('back');
 -%]
 
-<script src="/js/libs/datatables-bootstrap-paging.js"></script>
+<script src="/js/libs/bootstrap/datatables-paging.js"></script>
 <script src="/js/libs/jquery-ui-timepicker-addon.js"></script>
 <script type="text/javascript">
 
