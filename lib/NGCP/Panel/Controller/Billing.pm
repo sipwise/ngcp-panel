@@ -178,6 +178,7 @@ sub create :Chained('profile_list') :PathPart('create') :Args(0) {
             delete $form->values->{reseller};
             my $profile = $c->model('DB')->resultset('billing_profiles')->create($form->values);
             $c->session->{created_objects}->{billing_profile} = { id => $profile->id };
+            delete $c->session->{created_objects}->{reseller};
 
             $c->flash(messages => [{type => 'success', text => 'Billing profile successfully created'}]);
         } catch($e) {
@@ -476,6 +477,13 @@ sub peaktimes_list :Chained('base') :PathPart('peaktimes') :CaptureArgs(0) {
     
     my $rs = $c->stash->{profile_result}->billing_peaktime_weekdays;
     $rs = $rs->search(undef, {order_by => 'start'});
+
+    $c->stash->{special_dt_columns} = NGCP::Panel::Utils::Datatables::set_columns($c, [
+        { name => 'id', search => 1, title => '#' },
+        { name => 'start', search => 1, title => 'Start Date' },
+        { name => 'end', search => 1, title => 'End Date' },
+    ]);
+
     $c->stash(weekdays_result => $rs);
     $c->stash(template => 'billing/peaktimes.tt');
 }
@@ -569,19 +577,7 @@ sub peaktime_specials_ajax :Chained('peaktimes_list') :PathPart('ajax') :Args(0)
     my ($self, $c) = @_;
 
     my $resultset = $c->stash->{'profile_result'}->billing_peaktime_specials;
-
-    $c->forward( "/ajax_process_resultset", [$resultset,
-                 ["id", "start", "end",],
-                 ["start", "end"]]);
-    
-    for my $row (@{ $c->stash->{aaData} }) {
-        $row->{date} = DateTime::Format::ISO8601->parse_datetime($row->{start})->date;
-        $row->{startend} = 
-            DateTime::Format::ISO8601->parse_datetime($row->{start})->hms
-            . " - " . 
-            DateTime::Format::ISO8601->parse_datetime($row->{end})->hms;
-    }
-    
+    NGCP::Panel::Utils::Datatables::process($c, $resultset, $c->stash->{special_dt_columns});
     $c->detach( $c->view("JSON") );
 }
 
@@ -609,26 +605,29 @@ sub peaktime_specials_edit :Chained('peaktime_specials_base') :PathPart('edit') 
     my ($self, $c) = @_;
 
     my $data_res = $c->stash->{special_result};
-    return unless (defined $data_res);
-    my $data = {
-        date => $data_res->start->date,
-        'time.start' => $data_res->start->hms,
-        'time.end' => $data_res->end->hms
-    };
     my $posted = ($c->request->method eq 'POST');
     my $form = NGCP::Panel::Form::BillingPeaktimeSpecial->new;
+    my $params = { $data_res->get_inflated_columns };
     $form->process(
-        posted => 1,
-        params => $posted ? $c->request->params : $data,
-        action => $c->uri_for_action('/billing/peaktime_specials_edit', $c->req->captures),
+        posted => $posted,
+        params => $c->request->params,
+        item => $params,
+    );
+    NGCP::Panel::Utils::Navigation::check_form_buttons(
+        c => $c,
+        form => $form,
+        fields => {},
+        back_uri => $c->req->uri,
     );
     if($posted && $form->validated) {
-        my $dates = $form->get_dates;
-        $c->stash->{special_result}->update( $dates );
-
-        $c->flash(messages => [{type => 'success', text => 'Peaktime date successfully changed!'}]);
-        $c->response->redirect($c->stash->{peaktimes_root_uri});
-        return;
+        try {
+            $c->stash->{special_result}->update($form->values);
+            $c->flash(messages => [{type => 'success', text => 'Special offpeak entry successfully updated'}]);
+        } catch($e) {
+            $c->log->error("failed to update special peaktime: $e");
+            $c->flash(messages => [{type => 'error', text => 'Failed to update special offpeak entry'}]);
+        }
+        NGCP::Panel::Utils::Navigation::back_or($c, $c->stash->{peaktimes_root_uri});
     }
 
     $c->stash(peaktimes_special_editflag => 1);
@@ -637,8 +636,14 @@ sub peaktime_specials_edit :Chained('peaktime_specials_base') :PathPart('edit') 
 
 sub peaktime_specials_delete :Chained('peaktime_specials_base') :PathPart('delete') :Args(0) {
     my ($self, $c) = @_;
-    return unless (defined $c->stash->{special_result});
-    $c->stash->{special_result}->delete;
+    try {
+        $c->stash->{special_result}->delete;
+            $c->flash(messages => [{type => 'success', text => 'Special offpeak entry successfully deleted'}]);
+    } catch($e) {
+        $c->log->error("failed to delete special peaktime: $e");
+        $c->flash(messages => [{type => 'error', text => 'Failed to delete special offpeak entry'}]);
+    }
+    NGCP::Panel::Utils::Navigation::back_or($c, $c->stash->{peaktimes_root_uri});
 }
 
 sub peaktime_specials_create :Chained('peaktimes_list') :PathPart('date/create') :Args(0) {
@@ -647,19 +652,28 @@ sub peaktime_specials_create :Chained('peaktimes_list') :PathPart('date/create')
     
     my $posted = ($c->request->method eq 'POST');
     my $form = NGCP::Panel::Form::BillingPeaktimeSpecial->new;
+    my $params = {};
     $form->process(
         posted => $posted,
         params => $c->request->params,
-        action => $c->uri_for_action('/billing/peaktime_specials_create', $c->req->captures),
+        item => $params,
+    );
+    NGCP::Panel::Utils::Navigation::check_form_buttons(
+        c => $c,
+        form => $form,
+        fields => {},
+        back_uri => $c->req->uri,
     );
     if($form->validated) {
-        my $dates = $form->get_dates;
-        $c->stash->{'profile_result'}->billing_peaktime_specials
-            ->create( $dates );
-
-        $c->flash(messages => [{type => 'success', text => 'Peaktime date successfully created!'}]);
-        $c->response->redirect($c->stash->{peaktimes_root_uri});
-        return;
+        try {
+            $c->stash->{'profile_result'}->billing_peaktime_specials
+                ->create($form->values);
+            $c->flash(messages => [{type => 'success', text => 'Special offpeak entry successfully created'}]);
+        } catch($e) {
+            $c->log->error("failed to create special offpeak entry: $e");
+            $c->flash(messages => [{type => 'error', text => 'Failed to create special offpeak entry'}]);
+        }
+        NGCP::Panel::Utils::Navigation::back_or($c, $c->stash->{peaktimes_root_uri});
     }
 
     $c->stash(peaktimes_special_form => $form);

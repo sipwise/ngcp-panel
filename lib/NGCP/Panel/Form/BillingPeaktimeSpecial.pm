@@ -15,32 +15,24 @@ has_field 'submitid' => ( type => 'Hidden' );
 sub build_render_list {[qw/submitid fields actions/]}
 sub build_form_element_class { [qw/form-horizontal/] }
 
-has_field 'date' => ( 
+has_field 'start' => ( 
     type => 'Text',
     element_attr => {
         rel => ['tooltip'],
-        title => ['YYYY-MM-DD']
+        title => ['YYYY-MM-DD HH:mm:ss']
     },
+    label => 'Start Date/Time',
+    required => 1,
 );
 
-has_field 'time' => (
-    type => 'Compound',
-);
-
-has_field 'time.start' => (
+has_field 'end' => ( 
     type => 'Text',
     element_attr => {
         rel => ['tooltip'],
-        title => ['hh:mm:ss']
+        title => ['YYYY-MM-DD HH:mm:ss']
     },
-);
-
-has_field 'time.end' => (
-    type => 'Text',
-    element_attr => {
-        rel => ['tooltip'],
-        title => ['hh:mm:ss']
-    },
+    label => 'End Date/Time',
+    required => 1,
 );
 
 has_field 'save' => (
@@ -53,7 +45,7 @@ has_field 'save' => (
 has_block 'fields' => (
     tag => 'div',
     class => [qw/modal-body/],
-    render_list => [qw/date time /],
+    render_list => [qw/start end/],
 );
 
 has_block 'actions' => (
@@ -62,35 +54,27 @@ has_block 'actions' => (
     render_list => [qw/save/],
 );
 
-sub get_dates {
-    my $self = shift;
-    my $parsetime = DateTime::Format::Strptime->new(
-        pattern => '%F %T'
-    );
-    my $parsetime2 = DateTime::Format::Strptime->new(
-        pattern => '%F %R'
-    );
-    my $tmpstart = $self->value->{date} . " " . $self->value->{time}->{start};
-    my $tmpend = $self->value->{date} . " " . $self->value->{time}->{end};
-    my $starttime = $parsetime->parse_datetime($tmpstart)
-        || $parsetime2->parse_datetime($tmpstart);
-    my $endtime = $parsetime->parse_datetime($tmpend)
-        || $parsetime2->parse_datetime($tmpend);
-    
-    return {
-        start => $starttime,
-        end => $endtime,
-    };
-}
-
 sub validate {
     my $self = shift;
-    my $dates = $self->get_dates();
+    my $start = $self->field('start');
+    my $end = $self->field('end');
+    my $parser = DateTime::Format::Strptime->new(
+        pattern => '%Y-%m-%d %H:%M:%S',
+    );
 
-    if ($dates->{end} < $dates->{start}) {
-        my $err_msg = 'End time must be later than start time.';
-        $self->field('time.start')->add_error($err_msg);
-        $self->field('time.end')->add_error($err_msg);
+    my $sdate = $parser->parse_datetime($start->value);
+    unless($sdate) {
+        $start->add_error("Invalid date format, must be YYYY-MM-DD hh:mm:ss");
+    }
+    my $edate = $parser->parse_datetime($end->value);
+    unless($edate) {
+        $end->add_error("Invalid date format, must be YYYY-MM-DD hh:mm:ss");
+    }
+
+    unless(DateTime->compare($sdate, $edate) == -1) {
+        my $err_msg = 'End time must be later than start time';
+        $start->add_error($err_msg);
+        $end->add_error($err_msg);
     }
 }
 

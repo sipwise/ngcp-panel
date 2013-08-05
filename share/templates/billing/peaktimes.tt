@@ -54,9 +54,7 @@
 
 [%
     helper.name = 'Date Definitions';
-    helper.show_create_button = 1;
-    helper.column_titles = [ '#', 'Date', 'Start-End' ];
-    helper.column_fields = [ 'id', 'date', 'startend' ];
+    helper.dt_columns = special_dt_columns;
 
     helper.create_flag = peaktimes_special_createflag;
     helper.edit_flag = peaktimes_special_editflag;
@@ -65,13 +63,16 @@
     helper.close_target = close_target;
 
     helper.tmpuri = c.uri_for(c.req.captures.0, "peaktimes","date");
-    helper.dt_buttons = [
-        { name = 'Edit', uri = helper.tmpuri _ "/'+full[\"id\"]+'/edit", class = 'btn-small btn-primary', icon = 'icon-edit' },
-        { name = 'Delete', uri = helper.tmpuri _ "/'+full[\"id\"]+'/delete", class = 'btn-small btn-secondary', icon = 'icon-trash' },
-    ];
-    helper.top_buttons = [
-        { name = 'Create Special Off-Peak Date', uri = helper.tmpuri _ "/create", icon = 'icon-star' },
-    ];
+
+    UNLESS c.user.read_only;
+        helper.dt_buttons = [
+            { name = 'Edit', uri = helper.tmpuri _ "/'+full.id+'/edit", class = 'btn-small btn-primary', icon = 'icon-edit' },
+            { name = 'Delete', uri = helper.tmpuri _ "/'+full.id+'/delete", class = 'btn-small btn-secondary', icon = 'icon-trash' },
+        ];
+        helper.top_buttons = [
+            { name = 'Create Special Off-Peak Date', uri = helper.tmpuri _ "/create", icon = 'icon-star' },
+        ];
+    END;
 
     PROCESS 'helpers/datatables.tt';
 -%]
