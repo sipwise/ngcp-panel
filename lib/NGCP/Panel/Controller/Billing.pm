@@ -161,7 +161,9 @@ sub create :Chained('profile_list') :PathPart('create') :Args(0) {
     NGCP::Panel::Utils::Navigation::check_form_buttons(
         c => $c,
         form => $form,
-        fields => {},
+        fields => {
+            'reseller.create' => $c->uri_for('/reseller/create'),
+        },
         back_uri => $c->req->uri,
     );
     if($posted && $form->validated) {
