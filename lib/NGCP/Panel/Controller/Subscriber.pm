@@ -1,7 +1,7 @@
 package NGCP::Panel::Controller::Subscriber;
 use Sipwise::Base;
-use namespace::sweep;
 BEGIN { extends 'Catalyst::Controller'; }
+use HTML::Entities;
 use NGCP::Panel::Utils;
 use NGCP::Panel::Utils::Navigation;
 use NGCP::Panel::Utils::Contract;
@@ -1380,6 +1380,11 @@ sub master :Chained('base') :PathPart('details') :CaptureArgs(0) {
         { name => "contact", search => 1, title => "Contact" },
         { name => "expires", search => 1, title => "Expires" },
     ]);
+    $c->stash->{capture_dt_columns} = NGCP::Panel::Utils::Datatables::set_columns($c, [
+        { name => "timestamp", search => 1, title => "Timestamp" },
+        { name => "call_id", search => 1, title => "Call-ID" },
+        { name => "method", search => 1, title => "Method" },
+    ]);
 
     $c->stash(
         template => 'subscriber/master.tt',
@@ -1930,6 +1935,25 @@ sub ajax_voicemails :Chained('master') :PathPart('voicemails/ajax') :Args(0) {
     $c->detach( $c->view("JSON") );
 }
 
+sub ajax_captured_calls :Chained('master') :PathPart('callflow/ajax') :Args(0) {
+    my ($self, $c) = @_;
+
+    my $caller_rs = $c->model('DB')->resultset('messages')->search({
+        'me.caller_uuid' => $c->stash->{subscriber}->uuid,
+    });
+    my $callee_rs = $c->model('DB')->resultset('messages')->search({
+        'me.callee_uuid' => $c->stash->{subscriber}->uuid,
+    });
+
+    # TODO: group_by or distinct on call_id!
+    my $rs = $caller_rs->union($callee_rs)->search(undef, {
+        order_by => { -asc => 'me.timestamp' },
+    });
+
+    NGCP::Panel::Utils::Datatables::process($c, $rs, $c->stash->{capture_dt_columns});
+    $c->detach( $c->view("JSON") );
+}
+
 sub voicemail :Chained('master') :PathPart('voicemail') :CaptureArgs(1) {
     my ($self, $c, $vm_id) = @_;
 
@@ -2380,7 +2404,6 @@ sub get_pcap :Chained('callflow_base') :PathPart('pcap') :Args(0) {
     $c->response->header ('Content-Disposition' => 'attachment; filename="' . $cid . '.pcap"');
     $c->response->content_type('application/octet-stream');
     $c->response->body($pcap);
-    
 }
 
 sub get_png :Chained('callflow_base') :PathPart('png') :Args(0) {
@@ -2399,6 +2422,60 @@ sub get_png :Chained('callflow_base') :PathPart('png') :Args(0) {
     $c->response->header ('Content-Disposition' => 'attachment; filename="' . $cid . '.png"');
     $c->response->content_type('image/png');
     $c->response->body($png);
+}
+
+sub get_callmap :Chained('callflow_base') :PathPart('callmap') :Args(0) {
+    my ($self, $c) = @_;
+    my $cid = $c->stash->{callid};
+
+    my $calls_rs = $c->model('DB')->resultset('messages')->search({
+        'me.call_id' => { -in => [ $cid, $cid.'_b2b-1' ] },
+    }, {
+        order_by => { -asc => 'timestamp' },
+    });
+
+    my $calls = [ $calls_rs->all ];
+    my $map = NGCP::Panel::Utils::Callflow::generate_callmap($c, $calls);
+
+    $c->stash(
+        canvas => $map,
+        template => 'subscriber/callmap.tt',
+    );
+}
+
+sub get_packet :Chained('callflow_base') :PathPart('packet') :Args() {
+    my ($self, $c, $packet_id) = @_;
+    my $cid = $c->stash->{callid};
+
+    my $packet = $c->model('DB')->resultset('messages')->find({
+        'me.call_id' => { -in => [ $cid, $cid.'_b2b-1' ] },
+        'me.id' => $packet_id,
+    }, {
+        order_by => { -asc => 'timestamp' },
+    });
+
+    return unless($packet);
+
+    my $pkg = { $packet->get_inflated_columns };
+
+    my $t = DateTime->from_epoch(
+        epoch => $pkg->{timestamp},
+        time_zone => DateTime::TimeZone->new(name => 'local'),
+    );
+    my $tstamp = $t->ymd('-') . ' ' . $t->hms(':') . '.' . $t->millisecond;
+
+    $pkg->{payload} = encode_entities($pkg->{payload});
+    $pkg->{payload} =~ s/\r//g;
+    $pkg->{payload} =~ s/([^\n]{120})/$1<br\/>/g;
+    $pkg->{payload} =~ s/^([^\n]+)\n/<b>$1<\/b>\n/;
+    $pkg->{payload} = $tstamp .' ('.$pkg->{timestamp}.')<br/>'.
+        $pkg->{src_ip}.':'.$pkg->{src_port}.' &rarr; '. $pkg->{dst_ip}.':'.$pkg->{dst_port}.'<br/><br/>'.
+        $pkg->{payload};
+    $pkg->{payload} =~ s/\n([a-zA-Z0-9\-_]+\:)/\n<b>$1<\/b>/g;
+    $pkg->{payload} =~ s/\n/<br\/>/g;
+
+    $c->response->content_type('text/html');
+    $c->response->body($pkg->{payload});
 
 }
 

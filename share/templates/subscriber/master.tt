@@ -161,6 +161,34 @@
         </div>
     </div>
 
+    <div class="accordion-group">
+        <div class="accordion-heading">
+            <a class="accordion-toggle" data-toggle="collapse" data-parent="#subscriber_data" href="#collapse_cap">Captured Dialogs</a>
+        </div>
+        <div class="accordion-body collapse" id="collapse_cap">
+            <div class="accordion-inner">
+
+[%
+    helper.name = 'Captured Dialogs';
+    #helper.column_sort = 'origtime';
+    helper.dt_columns = capture_dt_columns;
+
+    helper.close_target = close_target;
+    helper.create_flag = create_flag;
+    helper.edit_flag = edit_flag;
+    helper.form_object = form;
+    helper.ajax_uri = c.uri_for_action('/subscriber/ajax_captured_calls', [c.req.captures.0]);
+
+    helper.dt_buttons = [
+        { name = 'Call Flow', uri = "callflow/'+encodeURIComponent(full.call_id)+'/callmap", class = 'btn-small btn-primary', icon = 'icon-random' },
+    ];
+   
+
+    PROCESS 'helpers/datatables.tt';
+%]
+            </div>
+        </div>
+    </div>
 
 
 </div>
