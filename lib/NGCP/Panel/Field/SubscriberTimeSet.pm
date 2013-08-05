@@ -1,5 +1,5 @@
 package NGCP::Panel::Field::SubscriberTimeSet;
-use Moose;
+use Sipwise::Base;
 use Data::Printer;
 extends 'HTML::FormHandler::Field::Select';
 

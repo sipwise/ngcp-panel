@@ -1,9 +1,8 @@
 package NGCP::Panel::Controller::Statistics;
-use Moose;
+use Sipwise::Base;
 
 BEGIN { extends 'Catalyst::Controller'; }
 
-use Sipwise::Base;
 use NGCP::Panel::Utils::Statistics;
 use NGCP::Panel::Form::Statistics;
 use NGCP::Panel::Utils::Navigation;

@@ -1,7 +1,6 @@
 package NGCP::Panel::Form::BillingPeaktimeWeekdays;
-
+use Sipwise::Base;
 use HTML::FormHandler::Moose;
-use Moose;
 extends 'HTML::FormHandler';
 use HTML::FormHandler::Widget::Block::Bootstrap;
 use Moose::Util::TypeConstraints;

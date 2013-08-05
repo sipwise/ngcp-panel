@@ -1,5 +1,5 @@
 package NGCP::Panel::Field::ContractStatusSelect;
-use Moose;
+use Sipwise::Base;
 extends 'HTML::FormHandler::Field::Select';
 
 sub build_options {

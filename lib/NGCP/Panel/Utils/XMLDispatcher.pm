@@ -2,7 +2,6 @@ package NGCP::Panel::Utils::XMLDispatcher;
 
 use Sipwise::Base;
 use NGCP::Schema;
-use Moose;
 use Net::HTTP;
 use Errno;
 

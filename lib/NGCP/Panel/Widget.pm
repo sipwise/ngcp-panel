@@ -1,5 +1,5 @@
 package NGCP::Panel::Widget;
-use Moose;
+use Sipwise::Base;
 with 'MooseX::Object::Pluggable';
 
 sub handle {

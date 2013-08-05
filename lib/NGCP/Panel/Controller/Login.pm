@@ -1,6 +1,6 @@
 package NGCP::Panel::Controller::Login;
 
-use Moose;
+use Sipwise::Base;
 
 BEGIN { extends 'Catalyst::Controller'; }
 

@@ -1,5 +1,5 @@
 package NGCP::Panel::View::HTML;
-use Moose;
+use Sipwise::Base;
 
 extends 'Catalyst::View::TT';
 

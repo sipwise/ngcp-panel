@@ -1,5 +1,5 @@
 package NGCP::Panel::Controller::Logout;
-use Moose;
+use Sipwise::Base;
 
 
 BEGIN { extends 'Catalyst::Controller'; }
