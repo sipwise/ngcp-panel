@@ -13,10 +13,10 @@
     [% FOREACH m IN messages -%]
         <div class="alert alert-[% m.type %]">[% m.text %]</div>
     [% END -%]
-    [% IF subscriber.status != "active" -%]
+    [% IF subscriber && subscriber.status != "active" -%]
         <div class="alert">Subscriber status is <b>[% subscriber.status %]</b></div>
     [% END -%]
-    [% IF prov_lock_string != "none" -%]
+    [% IF prov_lock_string && prov_lock_string != "none" -%]
         <div class="alert">Subscriber is locked for <b>[% prov_lock_string %]</b></div>
     [% END -%]
 </div>
