@@ -34,6 +34,7 @@ Build-Depends: debhelper (>= 8),
                libhash-merge-simple-perl,
                liburi-encode-perl,
                libdata-printer-perl,
+               libxml-mini-perl,
                ngcp-schema
 Standards-Version: 3.9.4
 Homepage: http://sipwise.com/
@@ -72,6 +73,7 @@ Depends: libcatalyst-actionrole-acl-perl,
          libhash-merge-simple-perl,
          liburi-encode-perl,
          libdata-printer-perl,
+         libxml-mini-perl,
          ngcp-schema,
          ${misc:Depends},
          ${perl:Depends}
