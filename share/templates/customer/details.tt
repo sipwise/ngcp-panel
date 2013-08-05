@@ -202,7 +202,7 @@
                                 <div class="sw_actions pull-right">
                                     <a class="btn btn-small btn-primary" 
                                        href="[% c.uri_for_action("/customer/edit_balance", [contract.id]) %]">
-                                        <i class="icon-edit"></i> Edit</i>
+                                        <i class="icon-edit"></i> Edit
                                     </a>
                                 </div>
                             </td>
