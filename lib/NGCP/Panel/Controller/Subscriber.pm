@@ -7,6 +7,7 @@ use NGCP::Panel::Utils::Navigation;
 use NGCP::Panel::Utils::Contract;
 use NGCP::Panel::Utils::Subscriber;
 use NGCP::Panel::Utils::Datatables;
+use NGCP::Panel::Utils::Callflow;
 use NGCP::Panel::Form::Subscriber;
 use NGCP::Panel::Form::SubscriberEdit;
 use NGCP::Panel::Form::SubscriberCFSimple;
@@ -2354,6 +2355,32 @@ sub edit_speeddial :Chained('speeddial') :PathPart('edit') :Args(0) {
         cf_description => "Speed Dial Slot",
         cf_form => $form,
     );
+}
+
+sub callflow_base :Chained('base') :PathPart('callflow') :CaptureArgs(1) {
+    my ($self, $c, $callid) = @_;
+
+    my $decoder = URI::Encode->new;
+    $c->stash->{callid} = $decoder->decode($callid);
+}
+
+sub generate_pcap :Chained('callflow_base') :PathPart('pcap') :Args(0) {
+    my ($self, $c) = @_;
+    my $cid = $c->stash->{callid};
+
+    my $packet_rs = $c->model('DB')->resultset('packets')->search({
+        'message.call_id' => { -in => [ $cid, $cid.'_b2b-1' ] },
+    }, {
+        join => { message_packets => 'message' },
+    });
+
+    my $packets = [ $packet_rs->all ];
+    my $pcap = NGCP::Panel::Utils::Callflow::generate_pcap($packets);
+
+    $c->response->header ('Content-Disposition' => 'attachment; filename="' . $cid . '.pcap"');
+    $c->response->content_type('application/octet-stream');
+    $c->response->body($pcap);
+    
 }
 
 
