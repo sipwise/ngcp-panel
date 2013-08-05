@@ -196,12 +196,25 @@ sub rules_root :Chained('rules_list') :PathPart('') :Args(0) {
         },{
             order_by => {($use_next ? '-asc' : '-desc') => 'priority'}
         })->first;
-        if ($swap_elem) {
-            my $tmp_priority = $swap_elem->priority;
-            $swap_elem->priority($elem->priority);
-            $elem->priority($tmp_priority);
-            $swap_elem->update;
-            $elem->update;
+        try {
+            if ($swap_elem) {
+                my $tmp_priority = $swap_elem->priority;
+                $swap_elem->priority($elem->priority);
+                $elem->priority($tmp_priority);
+                $swap_elem->update;
+                $elem->update;
+            } elsif($use_next) {
+                my $last_priority = $c->stash->{rules_rs}->get_column('priority')->max() || 49;
+                $elem->priority(int($last_priority) + 1);
+                $elem->update;
+            } else {
+                my $last_priority = $c->stash->{rules_rs}->get_column('priority')->min() || 1;
+                $elem->priority(int($last_priority) - 1);
+                $elem->update;
+            }
+        } catch($e) {
+            $c->log->error("failed to move rewrite rule: $e");
+            $c->flash(messages => [{type => 'error', text => 'Failed to move rewrite rule'}]);
         }
     }
     
@@ -209,28 +222,28 @@ sub rules_root :Chained('rules_list') :PathPart('') :Args(0) {
         field => 'caller',
         direction => 'in',
     },{
-        order_by => 'priority',
+        order_by => { -asc => 'priority' },
     })->all;
     
     my @callee_in = $rules_rs->search({
         field => 'callee',
         direction => 'in',
     },{
-        order_by => 'priority',
+        order_by => { -asc => 'priority' },
     })->all;
     
     my @caller_out = $rules_rs->search({
         field => 'caller',
         direction => 'out',
     },{
-        order_by => 'priority',
+        order_by => { -asc => 'priority' },
     })->all;
     
     my @callee_out = $rules_rs->search({
         field => 'callee',
         direction => 'out',
     },{
-        order_by => 'priority',
+        order_by => { -asc => 'priority' },
     })->all;
     
     for my $row (@caller_in, @callee_in, @caller_out, @callee_out) {
@@ -330,6 +343,8 @@ sub rules_create :Chained('rules_list') :PathPart('create') :Args(0) {
     );
     if($posted && $form->validated) {
         try {
+            my $last_priority = $c->stash->{rules_rs}->get_column('priority')->max() || 49;
+            $form->values->{priority} = int($last_priority) + 1;
             $c->stash->{rules_rs}->create($form->values);
             $self->_sip_dialplan_reload();
             $c->flash(messages => [{type => 'success', text => 'Rewrite rule successfully created'}]);
