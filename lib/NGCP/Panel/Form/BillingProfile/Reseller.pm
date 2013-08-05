@@ -30,7 +30,7 @@ has_field 'handle' => (
     required => 1,
     element_attr => {
         rel => ['tooltip'],
-        title => ['unique identifier string']
+        title => ['unique identifier string (only alphanumeric chars)']
     },
 );
 
@@ -187,5 +187,14 @@ has_block 'actions' => (
     render_list => [qw/save/],
 );
 
-1;
+sub validate_handle {
+    my ($self, $field) = @_;
+
+    unless($field->value =~ /^[a-zA-Z0-9]+$/) {
+        my $err_msg = 'Only lower-case, upper-case and digits allowed';
+        $field->add_error($err_msg);
+    }
+}
+
+1
 # vim: set tabstop=4 expandtab:
