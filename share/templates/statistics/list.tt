@@ -9,6 +9,7 @@
     <script type="text/javascript" src="/js/libs/jsrrd/flot/jquery.flot.js"></script>
     <script type="text/javascript" src="/js/libs/jsrrd/flot/jquery.flot.selection.js"></script>
     <script type="text/javascript" src="/js/libs/jsrrd/flot/jquery.flot.pie.js"></script>
+    <script type="text/javascript" src="/js/libs/jsrrd/flot/jquery.flot.time.js"></script>
     <script type="text/javascript" >
         $(document).ready(function() {
             $('#host').change(function() {
