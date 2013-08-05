@@ -62,6 +62,25 @@ sub base :Chained('group_list') :PathPart('') :CaptureArgs(1) {
         $c->detach;
         return;
     }
+
+    $c->stash->{server_dt_columns} = NGCP::Panel::Utils::Datatables::set_columns($c, [
+        { name => 'id', search => 1, title => '#' },
+        { name => 'name', search => 1, title => 'Name' },
+        { name => 'ip', search => 1, title => 'IP Address' },
+        { name => 'host', search => 1, title => 'Hostname' },
+        { name => 'port', search => 1, title => 'Port' },
+        { name => 'transport', search => 1, title => 'Protocol' },
+        { name => 'weight', search => 1, title => 'Weight' },
+    ]);
+    $c->stash->{rules_dt_columns} = NGCP::Panel::Utils::Datatables::set_columns($c, [
+        { name => 'id', search => 1, title => '#' },
+        { name => 'callee_prefix', search => 1, title => 'Callee Prefix' },
+        { name => 'callee_pattern', search => 1, title => 'Callee Pattern' },
+        { name => 'caller_pattern', search => 1, title => 'Callee Pattern' },
+        { name => 'description', search => 1, title => 'Description' },
+    ]);
+
+
     $c->stash(group => {$res->get_columns});
     $c->stash->{group}->{'contract.id'} = $res->peering_contract_id;
     $c->stash(group_result => $res);
@@ -168,11 +187,7 @@ sub servers_ajax :Chained('servers_list') :PathPart('s_ajax') :Args(0) {
     my ($self, $c) = @_;
     
     my $resultset = $c->stash->{group_result}->voip_peer_hosts;
-    
-    $c->forward( "/ajax_process_resultset", [$resultset,
-                 ["id", "name", "ip", "host", "port", "transport", "weight"],
-                 [1,2,3,4,6]]);
-    
+    NGCP::Panel::Utils::Datatables::process($c, $resultset, $c->stash->{server_dt_columns});
     $c->detach( $c->view("JSON") );
 }
 
@@ -373,11 +388,7 @@ sub rules_ajax :Chained('rules_list') :PathPart('r_ajax') :Args(0) {
     my ($self, $c) = @_;
     
     my $resultset = $c->stash->{group_result}->voip_peer_rules;
-    
-    $c->forward( "/ajax_process_resultset", [$resultset,
-                 ["id", "callee_prefix", "callee_pattern", "caller_pattern", "description"],
-                 [1,2,3,4]]);
-    
+    NGCP::Panel::Utils::Datatables::process($c, $resultset, $c->stash->{rules_dt_columns});
     $c->detach( $c->view("JSON") );
 }
 

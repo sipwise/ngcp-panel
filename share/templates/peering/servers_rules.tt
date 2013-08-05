@@ -2,10 +2,8 @@
 <h3>Peering Servers</h3>
 [%
     helper.name = 'Peering Servers';
-    helper.show_create_button = 1;
     helper.messages = messages;
-    helper.column_titles = [ '#', 'Name', 'IP Address', 'Hostname', 'Port', 'Protocol', 'Weight' ];
-    helper.column_fields = [ 'id', 'name', 'ip', 'host', 'port', 'transport', 'weight' ];
+    helper.dt_columns = server_dt_columns;
 
     helper.close_target = close_target;
     helper.create_flag = servers_create_flag;
@@ -14,14 +12,20 @@
     helper.ajax_uri = c.uri_for_action( "/peering/servers_ajax", [c.req.captures.0] );
 
     helper.tmpuri = c.uri_for_action("/peering/servers_root", [c.req.captures.0]);
-    helper.dt_buttons = [
-        { name = 'Edit', uri = helper.tmpuri _ "/'+full[\"id\"]+'/edit", class = 'btn-small btn-primary', icon = 'icon-edit' },
-        { name = 'Delete', uri = helper.tmpuri _ "/'+full[\"id\"]+'/delete", class = 'btn-small btn-secondary', icon = 'icon-trash' },
-        { name = 'Preferences', uri = helper.tmpuri _ "/'+full[\"id\"]+'/preferences", class = 'btn-small btn-tertiary', icon = 'icon-list' },
-    ];
-    helper.top_buttons = [
-        { name = 'Create Peering Server', uri = helper.tmpuri _ "/create", icon = 'icon-star' },
-    ];
+    UNLESS c.user.read_only;
+        helper.dt_buttons = [
+            { name = 'Edit', uri = helper.tmpuri _ "/'+full.id+'/edit", class = 'btn-small btn-primary', icon = 'icon-edit' },
+            { name = 'Delete', uri = helper.tmpuri _ "/'+full.id+'/delete", class = 'btn-small btn-secondary', icon = 'icon-trash' },
+            { name = 'Preferences', uri = helper.tmpuri _ "/'+full.id+'/preferences", class = 'btn-small btn-tertiary', icon = 'icon-list' },
+        ];
+        helper.top_buttons = [
+            { name = 'Create Peering Server', uri = helper.tmpuri _ "/create", icon = 'icon-star' },
+        ];
+    ELSE;
+        helper.dt_buttons = [
+            { name = 'Preferences', uri = helper.tmpuri _ "/'+full.id+'/preferences", class = 'btn-small btn-tertiary', icon = 'icon-list' },
+        ];
+    END;
 
     PROCESS 'helpers/datatables.tt';
 -%]
@@ -30,11 +34,8 @@
 <h3>Peering Rules</h3>
 [%
     helper.name = 'Peering Rules';
-    helper.show_create_button = 1;
     helper.messages = rules_messages;
-    helper.column_titles = [ '#', 'Callee Prefix', 'Callee Pattern', 'Caller Pattern', 'Description' ];
-    helper.column_fields = [ 'id', 'callee_prefix', 'callee_pattern', 'caller_pattern', 'description' ];
-
+    helper.dt_columns = rules_dt_columns;
     helper.close_target = close_target;
     helper.create_flag = rules_create_flag;
     helper.edit_flag = rules_edit_flag;
@@ -42,13 +43,18 @@
     helper.ajax_uri = c.uri_for_action( "/peering/rules_ajax", [c.req.captures.0] );
 
     helper.tmpuri = c.uri_for(group.id, "rules");
-    helper.dt_buttons = [
-        { name = 'Edit', uri = helper.tmpuri _ "/'+full[\"id\"]+'/edit", class = 'btn-small btn-primary', icon = 'icon-edit' },
-        { name = 'Delete', uri = helper.tmpuri _ "/'+full[\"id\"]+'/delete", class = 'btn-small btn-secondary', icon = 'icon-trash' },
-    ];
-    helper.top_buttons = [
-        { name = 'Create Peering Rule', uri = helper.tmpuri _ "/create", icon = 'icon-star' },
-    ];
+    UNLESS c.user.read_only;
+        helper.dt_buttons = [
+            { name = 'Edit', uri = helper.tmpuri _ "/'+full[\"id\"]+'/edit", class = 'btn-small btn-primary', icon = 'icon-edit' },
+            { name = 'Delete', uri = helper.tmpuri _ "/'+full[\"id\"]+'/delete", class = 'btn-small btn-secondary', icon = 'icon-trash' },
+        ];
+        helper.top_buttons = [
+            { name = 'Create Peering Rule', uri = helper.tmpuri _ "/create", icon = 'icon-star' },
+        ];
+    ELSE;
+        helper.dt_buttons = [];
+        helper.top_buttons = [];
+    END;
     
     PROCESS 'helpers/datatables.tt';
 -%]
