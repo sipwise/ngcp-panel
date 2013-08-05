@@ -27,7 +27,7 @@ has_field 'destination.destination' => (
     widget => 'RadioGroup',
     label => 'Destination',
     do_label => 1,
-    options_method => \&build_destionations,
+    options_method => \&build_destinations,
     default => 'uri',
 );
 
