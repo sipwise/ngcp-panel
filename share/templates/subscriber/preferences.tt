@@ -108,8 +108,8 @@
                             <td class="ngcp-actions-column">
                                 <div class="sw_actions">
                                     <a class="btn btn-primary btn-small" href="[% c.uri_for_action("/subscriber/preferences_callforward", [c.req.captures.0], cf.type) %]"><i class="icon-edit"></i> Edit</a>
-                                    [% IF cf_mappings.${cf.type}.id -%]
-                                    <a class="btn btn-secondary btn-small" data-confirm="Delete" href="[% c.uri_for_action("/subscriber/preferences_callforward_delete", [c.req.captures.0, cf_mappings.${cf.type}.id], cf.type) %]"><i class="icon-delete"></i> Delete</a>
+                                    [% IF cf_destinations.${cf.type}.size -%]
+                                    <a class="btn btn-secondary btn-small" data-confirm="Delete" href="[% c.uri_for_action("/subscriber/preferences_callforward_delete", [c.req.captures.0], cf.type) %]"><i class="icon-trash"></i> Delete</a>
                                     [% END -%]
                                 </div>
 

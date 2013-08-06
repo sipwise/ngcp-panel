@@ -498,10 +498,11 @@ sub preferences_callforward :Chained('base') :PathPart('preferences/callforward'
     if($posted && $cf_form->validated) {
         try {
             $c->model('DB')->schema->txn_do( sub {
-                my $dest_set = $c->model('DB')->resultset('voip_cf_destination_sets')->find({
-                    subscriber_id => $prov_subscriber->id,
-                    name => 'quickset_'.$cf_type,
-                });
+                my $map = $cf_mapping->first;
+                my $dest_set;
+                if($map && $map->destination_set) {
+                    $dest_set = $map->destination_set;
+                }
                 unless($dest_set) {
                     $dest_set = $c->model('DB')->resultset('voip_cf_destination_sets')->create({
                         name => 'quickset_'.$cf_type,
@@ -555,11 +556,9 @@ sub preferences_callforward :Chained('base') :PathPart('preferences/callforward'
                     priority => 1,
                 });
 
-                $cf_mapping = $cf_mapping->first; 
-                unless(defined $cf_mapping) {
-                    $cf_mapping = $prov_subscriber->voip_cf_mappings->create({
+                unless(defined $map) {
+                    $map = $prov_subscriber->voip_cf_mappings->create({
                         type => $cf_type,
-                        # subscriber_id => $prov_subscriber->id,
                         destination_set_id => $dest_set->id,
                         time_set_id => undef, #$time_set_id,
                     });
@@ -567,7 +566,7 @@ sub preferences_callforward :Chained('base') :PathPart('preferences/callforward'
                 foreach my $pref($cf_preference->all) {
                     $pref->delete;
                 }
-                $cf_preference->create({ value => $cf_mapping->id });
+                $cf_preference->create({ value => $map->id });
                 if($cf_type eq 'cft') {
                     if($ringtimeout_preference->first) {
                         $ringtimeout_preference->first->update({ 
@@ -701,7 +700,8 @@ sub preferences_callforward_advanced :Chained('base') :PathPart('preferences/cal
                         $ringtimeout_preference->first->delete 
                             if($cf_type eq "cft" &&  $ringtimeout_preference->first);
                         $c->flash(messages => [{type => 'success', text => 'Successfully cleared Call Forward'}]);
-                        NGCP::Panel::Utils::Navigation::back_or($c, 
+                        # we don't use back_or, as we might end up in the simple view again
+                        $c->res->redirect(
                             $c->uri_for_action('/subscriber/preferences', 
                                 [$c->req->captures->[0]]), 1
                         );
@@ -730,7 +730,8 @@ sub preferences_callforward_advanced :Chained('base') :PathPart('preferences/cal
             $c->log->error("failed to save call-forward: $e");
             $c->flash(messages => [{type => 'error', text => 'Failed to save Call Forward'}]);
         }
-        NGCP::Panel::Utils::Navigation::back_or($c,
+        # we don't use back_or, as we might end up in the simple view again
+        $c->res->redirect(
             $c->uri_for_action('/subscriber/preferences', [$c->req->captures->[0]]));
     }
 
@@ -1305,10 +1306,16 @@ sub preferences_callforward_delete :Chained('base') :PathPart('preferences/callf
     my ($self, $c, $cf_type) = @_;
 
     try {
-        #$c->model('DB')->resultset('voip_cf_mappings')->find($cfmap_id)->delete;
-        # TODO: we need to delete all mappings for the cf_type here!
-        # also, we need to delete all usr_preferences of cf_type!
-        $c->flash(messages => [{type => 'error', text => 'TODO: Successfully deleted Call Forward'}]);
+        my $prov_subscriber = $c->stash->{subscriber}->provisioning_voip_subscriber;
+        $prov_subscriber->voip_cf_mappings->search({ type => $cf_type })
+            ->delete_all;
+        my $cf_pref = NGCP::Panel::Utils::Subscriber::get_usr_preference_rs(
+            c => $c,
+            attribute => $cf_type,
+            prov_subscriber => $prov_subscriber,
+        );
+        $cf_pref->delete_all;
+        $c->flash(messages => [{type => 'success', text => 'Successfully deleted Call Forward'}]);
     } catch($e) {
         $c->log->error("failed to delete call forward mapping: $e");
         $c->flash(messages => [{type => 'error', text => 'Failed to deleted Call Forward'}]);
