@@ -30,7 +30,9 @@ around handle => sub {
         }, {
             join => 'billing_mappings',
         }),
-        subscribers => $c->model('DB')->resultset('voip_subscribers')->search_rs({}),
+        subscribers => $c->model('DB')->resultset('voip_subscribers')->search_rs({
+            status => { '!=' => 'terminated' },
+        }),
     );
     return;
 };
