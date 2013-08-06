@@ -173,7 +173,8 @@ sub edit :Chained('base') :PathPart('edit') :Args(0) {
     my $billing_mapping = $contract->billing_mappings->find($contract->get_column('bmid'));
     my $params = {};
     unless($posted) {
-        $params->{billing_profile}{id} = $billing_mapping->billing_profile->id;
+        $params->{billing_profile}{id} = $billing_mapping->billing_profile->id
+            if($billing_mapping->billing_profile);
         $params->{contact}{id} = $contract->contact_id;
         $params->{external_id} = $contract->external_id;
         $params->{status} = $contract->status;
