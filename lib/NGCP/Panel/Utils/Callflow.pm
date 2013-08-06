@@ -175,7 +175,7 @@ sub process_callmap {
     my $y_offset = $canvas_margin + $canvas_pkg_distance;
     $i = 1;
     foreach my $packet(@{$packets}) {
-      my $time_offset = defined $last_timestamp ? ($packet->timestamp - $last_timestamp) : 0;
+      my $time_offset = defined $last_timestamp ? ($packet->timestamp->hires_epoch - $last_timestamp->hires_epoch) : 0;
       $last_timestamp = $packet->timestamp;
       my $from_x = $uas_pos_x{$packet->src_ip.':'.$packet->src_port};
       my $to_x = $uas_pos_x{$packet->dst_ip.':'.$packet->dst_port};

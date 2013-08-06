@@ -2465,17 +2465,14 @@ sub get_packet :Chained('callflow_base') :PathPart('packet') :Args() {
 
     my $pkg = { $packet->get_inflated_columns };
 
-    my $t = DateTime->from_epoch(
-        epoch => $pkg->{timestamp},
-        time_zone => DateTime::TimeZone->new(name => 'local'),
-    );
-    my $tstamp = $t->ymd('-') . ' ' . $t->hms(':') . '.' . $t->millisecond;
+    my $t = $packet->timestamp;
+    my $tstamp = $t->ymd('-') . ' ' . $t->hms(':') . '.' . $t->microsecond;
 
     $pkg->{payload} = encode_entities($pkg->{payload});
     $pkg->{payload} =~ s/\r//g;
     $pkg->{payload} =~ s/([^\n]{120})/$1<br\/>/g;
     $pkg->{payload} =~ s/^([^\n]+)\n/<b>$1<\/b>\n/;
-    $pkg->{payload} = $tstamp .' ('.$pkg->{timestamp}.')<br/>'.
+    $pkg->{payload} = $tstamp .' ('.$t->hires_epoch.')<br/>'.
         $pkg->{src_ip}.':'.$pkg->{src_port}.' &rarr; '. $pkg->{dst_ip}.':'.$pkg->{dst_port}.'<br/><br/>'.
         $pkg->{payload};
     $pkg->{payload} =~ s/\n([a-zA-Z0-9\-_]+\:)/\n<b>$1<\/b>/g;
