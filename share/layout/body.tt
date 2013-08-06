@@ -123,6 +123,15 @@ $(function () {
         }
         return true;
     });
+
+    [%# open last accordion tab if possible -%]
+    $('.accordion').on('shown', function (e) {
+        localStorage.setItem('lastTab', $(".accordion .in").attr('id'));
+    });
+    var lastTab = localStorage.getItem('lastTab');
+    if (lastTab) {
+        $('#'+lastTab).addClass("in");
+    }
 });
 </script>
 </body>

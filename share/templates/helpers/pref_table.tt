@@ -125,20 +125,6 @@
 [% END %]
 </div>
 
-<script type="text/javascript">
-$(function() {
-  $('#preference_groups').on('shown', function (e) {
-    localStorage.setItem('lastTab', $("#preference_groups .in").attr('id'));
-  });
-
-  //go to the latest tab, if it exists:
-  var lastTab = localStorage.getItem('lastTab');
-  if (lastTab) {
-      $('#'+lastTab).addClass("in");//collapse("show"); collapse does annoying animation
-  }
-});
-</script>
-
 [% IF helper.edit_preference -%]
 
 [%

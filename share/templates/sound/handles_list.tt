@@ -68,20 +68,6 @@
 [% END %]
 </div>
 
-<script type="text/javascript">
-$(function() {
-  $('#sound_groups').on('shown', function (e) {
-    localStorage.setItem('lastTab', $("#sound_groups .in").attr('id'));
-  });
-
-  //go to the latest tab, if it exists:
-  var lastTab = localStorage.getItem('lastTab');
-  if (lastTab) {
-      $('#'+lastTab).addClass("in");//collapse("show"); collapse does annoying animation
-  }
-});
-</script>
-
 [% IF edit_flag -%]
 
 [%
