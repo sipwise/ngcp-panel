@@ -10,8 +10,8 @@ has_field 'id' => (
     required => 1,
     template => 'helpers/datatables_field.tt',
     ajax_src => '/billing/ajax',
-    table_titles => ['#', 'Profile'],
-    table_fields => ['id', 'name'],
+    table_titles => ['#', 'Reseller', 'Profile'],
+    table_fields => ['id', 'reseller_name', 'name'],
 );
 
 has_field 'create' => (
