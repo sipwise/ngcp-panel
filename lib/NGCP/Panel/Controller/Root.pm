@@ -52,6 +52,15 @@ sub auto :Private {
 
     $c->log->debug("*** Root::auto grant access for authenticated user");
 
+    # check for read_only on write operations
+    if($c->user->read_only && (
+        $c->req->uri->path =~ /create/
+        || $c->req->uri->path =~ /edit/
+        || $c->req->uri->path =~ /delete/
+    )) {
+        $c->detach('/denied_page');
+    }
+
     # load top menu widgets
     my $plugin_finder = NGCP::Panel::Widget->new;
     my $topmenu_templates = [];
