@@ -87,7 +87,7 @@ $(function () {
                   '<h3 id="dataConfirmLabel">Are you sure?</h3>'+
                 '</div>'+
                 '<div class="modal-footer">'+
-                  '<button class="btn" data-dismiss="modal" aria-hidden="true">Cancel</button>'+
+                  '<button class="btn" data-dismiss="modal" aria-hidden="true" id="dataConfirmCancel">Cancel</button>'+
                   '<a class="btn btn-primary" id="dataConfirmOK">OK</a>'+
                 '</div>'+
               '</div>'
@@ -95,6 +95,12 @@ $(function () {
         } 
         $('#dataConfirmOK').attr('href', href);
         $('#dataConfirmOK').text($(this).attr('data-confirm'));
+        if($('#mod_edit').length) {
+            $('#mod_edit').modal('hide');
+            $('#dataConfirmCancel').live("click", function(ev) {
+                $('#mod_edit').modal('show');
+            });
+        }
         $('#dataConfirmModal').modal({show:true});
         return false;
     });
