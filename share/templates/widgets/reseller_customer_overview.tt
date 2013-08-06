@@ -1,0 +1,21 @@
+<div class="plan-container">
+    <div class="plan">
+        <div class="plan-header">
+            <div class="plan-title">Customers</div>
+            <div class="plan-price">
+                <span>[% customers.count %]</span>
+                <span class="term">Customer[% customers.count == 1 ? "" : "s" %]</span>
+            </div>
+        </div>
+        <div class="plan-features">
+            <ul>
+                <li><strong>[% contacts.count %]</strong> Contact[% contacts.count == 1 ? "" : "s" %]</li>
+                <li><strong>[% subscribers.count %]</strong> Subscriber[% subscribers.count == 1 ? "" : "s" %]</li>
+            </ul>
+        </div>
+        <div class="plan-actions">
+            <a href="[% c.uri_for('/customer') %]" class="btn">Configure</a>
+        </div>
+    </div>
+</div>
+[% # vim: set tabstop=4 syntax=html expandtab: -%]

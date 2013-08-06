@@ -26,6 +26,7 @@ around handle => sub {
         resellers => $c->model('DB')->resultset('resellers')->search_rs({}),
         domains => $c->model('DB')->resultset('domain_resellers')->search_rs({}),
         customers => $c->model('DB')->resultset('contracts')->search_rs({
+            status => { '!=' => 'terminated' },
             product_id => undef,
         }, {
             join => 'billing_mappings',

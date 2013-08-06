@@ -16,13 +16,19 @@ has 'type' => (
 has 'priority' => (
     is  => 'ro',
     isa => 'Int',
-    default => 100,
+    default => 10,
 );
 
 around handle => sub {
     my ($foo, $self, $c) = @_;
 
-    $c->log->debug("ResellerDomainOverview::handle");
+    my $reseller = $c->model('DB')->resultset('resellers')->find($c->user->reseller_id);
+
+    $c->stash(
+        domains => $reseller->domain_resellers,
+        rwr_sets => $reseller->voip_rewrite_rule_sets,
+        sound_sets => $reseller->voip_sound_sets,
+    );
     return;
 };
 
