@@ -853,7 +853,7 @@ sub preferences_callforward_destinationset_create :Chained('base') :PathPart('pr
         } catch($e) {
             $c->log->error("failed to create new destination set: $e");
         }
-        NGCP::Panel::Utils::Navigation::back_uri($c, 
+        NGCP::Panel::Utils::Navigation::back_or($c, 
             $c->uri_for_action('/subscriber/preferences_callforward_destinationset', 
                     [$c->req->captures->[0]], $cf_type)
             );
