@@ -1,0 +1,37 @@
+[% site_config.title = 'Call Flow for Call-ID ' _ callid  -%]
+
+<script type="text/javascript" src="/js/libs/jquery.popup.js"></script>
+<script type="text/javascript">
+    function pkgPopup(pkgid) {
+        // http://www.jquerypopup.com/documentation.php
+        modalPopup("center", 100, 640, 10, "#666666", 40, "#FFFFFF", "#000000", 4, 5, 300,
+            "[% c.uri_for_action('/callflow/get_packet', c.req.captures) %]/"+pkgid,
+            "/img/loader.gif");
+    }
+</script>
+
+<div class="row">
+    <span class="pull-left" style="margin:0 5px 0 5px;">
+        <a class="btn btn-primary btn-large" href="[% c.uri_for('/back') %]"><i class="icon-arrow-left"></i> Back</a>
+        <a class="btn btn-primary btn-large" href="[% c.uri_for_action('/callflow/get_pcap', c.req.captures) %]"><i class="icon-file"></i> Download PCAP</a>
+    </span>
+</div>
+[% back_created = 1 -%]
+
+<div class="row">
+    [% FOREACH m IN messages -%]
+        <div class="alert alert-[% m.type %]">[% m.text %]</div>
+    [% END -%]
+</div>
+
+<div class="ngcp-separator"></div>
+
+<img src="[% c.uri_for_action('/callflow/get_png', c.req.captures) %]"
+    width="[% canvas.width %]" height="[% canvas.height %]" usemap="#diamap" style="min-width:[% canvas.width %]px !important" />
+<map name="diamap">
+    [% FOREACH area IN canvas.areas -%]
+        <area shape="rect" coords="[% area.coords %]" href="javascript:pkgPopup([% area.id %])" />
+    [% END -%]
+</map>
+
+[% # vim: set tabstop=4 syntax=html expandtab: -%]

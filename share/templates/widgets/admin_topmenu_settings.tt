@@ -16,6 +16,7 @@
         <li><a href="[% c.uri_for('/ncos') %]">NCOS Levels</a></li>
         <li><a href="[% c.uri_for('/sound') %]">Sound Sets</a></li>
         <li><a href="[% c.uri_for('/security') %]">Security Bans</a></li>
+        <li><a href="[% c.uri_for('/security') %]">SIP Call Flows</a></li>
     </ul>
 </li>
 [% # vim: set tabstop=4 syntax=html expandtab: -%]

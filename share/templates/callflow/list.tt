@@ -1,0 +1,20 @@
+[% META title = 'SIP Call Flows' -%]
+[%
+    helper.name = 'Captured Calls';
+    helper.data = calls;
+    helper.messages = messages;
+    helper.dt_columns = capture_dt_columns;
+
+    helper.close_target = close_target;
+    helper.create_flag = create_flag;
+    helper.edit_flag = edit_flag;
+    helper.form_object = form;
+    helper.ajax_uri = c.uri_for('/callflow/ajax');
+
+    helper.dt_buttons = [
+        { name = 'Call Flow', uri = "/callflow/'+encodeURIComponent(full.call_id)+'/callmap", class = 'btn-small btn-primary', icon = 'icon-random' },
+    ];
+
+    PROCESS 'helpers/datatables.tt';
+-%]
+[% # vim: set tabstop=4 syntax=html expandtab: -%]
