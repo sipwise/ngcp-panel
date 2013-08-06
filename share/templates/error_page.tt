@@ -20,7 +20,7 @@
 					Back to Dashboard						
 				</a>
 				
-				<a href="/" class="btn btn-large">
+				<a href="mailto:[% c.config.contact.email %]" class="btn btn-large">
 					<i class="icon-envelope"></i>
 					&nbsp;
 					Contact Support						
