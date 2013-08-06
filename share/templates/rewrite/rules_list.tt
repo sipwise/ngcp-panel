@@ -53,7 +53,7 @@
                     <a class="btn btn-small btn-primary" href="[% c.uri_for_action('/rewrite/rules_edit',[set_result.id, r.id]) %]">
                         <i class="icon-edit"></i> Edit
                     </a>
-                    <a class="btn btn-small btn-secondary" href="[% c.uri_for_action('/rewrite/rules_delete',[set_result.id, r.id]) %]">
+                    <a data-confirm="Delete" class="btn btn-small btn-secondary" href="[% c.uri_for_action('/rewrite/rules_delete',[set_result.id, r.id]) %]">
                         <i class="icon-trash"></i> Delete
                     </a>
                 </div>
