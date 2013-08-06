@@ -32,7 +32,7 @@ a2dissite default
 
 # reload perl and/or apache modules
 if [ -x /etc/init.d/apache2 ] ; then
-  invoke-rc.d apache2 reload
+  invoke-rc.d apache2 restart
 fi
 
 exit 0
