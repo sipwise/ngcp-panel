@@ -183,7 +183,8 @@ sub reseller_customers :Chained('base') :PathPart('customers/ajax') :Args(0) {
     my ($self, $c) = @_;
 
     my $rs = $c->model('DB')->resultset('contracts')->search({
-        'contact.reseller_id' => $c->stash->{reseller}->first->id
+        'contact.reseller_id' => $c->stash->{reseller}->first->id,
+        'status' => { '!=' => 'terminated' },
     }, {
         join => 'contact'
     });
