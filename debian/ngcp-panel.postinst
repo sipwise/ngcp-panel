@@ -15,8 +15,6 @@ case "$1" in
   ;;
 esac
 
-. /usr/share/debconf/confmodule
-
 # enable required modules
 a2enmod ssl perl
 
