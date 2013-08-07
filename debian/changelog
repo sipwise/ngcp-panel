@@ -1,3 +1,9 @@
+ngcp-panel (1.0.3) unstable; urgency=low
+
+  * [f9ed88a] Provision "search" domain to prosody.
+
+ -- Andreas Granig <agranig@sipwise.com>  Thu, 08 Aug 2013 00:10:12 +0200
+
 ngcp-panel (1.0.2) unstable; urgency=low
 
   * [56c167c] Fix terminating voip_subscribers for reseller.
