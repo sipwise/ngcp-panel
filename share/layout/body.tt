@@ -137,6 +137,7 @@ $(function () {
     var lastTab = localStorage.getItem('lastTab');
     if (lastTab) {
         $('#'+lastTab).addClass("in");
+        $('#'+lastTab).parent().addClass("open");
     }
 });
 </script>
