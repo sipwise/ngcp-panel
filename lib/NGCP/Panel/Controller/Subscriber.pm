@@ -79,6 +79,7 @@ sub sub_list :Chained('/') :PathPart('subscriber') :CaptureArgs(0) {
         { name => "contract.contact.email", search => 1, title => "Contact Email" },
         { name => "username", search => 1, title => "Username" },
         { name => "domain.domain", search => 1, title => "Domain" },
+        { name => "uuid", search => 1, title => "UUID" },
         { name => "status", search => 1, title => "Status" },
     ]);
 }
@@ -2390,6 +2391,9 @@ sub edit_speeddial :Chained('speeddial') :PathPart('edit') :Args(0) {
 
 sub callflow_base :Chained('base') :PathPart('callflow') :CaptureArgs(1) {
     my ($self, $c, $callid) = @_;
+
+    $c->detach('/denied_page')
+        unless($c->config->{features}->{callflow});
 
     my $decoder = URI::Encode->new;
     $c->stash->{callid} = $decoder->decode($callid);
