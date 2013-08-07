@@ -1,3 +1,11 @@
+ngcp-panel (1.0.1) unstable; urgency=low
+
+  [ Gerhard Jungwirth ]
+  * [e41fe33] Use a modal to display the NCOS setting "Include local ac"
+  * [cc73c23] update dependencies in Build.PL
+
+ -- Andreas Granig <agranig@sipwise.com>  Wed, 07 Aug 2013 18:04:04 +0200
+
 ngcp-panel (1.0.0) unstable; urgency=low
 
   * Initial release of feature-complete v1.0
