@@ -1,3 +1,9 @@
+ngcp-panel (1.0.0) unstable; urgency=low
+
+  * Initial release of feature-complete v1.0
+
+ -- Andreas Granig <agranig@sipwise.com>  Wed, 07 Aug 2013 16:52:57 +0200
+
 ngcp-panel (0.01~dev) unstable; urgency=low
 
   * Initial release.
