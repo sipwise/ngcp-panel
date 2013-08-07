@@ -346,4 +346,9 @@ div.ngcp-modal .control-group.error .dataTables_wrapper input[type="text"] {
     padding: 4px 6px !important;
 }
 
+#number_patterns_local_ac > label {
+    display: inline;
+    cursor: not-allowed;
+}
+
 /* vim: set tabstop=4 syntax=css expandtab: */

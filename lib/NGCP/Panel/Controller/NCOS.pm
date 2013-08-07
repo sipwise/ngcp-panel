@@ -6,6 +6,7 @@ BEGIN { extends 'Catalyst::Controller'; }
 use NGCP::Panel::Form::NCOS::ResellerLevel;
 use NGCP::Panel::Form::NCOS::AdminLevel;
 use NGCP::Panel::Form::NCOS::Pattern;
+use NGCP::Panel::Form::NCOS::LocalAC;
 use NGCP::Panel::Utils::Navigation;
 use NGCP::Panel::Utils::Datatables;
 
@@ -200,39 +201,8 @@ sub pattern_list :Chained('base') :PathPart('pattern') :CaptureArgs(0) {
         { name => 'description', search => 1, title => 'Description' },
     ]);
     
-    my $local_ac_form = HTML::FormHandler::Model::DBIC->new(field_list => [
-        local_ac => { type => 'Boolean', label => 'Include local area code'},
-        save => { type => 'Submit', value => 'Set', element_class => ['btn']},
-        ],
-        'widget_wrapper' => 'Bootstrap',
-        form_element_class => ['form-horizontal', 'ngcp-quickform'],
-    );
-    $local_ac_form->process(
-        posted => ($c->request->method eq 'POST') && defined $c->req->params->{local_ac},
-        params => $c->request->params,
-        item   => $c->stash->{level_result}
-    );
-    NGCP::Panel::Utils::Navigation::check_form_buttons(
-        c => $c,
-        form => $local_ac_form,
-        fields => {},
-        back_uri => $c->req->uri,
-    );
-    $c->stash(local_ac_form => $local_ac_form);
-    if($local_ac_form->validated) {
-        try {
-            $c->stash->{pattern_rs}->first->update({
-                local_ac => $local_ac_form->values->{local_ac},
-            });
-            $c->flash(messages => [{type => 'success', text => 'Successfully updated NCOS pattern'}]);
-        } catch($e) {
-            $c->log->error("failed to update local-ac for ncos: $e");
-            $c->flash(messages => [{type => 'success', text => 'Successfully updated NCOS pattern'}]);
-        }
-        NGCP::Panel::Utils::Navigation::back_or($c, $c->stash->{pattern_base_uri});
-    }
-
-    $c->stash(template => 'ncos/pattern_list.tt');
+    $c->stash(local_ac_checked => $c->stash->{level_result}->local_ac,
+              template         => 'ncos/pattern_list.tt');
 }
 
 sub pattern_root :Chained('pattern_list') :PathPart('') :Args(0) {
@@ -340,6 +310,40 @@ sub pattern_create :Chained('pattern_list') :PathPart('create') :Args(0) {
         close_target => $c->stash->{pattern_base_uri},
         form => $form,
         create_flag => 1
+    );
+}
+
+sub pattern_edit_local_ac :Chained('pattern_list') :PathPart('edit_local_ac') :Args(0) {
+    my ($self, $c) = @_;
+
+    my $posted = ($c->request->method eq 'POST');
+    my $form = NGCP::Panel::Form::NCOS::LocalAC->new;
+    $form->process(
+        posted => $posted,
+        params => $c->request->params,
+        item   => $c->stash->{level_result},
+    );
+    NGCP::Panel::Utils::Navigation::check_form_buttons(
+        c => $c,
+        form => $form,
+        fields => {},
+        back_uri => $c->req->uri,
+    );
+    if($posted && $form->validated) {
+        try {
+            $c->stash->{level_result}->update($form->values);
+            $c->flash(messages => [{type => 'success', text => 'Setting successfully updated'}]);
+        } catch($e) {
+            $c->log->error("failed to update ncos level setting: $e");
+            $c->flash(messages => [{type => 'error', text => 'Failed to update NCOS level setting'}]);
+        }
+        NGCP::Panel::Utils::Navigation::back_or($c, $c->stash->{pattern_base_uri});
+    }
+
+    $c->stash(
+        close_target => $c->stash->{pattern_base_uri},
+        form => $form,
+        edit_flag => 1
     );
 }
 
