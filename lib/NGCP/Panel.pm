@@ -123,7 +123,7 @@ __PACKAGE__->config(
 );
 __PACKAGE__->config( default_view => 'HTML' );
 
-__PACKAGE__->log(Log::Log4perl::Catalyst->new($panel_config);
+__PACKAGE__->log(Log::Log4perl::Catalyst->new($panel_config));
 
 # Start the application
 __PACKAGE__->setup();
