@@ -2,10 +2,8 @@
 
 [%
     helper.name = 'Billing Fees';
-    helper.show_create_button = 1;
     helper.messages = messages;
-    helper.column_titles = [ '#', 'Source', 'Destination', 'Direction', 'Zone' ];
-    helper.column_fields = [ 'id', 'source', 'destination', 'direction', 'zone' ];
+    helper.dt_columns = fee_dt_columns;
 
     helper.close_target = close_target;
     helper.create_flag = create_flag;
@@ -14,15 +12,17 @@
     helper.ajax_uri = c.uri_for_action('/billing/fees_ajax', [c.req.captures.0]);
 
     helper.tmpuri = c.uri_for( profile.id, 'fees');
-    helper.dt_buttons = [
-        { name = 'Edit', uri = helper.tmpuri _ "/'+full[\"id\"]+'/edit", class = 'btn-small btn-primary', icon = 'icon-edit' },
-        { name = 'Delete', uri = helper.tmpuri _ "/'+full[\"id\"]+'/delete", class = 'btn-small btn-secondary', icon = 'icon-trash' },
-    ];
-    helper.top_buttons = [
-        { name = 'Create Fee Entry', uri = c.uri_for( profile.id, 'fees') _ "/create", icon = 'icon-star' },
-        { name = 'Upload Fees as CSV', uri = c.uri_for_action('/billing/fees_upload',[c.req.captures.0]), icon = 'icon-star' },
-        { name = 'Edit Zones', uri = c.uri_for_action('/billing/zones',[c.req.captures.0]), icon = 'icon-star' },
-    ];
+    UNLESS c.user.read_only;
+        helper.dt_buttons = [
+            { name = 'Edit', uri = helper.tmpuri _ "/'+full.id+'/edit", class = 'btn-small btn-primary', icon = 'icon-edit' },
+            { name = 'Delete', uri = helper.tmpuri _ "/'+full.id+'/delete", class = 'btn-small btn-secondary', icon = 'icon-trash' },
+        ];
+        helper.top_buttons = [
+            { name = 'Create Fee Entry', uri = c.uri_for( profile.id, 'fees') _ "/create", icon = 'icon-star' },
+            { name = 'Upload Fees as CSV', uri = c.uri_for_action('/billing/fees_upload',[c.req.captures.0]), icon = 'icon-star' },
+            { name = 'Edit Zones', uri = c.uri_for_action('/billing/zones',[c.req.captures.0]), icon = 'icon-star' },
+        ];
+    END;
 
     PROCESS 'helpers/datatables.tt';
 -%]

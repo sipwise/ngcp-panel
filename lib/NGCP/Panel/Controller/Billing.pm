@@ -201,7 +201,13 @@ sub create_without_reseller :Chained('profile_list') :PathPart('create/noreselle
 
 sub fees_list :Chained('base') :PathPart('fees') :CaptureArgs(0) {
     my ($self, $c) = @_;
-    
+    $c->stash->{fee_dt_columns} = NGCP::Panel::Utils::Datatables::set_columns($c, [
+        { name => 'id', search => 1, title => '#' },
+        { name => 'source', search => 1, title => 'Source Pattern' },
+        { name => 'destination', search => 1, title => 'Destination Pattern' },
+        { name => 'direction', search => 1, title => 'Match Direction' },
+        { name => 'billing_zone.detail', search => 1, title => 'Billing Zone' },
+    ]);
     $c->stash(template => 'billing/fees.tt');
 }
 
@@ -236,19 +242,8 @@ sub fees_base :Chained('fees_list') :PathPart('') :CaptureArgs(1) {
 sub fees_ajax :Chained('fees_list') :PathPart('ajax') :Args(0) {
     my ($self, $c) = @_;
 
-    my $resultset = $c->stash->{'profile_result'}->billing_fees
-        ->search(undef, {
-            join => 'billing_zone',
-            columns => [
-                {'zone' => 'billing_zone.zone'},
-               'id','source','destination','direction'
-            ]
-        });
-    
-    $c->forward( "/ajax_process_resultset", [$resultset,
-                 ["id", "source", "destination", "direction", "zone"],
-                 ["source", "destination", "direction"]]);
-    
+    my $resultset = $c->stash->{'profile_result'}->billing_fees;
+    NGCP::Panel::Utils::Datatables::process($c, $resultset, $c->stash->{fee_dt_columns});
     $c->detach( $c->view("JSON") );
 }
 

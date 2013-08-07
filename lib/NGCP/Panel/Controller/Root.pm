@@ -108,79 +108,6 @@ sub default :Path {
 
 sub end : ActionClass('RenderView') {}
 
-sub ajax_process_resultset :Private {
-    my ($self, $c, $rs, $columns, $searchable) = @_;
-
-    #Process Arguments
-    my $sEcho = int($c->request->params->{sEcho} // 1); #/
-    # http://datatables.net/usage/server-side#sEcho
-    my $sSearch        = $c->request->params->{sSearch} // "";     #/
-    my $iDisplayStart  = $c->request->params->{iDisplayStart};
-    my $iDisplayLength = $c->request->params->{iDisplayLength};
-    my $iSortCol_0     = $c->request->params->{iSortCol_0};
-    my $sSortDir_0     = $c->request->params->{sSortDir_0};
-
-    if (defined $sSortDir_0) {
-        if ('desc' eq lc $sSortDir_0) {
-            $sSortDir_0 = 'desc';
-        } else {
-            $sSortDir_0 = 'asc';
-        }
-    }
-
-    my $iIdOnTop       = $c->request->params->{iIdOnTop};
-
-    #will contain final data to be sent
-    my $aaData = [];
-
-    my $totalRecords = $rs->count;
-
-    if ($sSearch) {
-        $rs = $rs->search([ map{ +{ $_ => { like => '%'.$sSearch.'%' } } } @$searchable ]);
-    }
-
-    my $totalDisplayRecords = $rs->count;
-
-    #potentially selected Id as first element
-    if (defined $iIdOnTop) {
-        if (defined(my $row = $rs->find($iIdOnTop))) {
-            push @{ $aaData }, _prune_row($columns, $row->get_inflated_columns);
-            $rs = $rs->search({ 'me.id' => { '!=', $iIdOnTop} });
-        } else {
-            $c->log->error("iIdOnTop $iIdOnTop not found in resultset " . ref $rs);
-        };
-    }
-
-    #Sorting
-    if (defined $iSortCol_0 && defined $sSortDir_0) {
-        $rs = $rs->search(undef, {
-            order_by => {
-                "-$sSortDir_0" => $columns->[$iSortCol_0],
-            }
-        });
-    }
-
-    #Pagination
-    # $iDisplayLength will be -1 if bPaginate is false
-    if (defined $iDisplayStart && $iDisplayLength && $iDisplayLength > 0) {
-        $rs = $rs->search(undef, {
-            offset => $iDisplayStart,
-            rows   => $iDisplayLength,
-        });
-    }
-
-    for my $row ($rs->all) {
-        push @{ $aaData }, _prune_row($columns, $row->get_inflated_columns);
-    }
-
-    $c->stash(
-        aaData               => $aaData,
-        iTotalRecords        => $totalRecords,
-        iTotalDisplayRecords => $totalDisplayRecords,
-        sEcho                => $sEcho,
-    );
-}
-
 sub _prune_row {
     my ($columns, %row) = @_;
     while (my ($k,$v) = each %row) {
@@ -243,20 +170,6 @@ Standard 404 error page
 =head2 end
 
 Attempt to render a view, if needed.
-
-=head2 ajax_process_resultset
-
-Processes a L<ResultSet|DBIx::Class::ResultSet> and prepares data from other controllers to be used
-with the JSON view. The items exposed to stash are namely:
-
-* sEcho
-* aaData
-* iTotalRecords
-* iTotalDisplayRecords
-
-They are intended for use with datatables.
-
-Arguments: $resultset, \@columns, \@searchable
 
 =head2 error_page
 
