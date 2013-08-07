@@ -299,6 +299,7 @@ sub ajax_contract :Chained('list_reseller') :PathPart('ajax_contract') :Args(0) 
     my $free_contracts = $c->model('DB')
         ->resultset('contracts')
         ->search_rs({
+            'me.status' => { '!=' => 'terminated' },
             'me.id' => { 'not in' => \@used_contracts }
         });
     NGCP::Panel::Utils::Datatables::process($c, $free_contracts, $c->stash->{contract_dt_columns});

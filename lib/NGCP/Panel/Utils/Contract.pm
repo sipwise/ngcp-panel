@@ -66,19 +66,20 @@ sub recursively_lock_contract {
     for my $subscriber($contract->voip_subscribers->all) {
         $subscriber->update({ status => $status });
         if($status eq 'terminated') {
-            $subscriber->provisioning_voip_subscriber->delete;
+            $subscriber->provisioning_voip_subscriber->delete
+                if($subscriber->provisioning_voip_subscriber);
         } elsif($status eq 'locked') {
             NGCP::Panel::Utils::Subscriber::lock_provisoning_voip_subscriber(
                 c => $c,
                 prov_subscriber => $subscriber->provisioning_voip_subscriber,
                 level => 4,
-            );
+            ) if($subscriber->provisioning_voip_subscriber);
         } elsif($status eq 'active') {
             NGCP::Panel::Utils::Subscriber::lock_provisoning_voip_subscriber(
                 c => $c,
                 prov_subscriber => $subscriber->provisioning_voip_subscriber,
                 level => 0,
-            );
+            ) if($subscriber->provisioning_voip_subscriber);
         }
     }
 
@@ -113,19 +114,20 @@ sub recursively_lock_contract {
             for my $subscriber($customer->voip_subscribers->all) {
                 $subscriber->update({ status => $status });
                 if($status eq 'terminated') {
-                    $subscriber->provisioning_voip_subscriber->delete;
+                    $subscriber->provisioning_voip_subscriber->delete
+                        if($subscriber->provisioning_voip_subscriber);
                 } elsif($status eq 'locked') {
                     NGCP::Panel::Utils::Subscriber::lock_provisoning_voip_subscriber(
                         c => $c,
                         prov_subscriber => $subscriber->provisioning_voip_subscriber,
                         level => 4,
-                    );
+                    ) if($subscriber->provisioning_voip_subscriber);
                 } elsif($status eq 'active') {
                     NGCP::Panel::Utils::Subscriber::lock_provisoning_voip_subscriber(
                         c => $c,
                         prov_subscriber => $subscriber->provisioning_voip_subscriber,
                         level => 0,
-                    );
+                    ) if($subscriber->provisioning_voip_subscriber);
                 }
             }
         }

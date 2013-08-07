@@ -139,7 +139,7 @@ $(document).ready(function() {
     [% FOR button IN helper.top_buttons -%]
         [% IF button.method == "post" -%]
             <form method="post" action="[% button.uri %]" style="float:left; margin:0 5px 0 5px;">
-                <button class="btn btn-primary btn-large" style="height:42px;"><i class="[% button.icon %]"></i> [% button.name %]</button>
+                <button class="btn btn-primary btn-large" style="height:47px;"><i class="[% button.icon %]"></i> [% button.name %]</button>
                 <input type="hidden" name="back" value="[% c.req.uri %]"/>
             </form>
         [% ELSE -%]
