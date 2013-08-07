@@ -37,6 +37,7 @@ Build-Depends: debhelper (>= 8),
                libxml-mini-perl,
                libgd-gd2-perl,
                libhtml-parser-perl,
+               libnet-telnet-perl,
                ngcp-schema
 Standards-Version: 3.9.4
 Homepage: http://sipwise.com/
@@ -78,6 +79,7 @@ Depends: libcatalyst-actionrole-acl-perl,
          libxml-mini-perl,
          libgd-gd2-perl,
          libhtml-parser-perl,
+         libnet-telnet-perl,
          ngcp-schema,
          ${misc:Depends},
          ${perl:Depends}

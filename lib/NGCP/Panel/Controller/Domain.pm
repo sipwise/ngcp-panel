@@ -7,6 +7,7 @@ BEGIN { extends 'Catalyst::Controller'; }
 use NGCP::Panel::Form::Domain::Reseller;
 use NGCP::Panel::Form::Domain::Admin;
 use NGCP::Panel::Utils::Navigation;
+use NGCP::Panel::Utils::Prosody;
 
 sub auto :Does(ACL) :ACLDetachTo('/denied_page') :AllowedRole(admin) :AllowedRole(reseller) {
     my ($self, $c) = @_;
@@ -80,6 +81,7 @@ sub create :Chained('dom_list') :PathPart('create') :Args(0) {
                 $new_dom->create_related('domain_resellers', {
                     reseller_id => $reseller_id
                     });
+                NGCP::Panel::Utils::Prosody::activate_domain($c, $form->value->{domain});
                 delete $c->session->{created_objects}->{reseller};
             });
         } catch ($e) {
@@ -104,7 +106,7 @@ sub base :Chained('/domain/dom_list') :PathPart('') :CaptureArgs(1) {
     my ($self, $c, $domain_id) = @_;
 
     unless($domain_id && $domain_id->is_integer) {
-        $c->flash(messages => [{type => 'error', text => 'Invalid domain id detected!'}]);
+        $c->flash(messages => [{type => 'error', text => 'Invalid domain id detected'}]);
         $c->response->redirect($c->uri_for());
         $c->detach;
         return;
@@ -112,7 +114,7 @@ sub base :Chained('/domain/dom_list') :PathPart('') :CaptureArgs(1) {
 
     my $res = $c->stash->{dom_rs}->find($domain_id);
     unless(defined($res)) {
-        $c->flash(messages => [{type => 'error', text => 'Domain does not exist!'}]);
+        $c->flash(messages => [{type => 'error', text => 'Domain does not exist'}]);
         $c->response->redirect($c->uri_for());
         $c->detach;
         return;
@@ -148,15 +150,15 @@ sub edit :Chained('base') :PathPart('edit') :Args(0) {
                 });
             });
         } catch ($e) {
-            $c->flash(messages => [{type => 'error', text => 'Update of Domain failed!'}]);
-            $c->log->error("Update failed: $e");
+            $c->flash(messages => [{type => 'error', text => 'Failed to update domain'}]);
+            $c->log->error("failed to update domain: $e");
             $c->response->redirect($c->uri_for());
             return;
         }
 
         $self->_sip_domain_reload;
 
-        $c->flash(messages => [{type => 'success', text => 'Domain successfully changed!'}]);
+        $c->flash(messages => [{type => 'success', text => 'Domain successfully updated'}]);
         $c->response->redirect($c->uri_for());
         return;
     }
@@ -169,14 +171,16 @@ sub edit :Chained('base') :PathPart('edit') :Args(0) {
 sub delete :Chained('base') :PathPart('delete') :Args(0) {
     my ($self, $c) = @_;
 
+    my $domain = $c->stash->{'domain_result'}->domain;
     try {
         $c->model('DB')->schema->txn_do( sub {
             $c->stash->{'domain_result'}->delete;
             $c->stash->{'provisioning_domain_result'}->delete;
+            NGCP::Panel::Utils::Prosody::deactivate_domain($c, $domain);
         });
     } catch ($e) {
-        $c->flash(messages => [{type => 'error', text => 'Delete failed!'}]);
-        $c->log->error("Delete failed: $e");
+        $c->flash(messages => [{type => 'error', text => 'Failed to delete domain'}]);
+        $c->log->error("failed to delete domain: $e");
         $c->response->redirect($c->uri_for());
         return;
     }
