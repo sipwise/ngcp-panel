@@ -19,6 +19,13 @@ sub activate_domain {
         } else {
             $ok = 0;
         }
+        $t->print("host:activate('search.$domain', { component_module = 'sipwise_vjud' })");
+        my ($res, $amatch)  = $t->waitfor('/(Result: \w+)|(Message: .+)/');
+        if($amatch =~ /Result:\s*true/) {
+            # fine
+        } else {
+            $ok = 0;
+        }
     }
 
     return $ok if($ok);
@@ -35,6 +42,13 @@ sub deactivate_domain {
         $t->open(Host => $host->{ip}, Port => $host->{port});
         $t->waitfor('/http:\/\/prosody.im\/doc\/console/');
         $t->print("host:deactivate('$domain')");
+        my ($res, $amatch)  = $t->waitfor('/(Result: \w+)|(Message: .+)/');
+        if($amatch =~ /Result:\s*true/) {
+            # fine
+        } else {
+            $ok = 0;
+        }
+        $t->print("host:deactivate('search.$domain')");
         my ($res, $amatch)  = $t->waitfor('/(Result: \w+)|(Message: .+)/');
         if($amatch =~ /Result:\s*true/) {
             # fine
