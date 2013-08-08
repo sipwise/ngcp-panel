@@ -256,22 +256,38 @@ sub edit :Chained('base') :PathPart('edit') :Args(0) {
 sub terminate :Chained('base') :PathPart('terminate') :Args(0) {
     my ($self, $c) = @_;
 
+    my $reseller = $c->stash->{reseller}->first;
+
+    if ($reseller->id == 1) {
+        $c->flash(messages => [{type => 'error', text => 'Cannot terminate reseller with the id 1'}]);
+        NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for('/reseller'));
+    }
+
     try {
         $c->model('DB')->txn_do(sub {
-            my $reseller = $c->stash->{reseller}->first;
             my $old_status = $reseller->status;
             $reseller->update({ status => 'terminated' });
 
             if($reseller->status ne $old_status) {
+                #delete contracts
                 my $contract = $reseller->contract;
                 $contract->update({ status => $reseller->status });
                 NGCP::Panel::Utils::Contract::recursively_lock_contract(
                     c => $c,
                     contract => $contract,
                 );
+                #delete admins
                 for my $admin($reseller->admins->all) {
                     $admin->delete;
                 }
+                #delete ncos_levels
+                $reseller->ncos_levels->delete_all;
+                #delete voip_number_block_resellers
+                $reseller->voip_number_block_resellers->delete_all;
+                #delete voip_sound_sets
+                $reseller->voip_sound_sets->delete_all;
+                #delete voip_rewrite_rule_sets
+                $reseller->voip_rewrite_rule_sets->delete_all;
             }
         });
         $c->flash(messages => [{type => 'success', text => 'Successfully terminated reseller'}]);
