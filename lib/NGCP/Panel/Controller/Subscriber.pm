@@ -1990,7 +1990,7 @@ sub play_voicemail :Chained('voicemail') :PathPart('play') :Args(0) {
             $recording, 'WAV', 'WAV');
     } catch ($error) {
         $c->flash(messages => [{type => 'error', text => 'Transcode of audio file failed!'}]);
-        $c->log->info("Transcode failed: $error");
+        $c->log->error("failed to transcode file: $error");
         NGCP::Panel::Utils::Navigation::back_or($c, 
             $c->uri_for_action('/subscriber/details', [$c->req->captures->[0]]));
     }

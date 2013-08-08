@@ -115,7 +115,7 @@ sub set_delete :Chained('set_base') :PathPart('delete') {
         $c->stash->{set_result}->delete;
         $c->flash(messages => [{type => 'success', text => 'Rewrite rule set successfully deleted'}]);
     } catch($e) {
-        $c->log->info("failed to delete rewrite rule set: $e");
+        $c->log->error("failed to delete rewrite rule set: $e");
         $c->flash(messages => [{type => 'error', text => 'Failed to delete rewrite rule set'}]);
     }
     NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for('/rewrite'));
@@ -320,7 +320,7 @@ sub rules_delete :Chained('rules_base') :PathPart('delete') {
         $self->_sip_dialplan_reload();
         $c->flash(messages => [{type => 'success', text => 'Rewrite rule successfully deleted'}]);
     } catch($e) {
-        $c->log->info("failed to delete rewrite rule: $e");
+        $c->log->error("failed to delete rewrite rule: $e");
         $c->flash(messages => [{type => 'error', text => 'Failed to delete rewrite rule'}]);
     };
     NGCP::Panel::Utils::Navigation::back_or($c, $c->stash->{rules_uri});

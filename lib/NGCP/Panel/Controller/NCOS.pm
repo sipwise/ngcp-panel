@@ -132,11 +132,11 @@ sub delete :Chained('base') :PathPart('delete') {
     try {
         $c->stash->{level_result}->delete;
         $c->flash(messages => [{type => 'success', text => 'NCOS level successfully deleted'}]);
-    } catch (DBIx::Class::Exception $e) {
+    } catch ($e) {
         $c->flash(messages => [{type => 'error', text => 'Failed to delete NCOS level'}]);
         $c->log->error("failed to delete ncos level: $e");
     };
-    $c->response->redirect($c->uri_for());
+    NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for);
 }
 
 sub create :Chained('levels_list') :PathPart('create') :Args(0) {
@@ -273,7 +273,7 @@ sub pattern_delete :Chained('pattern_base') :PathPart('delete') {
     try {
         $c->stash->{pattern_result}->delete;
         $c->flash(messages => [{type => 'success', text => 'NCOS pattern successfully deleted'}]);
-    } catch (DBIx::Class::Exception $e) {
+    } catch ($e) {
         $c->log->error("failed to delete ncos pattern: $e");
         $c->flash(messages => [{type => 'error', text => 'Failed to delete NCOS pattern'}]);
     };

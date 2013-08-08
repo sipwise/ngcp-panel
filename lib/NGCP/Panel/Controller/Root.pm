@@ -125,7 +125,7 @@ sub _prune_row {
 sub error_page :Private {
     my ($self,$c) = @_;
     
-    $c->log->info( 'Failed to find: ' . $c->request->path );
+    $c->log->error( 'Failed to find path ' . $c->request->path );
     $c->stash(template => 'error_page.tt');
     #$c->response->body( 'Page not found' );
     $c->response->status(404);
@@ -134,7 +134,7 @@ sub error_page :Private {
 sub denied_page :Private {
     my ($self,$c) = @_;
     
-    $c->log->info('Access to path denied: ' . $c->request->path );
+    $c->log->error('Access denied to path ' . $c->request->path );
     $c->stash(template => 'denied_page.tt');
     $c->response->status(403);
 }

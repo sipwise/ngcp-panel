@@ -247,8 +247,8 @@ sub terminate :Chained('base') :PathPart('terminate') :Args(0) {
             );
         }
         $c->flash(messages => [{type => 'success', text => 'Contract successfully terminated'}]);
-    } catch (DBIx::Class::Exception $e) {
-        $c->log->info("failed to terminate contract: $e");
+    } catch ($e) {
+        $c->log->error("failed to terminate contract: $e");
         $c->flash(messages => [{type => 'error', text => 'Failed to terminate contract'}]);
     };
     NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for('/contract'));
