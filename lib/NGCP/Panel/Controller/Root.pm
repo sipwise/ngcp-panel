@@ -40,6 +40,8 @@ sub auto :Private {
         if($c->request->method eq 'GET') {
             if($c->request->uri !~ /\/logout$/) {
                 $target = $c->request->uri;
+            } else {
+                $target = $c->uri_for("/dashboard");
             }
         } else {
             $target = $c->request->headers->referer;
