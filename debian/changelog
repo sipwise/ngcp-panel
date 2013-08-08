@@ -1,3 +1,17 @@
+ngcp-panel (1.0.4) unstable; urgency=low
+
+  [ Andreas Granig ]
+  * [685d7d4] Pass back newly created domain to parent.
+  * [2a84ea4] Only disable other sites if they are enabled.
+
+  [ Gerhard Jungwirth ]
+  * [69ac47f] Handle the case,  the user logs out twice
+  * [20bb711] Adapt billing test to recent fixes
+  * [3af5806] delete related tables on reseller terminate
+  * [13a0b50] correctly terminate reseller from edit-modal
+
+ -- Andreas Granig <agranig@sipwise.com>  Thu, 08 Aug 2013 13:00:52 +0200
+
 ngcp-panel (1.0.3) unstable; urgency=low
 
   * [f9ed88a] Provision "search" domain to prosody.
