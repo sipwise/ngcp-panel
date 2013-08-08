@@ -310,9 +310,10 @@ sub ajax_contract :Chained('list_reseller') :PathPart('ajax_contract') :Args(0) 
     my ($self, $c) = @_;
  
     my $edit_contract_id = $c->session->{edit_contract_id};
-    my @used_contracts = map { 
-        $_->get_column('contract_id') 
-            unless($edit_contract_id && $edit_contract_id == $_->get_column('contract_id'))
+    my @used_contracts = map {
+        unless($edit_contract_id && $edit_contract_id == $_->get_column('contract_id')) {
+            $_->get_column('contract_id')
+        } else {}
     } $c->stash->{resellers}->all;
     my $free_contracts = $c->model('DB')
         ->resultset('contracts')
