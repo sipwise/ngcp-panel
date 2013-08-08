@@ -1,3 +1,9 @@
+ngcp-panel (1.0.8) unstable; urgency=low
+
+  * [3d75574] Remove a2ensite/dissite handling.
+
+ -- Andreas Granig <agranig@sipwise.com>  Thu, 08 Aug 2013 22:02:37 +0200
+
 ngcp-panel (1.0.7) unstable; urgency=low
 
   * [eb063dd] Fix syntax error.
