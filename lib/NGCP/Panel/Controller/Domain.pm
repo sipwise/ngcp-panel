@@ -83,6 +83,7 @@ sub create :Chained('dom_list') :PathPart('create') :Args(0) {
                     });
                 NGCP::Panel::Utils::Prosody::activate_domain($c, $form->value->{domain});
                 delete $c->session->{created_objects}->{reseller};
+                $c->session->{created_objects}->{domain} = { id => $new_dom->id };
             });
         } catch ($e) {
             $c->flash(messages => [{type => 'error', text => 'Failed to create domain'}]);
