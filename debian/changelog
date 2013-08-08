@@ -1,3 +1,18 @@
+ngcp-panel (1.0.6) unstable; urgency=low
+
+  [ Andreas Granig ]
+  * [083fbc7] Catch all exceptions and log errors as error.
+  * [b2faa82] Properly filter customer contracts.
+  * [2ead4f8] Don't fail installation if postinst fails.
+  * [d2aeb82] Make modal header more generic.
+  * [d43f4ca] Re-use ossbss logging config if available.
+
+  [ Gerhard Jungwirth ]
+  * [ec18d91] move admin deletion to Utils::Contract::recursively_lock_contract
+  * [ca5e863] fix view on narrow screens
+
+ -- Andreas Granig <agranig@sipwise.com>  Thu, 08 Aug 2013 18:21:00 +0200
+
 ngcp-panel (1.0.5) unstable; urgency=low
 
   * [993c7b9] Enable ngcp-panel in apache after installation.
