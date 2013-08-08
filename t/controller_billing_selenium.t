@@ -12,10 +12,8 @@ $d->get_ok("$uri/logout"); #make sure we are logged out
 $d->get_ok("$uri/login");
 $d->set_implicit_wait_timeout(1000);
 
-$d->findtext_ok('Subscriber Sign In');
-
-diag("Go to Admin Login");
-$d->findclick_ok(link_text => 'Admin');
+diag("Do Admin Login");
+$d->findtext_ok('Admin Sign In');
 $d->find(name => 'username')->send_keys('administrator');
 $d->find(name => 'password')->send_keys('administrator');
 $d->findclick_ok(name => 'submit');
@@ -29,11 +27,13 @@ $d->findclick_ok(link_text => "Billing");
 
 diag("Create a billing profile");
 $d->title_is("Billing Profiles");
-$d->findclick_ok(link_text => 'Create Billing Profiles');
+$d->findclick_ok(link_text => 'Create Billing Profile');
 $d->find(id => 'name')->send_keys('mytestprofile');
 $d->fill_element_ok(['name', 'handle', 'mytestprofile']);
 $d->find_ok(id => 'fraud_interval_lock');
 $d->findclick_ok(xpath => '//select[@id="fraud_interval_lock"]/option[contains(text(),"foreign calls")]');
+$d->findclick_ok(xpath => '//div[contains(@class,modal-body)]//table[@id="reselleridtable"]/tbody/tr[1]/td//input[@type="checkbox"]');
+
 $d->findclick_ok(xpath => '//div[contains(@class,"modal")]//input[@type="submit"]');
 $d->findtext_ok('mytestprofile');
 
@@ -52,17 +52,17 @@ is($elem->get_value, "mytestprofile");
 $d->fill_element_ok(['id', 'interval_charge', '3.2']);
 $d->findclick_ok(id => 'save');
 
-diag('Open "Edit Fees" for mytestprofile');
+diag('Open "Fees" for mytestprofile');
 $row = $d->find(xpath => '//table/tbody/tr/td[contains(text(), "mytestprofile")]/..');
 ok($row);
-$edit_link = $d->find_child_element($row, '(./td//a)[contains(text(),"Edit Fees")]');
+$edit_link = $d->find_child_element($row, '(./td//a)[contains(text(),"Fees")]');
 ok($edit_link);
 $d->move_to(element => $row);
 $edit_link->click;
 $d->title_like(qr/Billing Fees/);
 
 diag("Create a billing fee");
-$d->findclick_ok(link_text => 'Create Billing Fees');
+$d->findclick_ok(link_text => 'Create Fee Entry');
 $d->findclick_ok(xpath => '//div[contains(@class,"modal")]//input[@value="Create Zone"]');
 diag("Create a billing zone (redirect from previous form)");
 $d->fill_element_ok([name => 'zone', 'testingzone']);
@@ -75,11 +75,11 @@ $d->fill_element_ok([name => 'destination', '.+']);
 $d->findclick_ok(id => 'save');
 
 diag("Delete billing fee");
-$d->find_ok(xpath => '//div[contains(@class,"dataTables_wrapper")]//td[contains(text(),"testingzone")]/..//a[contains(@class,"btn-primary") and contains(text(),"Edit")]');
-$row = $d->find(xpath => '//div[contains(@class,"dataTables_wrapper")]//td[contains(text(),"testingzone")]/..');
+$d->find_ok(xpath => '//div[contains(@class,"dataTables_wrapper")]//td[contains(text(),"testingdetail")]/..//a[contains(@class,"btn-primary") and contains(text(),"Edit")]');
+$row = $d->find(xpath => '//div[contains(@class,"dataTables_wrapper")]//td[contains(text(),"testingdetail")]/..');
 ok($row);
 $d->move_to(element => $row);
-$d->findclick_ok(xpath => '//div[contains(@class,"dataTables_wrapper")]//td[contains(text(),"testingzone")]/..//a[contains(@class,"btn-secondary") and contains(text(),"Delete")]');
+$d->findclick_ok(xpath => '//div[contains(@class,"dataTables_wrapper")]//td[contains(text(),"testingdetail")]/..//a[contains(@class,"btn-secondary") and contains(text(),"Delete")]');
 $d->findtext_ok("Are you sure?");
 $d->findclick_ok(id => 'dataConfirmOK');
 $d->findtext_ok("successfully deleted");
@@ -105,7 +105,7 @@ $d->findclick_ok(link_text => "Billing");
 diag('Open "Edit Peak Times" for mytestprofile');
 $row = $d->find(xpath => '//table/tbody/tr/td[contains(text(), "mytestprofile")]/..');
 ok($row);
-$edit_link = $d->find_child_element($row, '(./td//a)[contains(text(),"Edit Peak Times")]');
+$edit_link = $d->find_child_element($row, '(./td//a)[contains(text(),"Peaktimes")]');
 ok($edit_link);
 $d->move_to(element => $row);
 $edit_link->click;
@@ -128,10 +128,9 @@ $d->findclick_ok(xpath => '//div[contains(@class,"modal")]//i[@class="icon-trash
 $d->findclick_ok(id => 'mod_close');
 
 diag("Create a Date Definition");
-$d->findclick_ok(link_text => 'Create Date Definitions');
-$d->fill_element_ok([name => 'date', '2008-02-28']);
-$d->fill_element_ok([name => 'time.start', "03:14:15"]);
-$d->fill_element_ok([name => 'time.end', "13:37:00"]);
+$d->findclick_ok(link_text => 'Create Special Off-Peak Date');
+$d->fill_element_ok([name => 'start', "2008-02-28 03:14:15"]);
+$d->fill_element_ok([name => 'end', "2008-02-28 13:37:00"]);
 $d->findclick_ok(name => 'save');
 
 diag("Find/delete my created date definition");
