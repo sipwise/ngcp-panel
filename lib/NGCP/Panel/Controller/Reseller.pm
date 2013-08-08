@@ -199,13 +199,15 @@ sub edit :Chained('base') :PathPart('edit') :Args(0) {
     $c->detach('/denied_page')
     	if($c->user->read_only);
 
+    my $reseller = $c->stash->{reseller}->first;
+
     my $posted = $c->request->method eq 'POST';
     my $form = NGCP::Panel::Form::Reseller->new;
 
     # we need this in the ajax call to not filter it as used contract
-    $c->session->{edit_contract_id} = $c->stash->{reseller}->first->contract_id;
+    $c->session->{edit_contract_id} = $reseller->contract_id;
 
-    my $params = { $c->stash->{reseller}->first->get_inflated_columns };
+    my $params = { $reseller->get_inflated_columns };
     $params->{contract}{id} = delete $params->{contract_id};
     $params = $params->merge($c->session->{created_objects});
     $form->process(
@@ -223,16 +225,11 @@ sub edit :Chained('base') :PathPart('edit') :Args(0) {
             $c->model('DB')->txn_do(sub {
                 $form->params->{contract_id} = delete $form->params->{contract}{id};
                 delete $form->params->{contract};
-                my $old_status = $c->stash->{reseller}->first->status;
-                $c->stash->{reseller}->first->update($form->params);
+                my $old_status = $reseller->status;
+                $reseller->update($form->params);
 
-                if($c->stash->{reseller}->first->status ne $old_status) {
-                    my $contract = $c->stash->{reseller}->first->contract;
-                    $contract->update({ status => $c->stash->{reseller}->first->status });
-                    NGCP::Panel::Utils::Contract::recursively_lock_contract(
-                        c => $c,
-                        contract => $contract,
-                    );
+                if($reseller->status ne $old_status) {
+                    $self->_handle_reseller_status_change($c, $reseller);
                 }
             });
 
@@ -269,25 +266,7 @@ sub terminate :Chained('base') :PathPart('terminate') :Args(0) {
             $reseller->update({ status => 'terminated' });
 
             if($reseller->status ne $old_status) {
-                #delete contracts
-                my $contract = $reseller->contract;
-                $contract->update({ status => $reseller->status });
-                NGCP::Panel::Utils::Contract::recursively_lock_contract(
-                    c => $c,
-                    contract => $contract,
-                );
-                #delete admins
-                for my $admin($reseller->admins->all) {
-                    $admin->delete;
-                }
-                #delete ncos_levels
-                $reseller->ncos_levels->delete_all;
-                #delete voip_number_block_resellers
-                $reseller->voip_number_block_resellers->delete_all;
-                #delete voip_sound_sets
-                $reseller->voip_sound_sets->delete_all;
-                #delete voip_rewrite_rule_sets
-                $reseller->voip_rewrite_rule_sets->delete_all;
+                $self->_handle_reseller_status_change($c,$reseller);
             }
         });
         $c->flash(messages => [{type => 'success', text => 'Successfully terminated reseller'}]);
@@ -296,6 +275,32 @@ sub terminate :Chained('base') :PathPart('terminate') :Args(0) {
         $c->flash(messages => [{type => 'error', text => 'Failed to terminate reseller'}]);
     }
     NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for('/reseller'));
+}
+
+sub _handle_reseller_status_change {
+    my ($self, $c, $reseller) = @_;
+    
+    my $contract = $reseller->contract;
+    $contract->update({ status => $reseller->status });
+    NGCP::Panel::Utils::Contract::recursively_lock_contract(
+        c => $c,
+        contract => $contract,
+    );
+    
+    if($reseller->status eq "terminated") {
+        #delete admins
+        for my $admin($reseller->admins->all) {
+            $admin->delete;
+        }
+        #delete ncos_levels
+        $reseller->ncos_levels->delete_all;
+        #delete voip_number_block_resellers
+        $reseller->voip_number_block_resellers->delete_all;
+        #delete voip_sound_sets
+        $reseller->voip_sound_sets->delete_all;
+        #delete voip_rewrite_rule_sets
+        $reseller->voip_rewrite_rule_sets->delete_all;
+    }
 }
 
 sub details :Chained('base') :PathPart('details') :Args(0) {
