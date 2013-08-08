@@ -89,17 +89,20 @@ sub recursively_lock_contract {
     });
     for my $reseller($resellers->all) {
 
-        # remove domains in case of reseller termination
         if($status eq 'terminated') {
+            # remove domains in case of reseller termination
             for my $domain($reseller->domain_resellers->all) {
                 $domain->domain->delete;
                 $domain->delete;
             }
-        }
 
-        # remove admin logins in case of reseller termination
-        for my $admin($reseller->admins->all) {
-            $admin->delete;
+            # remove admin logins in case of reseller termination
+            for my $admin($reseller->admins->all) {
+                if($admin->id == $c->user->id) {
+                    die "Cannot delete the currently used account";
+                }
+                $admin->delete;
+            }
         }
 
         # fetch sub-contracts of this contract

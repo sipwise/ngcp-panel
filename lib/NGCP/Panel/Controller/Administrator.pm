@@ -194,6 +194,11 @@ sub edit :Chained('base') :PathPart('edit') :Args(0) {
 
 sub delete :Chained('base') :PathPart('delete') :Args(0) {
     my ($self, $c) = @_;
+
+    if($c->stash->{administrator}->id == $c->user->id) {
+        $c->flash(messages => [{type => 'error', text => 'Cannot delete myself'}]);
+        NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for('/administrator'));
+    }
     try {
         $c->stash->{administrator}->delete;
         $c->flash(messages => [{type => 'success', text => 'Administrator successfully deleted'}]);

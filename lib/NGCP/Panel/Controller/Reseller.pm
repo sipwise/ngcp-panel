@@ -289,10 +289,6 @@ sub _handle_reseller_status_change {
     );
     
     if($reseller->status eq "terminated") {
-        #delete admins
-        for my $admin($reseller->admins->all) {
-            $admin->delete;
-        }
         #delete ncos_levels
         $reseller->ncos_levels->delete_all;
         #delete voip_number_block_resellers
