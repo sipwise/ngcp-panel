@@ -34,9 +34,13 @@ my $panel_config;
 for my $path(qw#/etc/ngcp-panel/ngcp_panel.conf etc/ngcp_panel.conf ngcp_panel.conf#) {
     if(-f $path) {
         $panel_config = $path;
+        last;
     }
 }
 $panel_config //= 'ngcp_panel.conf';
+
+my $logger_config = '/etc/ngcp-ossbss/logging.conf';
+$logger_config = $panel_config unless(-f $logger_config)
 
 __PACKAGE__->config(
     name => 'NGCP::Panel',
@@ -123,37 +127,10 @@ __PACKAGE__->config(
 );
 __PACKAGE__->config( default_view => 'HTML' );
 
-__PACKAGE__->log(Log::Log4perl::Catalyst->new($panel_config));
+__PACKAGE__->log(Log::Log4perl::Catalyst->new($logger_config));
 
 # Start the application
 __PACKAGE__->setup();
-
-=head1 NAME
-
-NGCP::Panel - Catalyst based application
-
-=head1 SYNOPSIS
-
-    script/ngcp_panel_server.pl
-
-=head1 DESCRIPTION
-
-[enter your description here]
-
-=head1 SEE ALSO
-
-L<NGCP::Panel::Controller::Root>, L<Catalyst>
-
-=head1 AUTHOR
-
-Andreas Granig,,,
-
-=head1 LICENSE
-
-This library is free software. You can redistribute it and/or modify
-it under the same terms as Perl itself.
-
-=cut
 
 1;
 
