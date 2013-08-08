@@ -1,3 +1,9 @@
+ngcp-panel (1.0.9) unstable; urgency=low
+
+  * [b430850] Fix filtering of free reseller contracts.
+
+ -- Andreas Granig <agranig@sipwise.com>  Thu, 08 Aug 2013 23:52:48 +0200
+
 ngcp-panel (1.0.8) unstable; urgency=low
 
   * [3d75574] Remove a2ensite/dissite handling.
