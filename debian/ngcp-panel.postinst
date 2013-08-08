@@ -26,12 +26,6 @@ if [ -e /etc/apache2/sites-enabled/default ]; then
     a2dissite default
 fi
 
-# disable old ngcp-www-admin
-if [ -e /etc/apache2/sites-enabled/ngcp-www-admin ]; then
-    a2dissite ngcp-www-admin
-fi
-a2ensite ngcp-panel
-
 # reload perl and/or apache modules
 if [ -x /etc/init.d/apache2 ] ; then
   /etc/init.d/apache2 restart || true
