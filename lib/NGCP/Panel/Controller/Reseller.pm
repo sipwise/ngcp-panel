@@ -184,9 +184,10 @@ sub reseller_customers :Chained('base') :PathPart('customers/ajax') :Args(0) {
 
     my $rs = $c->model('DB')->resultset('contracts')->search({
         'contact.reseller_id' => $c->stash->{reseller}->first->id,
-        'status' => { '!=' => 'terminated' },
+        'me.status' => { '!=' => 'terminated' },
+        'product_id' => undef,
     }, {
-        join => 'contact'
+        join => [ {'billing_mappings' => 'product' }, 'contact'],
     });
     NGCP::Panel::Utils::Datatables::process($c, $rs, $c->stash->{customer_dt_columns}); 
     $c->detach($c->view('JSON'));
