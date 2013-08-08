@@ -22,7 +22,7 @@
             <a href="javascript:;" class="btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
                 <i class="icon-reorder"></i>
             </a>
-            <div class="nav-collapse">
+            <div class="nav-collapse collapse">
                 <ul id="main-nav" class="nav pull-right">
 
                     <li class="nav-icon">
