@@ -85,6 +85,10 @@
                             <option [% (r.value.defined && r.value == set.id) ? 'selected="selected"' : '' %]>[% set.name %]</option>
                         [% END -%]
                         </select>
+                    [% ELSIF r.attribute == "allowed_ips" -%]
+                        [% FOR ipnet IN r.allowed_ips_rs.all -%]
+                            [% ipnet.ipnet -%]<br/>
+                        [% END -%]
 
                     [% ELSIF r.data_type == "boolean" %]
                         <input type="checkbox" disabled="disabled"
@@ -133,7 +137,20 @@
                  m.name = "Preference " _ helper.preference_meta.attribute);
 -%]
 
-    [% IF helper.preference_meta.max_occur != 1 %]
+    [% IF helper.preference_meta.attribute == "allowed_ips" %]
+        <div class="modal-body">
+        [% FOREACH net IN helper.aip_grp_rs.all %]
+            <div class="row-fluid">
+                <input type="text" value="[% net.ipnet %]" disabled="disabled"></input>
+            <a class="btn btn-primary pull-right" href="?delete_aig=[% net.id %]"><i class="icon-trash"></i></a>
+          </div>
+        [% END %]
+        <form action="[% helper.form.action %]" method="post">
+            [% helper.form.field(helper.preference_meta.attribute).render %]
+            <span class="pull-right">[% helper.form.field("add").render %]</span>
+        </form>
+        </div>
+    [% ELSIF helper.preference_meta.max_occur != 1 %]
         <div class="modal-body">
         [% FOREACH v IN helper.preference.all %]
             <div class="row-fluid">

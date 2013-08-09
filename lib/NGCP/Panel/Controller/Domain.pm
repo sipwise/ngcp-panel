@@ -8,6 +8,7 @@ use NGCP::Panel::Form::Domain::Reseller;
 use NGCP::Panel::Form::Domain::Admin;
 use NGCP::Panel::Utils::Navigation;
 use NGCP::Panel::Utils::Prosody;
+use NGCP::Panel::Utils::Preferences;
 
 sub auto :Does(ACL) :ACLDetachTo('/denied_page') :AllowedRole(admin) :AllowedRole(reseller) {
     my ($self, $c) = @_;
@@ -246,7 +247,7 @@ sub preferences_edit :Chained('preferences_base') :PathPart('edit') :Args(0) {
             domain_id => $c->stash->{provisioning_domain_result}->id,
         });
 
-    NGCP::Panel::Utils::create_preference_form( c => $c,
+    NGCP::Panel::Utils::Preferences::create_preference_form( c => $c,
         pref_rs => $pref_rs,
         enums   => \@enums,
         base_uri => $c->uri_for_action('/domain/preferences', [$c->req->captures->[0]]),
@@ -288,7 +289,7 @@ sub load_preference_list :Private {
     $c->stash(sound_sets_rs => $sound_sets_rs,
               sound_sets    => [$sound_sets_rs->all]);
 
-    NGCP::Panel::Utils::load_preference_list( c => $c,
+    NGCP::Panel::Utils::Preferences::load_preference_list( c => $c,
         pref_values => \%pref_values,
         dom_pref => 1,
     );

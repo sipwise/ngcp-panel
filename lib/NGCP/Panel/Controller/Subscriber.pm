@@ -2,12 +2,12 @@ package NGCP::Panel::Controller::Subscriber;
 use Sipwise::Base;
 BEGIN { extends 'Catalyst::Controller'; }
 use HTML::Entities;
-use NGCP::Panel::Utils;
 use NGCP::Panel::Utils::Navigation;
 use NGCP::Panel::Utils::Contract;
 use NGCP::Panel::Utils::Subscriber;
 use NGCP::Panel::Utils::Datatables;
 use NGCP::Panel::Utils::Callflow;
+use NGCP::Panel::Utils::Preferences;
 use NGCP::Panel::Form::Subscriber;
 use NGCP::Panel::Form::SubscriberEdit;
 use NGCP::Panel::Form::SubscriberCFSimple;
@@ -353,7 +353,7 @@ sub preferences_edit :Chained('preferences_base') :PathPart('edit') :Args(0) {
             subscriber_id => $c->stash->{subscriber}->provisioning_voip_subscriber->id
         });
 
-    NGCP::Panel::Utils::create_preference_form( c => $c,
+    NGCP::Panel::Utils::Preferences::create_preference_form( c => $c,
         pref_rs => $pref_rs,
         enums   => \@enums,
         base_uri => $c->uri_for_action('/subscriber/preferences', [$c->req->captures->[0]]),
@@ -1360,7 +1360,7 @@ sub load_preference_list :Private {
     $c->stash(sound_sets_rs => $sound_sets_rs,
               sound_sets    => [$sound_sets_rs->all]);
 
-    NGCP::Panel::Utils::load_preference_list( c => $c,
+    NGCP::Panel::Utils::Preferences::load_preference_list( c => $c,
         pref_values => \%pref_values,
         usr_pref => 1,
     );

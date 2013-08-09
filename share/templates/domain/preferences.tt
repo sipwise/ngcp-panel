@@ -13,6 +13,7 @@
     helper.rewrite_rule_sets = rwr_sets;
     helper.ncos_levels = ncos_levels;
     helper.sound_sets = sound_sets;
+    helper.aip_grp_rs = aip_grp_rs;
 
     helper.top_buttons = [
         { name = 'Back', uri = c.uri_for(), icon = 'icon-arrow-left' },
