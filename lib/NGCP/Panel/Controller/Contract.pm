@@ -234,9 +234,14 @@ sub edit :Chained('base') :PathPart('edit') :Args(0) {
 
 sub terminate :Chained('base') :PathPart('terminate') :Args(0) {
     my ($self, $c) = @_;
+    my $contract = $c->stash->{contract_result};
+
+    if ($contract->id == 1) {
+        $c->flash(messages => [{type => 'error', text => 'Cannot terminate contract with the id 1'}]);
+        NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for('/contract'));
+    }
 
     try {
-        my $contract = $c->stash->{contract_result};
         my $old_status = $contract->status;
         $contract->update({ status => 'terminated' });
         # if status changed, populate it down the chain
