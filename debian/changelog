@@ -1,3 +1,9 @@
+ngcp-panel (1.0.12) unstable; urgency=low
+
+  * [e5652b3] Pass ctx to DestinationSet form.
+
+ -- Andreas Granig <agranig@sipwise.com>  Fri, 09 Aug 2013 13:02:18 +0200
+
 ngcp-panel (1.0.11) unstable; urgency=low
 
   * [6f406e3] Don't show faxserver preferences if it's disabled.
