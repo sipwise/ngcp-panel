@@ -783,7 +783,7 @@ sub preferences_callforward_destinationset_create :Chained('base') :PathPart('pr
 
     my $prov_subscriber = $c->stash->{subscriber}->provisioning_voip_subscriber;
 
-    my $form = NGCP::Panel::Form::DestinationSet->new;
+    my $form = NGCP::Panel::Form::DestinationSet->new(ctx => $c);
 
     my $posted = ($c->request->method eq 'POST');
 
