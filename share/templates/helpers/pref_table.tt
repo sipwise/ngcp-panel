@@ -89,6 +89,10 @@
                         [% FOR ipnet IN r.allowed_ips_rs.all -%]
                             [% ipnet.ipnet -%]<br/>
                         [% END -%]
+                    [% ELSIF r.attribute == "man_allowed_ips" -%]
+                        [% FOR ipnet IN r.man_allowed_ips_rs.all -%]
+                            [% ipnet.ipnet -%]<br/>
+                        [% END -%]
 
                     [% ELSIF r.data_type == "boolean" %]
                         <input type="checkbox" disabled="disabled"
@@ -143,6 +147,19 @@
             <div class="row-fluid">
                 <input type="text" value="[% net.ipnet %]" disabled="disabled"></input>
             <a class="btn btn-primary pull-right" href="?delete_aig=[% net.id %]"><i class="icon-trash"></i></a>
+          </div>
+        [% END %]
+        <form action="[% helper.form.action %]" method="post">
+            [% helper.form.field(helper.preference_meta.attribute).render %]
+            <span class="pull-right">[% helper.form.field("add").render %]</span>
+        </form>
+        </div>
+    [% ELSIF helper.preference_meta.attribute == "man_allowed_ips" %]
+        <div class="modal-body">
+        [% FOREACH net IN helper.man_aip_grp_rs.all %]
+            <div class="row-fluid">
+                <input type="text" value="[% net.ipnet %]" disabled="disabled"></input>
+            <a class="btn btn-primary pull-right" href="?delete_man_aig=[% net.id %]"><i class="icon-trash"></i></a>
           </div>
         [% END %]
         <form action="[% helper.form.action %]" method="post">
