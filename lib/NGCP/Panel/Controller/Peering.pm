@@ -10,6 +10,7 @@ use NGCP::Panel::Form::PeeringRule;
 use NGCP::Panel::Form::PeeringServer;
 use NGCP::Panel::Utils::XMLDispatcher;
 use NGCP::Panel::Utils::Navigation;
+use NGCP::Panel::Utils::Preferences;
 
 sub auto :Does(ACL) :ACLDetachTo('/denied_page') :AllowedRole(admin) {
     my ($self, $c) = @_;
@@ -318,7 +319,7 @@ sub servers_preferences_list :Chained('servers_base') :PathPart('preferences') :
     $c->stash(rwr_sets_rs => $rewrite_rule_sets_rs,
               rwr_sets    => [$rewrite_rule_sets_rs->all]);
 
-    NGCP::Panel::Utils::load_preference_list( c => $c,
+    NGCP::Panel::Utils::Preferences::load_preference_list( c => $c,
         pref_values => \%pref_values,
         peer_pref => 1,
     );
@@ -366,7 +367,7 @@ sub servers_preferences_edit :Chained('servers_preferences_base') :PathPart('edi
     
     my $pref_rs = $c->stash->{server_result}->voip_peer_preferences;
 
-    NGCP::Panel::Utils::create_preference_form( c => $c,
+    NGCP::Panel::Utils::Preferences::create_preference_form( c => $c,
         pref_rs => $pref_rs,
         enums   => \@enums,
         base_uri => $c->uri_for_action('/peering/servers_preferences_root', [@{ $c->req->captures }[0,1]]),
@@ -609,7 +610,7 @@ id to stash. Will be used by L</servers_preferences_edit>.
 =head2 servers_preferences_edit
 
 Show a modal to edit one preference. Mainly uses
-NGCP::Panel::Utils::create_preference_form.
+NGCP::Panel::Utils::Preferences::create_preference_form.
 
 =head2 rules_list
 

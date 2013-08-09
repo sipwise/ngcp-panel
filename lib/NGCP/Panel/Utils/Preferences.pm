@@ -1,4 +1,4 @@
-package NGCP::Panel::Utils;
+package NGCP::Panel::Utils::Preferences;
 use strict;
 use warnings;
 
@@ -53,6 +53,11 @@ sub load_preference_list {
                         ->find($pref_values->{adm_ncos_id})->id
                     : undef;
             }
+            elsif($pref->attribute eq "allowed_ips") {
+                $pref->{allowed_ips_group_id} = $pref_values->{allowed_ips_grp};
+                $pref->{allowed_ips_rs} = $c->model('DB')->resultset('voip_allowed_ip_groups')
+                    ->search_rs({ group_id => $pref_values->{allowed_ips_grp} });
+            }
             if($pref->data_type eq "enum") {
                 $pref->{enums} = [];
                 push @{ $pref->{enums} },
@@ -83,6 +88,9 @@ sub create_preference_form {
     my $base_uri = $params{base_uri};
     my $edit_uri = $params{edit_uri};
     my $enums    = $params{enums};
+    
+    my $aip_grp_rs;
+    my $aip_group_id;
 
     my $preselected_value = undef;
     if ($c->stash->{preference_meta}->attribute eq "rewrite_rule_set") {
@@ -114,6 +122,17 @@ sub create_preference_form {
         if (defined $ncos_id_preference) {
             $preselected_value = $ncos_id_preference->value;
         }
+    } elsif ($c->stash->{preference_meta}->attribute eq "allowed_ips") {
+        my $allowed_ips_grp = $pref_rs->search({
+                'attribute.attribute' => 'allowed_ips_grp'
+            },{
+                join => 'attribute'
+            })->first;
+        if (defined $allowed_ips_grp) {
+            $aip_group_id = $allowed_ips_grp->value;
+            $aip_grp_rs = $c->model('DB')->resultset('voip_allowed_ip_groups')
+                ->search({ group_id => $aip_group_id });
+        }
     } elsif ($c->stash->{preference_meta}->max_occur == 1) {
         $preselected_value = $c->stash->{preference_values}->[0];
     }
@@ -144,7 +163,32 @@ sub create_preference_form {
     if($posted && $form->validated) {
         my $preference_id = $c->stash->{preference}->first ? $c->stash->{preference}->first->id : undef;
         my $attribute = $c->stash->{preference_meta}->attribute;
-        if ($c->stash->{preference_meta}->max_occur != 1) {
+       if ($attribute eq "allowed_ips") {
+
+            unless (defined $aip_group_id) {
+                #TODO put this in a transaction
+                my $new_group = $c->model('DB')->resultset('voip_aig_sequence')
+                    ->create({});
+                my $aig_preference_id = $c->model('DB')
+                    ->resultset('voip_preferences')
+                    ->find({ attribute => 'allowed_ips_grp' })
+                    ->id;
+                $pref_rs->create({
+                        value => $new_group->id,
+                        attribute_id => $aig_preference_id,
+                    });
+                $aip_group_id = $new_group->id;
+                $aip_grp_rs = $c->model('DB')->resultset('voip_allowed_ip_groups')
+                    ->search({ group_id => $aip_group_id });
+                $c->model('DB')->resultset('voip_aig_sequence')->search_rs({
+                        id => { '<' => $new_group->id },
+                    })->delete_all;
+            }
+            $aip_grp_rs->create({
+                group_id => $aip_group_id,
+                ipnet => $form->field($attribute)->value,
+            });
+        } elsif ($c->stash->{preference_meta}->max_occur != 1) {
             $pref_rs->create({
                 attribute_id => $c->stash->{preference_meta}->id,
                 value => $form->field($c->stash->{preference_meta}->attribute)->value,
@@ -239,9 +283,27 @@ sub create_preference_form {
             $rs->update({value => $new_value});
         }
     }
+    my $delete_aig_param = $c->request->params->{delete_aig};
+    if($delete_aig_param) {
+        my $result = $aip_grp_rs->find($delete_aig_param);
+        if($result) {
+            $result->delete;
+            unless ($aip_grp_rs->first) { #its empty
+                my $allowed_ips_grp_preference = $pref_rs->search({
+                    'attribute.attribute' => 'allowed_ips_grp'
+                },{
+                    join => 'attribute'
+                })->first;
+                $allowed_ips_grp_preference->delete
+                    if (defined $allowed_ips_grp_preference);
+            }
+        }
+            
+    }
 
     $form->process if $posted;
-    $c->stash(form => $form);
+    $c->stash(form       => $form,
+              aip_grp_rs => $aip_grp_rs);
 }
 
 sub _set_rewrite_preferences {
@@ -275,11 +337,12 @@ sub _set_rewrite_preferences {
 
 =head1 NAME
 
-NGCP::Panel::Utils
+NGCP::Panel::Utils::Preferences
 
 =head1 DESCRIPTION
 
-Various utils to outsource common tasks in the controllers.
+Various utils to outsource common tasks in the controllers
+regarding voip_preferences.
 
 =head1 METHODS
 
@@ -342,6 +405,11 @@ sound_sets_rs and sound_sets. In the template helper.sound_sets needs to
 be set.
 
 The preference with the attribute sound_set will contain the id of a sound_set.
+
+=head3 Special case allowed_ips
+
+Also something special here. The table containing data is
+provisioning.voip_allowed_ip_groups.
 
 =head2 _set_rewrite_preferences
 
