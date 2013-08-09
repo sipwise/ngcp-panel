@@ -202,6 +202,19 @@ sub handles_list :Chained('base') :PathPart('handles') :CaptureArgs(0) {
                 ],
             ],
         });
+    unless($c->config->{features}->{pbx}) {
+        $handles_rs = $handles_rs->search({ 'groups.name' => { '!=' => 'pbx' } });
+    }
+    unless($c->config->{features}->{musiconhold}) {
+        $handles_rs = $handles_rs->search({ 'groups.name' => { '!=' => 'music_on_hold' } });
+    }
+    unless($c->config->{features}->{callingcard}) {
+        $handles_rs = $handles_rs->search({ 'groups.name' => { '!=' => 'calling_card' } });
+    }
+    unless($c->config->{features}->{mobilepush}) {
+        $handles_rs = $handles_rs->search({ 'groups.name' => { '!=' => 'mobile_push' } });
+    }
+
     
     my @rows = $handles_rs->all;
     
