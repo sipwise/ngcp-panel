@@ -50,10 +50,14 @@ sub validate {
 
     my $parsetime  = DateTime::Format::Strptime->new(pattern => '%T');
     my $parsetime2 = DateTime::Format::Strptime->new(pattern => '%R');
-    my $start = $parsetime->parse_datetime($self->field('start')->value)
-            || $parsetime2->parse_datetime($self->field('start')->value);
-    my $end = $parsetime->parse_datetime($self->field('end')->value)
-          || $parsetime2->parse_datetime($self->field('end')->value);
+    my $stime = $self->field('start')->value;
+    my $etime = $self->field('end')->value;
+    $stime = '00:00:00' unless($stime && length($stime));
+    $etime = '23:59:59' unless($etime && length($etime));
+    my $start = $parsetime->parse_datetime($stime)
+            || $parsetime2->parse_datetime($stime);
+    my $end = $parsetime->parse_datetime($etime)
+          || $parsetime2->parse_datetime($etime);
 
     if ($end < $start) {
         my $err_msg = 'Start time must be later than end time.';

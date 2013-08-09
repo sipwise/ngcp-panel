@@ -511,11 +511,11 @@ sub peaktime_weekdays_edit :Chained('peaktime_weekdays_base') :PathPart('edit') 
         params => $c->request->params,
     );
     if($form->validated) {
+        $form->values->{weekday} = $c->stash->{weekday_id};
+        $form->values->{start} = '00:00:00' unless($form->values->{start});
+        $form->values->{end} = '23:59:59' unless($form->values->{end});
         $c->stash->{'weekdays_result'}
-            ->create({
-                %{ $form->fif },
-                weekday => $c->stash->{weekday_id},
-             });
+            ->create($form->values);
     }
     
     my $delete_param = $c->request->params->{delete};

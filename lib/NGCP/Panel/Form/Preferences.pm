@@ -97,7 +97,6 @@ sub field_list {
         }
         $field->{label} = $meta->attribute;
         push @field_list, $field;
-        use Data::Printer; print ">>>>>>>>>>>>>>>>>>>>> pref fields:\n"; p @field_list;
     }
     
     return \@field_list;
@@ -130,10 +129,7 @@ sub create_structure {
     my $self = shift;
     my $field_list = shift;
    
-    print ">>>>>>>>>>>>> create_structure\n";
     $self->block('fields')->render_list($field_list);
-    print ">>>>>>>>>>>>> end of create_structure\n";
-    use Data::Printer; p $self;
 }
 
 1;
