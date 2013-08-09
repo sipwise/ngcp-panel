@@ -118,8 +118,6 @@ sub create_preference_form {
         $preselected_value = $c->stash->{preference_values}->[0];
     }
 
-    $c->log->debug("Preselected value: $preselected_value");
-
     my $form = NGCP::Panel::Form::Preferences->new({
         fields_data => [{
             meta => $c->stash->{preference_meta},
@@ -133,9 +131,15 @@ sub create_preference_form {
 
     my $posted = ($c->request->method eq 'POST');
     $form->process(
-        posted => 1,
-        params => $posted ? $c->request->params : { $c->stash->{preference_meta}->attribute => $preselected_value },
-        action => $edit_uri,
+        posted => $posted,
+        params => $c->request->params,
+        item => { $c->stash->{preference_meta}->attribute => $preselected_value },
+    );
+    NGCP::Panel::Utils::Navigation::check_form_buttons(
+        c => $c,
+        form => $form,
+        fields => {},
+        back_uri => $c->req->uri,
     );
     if($posted && $form->validated) {
         my $preference_id = $c->stash->{preference}->first ? $c->stash->{preference}->first->id : undef;

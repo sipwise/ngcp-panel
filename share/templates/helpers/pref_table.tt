@@ -144,14 +144,14 @@
             [% END %]
             <a class="btn btn-primary pull-right" href="?delete=[% v.id %]"><i class="icon-trash"></i></a>
             [% IF v.value.substr(0,1) == '#' %]
-                <a class="btn btn-primary pull-right" href="?activate=[% v.id %]"><i class="icon-ok"></i></a>
+                <a class="btn btn-primary pull-right" style="margin:0 5px 0 5px" href="?activate=[% v.id %]"><i class="icon-ok"></i></a>
             [% ELSE %]
-                <a class="btn btn-primary pull-right" href="?deactivate=[% v.id %]"><i class="icon-ban-circle"></i></a>
+                <a class="btn btn-primary pull-right" style="margin:0 5px 0 5px" href="?deactivate=[% v.id %]"><i class="icon-ban-circle"></i></a>
             [% END %]
           </div>
         [% END %]
         <form action="[% helper.form.action %]" method="post">
-            [% helper.form.fields.2.render %]
+            [% helper.form.field(helper.preference_meta.attribute).render %]
             <span class="pull-right">[% helper.form.field("add").render %]</span>
         </form>
         </div>
