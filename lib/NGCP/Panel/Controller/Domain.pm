@@ -63,6 +63,7 @@ sub create :Chained('dom_list') :PathPart('create') :Args(0) {
     }
     my $params = {};
     $params = $params->merge($c->session->{created_objects});
+    delete $params->{domain} if exists($params->{domain}{id});
     $form->process(
         posted => $posted,
         params => $c->request->params,
