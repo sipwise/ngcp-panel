@@ -1,3 +1,19 @@
+ngcp-panel (1.0.13) unstable; urgency=low
+
+  [ Andreas Granig ]
+  * [352e403] HTML doesn't have an </input> field.
+  * [0174463] Clear created domain from session.
+  * [2d1d5b6] Allow to add empty offpeak start/end time.
+  * [7b24025] Filter sound groups according to config.
+  * [0f9d12f] Prevent termination of contract with id 1.
+  * [3cb1340] Don't allow to terminate contract via list view.
+
+  [ Gerhard Jungwirth ]
+  * [2403c72] Handle allowed_ips preference.
+  * [b18ab25] Handle the preference man_allowed_ips like allowed_ips
+
+ -- Andreas Granig <agranig@sipwise.com>  Fri, 09 Aug 2013 17:22:27 +0200
+
 ngcp-panel (1.0.12) unstable; urgency=low
 
   * [e5652b3] Pass ctx to DestinationSet form.
