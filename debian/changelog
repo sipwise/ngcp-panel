@@ -1,3 +1,9 @@
+ngcp-panel (1.0.11) unstable; urgency=low
+
+  * [6f406e3] Don't show faxserver preferences if it's disabled.
+
+ -- Andreas Granig <agranig@sipwise.com>  Fri, 09 Aug 2013 12:19:27 +0200
+
 ngcp-panel (1.0.10) unstable; urgency=low
 
   * [0f6fc8a] Fix preference handling with max_occur > 1.
