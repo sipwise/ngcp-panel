@@ -195,6 +195,7 @@
         </div>
     </div>
 
+    [% IF c.config.features.faxserver -%]
     <div class="accordion-group">
         <div class="accordion-heading">
             <a class="accordion-toggle" data-toggle="collapse" data-parent="#preference_groups" href="#collapse_fax">Fax2Mail and Sendfax</a>
@@ -296,6 +297,7 @@
             </div>
         </div>
     </div>
+    [% END -%]
 
     <div class="accordion-group">
         <div class="accordion-heading">
