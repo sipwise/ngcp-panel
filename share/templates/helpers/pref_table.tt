@@ -138,9 +138,9 @@
         [% FOREACH v IN helper.preference.all %]
             <div class="row-fluid">
             [% IF v.value.substr(0,1) == '#' %]
-                <input type="text" value="[% v.value.substr(1) %]" disabled="disabled" class="ngcp-entry-disabled"></input>
+                <input type="text" value="[% v.value.substr(1) %]" disabled="disabled" class="ngcp-entry-disabled"/>
             [% ELSE %]
-                <input type="text" value="[% v.value %]" disabled="disabled"></input>
+                <input type="text" value="[% v.value %]" disabled="disabled"/>
             [% END %]
             <a class="btn btn-primary pull-right" href="?delete=[% v.id %]"><i class="icon-trash"></i></a>
             [% IF v.value.substr(0,1) == '#' %]

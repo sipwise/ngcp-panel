@@ -31,7 +31,7 @@ $(document).ready(function() {
 		    		    { "mData": "[% f %]" },
                         [% END -%]
 		    		    { "mRender": function ( data, type, full ) {
-                                return '<input type="checkbox" value="' + full.id + '"></input>';
+                                return '<input type="checkbox" value="' + full.id + '"/>';
                             },
                           "mData": null,
                           "bSortable": false
@@ -56,7 +56,7 @@ $(document).ready(function() {
 <div class="control-group [% IF errors.size %]error[% END %]">
      <label class="control-label" for="[% table_id %]">[% label %]</label>
      <div class="controls">
-         <input type="hidden" name="[% field_name %]" value="[% value %]" id="[% hidden_id %]"></input>
+         <input type="hidden" name="[% field_name %]" value="[% value %]" id="[% hidden_id %]"/>
          <table class="table table-bordered table-striped table-highlight table-hover" id="[% table_id %]">
             <thead>
                 <tr>
