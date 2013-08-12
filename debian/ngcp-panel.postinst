@@ -27,8 +27,12 @@ if [ -e /etc/apache2/sites-enabled/default ]; then
 fi
 
 # reload perl and/or apache modules
-if [ -x /etc/init.d/apache2 ] ; then
-  /etc/init.d/apache2 restart || true
+if [ -x /etc/init.d/apache2 ]; then
+  if [ -x "`which invoke-rc.d 2>/dev/null`" ]; then
+    invoke-rc.d apache2 restart || true
+  else
+    /etc/init.d/apache2 restart || true
+  fi
 fi
 
 exit 0
