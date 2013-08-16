@@ -8,6 +8,7 @@ use NGCP::Panel::Utils::Subscriber;
 use NGCP::Panel::Utils::Datatables;
 use NGCP::Panel::Utils::Callflow;
 use NGCP::Panel::Utils::Preferences;
+use NGCP::Panel::Utils::Message;
 use NGCP::Panel::Form::Subscriber;
 use NGCP::Panel::Form::SubscriberEdit;
 use NGCP::Panel::Form::SubscriberCFSimple;
@@ -220,8 +221,11 @@ sub create_list :Chained('sub_list') :PathPart('create') :Args(0) {
             });
             $c->flash(messages => [{type => 'success', text => 'Subscriber successfully created!'}]);
         } catch($e) {
-            $c->log->error("Failed to create subscriber: $e");
-            $c->flash(messages => [{type => 'error', text => 'Creating subscriber failed!'}]);
+            NGCP::Panel::Utils::Message->error(
+                c => $c,
+                error => $e,
+                desc  => "Failed to create subscriber.",
+            );
         }
         NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for('/subscriber'));
     }
@@ -274,8 +278,11 @@ sub terminate :Chained('base') :PathPart('terminate') :Args(0) {
         });
         $c->flash(messages => [{type => 'success', text => 'Successfully terminated subscriber'}]);
     } catch($e) {
-        $c->log->error("Failed to terminate subscriber: $e");
-        $c->flash(messages => [{type => 'error', text => 'Failed to terminate subscriber'}]);
+        NGCP::Panel::Utils::Message->error(
+            c     => $c,
+            error => $e,
+            desc  => "Failed to terminate subscriber.",
+        );
     }
     NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for('/subscriber'));
 }
@@ -371,8 +378,11 @@ sub preferences_callforward :Chained('base') :PathPart('preferences/callforward'
         when("cft") { $cf_desc = "Call Forward Timeout" }
         when("cfna") { $cf_desc = "Call Forward Unavailable" }
         default {
-            $c->log->error("Invalid call-forward type '$cf_type'");
-            $c->flash(messages => [{type => 'error', text => 'Invalid Call Forward type'}]);
+            NGCP::Panel::Utils::Message->error(
+                c     => $c,
+                log   => "Invalid call-forward type '$cf_type'",
+                desc  => "Invalid Call Forward type.",
+            );
             NGCP::Panel::Utils::Navigation::back_or($c, 
                 $c->uri_for_action('/subscriber/preferences', [$c->req->captures->[0]]));
         }
@@ -582,8 +592,11 @@ sub preferences_callforward :Chained('base') :PathPart('preferences/callforward'
             });
             $c->flash(messages => [{type => 'success', text => 'Successfully saved Call Forward'}]);
         } catch($e) {
-            $c->log->error("failed to save call-forward: $e");
-            $c->flash(messages => [{type => 'error', text => 'Failed to save Call Forward'}]);
+            NGCP::Panel::Utils::Message->error(
+                c     => $c,
+                error => $e,
+                desc  => "Failed to save Call Forward.",
+            );
         }
         
         NGCP::Panel::Utils::Navigation::back_or($c, 
@@ -616,8 +629,11 @@ sub preferences_callforward_advanced :Chained('base') :PathPart('preferences/cal
         when("cft") { $cf_desc = "Call Forward Timeout" }
         when("cfna") { $cf_desc = "Call Forward Unavailable" }
         default {
-            $c->log->error("Invalid call-forward type '$cf_type'");
-            $c->flash(messages => [{type => 'error', text => 'Invalid Call Forward type'}]);
+            NGCP::Panel::Utils::Message->error(
+                c     => $c,
+                log   => "Invalid call-forward type '$cf_type'",
+                desc  => "Invalid Call Forward type.",
+            );
             NGCP::Panel::Utils::Navigation::back_or($c, 
                 $c->uri_for_action('/subscriber/preferences', [$c->req->captures->[0]]));
         }
@@ -728,8 +744,11 @@ sub preferences_callforward_advanced :Chained('base') :PathPart('preferences/cal
                 $c->flash(messages => [{type => 'success', text => 'Successfully saved Call Forward'}]);
             });
         } catch($e) {
-            $c->log->error("failed to save call-forward: $e");
-            $c->flash(messages => [{type => 'error', text => 'Failed to save Call Forward'}]);
+            NGCP::Panel::Utils::Message->error(
+                c     => $c,
+                error => $e,
+                desc  => "Failed to save Call Forward.",
+            );
         }
         # we don't use back_or, as we might end up in the simple view again
         $c->res->redirect(
@@ -1197,7 +1216,7 @@ sub preferences_callforward_timeset_edit :Chained('preferences_callforward_times
             foreach my $type(qw/year month mday wday hour minute/) {
                 my $val = $period->$type;
                 if(defined $val) {
-                    my ($from, $to) = split/\-/, $val;
+                    my ($from, $to) = split/\-/, $val; #/
                     if($type eq "wday") {
                         $from = int($from)-1 if defined($from);
                         $to = int($to)-1 if defined($to);
@@ -1318,8 +1337,11 @@ sub preferences_callforward_delete :Chained('base') :PathPart('preferences/callf
         $cf_pref->delete_all;
         $c->flash(messages => [{type => 'success', text => 'Successfully deleted Call Forward'}]);
     } catch($e) {
-        $c->log->error("failed to delete call forward mapping: $e");
-        $c->flash(messages => [{type => 'error', text => 'Failed to deleted Call Forward'}]);
+        NGCP::Panel::Utils::Message->error(
+            c     => $c,
+            error => $e,
+            desc  => "Failed to delete Call Forward.",
+        );
     }
 
     NGCP::Panel::Utils::Navigation::back_or($c, 
@@ -1596,8 +1618,11 @@ sub edit_master :Chained('master') :PathPart('edit') :Args(0) {
             });
             $c->flash(messages => [{type => 'success', text => 'Successfully updated subscriber'}]);
         } catch($e) {
-            $c->log->error("failed to update subscriber: $e");
-            $c->flash(messages => [{type => 'error', text => 'Failed to update subscriber'}]);
+            NGCP::Panel::Utils::Message->error(
+                c     => $c,
+                error => $e,
+                desc  => "Failed to update subscriber.",
+            );
         }
 
         NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for_action('/subscriber/details', [$c->req->captures->[0]]));
@@ -1619,8 +1644,11 @@ sub edit_voicebox :Chained('base') :PathPart('preferences/voicebox/edit') :Args(
     my $posted = ($c->request->method eq 'POST');
     my $vm_user = $c->stash->{subscriber}->provisioning_voip_subscriber->voicemail_user;
     unless($vm_user) {
-        $c->log->error("no voicemail user found for subscriber uuid ".$c->stash->{subscriber}->uuid);
-        $c->flash(messages => [{type => 'error', text => 'Failed to find voicemail user'}]);
+        NGCP::Panel::Utils::Message->error(
+            c     => $c,
+            log   => "no voicemail user found for subscriber uuid ".$c->stash->{subscriber}->uuid,
+            desc  => "Failed to find voicemail user.",
+        );
         NGCP::Panel::Utils::Navigation::back_or($c, 
             $c->uri_for_action('/subscriber/preferences', [$c->req->captures->[0]]));
     }
@@ -1677,8 +1705,11 @@ sub edit_voicebox :Chained('base') :PathPart('preferences/voicebox/edit') :Args(
                 }
             }
             default {
-                $c->log->error("trying to set invalid voicemail param '$attribute' for subscriber uuid ".$c->stash->{subscriber}->uuid);
-                $c->flash(messages => [{type => 'error', text => 'Invalid voicemail setting'}]);
+                NGCP::Panel::Utils::Message->error(
+                    c     => $c,
+                    log   => "trying to set invalid voicemail param '$attribute' for subscriber uuid ".$c->stash->{subscriber}->uuid,
+                    desc  => "Invalid voicemail setting.",
+                );
                 NGCP::Panel::Utils::Navigation::back_or($c, 
                     $c->uri_for_action('/subscriber/preferences', [$c->req->captures->[0]]), 1);
                 return;
@@ -1691,8 +1722,11 @@ sub edit_voicebox :Chained('base') :PathPart('preferences/voicebox/edit') :Args(
             return;
         }
     } catch($e) {
-        $c->log->error("updating voicemail setting failed: $e");
-        $c->flash(messages => [{type => 'error', text => 'Failed to update voicemail setting'}]);
+        NGCP::Panel::Utils::Message->error(
+            c     => $c,
+            error => $e,
+            desc  => "Failed to update voicemail setting.",
+        );
         NGCP::Panel::Utils::Navigation::back_or($c, 
             $c->uri_for_action('/subscriber/preferences', [$c->req->captures->[0]]));
     }
@@ -1814,8 +1848,11 @@ sub edit_fax :Chained('base') :PathPart('preferences/fax/edit') :Args(1) {
                 }
             }
             default {
-                $c->log->error("trying to set invalid fax param '$attribute' for subscriber uuid ".$c->stash->{subscriber}->uuid);
-                $c->flash(messages => [{type => 'error', text => 'Invalid fax setting'}]);
+                NGCP::Panel::Utils::Message->error(
+                    c     => $c,
+                    log   => "trying to set invalid fax param '$attribute' for subscriber uuid ".$c->stash->{subscriber}->uuid,
+                    desc  => "Invalid fax setting.",
+                );
                 NGCP::Panel::Utils::Navigation::back_or($c, 
                     $c->uri_for_action('/subscriber/preferences', [$c->req->captures->[0]]), 1);
                 return;
@@ -1828,8 +1865,11 @@ sub edit_fax :Chained('base') :PathPart('preferences/fax/edit') :Args(1) {
             return;
         }
     } catch($e) {
-        $c->log->error("updating fax setting failed: $e");
-        $c->flash(messages => [{type => 'error', text => 'Failed to update fax setting'}]);
+        NGCP::Panel::Utils::Message->error(
+            c     => $c,
+            error => $e,
+            desc  => "Failed to update fax setting.",
+        );
         NGCP::Panel::Utils::Navigation::back_or($c, 
             $c->uri_for_action('/subscriber/preferences', [$c->req->captures->[0]]));
     }
@@ -1888,8 +1928,11 @@ sub edit_reminder :Chained('base') :PathPart('preferences/reminder/edit') {
 
             $c->flash(messages => [{type => 'success', text => 'Successfully updated reminder setting'}]);
         } catch($e) {
-            $c->log->error("updating reminder setting failed: $e");
-            $c->flash(messages => [{type => 'error', text => 'Failed to update reminder setting'}]);
+            NGCP::Panel::Utils::Message->error(
+                c     => $c,
+                error => $e,
+                desc  => "Failed to update reminder setting.",
+            );
         }
         NGCP::Panel::Utils::Navigation::back_or($c, 
             $c->uri_for_action('/subscriber/preferences', [$c->req->captures->[0]]));
@@ -1970,8 +2013,11 @@ sub voicemail :Chained('master') :PathPart('voicemail') :CaptureArgs(1) {
          id => $vm_id,
     });
     unless($rs->first) {
-        $c->log->error("no such voicemail file with id '$vm_id' for uuid ".$c->stash->{subscriber}->uuid);
-        $c->flash(messages => [{type => 'error', text => 'No such voicemail file'}]);
+        NGCP::Panel::Utils::Message->error(
+            c    => $c,
+            log  => "no such voicemail file with id '$vm_id' for uuid ".$c->stash->{subscriber}->uuid,
+            desc => "No such voicemail file.",
+        );
         NGCP::Panel::Utils::Navigation::back_or($c, 
             $c->uri_for_action('/subscriber/details', [$c->req->captures->[0]]));
     }
@@ -1988,9 +2034,12 @@ sub play_voicemail :Chained('voicemail') :PathPart('play') :Args(0) {
     try {
         $data= NGCP::Panel::Utils::Sounds::transcode_data(
             $recording, 'WAV', 'WAV');
-    } catch ($error) {
-        $c->flash(messages => [{type => 'error', text => 'Transcode of audio file failed!'}]);
-        $c->log->error("failed to transcode file: $error");
+    } catch ($e) {
+        NGCP::Panel::Utils::Message->error(
+            c     => $c,
+            error => $e,
+            desc  => "Transcode of audio file failed.",
+        );
         NGCP::Panel::Utils::Navigation::back_or($c, 
             $c->uri_for_action('/subscriber/details', [$c->req->captures->[0]]));
     }
@@ -2007,8 +2056,11 @@ sub delete_voicemail :Chained('voicemail') :PathPart('delete') :Args(0) {
         $c->stash->{voicemail}->delete;
         $c->flash(messages => [{type => 'success', text => 'Successfully deleted voicemail'}]);
     } catch($e) {
-        $c->log->error("failed to delete voicemail message: $e");
-        $c->flash(messages => [{type => 'error', text => 'Failed to delete voicemail'}]);
+        NGCP::Panel::Utils::Message->error(
+            c     => $c,
+            error => $e,
+            desc  => "Failed to delete voicemail message.",
+        );
     }
     NGCP::Panel::Utils::Navigation::back_or($c, 
         $c->uri_for_action('/subscriber/details', [$c->req->captures->[0]]));
@@ -2024,8 +2076,11 @@ sub registered :Chained('master') :PathPart('registered') :CaptureArgs(1) {
         domain => $s->domain->domain,
     });
     unless($c->stash->{registered}) {
-        $c->log->error("failed to find location id '$reg_id' for subscriber uuid " . $s->uuid);
-        $c->flash(messages => [{type => 'error', text => 'Failed to find registered device'}]);
+        NGCP::Panel::Utils::Message->error(
+            c    => $c,
+            log  => "failed to find location id '$reg_id' for subscriber uuid " . $s->uuid,
+            desc => "Failed to find registered device.",
+        );
         NGCP::Panel::Utils::Navigation::back_or($c, 
             $c->uri_for_action('/subscriber/details', [$c->req->captures->[0]]));
     }
@@ -2052,8 +2107,11 @@ sub delete_registered :Chained('registered') :PathPart('delete') :Args(0) {
 </methodCall>
 EOF
     } catch($e) {
-        $c->log->error("failed to delete registered device: $e");
-        $c->flash(messages => [{type => 'error', text => 'Failed to delete registered device'}]);
+        NGCP::Panel::Utils::Message->error(
+            c     => $c,
+            error => $e,
+            desc  => "Failed to delete registered device.",
+        );
     }
 
 # TODO: how to determine if $ret was ok?
@@ -2112,8 +2170,11 @@ EOF
             # TODO: error check
             $c->flash(messages => [{type => 'success', text => 'Successfully added registered device'}]);
         } catch($e) {
-            $c->log->error("failed to add registered device: $e");
-            $c->flash(messages => [{type => 'error', text => 'Failed to add registered device'}]);
+            NGCP::Panel::Utils::Message->error(
+                c     => $c,
+                error => $e,
+                desc  => "Failed to add registered device.",
+            );
         }
         NGCP::Panel::Utils::Navigation::back_or($c, 
             $c->uri_for_action('/subscriber/details', [$c->req->captures->[0]]));
@@ -2155,8 +2216,11 @@ sub create_trusted :Chained('base') :PathPart('preferences/trusted/create') :Arg
             });
             $c->flash(messages => [{type => 'success', text => 'Successfully created trusted source'}]);
         } catch($e) {
-            $c->log->error("creating trusted source failed: $e");
-            $c->flash(messages => [{type => 'error', text => 'Failed to create trusted source'}]);
+            NGCP::Panel::Utils::Message->error(
+                c     => $c,
+                error => $e,
+                desc  => "Failed to create trusted source.",
+            );
         }
         NGCP::Panel::Utils::Navigation::back_or($c, 
             $c->uri_for_action('/subscriber/preferences', [$c->req->captures->[0]]));
@@ -2177,8 +2241,11 @@ sub trusted_base :Chained('base') :PathPart('preferences/trusted') :CaptureArgs(
                             ->voip_trusted_sources->find($trusted_id);
 
     unless($c->stash->{trusted}) {
-        $c->log->error("trusted source id '$trusted_id' not found for subscriber uuid ".$c->stash->{subscriber}->uuid);
-        $c->flash(messages => [{type => 'error', text => 'Trusted source entry not found'}]);
+        NGCP::Panel::Utils::Message->error(
+            c    => $c,
+            log  => "trusted source id '$trusted_id' not found for subscriber uuid ".$c->stash->{subscriber}->uuid,
+            desc => "Trusted source entry not found.",
+        );
         NGCP::Panel::Utils::Navigation::back_or($c, 
             $c->uri_for_action('/subscriber/preferences', [$c->req->captures->[0]]));
     }
@@ -2220,8 +2287,11 @@ sub edit_trusted :Chained('trusted_base') :PathPart('edit') {
 
             $c->flash(messages => [{type => 'success', text => 'Successfully updated trusted source'}]);
         } catch($e) {
-            $c->log->error("updating trusted source failed: $e");
-            $c->flash(messages => [{type => 'error', text => 'Failed to update trusted source'}]);
+            NGCP::Panel::Utils::Message->error(
+                c     => $c,
+                error => $e,
+                desc  => "Failed to update trusted source.",
+            );
         }
         NGCP::Panel::Utils::Navigation::back_or($c, 
             $c->uri_for_action('/subscriber/preferences', [$c->req->captures->[0]]));
@@ -2242,8 +2312,11 @@ sub delete_trusted :Chained('trusted_base') :PathPart('delete') :Args(0) {
         $c->stash->{trusted}->delete;
         $c->flash(messages => [{type => 'success', text => 'Successfully deleted trusted source'}]);
     } catch($e) {
-        $c->log->error("failed to delete trusted source: $e");
-        $c->flash(messages => [{type => 'error', text => 'Failed to delete trusted source'}]);
+        NGCP::Panel::Utils::Message->error(
+            c     => $c,
+            error => $e,
+            desc  => "Failed to delete trusted source.",
+        );
     }
 
     NGCP::Panel::Utils::Navigation::back_or($c, 
@@ -2292,8 +2365,11 @@ sub create_speeddial :Chained('base') :PathPart('preferences/speeddial/create') 
             });
             $c->flash(messages => [{type => 'success', text => 'Successfully created speed dial slot'}]);
         } catch($e) {
-            $c->log->error("failed to create speed dial slot: $e");
-            $c->flash(messages => [{type => 'error', text => 'Failed to created speed dial slot'}]);
+            NGCP::Panel::Utils::Message->error(
+                c     => $c,
+                error => $e,
+                desc  => "Failed to create speed dial slot.",
+            );
         }
         NGCP::Panel::Utils::Navigation::back_or($c, 
             $c->uri_for_action('/subscriber/preferences', [$c->req->captures->[0]]));
@@ -2314,8 +2390,11 @@ sub speeddial :Chained('base') :PathPart('preferences/speeddial') :CaptureArgs(1
     my $sd = $c->stash->{subscriber}->provisioning_voip_subscriber->voip_speed_dials
                 ->find($sd_id);
     unless($sd) {
-        $c->log->error("no such speed dial slot with id '$sd_id' for uuid ".$c->stash->{subscriber}->uuid);
-        $c->flash(messages => [{type => 'error', text => 'No such speed dial id'}]);
+        NGCP::Panel::Utils::Message->error(
+            c    => $c,
+            log  => "no such speed dial slot with id '$sd_id' for uuid ".$c->stash->{subscriber}->uuid,
+            desc => "No such speed dial id.",
+        );
         NGCP::Panel::Utils::Navigation::back_or($c, 
             $c->uri_for_action('/subscriber/preferences', [$c->req->captures->[0]]));
     }
@@ -2329,8 +2408,11 @@ sub delete_speeddial :Chained('speeddial') :PathPart('delete') :Args(0) {
         $c->stash->{speeddial}->delete;
         $c->flash(messages => [{type => 'success', text => 'Successfully deleted speed dial slot'}]);
     } catch($e) {
-        $c->log->error("failed to delete speed dial slot: $e");
-        $c->flash(messages => [{type => 'error', text => 'Failed to delete speed dial slot'}]);
+        NGCP::Panel::Utils::Message->error(
+            c     => $c,
+            error => $e,
+            desc  => "Failed to delete speed dial slot.",
+        );
     }
     NGCP::Panel::Utils::Navigation::back_or($c, 
         $c->uri_for_action('/subscriber/preferences', [$c->req->captures->[0]]));
@@ -2373,8 +2455,11 @@ sub edit_speeddial :Chained('speeddial') :PathPart('edit') :Args(0) {
             });
             $c->flash(messages => [{type => 'success', text => 'Successfully updated speed dial slot'}]);
         } catch($e) {
-            $c->log->error("failed to update speed dial slot: $e");
-            $c->flash(messages => [{type => 'error', text => 'Failed to update speed dial slot'}]);
+            NGCP::Panel::Utils::Message->error(
+                c     => $c,
+                error => $e,
+                desc  => "Failed to update speed dial slot.",
+            );
         }
         NGCP::Panel::Utils::Navigation::back_or($c, 
             $c->uri_for_action('/subscriber/preferences', [$c->req->captures->[0]]));
