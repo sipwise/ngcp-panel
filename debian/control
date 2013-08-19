@@ -84,4 +84,5 @@ Depends: libcatalyst-actionrole-acl-perl,
          ${misc:Depends},
          ${perl:Depends}
 Description: Catalyst based application
- TODO
+ A completely overhauled provisioning interface for the
+ NGCP system.
