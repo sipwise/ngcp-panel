@@ -122,6 +122,7 @@ sub edit :Chained('base') :PathPart('edit') :Args(0) {
         $params->{reseller}{id} = $c->user->reseller_id;
     } elsif($c->user->is_superuser) {
         $form = NGCP::Panel::Form::Contact::Admin->new;
+        $params->{reseller}{id} = $c->stash->{contact}->reseller->id;
     } else {
         $form = NGCP::Panel::Form::Contact::Reseller->new;
     }

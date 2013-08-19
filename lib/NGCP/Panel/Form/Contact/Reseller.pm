@@ -14,21 +14,50 @@ sub build_form_element_class { [qw/form-horizontal/] }
 has_field 'firstname' => (
     type => 'Text',
     label => 'First Name',
+    maxlength => 127,
 );
 
 has_field 'lastname' => (
     type => 'Text',
     label => 'Last Name',
+    maxlength => 127,
 );
 
 has_field 'company' => (
     type => 'Text',
     label => 'Company',
+    maxlength => 127,
 );
 
 has_field 'email' => (
     type => 'Email',
     required => 1,
+    maxlength => 255,
+);
+
+has_field 'street' => (
+    type => 'Text',
+    maxlength => 127,
+);
+
+has_field 'postcode' => (
+    type => 'Integer',
+);
+
+has_field 'city' => (
+    type => 'Text',
+    maxlength => 127,
+);
+
+has_field 'country' => (
+    type => 'Text',
+    maxlength => 2,
+);
+
+has_field 'phonenumber' => (
+    type => 'Text',
+    maxlength => 31,
+    label => 'Phone Number',
 );
 
 has_field 'save' => (
@@ -41,7 +70,8 @@ has_field 'save' => (
 has_block 'fields' => (
     tag => 'div',
     class => [qw/modal-body/],
-    render_list => [qw/firstname lastname email company/],
+    render_list => [qw/firstname lastname email company street postcode city
+        country phonenumber/],
 );
 
 has_block 'actions' => (
