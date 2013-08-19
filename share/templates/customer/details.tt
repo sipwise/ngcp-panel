@@ -69,6 +69,12 @@
         </div>
         <div class="accordion-body collapse" id="collapse_contact">
             <div class="accordion-inner">
+
+                <span>
+                    <a class="btn btn-primary btn-large" href="[% c.uri_for('/contact', contact_hash.id, 'edit') %]"><i class="icon-edit"></i> Edit Contact</a>
+                </span>
+                <div class="ngcp-separator"></div>
+
                 <table class="table table-bordered table-striped table-highlight table-hover">
                     <thead>
                         <th>Name</th>
