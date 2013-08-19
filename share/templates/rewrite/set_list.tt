@@ -1,6 +1,6 @@
 [% META title = 'Rewrite Rule Sets' -%]
 [%
-    helper.name = 'Rewrite Rule Sets';
+    helper.name = 'Rewrite Rule Set';
     helper.messages = messages;
     helper.dt_columns = set_dt_columns;
 
@@ -10,11 +10,16 @@
     helper.form_object = form;
     helper.ajax_uri = c.uri_for_action( "/rewrite/set_ajax" );
 
+    IF clone_flag;
+        helper.name = 'cloned Rewrite Rule Set';
+    END;
+
     UNLESS c.user.read_only;
         helper.dt_buttons = [
             { name = 'Edit', uri = "/rewrite/'+full.id+'/edit", class = 'btn-small btn-primary', icon = 'icon-edit' },
             { name = 'Delete', uri = "/rewrite/'+full.id+'/delete", class = 'btn-small btn-secondary', icon = 'icon-trash' },
             { name = 'Rules', uri = "/rewrite/'+full.id+'/rules", class = 'btn-small btn-tertiary', icon = 'icon-list' },
+            { name = 'Clone', uri = "/rewrite/'+full.id+'/clone", class = 'btn-small btn-tertiary', icon = 'icon-retweet' },
         ];
         helper.top_buttons = [
             { name = 'Create Rewrite Rule Set', uri = c.uri_for('/rewrite/create'), icon = 'icon-star' },
