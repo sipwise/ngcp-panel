@@ -5,6 +5,7 @@ BEGIN { extends 'Catalyst::Controller'; }
 
 use NGCP::Panel::Form::RewriteRule::AdminSet;
 use NGCP::Panel::Form::RewriteRule::ResellerSet;
+use NGCP::Panel::Form::RewriteRule::CloneSet;
 use NGCP::Panel::Form::RewriteRule::Rule;
 use NGCP::Panel::Utils::XMLDispatcher;
 use NGCP::Panel::Utils::Navigation;
@@ -119,6 +120,55 @@ sub set_delete :Chained('set_base') :PathPart('delete') {
         $c->flash(messages => [{type => 'error', text => 'Failed to delete rewrite rule set'}]);
     }
     NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for('/rewrite'));
+}
+
+sub set_clone :Chained('set_base') :PathPart('clone') {
+    my ($self, $c) = @_;
+
+    my $posted = ($c->request->method eq 'POST');
+    my $params = { $c->stash->{set_result}->get_inflated_columns };
+    $params = $params->merge($c->session->{created_objects});
+    my $form = NGCP::Panel::Form::RewriteRule::CloneSet->new;
+    $form->process(
+        posted => $posted,
+        params => $c->request->params,
+        item   => $params,
+    );
+    NGCP::Panel::Utils::Navigation::check_form_buttons(
+        c => $c,
+        form => $form,
+        fields => {},
+        back_uri => $c->req->uri,
+    );
+    if($posted && $form->validated) {
+        try {
+            my $new_set = $c->stash->{sets_rs}->create({
+                %{ $form->values },
+                reseller_id => $c->stash->{set_result}->reseller_id,
+            });
+            my @old_rules = $c->stash->{set_result}->voip_rewrite_rules->all;
+            for my $rule (@old_rules) {
+                $new_set->voip_rewrite_rules->create({
+                    match_pattern => $rule->match_pattern,
+                    replace_pattern => $rule->replace_pattern,
+                    description => $rule->description,
+                    direction => $rule->direction,
+                    field => $rule->field,
+                    priority => $rule->priority,
+                });
+            }
+
+            $c->flash(messages => [{type => 'success', text => 'Rewrite rule set successfully cloned'}]);
+        } catch($e) {
+            $c->log->error("failed to clone rewrite rule set: $e");
+            $c->flash(messages => [{type => 'error', text => 'Failed to clone rewrite rule set'}]);
+        }
+        NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for('/rewrite'));
+    }
+
+    $c->stash(form => $form);
+    $c->stash(create_flag => 1);
+    $c->stash(clone_flag => 1);
 }
 
 sub set_create :Chained('set_list') :PathPart('create') :Args(0) {
@@ -415,6 +465,13 @@ The form used is L<NGCP::Panel::Form::RewriteRuleSet>.
 =head2 set_delete
 
 Delete a rewrite rule set determined by L</set_base>.
+
+=head2 set_clone
+
+Deep copy a rewrite rule set determined by L</set_base>. The user can enter
+a new name and description. The reseller is not configurable, but set by the
+original rewrite rule set. The rewrite rules of the original rwrs are then
+cloned and assigned to the new rwrs.
 
 =head2 set_create
 
