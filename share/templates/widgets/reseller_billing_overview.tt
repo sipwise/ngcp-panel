@@ -9,8 +9,8 @@
         </div>
         <div class="plan-features">
             <ul>
-                <li><strong>[% FILTER format("%.02f") %][% reseller_sum / 100.0 %][% END %]</strong> Reseller Cost</li>
-                <li><strong>[% FILTER format("%.02f") %][% customer_sum / 100.0 %][% END %]</strong> Customer Revenue</li>
+                <li><strong>[% FILTER format("%.02f") %][% (reseller_sum || 0) / 100.0 %][% END %]</strong> Reseller Cost</li>
+                <li><strong>[% FILTER format("%.02f") %][% (customer_sum || 0) / 100.0 %][% END %]</strong> Customer Revenue</li>
             </ul>
         </div>
         <div class="plan-actions">
