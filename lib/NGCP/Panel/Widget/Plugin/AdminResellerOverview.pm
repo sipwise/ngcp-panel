@@ -23,7 +23,9 @@ around handle => sub {
     my ($foo, $self, $c) = @_;
 
     $c->stash(
-        resellers => $c->model('DB')->resultset('resellers')->search_rs({}),
+        resellers => $c->model('DB')->resultset('resellers')->search_rs({
+            status => { '!=' => 'terminated' },
+        }),
         domains => $c->model('DB')->resultset('domain_resellers')->search_rs({}),
         customers => $c->model('DB')->resultset('contracts')->search_rs({
             status => { '!=' => 'terminated' },
