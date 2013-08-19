@@ -18,7 +18,12 @@ sub process {
     # TODO: can we nest it deeper than once level?
     for my $c(@{ $cols }) {
         my @parts = split /\./, $c->{name};
-        if(@parts == 2) {
+        if($c->{literal_sql}) {
+            $rs = $rs->search_rs(undef, {
+                '+select' => [ $c->{literal_sql} ],
+                '+as' => [ $c->{accessor} ],
+            });
+        } elsif(@parts == 2) {
             $rs = $rs->search_rs(undef, {
                 join => $parts[0],
                 '+select' => [ $c->{name} ],
@@ -37,10 +42,11 @@ sub process {
 
     # generic searching
     my @searchColumns = ();
-    foreach my $c(@{ $cols }) {
+    foreach my $col(@{ $cols }) {
         # avoid amigious column names if we have the same column in different joined tables
-        my $name = _get_joined_column_name($c->{name});
-        push @searchColumns, $name if $c->{search};
+        my $name = _get_joined_column_name($col->{name});
+        $name = $col->{literal_sql} if $col->{literal_sql};
+        push @searchColumns, $name if $col->{search};
     }
     my $searchString = $c->request->params->{sSearch} // "";
     if($searchString) {

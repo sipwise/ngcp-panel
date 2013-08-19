@@ -82,6 +82,8 @@ sub sub_list :Chained('/') :PathPart('subscriber') :CaptureArgs(0) {
         { name => "domain.domain", search => 1, title => "Domain" },
         { name => "uuid", search => 1, title => "UUID" },
         { name => "status", search => 1, title => "Status" },
+        { name => "number", search => 1, title => "Number", literal_sql => "concat(voip_numbers.cc, voip_numbers.ac, voip_numbers.sn)"},
+        { name => "voip_numbers.cc", search => 1, title => "" }, #need this to get the relationship
     ]);
 }
 
