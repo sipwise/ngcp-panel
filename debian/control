@@ -44,7 +44,7 @@ Homepage: http://sipwise.com/
 
 Package: ngcp-panel
 Architecture: all
-Pre-Depends: apache2,
+Pre-Depends: apache2.2-common,
              libapache2-mod-perl2
 Depends: libcatalyst-actionrole-acl-perl,
          libcatalyst-modules-perl,
