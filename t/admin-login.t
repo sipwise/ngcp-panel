@@ -1,6 +1,6 @@
 use Sipwise::Base;
 use lib 't/lib';
-use Test::More import => [qw(done_testing is)];
+use Test::More import => [qw(done_testing is diag)];
 use Test::WebDriver::Sipwise qw();
 
 my $browsername = $ENV{BROWSER_NAME} || ""; #possible values: htmlunit, chrome
@@ -10,11 +10,11 @@ my $uri = $ENV{CATALYST_SERVER} || 'http://localhost:3000';
 $d->get_ok("$uri/logout"); #make sure we are logged out
 $d->get_ok("$uri/login");
 
-$d->find(link_text => 'Admin')->click;
-
+diag("Do Admin Login");
+$d->findtext_ok('Admin Sign In');
 $d->find(name => 'username')->send_keys('administrator');
 $d->find(name => 'password')->send_keys('administrator');
-$d->find(name => 'submit')->click;
+$d->findclick_ok(name => 'submit');
 
 $d->title_is('Dashboard');
 
