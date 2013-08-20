@@ -12,10 +12,8 @@ $d->get_ok("$uri/logout"); #make sure we are logged out
 $d->get_ok("$uri/login");
 $d->set_implicit_wait_timeout(1000);
 
-$d->findtext_ok('Subscriber Sign In');
-
-diag("Go to Admin Login");
-$d->findclick_ok(link_text => 'Admin');
+diag("Do Admin Login");
+$d->findtext_ok('Admin Sign In');
 $d->find(name => 'username')->send_keys('administrator');
 $d->find(name => 'password')->send_keys('administrator');
 $d->findclick_ok(name => 'submit');
