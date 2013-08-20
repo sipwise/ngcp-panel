@@ -20,7 +20,7 @@ sub process {
         my @parts = split /\./, $c->{name};
         if($c->{literal_sql}) {
             $rs = $rs->search_rs(undef, {
-                '+select' => [ $c->{literal_sql} ],
+                '+select' => [ \[$c->{literal_sql}] ],
                 '+as' => [ $c->{accessor} ],
             });
         } elsif(@parts == 2) {
@@ -42,15 +42,17 @@ sub process {
 
     # generic searching
     my @searchColumns = ();
+    my $searchString = $c->request->params->{sSearch} // "";
     foreach my $col(@{ $cols }) {
         # avoid amigious column names if we have the same column in different joined tables
         my $name = _get_joined_column_name($col->{name});
-        $name = $col->{literal_sql} if $col->{literal_sql};
-        push @searchColumns, $name if $col->{search};
+        my $stmt = { $name => { like => '%'.$searchString.'%' } };
+        $stmt = \[$col->{literal_sql} . " LIKE ?", '%'.$searchString.'%']
+            if $col->{literal_sql};
+        push @searchColumns, $stmt if $col->{search};
     }
-    my $searchString = $c->request->params->{sSearch} // "";
     if($searchString) {
-        $rs = $rs->search([ map{ +{ $_ => { like => '%'.$searchString.'%' } } } @searchColumns ]);
+        $rs = $rs->search([@searchColumns]);
     }
 
     # data-range searching
