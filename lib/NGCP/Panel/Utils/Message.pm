@@ -16,6 +16,12 @@ method error ($self: Catalyst :$c, Str :$desc, Str :$log?, :$error?) {
         $c->flash(messages => [{type => 'error', text => "$desc"}]);
         return;
     }
+    
+    if (my ($host) = $error =~ /problem connecting to (\S+, port [0-9]+)/ ) {
+        $c->log->error("$desc ($error)");
+        $c->flash(messages => [{type => 'error', text => "$desc (A service could not be reached, $host)"}]);
+        return;
+    }
 
     unless ( $error->isa('DBIx::Class::Exception') ) {
         $c->log->error("$desc ($error)");

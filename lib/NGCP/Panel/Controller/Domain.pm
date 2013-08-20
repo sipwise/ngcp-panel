@@ -6,6 +6,7 @@ BEGIN { extends 'Catalyst::Controller'; }
 
 use NGCP::Panel::Form::Domain::Reseller;
 use NGCP::Panel::Form::Domain::Admin;
+use NGCP::Panel::Utils::Message;
 use NGCP::Panel::Utils::Navigation;
 use NGCP::Panel::Utils::Prosody;
 use NGCP::Panel::Utils::Preferences;
@@ -88,8 +89,11 @@ sub create :Chained('dom_list') :PathPart('create') :Args(0) {
                 $c->session->{created_objects}->{domain} = { id => $new_dom->id };
             });
         } catch ($e) {
-            $c->flash(messages => [{type => 'error', text => 'Failed to create domain'}]);
-            $c->log->error("failed to create domain: $e");
+            NGCP::Panel::Utils::Message->error(
+                c => $c,
+                error => $e,
+                desc  => "Failed to create domain.",
+            );
             NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for('/domain'));
         }
 
@@ -135,7 +139,7 @@ sub edit :Chained('base') :PathPart('edit') :Args(0) {
     my ($self, $c) = @_;
 
     my $posted = ($c->request->method eq 'POST');
-    my $form = NGCP::Panel::Form::Domain->new;
+    my $form = NGCP::Panel::Form::Domain::Reseller->new;
     $form->process(
         posted => 1,
         params => $posted ? $c->request->params : $c->stash->{domain},
@@ -153,8 +157,11 @@ sub edit :Chained('base') :PathPart('edit') :Args(0) {
                 });
             });
         } catch ($e) {
-            $c->flash(messages => [{type => 'error', text => 'Failed to update domain'}]);
-            $c->log->error("failed to update domain: $e");
+            NGCP::Panel::Utils::Message->error(
+                c => $c,
+                error => $e,
+                desc  => "Failed to update domain.",
+            );
             $c->response->redirect($c->uri_for());
             return;
         }
@@ -182,8 +189,11 @@ sub delete :Chained('base') :PathPart('delete') :Args(0) {
             NGCP::Panel::Utils::Prosody::deactivate_domain($c, $domain);
         });
     } catch ($e) {
-        $c->flash(messages => [{type => 'error', text => 'Failed to delete domain'}]);
-        $c->log->error("failed to delete domain: $e");
+        NGCP::Panel::Utils::Message->error(
+            c => $c,
+            error => $e,
+            desc  => "Failed to delete domain.",
+        );
         $c->response->redirect($c->uri_for());
         return;
     }
