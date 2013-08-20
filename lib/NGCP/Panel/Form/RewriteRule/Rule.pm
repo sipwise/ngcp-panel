@@ -90,6 +90,16 @@ sub validate {
         $self->field('match_pattern')->add_error($err_msg);
         $self->field('replace_pattern')->add_error($err_msg);
     }
+    
+    if ( $r =~ m/\$$/ ) {
+        $self->field('replace_pattern')->add_error('Cannot end with "$"');
+    }
+    if ( my ($found) = $r =~ m/^([*+?])/ ) {
+        $self->field('replace_pattern')->add_error("Cannot start with \"$found\"");
+    }
+    if ( $r =~ m/\s/ ) {
+        $self->field('replace_pattern')->add_error("Spaces are not allowed in replacement pattern");
+    }
 }
 
 1;
