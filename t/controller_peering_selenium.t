@@ -12,10 +12,8 @@ $d->get_ok("$uri/logout"); #make sure we are logged out
 $d->get_ok("$uri/login");
 $d->set_implicit_wait_timeout(1000);
 
-$d->findtext_ok('Subscriber Sign In');
-
-diag("Go to Admin Login");
-$d->findclick_ok(link_text => 'Admin');
+diag("Do Admin Login");
+$d->findtext_ok('Admin Sign In');
 $d->find(name => 'username')->send_keys('administrator');
 $d->find(name => 'password')->send_keys('administrator');
 $d->findclick_ok(name => 'submit');
@@ -29,15 +27,15 @@ $d->findclick_ok(link_text => "Peerings");
 diag("Create a Peering Group");
 $d->title_is("SIP Peering Groups");
 my $peerings_uri = $d->get_location;
-$d->findclick_ok(link_text => 'Create SIP Peering Groups');
+$d->findclick_ok(link_text => 'Create Peering Group');
 
 diag("Create a Peering Contract");
 $d->findclick_ok(xpath => '//input[@type="button" and @value="Create Contract"]');
-$d->findclick_ok(xpath => '//table[@id="contractcontactidtable"]/tbody/tr[1]//input[@type="checkbox"]');
+$d->findclick_ok(xpath => '//table[@id="contactidtable"]/tbody/tr[1]//input[@type="checkbox"]');
 $d->findclick_ok(xpath => '//table[@id="billing_profileidtable"]/tbody/tr[1]//input[@type="checkbox"]');
-$d->findclick_ok(xpath => '//div[contains(@class,"modal-body")]//div//select[@id="contract.status"]/option[@value="active"]');
+$d->findclick_ok(xpath => '//div[contains(@class,"modal-body")]//div//select[@id="status"]/option[@value="active"]');
 $d->findclick_ok(xpath => '//div[contains(@class,"modal")]//input[@type="submit"]');
-$d->findtext_ok('Create SIP Peering Groups'); #Should go back to prev form
+$d->findtext_ok('Create Peering Group'); #Should go back to prev form
 
 $d->fill_element_ok([id => 'name', 'testinggroup']);
 $d->fill_element_ok([id => 'description', 'A group created for testing purposes']);
@@ -47,13 +45,13 @@ $d->findclick_ok(id => 'save');
 diag("Edit Servers/Rules of testinggroup");
 my $row = $d->find(xpath => '(//table/tbody/tr/td[contains(text(), "testinggroup")]/..)[1]');
 ok($row);
-my $edit_link = $d->find_child_element($row, '(./td//a)[contains(text(),"Peering Servers/Rules")]');
+my $edit_link = $d->find_child_element($row, '(./td//a)[contains(text(),"Details")]');
 ok($edit_link);
 $d->move_to(element => $row);
 $edit_link->click;
 
 diag("Create a Peering Rule");
-$d->findclick_ok(xpath => '//a[contains(text(),"Create Peering Rules")]');
+$d->findclick_ok(xpath => '//a[contains(text(),"Create Peering Rule")]');
 $d->fill_element_ok(['id', 'callee_prefix', '43']);
 $d->fill_element_ok(['id', 'callee_pattern', '^sip']);
 $d->fill_element_ok(['id', 'caller_pattern', '999']);
