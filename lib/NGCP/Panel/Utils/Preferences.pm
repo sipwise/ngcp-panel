@@ -372,7 +372,7 @@ sub create_preference_form {
         }
     }
 
-    $form->process if $posted;
+    $form->process if ($posted && $form->validated);
     $c->stash(form       => $form,
               aip_grp_rs => $aip_grp_rs,
               man_aip_grp_rs => $man_aip_grp_rs);
