@@ -7,6 +7,7 @@ use NGCP::Panel::Form::CustomerMonthlyFraud;
 use NGCP::Panel::Form::CustomerDailyFraud;
 use NGCP::Panel::Form::CustomerBalance;
 use NGCP::Panel::Form::CustomerSubscriber;
+use NGCP::Panel::Utils::Message;
 use NGCP::Panel::Utils::Navigation;
 use UUID qw/generate unparse/;
 
@@ -98,8 +99,11 @@ sub base :Chained('list_customer') :PathPart('') :CaptureArgs(1) {
                 contract => $contract->first,
             );
         } catch($e) {
-            $c->log->error("Failed to create contract balance: $e");
-            $c->flash(messages => [{type => 'error', text => 'Failed to create contract balance!'}]);
+            NGCP::Panel::Utils::Message->error(
+                c => $c,
+                error => $e,
+                desc  => "Failed to create contract balance.",
+            );
             $c->response->redirect($c->uri_for());
             return;
         }
@@ -265,8 +269,11 @@ sub subscriber_create :Chained('base') :PathPart('subscriber/create') :Args(0) {
             $c->response->redirect($c->uri_for_action('/customer/details', [$contract->id]));
             return;
         } catch($e) {
-            $c->log->error("Failed to create subscriber: $e");
-            $c->flash(messages => [{type => 'error', text => 'Creating subscriber failed!'}]);
+            NGCP::Panel::Utils::Message->error(
+                c => $c,
+                error => $e,
+                desc  => "Failed to create subscriber.",
+            );
             $c->response->redirect($c->uri_for_action('/customer/details', [$contract->id]));
             return;
         }
@@ -334,8 +341,11 @@ sub delete_fraud :Chained('base') :PathPart('fraud/delete') :Args(1) {
                 "fraud_".$type."_notify" => undef,
             });
         } catch($e) {
-            $c->log->error("Failed to clear fraud interval: $e");
-            $c->flash(messages => [{type => 'error', text => "Failed to clear fraud interval!"}]);
+            NGCP::Panel::Utils::Message->error(
+                c => $c,
+                error => $e,
+                desc  => "Failed to clear fraud interval.",
+            );
             $c->response->redirect($c->uri_for_action("/customer/details", [$c->stash->{contract}->id]));
             return;
         }

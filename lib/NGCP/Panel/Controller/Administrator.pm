@@ -4,6 +4,7 @@ use namespace::sweep;
 BEGIN { extends 'Catalyst::Controller'; }
 use NGCP::Panel::Form::Administrator::Reseller;
 use NGCP::Panel::Form::Administrator::Admin;
+use NGCP::Panel::Utils::Message;
 use NGCP::Panel::Utils::Navigation;
 
 sub auto :Does(ACL) :ACLDetachTo('/denied_page') :AllowedRole(admin) :AllowedRole(reseller) {
@@ -106,8 +107,11 @@ sub create :Chained('list_admin') :PathPart('create') :Args(0) {
             delete $c->session->{created_objects}->{reseller};
             $c->flash(messages => [{type => 'success', text => 'Administrator successfully created'}]);
         } catch($e) {
-            $c->log->error("failed to create administrator: $e");
-            $c->flash(messages => [{type => 'error', text => 'Failed to create administrator'}]);
+            NGCP::Panel::Utils::Message->error(
+                c => $c,
+                error => $e,
+                desc  => "Failed to create administrator.",
+            );
         }
         NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for('/administrator'));
     }
@@ -180,8 +184,11 @@ sub edit :Chained('base') :PathPart('edit') :Args(0) {
             delete $c->session->{created_objects}->{reseller};
             $c->flash(messages => [{type => 'success', text => 'Administrator successfully updated'}]);
         } catch($e) {
-            $c->log->error("failed to update administrator: $e");
-            $c->flash(messages => [{type => 'error', text => 'Failed to update administrator'}]);
+            NGCP::Panel::Utils::Message->error(
+                c => $c,
+                error => $e,
+                desc  => "Failed to update administrator.",
+            );
         };
         NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for('/administrator'));
     }
@@ -203,8 +210,11 @@ sub delete :Chained('base') :PathPart('delete') :Args(0) {
         $c->stash->{administrator}->delete;
         $c->flash(messages => [{type => 'success', text => 'Administrator successfully deleted'}]);
     } catch($e) {
-        $c->log->error("failed to delete administrator: $e");
-        $c->flash(messages => [{type => 'error', text => 'Failed to delete administrator'}]);
+        NGCP::Panel::Utils::Message->error(
+            c => $c,
+            error => $e,
+            desc  => "Failed to delete administrator.",
+        );
     };
     NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for('/administrator'));
 }

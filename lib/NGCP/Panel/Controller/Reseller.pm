@@ -7,6 +7,7 @@ use HTTP::Status qw(HTTP_SEE_OTHER);
 use NGCP::Panel::Form::Reseller;
 use NGCP::Panel::Utils::Navigation;
 use NGCP::Panel::Utils::Contract;
+use NGCP::Panel::Utils::Message;
 
 sub auto :Does(ACL) :ACLDetachTo('/denied_page') :AllowedRole(admin) {
     my ($self, $c) = @_;
@@ -88,8 +89,11 @@ sub create :Chained('list_reseller') :PathPart('create') :Args(0) {
 
             $c->flash(messages => [{type => 'success', text => 'Reseller successfully created'}]);
         } catch($e) {
-            $c->log->error($e);
-            $c->flash(messages => [{type => 'error', text => 'Failed to create reseller'}]);
+            NGCP::Panel::Utils::Message->error(
+                c => $c,
+                error => $e,
+                desc  => "Failed to create reseller.",
+            );
         }
         NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for('/reseller'));
     }
@@ -238,8 +242,11 @@ sub edit :Chained('base') :PathPart('edit') :Args(0) {
             delete $c->session->{edit_contract_id};
             $c->flash(messages => [{type => 'success', text => 'Reseller successfully updated'}]);
         } catch($e) {
-            $c->log->error($e);
-            $c->flash(messages => [{type => 'error', text => 'Failed to update reseller'}]);
+            NGCP::Panel::Utils::Message->error(
+                c => $c,
+                error => $e,
+                desc  => "Failed to update reseller.",
+            );
         }
         NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for('/reseller'));
     }
@@ -272,8 +279,11 @@ sub terminate :Chained('base') :PathPart('terminate') :Args(0) {
         });
         $c->flash(messages => [{type => 'success', text => 'Successfully terminated reseller'}]);
     } catch($e) {
-        $c->log->error("failed to terminate reseller: $e");
-        $c->flash(messages => [{type => 'error', text => 'Failed to terminate reseller'}]);
+        NGCP::Panel::Utils::Message->error(
+            c => $c,
+            error => $e,
+            desc  => "Failed to terminate reseller.",
+        );
     }
     NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for('/reseller'));
 }
@@ -389,8 +399,11 @@ sub create_defaults :Path('create_defaults') :Args(0) {
             );
         });
     } catch($e) {
-        $c->log->error($e);
-        $c->flash(messages => [{type => 'error', text => 'Failed to create reseller'}]);
+        NGCP::Panel::Utils::Message->error(
+            c => $c,
+            error => $e,
+            desc  => "Failed to create reseller.",
+        );
     };
     $c->flash(messages => [{type => 'success', text => "Reseller successfully created with login <b>".$defaults{admins}->{login}."</b> and password <b>".$defaults{admins}->{md5pass}."</b>, please review your settings below" }]);
     $c->res->redirect($c->uri_for_action('/reseller/details', [$r{resellers}->id]));

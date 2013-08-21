@@ -4,11 +4,11 @@ use Sipwise::Base;
 
 BEGIN { extends 'Catalyst::Controller'; }
 
-use NGCP::Panel::Utils::Navigation;
 use NGCP::Panel::Form::PeeringGroup;
 use NGCP::Panel::Form::PeeringRule;
 use NGCP::Panel::Form::PeeringServer;
 use NGCP::Panel::Utils::XMLDispatcher;
+use NGCP::Panel::Utils::Message;
 use NGCP::Panel::Utils::Navigation;
 use NGCP::Panel::Utils::Preferences;
 
@@ -112,8 +112,11 @@ sub edit :Chained('base') :PathPart('edit') {
             delete $c->session->{created_objects}->{contract};
             $c->flash(messages => [{type => 'success', text => 'Peering group successfully updated'}]);
         } catch ($e) {
-            $c->flash(messages => [{type => 'error', text => 'Failed to update peering group'}]);
-            $c->log->error("failed to update peering group: $e");
+            NGCP::Panel::Utils::Message->error(
+                c => $c,
+                error => $e,
+                desc  => "Failed to update peering group.",
+            );
         };
         NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for)
     }
@@ -130,8 +133,11 @@ sub delete :Chained('base') :PathPart('delete') {
         $self->_sip_lcr_reload;
         $c->flash(messages => [{type => 'success', text => 'Peering Group successfully deleted'}]);
     } catch ($e) {
-        $c->flash(messages => [{type => 'error', text => 'Failed to delete peering group'}]);
-        $c->log->error("failed to delete peering group: $e");
+        NGCP::Panel::Utils::Message->error(
+            c => $c,
+            error => $e,
+            desc  => "Failed to delete peering group.",
+        );
     };
     $c->response->redirect($c->uri_for());
 }
@@ -162,8 +168,11 @@ sub create :Chained('group_list') :PathPart('create') :Args(0) {
             delete $c->session->{created_objects}->{contract};
             $c->flash(messages => [{type => 'success', text => 'Peering group successfully created'}]);
         } catch ($e) {
-            $c->flash(rules_messages => [{type => 'error', text => 'Failed to create peering group'}]);
-            $c->log->error("failed to create peering group: $e");
+            NGCP::Panel::Utils::Message->error(
+                c => $c,
+                error => $e,
+                desc  => "Failed to create peering group.",
+            );
         };
         $c->response->redirect($c->uri_for_action('/peering/root'));
         return;
@@ -212,8 +221,11 @@ sub servers_create :Chained('servers_list') :PathPart('create') :Args(0) {
             $self->_sip_lcr_reload;
             $c->flash(messages => [{type => 'success', text => 'Peering server successfully created'}]);
         } catch($e) {
-            $c->log->error("failed to create peering server: $e");
-            $c->flash(messages => [{type => 'error', text => 'Failed to create peering server'}]);
+            NGCP::Panel::Utils::Message->error(
+                c => $c,
+                error => $e,
+                desc  => "Failed to create peering server.",
+            );
         };
         NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for_action('/peering/servers_root', [$c->req->captures->[0]]));
     }
@@ -268,8 +280,11 @@ sub servers_edit :Chained('servers_base') :PathPart('edit') :Args(0) {
             $self->_sip_lcr_reload;
             $c->flash(messages => [{type => 'success', text => 'Peering server successfully updated'}]);
         } catch ($e) {
-            $c->log->error("failed to update peering server: $e");
-            $c->flash(messages => [{type => 'error', text => 'Failed to update peering server'}]);
+            NGCP::Panel::Utils::Message->error(
+                c => $c,
+                error => $e,
+                desc  => "Failed to update peering server.",
+            );
         };
         NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for_action('/peering/servers_root', [$c->req->captures->[0]]));
     }
@@ -289,8 +304,11 @@ sub servers_delete :Chained('servers_base') :PathPart('delete') :Args(0) {
         $self->_sip_lcr_reload;
         $c->flash(messages => [{type => 'success', text => 'Peering server successfully deleted'}]);
     } catch ($e) {
-        $c->log->error("failed to delete peering server: $e");
-        $c->flash(rules_messages => [{type => 'error', text => 'Failed to delete peering server'}]);
+        NGCP::Panel::Utils::Message->error(
+            c => $c,
+            error => $e,
+            desc  => "Failed to delete peering server.",
+        );
     };
     NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for_action('/peering/servers_root', [$c->req->captures->[0]]));
 }
@@ -414,8 +432,11 @@ sub rules_create :Chained('rules_list') :PathPart('create') :Args(0) {
             $self->_sip_lcr_reload;
             $c->flash(rules_messages => [{type => 'success', text => 'Peering rule successfully created'}]);
         } catch ($e) {
-            $c->log->error("failed to create peering rule: $e");
-            $c->flash(rules_messages => [{type => 'error', text => 'Failed to create peering rule'}]);
+            NGCP::Panel::Utils::Message->error(
+                c => $c,
+                error => $e,
+                desc  => "Failed to create peering rule.",
+            );
         };
         NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for_action('/peering/servers_root', [$c->req->captures->[0]]));
     }
@@ -471,8 +492,11 @@ sub rules_edit :Chained('rules_base') :PathPart('edit') :Args(0) {
             $self->_sip_lcr_reload;
             $c->flash(rules_messages => [{type => 'success', text => 'Peering rule successfully changed'}]);
         } catch ($e) {
-            $c->log->error("failed to update peering rule: $e");
-            $c->flash(rules_messages => [{type => 'error', text => 'Failed to update peering rule'}]);
+            NGCP::Panel::Utils::Message->error(
+                c => $c,
+                error => $e,
+                desc  => "Failed to update peering rule.",
+            );
         };
         NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for_action('/peering/servers_root', [$c->req->captures->[0]]));
     }
@@ -492,8 +516,11 @@ sub rules_delete :Chained('rules_base') :PathPart('delete') :Args(0) {
         $self->_sip_lcr_reload;
         $c->flash(rules_messages => [{type => 'success', text => 'Peering rule successfully deleted'}]);
     } catch ($e) {
-        $c->log->error("failed to delete peering rule: $e");
-        $c->flash(rules_messages => [{type => 'error', text => 'Failed to delete peering rule'}]);
+        NGCP::Panel::Utils::Message->error(
+            c => $c,
+            error => $e,
+            desc  => "Failed to delete peering rule.",
+        );
     };
     NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for_action('/peering/servers_root', [$c->req->captures->[0]]));
 }
