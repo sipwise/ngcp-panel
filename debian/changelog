@@ -43,6 +43,37 @@ ngcp-panel (1.0.15) unstable; urgency=low
 
  -- Andrew Pogrebennyk <apogrebennyk@sipwise.com>  Mon, 07 Oct 2013 17:48:35 +0200
 
+ngcp-panel (1.0.14) unstable; urgency=low
+
+  [ Michael Prokop ]
+  * [a9c05a2] Use invoke-rc.d if available in postinst maintainer script
+  * [cd22cd9] Debian packaging: provide long description
+  * [147ec8f] Add apache2 to Depends
+  * [c292e08] Run wrap-and-sort on Debian files
+  * [ccc709c] Add libapache2-mod-perl2 to Depends
+  * [74cb386] Move apache2/libapache2-mod-perl2 to Pre-Depends
+  * [1098138] Replace Pre-Depends on apache2 with apache2.2-common
+
+  [ Gerhard Jungwirth ]
+  * [62124ac] Have a new messaging util for custom filtering of error
+    messages
+  * [e44482f] possibility to search a subscriber by his number
+  * [8f02c62] Option to edit an existing contact, belonging to a customer
+  * [c69ab29] Add some fields to contacts form
+  * [607932f] don't count terminated resellers in Dashboard
+  * [e262205] Fix some warnings due to non-numeric argument empty string ("")
+  * [a2ddf93] Copy rewrite rule set functionality
+  * [e892998] Adapt literal sql to older versions of DBIx::Class
+  * [f569c82] adapt search data structure to older versions of DBIx::Class
+  * [a8a0d9b] Validation on the replacement pattern of rewrite rules
+  * [0909c81] Use the messaging utility for Domains
+  * [778c3ca] fix missing validation on integer preferences
+  * [1a073df] adapt peering test to recent changes
+  * [562a9cc] adapt more tests
+  * [4e49c96] use the message utility for all controllers
+
+ -- Michael Prokop <mprokop@sipwise.com>  Wed, 21 Aug 2013 11:17:10 +0200
+
 ngcp-panel (1.0.13) unstable; urgency=low
 
   [ Andreas Granig ]
