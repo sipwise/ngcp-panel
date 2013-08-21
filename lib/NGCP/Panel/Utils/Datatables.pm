@@ -47,7 +47,7 @@ sub process {
         # avoid amigious column names if we have the same column in different joined tables
         my $name = _get_joined_column_name($col->{name});
         my $stmt = { $name => { like => '%'.$searchString.'%' } };
-        $stmt = \[$col->{literal_sql} . " LIKE ?", '%'.$searchString.'%']
+        $stmt = \[$col->{literal_sql} . " LIKE ?", [ {} => '%'.$searchString.'%'] ]
             if $col->{literal_sql};
         push @searchColumns, $stmt if $col->{search};
     }
