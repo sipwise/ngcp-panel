@@ -5,6 +5,7 @@ BEGIN { extends 'Catalyst::Controller'; }
 
 use NGCP::Panel::Form::Contact::Reseller;
 use NGCP::Panel::Form::Contact::Admin;
+use NGCP::Panel::Utils::Message;
 use NGCP::Panel::Utils::Navigation;
 
 sub auto :Does(ACL) :ACLDetachTo('/denied_page') :AllowedRole(admin) :AllowedRole(reseller) {
@@ -79,8 +80,11 @@ sub create :Chained('list_contact') :PathPart('create') :Args(0) {
             $c->session->{created_objects}->{contact} = { id => $contact->id };
             $c->flash(messages => [{type => 'success', text => 'Contact successfully created'}]);
         } catch($e) {
-            $c->log->error("failed to create contact: $e");
-            $c->flash(messages => [{type => 'error', text => 'Failed to create contact'}]);
+            NGCP::Panel::Utils::Message->error(
+                c => $c,
+                error => $e,
+                desc  => "Failed to create contact.",
+            );
         }
         NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for('/contact'));
     }
@@ -152,8 +156,11 @@ sub edit :Chained('base') :PathPart('edit') :Args(0) {
             $c->flash(messages => [{type => 'success', text => 'Contact successfully changed'}]);
             delete $c->session->{created_objects}->{reseller};
         } catch($e) {
-            $c->log->error("failed to update contact: $e");
-            $c->flash(messages => [{type => 'error', text => 'Failed to update contact'}]);
+            NGCP::Panel::Utils::Message->error(
+                c => $c,
+                error => $e,
+                desc  => "Failed to update contact.",
+            );
         }
         NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for('/contact'));
     }
@@ -177,8 +184,11 @@ sub delete :Chained('base') :PathPart('delete') :Args(0) {
         $c->stash->{contact}->delete;
         $c->flash(messages => [{type => 'success', text => 'Contact successfully deleted'}]);
     } catch($e) {
-        $c->log->error("failed to delete contact: $e");
-        $c->flash(messages => [{type => 'error', text => 'Failed to delete contact'}]);
+        NGCP::Panel::Utils::Message->error(
+            c => $c,
+            error => $e,
+            desc  => "Failed to delete contact.",
+        );
     }
     NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for('/contact'));
 }

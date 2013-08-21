@@ -3,6 +3,7 @@ use Sipwise::Base;
 
 BEGIN { extends 'Catalyst::Controller'; }
 use NGCP::Panel::Form::Contract;
+use NGCP::Panel::Utils::Message;
 use NGCP::Panel::Utils::Navigation;
 use NGCP::Panel::Utils::Contract;
 use NGCP::Panel::Utils::Subscriber;
@@ -128,8 +129,11 @@ sub create :Chained('contract_list') :PathPart('create') :Args(0) {
                 $c->flash(messages => [{type => 'success', text => "Contract #$contract_id successfully created!"}]);
             });
         } catch($e) {
-            $c->log->error("Failed to create contract: $e");
-            $c->flash(messages => [{type => 'error', text => 'Failed to create contract'}]);
+            NGCP::Panel::Utils::Message->error(
+                c => $c,
+                error => $e,
+                desc  => "Failed to create contract.",
+            );
         }
         NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for('/contract'));
     } 
@@ -238,8 +242,11 @@ sub edit :Chained('base') :PathPart('edit') :Args(0) {
             my $page_title = $c->stash->{page_title};
             $c->flash(messages => [{type => 'success', text => "$page_title successfully changed!"}]);
         } catch($e) {
-            $c->log->error("failed to update contract: $e");
-            $c->flash(messages => [{type => 'error', text => 'Failed to update contract'}]);
+            NGCP::Panel::Utils::Message->error(
+                c => $c,
+                error => $e,
+                desc  => "Failed to update contract.",
+            );
         }
         NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for('/contract'));
     }
@@ -270,8 +277,11 @@ sub terminate :Chained('base') :PathPart('terminate') :Args(0) {
         my $page_title = $c->stash->{page_title};
         $c->flash(messages => [{type => 'success', text => "$page_title successfully terminated"}]);
     } catch ($e) {
-        $c->log->error("failed to terminate contract: $e");
-        $c->flash(messages => [{type => 'error', text => 'Failed to terminate contract'}]);
+        NGCP::Panel::Utils::Message->error(
+            c => $c,
+            error => $e,
+            desc  => "Failed to terminate contract.",
+        );
     };
     NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for('/contract'));
 }
@@ -357,8 +367,11 @@ sub peering_create :Chained('peering_list') :PathPart('create') :Args(0) {
                 $c->flash(messages => [{type => 'success', text => "Contract #$contract_id successfully created"}]);
             });
         } catch($e) {
-            $c->log->error("Failed to create contract: $e");
-            $c->flash(messages => [{type => 'error', text => 'Failed to create contract'}]);
+            NGCP::Panel::Utils::Message->error(
+                c => $c,
+                error => $e,
+                desc  => "Failed to create contract.",
+            );
         }
         NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for('/contract'));
     } 
@@ -573,8 +586,11 @@ sub reseller_create :Chained('reseller_list') :PathPart('create') :Args(0) {
                 $c->flash(messages => [{type => 'success', text => 'Contract successfully created'}]);
             });
         } catch($e) {
-            $c->log->error("Failed to create contract: $e");
-            $c->flash(messages => [{type => 'error', text => 'Failed to create contract'}]);
+            NGCP::Panel::Utils::Message->error(
+                c => $c,
+                error => $e,
+                desc  => "Failed to create contract.",
+            );
         }
         NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for('/contract'));
     } 

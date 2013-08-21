@@ -13,6 +13,7 @@ use NGCP::Panel::Form::BillingZone;
 use NGCP::Panel::Form::BillingPeaktimeWeekdays;
 use NGCP::Panel::Form::BillingPeaktimeSpecial;
 use NGCP::Panel::Form::BillingFeeUpload;
+use NGCP::Panel::Utils::Message;
 use NGCP::Panel::Utils::Navigation;
 use NGCP::Panel::Utils::Datatables;
 
@@ -128,8 +129,11 @@ sub edit :Chained('base') :PathPart('edit') {
 
             $c->flash(messages => [{type => 'success', text => 'Billing profile successfully updated'}]);
         } catch($e) {
-            $c->log->error("failed to update billing profile: $e");
-            $c->flash(messages => [{type => 'error', text => 'Failed to update billing profile'}]);
+            NGCP::Panel::Utils::Message->error(
+                c => $c,
+                error => $e,
+                desc  => "Failed to update billing profile.",
+            );
         }
         NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for('/billing'));
     }
@@ -182,8 +186,11 @@ sub create :Chained('profile_list') :PathPart('create') :Args(0) {
 
             $c->flash(messages => [{type => 'success', text => 'Billing profile successfully created'}]);
         } catch($e) {
-            $c->log->error("failed to create billing profile: $e");
-            $c->flash(messages => [{type => 'error', text => 'Failed to create billing profile'}]);
+            NGCP::Panel::Utils::Message->error(
+                c => $c,
+                error => $e,
+                desc  => "Failed to create billing profile.",
+            );
         }
         NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for('/billing'));
     }
@@ -421,8 +428,11 @@ sub zones_create :Chained('zones_list') :PathPart('create') :Args(0) {
             $c->session->{created_objects}->{billing_zone} = { id => $zone->id };
             $c->flash(messages => [{type => 'success', text => 'Billing Zone successfully created'}]);
         } catch($e) {
-            $c->log->error("failed to create billing zone: $e");
-            $c->flash(messages => [{type => 'error', text => 'Failed to create billing zone'}]);
+            NGCP::Panel::Utils::Message->error(
+                c => $c,
+                error => $e,
+                desc  => "Failed to create billing zone.",
+            );
         }
         NGCP::Panel::Utils::Navigation::back_or($c, $c->stash->{zones_root_uri});
     }
@@ -458,8 +468,11 @@ sub zones_delete :Chained('zones_base') :PathPart('delete') :Args(0) {
         $c->stash->{zone_result}->delete;
         $c->flash(messages => [{type => 'success', text => 'Billing zone successfully deleted'}]);
     } catch($e) {
-        $c->log->error("failed to delete billing zone: $e");
-        $c->flash(messages => [{type => 'error', text => 'Failed to delete billing zone'}]);
+        NGCP::Panel::Utils::Message->error(
+            c => $c,
+            error => $e,
+            desc  => "Failed to delete billing zone.",
+        );
     }
     NGCP::Panel::Utils::Navigation::back_or($c, $c->stash->{zones_root_uri});
 }
@@ -619,8 +632,11 @@ sub peaktime_specials_edit :Chained('peaktime_specials_base') :PathPart('edit') 
             $c->stash->{special_result}->update($form->values);
             $c->flash(messages => [{type => 'success', text => 'Special offpeak entry successfully updated'}]);
         } catch($e) {
-            $c->log->error("failed to update special peaktime: $e");
-            $c->flash(messages => [{type => 'error', text => 'Failed to update special offpeak entry'}]);
+            NGCP::Panel::Utils::Message->error(
+                c => $c,
+                error => $e,
+                desc  => "Failed to update special offpeak entry.",
+            );
         }
         NGCP::Panel::Utils::Navigation::back_or($c, $c->stash->{peaktimes_root_uri});
     }
@@ -635,8 +651,11 @@ sub peaktime_specials_delete :Chained('peaktime_specials_base') :PathPart('delet
         $c->stash->{special_result}->delete;
             $c->flash(messages => [{type => 'success', text => 'Special offpeak entry successfully deleted'}]);
     } catch($e) {
-        $c->log->error("failed to delete special peaktime: $e");
-        $c->flash(messages => [{type => 'error', text => 'Failed to delete special offpeak entry'}]);
+        NGCP::Panel::Utils::Message->error(
+            c => $c,
+            error => $e,
+            desc  => "Failed to delete special offpeak entry.",
+        );
     }
     NGCP::Panel::Utils::Navigation::back_or($c, $c->stash->{peaktimes_root_uri});
 }
@@ -665,8 +684,11 @@ sub peaktime_specials_create :Chained('peaktimes_list') :PathPart('date/create')
                 ->create($form->values);
             $c->flash(messages => [{type => 'success', text => 'Special offpeak entry successfully created'}]);
         } catch($e) {
-            $c->log->error("failed to create special offpeak entry: $e");
-            $c->flash(messages => [{type => 'error', text => 'Failed to create special offpeak entry'}]);
+            NGCP::Panel::Utils::Message->error(
+                c => $c,
+                error => $e,
+                desc  => "Failed to create special offpeak entry.",
+            );
         }
         NGCP::Panel::Utils::Navigation::back_or($c, $c->stash->{peaktimes_root_uri});
     }
