@@ -1,4 +1,4 @@
-package NGCP::Panel::Form::Contract;
+package NGCP::Panel::Form::Contract::Basic;
 
 use HTML::FormHandler::Moose;
 extends 'HTML::FormHandler';

@@ -2,7 +2,8 @@ package NGCP::Panel::Controller::Contract;
 use Sipwise::Base;
 
 BEGIN { extends 'Catalyst::Controller'; }
-use NGCP::Panel::Form::Contract;
+use NGCP::Panel::Form::Contract::Basic;
+use NGCP::Panel::Form::Contract::ProductSelect;
 use NGCP::Panel::Utils::Message;
 use NGCP::Panel::Utils::Navigation;
 use NGCP::Panel::Utils::Contract;
@@ -24,6 +25,7 @@ sub contract_list :Chained('/') :PathPart('contract') :CaptureArgs(0) {
         { name => "external_id", search => 1, title => "External #" },
         { name => "contact.reseller.name", search => 1, title => "Reseller" },
         { name => "contact.email", search => 1, title => "Contact Email" },
+        { name => "billing_mappings.product.name", search => 1, title => "Product" },
         { name => "billing_mappings.billing_profile.name", search => 1, title => "Billing Profile" },
         { name => "status", search => 1, title => "Status" },
     ]);
@@ -88,7 +90,7 @@ sub create :Chained('contract_list') :PathPart('create') :Args(0) {
     my $params = {};
     $params = $params->merge($c->session->{created_objects});
     my $form;
-    $form = NGCP::Panel::Form::Contract->new;
+    $form = NGCP::Panel::Form::Contract::Basic->new;
     $form->process(
         posted => $posted,
         params => $c->request->params,
@@ -193,7 +195,7 @@ sub edit :Chained('base') :PathPart('edit') :Args(0) {
         $params->{status} = $contract->status;
     }
     $params = $params->merge($c->session->{created_objects});
-    my $form = NGCP::Panel::Form::Contract->new;
+    my $form = NGCP::Panel::Form::Contract::Basic->new;
     $form->process(
         posted => $posted,
         params => $c->req->params,
@@ -319,7 +321,7 @@ sub peering_create :Chained('peering_list') :PathPart('create') :Args(0) {
     my $posted = ($c->request->method eq 'POST');
     my $params = {};
     $params = $params->merge($c->session->{created_objects});
-    my $form = NGCP::Panel::Form::Contract->new;
+    my $form = NGCP::Panel::Form::Contract::Basic->new;
     $form->process(
         posted => $posted,
         params => $c->request->params,
@@ -378,7 +380,10 @@ sub customer_list :Chained('contract_list') :PathPart('customer') :CaptureArgs(0
 
     my $base_rs = $c->stash->{contract_select_rs};
     $c->stash->{customer_rs} = $base_rs->search({
-            'product_id' => undef,
+            '-or' => [
+                'product.class' => 'sipaccount',
+                'product.class' => 'pbxaccount',
+            ],
         }, {
             'join' => {'billing_mappings' => 'product'},
         });
@@ -404,9 +409,14 @@ sub customer_create :Chained('customer_list') :PathPart('create') :Args(0) {
     my ($self, $c) = @_;
 
     my $posted = ($c->request->method eq 'POST');
+    my $form;
     my $params = {};
     $params = $params->merge($c->session->{created_objects});
-    my $form = NGCP::Panel::Form::Contract->new;
+    if($c->config->{features}->{cloudpbx}) {
+        $form = NGCP::Panel::Form::Contract::ProductSelect->new;
+    } else {
+        $form = NGCP::Panel::Form::Contract::Basic->new;
+    }
     $form->process(
         posted => $posted,
         params => $c->request->params,
@@ -428,10 +438,13 @@ sub customer_create :Chained('customer_list') :PathPart('create') :Args(0) {
                 my $bprof_id = $form->params->{billing_profile}{id};
                 delete $form->params->{billing_profile};
                 $form->{create_timestamp} = $form->{modify_timestamp} = NGCP::Panel::Utils::DateTime::current_local;
+                my $product_id = $form->params->{product}{id};
+                delete $form->params->{product};
                 my $contract = $schema->resultset('contracts')->create($form->params);
                 my $billing_profile = $schema->resultset('billing_profiles')->find($bprof_id);
                 $contract->billing_mappings->create({
                     billing_profile_id => $bprof_id,
+                    product_id => $product_id,
                 });
                 
                 NGCP::Panel::Utils::Contract::create_contract_balance(
@@ -489,7 +502,7 @@ sub reseller_create :Chained('reseller_list') :PathPart('create') :Args(0) {
     my $posted = ($c->request->method eq 'POST');
     my $params = {};
     $params = $params->merge($c->session->{created_objects});
-    my $form = NGCP::Panel::Form::Contract->new;
+    my $form = NGCP::Panel::Form::Contract::Basic->new;
     $form->process(
         posted => $posted,
         params => $c->request->params,

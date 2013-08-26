@@ -136,6 +136,7 @@ sub base :Chained('list_reseller') :PathPart('') :CaptureArgs(1) {
     $c->stash->{customer_dt_columns} = NGCP::Panel::Utils::Datatables::set_columns($c, [
         { name => "id", search => 1, title => "#" },
         { name => "external_id", search => 1, title => "External #" },
+        { name => "billing_mappings.product.name", search => 1, title => "Product" },
         { name => "contact.email", search => 1, title => "Contact Email" },
         { name => "status", search => 1, title => "Status" },
     ]);
@@ -190,7 +191,10 @@ sub reseller_customers :Chained('base') :PathPart('customers/ajax') :Args(0) {
     my $rs = $c->model('DB')->resultset('contracts')->search({
         'contact.reseller_id' => $c->stash->{reseller}->first->id,
         'me.status' => { '!=' => 'terminated' },
-        'product_id' => undef,
+        '-or' => [
+            'product.class' => 'sipaccount',
+            'product.class' => 'pbxaccount',
+        ],
     }, {
         join => [ {'billing_mappings' => 'product' }, 'contact'],
     });

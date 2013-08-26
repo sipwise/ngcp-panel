@@ -39,6 +39,7 @@ sub list_customer :Chained('/') :PathPart('customer') :CaptureArgs(0) {
         { name => "external_id", search => 1, title => "External #" },
         { name => "contact.reseller.name", search => 1, title => "Reseller" },
         { name => "contact.email", search => 1, title => "Contact Email" },
+        { name => "billing_mappings.product.name", search => 1, title => "Product" },
         { name => "billing_mappings.billing_profile.name", search => 1, title => "Billing Profile" },
         { name => "status", search => 1, title => "Status" },
     ]);
