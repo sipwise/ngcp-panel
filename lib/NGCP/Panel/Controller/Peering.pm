@@ -77,7 +77,7 @@ sub base :Chained('group_list') :PathPart('') :CaptureArgs(1) {
         { name => 'id', search => 1, title => '#' },
         { name => 'callee_prefix', search => 1, title => 'Callee Prefix' },
         { name => 'callee_pattern', search => 1, title => 'Callee Pattern' },
-        { name => 'caller_pattern', search => 1, title => 'Callee Pattern' },
+        { name => 'caller_pattern', search => 1, title => 'Caller Pattern' },
         { name => 'description', search => 1, title => 'Description' },
     ]);
 
