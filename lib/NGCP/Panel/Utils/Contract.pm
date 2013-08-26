@@ -138,6 +138,48 @@ sub recursively_lock_contract {
     }
 }
 
+sub get_contract_rs {
+    my %params = @_;
+    my $c = $params{c};
+    my $mapping_rs = $c->model('DB')->resultset('billing_mappings');
+    my $rs = $c->model('DB')->resultset('contracts')
+        ->search({
+            'me.status' => { '!=' => 'terminated' },
+            'billing_mappings.id' => {
+                '=' => $mapping_rs->search({
+                    contract_id => { -ident => 'me.id' },
+                    start_date => [ -or =>
+                        { '<=' => NGCP::Panel::Utils::DateTime::current_local },
+                        { -is  => undef },
+                    ],
+                    end_date => [ -or =>
+                        { '>=' => NGCP::Panel::Utils::DateTime::current_local },
+                        { -is  => undef },
+                    ],
+                },{
+                    alias => 'bilmap',
+                    rows => 1,
+                    order_by => {-desc => ['bilmap.start_date', 'bilmap.id']},
+                })->get_column('id')->as_query,
+            },
+        },{
+            'join' => 'billing_mappings',
+            '+select' => [
+                'billing_mappings.id',
+                'billing_mappings.start_date',
+                'billing_mappings.product_id',
+            ],
+            '+as' => [
+                'billing_mapping_id',
+                'billing_mapping_start_date',
+                'product_id',
+            ],
+            alias => 'me',
+        });
+
+    return $rs;
+}
+
 1;
 
 =head1 NAME

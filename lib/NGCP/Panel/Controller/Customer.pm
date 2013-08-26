@@ -116,6 +116,23 @@ sub base :Chained('list_customer') :PathPart('') :CaptureArgs(1) {
                 });
     }
 
+    my $contract_select_rs = NGCP::Panel::Utils::Contract::get_contract_rs(c => $c);
+    $contract_select_rs = $contract_select_rs->search({
+        'me.id' => $contract_id,
+    });
+    my $product_id = $contract_select_rs->search({'me.id' => $contract_id})->first->get_column('product_id');
+    NGCP::Panel::Utils::Message->error(
+        c => $c,
+        error => "No product for customer contract id $contract_id found",
+        desc  => "No product for this customer contract found.",
+    ) unless($product_id);
+    my $product = $c->model('DB')->resultset('products')->find($product_id);
+    NGCP::Panel::Utils::Message->error(
+        c => $c,
+        error => "No product with id $product_id for customer contract id $contract_id found",
+        desc  => "Invalid product id for this customer contract.",
+    ) unless($product);
+
     my @subscribers = ();
     foreach my $s($contract->first->voip_subscribers->search_rs({ status => 'active' })->all) {
         my $sub = { $s->get_columns };
@@ -130,6 +147,7 @@ sub base :Chained('list_customer') :PathPart('') :CaptureArgs(1) {
     }
     $c->stash->{subscribers} = \@subscribers;
 
+    $c->stash(product => $product);
     $c->stash(balance => $balance);
     $c->stash(fraud => $contract->first->contract_fraud_preference);
     $c->stash(template => 'customer/details.tt'); 
