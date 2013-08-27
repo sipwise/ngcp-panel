@@ -1,4 +1,4 @@
-package NGCP::Panel::Form::CustomerSubscriber;
+package NGCP::Panel::Form::Customer::Subscriber;
 
 use HTML::FormHandler::Moose;
 extends 'HTML::FormHandler';

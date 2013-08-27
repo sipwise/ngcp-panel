@@ -6,7 +6,9 @@ use NGCP::Panel::Utils::Contract;
 use NGCP::Panel::Form::CustomerMonthlyFraud;
 use NGCP::Panel::Form::CustomerDailyFraud;
 use NGCP::Panel::Form::CustomerBalance;
-use NGCP::Panel::Form::CustomerSubscriber;
+use NGCP::Panel::Form::Customer::Subscriber;
+use NGCP::Panel::Form::Customer::PbxAdminSubscriber;
+use NGCP::Panel::Form::Customer::PbxExtensionSubscriber;
 use NGCP::Panel::Utils::Message;
 use NGCP::Panel::Utils::Navigation;
 use NGCP::Panel::Utils::DateTime;
@@ -164,7 +166,22 @@ sub details :Chained('base') :PathPart('details') :Args(0) {
 sub subscriber_create :Chained('base') :PathPart('subscriber/create') :Args(0) {
     my ($self, $c) = @_;
 
-    my $form = NGCP::Panel::Form::CustomerSubscriber->new;
+    my $pbx;
+    $pbx = 1 if $c->stash->{product}->class eq 'pbxaccount';
+    my $form;
+    if($c->config->{features}->{cloudpbx} && $pbx) {
+        # we need to create an admin subscriber first
+
+        # TODO: should we check whether one of the existing subscribers has the admin flag set?
+        unless(@{ $c->stash->{subscribers} }) {
+            $form = NGCP::Panel::Form::Customer::PbxAdminSubscriber->new(ctx => $c);
+        } else {
+            $form = NGCP::Panel::Form::Customer::PbxExtensionSubscriber->new(ctx => $c);
+        }
+    } else {
+        $form = NGCP::Panel::Form::Customer::Subscriber->new;
+    }
+
     my $params = {};
     $params = $params->merge($c->session->{created_objects});
     $form->process(
@@ -397,6 +414,9 @@ sub edit_balance :Chained('base') :PathPart('balance/edit') :Args(0) {
     $c->stash(close_target => $c->uri_for_action("/customer/details", [$c->stash->{contract}->id]));
     $c->stash(form => $form);
     $c->stash(edit_flag => 1);
+}
+
+sub pbx_group_ajax :Chained('base') :PathPart('pbx/group/ajax') :Args(0) {
 }
 
 =head1 AUTHOR
