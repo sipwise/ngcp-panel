@@ -9,6 +9,7 @@ use NGCP::Panel::Form::CustomerBalance;
 use NGCP::Panel::Form::CustomerSubscriber;
 use NGCP::Panel::Utils::Message;
 use NGCP::Panel::Utils::Navigation;
+use NGCP::Panel::Utils::DateTime;
 use UUID qw/generate unparse/;
 
 =head1 NAME
@@ -70,7 +71,7 @@ sub base :Chained('list_customer') :PathPart('') :CaptureArgs(1) {
         });
     }
 
-    my $stime = DateTime->now->truncate(to => 'month');
+    my $stime = NGCP::Panel::Utils::DateTime::current_local()->truncate(to => 'month');
     my $etime = $stime->clone->add(months => 1);
     my $balance = $contract->first->contract_balances
         ->find({
@@ -85,11 +86,11 @@ sub base :Chained('list_customer') :PathPart('') :CaptureArgs(1) {
                     -and => [
                         -or => [
                             start_date => undef,
-                            start_date => { '<=' => DateTime->now },
+                            start_date => { '<=' => NGCP::Panel::Utils::DateTime::current_local },
                         ],
                         -or => [
                             end_date => undef,
-                            end_date => { '>=' => DateTime->now },
+                            end_date => { '>=' => NGCP::Panel::Utils::DateTime::current_local },
                         ]
                     ],
                 },
@@ -208,6 +209,7 @@ sub subscriber_create :Chained('base') :PathPart('subscriber/create') :Args(0) {
                     admin => $c->request->params->{administrative} || 0,
                     account_id => $contract->id,
                     domain_id => $prov_domain->id,
+                    create_timestamp => NGCP::Panel::Utils::DateTime::current_local,
                 });
 
                 my $voip_preferences = $schema->resultset('voip_preferences')->search({

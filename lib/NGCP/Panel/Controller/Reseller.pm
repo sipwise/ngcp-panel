@@ -340,7 +340,7 @@ sub create_defaults :Path('create_defaults') :Args(0) {
     $c->detach('/denied_page') unless $c->request->method eq 'POST';
     $c->detach('/denied_page')
     	if($c->user->read_only);
-    my $now = DateTime->now;
+    my $now = NGCP::Panel::Utils::DateTime::current_local;
     my %defaults = (
         contacts => {
             firstname => 'Default',
