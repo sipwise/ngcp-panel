@@ -8,6 +8,8 @@ use NGCP::Panel::Utils::Subscriber;
 use NGCP::Panel::Utils::Datatables;
 use NGCP::Panel::Utils::Callflow;
 use NGCP::Panel::Utils::Preferences;
+use NGCP::Panel::Utils::Message;
+use NGCP::Panel::Utils::DateTime;
 use NGCP::Panel::Form::Subscriber;
 use NGCP::Panel::Form::SubscriberEdit;
 use NGCP::Panel::Form::SubscriberCFSimple;
@@ -160,6 +162,7 @@ sub create_list :Chained('sub_list') :PathPart('create') :Args(0) {
                     admin => $c->request->params->{administrative} || 0,
                     account_id => $contract->id,
                     domain_id => $prov_domain->id,
+                    create_timestamp => NGCP::Panel::Utils::DateTime::current_local,
                 });
                 if($number) {
                     $schema->resultset('voip_dbaliases')->create({

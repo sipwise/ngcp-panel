@@ -7,6 +7,7 @@ use XML::Mini::Document;
 use URI::Encode;
 use NGCP::Panel::Utils::Navigation;
 use NGCP::Panel::Utils::XMLDispatcher;
+use NGCP::Panel::Utils::DateTime;
 
 sub auto :Does(ACL) :ACLDetachTo('/denied_page') :AllowedRole(admin) {
     my ($self, $c) = @_;
@@ -105,10 +106,7 @@ EOF
             push @users, {
                 username => $key,
                 auth_count => $usr->{$key}->{auth_count},
-                last_auth => DateTime->from_epoch(
-                                 epoch => $usr->{$key}->{last_auth},
-                                 time_zone => DateTime::TimeZone->new(name => 'local')
-		),
+                last_auth => NGCP::Panel::Utils::DateTime::epoch_local($usr->{$key}->{last_auth}),
             } if($usr->{$key}->{auth_count} >= $c->config->{security}->{failed_auth_attempts});
         }
     }

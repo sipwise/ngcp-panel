@@ -6,6 +6,7 @@ use NGCP::Panel::Form::Contract;
 use NGCP::Panel::Utils::Navigation;
 use NGCP::Panel::Utils::Contract;
 use NGCP::Panel::Utils::Subscriber;
+use NGCP::Panel::Utils::DateTime;
 
 sub auto :Does(ACL) :ACLDetachTo('/denied_page') :AllowedRole(admin) :AllowedRole(reseller) {
     my ($self, $c) = @_;
@@ -34,11 +35,11 @@ sub contract_list :Chained('/') :PathPart('contract') :CaptureArgs(0) {
                 '=' => $mapping_rs->search({
                     contract_id => { -ident => 'me.id' },
                     start_date => [ -or =>
-                        { '<=' => DateTime->now },
+                        { '<=' => NGCP::Panel::Utils::DateTime::current_local },
                         { -is  => undef },
                     ],
                     end_date => [ -or =>
-                        { '>=' => DateTime->now },
+                        { '>=' => NGCP::Panel::Utils::DateTime::current_local },
                         { -is  => undef },
                     ],
                 },{
@@ -106,7 +107,7 @@ sub create :Chained('contract_list') :PathPart('create') :Args(0) {
                 delete $form->params->{contract};
                 my $bprof_id = $form->params->{billing_profile}{id};
                 delete $form->params->{billing_profile};
-                $form->{create_timestamp} = $form->{modify_timestamp} = DateTime->now;
+                $form->{create_timestamp} = $form->{modify_timestamp} = NGCP::Panel::Utils::DateTime::current_local;
                 my $contract = $schema->resultset('contracts')->create($form->params);
                 my $billing_profile = $schema->resultset('billing_profiles')->find($bprof_id);
                 $contract->billing_mappings->create({
@@ -198,7 +199,7 @@ sub edit :Chained('base') :PathPart('edit') :Args(0) {
             $schema->txn_do(sub {
                 if($form->values->{billing_profile}{id} != $billing_mapping->billing_profile->id) {
                     $contract->billing_mappings->create({
-                        start_date => DateTime->now(),
+                        start_date => NGCP::Panel::Utils::DateTime::current_local,
                         billing_profile_id => $form->values->{billing_profile}{id},
                     });
                 }
@@ -206,7 +207,7 @@ sub edit :Chained('base') :PathPart('edit') :Args(0) {
                 delete $form->values->{billing_profile};
                 $form->values->{contact_id} = $form->values->{contact}{id};
                 delete $form->values->{contact};
-                $form->{modify_timestamp} = DateTime->now;
+                $form->{modify_timestamp} = NGCP::Panel::Utils::DateTime::current_local;
                 $contract->update($form->values);
 
                 # if status changed, populate it down the chain
@@ -319,7 +320,7 @@ sub peering_create :Chained('peering_list') :PathPart('create') :Args(0) {
                 delete $form->params->{contract};
                 my $bprof_id = $form->params->{billing_profile}{id};
                 delete $form->params->{billing_profile};
-                $form->{create_timestamp} = $form->{modify_timestamp} = DateTime->now;
+                $form->{create_timestamp} = $form->{modify_timestamp} = NGCP::Panel::Utils::DateTime::current_local;
                 my $contract = $schema->resultset('contracts')->create($form->params);
                 my $billing_profile = $schema->resultset('billing_profiles')->find($bprof_id);
                 my $product = $schema->resultset('products')->find({ class => 'sippeering' }); 
@@ -401,7 +402,7 @@ sub customer_create :Chained('customer_list') :PathPart('create') :Args(0) {
                 delete $form->params->{contract};
                 my $bprof_id = $form->params->{billing_profile}{id};
                 delete $form->params->{billing_profile};
-                $form->{create_timestamp} = $form->{modify_timestamp} = DateTime->now;
+                $form->{create_timestamp} = $form->{modify_timestamp} = NGCP::Panel::Utils::DateTime::current_local;
                 my $contract = $schema->resultset('contracts')->create($form->params);
                 my $billing_profile = $schema->resultset('billing_profiles')->find($bprof_id);
                 $contract->billing_mappings->create({
@@ -481,7 +482,7 @@ sub reseller_create :Chained('reseller_list') :PathPart('create') :Args(0) {
                 delete $form->params->{contract};
                 my $bprof_id = $form->params->{billing_profile}{id};
                 delete $form->params->{billing_profile};
-                $form->{create_timestamp} = $form->{modify_timestamp} = DateTime->now;
+                $form->{create_timestamp} = $form->{modify_timestamp} = NGCP::Panel::Utils::DateTime::current_local;
                 my $contract = $schema->resultset('contracts')->create($form->params);
                 my $billing_profile = $schema->resultset('billing_profiles')->find($bprof_id);
                 my $product = $schema->resultset('products')->find({ class => 'reseller' }); 

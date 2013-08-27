@@ -21,7 +21,7 @@ has 'priority' => (
 
 around handle => sub {
     my ($foo, $self, $c) = @_;
-    my $stime = DateTime->now->truncate(to => 'month');
+    my $stime = NGCP::Panel::Utils::DateTime::current_local->truncate(to => 'month');
     my $etime = $stime->clone->add(months => 1);
 
     $c->stash(
