@@ -71,6 +71,8 @@ sub contract_list :Chained('/') :PathPart('contract') :CaptureArgs(0) {
     }
     $c->stash(contract_select_rs => $rs);
 
+    $c->stash(page_title => "Contract",
+              page_title_plural => "Contracts");
     $c->stash(ajax_uri => $c->uri_for_action("/contract/ajax"));
     $c->stash(template => 'contract/list.tt');
 }
@@ -163,6 +165,12 @@ sub base :Chained('contract_list') :PathPart('') :CaptureArgs(1) {
         $c->flash(messages => [{type => 'error', text => 'Contract does not exist'}]);
         NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for('/contract'));
     }
+
+    my $billing_mapping = $res->billing_mappings->find($res->get_column('bmid'));
+    if (! defined ($billing_mapping->product) ) {
+        $c->stash(page_title => "Customer",
+                  page_title_plural => "Customers");
+    }
     
     $c->stash(contract => {$res->get_inflated_columns});
     $c->stash(contract_result => $res);
@@ -225,7 +233,8 @@ sub edit :Chained('base') :PathPart('edit') :Args(0) {
                 delete $c->session->{created_objects}->{contact};
                 delete $c->session->{created_objects}->{billing_profile};
             });
-            $c->flash(messages => [{type => 'success', text => 'Contract successfully changed!'}]);
+            my $page_title = $c->stash->{page_title};
+            $c->flash(messages => [{type => 'success', text => "$page_title successfully changed!"}]);
         } catch($e) {
             NGCP::Panel::Utils::Message->error(
                 c => $c,
@@ -259,7 +268,8 @@ sub terminate :Chained('base') :PathPart('terminate') :Args(0) {
                 contract => $contract,
             );
         }
-        $c->flash(messages => [{type => 'success', text => 'Contract successfully terminated'}]);
+        my $page_title = $c->stash->{page_title};
+        $c->flash(messages => [{type => 'success', text => "$page_title successfully terminated"}]);
     } catch ($e) {
         NGCP::Panel::Utils::Message->error(
             c => $c,
@@ -372,7 +382,9 @@ sub customer_list :Chained('contract_list') :PathPart('customer') :CaptureArgs(0
         }, {
             'join' => {'billing_mappings' => 'product'},
         });
-   
+
+    $c->stash(page_title => "Customer",
+              page_title_plural => "Customers");
     $c->stash(ajax_uri => $c->uri_for_action("/contract/customer_ajax"));
 }
 
@@ -430,13 +442,13 @@ sub customer_create :Chained('customer_list') :PathPart('create') :Args(0) {
                 $c->session->{created_objects}->{contract} = { id => $contract->id };
                 delete $c->session->{created_objects}->{contact};
                 delete $c->session->{created_objects}->{billing_profile};
-                $c->flash(messages => [{type => 'success', text => 'Contract successfully created'}]);
+                $c->flash(messages => [{type => 'success', text => 'Customer successfully created'}]);
             });
         } catch($e) {
             NGCP::Panel::Utils::Message->error(
                 c => $c,
                 error => $e,
-                desc  => "Failed to create contract.",
+                desc  => "Failed to create customer contract.",
             );
         }
         NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for('/contract'));
