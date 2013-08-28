@@ -1,5 +1,6 @@
 package NGCP::Panel::Widget::Plugin::ResellerBillingOverview;
 use Moose::Role;
+use NGCP::Panel::Utils::DateTime;
 
 has 'template' => (
     is  => 'ro',
