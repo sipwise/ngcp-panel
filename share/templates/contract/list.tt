@@ -1,6 +1,6 @@
-[% META title = 'Contracts' -%]
+[% site_config.title = page_title_plural -%]
 [%
-    helper.name = 'Contract';
+    helper.name = page_title;
     helper.data = contracts;
     helper.messages = messages;
     helper.dt_columns = contract_dt_columns;
