@@ -35,6 +35,12 @@ method error ($self: Catalyst :$c, Str :$desc, Str :$log?, :$error?) {
         return;
     }
 
+    if ( my ($excerpt) = $error =~ /(Column \S+ cannot be null)/ ) {
+        $c->log->error("$desc ($error)");
+        $c->flash(messages => [{type => 'error', text => "$desc ($excerpt)"}]);
+        return;
+    }
+
     $c->log->error("$desc ($error)");
     $c->flash(messages => [{type => 'error', text => $desc}]);
     return;

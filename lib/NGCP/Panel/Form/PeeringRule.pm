@@ -13,6 +13,7 @@ sub build_form_element_class {[qw(form-horizontal)]}
 
 has_field 'callee_prefix' => ( 
     type => 'Text',
+    not_nullable => 1,
     element_attr => {
         rel => ['tooltip'],
         title => ['Callee prefix, eg: 43']
@@ -37,6 +38,7 @@ has_field 'caller_pattern' => (
 
 has_field 'description' => (
     type => 'Text',
+    not_nullable => 1,
     element_attr => {
         rel => ['tooltip'],
         title => ['string, rule description']
