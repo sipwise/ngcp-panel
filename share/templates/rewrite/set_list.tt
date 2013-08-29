@@ -3,6 +3,7 @@
     helper.name = 'Rewrite Rule Set';
     helper.messages = messages;
     helper.dt_columns = set_dt_columns;
+    helper.length_change = 1;
 
     helper.close_target = close_target;
     helper.create_flag = create_flag;

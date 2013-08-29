@@ -3,6 +3,7 @@
     helper.name = 'SIP Peering Groups';
     helper.messages = messages;
     helper.dt_columns = peering_group_dt_columns;
+    helper.length_change = 1;
 
     helper.close_target = close_target;
     helper.create_flag = create_flag;

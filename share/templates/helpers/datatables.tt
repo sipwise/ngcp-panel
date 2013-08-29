@@ -25,16 +25,21 @@ $.extend( $.fn.dataTableExt.oStdClasses, {
 $(document).ready(function() {
 	var [% helper.name.remove('[\s+\.]') %]_table = $('#[% helper.name.remove('[\s+\.]') %]_table')
 	    .dataTable( {
-        "sDom": "<'row-fluid'<'pull-left'r><'pull-right'f>>t<'row-fluid'<'pull-left'i><'pull-right'p>>",
+        "sDom": "<'row-fluid ngcp_dt_top_elements'lf<r>>t<'row-fluid'<'pull-left'i><'pull-right'p>>",
         "bProcessing": true,
         "bServerSide": true,
         "bPaginate": [% helper.paginate || 'true' %],
         "bFilter": [% helper.filter || 'true' %],
         "sPaginationType": "bootstrap",
-        "bLengthChange": true,
+        [% IF helper.length_change %]
+            "bLengthChange": true,
+            "aLengthMenu": [5, 10, 25, 50],
+        [% ELSE %]
+            "bLengthChange": false,
+        [% END %]
         "bSort": true,
         "bInfo": true,
-		"iDisplayLength": 5,
+        "iDisplayLength": 5,
         'iShowPages': 5,
 		"sAjaxSource": "[% helper.ajax_uri %]",
         [% IF helper.column_sort -%]

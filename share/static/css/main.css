@@ -204,6 +204,34 @@ div.ngcp-plot {
     margin-bottom: 30px;
 }
 
+div.ngcp_dt_top_elements {
+    position: relative;
+    margin-top: 10px;
+}
+
+div.ngcp_dt_top_elements > div:first-child {
+    float: left;
+}
+
+div.ngcp_dt_top_elements > div:first-child label {
+    width: auto;
+}
+
+div.ngcp_dt_top_elements > div:first-child + div {
+    float: right;
+}
+
+div.ngcp_dt_top_elements > div:first-child + div + div {
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+}
+
+div.ngcp_dt_top_elements > div:first-child + div + div > div {
+    margin:0 auto;
+    text-align: center;
+}
+
 /* ---------
   sw_actions (Action Buttons)
 ------------*/

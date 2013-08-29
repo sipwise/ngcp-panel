@@ -4,6 +4,7 @@
     helper.data = contracts;
     helper.messages = messages;
     helper.dt_columns = contract_dt_columns;
+    helper.length_change = 1;
 
     helper.close_target = close_target;
     helper.create_flag = create_flag;
