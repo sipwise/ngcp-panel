@@ -5,6 +5,7 @@
     helper.messages = messages;
     helper.column_sort = 'status';
     helper.dt_columns = dt_columns;
+    helper.length_change = 1;
 
     helper.close_target = close_target;
     helper.create_flag = create_flag;
