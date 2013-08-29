@@ -9,10 +9,11 @@ use NGCP::Panel::Form::CustomerBalance;
 use NGCP::Panel::Form::Customer::Subscriber;
 use NGCP::Panel::Form::Customer::PbxAdminSubscriber;
 use NGCP::Panel::Form::Customer::PbxExtensionSubscriber;
+use NGCP::Panel::Form::Customer::PbxGroup;
 use NGCP::Panel::Utils::Message;
 use NGCP::Panel::Utils::Navigation;
 use NGCP::Panel::Utils::DateTime;
-use UUID qw/generate unparse/;
+use NGCP::Panel::Utils::Subscriber;
 
 =head1 NAME
 
@@ -135,19 +136,39 @@ sub base :Chained('list_customer') :PathPart('') :CaptureArgs(1) {
         desc  => "Invalid product id for this customer contract.",
     ) unless($product);
 
+    $c->stash->{pbxgroup_dt_columns} = NGCP::Panel::Utils::Datatables::set_columns($c, [
+        { name => "id", search => 1, title => "#" },
+        { name => "name", search => 1, title => "Name" },
+        { name => "extension", search => 1, title => "Extension" },
+    ]);
+
     my @subscribers = ();
+    my @pbx_groups = ();
     foreach my $s($contract->first->voip_subscribers->search_rs({ status => 'active' })->all) {
         my $sub = { $s->get_columns };
+        if($c->config->{features}->{cloudpbx}) {
+            $sub->{voip_pbx_group} = { $s->provisioning_voip_subscriber->voip_pbx_group->get_columns }
+                if($s->provisioning_voip_subscriber->voip_pbx_group);
+        }
         $sub->{domain} = $s->domain->domain;
+        $sub->{admin} = $s->provisioning_voip_subscriber->admin if
+            $s->provisioning_voip_subscriber;
         $sub->{primary_number} = {$s->primary_number->get_columns} if(defined $s->primary_number);
         $sub->{locations} = [ map { { $_->get_columns } } $c->model('DB')->resultset('location')->
             search({
                 username => $s->username,
                 domain => $s->domain->domain,
             })->all ];
-        push @subscribers, $sub;
+        if($c->config->{features}->{cloudpbx} && $s->provisioning_voip_subscriber->is_pbx_group) {
+            my $grp = $contract->first->voip_pbx_groups->find({ subscriber_id => $s->provisioning_voip_subscriber->id });
+            $sub->{voip_pbx_group} = { $grp->get_columns } if $grp;
+            push @pbx_groups, $sub;
+        } else {
+            push @subscribers, $sub;
+        }
     }
     $c->stash->{subscribers} = \@subscribers;
+    $c->stash->{pbx_groups} = \@pbx_groups;
 
     $c->stash(product => $product);
     $c->stash(balance => $balance);
@@ -166,14 +187,19 @@ sub details :Chained('base') :PathPart('details') :Args(0) {
 sub subscriber_create :Chained('base') :PathPart('subscriber/create') :Args(0) {
     my ($self, $c) = @_;
 
-    my $pbx;
+    my $pbx = 0; my $pbxadmin = 0;
     $pbx = 1 if $c->stash->{product}->class eq 'pbxaccount';
+    my @admin_subscribers = NGCP::Panel::Utils::Subscriber::get_admin_subscribers(
+          voip_subscriber_rs => $c->stash->{subscribers});
     my $form;
+
+    my $admin_subscribers = NGCP::Panel::Utils::Subscriber::get_admin_subscribers(
+        voip_subscribers => $c->stash->{subscribers});
+
     if($c->config->{features}->{cloudpbx} && $pbx) {
         # we need to create an admin subscriber first
-
-        # TODO: should we check whether one of the existing subscribers has the admin flag set?
-        unless(@{ $c->stash->{subscribers} }) {
+        unless(@{ $admin_subscribers }) {
+            $pbxadmin = 1;
             $form = NGCP::Panel::Form::Customer::PbxAdminSubscriber->new(ctx => $c);
         } else {
             $form = NGCP::Panel::Form::Customer::PbxExtensionSubscriber->new(ctx => $c);
@@ -192,132 +218,58 @@ sub subscriber_create :Chained('base') :PathPart('subscriber/create') :Args(0) {
     NGCP::Panel::Utils::Navigation::check_form_buttons(
         c => $c,
         form => $form,
-        fields => [qw/domain.create/],
+        fields => {
+            'domain.create' => $c->uri_for('/domain/create'),
+            'group.create' => $c->uri_for_action('/customer/pbx_group_create', $c->req->captures),
+        },
         back_uri => $c->req->uri,
     );
     if($form->validated) {
-        my $schema = $c->model('DB');
-        my $contract = $c->stash->{contract};
-        my $reseller = $contract->contact->reseller;
-        my $billing_domain = $schema->resultset('domains')
-            ->find($c->request->params->{'domain.id'});
-        my $prov_domain = $schema->resultset('voip_domains')
-            ->find({domain => $billing_domain->domain});
+        my $billing_subscriber;
         try {
-            $schema->txn_do(sub {
-                my ($uuid_bin, $uuid_string);
-                UUID::generate($uuid_bin);
-                UUID::unparse($uuid_bin, $uuid_string);
-
-                # TODO: check if we find a reseller and contract and domains
-
-                my $number; my $cli = 0;
-                if(defined $c->request->params->{'e164.cc'} && 
-                   $c->request->params->{'e164.cc'} ne '') {
-                    $cli = $c->request->params->{'e164.cc'} .
-                           ($c->request->params->{'e164.ac'} || '') .
-                           $c->request->params->{'e164.sn'};
-
-                    $number = $reseller->voip_numbers->create({
-                        cc => $c->request->params->{'e164.cc'},
-                        ac => $c->request->params->{'e164.ac'} || '',
-                        sn => $c->request->params->{'e164.sn'},
-                        status => 'active',
-                    });
+            my $preferences = {};
+            if($pbx && !$pbxadmin) {
+                my $admin = $admin_subscribers->[0];
+                $form->params->{domain}{id} = $admin->{domain_id};
+                # TODO: make DT selection multi-select capable
+                # set pbx_group preferences somehow for the related group subscriber as well
+                $form->params->{pbx_group_id} = $form->params->{group}{id};
+                delete $form->params->{group};
+                my $base_number = $admin->{primary_number};
+                if($base_number) {
+                    # $preferences->{base_cli} = $base_number->cc . $base_number->ac . $base_number->sn;
+                    if($form->params->{extension}) {
+                        $form->params->{e164}{cc} = $base_number->{cc};
+                        $form->params->{e164}{ac} = $base_number->{ac};
+                        $form->params->{e164}{sn} = $base_number->{sn} . $form->params->{extension};
+                    }
                 }
-                my $billing_subscriber = $contract->voip_subscribers->create({
-                    uuid => $uuid_string,
-                    username => $c->request->params->{username},
-                    domain_id => $billing_domain->id,
-                    status => $c->request->params->{status},
-                    primary_number_id => defined $number ? $number->id : undef,
-                });
-                if(defined $number) {
-                    $number->update({ subscriber_id => $billing_subscriber->id });
-                }
-
-                my $prov_subscriber = $schema->resultset('provisioning_voip_subscribers')->create({
-                    uuid => $uuid_string,
-                    username => $c->request->params->{username},
-                    password => $c->request->params->{password},
-                    webusername => $c->request->params->{webusername} || $c->request->params->{username},
-                    webpassword => $c->request->params->{webpassword},
-                    admin => $c->request->params->{administrative} || 0,
-                    account_id => $contract->id,
-                    domain_id => $prov_domain->id,
-                    create_timestamp => NGCP::Panel::Utils::DateTime::current_local,
-                });
-
-                my $voip_preferences = $schema->resultset('voip_preferences')->search({
-                    'usr_pref' => 1,
-                });
-                $voip_preferences->find({ 'attribute' => 'account_id' })
-                    ->voip_usr_preferences->create({ 
-                        'subscriber_id' => $prov_subscriber->id,
-                        'value' => $contract->id,
-                    });
-                $voip_preferences->find({ 'attribute' => 'ac' })
-                    ->voip_usr_preferences->create({ 
-                        'subscriber_id' => $prov_subscriber->id,
-                        'value' => $c->request->params->{'e164.ac'},
-                    }) if (defined $c->request->params->{'e164.ac'} && 
-                           length($c->request->params->{'e164.ac'}) > 0);
-                if(defined $c->request->params->{'e164.cc'} &&
-                   length($c->request->params->{'e164.cc'}) > 0) {
-
-                        $voip_preferences->find({ 'attribute' => 'cc' })
-                            ->voip_usr_preferences->create({ 
-                                'subscriber_id' => $prov_subscriber->id,
-                                'value' => $c->request->params->{'e164.cc'},
-                            });
-                        $cli = $c->request->params->{'e164.cc'} .
-                                  (defined $c->request->params->{'e164.ac'} &&
-                                   length($c->request->params->{'e164.ac'}) > 0 ?
-                                   $c->request->params->{'e164.ac'} : ''
-                                  ) .
-                                  $c->request->params->{'e164.sn'};
-                        $voip_preferences->find({ 'attribute' => 'cli' })
-                            ->voip_usr_preferences->create({ 
-                                'subscriber_id' => $prov_subscriber->id,
-                                'value' => $cli,
-                            });
-                }
-
-                $schema->resultset('voicemail_users')->create({
-                    customer_id => $uuid_string,
-                    mailbox => $cli,
-                    password => sprintf("%04d", int(rand 10000)),
-                    email => '',
-                });
-                if($number) {
-                    $schema->resultset('dbaliases')->create({
-                        alias_username => $number->cc .
-                                          ($number->ac || '').
-                                          $number->sn,
-                        alias_domain => $prov_subscriber->domain->domain,
-                        username => $prov_subscriber->username,
-                        domain => $prov_subscriber->domain->domain,
-                    });
-                }
-
-                delete $c->session->{created_objects}->{domain};
-
-            });
-            $c->flash(messages => [{type => 'success', text => 'Subscriber successfully created!'}]);
-            $c->response->redirect($c->uri_for_action('/customer/details', [$contract->id]));
-            return;
+            }
+            if($pbx) {
+                $preferences->{cloud_pbx} = 1;
+            }
+            $billing_subscriber = NGCP::Panel::Utils::Subscriber::create_subscriber(
+                c => $c,
+                contract => $c->stash->{contract},
+                params => $form->params,
+                admin_default => $pbxadmin,
+                preferences => $preferences,
+            );
+            delete $c->session->{created_objects}->{domain};
+            delete $c->session->{created_objects}->{group};
+            $c->flash(messages => [{type => 'success', text => 'Subscriber successfully created.'}]);
         } catch($e) {
             NGCP::Panel::Utils::Message->error(
                 c => $c,
                 error => $e,
                 desc  => "Failed to create subscriber.",
             );
-            $c->response->redirect($c->uri_for_action('/customer/details', [$contract->id]));
-            return;
         }
+        NGCP::Panel::Utils::Navigation::back_or($c, 
+            $c->uri_for_action('/customer/details', [$c->stash->{contract}->id])
+        );
     }
 
-    $c->stash(close_target => $c->uri_for());
     $c->stash(create_flag => 1);
     $c->stash(form => $form)
 }
@@ -417,6 +369,100 @@ sub edit_balance :Chained('base') :PathPart('balance/edit') :Args(0) {
 }
 
 sub pbx_group_ajax :Chained('base') :PathPart('pbx/group/ajax') :Args(0) {
+    my ($self, $c) = @_;
+    my $res = $c->model('DB')->resultset('voip_pbx_groups')->search({
+        contract_id => $c->stash->{contract}->id,
+    });
+    NGCP::Panel::Utils::Datatables::process($c, $res, $c->stash->{pbxgroup_dt_columns});
+    $c->detach( $c->view("JSON") );
+}
+
+sub pbx_group_create :Chained('base') :PathPart('pbx/group/create') :Args(0) {
+    my ($self, $c) = @_;
+
+    my $posted = ($c->request->method eq 'POST');
+    my $admin_subscribers = NGCP::Panel::Utils::Subscriber::get_admin_subscribers(
+          voip_subscribers => $c->stash->{subscribers});
+    unless(@{ $admin_subscribers }) {
+        NGCP::Panel::Utils::Message->error(
+            c => $c,
+            error => 'cannot create pbx group without having an admin subscriber',
+            desc  => "Can't create a PBX group without having an administrative subscriber.",
+        );
+        NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for_action('/customer/details', $c->req->captures));
+    }
+    my $form;
+    $form = NGCP::Panel::Form::Customer::PbxGroup->new;
+    my $params = {};
+    $params = $params->merge($c->session->{created_objects});
+    $form->process(
+        posted => $posted,
+        params => $c->request->params,
+        item => $params,
+    );
+    NGCP::Panel::Utils::Navigation::check_form_buttons(
+        c => $c,
+        form => $form,
+        fields => {},
+        back_uri => $c->req->uri,
+    );
+    if($posted && $form->validated) {
+        try {
+            $c->model('DB')->schema->txn_do( sub {
+                my $preferences = {};
+                my $admin = $admin_subscribers->[0];
+
+                my $base_number = $admin->{primary_number};
+                if($base_number) {
+                    # TODO: this pref doesn't exist yet in the db
+                    # $preferences->{base_cli} = $base_number->cc . $base_number->ac . $base_number->sn;
+
+                    if($form->params->{extension}) {
+                        $form->params->{e164}{cc} = $base_number->{cc};
+                        $form->params->{e164}{ac} = $base_number->{ac};
+                        $form->params->{e164}{sn} = $base_number->{sn} . $form->params->{extension};
+                    }
+
+                }
+
+                $form->params->{is_pbx_group} = 1;
+                $form->params->{domain}{id} = $admin->{domain_id};
+                $form->params->{status} = 'active';
+                $form->params->{username} = lc $form->params->{name};
+                $form->params->{username} =~ s/\s+/_/g;
+                $preferences->{cloud_pbx} = 1;
+                my $billing_subscriber = NGCP::Panel::Utils::Subscriber::create_subscriber(
+                    c => $c,
+                    contract => $c->stash->{contract},
+                    params => $form->params,
+                    admin_default => 0,
+                    preferences => $preferences,
+                );
+                foreach my $k(qw/is_pbx_group username password e164 pbx_group domain status/) {
+                    delete $form->params->{$k};
+                }
+                $form->params->{subscriber_id} = $billing_subscriber->provisioning_voip_subscriber->id;
+                my $group = $c->stash->{contract}->voip_pbx_groups->create($form->params);
+                $c->session->{created_objects}->{group} = { id => $group->id };
+            });
+
+            $c->flash(messages => [{type => 'success', text => 'PBX group successfully created.'}]);
+        } catch ($e) {
+            NGCP::Panel::Utils::Message->error(
+                c => $c,
+                error => $e,
+                desc  => "Failed to create PBX group.",
+            );
+        }
+
+        NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for_action('/customer/details', $c->req->captures));
+    }
+
+    $c->stash(
+        close_target => $c->uri_for,
+        create_flag => 1,
+        form => $form
+    );
 }
 
 =head1 AUTHOR

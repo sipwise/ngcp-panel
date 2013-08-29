@@ -13,12 +13,6 @@ has_field 'submitid' => ( type => 'Hidden' );
 sub build_render_list {[qw/submitid fields actions/]}
 sub build_form_element_class { [qw/form-horizontal/] }
 
-has_field 'group' => (
-    type => '+NGCP::Panel::Field::PbxGroup',
-    label => 'Group',
-    not_nullable => 1,
-);
-
 has_field 'webusername' => (
     type => 'Text',
     label => 'Web Username',
@@ -104,16 +98,6 @@ has_block 'actions' => (
     class => [qw/modal-footer/],
     render_list => [qw/save/],
 );
-
-sub field_list {
-    my $self = shift;
-    my $c = $self->ctx;
-
-    my $group = $self->field('group');
-    $group->field('id')->ajax_src(
-        $c->uri_for_action('/customer/pbx_group_ajax', [$c->req->captures->[0]])->as_string
-    );
-}
 
 1;
 

@@ -4,6 +4,8 @@ use warnings;
 
 use Sipwise::Base;
 use DBIx::Class::Exception;
+use NGCP::Panel::Utils::DateTime;
+use UUID qw/generate unparse/;
 
 my %LOCK = (
     0, 'none',
@@ -120,6 +122,122 @@ sub lock_provisoning_voip_subscriber {
 sub get_lock_string {
     my $level = shift;
     return $LOCK{$level};
+}
+
+sub get_admin_subscribers {
+    my %params = @_;
+    my $subs = $params{voip_subscribers};
+    my @subscribers = ();
+    foreach my $s(@{ $subs }) {
+        push @subscribers, $s if($s->{admin});
+    }
+    return \@subscribers;
+}
+
+sub create_subscriber {
+    my %params = @_;
+    my $c = $params{c};
+
+    my $contract = $params{contract};
+    my $params = $params{params};
+    my $administrative = $params{admin_default};
+    my $preferences = $params{preferences};
+
+    my $schema = $c->model('DB');
+    my $reseller = $contract->contact->reseller;
+    my $billing_domain = $schema->resultset('domains')
+            ->find($params->{domain}{id});
+    my $prov_domain = $schema->resultset('voip_domains')
+            ->find({domain => $billing_domain->domain});
+    
+    $schema->txn_do(sub {
+        my ($uuid_bin, $uuid_string);
+        UUID::generate($uuid_bin);
+        UUID::unparse($uuid_bin, $uuid_string);
+
+        # TODO: check if we find a reseller and contract and domains
+
+        my ($number, $cli);
+        if(defined $params->{e164}{cc} && $params->{e164}{cc} ne '') {
+            $cli = $params->{e164}{cc} .
+                ($params->{e164}{ac} || '') .
+                $params->{e164}{sn};
+
+            $number = $reseller->voip_numbers->create({
+                cc => $params->{e164}{cc},
+                ac => $params->{e164}{ac} || '',
+                sn => $params->{e164}{sn},
+                status => 'active',
+            });
+        }
+        my $billing_subscriber = $contract->voip_subscribers->create({
+            uuid => $uuid_string,
+            username => $params->{username},
+            domain_id => $billing_domain->id,
+            status => $params->{status},
+            primary_number_id => defined $number ? $number->id : undef,
+        });
+        if(defined $number) {
+            $number->update({ subscriber_id => $billing_subscriber->id });
+        }
+
+        unless(exists $params->{password}) {
+            my ($pass_bin, $pass_str);
+            UUID::generate($pass_bin);
+            UUID::unparse($pass_bin, $pass_str);
+            $params->{password} = $pass_str;
+        }
+        my $prov_subscriber = $schema->resultset('provisioning_voip_subscribers')->create({
+            uuid => $uuid_string,
+            username => $params->{username},
+            password => $params->{password},
+            webusername => $params->{webusername} || $params->{username},
+            webpassword => $params->{webpassword},
+            admin => $params->{administrative} // $administrative,
+            account_id => $contract->id,
+            domain_id => $prov_domain->id,
+            is_pbx_group => $params->{is_pbx_group} // 0,
+            pbx_group_id => $params->{pbx_group_id},
+            create_timestamp => NGCP::Panel::Utils::DateTime::current_local,
+        });
+
+        my $voip_preferences = $schema->resultset('voip_preferences')->search({
+            'usr_pref' => 1,
+        });
+
+        $preferences->{account_id} = $contract->id;
+        $preferences->{ac} = $params->{e164}{ac}
+            if(defined $params->{e164}{ac} && length($params->{e164}{ac}) > 0);
+        $preferences->{cc} = $params->{e164}{cc}
+            if(defined $params->{e164}{cc} && length($params->{e164}{cc}) > 0);
+        $preferences->{cli} = $cli
+            if(defined $cli);
+
+        foreach my $k(keys %{ $preferences } ) {
+            $voip_preferences->find({ 'attribute' => $k })
+                ->voip_usr_preferences->create({ 
+                    'subscriber_id' => $prov_subscriber->id,
+                    'value' => $preferences->{$k},
+                });
+        }
+
+        $schema->resultset('voicemail_users')->create({
+            customer_id => $uuid_string,
+            mailbox => $cli // 0,
+            password => sprintf("%04d", int(rand 10000)),
+            email => '',
+        });
+        if($cli) {
+            $schema->resultset('dbaliases')->create({
+                alias_username => $cli,
+                alias_domain => $prov_subscriber->domain->domain,
+                username => $prov_subscriber->username,
+                domain => $prov_subscriber->domain->domain,
+            });
+        }
+
+        return $billing_subscriber;
+    });
 }
 
 1;

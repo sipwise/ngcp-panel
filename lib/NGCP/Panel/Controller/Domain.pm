@@ -84,7 +84,8 @@ sub create :Chained('dom_list') :PathPart('create') :Args(0) {
                 $new_dom->create_related('domain_resellers', {
                     reseller_id => $reseller_id
                     });
-                NGCP::Panel::Utils::Prosody::activate_domain($c, $form->value->{domain});
+                NGCP::Panel::Utils::Prosody::activate_domain($c, $form->value->{domain})
+                    unless($c->config->{features}->{debug});
                 delete $c->session->{created_objects}->{reseller};
                 $c->session->{created_objects}->{domain} = { id => $new_dom->id };
             });
@@ -186,7 +187,8 @@ sub delete :Chained('base') :PathPart('delete') :Args(0) {
         $c->model('DB')->schema->txn_do( sub {
             $c->stash->{'domain_result'}->delete;
             $c->stash->{'provisioning_domain_result'}->delete;
-            NGCP::Panel::Utils::Prosody::deactivate_domain($c, $domain);
+            NGCP::Panel::Utils::Prosody::deactivate_domain($c, $domain)
+                unless($c->config->{features}->{debug});
         });
     } catch ($e) {
         NGCP::Panel::Utils::Message->error(

@@ -156,6 +156,9 @@
                         <tr>
                             <th>SIP URI</th>
                             <th>Primary Number</th>
+                            [% IF c.config.features.cloudpbx && product.class == 'pbxaccount' -%]
+                            <th>PBX Group</th>
+                            [% END -%]
                             <th>Registered Devices</th>
                             <th class="ngcp-actions-column"></th>
                         </tr>
@@ -165,6 +168,11 @@
                         <tr class="sw_action_row">
                             <td>[% subscriber.username %]@[% subscriber.domain %]</td>
                             <td>[% subscriber.primary_number.cc %] [% subscriber.primary_number.ac %] [% subscriber.primary_number.sn %]</td>
+                            [% IF c.config.features.cloudpbx && product.class == 'pbxaccount' -%]
+                            <td>
+                                [% subscriber.voip_pbx_group.name -%]
+                            </td>
+                            [% END -%]
                             <td>
                                 [% FOR location IN subscriber.locations -%]
                                     [% location.user_agent %]<br/>
@@ -172,6 +180,9 @@
                             </td>
                             <td class="ngcp-actions-column">
                                 <div class="sw_actions">
+                                    [% UNLESS c.user.readonly -%]
+                                    <a class="btn btn-secondary btn-small" href="[% c.uri_for_action("/subscriber/terminate", [subscriber.id]) %]" data-confirm="Terminate"><i class="icon-remove"></i> Terminate</a>
+                                    [% END -%]
                                     <a class="btn btn-primary btn-small" href="[% c.uri_for_action("/subscriber/details", [subscriber.id]) %]"><i class="icon-th-list"></i> Details</a>
                                     <a class="btn btn-tertiary btn-small" href="[% c.uri_for_action("/subscriber/preferences", [subscriber.id]) %]"><i class="icon-list"></i> Preferences</a>
                                 </div>
@@ -183,6 +194,52 @@
             </div>
         </div>
     </div>
+
+    [% IF c.config.features.cloudpbx && subscribers.size -%]
+    <div class="accordion-group">
+        <div class="accordion-heading">
+            <a class="accordion-toggle" data-toggle="collapse" data-parent="#customer_details" href="#collapse_pbxgroups">PBX Groups</a>
+        </div>
+        <div class="accordion-body collapse" id="collapse_pbxgroups">
+            <div class="accordion-inner">
+                <a class="btn btn-large btn-primary" href="[% c.uri_for_action('/customer/pbx_group_create', [ c.req.captures.0 ]) %]"><i class="icon-star"></i> Create PBX Group</a>
+                <div class="ngcp-separator"></div>
+                <table class="table table-bordered table-striped table-highlight table-hover" id="subscribers_table">
+                    <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>SIP URI</th>
+                            <th>Primary Number</th>
+                            <th>Hunting Policy</th>
+                            <th>Hunting Timeout</th>
+                            <th class="ngcp-actions-column"></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        [% FOR subscriber IN pbx_groups -%]
+                        <tr class="sw_action_row">
+                            <td>[% subscriber.voip_pbx_group.name %]</td>
+                            <td>[% subscriber.username %]@[% subscriber.domain %]</td>
+                            <td>[% subscriber.primary_number.cc %] [% subscriber.primary_number.ac %] [% subscriber.primary_number.sn %]</td>
+                            <td>[% subscriber.voip_pbx_group.hunt_policy %]</td>
+                            <td>[% subscriber.voip_pbx_group.hunt_policy_timeout %]</td>
+                            <td class="ngcp-actions-column">
+                                <div class="sw_actions">
+                                    [% UNLESS c.user.readonly -%]
+                                    <a class="btn btn-secondary btn-small" href="[% c.uri_for_action("/subscriber/terminate", [subscriber.id]) %]" data-confirm="Terminate"><i class="icon-remove"></i> Terminate</a>
+                                    [% END -%]
+                                    <a class="btn btn-primary btn-small" href="[% c.uri_for_action("/subscriber/details", [subscriber.id]) %]"><i class="icon-th-list"></i> Details</a>
+                                    <a class="btn btn-tertiary btn-small" href="[% c.uri_for_action("/subscriber/preferences", [subscriber.id]) %]"><i class="icon-list"></i> Preferences</a>
+                                </div>
+                            </td>
+                        </tr>
+                        [% END -%]
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    [% END -%]
 
     <div class="accordion-group">
         <div class="accordion-heading">

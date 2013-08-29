@@ -276,6 +276,17 @@ sub terminate :Chained('base') :PathPart('terminate') :Args(0) {
     my $schema = $c->model('DB');
     try {
         $schema->txn_do(sub {
+            if($subscriber->provisioning_voip_subscriber->is_pbx_group) {
+                my $pbx_group = $schema->resultset('voip_pbx_groups')->find({
+                    subscriber_id => $subscriber->provisioning_voip_subscriber->id
+                });
+                if($pbx_group) {
+                    $pbx_group->provisioning_voip_subscribers->update_all({
+                        pbx_group_id => undef,
+                    });
+                }
+                $pbx_group->delete;
+            }
             $subscriber->provisioning_voip_subscriber->delete;
             $subscriber->voip_numbers->delete_all;
             $subscriber->update({ status => 'terminated' });

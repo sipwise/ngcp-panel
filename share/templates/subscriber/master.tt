@@ -55,7 +55,13 @@
                                 { value = subscriber.primary_number.cc _ ' ' _ subscriber.primary_number.ac _ ' ' _ subscriber.primary_number.sn, desc = 'Primary Number'},
                                 { value = subscriber.provisioning_voip_subscriber.admin ? 'yes' : 'no', desc = 'Administrative'},
                                 { value = subscriber.external_id, desc = 'External #'},
-                            ]
+                            ];
+                            IF subscriber.provisioning_voip_subscriber.voip_pbx_group.defined;
+                                elements.push(
+                                    { value = subscriber.provisioning_voip_subscriber.voip_pbx_group.name, desc = 'PBX Group' },
+                                );
+                            END;
+
                         -%]
                         [% FOR elem IN elements -%]
                             <tr>

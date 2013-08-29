@@ -3,23 +3,38 @@ package NGCP::Panel::Form::Customer::PbxExtensionSubscriber;
 use HTML::FormHandler::Moose;
 extends 'NGCP::Panel::Form::Customer::PbxSubscriber';
 
-has_field 'ext' => (
+has_field 'group' => (
+    type => '+NGCP::Panel::Field::PbxGroup',
+    label => 'Group',
+    not_nullable => 1,
+);
+
+has_field 'extension' => (
     type => 'PosInteger',
     element_attr => { 
-        class => ['ngcp_e164_sn'], 
         rel => ['tooltip'], 
         title => ['Extension Number, e.g. 101'] 
     },
-    do_label => 0,
-    do_wrapper => 0,
     required => 1,
+    label => 'Extension',
 );
 
 has_block 'fields' => (
     tag => 'div',
     class => [qw/modal-body/],
-    render_list => [qw/webusername webpassword ext username password status external_id/ ],
+    render_list => [qw/group webusername webpassword extension username password status external_id/ ],
 );
+
+sub field_list {
+    my $self = shift;
+    my $c = $self->ctx;
+
+    my $group = $self->field('group');
+    $group->field('id')->ajax_src(
+        $c->uri_for_action('/customer/pbx_group_ajax', [$c->req->captures->[0]])->as_string
+    );
+}
+
 
 1;
 

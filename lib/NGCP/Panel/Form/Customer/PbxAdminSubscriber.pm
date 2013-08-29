@@ -54,7 +54,7 @@ has_field 'domain' => (
 has_block 'fields' => (
     tag => 'div',
     class => [qw/modal-body/],
-    render_list => [qw/group webusername webpassword e164 username domain password status external_id/ ],
+    render_list => [qw/webusername webpassword e164 username domain password status external_id/ ],
 );
 
 sub validate {
