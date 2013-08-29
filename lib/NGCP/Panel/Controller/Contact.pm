@@ -196,7 +196,16 @@ sub delete :Chained('base') :PathPart('delete') :Args(0) {
 sub ajax :Chained('list_contact') :PathPart('ajax') :Args(0) {
     my ($self, $c) = @_;
     
-    NGCP::Panel::Utils::Datatables::process($c, $c->stash->{contacts}, $c->stash->{contact_dt_columns});
+    NGCP::Panel::Utils::Datatables::process(
+        $c,
+        $c->stash->{contacts}->search_rs(undef, {prefetch=>"contracts"}),
+        $c->stash->{contact_dt_columns},
+        sub {
+            my ($result) = @_;
+            my %data = (deletable => ($result->contracts->all) ? 0 : 1);
+            return %data
+        },
+    );
     
     $c->detach( $c->view("JSON") );
 }

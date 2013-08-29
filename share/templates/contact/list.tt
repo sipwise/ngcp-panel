@@ -15,7 +15,7 @@
     UNLESS c.user.read_only;
         helper.dt_buttons = [
             { name = 'Edit', uri = "/contact/'+full.id+'/edit", class = 'btn-small btn-primary', icon = 'icon-edit' },
-            { name = 'Delete', uri = "/contact/'+full.id+'/delete", class = 'btn-small btn-secondary', icon = 'icon-trash' },
+            { name = 'Delete', uri = "/contact/'+full.id+'/delete", class = 'btn-small btn-secondary', icon = 'icon-trash' condition = 'full.deletable' },
         ];
         helper.top_buttons = [
             { name = 'Create Contact', uri = c.uri_for('/contact/create'), icon = 'icon-star' },
