@@ -195,7 +195,7 @@
         </div>
     </div>
 
-    [% IF c.config.features.cloudpbx && subscribers.size -%]
+    [% IF c.config.features.cloudpbx && product.class == 'pbxaccount' && subscribers.size -%]
     <div class="accordion-group">
         <div class="accordion-heading">
             <a class="accordion-toggle" data-toggle="collapse" data-parent="#customer_details" href="#collapse_pbxgroups">PBX Groups</a>
