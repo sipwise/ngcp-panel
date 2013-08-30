@@ -8,6 +8,7 @@
         <li><a href="[% c.uri_for('/administrator') %]">Administrators</a></li>
         <li><a href="[% c.uri_for('/reseller') %]">Resellers</a></li>
         <li><a href="[% c.uri_for('/customer') %]">Customers</a></li>
+        <li><a href="[% c.uri_for('/contact') %]">Contacts</a></li>
         <li><a href="[% c.uri_for('/domain') %]">Domains</a></li>
         <li><a href="[% c.uri_for('/subscriber') %]">Subscribers</a></li>
         <li><a href="[% c.uri_for('/billing') %]">Billing</a></li>
