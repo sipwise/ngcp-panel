@@ -227,34 +227,52 @@ sub subscriber_create :Chained('base') :PathPart('subscriber/create') :Args(0) {
     if($form->validated) {
         my $billing_subscriber;
         try {
-            my $preferences = {};
-            if($pbx && !$pbxadmin) {
-                my $admin = $admin_subscribers->[0];
-                $form->params->{domain}{id} = $admin->{domain_id};
-                # TODO: make DT selection multi-select capable
-                # set pbx_group preferences somehow for the related group subscriber as well
-                $form->params->{pbx_group_id} = $form->params->{group}{id};
-                delete $form->params->{group};
-                my $base_number = $admin->{primary_number};
-                if($base_number) {
-                    # $preferences->{base_cli} = $base_number->cc . $base_number->ac . $base_number->sn;
-                    if($form->params->{extension}) {
-                        $form->params->{e164}{cc} = $base_number->{cc};
-                        $form->params->{e164}{ac} = $base_number->{ac};
-                        $form->params->{e164}{sn} = $base_number->{sn} . $form->params->{extension};
+            my $schema = $c->model('DB');
+            $schema->txn_do(sub {
+                my $preferences = {};
+                if($pbx && !$pbxadmin) {
+                    my $admin = $admin_subscribers->[0];
+                    $form->params->{domain}{id} = $admin->{domain_id};
+                    # TODO: make DT selection multi-select capable
+                    $form->params->{pbx_group_id} = $form->params->{group}{id};
+                    delete $form->params->{group};
+                    my $base_number = $admin->{primary_number};
+                    if($base_number) {
+                        $preferences->{cloud_pbx_base_cli} = $base_number->{cc} . $base_number->{ac} . $base_number->{sn};
+                        if($form->params->{extension}) {
+                            $form->params->{e164}{cc} = $base_number->{cc};
+                            $form->params->{e164}{ac} = $base_number->{ac};
+                            $form->params->{e164}{sn} = $base_number->{sn} . $form->params->{extension};
+                        }
                     }
                 }
-            }
-            if($pbx) {
-                $preferences->{cloud_pbx} = 1;
-            }
-            $billing_subscriber = NGCP::Panel::Utils::Subscriber::create_subscriber(
-                c => $c,
-                contract => $c->stash->{contract},
-                params => $form->params,
-                admin_default => $pbxadmin,
-                preferences => $preferences,
-            );
+                if($pbx) {
+                    $preferences->{cloud_pbx} = 1;
+                }
+                $billing_subscriber = NGCP::Panel::Utils::Subscriber::create_subscriber(
+                    c => $c,
+                    schema => $schema,
+                    contract => $c->stash->{contract},
+                    params => $form->params,
+                    admin_default => $pbxadmin,
+                    preferences => $preferences,
+                );
+
+                # update the corresponding group subscriber preference
+                if($pbx && !$pbxadmin && $form->params->{pbx_group_id}) {
+                    my $grp_subscriber = $c->model('DB')->resultset('voip_pbx_groups')
+                        ->find($form->params->{pbx_group_id})
+                        ->provisioning_voip_subscriber;
+                    if($grp_subscriber) {
+                        my $grp_pref_rs = NGCP::Panel::Utils::Subscriber::get_usr_preference_rs(
+                            c => $c, attribute => 'cloud_pbx_hunt_group', prov_subscriber => $grp_subscriber
+                        );
+                        $grp_pref_rs->create({ value => 'sip:'.$form->params->{username}.'@'.
+                            $billing_subscriber->domain->domain });
+                    }
+                }
+            });
+
             delete $c->session->{created_objects}->{domain};
             delete $c->session->{created_objects}->{group};
             $c->flash(messages => [{type => 'success', text => 'Subscriber successfully created.'}]);
@@ -408,15 +426,14 @@ sub pbx_group_create :Chained('base') :PathPart('pbx/group/create') :Args(0) {
     );
     if($posted && $form->validated) {
         try {
-            $c->model('DB')->schema->txn_do( sub {
+            my $schema = $c->model('DB');
+            $schema->txn_do( sub {
                 my $preferences = {};
                 my $admin = $admin_subscribers->[0];
 
                 my $base_number = $admin->{primary_number};
                 if($base_number) {
-                    # TODO: this pref doesn't exist yet in the db
-                    # $preferences->{base_cli} = $base_number->cc . $base_number->ac . $base_number->sn;
-
+                    $preferences->{cloud_pbx_base_cli} = $base_number->{cc} . $base_number->{ac} . $base_number->{sn};
                     if($form->params->{extension}) {
                         $form->params->{e164}{cc} = $base_number->{cc};
                         $form->params->{e164}{ac} = $base_number->{ac};
@@ -431,8 +448,11 @@ sub pbx_group_create :Chained('base') :PathPart('pbx/group/create') :Args(0) {
                 $form->params->{username} = lc $form->params->{name};
                 $form->params->{username} =~ s/\s+/_/g;
                 $preferences->{cloud_pbx} = 1;
+                $preferences->{cloud_pbx_hunt_policy} = $form->params->{hunt_policy};
+                $preferences->{cloud_pbx_hunt_timeout} = $form->params->{hunt_policy_timeout};
                 my $billing_subscriber = NGCP::Panel::Utils::Subscriber::create_subscriber(
                     c => $c,
+                    schema => $schema,
                     contract => $c->stash->{contract},
                     params => $form->params,
                     admin_default => 0,

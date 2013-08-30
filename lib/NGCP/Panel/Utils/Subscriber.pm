@@ -143,7 +143,7 @@ sub create_subscriber {
     my $administrative = $params{admin_default};
     my $preferences = $params{preferences};
 
-    my $schema = $c->model('DB');
+    my $schema = $params{schema} // $c->model('DB');
     my $reseller = $contract->contact->reseller;
     my $billing_domain = $schema->resultset('domains')
             ->find($params->{domain}{id});
@@ -201,10 +201,6 @@ sub create_subscriber {
             create_timestamp => NGCP::Panel::Utils::DateTime::current_local,
         });
 
-        my $voip_preferences = $schema->resultset('voip_preferences')->search({
-            'usr_pref' => 1,
-        });
-
         $preferences->{account_id} = $contract->id;
         $preferences->{ac} = $params->{e164}{ac}
             if(defined $params->{e164}{ac} && length($params->{e164}{ac}) > 0);
@@ -214,11 +210,17 @@ sub create_subscriber {
             if(defined $cli);
 
         foreach my $k(keys %{ $preferences } ) {
-            $voip_preferences->find({ 'attribute' => $k })
-                ->voip_usr_preferences->create({ 
-                    'subscriber_id' => $prov_subscriber->id,
+            my $pref = get_usr_preference_rs(
+                c => $c, attribute => $k, prov_subscriber => $prov_subscriber);
+            if($pref->first && $pref->first->attribute->max_occur == 1) {
+                $pref->first->update({ 
                     'value' => $preferences->{$k},
                 });
+            } else {
+                $pref->create({ 
+                    'value' => $preferences->{$k},
+                });
+            }
         }
 
         $schema->resultset('voicemail_users')->create({
