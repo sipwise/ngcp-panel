@@ -327,5 +327,4 @@
 -%]
 [% END -%]
 
-
 [% # vim: set tabstop=4 syntax=html expandtab: -%]
