@@ -74,7 +74,6 @@ sub index :Path Form {
                                 login => $user,
                                 is_active => 1, 
                                 is_superuser => 0,
-                                reseller_id => { '>' => 1 },
                             ],
                         }],
                     }

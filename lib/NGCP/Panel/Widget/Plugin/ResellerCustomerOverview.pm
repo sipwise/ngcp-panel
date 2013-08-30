@@ -28,8 +28,9 @@ around handle => sub {
         customers => $c->model('DB')->resultset('contracts')->search({
             'me.status' => { '!=' => 'terminated' },
             'contact.reseller_id' => $c->user->reseller_id,
+            'product.class' => { 'not in' => [ 'reseller', 'sippeering', 'pstnpeering' ] },
         },{
-            join => 'contact',
+            join => [ 'contact', { 'billing_mappings' => 'product' } ],
         }),
         subscribers => $c->model('DB')->resultset('voip_subscribers')->search({
             'contact.reseller_id' => $c->user->reseller_id,

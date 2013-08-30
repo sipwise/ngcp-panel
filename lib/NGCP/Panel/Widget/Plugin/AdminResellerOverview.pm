@@ -29,9 +29,9 @@ around handle => sub {
         domains => $c->model('DB')->resultset('domain_resellers')->search_rs({}),
         customers => $c->model('DB')->resultset('contracts')->search_rs({
             status => { '!=' => 'terminated' },
-            product_id => undef,
+            'product.class' => { 'not in' => [ 'reseller', 'sippeering', 'pstnpeering' ] },
         }, {
-            join => 'billing_mappings',
+            join => { 'billing_mappings' => 'product' },
         }),
         subscribers => $c->model('DB')->resultset('voip_subscribers')->search_rs({
             status => { '!=' => 'terminated' },
