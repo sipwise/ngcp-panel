@@ -160,7 +160,7 @@
     helper.create_flag = create_flag;
     helper.edit_flag = edit_flag;
     helper.form_object = form;
-    helper.ajax_uri = c.uri_for('/domain/ajax');
+    helper.ajax_uri = c.uri_for('/domain/ajax/filter_reseller', reseller.first.id);
 
     UNLESS c.user.read_only;
         helper.dt_buttons = [

@@ -212,6 +212,18 @@ sub ajax :Chained('dom_list') :PathPart('ajax') :Args(0) {
     $c->detach( $c->view("JSON") );
 }
 
+sub ajax_filter_reseller :Chained('dom_list') :PathPart('ajax/filter_reseller') :Args(1) {
+    my ($self, $c, $reseller_id) = @_;
+
+    my $resultset = $c->stash->{dom_rs}->search({
+        'domain_resellers.reseller_id' => $reseller_id,
+    },{
+        join => 'domain_resellers'
+    });
+    NGCP::Panel::Utils::Datatables::process($c, $resultset, $c->stash->{domain_dt_columns});
+    $c->detach( $c->view("JSON") );
+}
+
 sub preferences :Chained('base') :PathPart('preferences') :Args(0) {
     my ($self, $c) = @_;
 
