@@ -139,6 +139,24 @@ $(function () {
         $('#'+lastTab).addClass("in");
         $('#'+lastTab).parent().addClass("open");
     }
+    if($('.accordion-body').length) {
+        $('#content').children('.container').prepend('<a href="#" id="toggle-accordions" class="btn btn-small btn-tertiary pull-right ngcp-accordion-closed"><i class="icon-resize-full"></i> Expand Groups</a>');
+        $('#toggle-accordions').click(function() {
+            if($('#toggle-accordions').hasClass('ngcp-accordion-closed')) {
+                $('#toggle-accordions').removeClass('ngcp-accordion-closed');
+                $('#toggle-accordions').html('<i class="icon-resize-small"></i> Collapse Groups');
+                $('.accordion-body').removeClass('collapse');
+                $('.accordion-body').addClass('in');
+            } else {
+                $('#toggle-accordions').addClass('ngcp-accordion-closed');
+                $('#toggle-accordions').html('<i class="icon-resize-full"></i> Expand Groups');
+                $('.accordion-body').removeClass('in');
+                $('.accordion-body').addClass('collapse');
+                $('.accordion-group.open').find('.accordion-body').addClass('in');
+                $('.accordion-group.open').find('.accordion-body').removeClass('collapse');
+            }
+        });
+    }
 });
 </script>
 </body>

@@ -308,7 +308,7 @@
         <div class="accordion-body collapse" id="collapse_speed">
             <div class="accordion-inner">
 
-                <a class="btn btn-tertiary button-large" href="[% c.uri_for_action('/subscriber/create_speeddial', [c.req.captures.0]) %]"><i class="icon-star"></i> Create Slot</a>
+                <a class="btn btn-tertiary btn-large" href="[% c.uri_for_action('/subscriber/create_speeddial', [c.req.captures.0]) %]"><i class="icon-star"></i> Create Slot</a>
 [%
     helper.messages = '';
     helper.name = 'Speeddial';
