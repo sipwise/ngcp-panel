@@ -411,6 +411,9 @@ sub customer_create :Chained('customer_list') :PathPart('create') :Args(0) {
                 $form->{create_timestamp} = $form->{modify_timestamp} = NGCP::Panel::Utils::DateTime::current_local;
                 my $product_id = $form->params->{product}{id};
                 delete $form->params->{product};
+                unless($product_id) {
+                    $product_id = $c->model('DB')->resultset('products')->find({ class => 'sipaccount' })->id;
+                }
                 my $contract = $schema->resultset('contracts')->create($form->params);
                 my $billing_profile = $schema->resultset('billing_profiles')->find($bprof_id);
                 $contract->billing_mappings->create({
