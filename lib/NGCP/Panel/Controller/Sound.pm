@@ -202,7 +202,7 @@ sub handles_list :Chained('base') :PathPart('handles') :CaptureArgs(0) {
                 ],
             ],
         });
-    unless($c->config->{features}->{pbx}) {
+    unless($c->config->{features}->{cloudpbx}) {
         $handles_rs = $handles_rs->search({ 'groups.name' => { '!=' => 'pbx' } });
     }
     unless($c->config->{features}->{musiconhold}) {
