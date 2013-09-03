@@ -287,7 +287,25 @@ sub terminate :Chained('base') :PathPart('terminate') :Args(0) {
                 }
                 $pbx_group->delete;
             }
-            $subscriber->provisioning_voip_subscriber->delete;
+            my $prov_subscriber = $subscriber->provisioning_voip_subscriber;
+            if($prov_subscriber) {
+                if($prov_subscriber->voip_pbx_group) {
+                    my $group_subscriber = $prov_subscriber->voip_pbx_group->provisioning_voip_subscriber;
+                    if($group_subscriber) {
+                        my $hunt_group = NGCP::Panel::Utils::Subscriber::get_usr_preference_rs(
+                            c => $c,
+                            prov_subscriber => $group_subscriber,
+                            attribute => 'cloud_pbx_hunt_group'
+                        );
+                        my $pref = $hunt_group->find({ 
+                            value => 'sip:'.$prov_subscriber->username . 
+                                '@' . $prov_subscriber->domain->domain
+                                });
+                        $pref->delete if($pref);
+                    }
+                }
+                $prov_subscriber->delete;
+            }
             $subscriber->voip_numbers->delete_all;
             $subscriber->update({ status => 'terminated' });
         });
