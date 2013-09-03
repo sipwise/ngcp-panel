@@ -48,8 +48,10 @@ around('ACTION_test', sub {
     Pod::Usage::pod2usage(-exitval => 0, -input => 'Build.PL', -verbose => 2) if $opt{man};
     Pod::Usage::pod2usage("$0: --webdriver option required.\nRun `perldoc Build.PL`") unless $opt{webdriver};
 
-    $webdriver = child { exec $opt{webdriver} };
-    $self->wait_socket(qw(localhost 4444));
+    unless ($opt{webdriver} eq "external") {
+        $webdriver = child { exec $opt{webdriver} };
+        $self->wait_socket(qw(localhost 4444));
+    }
 
     require URI;
     my $uri = URI->new($opt{server});
