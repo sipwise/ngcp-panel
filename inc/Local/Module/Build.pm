@@ -40,13 +40,19 @@ around('ACTION_test', sub {
 
     require Getopt::Long;
     my %opt = (server => 'http://localhost:5000');
-    Getopt::Long::GetOptions(\%opt, 'webdriver=s', 'server:s', 'help|?', 'man')
+    Getopt::Long::GetOptions(\%opt, 'webdriver=s', 'server:s', 'help|?', 'man', 'wd-server=s')
         or die 'could not process command-line options';
 
     require Pod::Usage;
     Pod::Usage::pod2usage(-exitval => 1, -input => 'Build.PL') if $opt{help};
     Pod::Usage::pod2usage(-exitval => 0, -input => 'Build.PL', -verbose => 2) if $opt{man};
     Pod::Usage::pod2usage("$0: --webdriver option required.\nRun `perldoc Build.PL`") unless $opt{webdriver};
+
+    if ($opt{'wd-server'}) {
+        my ($wd_host, $wd_port) = $opt{'wd-server'} =~ m{([^/:]+):([0-9]+)};
+        $ENV{TWD_HOST} = $wd_host;
+        $ENV{TWD_PORT} = $wd_port;
+    }
 
     unless ($opt{webdriver} eq "external") {
         $webdriver = child { exec $opt{webdriver} };

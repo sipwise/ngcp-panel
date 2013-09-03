@@ -107,12 +107,14 @@ Build.PL - NGCP-Panel build system including test fixtures
     ./Build test --webdriver='java -jar selenium-server-standalone.jar'
     ./Build test --webdriver='chromedriver --url-base=wd/hub --port=4444'
     ./Build test --webdriver=selenium-rc # from CPAN distro Alien-SeleniumRC
+    ./Build test --webdriver=external --wd-server=127.0.0.1:5555
 
     ./Build testcover --webdriver='phantomjs --webdriver=4444'
 
 =head2 Options
 
     --webdriver     (required) external webdriver command
+    --wd-server     HOST:PORT of an external webdriver to connect to
     --server        URI for socket test server
     --help          brief help message
     --man           full documentation
@@ -122,6 +124,12 @@ Build.PL - NGCP-Panel build system including test fixtures
 =head2 C<--webdriver>
 
 (required) command to launch a webdriver
+external if the webdriver is launched externally
+
+=head2 C<--wd-server>
+
+Host:Port of the webdriver to which the tests should connect.
+Default is set by Test::WebDriver to localhost
 
 =head2 C<--server>
 
