@@ -152,8 +152,8 @@
     helper.dt_columns = reg_dt_columns;
 
     helper.close_target = close_target;
-    helper.create_flag = create_flag;
-    helper.edit_flag = edit_flag;
+    helper.create_flag = reg_create_flag;
+    helper.edit_flag = reg_edit_flag;
     helper.form_object = form;
     helper.ajax_uri = c.uri_for_action('/subscriber/ajax_registered', [c.req.captures.0]);
 
@@ -182,8 +182,8 @@
     helper.dt_columns = capture_dt_columns;
 
     helper.close_target = close_target;
-    helper.create_flag = create_flag;
-    helper.edit_flag = edit_flag;
+    helper.create_flag = 0;
+    helper.edit_flag = 0;
     helper.form_object = form;
     helper.ajax_uri = c.uri_for_action('/subscriber/ajax_captured_calls', [c.req.captures.0]);
 
@@ -203,6 +203,7 @@
 </div>
 
 [% IF edit_flag == 1 -%]
+<!-- edit master data -->
 [%
     IF form.has_for_js;
         form.render_repeatable_js;

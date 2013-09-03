@@ -143,33 +143,12 @@ sub base :Chained('list_customer') :PathPart('') :CaptureArgs(1) {
         { name => "extension", search => 1, title => "Extension" },
     ]);
 
-    my @subscribers = ();
-    my @pbx_groups = ();
-    foreach my $s($contract->first->voip_subscribers->search_rs({ status => 'active' })->all) {
-        my $sub = { $s->get_columns };
-        if($c->config->{features}->{cloudpbx}) {
-            $sub->{voip_pbx_group} = { $s->provisioning_voip_subscriber->voip_pbx_group->get_columns }
-                if($s->provisioning_voip_subscriber->voip_pbx_group);
-        }
-        $sub->{domain} = $s->domain->domain;
-        $sub->{admin} = $s->provisioning_voip_subscriber->admin if
-            $s->provisioning_voip_subscriber;
-        $sub->{primary_number} = {$s->primary_number->get_columns} if(defined $s->primary_number);
-        $sub->{locations} = [ map { { $_->get_columns } } $c->model('DB')->resultset('location')->
-            search({
-                username => $s->username,
-                domain => $s->domain->domain,
-            })->all ];
-        if($c->config->{features}->{cloudpbx} && $s->provisioning_voip_subscriber->is_pbx_group) {
-            my $grp = $contract->first->voip_pbx_groups->find({ subscriber_id => $s->provisioning_voip_subscriber->id });
-            $sub->{voip_pbx_group} = { $grp->get_columns } if $grp;
-            push @pbx_groups, $sub;
-        } else {
-            push @subscribers, $sub;
-        }
-    }
-    $c->stash->{subscribers} = \@subscribers;
-    $c->stash->{pbx_groups} = \@pbx_groups;
+    my $subs = NGCP::Panel::Utils::Subscriber::get_custom_subscriber_struct(
+        c => $c,
+        contract => $contract->first
+    );
+    $c->stash->{subscribers} = $subs->{subscribers};
+    $c->stash->{pbx_groups} = $subs->{pbx_groups};
 
     $c->stash(product => $product);
     $c->stash(balance => $balance);
@@ -190,14 +169,12 @@ sub subscriber_create :Chained('base') :PathPart('subscriber/create') :Args(0) {
 
     my $pbx = 0; my $pbxadmin = 0;
     $pbx = 1 if $c->stash->{product}->class eq 'pbxaccount';
-    my @admin_subscribers = NGCP::Panel::Utils::Subscriber::get_admin_subscribers(
-          voip_subscriber_rs => $c->stash->{subscribers});
     my $form;
-
     my $admin_subscribers = NGCP::Panel::Utils::Subscriber::get_admin_subscribers(
         voip_subscribers => $c->stash->{subscribers});
 
     if($c->config->{features}->{cloudpbx} && $pbx) {
+        $c->stash(customer_id => $c->stash->{contract}->id);
         # we need to create an admin subscriber first
         unless(@{ $admin_subscribers }) {
             $pbxadmin = 1;

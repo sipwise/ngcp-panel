@@ -12,6 +12,7 @@ use NGCP::Panel::Utils::Message;
 use NGCP::Panel::Utils::DateTime;
 use NGCP::Panel::Form::Subscriber;
 use NGCP::Panel::Form::SubscriberEdit;
+use NGCP::Panel::Form::Customer::PbxExtensionSubscriberEdit;
 use NGCP::Panel::Form::SubscriberCFSimple;
 use NGCP::Panel::Form::SubscriberCFTSimple;
 use NGCP::Panel::Form::SubscriberCFAdvanced;
@@ -1477,32 +1478,71 @@ sub details :Chained('master') :PathPart('') :Args(0) {
 
 sub edit_master :Chained('master') :PathPart('edit') :Args(0) {
     my ($self, $c) = @_;
-
-    my $form = NGCP::Panel::Form::SubscriberEdit->new;
-    my $posted = ($c->request->method eq 'POST');
     my $subscriber = $c->stash->{subscriber};
     my $prov_subscriber = $subscriber->provisioning_voip_subscriber;
+
+    my $form; my $pbx_ext;
+    if($c->config->{features}->{cloudpbx} && $prov_subscriber->voip_pbx_group) {
+        $pbx_ext = 1;
+        $c->stash(customer_id => $subscriber->contract->id);
+        $form = NGCP::Panel::Form::Customer::PbxExtensionSubscriberEdit->new(ctx => $c);
+    } else {
+        $form = NGCP::Panel::Form::SubscriberEdit->new;
+    }
+
+    my $posted = ($c->request->method eq 'POST');
 
     my $params;
     my $lock = $c->stash->{prov_lock};
 
+    my $base_number;
+    if($pbx_ext) {
+        my $subs = NGCP::Panel::Utils::Subscriber::get_custom_subscriber_struct(
+            c => $c,
+            contract => $subscriber->contract
+        );
+        my $admin_subscribers = NGCP::Panel::Utils::Subscriber::get_admin_subscribers(
+            voip_subscribers => $subs->{subscribers}
+        );
+        $base_number = $admin_subscribers->[0]->{primary_number};
+    }
+
+    # we don't change this on edit
+    $c->request->params->{username} = $prov_subscriber->username;
     unless($posted) {
         $params->{webusername} = $prov_subscriber->webusername;
         $params->{webpassword} = $prov_subscriber->webpassword;
         $params->{password} = $prov_subscriber->password;
         $params->{administrative} = $prov_subscriber->admin;
         if($subscriber->primary_number) {
-            $params->{e164}->{cc} = $subscriber->primary_number->cc;
-            $params->{e164}->{ac} = $subscriber->primary_number->ac;
-            $params->{e164}->{sn} = $subscriber->primary_number->sn;
+            unless($pbx_ext) {
+                $params->{e164}->{cc} = $subscriber->primary_number->cc;
+                $params->{e164}->{ac} = $subscriber->primary_number->ac;
+                $params->{e164}->{sn} = $subscriber->primary_number->sn;
+            } elsif($base_number) {
+                my $pbx_base_num = $base_number->{cc} .
+                    ($base_number->{ac} // '').
+                    $base_number->{sn};
+                my $full =  $subscriber->primary_number->cc .
+                    ($subscriber->primary_number->ac // '').
+                    $subscriber->primary_number->sn;
+                if($full =~ s/^${pbx_base_num}(.+)$/$1/) {
+                    $params->{extension} = $full;
+                }
+            }
+            if($pbx_ext) {
+                $params->{group}{id} = $prov_subscriber->pbx_group_id;
+            }
         }
-        my @alias_nums = ();
-        for my $num($subscriber->voip_numbers->all) {
-            next if $subscriber->primary_number && 
-                $num->id == $subscriber->primary_number->id;
-            push @alias_nums, { e164 => { cc => $num->cc, ac => $num->ac, sn => $num->sn } };
+        unless($pbx_ext) {
+            my @alias_nums = ();
+            for my $num($subscriber->voip_numbers->all) {
+                next if $subscriber->primary_number && 
+                    $num->id == $subscriber->primary_number->id;
+                push @alias_nums, { e164 => { cc => $num->cc, ac => $num->ac, sn => $num->sn } };
+            }
+            $params->{alias_number} = \@alias_nums;
         }
-        $params->{alias_number} = \@alias_nums;
         $params->{status} = $subscriber->status;
         $params->{external_id} = $subscriber->external_id;
 
@@ -1510,8 +1550,11 @@ sub edit_master :Chained('master') :PathPart('edit') :Args(0) {
     }
 
     $form->process(
-        params => $posted ? $c->request->params : $params
+        posted => $posted,
+        params => $c->request->params,
+        item => $params
     );
+
     NGCP::Panel::Utils::Navigation::check_form_buttons(
         c => $c,
         form => $form,
@@ -1528,15 +1571,16 @@ sub edit_master :Chained('master') :PathPart('edit') :Args(0) {
         my $schema = $c->model('DB');
         try {
             $schema->txn_do(sub {
-                $prov_subscriber->update({
-                    webusername => $form->field('webusername')->value,
-                    webpassword => $form->field('webpassword')->value,
-                    password => $form->field('password')->value,
-                    admin => $form->field('administrative')->value,
-                });
+                my $prov_params = {};
+                $prov_params->{webusername} = $form->params->{webusername};
+                $prov_params->{webpassword} = $form->params->{webpassword};
+                $prov_params->{password} = $form->params->{password};
+                $prov_params->{admin} = $form->params->{administrative}
+                    unless($pbx_ext);
+                $prov_subscriber->update($prov_params);
                 $subscriber->update({
-                    status => $form->field('status')->value,
-                    external_id => $form->field('external_id')->value,
+                    status => $form->params->{status},
+                    external_id => $form->params->{external_id},
                 });
                 if($subscriber->status eq 'locked') {
                     $form->values->{lock} = 4; # update lock below
@@ -1554,22 +1598,28 @@ sub edit_master :Chained('master') :PathPart('edit') :Args(0) {
                                     domain => $prov_subscriber->domain->domain,
                                 })->delete_all;
 
-                # TODO: check for availablity of cc and sn
                 my $num;
                 if($subscriber->primary_number) {
-                    if(!$form->field('e164')->field('cc')->value &&
-                       !$form->field('e164')->field('ac')->value &&
-                       !$form->field('e164')->field('sn')->value) {
+                    if($pbx_ext) {
+                        $form->params->{e164}{cc} = $subscriber->primary_number->cc;
+                        $form->params->{e164}{ac} = $subscriber->primary_number->ac;
+                        $form->params->{e164}{sn} = $base_number->{sn} . $form->params->{extension};
+                    }
+                    if(!$form->params->{e164}{cc} &&
+                       !$form->params->{e164}{ac} &&
+                       !$form->params->{e164}{sn}) {
+
+                       # TODO: if it's an admin for pbx, don't allow this!
                         $subscriber->primary_number->delete;
                         $prov_subscriber->voicemail_user->update({ mailbox => '0' });
                     } else {
                         # check if cc and sn are set if cc is there
                         $num = $subscriber->primary_number->update({
-                            cc => $form->field('e164')->field('cc')->value,
-                            ac => $form->field('e164')->field('ac')->value || '',
-                            sn => $form->field('e164')->field('sn')->value,
+                            cc => $form->params->{e164}{cc},
+                            ac => $form->params->{e164}{ac} // '',
+                            sn => $form->params->{e164}{sn},
                         });
-                        my $cli = $num->cc.($num->ac || '').$num->sn;
+                        my $cli = $num->cc.($num->ac // '').$num->sn;
                         for my $cfset($prov_subscriber->voip_cf_destination_sets->all) {
                             for my $cf($cfset->voip_cf_destinations->all) {
                                 if($cf->destination =~ /\@voicebox\.local$/) {
@@ -1582,16 +1632,19 @@ sub edit_master :Chained('master') :PathPart('edit') :Args(0) {
                             }
                         }
                         $prov_subscriber->voicemail_user->update({ mailbox => $cli });
+
+                        # TODO: if it's an admin for pbx, update all other subscribers as well!
+                        # this means cloud_pbx_base_cli pref, primary number, dbaliases, voicemail, cf
                     }
                 } else {
-                    if($form->field('e164')->field('cc')->value &&
-                       $form->field('e164')->field('sn')->value) {
+                    if($form->params->{e164}{cc} &&
+                       $form->params->{e164}{sn}) {
                         $num = $schema->resultset('voip_numbers')->create({
                             subscriber_id => $subscriber->id,
                             reseller_id => $subscriber->contract->contact->reseller_id,
-                            cc => $form->field('e164')->field('cc')->value,
-                            ac => $form->field('e164')->field('ac')->value || '',
-                            sn => $form->field('e164')->field('sn')->value,
+                            cc => $form->params->{e164}{cc},
+                            ac => $form->params->{e164}{ac} // '',
+                            sn => $form->params->{e164}{sn},
                         });
                         $subscriber->update({ primary_number_id => $num->id });
                         $prov_subscriber->voicemail_user->update({ mailbox => 
@@ -1624,18 +1677,20 @@ sub edit_master :Chained('master') :PathPart('edit') :Args(0) {
                         }
                     }
                 }
-                for my $alias($form->field('alias_number')->fields) {
-                    $num = $subscriber->voip_numbers->create({
-                        cc => $alias->field('e164')->field('cc')->value,
-                        ac => $alias->field('e164')->field('ac')->value,
-                        sn => $alias->field('e164')->field('sn')->value,
-                    });
-                    $schema->resultset('dbaliases')->create({
-                        alias_username => $num->cc.($num->ac || '').$num->sn,
-                        alias_domain => $prov_subscriber->domain->domain,
-                        username => $prov_subscriber->username,
-                        domain => $prov_subscriber->domain->domain,
-                    });
+                if($form->field('alias_number')) {
+                    for my $alias($form->field('alias_number')->fields) {
+                        $num = $subscriber->voip_numbers->create({
+                            cc => $alias->field('e164')->field('cc')->value,
+                            ac => $alias->field('e164')->field('ac')->value,
+                            sn => $alias->field('e164')->field('sn')->value,
+                        });
+                        $schema->resultset('dbaliases')->create({
+                            alias_username => $num->cc.($num->ac || '').$num->sn,
+                            alias_domain => $prov_subscriber->domain->domain,
+                            username => $prov_subscriber->username,
+                            domain => $prov_subscriber->domain->domain,
+                        });
+                    }
                 }
 
                 $form->values->{lock} ||= 0;
@@ -2214,7 +2269,7 @@ EOF
     }
 
     $c->stash(
-        edit_flag => 1,
+        reg_create_flag => 1,
         description => 'Registered Device',
         form => $form,
     );

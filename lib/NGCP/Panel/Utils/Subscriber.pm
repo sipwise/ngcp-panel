@@ -242,6 +242,41 @@ sub create_subscriber {
     });
 }
 
+sub get_custom_subscriber_struct {
+    my %params = @_;
+
+    my $c = $params{c};
+    my $contract = $params{contract};
+
+    my @subscribers = ();
+    my @pbx_groups = ();
+    foreach my $s($contract->voip_subscribers->search_rs({ status => 'active' })->all) {
+        my $sub = { $s->get_columns };
+        if($c->config->{features}->{cloudpbx}) {
+            $sub->{voip_pbx_group} = { $s->provisioning_voip_subscriber->voip_pbx_group->get_columns }
+                if($s->provisioning_voip_subscriber->voip_pbx_group);
+        }
+        $sub->{domain} = $s->domain->domain;
+        $sub->{admin} = $s->provisioning_voip_subscriber->admin if
+            $s->provisioning_voip_subscriber;
+        $sub->{primary_number} = {$s->primary_number->get_columns} if(defined $s->primary_number);
+        $sub->{locations} = [ map { { $_->get_columns } } $c->model('DB')->resultset('location')->
+            search({
+                username => $s->username,
+                domain => $s->domain->domain,
+            })->all ];
+        if($c->config->{features}->{cloudpbx} && $s->provisioning_voip_subscriber->is_pbx_group) {
+            my $grp = $contract->voip_pbx_groups->find({ subscriber_id => $s->provisioning_voip_subscriber->id });
+            $sub->{voip_pbx_group} = { $grp->get_columns } if $grp;
+            push @pbx_groups, $sub;
+        } else {
+            push @subscribers, $sub;
+        }
+    }
+
+    return { subscribers => \@subscribers, pbx_groups => \@pbx_groups };
+}
+
 1;
 
 =head1 NAME

@@ -1,4 +1,4 @@
-package NGCP::Panel::Form::Customer::PbxExtensionSubscriber;
+package NGCP::Panel::Form::Customer::PbxExtensionSubscriberEdit;
 
 use HTML::FormHandler::Moose;
 extends 'NGCP::Panel::Form::Customer::PbxSubscriber';
@@ -22,7 +22,7 @@ has_field 'extension' => (
 has_block 'fields' => (
     tag => 'div',
     class => [qw/modal-body/],
-    render_list => [qw/group webusername webpassword extension username password status external_id/ ],
+    render_list => [qw/group webusername webpassword extension password status external_id/ ],
 );
 
 sub field_list {
