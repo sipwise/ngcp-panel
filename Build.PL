@@ -105,7 +105,7 @@ Build.PL - NGCP-Panel build system including test fixtures
     perl ./Build
     ./Build test --webdriver='phantomjs --webdriver=4444'
     ./Build test --webdriver='java -jar selenium-server-standalone.jar'
-    ./Build test --webdriver='chromedriver --port=4444'
+    ./Build test --webdriver='chromedriver --url-base=wd/hub --port=4444'
     ./Build test --webdriver=selenium-rc # from CPAN distro Alien-SeleniumRC
 
     ./Build testcover --webdriver='phantomjs --webdriver=4444'

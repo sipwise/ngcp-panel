@@ -1,5 +1,6 @@
 package NGCP::Panel::Utils::Message;
 
+use Catalyst;
 use Sipwise::Base;
 
 method error ($self: Catalyst :$c, Str :$desc, Str :$log?, :$error?) {

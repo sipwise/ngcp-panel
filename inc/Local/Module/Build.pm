@@ -59,7 +59,7 @@ around('ACTION_test', sub {
         exec $^X,
             '-Ilib',
             @cover_opt,
-            File::Which::which('plackup'),
+            scalar File::Which::which('plackup'),
             sprintf('--listen=%s:%s', $uri->host, $uri->port),
             'ngcp_panel.psgi';
     };
