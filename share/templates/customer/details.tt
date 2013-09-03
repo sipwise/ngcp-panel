@@ -227,6 +227,7 @@
                                 <div class="sw_actions">
                                     [% UNLESS c.user.readonly -%]
                                     <a class="btn btn-secondary btn-small" href="[% c.uri_for_action("/subscriber/terminate", [subscriber.id]) %]" data-confirm="Terminate"><i class="icon-remove"></i> Terminate</a>
+                                    <a class="btn btn-primary btn-small" href="[% c.uri_for_action("/customer/pbx_group_edit", [contract.id, subscriber.voip_pbx_group.id]) %]"><i class="icon-edit"></i> Edit</a>
                                     [% END -%]
                                     <a class="btn btn-primary btn-small" href="[% c.uri_for_action("/subscriber/details", [subscriber.id]) %]"><i class="icon-th-list"></i> Details</a>
                                     <a class="btn btn-tertiary btn-small" href="[% c.uri_for_action("/subscriber/preferences", [subscriber.id]) %]"><i class="icon-list"></i> Preferences</a>

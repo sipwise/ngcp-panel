@@ -9,6 +9,7 @@ use NGCP::Panel::Form::CustomerBalance;
 use NGCP::Panel::Form::Customer::Subscriber;
 use NGCP::Panel::Form::Customer::PbxAdminSubscriber;
 use NGCP::Panel::Form::Customer::PbxExtensionSubscriber;
+use NGCP::Panel::Form::Customer::PbxGroupBase;
 use NGCP::Panel::Form::Customer::PbxGroup;
 use NGCP::Panel::Utils::Message;
 use NGCP::Panel::Utils::Navigation;
@@ -479,12 +480,92 @@ sub pbx_group_create :Chained('base') :PathPart('pbx/group/create') :Args(0) {
     }
 
     $c->stash(
-        close_target => $c->uri_for,
         create_flag => 1,
         form => $form
     );
 }
 
+sub pbx_group_base :Chained('base') :PathPart('pbx/group') :CaptureArgs(1) {
+    my ($self, $c, $group_id) = @_;
+
+    my $group = $c->model('DB')->resultset('voip_pbx_groups')->find($group_id);
+    unless($group) {
+        NGCP::Panel::Utils::Message->error(
+            c => $c,
+            error => "invalid voip pbx group id $group_id",
+            desc  => "PBX group with id $group_id does not exist.",
+        );
+        NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for_action('/customer/details', [$c->req->captures->[0]]));
+    }
+
+    $c->stash(
+        pbx_group => $group,
+    );
+}
+
+sub pbx_group_edit :Chained('pbx_group_base') :PathPart('edit') :Args(0) {
+    my ($self, $c) = @_;
+
+    my $posted = ($c->request->method eq 'POST');
+    my $form;
+    $form = NGCP::Panel::Form::Customer::PbxGroupBase->new;
+    my $params = { $c->stash->{pbx_group}->get_inflated_columns };
+    $params = $params->merge($c->session->{created_objects});
+    $form->process(
+        posted => $posted,
+        params => $c->request->params,
+        item => $params,
+    );
+    NGCP::Panel::Utils::Navigation::check_form_buttons(
+        c => $c,
+        form => $form,
+        fields => {},
+        back_uri => $c->req->uri,
+    );
+    if($posted && $form->validated) {
+        try {
+            my $schema = $c->model('DB');
+            $schema->txn_do(sub {
+                $c->stash->{pbx_group}->update($form->params);
+                my $hunt_policy = NGCP::Panel::Utils::Subscriber::get_usr_preference_rs(
+                    c => $c, 
+                    prov_subscriber => $c->stash->{pbx_group}->provisioning_voip_subscriber,
+                    attribute => 'cloud_pbx_hunt_policy'
+                );
+                if($hunt_policy->first) {
+                    $hunt_policy->first->update({ value => $form->params->{hunt_policy} });
+                } else {
+                    $hunt_policy->create({ value => $form->params->{hunt_policy} });
+                }
+                my $hunt_timeout = NGCP::Panel::Utils::Subscriber::get_usr_preference_rs(
+                    c => $c, 
+                    prov_subscriber => $c->stash->{pbx_group}->provisioning_voip_subscriber,
+                    attribute => 'cloud_pbx_hunt_timeout'
+                );
+                if($hunt_timeout->first) {
+                    $hunt_timeout->first->update({ value => $form->params->{hunt_policy_timeout} });
+                } else {
+                    $hunt_timeout->create({ value => $form->params->{hunt_policy_timeout} });
+                }
+            });
+
+            $c->flash(messages => [{type => 'success', text => 'PBX group successfully updated.'}]);
+        } catch ($e) {
+            NGCP::Panel::Utils::Message->error(
+                c => $c,
+                error => $e,
+                desc  => "Failed to update PBX group.",
+            );
+        }
+
+        NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for_action('/customer/details', [$c->req->captures->[0]]));
+    }
+
+    $c->stash(
+        edit_flag => 1,
+        form => $form
+    );
+}
 =head1 AUTHOR
 
 Andreas Granig,,,
