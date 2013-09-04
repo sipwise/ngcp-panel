@@ -141,7 +141,7 @@ has_field 'save' => (
 has_block 'fields' => (
     tag => 'div',
     class => [qw/modal-body/],
-    render_list => [qw/webusername webpassword e164 username domain password status external_id administrative/ ],
+    render_list => [qw/domain e164 webusername webpassword username password status external_id administrative/ ],
 );
 
 has_block 'actions' => (

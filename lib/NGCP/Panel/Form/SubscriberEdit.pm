@@ -214,7 +214,7 @@ has_field 'save' => (
 has_block 'fields' => (
     tag => 'div',
     class => [qw/modal-body/],
-    render_list => [qw/webusername webpassword e164 alias_number alias_number_add password lock status external_id administrative/ ],
+    render_list => [qw/e164 alias_number alias_number_add webusername webpassword password lock status external_id administrative/ ],
 );
 
 has_block 'actions' => (
