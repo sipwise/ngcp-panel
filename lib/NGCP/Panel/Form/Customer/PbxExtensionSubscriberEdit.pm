@@ -22,7 +22,7 @@ has_field 'extension' => (
 has_block 'fields' => (
     tag => 'div',
     class => [qw/modal-body/],
-    render_list => [qw/group webusername webpassword extension password status external_id/ ],
+    render_list => [qw/group extension display_name webusername webpassword password status external_id/ ],
 );
 
 sub field_list {

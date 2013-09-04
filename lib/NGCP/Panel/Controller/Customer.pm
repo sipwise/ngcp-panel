@@ -170,6 +170,7 @@ sub subscriber_create :Chained('base') :PathPart('subscriber/create') :Args(0) {
     my $pbx = 0; my $pbxadmin = 0;
     $pbx = 1 if $c->stash->{product}->class eq 'pbxaccount';
     my $form;
+    my $posted = ($c->request->method eq 'POST');
     my $admin_subscribers = NGCP::Panel::Utils::Subscriber::get_admin_subscribers(
         voip_subscribers => $c->stash->{subscribers});
 
@@ -189,7 +190,7 @@ sub subscriber_create :Chained('base') :PathPart('subscriber/create') :Args(0) {
     my $params = {};
     $params = $params->merge($c->session->{created_objects});
     $form->process(
-        posted => ($c->request->method eq 'POST'),
+        posted => $posted,
         params => $c->request->params,
         item => $params,
     );
@@ -207,7 +208,7 @@ sub subscriber_create :Chained('base') :PathPart('subscriber/create') :Args(0) {
         fields => $fields,
         back_uri => $c->req->uri,
     );
-    if($form->validated) {
+    if($posted && $form->validated) {
         my $billing_subscriber;
         try {
             my $schema = $c->model('DB');
@@ -231,7 +232,12 @@ sub subscriber_create :Chained('base') :PathPart('subscriber/create') :Args(0) {
                 }
                 if($pbx) {
                     $preferences->{cloud_pbx} = 1;
+                    # TODO: only if it's not a fax/conf extension:
+                    $preferences->{shared_buddylist_visibility} = 1;
+                    $preferences->{display_name} = $form->params->{display_name}
+                        if($form->params->{display_name});
                 }
+                use Data::Printer; p $preferences;
                 $billing_subscriber = NGCP::Panel::Utils::Subscriber::create_subscriber(
                     c => $c,
                     schema => $schema,

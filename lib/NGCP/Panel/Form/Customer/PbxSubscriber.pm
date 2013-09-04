@@ -13,6 +13,17 @@ has_field 'submitid' => ( type => 'Hidden' );
 sub build_render_list {[qw/submitid fields actions/]}
 sub build_form_element_class { [qw/form-horizontal/] }
 
+has_field 'display_name' => (
+    type => 'Text',
+    element_attr => { 
+        rel => ['tooltip'], 
+        title => ['The human-readable display name (e.g. John Doe)'] 
+    },
+    required => 0,
+    label => 'Display Name',
+);
+
+
 has_field 'webusername' => (
     type => 'Text',
     label => 'Web Username',
@@ -90,7 +101,7 @@ has_field 'save' => (
 has_block 'fields' => (
     tag => 'div',
     class => [qw/modal-body/],
-    render_list => [qw/webusername webpassword username password status external_id/ ],
+    render_list => [qw/display_name webusername webpassword username password status external_id/ ],
 );
 
 has_block 'actions' => (
