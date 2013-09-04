@@ -244,7 +244,8 @@ sub subscriber_create :Chained('base') :PathPart('subscriber/create') :Args(0) {
                 NGCP::Panel::Utils::Subscriber::update_pbx_group_prefs(
                     c => $c,
                     schema => $schema,
-                    group_id => $form->params->{pbx_group_id},
+                    old_group_id => undef,
+                    new_group_id => $form->params->{pbx_group_id},
                     username => $form->params->{username},
                     domain => $billing_subscriber->domain->domain,
                 ) if($pbx && !$pbxadmin && $form->params->{pbx_group_id});

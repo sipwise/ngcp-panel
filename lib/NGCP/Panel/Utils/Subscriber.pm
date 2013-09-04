@@ -268,34 +268,41 @@ sub update_pbx_group_prefs {
     my %params = @_;
 
     my $c = $params{c};
-    my $schema = $params{schema};
+    my $schema = $params{schema} // $c->model('DB');
     my $old_group_id = $params{old_group_id};
     my $new_group_id = $params{new_group_id};
     my $username = $params{username};
     my $domain = $params{domain};
 
-    return if($old_group_id == $new_group_id);
+    return if(defined $old_group_id && defined $new_group_id && $old_group_id == $new_group_id);
 
-    my $old_grp_subscriber = $c->model('DB')->resultset('voip_pbx_groups')
+    my $old_grp_subscriber;
+    my $new_grp_subscriber;
+
+    my $uri = "sip:$username\@$domain";
+    if($old_group_id) {
+        $old_grp_subscriber= $c->model('DB')->resultset('voip_pbx_groups')
                         ->find($old_group_id)
                         ->provisioning_voip_subscriber;
-    my $new_grp_subscriber = $c->model('DB')->resultset('voip_pbx_groups')
+        if($old_grp_subscriber) {
+            my $grp_pref_rs = NGCP::Panel::Utils::Preferences::get_usr_preference_rs(
+                c => $c, attribute => 'cloud_pbx_hunt_group', prov_subscriber => $old_grp_subscriber
+            );
+            my $pref = $grp_pref_rs->find({ value => $uri });
+            $pref->delete if($pref);
+        }
+    }
+    if($new_group_id) {
+        $new_grp_subscriber = $c->model('DB')->resultset('voip_pbx_groups')
                         ->find($new_group_id)
                         ->provisioning_voip_subscriber;
-    my $uri = "sip:$username\@$domain";
-    if($old_grp_subscriber) {
-        my $grp_pref_rs = NGCP::Panel::Utils::Preferences::get_usr_preference_rs(
-            c => $c, attribute => 'cloud_pbx_hunt_group', prov_subscriber => $old_grp_subscriber
-        );
-        my $pref = $grp_pref_rs->find({ value => $uri });
-        $pref->delete if($pref);
-    }
-    if($new_grp_subscriber) {
-        my $grp_pref_rs = NGCP::Panel::Utils::Preferences::get_usr_preference_rs(
-            c => $c, attribute => 'cloud_pbx_hunt_group', prov_subscriber => $new_grp_subscriber
-        );
-        unless($grp_pref_rs->find({ value => $uri })) {
-            $grp_pref_rs->create({ value => $uri });
+        if($new_grp_subscriber) {
+            my $grp_pref_rs = NGCP::Panel::Utils::Preferences::get_usr_preference_rs(
+                c => $c, attribute => 'cloud_pbx_hunt_group', prov_subscriber => $new_grp_subscriber
+            );
+            unless($grp_pref_rs->find({ value => $uri })) {
+                $grp_pref_rs->create({ value => $uri });
+            }
         }
     }
 }

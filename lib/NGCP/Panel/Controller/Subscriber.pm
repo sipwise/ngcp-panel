@@ -290,21 +290,14 @@ sub terminate :Chained('base') :PathPart('terminate') :Args(0) {
             }
             my $prov_subscriber = $subscriber->provisioning_voip_subscriber;
             if($prov_subscriber) {
-                if($prov_subscriber->voip_pbx_group) {
-                    my $group_subscriber = $prov_subscriber->voip_pbx_group->provisioning_voip_subscriber;
-                    if($group_subscriber) {
-                        my $hunt_group = NGCP::Panel::Utils::Preferences::get_usr_preference_rs(
-                            c => $c,
-                            prov_subscriber => $group_subscriber,
-                            attribute => 'cloud_pbx_hunt_group'
-                        );
-                        my $pref = $hunt_group->find({ 
-                            value => 'sip:'.$prov_subscriber->username . 
-                                '@' . $prov_subscriber->domain->domain
-                                });
-                        $pref->delete if($pref);
-                    }
-                }
+                NGCP::Panel::Utils::Subscriber::update_pbx_group_prefs(
+                    c => $c,
+                    schema => $schema,
+                    old_group_id => $prov_subscriber->voip_pbx_group->id,
+                    new_group_id => undef,
+                    username => $prov_subscriber->username,
+                    domain => $prov_subscriber->domain->domain,
+                ) if($prov_subscriber->voip_pbx_group);
                 $prov_subscriber->delete;
             }
             $subscriber->voip_numbers->delete_all;
