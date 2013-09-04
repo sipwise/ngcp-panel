@@ -368,8 +368,8 @@
 [% IF create_flag == 1 -%]
 [%
     PROCESS "helpers/modal.tt";
-    modal_header(m.create_flag=create_flag,
-                 m.name = "Subscriber");
+    modal_header(m.create_flag = create_flag,
+                 m.name = description.defined ? description : "Subscriber");
     form.render;
     modal_footer();
     modal_script(m.close_target = close_target);

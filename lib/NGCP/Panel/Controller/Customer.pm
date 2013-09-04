@@ -241,19 +241,13 @@ sub subscriber_create :Chained('base') :PathPart('subscriber/create') :Args(0) {
                     preferences => $preferences,
                 );
 
-                # update the corresponding group subscriber preference
-                if($pbx && !$pbxadmin && $form->params->{pbx_group_id}) {
-                    my $grp_subscriber = $c->model('DB')->resultset('voip_pbx_groups')
-                        ->find($form->params->{pbx_group_id})
-                        ->provisioning_voip_subscriber;
-                    if($grp_subscriber) {
-                        my $grp_pref_rs = NGCP::Panel::Utils::Preferences::get_usr_preference_rs(
-                            c => $c, attribute => 'cloud_pbx_hunt_group', prov_subscriber => $grp_subscriber
-                        );
-                        $grp_pref_rs->create({ value => 'sip:'.$form->params->{username}.'@'.
-                            $billing_subscriber->domain->domain });
-                    }
-                }
+                NGCP::Panel::Utils::Subscriber::update_pbx_group_prefs(
+                    c => $c,
+                    schema => $schema,
+                    group_id => $form->params->{pbx_group_id},
+                    username => $form->params->{username},
+                    domain => $billing_subscriber->domain->domain,
+                ) if($pbx && !$pbxadmin && $form->params->{pbx_group_id});
             });
 
             delete $c->session->{created_objects}->{domain};
@@ -463,7 +457,8 @@ sub pbx_group_create :Chained('base') :PathPart('pbx/group/create') :Args(0) {
 
     $c->stash(
         create_flag => 1,
-        form => $form
+        form => $form,
+        description => 'PBX Group',
     );
 }
 

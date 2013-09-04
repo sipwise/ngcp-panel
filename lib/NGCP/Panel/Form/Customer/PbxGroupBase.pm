@@ -25,7 +25,7 @@ has_field 'hunt_policy' => (
 has_field 'hunt_policy_timeout' => (
     type => 'PosInteger',
     required => 1,
-    label => 'Serial Ringing Timeout',
+    label => 'Serial Hunting Timeout',
     default => 10,
 );
 

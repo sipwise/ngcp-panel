@@ -1492,9 +1492,8 @@ sub edit_master :Chained('master') :PathPart('edit') :Args(0) {
 
     my $posted = ($c->request->method eq 'POST');
 
-    my $params;
+    my $params = {};
     my $lock = $c->stash->{prov_lock};
-
     my $base_number;
     if($pbx_ext) {
         my $subs = NGCP::Panel::Utils::Subscriber::get_custom_subscriber_struct(
@@ -1547,6 +1546,7 @@ sub edit_master :Chained('master') :PathPart('edit') :Args(0) {
         $params->{external_id} = $subscriber->external_id;
 
         $params->{lock} = $lock->first ? $lock->first->value : undef;
+        $params = $params->merge($c->session->{created_objects});
     }
 
     $form->process(
@@ -1558,7 +1558,9 @@ sub edit_master :Chained('master') :PathPart('edit') :Args(0) {
     NGCP::Panel::Utils::Navigation::check_form_buttons(
         c => $c,
         form => $form,
-        fields => {},
+        fields => {
+            'group.create' => $c->uri_for_action('/customer/pbx_group_create', [$prov_subscriber->account_id]),
+        },
         back_uri => $c->req->uri,
     );
 
@@ -1577,7 +1579,20 @@ sub edit_master :Chained('master') :PathPart('edit') :Args(0) {
                 $prov_params->{password} = $form->params->{password};
                 $prov_params->{admin} = $form->params->{administrative}
                     unless($pbx_ext);
+                $prov_params->{pbx_group_id} = $form->params->{group}{id}
+                    if($pbx_ext);
+                my $old_group_id = $prov_subscriber->pbx_group_id;
                 $prov_subscriber->update($prov_params);
+
+                NGCP::Panel::Utils::Subscriber::update_pbx_group_prefs(
+                    c => $c,
+                    schema => $schema,
+                    old_group_id => $old_group_id,
+                    new_group_id => $prov_subscriber->pbx_group_id,
+                    username => $subscriber->username,
+                    domain => $subscriber->domain->domain,
+                ) if($pbx_ext && $old_group_id != $prov_subscriber->pbx_group_id);
+
                 $subscriber->update({
                     status => $form->params->{status},
                     external_id => $form->params->{external_id},
@@ -1704,6 +1719,7 @@ sub edit_master :Chained('master') :PathPart('edit') :Args(0) {
                     $lock->create({ value => $form->values->{lock} });
                 }
             });
+            delete $c->session->{created_objects}->{group};
             $c->flash(messages => [{type => 'success', text => 'Successfully updated subscriber'}]);
         } catch($e) {
             NGCP::Panel::Utils::Message->error(
