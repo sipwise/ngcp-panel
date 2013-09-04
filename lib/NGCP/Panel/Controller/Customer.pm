@@ -193,13 +193,18 @@ sub subscriber_create :Chained('base') :PathPart('subscriber/create') :Args(0) {
         params => $c->request->params,
         item => $params,
     );
+    my $fields = {
+            'domain.create' => $c->uri_for('/domain/create'),
+            'group.create' => $c->uri_for_action('/customer/pbx_group_create', $c->req->captures),
+    };
+    if($pbxadmin) {
+        $fields->{'domain.create'} = $c->uri_for_action('/domain/create', 
+            $c->stash->{contract}->contact->reseller_id, 'pbx');
+    }
     NGCP::Panel::Utils::Navigation::check_form_buttons(
         c => $c,
         form => $form,
-        fields => {
-            'domain.create' => $c->uri_for('/domain/create'),
-            'group.create' => $c->uri_for_action('/customer/pbx_group_create', $c->req->captures),
-        },
+        fields => $fields,
         back_uri => $c->req->uri,
     );
     if($form->validated) {
@@ -242,7 +247,7 @@ sub subscriber_create :Chained('base') :PathPart('subscriber/create') :Args(0) {
                         ->find($form->params->{pbx_group_id})
                         ->provisioning_voip_subscriber;
                     if($grp_subscriber) {
-                        my $grp_pref_rs = NGCP::Panel::Utils::Subscriber::get_usr_preference_rs(
+                        my $grp_pref_rs = NGCP::Panel::Utils::Preferences::get_usr_preference_rs(
                             c => $c, attribute => 'cloud_pbx_hunt_group', prov_subscriber => $grp_subscriber
                         );
                         $grp_pref_rs->create({ value => 'sip:'.$form->params->{username}.'@'.
@@ -504,7 +509,7 @@ sub pbx_group_edit :Chained('pbx_group_base') :PathPart('edit') :Args(0) {
             my $schema = $c->model('DB');
             $schema->txn_do(sub {
                 $c->stash->{pbx_group}->update($form->params);
-                my $hunt_policy = NGCP::Panel::Utils::Subscriber::get_usr_preference_rs(
+                my $hunt_policy = NGCP::Panel::Utils::Preferences::get_usr_preference_rs(
                     c => $c, 
                     prov_subscriber => $c->stash->{pbx_group}->provisioning_voip_subscriber,
                     attribute => 'cloud_pbx_hunt_policy'
@@ -514,7 +519,7 @@ sub pbx_group_edit :Chained('pbx_group_base') :PathPart('edit') :Args(0) {
                 } else {
                     $hunt_policy->create({ value => $form->params->{hunt_policy} });
                 }
-                my $hunt_timeout = NGCP::Panel::Utils::Subscriber::get_usr_preference_rs(
+                my $hunt_timeout = NGCP::Panel::Utils::Preferences::get_usr_preference_rs(
                     c => $c, 
                     prov_subscriber => $c->stash->{pbx_group}->provisioning_voip_subscriber,
                     attribute => 'cloud_pbx_hunt_timeout'

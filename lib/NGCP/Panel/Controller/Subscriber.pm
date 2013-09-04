@@ -293,7 +293,7 @@ sub terminate :Chained('base') :PathPart('terminate') :Args(0) {
                 if($prov_subscriber->voip_pbx_group) {
                     my $group_subscriber = $prov_subscriber->voip_pbx_group->provisioning_voip_subscriber;
                     if($group_subscriber) {
-                        my $hunt_group = NGCP::Panel::Utils::Subscriber::get_usr_preference_rs(
+                        my $hunt_group = NGCP::Panel::Utils::Preferences::get_usr_preference_rs(
                             c => $c,
                             prov_subscriber => $group_subscriber,
                             attribute => 'cloud_pbx_hunt_group'
@@ -352,7 +352,7 @@ sub preferences :Chained('base') :PathPart('preferences') :Args(0) {
     }
     $c->stash(cf_destinations => $cfs);
 
-    my $ringtimeout_preference = NGCP::Panel::Utils::Subscriber::get_usr_preference_rs(
+    my $ringtimeout_preference = NGCP::Panel::Utils::Preferences::get_usr_preference_rs(
             c => $c, attribute => 'ringtimeout', prov_subscriber => $prov_subscriber)
         ->first;
     $c->stash(cf_ringtimeout => $ringtimeout_preference ? $ringtimeout_preference->value : undef);
@@ -425,9 +425,9 @@ sub preferences_callforward :Chained('base') :PathPart('preferences/callforward'
     my $posted = ($c->request->method eq 'POST');
 
     my $prov_subscriber = $c->stash->{subscriber}->provisioning_voip_subscriber;
-    my $cf_preference = NGCP::Panel::Utils::Subscriber::get_usr_preference_rs(
+    my $cf_preference = NGCP::Panel::Utils::Preferences::get_usr_preference_rs(
             c => $c, prov_subscriber => $prov_subscriber, attribute => $cf_type);
-    my $ringtimeout_preference = NGCP::Panel::Utils::Subscriber::get_usr_preference_rs(
+    my $ringtimeout_preference = NGCP::Panel::Utils::Preferences::get_usr_preference_rs(
             c => $c, prov_subscriber => $prov_subscriber, attribute => 'ringtimeout');
     my $cf_mapping = $prov_subscriber->voip_cf_mappings->search_rs({ type => $cf_type });
     my $destination;
@@ -675,9 +675,9 @@ sub preferences_callforward_advanced :Chained('base') :PathPart('preferences/cal
 
     my $prov_subscriber = $c->stash->{subscriber}->provisioning_voip_subscriber;
     my $cf_mapping = $prov_subscriber->voip_cf_mappings->search_rs({ type => $cf_type });
-    my $cf_preference = NGCP::Panel::Utils::Subscriber::get_usr_preference_rs(
+    my $cf_preference = NGCP::Panel::Utils::Preferences::get_usr_preference_rs(
             c => $c, prov_subscriber => $prov_subscriber, attribute => $cf_type);
-    my $ringtimeout_preference = NGCP::Panel::Utils::Subscriber::get_usr_preference_rs(
+    my $ringtimeout_preference = NGCP::Panel::Utils::Preferences::get_usr_preference_rs(
             c => $c, prov_subscriber => $prov_subscriber, attribute => 'ringtimeout');
 
     # TODO: we can have more than one active, no?
@@ -943,11 +943,11 @@ sub preferences_callforward_destinationset_edit :Chained('preferences_callforwar
 
     my $posted = ($c->request->method eq 'POST');
 
-    my $cf_preference = NGCP::Panel::Utils::Subscriber::get_usr_preference_rs(
+    my $cf_preference = NGCP::Panel::Utils::Preferences::get_usr_preference_rs(
         c => $c, prov_subscriber => $c->stash->{subscriber}->provisioning_voip_subscriber,
         attribute => $cf_type,
     );
-    my $ringtimeout_preference = NGCP::Panel::Utils::Subscriber::get_usr_preference_rs(
+    my $ringtimeout_preference = NGCP::Panel::Utils::Preferences::get_usr_preference_rs(
         c => $c, prov_subscriber => $c->stash->{subscriber}->provisioning_voip_subscriber,
         attribute => 'ringtimeout',
     );
@@ -1086,11 +1086,11 @@ sub preferences_callforward_destinationset_edit :Chained('preferences_callforwar
 sub preferences_callforward_destinationset_delete :Chained('preferences_callforward_destinationset_base') :PathPart('delete') :Args(1) {
     my ($self, $c, $cf_type) = @_;
 
-    my $cf_preference = NGCP::Panel::Utils::Subscriber::get_usr_preference_rs(
+    my $cf_preference = NGCP::Panel::Utils::Preferences::get_usr_preference_rs(
         c => $c, prov_subscriber => $c->stash->{subscriber}->provisioning_voip_subscriber,
         attribute => $cf_type,
     );
-    my $ringtimeout_preference = NGCP::Panel::Utils::Subscriber::get_usr_preference_rs(
+    my $ringtimeout_preference = NGCP::Panel::Utils::Preferences::get_usr_preference_rs(
         c => $c, prov_subscriber => $c->stash->{subscriber}->provisioning_voip_subscriber,
         attribute => 'ringtimeout',
     );
@@ -1363,7 +1363,7 @@ sub preferences_callforward_delete :Chained('base') :PathPart('preferences/callf
         my $prov_subscriber = $c->stash->{subscriber}->provisioning_voip_subscriber;
         $prov_subscriber->voip_cf_mappings->search({ type => $cf_type })
             ->delete_all;
-        my $cf_pref = NGCP::Panel::Utils::Subscriber::get_usr_preference_rs(
+        my $cf_pref = NGCP::Panel::Utils::Preferences::get_usr_preference_rs(
             c => $c,
             attribute => $cf_type,
             prov_subscriber => $prov_subscriber,
@@ -1454,7 +1454,7 @@ sub master :Chained('base') :PathPart('details') :CaptureArgs(0) {
         template => 'subscriber/master.tt',
     );
 
-    $c->stash->{prov_lock} = NGCP::Panel::Utils::Subscriber::get_usr_preference_rs(
+    $c->stash->{prov_lock} = NGCP::Panel::Utils::Preferences::get_usr_preference_rs(
         c => $c,
         attribute => 'lock',
         prov_subscriber => $c->stash->{subscriber}->provisioning_voip_subscriber,
@@ -1467,7 +1467,7 @@ sub master :Chained('base') :PathPart('details') :CaptureArgs(0) {
 sub details :Chained('master') :PathPart('') :Args(0) {
     my ($self, $c) = @_;
 
-    $c->stash->{prov_lock} = NGCP::Panel::Utils::Subscriber::get_usr_preference_rs(
+    $c->stash->{prov_lock} = NGCP::Panel::Utils::Preferences::get_usr_preference_rs(
         c => $c,
         attribute => 'lock',
         prov_subscriber => $c->stash->{subscriber}->provisioning_voip_subscriber,

@@ -240,7 +240,7 @@ sub create_preference_form {
             my $selected_rwrs = $c->stash->{rwr_sets_rs}->find(
                 $form->field($attribute)->value
             );
-            _set_rewrite_preferences(
+            set_rewrite_preferences(
                 c             => $c,
                 rwrs_result   => $selected_rwrs,
                 pref_rs       => $pref_rs,
@@ -365,7 +365,7 @@ sub create_preference_form {
               man_aip_grp_rs => $man_aip_grp_rs);
 }
 
-sub _set_rewrite_preferences {
+sub set_rewrite_preferences {
     my %params = @_;
 
     my $c             = $params{c};
@@ -390,6 +390,36 @@ sub _set_rewrite_preferences {
         }
     }
 
+}
+
+sub get_usr_preference_rs {
+    my %params = @_;
+
+    my $c = $params{c};
+    my $attribute = $params{attribute};
+    my $prov_subscriber= $params{prov_subscriber};
+
+    my $preference = $c->model('DB')->resultset('voip_preferences')->find({
+            attribute => $attribute, 'usr_pref' => 1,
+        })->voip_usr_preferences->search_rs({
+            subscriber_id => $prov_subscriber->id,
+        });
+    return $preference;
+}
+
+sub get_dom_preference_rs {
+    my %params = @_;
+
+    my $c = $params{c};
+    my $attribute = $params{attribute};
+    my $prov_domain = $params{prov_domain};
+
+    my $preference = $c->model('DB')->resultset('voip_preferences')->find({
+            attribute => $attribute, 'dom_pref' => 1,
+        })->voip_usr_preferences->search_rs({
+            domain_id => $prov_domain->id,
+        });
+    return $preference;
 }
 
 1;
@@ -443,7 +473,7 @@ set in the template (to be used by F<helpers/pref_table.tt>).
 
 On update 4 voip_*_preferences will be created with the attributes
 rewrite_callee_in_dpid, rewrite_caller_in_dpid, rewrite_callee_out_dpid
-and rewrite_caller_out_dpid (using the helper method _set_rewrite_preferences).
+and rewrite_caller_out_dpid (using the helper method set_rewrite_preferences).
 
 For compatibility with ossbss and the www_admin panel, no preference with
 the attribute rewrite_rule_set is created and caller_in_dpid is used to
@@ -470,7 +500,7 @@ The preference with the attribute sound_set will contain the id of a sound_set.
 Also something special here. The table containing data is
 provisioning.voip_allowed_ip_groups.
 
-=head2 _set_rewrite_preferences
+=head2 set_rewrite_preferences
 
 See "Special case rewrite_rule_set".
 

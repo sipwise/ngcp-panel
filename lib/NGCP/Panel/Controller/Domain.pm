@@ -5,6 +5,7 @@ use Sipwise::Base;
 BEGIN { extends 'Catalyst::Controller'; }
 
 use NGCP::Panel::Form::Domain::Reseller;
+use NGCP::Panel::Form::Domain::ResellerPbx;
 use NGCP::Panel::Form::Domain::Admin;
 use NGCP::Panel::Utils::Message;
 use NGCP::Panel::Utils::Navigation;
@@ -53,12 +54,35 @@ sub root :Chained('dom_list') :PathPart('') :Args(0) {
     my ($self, $c) = @_;
 }
 
-sub create :Chained('dom_list') :PathPart('create') :Args(0) {
-    my ($self, $c) = @_;
+sub create :Chained('dom_list') :PathPart('create') :Args() {
+    my ($self, $c, $reseller_id, $type) = @_;
 
     my $posted = ($c->request->method eq 'POST');
-    my $form;
-    if($c->user->is_superuser) {
+    my $form; my $pbx;
+    if($type && $type eq 'pbx') {
+        unless($reseller_id && $reseller_id->is_int) {
+            NGCP::Panel::Utils::Message->error(
+                c => $c,
+                error => 'invalid reseller id for creating pbx domain',
+                desc => 'Invalid reseller id detected.',
+            );
+            NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for('/domain'));
+        }
+        if(!$c->user->is_superuser && $reseller_id != $c->user->reseller_id) {
+            $c->detach('/denied_page');
+        }
+        $c->stash->{reseller} = $c->model('DB')->resultset('resellers')->find($reseller_id);
+        unless($c->stash->{reseller}) {
+            NGCP::Panel::Utils::Message->error(
+                c => $c,
+                error => "reseller with id $reseller_id not found when creating pbx domain",
+                desc => 'Reseller not found.',
+            );
+            NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for('/domain'));
+        }
+        $form = NGCP::Panel::Form::Domain::ResellerPbx->new(ctx => $c);
+        $pbx = 1;
+    } elsif($c->user->is_superuser) {
         $form = NGCP::Panel::Form::Domain::Admin->new;
     } else {
         $form = NGCP::Panel::Form::Domain::Reseller->new;
@@ -74,12 +98,22 @@ sub create :Chained('dom_list') :PathPart('create') :Args(0) {
     if($posted && $form->validated) {
         try {
             $c->model('DB')->schema->txn_do( sub {
-                $c->model('DB')->resultset('voip_domains')
+                my $prov_dom = $c->model('DB')->resultset('voip_domains')
                     ->create({domain => $form->value->{domain}});
                 my $new_dom = $c->stash->{dom_rs}
                     ->create({domain => $form->value->{domain}});
-                my $reseller_id = $c->user->is_superuser ? $form->values->{reseller}{id} :
-                    $c->user->reseller_id;
+                unless($pbx) {
+                    $reseller_id = $c->user->is_superuser ? 
+                        $form->values->{reseller}{id} : $c->user->reseller_id;
+                } elsif($form->values->{rwr_set}) {
+                    my $rwr_set = $c->model('DB')->resultset('voip_rewrite_rule_sets')
+                        ->find($form->values->{rwr_set});
+                    NGCP::Panel::Utils::Preferences::set_rewrite_preferences(
+                        c => $c,
+                        rwrs_result => $rwr_set,
+                        pref_rs => $prov_dom->voip_dom_preferences,
+                    ) if($rwr_set);
+                }
 
                 $new_dom->create_related('domain_resellers', {
                     reseller_id => $reseller_id

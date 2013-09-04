@@ -5,6 +5,7 @@ use warnings;
 use Sipwise::Base;
 use DBIx::Class::Exception;
 use NGCP::Panel::Utils::DateTime;
+use NGCP::Panel::Utils::Preferences;
 use UUID qw/generate unparse/;
 
 my %LOCK = (
@@ -15,20 +16,6 @@ my %LOCK = (
     4, 'global',
 );
 
-sub get_usr_preference_rs {
-    my %params = @_;
-
-    my $c = $params{c};
-    my $attribute = $params{attribute};
-    my $prov_subscriber= $params{prov_subscriber};
-
-    my $preference = $c->model('DB')->resultset('voip_preferences')->find({
-            attribute => $attribute, 'usr_pref' => 1,
-        })->voip_usr_preferences->search_rs({
-            subscriber_id => $prov_subscriber->id,
-        });
-    return $preference;
-}
 
 sub period_as_string {
     my $set = shift;
@@ -98,7 +85,7 @@ sub lock_provisoning_voip_subscriber {
 
     return unless $prov_subscriber;
 
-    my $rs = get_usr_preference_rs(
+    my $rs = NGCP::Panel::Utils::Preferences::get_usr_preference_rs(
         c => $c, 
         prov_subscriber => $prov_subscriber, 
         attribute => 'lock'
@@ -210,7 +197,7 @@ sub create_subscriber {
             if(defined $cli);
 
         foreach my $k(keys %{ $preferences } ) {
-            my $pref = get_usr_preference_rs(
+            my $pref = NGCP::Panel::Utils::Preferences::get_usr_preference_rs(
                 c => $c, attribute => $k, prov_subscriber => $prov_subscriber);
             if($pref->first && $pref->first->attribute->max_occur == 1) {
                 $pref->first->update({ 
@@ -288,15 +275,6 @@ NGCP::Panel::Utils::Subscriber
 A temporary helper to manipulate subscriber data
 
 =head1 METHODS
-
-=head2 get_usr_preference_rs
-
-Parameters:
-    c               The controller
-    prov_subscriber The provisioning_voip_subscriber row
-    attribute       The name of the usr preference
-
-Returns a result set for the voip_usr_preference of the given subscriber.
 
 =head1 AUTHOR
 
