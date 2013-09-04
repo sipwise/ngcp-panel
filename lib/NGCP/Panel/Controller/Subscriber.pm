@@ -485,14 +485,16 @@ sub preferences_callforward :Chained('base') :PathPart('preferences/callforward'
             $d = 'fax2mail';
         } elsif($d =~ /\@conference\.local$/) {
             $d = 'conference';
-        } elsif($d =~ /\@fax2mail\.local$/) {
-            $d = 'fax2mail';
         } elsif($d =~ /^sip:callingcard\@app\.local$/) {
             $d = 'callingcard';
         } elsif($d =~ /^sip:callthrough\@app\.local$/) {
             $d = 'callthrough';
         } elsif($d =~ /^sip:localuser\@.+\.local$/) {
             $d = 'localuser';
+        } elsif($d =~ /^sip:auto-attendant\@app\.local$/) {
+            $d = 'autoattendant';
+        } elsif($d =~ /^sip:office-hours\@app\.local$/) {
+            $d = 'officehours';
         } else {
             $duri = $d;
             $d = 'uri';
@@ -507,6 +509,17 @@ sub preferences_callforward :Chained('base') :PathPart('preferences/callforward'
         $params = { destination => $c->stash->{cf_tmp_params} };
         $params->{destination}{destination} = $d;
         $params->{ringtimeout} = $ringtimeout;
+    }
+
+    if($c->config->{features}->{cloudpbx}) {
+        my $pbx_pref = NGCP::Panel::Utils::Preferences::get_usr_preference_rs(
+            c => $c,
+            attribute => 'cloud_pbx',
+            prov_subscriber => $c->stash->{subscriber}->provisioning_voip_subscriber
+        );
+        if($pbx_pref->first) {
+            $c->stash->{pbx} = 1;
+        }
     }
 
     my $cf_form;
@@ -577,6 +590,10 @@ sub preferences_callforward :Chained('base') :PathPart('preferences/callforward'
                     $d = "sip:callthrough\@app.local";
                 } elsif($d eq "localuser") {
                     $d = "sip:localuser\@app.local";
+                } elsif($d eq "autoattendant") {
+                    $d = "sip:auto-attendant\@app.local";
+                } elsif($d eq "officehours") {
+                    $d = "sip:office-hours\@app.local";
                 } elsif($d eq "uri") {
                     $d = $dest->field('uri')->field('destination')->value;
                     if($d !~ /\@/) {
@@ -829,6 +846,17 @@ sub preferences_callforward_destinationset_create :Chained('base') :PathPart('pr
 
     my $prov_subscriber = $c->stash->{subscriber}->provisioning_voip_subscriber;
 
+    if($c->config->{features}->{cloudpbx}) {
+        my $pbx_pref = NGCP::Panel::Utils::Preferences::get_usr_preference_rs(
+            c => $c,
+            attribute => 'cloud_pbx',
+            prov_subscriber => $c->stash->{subscriber}->provisioning_voip_subscriber
+        );
+        if($pbx_pref->first) {
+            $c->stash->{pbx} = 1;
+        }
+    }
+
     my $form = NGCP::Panel::Form::DestinationSet->new(ctx => $c);
 
     my $posted = ($c->request->method eq 'POST');
@@ -877,6 +905,10 @@ sub preferences_callforward_destinationset_create :Chained('base') :PathPart('pr
                             $d = "sip:callthrough\@app.local";
                         } elsif($d eq "localuser") {
                             $d = "sip:localuser\@app.local";
+                        } elsif($d eq "autoattendant") {
+                            $d = "sip:auto-attendant\@app.local";
+                        } elsif($d eq "officehours") {
+                            $d = "sip:office-hours\@app.local";
                         } elsif($d eq "uri") {
                             $d = $dest->field('uri')->field('destination')->value;
                             # TODO: check for valid dest here
@@ -936,6 +968,17 @@ sub preferences_callforward_destinationset_edit :Chained('preferences_callforwar
 
     my $posted = ($c->request->method eq 'POST');
 
+    if($c->config->{features}->{cloudpbx}) {
+        my $pbx_pref = NGCP::Panel::Utils::Preferences::get_usr_preference_rs(
+            c => $c,
+            attribute => 'cloud_pbx',
+            prov_subscriber => $c->stash->{subscriber}->provisioning_voip_subscriber
+        );
+        if($pbx_pref->first) {
+            $c->stash->{pbx} = 1;
+        }
+    }
+
     my $cf_preference = NGCP::Panel::Utils::Preferences::get_usr_preference_rs(
         c => $c, prov_subscriber => $c->stash->{subscriber}->provisioning_voip_subscriber,
         attribute => $cf_type,
@@ -968,6 +1011,10 @@ sub preferences_callforward_destinationset_edit :Chained('preferences_callforwar
                 $d = 'callthrough';
             } elsif($d =~ /^sip:localuser\@.+\.local$/) {
                 $d = 'localuser';
+            } elsif($d =~ /^sip:auto-attendant\@app\.local$/) {
+                $d = 'autoattendant';
+            } elsif($d =~ /^sip:office-hours\@app\.local$/) {
+                $d = 'officehours';
             } else {
                 $duri = $d;
                 $d = 'uri';
@@ -1042,6 +1089,10 @@ sub preferences_callforward_destinationset_edit :Chained('preferences_callforwar
                         $d = "sip:callthrough\@app.local";
                     } elsif($d eq "localuser") {
                         $d = "sip:localuser\@app.local";
+                    } elsif($d eq "autoattendant") {
+                        $d = "sip:auto-attendant\@app.local";
+                    } elsif($d eq "officehours") {
+                        $d = "sip:office-hours\@app.local";
                     } elsif($d eq "uri") {
                         $d = $dest->field('uri')->field('destination')->value;
                         # TODO: check for valid dest here

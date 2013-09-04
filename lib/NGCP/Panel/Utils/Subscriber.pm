@@ -65,6 +65,10 @@ sub destination_as_string {
         return "CallThrough";
     } elsif($dest =~ /^sip:localuser\@.+\.local$/) {
         return "Local Subscriber";
+    } elsif($dest =~ /^sip:auto-attendant\@app\.local$/) {
+        return "Auto Attendant";
+    } elsif($dest =~ /^sip:office-hours\@app\.local$/) {
+        return "Office Hours Announcement";
     } else {
         my $d = $dest;
         $d =~ s/sip:(.+)\@.+$/$1/;
