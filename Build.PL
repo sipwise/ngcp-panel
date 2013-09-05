@@ -32,6 +32,7 @@ my $builder = Local::Module::Build->new(
         'DateTime::Format::ISO8601' => 0,
         'DBIx::Class::ResultSet::RecursiveUpdate' => '0.30',
         'Email::Valid' => 0,
+        'File::ShareDir' => 0,
         'File::Type' => 0,
         'GD::Simple' => 0,
         'Hash::Merge::Simple' => 0,
@@ -115,11 +116,12 @@ Build.PL - NGCP-Panel build system including test fixtures
 
 =head2 Options
 
-    --webdriver     (required) external webdriver command
-    --wd-server     HOST:PORT of an external webdriver to connect to
-    --server        URI for socket test server
-    --help          brief help message
-    --man           full documentation
+    --webdriver       (required) external webdriver command
+    --wd-server       HOST:PORT of an external webdriver to connect to
+    --server          URI for socket test server
+    --schema-base-dir directory of NGCP::Schema if its not yet installed
+    --help            brief help message
+    --man             full documentation
 
 =head1 OPTIONS
 
@@ -137,6 +139,12 @@ Default is set by Test::WebDriver to localhost:4444
 
 URI for the HTTP::Server::PSGI socket server run for testing,
 default C<http://localhost:5000>
+
+=head2 C<--schema-base-dir>
+
+If the NGCP::Schema is not installed to a known path to perl, this
+option can specify the base directory of its development location.
+It will then be included via blib, so we have access to its lib and share.
 
 =head2 C<--help>
 

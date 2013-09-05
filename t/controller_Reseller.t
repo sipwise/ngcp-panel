@@ -1,6 +1,6 @@
 use strict;
 use warnings;
-use Test::More;
+use Test::More skip_all => 'Not yet working, the Mechanize does not consider our blib setting';
 use JSON::Parse 'valid_json';
 use JSON qw( from_json );
 use Catalyst::Test 'NGCP::Panel';

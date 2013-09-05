@@ -39,7 +39,7 @@ sub _test_preconditions {
 
     require Getopt::Long;
     my %opt = (server => 'http://localhost:5000');
-    Getopt::Long::GetOptions(\%opt, 'webdriver=s', 'server:s', 'help|?', 'man', 'wd-server=s')
+    Getopt::Long::GetOptions(\%opt, 'webdriver=s', 'server:s', 'help|?', 'man', 'wd-server=s', 'schema-base-dir=s')
         or die 'could not process command-line options';
 
     require Pod::Usage;
@@ -62,9 +62,11 @@ sub _test_preconditions {
     my $uri = URI->new($opt{server});
 
     require File::Which;
+    $ENV{ NGCP_PANEL_CONFIG_LOCAL_SUFFIX } = "testing";
     $plackup = child {
         exec $^X,
             '-Ilib',
+            exists $opt{'schema-base-dir'} ? "-Mblib=$opt{'schema-base-dir'}" : (),
             @cover_opt,
             scalar File::Which::which('plackup'),
             sprintf('--listen=%s:%s', $uri->host, $uri->port),
