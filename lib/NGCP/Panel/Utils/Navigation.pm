@@ -29,9 +29,7 @@ sub check_redirect_chain {
         }
         $c->stash(close_target => $back_uri);
     } elsif(@{ $c->session->{redirect_targets} }) {
-        print "checking if we at '".$c->req->uri->path."' are the first '".@{ $c->session->{redirect_targets} }[0]->path."'\n";
         if($c->req->uri->path eq @{ $c->session->{redirect_targets} }[0]->path) {
-            print "first entry in redirect chain is us, remove\n";
             shift @{ $c->session->{redirect_targets} }
         }
         my $target = @{ $c->session->{redirect_targets} }[0];
