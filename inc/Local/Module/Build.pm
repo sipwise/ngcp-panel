@@ -34,9 +34,8 @@ sub shutdown_servers {
     }
 }
 
-around('ACTION_test', sub {
-    my $super = shift;
-    my $self = shift;
+sub _test_preconditions {
+    my ($self) = @_;
 
     require Getopt::Long;
     my %opt = (server => 'http://localhost:5000');
@@ -73,6 +72,14 @@ around('ACTION_test', sub {
     };
     $self->wait_socket($uri->host, $uri->port);
     $ENV{CATALYST_SERVER} = $opt{server};
+}
+
+around('ACTION_test', sub {
+    my $super = shift;
+    my $self = shift;
+
+    $self->_test_preconditions;
+
     try {
         $self->$super(@_);
     };
@@ -101,6 +108,14 @@ method ACTION_testcover {
     shutdown_servers;
     sleep 5;
     $self->do_system(qw(cover));
+}
+
+method ACTION_test_tap {
+    $self->depends_on('code');
+    $self->_test_preconditions;
+    system( "mkdir -p tap" );
+    $ENV{PERL_TEST_HARNESS_DUMP_TAP} = "tap/";
+    $self->generic_test(type => 'default');
 }
 
 END { shutdown_servers }

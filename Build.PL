@@ -109,6 +109,8 @@ Build.PL - NGCP-Panel build system including test fixtures
     ./Build test --webdriver=selenium-rc # from CPAN distro Alien-SeleniumRC
     ./Build test --webdriver=external --wd-server=127.0.0.1:5555
 
+    ./Build test_tap --webdriver=external # outputs tap to tap/ folder
+
     ./Build testcover --webdriver='phantomjs --webdriver=4444'
 
 =head2 Options
@@ -129,7 +131,7 @@ external if the webdriver is launched externally
 =head2 C<--wd-server>
 
 Host:Port of the webdriver to which the tests should connect.
-Default is set by Test::WebDriver to localhost
+Default is set by Test::WebDriver to localhost:4444
 
 =head2 C<--server>
 
