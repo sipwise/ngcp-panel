@@ -22,7 +22,7 @@ method wait_socket($host, $port) {
         sleep 1;
         $timer++;
         die sprintf('socket %s:%s is not accessible within 30 seconds after start', $host, $port)
-            if $timer > 30;
+            if $timer > 90;
     };
 }
 
