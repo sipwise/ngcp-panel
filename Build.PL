@@ -5,6 +5,10 @@ my $builder = Local::Module::Build->new(
     module_name         => 'NGCP::Panel',
     license             => 'restrictive',
     dist_version_from   => 'lib/NGCP/Panel.pm',
+    tap_harness_args    => {
+        formatter_class => 'TAP::Formatter::JUnit',
+        merge           => 1,
+    },
     configure_requires => {
         'lib' => 0,
         'Module::Build' => '0.4004',
@@ -13,6 +17,7 @@ my $builder = Local::Module::Build->new(
     },
     requires => {
         'base' => 0,
+        'Capture::Tiny' => 0,
         'Catalyst::Action::RenderView' => 0,
         'Catalyst::ActionRole::ACL' => 0,
         'Catalyst::Model::DBIC::Schema' => 0,

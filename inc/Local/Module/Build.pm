@@ -2,6 +2,7 @@ package Local::Module::Build;
 use Sipwise::Base;
 use Moose qw(around);
 use Child qw(child);
+use Capture::Tiny qw(capture_merged);
 use TryCatch;
 use MooseX::Method::Signatures;
 extends 'Module::Build';
@@ -64,6 +65,8 @@ sub _test_preconditions {
     require File::Which;
     $ENV{ NGCP_PANEL_CONFIG_LOCAL_SUFFIX } = "testing";
     $plackup = child {
+        my $debug_fh = IO::File->new("panel_debug_output", "w+");
+        capture_merged {
         exec $^X,
             '-Ilib',
             exists $opt{'schema-base-dir'} ? "-Mblib=$opt{'schema-base-dir'}" : (),
@@ -71,6 +74,7 @@ sub _test_preconditions {
             scalar File::Which::which('plackup'),
             sprintf('--listen=%s:%s', $uri->host, $uri->port),
             'ngcp_panel.psgi';
+        } stdout => $debug_fh;
     };
     $self->wait_socket($uri->host, $uri->port);
     $ENV{CATALYST_SERVER} = $opt{server};
