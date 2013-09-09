@@ -92,6 +92,43 @@
         </div>
     </div>
 
+    <div class="accordion-group">
+        <div class="accordion-heading">
+            <a class="accordion-toggle" data-toggle="collapse" data-parent="#device_details" href="#collapse_devconf">Device Configurations</a>
+        </div>
+        <div class="accordion-body collapse" id="collapse_devconf">
+            <div class="accordion-inner">
+                [% UNLESS c.user.read_only -%]
+                <span>
+                    <a class="btn btn-primary btn-large" href="[% c.uri_for('/device/config/create') %]"><i class="icon-star"></i> Create Device Configuration</a>
+                </span>
+                <div class="ngcp-separator"></div>
+                [% END -%]
+[%
+    helper.name = 'Device Configuration';
+    helper.data = devconf;
+    helper.dt_columns = devconf_dt_columns;
+    helper.length_change = 1;
+
+    helper.close_target = close_target;
+    helper.create_flag = devconf_create_flag;
+    helper.edit_flag = devconf_edit_flag;
+    helper.form_object = form;
+    helper.ajax_uri = c.uri_for('/device/config/ajax');
+
+    UNLESS c.user.read_only;
+        helper.dt_buttons = [
+            { name = 'Delete', uri = "/device/config/'+full.id+'/delete", class = 'btn-small btn-secondary', icon = 'icon-trash' },
+            { name = 'Edit', uri = "/device/config/'+full.id+'/edit", class = 'btn-small btn-primary', icon = 'icon-edit' },
+            { name = 'Download', uri = "/device/config/'+full.id+'/download", class = 'btn-small btn-tertiary', icon = 'icon-download-alt' },
+        ];
+    END;
+
+    PROCESS 'helpers/datatables.tt';
+-%]
+            </div>
+        </div>
+    </div>
 
 </div>
 [% # vim: set tabstop=4 syntax=html expandtab: -%]

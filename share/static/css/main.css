@@ -388,4 +388,8 @@ div.ngcp-modal .control-group.error .dataTables_wrapper input[type="text"] {
     cursor: not-allowed;
 }
 
+textarea.ngcp-autoconf-area {
+    width: 580px;
+}
+
 /* vim: set tabstop=4 syntax=css expandtab: */

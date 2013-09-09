@@ -4,6 +4,7 @@ use Sipwise::Base;
 use NGCP::Panel::Form::Device::Model;
 use NGCP::Panel::Form::Device::ModelAdmin;
 use NGCP::Panel::Form::Device::Firmware;
+use NGCP::Panel::Form::Device::Config;
 use NGCP::Panel::Utils::Navigation;
 
 
@@ -46,9 +47,25 @@ sub base :Chained('/') :PathPart('device') :CaptureArgs(0) {
         { name => 'filename', search => 1, title => 'Firmware File' },
     ]);
 
+    my $devconf_rs = $c->model('DB')->resultset('autoprov_configs');
+    unless($c->user->is_superuser) {
+        $devconf_rs = $devconf_rs->search({
+                'device.reseller_id' => $c->user->reseller_id
+            }, { 
+                join => 'device',
+        });
+    }
+    $c->stash->{devconf_dt_columns} = NGCP::Panel::Utils::Datatables::set_columns($c, [
+        { name => 'id', search => 1, title => '#' },
+        { name => 'device.vendor', search => 1, title => 'Device Vendor' },
+        { name => 'device.model', search => 1, title => 'Device Model' },
+        { name => 'version', search => 1, title => 'Version' },
+    ]);
+
     $c->stash(
         devmod_rs   => $devmod_rs,
         devfw_rs   => $devfw_rs,
+        devconf_rs   => $devconf_rs,
         template => 'device/list.tt',
     );
 }
@@ -389,94 +406,165 @@ sub devfw_download :Chained('devfw_base') :PathPart('download') :Args(0) {
     $c->response->header ('Content-Disposition' => 'attachment; filename="' . $fw->filename . '"');
     $c->response->content_type('application/octet-stream');
     $c->response->body($fw->data);
-    $c->flash(messages => [{type => 'success', text => 'Device firmware successfully deleted' }]);
+}
+
+sub devconf_ajax :Chained('base') :PathPart('config/ajax') :Args(0) {
+    my ($self, $c) = @_;
+
+    my $resultset = $c->stash->{devconf_rs};
+    NGCP::Panel::Utils::Datatables::process($c, $resultset, $c->stash->{devconf_dt_columns});
+    $c->detach( $c->view("JSON") );
+}
+
+sub devconf_create :Chained('base') :PathPart('config/create') :Args(0) {
+    my ($self, $c) = @_;
+
+    my $posted = ($c->request->method eq 'POST');
+    my $form = NGCP::Panel::Form::Device::Config->new;
+
+    my $params = {};
+    $params = $params->merge($c->session->{created_objects});
+    $form->process(
+        posted => $posted,
+        params => $c->request->params,
+        item => $params
+    );
+    NGCP::Panel::Utils::Navigation::check_form_buttons(
+        c => $c,
+        form => $form,
+        fields => {
+            'device.create' => $c->uri_for('/device/model/create'),
+        },
+        back_uri => $c->req->uri,
+    );
+
+    if($posted && $form->validated) {
+        try {
+            my $schema = $c->model('DB');
+            $schema->txn_do(sub {
+                my $devmod = $c->stash->{devmod_rs}->find($form->params->{device}{id});
+                $devmod->create_related('autoprov_configs', $form->params);
+                delete $c->session->{created_objects}->{device};
+                $c->flash(messages => [{type => 'success', text => 'Successfully created device configuration'}]);
+            });
+        } catch($e) {
+            NGCP::Panel::Utils::Message->error(
+                c => $c,
+                error => $e,
+                desc => "Failed to create device configuration",
+            );
+        }
+        NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for('/device'));
+    }
+
+    $c->stash(
+        devconf_create_flag => 1,
+        form => $form,
+    );
+}
+
+sub devconf_base :Chained('base') :PathPart('config') :CaptureArgs(1) {
+    my ($self, $c, $devconf_id) = @_;
+
+    unless($devconf_id->is_int) {
+        NGCP::Panel::Utils::Message->error(
+            c => $c,
+            error => "invalid device config id '$devconf_id'",
+            desc => "Invalid device configuration id",
+        );
+        NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for('/device'));
+    }
+
+    $c->stash->{devconf} = $c->stash->{devconf_rs}->find($devconf_id);
+    unless($c->stash->{devconf}) {
+        NGCP::Panel::Utils::Message->error(
+            c => $c,
+            error => "device configuration with id '$devconf_id' not found",
+            desc => "Device configuration not found",
+        );
+        NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for('/device'));
+    }
+}
+
+sub devconf_delete :Chained('devconf_base') :PathPart('delete') :Args(0) {
+    my ($self, $c) = @_;
+
+    try {
+        $c->stash->{devconf}->delete;
+        $c->flash(messages => [{type => 'success', text => 'Device configuration successfully deleted' }]);
+    } catch($e) {
+        NGCP::Panel::Utils::Message->error(
+            c => $c,
+            error => "failed to delete device configuration with id '".$c->stash->{devconf}->id."': $e",
+            desc => "Failed to delete device configuration",
+        );
+    }
+
+    NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for('/device'));
+}
+
+sub devconf_edit :Chained('devconf_base') :PathPart('edit') :Args(0) {
+    my ($self, $c) = @_;
+
+    my $posted = ($c->request->method eq 'POST');
+    my $form;
+    my $params = { $c->stash->{devconf}->get_inflated_columns };
+    $params->{device}{id} = delete $params->{device_id};
+    $params = $params->merge($c->session->{created_objects});
+    $form = NGCP::Panel::Form::Device::Config->new;
+
+    $form->process(
+        posted => $posted,
+        params => $c->request->params,
+        item => $params
+    );
+    NGCP::Panel::Utils::Navigation::check_form_buttons(
+        c => $c,
+        form => $form,
+        fields => {
+            'device.create' => $c->uri_for('/device/model/create'),
+        },
+        back_uri => $c->req->uri,
+    );
+
+    if($posted && $form->validated) {
+        try {
+            my $schema = $c->model('DB');
+            $schema->txn_do(sub {
+                $form->params->{device_id} = $form->params->{device}{id};
+                delete $form->params->{device};
+
+                $c->stash->{devconf}->update($form->params);
+                delete $c->session->{created_objects}->{device};
+                $c->flash(messages => [{type => 'success', text => 'Successfully updated device configuration'}]);
+            });
+        } catch($e) {
+            NGCP::Panel::Utils::Message->error(
+                c => $c,
+                error => $e,
+                desc => "Failed to update device configuration",
+            );
+        }
+        NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for('/device'));
+    }
+
+    $c->stash(
+        devconf_edit_flag => 1,
+        form => $form,
+    );
+}
+
+sub devconf_download :Chained('devconf_base') :PathPart('download') :Args(0) {
+    my ($self, $c) = @_;
+
+    my $conf = $c->stash->{devconf};
+
+    $c->response->content_type($conf->content_type);
+    $c->response->body($conf->data);
 }
 
 __PACKAGE__->meta->make_immutable;
 
 1;
-
-__END__
-
-=head1 NAME
-
-NGCP::Panel::Controller::Domain - Catalyst Controller
-
-=head1 DESCRIPTION
-
-Catalyst Controller.
-
-=head1 METHODS
-
-=head2 dom_list
-
-basis for the domain controller
-
-=head2 root
-
-=head2 create
-
-Provide a form to create new domains. Handle posted data and create domains.
-
-=head2 search
-
-obsolete
-
-=head2 base
-
-Fetch a domain by its id.
-
-Data that is put on stash: domain, domain_result
-
-=head2 edit
-
-probably obsolete
-
-=head2 delete
-
-deletes a domain (defined in base)
-
-=head2 ajax
-
-Get domains and output them as JSON.
-
-=head2 preferences
-
-Show a table view of preferences.
-
-=head2 preferences_base
-
-Get details about one preference for further editing.
-
-Data that is put on stash: preference_meta, preference, preference_values
-
-=head2 preferences_edit
-
-Use a form for editing one preference. Execute the changes that are posted.
-
-Data that is put on stash: edit_preference, form
-
-=head2 load_preference_list
-
-Retrieves and processes a datastructure containing preference groups, preferences and their values, to be used in rendering the preference list.
-
-Data that is put on stash: pref_groups
-
-=head2 _sip_domain_reload
-
-Ported from ossbss
-
-reloads domain cache of sip proxies
-
-=head1 AUTHOR
-
-Andreas Granig,,,
-
-=head1 LICENSE
-
-This library is free software. You can redistribute it and/or modify
-it under the same terms as Perl itself.
-
-=cut
 
 # vim: set tabstop=4 expandtab:
