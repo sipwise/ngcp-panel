@@ -5,6 +5,7 @@ use NGCP::Panel::Form::Device::Model;
 use NGCP::Panel::Form::Device::ModelAdmin;
 use NGCP::Panel::Form::Device::Firmware;
 use NGCP::Panel::Form::Device::Config;
+use NGCP::Panel::Form::Device::Profile;
 use NGCP::Panel::Utils::Navigation;
 
 
@@ -43,7 +44,6 @@ sub base :Chained('/') :PathPart('device') :CaptureArgs(0) {
         { name => 'id', search => 1, title => '#' },
         { name => 'device.vendor', search => 1, title => 'Device Vendor' },
         { name => 'device.model', search => 1, title => 'Device Model' },
-        { name => 'version', search => 1, title => 'Version' },
         { name => 'filename', search => 1, title => 'Firmware File' },
     ]);
 
@@ -62,10 +62,28 @@ sub base :Chained('/') :PathPart('device') :CaptureArgs(0) {
         { name => 'version', search => 1, title => 'Version' },
     ]);
 
+    my $devprof_rs = $c->model('DB')->resultset('autoprov_profiles');
+    unless($c->user->is_superuser) {
+        $devprof_rs = $devprof_rs->search({
+                'device.reseller_id' => $c->user->reseller_id
+            }, { 
+                join => 'device',
+        });
+    }
+    $c->stash->{devprof_dt_columns} = NGCP::Panel::Utils::Datatables::set_columns($c, [
+        { name => 'id', search => 1, title => '#' },
+        { name => 'name', search => 1, title => 'Name' },
+        { name => 'config.device.vendor', search => 1, title => 'Device Vendor' },
+        { name => 'config.device.model', search => 1, title => 'Device Model' },
+        { name => 'firmware.filename', search => 1, title => 'Firmware File' },
+        { name => 'config.version', search => 1, title => 'Configuration Version' },
+    ]);
+
     $c->stash(
         devmod_rs   => $devmod_rs,
         devfw_rs   => $devfw_rs,
         devconf_rs   => $devconf_rs,
+        devprof_rs   => $devprof_rs,
         template => 'device/list.tt',
     );
 }
@@ -281,8 +299,9 @@ sub devfw_create :Chained('base') :PathPart('firmware/create') :Args(0) {
                 $form->params->{filename} = $file->filename;
                 $form->params->{data} = $file->slurp;
                 my $devmod = $c->stash->{devmod_rs}->find($form->params->{device}{id});
-                $devmod->create_related('autoprov_firmwares', $form->params);
+                my $devfw = $devmod->create_related('autoprov_firmwares', $form->params);
                 delete $c->session->{created_objects}->{device};
+                $c->session->{created_objects}->{firmware} = { id => $devfw->id };
                 $c->flash(messages => [{type => 'success', text => 'Successfully created device firmware'}]);
             });
         } catch($e) {
@@ -443,8 +462,9 @@ sub devconf_create :Chained('base') :PathPart('config/create') :Args(0) {
             my $schema = $c->model('DB');
             $schema->txn_do(sub {
                 my $devmod = $c->stash->{devmod_rs}->find($form->params->{device}{id});
-                $devmod->create_related('autoprov_configs', $form->params);
+                my $devconf = $devmod->create_related('autoprov_configs', $form->params);
                 delete $c->session->{created_objects}->{device};
+                $c->session->{created_objects}->{config} = { id => $devconf->id };
                 $c->flash(messages => [{type => 'success', text => 'Successfully created device configuration'}]);
             });
         } catch($e) {
@@ -561,6 +581,165 @@ sub devconf_download :Chained('devconf_base') :PathPart('download') :Args(0) {
 
     $c->response->content_type($conf->content_type);
     $c->response->body($conf->data);
+}
+
+sub devprof_ajax :Chained('base') :PathPart('profile/ajax') :Args(0) {
+    my ($self, $c) = @_;
+
+    my $resultset = $c->stash->{devprof_rs};
+    NGCP::Panel::Utils::Datatables::process($c, $resultset, $c->stash->{devprof_dt_columns});
+    $c->detach( $c->view("JSON") );
+}
+
+sub devprof_create :Chained('base') :PathPart('profile/create') :Args(0) {
+    my ($self, $c) = @_;
+
+    my $posted = ($c->request->method eq 'POST');
+    my $form = NGCP::Panel::Form::Device::Profile->new;
+
+    my $params = {};
+    $params = $params->merge($c->session->{created_objects});
+    $form->process(
+        posted => $posted,
+        params => $c->request->params,
+        item => $params
+    );
+    NGCP::Panel::Utils::Navigation::check_form_buttons(
+        c => $c,
+        form => $form,
+        fields => {
+            'firmware.create' => $c->uri_for('/device/firmware/create'),
+            'config.create' => $c->uri_for('/device/config/create'),
+        },
+        back_uri => $c->req->uri,
+    );
+
+    if($posted && $form->validated) {
+        try {
+            my $schema = $c->model('DB');
+            $schema->txn_do(sub {
+                $form->params->{firmware_id} = $form->params->{firmware}{id};
+                delete $form->params->{firmware};
+                $form->params->{config_id} = $form->params->{config}{id};
+                delete $form->params->{config};
+
+                $c->model('DB')->resultset('autoprov_profiles')->create($form->params);
+
+                delete $c->session->{created_objects}->{firmware};
+                delete $c->session->{created_objects}->{config};
+                $c->flash(messages => [{type => 'success', text => 'Successfully created device profile'}]);
+            });
+        } catch($e) {
+            NGCP::Panel::Utils::Message->error(
+                c => $c,
+                error => $e,
+                desc => "Failed to create device profile",
+            );
+        }
+        NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for('/device'));
+    }
+
+    $c->stash(
+        devprof_create_flag => 1,
+        form => $form,
+    );
+}
+
+sub devprof_base :Chained('base') :PathPart('profile') :CaptureArgs(1) {
+    my ($self, $c, $devprof_id) = @_;
+
+    unless($devprof_id->is_int) {
+        NGCP::Panel::Utils::Message->error(
+            c => $c,
+            error => "invalid device profile id '$devprof_id'",
+            desc => "Invalid device profile id",
+        );
+        NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for('/device'));
+    }
+
+    $c->stash->{devprof} = $c->stash->{devprof_rs}->find($devprof_id);
+    unless($c->stash->{devprof}) {
+        NGCP::Panel::Utils::Message->error(
+            c => $c,
+            error => "device profile with id '$devprof_id' not found",
+            desc => "Device profile not found",
+        );
+        NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for('/device'));
+    }
+}
+
+sub devprof_delete :Chained('devprof_base') :PathPart('delete') :Args(0) {
+    my ($self, $c) = @_;
+
+    try {
+        $c->stash->{devprof}->delete;
+        $c->flash(messages => [{type => 'success', text => 'Device profile successfully deleted' }]);
+    } catch($e) {
+        NGCP::Panel::Utils::Message->error(
+            c => $c,
+            error => "failed to delete device profile with id '".$c->stash->{devprof}->id."': $e",
+            desc => "Failed to delete device profile",
+        );
+    }
+
+    NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for('/device'));
+}
+
+sub devprof_edit :Chained('devprof_base') :PathPart('edit') :Args(0) {
+    my ($self, $c) = @_;
+
+    my $posted = ($c->request->method eq 'POST');
+    my $form;
+    my $params = { $c->stash->{devprof}->get_inflated_columns };
+    $params->{firmware}{id} = delete $params->{firmware_id};
+    $params->{config}{id} = delete $params->{config_id};
+    $params = $params->merge($c->session->{created_objects});
+    $form = NGCP::Panel::Form::Device::Profile->new;
+
+    $form->process(
+        posted => $posted,
+        params => $c->request->params,
+        item => $params
+    );
+    NGCP::Panel::Utils::Navigation::check_form_buttons(
+        c => $c,
+        form => $form,
+        fields => {
+            'firmware.create' => $c->uri_for('/device/firmware/create'),
+            'config.create' => $c->uri_for('/device/config/create'),
+        },
+        back_uri => $c->req->uri,
+    );
+
+    if($posted && $form->validated) {
+        try {
+            my $schema = $c->model('DB');
+            $schema->txn_do(sub {
+                $form->params->{firmware_id} = $form->params->{firmware}{id};
+                delete $form->params->{firmware};
+                $form->params->{config_id} = $form->params->{config}{id};
+                delete $form->params->{config};
+
+                $c->stash->{devprof}->update($form->params);
+
+                delete $c->session->{created_objects}->{firmware};
+                delete $c->session->{created_objects}->{config};
+                $c->flash(messages => [{type => 'success', text => 'Successfully updated device profile'}]);
+            });
+        } catch($e) {
+            NGCP::Panel::Utils::Message->error(
+                c => $c,
+                error => $e,
+                desc => "Failed to update device profile",
+            );
+        }
+        NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for('/device'));
+    }
+
+    $c->stash(
+        devprof_edit_flag => 1,
+        form => $form,
+    );
 }
 
 __PACKAGE__->meta->make_immutable;

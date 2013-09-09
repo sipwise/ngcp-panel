@@ -294,6 +294,8 @@ sub _handle_reseller_status_change {
         $reseller->voip_sound_sets->delete_all;
         #delete voip_rewrite_rule_sets
         $reseller->voip_rewrite_rule_sets->delete_all;
+        #delete autoprov_devices
+        $reseller->autoprov_devices->delete_all;
     }
 }
 
