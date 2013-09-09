@@ -7,6 +7,12 @@
 </div>
 [% back_created = 1 -%]
 
+<div class="row">
+    [% FOREACH m IN messages -%]
+        <div class="alert alert-[% m.type %]">[% m.text %]</div>
+    [% END -%]
+</div>
+
 <div class="ngcp-separator"></div>
 
 <div class="accordion" id="device_details">
@@ -17,18 +23,21 @@
         </div>
         <div class="accordion-body collapse" id="collapse_devmod">
             <div class="accordion-inner">
-            
-
+                [% UNLESS c.user.read_only -%]
+                <span>
+                    <a class="btn btn-primary btn-large" href="[% c.uri_for('/device/model/create') %]"><i class="icon-star"></i> Create Device Model</a>
+                </span>
+                <div class="ngcp-separator"></div>
+                [% END -%]
 [%
-    helper.name = 'Device Models';
+    helper.name = 'Device Model';
     helper.data = devmod;
-    helper.messages = messages;
     helper.dt_columns = devmod_dt_columns;
     helper.length_change = 1;
 
     helper.close_target = close_target;
-    helper.create_flag = create_flag;
-    helper.edit_flag = edit_flag;
+    helper.create_flag = devmod_create_flag;
+    helper.edit_flag = devmod_edit_flag;
     helper.form_object = form;
     helper.ajax_uri = c.uri_for('/device/model/ajax');
 
@@ -37,8 +46,43 @@
             { name = 'Delete', uri = "/device/model/'+full.id+'/delete", class = 'btn-small btn-secondary', icon = 'icon-trash' },
             { name = 'Edit', uri = "/device/model/'+full.id+'/edit", class = 'btn-small btn-primary', icon = 'icon-edit' },
         ];
-        helper.top_buttons = [
-            { name = 'Create Device Model', uri = c.uri_for('/device/model/create'), icon = 'icon-star' },
+    END;
+
+    PROCESS 'helpers/datatables.tt';
+-%]
+            </div>
+        </div>
+    </div>
+
+    <div class="accordion-group">
+        <div class="accordion-heading">
+            <a class="accordion-toggle" data-toggle="collapse" data-parent="#device_details" href="#collapse_devfw">Device Firmwares</a>
+        </div>
+        <div class="accordion-body collapse" id="collapse_devfw">
+            <div class="accordion-inner">
+                [% UNLESS c.user.read_only -%]
+                <span>
+                    <a class="btn btn-primary btn-large" href="[% c.uri_for('/device/firmware/create') %]"><i class="icon-star"></i> Upload Device Firmware</a>
+                </span>
+                <div class="ngcp-separator"></div>
+                [% END -%]
+[%
+    helper.name = 'Device Firmware';
+    helper.data = devfw;
+    helper.dt_columns = devfw_dt_columns;
+    helper.length_change = 1;
+
+    helper.close_target = close_target;
+    helper.create_flag = devfw_create_flag;
+    helper.edit_flag = devfw_edit_flag;
+    helper.form_object = form;
+    helper.ajax_uri = c.uri_for('/device/firmware/ajax');
+
+    UNLESS c.user.read_only;
+        helper.dt_buttons = [
+            { name = 'Delete', uri = "/device/firmware/'+full.id+'/delete", class = 'btn-small btn-secondary', icon = 'icon-trash' },
+            { name = 'Edit', uri = "/device/firmware/'+full.id+'/edit", class = 'btn-small btn-primary', icon = 'icon-edit' },
+            { name = 'Download', uri = "/device/firmware/'+full.id+'/download", class = 'btn-small btn-tertiary', icon = 'icon-download-alt' },
         ];
     END;
 
