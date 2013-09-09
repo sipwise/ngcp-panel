@@ -70,10 +70,12 @@
         <div class="accordion-body collapse" id="collapse_contact">
             <div class="accordion-inner">
 
+                [% UNLESS c.user.read_only -%]
                 <span>
                     <a class="btn btn-primary btn-large" href="[% c.uri_for('/contact', contact_hash.id, 'edit') %]"><i class="icon-edit"></i> Edit Contact</a>
                 </span>
                 <div class="ngcp-separator"></div>
+                [% END -%]
 
                 <table class="table table-bordered table-striped table-highlight table-hover">
                     <thead>
