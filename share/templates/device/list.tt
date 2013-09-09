@@ -1,0 +1,29 @@
+[% META title = 'Device Management' -%]
+
+
+[%
+    helper.name = 'Device Models';
+    helper.data = devmod;
+    helper.messages = messages;
+    helper.dt_columns = devmod_dt_columns;
+    helper.length_change = 1;
+
+    helper.close_target = close_target;
+    helper.create_flag = create_flag;
+    helper.edit_flag = edit_flag;
+    helper.form_object = form;
+    helper.ajax_uri = c.uri_for('/device/model/ajax');
+
+    UNLESS c.user.read_only;
+        helper.dt_buttons = [
+            { name = 'Delete', uri = "/device/model/'+full.id+'/delete", class = 'btn-small btn-secondary', icon = 'icon-trash' },
+            { name = 'Edit', uri = "/device/model/'+full.id+'/edit", class = 'btn-small btn-primary', icon = 'icon-edit' },
+        ];
+        helper.top_buttons = [
+            { name = 'Create Device Model', uri = c.uri_for('/device/model/create'), icon = 'icon-star' },
+        ];
+    END;
+
+    PROCESS 'helpers/datatables.tt';
+-%]
+[% # vim: set tabstop=4 syntax=html expandtab: -%]
