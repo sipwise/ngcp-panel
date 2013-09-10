@@ -4,10 +4,12 @@ $(document).ready(function() {
     
     $('#[% table_id %] tr td input[type="checkbox"]').live( "click", function() {
     
-        $("#[% hidden_id %]").val( $(this).parents("tr")
-                        .find("td:first").text() );
         if($(this).attr("checked") == "checked") {
             $(this).parents("tr").siblings().find("td input[type='checkbox']").attr("checked", false);
+            $("#[% hidden_id %]").val( $(this).parents("tr")
+                        .find("td:first").text() );
+        } else {
+            $("#[% hidden_id %]").val("");
         }
     
     });

@@ -618,7 +618,7 @@ sub devprof_create :Chained('base') :PathPart('profile/create') :Args(0) {
         try {
             my $schema = $c->model('DB');
             $schema->txn_do(sub {
-                $form->params->{firmware_id} = $form->params->{firmware}{id};
+                $form->params->{firmware_id} = $form->params->{firmware}{id} || undef;;
                 delete $form->params->{firmware};
                 $form->params->{config_id} = $form->params->{config}{id};
                 delete $form->params->{config};
@@ -715,7 +715,7 @@ sub devprof_edit :Chained('devprof_base') :PathPart('edit') :Args(0) {
         try {
             my $schema = $c->model('DB');
             $schema->txn_do(sub {
-                $form->params->{firmware_id} = $form->params->{firmware}{id};
+                $form->params->{firmware_id} = $form->params->{firmware}{id} || undef;
                 delete $form->params->{firmware};
                 $form->params->{config_id} = $form->params->{config}{id};
                 delete $form->params->{config};
