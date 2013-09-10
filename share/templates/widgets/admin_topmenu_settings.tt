@@ -20,6 +20,9 @@
         [% IF c.config.features.callflow -%]
         <li><a href="[% c.uri_for('/callflow') %]">SIP Call Flows</a></li>
         [% END -%]
+        [% IF c.config.features.cloudpbx -%]
+        <li><a href="[% c.uri_for('/device') %]">Device Management</a></li>
+        [% END -%]
     </ul>
 </li>
 [% # vim: set tabstop=4 syntax=html expandtab: -%]
