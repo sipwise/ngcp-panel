@@ -57,7 +57,12 @@ $(document).ready(function() {
         [% END -%]
 		"aoColumns": [
 		    [% FOREACH f IN helper.column_fields -%]
-		    { "mData": "[% f %]" },
+		    { 
+                "mData": "[% f %]",
+                "mRender": function ( data, type, full ) {
+                    return String(data).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+                }
+            },
 		    [% END -%]
 		    {   "mRender": function ( data, type, full ) {
                     var html = '' +
