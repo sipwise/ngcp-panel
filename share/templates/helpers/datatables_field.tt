@@ -28,7 +28,12 @@ $(document).ready(function() {
 		
 		"aoColumns": [
                         [% FOREACH f IN table_fields -%]
-		    		    { "mData": "[% f %]" },
+		    		    { 
+                           "mData": "[% f %]",
+                           "mRender": function ( data, type, full ) {
+                                return String(data).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+                            }
+                        },
                         [% END -%]
 		    		    { "mRender": function ( data, type, full ) {
                                 return '<input type="checkbox" value="' + full.id + '"/>';
