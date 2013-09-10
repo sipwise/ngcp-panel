@@ -32,7 +32,7 @@ has_field 'save' => (
 has_block 'fields' => (
     tag => 'div',
     class => [qw/modal-body/],
-    render_list => [qw/reseller vendor model/],
+    render_list => [qw/reseller vendor model front_image mac_image/],
 );
 
 has_block 'actions' => (

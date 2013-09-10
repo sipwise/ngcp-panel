@@ -7,6 +7,7 @@ use Moose::Util::TypeConstraints;
 use HTML::FormHandler::Widget::Block::Bootstrap;
 
 has '+widget_wrapper' => ( default => 'Bootstrap' );
+has '+enctype' => ( default => 'multipart/form-data');
 has_field 'submitid' => ( type => 'Hidden' );
 sub build_render_list {[qw/submitid fields actions/]}
 sub build_form_element_class {[qw(form-horizontal)]}
@@ -23,6 +24,20 @@ has_field 'model' => (
     label => 'Model',
 );
 
+has_field 'front_image' => (
+    type => 'Upload',
+    required => 0,
+    label => 'Front Image',
+    max_size => '67108864', # 64MB
+);
+
+has_field 'mac_image' => (
+    type => 'Upload',
+    required => 0,
+    label => 'MAC Address Image',
+    max_size => '67108864', # 64MB
+);
+
 has_field 'save' => (
     type => 'Submit',
     value => 'Save',
@@ -33,7 +48,7 @@ has_field 'save' => (
 has_block 'fields' => (
     tag => 'div',
     class => [qw/modal-body/],
-    render_list => [qw/vendor model/],
+    render_list => [qw/vendor model front_image mac_image/],
 );
 
 has_block 'actions' => (

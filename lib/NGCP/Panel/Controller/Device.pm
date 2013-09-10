@@ -113,6 +113,10 @@ sub devmod_create :Chained('base') :PathPart('model/create') :Args(0) {
 
     my $params = {};
     $params = $params->merge($c->session->{created_objects});
+    if($posted) {
+        $c->req->params->{front_image} = $c->req->upload('front_image');
+        $c->req->params->{mac_image} = $c->req->upload('mac_image');
+    }
     $form->process(
         posted => $posted,
         params => $c->request->params,
@@ -137,6 +141,18 @@ sub devmod_create :Chained('base') :PathPart('model/create') :Args(0) {
                     $form->params->{reseller_id} = $c->user->reseller_id;
                 }
                 delete $form->params->{reseller};
+
+                my $ft = File::Type->new();
+                if($form->params->{front_image}) {
+                    my $front_image = delete $form->params->{front_image};
+                    $form->params->{front_image} = $front_image->slurp;
+                    $form->params->{front_image_type} = $ft->mime_type($form->params->{front_image});
+                }
+                if($form->params->{mac_image}) {
+                    my $mac_image = delete $form->params->{mac_image};
+                    $form->params->{mac_image} = $mac_image->slurp;
+                    $form->params->{mac_image_type} = $ft->mime_type($form->params->{mac_image});
+                }
 
                 my $devmod = $schema->resultset('autoprov_devices')->create($form->params);
                 delete $c->session->{created_objects}->{reseller};
@@ -212,6 +228,10 @@ sub devmod_edit :Chained('devmod_base') :PathPart('edit') :Args(0) {
     } else {
         $form = NGCP::Panel::Form::Device::Model->new;
     }
+    if($posted) {
+        $c->req->params->{front_image} = $c->req->upload('front_image');
+        $c->req->params->{mac_image} = $c->req->upload('mac_image');
+    }
 
     $form->process(
         posted => $posted,
@@ -238,6 +258,24 @@ sub devmod_edit :Chained('devmod_base') :PathPart('edit') :Args(0) {
                 }
                 delete $form->params->{reseller};
 
+                if($form->params->{front_image}) {
+                    my $front_image = delete $form->params->{front_image};
+                    $form->params->{front_image} = $front_image->slurp;
+                    $form->params->{front_image_type} = $front_image->type;
+                } else {
+                    delete $form->params->{front_image};
+                    delete $form->params->{front_image_type};
+                }
+
+                if($form->params->{mac_image}) {
+                    my $mac_image = delete $form->params->{mac_image};
+                    $form->params->{mac_image} = $mac_image->slurp;
+                    $form->params->{mac_image_type} = $mac_image->type;
+                } else {
+                    delete $form->params->{mac_image};
+                    delete $form->params->{mac_image_type};
+                }
+
                 $c->stash->{devmod}->update($form->params);
                 delete $c->session->{created_objects}->{reseller};
                 $c->flash(messages => [{type => 'success', text => 'Successfully updated device model'}]);
@@ -256,6 +294,32 @@ sub devmod_edit :Chained('devmod_base') :PathPart('edit') :Args(0) {
         devmod_edit_flag => 1,
         form => $form,
     );
+}
+
+sub devmod_download_frontimage :Chained('devmod_base') :PathPart('frontimage') :Args(0) {
+    my ($self, $c) = @_;
+
+    my $devmod = $c->stash->{devmod};
+    unless($devmod->front_image) {
+        $c->response->body("404 - No front image available for this device model");
+        $c->response->status(404);
+        return;
+    }
+    $c->response->content_type($devmod->front_image_type);
+    $c->response->body($devmod->front_image);
+}
+
+sub devmod_download_macimage :Chained('devmod_base') :PathPart('macimage') :Args(0) {
+    my ($self, $c) = @_;
+
+    my $devmod = $c->stash->{devmod};
+    unless($devmod->mac_image) {
+        $c->response->body("404 - No mac image available for this device model");
+        $c->response->status(404);
+        return;
+    }
+    $c->response->content_type($devmod->mac_image_type);
+    $c->response->body($devmod->mac_image);
 }
 
 sub devfw_ajax :Chained('base') :PathPart('firmware/ajax') :Args(0) {
