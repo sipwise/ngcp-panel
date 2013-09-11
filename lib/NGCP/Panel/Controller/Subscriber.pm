@@ -2223,11 +2223,16 @@ sub registered :Chained('master') :PathPart('registered') :CaptureArgs(1) {
     my ($self, $c, $reg_id) = @_;
 
     my $s = $c->stash->{subscriber}->provisioning_voip_subscriber;
-    $c->stash->{registered} = $c->model('DB')->resultset('location')->find({
+    my $reg_rs = $c->model('DB')->resultset('location')->search({
         id => $reg_id,
         username => $s->username,
-        domain => $s->domain->domain,
     });
+    if($c->config->{features}->{multidomain}) {
+        $reg_rs = $reg_rs->search({
+            domain => $s->domain->domain,
+        });
+    }
+    $c->stash->{registered} = $reg_rs->first;
     unless($c->stash->{registered}) {
         NGCP::Panel::Utils::Message->error(
             c    => $c,
