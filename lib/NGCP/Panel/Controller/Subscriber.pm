@@ -1982,8 +1982,13 @@ sub ajax_registered :Chained('master') :PathPart('registered/ajax') :Args(0) {
     my $s = $c->stash->{subscriber}->provisioning_voip_subscriber;
     my $reg_rs = $c->model('DB')->resultset('location')->search({
         username => $s->username,
-        domain => $s->domain->domain,
     });
+    if($c->config->{features}->{multidomain}) {
+        $reg_rs = $reg_rs->search({
+            domain => $s->domain->domain,
+        });
+    }
+
     NGCP::Panel::Utils::Datatables::process($c, $reg_rs, $c->stash->{reg_dt_columns});
 
     $c->detach( $c->view("JSON") );
