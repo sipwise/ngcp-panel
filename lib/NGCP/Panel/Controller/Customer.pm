@@ -11,6 +11,7 @@ use NGCP::Panel::Form::Customer::PbxAdminSubscriber;
 use NGCP::Panel::Form::Customer::PbxExtensionSubscriber;
 use NGCP::Panel::Form::Customer::PbxGroupBase;
 use NGCP::Panel::Form::Customer::PbxGroup;
+use NGCP::Panel::Form::Customer::PbxFieldDevice;
 use NGCP::Panel::Utils::Message;
 use NGCP::Panel::Utils::Navigation;
 use NGCP::Panel::Utils::DateTime;
@@ -550,6 +551,60 @@ sub pbx_group_edit :Chained('pbx_group_base') :PathPart('edit') :Args(0) {
         form => $form
     );
 }
+
+sub pbx_device_create :Chained('base') :PathPart('pbx/device/create') :Args(0) {
+    my ($self, $c) = @_;
+
+    my $posted = ($c->request->method eq 'POST');
+    unless($posted) {
+        $c->stash->{autoprov_profile_rs} = $c->model('DB')->resultset('autoprov_profiles')
+            ->search({
+                'device.reseller_id' => $c->stash->{contract}->contact->reseller_id,
+            },{
+               join => { 'config' => 'device' }, 
+            });
+    }
+    my $form = NGCP::Panel::Form::Customer::PbxFieldDevice->new(ctx => $c);
+    my $params = {};
+    $params = $params->merge($c->session->{created_objects});
+    $form->process(
+        posted => $posted,
+        params => $c->request->params,
+        item => $params,
+    );
+    NGCP::Panel::Utils::Navigation::check_form_buttons(
+        c => $c,
+        form => $form,
+        fields => {},
+        back_uri => $c->req->uri,
+    );
+    if($posted && $form->validated) {
+        try {
+            my $schema = $c->model('DB');
+            $schema->txn_do( sub {
+                
+            });
+
+            $c->flash(messages => [{type => 'success', text => 'PBX device successfully created'}]);
+        } catch ($e) {
+            NGCP::Panel::Utils::Message->error(
+                c => $c,
+                error => $e,
+                desc  => "Failed to create PBX device",
+            );
+        }
+
+        NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for_action('/customer/details', $c->req->captures));
+    }
+
+    $c->stash(
+        create_flag => 1,
+        form => $form,
+        description => 'PBX Device',
+    );
+}
+
+
 =head1 AUTHOR
 
 Andreas Granig,,,

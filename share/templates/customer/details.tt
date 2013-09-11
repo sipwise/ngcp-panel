@@ -242,6 +242,45 @@
             </div>
         </div>
     </div>
+
+    <div class="accordion-group">
+        <div class="accordion-heading">
+            <a class="accordion-toggle" data-toggle="collapse" data-parent="#customer_details" href="#collapse_pbxdevs">PBX Devices</a>
+        </div>
+        <div class="accordion-body collapse" id="collapse_pbxdevs">
+            <div class="accordion-inner">
+                <a class="btn btn-large btn-primary" href="[% c.uri_for_action('/customer/pbx_device_create', [ c.req.captures.0 ]) %]"><i class="icon-star"></i> Create PBX Device</a>
+                <div class="ngcp-separator"></div>
+                <table class="table table-bordered table-striped table-highlight table-hover" id="subscribers_table">
+                    <thead>
+                        <tr>
+                            <th>SIP URI</th>
+                            <th>MAC Address / Identifier</th>
+                            <th>Device Profile</th>
+                            <th class="ngcp-actions-column"></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        [% FOR dev IN pbx_devices -%]
+                        <tr class="sw_action_row">
+                            <td>[% dev.subscriber.username %]@[% dev.subscriber.domain %]</td>
+                            <td>[% dev.token %]</td>
+                            <td>[% dev.profile.name %]</td>
+                            <td class="ngcp-actions-column">
+                                <div class="sw_actions">
+                                    [% UNLESS c.user.readonly -%]
+                                    <a class="btn btn-secondary btn-small" href="[% c.uri_for_action("/subscriber/terminate", [subscriber.id]) %]" data-confirm="Terminate"><i class="icon-remove"></i> Terminate</a>
+                                    <a class="btn btn-primary btn-small" href="[% c.uri_for_action("/customer/pbx_group_edit", [contract.id, subscriber.voip_pbx_group.id]) %]"><i class="icon-edit"></i> Edit</a>
+                                    [% END -%]
+                                </div>
+                            </td>
+                        </tr>
+                        [% END -%]
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
     [% END -%]
 
     <div class="accordion-group">
