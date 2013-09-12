@@ -1,0 +1,2 @@
+ngcp_panel.psgi usr/share/ngcp-panel/
+script/ngcp_panel_fastcgi.pl user/share/ngcp-panel/

@@ -44,8 +44,41 @@ Homepage: http://sipwise.com/
 
 Package: ngcp-panel
 Architecture: all
+Depends: ngcp-panel-common (>= 1.0.15),
+         ngcp-panel-nginx | ngcp-panel-apache
+Description: Catalyst based application
+ A completely overhauled provisioning interface for the
+ NGCP system.
+ .
+ This is a dependency package to install either ngpcp-panel-nginx
+ (by default) or ngcp-panel-apache.
+
+Package: ngcp-panel-apache
+Architecture: all
 Pre-Depends: apache2.2-common,
              libapache2-mod-perl2
+Depends: ngcp-panel-common (= ${binary:Version}),
+         ${misc:Depends}
+Conflicts: ngcp-panel-nginx
+Description: Catalyst based application. Using mod-perl
+ A completely overhauled provisioning interface for the
+ NGCP system.
+
+Package: ngcp-panel-nginx
+Architecture: all
+Pre-Depends: nginx-common,
+             ngcp-panel-common (= ${binary:Version})
+Depends: libfcgi-procmanager-perl,
+         ${misc:Depends}
+Conflicts: ngcp-panel-apache
+Description: Catalyst based application. Using starman+nginx
+ A completely overhauled provisioning interface for the
+ NGCP system.
+
+Package: ngcp-panel-common
+Architecture: all
+Replaces: ngcp-panel (<< 1.0.15)
+Breaks: ngcp-panel (<< 1.0.15)
 Depends: libcatalyst-actionrole-acl-perl,
          libcatalyst-modules-perl,
          libcatalyst-perl (>= 5.90040),
