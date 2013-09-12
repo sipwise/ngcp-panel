@@ -1,11 +1,12 @@
 #!/usr/bin/make -f
+# Uncomment this to turn on verbose mode.
+#export DH_VERBOSE=1
+
+# This has to be exported to make some magic below work.
+export DH_OPTIONS
+
 %:
 	dh $@
-
-override_dh_install:
-	dh_install
-	# remove all *.pl scripts, they are for development usage only
-	rm -rf ./debian/ngcp-panel/usr/bin
 
 override_dh_auto_test:
 	echo "TODO / FIXME  - skipping dh_auto_test"

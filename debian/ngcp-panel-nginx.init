@@ -1,0 +1,103 @@
+#!/bin/sh
+### BEGIN INIT INFO
+# Provides:          ngcp-panel
+# Required-Start:    $syslog $network $local_fs $remote_fs $time mysql
+# Required-Stop:     $syslog $network $local_fs $remote_fs mysql
+# Default-Start:     2 3 4 5
+# Default-Stop:      0 1 6
+# Short-Description: Start the ngcp-panel webapp
+# Description:       Start the ngcp-panel webapp
+### END INIT INFO
+
+. /lib/lsb/init-functions
+
+DAEMON=/usr/share/ngcp-panel/ngcp_panel_fastcgi.pl
+HOMEDIR=/usr/share/ngcp-panel
+PIDFILE=/var/run/ngcp-panel.pid
+USER=www-data
+GROUP=www-data
+NAME="ngcp_panel_fastcgi"
+DESC="NGCP-Panel Webapp"
+USOCKET=/var/run/ngcp-panel.sock
+LOGERR=/var/log/ngcp/ngcp-panel.log
+NPROC=1
+
+OPTIONS="--listen $USOCKET --daemon --pidfile $PIDFILE --nproc $NPROC"
+
+check_running() {
+    [ -s $PIDFILE ] && kill -0 $(cat $PIDFILE) >/dev/null 2>&1
+}
+
+_start() {
+    rm -f $PIDFILE 2>/dev/null
+    start-stop-daemon --start --quiet --pidfile $PIDFILE \
+          --exec $DAEMON --chdir $HOMEDIR \
+          --user $USER --group $GROUP \
+          -- $OPTIONS || log_failure_msg "error"
+}
+
+start() {
+  log_daemon_msg "Starting $DESC: $NAME"
+  if check_running; then
+      log_progress_msg "already running"
+      log_end_msg 0
+      exit 0
+  fi
+  _start
+  log_end_msg $?
+  return $?
+}
+
+_stop() {
+  if [ -e $PIDFILE ]; then
+      if ! check_running ; then
+         log_daemon_msg " not running"
+         return 0
+      fi
+      kill `cat $PIDFILE`;
+      for i in 1 2 3 4 5 6 7; do
+          echo -n "."
+          sleep 1;
+          if check_running ; then
+              return 0
+          fi
+      done
+      if check_running ; then
+          return 1;
+      fi
+  fi
+}
+
+stop() {
+  log_daemon_msg "Stopping $DESC: $NAME"
+  _stop
+  log_end_msg $?
+  return $?
+}
+
+case "$1" in
+  start)
+        start
+        ;;
+  stop)
+        stop
+        ;;
+  restart|force-reload)
+        log_daemon_msg "Restarting web application" $NAME
+        _stop
+        _start
+        log_end_msg $?
+        return $?
+        ;;
+  status)
+        log_daemon_msg "Status of $DESC: "
+        status_of_proc -p$PIDFILE $DAEMON $NAME
+        ;;
+  *)
+        N=/etc/init.d/$NAME
+        echo "Usage: $N {start|stop|restart|force-reload|status}" >&2
+        exit 1
+        ;;
+esac
+
+exit 0
