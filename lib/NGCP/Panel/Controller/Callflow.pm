@@ -21,11 +21,11 @@ sub root :Chained('/') :PathPart('callflow') :CaptureArgs(0) {
     my ( $self, $c ) = @_;
 
     $c->stash->{capture_dt_columns} = NGCP::Panel::Utils::Datatables::set_columns($c, [
-        { name => "timestamp", search => 1, title => "Timestamp" },
+        { name => "timestamp", search => 1, title => "Timestamp", literal_sql => "min(timestamp)" },
         { name => "call_id", search => 1, title => "Call-ID" },
         { name => "caller_uuid", search => 1, title => "Caller UUID" },
         { name => "callee_uuid", search => 1, title => "Callee UUID" },
-        { name => "method", search => 1, title => "Method" },
+        { name => "cseq_method", search => 1, title => "Method" },
     ]);
 
     $c->stash->{calls_rs} = $c->model('DB')->resultset('messages')->search(undef, {
@@ -45,8 +45,14 @@ sub index :Chained('root') :PathPart('') :Args(0) {
 
 sub ajax :Chained('root') :PathPart('ajax') :Args(0) {
     my ( $self, $c ) = @_;
-    my $calls_rs = $c->stash->{calls_rs};
-    NGCP::Panel::Utils::Datatables::process($c, $calls_rs, $c->stash->{capture_dt_columns});
+    my $calls_rs = $c->stash->{calls_rs}->search_rs(undef,{
+        group_by => 'call_id'
+    });
+    NGCP::Panel::Utils::Datatables::process(
+        $c,
+        $calls_rs,
+        $c->stash->{capture_dt_columns},
+    );
     $c->detach( $c->view("JSON") );
 }
 
@@ -54,7 +60,7 @@ sub callflow_base :Chained('root') :PathPart('') :CaptureArgs(1) {
     my ($self, $c, $callid) = @_;
 
     my $decoder = URI::Encode->new;
-    $c->stash->{callid} = $decoder->decode($callid);
+    $c->stash->{callid} = $decoder->decode($callid) =~ s/_b2b-1$//r;
 }
 
 sub get_pcap :Chained('callflow_base') :PathPart('pcap') :Args(0) {
