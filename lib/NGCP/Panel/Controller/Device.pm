@@ -1,6 +1,7 @@
 package NGCP::Panel::Controller::Device;
 use Sipwise::Base;
 
+use Template;
 use NGCP::Panel::Form::Device::Model;
 use NGCP::Panel::Form::Device::ModelAdmin;
 use NGCP::Panel::Form::Device::Firmware;
@@ -11,15 +12,16 @@ use NGCP::Panel::Utils::Navigation;
 
 BEGIN { extends 'Catalyst::Controller'; }
 
-sub auto :Does(ACL) :ACLDetachTo('/denied_page') :AllowedRole(admin) :AllowedRole(reseller) {
+sub auto {
     my ($self, $c) = @_;
     $c->log->debug(__PACKAGE__ . '::auto');
-    NGCP::Panel::Utils::Navigation::check_redirect_chain(c => $c);
     return 1;
 }
 
-sub base :Chained('/') :PathPart('device') :CaptureArgs(0) {
+sub base :Chained('/') :PathPart('device') :CaptureArgs(0) :Does(ACL) :ACLDetachTo('/denied_page') :AllowedRole(admin) :AllowedRole(reseller) {
     my ($self, $c) = @_;
+
+    NGCP::Panel::Utils::Navigation::check_redirect_chain(c => $c);
 
     my $devmod_rs = $c->model('DB')->resultset('autoprov_devices');
     unless($c->user->is_superuser) {
@@ -804,6 +806,38 @@ sub devprof_edit :Chained('devprof_base') :PathPart('edit') :Args(0) {
         devprof_edit_flag => 1,
         form => $form,
     );
+}
+
+sub dev_field_config :Chained('/') :PathPart('device/autoprov') :Args(1) {
+    my ($self, $c, $id) = @_;
+
+    my $dev = $c->model('DB')->resultset('autoprov_field_devices')->find({
+        identifier => $id
+    });
+    unless($dev) {
+        $c->response->content_type('text/plain');
+        $c->response->body("404 - device not found");
+        $c->response->status(404);
+        return;
+    }
+
+    my $sub = $dev->provisioning_voip_subscriber;
+    my $vars = {
+        sip => {
+            username => $sub->username,
+            password => $sub->password,
+            domain => $sub->domain->domain,
+            # displayname => $disp_pref->value,
+        },
+    };
+
+    my $data = $dev->profile->config->data;
+    my $processed_data = "";
+    my $t = Template->new;
+    $t->process(\$data, $vars, \$processed_data);
+
+    $c->response->content_type($dev->profile->config->content_type);
+    $c->response->body($processed_data);
 }
 
 __PACKAGE__->meta->make_immutable;

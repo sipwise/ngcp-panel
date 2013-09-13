@@ -23,6 +23,9 @@ sub auto :Private {
         
         $c->log->debug("*** Root::auto grant access to " . $c->request->path);
         return 1;
+    } elsif($c->req->uri->path =~ /^\/device\/autoprov\/.+/) {
+        $c->log->debug("*** Root::auto grant access to " . $c->request->path);
+        return 1;
     }
     
     unless($c->user_exists) {
