@@ -151,6 +151,13 @@ sub base :Chained('list_customer') :PathPart('') :CaptureArgs(1) {
     $c->stash->{subscribers} = $subs->{subscribers};
     $c->stash->{pbx_groups} = $subs->{pbx_groups};
 
+    my $field_devs = [ $c->model('DB')->resultset('autoprov_field_devices')->search({
+        'provisioning_voip_subscriber.account_id' => $contract->first->id
+    }, {
+        join => 'provisioning_voip_subscriber'
+    })->all ];
+    $c->stash(pbx_devices => $field_devs);
+
     $c->stash(product => $product);
     $c->stash(balance => $balance);
     $c->stash(fraud => $contract->first->contract_fraud_preference);
@@ -556,14 +563,12 @@ sub pbx_device_create :Chained('base') :PathPart('pbx/device/create') :Args(0) {
     my ($self, $c) = @_;
 
     my $posted = ($c->request->method eq 'POST');
-    unless($posted) {
-        $c->stash->{autoprov_profile_rs} = $c->model('DB')->resultset('autoprov_profiles')
-            ->search({
-                'device.reseller_id' => $c->stash->{contract}->contact->reseller_id,
-            },{
-               join => { 'config' => 'device' }, 
-            });
-    }
+    $c->stash->{autoprov_profile_rs} = $c->model('DB')->resultset('autoprov_profiles')
+        ->search({
+            'device.reseller_id' => $c->stash->{contract}->contact->reseller_id,
+        },{
+            join => { 'config' => 'device' }, 
+        });
     my $form = NGCP::Panel::Form::Customer::PbxFieldDevice->new(ctx => $c);
     my $params = {};
     $params = $params->merge($c->session->{created_objects});
@@ -582,7 +587,21 @@ sub pbx_device_create :Chained('base') :PathPart('pbx/device/create') :Args(0) {
         try {
             my $schema = $c->model('DB');
             $schema->txn_do( sub {
-                
+                my $prov_subscriber = $schema->resultset('provisioning_voip_subscribers')->find({
+                    id => $form->params->{subscriber_id},
+                    account_id => $c->stash->{contract}->id,
+                });
+                unless($prov_subscriber) {
+                    NGCP::Panel::Utils::Message->error(
+                        c => $c,
+                        error => "invalid provisioning subscriber_id '".$form->params->{subscriber_id}.
+                            "' for contract id '".$c->stash->{contract}->id."'",
+                        desc  => "Invalid provisioning subscriber id detected.",
+                    );
+                }
+                else {
+                    $prov_subscriber->autoprov_field_devices->create($form->params);
+                }
             });
 
             $c->flash(messages => [{type => 'success', text => 'PBX device successfully created'}]);
@@ -602,6 +621,93 @@ sub pbx_device_create :Chained('base') :PathPart('pbx/device/create') :Args(0) {
         form => $form,
         description => 'PBX Device',
     );
+}
+
+sub pbx_device_base :Chained('base') :PathPart('pbx/device') :CaptureArgs(1) {
+    my ($self, $c, $dev_id) = @_;
+
+    my $dev = $c->model('DB')->resultset('autoprov_field_devices')->find($dev_id);
+    unless($dev) {
+        NGCP::Panel::Utils::Message->error(
+            c => $c,
+            error => "invalid voip pbx device id $dev_id",
+            desc  => "PBX device with id $dev_id does not exist.",
+        );
+        NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for_action('/customer/details', [$c->req->captures->[0]]));
+    }
+
+    # TODO: in groups, devices etc, check for reseller-id!
+
+    $c->stash(
+        pbx_device => $dev,
+    );
+}
+
+sub pbx_device_edit :Chained('pbx_device_base') :PathPart('edit') :Args(0) {
+    my ($self, $c) = @_;
+
+    my $posted = ($c->request->method eq 'POST');
+    $c->stash->{autoprov_profile_rs} = $c->model('DB')->resultset('autoprov_profiles')
+        ->search({
+            'device.reseller_id' => $c->stash->{contract}->contact->reseller_id,
+        },{
+            join => { 'config' => 'device' }, 
+        });
+    my $form = NGCP::Panel::Form::Customer::PbxFieldDevice->new(ctx => $c);
+    my $params = { $c->stash->{pbx_device}->get_inflated_columns };
+    $params = $params->merge($c->session->{created_objects});
+    $form->process(
+        posted => $posted,
+        params => $c->request->params,
+        item => $params,
+    );
+    NGCP::Panel::Utils::Navigation::check_form_buttons(
+        c => $c,
+        form => $form,
+        fields => {},
+        back_uri => $c->req->uri,
+    );
+    if($posted && $form->validated) {
+        try {
+            my $schema = $c->model('DB');
+            $schema->txn_do( sub {
+                $c->stash->{pbx_device}->update($form->params);
+            });
+
+            $c->flash(messages => [{type => 'success', text => 'PBX device successfully updated'}]);
+        } catch ($e) {
+            NGCP::Panel::Utils::Message->error(
+                c => $c,
+                error => $e,
+                desc  => "Failed to update PBX device",
+            );
+        }
+
+        NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for_action('/customer/details', $c->req->captures));
+    }
+
+    $c->stash(
+        edit_flag => 1,
+        form => $form,
+        description => 'PBX Device',
+    );
+}
+
+sub pbx_device_delete :Chained('pbx_device_base') :PathPart('delete') :Args(0) {
+    my ($self, $c) = @_;
+
+    try {
+        $c->stash->{pbx_device}->delete;
+        $c->flash(messages => [{type => 'success', text => 'PBX Device successfully deleted' }]);
+    } catch($e) {
+        NGCP::Panel::Utils::Message->error(
+            c => $c,
+            error => "failed to delete PBX device with id '".$c->stash->{pbx_device}->id."': $e",
+            desc => "Failed to delete PBX device",
+        );
+    }
+
+    NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for_action('/customer/details', $c->req->captures));
 }
 
 

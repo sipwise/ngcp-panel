@@ -11,7 +11,7 @@ has_field 'submitid' => ( type => 'Hidden' );
 sub build_render_list {[qw/submitid fields actions/]}
 sub build_form_element_class {[qw(form-horizontal)]}
 
-has_field 'profile' => (
+has_field 'profile_id' => (
     type => 'Select',
     required => 1,
     label => 'Device Profile',
@@ -34,7 +34,7 @@ has_field 'identifier' => (
     label => 'MAC Address / Identifier',
 );
 
-has_field 'subscriber' => (
+has_field 'subscriber_id' => (
     type => 'Select',
     required => 1,
     label => 'Subscriber',
@@ -64,7 +64,7 @@ has_field 'save' => (
 has_block 'fields' => (
     tag => 'div',
     class => [qw/modal-body/],
-    render_list => [qw/profile identifier subscriber/],
+    render_list => [qw/profile_id identifier subscriber_id/],
 );
 
 has_block 'actions' => (

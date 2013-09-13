@@ -254,6 +254,7 @@
                 <table class="table table-bordered table-striped table-highlight table-hover" id="subscribers_table">
                     <thead>
                         <tr>
+                            <th></th>
                             <th>SIP URI</th>
                             <th>MAC Address / Identifier</th>
                             <th>Device Profile</th>
@@ -263,14 +264,15 @@
                     <tbody>
                         [% FOR dev IN pbx_devices -%]
                         <tr class="sw_action_row">
-                            <td>[% dev.subscriber.username %]@[% dev.subscriber.domain %]</td>
-                            <td>[% dev.token %]</td>
+                            <td><img src="[% c.uri_for_action('/device/devmod_download_frontimage', [ dev.profile.config.device.id]) %]" style="height:40px"/></td>
+                            <td>[% dev.provisioning_voip_subscriber.username %]@[% dev.provisioning_voip_subscriber.domain.domain %]</td>
+                            <td>[% dev.identifier %]</td>
                             <td>[% dev.profile.name %]</td>
                             <td class="ngcp-actions-column">
                                 <div class="sw_actions">
                                     [% UNLESS c.user.readonly -%]
-                                    <a class="btn btn-secondary btn-small" href="[% c.uri_for_action("/subscriber/terminate", [subscriber.id]) %]" data-confirm="Terminate"><i class="icon-remove"></i> Terminate</a>
-                                    <a class="btn btn-primary btn-small" href="[% c.uri_for_action("/customer/pbx_group_edit", [contract.id, subscriber.voip_pbx_group.id]) %]"><i class="icon-edit"></i> Edit</a>
+                                    <a class="btn btn-secondary btn-small" href="[% c.uri_for_action("/customer/pbx_device_delete", [contract.id, dev.id])%]" data-confirm="Delete"><i class="icon-remove"></i> Delete</a>
+                                    <a class="btn btn-primary btn-small" href="[% c.uri_for_action("/customer/pbx_device_edit", [contract.id, dev.id]) %]"><i class="icon-edit"></i> Edit</a>
                                     [% END -%]
                                 </div>
                             </td>
