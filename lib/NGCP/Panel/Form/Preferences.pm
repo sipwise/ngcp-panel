@@ -19,7 +19,7 @@ has 'fields_data' => (is => 'rw');
 
 has_block 'fields' => (
     tag => 'div',
-    class => [qw/modal-body/],
+    class => [qw/modal-body ngcp-modal-preferences/],
 );
 
 sub field_list {
