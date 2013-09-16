@@ -329,6 +329,15 @@ div.ngcp-modal .control-group.error .dataTables_wrapper input[type="text"] {
 	text-decoration: line-through;
 }
 
+.ngcp-modal-preferences .control-group .control-label {
+    width: auto;
+    padding-right: 10px;
+}
+
+.ngcp-modal-preferences .control-group .controls {
+    overflow: hidden;
+}
+
 /* ---------
   Widgets
 ------------*/
