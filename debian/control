@@ -44,7 +44,7 @@ Homepage: http://sipwise.com/
 
 Package: ngcp-panel
 Architecture: all
-Depends: ngcp-panel-common (>= 1.0.15),
+Depends: ngcp-panel-common (> 1.0.14),
          ngcp-panel-nginx | ngcp-panel-webserver,
          ${misc:Depends}
 Description: Catalyst based application
@@ -71,7 +71,7 @@ Architecture: all
 Pre-Depends: nginx-common
 Depends: libfcgi-procmanager-perl,
          ngcp-panel-common (>= ${binary:Version}),
-         ngcp-templates-ce-ngcp-panel (>= 3.0.16) | ngcp-templates-pro-ngcp-panel (>=3.0.16),
+         ngcp-templates-ce-ngcp-panel (> 3.0.15) | ngcp-templates-pro-ngcp-panel (> 3.0.15),
          ${misc:Depends}
 Conflicts: ngcp-panel-apache
 Provides: ngcp-panel-webserver
@@ -81,8 +81,8 @@ Description: Catalyst based application. Using starman+nginx
 
 Package: ngcp-panel-common
 Architecture: all
-Replaces: ngcp-panel (<< 1.0.15)
-Breaks: ngcp-panel (<< 1.0.15)
+Replaces: ngcp-panel (<= 1.0.14)
+Breaks: ngcp-panel (<= 1.0.14)
 Depends: libcatalyst-actionrole-acl-perl,
          libcatalyst-modules-perl,
          libcatalyst-perl (>= 5.90040),
