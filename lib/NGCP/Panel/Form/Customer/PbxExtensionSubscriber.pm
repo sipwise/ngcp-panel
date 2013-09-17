@@ -1,6 +1,7 @@
 package NGCP::Panel::Form::Customer::PbxExtensionSubscriber;
 
 use HTML::FormHandler::Moose;
+use NGCP::Panel::Field::PosInteger;
 extends 'NGCP::Panel::Form::Customer::PbxSubscriber';
 
 has_field 'group' => (
@@ -10,7 +11,7 @@ has_field 'group' => (
 );
 
 has_field 'extension' => (
-    type => 'PosInteger',
+    type => '+NGCP::Panel::Field::PosInteger',
     element_attr => { 
         rel => ['tooltip'], 
         title => ['Extension Number, e.g. 101'] 

@@ -5,6 +5,7 @@ extends 'HTML::FormHandler';
 use Moose::Util::TypeConstraints;
 
 use HTML::FormHandler::Widget::Block::Bootstrap;
+use NGCP::Panel::Field::PosInteger;
 
 has '+widget_wrapper' => ( default => 'Bootstrap' );
 has_field 'submitid' => ( type => 'Hidden' );
@@ -23,7 +24,7 @@ has_field 'hunt_policy' => (
 );
 
 has_field 'hunt_policy_timeout' => (
-    type => 'PosInteger',
+    type => '+NGCP::Panel::Field::PosInteger',
     required => 1,
     label => 'Serial Hunting Timeout',
     default => 10,

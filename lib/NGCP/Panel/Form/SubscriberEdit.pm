@@ -9,6 +9,7 @@ use HTML::FormHandler::Widget::Block::Bootstrap;
 use NGCP::Panel::Field::Domain;
 use NGCP::Panel::Field::CustomerContract;
 use NGCP::Panel::Field::Reseller;
+use NGCP::Panel::Field::PosInteger;
 
 with 'NGCP::Panel::Render::RepeatableJs';
 
@@ -54,7 +55,7 @@ has_field 'e164' => (
 );
 
 has_field 'e164.cc' => (
-    type => 'PosInteger',
+    type => '+NGCP::Panel::Field::PosInteger',
     element_attr => { 
         class => ['ngcp_e164_cc'], 
         rel => ['tooltip'], 
@@ -65,7 +66,7 @@ has_field 'e164.cc' => (
 );
 
 has_field 'e164.ac' => (
-    type => 'PosInteger',
+    type => '+NGCP::Panel::Field::PosInteger',
     element_attr => { 
         class => ['ngcp_e164_ac'], 
         rel => ['tooltip'], 
@@ -76,7 +77,7 @@ has_field 'e164.ac' => (
 );
 
 has_field 'e164.sn' => (
-    type => 'PosInteger',
+    type => '+NGCP::Panel::Field::PosInteger',
     element_attr => { 
         class => ['ngcp_e164_sn'], 
         rel => ['tooltip'], 
@@ -112,7 +113,7 @@ has_field 'alias_number.e164' => (
 );
 
 has_field 'alias_number.e164.cc' => (
-    type => 'PosInteger',
+    type => '+NGCP::Panel::Field::PosInteger',
     element_attr => { 
         class => ['ngcp_e164_cc'], 
         rel => ['tooltip'], 
@@ -123,7 +124,7 @@ has_field 'alias_number.e164.cc' => (
 );
 
 has_field 'alias_number.e164.ac' => (
-    type => 'PosInteger',
+    type => '+NGCP::Panel::Field::PosInteger',
     element_attr => { 
         class => ['ngcp_e164_ac'], 
         rel => ['tooltip'], 
@@ -134,7 +135,7 @@ has_field 'alias_number.e164.ac' => (
 );
 
 has_field 'alias_number.e164.sn' => (
-    type => 'PosInteger',
+    type => '+NGCP::Panel::Field::PosInteger',
     element_attr => { 
         class => ['ngcp_e164_sn'], 
         rel => ['tooltip'], 

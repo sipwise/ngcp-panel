@@ -1,6 +1,7 @@
 package NGCP::Panel::Form::Customer::PbxAdminSubscriber;
 
 use HTML::FormHandler::Moose;
+use NGCP::Panel::Field::PosInteger;
 extends 'NGCP::Panel::Form::Customer::PbxSubscriber';
 
 has_field 'e164' => (
@@ -13,7 +14,7 @@ has_field 'e164' => (
 );
 
 has_field 'e164.cc' => (
-    type => 'PosInteger',
+    type => '+NGCP::Panel::Field::PosInteger',
     element_attr => { 
         class => ['ngcp_e164_cc'], 
         rel => ['tooltip'], 
@@ -24,7 +25,7 @@ has_field 'e164.cc' => (
 );
 
 has_field 'e164.ac' => (
-    type => 'PosInteger',
+    type => '+NGCP::Panel::Field::PosInteger',
     element_attr => { 
         class => ['ngcp_e164_ac'], 
         rel => ['tooltip'], 
@@ -35,7 +36,7 @@ has_field 'e164.ac' => (
 );
 
 has_field 'e164.sn' => (
-    type => 'PosInteger',
+    type => '+NGCP::Panel::Field::PosInteger',
     element_attr => { 
         class => ['ngcp_e164_sn'], 
         rel => ['tooltip'], 
