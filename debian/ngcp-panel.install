@@ -1,0 +1,3 @@
+etc/apache2/ngcp-panel	etc/apache2/sites-available/
+ngcp_panel.conf		etc/ngcp-panel/
+share/*			usr/share/ngcp-panel/
