@@ -2,6 +2,7 @@ package NGCP::Panel::Form::SubscriberCFSimple;
 use HTML::FormHandler::Moose;
 use HTML::FormHandler::Widget::Block::Bootstrap;
 use Moose::Util::TypeConstraints;
+use NGCP::Panel::Field::PosInteger;
 extends 'HTML::FormHandler';
 
 has '+widget_wrapper' => (default => 'Bootstrap');
@@ -63,7 +64,7 @@ has_field 'destination.uri.destination' => (
     label => 'URI/Number',
 );
 has_field 'destination.uri.timeout' => (
-    type => 'PosInteger',
+    type => '+NGCP::Panel::Field::PosInteger',
     label => 'for (seconds)',
     default => 300,
 );

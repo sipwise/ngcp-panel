@@ -3,6 +3,7 @@ use Sipwise::Base;
 use HTML::FormHandler::Moose;
 extends 'HTML::FormHandler';
 use Moose::Util::TypeConstraints;
+use NGCP::Panel::Field::PosInteger;
 
 use HTML::FormHandler::Widget::Block::Bootstrap;
 
@@ -28,7 +29,7 @@ has_field 'host' => (
 );
 
 has_field 'port' => (
-    type => 'PosInteger',
+    type => '+NGCP::Panel::Field::PosInteger',
     max_range => 65535,
     default => '5060',
     required => 1,
@@ -45,7 +46,7 @@ has_field 'transport' => (
 );
 
 has_field 'weight' => (
-    type => 'PosInteger',
+    type => '+NGCP::Panel::Field::PosInteger',
     required => 1,
     max_range => 25,
     default => 1,

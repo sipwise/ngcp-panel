@@ -8,7 +8,7 @@ use HTML::FormHandler::Widget::Block::Bootstrap;
 
 use NGCP::Panel::Field::Domain;
 use NGCP::Panel::Field::CustomerContract;
-use NGCP::Panel::Field::Reseller;
+use NGCP::Panel::Field::PosInteger;
 
 has '+widget_wrapper' => ( default => 'Bootstrap' );
 has_field 'submitid' => ( type => 'Hidden' );
@@ -52,7 +52,7 @@ has_field 'e164' => (
 );
 
 has_field 'e164.cc' => (
-    type => 'PosInteger',
+    type => '+NGCP::Panel::Field::PosInteger',
     element_attr => { 
         class => ['ngcp_e164_cc'], 
         rel => ['tooltip'], 
@@ -63,7 +63,7 @@ has_field 'e164.cc' => (
 );
 
 has_field 'e164.ac' => (
-    type => 'PosInteger',
+    type => '+NGCP::Panel::Field::PosInteger',
     element_attr => { 
         class => ['ngcp_e164_ac'], 
         rel => ['tooltip'], 
@@ -74,7 +74,7 @@ has_field 'e164.ac' => (
 );
 
 has_field 'e164.sn' => (
-    type => 'PosInteger',
+    type => '+NGCP::Panel::Field::PosInteger',
     element_attr => { 
         class => ['ngcp_e164_sn'], 
         rel => ['tooltip'], 
@@ -165,7 +165,18 @@ sub validate {
     my $cc = $self->field('e164.cc')->value;
     my $sn = $self->field('e164.sn')->value;
 
-    if (defined $cc && $cc ne '' && (!defined $sn || $sn eq '')) {
+    my %sub_errors = map {$_, 1} (
+        @{ $self->field('e164.cc')->errors },
+        @{ $self->field('e164.ac')->errors },
+        @{ $self->field('e164.sn')->errors } );
+    $self->field('e164')->push_errors(keys %sub_errors);
+    $self->field('e164.cc')->clear_errors;
+    $self->field('e164.ac')->clear_errors;
+    $self->field('e164.sn')->clear_errors;
+
+    if ($self->field('e164')->has_errors) {
+        #dont add more errors
+    } elsif (defined $cc && $cc ne '' && (!defined $sn || $sn eq '')) {
         my $err_msg = 'Subscriber Number required if Country Code is set';
         $self->field('e164')->add_error($err_msg);
     } elsif(defined $sn && $sn ne '' && (!defined $cc || $cc eq '')) {

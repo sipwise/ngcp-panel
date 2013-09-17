@@ -2,6 +2,7 @@ package NGCP::Panel::Form::DestinationSet;
 use HTML::FormHandler::Moose;
 use HTML::FormHandler::Widget::Block::Bootstrap;
 use Moose::Util::TypeConstraints;
+use NGCP::Panel::Field::PosInteger;
 extends 'HTML::FormHandler';
 
 with 'NGCP::Panel::Render::RepeatableJs';
@@ -79,14 +80,14 @@ has_field 'destination.uri.destination' => (
     wrapper_class => [qw/hfh-rep-field/],
 );
 has_field 'destination.uri.timeout' => (
-    type => 'PosInteger',
+    type => '+NGCP::Panel::Field::PosInteger',
     label => 'for (seconds)',
     default => 300,
     wrapper_class => [qw/hfh-rep-field/],
 );
 
 has_field 'destination.priority' => (
-    type => 'PosInteger',
+    type => '+NGCP::Panel::Field::PosInteger',
     label => 'Priority',
     wrapper_class => [qw/hfh-rep-field/],
     default => 1,

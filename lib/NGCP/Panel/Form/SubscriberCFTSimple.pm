@@ -2,10 +2,11 @@ package NGCP::Panel::Form::SubscriberCFTSimple;
 use HTML::FormHandler::Moose;
 use HTML::FormHandler::Widget::Block::Bootstrap;
 use Moose::Util::TypeConstraints;
+use NGCP::Panel::Field::PosInteger;
 extends 'NGCP::Panel::Form::SubscriberCFSimple';
 
 has_field 'ringtimeout' => (
-	type => 'PosInteger', 
+	type => '+NGCP::Panel::Field::PosInteger', 
 	required => 1,
 	label => 'after ring timeout',
     element_attr => {
