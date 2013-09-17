@@ -49,8 +49,8 @@
                         [% 
                             elements = [
                                 { value = subscriber.status, desc = 'Status'},
-                                { value = subscriber.provisioning_voip_subscriber.webusername, desc = 'CSC Username'},
-                                { value = subscriber.provisioning_voip_subscriber.webpassword, desc = 'CSC Password'},
+                                { value = subscriber.provisioning_voip_subscriber.webusername, desc = 'Web Username'},
+                                { value = subscriber.provisioning_voip_subscriber.webpassword, desc = 'Web Password'},
                                 { value = subscriber.username _ '@' _ subscriber.domain.domain, desc = 'SIP URI'},
                                 { value = subscriber.primary_number.cc _ ' ' _ subscriber.primary_number.ac _ ' ' _ subscriber.primary_number.sn, desc = 'Primary Number'},
                                 { value = subscriber.provisioning_voip_subscriber.admin ? 'yes' : 'no', desc = 'Administrative'},
