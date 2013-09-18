@@ -808,8 +808,16 @@ sub devprof_edit :Chained('devprof_base') :PathPart('edit') :Args(0) {
     );
 }
 
-sub dev_field_config :Chained('/') :PathPart('device/autoprov') :Args(1) {
+sub dev_field_config :Chained('/') :PathPart('device/autoprov') :Args() {
     my ($self, $c, $id) = @_;
+
+    unless($id) {
+        $c->response->content_type('text/plain');
+        $c->response->body("404 - device not found");
+        $c->response->status(404);
+        return;
+    }
+    $id =~ s/^([^\=]+)\=0$/$1/;
 
     my $dev = $c->model('DB')->resultset('autoprov_field_devices')->find({
         identifier => $id

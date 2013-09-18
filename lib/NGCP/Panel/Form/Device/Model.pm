@@ -38,6 +38,31 @@ has_field 'mac_image' => (
     max_size => '67108864', # 64MB
 );
 
+has_field 'sync_uri' => (
+    type => 'Text',
+    required => 0,
+    label => 'Bootstrap Sync URI',
+    default => 'http://[% client.ip %]/admin/resync',
+);
+
+has_field 'sync_method' => (
+    type => 'Select',
+    required => 0,
+    label => 'Bootstrap Sync HTTP Method',
+    options => [
+        { label => 'GET', value => 'GET' },
+        { label => 'POST', value => 'POST' },
+    ],
+    default => 'GET',
+);
+
+has_field 'sync_params' => (
+    type => 'Text',
+    required => 0,
+    label => 'Bootstrap Sync Parameters',
+    default => '[% server.uri %]/$MA',
+);
+
 has_field 'save' => (
     type => 'Submit',
     value => 'Save',
@@ -48,7 +73,7 @@ has_field 'save' => (
 has_block 'fields' => (
     tag => 'div',
     class => [qw/modal-body/],
-    render_list => [qw/vendor model front_image mac_image/],
+    render_list => [qw/vendor model front_image mac_image sync_uri sync_method sync_params/],
 );
 
 has_block 'actions' => (

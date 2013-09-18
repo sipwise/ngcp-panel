@@ -273,6 +273,7 @@
                                     [% UNLESS c.user.readonly -%]
                                     <a class="btn btn-secondary btn-small" href="[% c.uri_for_action("/customer/pbx_device_delete", [contract.id, dev.id])%]" data-confirm="Delete"><i class="icon-remove"></i> Delete</a>
                                     <a class="btn btn-primary btn-small" href="[% c.uri_for_action("/customer/pbx_device_edit", [contract.id, dev.id]) %]"><i class="icon-edit"></i> Edit</a>
+                                    <a class="btn btn-primary btn-small" href="[% c.uri_for_action("/customer/pbx_device_sync", [contract.id, dev.id]) %]"><i class="icon-edit"></i> Sync Device</a>
                                     [% END -%]
                                 </div>
                             </td>
@@ -426,6 +427,82 @@
     modal_footer();
     modal_script(m.close_target = close_target);
 -%]
+[% ELSIF devsync_flag == 1 -%]
+[%
+    PROCESS "helpers/modal.tt";
+    modal_header(m.create_flag=0,
+                 m.name = "Sync Device");
+    form.render;
+    modal_footer();
+    modal_script(m.close_target = close_target);
+-%]
+    <script>
+        $('input#sync').click(function(e) {
+            var timer; var loaded = 0;
+            var ip = $('form#devsyncform input#ip').val();
+            $('form#devsyncform .form_messages').empty();
+
+            // Add the iframe with a unique name
+            var iframe = document.createElement("iframe");
+            var uniqueString = "spa_autoconf_post";
+            document.body.appendChild(iframe);
+            iframe.style.display = "none";
+            iframe.contentWindow.name = uniqueString;
+            iframe.onload = function(e) {
+                $('input#ip').removeAttr("disabled");
+                clearTimeout(timer);
+                if(!loaded) {
+                    loaded = 1;
+                    $('form#devsyncform .form_messages').prepend('<div class="alert alert-success" style="margin:10px">Successfully pushed provisioning settings to device</div>');
+                } else {
+                    console.log("iframe loaded after timer");
+                }
+            }
+
+            // construct a form with hidden inputs, targeting the iframe
+            if(!ip.length) {
+                return 0;
+            }
+            var autoprov_uri = "[% autoprov_uri %]";
+            console.log("before uri: " + autoprov_uri);
+            autoprov_uri = autoprov_uri.replace('__NGCP_CLIENT_IP__', ip);
+            console.log("after uri: " + autoprov_uri);
+            $('form#devsyncform').attr('target', uniqueString);
+            $('form#devsyncform').attr('action', autoprov_uri);
+            $('form#devsyncform').attr('method', "[% autoprov_method %]");
+            console.log("method=[% autoprov_method %], uri=" + autoprov_uri);
+
+            [% FOR p IN autoprov_params -%]
+                var input = document.createElement("input");
+                input.type = "hidden";
+                input.name = "[% p.key %]";
+                [%# IF p.value.defined -%]
+                    input.value = "[% p.value %]";
+                [%# END -%]
+                $('form#devsyncform').append(input);
+            [% END -%]
+
+            timer = setTimeout(function() {
+                console.log("timeout hit");
+                $('input#ip').removeAttr("disabled");
+                if(loaded) {
+                    console.log("iframe already loaded, we're fine?");
+                } else {
+                    $('form#devsyncform .form_messages').prepend('<div class="alert alert-error" style="margin:10px">Failed to push provisioning settings to device. Is the IP Address reachable from your browser?</div>');
+                }
+                loaded = 1;
+                // TODO: get iframe by id
+                var iframes = document.getElementsByTagName('iframe');
+                for (var i = 0; i < iframes.length; i++) {
+                    iframes[i].parentNode.removeChild(iframes[i]);
+                }
+            }, 5000);
+
+            $('form#devsyncform').submit(function() {
+                $('input#ip').attr("disabled", "disabled");
+            });
+        });
+    </script>
 [% END -%]
 
 [% # vim: set tabstop=4 syntax=html expandtab: -%]

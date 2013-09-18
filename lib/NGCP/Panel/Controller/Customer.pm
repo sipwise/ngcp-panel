@@ -12,10 +12,12 @@ use NGCP::Panel::Form::Customer::PbxExtensionSubscriber;
 use NGCP::Panel::Form::Customer::PbxGroupBase;
 use NGCP::Panel::Form::Customer::PbxGroup;
 use NGCP::Panel::Form::Customer::PbxFieldDevice;
+use NGCP::Panel::Form::Customer::PbxFieldDeviceSync;
 use NGCP::Panel::Utils::Message;
 use NGCP::Panel::Utils::Navigation;
 use NGCP::Panel::Utils::DateTime;
 use NGCP::Panel::Utils::Subscriber;
+use Template;
 
 =head1 NAME
 
@@ -710,6 +712,63 @@ sub pbx_device_delete :Chained('pbx_device_base') :PathPart('delete') :Args(0) {
     NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for_action('/customer/details', $c->req->captures));
 }
 
+sub pbx_device_sync :Chained('pbx_device_base') :PathPart('sync') :Args(0) {
+    my ($self, $c) = @_;
+
+    my $form = NGCP::Panel::Form::Customer::PbxFieldDeviceSync->new;
+    my $posted = ($c->req->method eq 'POST');
+
+    # TODO: if registered, we could try taking the ip from location?
+    my $params = {};
+
+    $form->process(
+        posted => $posted,
+        params => $c->req->params,
+        item => $params,
+    );
+
+    if($posted && $form->validated) {
+        NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for_action('/customer/details', $c->req->captures));
+    }
+    my $dev = $c->stash->{pbx_device};
+
+    my $t = Template->new;
+    my $conf = {
+        client => {
+            ip => '__NGCP_CLIENT_IP__',
+            
+        },
+        server => {
+            uri => $c->uri_for_action('/device/dev_field_config'),
+        },
+    };
+    my ($sync_uri, $real_sync_uri) = ("", "");
+    $sync_uri = $dev->profile->config->device->sync_uri;
+    $t->process(\$sync_uri, $conf, \$real_sync_uri);
+
+    my ($sync_params_field, $real_sync_params) = ("", "");
+    $sync_params_field = $dev->profile->config->device->sync_params;
+    my @sync_params = ();
+    if($sync_params_field) {
+        $t->process(\$sync_params_field, $conf, \$real_sync_params);
+        foreach my $p(split /\s*\,\s*/, $real_sync_params) {
+            my ($k, $v) = split /=/, $p;
+            if(defined $k && defined $v) {
+                push @sync_params, { key => $k, value => $v };
+            } elsif(defined $k) {
+                push @sync_params, { key => $k, value => 0 };
+            }
+        }
+    }
+
+    $c->stash(
+        form => $form,
+        devsync_flag => 1,
+        autoprov_uri => $real_sync_uri,
+        autoprov_method => $dev->profile->config->device->sync_method,
+        autoprov_params => \@sync_params,
+    );
+}
 
 =head1 AUTHOR
 
