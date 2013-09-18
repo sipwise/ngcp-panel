@@ -602,6 +602,7 @@ sub pbx_device_create :Chained('base') :PathPart('pbx/device/create') :Args(0) {
                     );
                 }
                 else {
+                    $form->params->{identifier} = lc $form->params->{identifier};
                     $prov_subscriber->autoprov_field_devices->create($form->params);
                 }
             });
@@ -673,6 +674,7 @@ sub pbx_device_edit :Chained('pbx_device_base') :PathPart('edit') :Args(0) {
         try {
             my $schema = $c->model('DB');
             $schema->txn_do( sub {
+                $form->params->{identifier} = lc $form->params->{identifier};
                 $c->stash->{pbx_device}->update($form->params);
             });
 

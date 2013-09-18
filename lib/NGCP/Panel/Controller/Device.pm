@@ -818,6 +818,7 @@ sub dev_field_config :Chained('/') :PathPart('device/autoprov') :Args() {
         return;
     }
     $id =~ s/^([^\=]+)\=0$/$1/;
+    $id = lc $id;
 
     my $dev = $c->model('DB')->resultset('autoprov_field_devices')->find({
         identifier => $id
@@ -830,12 +831,22 @@ sub dev_field_config :Chained('/') :PathPart('device/autoprov') :Args() {
     }
 
     my $sub = $dev->provisioning_voip_subscriber;
+    my $display_name = NGCP::Panel::Utils::Preferences::get_usr_preference_rs(
+        c => $c,
+        prov_subscriber => $sub,
+        attribute => 'display_name',
+    );
+    if($display_name->first) {
+        $display_name = $display_name->first->value;
+    } else {
+        $display_name = $sub->username;
+    };
     my $vars = {
         sip => {
             username => $sub->username,
             password => $sub->password,
             domain => $sub->domain->domain,
-            # displayname => $disp_pref->value,
+            displayname => $display_name,
         },
     };
 
