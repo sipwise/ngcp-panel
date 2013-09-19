@@ -27,12 +27,8 @@ sub index :Path Form {
     my ( $self, $c, $realm ) = @_;
 
     $c->log->debug("*** Login::index");
-=pod
     $realm = 'subscriber' 
         unless($realm and ($realm eq 'admin' or $realm eq 'reseller'));
-=cut
-    $realm = 'admin' 
-        unless($realm and ($realm eq 'reseller'));
 
     my $form = NGCP::Panel::Form::Login->new;
     $form->process(
@@ -74,6 +70,21 @@ sub index :Path Form {
                                 login => $user,
                                 is_active => 1, 
                                 is_superuser => 0,
+                            ],
+                        }],
+                    }
+                }, 
+                $realm);
+        } elsif($realm eq 'subscriber') {
+            # TODO: check for lock status?
+            $res = $c->authenticate(
+                {
+                    webusername => $user, 
+                    webpassword => $pass,
+                    'dbix_class' => {
+                        searchargs => [{
+                            -and => [ 
+                                webusername => $user,
                             ],
                         }],
                     }

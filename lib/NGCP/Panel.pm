@@ -83,18 +83,6 @@ __PACKAGE__->config(
     },
 
     'Plugin::Authentication' => {
-        default => {
-            credential => {
-                class => 'Password',
-                password_field => 'password',
-                password_type => 'clear'
-            },
-            store => {
-                class => 'Minimal',
-                users => {
-                }
-            }
-        },
         reseller => {
             credential => {
                 class => 'Password',
@@ -119,6 +107,19 @@ __PACKAGE__->config(
             store => {
                 class => 'DBIx::Class',
                 user_model => 'DB::admins',
+                id_field => 'id',
+                store_user_class => 'NGCP::Panel::AuthenticationStore::RoleFromRealm',
+            }
+        },
+        subscriber => {
+            credential => {
+                class => 'Password',
+                password_field => 'webpassword',
+                password_type => 'clear',
+            },
+            store => {
+                class => 'DBIx::Class',
+                user_model => 'DB::provisioning_voip_subscribers',
                 id_field => 'id',
                 store_user_class => 'NGCP::Panel::AuthenticationStore::RoleFromRealm',
             }

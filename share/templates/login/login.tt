@@ -9,7 +9,7 @@
     <div class="login-extra">
         Go to 
         [% 
-            realms = ['admin', 'reseller'];
+            realms = ['subscriber', 'admin', 'reseller'];
             links = [];
             FOREACH r IN realms;
                 UNLESS realm == r;
