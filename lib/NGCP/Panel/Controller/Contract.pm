@@ -186,6 +186,7 @@ sub edit :Chained('base') :PathPart('edit') :Args(0) {
                     $contract->billing_mappings->create({
                         start_date => NGCP::Panel::Utils::DateTime::current_local,
                         billing_profile_id => $form->values->{billing_profile}{id},
+                        product_id => $billing_mapping->product_id,
                     });
                 }
                 my $old_status = $contract->status;
