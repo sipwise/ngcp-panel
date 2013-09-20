@@ -169,7 +169,9 @@ sub validate {
         @{ $self->field('e164.cc')->errors },
         @{ $self->field('e164.ac')->errors },
         @{ $self->field('e164.sn')->errors } );
-    $self->field('e164')->push_errors(keys %sub_errors);
+    for my $sub_error( keys %sub_errors ) {
+        $self->field('e164')->add_error($sub_error);
+    }
     $self->field('e164.cc')->clear_errors;
     $self->field('e164.ac')->clear_errors;
     $self->field('e164.sn')->clear_errors;
@@ -183,6 +185,8 @@ sub validate {
         my $err_msg = 'Country Code required if Subscriber Number is set';
         $self->field('e164')->add_error($err_msg);
     }
+
+    return;
 }
 
 1;
