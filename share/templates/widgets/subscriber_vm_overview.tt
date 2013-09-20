@@ -17,7 +17,7 @@
                     <li>
                         <div class="row-fluid">
                         <span class="span1">
-                            <a href="#" alt="listen">
+                            <a href="[% c.uri_for_action('/subscriber/play_voicemail', [subscriber.id, vmail.id]) %]" alt="listen">
                                 <i class="icon-volume-up" style="color:green"></i>
                             </a>
                         </span>
@@ -31,7 +31,7 @@
             </ul>
         </div>
         <div class="plan-actions">
-            <a href="[% c.uri_for('/subscriber') %]" class="btn">View Call List</a>
+            <a href="[% c.uri_for('/subscriber') %]" class="btn">View Voicebox Messages</a>
         </div>
     </div>
 </div>

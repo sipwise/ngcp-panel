@@ -83,6 +83,18 @@ __PACKAGE__->config(
     },
 
     'Plugin::Authentication' => {
+        default => {
+            credential => {
+                class => 'Password',
+                password_field => 'password',
+                password_type => 'clear'
+            },
+            store => {
+                class => 'Minimal',
+                users => {
+                }
+            }
+        },
         reseller => {
             credential => {
                 class => 'Password',

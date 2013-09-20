@@ -2130,6 +2130,7 @@ sub ajax_voicemails :Chained('master') :PathPart('voicemails/ajax') :Args(0) {
 
     my $vm_rs = $c->model('DB')->resultset('voicemail_spool')->search({
         mailboxuser => $c->stash->{subscriber}->uuid,
+        msgnum => { '>=' => 0 },
     });
     NGCP::Panel::Utils::Datatables::process($c, $vm_rs, $c->stash->{vm_dt_columns});
 

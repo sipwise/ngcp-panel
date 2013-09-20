@@ -22,14 +22,19 @@ has 'priority' => (
 around handle => sub {
     my ($foo, $self, $c) = @_;
 
+    my $sub = $c->model('DB')->resultset('voip_subscribers')->find({
+        uuid => $c->user->uuid,
+    });
     my $rs = $c->model('DB')->resultset('voicemail_spool')->search({
         mailboxuser => $c->user->uuid,
+        msgnum => { '>=' => 0 },
         dir => { -like => '%/INBOX' },
     }, {
         order_by => { -desc => 'me.origtime' },
     })->slice(0, 9);
 
     $c->stash(
+        subscriber => $sub,
         vmails => $rs,
     );
     return;
