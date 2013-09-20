@@ -76,6 +76,11 @@ sub _test_preconditions {
             'ngcp_panel.psgi';
         } stdout => $debug_fh;
     };
+
+    if ($opt{'schema-base-dir'}) {
+        require blib;
+        blib->import($opt{'schema-base-dir'})
+    }
     $self->wait_socket($uri->host, $uri->port);
     $ENV{CATALYST_SERVER} = $opt{server};
 }
