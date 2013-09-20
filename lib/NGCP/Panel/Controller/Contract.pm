@@ -388,6 +388,31 @@ sub customer_ajax :Chained('customer_list') :PathPart('ajax') :Args(0) {
     $c->detach( $c->view("JSON") );
 }
 
+sub customer_ajax_reseller_filter :Chained('customer_list') :PathPart('ajax/reseller') :Args(1) {
+    my ($self, $c, $reseller_id) = @_;
+
+    unless($reseller_id && $reseller_id->is_int) {
+        $c->flash(messages => [{type => 'error', text => 'Invalid reseller id detected'}]);
+        $c->response->redirect($c->uri_for());
+        return;
+    }
+
+    my $rs = $c->stash->{customer_rs}->search_rs({
+        'contact.reseller_id' => $reseller_id,
+    },{
+        join => 'contact',
+    });
+    my $reseller_customer_columns = NGCP::Panel::Utils::Datatables::set_columns($c, [
+        { name => "id", search => 1, title => "#" },
+        { name => "external_id", search => 1, title => "External #" },
+        { name => "billing_mappings.product.name", search => 1, title => "Product" },
+        { name => "contact.email", search => 1, title => "Contact Email" },
+        { name => "status", search => 1, title => "Status" },
+    ]);
+    NGCP::Panel::Utils::Datatables::process($c, $rs,  $reseller_customer_columns);
+    $c->detach( $c->view("JSON") );
+}
+
 sub customer_create :Chained('customer_list') :PathPart('create') :Args(0) {
     my ($self, $c) = @_;
 
