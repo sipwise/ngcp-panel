@@ -77,16 +77,23 @@ sub index :Path Form {
                 $realm);
         } elsif($realm eq 'subscriber') {
             # TODO: check for lock status?
+            my ($u, $d) = split /\@/, $user;
+            unless($d) {
+                $d = $c->req->uri->host;
+            }
+            my $authrs = $c->model('DB')->resultset('provisioning_voip_subscribers')->search({
+                webusername => $u,
+                webpassword => $pass,
+                'domain.domain' => $d,
+            }, {
+                join => 'domain',
+            });
             $res = $c->authenticate(
                 {
-                    webusername => $user, 
+                    webusername => $u, 
                     webpassword => $pass,
                     'dbix_class' => {
-                        searchargs => [{
-                            -and => [ 
-                                webusername => $user,
-                            ],
-                        }],
+                        resultset => $authrs
                     }
                 }, 
                 $realm);

@@ -1,0 +1,51 @@
+[% USE Math -%]
+<div class="plan-container">
+    <div class="plan">
+        <div class="plan-header">
+            <div class="plan-title">Call List</div>
+            <div class="plan-price">
+                <span>[% calls.count %]</span>
+                <span class="term">Recent Calls</span>
+            </div>
+        </div>
+        <div class="plan-features">
+            <ul>
+                [% IF calls.count == 0 -%]
+                <li>No calls yet</li>
+                [% ELSE -%]
+                    [% FOR call IN calls.all -%]
+                    <li>
+                        <div class="row-fluid">
+                        [% IF call.source_user_id == c.user.uuid -%]
+                            <span class="span1">
+                            [% IF call.call_status == "ok" -%]
+                                <i class="icon-circle-arrow-right" style="color:green"></i>
+                            [% ELSE -%]
+                                <i class="icon-circle-arrow-up" style="color:red"></i>
+                            [% END -%]
+                            </span>
+                            <span class="span4">[% call.destination_user_in %]</span>
+                        [% ELSE -%]
+                            <span class="span1">
+                            [% IF call.call_status == "ok" -%]
+                                <i class="icon-circle-arrow-left" style="color:green"></i>
+                            [% ELSE -%]
+                                <i class="icon-circle-arrow-down" style="color:red"></i>
+                            [% END -%]
+                            </span>
+                            <span class="span4">[% call.clir ? "anonymous" : call.source_cli %]</span>
+                        [% END -%]
+                        <span class="span3">[% call.start_time -%]</span>
+                        <span class="span1">[% Math.int(call.duration) -%]s</span>
+                        </div>
+                    </li>
+                    [% END -%]
+                [% END -%]
+            </ul>
+        </div>
+        <div class="plan-actions">
+            <a href="[% c.uri_for('/subscriber') %]" class="btn">View Call List</a>
+        </div>
+    </div>
+</div>
+[% # vim: set tabstop=4 syntax=html expandtab: -%]

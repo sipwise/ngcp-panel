@@ -9,7 +9,14 @@
 
             <div id="top-nav">
                 <ul class="pull-right">
-                    <li><i class="icon-user"></i> Logged in as [% c.user.login %]</li>
+                    <li>
+                      <i class="icon-user"></i> Logged in as 
+                      [% IF c.user_in_realm('admin') || c.user_in_realm('reseller') -%]
+                        [% c.user.login %]
+                      [% ELSE -%]
+                        [% c.user.webusername %]@[% c.user.domain.domain %]
+                      [% END -%]
+                    </li>
                     <li><a href="[% c.uri_for('/logout') %]">Logout</a></li>
                 </ul>
             </div> <!-- /#top-nav -->
