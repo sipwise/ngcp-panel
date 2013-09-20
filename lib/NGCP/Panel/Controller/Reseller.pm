@@ -185,24 +185,6 @@ sub reseller_admin :Chained('base') :PathPart('admins/ajax') :Args(0) {
     return;
 }
 
-sub reseller_customers :Chained('base') :PathPart('customers/ajax') :Args(0) {
-    my ($self, $c) = @_;
-
-    my $rs = $c->model('DB')->resultset('contracts')->search({
-        'contact.reseller_id' => $c->stash->{reseller}->first->id,
-        'me.status' => { '!=' => 'terminated' },
-        '-or' => [
-            'product.class' => 'sipaccount',
-            'product.class' => 'pbxaccount',
-        ],
-    }, {
-        join => [ {'billing_mappings' => 'product' }, 'contact'],
-    });
-    NGCP::Panel::Utils::Datatables::process($c, $rs, $c->stash->{customer_dt_columns}); 
-    $c->detach($c->view('JSON'));
-    return;
-}
-
 sub edit :Chained('base') :PathPart('edit') :Args(0) {
     my ($self, $c) = @_;
 
