@@ -15,6 +15,11 @@ case "$1" in
   ;;
 esac
 
+# remove default debian site
+if [ -e /etc/nginx/sites-enabled/default ]; then
+    rm /etc/nginx/sites-enabled/default
+fi
+
 # reload nginx
 if [ -x /etc/init.d/nginx ]; then
   if [ -x "`which invoke-rc.d 2>/dev/null`" ]; then
