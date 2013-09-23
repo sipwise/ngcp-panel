@@ -200,6 +200,25 @@ sub ajax :Chained('list_contact') :PathPart('ajax') :Args(0) {
     $c->detach( $c->view("JSON") );
 }
 
+sub ajax_noreseller :Chained('list_contact') :PathPart('ajax_noreseller') :Args(0) {
+    my ($self, $c) = @_;
+
+    NGCP::Panel::Utils::Datatables::process(
+        $c,
+        $c->stash->{contacts}->search_rs({
+            reseller_id => undef,
+        }, {prefetch=>"contracts"}),
+        $c->stash->{contact_dt_columns},
+        sub {
+            my ($result) = @_;
+            my %data = (deletable => ($result->contracts->all) ? 0 : 1);
+            return %data
+        },
+    );
+
+    $c->detach( $c->view("JSON") );
+}
+
 __PACKAGE__->meta->make_immutable;
 
 1;

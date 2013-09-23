@@ -204,7 +204,9 @@ sub edit :Chained('base') :PathPart('edit') :Args(0) {
         item => $params,
     );
     NGCP::Panel::Utils::Navigation::check_form_buttons(
-        c => $c, form => $form, fields => [qw/contract.create/], 
+        c => $c,
+        form => $form,
+        fields => {'contract.create' => $c->uri_for('/contract/reseller/create') },
         back_uri => $c->req->uri,
     );
 
