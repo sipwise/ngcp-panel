@@ -1,6 +1,9 @@
 [% site_config.title = page_title_plural -%]
 [%
     helper.name = page_title;
+    IF edit_flag;
+        helper.name = page_title _ " #" _ contract.id;
+    END;
     helper.data = contracts;
     helper.messages = messages;
     helper.dt_columns = contract_dt_columns;
