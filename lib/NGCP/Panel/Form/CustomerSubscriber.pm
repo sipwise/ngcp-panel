@@ -8,6 +8,7 @@ use HTML::FormHandler::Widget::Block::Bootstrap;
 
 use NGCP::Panel::Field::Domain;
 use NGCP::Panel::Field::PosInteger;
+use NGCP::Panel::Field::Identifier;
 
 has '+widget_wrapper' => ( default => 'Bootstrap' );
 has_field 'submitid' => ( type => 'Hidden' );
@@ -77,7 +78,7 @@ has_field 'e164.sn' => (
 );
 
 has_field 'username' => (
-    type => 'Text',
+    type => '+NGCP::Panel::Field::Identifier',
     label => 'SIP Username',
     required => 1,
     noupdate => 1,
