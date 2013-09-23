@@ -94,7 +94,8 @@ sub create :Chained('contract_list') :PathPart('create') :Args(0) {
                 delete $c->session->{created_objects}->{contact};
                 delete $c->session->{created_objects}->{billing_profile};
                 $c->session->{created_objects}->{contract} = { id => $contract->id };
-                $c->flash(messages => [{type => 'success', text => 'Contract successfully created!'}]);
+                my $contract_id = $contract->id;
+                $c->flash(messages => [{type => 'success', text => "Contract #$contract_id successfully created!"}]);
             });
         } catch($e) {
             NGCP::Panel::Utils::Message->error(
@@ -331,7 +332,8 @@ sub peering_create :Chained('peering_list') :PathPart('create') :Args(0) {
                 $c->session->{created_objects}->{contract} = { id => $contract->id };
                 delete $c->session->{created_objects}->{contact};
                 delete $c->session->{created_objects}->{billing_profile};
-                $c->flash(messages => [{type => 'success', text => 'Contract successfully created'}]);
+                my $contract_id = $contract->id;
+                $c->flash(messages => [{type => 'success', text => "Contract #$contract_id successfully created"}]);
             });
         } catch($e) {
             NGCP::Panel::Utils::Message->error(
@@ -455,7 +457,8 @@ sub customer_create :Chained('customer_list') :PathPart('create') :Args(0) {
                 $c->session->{created_objects}->{contract} = { id => $contract->id };
                 delete $c->session->{created_objects}->{contact};
                 delete $c->session->{created_objects}->{billing_profile};
-                $c->flash(messages => [{type => 'success', text => 'Customer successfully created'}]);
+                my $contract_id = $contract->id;
+                $c->flash(messages => [{type => 'success', text => "Customer #$contract_id successfully created"}]);
             });
         } catch($e) {
             NGCP::Panel::Utils::Message->error(
