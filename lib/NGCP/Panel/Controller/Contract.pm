@@ -164,7 +164,11 @@ sub base :Chained('contract_list') :PathPart('') :CaptureArgs(1) {
     }
 
     my $billing_mapping = $res->billing_mappings->find($res->get_column('bmid'));
-    if (! defined ($billing_mapping->product) ) {
+    if (! defined ($billing_mapping->product) || (
+        $billing_mapping->product->handle ne 'VOIP_RESELLER' &&
+        $billing_mapping->product->handle ne 'SIP_PEERING' &&
+        $billing_mapping->product->handle ne 'PSTN_PEERING')) {
+
         $c->stash(page_title => "Customer",
                   page_title_plural => "Customers");
     }
