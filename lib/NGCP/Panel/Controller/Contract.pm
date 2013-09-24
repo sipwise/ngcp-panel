@@ -531,6 +531,29 @@ sub reseller_ajax :Chained('reseller_list') :PathPart('ajax') :Args(0) {
     $c->detach( $c->view("JSON") );
 }
 
+sub reseller_ajax_contract_filter :Chained('reseller_list') :PathPart('ajax/contract') :Args(1) {
+    my ($self, $c, $contract_id) = @_;
+
+    unless($contract_id && $contract_id->is_int) {
+        $c->flash(messages => [{type => 'error', text => 'Invalid contract id detected'}]);
+        $c->response->redirect($c->uri_for());
+        return;
+    }
+
+    my $rs = $c->stash->{reseller_rs}->search_rs({
+        'me.id' => $contract_id,
+    });
+    my $contract_columns = NGCP::Panel::Utils::Datatables::set_columns($c, [
+        { name => "id", search => 1, title => "#" },
+        { name => "external_id", search => 1, title => "External #" },
+        { name => "contact.email", search => 1, title => "Contact Email" },
+        { name => "billing_mappings.billing_profile.name", search => 1, title => "Billing Profile" },
+        { name => "status", search => 1, title => "Status" },
+    ]);
+    NGCP::Panel::Utils::Datatables::process($c, $rs,  $contract_columns);
+    $c->detach( $c->view("JSON") );
+}
+
 sub reseller_create :Chained('reseller_list') :PathPart('create') :Args(0) {
     my ($self, $c) = @_;
 

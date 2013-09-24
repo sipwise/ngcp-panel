@@ -69,7 +69,7 @@
     helper.form_object = form;
     helper.paginate = 'false';
     helper.filter = 'false';
-    helper.ajax_uri = c.uri_for_action('/reseller/reseller_contracts', c.req.captures );
+    helper.ajax_uri = c.uri_for_action('/contract/reseller_ajax_contract_filter', [reseller.first.contract_id] );
     helper.base_uri = c.uri_for_action('/contract/root');
 
     UNLESS c.user.read_only;

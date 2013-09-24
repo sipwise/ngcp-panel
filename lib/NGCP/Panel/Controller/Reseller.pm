@@ -157,14 +157,6 @@ sub reseller_contacts :Chained('base') :PathPart('contacts/ajax') :Args(0) {
     return;
 }
 
-sub reseller_contracts :Chained('base') :PathPart('contracts/ajax') :Args(0) {
-    my ($self, $c) = @_;
-    my $rs = $c->stash->{reseller}->first->search_related_rs('contract');
-    NGCP::Panel::Utils::Datatables::process($c, $rs, $c->stash->{contract_dt_columns});
-    $c->detach($c->view('JSON'));
-    return;
-}
-
 sub reseller_single :Chained('base') :PathPart('single/ajax') :Args(0) {
     my ($self, $c) = @_;
 
