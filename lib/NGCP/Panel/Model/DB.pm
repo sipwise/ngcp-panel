@@ -17,6 +17,11 @@ sub setup {
         use_module('NGCP::Schema::Config')->instance
             ->config_file($config_location);
     }
+    if($ENV{NGCP_PANEL_CUSTOM_DSN}) {
+        use_module('NGCP::Schema::Config')->instance->as_hash;
+        use_module('NGCP::Schema::Config')->instance->as_hash
+            ->{ngcp_connect_info} = {dsn => $ENV{NGCP_PANEL_CUSTOM_DSN}};
+    }
 }
 
 __PACKAGE__->config(

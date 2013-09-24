@@ -7,7 +7,7 @@ use TryCatch;
 use MooseX::Method::Signatures;
 extends 'Module::Build';
 
-our ($plackup, $webdriver, @cover_opt);
+our ($plackup, $webdriver, @cover_opt, $mysqld);
 
 method wait_socket($host, $port) {
     require IO::Socket::IP;
@@ -40,7 +40,7 @@ sub _test_preconditions {
 
     require Getopt::Long;
     my %opt = (server => 'http://localhost:5000');
-    Getopt::Long::GetOptions(\%opt, 'webdriver=s', 'server:s', 'help|?', 'man', 'wd-server=s', 'schema-base-dir=s')
+    Getopt::Long::GetOptions(\%opt, 'webdriver=s', 'server:s', 'help|?', 'man', 'wd-server=s', 'schema-base-dir=s', 'mysqld-port=s', 'mysqld-dir=s')
         or die 'could not process command-line options';
 
     require Pod::Usage;
@@ -52,6 +52,22 @@ sub _test_preconditions {
         my ($wd_host, $wd_port) = $opt{'wd-server'} =~ m{([^/:]+):([0-9]+)};
         $ENV{TWD_HOST} = $wd_host;
         $ENV{TWD_PORT} = $wd_port;
+    }
+
+    if ($opt{'schema-base-dir'}) {
+        require blib;
+        blib->import($opt{'schema-base-dir'})
+    }
+
+    if ($opt{'mysqld-port'} && $opt{'mysqld-dir'}) {
+        require Test::mysqld;
+        $mysqld = Test::mysqld->new(
+            my_cnf => {
+                'port' => $opt{'mysqld-port'},
+            },
+            copy_data_from => $opt{'mysqld-dir'},
+        ) or die "couldnt start mysqld";
+        $ENV{NGCP_PANEL_CUSTOM_DSN} = $mysqld->dsn;
     }
 
     unless ($opt{webdriver} eq "external") {
@@ -77,10 +93,6 @@ sub _test_preconditions {
         } stdout => $debug_fh;
     };
 
-    if ($opt{'schema-base-dir'}) {
-        require blib;
-        blib->import($opt{'schema-base-dir'})
-    }
     $self->wait_socket($uri->host, $uri->port);
     $ENV{CATALYST_SERVER} = $opt{server};
 }
