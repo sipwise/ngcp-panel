@@ -51,7 +51,8 @@ Catalyst Controller.
 
 =cut
 
-sub auto :Does(ACL) :ACLDetachTo('/denied_page') :AllowedRole(admin) :AllowedRole(reseller) {
+#sub auto :Does(ACL) :ACLDetachTo('/denied_page') {
+sub auto {
     my ($self, $c) = @_;
     $c->log->debug(__PACKAGE__ . '::auto');
     NGCP::Panel::Utils::Navigation::check_redirect_chain(c => $c);
@@ -89,12 +90,12 @@ sub sub_list :Chained('/') :PathPart('subscriber') :CaptureArgs(0) {
     ]);
 }
 
-sub root :Chained('sub_list') :PathPart('') :Args(0) {
+sub root :Chained('sub_list') :PathPart('') :Args(0) :Does(ACL) :ACLDetachTo('/denied_page') :AllowedRole(admin) :AllowedRole(reseller) {
     my ($self, $c) = @_;
 }
 
 
-sub create_list :Chained('sub_list') :PathPart('create') :Args(0) {
+sub create_list :Chained('sub_list') :PathPart('create') :Args(0) :Does(ACL) :ACLDetachTo('/denied_page') :AllowedRole(admin) :AllowedRole(reseller) {
     my ($self, $c) = @_;
 
     my $posted = ($c->request->method eq 'POST');
@@ -238,7 +239,7 @@ sub create_list :Chained('sub_list') :PathPart('create') :Args(0) {
     $c->stash(form => $form)
 }
 
-sub base :Chained('/subscriber/sub_list') :PathPart('') :CaptureArgs(1) {
+sub base :Chained('sub_list') :PathPart('') :CaptureArgs(1) {
     my ($self, $c, $subscriber_id) = @_;
 
     unless($subscriber_id && $subscriber_id->is_integer) {
@@ -261,7 +262,7 @@ sub base :Chained('/subscriber/sub_list') :PathPart('') :CaptureArgs(1) {
     ]);
 }
 
-sub ajax :Chained('sub_list') :PathPart('ajax') :Args(0) {
+sub ajax :Chained('sub_list') :PathPart('ajax') :Args(0) :Does(ACL) :ACLDetachTo('/denied_page') :AllowedRole(admin) :AllowedRole(reseller) {
     my ($self, $c) = @_;
 
     my $resultset = $c->stash->{subscribers_rs};
@@ -269,7 +270,7 @@ sub ajax :Chained('sub_list') :PathPart('ajax') :Args(0) {
     $c->detach( $c->view("JSON") );
 }
 
-sub terminate :Chained('base') :PathPart('terminate') :Args(0) {
+sub terminate :Chained('base') :PathPart('terminate') :Args(0) :Does(ACL) :ACLDetachTo('/denied_page') :AllowedRole(admin) :AllowedRole(reseller) {
     my ($self, $c) = @_;
 
     my $subscriber = $c->stash->{subscriber};
@@ -2343,7 +2344,7 @@ EOF
     );
 }
 
-sub create_trusted :Chained('base') :PathPart('preferences/trusted/create') :Args(0) {
+sub create_trusted :Chained('base') :PathPart('preferences/trusted/create') :Args(0) :Does(ACL) :ACLDetachTo('/denied_page') :AllowedRole(admin) :AllowedRole(reseller) {
     my ($self, $c) = @_;
 
     my $posted = ($c->request->method eq 'POST');
@@ -2390,7 +2391,7 @@ sub create_trusted :Chained('base') :PathPart('preferences/trusted/create') :Arg
     );
 }
 
-sub trusted_base :Chained('base') :PathPart('preferences/trusted') :CaptureArgs(1) {
+sub trusted_base :Chained('base') :PathPart('preferences/trusted') :CaptureArgs(1) :Does(ACL) :ACLDetachTo('/denied_page') :AllowedRole(admin) :AllowedRole(reseller) {
     my ($self, $c, $trusted_id) = @_;
 
     $c->stash->{trusted} = $c->stash->{subscriber}->provisioning_voip_subscriber
@@ -2630,7 +2631,7 @@ sub edit_speeddial :Chained('speeddial') :PathPart('edit') :Args(0) {
     );
 }
 
-sub callflow_base :Chained('base') :PathPart('callflow') :CaptureArgs(1) {
+sub callflow_base :Chained('base') :PathPart('callflow') :CaptureArgs(1) :Does(ACL) :ACLDetachTo('/denied_page') :AllowedRole(admin) :AllowedRole(reseller) {
     my ($self, $c, $callid) = @_;
 
     $c->detach('/denied_page')
