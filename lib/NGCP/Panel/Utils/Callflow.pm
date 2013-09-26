@@ -109,6 +109,8 @@ sub process_callmap {
     foreach my $packet(@{$packets}) {
       if(exists($int_uas{$packet->src_ip.':'.$packet->src_port})) {
         #print "skipping internal elem ".$packet->src_ip.':'.$packet->src_port." (".$int_uas{$packet->src_ip.':'.$packet->src_port}.")\n";
+        my $ua = $int_uas{$packet->src_ip.':'.$packet->src_port};
+        push (@uas, $ua) unless grep {$_ eq $ua} @uas;
       }
       elsif(exists($ext_uas{$packet->src_ip.':'.$packet->src_port})) {
         #print "skipping known external elem ".$packet->src_ip.':'.$packet->src_port."\n";
@@ -122,6 +124,8 @@ sub process_callmap {
 
       if(exists($int_uas{$packet->dst_ip.':'.$packet->dst_port})) {
         #print "skipping internal elem ".$packet->dst_ip.':'.$packet->dst_port." (".$int_uas{$packet->dst_ip.':'.$packet->dst_port}.")\n";
+        my $ua = $int_uas{$packet->dst_ip.':'.$packet->dst_port};
+        push (@uas, $ua) unless grep {$_ eq $ua} @uas;
       }
       elsif(exists($ext_uas{$packet->dst_ip.':'.$packet->dst_port})) {
         #print "skipping known external elem ".$packet->dst_ip.':'.$packet->dst_port."\n";
@@ -133,7 +137,6 @@ sub process_callmap {
         push @uas, $packet->dst_ip.':'.$packet->dst_port;
       }
     }
-    push @uas, ('lb', 'sbc', 'proxy', 'app');
 
     ### calculate x position of all uas
     my %uas_pos_x = ();
