@@ -69,13 +69,13 @@ sub sub_list :Chained('/') :PathPart('subscriber') :CaptureArgs(0) {
     $c->stash->{subscribers_rs} = $c->model('DB')->resultset('voip_subscribers')->search({
         'me.status' => { '!=' => 'terminated' },
     });
-    if($c->user_in_realm('reseller')) {
+    if($c->user->roles eq 'reseller') {
         $c->stash->{subscribers_rs} = $c->stash->{subscribers_rs}->search({
             'contact.reseller_id' => $c->user->reseller_id,
         },{
             join => { 'contract' => 'contact'},
         });
-    } elsif($c->user_in_realm('subscriber') || $c->user_in_realm('subscriberadmin')) {
+    } elsif($c->user->roles eq 'subscriber' || $c->user->roles eq 'subscriberadmin') {
         $c->stash->{subscribers_rs} = $c->stash->{subscribers_rs}->search({
             'username' => $c->user->username
         },{
@@ -380,7 +380,7 @@ sub preferences_base :Chained('base') :PathPart('preferences') :CaptureArgs(1) {
     $c->stash->{preference_meta} = $c->model('DB')
         ->resultset('voip_preferences')
         ->single({id => $pref_id});
-     if(($c->user_in_realm('subscriber') || $c->user_in_realm('subscriberadmin')) &&
+     if(($c->user->roles eq 'subscriber' || $c->user->roles eq 'subscriberadmin') &&
         !$c->stash->{preference_meta}->expose_to_customer) {
 
         $c->log->error("invalid access to pref_id '$pref_id' by provisioning subscriber id '".$c->user->id."'");
@@ -1489,7 +1489,7 @@ sub load_preference_list :Private {
     NGCP::Panel::Utils::Preferences::load_preference_list( c => $c,
         pref_values => \%pref_values,
         usr_pref => 1,
-        customer_view => (($c->user_in_realm('subscriber') || $c->user_in_realm('subscriberadmin')) ? 1 : 0)
+        customer_view => (($c->user->roles eq 'subscriber' || $c->user->roles eq 'subscriberadmin') ? 1 : 0)
     );
 }
 

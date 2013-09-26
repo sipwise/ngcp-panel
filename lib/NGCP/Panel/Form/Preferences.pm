@@ -25,8 +25,8 @@ has_block 'fields' => (
 sub field_list {
     my $self = shift;
 
-    my $is_subscriber = ($self->ctx->user_in_realm('subscriber') || 
-                         $self->ctx->user_in_realm('subscriberadmin'));
+    my $is_subscriber = ($self->ctx->user->roles eq 'subscriber' || 
+                         $self->ctx->user->roles eq 'subscriberadmin');
     
     my @field_list;
     my $fields_data = $self->fields_data;

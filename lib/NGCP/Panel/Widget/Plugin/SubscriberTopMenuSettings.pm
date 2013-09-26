@@ -23,7 +23,7 @@ sub filter {
 
     return $self if(
         $type eq $self->type &&
-        $c->user_in_realm('subscriber')
+        $c->user->roles eq 'subscriber'
     );
     return;
 }

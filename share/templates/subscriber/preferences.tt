@@ -365,7 +365,7 @@
         </div>
     </div>
 
-[% UNLESS c.user_in_realm('subscriber') || c.user_in_realm('subscriberadmin') -%]
+[% UNLESS c.user.roles == 'subscriber' || c.user.roles == 'subscriberadmin' -%]
     <div class="accordion-group">
         <div class="accordion-heading">
             <a class="accordion-toggle" data-toggle="collapse" data-parent="#preference_groups" href="#collapse_ts">Trusted Sources</a>

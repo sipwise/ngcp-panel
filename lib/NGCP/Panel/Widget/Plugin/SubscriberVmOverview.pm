@@ -45,7 +45,7 @@ sub filter {
 
     return $self if(
         $type eq $self->type &&
-        ($c->user_in_realm('subscriber') || $c->user_in_realm('subscriberadmin')) &&
+        ($c->user->roles eq 'subscriber' || $c->user->roles eq 'subscriberadmin') &&
         ref $c->controller eq 'NGCP::Panel::Controller::Dashboard'
     );
     return;

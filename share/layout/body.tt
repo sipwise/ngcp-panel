@@ -11,7 +11,7 @@
                 <ul class="pull-right">
                     <li>
                       <i class="icon-user"></i> Logged in as 
-                      [% IF c.user_in_realm('admin') || c.user_in_realm('reseller') -%]
+                      [% IF c.user.roles == 'admin' || c.user.roles == 'reseller' -%]
                         [% c.user.login %]
                       [% ELSE -%]
                         [% c.user.webusername %]@[% c.user.domain.domain %]
