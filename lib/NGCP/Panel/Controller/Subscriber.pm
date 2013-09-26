@@ -2550,8 +2550,13 @@ sub create_speeddial :Chained('base') :PathPart('preferences/speeddial/create') 
     my $slots = $prov_subscriber->voip_speed_dials;
     $c->stash->{used_sd_slots} = $slots;
     my $form = NGCP::Panel::Form::Subscriber::SpeedDial->new(ctx => $c);
+    my $params = {};
 
-    $form->process(params => $c->req->params);
+    $form->process(
+        posted => $posted,
+        params => $c->req->params,
+        item => $params,
+    );
     NGCP::Panel::Utils::Navigation::check_form_buttons(
         c => $c,
         form => $form,
