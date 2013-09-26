@@ -255,7 +255,6 @@ sub subscriber_create :Chained('base') :PathPart('subscriber/create') :Args(0) {
                     $preferences->{display_name} = $form->params->{display_name}
                         if($form->params->{display_name});
                 }
-                use Data::Printer; p $preferences;
                 $billing_subscriber = NGCP::Panel::Utils::Subscriber::create_subscriber(
                     c => $c,
                     schema => $schema,
@@ -646,8 +645,14 @@ sub pbx_device_base :Chained('base') :PathPart('pbx/device') :CaptureArgs(1) {
         );
         NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for_action('/customer/details', [$c->req->captures->[0]]));
     }
-
-    # TODO: in groups, devices etc, check for reseller-id!
+    if($dev->provisioning_voip_subscriber->account_id != $c->stash->{contract}->id) {
+        NGCP::Panel::Utils::Message->error(
+            c => $c,
+            error => "invalid voip pbx device id $dev_id for customer id '".$c->stash->{contract}->id."'",
+            desc  => "PBX device with id $dev_id does not exist for this customer.",
+        );
+        NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for_action('/customer/details', [$c->req->captures->[0]]));
+    }
 
     $c->stash(
         pbx_device => $dev,

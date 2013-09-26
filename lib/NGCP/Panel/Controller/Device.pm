@@ -18,14 +18,16 @@ sub auto {
     return 1;
 }
 
-sub base :Chained('/') :PathPart('device') :CaptureArgs(0) :Does(ACL) :ACLDetachTo('/denied_page') :AllowedRole(admin) :AllowedRole(reseller) {
+sub base :Chained('/') :PathPart('device') :CaptureArgs(0) {
     my ($self, $c) = @_;
 
     NGCP::Panel::Utils::Navigation::check_redirect_chain(c => $c);
 
     my $devmod_rs = $c->model('DB')->resultset('autoprov_devices');
-    unless($c->user->is_superuser) {
+    if($c->user->roles eq 'reseller') {
         $devmod_rs = $devmod_rs->search({ reseller_id => $c->user->reseller_id });
+    } elsif($c->user->roles eq 'subscriber' || $c->user->roles eq 'subscriberadmin') {
+        $devmod_rs = $devmod_rs->search({ reseller_id => $c->user->voip_subscriber->contract->contact->reseller_id });
     }
     $c->stash->{devmod_dt_columns} = NGCP::Panel::Utils::Datatables::set_columns($c, [
         { name => 'id', search => 1, title => '#' },
@@ -90,11 +92,11 @@ sub base :Chained('/') :PathPart('device') :CaptureArgs(0) :Does(ACL) :ACLDetach
     );
 }
 
-sub root :Chained('base') :PathPart('') :Args(0) {
+sub root :Chained('base') :PathPart('') :Args(0) :Does(ACL) :ACLDetachTo('/denied_page') :AllowedRole(admin) :AllowedRole(reseller) {
     my ($self, $c) = @_;
 }
 
-sub devmod_ajax :Chained('base') :PathPart('model/ajax') :Args(0) {
+sub devmod_ajax :Chained('base') :PathPart('model/ajax') :Args(0) :Does(ACL) :ACLDetachTo('/denied_page') :AllowedRole(admin) :AllowedRole(reseller) {
     my ($self, $c) = @_;
 
     my $resultset = $c->stash->{devmod_rs};
@@ -102,7 +104,7 @@ sub devmod_ajax :Chained('base') :PathPart('model/ajax') :Args(0) {
     $c->detach( $c->view("JSON") );
 }
 
-sub devmod_create :Chained('base') :PathPart('model/create') :Args(0) {
+sub devmod_create :Chained('base') :PathPart('model/create') :Args(0) :Does(ACL) :ACLDetachTo('/denied_page') :AllowedRole(admin) :AllowedRole(reseller) {
     my ($self, $c) = @_;
 
     my $posted = ($c->request->method eq 'POST');
@@ -200,7 +202,7 @@ sub devmod_base :Chained('base') :PathPart('model') :CaptureArgs(1) {
     }
 }
 
-sub devmod_delete :Chained('devmod_base') :PathPart('delete') :Args(0) {
+sub devmod_delete :Chained('devmod_base') :PathPart('delete') :Args(0) :Does(ACL) :ACLDetachTo('/denied_page') :AllowedRole(admin) :AllowedRole(reseller) {
     my ($self, $c) = @_;
 
     try {
@@ -217,7 +219,7 @@ sub devmod_delete :Chained('devmod_base') :PathPart('delete') :Args(0) {
     NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for('/device'));
 }
 
-sub devmod_edit :Chained('devmod_base') :PathPart('edit') :Args(0) {
+sub devmod_edit :Chained('devmod_base') :PathPart('edit') :Args(0) :Does(ACL) :ACLDetachTo('/denied_page') :AllowedRole(admin) :AllowedRole(reseller) {
     my ($self, $c) = @_;
 
     my $posted = ($c->request->method eq 'POST');
@@ -324,7 +326,7 @@ sub devmod_download_macimage :Chained('devmod_base') :PathPart('macimage') :Args
     $c->response->body($devmod->mac_image);
 }
 
-sub devfw_ajax :Chained('base') :PathPart('firmware/ajax') :Args(0) {
+sub devfw_ajax :Chained('base') :PathPart('firmware/ajax') :Args(0) :Does(ACL) :ACLDetachTo('/denied_page') :AllowedRole(admin) :AllowedRole(reseller) {
     my ($self, $c) = @_;
 
     my $resultset = $c->stash->{devfw_rs};
@@ -332,7 +334,7 @@ sub devfw_ajax :Chained('base') :PathPart('firmware/ajax') :Args(0) {
     $c->detach( $c->view("JSON") );
 }
 
-sub devfw_create :Chained('base') :PathPart('firmware/create') :Args(0) {
+sub devfw_create :Chained('base') :PathPart('firmware/create') :Args(0) :Does(ACL) :ACLDetachTo('/denied_page') :AllowedRole(admin) :AllowedRole(reseller) {
     my ($self, $c) = @_;
 
     my $posted = ($c->request->method eq 'POST');
@@ -386,7 +388,7 @@ sub devfw_create :Chained('base') :PathPart('firmware/create') :Args(0) {
     );
 }
 
-sub devfw_base :Chained('base') :PathPart('firmware') :CaptureArgs(1) {
+sub devfw_base :Chained('base') :PathPart('firmware') :CaptureArgs(1) :Does(ACL) :ACLDetachTo('/denied_page') :AllowedRole(admin) :AllowedRole(reseller) {
     my ($self, $c, $devfw_id) = @_;
 
     unless($devfw_id->is_int) {
@@ -493,7 +495,7 @@ sub devfw_download :Chained('devfw_base') :PathPart('download') :Args(0) {
     $c->response->body($fw->data);
 }
 
-sub devconf_ajax :Chained('base') :PathPart('config/ajax') :Args(0) {
+sub devconf_ajax :Chained('base') :PathPart('config/ajax') :Args(0) :Does(ACL) :ACLDetachTo('/denied_page') :AllowedRole(admin) :AllowedRole(reseller) {
     my ($self, $c) = @_;
 
     my $resultset = $c->stash->{devconf_rs};
@@ -501,7 +503,7 @@ sub devconf_ajax :Chained('base') :PathPart('config/ajax') :Args(0) {
     $c->detach( $c->view("JSON") );
 }
 
-sub devconf_create :Chained('base') :PathPart('config/create') :Args(0) {
+sub devconf_create :Chained('base') :PathPart('config/create') :Args(0) :Does(ACL) :ACLDetachTo('/denied_page') :AllowedRole(admin) :AllowedRole(reseller) {
     my ($self, $c) = @_;
 
     my $posted = ($c->request->method eq 'POST');
@@ -549,7 +551,7 @@ sub devconf_create :Chained('base') :PathPart('config/create') :Args(0) {
     );
 }
 
-sub devconf_base :Chained('base') :PathPart('config') :CaptureArgs(1) {
+sub devconf_base :Chained('base') :PathPart('config') :CaptureArgs(1) :Does(ACL) :ACLDetachTo('/denied_page') :AllowedRole(admin) :AllowedRole(reseller) {
     my ($self, $c, $devconf_id) = @_;
 
     unless($devconf_id->is_int) {
@@ -649,7 +651,7 @@ sub devconf_download :Chained('devconf_base') :PathPart('download') :Args(0) {
     $c->response->body($conf->data);
 }
 
-sub devprof_ajax :Chained('base') :PathPart('profile/ajax') :Args(0) {
+sub devprof_ajax :Chained('base') :PathPart('profile/ajax') :Args(0) :Does(ACL) :ACLDetachTo('/denied_page') :AllowedRole(admin) :AllowedRole(reseller) {
     my ($self, $c) = @_;
 
     my $resultset = $c->stash->{devprof_rs};
@@ -657,7 +659,7 @@ sub devprof_ajax :Chained('base') :PathPart('profile/ajax') :Args(0) {
     $c->detach( $c->view("JSON") );
 }
 
-sub devprof_create :Chained('base') :PathPart('profile/create') :Args(0) {
+sub devprof_create :Chained('base') :PathPart('profile/create') :Args(0) :Does(ACL) :ACLDetachTo('/denied_page') :AllowedRole(admin) :AllowedRole(reseller) {
     my ($self, $c) = @_;
 
     my $posted = ($c->request->method eq 'POST');
@@ -711,7 +713,7 @@ sub devprof_create :Chained('base') :PathPart('profile/create') :Args(0) {
     );
 }
 
-sub devprof_base :Chained('base') :PathPart('profile') :CaptureArgs(1) {
+sub devprof_base :Chained('base') :PathPart('profile') :CaptureArgs(1) :Does(ACL) :ACLDetachTo('/denied_page') :AllowedRole(admin) :AllowedRole(reseller) {
     my ($self, $c, $devprof_id) = @_;
 
     unless($devprof_id->is_int) {

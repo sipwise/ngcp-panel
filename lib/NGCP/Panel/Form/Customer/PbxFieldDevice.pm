@@ -46,6 +46,7 @@ sub build_subscribers {
     my $sub_rs = $c->stash->{contract}->voip_subscribers;
     my @options = ();
     foreach my $s($sub_rs->all) {
+        next unless($s->status eq 'active');
         push @options, { 
             label => $s->username . '@' . $s->domain->domain, 
             value => $s->provisioning_voip_subscriber->id 
