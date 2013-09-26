@@ -255,8 +255,6 @@ sub create_list :Chained('sub_list') :PathPart('create') :Args(0) :Does(ACL) :AC
 sub base :Chained('sub_list') :PathPart('') :CaptureArgs(1) {
     my ($self, $c, $subscriber_id) = @_;
 
-    $c->log->debug(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>> base");
-
     unless($subscriber_id && $subscriber_id->is_integer) {
         NGCP::Panel::Utils::Message->error(
             c     => $c,
@@ -1498,8 +1496,6 @@ sub load_preference_list :Private {
 sub master :Chained('base') :PathPart('details') :CaptureArgs(0) {
     my ($self, $c) = @_;
 
-    $c->log->debug(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>> master");
-
     $c->stash->{calls_dt_columns} = NGCP::Panel::Utils::Datatables::set_columns($c, [
         { name => "source_user", search => 1, title => "Caller" },
         { name => "destination_user", search => 1, title => "Callee" },
@@ -2215,8 +2211,6 @@ sub ajax_captured_calls :Chained('master') :PathPart('callflow/ajax') :Args(0) {
 sub voicemail :Chained('master') :PathPart('voicemail') :CaptureArgs(1) {
     my ($self, $c, $vm_id) = @_;
 
-    $c->log->debug(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>> voicemail");
-
     my $rs = $c->model('DB')->resultset('voicemail_spool')->search({
          mailboxuser => $c->stash->{subscriber}->uuid,
          id => $vm_id,
@@ -2235,8 +2229,6 @@ sub voicemail :Chained('master') :PathPart('voicemail') :CaptureArgs(1) {
 
 sub play_voicemail :Chained('voicemail') :PathPart('play') :Args(0) {
     my ($self, $c) = @_;
-
-    $c->log->debug(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>> play_voicemail");
 
     my $file = $c->stash->{voicemail};
     my $recording = $file->recording;
