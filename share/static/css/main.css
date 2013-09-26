@@ -354,6 +354,15 @@ div.ngcp-modal .control-group.error .dataTables_wrapper input[type="text"] {
     padding-left: 0px;
 }
 
+.plan .plan-features.large {
+    min-height:325px;
+}
+
+.plan .plan-features div.row-fluid [class*="span"] {
+    min-height: 10px;
+    text-align: left;
+}
+
 /* -------------
   Various form fields
 ----------------*/

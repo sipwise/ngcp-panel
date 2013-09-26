@@ -20,7 +20,7 @@
                 <span class="term">Call Forward[% cfcount != 1 ? 's' : '' %] Configured</span>
             </div>
         </div>
-        <div class="plan-features">
+        <div class="plan-features large">
             <ul>
             [% FOR cf IN cfs -%]
                 <li>
