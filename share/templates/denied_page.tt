@@ -4,9 +4,9 @@
 		
 		<div class="error-container">
 			
-			<h1>Nope!</h1>
+			<h1>Forbidden!</h1>
 			
-			<h2>[% c.response.status %] Denied</h2>
+			<h2>[% c.response.status %] Access Denied</h2>
 			
 			<div class="error-details">
 				Sorry, an error has occured, requested operation denied!
