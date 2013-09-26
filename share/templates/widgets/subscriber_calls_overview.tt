@@ -44,7 +44,7 @@
             </ul>
         </div>
         <div class="plan-actions">
-            <a href="[% c.uri_for('/subscriber') %]" class="btn">View Call List</a>
+            <a href="[% c.uri_for_action('/subscriber/calllist', [subscriber.id]) %]" class="btn">View Call List</a>
         </div>
     </div>
 </div>

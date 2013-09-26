@@ -1545,6 +1545,22 @@ sub details :Chained('master') :PathPart('') :Args(0) {
     $c->stash->{prov_lock_string} = NGCP::Panel::Utils::Subscriber::get_lock_string($locklevel);
 }
 
+sub voicemails :Chained('master') :PathPart('voicemails') :Args(0) {
+    my ($self, $c) = @_;
+
+    $c->stash(
+        template => 'subscriber/voicemail.tt'
+    );
+}
+
+sub calllist :Chained('master') :PathPart('calls') :Args(0) {
+    my ($self, $c) = @_;
+
+    $c->stash(
+        template => 'subscriber/calllist.tt'
+    );
+}
+
 sub edit_master :Chained('master') :PathPart('edit') :Args(0) {
     my ($self, $c) = @_;
     my $subscriber = $c->stash->{subscriber};

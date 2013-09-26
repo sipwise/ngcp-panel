@@ -31,7 +31,7 @@
             </ul>
         </div>
         <div class="plan-actions">
-            <a href="[% c.uri_for('/subscriber') %]" class="btn">View Voicebox Messages</a>
+            <a href="[% c.uri_for_action('/subscriber/voicemails', [subscriber.id]) %]" class="btn">View Voicebox Messages</a>
         </div>
     </div>
 </div>
