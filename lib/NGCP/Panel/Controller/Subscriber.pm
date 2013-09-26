@@ -1539,7 +1539,7 @@ sub master :Chained('base') :PathPart('details') :CaptureArgs(0) {
     );
 }
 
-sub details :Chained('master') :PathPart('') :Args(0) {
+sub details :Chained('master') :PathPart('') :Args(0) :Does(ACL) :ACLDetachTo('/denied_page') :AllowedRole(admin) :AllowedRole(reseller) :AllowedRole('subscriberadmin') {
     my ($self, $c) = @_;
 
     $c->stash->{prov_lock} = NGCP::Panel::Utils::Preferences::get_usr_preference_rs(
