@@ -5,7 +5,7 @@
             <div class="plan-title">Voicebox Messages</div>
             <div class="plan-price">
                 <span>[% vmails.count %]</span>
-                <span class="term">New Messages</span>
+                <span class="term">New Message[% vmails.count != 1 ? 's' : '' %]</span>
             </div>
         </div>
         <div class="plan-features">

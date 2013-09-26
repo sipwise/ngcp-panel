@@ -31,7 +31,7 @@ around handle => sub {
         dir => { -like => '%/INBOX' },
     }, {
         order_by => { -desc => 'me.origtime' },
-    })->slice(0, 9);
+    })->slice(0, 4);
 
     $c->stash(
         subscriber => $sub,

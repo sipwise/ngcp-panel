@@ -12,6 +12,7 @@ sub load_preference_list {
     my $peer_pref = $params{peer_pref};
     my $dom_pref = $params{dom_pref};
     my $usr_pref = $params{usr_pref};
+    my $customer_view = $params{customer_view} // 0;
     
     my @pref_groups = $c->model('DB')
         ->resultset('voip_preference_groups')
@@ -25,6 +26,7 @@ sub load_preference_list {
             $usr_pref ? ('voip_preferences.usr_pref' => 1,
                 -or => ['voip_preferences_enums.usr_pref' => 1,
                     'voip_preferences_enums.usr_pref' => undef]) : (),
+            $customer_view ? ('voip_preferences.expose_to_customer' => 1) : (),
             }, {
                 prefetch => {'voip_preferences' => 'voip_preferences_enums'},
             })

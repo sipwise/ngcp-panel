@@ -7,6 +7,7 @@
     <ul class="dropdown-menu">
         <li><a href="[% c.uri_for_action('/subscriber/calllist', [subscriber.id]) %]">Call List</a></li>
         <li><a href="[% c.uri_for_action('/subscriber/voicemail', [subscriber.id]) %]">Voicebox Messages</a></li>
+        <li><a href="[% c.uri_for_action('/subscriber/preferences', [subscriber.id]) %]">Line Settings</a></li>
     </ul>
 </li>
 [% # vim: set tabstop=4 syntax=html expandtab: -%]

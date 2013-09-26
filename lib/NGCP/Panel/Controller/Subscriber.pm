@@ -382,6 +382,12 @@ sub preferences_base :Chained('base') :PathPart('preferences') :CaptureArgs(1) {
     $c->stash->{preference_meta} = $c->model('DB')
         ->resultset('voip_preferences')
         ->single({id => $pref_id});
+     if(($c->user_in_realm('subscriber') || $c->user_in_realm('subscriberadmin')) &&
+        !$c->stash->{preference_meta}->expose_to_customer) {
+
+        $c->log->error("invalid access to pref_id '$pref_id' by provisioning subscriber id '".$c->user->id."'");
+        $c->detach('/denied_page');
+    }
 
     $c->stash->{preference} = $c->model('DB')
         ->resultset('voip_usr_preferences')
@@ -1459,7 +1465,6 @@ sub load_preference_list :Private {
             },{
                 prefetch => {'voip_usr_preferences' => 'subscriber'},
             });
-
     my %pref_values;
     foreach my $value($usr_pref_values->all) {
 
@@ -1486,6 +1491,7 @@ sub load_preference_list :Private {
     NGCP::Panel::Utils::Preferences::load_preference_list( c => $c,
         pref_values => \%pref_values,
         usr_pref => 1,
+        customer_view => (($c->user_in_realm('subscriber') || $c->user_in_realm('subscriberadmin')) ? 1 : 0)
     );
 }
 

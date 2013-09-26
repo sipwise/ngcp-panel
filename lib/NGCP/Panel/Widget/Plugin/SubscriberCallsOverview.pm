@@ -30,7 +30,7 @@ around handle => sub {
     });
     my $calls_rs = $out_rs->union($in_rs)->search(undef, {
          order_by => { -desc => 'me.start_time' },
-    })->slice(0, 9);
+    })->slice(0, 4);
 
     $c->stash(
         calls => $calls_rs,
