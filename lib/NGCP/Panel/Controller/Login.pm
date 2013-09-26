@@ -76,7 +76,6 @@ sub index :Path Form {
                 }, 
                 $realm);
         } elsif($realm eq 'subscriber') {
-            # TODO: check for lock status?
             my ($u, $d) = split /\@/, $user;
             unless($d) {
                 $d = $c->req->uri->host;
@@ -85,8 +84,9 @@ sub index :Path Form {
                 webusername => $u,
                 webpassword => $pass,
                 'domain.domain' => $d,
+                'contract.status' => 'active',
             }, {
-                join => 'domain',
+                join => ['domain', 'contract'],
             });
             $res = $c->authenticate(
                 {
