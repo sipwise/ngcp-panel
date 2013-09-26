@@ -75,7 +75,7 @@ sub sub_list :Chained('/') :PathPart('subscriber') :CaptureArgs(0) {
         },{
             join => { 'contract' => 'contact'},
         });
-    } elsif($c->user->roles eq 'subscriber' || $c->user->roles eq 'subscriberadmin') {
+    } elsif($c->user->roles eq 'subscriber') {
         $c->stash->{subscribers_rs} = $c->stash->{subscribers_rs}->search({
             'username' => $c->user->username
         },{
@@ -88,6 +88,12 @@ sub sub_list :Chained('/') :PathPart('subscriber') :CaptureArgs(0) {
                 join => 'domain'
             });
         }
+    } elsif($c->user->roles eq 'subscriberadmin') {
+        $c->stash->{subscribers_rs} = $c->stash->{subscribers_rs}->search({
+            'contract.id' => $c->user->account_id,
+        },{
+            join => { 'contract' => 'contact'},
+        });
     }
 
     $c->stash->{dt_columns} = NGCP::Panel::Utils::Datatables::set_columns($c, [

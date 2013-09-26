@@ -31,7 +31,7 @@ Catalyst Controller.
 
 =cut
 
-sub auto :Does(ACL) :ACLDetachTo('/denied_page') :AllowedRole(admin) :AllowedRole(reseller) {
+sub auto :Does(ACL) :ACLDetachTo('/denied_page') :AllowedRole(admin) :AllowedRole(reseller) :AllowedRole(subscriberadmin) {
     my ($self, $c) = @_;
     $c->log->debug(__PACKAGE__ . '::auto');
     NGCP::Panel::Utils::Navigation::check_redirect_chain(c => $c);
@@ -56,7 +56,7 @@ sub list_customer :Chained('/') :PathPart('customer') :CaptureArgs(0) {
     );
 }
 
-sub root :Chained('list_customer') :PathPart('') :Args(0) {
+sub root :Chained('list_customer') :PathPart('') :Args(0) :Does(ACL) :ACLDetachTo('/denied_page') :AllowedRole(admin) :AllowedRole(reseller) {
     my ($self, $c) = @_;
 }
 
@@ -71,12 +71,20 @@ sub base :Chained('list_customer') :PathPart('') :CaptureArgs(1) {
 
     my $contract = $c->model('DB')->resultset('contracts')
         ->search('me.id' => $contract_id);
-    unless($c->user->is_superuser) {
+    if($c->user->roles eq 'reseller') {
         $contract = $contract->search({
             'contact.reseller_id' => $c->user->reseller_id,
         }, {
             join => 'contact',
         });
+    } elsif($c->user->roles eq 'subscriberadmin') {
+        $contract = $contract->search({
+            'me.id' => $c->user->account_id,
+        });
+        unless($contract->count) {
+            $c->log->error("unauthorized access of subscriber uuid '".$c->user->uuid."' to contract id '$contract_id'");
+            $c->detach('/denied_page');
+        }
     }
 
     my $stime = NGCP::Panel::Utils::DateTime::current_local()->truncate(to => 'month');

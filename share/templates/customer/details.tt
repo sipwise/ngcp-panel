@@ -14,7 +14,7 @@
     <span>
         <a class="btn btn-primary btn-large" href="[% c.uri_for('/back') %]"><i class="icon-arrow-left"></i> Back</a>
     </span>
-    [% UNLESS c.user.read_only -%]
+    [% IF !c.user.read_only && (c.user.roles == 'admin' || c.user.roles == 'reseller') -%]
     <span>
         <a class="btn btn-primary btn-large" href="[% c.uri_for_action('/contract/edit', [ contract.id ]) %]"><i class="icon-edit"></i> Edit</a>
     </span>
@@ -63,6 +63,7 @@
     </div>
     [% END -%]
 
+    [% IF c.user.roles == 'admin' || c.user.roles == 'reseller' %]
     <div class="accordion-group">
         <div class="accordion-heading">
             <a class="accordion-toggle" data-toggle="collapse" data-parent="#customer_details" href="#collapse_contact">Contact Details</a>
@@ -144,6 +145,7 @@
             </div>
         </div>
     </div>
+    [% END -%]
 
     <div class="accordion-group">
         <div class="accordion-heading">
@@ -327,6 +329,7 @@
         </div>
     </div>
 
+    [% IF c.user.roles == 'admin' || c.user.roles == 'reseller' %]
     <div class="accordion-group">
         <div class="accordion-heading">
             <a class="accordion-toggle" data-toggle="collapse" data-parent="#customer_details" href="#collapse_fraud">Fraud Limits</a>
@@ -407,6 +410,7 @@
             </div>
         </div>
     </div>
+    [% END -%]
 </div>
 
 [% IF create_flag == 1 -%]
