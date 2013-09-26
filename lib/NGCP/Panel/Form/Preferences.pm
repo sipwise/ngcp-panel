@@ -24,6 +24,9 @@ has_block 'fields' => (
 
 sub field_list {
     my $self = shift;
+
+    my $is_subscriber = ($self->ctx->user_in_realm('subscriber') || 
+                         $self->ctx->user_in_realm('subscriberadmin'));
     
     my @field_list;
     my $fields_data = $self->fields_data;
@@ -95,7 +98,8 @@ sub field_list {
                 };
             }
         }
-        $field->{label} = $meta->attribute;
+        
+        $field->{label} = $is_subscriber ? $meta->label : $meta->attribute;
         push @field_list, $field;
     }
     

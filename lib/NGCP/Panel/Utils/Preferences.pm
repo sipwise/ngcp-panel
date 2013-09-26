@@ -158,6 +158,7 @@ sub create_preference_form {
     }
 
     my $form = NGCP::Panel::Form::Preferences->new({
+        ctx => $c,
         fields_data => [{
             meta => $c->stash->{preference_meta},
             enums => $enums,

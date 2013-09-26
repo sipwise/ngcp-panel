@@ -33,6 +33,9 @@
         <tr>
             [% # one for description -%]
             <th></th>
+            [% UNLESS c.user_in_realm('subscriber') || c.user_in_realm('subscriberadmin') -%]
+            <th>Attribute</th>
+            [% END -%]
             <th>Name</th>
             <th>Value</th>
             [% # one for actions -%]
@@ -53,8 +56,11 @@
                             ]
                         }); return false;"><i class="icon-question-sign"></i></a>
                 </td>
+                [% UNLESS c.user_in_realm('subscriber') || c.user_in_realm('subscriberadmin') -%]
+                <td>[% r.attribute %]</td>
+                [% END -%]
                 <td>
-                  [% r.attribute %]
+                  [% r.label %]
                 </td>
                 <td>
                     [% IF r.attribute == "rewrite_rule_set" -%]
@@ -138,7 +144,7 @@
 [%
     PROCESS "helpers/modal.tt";
     modal_header(m.create_flag=0,
-                 m.name = "Preference " _ helper.preference_meta.attribute);
+                 m.name = "Preference '" _ helper.preference_meta.label _"'");
 -%]
 
     [% IF helper.preference_meta.attribute == "allowed_ips" %]
