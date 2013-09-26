@@ -1,10 +1,10 @@
-package NGCP::Panel::Widget::Plugin::SubscriberVmOverview;
+package NGCP::Panel::Widget::Plugin::SubscriberRegisterOverview;
 use Moose::Role;
 
 has 'template' => (
     is  => 'ro',
     isa => 'Str',
-    default => 'widgets/subscriber_vm_overview.tt'
+    default => 'widgets/subscriber_reg_overview.tt'
 );
 
 has 'type' => (
@@ -16,26 +16,26 @@ has 'type' => (
 has 'priority' => (
     is  => 'ro',
     isa => 'Int',
-    default => 20,
+    default => 40,
 );
 
 around handle => sub {
     my ($foo, $self, $c) = @_;
 
-    my $sub = $c->model('DB')->resultset('voip_subscribers')->find({
-        uuid => $c->user->uuid,
+    my $rs = $c->model('DB')->resultset('location')->search({
+        username => $c->user->username,
     });
-    my $rs = $c->model('DB')->resultset('voicemail_spool')->search({
-        mailboxuser => $c->user->uuid,
-        msgnum => { '>=' => 0 },
-        dir => { -like => '%/INBOX' },
-    }, {
-        order_by => { -desc => 'me.origtime' },
-    })->slice(0, 4);
+    if($c->config->{features}->{multidomain}) {
+        $rs = $rs->search({
+            domain => $c->user->domain->domain,
+        });
+    }
+    my $reg_count = $rs->count;
+    $rs = $rs->slice(0,4);
 
     $c->stash(
-        subscriber => $sub,
-        vmails => $rs,
+        regs => $rs,
+        reg_count => $reg_count,
     );
     return;
 };

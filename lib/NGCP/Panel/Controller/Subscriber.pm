@@ -1567,6 +1567,14 @@ sub calllist :Chained('master') :PathPart('calls') :Args(0) {
     );
 }
 
+sub reglist :Chained('master') :PathPart('regdevices') :Args(0) {
+    my ($self, $c) = @_;
+
+    $c->stash(
+        template => 'subscriber/reglist.tt'
+    );
+}
+
 sub edit_master :Chained('master') :PathPart('edit') :Args(0) {
     my ($self, $c) = @_;
     my $subscriber = $c->stash->{subscriber};

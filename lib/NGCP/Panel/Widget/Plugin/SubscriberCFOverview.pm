@@ -16,7 +16,7 @@ has 'type' => (
 has 'priority' => (
     is  => 'ro',
     isa => 'Int',
-    default => 10,
+    default => 30,
 );
 
 around handle => sub {
