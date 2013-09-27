@@ -9,7 +9,7 @@
         <li><a href="[% c.uri_for_action('/subscriber/voicemails', [subscriber.id]) %]">Voicebox Messages</a></li>
         <li><a href="[% c.uri_for_action('/subscriber/reglist', [subscriber.id]) %]">Registered Devices</a></li>
         <li><a href="[% c.uri_for_action('/subscriber/preferences', [subscriber.id]) %]">Line Settings</a></li>
-        <li><a href="#">Subscriber Admin Test</a></li>
+        <li><a href="[% c.uri_for_action('/customer/details', [c.user.account_id]) %]">Customer Settings</a></li>
     </ul>
 </li>
 [% # vim: set tabstop=4 syntax=html expandtab: -%]
