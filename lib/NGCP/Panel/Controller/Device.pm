@@ -23,6 +23,9 @@ sub base :Chained('/') :PathPart('device') :CaptureArgs(0) {
 
     NGCP::Panel::Utils::Navigation::check_redirect_chain(c => $c);
 
+    # TODO: move out fw/profile/config fetching to separate func to not 
+    # load it for subscriber access?
+
     my $devmod_rs = $c->model('DB')->resultset('autoprov_devices');
     if($c->user->roles eq 'reseller') {
         $devmod_rs = $devmod_rs->search({ reseller_id => $c->user->reseller_id });
