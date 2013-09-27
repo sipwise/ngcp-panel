@@ -30,14 +30,14 @@ sub index :Path Form {
     $realm = 'subscriber' 
         unless($realm and ($realm eq 'admin' or $realm eq 'reseller'));
 
+    my $posted = ($c->req->method eq 'POST');
     my $form = NGCP::Panel::Form::Login->new;
     $form->process(
-        posted => ($c->req->method eq 'POST'),
+        posted => $posted,
         params => $c->request->params,
-        action => $c->uri_for('/login/'.$realm),
     );
 
-    if($form->validated) {
+    if($posted && $form->validated) {
         $c->log->debug("login form validated");
         my $user = $form->field('username')->value;
         my $pass = $form->field('password')->value;
@@ -105,11 +105,13 @@ sub index :Path Form {
             delete $c->session->{target};
             $c->log->debug("*** Login::index auth ok, redirecting to $target");
             $c->response->redirect($target);
+            return;
         } else {
             $c->log->debug("*** Login::index auth failed");
             $form->add_form_error('Invalid username/password');
         }
     } else {
+        $c->log->debug(">>>>>>>>>>>>>>>>>>>>>>>> initial get in Login");
         # initial get
     }
 
