@@ -59,6 +59,8 @@ sub _test_preconditions {
         blib->import($opt{'schema-base-dir'})
     }
 
+    $SIG{'INT'} = sub { exit(1) }; # for clean stopping of servers
+
     if ($opt{'mysqld-port'} && $opt{'mysql-dump'}) {
         require Test::mysqld;
         $mysqld = Test::mysqld->new(
@@ -83,6 +85,8 @@ sub _test_preconditions {
     $ENV{ NGCP_PANEL_CONFIG_LOCAL_SUFFIX } = "testing";
     $plackup = child {
         my $debug_fh = IO::File->new("panel_debug_output", "w+");
+        $debug_fh->autoflush(1);
+        local $| = 1;
         capture_merged {
         exec $^X,
             '-Ilib',
