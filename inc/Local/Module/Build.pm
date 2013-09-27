@@ -40,7 +40,7 @@ sub _test_preconditions {
 
     require Getopt::Long;
     my %opt = (server => 'http://localhost:5000');
-    Getopt::Long::GetOptions(\%opt, 'webdriver=s', 'server:s', 'help|?', 'man', 'wd-server=s', 'schema-base-dir=s', 'mysqld-port=s', 'mysqld-dir=s')
+    Getopt::Long::GetOptions(\%opt, 'webdriver=s', 'server:s', 'help|?', 'man', 'wd-server=s', 'schema-base-dir=s', 'mysqld-port=s', 'mysql-dump=s@')
         or die 'could not process command-line options';
 
     require Pod::Usage;
@@ -59,15 +59,16 @@ sub _test_preconditions {
         blib->import($opt{'schema-base-dir'})
     }
 
-    if ($opt{'mysqld-port'} && $opt{'mysqld-dir'}) {
+    if ($opt{'mysqld-port'} && $opt{'mysql-dump'}) {
         require Test::mysqld;
         $mysqld = Test::mysqld->new(
             my_cnf => {
                 'port' => $opt{'mysqld-port'},
             },
-            copy_data_from => $opt{'mysqld-dir'},
         ) or die "couldnt start mysqld";
-        $ENV{NGCP_PANEL_CUSTOM_DSN} = $mysqld->dsn;
+        $ENV{NGCP_PANEL_CUSTOM_DSN} = $mysqld->dsn(host => 'localhost');
+        my $dump_files = join(' ', @{ $opt{'mysql-dump'} });
+        system("cat $dump_files | mysql -uroot --port=$opt{'mysqld-port'}");
     }
 
     unless ($opt{webdriver} eq "external") {
@@ -139,6 +140,13 @@ method ACTION_test_tap {
     system( "mkdir -p tap" );
     $ENV{PERL_TEST_HARNESS_DUMP_TAP} = "tap/";
     $self->generic_test(type => 'default');
+}
+
+method ACTION_test_servers {
+    $self->depends_on('code');
+    $self->_test_preconditions;
+    print "All servers ready for you!\nPress [Enter] to exit.";
+    <STDIN>;
 }
 
 END { shutdown_servers }

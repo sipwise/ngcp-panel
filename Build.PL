@@ -127,7 +127,7 @@ Build.PL - NGCP-Panel build system including test fixtures
     --server          URI for socket test server
     --schema-base-dir directory of NGCP::Schema if its not yet installed
     --mysqld-port     port where the mysqld should be started
-    --mysqld-dir      data directory for the temporary mysqld
+    --mysql-dump      one or more mysql dumps to be imported to our mysqld
     --help            brief help message
     --man             full documentation
 
@@ -160,11 +160,12 @@ If this option and C<--mysqld-dir> are supplied, a mysqld will be started
 at the specified port and be used for the tests. mysqld will be stopped
 and the temporary data deleted when this script finishes.
 
-=head2 C<--mysqld-dir>
+=head2 C<--mysql-dump>
 
-If this option and C<--mysqld-port> are supplied, a mysqld will be started and be used for the tests. It will use a copy of the specified directory as
-the data directory of MySQL.
-For more information see L<Test::mysqld>.
+If this option and C<--mysqld-port> are supplied, a mysqld will be started
+and be used for the tests. It will import all dumps supplied with this option.
+This option can be set multiple times. In this case all specified files will
+be dumped into the database.
 
 =head2 C<--help>
 

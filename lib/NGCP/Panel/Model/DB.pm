@@ -20,7 +20,7 @@ sub setup {
     if($ENV{NGCP_PANEL_CUSTOM_DSN}) {
         use_module('NGCP::Schema::Config')->instance->as_hash;
         use_module('NGCP::Schema::Config')->instance->as_hash
-            ->{ngcp_connect_info} = {dsn => $ENV{NGCP_PANEL_CUSTOM_DSN}};
+            ->{ngcp_connect_info}{dsn} = $ENV{NGCP_PANEL_CUSTOM_DSN};
     }
 }
 
