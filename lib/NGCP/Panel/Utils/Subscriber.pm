@@ -221,11 +221,10 @@ sub create_subscriber {
             email => '',
         });
         if($cli) {
-            $schema->resultset('dbaliases')->create({
-                alias_username => $cli,
-                alias_domain => $prov_subscriber->domain->domain,
-                username => $prov_subscriber->username,
-                domain => $prov_subscriber->domain->domain,
+            $schema->resultset('voip_dbaliases')->create({
+                username => $cli,
+                domain_id => $prov_subscriber->domain->id,
+                subscriber_id => $prov_subscriber->id,
             });
         }
 
