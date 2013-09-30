@@ -60,6 +60,7 @@ my $builder = Local::Module::Build->new(
         'Template' => 0,
         'Text::CSV_XS' => 0,
         'URI::Encode' => 0,
+        'URI::Escape' => 0,
         'UUID' => 0,
         'XML::Mini' => 0,
         'warnings' => 0,

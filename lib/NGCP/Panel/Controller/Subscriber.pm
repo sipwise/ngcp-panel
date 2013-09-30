@@ -2,6 +2,7 @@ package NGCP::Panel::Controller::Subscriber;
 use Sipwise::Base;
 BEGIN { extends 'Catalyst::Controller'; }
 use HTML::Entities;
+use URI::Escape qw(uri_unescape);
 use NGCP::Panel::Utils::Navigation;
 use NGCP::Panel::Utils::Contract;
 use NGCP::Panel::Utils::Subscriber;
@@ -1918,7 +1919,15 @@ sub ajax_calls :Chained('master') :PathPart('calls/ajax') :Args(0) {
         destination_user_id => $c->stash->{subscriber}->uuid,
     });
     my $rs = $out_rs->union($in_rs);
-    NGCP::Panel::Utils::Datatables::process($c, $rs, $c->stash->{calls_dt_columns});
+    NGCP::Panel::Utils::Datatables::process(
+        $c, $rs, $c->stash->{calls_dt_columns},
+        sub {
+            my ($result) = @_;
+            my %data = (source_user => uri_unescape($result->source_user),
+                destination_user => uri_unescape($result->destination_user));
+            return %data
+        },
+    );
 
     $c->detach( $c->view("JSON") );
 }
