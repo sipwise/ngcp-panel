@@ -162,13 +162,12 @@ sub create_list :Chained('sub_list') :PathPart('create') :Args(0) {
                     domain_id => $prov_domain->id,
                 });
                 if($number) {
-                    $schema->resultset('dbaliases')->create({
-                        alias_username => $number->cc .
-                                          ($number->ac || '').
-                                          $number->sn,
-                        alias_domain => $prov_subscriber->domain->domain,
-                        username => $prov_subscriber->username,
-                        domain => $prov_subscriber->domain->domain,
+                    $schema->resultset('voip_dbaliases')->create({
+                        username => $number->cc .
+                                    ($number->ac || '').
+                                    $number->sn,
+                        domain_id => $prov_subscriber->domain->id,
+                        subscriber_id=> $prov_subscriber->id,
                     });
                 }
 
@@ -1494,9 +1493,9 @@ sub edit_master :Chained('master') :PathPart('edit') :Args(0) {
                     $num->delete;
                 }
 
-                $schema->resultset('dbaliases')->search({
-                                    username => $prov_subscriber->username,
-                                    domain => $prov_subscriber->domain->domain,
+                $schema->resultset('voip_dbaliases')->search({
+                                    subscriber_id => $prov_subscriber->id,
+                                    domain_id => $prov_subscriber->domain->id,
                                 })->delete_all;
 
                 # TODO: check for availablity of cc and sn
@@ -1550,11 +1549,10 @@ sub edit_master :Chained('master') :PathPart('edit') :Args(0) {
 
                 }
                 if($num) {
-                    $schema->resultset('dbaliases')->create({
-                        alias_username => $num->cc.($num->ac || '').$num->sn,
-                        alias_domain => $prov_subscriber->domain->domain,
-                        username => $prov_subscriber->username,
-                        domain => $prov_subscriber->domain->domain,
+                    $schema->resultset('voip_dbaliases')->create({
+                        username => $num->cc.($num->ac || '').$num->sn,
+                        domain_id => $prov_subscriber->domain->id,
+                        subscriber_id => $prov_subscriber->id,
                     });
                     my $cli = $num->cc.($num->ac || '').$num->sn;
                     for my $cfset($prov_subscriber->voip_cf_destination_sets->all) {
@@ -1569,18 +1567,19 @@ sub edit_master :Chained('master') :PathPart('edit') :Args(0) {
                         }
                     }
                 }
-                for my $alias($form->field('alias_number')->fields) {
-                    $num = $subscriber->voip_numbers->create({
-                        cc => $alias->field('e164')->field('cc')->value,
-                        ac => $alias->field('e164')->field('ac')->value,
-                        sn => $alias->field('e164')->field('sn')->value,
-                    });
-                    $schema->resultset('dbaliases')->create({
-                        alias_username => $num->cc.($num->ac || '').$num->sn,
-                        alias_domain => $prov_subscriber->domain->domain,
-                        username => $prov_subscriber->username,
-                        domain => $prov_subscriber->domain->domain,
-                    });
+                if($form->field('alias_number')) {
+                    for my $alias($form->field('alias_number')->fields) {
+                        $num = $subscriber->voip_numbers->create({
+                            cc => $alias->field('e164')->field('cc')->value,
+                            ac => $alias->field('e164')->field('ac')->value,
+                            sn => $alias->field('e164')->field('sn')->value,
+                        });
+                        $schema->resultset('voip_dbaliases')->create({
+                            username => $num->cc.($num->ac || '').$num->sn,
+                            subscriber_id => $prov_subscriber->id,
+                            domain_id => $prov_subscriber->domain->id,
+                        });
+                    }
                 }
 
                 $form->values->{lock} ||= 0;
