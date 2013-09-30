@@ -12,7 +12,7 @@ use NGCP::Panel::Utils::Navigation;
 
 BEGIN { extends 'Catalyst::Controller'; }
 
-sub auto {
+sub auto :Private {
     my ($self, $c) = @_;
     $c->log->debug(__PACKAGE__ . '::auto');
     return 1;

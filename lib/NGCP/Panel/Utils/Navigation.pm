@@ -6,9 +6,10 @@ use URI::Encode qw(uri_decode);
 
 sub check_redirect_chain {
     my %params = @_;
-
     # TODO: check for missing fields
     my $c = $params{c};
+
+    $c->log->debug(">>>>>>>>>>>> check_redirect_chain");
 
     return if($c->req->uri->path =~ /ajax/);
 
@@ -21,10 +22,14 @@ sub check_redirect_chain {
         $back_uri->query_param_delete('back');
         delete $c->request->params->{back};
         if(@{ $c->session->{redirect_targets} }) {
-            unshift @{ $c->session->{redirect_targets} }, $back_uri
+            $c->log->debug(">>>>>>>>>>>> adding $back_uri to list of redirect targets");
+            unless(${ $c->session->{redirect_targets} }[0]->path eq $back_uri->path) {
+                $c->log->debug(">>>>>>>>>>>> $back_uri not on top of redirect targets, do add");
+                unshift @{ $c->session->{redirect_targets} }, $back_uri
+            }
                 # in case you press F5 with a back-uri in the url
-                unless(${ $c->session->{redirect_targets} }[0]->path eq $back_uri->path);
         } else {
+            $c->log->debug(">>>>>>>>>>>> initialize redirect targets with $back_uri");
             $c->session->{redirect_targets} = [ $back_uri ];
         }
         $c->stash(close_target => $back_uri);

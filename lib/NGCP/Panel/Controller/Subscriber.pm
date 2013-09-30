@@ -52,15 +52,18 @@ Catalyst Controller.
 =cut
 
 #sub auto :Does(ACL) :ACLDetachTo('/denied_page') {
-sub auto {
+sub auto :Private {
     my ($self, $c) = @_;
     $c->log->debug(__PACKAGE__ . '::auto');
+    $c->log->debug(">>>>>>>>>>>>>>>>> subscriber::auto");
     NGCP::Panel::Utils::Navigation::check_redirect_chain(c => $c);
     return 1;
 }
 
 sub sub_list :Chained('/') :PathPart('subscriber') :CaptureArgs(0) {
     my ($self, $c) = @_;
+
+    $c->log->debug(">>>>>>>>>>>>>>>>> subscriber::sub_list");
 
     $c->stash(
         template => 'subscriber/list.tt',
@@ -261,6 +264,8 @@ sub create_list :Chained('sub_list') :PathPart('create') :Args(0) :Does(ACL) :AC
 sub base :Chained('sub_list') :PathPart('') :CaptureArgs(1) {
     my ($self, $c, $subscriber_id) = @_;
 
+    $c->log->debug(">>>>>>>>>>>>>>>>> subscriber::base");
+
     unless($subscriber_id && $subscriber_id->is_integer) {
         NGCP::Panel::Utils::Message->error(
             c     => $c,
@@ -297,10 +302,19 @@ sub ajax :Chained('sub_list') :PathPart('ajax') :Args(0) :Does(ACL) :ACLDetachTo
     $c->detach( $c->view("JSON") );
 }
 
-sub terminate :Chained('base') :PathPart('terminate') :Args(0) :Does(ACL) :ACLDetachTo('/denied_page') :AllowedRole(admin) :AllowedRole(reseller) {
+sub terminate :Chained('base') :PathPart('terminate') :Args(0) :Does(ACL) :ACLDetachTo('/denied_page') :AllowedRole(admin) :AllowedRole(reseller) :AllowedRole(subscriberadmin) {
     my ($self, $c) = @_;
-
     my $subscriber = $c->stash->{subscriber};
+
+    if($c->user->roles eq 'subscriberadmin' && $c->user->uuid eq $subscriber->uuid) {
+        NGCP::Panel::Utils::Message->error(
+            c     => $c,
+            error => 'unauthorized termination of own subscriber for uuid '.$c->user->uuid,
+            desc  => "Terminating own subscriber is prohibited.",
+        );
+        NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for('/subscriber'));
+    }
+
     my $schema = $c->model('DB');
     try {
         $schema->txn_do(sub {
