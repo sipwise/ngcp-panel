@@ -1,13 +1,20 @@
 package NGCP::Panel::View::HTML;
 use Sipwise::Base;
 
+use URI::Escape qw/uri_unescape/;
+
 extends 'Catalyst::View::TT';
 
 __PACKAGE__->config(
     TEMPLATE_EXTENSION => '.tt',
     render_die => 1,
     ENCODING => 'UTF-8',
-    WRAPPER => 'wrapper.tt'
+    WRAPPER => 'wrapper.tt',
+    FILTERS => {
+        uri_unescape => sub {
+            URI::Escape::uri_unescape(@_);
+        },
+    },
 );
 
 =head1 NAME

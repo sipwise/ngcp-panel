@@ -24,7 +24,7 @@
                                 <i class="icon-circle-arrow-up" style="color:red"></i>
                             [% END -%]
                             </div>
-                            <div class="span8">[% call.destination_user_in %]</div>
+                            <div class="span8">[% call.destination_user_in | uri_unescape %]</div>
                         [% ELSE -%]
                             <div class="span1">
                             [% IF call.call_status == "ok" -%]
@@ -33,7 +33,7 @@
                                 <i class="icon-circle-arrow-down" style="color:red"></i>
                             [% END -%]
                             </div>
-                            <div class="span8">[% call.clir ? "anonymous" : call.source_cli %]</div>
+                            <div class="span8">[% call.clir ? "anonymous" : call.source_cli | uri_unescape %]</div>
                         [% END -%]
                         </div>
                         <div class="row-fluid">
