@@ -55,15 +55,12 @@ Catalyst Controller.
 sub auto :Private {
     my ($self, $c) = @_;
     $c->log->debug(__PACKAGE__ . '::auto');
-    $c->log->debug(">>>>>>>>>>>>>>>>> subscriber::auto");
     NGCP::Panel::Utils::Navigation::check_redirect_chain(c => $c);
     return 1;
 }
 
 sub sub_list :Chained('/') :PathPart('subscriber') :CaptureArgs(0) {
     my ($self, $c) = @_;
-
-    $c->log->debug(">>>>>>>>>>>>>>>>> subscriber::sub_list");
 
     $c->stash(
         template => 'subscriber/list.tt',
@@ -263,8 +260,6 @@ sub create_list :Chained('sub_list') :PathPart('create') :Args(0) :Does(ACL) :AC
 
 sub base :Chained('sub_list') :PathPart('') :CaptureArgs(1) {
     my ($self, $c, $subscriber_id) = @_;
-
-    $c->log->debug(">>>>>>>>>>>>>>>>> subscriber::base");
 
     unless($subscriber_id && $subscriber_id->is_integer) {
         NGCP::Panel::Utils::Message->error(

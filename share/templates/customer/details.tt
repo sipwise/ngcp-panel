@@ -184,11 +184,11 @@
                             </td>
                             <td class="ngcp-actions-column">
                                 <div class="sw_actions">
-                                    [% UNLESS c.user.readonly -%]
-                                    <a class="btn btn-secondary btn-small" href="[% c.uri_for_action("/subscriber/terminate", [subscriber.id]) %]" data-confirm="Terminate"><i class="icon-remove"></i> Terminate</a>
-                                    [% END -%]
                                     <a class="btn btn-primary btn-small" href="[% c.uri_for_action("/subscriber/details", [subscriber.id]) %]"><i class="icon-th-list"></i> Details</a>
                                     <a class="btn btn-tertiary btn-small" href="[% c.uri_for_action("/subscriber/preferences", [subscriber.id]) %]"><i class="icon-list"></i> Preferences</a>
+                                    [% IF (!c.user.readonly && (c.user.role == 'admin' || c.user.role == 'reseller')) || c.user.uuid != subscriber.uuid -%]
+                                    <a class="btn btn-secondary btn-small" href="[% c.uri_for_action("/subscriber/terminate", [subscriber.id]) %]" data-confirm="Terminate"><i class="icon-remove"></i> Terminate</a>
+                                    [% END -%]
                                 </div>
                             </td>
                         </tr>
