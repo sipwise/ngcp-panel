@@ -48,7 +48,7 @@ has_field 'transport' => (
 has_field 'weight' => (
     type => '+NGCP::Panel::Field::PosInteger',
     required => 1,
-    max_range => 25,
+    range_end => 127,
     default => 1,
 );
 
