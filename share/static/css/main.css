@@ -70,6 +70,19 @@ div.ngcp-modal div.modal-body div.control-group.hfh-rep div.controls div.hfh-rep
     margin-left: 180px;
 }
 
+
+div.ngcp-modal div.modal-body div.control-group.hfh-rep-block div.control-group.hfh-repinst div.controls {
+    margin-left: 0;
+}
+
+div.ngcp-modal div.modal-body div.control-group.hfh-rep-block div.control-group.hfh-repinst div.controls div.control-group {
+    margin-left: 0;
+}
+
+div.ngcp-modal div.modal-body div.control-group.hfh-rep-block div.control-group.hfh-repinst div.controls div.control-group div.controls {
+    margin-left: 180px;
+}
+
 /* align timeset elements in one row */
 
 div.ngcp-timeset-row {

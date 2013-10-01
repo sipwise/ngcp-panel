@@ -160,8 +160,15 @@ sub devmod_create :Chained('base') :PathPart('model/create') :Args(0) :Does(ACL)
                     $form->params->{mac_image} = $mac_image->slurp;
                     $form->params->{mac_image_type} = $ft->mime_type($form->params->{mac_image});
                 }
+                my $linerange = delete $form->params->{linerange};
 
                 my $devmod = $schema->resultset('autoprov_devices')->create($form->params);
+
+                foreach my $range(@{ $linerange }) {
+                    delete $range->{id};
+                    $devmod->autoprov_device_line_ranges->create($range);
+                }
+
                 delete $c->session->{created_objects}->{reseller};
                 $c->session->{created_objects}->{device} = { id => $devmod->id };
                 $c->flash(messages => [{type => 'success', text => 'Successfully created device model'}]);
@@ -228,6 +235,11 @@ sub devmod_edit :Chained('devmod_base') :PathPart('edit') :Args(0) :Does(ACL) :A
     my $posted = ($c->request->method eq 'POST');
     my $form;
     my $params = { $c->stash->{devmod}->get_inflated_columns };
+    $params->{linerange} = [];
+    foreach my $range($c->stash->{devmod}->autoprov_device_line_ranges->all) {
+        push @{ $params->{linerange} }, { $range->get_inflated_columns };
+    }
+    use Data::Printer; p $params;
     $params->{reseller}{id} = delete $params->{reseller_id};
     $params = $params->merge($c->session->{created_objects});
     if($c->user->is_superuser) {
@@ -283,7 +295,15 @@ sub devmod_edit :Chained('devmod_base') :PathPart('edit') :Args(0) :Does(ACL) :A
                     delete $form->params->{mac_image_type};
                 }
 
+                my $linerange = delete $form->params->{linerange};
                 $c->stash->{devmod}->update($form->params);
+
+                $c->stash->{devmod}->autoprov_device_line_ranges->delete_all;
+                foreach my $range(@{ $linerange }) {
+                    delete $range->{id};
+                    $c->stash->{devmod}->autoprov_device_line_ranges->create($range);
+                }
+
                 delete $c->session->{created_objects}->{reseller};
                 $c->flash(messages => [{type => 'success', text => 'Successfully updated device model'}]);
             });

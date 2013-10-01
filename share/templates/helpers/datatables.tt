@@ -191,6 +191,9 @@ $(document).ready(function() {
 
 [% IF helper.edit_flag || helper.create_flag == 1 -%]
 [%
+    IF helper.form_object.has_for_js;
+        helper.form_object.render_repeatable_js;
+    END;
     PROCESS "helpers/modal.tt";
     modal_header(m.create_flag=helper.create_flag,
                  m.name = helper.name);

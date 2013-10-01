@@ -6,6 +6,8 @@ use Moose::Util::TypeConstraints;
 
 use HTML::FormHandler::Widget::Block::Bootstrap;
 
+with 'NGCP::Panel::Render::RepeatableJs';
+
 has '+widget_wrapper' => ( default => 'Bootstrap' );
 has '+enctype' => ( default => 'multipart/form-data');
 has_field 'submitid' => ( type => 'Hidden' );
@@ -63,6 +65,87 @@ has_field 'sync_params' => (
     default => '[% server.uri %]/$MA',
 );
 
+has_field 'linerange' => (
+    type => 'Repeatable',
+    label => 'Line/Key Range',
+    setup_for_js => 1,
+    do_wrapper => 1,
+    do_label => 1,
+    required => 1,
+    tags => {
+        controls_div => 1,
+    },
+    wrapper_class => [qw/hfh-rep-block/],
+);
+
+has_field 'linerange.id' => (
+    type => 'Hidden',
+);
+
+has_field 'linerange.name' => (
+    type => 'Text',
+    label => 'Name',
+    default => 'Phone Keys',
+    element_attr => {
+        rel => ['tooltip'],
+        title => ['The Name of this range, e.g. <i>Phone Keys</i> or <i>Attendant Console 1 Keys</i>, accessible in the config template array via <i>phone.lineranges[].name</i>'],
+    },
+);
+
+has_field 'linerange.num_lines' => (
+    type => 'PosInteger',
+    label => 'Number of Lines/Keys',
+    default => 4,
+    element_attr => {
+        rel => ['tooltip'],
+        title => ['The number of Lines/Keys in this range, indexed from 0 in the config template array <i>phone.lineranges[].lines[]</i>'],
+    },
+);
+
+has_field 'linerange.can_private' => (
+    type => 'Boolean',
+    label => 'Supports Private Line',
+    default => 1,
+    element_attr => {
+        rel => ['tooltip'],
+        title => ['Lines/Keys in this range can be used as regular phone lines. Value is accessible in the config template via <i>phone.lineranges[].lines[].can_private</i>'],
+    },
+);
+
+has_field 'linerange.can_shared' => (
+    type => 'Boolean',
+    label => 'Supports Shared Line',
+    default => 0,
+    element_attr => {
+        rel => ['tooltip'],
+        title => ['Lines/Keys in this range can be used as shared lines. Value is accessible in the config template via <i>phone.lineranges[].lines[].can_shared</i>'],
+    },
+);
+
+has_field 'linerange.can_blf' => (
+    type => 'Boolean',
+    label => 'Supports Busy Lamp Field',
+    default => 0,
+    element_attr => {
+        rel => ['tooltip'],
+        title => ['Lines/Keys in this range can be used as Busy Lamp Field. Value is accessible in the config template via <i>phone.lineranges[].lines[].can_blf</i>'],
+    },
+);
+
+has_field 'linerange.rm' => (
+    type => 'RmElement',
+    value => 'Remove',
+    order => 100,
+    element_class => [qw/btn btn-primary pull-right/],
+);
+
+has_field 'linerange_add' => (
+    type => 'AddElement',
+    repeatable => 'linerange',
+    value => 'Add another Line/Key Range',
+    element_class => [qw/btn btn-primary pull-right/],
+);
+
 has_field 'save' => (
     type => 'Submit',
     value => 'Save',
@@ -73,7 +156,7 @@ has_field 'save' => (
 has_block 'fields' => (
     tag => 'div',
     class => [qw/modal-body/],
-    render_list => [qw/vendor model front_image mac_image sync_uri sync_method sync_params/],
+    render_list => [qw/vendor model linerange linerange_add front_image mac_image sync_uri sync_method sync_params/],
 );
 
 has_block 'actions' => (

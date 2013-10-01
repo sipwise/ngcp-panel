@@ -26,7 +26,7 @@ has_field 'save' => (
 has_block 'fields' => (
     tag => 'div',
     class => [qw/modal-body/],
-    render_list => [qw/reseller vendor model front_image mac_image sync_uri sync_method sync_params/],
+    render_list => [qw/reseller vendor model linerange linerange_add front_image mac_image sync_uri sync_method sync_params/],
 );
 
 has_block 'actions' => (
