@@ -1,0 +1,9 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
+    <head>
+        <title>Invalid certificate serial number</title>
+    </head>
+    <body>
+        <p>Invalid certificate serial number <var>[% ssl_client_m_serial %]</var></p>
+    </body>
+</html>

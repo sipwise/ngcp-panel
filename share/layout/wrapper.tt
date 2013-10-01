@@ -1,5 +1,5 @@
 [%
-    IF template.name.match('(\.html$|\.css$|\.js$|\.txt$)');
+    IF template.name.match('^api|(\.html$|\.css$|\.js$|\.txt$)');
         content;
     ELSIF template.name.match('^login\/login\.tt$');
        content WRAPPER html.tt;

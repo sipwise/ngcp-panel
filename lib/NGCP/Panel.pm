@@ -123,6 +123,18 @@ __PACKAGE__->config(
                 store_user_class => 'NGCP::Panel::AuthenticationStore::RoleFromRealm',
             }
         },
+        api_admin => {
+            credential => {
+                class => 'NoPassword',
+            },
+            store => {
+                class => 'DBIx::Class',
+                user_model => 'DB::admins',
+                id_field => 'ssl_client_m_serial',
+                store_user_class => 'NGCP::Panel::AuthenticationStore::RoleFromRealm',
+            },
+            use_session => 0,
+        },
         subscriber => {
             credential => {
                 class => 'Password',
