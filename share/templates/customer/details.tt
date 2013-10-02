@@ -415,6 +415,9 @@
 
 [% IF create_flag == 1 -%]
 [%
+    IF form.has_for_js;
+        form.render_repeatable_js;
+    END;
     PROCESS "helpers/modal.tt";
     modal_header(m.create_flag = create_flag,
                  m.name = description.defined ? description : "Subscriber");
@@ -424,6 +427,9 @@
 -%]
 [% ELSIF edit_flag == 1 -%]
 [%
+    IF form.has_for_js;
+        form.render_repeatable_js;
+    END;
     PROCESS "helpers/modal.tt";
     modal_header(m.create_flag=0,
                  m.name = "Settings");
@@ -504,6 +510,62 @@
 
             $('form#devsyncform').submit(function() {
                 $('input#ip').attr("disabled", "disabled");
+            });
+        });
+    </script>
+[% END -%]
+[% IF c.config.features.cloudpbx -%]
+    <script>
+        var aaData;
+        $('#line\\.0\\.line option').remove();
+        $('#line\\.0\\.type option').remove();
+        $('div.controls #profile_id').change(function() {
+            $('#line\\.0\\.line option').remove();
+            $('#line\\.0\\.type option').remove();
+            console.log("profile_id changed");
+            var prof_id;
+            $('div.controls #profile_id option:selected').each(function() {
+                prof_id = $(this).attr('value');
+            });
+            console.log("querying lines for profile id " + prof_id);
+            $.ajax({
+                url: "/device/profile/" + prof_id + "/lines/ajax",
+            }).done(function(data) {
+                aaData = data.aaData;
+                console.log("got data", data);
+                for(var i = 0; i < aaData.length; ++i) {
+                    var range = aaData[i];
+
+                    // TODO: do it for all line.$id.line/type
+
+                    $('#line\\.0\\.line').append('<option value=""></option>');
+                    for(var j = 0; j < range.num_lines; ++j) {
+                        $('#line\\.0\\.line').append('<option id="line.' + i + '.line.' + j + '" value="' + i + '.' + j + '">' + range.name + ' - Key/Line ' + j + '</option>');
+                    }
+                }
+
+                // TODO: do this based on line.$id.line being selected!
+                $('#line\\.0\\.line').change(function() {
+                    var line_id;
+                    $('#line\\.0\\.line option:selected').each(function() {
+                        line_id = $(this).attr('value'); // e.g. "2.1"
+                    });
+                    console.log("selected line_id " + line_id);
+                    var range_id = Math.floor(line_id);
+                    var range = aaData[range_id];
+                    console.log("range for range_id " + range_id + " is ", range);
+
+                    $('#line\\.0\\.type option').remove();
+                    if(+range.can_private) { // cast to int
+                        $('#line\\.0\\.type').append('<option value="private">Private Line</option>');
+                    }
+                    if(+range.can_shared) {
+                        $('#line\\.0\\.type').append('<option value="shared">Shared Line</option>');
+                    }
+                    if(+range.can_blf) {
+                        $('#line\\.0\\.type').append('<option value="blf">BLF Key</option>');
+                    }
+                });
             });
         });
     </script>

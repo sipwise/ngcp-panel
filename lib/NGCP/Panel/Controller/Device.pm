@@ -759,6 +759,23 @@ sub devprof_base :Chained('base') :PathPart('profile') :CaptureArgs(1) :Does(ACL
     }
 }
 
+sub devprof_get_lines :Chained('devprof_base') :PathPart('lines/ajax') :Args(0) :Does(ACL) :ACLDetachTo('/denied_page') :AllowedRole(admin) :AllowedRole(reseller) :AllowedRole(subscriberadmin) {
+    my ($self, $c) = @_;
+
+    # fooooo
+    my $resultset = $c->stash->{devprof}->config->device->autoprov_device_line_ranges;
+    my $cols = NGCP::Panel::Utils::Datatables::set_columns($c, [
+        { name => 'name', search => 1, title => 'Name' },
+        { name => 'num_lines', search => 1, title => 'Number of Lines/Keys' },
+        { name => 'can_private', search => 1, title => 'Private Line' },
+        { name => 'can_shared', search => 1, title => 'Shared Line' },
+        { name => 'can_blf', search => 1, title => 'BLF Key' },
+    ]);
+    NGCP::Panel::Utils::Datatables::process($c, $resultset, $cols);
+    $c->detach( $c->view("JSON") );
+}
+
+
 sub devprof_delete :Chained('devprof_base') :PathPart('delete') :Args(0) {
     my ($self, $c) = @_;
 

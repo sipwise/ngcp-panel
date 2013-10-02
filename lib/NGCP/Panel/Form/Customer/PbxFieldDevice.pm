@@ -6,6 +6,8 @@ use Moose::Util::TypeConstraints;
 
 use HTML::FormHandler::Widget::Block::Bootstrap;
 
+with 'NGCP::Panel::Render::RepeatableJs';
+
 has '+widget_wrapper' => ( default => 'Bootstrap' );
 has_field 'submitid' => ( type => 'Hidden' );
 sub build_render_list {[qw/submitid fields actions/]}
@@ -22,6 +24,7 @@ sub build_profiles {
     my $c = $self->form->ctx;
     my $profile_rs = $c->stash->{autoprov_profile_rs};
     my @options = ();
+    push @options, { label => '', value => undef };
     foreach my $p($profile_rs->all) {
         push @options, { label => $p->name, value => $p->id };
     }
@@ -34,12 +37,58 @@ has_field 'identifier' => (
     label => 'MAC Address / Identifier',
 );
 
-has_field 'subscriber_id' => (
+has_field 'line' => (
+    type => 'Repeatable',
+    label => 'Lines/Keys',
+    setup_for_js => 1,
+    do_wrapper => 1,
+    do_label => 1,
+    required => 1,
+    tags => {
+        controls_div => 1,
+    },
+    wrapper_class => [qw/hfh-rep-block/],
+);
+
+has_field 'line.id' => (
+    type => 'Hidden',
+);
+
+has_field 'line.subscriber_id' => (
     type => 'Select',
     required => 1,
     label => 'Subscriber',
     options_method => \&build_subscribers,
+    element_attr => {
+        rel => ['tooltip'],
+        title => ['The subscriber to use on this line/key'],
+    },
 );
+
+has_field 'line.line' => (
+    type => 'Select',
+    required => 1,
+    label => 'Line/Key',
+    options => [],
+    element_attr => {
+        rel => ['tooltip'],
+        title => ['The line/key to use'],
+    },
+);
+
+
+has_field 'line.type' => (
+    type => 'Select',
+    required => 1,
+    label => 'Line/Key Type',
+    options => [],
+    element_attr => {
+        rel => ['tooltip'],
+        title => ['The type of feature to use on this line/key'],
+    },
+);
+
+
 sub build_subscribers {
     my ($self) = @_;
     my $c = $self->form->ctx;
@@ -55,6 +104,21 @@ sub build_subscribers {
     return \@options;
 }
 
+has_field 'line.rm' => (
+    type => 'RmElement',
+    value => 'Remove',
+    order => 100,
+    element_class => [qw/btn btn-primary pull-right/],
+);
+
+has_field 'line_add' => (
+    type => 'AddElement',
+    repeatable => 'line',
+    value => 'Add another Line/Key',
+    element_class => [qw/btn btn-primary pull-right/],
+);
+
+
 has_field 'save' => (
     type => 'Submit',
     value => 'Save',
@@ -65,7 +129,7 @@ has_field 'save' => (
 has_block 'fields' => (
     tag => 'div',
     class => [qw/modal-body/],
-    render_list => [qw/profile_id identifier subscriber_id/],
+    render_list => [qw/profile_id identifier line line_add/],
 );
 
 has_block 'actions' => (
