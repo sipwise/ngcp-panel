@@ -370,13 +370,15 @@ sub preferences :Chained('base') :PathPart('preferences') :Args(0) {
                 $d->{as_string} = NGCP::Panel::Utils::Subscriber::destination_as_string($d);
             }
             my @tset = ();
+            my $tset_name = undef;
             if($map->time_set) {
                 @tset = map { { $_->get_columns } } $map->time_set->voip_cf_periods->all;
                 foreach my $t(@tset) {
                     $t->{as_string} = NGCP::Panel::Utils::Subscriber::period_as_string($t);
                 }
+                $tset_name = $map->time_set->name;
             }
-            push @{ $cfs->{$type} }, { destinations => \@dset, periods => \@tset };
+            push @{ $cfs->{$type} }, { destinations => \@dset, periods => \@tset, tset_name => $tset_name, dset_name => $map->destination_set->name };
         }
     }
     $c->stash(cf_destinations => $cfs);
