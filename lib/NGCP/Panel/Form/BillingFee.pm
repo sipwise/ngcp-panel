@@ -49,6 +49,7 @@ has_field 'billing_zone' => (
 
 has_field 'onpeak_init_rate' => (
     type => 'Float',
+    precision => 18,
     element_attr => {
         rel => ['tooltip'],
         title => ['The cost of the init interval in cents (e.g 0.90)']
@@ -67,6 +68,7 @@ has_field 'onpeak_init_interval' => (
 
 has_field 'onpeak_follow_rate' => (
     type => 'Float',
+    precision => 18,
     element_attr => {
         rel => ['tooltip'],
         title => ['The cost of each following interval in cents (e.g 0.90)']
@@ -85,6 +87,7 @@ has_field 'onpeak_follow_interval' => (
 
 has_field 'offpeak_init_rate' => (
     type => 'Float',
+    precision => 18,
     element_attr => {
         rel => ['tooltip'],
         title => ['The cost of the init interval in cents (e.g 0.90)']
@@ -103,6 +106,7 @@ has_field 'offpeak_init_interval' => (
 
 has_field 'offpeak_follow_rate' => (
     type => 'Float',
+    precision => 18,
     element_attr => {
         rel => ['tooltip'],
         title => ['The cost of each following interval in cents (e.g 0.90)']
