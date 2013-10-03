@@ -18,7 +18,7 @@ has_field 'ringtimeout' => (
 has_block 'fields' => (
     tag => 'div',
     class => [qw(modal-body)],
-    render_list => [qw(submitid active_callforward callforward_controls_add ringtimeout)],
+    render_list => [qw(active_callforward callforward_controls_add ringtimeout)],
 );
 
 
