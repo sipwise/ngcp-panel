@@ -74,6 +74,7 @@ has_field 'line.line' => (
         rel => ['tooltip'],
         title => ['The line/key to use'],
     },
+    element_class => [qw/ngcp-linekey-select/],
 );
 
 
@@ -86,6 +87,7 @@ has_field 'line.type' => (
         rel => ['tooltip'],
         title => ['The type of feature to use on this line/key'],
     },
+    element_class => [qw/ngcp-linetype-select/],
 );
 
 

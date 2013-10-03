@@ -45,6 +45,11 @@ sub render_repeatable_js {
     // increment index of repeatable fields
     index++;
     rep_index[data_rep_id] = index;
+
+    // initiate callback if there is a handler for that
+    if(repeatadd_handler) {
+    	repeatadd_handler.onAdd(index-1);
+    }
   });
 
   \$(document).on('click', '.rm_element', function() {
@@ -52,6 +57,13 @@ sub render_repeatable_js {
     var esc_id = id.replace(/[.]/g, '\\\\.');
     var rm_elem = \$('#' + esc_id);
     rm_elem.remove();
+
+    // initiate callback if there is a handler for that
+    if(repeatadd_handler) {
+    	var idx_id = id.replace(/^.+\\.(\\d+)\$/, "\$1");
+    	repeatadd_handler.onRm(idx_id);
+    }
+
     event.preventDefault();
   });
 

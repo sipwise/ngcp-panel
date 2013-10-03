@@ -517,11 +517,38 @@
 [% IF c.config.features.cloudpbx -%]
     <script>
         var aaData;
-        $('#line\\.0\\.line option').remove();
-        $('#line\\.0\\.type option').remove();
+
+        var AddLineHandler = (function() {
+            function AddLineHandler(){};
+            AddLineHandler.prototype.onAdd = function(index) {
+                console.log("new line added, index is", index);
+                //handle_add_line(index);
+            };
+            AddLineHandler.prototype.onRm = function(index) {
+                console.log("old line removed, index is", index);
+                //handle_rm_line(index);
+            };
+            return AddLineHandler;
+        })();
+        var repeatadd_handler = new AddLineHandler();
+
+        /*
+        function handle_add_line(range_id) {
+            $('#line\\.' + range_id + '\\.line').append('<option value=""></option>');
+            for(var j = 0; j < range.num_lines; ++j) {
+                $('#line\\.' + index + '\\.line').append('<option id="line.' + i + '.line.' + j + '" value="' + i + '.' + j + '">' + range.name + ' - Key/Line ' + j + '</option>');
+            }
+        }
+        */
+
+        [% IF create_flag == 1 -%]
+        $('.ngcp-linekey-select option').remove();
+        $('.ngcp-linetype-select option').remove();
+        [% END -%]
+
         $('div.controls #profile_id').change(function() {
-            $('#line\\.0\\.line option').remove();
-            $('#line\\.0\\.type option').remove();
+            $('.ngcp-linekey-select option').remove();
+            $('.ngcp-linetype-select option').remove();
             console.log("profile_id changed");
             var prof_id;
             $('div.controls #profile_id option:selected').each(function() {
@@ -533,37 +560,51 @@
             }).done(function(data) {
                 aaData = data.aaData;
                 console.log("got data", data);
-                for(var i = 0; i < aaData.length; ++i) {
-                    var range = aaData[i];
 
-                    // TODO: do it for all line.$id.line/type
+                // foreach line/key repeatable block:
+                $('#line .controls .control-group.hfh-repinst').each(function(line_index, line_value) {
+                   
+                    console.log("handling line block");
+                    console.log("line_index", line_index);
+                    console.log("line_value", line_value);
 
-                    $('#line\\.0\\.line').append('<option value=""></option>');
-                    for(var j = 0; j < range.num_lines; ++j) {
-                        $('#line\\.0\\.line').append('<option id="line.' + i + '.line.' + j + '" value="' + i + '.' + j + '">' + range.name + ' - Key/Line ' + j + '</option>');
+                    var line_id = $(line_value).attr("id").replace(/^.+\.(\d+)$/, "$1");
+                    console.log("range_id=", line_id);
+
+                    for(var i = 0; i < aaData.length; ++i) {
+                        var range = aaData[i];
+
+                        $('#line\\.' + line_id + '\\.line').append('<option value=""></option>');
+                        for(var j = 0; j < range.num_lines; ++j) {
+                            $('#line\\.' + line_id + '\\.line').append('<option id="line.' + line_id + '.line.' + j + '" value="' + i + '.' + j + '">' + range.name + ' - Key/Line ' + j + '</option>');
+                        }
                     }
-                }
 
-                // TODO: do this based on line.$id.line being selected!
-                $('#line\\.0\\.line').change(function() {
+                });
+
+                $('.ngcp-linekey-select').change(function(obj) {
                     var line_id;
-                    $('#line\\.0\\.line option:selected').each(function() {
-                        line_id = $(this).attr('value'); // e.g. "2.1"
-                    });
-                    console.log("selected line_id " + line_id);
-                    var range_id = Math.floor(line_id);
-                    var range = aaData[range_id];
-                    console.log("range for range_id " + range_id + " is ", range);
+                    var range_id;
+                    var key_id;
 
-                    $('#line\\.0\\.type option').remove();
-                    if(+range.can_private) { // cast to int
-                        $('#line\\.0\\.type').append('<option value="private">Private Line</option>');
+                    line_id = $(obj.currentTarget).attr("id").replace(/^line\.(\d+)\..+$/, "$1");
+                    $(obj.currentTarget).find('option:selected').each(function() {
+                        console.log("selected line key ", $(this).attr('value'));
+                        range_id = $(this).attr('value').replace(/^(\d+)\.(\d+)$/, "$1");
+                        key_id = $(this).attr('value').replace(/^(\d+)\.(\d+)$/, "$2");
+                    });
+                    var range = aaData[range_id];
+                    console.log("setting line_id " + line_id + ", range for range_id " + range_id + " is ", range);
+
+                    $('#line\\.' + line_id + '\\.type option').remove();
+                    if(range && +range.can_private) { // cast to int
+                        $('#line\\.' + line_id + '\\.type').append('<option value="private">Private Line</option>');
                     }
-                    if(+range.can_shared) {
-                        $('#line\\.0\\.type').append('<option value="shared">Shared Line</option>');
+                    if(range && +range.can_shared) {
+                        $('#line\\.' + line_id + '\\.type').append('<option value="shared">Shared Line</option>');
                     }
-                    if(+range.can_blf) {
-                        $('#line\\.0\\.type').append('<option value="blf">BLF Key</option>');
+                    if(range && +range.can_blf) {
+                        $('#line\\.' + line_id + '\\.type').append('<option value="blf">BLF Key</option>');
                     }
                 });
             });
