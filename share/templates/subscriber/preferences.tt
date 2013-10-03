@@ -16,6 +16,8 @@
     helper.aip_grp_rs = aip_grp_rs;
     helper.man_aip_grp_rs = man_aip_grp_rs;
     helper.skip_head = 1;
+
+    PROCESS "helpers/modal.tt";
 %]
 
 <div class="row">
@@ -49,7 +51,7 @@
                             <th>Type</th>
                             <th>Answer Timeout</th>
                             <th>Destinations</th>
-                            <th>Period</th>
+                            <th>Timeset</th>
                             [% # one for actions -%]
                             <th class="ngcp-actions-column"></th>
                         </tr>
@@ -60,13 +62,6 @@
                                    { type = "cft", desc = "Timeout" },
                                    { type = "cfna", desc = "Unavailable" } ] -%]
                         <tr class="sw_action_row">
-                            [% # let's count the lines of dest/period per map for proper alignment: -%]
-                            [% 
-                                FOR maps IN cf_destinations.${cf.type};
-                                    destinations.${loop.index} = maps.destinations.size;
-                                    periods.${loop.index} = maps.periods.size;
-                                END;
-                            -%]
                             <td>Call Forward [% cf.desc %]</td>
                             <td>
                                 [% cf_ringtimeout _ 's' IF cf.type == "cft" && cf_destinations.${cf.type}.size %]
@@ -74,37 +69,50 @@
                             <td>
                                 [% idx = 0 -%]
                                 [% FOR maps IN cf_destinations.${cf.type} -%]
-                                    [% jdx = 0 -%]
-                                    [% FOR d IN maps.destinations -%]
-                                        [% d.as_string %] <span class="pull-right">for [% d.timeout %]s</span><br/>
-                                        [% jdx = jdx + 1 %]
-                                    [% END -%]
-                                    [% WHILE jdx < periods.${idx} -%]
-                                        <br/>
-                                        [% jdx = jdx + 1 %]
-                                    [% END -%]
-                                    [% idx = idx + 1 -%]
-                                    [% '<br/>' UNLESS loop.index == loop.max -%]
+                                    [% IF maps.dset_name.search('^quickset_') && maps.destinations.size == 1 %]
+                                        [% maps.destinations.0.as_string %] <span class="pull-right">for [% maps.destinations.0.timeout %]s</span>
+                                    [% ELSE %]
+                                        [% jdx = 0 -%]
+                                        [% maps.dset_name -%]
+
+                                        [% dset_unique_id = cf.type _ "dset" _ idx _ jdx _ maps.id -%]
+                                        <a href="#" data-toggle="modal" data-target="#[% dset_unique_id %]" class="pull-right"><i class="icon-question-sign"></i></a>
+                                        [% modal_header_dynamic(m.header = 'Destination Set "' _ maps.dset_name _ '" Details', m.id=dset_unique_id) %]
+                                        <div class="modal-body">
+                                            [% FOR d IN maps.destinations -%]
+                                                [% d.as_string %] <span class="pull-right">for [% d.timeout %]s</span><br/>
+                                                [% jdx = jdx + 1 -%]
+                                            [% END -%]
+                                        </div>
+                                        [% modal_footer() %]
+
+                                        [% idx = idx + 1 -%]
+                                    [% END %]
+                                    <br/>
                                 [% END -%]
                             </td>
                             <td>
                                 [% idx = 0 -%]
                                 [% FOR maps IN cf_destinations.${cf.type} -%]
                                     [% jdx = 0 -%]
-                                    [% UNLESS maps.periods.size -%]
-                                        always<br/>
+                                    [% UNLESS maps.tset_name.defined -%]
+                                        always
                                         [% jdx = jdx + 1 %]
                                     [% END -%]
-                                    [% FOR p IN maps.periods -%]
-                                        [% p.as_string %]<br/>
-                                        [% jdx = jdx + 1 %]
-                                    [% END -%]
-                                    [% WHILE jdx < destinations.${idx} -%]
-                                        <br/>
-                                        [% jdx = jdx + 1 %]
-                                    [% END -%]
+                                    [% maps.tset_name -%]
+                                    [% IF maps.tset_name.defined -%]
+                                        [% tset_unique_id = cf.type _ idx _ jdx _ maps.id -%]
+                                        <a href="#" data-toggle="modal" data-target="#[% tset_unique_id %]" class="pull-right"><i class="icon-question-sign"></i></a>
+                                        [% modal_header_dynamic(m.header = 'Timeset "' _ maps.tset_name _ '" Details', m.id=tset_unique_id) %]
+                                        <div class="modal-body">
+                                        [% FOR p IN maps.periods -%]
+                                            [% p.as_string %]<br/>
+                                        [% END -%]
+                                        </div>
+                                        [% modal_footer() %]
+                                    [% END %]
                                     [% idx = idx + 1 -%]
-                                    [% '<br/>' UNLESS loop.index == loop.max -%]
+                                    <br/>
                                 [% END -%]
                             </td>
                             <td class="ngcp-actions-column">
@@ -537,3 +545,4 @@
 [% END -%]
 
 [% # vim: set tabstop=4 syntax=html expandtab: -%]
+
