@@ -1,3 +1,48 @@
+ngcp-panel (1.0.14) unstable; urgency=low
+
+  [ Andreas Granig ]
+  * [8e2e567] MT#3981 Write numbers to provisioning.voip_dbalias.
+  * [3ca68fa] Use localtime in TS and set createtime for subs.
+  * [dc4de41] Add accordion toggle button.
+  * [b2b4073] MT#3975 Prevent subadmin from terminating himself.
+
+  [ Gerhard Jungwirth ]
+  * [30c2fb8] Option to edit an existing contact, belonging to a customer
+  * [caefe25] Add some fields to contacts form
+  * [e14d517] don't count terminated resellers in Dashboard
+  * [574f7da] Validation on the replacement pattern of rewrite rules
+  * [a0a39c2] Call end-user-contracts customers to avoid confusion
+  * [7e9b06c] fix missing include "NGCP::Panel::Utils::DateTime"
+  * [db25b1f] Option to select the number of rows in datatables table
+  * [c17db14] Only expose delete button to contacts with no contracts
+  * [85007e8] Expose the contacts controller to Edit/Delete Contacts
+  * [3adda47] provide error message on "column" cannot be null
+  * [26bc604] Only show relevant domains on reseller details
+  * [4de5764] Group callflows by call_id
+  * [7dbe51e] Fix saving preferences of type enum with empty value
+  * [b41a719] Fix syling of long labels in modal
+  * [e51ae82] Suppress superfluous error messages "Value must be an integer"
+  * [fa286e1] Consistent naming: Web Username/Password vs CSC Username/Password
+  * [a64bc15] Preserve the product_id when updating a billing_mapping
+  * [684fef1] Correctly select customers under reseller-> customers section
+  * [6a3e3ea] Fix e164 validation on subscriber creation
+  * [e67c4b7] Validate SIP username
+  * [64766a4] Show Contract (equals Cusomer-) id
+  * [bf3337b] Correctly identify customer contracts
+  * [00a7b2d] Filter Contract Contacts by whether they have a reseller_id
+  * [5c46e89] Fix duplicate showing of contracts under Reseller Details - Reseller Contract
+  * [9f98aa9] Show Timeset and Destination Set Names
+  * [afc47e1] Fix failing redirect due to double submitid
+  * [02296a9] uri_unescape CDRs
+  * [99bcb29] validate weight field of Peering Servers
+  * [f3bcebd] Allow 18 decimal digits on Fee rates
+  * [45a0d6c] Restrict certain domain-prefs to their respective reseller
+
+  [ Andrew Pogrebennyk ]
+  * [0035fa8] Fix a typo on peering page: caller vs callee.
+
+ -- Andrew Pogrebennyk <apogrebennyk@sipwise.com>  Fri, 04 Oct 2013 15:19:28 +0200
+
 ngcp-panel (1.0.13) unstable; urgency=low
 
   [ Andreas Granig ]
