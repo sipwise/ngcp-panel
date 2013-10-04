@@ -538,6 +538,7 @@
 
         function handle_add_line(line_id) {
             console.log("add line_id " + line_id);
+            $('#line\\.' + line_id + '\\.line option').remove();
             $('#line\\.' + line_id + '\\.line').append('<option value=""></option>');
             for(var i = 0; i < aaData.length; ++i) {
                 var range = aaData[i];
@@ -548,11 +549,11 @@
                 }
             }
             $('#line\\.' + line_id + '\\.line').change(function(obj) {
-                handle_change_line(obj);
+                handle_change_line(obj, 'invalid');
             });
         }
 
-        function handle_change_line(obj) {
+        function handle_change_line(obj, active_type) {
             var range_id;
             var range_num;
             var key_num;
@@ -571,19 +572,45 @@
 
             $('#line\\.' + line_id + '\\.type option').remove();
             if(range && +range.can_private) { // cast to int
-                $('#line\\.' + line_id + '\\.type').append('<option value="private">Private Line</option>');
+                $('#line\\.' + line_id + '\\.type').append('<option value="private"' + (active_type == 'private' ? ' selected="selected"' : '') + '>Private Line</option>');
             }
             if(range && +range.can_shared) {
-                $('#line\\.' + line_id + '\\.type').append('<option value="shared">Shared Line</option>');
+                $('#line\\.' + line_id + '\\.type').append('<option value="shared"' + (active_type == 'shared' ? ' selected="selected"' : '') + '>Shared Line</option>');
             }
             if(range && +range.can_blf) {
-                $('#line\\.' + line_id + '\\.type').append('<option value="blf">BLF Key</option>');
+                $('#line\\.' + line_id + '\\.type').append('<option value="blf"' + (active_type == 'blf' ? ' selected="selected"' : '') + '>BLF Key</option>');
             }
         }
 
         [% IF create_flag == 1 -%]
-        $('.ngcp-linekey-select option').remove();
-        $('.ngcp-linetype-select option').remove();
+            $('.ngcp-linekey-select option').remove();
+            $('.ngcp-linetype-select option').remove();
+        [% ELSIF edit_flag == 1 -%]
+            var linekeys = {
+            [% FOR line IN pbx_device.autoprov_field_device_lines.all -%]
+                '[% line.linerange_id %].[% line.linerange_num %].[% line.key_num %]':'[% line.line_type %]'[% line == bx_device.autoprov_field_device_lines.all.last ? '' : ',' %]
+            [% END -%]
+            };
+            var prof_id;
+            $('div.controls #profile_id option:selected').each(function() {
+                prof_id = $(this).attr('value');
+            });
+            console.log("querying lines for profile id " + prof_id);
+            $.ajax({
+                url: "/device/profile/" + prof_id + "/lines/ajax",
+            }).done(function(data) {
+                aaData = data.aaData;
+                console.log("got edit data", data);
+                $('.ngcp-linekey-select').each(function() {
+                    var key_val;
+                    $(this).find('option:selected').each(function(){
+                        key_val = $(this).attr("value");
+                    });
+                    console.log("key_val=" + key_val + ", type=" + linekeys[key_val]);
+                    var obj = { currentTarget: $(this)};
+                    handle_change_line(obj, linekeys[key_val]);
+                });
+            });
         [% END -%]
 
         $('div.controls #profile_id').change(function() {

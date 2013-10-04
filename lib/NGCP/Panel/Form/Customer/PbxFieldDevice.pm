@@ -21,6 +21,7 @@ has_field 'profile_id' => (
 );
 sub build_profiles {
     my ($self) = @_;
+    print ">>>>>>>>>>>>>> build_profiles\n";
     my $c = $self->form->ctx;
     my $profile_rs = $c->stash->{autoprov_profile_rs};
     my @options = ();

@@ -12,6 +12,7 @@ use NGCP::Panel::Form::Customer::PbxExtensionSubscriber;
 use NGCP::Panel::Form::Customer::PbxGroupBase;
 use NGCP::Panel::Form::Customer::PbxGroup;
 use NGCP::Panel::Form::Customer::PbxFieldDevice;
+use NGCP::Panel::Form::Customer::PbxFieldDeviceEdit;
 use NGCP::Panel::Form::Customer::PbxFieldDeviceSync;
 use NGCP::Panel::Utils::Message;
 use NGCP::Panel::Utils::Navigation;
@@ -690,9 +691,20 @@ sub pbx_device_edit :Chained('pbx_device_base') :PathPart('edit') :Args(0) {
         },{
             join => { 'config' => 'device' }, 
         });
-    my $form = NGCP::Panel::Form::Customer::PbxFieldDevice->new(ctx => $c);
+    say ">>>>>>>>>>>>>>>>>>> ceate NGCP::Panel::Form::Customer::PbxFieldDevice";
+    my $form = NGCP::Panel::Form::Customer::PbxFieldDeviceEdit->new(ctx => $c);
     my $params = { $c->stash->{pbx_device}->get_inflated_columns };
+    my @lines = ();
+    foreach my $line($c->stash->{pbx_device}->autoprov_field_device_lines->all) {
+        push @lines, {
+            subscriber_id => $line->subscriber_id,
+            line => $line->linerange_id . '.' . $line->linerange_num . '.' . $line->key_num,
+            type => $line->line_type,
+        };
+    }
+    $params->{line} = \@lines;
     $params = $params->merge($c->session->{created_objects});
+    say ">>>>>>>>>>>>>>>>>>>>>>> process form";
     $form->process(
         posted => $posted,
         params => $c->request->params,
@@ -706,13 +718,52 @@ sub pbx_device_edit :Chained('pbx_device_base') :PathPart('edit') :Args(0) {
     );
     if($posted && $form->validated) {
         try {
+            my $err = 0;
             my $schema = $c->model('DB');
             $schema->txn_do( sub {
-                $form->params->{identifier} = lc $form->params->{identifier};
-                $c->stash->{pbx_device}->update($form->params);
-            });
+                my $fdev = $c->stash->{pbx_device};
+                my $station_name = $form->params->{station_name};
+                my $identifier = lc $form->params->{identifier};
+                my $profile_id = $form->params->{profile_id};
+                $fdev->update({
+                    profile_id => $profile_id,
+                    identifier => $identifier,
+                    station_name => $station_name,
+                });
 
-            $c->flash(messages => [{type => 'success', text => 'PBX device successfully updated'}]);
+                $fdev->autoprov_field_device_lines->delete_all;
+                my @lines = $form->field('line')->fields;
+                foreach my $line(@lines) {
+                    say ">>>>>>>>>> handle line, subscriber_id=".$line->field('subscriber_id').", account_id=".$c->stash->{contract}->id;
+                    my $prov_subscriber = $schema->resultset('provisioning_voip_subscribers')->find({
+                        id => $line->field('subscriber_id')->value,
+                        account_id => $c->stash->{contract}->id,
+                    });
+                    unless($prov_subscriber) {
+                        NGCP::Panel::Utils::Message->error(
+                            c => $c,
+                            error => "invalid provisioning subscriber_id '".$line->field('subscriber_id')->value.
+                                "' for contract id '".$c->stash->{contract}->id."'",
+                            desc  => "Invalid provisioning subscriber id detected.",
+                        );
+                        # TODO: throw exception here!
+                        $err = 1;
+                        last;
+                    }
+                    my ($range_id, $range_num, $key_num) = split /\./, $line->field('line')->value;
+                    my $type = $line->field('type')->value;
+                    $fdev->autoprov_field_device_lines->create({
+                        subscriber_id => $prov_subscriber->id,
+                        linerange_id => $range_id,
+                        linerange_num => $range_num,
+                        key_num => $key_num,
+                        line_type => $type,
+                    });
+                }
+            });
+            unless($err) {
+                $c->flash(messages => [{type => 'success', text => 'PBX device successfully updated'}]);
+            }
         } catch ($e) {
             NGCP::Panel::Utils::Message->error(
                 c => $c,
