@@ -29,7 +29,6 @@ ngcp-panel (1.0.14) unstable; urgency=low
   * [e67c4b7] Validate SIP username
   * [64766a4] Show Contract (equals Cusomer-) id
   * [bf3337b] Correctly identify customer contracts
-  * [00a7b2d] Filter Contract Contacts by whether they have a reseller_id
   * [5c46e89] Fix duplicate showing of contracts under Reseller Details - Reseller Contract
   * [9f98aa9] Show Timeset and Destination Set Names
   * [afc47e1] Fix failing redirect due to double submitid
