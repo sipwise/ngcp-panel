@@ -2,10 +2,7 @@ package NGCP::Panel::Controller::Contract;
 use Sipwise::Base;
 
 BEGIN { extends 'Catalyst::Controller'; }
-use NGCP::Panel::Form::Contract::Basic;
-use NGCP::Panel::Form::Contract::PeeringReseller;
-use NGCP::Panel::Form::Contract::ProductSelect;
-use NGCP::Panel::Utils::Message;
+use NGCP::Panel::Form::Contract;
 use NGCP::Panel::Utils::Navigation;
 use NGCP::Panel::Utils::Contract;
 use NGCP::Panel::Utils::Subscriber;
@@ -197,20 +194,7 @@ sub edit :Chained('base') :PathPart('edit') :Args(0) {
         $params->{status} = $contract->status;
     }
     $params = $params->merge($c->session->{created_objects});
-<<<<<<< HEAD
     my $form = NGCP::Panel::Form::Contract->new;
-=======
-    my ($form, $is_peering_reseller);
-    if (defined $billing_mapping->product &&
-        grep {$billing_mapping->product->handle eq $_}
-            ("SIP_PEERING", "PSTN_PEERING", "VOIP_RESELLER") ) {
-        $form = NGCP::Panel::Form::Contract::PeeringReseller->new;
-        $is_peering_reseller = 1;
-    } else {
-        $form = NGCP::Panel::Form::Contract::Basic->new;
-        $is_peering_reseller = 0;
-    }
->>>>>>> 1991296... Filter Contract Contacts by whether they have a reseller_id
     $form->process(
         posted => $posted,
         params => $c->req->params,
@@ -218,10 +202,7 @@ sub edit :Chained('base') :PathPart('edit') :Args(0) {
     );
     NGCP::Panel::Utils::Navigation::check_form_buttons(
         c => $c, form => $form,
-        fields => {
-            'contact.create' => ( $is_peering_reseller
-                ? $c->uri_for('/contact/create/noreseller')
-                : $c->uri_for('/contact/create')),
+        fields => {'contact.create' => $c->uri_for('/contact/create'),
                    'billing_profile.create'  => $c->uri_for('/billing/create')},
         back_uri => $c->req->uri,
     );
@@ -242,11 +223,6 @@ sub edit :Chained('base') :PathPart('edit') :Args(0) {
                 delete $form->values->{contact};
                 $form->{modify_timestamp} = NGCP::Panel::Utils::DateTime::current_local;
                 $contract->update($form->values);
-
-                if ($is_peering_reseller &&
-                    defined $contract->contact->reseller_id) {
-                    die( ["Cannot use this contact for peering or reseller contracts.", "showdetails"] );
-                }
 
                 # if status changed, populate it down the chain
                 if($contract->status ne $old_status) {
@@ -339,11 +315,7 @@ sub peering_create :Chained('peering_list') :PathPart('create') :Args(0) {
     my $posted = ($c->request->method eq 'POST');
     my $params = {};
     $params = $params->merge($c->session->{created_objects});
-<<<<<<< HEAD
     my $form = NGCP::Panel::Form::Contract->new;
-=======
-    my $form = NGCP::Panel::Form::Contract::PeeringReseller->new;
->>>>>>> 1991296... Filter Contract Contacts by whether they have a reseller_id
     $form->process(
         posted => $posted,
         params => $c->request->params,
@@ -560,11 +532,7 @@ sub reseller_create :Chained('reseller_list') :PathPart('create') :Args(0) {
     my $posted = ($c->request->method eq 'POST');
     my $params = {};
     $params = $params->merge($c->session->{created_objects});
-<<<<<<< HEAD
     my $form = NGCP::Panel::Form::Contract->new;
-=======
-    my $form = NGCP::Panel::Form::Contract::PeeringReseller->new;
->>>>>>> 1991296... Filter Contract Contacts by whether they have a reseller_id
     $form->process(
         posted => $posted,
         params => $c->request->params,

@@ -23,12 +23,6 @@ method error ($self: Catalyst :$c, Str :$desc, Str :$log?, :$error?) {
         return;
     }
 
-    if ( ref($error) eq "ARRAY" && @$error >= 2 && $error->[1] eq "showdetails" ) {
-        $c->log->error("$desc (@$error[0])");
-        $c->flash(messages => [{type => 'error', text => "$desc (@$error[0])"}]);
-        return;
-    }
-
     unless ( $error->isa('DBIx::Class::Exception') ) {
         $c->log->error("$desc ($error)");
         $c->flash(messages => [{type => 'error', text => $desc}]);
