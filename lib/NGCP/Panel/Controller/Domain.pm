@@ -332,18 +332,22 @@ sub load_preference_list :Private {
         ];
     }
 
+    my $correct_reseller_id = $c->stash->{domain_result}->domain_resellers->first->reseller_id;
     my $rewrite_rule_sets_rs = $c->model('DB')
-        ->resultset('voip_rewrite_rule_sets');
+        ->resultset('voip_rewrite_rule_sets')
+        ->search_rs({ reseller_id => $correct_reseller_id, });
     $c->stash(rwr_sets_rs => $rewrite_rule_sets_rs,
               rwr_sets    => [$rewrite_rule_sets_rs->all]);
 
     my $ncos_levels_rs = $c->model('DB')
-        ->resultset('ncos_levels');
+        ->resultset('ncos_levels')
+        ->search_rs({ reseller_id => $correct_reseller_id, });
     $c->stash(ncos_levels_rs => $ncos_levels_rs,
               ncos_levels    => [$ncos_levels_rs->all]);
 
     my $sound_sets_rs = $c->model('DB')
-        ->resultset('voip_sound_sets');
+        ->resultset('voip_sound_sets')
+        ->search_rs({ reseller_id => $correct_reseller_id, });
     $c->stash(sound_sets_rs => $sound_sets_rs,
               sound_sets    => [$sound_sets_rs->all]);
 
