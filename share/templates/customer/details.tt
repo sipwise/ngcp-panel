@@ -257,7 +257,8 @@
                     <thead>
                         <tr>
                             <th></th>
-                            <th>SIP URI</th>
+                            <th>Station Name</th>
+                            <th>Subscriber</th>
                             <th>MAC Address / Identifier</th>
                             <th>Device Profile</th>
                             <th class="ngcp-actions-column"></th>
@@ -267,10 +268,13 @@
                         [% FOR dev IN pbx_devices -%]
                         <tr class="sw_action_row">
                             <td><img src="[% c.uri_for_action('/device/devmod_download_frontimage', [ dev.profile.config.device.id]) %]" style="height:40px"/></td>
+                            <td>[% dev.station_name %]</td>
                             <td>
+                                <ul style="list-style-type:none; margin-left:0">
                                 [% FOR line IN dev.autoprov_field_device_lines.all -%]
-                                    [% line.provisioning_voip_subscriber.username %]@[% line.provisioning_voip_subscriber.domain.domain %]<span class="pull-right">[% line.line_type %]</span><br/>
+                                    <li>[% line.linerange_num %]/[% line.key_num %]: [% line.provisioning_voip_subscriber.username %]@[% line.provisioning_voip_subscriber.domain.domain %]<span class="pull-right">[% line.line_type %]</span></li>
                                 [% END -%]
+                                </ul>
                             </td>
                             <td>[% dev.identifier %]</td>
                             <td>[% dev.profile.name %]</td>
