@@ -48,6 +48,7 @@ my $builder = Local::Module::Build->new(
         'HTML::FormHandler::Model::DBIC' => 0,
         'HTML::FormHandler::Moose' => 0,
         'HTML::FormHandler::Widget::Block::Bootstrap' => 0,
+        'HTTP::Headers' => 0,
         'HTTP::Status' => 0,
         'IPC::System::Simple' => 0,
         'Log::Log4perl::Catalyst' => 0,
