@@ -2,8 +2,11 @@ package NGCP::Panel::Controller::Administrator;
 use Sipwise::Base;
 use namespace::sweep;
 BEGIN { extends 'Catalyst::Controller'; }
+use HTTP::Headers qw();
 use NGCP::Panel::Form::Administrator::Reseller;
 use NGCP::Panel::Form::Administrator::Admin;
+use NGCP::Panel::Form::Administrator::APIGenerate qw();
+use NGCP::Panel::Form::Administrator::APIDownDelete qw();
 use NGCP::Panel::Utils::Message;
 use NGCP::Panel::Utils::Navigation;
 
@@ -217,6 +220,45 @@ sub delete :Chained('base') :PathPart('delete') :Args(0) {
         );
     };
     NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for('/administrator'));
+}
+
+sub api_key :Chained('base') :PathPart('api_key') :Args(0) {
+    my ($self, $c) = @_;
+    my $serial = $c->stash->{administrator}->ssl_client_m_serial;
+    if ($c->req->body_parameters->{'key_actions.generate'}) {
+        $serial = time;
+        my $updated;
+        while (!$updated) {
+            try {
+                $c->stash->{administrator}->update({ ssl_client_m_serial => $serial });
+                $updated = 1;
+            } catch(DBIx::Class::Exception $e where { "$_" =~ qr'Duplicate entry' }) {
+                $serial++;
+            };
+        }
+        $c->model('CA')->make_client($serial);
+    } elsif ($c->req->body_parameters->{'key_actions.delete'}) {
+        undef $serial;
+        $c->stash->{administrator}->update({ ssl_client_m_serial => $serial });
+    } elsif ($c->req->body_parameters->{'key_actions.download'}) {
+        my $cert_file = $c->model('CA')->client_cert_file($serial);
+        $c->res->headers(HTTP::Headers->new(
+            'Content-Type' => 'application/octet-stream',
+            'Content-Disposition' => sprintf('attachment; filename=%s', $cert_file->basename)
+        ));
+        $c->res->body($cert_file->openr);
+        return;
+    }
+    my $form;
+    if ($serial) {
+        $form = NGCP::Panel::Form::Administrator::APIDownDelete->new;
+    } else {
+        $form = NGCP::Panel::Form::Administrator::APIGenerate->new;
+    }
+    $c->stash(
+        api_modal_flag => 1,
+        form => $form,
+    );
 }
 
 $CLASS->meta->make_immutable;
