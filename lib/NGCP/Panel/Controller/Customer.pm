@@ -162,9 +162,7 @@ sub base :Chained('list_customer') :PathPart('') :CaptureArgs(1) {
     $c->stash->{pbx_groups} = $subs->{pbx_groups};
 
     my $field_devs = [ $c->model('DB')->resultset('autoprov_field_devices')->search({
-        'provisioning_voip_subscriber.account_id' => $contract->first->id
-    }, {
-        join => 'provisioning_voip_subscriber'
+        'contract_id' => $contract->first->id
     })->all ];
     $c->stash(pbx_devices => $field_devs);
 
@@ -594,27 +592,50 @@ sub pbx_device_create :Chained('base') :PathPart('pbx/device/create') :Args(0) {
     );
     if($posted && $form->validated) {
         try {
+            my $err = 0;
             my $schema = $c->model('DB');
             $schema->txn_do( sub {
-                my $prov_subscriber = $schema->resultset('provisioning_voip_subscribers')->find({
-                    id => $form->params->{subscriber_id},
-                    account_id => $c->stash->{contract}->id,
+                my $station_name = $form->params->{station_name};
+                my $identifier = lc $form->params->{identifier};
+                my $profile_id = $form->params->{profile_id};
+                my $fdev = $c->stash->{contract}->autoprov_field_devices->create({
+                    profile_id => $profile_id,
+                    identifier => $identifier,
+                    station_name => $station_name,
                 });
-                unless($prov_subscriber) {
-                    NGCP::Panel::Utils::Message->error(
-                        c => $c,
-                        error => "invalid provisioning subscriber_id '".$form->params->{subscriber_id}.
-                            "' for contract id '".$c->stash->{contract}->id."'",
-                        desc  => "Invalid provisioning subscriber id detected.",
-                    );
-                }
-                else {
-                    $form->params->{identifier} = lc $form->params->{identifier};
-                    $prov_subscriber->autoprov_field_devices->create($form->params);
+
+                my @lines = $form->field('line')->fields;
+                foreach my $line(@lines) {
+                    say ">>>>>>>>>> handle line, subscriber_id=".$line->field('subscriber_id').", account_id=".$c->stash->{contract}->id;
+                    my $prov_subscriber = $schema->resultset('provisioning_voip_subscribers')->find({
+                        id => $line->field('subscriber_id')->value,
+                        account_id => $c->stash->{contract}->id,
+                    });
+                    unless($prov_subscriber) {
+                        NGCP::Panel::Utils::Message->error(
+                            c => $c,
+                            error => "invalid provisioning subscriber_id '".$line->field('subscriber_id')->value.
+                                "' for contract id '".$c->stash->{contract}->id."'",
+                            desc  => "Invalid provisioning subscriber id detected.",
+                        );
+                        # TODO: throw exception here!
+                        $err = 1;
+                        last;
+                    }
+                    my ($range_id, $range_num, $key_num) = split /\./, $line->field('line')->value;
+                    my $type = $line->field('type')->value;
+                    $fdev->autoprov_field_device_lines->create({
+                        subscriber_id => $prov_subscriber->id,
+                        linerange_id => $range_id,
+                        linerange_num => $range_num,
+                        key_num => $key_num,
+                        line_type => $type,
+                    });
                 }
             });
-
-            $c->flash(messages => [{type => 'success', text => 'PBX device successfully created'}]);
+            unless($err) {
+                $c->flash(messages => [{type => 'success', text => 'PBX device successfully created'}]);
+            }
         } catch ($e) {
             NGCP::Panel::Utils::Message->error(
                 c => $c,
@@ -645,7 +666,7 @@ sub pbx_device_base :Chained('base') :PathPart('pbx/device') :CaptureArgs(1) {
         );
         NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for_action('/customer/details', [$c->req->captures->[0]]));
     }
-    if($dev->provisioning_voip_subscriber->account_id != $c->stash->{contract}->id) {
+    if($dev->contract->id != $c->stash->{contract}->id) {
         NGCP::Panel::Utils::Message->error(
             c => $c,
             error => "invalid voip pbx device id $dev_id for customer id '".$c->stash->{contract}->id."'",

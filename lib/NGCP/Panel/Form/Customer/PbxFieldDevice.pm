@@ -37,6 +37,12 @@ has_field 'identifier' => (
     label => 'MAC Address / Identifier',
 );
 
+has_field 'station_name' => (
+    type => 'Text',
+    required => 1,
+    label => 'Station Name',
+);
+
 has_field 'line' => (
     type => 'Repeatable',
     label => 'Lines/Keys',
@@ -64,33 +70,6 @@ has_field 'line.subscriber_id' => (
         title => ['The subscriber to use on this line/key'],
     },
 );
-
-has_field 'line.line' => (
-    type => 'Select',
-    required => 1,
-    label => 'Line/Key',
-    options => [],
-    element_attr => {
-        rel => ['tooltip'],
-        title => ['The line/key to use'],
-    },
-    element_class => [qw/ngcp-linekey-select/],
-);
-
-
-has_field 'line.type' => (
-    type => 'Select',
-    required => 1,
-    label => 'Line/Key Type',
-    options => [],
-    element_attr => {
-        rel => ['tooltip'],
-        title => ['The type of feature to use on this line/key'],
-    },
-    element_class => [qw/ngcp-linetype-select/],
-);
-
-
 sub build_subscribers {
     my ($self) = @_;
     my $c = $self->form->ctx;
@@ -104,6 +83,53 @@ sub build_subscribers {
         };
     }
     return \@options;
+}
+
+
+has_field 'line.line' => (
+    type => 'Select',
+    required => 1,
+    label => 'Line/Key',
+    options => [],
+    no_option_validation => 1,
+    element_attr => {
+        rel => ['tooltip'],
+        title => ['The line/key to use'],
+    },
+    element_class => [qw/ngcp-linekey-select/],
+);
+sub validate_line_line {
+    my ($self, $field) = @_;
+    $field->clear_errors;
+    unless($field->value =~ /^\d+\.\d+\.\d+$/) {
+        my $err_msg = 'Invalid line value';
+        $field->add_error($err_msg);
+    }
+    return;
+}
+
+has_field 'line.type' => (
+    type => 'Select',
+    required => 1,
+    label => 'Line/Key Type',
+    options => [],
+    no_option_validation => 1,
+    element_attr => {
+        rel => ['tooltip'],
+        title => ['The type of feature to use on this line/key'],
+    },
+    element_class => [qw/ngcp-linetype-select/],
+);
+sub validate_line_type {
+    my ($self, $field) = @_;
+    $field->clear_errors;
+    unless($field->value eq 'private' ||
+           $field->value eq 'shared' ||
+           $field->value eq 'blf') {
+        my $err_msg = 'Invalid line type, must be private, shared or blf';
+        $field->add_error($err_msg);
+    }
+    return;
 }
 
 has_field 'line.rm' => (
@@ -131,7 +157,7 @@ has_field 'save' => (
 has_block 'fields' => (
     tag => 'div',
     class => [qw/modal-body/],
-    render_list => [qw/profile_id identifier line line_add/],
+    render_list => [qw/profile_id identifier station_name line line_add/],
 );
 
 has_block 'actions' => (

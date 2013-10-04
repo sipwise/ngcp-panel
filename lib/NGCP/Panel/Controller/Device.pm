@@ -762,9 +762,9 @@ sub devprof_base :Chained('base') :PathPart('profile') :CaptureArgs(1) :Does(ACL
 sub devprof_get_lines :Chained('devprof_base') :PathPart('lines/ajax') :Args(0) :Does(ACL) :ACLDetachTo('/denied_page') :AllowedRole(admin) :AllowedRole(reseller) :AllowedRole(subscriberadmin) {
     my ($self, $c) = @_;
 
-    # fooooo
     my $resultset = $c->stash->{devprof}->config->device->autoprov_device_line_ranges;
     my $cols = NGCP::Panel::Utils::Datatables::set_columns($c, [
+        { name => 'id', search => 1, title => 'ID' },
         { name => 'name', search => 1, title => 'Name' },
         { name => 'num_lines', search => 1, title => 'Number of Lines/Keys' },
         { name => 'can_private', search => 1, title => 'Private Line' },
@@ -855,7 +855,11 @@ sub dev_field_config :Chained('/') :PathPart('device/autoprov') :Args() {
 
     unless($id) {
         $c->response->content_type('text/plain');
-        $c->response->body("404 - device not found");
+        if($c->config->{features}->{debug}) {
+            $c->response->body("404 - device id not given");
+        } else {
+            $c->response->body("404 - device not found");
+        }
         $c->response->status(404);
         return;
     }
@@ -867,35 +871,75 @@ sub dev_field_config :Chained('/') :PathPart('device/autoprov') :Args() {
     });
     unless($dev) {
         $c->response->content_type('text/plain');
-        $c->response->body("404 - device not found");
+        if($c->config->{features}->{debug}) {
+            $c->response->body("404 - device id '" . $id . "' not found");
+        } else {
+            $c->response->body("404 - device not found");
+        }
         $c->response->status(404);
         return;
     }
 
-    my $sub = $dev->provisioning_voip_subscriber;
-    my $display_name = NGCP::Panel::Utils::Preferences::get_usr_preference_rs(
-        c => $c,
-        prov_subscriber => $sub,
-        attribute => 'display_name',
-    );
-    if($display_name->first) {
-        $display_name = $display_name->first->value;
-    } else {
-        $display_name = $sub->username;
-    };
+    my $model = $dev->profile->config->device;
+
     my $vars = {
-        sip => {
-            username => $sub->username,
-            password => $sub->password,
-            domain => $sub->domain->domain,
-            displayname => $display_name,
+        phone => {
+            stationname => $dev->station_name,
+            lineranges => [],
         },
     };
+
+    my @lines = ();
+    foreach my $linerange($model->autoprov_device_line_ranges->all) {
+        my $range = {
+            name => $linerange->name,
+            num_lines => $linerange->num_lines,
+            lines => [],
+        };
+        foreach my $line($linerange->autoprov_field_device_lines->all) {
+            my $sub = $line->provisioning_voip_subscriber;
+            my $display_name = NGCP::Panel::Utils::Preferences::get_usr_preference_rs(
+                c => $c,
+                prov_subscriber => $sub,
+                attribute => 'display_name',
+            );
+            if($display_name->first) {
+                $display_name = $display_name->first->value;
+            } else {
+                $display_name = $sub->username;
+            };
+            push @{ $range->{lines} }, {
+                username => $sub->username,
+                domain => $sub->domain->domain,
+                password => $sub->password,
+                displayname => $display_name,
+                keynum => $line->key_num,
+                rangenum => $line->linerange_num,
+                type => $line->line_type,
+            };
+            if($line->line_type eq "private" && !exists $vars->{sla}) {
+                $vars->{sla}->{username} = $sub->username,
+                $vars->{sla}->{domain} = $sub->domain->domain,
+                $vars->{sla}->{password} = $sub->password,
+            }
+        }
+        push @{ $vars->{phone}->{lineranges} }, $range;
+    }
 
     my $data = $dev->profile->config->data;
     my $processed_data = "";
     my $t = Template->new;
-    $t->process(\$data, $vars, \$processed_data);
+    $t->process(\$data, $vars, \$processed_data) || do {
+        my $error = $t->error();
+        my $msg = "error processing template, type=".$error->type.", info='".$error->info."'";
+        $c->log->error($msg);
+        $c->response->body("500 - error creating template:\n$msg");
+        $c->response->status(500);
+        return;
+    };
+
+    $c->log->debug("providing config to $id");
+    $c->log->debug($processed_data);
 
     $c->response->content_type($dev->profile->config->content_type);
     $c->response->body($processed_data);

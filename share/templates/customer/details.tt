@@ -267,7 +267,11 @@
                         [% FOR dev IN pbx_devices -%]
                         <tr class="sw_action_row">
                             <td><img src="[% c.uri_for_action('/device/devmod_download_frontimage', [ dev.profile.config.device.id]) %]" style="height:40px"/></td>
-                            <td>[% dev.provisioning_voip_subscriber.username %]@[% dev.provisioning_voip_subscriber.domain.domain %]</td>
+                            <td>
+                                [% FOR line IN dev.autoprov_field_device_lines.all -%]
+                                    [% line.provisioning_voip_subscriber.username %]@[% line.provisioning_voip_subscriber.domain.domain %]<span class="pull-right">[% line.line_type %]</span><br/>
+                                [% END -%]
+                            </td>
                             <td>[% dev.identifier %]</td>
                             <td>[% dev.profile.name %]</td>
                             <td class="ngcp-actions-column">
@@ -540,7 +544,7 @@
 
                 $('#line\\.' + line_id + '\\.line').append('<option value=""></option>');
                 for(var j = 0; j < range.num_lines; ++j) {
-                    $('#line\\.' + line_id + '\\.line').append('<option id="line.' + line_id + '.line.' + j + '" value="' + i + '.' + j + '">' + range.name + ' - Key/Line ' + j + '</option>');
+                    $('#line\\.' + line_id + '\\.line').append('<option id="line.' + line_id + '.line.' + j + '" value="' + range.id + '.' + i + '.' + j + '">' + range.name + ' - Key/Line ' + j + '</option>');
                 }
             }
             $('#line\\.' + line_id + '\\.line').change(function(obj) {
@@ -550,18 +554,20 @@
 
         function handle_change_line(obj) {
             var range_id;
-            var key_id;
+            var range_num;
+            var key_num;
 
             var line_id = $(obj.currentTarget).attr("id").replace(/^line\.(\d+)\..+$/, "$1");
             console.log("handling change of line " + line_id);
 
             $(obj.currentTarget).find('option:selected').each(function() {
                 console.log("selected line key ", $(this).attr('value'));
-                range_id = $(this).attr('value').replace(/^(\d+)\.(\d+)$/, "$1");
-                key_id = $(this).attr('value').replace(/^(\d+)\.(\d+)$/, "$2");
+                range_id = $(this).attr('value').replace(/^(\d+)\.(\d+)\.(\d+)$/, "$1");
+                range_num = $(this).attr('value').replace(/^(\d+)\.(\d+)\.(\d+)$/, "$2");
+                key_num = $(this).attr('value').replace(/^(\d+)\.(\d+)\.(\d+)$/, "$3");
             });
-            var range = aaData[range_id];
-            console.log("setting line_id " + line_id + ", range for range_id " + range_id + " is ", range);
+            var range = aaData[range_num];
+            console.log("setting line_id " + line_id + ", range for range_num " + range_num + " is ", range);
 
             $('#line\\.' + line_id + '\\.type option').remove();
             if(range && +range.can_private) { // cast to int

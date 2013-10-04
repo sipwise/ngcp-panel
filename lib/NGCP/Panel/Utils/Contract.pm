@@ -62,6 +62,9 @@ sub recursively_lock_contract {
     my $c = $params{c};
     my $contract = $params{contract};
     my $status = $contract->status;
+    if($status eq 'terminated') {
+        $contract->autoprov_field_devices->delete_all;
+    }
 
     # first, change all voip subscribers, in case there are any
     for my $subscriber($contract->voip_subscribers->all) {
