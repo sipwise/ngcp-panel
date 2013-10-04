@@ -35,23 +35,28 @@ sub load_preference_list {
         
         foreach my $pref(@group_prefs) {
             if($pref->attribute eq "rewrite_rule_set") {
-                $pref->{rwrs_id} = $pref_values->{rewrite_caller_in_dpid} ?
-                    $c->stash->{rwr_sets_rs}->search({
+                my $tmp;
+                $pref->{rwrs_id} = $pref_values->{rewrite_caller_in_dpid} &&
+                    ($tmp = $c->stash->{rwr_sets_rs}->search({
                         caller_in_dpid =>$pref_values->{rewrite_caller_in_dpid}
-                    })->first->id
+                    })->first) ?
+                    $tmp->id
                     : undef;
             }
             elsif($pref->attribute eq "ncos") {
-                $pref->{ncos_id} = $pref_values->{ncos_id} ?
-                    $c->stash->{ncos_levels_rs}
-                        ->find($pref_values->{ncos_id})->id
-                    : undef;
+                if ($pref_values->{ncos_id} &&
+                    (my $tmp = $c->stash->{ncos_levels_rs}
+                        ->find($pref_values->{ncos_id}) )) {
+                    $pref->{ncos_id} = $tmp->id;
+                }
             }
             elsif($pref->attribute eq "adm_ncos") {
-                $pref->{adm_ncos_id} = $pref_values->{adm_ncos_id} ?
-                    $c->stash->{ncos_levels_rs}
-                        ->find($pref_values->{adm_ncos_id})->id
-                    : undef;
+                
+                if ($pref_values->{adm_ncos_id} &&
+                    (my $tmp = $c->stash->{ncos_levels_rs}
+                        ->find($pref_values->{adm_ncos_id}) )) {
+                    $pref->{adm_ncos_id} = $tmp->id;
+                }
             }
             elsif($pref->attribute eq "allowed_ips") {
                 $pref->{allowed_ips_group_id} = $pref_values->{allowed_ips_grp};
@@ -106,10 +111,12 @@ sub create_preference_form {
             },{
                 join => 'attribute'
             })->first;
-        if (defined $rewrite_caller_in_dpid) {
-            $preselected_value = $c->stash->{rwr_sets_rs}->search({
+        if (defined $rewrite_caller_in_dpid && (
+            my $tmp = $preselected_value = $c->stash->{rwr_sets_rs}->search({
                     caller_in_dpid => $rewrite_caller_in_dpid->value,
-                })->first->id;
+                })->first
+        )) {
+            $preselected_value = $tmp->id;
         }
     } elsif ($c->stash->{preference_meta}->attribute eq "ncos") {
         my $ncos_id_preference = $pref_rs->search({
