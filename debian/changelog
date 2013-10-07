@@ -1,4 +1,4 @@
-ngcp-panel (1.0.14) unstable; urgency=low
+ngcp-panel (1.0.15) unstable; urgency=low
 
   [ Andreas Granig ]
   * [8e2e567] MT#3981 Write numbers to provisioning.voip_dbalias.
