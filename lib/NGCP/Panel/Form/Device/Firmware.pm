@@ -18,6 +18,12 @@ has_field 'device' => (
     label => 'Device Model',
 );
 
+has_field 'version' => (
+    type => 'Text',
+    required => 1,
+    label => 'Version',
+);
+
 has_field 'data' => (
     type => 'Upload',
     required => 1,
@@ -35,7 +41,7 @@ has_field 'save' => (
 has_block 'fields' => (
     tag => 'div',
     class => [qw/modal-body/],
-    render_list => [qw/device data/],
+    render_list => [qw/device version data/],
 );
 
 has_block 'actions' => (

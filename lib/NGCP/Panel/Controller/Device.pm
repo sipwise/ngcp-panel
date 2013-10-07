@@ -52,6 +52,7 @@ sub base :Chained('/') :PathPart('device') :CaptureArgs(0) {
         { name => 'device.vendor', search => 1, title => 'Device Vendor' },
         { name => 'device.model', search => 1, title => 'Device Model' },
         { name => 'filename', search => 1, title => 'Firmware File' },
+        { name => 'version', search => 1, title => 'Version' },
     ]);
 
     my $devconf_rs = $c->model('DB')->resultset('autoprov_configs');
@@ -850,7 +851,7 @@ sub devprof_edit :Chained('devprof_base') :PathPart('edit') :Args(0) {
     );
 }
 
-sub dev_field_config :Chained('/') :PathPart('device/autoprov') :Args() {
+sub dev_field_config :Chained('/') :PathPart('device/autoprov/config') :Args() {
     my ($self, $c, $id) = @_;
 
     unless($id) {
@@ -881,13 +882,24 @@ sub dev_field_config :Chained('/') :PathPart('device/autoprov') :Args() {
     }
 
     my $model = $dev->profile->config->device;
+    my $fw = $dev->profile->firmware;
 
     my $vars = {
+        firmware => {
+            
+        },
         phone => {
             stationname => $dev->station_name,
             lineranges => [],
         },
     };
+    if($fw) {
+        $vars->{firmware} = {
+            filename => $fw->filename,
+            version => $fw->version,
+            url => $c->uri_for_action('/device/dev_field_firmware', [ $fw->id ]),
+        };
+    }
 
     my @lines = ();
     foreach my $linerange($model->autoprov_device_line_ranges->all) {
@@ -944,6 +956,42 @@ sub dev_field_config :Chained('/') :PathPart('device/autoprov') :Args() {
     $c->response->content_type($dev->profile->config->content_type);
     $c->response->body($processed_data);
 }
+
+sub dev_field_firmware_base :Chained('/') :PathPart('device/autoprov/firmware') :CaptureArgs(1) {
+    my ($self, $c, $devfw_id) = @_;
+
+    unless($devfw_id->is_int) {
+        $c->log->error("invalid device firmware id '$devfw_id' given");
+        if($c->config->{features}->{debug}) {
+            $c->response->body("404 - invalid device firmware id '$devfw_id'");
+        } else {
+            $c->response->body("404 - device firmware not found");
+        }
+        $c->response->status(404);
+    }
+
+    my $devfw_rs = $c->model('DB')->resultset('autoprov_firmwares');
+    $c->stash->{devfw} = $devfw_rs->find($devfw_id);
+    unless($c->stash->{devfw}) {
+        $c->log->error("device firmware id '$devfw_id' not found");
+        if($c->config->{features}->{debug}) {
+            $c->response->body("404 - device firmware with id '$devfw_id' not found");
+        } else {
+            $c->response->body("404 - device firmware not found");
+        }
+        $c->response->status(404);
+    }
+}
+
+sub dev_field_firmware :Chained('dev_field_firmware_base') :PathPart('download') :Args(0) {
+    my ($self, $c) = @_;
+    my $fw = $c->stash->{devfw};
+
+    $c->response->header ('Content-Disposition' => 'attachment; filename="' . $fw->filename . '"');
+    $c->response->content_type('application/octet-stream');
+    $c->response->body($fw->data);
+}
+
 
 __PACKAGE__->meta->make_immutable;
 
