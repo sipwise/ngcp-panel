@@ -36,11 +36,12 @@ ngcp-panel (1.0.14) unstable; urgency=low
   * [99bcb29] validate weight field of Peering Servers
   * [f3bcebd] Allow 18 decimal digits on Fee rates
   * [45a0d6c] Restrict certain domain-prefs to their respective reseller
+  * [f541e8b] Allow for + at beginning of replacement patterns
 
   [ Andrew Pogrebennyk ]
   * [0035fa8] Fix a typo on peering page: caller vs callee.
 
- -- Andrew Pogrebennyk <apogrebennyk@sipwise.com>  Fri, 04 Oct 2013 15:19:28 +0200
+ -- Andrew Pogrebennyk <apogrebennyk@sipwise.com>  Mon, 07 Oct 2013 17:48:35 +0200
 
 ngcp-panel (1.0.13) unstable; urgency=low
 
