@@ -1,0 +1,51 @@
+[% barge_in = 0 -%]
+<flat-profile>
+  <Upgrade_Enable>Yes</Upgrade_Enable>
+  <Upgrade_Rule>[% firmware.url %]</Upgrade_Rule>
+  <Station_Name>[% phone.stationname %]</Station_Name>
+  <Station_Display_Name>[% phone.stationname %]</Station_Display_Name>
+  <Server_Type>RFC3265_4235</Server_Type>
+  <Voice_Mail_Number>2000</Voice_Mail_Number>
+  <Attendant_Console_Call_Pickup_Code>**#</Attendant_Console_Call_Pickup_Code>
+  <Attendant_Console_Call_Park_Code>*68</Attendant_Console_Call_Park_Code>
+  <Attendant_Console_Call_unPark_Code>*88</Attendant_Console_Call_unPark_Code>
+  [% FOR range IN phone.lineranges -%]
+    [% FOR line IN range.lines -%]
+      [% IF range.name == "Phone Keys" -%]
+        [% key = line.keynum + 1 -%]
+        <Extension_[% key %]_>[% key %]</Extension_[% key %]_>
+        <Short_Name_[% key %]_>[% line.displayname %]</Short_Name_[% key %]_>
+        <Share_Call_Appearance_[% key %]_>[% line.type == "shared" ? line.type : "private" %]</Share_Call_Appearance_[% key %]_>
+        [% IF line.type == "blf" -%]
+          <Extended_Function_[% key %]_>fnc=blf+cp+sd;sub=[% line.username %]@[% line.domain %]</Extended_Function_[% key %]_>
+        [% ELSIF line.type == "shared" && barge_in == 0 -%]
+          <SCA_Barge-In_Enable>Yes</SCA_Barge-In_Enable>
+          [% barge_in = 1 -%]
+        [% END -%]
+        <Line_Enable_[% key %]_>[% line.type == "blf" ? "No" : "Yes" %]</Line_Enable_[% key %]_>
+        <Share_Ext_[% key %]_>[% line.type == "shared" ? "shared" : "private" %]</Share_Ext_[% key %]_>
+        <Shared_User_ID_[% key %]_>[% line.type == "shared" ? line.username : "" %]</Shared_User_ID_[% key %]_>
+        [% IF line.type == "private" || line.type == "shared" -%]
+          <Register_[% key %]_>Yes</Register_[% key %]_>
+          <Use_DNS_SRV_[% key %]_>No</Use_DNS_SRV_[% key %]_>
+          [% IF line.type == "private" -%]
+            <User_ID_[% key %]_>[% line.username %]</User_ID_[% key %]_>
+            <Password_[% key %]_>[% line.password %]</Password_[% key %]_>
+            <Proxy_[% key %]_>[% line.domain %]</Proxy_[% key %]_>
+          [% ELSE -%]
+            <User_ID_[% key %]_>[% sla.username %]</User_ID_[% key %]_>
+            <Password_[% key %]_>[% sla.password %]</Password_[% key %]_>
+            <Proxy_[% key %]_>[% sla.domain %]</Proxy_[% key %]_>
+          [% END -%]
+          <Outbound_Proxy_[% key %]_></Outbound_Proxy_[% key %]_>
+          <Use_Auth_ID_[% key %]_></Use_Auth_ID_[% key %]_>
+          <Auth_ID_[% key %]_></Auth_ID_[% key %]_>
+        [% END -%]
+      [% ELSIF range.name == "Attendant Console 1" -%]
+        <Unit_1_Key_[% line.keynum + 1 %]>fnc=sd+cp+blf;sub=[% line.username %]@[% line.domain %]</Unit_1_Key_[% line.keynum + 1 %]>
+      [% ELSIF range.name == "Attendant Console 2" -%]
+        <Unit_2_Key_[% line.keynum + 1 %]>fnc=sd+cp+blf;sub=[% line.username %]@[% line.domain %]</Unit_2_Key_[% line.keynum + 1 %]>
+      [% END -%]
+    [% END -%]    
+  [% END -%]
+</flat-profile>
