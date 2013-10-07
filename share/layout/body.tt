@@ -152,15 +152,31 @@ $(function () {
             if($('#toggle-accordions').hasClass('ngcp-accordion-closed')) {
                 $('#toggle-accordions').removeClass('ngcp-accordion-closed');
                 $('#toggle-accordions').html('<i class="icon-resize-small"></i> Collapse Groups');
-                $('.accordion-body').removeClass('collapse');
-                $('.accordion-body').addClass('in');
+                $('.accordion-body').each(function() {
+                    $(this).removeClass('collapse');
+                    $(this).addClass('in');
+                    $(this).attr('style', 'height:auto;');
+                });
+                $('.accordion-heading a.accordion-toggle').each(function() {
+                    $(this).removeClass('collapsed');
+                });
+                $('.accordion-group').each(function() {
+                    $(this).addClass('open');
+                });
             } else {
                 $('#toggle-accordions').addClass('ngcp-accordion-closed');
                 $('#toggle-accordions').html('<i class="icon-resize-full"></i> Expand Groups');
-                $('.accordion-body').removeClass('in');
-                $('.accordion-body').addClass('collapse');
-                $('.accordion-group.open').find('.accordion-body').addClass('in');
-                $('.accordion-group.open').find('.accordion-body').removeClass('collapse');
+                $('.accordion-body').each(function() {
+                    $(this).removeClass('in');
+                    $(this).addClass('collapse');
+                    $(this).attr('style', 'height:0px;');
+                });
+                $('.accordion-heading a.accordion-toggle').each(function() {
+                    $(this).addClass('collapsed');
+                });
+                $('.accordion-group').each(function() {
+                    $(this).removeClass('open');
+                });
             }
         });
     }
