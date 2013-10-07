@@ -94,7 +94,7 @@ sub validate {
     if ( $r =~ m/\$$/ ) {
         $self->field('replace_pattern')->add_error('Cannot end with "$"');
     }
-    if ( my ($found) = $r =~ m/^([*+?])/ ) {
+    if ( my ($found) = $r =~ m/^([*?])/ ) {
         $self->field('replace_pattern')->add_error("Cannot start with \"$found\"");
     }
     if ( $r =~ m/\s/ ) {
@@ -121,7 +121,19 @@ regex before their display.
 
 =head2 validate
 
-Do some special validation for match_pattern and replace_pattern together.
+Do some special validation for match_pattern and replace_pattern together:
+
+=over
+
+=item replacement pattern ending with C<$>
+
+=item replacement pattern starting with C<*?>
+
+=item replacement pattern containing space
+
+=item General perl validation of the whole regexp
+
+=back
 
 =head1 AUTHOR
 
