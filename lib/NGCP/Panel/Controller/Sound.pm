@@ -17,12 +17,45 @@ sub auto :Private {
     my ($self, $c) = @_;
     $c->log->debug(__PACKAGE__ . '::auto');
     NGCP::Panel::Utils::Navigation::check_redirect_chain(c => $c);
+
+    # only allow access to admin/reseller if cloudpbx is not enabled
+    if(!$c->config->{features}->{cloudpbx} && 
+       $c->user->roles ne "admin" &&
+       $c->user->roles ne "reseller") {
+
+        $c->detach('/denied_page');
+    }
+
+    # even for pbx, it's only for admin/reseller/subscriberadmins
+    if($c->user->roles eq "subscriber") {
+        $c->detach('/denied_page');
+    }
+
+    # and then again, it's only for subscriberadmins with pbxaccount product
+    if($c->user->roles eq "subscriberadmin") {
+        my $contract_id = $c->user->account_id;
+        my $contract_select_rs = NGCP::Panel::Utils::Contract::get_contract_rs(c => $c);
+        $contract_select_rs = $contract_select_rs->search({ 'me.id' => $contract_id });
+        my $product_id = $contract_select_rs->first->get_column('product_id');
+        NGCP::Panel::Utils::Message->error(
+            c => $c,
+            error => "No product for customer contract id $contract_id found",
+            desc  => "No product for this customer contract found.",
+        ) unless($product_id);
+        my $product = $c->model('DB')->resultset('products')->find({ 
+            id => $product_id, class => 'pbxaccount' 
+        });
+        unless($product) {
+            $c->detach('/denied_page');
+        }
+    }
+
     return 1;
 }
 
 sub sets_list :Chained('/') :PathPart('sound') :CaptureArgs(0) {
     my ( $self, $c ) = @_;
-    
+
     my $sets_rs = $c->model('DB')->resultset('voip_sound_sets');
 
     my $dt_fields = [
@@ -42,8 +75,6 @@ sub sets_list :Chained('/') :PathPart('sound') :CaptureArgs(0) {
         $sets_rs = $sets_rs->search({ reseller_id => $c->user->reseller_id });
     } elsif($c->user->roles eq "subscriberadmin") {
         $sets_rs = $sets_rs->search({ contract_id => $c->user->account_id });
-    } else {
-        $c->detach('/denied_page');
     }
 
     $c->stash->{soundset_dt_columns} = NGCP::Panel::Utils::Datatables::set_columns($c, $dt_fields);
