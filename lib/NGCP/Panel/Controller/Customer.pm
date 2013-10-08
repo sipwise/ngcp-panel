@@ -136,7 +136,7 @@ sub base :Chained('list_customer') :PathPart('') :CaptureArgs(1) {
     $contract_select_rs = $contract_select_rs->search({
         'me.id' => $contract_id,
     });
-    my $product_id = $contract_select_rs->search({'me.id' => $contract_id})->first->get_column('product_id');
+    my $product_id = $contract_select_rs->first->get_column('product_id');
     NGCP::Panel::Utils::Message->error(
         c => $c,
         error => "No product for customer contract id $contract_id found",
