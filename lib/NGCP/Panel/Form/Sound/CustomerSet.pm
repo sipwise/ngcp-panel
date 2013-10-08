@@ -1,4 +1,4 @@
-package NGCP::Panel::Form::Sound::ResellerSet;
+package NGCP::Panel::Form::Sound::CustomerSet;
 
 use HTML::FormHandler::Moose;
 extends 'HTML::FormHandler';
@@ -10,12 +10,6 @@ has '+widget_wrapper' => ( default => 'Bootstrap' );
 has_field 'submitid' => ( type => 'Hidden' );
 sub build_render_list {[qw/submitid fields actions/]}
 sub build_form_element_class {[qw(form-horizontal)]}
-
-has_field 'contract' => (
-    type => '+NGCP::Panel::Field::CustomerContract',
-    label => 'Customer',
-    not_nullable => 0,
-);
 
 has_field 'name' => (
     type => 'Text',
@@ -37,7 +31,7 @@ has_field 'save' => (
 has_block 'fields' => (
     tag => 'div',
     class => [qw/modal-body/],
-    render_list => [qw/contract name description/],
+    render_list => [qw/name description/],
 );
 
 has_block 'actions' => (

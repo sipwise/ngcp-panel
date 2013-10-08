@@ -9,10 +9,16 @@ has_field 'reseller' => (
     not_nullable => 1,
 );
 
+has_field 'contract' => (
+    type => '+NGCP::Panel::Field::CustomerContract',
+    label => 'Customer',
+    not_nullable => 0,
+);
+
 has_block 'fields' => (
     tag => 'div',
     class => [qw/modal-body/],
-    render_list => [qw/reseller name description/],
+    render_list => [qw/reseller contract name description/],
 );
 
 1;

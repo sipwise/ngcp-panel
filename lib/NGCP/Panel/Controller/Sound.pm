@@ -6,13 +6,14 @@ BEGIN { extends 'Catalyst::Controller'; }
 
 use NGCP::Panel::Form::Sound::AdminSet;
 use NGCP::Panel::Form::Sound::ResellerSet;
+use NGCP::Panel::Form::Sound::CustomerSet;
 use NGCP::Panel::Form::Sound::File;
 use File::Type;
 use NGCP::Panel::Utils::XMLDispatcher;
 use NGCP::Panel::Utils::Sounds;
 use NGCP::Panel::Utils::Navigation;
 
-sub auto :Does(ACL) :ACLDetachTo('/denied_page') :AllowedRole(admin) :AllowedRole(reseller) {
+sub auto :Private {
     my ($self, $c) = @_;
     $c->log->debug(__PACKAGE__ . '::auto');
     NGCP::Panel::Utils::Navigation::check_redirect_chain(c => $c);
@@ -23,16 +24,29 @@ sub sets_list :Chained('/') :PathPart('sound') :CaptureArgs(0) {
     my ( $self, $c ) = @_;
     
     my $sets_rs = $c->model('DB')->resultset('voip_sound_sets');
-    unless($c->user->is_superuser) {
-        $sets_rs = $sets_rs->search({ reseller_id => $c->user->reseller_id });
-    }
 
-    $c->stash->{soundset_dt_columns} = NGCP::Panel::Utils::Datatables::set_columns($c, [
+    my $dt_fields = [
         { name => 'id', search => 1, title => '#' },
-        { name => 'reseller.name', search => 1, title => 'Reseller' },
         { name => 'name', search => 1, title => 'Name' },
         { name => 'description', search => 1, title => 'Description' },
-    ]);
+    ];
+
+    if($c->user->roles eq "admin") {
+        splice @{ $dt_fields }, 1, 0, 
+            { name => 'reseller.name', search => 1, title => 'Reseller' };
+        splice @{ $dt_fields }, 2, 0, 
+            { name => 'contract.contact.email', search => 1, title => 'Customer' };
+    } elsif($c->user->roles eq "reseller") {
+        splice @{ $dt_fields }, 1, 0, 
+            { name => 'contract.contact.email', search => 1, title => 'Customer' };
+        $sets_rs = $sets_rs->search({ reseller_id => $c->user->reseller_id });
+    } elsif($c->user->roles eq "subscriberadmin") {
+        $sets_rs = $sets_rs->search({ contract_id => $c->user->account_id });
+    } else {
+        $c->detach('/denied_page');
+    }
+
+    $c->stash->{soundset_dt_columns} = NGCP::Panel::Utils::Datatables::set_columns($c, $dt_fields);
 
     $c->stash(sets_rs => $sets_rs);
     $c->stash(template => 'sound/list.tt');
@@ -73,11 +87,14 @@ sub edit :Chained('base') :PathPart('edit') {
     my $form;
     my $params = { $c->stash->{set_result}->get_inflated_columns };
     $params->{reseller}{id} = delete $params->{reseller_id};
+    $params->{contract}{id} = delete $params->{contract_id};
     $params = $params->merge($c->session->{created_objects});
-    if($c->user->is_superuser) {
+    if($c->user->roles eq "admin") {
         $form = NGCP::Panel::Form::Sound::AdminSet->new;
-    } else {
+    } elsif($c->user->roles eq "reseller") {
         $form = NGCP::Panel::Form::Sound::ResellerSet->new;
+    } else {
+        $form = NGCP::Panel::Form::Sound::CustomerSet->new;
     }
     $form->process(
         posted => $posted,
@@ -94,12 +111,15 @@ sub edit :Chained('base') :PathPart('edit') {
     );
     if($posted && $form->validated) {
         try {
-            if($c->user->is_superuser) {
+            if($c->user->roles eq "admin") {
                 $form->values->{reseller_id} = $form->values->{reseller}{id};
+                $form->values->{contract_id} = $form->values->{contract}{id} // undef;
             }
             delete $form->values->{reseller};
+            delete $form->values->{contract};
             $c->stash->{set_result}->update($form->values);
             delete $c->session->{created_objects}->{reseller};
+            delete $c->session->{created_objects}->{contract};
             $c->flash(messages => [{type => 'success', text => 'Sound set successfully updated'}]);
         } catch($e) {
             $c->log->error("failed to update sound set: $e");
@@ -134,10 +154,12 @@ sub create :Chained('sets_list') :PathPart('create') :Args(0) {
     my $form;
     my $params = {};
     $params = $params->merge($c->session->{created_objects});
-    if($c->user->is_superuser) {
+    if($c->user->roles eq "admin") {
         $form = NGCP::Panel::Form::Sound::AdminSet->new;
-    } else {
+    } elsif($c->user->roles eq "reseller") {
         $form = NGCP::Panel::Form::Sound::ResellerSet->new;
+    } else {
+        $form = NGCP::Panel::Form::Sound::CustomerSet->new;
     }
     $form->process(
         posted => $posted,
@@ -149,17 +171,25 @@ sub create :Chained('sets_list') :PathPart('create') :Args(0) {
         form => $form,
         fields => {
             'reseller.create' => $c->uri_for('/reseller/create'),
+            'contract.create' => $c->uri_for_action('/contract/customer_create'),
         },
         back_uri => $c->req->uri,
     );
     if($posted && $form->validated) {
         try {
-            if($c->user->is_superuser) {
+            if($c->user->roles eq "admin") {
                 $form->values->{reseller_id} = $form->values->{reseller}{id};
-                delete $form->values->{reseller};
-            } else {
+                $form->values->{contract_id} = $form->values->{contract}{id} // undef;
+            } elsif($c->user->roles eq "reseller") {
                 $form->values->{reseller_id} = $c->user->reseller_id;
+                $form->values->{contract_id} = $form->values->{contract}{id} // undef;
+            } else {
+                $form->values->{reseller_id} = $c->user->contract->contact->reseller_id;
+                $form->values->{contract_id} = $c->user->account_id;
             }
+            delete $form->values->{reseller};
+            delete $form->values->{contract};
+
             $c->stash->{sets_rs}->create($form->values);
             delete $c->session->{created_objects}->{reseller};
             $c->flash(messages => [{type => 'success', text => 'Sound set successfully created'}]);
@@ -180,6 +210,7 @@ sub handles_list :Chained('base') :PathPart('handles') :CaptureArgs(0) {
     my ( $self, $c ) = @_;
     
     my $files_rs = $c->stash->{set_result}->voip_sound_files;
+
     $c->stash(files_rs => $files_rs);
     $c->stash(handles_base_uri =>
         $c->uri_for_action("/sound/handles_root", [$c->req->captures->[0]]));
@@ -202,6 +233,13 @@ sub handles_list :Chained('base') :PathPart('handles') :CaptureArgs(0) {
                 ],
             ],
         });
+
+    if($c->stash->{set_result}->contract_id) {
+        $handles_rs = $handles_rs->search({ 'groups.name' => { '=' => 'pbx' } });
+    } else {
+        $handles_rs = $handles_rs->search({ 'groups.name' => { '!=' => 'pbx' } });
+    }
+
     unless($c->config->{features}->{cloudpbx}) {
         $handles_rs = $handles_rs->search({ 'groups.name' => { '!=' => 'pbx' } });
     }
@@ -225,6 +263,7 @@ sub handles_list :Chained('base') :PathPart('handles') :CaptureArgs(0) {
         push $groups{ $handle->get_column('groupname') }, $handle;
     }
     $c->stash(sound_groups => \%groups);
+    $c->stash(handles_rs => $handles_rs);
 
     $c->stash(has_edit => 1);
     $c->stash(has_delete => 1);
@@ -240,6 +279,12 @@ sub handles_base :Chained('handles_list') :PathPart('') :CaptureArgs(1) {
 
     unless($handle_id && $handle_id->is_integer) {
         $c->flash(messages => [{type => 'error', text => 'Invalid sound handle id detected'}]);
+        NGCP::Panel::Utils::Navigation::back_or($c, $c->stash->{handles_base_uri});
+    }
+    my @tmph = $c->stash->{handles_rs}->all;
+    use Data::Printer; p @tmph;
+    unless($c->stash->{handles_rs}->find({ 'handles.id' => $handle_id })) {
+        $c->flash(messages => [{type => 'error', text => 'Sound handle id does not exist'}]);
         NGCP::Panel::Utils::Navigation::back_or($c, $c->stash->{handles_base_uri});
     }
 
