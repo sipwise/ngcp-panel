@@ -91,6 +91,13 @@
                             <option [% (r.value.defined && r.value == set.id) ? 'selected="selected"' : '' %]>[% set.name %]</option>
                         [% END -%]
                         </select>
+                    [% ELSIF r.attribute == "contract_sound_set" -%]
+                        <select disabled="disabled">
+                            <option>&nbsp;</option>
+                        [% FOR set IN helper.contract_sound_sets -%]
+                            <option [% (r.value.defined && r.value == set.id) ? 'selected="selected"' : '' %]>[% set.name %]</option>
+                        [% END -%]
+                        </select>
                     [% ELSIF r.attribute == "allowed_ips" -%]
                         [% FOR ipnet IN r.allowed_ips_rs.all -%]
                             [% ipnet.ipnet -%]<br/>

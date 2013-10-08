@@ -13,6 +13,7 @@
     helper.rewrite_rule_sets = rwr_sets;
     helper.ncos_levels = ncos_levels;
     helper.sound_sets = sound_sets;
+    helper.contract_sound_sets = contract_sound_sets;
     helper.aip_grp_rs = aip_grp_rs;
     helper.man_aip_grp_rs = man_aip_grp_rs;
     helper.skip_head = 1;

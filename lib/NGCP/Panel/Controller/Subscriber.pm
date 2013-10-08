@@ -1474,6 +1474,8 @@ sub preferences_callforward_delete :Chained('base') :PathPart('preferences/callf
 sub load_preference_list :Private {
     my ($self, $c) = @_;
 
+    my $reseller_id = $c->stash->{subscriber}->contract->contact->reseller_id;
+
     my $usr_pref_values = $c->model('DB')
         ->resultset('voip_preferences')
         ->search({
@@ -1490,19 +1492,28 @@ sub load_preference_list :Private {
     }
 
     my $rewrite_rule_sets_rs = $c->model('DB')
-        ->resultset('voip_rewrite_rule_sets');
+        ->resultset('voip_rewrite_rule_sets')->search({ reseller_id => $reseller_id });
     $c->stash(rwr_sets_rs => $rewrite_rule_sets_rs,
               rwr_sets    => [$rewrite_rule_sets_rs->all]);
 
     my $ncos_levels_rs = $c->model('DB')
-        ->resultset('ncos_levels');
+        ->resultset('ncos_levels')->search({ reseller_id => $reseller_id });
     $c->stash(ncos_levels_rs => $ncos_levels_rs,
               ncos_levels    => [$ncos_levels_rs->all]);
 
     my $sound_sets_rs = $c->model('DB')
-        ->resultset('voip_sound_sets');
+        ->resultset('voip_sound_sets')->search({ 
+            reseller_id => $reseller_id, 
+            contract_id => undef });
     $c->stash(sound_sets_rs => $sound_sets_rs,
               sound_sets    => [$sound_sets_rs->all]);
+
+    my $contract_sound_sets_rs = $c->model('DB')
+        ->resultset('voip_sound_sets')->search({ 
+            reseller_id => $reseller_id, 
+            contract_id => $c->stash->{subscriber}->contract_id });
+    $c->stash(contract_sound_sets_rs => $contract_sound_sets_rs,
+              contract_sound_sets    => [$contract_sound_sets_rs->all]);
 
     NGCP::Panel::Utils::Preferences::load_preference_list( c => $c,
         pref_values => \%pref_values,

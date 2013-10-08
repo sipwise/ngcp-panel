@@ -347,7 +347,7 @@ sub load_preference_list :Private {
 
     my $sound_sets_rs = $c->model('DB')
         ->resultset('voip_sound_sets')
-        ->search_rs({ reseller_id => $correct_reseller_id, });
+        ->search_rs({ reseller_id => $correct_reseller_id, contract_id => undef, });
     $c->stash(sound_sets_rs => $sound_sets_rs,
               sound_sets    => [$sound_sets_rs->all]);
 

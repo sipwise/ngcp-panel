@@ -172,6 +172,7 @@ sub create_preference_form {
             rwrs_rs => $c->stash->{rwr_sets_rs},
             ncos_rs => $c->stash->{ncos_levels_rs},
             sound_rs => $c->stash->{sound_sets_rs},
+            contract_sound_rs => $c->stash->{contract_sound_sets_rs},
         }],
     });
     $form->create_structure([$c->stash->{preference_meta}->attribute]);
@@ -280,6 +281,24 @@ sub create_preference_form {
             return;
         } elsif ($attribute eq "sound_set") {
             my $selected_set = $c->stash->{sound_sets_rs}->find(
+                $form->field($attribute)->value
+            );
+
+            my $preference = $pref_rs->search({
+                attribute_id => $c->stash->{preference_meta}->id });
+            if(!defined $selected_set) {
+                $preference->first->delete if $preference->first;
+            } elsif($preference->first) {
+                $preference->first->update({ value => $selected_set->id });
+            } else {
+                $preference->create({ value => $selected_set->id });
+            }
+
+            $c->flash(messages => [{type => 'success', text => "Preference $attribute successfully updated."}]);
+            $c->response->redirect($base_uri);
+            return;
+        } elsif ($attribute eq "contract_sound_set") {
+            my $selected_set = $c->stash->{contract_sound_sets_rs}->find(
                 $form->field($attribute)->value
             );
 
@@ -503,13 +522,13 @@ be set.
 
 The updated preferences are called ncos_id and adm_ncos_id.
 
-=head3 Special case sound_set
+=head3 Special case sound_set and contract_sound_set
 
 This is also similar to rewrite_rule_set and ncos. The stashed variables are
-sound_sets_rs and sound_sets. In the template helper.sound_sets needs to
+(contract_)sound_sets_rs and (contract_)sound_sets. In the template helper.(contract_)sound_sets needs to
 be set.
 
-The preference with the attribute sound_set will contain the id of a sound_set.
+The preference with the attribute (contract_)sound_set will contain the id of a sound set.
 
 =head3 Special case allowed_ips
 

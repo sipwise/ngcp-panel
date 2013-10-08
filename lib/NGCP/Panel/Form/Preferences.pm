@@ -37,6 +37,7 @@ sub field_list {
         my $rwrs_rs = $row->{rwrs_rs};
         my $ncos_rs = $row->{ncos_rs};
         my $sound_rs = $row->{sound_rs};
+        my $contract_sound_rs = $row->{contract_sound_rs};
         my $field;
         if($meta->attribute eq "rewrite_rule_set") {
             my @options = map {{label => $_->name, value => $_->id}}
@@ -59,6 +60,15 @@ sub field_list {
         } elsif ($meta->attribute eq "sound_set") {
             my @options = map {{label => $_->name, value => $_->id}}
                 defined $sound_rs ? $sound_rs->all : ();
+            unshift @options, {label => '', value => ''};
+            $field = {
+                name => $meta->attribute,
+                type => 'Select',
+                options => \@options,
+            };
+        } elsif ($meta->attribute eq "contract_sound_set") {
+            my @options = map {{label => $_->name, value => $_->id}}
+                defined $contract_sound_rs ? $contract_sound_rs->all : ();
             unshift @options, {label => '', value => ''};
             $field = {
                 name => $meta->attribute,
