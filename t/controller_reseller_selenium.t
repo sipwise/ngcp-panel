@@ -14,6 +14,7 @@ $d->get_ok("$uri/login");
 $d->set_implicit_wait_timeout(1000);
 
 diag("Do Admin Login");
+$d->find(link_text => 'Admin')->click;
 $d->findtext_ok('Admin Sign In');
 $d->find(name => 'username')->send_keys('administrator');
 $d->find(name => 'password')->send_keys('administrator');
