@@ -68,9 +68,9 @@ sub _test_preconditions {
                 'port' => $opt{'mysqld-port'},
             },
         ) or die "couldnt start mysqld";
-        $ENV{NGCP_PANEL_CUSTOM_DSN} = $mysqld->dsn(host => 'localhost');
+        $ENV{NGCP_PANEL_CUSTOM_DSN} = $mysqld->dsn();
         my $dump_files = join(' ', @{ $opt{'mysql-dump'} });
-        system("cat $dump_files | mysql -uroot --port=$opt{'mysqld-port'}");
+        system("cat $dump_files | mysql -uroot --host=127.0.0.1 --port=$opt{'mysqld-port'}");
     }
 
     unless ($opt{webdriver} eq "external") {
