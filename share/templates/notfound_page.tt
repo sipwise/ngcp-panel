@@ -6,16 +6,11 @@
 			
 			<h1>Oops!</h1>
 			
-			<h2>[% c.response.status %] Internal server error </h2>
+			<h2>[% c.response.status %] Not found</h2>
 			
 			<div class="error-details">
-				<p>Sorry, an exceptional error has occured:</p>
-				<ul>
-				<li>incident number: [% exception_incident %]</li>
-				<li>time of incident: [% exception_timestamp %]</li>
-				</ul>
-				<p>Details have been logged on the server. If you want to report the error,
-				describe what you were doing or attempting to do just before.</p>
+				Sorry, an error has occured, Requested page not found!
+				
 			</div> <!-- /error-details -->
 			
 			<div class="error-actions">
