@@ -11,6 +11,7 @@ $d->get_ok("$uri/logout"); #make sure we are logged out
 $d->get_ok("$uri/login");
 
 diag("Do Admin Login");
+$d->find(link_text => 'Admin')->click;
 $d->findtext_ok('Admin Sign In');
 $d->find(name => 'username')->send_keys('administrator');
 $d->find(name => 'password')->send_keys('administrator');
