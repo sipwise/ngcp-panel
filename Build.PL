@@ -32,9 +32,12 @@ my $builder = Local::Module::Build->new(
         'Catalyst::View::JSON' => 0,
         'Catalyst::View::TT' => 0,
         'Config::General' => 0,
+        'Convert::Ascii85' => 0,
+        'Data::Dumper' => 0,
         'Data::Validate::IP' => 0,
         'DateTime' => 0,
         'DateTime::Format::ISO8601' => 0,
+        'DateTime::Format::RFC3339' => 0,
         'DBIx::Class::ResultSet::RecursiveUpdate' => '0.30',
         'Email::Valid' => 0,
         'File::ShareDir' => 0,
@@ -49,6 +52,7 @@ my $builder = Local::Module::Build->new(
         'HTML::FormHandler::Moose' => 0,
         'HTML::FormHandler::Widget::Block::Bootstrap' => 0,
         'HTTP::Status' => 0,
+        'IO::Compress::Xz' => 0,
         'IPC::System::Simple' => 0,
         'Log::Log4perl::Catalyst' => 0,
         'Module::Runtime' => 0,
@@ -65,6 +69,7 @@ my $builder = Local::Module::Build->new(
         'strict' => 0,
         'Template' => 0,
         'Text::CSV_XS' => 0,
+        'Time::HiRes' => 0,
         'URI::Encode' => 0,
         'URI::Escape' => 0,
         'UUID' => 0,
@@ -95,6 +100,9 @@ my $builder = Local::Module::Build->new(
         # for the testcover target
         'Devel::Cover' => 0,
         'sigtrap' => 0,
+        # for development
+        'Convert::Ascii85' => 0,
+        'IO::Uncompress::UnXz' => 0,
     },
     add_to_cleanup => [ 'NGCP-Panel-*' ],
 );
