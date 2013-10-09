@@ -39,6 +39,8 @@ my $builder = Local::Module::Build->new(
         'Config::General' => 0,
         'Data::HAL' => 0,
         'Data::Record' => 0,
+        'Convert::Ascii85' => 0,
+        'Data::Dumper' => 0,
         'Data::Validate::IP' => 0,
         'DateTime' => 0,
         'DateTime::Format::HTTP' => 0,
@@ -60,6 +62,7 @@ my $builder = Local::Module::Build->new(
         'HTML::FormHandler::Widget::Block::Bootstrap' => 0,
         'HTTP::Headers' => 0,
         'HTTP::Status' => 0,
+        'IO::Compress::Xz' => 0,
         'IPC::System::Simple' => 0,
         'JE' => 0,
         'JSON::Pointer' => 0,
@@ -83,6 +86,7 @@ my $builder = Local::Module::Build->new(
         'Template' => 0,
         'Text::CSV_XS' => 0,
         'Types::Path::Tiny' => 0,
+        'Time::HiRes' => 0,
         'URI::Encode' => 0,
         'URI::Escape' => 0,
         'UUID' => 0,
@@ -113,6 +117,9 @@ my $builder = Local::Module::Build->new(
         # for the testcover target
         'Devel::Cover' => 0,
         'sigtrap' => 0,
+        # for development
+        'Convert::Ascii85' => 0,
+        'IO::Uncompress::UnXz' => 0,
     },
     add_to_cleanup => [ 'NGCP-Panel-*' ],
 );
