@@ -1622,7 +1622,8 @@ sub edit_master :Chained('master') :PathPart('edit') :Args(0) {
     if($pbx_ext) {
         my $subs = NGCP::Panel::Utils::Subscriber::get_custom_subscriber_struct(
             c => $c,
-            contract => $subscriber->contract
+            contract => $subscriber->contract,
+            show_locked => 0,
         );
         my $admin_subscribers = NGCP::Panel::Utils::Subscriber::get_admin_subscribers(
             voip_subscribers => $subs->{subscribers}

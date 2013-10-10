@@ -240,7 +240,13 @@ sub get_custom_subscriber_struct {
 
     my @subscribers = ();
     my @pbx_groups = ();
-    foreach my $s($contract->voip_subscribers->search_rs({ status => 'active' })->all) {
+    my $voip_sub_rs = $contract->voip_subscribers;
+    if($params{show_locked}) {
+        $voip_sub_rs = $voip_sub_rs->search_rs({ status => { -in => [ 'active', 'locked' ] } });
+    } else {
+        $voip_sub_rs = $voip_sub_rs->search_rs({ status => 'active' });
+    }
+    foreach my $s($voip_sub_rs->all) {
         my $sub = { $s->get_columns };
         if($c->config->{features}->{cloudpbx}) {
             $sub->{voip_pbx_group} = { $s->provisioning_voip_subscriber->voip_pbx_group->get_columns }

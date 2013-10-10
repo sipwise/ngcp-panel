@@ -157,7 +157,8 @@ sub base :Chained('list_customer') :PathPart('') :CaptureArgs(1) {
 
     my $subs = NGCP::Panel::Utils::Subscriber::get_custom_subscriber_struct(
         c => $c,
-        contract => $contract->first
+        contract => $contract->first,
+        show_locked => 1,
     );
     $c->stash->{subscribers} = $subs->{subscribers};
     $c->stash->{pbx_groups} = $subs->{pbx_groups};
