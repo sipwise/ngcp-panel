@@ -10,8 +10,8 @@ has_field 'id' => (
     required => 1,
     template => 'helpers/datatables_field.tt',
     ajax_src => '/contract/peering/ajax',
-    table_titles => ['#',  'Status', 'Billing Profile'],
-    table_fields => ['id', 'status', 'billing_mappings_billing_profile_name'],
+    table_titles => ['#',  'Status', 'Contact Email', 'Billing Profile'],
+    table_fields => ['id', 'status', 'contact_email', 'billing_mappings_billing_profile_name'],
 );
 
 has_field 'create' => (
