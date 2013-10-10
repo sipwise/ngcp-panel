@@ -129,7 +129,12 @@ sub update_subscriber_numbers {
     my $subscriber_id  = $params{subscriber_id};
     my $reseller_id    = $params{reseller_id};
     my $primary_number = $params{primary_number};
-    my $e164           = $params{e164}; # alias numbers
+    my $alias_numbers  = $params{alias_numbers}; # alias numbers
+
+    my $billing_subs = $schema->resultset('voip_subscribers')->find({
+            id => $subscriber_id,
+        });
+    my $prov_subs = $billing_subs->provisioning_voip_subscriber;
 
     if (defined $primary_number) {
 
@@ -163,21 +168,49 @@ sub update_subscriber_numbers {
                     subscriber_id => $subscriber_id,
                 });
             }
+        }
 
-            my $subs = $schema->resultset('voip_subscribers')->find({
-                    id => $subscriber_id,
-                });
+        if(defined $number) {
+            my $cli = $number->cc . ($number->ac || '') . $number->sn;
 
-            $subs->update({
+            if(defined $billing_subs->primary_number
+                && $billing_subs->primary_number_id != $number->id) {
+                $billing_subs->primary_number->delete;
+            }
+            $billing_subs->update({
                     primary_number_id => $number->id,
                 });
-            $schema->resultset('voip_dbaliases')->create({
-                username => $number->cc .
-                            ($number->ac || '').
-                            $number->sn,
-                domain_id => $subs->provisioning_voip_subscriber->domain->id,
-                subscriber_id => $subs->provisioning_voip_subscriber->id,
-            });
+            if(defined $prov_subs) {
+                $schema->resultset('voip_dbaliases')->create({
+                    username => $cli,
+                    domain_id => $prov_subs->domain->id,
+                    subscriber_id => $prov_subs->id,
+                });
+                if(defined $prov_subs->voicemail_user) {
+                    $prov_subs->voicemail_user->update({
+                        mailbox => $cli,
+                    });
+                }
+
+                for my $cfset($prov_subs->voip_cf_destination_sets->all) {
+                    for my $cf($cfset->voip_cf_destinations->all) {
+                        if($cf->destination =~ /\@voicebox\.local$/) {
+                            $cf->update({ destination => 'sip:vmu'.$cli.'@voicebox.local' });
+                        } elsif($cf->destination =~ /\@fax2mail\.local$/) {
+                            $cf->update({ destination => 'sip:'.$cli.'@fax2mail.local' });
+                        } elsif($cf->destination =~ /\@conference\.local$/) {
+                            $cf->update({ destination => 'sip:conf='.$cli.'@conference.local' });
+                        }
+                    }
+                }
+            }
+        } else {
+            if (defined $billing_subs->primary_number) {
+                $billing_subs->primary_number->delete;
+            }
+            if(defined $prov_subs->voicemail_user) {
+                $prov_subs->voicemail_user->update({ mailbox => '0' });
+            }
         }
     }
 
