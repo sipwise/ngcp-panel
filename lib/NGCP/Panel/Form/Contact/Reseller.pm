@@ -41,7 +41,8 @@ has_field 'street' => (
 );
 
 has_field 'postcode' => (
-    type => 'Integer',
+    type => 'Text',
+    maxlength => 16,
 );
 
 has_field 'city' => (
