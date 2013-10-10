@@ -122,6 +122,68 @@ sub get_lock_string {
     return $LOCK{$level};
 }
 
+sub update_subscriber_numbers {
+    my %params = @_;
+
+    my $schema         = $params{schema};
+    my $subscriber_id  = $params{subscriber_id};
+    my $reseller_id    = $params{reseller_id};
+    my $primary_number = $params{primary_number};
+    my $e164           = $params{e164}; # alias numbers
+
+    if (defined $primary_number) {
+
+        my $number;
+        if (defined $primary_number->{cc}
+            && $primary_number->{cc} ne '') {
+
+            my $old_number = $schema->resultset('voip_numbers')->search({
+                    cc            => $primary_number->{cc},
+                    ac            => $primary_number->{ac} || '',
+                    sn            => $primary_number->{sn},
+                    subscriber_id => [undef, $subscriber_id],
+                },{
+                    for => 'update',
+                })->first;
+
+            if(defined $old_number) {
+                $old_number->update({
+                    status        => 'active',
+                    reseller_id   => $reseller_id,
+                    subscriber_id => $subscriber_id,
+                });
+                $number = $old_number;
+            } else {
+                $number = $schema->resultset('voip_numbers')->create({
+                    cc            => $primary_number->{cc},
+                    ac            => $primary_number->{ac} || '',
+                    sn            => $primary_number->{sn},
+                    status        => 'active',
+                    reseller_id   => $reseller_id,
+                    subscriber_id => $subscriber_id,
+                });
+            }
+
+            my $subs = $schema->resultset('voip_subscribers')->find({
+                    id => $subscriber_id,
+                });
+
+            $subs->update({
+                    primary_number_id => $number->id,
+                });
+            $schema->resultset('voip_dbaliases')->create({
+                username => $number->cc .
+                            ($number->ac || '').
+                            $number->sn,
+                domain_id => $subs->provisioning_voip_subscriber->domain->id,
+                subscriber_id => $subs->provisioning_voip_subscriber->id,
+            });
+        }
+    }
+
+    return;
+}
+
 1;
 
 =head1 NAME
