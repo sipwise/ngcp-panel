@@ -116,7 +116,7 @@ sub base :Chained('list_customer') :PathPart('') :CaptureArgs(1) {
     }
 
     my @subscribers = ();
-    foreach my $s($contract->first->voip_subscribers->search_rs({ status => 'active' })->all) {
+    foreach my $s($contract->first->voip_subscribers->search_rs({ status => { -in => ['active', 'locked'] } })->all) {
         my $sub = { $s->get_columns };
         $sub->{domain} = $s->domain->domain;
         $sub->{primary_number} = {$s->primary_number->get_columns} if(defined $s->primary_number);
