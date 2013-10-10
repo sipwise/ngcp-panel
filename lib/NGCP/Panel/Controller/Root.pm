@@ -1,15 +1,11 @@
 package NGCP::Panel::Controller::Root;
 use Sipwise::Base;
+
+
 BEGIN { extends 'Catalyst::Controller' }
-use Carp qw(longmess);
-use Convert::Ascii85 qw();
-use Data::Dumper qw(Dumper);
-use DateTime qw();
-use DateTime::Format::RFC3339 qw();
-use IO::Compress::Xz qw(xz);
+
 use NGCP::Panel::Widget;
 use Scalar::Util qw(blessed);
-use Time::HiRes qw();
 
 #
 # Sets the actions in this controller to be registered with no prefix
@@ -115,41 +111,7 @@ sub default :Path {
     $c->detach( '/error_page' );
 }
 
-sub render :ActionClass('RenderView') { }
-
-sub end :Private {
-    my ($self, $c) = @_;
-    $c->forward('render');
-    if (@{ $c->error }) {
-        my $incident = DateTime->from_epoch(epoch => Time::HiRes::time);
-        my $incident_id = sprintf '%X', $incident->strftime('%s%N');
-        my $incident_timestamp = DateTime::Format::RFC3339->new->format_datetime($incident);
-        my $crash_state;
-        if ($c->config->{log_crash_state}) {
-            local $Data::Dumper::Indent = 1;
-            local $Data::Dumper::Useqq = 1;
-            local $Data::Dumper::Deparse = 1;
-            local $Data::Dumper::Quotekeys = 0;
-            local $Data::Dumper::Sortkeys = 1;
-            my $buffer;
-            xz(\(join(q(), @{ $c->error }) . longmess . Dumper($c) . Dumper($c->config)), \$buffer);
-            $crash_state = Convert::Ascii85::encode($buffer);
-            $crash_state =~ s/(.{80})/$1\n/g;
-        }
-        $c->log->error(
-            "Exception id $incident_id at $incident_timestamp crash_state:" .
-            ($crash_state ? ("\n" . $crash_state) : ' disabled')
-        );
-        $c->clear_errors;
-        $c->stash(
-            exception_incident => $incident_id,
-            exception_timestamp => $incident_timestamp,
-            template => 'error_page.tt'
-        );
-        $c->response->status(500);
-        $c->detach($c->view);
-    }
-}
+sub end : ActionClass('RenderView') {}
 
 sub _prune_row {
     my ($columns, %row) = @_;
@@ -167,7 +129,8 @@ sub error_page :Private {
     my ($self,$c) = @_;
     
     $c->log->error( 'Failed to find path ' . $c->request->path );
-    $c->stash(template => 'notfound_page.tt');
+    $c->stash(template => 'error_page.tt');
+    #$c->response->body( 'Page not found' );
     $c->response->status(404);
 }
 
