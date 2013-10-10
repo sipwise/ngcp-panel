@@ -175,7 +175,7 @@ sub create_list :Chained('sub_list') :PathPart('create') :Args(0) :Does(ACL) :AC
 
                 NGCP::Panel::Utils::Subscriber::update_subscriber_numbers(
                     schema         => $schema,
-                    primary_number => $form->params->{e164},
+                    primary_number => $form->values->{e164},
                     reseller_id    => $reseller->id,
                     subscriber_id  => $billing_subscriber->id,
                 );
@@ -1727,57 +1727,23 @@ sub edit_master :Chained('master') :PathPart('edit') :Args(0) {
                         $form->params->{e164}{ac} = $subscriber->primary_number->ac;
                         $form->params->{e164}{sn} = $base_number->{sn} . $form->params->{extension};
                     }
-                    if(!$form->params->{e164}{cc} &&
-                       !$form->params->{e164}{ac} &&
-                       !$form->params->{e164}{sn}) {
 
-                       # TODO: if it's an admin for pbx, don't allow this!
-                        $subscriber->primary_number->delete;
-                        $prov_subscriber->voicemail_user->update({ mailbox => '0' });
-                    } else {
-                        # check if cc and sn are set if cc is there
-                        $num = $subscriber->primary_number->update({
-                            cc => $form->params->{e164}{cc},
-                            ac => $form->params->{e164}{ac} // '',
-                            sn => $form->params->{e164}{sn},
-                        });
-                        my $cli = $num->cc.($num->ac // '').$num->sn;
-                        for my $cfset($prov_subscriber->voip_cf_destination_sets->all) {
-                            for my $cf($cfset->voip_cf_destinations->all) {
-                                if($cf->destination =~ /\@voicebox\.local$/) {
-                                    $cf->update({ destination => 'sip:vmu'.$cli.'@voicebox.local' });
-                                } elsif($cf->destination =~ /\@fax2mail\.local$/) {
-                                    $cf->update({ destination => 'sip:'.$cli.'@fax2mail.local' });
-                                } elsif($cf->destination =~ /\@conference\.local$/) {
-                                    $cf->update({ destination => 'sip:conf='.$cli.'@conference.local' });
-                                }
-                            }
-                        }
-                        $prov_subscriber->voicemail_user->update({ mailbox => $cli });
+                    NGCP::Panel::Utils::Subscriber::update_subscriber_numbers(
+                        schema => $schema,
+                        subscriber_id =>$subscriber->id,
+                        reseller_id => $subscriber->contract->contact->reseller_id,
+                        primary_number => $form->params->{e164},
+                    );
 
                         # TODO: if it's an admin for pbx, update all other subscribers as well!
                         # this means cloud_pbx_base_cli pref, primary number, dbaliases, voicemail, cf
-                    }
                 } else {
-                    if($form->params->{e164}{cc} &&
-                       $form->params->{e164}{sn}) {
-                        $num = $schema->resultset('voip_numbers')->create({
-                            subscriber_id => $subscriber->id,
-                            reseller_id => $subscriber->contract->contact->reseller_id,
-                            cc => $form->params->{e164}{cc},
-                            ac => $form->params->{e164}{ac} // '',
-                            sn => $form->params->{e164}{sn},
-                        });
-                        $subscriber->update({ primary_number_id => $num->id });
-                        $prov_subscriber->voicemail_user->update({ mailbox => 
-                            $form->field('e164')->field('cc')->value .
-                            ($form->field('e164')->field('ac')->value || '').
-                            $form->field('e164')->field('sn')->value,
-                        });
-                    } else {
-                        $prov_subscriber->voicemail_user->update({ mailbox => '0' });
-                    }
-
+                    NGCP::Panel::Utils::Subscriber::update_subscriber_numbers(
+                        schema => $schema,
+                        subscriber_id =>$subscriber->id,
+                        reseller_id => $subscriber->contract->contact->reseller_id,
+                        primary_number => $form->values->{e164},
+                    );
                 }
                 if($num) {
                     $schema->resultset('voip_dbaliases')->create({
