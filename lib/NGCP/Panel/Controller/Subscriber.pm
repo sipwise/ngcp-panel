@@ -154,28 +154,12 @@ sub create_list :Chained('sub_list') :PathPart('create') :Args(0) :Does(ACL) :AC
 
                 my $reseller = $contract->contact->reseller;
 
-                my $number;
-                if(defined $c->request->params->{'e164.cc'} && 
-                   $c->request->params->{'e164.cc'} ne '') {
-
-                    
-                    $number = $reseller->voip_numbers->create({
-                        cc => $c->request->params->{'e164.cc'},
-                        ac => $c->request->params->{'e164.ac'} || '',
-                        sn => $c->request->params->{'e164.sn'},
-                        status => 'active',
-                    });
-                }
                 my $billing_subscriber = $contract->voip_subscribers->create({
                     uuid => $uuid_string,
                     username => $c->request->params->{username},
                     domain_id => $billing_domain->id,
                     status => $c->request->params->{status},
-                    primary_number_id => defined $number ? $number->id : undef,
                 });
-                if(defined $number) {
-                    $number->update({ subscriber_id => $billing_subscriber->id });
-                }
 
                 my $prov_subscriber = $schema->resultset('provisioning_voip_subscribers')->create({
                     uuid => $uuid_string,
@@ -188,15 +172,13 @@ sub create_list :Chained('sub_list') :PathPart('create') :Args(0) :Does(ACL) :AC
                     domain_id => $prov_domain->id,
                     create_timestamp => NGCP::Panel::Utils::DateTime::current_local,
                 });
-                if($number) {
-                    $schema->resultset('voip_dbaliases')->create({
-                        username => $number->cc .
-                                    ($number->ac || '').
-                                    $number->sn,
-                        domain_id => $prov_subscriber->domain->id,
-                        subscriber_id=> $prov_subscriber->id,
-                    });
-                }
+
+                NGCP::Panel::Utils::Subscriber::update_subscriber_numbers(
+                    schema         => $schema,
+                    primary_number => $form->params->{e164},
+                    reseller_id    => $reseller->id,
+                    subscriber_id  => $billing_subscriber->id,
+                );
 
                 my $cli = 0;
                 my $voip_preferences = $schema->resultset('voip_preferences')->search({
