@@ -15,6 +15,10 @@ has_field 'fraud_daily_limit' => (
     type => 'Integer',
     label => 'Daily Fraud Limit',
     required => 1,
+    element_attr => {
+        rel => ['tooltip'],
+        title => ['fraud detection threshold per day, specifying cents']
+    },
 );
 
 has_field 'fraud_daily_lock' => (
@@ -33,6 +37,10 @@ has_field 'fraud_daily_notify' => (
     type => '+NGCP::Panel::Field::EmailList',
     label => 'Notify Emails',
     maxlength => 255,
+    element_attr => {
+        rel => ['tooltip'],
+        title => ['where e-mail notifications are sent, a list of e-mail addreses separated by comma']
+    },
 );
 
 has_field 'save' => (
