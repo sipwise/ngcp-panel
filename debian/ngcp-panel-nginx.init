@@ -16,8 +16,9 @@ HOMEDIR=/usr/share/ngcp-panel
 PIDFILE=/var/run/ngcp-panel.pid
 USER=www-data
 GROUP=www-data
-NAME="ngcp_panel_fastcgi"
+NAME="ngcp-panel-nginx"
 DESC="NGCP-Panel Webapp"
+DEFAULTS=/etc/default/$NAME
 USOCKET=/var/run/ngcp-panel.sock
 LOGERR=/var/log/ngcp/ngcp-panel.log
 NPROC=1
@@ -74,6 +75,17 @@ _stop() {
       return 1
   fi
 }
+
+# Load startup options if available
+if [ -f $DEFAULTS ]; then
+   . $DEFAULTS || true
+fi
+
+if [ "$RUN_DAEMON" != "yes" ]; then
+    log_failure_msg "$NAME not yet configured. Edit /etc/default/$NAME first."
+    log_end_msg 0
+    exit 0
+fi
 
 case "$1" in
   start)
