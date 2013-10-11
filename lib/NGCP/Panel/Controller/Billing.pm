@@ -114,7 +114,9 @@ sub edit :Chained('base') :PathPart('edit') {
     NGCP::Panel::Utils::Navigation::check_form_buttons(
         c => $c,
         form => $form,
-        fields => {},
+        fields => {
+            'reseller.create' => $c->uri_for('/reseller/create'),
+        },
         back_uri => $c->req->uri,
     );
     if($posted && $form->validated) {
@@ -127,6 +129,7 @@ sub edit :Chained('base') :PathPart('edit') {
             delete $form->values->{reseller};
             $c->stash->{profile_result}->update($form->values);
 
+            delete $c->session->{created_objects}->{reseller};
             $c->flash(messages => [{type => 'success', text => 'Billing profile successfully updated'}]);
         } catch($e) {
             NGCP::Panel::Utils::Message->error(
