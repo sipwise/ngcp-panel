@@ -48,6 +48,7 @@ sub auto :Private {
         unless($product) {
             $c->detach('/denied_page');
         }
+        $c->stash->{contract_rs} = $contract_select_rs;
     }
 
     return 1;
@@ -56,30 +57,14 @@ sub auto :Private {
 sub sets_list :Chained('/') :PathPart('sound') :CaptureArgs(0) {
     my ( $self, $c ) = @_;
 
-    my $sets_rs = $c->model('DB')->resultset('voip_sound_sets');
-
-    my $dt_fields = [
-        { name => 'id', search => 1, title => '#' },
-        { name => 'name', search => 1, title => 'Name' },
-        { name => 'description', search => 1, title => 'Description' },
-    ];
-
-    if($c->user->roles eq "admin") {
-        splice @{ $dt_fields }, 1, 0, 
-            { name => 'reseller.name', search => 1, title => 'Reseller' };
-        splice @{ $dt_fields }, 2, 0, 
-            { name => 'contract.contact.email', search => 1, title => 'Customer' };
-    } elsif($c->user->roles eq "reseller") {
-        splice @{ $dt_fields }, 1, 0, 
-            { name => 'contract.contact.email', search => 1, title => 'Customer' };
-        $sets_rs = $sets_rs->search({ reseller_id => $c->user->reseller_id });
-    } elsif($c->user->roles eq "subscriberadmin") {
-        $sets_rs = $sets_rs->search({ contract_id => $c->user->account_id });
+    if($c->stash->{contract_rs}) {
+        NGCP::Panel::Utils::Sounds::stash_soundset_list(
+            c => $c, 
+            contract => $c->stash->{contract_rs}->first
+        );
+    } else {
+        NGCP::Panel::Utils::Sounds::stash_soundset_list(c => $c);
     }
-
-    $c->stash->{soundset_dt_columns} = NGCP::Panel::Utils::Datatables::set_columns($c, $dt_fields);
-
-    $c->stash(sets_rs => $sets_rs);
     $c->stash(template => 'sound/list.tt');
 }
 

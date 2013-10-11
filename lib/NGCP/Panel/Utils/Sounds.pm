@@ -47,6 +47,43 @@ sub transcode_data {
     return $out;
 }
 
+sub stash_soundset_list {
+    my (%params) = @_;
+
+    my $c = $params{c};
+    my $contract = $params{contract}; 
+
+    my $sets_rs = $c->model('DB')->resultset('voip_sound_sets');
+    if($contract) {
+        $sets_rs = $sets_rs->search({ contract_id => $contract->id });
+    }
+
+    my $dt_fields = [
+        { name => 'id', search => 1, title => '#' },
+        { name => 'name', search => 1, title => 'Name' },
+        { name => 'description', search => 1, title => 'Description' },
+    ];
+
+    if($c->user->roles eq "admin") {
+        splice @{ $dt_fields }, 1, 0,
+            { name => 'reseller.name', search => 1, title => 'Reseller' };
+        splice @{ $dt_fields }, 2, 0,
+            { name => 'contract.contact.email', search => 1, title => 'Customer' };
+    } elsif($c->user->roles eq "reseller") {
+        splice @{ $dt_fields }, 1, 0,
+            { name => 'contract.contact.email', search => 1, title => 'Customer' };
+        $sets_rs = $sets_rs->search({ reseller_id => $c->user->reseller_id });
+    } elsif($c->user->roles eq "subscriberadmin" && !$contract) {
+        $sets_rs = $sets_rs->search({ contract_id => $c->user->account_id });
+    }
+
+    $c->stash->{soundset_dt_columns} = NGCP::Panel::Utils::Datatables::set_columns($c, $dt_fields);
+
+    $c->stash(sets_rs => $sets_rs);
+
+    return;
+}
+
 1;
 
 # vim: set tabstop=4 expandtab:

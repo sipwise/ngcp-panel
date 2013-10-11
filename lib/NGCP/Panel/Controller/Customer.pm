@@ -18,6 +18,7 @@ use NGCP::Panel::Utils::Message;
 use NGCP::Panel::Utils::Navigation;
 use NGCP::Panel::Utils::DateTime;
 use NGCP::Panel::Utils::Subscriber;
+use NGCP::Panel::Utils::Sounds;
 use Template;
 
 =head1 NAME
@@ -179,6 +180,7 @@ sub base :Chained('list_customer') :PathPart('') :CaptureArgs(1) {
 sub details :Chained('base') :PathPart('details') :Args(0) {
     my ($self, $c) = @_;
 
+    NGCP::Panel::Utils::Sounds::stash_soundset_list(c => $c, contract => $c->stash->{contract});
     $c->stash->{contact_hash} = { $c->stash->{contract}->contact->get_inflated_columns };
 }
 

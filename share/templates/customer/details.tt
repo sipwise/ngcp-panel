@@ -296,6 +296,44 @@
     </div>
     [% END -%]
 
+    [% IF 
+        c.config.features.cloudpbx && 
+        (c.user.roles == 'admin' || c.user.roles == 'reseller' || c.user.roles == 'subscriberadmin')
+    -%]
+    <div class="accordion-group">
+        <div class="accordion-heading">
+            <a class="accordion-toggle" data-toggle="collapse" data-parent="#customer_details" href="#collapse_soundsets">Sound Sets</a>
+        </div>
+        <div class="accordion-body collapse" id="collapse_soundsets">
+            <div class="accordion-inner">
+            
+[%
+    helper.name = 'Sound Sets';
+    helper.dt_columns = soundset_dt_columns;
+    helper.ajax_uri = c.uri_for('/sound/ajax');
+
+    UNLESS c.user.read_only;
+        helper.dt_buttons = [
+            { name = 'Edit', uri = "/sound/'+full.id+'/edit", class = 'btn-small btn-primary', icon = 'icon-edit' },
+            { name = 'Delete', uri = "/sound/'+full.id+'/delete", class = 'btn-small btn-secondary', icon = 'icon-trash' },
+            { name = 'Files', uri = "/sound/'+full.id+'/handles", class = 'btn-small btn-tertiary', icon = 'icon-list' },
+        ];
+        helper.top_buttons = [
+            { name = 'Create Sound Set', uri = c.uri_for('/sound/create'), icon = 'icon-star', accordion_button = 1 },
+        ];
+    ELSE;
+        helper.dt_buttons = [
+            { name = 'Files', uri = "/sound/'+full.id+'/handles", class = 'btn-small btn-tertiary', icon = 'icon-list' },
+        ];
+    END;
+
+    PROCESS 'helpers/datatables.tt';
+%]
+            </div>
+        </div>
+    </div>
+    [% END -%]
+
     <div class="accordion-group">
         <div class="accordion-heading">
             <a class="accordion-toggle" data-toggle="collapse" data-parent="#customer_details" href="#collapse_balance">Contract Balance</a>
