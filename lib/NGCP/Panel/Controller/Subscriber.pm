@@ -132,7 +132,7 @@ sub create_list :Chained('sub_list') :PathPart('create') :Args(0) :Does(ACL) :AC
         fields => {
             'domain.create' => $c->uri_for('/domain/create'),
             'reseller.create' => $c->uri_for('/reseller/create'),
-            'contract.create' => $c->uri_for('/contract/customer/create'),
+            'contract.create' => $c->uri_for('/customer/create'),
         },
         back_uri => $c->req->uri,
     );
