@@ -71,7 +71,7 @@ has_field 'fraud_interval_limit' => (
     label => 'Fraud Monthly Limit',
     element_attr => {
         rel => ['tooltip'],
-        title => ['fraud detection threshold, per month, float, specifying EUR, USD, etc.']
+        title => ['fraud detection threshold per month, specifying cents']
     },
 );
 
@@ -105,7 +105,7 @@ has_field 'fraud_daily_limit' => (
     type => 'Integer',
     element_attr => {
         rel => ['tooltip'],
-        title => ['fraud detection threshold, per day, float, specifying EUR, USD, etc.']
+        title => ['fraud detection threshold per day, specifying cents']
     },
     required => 0,
     default => undef,
