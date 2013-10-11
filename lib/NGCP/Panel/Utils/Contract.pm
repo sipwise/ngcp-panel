@@ -143,9 +143,9 @@ sub recursively_lock_contract {
 
 sub get_contract_rs {
     my %params = @_;
-    my $c = $params{c};
-    my $mapping_rs = $c->model('DB')->resultset('billing_mappings');
-    my $rs = $c->model('DB')->resultset('contracts')
+    my $schema = $params{schema};
+    my $mapping_rs = $schema->resultset('billing_mappings');
+    my $rs = $schema->resultset('contracts')
         ->search({
             'me.status' => { '!=' => 'terminated' },
             'billing_mappings.id' => {

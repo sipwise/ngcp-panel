@@ -31,7 +31,8 @@ sub contract_list :Chained('/') :PathPart('contract') :CaptureArgs(0) {
         { name => "status", search => 1, title => "Status" },
     ]);
 
-    my $rs = NGCP::Panel::Utils::Contract::get_contract_rs(c => $c);
+    my $rs = NGCP::Panel::Utils::Contract::get_contract_rs(
+        schema => $c->model('DB'));
     unless($c->user->is_superuser) {
         $rs = $rs->search({
             'contact.reseller_id' => $c->user->reseller_id,
@@ -382,31 +383,7 @@ sub customer_list :Chained('contract_list') :PathPart('customer') :CaptureArgs(0
 
     $c->stash(page_title => "Customer",
               page_title_plural => "Customers");
-    $c->stash(ajax_uri => $c->uri_for_action("/contract/customer_ajax"));
-}
-
-sub customer_root :Chained('customer_list') :PathPart('') :Args(0) {
-
-}
-
-sub customer_ajax :Chained('customer_list') :PathPart('ajax') :Args(0) {
-    my ($self, $c) = @_;
-    
-    my $rs = $c->stash->{customer_rs}; 
-    my $contract_dt_col = NGCP::Panel::Utils::Datatables::set_columns($c, [
-        { name => "id", search => 1, title => "#" },
-        { name => "external_id", search => 1, title => "External #" },
-        { name => "contact.reseller.name", search => 1, title => "Reseller" },
-        { name => "contact.email", search => 1, title => "Contact Email" },
-        { name => "billing_mappings.product.name", search => 1, title => "Product" },
-        { name => "billing_mappings.billing_profile.name", search => 1, title => "Billing Profile" },
-        { name => "status", search => 1, title => "Status" },
-        { name => "max_subscribers", search => 1, title => "Max Number of Subscribers" },
-    ]);
-    push @{ $c->stash->{contract_dt_columns} }, 
-        { name => "max_subscribers", search => 1, title => "Max Number of Subscribers" };
-    NGCP::Panel::Utils::Datatables::process($c, $rs, $contract_dt_col);
-    $c->detach( $c->view("JSON") );
+    $c->stash(ajax_uri => $c->uri_for_action("/customer/ajax"));
 }
 
 sub customer_ajax_reseller_filter :Chained('customer_list') :PathPart('ajax/reseller') :Args(1) {
