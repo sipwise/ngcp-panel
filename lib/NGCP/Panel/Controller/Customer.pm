@@ -89,6 +89,103 @@ sub ajax :Chained('list_customer') :PathPart('ajax') :Args(0) {
     $c->detach( $c->view("JSON") );
 }
 
+sub ajax_reseller_filter :Chained('list_customer') :PathPart('ajax/reseller') :Args(1) {
+    my ($self, $c, $reseller_id) = @_;
+
+    unless($reseller_id && $reseller_id->is_int) {
+        $c->flash(messages => [{type => 'error', text => 'Invalid reseller id detected'}]);
+        $c->response->redirect($c->uri_for());
+        return;
+    }
+
+    my $rs = $c->stash->{contract_select_rs}->search_rs({
+        'contact.reseller_id' => $reseller_id,
+    },{
+        join => 'contact',
+    });
+    my $reseller_customer_columns = NGCP::Panel::Utils::Datatables::set_columns($c, [
+        { name => "id", search => 1, title => "#" },
+        { name => "external_id", search => 1, title => "External #" },
+        { name => "billing_mappings.product.name", search => 1, title => "Product" },
+        { name => "contact.email", search => 1, title => "Contact Email" },
+        { name => "status", search => 1, title => "Status" },
+    ]);
+    NGCP::Panel::Utils::Datatables::process($c, $rs,  $reseller_customer_columns);
+    $c->detach( $c->view("JSON") );
+}
+
+sub create :Chained('list_customer') :PathPart('create') :Args(0) {
+    my ($self, $c) = @_;
+
+    my $posted = ($c->request->method eq 'POST');
+    my $form;
+    my $params = {};
+    $params = $params->merge($c->session->{created_objects});
+    if($c->config->{features}->{cloudpbx}) {
+        $form = NGCP::Panel::Form::Contract::ProductSelect->new;
+    } else {
+        $form = NGCP::Panel::Form::Contract::Basic->new;
+    }
+    $form->process(
+        posted => $posted,
+        params => $c->request->params,
+        item => $params
+    );
+    NGCP::Panel::Utils::Navigation::check_form_buttons(
+        c => $c,
+        form => $form,
+        fields => {'contact.create' => $c->uri_for('/contact/create'),
+                   'billing_profile.create'  => $c->uri_for('/billing/create')},
+        back_uri => $c->req->uri,
+    );
+    if($posted && $form->validated) {
+        try {
+            my $schema = $c->model('DB');
+            $schema->txn_do(sub {
+                $form->params->{contact_id} = $form->params->{contact}{id};
+                delete $form->params->{contact};
+                my $bprof_id = $form->params->{billing_profile}{id};
+                delete $form->params->{billing_profile};
+                $form->{create_timestamp} = $form->{modify_timestamp} = NGCP::Panel::Utils::DateTime::current_local;
+                my $product_id = $form->params->{product}{id};
+                delete $form->params->{product};
+                unless($product_id) {
+                    $product_id = $c->model('DB')->resultset('products')->find({ class => 'sipaccount' })->id;
+                }
+                unless($form->params->{max_subscribers} && length($form->params->{max_subscribers})) {
+                    delete $form->params->{max_subscribers};
+                }
+                my $contract = $schema->resultset('contracts')->create($form->params);
+                my $billing_profile = $schema->resultset('billing_profiles')->find($bprof_id);
+                $contract->billing_mappings->create({
+                    billing_profile_id => $bprof_id,
+                    product_id => $product_id,
+                });
+
+                NGCP::Panel::Utils::Contract::create_contract_balance(
+                    c => $c,
+                    profile => $billing_profile,
+                    contract => $contract,
+                );
+                $c->session->{created_objects}->{contract} = { id => $contract->id };
+                delete $c->session->{created_objects}->{contact};
+                delete $c->session->{created_objects}->{billing_profile};
+                my $contract_id = $contract->id;
+                $c->flash(messages => [{type => 'success', text => "Customer #$contract_id successfully created"}]);
+            });
+        } catch($e) {
+            NGCP::Panel::Utils::Message->error(
+                c => $c,
+                error => $e,
+                desc  => "Failed to create customer contract.",
+            );
+        }
+        NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for('/contract'));
+    }
+
+    $c->stash(create_flag => 1);
+    $c->stash(form => $form);
+}
 
 sub base :Chained('list_customer') :PathPart('') :CaptureArgs(1) {
     my ($self, $c, $contract_id) = @_;

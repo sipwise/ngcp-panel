@@ -235,7 +235,7 @@ sub create :Chained('sets_list') :PathPart('create') :Args(0) {
         form => $form,
         fields => {
             'reseller.create' => $c->uri_for('/reseller/create'),
-            'contract.create' => $c->uri_for_action('/contract/customer_create'),
+            'contract.create' => $c->uri_for_action('/customer/create'),
         },
         back_uri => $c->req->uri,
     );

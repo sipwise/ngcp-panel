@@ -1,6 +1,6 @@
 [% META title = 'Customers' -%]
 [%
-    helper.name = 'Customers';
+    helper.name = 'Customer';
     helper.data = contracts;
     helper.messages = messages;
     helper.dt_columns = contract_dt_columns;
@@ -19,7 +19,7 @@
             { name = 'Details', uri = "/customer/'+full.id+'/details", class = 'btn-small btn-tertiary', icon = 'icon-list' },
         ];
         helper.top_buttons = [
-            { name = 'Create Customer', uri = c.uri_for_action('/contract/customer_create'), icon = 'icon-star' },
+            { name = 'Create Customer', uri = c.uri_for_action('/customer/create'), icon = 'icon-star' },
         ];
     ELSE;
         helper.dt_buttons = [
