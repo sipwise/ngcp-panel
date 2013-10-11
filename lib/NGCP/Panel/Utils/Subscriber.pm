@@ -408,6 +408,26 @@ sub update_subscriber_numbers {
         }
     }
 
+    if(defined $alias_numbers && ref($alias_numbers) eq 'ARRAY') {
+        # note that this only adds new alias numbers
+        # old entries in voip_numbers and voip_dbaliases are usually deleted
+        # before calling this sub
+        my $num;
+        for my $alias(@$alias_numbers) {
+            $num = $billing_subs->voip_numbers->create({
+                cc          => $alias->{e164}{cc},
+                ac          => $alias->{e164}{ac},
+                sn          => $alias->{e164}{sn},
+                reseller_id => $reseller_id,
+            });
+            $schema->resultset('voip_dbaliases')->create({
+                username => $num->cc . ($num->ac || '') . $num->sn,
+                subscriber_id => $prov_subs->id,
+                domain_id     => $prov_subs->domain->id,
+            });
+        }
+    }
+
     return;
 }
 
@@ -422,6 +442,14 @@ NGCP::Panel::Utils::Subscriber
 A temporary helper to manipulate subscriber data
 
 =head1 METHODS
+
+=head2 update_subscriber_numbers
+
+This reimplements the behavior of ossbss. When adding numbers to a subscriber,
+we first check, if the number is already available in voip_numbers but
+has no subscriber_id set. In that case we can just reuse that number.
+If the number does not exist at all, we just create it.
+For reference see _get_number_for_update() in ossbss.
 
 =head1 AUTHOR
 

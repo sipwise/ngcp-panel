@@ -1720,7 +1720,6 @@ sub edit_master :Chained('master') :PathPart('edit') :Args(0) {
                                     domain_id => $prov_subscriber->domain->id,
                                 })->delete_all;
 
-                my $num;
                 if($subscriber->primary_number) {
                     if($pbx_ext) {
                         $form->params->{e164}{cc} = $subscriber->primary_number->cc;
@@ -1733,6 +1732,7 @@ sub edit_master :Chained('master') :PathPart('edit') :Args(0) {
                         subscriber_id =>$subscriber->id,
                         reseller_id => $subscriber->contract->contact->reseller_id,
                         primary_number => $form->params->{e164},
+                        alias_numbers  => $form->values->{alias_number},
                     );
 
                         # TODO: if it's an admin for pbx, update all other subscribers as well!
@@ -1743,40 +1743,8 @@ sub edit_master :Chained('master') :PathPart('edit') :Args(0) {
                         subscriber_id =>$subscriber->id,
                         reseller_id => $subscriber->contract->contact->reseller_id,
                         primary_number => $form->values->{e164},
+                        alias_numbers  => $form->values->{alias_number},
                     );
-                }
-                if($num) {
-                    $schema->resultset('voip_dbaliases')->create({
-                        username => $num->cc.($num->ac || '').$num->sn,
-                        domain_id => $prov_subscriber->domain->id,
-                        subscriber_id => $prov_subscriber->id,
-                    });
-                    my $cli = $num->cc.($num->ac || '').$num->sn;
-                    for my $cfset($prov_subscriber->voip_cf_destination_sets->all) {
-                        for my $cf($cfset->voip_cf_destinations->all) {
-                            if($cf->destination =~ /\@voicebox\.local$/) {
-                                $cf->update({ destination => 'sip:vmu'.$cli.'@voicebox.local' });
-                            } elsif($cf->destination =~ /\@fax2mail\.local$/) {
-                                $cf->update({ destination => 'sip:'.$cli.'@fax2mail.local' });
-                            } elsif($cf->destination =~ /\@conference\.local$/) {
-                                $cf->update({ destination => 'sip:conf='.$cli.'@conference.local' });
-                            }
-                        }
-                    }
-                }
-                if($form->field('alias_number')) {
-                    for my $alias($form->field('alias_number')->fields) {
-                        $num = $subscriber->voip_numbers->create({
-                            cc => $alias->field('e164')->field('cc')->value,
-                            ac => $alias->field('e164')->field('ac')->value,
-                            sn => $alias->field('e164')->field('sn')->value,
-                        });
-                        $schema->resultset('voip_dbaliases')->create({
-                            username => $num->cc.($num->ac || '').$num->sn,
-                            subscriber_id => $prov_subscriber->id,
-                            domain_id => $prov_subscriber->domain->id,
-                        });
-                    }
                 }
 
                 $form->values->{lock} ||= 0;
