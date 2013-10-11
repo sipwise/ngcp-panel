@@ -54,7 +54,26 @@ sub list_customer :Chained('/') :PathPart('customer') :CaptureArgs(0) {
         { name => "max_subscribers", search => 1, title => "Max Number of Subscribers" },
     ]);
 
+    my $rs = NGCP::Panel::Utils::Contract::get_contract_rs(
+        schema => $c->model('DB'));
+    unless($c->user->is_superuser) {
+        $rs = $rs->search({
+            'contact.reseller_id' => $c->user->reseller_id,
+        }, {
+            join => 'contact',
+        });
+    }
+    $rs = $rs->search({
+            '-or' => [
+                'product.class' => 'sipaccount',
+                'product.class' => 'pbxaccount',
+            ],
+        }, {
+            'join' => {'billing_mappings' => 'product'},
+        });
+
     $c->stash(
+        contract_select_rs => $rs,
         template => 'customer/list.tt'
     );
 }
@@ -62,6 +81,14 @@ sub list_customer :Chained('/') :PathPart('customer') :CaptureArgs(0) {
 sub root :Chained('list_customer') :PathPart('') :Args(0) :Does(ACL) :ACLDetachTo('/denied_page') :AllowedRole(admin) :AllowedRole(reseller) {
     my ($self, $c) = @_;
 }
+
+sub ajax :Chained('list_customer') :PathPart('ajax') :Args(0) {
+    my ($self, $c) = @_;
+    my $res = $c->stash->{contract_select_rs};
+    NGCP::Panel::Utils::Datatables::process($c, $res, $c->stash->{contract_dt_columns});
+    $c->detach( $c->view("JSON") );
+}
+
 
 sub base :Chained('list_customer') :PathPart('') :CaptureArgs(1) {
     my ($self, $c, $contract_id) = @_;
@@ -134,7 +161,8 @@ sub base :Chained('list_customer') :PathPart('') :CaptureArgs(1) {
                 });
     }
 
-    my $contract_select_rs = NGCP::Panel::Utils::Contract::get_contract_rs(c => $c);
+    my $contract_select_rs = NGCP::Panel::Utils::Contract::get_contract_rs(
+        schema => $c->model('DB'));
     $contract_select_rs = $contract_select_rs->search({
         'me.id' => $contract_id,
     });

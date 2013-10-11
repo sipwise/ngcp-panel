@@ -9,7 +9,7 @@ has_field 'id' => (
     do_wrapper => 0,
     required => 1,
     template => 'helpers/datatables_field.tt',
-    ajax_src => '/contract/customer/ajax',
+    ajax_src => '/customer/ajax',
     table_titles => ['#', 'Reseller', 'Contact Email', 'External #', 'Status'],
     table_fields => ['id', 'contact_reseller_name', 'contact_email', 'external_id', 'status'],
 );

@@ -34,7 +34,8 @@ sub auto :Private {
     # and then again, it's only for subscriberadmins with pbxaccount product
     if($c->user->roles eq "subscriberadmin") {
         my $contract_id = $c->user->account_id;
-        my $contract_select_rs = NGCP::Panel::Utils::Contract::get_contract_rs(c => $c);
+        my $contract_select_rs = NGCP::Panel::Utils::Contract::get_contract_rs(
+            schema => $c->model('DB'));
         $contract_select_rs = $contract_select_rs->search({ 'me.id' => $contract_id });
         my $product_id = $contract_select_rs->first->get_column('product_id');
         unless($product_id) {
