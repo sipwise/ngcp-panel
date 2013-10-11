@@ -310,7 +310,7 @@
 [%
     helper.name = 'Sound Sets';
     helper.dt_columns = soundset_dt_columns;
-    helper.ajax_uri = c.uri_for('/sound/ajax');
+    helper.ajax_uri = c.uri_for_action('/sound/contract_ajax', [ c.req.captures.0 ]);
 
     UNLESS c.user.read_only;
         helper.dt_buttons = [

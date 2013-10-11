@@ -37,11 +37,14 @@ sub auto :Private {
         my $contract_select_rs = NGCP::Panel::Utils::Contract::get_contract_rs(c => $c);
         $contract_select_rs = $contract_select_rs->search({ 'me.id' => $contract_id });
         my $product_id = $contract_select_rs->first->get_column('product_id');
-        NGCP::Panel::Utils::Message->error(
-            c => $c,
-            error => "No product for customer contract id $contract_id found",
-            desc  => "No product for this customer contract found.",
-        ) unless($product_id);
+        unless($product_id) {
+            NGCP::Panel::Utils::Message->error(
+                c => $c,
+                error => "No product for customer contract id $contract_id found",
+                desc  => "No product for this customer contract found.",
+            );
+            NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for('/sound'));
+        }
         my $product = $c->model('DB')->resultset('products')->find({ 
             id => $product_id, class => 'pbxaccount' 
         });
@@ -68,11 +71,55 @@ sub sets_list :Chained('/') :PathPart('sound') :CaptureArgs(0) {
     $c->stash(template => 'sound/list.tt');
 }
 
+sub contract_sets_list :Chained('/') :PathPart('sound/contract') :CaptureArgs(1) {
+    my ( $self, $c, $contract_id ) = @_;
+
+    unless($contract_id && $contract_id->is_int) {
+        NGCP::Panel::Utils::Message->error(
+            c => $c,
+            error => "Invalid contract id $contract_id found",
+            desc  => "Invalid contract id found",
+        );
+        NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for('/sound'));
+    }
+    if($c->user->roles eq "subscriberadmin" && $c->user->account_id != $contract_id) {
+        NGCP::Panel::Utils::Message->error(
+            c => $c,
+            error => "access violatio, subscriberadmin ".$c->user->uuid." with contract id ".$c->user->account_id." tries to access foreign contract id $contract_id",
+            desc  => "Invalid contract id found",
+        );
+        NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for('/sound'));
+    }
+    my $contract = $c->model('DB')->resultset('contracts')->find($contract_id);
+    unless($contract) {
+        NGCP::Panel::Utils::Message->error(
+            c => $c,
+            error => "Contract id $contract_id not found",
+            desc  => "Invalid contract id detected",
+        );
+        NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for('/sound'));
+    }
+
+    NGCP::Panel::Utils::Sounds::stash_soundset_list(
+        c => $c, 
+        contract => $contract,
+    );
+    $c->stash(template => 'sound/list.tt');
+}
+
 sub root :Chained('sets_list') :PathPart('') :Args(0) {
     my ($self, $c) = @_;
 }
 
 sub ajax :Chained('sets_list') :PathPart('ajax') :Args(0) {
+    my ($self, $c) = @_;
+    
+    my $resultset = $c->stash->{sets_rs};
+    NGCP::Panel::Utils::Datatables::process($c, $resultset, $c->stash->{soundset_dt_columns});
+    $c->detach( $c->view("JSON") );
+}
+
+sub contract_ajax :Chained('contract_sets_list') :PathPart('ajax') :Args(0) {
     my ($self, $c) = @_;
     
     my $resultset = $c->stash->{sets_rs};

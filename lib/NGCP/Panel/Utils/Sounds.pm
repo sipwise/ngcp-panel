@@ -55,7 +55,8 @@ sub stash_soundset_list {
 
     my $sets_rs = $c->model('DB')->resultset('voip_sound_sets');
     if($contract) {
-        $sets_rs = $sets_rs->search({ contract_id => $contract->id });
+        say ">>>>>>>>>>>>>>> we've a contract, limit rs";
+        $sets_rs = $sets_rs->search({ 'me.contract_id' => $contract->id });
     }
 
     my $dt_fields = [
@@ -74,7 +75,7 @@ sub stash_soundset_list {
             { name => 'contract.contact.email', search => 1, title => 'Customer' };
         $sets_rs = $sets_rs->search({ reseller_id => $c->user->reseller_id });
     } elsif($c->user->roles eq "subscriberadmin" && !$contract) {
-        $sets_rs = $sets_rs->search({ contract_id => $c->user->account_id });
+        $sets_rs = $sets_rs->search({ 'me.contract_id' => $c->user->account_id });
     }
 
     $c->stash->{soundset_dt_columns} = NGCP::Panel::Utils::Datatables::set_columns($c, $dt_fields);
