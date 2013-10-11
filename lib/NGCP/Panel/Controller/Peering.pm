@@ -72,6 +72,7 @@ sub base :Chained('group_list') :PathPart('') :CaptureArgs(1) {
         { name => 'port', search => 1, title => 'Port' },
         { name => 'transport', search => 1, title => 'Protocol' },
         { name => 'weight', search => 1, title => 'Weight' },
+        { name => 'via_route', search => 1, title => 'Via Route Set' },
     ]);
     $c->stash->{rules_dt_columns} = NGCP::Panel::Utils::Datatables::set_columns($c, [
         { name => 'id', search => 1, title => '#' },

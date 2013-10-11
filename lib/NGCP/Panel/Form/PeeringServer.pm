@@ -52,6 +52,17 @@ has_field 'weight' => (
     default => 1,
 );
 
+has_field 'via_route' => (
+    type => 'Text',
+    label => 'Via Route',
+    maxlength => 255,
+    element_attr => { 
+        rel => ['tooltip'], 
+        # TODO: &lt; etc doesn't work?
+        title => ['An optional comma-separated Route Set to follow from the lb towards the peer, e.g. <i>sip:1.2.3.4:5060,sip:2.3.5:5060</i>'] 
+    },
+);
+
 has_field 'save' => (
     type => 'Submit',
     value => 'Save',
@@ -62,7 +73,7 @@ has_field 'save' => (
 has_block 'fields' => (
     tag => 'div',
     class => [qw/modal-body/],
-    render_list => [qw/ name ip host port transport weight /],
+    render_list => [qw/ name ip host port transport weight via_route /],
 );
 
 has_block 'actions' => (
@@ -70,6 +81,23 @@ has_block 'actions' => (
     class => [qw/modal-footer/],
     render_list => [qw/save/],
 );
+
+sub validate_via_route {
+    my ($self, $field) = @_;
+
+    my @hops = split /,/, $field->value;
+    my $err = 0;
+    foreach my $hop(@hops) {
+        $hop =~ s/^\s*([^\s]+)\s*$/$1/;
+        # TODO: is there a proper sip uri check?
+        unless($hop =~ /^<sip\:.+>$/) {
+            $err = 1; last;
+        }
+    }
+    if($err) {
+        $field->add_error("Invalid SIP URI, must be (comma-separated) SIP URI(s) in form sip:ip:port");
+    }
+}
 
 1;
 
