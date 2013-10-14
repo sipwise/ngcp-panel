@@ -70,7 +70,7 @@
 $(function () {
     Theme.init ();
 
-    $('[rel="tooltip"]').tooltip({ html:true });
+    $('[rel="tooltip"]').tooltip(html: true);
 
     $('.sw_actions').css('visibility','hidden');
     $('.sw_action_row').hover(
