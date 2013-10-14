@@ -88,7 +88,7 @@ has_field 'linerange.name' => (
     default => 'Phone Keys',
     element_attr => {
         rel => ['tooltip'],
-        title => ['The Name of this range, e.g. <i>Phone Keys</i> or <i>Attendant Console 1 Keys</i>, accessible in the config template array via <i>phone.lineranges[].name</i>'],
+        title => ['The Name of this range, e.g. Phone Keys or Attendant Console 1 Keys, accessible in the config template array via phone.lineranges[].name'],
     },
 );
 
@@ -98,7 +98,7 @@ has_field 'linerange.num_lines' => (
     default => 4,
     element_attr => {
         rel => ['tooltip'],
-        title => ['The number of Lines/Keys in this range, indexed from 0 in the config template array <i>phone.lineranges[].lines[]</i>'],
+        title => ['The number of Lines/Keys in this range, indexed from 0 in the config template array phone.lineranges[].lines[]'],
     },
 );
 
@@ -108,7 +108,7 @@ has_field 'linerange.can_private' => (
     default => 1,
     element_attr => {
         rel => ['tooltip'],
-        title => ['Lines/Keys in this range can be used as regular phone lines. Value is accessible in the config template via <i>phone.lineranges[].lines[].can_private</i>'],
+        title => ['Lines/Keys in this range can be used as regular phone lines. Value is accessible in the config template via phone.lineranges[].lines[].can_private'],
     },
 );
 
@@ -118,7 +118,7 @@ has_field 'linerange.can_shared' => (
     default => 0,
     element_attr => {
         rel => ['tooltip'],
-        title => ['Lines/Keys in this range can be used as shared lines. Value is accessible in the config template via <i>phone.lineranges[].lines[].can_shared</i>'],
+        title => ['Lines/Keys in this range can be used as shared lines. Value is accessible in the config template via phone.lineranges[].lines[].can_shared'],
     },
 );
 
@@ -128,7 +128,7 @@ has_field 'linerange.can_blf' => (
     default => 0,
     element_attr => {
         rel => ['tooltip'],
-        title => ['Lines/Keys in this range can be used as Busy Lamp Field. Value is accessible in the config template via <i>phone.lineranges[].lines[].can_blf</i>'],
+        title => ['Lines/Keys in this range can be used as Busy Lamp Field. Value is accessible in the config template via phone.lineranges[].lines[].can_blf'],
     },
 );
 
