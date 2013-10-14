@@ -28,6 +28,7 @@ use NGCP::Panel::Form::Reminder;
 use NGCP::Panel::Form::Subscriber::TrustedSource;
 use NGCP::Panel::Form::Subscriber::Location;
 use NGCP::Panel::Form::Subscriber::SpeedDial;
+use NGCP::Panel::Form::Subscriber::AutoAttendant;
 use NGCP::Panel::Form::Faxserver::Name;
 use NGCP::Panel::Form::Faxserver::Password;
 use NGCP::Panel::Form::Faxserver::Active;
@@ -268,6 +269,11 @@ sub base :Chained('sub_list') :PathPart('') :CaptureArgs(1) {
     $c->stash->{sd_dt_columns} = NGCP::Panel::Utils::Datatables::set_columns($c, [
         { name => "id", search => 1, title => "#" },
         { name => "slot", search => 1, title => "Slot" },
+        { name => "destination", search => 1, title => "Destination" },
+    ]);
+    $c->stash->{aa_dt_columns} = NGCP::Panel::Utils::Datatables::set_columns($c, [
+        { name => "id", search => 1, title => "#" },
+        { name => "choice", search => 1, title => "Slot" },
         { name => "destination", search => 1, title => "Destination" },
     ]);
 }
@@ -2637,6 +2643,119 @@ sub edit_speeddial :Chained('speeddial') :PathPart('edit') :Args(0) {
         template => 'subscriber/preferences.tt',
         edit_cf_flag => 1,
         cf_description => "Speed Dial Slot",
+        cf_form => $form,
+    );
+}
+
+sub ajax_autoattendant :Chained('base') :PathPart('preferences/autoattendant/ajax') :Args(0) {
+    my ($self, $c) = @_;
+
+    my $prov_subscriber = $c->stash->{subscriber}->provisioning_voip_subscriber;
+    my $aa_rs = $prov_subscriber->voip_pbx_autoattendants;
+    NGCP::Panel::Utils::Datatables::process($c, $aa_rs, $c->stash->{aa_dt_columns});
+
+    $c->detach( $c->view("JSON") );
+}
+
+sub autoattendant :Chained('base') :PathPart('preferences/autoattendant') :CaptureArgs(1) {
+    my ($self, $c, $aa_id) = @_;
+
+    my $aa = $c->stash->{subscriber}->provisioning_voip_subscriber->voip_pbx_autoattendants
+                ->find($aa_id);
+    unless($aa) {
+        NGCP::Panel::Utils::Message->error(
+            c    => $c,
+            log  => "no such auto attendant slot with id '$aa_id' for uuid ".$c->stash->{subscriber}->uuid,
+            desc => "No such auto attendant id.",
+        );
+        NGCP::Panel::Utils::Navigation::back_or($c, 
+            $c->uri_for_action('/subscriber/preferences', [$c->req->captures->[0]]));
+    }
+    $c->stash->{autoattendant} = $aa;
+}
+
+sub delete_autoattendant :Chained('autoattendant') :PathPart('delete') :Args(0) {
+    my ($self, $c) = @_;
+
+    try {
+        $c->stash->{autoattendant}->delete;
+        $c->flash(messages => [{type => 'success', text => 'Successfully deleted auto attendant slot'}]);
+    } catch($e) {
+        NGCP::Panel::Utils::Message->error(
+            c     => $c,
+            error => $e,
+            desc  => "Failed to delete auto attendant slot.",
+        );
+    }
+    NGCP::Panel::Utils::Navigation::back_or($c, 
+        $c->uri_for_action('/subscriber/preferences', [$c->req->captures->[0]]));
+}
+
+sub edit_autoattendant :Chained('base') :PathPart('preferences/speeddial/edit') :Args(0) {
+    my ($self, $c) = @_;
+
+    my $posted = ($c->request->method eq 'POST');
+    my $prov_subscriber = $c->stash->{subscriber}->provisioning_voip_subscriber;
+    my $slots = $prov_subscriber->voip_pbx_autoattendants;
+    my $form = NGCP::Panel::Form::Subscriber::AutoAttendant->new;
+
+    my $params = {};
+    unless($posted) {
+        $params->{slot} = [];
+        foreach my $slot($slots->all) {
+            push @{ $params->{slot} }, { $slot->get_inflated_columns };
+        }
+    }
+
+    $form->process(
+        posted => $posted,
+        params => $c->req->params,
+        item => $params,
+    );
+    NGCP::Panel::Utils::Navigation::check_form_buttons(
+        c => $c,
+        form => $form,
+        fields => {},
+        back_uri => $c->req->uri,
+    );
+    if($posted && $form->validated) {
+        try {
+            my $schema = $c->model('DB');
+            $schema->txn_do(sub {
+                $slots->delete_all;
+                my @fields = $form->field('slot')->fields;
+                foreach my $slot(@fields) {
+                    my $d = $slot->field('destination')->value;
+                    if($d !~ /\@/) {
+                        $d .= '@'.$prov_subscriber->domain->domain;
+                    }
+                    if($d !~ /^sip:/) {
+                        $d = 'sip:' . $d;
+                    }
+                    $slots->create({
+                        uuid => $prov_subscriber->uuid,
+                        choice => $slot->field('choice')->value,
+                        destination => $d,
+                    });
+                }
+            });
+            
+            $c->flash(messages => [{type => 'success', text => 'Successfully updated auto attendant slots'}]);
+        } catch($e) {
+            NGCP::Panel::Utils::Message->error(
+                c     => $c,
+                error => $e,
+                desc  => "Failed to update autoattendant slots",
+            );
+        }
+        NGCP::Panel::Utils::Navigation::back_or($c, 
+            $c->uri_for_action('/subscriber/preferences', [$c->req->captures->[0]]));
+    }
+
+    $c->stash(
+        template => 'subscriber/preferences.tt',
+        edit_cf_flag => 1,
+        cf_description => "Auto Attendant Slot",
         cf_form => $form,
     );
 }

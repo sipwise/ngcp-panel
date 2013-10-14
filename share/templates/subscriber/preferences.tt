@@ -310,6 +310,34 @@
     </div>
     [% END -%]
 
+    [% IF c.config.features.cloudpbx -%]
+    <div class="accordion-group">
+        <div class="accordion-heading">
+            <a class="accordion-toggle" data-toggle="collapse" data-parent="#preference_groups" href="#collapse_aa">Auto Attendant Slots</a>
+        </div>
+        <div class="accordion-body collapse" id="collapse_aa">
+            <div class="accordion-inner">
+
+                <a class="btn btn-tertiary btn-large" href="[% c.uri_for_action('/subscriber/edit_autoattendant', [c.req.captures.0]) %]"><i class="icon-star"></i> Edit Slots</a>
+[%
+    helper.messages = '';
+    helper.name = 'Autoattendant';
+    helper.column_sort = 'choice';
+    helper.dt_columns = aa_dt_columns;
+    helper.length_change = 1;
+    helper.ajax_uri = c.uri_for_action('/subscriber/ajax_autoattendant', [c.req.captures.0]);
+
+    helper.dt_buttons = [
+        { name = 'Delete', uri = "preferences/autoattendant/'+full.id+'/delete", class = 'btn-small btn-secondary', icon = 'icon-trash' },
+    ];
+
+    PROCESS 'helpers/datatables.tt';
+%]
+            </div>
+        </div>
+    </div>
+    [% END -%]
+
     <div class="accordion-group">
         <div class="accordion-heading">
             <a class="accordion-toggle" data-toggle="collapse" data-parent="#preference_groups" href="#collapse_speed">Speed Dial</a>
