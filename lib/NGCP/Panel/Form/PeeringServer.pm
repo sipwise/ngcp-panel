@@ -58,8 +58,7 @@ has_field 'via_route' => (
     maxlength => 255,
     element_attr => { 
         rel => ['tooltip'], 
-        # TODO: &lt; etc doesn't work?
-        title => ['An optional comma-separated Route Set to follow from the lb towards the peer, e.g. &lt;sip:1.2.3.4:5060&gt;,&lt;sip:2.3.5:5060&gt;'] 
+        title => ['An optional comma-separated Route Set to follow from the lb towards the peer, e.g. <sip:1.2.3.4:5060>,<sip:2.3.5:5060>'] 
     },
 );
 
