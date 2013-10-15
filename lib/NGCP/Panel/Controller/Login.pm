@@ -111,7 +111,6 @@ sub index :Path Form {
             $form->add_form_error('Invalid username/password');
         }
     } else {
-        $c->log->debug(">>>>>>>>>>>>>>>>>>>>>>>> initial get in Login");
         # initial get
     }
 

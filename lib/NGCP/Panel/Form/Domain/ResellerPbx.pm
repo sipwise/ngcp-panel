@@ -19,7 +19,6 @@ sub build_rwr_sets {
     push @options, { label => '', value => undef };
     if(defined $c) {
         my $sets = $c->stash->{reseller}->voip_rewrite_rule_sets;
-        use Data::Printer; p $sets->all;
         foreach my $s($sets->all) {
             push @options, { label => $s->name, value => $s->id };
         }
