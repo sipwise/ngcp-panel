@@ -56,10 +56,7 @@
         <Unit_2_Key_[% key %]>fnc=sd+cp+blf;sub=[% line.username %]@[% line.domain %]</Unit_2_Key_[% key %]>
       [% END -%]
     [% END -%]
-    <!-- [% USE Dumper; Dumper.dump(used_keys) -%] -->
-    <!-- check [% range.name %] with [% range.num_lines %] keys -->
     [% FOR key IN [1 .. range.num_lines] -%]
-      <!-- checking key [% key %] of [% range.name %] -->
       [% IF range.name == "Phone Keys" -%]
         [% UNLESS used_keys.$key == 1 -%]
           <Extension_[% key %]_>Disabled</Extension_[% key %]_>
