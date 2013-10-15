@@ -240,7 +240,6 @@ sub devmod_edit :Chained('devmod_base') :PathPart('edit') :Args(0) :Does(ACL) :A
     foreach my $range($c->stash->{devmod}->autoprov_device_line_ranges->all) {
         push @{ $params->{linerange} }, { $range->get_inflated_columns };
     }
-    use Data::Printer; p $params;
     $params->{reseller}{id} = delete $params->{reseller_id};
     $params = $params->merge($c->session->{created_objects});
     if($c->user->is_superuser) {

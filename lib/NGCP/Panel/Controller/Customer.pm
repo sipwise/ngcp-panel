@@ -610,7 +610,6 @@ sub pbx_device_create :Chained('base') :PathPart('pbx/device/create') :Args(0) {
 
                 my @lines = $form->field('line')->fields;
                 foreach my $line(@lines) {
-                    say ">>>>>>>>>> handle line, subscriber_id=".$line->field('subscriber_id').", account_id=".$c->stash->{contract}->id;
                     my $prov_subscriber = $schema->resultset('provisioning_voip_subscribers')->find({
                         id => $line->field('subscriber_id')->value,
                         account_id => $c->stash->{contract}->id,
@@ -694,7 +693,6 @@ sub pbx_device_edit :Chained('pbx_device_base') :PathPart('edit') :Args(0) {
         },{
             join => { 'config' => 'device' }, 
         });
-    say ">>>>>>>>>>>>>>>>>>> ceate NGCP::Panel::Form::Customer::PbxFieldDevice";
     my $form = NGCP::Panel::Form::Customer::PbxFieldDeviceEdit->new(ctx => $c);
     my $params = { $c->stash->{pbx_device}->get_inflated_columns };
     my @lines = ();
@@ -707,7 +705,6 @@ sub pbx_device_edit :Chained('pbx_device_base') :PathPart('edit') :Args(0) {
     }
     $params->{line} = \@lines;
     $params = $params->merge($c->session->{created_objects});
-    say ">>>>>>>>>>>>>>>>>>>>>>> process form";
     $form->process(
         posted => $posted,
         params => $c->request->params,
@@ -737,7 +734,6 @@ sub pbx_device_edit :Chained('pbx_device_base') :PathPart('edit') :Args(0) {
                 $fdev->autoprov_field_device_lines->delete_all;
                 my @lines = $form->field('line')->fields;
                 foreach my $line(@lines) {
-                    say ">>>>>>>>>> handle line, subscriber_id=".$line->field('subscriber_id').", account_id=".$c->stash->{contract}->id;
                     my $prov_subscriber = $schema->resultset('provisioning_voip_subscribers')->find({
                         id => $line->field('subscriber_id')->value,
                         account_id => $c->stash->{contract}->id,

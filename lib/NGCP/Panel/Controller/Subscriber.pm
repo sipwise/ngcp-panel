@@ -39,8 +39,6 @@ use NGCP::Panel::Form::Faxserver::Destination;
 use NGCP::Panel::Utils::XMLDispatcher;
 use UUID;
 
-use Data::Printer;
-
 =head1 NAME
 
 NGCP::Panel::Controller::Subscriber - Catalyst Controller

@@ -345,7 +345,6 @@ sub handles_base :Chained('handles_list') :PathPart('') :CaptureArgs(1) {
         NGCP::Panel::Utils::Navigation::back_or($c, $c->stash->{handles_base_uri});
     }
     my @tmph = $c->stash->{handles_rs}->all;
-    use Data::Printer; p @tmph;
     unless($c->stash->{handles_rs}->find({ 'handles.id' => $handle_id })) {
         $c->flash(messages => [{type => 'error', text => 'Sound handle id does not exist'}]);
         NGCP::Panel::Utils::Navigation::back_or($c, $c->stash->{handles_base_uri});

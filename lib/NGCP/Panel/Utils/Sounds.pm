@@ -55,7 +55,6 @@ sub stash_soundset_list {
 
     my $sets_rs = $c->model('DB')->resultset('voip_sound_sets');
     if($contract) {
-        say ">>>>>>>>>>>>>>> we've a contract, limit rs";
         $sets_rs = $sets_rs->search({ 'me.contract_id' => $contract->id });
     }
 
