@@ -825,7 +825,7 @@ sub pbx_device_sync :Chained('pbx_device_base') :PathPart('sync') :Args(0) {
             
         },
         server => {
-            uri => $c->uri_for_action('/device/dev_field_config'),
+            uri => 'http://' . $c->req->uri->host . ':' . ($c->config->{web}->{autoprov_plain_port} // '1444') . '/device/autoprov/config',
         },
     };
     my ($sync_uri, $real_sync_uri) = ("", "");

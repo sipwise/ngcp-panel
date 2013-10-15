@@ -549,7 +549,7 @@
                 if(loaded) {
                     console.log("iframe already loaded, we're fine?");
                 } else {
-                    $('form#devsyncform .form_messages').prepend('<div class="alert alert-error" style="margin:10px">Failed to push provisioning settings to device. Is the IP Address reachable from your browser? Try to trigger the sync <a target="_blank" href="' + autoprov_uri + '">manually</a></div>');
+                    $('form#devsyncform .form_messages').prepend('<div class="alert alert-error" style="margin:10px">Failed to push provisioning settings to device. Is the IP Address reachable from your browser? Try to trigger the sync <a target="_blank" href="' + autoprov_uri + '?' + full_params + '">manually</a></div>');
                 }
                 loaded = 1;
                 // TODO: get iframe by id

@@ -1,4 +1,3 @@
-[% barge_in = 0 -%]
 <flat-profile>
   <Upgrade_Enable>Yes</Upgrade_Enable>
   <Upgrade_Rule>[% firmware.url %]</Upgrade_Rule>
@@ -9,11 +8,18 @@
   <Attendant_Console_Call_Pickup_Code>**#</Attendant_Console_Call_Pickup_Code>
   <Attendant_Console_Call_Park_Code>*68</Attendant_Console_Call_Park_Code>
   <Attendant_Console_Call_unPark_Code>*88</Attendant_Console_Call_unPark_Code>
+  <Linksys_Key_System>Yes</Linksys_Key_System>
   [% FOR range IN phone.lineranges -%]
+    [% 
+      used_keys = [];
+      FOR key IN [1 .. range.num_lines];
+        used_keys.$key = 0;
+      END
+    -%]
     [% FOR line IN range.lines -%]
+      [% key = line.keynum + 1 -%]
+      [% used_keys.${key} = 1; -%]
       [% IF range.name == "Phone Keys" -%]
-        [% key = line.keynum + 1 -%]
-        <Extension_[% key %]_>[% key %]</Extension_[% key %]_>
         <Short_Name_[% key %]_>[% line.displayname %]</Short_Name_[% key %]_>
         <Share_Call_Appearance_[% key %]_>[% line.type == "shared" ? line.type : "private" %]</Share_Call_Appearance_[% key %]_>
         [% IF line.type == "blf" -%]
@@ -26,6 +32,7 @@
         <Share_Ext_[% key %]_>[% line.type == "shared" ? "shared" : "private" %]</Share_Ext_[% key %]_>
         <Shared_User_ID_[% key %]_>[% line.type == "shared" ? line.username : "" %]</Shared_User_ID_[% key %]_>
         [% IF line.type == "private" || line.type == "shared" -%]
+          <Extension_[% key %]_>[% key %]</Extension_[% key %]_>
           <Register_[% key %]_>Yes</Register_[% key %]_>
           <Use_DNS_SRV_[% key %]_>No</Use_DNS_SRV_[% key %]_>
           [% IF line.type == "private" -%]
@@ -40,12 +47,32 @@
           <Outbound_Proxy_[% key %]_></Outbound_Proxy_[% key %]_>
           <Use_Auth_ID_[% key %]_></Use_Auth_ID_[% key %]_>
           <Auth_ID_[% key %]_></Auth_ID_[% key %]_>
+        [% ELSE -%]
+          <Extension_[% key %]_>Disabled</Extension_[% key %]_>
         [% END -%]
       [% ELSIF range.name == "Attendant Console 1" -%]
-        <Unit_1_Key_[% line.keynum + 1 %]>fnc=sd+cp+blf;sub=[% line.username %]@[% line.domain %]</Unit_1_Key_[% line.keynum + 1 %]>
+        <Unit_1_Key_[% key %]>fnc=sd+cp+blf;sub=[% line.username %]@[% line.domain %]</Unit_1_Key_[% key %]>
       [% ELSIF range.name == "Attendant Console 2" -%]
-        <Unit_2_Key_[% line.keynum + 1 %]>fnc=sd+cp+blf;sub=[% line.username %]@[% line.domain %]</Unit_2_Key_[% line.keynum + 1 %]>
+        <Unit_2_Key_[% key %]>fnc=sd+cp+blf;sub=[% line.username %]@[% line.domain %]</Unit_2_Key_[% key %]>
       [% END -%]
-    [% END -%]    
+    [% END -%]
+    <!-- [% USE Dumper; Dumper.dump(used_keys) -%] -->
+    <!-- check [% range.name %] with [% range.num_lines %] keys -->
+    [% FOR key IN [1 .. range.num_lines] -%]
+      <!-- checking key [% key %] of [% range.name %] -->
+      [% IF range.name == "Phone Keys" -%]
+        [% UNLESS used_keys.$key == 1 -%]
+          <Extension_[% key %]_>Disabled</Extension_[% key %]_>
+        [% END -%]
+      [% ELSIF range.name == "Attendant Console 1" -%]
+        [% UNLESS used_keys.$key == 1 -%]
+          <Unit_1_Key_[% key %]></Unit_1_Key_[% key %]>
+        [% END -%]
+      [% ELSIF range.name == "Attendant Console 2" -%]
+        [% UNLESS used_keys.$key == 1 -%]
+          <Unit_2_Key_[% key %]></Unit_2_Key_[% key %]>
+        [% END -%]
+      [% END -%]
+    [% END -%]
   [% END -%]
 </flat-profile>
