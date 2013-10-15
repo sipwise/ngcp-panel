@@ -40,13 +40,20 @@ sub base :Chained('/') :PathPart('device') :CaptureArgs(0) {
     ]);
 
     my $devfw_rs = $c->model('DB')->resultset('autoprov_firmwares');
-    unless($c->user->is_superuser) {
+    if($c->user->roles eq "subscriberadmin" || $c->user->roles eq "subscriber") {
+        $devfw_rs = $devfw_rs->search({
+        	'device.reseller_id' => $c->user->voip_subscriber->contract->contact->reseller_id,
+            }, { 
+                join => 'device',
+        });
+    } elsif($c->user->roles eq "reseller") {
         $devfw_rs = $devfw_rs->search({
                 'device.reseller_id' => $c->user->reseller_id
             }, { 
                 join => 'device',
         });
     }
+
     $c->stash->{devfw_dt_columns} = NGCP::Panel::Utils::Datatables::set_columns($c, [
         { name => 'id', search => 1, title => '#' },
         { name => 'device.vendor', search => 1, title => 'Device Vendor' },
@@ -56,13 +63,20 @@ sub base :Chained('/') :PathPart('device') :CaptureArgs(0) {
     ]);
 
     my $devconf_rs = $c->model('DB')->resultset('autoprov_configs');
-    unless($c->user->is_superuser) {
+    if($c->user->roles eq "subscriberadmin" || $c->user->roles eq "subscriber") {
+        $devconf_rs = $devconf_rs->search({
+        	'device.reseller_id' => $c->user->voip_subscriber->contract->contact->reseller_id,
+            }, { 
+                join => 'device',
+        });
+    } elsif($c->user->roles eq "reseller") {
         $devconf_rs = $devconf_rs->search({
                 'device.reseller_id' => $c->user->reseller_id
             }, { 
                 join => 'device',
         });
     }
+
     $c->stash->{devconf_dt_columns} = NGCP::Panel::Utils::Datatables::set_columns($c, [
         { name => 'id', search => 1, title => '#' },
         { name => 'device.vendor', search => 1, title => 'Device Vendor' },
@@ -71,11 +85,17 @@ sub base :Chained('/') :PathPart('device') :CaptureArgs(0) {
     ]);
 
     my $devprof_rs = $c->model('DB')->resultset('autoprov_profiles');
-    unless($c->user->is_superuser) {
+    if($c->user->roles eq "subscriberadmin" || $c->user->roles eq "subscriber") {
+        $devprof_rs = $devprof_rs->search({
+        	'device.reseller_id' => $c->user->voip_subscriber->contract->contact->reseller_id,
+            }, { 
+                join => { 'config' => 'device' },
+        });
+    } elsif($c->user->roles eq "reseller") {
         $devprof_rs = $devprof_rs->search({
                 'device.reseller_id' => $c->user->reseller_id
             }, { 
-                join => 'device',
+                join => { 'config' => 'device' },
         });
     }
     $c->stash->{devprof_dt_columns} = NGCP::Panel::Utils::Datatables::set_columns($c, [
@@ -896,7 +916,7 @@ sub dev_field_config :Chained('/') :PathPart('device/autoprov/config') :Args() {
         $vars->{firmware} = {
             filename => $fw->filename,
             version => $fw->version,
-            url => $c->uri_for_action('/device/dev_field_firmware', [ $fw->id ]),
+            url => 'http://' . $c->req->uri->host . ':' . ($c->config->{web}->{autoprov_plain_port} // '1444') . '/device/autoprov/firmware/' . $fw->id . '/download',
         };
     }
 
