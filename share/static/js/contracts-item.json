@@ -1,0 +1,10 @@
+{
+    "$schema": "http://json-schema.org/draft-04/schema#",
+    "required": ["external_id", "status"],
+    "properties": {
+        "external_id": { "type": ["null", "string"], "description": "XXX" },
+        "status": { "enum": [null, "active", "locked", "pending", "terminated"], "description": "XXX" }
+    },
+    "title": "contract",
+    "type": "object"
+}

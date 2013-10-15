@@ -56,13 +56,13 @@ sub COMPONENT {
 sub make_ca {
     my ($self) = @_;
     my $command = sprintf 'certtool -p --bits 3248 --outfile %s 1>&- 2>&-', $self->prefix->child('ca-key.pem');
-    $self->log->debug($command);
+    warn "$command\n";
     system $command;
     my $ca_selfsign_template = Path::Tiny->tempfile;
     $ca_selfsign_template->spew_utf8($self->ca_selfsign_template);
     $command = sprintf 'certtool -s --load-privkey %s --outfile %s --template %s 1>&- 2>&-',
       $self->prefix->child('ca-key.pem'), $self->prefix->child('ca-cert.pem'), $ca_selfsign_template->stringify;
-    $self->log->debug($command);
+    warn "$command\n";
     system $command;
     return;
 }
@@ -70,21 +70,21 @@ sub make_ca {
 sub make_server {
     my ($self) = @_;
     my $command = sprintf 'certtool -p --bits 3248 --outfile %s  1>&- 2>&-', $self->prefix->child('server-key.pem');
-    $self->log->debug($command);
+    warn "$command\n";
     system $command;
     my $server_signingrequest_template = Path::Tiny->tempfile;
     $server_signingrequest_template->spew($self->server_signingrequest_template);
     $command = sprintf 'certtool -q --load-privkey %s --outfile %s --template %s 1>&- 2>&-',
       $self->prefix->child('server-key.pem'), $self->prefix->child('server-csr.pem'),
       $server_signingrequest_template->stringify;
-    $self->log->debug($command);
+    warn "$command\n";
     system $command;
     my $server_signing_template = Path::Tiny->tempfile;
     $server_signing_template->spew($self->server_signing_template);
     $command = sprintf 'certtool -c --load-request %s --outfile %s --load-ca-certificate %s --load-ca-privkey %s ' .
       '--template %s 1>&- 2>&-', $self->prefix->child('server-csr.pem'), $self->prefix->child('server-cert.pem'),
       $self->prefix->child('ca-cert.pem'), $self->prefix->child('ca-key.pem'), $server_signing_template->stringify;
-    $self->log->debug($command);
+    warn "$command\n";
     system $command;
     return;
 }

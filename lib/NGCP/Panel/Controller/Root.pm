@@ -117,7 +117,13 @@ sub default :Path {
     $c->detach( '/error_page' );
 }
 
-sub end : ActionClass('RenderView') {}
+sub render :ActionClass('RenderView') { }
+
+sub end : Private {
+    my ($self, $c) = @_;
+    $c->forward('render');
+    return;
+}
 
 sub _prune_row {
     my ($columns, %row) = @_;

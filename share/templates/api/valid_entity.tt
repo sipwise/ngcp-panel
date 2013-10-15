@@ -1,0 +1,10 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
+    <head>
+        <title>Bad request</title>
+    </head>
+    <body>
+        <p>The entity is not a well-formed <tt>[% media_type | html %]</tt> document.</p>
+        <p><samp>[% error_message | html %]</samp></p>
+    </body>
+</html>

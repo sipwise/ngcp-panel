@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
+    <head>
+        <title>Internal server error</title>
+    </head>
+    <body>
+        <p>An exceptional error has occured.</p>
+        <dl>
+            <dt>incident number</dt>
+            <dd>[% exception_incident | html %]</dd>
+            <dt>time of incident</dt>
+            <dd>[% exception_timestamp | html %]</dd>
+        </dl>
+        <p>Details have been logged on the server.</p>
+    </body>
+</html>

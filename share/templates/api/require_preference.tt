@@ -1,0 +1,10 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
+    <head>
+        <title>Preference required</title>
+    </head>
+    <body>
+        <p>This request is required to express an expectation about the response. Use the <tt>Prefer</tt> header with
+        either a <tt>return=minimal</tt> or a <tt>return=representation</tt> preference.</p>
+    </body>
+</html>
