@@ -460,6 +460,9 @@ sub customer_create :Chained('customer_list') :PathPart('create') :Args(0) {
                 unless($product_id) {
                     $product_id = $c->model('DB')->resultset('products')->find({ class => 'sipaccount' })->id;
                 }
+                unless($form->params->{max_subscribers} && length($form->params->{max_subscribers})) {
+                    delete $form->params->{max_subscribers};
+                }
                 my $contract = $schema->resultset('contracts')->create($form->params);
                 my $billing_profile = $schema->resultset('billing_profiles')->find($bprof_id);
                 $contract->billing_mappings->create({
