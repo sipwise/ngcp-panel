@@ -9,10 +9,21 @@ has_field 'product' => (
     not_nullable => 1,
 );
 
+has_field 'max_subscribers' => (
+    type => 'PosInteger',
+    label => 'Max Subscribers',
+    required => 0,
+    element_attr => {
+        rel => ['tooltip'],
+        title => ['Optionally set the maximum number of subscribers for this contract. Leave empty for unlimited.']
+    },
+);
+
+
 has_block 'fields' => (
     tag => 'div',
     class => [qw/modal-body/],
-    render_list => [qw/product contact billing_profile status external_id/],
+    render_list => [qw/contact billing_profile product max_subscribers status external_id/],
 );
 
 1;
