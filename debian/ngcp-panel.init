@@ -5,6 +5,7 @@
 # Required-Stop:     $syslog $network $local_fs $remote_fs
 # Default-Start:     2 3 4 5
 # Default-Stop:      0 1 6
+# Should-Start:      sshd
 # Short-Description: Start the ngcp-panel webapp
 # Description:       Start the ngcp-panel webapp
 ### END INIT INFO
@@ -16,7 +17,7 @@ HOMEDIR=/usr/share/ngcp-panel
 PIDFILE=/var/run/ngcp-panel.pid
 USER=www-data
 GROUP=www-data
-NAME="ngcp-panel-nginx"
+NAME="ngcp-panel"
 DESC="NGCP-Panel Webapp"
 DEFAULTS=/etc/default/$NAME
 USOCKET=/var/run/ngcp-panel.sock
