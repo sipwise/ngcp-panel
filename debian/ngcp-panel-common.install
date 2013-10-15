@@ -1,3 +1,0 @@
-ngcp_panel.conf		etc/ngcp-panel/
-share/*			usr/share/ngcp-panel/
-debian/tmp/usr/share/*  usr/share/

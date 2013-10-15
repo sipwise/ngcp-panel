@@ -1,2 +1,4 @@
 ngcp_panel.psgi usr/share/ngcp-panel/
 script/ngcp_panel_fastcgi.pl usr/share/ngcp-panel/
+ngcp_panel.conf		etc/ngcp-panel/
+share/*			usr/share/ngcp-panel/
