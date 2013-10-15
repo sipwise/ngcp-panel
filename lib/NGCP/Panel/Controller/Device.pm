@@ -736,7 +736,7 @@ sub devprof_create :Chained('base') :PathPart('profile/create') :Args(0) :Does(A
     );
 }
 
-sub devprof_base :Chained('base') :PathPart('profile') :CaptureArgs(1) :Does(ACL) :ACLDetachTo('/denied_page') :AllowedRole(admin) :AllowedRole(reseller) {
+sub devprof_base :Chained('base') :PathPart('profile') :CaptureArgs(1) :Does(ACL) :ACLDetachTo('/denied_page') :AllowedRole(admin) :AllowedRole(reseller) :AllowedRole(subscriberadmin) {
     my ($self, $c, $devprof_id) = @_;
 
     unless($devprof_id->is_int) {
@@ -776,7 +776,7 @@ sub devprof_get_lines :Chained('devprof_base') :PathPart('lines/ajax') :Args(0) 
 }
 
 
-sub devprof_delete :Chained('devprof_base') :PathPart('delete') :Args(0) {
+sub devprof_delete :Chained('devprof_base') :PathPart('delete') :Args(0) :Does(ACL) :ACLDetachTo('/denied_page') :AllowedRole(admin) :AllowedRole(reseller) {
     my ($self, $c) = @_;
 
     try {
@@ -793,7 +793,7 @@ sub devprof_delete :Chained('devprof_base') :PathPart('delete') :Args(0) {
     NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for('/device'));
 }
 
-sub devprof_edit :Chained('devprof_base') :PathPart('edit') :Args(0) {
+sub devprof_edit :Chained('devprof_base') :PathPart('edit') :Args(0) :Does(ACL) :ACLDetachTo('/denied_page') :AllowedRole(admin) :AllowedRole(reseller) {
     my ($self, $c) = @_;
 
     my $posted = ($c->request->method eq 'POST');
