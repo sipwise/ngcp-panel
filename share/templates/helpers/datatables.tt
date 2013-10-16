@@ -10,6 +10,8 @@
     END;
     backuri = c.req.uri;
     tmp = backuri.query_param_delete('back');
+    # create unique identifier
+    helper.id_from_name = helper.name.remove('[\s+\.#]');
 -%]
 
 <script src="/js/libs/bootstrap/datatables-paging.js"></script>
@@ -23,7 +25,7 @@ $.extend( $.fn.dataTableExt.oStdClasses, {
             } );
 
 $(document).ready(function() {
-	var [% helper.name.remove('[\s+\.]') %]_table = $('#[% helper.name.remove('[\s+\.]') %]_table')
+	var [% helper.id_from_name %]_table = $('#[% helper.id_from_name %]_table')
 	    .dataTable( {
         "sDom": "<'row-fluid ngcp_dt_top_elements'lf<r>>t<'row-fluid'<'pull-left'i><'pull-right'p>>",
         "bProcessing": true,
@@ -107,33 +109,33 @@ $(document).ready(function() {
     [% has_from = 0; has_to = 0; -%]
     [% FOR col IN helper.dt_columns -%]
       [% IF col.search_from_epoch && !has_from -%]
-        var f = '<label>From Date: <input type="text" id="[% helper.name.remove('[\s+\.]') %]_datepicker_start" class="ngcp-datepicker" rel="tooltip" data-original-title="YYYY-MM-DD"/></label>';
-        $('#[% helper.name.remove('[\s+\.]') %]_table_filter').prepend(f);
-        $('#[% helper.name.remove('[\s+\.]') %]_datepicker_start').datepicker({
+        var f = '<label>From Date: <input type="text" id="[% helper.id_from_name %]_datepicker_start" class="ngcp-datepicker" rel="tooltip" data-original-title="YYYY-MM-DD"/></label>';
+        $('#[% helper.id_from_name %]_table_filter').prepend(f);
+        $('#[% helper.id_from_name %]_datepicker_start').datepicker({
             "dateFormat": "yy-mm-dd",
             "onSelect": function(date) {
-                [% helper.name.remove('[\s+\.]') %]_table.fnFilter(date, 0);
+                [% helper.id_from_name %]_table.fnFilter(date, 0);
             }
         }).keyup( function () {
-            [% helper.name.remove('[\s+\.]') %]_table.fnFilter(this.value, 0);    
+            [% helper.id_from_name %]_table.fnFilter(this.value, 0);
         });
         [% has_from = 1 -%]
       [% END -%]
       [% IF col.search_to_epoch && !has_to -%]
 
-        var t = '<label>To Date: <input type="text" id="[% helper.name.remove('[\s+\.]') %]_datepicker_end" class="ngcp-datepicker" rel="tooltip" data-original-title="YYYY-MM-DD"/></label>';
-        if($('#[% helper.name.remove('[\s+\.]') %]_datepicker_start').length > 0) {
-            $('#[% helper.name.remove('[\s+\.]') %]_datepicker_start').parent().after(t);
+        var t = '<label>To Date: <input type="text" id="[% helper.id_from_name %]_datepicker_end" class="ngcp-datepicker" rel="tooltip" data-original-title="YYYY-MM-DD"/></label>';
+        if($('#[% helper.id_from_name %]_datepicker_start').length > 0) {
+            $('#[% helper.id_from_name %]_datepicker_start').parent().after(t);
         } else {
-            $('#[% helper.name.remove('[\s+\.]') %]_table_filter').prepend(t);
+            $('#[% helper.id_from_name %]_table_filter').prepend(t);
         }
-        $('#[% helper.name.remove('[\s+\.]') %]_datepicker_end').datepicker({
+        $('#[% helper.id_from_name %]_datepicker_end').datepicker({
             "dateFormat": "yy-mm-dd",
             "onSelect": function(date) {
-                [% helper.name.remove('[\s+\.]') %]_table.fnFilter(date, 1);
+                [% helper.id_from_name %]_table.fnFilter(date, 1);
             }
         }).keyup( function () {
-            [% helper.name.remove('[\s+\.]') %]_table.fnFilter(this.value, 1);    
+            [% helper.id_from_name %]_table.fnFilter(this.value, 1);
         });
         [% has_to = 1-%]
       [% END -%]
@@ -176,7 +178,7 @@ $(document).ready(function() {
 
 <div class="ngcp-separator"></div>
 
-<table class="table table-bordered table-striped table-highlight table-hover ngcp-datatable" id="[% helper.name.remove('[\s+\.]') %]_table">
+<table class="table table-bordered table-striped table-highlight table-hover ngcp-datatable" id="[% helper.id_from_name %]_table">
     <thead>
         <tr>
             [% FOREACH t IN helper.column_titles -%]
