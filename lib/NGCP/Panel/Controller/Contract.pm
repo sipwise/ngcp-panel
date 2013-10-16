@@ -393,7 +393,19 @@ sub customer_ajax :Chained('customer_list') :PathPart('ajax') :Args(0) {
     my ($self, $c) = @_;
     
     my $rs = $c->stash->{customer_rs}; 
-    NGCP::Panel::Utils::Datatables::process($c, $rs,  $c->stash->{contract_dt_columns});
+    my $contract_dt_col = NGCP::Panel::Utils::Datatables::set_columns($c, [
+        { name => "id", search => 1, title => "#" },
+        { name => "external_id", search => 1, title => "External #" },
+        { name => "contact.reseller.name", search => 1, title => "Reseller" },
+        { name => "contact.email", search => 1, title => "Contact Email" },
+        { name => "billing_mappings.product.name", search => 1, title => "Product" },
+        { name => "billing_mappings.billing_profile.name", search => 1, title => "Billing Profile" },
+        { name => "status", search => 1, title => "Status" },
+        { name => "max_subscribers", search => 1, title => "Max Number of Subscribers" },
+    ]);
+    push @{ $c->stash->{contract_dt_columns} }, 
+        { name => "max_subscribers", search => 1, title => "Max Number of Subscribers" };
+    NGCP::Panel::Utils::Datatables::process($c, $rs, $contract_dt_col);
     $c->detach( $c->view("JSON") );
 }
 
@@ -451,7 +463,7 @@ sub customer_create :Chained('customer_list') :PathPart('create') :Args(0) {
             my $schema = $c->model('DB');
             $schema->txn_do(sub {
                 $form->params->{contact_id} = $form->params->{contact}{id};
-                delete $form->params->{contract};
+                delete $form->params->{contact};
                 my $bprof_id = $form->params->{billing_profile}{id};
                 delete $form->params->{billing_profile};
                 $form->{create_timestamp} = $form->{modify_timestamp} = NGCP::Panel::Utils::DateTime::current_local;
@@ -492,6 +504,102 @@ sub customer_create :Chained('customer_list') :PathPart('create') :Args(0) {
     } 
 
     $c->stash(create_flag => 1);
+    $c->stash(form => $form);
+}
+
+sub customer_base :Chained('customer_list') :PathPart('') :CaptureArgs(1) {
+    my ($self, $c, $contract_id) = @_;
+
+    unless($contract_id->is_int) {
+        NGCP::Panel::Utils::Message->error(
+            c => $c,
+            error => "customer contract id '$contract_id' is not valid",
+            desc  => "Invalid customer contract id",
+        );
+        NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for('/customer'));
+    }
+    my $contract_rs = $c->stash->{customer_rs};
+    $c->stash->{contract} = $contract_rs->find($contract_id);
+    unless($c->stash->{contract}) {
+        NGCP::Panel::Utils::Message->error(
+            c => $c,
+            error => "customer contract id '$contract_id' not found",
+            desc  => "Customer contract id not found",
+        );
+        NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for('/customer'));
+    }
+}
+
+
+sub customer_edit :Chained('customer_base') :PathPart('edit') :Args(0) {
+    my ($self, $c) = @_;
+
+    my $contract = $c->stash->{contract};
+    my $posted = ($c->request->method eq 'POST');
+    my $form;
+    my $params = { $contract->get_inflated_columns };
+    $params->{contact}{id} = delete $params->{contact_id};
+    $params->{product}{id} = $contract->billing_mappings->first->product_id;
+    $params->{billing_profile}{id} = $contract->billing_mappings->first->billing_profile_id;
+    $params = $params->merge($c->session->{created_objects});
+    if($c->config->{features}->{cloudpbx}) {
+        $form = NGCP::Panel::Form::Contract::ProductSelect->new;
+    } else {
+        $form = NGCP::Panel::Form::Contract::Basic->new;
+    }
+    $form->process(
+        posted => $posted,
+        params => $c->request->params,
+        item => $params
+    );
+    NGCP::Panel::Utils::Navigation::check_form_buttons(
+        c => $c,
+        form => $form,
+        fields => {'contact.create' => $c->uri_for('/contact/create'),
+                   'billing_profile.create'  => $c->uri_for('/billing/create')},
+        back_uri => $c->req->uri,
+    );
+    if($posted && $form->validated) {
+        try {
+            my $schema = $c->model('DB');
+            $schema->txn_do(sub {
+                $form->params->{contact_id} = $form->params->{contact}{id};
+                delete $form->params->{contact};
+                my $bprof_id = $form->params->{billing_profile}{id};
+                delete $form->params->{billing_profile};
+                $form->{modify_timestamp} = NGCP::Panel::Utils::DateTime::current_local;
+                my $product_id = $form->params->{product}{id};
+                delete $form->params->{product};
+                unless($form->params->{max_subscribers} && length($form->params->{max_subscribers})) {
+                    $form->params->{max_subscribers} = undef;
+                }
+                my $old_bprof_id = $contract->billing_mappings->first->billing_profile_id;
+                say ">>>>>>>>>>> old bprof_id=$old_bprof_id";
+                $contract->update($form->params);
+                if($bprof_id != $old_bprof_id) {
+                    $contract->billing_mappings->create({
+                        billing_profile_id => $bprof_id,
+                        product_id => $product_id,
+                        start_date => NGCP::Panel::Utils::DateTime::current_local,
+                    });
+                }
+                
+                delete $c->session->{created_objects}->{contact};
+                delete $c->session->{created_objects}->{billing_profile};
+                my $contract_id = $contract->id;
+                $c->flash(messages => [{type => 'success', text => "Customer #$contract_id successfully updated"}]);
+            });
+        } catch($e) {
+            NGCP::Panel::Utils::Message->error(
+                c => $c,
+                error => $e,
+                desc  => "Failed to update customer contract.",
+            );
+        }
+        NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for('/customer'));
+    } 
+
+    $c->stash(edit_flag => 1);
     $c->stash(form => $form);
 }
 

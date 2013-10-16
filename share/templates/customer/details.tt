@@ -153,7 +153,12 @@
         </div>
         <div class="accordion-body collapse" id="collapse_subs">
             <div class="accordion-inner">
-                <a class="btn btn-large btn-primary" href="[% c.uri_for_action('/customer/subscriber_create', [ c.req.captures.0 ]) %]"><i class="icon-star"></i> Create Subscriber</a>
+                [% IF contract.max_subscribers.defined && subscriber_count < contract.max_subscribers -%]
+                    <div class="alert alert-info">[% subscriber_count -%] of maximum [% contract.max_subscribers %] subscribers [% IF c.config.features.cloudpbx %](including PBX groups) [% END %]created</div>
+                    <a class="btn btn-large btn-primary" href="[% c.uri_for_action('/customer/subscriber_create', [ c.req.captures.0 ]) %]"><i class="icon-star"></i> Create Subscriber</a>
+                [% ELSIF contract.max_subscribers.defined -%]
+                    <div class="alert">Maximum number of [% contract.max_subscribers %] subscribers [% IF c.config.features.cloudpbx %](including PBX groups) [% END %]created</div>
+                [% END -%]
                 <div class="ngcp-separator"></div>
                 <table class="table table-bordered table-striped table-highlight table-hover" id="subscribers_table">
                     <thead>
@@ -206,7 +211,13 @@
         </div>
         <div class="accordion-body collapse" id="collapse_pbxgroups">
             <div class="accordion-inner">
-                <a class="btn btn-large btn-primary" href="[% c.uri_for_action('/customer/pbx_group_create', [ c.req.captures.0 ]) %]"><i class="icon-star"></i> Create PBX Group</a>
+                [% IF contract.max_subscribers.defined && subscriber_count < contract.max_subscribers -%]
+                    <div class="alert alert-info">[% subscriber_count -%] of maximum [% contract.max_subscribers %] subscribers [% IF c.config.features.cloudpbx %](including PBX groups) [% END %]created</div>
+                    <a class="btn btn-large btn-primary" href="[% c.uri_for_action('/customer/pbx_group_create', [ c.req.captures.0 ]) %]"><i class="icon-star"></i> Create PBX Group</a>
+                [% ELSIF contract.max_subscribers.defined -%]
+                    <div class="alert">Maximum number of [% contract.max_subscribers %] subscribers [% IF c.config.features.cloudpbx %](including PBX groups) [% END %]created</div>
+                [% END -%]
+
                 <div class="ngcp-separator"></div>
                 <table class="table table-bordered table-striped table-highlight table-hover" id="subscribers_table">
                     <thead>
