@@ -16,7 +16,7 @@
     </span>
     [% IF !c.user.read_only && (c.user.roles == 'admin' || c.user.roles == 'reseller') -%]
     <span>
-        <a class="btn btn-primary btn-large" href="[% c.uri_for_action('/contract/edit', [ contract.id ]) %]"><i class="icon-edit"></i> Edit</a>
+        <a class="btn btn-primary btn-large" href="[% c.uri_for_action('/customer/edit', [ contract.id ]) %]"><i class="icon-edit"></i> Edit</a>
     </span>
     [% END -%]
 </div>

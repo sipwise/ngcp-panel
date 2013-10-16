@@ -191,9 +191,13 @@ sub base :Chained('list_customer') :PathPart('') :CaptureArgs(1) {
     my ($self, $c, $contract_id) = @_;
 
     unless($contract_id && $contract_id->is_integer) {
-         $c->flash(messages => [{type => 'error', text => 'Invalid contract id detected!'}]);
-         $c->response->redirect($c->uri_for());
-         return;
+        NGCP::Panel::Utils::Message->error(
+            c => $c,
+            error => "customer contract id '$contract_id' is not valid",
+            desc  => "Invalid customer contract id",
+        );
+        NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for('/customer'));
+        return;
     }
 
     my $contract = $c->model('DB')->resultset('contracts')
@@ -301,6 +305,79 @@ sub base :Chained('list_customer') :PathPart('') :CaptureArgs(1) {
     $c->stash(template => 'customer/details.tt'); 
     $c->stash(contract => $contract->first);
     $c->stash(contract_rs => $contract);
+}
+
+sub edit :Chained('base') :PathPart('edit') :Args(0) {
+    my ($self, $c) = @_;
+
+    my $contract = $c->stash->{contract};
+    my $posted = ($c->request->method eq 'POST');
+    my $form;
+    my $params = { $contract->get_inflated_columns };
+    $params->{contact}{id} = delete $params->{contact_id};
+    $params->{product}{id} = $contract->billing_mappings->first->product_id;
+    $params->{billing_profile}{id} = $contract->billing_mappings->first->billing_profile_id;
+    $params = $params->merge($c->session->{created_objects});
+    if($c->config->{features}->{cloudpbx}) {
+        $form = NGCP::Panel::Form::Contract::ProductSelect->new;
+    } else {
+        $form = NGCP::Panel::Form::Contract::Basic->new;
+    }
+    $form->process(
+        posted => $posted,
+        params => $c->request->params,
+        item => $params
+    );
+    NGCP::Panel::Utils::Navigation::check_form_buttons(
+        c => $c,
+        form => $form,
+        fields => {'contact.create' => $c->uri_for('/contact/create'),
+                   'billing_profile.create'  => $c->uri_for('/billing/create')},
+        back_uri => $c->req->uri,
+    );
+    if($posted && $form->validated) {
+        try {
+            my $schema = $c->model('DB');
+            $schema->txn_do(sub {
+                $form->params->{contact_id} = $form->params->{contact}{id};
+                delete $form->params->{contact};
+                my $bprof_id = $form->params->{billing_profile}{id};
+                delete $form->params->{billing_profile};
+                $form->{modify_timestamp} = NGCP::Panel::Utils::DateTime::current_local;
+                my $product_id = $form->params->{product}{id};
+                delete $form->params->{product};
+                unless($form->params->{max_subscribers} && length($form->params->{max_subscribers})) {
+                    $form->params->{max_subscribers} = undef;
+                }
+                my $old_bprof_id = $contract->billing_mappings->first->billing_profile_id;
+                say ">>>>>>>>>>> old bprof_id=$old_bprof_id";
+                $contract->update($form->params);
+                if($bprof_id != $old_bprof_id) {
+                    $contract->billing_mappings->create({
+                        billing_profile_id => $bprof_id,
+                        product_id => $product_id,
+                        start_date => NGCP::Panel::Utils::DateTime::current_local,
+                    });
+                }
+
+                delete $c->session->{created_objects}->{contact};
+                delete $c->session->{created_objects}->{billing_profile};
+                my $contract_id = $contract->id;
+                $c->flash(messages => [{type => 'success', text => "Customer #$contract_id successfully updated"}]);
+            });
+        } catch($e) {
+            NGCP::Panel::Utils::Message->error(
+                c => $c,
+                error => $e,
+                desc  => "Failed to update customer contract.",
+            );
+        }
+        NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for('/customer'));
+    }
+
+    $c->stash(template => 'customer/list.tt');
+    $c->stash(edit_flag => 1);
+    $c->stash(form => $form);
 }
 
 sub details :Chained('base') :PathPart('details') :Args(0) {

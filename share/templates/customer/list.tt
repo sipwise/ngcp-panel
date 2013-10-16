@@ -14,7 +14,7 @@
 
     UNLESS c.user.read_only;
         helper.dt_buttons = [
-            { name = 'Edit', uri = "/contract/customer/'+full.id+'/edit", class = 'btn-small btn-primary', icon = 'icon-edit' },
+            { name = 'Edit', uri = "/customer/'+full.id+'/edit", class = 'btn-small btn-primary', icon = 'icon-edit' },
             { name = 'Terminate', uri = "/contract/'+full.id+'/terminate", class = 'btn-small btn-secondary', icon = 'icon-remove' },
             { name = 'Details', uri = "/customer/'+full.id+'/details", class = 'btn-small btn-tertiary', icon = 'icon-list' },
         ];
@@ -26,6 +26,8 @@
             { name = 'Details', uri = "/customer/'+full.id+'/details", class = 'btn-small btn-tertiary', icon = 'icon-list' },
         ];
     END;
+
+    IF helper.edit_flag; helper.name = 'Customer #' _ contract.id; END;
 
     PROCESS 'helpers/datatables.tt';
 -%]
