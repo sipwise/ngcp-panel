@@ -158,6 +158,8 @@
                     <a class="btn btn-large btn-primary" href="[% c.uri_for_action('/customer/subscriber_create', [ c.req.captures.0 ]) %]"><i class="icon-star"></i> Create Subscriber</a>
                 [% ELSIF contract.max_subscribers.defined -%]
                     <div class="alert">Maximum number of [% contract.max_subscribers %] subscribers [% IF c.config.features.cloudpbx %](including PBX groups) [% END %]created</div>
+                [% ELSE -%]
+                    <a class="btn btn-large btn-primary" href="[% c.uri_for_action('/customer/subscriber_create', [ c.req.captures.0 ]) %]"><i class="icon-star"></i> Create Subscriber</a>
                 [% END -%]
                 <div class="ngcp-separator"></div>
                 <table class="table table-bordered table-striped table-highlight table-hover" id="subscribers_table">
