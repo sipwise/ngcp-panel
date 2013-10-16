@@ -51,6 +51,7 @@ sub list_customer :Chained('/') :PathPart('customer') :CaptureArgs(0) {
         { name => "billing_mappings.product.name", search => 1, title => "Product" },
         { name => "billing_mappings.billing_profile.name", search => 1, title => "Billing Profile" },
         { name => "status", search => 1, title => "Status" },
+        { name => "max_subscribers", search => 1, title => "Max Number of Subscribers" },
     ]);
 
     $c->stash(
@@ -182,10 +183,30 @@ sub details :Chained('base') :PathPart('details') :Args(0) {
 
     NGCP::Panel::Utils::Sounds::stash_soundset_list(c => $c, contract => $c->stash->{contract});
     $c->stash->{contact_hash} = { $c->stash->{contract}->contact->get_inflated_columns };
+    if(defined $c->stash->{contract}->max_subscribers) {
+       $c->stash->{subscriber_count} = $c->stash->{contract}->voip_subscribers
+        ->search({ status => { -not_in => ['terminated'] } })
+        ->count;
+    }
 }
 
 sub subscriber_create :Chained('base') :PathPart('subscriber/create') :Args(0) {
     my ($self, $c) = @_;
+
+    if(defined $c->stash->{contract}->max_subscribers &&
+       $c->stash->{contract}->voip_subscribers
+        ->search({ status => { -not_in => ['terminated'] } })
+        ->count >= $c->stash->{contract}->max_subscribers) {
+
+        NGCP::Panel::Utils::Message->error(
+            c => $c,
+            error => "tried to exceed max number of subscribers of " . $c->stash->{contract}->max_subscribers,
+            desc  => "Maximum number of subscribers for this customer reached",
+        );
+        NGCP::Panel::Utils::Navigation::back_or($c, 
+            $c->uri_for_action('/customer/details', [$c->stash->{contract}->id])
+        );
+    }
 
     my $pbx = 0; my $pbxadmin = 0;
     $pbx = 1 if $c->stash->{product}->class eq 'pbxaccount';
@@ -400,6 +421,21 @@ sub pbx_group_ajax :Chained('base') :PathPart('pbx/group/ajax') :Args(0) {
 
 sub pbx_group_create :Chained('base') :PathPart('pbx/group/create') :Args(0) {
     my ($self, $c) = @_;
+
+    if(defined $c->stash->{contract}->max_subscribers &&
+       $c->stash->{contract}->voip_subscribers
+        ->search({ status => { -not_in => ['terminated'] } })
+        ->count >= $c->stash->{contract}->max_subscribers) {
+
+        NGCP::Panel::Utils::Message->error(
+            c => $c,
+            error => "tried to exceed max number of subscribers of " . $c->stash->{contract}->max_subscribers,
+            desc  => "Maximum number of subscribers for this customer reached",
+        );
+        NGCP::Panel::Utils::Navigation::back_or($c, 
+            $c->uri_for_action('/customer/details', [$c->stash->{contract}->id])
+        );
+    }
 
     my $posted = ($c->request->method eq 'POST');
     my $admin_subscribers = NGCP::Panel::Utils::Subscriber::get_admin_subscribers(
