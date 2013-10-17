@@ -205,7 +205,7 @@ sub servers_create :Chained('servers_list') :PathPart('create') :Args(0) {
     my ($self, $c) = @_;
     
     my $posted = ($c->request->method eq 'POST');
-    my $form = NGCP::Panel::Form::PeeringServer->new;
+    my $form = NGCP::Panel::Form::PeeringServer->new(ctx => $c);
     $form->process(
         posted => $posted,
         params => $c->request->params,
@@ -263,7 +263,7 @@ sub servers_edit :Chained('servers_base') :PathPart('edit') :Args(0) {
     my ($self, $c) = @_;
     
     my $posted = ($c->request->method eq 'POST');
-    my $form = NGCP::Panel::Form::PeeringServer->new;
+    my $form = NGCP::Panel::Form::PeeringServer->new(ctx => $c);
     $form->process(
         posted => $posted,
         params => $c->request->params,
