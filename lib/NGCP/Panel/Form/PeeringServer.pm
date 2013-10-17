@@ -53,14 +53,22 @@ has_field 'weight' => (
 );
 
 has_field 'via_route' => (
-    type => 'Text',
+    type => 'Select',
     label => 'Via Route',
-    maxlength => 255,
-    element_attr => { 
-        rel => ['tooltip'], 
-        title => ['An optional comma-separated Route Set to follow from the lb towards the peer, e.g. <sip:1.2.3.4:5060>,<sip:2.3.5:5060>'] 
-    },
+    options_method => \&build_via_routes,
 );
+
+sub build_via_routes {
+    my ($self) = @_;
+
+    my @options = ();
+    push @options, { label => 'None', value => '' };
+    foreach my $via(@{ $self->form->ctx->config->{sip}->{external_sbc} }) {
+        my $uri = '<' . $via . '>';
+        push @options, { label => $uri, value => $uri };
+    }
+    return \@options;
+}
 
 has_field 'save' => (
     type => 'Submit',
