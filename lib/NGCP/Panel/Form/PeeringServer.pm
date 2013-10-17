@@ -64,7 +64,7 @@ sub build_via_routes {
     my @options = ();
     push @options, { label => 'None', value => '' };
     foreach my $via(@{ $self->form->ctx->config->{sip}->{external_sbc} }) {
-        my $uri = '<' . $via . '>';
+        my $uri = '<' . $via . ';lr>';
         push @options, { label => $uri, value => $uri };
     }
     return \@options;
