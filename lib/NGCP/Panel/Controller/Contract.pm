@@ -11,7 +11,7 @@ use NGCP::Panel::Utils::Contract;
 use NGCP::Panel::Utils::Subscriber;
 use NGCP::Panel::Utils::DateTime;
 
-sub auto :Does(ACL) :ACLDetachTo('/denied_page') :AllowedRole(admin) :AllowedRole(reseller) {
+sub auto :Does(ACL) :ACLDetachTo('/denied_page') :AllowedRole(admin) {
     my ($self, $c) = @_;
     $c->log->debug(__PACKAGE__ . '::auto');
     NGCP::Panel::Utils::Navigation::check_redirect_chain(c => $c);
@@ -24,7 +24,6 @@ sub contract_list :Chained('/') :PathPart('contract') :CaptureArgs(0) {
     $c->stash->{contract_dt_columns} = NGCP::Panel::Utils::Datatables::set_columns($c, [
         { name => "id", search => 1, title => "#" },
         { name => "external_id", search => 1, title => "External #" },
-        { name => "contact.reseller.name", search => 1, title => "Reseller" },
         { name => "contact.email", search => 1, title => "Contact Email" },
         { name => "billing_mappings.product.name", search => 1, title => "Product" },
         { name => "billing_mappings.billing_profile.name", search => 1, title => "Billing Profile" },
@@ -40,82 +39,23 @@ sub contract_list :Chained('/') :PathPart('contract') :CaptureArgs(0) {
             join => 'contact',
         });
     }
+    $rs = $rs->search({
+            '-or' => [
+                'product.class' => 'pstnpeering',
+                'product.class' => 'sippeering',
+                'product.class' => 'reseller',
+            ],
+        }, {
+            'join' => {'billing_mappings' => 'product'},
+        });
     $c->stash(contract_select_rs => $rs);
 
-    $c->stash(page_title => "Contract",
-              page_title_plural => "Contracts");
     $c->stash(ajax_uri => $c->uri_for_action("/contract/ajax"));
     $c->stash(template => 'contract/list.tt');
 }
 
 sub root :Chained('contract_list') :PathPart('') :Args(0) {
     my ($self, $c) = @_;
-}
-
-sub create :Chained('contract_list') :PathPart('create') :Args(0) {
-    my ($self, $c) = @_;
-    
-    my $posted = ($c->request->method eq 'POST');
-    my $params = {};
-    $params = $params->merge($c->session->{created_objects});
-    my $form;
-    $form = NGCP::Panel::Form::Contract::Basic->new;
-    $form->process(
-        posted => $posted,
-        params => $c->request->params,
-        item => $params
-    );
-
-    NGCP::Panel::Utils::Navigation::check_form_buttons(
-        c => $c,
-        form => $form,
-        fields => {'contact.create' => $c->uri_for('/contact/create'),
-                   'billing_profile.create'  => $c->uri_for('/billing/create')},
-        back_uri => $c->req->uri,
-    );
-    if($posted && $form->validated) {
-        try {
-            my $schema = $c->model('DB');
-            $schema->txn_do(sub {
-                $form->params->{contact_id} = $form->params->{contact}{id};
-                delete $form->params->{contract};
-                my $bprof_id = $form->params->{billing_profile}{id};
-                delete $form->params->{billing_profile};
-                $form->{create_timestamp} = $form->{modify_timestamp} = NGCP::Panel::Utils::DateTime::current_local;
-                my $contract = $schema->resultset('contracts')->create($form->params);
-                my $billing_profile = $schema->resultset('billing_profiles')->find($bprof_id);
-                $contract->billing_mappings->create({
-                    billing_profile_id => $bprof_id,
-                });
-                
-                NGCP::Panel::Utils::Contract::create_contract_balance(
-                    c => $c,
-                    profile => $billing_profile,
-                    contract => $contract,
-                );
-                delete $c->session->{created_objects}->{contact};
-                delete $c->session->{created_objects}->{billing_profile};
-                $c->session->{created_objects}->{contract} = { id => $contract->id };
-                my $contract_id = $contract->id;
-                $c->flash(messages => [{type => 'success', text => "Contract #$contract_id successfully created!"}]);
-            });
-        } catch($e) {
-            NGCP::Panel::Utils::Message->error(
-                c => $c,
-                error => $e,
-                desc  => "Failed to create contract.",
-            );
-        }
-        NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for('/contract'));
-    } 
-
-    $c->stash(create_flag => 1);
-    $c->stash(form => $form);
-}
-
-sub create_without_reseller :Chained('contract_list') :PathPart('create/noreseller') :Args(0) {
-    my ($self, $c) = @_;
-    $self->create($c, 1);
 }
 
 sub base :Chained('contract_list') :PathPart('') :CaptureArgs(1) {
@@ -144,8 +84,6 @@ sub base :Chained('contract_list') :PathPart('') :CaptureArgs(1) {
         $billing_mapping->product->handle ne 'SIP_PEERING' &&
         $billing_mapping->product->handle ne 'PSTN_PEERING')) {
 
-        $c->stash(page_title => "Customer",
-                  page_title_plural => "Customers");
     }
     
     $c->stash(contract => {$res->get_inflated_columns});
@@ -227,8 +165,7 @@ sub edit :Chained('base') :PathPart('edit') :Args(0) {
                 delete $c->session->{created_objects}->{contact};
                 delete $c->session->{created_objects}->{billing_profile};
             });
-            my $page_title = $c->stash->{page_title};
-            $c->flash(messages => [{type => 'success', text => "$page_title successfully changed!"}]);
+            $c->flash(messages => [{type => 'success', text => "Contract successfully changed!"}]);
         } catch($e) {
             NGCP::Panel::Utils::Message->error(
                 c => $c,
@@ -262,8 +199,7 @@ sub terminate :Chained('base') :PathPart('terminate') :Args(0) {
                 contract => $contract,
             );
         }
-        my $page_title = $c->stash->{page_title};
-        $c->flash(messages => [{type => 'success', text => "$page_title successfully terminated"}]);
+        $c->flash(messages => [{type => 'success', text => "Contract successfully terminated"}]);
     } catch ($e) {
         NGCP::Panel::Utils::Message->error(
             c => $c,
@@ -460,7 +396,8 @@ sub reseller_create :Chained('reseller_list') :PathPart('create') :Args(0) {
                 $c->session->{created_objects}->{contract} = { id => $contract->id };
                 delete $c->session->{created_objects}->{contact};
                 delete $c->session->{created_objects}->{billing_profile};
-                $c->flash(messages => [{type => 'success', text => 'Contract successfully created'}]);
+                my $contract_id = $contract->id;
+                $c->flash(messages => [{type => 'success', text => "Contract #$contract_id successfully created"}]);
             });
         } catch($e) {
             NGCP::Panel::Utils::Message->error(

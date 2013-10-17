@@ -200,7 +200,7 @@
     UNLESS c.user.read_only;
         helper.dt_buttons = [
             { name = 'Edit', uri = "/contract/'+full.id+'/edit", class = 'btn-small btn-primary', icon = 'icon-edit' },
-            { name = 'Terminate', uri = "/contract/'+full.id+'/terminate", class = 'btn-small btn-secondary', icon = 'icon-remove' },
+            { name = 'Terminate', uri = "/customer/'+full.id+'/terminate", class = 'btn-small btn-secondary', icon = 'icon-remove' },
             { name = 'Details', uri = "/customer/'+full.id+'/details", class = 'btn-small btn-tertiary', icon = 'icon-list' },
         ];
     ELSE;
