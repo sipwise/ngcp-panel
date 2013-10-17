@@ -380,6 +380,36 @@ sub edit :Chained('base') :PathPart('edit') :Args(0) {
     $c->stash(form => $form);
 }
 
+sub terminate :Chained('base') :PathPart('terminate') :Args(0) {
+    my ($self, $c) = @_;
+    my $contract = $c->stash->{contract};
+
+    if ($contract->id == 1) {
+        $c->flash(messages => [{type => 'error', text => 'Cannot terminate contract with the id 1'}]);
+        NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for('/contract'));
+    }
+
+    try {
+        my $old_status = $contract->status;
+        $contract->update({ status => 'terminated' });
+        # if status changed, populate it down the chain
+        if($contract->status ne $old_status) {
+            NGCP::Panel::Utils::Contract::recursively_lock_contract(
+                c => $c,
+                contract => $contract,
+            );
+        }
+        $c->flash(messages => [{type => 'success', text => "Customer successfully terminated"}]);
+    } catch ($e) {
+        NGCP::Panel::Utils::Message->error(
+            c => $c,
+            error => $e,
+            desc  => "Failed to terminate contract.",
+        );
+    };
+    NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for('/contract'));
+}
+
 sub details :Chained('base') :PathPart('details') :Args(0) {
     my ($self, $c) = @_;
 

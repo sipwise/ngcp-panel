@@ -160,7 +160,7 @@ $(document).ready(function() {
             <span class="pull-left" style="margin:0 5px 0 5px;">
                 [% IF button.accordion_button == 1 && loop.count == 1 -%]
                 <a class="btn btn-primary btn-large" href="[% button.uri %]" style="margin-left:25px;"><i class="[% button.icon %]"></i> [% button.name %]</a>
-                [% ELSIF loop.count == 1-%]
+                [% ELSE -%]
                 <a class="btn btn-primary btn-large" href="[% button.uri %]"><i class="[% button.icon %]"></i> [% button.name %]</a>
                 [% END -%]
             </span>
