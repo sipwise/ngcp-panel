@@ -1,4 +1,5 @@
 <flat-profile>
+  [% barge_in = 0 -%]
   <Upgrade_Enable>Yes</Upgrade_Enable>
   <Upgrade_Rule>[% firmware.url %]</Upgrade_Rule>
   <Station_Name>[% phone.stationname %]</Station_Name>
