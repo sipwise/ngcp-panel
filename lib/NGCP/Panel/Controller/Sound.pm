@@ -299,7 +299,7 @@ sub handles_list :Chained('base') :PathPart('handles') :CaptureArgs(0) {
         });
 
     if($c->stash->{set_result}->contract_id) {
-        $handles_rs = $handles_rs->search({ 'groups.name' => { '=' => 'pbx' } });
+        $handles_rs = $handles_rs->search({ 'groups.name' => { '-in' => ['pbx', 'music_on_hold'] } });
     } else {
         $handles_rs = $handles_rs->search({ 'groups.name' => { '!=' => 'pbx' } });
     }
@@ -404,7 +404,7 @@ sub handles_edit :Chained('handles_base') :PathPart('edit') {
                 }
             }
 
-            if ($file_result->handle->name eq 'music_on_hold') {
+            if ($file_result->handle->name eq 'music_on_hold' && !$file_result->set->contract_id) {
                 $target_codec = 'PCMA';
                 $filename =~ s/\.[^.]+$/.pcma/;
             }
