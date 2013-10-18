@@ -905,7 +905,7 @@ sub dev_field_config :Chained('/') :PathPart('device/autoprov/config') :Args() {
 
     my $vars = {
         config => {
-            url => $c->uri_for,
+            url => 'http://' . $c->req->uri->host . ':' . ($c->config->{web}->{autoprov_plain_port} // '1444') . '/device/autoprov/config/' . $id,
         },
         firmware => {
         },
