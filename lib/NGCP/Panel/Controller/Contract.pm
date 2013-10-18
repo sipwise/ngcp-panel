@@ -525,9 +525,11 @@ sub reseller_ajax_contract_filter :Chained('reseller_list') :PathPart('ajax/cont
         return;
     }
 
-    my $rs = $c->stash->{reseller_rs}->search_rs({
-        'me.id' => $contract_id,
-    });
+    my $rs = NGCP::Panel::Utils::Contract::get_contract_rs(
+            schema => $c->model('DB'))
+        ->search_rs({
+            'me.id' => $contract_id,
+        });
     my $contract_columns = NGCP::Panel::Utils::Datatables::set_columns($c, [
         { name => "id", search => 1, title => "#" },
         { name => "external_id", search => 1, title => "External #" },

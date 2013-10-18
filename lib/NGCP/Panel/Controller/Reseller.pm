@@ -303,12 +303,16 @@ sub ajax_contract :Chained('list_reseller') :PathPart('ajax_contract') :Args(0) 
             $_->get_column('contract_id')
         } else {}
     } $c->stash->{resellers}->all;
-    my $free_contracts = $c->model('DB')
-        ->resultset('contracts')
+    my $free_contracts = NGCP::Panel::Utils::Contract::get_contract_rs(
+            schema => $c->model('DB'))
         ->search_rs({
             'me.status' => { '!=' => 'terminated' },
-            'me.id' => { 'not in' => \@used_contracts }
-        });
+            'me.id' => { 'not in' => \@used_contracts },
+            'product.class' => 'reseller',
+        },{
+            join => { 'billing_mappings' => 'product'},
+        }
+        );
     NGCP::Panel::Utils::Datatables::process($c, $free_contracts, $c->stash->{contract_dt_columns});
     $c->detach( $c->view("JSON") );
 }
