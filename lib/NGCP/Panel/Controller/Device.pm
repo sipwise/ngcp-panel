@@ -904,8 +904,10 @@ sub dev_field_config :Chained('/') :PathPart('device/autoprov/config') :Args() {
     my $fw = $dev->profile->firmware;
 
     my $vars = {
+        config => {
+            url => $c->uri_for,
+        }
         firmware => {
-            
         },
         phone => {
             stationname => $dev->station_name,
