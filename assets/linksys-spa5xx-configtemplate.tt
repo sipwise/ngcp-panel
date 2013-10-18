@@ -6,7 +6,7 @@
   <Station_Name>[% phone.stationname %]</Station_Name>
   <Station_Display_Name>[% phone.stationname %]</Station_Display_Name>
   <Server_Type>RFC3265_4235</Server_Type>
-  <Voice_Mail_Number>2000</Voice_Mail_Number>
+  <Voice_Mail_Number>voicebox</Voice_Mail_Number>
   <Attendant_Console_Call_Pickup_Code>**#</Attendant_Console_Call_Pickup_Code>
   <Attendant_Console_Call_Park_Code>*68</Attendant_Console_Call_Park_Code>
   <Attendant_Console_Call_unPark_Code>*88</Attendant_Console_Call_unPark_Code>
