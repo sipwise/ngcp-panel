@@ -14,6 +14,16 @@ method findclick(Str $scheme, Str $query) {
     return 1;
 }
 
+method select_if_unselected(Str $scheme, Str $query) {
+    my $elem = $self->find($scheme, $query);
+    return 0 unless $elem;
+    return 0 unless $elem->is_displayed;
+    if (! $elem->is_selected() ) {
+        $elem->click;
+    }
+    return 1;
+}
+
 method findtext(Str $text, Any $ignore) {
     return $self->find(xpath => "//*[contains(text(),\"$text\")]");
 }
@@ -36,4 +46,10 @@ method fill_element(ArrayRef $options, Any $ignore) {
     $elem->clear;
     $elem->send_keys($filltext);
     return 1;
+}
+
+sub browser_name_in {
+    my ($self, @names) = @_;
+    my $browser_name = $self->get_capabilities->{browserName};
+    return $browser_name ~~ @names;
 }
