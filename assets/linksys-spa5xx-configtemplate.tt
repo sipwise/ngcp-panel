@@ -34,7 +34,7 @@
         <Share_Ext_[% key %]_>[% line.type == "shared" ? "shared" : "private" %]</Share_Ext_[% key %]_>
         <Shared_User_ID_[% key %]_>[% line.type == "shared" ? line.username : "" %]</Shared_User_ID_[% key %]_>
         [% IF line.type == "private" || line.type == "shared" -%]
-	  <Outbound_Proxy_[% key %]_>[% line.domain %]</Outbound_Proxy_[% key %]>
+	  <Outbound_Proxy_[% key %]_>[% line.domain %]</Outbound_Proxy_[% key %]_>
 	  <Use_Outbound_Proxy_[% key %]_>Yes</Use_Outbound_Proxy_[% key %]_>
           <Extension_[% key %]_>[% key %]</Extension_[% key %]_>
           <Register_[% key %]_>Yes</Register_[% key %]_>
