@@ -48,7 +48,6 @@
             <Password_[% key %]_>[% sla.password %]</Password_[% key %]_>
             <Proxy_[% key %]_>[% sla.domain %]</Proxy_[% key %]_>
           [% END -%]
-          <Outbound_Proxy_[% key %]_></Outbound_Proxy_[% key %]_>
           <Use_Auth_ID_[% key %]_></Use_Auth_ID_[% key %]_>
           <Auth_ID_[% key %]_></Auth_ID_[% key %]_>
         [% ELSE -%]
