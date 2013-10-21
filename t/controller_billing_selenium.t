@@ -10,7 +10,7 @@ $d->set_window_size(800,1280) if ($browsername ne "htmlunit");
 my $uri = $ENV{CATALYST_SERVER} || 'http://localhost:3000';
 $d->get_ok("$uri/logout"); #make sure we are logged out
 $d->get_ok("$uri/login");
-$d->set_implicit_wait_timeout(1000);
+$d->set_implicit_wait_timeout(2500);
 
 diag("Do Admin Login");
 $d->find(link_text => 'Admin')->click;
@@ -70,7 +70,8 @@ $d->fill_element_ok([name => 'zone', 'testingzone']);
 $d->fill_element_ok([name => 'detail', 'testingdetail']);
 $d->findclick_ok(name => 'save');
 diag("Back to orignial form (create billing fees)");
-$d->findclick_ok(xpath => '//div[contains(@class,"modal")]//div[contains(@class,"dataTables_wrapper")]//td[contains(text(),"testingzone")]/..//input[@type="checkbox"]');
+#sleep 2; # give ajax time to load
+$d->select_if_unselected_ok(xpath => '//div[contains(@class,"modal")]//div[contains(@class,"dataTables_wrapper")]//td[contains(text(),"testingzone")]/..//input[@type="checkbox"]');
 $d->fill_element_ok([id => 'source', '.*']);
 $d->fill_element_ok([name => 'destination', '.+']);
 $d->findclick_ok(id => 'save');
@@ -116,7 +117,7 @@ diag("Edit Wednesday");
 $row = $d->find(xpath => '//table//td[contains(text(),"Wednesday")]');
 ok($row);
 $d->move_to(element => ($d->find(xpath => '//h3[contains(text(),"Weekdays")]')));
-sleep 2 if ($browsername eq "htmlunit");
+sleep 2 if ($d->browser_name_in("firefox", "htmlunit"));
 $d->move_to(element => $row);
 $d->findclick_ok(xpath => '//table//td[contains(text(),"Wednesday")]/..//a[text()[contains(.,"Edit")]]');
 $d->findtext_ok("Edit Wednesday");

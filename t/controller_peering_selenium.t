@@ -32,15 +32,15 @@ $d->findclick_ok(link_text => 'Create Peering Group');
 
 diag("Create a Peering Contract");
 $d->findclick_ok(xpath => '//input[@type="button" and @value="Create Contract"]');
-$d->findclick_ok(xpath => '//table[@id="contactidtable"]/tbody/tr[1]//input[@type="checkbox"]');
-$d->findclick_ok(xpath => '//table[@id="billing_profileidtable"]/tbody/tr[1]//input[@type="checkbox"]');
+$d->select_if_unselected_ok(xpath => '//table[@id="contactidtable"]/tbody/tr[1]//input[@type="checkbox"]');
+$d->select_if_unselected_ok(xpath => '//table[@id="billing_profileidtable"]/tbody/tr[1]//input[@type="checkbox"]');
 $d->findclick_ok(xpath => '//div[contains(@class,"modal-body")]//div//select[@id="status"]/option[@value="active"]');
 $d->findclick_ok(xpath => '//div[contains(@class,"modal")]//input[@type="submit"]');
 $d->findtext_ok('Create Peering Group'); #Should go back to prev form
 
 $d->fill_element_ok([id => 'name', 'testinggroup']);
 $d->fill_element_ok([id => 'description', 'A group created for testing purposes']);
-$d->findclick_ok(xpath => '//table[@id="contractidtable"]/tbody/tr[1]//input[@type="checkbox"]');
+$d->select_if_unselected(xpath => '//table[@id="contractidtable"]/tbody/tr[1]//input[@type="checkbox"]');
 $d->findclick_ok(id => 'save');
 
 diag("Edit Servers/Rules of testinggroup");
@@ -70,6 +70,7 @@ $d->findtext_ok('Peering server successfully created');
 my $server_rules_uri = $d->get_location;
 
 diag('Edit Preferences for "mytestserver".');
+sleep 1; #make sure, we are on the right page
 $row = $d->find(xpath => '(//table/tbody/tr/td[contains(text(), "mytestserver")]/..)[1]');
 ok($row);
 $edit_link = $d->find_child_element($row, '(./td//a)[contains(text(),"Preferences")]');
@@ -97,6 +98,7 @@ diag("Go back to Servers/Rules");
 $d->navigate_ok($server_rules_uri);
 
 diag("Delete mytestserver");
+sleep 1; #make sure, we are on the right page
 $row = $d->find(xpath => '(//table/tbody/tr/td[contains(text(), "mytestserver")]/..)[1]');
 ok($row);
 my $delete_link = $d->find_child_element($row, '(./td//a)[contains(text(),"Delete")]');
