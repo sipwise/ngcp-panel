@@ -168,11 +168,10 @@ sub edit :Chained('base') :PathPart('edit') :Args(0) {
     );
     if ($posted && $form->validated) {
         try {
-            # don't allow to take away own master rights, otherwise he'll not be
+            # don't allow to take away own master rights/write permission, otherwise he'll not be
             # able to manage any more admins
             if($c->stash->{administrator}->id == $c->user->id) {
-                delete $form->values->{is_master};
-                delete $form->values->{is_active};
+                delete $form->values->{$_} for qw(is_master is_active read_only);
             }
 
             if($c->user->is_superuser) {
