@@ -2097,13 +2097,12 @@ sub ajax_calls :Chained('master') :PathPart('calls/ajax') :Args(0) {
     my ($self, $c) = @_;
 
     # CDRs
-    my $out_rs = $c->model('DB')->resultset('cdr')->search({
-        source_user_id => $c->stash->{subscriber}->uuid,
+    my $rs = $c->model('DB')->resultset('cdr')->search({
+        -or => [
+            source_user_id => $c->stash->{subscriber}->uuid,
+            destination_user_id => $c->stash->{subscriber}->uuid,
+        ],
     });
-    my $in_rs = $c->model('DB')->resultset('cdr')->search({
-        destination_user_id => $c->stash->{subscriber}->uuid,
-    });
-    my $rs = $out_rs->union($in_rs);
     NGCP::Panel::Utils::Datatables::process(
         $c, $rs, $c->stash->{calls_dt_columns},
         sub {
@@ -2150,15 +2149,12 @@ sub ajax_voicemails :Chained('master') :PathPart('voicemails/ajax') :Args(0) {
 sub ajax_captured_calls :Chained('master') :PathPart('callflow/ajax') :Args(0) {
     my ($self, $c) = @_;
 
-    my $caller_rs = $c->model('DB')->resultset('messages')->search({
-        'me.caller_uuid' => $c->stash->{subscriber}->uuid,
-    });
-    my $callee_rs = $c->model('DB')->resultset('messages')->search({
-        'me.callee_uuid' => $c->stash->{subscriber}->uuid,
-    });
-
-    # TODO: group_by or distinct on call_id!
-    my $rs = $caller_rs->union($callee_rs)->search(undef, {
+    my $rs = $c->model('DB')->resultset('messages')->search({
+        -or => [
+            'me.caller_uuid' => $c->stash->{subscriber}->uuid,
+            'me.callee_uuid' => $c->stash->{subscriber}->uuid,
+        ],
+    }, {
         order_by => { -asc => 'me.timestamp' },
     });
 
