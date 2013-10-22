@@ -1,3 +1,9 @@
+ngcp-panel (1.0.18) unstable; urgency=low
+
+  * [d2b7aca] MT#4607 Replace UNION by simple OR
+
+ -- Andreas Granig <agranig@sipwise.com>  Tue, 22 Oct 2013 17:19:12 +0200
+
 ngcp-panel (1.0.17) unstable; urgency=low
 
   * [d38e984] MT#4309 Show locked subs in Customer Details
