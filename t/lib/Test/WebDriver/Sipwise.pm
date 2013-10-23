@@ -28,14 +28,16 @@ method findtext(Str $text, Any $ignore) {
     return $self->find(xpath => "//*[contains(text(),\"$text\")]");
 }
 
-method save_screenshot() {
+method save_screenshot(Str $filename="screenshot.png") {
     use MIME::Base64;
-    local *FH;
-    open(FH,'>','screenshot.png');
-    binmode FH;
-    my $png_base64 = $self->screenshot();
-    print FH decode_base64($png_base64);
-    close FH;
+    if($self->get_capabilities->{takesScreenshot}) {
+        local *FH;
+        open(FH,'>',$filename);
+        binmode FH;
+        my $png_base64 = $self->screenshot();
+        print FH decode_base64($png_base64);
+        close FH;
+    }
 }
 
 method fill_element(ArrayRef $options, Any $ignore) {

@@ -12,6 +12,9 @@ $d->get_ok("$uri/logout"); #make sure we are logged out
 $d->get_ok("$uri/login");
 $d->set_implicit_wait_timeout(10000);
 
+sleep 2;
+$d->save_screenshot("ssht_domain_logged_out.png");
+
 diag("Do Admin Login");
 $d->find(link_text => 'Admin')->click;
 $d->findtext_ok('Admin Sign In');
@@ -19,12 +22,18 @@ $d->find(name => 'username')->send_keys('administrator');
 $d->find(name => 'password')->send_keys('administrator');
 $d->findclick_ok(name => 'submit');
 
+sleep 2;
+$d->save_screenshot("ssht_domain_logged_in.png");
+
 $d->find_ok(xpath => '//*[@id="masthead"]//h2[contains(text(),"Dashboard")]');
 
 diag("Go to Domains page");
 $d->findclick_ok(xpath => '//*[@id="main-nav"]//*[contains(text(),"Settings")]');
 $d->find_ok(xpath => '//a[contains(@href,"/domain")]');
 $d->findclick_ok(link_text => "Domains");
+
+sleep 2;
+$d->save_screenshot("ssht_domain_main_page.png");
 
 $d->find_ok(xpath => '//*[@id="masthead"]//h2[contains(text(),"Domains")]');
 SKIP: {
