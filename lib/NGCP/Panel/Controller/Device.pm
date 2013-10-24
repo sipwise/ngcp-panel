@@ -56,6 +56,7 @@ sub base :Chained('/') :PathPart('device') :CaptureArgs(0) {
 
     $c->stash->{devfw_dt_columns} = NGCP::Panel::Utils::Datatables::set_columns($c, [
         { name => 'id', search => 1, title => '#' },
+        { name => 'device.reseller.name', search => 1, title => 'Reseller' },
         { name => 'device.vendor', search => 1, title => 'Device Vendor' },
         { name => 'device.model', search => 1, title => 'Device Model' },
         { name => 'filename', search => 1, title => 'Firmware File' },
@@ -79,6 +80,7 @@ sub base :Chained('/') :PathPart('device') :CaptureArgs(0) {
 
     $c->stash->{devconf_dt_columns} = NGCP::Panel::Utils::Datatables::set_columns($c, [
         { name => 'id', search => 1, title => '#' },
+        { name => 'device.reseller.name', search => 1, title => 'Reseller' },
         { name => 'device.vendor', search => 1, title => 'Device Vendor' },
         { name => 'device.model', search => 1, title => 'Device Model' },
         { name => 'version', search => 1, title => 'Version' },
@@ -100,6 +102,7 @@ sub base :Chained('/') :PathPart('device') :CaptureArgs(0) {
     }
     $c->stash->{devprof_dt_columns} = NGCP::Panel::Utils::Datatables::set_columns($c, [
         { name => 'id', search => 1, title => '#' },
+        { name => 'config.device.reseller.name', search => 1, title => 'Reseller' },
         { name => 'name', search => 1, title => 'Name' },
         { name => 'config.device.vendor', search => 1, title => 'Device Vendor' },
         { name => 'config.device.model', search => 1, title => 'Device Model' },
