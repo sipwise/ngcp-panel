@@ -162,6 +162,11 @@ sub create :Chained('list_customer') :PathPart('create') :Args(0) {
                     product_id => $product_id,
                 });
 
+                if($contract->contact->reseller_id // -1 !=
+                    $billing_profile->reseller_id // -1) {
+                    die( ["Contact and Billing profile should have the same reseller", "showdetails"] );
+                }
+
                 NGCP::Panel::Utils::Contract::create_contract_balance(
                     c => $c,
                     profile => $billing_profile,
@@ -354,6 +359,11 @@ sub edit :Chained('base') :PathPart('edit') :Args(0) {
                         product_id => $product_id,
                         start_date => NGCP::Panel::Utils::DateTime::current_local,
                     });
+                }
+
+                if($contract->contact->reseller_id // -1 !=
+                    $billing_mapping->billing_profile->reseller_id // -1) {
+                    die( ["Contact and Billing profile should have the same reseller", "showdetails"] );
                 }
 
                 delete $c->session->{created_objects}->{contact};
