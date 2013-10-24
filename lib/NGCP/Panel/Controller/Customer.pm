@@ -200,27 +200,40 @@ sub base :Chained('list_customer') :PathPart('') :CaptureArgs(1) {
         return;
     }
 
-    my $contract = $c->model('DB')->resultset('contracts')
-        ->search('me.id' => $contract_id);
+    my $contract_rs = $c->stash->{contract_select_rs}
+        ->search({
+            'me.id' => $contract_id,
+        },{
+            '+select' => 'billing_mappings.id',
+            '+as' => 'bmid',
+        });
+
     if($c->user->roles eq 'reseller') {
-        $contract = $contract->search({
+        $contract_rs = $contract_rs->search({
             'contact.reseller_id' => $c->user->reseller_id,
         }, {
             join => 'contact',
         });
     } elsif($c->user->roles eq 'subscriberadmin') {
-        $contract = $contract->search({
+        $contract_rs = $contract_rs->search({
             'me.id' => $c->user->account_id,
         });
-        unless($contract->count) {
+        unless($contract_rs->count) {
             $c->log->error("unauthorized access of subscriber uuid '".$c->user->uuid."' to contract id '$contract_id'");
             $c->detach('/denied_page');
         }
     }
 
+    unless(defined($contract_rs->first)) {
+        $c->flash(messages => [{type => 'error', text => 'Customer was not found'}]);
+        NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for('/customer'));
+    }
+
+    my $billing_mapping = $contract_rs->first->billing_mappings->find($contract_rs->first->get_column('bmid'));
+
     my $stime = NGCP::Panel::Utils::DateTime::current_local()->truncate(to => 'month');
     my $etime = $stime->clone->add(months => 1);
-    my $balance = $contract->first->contract_balances
+    my $balance = $contract_rs->first->contract_balances
         ->find({
             start => { '>=' => $stime },
             end => { '<' => $etime },
@@ -229,22 +242,8 @@ sub base :Chained('list_customer') :PathPart('') :CaptureArgs(1) {
         try {
             NGCP::Panel::Utils::Contract::create_contract_balance(
                 c => $c,
-                profile => $contract->first->billing_mappings->search({
-                    -and => [
-                        -or => [
-                            start_date => undef,
-                            start_date => { '<=' => NGCP::Panel::Utils::DateTime::current_local },
-                        ],
-                        -or => [
-                            end_date => undef,
-                            end_date => { '>=' => NGCP::Panel::Utils::DateTime::current_local },
-                        ]
-                    ],
-                },
-                {
-                    order_by => { -desc => 'start_time', -desc => 'id' }
-                })->first->billing_profile,
-                contract => $contract->first,
+                profile => $billing_mapping->billing_profile,
+                contract => $contract_rs->first,
             );
         } catch($e) {
             NGCP::Panel::Utils::Message->error(
@@ -255,19 +254,14 @@ sub base :Chained('list_customer') :PathPart('') :CaptureArgs(1) {
             $c->response->redirect($c->uri_for());
             return;
         }
-        $balance = $contract->first->contract_balances
+        $balance = $contract_rs->first->contract_balances
             ->find({
-                start => { '>=' => $stime },
-                end => { '<' => $etime },
-                });
+                start => {'>=' => $stime},
+                end   => {'<'  => $etime},
+            });
     }
 
-    my $contract_select_rs = NGCP::Panel::Utils::Contract::get_contract_rs(
-        schema => $c->model('DB'));
-    $contract_select_rs = $contract_select_rs->search({
-        'me.id' => $contract_id,
-    });
-    my $product_id = $contract_select_rs->first->get_column('product_id');
+    my $product_id = $contract_rs->first->get_column('product_id');
     NGCP::Panel::Utils::Message->error(
         c => $c,
         error => "No product for customer contract id $contract_id found",
@@ -288,35 +282,37 @@ sub base :Chained('list_customer') :PathPart('') :CaptureArgs(1) {
 
     my $subs = NGCP::Panel::Utils::Subscriber::get_custom_subscriber_struct(
         c => $c,
-        contract => $contract->first,
+        contract => $contract_rs->first,
         show_locked => 1,
     );
     $c->stash->{subscribers} = $subs->{subscribers};
     $c->stash->{pbx_groups} = $subs->{pbx_groups};
 
     my $field_devs = [ $c->model('DB')->resultset('autoprov_field_devices')->search({
-        'contract_id' => $contract->first->id
+        'contract_id' => $contract_rs->first->id
     })->all ];
     $c->stash(pbx_devices => $field_devs);
 
     $c->stash(product => $product);
     $c->stash(balance => $balance);
-    $c->stash(fraud => $contract->first->contract_fraud_preference);
+    $c->stash(fraud => $contract_rs->first->contract_fraud_preference);
     $c->stash(template => 'customer/details.tt'); 
-    $c->stash(contract => $contract->first);
-    $c->stash(contract_rs => $contract);
+    $c->stash(contract => $contract_rs->first);
+    $c->stash(contract_rs => $contract_rs);
+    $c->stash(billing_mapping => $billing_mapping);
 }
 
 sub edit :Chained('base') :PathPart('edit') :Args(0) {
     my ($self, $c) = @_;
 
     my $contract = $c->stash->{contract};
+    my $billing_mapping = $c->stash->{billing_mapping};
     my $posted = ($c->request->method eq 'POST');
     my $form;
     my $params = { $contract->get_inflated_columns };
     $params->{contact}{id} = delete $params->{contact_id};
-    $params->{product}{id} = $contract->billing_mappings->first->product_id;
-    $params->{billing_profile}{id} = $contract->billing_mappings->first->billing_profile_id;
+    $params->{product}{id} = $billing_mapping->product_id;
+    $params->{billing_profile}{id} = $billing_mapping->billing_profile_id;
     $params = $params->merge($c->session->{created_objects});
     if($c->config->{features}->{cloudpbx}) {
         $form = NGCP::Panel::Form::Contract::ProductSelect->new;
@@ -344,13 +340,13 @@ sub edit :Chained('base') :PathPart('edit') :Args(0) {
                 my $bprof_id = $form->params->{billing_profile}{id};
                 delete $form->params->{billing_profile};
                 $form->{modify_timestamp} = NGCP::Panel::Utils::DateTime::current_local;
-                my $product_id = $form->params->{product}{id};
+                my $product_id = $form->params->{product}{id} || $billing_mapping->product_id;
                 delete $form->params->{product};
                 unless($form->params->{max_subscribers} && length($form->params->{max_subscribers})) {
                     $form->params->{max_subscribers} = undef;
                 }
-                my $old_bprof_id = $contract->billing_mappings->first->billing_profile_id;
-                say ">>>>>>>>>>> old bprof_id=$old_bprof_id";
+                my $old_bprof_id = $billing_mapping->billing_profile_id;
+                $c->log->debug(">>>>>>>>>>> old bprof_id=$old_bprof_id");
                 $contract->update($form->params);
                 if($bprof_id != $old_bprof_id) {
                     $contract->billing_mappings->create({
