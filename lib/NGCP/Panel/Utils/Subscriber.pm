@@ -338,7 +338,7 @@ sub update_subscriber_numbers {
 
             my $old_number = $schema->resultset('voip_numbers')->search({
                     cc            => $primary_number->{cc},
-                    ac            => $primary_number->{ac} || '',
+                    ac            => $primary_number->{ac} // '',
                     sn            => $primary_number->{sn},
                     subscriber_id => [undef, $subscriber_id],
                 },{
@@ -355,7 +355,7 @@ sub update_subscriber_numbers {
             } else {
                 $number = $schema->resultset('voip_numbers')->create({
                     cc            => $primary_number->{cc},
-                    ac            => $primary_number->{ac} || '',
+                    ac            => $primary_number->{ac} // '',
                     sn            => $primary_number->{sn},
                     status        => 'active',
                     reseller_id   => $reseller_id,
@@ -365,7 +365,7 @@ sub update_subscriber_numbers {
         }
 
         if(defined $number) {
-            my $cli = $number->cc . ($number->ac || '') . $number->sn;
+            my $cli = $number->cc . ($number->ac // '') . $number->sn;
 
             if(defined $billing_subs->primary_number
                 && $billing_subs->primary_number_id != $number->id) {
@@ -416,12 +416,12 @@ sub update_subscriber_numbers {
         for my $alias(@$alias_numbers) {
             $num = $billing_subs->voip_numbers->create({
                 cc          => $alias->{e164}{cc},
-                ac          => $alias->{e164}{ac},
+                ac          => $alias->{e164}{ac} // '',
                 sn          => $alias->{e164}{sn},
                 reseller_id => $reseller_id,
             });
             $schema->resultset('voip_dbaliases')->create({
-                username => $num->cc . ($num->ac || '') . $num->sn,
+                username => $num->cc . ($num->ac // '') . $num->sn,
                 subscriber_id => $prov_subs->id,
                 domain_id     => $prov_subs->domain->id,
             });
