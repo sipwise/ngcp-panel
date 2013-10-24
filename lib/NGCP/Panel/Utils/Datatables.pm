@@ -35,8 +35,14 @@ sub process {
                 '+select' => [ $parts[1].'.'.$parts[2] ],
                 '+as' => [ $c->{accessor} ],
             });
-        } elsif(@parts > 3) {
-            # TODO throw an error for now as we only support one and two levels
+        } elsif(@parts == 4) {
+            $rs = $rs->search_rs(undef, {
+                join => { $parts[0] => { $parts[1] => $parts[2] } },
+                '+select' => [ $parts[2].'.'.$parts[3] ],
+                '+as' => [ $c->{accessor} ],
+            });
+        } elsif(@parts > 4) {
+            # TODO throw an error for now as we only support up to 3 levels
         }
     }
 
@@ -188,6 +194,8 @@ sub _get_joined_column_name {
             $name = $cname;
         } elsif(@parts == 3) {
             $name = $parts[1].'.'.$parts[2];
+        } elsif(@parts == 4) {
+            $name = $parts[1].'.'.$parts[2].'.'.$parts[3];
         } else {
             # TODO throw an error for now as we only support one and two level
         }
