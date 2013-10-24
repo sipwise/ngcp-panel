@@ -1,3 +1,15 @@
+ngcp-panel (1.0.19) unstable; urgency=low
+
+  [ Gerhard Jungwirth ]
+  * [f9bf64f] MT#4261 Proper number handling on subscribers
+  * [c1b3c11] MT#4261 number handling on subscriber update
+  * [8646de1] MT#4261 alias number handling
+
+  [ Andreas Granig ]
+  * [a6962dc] MT#4657 Make ac an empty string if undef.
+
+ -- Andreas Granig <agranig@sipwise.com>  Thu, 24 Oct 2013 12:48:37 +0200
+
 ngcp-panel (1.0.18) unstable; urgency=low
 
   * [d2b7aca] MT#4607 Replace UNION by simple OR
