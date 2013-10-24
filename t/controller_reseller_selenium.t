@@ -30,6 +30,7 @@ ok($searchfield);
 $searchfield->send_keys('donotfindme');
 
 diag("Verify that nothing is shown");
+sleep 2; # wait for ajax
 my $elem = $d->find(css => '#Resellers_table td.dataTables_empty');
 ok($elem);
 is($elem->get_text,'No matching records found');
