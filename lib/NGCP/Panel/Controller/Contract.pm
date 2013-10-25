@@ -249,6 +249,9 @@ sub peering_create :Chained('peering_list') :PathPart('create') :Args(0) {
     my $posted = ($c->request->method eq 'POST');
     my $params = {};
     $params = $params->merge($c->session->{created_objects});
+    unless ($self->is_valid_noreseller_contact($c, $params->{contact}{id})) {
+        delete $params->{contact};
+    }
     my $form = NGCP::Panel::Form::Contract::PeeringReseller->new;
     $form->process(
         posted => $posted,
@@ -284,6 +287,12 @@ sub peering_create :Chained('peering_list') :PathPart('create') :Args(0) {
                     profile => $billing_profile,
                     contract => $contract,
                 );
+
+                if (defined $contract->contact->reseller_id) {
+                    my $contact_id = $contract->contact->id;
+                    die( ["Cannot use this contact (#$contact_id) for peering contracts.", "showdetails"] );
+                }
+
                 $c->session->{created_objects}->{contract} = { id => $contract->id };
                 delete $c->session->{created_objects}->{contact};
                 delete $c->session->{created_objects}->{billing_profile};
@@ -360,6 +369,9 @@ sub reseller_create :Chained('reseller_list') :PathPart('create') :Args(0) {
     my $posted = ($c->request->method eq 'POST');
     my $params = {};
     $params = $params->merge($c->session->{created_objects});
+    unless ($self->is_valid_noreseller_contact($c, $params->{contact}{id})) {
+        delete $params->{contact};
+    }
     my $form = NGCP::Panel::Form::Contract::PeeringReseller->new;
     $form->process(
         posted => $posted,
@@ -395,6 +407,12 @@ sub reseller_create :Chained('reseller_list') :PathPart('create') :Args(0) {
                     profile => $billing_profile,
                     contract => $contract,
                 );
+
+                if (defined $contract->contact->reseller_id) {
+                    my $contact_id = $contract->contact->id;
+                    die( ["Cannot use this contact (#$contact_id) for reseller contracts.", "showdetails"] );
+                }
+
                 $c->session->{created_objects}->{contract} = { id => $contract->id };
                 delete $c->session->{created_objects}->{contact};
                 delete $c->session->{created_objects}->{billing_profile};
@@ -413,6 +431,19 @@ sub reseller_create :Chained('reseller_list') :PathPart('create') :Args(0) {
 
     $c->stash(create_flag => 1);
     $c->stash(form => $form);
+}
+
+sub is_valid_noreseller_contact {
+    my ($self, $c, $contact_id) = @_;
+    my $contact = $c->model('DB')->resultset('contacts')->search_rs({
+        'id' => $contact_id,
+        'reseller_id' => undef,
+        })->first;
+    if( $contact ) {
+        return 1;
+    } else {
+        return 0;
+    }
 }
 
 __PACKAGE__->meta->make_immutable;
