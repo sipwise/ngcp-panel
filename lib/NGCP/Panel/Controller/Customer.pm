@@ -162,8 +162,8 @@ sub create :Chained('list_customer') :PathPart('create') :Args(0) {
                     product_id => $product_id,
                 });
 
-                if($contract->contact->reseller_id // -1 !=
-                    $billing_profile->reseller_id // -1) {
+                if(($contract->contact->reseller_id // -1) !=
+                    ($billing_profile->reseller_id // -1)) {
                     die( ["Contact and Billing profile should have the same reseller", "showdetails"] );
                 }
 
@@ -361,8 +361,8 @@ sub edit :Chained('base') :PathPart('edit') :Args(0) {
                     });
                 }
 
-                if($contract->contact->reseller_id // -1 !=
-                    $billing_mapping->billing_profile->reseller_id // -1) {
+                if(($contract->contact->reseller_id // -1) !=
+                    ($billing_mapping->billing_profile->reseller_id // -1)) {
                     die( ["Contact and Billing profile should have the same reseller", "showdetails"] );
                 }
 
