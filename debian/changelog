@@ -1,3 +1,18 @@
+ngcp-panel (1.0.20) unstable; urgency=low
+
+  [ Andreas Granig ]
+  * [e9dfa3d] MT#4145 Change postcode to txt, fix empty reseller
+  * [22cc03f] MT#4237 Fix create of reseller on billprof edit
+
+  [ Gerhard Jungwirth ]
+  * [cb15d28] MT#4317 fraud limits: fix labelling
+  * [333244e] MT#3855 Fix empty contract tab on Reseller details
+
+  [ Lars Dieckow ]
+  * [432760b] MT#4609 extend checks when editing the own admin user to prevent locking oneself out
+
+ -- Andrew Pogrebennyk <apogrebennyk@sipwise.com>  Fri, 25 Oct 2013 13:01:50 +0200
+
 ngcp-panel (1.0.19) unstable; urgency=low
 
   [ Gerhard Jungwirth ]
