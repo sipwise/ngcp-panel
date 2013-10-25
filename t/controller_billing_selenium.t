@@ -10,7 +10,7 @@ $d->set_window_size(800,1280) if ($browsername ne "htmlunit");
 my $uri = $ENV{CATALYST_SERVER} || 'http://localhost:3000';
 $d->get_ok("$uri/logout"); #make sure we are logged out
 $d->get_ok("$uri/login");
-$d->set_implicit_wait_timeout(2500);
+$d->set_implicit_wait_timeout(10000);
 
 diag("Do Admin Login");
 $d->find(link_text => 'Admin')->click;
@@ -19,7 +19,7 @@ $d->find(name => 'username')->send_keys('administrator');
 $d->find(name => 'password')->send_keys('administrator');
 $d->findclick_ok(name => 'submit');
 
-$d->title_is('Dashboard');
+$d->find_ok(xpath => '//*[@id="masthead"]//h2[contains(text(),"Dashboard")]');
 
 diag("Go to Billing page");
 $d->findclick_ok(xpath => '//*[@id="main-nav"]//*[contains(text(),"Settings")]');
@@ -27,7 +27,7 @@ $d->find_ok(xpath => '//a[contains(@href,"/domain")]');
 $d->findclick_ok(link_text => "Billing");
 
 diag("Create a billing profile");
-$d->title_is("Billing Profiles");
+$d->find_ok(xpath => '//*[@id="masthead"]//h2[contains(text(),"Billing Profiles")]');
 $d->findclick_ok(link_text => 'Create Billing Profile');
 $d->find(id => 'name')->send_keys('mytestprofile');
 $d->fill_element_ok(['name', 'handle', 'mytestprofile']);
@@ -60,7 +60,7 @@ $edit_link = $d->find_child_element($row, '(./td//a)[contains(text(),"Fees")]');
 ok($edit_link);
 $d->move_to(element => $row);
 $edit_link->click;
-$d->title_like(qr/Billing Fees/);
+$d->find_ok(xpath => '//*[@id="masthead"]//h2[contains(text(),"Billing Fees")]');
 
 diag("Create a billing fee");
 $d->findclick_ok(link_text => 'Create Fee Entry');
@@ -91,7 +91,7 @@ TODO: {
 
 diag("Click Edit Zones");
 $d->findclick_ok(link_text => "Edit Zones");
-$d->title_like(qr/Billing Zones/);
+$d->find_ok(xpath => '//*[@id="masthead"]//h2[contains(text(),"Billing Zones")]');
 
 diag("Delete testingzone");
 $d->fill_element_ok([xpath => '//div[contains(@class, "dataTables_filter")]//input', 'testingdetail']);
@@ -114,7 +114,7 @@ $edit_link = $d->find_child_element($row, '(./td//a)[contains(text(),"Peaktimes"
 ok($edit_link);
 $d->move_to(element => $row);
 $edit_link->click;
-$d->title_like(qr/times for mytestprofile/);
+$d->find_ok(xpath => '//*[@id="masthead"]//h2[contains(text(),"times for mytestprofile")]');
 
 diag("Edit Wednesday");
 $row = $d->find(xpath => '//table//td[contains(text(),"Wednesday")]');

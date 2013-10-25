@@ -11,7 +11,7 @@ $d->set_window_size(800,1280) if ($browsername ne "htmlunit");
 my $uri = $ENV{CATALYST_SERVER} || 'http://localhost:3000';
 $d->get_ok("$uri/logout"); #make sure we are logged out
 $d->get_ok("$uri/login");
-$d->set_implicit_wait_timeout(1000);
+$d->set_implicit_wait_timeout(10000);
 
 diag("Do Admin Login");
 $d->find(link_text => 'Admin')->click;
@@ -21,7 +21,7 @@ $d->find(name => 'password')->send_keys('administrator');
 $d->findclick_ok(name => 'submit');
 
 diag("Go to reseller list");
-$d->title_is('Dashboard');
+$d->find_ok(xpath => '//*[@id="masthead"]//h2[contains(text(),"Dashboard")]');
 $d->findclick_ok(xpath => '//a[@class="btn" and contains(@href,"/reseller")]');
 
 diag("Search nonexisting reseller");
