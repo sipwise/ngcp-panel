@@ -304,7 +304,7 @@ sub ajax_contract :Chained('list_reseller') :PathPart('ajax_contract') :Args(0) 
         } else {}
     } $c->stash->{resellers}->all;
     my $free_contracts = NGCP::Panel::Utils::Contract::get_contract_rs(
-            schema => $c->model('DB'))
+            c => $c)
         ->search_rs({
             'me.status' => { '!=' => 'terminated' },
             'me.id' => { 'not in' => \@used_contracts },

@@ -492,8 +492,7 @@ sub reseller_ajax_contract_filter :Chained('reseller_list') :PathPart('ajax/cont
         return;
     }
 
-    my $rs = NGCP::Panel::Utils::Contract::get_contract_rs(
-            schema => $c->model('DB'))
+    my $rs = NGCP::Panel::Utils::Contract::get_contract_rs(c => $c)
         ->search_rs({
             'me.id' => $contract_id,
         });
