@@ -3,7 +3,10 @@ ngcp-panel (1.0.21) unstable; urgency=low
   [ Andreas Granig ]
   * [b76042a] Show product name in customer details.
 
- -- Andrew Pogrebennyk <apogrebennyk@sipwise.com>  Fri, 25 Oct 2013 18:27:44 +0200
+  [ Gerhard Jungwirth ]
+  * [fa3667a] MT#3855 Fix error on calling get_contract_rs
+
+ -- Andrew Pogrebennyk <apogrebennyk@sipwise.com>  Mon, 28 Oct 2013 21:50:49 +0100
 
 ngcp-panel (1.0.20) unstable; urgency=low
 
