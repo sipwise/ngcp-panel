@@ -106,7 +106,7 @@ sub base :Chained('/') :PathPart('device') :CaptureArgs(0) {
         { name => 'name', search => 1, title => 'Name' },
         { name => 'config.device.vendor', search => 1, title => 'Device Vendor' },
         { name => 'config.device.model', search => 1, title => 'Device Model' },
-        { name => 'firmware.filename', search => 1, title => 'Firmware File' },
+#        { name => 'firmware.filename', search => 1, title => 'Firmware File' },
         { name => 'config.version', search => 1, title => 'Configuration Version' },
     ]);
 
@@ -722,7 +722,6 @@ sub devprof_create :Chained('base') :PathPart('profile/create') :Args(0) :Does(A
         c => $c,
         form => $form,
         fields => {
-            'firmware.create' => $c->uri_for('/device/firmware/create'),
             'config.create' => $c->uri_for('/device/config/create'),
         },
         back_uri => $c->req->uri,
@@ -732,14 +731,11 @@ sub devprof_create :Chained('base') :PathPart('profile/create') :Args(0) :Does(A
         try {
             my $schema = $c->model('DB');
             $schema->txn_do(sub {
-                $form->params->{firmware_id} = $form->params->{firmware}{id} || undef;;
-                delete $form->params->{firmware};
                 $form->params->{config_id} = $form->params->{config}{id};
                 delete $form->params->{config};
 
                 $c->model('DB')->resultset('autoprov_profiles')->create($form->params);
 
-                delete $c->session->{created_objects}->{firmware};
                 delete $c->session->{created_objects}->{config};
                 $c->flash(messages => [{type => 'success', text => 'Successfully created device profile'}]);
             });
@@ -822,7 +818,6 @@ sub devprof_edit :Chained('devprof_base') :PathPart('edit') :Args(0) :Does(ACL) 
     my $posted = ($c->request->method eq 'POST');
     my $form;
     my $params = { $c->stash->{devprof}->get_inflated_columns };
-    $params->{firmware}{id} = delete $params->{firmware_id};
     $params->{config}{id} = delete $params->{config_id};
     $params = $params->merge($c->session->{created_objects});
     $form = NGCP::Panel::Form::Device::Profile->new;
@@ -836,7 +831,6 @@ sub devprof_edit :Chained('devprof_base') :PathPart('edit') :Args(0) :Does(ACL) 
         c => $c,
         form => $form,
         fields => {
-            'firmware.create' => $c->uri_for('/device/firmware/create'),
             'config.create' => $c->uri_for('/device/config/create'),
         },
         back_uri => $c->req->uri,
@@ -846,14 +840,11 @@ sub devprof_edit :Chained('devprof_base') :PathPart('edit') :Args(0) :Does(ACL) 
         try {
             my $schema = $c->model('DB');
             $schema->txn_do(sub {
-                $form->params->{firmware_id} = $form->params->{firmware}{id} || undef;
-                delete $form->params->{firmware};
                 $form->params->{config_id} = $form->params->{config}{id};
                 delete $form->params->{config};
 
                 $c->stash->{devprof}->update($form->params);
 
-                delete $c->session->{created_objects}->{firmware};
                 delete $c->session->{created_objects}->{config};
                 $c->flash(messages => [{type => 'success', text => 'Successfully updated device profile'}]);
             });
@@ -904,7 +895,6 @@ sub dev_field_config :Chained('/') :PathPart('device/autoprov/config') :Args() {
     }
 
     my $model = $dev->profile->config->device;
-    my $fw = $dev->profile->firmware;
 
     my $vars = {
         config => {
@@ -917,13 +907,12 @@ sub dev_field_config :Chained('/') :PathPart('device/autoprov/config') :Args() {
             lineranges => [],
         },
     };
-    if($fw) {
-        $vars->{firmware} = {
-            filename => $fw->filename,
-            version => $fw->version,
-            url => 'http://' . $c->req->uri->host . ':' . ($c->config->{web}->{autoprov_plain_port} // '1444') . '/device/autoprov/firmware/' . $fw->id . '/download',
-        };
-    }
+
+    $vars->{firmware} = {
+        baseurl => 'http://' . $c->req->uri->host . ':' . 
+            ($c->config->{web}->{autoprov_plain_port} // '1444') . 
+            '/device/autoprov/firmware',
+    };
 
     my @lines = ();
     foreach my $linerange($model->autoprov_device_line_ranges->all) {
@@ -982,34 +971,97 @@ sub dev_field_config :Chained('/') :PathPart('device/autoprov/config') :Args() {
 }
 
 sub dev_field_firmware_base :Chained('/') :PathPart('device/autoprov/firmware') :CaptureArgs(1) {
-    my ($self, $c, $devfw_id) = @_;
+    my ($self, $c, $id) = @_;
 
-    unless($devfw_id->is_int) {
-        $c->log->error("invalid device firmware id '$devfw_id' given");
+    unless($id) {
+        $c->response->content_type('text/plain');
         if($c->config->{features}->{debug}) {
-            $c->response->body("404 - invalid device firmware id '$devfw_id'");
+            $c->response->body("404 - device id not given");
         } else {
-            $c->response->body("404 - device firmware not found");
+            $c->response->body("404 - device not found");
         }
         $c->response->status(404);
+        return;
     }
+    $id =~ s/^([^\=]+)\=0$/$1/;
+    $id = lc $id;
 
-    my $devfw_rs = $c->model('DB')->resultset('autoprov_firmwares');
-    $c->stash->{devfw} = $devfw_rs->find($devfw_id);
-    unless($c->stash->{devfw}) {
-        $c->log->error("device firmware id '$devfw_id' not found");
+    my $dev = $c->model('DB')->resultset('autoprov_field_devices')->find({
+        identifier => $id
+    });
+    unless($dev) {
+        $c->response->content_type('text/plain');
         if($c->config->{features}->{debug}) {
-            $c->response->body("404 - device firmware with id '$devfw_id' not found");
+            $c->response->body("404 - device id '" . $id . "' not found");
         } else {
-            $c->response->body("404 - device firmware not found");
+            $c->response->body("404 - device not found");
         }
         $c->response->status(404);
+        return;
     }
+
+    $c->stash->{dev} = $dev;
 }
 
-sub dev_field_firmware :Chained('dev_field_firmware_base') :PathPart('download') :Args(0) {
+sub dev_field_firmware_version_base :Chained('dev_field_firmware_base') :PathPart('from') :CaptureArgs(1) {
+    my ($self, $c, $fwver) = @_;
+
+    unless($fwver) {
+        $c->response->content_type('text/plain');
+        if($c->config->{features}->{debug}) {
+            $c->response->body("404 - firmware name not given");
+        } else {
+            $c->response->body("404 - firmware not found");
+        }
+        $c->response->status(404);
+        return;
+    }
+
+    $c->stash->{dev_fw_string} = $fwver;
+    my $dev = $c->stash->{dev};
+    $c->stash->{fw_rs} = $dev->profile->config->device->autoprov_firmwares;
+}
+
+sub dev_field_firmware_next :Chained('dev_field_firmware_version_base') :PathPart('next') :Args(0) {
     my ($self, $c) = @_;
-    my $fw = $c->stash->{devfw};
+
+    my $rs = $c->stash->{fw_rs}->search({
+        device_id => $c->stash->{dev}->profile->config->device->id,
+        version => { '>' => $c->stash->{dev_fw_string} },
+    }, {
+        order_by => { -asc => 'version' },
+    });
+
+    my $fw = $rs->first;
+    unless($fw) {
+        $c->response->content_type('text/plain');
+        $c->response->body("404 - current firmware version '" . $c->stash->{dev_fw_string} . "' is latest");
+        $c->response->status(404);
+        return;
+    }
+
+    $c->response->header ('Content-Disposition' => 'attachment; filename="' . $fw->filename . '"');
+    $c->response->content_type('application/octet-stream');
+    $c->response->body($fw->data);
+}
+
+sub dev_field_firmware_latest :Chained('dev_field_firmware_version_base') :PathPart('latest') :Args(0) {
+    my ($self, $c) = @_;
+
+    my $rs = $c->stash->{fw_rs}->search({
+        device_id => $c->stash->{dev}->profile->config->device->id,
+        version => { '>' => $c->stash->{dev_fw_string} },
+    }, {
+        order_by => { -desc => 'version' },
+    });
+
+    my $fw = $rs->first;
+    unless($fw) {
+        $c->response->content_type('text/plain');
+        $c->response->body("404 - current firmware version '" . $c->stash->{dev_fw_string} . "' is latest");
+        $c->response->status(404);
+        return;
+    }
 
     $c->response->header ('Content-Disposition' => 'attachment; filename="' . $fw->filename . '"');
     $c->response->content_type('application/octet-stream');
