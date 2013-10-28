@@ -6,16 +6,12 @@ use Moose::Util::TypeConstraints;
 
 use HTML::FormHandler::Widget::Block::Bootstrap;
 
+with 'NGCP::Panel::Render::RepeatableJs';
+
 has '+widget_wrapper' => ( default => 'Bootstrap' );
 has_field 'submitid' => ( type => 'Hidden' );
 sub build_render_list {[qw/submitid fields actions/]}
 sub build_form_element_class {[qw(form-horizontal)]}
-
-has_field 'firmware' => (
-    type => '+NGCP::Panel::Field::DeviceFirmware',
-    not_nullable => 0,
-    label => 'Device Firmware',
-);
 
 has_field 'config' => (
     type => '+NGCP::Panel::Field::DeviceConfig',
@@ -39,7 +35,7 @@ has_field 'save' => (
 has_block 'fields' => (
     tag => 'div',
     class => [qw/modal-body/],
-    render_list => [qw/firmware config name/],
+    render_list => [qw/config name/],
 );
 
 has_block 'actions' => (
