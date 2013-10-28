@@ -180,6 +180,11 @@ $(function () {
             }
         });
     }
+
+    var my_pathname = window.location.pathname;
+    $('.dataTables_length > label > select').on('change', function (e) {
+        localStorage.setItem('ngcp_dt_entries'+my_pathname, $(this).find(":selected").text());
+    });
 });
 </script>
 </body>
