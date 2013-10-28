@@ -2,7 +2,7 @@
   [% barge_in = 0 -%]
   <Profile_Rule>[% config.url %]</Profile_Rule>
   <Upgrade_Enable>Yes</Upgrade_Enable>
-  <Upgrade_Rule>[% firmware.url %]</Upgrade_Rule>
+  <Upgrade_Rule>[% firmware.baseurl %]/$MA/from/$SWVER/next</Upgrade_Rule>
   <Station_Name>[% phone.stationname %]</Station_Name>
   <Station_Display_Name>[% phone.stationname %]</Station_Display_Name>
   <Server_Type>RFC3265_4235</Server_Type>
