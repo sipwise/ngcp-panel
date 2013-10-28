@@ -908,11 +908,17 @@ sub dev_field_config :Chained('/') :PathPart('device/autoprov/config') :Args() {
         },
     };
 
-    $vars->{firmware} = {
-        baseurl => 'http://' . $c->req->uri->host . ':' . 
+    $vars->{firmware}->{baseurl} = 'http://' . $c->req->uri->host . ':' . 
             ($c->config->{web}->{autoprov_plain_port} // '1444') . 
-            '/device/autoprov/firmware',
-    };
+            '/device/autoprov/firmware';
+    my $latest_fw = $c->model('DB')->resultset('autoprov_firmwares')->search({
+        device_id => $model->id,
+    }, {
+        order_by => { -desc => 'version' },
+    })->first;
+    if($latest_fw) {
+        $vars->{firmware}->{maxversion} = $latest_fw->version;
+    }
 
     my @lines = ();
     foreach my $linerange($model->autoprov_device_line_ranges->all) {
