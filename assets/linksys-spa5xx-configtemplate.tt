@@ -11,6 +11,7 @@
   <Attendant_Console_Call_Park_Code>*68</Attendant_Console_Call_Park_Code>
   <Attendant_Console_Call_unPark_Code>*88</Attendant_Console_Call_unPark_Code>
   <Linksys_Key_System>Yes</Linksys_Key_System>
+  <Subscribe_Expires>300</Subscribe_Expires>
   [% FOR range IN phone.lineranges -%]
     [% 
       used_keys = [];
@@ -22,6 +23,7 @@
       [% key = line.keynum + 1 -%]
       [% used_keys.${key} = 1; -%]
       [% IF range.name == "Phone Keys" -%]
+        <Subscription_Expires_[% key %]_>300</Subscription_Expires_[% key %]_>
         <Short_Name_[% key %]_>[% line.displayname %]</Short_Name_[% key %]_>
         <Share_Call_Appearance_[% key %]_>[% line.type == "shared" ? line.type : "private" %]</Share_Call_Appearance_[% key %]_>
         [% IF line.type == "blf" -%]
