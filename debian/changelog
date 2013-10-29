@@ -1,3 +1,9 @@
+ngcp-panel (1.0.22) unstable; urgency=low
+
+  * [54101ea] Revert "Show product name in customer details."
+
+ -- Andreas Granig <agranig@sipwise.com>  Tue, 29 Oct 2013 16:51:38 +0100
+
 ngcp-panel (1.0.21) unstable; urgency=low
 
   [ Andreas Granig ]
