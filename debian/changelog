@@ -1,3 +1,237 @@
+ngcp-panel (1.1.0) unstable; urgency=low
+
+  [ Andreas Granig ]
+  * [ad9a8bb] Use localtime in TS and set createtime for subs.
+  * [e6b9a0a] Add product selection for customer contracts.
+  * [fe580d3] Show product name in customer details.
+  * [dfb25d9] Add skeleton to create admin/extension subscriber.
+  * [754f1f7] Align customer detection to product handling.
+  * [23675b4] Implement group, admin and ext handling for PBX.
+  * [8536595] Fix customer determination in dashboard.
+  * [d47bbec] Add accordion toggle button.
+  * [df1c2cc] Only show PBX groups if it's a PBX account.
+  * [63e9ded] Properly set PBX preferences and use transaction.
+  * [7f7e6cb] Assign contracts to sipaccount product by default.
+  * [2daa16d] Migrate pbx feature config flag to cloudpbx.
+  * [3c8734f] Make PBX groups editable.
+  * [d79b11a] Remove subscriber from PBX group on termination.
+  * [9a1873b] Fix test environment.
+  * [00e13f9] Implement editing PBX extension subscribers.
+  * [5f9c114] Select rewrite rule set for PBX domain creation.
+  * [9efb1f8] Allow changing PBX group for PBX extension.
+  * [ceb9f80] Use proper PBX group helper when changing PBX ext.
+  * [811929b] Add display name and shared roster visibility.
+  * [d1deb32] Reorder subscriber fields to have DT on top.
+  * [ca3e92f] Fix editing normal subscriber.
+  * [acf36bd] Add PBX auto-attendant and office-hours CF targets
+  * [d801311] Remove debug output to stdout.
+  * [35e3a51] Add skeleton for device provisioning.
+  * [199ae7e] Implement device model management.
+  * [e99265c] Check for read_only flag when editing contact.
+  * [8a359e5] Group device overview.
+  * [dcac5aa] Implement device firmware management.
+  * [e5832d6] Implement device config management.
+  * [c3cadb1] Implement device profile management.
+  * [8746a60] Add device management to top menu.
+  * [231dc9f] Reset DT field id if it's not selected.
+  * [015f04b] Add front and mac image for devices.
+  * [907eab8] HTML-escape DT fields before displaying it.
+  * [527bac9] Fix registration list if ignore_auth_realm is set.
+  * [d27d6a1] Make domain optional when handling reg contacts.
+  * [b2f7e00] Render empty string on null values.
+  * [fef88b9] Add PBX device skeleton.
+  * [d4ec2ef] Implement PBX field device handling.
+  * [fdc1f95] Implement PBX field device config delivery.
+  * [b4949f1] Implement PBX device boot-strapping.
+  * [d156b57] Add display name to PBX device config template.
+  * [1809b44] MT#3981 Write numbers to provisioning.voip_dbalias.
+  * [5160759] Implement subscriber login.
+  * [06fc0fa] Fix subscriber login and add basic widgets.
+  * [78e126c] Add basic voicemail widget for subscribers.
+  * [2faa84a] Prepare ACL for subscriber login.
+  * [1dcd702] Correctly prepare subscriber rs depending on realm
+  * [b8cf089] Implement subscriber login call-list/voicemails.
+  * [9769f40] Add templates for subscriber login call-list/vm.
+  * [6e8ac2a] Show subscriber login CF widget and allow prefs.
+  * [de99e0b] Make widget containers higher for subscribers.
+  * [fb780a7] Only validate speeddial form if posted.
+  * [d5dc850] Add subscriber login registered dev widget.
+  * [93fb5eb] Don't allow login subscriber to subscriber details
+  * [de73436] Fix subscriber login topmenu vm link.
+  * [8a194e5] Use preference label instead of attribute.
+  * [fc8c9e2] Cleanup debug log messages.
+  * [086d91f] Use roles instead of realm for logged in users.
+  * [585a4d9] Be more formal in denied-page.
+  * [f2b5729] Only allow subscriber logins from active accounts.
+  * [1af065d] Allow subscriberadmin to access sub-subscribers.
+  * [2447dc9] Harden access to device controller for subscribers
+  * [ef36719] Add subscriberadmin customer link in top menu.
+  * [af5cc9b] Try to avoid wrong redirect to login after login.
+  * [dd62516] Fix $controller::auto declaration.
+  * [683047c] MT#3975 Prevent subadmin from terminating himself.
+  * [fba3998] MT#3977 Implement line/key handling for devices.
+  * [03e4d57] MT#3977 Prepare line/key in PBX field dev.
+  * [1c81791] MT#3977 populate PBX field dev form on prof change
+  * [50a494a] MT#3977 Handle new lines added by user in UI.
+  * [ed359aa] MT#3977 Implement backend for multi-line PBX conf
+  * [5730437] MT#3977 Implement editing of PBX field device.
+  * [853e9e5] MT#3977 Display stationname/keyid in PBX field dev
+  * [3c3cfff] MT#3977 Add option in status msg to manually sync.
+  * [9680cad] MT#3977 properly handle firmware upgrade.
+  * [61983ba] MT#3977 provide example config template SPA5xx
+  * [71d531f] MT#3977 Fix accordion expand/collapse toggle.
+  * [5d8c81e] MT#4213 Don't search for contract id twice.
+  * [8f6431f] MT#4025 Implement management of customer sound set
+  * [507f42c] MT#4025 Fence sound set for subscriberadmins.
+  * [1761945] MT#4025 Implement contract_sound_set preference.
+  * [ff68cbd] MT#4309 Show locked subs in Customer Details
+  * [ddbd742] MT#4263 Also show email in Contract field.
+  * [3acdd72] MT#4145 Change postcode to txt, fix empty reseller
+  * [e93c68c] MT#4025 Manage customer sound-sets in details view
+  * [e03bd51] MT#4025 Only show customer sound sets for admins.
+  * [3f2ecc2] MT#4237 Fix create of reseller on billprof edit
+  * [acff496] MT#3997 Add via_route field to peer hosts.
+  * [988e304] MT#3997 Allow html in tooltips.
+  * [144a360] MT#3997 Use correct tooltip for peer via-routes.
+  * [1515e36] MT#3997 Really properly fix tooltips.
+  * [259ddc1] MT#3997 Cleanup tooltips.
+  * [36a020c] MT#4007 Implement auto attendant mgm for subs.
+  * [05553d0] MT#4413 Remove debugging messages.
+  * [a8c4c0f] MT#3977 Fix ACL for fetching keys of dev profile.
+  * [0ab09a6] MT#3977 Use plain port for linksys provisioning.
+  * [b28f18d] MT#3977 Remove comments from linksys config.
+  * [ff5d127] MT#3971 Add max_subscribers field.
+  * [074758d] MT#3971 Implement limitation of subscribers.
+  * [773c04c] MT#3971 Show Create btn if max_subscribers is null
+  * [1c1f672] MT#3995 Use pre-selected options for ext sbc.
+  * [29e1251] MT#3997 Transform via_route to loose-route URI
+  * [be3439d] MT#3977 Re-add barge-in flag.
+  * [4d619e3] MT#3977 Also set config.url for autoprov config.
+  * [735f340] MT#3977 Fix syntax error.
+  * [c8d1a83] MT#3977 Use voicebox instead of hardcoded 2000
+  * [02207fc] MT#3977 Set proper config.url parameter.
+  * [4421421] MT#4533 Don't transcode MOH files for PBX.
+  * [28db696] MT#3977 Set oubound proxy for priv/shared lines
+  * [eaa8698] MT#3977 Also set flag to use outbound proxy.
+  * [b476bd9] MT#3977 Fix xml syntax error in closing tag.
+  * [cfde4c9] MT#3977 Remove stray outbound proxy setting.
+  * [4b9091d] MT#4607 Replace UNION by simple OR
+  * [83b9be3] MT#4655 Show reseller name in device mgm.
+  * [0945fc9] MT#4657 Make ac an empty string if undef.
+  * [4c88879] MT#4685 Don't tie firmware to profile.
+  * [fdaa0c6] MT#4685 Try to fetch next device firmware
+  * [da753f4] MT#4685 Export latest firmware version for model.
+  * [e6d1861] MT#4685 Set subscription expiry to 300s.
+
+  [ Gerhard Jungwirth ]
+  * [62124ac] Have a new messaging util for custom filtering of error messages
+  * [e44482f] possibility to search a subscriber by his number
+  * [8f02c62] Option to edit an existing contact, belonging to a customer
+  * [c69ab29] Add some fields to contacts form
+  * [607932f] don't count terminated resellers in Dashboard
+  * [e262205] Fix some warnings due to non-numeric argument empty string ("")
+  * [a2ddf93] Copy rewrite rule set functionality
+  * [e892998] Adapt literal sql to older versions of DBIx::Class
+  * [f569c82] adapt search data structure to older versions of DBIx::Class
+  * [a8a0d9b] Validation on the replacement pattern of rewrite rules
+  * [0909c81] Use the messaging utility for Domains
+  * [778c3ca] fix missing validation on integer preferences
+  * [1a073df] adapt peering test to recent changes
+  * [562a9cc] adapt more tests
+  * [4e49c96] use the message utility for all controllers
+  * [b856662] Call end-user-contracts customers to avoid confusion
+  * [f7586a4] fix missing include "NGCP::Panel::Utils::DateTime"
+  * [52e353d] Option to select the number of rows in datatables table
+  * [4cfa5b7] Only expose delete button to contacts with no contracts
+  * [9f9d20e] Expose the contacts controller to Edit/Delete Contacts
+  * [07d3ee5] provide error message on "column" cannot be null
+  * [1c154f8] Only show relevant domains on reseller details
+  * [341aad8] Option for an external webdriver
+  * [cb2e489] Add build option --wd-server
+  * [b541d7c] Add the "./Build test_tap" action which outputs plain TAP
+  * [962eced] use config file ngcp-schema/share/test.conf for testing
+  * [03f08d1] Use JUnit output by default with ./Build test
+  * [c1e2303] increase panel starting timeout
+  * [788d78e] Group callflows by call_id
+  * [5936b59] Fix saving preferences of type enum with empty value
+  * [f0e2f1d] Fix syling of long labels in modal
+  * [c636263] Suppress superfluous error messages "Value must be an integer"
+  * [096ee48] Consistent naming: Web Username/Password vs CSC Username/Password
+  * [594f341] Preserve the product_id when updating a billing_mapping
+  * [c6abfbc] Correctly select customers under reseller-> customers section
+  * [1ab63ef] Fix e164 validation on subscriber creation
+  * [ccd46c1] Validate SIP username
+  * [f444dc0] Show Contract (equals Cusomer-) id
+  * [2f85002] Correctly identify customer contracts
+  * [1991296] Filter Contract Contacts by whether they have a reseller_id
+  * [01ba880] Fix duplicate showing of contracts under Reseller Details - Reseller Contract
+  * [5c5e41c] Use --schema-base-dir setting of ./Build test for all tests
+  * [563adfd] Option to start a custom mysql for ./Build test
+  * [373185c] Use a mysql dump instead of a mysql data directory for tests
+  * [b442c75] Show Timeset and Destination Set Names
+  * [9329de0] Fix failing redirect due to double submitid
+  * [ae0d9ab] Really stop mysqld when Ctrl-C is pressed
+  * [ebe64d3] uri_unescape CDRs
+  * [8d11c9f] validate weight field of Peering Servers
+  * [25dbc9d] Allow 18 decimal digits on Fee rates
+  * [76f4bdd] Restrict certain domain-prefs to their respective reseller
+  * [d010ca4] Allow for + at beginning of replacement patterns
+  * [7427601] MT#4265 Fix editing contacts without a reseller
+  * [a1e04e3] MT#4261 Proper number handling on subscribers
+  * [124137c] MT#4261 number handling on subscriber update
+  * [029c383] MT#4317 fraud limits: fix labelling
+  * [8bdd9f4] MT#4261 alias number handling
+  * [0690dee] MT#3435 fix mysql commandline and DSN
+  * [b8a1e28] MT#3435 fix failing tests due to changed login
+  * [104751b] MT#4289 separate customer/ajax and contract/ajax
+  * [5caf898] MT#4289 separate customer-/contract- create and ajax_reseller_filter
+  * [92c1724] MT#4289 fix html-id with invalid symbols
+  * [6fb3119] MT#4289 move /contract/customer/edit to /customer/edit
+  * [7945805] MT#4289 contracts: filter by product and separate terminate
+  * [b2bcac6] MT#3855 Fix empty contract tab on Reseller details
+  * [8da8d2f] MT#4659 preserve product, when not set by form
+  * [d17c382] MT#4129 prohibit customer with diverging resellers
+  * [35630e1] MT#4129 fix operator precedence
+  * [e76de8b] MT#4667 validate contact on contract create
+  * [4170966] MT#3435 fix tests
+  * [bbe7835] MT#3435 separate stdout/stderr of panel debug
+  * [cab87af] MT#3435 skip problematic tests
+  * [b3a9739] MT#3435 quickfixes for tests
+
+  [ Michael Prokop ]
+  * [a9c05a2] Use invoke-rc.d if available in postinst maintainer script
+  * [cd22cd9] Debian packaging: provide long description
+  * [147ec8f] Add apache2 to Depends
+  * [c292e08] Run wrap-and-sort on Debian files
+  * [ccc709c] Add libapache2-mod-perl2 to Depends
+  * [74cb386] Move apache2/libapache2-mod-perl2 to Pre-Depends
+  * [1098138] Replace Pre-Depends on apache2 with apache2.2-common
+
+  [ Andrew Pogrebennyk ]
+  * [3d11507] Fix a typo on peering page: caller vs callee.
+
+  [ Victor Seva ]
+  * [1614858] Split packaging into ngcp-panel-[common|apache|nginx] packages to deal with webservers.
+  * [96292a5] Added ngcp-panel-[apache|nginx] packages to deal with webservers. Rename ngcp-panel to ngcp-panel-common.
+  * [3b2ad2a] Adjust depends for new ngcp-panel-common split
+  * [9e57266] remove mysql from INIT INFO
+  * [ff16940] remove default nginx site if exist.
+  * [1a5ff7b] MT#4281 fix return value of init script.
+  * [3481d75] MT#4361 Add default file to ngcp-panel-nginx daemon.
+  * [e105fd4] MT#4435 generate just ngcp-panel
+  * [1cbab0e] MT#4435 try to fix trunk upgrades
+
+  [ Alexander Lutay ]
+  * [38e31a6] TT#3921 Usability enhancement for SIP call diagram
+
+  [ Lars Dieckow ]
+  * [eece093] MT#4229 custom Internal server error page
+  * [a37b165] MT#4229 custom Internal server error page
+  * [2a09c77] correct dep name
+  * [79b7304] MT#4609 extend checks when editing the own admin user to prevent locking oneself out
+
+ -- Andreas Granig <agranig@sipwise.com>  Tue, 29 Oct 2013 12:27:26 +0100
+
 ngcp-panel (1.0.21) unstable; urgency=low
 
   [ Andreas Granig ]
