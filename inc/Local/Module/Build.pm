@@ -156,4 +156,11 @@ method ACTION_test_servers {
     <STDIN>;
 }
 
+method ACTION_test_selenium {
+    $self->depends_on('code');
+    $self->_test_preconditions;
+    $self->test_files('t/*_selenium.t t/admin-login.t');
+    $self->generic_test(type => 'default');
+}
+
 END { shutdown_servers }
