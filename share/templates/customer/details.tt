@@ -507,74 +507,42 @@
 -%]
     <script>
         $('input#sync').click(function(e) {
+            e.preventDefault();
             var full_params = "";
-            var timer; var loaded = 0;
             var ip = $('form#devsyncform input#ip').val();
-            $('form#devsyncform .form_messages').empty();
-
-            // Add the iframe with a unique name
-            var iframe = document.createElement("iframe");
-            var uniqueString = "spa_autoconf_post";
-            document.body.appendChild(iframe);
-            iframe.style.display = "none";
-            iframe.contentWindow.name = uniqueString;
-            iframe.onload = function(e) {
-                $('input#ip').removeAttr("disabled");
-                clearTimeout(timer);
-                if(!loaded) {
-                    loaded = 1;
-                    $('form#devsyncform .form_messages').prepend('<div class="alert alert-success" style="margin:10px">Successfully pushed provisioning settings to device. If the device does not reboot, try to sync it <a target="_blank" href="' + autoprov_uri + '?' + full_params + '">manually</a></div>');
-                } else {
-                    console.log("iframe loaded after timer");
-                }
-            }
-
-            // construct a form with hidden inputs, targeting the iframe
             if(!ip.length) {
                 return 0;
             }
-            var autoprov_uri = "[% autoprov_uri %]";
-            console.log("before uri: " + autoprov_uri);
-            autoprov_uri = autoprov_uri.replace('__NGCP_CLIENT_IP__', ip);
-            console.log("after uri: " + autoprov_uri);
-            $('form#devsyncform').attr('target', uniqueString);
-            $('form#devsyncform').attr('action', autoprov_uri);
-            $('form#devsyncform').attr('method', "[% autoprov_method %]");
-            console.log("method=[% autoprov_method %], uri=" + autoprov_uri);
+            $('form#devsyncform .form_messages').empty();
 
-            [% FOR p IN autoprov_params -%]
-                var input = document.createElement("input");
-                input.type = "hidden";
-                input.name = "[% p.key %]";
-                if(full_params.length > 0)
-                    full_params += '&';
-                full_params += input.name;
-                [%# IF p.value.defined -%]
+            var autoprov_uri = "[% autoprov_uri %]";
+            autoprov_uri = autoprov_uri.replace('__NGCP_CLIENT_IP__', ip);
+            [% IF autoprov_method == "POST" -%]
+                $devform = $('form#devsyncform').clone(true);
+                $devform.remove('input:hidden');
+                $devform.find('input#ip').remove();
+                [% FOR p IN autoprov_params -%]
+                    var input = document.createElement("input");
+                    input.type = "hidden";
+                    input.name = "[% p.key %]";
                     input.value = "[% p.value %]";
-                    full_params += '=' + input.value;
-                [%# END -%]
-                $('form#devsyncform').append(input);
+                    $devform.append(input);
+                [% END -%]
+                $devform.attr("target", "_blank");
+                $devform.attr("action", autoprov_uri);
+                $devform.attr("method", "[% autoprov_method %]");
+                $devform.submit();
+            [% ELSE -%]
+                [% FOR p IN autoprov_params -%]
+                    if(full_params.length > 0)
+                        full_params += '&';
+                    full_params += "[% p.key %]";
+                    full_params += '=' + "[% p.value %]";
+                [% END -%]
+                window.open(autoprov_uri + '?' + full_params, '_blank');
             [% END -%]
 
-            timer = setTimeout(function() {
-                console.log("timeout hit");
-                $('input#ip').removeAttr("disabled");
-                if(loaded) {
-                    console.log("iframe already loaded, we're fine?");
-                } else {
-                    $('form#devsyncform .form_messages').prepend('<div class="alert alert-error" style="margin:10px">Failed to push provisioning settings to device. Is the IP Address reachable from your browser? Try to trigger the sync <a target="_blank" href="' + autoprov_uri + '?' + full_params + '">manually</a></div>');
-                }
-                loaded = 1;
-                // TODO: get iframe by id
-                var iframes = document.getElementsByTagName('iframe');
-                for (var i = 0; i < iframes.length; i++) {
-                    iframes[i].parentNode.removeChild(iframes[i]);
-                }
-            }, 5000);
-
-            $('form#devsyncform').submit(function() {
-                $('input#ip').attr("disabled", "disabled");
-            });
+            return false;
         });
     </script>
 [% END -%]

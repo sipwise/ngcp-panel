@@ -1088,7 +1088,8 @@ sub pbx_device_sync :Chained('pbx_device_base') :PathPart('sync') :Args(0) {
     );
 
     if($posted && $form->validated) {
-        NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for_action('/customer/details', $c->req->captures));
+        $c->flash(messages => [{type => 'success', text => 'Successfully redirected request to device'}]);
+        NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for_action('/customer/details', [ $c->req->captures->[0] ]));
     }
     my $dev = $c->stash->{pbx_device};
 
