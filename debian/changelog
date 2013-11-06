@@ -3,7 +3,10 @@ ngcp-panel (1.1.1) unstable; urgency=low
   [ Andreas Granig ]
   * [0554501] MT#4017 Fix subscriber->device mapping in config.
 
- -- Andrew Pogrebennyk <apogrebennyk@sipwise.com>  Wed, 06 Nov 2013 10:41:06 +0100
+  [ Andrew Pogrebennyk ]
+  * [677027d] MT#4863 Grant access to Customer Settings for administrative subscribers.
+
+ -- Andrew Pogrebennyk <apogrebennyk@sipwise.com>  Wed, 06 Nov 2013 15:07:19 +0100
 
 ngcp-panel (1.1.0) unstable; urgency=low
 
