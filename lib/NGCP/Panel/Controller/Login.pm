@@ -114,6 +114,11 @@ sub index :Path Form {
         # initial get
     }
 
+    if ($form->has_errors) {
+        my $request_ip = $c->request->address;
+        $c->log->error("NGCP Panel Login failed realm=$realm ip=$request_ip");
+    }
+
     $c->stash(form => $form);
     $c->stash(realm => $realm);
     $c->stash(template => 'login/login.tt');
