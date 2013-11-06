@@ -56,9 +56,15 @@ sub list_customer :Chained('/') :PathPart('customer') :CaptureArgs(0) {
 
     my $rs = NGCP::Panel::Utils::Contract::get_contract_rs(
         schema => $c->model('DB'));
-    unless($c->user->is_superuser) {
+    if($c->user->roles eq "reseller") {
         $rs = $rs->search({
             'contact.reseller_id' => $c->user->reseller_id,
+        }, {
+            join => 'contact',
+        });
+    } elsif($c->user->roles eq "subscriberadmin") {
+        $rs = $rs->search({
+            'contact.reseller_id' => $c->user->contract->contact->reseller_id,
         }, {
             join => 'contact',
         });
