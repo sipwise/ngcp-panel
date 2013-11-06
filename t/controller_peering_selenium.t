@@ -31,11 +31,9 @@ my $peerings_uri = $d->get_location;
 $d->findclick_ok(link_text => 'Create Peering Group');
 
 diag("Create a Peering Contract");
-sleep 2;
-$d->save_screenshot("ssht_peering_want_contract.png");
+$d->wait_and_screenshot("ssht_peering_want_contract.png");
 $d->findclick_ok(xpath => '//input[@type="button" and @value="Create Contract"]');
-sleep 2;
-$d->save_screenshot("ssht_peering_create_contract_modal.png");
+$d->wait_and_screenshot("ssht_peering_create_contract_modal.png");
 $d->select_if_unselected_ok(xpath => '//table[@id="contactidtable"]/tbody/tr[1]//input[@type="checkbox"]');
 $d->select_if_unselected_ok(xpath => '//table[@id="billing_profileidtable"]/tbody/tr[1]//input[@type="checkbox"]');
 $d->findclick_ok(xpath => '//div[contains(@class,"modal-body")]//div//select[@id="status"]/option[@value="active"]');
@@ -45,8 +43,7 @@ $d->findtext_ok('Create Peering Group'); #Should go back to prev form
 $d->fill_element_ok([id => 'name', 'testinggroup']);
 $d->fill_element_ok([id => 'description', 'A group created for testing purposes']);
 $d->select_if_unselected(xpath => '//table[@id="contractidtable"]/tbody/tr[1]//input[@type="checkbox"]');
-sleep 2;
-$d->save_screenshot("ssht_peering_create_contract_filled.png");
+$d->wait_and_screenshot("ssht_peering_create_contract_filled.png");
 $d->findclick_ok(id => 'save');
 
 diag("Edit Servers/Rules of testinggroup");
@@ -71,14 +68,13 @@ $d->fill_element_ok(['id', 'name', 'mytestserver']);
 $d->fill_element_ok(['id', 'ip', '10.0.0.100']);
 $d->fill_element_ok(['id', 'host', 'sipwise.com']);
 $d->findclick_ok(id => 'save');
-sleep 2;
-$d->save_screenshot("ssht_peering_server_created.png");
+$d->wait_and_screenshot("ssht_peering_server_created.png");
 $d->findtext_ok('Peering server successfully created');
 
 my $server_rules_uri = $d->get_location;
 
 diag('Edit Preferences for "mytestserver".');
-sleep 1; #make sure, we are on the right page
+$d->wait_for_page_to_load; #make sure, we are on the right page
 $row = $d->find(xpath => '(//table/tbody/tr/td[contains(text(), "mytestserver")]/..)[1]');
 ok($row);
 $edit_link = $d->find_child_element($row, '(./td//a)[contains(text(),"Preferences")]');
@@ -108,37 +104,32 @@ $d->navigate_ok($server_rules_uri);
 my $delete_link;
 diag('skip was here');
 diag("Delete mytestserver");
-sleep 1; #make sure, we are on the right page
+$d->wait_for_page_to_load; #make sure, we are on the right page
 $row = $d->find(xpath => '(//table/tbody/tr/td[contains(text(), "mytestserver")]/..)[1]');
 ok($row);
 $delete_link = $d->find_child_element($row, '(./td//a)[contains(text(),"Delete")]');
 ok($delete_link);
 $d->move_to(element => $row);
-sleep 5;
-$d->save_screenshot("ssht_peering_before_delete_server.png");
+$d->wait_and_screenshot("ssht_peering_before_delete_server.png");
 $delete_link->click;
 $d->findtext_ok("Are you sure?");
 $d->findclick_ok(id => 'dataConfirmOK');
-sleep 2;
-$d->save_screenshot("ssht_peering_view_delete_confirmation.png");
+$d->wait_and_screenshot("ssht_peering_view_delete_confirmation.png");
 $d->findtext_ok("successfully deleted"); # delete does not work
-sleep 2;
-$d->save_screenshot("ssht_peering_deleted_server.png");
+$d->wait_and_screenshot("ssht_peering_deleted_server.png");
 
 diag("Delete the previously created Peering Rule");
-sleep 1;
+$d->wait_for_page_to_load;
 $row = $d->find(xpath => '//table[@id="PeeringRules_table"]/tbody/tr[1]');
 ok($row);
 $delete_link = $d->find_child_element($row, '(./td//a)[contains(text(),"Delete")]');
 ok($delete_link);
 $d->move_to(element => $row);
-sleep 2;
-$d->save_screenshot("ssht_peering_before_delete_rule.png");
+$d->wait_and_screenshot("ssht_peering_before_delete_rule.png");
 $delete_link->click;
 $d->findtext_ok("Are you sure?");
 $d->findclick_ok(id => 'dataConfirmOK');
-sleep 2;
-$d->save_screenshot("ssht_peering_deleted_peering_rule.png");
+$d->wait_and_screenshot("ssht_peering_deleted_peering_rule.png");
 diag('skip was here');
 $d->findtext_ok("successfully deleted");
 

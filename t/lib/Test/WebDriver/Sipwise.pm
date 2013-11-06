@@ -55,3 +55,28 @@ sub browser_name_in {
     my $browser_name = $self->get_capabilities->{browserName};
     return $browser_name ~~ @names;
 }
+
+#taken from Selenium::Remote::Driver's wiki page
+method wait_for_page_to_load (Int $timeout=10000) {
+    my $ret = 0;
+    my $sleeptime = 2000;  # milliseconds
+    my $script_ret = "";
+
+    do {
+        sleep ($sleeptime/1000);      # Sleep for the given sleeptime
+        $timeout = $timeout - $sleeptime;
+        $script_ret = $self->execute_script("return document.readyState");
+    } while (($script_ret ne 'complete') && ($timeout > 0));
+    if ($script_ret eq 'complete') {
+         $ret = 1;
+    }
+    return $ret;
+}
+
+method wait_and_screenshot(Str $filename="screenshot.png") {
+    if($self->get_capabilities->{takesScreenshot}) {
+        $self->wait_for_page_to_load;
+        $self->save_screenshot($filename);
+    }
+}
+

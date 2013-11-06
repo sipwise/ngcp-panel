@@ -49,7 +49,7 @@ $d->findtext_ok("Name field is required");
 $d->findclick_ok(id => 'mod_close');
 
 diag("Click Edit on the first reseller shown (first row)");
-sleep 1; #prevent a StaleElementReferenceException
+$d->wait_for_page_to_load;
 my $row = $d->find(xpath => '//*[@id="Resellers_table"]/tbody/tr[1]');
 ok($row);
 $d->move_to(element => $row);
@@ -60,7 +60,7 @@ $btn->click;
 $d->findclick_ok(id => 'mod_close');
 
 diag("Click Terminate on the first reseller shown");
-sleep 1; #prevent a StaleElementReferenceException
+$d->wait_for_page_to_load;
 $row = $d->find(xpath => '//*[@id="Resellers_table"]/tbody/tr[1]');
 ok($row);
 $d->move_to(element => $row);
