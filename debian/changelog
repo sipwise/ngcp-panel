@@ -1,3 +1,10 @@
+ngcp-panel (1.0.24) unstable; urgency=low
+
+  [ Gerhard Jungwirth ]
+  * [b6f885d] MT#4369 Disable Timestamp search on Callflows
+
+ -- Andrew Pogrebennyk <apogrebennyk@sipwise.com>  Wed, 06 Nov 2013 15:12:29 +0100
+
 ngcp-panel (1.0.23) unstable; urgency=low
 
   * [742df74] MT#4395 Fix reseller contracts loading
