@@ -927,7 +927,7 @@ sub dev_field_config :Chained('/') :PathPart('device/autoprov/config') :Args() {
             num_lines => $linerange->num_lines,
             lines => [],
         };
-        foreach my $line($linerange->autoprov_field_device_lines->all) {
+        foreach my $line($linerange->autoprov_field_device_lines->search({ device_id => $dev->id })->all) {
             my $sub = $line->provisioning_voip_subscriber;
             my $display_name = NGCP::Panel::Utils::Preferences::get_usr_preference_rs(
                 c => $c,
