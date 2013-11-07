@@ -9,7 +9,7 @@ server {
 		# adjust parameters for PSGI compatibility
 		fastcgi_param SCRIPT_NAME '';
 		fastcgi_param PATH_INFO $fastcgi_script_name;
-		fastcgi_pass  127.0.1.1:1433;
+		fastcgi_pass  unix:/var/run/fastcgi/ngcp-panel.sock;
 	}
 	location /static {
 		root  /usr/share/ngcp-panel;
