@@ -91,7 +91,7 @@ fi
 
 if [ ! -d $HOMERUN ]; then
   mkdir -p $HOMERUN
-  chown -R $USER:$GROUP
+  chown -R $USER:$GROUP $HOMERUN
 fi
 
 case "$1" in
