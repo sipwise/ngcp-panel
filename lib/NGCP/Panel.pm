@@ -114,6 +114,7 @@ __PACKAGE__->config(
                 user_model => 'DB::admins',
                 id_field => 'id',
                 store_user_class => 'NGCP::Panel::AuthenticationStore::RoleFromRealm',
+                use_userdata_from_session => 1,
             }
         },
         admin => {
@@ -128,6 +129,7 @@ __PACKAGE__->config(
                 user_model => 'DB::admins',
                 id_field => 'id',
                 store_user_class => 'NGCP::Panel::AuthenticationStore::RoleFromRealm',
+                use_userdata_from_session => 1,
             }
         },
         api_admin => {
@@ -153,6 +155,7 @@ __PACKAGE__->config(
                 user_model => 'DB::provisioning_voip_subscribers',
                 id_field => 'id',
                 store_user_class => 'NGCP::Panel::AuthenticationStore::RoleFromRealm',
+                use_userdata_from_session => 1,
             }
         }
     },
