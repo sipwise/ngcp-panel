@@ -6,6 +6,12 @@ body {
     overflow-y: scroll;
 }
 
+.btn:hover, .btn:focus {
+    background-position: 0 0;
+    background-color: transparent;
+    transition: none;
+}
+
 /* ---------
   The modal
 ------------*/
