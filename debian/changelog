@@ -1,3 +1,20 @@
+ngcp-panel (1.1.2) unstable; urgency=low
+
+  [ Andreas Granig ]
+  * [6be0ad7] MT#3917 Show datetime in local timezone for DT.
+  * [7531d79] MT#4017 Use shared line creds for SLA line.
+  * [d683b14] MT#4787 Send browser to PBX device when syncing
+
+  [ Gerhard Jungwirth ]
+  * [cf3e63a] MT#4369 Disable Timestamp search on Callflows
+  * [be8d508] MT#4877: fix button focus style
+  * [bbab21c] MT#4877 Fix button color on click
+
+  [ Victor Seva ]
+  * [68f19db] MT#4895 drop root privileges
+
+ -- Andreas Granig <agranig@sipwise.com>  Thu, 07 Nov 2013 16:26:00 +0100
+
 ngcp-panel (1.1.1) unstable; urgency=low
 
   [ Andreas Granig ]
