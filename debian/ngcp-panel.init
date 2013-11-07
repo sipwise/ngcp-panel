@@ -15,7 +15,7 @@
 DAEMON=/usr/share/ngcp-panel/ngcp_panel_fastcgi.pl
 HOMEDIR=/usr/share/ngcp-panel
 HOMERUN=/var/run/fastcgi
-PIDFILE=/var/run/ngcp-panel.pid
+PIDFILE=$HOMERUN/ngcp-panel.pid
 USER=www-data
 GROUP=www-data
 NAME="ngcp-panel"
@@ -89,10 +89,8 @@ if [ "$RUN_DAEMON" != "yes" ]; then
     exit 0
 fi
 
-if [ ! -d $HOMERUN ]; then
-  mkdir -p $HOMERUN
-  chown -R $USER:$GROUP $HOMERUN
-fi
+# $HOMERUN perms
+mkdir -p $HOMERUN && chown -R $USER:$GROUP $HOMERUN
 
 case "$1" in
   start)
