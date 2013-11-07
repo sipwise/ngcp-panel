@@ -20,6 +20,11 @@ case "$1" in
     	echo "Deactivating ngcp-panel on apache"
     	rm /etc/apache2/sites-enabled/ngcp-panel
     fi
+    # fix tmp perms
+    if [ -d /tmp/ngcp ]; then
+        echo "fixing /tmp/ngcp dir perms"
+        chown -R www-data:www-data /tmp/ngcp
+    fi
     ;;
 
     abort-upgrade)
