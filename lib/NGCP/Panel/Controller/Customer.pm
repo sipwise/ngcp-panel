@@ -517,6 +517,14 @@ sub subscriber_create :Chained('base') :PathPart('subscriber/create') :Args(0) {
                 }
                 if($pbx) {
                     $preferences->{cloud_pbx} = 1;
+                    if($form->params->{e164}{cc} && $form->params->{e164}{sn}) {
+                        $preferences->{cloud_pbx_base_cli} = $form->params->{e164}{cc} . 
+                                                             ($form->params->{e164}{ac} // '') . 
+                                                             $form->params->{e164}{sn};
+                    }
+
+                    # TODO: if number changes, also update cloud_pbx_base_cli
+
                     # TODO: only if it's not a fax/conf extension:
                     $preferences->{shared_buddylist_visibility} = 1;
                     $preferences->{display_name} = $form->params->{display_name}
