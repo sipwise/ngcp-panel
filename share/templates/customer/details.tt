@@ -332,7 +332,7 @@
             { name = 'Files', uri = "/sound/'+full.id+'/handles", class = 'btn-small btn-tertiary', icon = 'icon-list' },
         ];
         helper.top_buttons = [
-            { name = 'Create Sound Set', uri = c.uri_for('/sound/create'), icon = 'icon-star', accordion_button = 1 },
+            { name = 'Create Sound Set', uri = c.uri_for_action('/sound/create', c.req.captures.0), icon = 'icon-star', accordion_button = 1 },
         ];
     ELSE;
         helper.dt_buttons = [
