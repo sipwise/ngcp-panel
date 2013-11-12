@@ -202,7 +202,21 @@ sub delete :Chained('base') :PathPart('delete') {
     my ($self, $c) = @_;
 
     try {
-        $c->stash->{set_result}->delete;
+
+        my $schema = $c->model('DB');
+        $schema->txn_do(sub {
+
+            # remove all usr_preferenes where this set is assigned
+            my $pref_rs = NGCP::Panel::Utils::Preferences::get_usr_preference_rs(
+                c => $c, attribute => 'contract_sound_set', 
+            );
+            $pref_rs->search({ value => $c->stash->{set_result}->id })
+                ->delete_all;
+
+            # TODO: what about normal sound_sets for usr/dom/peer?
+
+            $c->stash->{set_result}->delete;
+        });
         $c->flash(messages => [{type => 'success', text => 'Sound set successfully deleted'}]);
     } catch($e) {
         $c->log->error("failed to delete sound set: $e");
@@ -211,8 +225,8 @@ sub delete :Chained('base') :PathPart('delete') {
     NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for('/sound'));
 }
 
-sub create :Chained('sets_list') :PathPart('create') :Args(0) {
-    my ($self, $c) = @_;
+sub create :Chained('sets_list') :PathPart('create') :Args() {
+    my ($self, $c, $contract_id) = @_;
 
     my $posted = ($c->request->method eq 'POST');
     my $form;
@@ -220,8 +234,21 @@ sub create :Chained('sets_list') :PathPart('create') :Args(0) {
     $params = $params->merge($c->session->{created_objects});
     if($c->user->roles eq "admin") {
         $form = NGCP::Panel::Form::Sound::AdminSet->new;
+        if($contract_id) {
+            my $contract = $c->model('DB')->resultset('contracts')->find($contract_id);
+            if($contract) {
+                $params->{contract}{id} = $contract->id;
+                $params->{reseller}{id} = $contract->contact->reseller_id;
+            }
+        }
     } elsif($c->user->roles eq "reseller") {
         $form = NGCP::Panel::Form::Sound::ResellerSet->new;
+        if($contract_id) {
+            my $contract = $c->model('DB')->resultset('contracts')->find($contract_id);
+            if($contract && $contract->contact->reseller_id == $c->user->reseller_id) {
+                $params->{contract}{id} = $contract->id;
+            }
+        }
     } else {
         $form = NGCP::Panel::Form::Sound::CustomerSet->new;
     }
@@ -244,17 +271,54 @@ sub create :Chained('sets_list') :PathPart('create') :Args(0) {
             if($c->user->roles eq "admin") {
                 $form->values->{reseller_id} = $form->values->{reseller}{id};
                 $form->values->{contract_id} = $form->values->{contract}{id} // undef;
+                if(defined $form->values->{contract_id}) {
+                    $form->values->{contract_default} //= 0;
+                } else {
+                    $form->values->{contract_default} = 0;
+                }
             } elsif($c->user->roles eq "reseller") {
                 $form->values->{reseller_id} = $c->user->reseller_id;
                 $form->values->{contract_id} = $form->values->{contract}{id} // undef;
+                if(defined $form->values->{contract_id}) {
+                    $form->values->{contract_default} //= 0;
+                } else {
+                    $form->values->{contract_default} = 0;
+                }
             } else {
                 $form->values->{reseller_id} = $c->user->contract->contact->reseller_id;
                 $form->values->{contract_id} = $c->user->account_id;
+                $form->values->{contract_default} //= 0;
             }
             delete $form->values->{reseller};
             delete $form->values->{contract};
 
-            $c->stash->{sets_rs}->create($form->values);
+            my $schema = $c->model('DB');
+            $schema->txn_do(sub {
+                my $set = $c->stash->{sets_rs}->create($form->values);
+
+                if($set->contract_default == 1) {
+                    # go over each subscriber in the contract and set the contract_sound_set
+                    # preference if it doesn't have one set yet
+                    my $contract;
+                    if($c->user->roles eq "admin" || $c->user->roles eq "reseller") {
+                        $contract = $schema->resultset('contracts')->find($form->values->{contract_id});
+                    } else {
+                        $contract = $c->user->contract;
+                    }
+                    foreach my $bill_subscriber($contract->voip_subscribers->all) {
+                        my $prov_subscriber = $bill_subscriber->provisioning_voip_subscriber;
+                        if($prov_subscriber) {
+                            my $pref_rs = NGCP::Panel::Utils::Preferences::get_usr_preference_rs(
+                               c => $c, prov_subscriber => $prov_subscriber, attribute => 'contract_sound_set', 
+                            );
+                            unless($pref_rs->first) {
+                                $pref_rs->create({ value => $set->id });
+                            }
+                        }
+                    }
+                }
+            });
+
             delete $c->session->{created_objects}->{reseller};
             $c->flash(messages => [{type => 'success', text => 'Sound set successfully created'}]);
         } catch($e) {

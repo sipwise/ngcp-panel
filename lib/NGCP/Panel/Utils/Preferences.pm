@@ -432,14 +432,17 @@ sub get_usr_preference_rs {
 
     my $c = $params{c};
     my $attribute = $params{attribute};
-    my $prov_subscriber= $params{prov_subscriber};
+    my $prov_subscriber = $params{prov_subscriber};
 
-    my $preference = $c->model('DB')->resultset('voip_preferences')->find({
+    my $pref_rs = $c->model('DB')->resultset('voip_preferences')->find({
             attribute => $attribute, 'usr_pref' => 1,
-        })->voip_usr_preferences->search_rs({
-            subscriber_id => $prov_subscriber->id,
-        });
-    return $preference;
+        })->voip_usr_preferences;
+    if($prov_subscriber) {
+        $pref_rs = $pref_rs->search({
+                subscriber_id => $prov_subscriber->id,
+            });
+    }
+    return $pref_rs;
 }
 
 sub get_dom_preference_rs {
