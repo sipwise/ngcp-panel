@@ -61,6 +61,7 @@ sub callflow_base :Chained('root') :PathPart('') :CaptureArgs(1) {
 
     my $decoder = URI::Encode->new;
     $c->stash->{callid} = $decoder->decode($callid) =~ s/_b2b-1$//r;
+    $c->stash->{callid} = $decoder->decode($callid) =~ s/_pbx-1$//r;
 }
 
 sub get_pcap :Chained('callflow_base') :PathPart('pcap') :Args(0) {
@@ -68,7 +69,7 @@ sub get_pcap :Chained('callflow_base') :PathPart('pcap') :Args(0) {
     my $cid = $c->stash->{callid};
 
     my $packet_rs = $c->model('DB')->resultset('packets')->search({
-        'message.call_id' => { -in => [ $cid, $cid.'_b2b-1' ] },
+        'message.call_id' => { -in => [ $cid, $cid.'_b2b-1', $cid.'_pbx-1' ] },
     }, {
         join => { message_packets => 'message' },
     });
@@ -86,7 +87,7 @@ sub get_png :Chained('callflow_base') :PathPart('png') :Args(0) {
     my $cid = $c->stash->{callid};
 
     my $calls_rs = $c->model('DB')->resultset('messages')->search({
-        'me.call_id' => { -in => [ $cid, $cid.'_b2b-1' ] },
+        'me.call_id' => { -in => [ $cid, $cid.'_b2b-1', $cid.'_pbx-1' ] },
     }, {
         order_by => { -asc => 'timestamp' },
     });
@@ -104,7 +105,7 @@ sub get_callmap :Chained('callflow_base') :PathPart('callmap') :Args(0) {
     my $cid = $c->stash->{callid};
 
     my $calls_rs = $c->model('DB')->resultset('messages')->search({
-        'me.call_id' => { -in => [ $cid, $cid.'_b2b-1' ] },
+        'me.call_id' => { -in => [ $cid, $cid.'_b2b-1', $cid.'_pbx-1' ] },
     }, {
         order_by => { -asc => 'timestamp' },
     });
@@ -123,7 +124,7 @@ sub get_packet :Chained('callflow_base') :PathPart('packet') :Args() {
     my $cid = $c->stash->{callid};
 
     my $packet = $c->model('DB')->resultset('messages')->find({
-        'me.call_id' => { -in => [ $cid, $cid.'_b2b-1' ] },
+        'me.call_id' => { -in => [ $cid, $cid.'_b2b-1', $cid.'_pbx-1' ] },
         'me.id' => $packet_id,
     }, {
         order_by => { -asc => 'timestamp' },
