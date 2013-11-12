@@ -125,6 +125,7 @@ sub end :Private {
         my $incident_id = sprintf '%X', $incident->strftime('%s%N');
         my $incident_timestamp = DateTime::Format::RFC3339->new->format_datetime($incident);
         my $crash_state;
+        $c->log->error(join(q(), @{ $c->error }));
         if ($c->config->{log_crash_state}) {
             local $Data::Dumper::Indent = 1;
             local $Data::Dumper::Useqq = 1;
