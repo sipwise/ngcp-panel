@@ -1533,7 +1533,7 @@ sub master :Chained('base') :PathPart('details') :CaptureArgs(0) {
     $c->stash->{capture_dt_columns} = NGCP::Panel::Utils::Datatables::set_columns($c, [
         { name => "timestamp", search => 1, title => "Timestamp" },
         { name => "call_id", search => 1, title => "Call-ID" },
-        { name => "method", search => 1, title => "Method" },
+        { name => "cseq_method", search => 1, title => "Method" },
     ]);
 
     $c->stash(
