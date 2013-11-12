@@ -40,7 +40,7 @@
           [% even = 0 %]
           [% FOREACH item IN plotdata %]
             <h3>[% item.title %]</h3>
-            <div id="plot_[% item.name %]" class="ngcp-plot"><div style="margin: 20px;"><img src="/img/loader.gif" alt="loading" style="margin-right: 10px;"/>loading...</div></div>
+            <div id="plot_[% item.name | replace('[^a-zA-Z0-9_]+', '_') %]" class="ngcp-plot"><div style="margin: 20px;"><img src="/img/loader.gif" alt="loading" style="margin-right: 10px;"/>loading...</div></div>
           [% END %]
         </div>
     </div>
@@ -95,7 +95,7 @@
           [% FOREACH url IN item.url %]
             "[% url %]",
           [% END %]
-        ], "plot_[% item.name %]", [% item.si ? "true" : "false" %]);
+        ], "plot_[% item.name | replace('[^a-zA-Z0-9_]+', '_') %]", [% item.si ? "true" : "false" %]);
       [% END %]
 
     </script>
