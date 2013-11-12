@@ -81,6 +81,7 @@ sub process_callmap {
       $c->config->{callflow}->{proxy},  'proxy',
       $c->config->{callflow}->{sbc},    'sbc',
       $c->config->{callflow}->{app},    'app',
+      $c->config->{callflow}->{pbx},    'pbx',
     );
 
     my $canvas_margin = 100; # enough free space around diagram for text etc
