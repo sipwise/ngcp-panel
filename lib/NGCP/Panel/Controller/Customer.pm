@@ -517,10 +517,16 @@ sub subscriber_create :Chained('base') :PathPart('subscriber/create') :Args(0) {
                 }
                 if($pbx) {
                     $preferences->{cloud_pbx} = 1;
-                    if($form->params->{e164}{cc} && $form->params->{e164}{sn}) {
+                    if($pbxadmin && $form->params->{e164}{cc} && $form->params->{e164}{sn}) {
                         $preferences->{cloud_pbx_base_cli} = $form->params->{e164}{cc} . 
                                                              ($form->params->{e164}{ac} // '') . 
                                                              $form->params->{e164}{sn};
+                    }
+
+                    # if there is a contract default sound set, use it.
+                    my $default_sound_set = $c->stash->{contract}->voip_sound_sets->search({ contract_default => 1 })->first;
+                    if($default_sound_set) {
+                        $preferences->{contract_sound_set} = $default_sound_set->id;
                     }
 
                     # TODO: if number changes, also update cloud_pbx_base_cli

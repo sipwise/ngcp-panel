@@ -18,7 +18,7 @@ has_field 'contract' => (
 has_block 'fields' => (
     tag => 'div',
     class => [qw/modal-body/],
-    render_list => [qw/reseller contract name description/],
+    render_list => [qw/reseller contract name description contract_default/],
 );
 
 1;

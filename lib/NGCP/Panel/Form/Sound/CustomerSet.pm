@@ -21,6 +21,15 @@ has_field 'description' => (
     type => 'Text',
 );
 
+has_field 'contract_default' => (
+    type => 'Boolean',
+    label => 'Default for Subscribers',
+    element_attr => {
+        rel => ['tooltip'],
+        title => ['If active, this sound set is used for all existing and new subscribers if no specific sound set is specified for them'],
+    },
+);
+
 has_field 'save' => (
     type => 'Submit',
     value => 'Save',
@@ -31,7 +40,7 @@ has_field 'save' => (
 has_block 'fields' => (
     tag => 'div',
     class => [qw/modal-body/],
-    render_list => [qw/name description/],
+    render_list => [qw/name description contract_default/],
 );
 
 has_block 'actions' => (
