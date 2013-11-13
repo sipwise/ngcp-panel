@@ -28,7 +28,8 @@ sub get_host_list {
 sub get_host_subdirs {
     my ($host) = @_;
 
-    my @dirs = File::Find::Rule->directory
+    my $rule = File::Find::Rule->extras({ follow => 1 });
+    my @dirs = $rule->directory
                     ->mindepth( 1 )
                     ->maxdepth( 1 )
                     ->in('/var/lib/collectd/rrd/' . $host);
