@@ -25,11 +25,6 @@ $.extend( $.fn.dataTableExt.oStdClasses, {
             } );
 
 $(document).ready(function() {
-    var prev_controller = (document.referrer || "http://is.invalid/invalid_controller").match(/:\/\/[^/]*\/([^/?]+)/).pop();
-    var this_controller = window.location.pathname.match(/[^/]+/g)[0];
-    if (prev_controller != this_controller) {
-        localStorage.removeItem('ngcp_dt_[% helper.id_from_name %]_table');
-    }
 	var [% helper.id_from_name %]_table = $('#[% helper.id_from_name %]_table')
 	    .dataTable( {
         "sDom": "<'row-fluid ngcp_dt_top_elements'lf<r>>t<'row-fluid'<'pull-left'i><'pull-right'p>>",
