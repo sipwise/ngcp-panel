@@ -1,3 +1,24 @@
+ngcp-panel (1.1.3) unstable; urgency=low
+
+  [ Gerhard Jungwirth ]
+  * [f41bbce] MT#4707 log IP on failed login
+  * [8345d01] MT#4871 Add Selenium Tests for "Customer" page
+
+  [ Andreas Granig ]
+  * [3976851] MT#4543 Also set cloud_pbx_base_cli pref for admin
+  * [adaf5b4] MT#4949 Use pbx in call flow graph.
+  * [d30c21f] MT#4229 Still log the error causing a 500.
+  * [eec7782] MT#4955 Use cseq_method for subscriber captures.
+  * [288c9d1] MT#4955 Introduce customer default sound sets.
+  * [65f1f17] MT#4949 Use pbx-1 suffix for callflows.
+  * [7ebbc58] MT#4961 Fix non-alphanumeric RRD filename handling
+  * [f27e272] MT#4971 Fix follow symlink sp-SELF in statistics.
+
+  [ Lars Dieckow ]
+  * [9857ca0] avoid db fetch for authenticated request
+
+ -- Andrew Pogrebennyk <apogrebennyk@sipwise.com>  Wed, 13 Nov 2013 16:47:41 +0100
+
 ngcp-panel (1.1.2) unstable; urgency=low
 
   [ Andreas Granig ]
