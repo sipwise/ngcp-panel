@@ -14,6 +14,7 @@ use NGCP::Panel::Utils::DateTime;
 use NGCP::Panel::Form::Subscriber;
 use NGCP::Panel::Form::SubscriberEdit;
 use NGCP::Panel::Form::Customer::PbxExtensionSubscriberEdit;
+use NGCP::Panel::Form::Customer::PbxExtensionSubscriberEditAdmin;
 use NGCP::Panel::Form::SubscriberCFSimple;
 use NGCP::Panel::Form::SubscriberCFTSimple;
 use NGCP::Panel::Form::SubscriberCFAdvanced;
@@ -1594,11 +1595,16 @@ sub edit_master :Chained('master') :PathPart('edit') :Args(0) {
     my $subscriber = $c->stash->{subscriber};
     my $prov_subscriber = $subscriber->provisioning_voip_subscriber;
 
-    my $form; my $pbx_ext;
+    my $form; my $pbx_ext; my $is_admin;
     if($c->config->{features}->{cloudpbx} && $prov_subscriber->voip_pbx_group) {
         $pbx_ext = 1;
         $c->stash(customer_id => $subscriber->contract->id);
-        $form = NGCP::Panel::Form::Customer::PbxExtensionSubscriberEdit->new(ctx => $c);
+        if($c->user->roles eq 'subscriberadmin') {
+            $form = NGCP::Panel::Form::Customer::PbxExtensionSubscriberEdit->new(ctx => $c);
+        } else {
+            $is_admin = 1;
+            $form = NGCP::Panel::Form::Customer::PbxExtensionSubscriberEditAdmin->new(ctx => $c);
+        }
     } else {
         $form = NGCP::Panel::Form::SubscriberEdit->new;
     }
@@ -1628,11 +1634,11 @@ sub edit_master :Chained('master') :PathPart('edit') :Args(0) {
         $params->{password} = $prov_subscriber->password;
         $params->{administrative} = $prov_subscriber->admin;
         if($subscriber->primary_number) {
-            unless($pbx_ext) {
-                $params->{e164}->{cc} = $subscriber->primary_number->cc;
-                $params->{e164}->{ac} = $subscriber->primary_number->ac;
-                $params->{e164}->{sn} = $subscriber->primary_number->sn;
-            } elsif($base_number) {
+            $params->{e164}->{cc} = $subscriber->primary_number->cc;
+            $params->{e164}->{ac} = $subscriber->primary_number->ac;
+            $params->{e164}->{sn} = $subscriber->primary_number->sn;
+
+            if($base_number && $pbx_ext) {
                 my $pbx_base_num = $base_number->{cc} .
                     ($base_number->{ac} // '').
                     $base_number->{sn};
@@ -1647,15 +1653,15 @@ sub edit_master :Chained('master') :PathPart('edit') :Args(0) {
                 $params->{group}{id} = $prov_subscriber->pbx_group_id;
             }
         }
-        unless($pbx_ext) {
-            my @alias_nums = ();
-            for my $num($subscriber->voip_numbers->all) {
-                next if $subscriber->primary_number && 
-                    $num->id == $subscriber->primary_number->id;
-                push @alias_nums, { e164 => { cc => $num->cc, ac => $num->ac, sn => $num->sn } };
-            }
-            $params->{alias_number} = \@alias_nums;
+
+        my @alias_nums = ();
+        for my $num($subscriber->voip_numbers->all) {
+            next if $subscriber->primary_number &&
+                $num->id == $subscriber->primary_number->id;
+            push @alias_nums, { e164 => { cc => $num->cc, ac => $num->ac, sn => $num->sn } };
         }
+        $params->{alias_number} = \@alias_nums;
+
         $params->{status} = $subscriber->status;
         $params->{external_id} = $subscriber->external_id;
 
@@ -1728,7 +1734,7 @@ sub edit_master :Chained('master') :PathPart('edit') :Args(0) {
                                 })->delete_all;
 
                 if($subscriber->primary_number) {
-                    if($pbx_ext) {
+                    if($pbx_ext && !$is_admin) {
                         $form->params->{e164}{cc} = $subscriber->primary_number->cc;
                         $form->params->{e164}{ac} = $subscriber->primary_number->ac;
                         $form->params->{e164}{sn} = $base_number->{sn} . $form->params->{extension};
