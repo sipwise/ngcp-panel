@@ -44,45 +44,12 @@ has_field 'webpassword' => (
 );
 
 has_field 'e164' => (
-    type => 'Compound', 
+    type => '+NGCP::Panel::Field::E164',
     order => 99,
     required => 0,
     label => 'E164 Number',
     do_label => 1,
     do_wrapper => 1,
-);
-
-has_field 'e164.cc' => (
-    type => '+NGCP::Panel::Field::PosInteger',
-    element_attr => { 
-        class => ['ngcp_e164_cc'], 
-        rel => ['tooltip'], 
-        title => ['Country Code, e.g. 1 for US or 43 for Austria'] 
-    },
-    do_label => 0,
-    do_wrapper => 0,
-);
-
-has_field 'e164.ac' => (
-    type => '+NGCP::Panel::Field::PosInteger',
-    element_attr => { 
-        class => ['ngcp_e164_ac'], 
-        rel => ['tooltip'], 
-        title => ['Area Code, e.g. 212 for NYC or 1 for Vienna'] 
-    },
-    do_label => 0,
-    do_wrapper => 0,
-);
-
-has_field 'e164.sn' => (
-    type => '+NGCP::Panel::Field::PosInteger',
-    element_attr => { 
-        class => ['ngcp_e164_sn'], 
-        rel => ['tooltip'], 
-        title => ['Subscriber Number, e.g. 12345678'] 
-    },
-    do_label => 0,
-    do_wrapper => 0,
 );
 
 has_field 'username' => (
@@ -160,35 +127,6 @@ has_block 'actions' => (
     class => [qw/modal-footer/],
     render_list => [qw/save/],
 );
-
-sub validate {
-    my $self = shift;
-    my $cc = $self->field('e164.cc')->value;
-    my $sn = $self->field('e164.sn')->value;
-
-    my %sub_errors = map {$_, 1} (
-        @{ $self->field('e164.cc')->errors },
-        @{ $self->field('e164.ac')->errors },
-        @{ $self->field('e164.sn')->errors } );
-    for my $sub_error( keys %sub_errors ) {
-        $self->field('e164')->add_error($sub_error);
-    }
-    $self->field('e164.cc')->clear_errors;
-    $self->field('e164.ac')->clear_errors;
-    $self->field('e164.sn')->clear_errors;
-
-    if ($self->field('e164')->has_errors) {
-        #dont add more errors
-    } elsif (defined $cc && $cc ne '' && (!defined $sn || $sn eq '')) {
-        my $err_msg = 'Subscriber Number required if Country Code is set';
-        $self->field('e164')->add_error($err_msg);
-    } elsif(defined $sn && $sn ne '' && (!defined $cc || $cc eq '')) {
-        my $err_msg = 'Country Code required if Subscriber Number is set';
-        $self->field('e164')->add_error($err_msg);
-    }
-
-    return;
-}
 
 1;
 
