@@ -24,7 +24,8 @@
 <div class="ngcp-separator"></div>
 
 <div class="accordion" id="subscriber_data">
-    [% IF c.user.roles == 'admin' || c.user.roles == 'reseller' %]
+    [% IF c.user.roles == 'admin' || c.user.roles == 'reseller'
+            || c.user.roles == 'subscriberadmin' -%]
     <div class="accordion-group">
         <div class="accordion-heading">
             <a class="accordion-toggle" data-toggle="collapse" data-parent="#subscriber_data" href="#collapse_master">Master Data</a>
