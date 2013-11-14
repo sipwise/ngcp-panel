@@ -44,15 +44,6 @@ has_field 'webpassword' => (
     },
 );
 
-has_field 'e164' => (
-    type => 'Compound', 
-    order => 99,
-    required => 0,
-    label => 'Extension Number',
-    do_label => 1,
-    do_wrapper => 1,
-);
-
 has_field 'username' => (
     type => 'Text',
     label => 'SIP Username',
