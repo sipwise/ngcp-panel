@@ -939,6 +939,7 @@ sub dev_field_config :Chained('/') :PathPart('device/autoprov/config') :Args() {
             } else {
                 $display_name = $sub->username;
             };
+            # TODO: only push password for private/shared line?
             push @{ $range->{lines} }, {
                 username => $sub->username,
                 domain => $sub->domain->domain,
@@ -948,11 +949,6 @@ sub dev_field_config :Chained('/') :PathPart('device/autoprov/config') :Args() {
                 rangenum => $line->linerange_num,
                 type => $line->line_type,
             };
-            if($line->line_type eq "private" && !exists $vars->{sla}) {
-                $vars->{sla}->{username} = $sub->username,
-                $vars->{sla}->{domain} = $sub->domain->domain,
-                $vars->{sla}->{password} = $sub->password,
-            }
         }
         push @{ $vars->{phone}->{lineranges} }, $range;
     }
