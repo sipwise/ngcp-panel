@@ -454,7 +454,7 @@ sub get_dom_preference_rs {
 
     my $preference = $c->model('DB')->resultset('voip_preferences')->find({
             attribute => $attribute, 'dom_pref' => 1,
-        })->voip_usr_preferences->search_rs({
+        })->voip_dom_preferences->search_rs({
             domain_id => $prov_domain->id,
         });
     return $preference;

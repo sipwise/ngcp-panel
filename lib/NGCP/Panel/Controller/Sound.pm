@@ -178,17 +178,60 @@ sub edit :Chained('base') :PathPart('edit') {
             if($c->user->roles eq "admin") {
                 $form->values->{reseller_id} = $form->values->{reseller}{id};
                 $form->values->{contract_id} = $form->values->{contract}{id} // undef;
+                if(defined $form->values->{contract_id}) {
+                    $form->values->{contract_default} //= 0;
+                } else {
+                    $form->values->{contract_default} = 0;
+                }
+            } elsif($c->user->roles eq "reseller") {
+                if(defined $c->stash->{set_result}->contract_id) {
+                    $form->values->{contract_default} //= 0;
+                } else {
+                    $form->values->{contract_default} = 0;
+                }
+            } else {
+                $form->values->{contract_default} //= 0;
             }
             delete $form->values->{reseller};
             delete $form->values->{contract};
-            $c->stash->{set_result}->update($form->values);
+            $c->model('DB')->txn_do(sub {
+                # if contract default is set, clear old ones first
+                if($c->stash->{set_result}->contract_id && $form->values->{contract_default} == 1) {
+                    $c->stash->{sets_rs}->search({
+                        reseller_id => $c->stash->{set_result}->reseller_id,
+                        contract_id => $c->stash->{set_result}->contract_id,
+                        contract_default => 1,
+                    })->update_all({ contract_default => 0 });
+                }
+
+                my $old_contract_default = $c->stash->{set_result}->contract_default;
+                $c->stash->{set_result}->update($form->values);
+
+                if($c->stash->{set_result}->contract && 
+                   $c->stash->{set_result}->contract_default == 1 && $old_contract_default != 1) {
+                    # go over each subscriber in the contract and set the contract_sound_set
+                    # preference if it doesn't have one set yet
+                    my $contract = $c->stash->{set_result}->contract;
+                    foreach my $bill_subscriber($contract->voip_subscribers->all) {
+                        my $prov_subscriber = $bill_subscriber->provisioning_voip_subscriber;
+                        if($prov_subscriber) {
+                            my $pref_rs = NGCP::Panel::Utils::Preferences::get_usr_preference_rs(
+                               c => $c, prov_subscriber => $prov_subscriber, attribute => 'contract_sound_set', 
+                            );
+                            unless($pref_rs->first) {
+                                $pref_rs->create({ value => $c->stash->{set_result}->id });
+                            }
+                        }
+                    }
+                }
+            });
             delete $c->session->{created_objects}->{reseller};
             delete $c->session->{created_objects}->{contract};
             $c->flash(messages => [{type => 'success', text => 'Sound set successfully updated'}]);
         } catch($e) {
             $c->log->error("failed to update sound set: $e");
             $c->flash(messages => [{type => 'error', text => 'Sound set successfully updated'}]);
-        }
+        };
         NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for('/sound'));
     }
 
@@ -294,17 +337,20 @@ sub create :Chained('sets_list') :PathPart('create') :Args() {
 
             my $schema = $c->model('DB');
             $schema->txn_do(sub {
+                # if a new contract default is set, clear old ones first
+                if($form->values->{contract_id} && $form->values->{contract_default} == 1) {
+                    $c->stash->{sets_rs}->search({
+                        reseller_id => $form->values->{reseller_id},
+                        contract_id => $form->values->{contract_id},
+                        contract_default => 1,
+                    })->update_all({ contract_default => 0 });
+                }
                 my $set = $c->stash->{sets_rs}->create($form->values);
 
-                if($set->contract_default == 1) {
+                if($set->contract && $set->contract_default == 1) {
                     # go over each subscriber in the contract and set the contract_sound_set
                     # preference if it doesn't have one set yet
-                    my $contract;
-                    if($c->user->roles eq "admin" || $c->user->roles eq "reseller") {
-                        $contract = $schema->resultset('contracts')->find($form->values->{contract_id});
-                    } else {
-                        $contract = $c->user->contract;
-                    }
+                    my $contract = $set->contract;
                     foreach my $bill_subscriber($contract->voip_subscribers->all) {
                         my $prov_subscriber = $bill_subscriber->provisioning_voip_subscriber;
                         if($prov_subscriber) {
