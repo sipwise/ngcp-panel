@@ -115,6 +115,18 @@ sub create :Chained('dom_list') :PathPart('create') :Args() {
                     ) if($rwr_set);
                 }
 
+                # for PBX domains, we set outbound_from_display to np_display
+                if($pbx) {
+                    my $pref_rs = NGCP::Panel::Utils::Preferences::get_dom_preference_rs(
+                        c => $c, attribute => 'outbound_from_display', prov_domain => $prov_dom
+                    );
+                    unless($pref_rs->first) {
+                        $pref_rs->create({ value => 'np_display' });
+                    } else {
+                        $pref_rs->first->update({ value => 'np_display' });
+                    }
+                }
+
                 $new_dom->create_related('domain_resellers', {
                     reseller_id => $reseller_id
                     });
