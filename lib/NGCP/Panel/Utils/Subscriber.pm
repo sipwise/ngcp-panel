@@ -148,28 +148,25 @@ sub create_subscriber {
 
         # TODO: check if we find a reseller and contract and domains
 
-        my ($number, $cli);
-        if(defined $params->{e164}{cc} && $params->{e164}{cc} ne '') {
-            $cli = $params->{e164}{cc} .
-                ($params->{e164}{ac} || '') .
-                $params->{e164}{sn};
-
-            $number = $reseller->voip_numbers->create({
-                cc => $params->{e164}{cc},
-                ac => $params->{e164}{ac} || '',
-                sn => $params->{e164}{sn},
-                status => 'active',
-            });
-        }
         my $billing_subscriber = $contract->voip_subscribers->create({
             uuid => $uuid_string,
             username => $params->{username},
             domain_id => $billing_domain->id,
             status => $params->{status},
-            primary_number_id => defined $number ? $number->id : undef,
+            primary_number_id => undef, # will be filled in next step
         });
-        if(defined $number) {
-            $number->update({ subscriber_id => $billing_subscriber->id });
+        my ($cli);
+        if(defined $params->{e164}{cc} && $params->{e164}{cc} ne '') {
+            $cli = $params->{e164}{cc} .
+                ($params->{e164}{ac} || '') .
+                $params->{e164}{sn};
+
+            update_subscriber_numbers(
+                schema => $schema,
+                subscriber_id => $billing_subscriber->id,
+                reseller_id => $reseller->id,
+                primary_number => $params->{e164},
+            );
         }
 
         unless(exists $params->{password}) {
