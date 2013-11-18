@@ -1,4 +1,8 @@
-[% site_config.title = 'Customer Details for #' _ contract.id _ " (" _ product.name _ ")" -%]
+[% IF c.user.roles == "subscriber" || c.user.roles == "subscriberadmin" -%]
+    [% site_config.title = 'Customer Details' -%]
+[% ELSE -%]
+    [% site_config.title = 'Customer Details for #' _ contract.id _ " (" _ product.name _ ")" -%]
+[% END -%]
 
 [%
     lock_levels = [
