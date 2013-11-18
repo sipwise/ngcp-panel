@@ -44,25 +44,33 @@
                         </tr>
                     </thead>
                     <tbody>
+                        [% IF c.user.roles == "admin" || c.user.roles == "reseller" -%]
                         <tr class="sw_action_row">
                             <td>Customer #</td>
                             <td>[% subscriber.contract.id %]</td>
                         </tr>
+                        [% END -%]
                         [% 
-                            elements = [
-                                { value = subscriber.status, desc = 'Status'},
-                                { value = subscriber.provisioning_voip_subscriber.webusername, desc = 'Web Username'},
-                                { value = subscriber.provisioning_voip_subscriber.webpassword, desc = 'Web Password'},
-                                { value = subscriber.username _ '@' _ subscriber.domain.domain, desc = 'SIP URI'},
-                                { value = subscriber.primary_number.cc _ ' ' _ subscriber.primary_number.ac _ ' ' _ subscriber.primary_number.sn, desc = 'Primary Number'},
-                                { value = subscriber.provisioning_voip_subscriber.admin ? 'yes' : 'no', desc = 'Administrative'},
-                                { value = subscriber.external_id, desc = 'External #'},
-                            ];
-                            IF subscriber.provisioning_voip_subscriber.voip_pbx_group.defined;
-                                elements.push(
-                                    { value = subscriber.provisioning_voip_subscriber.voip_pbx_group.name, desc = 'PBX Group' },
-                                );
+                            elements = [];
+
+                            elements.push({ value = subscriber.status, desc = 'Status'});
+                            elements.push({ value = subscriber.provisioning_voip_subscriber.webusername, desc = 'Web Username'});
+                            IF (c.user.roles == "admin" || c.user.roles == "reseller") && c.user.show_passwords;
+                            elements.push({ value = subscriber.provisioning_voip_subscriber.webpassword, desc = 'Web Password'});
                             END;
+                            elements.push({ value = subscriber.username _ '@' _ subscriber.domain.domain, desc = 'SIP URI'});
+                            IF (c.user.roles == "admin" || c.user.roles == "reseller") && c.user.show_passwords;
+                            elements.push({ value = subscriber.provisioning_voip_subscriber.webpassword, desc = 'SIP Password'});
+                            END;
+                            IF subscriber.provisioning_voip_subscriber.voip_pbx_group.defined;
+                            elements.push({ value = subscriber.provisioning_voip_subscriber.voip_pbx_group.name, desc = 'PBX Group' });
+                            END;
+                            IF c.user.roles == "admin" || c.user.roles == "reseller";
+                            elements.push({ value = subscriber.provisioning_voip_subscriber.admin ? 'yes' : 'no', desc = 'Administrative'});
+                            elements.push({ value = subscriber.external_id, desc = 'External #'});
+                            elements.push({ value = subscriber.uuid, desc = 'UUID'});
+                            END;
+                            elements.push({ value = subscriber.primary_number.cc _ ' ' _ subscriber.primary_number.ac _ ' ' _ subscriber.primary_number.sn, desc = 'Primary Number'});
 
                         -%]
                         [% FOR elem IN elements -%]
@@ -71,10 +79,6 @@
                                 <td>[% elem.value %]</td>
                             </tr>
                         [% END -%]
-                        <tr>
-                            <td>UUID</td>
-                            <td>[% subscriber.uuid %]</td>
-                        </tr>
                         <tr>
                             <td>Alias Numbers</td>
                             <td>
