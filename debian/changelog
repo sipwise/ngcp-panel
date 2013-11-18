@@ -1,3 +1,20 @@
+ngcp-panel (1.0.24+peerroute.1) unstable; urgency=low
+
+  [ Andreas Granig ]
+  * [43ffda3] MT#3997 Add via_route field to peer hosts.
+  * [74afa02] MT#3997 Allow html in tooltips.
+  * [93c4df0] MT#3997 Use correct tooltip for peer via-routes.
+  * [944c843] MT#3997 Really properly fix tooltips.
+  * [f12bfe8] MT#3995 Use pre-selected options for ext sbc.
+  * [b578012] MT#3997 Transform via_route to loose-route URI
+  * [ec2449e] HTML-escape DT fields before displaying it.
+
+  [ Andrew Pogrebennyk ]
+  * [ee0ddfb] Temporarily disable html in tooltips.
+  * [e7b2377] MT#3997 Fix build_via_routes with only one external sbc.
+
+ -- Andrew Pogrebennyk <apogrebennyk@sipwise.com>  Mon, 18 Nov 2013 20:44:20 +0100
+
 ngcp-panel (1.0.24) unstable; urgency=low
 
   [ Gerhard Jungwirth ]
