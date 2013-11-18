@@ -324,7 +324,10 @@ sub terminate :Chained('base') :PathPart('terminate') :Args(0) :Does(ACL) :ACLDe
                 ) if($prov_subscriber->voip_pbx_group);
                 $prov_subscriber->delete;
             }
-            $subscriber->voip_numbers->delete_all;
+            $subscriber->voip_numbers->update_all({
+                subscriber_id => undef,
+                reseller_id => undef,
+            });
             $subscriber->update({ status => 'terminated' });
         });
         $c->flash(messages => [{type => 'success', text => 'Successfully terminated subscriber'}]);
