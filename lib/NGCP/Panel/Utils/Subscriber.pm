@@ -411,14 +411,35 @@ sub update_subscriber_numbers {
         # before calling this sub
         my $num;
         for my $alias(@$alias_numbers) {
-            $num = $billing_subs->voip_numbers->create({
-                cc          => $alias->{e164}{cc},
-                ac          => $alias->{e164}{ac} // '',
-                sn          => $alias->{e164}{sn},
-                reseller_id => $reseller_id,
-            });
+
+            my $old_number = $schema->resultset('voip_numbers')->search({
+                    cc            => $alias->{cc},
+                    ac            => $alias->{ac} // '',
+                    sn            => $alias->{sn},
+                    subscriber_id => [undef, $subscriber_id],
+                },{
+                    for => 'update',
+                })->first;
+
+            if(defined $old_number) {
+                $old_number->update({
+                    status        => 'active',
+                    reseller_id   => $reseller_id,
+                    subscriber_id => $subscriber_id,
+                });
+                $number = $old_number;
+            } else {
+                $number = $schema->resultset('voip_numbers')->create({
+                    cc            => $alias->{cc},
+                    ac            => $alias->{ac} // '',
+                    sn            => $alias->{sn},
+                    status        => 'active',
+                    reseller_id   => $reseller_id,
+                    subscriber_id => $subscriber_id,
+                });
+            }
             $schema->resultset('voip_dbaliases')->create({
-                username => $num->cc . ($num->ac // '') . $num->sn,
+                username => $number->cc . ($number->ac // '') . $number->sn,
                 subscriber_id => $prov_subs->id,
                 domain_id     => $prov_subs->domain->id,
             });
