@@ -413,9 +413,9 @@ sub update_subscriber_numbers {
         for my $alias(@$alias_numbers) {
 
             my $old_number = $schema->resultset('voip_numbers')->search({
-                    cc            => $alias->{cc},
-                    ac            => $alias->{ac} // '',
-                    sn            => $alias->{sn},
+                    cc            => $alias->{e164}->{cc},
+                    ac            => $alias->{e164}->{ac} // '',
+                    sn            => $alias->{e164}->{sn},
                     subscriber_id => [undef, $subscriber_id],
                 },{
                     for => 'update',
@@ -430,9 +430,9 @@ sub update_subscriber_numbers {
                 $number = $old_number;
             } else {
                 $number = $schema->resultset('voip_numbers')->create({
-                    cc            => $alias->{cc},
-                    ac            => $alias->{ac} // '',
-                    sn            => $alias->{sn},
+                    cc            => $alias->{e164}->{cc},
+                    ac            => $alias->{e164}->{ac} // '',
+                    sn            => $alias->{e164}->{sn},
                     status        => 'active',
                     reseller_id   => $reseller_id,
                     subscriber_id => $subscriber_id,
