@@ -169,100 +169,15 @@ sub subscriber_create :Chained('base') :PathPart('subscriber/create') :Args(0) {
             ->find({domain => $billing_domain->domain});
         try {
             $schema->txn_do(sub {
-                my ($uuid_bin, $uuid_string);
-                UUID::generate($uuid_bin);
-                UUID::unparse($uuid_bin, $uuid_string);
-
-                # TODO: check if we find a reseller and contract and domains
-
-                my $number; my $cli = 0;
-                if(defined $c->request->params->{'e164.cc'} && 
-                   $c->request->params->{'e164.cc'} ne '') {
-                    $cli = $c->request->params->{'e164.cc'} .
-                           ($c->request->params->{'e164.ac'} || '') .
-                           $c->request->params->{'e164.sn'};
-
-                    $number = $reseller->voip_numbers->create({
-                        cc => $c->request->params->{'e164.cc'},
-                        ac => $c->request->params->{'e164.ac'} || '',
-                        sn => $c->request->params->{'e164.sn'},
-                        status => 'active',
-                    });
-                }
-                my $billing_subscriber = $contract->voip_subscribers->create({
-                    uuid => $uuid_string,
-                    username => $c->request->params->{username},
-                    domain_id => $billing_domain->id,
-                    status => $c->request->params->{status},
-                    primary_number_id => defined $number ? $number->id : undef,
-                });
-                if(defined $number) {
-                    $number->update({ subscriber_id => $billing_subscriber->id });
-                }
-
-                my $prov_subscriber = $schema->resultset('provisioning_voip_subscribers')->create({
-                    uuid => $uuid_string,
-                    username => $c->request->params->{username},
-                    password => $c->request->params->{password},
-                    webusername => $c->request->params->{webusername} || $c->request->params->{username},
-                    webpassword => $c->request->params->{webpassword},
-                    admin => $c->request->params->{administrative} || 0,
-                    account_id => $contract->id,
-                    domain_id => $prov_domain->id,
-                    create_timestamp => NGCP::Panel::Utils::DateTime::current_local,
-                });
-
-                my $voip_preferences = $schema->resultset('voip_preferences')->search({
-                    'usr_pref' => 1,
-                });
-                $voip_preferences->find({ 'attribute' => 'account_id' })
-                    ->voip_usr_preferences->create({ 
-                        'subscriber_id' => $prov_subscriber->id,
-                        'value' => $contract->id,
-                    });
-                $voip_preferences->find({ 'attribute' => 'ac' })
-                    ->voip_usr_preferences->create({ 
-                        'subscriber_id' => $prov_subscriber->id,
-                        'value' => $c->request->params->{'e164.ac'},
-                    }) if (defined $c->request->params->{'e164.ac'} && 
-                           length($c->request->params->{'e164.ac'}) > 0);
-                if(defined $c->request->params->{'e164.cc'} &&
-                   length($c->request->params->{'e164.cc'}) > 0) {
-
-                        $voip_preferences->find({ 'attribute' => 'cc' })
-                            ->voip_usr_preferences->create({ 
-                                'subscriber_id' => $prov_subscriber->id,
-                                'value' => $c->request->params->{'e164.cc'},
-                            });
-                        $cli = $c->request->params->{'e164.cc'} .
-                                  (defined $c->request->params->{'e164.ac'} &&
-                                   length($c->request->params->{'e164.ac'}) > 0 ?
-                                   $c->request->params->{'e164.ac'} : ''
-                                  ) .
-                                  $c->request->params->{'e164.sn'};
-                        $voip_preferences->find({ 'attribute' => 'cli' })
-                            ->voip_usr_preferences->create({ 
-                                'subscriber_id' => $prov_subscriber->id,
-                                'value' => $cli,
-                            });
-                }
-
-                $schema->resultset('voicemail_users')->create({
-                    customer_id => $uuid_string,
-                    mailbox => $cli,
-                    password => sprintf("%04d", int(rand 10000)),
-                    email => '',
-                });
-                if($number) {
-                    $schema->resultset('dbaliases')->create({
-                        alias_username => $number->cc .
-                                          ($number->ac || '').
-                                          $number->sn,
-                        alias_domain => $prov_subscriber->domain->domain,
-                        username => $prov_subscriber->username,
-                        domain => $prov_subscriber->domain->domain,
-                    });
-                }
+                my $preferences = {};
+                my $billing_subscriber = NGCP::Panel::Utils::Subscriber::create_subscriber(
+                    c => $c,
+                    schema => $schema,
+                    contract => $c->stash->{contract},
+                    params => $form->params,
+                    admin_default => 0,
+                    preferences => $preferences,
+                );
 
                 delete $c->session->{created_objects}->{domain};
 

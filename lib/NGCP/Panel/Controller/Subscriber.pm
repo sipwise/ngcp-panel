@@ -259,7 +259,10 @@ sub terminate :Chained('base') :PathPart('terminate') :Args(0) {
     try {
         $schema->txn_do(sub {
             $subscriber->provisioning_voip_subscriber->delete;
-            $subscriber->voip_numbers->delete_all;
+            $subscriber->voip_numbers->update_all({
+                subscriber_id => undef,
+                reseller_id => undef,
+            });
             $subscriber->update({ status => 'terminated' });
         });
         $c->flash(messages => [{type => 'success', text => 'Successfully terminated subscriber'}]);
