@@ -405,6 +405,39 @@ sub _set_rewrite_preferences {
 
 }
 
+sub get_usr_preference_rs {
+    my %params = @_;
+
+    my $c = $params{c};
+    my $attribute = $params{attribute};
+    my $prov_subscriber = $params{prov_subscriber};
+
+    my $pref_rs = $c->model('DB')->resultset('voip_preferences')->find({
+            attribute => $attribute, 'usr_pref' => 1,
+        })->voip_usr_preferences;
+    if($prov_subscriber) {
+        $pref_rs = $pref_rs->search({
+                subscriber_id => $prov_subscriber->id,
+            });
+    }
+    return $pref_rs;
+}
+
+sub get_dom_preference_rs {
+    my %params = @_;
+
+    my $c = $params{c};
+    my $attribute = $params{attribute};
+    my $prov_domain = $params{prov_domain};
+
+    my $preference = $c->model('DB')->resultset('voip_preferences')->find({
+            attribute => $attribute, 'dom_pref' => 1,
+        })->voip_dom_preferences->search_rs({
+            domain_id => $prov_domain->id,
+        });
+    return $preference;
+}
+
 1;
 
 =head1 NAME

@@ -1,4 +1,4 @@
-[% site_config.title = 'Customer Details for #' _ contract.id _ " (" _ product.name _ ")" -%]
+[% site_config.title = 'Customer Details for #' _ contract.id -%]
 
 [%
     lock_levels = [

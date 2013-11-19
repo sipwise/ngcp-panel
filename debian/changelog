@@ -1,4 +1,4 @@
-ngcp-panel (1.0.24+peerroute.1) unstable; urgency=low
+ngcp-panel (1.0.26+peerroute.1) unstable; urgency=low
 
   [ Andreas Granig ]
   * [43ffda3] MT#3997 Add via_route field to peer hosts.
@@ -14,6 +14,18 @@ ngcp-panel (1.0.24+peerroute.1) unstable; urgency=low
   * [e7b2377] MT#3997 Fix build_via_routes with only one external sbc.
 
  -- Andrew Pogrebennyk <apogrebennyk@sipwise.com>  Mon, 18 Nov 2013 20:44:20 +0100
+
+ngcp-panel (1.0.26) unstable; urgency=low
+
+  * [f12de19] MT#5009 Also correctly reuse alias numbers.
+
+ -- Andreas Granig <agranig@sipwise.com>  Tue, 19 Nov 2013 16:47:51 +0100
+
+ngcp-panel (1.0.25) unstable; urgency=low
+
+  * [7d351c7] MT#5009 Manually backport number termination/reuse
+
+ -- Andreas Granig <agranig@sipwise.com>  Tue, 19 Nov 2013 15:10:01 +0100
 
 ngcp-panel (1.0.24) unstable; urgency=low
 
