@@ -409,7 +409,7 @@ sub update_subscriber_numbers {
         # note that this only adds new alias numbers
         # old entries in voip_numbers and voip_dbaliases are usually deleted
         # before calling this sub
-        my $num;
+        my $number;
         for my $alias(@$alias_numbers) {
 
             my $old_number = $schema->resultset('voip_numbers')->search({
