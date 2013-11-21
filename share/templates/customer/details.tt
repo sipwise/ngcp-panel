@@ -289,7 +289,8 @@
                             <td>
                                 <ul style="list-style-type:none; margin-left:0">
                                 [% FOR line IN dev.autoprov_field_device_lines.all -%]
-                                    <li>[% line.linerange_num %]/[% line.key_num %]: [% line.provisioning_voip_subscriber.username %]@[% line.provisioning_voip_subscriber.domain.domain %]<span class="pull-right">[% line.line_type %]</span></li>
+                                    [% sub = line.provisioning_voip_subscriber.username _ '@' _ line.provisioning_voip_subscriber.domain.domain; -%]
+                                    <li>[% line.autoprov_device_line_range.name %]/[% line.key_num %]: [% line.line_type %]<br/>[% sub %]</li>[% UNLESS loop.last -%]<li>&nbsp;</li>[% END -%]
                                 [% END -%]
                                 </ul>
                             </td>

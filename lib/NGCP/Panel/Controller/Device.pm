@@ -972,6 +972,131 @@ sub dev_field_config :Chained('/') :PathPart('device/autoprov/config') :Args() {
     $c->response->body($processed_data);
 }
 
+sub dev_static_jitsi_config :Chained('/') :PathPart('device/autoprov/static/jitsi') :Args(0) {
+    my ($self, $c) = @_;
+
+    unless($c->req->params->{user} && $c->req->params->{pass} && $c->req->params->{uuid}) {
+        $c->response->content_type('text/plain');
+        if($c->config->{features}->{debug}) {
+            $c->response->body("404 - user/pass/uuid triple not specified in params");
+        } else {
+            $c->response->body("404 - missing config parameters");
+        }
+        $c->response->status(404);
+        return;
+    }
+    my $uri = $c->req->params->{user};
+    my $pass = $c->req->params->{pass};
+    my $uuid = $c->req->params->{uuid};
+    my ($user, $domain) = split /\@/, $uri;
+    unless($user && $domain) {
+        $c->response->content_type('text/plain');
+        if($c->config->{features}->{debug}) {
+            $c->response->body("404 - user param not in format user\@domain");
+        } else {
+            $c->response->body("404 - invalid user config parameters");
+        }
+        $c->response->status(404);
+        return;
+    }
+
+    my $sipacc = 'accsipngcp'.$user.$domain;
+    my $xmppacc = 'accxmppngcp'.$user.$domain;
+    $sipacc =~ s/[^a-zA-Z0-9]//g;
+    $xmppacc =~ s/[^a-zA-Z0-9]//g;
+    my $provserver = 'https://' . $c->req->uri->host . ':' . $c->req->uri->port .
+            '/device/autoprov/static/jitsi';
+    my $server_ip;
+    if(defined $c->config->{sip}->{lb}) {
+        if(ref $c->config->{sip}->{lb} eq 'ARRAY') {
+            # if we have more lbs, pick a random one
+            $server_ip = $c->config->{sip}->{lb}->[rand @{ $c->config->{sip}->{lb} }];
+        } else {
+            $server_ip = $c->config->{sip}->{lb};
+        }
+    } else {
+        $server_ip = $c->req->uri->host;
+    }
+    my $server_port;
+    my $server_proto;
+
+    $server_port = $c->config->{sip}->{tls_port} // 5060;
+    $server_proto = $c->config->{sip}->{tls_port} ? 'TLS' : 'UDP';
+    $c->log->info("jitsiprov gathered required information, sipacc=$sipacc, xmppacc=$xmppacc");
+
+    my $config = <<"EOF";
+net.java.sip.communicator.plugin.provisioning.URL=$provserver?user\=\${username}&pass\=\${password}&uuid\=\${uuid}
+net.java.sip.communicator.impl.protocol.sip.$sipacc=$sipacc
+net.java.sip.communicator.impl.protocol.sip.$sipacc.ACCOUNT_UID=SIP\:$user\@$domain
+net.java.sip.communicator.impl.protocol.sip.$sipacc.DEFAULT_ENCRYPTION=true
+net.java.sip.communicator.impl.protocol.sip.$sipacc.DEFAULT_SIPZRTP_ATTRIBUTE=true
+net.java.sip.communicator.impl.protocol.sip.$sipacc.DTMF_METHOD=AUTO_DTMF
+net.java.sip.communicator.impl.protocol.sip.$sipacc.DTMF_MINIMAL_TONE_DURATION=70
+net.java.sip.communicator.impl.protocol.sip.$sipacc.PASSWORD=$pass
+net.java.sip.communicator.impl.protocol.sip.$sipacc.ENCRYPTION_PROTOCOL.ENCRYPTION_PROTOCOL.ZRTP=0
+net.java.sip.communicator.impl.protocol.sip.$sipacc.ENCRYPTION_PROTOCOL_STATUS.ENCRYPTION_PROTOCOL_STATUS.ZRTP=true
+net.java.sip.communicator.impl.protocol.sip.$sipacc.FORCE_P2P_MODE=false
+net.java.sip.communicator.impl.protocol.sip.$sipacc.VOICEMAIL_CHECK_URI=sip\:voicebox\@$domain
+net.java.sip.communicator.impl.protocol.sip.$sipacc.VOICEMAIL_URI=
+net.java.sip.communicator.impl.protocol.sip.$sipacc.IS_PRESENCE_ENABLED=false
+net.java.sip.communicator.impl.protocol.sip.$sipacc.KEEP_ALIVE_INTERVAL=25
+net.java.sip.communicator.impl.protocol.sip.$sipacc.KEEP_ALIVE_METHOD=OPTIONS
+net.java.sip.communicator.impl.protocol.sip.$sipacc.OVERRIDE_ENCODINGS=false
+net.java.sip.communicator.impl.protocol.sip.$sipacc.POLLING_PERIOD=30
+net.java.sip.communicator.impl.protocol.sip.$sipacc.PROTOCOL_NAME=SIP
+net.java.sip.communicator.impl.protocol.sip.$sipacc.SAVP_OPTION=0
+net.java.sip.communicator.impl.protocol.sip.$sipacc.SERVER_ADDRESS=$domain
+net.java.sip.communicator.impl.protocol.sip.$sipacc.PROXY_AUTO_CONFIG=false
+net.java.sip.communicator.impl.protocol.sip.$sipacc.PROXY_ADDRESS=$server_ip
+net.java.sip.communicator.impl.protocol.sip.$sipacc.PROXY_PORT=$server_port
+net.java.sip.communicator.impl.protocol.sip.$sipacc.PREFERRED_TRANSPORT=$server_proto
+net.java.sip.communicator.impl.protocol.sip.$sipacc.SUBSCRIPTION_EXPIRATION=3600
+net.java.sip.communicator.impl.protocol.sip.$sipacc.USER_ID=$user\@$domain
+net.java.sip.communicator.impl.protocol.sip.$sipacc.XCAP_ENABLE=false
+net.java.sip.communicator.impl.protocol.sip.$sipacc.XIVO_ENABLE=false
+net.java.sip.communicator.impl.protocol.sip.$sipacc.cusax.XMPP_ACCOUNT_ID=$xmppacc
+net.java.sip.communicator.impl.protocol.jabber.$xmppacc=$xmppacc
+net.java.sip.communicator.impl.protocol.jabber.$xmppacc.ACCOUNT_UID=Jabber\:$user\@$domain\@$domain
+net.java.sip.communicator.impl.protocol.jabber.$xmppacc.ALLOW_NON_SECURE=false
+net.java.sip.communicator.impl.protocol.jabber.$xmppacc.AUTO_DISCOVER_JINGLE_NODES=true
+net.java.sip.communicator.impl.protocol.jabber.$xmppacc.AUTO_DISCOVER_STUN=true
+net.java.sip.communicator.impl.protocol.jabber.$xmppacc.AUTO_GENERATE_RESOURCE=false
+net.java.sip.communicator.impl.protocol.jabber.$xmppacc.BYPASS_GTALK_CAPABILITIES=false
+net.java.sip.communicator.impl.protocol.jabber.$xmppacc.CALLING_DISABLED=true
+net.java.sip.communicator.impl.protocol.jabber.$xmppacc.DEFAULT_ENCRYPTION=true
+net.java.sip.communicator.impl.protocol.jabber.$xmppacc.DEFAULT_SIPZRTP_ATTRIBUTE=true
+net.java.sip.communicator.impl.protocol.jabber.$xmppacc.DTMF_METHOD=AUTO_DTMF
+net.java.sip.communicator.impl.protocol.jabber.$xmppacc.DTMF_MINIMAL_TONE_DURATION=70
+net.java.sip.communicator.impl.protocol.jabber.$xmppacc.PASSWORD=$pass
+net.java.sip.communicator.impl.protocol.jabber.$xmppacc.ENCRYPTION_PROTOCOL.SDES=1
+net.java.sip.communicator.impl.protocol.jabber.$xmppacc.ENCRYPTION_PROTOCOL.ZRTP=0
+net.java.sip.communicator.impl.protocol.jabber.$xmppacc.ENCRYPTION_PROTOCOL_STATUS.SDES=false
+net.java.sip.communicator.impl.protocol.jabber.$xmppacc.ENCRYPTION_PROTOCOL_STATUS.ZRTP=true
+net.java.sip.communicator.impl.protocol.jabber.$xmppacc.GMAIL_NOTIFICATIONS_ENABLED=false
+net.java.sip.communicator.impl.protocol.jabber.$xmppacc.GOOGLE_CONTACTS_ENABLED=true
+net.java.sip.communicator.impl.protocol.jabber.$xmppacc.GTALK_ICE_ENABLED=true
+net.java.sip.communicator.impl.protocol.jabber.$xmppacc.ICE_ENABLED=true
+net.java.sip.communicator.impl.protocol.jabber.$xmppacc.IS_PREFERRED_PROTOCOL=false
+net.java.sip.communicator.impl.protocol.jabber.$xmppacc.IS_SERVER_OVERRIDDEN=false
+net.java.sip.communicator.impl.protocol.jabber.$xmppacc.JINGLE_NODES_ENABLED=true
+net.java.sip.communicator.impl.protocol.jabber.$xmppacc.OVERRIDE_ENCODINGS=false
+net.java.sip.communicator.impl.protocol.jabber.$xmppacc.OVERRIDE_PHONE_SUFFIX=
+net.java.sip.communicator.impl.protocol.jabber.$xmppacc.PROTOCOL_NAME=Jabber
+net.java.sip.communicator.impl.protocol.jabber.$xmppacc.RESOURCE=sipwise
+net.java.sip.communicator.impl.protocol.jabber.$xmppacc.RESOURCE_PRIORITY=30
+net.java.sip.communicator.impl.protocol.jabber.$xmppacc.SDES_CIPHER_SUITES=AES_CM_128_HMAC_SHA1_80,AES_CM_128_HMAC_SHA1_32
+net.java.sip.communicator.impl.protocol.jabber.$xmppacc.SERVER_ADDRESS=$domain
+net.java.sip.communicator.impl.protocol.jabber.$xmppacc.SERVER_PORT=5222
+net.java.sip.communicator.impl.protocol.jabber.$xmppacc.TELEPHONY_BYPASS_GTALK_CAPS=
+net.java.sip.communicator.impl.protocol.jabber.$xmppacc.UPNP_ENABLED=true
+net.java.sip.communicator.impl.protocol.jabber.$xmppacc.USER_ID=$user\@$domain
+net.java.sip.communicator.impl.protocol.jabber.$xmppacc.USE_DEFAULT_STUN_SERVER=true
+EOF
+
+    $c->response->content_type('text/plain');
+    $c->response->body($config);
+}
+
 sub dev_field_firmware_base :Chained('/') :PathPart('device/autoprov/firmware') :CaptureArgs(1) {
     my ($self, $c, $id) = @_;
 
