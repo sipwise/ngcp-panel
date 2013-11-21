@@ -1,3 +1,11 @@
+ngcp-panel (1.1.6) unstable; urgency=low
+
+  * [d23de0e] MT#5009 Fix syntax error.
+  * [7110f43] MT#5009 Use proper alias number sub-elements.
+  * [80dcf44] MT#4235 Implement static Jitsi provisioning.
+
+ -- Andreas Granig <agranig@sipwise.com>  Thu, 21 Nov 2013 14:56:09 +0100
+
 ngcp-panel (1.1.5) unstable; urgency=low
 
   * [f575753] MT#5009 Properly reuse alias numbers also.
