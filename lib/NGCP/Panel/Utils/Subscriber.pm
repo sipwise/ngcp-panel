@@ -451,6 +451,34 @@ sub update_subscriber_numbers {
     return;
 }
 
+sub update_subadmin_sub_aliases {
+    my %params = @_;
+
+    my $schema         = $params{schema};
+    my $subscriber_id  = $params{subscriber_id};
+    my $sadmin_id      = $params{sadmin_id};
+    my $contract_id    = $params{contract_id};
+    my $alias_selected = $params{alias_selected};
+
+    my $num_rs = $schema->resultset('voip_numbers')->search_rs({
+        'subscriber.contract_id' => $contract_id,
+    },{
+        prefetch => 'subscriber',
+    });
+    for my $num ($num_rs->all) {
+        next if ($num->voip_subscribers->first); # is a primary number
+        if ($num->id ~~ $alias_selected) {
+            $num->update({
+                subscriber_id => $subscriber_id
+            });
+        } elsif ($num->subscriber_id == $subscriber_id) { #unselected
+            $num->update({
+                subscriber_id => $sadmin_id
+            });
+        }
+    }
+}
+
 1;
 
 =head1 NAME

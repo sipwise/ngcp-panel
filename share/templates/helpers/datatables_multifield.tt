@@ -1,0 +1,96 @@
+<!-- datatables_multifield -->
+<script type="text/javascript">
+
+var checked_fields = {};
+$(document).ready(function() {
+    
+    JSON.parse('[% value %]').map( function (val) {
+        checked_fields[val] = 1;
+    });
+    $('#[% table_id %] tr td input[type="checkbox"]').live( "click", function() {
+    
+        var my_id = $(this).parents("tr").find("td:first").text();
+        if($(this).attr("checked") == "checked") {
+            checked_fields[my_id] = 1;
+        } else {
+            delete checked_fields[my_id];
+        }
+        $("#[% hidden_id %]").val( JSON.stringify(Object.keys(checked_fields)) );
+    
+    });
+
+	$('#[% table_id %]')
+	    .dataTable( {
+        "sDom": "<'row-fluid'<'pull-left'r><'pull-right'f>>t<'row-fluid'<'pull-left'i><'pull-right'p>>",
+		"bProcessing": true,
+		"bServerSide": true,
+		"bPaginate": true,
+        "sPaginationType": "bootstrap",
+		"bLengthChange": false,
+		"bSort": true,
+		"bInfo": true,
+		"iDisplayLength": 4,
+        'iShowPages': 5,
+		"sAjaxSource": "[% ajax_src %]",
+		
+		"aoColumns": [
+                        [% FOREACH f IN table_fields -%]
+		    		    { 
+                           "mData": "[% f %]",
+                           "mRender": function ( data, type, full ) {
+                                if(data == null)
+                                    return '';
+                                return String(data).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+                            }
+                        },
+                        [% END -%]
+		    		    { "mRender": function ( data, type, full ) {
+                                return '<input type="checkbox" value="' + full.id + '"/>';
+                            },
+                          "mData": null,
+                          "bSortable": false
+                        }
+		],
+        "fnRowCallback": function(nRow, aData, iDisplayIndex) {
+            nRow.className = "sw_action_row";
+            if($(nRow).find("td:first").text() in checked_fields)
+            {
+                $(nRow).find("td input[type='checkbox']").attr("checked", "checked");
+            }
+            return nRow;
+        },
+        "fnServerParams": function ( aoData ) {
+            //aoData.push( {"name":"iIdOnTop","value":"[% value %]"} );
+        },
+	} );
+
+} );
+</script>
+
+<div class="control-group [% IF errors.size %]error[% END %]">
+     <label class="control-label" for="[% table_id %]">[% label %]</label>
+     <div class="controls">
+         <input type="hidden" name="[% field_name %]" value="[% value | html %]" id="[% hidden_id %]"/>
+         <table class="table table-bordered table-striped table-highlight table-hover" id="[% table_id %]">
+            <thead>
+                <tr>
+                    [% FOREACH t IN table_titles %]
+                        <th>[% t %]</th>
+                    [% END %]
+                    <th class="span"></th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr class="sw_action_row">
+                    <td>Loading</td>
+                </tr>
+            </tbody>
+        </table>
+        [% IF errors.size -%]
+        <span class="help-inline">
+            [% errors.join('<br/>') %]
+        </span>
+        [% END -%]
+    </div>
+</div>
+[% # vim: set tabstop=4 syntax=html expandtab: -%]

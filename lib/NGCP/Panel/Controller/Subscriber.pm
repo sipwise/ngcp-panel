@@ -2,6 +2,7 @@ package NGCP::Panel::Controller::Subscriber;
 use Sipwise::Base;
 BEGIN { extends 'Catalyst::Controller'; }
 use HTML::Entities;
+use JSON qw(decode_json encode_json);
 use URI::Escape qw(uri_unescape);
 use Test::More;
 use NGCP::Panel::Utils::Navigation;
@@ -17,6 +18,8 @@ use NGCP::Panel::Form::Subscriber;
 use NGCP::Panel::Form::SubscriberEdit;
 use NGCP::Panel::Form::Customer::PbxExtensionSubscriberEdit;
 use NGCP::Panel::Form::Customer::PbxExtensionSubscriberEditAdmin;
+use NGCP::Panel::Form::Customer::PbxExtensionSubscriberEditSubadmin;
+use NGCP::Panel::Form::Customer::PbxExtensionSubscriberEditSubadminNoGroup;
 use NGCP::Panel::Form::SubscriberCFSimple;
 use NGCP::Panel::Form::SubscriberCFTSimple;
 use NGCP::Panel::Form::SubscriberCFAdvanced;
@@ -1673,18 +1676,28 @@ sub edit_master :Chained('master') :PathPart('edit') :Args(0) {
     my $subscriber = $c->stash->{subscriber};
     my $prov_subscriber = $subscriber->provisioning_voip_subscriber;
 
-    my $form; my $pbx_ext; my $is_admin;
-    if($c->config->{features}->{cloudpbx} && $prov_subscriber->voip_pbx_group) {
-        $pbx_ext = 1;
-        $c->stash(customer_id => $subscriber->contract->id);
+    my $form; my $pbx_ext; my $is_admin; my $subadmin_pbx;
+    
+    if ($c->config->{features}->{cloudpbx} && $prov_subscriber->voip_pbx_group) {
         if($c->user->roles eq 'subscriberadmin') {
-            $form = NGCP::Panel::Form::Customer::PbxExtensionSubscriberEdit->new(ctx => $c);
+            $pbx_ext = 1;
+            $subadmin_pbx = 1;
+            $c->stash(customer_id => $subscriber->contract->id);
+            $form = NGCP::Panel::Form::Customer::PbxExtensionSubscriberEditSubadmin->new(ctx => $c);
         } else {
+            $pbx_ext = 1;
+            $c->stash(customer_id => $subscriber->contract->id);
             $is_admin = 1;
             $form = NGCP::Panel::Form::Customer::PbxExtensionSubscriberEditAdmin->new(ctx => $c);
         }
     } else {
-        $form = NGCP::Panel::Form::SubscriberEdit->new;
+        if($c->user->roles eq 'subscriberadmin') {
+            $subadmin_pbx = 1;
+            $c->stash(customer_id => $subscriber->contract->id);
+            $form = NGCP::Panel::Form::Customer::PbxExtensionSubscriberEditSubadminNoGroup->new(ctx => $c);
+        } else {
+            $form = NGCP::Panel::Form::SubscriberEdit->new;
+        }
     }
 
     my $posted = ($c->request->method eq 'POST');
@@ -1732,13 +1745,21 @@ sub edit_master :Chained('master') :PathPart('edit') :Args(0) {
             }
         }
 
+        my @alias_options = ();
         my @alias_nums = ();
-        for my $num($subscriber->voip_numbers->all) {
-            next if $subscriber->primary_number &&
-                $num->id == $subscriber->primary_number->id;
+        my $num_rs = $c->model('DB')->resultset('voip_numbers')->search_rs({
+            'subscriber.contract_id' => $subscriber->contract_id,
+        },{
+            prefetch => 'subscriber',
+        });
+        for my $num($num_rs->all) {
+            next if ($num->voip_subscribers->first); # is a primary number
+            next unless ($num->subscriber_id == $subscriber->id);
             push @alias_nums, { e164 => { cc => $num->cc, ac => $num->ac, sn => $num->sn } };
+            push @alias_options, $num->id;
         }
         $params->{alias_number} = \@alias_nums;
+        $params->{alias_select} = encode_json(\@alias_options);
 
         $params->{status} = $subscriber->status;
         $params->{external_id} = $subscriber->external_id;
@@ -1750,14 +1771,19 @@ sub edit_master :Chained('master') :PathPart('edit') :Args(0) {
     $form->process(
         posted => $posted,
         params => $c->request->params,
-        item => $params
+        item => $params,
+        update_field_list => {
+                $subadmin_pbx ?  (alias_select => {
+                    ajax_src => "".$c->uri_for_action("/subscriber/aliases_ajax", $c->req->captures)
+                }) : (),
+            }
     );
 
     NGCP::Panel::Utils::Navigation::check_form_buttons(
         c => $c,
         form => $form,
         fields => {
-            'group.create' => $c->uri_for_action('/customer/pbx_group_create', [$prov_subscriber->account_id]),
+            $pbx_ext ? ('group.create' => $c->uri_for_action('/customer/pbx_group_create', [$prov_subscriber->account_id])) : (),
         },
         back_uri => $c->req->uri,
     );
@@ -1776,7 +1802,7 @@ sub edit_master :Chained('master') :PathPart('edit') :Args(0) {
                 $prov_params->{webpassword} = $form->params->{webpassword};
                 $prov_params->{password} = $form->params->{password};
                 $prov_params->{admin} = $form->params->{administrative} // 0
-                    unless($pbx_ext);
+                    if($is_admin);
                 $prov_params->{pbx_group_id} = $form->params->{group}{id}
                     if($pbx_ext);
                 my $old_group_id = $prov_subscriber->pbx_group_id;
@@ -1789,7 +1815,7 @@ sub edit_master :Chained('master') :PathPart('edit') :Args(0) {
                     new_group_id => $prov_subscriber->pbx_group_id,
                     username => $subscriber->username,
                     domain => $subscriber->domain->domain,
-                ) if($pbx_ext && $old_group_id != $prov_subscriber->pbx_group_id);
+                ) if($pbx_ext && defined $old_group_id && $old_group_id != $prov_subscriber->pbx_group_id);
 
                 $subscriber->update({
                     status => $form->params->{status},
@@ -1801,15 +1827,29 @@ sub edit_master :Chained('master') :PathPart('edit') :Args(0) {
                     $form->values->{lock} ||= 0; # update lock below
                 }
 
-                for my $num($subscriber->voip_numbers->all) {
-                    next if($subscriber->primary_number && $num->id == $subscriber->primary_number->id);
-                    $num->delete;
+                unless ($subadmin_pbx) {
+                    for my $num($subscriber->voip_numbers->all) {
+                        next if($subscriber->primary_number && $num->id == $subscriber->primary_number->id);
+                        $num->delete;
+                    }
                 }
 
                 $schema->resultset('voip_dbaliases')->search({
                                     subscriber_id => $prov_subscriber->id,
                                     domain_id => $prov_subscriber->domain->id,
                                 })->delete_all;
+
+                if ($subadmin_pbx) {
+                    NGCP::Panel::Utils::Subscriber::update_subadmin_sub_aliases(
+                        schema => $schema,
+                        subscriber_id => $subscriber->id,
+                        contract_id => $subscriber->contract_id,
+                        alias_selected => decode_json($form->value->{alias_select}),
+                        sadmin_id => $c->model('DB')
+                            ->resultset('voip_subscribers')
+                            ->find({uuid => $c->user->uuid})->id
+                    );
+                }
 
                 if($subscriber->primary_number) {
                     if($pbx_ext && !$is_admin) {
@@ -1823,7 +1863,7 @@ sub edit_master :Chained('master') :PathPart('edit') :Args(0) {
                         subscriber_id =>$subscriber->id,
                         reseller_id => $subscriber->contract->contact->reseller_id,
                         primary_number => $form->params->{e164},
-                        alias_numbers  => $form->values->{alias_number},
+                        $subadmin_pbx ? () : (alias_numbers  => $form->values->{alias_number}),
                     );
 
                         # TODO: if it's an admin for pbx, update all other subscribers as well!
@@ -1834,7 +1874,7 @@ sub edit_master :Chained('master') :PathPart('edit') :Args(0) {
                         subscriber_id =>$subscriber->id,
                         reseller_id => $subscriber->contract->contact->reseller_id,
                         primary_number => $form->values->{e164},
-                        alias_numbers  => $form->values->{alias_number},
+                        $subadmin_pbx ? () : (alias_numbers  => $form->values->{alias_number}),
                     );
                 }
 
@@ -1869,6 +1909,29 @@ sub edit_master :Chained('master') :PathPart('edit') :Args(0) {
         close_target => $c->uri_for_action('/subscriber/details', [$c->req->captures->[0]]),
     );
 
+}
+
+sub aliases_ajax :Chained('master') :PathPart('aliases/ajax') :Args(0) :Does(ACL) :ACLDetachTo('/denied_page') :AllowedRole(subscriberadmin) {
+    my ($self, $c) = @_;
+
+    my $subscriber = $c->stash->{subscriber};
+    my @alias_nums = ();
+    my $num_rs = $c->model('DB')->resultset('voip_numbers')->search_rs({
+        'subscriber.contract_id' => $subscriber->contract_id,
+        'voip_subscribers.id' => undef,
+    },{
+        prefetch => ['subscriber', 'voip_subscribers'],
+    });
+
+    my $alias_columns = NGCP::Panel::Utils::Datatables::set_columns($c, [
+        { name => "id", search => 1, title => "#" },
+        { name => "number", search => 1, title => "Number", literal_sql => "concat(cc,' ',ac,' ',sn)"},
+        { name => "subscriber.username", search => 1, title => "Subscriber" },
+    ]);
+
+    NGCP::Panel::Utils::Datatables::process($c, $num_rs, $alias_columns);
+    
+    $c->detach( $c->view("JSON") );
 }
 
 sub edit_voicebox :Chained('base') :PathPart('preferences/voicebox/edit') :Args(1) {
