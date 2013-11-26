@@ -409,6 +409,9 @@ sub preferences_base :Chained('base') :PathPart('preferences') :CaptureArgs(1) {
 sub preferences_edit :Chained('preferences_base') :PathPart('edit') :Args(0) {
     my ($self, $c) = @_;
 
+    $c->detach('/denied_page')
+        if(($c->user->roles eq "admin" || $c->user->roles eq "reseller") && $c->user->read_only);
+
     $c->stash(edit_preference => 1);
 
     my @enums = $c->stash->{preference_meta}
@@ -432,6 +435,9 @@ sub preferences_edit :Chained('preferences_base') :PathPart('edit') :Args(0) {
 
 sub preferences_callforward :Chained('base') :PathPart('preferences/callforward') :Args(1) {
     my ($self, $c, $cf_type) = @_;
+
+    $c->detach('/denied_page')
+        if(($c->user->roles eq "admin" || $c->user->roles eq "reseller") && $c->user->read_only);
 
     my $cf_desc;
     given($cf_type) {
@@ -694,6 +700,9 @@ sub preferences_callforward :Chained('base') :PathPart('preferences/callforward'
 sub preferences_callforward_advanced :Chained('base') :PathPart('preferences/callforward') :Args(2) {
     my ($self, $c, $cf_type, $advanced) = @_;
 
+    $c->detach('/denied_page')
+        if(($c->user->roles eq "admin" || $c->user->roles eq "reseller") && $c->user->read_only);
+
     # TODO bail out of $advanced ne "advanced"
     if(defined $advanced && $advanced eq 'advanced') {
         $advanced = 1;
@@ -847,6 +856,9 @@ sub preferences_callforward_advanced :Chained('base') :PathPart('preferences/cal
 sub preferences_callforward_destinationset :Chained('base') :PathPart('preferences/destinationset') :Args(1) {
     my ($self, $c, $cf_type) = @_;
 
+    $c->detach('/denied_page')
+        if(($c->user->roles eq "admin" || $c->user->roles eq "reseller") && $c->user->read_only);
+
     my $prov_subscriber = $c->stash->{subscriber}->provisioning_voip_subscriber;
 
     my @sets;
@@ -878,6 +890,9 @@ sub preferences_callforward_destinationset :Chained('base') :PathPart('preferenc
 
 sub preferences_callforward_destinationset_create :Chained('base') :PathPart('preferences/destinationset/create') :Args(1) {
     my ($self, $c, $cf_type) = @_;
+
+    $c->detach('/denied_page')
+        if(($c->user->roles eq "admin" || $c->user->roles eq "reseller") && $c->user->read_only);
 
     my $prov_subscriber = $c->stash->{subscriber}->provisioning_voip_subscriber;
 
@@ -986,6 +1001,9 @@ sub preferences_callforward_destinationset_create :Chained('base') :PathPart('pr
 
 sub preferences_callforward_destinationset_base :Chained('base') :PathPart('preferences/destinationset') :CaptureArgs(1) {
     my ($self, $c, $set_id) = @_;
+
+    $c->detach('/denied_page')
+        if(($c->user->roles eq "admin" || $c->user->roles eq "reseller") && $c->user->read_only);
 
     $c->stash(destination_set => $c->stash->{subscriber}
         ->provisioning_voip_subscriber
@@ -1203,6 +1221,9 @@ sub preferences_callforward_destinationset_delete :Chained('preferences_callforw
 sub preferences_callforward_timeset :Chained('base') :PathPart('preferences/timeset') :Args(1) {
     my ($self, $c, $cf_type) = @_;
 
+    $c->detach('/denied_page')
+        if(($c->user->roles eq "admin" || $c->user->roles eq "reseller") && $c->user->read_only);
+
     my $prov_subscriber = $c->stash->{subscriber}->provisioning_voip_subscriber;
 
     my @sets;
@@ -1233,6 +1254,9 @@ sub preferences_callforward_timeset :Chained('base') :PathPart('preferences/time
 
 sub preferences_callforward_timeset_create :Chained('base') :PathPart('preferences/timeset/create') :Args(1) {
     my ($self, $c, $cf_type) = @_;
+
+    $c->detach('/denied_page')
+        if(($c->user->roles eq "admin" || $c->user->roles eq "reseller") && $c->user->read_only);
 
     my $prov_subscriber = $c->stash->{subscriber}->provisioning_voip_subscriber;
 
@@ -1302,6 +1326,9 @@ sub preferences_callforward_timeset_create :Chained('base') :PathPart('preferenc
 
 sub preferences_callforward_timeset_base :Chained('base') :PathPart('preferences/timeset') :CaptureArgs(1) {
     my ($self, $c, $set_id) = @_;
+
+    $c->detach('/denied_page')
+        if(($c->user->roles eq "admin" || $c->user->roles eq "reseller") && $c->user->read_only);
 
     $c->stash(time_set => $c->stash->{subscriber}
         ->provisioning_voip_subscriber
@@ -1437,6 +1464,9 @@ sub preferences_callforward_timeset_delete :Chained('preferences_callforward_tim
 
 sub preferences_callforward_delete :Chained('base') :PathPart('preferences/callforward/delete') :Args(1) {
     my ($self, $c, $cf_type) = @_;
+
+    $c->detach('/denied_page')
+        if(($c->user->roles eq "admin" || $c->user->roles eq "reseller") && $c->user->read_only);
 
     try {
         my $prov_subscriber = $c->stash->{subscriber}->provisioning_voip_subscriber;
@@ -1592,6 +1622,10 @@ sub reglist :Chained('master') :PathPart('regdevices') :Args(0) {
 
 sub edit_master :Chained('master') :PathPart('edit') :Args(0) {
     my ($self, $c) = @_;
+
+    $c->detach('/denied_page')
+        if(($c->user->roles eq "admin" || $c->user->roles eq "reseller") && $c->user->read_only);
+
     my $subscriber = $c->stash->{subscriber};
     my $prov_subscriber = $subscriber->provisioning_voip_subscriber;
 
@@ -1796,6 +1830,9 @@ sub edit_master :Chained('master') :PathPart('edit') :Args(0) {
 sub edit_voicebox :Chained('base') :PathPart('preferences/voicebox/edit') :Args(1) {
     my ($self, $c, $attribute) = @_;
 
+    $c->detach('/denied_page')
+        if(($c->user->roles eq "admin" || $c->user->roles eq "reseller") && $c->user->read_only);
+
     my $form;
     my $posted = ($c->request->method eq 'POST');
     my $vm_user = $c->stash->{subscriber}->provisioning_voip_subscriber->voicemail_user;
@@ -1897,6 +1934,9 @@ sub edit_voicebox :Chained('base') :PathPart('preferences/voicebox/edit') :Args(
 
 sub edit_fax :Chained('base') :PathPart('preferences/fax/edit') :Args(1) {
     my ($self, $c, $attribute) = @_;
+
+    $c->detach('/denied_page')
+        if(($c->user->roles eq "admin" || $c->user->roles eq "reseller") && $c->user->read_only);
 
     my $form;
     my $posted = ($c->request->method eq 'POST');
@@ -2040,6 +2080,9 @@ sub edit_fax :Chained('base') :PathPart('preferences/fax/edit') :Args(1) {
 
 sub edit_reminder :Chained('base') :PathPart('preferences/reminder/edit') {
     my ($self, $c, $attribute) = @_;
+
+    $c->detach('/denied_page')
+        if(($c->user->roles eq "admin" || $c->user->roles eq "reseller") && $c->user->read_only);
 
     my $posted = ($c->request->method eq 'POST');
     my $reminder = $c->stash->{subscriber}->provisioning_voip_subscriber->voip_reminder;
@@ -2218,6 +2261,9 @@ sub play_voicemail :Chained('voicemail') :PathPart('play') :Args(0) {
 sub delete_voicemail :Chained('voicemail') :PathPart('delete') :Args(0) {
     my ($self, $c) = @_;
 
+    $c->detach('/denied_page')
+        if(($c->user->roles eq "admin" || $c->user->roles eq "reseller") && $c->user->read_only);
+
     try {
         $c->stash->{voicemail}->delete;
         $c->flash(messages => [{type => 'success', text => 'Successfully deleted voicemail'}]);
@@ -2259,6 +2305,10 @@ sub registered :Chained('master') :PathPart('registered') :CaptureArgs(1) {
 
 sub delete_registered :Chained('registered') :PathPart('delete') :Args(0) {
     my ($self, $c) = @_;
+
+    $c->detach('/denied_page')
+        if(($c->user->roles eq "admin" || $c->user->roles eq "reseller") && $c->user->read_only);
+
     my $ret;
 
     try {
@@ -2425,6 +2475,9 @@ sub trusted_base :Chained('base') :PathPart('preferences/trusted') :CaptureArgs(
 sub edit_trusted :Chained('trusted_base') :PathPart('edit') {
     my ($self, $c) = @_;
 
+    $c->detach('/denied_page')
+        if(($c->user->roles eq "admin" || $c->user->roles eq "reseller") && $c->user->read_only);
+
     my $posted = ($c->request->method eq 'POST');
     my $trusted = $c->stash->{trusted};
     my $params = {};
@@ -2478,6 +2531,9 @@ sub edit_trusted :Chained('trusted_base') :PathPart('edit') {
 
 sub delete_trusted :Chained('trusted_base') :PathPart('delete') :Args(0) {
     my ($self, $c) = @_;
+
+    $c->detach('/denied_page')
+        if(($c->user->roles eq "admin" || $c->user->roles eq "reseller") && $c->user->read_only);
 
     try {
         $c->stash->{trusted}->delete;
@@ -2580,6 +2636,9 @@ sub speeddial :Chained('base') :PathPart('preferences/speeddial') :CaptureArgs(1
 sub delete_speeddial :Chained('speeddial') :PathPart('delete') :Args(0) {
     my ($self, $c) = @_;
 
+    $c->detach('/denied_page')
+        if(($c->user->roles eq "admin" || $c->user->roles eq "reseller") && $c->user->read_only);
+
     try {
         $c->stash->{speeddial}->delete;
         $c->flash(messages => [{type => 'success', text => 'Successfully deleted speed dial slot'}]);
@@ -2596,6 +2655,9 @@ sub delete_speeddial :Chained('speeddial') :PathPart('delete') :Args(0) {
 
 sub edit_speeddial :Chained('speeddial') :PathPart('edit') :Args(0) {
     my ($self, $c) = @_;
+
+    $c->detach('/denied_page')
+        if(($c->user->roles eq "admin" || $c->user->roles eq "reseller") && $c->user->read_only);
 
     my $posted = ($c->request->method eq 'POST');
     my $prov_subscriber = $c->stash->{subscriber}->provisioning_voip_subscriber;
@@ -2680,6 +2742,9 @@ sub autoattendant :Chained('base') :PathPart('preferences/autoattendant') :Captu
 sub delete_autoattendant :Chained('autoattendant') :PathPart('delete') :Args(0) {
     my ($self, $c) = @_;
 
+    $c->detach('/denied_page')
+        if(($c->user->roles eq "admin" || $c->user->roles eq "reseller") && $c->user->read_only);
+
     try {
         $c->stash->{autoattendant}->delete;
         $c->flash(messages => [{type => 'success', text => 'Successfully deleted auto attendant slot'}]);
@@ -2696,6 +2761,9 @@ sub delete_autoattendant :Chained('autoattendant') :PathPart('delete') :Args(0) 
 
 sub edit_autoattendant :Chained('base') :PathPart('preferences/speeddial/edit') :Args(0) {
     my ($self, $c) = @_;
+
+    $c->detach('/denied_page')
+        if(($c->user->roles eq "admin" || $c->user->roles eq "reseller") && $c->user->read_only);
 
     my $posted = ($c->request->method eq 'POST');
     my $prov_subscriber = $c->stash->{subscriber}->provisioning_voip_subscriber;
