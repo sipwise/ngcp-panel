@@ -1,0 +1,56 @@
+[% META title = 'Call Distribution' -%]
+
+    <style>
+        #circle circle {
+          fill: none;
+          pointer-events: all;
+        }
+
+        .group path {
+          fill-opacity: .5;
+        }
+
+        path.chord {
+          stroke: #000;
+          stroke-width: .25px;
+        }
+
+        #circle:hover path.fade {
+          display: none;
+        }
+
+        svg {
+          font: 10px sans-serif;
+        }
+
+        .axis path, .axis line {
+          fill: none;
+          stroke: #000;
+          shape-rendering: crispEdges;
+        }
+
+    </style>
+
+    <script type="text/javascript" src="/js/libs/d3.v2.min-2.8.1.js"></script>
+    <div class="row">
+        <span>
+            <a class="btn btn-primary btn-large" href="[% c.uri_for('/back') %]"><i class="icon-arrow-left"></i> Back</a>
+        </span>
+    </div>
+    [% back_created = 1 -%]
+    <div class="ngcp-separator"></div>
+
+    <p>Mouseover on a country name to focus on calls to or from a single country. The thickness of links between countries encodes the relative frequency of calls between two countries: thicker links represent more calls.</p>
+    <p>Links are colored by the more frequent origin. Mouseover on a link to see the direction details.</p>
+
+    <div class="offset2 span6" id="ngcp-cdr-chord" style="margin-top:20px">
+        <div id="ngcp-cdr-chord-loading" style="margin-top:30px">
+            <img src="/img/loader.gif" alt="loading" style="margin-right: 10px;"/>
+            <span><i>crunching data, please be patient - it might take a while...</i></span>
+        </div>
+    </div>
+
+    <script type="text/javascript" src="/js/libs/ngcp-chord.js"></script>
+
+
+[% # vim: set tabstop=4 syntax=html expandtab: -%]

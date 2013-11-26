@@ -1,5 +1,19 @@
 <li class="dropdown">
     <a href="javascript:;" class="dropdown-toggle" data-toggle="dropdown">
+        <i class="icon-signal"></i>
+        <span>Monitoring &amp; Statistics</span>
+        <b class="caret"></b>
+    </a>
+    <ul class="dropdown-menu">
+        <li><a href="[% c.uri_for('/statistics') %]">System Statistics</a></li>
+        <li><a href="[% c.uri_for('/calls') %]">Call Distribution</a></li>
+        [% IF c.config.features.callflow -%]
+        <li><a href="[% c.uri_for('/callflow') %]">SIP Call Flows</a></li>
+        [% END -%]
+    </ul>
+</li>
+<li class="dropdown">
+    <a href="javascript:;" class="dropdown-toggle" data-toggle="dropdown">
         <i class="icon-th"></i>
         <span>Settings</span>
         <b class="caret"></b>
@@ -18,9 +32,6 @@
         <li><a href="[% c.uri_for('/ncos') %]">NCOS Levels</a></li>
         <li><a href="[% c.uri_for('/sound') %]">Sound Sets</a></li>
         <li><a href="[% c.uri_for('/security') %]">Security Bans</a></li>
-        [% IF c.config.features.callflow -%]
-        <li><a href="[% c.uri_for('/callflow') %]">SIP Call Flows</a></li>
-        [% END -%]
         [% IF c.config.features.cloudpbx -%]
         <li><a href="[% c.uri_for('/device') %]">Device Management</a></li>
         [% END -%]
