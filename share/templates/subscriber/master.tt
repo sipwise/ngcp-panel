@@ -33,7 +33,9 @@
         <div class="accordion-body collapse" id="collapse_master">
             <div class="accordion-inner">
 
+                [% IF (c.user.roles == "admin" || c.user.roles == "reseller") && c.user.read_only != 1 -%]
                 <a class="btn btn-tertiary btn-large" href="[% c.uri_for_action('/subscriber/edit_master', [ subscriber.id ]) %]"><i class="icon-edit"></i> Edit</a>
+                [% END -%]
                 <div class="ngcp-separator"></div>
 
                 <table class="table table-bordered table-striped table-highlight table-hover" id="subscribers_table">
@@ -135,10 +137,17 @@
     helper.form_object = form;
     helper.ajax_uri = c.uri_for_action('/subscriber/ajax_voicemails', [c.req.captures.0]);
 
+    
+    IF (c.user.roles == "admin" || c.user.roles == "reseller") && c.user.read_only != 1;
+    helper.dt_buttons = [
+        { name = 'Play', uri = "details/voicemail/'+full.id+'/play", class = 'btn-small btn-tertiary', icon = 'icon-play' },
+    ];
+    ELSE;
     helper.dt_buttons = [
         { name = 'Play', uri = "details/voicemail/'+full.id+'/play", class = 'btn-small btn-tertiary', icon = 'icon-play' },
         { name = 'Delete', uri = "details/voicemail/'+full.id+'/delete", class = 'btn-small btn-secondary', icon = 'icon-trash' },
     ];
+    END;
    
 
     PROCESS 'helpers/datatables.tt';
@@ -155,7 +164,9 @@
         <div class="accordion-body collapse" id="collapse_regdev">
             <div class="accordion-inner">
 
+            [% IF (c.user.roles == "admin" || c.user.roles == "reseller") && c.user.read_only != 1 -%]
             <a class="btn btn-tertiary btn-large" href="[% c.uri_for_action('/subscriber/create_registered', [c.req.captures.0]) %]"><i class="icon-star"></i> Create Permanent Registration</a>
+            [% END -%]
 [%
     helper.name = 'Registered Devices';
     #helper.column_sort = 'origtime';
@@ -167,9 +178,11 @@
     helper.form_object = form;
     helper.ajax_uri = c.uri_for_action('/subscriber/ajax_registered', [c.req.captures.0]);
 
+    IF (c.user.roles == "admin" || c.user.roles == "reseller") && c.user.read_only != 1;
     helper.dt_buttons = [
         { name = 'Delete', uri = "details/registered/'+full.id+'/delete", class = 'btn-small btn-secondary', icon = 'icon-trash' },
     ];
+    END;
    
 
     PROCESS 'helpers/datatables.tt';
@@ -178,7 +191,7 @@
         </div>
     </div>
 
-[% IF c.config.features.callflow -%]
+[% IF c.config.features.callflow && c.user.call_data -%]
     <div class="accordion-group">
         <div class="accordion-heading">
             <a class="accordion-toggle" data-toggle="collapse" data-parent="#subscriber_data" href="#collapse_cap">Captured Dialogs</a>
