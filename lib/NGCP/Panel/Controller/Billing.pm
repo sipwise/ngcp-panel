@@ -313,28 +313,47 @@ sub fees_upload :Chained('fees_list') :PathPart('upload') :Args(0) {
             return;
         }
 
-        my $csv = Text::CSV_XS->new({allow_whitespace => 1, binary => 1});
+        my $csv = Text::CSV_XS->new({allow_whitespace => 1, binary => 1, keep_meta_info => 1});
         my @cols = $c->config->{fees_csv}->{element_order};
         $csv->column_names (@cols);
         if ($c->req->params->{purge_existing}) {
             $c->stash->{'profile_result'}->billing_fees->delete_all;
         }
 
+        my @fails = ();
+        my $linenum = 0;
+        try {
+            $c->model('DB')->txn_do(sub {
+                while(my $row = $csv->getline_hr($upload->fh)) {
+                    ++$linenum;
+                    if($csv->is_missing(1)) {
+                        push @fails, $linenum;
+                        next;
+                    }
+                    my $zone = $c->stash->{'profile_result'}
+                        ->billing_zones
+                        ->find_or_create({
+                            zone => $row->{zone},
+                            detail => $row->{zone_detail}
+                        });
+                    $row->{billing_zone_id} = $zone->id;
+                    delete $row->{zone};
+                    delete $row->{zone_detail};
+                    $c->stash->{'profile_result'}
+                        ->billing_fees->create($row);
+                }
+            });
+            my $text = "Billing Fee successfully uploaded";
+            if(@fails) {
+                $text .= ", but skipped the following line numbers: " . (join ", ", @fails);
+            }
 
-        while (my $row = $csv->getline_hr($upload->fh)) {
-            my $zone = $c->stash->{'profile_result'}
-                ->billing_zones
-                ->find_or_create({
-                    zone => $row->{zone},
-                    detail => $row->{zone_detail}
-                });
-            $row->{billing_zone_id} = $zone->id;
-            delete $row->{zone};
-            delete $row->{zone_detail};
-            $c->stash->{'profile_result'}
-                ->billing_fees->create($row);
-        }
-        $c->flash(messages => [{type => 'success', text => 'Billing Fee successfully uploaded!'}]);
+            $c->flash(messages => [{type => 'success', text => $text}]);
+        } catch($e) {
+            $c->log->error("failed to upload csv: $e");
+            $c->flash(messages => [{type => 'error', text => 'Failed to upload Billing Fees'}]);
+        };
+
         $c->response->redirect($c->uri_for($c->stash->{profile}->{id}, 'fees'));
         return;
     }
