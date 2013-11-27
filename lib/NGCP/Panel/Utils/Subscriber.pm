@@ -256,7 +256,7 @@ sub get_custom_subscriber_struct {
         $sub->{locations} = [ map { { $_->get_columns } } $c->model('DB')->resultset('location')->
             search({
                 username => $s->username,
-                domain => $s->domain->domain,
+                ($c->config->{features}->{multidomain}) ? (domain => $s->domain->domain) : (),
             })->all ];
         if($c->config->{features}->{cloudpbx} && $s->provisioning_voip_subscriber->is_pbx_group) {
             my $grp = $contract->voip_pbx_groups->find({ subscriber_id => $s->provisioning_voip_subscriber->id });
