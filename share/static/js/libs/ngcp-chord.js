@@ -1,25 +1,39 @@
-console.log("foo bar");
 var chord;
-jQuery.ajax({
-    url: "/calls/ajax",
-    type: "post",
+function loadChord() {
+
+$("#ngcp-cdr-chord-loading").remove();
+$("#ngcp-cdr-chord").append(
+    '<div id="ngcp-cdr-chord-loading" style="margin-top:30px">' +
+    '  <img src="/img/loader.gif" alt="loading" style="margin-right: 10px;"/>' +
+    '  <span><i>crunching data, please be patient - it might take a while...</i></span>' +
+    '</div>'
+);
+
+$.ajax({
+    url: "/calls/ajax?from=" + $("#datepicker_start").val() + "&to=" + $("#datepicker_end").val(),
+    type: "get",
     async: true,
     datatype: "json",
     error: function(xhr, textStatus, errorThrown) {
         $("#ngcp-cdr-chord-loading").remove();
-        $("#ngcp-cdr-chord").append('<div class="error">Failed to load call data</div>');
+        $("#ngcp-cdr-chord").append('<div id="ngcp-cdr-chord-loading">Failed to load call data</div>');
     },
     success: function(resjson, textStatus, XMLHttpRequest) {
         $("#ngcp-cdr-chord-loading").remove();
         var json = $.parseJSON(resjson);
     	var countries = json.countries;
 	    var matrix = json.calls;
+
+        if(matrix.length == 0) {
+            $("#ngcp-cdr-chord").append('<div id="ngcp-cdr-chord-loading">No call data for the specified date range found</div>');
+            return;
+        }
+
+
         var width = 720,
             height = 720,
             outerRadius = Math.min(width, height) / 2 - 10,
             innerRadius = outerRadius - 24;
-
-        console.log(json);
 
         //var formatPercent = d3.format(".1%");
         var formatPercent = function(v) {
@@ -38,7 +52,6 @@ jQuery.ajax({
         var path = d3.svg.chord()
             .radius(innerRadius);
 
-        console.log("appending svg");
         var svg = d3.select("#ngcp-cdr-chord").append("svg")
             .attr("width", width)
             .attr("height", height)
@@ -104,6 +117,8 @@ jQuery.ajax({
         });
     }
 });
+
+}
 
 function mouseover(d, i) {
   chord.classed("fade", function(p) {
