@@ -12,9 +12,11 @@ sub build_render_list {[qw/submitid fields actions/]}
 sub build_form_element_class { [qw/form-horizontal/] }
 
 has_field 'cash_balance' => (
-    type => 'Integer',
+    type => 'Money',
     label => 'Cash Balance',
     required => 1,
+    inflate_method => sub { return $_[1] * 100 },
+    deflate_method => sub { return $_[1] / 100 },
 );
 
 has_field 'free_time_balance' => (
@@ -46,11 +48,11 @@ has_block 'actions' => (
 
 =head1 NAME
 
-NGCP::Panel::Form::NCOSPattern
+NGCP::Panel::Form::CustomerBalance
 
 =head1 DESCRIPTION
 
-Form to modify a billing.ncos_pattern_list row.
+
 
 =head1 METHODS
 
