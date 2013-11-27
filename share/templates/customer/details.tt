@@ -368,9 +368,11 @@
                         </tr>
                     </thead>
                     <tbody>
+                        [% USE format %]
+                        [% money_format = format('%.2f') %]
                         <tr class="sw_action_row">
                             <td>Current totals</td>
-                            <td>[% balance.cash_balance %]</td>
+                            <td>[% money_format(balance.cash_balance / 100) %]</td>
                             <td>[% balance.free_time_balance %]</td>
                             <td class="ngcp-actions-column">
                                 <div class="sw_actions pull-right">
@@ -383,7 +385,7 @@
                         </tr>
                         <tr>
                             <td>Spent this interval</td>
-                            <td>[% balance.cash_balance_interval %]</td>
+                            <td>[% money_format( balance.cash_balance_interval / 100 ) %]</td>
                             <td>[% balance.free_time_balance_interval %]</td>
                             <td></td>
                         </tr>
