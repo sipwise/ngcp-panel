@@ -1,5 +1,6 @@
 package NGCP::Panel::Controller::Calls;
 use Sipwise::Base;
+use DateTime::Format::Strptime;
 
 BEGIN { extends 'Catalyst::Controller'; }
 
@@ -29,7 +30,31 @@ sub calls_matrix_ajax :Chained('/') :PathPart('calls/ajax') :Args(0) {
      my $matrix = [];
      my $countries = [];
 
-     my $rs = $c->model('DB')->resultset('cdr')->search({}, {
+     my $from = $c->req->params->{from};
+     my $to = $c->req->params->{to};
+     my $parse_time = DateTime::Format::Strptime->new(pattern => '%F');
+
+     my $from_epoch;
+     if($from) {
+        $from_epoch = $parse_time->parse_datetime($from)->epoch();
+     } else {
+        $from_epoch = NGCP::Panel::Utils::DateTime::current_local->truncate(to => 'day')->epoch();
+     }
+     my $to_epoch; 
+     if($to) {
+        $to_epoch = $parse_time->parse_datetime($to)->add(days => 1)->epoch();
+     } else {
+        $to_epoch = NGCP::Panel::Utils::DateTime::current_local->truncate(to => 'day')->add(days => 1)->epoch();
+     }
+
+     use Data::Printer; p $from_epoch; p $to_epoch;
+
+     my $rs = $c->model('DB')->resultset('cdr')->search({
+        -and => [
+            start_time => { '>=' => $from_epoch },
+            start_time => { '<=' => $to_epoch },
+        ],
+     }, {
         select => [qw/source_cli destination_user_in/],
      });
 
