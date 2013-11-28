@@ -42,6 +42,7 @@ div.ngcp-modal .help-inline {
 .tooltip {
     /* make sure to put the tooltip over the modal */
     z-index: 2000 !important;
+    position: fixed !important;
 }
 
 div.ui-datepicker {
