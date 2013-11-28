@@ -877,8 +877,27 @@ sub dev_field_config :Chained('/') :PathPart('device/autoprov/config') :Args() {
         $c->response->status(404);
         return;
     }
+
+    if($id =~ /^[a-fA-F0-9]{12}\.cfg$/
+       && $c->req->user_agent =~ /PolycomVVX/
+    ) {
+        $id =~ s/\.cfg$//;
+        $c->response->content_type('text/xml');
+        $c->response->body(
+            '<?xml version="1.0" standalone="yes"?>'.
+            '<APPLICATION '.
+#           '  APP_FILE_PATH="sip.ld" '.
+            '  CONFIG_FILES="'.$id.'-phone.cfg" '.
+#           '  MISC_FILES="huji-polycom-501.bmp" '.
+            '  LOG_FILE_DIRECTORY="" '.
+            '/>'
+        );
+        return;
+    }
+
     $id =~ s/^([^\=]+)\=0$/$1/;
     $id = lc $id;
+    $id =~ s/\-phone\.cfg$//; # polycoms send a -phone.cfg suffix
 
     my $dev = $c->model('DB')->resultset('autoprov_field_devices')->find({
         identifier => $id

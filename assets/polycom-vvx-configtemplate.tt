@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<PHONE_CONFIG>
+  <ALL
+    dialplan.digitmap=""
+    dialplan.digitmap.timeOut=""
+    feature.presence.enabled="1"
+    pres.idleTimeout.offHours.enabled="0"
+    pres.idleTimeout.officeHours.enabled="0"
+    call.directedCallPickupMethod="native"
+    call.directedCallPickupString="dpickup"
+    call.parkedCallRetrieveMethod="native"
+    call.parkedCallRetrieveString="ppickup"
+    attendant.behaviors.display.remoteCallerID.normal="1"
+    attendant.behaviors.display.spontaneousCallAppearances.normal="0"
+    voIpProt.SIP.useCompleteUriForRetrieve="1"
+    voIpProt.SIP.strictReplacesHeader="1"
+    [% FOR range IN phone.lineranges -%]
+      [% FOR line IN range.lines -%]
+        [% key = line.keynum + 1 -%]
+        [% IF range.name == "Phone Keys" -%]
+          [% IF line.type == "private" -%]
+            reg.[% key %].address="sip:[% line.username %]@[% line.domain %]"
+            reg.[% key %].auth.password="[% line.password %]"
+            reg.[% key %].auth.userId="[% line.username %]"
+            reg.[% key %].displayName="[% line.displayname %]"
+            reg.[% key %].label="[% line.displayname %]"
+	    reg.[% key %].type="private"
+	    voIpProt.server.[% key %].address="[% line.domain %]"
+          [% ELSIF line.type == "shared" -%]
+            reg.[% key %].address="sip:[% line.username %]@[% line.domain %]"
+            reg.[% key %].auth.password="[% line.password %]"
+            reg.[% key %].auth.userId="[% line.username %]"
+            reg.[% key %].displayName="[% line.displayname %]"
+            reg.[% key %].label="[% line.displayname %]"
+	    reg.[% key %].type="shared"
+	    voIpProt.server.[% key %].address="[% line.domain %]"
+          [% ELSIF line.type == "blf" -%]
+            attendant.resourceList.[% key %].address="sip:[% line.username %]@[% line.domain %]"
+            attendant.resourceList.[% key %].label="[% line.displayname %]"
+            attendant.resourceList.[% key %].type="normal"
+          [% END -%]
+        [% END -%]
+      [% END -%]
+    [% END -%]
+  />
+</PHONE_CONFIG>
