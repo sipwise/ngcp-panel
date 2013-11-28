@@ -367,8 +367,12 @@ sub edit :Chained('base') :PathPart('edit') :Args(0) {
                     });
                 }
 
-                if(($contract->contact->reseller_id // -1) !=
-                    ($billing_mapping->billing_profile->reseller_id // -1)) {
+                unless ( defined $schema->resultset('billing_profiles')
+                        ->search_rs({
+                                id => $bprof_id,
+                                reseller_id => $contract->contact->reseller_id,
+                            })
+                        ->first ) {
                     die( ["Contact and Billing profile should have the same reseller", "showdetails"] );
                 }
 
