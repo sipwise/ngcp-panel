@@ -1,4 +1,4 @@
-<h5>Example Request and Response</h5>
+<h[% level %]>Example Request and Response</h[% level %]>
 <table>
     <tr><th>Request</th><th>Response</th></tr>
     <tr>

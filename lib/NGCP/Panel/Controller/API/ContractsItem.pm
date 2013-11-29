@@ -490,9 +490,9 @@ sub require_preference : Private {
 sub require_valid_patch : Private {
     my ($self, $c, $json) = @_;
     my $js
-      = path($c->path_to(qw(share static js tv4.js)))->slurp
+      = path($c->path_to(qw(share static js api tv4.js)))->slurp
       . "\nvar schema = "
-      . path($c->path_to(qw(share static js json-patch.json)))->slurp
+      . path($c->path_to(qw(share static js api json-patch.json)))->slurp
       . ";\nvar data = "
       . $json # code injection prevented by asserting well-formedness
       . ";\ntv4.validate(data, schema);";
@@ -542,9 +542,9 @@ sub resource_exists : Private {
 sub valid_entity : Private {
     my ($self, $c, $entity) = @_;
     my $js
-        = path($c->path_to(qw(share static js tv4.js)))->slurp
+        = path($c->path_to(qw(share static js api tv4.js)))->slurp
         . "\nvar schema = "
-        . path($c->path_to(qw(share static js contracts-item.json)))->slurp
+        . path($c->path_to(qw(share static js api properties contracts-item.json)))->slurp
         . ";\nvar data = "
         . JSON::to_json($entity, { canonical => 1, pretty => 1, utf8 => 1, })
         . ";\ntv4.validate(data, schema);";

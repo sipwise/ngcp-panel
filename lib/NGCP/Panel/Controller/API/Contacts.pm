@@ -335,9 +335,9 @@ sub valid_media_type : Private {
 sub valid_entity : Private {
     my ($self, $c, $entity) = @_;
     my $js
-        = path($c->path_to(qw(share static js tv4.js)))->slurp
+        = path($c->path_to(qw(share static js api tv4.js)))->slurp
         . "\nvar schema = "
-        . path($c->path_to(qw(share static js contacts-item.json)))->slurp
+        . path($c->path_to(qw(share static js api properties contacts-item.json)))->slurp
         . ";\nvar data = "
         . $entity
         . ";\ntv4.validate(data, schema);";

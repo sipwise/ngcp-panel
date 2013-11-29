@@ -1,4 +1,4 @@
-<h2 id="[% id %]">
+<h[% level %] id="[% id %]">
   [% IF uri -%]
   <a href="[% uri %]" rel="collection">
   [% END -%]
@@ -6,20 +6,26 @@
   [% IF uri -%]
   </a>
   [% END -%]
-</h2>
+</h[% level %]>
 
+<h[% level + 1 %]>Properties</h[% level + 1%]>
 <code>
-[% INSERT 'js/contacts-item.json' -%]
+[% INSERT 'js/api/properties/contacts-item.json' -%]
 </code>
 
-<h3>Examples</h3>
+<h[% level + 1 %]>Relation Links</h[% level + 1%]>
+<code>
+[% INSERT 'js/api/links/contacts-item.json' -%]
+</code>
+
+<h[% level + 1 %]>Examples</h[% level + 1 %]>
 <div class="examples">
 
-<h4>Request available HTTP methods on the URI</h4>
+<h[% level + 2 %]>Request available HTTP methods on the URI</h[% level + 2 %]>
 <p>
 [%
     cmd = 'curl -i -X OPTIONS -H \'Connection: close\' -E NGCP-API-client-certificate-1385650532.pem --cacert ca-cert.pem https://example.org:1443/api/contacts/';
-    INCLUDE helpers/api_command.tt cmd=cmd;
+    INCLUDE helpers/api_command.tt cmd=cmd level=level+3;
 
     request = [ 
         'OPTIONS /api/contacts/ HTTP/1.1' 
@@ -29,15 +35,15 @@
         'Allow: GET, HEAD, OPTIONS, POST',
         '<a href="#draft-wilde-accept-post">Accept-Post</a>: application/hal+json; profile="http://purl.org/sipwise/ngcp-api/#rel-contacts"',
     ];
-    INCLUDE helpers/api_req_res.tt request=request response=response;
+    INCLUDE helpers/api_req_res.tt request=request response=response  level=level+3;
 -%]
 </p>
 
-<h4>Request the entire <i>contacts</i> collection</h4>
+<h[% level + 2 %]>Request the entire <i>contacts</i> collection</h[% level + 2 %]>
 <p>
 [%
     cmd = 'curl -i -X GET -H \'Connection: close\' -E NGCP-API-client-certificate-1385650532.pem --cacert ca-cert.pem https://example.org:1443/api/contacts/';
-    INCLUDE helpers/api_command.tt cmd=cmd;
+    INCLUDE helpers/api_command.tt cmd=cmd level=level+3;
 
     request = [ 
         'GET /api/contacts/ HTTP/1.1',
@@ -137,15 +143,15 @@ Link: &lt;/api/resellers/?id=2&gt;; rel="http://example.com/#rel-contacts"
     }
 }',
     ];
-    INCLUDE helpers/api_req_res.tt request=request response=response;
+    INCLUDE helpers/api_req_res.tt request=request response=response level=level+3;
 -%]
 </p>
 
-<h4>Create a new <i>contacts</i> entry</h4>
+<h[% level + 2 %]>Create a new <i>contacts</i> entry</h[% level + 2 %]>
 <p>
 [%
     cmd = 'curl -i -X POST -H \'Connection: close\'  -E NGCP-API-client-certificate-1385650532.pem --cacert ca-cert.pem https://example.org:1443/api/contacts/ --data-binary \'{ "firstname": "John", "lastname": "Doe", "email": "john.doe@example.org", "city": null, "company": null, "country": null, "phonenumber": null, "postcode": null, "street": null, "_links" : { "http://purl.org/sipwise/ngcp-api/#rel-resellers": { "href": "/api/resellers/?id=1" } } }\' -H \'Content-Type: application/hal+json\'';
-    INCLUDE helpers/api_command.tt cmd=cmd;
+    INCLUDE helpers/api_command.tt cmd=cmd level=level+3;
 
     request = [ 
         'POST /api/contacts/ HTTP/1.1',
@@ -173,15 +179,15 @@ Link: &lt;/api/resellers/?id=2&gt;; rel="http://example.com/#rel-contacts"
         'Location: /api/contacts/?id=10',
     ];
 
-    INCLUDE helpers/api_req_res.tt request=request response=response;
+    INCLUDE helpers/api_req_res.tt request=request response=response level=level+3;
 -%]
 </p>
 
-<h4>Update an existing <i>contacts</i> entry</h4>
+<h[% level + 2 %]>Update an existing <i>contacts</i> entry</h[% level + 2 %]>
 <p>
 [%
     cmd = 'curl -i -X PUT -H \'Connection: close\'  -E NGCP-API-client-certificate-1385650532.pem --cacert ca-cert.pem https://example.org:1443/api/contacts/?id=10 --data-binary \'{ "firstname": "John", "lastname": "Doe", "email": "john.doe@example.org", "city": null, "company": null, "country": null, "phonenumber": null, "postcode": null, "street": null, "_links" : { "http://purl.org/sipwise/ngcp-api/#rel-resellers": { "href": "/api/resellers/?id=1" } } }\' -H \'Content-Type: application/hal+json\' -H \'If-Match: *\' -H \'Prefer: return=minimal\'';
-    INCLUDE helpers/api_command.tt cmd=cmd extended=1;
+    INCLUDE helpers/api_command.tt cmd=cmd extended=1 level=level+3;
 
     request = [ 
         'PUT /api/contacts/?id=10 HTTP/1.1',
@@ -211,15 +217,15 @@ Link: &lt;/api/resellers/?id=2&gt;; rel="http://example.com/#rel-contacts"
         'Preference-Applied: return=minimal',
     ];
 
-    INCLUDE helpers/api_req_res.tt request=request response=response;
+    INCLUDE helpers/api_req_res.tt request=request response=response level=level+3;
 -%]
 </p>
 
-<h4>Update specific fields of an existing <i>contacts</i> entry</h4>
+<h[% level + 2 %]>Update specific fields of an existing <i>contacts</i> entry</h[% level + 2 %]>
 <p>
 [%
     cmd = 'curl -i -X PATCH -H \'Connection: close\' -E NGCP-API-client-certificate-1385650532.pem --cacert ca-cert.pem https://example.org:1443/api/contacts/?id=10 --data-binary \'[ { "op": "replace", "path": "/email", "value": "other.john.doe@example.org" } ]\' -H \'Content-Type: application/json-patch+json\' -H \'If-Match: *\' -H \'Prefer: return=minimal\'';
-    INCLUDE helpers/api_command.tt cmd=cmd extended=1;
+    INCLUDE helpers/api_command.tt cmd=cmd extended=1 level=level+3;
 
     request = [ 
         'PATCH /api/contacts/?id=10 HTTP/1.1',
@@ -245,7 +251,7 @@ Link: &lt;/api/resellers/?id=2&gt;; rel="http://example.com/#rel-contacts"
         'Preference-Applied: return=minimal',
     ];
 
-    INCLUDE helpers/api_req_res.tt request=request response=response;
+    INCLUDE helpers/api_req_res.tt request=request response=response level=level+3;
 -%]
 </p>
 

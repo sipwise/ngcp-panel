@@ -1,4 +1,4 @@
-<h5>Example command</h5>
+<h[% level %]>Example command</h[% level %]>
 <code>[% cmd %]</code>
 
 [% IF extended -%]

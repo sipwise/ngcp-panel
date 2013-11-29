@@ -3,17 +3,27 @@
     <head>
         <title>Sipwise NGCP HTTP API documentation</title>
         <link rel="stylesheet" href="/css/ui-lightness/jquery-ui-1.10.3.custom.min.css"></link>
+        <link rel="stylesheet" href="/css/font-opensans.css"></link>
+        <link rel="stylesheet" href="/css/font-awesome.css"></link>
+        <link rel="stylesheet" href="/css/bootstrap/bootstrap.css"></link>
+        <link rel="stylesheet" href="/css/bootstrap/bootstrap-responsive.css"></link>
         <style>
-            h1 { color: white; background-color: #54893B; height: 4em; padding: 1.4em; }
-            nav ol { counter-reset: section; list-style: none; }
-            nav li:before { counter-increment: section; content: counters(section, ".") ". "; }
-            a[rel="collection"] { font-family: monospace; border: solid 0.2em #080; }
-            a[href^="#"] { text-decoration: none; border-bottom: 0.15em dotted; }
-            code { white-space: pre-wrap; }
-	    table { width: 100%; border-collapse: collapse; }
-	    th, td { border: 1px solid black; width: 50%; padding: 20px; }
+            body { padding: 1em }
+            .content { margin-left: 2em }
+            h1 { color: white; background-color: #54893B; padding: 1.7em; }
+            h6 { font-size: 1.1em; }
+            code { white-space: pre-wrap; background-color: transparent; border: none; color: #000; font-size: 0.9em; padding: 0; }
+            table { width: 100%; border-collapse: collapse; }
+            th, td { border: 1px solid #aaa; width: 50%; padding: 20px; }
             td { vertical-align: top; }
             span { font-family: monospace; }
+            nav ol { counter-reset: item }
+            nav li { display: block }
+            nav li:before { content: counters(item, ".") " "; counter-increment: item }
+            a { color: #54893B; border-bottom: 1px dotted #54893B; }
+            a:hover { color: #54893B; text-decoration: underline; border: none; }
+            .ui-state-active { border: 1px solid #54893B; color: #54893B; }
+            .ui-state-default { color: #54893B; }
         </style>
 	<script type="text/javascript" src="/js/libs/jquery-1.7.2.min.js"></script>
 	<script type="text/javascript" src="/js/libs/jquery-ui-1.10.3.custom.min.js"></script>
@@ -21,19 +31,29 @@
     <body>
 [%
     chapters = [
-        { id = 'intro',         title = 'Introduction',                             },
-        { id = 'relations',     title = 'Link Relations',                           },
-        { id = 'rel-contacts',  title = 'Contacts Relation',    uri = 'contacts/'   },
-        { id = 'definitions',   title = 'Definitions',                              },
+        { level = 2,    id = 'intro',         title = 'Introduction',                             },
+        { level = 2,    id = 'relations',     title = 'Relations',                                },
+        { level = 3,    id = 'std-relations', title = 'Standard Link Relations',                  },
+        { level = 3,    id = 'rel-contacts',  title = 'Contacts Relation',    uri = 'contacts/'   },
+        { level = 2,    id = 'definitions',   title = 'Definitions',                              },
     ];
 -%]
-    <h1>NGCP HTTP API Documentation</h1>
+    <h1>Sipwise NGCP HTTP API Documentation</h1>
 
+    <div class="content">
     <h2>Table of Contents</h2>
     <nav>
         <ol>
         [% FOR chapter IN chapters %]
-            <li><a href="#[% chapter.id %]">[% chapter.title %]</a></li>
+            [% IF loop.prev.level > chapter.level -%]
+            </ol></li>
+            [% END -%]
+            <li><a href="#[% chapter.id %]">[% chapter.title %]</a>
+            [% IF loop.next.level > chapter.level -%]
+            <ol>
+            [% ELSE -%]
+            </li>
+            [% END -%]
         [% END -%]
         </ol>
     </nav>
@@ -41,14 +61,16 @@
 [%
     FOR chapter IN chapters;
         t = 'api/root/' _ chapter.id _ '.tt';
-        INCLUDE $t title=chapter.title id=chapter.id uri=chapter.uri;
+        INCLUDE $t level=chapter.level title=chapter.title id=chapter.id uri=chapter.uri;
     END;
 -%]
+
+    </div>
 
     <script type="text/javascript">
         $(function() {
             $("div.examples").accordion({ 
-                header: "h4", 
+                header: "h5", 
                 collapsible: true, 
                 heightStyle: "content",
                 active: false

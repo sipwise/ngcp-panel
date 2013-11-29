@@ -1,0 +1,7 @@
+{
+    "_links" : { 
+        "ngcp:resellers": { 
+            "href": "/api/resellers/?id={id}" 
+        } 
+    }
+}
