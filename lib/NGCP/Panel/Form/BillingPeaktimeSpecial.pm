@@ -15,7 +15,7 @@ sub build_render_list {[qw/submitid fields actions/]}
 sub build_form_element_class { [qw/form-horizontal/] }
 
 has_field 'start' => ( 
-    type => 'Text',
+    type => '+NGCP::Panel::Field::DateTime',
     element_attr => {
         rel => ['tooltip'],
         title => ['YYYY-MM-DD HH:mm:ss']
@@ -25,7 +25,7 @@ has_field 'start' => (
 );
 
 has_field 'end' => ( 
-    type => 'Text',
+    type => '+NGCP::Panel::Field::DateTime',
     element_attr => {
         rel => ['tooltip'],
         title => ['YYYY-MM-DD HH:mm:ss']
