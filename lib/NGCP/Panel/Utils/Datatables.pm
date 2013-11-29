@@ -176,7 +176,6 @@ sub _prune_row {
             next;
         }
         if(blessed($v) && $v->isa('DateTime')) {
-            $v->add(seconds => DateTime::TimeZone->new(name => 'local')->offset_for_datetime($v));
             $row{$k} = $v->ymd('-') . ' ' . $v->hms(':');
             $row{$k} .= '.'.$v->millisecond if $v->millisecond > 0.0;
         }
