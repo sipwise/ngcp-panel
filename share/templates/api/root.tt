@@ -27,6 +27,7 @@
         { id = 'definitions',   title = 'Definitions',                              },
     ];
 -%]
+    <h1>NGCP HTTP API Documentation</h1>
 
     <h2>Table of Contents</h2>
     <nav>
@@ -56,3 +57,4 @@
     </script>
     </body>
 </html>
+[% # vim: set tabstop=4 syntax=html expandtab: -%]
