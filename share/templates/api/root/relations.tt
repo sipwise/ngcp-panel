@@ -1,0 +1,17 @@
+<h2 id="[% id %]">
+  [% IF uri -%]
+  <a href="[% uri %]" rel="collection">
+  [% END -%]
+  [% title %]
+  [% IF uri -%]
+  </a>
+  [% END -%]
+</h2>
+
+<h3><a href="#iana-relations">standard link relations</a></h3>
+<ul>
+    <li id="self">self</li>
+    <li id="collection">collection</li>
+    <li id="item">item</li>
+</ul>
+[% # vim: set tabstop=4 syntax=html expandtab: -%]

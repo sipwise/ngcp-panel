@@ -1,0 +1,16 @@
+<h2 id="[% id %]">
+  [% IF uri -%]
+  <a href="[% uri %]" rel="collection">
+  [% END -%]
+  [% title %]
+  [% IF uri -%]
+  </a>
+  [% END -%]
+</h2>
+
+<p>This documentation is also a machine-readable service document. The resource processing model is implied by
+the <a href="#draft-kelly-json-hal">JSON Hypertext Application Language</a>, draft version 06. This document
+specifies a <a href="#rfc6906">profile</a> by defining <a href="#relations">link relations</a> and their
+implied restrictions on the media type.</p>
+
+[% # vim: set tabstop=4 syntax=html expandtab: -%]

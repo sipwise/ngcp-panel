@@ -60,8 +60,10 @@ __PACKAGE__->config(
         INCLUDE_PATH => [
             '/usr/share/ngcp-panel/templates',
             '/usr/share/ngcp-panel/layout',
+            '/usr/share/ngcp-panel/static',
             __PACKAGE__->path_to('share', 'templates'),
             __PACKAGE__->path_to('share', 'layout'),
+            __PACKAGE__->path_to('share', 'static'),
         ],
         ABSOLUTE => 1,
         EVAL_PERL => 1,
