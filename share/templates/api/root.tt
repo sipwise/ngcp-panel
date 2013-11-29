@@ -2,7 +2,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
     <head>
         <title>Sipwise NGCP HTTP API documentation</title>
-        <script src="https://code.jquery.com/jquery-2.0.3.min.js"></script>
+        <link rel="stylesheet" href="/css/ui-lightness/jquery-ui-1.10.3.custom.min.css"></link>
         <style>
             h1 { color: white; background-color: #54893B; height: 4em; padding: 1.4em; }
             nav ol { counter-reset: section; list-style: none; }
@@ -10,366 +10,49 @@
             a[rel="collection"] { font-family: monospace; border: solid 0.2em #080; }
             a[href^="#"] { text-decoration: none; border-bottom: 0.15em dotted; }
             code { white-space: pre-wrap; }
-            table, th, td { border: 2px outset; }
-            th, td { width: 50%; }
+	    table { width: 100%; border-collapse: collapse; }
+	    th, td { border: 1px solid black; width: 50%; padding: 20px; }
             td { vertical-align: top; }
             span { font-family: monospace; }
         </style>
+	<script type="text/javascript" src="/js/libs/jquery-1.7.2.min.js"></script>
+	<script type="text/javascript" src="/js/libs/jquery-ui-1.10.3.custom.min.js"></script>
     </head>
     <body>
-        <h1>Sipwise NGCP HTTP API documentation</h1>
-        <h2 id="toc">Table of contents</h2>
-        <nav>
-            <ol>
-                <li><a href="#toc">Table of contents</a></li>
-                <li><a href="#introduction">Introduction</a></li>
-                <li><a href="#relations">Link relations</a>
-                    <ol>
-                        <li>standard link relations</li>
-                        <li>custom link relations
-                            <ol>
-                                <li><a href="#rel-contacts">contacts</a></li>
-                                <li><a href="#rel-contracts">contracts</a></li>
-                            </ol>
-                        </li>
-                    </ol>
-                </li>
-                <li><a href="#examples">Examples</a>
-                    <ol>
-                        <li>request information about the communication options available on the URI</li>
-                        <li>retrieve information that is identified by the URI</li>
-                        <li>create a new subordinate of the resource identified by the URI</li>
-                        <li>store entity under the URI</li>
-                    </ol>
-                </li>
-                <li><a href="#hints">Implementation hints</a></li>
-                <li><a href="#bugs">Bugs and incompatibilities</a></li>
-                <li><a href="#future">Future considerations</a>
-                    <ol>
-                        <li><a href="#versioning">Versioning</a></li>
-                        <li><a href="#feed-paging">Feed paging</a></li>
-                        <li><a href="#search">Search</a></li>
-                        <li><a href="#prefetch">Link prefetching</a></li>
-                        <li><a href="#home-document">Home document</a></li>
-                    </ol>
-                </li>
-                <li><a href="#definitions">Definitions</a></li>
-                <li><a href="#definitions">Definitions</a></li>
-            </ol>
-        </nav>
-        <h2 id="introduction">Introduction</h2>
-        <p>This documentation is also a machine-readable service document. The resource processing model is implied by
-        the <a href="#draft-kelly-json-hal">JSON Hypertext Application Language</a>, draft version 06. This document
-        specifies a <a href="#rfc6906">profile</a> by defining <a href="#relations">link relations</a> and their
-        implied restrictions on the media type.</p>
-        <h2 id="relations">Link relations</h2>
-        <h3><a href="#iana-relations">standard link relations</a></h3>
-        <ul>
-            <li id="self">self</li>
-            <li id="collection">collection</li>
-            <li id="item">item</li>
-        </ul>
-        <h3>custom link relations</h3>
-        <p>The entity for each relation is expressed by a HAL document whose resource object validates against the
-        provided schemas.</p>
-        <h4 id="rel-contacts"><a href="contacts/" rel="collection">contacts</a></h4>
-<code>
-{
-    "$schema": "http://json-schema.org/draft-04/schema#",
-    "description": "contact information for a contract",
-    "required": ["city", "company", "country", "email", "firstname", "lastname", "phonenumber", "postcode", "street"],
-    "properties": {
-        "city": { "type": ["null", "string"], "description": "The contact's city." },
-        "company": { "type": ["null", "string"], "description": "The contact's company." },
-        "country": { "type": ["null", "string"], "description": "The contact's country (ISO-3166, e.g. \"AT\" for Austria, \"DE\" for Germany)." },
-        "email": { "type": "string", "format": "email", "description": "The contact's e-mail address." },
-        "firstname": { "type": "string", "description": "The contact's given name." },
-        "lastname": { "type": "string", "description": "The contact's family name." },
-        "phonenumber": { "type": ["null", "string"], "description": "E.164 number. The contact's officephone number." },
-        "postcode": { "type": ["null", "string"], "description": "The contact's postal routing code." },
-        "street": { "type": ["null", "string"], "description": "The contact's street address." }
-    },
-    "title": "contact",
-    "type": "object"
-}
-</code>
-        <h4 id="rel-contracts"><a href="contracts/" rel="collection">contracts</a></h4>
-<code>
-{
-    "$schema": "http://json-schema.org/draft-04/schema#",
-    "required": ["external_id", "status"],
-    "properties": {
-        "external_id": { "type": ["null", "string"], "description": "XXX" },
-        "status": { "enum": [null, "active", "locked", "pending", "terminated"], "description": "XXX" }
-    },
-    "title": "contract",
-    "type": "object"
-}
-</code>
-        <h2 id="examples">Examples</h2>
-        <h3>request information about the communication options available on the URI</h3>
-        <table>
-        <tr><th>request</th><th>response</th></tr>
-        <tr><td>
-<code>
-OPTIONS /api/contacts/ HTTP/1.1
-</code>
-        </td><td>
-<code>
-HTTP/1.1 200 OK
-Allow: GET, HEAD, OPTIONS, POST
-<a href="#draft-wilde-accept-post">Accept-Post</a>: application/hal+json; profile=http://example.com/#rel-contacts
-</code>
-        </td></tr>
-        </table>
-        <h3>retrieve information that is identified by the URI</h3>
-        <table>
-        <tr><th>request</th><th>response</th></tr>
-        <tr><td>
-<code>
-GET /api/contacts/ HTTP/1.1
-</code>
-        </td><td>
-<code>
-HTTP/1.1 200 OK
-Content-Type: application/hal+json; profile="http://example.com/#rel-contacts"
-ETag: "ni:/sha3-256;JH7uV8gwV5paX1NL1WK0YPo8KgAMUl+UwqW4c1tm9DA"
-Last-Modified: Thu, 21 Nov 2013 16:34:07 GMT
-Link: &lt;http://example.com/>; <a href="#rfc6906">rel=profile</a>
-<a href="#rfc5988">Link</a>: &lt;/api/contacts/>; rel=self
-Link: &lt;/api/resellers/?id=1>; rel="http://example.com/#rel-contacts"
-Link: &lt;/api/resellers/?id=2>; rel="http://example.com/#rel-contacts"
+[%
+    chapters = [
+        { id = 'intro',         title = 'Introduction',                             },
+        { id = 'relations',     title = 'Link Relations',                           },
+        { id = 'rel-contacts',  title = 'Contacts Relation',    uri = 'contacts/'   },
+        { id = 'definitions',   title = 'Definitions',                              },
+    ];
+-%]
 
-{
-    "_embedded" : {
-        "ngcp:contacts" : [
-            {
-                "_links" : {
-                    "collection" : {
-                        "href" : "/api/contacts/"
-                    },
-                    "curies" : {
-                        "href" : "http://example.com/#rel-{rel}",
-                        "name" : "ngcp",
-                        "templated" : true
-                    },
-                    "ngcp:resellers" : {
-                        "href" : "/api/resellers/?id=1"
-                    },
-                    "profile" : {
-                        "href" : "http://example.com/"
-                    },
-                    "self" : {
-                        "href" : "/api/contacts/?id=1"
-                    }
-                },
-                "city" : null,
-                "company" : null,
-                "country" : null,
-                "email" : "default-customer@default.invalid",
-                "firstname" : "Default",
-                "lastname" : "Contact",
-                "phonenumber" : null,
-                "postcode" : null,
-                "street" : null
-            },
-            {
-                "_links" : {
-                    "collection" : {
-                        "href" : "/api/contacts/"
-                    },
-                    "curies" : {
-                        "href" : "http://example.com/#rel-{rel}",
-                        "name" : "ngcp",
-                        "templated" : true
-                    },
-                    "profile" : {
-                        "href" : "http://example.com/"
-                    },
-                    "self" : {
-                        "href" : "/api/contacts/?id=2"
-                    }
-                },
-                "city" : "McMurdo",
-                "company" : "Internet Widgets",
-                "country" : "AQ",
-                "email" : "a.customr@mail.example.net",
-                "firstname" : "Any",
-                "lastname" : "Customr",
-                "phonenumber" : null,
-                "postcode" : "000045",
-                "street" : null
-            }
-        ]
-    },
-    "_links" : {
-        "curies" : {
-            "href" : "http://example.com/#rel-{rel}",
-            "name" : "ngcp",
-            "templated" : true
-        },
-        "ngcp:contacts" : [
-            {
-                "href" : "/api/resellers/?id=1"
-            },
-            {
-                "href" : "/api/resellers/?id=2"
-            }
-        ],
-        "profile" : {
-            "href" : "http://example.com/"
-        },
-        "self" : {
-            "href" : "/api/contacts/"
-        }
-    }
-}
-</code>
-      </td></tr>
-        </table>
-        <h3>create a new subordinate of the resource identified by the URI</h3>
-        <table>
-        <tr><th>request</th><th>response</th></tr>
-        <tr><td>
-<code>
-POST /api/contacts/ HTTP/1.1
-Content-Type: application/hal+json
+    <h2>Table of Contents</h2>
+    <nav>
+        <ol>
+        [% FOR chapter IN chapters %]
+            <li><a href="#[% chapter.id %]">[% chapter.title %]</a></li>
+        [% END -%]
+        </ol>
+    </nav>
 
-{ "city" : null, "company" : null, "country" : null, "email" : "someid@internal.example.net", "firstname" : "F", "lastname" : "L", "phonenumber" : null, "postcode" : null, "street" : null }
-</code>
-        </td><td>
-<code>
-HTTP/1.1 201 Created
-Location: /api/contacts/?id=9
-</code>
-        </td></tr>
-        </table>
-        <h3>store entity under the URI</h3>
-        <table>
-        <tr><th>request</th><th>response</th></tr>
-        <tr><td>
-<code>
-PUT /api/contacts/?id=9 HTTP/1.1
-Content-Type: application/hal+json
-If-Match: "ni:/sha3-256;J4dSzVbt1ZFupOVeb0srYPj3gUhzP98IodP1hrniN5w"
-<a href="#draft-snell-http-prefer">Prefer</a>: return=minimal
+[%
+    FOR chapter IN chapters;
+        t = 'api/root/' _ chapter.id _ '.tt';
+        INCLUDE $t title=chapter.title id=chapter.id uri=chapter.uri;
+    END;
+-%]
 
-{ "city" : "C", "company" : null, "country" : "ZZ", "email" : "someid@internal.example.net", "firstname" : "F", "lastname" : "L", "phonenumber" : null, "postcode" : null, "street" : "S" }
-</code>
-        </td><td>
-<code>
-HTTP/1.1 204 No Content
-Preference-Applied: return=minimal
-</code>
-        </td></tr>
-        </table>
-        <h3>apply set of changes to the resource identified by the URI</h3>
-        <table>
-        <tr><th>request</th><th>response</th></tr>
-        <tr><td>
-<code>
-<a href="#rfc5789">PATCH</a> /api/contacts/?id=9 HTTP/1.1
-Content-Type: <a href="#rfc6902">application/json-patch+json</a>
-If-Match: "ni:/sha3-256;u2ICdb8IG8m7E+9TX8qg9O5DTrcILrQ51e1jzjDIsRr"
-Prefer: return=representation
-
-[{ "op": "replace", "path": "/email", "value": "fnord@example.net" }]
-</code>
-        </td><td>
-<code>
-HTTP/1.1 200 OK
-Content-Type: application/hal+json; profile=http://example.com/
-ETag: "ni:/sha3-256;stgh2IJ+B38gLTjOKYz8z7p0n5lb6Gwi7124bmCfqYN"
-Last-Modified: Wed, 27 Nov 2013 11:22:55 GMT
-Link: &lt;/api/contacts/>; rel=collection
-Link: &lt;http://example.com/>; rel=profile
-Link: &lt;/api/contacts/?id=9>; rel=self
-Preference-Applied: return=representation
-
-{
-    "_links" : {
-        "collection" : {
-            "href" : "/api/contacts/"
-        },
-        "curies" : {
-            "href" : "http://example.com/#rel-{rel}",
-            "name" : "ngcp",
-            "templated" : true
-        },
-        "profile" : {
-            "href" : "http://example.com/"
-        },
-        "self" : {
-            "href" : "/api/contacts/?id=9"
-        }
-    },
-    "city" : "C",
-    "company" : null,
-    "country" : "ZZ",
-    "email" : "fnord@example.net",
-    "firstname" : "F",
-    "lastname" : "L",
-    "phonenumber" : null,
-    "postcode" : null,
-    "street" : "S"
-}
-</code>
-        </td></tr>
-        </table>
-        <h2 id="hints">Implementation hints</h2>
-        <p><a href="#rfc2616">HTTP</a> is a rich application protocol. A client <a href="#rfc2119">MUST</a> handle
-        errors, request retries and caching as indicated by the normative status codes and protocol headers. In order
-        to avoid unnecessary load, it is <a href="#rfc2119">RECOMMENDED</a> that an implementation uses a high-quality
-        programmable HTTP library that supports persistent connections and retry back-off.</p>
-        <p id="hints-tight-coupling">Avoid tight coupling to URIs, discover resources by following hyperlinks with the
-        <a href="#collection">collection</a> relation. (They are highlighted with a green border in this document.) If
-        an implementation disregards this, it risks breaking with future releases.</p>
-        <p id="hints-link-header">Resource relations are also replicated as <a href="#rfc5988">Link</a> headers. Use
-        <span>HEAD</span> requests to traverse relations without transferring entity bodies.</p>
-        <h2 id="bugs">Bugs and incompatibilities</h2>
-        <p id="bug-te-gzip">When sending the request header <span>TE: gzip</span>, the application erroneously returns
-        the header <span>Transfer-Encoding: chunked</span>, whereas <span>Transfer-Encoding: gzip, chunked</span> would
-        be correct. If you are prepared to change the client code once the bug is fixed, you <a href="#rfc2119">MAY</a>
-        work around this incompatibility by detecting the magic signature octets <span>0x1f 0x8b</span> and then assume
-        the correct header. (Until the bug is fixed, it is guaranteed that the application returns either gzip transfer
-        coding, or uncompressed, and nought else. The chunked coding is applied in any case.)</p>
-        <h2 id="future">Future considerations</h2>
-        <h3 id="versioning">Versioning</h3>
-        <p id="versioning-incrementally">According to hypermedia best practices, there are no numbered versions in the
-        mechanism itself; functionality is added or subtracted incrementally. This document will keep a log of changes.
-        Incompatible changes require minting new relations and deprecations of existing ones.</p>
-        <h3 id="feed-paging">Feed paging</h3>
-        <p>Add the link relations <span>first</span>, <span>last</span>, <span>next</span>, <span>prev</span>. When a
-        resource has a link with the <span>next</span> or <span>prev</span> relations, it indicates that the resource
-        represents an paginated, incomplete feed. Traverse the links to assemble the complete logical feed.</p>
-        <h3 id="search">Search</h3>
-        <p>using URI templates</p>
-        <h3 id="prefetch">Link prefetching</h3>
-        <p>using the link relation <span>prefetch</span> is an opportunity for optimising closely related requests</p>
-        <h3 id="home-document">Home document</h3>
-        <p>a list of resource hints, useful for generating code</p>
-        <h2 id="definitions">Definitions</h2>
-        <dl>
-            <dt id="draft-wilde-accept-post">Accept-Post header</dt>
-            <dd><a href="http://tools.ietf.org/html/draft-wilde-accept-post">draft-wilde-accept-post</a></dd>
-            <dt id="rfc6902">JSON Patch</dt>
-            <dd><a href="http://tools.ietf.org/html/rfc6902">RFC 6902</a></dd>
-            <dt id="draft-kelly-json-hal">HAL</dt>
-            <dd><a href="http://tools.ietf.org/html/draft-kelly-json-hal">draft-kelly-json-hal</a></dd>
-            <dt id="rfc2616">HTTP</dt>
-            <dd><a href="http://tools.ietf.org/html/rfc2616">RFC 2616</a></dd>
-            <dt id="rfc5988">Link headers</dt>
-            <dd><a href="http://tools.ietf.org/html/rfc5988">RFC 5988</a></dd>
-            <dt id="rfc2119">MAY, MUST, RECOMMENDED</dt>
-            <dd><a href="http://tools.ietf.org/html/rfc2119">RFC 2119</a></dd>
-            <dt id="rfc5789">PATCH method</dt>
-            <dd><a href="http://tools.ietf.org/html/rfc5789">RFC 5789</a></dd>
-            <dt id="draft-snell-http-prefer">Prefer header</dt>
-            <dd><a href="http://tools.ietf.org/html/draft-snell-http-prefer">draft-snell-http-prefer</a></dd>
-            <dt id="rfc6906">profile link relation</dt>
-            <dd><a href="http://tools.ietf.org/html/rfc6906">RFC 6906</a></dd>
-            <dt id="iana-relations">standard link relations</dt>
-            <dd><a href="https://iana.org/assignments/link-relations">IANA link relations registry</a></dd>
-        </dl>
+    <script type="text/javascript">
+        $(function() {
+            $("div.examples").accordion({ 
+                header: "h4", 
+                collapsible: true, 
+                heightStyle: "content",
+                active: false
+            });
+        });
+    </script>
     </body>
 </html>
