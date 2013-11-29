@@ -26,6 +26,14 @@ sub auto :Private {
         $c->log->debug("*** Root::auto skip authn, grant access to " . $c->request->path);
         return 1;
     }
+
+    if($c->user_exists && $c->user->roles ne "api_admin" &&
+       0 == index $c->controller->catalyst_component_name, 'NGCP::Panel::Controller::API') {
+        
+        $c->log->debug("*** Root::auto invalidate authenticated non-api-admin user for api access");
+        $c->logout;
+    }
+
     unless($c->user_exists) {
         $c->log->debug("*** Root::auto user not authenticated");
         if (
