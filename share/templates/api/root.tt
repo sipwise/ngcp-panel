@@ -24,6 +24,9 @@
             a:hover { color: #54893B; text-decoration: underline; border: none; }
             .ui-state-active { border: 1px solid #54893B; color: #54893B; }
             .ui-state-default { color: #54893B; }
+            @media print { .ui-accordion > *{display:block !important;} }
+            .pagebreak { page-break-after: always; }
+            .chapter { page-break-inside: avoid; }
         </style>
 	<script type="text/javascript" src="/js/libs/jquery-1.7.2.min.js"></script>
 	<script type="text/javascript" src="/js/libs/jquery-ui-1.10.3.custom.min.js"></script>
@@ -34,13 +37,13 @@
         { level = 2,    id = 'intro',         title = 'Introduction',                             },
         { level = 2,    id = 'relations',     title = 'Relations',                                },
         { level = 3,    id = 'std-relations', title = 'Standard Link Relations',                  },
-        { level = 3,    id = 'rel-contacts',  title = 'Contacts Relation',    uri = 'contacts/'   },
+        { level = 3,    id = 'rel-contacts',  title = 'Contacts Relation',    uri = '/api/contacts/'   },
         { level = 2,    id = 'definitions',   title = 'Definitions',                              },
     ];
 -%]
     <h1>Sipwise NGCP HTTP API Documentation</h1>
-
     <div class="content">
+    <div class="chapter">
     <h2>Table of Contents</h2>
     <nav>
         <ol>
@@ -57,13 +60,19 @@
         [% END -%]
         </ol>
     </nav>
+    </div>
 
+[% FOR chapter IN chapters -%]
+    [% IF loop.prev.level >= chapter.level -%]
+    <div class="pagebreak"></div>
+    [% END -%]
+    <div class="chapter">
 [%
-    FOR chapter IN chapters;
         t = 'api/root/' _ chapter.id _ '.tt';
         INCLUDE $t level=chapter.level title=chapter.title id=chapter.id uri=chapter.uri;
-    END;
 -%]
+    </div>
+[% END -%]
 
     </div>
 
