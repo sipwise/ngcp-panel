@@ -30,7 +30,7 @@ require CHI::Driver::FastMmap;
 use Log::Log4perl::Catalyst qw();
 use NGCP::Panel::Cache::Serializer qw();
 use NGCP::Panel::Middleware::HSTS qw();
-use NGCP::Panel::Middleware::TEgzip qw();
+#use NGCP::Panel::Middleware::TEgzip qw();
 extends 'Catalyst';
 
 our $VERSION = '0.01';
@@ -157,7 +157,7 @@ __PACKAGE__->config(
         }
     },
     'Plugin::EnableMiddleware' => [
-        NGCP::Panel::Middleware::TEgzip->new,
+        #NGCP::Panel::Middleware::TEgzip->new,
         NGCP::Panel::Middleware::HSTS->new,
     ],
 );

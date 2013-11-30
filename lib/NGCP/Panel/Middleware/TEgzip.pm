@@ -1,7 +1,7 @@
 package NGCP::Panel::Middleware::TEgzip;
 use Sipwise::Base;
 use HTTP::Headers::Util qw(split_header_words);
-use Plack::Middleware::Deflater qw();
+use Plack::Middleware::Deflater;
 # for internal package Plack::Middleware::Deflater::Encoder
 use Plack::Util qw();
 extends 'Plack::Middleware';
