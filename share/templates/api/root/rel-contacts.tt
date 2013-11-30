@@ -18,14 +18,38 @@ For customer contacts, the item MUST link to a <a href="#rel-resellers">reseller
 </p>
 
 <h[% level + 1 %]>Properties</h[% level + 1%]>
-<code>
-[% INSERT 'js/api/properties/contacts-item.json' -%]
-</code>
+<ul id="[% id %]-props"></ul>
+<script>
+<![CDATA[
+    $(function() {
+        var items = [];
+        var props = '[% INSERT 'js/api/properties/contacts-item.json' | replace('\'', '\\\'') | replace("\n", ' ') | replace('\\\"', '\\\\\"') -%]';
+        var jprops = $.parseJSON(props);
+        for(var key in jprops.properties) {
+            var prop = jprops.properties[key];
+            items.push('<li><b>' + key + '</b> (<i>' + prop.type + '</i>): ' + prop.description + '</li>');
+        }
+        $('#[% id %]-props').append(items.join(''));
+    });
+]]>
+</script>
 
 <h[% level + 1 %]>Relation Links</h[% level + 1%]>
-<code>
-[% INSERT 'js/api/links/contacts-item.json' -%]
-</code>
+<ul id="[% id %]-links"></ul>
+<script>
+<![CDATA[
+    $(function() {
+        var items = [];
+        var links = '[% INSERT 'js/api/links/contacts-item.json' | replace('\'', '\\\'') | replace("\n", ' ') | replace('\\\"', '\\\\\"') -%]';
+        var jlinks = $.parseJSON(links);
+        for(var key in jlinks._links) {
+            var link = jlinks._links[key];
+            items.push('<li><b>' + key + '</b> (<i>href</i>): ' + link.href + '</li>');
+        }
+        $('#[% id %]-links').append(items.join(''));
+    });
+]]>
+</script>
 
 <p class="alert alert-error">If the contact is going to be used for identifying a reseller or peering (that is, when you create an <a href="#rel-contracts">contracts</a> item), you <b>MUST NOT</b> set the <i>ngcp:resellers</i> relation.</p>
 
@@ -156,6 +180,11 @@ Link: &lt;/api/resellers/?id=2&gt;; rel="http://example.com/#rel-contacts"
     ];
     INCLUDE helpers/api_req_res.tt request=request response=response level=level+3;
 -%]
+</p>
+
+<h[% level + 2 %]>Request a specific <i>contacts</i> item</h[% level + 2 %]>
+<p>
+TODO
 </p>
 
 <h[% level + 2 %]>Create a new <i>contacts</i> entry</h[% level + 2 %]>
