@@ -1,0 +1,83 @@
+<h[% level %] id="[% id %]">
+  [% IF uri -%]
+  <a href="[% uri %]" rel="collection">
+  [% END -%]
+  [% title %]
+  [% IF uri -%]
+  </a>
+  [% END -%]
+</h[% level %]>
+
+Authentication and authorization on the Sipwise NGCP HTTP API is performed via <b>SSL Client Certificates</b>. You can generate and download certificates for administrators and resellers via the <b>NGCP Panel</b> in the <b>Administrators</b> view.
+
+You will need two files:
+
+<ol>
+    <li>The client certificate generated via the NGCP Panel. This is usually labelled <span>NGCP-API-client-certificate-xxxxx.pem</span>.</li>
+    <li>The CA certificate used to sign the server certificate, in case it as been self-signed or the CA is not recognized by the client host environment.</li>
+</ol>
+
+<h[% level + 1 %]>Examples</h[% level + 1 %]>
+<div class="examples">
+
+<h5>Using cURL on the Shell</h5>
+<p>
+With cURL, use <span>--cert /path/to/NGCP-API-client-certificate-xxxxx.pem</span> to specify the client certificate, and <span>--cacert /path/to/ca-cert.pem</span> to specify the CA certificate in case of a self-signed server certificate.
+
+<code>
+curl -i -X GET --cert /path/to/NGCP-API-client-certificate-1385650532.pem --cacert /path/to/ca-cert.pem https://example.org:1443/api/something/
+</code>
+</p>
+
+<h5>Using Perl LWP::UserAgent</h5>
+<p>
+With LWP::UserAgent, set up the SSL client certificates using the <span>ssl_opts()</span> function. Since the key file downloaded from the NGCP Panel combines both the client key and the certificate into one single file, use the same filename for the <span>SSL_cert_file</span> and <span>SSL_key_file</span> option.
+
+<code>
+#!/usr/bin/perl -w
+use strict;
+use LWP::UserAgent;
+
+my $ua = LWP::UserAgent->new();
+$ua->ssl_opts(
+    SSL_cert_file => '/path/to/NGCP-API-client-certificate-1385650532.pem',
+    SSL_key_file  => '/path/to/NGCP-API-client-certificate-1385650532.pem',
+    SSL_ca_file   => '/path/to/ca-cert.pem',
+);
+my $res = $ua->get('https://example.org:1443/api/something/');
+if($res->is_success) {
+    print $res->as_string;
+} else {
+    print STDERR $res->status_line, "\n";
+}
+</code>
+</p>
+
+<h5>Using PHP cURL</h5>
+<p>
+
+Same as with Perl's LWP::UserAgent described above, you have to set the key and certificate paths using <span>curl_setopt_array()</span>, with the parameters <span>CURLOPT_SSLCERT</span> and <span>CURLOPT_SSLKEY</span> pointing to your client certificate.
+
+<code>
+$ua = curl_init();
+$options = array( 
+    CURLOPT_SSLCERT => '/path/to/NGCP-API-client-certificate-1385650532.pem',
+    CURLOPT_SSLKEY  => '/path/to/NGCP-API-client-certificate-1385650532.pem',
+    CURLOPT_CAINFO =>  '/path/to/ca-cert.pem',
+    CURLOPT_SSL_VERIFYPEER => true,
+    CURLOPT_RETURNTRANSFER => true,
+);
+curl_setopt_array($ua , $options);
+curl_setopt($ua, CURLOPT_URL, 'https://example.org:1443/api/something/');
+$res = curl_exec($ua);
+if(!$res) {
+    echo "Curl Error : " . curl_error($ua);
+}
+else {
+    echo $res;
+}
+</code>
+</p>
+
+</div>
+[% # vim: set tabstop=4 syntax=html expandtab: -%]

@@ -12,18 +12,34 @@
             .content { margin-left: 2em }
             h1 { color: white; background-color: #54893B; padding: 1.7em; }
             h6 { font-size: 1.1em; }
-            code { white-space: pre-wrap; background-color: transparent; border: none; color: #000; font-size: 0.9em; padding: 0; }
+            code { white-space: pre-wrap; background-color: transparent; border: none; color: #000; font-size: 0.9em; display: block; margin: 0 0 20px 0;}
             table { width: 100%; border-collapse: collapse; }
             th, td { border: 1px solid #aaa; width: 50%; padding: 20px; }
             td { vertical-align: top; }
             span { font-family: monospace; }
-            nav ol { counter-reset: item }
-            nav li { display: block }
-            nav li:before { content: counters(item, ".") " "; counter-increment: item }
+
             a { color: #54893B; border-bottom: 1px dotted #54893B; }
             a:hover { color: #54893B; text-decoration: underline; border: none; }
             .ui-state-active { border: 1px solid #54893B; color: #54893B; }
             .ui-state-default { color: #54893B; }
+            .ui-widget { font-family: inherit; }
+            .ui-widget-content { background: none; }
+
+            /* toc numbering */
+            nav ol { counter-reset: item }
+            nav li { display: block }
+            nav li:before { content: counters(item, ".") " "; counter-increment: item }
+
+            /* header numbering */
+            body { counter-reset: h2counter; counter-reset: h3counter; }
+            h1 { counter-reset: h2counter; }
+            h2:before { content: counter(h2counter) "\0000a0\0000a0"; counter-increment: h2counter; counter-reset: h3counter; }
+            h2.nocount:before { content: none; counter-increment: none; }
+            h2 { counter-reset: h3counter; }
+            h3:before { counter-increment: h3counter; content: counter(h2counter) "." counter(h3counter) "\0000a0\0000a0"; }
+            /*h3:before { content: counter(h2counter) "." counter(h3counter) "\0000a0\0000a0"; counter-increment: h3counter; }*/
+
+            /* print properties */
             @media print { .ui-accordion > *{display:block !important;} }
             .pagebreak { page-break-after: always; }
             .chapter { page-break-inside: avoid; }
@@ -34,17 +50,24 @@
     <body>
 [%
     chapters = [
-        { level = 2,    id = 'intro',         title = 'Introduction',                             },
-        { level = 2,    id = 'relations',     title = 'Relations',                                },
-        { level = 3,    id = 'std-relations', title = 'Standard Link Relations',                  },
-        { level = 3,    id = 'rel-contacts',  title = 'Contacts Relation',    uri = '/api/contacts/'   },
-        { level = 2,    id = 'definitions',   title = 'Definitions',                              },
+        { level = 2,    id = 'intro',         title = 'Introduction',                                   },
+        { level = 2,    id = 'auth',          title = 'Authentication',                                 },
+        { level = 2,    id = 'relations',     title = 'Resources',                                      },
+
+        { level = 3,    id = 'rel-contacts',  title = 'Contacts',             uri = '/api/contacts/'    },
+#        { level = 3,    id = 'rel-resellers', title = 'Resellers',            uri = '/api/resellers/'   },
+#        { level = 3,    id = 'rel-admins',    title = 'Admins',               uri = '/api/admins/'      },
+#        { level = 3,    id = 'rel-customers', title = 'Customers',            uri = '/api/customers/'   },
+
+#        { level = 3,    id = 'rel-billingprofiles', title = 'Billing Profiles', uri = '/api/billing/'   },
+
+        { level = 2,    id = 'definitions',   title = 'Definitions',                                    },
     ];
 -%]
     <h1>Sipwise NGCP HTTP API Documentation</h1>
     <div class="content">
     <div class="chapter">
-    <h2>Table of Contents</h2>
+    <h2 class="nocount">Table of Contents</h2>
     <nav>
         <ol>
         [% FOR chapter IN chapters %]

@@ -8,6 +8,15 @@
   [% END -%]
 </h[% level %]>
 
+<h[% level + 1 %]>Description</h[% level + 1%]>
+
+<p>
+The <a href="#rel-contacts">contacts</a> item is used to specify the contact information of <a href="#rel-contracts">contracts</a> for customers, resellers and peering groups.
+</p>
+<p>
+For customer contacts, the item MUST link to a <a href="#rel-resellers">reseller</a>, otherwise it MUST be unset.
+</p>
+
 <h[% level + 1 %]>Properties</h[% level + 1%]>
 <code>
 [% INSERT 'js/api/properties/contacts-item.json' -%]
@@ -18,13 +27,15 @@
 [% INSERT 'js/api/links/contacts-item.json' -%]
 </code>
 
+<p class="alert alert-error">If the contact is going to be used for identifying a reseller or peering (that is, when you create an <a href="#rel-contracts">contracts</a> item), you <b>MUST NOT</b> set the <i>ngcp:resellers</i> relation.</p>
+
 <h[% level + 1 %]>Examples</h[% level + 1 %]>
 <div class="examples">
 
 <h[% level + 2 %]>Request available HTTP methods on the URI</h[% level + 2 %]>
 <p>
 [%
-    cmd = 'curl -i -X OPTIONS -H \'Connection: close\' -E NGCP-API-client-certificate-1385650532.pem --cacert ca-cert.pem https://example.org:1443/api/contacts/';
+    cmd = 'curl -i -X OPTIONS -H \'Connection: close\' --cert NGCP-API-client-certificate-1385650532.pem --cacert ca-cert.pem https://example.org:1443/api/contacts/';
     INCLUDE helpers/api_command.tt cmd=cmd level=level+3;
 
     request = [ 
@@ -42,7 +53,7 @@
 <h[% level + 2 %]>Request the entire <i>contacts</i> collection</h[% level + 2 %]>
 <p>
 [%
-    cmd = 'curl -i -X GET -H \'Connection: close\' -E NGCP-API-client-certificate-1385650532.pem --cacert ca-cert.pem https://example.org:1443/api/contacts/';
+    cmd = 'curl -i -X GET -H \'Connection: close\' --cert NGCP-API-client-certificate-1385650532.pem --cacert ca-cert.pem https://example.org:1443/api/contacts/';
     INCLUDE helpers/api_command.tt cmd=cmd level=level+3;
 
     request = [ 
@@ -150,7 +161,7 @@ Link: &lt;/api/resellers/?id=2&gt;; rel="http://example.com/#rel-contacts"
 <h[% level + 2 %]>Create a new <i>contacts</i> entry</h[% level + 2 %]>
 <p>
 [%
-    cmd = 'curl -i -X POST -H \'Connection: close\'  -E NGCP-API-client-certificate-1385650532.pem --cacert ca-cert.pem https://example.org:1443/api/contacts/ --data-binary \'{ "firstname": "John", "lastname": "Doe", "email": "john.doe@example.org", "city": null, "company": null, "country": null, "phonenumber": null, "postcode": null, "street": null, "_links" : { "http://purl.org/sipwise/ngcp-api/#rel-resellers": { "href": "/api/resellers/?id=1" } } }\' -H \'Content-Type: application/hal+json\'';
+    cmd = 'curl -i -X POST -H \'Connection: close\'  --cert NGCP-API-client-certificate-1385650532.pem --cacert ca-cert.pem https://example.org:1443/api/contacts/ --data-binary \'{ "firstname": "John", "lastname": "Doe", "email": "john.doe@example.org", "city": null, "company": null, "country": null, "phonenumber": null, "postcode": null, "street": null, "_links" : { "http://purl.org/sipwise/ngcp-api/#rel-resellers": { "href": "/api/resellers/?id=1" } } }\' -H \'Content-Type: application/hal+json\'';
     INCLUDE helpers/api_command.tt cmd=cmd level=level+3;
 
     request = [ 
@@ -186,7 +197,7 @@ Link: &lt;/api/resellers/?id=2&gt;; rel="http://example.com/#rel-contacts"
 <h[% level + 2 %]>Update an existing <i>contacts</i> entry</h[% level + 2 %]>
 <p>
 [%
-    cmd = 'curl -i -X PUT -H \'Connection: close\'  -E NGCP-API-client-certificate-1385650532.pem --cacert ca-cert.pem https://example.org:1443/api/contacts/?id=10 --data-binary \'{ "firstname": "John", "lastname": "Doe", "email": "john.doe@example.org", "city": null, "company": null, "country": null, "phonenumber": null, "postcode": null, "street": null, "_links" : { "http://purl.org/sipwise/ngcp-api/#rel-resellers": { "href": "/api/resellers/?id=1" } } }\' -H \'Content-Type: application/hal+json\' -H \'If-Match: *\' -H \'Prefer: return=minimal\'';
+    cmd = 'curl -i -X PUT -H \'Connection: close\'  --cert NGCP-API-client-certificate-1385650532.pem --cacert ca-cert.pem https://example.org:1443/api/contacts/?id=10 --data-binary \'{ "firstname": "John", "lastname": "Doe", "email": "john.doe@example.org", "city": null, "company": null, "country": null, "phonenumber": null, "postcode": null, "street": null, "_links" : { "http://purl.org/sipwise/ngcp-api/#rel-resellers": { "href": "/api/resellers/?id=1" } } }\' -H \'Content-Type: application/hal+json\' -H \'If-Match: *\' -H \'Prefer: return=minimal\'';
     INCLUDE helpers/api_command.tt cmd=cmd extended=1 level=level+3;
 
     request = [ 
@@ -224,7 +235,7 @@ Link: &lt;/api/resellers/?id=2&gt;; rel="http://example.com/#rel-contacts"
 <h[% level + 2 %]>Update specific fields of an existing <i>contacts</i> entry</h[% level + 2 %]>
 <p>
 [%
-    cmd = 'curl -i -X PATCH -H \'Connection: close\' -E NGCP-API-client-certificate-1385650532.pem --cacert ca-cert.pem https://example.org:1443/api/contacts/?id=10 --data-binary \'[ { "op": "replace", "path": "/email", "value": "other.john.doe@example.org" } ]\' -H \'Content-Type: application/json-patch+json\' -H \'If-Match: *\' -H \'Prefer: return=minimal\'';
+    cmd = 'curl -i -X PATCH -H \'Connection: close\' --cert NGCP-API-client-certificate-1385650532.pem --cacert ca-cert.pem https://example.org:1443/api/contacts/?id=10 --data-binary \'[ { "op": "replace", "path": "/email", "value": "other.john.doe@example.org" } ]\' -H \'Content-Type: application/json-patch+json\' -H \'If-Match: *\' -H \'Prefer: return=minimal\'';
     INCLUDE helpers/api_command.tt cmd=cmd extended=1 level=level+3;
 
     request = [ 

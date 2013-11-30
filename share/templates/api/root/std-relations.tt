@@ -1,7 +1,0 @@
-<h[% level %]><a href="#iana-relations">Standard Link Relations</a></h[% level %]>
-<ul>
-    <li id="self">self</li>
-    <li id="collection">collection</li>
-    <li id="item">item</li>
-</ul>
-[% # vim: set tabstop=4 syntax=html expandtab: -%]
