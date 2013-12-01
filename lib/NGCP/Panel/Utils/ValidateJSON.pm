@@ -1,4 +1,4 @@
-package NGCP::Panel::ValidateJSON;
+package NGCP::Panel::Utils::ValidateJSON;
 use Sipwise::Base;
 extends 'JSON::Tiny::Subclassable';
 

@@ -6,6 +6,14 @@ use JSON qw();
 use HTTP::Status qw(:constants);
 use Safe::Isa qw($_isa);
 use Try::Tiny;
+use Digest::SHA3 qw(sha3_256_base64);
+use DateTime::Format::HTTP qw();
+use DateTime::Format::RFC3339 qw();
+use Types::Standard qw(InstanceOf);
+use Regexp::Common qw(delimited); # $RE{delimited}
+use NGCP::Panel::Utils::ValidateJSON qw();
+
+has('last_modified', is => 'rw', isa => InstanceOf['DateTime']);
 
 sub get_valid_post_data {
     my ($self, %params) = @_;
@@ -108,7 +116,7 @@ sub require_body {
 sub require_wellformed_json {
     my ($self, $c, $media_type, $patch) = @_;
     try {
-        NGCP::Panel::ValidateJSON->new($patch);
+        NGCP::Panel::Utils::ValidateJSON->new($patch);
     } catch {
         $self->error($c, HTTP_BAD_REQUEST, "The entity is not a well-formed '$media_type' document. $_");
         return;
@@ -116,7 +124,42 @@ sub require_wellformed_json {
     return 1;
 }
 
+sub cached {
+    my ($self, $c) = @_;
+    my $response = $c->cache->get($c->request->uri->canonical->as_string);
+    unless ($response) {
+        $c->log->info('not cached');
+        return;
+    }
+    my $matched_tag = $c->request->header('If-None-Match') && ('*' eq $c->request->header('If-None-Match'))
+      || (grep {$response->header('ETag') eq $_} Data::Record->new({
+        split => qr/\s*,\s*/, unless => $RE{delimited}{-delim => q(")},
+      })->records($c->request->header('If-None-Match')));
+    my $not_modified = $c->request->header('If-Modified-Since')
+        && !($self->last_modified < DateTime::Format::HTTP->parse_datetime($c->request->header('If-Modified-Since')));
+    if (
+        $matched_tag && $not_modified
+        || $matched_tag
+        || $not_modified
+    ) {
+        $c->response->status(HTTP_NOT_MODIFIED);
+        $c->response->headers($response->headers);
+        $c->log->info('cached');
+        return 1;
+    }
+    $c->log->info('stale');
+    return;
+}
 
+sub etag {
+    my ($self, $octets) = @_;
+    return sprintf '"ni:/sha3-256;%s"', sha3_256_base64($octets);
+}
+
+sub expires {
+    my ($self) = @_;
+    return DateTime->now->clone->add(years => 1); # XXX insert product end-of-life
+}
 
 1;
 # vim: set tabstop=4 expandtab:

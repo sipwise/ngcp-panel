@@ -22,7 +22,7 @@ use JE qw();
 use JSON qw();
 use MooseX::ClassAttribute qw(class_has);
 use NGCP::Panel::Form::Contact::Reseller qw();
-use NGCP::Panel::ValidateJSON qw();
+use NGCP::Panel::Utils::ValidateJSON qw();
 use Path::Tiny qw(path);
 use Regexp::Common qw(delimited); # $RE{delimited}
 use Safe::Isa qw($_isa);
@@ -286,7 +286,7 @@ sub require_body : Private {
 sub require_wellformed_json : Private {
     my ($self, $c, $media_type, $patch) = @_;
     try {
-        NGCP::Panel::ValidateJSON->new($patch);
+        NGCP::Panel::Utils::ValidateJSON->new($patch);
     } catch($e) {
         $c->response->status(HTTP_BAD_REQUEST);
         $c->response->header('Content-Language' => 'en');
