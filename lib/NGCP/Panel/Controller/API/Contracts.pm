@@ -10,23 +10,13 @@ use DateTime::Format::RFC3339 qw();
 use Digest::SHA3 qw(sha3_256_base64);
 use HTTP::Headers qw();
 use HTTP::Headers::Util qw(split_header_words);
-use HTTP::Status qw(
-    HTTP_BAD_REQUEST
-    HTTP_CREATED
-    HTTP_NOT_MODIFIED
-    HTTP_OK
-    HTTP_UNPROCESSABLE_ENTITY
-    HTTP_UNSUPPORTED_MEDIA_TYPE
-);
-use JE qw();
+use HTTP::Status qw(:constants);
 use JSON qw();
 use MooseX::ClassAttribute qw(class_has);
-use NGCP::Panel::Form::Contact::Reseller qw();
 use NGCP::Panel::Utils::ValidateJSON qw();
 use Path::Tiny qw(path);
 use Regexp::Common qw(delimited); # $RE{delimited}
 use Safe::Isa qw($_isa);
-use Types::Standard qw(InstanceOf);
 BEGIN { extends 'Catalyst::Controller::ActionRole'; }
 require Catalyst::ActionRole::ACL;
 require Catalyst::ActionRole::CheckTrailingSlash;
@@ -35,9 +25,10 @@ require Catalyst::ActionRole::QueryParameter;
 require Catalyst::ActionRole::RequireSSL;
 require URI::QueryParam;
 
+with 'NGCP::Panel::Role::API';
+
 class_has('dispatch_path', is => 'ro', default => '/api/contracts/');
 class_has('relation', is => 'ro', default => 'http://purl.org/sipwise/ngcp-api/#rel-contracts');
-has('last_modified', is => 'rw', isa => InstanceOf['DateTime']);
 
 __PACKAGE__->config(
     action => {
@@ -124,49 +115,34 @@ sub OPTIONS : Allow {
 
 sub POST : Allow {
     my ($self, $c) = @_;
-    my $media_type = 'application/hal+json';
     {
-        last unless $self->forbid_link_header($c);
-        last unless $self->valid_media_type($c, $media_type);
-        last unless $self->require_body($c);
-        my $json = do { local $/; $c->request->body->getline }; # slurp
-        last unless $self->require_wellformed_json($c, $media_type, $json);
-        last unless $self->valid_entity($c, $json);
-        my $hal = Data::HAL->from_json($json);
+        my $resource = $self->get_valid_post_data(
+            c => $c,
+            media_type => 'application/json',
+        );
+	    last unless $resource;
 
-        my $contact_id;
-        {
-            my $contact_link = ($hal->links // [])->grep(sub {
-                $_->relation->eq('http://purl.org/sipwise/ngcp-api/#rel-contacts')
-            });
+    	# this is only accessible by admins, so on other roles check
+        my $contract_form = NGCP::Panel::Form::Contract::PeeringReseller->new;
+        last unless $self->validate_form(
+            c => $c,
+            resource => $resource,
+            form => $contract_form,
+        );
+	    my $contact = $c->model('DB')->resultset('contacts')->find($resource->{contact_id});
+	    unless($contact) {
+            $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Invalid contact_id."); # TODO: log error, ...
+            last;
+	    }
+        if($contact->reseller_id) {
+            # TODO: should be allow to create customer contracts here as well? If not, reject
+            # a contact with a reseller!
 
-            if ($contact_link->size) {
-                my $contact_uri = URI->new_abs($contact_link->at(0)->href->as_string, $c->req->uri)->canonical;
-                my $contacts_uri = URI->new_abs('/api/contacts/', $c->req->uri)->canonical;
-                if (0 != index $contact_uri, $contacts_uri) {
-                    $c->response->status(HTTP_UNPROCESSABLE_ENTITY);
-                    $c->response->header('Content-Language' => 'en');
-                    $c->response->content_type('application/xhtml+xml');
-                    $c->stash(
-                        template => 'api/unprocessable_entity.tt',
-                        error_message => "The link $contact_uri cannot express a contact relationship.",
-                    );
-                    last;
-                }
-                $contact_id = $contact_uri->rel($contacts_uri)->query_param('id');
-                last unless $self->valid_id($c, $contact_id);
-            }
-        }
-        my $resource = $hal->resource;
-
-        my %fields = map { $_ => undef } qw(external_id status);
-        for my $k (keys %{ $resource }) {
-            delete $resource->{$k} unless exists $fields{$k};
-            $resource->{$k} = DateTime::Format::RFC3339->format_datetime($resource->{$k})
-                if $resource->{$k}->$_isa('DateTime');
+            #$self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Invalid contact for system contract, must not belong to a reseller."); # TODO: log error, ...
+            #last;
         }
 
-        $resource->{contact_id} = $contact_id;
+        # TODO: do we need to use our DateTime utils for localized "now"?
         my $now = DateTime->now;
         $resource->{create_timestamp} = $now;
         $resource->{modify_timestamp} = $now;
@@ -189,53 +165,6 @@ sub allowed_methods : Private {
             if $meta->get_method($method)->can('attributes') && 'Allow' ~~ $meta->get_method($method)->attributes;
     }
     return [sort @allow];
-}
-
-sub cached : Private {
-    my ($self, $c) = @_;
-    my $response = $c->cache->get($c->request->uri->canonical->as_string);
-    unless ($response) {
-        $c->log->info('not cached');
-        return;
-    }
-    my $matched_tag = $c->request->header('If-None-Match') && ('*' eq $c->request->header('If-None-Match'))
-      || (grep {$response->header('ETag') eq $_} Data::Record->new({
-        split => qr/\s*,\s*/, unless => $RE{delimited}{-delim => q(")},
-      })->records($c->request->header('If-None-Match')));
-    my $not_modified = $c->request->header('If-Modified-Since')
-        && !($self->last_modified < DateTime::Format::HTTP->parse_datetime($c->request->header('If-Modified-Since')));
-    if (
-        $matched_tag && $not_modified
-        || $matched_tag
-        || $not_modified
-    ) {
-        $c->response->status(HTTP_NOT_MODIFIED);
-        $c->response->headers($response->headers);
-        $c->log->info('cached');
-        return 1;
-    }
-    $c->log->info('stale');
-    return;
-}
-
-sub etag : Private {
-    my ($self, $octets) = @_;
-    return sprintf '"ni:/sha3-256;%s"', sha3_256_base64($octets);
-}
-
-sub expires : Private {
-    my ($self) = @_;
-    return DateTime->now->clone->add(years => 1); # XXX insert product end-of-life
-}
-
-sub forbid_link_header : Private {
-    my ($self, $c) = @_;
-    return 1 unless $c->request->header('Link');
-    $c->response->status(HTTP_BAD_REQUEST);
-    $c->response->header('Content-Language' => 'en');
-    $c->response->content_type('application/xhtml+xml');
-    $c->stash(template => 'api/forbid_link_header.tt');
-    return;
 }
 
 sub hal_from_contract : Private {
@@ -273,30 +202,6 @@ sub hal_from_contract : Private {
     return $hal;
 }
 
-sub require_body : Private {
-    my ($self, $c) = @_;
-    return 1 if $c->request->body;
-    $c->response->status(HTTP_BAD_REQUEST);
-    $c->response->header('Content-Language' => 'en');
-    $c->response->content_type('application/xhtml+xml');
-    $c->stash(template => 'api/require_body.tt');
-    return;
-}
-
-sub require_wellformed_json : Private {
-    my ($self, $c, $media_type, $patch) = @_;
-    try {
-        NGCP::Panel::Utils::ValidateJSON->new($patch);
-    } catch($e) {
-        $c->response->status(HTTP_BAD_REQUEST);
-        $c->response->header('Content-Language' => 'en');
-        $c->response->content_type('application/xhtml+xml');
-        $c->stash(template => 'api/valid_entity.tt', media_type => $media_type, error_message => $e);
-        return;
-    };
-    return 1;
-}
-
 sub valid_id : Private {
     my ($self, $c, $id) = @_;
     return 1 if $id->is_integer;
@@ -305,43 +210,6 @@ sub valid_id : Private {
     $c->response->content_type('application/xhtml+xml');
     $c->stash(template => 'api/invalid_query_parameter.tt', key => 'id');
     return;
-}
-
-sub valid_media_type : Private {
-    my ($self, $c, $media_type) = @_;
-    return 1 if $c->request->header('Content-Type') && 0 == index $c->request->header('Content-Type'), $media_type;
-    $c->response->status(HTTP_UNSUPPORTED_MEDIA_TYPE);
-    $c->response->header('Content-Language' => 'en');
-    $c->response->content_type('application/xhtml+xml');
-    $c->stash(template => 'api/valid_media_type.tt', media_type => $media_type);
-    return;
-}
-
-sub valid_entity : Private {
-    my ($self, $c, $entity) = @_;
-    my $js
-        = path($c->path_to(qw(share static js api tv4.js)))->slurp
-        . "\nvar schema = "
-        . path($c->path_to(qw(share static js api properties contracts-item.json)))->slurp
-        . ";\nvar data = "
-        . $entity
-        . ";\ntv4.validate(data, schema);";
-    my $je = JE->new;
-    unless ($je->eval($js)) {
-        die "generic JavaScript error: $@" if $@;
-        $c->response->status(HTTP_UNPROCESSABLE_ENTITY);
-        $c->response->header('Content-Language' => 'en');
-        $c->response->content_type('application/xhtml+xml');
-        $c->stash(
-            template => 'api/unprocessable_entity.tt',
-            error_message => JSON::to_json(
-                { map { $_ => $je->{tv4}{error}{$_}->value } qw(dataPath message schemaPath) },
-                { canonical => 1, pretty => 1, }
-            )
-        );
-        return;
-    }
-    return 1;
 }
 
 sub end : Private {
@@ -375,3 +243,4 @@ use Carp qw(longmess); use DateTime::Format::RFC3339 qw(); use Data::Dumper qw(D
         $c->detach($c->view);
     }
 }
+# vim: set tabstop=4 expandtab:

@@ -132,6 +132,12 @@ sub POST : Allow {
             form => $contact_form,
         );
 
+        my $reseller = $c->model('DB')->resultset('resellers')->find($resource->{reseller_id});
+        unless($reseller) {
+            $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Invalid reseller_id."); # TODO: log error, ...
+            last;
+        }
+
         my $now = DateTime->now;
         $resource->{create_timestamp} = $now;
         $resource->{modify_timestamp} = $now;
