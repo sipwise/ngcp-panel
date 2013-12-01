@@ -17,10 +17,12 @@ use HTTP::Status qw(
     HTTP_OK
     HTTP_UNPROCESSABLE_ENTITY
     HTTP_UNSUPPORTED_MEDIA_TYPE
+    HTTP_INTERNAL_SERVER_ERROR
 );
-use JE qw();
-use JSON qw();
+#use JE qw();
+use JSON qw(from_json);
 use MooseX::ClassAttribute qw(class_has);
+use NGCP::Panel::Form::Contact::Admin qw();
 use NGCP::Panel::Form::Contact::Reseller qw();
 use NGCP::Panel::ValidateJSON qw();
 use Path::Tiny qw(path);
@@ -123,55 +125,43 @@ sub OPTIONS : Allow {
 
 sub POST : Allow {
     my ($self, $c) = @_;
-    my $media_type = 'application/hal+json';
+    my $media_type = 'application/json';
     {
         last unless $self->forbid_link_header($c);
         last unless $self->valid_media_type($c, $media_type);
         last unless $self->require_body($c);
         my $json = do { local $/; $c->request->body->getline }; # slurp
         last unless $self->require_wellformed_json($c, $media_type, $json);
-        last unless $self->valid_entity($c, $json);
-        my $hal = Data::HAL->from_json($json);
+        #last unless $self->valid_entity($c, $json);
 
-        my $r_id;
-        {
-            my $reseller_link = ($hal->links // [])->grep(sub {
-                $_->relation->eq('http://purl.org/sipwise/ngcp-api/#rel-resellers')
-            });
-
-            if ($reseller_link->size) {
-                my $reseller_uri = URI->new_abs($reseller_link->at(0)->href->as_string, $c->req->uri)->canonical;
-                my $resellers_uri = URI->new_abs('/api/resellers/', $c->req->uri)->canonical;
-                if (0 != index $reseller_uri, $resellers_uri) {
-                    $c->response->status(HTTP_UNPROCESSABLE_ENTITY);
-                    $c->response->header('Content-Language' => 'en');
-                    $c->response->content_type('application/xhtml+xml');
-                    $c->stash(
-                        template => 'api/unprocessable_entity.tt',
-                        error_message => "The link $reseller_uri cannot express a reseller relationship.",
-                    );
-                    last;
-                }
-                $r_id = $reseller_uri->rel($resellers_uri)->query_param('id');
-                last unless $self->valid_id($c, $r_id);
-            }
+        my $contact_form;
+        my $resource = from_json($json);
+        $resource->{reseller}{id} = delete $resource->{reseller_id};
+        if($c->user->roles eq "api_admin") {
+            $c->log->debug("+++++++++++++++ using NGCP::Panel::Form::Contact::Admin for validation");
+            $contact_form = NGCP::Panel::Form::Contact::Admin->new;
+        } else {
+            $contact_form = NGCP::Panel::Form::Contact::Reseller->new;
+            $resource->{reseller}{id} = $c->user->reseller_id;
         }
-        my $resource = $hal->resource;
-
-        my $contact_form = NGCP::Panel::Form::Contact::Reseller->new;
-        my %fields = map { $_->name => undef } grep { 'Text' eq $_->type || 'Email' eq $_->type } $contact_form->fields;
+        my %fields = map { $_->name => undef } $contact_form->fields;
         for my $k (keys %{ $resource }) {
-            delete $resource->{$k} unless exists $fields{$k};
+            unless(exists $fields{$k}) {
+                $c->log->debug("+++++++++++++ deleting unknown key '$k'");
+                delete $resource->{$k};
+            }
             $resource->{$k} = DateTime::Format::RFC3339->format_datetime($resource->{$k})
                 if $resource->{$k}->$_isa('DateTime');
         }
+
         my $result = $contact_form->run(params => $resource);
         if ($result->error_results->size) {
             $c->response->status(HTTP_UNPROCESSABLE_ENTITY);
             $c->response->header('Content-Language' => 'en');
+            # TODO: return error in json!
             $c->response->content_type('application/xhtml+xml');
             my $e = $result->error_results->map(sub {
-                sprintf '%s: %s - %s', $_->name, $_->input, $_->errors->join(q())
+                sprintf 'field: \'%s\', input: \'%s\', errors: %s', $_->name, $_->input // '', $_->errors->join(q())
             })->join("\n");
             $c->stash(
                 template => 'api/unprocessable_entity.tt',
@@ -180,11 +170,23 @@ sub POST : Allow {
             last;
         }
 
-        $resource->{reseller_id} = $r_id;
+        $resource->{reseller_id} = $resource->{reseller}{id}; delete $resource->{reseller};
         my $now = DateTime->now;
         $resource->{create_timestamp} = $now;
         $resource->{modify_timestamp} = $now;
-        my $contact = $c->model('DB')->resultset('contacts')->create($resource);
+        my $contact;
+        try {
+            $contact = $c->model('DB')->resultset('contacts')->create($resource);
+        } catch($e) {
+            $c->log->error("failed to create contact: $e"); # TODO: log user, input etc
+            $c->response->status(HTTP_INTERNAL_SERVER_ERROR);
+            # TODO: that one is not rendered, rather than our "normal" 500 template!
+            $c->stash(
+                template => 'api/internal_server_error.tt',
+                error_message => "DB query faild: $e",
+            );
+            last;
+        }
 
         $c->cache->remove($c->request->uri->canonical->as_string);
         $c->response->status(HTTP_CREATED);
@@ -257,6 +259,7 @@ sub hal_from_contact : Private {
     # XXX invalid 00-00-00 dates
     my %resource = $contact->get_inflated_columns;
     my $id = delete $resource{id};
+
 
     my $hal = Data::HAL->new(
         links => [
@@ -331,7 +334,7 @@ sub valid_media_type : Private {
     $c->stash(template => 'api/valid_media_type.tt', media_type => $media_type);
     return;
 }
-
+=pod
 sub valid_entity : Private {
     my ($self, $c, $entity) = @_;
     my $js
@@ -358,6 +361,7 @@ sub valid_entity : Private {
     }
     return 1;
 }
+=cut
 
 sub end : Private {
     my ($self, $c) = @_;
@@ -390,3 +394,5 @@ use Carp qw(longmess); use DateTime::Format::RFC3339 qw(); use Data::Dumper qw(D
         $c->detach($c->view);
     }
 }
+
+# vim: set tabstop=4 expandtab:

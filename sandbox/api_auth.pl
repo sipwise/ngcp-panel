@@ -7,6 +7,7 @@ $ua->ssl_opts(
     SSL_cert_file => '/etc/ssl/ngcp/api/NGCP-API-client-certificate-1385650532.pem',
     SSL_key_file  => '/etc/ssl/ngcp/api/NGCP-API-client-certificate-1385650532.pem',
     SSL_ca_file   => '/etc/ssl/ngcp/api/ca-cert.pem',
+);
 my $can_accept = HTTP::Message::decodable;
 my $res = $ua->get(
     'https://serenity:4443/api/contacts/?id=10',

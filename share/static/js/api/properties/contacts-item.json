@@ -3,6 +3,7 @@
     "description": "contact information for a contract",
     "required": ["city", "company", "country", "email", "firstname", "lastname", "phonenumber", "postcode", "street"],
     "properties": {
+        "reseller_id": { "type": ["null", "number"], "description": "The id of the contact's reseller." },
         "city": { "type": ["null", "string"], "description": "The contact's city." },
         "company": { "type": ["null", "string"], "description": "The contact's company." },
         "country": { "type": ["null", "string"], "description": "The contact's country (ISO-3166, e.g. \"AT\" for Austria, \"DE\" for Germany)." },
