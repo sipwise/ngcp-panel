@@ -10,17 +10,8 @@ use DateTime::Format::RFC3339 qw();
 use Digest::SHA3 qw(sha3_256_base64);
 use HTTP::Headers qw();
 use HTTP::Headers::Util qw(split_header_words);
-use HTTP::Status qw(
-    HTTP_BAD_REQUEST
-    HTTP_CREATED
-    HTTP_NOT_MODIFIED
-    HTTP_OK
-    HTTP_UNPROCESSABLE_ENTITY
-    HTTP_UNSUPPORTED_MEDIA_TYPE
-    HTTP_INTERNAL_SERVER_ERROR
-);
+use HTTP::Status qw(:constants);
 #use JE qw();
-use JSON qw(from_json);
 use MooseX::ClassAttribute qw(class_has);
 use NGCP::Panel::Form::Contact::Admin qw();
 use NGCP::Panel::Form::Contact::Reseller qw();
@@ -36,6 +27,8 @@ require Catalyst::ActionRole::HTTPMethods;
 require Catalyst::ActionRole::QueryParameter;
 require Catalyst::ActionRole::RequireSSL;
 require URI::QueryParam;
+
+with 'NGCP::Panel::Role::API';
 
 class_has('dispatch_path', is => 'ro', default => '/api/contacts/');
 class_has('relation', is => 'ro', default => 'http://purl.org/sipwise/ngcp-api/#rel-contacts');
@@ -125,52 +118,27 @@ sub OPTIONS : Allow {
 
 sub POST : Allow {
     my ($self, $c) = @_;
-    my $media_type = 'application/json';
+
     {
-        last unless $self->forbid_link_header($c);
-        last unless $self->valid_media_type($c, $media_type);
-        last unless $self->require_body($c);
-        my $json = do { local $/; $c->request->body->getline }; # slurp
-        last unless $self->require_wellformed_json($c, $media_type, $json);
-        #last unless $self->valid_entity($c, $json);
+        my $resource = $self->get_valid_post_data(
+            c => $c, 
+            media_type => 'application/json',
+        );
+        last unless $resource;
 
         my $contact_form;
-        my $resource = from_json($json);
-        $resource->{reseller}{id} = delete $resource->{reseller_id};
         if($c->user->roles eq "api_admin") {
-            $c->log->debug("+++++++++++++++ using NGCP::Panel::Form::Contact::Admin for validation");
             $contact_form = NGCP::Panel::Form::Contact::Admin->new;
         } else {
             $contact_form = NGCP::Panel::Form::Contact::Reseller->new;
-            $resource->{reseller}{id} = $c->user->reseller_id;
+            $resource->{reseller_id} = $c->user->reseller_id;
         }
-        my %fields = map { $_->name => undef } $contact_form->fields;
-        for my $k (keys %{ $resource }) {
-            unless(exists $fields{$k}) {
-                $c->log->debug("+++++++++++++ deleting unknown key '$k'");
-                delete $resource->{$k};
-            }
-            $resource->{$k} = DateTime::Format::RFC3339->format_datetime($resource->{$k})
-                if $resource->{$k}->$_isa('DateTime');
-        }
+        last unless $self->validate_form(
+            c => $c,
+            resource => $resource,
+            form => $contact_form,
+        );
 
-        my $result = $contact_form->run(params => $resource);
-        if ($result->error_results->size) {
-            $c->response->status(HTTP_UNPROCESSABLE_ENTITY);
-            $c->response->header('Content-Language' => 'en');
-            # TODO: return error in json!
-            $c->response->content_type('application/xhtml+xml');
-            my $e = $result->error_results->map(sub {
-                sprintf 'field: \'%s\', input: \'%s\', errors: %s', $_->name, $_->input // '', $_->errors->join(q())
-            })->join("\n");
-            $c->stash(
-                template => 'api/unprocessable_entity.tt',
-                error_message => "Validation failed: $e",
-            );
-            last;
-        }
-
-        $resource->{reseller_id} = $resource->{reseller}{id}; delete $resource->{reseller};
         my $now = DateTime->now;
         $resource->{create_timestamp} = $now;
         $resource->{modify_timestamp} = $now;
@@ -178,13 +146,8 @@ sub POST : Allow {
         try {
             $contact = $c->model('DB')->resultset('contacts')->create($resource);
         } catch($e) {
-            $c->log->error("failed to create contact: $e"); # TODO: log user, input etc
-            $c->response->status(HTTP_INTERNAL_SERVER_ERROR);
-            # TODO: that one is not rendered, rather than our "normal" 500 template!
-            $c->stash(
-                template => 'api/internal_server_error.tt',
-                error_message => "DB query faild: $e",
-            );
+            $c->log->error("failed to create contact: $e"); # TODO: user, message, trace, ...
+            $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "failed to create contact");
             last;
         }
 
@@ -244,16 +207,6 @@ sub expires : Private {
     return DateTime->now->clone->add(years => 1); # XXX insert product end-of-life
 }
 
-sub forbid_link_header : Private {
-    my ($self, $c) = @_;
-    return 1 unless $c->request->header('Link');
-    $c->response->status(HTTP_BAD_REQUEST);
-    $c->response->header('Content-Language' => 'en');
-    $c->response->content_type('application/xhtml+xml');
-    $c->stash(template => 'api/forbid_link_header.tt');
-    return;
-}
-
 sub hal_from_contact : Private {
     my ($self, $contact) = @_;
     # XXX invalid 00-00-00 dates
@@ -291,30 +244,6 @@ sub hal_from_contact : Private {
     return $hal;
 }
 
-sub require_body : Private {
-    my ($self, $c) = @_;
-    return 1 if $c->request->body;
-    $c->response->status(HTTP_BAD_REQUEST);
-    $c->response->header('Content-Language' => 'en');
-    $c->response->content_type('application/xhtml+xml');
-    $c->stash(template => 'api/require_body.tt');
-    return;
-}
-
-sub require_wellformed_json : Private {
-    my ($self, $c, $media_type, $patch) = @_;
-    try {
-        NGCP::Panel::ValidateJSON->new($patch);
-    } catch($e) {
-        $c->response->status(HTTP_BAD_REQUEST);
-        $c->response->header('Content-Language' => 'en');
-        $c->response->content_type('application/xhtml+xml');
-        $c->stash(template => 'api/valid_entity.tt', media_type => $media_type, error_message => $e);
-        return;
-    };
-    return 1;
-}
-
 sub valid_id : Private {
     my ($self, $c, $id) = @_;
     return 1 if $id->is_integer;
@@ -325,73 +254,16 @@ sub valid_id : Private {
     return;
 }
 
-sub valid_media_type : Private {
-    my ($self, $c, $media_type) = @_;
-    return 1 if $c->request->header('Content-Type') && 0 == index $c->request->header('Content-Type'), $media_type;
-    $c->response->status(HTTP_UNSUPPORTED_MEDIA_TYPE);
-    $c->response->header('Content-Language' => 'en');
-    $c->response->content_type('application/xhtml+xml');
-    $c->stash(template => 'api/valid_media_type.tt', media_type => $media_type);
-    return;
-}
-=pod
-sub valid_entity : Private {
-    my ($self, $c, $entity) = @_;
-    my $js
-        = path($c->path_to(qw(share static js api tv4.js)))->slurp
-        . "\nvar schema = "
-        . path($c->path_to(qw(share static js api properties contacts-item.json)))->slurp
-        . ";\nvar data = "
-        . $entity
-        . ";\ntv4.validate(data, schema);";
-    my $je = JE->new;
-    unless ($je->eval($js)) {
-        die "generic JavaScript error: $@" if $@;
-        $c->response->status(HTTP_UNPROCESSABLE_ENTITY);
-        $c->response->header('Content-Language' => 'en');
-        $c->response->content_type('application/xhtml+xml');
-        $c->stash(
-            template => 'api/unprocessable_entity.tt',
-            error_message => JSON::to_json(
-                { map { $_ => $je->{tv4}{error}{$_}->value } qw(dataPath message schemaPath) },
-                { canonical => 1, pretty => 1, }
-            )
-        );
-        return;
-    }
-    return 1;
-}
-=cut
-
 sub end : Private {
     my ($self, $c) = @_;
     $c->forward(qw(Controller::Root render));
     $c->response->content_type('')
         if $c->response->content_type =~ qr'text/html'; # stupid RenderView getting in the way
-use Carp qw(longmess); use DateTime::Format::RFC3339 qw(); use Data::Dumper qw(Dumper); use Convert::Ascii85 qw();
     if (@{ $c->error }) {
-        my $incident = DateTime->from_epoch(epoch => Time::HiRes::time);
-        my $incident_id = sprintf '%X', $incident->strftime('%s%N');
-        my $incident_timestamp = DateTime::Format::RFC3339->new->format_datetime($incident);
-        local $Data::Dumper::Indent = 1;
-        local $Data::Dumper::Useqq = 1;
-        local $Data::Dumper::Deparse = 1;
-        local $Data::Dumper::Quotekeys = 0;
-        local $Data::Dumper::Sortkeys = 1;
-        my $crash_state = join "\n", @{ $c->error }, longmess, Dumper($c), Dumper($c->config);
-        $c->log->error(
-            "Exception id $incident_id at $incident_timestamp crash_state:" .
-            ($crash_state ? ("\n" . $crash_state) : ' disabled')
-        );
+        my $msg = join ', ', @{ $c->error };
+        $c->log->error($msg);
+        $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "Internal Server Error");
         $c->clear_errors;
-        $c->stash(
-            exception_incident => $incident_id,
-            exception_timestamp => $incident_timestamp,
-            template => 'api/internal_server_error.tt'
-        );
-        $c->response->status(500);
-        $c->response->content_type('application/xhtml+xml');
-        $c->detach($c->view);
     }
 }
 
