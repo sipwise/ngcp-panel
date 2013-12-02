@@ -6,9 +6,7 @@ use Data::HAL qw();
 use Data::HAL::Link qw();
 use Data::Record qw();
 use HTTP::Headers qw();
-use HTTP::Headers::Util qw(split_header_words);
 use HTTP::Status qw(:constants);
-#use JE qw();
 use MooseX::ClassAttribute qw(class_has);
 use NGCP::Panel::Form::Contact::Admin qw();
 use NGCP::Panel::Form::Contact::Reseller qw();
@@ -18,9 +16,7 @@ BEGIN { extends 'Catalyst::Controller::ActionRole'; }
 require Catalyst::ActionRole::ACL;
 require Catalyst::ActionRole::CheckTrailingSlash;
 require Catalyst::ActionRole::HTTPMethods;
-require Catalyst::ActionRole::QueryParameter;
 require Catalyst::ActionRole::RequireSSL;
-require URI::QueryParam;
 
 with 'NGCP::Panel::Role::API';
 
@@ -36,40 +32,55 @@ __PACKAGE__->config(
             Does => [qw(ACL CheckTrailingSlash RequireSSL)],
             Method => $_,
             Path => __PACKAGE__->dispatch_path,
-            QueryParam => '!id',
         } } @{ __PACKAGE__->allowed_methods }
     },
-    action_roles => [qw(HTTPMethods QueryParameter)],
+    action_roles => [qw(HTTPMethods)],
 );
 
-sub GET : Allow {
+sub GET :Allow {
     my ($self, $c) = @_;
+    my $page = $c->request->params->{page} // 1;
+    my $rows = $c->request->params->{rows} // 10;
     {
         last if $self->cached($c);
         my $contacts = $c->model('DB')->resultset('contacts');
         $self->last_modified($contacts->get_column('modify_timestamp')->max_rs->single->modify_timestamp);
+        my $total_count = int($contacts->count);
+        $contacts = $contacts->search(undef, {
+            page => $page,
+            rows => $rows,
+        });
         my (@embedded, @links);
         for my $contact ($contacts->search({}, {order_by => {-asc => 'me.id'}, prefetch => ['reseller']})->all) {
             push @embedded, $self->hal_from_contact($contact);
             push @links, Data::HAL::Link->new(
                 relation => 'ngcp:contacts',
-                href     => sprintf('/api/contacts/?id=%d', $contact->id),
+                href     => sprintf('/api/contacts/%d', $contact->id),
             );
         }
+        push @links,
+            Data::HAL::Link->new(
+                relation => 'curies',
+                href => 'http://purl.org/sipwise/ngcp-api/#rel-{rel}',
+                name => 'ngcp',
+                templated => true,
+            ),
+            Data::HAL::Link->new(relation => 'profile', href => 'http://purl.org/sipwise/ngcp-api/'),
+            Data::HAL::Link->new(relation => 'self', href => "/api/contacts/?page=$page&rows=$rows");
+        if(($total_count / $rows) > $page ) {
+            push @links, Data::HAL::Link->new(relation => 'next', href => "/api/contacts/?page=".($page+1)."&rows=$rows"),
+        }
+        if($page > 1) {
+            push @links, Data::HAL::Link->new(relation => 'prev', href => "/api/contacts/?page=".($page-1)."&rows=$rows");
+        }
+
         my $hal = Data::HAL->new(
             embedded => [@embedded],
-            links => [
-                Data::HAL::Link->new(
-                    relation => 'curies',
-                    href => 'http://purl.org/sipwise/ngcp-api/#rel-{rel}',
-                    name => 'ngcp',
-                    templated => true,
-                ),
-                Data::HAL::Link->new(relation => 'profile', href => 'http://purl.org/sipwise/ngcp-api/'),
-                Data::HAL::Link->new(relation => 'self', href => '/api/contacts/'),
-                @links,
-            ]
+            links => [@links],
         );
+        $hal->resource({
+            total_count => $total_count,
+        });
         my $response = HTTP::Response->new(HTTP_OK, undef, HTTP::Headers->new(
             (map { # XXX Data::HAL must be able to generate links with multiple relations
                 s|rel="(http://purl.org/sipwise/ngcp-api/#rel-contacts)"|rel="item $1"|;
@@ -89,27 +100,27 @@ sub GET : Allow {
     return;
 }
 
-sub HEAD : Allow {
+sub HEAD :Allow {
     my ($self, $c) = @_;
     $c->forward(qw(GET));
     $c->response->body(q());
     return;
 }
 
-sub OPTIONS : Allow {
+sub OPTIONS :Allow {
     my ($self, $c) = @_;
-    my $allowed_methods = $self->allowed_methods->join(q(, ));
+    my $allowed_methods = $self->allowed_methods;
     $c->response->headers(HTTP::Headers->new(
-        Allow => $allowed_methods,
+        Allow => $allowed_methods->join(', '),
         Accept_Post => 'application/hal+json; profile=http://purl.org/sipwise/ngcp-api/#rel-contacts',
         Content_Language => 'en',
     ));
-    $c->response->content_type('application/xhtml+xml');
-    $c->stash(template => 'api/allowed_methods.tt', allowed_methods => $allowed_methods);
+    $c->response->content_type('application/json');
+    $c->response->body(JSON::to_json({ methods => $allowed_methods })."\n");
     return;
 }
 
-sub POST : Allow {
+sub POST :Allow {
     my ($self, $c) = @_;
 
     {
@@ -152,23 +163,11 @@ sub POST : Allow {
 
         $c->cache->remove($c->request->uri->canonical->as_string);
         $c->response->status(HTTP_CREATED);
-        $c->response->header(Location => sprintf('/api/contacts/?id=%d', $contact->id));
+        $c->response->header(Location => sprintf('/api/contacts/%d', $contact->id));
         $c->response->body(q());
     }
     return;
 }
-
-sub allowed_methods : Private {
-    my ($self) = @_;
-    my $meta = $self->meta;
-    my @allow;
-    for my $method ($meta->get_method_list) {
-        push @allow, $meta->get_method($method)->name
-            if $meta->get_method($method)->can('attributes') && 'Allow' ~~ $meta->get_method($method)->attributes;
-    }
-    return [sort @allow];
-}
-
 
 sub hal_from_contact : Private {
     my ($self, $contact) = @_;
@@ -187,11 +186,11 @@ sub hal_from_contact : Private {
             ),
             Data::HAL::Link->new(relation => 'collection', href => '/api/contacts/'),
             Data::HAL::Link->new(relation => 'profile', href => 'http://purl.org/sipwise/ngcp-api/'),
-            Data::HAL::Link->new(relation => 'self', href => "/api/contacts/?id=$id"),
+            Data::HAL::Link->new(relation => 'self', href => "/api/contacts/$id"),
             $contact->reseller
                 ? Data::HAL::Link->new(
                     relation => 'ngcp:resellers',
-                    href => sprintf('/api/resellers/?id=%d', $contact->reseller_id),
+                    href => sprintf('/api/resellers/%d', $contact->reseller_id),
                 ) : (),
         ],
         relation => 'ngcp:contacts',

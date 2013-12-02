@@ -4,17 +4,15 @@ use namespace::sweep;
 use DateTime qw();
 use DateTime::Format::HTTP qw();
 use HTTP::Headers qw();
-use HTTP::Status qw(
-    HTTP_NOT_IMPLEMENTED
-);
+use HTTP::Status qw(:constants);
 use MooseX::ClassAttribute qw(class_has);
 BEGIN { extends 'Catalyst::Controller::ActionRole'; }
 require Catalyst::ActionRole::ACL;
 require Catalyst::ActionRole::CheckTrailingSlash;
 require Catalyst::ActionRole::HTTPMethods;
-require Catalyst::ActionRole::QueryParameter;
 require Catalyst::ActionRole::RequireSSL;
-require URI::QueryParam;
+
+with 'NGCP::Panel::Role::API';
 
 class_has('dispatch_path', is => 'ro', default => '/api/resellers/');
 
@@ -23,14 +21,13 @@ __PACKAGE__->config(
         map { $_ => {
             ACLDetachTo => '/api/root/invalid_user',
             AllowedRole => 'api_admin',
-            Args => 0,
-            Does => [qw(ACL CheckTrailingSlash RequireSSL)],
+            Args => 1,
+            Does => [qw(ACL RequireSSL)],
             Method => $_,
             Path => __PACKAGE__->dispatch_path,
-            QueryParam => 'id',
         } } @{ __PACKAGE__->allowed_methods }
     },
-    action_roles => [qw(HTTPMethods QueryParameter)],
+    action_roles => [qw(HTTPMethods)],
 );
 
 sub GET : Allow {
@@ -63,14 +60,15 @@ sub OPTIONS : Allow {
     return;
 }
 
-
-sub allowed_methods : Private {
-    my ($self) = @_;
-    my $meta = $self->meta;
-    my @allow;
-    for my $method ($meta->get_method_list) {
-        push @allow, $meta->get_method($method)->name
-            if $meta->get_method($method)->can('attributes') && 'Allow' ~~ $meta->get_method($method)->attributes;
+sub end : Private {
+    my ($self, $c) = @_;
+    $c->forward(qw(Controller::Root render));
+    $c->response->content_type('')
+        if $c->response->content_type =~ qr'text/html'; # stupid RenderView getting in the way
+    if (@{ $c->error }) {
+        my $msg = join ', ', @{ $c->error };
+        $c->log->error($msg);
+        $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "Internal Server Error");
+        $c->clear_errors;
     }
-    return [sort @allow];
 }

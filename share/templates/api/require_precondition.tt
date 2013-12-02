@@ -1,9 +1,0 @@
-<!DOCTYPE html>
-<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
-    <head>
-        <title>Precondition required</title>
-    </head>
-    <body>
-        <p>This request is required to be conditional, use the <tt>[% header_name | html %]</tt> header.</p>
-    </body>
-</html>

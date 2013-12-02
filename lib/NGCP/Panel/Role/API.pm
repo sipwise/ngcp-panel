@@ -11,6 +11,7 @@ use DateTime::Format::HTTP qw();
 use DateTime::Format::RFC3339 qw();
 use Types::Standard qw(InstanceOf);
 use Regexp::Common qw(delimited); # $RE{delimited}
+use HTTP::Headers::Util qw(split_header_words);
 use NGCP::Panel::Utils::ValidateJSON qw();
 
 has('last_modified', is => 'rw', isa => InstanceOf['DateTime']);
@@ -79,8 +80,6 @@ sub validate_form {
     return 1;
 }
 
-# private
-
 sub error {
     my ($self, $c, $code, $message) = @_;
 
@@ -110,6 +109,22 @@ sub require_body {
     my ($self, $c) = @_;
     return 1 if $c->request->body;
     $self->error($c, HTTP_BAD_REQUEST, "This request is missing a message body.");
+    return;
+}
+
+sub require_precondition {
+    my ($self, $c, $header_name) = @_;
+    return 1 if $c->request->header($header_name);
+    $self->error($c, HTTP_PRECONDITION_REQUIRED, "This request is required to be conditional, use the '$header_name' header.");
+    return;
+}
+
+sub require_preference {
+    my ($self, $c) = @_;
+    my @preference = grep { 'return' eq $_->[0] } split_header_words($c->request->header('Prefer'));
+    return $preference[0][1]
+        if 1 == @preference && ('minimal' eq $preference[0][1] || 'representation' eq $preference[0][1]);
+    $self->error($c, HTTP_BAD_REQUEST, "This request is required to express an expectation about the response. Use the 'Prefer' header with either 'return=representation' or 'return='minimal' preference.");
     return;
 }
 
@@ -159,6 +174,65 @@ sub etag {
 sub expires {
     my ($self) = @_;
     return DateTime->now->clone->add(years => 1); # XXX insert product end-of-life
+}
+
+sub allowed_methods {
+    my ($self) = @_;
+    my $meta = $self->meta;
+    my @allow;
+    for my $method ($meta->get_method_list) {
+        push @allow, $meta->get_method($method)->name
+            if $meta->get_method($method)->can('attributes') && 'Allow' ~~ $meta->get_method($method)->attributes;
+    }
+    return [sort @allow];
+}
+
+sub valid_id {
+    my ($self, $c, $id) = @_;
+    return 1 if $id->is_integer;
+    $self->error($c, HTTP_BAD_REQUEST, "Invalid id in request URI");
+    return;
+}
+
+sub require_valid_patch {
+    my ($self, $c, $json) = @_;
+
+    # TODO: implement without JE
+    return 1;
+}
+
+sub resource_exists {
+    my ($self, $c, $entity_name, $resource) = @_;
+    return 1 if $resource;
+    $self->error($c, HTTP_NOT_FOUND, "Entity '$entity_name' not found.");
+    return;
+}
+
+sub apply_patch {
+    my ($self, $c, $entity, $json) = @_;
+    my $patch = JSON::decode_json($json);
+    for my $op (@{ $patch }) {
+        my $coderef = JSON::Pointer->can($op->{op});
+        die 'invalid op despite schema validation' unless $coderef;
+        try {
+            for ($op->{op}) {
+                if ('add' eq $_ or 'replace' eq $_) {
+                    $entity = $coderef->('JSON::Pointer', $entity, $op->{path}, $op->{value});
+                } elsif ('remove' eq $_) {
+                    $entity = $coderef->('JSON::Pointer', $entity, $op->{path});
+                } elsif ('move' eq $_ or 'copy' eq $_) {
+                    $entity = $coderef->('JSON::Pointer', $entity, $op->{from}, $op->{path});
+                } elsif ('test' eq $_) {
+                    die "test failed - path: $op->{path} value: $op->{value}\n"
+                        unless $coderef->('JSON::Pointer', $entity, $op->{path}, $op->{value});
+                }
+            }
+        } catch {
+            $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "The entity could not be processed: $_");
+            return;
+        };
+    }
+    return $entity;
 }
 
 1;

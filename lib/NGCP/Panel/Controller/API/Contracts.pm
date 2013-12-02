@@ -9,7 +9,6 @@ use DateTime::Format::HTTP qw();
 use DateTime::Format::RFC3339 qw();
 use Digest::SHA3 qw(sha3_256_base64);
 use HTTP::Headers qw();
-use HTTP::Headers::Util qw(split_header_words);
 use HTTP::Status qw(:constants);
 use JSON qw();
 use MooseX::ClassAttribute qw(class_has);
@@ -23,7 +22,6 @@ require Catalyst::ActionRole::CheckTrailingSlash;
 require Catalyst::ActionRole::HTTPMethods;
 require Catalyst::ActionRole::QueryParameter;
 require Catalyst::ActionRole::RequireSSL;
-require URI::QueryParam;
 
 with 'NGCP::Panel::Role::API';
 
@@ -39,40 +37,55 @@ __PACKAGE__->config(
             Does => [qw(ACL CheckTrailingSlash RequireSSL)],
             Method => $_,
             Path => __PACKAGE__->dispatch_path,
-            QueryParam => '!id',
         } } @{ __PACKAGE__->allowed_methods }
     },
-    action_roles => [qw(HTTPMethods QueryParameter)],
+    action_roles => [qw(HTTPMethods)],
 );
 
-sub GET : Allow {
+sub GET :Allow :Args(0) {
     my ($self, $c) = @_;
+    my $page = $c->request->params->{page} // 1;
+    my $rows = $c->request->params->{rows} // 10;
     {
         last if $self->cached($c);
         my $contracts = $c->model('DB')->resultset('contracts');
         $self->last_modified($contracts->get_column('modify_timestamp')->max_rs->single->modify_timestamp);
+        my $total_count = int($contracts->count);
+        $contracts = $contracts->search(undef, {
+            page => $page,
+            rows => $rows,
+        });
         my (@embedded, @links);
         for my $contract ($contracts->search({}, {order_by => {-asc => 'me.id'}, prefetch => ['contact']})->all) {
             push @embedded, $self->hal_from_contract($contract);
             push @links, Data::HAL::Link->new(
                 relation => 'ngcp:contracts',
-                href     => sprintf('/api/contracts/?id=%d', $contract->id),
+                href     => sprintf('/api/contracts/%d', $contract->id),
             );
+        }
+        push @links,
+            Data::HAL::Link->new(
+                relation => 'curies',
+                href => 'http://purl.org/sipwise/ngcp-api/#rel-{rel}',
+                name => 'ngcp',
+                templated => true,
+            ),
+            Data::HAL::Link->new(relation => 'profile', href => 'http://purl.org/sipwise/ngcp-api/'),
+            Data::HAL::Link->new(relation => 'self', href => "/api/contracts/?page=$page&rows=$rows");
+        
+        if(($total_count / $rows) > $page ) {
+            push @links, Data::HAL::Link->new(relation => 'next', href => "/api/contracts/?page=".($page+1)."&rows=$rows"),
+        }
+        if($page > 1) {
+            push @links, Data::HAL::Link->new(relation => 'prev', href => "/api/contracts/?page=".($page-1)."&rows=$rows");
         }
         my $hal = Data::HAL->new(
             embedded => [@embedded],
-            links => [
-                Data::HAL::Link->new(
-                    relation => 'curies',
-                    href => 'http://purl.org/sipwise/ngcp-api/#rel-{rel}',
-                    name => 'ngcp',
-                    templated => true,
-                ),
-                Data::HAL::Link->new(relation => 'profile', href => 'http://purl.org/sipwise/ngcp-api/'),
-                Data::HAL::Link->new(relation => 'self', href => '/api/contracts/'),
-                @links,
-            ]
+            links => [@links],
         );
+        $hal->resource({
+            total_count => $total_count,
+        });
         my $response = HTTP::Response->new(HTTP_OK, undef, HTTP::Headers->new(
             (map { # XXX Data::HAL must be able to generate links with multiple relations
                 s|rel="(http://purl.org/sipwise/ngcp-api/#rel-contracts)"|rel="item $1"|;
@@ -102,14 +115,14 @@ sub HEAD : Allow {
 
 sub OPTIONS : Allow {
     my ($self, $c) = @_;
-    my $allowed_methods = $self->allowed_methods->join(q(, ));
+    my $allowed_methods = $self->allowed_methods;
     $c->response->headers(HTTP::Headers->new(
-        Allow => $allowed_methods,
+        Allow => $allowed_methods->join(', '),
         Accept_Post => 'application/hal+json; profile=http://purl.org/sipwise/ngcp-api/#rel-contracts',
         Content_Language => 'en',
     ));
-    $c->response->content_type('application/xhtml+xml');
-    $c->stash(template => 'api/allowed_methods.tt', allowed_methods => $allowed_methods);
+    $c->response->content_type('application/json');
+    $c->response->body(JSON::to_json({ methods => $allowed_methods })."\n");
     return;
 }
 
@@ -150,21 +163,10 @@ sub POST : Allow {
 
         $c->cache->remove($c->request->uri->canonical->as_string);
         $c->response->status(HTTP_CREATED);
-        $c->response->header(Location => sprintf('/api/contracts/?id=%d', $contract->id));
+        $c->response->header(Location => sprintf('/api/contracts/%d', $contract->id));
         $c->response->body(q());
     }
     return;
-}
-
-sub allowed_methods : Private {
-    my ($self) = @_;
-    my $meta = $self->meta;
-    my @allow;
-    for my $method ($meta->get_method_list) {
-        push @allow, $meta->get_method($method)->name
-            if $meta->get_method($method)->can('attributes') && 'Allow' ~~ $meta->get_method($method)->attributes;
-    }
-    return [sort @allow];
 }
 
 sub hal_from_contract : Private {
@@ -183,11 +185,11 @@ sub hal_from_contract : Private {
             ),
             Data::HAL::Link->new(relation => 'collection', href => '/api/contracts/'),
             Data::HAL::Link->new(relation => 'profile', href => 'http://purl.org/sipwise/ngcp-api/'),
-            Data::HAL::Link->new(relation => 'self', href => "/api/contracts/?id=$id"),
+            Data::HAL::Link->new(relation => 'self', href => "/api/contracts/$id"),
             $contract->contact
                 ? Data::HAL::Link->new(
                     relation => 'ngcp:contacts',
-                    href => sprintf('/api/contacts/?id=%d', $contract->contact_id),
+                    href => sprintf('/api/contacts/%d', $contract->contact_id),
                 ) : (),
         ],
         relation => 'ngcp:contracts',
@@ -217,30 +219,13 @@ sub end : Private {
     $c->forward(qw(Controller::Root render));
     $c->response->content_type('')
         if $c->response->content_type =~ qr'text/html'; # stupid RenderView getting in the way
-use Carp qw(longmess); use DateTime::Format::RFC3339 qw(); use Data::Dumper qw(Dumper); use Convert::Ascii85 qw();
     if (@{ $c->error }) {
-        my $incident = DateTime->from_epoch(epoch => Time::HiRes::time);
-        my $incident_id = sprintf '%X', $incident->strftime('%s%N');
-        my $incident_timestamp = DateTime::Format::RFC3339->new->format_datetime($incident);
-        local $Data::Dumper::Indent = 1;
-        local $Data::Dumper::Useqq = 1;
-        local $Data::Dumper::Deparse = 1;
-        local $Data::Dumper::Quotekeys = 0;
-        local $Data::Dumper::Sortkeys = 1;
-        my $crash_state = join "\n", @{ $c->error }, longmess, Dumper($c), Dumper($c->config);
-        $c->log->error(
-            "Exception id $incident_id at $incident_timestamp crash_state:" .
-            ($crash_state ? ("\n" . $crash_state) : ' disabled')
-        );
+        my $msg = join ', ', @{ $c->error };
+        $c->log->error($msg);
+        $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "Internal Server Error");
         $c->clear_errors;
-        $c->stash(
-            exception_incident => $incident_id,
-            exception_timestamp => $incident_timestamp,
-            template => 'api/internal_server_error.tt'
-        );
-        $c->response->status(500);
-        $c->response->content_type('application/xhtml+xml');
-        $c->detach($c->view);
     }
 }
+
+
 # vim: set tabstop=4 expandtab:
