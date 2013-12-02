@@ -16,6 +16,8 @@ require Catalyst::ActionRole::CheckTrailingSlash;
 require Catalyst::ActionRole::HTTPMethods;
 require Catalyst::ActionRole::RequireSSL;
 
+with 'NGCP::Panel::Role::API';
+
 class_has('dispatch_path', is => 'ro', default => '/api/');
 
 __PACKAGE__->config(
@@ -72,41 +74,6 @@ sub OPTIONS : Allow {
     return;
 }
 
-sub allowed_methods : Private {
-    my $meta = __PACKAGE__->meta;
-    my @allow;
-    for my $method ($meta->get_method_list) {
-        push @allow, $meta->get_method($method)->name
-            if $meta->get_method($method)->can('attributes') && 'Allow' ~~ $meta->get_method($method)->attributes;
-    }
-    return [sort @allow];
-}
-
-sub cached : Private {
-    my ($self, $c) = @_;
-    my $response = $c->cache->get($c->request->uri->canonical->as_string);
-    return unless $response;
-    my $matched_tag = $c->request->header('If-None-Match')
-        && ('*' eq $c->request->header('If-None-Match'))
-        || (
-            grep { $response->header('ETag') eq $_ }
-            Data::Record->new({ split => qr/\s*,\s*/, unless => $RE{quoted}, })
-                ->records($c->request->header('If-None-Match'))
-        );
-    my $not_modified = $c->request->header('If-Modified-Since')
-        && !($self->last_modified < DateTime::Format::HTTP->parse_datetime($c->request->header('If-Modified-Since')));
-    if (
-        $matched_tag && $not_modified
-        || $matched_tag
-        || $not_modified
-    ) {
-        $response->code(HTTP_NOT_MODIFIED);
-        $response->content(undef);
-        return $response;
-    }
-    return;
-}
-
 sub collections_link_headers : Private {
     my ($self) = @_;
     return (
@@ -115,16 +82,6 @@ sub collections_link_headers : Private {
         Link => '</api/contracts/>; rel="collection http://purl.org/sipwise/ngcp-api/#rel-contracts"',
         # Link => '</api/resellers/>; rel=collection', # XXX does not exist yet
     );
-}
-
-sub etag : Private {
-    my ($self, $octets) = @_;
-    return sprintf '"ni:/sha3-256;%s"', sha3_256_base64($octets);
-}
-
-sub expires : Private {
-    my ($self) = @_;
-    return DateTime->now->clone->add(years => 1); # XXX insert install timestamp + 1000 days/ product end-of-life
 }
 
 sub invalid_user : Private {
@@ -138,4 +95,10 @@ sub invalid_user : Private {
 sub last_modified : Private {
     my ($self, $octets) = @_;
     return DateTime->new(year => 2013, month => 11, day => 11); # XXX insert release timestamp
+}
+
+sub end : Private {
+    my ($self, $c) = @_;
+
+    $c->log->debug("+++++++++++++++++++ API::Root::end");
 }

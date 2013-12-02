@@ -41,6 +41,14 @@ __PACKAGE__->config(
     action_roles => [qw(HTTPMethods)],
 );
 
+sub auto :Allow {
+    my ($self, $c) = @_;
+
+    $self->set_body($c);
+    $c->log->debug("++++++++++++++++ request body: " . $c->stash->{body});
+}
+
+
 sub GET :Allow :Args(0) {
     my ($self, $c) = @_;
     my $page = $c->request->params->{page} // 1;
@@ -224,6 +232,7 @@ sub end : Private {
         $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "Internal Server Error");
         $c->clear_errors;
     }
+    $c->log->debug("++++++++++++++++ response body: " . ($c->response->body // ''));
 }
 
 

@@ -37,6 +37,13 @@ __PACKAGE__->config(
     action_roles => [qw(HTTPMethods)],
 );
 
+sub auto :Allow {
+    my ($self, $c) = @_;
+
+    $self->set_body($c);
+    $c->log->debug("++++++++++++++++ request body: " . $c->stash->{body});
+}
+
 sub GET :Allow {
     my ($self, $c) = @_;
     my $page = $c->request->params->{page} // 1;
@@ -132,7 +139,12 @@ sub POST :Allow {
 
         my $contact_form;
         if($c->user->roles eq "api_admin") {
-            $contact_form = NGCP::Panel::Form::Contact::Admin->new;
+            if($resource->{reseller_id}) {
+                $contact_form = NGCP::Panel::Form::Contact::Admin->new;
+            } else {
+                $contact_form = NGCP::Panel::Form::Contact::Reseller->new;
+                delete $resource->{reseller_id};
+            }
         } else {
             $contact_form = NGCP::Panel::Form::Contact::Reseller->new;
             $resource->{reseller_id} = $c->user->reseller_id;
@@ -143,10 +155,14 @@ sub POST :Allow {
             form => $contact_form,
         );
 
-        my $reseller = $c->model('DB')->resultset('resellers')->find($resource->{reseller_id});
-        unless($reseller) {
-            $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Invalid reseller_id."); # TODO: log error, ...
-            last;
+        if($c->user->roles eq "api_admin" && !exists $resource->{reseller_id}) {
+            # admins can pass a contact without reseller_id
+        } else {
+            my $reseller = $c->model('DB')->resultset('resellers')->find($resource->{reseller_id});
+            unless($reseller) {
+                $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Invalid reseller_id."); # TODO: log error, ...
+                last;
+            }
         }
 
         my $now = DateTime->now;
@@ -227,6 +243,7 @@ sub end : Private {
         $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "Internal Server Error");
         $c->clear_errors;
     }
+    $c->log->debug("++++++++++++++++ response body: " . $c->response->body // '');
 }
 
 # vim: set tabstop=4 expandtab:

@@ -30,6 +30,13 @@ __PACKAGE__->config(
     action_roles => [qw(HTTPMethods)],
 );
 
+sub auto :Allow {
+    my ($self, $c) = @_;
+
+    $self->set_body($c);
+    $c->log->debug("++++++++++++++++ request body: " . $c->stash->{body});
+}
+
 sub GET :Allow {
     my ($self, $c) = @_;
     $c->response->status(HTTP_NOT_IMPLEMENTED);

@@ -42,6 +42,13 @@ __PACKAGE__->config(
     action_roles => [qw(HTTPMethods)],
 );
 
+sub auto :Allow {
+    my ($self, $c) = @_;
+
+    $self->set_body($c);
+    $c->log->debug("++++++++++++++++ request body: " . $c->stash->{body});
+}
+
 sub GET :Allow {
     my ($self, $c, $id) = @_;
     {
@@ -49,7 +56,7 @@ sub GET :Allow {
         last if $self->cached($c);
         my $contract = $self->contract_by_id($c, $id);
         last unless $self->resource_exists($c, contract => $contract);
-        my $hal = $self->hal_from_contract($contract);
+        my $hal = $self->hal_from_contract($c, $contract);
         my $response = HTTP::Response->new(HTTP_OK, undef, HTTP::Headers->new(
             (map { # XXX Data::HAL must be able to generate links with multiple relations
                 s|rel="(http://purl.org/sipwise/ngcp-api/#rel-contacts)"|rel="item $1"|;
@@ -119,14 +126,14 @@ sub PATCH :Allow {
             if ('*' eq $c->request->header('If-Match')) {
                 $contract = $self->contract_by_id($c, $id);
                 last unless $self->resource_exists($c, contract => $contract);
-                $entity = JSON::decode_json($self->hal_from_contract($contract)->as_json);
+                $entity = JSON::decode_json($self->hal_from_contract($c, $contract)->as_json);
             } else {
 	    	$self->error($c, HTTP_PRECONDITION_FAILED, "This 'contract' entity cannot be found, it is either expired or does not exist. Fetch a fresh one.");
                 last;
             }
         }
         last unless $self->require_body($c);
-        my $json = do { local $/; $c->request->body->getline }; # slurp
+        my $json = $c->stash->{body};
         last unless $self->require_wellformed_json($c, $media_type, $json);
         last unless $self->require_valid_patch($c, $json);
         $entity = $self->apply_patch($c, $entity, $json);
@@ -181,7 +188,7 @@ sub PATCH :Allow {
             $c->response->header(Preference_Applied => 'return=minimal');
             $c->response->body(q());
         } else {
-            $hal = $self->hal_from_contract($contract);
+            $hal = $self->hal_from_contract($c, $contract);
             my $response = HTTP::Response->new(HTTP_OK, undef, HTTP::Headers->new(
                 $hal->http_headers,
                 Cache_Control => 'no-cache, private',
@@ -228,14 +235,14 @@ sub PUT :Allow {
             if ('*' eq $c->request->header('If-Match')) {
                 $contract = $self->contract_by_id($c, $id);
                 last unless $self->resource_exists($c, contract => $contract);
-                $entity = JSON::decode_json($self->hal_from_contract($contract)->as_json);
+                $entity = JSON::decode_json($self->hal_from_contract($c, $contract)->as_json);
             } else {
 	    	$self->error($c, HTTP_PRECONDITION_FAILED, "This 'contract' entity cannot be found, it is either expired or does not exist. Fetch a fresh one.");
                 last;
             }
         }
         last unless $self->require_body($c);
-        my $json = do { local $/; $c->request->body->getline }; # slurp
+        my $json = $c->stash->{body};
         last unless $self->require_wellformed_json($c, $media_type, $json);
         $entity = JSON::decode_json($json);
         last unless $self->valid_entity($c, $entity);
@@ -285,7 +292,7 @@ sub PUT :Allow {
             $c->response->header(Preference_Applied => 'return=minimal');
             $c->response->body(q());
         } else {
-            $hal = $self->hal_from_contract($contract);
+            $hal = $self->hal_from_contract($c, $contract);
             my $response = HTTP::Response->new(HTTP_OK, undef, HTTP::Headers->new(
                 $hal->http_headers,
                 Cache_Control => 'no-cache, private',
@@ -308,7 +315,7 @@ sub contract_by_id :Private {
 }
 
 sub hal_from_contract :Private {
-    my ($self, $contract) = @_;
+    my ($self, $c, $contract) = @_;
     # XXX invalid 00-00-00 dates
     my %resource = $contract->get_inflated_columns;
     my $id = delete $resource{id};
@@ -324,21 +331,24 @@ sub hal_from_contract :Private {
             ),
             Data::HAL::Link->new(relation => 'collection', href => '/api/contracts/'),
             Data::HAL::Link->new(relation => 'profile', href => 'http://purl.org/sipwise/ngcp-api/'),
-            Data::HAL::Link->new(relation => 'self', href => "/api/contracts/?id=$id"),
+            Data::HAL::Link->new(relation => 'self', href => "/api/contracts/$id"),
             $contract->contact
                 ? Data::HAL::Link->new(
                     relation => 'ngcp:contacts',
-                    href => sprintf('/api/contacts/?id=%d', $contract->contact_id),
+                    href => sprintf('/api/contacts/%d', $contract->contact_id),
                 ) : (),
         ],
         relation => 'ngcp:contracts',
     );
 
-    my %fields = map { $_ => undef } qw(external_id status);
-    for my $k (keys %resource) {
-        delete $resource{$k} unless exists $fields{$k};
-        $resource{$k} = DateTime::Format::RFC3339->format_datetime($resource{$k}) if $resource{$k}->$_isa('DateTime');
-    }
+    my $form = NGCP::Panel::Form::Contract::PeeringReseller->new;
+    $self->validate_form(
+        c => $c,
+        resource => \%resource,
+        form => $form,
+        run => 0,
+    );
+
     $hal->resource({%resource});
     return $hal;
 }
@@ -354,4 +364,7 @@ sub end : Private {
         $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "Internal Server Error");
         $c->clear_errors;
     }
+    $c->log->debug("++++++++++++++++ response body: " . ($c->response->body // ''));
 }
+
+# vim: set tabstop=4 expandtab:

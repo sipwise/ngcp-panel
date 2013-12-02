@@ -25,7 +25,25 @@ sub get_valid_post_data {
     return unless $self->forbid_link_header($c);
     return unless $self->valid_media_type($c, $media_type);
     return unless $self->require_body($c);
-    my $json =  do { local $/; $c->request->body->getline }; # slurp
+    my $json =  $c->stash->{body};
+    return unless $self->require_wellformed_json($c, $media_type, $json);
+
+    return JSON::from_json($json);
+}
+
+sub get_valid_put_data {
+    my ($self, %params) = @_;
+
+    my $c = $params{c};
+    my $media_type = $params{media_type};
+    my $id = $params{id};
+
+    return unless $self->valid_id($c, $id);
+    return unless $self->forbid_link_header($c);
+    return unless $self->valid_media_type($c, $media_type);
+    return unless $self->require_precondition($c, 'If-Match');
+    return unless $self->require_body($c);
+    my $json =  $c->stash->{body};
     return unless $self->require_wellformed_json($c, $media_type, $json);
 
     return JSON::from_json($json);
@@ -37,43 +55,53 @@ sub validate_form {
     my $c = $params{c};
     my $resource = $params{resource};
     my $form = $params{form};
+    my $run = $params{run} // 1;
 
     my @normalized = ();
 
     # move {xxx_id} into {xxx}{id} for FormHandler
     foreach my $key(keys %{ $resource } ) {
         if($key =~ /^([a-z]+)_id$/) {
+            $c->log->debug("++++++++++++ moving key $key with value " .  ($resource->{$key} // '<null>') . " to $1/id");
             push @normalized, $1;
             $resource->{$1}{id} = delete $resource->{$key};
         }
     }
 
-    use Data::Printer; p $resource;
-
     # remove unknown keys
     my %fields = map { $_->name => undef } $form->fields;
     for my $k (keys %{ $resource }) {
         unless(exists $fields{$k}) {
-            $c->log->info("deleting unknown key '$k' from message"); # TODO: user, message trace, ...
+            $c->log->info("+++++++++ deleting unknown key '$k' from message"); # TODO: user, message trace, ...
             delete $resource->{$k};
         }
+
         $resource->{$k} = DateTime::Format::RFC3339->format_datetime($resource->{$k})
             if $resource->{$k}->$_isa('DateTime');
+        $resource->{$k} = $resource->{$k} + 0
+            if($form->field($k)->$_isa('HTML::FormHandler::Field::Integer') ||
+               $form->field($k)->$_isa('HTML::FormHandler::Field::Float'));
     }
 
-    # check keys/vals
-    my $result = $form->run(params => $resource);
-    if ($result->error_results->size) {
-        my $e = $result->error_results->map(sub {
-            sprintf 'field=\'%s\', input=\'%s\', errors=\'%s\'', $_->name, $_->input // '', $_->errors->join(q())
-        })->join("; ");
-        $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Validation failed. $e");
-        return;
+    if($run) {
+        # check keys/vals
+        my $result = $form->run(params => $resource);
+        if ($result->error_results->size) {
+            my $f = $result->error_results->[0];
+            use Data::Printer; p $f;
+            my $e = $result->error_results->map(sub {
+                sprintf 'field=\'%s\', input=\'%s\', errors=\'%s\'', ($_->parent->$_isa('HTML::FormHandler::Field::Result') ? $_->parent->name . '_' : '') . $_->name, $_->input // '', $_->errors->join(q())
+            })->join("; ");
+            $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Validation failed. $e");
+            return;
+        }
     }
 
     # move {xxx}{id} back into {xxx_id} for DB
     foreach my $key(@normalized) {
-        $resource->{$key . '_id'} = $resource->{$key}{id};
+        $resource->{$key . '_id'} = defined($resource->{$key}{id}) ?
+            int($resource->{$key}{id}) :
+            $resource->{$key}{id};
         delete $resource->{$key};
     }
 
@@ -107,7 +135,7 @@ sub valid_media_type {
 
 sub require_body {
     my ($self, $c) = @_;
-    return 1 if $c->request->body;
+    return 1 if length $c->stash->{body};
     $self->error($c, HTTP_BAD_REQUEST, "This request is missing a message body.");
     return;
 }
@@ -116,6 +144,16 @@ sub require_precondition {
     my ($self, $c, $header_name) = @_;
     return 1 if $c->request->header($header_name);
     $self->error($c, HTTP_PRECONDITION_REQUIRED, "This request is required to be conditional, use the '$header_name' header.");
+    return;
+}
+
+sub valid_precondition {
+    my ($self, $c, $etag, $entity_name) = @_;
+    my $if_match = $c->request->header('If-Match');
+    return 1 if '*' eq $if_match || grep {$etag eq $_} Data::Record->new({
+        split  => qr/\s*,\s*/, unless => $RE{delimited}{-delim => q(")},
+    })->records($if_match);
+    $self->error($c, HTTP_PRECONDITION_FAILED, "This '$entity_name' entity cannot be found, it is either expired or does not exist. Fetch a fresh one.");
     return;
 }
 
@@ -233,6 +271,11 @@ sub apply_patch {
         };
     }
     return $entity;
+}
+
+sub set_body {
+    my ($self, $c) = @_;
+    $c->stash->{body} = $c->request->body ? (do { local $/; $c->request->body->getline }) : '';
 }
 
 1;
