@@ -121,10 +121,7 @@ sub PATCH :Allow {
                 last unless $self->resource_exists($c, contract => $contract);
                 $entity = JSON::decode_json($self->hal_from_contract($contract)->as_json);
             } else {
-                $c->response->status(HTTP_PRECONDITION_FAILED);
-                $c->response->header('Content-Language' => 'en');
-                $c->response->content_type('application/xhtml+xml');
-                $c->stash(template => 'api/precondition_failed.tt', entity_name => 'contract');
+	    	$self->error($c, HTTP_PRECONDITION_FAILED, "This 'contract' entity cannot be found, it is either expired or does not exist. Fetch a fresh one.");
                 last;
             }
         }
@@ -233,10 +230,7 @@ sub PUT :Allow {
                 last unless $self->resource_exists($c, contract => $contract);
                 $entity = JSON::decode_json($self->hal_from_contract($contract)->as_json);
             } else {
-                $c->response->status(HTTP_PRECONDITION_FAILED);
-                $c->response->header('Content-Language' => 'en');
-                $c->response->content_type('application/xhtml+xml');
-                $c->stash(template => 'api/precondition_failed.tt', entity_name => 'contract');
+	    	$self->error($c, HTTP_PRECONDITION_FAILED, "This 'contract' entity cannot be found, it is either expired or does not exist. Fetch a fresh one.");
                 last;
             }
         }
