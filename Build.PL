@@ -64,7 +64,6 @@ my $builder = Local::Module::Build->new(
         'HTTP::Status' => 0,
         'IO::Compress::Xz' => 0,
         'IPC::System::Simple' => 0,
-        'JE' => 0,
         'JSON::Pointer' => 0,
         'JSON::Tiny::Subclassable' => 0,
         'Log::Log4perl::Catalyst' => 0,
