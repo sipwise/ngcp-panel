@@ -30,7 +30,7 @@ __PACKAGE__->config(
     action_roles => [qw(HTTPMethods)],
 );
 
-sub GET : Allow {
+sub GET :Allow {
     my ($self, $c) = @_;
     $c->response->status(HTTP_NOT_IMPLEMENTED);
     $c->response->headers(HTTP::Headers->new(
@@ -41,26 +41,26 @@ sub GET : Allow {
     return;
 }
 
-sub HEAD : Allow {
+sub HEAD :Allow {
     my ($self, $c) = @_;
     $c->forward(qw(GET));
     $c->response->body(q());
     return;
 }
 
-sub OPTIONS : Allow {
+sub OPTIONS :Allow {
     my ($self, $c) = @_;
-    my $allowed_methods = $self->allowed_methods->join(q(, ));
+    my $allowed_methods = $self->allowed_methods;
     $c->response->headers(HTTP::Headers->new(
-        Allow => $allowed_methods,
+        Allow => $allowed_methods->join(', '),
         Content_Language => 'en',
     ));
-    $c->response->content_type('application/xhtml+xml');
-    $c->stash(template => 'api/allowed_methods.tt', allowed_methods => $allowed_methods);
+    $c->response->content_type('application/json');
+    $c->response->body(JSON::to_json({ methods => $allowed_methods })."\n");
     return;
 }
 
-sub end : Private {
+sub end :Private {
     my ($self, $c) = @_;
     $c->forward(qw(Controller::Root render));
     $c->response->content_type('')

@@ -76,14 +76,14 @@ sub HEAD :Allow {
 
 sub OPTIONS :Allow {
     my ($self, $c, $id) = @_;
-    my $allowed_methods = $self->allowed_methods->join(q(, ));
+    my $allowed_methods = $self->allowed_methods;
     $c->response->headers(HTTP::Headers->new(
-        Allow => $allowed_methods,
+        Allow => $allowed_methods->join(', '),
         Accept_Patch => 'application/json-patch+json',
         Content_Language => 'en',
     ));
-    $c->response->content_type('application/xhtml+xml');
-    $c->stash(template => 'api/allowed_methods.tt', allowed_methods => $allowed_methods);
+    $c->response->content_type('application/json');
+    $c->response->body(JSON::to_json({ methods => $allowed_methods })."\n");
     return;
 }
 
