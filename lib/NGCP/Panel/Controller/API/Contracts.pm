@@ -20,7 +20,6 @@ BEGIN { extends 'Catalyst::Controller::ActionRole'; }
 require Catalyst::ActionRole::ACL;
 require Catalyst::ActionRole::CheckTrailingSlash;
 require Catalyst::ActionRole::HTTPMethods;
-require Catalyst::ActionRole::QueryParameter;
 require Catalyst::ActionRole::RequireSSL;
 
 with 'NGCP::Panel::Role::API';
