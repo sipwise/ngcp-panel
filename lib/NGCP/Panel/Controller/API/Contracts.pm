@@ -41,13 +41,12 @@ __PACKAGE__->config(
     action_roles => [qw(HTTPMethods)],
 );
 
-sub auto :Allow {
+sub auto :Private {
     my ($self, $c) = @_;
 
     $self->set_body($c);
-    $c->log->debug("++++++++++++++++ request body: " . $c->stash->{body});
+    $self->log_request($c);
 }
-
 
 sub GET :Allow :Args(0) {
     my ($self, $c) = @_;
@@ -223,17 +222,8 @@ sub valid_id : Private {
 
 sub end : Private {
     my ($self, $c) = @_;
-    $c->forward(qw(Controller::Root render));
-    $c->response->content_type('')
-        if $c->response->content_type =~ qr'text/html'; # stupid RenderView getting in the way
-    if (@{ $c->error }) {
-        my $msg = join ', ', @{ $c->error };
-        $c->log->error($msg);
-        $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "Internal Server Error");
-        $c->clear_errors;
-    }
-    $c->log->debug("++++++++++++++++ response body: " . ($c->response->body // ''));
-}
 
+    $self->log_response($c);
+}
 
 # vim: set tabstop=4 expandtab:

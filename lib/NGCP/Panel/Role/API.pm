@@ -278,5 +278,43 @@ sub set_body {
     $c->stash->{body} = $c->request->body ? (do { local $/; $c->request->body->getline }) : '';
 }
 
+sub log_request {
+    my ($self, $c) = @_;
+
+    my $params = join(', ', map { "'".$_."'='".($c->request->query_params->{$_} // '')."'" } 
+        keys %{ $c->request->query_params }
+    );
+    my $user;
+    if($c->user->roles eq "api_admin" || $c->user->roles eq "api_reseller") {
+        $user = $c->user->login;
+    } else {
+        $user = $c->user->username . '@' . $c->user->domain;
+    }
+
+    $c->log->info("API function '".$c->request->path."' called by '" . $user . 
+        "' ('" . $c->user->roles . "') from host '".$c->request->address."' with params " .
+        (length $params ? $params : "''") .
+        " and body '" . $c->stash->{body} . "'");
+}
+
+sub log_response {
+    my ($self, $c) = @_;
+
+    # TODO: should be put a UUID to stash in log_request and use it here to correlate
+    # req/res lines?
+    $c->forward(qw(Controller::Root render));
+    $c->response->content_type('')
+        if $c->response->content_type =~ qr'text/html'; # stupid RenderView getting in the way
+    if (@{ $c->error }) {
+        my $msg = join ', ', @{ $c->error };
+        $c->log->error($msg);
+        $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "Internal Server Error");
+        $c->clear_errors;
+    }
+    $c->log->info("API function '".$c->request->path."' generated response with code '" . 
+        $c->response->code . "' and body '" .
+        $c->response->body . "'");
+}
+
 1;
 # vim: set tabstop=4 expandtab:

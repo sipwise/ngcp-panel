@@ -23,6 +23,11 @@ $ua->ssl_opts(
 
 # OPTIONS tests
 {
+    # test some uri params
+    $req = HTTP::Request->new('OPTIONS', $uri.'/api/?foo=bar&bla');
+    $res = $ua->request($req);
+    ok($res->code == 200, "check options request with uri params");
+
     $req = HTTP::Request->new('OPTIONS', $uri.'/api/');
     $res = $ua->request($req);
     ok($res->code == 200, "check options request");
