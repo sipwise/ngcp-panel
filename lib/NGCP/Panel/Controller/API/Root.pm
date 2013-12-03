@@ -10,6 +10,7 @@ use HTTP::Response qw();
 use HTTP::Status qw(:constants);
 use MooseX::ClassAttribute qw(class_has);
 use Regexp::Common qw(delimited); # $RE{delimited}{-delim=>'"'}
+use File::Find::Rule;
 BEGIN { extends 'Catalyst::Controller'; }
 require Catalyst::ActionRole::ACL;
 require Catalyst::ActionRole::CheckTrailingSlash;
@@ -76,12 +77,34 @@ sub OPTIONS : Allow {
 
 sub collections_link_headers : Private {
     my ($self) = @_;
-    return (
-        # XXX introspect class attribute API/*.pm->dispatch_path
-        Link => '</api/contacts/>; rel="collection http://purl.org/sipwise/ngcp-api/#rel-contacts"',
-        Link => '</api/contracts/>; rel="collection http://purl.org/sipwise/ngcp-api/#rel-contracts"',
-        # Link => '</api/resellers/>; rel=collection', # XXX does not exist yet
-    );
+
+    # figure out base path of our api modules
+    my $libpath = $INC{"NGCP/Panel/Controller/API/Root.pm"};
+    $libpath =~ s/Root\.pm$//;
+
+    # find all modules not called Root.pm and *Item.pm
+    # (which should then be just collections)
+    my $rootrule = File::Find::Rule->new->name('Root.pm');
+    my $itemrule = File::Find::Rule->new->name('*Item.pm');
+    my $rule = File::Find::Rule->new
+        ->mindepth(1)
+        ->maxdepth(1)
+        ->name('*.pm')
+        ->not($rootrule)
+        ->not($itemrule);
+    my @colls = $rule->in($libpath);
+
+    # create Link header for each of the collections
+    my @links = ();
+    foreach my $mod(@colls) {
+        # extract file base from path (e.g. Foo from lib/something/Foo.pm)
+        $mod =~ s/^.+\/([a-zA-Z0-9_]+)\.pm$/$1/;
+        my $rel = lc $mod;
+        $mod = 'NGCP::Panel::Controller::API::'.$mod;
+        my $dp = $mod->dispatch_path;
+        push @links, Link => '<'.$dp.'>; rel="collection http://purl.org/sipwise/ngcp-api/#rel-'.$rel.'"';
+    }
+    return @links;
 }
 
 sub invalid_user : Private {
