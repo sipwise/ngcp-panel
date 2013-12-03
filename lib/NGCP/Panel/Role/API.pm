@@ -99,6 +99,7 @@ sub validate_form {
 
     # move {xxx}{id} back into {xxx_id} for DB
     foreach my $key(@normalized) {
+        next unless(exists $resource->{$key});
         $resource->{$key . '_id'} = defined($resource->{$key}{id}) ?
             int($resource->{$key}{id}) :
             $resource->{$key}{id};
@@ -177,6 +178,8 @@ sub require_wellformed_json {
     return 1;
 }
 
+=pod
+# don't use caching for now, keep it as simple as possible
 sub cached {
     my ($self, $c) = @_;
     my $response = $c->cache->get($c->request->uri->canonical->as_string);
@@ -213,6 +216,7 @@ sub expires {
     my ($self) = @_;
     return DateTime->now->clone->add(years => 1); # XXX insert product end-of-life
 }
+=cut
 
 sub allowed_methods {
     my ($self) = @_;
