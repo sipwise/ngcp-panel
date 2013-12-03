@@ -105,7 +105,7 @@ my $firstcontact = undef;
         } else {
             ok(exists $collection->{_links}->{prev}->{href}, "check existence of 'prev'");
         }
-        if(($collection->{total_count} / $rows) < $page) {
+        if(($collection->{total_count} / $rows) <= $page) {
             ok(!exists $collection->{_links}->{next}->{href}, "check absence of 'next' on last page");
         } else {
             ok(exists $collection->{_links}->{next}->{href}, "check existence of 'next'");
@@ -150,7 +150,76 @@ my $firstcontact = undef;
         ok($res->decoded_content =~ /\"reseller_id\"\s*:\s*\d+/, "check if reseller_id is number");
     }
     
-    # PUT     
+    # PUT same result again
+    my $old_contact = { %$contact };
+    delete $contact->{_links};
+    delete $contact->{_embedded};
+    $req = HTTP::Request->new('PUT', $uri.'/'.$firstcontact);
+    
+    # check if it fails without If-Match
+    $req->header('Content-Type' => 'application/json');
+    $res = $ua->request($req);
+    ok($res->code == 428, "check put precondition-required");
+
+    $req->header('If-Match' => '*');
+
+    # check if it fails without content type
+    $req->remove_header('Content-Type');
+    $res = $ua->request($req);
+    ok($res->code == 415, "check put missing content type");
+
+    # check if it fails with unsupported content type
+    $req->header('Content-Type' => 'application/xxx');
+    $res = $ua->request($req);
+    ok($res->code == 415, "check put invalid content type");
+
+    $req->remove_header('Content-Type');
+    $req->header('Content-Type' => 'application/json');
+
+    # check if it fails with missing Prefer
+    $res = $ua->request($req);
+    ok($res->code == 400, "check put missing prefer");
+
+    # check if it fails with invalid Prefer
+    $req->header('Prefer' => "return=invalid");
+    $res = $ua->request($req);
+    ok($res->code == 400, "check put invalid prefer");
+
+
+    $req->remove_header('Prefer');
+    $req->header('Prefer' => "return=representation");
+
+    # check if it fails with missing body
+    $res = $ua->request($req);
+    ok($res->code == 400, "check put no body");
+
+    # check if put is ok
+    $req->content(JSON::to_json($contact));
+    $res = $ua->request($req);
+    ok($res->code == 200, "check put successful");
+
+    my $new_contact = JSON::from_json($res->decoded_content);
+    is_deeply($old_contact, $new_contact, "check put if unmodified put returns the same");
+
+    # check if a contact without reseller doesn't have a resellers link
+    $contact->{reseller_id} = undef;
+    $req->content(JSON::to_json($contact));
+    $res = $ua->request($req);
+    ok($res->code == 200, "check put successful");
+    $new_contact = JSON::from_json($res->decoded_content);
+    ok(!defined $new_contact->{reseller_id}, "check put if reseller_id is undef");
+    ok(!exists $new_contact->{_links}->{'ngcp:resellers'}, "check put absence of ngcp:resellers relation");
+
+    # check if a contact with reseller has resellers link
+    $contact->{reseller_id} = 1;
+    $req->content(JSON::to_json($contact));
+    $res = $ua->request($req);
+    ok($res->code == 200, "check put successful");
+    $new_contact = JSON::from_json($res->decoded_content);
+    ok(defined $new_contact->{reseller_id} && $new_contact->{reseller_id} == 1, "check put if reseller_id is set");
+    ok(exists $new_contact->{_links}->{'ngcp:resellers'} && ref $new_contact->{_links}->{'ngcp:resellers'} eq "HASH", "check put presence of ngcp:resellers relation");
+    ok($new_contact->{_links}->{'ngcp:resellers'}->{href} eq "/api/resellers/1", "check put correct ngcp:resellers relation href");
+
 
 }
 

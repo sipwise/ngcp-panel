@@ -265,12 +265,14 @@ sub PUT :Allow {
         }
 
         my $contact_form;
+        my $undef_reseller;
         if($c->user->roles eq "api_admin") {
-            if($resource->{reseller_id}) {
+            if(defined $resource->{reseller_id}) {
                 $contact_form = NGCP::Panel::Form::Contact::Admin->new;
             } else {
                 $contact_form = NGCP::Panel::Form::Contact::Reseller->new;
                 delete $resource->{reseller_id};
+                $undef_reseller = 1;
             }
         } else {
             $contact_form = NGCP::Panel::Form::Contact::Reseller->new;
@@ -283,6 +285,8 @@ sub PUT :Allow {
             resource => $resource,
             form => $contact_form,
         );
+        $resource->{reseller_id} = undef 
+            if($undef_reseller);
 
         $resource->{modify_timestamp} = DateTime->now;
         $contact = $self->contact_by_id($c, $id) unless $contact;
