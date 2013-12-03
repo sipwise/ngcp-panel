@@ -133,13 +133,16 @@ __PACKAGE__->config(
             }
         },
         api_admin => {
+            # TODO: should be NoPassword, but it's not available in our catalyst version yet
             credential => {
-                class => 'NoPassword',
+                class => 'Password',
+                password_field => 'is_superuser',
+                password_type => 'clear',
             },
             store => {
                 class => 'DBIx::Class',
                 user_model => 'DB::admins',
-                id_field => 'ssl_client_m_serial',
+                id_field => 'id',
                 store_user_class => 'NGCP::Panel::AuthenticationStore::RoleFromRealm',
             },
             use_session => 0,

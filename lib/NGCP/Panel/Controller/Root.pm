@@ -45,8 +45,17 @@ sub auto :Private {
             && 0 == index $c->controller->catalyst_component_name, 'NGCP::Panel::Controller::API'
         ) {
             my $ssl_client_m_serial = hex $c->request->env->{SSL_CLIENT_M_SERIAL};
-            $c->authenticate({ ssl_client_m_serial => $ssl_client_m_serial }, 'api_admin');
-            $c->detach(qw(API::Root invalid_user), [$ssl_client_m_serial]) unless $c->user_exists;
+            my $res = $c->authenticate({ 
+                    ssl_client_m_serial => $ssl_client_m_serial,
+                    is_superuser => 1, # TODO: abused as password until NoPassword handler is available
+                }, 'api_admin');
+            unless($c->user_exists)  {
+                use Data::Printer; p $res;
+                $c->log->debug("+++++ invalid api login");
+                $c->detach(qw(API::Root invalid_user), [$ssl_client_m_serial]) unless $c->user_exists;
+            } else {
+                $c->log->debug("api_admin '".$c->user->login."' authenticated");
+            }
             return 1;
         }
         # don't redirect to login page for ajax uris
