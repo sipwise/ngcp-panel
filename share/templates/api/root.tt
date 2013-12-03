@@ -86,7 +86,7 @@
     </div>
 
 [% FOR chapter IN chapters -%]
-    [% IF loop.prev.level >= chapter.level -%]
+    [% IF loop.prev && loop.prev.level >= chapter.level -%]
     <div class="pagebreak"></div>
     [% END -%]
     <div class="chapter">
