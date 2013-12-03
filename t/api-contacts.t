@@ -38,6 +38,7 @@ $ua->ssl_opts(
 
 # collection test
 my $firstcontact = undef;
+my @allcontacts = ();
 {
     # create 6 new system contacts (no reseller)
     my %contacts = ();
@@ -53,6 +54,7 @@ my $firstcontact = undef;
         $res = $ua->request($req);
         ok($res->code == 201, "create test contact $i");
         $contacts{$res->header('Location')} = 1;
+        push @allcontacts, $res->header('Location');
         $firstcontact = $res->header('Location') unless $firstcontact;
     }
 
@@ -138,6 +140,20 @@ my $firstcontact = undef;
 
 # test contacts item
 {
+    $req = HTTP::Request->new('OPTIONS', $uri.'/'.$firstcontact);
+    $res = $ua->request($req);
+    ok($res->code == 200, "check options on item");
+    my @hopts = split /\s*,\s*/, $res->header('Allow');
+    my $opts = JSON::from_json($res->decoded_content);
+    ok(exists $opts->{methods} && ref $opts->{methods} eq "ARRAY", "check for valid 'methods' in body");
+    foreach my $opt(qw( GET HEAD OPTIONS PUT PATCH DELETE )) {
+        ok(grep(/^$opt$/, @hopts), "check for existence of '$opt' in Allow header");
+        ok(grep(/^$opt$/, @{ $opts->{methods} }), "check for existence of '$opt' in body");
+    }
+    my $opt = 'POST';
+    ok(!grep(/^$opt$/, @hopts), "check for absence of '$opt' in Allow header");
+    ok(!grep(/^$opt$/, @{ $opts->{methods} }), "check for absence of '$opt' in body");
+
     $req = HTTP::Request->new('GET', $uri.'/'.$firstcontact);
     $res = $ua->request($req);
     ok($res->code == 200, "fetch one contact item");
@@ -219,8 +235,15 @@ my $firstcontact = undef;
     ok(defined $new_contact->{reseller_id} && $new_contact->{reseller_id} == 1, "check put if reseller_id is set");
     ok(exists $new_contact->{_links}->{'ngcp:resellers'} && ref $new_contact->{_links}->{'ngcp:resellers'} eq "HASH", "check put presence of ngcp:resellers relation");
     ok($new_contact->{_links}->{'ngcp:resellers'}->{href} eq "/api/resellers/1", "check put correct ngcp:resellers relation href");
+}
 
-
+# DELETE
+{
+    foreach my $contact(@allcontacts) {
+        $req = HTTP::Request->new('DELETE', $uri.'/'.$contact);
+        $res = $ua->request($req);
+        ok($res->code == 204, "check delete of contact");
+    }
 }
 
 done_testing;

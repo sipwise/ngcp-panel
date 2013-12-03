@@ -193,6 +193,7 @@ sub PATCH :Allow {
         $resource->{reseller_id} = $r_id;
         $resource->{modify_timestamp} = DateTime->now;
         $contact = $self->contact_by_id($c, $id) unless $contact;
+        last unless $self->resource_exists($c, contact => $contact);
         $contact->update($resource);
         $guard->commit;
 
@@ -316,9 +317,37 @@ sub PUT :Allow {
     return;
 }
 
+sub DELETE :Allow {
+    my ($self, $c, $id) = @_;
+    my $guard = $c->model('DB')->txn_scope_guard;
+    {
+        my $contact = $self->contact_by_id($c, $id);
+        last unless $self->resource_exists($c, contact => $contact);
+        $contact->delete;
+        $guard->commit;
+
+        $c->cache->remove($c->request->uri->canonical->as_string);
+
+        $c->response->status(HTTP_NO_CONTENT);
+        $c->response->body(q());
+    }
+    return;
+}
+
 sub contact_by_id : Private {
     my ($self, $c, $id) = @_;
-    return $c->model('DB')->resultset('contacts')->find({'me.id' => $id});
+    my $contact_rs = $c->model('DB')->resultset('contacts');
+    if($c->user->roles eq "api_admin") {
+        # admin can handle all contacts
+    } elsif($c->user->roles eq "api_reseller") {
+        $contact_rs = $contact_rs->search({
+            reseller_id => $c->user->reseller_id,
+        });
+    } else {
+        # TODO: for subscribers etc?
+        return;
+    }
+    return $contact_rs->find({'me.id' => $id});
 }
 
 sub hal_from_contact : Private {
