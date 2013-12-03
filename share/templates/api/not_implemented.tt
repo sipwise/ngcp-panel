@@ -1,9 +1,0 @@
-<!DOCTYPE html>
-<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
-    <head>
-        <title>Not implemented</title>
-    </head>
-    <body>
-        <p>The functionality for the entity <tt>[% entity_name | html %]</tt> is not yet implemented.</p>
-    </body>
-</html>

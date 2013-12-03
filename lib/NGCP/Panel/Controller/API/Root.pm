@@ -7,7 +7,7 @@ use Digest::SHA3 qw(sha3_256_base64);
 use Encode qw(encode);
 use HTTP::Headers qw();
 use HTTP::Response qw();
-use HTTP::Status qw(HTTP_NOT_MODIFIED HTTP_OK);
+use HTTP::Status qw(:constants);
 use MooseX::ClassAttribute qw(class_has);
 use Regexp::Common qw(delimited); # $RE{delimited}{-delim=>'"'}
 BEGIN { extends 'Catalyst::Controller'; }
@@ -63,14 +63,14 @@ sub HEAD : Allow {
 
 sub OPTIONS : Allow {
     my ($self, $c) = @_;
-    my $allowed_methods = $self->allowed_methods->join(q(, ));
+    my $allowed_methods = $self->allowed_methods;
     $c->response->headers(HTTP::Headers->new(
-        Allow => $allowed_methods,
+        Allow => $allowed_methods->join(', '),
         Content_Language => 'en',
         $self->collections_link_headers,
     ));
-    $c->response->content_type('application/xhtml+xml');
-    $c->stash(template => 'api/allowed_methods.tt', allowed_methods => $allowed_methods);
+    $c->response->content_type('application/json');
+    $c->response->body(JSON::to_json({ methods => $allowed_methods })."\n");
     return;
 }
 
@@ -86,9 +86,7 @@ sub collections_link_headers : Private {
 
 sub invalid_user : Private {
     my ($self, $c, $ssl_client_m_serial) = @_;
-    $c->response->status(403);
-    $c->response->content_type('application/xhtml+xml');
-    $c->stash(template => 'api/invalid_user.tt', ssl_client_m_serial => $ssl_client_m_serial);
+    $self->error($c, HTTP_FORBIDDEN, "Invalid certificate serial number '$ssl_client_m_serial'.");
     return;
 }
 
@@ -99,6 +97,8 @@ sub last_modified : Private {
 
 sub end : Private {
     my ($self, $c) = @_;
-
-    $c->log->debug("+++++++++++++++++++ API::Root::end");
+    
+    #$c->log->debug("++++++++++++++++ response body: " . $c->response->body // '');
 }
+
+# vim: set tabstop=4 expandtab:

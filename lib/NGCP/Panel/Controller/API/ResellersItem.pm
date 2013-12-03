@@ -39,12 +39,10 @@ sub auto :Allow {
 
 sub GET :Allow {
     my ($self, $c) = @_;
-    $c->response->status(HTTP_NOT_IMPLEMENTED);
     $c->response->headers(HTTP::Headers->new(
-        Content_Language => 'en',
         Retry_After => DateTime::Format::HTTP->format_datetime(DateTime->new(year => 2014, month => 1, day => 1)), # XXX
     ));
-    $c->stash(template => 'api/not_implemented.tt', entity_name => 'resellers');
+    $self->error($c, HTTP_NOT_IMPLEMENTED, "The functionality for the entity 'resellers' is not yet implemented.");
     return;
 }
 
