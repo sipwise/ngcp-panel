@@ -244,6 +244,9 @@ my @allcontacts = ();
         $res = $ua->request($req);
         ok($res->code == 204, "check delete of contact");
     }
+    $req = HTTP::Request->new('DELETE', $uri.'/api/contacts/1');
+    $res = $ua->request($req);
+    ok($res->code == 423, "check delete of used contact");
 }
 
 done_testing;

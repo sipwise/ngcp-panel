@@ -323,7 +323,15 @@ sub DELETE :Allow {
     {
         my $contact = $self->contact_by_id($c, $id);
         last unless $self->resource_exists($c, contact => $contact);
-        $contact->delete;
+        my $contract_count = $c->model('DB')->resultset('contracts')->search({
+            contact_id => $id
+        });
+        if($contract_count > 0) {
+            $self->error($c, HTTP_LOCKED, "Contact is still in use.");
+            last;
+        } else {
+            $contact->delete;
+        }
         $guard->commit;
 
         $c->cache->remove($c->request->uri->canonical->as_string);
