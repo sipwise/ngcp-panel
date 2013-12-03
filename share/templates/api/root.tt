@@ -71,11 +71,11 @@
     <nav>
         <ol>
         [% FOR chapter IN chapters %]
-            [% IF loop.prev.level > chapter.level -%]
+            [% IF loop.prev && loop.prev.level > chapter.level -%]
             </ol></li>
             [% END -%]
             <li><a href="#[% chapter.id %]">[% chapter.title %]</a>
-            [% IF loop.next.level > chapter.level -%]
+            [% IF loop.next && loop.next.level > chapter.level -%]
             <ol>
             [% ELSE -%]
             </li>
