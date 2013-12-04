@@ -23,10 +23,10 @@ HAL is a generic media type with which Web APIs can be developed and exposed as 
 
 A HAL document uses the format described in <a href="http://tools.ietf.org/html/rfc4627">RFC4627 - The application/json Media Type for JavaScript Object Notation (JSON)</a> and has the media type <span>application/hal+json</span>.
 
-An example request to fetch a <i>contact</i> via the API looks like this:
+An example request to fetch a <i>customercontacts</i> item with id <i>1</i> via the API looks like this:
 
 <code>
-   GET /api/contacts/?id=1 HTTP/1.1
+   GET /api/customercontacts/1 HTTP/1.1
    Accept: application/hal+json
 </code>
 
@@ -38,8 +38,8 @@ The corresponding response is as follows:
 
    {
      "_links": {
-       "self": { "href": "/api/contacts/?id=1" },
-       "ngcp:reseller": { "href": "/api/resellers/?id=5" },
+       "self": { "href": "/api/customercontacts/1" },
+       "ngcp:reseller": { "href": "/api/resellers/5" },
      },
      "firstname": "John",
      "lastname": "Doe",
@@ -47,7 +47,7 @@ The corresponding response is as follows:
    }
 </code>
 
-Here, we have a HAL document representing a contact resource with the URI <span>/api/contacts/?id=1</span>. It has a link to a <span>reseller</span> it belongs to, and its own state in the form of <span>firstname</span>, <span>lastname</span> and <span>email</span> properties.
+Here, we have a HAL document representing a contact resource with the URI <span>/api/customercontacts/1</span>. It has a link to a <span>reseller</span> it belongs to, and its own state in the form of <span>firstname</span>, <span>lastname</span> and <span>email</span> properties.
 
 To fetch the reseller of this contact, an API client only has to follow the link provided in <span>_links.reseller.href</span>.
 
@@ -57,7 +57,7 @@ A simple code example might look like this:
   $ua = LWP::UserAgent->new;
 
   # fetch the contact (URI hardcoded for simplicity only!)
-  $contact = from_json($ua->get('https://example.org/api/contacts/?id=1'));
+  $contact = from_json($ua->get('https://example.org/api/customercontacts/1'));
 
   # follow the reseller link to fetch the reseller of this contact
   $reseller = from_json($ua->get($contact->{'_links'}->{'ngcp:reseller'}->{'href'});

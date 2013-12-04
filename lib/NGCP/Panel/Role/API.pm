@@ -3,6 +3,7 @@ use Moose::Role;
 use Sipwise::Base;
 
 use JSON qw();
+use JSON::Pointer;
 use HTTP::Status qw(:constants);
 use Safe::Isa qw($_isa);
 use Try::Tiny;
@@ -49,6 +50,24 @@ sub get_valid_put_data {
     return JSON::from_json($json);
 }
 
+sub get_valid_patch_data {
+    my ($self, %params) = @_;
+
+    my $c = $params{c};
+    my $media_type = $params{media_type};
+    my $id = $params{id};
+
+    return unless $self->valid_id($c, $id);
+    return unless $self->forbid_link_header($c);
+    return unless $self->valid_media_type($c, $media_type);
+    return unless $self->require_body($c);
+    my $json =  $c->stash->{body};
+    return unless $self->require_wellformed_json($c, $media_type, $json);
+    return unless $self->require_valid_patch($c, $json);
+
+    return $json;
+}
+
 sub validate_form {
     my ($self, %params) = @_;
 
@@ -72,7 +91,7 @@ sub validate_form {
     my %fields = map { $_->name => undef } $form->fields;
     for my $k (keys %{ $resource }) {
         unless(exists $fields{$k}) {
-            $c->log->info("+++++++++ deleting unknown key '$k' from message"); # TODO: user, message trace, ...
+            $c->log->debug("+++++++++ deleting unknown key '$k' from message"); # TODO: user, message trace, ...
             delete $resource->{$k};
         }
 
@@ -88,7 +107,6 @@ sub validate_form {
         my $result = $form->run(params => $resource);
         if ($result->error_results->size) {
             my $f = $result->error_results->[0];
-            use Data::Printer; p $f;
             my $e = $result->error_results->map(sub {
                 sprintf 'field=\'%s\', input=\'%s\', errors=\'%s\'', ($_->parent->$_isa('HTML::FormHandler::Field::Result') ? $_->parent->name . '_' : '') . $_->name, $_->input // '', $_->errors->join(q())
             })->join("; ");
@@ -239,7 +257,50 @@ sub valid_id {
 sub require_valid_patch {
     my ($self, $c, $json) = @_;
 
-    # TODO: implement without JE
+    my $valid_ops = { 
+        'test' => { 'path' => 1, 'value' => 1 },
+        'remove' => { 'path' => 1 },
+        'add' => { 'path' => 1, 'value' => 1 },
+        'replace' => { 'path' => 1, 'value' => 1 },
+        'move' => { 'from' => 1, 'path' => 1 },
+        'copy' => { 'from' => 1, 'path' => 1 },
+    };
+
+    my $patch = JSON::from_json($json);
+    unless(ref $patch eq "ARRAY") {
+        $self->error($c, HTTP_BAD_REQUEST, "Body for PATCH must be an array.");
+        return;
+    }
+    foreach my $elem(@{ $patch }) {
+        unless(ref $elem eq "HASH") {
+            $self->error($c, HTTP_BAD_REQUEST, "Array in body of PATCH must only contain hashes.");
+            return;
+        }
+        unless(exists $elem->{op}) {
+            $self->error($c, HTTP_BAD_REQUEST, "PATCH element must have an 'op' field.");
+            return;
+        }
+        unless(exists $valid_ops->{$elem->{op}}) {
+            $self->error($c, HTTP_BAD_REQUEST, "Invalid PATCH op '$elem->{op}', must be one of " . (join(', ', map { "'".$_."'" } keys %{ $valid_ops }) ));
+            return;
+        }
+        my $tmpelem = { %{ $elem } };
+        my $tmpops = { %{ $valid_ops } };
+        my $op = delete $tmpelem->{op};
+        foreach my $k(keys %{ $tmpelem }) {
+            unless(exists $tmpops->{$op}->{$k}) {
+                $self->error($c, HTTP_BAD_REQUEST, "Invalid PATCH key '$k' for op '$op', must be one of " . (join(', ', map { "'".$_."'" } keys %{ $valid_ops->{$op} }) ));
+                return;
+            }
+            delete $tmpops->{$op}->{$k};
+        }
+        if(keys %{ $tmpops->{$op} }) {
+            $self->error($c, HTTP_BAD_REQUEST, "Missing PATCH keys ". (join(', ', map { "'".$_."'" } keys %{ $tmpops->{$op} }) ) . " for op '$op'");
+            return;
+        }
+
+    }
+
     return 1;
 }
 
@@ -255,7 +316,7 @@ sub apply_patch {
     my $patch = JSON::decode_json($json);
     for my $op (@{ $patch }) {
         my $coderef = JSON::Pointer->can($op->{op});
-        die 'invalid op despite schema validation' unless $coderef;
+        die "invalid op '".$op->{op}."' despite schema validation" unless $coderef;
         try {
             for ($op->{op}) {
                 if ('add' eq $_ or 'replace' eq $_) {

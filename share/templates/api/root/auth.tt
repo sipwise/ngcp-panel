@@ -25,7 +25,7 @@ You will need two files:
 With cURL, use <span>--cert /path/to/NGCP-API-client-certificate-xxxxx.pem</span> to specify the client certificate, and <span>--cacert /path/to/ca-cert.pem</span> to specify the CA certificate in case of a self-signed server certificate.
 
 <code>
-curl -i -X GET --cert /path/to/NGCP-API-client-certificate-1385650532.pem --cacert /path/to/ca-cert.pem https://example.org:1443/api/something/
+curl -i -X GET --cert /path/to/NGCP-API-client-certificate-xxxxx.pem --cacert /path/to/ca-cert.pem https://example.org:1443/api/
 </code>
 </p>
 
@@ -40,11 +40,11 @@ use LWP::UserAgent;
 
 my $ua = LWP::UserAgent->new();
 $ua->ssl_opts(
-    SSL_cert_file => '/path/to/NGCP-API-client-certificate-1385650532.pem',
-    SSL_key_file  => '/path/to/NGCP-API-client-certificate-1385650532.pem',
+    SSL_cert_file => '/path/to/NGCP-API-client-certificate-xxxxx.pem',
+    SSL_key_file  => '/path/to/NGCP-API-client-certificate-xxxxx.pem',
     SSL_ca_file   => '/path/to/ca-cert.pem',
 );
-my $res = $ua->get('https://example.org:1443/api/something/');
+my $res = $ua->get('https://example.org:1443/api/');
 if($res->is_success) {
     print $res->as_string;
 } else {
@@ -61,14 +61,14 @@ Same as with Perl's LWP::UserAgent described above, you have to set the key and 
 <code>
 $ua = curl_init();
 $options = array( 
-    CURLOPT_SSLCERT => '/path/to/NGCP-API-client-certificate-1385650532.pem',
-    CURLOPT_SSLKEY  => '/path/to/NGCP-API-client-certificate-1385650532.pem',
+    CURLOPT_SSLCERT => '/path/to/NGCP-API-client-certificate-xxxxx.pem',
+    CURLOPT_SSLKEY  => '/path/to/NGCP-API-client-certificate-xxxxx.pem',
     CURLOPT_CAINFO =>  '/path/to/ca-cert.pem',
     CURLOPT_SSL_VERIFYPEER => true,
     CURLOPT_RETURNTRANSFER => true,
 );
 curl_setopt_array($ua , $options);
-curl_setopt($ua, CURLOPT_URL, 'https://example.org:1443/api/something/');
+curl_setopt($ua, CURLOPT_URL, 'https://example.org:1443/api/');
 $res = curl_exec($ua);
 if(!$res) {
     echo "Curl Error : " . curl_error($ua);

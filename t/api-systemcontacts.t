@@ -206,6 +206,32 @@ my @allcontacts = ();
     $new_contact = JSON::from_json($res->decoded_content);
     ok(!exists $new_contact->{reseller_id}, "check put if reseller_id is absent");
     ok(!exists $new_contact->{_links}->{'ngcp:resellers'}, "check put absence of ngcp:resellers relation");
+
+    $req = HTTP::Request->new('PATCH', $uri.'/'.$firstcontact);
+    $req->header('Prefer' => 'return=representation');
+    $req->header('Content-Type' => 'application/json-patch+json');
+
+    $req->content(JSON::to_json(
+        [ { op => 'add', path => '/firstname', value => 'patchedfirst' } ]
+    ));
+    $res = $ua->request($req);
+    ok($res->code == 200, "check patched contact item");
+    my $mod_contact = JSON::from_json($res->decoded_content);
+    ok($mod_contact->{firstname} eq "patchedfirst", "check patched add op");
+
+    $req->content(JSON::to_json(
+        [ { op => 'replace', path => '/firstname', value => undef } ]
+    ));
+    $res = $ua->request($req);
+    ok($res->code == 200, "check patched contact item");
+    $mod_contact = JSON::from_json($res->decoded_content);
+    ok(exists $mod_contact->{firstname} && !defined $mod_contact->{firstname}, "check patched replace op for undef");
+
+    $req->content(JSON::to_json(
+        [ { op => 'replace', path => '/email', value => undef } ]
+    ));
+    $res = $ua->request($req);
+    ok($res->code == 422, "check patched contact with unset email");
 }
 
 # DELETE

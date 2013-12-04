@@ -1,19 +1,10 @@
 <h[% level %]>Example command</h[% level %]>
-<code>[% cmd %]</code>
+<code>[% cmd | html %]</code>
 
 [% IF extended -%]
 <p>
-    Note that you need to pass the following additional headers for this request:
+    Note that you <b>MUST</b> to pass the following additional headers for this request:
     <ul>
-        <li><b>If-Match</b>
-            <p>This header is used to verify the cache integrity of a resource. If two instances are retrieving the same resource using GET, and both are updating that resource, the instance doing the second update will have wrong assumptions about the current content of the resource (as it has been updated in the meanwhile). Therefore, an <b>ETag</b> header is passed to the client in the response to the GET request, and this value needs to be put into the <b>If-Match</b> header for subsequent operations. If the resource has been modified in the meanwhile, the API responds with a <b>412 Precondition Failed</b>, telling the client to perform another GET and retry the update. The following values can be passed in the <b>If-Match</b> header:
-            <ul>
-                <li><b>*</b> tells the server to forcefully override the resource, no matter whether the resource has been changed in the meanwhile or not. <i>This is useful for testing, but should <b>NOT</b> be used in production code!</i></li>
-                <li>the value of the <b>ETag</b> header of a previous GET request. This ensures data integrity, and if the API responds with <b>412 Precondition Failed</b>, the client should GET the resource again, validate the result and retry the operation if necessary.</li>
-            </ul>
-            </p>
-        </li>
-
         <li><b>Prefer</b>
             <p>This header tells the API which type of response it expects. The following values are possible:
             <ul>

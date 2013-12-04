@@ -54,7 +54,7 @@
         { level = 2,    id = 'auth',          title = 'Authentication',                                 },
         { level = 2,    id = 'relations',     title = 'Resources',                                      },
 
-        { level = 3,    id = 'rel-contacts',  title = 'Contacts',             uri = '/api/contacts/'    },
+        { level = 3,    id = 'rel-systemcontacts',  title = 'System Contacts',             uri = '/api/contacts/'    },
 #        { level = 3,    id = 'rel-resellers', title = 'Resellers',            uri = '/api/resellers/'   },
 #        { level = 3,    id = 'rel-admins',    title = 'Admins',               uri = '/api/admins/'      },
 #        { level = 3,    id = 'rel-customers', title = 'Customers',            uri = '/api/customers/'   },

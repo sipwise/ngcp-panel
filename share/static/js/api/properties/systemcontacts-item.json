@@ -1,9 +1,8 @@
 {
     "$schema": "http://json-schema.org/draft-04/schema#",
-    "description": "contact information for a contract",
+    "description": "Contact information for a reseller or peering contract",
     "required": ["city", "company", "country", "email", "firstname", "lastname", "phonenumber", "postcode", "street"],
     "properties": {
-        "reseller_id": { "type": ["null", "number"], "description": "The id of the contact's reseller." },
         "city": { "type": ["null", "string"], "description": "The contact's city." },
         "company": { "type": ["null", "string"], "description": "The contact's company." },
         "country": { "type": ["null", "string"], "description": "The contact's country (ISO-3166, e.g. \"AT\" for Austria, \"DE\" for Germany)." },
@@ -14,6 +13,6 @@
         "postcode": { "type": ["null", "string"], "description": "The contact's postal routing code." },
         "street": { "type": ["null", "string"], "description": "The contact's street address." }
     },
-    "title": "contact",
+    "title": "systemcontact",
     "type": "object"
 }

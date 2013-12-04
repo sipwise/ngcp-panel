@@ -48,7 +48,8 @@ sub GET :Allow {
     my $page = $c->request->params->{page} // 1;
     my $rows = $c->request->params->{rows} // 10;
     {
-        my $contacts = $c->model('DB')->resultset('contacts');
+        my $contacts = $c->model('DB')->resultset('contacts')
+            ->search({ reseller_id => undef });
         my $total_count = int($contacts->count);
         $contacts = $contacts->search(undef, {
             page => $page,
@@ -172,11 +173,6 @@ sub hal_from_contact : Private {
             Data::HAL::Link->new(relation => 'collection', href => sprintf('/%s', $c->request->path)),
             Data::HAL::Link->new(relation => 'profile', href => 'http://purl.org/sipwise/ngcp-api/'),
             Data::HAL::Link->new(relation => 'self', href => sprintf("/%s%d", $c->request->path, $contact->id)),
-            $contact->reseller
-                ? Data::HAL::Link->new(
-                    relation => 'ngcp:resellers',
-                    href => sprintf('/api/resellers/%d', $contact->reseller_id),
-                ) : (),
         ],
         relation => 'ngcp:'.$self->resource_name,
     );
