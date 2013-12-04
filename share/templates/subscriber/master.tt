@@ -62,7 +62,7 @@
                             END;
                             elements.push({ value = subscriber.username _ '@' _ subscriber.domain.domain, desc = 'SIP URI'});
                             IF (c.user.roles == "admin" || c.user.roles == "reseller") && c.user.show_passwords;
-                            elements.push({ value = subscriber.provisioning_voip_subscriber.webpassword, desc = 'SIP Password'});
+                            elements.push({ value = subscriber.provisioning_voip_subscriber.password, desc = 'SIP Password'});
                             END;
                             IF subscriber.provisioning_voip_subscriber.voip_pbx_group.defined;
                             elements.push({ value = subscriber.provisioning_voip_subscriber.voip_pbx_group.name, desc = 'PBX Group' });
