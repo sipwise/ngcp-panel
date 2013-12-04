@@ -25,8 +25,6 @@ use Catalyst qw/
     Session::Store::FastMmap
     Session::State::Cookie
 /;
-use CHI qw();
-require CHI::Driver::FastMmap;
 use Log::Log4perl::Catalyst qw();
 use NGCP::Panel::Cache::Serializer qw();
 use NGCP::Panel::Middleware::HSTS qw();
@@ -170,16 +168,6 @@ __PACKAGE__->config(
 __PACKAGE__->config( default_view => 'HTML' );
 
 __PACKAGE__->log(Log::Log4perl::Catalyst->new($logger_config));
-
-has('cache', is => 'ro', default => sub {
-    my ($self) = @_;
-    return CHI->new(
-        cache_size => '30m',
-        driver => 'FastMmap',
-        root_dir => $self->config->{cache_root},
-        serializer => NGCP::Panel::Cache::Serializer->new,
-    );
-});
 
 # Start the application
 __PACKAGE__->setup();

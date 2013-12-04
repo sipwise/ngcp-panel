@@ -4,17 +4,11 @@ use namespace::sweep;
 use boolean qw(true);
 use Data::HAL qw();
 use Data::HAL::Link qw();
-use Data::Record qw();
-use DateTime::Format::HTTP qw();
-use DateTime::Format::RFC3339 qw();
-use Digest::SHA3 qw(sha3_256_base64);
 use HTTP::Headers qw();
 use HTTP::Status qw(:constants);
-use JSON qw();
 use MooseX::ClassAttribute qw(class_has);
-use NGCP::Panel::Utils::ValidateJSON qw();
+use NGCP::Panel::Form::Contract::PeeringReseller qw();
 use Path::Tiny qw(path);
-use Regexp::Common qw(delimited); # $RE{delimited}
 use Safe::Isa qw($_isa);
 BEGIN { extends 'Catalyst::Controller::ActionRole'; }
 require Catalyst::ActionRole::ACL;
@@ -24,6 +18,7 @@ require Catalyst::ActionRole::RequireSSL;
 
 with 'NGCP::Panel::Role::API';
 
+class_has('resource_name', is => 'ro', default => 'contracts');
 class_has('dispatch_path', is => 'ro', default => '/api/contracts/');
 class_has('relation', is => 'ro', default => 'http://purl.org/sipwise/ngcp-api/#rel-contracts');
 
@@ -48,25 +43,29 @@ sub auto :Private {
     $self->log_request($c);
 }
 
-sub GET :Allow :Args(0) {
+sub GET :Allow {
     my ($self, $c) = @_;
     my $page = $c->request->params->{page} // 1;
     my $rows = $c->request->params->{rows} // 10;
     {
-        last if $self->cached($c);
-        my $contracts = $c->model('DB')->resultset('contracts');
-        $self->last_modified($contracts->get_column('modify_timestamp')->max_rs->single->modify_timestamp);
+        my $contracts = $c->model('DB')->resultset('contracts')
+            ->search({
+                'contact.reseller_id' => undef 
+            },{
+                join => 'contact'
+            });
         my $total_count = int($contracts->count);
         $contracts = $contracts->search(undef, {
             page => $page,
             rows => $rows,
         });
         my (@embedded, @links);
+        my $form = NGCP::Panel::Form::Contract::PeeringReseller->new;
         for my $contract ($contracts->search({}, {order_by => {-asc => 'me.id'}, prefetch => ['contact']})->all) {
-            push @embedded, $self->hal_from_contract($contract);
+            push @embedded, $self->hal_from_contract($c, $contract, $form);
             push @links, Data::HAL::Link->new(
-                relation => 'ngcp:contracts',
-                href     => sprintf('/api/contracts/%d', $contract->id),
+                relation => 'ngcp:'.$self->resource_name,
+                href     => sprintf('/%s%d', $c->request->path, $contract->id),
             );
         }
         push @links,
@@ -77,14 +76,15 @@ sub GET :Allow :Args(0) {
                 templated => true,
             ),
             Data::HAL::Link->new(relation => 'profile', href => 'http://purl.org/sipwise/ngcp-api/'),
-            Data::HAL::Link->new(relation => 'self', href => "/api/contracts/?page=$page&rows=$rows");
-        
+            Data::HAL::Link->new(relation => 'self', href => sprintf('/%s?page=%s&rows=%s', $c->request->path, $page, $rows));
+
         if(($total_count / $rows) > $page ) {
-            push @links, Data::HAL::Link->new(relation => 'next', href => "/api/contracts/?page=".($page+1)."&rows=$rows"),
+            push @links, Data::HAL::Link->new(relation => 'next', href => sprintf('/%s?page=%d&rows=%d', $c->request->path, $page + 1, $rows));
         }
         if($page > 1) {
-            push @links, Data::HAL::Link->new(relation => 'prev', href => "/api/contracts/?page=".($page-1)."&rows=$rows");
+            push @links, Data::HAL::Link->new(relation => 'prev', href => sprintf('/%s?page=%d&rows=%d', $c->request->path, $page - 1, $rows));
         }
+
         my $hal = Data::HAL->new(
             embedded => [@embedded],
             links => [@links],
@@ -92,19 +92,14 @@ sub GET :Allow :Args(0) {
         $hal->resource({
             total_count => $total_count,
         });
+        my $rname = $self->resource_name;
         my $response = HTTP::Response->new(HTTP_OK, undef, HTTP::Headers->new(
             (map { # XXX Data::HAL must be able to generate links with multiple relations
-                s|rel="(http://purl.org/sipwise/ngcp-api/#rel-contracts)"|rel="item $1"|;
+                s|rel="(http://purl.org/sipwise/ngcp-api/#rel-$rname)"|rel="item $1"|;
                 s/rel=self/rel="collection self"/;
                 $_
             } $hal->http_headers),
-            $hal->http_headers,
-            Cache_Control => 'no-cache, private',
-            ETag => $self->etag($hal->as_json),
-            Expires => DateTime::Format::HTTP->format_datetime($self->expires),
-            Last_Modified => DateTime::Format::HTTP->format_datetime($self->last_modified),
         ), $hal->as_json);
-        $c->cache->set($c->request->uri->canonical->as_string, $response, { expires_at => $self->expires->epoch });
         $c->response->headers($response->headers);
         $c->response->body($response->content);
         return;
@@ -112,74 +107,75 @@ sub GET :Allow :Args(0) {
     return;
 }
 
-sub HEAD : Allow {
+sub HEAD :Allow {
     my ($self, $c) = @_;
     $c->forward(qw(GET));
     $c->response->body(q());
     return;
 }
 
-sub OPTIONS : Allow {
+sub OPTIONS :Allow {
     my ($self, $c) = @_;
     my $allowed_methods = $self->allowed_methods;
     $c->response->headers(HTTP::Headers->new(
         Allow => $allowed_methods->join(', '),
-        Accept_Post => 'application/hal+json; profile=http://purl.org/sipwise/ngcp-api/#rel-contracts',
-        Content_Language => 'en',
+        Accept_Post => 'application/hal+json; profile=http://purl.org/sipwise/ngcp-api/#rel-'.$self->resource_name,
     ));
     $c->response->content_type('application/json');
     $c->response->body(JSON::to_json({ methods => $allowed_methods })."\n");
     return;
 }
 
-sub POST : Allow {
+sub POST :Allow {
     my ($self, $c) = @_;
+
+    my $guard = $c->model('DB')->txn_scope_guard;
     {
         my $resource = $self->get_valid_post_data(
-            c => $c,
+            c => $c, 
             media_type => 'application/json',
         );
-	    last unless $resource;
+        last unless $resource;
 
-    	# this is only accessible by admins, so on other roles check
-        my $contract_form = NGCP::Panel::Form::Contract::PeeringReseller->new;
+        my $form = NGCP::Panel::Form::Contract::PeeringReseller->new;
         last unless $self->validate_form(
             c => $c,
             resource => $resource,
-            form => $contract_form,
+            form => $form,
         );
-	    my $contact = $c->model('DB')->resultset('contacts')->find($resource->{contact_id});
-	    unless($contact) {
-            $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Invalid contact_id."); # TODO: log error, ...
-            last;
-	    }
-        if($contact->reseller_id) {
-            # TODO: should be allow to create customer contracts here as well? If not, reject
-            # a contact with a reseller!
 
-            #$self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Invalid contact for system contract, must not belong to a reseller."); # TODO: log error, ...
-            #last;
-        }
-
-        # TODO: do we need to use our DateTime utils for localized "now"?
         my $now = DateTime->now;
         $resource->{create_timestamp} = $now;
         $resource->{modify_timestamp} = $now;
-        my $contract = $c->model('DB')->resultset('contracts')->create($resource);
+        my $contract;
+        try {
+            $contract = $c->model('DB')->resultset('contracts')->create($resource);
 
-        $c->cache->remove($c->request->uri->canonical->as_string);
+            # TODO: billing_mappings, contract_balances, ...
+            # TODO: product (sippeering or reseller)
+        } catch($e) {
+            $c->log->error("failed to create contract: $e"); # TODO: user, message, trace, ...
+            $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "Failed to create contract.");
+            last;
+        }
+
+        $guard->commit;
+
         $c->response->status(HTTP_CREATED);
-        $c->response->header(Location => sprintf('/api/contracts/%d', $contract->id));
+        $c->response->header(Location => sprintf('/%s%d', $c->request->path, $contract->id));
         $c->response->body(q());
     }
     return;
 }
 
 sub hal_from_contract : Private {
-    my ($self, $contract) = @_;
-    # XXX invalid 00-00-00 dates
+    my ($self, $c, $contract, $form) = @_;
+
+    # TODO: fixxxxxxme
+    my $billing_profile_id = 1;
+    my $contract_balance_id = 1;
+
     my %resource = $contract->get_inflated_columns;
-    my $id = delete $resource{id};
 
     my $hal = Data::HAL->new(
         links => [
@@ -189,35 +185,25 @@ sub hal_from_contract : Private {
                 name => 'ngcp',
                 templated => true,
             ),
-            Data::HAL::Link->new(relation => 'collection', href => '/api/contracts/'),
+            Data::HAL::Link->new(relation => 'collection', href => sprintf('/%s', $c->request->path)),
             Data::HAL::Link->new(relation => 'profile', href => 'http://purl.org/sipwise/ngcp-api/'),
-            Data::HAL::Link->new(relation => 'self', href => "/api/contracts/$id"),
-            $contract->contact
-                ? Data::HAL::Link->new(
-                    relation => 'ngcp:contacts',
-                    href => sprintf('/api/contacts/%d', $contract->contact_id),
-                ) : (),
+            Data::HAL::Link->new(relation => 'self', href => sprintf("/%s%d", $c->request->path, $contract->id)),
+            Data::HAL::Link->new(relation => 'ngcp:systemcontacts', href => sprintf("/api/systemcontacts/%d", $contract->contact->id)),
+            Data::HAL::Link->new(relation => 'ngcp:billingprofiles', href => sprintf("/api/billingprofiles/%d", $billing_profile_id)),
+            Data::HAL::Link->new(relation => 'ngcp:contractbalances', href => sprintf("/api/contractbalances/%d", $contract_balance_id)),
         ],
-        relation => 'ngcp:contracts',
+        relation => 'ngcp:'.$self->resource_name,
     );
 
-    my %fields = map { $_ => undef } qw(external_id status);
-    for my $k (keys %resource) {
-        delete $resource{$k} unless exists $fields{$k};
-        $resource{$k} = DateTime::Format::RFC3339->format_datetime($resource{$k}) if $resource{$k}->$_isa('DateTime');
-    }
+    return unless $self->validate_form(
+        c => $c,
+        form => $form,
+        resource => \%resource,
+        run => 0,
+    );
+
     $hal->resource({%resource});
     return $hal;
-}
-
-sub valid_id : Private {
-    my ($self, $c, $id) = @_;
-    return 1 if $id->is_integer;
-    $c->response->status(HTTP_BAD_REQUEST);
-    $c->response->header('Content-Language' => 'en');
-    $c->response->content_type('application/xhtml+xml');
-    $c->stash(template => 'api/invalid_query_parameter.tt', key => 'id');
-    return;
 }
 
 sub end : Private {

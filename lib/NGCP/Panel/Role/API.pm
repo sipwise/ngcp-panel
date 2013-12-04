@@ -7,7 +7,6 @@ use JSON::Pointer;
 use HTTP::Status qw(:constants);
 use Safe::Isa qw($_isa);
 use Try::Tiny;
-use Digest::SHA3 qw(sha3_256_base64);
 use DateTime::Format::HTTP qw();
 use DateTime::Format::RFC3339 qw();
 use Types::Standard qw(InstanceOf);
