@@ -6,6 +6,7 @@ my $builder = Local::Module::Build->new(
     license             => 'restrictive',
     dist_version_from   => 'lib/NGCP/Panel.pm',
     tap_harness_args    => {
+        timer           => 1,
         formatter_class => 'TAP::Formatter::JUnit',
         merge           => 1,
     },

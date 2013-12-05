@@ -84,10 +84,8 @@ $d->move_to(element => $row);
 $d->findclick_ok(xpath => '//div[contains(@class,"dataTables_wrapper")]//td[contains(text(),"testingdetail")]/..//a[contains(@class,"btn-secondary") and contains(text(),"Delete")]');
 $d->findtext_ok("Are you sure?");
 $d->findclick_ok(id => 'dataConfirmOK');
-TODO: {
-    todo_skip "jenkins selenium problem, double loading of previous page", 1;
-    $d->findtext_ok("successfully deleted");
-}
+diag('skip was here');
+$d->findtext_ok("successfully deleted");
 
 diag("Click Edit Zones");
 $d->findclick_ok(link_text => "Edit Zones");
@@ -130,10 +128,9 @@ $d->fill_element_ok([name => 'start', "03:14:15"]);
 $d->fill_element_ok([name => 'end', "13:37:00"]);
 $d->findclick_ok(name => 'add');
 $d->findclick_ok(xpath => '//div[contains(@class,"modal")]//i[@class="icon-trash"]/..');
-TODO: {
-    todo_skip "jenkins selenium problem, double loading of previous page", 1;
-    $d->findclick_ok(id => 'mod_close');
-}
+
+diag('skip was here');
+$d->findclick_ok(id => 'mod_close');
 
 diag("Create a Date Definition");
 $d->findclick_ok(link_text => 'Create Special Off-Peak Date');
