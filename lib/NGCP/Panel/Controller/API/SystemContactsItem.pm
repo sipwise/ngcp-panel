@@ -8,6 +8,7 @@ use HTTP::Headers qw();
 use HTTP::Status qw(:constants);
 use MooseX::ClassAttribute qw(class_has);
 use NGCP::Panel::Form::Contact::Reseller qw();
+use NGCP::Panel::Utils::DateTime;
 use NGCP::Panel::Utils::ValidateJSON qw();
 use Path::Tiny qw(path);
 use Safe::Isa qw($_isa);
@@ -113,7 +114,8 @@ sub PATCH :Allow {
             resource => $resource
         );
 
-        $resource->{modify_timestamp} = DateTime->now;
+        my $now = NGCP::Panel::Utils::DateTime::current_local;
+        $resource->{modify_timestamp} = $now;
         $contact->update($resource);
         $guard->commit;
 
@@ -154,7 +156,8 @@ sub PUT :Allow {
             form => $form,
         );
 
-        $resource->{modify_timestamp} = DateTime->now;
+        my $now = NGCP::Panel::Utils::DateTime::current_local;
+        $resource->{modify_timestamp} = $now;
         my $contact = $self->contact_by_id($c, $id);
         $contact->update($resource);
         $guard->commit;

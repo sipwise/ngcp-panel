@@ -8,6 +8,7 @@ use HTTP::Headers qw();
 use HTTP::Status qw(:constants);
 use MooseX::ClassAttribute qw(class_has);
 use NGCP::Panel::Form::Contact::Reseller qw();
+use NGCP::Panel::Utils::DateTime;
 use Path::Tiny qw(path);
 use Safe::Isa qw($_isa);
 BEGIN { extends 'Catalyst::Controller::ActionRole'; }
@@ -138,7 +139,7 @@ sub POST :Allow {
             form => $form,
         );
 
-        my $now = DateTime->now;
+        my $now = NGCP::Panel::Utils::DateTime::current_local;
         $resource->{create_timestamp} = $now;
         $resource->{modify_timestamp} = $now;
         my $contact;
