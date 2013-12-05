@@ -61,7 +61,7 @@ $d->find_ok(xpath => '//div[contains(@class,"accordion-body")]//table//td[contai
 
 diag("Edit Fraud Limits");
 $d->findclick_ok(xpath => '//div[contains(@class,"accordion-heading")]//a[contains(text(),"Fraud Limits")]');
-sleep 2 if ($d->browser_name_in("phantomjs", "chrome")); # time to move
+sleep 2 if ($d->browser_name_in("phantomjs", "chrome", "firefox")); # time to move
 $row = $d->find(xpath => '//div[contains(@class,"accordion-body")]//table//tr/td[contains(text(),"Monthly Settings")]');
 ok($row);
 $edit_link = $d->find_child_element($row, './../td//a[text()[contains(.,"Edit")]]');

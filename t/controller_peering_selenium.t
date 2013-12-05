@@ -98,20 +98,18 @@ diag("Go back to Servers/Rules");
 $d->navigate_ok($server_rules_uri);
 
 my $delete_link;
-TODO: {
-    todo_skip "Deleting fails with our jenkins selenium installation", 1;
-    diag("Delete mytestserver");
-    sleep 1; #make sure, we are on the right page
-    $row = $d->find(xpath => '(//table/tbody/tr/td[contains(text(), "mytestserver")]/..)[1]');
-    ok($row);
-    $delete_link = $d->find_child_element($row, '(./td//a)[contains(text(),"Delete")]');
-    ok($delete_link);
-    $d->move_to(element => $row);
-    $delete_link->click;
-    $d->findtext_ok("Are you sure?");
-    $d->findclick_ok(id => 'dataConfirmOK');
-    $d->findtext_ok("successfully deleted"); # delete does not work
-}
+diag('skip was here');
+diag("Delete mytestserver");
+sleep 1; #make sure, we are on the right page
+$row = $d->find(xpath => '(//table/tbody/tr/td[contains(text(), "mytestserver")]/..)[1]');
+ok($row);
+$delete_link = $d->find_child_element($row, '(./td//a)[contains(text(),"Delete")]');
+ok($delete_link);
+$d->move_to(element => $row);
+$delete_link->click;
+$d->findtext_ok("Are you sure?");
+$d->findclick_ok(id => 'dataConfirmOK');
+$d->findtext_ok("successfully deleted"); # delete does not work
 
 diag("Delete the previously created Peering Rule");
 sleep 1;
@@ -123,10 +121,9 @@ $d->move_to(element => $row);
 $delete_link->click;
 $d->findtext_ok("Are you sure?");
 $d->findclick_ok(id => 'dataConfirmOK');
-TODO: {
-    todo_skip "Delete Rule seems to be executed twice, which gives the wrong message here (using jenkins selenium)", 1;
-    $d->findtext_ok("successfully deleted");
-}
+
+diag('skip was here');
+$d->findtext_ok("successfully deleted");
 
 diag('Go back to "SIP Peering Groups".');
 $d->navigate_ok($peerings_uri);
@@ -140,10 +137,9 @@ $d->move_to(element => $row);
 $delete_link->click;
 $d->findtext_ok("Are you sure?");
 $d->findclick_ok(id => 'dataConfirmOK');
-TODO: {
-    todo_skip "Same as above, jenkins selenium results in wrong message", 1;
-    $d->findtext_ok("successfully deleted");
-}
+
+diag('skip was here');
+$d->findtext_ok("successfully deleted");
 
 done_testing;
 # vim: filetype=perl
