@@ -124,15 +124,28 @@ sub PATCH :Allow {
                 $self->error($c, HTTP_NOT_FOUND, "Invalid 'billing_profile_id'");
                 last;
             }
-            $billing_mapping->update({ 
-                billing_profile_id => $resource->{billing_profile_id}
+            $contract->billing_mappings->create({ 
+                start_date => NGCP::Panel::Utils::DateTime::current_local,
+                billing_profile_id => $resource->{billing_profile_id},
+                product_id => $billing_mapping->product_id,
             });
         }
         delete $resource->{billing_profile_id};
+
         $contract->update($resource);
 
+        if($old_resource->{status} ne $resource->{status}) {
+            if($id == 1) {
+                $self->error($c, HTTP_FORBIDDEN, "Cannot set contract status to '".$resource->{status}."' for contract id '1'");
+                last;
+            }
+            NGCP::Panel::Utils::Contract::recursively_lock_contract(
+                c => $c,
+                contract => $contract,
+            );
+        }
+
         # TODO: what about changed product, do we allow it?
-        # TODO: handle termination, ....
 
         $guard->commit;
 
@@ -186,15 +199,27 @@ sub PUT :Allow {
                 $self->error($c, HTTP_NOT_FOUND, "Invalid 'billing_profile_id'");
                 last;
             }
-            $billing_mapping->update({ 
-                billing_profile_id => $resource->{billing_profile_id}
+            $contract->billing_mappings->create({ 
+                start_date => NGCP::Panel::Utils::DateTime::current_local,
+                billing_profile_id => $resource->{billing_profile_id},
+                product_id => $billing_mapping->product_id,
             });
         }
         delete $resource->{billing_profile_id};
         $contract->update($resource);
 
+        if($old_resource->{status} ne $resource->{status}) {
+            if($id == 1) {
+                $self->error($c, HTTP_FORBIDDEN, "Cannot set contract status to '".$resource->{status}."' for contract id '1'");
+                last;
+            }
+            NGCP::Panel::Utils::Contract::recursively_lock_contract(
+                c => $c,
+                contract => $contract,
+            );
+        }
+
         # TODO: what about changed product, do we allow it?
-        # TODO: handle termination, ....
 
         $guard->commit;
 
