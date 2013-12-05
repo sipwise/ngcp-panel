@@ -103,50 +103,12 @@ sub PATCH :Allow {
 
         my $contract = $self->contract_by_id($c, $id);
         last unless $self->resource_exists($c, contract => $contract);
-        my $billing_mapping = $contract->billing_mappings->find($contract->get_column('bmid'));
         my $old_resource = { $contract->get_inflated_columns };
-        $old_resource->{billing_profile_id} = $billing_mapping->billing_profile_id;
         my $resource = $self->apply_patch($c, $old_resource, $json);
         last unless $resource;
 
         my $form = NGCP::Panel::Form::Contract::PeeringReseller->new;
-        last unless $self->validate_form(
-            c => $c,
-            form => $form,
-            resource => $resource
-        );
-
-        my $now = NGCP::Panel::Utils::DateTime::current_local;
-        $resource->{modify_timestamp} = $now;
-        if($old_resource->{billing_profile_id} != $resource->{billing_profile_id}) {
-            my $billing_profile = $c->model('DB')->resultset('billing_profiles')->find($resource->{billing_profile_id});
-            unless($billing_profile) {
-                $self->error($c, HTTP_NOT_FOUND, "Invalid 'billing_profile_id'");
-                last;
-            }
-            $contract->billing_mappings->create({ 
-                start_date => NGCP::Panel::Utils::DateTime::current_local,
-                billing_profile_id => $resource->{billing_profile_id},
-                product_id => $billing_mapping->product_id,
-            });
-        }
-        delete $resource->{billing_profile_id};
-
-        $contract->update($resource);
-
-        if($old_resource->{status} ne $resource->{status}) {
-            if($id == 1) {
-                $self->error($c, HTTP_FORBIDDEN, "Cannot set contract status to '".$resource->{status}."' for contract id '1'");
-                last;
-            }
-            NGCP::Panel::Utils::Contract::recursively_lock_contract(
-                c => $c,
-                contract => $contract,
-            );
-        }
-
-        # TODO: what about changed product, do we allow it?
-
+        last unless $self->update_contract($c, $contract, $old_resource, $resource, $form);
         $guard->commit;
 
         if ('minimal' eq $preference) {
@@ -180,46 +142,10 @@ sub PUT :Allow {
             id => $id,
             media_type => 'application/json',
         );
-        my $billing_mapping = $contract->billing_mappings->find($contract->get_column('bmid'));
         my $old_resource = { $contract->get_inflated_columns };
-        $old_resource->{billing_profile_id} = $billing_mapping->billing_profile_id;
 
         my $form = NGCP::Panel::Form::Contract::PeeringReseller->new;
-        last unless $self->validate_form(
-            c => $c,
-            form => $form,
-            resource => $resource
-        );
-
-        my $now = NGCP::Panel::Utils::DateTime::current_local;
-        $resource->{modify_timestamp} = $now;
-        if($old_resource->{billing_profile_id} != $resource->{billing_profile_id}) {
-            my $billing_profile = $c->model('DB')->resultset('billing_profiles')->find($resource->{billing_profile_id});
-            unless($billing_profile) {
-                $self->error($c, HTTP_NOT_FOUND, "Invalid 'billing_profile_id'");
-                last;
-            }
-            $contract->billing_mappings->create({ 
-                start_date => NGCP::Panel::Utils::DateTime::current_local,
-                billing_profile_id => $resource->{billing_profile_id},
-                product_id => $billing_mapping->product_id,
-            });
-        }
-        delete $resource->{billing_profile_id};
-        $contract->update($resource);
-
-        if($old_resource->{status} ne $resource->{status}) {
-            if($id == 1) {
-                $self->error($c, HTTP_FORBIDDEN, "Cannot set contract status to '".$resource->{status}."' for contract id '1'");
-                last;
-            }
-            NGCP::Panel::Utils::Contract::recursively_lock_contract(
-                c => $c,
-                contract => $contract,
-            );
-        }
-
-        # TODO: what about changed product, do we allow it?
+        last unless $self->update_contract($c, $contract, $old_resource, $resource, $form);
 
         $guard->commit;
 

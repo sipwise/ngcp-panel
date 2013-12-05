@@ -94,5 +94,54 @@ sub contract_by_id {
     return $contracts->find({'me.id' => $id});
 }
 
+sub update_contract {
+    my ($self, $c, $contract, $old_resource, $resource, $form) = @_;
+
+    my $billing_mapping = $contract->billing_mappings->find($contract->get_column('bmid'));
+    $old_resource->{billing_profile_id} = $billing_mapping->billing_profile_id; 
+    $resource->{billing_profile_id} //= $old_resource->{billing_profile_id};
+   
+    $form //= NGCP::Panel::Form::Contract::PeeringReseller->new;
+    return unless $self->validate_form(
+        c => $c,
+        form => $form,
+        resource => $resource,
+    );
+
+    my $now = NGCP::Panel::Utils::DateTime::current_local;
+    $resource->{modify_timestamp} = $now;
+
+    if($old_resource->{billing_profile_id} != $resource->{billing_profile_id}) {
+        my $billing_profile = $c->model('DB')->resultset('billing_profiles')->find($resource->{billing_profile_id});
+        unless($billing_profile) {
+            $self->error($c, HTTP_NOT_FOUND, "Invalid 'billing_profile_id'");
+            return;
+        }
+        $contract->billing_mappings->create({
+            start_date => NGCP::Panel::Utils::DateTime::current_local,
+            billing_profile_id => $resource->{billing_profile_id},
+            product_id => $billing_mapping->product_id,
+        });
+    }
+    delete $resource->{billing_profile_id};
+
+    $contract->update($resource);
+
+    if($old_resource->{status} ne $resource->{status}) {
+        if($contract->id == 1) {
+            $self->error($c, HTTP_FORBIDDEN, "Cannot set contract status to '".$resource->{status}."' for contract id '1'");
+            return;
+        }
+        NGCP::Panel::Utils::Contract::recursively_lock_contract(
+            c => $c,
+            contract => $contract,
+        );
+    }
+
+    # TODO: what about changed product, do we allow it?
+
+    return $contract;
+}
+
 1;
 # vim: set tabstop=4 expandtab:
