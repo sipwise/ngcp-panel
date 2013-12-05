@@ -7,9 +7,10 @@ use Data::HAL::Link qw();
 use HTTP::Headers qw();
 use HTTP::Status qw(:constants);
 use MooseX::ClassAttribute qw(class_has);
+use NGCP::Panel::Utils::DateTime;
+use NGCP::Panel::Utils::Contract;
 use NGCP::Panel::Form::Contract::PeeringReseller qw();
 use Path::Tiny qw(path);
-use Safe::Isa qw($_isa);
 BEGIN { extends 'Catalyst::Controller::ActionRole'; }
 require Catalyst::ActionRole::ACL;
 require Catalyst::ActionRole::CheckTrailingSlash;
@@ -17,6 +18,7 @@ require Catalyst::ActionRole::HTTPMethods;
 require Catalyst::ActionRole::RequireSSL;
 
 with 'NGCP::Panel::Role::API';
+with 'NGCP::Panel::Role::API::Contracts';
 
 class_has('resource_name', is => 'ro', default => 'contracts');
 class_has('dispatch_path', is => 'ro', default => '/api/contracts/');
@@ -48,11 +50,15 @@ sub GET :Allow {
     my $page = $c->request->params->{page} // 1;
     my $rows = $c->request->params->{rows} // 10;
     {
-        my $contracts = $c->model('DB')->resultset('contracts')
-            ->search({
+        my $contracts = NGCP::Panel::Utils::Contract::get_contract_rs(
+            schema => $c->model('DB'),
+        );
+        $contracts = $contracts->search({
                 'contact.reseller_id' => undef 
             },{
-                join => 'contact'
+                join => 'contact',
+                '+select' => 'billing_mappings.id',
+                '+as' => 'bmid',
             });
         my $total_count = int($contracts->count);
         $contracts = $contracts->search(undef, {
@@ -61,7 +67,7 @@ sub GET :Allow {
         });
         my (@embedded, @links);
         my $form = NGCP::Panel::Form::Contract::PeeringReseller->new;
-        for my $contract ($contracts->search({}, {order_by => {-asc => 'me.id'}, prefetch => ['contact']})->all) {
+        for my $contract ($contracts->all) {
             push @embedded, $self->hal_from_contract($c, $contract, $form);
             push @links, Data::HAL::Link->new(
                 relation => 'ngcp:'.$self->resource_name,
@@ -131,12 +137,14 @@ sub POST :Allow {
 
     my $guard = $c->model('DB')->txn_scope_guard;
     {
+        my $schema = $c->model('DB');
         my $resource = $self->get_valid_post_data(
             c => $c, 
             media_type => 'application/json',
         );
         last unless $resource;
 
+        my $product_class = delete $resource->{type};
         my $form = NGCP::Panel::Form::Contract::PeeringReseller->new;
         last unless $self->validate_form(
             c => $c,
@@ -144,15 +152,37 @@ sub POST :Allow {
             form => $form,
         );
 
-        my $now = DateTime->now;
+        my $now = NGCP::Panel::Utils::DateTime::current_local;
         $resource->{create_timestamp} = $now;
         $resource->{modify_timestamp} = $now;
         my $contract;
         try {
-            $contract = $c->model('DB')->resultset('contracts')->create($resource);
+            my $billing_profile_id = delete $resource->{billing_profile_id};
+            my $billing_profile = $schema->resultset('billing_profiles')->find($billing_profile_id);
+            unless($billing_profile) {
+                $self->error($c, HTTP_NOT_FOUND, "Invalid 'billing_profile_id'.");
+                last;
+            }
+            my $product = $schema->resultset('products')->find({ class => $product_class });
+            unless($product) {
+                $self->error($c, HTTP_NOT_FOUND, "Invalid 'type'.");
+                last;
+            }
+            $contract = $schema->resultset('contracts')->create($resource);
+            if($contract->contact->reseller_id) {
+                $self->error($c, HTTP_NOT_FOUND, "The contact_id is not a valid ngcp:systemcontacts item, but an ngcp:customercontacts item");
+                last;
+            }
+            $contract->billing_mappings->create({
+                billing_profile_id => $billing_profile->id,
+                product_id => $product->id,
+            });
+            NGCP::Panel::Utils::Contract::create_contract_balance(
+                c => $c,
+                profile => $billing_profile,
+                contract => $contract,
+            );
 
-            # TODO: billing_mappings, contract_balances, ...
-            # TODO: product (sippeering or reseller)
         } catch($e) {
             $c->log->error("failed to create contract: $e"); # TODO: user, message, trace, ...
             $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "Failed to create contract.");
@@ -166,44 +196,6 @@ sub POST :Allow {
         $c->response->body(q());
     }
     return;
-}
-
-sub hal_from_contract : Private {
-    my ($self, $c, $contract, $form) = @_;
-
-    # TODO: fixxxxxxme
-    my $billing_profile_id = 1;
-    my $contract_balance_id = 1;
-
-    my %resource = $contract->get_inflated_columns;
-
-    my $hal = Data::HAL->new(
-        links => [
-            Data::HAL::Link->new(
-                relation => 'curies',
-                href => 'http://purl.org/sipwise/ngcp-api/#rel-{rel}',
-                name => 'ngcp',
-                templated => true,
-            ),
-            Data::HAL::Link->new(relation => 'collection', href => sprintf('/%s', $c->request->path)),
-            Data::HAL::Link->new(relation => 'profile', href => 'http://purl.org/sipwise/ngcp-api/'),
-            Data::HAL::Link->new(relation => 'self', href => sprintf("/%s%d", $c->request->path, $contract->id)),
-            Data::HAL::Link->new(relation => 'ngcp:systemcontacts', href => sprintf("/api/systemcontacts/%d", $contract->contact->id)),
-            Data::HAL::Link->new(relation => 'ngcp:billingprofiles', href => sprintf("/api/billingprofiles/%d", $billing_profile_id)),
-            Data::HAL::Link->new(relation => 'ngcp:contractbalances', href => sprintf("/api/contractbalances/%d", $contract_balance_id)),
-        ],
-        relation => 'ngcp:'.$self->resource_name,
-    );
-
-    return unless $self->validate_form(
-        c => $c,
-        form => $form,
-        resource => \%resource,
-        run => 0,
-    );
-
-    $hal->resource({%resource});
-    return $hal;
 }
 
 sub end : Private {

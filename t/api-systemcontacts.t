@@ -145,6 +145,7 @@ my @allcontacts = ();
     ok(exists $contact->{firstname}, "check existence of firstname");
     ok(exists $contact->{lastname}, "check existence of lastname");
     ok(exists $contact->{email}, "check existence of email");
+    ok(exists $contact->{id} && $contact->{id}->is_int, "check existence of id");
     ok(!exists $contact->{reseller_id}, "check absence of reseller_id");
     
     # PUT same result again
@@ -153,13 +154,6 @@ my @allcontacts = ();
     delete $contact->{_embedded};
     $req = HTTP::Request->new('PUT', $uri.'/'.$firstcontact);
     
-    # check if it fails without If-Match
-    $req->header('Content-Type' => 'application/json');
-    $res = $ua->request($req);
-    ok($res->code == 428, "check put precondition-required");
-
-    $req->header('If-Match' => '*');
-
     # check if it fails without content type
     $req->remove_header('Content-Type');
     $res = $ua->request($req);

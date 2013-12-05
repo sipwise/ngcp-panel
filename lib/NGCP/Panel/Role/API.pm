@@ -41,7 +41,6 @@ sub get_valid_put_data {
     return unless $self->valid_id($c, $id);
     return unless $self->forbid_link_header($c);
     return unless $self->valid_media_type($c, $media_type);
-    return unless $self->require_precondition($c, 'If-Match');
     return unless $self->require_body($c);
     my $json =  $c->stash->{body};
     return unless $self->require_wellformed_json($c, $media_type, $json);
@@ -79,7 +78,7 @@ sub validate_form {
 
     # move {xxx_id} into {xxx}{id} for FormHandler
     foreach my $key(keys %{ $resource } ) {
-        if($key =~ /^([a-z]+)_id$/) {
+        if($key =~ /^(.+)_id$/ && $key ne "external_id") {
             $c->log->debug("++++++++++++ moving key $key with value " .  ($resource->{$key} // '<null>') . " to $1/id");
             push @normalized, $1;
             $resource->{$1}{id} = delete $resource->{$key};
@@ -356,7 +355,7 @@ sub log_request {
     }
 
     $c->log->info("API function '".$c->request->path."' called by '" . $user . 
-        "' ('" . $c->user->roles . "') from host '".$c->request->address."' with params " .
+        "' ('" . $c->user->roles . "') from host '".$c->request->address."' with method '" . $c->request->method . "' and params " .
         (length $params ? $params : "''") .
         " and body '" . $c->stash->{body} . "'");
 }

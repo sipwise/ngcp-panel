@@ -1,9 +1,13 @@
 {
     "$schema": "http://json-schema.org/draft-04/schema#",
-    "required": ["external_id", "status"],
+    "description": "A billing container for a reseller or peering",
+    "required": ["external_id", "status", "type", "billing_profile_id", "contact_id"],
     "properties": {
-        "external_id": { "type": ["null", "string"], "description": "XXX" },
-        "status": { "enum": [null, "active", "locked", "pending", "terminated"], "description": "XXX" }
+        "status": { "enum": ["active", "locked", "pending", "terminated"], "description": "The operational status of the contract" }
+        "type": { "enum": ["reseller", "sippeering"], "description": "The type of the contract" }
+	"contact_id": { "type": "number", "description": "The ID of the 'ngcp:systemcontacts' item this contract belongs to" },
+	"billing_profile_id": { "type": "number", "description": "The ID of the 'ngcp:billingprofiles' item this contract uses" },
+        "external_id": { "type": ["null", "string"], "description": "An external ID e.g. to identify the contract in a 3rd party system" },
     },
     "title": "contract",
     "type": "object"

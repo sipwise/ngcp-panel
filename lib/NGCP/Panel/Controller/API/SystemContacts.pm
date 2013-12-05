@@ -18,6 +18,7 @@ require Catalyst::ActionRole::HTTPMethods;
 require Catalyst::ActionRole::RequireSSL;
 
 with 'NGCP::Panel::Role::API';
+with 'NGCP::Panel::Role::API::SystemContacts';
 
 class_has('resource_name', is => 'ro', default => 'systemcontacts');
 class_has('dispatch_path', is => 'ro', default => '/api/systemcontacts/');
@@ -156,37 +157,6 @@ sub POST :Allow {
         $c->response->body(q());
     }
     return;
-}
-
-sub hal_from_contact : Private {
-    my ($self, $c, $contact, $form) = @_;
-
-    my %resource = $contact->get_inflated_columns;
-
-    my $hal = Data::HAL->new(
-        links => [
-            Data::HAL::Link->new(
-                relation => 'curies',
-                href => 'http://purl.org/sipwise/ngcp-api/#rel-{rel}',
-                name => 'ngcp',
-                templated => true,
-            ),
-            Data::HAL::Link->new(relation => 'collection', href => sprintf('/%s', $c->request->path)),
-            Data::HAL::Link->new(relation => 'profile', href => 'http://purl.org/sipwise/ngcp-api/'),
-            Data::HAL::Link->new(relation => 'self', href => sprintf("/%s%d", $c->request->path, $contact->id)),
-        ],
-        relation => 'ngcp:'.$self->resource_name,
-    );
-
-    return unless $self->validate_form(
-        c => $c,
-        form => $form,
-        resource => \%resource,
-        run => 0,
-    );
-
-    $hal->resource({%resource});
-    return $hal;
 }
 
 sub end : Private {
