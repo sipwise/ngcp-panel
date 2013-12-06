@@ -1,15 +1,12 @@
-package NGCP::Panel::Controller::API::ContractsItem;
+package NGCP::Panel::Controller::API::BillingProfilesItem;
 use Sipwise::Base;
 use namespace::sweep;
-use boolean qw(true);
-use Data::HAL qw();
-use Data::HAL::Link qw();
 use HTTP::Headers qw();
 use HTTP::Status qw(:constants);
 use MooseX::ClassAttribute qw(class_has);
-use NGCP::Panel::Form::Contract::PeeringReseller qw();
-use NGCP::Panel::Utils::ValidateJSON qw();
+use NGCP::Panel::Form::BillingProfile::Admin qw();
 use NGCP::Panel::Utils::DateTime;
+use NGCP::Panel::Utils::ValidateJSON qw();
 use Path::Tiny qw(path);
 use Safe::Isa qw($_isa);
 BEGIN { extends 'Catalyst::Controller::ActionRole'; }
@@ -18,11 +15,11 @@ require Catalyst::ActionRole::HTTPMethods;
 require Catalyst::ActionRole::RequireSSL;
 
 with 'NGCP::Panel::Role::API';
-with 'NGCP::Panel::Role::API::Contracts';
+with 'NGCP::Panel::Role::API::BillingProfiles';
 
-class_has('resource_name', is => 'ro', default => 'contracts');
-class_has('dispatch_path', is => 'ro', default => '/api/contracts/');
-class_has('relation', is => 'ro', default => 'http://purl.org/sipwise/ngcp-api/#rel-contracts');
+class_has('resource_name', is => 'ro', default => 'billingprofiles');
+class_has('dispatch_path', is => 'ro', default => '/api/billingprofiles/');
+class_has('relation', is => 'ro', default => 'http://purl.org/sipwise/ngcp-api/#rel-billingprofiles');
 
 __PACKAGE__->config(
     action => {
@@ -49,11 +46,12 @@ sub GET :Allow {
     my ($self, $c, $id) = @_;
     {
         last unless $self->valid_id($c, $id);
-        my $contract = $self->contract_by_id($c, $id);
-        last unless $self->resource_exists($c, contract => $contract);
+        my $profile = $self->profile_by_id($c, $id);
+        last unless $self->resource_exists($c, billingprofile => $profile);
 
-        my $hal = $self->hal_from_contract($c, $contract);
+        my $hal = $self->hal_from_profile($c, $profile);
 
+        # TODO: we don't need reseller stuff here!
         my $response = HTTP::Response->new(HTTP_OK, undef, HTTP::Headers->new(
             (map { # XXX Data::HAL must be able to generate links with multiple relations
                 s|rel="(http://purl.org/sipwise/ngcp-api/#rel-resellers)"|rel="item $1"|;
@@ -101,14 +99,14 @@ sub PATCH :Allow {
         );
         last unless $json;
 
-        my $contract = $self->contract_by_id($c, $id);
-        last unless $self->resource_exists($c, contract => $contract);
-        my $old_resource = { $contract->get_inflated_columns };
+        my $profile = $self->profile_by_id($c, $id);
+        last unless $self->resource_exists($c, billingprofile => $profile);
+        my $old_resource = { $profile->get_inflated_columns };
         my $resource = $self->apply_patch($c, $old_resource, $json);
         last unless $resource;
 
-        my $form = NGCP::Panel::Form::Contract::PeeringReseller->new;
-        last unless $self->update_contract($c, $contract, $old_resource, $resource, $form);
+        my $form = NGCP::Panel::Form::BillingProfile::Admin->new;
+        last unless $self->update_profile($c, $profile, $old_resource, $resource, $form);
 
         $guard->commit;
 
@@ -117,7 +115,7 @@ sub PATCH :Allow {
             $c->response->header(Preference_Applied => 'return=minimal');
             $c->response->body(q());
         } else {
-            my $hal = $self->hal_from_contract($c, $contract, $form);
+            my $hal = $self->hal_from_profile($c, $profile, $form);
             my $response = HTTP::Response->new(HTTP_OK, undef, HTTP::Headers->new(
                 $hal->http_headers,
             ), $hal->as_json);
@@ -136,18 +134,18 @@ sub PUT :Allow {
         my $preference = $self->require_preference($c);
         last unless $preference;
 
-        my $contract = $self->contract_by_id($c, $id);
-        last unless $self->resource_exists($c, contract => $contract);
+        my $profile = $self->profile_by_id($c, $id);
+        last unless $self->resource_exists($c, billingprofile => $profile );
         my $resource = $self->get_valid_put_data(
             c => $c,
             id => $id,
             media_type => 'application/json',
         );
         last unless $resource;
-        my $old_resource = { $contract->get_inflated_columns };
+        my $old_resource = { $profile->get_inflated_columns };
 
-        my $form = NGCP::Panel::Form::Contract::PeeringReseller->new;
-        last unless $self->update_contract($c, $contract, $old_resource, $resource, $form);
+        my $form = NGCP::Panel::Form::BillingProfile::Admin->new;
+        last unless $self->update_profile($c, $profile, $old_resource, $resource, $form);
 
         $guard->commit;
 
@@ -156,7 +154,7 @@ sub PUT :Allow {
             $c->response->header(Preference_Applied => 'return=minimal');
             $c->response->body(q());
         } else {
-            my $hal = $self->hal_from_contract($c, $contract, $form);
+            my $hal = $self->hal_from_profile($c, $profile, $form);
             my $response = HTTP::Response->new(HTTP_OK, undef, HTTP::Headers->new(
                 $hal->http_headers,
             ), $hal->as_json);
@@ -168,33 +166,7 @@ sub PUT :Allow {
     return;
 }
 
-=pod
-# we don't allow to delete contracts
-sub DELETE :Allow {
-    my ($self, $c, $id) = @_;
-    my $guard = $c->model('DB')->txn_scope_guard;
-    {
-        my $contract = $self->contract_by_id($c, $id);
-        last unless $self->resource_exists($c, contract => $contract);
-
-        # TODO: do we want to prevent deleting used contracts?
-        #my $contract_count = $c->model('DB')->resultset('contracts')->search({
-        #    contact_id => $id
-        #});
-        #if($contract_count > 0) {
-        #    $self->error($c, HTTP_LOCKED, "Contact is still in use.");
-        #    last;
-        #} else {
-            $contract->delete;
-        #}
-        $guard->commit;
-
-        $c->response->status(HTTP_NO_CONTENT);
-        $c->response->body(q());
-    }
-    return;
-}
-=cut
+# we don't allow to DELETE a billing profile
 
 sub end : Private {
     my ($self, $c) = @_;

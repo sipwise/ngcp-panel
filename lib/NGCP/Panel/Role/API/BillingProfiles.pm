@@ -26,7 +26,6 @@ sub hal_from_profile {
             ),
             Data::HAL::Link->new(relation => 'collection', href => sprintf('/api/%s/', $self->resource_name)),
             Data::HAL::Link->new(relation => 'profile', href => 'http://purl.org/sipwise/ngcp-api/'),
-            # TODO: if called from collection, this is wrong, as the id is missing when we put it into embedded! Same for systemcontacts/contracts:
             Data::HAL::Link->new(relation => 'self', href => sprintf("%s%d", $self->dispatch_path, $profile->id)),
             map { Data::HAL::Link->new(relation => 'ngcp:billingfees', href => sprintf("/api/billingfees/%d", $_->id)) } $profile->billing_fees->all,
         ],
@@ -46,83 +45,46 @@ sub hal_from_profile {
     return $hal;
 }
 
-sub contract_by_id {
+sub profile_by_id {
     my ($self, $c, $id) = @_;
 
-    # we only return system contracts, that is, those with contacts without
-    # reseller
-    my $contracts = NGCP::Panel::Utils::Contract::get_contract_rs(
-        schema => $c->model('DB'),
-    );
-    $contracts = $contracts->search({
-        'contact.reseller_id' => undef
-    },{
-        join => 'contact',
-        '+select' => 'billing_mappings.id',
-        '+as' => 'bmid',
-    });
+    my $profiles = $c->model('DB')->resultset('billing_profiles');
+    if($c->user->roles eq "api_admin") {
+    } elsif($c->user->roles eq "api_reseller") {
+        $profiles = $profiles->search({
+            reseller_id => $c->user->reseller_id,
+        });
+    } else {
+        $profiles = $profiles->search({
+            reseller_id => $c->user->contract->contact->reseller_id,
+        });
+    }
 
-    return $contracts->find($id);
+    return $profiles->find($id);
 }
 
-sub update_contract {
-    my ($self, $c, $contract, $old_resource, $resource, $form) = @_;
+sub update_profile {
+    my ($self, $c, $profile, $old_resource, $resource, $form) = @_;
 
-    my $billing_mapping = $contract->billing_mappings->find($contract->get_column('bmid'));
-    $old_resource->{billing_profile_id} = $billing_mapping->billing_profile_id; 
-    $resource->{billing_profile_id} //= $old_resource->{billing_profile_id};
-   
-    $form //= NGCP::Panel::Form::Contract::PeeringReseller->new;
+    $form //= NGCP::Panel::Form::BillingProfile::Admin->new;
     return unless $self->validate_form(
         c => $c,
         form => $form,
         resource => $resource,
     );
 
-    my $now = NGCP::Panel::Utils::DateTime::current_local;
-    $resource->{modify_timestamp} = $now;
-
-    if($old_resource->{billing_profile_id} != $resource->{billing_profile_id}) {
-        my $billing_profile = $c->model('DB')->resultset('billing_profiles')->find($resource->{billing_profile_id});
-        unless($billing_profile) {
-            $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Invalid 'billing_profile_id'");
-            return;
-        }
-        $contract->billing_mappings->create({
-            start_date => NGCP::Panel::Utils::DateTime::current_local,
-            billing_profile_id => $resource->{billing_profile_id},
-            product_id => $billing_mapping->product_id,
-        });
-    }
-    delete $resource->{billing_profile_id};
-
-
-    if($old_resource->{contact_id} != $resource->{contact_id}) {
-        my $syscontact = $c->model('DB')->resultset('contacts')
-            ->search({ reseller_id => undef })
-            ->find($resource->{contact_id});
-        unless($syscontact) {
-            $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Invalid 'contact_id'");
+    if($old_resource->{reseller_id} != $resource->{reseller_id}) {
+        my $reseller = $c->model('DB')->resultset('resellers')
+            ->find($resource->{reseller_id});
+        unless($reseller) {
+            $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Invalid 'reseller_id'");
             return;
         }
     }
 
-    $contract->update($resource);
+    $profile->update($resource);
 
-    if($old_resource->{status} ne $resource->{status}) {
-        if($contract->id == 1) {
-            $self->error($c, HTTP_FORBIDDEN, "Cannot set contract status to '".$resource->{status}."' for contract id '1'");
-            return;
-        }
-        NGCP::Panel::Utils::Contract::recursively_lock_contract(
-            c => $c,
-            contract => $contract,
-        );
-    }
-
-    # TODO: what about changed product, do we allow it?
-
-    return $contract;
+    return $profile;
 }
 
 1;
