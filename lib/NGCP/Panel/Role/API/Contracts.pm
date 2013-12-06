@@ -50,9 +50,9 @@ sub hal_from_contract {
                 name => 'ngcp',
                 templated => true,
             ),
-            Data::HAL::Link->new(relation => 'collection', href => sprintf('/%s', $c->request->path)),
+            Data::HAL::Link->new(relation => 'collection', href => sprintf('/api/%s/', $self->resource_name)),
             Data::HAL::Link->new(relation => 'profile', href => 'http://purl.org/sipwise/ngcp-api/'),
-            Data::HAL::Link->new(relation => 'self', href => sprintf("/%s%d", $c->request->path, $contract->id)),
+            Data::HAL::Link->new(relation => 'self', href => sprintf("/%s", $c->request->path)),
             Data::HAL::Link->new(relation => 'ngcp:systemcontacts', href => sprintf("/api/systemcontacts/%d", $contract->contact->id)),
             Data::HAL::Link->new(relation => 'ngcp:billingprofiles', href => sprintf("/api/billingprofiles/%d", $billing_profile_id)),
             Data::HAL::Link->new(relation => 'ngcp:contractbalances', href => sprintf("/api/contractbalances/%d", $contract_balance->id)),
@@ -91,7 +91,7 @@ sub contract_by_id {
         '+as' => 'bmid',
     });
 
-    return $contracts->find({'me.id' => $id});
+    return $contracts->find($id);
 }
 
 sub update_contract {
@@ -114,7 +114,7 @@ sub update_contract {
     if($old_resource->{billing_profile_id} != $resource->{billing_profile_id}) {
         my $billing_profile = $c->model('DB')->resultset('billing_profiles')->find($resource->{billing_profile_id});
         unless($billing_profile) {
-            $self->error($c, HTTP_NOT_FOUND, "Invalid 'billing_profile_id'");
+            $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Invalid 'billing_profile_id'");
             return;
         }
         $contract->billing_mappings->create({
@@ -124,6 +124,17 @@ sub update_contract {
         });
     }
     delete $resource->{billing_profile_id};
+
+
+    if($old_resource->{contact_id} != $resource->{contact_id}) {
+        my $syscontact = $c->model('DB')->resultset('contacts')
+            ->search({ reseller_id => undef })
+            ->find($resource->{contact_id});
+        unless($syscontact) {
+            $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Invalid 'contact_id'");
+            return;
+        }
+    }
 
     $contract->update($resource);
 

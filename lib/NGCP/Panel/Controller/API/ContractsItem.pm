@@ -104,7 +104,8 @@ sub PATCH :Allow {
         my $contract = $self->contract_by_id($c, $id);
         last unless $self->resource_exists($c, contract => $contract);
         my $old_resource = { $contract->get_inflated_columns };
-        my $resource = $self->apply_patch($c, $old_resource, $json);
+        # make sure we don't modify $old_resource, but use a copy:
+        my $resource = $self->apply_patch($c, { %{ $old_resource } }, $json);
         last unless $resource;
 
         my $form = NGCP::Panel::Form::Contract::PeeringReseller->new;
@@ -142,6 +143,7 @@ sub PUT :Allow {
             id => $id,
             media_type => 'application/json',
         );
+        last unless $resource;
         my $old_resource = { $contract->get_inflated_columns };
 
         my $form = NGCP::Panel::Form::Contract::PeeringReseller->new;

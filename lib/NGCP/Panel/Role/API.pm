@@ -256,12 +256,14 @@ sub require_valid_patch {
     my ($self, $c, $json) = @_;
 
     my $valid_ops = { 
-        'test' => { 'path' => 1, 'value' => 1 },
-        'remove' => { 'path' => 1 },
-        'add' => { 'path' => 1, 'value' => 1 },
         'replace' => { 'path' => 1, 'value' => 1 },
-        'move' => { 'from' => 1, 'path' => 1 },
         'copy' => { 'from' => 1, 'path' => 1 },
+        # we don't support those, as they're quite useless in our case
+        # TODO: maybe except for remove, which might set it to null?
+        #'test' => { 'path' => 1, 'value' => 1 },
+        #'move' => { 'from' => 1, 'path' => 1 },
+        #'remove' => { 'path' => 1 },
+        #'add' => { 'path' => 1, 'value' => 1 },
     };
 
     my $patch = JSON::from_json($json);

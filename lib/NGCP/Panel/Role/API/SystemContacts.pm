@@ -47,7 +47,7 @@ sub contact_by_id {
     # we only return system contacts, that is, a contact without reseller
     my $contact_rs = $c->model('DB')->resultset('contacts')
         ->search({ reseller_id => undef });
-    return $contact_rs->find({'me.id' => $id});
+    return $contact_rs->find($id);
 }
 
 1;

@@ -156,23 +156,32 @@ sub POST :Allow {
         $resource->{create_timestamp} = $now;
         $resource->{modify_timestamp} = $now;
         my $contract;
+        
+        my $billing_profile_id = delete $resource->{billing_profile_id};
+        my $billing_profile = $schema->resultset('billing_profiles')->find($billing_profile_id);
+        unless($billing_profile) {
+            $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Invalid 'billing_profile_id'.");
+            last;
+        }
+        my $product = $schema->resultset('products')->find({ class => $product_class });
+        unless($product) {
+            $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Invalid 'type'.");
+            last;
+        }
         try {
-            my $billing_profile_id = delete $resource->{billing_profile_id};
-            my $billing_profile = $schema->resultset('billing_profiles')->find($billing_profile_id);
-            unless($billing_profile) {
-                $self->error($c, HTTP_NOT_FOUND, "Invalid 'billing_profile_id'.");
-                last;
-            }
-            my $product = $schema->resultset('products')->find({ class => $product_class });
-            unless($product) {
-                $self->error($c, HTTP_NOT_FOUND, "Invalid 'type'.");
-                last;
-            }
             $contract = $schema->resultset('contracts')->create($resource);
-            if($contract->contact->reseller_id) {
-                $self->error($c, HTTP_NOT_FOUND, "The contact_id is not a valid ngcp:systemcontacts item, but an ngcp:customercontacts item");
-                last;
-            }
+        } catch($e) {
+            $c->log->error("failed to create contract: $e"); # TODO: user, message, trace, ...
+            $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "Failed to create contract.");
+            last;
+        }
+
+        if($contract->contact->reseller_id) {
+            $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "The contact_id is not a valid ngcp:systemcontacts item, but an ngcp:customercontacts item");
+            last;
+        }
+
+        try {
             $contract->billing_mappings->create({
                 billing_profile_id => $billing_profile->id,
                 product_id => $product->id,
@@ -182,7 +191,6 @@ sub POST :Allow {
                 profile => $billing_profile,
                 contract => $contract,
             );
-
         } catch($e) {
             $c->log->error("failed to create contract: $e"); # TODO: user, message, trace, ...
             $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "Failed to create contract.");

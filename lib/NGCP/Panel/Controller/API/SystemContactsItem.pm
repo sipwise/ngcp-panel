@@ -183,7 +183,8 @@ sub DELETE :Allow {
         my $contact = $self->contact_by_id($c, $id);
         last unless $self->resource_exists($c, systemcontact => $contact);
         my $contract_count = $c->model('DB')->resultset('contracts')->search({
-            contact_id => $id
+            contact_id => $id,
+            status => { '!=' => 'terminated' },
         });
         if($contract_count > 0) {
             $self->error($c, HTTP_LOCKED, "Contact is still in use.");

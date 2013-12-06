@@ -206,12 +206,12 @@ my @allcontacts = ();
     $req->header('Content-Type' => 'application/json-patch+json');
 
     $req->content(JSON::to_json(
-        [ { op => 'add', path => '/firstname', value => 'patchedfirst' } ]
+        [ { op => 'replace', path => '/firstname', value => 'patchedfirst' } ]
     ));
     $res = $ua->request($req);
     ok($res->code == 200, "check patched contact item");
     my $mod_contact = JSON::from_json($res->decoded_content);
-    ok($mod_contact->{firstname} eq "patchedfirst", "check patched add op");
+    ok($mod_contact->{firstname} eq "patchedfirst", "check patched replace op");
 
     $req->content(JSON::to_json(
         [ { op => 'replace', path => '/firstname', value => undef } ]
