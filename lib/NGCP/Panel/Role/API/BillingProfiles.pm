@@ -1,4 +1,4 @@
-package NGCP::Panel::Role::API::Contracts;
+package NGCP::Panel::Role::API::BillingProfiles;
 use Moose::Role;
 use Sipwise::Base;
 
@@ -9,38 +9,12 @@ use Data::HAL::Link qw();
 use HTTP::Status qw(:constants);
 use NGCP::Panel::Utils::DateTime;
 use NGCP::Panel::Utils::Contract;
-use NGCP::Panel::Form::Contract::PeeringReseller qw();
+use NGCP::Panel::Form::BillingProfile::Admin qw();
 
-sub hal_from_contract {
-    my ($self, $c, $contract, $form) = @_;
+sub hal_from_profile {
+    my ($self, $c, $profile, $form) = @_;
 
-    my $billing_mapping = $contract->billing_mappings->find($contract->get_column('bmid'));
-    my $billing_profile_id = $billing_mapping->billing_profile->id;
-    my $stime = NGCP::Panel::Utils::DateTime::current_local()->truncate(to => 'month');
-    my $etime = $stime->clone->add(months => 1);
-    my $contract_balance = $contract->contract_balances
-        ->find({
-            start => { '>=' => $stime },
-            end => { '<' => $etime },
-            });
-    unless($contract_balance) {
-        try {
-            NGCP::Panel::Utils::Contract::create_contract_balance(
-                c => $c,
-                profile => $billing_mapping->billing_profile,
-                contract => $contract,
-            );
-        } catch {
-            $self->log->error("Failed to create current contract balance for contract id '".$contract->id."': $_");
-            $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "Internal Server Error.");
-        }
-        $contract_balance = $contract->contract_balances->find({
-            start => { '>=' => $stime },
-            end => { '<' => $etime },
-        });
-    }
-
-    my %resource = $contract->get_inflated_columns;
+    my %resource = $profile->get_inflated_columns;
 
     my $hal = Data::HAL->new(
         links => [
@@ -52,15 +26,14 @@ sub hal_from_contract {
             ),
             Data::HAL::Link->new(relation => 'collection', href => sprintf('/api/%s/', $self->resource_name)),
             Data::HAL::Link->new(relation => 'profile', href => 'http://purl.org/sipwise/ngcp-api/'),
-            Data::HAL::Link->new(relation => 'self', href => sprintf("%s%d", $self->dispatch_path, $contract->id)),
-            Data::HAL::Link->new(relation => 'ngcp:systemcontacts', href => sprintf("/api/systemcontacts/%d", $contract->contact->id)),
-            Data::HAL::Link->new(relation => 'ngcp:billingprofiles', href => sprintf("/api/billingprofiles/%d", $billing_profile_id)),
-            Data::HAL::Link->new(relation => 'ngcp:contractbalances', href => sprintf("/api/contractbalances/%d", $contract_balance->id)),
+            # TODO: if called from collection, this is wrong, as the id is missing when we put it into embedded! Same for systemcontacts/contracts:
+            Data::HAL::Link->new(relation => 'self', href => sprintf("%s%d", $self->dispatch_path, $profile->id)),
+            map { Data::HAL::Link->new(relation => 'ngcp:billingfees', href => sprintf("/api/billingfees/%d", $_->id)) } $profile->billing_fees->all,
         ],
         relation => 'ngcp:'.$self->resource_name,
     );
 
-    $form //= NGCP::Panel::Form::Contract::PeeringReseller->new;
+    $form //= NGCP::Panel::Form::BillingProfile::Admin->new;
     return unless $self->validate_form(
         c => $c,
         form => $form,
@@ -68,9 +41,7 @@ sub hal_from_contract {
         run => 0,
     );
 
-    $resource{id} = int($contract->id);
-    $resource{type} = $billing_mapping->product->class;
-    $resource{billing_profile_id} = int($billing_profile_id);
+    $resource{id} = int($profile->id);
     $hal->resource({%resource});
     return $hal;
 }

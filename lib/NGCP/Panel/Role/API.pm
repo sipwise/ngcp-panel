@@ -4,6 +4,7 @@ use Sipwise::Base;
 
 use JSON qw();
 use JSON::Pointer;
+use JSON::Types qw(bool);
 use HTTP::Status qw(:constants);
 use Safe::Isa qw($_isa);
 use Try::Tiny;
@@ -96,8 +97,13 @@ sub validate_form {
         $resource->{$k} = DateTime::Format::RFC3339->format_datetime($resource->{$k})
             if $resource->{$k}->$_isa('DateTime');
         $resource->{$k} = $resource->{$k} + 0
-            if($form->field($k)->$_isa('HTML::FormHandler::Field::Integer') ||
-               $form->field($k)->$_isa('HTML::FormHandler::Field::Float'));
+            if(defined $resource->{$k} && (
+               $form->field($k)->$_isa('HTML::FormHandler::Field::Integer') ||
+               $form->field($k)->$_isa('HTML::FormHandler::Field::Money') ||
+               $form->field($k)->$_isa('HTML::FormHandler::Field::Float')));
+        $resource->{$k} = JSON::Types::bool($resource->{$k})
+            if(defined $resource->{$k} && 
+               $form->field($k)->$_isa('HTML::FormHandler::Field::Boolean'));
     }
 
     if($run) {
