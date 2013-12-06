@@ -122,6 +122,15 @@ my @allcontracts = ();
     $err = JSON::from_json($res->decoded_content);
     ok($err->{code} eq "422", "check error code in body");
     ok($err->{message} =~ /The contact_id is not a valid ngcp:systemcontacts item/, "check error message in body");
+    
+    # try to create invalid contract without contact
+    $req->content(JSON::to_json({
+        status => "active",
+        type => "reseller",
+        billing_profile_id => $billing_profile_id,
+    }));
+    $res = $ua->request($req);
+    ok($res->code == 422, "create contract without contact");
 
     # try to create invalid contract with invalid status
     $req->content(JSON::to_json({

@@ -16,6 +16,10 @@ sub hal_from_profile {
 
     my %resource = $profile->get_inflated_columns;
 
+    # TODO: we should return the fees in an embedded field,
+    # if the structure is returned for one single item
+    # (make it a method flag)
+
     my $hal = Data::HAL->new(
         links => [
             Data::HAL::Link->new(

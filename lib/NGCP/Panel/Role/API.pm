@@ -109,6 +109,7 @@ sub validate_form {
     if($run) {
         # check keys/vals
         my $result = $form->run(params => $resource);
+        use Data::Printer; p $result; p $result->error_results;
         if ($result->error_results->size) {
             my $f = $result->error_results->[0];
             my $e = $result->error_results->map(sub {
