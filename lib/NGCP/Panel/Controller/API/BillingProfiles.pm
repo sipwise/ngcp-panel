@@ -145,6 +145,7 @@ sub POST :Allow {
         }
 
         my $form = NGCP::Panel::Form::BillingProfile::Admin->new;
+        $resource->{reseller_id} //= undef;
         last unless $self->validate_form(
             c => $c,
             resource => $resource,

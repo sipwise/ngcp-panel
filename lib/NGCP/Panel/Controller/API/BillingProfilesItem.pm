@@ -106,7 +106,8 @@ sub PATCH :Allow {
         last unless $resource;
 
         my $form = NGCP::Panel::Form::BillingProfile::Admin->new;
-        last unless $self->update_profile($c, $profile, $old_resource, $resource, $form);
+        $profile = $self->update_profile($c, $profile, $old_resource, $resource, $form);
+        last unless $profile;
 
         $guard->commit;
 
@@ -145,7 +146,10 @@ sub PUT :Allow {
         my $old_resource = { $profile->get_inflated_columns };
 
         my $form = NGCP::Panel::Form::BillingProfile::Admin->new;
-        last unless $self->update_profile($c, $profile, $old_resource, $resource, $form);
+        use Data::Printer; p $profile;
+        $profile = $self->update_profile($c, $profile, $old_resource, $resource, $form);
+        use Data::Printer; p $profile;
+        last unless $profile;
 
         $guard->commit;
 

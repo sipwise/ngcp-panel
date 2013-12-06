@@ -102,6 +102,8 @@ sub update_contract {
     $resource->{billing_profile_id} //= $old_resource->{billing_profile_id};
    
     $form //= NGCP::Panel::Form::Contract::PeeringReseller->new;
+    # TODO: for some reason, formhandler lets missing contact_id slip thru
+    $resource->{contact_id} //= undef; 
     return unless $self->validate_form(
         c => $c,
         form => $form,

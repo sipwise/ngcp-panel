@@ -101,20 +101,26 @@ sub validate_form {
                $form->field($k)->$_isa('HTML::FormHandler::Field::Integer') ||
                $form->field($k)->$_isa('HTML::FormHandler::Field::Money') ||
                $form->field($k)->$_isa('HTML::FormHandler::Field::Float')));
-        $resource->{$k} = JSON::Types::bool($resource->{$k})
-            if(defined $resource->{$k} && 
-               $form->field($k)->$_isa('HTML::FormHandler::Field::Boolean'));
+
+        # only do this for converting back from obj to hal
+        # otherwise it breaks db fields with the \0 and \1 notation
+        unless($run) {
+            $resource->{$k} = JSON::Types::bool($resource->{$k})
+                if(defined $resource->{$k} && 
+                   $form->field($k)->$_isa('HTML::FormHandler::Field::Boolean'));
+        }
     }
 
     if($run) {
         # check keys/vals
-        my $result = $form->run(params => $resource);
-        use Data::Printer; p $result; p $result->error_results;
-        if ($result->error_results->size) {
-            my $f = $result->error_results->[0];
-            my $e = $result->error_results->map(sub {
-                sprintf 'field=\'%s\', input=\'%s\', errors=\'%s\'', ($_->parent->$_isa('HTML::FormHandler::Field::Result') ? $_->parent->name . '_' : '') . $_->name, $_->input // '', $_->errors->join(q())
-            })->join("; ");
+        $form->process(params => $resource, posted => 1);
+        unless($form->validated) {
+            my $e = join '; ', map { 
+                sprintf 'field=\'%s\', input=\'%s\', errors=\'%s\'', 
+                    ($_->parent->$_isa('HTML::FormHandler::Field') ? $_->parent->name . '_' : '') . $_->name,
+                    $_->input // '',
+                    $_->errors->join(q())
+            } $form->error_fields;
             $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Validation failed. $e");
             return;
         }

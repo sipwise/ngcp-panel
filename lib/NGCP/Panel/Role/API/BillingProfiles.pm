@@ -71,6 +71,8 @@ sub update_profile {
     my ($self, $c, $profile, $old_resource, $resource, $form) = @_;
 
     $form //= NGCP::Panel::Form::BillingProfile::Admin->new;
+    # TODO: for some reason, formhandler lets missing reseller slip thru
+    $resource->{reseller_id} //= undef;
     return unless $self->validate_form(
         c => $c,
         form => $form,

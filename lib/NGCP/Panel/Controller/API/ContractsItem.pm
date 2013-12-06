@@ -108,7 +108,8 @@ sub PATCH :Allow {
         last unless $resource;
 
         my $form = NGCP::Panel::Form::Contract::PeeringReseller->new;
-        last unless $self->update_contract($c, $contract, $old_resource, $resource, $form);
+        $contract = $self->update_contract($c, $contract, $old_resource, $resource, $form);
+        last unless $contract;
 
         $guard->commit;
 
@@ -147,7 +148,8 @@ sub PUT :Allow {
         my $old_resource = { $contract->get_inflated_columns };
 
         my $form = NGCP::Panel::Form::Contract::PeeringReseller->new;
-        last unless $self->update_contract($c, $contract, $old_resource, $resource, $form);
+        $contract = $self->update_contract($c, $contract, $old_resource, $resource, $form);
+        last unless $contract;
 
         $guard->commit;
 

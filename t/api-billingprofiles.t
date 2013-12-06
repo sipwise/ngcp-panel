@@ -49,8 +49,8 @@ my @allprofiles = ();
         $req->header('Content-Type' => 'application/json');
         $req->content(JSON::to_json({
             reseller_id => $reseller_id,
-            handle => "testapihandle$i",
-            name => "test api name $i",
+            handle => "testapihandle$i".time,
+            name => "test api name $i".time,
         }));
         $res = $ua->request($req);
         ok($res->code == 201, "create test billing profile $i");
@@ -274,14 +274,14 @@ my @allprofiles = ();
     $req = HTTP::Request->new('PATCH', $uri.'/'.$firstprofile);
     $req->header('Prefer' => 'return=representation');
     $req->header('Content-Type' => 'application/json-patch+json');
-
+    my $t = time;
     $req->content(JSON::to_json(
-        [ { op => 'replace', path => '/name', value => 'patched name' } ]
+        [ { op => 'replace', path => '/name', value => 'patched name '.$t } ]
     ));
     $res = $ua->request($req);
     ok($res->code == 200, "check patched profile item");
     my $mod_profile = JSON::from_json($res->decoded_content);
-    ok($mod_profile->{name} eq "patched name", "check patched replace op");
+    ok($mod_profile->{name} eq "patched name $t", "check patched replace op");
     ok($mod_profile->{_links}->{self}->{href} eq $firstprofile, "check patched self link");
     ok($mod_profile->{_links}->{collection}->{href} eq '/api/billingprofiles/', "check patched collection link");
     

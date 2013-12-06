@@ -145,6 +145,7 @@ sub POST :Allow {
         last unless $resource;
 
         my $product_class = delete $resource->{type};
+        $resource->{contact_id} //= undef;
         my $form = NGCP::Panel::Form::Contract::PeeringReseller->new;
         last unless $self->validate_form(
             c => $c,
