@@ -38,8 +38,21 @@ $ua->ssl_opts(
     }
 }
 
-# TODO: create billing profile first
-my $billing_profile_id = 1;
+$req = HTTP::Request->new('POST', $uri.'/api/billingprofiles/');
+$req->header('Content-Type' => 'application/json');
+$req->header('Prefer' => 'return=representation');
+my $t = time;
+$req->content(JSON::to_json({
+    name => "test profile $t",
+    handle  => "testprofile$t",
+    reseller_id => 1,
+}));
+$res = $ua->request($req);
+ok($res->code == 201, "create test billing profile");
+# TODO: get id from body once the API returns it
+my $billing_profile_id = $res->header('Location');
+$billing_profile_id =~ s/^.+\/(\d+)$/$1/;
+
 # TODO: create customer contact first
 my $customer_contact_id = 1;
 

@@ -198,13 +198,14 @@ sub require_preference {
 
 sub require_wellformed_json {
     my ($self, $c, $media_type, $patch) = @_;
+    my $ret;
     try {
         NGCP::Panel::Utils::ValidateJSON->new($patch);
+        $ret = 1;
     } catch {
         $self->error($c, HTTP_BAD_REQUEST, "The entity is not a well-formed '$media_type' document. $_");
-        return;
     };
-    return 1;
+    return $ret;
 }
 
 =pod

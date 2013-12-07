@@ -90,7 +90,10 @@ sub update_fee {
     );
     $resource->{billing_profile_id} = $billing_profile_id;
 
-    if($old_resource->{billing_profile_id} != $resource->{billing_profile_id}) {
+    if(!defined $resource->{billing_profile_id}) {
+        $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Invalid 'billing_profile_id'");
+        return;
+    } elsif($old_resource->{billing_profile_id} != $resource->{billing_profile_id}) {
         my $profile = $c->model('DB')->resultset('billing_profiles')
             ->find($resource->{billing_profile_id});
         unless($profile) {

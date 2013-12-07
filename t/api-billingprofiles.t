@@ -96,52 +96,13 @@ my @allprofiles = ();
     ok($err->{code} eq "422", "check error code in body");
     ok($err->{message} =~ /Invalid 'reseller_id'/, "check error message in body");
 
-=pod
-    # try to create invalid contract with wrong billing profile
-    $req->content(JSON::to_json({
-        status => "active",
-        contact_id => $syscontact->{id},
-        type => "reseller",
-        billing_profile_id => 999999,
-    }));
-    $res = $ua->request($req);
-    ok($res->code == 422, "create contract with invalid billing profile");
-    $err = JSON::from_json($res->decoded_content);
-    ok($err->{code} eq "422", "check error code in body");
-    ok($err->{message} =~ /Invalid 'billing_profile_id'/, "check error message in body");
-
-    # try to create invalid contract with customercontact
-    $req->content(JSON::to_json({
-        status => "active",
-        type => "reseller",
-        billing_profile_id => $billing_profile_id,
-        contact_id => $customer_contact_id,
-    }));
-    $res = $ua->request($req);
-    ok($res->code == 422, "create contract with invalid contact");
-    $err = JSON::from_json($res->decoded_content);
-    ok($err->{code} eq "422", "check error code in body");
-    ok($err->{message} =~ /The contact_id is not a valid ngcp:systemcontacts item/, "check error message in body");
-
-    # try to create invalid contract with invalid status
-    $req->content(JSON::to_json({
-        type => "reseller",
-        billing_profile_id => $billing_profile_id,
-        contact_id => $syscontact->{id},
-        status => "invalid",
-    }));
-    $res = $ua->request($req);
-    ok($res->code == 422, "create contract with invalid status");
-    $err = JSON::from_json($res->decoded_content);
-    ok($err->{code} eq "422", "check error code in body");
-    ok($err->{message} =~ /field='status'/, "check error message in body");
-=cut
+    # TODO: check for wrong values in prepaid, fees etc
 
     # iterate over contracts collection to check next/prev links and status
     my $nexturi = $uri.'/api/billingprofiles/?page=1&rows=5';
     do {
         $res = $ua->get($nexturi);
-        ok($res->code == 200, "fetch contacts page");
+        ok($res->code == 200, "fetch profile page");
         my $collection = JSON::from_json($res->decoded_content);
         my $selfuri = $uri . $collection->{_links}->{self}->{href};
         ok($selfuri eq $nexturi, "check _links.self.href of collection");
@@ -176,16 +137,19 @@ my @allprofiles = ();
 
         # remove any entry we find in the collection for later check
         if(ref $collection->{_links}->{'ngcp:billingprofiles'} eq "HASH") {
-            # TODO: check any refs we might have
-            #ok(exists $collection->{_embedded}->{'ngcp:contracts'}->{_links}->{'ngcp:contractbalances'}, "check presence of ngcp:contractbalances relation");
+            # these relations are only there if we have zones/fees, which is not the case with an empty profile
+            #ok(exists $collection->{_embedded}->{'ngcp:billingprofiles'}->{_links}->{'ngcp:billingfees'}, "check presence of ngcp:billingfees relation");
+            #ok(exists $collection->{_embedded}->{'ngcp:billingprofiles'}->{_links}->{'ngcp:billingzones'}, "check presence of ngcp:billingzones relation");
             delete $profiles{$collection->{_links}->{'ngcp:billingprofiles'}->{href}};
         } else {
             foreach my $c(@{ $collection->{_links}->{'ngcp:billingprofiles'} }) {
                 delete $profiles{$c->{href}};
             }
             foreach my $c(@{ $collection->{_embedded}->{'ngcp:billingprofiles'} }) {
-            # TODO: check any refs we might have
-                #ok(exists $c->{_links}->{'ngcp:contractbalances'}, "check presence of ngcp:contractbalances relation");
+            # these relations are only there if we have zones/fees, which is not the case with an empty profile
+            #ok(exists $collection->{_embedded}->{'ngcp:billingprofiles'}->{_links}->{'ngcp:billingfees'}, "check presence of ngcp:billingfees relation");
+                #ok(exists $c->{_links}->{'ngcp:billingfees'}, "check presence of ngcp:billingfees relation");
+                #ok(exists $c->{_links}->{'ngcp:billingzones'}, "check presence of ngcp:billingzones relation");
 
                 delete $profiles{$c->{_links}->{self}->{href}};
             }
