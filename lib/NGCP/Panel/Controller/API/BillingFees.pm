@@ -1,4 +1,4 @@
-package NGCP::Panel::Controller::API::BillingProfiles;
+package NGCP::Panel::Controller::API::BillingFees;
 use Sipwise::Base;
 use namespace::sweep;
 use boolean qw(true);
@@ -8,7 +8,7 @@ use HTTP::Headers qw();
 use HTTP::Status qw(:constants);
 use MooseX::ClassAttribute qw(class_has);
 use NGCP::Panel::Utils::DateTime;
-use NGCP::Panel::Form::BillingProfile::Admin qw();
+use NGCP::Panel::Form::BillingFee qw();
 use Path::Tiny qw(path);
 BEGIN { extends 'Catalyst::Controller::ActionRole'; }
 require Catalyst::ActionRole::ACL;
@@ -17,11 +17,11 @@ require Catalyst::ActionRole::HTTPMethods;
 require Catalyst::ActionRole::RequireSSL;
 
 with 'NGCP::Panel::Role::API';
-with 'NGCP::Panel::Role::API::BillingProfiles';
+with 'NGCP::Panel::Role::API::BillingFees';
 
-class_has('resource_name', is => 'ro', default => 'billingprofiles');
-class_has('dispatch_path', is => 'ro', default => '/api/billingprofiles/');
-class_has('relation', is => 'ro', default => 'http://purl.org/sipwise/ngcp-api/#rel-billingprofiles');
+class_has('resource_name', is => 'ro', default => 'billingfees');
+class_has('dispatch_path', is => 'ro', default => '/api/billingfees/');
+class_has('relation', is => 'ro', default => 'http://purl.org/sipwise/ngcp-api/#rel-billingfees');
 
 __PACKAGE__->config(
     action => {
@@ -49,25 +49,39 @@ sub GET :Allow {
     my $page = $c->request->params->{page} // 1;
     my $rows = $c->request->params->{rows} // 10;
     {
-        my $profiles = $c->model('DB')->resultset('billing_profiles');
+        my $fees = $c->model('DB')->resultset('billing_fees');
+        if($c->request->query_parameters->{billing_profile_id}) {
+            $fees = $fees->search({ 
+                billing_profile_id => $c->request->query_parameters->{billing_profile_id},
+            });
+        };
+
         if($c->user->roles eq "api_admin") {
         } elsif($c->user->roles eq "api_reseller") {
-            $profiles = $profiles->search({ reseller_id => $c->user->reseller_id });
+            $fees = $fees->search({ 
+                'billing_profile.reseller_id' => $c->user->reseller_id 
+            }, {
+                join => 'billing_profile',
+            });
         } else {
-            $profiles = $profiles->search({ reseller_id => $c->user->contract->contact->reseller_id});
+            $fees = $fees->search({ 
+                'billing_profile.reseller_id' => $c->user->contract->contact->reseller_id,
+            }, {
+                join => 'billing_profile',
+            });
         }
-        my $total_count = int($profiles->count);
-        $profiles = $profiles->search(undef, {
+        my $total_count = int($fees->count);
+        $fees = $fees->search(undef, {
             page => $page,
             rows => $rows,
         });
         my (@embedded, @links);
-        my $form = NGCP::Panel::Form::BillingProfile::Admin->new;
-        for my $profile ($profiles->all) {
-            push @embedded, $self->hal_from_profile($c, $profile, $form);
+        my $form = NGCP::Panel::Form::BillingFee->new;
+        for my $fee ($fees->all) {
+            push @embedded, $self->hal_from_fee($c, $fee, $form);
             push @links, Data::HAL::Link->new(
                 relation => 'ngcp:'.$self->resource_name,
-                href     => sprintf('/%s%d', $c->request->path, $profile->id),
+                href     => sprintf('/%s%d', $c->request->path, $fee->id),
             );
         }
         push @links,
@@ -140,39 +154,52 @@ sub POST :Allow {
         );
         last unless $resource;
 
+        my $reseller_id;
         if($c->user->roles eq "api_admin") {
         } elsif($c->user->roles eq "api_reseller") {
-            $resource->{reseller_id} = $c->user->reseller_id;
+            $reseller_id = $c->user->reseller_id;
         } else {
-            $resource->{reseller_id} = $c->user->contract->contact->reseller_id;
+            $reseller_id = $c->user->contract->contact->reseller_id;
         }
 
-        my $form = NGCP::Panel::Form::BillingProfile::Admin->new;
-        $resource->{reseller_id} //= undef;
+        my $form = NGCP::Panel::Form::BillingFee->new;
+        my $billing_profile_id = $resource->{billing_profile_id} // undef;
+        $resource->{billing_zone_id} //= undef;
         last unless $self->validate_form(
             c => $c,
             resource => $resource,
             form => $form,
         );
+        $resource->{billing_profile_id} = $billing_profile_id;
 
-        my $reseller = $schema->resultset('resellers')->find($resource->{reseller_id});
-        unless($reseller) {
-            $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Invalid 'reseller_id'.");
+        my $profile = $schema->resultset('billing_profiles')->find($resource->{billing_profile_id});
+        unless($profile) {
+            $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Invalid 'billing_profile_id'.");
             last;
         }
-        my $billing_profile;
+        if($c->user->roles ne "api_admin" && $profile->reseller_id != $reseller_id) {
+            $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Invalid 'billing_profile_id'.");
+            last;
+        }
+        my $zone = $profile->billing_zones->find($resource->{billing_zone_id});
+        unless($zone) {
+            $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Invalid 'billing_zone_id'.");
+            last;
+        }
+
+        my $fee;
         try {
-            $billing_profile= $schema->resultset('billing_profiles')->create($resource);
+            $fee = $profile->billing_fees->create($resource);
         } catch($e) {
-            $c->log->error("failed to create billing profile: $e"); # TODO: user, message, trace, ...
-            $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "Failed to create billing profile.");
+            $c->log->error("failed to create billing fee: $e"); # TODO: user, message, trace, ...
+            $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "Failed to create billing fee.");
             last;
         }
 
         $guard->commit;
 
         $c->response->status(HTTP_CREATED);
-        $c->response->header(Location => sprintf('%s%d', $self->dispatch_path, $billing_profile->id));
+        $c->response->header(Location => sprintf('%s%d', $self->dispatch_path, $fee->id));
         $c->response->body(q());
     }
     return;

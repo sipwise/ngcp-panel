@@ -1,0 +1,122 @@
+package NGCP::Panel::Role::API::BillingFees;
+use Moose::Role;
+use Sipwise::Base;
+
+use boolean qw(true);
+use Try::Tiny;
+use Data::HAL qw();
+use Data::HAL::Link qw();
+use HTTP::Status qw(:constants);
+use NGCP::Panel::Utils::DateTime;
+use NGCP::Panel::Utils::Contract;
+use NGCP::Panel::Form::BillingFee qw();
+
+sub hal_from_fee {
+    my ($self, $c, $fee, $form) = @_;
+
+    my %resource = $fee->get_inflated_columns;
+
+    my $hal = Data::HAL->new(
+        links => [
+            Data::HAL::Link->new(
+                relation => 'curies',
+                href => 'http://purl.org/sipwise/ngcp-api/#rel-{rel}',
+                name => 'ngcp',
+                templated => true,
+            ),
+            Data::HAL::Link->new(relation => 'collection', href => sprintf('/api/%s/', $self->resource_name)),
+            Data::HAL::Link->new(relation => 'profile', href => 'http://purl.org/sipwise/ngcp-api/'),
+            Data::HAL::Link->new(relation => 'self', href => sprintf("%s%d", $self->dispatch_path, $fee->id)),
+            Data::HAL::Link->new(relation => 'ngcp:billingprofiles', href => sprintf("/api/billingprofiles/%d", $fee->billing_profile->id)),
+            Data::HAL::Link->new(relation => 'ngcp:billingzones', href => sprintf("/api/billingzones/%d", $fee->billing_zone->id)),
+        ],
+        relation => 'ngcp:'.$self->resource_name,
+    );
+
+    $form //= NGCP::Panel::Form::BillingFee->new;
+    return unless $self->validate_form(
+        c => $c,
+        form => $form,
+        resource => \%resource,
+        run => 0,
+    );
+
+    $resource{id} = int($fee->id);
+    $resource{billing_profile_id} = int($fee->billing_profile_id);
+    $hal->resource({%resource});
+    return $hal;
+}
+
+sub fee_by_id {
+    my ($self, $c, $id) = @_;
+
+    my $fees = $c->model('DB')->resultset('billing_fees');
+    if($c->user->roles eq "api_admin") {
+    } elsif($c->user->roles eq "api_reseller") {
+        $fees = $fees->search({
+            'billing_zone.reseller_id' => $c->user->reseller_id,
+        }, {
+            join => 'billin_zone',
+        });
+    } else {
+        $fees = $fees->search({
+            'billing_zone.reseller_id' => $c->user->contract->contact->reseller_id,
+        }, {
+            join => 'billin_zone',
+        });
+    }
+
+    return $fees->find($id);
+}
+
+sub update_fee {
+    my ($self, $c, $fee, $old_resource, $resource, $form) = @_;
+
+    my $reseller_id;
+    if($c->user->roles eq "api_admin") {
+    } elsif($c->user->roles eq "api_admin") {
+        $reseller_id = $c->user->reseller_id;
+    } else {
+        $reseller_id = $c->user->contract->contact->reseller_id;
+    }
+    $form //= NGCP::Panel::Form::BillingFee->new;
+    # TODO: for some reason, formhandler lets missing profile/zone id
+    my $billing_profile_id = $resource->{billing_profile_id} // undef;
+    $resource->{billing_zone_id} //= undef;
+    return unless $self->validate_form(
+        c => $c,
+        form => $form,
+        resource => $resource,
+    );
+    $resource->{billing_profile_id} = $billing_profile_id;
+
+    if($old_resource->{billing_profile_id} != $resource->{billing_profile_id}) {
+        my $profile = $c->model('DB')->resultset('billing_profiles')
+            ->find($resource->{billing_profile_id});
+        unless($profile) {
+            $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Invalid 'billing_profile_id'");
+            return;
+        }
+        if($c->user->roles ne "api_admin" && $profile->reseller->id != $reseller_id) {
+            $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Invalid 'billing_profile_id'");
+            return;
+        }
+    }
+
+    if($old_resource->{billing_zone_id} != $resource->{billing_zone_id}) {
+        my $zone = $c->model('DB')->resultset('billing_zones')
+            ->search(billing_profile_id => $resource->{billing_profile_id})
+            ->find($resource->{billing_zone_id});
+        unless($zone) {
+            $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Invalid 'billing_zone_id'");
+            return;
+        }
+    }
+
+    $fee->update($resource);
+
+    return $fee;
+}
+
+1;
+# vim: set tabstop=4 expandtab:
