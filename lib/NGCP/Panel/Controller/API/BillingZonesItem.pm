@@ -1,10 +1,10 @@
-package NGCP::Panel::Controller::API::BillingFeesItem;
+package NGCP::Panel::Controller::API::BillingZonesItem;
 use Sipwise::Base;
 use namespace::sweep;
 use HTTP::Headers qw();
 use HTTP::Status qw(:constants);
 use MooseX::ClassAttribute qw(class_has);
-use NGCP::Panel::Form::BillingFee qw();
+use NGCP::Panel::Form::BillingZone qw();
 use NGCP::Panel::Utils::DateTime;
 use NGCP::Panel::Utils::ValidateJSON qw();
 use Path::Tiny qw(path);
@@ -15,11 +15,11 @@ require Catalyst::ActionRole::HTTPMethods;
 require Catalyst::ActionRole::RequireSSL;
 
 with 'NGCP::Panel::Role::API';
-with 'NGCP::Panel::Role::API::BillingFees';
+with 'NGCP::Panel::Role::API::BillingZones';
 
-class_has('resource_name', is => 'ro', default => 'billingfees');
-class_has('dispatch_path', is => 'ro', default => '/api/billingfees/');
-class_has('relation', is => 'ro', default => 'http://purl.org/sipwise/ngcp-api/#rel-billingfees');
+class_has('resource_name', is => 'ro', default => 'billingzones');
+class_has('dispatch_path', is => 'ro', default => '/api/billingzones/');
+class_has('relation', is => 'ro', default => 'http://purl.org/sipwise/ngcp-api/#rel-billingzones');
 
 __PACKAGE__->config(
     action => {
@@ -46,10 +46,10 @@ sub GET :Allow {
     my ($self, $c, $id) = @_;
     {
         last unless $self->valid_id($c, $id);
-        my $fee = $self->fee_by_id($c, $id);
-        last unless $self->resource_exists($c, billingfee => $fee);
+        my $zone = $self->zone_by_id($c, $id);
+        last unless $self->resource_exists($c, billingzone => $zone);
 
-        my $hal = $self->hal_from_fee($c, $fee);
+        my $hal = $self->hal_from_zone($c, $zone);
 
         # TODO: we don't need reseller stuff here!
         my $response = HTTP::Response->new(HTTP_OK, undef, HTTP::Headers->new(
@@ -99,15 +99,15 @@ sub PATCH :Allow {
         );
         last unless $json;
 
-        my $fee = $self->fee_by_id($c, $id);
-        last unless $self->resource_exists($c, billingfee => $fee);
-        my $old_resource = { $fee->get_inflated_columns };
+        my $zone = $self->zone_by_id($c, $id);
+        last unless $self->resource_exists($c, billingzone => $zone);
+        my $old_resource = { $zone->get_inflated_columns };
         my $resource = $self->apply_patch($c, $old_resource, $json);
         last unless $resource;
 
-        my $form = NGCP::Panel::Form::BillingFee->new;
-        $fee = $self->update_fee($c, $fee, $old_resource, $resource, $form);
-        last unless $fee;
+        my $form = NGCP::Panel::Form::BillingZone->new;
+        $zone = $self->update_zone($c, $zone, $old_resource, $resource, $form);
+        last unless $zone;
 
         $guard->commit;
 
@@ -116,7 +116,7 @@ sub PATCH :Allow {
             $c->response->header(Preference_Applied => 'return=minimal');
             $c->response->body(q());
         } else {
-            my $hal = $self->hal_from_fee($c, $fee, $form);
+            my $hal = $self->hal_from_zone($c, $zone, $form);
             my $response = HTTP::Response->new(HTTP_OK, undef, HTTP::Headers->new(
                 $hal->http_headers,
             ), $hal->as_json);
@@ -135,19 +135,19 @@ sub PUT :Allow {
         my $preference = $self->require_preference($c);
         last unless $preference;
 
-        my $fee = $self->fee_by_id($c, $id);
-        last unless $self->resource_exists($c, billingfee => $fee);
+        my $zone = $self->zone_by_id($c, $id);
+        last unless $self->resource_exists($c, billingzone => $zone);
         my $resource = $self->get_valid_put_data(
             c => $c,
             id => $id,
             media_type => 'application/json',
         );
         last unless $resource;
-        my $old_resource = { $fee->get_inflated_columns };
+        my $old_resource = { $zone->get_inflated_columns };
 
-        my $form = NGCP::Panel::Form::BillingFee->new;
-        $fee = $self->update_fee($c, $fee, $old_resource, $resource, $form);
-        last unless $fee;
+        my $form = NGCP::Panel::Form::BillingZone->new;
+        $zone = $self->update_zone($c, $zone, $old_resource, $resource, $form);
+        last unless $zone;
 
         $guard->commit;
 
@@ -156,7 +156,7 @@ sub PUT :Allow {
             $c->response->header(Preference_Applied => 'return=minimal');
             $c->response->body(q());
         } else {
-            my $hal = $self->hal_from_fee($c, $fee, $form);
+            my $hal = $self->hal_from_zone($c, $zone, $form);
             my $response = HTTP::Response->new(HTTP_OK, undef, HTTP::Headers->new(
                 $hal->http_headers,
             ), $hal->as_json);
@@ -172,17 +172,16 @@ sub DELETE :Allow {
     my ($self, $c, $id) = @_;
     my $guard = $c->model('DB')->txn_scope_guard;
     {
-        my $fee = $self->fee_by_id($c, $id);
-        last unless $self->resource_exists($c, billingfee => $fee);
-
+        my $zone = $self->zone_by_id($c, $id);
+        last unless $self->resource_exists($c, billingzone => $zone);
         try {
-            $fee->delete;
+            $zone->billing_fees->delete_all;
+            $zone->delete;
         } catch($e) {
-            $c->log->error("Failed to delete billing fee with id '$id': $e");
+            $c->log->error("Failed to delete billing zone with id '$id': $e");
             $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "Internal Server Error");
             last;
         }
-
         $guard->commit;
 
         $c->response->status(HTTP_NO_CONTENT);
