@@ -82,6 +82,31 @@ sub update_fee {
     $form //= NGCP::Panel::Form::BillingFee->new;
     # TODO: for some reason, formhandler lets missing profile/zone id
     my $billing_profile_id = $resource->{billing_profile_id} // undef;
+
+    # in case of implicit zone declaration (name/detail instead of id),
+    # find or create the zone
+    my $profile;
+    if(!defined $resource->{billing_zone_id} &&
+        defined $resource->{billing_profile_id} &&
+        defined $resource->{billing_zone_zone} &&
+        defined $resource->{billing_zone_detail}) {
+
+        $profile = $c->model('DB')->resultset('billing_profiles')->find($resource->{billing_profile_id});
+        if($profile) {
+            my $zone = $profile->billing_zones->find({
+                zone => $resource->{billing_zone_zone},
+                detail => $resource->{billing_zone_detail},
+            });
+            $zone = $profile->billing_zones->create({
+                zone => $resource->{billing_zone_zone},
+                detail => $resource->{billing_zone_detail},
+            }) unless $zone;
+            $resource->{billing_zone_id} = $zone->id;
+            delete $resource->{billing_zone_zone};
+            delete $resource->{billing_zone_detail};
+        }
+    }
+
     $resource->{billing_zone_id} //= undef;
     return unless $self->validate_form(
         c => $c,
@@ -94,7 +119,7 @@ sub update_fee {
         $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Invalid 'billing_profile_id'");
         return;
     } elsif($old_resource->{billing_profile_id} != $resource->{billing_profile_id}) {
-        my $profile = $c->model('DB')->resultset('billing_profiles')
+        $profile //= $c->model('DB')->resultset('billing_profiles')
             ->find($resource->{billing_profile_id});
         unless($profile) {
             $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Invalid 'billing_profile_id'");

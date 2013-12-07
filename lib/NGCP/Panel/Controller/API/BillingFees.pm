@@ -164,6 +164,32 @@ sub POST :Allow {
 
         my $form = NGCP::Panel::Form::BillingFee->new;
         my $billing_profile_id = $resource->{billing_profile_id} // undef;
+
+        my $profile;
+
+        # in case of implicit zone declaration (name/detail instead of id),
+        # find or create the zone
+        if(!defined $resource->{billing_zone_id} &&
+           defined $resource->{billing_profile_id} &&
+           defined $resource->{billing_zone_zone} &&
+           defined $resource->{billing_zone_detail}) {
+
+            $profile = $schema->resultset('billing_profiles')->find($resource->{billing_profile_id});
+            if($profile) {
+                my $zone = $profile->billing_zones->find({
+                    zone => $resource->{billing_zone_zone},
+                    detail => $resource->{billing_zone_detail},
+                });
+                $zone = $profile->billing_zones->create({
+                    zone => $resource->{billing_zone_zone},
+                    detail => $resource->{billing_zone_detail},
+                }) unless $zone;
+                $resource->{billing_zone_id} = $zone->id;
+                delete $resource->{billing_zone_zone};
+                delete $resource->{billing_zone_detail};
+            }
+        }
+
         $resource->{billing_zone_id} //= undef;
         last unless $self->validate_form(
             c => $c,
@@ -172,7 +198,7 @@ sub POST :Allow {
         );
         $resource->{billing_profile_id} = $billing_profile_id;
 
-        my $profile = $schema->resultset('billing_profiles')->find($resource->{billing_profile_id});
+        $profile //= $schema->resultset('billing_profiles')->find($resource->{billing_profile_id});
         unless($profile) {
             $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Invalid 'billing_profile_id'.");
             last;

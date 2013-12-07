@@ -250,7 +250,74 @@ my @allfees = ();
     } while($nexturi);
 
     ok(keys %fees == 0, "check if all test billing fees have been found");
+
+    # try to create fee with implicit zone which already exists
+    $req = HTTP::Request->new('POST', $uri.'/api/billingfees/');
+    $req->header('Content-Type' => 'application/json');
+    $req->content(JSON::to_json({
+        billing_profile_id => $billing_profile_id,
+        billing_zone_zone => 'testzone',
+        billing_zone_detail => 'test zone from api',
+        destination => "^1234",
+        direction => "out",
+        onpeak_init_rate => 1,
+        onpeak_init_interval => 60,
+        onpeak_follow_rate => 1,
+        onpeak_follow_interval => 30,
+        offpeak_init_rate => 0.5,
+        offpeak_init_interval => 60,
+        offpeak_follow_rate => 0.5,
+        offpeak_follow_interval => 30,
+    }));
+    $res = $ua->request($req);
+    ok($res->code == 201, "create profile fee with existing implicit zone");
+    $req = HTTP::Request->new('GET', $uri.$res->header('Location'));
+    $res = $ua->request($req);
+    ok($res->code == 200, "fetch profile fee with existing implicit zone");
+    my $z_fee = JSON::from_json($res->decoded_content);
+    ok(exists $z_fee->{billing_zone_id} && $z_fee->{billing_zone_id} == $billing_zone_id, "check if implicit zone returns the correct zone id");
+    
+    $req = HTTP::Request->new('DELETE', $uri.$z_fee->{_links}->{'self'}->{href});
+    $res = $ua->request($req);
+    ok($res->code == 204, "delete fee of existing implicit zone");
+
+    # try to create fee with implicit zone which doesn't exist yet
+    my $t = time;
+    $req = HTTP::Request->new('POST', $uri.'/api/billingfees/');
+    $req->header('Content-Type' => 'application/json');
+    $req->content(JSON::to_json({
+        billing_profile_id => $billing_profile_id,
+        billing_zone_zone => 'testzone new'.$t,
+        billing_zone_detail => 'test zone from api new'.$t,
+        destination => "^1234",
+        direction => "out",
+        onpeak_init_rate => 1,
+        onpeak_init_interval => 60,
+        onpeak_follow_rate => 1,
+        onpeak_follow_interval => 30,
+        offpeak_init_rate => 0.5,
+        offpeak_init_interval => 60,
+        offpeak_follow_rate => 0.5,
+        offpeak_follow_interval => 30,
+    }));
+    $res = $ua->request($req);
+    ok($res->code == 201, "create profile fee with new implicit zone");
+    $req = HTTP::Request->new('GET', $uri.$res->header('Location'));
+    $res = $ua->request($req);
+    ok($res->code == 200, "fetch profile fee with new implicit zone");
+    $z_fee = JSON::from_json($res->decoded_content);
+    ok(exists $z_fee->{billing_zone_id} && $z_fee->{billing_zone_id} > $billing_zone_id, "check if implicit zone returns a new zone id");
+
+    $req = HTTP::Request->new('DELETE', $uri.$z_fee->{_links}->{'ngcp:billingzones'}->{href});
+    $res = $ua->request($req);
+    ok($res->code == 204, "delete new implicit zone");
+
+    $req = HTTP::Request->new('GET', $uri.$z_fee->{_links}->{'self'}->{href});
+    $res = $ua->request($req);
+    ok($res->code == 404, "check if fee is deleted when zone is deleted");
 }
+
+
 
 # test fee item
 {
