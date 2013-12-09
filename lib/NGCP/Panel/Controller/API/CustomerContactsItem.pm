@@ -1,10 +1,10 @@
-package NGCP::Panel::Controller::API::SystemContactsItem;
+package NGCP::Panel::Controller::API::CustomerContactsItem;
 use Sipwise::Base;
 use namespace::sweep;
 use HTTP::Headers qw();
 use HTTP::Status qw(:constants);
 use MooseX::ClassAttribute qw(class_has);
-use NGCP::Panel::Form::Contact::Reseller qw();
+use NGCP::Panel::Form::Contact::Admin qw();
 use NGCP::Panel::Utils::DateTime;
 use NGCP::Panel::Utils::ValidateJSON qw();
 use Path::Tiny qw(path);
@@ -15,11 +15,11 @@ require Catalyst::ActionRole::HTTPMethods;
 require Catalyst::ActionRole::RequireSSL;
 
 with 'NGCP::Panel::Role::API';
-with 'NGCP::Panel::Role::API::SystemContacts';
+with 'NGCP::Panel::Role::API::CustomerContacts';
 
-class_has('resource_name', is => 'ro', default => 'systemcontacts');
-class_has('dispatch_path', is => 'ro', default => '/api/systemcontacts/');
-class_has('relation', is => 'ro', default => 'http://purl.org/sipwise/ngcp-api/#rel-systemcontacts');
+class_has('resource_name', is => 'ro', default => 'customercontacts');
+class_has('dispatch_path', is => 'ro', default => '/api/customercontacts/');
+class_has('relation', is => 'ro', default => 'http://purl.org/sipwise/ngcp-api/#rel-customercontacts');
 
 __PACKAGE__->config(
     action => {
@@ -47,7 +47,7 @@ sub GET :Allow {
     {
         last unless $self->valid_id($c, $id);
         my $contact = $self->contact_by_id($c, $id);
-        last unless $self->resource_exists($c, systemcontact => $contact);
+        last unless $self->resource_exists($c, customercontact => $contact);
 
         my $hal = $self->hal_from_contact($c, $contact);
 
@@ -100,15 +100,15 @@ sub PATCH :Allow {
         last unless $json;
 
         my $contact = $self->contact_by_id($c, $id);
-        last unless $self->resource_exists($c, systemcontact => $contact);
+        last unless $self->resource_exists($c, customercontact => $contact);
         my $old_resource = { $contact->get_inflated_columns };
         my $resource = $self->apply_patch($c, $old_resource, $json);
         last unless $resource;
 
-        my $form = NGCP::Panel::Form::Contact::Reseller->new;
+        my $form = NGCP::Panel::Form::Contact::Admin->new;
         $contact = $self->update_contact($c, $contact, $old_resource, $resource, $form);
         last unless $contact;
-        
+
         $guard->commit;
 
         if ('minimal' eq $preference) {
@@ -136,7 +136,7 @@ sub PUT :Allow {
         last unless $preference;
 
         my $contact = $self->contact_by_id($c, $id);
-        last unless $self->resource_exists($c, systemcontact => $contact);
+        last unless $self->resource_exists($c, customercontact => $contact);
         my $resource = $self->get_valid_put_data(
             c => $c,
             id => $id,
@@ -149,7 +149,7 @@ sub PUT :Allow {
         $contact = $self->update_contact($c, $contact, $old_resource, $resource, $form);
         last unless $contact;
 
-        $guard->commit; 
+        $guard->commit;
 
         if ('minimal' eq $preference) {
             $c->response->status(HTTP_NO_CONTENT);
@@ -173,7 +173,7 @@ sub DELETE :Allow {
     my $guard = $c->model('DB')->txn_scope_guard;
     {
         my $contact = $self->contact_by_id($c, $id);
-        last unless $self->resource_exists($c, systemcontact => $contact);
+        last unless $self->resource_exists($c, customercontact => $contact);
         my $contract_count = $c->model('DB')->resultset('contracts')->search({
             contact_id => $id,
             status => { '!=' => 'terminated' },

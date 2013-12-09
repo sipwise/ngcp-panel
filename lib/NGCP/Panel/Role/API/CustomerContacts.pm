@@ -1,4 +1,4 @@
-package NGCP::Panel::Role::API::SystemContacts;
+package NGCP::Panel::Role::API::CustomerContacts;
 use Moose::Role;
 use Sipwise::Base;
 
@@ -7,12 +7,11 @@ use Try::Tiny;
 use Data::HAL qw();
 use Data::HAL::Link qw();
 use HTTP::Status qw(:constants);
-use NGCP::Panel::Form::Contact::Reseller;
+use NGCP::Panel::Form::Contact::Admin;
 
 sub hal_from_contact {
     my ($self, $c, $contact, $form) = @_;
     my %resource = $contact->get_inflated_columns;
-
 
     my $hal = Data::HAL->new(
         links => [
@@ -29,10 +28,7 @@ sub hal_from_contact {
         relation => 'ngcp:'.$self->resource_name,
     );
 
-    $form //= NGCP::Panel::Form::Contact::Reseller->new;
-
-    # TODO: i'd expect reseller to be removed automatically
-    delete $resource{reseller_id};
+    $form //= NGCP::Panel::Form::Contact::Admin->new;
     $self->validate_form(
         c => $c,
         resource => \%resource,
@@ -50,15 +46,16 @@ sub contact_by_id {
 
     # we only return system contacts, that is, a contact without reseller
     my $contact_rs = $c->model('DB')->resultset('contacts')
-        ->search({ reseller_id => undef });
+        ->search({ reseller_id => {'-not' => undef } });
     return $contact_rs->find($id);
 }
 
 sub update_contact {
     my ($self, $c, $contact, $old_resource, $resource, $form) = @_;
 
-    $form //= NGCP::Panel::Form::Contact::Reseller->new;
-    delete $resource->{reseller_id};
+    $form //= NGCP::Panel::Form::Contact::Admin->new;
+    # TODO: for some reason, formhandler lets missing reseller_id slip thru
+    $resource->{reseller_id} //= undef; 
     return unless $self->validate_form(
         c => $c,
         form => $form,
@@ -67,6 +64,14 @@ sub update_contact {
 
     my $now = NGCP::Panel::Utils::DateTime::current_local;
     $resource->{modify_timestamp} = $now;
+
+    if($old_resource->{reseller_id} != $resource->{reseller_id}) {
+        my $reseller = $c->model('DB')->resultset('resellers')->find($resource->{reseller_id});
+        unless($reseller) {
+            $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Invalid 'reseller_id'");
+            return;
+        }
+    }
 
     $contact->update($resource);
 
