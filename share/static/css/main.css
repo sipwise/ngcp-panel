@@ -145,6 +145,9 @@ input.ngcp-destination-field {
 div.modal-footer div.control-group div.controls {
     margin-left: 5px;
 }
+div.modal-footer div.control-group div.controls div.form-actions.pull-right {
+    margin-left: 5px;
+}
 
 /* ---------
   Datatable (main one)

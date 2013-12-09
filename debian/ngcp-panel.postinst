@@ -15,6 +15,13 @@ case "$1" in
   ;;
 esac
 
+# certs should end up in db, but in the meanwhile prepare
+# the dir structure
+if [ ! -d /etc/ssl/ngcp/api ]; then
+    mkdir -p /etc/ssl/ngcp/api
+    chown www-data.www-data /etc/ssl/ngcp/api
+fi
+
 # remove default debian site
 if [ -e /etc/nginx/sites-enabled/default ]; then
     rm /etc/nginx/sites-enabled/default

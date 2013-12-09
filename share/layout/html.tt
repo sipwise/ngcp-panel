@@ -19,13 +19,13 @@
         <link rel="stylesheet" href="/css/bootstrap/bootstrap.css">
         <link rel="stylesheet" href="/css/bootstrap/bootstrap-responsive.css">
 
-        <link rel="stylesheet" href="/css/ui-lightness/jquery-ui-1.8.21.custom.css">
+        <link rel="stylesheet" href="/css/ui-lightness/jquery-ui-1.10.3.custom.min.css">
         <link rel="stylesheet" href="/css/application.css">
         <link rel="stylesheet" href="/css/pages/pricing.css">
 
         <script src="/js/libs/modernizr-2.5.3.min.js"></script>
         <script src="/js/libs/jquery-1.7.2.min.js"></script>
-        <script src="/js/libs/jquery-ui-1.8.21.custom.min.js"></script>
+        <script src="jquery-ui-1.10.3.custom.min.js"></script>
         <script src="/js/libs/jquery.ui.touch-punch.min.js"></script>
         <script src="/js/libs/bootstrap/bootstrap.min.js"></script>
         <script src="/js/libs/jquery.dataTables.min.js"></script>

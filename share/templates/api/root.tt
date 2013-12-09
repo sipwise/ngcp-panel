@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
+    <head>
+        <title>Sipwise NGCP HTTP API documentation</title>
+        <link rel="stylesheet" href="/css/ui-lightness/jquery-ui-1.10.3.custom.min.css"></link>
+        <link rel="stylesheet" href="/css/font-opensans.css"></link>
+        <link rel="stylesheet" href="/css/font-awesome.css"></link>
+        <link rel="stylesheet" href="/css/bootstrap/bootstrap.css"></link>
+        <link rel="stylesheet" href="/css/bootstrap/bootstrap-responsive.css"></link>
+        <style>
+            body { padding: 1em }
+            .content { margin-left: 2em }
+            h1 { color: white; background-color: #54893B; padding: 1.7em; }
+            h6 { font-size: 1.1em; }
+            code { white-space: pre-wrap; background-color: transparent; border: none; color: #000; font-size: 0.9em; display: block; margin: 0 0 20px 0;}
+            table { width: 100%; border-collapse: collapse; }
+            th, td { border: 1px solid #aaa; width: 50%; padding: 20px; }
+            td { vertical-align: top; }
+            span { font-family: monospace; }
+
+            a { color: #54893B; border-bottom: 1px dotted #54893B; }
+            a:hover { color: #54893B; text-decoration: underline; border: none; }
+            .ui-state-active { border: 1px solid #54893B; color: #54893B; }
+            .ui-state-default { color: #54893B; }
+            .ui-widget { font-family: inherit; }
+            .ui-widget-content { background: none; }
+
+            /* toc numbering */
+            nav ol { counter-reset: item }
+            nav li { display: block }
+            nav li:before { content: counters(item, ".") " "; counter-increment: item }
+
+            /* header numbering */
+            body { counter-reset: h2counter; counter-reset: h3counter; }
+            h1 { counter-reset: h2counter; }
+            h2:before { content: counter(h2counter) "\0000a0\0000a0"; counter-increment: h2counter; counter-reset: h3counter; }
+            h2.nocount:before { content: none; counter-increment: none; }
+            h2 { counter-reset: h3counter; }
+            h3:before { counter-increment: h3counter; content: counter(h2counter) "." counter(h3counter) "\0000a0\0000a0"; }
+            /*h3:before { content: counter(h2counter) "." counter(h3counter) "\0000a0\0000a0"; counter-increment: h3counter; }*/
+
+            /* print properties */
+            @media print { .ui-accordion > *{display:block !important;} }
+            .pagebreak { page-break-after: always; }
+            .chapter { page-break-inside: avoid; }
+        </style>
+	<script type="text/javascript" src="/js/libs/jquery-1.7.2.min.js"></script>
+	<script type="text/javascript" src="/js/libs/jquery-ui-1.10.3.custom.min.js"></script>
+    </head>
+    <body>
+[%
+    chapters = [
+        { level = 2,    id = 'intro',         title = 'Introduction',                                   },
+        { level = 2,    id = 'auth',          title = 'Authentication',                                 },
+        { level = 2,    id = 'relations',     title = 'Resources',                                      },
+
+        { level = 3,    id = 'rel-systemcontacts',  title = 'System Contacts',             uri = '/api/contacts/'    },
+#        { level = 3,    id = 'rel-resellers', title = 'Resellers',            uri = '/api/resellers/'   },
+#        { level = 3,    id = 'rel-admins',    title = 'Admins',               uri = '/api/admins/'      },
+#        { level = 3,    id = 'rel-customers', title = 'Customers',            uri = '/api/customers/'   },
+
+#        { level = 3,    id = 'rel-billingprofiles', title = 'Billing Profiles', uri = '/api/billing/'   },
+
+        { level = 2,    id = 'definitions',   title = 'Definitions',                                    },
+    ];
+-%]
+    <h1>Sipwise NGCP HTTP API Documentation</h1>
+    <div class="content">
+    <div class="chapter">
+    <h2 class="nocount">Table of Contents</h2>
+    <nav>
+        <ol>
+        [% FOR chapter IN chapters %]
+            [% IF loop.prev && loop.prev.level > chapter.level -%]
+            </ol></li>
+            [% END -%]
+            <li><a href="#[% chapter.id %]">[% chapter.title %]</a>
+            [% IF loop.next && loop.next.level > chapter.level -%]
+            <ol>
+            [% ELSE -%]
+            </li>
+            [% END -%]
+        [% END -%]
+        </ol>
+    </nav>
+    </div>
+
+[% FOR chapter IN chapters -%]
+    [% IF loop.prev && loop.prev.level >= chapter.level -%]
+    <div class="pagebreak"></div>
+    [% END -%]
+    <div class="chapter">
+[%
+        t = 'api/root/' _ chapter.id _ '.tt';
+        INCLUDE $t level=chapter.level title=chapter.title id=chapter.id uri=chapter.uri;
+-%]
+    </div>
+[% END -%]
+
+    </div>
+
+    <script type="text/javascript">
+        $(function() {
+            $("div.examples").accordion({ 
+                header: "h5", 
+                collapsible: true, 
+                heightStyle: "content",
+                active: false
+            });
+        });
+    </script>
+    </body>
+</html>
+[% # vim: set tabstop=4 syntax=html expandtab: -%]

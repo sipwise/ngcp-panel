@@ -1,0 +1,72 @@
+<h[% level %] id="[% id %]">
+  [% IF uri -%]
+  <a href="[% uri %]" rel="collection">
+  [% END -%]
+  [% title %]
+  [% IF uri -%]
+  </a>
+  [% END -%]
+</h[% level %]>
+
+<p>
+This documentation describes the Sipwise NGCP HTTP API, which is used to control the NGCP platform via 3rd party
+applications. It is also a machine-readable service document and serves as entry point for API clients.
+</p>
+
+<p>
+The Sipwise NGCP HTTP API strictly follows the REST principle and uses the <a href="http://tools.ietf.org/html/draft-kelly-json-hal-06">JSON Hypertext Application Language (JSON-HAL)</a> to express resources and their relations. This means, compared to typical plain JSON APIs, that relations between resources are defined as hyperlinks within the JSON objects, so a client can and should navigate between related objects without hard-coding any URIs.
+</p>
+
+<h[% level + 1%]>Brief Overview of JSON-HAL</h[% level + 1%]>
+
+HAL is a generic media type with which Web APIs can be developed and exposed as series of links. Clients of these APIs can select links by their link relation type and traverse them in order to progress through the application.
+
+A HAL document uses the format described in <a href="http://tools.ietf.org/html/rfc4627">RFC4627 - The application/json Media Type for JavaScript Object Notation (JSON)</a> and has the media type <span>application/hal+json</span>.
+
+An example request to fetch a <i>customercontacts</i> item with id <i>1</i> via the API looks like this:
+
+<code>
+   GET /api/customercontacts/1 HTTP/1.1
+   Accept: application/hal+json
+</code>
+
+The corresponding response is as follows:
+
+<code>
+   HTTP/1.1 200 OK
+   Content-Type: application/hal+json
+
+   {
+     "_links": {
+       "self": { "href": "/api/customercontacts/1" },
+       "ngcp:reseller": { "href": "/api/resellers/5" },
+     },
+     "firstname": "John",
+     "lastname": "Doe",
+     "email": "john.doe@example.org"
+   }
+</code>
+
+Here, we have a HAL document representing a contact resource with the URI <span>/api/customercontacts/1</span>. It has a link to a <span>reseller</span> it belongs to, and its own state in the form of <span>firstname</span>, <span>lastname</span> and <span>email</span> properties.
+
+To fetch the reseller of this contact, an API client only has to follow the link provided in <span>_links.reseller.href</span>.
+
+A simple code example might look like this:
+
+<code>
+  $ua = LWP::UserAgent->new;
+
+  # fetch the contact (URI hardcoded for simplicity only!)
+  $contact = from_json($ua->get('https://example.org/api/customercontacts/1'));
+
+  # follow the reseller link to fetch the reseller of this contact
+  $reseller = from_json($ua->get($contact->{'_links'}->{'ngcp:reseller'}->{'href'});
+</code>
+
+<h[% level + 1%]>API Versioning</h[% level + 1%]>
+
+Due to the JSON-HAL structure, all related resources are hyperlinked, which implies that no strict API versioning is required. If URIs change between NGCP versions, the hyperlinks in the JSON-HAL documents are updated accordingly.
+
+As a consequence, this means that a client implemented against the API <b>should not hardcode URIs</b>, rather than using the hyperlinks provided in the resources.
+
+[% # vim: set tabstop=4 syntax=html expandtab: -%]

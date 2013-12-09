@@ -1,0 +1,14 @@
+<h[% level %]>Example Request and Response</h[% level %]>
+<table>
+    <tr><th>Request</th><th>Response</th></tr>
+    <tr>
+        <td>
+            <code>[% FOR r IN request; r _ "\n" | html; END %]</code>
+        </td>
+        <td>
+            <code>[% FOR r IN response; r _ "\n" | html; END %]</code>
+        </td>
+    </tr>
+</table>
+
+[% # vim: set tabstop=4 syntax=html expandtab: -%]

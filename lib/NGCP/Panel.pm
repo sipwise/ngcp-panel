@@ -20,12 +20,15 @@ use Catalyst qw/
     Static::Simple
     Authentication
     Authorization::Roles
+    EnableMiddleware
     Session
     Session::Store::FastMmap
     Session::State::Cookie
 /;
 use Log::Log4perl::Catalyst qw();
-
+use NGCP::Panel::Cache::Serializer qw();
+use NGCP::Panel::Middleware::HSTS qw();
+#use NGCP::Panel::Middleware::TEgzip qw();
 extends 'Catalyst';
 
 our $VERSION = '0.01';
@@ -55,8 +58,10 @@ __PACKAGE__->config(
         INCLUDE_PATH => [
             '/usr/share/ngcp-panel/templates',
             '/usr/share/ngcp-panel/layout',
+            '/usr/share/ngcp-panel/static',
             __PACKAGE__->path_to('share', 'templates'),
             __PACKAGE__->path_to('share', 'layout'),
+            __PACKAGE__->path_to('share', 'static'),
         ],
         ABSOLUTE => 1,
         EVAL_PERL => 1,
@@ -125,6 +130,21 @@ __PACKAGE__->config(
                 use_userdata_from_session => 1,
             }
         },
+        api_admin => {
+            # TODO: should be NoPassword, but it's not available in our catalyst version yet
+            credential => {
+                class => 'Password',
+                password_field => 'is_superuser',
+                password_type => 'clear',
+            },
+            store => {
+                class => 'DBIx::Class',
+                user_model => 'DB::admins',
+                id_field => 'id',
+                store_user_class => 'NGCP::Panel::AuthenticationStore::RoleFromRealm',
+            },
+            use_session => 0,
+        },
         subscriber => {
             credential => {
                 class => 'Password',
@@ -139,7 +159,11 @@ __PACKAGE__->config(
                 use_userdata_from_session => 1,
             }
         }
-    }
+    },
+    'Plugin::EnableMiddleware' => [
+        #NGCP::Panel::Middleware::TEgzip->new,
+        NGCP::Panel::Middleware::HSTS->new,
+    ],
 );
 __PACKAGE__->config( default_view => 'HTML' );
 

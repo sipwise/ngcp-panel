@@ -17,13 +17,26 @@
         helper.dt_buttons = [
             { name = 'Edit', uri = "/administrator/'+full[\"id\"]+'/edit", class = 'btn-small btn-primary', icon = 'icon-edit' },
             { name = 'Delete', uri = "/administrator/'+full[\"id\"]+'/delete", class = 'btn-small btn-secondary', icon = 'icon-trash' },
+            { name = 'API key', uri = "/administrator/'+full[\"id\"]+'/api_key", class = 'btn-small btn-info', icon = 'icon-lock' },
         ];
 
         helper.top_buttons = [
             { name = 'Create Administrator', uri = c.uri_for('/administrator/create'), icon = 'icon-star' },
         ];
+    ELSE;
+        helper.dt_buttons = [
+            { name = 'API key', uri = "/administrator/'+full[\"id\"]+'/api_key", class = 'btn-small btn-info', icon = 'icon-lock' },
+        ];
     END;
 
     PROCESS 'helpers/datatables.tt';
+
+    IF api_modal_flag;
+        PROCESS "helpers/modal.tt";
+        modal_header(m.name = "API key");
+        helper.form_object.render;
+        modal_footer();
+        modal_script(m.close_target = helper.close_target);
+    END;
 -%]
 [% # vim: set tabstop=4 syntax=html expandtab: -%]

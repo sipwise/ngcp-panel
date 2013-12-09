@@ -52,7 +52,7 @@ has_field 'onpeak_init_rate' => (
     precision => 18,
     element_attr => {
         rel => ['tooltip'],
-        title => ['The cost of the init interval in cents (e.g 0.90)']
+        title => ['The cost of the init interval in cents per second (e.g 0.90)']
     },
     default => 0,
 );
@@ -64,6 +64,8 @@ has_field 'onpeak_init_interval' => (
         title => ['The length of the first interval']
     },
     default => 60,
+    required => 1,
+    validate_method => \&validate_interval,
 );
 
 has_field 'onpeak_follow_rate' => (
@@ -71,7 +73,7 @@ has_field 'onpeak_follow_rate' => (
     precision => 18,
     element_attr => {
         rel => ['tooltip'],
-        title => ['The cost of each following interval in cents (e.g 0.90)']
+        title => ['The cost of each following interval in cents per second (e.g 0.90)']
     },
     default => 0,
 );
@@ -83,6 +85,8 @@ has_field 'onpeak_follow_interval' => (
         title => ['The length of the following intervals']
     },
     default => 60,
+    required => 1,
+    validate_method => \&validate_interval,
 );
 
 has_field 'offpeak_init_rate' => (
@@ -90,7 +94,7 @@ has_field 'offpeak_init_rate' => (
     precision => 18,
     element_attr => {
         rel => ['tooltip'],
-        title => ['The cost of the init interval in cents (e.g 0.90)']
+        title => ['The cost of the init interval in cents per second (e.g 0.90)']
     },
     default => 0,
 );
@@ -102,6 +106,8 @@ has_field 'offpeak_init_interval' => (
         title => ['The length of the first interval']
     },
     default => 60,
+    required => 1,
+    validate_method => \&validate_interval,
 );
 
 has_field 'offpeak_follow_rate' => (
@@ -109,7 +115,7 @@ has_field 'offpeak_follow_rate' => (
     precision => 18,
     element_attr => {
         rel => ['tooltip'],
-        title => ['The cost of each following interval in cents (e.g 0.90)']
+        title => ['The cost of each following interval in cents per second (e.g 0.90)']
     },
     default => 0,
 );
@@ -121,6 +127,8 @@ has_field 'offpeak_follow_interval' => (
         title => ['The length of the following intervals']
     },
     default => 60,
+    required => 1,
+    validate_method => \&validate_interval,
 );
 
 has_field 'use_free_time' => (
@@ -154,6 +162,14 @@ has_block 'actions' => (
     class => [qw/modal-footer/],
     render_list => [qw/save/],
 );
+
+sub validate_interval {
+    my ($self, $field) = @_;
+
+    if(int($field->value) < 1) {
+        $field->add_error("Invalid interval, must be bigger than 0");
+    }
+}
 
 1;
 # vim: set tabstop=4 expandtab:

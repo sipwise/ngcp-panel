@@ -1,0 +1,33 @@
+<h2 id="[% id %]">
+  [% IF uri -%]
+  <a href="[% uri %]" rel="collection">
+  [% END -%]
+  [% title %]
+  [% IF uri -%]
+  </a>
+  [% END -%]
+</h2>
+
+<dl>
+    <dt id="draft-wilde-accept-post">Accept-Post header</dt>
+    <dd><a href="http://tools.ietf.org/html/draft-wilde-accept-post">draft-wilde-accept-post</a></dd>
+    <dt id="rfc6902">JSON Patch</dt>
+    <dd><a href="http://tools.ietf.org/html/rfc6902">RFC 6902</a></dd>
+    <dt id="draft-kelly-json-hal">HAL</dt>
+    <dd><a href="http://tools.ietf.org/html/draft-kelly-json-hal">draft-kelly-json-hal</a></dd>
+    <dt id="rfc2616">HTTP</dt>
+    <dd><a href="http://tools.ietf.org/html/rfc2616">RFC 2616</a></dd>
+    <dt id="rfc5988">Link headers</dt>
+    <dd><a href="http://tools.ietf.org/html/rfc5988">RFC 5988</a></dd>
+    <dt id="rfc2119">MAY, MUST, RECOMMENDED</dt>
+    <dd><a href="http://tools.ietf.org/html/rfc2119">RFC 2119</a></dd>
+    <dt id="rfc5789">PATCH method</dt>
+    <dd><a href="http://tools.ietf.org/html/rfc5789">RFC 5789</a></dd>
+    <dt id="draft-snell-http-prefer">Prefer header</dt>
+    <dd><a href="http://tools.ietf.org/html/draft-snell-http-prefer">draft-snell-http-prefer</a></dd>
+    <dt id="rfc6906">profile link relation</dt>
+    <dd><a href="http://tools.ietf.org/html/rfc6906">RFC 6906</a></dd>
+    <dt id="iana-relations">standard link relations</dt>
+    <dd><a href="https://iana.org/assignments/link-relations">IANA link relations registry</a></dd>
+</dl>
+[% # vim: set tabstop=4 syntax=html expandtab: -%]

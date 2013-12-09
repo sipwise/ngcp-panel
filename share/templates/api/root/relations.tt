@@ -1,0 +1,11 @@
+<h[% level %] id="[% id %]">
+  [% IF uri -%]
+  <a href="[% uri %]" rel="collection">
+  [% END -%]
+  [% title %]
+  [% IF uri -%]
+  </a>
+  [% END -%]
+</h[% level %]>
+
+[% # vim: set tabstop=4 syntax=html expandtab: -%]

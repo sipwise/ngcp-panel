@@ -22,19 +22,42 @@ sub auto :Private {
 
     $c->log->debug("*** Root::auto called");
 
-    if($c->controller =~ /::Root\b/
-        or $c->controller =~ /::Login\b/) {
-        
-        $c->log->debug("*** Root::auto grant access to " . $c->request->path);
-        return 1;
-    } elsif($c->req->uri->path =~ /^\/device\/autoprov\/.+/) {
-        $c->log->debug("*** Root::auto grant access to " . $c->request->path);
+    if (
+        __PACKAGE__ eq $c->controller->catalyst_component_name
+        or 'NGCP::Panel::Controller::Login' eq $c->controller->catalyst_component_name
+        or $c->req->uri->path =~ m|^/device/autoprov/.+|
+    ) {
+        $c->log->debug("*** Root::auto skip authn, grant access to " . $c->request->path);
         return 1;
     }
-    
+
+    if($c->user_exists && $c->user->roles ne "api_admin" &&
+       0 == index $c->controller->catalyst_component_name, 'NGCP::Panel::Controller::API') {
+        
+        $c->log->debug("*** Root::auto invalidate authenticated non-api-admin user for api access");
+        $c->logout;
+    }
+
     unless($c->user_exists) {
         $c->log->debug("*** Root::auto user not authenticated");
-        
+        if (
+            exists $c->request->env->{SSL_CLIENT_M_SERIAL}
+            && 0 == index $c->controller->catalyst_component_name, 'NGCP::Panel::Controller::API'
+        ) {
+            my $ssl_client_m_serial = hex $c->request->env->{SSL_CLIENT_M_SERIAL};
+            my $res = $c->authenticate({ 
+                    ssl_client_m_serial => $ssl_client_m_serial,
+                    is_superuser => 1, # TODO: abused as password until NoPassword handler is available
+                }, 'api_admin');
+            unless($c->user_exists)  {
+                use Data::Printer; p $res;
+                $c->log->debug("+++++ invalid api login");
+                $c->detach(qw(API::Root invalid_user), [$ssl_client_m_serial]) unless $c->user_exists;
+            } else {
+                $c->log->debug("api_admin '".$c->user->login."' authenticated");
+            }
+            return 1;
+        }
         # don't redirect to login page for ajax uris
         if($c->request->path =~ /\/ajax$/) {
             $c->response->body("403 - Permission denied");

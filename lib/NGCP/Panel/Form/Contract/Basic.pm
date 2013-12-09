@@ -23,8 +23,15 @@ has_field 'billing_profile' => (
 );
 
 has_field 'status' => (
-    type => '+NGCP::Panel::Field::ContractStatusSelect',
-    not_nullable => 1,
+    type => 'Select',
+    required => 1,
+    label => 'Status',
+    options => [ 
+        { label => 'active', value => 'active' },
+        { label => 'pending', value => 'pending' },
+        { label => 'locked', value => 'locked' },
+        { label => 'terminated', value => 'terminated' },
+    ],
 );
 
 has_field 'external_id' => (
