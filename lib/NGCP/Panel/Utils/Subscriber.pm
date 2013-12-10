@@ -376,6 +376,7 @@ sub update_subscriber_numbers {
                     username => $cli,
                     domain_id => $prov_subs->domain->id,
                     subscriber_id => $prov_subs->id,
+                    is_primary => 1,
                 });
                 if(defined $prov_subs->voicemail_user) {
                     $prov_subs->voicemail_user->update({
@@ -442,6 +443,7 @@ sub update_subscriber_numbers {
                 username => $number->cc . ($number->ac // '') . $number->sn,
                 subscriber_id => $prov_subs->id,
                 domain_id     => $prov_subs->domain->id,
+                is_primary => 0,
             });
         }
     }
