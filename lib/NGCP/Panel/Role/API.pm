@@ -98,6 +98,7 @@ sub validate_form {
             if $resource->{$k}->$_isa('DateTime');
         $resource->{$k} = $resource->{$k} + 0
             if(defined $resource->{$k} && (
+               $resource->{$k}->is_int || $resource->{$k}->is_decimal) && (
                $form->field($k)->$_isa('HTML::FormHandler::Field::Integer') ||
                $form->field($k)->$_isa('HTML::FormHandler::Field::Money') ||
                $form->field($k)->$_isa('HTML::FormHandler::Field::Float')));

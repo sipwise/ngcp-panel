@@ -1,4 +1,4 @@
-package NGCP::Panel::Controller::API::ContractsItem;
+package NGCP::Panel::Controller::API::CustomersItem;
 use Sipwise::Base;
 use namespace::sweep;
 use boolean qw(true);
@@ -7,7 +7,7 @@ use Data::HAL::Link qw();
 use HTTP::Headers qw();
 use HTTP::Status qw(:constants);
 use MooseX::ClassAttribute qw(class_has);
-use NGCP::Panel::Form::Contract::PeeringReseller qw();
+use NGCP::Panel::Form::Contract::ProductSelect qw();
 use NGCP::Panel::Utils::ValidateJSON qw();
 use NGCP::Panel::Utils::DateTime;
 use Path::Tiny qw(path);
@@ -18,11 +18,11 @@ require Catalyst::ActionRole::HTTPMethods;
 require Catalyst::ActionRole::RequireSSL;
 
 with 'NGCP::Panel::Role::API';
-with 'NGCP::Panel::Role::API::Contracts';
+with 'NGCP::Panel::Role::API::Customers';
 
-class_has('resource_name', is => 'ro', default => 'contracts');
-class_has('dispatch_path', is => 'ro', default => '/api/contracts/');
-class_has('relation', is => 'ro', default => 'http://purl.org/sipwise/ngcp-api/#rel-contracts');
+class_has('resource_name', is => 'ro', default => 'customers');
+class_has('dispatch_path', is => 'ro', default => '/api/customers/');
+class_has('relation', is => 'ro', default => 'http://purl.org/sipwise/ngcp-api/#rel-customers');
 
 __PACKAGE__->config(
     action => {
@@ -49,10 +49,10 @@ sub GET :Allow {
     my ($self, $c, $id) = @_;
     {
         last unless $self->valid_id($c, $id);
-        my $contract = $self->contract_by_id($c, $id);
-        last unless $self->resource_exists($c, contract => $contract);
+        my $customer = $self->customer_by_id($c, $id);
+        last unless $self->resource_exists($c, customer => $customer);
 
-        my $hal = $self->hal_from_contract($c, $contract);
+        my $hal = $self->hal_from_customer($c, $customer);
 
         my $response = HTTP::Response->new(HTTP_OK, undef, HTTP::Headers->new(
             (map { # XXX Data::HAL must be able to generate links with multiple relations
@@ -101,17 +101,19 @@ sub PATCH :Allow {
         );
         last unless $json;
 
-        my $contract = $self->contract_by_id($c, $id);
-        last unless $self->resource_exists($c, contract => $contract);
-        my $old_resource = { $contract->get_inflated_columns };
-        my $billing_mapping = $contract->billing_mappings->find($contract->get_column('bmid'));
+        my $customer = $self->customer_by_id($c, $id);
+        last unless $self->resource_exists($c, customer => $customer);
+
+        my $old_resource = { $customer->get_inflated_columns };
+        my $billing_mapping = $customer->billing_mappings->find($customer->get_column('bmid'));
         $old_resource->{billing_profile_id} = $billing_mapping->billing_profile_id;
+
         my $resource = $self->apply_patch($c, $old_resource, $json);
         last unless $resource;
 
-        my $form = NGCP::Panel::Form::Contract::PeeringReseller->new;
-        $contract = $self->update_contract($c, $contract, $old_resource, $resource, $form);
-        last unless $contract;
+        my $form = NGCP::Panel::Form::Contract::ProductSelect->new;
+        $customer = $self->update_customer($c, $customer, $old_resource, $resource, $form);
+        last unless $customer;
 
         $guard->commit;
 
@@ -120,7 +122,7 @@ sub PATCH :Allow {
             $c->response->header(Preference_Applied => 'return=minimal');
             $c->response->body(q());
         } else {
-            my $hal = $self->hal_from_contract($c, $contract, $form);
+            my $hal = $self->hal_from_customer($c, $customer, $form);
             my $response = HTTP::Response->new(HTTP_OK, undef, HTTP::Headers->new(
                 $hal->http_headers,
             ), $hal->as_json);
@@ -139,19 +141,19 @@ sub PUT :Allow {
         my $preference = $self->require_preference($c);
         last unless $preference;
 
-        my $contract = $self->contract_by_id($c, $id);
-        last unless $self->resource_exists($c, contract => $contract);
+        my $customer = $self->customer_by_id($c, $id);
+        last unless $self->resource_exists($c, customer => $customer);
         my $resource = $self->get_valid_put_data(
             c => $c,
             id => $id,
             media_type => 'application/json',
         );
         last unless $resource;
-        my $old_resource = { $contract->get_inflated_columns };
+        my $old_resource = { $customer->get_inflated_columns };
 
-        my $form = NGCP::Panel::Form::Contract::PeeringReseller->new;
-        $contract = $self->update_contract($c, $contract, $old_resource, $resource, $form);
-        last unless $contract;
+        my $form = NGCP::Panel::Form::Contract::ProductSelect->new;
+        $customer = $self->update_customer($c, $customer, $old_resource, $resource, $form);
+        last unless $customer;
 
         $guard->commit;
 
@@ -160,7 +162,7 @@ sub PUT :Allow {
             $c->response->header(Preference_Applied => 'return=minimal');
             $c->response->body(q());
         } else {
-            my $hal = $self->hal_from_contract($c, $contract, $form);
+            my $hal = $self->hal_from_customer($c, $customer, $form);
             my $response = HTTP::Response->new(HTTP_OK, undef, HTTP::Headers->new(
                 $hal->http_headers,
             ), $hal->as_json);
@@ -173,23 +175,23 @@ sub PUT :Allow {
 }
 
 =pod
-# we don't allow to delete contracts
+# we don't allow to delete customers
 sub DELETE :Allow {
     my ($self, $c, $id) = @_;
     my $guard = $c->model('DB')->txn_scope_guard;
     {
-        my $contract = $self->contract_by_id($c, $id);
-        last unless $self->resource_exists($c, contract => $contract);
+        my $customer = $self->customer_by_id($c, $id);
+        last unless $self->resource_exists($c, customer => $customer);
 
-        # TODO: do we want to prevent deleting used contracts?
-        #my $contract_count = $c->model('DB')->resultset('contracts')->search({
+        # TODO: do we want to prevent deleting used customers?
+        #my $customer_count = $c->model('DB')->resultset('customers')->search({
         #    contact_id => $id
         #});
-        #if($contract_count > 0) {
+        #if($customer_count > 0) {
         #    $self->error($c, HTTP_LOCKED, "Contact is still in use.");
         #    last;
         #} else {
-            $contract->delete;
+            $customer->delete;
         #}
         $guard->commit;
 
