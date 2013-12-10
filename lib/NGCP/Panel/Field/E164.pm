@@ -3,7 +3,7 @@ use HTML::FormHandler::Moose;
 extends 'HTML::FormHandler::Field::Compound';
 
 
-has 'label' => ( default => 'E164 Number');
+#has 'label' => ( default => 'E164 Number');
 
 has_field 'cc' => (
     type => '+NGCP::Panel::Field::PosInteger',

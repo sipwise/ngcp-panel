@@ -3,7 +3,7 @@ use HTML::FormHandler::Moose;
 extends 'HTML::FormHandler::Field::Repeatable';
 
 
-has 'label' => ( default => 'E164 Number');
+#has 'label' => ( default => 'E164 Number');
 
 has_field 'id' => (
     type => 'Hidden',
