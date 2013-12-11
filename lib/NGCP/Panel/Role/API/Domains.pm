@@ -97,6 +97,10 @@ sub xmpp_domain_reload {
     NGCP::Panel::Utils::Prosody::activate_domain($c, $resource->{domain});
 }
 
+sub xmpp_domain_disable {
+    my ($self, $c, $domain) = @_;
+    NGCP::Panel::Utils::Prosody::deactivate_domain($c, $domain);
+}
 
 =pod
 # you can't update a domain per se, only its preferences!
