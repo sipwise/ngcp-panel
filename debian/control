@@ -55,7 +55,8 @@ Replaces: ngcp-panel-common (<= 1.0.15),
           ngcp-panel-nginx (<= 1.0.15)
 Breaks: ngcp-panel-common (<= 1.0.15),
         ngcp-panel-nginx (<= 1.0.15)
-Depends: libautodie-perl (>= 2.21~),
+Depends: gnutls-bin,
+         libautodie-perl (>= 2.21~),
          libcatalyst-actionrole-acl-perl,
          libcatalyst-actionrole-checktrailingslash-perl,
          libcatalyst-actionrole-requiressl-perl,
