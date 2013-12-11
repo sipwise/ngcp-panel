@@ -138,6 +138,12 @@ has_block 'actions' => (
     render_list => [qw/save/],
 );
 
+sub update_fields {
+    my $self = shift;
+
+    $self->field('password')->required(0); # optional on edit
+}
+
 1;
 
 # vim: set tabstop=4 expandtab:

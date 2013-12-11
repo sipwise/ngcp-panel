@@ -22,6 +22,19 @@ has_block 'fields' => (
     render_list => [qw/display_name webusername webpassword password external_id alias_select/ ],
 );
 
+sub update_fields {
+    my $self = shift;
+    my $c = $self->ctx;
+    my $pkg = __PACKAGE__;
+    $c->log->debug("my form: $pkg");
+
+    $self->field('alias_select')->ajax_src(
+            "".$c->uri_for_action("/subscriber/aliases_ajax", $c->req->captures)
+        );
+
+    $self->field('password')->required(0); # optional on edit
+}
+
 1;
 
 =head1 NAME

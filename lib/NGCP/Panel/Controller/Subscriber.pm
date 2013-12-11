@@ -1667,7 +1667,7 @@ sub reglist :Chained('master') :PathPart('regdevices') :Args(0) {
     );
 }
 
-sub edit_master :Chained('master') :PathPart('edit') :Args(0) {
+sub edit_master :Chained('master') :PathPart('edit') :Args(0) :Does(ACL) :ACLDetachTo('/denied_page') :AllowedRole(admin) :AllowedRole(reseller) :AllowedRole(subscriberadmin) {
     my ($self, $c) = @_;
 
     $c->detach('/denied_page')
@@ -1725,8 +1725,6 @@ sub edit_master :Chained('master') :PathPart('edit') :Args(0) {
     }
     unless($posted) {
         $params->{webusername} = $prov_subscriber->webusername;
-        $params->{webpassword} = $prov_subscriber->webpassword;
-        $params->{password} = $prov_subscriber->password;
         $params->{administrative} = $prov_subscriber->admin;
         if($subscriber->primary_number) {
             $params->{e164}->{cc} = $subscriber->primary_number->cc;
@@ -1769,18 +1767,12 @@ sub edit_master :Chained('master') :PathPart('edit') :Args(0) {
         $params->{external_id} = $subscriber->external_id;
 
         $params->{lock} = $lock->first ? $lock->first->value : undef;
-        $params = $params->merge($c->session->{created_objects});
     }
 
     $form->process(
         posted => $posted,
         params => $c->request->params,
         item => $params,
-        update_field_list => {
-                $subadmin_pbx ?  (alias_select => {
-                    ajax_src => "".$c->uri_for_action("/subscriber/aliases_ajax", $c->req->captures)
-                }) : (),
-            }
     );
 
     NGCP::Panel::Utils::Navigation::check_form_buttons(
@@ -1803,8 +1795,10 @@ sub edit_master :Chained('master') :PathPart('edit') :Args(0) {
             $schema->txn_do(sub {
                 my $prov_params = {};
                 $prov_params->{webusername} = $form->params->{webusername};
-                $prov_params->{webpassword} = $form->params->{webpassword};
-                $prov_params->{password} = $form->params->{password};
+                $prov_params->{webpassword} = $form->params->{webpassword}
+                    if($form->params->{webpassword});
+                $prov_params->{password} = $form->params->{password}
+                    if($form->params->{password});
                 $prov_params->{admin} = $form->params->{administrative} // 0
                     if($is_admin);
                 $prov_params->{pbx_group_id} = $form->params->{group}{id}

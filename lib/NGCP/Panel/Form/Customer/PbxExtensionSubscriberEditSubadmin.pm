@@ -22,6 +22,24 @@ has_block 'fields' => (
     render_list => [qw/group extension display_name webusername webpassword password external_id alias_select/ ],
 );
 
+sub update_fields {
+    my $self = shift;
+    my $c = $self->ctx;
+    my $pkg = __PACKAGE__;
+    $c->log->debug("my form: $pkg");
+
+    $self->field('alias_select')->ajax_src(
+            "".$c->uri_for_action("/subscriber/aliases_ajax", $c->req->captures)
+        );
+
+    my $group = $self->field('group');
+    $group->field('id')->ajax_src(
+        $c->uri_for_action('/customer/pbx_group_ajax', [$c->stash->{customer_id}])->as_string
+    );
+
+    $self->field('password')->required(0); # optional on edit
+}
+
 1;
 
 =head1 NAME
