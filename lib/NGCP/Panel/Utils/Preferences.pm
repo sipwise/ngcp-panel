@@ -460,6 +460,42 @@ sub get_dom_preference_rs {
     return $preference;
 }
 
+sub get_peer_auth_params {
+    my ($c, $prov_subscriber, $prefs) = @_;
+
+    my $rs;
+    $rs = NGCP::Panel::Utils::Preferences::get_usr_preference_rs(
+        c => $c, attribute => 'peer_auth_user', 
+        prov_subscriber => $prov_subscriber);
+    $prefs->{peer_auth_user} = $rs->first ? $rs->first->value : undef;
+    $rs = NGCP::Panel::Utils::Preferences::get_usr_preference_rs(
+        c => $c, attribute => 'peer_auth_realm', 
+        prov_subscriber => $prov_subscriber);
+    $prefs->{peer_auth_realm} = $rs->first ? $rs->first->value : undef;
+    $rs = NGCP::Panel::Utils::Preferences::get_usr_preference_rs(
+        c => $c, attribute => 'peer_auth_pass', 
+        prov_subscriber => $prov_subscriber);
+    $prefs->{peer_auth_pass} = $rs->first ? $rs->first->value : undef;
+    $rs = NGCP::Panel::Utils::Preferences::get_usr_preference_rs(
+        c => $c, attribute => 'peer_auth_register',
+        prov_subscriber => $prov_subscriber);
+    $prefs->{peer_auth_register} = $rs->first ? $rs->first->value : undef;
+}
+
+sub is_peer_auth_active {
+    my ($c, $prefs) = @_;
+    if(defined $prefs->{peer_auth_register} && $prefs->{peer_auth_register} == 1 &&
+       defined $prefs->{peer_auth_user} &&
+       defined $prefs->{peer_auth_realm} &&
+       defined $prefs->{peer_auth_pass}) {
+
+        $c->log->debug("+++++++++++ peer auth register is active");
+        return 1;
+    }
+    $c->log->debug("+++++++++++ peer auth register is NOT active");
+    return;
+}
+
 1;
 
 =head1 NAME

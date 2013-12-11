@@ -3,6 +3,7 @@ use Sipwise::Base;
 BEGIN { extends 'Catalyst::Controller'; }
 use HTML::Entities;
 use URI::Escape qw(uri_unescape);
+use Test::More;
 use NGCP::Panel::Utils::Navigation;
 use NGCP::Panel::Utils::Contract;
 use NGCP::Panel::Utils::Subscriber;
@@ -11,6 +12,7 @@ use NGCP::Panel::Utils::Callflow;
 use NGCP::Panel::Utils::Preferences;
 use NGCP::Panel::Utils::Message;
 use NGCP::Panel::Utils::DateTime;
+use NGCP::Panel::Utils::Sems;
 use NGCP::Panel::Form::Subscriber;
 use NGCP::Panel::Form::SubscriberEdit;
 use NGCP::Panel::Form::Customer::PbxExtensionSubscriberEdit;
@@ -409,6 +411,8 @@ sub preferences_base :Chained('base') :PathPart('preferences') :CaptureArgs(1) {
 sub preferences_edit :Chained('preferences_base') :PathPart('edit') :Args(0) {
     my ($self, $c) = @_;
 
+    my $prov_subscriber = $c->stash->{subscriber}->provisioning_voip_subscriber;
+
     $c->detach('/denied_page')
         if(($c->user->roles eq "admin" || $c->user->roles eq "reseller") && $c->user->read_only);
 
@@ -422,8 +426,14 @@ sub preferences_edit :Chained('preferences_base') :PathPart('edit') :Args(0) {
     my $pref_rs = $c->model('DB')
         ->resultset('voip_usr_preferences')
         ->search({
-            subscriber_id => $c->stash->{subscriber}->provisioning_voip_subscriber->id
+            subscriber_id => $prov_subscriber->id
         });
+
+    my $old_auth_prefs = {};
+    if($c->req->method eq "POST" && $c->stash->{preference_meta}->attribute =~ /^peer_auth_/) {
+        NGCP::Panel::Utils::Preferences::get_peer_auth_params(
+            $c, $prov_subscriber, $old_auth_prefs);
+    }
 
     NGCP::Panel::Utils::Preferences::create_preference_form( c => $c,
         pref_rs => $pref_rs,
@@ -431,6 +441,40 @@ sub preferences_edit :Chained('preferences_base') :PathPart('edit') :Args(0) {
         base_uri => $c->uri_for_action('/subscriber/preferences', [$c->req->captures->[0]]),
         edit_uri => $c->uri_for_action('/subscriber/preferences_edit', $c->req->captures),
     );
+
+    if(keys %{ $old_auth_prefs }) {
+        my $new_auth_prefs = {};
+        NGCP::Panel::Utils::Preferences::get_peer_auth_params(
+            $c, $prov_subscriber, $new_auth_prefs);
+        unless(is_deeply($old_auth_prefs, $new_auth_prefs)) {
+            try {
+
+                if(!NGCP::Panel::Utils::Preferences::is_peer_auth_active($c, $old_auth_prefs) && 
+                    NGCP::Panel::Utils::Preferences::is_peer_auth_active($c, $new_auth_prefs)) {
+
+                    NGCP::Panel::Utils::Sems::create_peer_registration(
+                        $c, $prov_subscriber, $new_auth_prefs);
+                } elsif(NGCP::Panel::Utils::Preferences::is_peer_auth_active($c, $old_auth_prefs) && 
+                        !NGCP::Panel::Utils::Preferences::is_peer_auth_active($c, $new_auth_prefs)) {
+
+                    NGCP::Panel::Utils::Sems::delete_peer_registration(
+                        $c, $prov_subscriber, $old_auth_prefs);
+                } elsif(NGCP::Panel::Utils::Preferences::is_peer_auth_active($c, $old_auth_prefs) &&
+                        NGCP::Panel::Utils::Preferences::is_peer_auth_active($c, $new_auth_prefs)){
+
+                    NGCP::Panel::Utils::Sems::update_peer_registration(
+                        $c, $prov_subscriber, $new_auth_prefs, $old_auth_prefs);
+                }
+
+            } catch($e) {
+                NGCP::Panel::Utils::Message->error(
+                    c     => $c,
+                    log   => "Failed to set peer registration: $e",
+                    desc  => "Peer registration error: $e",
+                );
+            }
+        }
+    }
 }
 
 sub preferences_callforward :Chained('base') :PathPart('preferences/callforward') :Args(1) {
