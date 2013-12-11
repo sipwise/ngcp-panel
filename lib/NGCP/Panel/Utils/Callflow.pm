@@ -2,7 +2,7 @@ package NGCP::Panel::Utils::Callflow;
 use strict;
 use warnings;
 
-use GD::Simple;
+use NGCP::Panel::Utils::GD::Simple;
 
 sub generate_pcap {
     my $packets = shift;
@@ -157,7 +157,7 @@ sub process_callmap {
     # TODO: take into account length of "proto:[ipv6]:port"
     my $canvas_width = 2*$canvas_margin + $canvas_elem_distance*(@uas - 1);
     my $canvas_height = 2*$canvas_margin + $canvas_pkg_distance*(@{$packets} + 1); # leave one pkg_distance free at begin and end
-    my $canvas = GD::Simple->new($canvas_width, $canvas_height);
+    my $canvas = NGCP::Panel::Utils::GD::Simple->new($canvas_width, $canvas_height);
     $canvas->bgcolor('white');
 
     ### prepare html
