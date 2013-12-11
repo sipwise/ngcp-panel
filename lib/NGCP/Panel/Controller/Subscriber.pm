@@ -329,10 +329,21 @@ sub terminate :Chained('base') :PathPart('terminate') :Args(0) :Does(ACL) :ACLDe
                 ) if($prov_subscriber->voip_pbx_group);
                 $prov_subscriber->delete;
             }
-            $subscriber->voip_numbers->update_all({
-                subscriber_id => undef,
-                reseller_id => undef,
-            });
+            if ($c->user->roles eq 'subscriberadmin') {
+                NGCP::Panel::Utils::Subscriber::update_subadmin_sub_aliases(
+                    schema => $schema,
+                    subscriber_id => $subscriber->id,
+                    contract_id => $subscriber->contract_id,
+                    alias_selected => [], #none, thus moving them back to our subadmin
+                    sadmin_id => $schema->resultset('voip_subscribers')
+                        ->find({uuid => $c->user->uuid})->id
+                );
+            } else {
+                $subscriber->voip_numbers->update_all({
+                    subscriber_id => undef,
+                    reseller_id => undef,
+                });
+            }
             $subscriber->update({ status => 'terminated' });
         });
         $c->flash(messages => [{type => 'success', text => 'Successfully terminated subscriber'}]);
