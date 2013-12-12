@@ -14,26 +14,26 @@ locality = "Brunn am Gebirge"
 state = "Niederösterreich"
 country = AT
 cn = "*.sipwise.com"
-expiration_days = 1000
+expiration_days = 7300
 ca
 cert_signing_key
 
 has('server_signingrequest_template', is => 'ro', isa => 'Str', default => sub { <<"" });
 cn = "@{[ hostname ]}"
-expiration_days = 365
+expiration_days = 7300
 tls_www_server
 signing_key
 encryption_key
 
 has('server_signing_template', is => 'ro', isa => 'Str', default => sub { <<'' });
-expiration_days = 365
+expiration_days = 7300
 honor_crq_extensions
 
 sub client_signing_template {
     my ($self, $serial) = @_;
     return <<"";
 cn = "Sipwise NGCP API client certificate"
-expiration_days = 365
+expiration_days = 7300
 serial = $serial
 tls_www_client
 signing_key
@@ -96,7 +96,9 @@ sub make_client {
     $self->log->debug($command);
     system $command;
     my $client_signing_template = Path::Tiny->tempfile;
-    $client_signing_template->spew($self->client_signing_template($serial));
+    my $tmpl = $self->client_signing_template($serial);
+    $c->log->debug("++++ creating client cert with template: $tmpl");
+    $client_signing_template->spew($tmpl);
     my $client_cert = Path::Tiny->tempfile;
     $command = sprintf 'certtool -c --load-privkey %s --outfile %s --load-ca-certificate %s --load-ca-privkey %s ' .
       '--template %s 1>&- 2>&-', $client_key->stringify, $client_cert->stringify, $self->prefix->child('ca-cert.pem'),
