@@ -1,3 +1,29 @@
+ngcp-panel (1.1.7) unstable; urgency=low
+
+  [ Andreas Granig ]
+  * [5558bb2] MT#4565 Fix read-only permissions.
+  * [c3feff9] MT#5131 Make CSV fee parsing more tight.
+  * [f0b2d5d] MT#5355 Implement peer_auth api calls to sems.
+  * [7f45707] MT#4967 Fix invalid "has label" statement.
+  * [91e8cb9] MT#5307 Fix GD::Simple to avoid race conditions
+
+  [ Gerhard Jungwirth ]
+  * [cc4cf89] MT#4693 show contract balance in euros instead of cents
+  * [5039ce6] MT#4767 Show missing registered devices
+  * [0801bc7] MT#4129 Validate update customer with wrong resellers
+  * [80fe549] MT#5145 put tooltips on top
+  * [18da118] MT#5147 Proper DateTime deflation in Forms
+  * [875ddbc] MT#3917 do not alter datetime objects from schema
+  * [c61702d] MT#4967 Show primary number in subscriber list
+  * [4d6408b] MT#4967 fix show sippassword instead of webpassword
+  * [3cdcd64] MT#4565 Fix boolean expression on read-only permissions
+
+  [ Andrew Pogrebennyk ]
+  * [92a526e] MT#3997 MT#5193 Fix build_via_routes with only one external sbc.
+  * [4eb3d56] MT#5193 MT#5195 Fix "Use of uninitialized value" for external_sbc
+
+ -- Andreas Granig <agranig@sipwise.com>  Thu, 12 Dec 2013 20:05:34 +0100
+
 ngcp-panel (1.1.6) unstable; urgency=low
 
   * [d23de0e] MT#5009 Fix syntax error.
