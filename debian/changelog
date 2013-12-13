@@ -1,3 +1,220 @@
+ngcp-panel (1.2.0) UNRELEASED; urgency=low
+
+  [ Lars Dieckow ]
+  * [aba646f] MT#3929 certificate management
+  * [f6e01fd] MT#3927 custom auth
+  * [e5a42d9] wip
+  * [940d1cf] MT#4229 custom Internal server error page
+  * [099e057] correct dep name
+  * [e215422] MT#4609 extend checks when editing the own admin user to prevent locking oneself out
+  * [fbb03e3] avoid db fetch for authenticated request
+
+  [ Andreas Granig ]
+  * [dd39bae] MT#5103 Add basic call distribution graph.
+  * [272caf5] MT#4565 Fix read-only permissions.
+  * [b8dc8a4] MT#5131 Make CSV fee parsing more tight.
+  * [e21d14d] MT#5103 Add date picker to call distribution graph
+  * [b909a98] MT#5173 Very basic support for polycom prov
+  * [a5cbfd2] MT#3927 Invalidate session in API for non-API user
+  * [5098850] MT#3925 Add documentation framework for API.
+  * [8123208] MT#3925 Manually re-merge API doc changes.
+  * [defde60] MT#3925 Add main header and vim trailer.
+  * [5068bd0] MT#3925 Style and reorganize API templates
+  * [feebde1] MT#3925 Basic styling for printing API docs.
+  * [b5fca43] MT#3925 Make API work with LWP::UserAgent.
+  * [2e9e527] MT#3925 Add example PHP API client to sandbox
+  * [df6bfea] MT#3925 Extend API documentation (Auth, styling).
+  * [eb01bbd] MT#3925 Show API item properties from json via JS
+  * [a7ae65c] MT#3925 Use forms for validation only; other fixes
+  * [8683e52] MT#3925 Move POST validation methods into Role.
+  * [9ef4961] MT#3925 Migrate more common methods into Role.
+  * [59e55c2] MT#3925 Move contracts/ to Role, tighten contacts/
+  * [9f03bf4] MT#4007 Implement auto attendant mgm for subs.
+  * [3030a62] MT#4413 Remove debugging messages.
+  * [7ea0814] MT#3977 Fix ACL for fetching keys of dev profile.
+  * [5266545] MT#3977 Use plain port for linksys provisioning.
+  * [57df6c4] MT#3977 Remove comments from linksys config.
+  * [dce2f45] MT#3971 Add max_subscribers field.
+  * [b9d03df] MT#3971 Implement limitation of subscribers.
+  * [7363b51] MT#3971 Show Create btn if max_subscribers is null
+  * [1fb6381] MT#3995 Use pre-selected options for ext sbc.
+  * [3cbe4db] MT#3997 Transform via_route to loose-route URI
+  * [fec7d6f] MT#3977 Re-add barge-in flag.
+  * [816b1d0] MT#3977 Also set config.url for autoprov config.
+  * [0f99b45] MT#3977 Fix syntax error.
+  * [5866179] MT#3977 Use voicebox instead of hardcoded 2000
+  * [a6f3117] MT#3977 Set proper config.url parameter.
+  * [0feebeb] MT#4533 Don't transcode MOH files for PBX.
+  * [ef33e73] MT#3977 Set oubound proxy for priv/shared lines
+  * [d022bb5] MT#3977 Also set flag to use outbound proxy.
+  * [10a9215] MT#3977 Fix xml syntax error in closing tag.
+  * [a2b8faa] MT#3977 Remove stray outbound proxy setting.
+  * [9df13fa] MT#4601 Bump version to 1.0.17 for 3.0 backport.
+  * [8ad33c7] MT#4607 Replace UNION by simple OR
+  * [c8ff9af] MT#4607 Bump version to 1.0.18 for 3.0 backport.
+  * [96edced] MT#4655 Show reseller name in device mgm.
+  * [58b4960] MT#4657 Make ac an empty string if undef.
+  * [28f2559] MT#4657 Bump version to 1.0.19
+  * [d69d7bb] MT#4685 Don't tie firmware to profile.
+  * [096b5eb] MT#4685 Try to fetch next device firmware
+  * [57bc421] MT#4685 Export latest firmware version for model.
+  * [b261f5f] MT#4685 Set subscription expiry to 300s.
+  * [35e8637] Bump version to 1.1.0 for 3.1 release.
+  * [2ee40a3] MT#3917 Show datetime in local timezone for DT.
+  * [4848178] MT#4017 Use shared line creds for SLA line.
+  * [10ddf43] MT#4787 Send browser to PBX device when syncing
+  * [7c0b691] MT#4017 Fix subscriber->device mapping in config.
+  * [a3bbaa9] Bump debian version to 1.1.2 for 3.1 release.
+  * [9c69626] MT#4543 Also set cloud_pbx_base_cli pref for admin
+  * [d2dfbea] MT#4949 Use pbx in call flow graph.
+  * [097af29] MT#4229 Still log the error causing a 500.
+  * [36f6756] MT#4955 Use cseq_method for subscriber captures.
+  * [e2ccdf3] MT#4955 Introduce customer default sound sets.
+  * [332ad0c] MT#4949 Use pbx-1 suffix for callflows.
+  * [7dcfd7d] MT#4961 Fix non-alphanumeric RRD filename handling
+  * [afa1969] MT#4971 Fix follow symlink sp-SELF in statistics.
+  * [059607a] MT#4955 Only allow one ss, set dom-pref np-display
+  * [e3ba8b4] MT#5009 Properly re-use free numbers.
+  * [2258395] MT#5009 Properly free voip_numbers on termination.
+  * [fec5634] MT#4967 Filter system information for subs-roles
+  * [65a14e9] Bump debian version to 1.1.4 for 3.1 release.
+  * [4384ec3] MT#5009 Properly reuse alias numbers also.
+  * [19e1d77] Bump debian version to 1.1.5 for 3.1 release.
+  * [d62a5ac] MT#5009 Fix syntax error.
+  * [f8dfb8f] MT#5009 Use proper alias number sub-elements.
+  * [c88c69d] MT#4235 Implement static Jitsi provisioning.
+  * [dc11a0b] Bump debian version to 1.1.6 for 3.1 release.
+  * [59a75ed] MT#5103 Add basic call distribution graph.
+  * [2ef9dc1] MT#4565 Fix read-only permissions.
+  * [b84bc50] MT#5131 Make CSV fee parsing more tight.
+  * [2bff650] MT#5103 Add date picker to call distribution graph
+  * [6d3fa76] MT#5173 Very basic support for polycom prov
+  * [40ecb1e] MT#3997 Distinguish collection and item in URI
+  * [0fb58d2] MT#3997 Use JSON in OPTIONS methods.
+  * [fd19cf7] MT#3997 Return JSON on precondition failures.
+  * [0f09d98] MT#3997 Remove JE.pm, too slow for production use.
+  * [a4a9f70] MT#3997 Remove QueryParameter dependency.
+  * [5159906] MT#3997 Fix general collection/item handling.
+  * [5e3b642] MT#5215 Replace NoPassword cred handler
+  * [f21a57f] MT#3997 Fix warnings in api/root template.
+  * [dbdf898] MT#3997 Fix another warning in api/root template.
+  * [7b8092f] MT#3997 Get rid of the remaining tt xml responses
+  * [9aa1560] MT#3997 Dynamically return collections relations.
+  * [e4a3ade] MT#3997 Add OPTIONS tests for API::Root
+  * [2c51cbd] MT#3997 Fix PUT with reseller_id=null for contact
+  * [a6c3ecb] MT#5255 API: Implement DELETE for contacts
+  * [a135c00] MT#5255 API: prevent DELETE of used contact
+  * [81bd123] MT#3997 API: add notes about tests to be done
+  * [beb9398] MT#3997 API: move req/res log functions to Role.
+  * [f4a9e39] MT#5255 API: move contacts to systemcontacts.
+  * [6bb57f0] MT#3997 Finish API skeleton.
+  * [02998dd] MT#3949 API: base-line for system contracts.
+  * [458852f] MT#5255 API: use local time for timestamps.
+  * [7a782eb] MT#5255 API: Create roles for resources.
+  * [b64266b] MT#3949 API: Implement base-line for sys contracts
+  * [14d9374] MT#3949 API: move common contract stuff to role.
+  * [45a460a] MT#3949 API: implement contracts handling.
+  * [3ce79d6] MT#5299 API: GET and POST billing profiles.
+  * [829b432] MT#5299 API: PUT/PATCH/GET billingprofiles item
+  * [5ba6edc] MT#5299 API: add first tests for billing profiles.
+  * [cd2d9e4] MT#5255 Fix boolean handling and HFH validation
+  * [bdb129e] MT#5299 API: Add billing fee handling.
+  * [b3de58f] MT#5299 API: Implement billing zone handling.
+  * [d125209] MT#5299 API: more billing tests and bug fixes.
+  * [c0a6264] MT#5299 API: Implement implicit zone def for fees
+  * [5c5668d] MT#3949 API: Implement reseller resource handling.
+  * [3db6117] MT#3931 API: Implement customer contacts.
+  * [cfd8671] MT#5215 Add SSL dirs needed for API cert handling.
+  * [456df97] MT#3931 API: implement customer contract handling.
+  * [1656f05] MT#5101 Mark primary numbers in voip_dbaliases.
+  * [52ea49a] MT#4967 Fix invalid "has label" statement.
+  * [262cacd] MT#3925 Fix jquery-ui path.
+  * [9592c6b] MT#5349 API: Implement collection part for doms
+  * [58adac5] MT#5349 API: Implement GET/DELETE for domain item.
+  * [7e3a299] MT#5355 Implement peer_auth api calls to sems.
+  * [5e5fbee] MT#5307 Fix GD::Simple to avoid race conditions
+  * [6d4ba44] MT#3929 Add gnutls-bin dependency for certtool
+
+  [ Gerhard Jungwirth ]
+  * [9b0cc33] MT#4767 Show missing registered devices
+  * [0c41788] MT#4693 show contract balance in euros instead of cents
+  * [2ca352c] MT#4129 Validate update customer with wrong resellers
+  * [48e0b55] MT#5145 put tooltips on top
+  * [aeb7976] MT#5147 Proper DateTime deflation in Forms
+  * [f6f4e33] MT#3917 do not alter datetime objects from schema
+  * [a1541d9] MT#3435 fix mysql commandline and DSN
+  * [a78a6ba] MT#3435 fix failing tests due to changed login
+  * [21482c0] MT#4289 separate customer/ajax and contract/ajax
+  * [4903784] MT#4289 separate customer-/contract- create and ajax_reseller_filter
+  * [12fb9a7] MT#4289 fix html-id with invalid symbols
+  * [35c82cc] MT#4289 move /contract/customer/edit to /customer/edit
+  * [e184e00] MT#4289 contracts: filter by product and separate terminate
+  * [ec34c1d] MT#3855 Fix empty contract tab on Reseller details
+  * [fa3c979] MT#4659 preserve product, when not set by form
+  * [7769853] MT#4129 prohibit customer with diverging resellers
+  * [f16c1cf] MT#4129 fix operator precedence
+  * [9387989] MT#4667 validate contact on contract create
+  * [8d1bc95] MT#3435 fix tests
+  * [003571f] MT#3435 separate stdout/stderr of panel debug
+  * [9353d44] MT#3435 skip problematic tests
+  * [39698f4] MT#3435 quickfixes for tests
+  * [afd85b4] MT#4771 option to call ./Build test_selenium
+  * [10cd462] MT#4369 Disable Timestamp search on Callflows
+  * [6355873] MT#4877: fix button focus style
+  * [1e46a7f] MT#4877 Fix button color on click
+  * [93ab17c] MT#4871 Cleanup basic controller tests
+  * [f6e2bba] MT#4287 preserve display setting rows
+  * [cd0fa24] MT#4287 Use Statesave Feature
+  * [6583c96] MT#4287 Remove datatables state on menu items
+  * [1be3912] MT#4903 Fix javascript error on empty referrer
+  * [3279897] MT#4707 log IP on failed login
+  * [0f44c12] MT#4871 Add Selenium Tests for "Customer" page
+  * [364c9d9] MT#4287 Preserve dt settings until logout
+  * [7a20e3f] MT#4967 Refactor Subscriber Forms
+  * [2ada158] MT#4967 Let admin/reseller always change subscriber numbers
+  * [342ba86] MT#4967 Show primary number in subscriber list
+  * [4fa47ff] MT#4767 Show missing registered devices
+  * [fdb2b49] MT#4693 show contract balance in euros instead of cents
+  * [6524548] MT#4129 Validate update customer with wrong resellers
+  * [273a59a] MT#5145 put tooltips on top
+  * [83a4085] MT#5147 Proper DateTime deflation in Forms
+  * [f11ae48] MT#3917 do not alter datetime objects from schema
+  * [5d2ff6f] MT#4967 fix show sippassword instead of webpassword
+  * [8254001] MT#4565 Fix boolean expression on read-only permissions
+  * [0e8b1f6] MT#4871 selenium-tests: unskip tests, timer information
+  * [2c7a0c4] MT#4967 Let subadmins steal numbers
+  * [9fed076] MT#4967 Disallow subscriberadmin to change status
+  * [dfe18e5] MT#4967 Do not show password on edit
+  * [f316797] MT#4967 "Unsteal" number on subadmin terminate
+
+  [ Andrew Pogrebennyk ]
+  * [cc9fe6e] MT#3997 MT#5193 Fix build_via_routes with only one external sbc.
+  * [fe118d6] Bump version for backport to 3.0 release. (cherry picked from commit b94d592d2e4932b38af27d86c63fa2ff8ed8096f)
+  * [ddfa9cf] Start changelog for 1.0.20 backport to 3.0.
+  * [ac80ecb] Start changelog for 1.0.21.
+  * [fdce440] Update changelog for 1.0.21.
+  * [76bf4a1] MT#4863 Grant access to Customer Settings for administrative subscribers.
+  * [507397d] Start changelog for 1.1.1.
+  * [679e364] Update changelog for 1.1.1
+  * [86600a6] Start changelog for 1.1.3
+  * [d52049a] MT#3997 MT#5193 Fix build_via_routes with only one external sbc.
+  * [7587e66] MT#5193 MT#5195 Fix "Use of uninitialized value" when external_sbc is empty
+
+  [ Victor Seva ]
+  * [62bcb09] MT#4435 generate just ngcp-panel
+  * [37d5395] MT#4435 try to fix trunk upgrades
+  * [440d32a] MT#4895 drop root privileages
+  * [51a27c8] MT#4895 fix last commit
+  * [b8eaea0] MT#4895 fix last commit
+  * [193ab53] MT#4895 fix last commit
+
+  [ Michael Prokop ]
+  * [47e6925] MT#5215 Add new packages for REST feature to Depends
+  * [6dbb4b5] MT#5215 Add libjson-pointer-perl + libjson-types-perl to Depends
+  * [ffa81f5] MT#5365 Add further packages to (Build-)Depends
+
+ -- Alex Lutay <taurus@taurus-laptop>  Fri, 13 Dec 2013 10:07:58 +0100
+
 ngcp-panel (1.1.6) unstable; urgency=low
 
   * [d23de0e] MT#5009 Fix syntax error.
