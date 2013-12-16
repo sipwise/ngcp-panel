@@ -55,6 +55,29 @@ has_field 'p12.description' => (
     do_label => 0,
 );
 
+has_field 'ca' => (
+    type => 'Compound',
+    label => 'Download CA Certificate',
+    do_label => 1,
+    do_wrapper => 1,
+    wrapper_class => [qw(row)],
+);
+
+has_field 'ca.download' => (
+    type => 'Submit',
+    value => 'Download CA Cert',
+    element_class => [qw(btn btn-tertiary)],
+    do_wrapper => 0,
+    do_label => 0,
+);
+
+has_field 'ca.description' => (
+    type => 'Display',
+    html => '<div class="ngcp-form-desc">The Server Certificate used to sign the above\'s Client Certificates. Needed if you want to verify the server connection in your API client, and the server certificate is not signed by a well-known CA or is self-signed.</div>',
+    do_wrapper => 0,
+    do_label => 0,
+);
+
 
 has_field 'del' => (
     type => 'Compound',
@@ -82,7 +105,7 @@ has_field 'del.description' => (
 has_block 'fields' => (
     tag => 'div',
     class => [qw(modal-body)],
-    render_list => [qw(pem p12 del)],
+    render_list => [qw(pem p12 ca del)],
 );
 
 has_field 'close' => (

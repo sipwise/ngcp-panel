@@ -65,10 +65,11 @@ sub make_pkcs12 {
     return $p12;
 }
 
-__END__
+sub get_server_cert {
+    my ($self, $c) = @_;
 
-=encoding UTF-8
+    my $cert_file = Path::Tiny->new($c->config->{ssl}->{certfile});
+    return $cert_file->slurp;
+}
 
-=head1 NAME
-
-NGCP::Panel::Model::CA - certificate management model
+# vim: set tabstop=4 expandtab

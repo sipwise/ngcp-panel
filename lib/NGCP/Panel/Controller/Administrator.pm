@@ -266,6 +266,14 @@ sub api_key :Chained('base') :PathPart('api_key') :Args(0) {
         ));
         $c->res->body($p12);
         return;
+    } elsif ($c->req->body_parameters->{'ca.download'}) {
+        my $ca_cert = $c->model('CA')->get_server_cert($c);
+        $c->res->headers(HTTP::Headers->new(
+            'Content-Type' => 'application/octet-stream',
+            'Content-Disposition' => sprintf('attachment; filename=%s', "NGCP-API-ca-certificate.pem")
+        ));
+        $c->res->body($ca_cert);
+        return;
     } elsif ($c->req->body_parameters->{'close'}) {
         NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for('/administrator'));
         return;
