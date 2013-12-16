@@ -58,7 +58,8 @@ Build-Depends: debhelper (>= 8),
                libtypes-path-tiny-perl,
                liburi-encode-perl,
                libxml-mini-perl,
-               ngcp-schema
+               ngcp-schema,
+               openssl
 Standards-Version: 3.9.4
 Homepage: http://sipwise.com/
 
@@ -133,6 +134,7 @@ Depends: gnutls-bin,
          libxml-mini-perl,
          ngcp-schema,
          ngcp-templates-ce-ngcp-panel (> 3.0.19) | ngcp-templates-pro-ngcp-panel (> 3.0.19),
+         openssl
          ${misc:Depends},
          ${perl:Depends}
 Description: Catalyst based application
