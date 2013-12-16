@@ -5,22 +5,52 @@ use Moose::Util::TypeConstraints;
 extends 'HTML::FormHandler';
 
 has '+widget_wrapper' => (default => 'Bootstrap');
-sub build_render_list {[qw(actions)]}
+has_field 'submitid' => ( type => 'Hidden' );
+sub build_render_list {[qw/submitid fields actions/]}
+sub build_form_element_class {[qw(form-horizontal)]}
 
-has_field 'key_actions' => (
+has_field 'gen' => (
     type => 'Compound',
-    do_label => 0,
+    label => 'Generate Certificate',
+    do_label => 1,
     do_wrapper => 1,
-    wrapper_class => [qw(row pull-right)],
+    wrapper_class => [qw(row)],
 );
 
-has_field 'key_actions.generate' => (
+has_field 'gen.generate' => (
     type => 'Submit',
     value => 'Generate',
     element_class => [qw(btn btn-primary)],
-    wrapper_class => [qw(pull-right)],
+    do_wrapper => 0,
+    do_label => 0,
 );
 
-has_block 'actions' => (tag => 'div', class => [qw(modal-footer)], render_list => [qw(key_actions)],);
+has_field 'gen.description' => (
+    type => 'Display',
+    html => '<div class="ngcp-form-desc">Generates an X.509 Client Certificate for API Clients (PEM Format) and for Browser Import (PKCS12 Format).</div>',
+    do_wrapper => 0,
+    do_label => 0,
+);
+
+has_block 'fields' => (
+    tag => 'div',
+    class => [qw(modal-body)],
+    render_list => [qw(gen)],
+);
+
+has_field 'close' => (
+    type => 'Submit',
+    do_label => 0,
+    value => 'Close',
+    element_class => [qw(btn btn-tertiary)],
+);
+
+has_block 'actions' => (
+    tag => 'div',
+    class => [qw(modal-footer)],
+    render_list => [qw(close)],
+);
 
 1;
+
+# vim: set tabstop=4 expandtab:

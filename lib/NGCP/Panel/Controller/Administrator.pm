@@ -224,28 +224,50 @@ sub delete :Chained('base') :PathPart('delete') :Args(0) {
 sub api_key :Chained('base') :PathPart('api_key') :Args(0) {
     my ($self, $c) = @_;
     my $serial = $c->stash->{administrator}->ssl_client_m_serial;
-    if ($c->req->body_parameters->{'key_actions.generate'}) {
+    my $cert;
+    if ($c->req->body_parameters->{'gen.generate'}) {
         $serial = time;
+        $cert = $c->model('CA')->make_client($c, $serial);
         my $updated;
         while (!$updated) {
             try {
-                $c->stash->{administrator}->update({ ssl_client_m_serial => $serial });
+                $c->stash->{administrator}->update({ 
+                    ssl_client_m_serial => $serial,
+                    ssl_client_certificate => $cert,
+                });
                 $updated = 1;
             } catch(DBIx::Class::Exception $e where { "$_" =~ qr'Duplicate entry' }) {
                 $serial++;
             };
         }
-        $c->model('CA')->make_client($serial);
-    } elsif ($c->req->body_parameters->{'key_actions.delete'}) {
+    } elsif ($c->req->body_parameters->{'del.delete'}) {
         undef $serial;
-        $c->stash->{administrator}->update({ ssl_client_m_serial => $serial });
-    } elsif ($c->req->body_parameters->{'key_actions.download'}) {
-        my $cert_file = $c->model('CA')->client_cert_file($serial);
+        undef $cert;
+        $c->stash->{administrator}->update({ 
+            ssl_client_m_serial => $serial,
+            ssl_client_certificate => $cert,
+        });
+    } elsif ($c->req->body_parameters->{'pem.download'}) {
+        $cert = $c->stash->{administrator}->ssl_client_certificate;
+        $serial = $c->stash->{administrator}->ssl_client_m_serial; 
         $c->res->headers(HTTP::Headers->new(
             'Content-Type' => 'application/octet-stream',
-            'Content-Disposition' => sprintf('attachment; filename=%s', $cert_file->basename)
+            'Content-Disposition' => sprintf('attachment; filename=%s', "NGCP-API-client-certificate-$serial.pem")
         ));
-        $c->res->body($cert_file->openr);
+        $c->res->body($cert);
+        return;
+    } elsif ($c->req->body_parameters->{'p12.download'}) {
+        $cert = $c->stash->{administrator}->ssl_client_certificate;
+        $serial = $c->stash->{administrator}->ssl_client_m_serial;
+        my $p12 = $c->model('CA')->make_pkcs12($c, $serial, $cert, 'sipwise');
+        $c->res->headers(HTTP::Headers->new(
+            'Content-Type' => 'application/octet-stream',
+            'Content-Disposition' => sprintf('attachment; filename=%s', "NGCP-API-client-certificate-$serial.p12")
+        ));
+        $c->res->body($p12);
+        return;
+    } elsif ($c->req->body_parameters->{'close'}) {
+        NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for('/administrator'));
         return;
     }
     my $form;
