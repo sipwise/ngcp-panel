@@ -1,12 +1,8 @@
 package NGCP::Panel::Controller::Root;
 use Sipwise::Base;
 BEGIN { extends 'Catalyst::Controller' }
-use Carp qw(longmess);
-use Convert::Ascii85 qw();
-use Data::Dumper qw(Dumper);
 use DateTime qw();
 use DateTime::Format::RFC3339 qw();
-use IO::Compress::Xz qw(xz);
 use NGCP::Panel::Widget;
 use Scalar::Util qw(blessed);
 use Time::HiRes qw();
@@ -147,23 +143,7 @@ sub end :Private {
         my $incident = DateTime->from_epoch(epoch => Time::HiRes::time);
         my $incident_id = sprintf '%X', $incident->strftime('%s%N');
         my $incident_timestamp = DateTime::Format::RFC3339->new->format_datetime($incident);
-        my $crash_state;
-        $c->log->error(join(q(), @{ $c->error }));
-        if ($c->config->{log_crash_state}) {
-            local $Data::Dumper::Indent = 1;
-            local $Data::Dumper::Useqq = 1;
-            local $Data::Dumper::Deparse = 1;
-            local $Data::Dumper::Quotekeys = 0;
-            local $Data::Dumper::Sortkeys = 1;
-            my $buffer;
-            xz(\(join(q(), @{ $c->error }) . longmess . Dumper($c) . Dumper($c->config)), \$buffer);
-            $crash_state = Convert::Ascii85::encode($buffer);
-            $crash_state =~ s/(.{80})/$1\n/g;
-        }
-        $c->log->error(
-            "Exception id $incident_id at $incident_timestamp crash_state:" .
-            ($crash_state ? ("\n" . $crash_state) : ' disabled')
-        );
+        $c->log->error("fatal error, id=$incident_id, timestamp=$incident_timestamp, error=".join(q(), @{ $c->error }));
         $c->clear_errors;
         $c->stash(
             exception_incident => $incident_id,

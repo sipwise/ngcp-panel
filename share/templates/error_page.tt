@@ -4,32 +4,24 @@
 		
 		<div class="error-container">
 			
-			<h1>Oops!</h1>
+			<h1>Sorry!</h1>
 			
 			<h2>[% c.response.status %] Internal server error </h2>
 			
 			<div class="error-details">
-				<p>Sorry, an exceptional error has occured:</p>
-				<ul>
-				<li>incident number: [% exception_incident %]</li>
-				<li>time of incident: [% exception_timestamp %]</li>
-				</ul>
+				<p>We are terribly sorry, an exceptional error has occured:</p>
+				<div><strong>incident number:</strong> [% exception_incident %]</div>
+				<div><strong>time of incident:</strong> [% exception_timestamp %]</div>
+				<br/>
 				<p>Details have been logged on the server. If you want to report the error,
 				describe what you were doing or attempting to do just before.</p>
 			</div> <!-- /error-details -->
 			
 			<div class="error-actions">
-				<a href="[% c.uri_for('/back') %]" class="btn btn-large btn-primary">
-					<i class="icon-chevron-left"></i>
-					&nbsp;
-					Back to Dashboard						
-				</a>
-				
-				<a href="mailto:[% c.config.contact.email %]" class="btn btn-large">
-					<i class="icon-envelope"></i>
-					&nbsp;
-					Contact Support						
-				</a>
+				<a href="[% c.uri_for('/back') %]" class="btn btn-large btn-primary ngcp-error-button">
+					<i class="icon-chevron-left"></i> Back to Dashboard</a> 
+				<a href="mailto:[% c.config.contact.email %]?subject=NGCP-Panel Incident [% exception_incident %]" class="btn btn-large ngcp-error-button">
+					<i class="icon-envelope"></i> Contact Support</a>
 				
 			</div> <!-- /error-actions -->
 						
