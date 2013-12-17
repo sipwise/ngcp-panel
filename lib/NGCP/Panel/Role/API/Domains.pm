@@ -7,6 +7,7 @@ use Try::Tiny;
 use Data::HAL qw();
 use Data::HAL::Link qw();
 use HTTP::Status qw(:constants);
+use JSON::Types;
 use NGCP::Panel::Form::Domain::Admin qw();
 use NGCP::Panel::Form::Domain::Reseller qw();
 use NGCP::Panel::Utils::XMLDispatcher;
@@ -37,6 +38,8 @@ sub hal_from_item {
             Data::HAL::Link->new(relation => 'collection', href => sprintf("/api/%s/", $self->resource_name)),
             Data::HAL::Link->new(relation => 'profile', href => 'http://purl.org/sipwise/ngcp-api/'),
             Data::HAL::Link->new(relation => 'self', href => sprintf("%s%d", $self->dispatch_path, $item->id)),
+            #( map { $_->attribute->internal ? () : Data::HAL::Link->new(relation => 'ngcp:domainpreferences', href => sprintf("/api/domainpreferences/%d", $_->id), name => $_->attribute->attribute) } $item->provisioning_voip_domain->voip_dom_preferences->all ),
+            Data::HAL::Link->new(relation => 'ngcp:domainpreferences', href => sprintf("/api/domainpreferences/%d", $item->id)),
         ],
         relation => 'ngcp:'.$self->resource_name,
     );
@@ -51,6 +54,42 @@ sub hal_from_item {
     );
 
     $resource{id} = int($item->id);
+
+=pod
+    # TODO: do we really want to provide this info, as you can't actually
+    # PUT/PATCH/POST it? Or should you?
+    $resource{preferences} = {};
+    foreach my $pref($item->provisioning_voip_domain->voip_dom_preferences->all) {
+        next if($pref->attribute->internal);
+        my $plain = { "boolean" => 1, "int" => 1, "string" => 1 };
+        if(exists $plain->{$pref->attribute->data_type}) {
+            # plain key/value pairs
+            my $value;
+            given($pref->attribute->data_type) {
+                when("int")     { $value = int($pref->value) }
+                when("boolean") { $value = JSON::Types::bool($pref->value) }
+                default         { $value = $pref->value }
+            }
+            if($pref->attribute->max_occur <= 1) {
+                $resource{preferences}{$pref->attribute->attribute} = $value;
+            } else {
+                $resource{preferences}{$pref->attribute->attribute} = []
+                    unless(exists $resource{preferences}{$pref->attribute->attribute});
+                push @{ $resource{preferences}{$pref->attribute->attribute} }, $value;
+            }
+        } else {
+            # enum mappings
+            my $value;
+            given($pref->attribute->data_type) {
+                when("int")     { $value = int($pref->value) }
+                when("boolean") { $value = JSON::Types::bool($pref->value) }
+                default         { $value = $pref->value }
+            }
+            $resource{preferences}{$pref->attribute->attribute} = $value;
+        }
+    }
+=cut    
+    
     $hal->resource({%resource});
     return $hal;
 }

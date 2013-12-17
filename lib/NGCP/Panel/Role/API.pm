@@ -2,12 +2,13 @@ package NGCP::Panel::Role::API;
 use Moose::Role;
 use Sipwise::Base;
 
+use Storable qw();
 use JSON qw();
 use JSON::Pointer;
 use JSON::Types qw(bool);
 use HTTP::Status qw(:constants);
 use Safe::Isa qw($_isa);
-use Try::Tiny;
+use TryCatch;
 use DateTime::Format::HTTP qw();
 use DateTime::Format::RFC3339 qw();
 use Types::Standard qw(InstanceOf);
@@ -55,6 +56,7 @@ sub get_valid_patch_data {
     my $c = $params{c};
     my $media_type = $params{media_type};
     my $id = $params{id};
+    my $ops = $params{ops} // [qw/replace copy/];
 
     return unless $self->valid_id($c, $id);
     return unless $self->forbid_link_header($c);
@@ -62,7 +64,7 @@ sub get_valid_patch_data {
     return unless $self->require_body($c);
     my $json =  $c->stash->{body};
     return unless $self->require_wellformed_json($c, $media_type, $json);
-    return unless $self->require_valid_patch($c, $json);
+    return unless $self->require_valid_patch($c, $json, $ops);
 
     return $json;
 }
@@ -203,9 +205,9 @@ sub require_wellformed_json {
     try {
         NGCP::Panel::Utils::ValidateJSON->new($patch);
         $ret = 1;
-    } catch {
-        $self->error($c, HTTP_BAD_REQUEST, "The entity is not a well-formed '$media_type' document. $_");
-    };
+    } catch($e) {
+        $self->error($c, HTTP_BAD_REQUEST, "The entity is not a well-formed '$media_type' document. $e");
+    }
     return $ret;
 }
 
@@ -268,18 +270,21 @@ sub valid_id {
 }
 
 sub require_valid_patch {
-    my ($self, $c, $json) = @_;
+    my ($self, $c, $json, $ops) = @_;
 
     my $valid_ops = { 
         'replace' => { 'path' => 1, 'value' => 1 },
         'copy' => { 'from' => 1, 'path' => 1 },
-        # we don't support those, as they're quite useless in our case
-        # TODO: maybe except for remove, which might set it to null?
-        #'test' => { 'path' => 1, 'value' => 1 },
-        #'move' => { 'from' => 1, 'path' => 1 },
-        #'remove' => { 'path' => 1 },
-        #'add' => { 'path' => 1, 'value' => 1 },
+        'remove' => { 'path' => 1 },
+        'add' => { 'path' => 1, 'value' => 1 },
+        'test' => { 'path' => 1, 'value' => 1 },
+        'move' => { 'from' => 1, 'path' => 1 },
     };
+    for my $o(keys %{ $valid_ops }) {
+        unless(grep { /^$o$/ } @{ $ops }) {
+            delete $valid_ops->{$o}
+        }
+    }
 
     my $patch = JSON::from_json($json);
     unless(ref $patch eq "ARRAY") {
@@ -299,8 +304,8 @@ sub require_valid_patch {
             $self->error($c, HTTP_BAD_REQUEST, "Invalid PATCH op '$elem->{op}', must be one of " . (join(', ', map { "'".$_."'" } keys %{ $valid_ops }) ));
             return;
         }
-        my $tmpelem = { %{ $elem } };
-        my $tmpops = { %{ $valid_ops } };
+        my $tmpelem = Storable::dclone($elem);
+        my $tmpops = Storable::dclone($valid_ops);
         my $op = delete $tmpelem->{op};
         foreach my $k(keys %{ $tmpelem }) {
             unless(exists $tmpops->{$op}->{$k}) {
@@ -329,10 +334,10 @@ sub resource_exists {
 sub apply_patch {
     my ($self, $c, $entity, $json) = @_;
     my $patch = JSON::decode_json($json);
-    for my $op (@{ $patch }) {
-        my $coderef = JSON::Pointer->can($op->{op});
-        die "invalid op '".$op->{op}."' despite schema validation" unless $coderef;
-        try {
+    try {
+        for my $op (@{ $patch }) {
+            my $coderef = JSON::Pointer->can($op->{op});
+            die "invalid op '".$op->{op}."' despite schema validation" unless $coderef;
             for ($op->{op}) {
                 if ('add' eq $_ or 'replace' eq $_) {
                     $entity = $coderef->('JSON::Pointer', $entity, $op->{path}, $op->{value});
@@ -345,10 +350,10 @@ sub apply_patch {
                         unless $coderef->('JSON::Pointer', $entity, $op->{path}, $op->{value});
                 }
             }
-        } catch {
-            $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "The entity could not be processed: $_");
-            return;
-        };
+        }
+    } catch($e) {
+        $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "The entity could not be processed: $e");
+        return;
     }
     return $entity;
 }

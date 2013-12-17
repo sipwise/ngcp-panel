@@ -454,10 +454,11 @@ sub get_dom_preference_rs {
 
     my $preference = $c->model('DB')->resultset('voip_preferences')->find({
             attribute => $attribute, 'dom_pref' => 1,
-        })->voip_dom_preferences->search_rs({
+        });
+    return unless($preference);
+    return $preference->voip_dom_preferences->search_rs({
             domain_id => $prov_domain->id,
         });
-    return $preference;
 }
 
 sub get_peer_auth_params {
