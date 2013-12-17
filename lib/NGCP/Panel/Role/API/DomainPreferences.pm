@@ -49,7 +49,6 @@ sub get_resource {
     my ($self, $c, $item) = @_;
 
     my $prefs = $item->provisioning_voip_domain->voip_dom_preferences->search({
-        'attribute.internal' => 0,
     }, {
         join => 'attribute'
     });
@@ -57,6 +56,76 @@ sub get_resource {
     my $resource;
     foreach my $pref($prefs->all) {
         my $value;
+
+        given($pref->attribute->attribute) {
+            $c->log->debug("+++++++++++++ checking preference ".$pref->attribute->attribute);
+            when(/^rewrite_calle[re]_(in|out)_dpid$/) {
+                next if(exists $resource->{rewrite_rule_set});
+                my $col = $pref->attribute->attribute;
+                $col =~ s/^rewrite_//;
+                my $rwr_set = $c->model('DB')->resultset('voip_rewrite_rule_sets')->find({
+                    $col => $pref->value,
+                });
+                if($rwr_set) {
+                    $resource->{rewrite_rule_set} = $rwr_set->name;
+                } else {
+                    $c->log->error("no rewrite rule set for '".$pref->attribute->attribute."' with value '".$pref->value."' found, altough it's stored in preference id ".$pref->id);
+                    # let it slip through
+                }
+                next;
+                # TODO: HAL link to rewrite rule set? Also/instead set id?
+            }
+
+            when(/^(adm_)?ncos_id$/) {
+                my $pref_name = $pref->attribute->attribute;
+                $pref_name =~ s/_id$//;
+                my $ncos = $c->model('DB')->resultset('ncos_levels')->find({
+                    id => $pref->value,
+                });
+                if($ncos) {
+                    $resource->{$pref_name} = $ncos->level;
+                } else {
+                    $c->log->error("no ncos level for '".$pref->attribute->attribute."' with value '".$pref->value."' found, altough it's stored in preference id ".$pref->id);
+                    # let it slip through
+                }
+                next;
+                # TODO: HAL link to rewrite rule set? Also/instead set id?
+            }
+
+            when(/^(adm_)?sound_set$/) {
+                my $set = $c->model('DB')->resultset('voip_sound_sets')->find({
+                    id => $pref->value,
+                });
+                if($set) {
+                    $resource->{$pref->attribute->attribute} = $set->name;
+                } else {
+                    $c->log->error("no sound set for '".$pref->attribute->attribute."' with value '".$pref->value."' found, altough it's stored in preference id ".$pref->id);
+                    # let it slip through
+                }
+                next;
+                # TODO: HAL link to rewrite rule set? Also/instead set id?
+            }
+
+            when(/^(man_)?allowed_ips_grp$/) {
+                my $pref_name = $pref->attribute->attribute;
+                $pref_name =~ s/_grp$//;
+                my $sets = $c->model('DB')->resultset('voip_allowed_ip_groups')->search({
+                    group_id => $pref->value,
+                });
+                foreach my $set($sets->all) {
+                    $resource->{$pref_name} = []
+                        unless exists($resource->{$pref_name});
+                    push @{ $resource->{$pref_name} }, $set->ipnet;
+                }
+                next;
+            }
+
+            default { next if $pref->attribute->internal != 0 }
+
+        }
+
+
+
         given($pref->attribute->data_type) {
             when("int")     { $value = int($pref->value) if($pref->value->is_int) }
             when("boolean") { $value = JSON::Types::bool($pref->value) if(defined $pref->value) }
@@ -69,6 +138,7 @@ sub get_resource {
         } else {
             $resource->{$pref->attribute->attribute} = $value;
         }
+
     }
     $resource->{domain_id} = int($item->id);
     $resource->{domainpreferences_id} = int($item->id);
@@ -160,6 +230,7 @@ sub update_item {
         }
 
         # TODO: special handling for different prefs (sound set, rewrite rule etc)
+        # TODO: check for valid enum values below!
 
         try {
             my $vtype = ref $resource->{$pref};
@@ -196,6 +267,7 @@ sub update_item {
     return $item;
 }
 
+# TODO: check for valid ENUM values!
 sub check_pref_value {
     my ($self, $c, $meta, $value) = @_;
     my $err;
