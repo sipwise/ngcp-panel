@@ -132,6 +132,7 @@ sub update_item {
     }
 
     foreach my $pref(keys %{ $resource }) {
+        next unless(defined $resource->{$pref});
         my $rs = NGCP::Panel::Utils::Preferences::get_dom_preference_rs(
             c => $c,
             attribute => $pref,
