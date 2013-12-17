@@ -70,7 +70,7 @@ sub hal_from_item {
                 when("boolean") { $value = JSON::Types::bool($pref->value) }
                 default         { $value = $pref->value }
             }
-            if($pref->attribute->max_occur <= 1) {
+            if($pref->attribute->max_occur != 1) {
                 $resource{preferences}{$pref->attribute->attribute} = $value;
             } else {
                 $resource{preferences}{$pref->attribute->attribute} = []

@@ -62,7 +62,13 @@ sub get_resource {
             when("boolean") { $value = JSON::Types::bool($pref->value) if(defined $pref->value) }
             default         { $value = $pref->value }
         }
-        $resource->{$pref->attribute->attribute} = $value;
+        if($pref->attribute->max_occur != 1) {
+            $resource->{$pref->attribute->attribute} = []
+                unless(exists $resource->{$pref->attribute->attribute});
+            push @{ $resource->{$pref->attribute->attribute} }, $value;
+        } else {
+            $resource->{$pref->attribute->attribute} = $value;
+        }
     }
     $resource->{domain_id} = int($item->id);
     $resource->{domainpreferences_id} = int($item->id);
@@ -121,7 +127,7 @@ sub update_item {
                         prov_domain => $item->provisioning_voip_domain,
                     );
                     next unless $rs; # unknown resource, just ignore
-                    $rs->first->delete if($rs->first);
+                    $rs->delete_all;
                 }
             }
         } catch($e) {
@@ -143,24 +149,77 @@ sub update_item {
             next;
         }
 
-        # TODO: special handling for different prefs, but otherwise:
+        # TODO: can't we get this via $rs->search_related or $rs->related_resultset?
+        my $meta = $c->model('DB')->resultset('voip_preferences')->find({
+            attribute => $pref, 'dom_pref' => 1,
+        });
+        unless($meta) {
+            $c->log->error("failed to get voip_preference entry for '$pref'");
+            $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "Internal Server Error.");
+            return;
+        }
 
-        # TODO: syntax checks?
+        # TODO: special handling for different prefs (sound set, rewrite rule etc)
 
         try {
-            if($rs->first) {
+            my $vtype = ref $resource->{$pref};
+            if($meta->max_occur == 1 && $vtype ne "") {
+                $c->log->error("preference '$pref' has max_occur '".$meta->max_occur."', but value got passed in as '$vtype', expected flat value");
+                $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Invalid data type '$vtype' for preference '$pref', expected flat value");
+                return;
+            } elsif($meta->max_occur != 1 && $vtype ne "ARRAY") {
+                $c->log->error("preference '$pref' has max_occur '".$meta->max_occur."', but value got passed in as '$vtype', expected ARRAY");
+                $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Invalid data type '$vtype' for preference '$pref', expected ARRAY");
+                return;
+            }
+
+            if($meta->max_occur != 1) {
+                $rs->delete_all;
+                foreach my $v(@{ $resource->{$pref} }) {
+                    return unless $self->check_pref_value($c, $meta, $v);
+                    $rs->create({ value => $v });
+                }
+            } elsif($rs->first) {
+                return unless $self->check_pref_value($c, $meta, $resource->{$pref});
                 $rs->first->update({ value => $resource->{$pref} });
             } else {
+                return unless $self->check_pref_value($c, $meta, $resource->{$pref});
                 $rs->create({ value => $resource->{$pref} });
             }
         } catch($e) {
             $c->log->error("failed to update preference for domain '".$item->domain."': $e");
             $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "Internal Server Error.");
             return;
-        };
+        }
     }
 
     return $item;
+}
+
+sub check_pref_value {
+    my ($self, $c, $meta, $value) = @_;
+    my $err;
+
+    my $vtype = ref $value;
+    unless($vtype eq "") {
+        $c->log->error("preference '".$meta->attribute."' has invalid value data structure, expected plain value");
+        $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Invalid data structure as value for element in preference '".$meta->attribute."', expected plain value");
+        return;
+    }
+
+
+    given($meta->data_type) {
+        when("int") { $err = 1 unless $value->is_int }
+        when("boolean") { $err = 1 unless JSON::is_bool($value) }
+    }
+
+    if($err) {
+        $c->log->error("preference '".$meta->attribute."' has invalid value data type, expected '".$meta->data_type."'");
+        $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Invalid data type for element in preference '".$meta->attribute."', expected '".$meta->data_type."'");
+        return;
+    }
+
+    return 1;
 }
 
 1;
