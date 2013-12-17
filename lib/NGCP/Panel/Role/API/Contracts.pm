@@ -3,7 +3,7 @@ use Moose::Role;
 use Sipwise::Base;
 
 use boolean qw(true);
-use Try::Tiny;
+use TryCatch;
 use Data::HAL qw();
 use Data::HAL::Link qw();
 use HTTP::Status qw(:constants);
@@ -30,8 +30,8 @@ sub hal_from_contract {
                 profile => $billing_mapping->billing_profile,
                 contract => $contract,
             );
-        } catch {
-            $self->log->error("Failed to create current contract balance for contract id '".$contract->id."': $_");
+        } catch($e) {
+            $self->log->error("Failed to create current contract balance for contract id '".$contract->id."': $e");
             $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "Internal Server Error.");
             return;
         }
