@@ -319,9 +319,7 @@ sub create_preference_form {
             if( ($c->stash->{preference_meta}->data_type ne 'enum' &&
                 $form->field($attribute)->value eq '') ||
                 ($c->stash->{preference_meta}->data_type eq 'enum' &&
-                $c->stash->{preference_meta}->voip_preferences_enums->find({
-                    value => $form->field($attribute)->value
-                })->default_val == 1)
+                ! defined $form->field($attribute)->value)
                 ) {
                 my $preference = $pref_rs->find($preference_id);
                 $preference->delete if $preference;
