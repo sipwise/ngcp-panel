@@ -9,6 +9,7 @@ my $d = Test::WebDriver::Sipwise->new (browser_name => $browsername,
 my $uri = $ENV{CATALYST_SERVER} || 'http://localhost:3000';
 $d->get_ok("$uri/logout"); #make sure we are logged out
 $d->get_ok("$uri/login");
+$d->set_implicit_wait_timeout(10000);
 
 diag("Do Admin Login");
 $d->find(link_text => 'Admin')->click;
