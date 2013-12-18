@@ -36,6 +36,9 @@ $d->fill_element_ok([css => '#contactidtable_filter input', 'default-customer'])
 $d->select_if_unselected_ok(xpath => '//table[@id="contactidtable"]/tbody/tr[1]/td[contains(text(),"default-customer")]/..//input[@type="checkbox"]');
 $d->fill_element_ok([css => '#billing_profileidtable_filter input', 'Default Billing Profile']);
 $d->select_if_unselected_ok(xpath => '//table[@id="billing_profileidtable"]/tbody/tr[1]/td[contains(text(),"Default Billing Profile")]/..//input[@type="checkbox"]');
+eval { #lets only try this
+    $d->select_if_unselected(xpath => '//table[@id="productidtable"]/tbody/tr[1]/td[contains(text(),"Basic SIP Account")]/..//input[@type="checkbox"]');
+};
 $d->fill_element_ok([id => 'external_id', $rnd_id]);
 $d->findclick_ok(id => 'save');
 
