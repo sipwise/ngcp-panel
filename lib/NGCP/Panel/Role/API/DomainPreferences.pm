@@ -194,14 +194,63 @@ sub update_item {
         # in case of PATCH, we remove only those entries marked for removal in the patch
         try {
             foreach my $k(keys %{ $old_resource }) {
-                unless(exists $resource->{$k}) {
-                    my $rs = NGCP::Panel::Utils::Preferences::get_dom_preference_rs(
-                        c => $c,
-                        attribute => $k,
-                        prov_domain => $item->provisioning_voip_domain,
-                    );
-                    next unless $rs; # unknown resource, just ignore
-                    $rs->delete_all;
+                given($k) {
+
+                    # no special treatment for *_sound_set deletion, as id is stored in right name
+
+                    when(/^rewrite_rule_set$/) {
+                        $c->log->debug("+++++++++++++ check $k for deletion");
+                        unless(exists $resource->{$k}) {
+                            $c->log->debug("+++++++++++++ $k marked for deletion");
+                            foreach my $p(qw/caller_in_dpid callee_in_dpid caller_out_dpid callee_out_dpid/) {
+                                my $rs = NGCP::Panel::Utils::Preferences::get_dom_preference_rs(
+                                    c => $c,
+                                    attribute => 'rewrite_' . $p,
+                                    prov_domain => $item->provisioning_voip_domain,
+                                );
+                                next unless $rs; # unknown resource, just ignore
+                                $rs->delete_all;
+                            }
+                        }
+                    }
+                    when(/^(adm_)?ncos$/) {
+                        unless(exists $resource->{$k}) {
+                            my $rs = NGCP::Panel::Utils::Preferences::get_dom_preference_rs(
+                                c => $c,
+                                attribute => $k . '_id',
+                                prov_domain => $item->provisioning_voip_domain,
+                            );
+                            next unless $rs; # unknown resource, just ignore
+                            $rs->delete_all;
+                        }
+                    }
+                    when(/^(man_)?allowed_ips$/) {
+                        unless(exists $resource->{$k}) {
+                            my $rs = NGCP::Panel::Utils::Preferences::get_dom_preference_rs(
+                                c => $c,
+                                attribute => $k . '_grp',
+                                prov_domain => $item->provisioning_voip_domain,
+                            );
+                            next unless $rs; # unknown resource, just ignore
+                            if($rs->first) {
+                                $c->model('DB')->resultset('voip_allowed_ip_groups')->search({
+                                    group_id => $rs->first->value,
+                                })->delete_all;
+                            }
+                            $rs->delete_all;
+                        }
+                    }
+                    default {
+                        unless(exists $resource->{$k}) {
+                            my $rs = NGCP::Panel::Utils::Preferences::get_dom_preference_rs(
+                                c => $c,
+                                attribute => $k,
+                                prov_domain => $item->provisioning_voip_domain,
+                            );
+                            next unless $rs; # unknown resource, just ignore
+                            $rs->delete_all;
+                        }
+                    }
                 }
             }
 
