@@ -50,7 +50,8 @@ sub get_resource {
 
     my $prefs = $item->provisioning_voip_domain->voip_dom_preferences->search({
     }, {
-        join => 'attribute'
+        join => 'attribute',
+        order_by => { '-asc' => 'id' },
     });
 
     my $resource;
@@ -92,7 +93,8 @@ sub get_resource {
                 # TODO: HAL link to rewrite rule set? Also/instead set id?
             }
 
-            when(/^(adm_)?sound_set$/) {
+            when(/^(contract_)?sound_set$/) {
+                # TODO: not applicable for domains, but for subs, check for contract_id!
                 my $set = $c->model('DB')->resultset('voip_sound_sets')->find({
                     id => $pref->value,
                 });
@@ -111,6 +113,8 @@ sub get_resource {
                 $pref_name =~ s/_grp$//;
                 my $sets = $c->model('DB')->resultset('voip_allowed_ip_groups')->search({
                     group_id => $pref->value,
+                }, {
+                    order_by => { -asc => 'id' },
                 });
                 foreach my $set($sets->all) {
                     $resource->{$pref_name} = []
@@ -200,6 +204,9 @@ sub update_item {
                     $rs->delete_all;
                 }
             }
+
+            # TODO: also go over special cases (rewrite_rule_set) and delete them
+            # if not available in $resource
         } catch($e) {
             $c->log->error("failed to clear preference for domain '".$item->domain."': $e");
             $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "Internal Server Error.");
@@ -218,6 +225,9 @@ sub update_item {
             $c->log->debug("removing unknown dom_preference '$pref' from update");
             next;
         }
+        $rs = $rs->search(undef, {
+            order_by => { '-asc' => 'id' },
+        });
 
         # TODO: can't we get this via $rs->search_related or $rs->related_resultset?
         my $meta = $c->model('DB')->resultset('voip_preferences')->find({
@@ -228,9 +238,6 @@ sub update_item {
             $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "Internal Server Error.");
             return;
         }
-
-        # TODO: special handling for different prefs (sound set, rewrite rule etc)
-        # TODO: check for valid enum values below!
 
         try {
             my $vtype = ref $resource->{$pref};
@@ -244,18 +251,137 @@ sub update_item {
                 return;
             }
 
-            if($meta->max_occur != 1) {
-                $rs->delete_all;
-                foreach my $v(@{ $resource->{$pref} }) {
-                    return unless $self->check_pref_value($c, $meta, $v);
-                    $rs->create({ value => $v });
+            given($pref) {
+                $c->log->debug("+++++++++++++ checking preference $pref for update");
+                when(/^rewrite_rule_set$/) {
+
+                    my $rwr_set = $c->model('DB')->resultset('voip_rewrite_rule_sets')->find({
+                        name => $resource->{$pref},
+                        reseller_id => $item->domain_resellers->first->reseller_id,
+                    });
+                    
+                    unless($rwr_set) {
+                        $c->log->error("no rewrite rule set '".$resource->{$pref}."' for reseller id ".$item->domain_resellers->first->reseller_id." found");
+                        $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Unknown rewrite_rule_set '".$resource->{$pref}."'");
+                        return;
+                    }
+
+                    foreach my $k(qw/caller_in_dpid callee_in_dpid caller_out_dpid callee_out_dpid/) {
+                        my $rs = NGCP::Panel::Utils::Preferences::get_dom_preference_rs(
+                            c => $c,
+                            attribute => 'rewrite_'.$k,
+                            prov_domain => $item->provisioning_voip_domain,
+                        );
+                        if($rs->first) {
+                            $rs->first->update({ value => $rwr_set->$k });
+                        } else {
+                            $rs->create({ value => $rwr_set->$k });
+                        }
+                    }
                 }
-            } elsif($rs->first) {
-                return unless $self->check_pref_value($c, $meta, $resource->{$pref});
-                $rs->first->update({ value => $resource->{$pref} });
-            } else {
-                return unless $self->check_pref_value($c, $meta, $resource->{$pref});
-                $rs->create({ value => $resource->{$pref} });
+
+                when(/^(adm_)?ncos$/) {
+                    my $pref_name = $pref . "_id";
+                    my $ncos = $c->model('DB')->resultset('ncos_levels')->find({
+                        level => $resource->{$pref},
+                        reseller_id => $item->domain_resellers->first->reseller_id,
+                    });
+                    unless($ncos) {
+                        $c->log->error("no ncos level '".$resource->{$pref}."' for reseller id ".$item->domain_resellers->first->reseller_id." found");
+                        $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Unknown ncos_level '".$resource->{$pref}."'");
+                        return;
+                    }
+                    my $rs = NGCP::Panel::Utils::Preferences::get_dom_preference_rs(
+                        c => $c,
+                        attribute => $pref_name,
+                        prov_domain => $item->provisioning_voip_domain,
+                    );
+                    if($rs->first) {
+                        $rs->first->update({ value => $ncos->id });
+                    } else {
+                        $rs->create({ value => $ncos->id });
+                    }
+                }
+
+                when(/^(contract_)?sound_set$/) {
+                    # TODO: not applicable for domains, but for subs, check for contract_id!
+                    my $set = $c->model('DB')->resultset('voip_sound_sets')->find({
+                        name => $resource->{$pref},
+                        reseller_id => $item->domain_resellers->first->reseller_id,
+                    });
+                    unless($set) {
+                        $c->log->error("no $pref '".$resource->{$pref}."' for reseller id ".$item->domain_resellers->first->reseller_id." found");
+                        $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Unknown $pref'".$resource->{$pref}."'");
+                        return;
+                    }
+                    my $rs = NGCP::Panel::Utils::Preferences::get_dom_preference_rs(
+                        c => $c,
+                        attribute => $pref,
+                        prov_domain => $item->provisioning_voip_domain,
+                    );
+                    if($rs->first) {
+                        $rs->first->update({ value => $set->id });
+                    } else {
+                        $rs->create({ value => $set->id });
+                    }
+                }
+
+                when(/^(man_)?allowed_ips$/) {
+                    my $pref_name = $pref . "_grp";
+                    my $aig_rs;
+                    my $seq;
+                    my $rs = NGCP::Panel::Utils::Preferences::get_dom_preference_rs(
+                        c => $c,
+                        attribute => $pref_name,
+                        prov_domain => $item->provisioning_voip_domain,
+                    );
+                    if($rs->first) {
+                        $aig_rs = $c->model('DB')->resultset('voip_allowed_ip_groups')->search({
+                            group_id => $rs->first->value
+                        });
+                        $aig_rs->delete_all;
+                    } else {
+                        my $aig_seq = $c->model('DB')->resultset('voip_aig_sequence')->search({},{
+                            for => 'update',
+                        });
+                        unless($aig_seq->first) {
+                            $seq = 1;
+                            $aig_seq->create({ id => $seq });
+                        } else {
+                            $seq = $aig_seq->first->id + 1;
+                            $aig_seq->first->update({ id => $seq });
+                        }
+                        $aig_rs = $c->model('DB')->resultset('voip_allowed_ip_groups')->search({
+                            group_id => $seq
+                        });
+                    }
+
+                    foreach my $ip(@{ $resource->{$pref} }) {
+                        # TODO: check for valid ipv4/v6
+                        $aig_rs->create({ ipnet => $ip });
+                    }
+
+                    unless($rs->first) {
+                        $rs->create({ value => $seq });
+                    }
+                }
+
+                default {
+
+                    if($meta->max_occur != 1) {
+                        $rs->delete_all;
+                        foreach my $v(@{ $resource->{$pref} }) {
+                            return unless $self->check_pref_value($c, $meta, $v);
+                            $rs->create({ value => $v });
+                        }
+                    } elsif($rs->first) {
+                        return unless $self->check_pref_value($c, $meta, $resource->{$pref});
+                        $rs->first->update({ value => $resource->{$pref} });
+                    } else {
+                        return unless $self->check_pref_value($c, $meta, $resource->{$pref});
+                        $rs->create({ value => $resource->{$pref} });
+                    }
+                }
             }
         } catch($e) {
             $c->log->error("failed to update preference for domain '".$item->domain."': $e");
@@ -267,7 +393,6 @@ sub update_item {
     return $item;
 }
 
-# TODO: check for valid ENUM values!
 sub check_pref_value {
     my ($self, $c, $meta, $value) = @_;
     my $err;
@@ -279,16 +404,27 @@ sub check_pref_value {
         return;
     }
 
-
     given($meta->data_type) {
         when("int") { $err = 1 unless $value->is_int }
         when("boolean") { $err = 1 unless JSON::is_bool($value) }
     }
-
     if($err) {
         $c->log->error("preference '".$meta->attribute."' has invalid value data type, expected '".$meta->data_type."'");
         $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Invalid data type for element in preference '".$meta->attribute."', expected '".$meta->data_type."'");
         return;
+    }
+
+    if($meta->data_type eq "enum") {
+        my $enum = $c->model('DB')->resultset('voip_preferences_enum')->find({
+            preference_id => $meta->id,
+            dom_pref => 1,
+            value => $value,
+        });
+        unless($enum) {
+            $c->log->error("preference '".$meta->attribute."' has invalid enum value '".$value."'");
+            $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Invalid enum value in preference '".$meta->attribute."'");
+            return;
+        }
     }
 
     return 1;
