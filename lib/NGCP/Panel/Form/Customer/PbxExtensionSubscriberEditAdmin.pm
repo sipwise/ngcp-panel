@@ -6,19 +6,6 @@ extends 'NGCP::Panel::Form::Customer::PbxExtensionSubscriberEdit';
 
 with 'NGCP::Panel::Render::RepeatableJs';
 
-has_field 'extension' => (
-    required => 0,
-);
-
-has_field 'e164' => (
-    type => '+NGCP::Panel::Field::E164',
-    order => 99,
-    required => 0,
-    label => 'E164 Number',
-    do_label => 1,
-    do_wrapper => 1,
-);
-
 has_field 'alias_number' => (
     type => '+NGCP::Panel::Field::AliasNumber',
     setup_for_js => 1,
@@ -40,7 +27,7 @@ has_field 'alias_number_add' => (
 has_block 'fields' => (
     tag => 'div',
     class => [qw/modal-body/],
-    render_list => [qw/group e164 alias_number alias_number_add display_name webusername webpassword password status external_id/ ],
+    render_list => [qw/group extension alias_number alias_number_add display_name webusername webpassword password status external_id/ ],
 );
 
 1;

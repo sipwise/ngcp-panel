@@ -1861,7 +1861,7 @@ sub edit_master :Chained('master') :PathPart('edit') :Args(0) :Does(ACL) :ACLDet
                 }
 
                 if($subscriber->primary_number) {
-                    if($pbx_ext && !$is_admin) {
+                    if($pbx_ext) {
                         $form->params->{e164}{cc} = $subscriber->primary_number->cc;
                         $form->params->{e164}{ac} = $subscriber->primary_number->ac;
                         $form->params->{e164}{sn} = $base_number->{sn} . $form->params->{extension};
