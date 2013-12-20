@@ -1867,10 +1867,6 @@ sub edit_master :Chained('master') :PathPart('edit') :Args(0) :Does(ACL) :ACLDet
                         $form->params->{e164}{sn} = $base_number->{sn} . $form->params->{extension};
                     }
 
-                    my $old_cc = $subscriber->primary_number->cc;
-                    my $old_ac = $subscriber->primary_number->ac;
-                    my $old_sn = $subscriber->primary_number->sn;
-
                     NGCP::Panel::Utils::Subscriber::update_subscriber_numbers(
                         schema => $schema,
                         subscriber_id =>$subscriber->id,
@@ -1878,31 +1874,6 @@ sub edit_master :Chained('master') :PathPart('edit') :Args(0) :Does(ACL) :ACLDet
                         primary_number => $form->params->{e164},
                         $subadmin_pbx ? () : (alias_numbers  => $form->values->{alias_number}),
                     );
-
-                    # TODO: if it's an admin for pbx, update all other subscribers as well!
-                    # this means cloud_pbx_base_cli pref, primary number, dbaliases, voicemail, cf
-                    # now implemented for primary number
-                    if ( $subscriber->contract->billing_mappings->first->product->class eq "pbxaccount"
-                            && ! defined $prov_subscriber->voip_pbx_group
-                            && ($c->user->roles eq "admin" || $c->user->roles eq "reseller")) {
-                        my $customer_subscribers_rs = $subscriber->contract->voip_subscribers;
-                        my $my_cc = $form->params->{e164}{cc};
-                        my $my_ac = $form->params->{e164}{ac};
-                        my $my_sn = $form->params->{e164}{sn};
-                        for my $sub ($customer_subscribers_rs->all) {
-                            next if $sub->id == $subscriber->id; # myself
-                            next unless $sub->primary_number;
-                            next unless $sub->primary_number->cc == $old_cc;
-                            next unless $sub->primary_number->cc == $old_cc;
-                            next unless $sub->primary_number->ac == $old_ac;
-                            next unless $sub->primary_number->sn =~ /^$old_sn/;
-                            $sub->primary_number->update({
-                                cc => $my_cc,
-                                ac => $my_ac,
-                                sn => $sub->primary_number->sn =~ s/^$old_sn/$my_sn/r,
-                            });
-                        }
-                    }
                 } else {
                     NGCP::Panel::Utils::Subscriber::update_subscriber_numbers(
                         schema => $schema,

@@ -329,6 +329,15 @@ sub update_subscriber_numbers {
 
     if (defined $primary_number) {
 
+        my $old_cc;
+        my $old_ac;
+        my $old_sn;
+        if (defined $billing_subs->primary_number) {
+            $old_cc = $billing_subs->primary_number->cc;
+            $old_ac = $billing_subs->primary_number->ac;
+            $old_sn = $billing_subs->primary_number->sn;
+        }
+
         my $number;
         if (defined $primary_number->{cc}
             && $primary_number->{cc} ne '') {
@@ -404,7 +413,45 @@ sub update_subscriber_numbers {
                 $prov_subs->voicemail_user->update({ mailbox => '0' });
             }
         }
+
+        if ( (defined $old_cc && defined $old_sn)
+                && $billing_subs->contract->billing_mappings->first->product->class eq "pbxaccount"
+                && ! defined $prov_subs->voip_pbx_group
+                && $prov_subs->admin ) {
+            my $customer_subscribers_rs = $billing_subs->contract->voip_subscribers;
+            my $my_cc = $primary_number->{cc};
+            my $my_ac = $primary_number->{ac};
+            my $my_sn = $primary_number->{sn};
+            my $new_base_cli = $my_cc . ($my_ac // '') . $my_sn;
+            my $usr_preferences_base_cli_rs = $schema->resultset('voip_preferences')->find({
+                    attribute => 'cloud_pbx_base_cli',
+                })->voip_usr_preferences;
+            $usr_preferences_base_cli_rs->search_rs({subscriber_id=>$prov_subs->id})->update_all({value => $new_base_cli});
+            for my $sub ($customer_subscribers_rs->all) {
+                next if $sub->id == $billing_subs->id; # myself
+                next unless $sub->primary_number;
+                next unless $sub->primary_number->cc == $old_cc;
+                next unless $sub->primary_number->ac == $old_ac;
+                next unless $sub->primary_number->sn =~ /^$old_sn/;
+                $usr_preferences_base_cli_rs->search_rs({subscriber_id=>$sub->provisioning_voip_subscriber->id})->update_all({value => $new_base_cli});
+                $schema->resultset('voip_dbaliases')->search_rs({
+                    username => $old_cc . ($old_ac // '') . $sub->primary_number->sn,
+                })->delete;
+                update_subscriber_numbers(
+                    schema => $schema,
+                    subscriber_id => $sub->id,
+                    reseller_id => $reseller_id,
+                    primary_number => {
+                        cc => $my_cc,
+                        ac => $my_ac,
+                        sn => $sub->primary_number->sn =~ s/^$old_sn/$my_sn/r,
+                    }
+                );
+            }
+        }
+
     }
+
 
     if(defined $alias_numbers && ref($alias_numbers) eq 'ARRAY') {
         # note that this only adds new alias numbers
