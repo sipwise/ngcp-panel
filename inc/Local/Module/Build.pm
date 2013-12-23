@@ -163,4 +163,10 @@ method ACTION_test_selenium {
     $self->generic_test(type => 'default');
 }
 
+method ACTION_readme {
+    require Pod::Readme;
+    my $parser = Pod::Readme->new();
+    $parser->parse_from_file('Build.PL', 'README');
+}
+
 END { shutdown_servers }
