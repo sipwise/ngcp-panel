@@ -23,6 +23,7 @@ use Catalyst qw/
     Session
     Session::Store::FastMmap
     Session::State::Cookie
+    I18N
 /;
 #    EnableMiddleware
 use Log::Log4perl::Catalyst qw();

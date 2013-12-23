@@ -29,18 +29,18 @@ sub list_admin :PathPart('administrator') :Chained('/') :CaptureArgs(0) {
         { name => "id", search => 1, title => "#" },
     ];
     if($c->user->is_superuser) {
-        @{ $cols } =  (@{ $cols }, { name => "reseller.name", search => 1, title => "Reseller" });
+        @{ $cols } =  (@{ $cols }, { name => "reseller.name", search => 1, title => $c->loc("Reseller") });
     }
     @{ $cols } =  (@{ $cols }, 
-        { name => "login", search => 1, title => "Login" },
-        { name => "is_master", title => "Master" },
-        { name => "is_active", title => "Active" },
-        { name => "read_only", title => "Read Only" },
-        { name => "show_passwords", title => "Show Passwords" },
-        { name => "call_data", title => "Show CDRs" },
+        { name => "login", search => 1, title => $c->loc("Login") },
+        { name => "is_master", title => $c->loc("Master") },
+        { name => "is_active", title => $c->loc("Active") },
+        { name => "read_only", title => $c->loc("Read Only") },
+        { name => "show_passwords", title => $c->loc("Show Passwords") },
+        { name => "call_data", title => $c->loc("Show CDRs") },
     );
     if($c->user->is_superuser) {
-        @{ $cols } =  (@{ $cols },  { name => "lawful_intercept", title => "Lawful Intercept" });
+        @{ $cols } =  (@{ $cols },  { name => "lawful_intercept", title => $c->loc("Lawful Intercept") });
     }
     $c->stash->{admin_dt_columns} = NGCP::Panel::Utils::Datatables::set_columns($c, $cols);
     return;
@@ -108,12 +108,12 @@ sub create :Chained('list_admin') :PathPart('create') :Args(0) {
             }
             $c->stash->{admins}->create($form->values);
             delete $c->session->{created_objects}->{reseller};
-            $c->flash(messages => [{type => 'success', text => 'Administrator successfully created'}]);
+            $c->flash(messages => [{type => 'success', text => $c->loc('Administrator successfully created')}]);
         } catch($e) {
             NGCP::Panel::Utils::Message->error(
                 c => $c,
                 error => $e,
-                desc  => "Failed to create administrator.",
+                desc  => $c->loc("Failed to create administrator."),
             );
         }
         NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for('/administrator'));
@@ -132,12 +132,12 @@ sub base :Chained('list_admin') :PathPart('') :CaptureArgs(1) {
     	unless($c->user->is_master);
 
     unless ($administrator_id && $administrator_id->is_integer) {
-        $c->flash(messages => [{type => 'error', text => 'Invalid administrator id detected'}]);
+        $c->flash(messages => [{type => 'error', text => $c->loc('Invalid administrator id detected')}]);
         NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for('/administrator'));
     }
     $c->stash(administrator => $c->stash->{admins}->find($administrator_id));
     unless($c->stash->{administrator}) {
-        $c->flash(messages => [{type => 'error', text => 'Administrator not found'}]);
+        $c->flash(messages => [{type => 'error', text => $c->loc('Administrator not found')}]);
         NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for('/administrator'));
     }
 }
@@ -184,12 +184,12 @@ sub edit :Chained('base') :PathPart('edit') :Args(0) {
             delete $form->values->{md5pass} unless length $form->values->{md5pass};
             $c->stash->{administrator}->update($form->values);
             delete $c->session->{created_objects}->{reseller};
-            $c->flash(messages => [{type => 'success', text => 'Administrator successfully updated'}]);
+            $c->flash(messages => [{type => 'success', text => $c->loc('Administrator successfully updated')}]);
         } catch($e) {
             NGCP::Panel::Utils::Message->error(
                 c => $c,
                 error => $e,
-                desc  => "Failed to update administrator.",
+                desc  => $c->loc("Failed to update administrator."),
             );
         };
         NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for('/administrator'));
@@ -205,17 +205,17 @@ sub delete :Chained('base') :PathPart('delete') :Args(0) {
     my ($self, $c) = @_;
 
     if($c->stash->{administrator}->id == $c->user->id) {
-        $c->flash(messages => [{type => 'error', text => 'Cannot delete myself'}]);
+        $c->flash(messages => [{type => 'error', text => $c->loc('Cannot delete myself')}]);
         NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for('/administrator'));
     }
     try {
         $c->stash->{administrator}->delete;
-        $c->flash(messages => [{type => 'success', text => 'Administrator successfully deleted'}]);
+        $c->flash(messages => [{type => 'success', text => $c->loc('Administrator successfully deleted')}]);
     } catch($e) {
         NGCP::Panel::Utils::Message->error(
             c => $c,
             error => $e,
-            desc  => "Failed to delete administrator.",
+            desc  => $c->loc("Failed to delete administrator."),
         );
     };
     NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for('/administrator'));

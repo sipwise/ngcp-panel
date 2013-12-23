@@ -68,6 +68,9 @@ $(document).ready(function() {
             -%]
             ],
         [% END -%]
+        "oLanguage": {
+            "sUrl": "js/i18n/[% c.loc('dataTables.default.js') %]"
+        },
 		"aoColumns": [
 		    [% FOREACH f IN helper.column_fields -%]
 		    { 
@@ -157,7 +160,7 @@ $(document).ready(function() {
 <div class="row">
     [% UNLESS back_created -%]
     <span class="pull-left" style="margin:0 5px 0 5px;">
-        <a class="btn btn-primary btn-large" href="[% c.uri_for('/back') %]"><i class="icon-arrow-left"></i> Back</a>
+        <a class="btn btn-primary btn-large" href="[% c.uri_for('/back') %]"><i class="icon-arrow-left"></i> [% c.loc("Back") %]</a>
     </span>
     [% back_created = 1 -%]
     [% END -%]
@@ -201,7 +204,7 @@ $(document).ready(function() {
     </thead>
     <tbody>
         <tr class="sw_action_row">
-            <td colspan="[% helper.column_titles.size + 1 %]">Loading...</td>
+            <td colspan="[% helper.column_titles.size + 1 %]">[% c.loc('Loading...') %]</td>
         </tr>
     </tbody>
 </table>

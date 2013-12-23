@@ -1,6 +1,6 @@
 [% META title = 'Administrators' -%]
 [%
-    helper.name = 'Administrator';
+    helper.name = c.loc('Administrator');
     helper.show_create_button = 1;
     helper.data = admins;
     helper.messages = messages;
@@ -15,17 +15,17 @@
 
     IF c.user.is_master;
         helper.dt_buttons = [
-            { name = 'Edit', uri = "/administrator/'+full[\"id\"]+'/edit", class = 'btn-small btn-primary', icon = 'icon-edit' },
-            { name = 'Delete', uri = "/administrator/'+full[\"id\"]+'/delete", class = 'btn-small btn-secondary', icon = 'icon-trash' },
-            { name = 'API key', uri = "/administrator/'+full[\"id\"]+'/api_key", class = 'btn-small btn-info', icon = 'icon-lock' },
+            { name = c.loc('Edit'), uri = "/administrator/'+full[\"id\"]+'/edit", class = 'btn-small btn-primary', icon = 'icon-edit' },
+            { name = c.loc('Delete'), uri = "/administrator/'+full[\"id\"]+'/delete", class = 'btn-small btn-secondary', icon = 'icon-trash' },
+            { name = c.loc('API key'), uri = "/administrator/'+full[\"id\"]+'/api_key", class = 'btn-small btn-info', icon = 'icon-lock' },
         ];
 
         helper.top_buttons = [
-            { name = 'Create Administrator', uri = c.uri_for('/administrator/create'), icon = 'icon-star' },
+            { name = c.loc('Create Administrator'), uri = c.uri_for('/administrator/create'), icon = 'icon-star' },
         ];
     ELSE;
         helper.dt_buttons = [
-            { name = 'API key', uri = "/administrator/'+full[\"id\"]+'/api_key", class = 'btn-small btn-info', icon = 'icon-lock' },
+            { name = c.loc('API key'), uri = "/administrator/'+full[\"id\"]+'/api_key", class = 'btn-small btn-info', icon = 'icon-lock' },
         ];
     END;
 
