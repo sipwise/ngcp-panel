@@ -128,6 +128,10 @@ __END__
 
 =encoding UTF-8
 
+=head1 NGCP-Panel
+
+A completely overhauled provisioning interface for the NGCP system.
+
 =head1 NAME
 
 Build.PL - NGCP-Panel build system including test fixtures
@@ -199,3 +203,22 @@ Print a brief help message and exits.
 =head2 C<--man>
 
 Prints the manual page and exits.
+
+=head1 I18N
+
+1. Update strings from database
+
+    script/ngcp_panel_dump_db_strings.pl
+
+2. regenerate messages.pot (use -v for verbose output)
+
+    xgettext.pl --output=lib/NGCP/Panel/I18N/messages.pot --directory=lib/ --directory=share/templates/ --directory=share/layout -P perl=tt,pm
+
+3. Update or create $LANG.po files
+
+    msgmerge --update $LANG.po messages.pot
+
+In case your language did not exist already:
+
+    msginit --input=lib/NGCP/Panel/I18N/messages.pot --output=lib/NGCP/Panel/I18N/$LANG.po --locale=$LANG
+

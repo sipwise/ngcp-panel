@@ -48,7 +48,7 @@
             <tr class="sw_action_row">
                 <td>
                     <a href="#" onclick="$.msgbox(
-                        '[% r.description.squote | html %]',
+                        '[% c.loc(r.description.remove('[\[\]]')).squote | html %]',
                         {
                             type:'info', 
                             buttons:[
@@ -60,7 +60,7 @@
                 <td>[% r.attribute %]</td>
                 [% END -%]
                 <td>
-                  [% r.label %]
+                  [% c.loc(r.label||" ") %]
                 </td>
                 <td>
                     [% IF r.attribute == "rewrite_rule_set" -%]
@@ -134,7 +134,7 @@
                 <td>
                     <div class="sw_actions pull-right">
                         [% UNLESS (c.user.roles == "admin" || c.user.roles == "reseller") && c.user.read_only -%]
-                        <a class="btn btn-small btn-primary" href="[% helper.base_uri _ "/" _ r.id _ "/edit" %]"><i class="icon-edit"></i> Edit</a>
+                        <a class="btn btn-small btn-primary" href="[% helper.base_uri _ "/" _ r.id _ "/edit" %]"><i class="icon-edit"></i> [% c.loc('Edit') %]</a>
                         [% END -%]
                     </div>
                 </td>
@@ -153,7 +153,7 @@
 [%
     PROCESS "helpers/modal.tt";
     modal_header(m.create_flag=0,
-                 m.name = "Preference '" _ helper.preference_meta.label _"'");
+                 m.name = "Preference '" _ c.loc(helper.preference_meta.label) _"'");
 -%]
 
     [% IF helper.preference_meta.attribute == "allowed_ips" %]
