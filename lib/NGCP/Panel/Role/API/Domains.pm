@@ -54,6 +54,12 @@ sub hal_from_item {
     );
 
     $resource{id} = int($item->id);
+    if($c->user->roles eq "api_admin") {
+        $resource{reseller_id} = 
+            int($item->domain_resellers->first->reseller_id)
+            if($item->domain_resellers->first);
+    } elsif($c->user->roles eq "api_reseller") {
+    }
 
 =pod
     # TODO: do we really want to provide this info, as you can't actually
