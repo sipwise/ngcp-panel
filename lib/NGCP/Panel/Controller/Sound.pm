@@ -509,6 +509,9 @@ sub handles_edit :Chained('handles_base') :PathPart('edit') {
             if($file_result->handle->group->name eq 'calling_card') {
                 try {
                     NGCP::Panel::Utils::Sems::clear_audio_cache("appserver", $file_result->set_id, $file_result->handle->name);
+                    if($c->config->{features}->{cloudpbx}) {
+                        NGCP::Panel::Utils::Sems::clear_audio_cache("pbx", $file_result->set_id, $file_result->handle->name);
+                    }
                 } catch ($e) {
                     $c->flash(messages => [{type => 'error', text => 'Failed to clear audio cache'}]);
                     NGCP::Panel::Utils::Navigation::back_or($c, $c->stash->{handles_base_uri});
