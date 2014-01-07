@@ -216,6 +216,13 @@ sub POST :Allow {
             $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Invalid 'customer_id', doesn't exist.");
             last;
         }
+        if(defined $customer->max_subscribers && $customer->voip_subscribers->search({ 
+                status => { '!=' => 'terminated' }
+            })->count >= $customer->max_subscribers) {
+            
+            $self->error($c, HTTP_FORBIDDEN, "Maximum number of subscribers reached.");
+            last;
+        }
 
         # TODO: check if number is already taken
 
