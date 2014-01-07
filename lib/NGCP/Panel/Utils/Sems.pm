@@ -169,6 +169,46 @@ EOF
     return 1;
 }
 
+sub clear_audio_cache {
+    my ($service, $sound_set_id, $handle_name) = @_;
+
+    my $dispatcher = NGCP::Panel::Utils::XMLDispatcher->new;
+
+    my @ret = $dispatcher->dispatch($service, 1, 1, <<EOF );
+<?xml version="1.0"?>
+  <methodCall>
+    <methodName>postDSMEvent</methodName>
+    <params>
+      <param>
+        <value><string>sw_audio</string></value>
+      </param>
+      <param>
+        <value><array><data>
+          <value><array><data>
+            <value><string>cmd</string></value>
+            <value><string>clearFile</string></value>
+          </data></array></value>
+          <value><array><data>
+          <value><string>audio_id</string></value>
+            <value><string>$handle_name</string></value>
+         </data></array></value>
+         <value><array><data>
+           <value><string>sound_set_id</string></value>
+           <value><string>$sound_set_id</string></value>
+         </data></array></value>
+       </data></array></value>
+     </param>
+   </params>
+  </methodCall>
+EOF
+
+    if(grep { $$_[1] != 1 or $$_[2] !~ m#<value>OK</value># } @ret) {  # error
+        die "failed to clear SEMS audio cache";
+    }
+
+    return 1;
+}
+
 1;
 
 # vim: set tabstop=4 expandtab:

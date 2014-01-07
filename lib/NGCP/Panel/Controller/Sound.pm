@@ -12,6 +12,7 @@ use File::Type;
 use NGCP::Panel::Utils::XMLDispatcher;
 use NGCP::Panel::Utils::Sounds;
 use NGCP::Panel::Utils::Navigation;
+use NGCP::Panel::Utils::Sems;
 
 sub auto :Private {
     my ($self, $c) = @_;
@@ -507,7 +508,7 @@ sub handles_edit :Chained('handles_base') :PathPart('edit') {
             
             if($file_result->handle->group->name eq 'calling_card') {
                 try {
-                    $self->_clear_audio_cache($file_result->set_id, $file_result->handle->name);
+                    NGCP::Panel::Utils::Sems::clear_audio_cache("appserver", $file_result->set_id, $file_result->handle->name);
                 } catch ($e) {
                     $c->flash(messages => [{type => 'error', text => 'Failed to clear audio cache'}]);
                     NGCP::Panel::Utils::Navigation::back_or($c, $c->stash->{handles_base_uri});
@@ -597,45 +598,6 @@ sub handles_download :Chained('handles_base') :PathPart('download') :Args(0) {
     $c->response->body($data);
 }
 
-sub _clear_audio_cache {
-    my ($self, $sound_set_id, $handle_name) = @_;
-
-    my $dispatcher = NGCP::Panel::Utils::XMLDispatcher->new;
-
-    my @ret = $dispatcher->dispatch("appserver", 1, 1, <<EOF );
-<?xml version="1.0"?>
-  <methodCall>
-    <methodName>postDSMEvent</methodName>
-    <params>
-      <param>
-        <value><string>sw_audio</string></value>
-      </param>
-      <param>
-        <value><array><data>
-          <value><array><data>
-            <value><string>cmd</string></value>
-            <value><string>clearFile</string></value>
-          </data></array></value>
-          <value><array><data>
-          <value><string>audio_id</string></value>
-            <value><string>$handle_name</string></value>
-         </data></array></value>
-         <value><array><data>
-           <value><string>sound_set_id</string></value>
-           <value><string>$sound_set_id</string></value>
-         </data></array></value>
-       </data></array></value>
-     </param>
-   </params>
-  </methodCall>
-EOF
-
-    if(grep { $$_[1] != 1 or $$_[2] !~ m#<value>OK</value># } @ret) {  # error
-        die "failed to clear SEMS audio cache";
-    }
-
-    return 1;
-}
 
 __PACKAGE__->meta->make_immutable;
 
@@ -720,12 +682,6 @@ L<NGCP::Panel::Form::SoundFile>.
 =head2 handles_delete
 
 Delete the Sound File determined by L</base>.
-
-=head2 _clear_audio_cache
-
-Ported from ossbss.
-
-tells our application server to clear a specific audio file
 
 =head1 AUTHOR
 
