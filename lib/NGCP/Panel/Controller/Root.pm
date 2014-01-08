@@ -102,6 +102,21 @@ sub auto :Private {
         return;
     }
 
+    if(defined $c->request->params->{lang} &&
+            $c->request->params->{lang} =~ /^\w+$/ && (
+            exists $c->installed_languages->{$c->request->params->{lang}} ||
+            $c->request->params->{lang} eq 'i_default') ) {
+        $c->session->{lang} = $c->request->params->{lang};
+        $c->response->cookies->{ngcp_panel_lang} = { value => $c->request->params->{lang}, expires =>  '+3M', };
+        $c->log->debug("Setting language to ". $c->request->params->{lang});
+    }
+    if (defined $c->session->{lang}) {
+        $c->languages([$c->session->{lang}, "i_default"]);
+    } elsif ( $c->req->cookie('ngcp_panel_lang') ) {
+        $c->session->{lang} = $c->req->cookie('ngcp_panel_lang')->value;
+        $c->languages([$c->session->{lang}, "i_default"]);
+    }
+
     $c->log->debug("*** Root::auto grant access for authenticated user");
 
     # check for read_only on write operations
