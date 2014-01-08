@@ -1,0 +1,182 @@
+[% site_config.title = 'Web Phone for ' _ subscriber.username _ '@' _ subscriber.domain.domain -%]
+
+<style>
+    #xmpp-roster .available {
+        color: green;
+    }
+    #xmpp-roster .unavailable {
+        color: red;
+    }
+/* 
+    #xmpp-roster .chat {
+        color: green;
+    }
+    #xmpp-roster .away, #xmpp-roster .xa {
+        color: orange;
+    }
+    #xmpp-roster .dnd {
+        color: orange;
+    }
+*/
+</style>
+
+<div class="row">
+    <span class="pull-left" style="margin:0 5px 0 5px;">
+        <a class="btn btn-primary btn-large" href="[% c.uri_for('/back') %]"><i class="icon-arrow-left"></i> Back</a>
+    </span>
+</div>
+[% back_created = 1 -%]
+
+<div class="ngcp-separator"></div>
+
+
+    <script type="text/javascript" src="/js/libs/jssip-0.3.0.min.js"></script>
+    <!--<script type="text/javascript" src="/js/libs/stanzaio.bundle.min.js"></script>-->
+    <script type="text/javascript" src="/js/libs/stanzaio.bundle.js"></script>
+    <script type="text/javascript">
+
+        var phone = null;
+        var chat = null;
+
+        $.ajax({
+            url: "[% c.uri_for_action('/subscriber/webphone_ajax', c.req.captures) %]"
+        }).done(function(data) {
+
+            var sip_configuration = data.aaData.sip;
+            sip_configuration.register = true;
+            //sip_configuration.trace_sip = true;
+            phone = new JsSIP.UA(sip_configuration);
+
+            // ws connection events
+            phone.on('connected', function(e){
+                console.log("connected");
+                $("#sip-status").html("connected - registering...");
+            });
+            phone.on('disconnected', function(e){
+                console.log("disconnected");
+                $("#sip-status").html("disconnected.");
+            });
+            // in/out call event
+            phone.on('newRTCSession', function(e){
+                console.log("newRTCSession");
+            });
+            // in/out im event
+            phone.on('newMessage', function(e){
+                console.log("newMessage");
+            });
+            // registration events
+            phone.on('registered', function(e){
+                console.log("registered");
+                $("#sip-status").html("registered.");
+            });
+            phone.on('unregistered', function(e){
+                console.log("unregistered");
+                $("#sip-status").html("unregistered.");
+            });
+            phone.on('registrationFailed', function(e){
+                console.log("registrationFailed", e.data.response);
+                $("#sip-status").html("registration failed: " + e.data.response.status_code + " - " + e.data.response.reason_phrase);
+            });
+
+            phone.start();
+
+            var xmpp_configuration = data.aaData.xmpp;
+            chat = XMPP.createClient(xmpp_configuration);
+
+            chat.on('*', function(name, data) {
+                //console.log("xmpp cb " + name);
+                //console.log(data);
+            });
+
+            chat.on('session:started', function() {
+                $("#xmpp-status").html("session-started.");
+                chat.enableCarbons();
+                chat.getRoster(function(err, resp) {
+                    console.log(">>>>>>>>>>>> getRoster");
+                    console.log(err, resp);
+                    chat.sendPresence();
+                    if(err == null) {
+                        $.each(resp.roster.items, function(index, item) {
+                            console.log(item.name);
+                            var jidid = item.jid.bare.replace(/[^a-zA-Z0-9_]/g, '-');
+                            $("#xmpp-roster").append('<li id="' + jidid + '">' + item.jid.bare + ' <i>' + item.name + '</i></li>');
+                        });
+                    }
+                });
+            });
+            chat.on('presence', function(pres) {
+                if(pres.from.bare == xmpp_configuration.jid) {
+                    console.log("skip own presence info");
+                    return 1;
+                }
+                var type = pres.type || 'available';
+                var jidid = pres.from.bare.replace(/[^a-zA-Z0-9_]/g, '-');
+
+                $("#xmpp-roster #" + jidid).removeClass().addClass(type);
+
+                console.log("+++++++ xmpp cb " + pres.type + " for from=" + pres.from.bare + " and to=" + pres.to.bare, pres);
+            });
+
+            chat.connect();
+        });
+
+        function call() {
+            var eventHandlers = {
+                'progress': function(e) {
+                    console.log("call in progress");
+                    $("#sip-status").html("in progress");
+                },
+                'failed': function(e) { 
+                    console.log("call failed");
+                    $("#sip-status").html("call failed");
+                },
+                'started': function(e) {
+                    console.log("call started");
+                    $("#sip-status").html("call started");
+
+                    var rtcSession = e.sender;
+
+                    if (rtcSession.getLocalStreams().length > 0) {
+                      selfView.src = window.URL.createObjectURL(rtcSession.getLocalStreams()[0]);
+                    }
+                    if (rtcSession.getRemoteStreams().length > 0) {
+                      remoteView.src = window.URL.createObjectURL(rtcSession.getRemoteStreams()[0]);
+                    }
+                },
+                'ended': function(e){ 
+                    console.log("call ended");
+                    $("#sip-status").html("call ended");
+                }
+            };
+
+            var options = {
+              'eventHandlers': eventHandlers,
+              'extraHeaders': [ 'X-Foo: foo', 'X-Bar: bar' ],
+              'mediaConstraints': {'audio': true, 'video': false}
+            };
+
+            phone.call('sip:voicebox@pbx1.demo.sipwise.com', options);
+        }
+
+    </script>
+
+    <div class="row">
+        <div class="span6">Phone Status: <span id="sip-status">connecting...</span></div>
+    </div>
+    <div class="row">
+        <div class="span6">Chat Status: <span id="xmpp-status">connecting...</span></div>
+    </div>
+    <div class="row">
+        <button onclick="javascript:call();" class="btn btn-large btn-primary">Call</a>
+    </div>
+    <div class="row">
+        <h3>XMPP Roster</h3>
+        <ul id="xmpp-roster">
+        </ul>
+    </div>
+    
+
+    <video id="selfView" autoplay hidden=true></video>
+    <video id="remoteView" autoplay hidden=true></video>
+
+[% # vim: set tabstop=4 syntax=html expandtab: -%]

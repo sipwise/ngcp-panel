@@ -296,6 +296,45 @@ sub base :Chained('sub_list') :PathPart('') :CaptureArgs(1) {
     ]);
 }
 
+sub webphone :Chained('base') :PathPart('webphone') :Args(0) {
+    my ($self, $c) = @_;
+
+    $c->stash(template => 'subscriber/webphone.tt');
+}
+
+sub webphone_ajax :Chained('base') :PathPart('webphone/ajax') :Args(0) {
+    my ($self, $c) = @_;
+
+    if($c->user->roles eq "admin") {
+    } elsif($c->user->roles eq "reseller") {
+        $c->detach('/denied_page')
+            unless($c->stash->{subscriber}->contract->contact->reseller_id != $c->user->reseller_id);
+    } elsif($c->user->roles eq "subscriberadmin") {
+        $c->detach('/denied_page')
+            unless($c->stash->{subscriber}->contract_id != $c->user->account_id);
+    } else {
+    }
+
+    my $subscriber = $c->stash->{subscriber}->provisioning_voip_subscriber;
+
+    my $config = {
+        sip => {
+            ws_servers => 'ws://' . $subscriber->domain->domain . ':5060/ws',
+            uri => 'sip:' . $subscriber->username . '@' . $subscriber->domain->domain,
+            password => $subscriber->password,
+        },
+        xmpp => {
+            wsURL => 'wss://' . $subscriber->domain->domain . ':5281/xmpp-websocket/',
+            jid => $subscriber->username . '@' . $subscriber->domain->domain,
+            server => $subscriber->domain->domain,
+            credentials => { password => $subscriber->password },
+        },
+    };
+
+    $c->stash(aaData => $config);
+    $c->detach( $c->view("JSON") );
+}
+
 sub ajax :Chained('sub_list') :PathPart('ajax') :Args(0) :Does(ACL) :ACLDetachTo('/denied_page') :AllowedRole(admin) :AllowedRole(reseller) {
     my ($self, $c) = @_;
 
