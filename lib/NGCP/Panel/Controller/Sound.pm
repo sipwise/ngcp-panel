@@ -521,16 +521,19 @@ sub handles_edit :Chained('handles_base') :PathPart('edit') {
                     }
                 }
                 when([qw/pbx music_on_hold/]) {
+                    my $service;
                     try {
-                        NGCP::Panel::Utils::Sems::clear_audio_cache("appserver", $file_result->set_id, $file_result->handle->name)
-                            if($file_result->handle->group->name eq "music_on_hold");
-                        if($c->config->{features}->{cloudpbx}) {
-                            NGCP::Panel::Utils::Sems::clear_audio_cache("pbx", $file_result->set_id, $file_result->handle->name);
+                        if(!$file_result->set->contract_id) {
+                            $service = "appserver";
+                            NGCP::Panel::Utils::Sems::clear_audio_cache($service, $file_result->set_id, $file_result->handle->name);
+                        } else {
+                            $service = "pbx";
+                            NGCP::Panel::Utils::Sems::clear_audio_cache($service, $file_result->set_id, $file_result->handle->name);
                         }
                     } catch ($e) {
                         NGCP::Panel::Utils::Message->error(
                             c => $c,
-                            error => "Failed to clear audio cache for " . $file_result->handle->group->name,
+                            error => "Failed to clear audio cache for " . $file_result->handle->group->name . " on $service",
                             desc  => "Failed to clear audio cache.",
                         );
                         NGCP::Panel::Utils::Navigation::back_or($c, $c->stash->{handles_base_uri});
