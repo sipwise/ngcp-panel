@@ -11,7 +11,8 @@
     backuri = c.req.uri;
     tmp = backuri.query_param_delete('back');
     # create unique identifier
-    helper.id_from_name = helper.name.remove('[\s+\.#]');
+    helper.id_from_name = helper.identifier || helper.name.remove('[\s+\.#]');
+    helper.identifier = 0; # make sure we dont use the same identifier twice
 -%]
 
 <script src="/js/libs/bootstrap/datatables-paging.js"></script>

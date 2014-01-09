@@ -54,6 +54,7 @@
 
 [%
     helper.name = c.loc('Date Definition');
+    helper.identifier = 'date_definition';
     helper.dt_columns = special_dt_columns;
 
     helper.create_flag = peaktimes_special_createflag;

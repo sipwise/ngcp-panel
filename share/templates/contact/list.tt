@@ -1,6 +1,7 @@
 [% site_config.title = c.loc('Contacts') -%]
 [%
     helper.name = c.loc('Contact');
+    helper.identifier = 'contact';
     helper.data = contacts;
     helper.messages = messages;
     helper.dt_columns = contact_dt_columns;

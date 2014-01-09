@@ -1,6 +1,7 @@
 [% site_config.title = c.loc('Billing Zones') -%]
 [%
     helper.name = c.loc('Billing Zone');
+    helper.identifier = 'billing_zone';
     helper.messages = messages;
     helper.dt_columns = zone_dt_columns;
     helper.length_change = 1;

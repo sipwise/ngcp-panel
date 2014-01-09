@@ -1,6 +1,7 @@
 [% site_config.title = c.loc('Administrators') -%]
 [%
     helper.name = c.loc('Administrator');
+    helper.identifier = 'administrator';
     helper.show_create_button = 1;
     helper.data = admins;
     helper.messages = messages;

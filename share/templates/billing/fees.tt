@@ -2,6 +2,7 @@
 
 [%
     helper.name = c.loc('Billing Fee');
+    helper.identifier = 'billing_fee';
     helper.messages = messages;
     helper.dt_columns = fee_dt_columns;
     helper.length_change = 1;

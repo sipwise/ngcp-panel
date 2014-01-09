@@ -1,6 +1,7 @@
 [% site_config.title = c.loc('Billing Profiles') -%]
 [%
     helper.name = c.loc('Billing Profile');
+    helper.identifier = 'billing_profile';
     helper.messages = messages;
     helper.dt_columns = profile_dt_columns;
     helper.length_change = 1;
