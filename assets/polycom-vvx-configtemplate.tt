@@ -1,3 +1,8 @@
+<!--
+	Bootstrap Sync URI:    http://[% client.ip %]/form-submit
+	Bootstrap Sync Method: POST
+	Bootstrap Sync Params: 447=2,445=[% server.uri %],264=2
+-->
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <PHONE_CONFIG>
   <ALL
