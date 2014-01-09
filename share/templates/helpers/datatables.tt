@@ -69,7 +69,7 @@ $(document).ready(function() {
             ],
         [% END -%]
         "oLanguage": {
-            "sUrl": "js/i18n/[% c.loc('dataTables.default.js') %]"
+            "sUrl": "/js/i18n/[% c.loc('dataTables.default.js') %]"
         },
 		"aoColumns": [
 		    [% FOREACH f IN helper.column_fields -%]

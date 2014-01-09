@@ -1,8 +1,8 @@
-[% site_config.title = 'Off-peak-times for ' _ profile.name -%]
+[% site_config.title = c.loc('Off-peak-times for [_1]', profile.name) -%]
 
 <div class="row">
     <span>
-        <a class="btn btn-primary btn-large" href="[% c.uri_for('/back') %]"><i class="icon-arrow-left"></i> Back</a>
+        <a class="btn btn-primary btn-large" href="[% c.uri_for('/back') %]"><i class="icon-arrow-left"></i>[% c.loc('Back') %]</a>
     </span>
 </div>
 [% back_created = 1 -%]
@@ -17,13 +17,13 @@
 
 <div class="ngcp-separator"></div>
 
-<h3>Weekdays</h3>
+<h3>[% c.loc('Weekdays') %]</h3>
 
 <table class="table table-bordered table-striped table-highlight table-hover">
     <thead>
         <tr>
-            <th>Weekday</th>
-            <th>Start - End</th>
+            <th>[% c.loc('Weekday') %]</th>
+            <th>[% c.loc('Start - End') %]</th>
             <th class="ngcp-actions-column"></th>[% #Actions %]
         </tr>
     </thead>
@@ -40,7 +40,7 @@
             [% IF w.edit_link %]
                 <div class="sw_actions pull-right">
                     <a class="btn btn-small btn-primary" href="[% w.edit_link %]">
-                        <i class="icon-edit"></i> Edit
+                        <i class="icon-edit"></i> [% c.loc('Edit') %]
                     </a>
                 </div>
             [% END %]
@@ -50,10 +50,10 @@
     </tbody>
 </table>
 
-<h3>Dates</h3>
+<h3>[% c.loc('Dates') %]</h3>
 
 [%
-    helper.name = 'Date Definitions';
+    helper.name = c.loc('Date Definition');
     helper.dt_columns = special_dt_columns;
 
     helper.create_flag = peaktimes_special_createflag;
@@ -66,11 +66,11 @@
 
     UNLESS c.user.read_only;
         helper.dt_buttons = [
-            { name = 'Edit', uri = helper.tmpuri _ "/'+full.id+'/edit", class = 'btn-small btn-primary', icon = 'icon-edit' },
-            { name = 'Delete', uri = helper.tmpuri _ "/'+full.id+'/delete", class = 'btn-small btn-secondary', icon = 'icon-trash' },
+            { name = c.loc('Edit'), uri = helper.tmpuri _ "/'+full.id+'/edit", class = 'btn-small btn-primary', icon = 'icon-edit' },
+            { name = c.loc('Delete'), uri = helper.tmpuri _ "/'+full.id+'/delete", class = 'btn-small btn-secondary', icon = 'icon-trash' },
         ];
         helper.top_buttons = [
-            { name = 'Create Special Off-Peak Date', uri = helper.tmpuri _ "/create", icon = 'icon-star' },
+            { name = c.loc('Create Special Off-Peak Date'), uri = helper.tmpuri _ "/create", icon = 'icon-star' },
         ];
     END;
 

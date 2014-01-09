@@ -1,7 +1,7 @@
-[% META title = 'Billing Fees' -%]
+[% site_config.title = c.loc('Billing Fees') -%]
 
 [%
-    helper.name = 'Billing Fees';
+    helper.name = c.loc('Billing Fee');
     helper.messages = messages;
     helper.dt_columns = fee_dt_columns;
     helper.length_change = 1;
@@ -15,13 +15,13 @@
     helper.tmpuri = c.uri_for( profile.id, 'fees');
     UNLESS c.user.read_only;
         helper.dt_buttons = [
-            { name = 'Edit', uri = helper.tmpuri _ "/'+full.id+'/edit", class = 'btn-small btn-primary', icon = 'icon-edit' },
-            { name = 'Delete', uri = helper.tmpuri _ "/'+full.id+'/delete", class = 'btn-small btn-secondary', icon = 'icon-trash' },
+            { name = c.loc('Edit'), uri = helper.tmpuri _ "/'+full.id+'/edit", class = 'btn-small btn-primary', icon = 'icon-edit' },
+            { name = c.loc('Delete'), uri = helper.tmpuri _ "/'+full.id+'/delete", class = 'btn-small btn-secondary', icon = 'icon-trash' },
         ];
         helper.top_buttons = [
-            { name = 'Create Fee Entry', uri = c.uri_for( profile.id, 'fees') _ "/create", icon = 'icon-star' },
-            { name = 'Upload Fees as CSV', uri = c.uri_for_action('/billing/fees_upload',[c.req.captures.0]), icon = 'icon-star' },
-            { name = 'Edit Zones', uri = c.uri_for_action('/billing/zones',[c.req.captures.0]), icon = 'icon-star' },
+            { name = c.loc('Create Fee Entry'), uri = c.uri_for( profile.id, 'fees') _ "/create", icon = 'icon-star' },
+            { name = c.loc('Upload Fees as CSV'), uri = c.uri_for_action('/billing/fees_upload',[c.req.captures.0]), icon = 'icon-star' },
+            { name = c.loc('Edit Zones'), uri = c.uri_for_action('/billing/zones',[c.req.captures.0]), icon = 'icon-star' },
         ];
     END;
 

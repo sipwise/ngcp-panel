@@ -1,4 +1,4 @@
-[% META title = 'Administrators' -%]
+[% site_config.title = c.loc('Administrators') -%]
 [%
     helper.name = c.loc('Administrator');
     helper.show_create_button = 1;

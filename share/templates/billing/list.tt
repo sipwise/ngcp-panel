@@ -1,6 +1,6 @@
-[% META title = 'Billing Profiles' -%]
+[% site_config.title = c.loc('Billing Profiles') -%]
 [%
-    helper.name = 'Billing Profiles';
+    helper.name = c.loc('Billing Profile');
     helper.messages = messages;
     helper.dt_columns = profile_dt_columns;
     helper.length_change = 1;
@@ -13,12 +13,12 @@
 
     UNLESS c.user.read_only;
         helper.dt_buttons = [
-            { name = 'Edit', uri = "/billing/'+full[\"id\"]+'/edit", class = 'btn-small btn-primary', icon = 'icon-edit' },
-            { name = 'Fees', uri = "/billing/'+full[\"id\"]+'/fees", class = 'btn-small btn-tertiary', icon = 'icon-shopping-cart' },
-            { name = 'Peaktimes', uri = "/billing/'+full[\"id\"]+'/peaktimes", class = 'btn-small btn-tertiary', icon = 'icon-time' },
+            { name = c.loc('Edit'), uri = "/billing/'+full[\"id\"]+'/edit", class = 'btn-small btn-primary', icon = 'icon-edit' },
+            { name = c.loc('Fees'), uri = "/billing/'+full[\"id\"]+'/fees", class = 'btn-small btn-tertiary', icon = 'icon-shopping-cart' },
+            { name = c.loc('Peaktimes'), uri = "/billing/'+full[\"id\"]+'/peaktimes", class = 'btn-small btn-tertiary', icon = 'icon-time' },
         ];
         helper.top_buttons = [
-            { name = 'Create Billing Profile', uri = c.uri_for('/billing/create'), icon = 'icon-star' },
+            { name = c.loc('Create Billing Profile'), uri = c.uri_for('/billing/create'), icon = 'icon-star' },
         ];
     END;
 

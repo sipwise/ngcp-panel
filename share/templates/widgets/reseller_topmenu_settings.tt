@@ -1,21 +1,21 @@
 <li class="dropdown">
     <a href="javascript:;" class="dropdown-toggle" data-toggle="dropdown">
         <i class="icon-th"></i>
-        <span>Settings</span>
+        <span>[% c.loc('Settings') %]</span>
         <b class="caret"></b>
     </a>
     <ul class="dropdown-menu">
-        <li><a href="[% c.uri_for('/administrator') %]">Administrators</a></li>
-        <li><a href="[% c.uri_for('/customer') %]">Customers</a></li>
-        <li><a href="[% c.uri_for('/contact') %]">Contacts</a></li>
-        <li><a href="[% c.uri_for('/domain') %]">Domains</a></li>
-        <li><a href="[% c.uri_for('/subscriber') %]">Subscribers</a></li>
-        <li><a href="[% c.uri_for('/billing') %]">Billing</a></li>
-        <li><a href="[% c.uri_for('/rewrite') %]">Rewrite Rule Sets</a></li>
-        <li><a href="[% c.uri_for('/ncos') %]">NCOS Levels</a></li>
-        <li><a href="[% c.uri_for('/sound') %]">Sound Sets</a></li>
+        <li><a href="[% c.uri_for('/administrator') %]">[% c.loc('Administrators') %]</a></li>
+        <li><a href="[% c.uri_for('/customer') %]">[% c.loc('Customers') %]</a></li>
+        <li><a href="[% c.uri_for('/contact') %]">[% c.loc('Contacts') %]</a></li>
+        <li><a href="[% c.uri_for('/domain') %]">[% c.loc('Domains') %]</a></li>
+        <li><a href="[% c.uri_for('/subscriber') %]">[% c.loc('Subscribers') %]</a></li>
+        <li><a href="[% c.uri_for('/billing') %]">[% c.loc('Billing') %]</a></li>
+        <li><a href="[% c.uri_for('/rewrite') %]">[% c.loc('Rewrite Rule Sets') %]</a></li>
+        <li><a href="[% c.uri_for('/ncos') %]">[% c.loc('NCOS Levels') %]</a></li>
+        <li><a href="[% c.uri_for('/sound') %]">[% c.loc('Sound Sets') %]</a></li>
         [% IF c.config.features.cloudpbx -%]
-        <li><a href="[% c.uri_for('/device') %]">Device Management</a></li>
+        <li><a href="[% c.uri_for('/device') %]">[% c.loc('Device Management') %]</a></li>
         [% END -%]
     </ul>
 </li>

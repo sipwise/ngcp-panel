@@ -19,7 +19,15 @@ msgstr ""
 msgid "\"Calling line identification restriction\" - if set to true, the CLI is not displayed on outgoing calls."
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/Root.pm:59
+#: lib/NGCP/Panel/Controller/Administrator.pm:29 lib/NGCP/Panel/Controller/Billing.pm:211 lib/NGCP/Panel/Controller/Billing.pm:33 lib/NGCP/Panel/Controller/Billing.pm:508 lib/NGCP/Panel/Controller/Billing.pm:77 lib/NGCP/Panel/Controller/Contact.pm:30 lib/NGCP/Panel/Controller/Contract.pm:25 lib/NGCP/Panel/Controller/Contract.pm:369
+msgid "#"
+msgstr ""
+
+#: lib/NGCP/Panel/Controller/Billing.pm:344
+msgid ", but skipped the following line numbers: "
+msgstr ""
+
+#: lib/NGCP/Panel/Controller/Root.pm:72
 msgid "403 - Permission denied"
 msgstr ""
 
@@ -47,7 +55,7 @@ msgstr ""
 msgid "A username used for authentication against the peer host."
 msgstr ""
 
-#: share/templates/administrator/list.tt:20 share/templates/administrator/list.tt:28
+#: share/templates/administrator/list.tt:21 share/templates/administrator/list.tt:29
 msgid "API key"
 msgstr ""
 
@@ -103,6 +111,10 @@ msgstr ""
 msgid "Administrator successfully updated"
 msgstr ""
 
+#: share/templates/widgets/admin_topmenu_settings.tt:22 share/templates/widgets/reseller_topmenu_settings.tt:8
+msgid "Administrators"
+msgstr ""
+
 #: lib/NGCP/Panel/Utils/DbStrings.pm:143 lib/NGCP/Panel/Utils/DbStrings.pm:145
 msgid "Allow access from the given list of IP addresses and/or IP nets."
 msgstr ""
@@ -135,8 +147,84 @@ msgstr ""
 msgid "Area Code"
 msgstr ""
 
-#: share/templates/helpers/datatables.tt:163
+#: share/templates/billing/peaktimes.tt:5 share/templates/helpers/datatables.tt:163
 msgid "Back"
+msgstr ""
+
+#: share/templates/widgets/admin_topmenu_settings.tt:29 share/templates/widgets/reseller_topmenu_settings.tt:13
+msgid "Billing"
+msgstr ""
+
+#: share/templates/billing/fees.tt:4
+msgid "Billing Fee"
+msgstr ""
+
+#: lib/NGCP/Panel/Controller/Billing.pm:238
+msgid "Billing Fee does not exist!"
+msgstr ""
+
+#: lib/NGCP/Panel/Controller/Billing.pm:280
+msgid "Billing Fee successfully created!"
+msgstr ""
+
+#: lib/NGCP/Panel/Controller/Billing.pm:342
+msgid "Billing Fee successfully uploaded"
+msgstr ""
+
+#: share/templates/billing/fees.tt:1
+msgid "Billing Fees"
+msgstr ""
+
+#: lib/NGCP/Panel/Controller/Contract.pm:29 lib/NGCP/Panel/Controller/Contract.pm:372 share/templates/billing/list.tt:3
+msgid "Billing Profile"
+msgstr ""
+
+#: lib/NGCP/Panel/Controller/Billing.pm:84
+msgid "Billing Profile does not exist!"
+msgstr ""
+
+#: lib/NGCP/Panel/Controller/Billing.pm:388
+msgid "Billing Profile successfully changed!"
+msgstr ""
+
+#: share/templates/billing/list.tt:1
+msgid "Billing Profiles"
+msgstr ""
+
+#: lib/NGCP/Panel/Controller/Billing.pm:215 share/templates/billing/zones.tt:3
+msgid "Billing Zone"
+msgstr ""
+
+#: lib/NGCP/Panel/Controller/Billing.pm:447
+msgid "Billing Zone successfully created"
+msgstr ""
+
+#: share/templates/billing/zones.tt:1
+msgid "Billing Zones"
+msgstr ""
+
+#: lib/NGCP/Panel/Controller/Billing.pm:401
+msgid "Billing fee not found!"
+msgstr ""
+
+#: lib/NGCP/Panel/Controller/Billing.pm:186
+msgid "Billing profile successfully created"
+msgstr ""
+
+#: lib/NGCP/Panel/Controller/Billing.pm:406
+msgid "Billing profile successfully deleted!"
+msgstr ""
+
+#: lib/NGCP/Panel/Controller/Billing.pm:129
+msgid "Billing profile successfully updated"
+msgstr ""
+
+#: lib/NGCP/Panel/Controller/Billing.pm:476
+msgid "Billing zone does not exist!"
+msgstr ""
+
+#: lib/NGCP/Panel/Controller/Billing.pm:487
+msgid "Billing zone successfully deleted"
 msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:12
@@ -163,8 +251,20 @@ msgstr ""
 msgid "CLI of CloudPBX Pilot Subscriber"
 msgstr ""
 
+#: share/templates/widgets/admin_topmenu_settings.tt:9
+msgid "Call Distribution"
+msgstr ""
+
+#: share/templates/widgets/subscriber_topmenu_settings.tt:8 share/templates/widgets/subscriberadmin_topmenu_settings.tt:8
+msgid "Call List"
+msgstr ""
+
 #: lib/NGCP/Panel/Controller/Administrator.pm:208
 msgid "Cannot delete myself"
+msgstr ""
+
+#: lib/NGCP/Panel/Controller/Contract.pm:196
+msgid "Cannot terminate contract with the id 1"
 msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:163
@@ -195,6 +295,38 @@ msgstr ""
 msgid "CloudPBX Subscriber"
 msgstr ""
 
+#: lib/NGCP/Panel/Controller/Contact.pm:34
+msgid "Company"
+msgstr ""
+
+#: share/templates/contact/list.tt:3
+msgid "Contact"
+msgstr ""
+
+#: lib/NGCP/Panel/Controller/Contract.pm:27 lib/NGCP/Panel/Controller/Contract.pm:371
+msgid "Contact Email"
+msgstr ""
+
+#: lib/NGCP/Panel/Controller/Contact.pm:112
+msgid "Contact not found"
+msgstr ""
+
+#: lib/NGCP/Panel/Controller/Contact.pm:156
+msgid "Contact successfully changed"
+msgstr ""
+
+#: lib/NGCP/Panel/Controller/Contact.pm:81
+msgid "Contact successfully created"
+msgstr ""
+
+#: lib/NGCP/Panel/Controller/Contact.pm:185
+msgid "Contact successfully deleted"
+msgstr ""
+
+#: share/templates/contact/list.tt:1 share/templates/widgets/admin_topmenu_settings.tt:26 share/templates/widgets/reseller_topmenu_settings.tt:10
+msgid "Contacts"
+msgstr ""
+
 #: lib/NGCP/Panel/Utils/DbStrings.pm:19
 msgid "Contains wildcarded SIP usernames (the localpart of the whole SIP URI, eg., \"user\" of SIP URI \"user@example.com\") that are (not) allowed to be called by the subscriber. \"*\", \"?\" and \"x-y\" with \"x\" and \"y\" representing numbers from 0 to 9 may be used as wildcards like in shell patterns."
 msgstr ""
@@ -203,12 +335,58 @@ msgstr ""
 msgid "Contains wildcarded SIP usernames (the localpart of the whole SIP URI, eg., \"user\" of SIP URI \"user@example.com\") that are (not) allowed to call the subscriber. \"*\", \"?\" and \"x-y\" with \"x\" and \"y\" representing numbers from 0 to 9 may be used as wildcards like in shell patterns."
 msgstr ""
 
+#. ($contract_id)
+#: lib/NGCP/Panel/Controller/Contract.pm:308 lib/NGCP/Panel/Controller/Contract.pm:433
+msgid "Contract #%1 successfully created"
+msgstr ""
+
+#: lib/NGCP/Panel/Controller/Contract.pm:84
+msgid "Contract does not exist"
+msgstr ""
+
+#: lib/NGCP/Panel/Controller/Contract.pm:176
+msgid "Contract successfully changed!"
+msgstr ""
+
+#: lib/NGCP/Panel/Controller/Contract.pm:210
+msgid "Contract successfully terminated"
+msgstr ""
+
 #: lib/NGCP/Panel/Utils/DbStrings.pm:44
 msgid "Country Code"
 msgstr ""
 
-#: share/templates/administrator/list.tt:24
+#: share/templates/billing/zones.tt:21
+msgid "Create"
+msgstr ""
+
+#. (m.name)
+#: share/templates/helpers/modal.tt:6
+msgid "Create %1"
+msgstr ""
+
+#: share/templates/administrator/list.tt:25
 msgid "Create Administrator"
+msgstr ""
+
+#: share/templates/billing/list.tt:22
+msgid "Create Billing Profile"
+msgstr ""
+
+#: share/templates/contact/list.tt:22
+msgid "Create Contact"
+msgstr ""
+
+#: share/templates/billing/fees.tt:23
+msgid "Create Fee Entry"
+msgstr ""
+
+#: share/templates/billing/peaktimes.tt:74
+msgid "Create Special Off-Peak Date"
+msgstr ""
+
+#: share/templates/widgets/subscriberadmin_topmenu_settings.tt:12
+msgid "Customer Settings"
 msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:181
@@ -219,24 +397,61 @@ msgstr ""
 msgid "Customer specific Sound Set used for PBX auto-attendant prompts, customer-specific announcements etc."
 msgstr ""
 
-#: share/layout/body.tt:28
+#: share/templates/widgets/admin_topmenu_settings.tt:24 share/templates/widgets/reseller_topmenu_settings.tt:9
+msgid "Customers"
+msgstr ""
+
+#: share/layout/body.tt:39
 msgid "Dashboard"
 msgstr ""
 
-#: share/templates/administrator/list.tt:19
+#: share/templates/billing/peaktimes.tt:56
+msgid "Date Definition"
+msgstr ""
+
+#: share/templates/billing/peaktimes.tt:53
+msgid "Dates"
+msgstr ""
+
+#: share/templates/administrator/list.tt:20 share/templates/billing/fees.tt:20 share/templates/billing/peaktimes.tt:71 share/templates/billing/zones.tt:18 share/templates/contact/list.tt:19
 msgid "Delete"
+msgstr ""
+
+#: lib/NGCP/Panel/Controller/Billing.pm:213
+msgid "Destination Pattern"
+msgstr ""
+
+#: share/templates/widgets/admin_topmenu_settings.tt:36 share/templates/widgets/reseller_topmenu_settings.tt:18
+msgid "Device Management"
 msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:148
 msgid "Disable NAT SIP pings"
 msgstr ""
 
+#: share/templates/widgets/admin_topmenu_settings.tt:27 share/templates/widgets/reseller_topmenu_settings.tt:11
+msgid "Domains"
+msgstr ""
+
 #: lib/NGCP/Panel/Utils/DbStrings.pm:149
 msgid "Don't do NAT ping for domain/user. Use with caution: this only makes sense on the access network which does not need pings (e.g. CDMA)"
 msgstr ""
 
-#: share/templates/administrator/list.tt:18 share/templates/helpers/pref_table.tt:137
+#: share/templates/administrator/list.tt:19 share/templates/billing/fees.tt:19 share/templates/billing/list.tt:17 share/templates/billing/peaktimes.tt:43 share/templates/billing/peaktimes.tt:70 share/templates/contact/list.tt:18 share/templates/helpers/pref_table.tt:137
 msgid "Edit"
+msgstr ""
+
+#. (m.name)
+#: share/templates/helpers/modal.tt:6
+msgid "Edit %1"
+msgstr ""
+
+#: share/templates/billing/fees.tt:25
+msgid "Edit Zones"
+msgstr ""
+
+#: lib/NGCP/Panel/Controller/Contact.pm:35
+msgid "Email"
 msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:110
@@ -271,12 +486,20 @@ msgstr ""
 msgid "Enable Session-Timers"
 msgstr ""
 
+#: lib/NGCP/Panel/Controller/Billing.pm:510
+msgid "End Date"
+msgstr ""
+
 #: lib/NGCP/Panel/Utils/DbStrings.pm:177
 msgid "Export subscriber to shared XMPP Buddylist"
 msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:178
 msgid "Export this subscriber into the shared XMPP buddy list for the customer."
+msgstr ""
+
+#: lib/NGCP/Panel/Controller/Contract.pm:26 lib/NGCP/Panel/Controller/Contract.pm:370
+msgid "External #"
 msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:77
@@ -291,16 +514,80 @@ msgstr ""
 msgid "Failed to create administrator."
 msgstr ""
 
+#: lib/NGCP/Panel/Controller/Billing.pm:191
+msgid "Failed to create billing profile."
+msgstr ""
+
+#: lib/NGCP/Panel/Controller/Billing.pm:452
+msgid "Failed to create billing zone."
+msgstr ""
+
+#: lib/NGCP/Panel/Controller/Contact.pm:86
+msgid "Failed to create contact."
+msgstr ""
+
+#: lib/NGCP/Panel/Controller/Contract.pm:314 lib/NGCP/Panel/Controller/Contract.pm:439
+msgid "Failed to create contract."
+msgstr ""
+
+#: lib/NGCP/Panel/Controller/Billing.pm:718
+msgid "Failed to create special offpeak entry."
+msgstr ""
+
 #: lib/NGCP/Panel/Controller/Administrator.pm:218
 msgid "Failed to delete administrator."
+msgstr ""
+
+#: lib/NGCP/Panel/Controller/Billing.pm:492
+msgid "Failed to delete billing zone."
+msgstr ""
+
+#: lib/NGCP/Panel/Controller/Contact.pm:190
+msgid "Failed to delete contact."
+msgstr ""
+
+#: lib/NGCP/Panel/Controller/Billing.pm:685
+msgid "Failed to delete special offpeak entry."
+msgstr ""
+
+#: lib/NGCP/Panel/Controller/Contract.pm:215
+msgid "Failed to terminate contract."
 msgstr ""
 
 #: lib/NGCP/Panel/Controller/Administrator.pm:192
 msgid "Failed to update administrator."
 msgstr ""
 
+#: lib/NGCP/Panel/Controller/Billing.pm:134
+msgid "Failed to update billing profile."
+msgstr ""
+
+#: lib/NGCP/Panel/Controller/Contact.pm:162
+msgid "Failed to update contact."
+msgstr ""
+
+#: lib/NGCP/Panel/Controller/Contract.pm:181
+msgid "Failed to update contract."
+msgstr ""
+
+#: lib/NGCP/Panel/Controller/Billing.pm:666
+msgid "Failed to update special offpeak entry."
+msgstr ""
+
+#: lib/NGCP/Panel/Controller/Billing.pm:350
+msgid "Failed to upload Billing Fees"
+msgstr ""
+
+#: share/templates/billing/list.tt:18
+msgid "Fees"
+msgstr ""
+
 #: lib/NGCP/Panel/Utils/DbStrings.pm:79
 msgid "Find Subscriber by UUID"
+msgstr ""
+
+#: lib/NGCP/Panel/Controller/Contact.pm:32
+msgid "First Name"
 msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:80
@@ -323,6 +610,10 @@ msgstr ""
 msgid "Force outbound call via socket"
 msgstr ""
 
+#: lib/NGCP/Panel/Controller/Billing.pm:586
+msgid "Friday"
+msgstr ""
+
 #: lib/NGCP/Panel/Utils/DbStrings.pm:139 lib/NGCP/Panel/Utils/DbStrings.pm:141
 msgid "Group of addresses and/or IP nets allowed access."
 msgstr ""
@@ -331,7 +622,7 @@ msgstr ""
 msgid "Hide own number for outbound calls"
 msgstr ""
 
-#: share/layout/body.tt:38
+#: share/layout/body.tt:49
 msgid "Home"
 msgstr ""
 
@@ -423,8 +714,44 @@ msgstr ""
 msgid "Invalid administrator id detected"
 msgstr ""
 
+#: lib/NGCP/Panel/Controller/Billing.pm:229
+msgid "Invalid billing fee id detected!"
+msgstr ""
+
+#: lib/NGCP/Panel/Controller/Billing.pm:469
+msgid "Invalid billing zone id detected"
+msgstr ""
+
+#: lib/NGCP/Panel/Controller/Contact.pm:106
+msgid "Invalid contact id detected"
+msgstr ""
+
+#: lib/NGCP/Panel/Controller/Contract.pm:357
+msgid "Invalid contract id detected"
+msgstr ""
+
+#: lib/NGCP/Panel/Controller/Contract.pm:68
+msgid "Invalid contract id detected!"
+msgstr ""
+
+#: lib/NGCP/Panel/Controller/Billing.pm:624
+msgid "Invalid peaktime date id detected!"
+msgstr ""
+
+#: lib/NGCP/Panel/Controller/Billing.pm:71
+msgid "Invalid profile id detected!"
+msgstr ""
+
+#: lib/NGCP/Panel/Controller/Contact.pm:33
+msgid "Last Name"
+msgstr ""
+
 #: lib/NGCP/Panel/Controller/Administrator.pm:43
 msgid "Lawful Intercept"
+msgstr ""
+
+#: share/templates/widgets/subscriber_topmenu_settings.tt:11 share/templates/widgets/subscriberadmin_topmenu_settings.tt:11
+msgid "Line Settings"
 msgstr ""
 
 #: share/templates/helpers/datatables.tt:207
@@ -435,11 +762,16 @@ msgstr ""
 msgid "Lock Level"
 msgstr ""
 
+#. (login_name)
+#: share/layout/body.tt:18
+msgid "Logged in as %1"
+msgstr ""
+
 #: lib/NGCP/Panel/Controller/Administrator.pm:35
 msgid "Login"
 msgstr ""
 
-#: share/layout/body.tt:20
+#: share/layout/body.tt:31
 msgid "Logout"
 msgstr ""
 
@@ -449,6 +781,10 @@ msgstr ""
 
 #: lib/NGCP/Panel/Controller/Administrator.pm:36
 msgid "Master"
+msgstr ""
+
+#: lib/NGCP/Panel/Controller/Billing.pm:214
+msgid "Match Direction"
 msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:73
@@ -471,8 +807,24 @@ msgstr ""
 msgid "Mobile Push Expiry Timeout"
 msgstr ""
 
+#: lib/NGCP/Panel/Controller/Billing.pm:582
+msgid "Monday"
+msgstr ""
+
+#: share/templates/widgets/admin_topmenu_settings.tt:4
+msgid "Monitoring & Statistics"
+msgstr ""
+
 #: lib/NGCP/Panel/Utils/DbStrings.pm:52
 msgid "NCOS Level"
+msgstr ""
+
+#: share/templates/widgets/admin_topmenu_settings.tt:32 share/templates/widgets/reseller_topmenu_settings.tt:15
+msgid "NCOS Levels"
+msgstr ""
+
+#: lib/NGCP/Panel/Controller/Billing.pm:34
+msgid "Name"
 msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:40
@@ -481,6 +833,15 @@ msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:179
 msgid "Network-Provided Display Name"
+msgstr ""
+
+#: lib/NGCP/Panel/Controller/Billing.pm:307
+msgid "No Billing Fee file specified!"
+msgstr ""
+
+#. (profile.name)
+#: share/templates/billing/peaktimes.tt:1
+msgid "Off-peak-times for %1"
 msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:136
@@ -511,6 +872,14 @@ msgstr ""
 msgid "PIN to bypass outbound Block List"
 msgstr ""
 
+#: lib/NGCP/Panel/Controller/Billing.pm:632
+msgid "Peaktime date does not exist!"
+msgstr ""
+
+#: share/templates/billing/list.tt:19
+msgid "Peaktimes"
+msgstr ""
+
 #: lib/NGCP/Panel/Utils/DbStrings.pm:66
 msgid "Peer Authentication Domain"
 msgstr ""
@@ -521,6 +890,14 @@ msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:60
 msgid "Peer Authentication User"
+msgstr ""
+
+#: share/templates/widgets/admin_topmenu_settings.tt:30
+msgid "Peerings"
+msgstr ""
+
+#: lib/NGCP/Panel/Controller/Contract.pm:28
+msgid "Product"
 msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:164
@@ -535,6 +912,10 @@ msgstr ""
 msgid "Read Only"
 msgstr ""
 
+#: share/templates/widgets/subscriber_topmenu_settings.tt:10 share/templates/widgets/subscriberadmin_topmenu_settings.tt:10
+msgid "Registered Devices"
+msgstr ""
+
 #: lib/NGCP/Panel/Utils/DbStrings.pm:108
 msgid "Reject Emergency Calls"
 msgstr ""
@@ -543,16 +924,32 @@ msgstr ""
 msgid "Reject emergency calls from this user or domain."
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/Administrator.pm:32
+#: lib/NGCP/Panel/Controller/Administrator.pm:32 lib/NGCP/Panel/Controller/Billing.pm:35 lib/NGCP/Panel/Controller/Contact.pm:31
 msgid "Reseller"
+msgstr ""
+
+#: share/templates/widgets/admin_topmenu_settings.tt:25
+msgid "Reseller and Peering Contracts"
+msgstr ""
+
+#: share/templates/widgets/admin_topmenu_settings.tt:23
+msgid "Resellers"
 msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:81
 msgid "Rewrite Rule Set"
 msgstr ""
 
+#: share/templates/widgets/admin_topmenu_settings.tt:31 share/templates/widgets/reseller_topmenu_settings.tt:14
+msgid "Rewrite Rule Sets"
+msgstr ""
+
 #: lib/NGCP/Panel/Utils/DbStrings.pm:38
 msgid "Ring Timeout for CFT"
+msgstr ""
+
+#: share/templates/widgets/admin_topmenu_settings.tt:11
+msgid "SIP Call Flows"
 msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:99
@@ -607,8 +1004,16 @@ msgstr ""
 msgid "Same as \"ncos\", but may only be set by administrators and is applied prior to the user setting."
 msgstr ""
 
+#: lib/NGCP/Panel/Controller/Billing.pm:587
+msgid "Saturday"
+msgstr ""
+
 #: lib/NGCP/Panel/Utils/DbStrings.pm:129
 msgid "Search for partial match of user-provided number (UPN) to subscriber's  primary E164 number and aliases. If it mathes, take UPN as valid wihout allowed_clis check and copy UPN to network-provided number (NPN)."
+msgstr ""
+
+#: share/templates/widgets/admin_topmenu_settings.tt:34
+msgid "Security Bans"
 msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:9
@@ -655,6 +1060,10 @@ msgstr ""
 msgid "Sets upper limit on accepted Min-SE value in in SBC."
 msgstr ""
 
+#: share/templates/widgets/admin_topmenu_settings.tt:18 share/templates/widgets/reseller_topmenu_settings.tt:4 share/templates/widgets/subscriber_topmenu_settings.tt:4 share/templates/widgets/subscriberadmin_topmenu_settings.tt:4
+msgid "Settings"
+msgstr ""
+
 #: lib/NGCP/Panel/Controller/Administrator.pm:40
 msgid "Show CDRs"
 msgstr ""
@@ -665,6 +1074,22 @@ msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:107
 msgid "Sound Set used for system prompts like error announcements etc."
+msgstr ""
+
+#: share/templates/widgets/admin_topmenu_settings.tt:33 share/templates/widgets/reseller_topmenu_settings.tt:16
+msgid "Sound Sets"
+msgstr ""
+
+#: lib/NGCP/Panel/Controller/Billing.pm:212
+msgid "Source Pattern"
+msgstr ""
+
+#: lib/NGCP/Panel/Controller/Billing.pm:713
+msgid "Special offpeak entry successfully created"
+msgstr ""
+
+#: lib/NGCP/Panel/Controller/Billing.pm:661
+msgid "Special offpeak entry successfully updated"
 msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:39
@@ -695,8 +1120,32 @@ msgstr ""
 msgid "Specifies whether registration at the peer host is desired."
 msgstr ""
 
+#: share/templates/billing/peaktimes.tt:26
+msgid "Start - End"
+msgstr ""
+
+#: lib/NGCP/Panel/Controller/Billing.pm:509
+msgid "Start Date"
+msgstr ""
+
+#: lib/NGCP/Panel/Controller/Contract.pm:30 lib/NGCP/Panel/Controller/Contract.pm:373
+msgid "Status"
+msgstr ""
+
+#: share/templates/widgets/admin_topmenu_settings.tt:28 share/templates/widgets/reseller_topmenu_settings.tt:12
+msgid "Subscribers"
+msgstr ""
+
+#: lib/NGCP/Panel/Controller/Billing.pm:588
+msgid "Sunday"
+msgstr ""
+
 #: lib/NGCP/Panel/Utils/DbStrings.pm:106
 msgid "System Sound Set"
+msgstr ""
+
+#: share/templates/widgets/admin_topmenu_settings.tt:8
+msgid "System Statistics"
 msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:117
@@ -787,6 +1236,18 @@ msgstr ""
 msgid "The string to be used as a User-Agent header replacement if ua_header_mode is set to \"replace\"."
 msgstr ""
 
+#: lib/NGCP/Panel/Controller/Billing.pm:559
+msgid "The timerange you wanted to delete does not exist."
+msgstr ""
+
+#: lib/NGCP/Panel/Controller/Billing.pm:527
+msgid "This weekday does not exist."
+msgstr ""
+
+#: lib/NGCP/Panel/Controller/Billing.pm:585
+msgid "Thursday"
+msgstr ""
+
 #: lib/NGCP/Panel/Utils/DbStrings.pm:132
 msgid "Total max of outbound calls of Customer"
 msgstr ""
@@ -801,6 +1262,14 @@ msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:70
 msgid "Total max of overall concurrent calls"
+msgstr ""
+
+#: lib/NGCP/Panel/Controller/Billing.pm:583
+msgid "Tuesday"
+msgstr ""
+
+#: share/templates/billing/fees.tt:24
+msgid "Upload Fees as CSV"
 msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:87
@@ -819,7 +1288,31 @@ msgstr ""
 msgid "User-Provided Number"
 msgstr ""
 
-#: share/layout/body.tt:68
+#: share/templates/widgets/subscriber_topmenu_settings.tt:9 share/templates/widgets/subscriberadmin_topmenu_settings.tt:9
+msgid "Voicebox Messages"
+msgstr ""
+
+#: lib/NGCP/Panel/Controller/Billing.pm:584
+msgid "Wednesday"
+msgstr ""
+
+#: share/templates/billing/peaktimes.tt:25
+msgid "Weekday"
+msgstr ""
+
+#: share/templates/billing/peaktimes.tt:20
+msgid "Weekdays"
+msgstr ""
+
+#: lib/NGCP/Panel/Controller/Billing.pm:78
+msgid "Zone"
+msgstr ""
+
+#: lib/NGCP/Panel/Controller/Billing.pm:79
+msgid "Zone Details"
+msgstr ""
+
+#: share/layout/body.tt:79
 msgid "all rights reserved"
 msgstr ""
 

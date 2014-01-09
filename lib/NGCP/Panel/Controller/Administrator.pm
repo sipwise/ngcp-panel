@@ -26,7 +26,7 @@ sub list_admin :PathPart('administrator') :Chained('/') :CaptureArgs(0) {
         template => 'administrator/list.tt',
     );
     my $cols = [
-        { name => "id", search => 1, title => "#" },
+        { name => "id", search => 1, title => $c->loc("#") },
     ];
     if($c->user->is_superuser) {
         @{ $cols } =  (@{ $cols }, { name => "reseller.name", search => 1, title => $c->loc("Reseller") });

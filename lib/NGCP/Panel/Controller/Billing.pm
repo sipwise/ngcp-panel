@@ -1,7 +1,6 @@
 package NGCP::Panel::Controller::Billing;
 use Sipwise::Base;
 use Text::CSV_XS;
-use I18N::Langinfo qw(langinfo DAY_1 DAY_2 DAY_3 DAY_4 DAY_5 DAY_6 DAY_7);
 use DateTime::Format::ISO8601;
 
 BEGIN { extends 'Catalyst::Controller'; }
@@ -20,9 +19,6 @@ use NGCP::Panel::Utils::Datatables;
 use NGCP::Panel::Utils::Preferences;
 use NGCP::Panel::Utils::DateTime;
 
-my @WEEKDAYS = map { langinfo($_) } (DAY_2, DAY_3, DAY_4, DAY_5, DAY_6, DAY_7, DAY_1);
-#Monday Tuesday Wednesday Thursday Friday Saturday Sunday
-
 sub auto :Does(ACL) :ACLDetachTo('/denied_page') :AllowedRole(admin) :AllowedRole(reseller) {
     my ($self, $c) = @_;
     $c->log->debug(__PACKAGE__ . '::auto');
@@ -37,9 +33,9 @@ sub profile_list :Chained('/') :PathPart('billing') :CaptureArgs(0) {
     my $profiles_rs = $self->$dispatch_to($c);
     $c->stash(profiles_rs => $profiles_rs);
     $c->stash->{profile_dt_columns} = NGCP::Panel::Utils::Datatables::set_columns($c, [
-        { name => "id", "search" => 1, "title" => "#" },
-        { name => "name", "search" => 1, "title" => "Name" },
-        { name => "reseller.name", "search" => 1, "title" => "Reseller" },
+        { name => "id", "search" => 1, "title" => $c->loc("#") },
+        { name => "name", "search" => 1, "title" => $c->loc("Name") },
+        { name => "reseller.name", "search" => 1, "title" => $c->loc("Reseller") },
     ]);
 
     $c->stash(template => 'billing/list.tt');
@@ -75,20 +71,20 @@ sub base :Chained('profile_list') :PathPart('') :CaptureArgs(1) {
     my ($self, $c, $profile_id) = @_;
 
     unless($profile_id && $profile_id->is_integer) {
-        $c->flash(messages => [{type => 'error', text => 'Invalid profile id detected!'}]);
+        $c->flash(messages => [{type => 'error', text => $c->loc('Invalid profile id detected!')}]);
         $c->response->redirect($c->uri_for());
         return;
     }
 
     $c->stash->{zone_dt_columns} = NGCP::Panel::Utils::Datatables::set_columns($c, [
-        { name => 'id', search => 1, title => '#' },
-        { name => 'zone', search => 1, title => 'Zone' },
-        { name => 'detail', search => 1, title => 'Zone Details' },
+        { name => 'id', search => 1, title => $c->loc('#') },
+        { name => 'zone', search => 1, title => $c->loc('Zone') },
+        { name => 'detail', search => 1, title => $c->loc('Zone Details') },
     ]);
     
     my $res = $c->stash->{profiles_rs}->find($profile_id);
     unless(defined($res)) {
-        $c->flash(messages => [{type => 'error', text => 'Billing Profile does not exist!'}]);
+        $c->flash(messages => [{type => 'error', text => $c->loc('Billing Profile does not exist!')}]);
         $c->response->redirect($c->uri_for());
         return;
     }
@@ -182,12 +178,12 @@ sub edit :Chained('base') :PathPart('edit') {
             });
 
             delete $c->session->{created_objects}->{reseller};
-            $c->flash(messages => [{type => 'success', text => 'Billing profile successfully updated'}]);
+            $c->flash(messages => [{type => 'success', text => $c->loc('Billing profile successfully updated')}]);
         } catch($e) {
             NGCP::Panel::Utils::Message->error(
                 c => $c,
                 error => $e,
-                desc  => "Failed to update billing profile.",
+                desc  => $c->loc("Failed to update billing profile."),
             );
         }
         NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for('/billing'));
@@ -239,12 +235,12 @@ sub create :Chained('profile_list') :PathPart('create') :Args(0) {
             $c->session->{created_objects}->{billing_profile} = { id => $profile->id };
             delete $c->session->{created_objects}->{reseller};
 
-            $c->flash(messages => [{type => 'success', text => 'Billing profile successfully created'}]);
+            $c->flash(messages => [{type => 'success', text => $c->loc('Billing profile successfully created')}]);
         } catch($e) {
             NGCP::Panel::Utils::Message->error(
                 c => $c,
                 error => $e,
-                desc  => "Failed to create billing profile.",
+                desc  => $c->loc("Failed to create billing profile."),
             );
         }
         NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for('/billing'));
@@ -264,11 +260,11 @@ sub create_without_reseller :Chained('profile_list') :PathPart('create/noreselle
 sub fees_list :Chained('base') :PathPart('fees') :CaptureArgs(0) {
     my ($self, $c) = @_;
     $c->stash->{fee_dt_columns} = NGCP::Panel::Utils::Datatables::set_columns($c, [
-        { name => 'id', search => 1, title => '#' },
-        { name => 'source', search => 1, title => 'Source Pattern' },
-        { name => 'destination', search => 1, title => 'Destination Pattern' },
-        { name => 'direction', search => 1, title => 'Match Direction' },
-        { name => 'billing_zone.detail', search => 1, title => 'Billing Zone' },
+        { name => 'id', search => 1, title => $c->loc('#') },
+        { name => 'source', search => 1, title => $c->loc('Source Pattern') },
+        { name => 'destination', search => 1, title => $c->loc('Destination Pattern') },
+        { name => 'direction', search => 1, title => $c->loc('Match Direction') },
+        { name => 'billing_zone.detail', search => 1, title => $c->loc('Billing Zone') },
     ]);
     $c->stash(template => 'billing/fees.tt');
 }
@@ -282,7 +278,7 @@ sub fees_base :Chained('fees_list') :PathPart('') :CaptureArgs(1) {
     my ($self, $c, $fee_id) = @_;
 
     unless($fee_id && $fee_id->is_integer) {
-        $c->flash(messages => [{type => 'error', text => 'Invalid billing fee id detected!'}]);
+        $c->flash(messages => [{type => 'error', text => $c->loc('Invalid billing fee id detected!')}]);
         $c->response->redirect($c->uri_for($c->stash->{profile}->{id}, 'fees'));
         return;
     }
@@ -291,7 +287,7 @@ sub fees_base :Chained('fees_list') :PathPart('') :CaptureArgs(1) {
         ->search(undef, {join => 'billing_zone',})
         ->find($fee_id);
     unless(defined($res)) {
-        $c->flash(messages => [{type => 'error', text => 'Billing Fee does not exist!'}]);
+        $c->flash(messages => [{type => 'error', text => $c->loc('Billing Fee does not exist!')}]);
         $c->response->redirect($c->uri_for($c->stash->{profile}->{id}, 'fees'));
         return;
     }
@@ -333,7 +329,7 @@ sub fees_create :Chained('fees_list') :PathPart('create') :Args(0) {
           ->billing_fees->create($form->values);
         delete $c->session->{created_objects}->{billing_zone};
 
-        $c->flash(messages => [{type => 'success', text => 'Billing Fee successfully created!'}]);
+        $c->flash(messages => [{type => 'success', text => $c->loc('Billing Fee successfully created!')}]);
         $c->response->redirect($c->uri_for($c->stash->{profile}->{id}, 'fees'));
         return;
     }
@@ -360,7 +356,7 @@ sub fees_upload :Chained('fees_list') :PathPart('upload') :Args(0) {
 
         # TODO: check by formhandler?
         unless($upload) {
-            $c->flash(messages => [{type => 'error', text => 'No Billing Fee file specified!'}]);
+            $c->flash(messages => [{type => 'error', text => $c->loc('No Billing Fee file specified!')}]);
             $c->response->redirect($c->uri_for($c->stash->{profile}->{id}, 'fees'));
             return;
         }
@@ -395,15 +391,15 @@ sub fees_upload :Chained('fees_list') :PathPart('upload') :Args(0) {
                         ->billing_fees->create($row);
                 }
             });
-            my $text = "Billing Fee successfully uploaded";
+            my $text = $c->loc('Billing Fee successfully uploaded');
             if(@fails) {
-                $text .= ", but skipped the following line numbers: " . (join ", ", @fails);
+                $text .= $c->loc(", but skipped the following line numbers: ") . (join ", ", @fails);
             }
 
             $c->flash(messages => [{type => 'success', text => $text}]);
         } catch($e) {
             $c->log->error("failed to upload csv: $e");
-            $c->flash(messages => [{type => 'error', text => 'Failed to upload Billing Fees'}]);
+            $c->flash(messages => [{type => 'error', text => $c->loc('Failed to upload Billing Fees')}]);
         };
 
         $c->response->redirect($c->uri_for($c->stash->{profile}->{id}, 'fees'));
@@ -441,7 +437,7 @@ sub fees_edit :Chained('fees_base') :PathPart('edit') :Args(0) {
         $c->stash->{'fee_result'}
             ->update($form->values);
         delete $c->session->{created_objects}->{billing_zone};
-        $c->flash(messages => [{type => 'success', text => 'Billing Profile successfully changed!'}]);
+        $c->flash(messages => [{type => 'success', text => $c->loc('Billing Profile successfully changed!')}]);
         $c->response->redirect($c->uri_for($c->stash->{profile}->{id}, 'fees'));
         return;
     }
@@ -454,12 +450,12 @@ sub fees_delete :Chained('fees_base') :PathPart('delete') :Args(0) {
     my ($self, $c) = @_;
 
     unless ( defined($c->stash->{'fee_result'}) ) {
-        $c->flash(messages => [{type => 'error', text => 'Billing fee not found!'}]);
+        $c->flash(messages => [{type => 'error', text => $c->loc('Billing fee not found!')}]);
         return;
     }
     $c->stash->{'fee_result'}->delete;
 
-    $c->flash(messages => [{type => 'success', text => 'Billing profile successfully deleted!'}]);
+    $c->flash(messages => [{type => 'success', text => $c->loc('Billing profile successfully deleted!')}]);
     $c->response->redirect($c->uri_for($c->stash->{profile}->{id}, 'fees'));
 }
 
@@ -500,12 +496,12 @@ sub zones_create :Chained('zones_list') :PathPart('create') :Args(0) {
         try {
             my $zone = $c->stash->{'profile_result'}->billing_zones->create($form->values);
             $c->session->{created_objects}->{billing_zone} = { id => $zone->id };
-            $c->flash(messages => [{type => 'success', text => 'Billing Zone successfully created'}]);
+            $c->flash(messages => [{type => 'success', text => $c->loc('Billing Zone successfully created')}]);
         } catch($e) {
             NGCP::Panel::Utils::Message->error(
                 c => $c,
                 error => $e,
-                desc  => "Failed to create billing zone.",
+                desc  => $c->loc('Failed to create billing zone.'),
             );
         }
         NGCP::Panel::Utils::Navigation::back_or($c, $c->stash->{zones_root_uri});
@@ -522,14 +518,14 @@ sub zones_base :Chained('zones_list') :PathPart('') :CaptureArgs(1) {
     my ($self, $c, $zone_id) = @_;
     
     unless($zone_id && $zone_id->is_integer) {
-        $c->flash(messages => [{type => 'error', text => 'Invalid billing zone id detected'}]);
+        $c->flash(messages => [{type => 'error', text => $c->loc('Invalid billing zone id detected')}]);
         NGCP::Panel::Utils::Navigation::back_or($c, $c->stash->{zones_root_uri});
     }
     
     my $res = $c->stash->{'profile_result'}->billing_zones
         ->find($zone_id);
     unless(defined($res)) {
-        $c->flash(messages => [{type => 'error', text => 'Billing zone does not exist!'}]);
+        $c->flash(messages => [{type => 'error', text => $c->loc('Billing zone does not exist!')}]);
         NGCP::Panel::Utils::Navigation::back_or($c, $c->stash->{zones_root_uri});
     }
     $c->stash(zone_result => $res);
@@ -540,12 +536,12 @@ sub zones_delete :Chained('zones_base') :PathPart('delete') :Args(0) {
     
     try {
         $c->stash->{zone_result}->delete;
-        $c->flash(messages => [{type => 'success', text => 'Billing zone successfully deleted'}]);
+        $c->flash(messages => [{type => 'success', text => $c->loc('Billing zone successfully deleted')}]);
     } catch($e) {
         NGCP::Panel::Utils::Message->error(
             c => $c,
             error => $e,
-            desc  => "Failed to delete billing zone.",
+            desc  => $c->loc('Failed to delete billing zone.'),
         );
     }
     NGCP::Panel::Utils::Navigation::back_or($c, $c->stash->{zones_root_uri});
@@ -561,9 +557,9 @@ sub peaktimes_list :Chained('base') :PathPart('peaktimes') :CaptureArgs(0) {
     $rs = $rs->search(undef, {order_by => 'start'});
 
     $c->stash->{special_dt_columns} = NGCP::Panel::Utils::Datatables::set_columns($c, [
-        { name => 'id', search => 1, title => '#' },
-        { name => 'start', search => 1, title => 'Start Date' },
-        { name => 'end', search => 1, title => 'End Date' },
+        { name => 'id', search => 1, title => $c->loc('#') },
+        { name => 'start', search => 1, title => $c->loc('Start Date') },
+        { name => 'end', search => 1, title => $c->loc('End Date') },
     ]);
 
     $c->stash(weekdays_result => $rs);
@@ -580,7 +576,7 @@ sub peaktime_weekdays_base :Chained('peaktimes_list') :PathPart('weekday') :Capt
     unless (defined $weekday_id && $weekday_id >= 0 && $weekday_id <= 6) {
         $c->flash(messages => [{
             type => 'error',
-            text => 'This weekday does not exist.'
+            text => $c->loc('This weekday does not exist.')
         }]);
         $c->response->redirect($c->uri_for_action(
             "/billing/peaktimes", [$c->req->captures->[0]],
@@ -612,7 +608,7 @@ sub peaktime_weekdays_edit :Chained('peaktime_weekdays_base') :PathPart('edit') 
         unless ($rs) {
             $c->flash(messages => [{
                 type => 'error',
-                text => 'The timerange you wanted to delete does not exist.'
+                text => $c->loc('The timerange you wanted to delete does not exist.')
             }]);
             $c->response->redirect($c->uri_for_action(
                 "/billing/peaktimes", [$c->req->captures->[0]],
@@ -633,6 +629,16 @@ sub peaktime_weekdays_edit :Chained('peaktime_weekdays_base') :PathPart('edit') 
 
 sub load_weekdays {
     my ($self, $c) = @_;
+
+    my @WEEKDAYS = (
+            $c->loc('Monday'),
+            $c->loc('Tuesday'),
+            $c->loc('Wednesday'),
+            $c->loc('Thursday'),
+            $c->loc('Friday'),
+            $c->loc('Saturday'),
+            $c->loc('Sunday')
+        );
 
     my @weekdays;
     for(0 .. 6) {
@@ -667,7 +673,7 @@ sub peaktime_specials_base :Chained('peaktimes_list') :PathPart('date') :Capture
     my ($self, $c, $special_id) = @_;
     
         unless($special_id && $special_id->is_integer) {
-        $c->flash(messages => [{type => 'error', text => 'Invalid peaktime date id detected!'}]);
+        $c->flash(messages => [{type => 'error', text => $c->loc('Invalid peaktime date id detected!')}]);
         $c->response->redirect($c->stash->{peaktimes_root_uri});
         return;
     }
@@ -675,7 +681,7 @@ sub peaktime_specials_base :Chained('peaktimes_list') :PathPart('date') :Capture
     my $res = $c->stash->{'profile_result'}->billing_peaktime_specials
         ->find($special_id);
     unless(defined($res)) {
-        $c->flash(messages => [{type => 'error', text => 'Peaktime date does not exist!'}]);
+        $c->flash(messages => [{type => 'error', text => $c->loc('Peaktime date does not exist!')}]);
         $c->response->redirect($c->stash->{peaktimes_root_uri});
         return;
     }
@@ -704,12 +710,12 @@ sub peaktime_specials_edit :Chained('peaktime_specials_base') :PathPart('edit') 
     if($posted && $form->validated) {
         try {
             $c->stash->{special_result}->update($form->values);
-            $c->flash(messages => [{type => 'success', text => 'Special offpeak entry successfully updated'}]);
+            $c->flash(messages => [{type => 'success', text => $c->loc('Special offpeak entry successfully updated')}]);
         } catch($e) {
             NGCP::Panel::Utils::Message->error(
                 c => $c,
                 error => $e,
-                desc  => "Failed to update special offpeak entry.",
+                desc  => $c->loc('Failed to update special offpeak entry.'),
             );
         }
         NGCP::Panel::Utils::Navigation::back_or($c, $c->stash->{peaktimes_root_uri});
@@ -728,7 +734,7 @@ sub peaktime_specials_delete :Chained('peaktime_specials_base') :PathPart('delet
         NGCP::Panel::Utils::Message->error(
             c => $c,
             error => $e,
-            desc  => "Failed to delete special offpeak entry.",
+            desc  => $c->loc('Failed to delete special offpeak entry.'),
         );
     }
     NGCP::Panel::Utils::Navigation::back_or($c, $c->stash->{peaktimes_root_uri});
@@ -756,12 +762,12 @@ sub peaktime_specials_create :Chained('peaktimes_list') :PathPart('date/create')
         try {
             $c->stash->{'profile_result'}->billing_peaktime_specials
                 ->create($form->values);
-            $c->flash(messages => [{type => 'success', text => 'Special offpeak entry successfully created'}]);
+            $c->flash(messages => [{type => 'success', text => $c->loc('Special offpeak entry successfully created')}]);
         } catch($e) {
             NGCP::Panel::Utils::Message->error(
                 c => $c,
                 error => $e,
-                desc  => "Failed to create special offpeak entry.",
+                desc  => $c->loc('Failed to create special offpeak entry.'),
             );
         }
         NGCP::Panel::Utils::Navigation::back_or($c, $c->stash->{peaktimes_root_uri});

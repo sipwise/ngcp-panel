@@ -27,12 +27,12 @@ sub list_contact :Chained('/') :PathPart('contact') :CaptureArgs(0) {
     $c->stash(template => 'contact/list.tt');
 
     $c->stash->{contact_dt_columns} = NGCP::Panel::Utils::Datatables::set_columns($c, [
-        { name => "id", search => 1, title => "#" },
-        { name => "reseller.name", search => 1, title => "Reseller" },
-        { name => "firstname", search => 1, title => "First Name" },
-        { name => "lastname", search => 1, title => "Last Name" },
-        { name => "company", search => 1, title => "Company" },
-        { name => "email", search => 1, title => "Email" },
+        { name => "id", search => 1, title => $c->loc("#") },
+        { name => "reseller.name", search => 1, title => $c->loc("Reseller") },
+        { name => "firstname", search => 1, title => $c->loc("First Name") },
+        { name => "lastname", search => 1, title => $c->loc("Last Name") },
+        { name => "company", search => 1, title => $c->loc("Company") },
+        { name => "email", search => 1, title => $c->loc("Email") },
     ]);
 }
 
@@ -78,12 +78,12 @@ sub create :Chained('list_contact') :PathPart('create') :Args(0) {
             my $contact = $c->stash->{contacts}->create($form->values);
             delete $c->session->{created_objects}->{reseller};
             $c->session->{created_objects}->{contact} = { id => $contact->id };
-            $c->flash(messages => [{type => 'success', text => 'Contact successfully created'}]);
+            $c->flash(messages => [{type => 'success', text => $c->loc('Contact successfully created')}]);
         } catch($e) {
             NGCP::Panel::Utils::Message->error(
                 c => $c,
                 error => $e,
-                desc  => "Failed to create contact.",
+                desc  => $c->loc("Failed to create contact."),
             );
         }
         NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for('/contact'));
@@ -103,13 +103,13 @@ sub base :Chained('list_contact') :PathPart('') :CaptureArgs(1) {
     my ($self, $c, $contact_id) = @_;
 
     unless($contact_id && $contact_id->is_int) {
-        $c->flash(messages => [{type => 'error', text => 'Invalid contact id detected'}]);
+        $c->flash(messages => [{type => 'error', text => $c->loc('Invalid contact id detected')}]);
         NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for('/contact'));
     }
     my $res = $c->stash->{contacts};
     $c->stash(contact => $res->find($contact_id));
     unless($c->stash->{contact}) {
-        $c->flash(messages => [{type => 'error', text => 'Contact not found'}]);
+        $c->flash(messages => [{type => 'error', text => $c->loc('Contact not found')}]);
         NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for('/contact'));
     }
 }
@@ -153,13 +153,13 @@ sub edit :Chained('base') :PathPart('edit') :Args(0) {
             }
             delete $form->values->{reseller};
             $c->stash->{contact}->update($form->values);
-            $c->flash(messages => [{type => 'success', text => 'Contact successfully changed'}]);
+            $c->flash(messages => [{type => 'success', text => $c->loc('Contact successfully changed')}]);
             delete $c->session->{created_objects}->{reseller};
         } catch($e) {
             NGCP::Panel::Utils::Message->error(
                 c => $c,
                 error => $e,
-                desc  => "Failed to update contact.",
+                desc  => $c->loc('Failed to update contact.'),
             );
         }
         NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for('/contact'));
@@ -182,12 +182,12 @@ sub delete :Chained('base') :PathPart('delete') :Args(0) {
 
     try {
         $c->stash->{contact}->delete;
-        $c->flash(messages => [{type => 'success', text => 'Contact successfully deleted'}]);
+        $c->flash(messages => [{type => 'success', text => $c->loc('Contact successfully deleted')}]);
     } catch($e) {
         NGCP::Panel::Utils::Message->error(
             c => $c,
             error => $e,
-            desc  => "Failed to delete contact.",
+            desc  => $c->loc('Failed to delete contact.'),
         );
     }
     NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for('/contact'));

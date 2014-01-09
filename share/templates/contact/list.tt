@@ -1,6 +1,6 @@
-[% META title = 'Contacts' -%]
+[% site_config.title = c.loc('Contacts') -%]
 [%
-    helper.name = 'Contact';
+    helper.name = c.loc('Contact');
     helper.data = contacts;
     helper.messages = messages;
     helper.dt_columns = contact_dt_columns;
@@ -14,11 +14,11 @@
 
     UNLESS c.user.read_only;
         helper.dt_buttons = [
-            { name = 'Edit', uri = "/contact/'+full.id+'/edit", class = 'btn-small btn-primary', icon = 'icon-edit' },
-            { name = 'Delete', uri = "/contact/'+full.id+'/delete", class = 'btn-small btn-secondary', icon = 'icon-trash' condition = 'full.deletable' },
+            { name = c.loc('Edit'), uri = "/contact/'+full.id+'/edit", class = 'btn-small btn-primary', icon = 'icon-edit' },
+            { name = c.loc('Delete'), uri = "/contact/'+full.id+'/delete", class = 'btn-small btn-secondary', icon = 'icon-trash' condition = 'full.deletable' },
         ];
         helper.top_buttons = [
-            { name = 'Create Contact', uri = c.uri_for('/contact/create'), icon = 'icon-star' },
+            { name = c.loc('Create Contact'), uri = c.uri_for('/contact/create'), icon = 'icon-star' },
         ];
     END;
 

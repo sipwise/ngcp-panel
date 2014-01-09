@@ -1,39 +1,39 @@
 <li class="dropdown">
     <a href="javascript:;" class="dropdown-toggle" data-toggle="dropdown">
         <i class="icon-signal"></i>
-        <span>Monitoring &amp; Statistics</span>
+        <span>[% c.loc('Monitoring & Statistics') | html %]</span>
         <b class="caret"></b>
     </a>
     <ul class="dropdown-menu">
-        <li><a href="[% c.uri_for('/statistics') %]">System Statistics</a></li>
-        <li><a href="[% c.uri_for('/calls') %]">Call Distribution</a></li>
+        <li><a href="[% c.uri_for('/statistics') %]">[% c.loc('System Statistics') %]</a></li>
+        <li><a href="[% c.uri_for('/calls') %]">[% c.loc('Call Distribution') %]</a></li>
         [% IF c.config.features.callflow -%]
-        <li><a href="[% c.uri_for('/callflow') %]">SIP Call Flows</a></li>
+        <li><a href="[% c.uri_for('/callflow') %]">[% c.loc('SIP Call Flows') %]</a></li>
         [% END -%]
     </ul>
 </li>
 <li class="dropdown">
     <a href="javascript:;" class="dropdown-toggle" data-toggle="dropdown">
         <i class="icon-th"></i>
-        <span>Settings</span>
+        <span>[% c.loc('Settings') %]</span>
         <b class="caret"></b>
     </a>
     <ul class="dropdown-menu">
-        <li><a href="[% c.uri_for('/administrator') %]">Administrators</a></li>
-        <li><a href="[% c.uri_for('/reseller') %]">Resellers</a></li>
-        <li><a href="[% c.uri_for('/customer') %]">Customers</a></li>
-        <li><a href="[% c.uri_for('/contract') %]">Reseller and Peering Contracts</a></li>
-        <li><a href="[% c.uri_for('/contact') %]">Contacts</a></li>
-        <li><a href="[% c.uri_for('/domain') %]">Domains</a></li>
-        <li><a href="[% c.uri_for('/subscriber') %]">Subscribers</a></li>
-        <li><a href="[% c.uri_for('/billing') %]">Billing</a></li>
-        <li><a href="[% c.uri_for('/peering') %]">Peerings</a></li>
-        <li><a href="[% c.uri_for('/rewrite') %]">Rewrite Rule Sets</a></li>
-        <li><a href="[% c.uri_for('/ncos') %]">NCOS Levels</a></li>
-        <li><a href="[% c.uri_for('/sound') %]">Sound Sets</a></li>
-        <li><a href="[% c.uri_for('/security') %]">Security Bans</a></li>
+        <li><a href="[% c.uri_for('/administrator') %]">[% c.loc('Administrators') %]</a></li>
+        <li><a href="[% c.uri_for('/reseller') %]">[% c.loc('Resellers') %]</a></li>
+        <li><a href="[% c.uri_for('/customer') %]">[% c.loc('Customers') %]</a></li>
+        <li><a href="[% c.uri_for('/contract') %]">[% c.loc('Reseller and Peering Contracts') %]</a></li>
+        <li><a href="[% c.uri_for('/contact') %]">[% c.loc('Contacts') %]</a></li>
+        <li><a href="[% c.uri_for('/domain') %]">[% c.loc('Domains') %]</a></li>
+        <li><a href="[% c.uri_for('/subscriber') %]">[% c.loc('Subscribers') %]</a></li>
+        <li><a href="[% c.uri_for('/billing') %]">[% c.loc('Billing') %]</a></li>
+        <li><a href="[% c.uri_for('/peering') %]">[% c.loc('Peerings') %]</a></li>
+        <li><a href="[% c.uri_for('/rewrite') %]">[% c.loc('Rewrite Rule Sets') %]</a></li>
+        <li><a href="[% c.uri_for('/ncos') %]">[% c.loc('NCOS Levels') %]</a></li>
+        <li><a href="[% c.uri_for('/sound') %]">[% c.loc('Sound Sets') %]</a></li>
+        <li><a href="[% c.uri_for('/security') %]">[% c.loc('Security Bans') %]</a></li>
         [% IF c.config.features.cloudpbx -%]
-        <li><a href="[% c.uri_for('/device') %]">Device Management</a></li>
+        <li><a href="[% c.uri_for('/device') %]">[% c.loc('Device Management') %]</a></li>
         [% END -%]
     </ul>
 </li>

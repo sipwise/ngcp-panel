@@ -3,7 +3,7 @@
 <div id="mod_edit" class="modal hide ngcp-modal">
     <div class="modal-header">
         <button id="mod_close" type="button" class="close mod_close">×</button>
-        <h3>[% m.create_flag == 1 ? 'Create' : 'Edit' %] [% m.name %]</h3>
+        <h3>[% m.create_flag == 1 ? c.loc('Create [_1]',m.name) : c.loc('Edit [_1]',m.name) %]</h3>
     </div>
 
 [% END -%]

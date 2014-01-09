@@ -1,6 +1,6 @@
-[% META title = 'Billing Zones' -%]
+[% site_config.title = c.loc('Billing Zones') -%]
 [%
-    helper.name = 'Billing Zones';
+    helper.name = c.loc('Billing Zone');
     helper.messages = messages;
     helper.dt_columns = zone_dt_columns;
     helper.length_change = 1;
@@ -14,10 +14,10 @@
     helper.tmpuri = c.uri_for( profile.id, 'zones');
     UNLESS c.user.read_only;
         helper.dt_buttons = [
-            { name = 'Delete', uri = helper.tmpuri _ "/'+full.id+'/delete", class = 'btn-small btn-secondary', icon = 'icon-trash' },
+            { name = c.loc('Delete'), uri = helper.tmpuri _ "/'+full.id+'/delete", class = 'btn-small btn-secondary', icon = 'icon-trash' },
         ];
         helper.top_buttons = [
-            { name = 'Create', uri = c.uri_for(profile.id, 'zones', 'create'), icon = 'icon-star' },
+            { name = c.loc('Create'), uri = c.uri_for(profile.id, 'zones', 'create'), icon = 'icon-star' },
         ];
     END;
 

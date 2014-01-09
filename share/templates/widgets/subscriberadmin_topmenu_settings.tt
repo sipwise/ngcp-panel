@@ -1,15 +1,15 @@
 <li class="dropdown">
     <a href="javascript:;" class="dropdown-toggle" data-toggle="dropdown">
         <i class="icon-th"></i>
-        <span>Settings</span>
+        <span>[% c.loc('Settings') %]</span>
         <b class="caret"></b>
     </a>
     <ul class="dropdown-menu">
-        <li><a href="[% c.uri_for_action('/subscriber/calllist', [subscriber.id]) %]">Call List</a></li>
-        <li><a href="[% c.uri_for_action('/subscriber/voicemails', [subscriber.id]) %]">Voicebox Messages</a></li>
-        <li><a href="[% c.uri_for_action('/subscriber/reglist', [subscriber.id]) %]">Registered Devices</a></li>
-        <li><a href="[% c.uri_for_action('/subscriber/preferences', [subscriber.id]) %]">Line Settings</a></li>
-        <li><a href="[% c.uri_for_action('/customer/details', [c.user.account_id]) %]">Customer Settings</a></li>
+        <li><a href="[% c.uri_for_action('/subscriber/calllist', [subscriber.id]) %]">[% c.loc('Call List') %]</a></li>
+        <li><a href="[% c.uri_for_action('/subscriber/voicemails', [subscriber.id]) %]">[% c.loc('Voicebox Messages') %]</a></li>
+        <li><a href="[% c.uri_for_action('/subscriber/reglist', [subscriber.id]) %]">[% c.loc('Registered Devices') %]</a></li>
+        <li><a href="[% c.uri_for_action('/subscriber/preferences', [subscriber.id]) %]">[% c.loc('Line Settings') %]</a></li>
+        <li><a href="[% c.uri_for_action('/customer/details', [c.user.account_id]) %]">[% c.loc('Customer Settings') %]</a></li>
     </ul>
 </li>
 [% # vim: set tabstop=4 syntax=html expandtab: -%]

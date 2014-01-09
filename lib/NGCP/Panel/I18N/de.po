@@ -80,7 +80,7 @@ msgstr ""
 
 #: lib/NGCP/Panel/Controller/Administrator.pm:37
 msgid "Active"
-msgstr ""
+msgstr "Aktiv"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:22
 msgid "Administrative Block List for inbound calls"
