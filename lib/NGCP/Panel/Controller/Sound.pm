@@ -418,7 +418,7 @@ sub handles_list :Chained('base') :PathPart('handles') :CaptureArgs(0) {
     unless($c->config->{features}->{cloudpbx}) {
         $handles_rs = $handles_rs->search({ 'groups.name' => { '!=' => 'pbx' } });
     }
-    unless($c->config->{features}->{musiconhold}) {
+    unless($c->config->{features}->{cloudpbx} || $c->config->{features}->{musiconhold}) {
         $handles_rs = $handles_rs->search({ 'groups.name' => { '!=' => 'music_on_hold' } });
     }
     unless($c->config->{features}->{callingcard}) {
@@ -505,16 +505,36 @@ sub handles_edit :Chained('handles_base') :PathPart('edit') {
             }
             
             my $target_codec = 'WAV';
-            
-            if($file_result->handle->group->name eq 'calling_card') {
-                try {
-                    NGCP::Panel::Utils::Sems::clear_audio_cache("appserver", $file_result->set_id, $file_result->handle->name);
-                    if($c->config->{features}->{cloudpbx}) {
-                        NGCP::Panel::Utils::Sems::clear_audio_cache("pbx", $file_result->set_id, $file_result->handle->name);
+
+            # clear audio caches
+            given($file_result->handle->group->name) {
+                when([qw/calling_card/]) {
+                    try {
+                        NGCP::Panel::Utils::Sems::clear_audio_cache("appserver", $file_result->set_id, $file_result->handle->name);
+                    } catch ($e) {
+                        NGCP::Panel::Utils::Message->error(
+                            c => $c,
+                            error => "Failed to clear audio cache for " . $file_result->handle->group->name . " at appserver",
+                            desc  => "Failed to clear audio cache.",
+                        );
+                        NGCP::Panel::Utils::Navigation::back_or($c, $c->stash->{handles_base_uri});
                     }
-                } catch ($e) {
-                    $c->flash(messages => [{type => 'error', text => 'Failed to clear audio cache'}]);
-                    NGCP::Panel::Utils::Navigation::back_or($c, $c->stash->{handles_base_uri});
+                }
+                when([qw/pbx music_on_hold/]) {
+                    try {
+                        NGCP::Panel::Utils::Sems::clear_audio_cache("appserver", $file_result->set_id, $file_result->handle->name)
+                            if($file_result->handle->group->name eq "music_on_hold");
+                        if($c->config->{features}->{cloudpbx}) {
+                            NGCP::Panel::Utils::Sems::clear_audio_cache("pbx", $file_result->set_id, $file_result->handle->name);
+                        }
+                    } catch ($e) {
+                        NGCP::Panel::Utils::Message->error(
+                            c => $c,
+                            error => "Failed to clear audio cache for " . $file_result->handle->group->name,
+                            desc  => "Failed to clear audio cache.",
+                        );
+                        NGCP::Panel::Utils::Navigation::back_or($c, $c->stash->{handles_base_uri});
+                    }
                 }
             }
 
