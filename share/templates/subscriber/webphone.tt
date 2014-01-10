@@ -1,23 +1,29 @@
 [% site_config.title = 'Web Phone for ' _ subscriber.username _ '@' _ subscriber.domain.domain -%]
 
 <style>
-    #xmpp-roster .available {
+    #xmpp-roster {
+        list-style-type: none;
+    }
+    .xmpp-roster-entry {
+        font-size: 1.2em;
+    }
+    .xmpp-roster-entry.available {
         color: green;
     }
-    #xmpp-roster .unavailable {
+    .xmpp-roster-entry.unavailable {
+        color: gray;
+    }
+    .xmpp-roster-entry.chat {
+        color: green;
+    }
+    .xmpp-roster-entry.away, 
+    .xmpp-roster-entry.xa {
+        color: orange;
+    }
+    .xmpp-roster-entry.dnd {
         color: red;
     }
-/* 
-    #xmpp-roster .chat {
-        color: green;
-    }
-    #xmpp-roster .away, #xmpp-roster .xa {
-        color: orange;
-    }
-    #xmpp-roster .dnd {
-        color: orange;
-    }
-*/
+
 </style>
 
 <div class="row">
@@ -33,6 +39,9 @@
     <script type="text/javascript" src="/js/libs/jssip-0.3.0.min.js"></script>
     <!--<script type="text/javascript" src="/js/libs/stanzaio.bundle.min.js"></script>-->
     <script type="text/javascript" src="/js/libs/stanzaio.bundle.js"></script>
+    <script type="text/javascript" src="/js/libs/bootstrap-select.min.js"></script>
+    <script type="text/javascript" src="/js/libs/bootstrap-select.min.js"></script>
+    <link rel="stylesheet" type="text/css" href="/css/bootstrap-select/bootstrap-select.min.css"/>
     <script type="text/javascript">
 
         var phone = null;
@@ -82,10 +91,37 @@
 
             var xmpp_configuration = data.aaData.xmpp;
             chat = XMPP.createClient(xmpp_configuration);
-
+/*
             chat.on('*', function(name, data) {
-                //console.log("xmpp cb " + name);
-                //console.log(data);
+                console.log("xmpp cb " + name);
+                console.log(data);
+            });
+*/
+
+            chat.on('disconnected', function() {
+                $("#xmpp-status").html("disconnected.");
+            });
+
+            chat.on('chatState', function(obj) {
+                console.log("got chat state", obj);
+                var jid = obj.from.bare;
+                var msg;
+                if(obj.chatState == "composing") {
+                    msg = jid + " is typing...";
+                } else if(obj.chatState == "paused") {
+                    msg = jid + " has stopped typing.";
+                } else if(obj.chatState == "active") {
+                    // chat session started/closed
+                }
+                $("#xmpp-status").html(msg);
+            });
+            chat.on('chat', function(obj) {
+                console.log("got message ", obj);
+                var jid = obj.from.bare;
+                $("#xmpp-status").html(jid + " has sent: " + obj.body);
+            });
+            chat.on('groupchat', function(message) {
+                console.log("got group message ", message);
             });
 
             chat.on('session:started', function() {
@@ -99,9 +135,16 @@
                         $.each(resp.roster.items, function(index, item) {
                             console.log(item.name);
                             var jidid = item.jid.bare.replace(/[^a-zA-Z0-9_]/g, '-');
-                            $("#xmpp-roster").append('<li id="' + jidid + '">' + item.jid.bare + ' <i>' + item.name + '</i></li>');
+                            $("#xmpp-roster").append('<li id="' + jidid + '"><span class="xmpp-roster-entry icon-user"></span> ' + item.jid.bare + '</span> <i>' + item.name + '</i> <span class="icon-comment xmpp-start-chat" data-jid="' + item.jid.bare + '"></span></li>');
                         });
                     }
+                    $('.xmpp-start-chat').click(function(obj) {
+                        var jid = obj.currentTarget.dataset.jid;
+                        console.log("starting chat with " + jid);
+
+                        chat.sendMessage({to: jid, body: "hello world"});
+                    });
+
                 });
             });
             chat.on('presence', function(pres) {
@@ -110,11 +153,18 @@
                     return 1;
                 }
                 var type = pres.type || 'available';
+                var show;
+                if(type == 'available') {
+                    show = pres.show || 'available';
+                } else {
+                    show = pres.show || 'unavailable';
+                }
                 var jidid = pres.from.bare.replace(/[^a-zA-Z0-9_]/g, '-');
 
-                $("#xmpp-roster #" + jidid).removeClass().addClass(type);
+                $("#xmpp-roster #" + jidid + " .xmpp-roster-entry").removeClass().addClass("xmpp-roster-entry icon-user " + show);
 
-                console.log("+++++++ xmpp cb " + pres.type + " for from=" + pres.from.bare + " and to=" + pres.to.bare, pres);
+                //console.log("+++++++ xmpp cb " + pres.type + " for from=" + pres.from.bare + " and to=" + pres.to.bare, pres);
+                console.log("+++++++ type=" + pres.type + ", show=" + pres.show);
             });
 
             chat.connect();
@@ -158,6 +208,23 @@
             phone.call('sip:voicebox@pbx1.demo.sipwise.com', options);
         }
 
+        $(function() {
+            $('.selectpicker').selectpicker();
+
+            $('#xmpp-pres').change(function(obj) {
+                var show = obj.currentTarget[obj.currentTarget.selectedIndex].value;
+                var type = (show == "unavailable" ? "unavailable" : "available");
+                console.log("changing xmpp presence status, show=" + show + ", type=" + type);
+                if(show == "available") {
+                    chat.sendPresence();
+                } else {
+                    chat.sendPresence({ type: type, show: show });
+                }
+            });
+
+        });
+
+
     </script>
 
     <div class="row">
@@ -168,6 +235,22 @@
     </div>
     <div class="row">
         <button onclick="javascript:call();" class="btn btn-large btn-primary">Call</a>
+    </div>
+    <div class="row">
+        <h3>Change XMPP Status</h3>
+        <select id="xmpp-pres" class="selectpicker">
+            [% FOR opt IN 
+                [
+                    { n = "available", d = "Available" },
+                    { n = "away", d = "Away" },
+                    { n = "xa", d = "Extended Away" },
+                    { n = "dnd", d = "Do Not Disturb" },
+                    { n = "unavailable", d = "Offline" },
+                ]
+            -%]
+                <option value="[% opt.n %]" data-content="<span class='icon-user xmpp-roster-entry [% opt.n %]'></span><span> [% opt.d %]</span>">[% opt.d %]</option>
+            [% END -%]
+        </select>
     </div>
     <div class="row">
         <h3>XMPP Roster</h3>
