@@ -23,6 +23,7 @@ my $builder = Local::Module::Build->new(
         'Catalyst::ActionRole::ACL' => 0,
         'Catalyst::ActionRole::CheckTrailingSlash' => 0,
         'Catalyst::ActionRole::RequireSSL' => 0,
+	'Catalyst::Authentication::Credential::HTTP' => 0,
         'Catalyst::Model::DBIC::Schema' => 0,
         'Catalyst::Plugin::Authentication' => 0,
         'Catalyst::Plugin::Authorization::Roles' => 0,
