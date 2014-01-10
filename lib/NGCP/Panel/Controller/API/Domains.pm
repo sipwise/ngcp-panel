@@ -27,7 +27,7 @@ __PACKAGE__->config(
     action => {
         map { $_ => {
             ACLDetachTo => '/api/root/invalid_user',
-            AllowedRole => 'api_admin',
+            AllowedRole => [qw/admin reseller/],
             Args => 0,
             Does => [qw(ACL CheckTrailingSlash RequireSSL)],
             Method => $_,
@@ -163,9 +163,9 @@ sub POST :Allow {
                 domain => $resource->{domain}
             });
             my $reseller_id;
-            if($c->user->roles eq "api_admin") {
+            if($c->user->roles eq "admin") {
                 $reseller_id = $resource->{reseller_id};
-            } elsif($c->user->roles eq "api_reseller") {
+            } elsif($c->user->roles eq "reseller") {
                 $reseller_id = $c->user->reseller_id;
             }
             $billing_domain->create_related('domain_resellers', {

@@ -27,7 +27,7 @@ __PACKAGE__->config(
     action => {
         map { $_ => {
             ACLDetachTo => '/api/root/invalid_user',
-            AllowedRole => 'api_admin',
+            AllowedRole => 'admin',
             Args => 1,
             Does => [qw(ACL RequireSSL)],
             Method => $_,
@@ -93,8 +93,8 @@ sub DELETE :Allow {
         my $subscriber = $self->item_by_id($c, $id);
         last unless $self->resource_exists($c, subscriber => $subscriber);
 
-        if($c->user->roles eq "api_admin") {
-        } elsif($c->user->roles eq "api_reseller") {
+        if($c->user->roles eq "admin") {
+        } elsif($c->user->roles eq "reseller") {
             unless($subscriber->subscriber_resellers->reseller_id == $c->user->reseller_id) {
                 $self->error($c, HTTP_FORBIDDEN, "subscriber does not belong to reseller");
                 last;

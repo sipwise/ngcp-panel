@@ -369,15 +369,21 @@ sub log_request {
     my $params = join(', ', map { "'".$_."'='".($c->request->query_params->{$_} // '')."'" } 
         keys %{ $c->request->query_params }
     );
-    my $user;
-    if($c->user->roles eq "api_admin" || $c->user->roles eq "api_reseller") {
-        $user = $c->user->login;
+    my ($user, $roles);
+    if($c->user_exists) {
+        if($c->user->roles eq "admin" || $c->user->roles eq "reseller") {
+            $user = $c->user->login;
+        } else {
+            $user = $c->user->username . '@' . $c->user->domain;
+        }
+        $roles = $c->user->roles;
     } else {
-        $user = $c->user->username . '@' . $c->user->domain;
+        $user = "<unknown>";
+        $roles = "<unknown>";
     }
 
     $c->log->info("API function '".$c->request->path."' called by '" . $user . 
-        "' ('" . $c->user->roles . "') from host '".$c->request->address."' with method '" . $c->request->method . "' and params " .
+        "' ('" . $roles . "') from host '".$c->request->address."' with method '" . $c->request->method . "' and params " .
         (length $params ? $params : "''") .
         " and body '" . $c->stash->{body} . "'");
 }
@@ -398,7 +404,7 @@ sub log_response {
     }
     $c->log->info("API function '".$c->request->path."' generated response with code '" . 
         $c->response->code . "' and body '" .
-        $c->response->body . "'");
+        ($c->response->body // '') . "'");
 }
 
 1;

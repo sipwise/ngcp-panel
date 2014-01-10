@@ -15,9 +15,9 @@ use NGCP::Panel::Utils::Prosody;
 
 sub get_form {
     my ($self, $c) = @_;
-    if($c->user->roles eq "api_admin") {
+    if($c->user->roles eq "admin") {
         return NGCP::Panel::Form::Domain::Admin->new;
-    } elsif($c->user->roles eq "api_reseller") {
+    } elsif($c->user->roles eq "reseller") {
         return NGCP::Panel::Form::Domain::Reseller->new;
     }
     return;
@@ -54,11 +54,11 @@ sub hal_from_item {
     );
 
     $resource{id} = int($item->id);
-    if($c->user->roles eq "api_admin") {
+    if($c->user->roles eq "admin") {
         $resource{reseller_id} = 
             int($item->domain_resellers->first->reseller_id)
             if($item->domain_resellers->first);
-    } elsif($c->user->roles eq "api_reseller") {
+    } elsif($c->user->roles eq "reseller") {
     }
 
 =pod
@@ -104,9 +104,9 @@ sub item_rs {
     my ($self, $c) = @_;
 
     my $item_rs;
-    if($c->user->roles eq "api_admin") {
+    if($c->user->roles eq "admin") {
         $item_rs = $c->model('DB')->resultset('domains');
-    } elsif($c->user->roles eq "api_reseller") {
+    } elsif($c->user->roles eq "reseller") {
         $item_rs = $c->model('DB')->resultset('admins')->find(
                 { id => $c->user->id, } )
             ->reseller

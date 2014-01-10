@@ -53,23 +53,6 @@ sub index :Path Form {
                             -and => [
                                 login => $user,
                                 is_active => 1, 
-                                is_superuser => 1,
-                            ],
-                        }],
-                    }
-                }, 
-                $realm);
-        } elsif($realm eq 'reseller') {
-            $res = $c->authenticate(
-                {
-                    login => $user, 
-                    md5pass => $pass,
-                    'dbix_class' => {
-                        searchargs => [{
-                            -and => [ 
-                                login => $user,
-                                is_active => 1, 
-                                is_superuser => 0,
                             ],
                         }],
                     }

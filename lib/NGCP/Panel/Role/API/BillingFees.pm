@@ -51,8 +51,8 @@ sub fee_by_id {
     my ($self, $c, $id) = @_;
 
     my $fees = $c->model('DB')->resultset('billing_fees');
-    if($c->user->roles eq "api_admin") {
-    } elsif($c->user->roles eq "api_reseller") {
+    if($c->user->roles eq "admin") {
+    } elsif($c->user->roles eq "reseller") {
         $fees = $fees->search({
             'billing_profile.reseller_id' => $c->user->reseller_id,
         }, {
@@ -73,8 +73,8 @@ sub update_fee {
     my ($self, $c, $fee, $old_resource, $resource, $form) = @_;
 
     my $reseller_id;
-    if($c->user->roles eq "api_admin") {
-    } elsif($c->user->roles eq "api_admin") {
+    if($c->user->roles eq "admin") {
+    } elsif($c->user->roles eq "admin") {
         $reseller_id = $c->user->reseller_id;
     } else {
         $reseller_id = $c->user->contract->contact->reseller_id;
@@ -125,7 +125,7 @@ sub update_fee {
             $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Invalid 'billing_profile_id'");
             return;
         }
-        if($c->user->roles ne "api_admin" && $profile->reseller->id != $reseller_id) {
+        if($c->user->roles ne "admin" && $profile->reseller->id != $reseller_id) {
             $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Invalid 'billing_profile_id'");
             return;
         }

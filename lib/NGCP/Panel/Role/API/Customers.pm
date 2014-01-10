@@ -104,8 +104,8 @@ sub customer_by_id {
             '+as' => 'bmid',
         });
 
-    if($c->user->roles eq "api_admin") {
-    } elsif($c->user->roles eq "api_reseller") {
+    if($c->user->roles eq "admin") {
+    } elsif($c->user->roles eq "reseller") {
         $customers = $customers->search({
             'contact.reseller_id' => $c->user->reseller_id,
         });

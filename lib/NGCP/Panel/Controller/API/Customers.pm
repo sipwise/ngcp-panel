@@ -28,7 +28,7 @@ __PACKAGE__->config(
     action => {
         map { $_ => {
             ACLDetachTo => '/api/root/invalid_user',
-            AllowedRole => 'api_admin',
+            AllowedRole => 'admin',
             Args => 0,
             Does => [qw(ACL CheckTrailingSlash RequireSSL)],
             Method => $_,
@@ -70,8 +70,8 @@ sub GET :Allow {
                 '+as' => 'bmid',
             });
 
-        if($c->user->roles eq "api_admin") {
-        } elsif($c->user->roles eq "api_reseller") {
+        if($c->user->roles eq "admin") {
+        } elsif($c->user->roles eq "reseller") {
             $customers = $customers->search({
                 'contact.reseller_id' => $c->user->reseller_id,
             });

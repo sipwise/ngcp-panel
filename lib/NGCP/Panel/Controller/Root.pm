@@ -27,33 +27,57 @@ sub auto :Private {
         return 1;
     }
 
-    if($c->user_exists && $c->user->roles ne "api_admin" &&
-       0 == index $c->controller->catalyst_component_name, 'NGCP::Panel::Controller::API') {
-        
-        $c->log->debug("*** Root::auto invalidate authenticated non-api-admin user for api access");
-        $c->logout;
-    }
-
     unless($c->user_exists) {
-        $c->log->debug("*** Root::auto user not authenticated");
-        if (
-            exists $c->request->env->{SSL_CLIENT_M_SERIAL}
-            && 0 == index $c->controller->catalyst_component_name, 'NGCP::Panel::Controller::API'
-        ) {
-            my $ssl_client_m_serial = hex $c->request->env->{SSL_CLIENT_M_SERIAL};
-            my $res = $c->authenticate({ 
-                    ssl_client_m_serial => $ssl_client_m_serial,
-                    is_superuser => 1, # TODO: abused as password until NoPassword handler is available
-                }, 'api_admin');
-            unless($c->user_exists)  {
-                use Data::Printer; p $res;
-                $c->log->debug("+++++ invalid api login");
-                $c->detach(qw(API::Root invalid_user), [$ssl_client_m_serial]) unless $c->user_exists;
+       
+        if(index($c->controller->catalyst_component_name, 'NGCP::Panel::Controller::API') == 0) {
+            $c->log->debug("++++++ Root::auto unauthenticated API request");
+            my $ssl_dn = $c->request->env->{SSL_CLIENT_M_DN} // ""; 
+            my $ssl_sn = hex $c->request->env->{SSL_CLIENT_M_SERIAL} // 0;
+            if($ssl_sn) {
+                $c->log->debug("++++++ Root::auto API request with client auth sn '$ssl_sn'");
+                unless($ssl_dn eq "/CN=Sipwise NGCP API client certificate") {
+                    $c->log->error("++++++ Root::auto API request with invalid client DN '$ssl_dn'");
+                    $c->res->status(403);
+                    $c->res->body(JSON::to_json({
+                        message => "Invalid client certificate DN '$ssl_dn'",
+                        code => 403,
+                    }));
+                    return;
+                }
+
+                my $res = $c->authenticate({ 
+                        ssl_client_m_serial => $ssl_sn,
+                        is_active => 1, # TODO: abused as password until NoPassword handler is available
+                    }, 'api_admin_cert');
+                unless($c->user_exists)  {
+                    $c->log->debug("+++++ invalid api login");
+                    $c->detach(qw(API::Root invalid_user), [$ssl_sn]) unless $c->user_exists;
+                } else {
+                    $c->log->debug("++++++ admin '".$c->user->login."' authenticated via api_admin_cert");
+                }
+                return 1;
+
+
             } else {
-                $c->log->debug("api_admin '".$c->user->login."' authenticated");
+                $c->log->debug("++++++ Root::auto API request with http auth");
+                my $realm = "api_admin_http";
+                my $res = $c->authenticate({}, $realm);
+
+                unless($c->user_exists && $c->user->is_active)  {
+                    $c->user->logout if($c->user);
+                    $c->log->debug("+++++ invalid api admin http login");
+                    my $r = $c->get_auth_realm($realm);
+                    $r->credential->authorization_required_response($c, $r);
+                    return;
+                } else {
+                    $c->log->debug("++++++ admin '".$c->user->login."' authenticated via api_admin_http");
+                }
+
+                return 1;
             }
-            return 1;
         }
+
+
         # don't redirect to login page for ajax uris
         if($c->request->path =~ /\/ajax$/) {
             $c->response->body("403 - Permission denied");

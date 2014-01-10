@@ -27,7 +27,7 @@ __PACKAGE__->config(
     action => {
         map { $_ => {
             ACLDetachTo => '/api/root/invalid_user',
-            AllowedRole => 'api_admin',
+            AllowedRole => 'admin',
             Args => 0,
             Does => [qw(ACL CheckTrailingSlash RequireSSL)],
             Method => $_,
@@ -56,8 +56,8 @@ sub GET :Allow {
             });
         };
 
-        if($c->user->roles eq "api_admin") {
-        } elsif($c->user->roles eq "api_reseller") {
+        if($c->user->roles eq "admin") {
+        } elsif($c->user->roles eq "reseller") {
             $fees = $fees->search({ 
                 'billing_profile.reseller_id' => $c->user->reseller_id 
             }, {
@@ -155,8 +155,8 @@ sub POST :Allow {
         last unless $resource;
 
         my $reseller_id;
-        if($c->user->roles eq "api_admin") {
-        } elsif($c->user->roles eq "api_reseller") {
+        if($c->user->roles eq "admin") {
+        } elsif($c->user->roles eq "reseller") {
             $reseller_id = $c->user->reseller_id;
         } else {
             $reseller_id = $c->user->contract->contact->reseller_id;
@@ -203,7 +203,7 @@ sub POST :Allow {
             $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Invalid 'billing_profile_id'.");
             last;
         }
-        if($c->user->roles ne "api_admin" && $profile->reseller_id != $reseller_id) {
+        if($c->user->roles ne "admin" && $profile->reseller_id != $reseller_id) {
             $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Invalid 'billing_profile_id'.");
             last;
         }

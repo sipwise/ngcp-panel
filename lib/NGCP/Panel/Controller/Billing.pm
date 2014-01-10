@@ -30,7 +30,7 @@ sub auto :Does(ACL) :ACLDetachTo('/denied_page') :AllowedRole(admin) :AllowedRol
 sub profile_list :Chained('/') :PathPart('billing') :CaptureArgs(0) {
     my ( $self, $c ) = @_;
     
-    my $dispatch_to = '_profile_resultset_' . $c->user->auth_realm;
+    my $dispatch_to = '_profile_resultset_' . $c->user->roles;
     my $profiles_rs = $self->$dispatch_to($c);
     $c->stash(profiles_rs => $profiles_rs);
     $c->stash->{profile_dt_columns} = NGCP::Panel::Utils::Datatables::set_columns($c, [

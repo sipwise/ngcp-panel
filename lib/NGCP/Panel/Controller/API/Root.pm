@@ -20,8 +20,8 @@ class_has('dispatch_path', is => 'ro', default => '/api/');
 __PACKAGE__->config(
     action => {
         map { $_ => {
-            ACLDetachTo => [qw(API::Root invalid_user)],
-            AllowedRole => 'api_admin',
+            ACLDetachTo => 'invalid_user',
+            AllowedRole => [qw/admin reseller/],
             Args => 0,
             Does => [qw(ACL CheckTrailingSlash RequireSSL)],
             Method => $_,
@@ -103,14 +103,15 @@ sub collections_link_headers : Private {
 
 sub invalid_user : Private {
     my ($self, $c, $ssl_client_m_serial) = @_;
-    $self->error($c, HTTP_FORBIDDEN, "Invalid certificate serial number '$ssl_client_m_serial'.");
+    #$self->error($c, HTTP_FORBIDDEN, "Invalid certificate serial number '$ssl_client_m_serial'.");
+    $self->error($c, HTTP_FORBIDDEN, "Invalid user");
     return;
 }
 
 sub end : Private {
     my ($self, $c) = @_;
     
-    $self->log_response($c);
+    #$self->log_response($c);
 }
 
 # vim: set tabstop=4 expandtab:

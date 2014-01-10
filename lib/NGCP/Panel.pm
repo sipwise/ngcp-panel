@@ -88,33 +88,7 @@ __PACKAGE__->config(
     },
 
     'Plugin::Authentication' => {
-        default => {
-            credential => {
-                class => 'Password',
-                password_field => 'password',
-                password_type => 'clear'
-            },
-            store => {
-                class => 'Minimal',
-                users => {
-                }
-            }
-        },
-        reseller => {
-            credential => {
-                class => 'Password',
-                password_field => 'md5pass',
-                password_type => 'hashed',
-                password_hash_type => 'MD5'
-            },
-            store => {
-                class => 'DBIx::Class',
-                user_model => 'DB::admins',
-                id_field => 'id',
-                store_user_class => 'NGCP::Panel::AuthenticationStore::RoleFromRealm',
-                use_userdata_from_session => 1,
-            }
-        },
+        default_realm => 'subscriber',
         admin => {
             credential => {
                 class => 'Password',
@@ -130,12 +104,30 @@ __PACKAGE__->config(
                 use_userdata_from_session => 1,
             }
         },
-        api_admin => {
+        api_admin_cert => {
             # TODO: should be NoPassword, but it's not available in our catalyst version yet
             credential => {
                 class => 'Password',
-                password_field => 'is_superuser',
+                password_field => 'is_active',
                 password_type => 'clear',
+            },
+            store => {
+                class => 'DBIx::Class',
+                user_model => 'DB::admins',
+                id_field => 'id',
+                store_user_class => 'NGCP::Panel::AuthenticationStore::RoleFromRealm',
+            },
+            use_session => 0,
+        },
+        api_admin_http => {
+            credential => {
+                class => 'HTTP',
+                #type => 'digest',
+                type => 'basic',
+                username_field => 'login',
+                password_field => 'md5pass',
+                password_type => 'hashed',
+                password_hash_type => 'MD5'
             },
             store => {
                 class => 'DBIx::Class',

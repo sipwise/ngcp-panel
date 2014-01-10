@@ -20,7 +20,7 @@ sub auto :Does(ACL) :ACLDetachTo('/denied_page') :AllowedRole(admin) :AllowedRol
 sub list_admin :PathPart('administrator') :Chained('/') :CaptureArgs(0) {
     my ($self, $c) = @_;
 
-    my $dispatch_to = '_admin_resultset_' . $c->user->auth_realm;
+    my $dispatch_to = '_admin_resultset_' . $c->user->roles;
     $c->stash(
         admins => $self->$dispatch_to($c),
         template => 'administrator/list.tt',

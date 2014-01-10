@@ -22,7 +22,7 @@ sub auto :Does(ACL) :ACLDetachTo('/denied_page') :AllowedRole(admin) :AllowedRol
 sub dom_list :Chained('/') :PathPart('domain') :CaptureArgs(0) {
     my ($self, $c) = @_;
 
-    my $dispatch_to = '_dom_resultset_' . $c->user->auth_realm;
+    my $dispatch_to = '_dom_resultset_' . $c->user->roles;
     my $dom_rs = $self->$dispatch_to($c);
 
     $c->stash->{domain_dt_columns} = NGCP::Panel::Utils::Datatables::set_columns($c, [

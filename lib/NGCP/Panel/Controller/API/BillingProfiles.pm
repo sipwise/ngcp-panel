@@ -27,7 +27,7 @@ __PACKAGE__->config(
     action => {
         map { $_ => {
             ACLDetachTo => '/api/root/invalid_user',
-            AllowedRole => 'api_admin',
+            AllowedRole => 'admin',
             Args => 0,
             Does => [qw(ACL CheckTrailingSlash RequireSSL)],
             Method => $_,
@@ -50,8 +50,8 @@ sub GET :Allow {
     my $rows = $c->request->params->{rows} // 10;
     {
         my $profiles = $c->model('DB')->resultset('billing_profiles');
-        if($c->user->roles eq "api_admin") {
-        } elsif($c->user->roles eq "api_reseller") {
+        if($c->user->roles eq "admin") {
+        } elsif($c->user->roles eq "reseller") {
             $profiles = $profiles->search({ reseller_id => $c->user->reseller_id });
         } else {
             $profiles = $profiles->search({ reseller_id => $c->user->contract->contact->reseller_id});
@@ -140,8 +140,8 @@ sub POST :Allow {
         );
         last unless $resource;
 
-        if($c->user->roles eq "api_admin") {
-        } elsif($c->user->roles eq "api_reseller") {
+        if($c->user->roles eq "admin") {
+        } elsif($c->user->roles eq "reseller") {
             $resource->{reseller_id} = $c->user->reseller_id;
         } else {
             $resource->{reseller_id} = $c->user->contract->contact->reseller_id;

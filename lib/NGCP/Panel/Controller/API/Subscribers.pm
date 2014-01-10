@@ -30,7 +30,7 @@ __PACKAGE__->config(
     action => {
         map { $_ => {
             ACLDetachTo => '/api/root/invalid_user',
-            AllowedRole => 'api_admin',
+            AllowedRole => 'admin',
             Args => 0,
             Does => [qw(ACL CheckTrailingSlash RequireSSL)],
             Method => $_,
@@ -139,8 +139,8 @@ sub POST :Allow {
         if($resource->{domain}) {
             $domain = $c->model('DB')->resultset('domains')
                 ->search({ domain => $resource->{domain} });
-            if($c->user->roles eq "api_admin") {
-            } elsif($c->user->roles eq "api_reseller") {
+            if($c->user->roles eq "admin") {
+            } elsif($c->user->roles eq "reseller") {
                 $domain = $domain->search({ 
                     'domain_resellers.reseller_id' => $c->user->reseller_id,
                 }, {
@@ -170,8 +170,8 @@ sub POST :Allow {
 
         unless($domain) {
             $domain = $c->model('DB')->resultset('domains')->search($resource->{domain_id});
-            if($c->user->roles eq "api_admin") {
-            } elsif($c->user->roles eq "api_reseller") {
+            if($c->user->roles eq "admin") {
+            } elsif($c->user->roles eq "reseller") {
                 $domain = $domain->search({ 
                     'domain_resellers.reseller_id' => $c->user->reseller_id,
                 }, {
@@ -205,8 +205,8 @@ sub POST :Allow {
                 '+select' => 'billing_mappings.id',
                 '+as' => 'bmid',
             }); 
-        if($c->user->roles eq "api_admin") {
-        } elsif($c->user->roles eq "api_reseller") {
+        if($c->user->roles eq "admin") {
+        } elsif($c->user->roles eq "reseller") {
             $customer = $customer->search({
                 'contact.reseller_id' => $c->user->reseller_id,
             });

@@ -21,7 +21,7 @@ sub auto :Does(ACL) :ACLDetachTo('/denied_page') :AllowedRole(admin) :AllowedRol
 sub levels_list :Chained('/') :PathPart('ncos') :CaptureArgs(0) {
     my ( $self, $c ) = @_;
     
-    my $dispatch_to = '_levels_resultset_' . $c->user->auth_realm;
+    my $dispatch_to = '_levels_resultset_' . $c->user->roles;
     my $levels_rs = $self->$dispatch_to($c);
     $c->stash(levels_rs => $levels_rs);
 

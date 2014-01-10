@@ -54,8 +54,8 @@ sub profile_by_id {
     my ($self, $c, $id) = @_;
 
     my $profiles = $c->model('DB')->resultset('billing_profiles');
-    if($c->user->roles eq "api_admin") {
-    } elsif($c->user->roles eq "api_reseller") {
+    if($c->user->roles eq "admin") {
+    } elsif($c->user->roles eq "reseller") {
         $profiles = $profiles->search({
             reseller_id => $c->user->reseller_id,
         });

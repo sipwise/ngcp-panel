@@ -13,9 +13,9 @@ use NGCP::Panel::Utils::Prosody;
 
 sub get_form {
     my ($self, $c) = @_;
-    if($c->user->roles eq "api_admin") {
+    if($c->user->roles eq "admin") {
         return NGCP::Panel::Form::Domain::Admin->new;
-    } elsif($c->user->roles eq "api_reseller") {
+    } elsif($c->user->roles eq "reseller") {
         return NGCP::Panel::Form::Domain::Reseller->new;
     }
     return;
@@ -155,9 +155,9 @@ sub item_rs {
     # we actually return the domain rs here, as we can easily
     # go to dom_preferences from there
     my $item_rs;
-    if($c->user->roles eq "api_admin") {
+    if($c->user->roles eq "admin") {
         $item_rs = $c->model('DB')->resultset('domains');
-    } elsif($c->user->roles eq "api_reseller") {
+    } elsif($c->user->roles eq "reseller") {
         $item_rs = $c->model('DB')->resultset('admins')->find(
                 { id => $c->user->id, } )
             ->reseller
