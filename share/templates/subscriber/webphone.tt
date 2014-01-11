@@ -46,12 +46,15 @@
 
         var phone = null;
         var chat = null;
+        var sip_configuration = null;
+        var xmpp_configuration = null;
+        var xmpp_last_state = 'available';
 
         $.ajax({
             url: "[% c.uri_for_action('/subscriber/webphone_ajax', c.req.captures) %]"
         }).done(function(data) {
 
-            var sip_configuration = data.aaData.sip;
+            sip_configuration = data.aaData.sip;
             sip_configuration.register = true;
             //sip_configuration.trace_sip = true;
             phone = new JsSIP.UA(sip_configuration);
@@ -89,17 +92,39 @@
 
             phone.start();
 
-            var xmpp_configuration = data.aaData.xmpp;
-            chat = XMPP.createClient(xmpp_configuration);
-/*
-            chat.on('*', function(name, data) {
-                console.log("xmpp cb " + name);
-                console.log(data);
-            });
-*/
+            xmpp_configuration = data.aaData.xmpp;
+            // chat client modifies it, so make a copy to have the original
+            // one later on re-connects
+            var tmp_xmpp_configuration = jQuery.extend(true, {}, xmpp_configuration);
+            chat = XMPP.createClient(tmp_xmpp_configuration);
+            register_chat_callbacks();
+            chat.connect();
+        });
 
+        function register_chat_callbacks() {
+            var timer = null;
             chat.on('disconnected', function() {
+                console.log("xmpp disconnection");
                 $("#xmpp-status").html("disconnected.");
+                if(timer)
+                    return 1;
+                console.log("prepare re-connect timer");
+                $('#xmpp-roster').empty();
+                var xmpp_last_state_tmp = xmpp_last_state;
+                $('#xmpp-pres').val('unavailable');
+                $('#xmpp-pres').change();
+                xmpp_last_state = xmpp_last_state_tmp;
+                timer = window.setInterval(function(){
+                    console.log("perform re-connect");
+                    window.clearInterval(timer);
+                    timer = null;
+                    chat.disconnect();
+                    console.log("create new client", xmpp_configuration);
+                    var tmp_xmpp_configuration = jQuery.extend(true, {}, xmpp_configuration);
+                    chat = XMPP.createClient(tmp_xmpp_configuration);
+                    register_chat_callbacks();
+                    chat.connect();
+                }, 3000);
             });
 
             chat.on('chatState', function(obj) {
@@ -126,6 +151,7 @@
 
             chat.on('session:started', function() {
                 $("#xmpp-status").html("session-started.");
+                console.log("++++++++++++++++++ session started");
                 chat.enableCarbons();
                 chat.getRoster(function(err, resp) {
                     console.log(">>>>>>>>>>>> getRoster");
@@ -144,7 +170,8 @@
 
                         chat.sendMessage({to: jid, body: "hello world"});
                     });
-
+                    $('#xmpp-pres').val(xmpp_last_state);
+                    $('#xmpp-pres').change();
                 });
             });
             chat.on('presence', function(pres) {
@@ -167,8 +194,7 @@
                 console.log("+++++++ type=" + pres.type + ", show=" + pres.show);
             });
 
-            chat.connect();
-        });
+        }
 
         function call() {
             var eventHandlers = {
@@ -213,6 +239,7 @@
 
             $('#xmpp-pres').change(function(obj) {
                 var show = obj.currentTarget[obj.currentTarget.selectedIndex].value;
+                xmpp_last_state = show;
                 var type = (show == "unavailable" ? "unavailable" : "available");
                 console.log("changing xmpp presence status, show=" + show + ", type=" + type);
                 if(show == "available") {
@@ -241,11 +268,11 @@
         <select id="xmpp-pres" class="selectpicker">
             [% FOR opt IN 
                 [
+                    { n = "unavailable", d = "Offline" },
                     { n = "available", d = "Available" },
                     { n = "away", d = "Away" },
                     { n = "xa", d = "Extended Away" },
                     { n = "dnd", d = "Do Not Disturb" },
-                    { n = "unavailable", d = "Offline" },
                 ]
             -%]
                 <option value="[% opt.n %]" data-content="<span class='icon-user xmpp-roster-entry [% opt.n %]'></span><span> [% opt.d %]</span>">[% opt.d %]</option>
