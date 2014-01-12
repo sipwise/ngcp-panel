@@ -57,6 +57,9 @@
         var sip_configuration = null;
         var xmpp_configuration = null;
         var xmpp_last_state = 'available';
+        var orig_page_title = document.title;
+        var window_focus = true;
+        var window_timeout;
 
         $.ajax({
             url: "[% c.uri_for_action('/subscriber/webphone_ajax', c.req.captures) %]"
@@ -168,6 +171,7 @@
                     chat_win = create_chat_window($('#xmpp-roster #' + jidid), jidid, jid);
                 }
                 $(chat_win).find('.xmpp-chat-history').append('<li>recv: ' + obj.body + '</li>');
+                raise_attention('chat');
             });
 
             chat.on('groupchat', function(message) {
@@ -298,6 +302,7 @@
                 content: '<div class="span4" style="margin:10px;"><ul class="xmpp-chat-history" style="list-style-type:none; margin:0; min-height:30px;"></ul><input data-jid="'+ jid + '" type="text" class="xmpp-chat-input" style="width:100%; margin:0;"/></div>'
             });
             $(parent).popover("show");
+            $(parent).find(".xmpp-chat-input").focus();
             return $(parent).find(".popover");
         }
 
@@ -315,6 +320,32 @@
                 element1.css('height', height);
             }
         }
+
+        function raise_attention(type) {
+            if(!window_focus) {
+                if(type == "chat") {
+                    flash_title('NEW MESSAGE');
+                } else {
+                    flash_title(type + '! ' + orig_page_title);
+                }
+            }
+        }
+
+
+        function flash_title(title) {
+            function step() {
+                document.title = (document.title == orig_page_title) ? title : orig_page_title;
+                window_timeout = setTimeout(step, 800);
+            };
+
+            cancel_flash_title(window_timeout);
+            step();
+        };
+
+        function cancel_flash_title() {
+            clearTimeout(window_timeout);
+            document.title = orig_page_title;
+        };
 
 
         $(function() {
@@ -351,6 +382,14 @@
                     $(obj.target).parents("li.xmpp-roster-entry").popover("destroy");
                     $(obj.target).parents(".popover").remove();
                 }
+            });
+
+            $(window).focus(function() {
+                window_focus = true;
+                document.title = orig_page_title;
+                clearTimeout(window_timeout);
+            }).blur(function() {
+                window_focus = false;
             });
 
         });
