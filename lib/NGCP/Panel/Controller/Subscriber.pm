@@ -317,13 +317,19 @@ sub webphone_ajax :Chained('base') :PathPart('webphone/ajax') :Args(0) {
 
     my $subscriber = $c->stash->{subscriber}->provisioning_voip_subscriber;
 
+    # TODO: use from config.yml.
+    # Important: ws vs wss (issues with self-signed certs on cross-domain)
     my $config = {
         sip => {
+            # wss/5061 vs ws/5060
             ws_servers => 'ws://' . $subscriber->domain->domain . ':5060/ws',
             uri => 'sip:' . $subscriber->username . '@' . $subscriber->domain->domain,
             password => $subscriber->password,
         },
         xmpp => {
+            # wss/5281 vs ws/5280
+            # - ws causes "insecure" error in firefox
+            # - wss fails if self signed cert is not accepted in firefox/chromium
             wsURL => 'wss://' . $subscriber->domain->domain . ':5281/xmpp-websocket/',
             jid => $subscriber->username . '@' . $subscriber->domain->domain,
             server => $subscriber->domain->domain,

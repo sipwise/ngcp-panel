@@ -4,24 +4,31 @@
     #xmpp-roster {
         list-style-type: none;
     }
-    .xmpp-roster-entry {
-        font-size: 1.2em;
+
+    #xmpp-roster .popover {
+        max-width: 100%; 
     }
-    .xmpp-roster-entry.available {
-        color: green;
+
+    .xmpp-roster-entry-col1.available {
+        background: #080;
     }
-    .xmpp-roster-entry.unavailable {
-        color: gray;
+    .xmpp-roster-entry-col1.unavailable {
+        background: #ddd;
     }
-    .xmpp-roster-entry.chat {
-        color: green;
+    .xmpp-roster-entry-col1.chat {
+        background: #0f0;
     }
-    .xmpp-roster-entry.away, 
-    .xmpp-roster-entry.xa {
-        color: orange;
+    .xmpp-roster-entry-col1.away, 
+    .xmpp-roster-entry-col1.xa {
+        background: #fa0;
     }
-    .xmpp-roster-entry.dnd {
-        color: red;
+    .xmpp-roster-entry-col1.dnd {
+        background: #f00;
+    }
+
+    .xmpp-roster-entry-ctrl {
+        margin-right:10px;
+        cursor: pointer;
     }
 
 </style>
@@ -42,6 +49,7 @@
     <script type="text/javascript" src="/js/libs/bootstrap-select.min.js"></script>
     <script type="text/javascript" src="/js/libs/bootstrap-select.min.js"></script>
     <link rel="stylesheet" type="text/css" href="/css/bootstrap-select/bootstrap-select.min.css"/>
+    <link rel="stylesheet" type="text/css" href="/font/font-awesome/css/font-awesome.min.css"/>
     <script type="text/javascript">
 
         var phone = null;
@@ -57,6 +65,7 @@
             sip_configuration = data.aaData.sip;
             sip_configuration.register = true;
             //sip_configuration.trace_sip = true;
+            /*
             phone = new JsSIP.UA(sip_configuration);
 
             // ws connection events
@@ -91,6 +100,7 @@
             });
 
             phone.start();
+            */
 
             xmpp_configuration = data.aaData.xmpp;
             // chat client modifies it, so make a copy to have the original
@@ -161,15 +171,31 @@
                         $.each(resp.roster.items, function(index, item) {
                             console.log(item.name);
                             var jidid = item.jid.bare.replace(/[^a-zA-Z0-9_]/g, '-');
-                            $("#xmpp-roster").append('<li id="' + jidid + '"><span class="xmpp-roster-entry icon-user"></span> ' + item.jid.bare + '</span> <i>' + item.name + '</i> <span class="icon-comment xmpp-start-chat" data-jid="' + item.jid.bare + '"></span></li>');
+                            var entry = create_xmpp_entry_dom(jidid, item.jid.bare, item.name || item.jid.bare);
+                            console.log("create roster entry", entry);
+                            $("#xmpp-roster").append(entry);
+                            equalHeights($('#' + jidid).find('.xmpp-roster-entry-col1'), $('#' + jidid).find('.xmpp-roster-entry-col2'));
+                            $('#' + jidid)
+                                .mouseenter(function(obj) {
+                                    $(obj.currentTarget).find('.xmpp-roster-entry-col3').show();
+                                })
+                                .mouseleave(function(obj) {
+                                    $(obj.currentTarget).find('.xmpp-roster-entry-col3').hide();
+                                });
+
+                            $('#' + jidid).find('.xmpp-roster-entry-ctrl-chat').click(function(obj) {
+                                console.log("start chat");
+                                $(obj.target).parents("li.xmpp-roster-entry").popover("destroy");
+                                $(obj.target).parents("li.xmpp-roster-entry").popover({
+                                    placement: 'right',
+                                    html: true,
+                                    title: '<div>&nbsp;<span class="pull-left">' + item.jid.bare + '</span><span class="xmpp-chat-close pull-right fa fa-times"></span></div>',
+                                    content: '<div class="span4" style="margin:10px;"><ul style="list-style-type:none; margin:0; min-height:30px;"></ul><input data-jid="'+ item.jid.bare + '" type="text" class="xmpp-chat-input" style="width:100%; margin:0;"/></div>'
+                                });
+
+                            });
                         });
                     }
-                    $('.xmpp-start-chat').click(function(obj) {
-                        var jid = obj.currentTarget.dataset.jid;
-                        console.log("starting chat with " + jid);
-
-                        chat.sendMessage({to: jid, body: "hello world"});
-                    });
                     $('#xmpp-pres').val(xmpp_last_state);
                     $('#xmpp-pres').change();
                 });
@@ -188,9 +214,7 @@
                 }
                 var jidid = pres.from.bare.replace(/[^a-zA-Z0-9_]/g, '-');
 
-                $("#xmpp-roster #" + jidid + " .xmpp-roster-entry").removeClass().addClass("xmpp-roster-entry icon-user " + show);
-
-                //console.log("+++++++ xmpp cb " + pres.type + " for from=" + pres.from.bare + " and to=" + pres.to.bare, pres);
+                $("#xmpp-roster #" + jidid + " .xmpp-roster-entry-col1").removeClass().addClass("xmpp-roster-entry-col1 " + show);
                 console.log("+++++++ type=" + pres.type + ", show=" + pres.show);
             });
 
@@ -234,6 +258,45 @@
             phone.call('sip:voicebox@pbx1.demo.sipwise.com', options);
         }
 
+        function create_xmpp_entry_dom(jidid, jid, name) {
+            var entry = 
+            '<li id="' + jidid + '" class="xmpp-roster-entry row span6" style="clear:both; float:left; padding:0; margin:1px; background:#f9f9f9;">' +
+            '    <div class="xmpp-roster-entry-col1 unavailable" style="float:left; width:10px; padding:0; margin:0; ">&nbsp;</div>' +
+            '    <div class="xmpp-roster-entry-col2 span3" style="float:left; padding:20px; margin:0;">' +
+            '        <div>' +
+            '            <span class="xmpp-roster-entry-name" style="font-size:1.3em; font-weight:bold;">' + name + '</span>' +
+            '        </div>' +
+            '        <div>' +
+            '            <span class="xmpp-roster-entry-details" style="font-size:1em; font-weight:normal;">' + jid + '</span>' +
+            '        </div>' +
+            '    </div>' +
+            '    <div class="xmpp-roster-entry-col3 span2" style="float:left; padding:20px 0 20px 0; margin:0; display:none;">' +
+            '        <div style="float:right; font-size:1.5em">' +
+            '            <span class="fa fa-comment xmpp-roster-entry-ctrl xmpp-roster-entry-ctrl-chat"></span>' +
+            '            <span class="fa fa-phone xmpp-roster-entry-ctrl xmpp-roster-entry-ctrl-phone"></span>' +
+            '            <span class="fa fa-file-text xmpp-roster-entry-ctrl xmpp-roster-entry-ctrl-fax"></span>' +
+            '        </div>' +
+            '    </div>' +
+            '</li>';
+            console.log("entry is", entry);
+            return entry;
+        }
+
+        function equalHeights (element1, element2) {
+            var height;
+
+            if (element1.outerHeight() > element2.outerHeight())
+            {
+                height = element1.outerHeight();
+                element2.css('height', height);
+            }
+            else {
+                height = element2.outerHeight();
+                element1.css('height', height);
+            }
+        }
+
+
         $(function() {
             $('.selectpicker').selectpicker();
 
@@ -246,6 +309,26 @@
                     chat.sendPresence();
                 } else {
                     chat.sendPresence({ type: type, show: show });
+                }
+            });
+
+            $(document).keypress(function(obj) {
+                if(obj.which == 13 && $(obj.target).hasClass("xmpp-chat-input")) {
+                    obj.preventDefault();
+                    console.log("enter pressed");
+                    if($(obj.target).val().length) {
+                        chat.sendMessage({ to: $(obj.target).data("jid"), body: $(obj.target).val() });
+                        $(obj.target).prev("ul").append("<li>sent: " + $(obj.target).val() + "</li>");
+                        $(obj.target).val("");
+                    }
+                }
+            });
+
+            $(document).click(function(obj) {
+                if($(obj.target).hasClass("xmpp-chat-close")) {
+                    console.log("hiding chat window");
+                    $(obj.target).parents(".popover").prev("li.xmpp-roster-entry").popover("destroy");
+                    $(obj.target).parents(".popover").remove();
                 }
             });
 
@@ -275,18 +358,20 @@
                     { n = "dnd", d = "Do Not Disturb" },
                 ]
             -%]
-                <option value="[% opt.n %]" data-content="<span class='icon-user xmpp-roster-entry [% opt.n %]'></span><span> [% opt.d %]</span>">[% opt.d %]</option>
+                <option value="[% opt.n %]" data-content="<span class='xmpp-roster-entry-col1 [% opt.n %]'>&nbsp;</span><span> [% opt.d %]</span>">[% opt.d %]</option>
             [% END -%]
         </select>
     </div>
+
     <div class="row">
-        <h3>XMPP Roster</h3>
-        <ul id="xmpp-roster">
+        <h3>Buddy List</h3>
+        <ul id="xmpp-roster" class="span8" style="list-style-type:none; padding:0;">
         </ul>
     </div>
     
-
+<!--
     <video id="selfView" autoplay hidden=true></video>
     <video id="remoteView" autoplay hidden=true></video>
+-->
 
 [% # vim: set tabstop=4 syntax=html expandtab: -%]
