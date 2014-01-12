@@ -142,29 +142,43 @@
                 var jid = obj.from.bare;
                 var msg;
                 if(obj.chatState == "composing") {
-                    msg = jid + " is typing...";
+                    msg = "is typing...";
                 } else if(obj.chatState == "paused") {
-                    msg = jid + " has stopped typing.";
+                    msg = "has stopped typing.";
                 } else if(obj.chatState == "active") {
                     // chat session started/closed
+                    return;
                 }
-                $("#xmpp-status").html(msg);
+
+                var jidid = jid.replace(/[^a-zA-Z0-9_]/g, '-');
+                var chat_win = $('#xmpp-roster #' + jidid).find('.popover');
+                if(!chat_win.length) {
+                    chat_win = create_chat_window($('#xmpp-roster #' + jidid), jidid, jid);
+                }
+                $(chat_win).find('.xmpp-chat-history').append('<li><em>' + msg + '</em></li>');
             });
+
             chat.on('chat', function(obj) {
                 console.log("got message ", obj);
                 var jid = obj.from.bare;
-                $("#xmpp-status").html(jid + " has sent: " + obj.body);
+                var jidid = jid.replace(/[^a-zA-Z0-9_]/g, '-');
+
+                var chat_win = $('#xmpp-roster #' + jidid).find('.popover');
+                if(!chat_win.length) {
+                    chat_win = create_chat_window($('#xmpp-roster #' + jidid), jidid, jid);
+                }
+                $(chat_win).find('.xmpp-chat-history').append('<li>recv: ' + obj.body + '</li>');
             });
+
             chat.on('groupchat', function(message) {
                 console.log("got group message ", message);
             });
 
             chat.on('session:started', function() {
-                $("#xmpp-status").html("session-started.");
+                $("#xmpp-status").html("online.");
                 console.log("++++++++++++++++++ session started");
                 chat.enableCarbons();
                 chat.getRoster(function(err, resp) {
-                    console.log(">>>>>>>>>>>> getRoster");
                     console.log(err, resp);
                     chat.sendPresence();
                     if(err == null) {
@@ -172,7 +186,6 @@
                             console.log(item.name);
                             var jidid = item.jid.bare.replace(/[^a-zA-Z0-9_]/g, '-');
                             var entry = create_xmpp_entry_dom(jidid, item.jid.bare, item.name || item.jid.bare);
-                            console.log("create roster entry", entry);
                             $("#xmpp-roster").append(entry);
                             equalHeights($('#' + jidid).find('.xmpp-roster-entry-col1'), $('#' + jidid).find('.xmpp-roster-entry-col2'));
                             $('#' + jidid)
@@ -185,14 +198,7 @@
 
                             $('#' + jidid).find('.xmpp-roster-entry-ctrl-chat').click(function(obj) {
                                 console.log("start chat");
-                                $(obj.target).parents("li.xmpp-roster-entry").popover("destroy");
-                                $(obj.target).parents("li.xmpp-roster-entry").popover({
-                                    placement: 'right',
-                                    html: true,
-                                    title: '<div>&nbsp;<span class="pull-left">' + item.jid.bare + '</span><span class="xmpp-chat-close pull-right fa fa-times"></span></div>',
-                                    content: '<div class="span4" style="margin:10px;"><ul style="list-style-type:none; margin:0; min-height:30px;"></ul><input data-jid="'+ item.jid.bare + '" type="text" class="xmpp-chat-input" style="width:100%; margin:0;"/></div>'
-                                });
-
+                                create_chat_window($(obj.target).parents("li.xmpp-roster-entry"), jidid, item.jid.bare);
                             });
                         });
                     }
@@ -278,9 +284,23 @@
             '        </div>' +
             '    </div>' +
             '</li>';
-            console.log("entry is", entry);
             return entry;
         }
+
+        function create_chat_window(parent, jidid, jid) {
+            $(parent).popover("destroy");
+            $(parent).popover({
+                placement: 'right',
+                html: true,
+                container: '#' + jidid,
+                trigger: 'manual',
+                title: '<div>&nbsp;<span class="pull-left">' + jid + '</span><span class="xmpp-chat-close pull-right fa fa-times"></span></div>',
+                content: '<div class="span4" style="margin:10px;"><ul class="xmpp-chat-history" style="list-style-type:none; margin:0; min-height:30px;"></ul><input data-jid="'+ jid + '" type="text" class="xmpp-chat-input" style="width:100%; margin:0;"/></div>'
+            });
+            $(parent).popover("show");
+            return $(parent).find(".popover");
+        }
+
 
         function equalHeights (element1, element2) {
             var height;
@@ -313,13 +333,14 @@
             });
 
             $(document).keypress(function(obj) {
-                if(obj.which == 13 && $(obj.target).hasClass("xmpp-chat-input")) {
-                    obj.preventDefault();
-                    console.log("enter pressed");
-                    if($(obj.target).val().length) {
+                if($(obj.target).hasClass("xmpp-chat-input")) {
+                    if(obj.which == 13 && $(obj.target).val().length) {
+                        obj.preventDefault();
                         chat.sendMessage({ to: $(obj.target).data("jid"), body: $(obj.target).val() });
                         $(obj.target).prev("ul").append("<li>sent: " + $(obj.target).val() + "</li>");
                         $(obj.target).val("");
+                    } else {
+                        // TODO: send chatState message somehow
                     }
                 }
             });
@@ -327,7 +348,7 @@
             $(document).click(function(obj) {
                 if($(obj.target).hasClass("xmpp-chat-close")) {
                     console.log("hiding chat window");
-                    $(obj.target).parents(".popover").prev("li.xmpp-roster-entry").popover("destroy");
+                    $(obj.target).parents("li.xmpp-roster-entry").popover("destroy");
                     $(obj.target).parents(".popover").remove();
                 }
             });
@@ -343,12 +364,15 @@
     <div class="row">
         <div class="span6">Chat Status: <span id="xmpp-status">connecting...</span></div>
     </div>
+    <!--
     <div class="row">
         <button onclick="javascript:call();" class="btn btn-large btn-primary">Call</a>
     </div>
+    -->
+
     <div class="row">
-        <h3>Change XMPP Status</h3>
-        <select id="xmpp-pres" class="selectpicker">
+        <h3>Buddy List</h3>
+        <select id="xmpp-pres" class="selectpicker span6">
             [% FOR opt IN 
                 [
                     { n = "unavailable", d = "Offline" },
@@ -361,11 +385,7 @@
                 <option value="[% opt.n %]" data-content="<span class='xmpp-roster-entry-col1 [% opt.n %]'>&nbsp;</span><span> [% opt.d %]</span>">[% opt.d %]</option>
             [% END -%]
         </select>
-    </div>
-
-    <div class="row">
-        <h3>Buddy List</h3>
-        <ul id="xmpp-roster" class="span8" style="list-style-type:none; padding:0;">
+        <ul id="xmpp-roster" class="span8" style="list-style-type:none; padding:0; margin:0;">
         </ul>
     </div>
     
