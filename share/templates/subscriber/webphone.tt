@@ -32,9 +32,13 @@
         cursor: pointer;
     }
 
-    .has-switch label.switch-mini {
+    .switch-left.switch-mini, .switch-right.switch-mini {
         /* make more space on left/right */
-        padding: 4px;
+        padding-left: 5px;
+        padding-right: 5px;
+    }
+    .has-switch {
+        margin-right: 10px;
     }
 
     .xmpp-chat-time {
@@ -110,9 +114,33 @@
                 console.log("disconnected");
                 $("#sip-status").html("disconnected.");
             });
+
             // in/out call event
             phone.on('newRTCSession', function(e){
-                console.log("newRTCSession");
+                //console.log("newRTCSession", e.originator, e.session);
+                console.log("newRTCSession", e);
+
+                var session = e.data.session;
+                if(session.direction == 'incoming') {
+                    session.answer({
+                        mediaConstraints: { audio: true, video: $('#sip_toggle_video').is(':checked') }
+                    });
+
+
+                    // TODO: create_incall_window($(obj.target).parents("li.xmpp-roster-entry"), jidid, item.jid.bare);
+
+                    session.on('started', function(e) {
+                        console.log("+++++++ session started");
+                        var rtcSession = e.sender;
+                        if(rtcSession.getLocalStreams().length > 0) {
+                            selfView.src = window.URL.createObjectURL(rtcSession.getLocalStreams()[0]);
+                            selfView.volume = 0;
+                        }
+                        if(rtcSession.getRemoteStreams().length > 0) {
+                            remoteView.src = window.URL.createObjectURL(rtcSession.getRemoteStreams()[0]);
+                        }
+                    });
+                }
             });
             // in/out im event
             phone.on('newMessage', function(e){
@@ -246,8 +274,8 @@
                             });
                             $('#' + jidid).find('.xmpp-roster-entry-ctrl-phone').click(function(obj) {
                                 console.log("start chat");
-                                //create_chat_window($(obj.target).parents("li.xmpp-roster-entry"), jidid, item.jid.bare);
-                                call(item.jid.bare);
+                                create_outcall_window($(obj.target).parents("li.xmpp-roster-entry"), jidid, item.jid.bare);
+                                var session = call(item.jid.bare);
                             });
 
                             // we get a presence callback where we'll show it
@@ -286,16 +314,16 @@
         function call(dest_uri) {
             var eventHandlers = {
                 'progress': function(e) {
-                    console.log("call in progress");
+                    console.log("call in progress", e);
                     $("#sip-status").html("in progress");
                 },
                 'failed': function(e) { 
                     console.log("call failed");
-                    $("#sip-status").html("call failed");
+                    $("#sip-status").html("call failed", e);
                 },
                 'started': function(e) {
                     console.log("call started");
-                    $("#sip-status").html("call started");
+                    $("#sip-status").html("call started", e);
 
                     var rtcSession = e.sender;
 
@@ -315,7 +343,7 @@
             var options = {
               'eventHandlers': eventHandlers,
               'extraHeaders': [ 'X-Foo: foo', 'X-Bar: bar' ],
-              'mediaConstraints': {'audio': true, 'video': false}
+              'mediaConstraints': { 'audio': true, 'video': $('#sip_toggle_video').is(':checked') }
             };
 
             phone.call('sip:' + dest_uri, options);
@@ -371,6 +399,54 @@
                 railVisible: true,
                 alwaysVisible: true,
                 start: 'bottom'
+            });
+            return $(parent).find(".popover");
+        }
+
+        function create_incall_window(parent, jidid, jid) {
+            $(parent).popover("destroy");
+            $(parent).popover({
+                placement: 'right',
+                html: true,
+                container: '#' + jidid,
+                trigger: 'manual',
+                title: '<div>&nbsp;<span class="pull-left">Call from ' + jid + '</span><span class="xmpp-chat-close pull-right fa fa-times"></span></div>',
+                content: '<div class="span4" style="margin:10px;"><button class="sip-accept-call" style="margin-right:20px;">Accept</button><button class="sip-reject-call">Reject</button></div>'
+            });
+            $(parent).popover("show");
+            $(parent).find(".sip-accept-call").click(function(){
+                console.log("+++++++++++ answering call");
+                /*
+                var session = ???; 
+                session.answer({
+                    mediaConstraints: { audio: true, video: $('#sip_toggle_video').is(':checked') }
+                });
+                */
+            });
+            $(parent).find(".sip-reject-call").click(function(){
+                console.log("+++++++++++ rejecting call");
+                // var session = ???; session.terminate({ status_code: 486 });
+            });
+            return $(parent).find(".popover");
+        }
+
+        function create_outcall_window(parent, jidid, jid) {
+            $(parent).popover("destroy");
+            $(parent).popover({
+                placement: 'right',
+                html: true,
+                container: '#' + jidid,
+                trigger: 'manual',
+                title: '<div>&nbsp;<span class="pull-left">Calling ' + jid + '</span><span class="xmpp-chat-close pull-right fa fa-times"></span></div>',
+                content: '<div class="span4" style="margin:10px;"><button class="sip-stop-call" style="margin-right:20px;">Terminate Call</button></div>'
+            });
+            $(parent).popover("show");
+            $(parent).find(".sip-stop-call").click(function(){
+                console.log("+++++++++++ stopping call");
+                /*
+                var session = ???; 
+                session.terminate();
+                */
             });
             return $(parent).find(".popover");
         }
@@ -433,6 +509,8 @@
                     $('.xmpp-roster-entry-col1.unavailable').parent().hide();
                 }
             });
+            $('#sip_toggle_video').bootstrapSwitch();
+            $('#sip_toggle_video').bootstrapSwitch('setSizeClass', 'switch-mini');
 
             $('#xmpp-pres').change(function(obj) {
                 var show = obj.currentTarget[obj.currentTarget.selectedIndex].value;
@@ -448,6 +526,10 @@
 
             $(document).keypress(function(obj) {
                 if($(obj.target).hasClass("xmpp-chat-input")) {
+                    // return esc and tab
+                    if (obj.which == 9 || obj.which == 27) {
+                        return false;
+                    }
                     if(obj.which == 13 && $(obj.target).val().length) {
                         obj.preventDefault();
                         chat.sendMessage({ to: $(obj.target).data("jid"), body: $(obj.target).val() });
@@ -482,6 +564,13 @@
                 window_focus = false;
             });
 
+            window.onbeforeunload = function(obj) {
+                if(phone.isRegistered()) {
+                    console.log("++++ unregistering phone before leaving");
+                    phone.unregister({'all': true});
+                }
+            };
+
         });
 
 
@@ -502,7 +591,8 @@
     <div>
         <h3>Buddy List</h3>
         <div class="row span6" style="margin:0; clear:both; padding:10px;">
-            <input id="xmpp-toggle-offline" style="float:left" type="checkbox" data-on="success" data-off="default" data-on-label="Show Offline Users" data-off-label="Hide Offline Users">
+            <input id="xmpp-toggle-offline" style="float:left" type="checkbox" data-on="success" data-off="default" data-on-label="Show Offline" data-off-label="Hide Offline">
+            <input id="sip_toggle_video" checked style="float:left" type="checkbox" data-on="success" data-off="default" data-on-label="Audio&amp;Video" data-off-label="Audio Only">
         </div>
         <div class="row span6" style="margin:0; clear:both;">
             <select id="xmpp-pres" class="selectpicker span6">
