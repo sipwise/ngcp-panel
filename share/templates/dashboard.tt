@@ -1,4 +1,4 @@
-[% META title = 'Dashboard' -%]
+[% site_config.title = c.loc('Dashboard') -%]
 [% wcount = widgets.size() > 4 ? 4 : widgets.size() -%]
 <div class="row">
     <div class="span12">

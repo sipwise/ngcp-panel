@@ -1,8 +1,8 @@
-[% site_config.title = 'Security Bans'  -%]
+[% site_config.title = c.loc('Security Bans')  -%]
 
 <div class="row">
     <span class="pull-left" style="margin:0 5px 0 5px;">
-        <a class="btn btn-primary btn-large" href="[% c.uri_for('/back') %]"><i class="icon-arrow-left"></i> Back</a>
+        <a class="btn btn-primary btn-large" href="[% c.uri_for('/back') %]"><i class="icon-arrow-left"></i> [% c.loc('Back') %]</a>
     </span>
 </div>
 [% back_created = 1 -%]
@@ -19,7 +19,7 @@
 
     <div class="accordion-group">
         <div class="accordion-heading">
-            <a class="accordion-toggle" data-toggle="collapse" data-parent="#security_data" href="#collapse_ips">Banned IPs</a>
+            <a class="accordion-toggle" data-toggle="collapse" data-parent="#security_data" href="#collapse_ips">[% c.loc('Banned IPs') %]</a>
         </div>
         <div class="accordion-body collapse" id="collapse_ips">
             <div class="accordion-inner">
@@ -27,7 +27,7 @@
                 <table class="table table-bordered table-striped table-highlight table-hover" id="subscribers_table">
                     <thead>
                         <tr>
-                            <th>IP</th>
+                            <th>[% c.loc('IP') %]</th>
                             <th></th>
                         </tr>
                     </thead>
@@ -40,7 +40,7 @@
                                 <div class="sw_actions pull-right">
                                     <a class="btn btn-small btn-primary" 
                                         href="[% c.uri_for_action("/security/ip_unban", [enc_ip]) %]">
-                                        <i class="icon-remove"></i> Unban
+                                        <i class="icon-remove"></i> [% c.loc('Unban') %]
                                     </a>
                                 </div>
                             </td>
@@ -54,7 +54,7 @@
 
     <div class="accordion-group">
         <div class="accordion-heading">
-            <a class="accordion-toggle" data-toggle="collapse" data-parent="#security_data" href="#collapse_users">Banned Users</a>
+            <a class="accordion-toggle" data-toggle="collapse" data-parent="#security_data" href="#collapse_users">[% c.loc('Banned Users') %]</a>
         </div>
         <div class="accordion-body collapse" id="collapse_users">
             <div class="accordion-inner">
@@ -62,9 +62,9 @@
                 <table class="table table-bordered table-striped table-highlight table-hover" id="subscribers_table">
                     <thead>
                         <tr>
-                            <th>User</th>
-                            <th>Fail Count</th>
-                            <th>Last Attempt</th>
+                            <th>[% c.loc('User') %]</th>
+                            <th>[% c.loc('Fail Count') %]</th>
+                            <th>[% c.loc('Last Attempt') %]</th>
                             <th></th>
                         </tr>
                     </thead>
@@ -79,7 +79,7 @@
                                 <div class="sw_actions pull-right">
                                     <a class="btn btn-small btn-primary" 
                                         href="[% c.uri_for_action("/security/user_unban", [enc_user]) %]">
-                                        <i class="icon-remove"></i> Unban
+                                        <i class="icon-remove"></i> [% c.loc('Unban') %]
                                     </a>
                                 </div>
                             </td>

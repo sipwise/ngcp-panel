@@ -1,26 +1,26 @@
 [% IF c.user.roles == "subscriber" || c.user.roles == "subscriberadmin" -%]
-    [% site_config.title = 'Customer Details' -%]
+    [% site_config.title = c.loc('Customer Details') -%]
 [% ELSE -%]
-    [% site_config.title = 'Customer Details for #' _ contract.id _ " (" _ product.name _ ")" -%]
+    [% site_config.title = c.loc('Customer Details for #[_1] ([_2])',contract.id,product.name) -%]
 [% END -%]
 
 [%
     lock_levels = [
-        { level = 0, text = "none" },
-        { level = 1, text = "foreign calls" },
-        { level = 2, text = "all outgoing calls" },
-        { level = 3, text = "incoming and outgoing" },
-        { level = 4, text = "global (including web login)" },
+        { level = 0, text = c.loc("none") },
+        { level = 1, text = c.loc("foreign calls") },
+        { level = 2, text = c.loc("all outgoing calls") },
+        { level = 3, text = c.loc("incoming and outgoing") },
+        { level = 4, text = c.loc("global (including web login)") },
     ];
 -%]
 
 <div class="row">
     <span>
-        <a class="btn btn-primary btn-large" href="[% c.uri_for('/back') %]"><i class="icon-arrow-left"></i> Back</a>
+        <a class="btn btn-primary btn-large" href="[% c.uri_for('/back') %]"><i class="icon-arrow-left"></i> [% c.loc('Back') %]</a>
     </span>
     [% IF !c.user.read_only && (c.user.roles == 'admin' || c.user.roles == 'reseller') -%]
     <span>
-        <a class="btn btn-primary btn-large" href="[% c.uri_for_action('/customer/edit', [ contract.id ]) %]"><i class="icon-edit"></i> Edit</a>
+        <a class="btn btn-primary btn-large" href="[% c.uri_for_action('/customer/edit', [ contract.id ]) %]"><i class="icon-edit"></i> [% c.loc('Edit') %]</a>
     </span>
     [% END -%]
 </div>
@@ -42,22 +42,24 @@
     [% IF c.user.is_superuser -%]
     <div class="accordion-group">
         <div class="accordion-heading">
-            <a class="accordion-toggle" data-toggle="collapse" data-parent="#customer_details" href="#collapse_reseller">Reseller</a>
+            <a class="accordion-toggle" data-toggle="collapse" data-parent="#customer_details" href="#collapse_reseller">[% c.loc('Reseller') %]</a>
         </div>
         <div class="accordion-body collapse" id="collapse_reseller">
             <div class="accordion-inner">
                 <table class="table table-bordered table-striped table-highlight table-hover">
                     <thead>
-                        <th>Name</th>
-                        <th>Value</th>
+                        <tr>
+                            <th>[% c.loc('Name') %]</th>
+                            <th>[% c.loc('Value') %]</th>
+                        </tr>
                     </thead>
                     <tbody>
                         <tr>
-                            <td>#</td>
+                            <td>[% c.loc('#') %]</td>
                             <td>[% contract.contact.reseller.id %]</td>
                         </tr>
                         <tr>
-                            <td>Name</td>
+                            <td>[% c.loc('Name') %]</td>
                             <td>[% contract.contact.reseller.name %]</td>
                         </tr>
                     </tbody>
@@ -70,38 +72,40 @@
     [% IF c.user.roles == 'admin' || c.user.roles == 'reseller' %]
     <div class="accordion-group">
         <div class="accordion-heading">
-            <a class="accordion-toggle" data-toggle="collapse" data-parent="#customer_details" href="#collapse_contact">Contact Details</a>
+            <a class="accordion-toggle" data-toggle="collapse" data-parent="#customer_details" href="#collapse_contact">[% c.loc('Contact Details') %]</a>
         </div>
         <div class="accordion-body collapse" id="collapse_contact">
             <div class="accordion-inner">
 
                 [% UNLESS c.user.read_only -%]
                 <span>
-                    <a class="btn btn-primary btn-large" href="[% c.uri_for('/contact', contact_hash.id, 'edit') %]"><i class="icon-edit"></i> Edit Contact</a>
+                    <a class="btn btn-primary btn-large" href="[% c.uri_for('/contact', contact_hash.id, 'edit') %]"><i class="icon-edit"></i> [% c.loc('Edit Contact') %]</a>
                 </span>
                 <div class="ngcp-separator"></div>
                 [% END -%]
 
                 <table class="table table-bordered table-striped table-highlight table-hover">
                     <thead>
-                        <th>Name</th>
-                        <th>Value</th>
+                        <tr>
+                            <th>[% c.loc('Name') %]</th>
+                            <th>[% c.loc('Value') %]</th>
+                        </tr>
                     </thead>
                     <tbody>
                         <tr>
-                            <td>Email</td>
+                            <td>[% c.loc('Email') %]</td>
                             <td>[% contact_hash.email%]</td>
                         </tr>
                         <tr>
-                            <td>Name</td>
+                            <td>[% c.loc('Name') %]</td>
                             <td>[% contact_hash.firstname %] [% contact_hash.lastname %]</td>
                         </tr>
                         <tr>
-                            <td>Company</td>
+                            <td>[% c.loc('Company') %]</td>
                             <td>[% contact_hash.company%]</td>
                         </tr>
                         <tr>
-                            <td>Address</td>
+                            <td>[% c.loc('Address') %]</td>
                             <td>
                                 [% contact_hash.street %]<br/>
                                 [% contact_hash.postcode %] [% contact_hash.city %]<br/>
@@ -109,7 +113,7 @@
                             </td>
                         </tr>
                         <tr>
-                            <td>Phone/Fax</td>
+                            <td>[% c.loc('Phone/Fax') %]</td>
                             <td>
                                 Mobile: [% contact_hash.mobilenumber %]<br/>
                                 Fixed: [% contact_hash.phonenumber %]<br/>
@@ -124,15 +128,15 @@
 
     <div class="accordion-group">
         <div class="accordion-heading">
-            <a class="accordion-toggle" data-toggle="collapse" data-parent="#customer_details" href="#collapse_bilprofs">Billing Profiles</a>
+            <a class="accordion-toggle" data-toggle="collapse" data-parent="#customer_details" href="#collapse_bilprofs">[% c.loc('Billing Profiles') %]</a>
         </div>
         <div class="accordion-body collapse" id="collapse_bilprofs">
             <div class="accordion-inner">
                 <table class="table table-bordered table-striped table-highlight table-hover">
                     <thead>
                         <tr>
-                            <th>Date</th>
-                            <th>Billing Profile Name</th>
+                            <th>[% c.loc('Date') %]</th>
+                            <th>[% c.loc('Billing Profile Name') %]</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -153,28 +157,38 @@
 
     <div class="accordion-group">
         <div class="accordion-heading">
-            <a class="accordion-toggle" data-toggle="collapse" data-parent="#customer_details" href="#collapse_subs">Subscribers</a>
+            <a class="accordion-toggle" data-toggle="collapse" data-parent="#customer_details" href="#collapse_subs">[% c.loc('Subscribers') %]</a>
         </div>
         <div class="accordion-body collapse" id="collapse_subs">
             <div class="accordion-inner">
                 [% IF contract.max_subscribers.defined && subscriber_count < contract.max_subscribers -%]
-                    <div class="alert alert-info">[% subscriber_count -%] of maximum [% contract.max_subscribers %] subscribers [% IF c.config.features.cloudpbx %](including PBX groups) [% END %]created</div>
-                    <a class="btn btn-large btn-primary" href="[% c.uri_for_action('/customer/subscriber_create', [ c.req.captures.0 ]) %]"><i class="icon-star"></i> Create Subscriber</a>
+                    <div class="alert alert-info">
+                        [% c.loc('[_1] of maximum [_2] subscribers [_3]created',subscriber_count,contract.max_subscribers,
+                                c.config.features.cloudpbx ? c.loc('(including PBX groups) ') : '') %]
+                    </div>
+                    <a class="btn btn-large btn-primary" href="[% c.uri_for_action('/customer/subscriber_create', [ c.req.captures.0 ]) %]">
+                        <i class="icon-star"></i> [% c.loc('Create Subscriber') %]
+                    </a>
                 [% ELSIF contract.max_subscribers.defined -%]
-                    <div class="alert">Maximum number of [% contract.max_subscribers %] subscribers [% IF c.config.features.cloudpbx %](including PBX groups) [% END %]created</div>
+                    <div class="alert">
+                        [% c.loc('Maximum number of [_1] subscribers [_2]created',contract.max_subscribers,
+                            c.config.features.cloudpbx ? c.loc('(including PBX groups) ') : '') %]
+                    </div>
                 [% ELSE -%]
-                    <a class="btn btn-large btn-primary" href="[% c.uri_for_action('/customer/subscriber_create', [ c.req.captures.0 ]) %]"><i class="icon-star"></i> Create Subscriber</a>
+                    <a class="btn btn-large btn-primary" href="[% c.uri_for_action('/customer/subscriber_create', [ c.req.captures.0 ]) %]">
+                        <i class="icon-star"></i> [% c.loc('Create Subscriber') %]
+                    </a>
                 [% END -%]
                 <div class="ngcp-separator"></div>
                 <table class="table table-bordered table-striped table-highlight table-hover" id="subscribers_table">
                     <thead>
                         <tr>
-                            <th>SIP URI</th>
-                            <th>Primary Number</th>
+                            <th>[% c.loc('SIP URI') %]</th>
+                            <th>[% c.loc('Primary Number') %]</th>
                             [% IF c.config.features.cloudpbx && product.class == 'pbxaccount' -%]
-                            <th>PBX Group</th>
+                            <th>[% c.loc('PBX Group') %]</th>
                             [% END -%]
-                            <th>Registered Devices</th>
+                            <th>[% c.loc('Registered Devices') %]</th>
                             <th class="ngcp-actions-column"></th>
                         </tr>
                     </thead>
@@ -195,10 +209,15 @@
                             </td>
                             <td class="ngcp-actions-column">
                                 <div class="sw_actions">
-                                    <a class="btn btn-primary btn-small" href="[% c.uri_for_action("/subscriber/details", [subscriber.id]) %]"><i class="icon-th-list"></i> Details</a>
-                                    <a class="btn btn-tertiary btn-small" href="[% c.uri_for_action("/subscriber/preferences", [subscriber.id]) %]"><i class="icon-list"></i> Preferences</a>
+                                    <a class="btn btn-primary btn-small" href="[% c.uri_for_action("/subscriber/details", [subscriber.id]) %]">
+                                        <i class="icon-th-list"></i> [% c.loc('Details') %]
+                                    </a>
+                                    <a class="btn btn-tertiary btn-small" href="[% c.uri_for_action("/subscriber/preferences", [subscriber.id]) %]">
+                                        <i class="icon-list"></i> [% c.loc('Preferences') %]
+                                    </a>
                                     [% IF (!c.user.readonly && (c.user.role == 'admin' || c.user.role == 'reseller')) || c.user.uuid != subscriber.uuid -%]
-                                    <a class="btn btn-secondary btn-small" href="[% c.uri_for_action("/subscriber/terminate", [subscriber.id]) %]" data-confirm="Terminate"><i class="icon-remove"></i> Terminate</a>
+                                    <a class="btn btn-secondary btn-small" href="[% c.uri_for_action("/subscriber/terminate", [subscriber.id]) %]" data-confirm="Terminate">
+                                        <i class="icon-remove"></i> [% c.loc('Terminate') %]</a>
                                     [% END -%]
                                 </div>
                             </td>
@@ -213,26 +232,34 @@
     [% IF c.config.features.cloudpbx && product.class == 'pbxaccount' && subscribers.size -%]
     <div class="accordion-group">
         <div class="accordion-heading">
-            <a class="accordion-toggle" data-toggle="collapse" data-parent="#customer_details" href="#collapse_pbxgroups">PBX Groups</a>
+            <a class="accordion-toggle" data-toggle="collapse" data-parent="#customer_details" href="#collapse_pbxgroups">[% c.loc('PBX Groups') %]</a>
         </div>
         <div class="accordion-body collapse" id="collapse_pbxgroups">
             <div class="accordion-inner">
                 [% IF contract.max_subscribers.defined && subscriber_count < contract.max_subscribers -%]
-                    <div class="alert alert-info">[% subscriber_count -%] of maximum [% contract.max_subscribers %] subscribers [% IF c.config.features.cloudpbx %](including PBX groups) [% END %]created</div>
-                    <a class="btn btn-large btn-primary" href="[% c.uri_for_action('/customer/pbx_group_create', [ c.req.captures.0 ]) %]"><i class="icon-star"></i> Create PBX Group</a>
+                    <div class="alert alert-info">
+                        [% c.loc('[_1] of maximum [_2] subscribers [_3]created',subscriber_count, contract.max_subscribers,
+                            c.config.features.cloudpbx ? c.loc('(including PBX groups) ') : '') %]
+                    </div>
+                    <a class="btn btn-large btn-primary" href="[% c.uri_for_action('/customer/pbx_group_create', [ c.req.captures.0 ]) %]">
+                        <i class="icon-star"></i> [% c.loc('Create PBX Group') %]
+                    </a>
                 [% ELSIF contract.max_subscribers.defined -%]
-                    <div class="alert">Maximum number of [% contract.max_subscribers %] subscribers [% IF c.config.features.cloudpbx %](including PBX groups) [% END %]created</div>
+                    <div class="alert">
+                        [% c.loc('Maximum number of [_1] subscribers [_2]created',contract.max_subscribers,
+                            c.config.features.cloudpbx ? c.loc('(including PBX groups) ') : '') %]
+                    </div>
                 [% END -%]
 
                 <div class="ngcp-separator"></div>
                 <table class="table table-bordered table-striped table-highlight table-hover" id="subscribers_table">
                     <thead>
                         <tr>
-                            <th>Name</th>
-                            <th>SIP URI</th>
-                            <th>Primary Number</th>
-                            <th>Hunting Policy</th>
-                            <th>Hunting Timeout</th>
+                            <th>[% c.loc('Name') %]</th>
+                            <th>[% c.loc('SIP URI') %]</th>
+                            <th>[% c.loc('Primary Number') %]</th>
+                            <th>[% c.loc('Hunting Policy') %]</th>
+                            <th>[% c.loc('Hunting Timeout') %]</th>
                             <th class="ngcp-actions-column"></th>
                         </tr>
                     </thead>
@@ -247,11 +274,19 @@
                             <td class="ngcp-actions-column">
                                 <div class="sw_actions">
                                     [% UNLESS c.user.readonly -%]
-                                    <a class="btn btn-secondary btn-small" href="[% c.uri_for_action("/subscriber/terminate", [subscriber.id]) %]" data-confirm="Terminate"><i class="icon-remove"></i> Terminate</a>
-                                    <a class="btn btn-primary btn-small" href="[% c.uri_for_action("/customer/pbx_group_edit", [contract.id, subscriber.voip_pbx_group.id]) %]"><i class="icon-edit"></i> Edit</a>
+                                    <a class="btn btn-secondary btn-small" href="[% c.uri_for_action("/subscriber/terminate", [subscriber.id]) %]" data-confirm="Terminate">
+                                        <i class="icon-remove"></i> [% c.loc('Terminate') %]
+                                    </a>
+                                    <a class="btn btn-primary btn-small" href="[% c.uri_for_action("/customer/pbx_group_edit", [contract.id, subscriber.voip_pbx_group.id]) %]">
+                                        <i class="icon-edit"></i> [% c.loc('Edit') %]
+                                    </a>
                                     [% END -%]
-                                    <a class="btn btn-primary btn-small" href="[% c.uri_for_action("/subscriber/details", [subscriber.id]) %]"><i class="icon-th-list"></i> Details</a>
-                                    <a class="btn btn-tertiary btn-small" href="[% c.uri_for_action("/subscriber/preferences", [subscriber.id]) %]"><i class="icon-list"></i> Preferences</a>
+                                    <a class="btn btn-primary btn-small" href="[% c.uri_for_action("/subscriber/details", [subscriber.id]) %]">
+                                        <i class="icon-th-list"></i> [% c.loc('Details') %]
+                                    </a>
+                                    <a class="btn btn-tertiary btn-small" href="[% c.uri_for_action("/subscriber/preferences", [subscriber.id]) %]">
+                                        <i class="icon-list"></i> [% c.loc('Preferences') %]
+                                    </a>
                                 </div>
                             </td>
                         </tr>
@@ -264,20 +299,20 @@
 
     <div class="accordion-group">
         <div class="accordion-heading">
-            <a class="accordion-toggle" data-toggle="collapse" data-parent="#customer_details" href="#collapse_pbxdevs">PBX Devices</a>
+            <a class="accordion-toggle" data-toggle="collapse" data-parent="#customer_details" href="#collapse_pbxdevs">[% c.loc('PBX Devices') %]</a>
         </div>
         <div class="accordion-body collapse" id="collapse_pbxdevs">
             <div class="accordion-inner">
-                <a class="btn btn-large btn-primary" href="[% c.uri_for_action('/customer/pbx_device_create', [ c.req.captures.0 ]) %]"><i class="icon-star"></i> Create PBX Device</a>
+                <a class="btn btn-large btn-primary" href="[% c.uri_for_action('/customer/pbx_device_create', [ c.req.captures.0 ]) %]"><i class="icon-star"></i> [% c.loc('Create PBX Device') %]</a>
                 <div class="ngcp-separator"></div>
                 <table class="table table-bordered table-striped table-highlight table-hover" id="subscribers_table">
                     <thead>
                         <tr>
                             <th></th>
-                            <th>Station Name</th>
-                            <th>Subscriber</th>
-                            <th>MAC Address / Identifier</th>
-                            <th>Device Profile</th>
+                            <th>[% c.loc('Station Name') %]</th>
+                            <th>[% c.loc('Subscriber') %]</th>
+                            <th>[% c.loc('MAC Address / Identifier') %]</th>
+                            <th>[% c.loc('Device Profile') %]</th>
                             <th class="ngcp-actions-column"></th>
                         </tr>
                     </thead>
@@ -299,9 +334,15 @@
                             <td class="ngcp-actions-column">
                                 <div class="sw_actions">
                                     [% UNLESS c.user.readonly -%]
-                                    <a class="btn btn-secondary btn-small" href="[% c.uri_for_action("/customer/pbx_device_delete", [contract.id, dev.id])%]" data-confirm="Delete"><i class="icon-remove"></i> Delete</a>
-                                    <a class="btn btn-primary btn-small" href="[% c.uri_for_action("/customer/pbx_device_edit", [contract.id, dev.id]) %]"><i class="icon-edit"></i> Edit</a>
-                                    <a class="btn btn-primary btn-small" href="[% c.uri_for_action("/customer/pbx_device_sync", [contract.id, dev.id]) %]"><i class="icon-edit"></i> Sync Device</a>
+                                    <a class="btn btn-secondary btn-small" href="[% c.uri_for_action("/customer/pbx_device_delete", [contract.id, dev.id])%]" data-confirm="Delete">
+                                        <i class="icon-remove"></i> [% c.loc('Delete') %]
+                                    </a>
+                                    <a class="btn btn-primary btn-small" href="[% c.uri_for_action("/customer/pbx_device_edit", [contract.id, dev.id]) %]">
+                                        <i class="icon-edit"></i> [% c.loc('Edit') %]
+                                    </a>
+                                    <a class="btn btn-primary btn-small" href="[% c.uri_for_action("/customer/pbx_device_sync", [contract.id, dev.id]) %]">
+                                        <i class="icon-edit"></i> [% c.loc('Sync Device') %]
+                                    </a>
                                     [% END -%]
                                 </div>
                             </td>
@@ -320,28 +361,29 @@
     -%]
     <div class="accordion-group">
         <div class="accordion-heading">
-            <a class="accordion-toggle" data-toggle="collapse" data-parent="#customer_details" href="#collapse_soundsets">Sound Sets</a>
+            <a class="accordion-toggle" data-toggle="collapse" data-parent="#customer_details" href="#collapse_soundsets">[% c.loc('Sound Sets') %]</a>
         </div>
         <div class="accordion-body collapse" id="collapse_soundsets">
             <div class="accordion-inner">
             
 [%
-    helper.name = 'Sound Sets';
+    helper.name = c.loc('Sound Set');
+    helper.identifier = 'sound_sets';
     helper.dt_columns = soundset_dt_columns;
     helper.ajax_uri = c.uri_for_action('/sound/contract_ajax', [ c.req.captures.0 ]);
 
     UNLESS c.user.read_only;
         helper.dt_buttons = [
-            { name = 'Edit', uri = "/sound/'+full.id+'/edit", class = 'btn-small btn-primary', icon = 'icon-edit' },
-            { name = 'Delete', uri = "/sound/'+full.id+'/delete", class = 'btn-small btn-secondary', icon = 'icon-trash' },
-            { name = 'Files', uri = "/sound/'+full.id+'/handles", class = 'btn-small btn-tertiary', icon = 'icon-list' },
+            { name = c.loc('Edit'), uri = "/sound/'+full.id+'/edit", class = 'btn-small btn-primary', icon = 'icon-edit' },
+            { name = c.loc('Delete'), uri = "/sound/'+full.id+'/delete", class = 'btn-small btn-secondary', icon = 'icon-trash' },
+            { name = c.loc('Files'), uri = "/sound/'+full.id+'/handles", class = 'btn-small btn-tertiary', icon = 'icon-list' },
         ];
         helper.top_buttons = [
-            { name = 'Create Sound Set', uri = c.uri_for_action('/sound/create', c.req.captures.0), icon = 'icon-star', accordion_button = 1 },
+            { name = c.loc('Create Sound Set'), uri = c.uri_for_action('/sound/create', c.req.captures.0), icon = 'icon-star', accordion_button = 1 },
         ];
     ELSE;
         helper.dt_buttons = [
-            { name = 'Files', uri = "/sound/'+full.id+'/handles", class = 'btn-small btn-tertiary', icon = 'icon-list' },
+            { name = c.loc('Files'), uri = "/sound/'+full.id+'/handles", class = 'btn-small btn-tertiary', icon = 'icon-list' },
         ];
     END;
 
@@ -354,7 +396,7 @@
 
     <div class="accordion-group">
         <div class="accordion-heading">
-            <a class="accordion-toggle" data-toggle="collapse" data-parent="#customer_details" href="#collapse_balance">Contract Balance</a>
+            <a class="accordion-toggle" data-toggle="collapse" data-parent="#customer_details" href="#collapse_balance">[% c.loc('Contract Balance') %]</a>
         </div>
         <div class="accordion-body collapse" id="collapse_balance">
             <div class="accordion-inner">
@@ -362,8 +404,8 @@
                     <thead>
                         <tr>
                             <th></th>
-                            <th>Cash</th>
-                            <th>Free time</th>
+                            <th>[% c.loc('Cash') %]</th>
+                            <th>[% c.loc('Free time') %]</th>
                             <th class="ngcp-actions-column"></th>
                         </tr>
                     </thead>
@@ -371,20 +413,20 @@
                         [% USE format %]
                         [% money_format = format('%.2f') %]
                         <tr class="sw_action_row">
-                            <td>Current totals</td>
+                            <td>[% c.loc('Current totals') %]</td>
                             <td>[% money_format(balance.cash_balance / 100) %]</td>
                             <td>[% balance.free_time_balance %]</td>
                             <td class="ngcp-actions-column">
                                 <div class="sw_actions pull-right">
                                     <a class="btn btn-small btn-primary" 
                                        href="[% c.uri_for_action("/customer/edit_balance", [contract.id]) %]">
-                                        <i class="icon-edit"></i> Edit
+                                        <i class="icon-edit"></i> [% c.loc('Edit') %]
                                     </a>
                                 </div>
                             </td>
                         </tr>
                         <tr>
-                            <td>Spent this interval</td>
+                            <td>[% c.loc('Spent this interval') %]</td>
                             <td>[% money_format( balance.cash_balance_interval / 100 ) %]</td>
                             <td>[% balance.free_time_balance_interval %]</td>
                             <td></td>
@@ -398,7 +440,7 @@
     [% IF c.user.roles == 'admin' || c.user.roles == 'reseller' %]
     <div class="accordion-group">
         <div class="accordion-heading">
-            <a class="accordion-toggle" data-toggle="collapse" data-parent="#customer_details" href="#collapse_fraud">Fraud Limits</a>
+            <a class="accordion-toggle" data-toggle="collapse" data-parent="#customer_details" href="#collapse_fraud">[% c.loc('Fraud Limits') %]</a>
         </div>
         <div class="accordion-body collapse" id="collapse_fraud">
             <div class="accordion-inner">
@@ -406,16 +448,16 @@
                     <thead>
                         <tr>
                             <th></th>
-                            <th>Limit</th>
-                            <th>Lock Level</th>
-                            <th>Notify</th>
+                            <th>[% c.loc('Limit') %]</th>
+                            <th>[% c.loc('Lock Level') %]</th>
+                            <th>[% c.loc('Notify') %]</th>
                             <th class="ngcp-actions-column"></th>
                         </tr>
                     </thead>
                     <tbody>
                         <tr class="sw_action_row">
-                            <td>Monthly Settings</td>
-                            [% fraud_def_message = (fraud.fraud_interval_limit.defined ? "none" : "billing profile default") %]
+                            <td>[% c.loc('Monthly Settings') %]</td>
+                            [% fraud_def_message = (fraud.fraud_interval_limit.defined ? "none" : c.loc("billing profile default")) %]
                             <td>[% fraud.fraud_interval_limit.defined ? fraud.fraud_interval_limit : fraud_def_message %]</td>
                             <td>
                                 [% IF fraud.fraud_interval_lock.defined -%]
@@ -433,18 +475,18 @@
                                 <div class="sw_actions pull-right">
                                     <a class="btn btn-small btn-primary" 
                                        href="[% c.uri_for_action("/customer/edit_fraud", [c.req.captures.0], "month") %]">
-                                        <i class="icon-edit"></i> Edit</i>
+                                        <i class="icon-edit"></i> [% c.loc('Edit') %]
                                     </a>
                                     <a class="btn btn-small btn-secondary" data-confirm="Delete" 
                                        href="[% c.uri_for_action("/customer/delete_fraud", [c.req.captures.0], "month") %]">
-                                        <i class="icon-trash"></i> Delete</i>
+                                        <i class="icon-trash"></i> [% c.loc('Delete') %]
                                     </a>
                                 </div>
                             </td>
                         </tr>
                         <tr class="sw_action_row">
-                            <td>Daily Settings</td>
-                            [% fraud_def_message = (fraud.fraud_daily_limit.defined ? "none" : "billing profile default") %]
+                            <td>[% c.loc('Daily Settings') %]</td>
+                            [% fraud_def_message = (fraud.fraud_daily_limit.defined ? "none" : c.loc("billing profile default")) %]
                             <td>[% fraud.fraud_daily_limit.defined ? fraud.fraud_daily_limit : fraud_def_message %]</td>
                             <td>
                                 [% IF fraud.fraud_daily_lock.defined -%]
@@ -462,11 +504,11 @@
                                 <div class="sw_actions pull-right">
                                     <a class="btn btn-small btn-primary" 
                                        href="[% c.uri_for_action("/customer/edit_fraud", [c.req.captures.0], "day") %]">
-                                        <i class="icon-edit"></i> Edit</i>
+                                        <i class="icon-edit"></i> [% c.loc('Edit') %]
                                     </a>
                                     <a class="btn btn-small btn-secondary" data-confirm="Delete" 
                                        href="[% c.uri_for_action("/customer/delete_fraud", [c.req.captures.0], "day") %]">
-                                        <i class="icon-trash"></i> Delete</i>
+                                        <i class="icon-trash"></i> [% c.loc('Delete') %]
                                     </a>
                                 </div>
                             </td>
@@ -486,7 +528,7 @@
     END;
     PROCESS "helpers/modal.tt";
     modal_header(m.create_flag = create_flag,
-                 m.name = description.defined ? description : "Subscriber");
+                 m.name = description.defined ? description : c.loc("Subscriber"));
     form.render;
     modal_footer();
     modal_script(m.close_target = close_target);
@@ -498,7 +540,7 @@
     END;
     PROCESS "helpers/modal.tt";
     modal_header(m.create_flag=0,
-                 m.name = "Settings");
+                 m.name = c.loc("Settings"));
     form.render;
     modal_footer();
     modal_script(m.close_target = close_target);
@@ -507,7 +549,7 @@
 [%
     PROCESS "helpers/modal.tt";
     modal_header(m.create_flag=0, m.edit_flag=0,
-                 m.name = "Deployed Device");
+                 m.name = c.loc("Deployed Device"));
     form.render;
     modal_footer();
     modal_script(m.close_target = close_target);

@@ -1,7 +1,8 @@
-[% site_config.title = 'Domain "' _ domain.domain _ '" – Preferences' -%]
+[% site_config.title = c.loc('Domain "[_1]" – Preferences', domain.domain) -%]
 
 [% 
-    helper.name = 'Domain';
+    helper.name = c.loc('Domain');
+    helper.identifier = 'domain';
     helper.messages = messages;
     
     helper.edit_preference = edit_preference;
@@ -16,7 +17,7 @@
     helper.man_aip_grp_rs = man_aip_grp_rs;
 
     helper.top_buttons = [
-        { name = 'Back', uri = c.uri_for(), icon = 'icon-arrow-left' },
+        { name = c.loc('Back'), uri = c.uri_for(), icon = 'icon-arrow-left' },
     ];
 
     PROCESS 'helpers/pref_table.tt';

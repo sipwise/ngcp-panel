@@ -1,21 +1,21 @@
 <div class="plan-container">
     <div class="plan">
         <div class="plan-header">
-            <div class="plan-title">System Status</div>
+            <div class="plan-title">[% c.loc('System Status') %]</div>
             <div class="plan-price">
                 <span class="ngcp-green-ok">&#9702;</span>
-                <span class="term">All services running</span>
+                <span class="term">[% c.loc('All services running') %]</span>
             </div>
         </div>
         <div class="plan-features">
             <ul>
-                <li>Applications <strong>Ok</strong></li>
-                <li>System <strong>Ok</strong></li>
-                <li>Hardware <strong>Ok</strong></li>
+                <li>[% c.loc('Applications <strong>Ok</strong>') %]</li>
+                <li>[% c.loc('System <strong>Ok</strong>') %]</li>
+                <li>[% c.loc('Hardware <strong>Ok</strong>') %]</li>
             </ul>
         </div>
         <div class="plan-actions">
-            <a href="[% c.uri_for('/statistics') %]" class="btn">View Statistics</a>
+            <a href="[% c.uri_for('/statistics') %]" class="btn">[% c.loc('View Statistics') %]</a>
         </div>
     </div>
 </div>

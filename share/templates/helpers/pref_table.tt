@@ -34,10 +34,10 @@
             [% # one for description -%]
             <th></th>
             [% UNLESS c.user.roles == 'subscriber' || c.user.roles == 'subscriberadmin' -%]
-            <th>Attribute</th>
+            <th>[% c.loc('Attribute') %]</th>
             [% END -%]
-            <th>Name</th>
-            <th>Value</th>
+            <th>[% c.loc('Name') %]</th>
+            <th>[% c.loc('Value') %]</th>
             [% # one for actions -%]
             <th class="span3"></th>
         </tr>

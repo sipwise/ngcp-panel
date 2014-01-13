@@ -44,14 +44,14 @@ sub list_customer :Chained('/') :PathPart('customer') :CaptureArgs(0) {
     my ($self, $c) = @_;
 
     $c->stash->{contract_dt_columns} = NGCP::Panel::Utils::Datatables::set_columns($c, [
-        { name => "id", search => 1, title => "#" },
-        { name => "external_id", search => 1, title => "External #" },
-        { name => "contact.reseller.name", search => 1, title => "Reseller" },
-        { name => "contact.email", search => 1, title => "Contact Email" },
-        { name => "billing_mappings.product.name", search => 1, title => "Product" },
-        { name => "billing_mappings.billing_profile.name", search => 1, title => "Billing Profile" },
-        { name => "status", search => 1, title => "Status" },
-        { name => "max_subscribers", search => 1, title => "Max Number of Subscribers" },
+        { name => "id", search => 1, title => $c->loc("#") },
+        { name => "external_id", search => 1, title => $c->loc("External #") },
+        { name => "contact.reseller.name", search => 1, title => $c->loc("Reseller") },
+        { name => "contact.email", search => 1, title => $c->loc("Contact Email") },
+        { name => "billing_mappings.product.name", search => 1, title => $c->loc("Product") },
+        { name => "billing_mappings.billing_profile.name", search => 1, title => $c->loc("Billing Profile") },
+        { name => "status", search => 1, title => $c->loc("Status") },
+        { name => "max_subscribers", search => 1, title => $c->loc("Max Number of Subscribers") },
     ]);
 
     my $rs = NGCP::Panel::Utils::Contract::get_contract_rs(
@@ -99,7 +99,11 @@ sub ajax_reseller_filter :Chained('list_customer') :PathPart('ajax/reseller') :A
     my ($self, $c, $reseller_id) = @_;
 
     unless($reseller_id && $reseller_id->is_int) {
-        $c->flash(messages => [{type => 'error', text => 'Invalid reseller id detected'}]);
+        NGCP::Panel::Utils::Message->error(
+            c     => $c,
+            log   => 'Invalid reseller id detected',
+            desc  => $c->loc('Invalid reseller id detected'),
+        );
         $c->response->redirect($c->uri_for());
         return;
     }
@@ -110,11 +114,11 @@ sub ajax_reseller_filter :Chained('list_customer') :PathPart('ajax/reseller') :A
         join => 'contact',
     });
     my $reseller_customer_columns = NGCP::Panel::Utils::Datatables::set_columns($c, [
-        { name => "id", search => 1, title => "#" },
-        { name => "external_id", search => 1, title => "External #" },
-        { name => "billing_mappings.product.name", search => 1, title => "Product" },
-        { name => "contact.email", search => 1, title => "Contact Email" },
-        { name => "status", search => 1, title => "Status" },
+        { name => "id", search => 1, title => $c->loc("#") },
+        { name => "external_id", search => 1, title => $c->loc("External #") },
+        { name => "billing_mappings.product.name", search => 1, title => $c->loc("Product") },
+        { name => "contact.email", search => 1, title => $c->loc("Contact Email") },
+        { name => "status", search => 1, title => $c->loc("Status") },
     ]);
     NGCP::Panel::Utils::Datatables::process($c, $rs,  $reseller_customer_columns);
     $c->detach( $c->view("JSON") );
@@ -182,13 +186,13 @@ sub create :Chained('list_customer') :PathPart('create') :Args(0) {
                 delete $c->session->{created_objects}->{contact};
                 delete $c->session->{created_objects}->{billing_profile};
                 my $contract_id = $contract->id;
-                $c->flash(messages => [{type => 'success', text => "Customer #$contract_id successfully created"}]);
+                $c->flash(messages => [{type => 'success', text => $c->loc('Customer #[_1] successfully created',$contract_id) }]);
             });
         } catch($e) {
             NGCP::Panel::Utils::Message->error(
                 c => $c,
                 error => $e,
-                desc  => "Failed to create customer contract.",
+                desc  => $c->loc('Failed to create customer contract.'),
             );
         }
         NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for('/contract'));
@@ -205,7 +209,7 @@ sub base :Chained('list_customer') :PathPart('') :CaptureArgs(1) {
         NGCP::Panel::Utils::Message->error(
             c => $c,
             error => "customer contract id '$contract_id' is not valid",
-            desc  => "Invalid customer contract id",
+            desc  => $c->loc('Invalid customer contract id'),
         );
         NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for('/customer'));
         return;
@@ -236,7 +240,11 @@ sub base :Chained('list_customer') :PathPart('') :CaptureArgs(1) {
     }
 
     unless(defined($contract_rs->first)) {
-        $c->flash(messages => [{type => 'error', text => 'Customer was not found'}]);
+        NGCP::Panel::Utils::Message->error(
+            c     => $c,
+            log   => 'Customer was not found',
+            desc  => $c->loc('Customer was not found'),
+        );
         NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for('/customer'));
     }
 
@@ -260,7 +268,7 @@ sub base :Chained('list_customer') :PathPart('') :CaptureArgs(1) {
             NGCP::Panel::Utils::Message->error(
                 c => $c,
                 error => $e,
-                desc  => "Failed to create contract balance.",
+                desc  => $c->loc('Failed to create contract balance.'),
             );
             $c->response->redirect($c->uri_for());
             return;
@@ -276,19 +284,19 @@ sub base :Chained('list_customer') :PathPart('') :CaptureArgs(1) {
     NGCP::Panel::Utils::Message->error(
         c => $c,
         error => "No product for customer contract id $contract_id found",
-        desc  => "No product for this customer contract found.",
+        desc  => $c->loc('No product for this customer contract found.'),
     ) unless($product_id);
     my $product = $c->model('DB')->resultset('products')->find($product_id);
     NGCP::Panel::Utils::Message->error(
         c => $c,
         error => "No product with id $product_id for customer contract id $contract_id found",
-        desc  => "Invalid product id for this customer contract.",
+        desc  => $c->loc('Invalid product id for this customer contract.'),
     ) unless($product);
 
     $c->stash->{pbxgroup_dt_columns} = NGCP::Panel::Utils::Datatables::set_columns($c, [
-        { name => "id", search => 1, title => "#" },
-        { name => "name", search => 1, title => "Name" },
-        { name => "extension", search => 1, title => "Extension" },
+        { name => "id", search => 1, title => $c->loc("#") },
+        { name => "name", search => 1, title => $c->loc("Name") },
+        { name => "extension", search => 1, title => $c->loc("Extension") },
     ]);
 
     my $subs = NGCP::Panel::Utils::Subscriber::get_custom_subscriber_struct(
@@ -404,13 +412,13 @@ sub edit :Chained('base') :PathPart('edit') :Args(0) {
                 delete $c->session->{created_objects}->{contact};
                 delete $c->session->{created_objects}->{billing_profile};
                 my $contract_id = $contract->id;
-                $c->flash(messages => [{type => 'success', text => "Customer #$contract_id successfully updated"}]);
+                $c->flash(messages => [{type => 'success', text => $c->loc('Customer #[_1] successfully updated',$contract_id) }]);
             });
         } catch($e) {
             NGCP::Panel::Utils::Message->error(
                 c => $c,
                 error => $e,
-                desc  => "Failed to update customer contract.",
+                desc  => $c->loc('Failed to update customer contract.'),
             );
         }
         NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for('/customer'));
@@ -426,7 +434,7 @@ sub terminate :Chained('base') :PathPart('terminate') :Args(0) {
     my $contract = $c->stash->{contract};
 
     if ($contract->id == 1) {
-        $c->flash(messages => [{type => 'error', text => 'Cannot terminate contract with the id 1'}]);
+        $c->flash(messages => [{type => 'error', text => $c->loc('Cannot terminate contract with the id 1')}]);
         NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for('/contract'));
     }
 
@@ -440,12 +448,12 @@ sub terminate :Chained('base') :PathPart('terminate') :Args(0) {
                 contract => $contract,
             );
         }
-        $c->flash(messages => [{type => 'success', text => "Customer successfully terminated"}]);
+        $c->flash(messages => [{type => 'success', text => $c->loc('Customer successfully terminated') }]);
     } catch ($e) {
         NGCP::Panel::Utils::Message->error(
             c => $c,
             error => $e,
-            desc  => "Failed to terminate contract.",
+            desc  => $c->loc('Failed to terminate contract.'),
         );
     };
     NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for('/contract'));
@@ -474,7 +482,7 @@ sub subscriber_create :Chained('base') :PathPart('subscriber/create') :Args(0) {
         NGCP::Panel::Utils::Message->error(
             c => $c,
             error => "tried to exceed max number of subscribers of " . $c->stash->{contract}->max_subscribers,
-            desc  => "Maximum number of subscribers for this customer reached",
+            desc  => $c->loc('Maximum number of subscribers for this customer reached'),
         );
         NGCP::Panel::Utils::Navigation::back_or($c, 
             $c->uri_for_action('/customer/details', [$c->stash->{contract}->id])
@@ -596,12 +604,12 @@ sub subscriber_create :Chained('base') :PathPart('subscriber/create') :Args(0) {
 
             delete $c->session->{created_objects}->{domain};
             delete $c->session->{created_objects}->{group};
-            $c->flash(messages => [{type => 'success', text => 'Subscriber successfully created.'}]);
+            $c->flash(messages => [{type => 'success', text => $c->loc('Subscriber successfully created.') }]);
         } catch($e) {
             NGCP::Panel::Utils::Message->error(
                 c => $c,
                 error => $e,
-                desc  => "Failed to create subscriber.",
+                desc  => $c->loc('Failed to create subscriber.'),
             );
         }
         NGCP::Panel::Utils::Navigation::back_or($c, 
@@ -623,7 +631,11 @@ sub edit_fraud :Chained('base') :PathPart('fraud/edit') :Args(1) {
     } elsif($type eq "day") {
         $form = NGCP::Panel::Form::CustomerDailyFraud->new;
     } else {
-        $c->flash(messages => [{type => 'error', text => "Invalid fraud interval '$type'!"}]);
+        NGCP::Panel::Utils::Message->error(
+            c     => $c,
+            log   => "Invalid fraud interval '$type'!",
+            desc  => $c->loc("Invalid fraud interval '[_1]'!",$type),
+        );
         $c->response->redirect($c->uri_for_action("/customer/details", [$c->stash->{contract}->id]));
         return;
     }
@@ -638,7 +650,7 @@ sub edit_fraud :Chained('base') :PathPart('fraud/edit') :Args(1) {
         item => $fraud_prefs,
     );
     if($posted && $form->validated) {
-        $c->flash(messages => [{type => 'success', text => 'Fraud settings successfully changed!'}]);
+        $c->flash(messages => [{type => 'success', text => $c->loc('Fraud settings successfully changed!') }]);
         $c->response->redirect($c->uri_for_action("/customer/details", [$c->stash->{contract}->id]));
         return;
     }
@@ -656,7 +668,11 @@ sub delete_fraud :Chained('base') :PathPart('fraud/delete') :Args(1) {
     } elsif($type eq "day") {
         $type = "daily";
     } else {
-        $c->flash(messages => [{type => 'error', text => "Invalid fraud interval '$type'!"}]);
+        NGCP::Panel::Utils::Message->error(
+            c     => $c,
+            log   => "Invalid fraud interval '$type'!",
+            desc  => $c->loc("Invalid fraud interval '[_1]'!",$type),
+        );
         $c->response->redirect($c->uri_for_action("/customer/details", [$c->stash->{contract}->id]));
         return;
     }
@@ -673,13 +689,13 @@ sub delete_fraud :Chained('base') :PathPart('fraud/delete') :Args(1) {
             NGCP::Panel::Utils::Message->error(
                 c => $c,
                 error => $e,
-                desc  => "Failed to clear fraud interval.",
+                desc  => $c->loc('Failed to clear fraud interval.'),
             );
             $c->response->redirect($c->uri_for_action("/customer/details", [$c->stash->{contract}->id]));
             return;
         }
     }
-    $c->flash(messages => [{type => 'success', text => "Successfully cleared fraud interval!"}]);
+    $c->flash(messages => [{type => 'success', text => $c->loc('Successfully cleared fraud interval!') }]);
     $c->response->redirect($c->uri_for_action("/customer/details", [$c->stash->{contract}->id]));
     return;
 }
@@ -697,7 +713,7 @@ sub edit_balance :Chained('base') :PathPart('balance/edit') :Args(0) {
         item => $c->stash->{balance},
     );
     if($posted && $form->validated) {
-        $c->flash(messages => [{type => 'success', text => 'Account balance successfully changed!'}]);
+        $c->flash(messages => [{type => 'success', text => $c->loc('Account balance successfully changed!') }]);
         $c->response->redirect($c->uri_for_action("/customer/details", [$c->stash->{contract}->id]));
         return;
     }
@@ -727,7 +743,7 @@ sub pbx_group_create :Chained('base') :PathPart('pbx/group/create') :Args(0) {
         NGCP::Panel::Utils::Message->error(
             c => $c,
             error => "tried to exceed max number of subscribers of " . $c->stash->{contract}->max_subscribers,
-            desc  => "Maximum number of subscribers for this customer reached",
+            desc  => $c->loc('Maximum number of subscribers for this customer reached'),
         );
         NGCP::Panel::Utils::Navigation::back_or($c, 
             $c->uri_for_action('/customer/details', [$c->stash->{contract}->id])
@@ -741,7 +757,7 @@ sub pbx_group_create :Chained('base') :PathPart('pbx/group/create') :Args(0) {
         NGCP::Panel::Utils::Message->error(
             c => $c,
             error => 'cannot create pbx group without having an admin subscriber',
-            desc  => "Can't create a PBX group without having an administrative subscriber.",
+            desc  => $c->loc("Can't create a PBX group without having an administrative subscriber."),
         );
         NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for_action('/customer/details', $c->req->captures));
     }
@@ -802,12 +818,12 @@ sub pbx_group_create :Chained('base') :PathPart('pbx/group/create') :Args(0) {
                 $c->session->{created_objects}->{group} = { id => $group->id };
             });
 
-            $c->flash(messages => [{type => 'success', text => 'PBX group successfully created.'}]);
+            $c->flash(messages => [{type => 'success', text => $c->loc('PBX group successfully created.')}]);
         } catch ($e) {
             NGCP::Panel::Utils::Message->error(
                 c => $c,
                 error => $e,
-                desc  => "Failed to create PBX group.",
+                desc  => $c->loc('Failed to create PBX group.'),
             );
         }
 
@@ -817,7 +833,7 @@ sub pbx_group_create :Chained('base') :PathPart('pbx/group/create') :Args(0) {
     $c->stash(
         create_flag => 1,
         form => $form,
-        description => 'PBX Group',
+        description => $c->loc('PBX Group'),
     );
 }
 
@@ -829,7 +845,7 @@ sub pbx_group_base :Chained('base') :PathPart('pbx/group') :CaptureArgs(1) {
         NGCP::Panel::Utils::Message->error(
             c => $c,
             error => "invalid voip pbx group id $group_id",
-            desc  => "PBX group with id $group_id does not exist.",
+            desc  => $c->loc('PBX group with id [_1] does not exist.',$group_id),
         );
         NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for_action('/customer/details', [$c->req->captures->[0]]));
     }
@@ -885,12 +901,12 @@ sub pbx_group_edit :Chained('pbx_group_base') :PathPart('edit') :Args(0) {
                 }
             });
 
-            $c->flash(messages => [{type => 'success', text => 'PBX group successfully updated.'}]);
+            $c->flash(messages => [{type => 'success', text => $c->loc('PBX group successfully updated.') }]);
         } catch ($e) {
             NGCP::Panel::Utils::Message->error(
                 c => $c,
                 error => $e,
-                desc  => "Failed to update PBX group.",
+                desc  => $c->loc('Failed to update PBX group.'),
             );
         }
 
@@ -952,7 +968,7 @@ sub pbx_device_create :Chained('base') :PathPart('pbx/device/create') :Args(0) {
                             c => $c,
                             error => "invalid provisioning subscriber_id '".$line->field('subscriber_id')->value.
                                 "' for contract id '".$c->stash->{contract}->id."'",
-                            desc  => "Invalid provisioning subscriber id detected.",
+                            desc  => $c->loc('Invalid provisioning subscriber id detected.'),
                         );
                         # TODO: throw exception here!
                         $err = 1;
@@ -970,13 +986,13 @@ sub pbx_device_create :Chained('base') :PathPart('pbx/device/create') :Args(0) {
                 }
             });
             unless($err) {
-                $c->flash(messages => [{type => 'success', text => 'PBX device successfully created'}]);
+                $c->flash(messages => [{type => 'success', text => $c->loc('PBX device successfully created') }]);
             }
         } catch ($e) {
             NGCP::Panel::Utils::Message->error(
                 c => $c,
                 error => $e,
-                desc  => "Failed to create PBX device",
+                desc  => $c->loc('Failed to create PBX device'),
             );
         }
 
@@ -986,7 +1002,7 @@ sub pbx_device_create :Chained('base') :PathPart('pbx/device/create') :Args(0) {
     $c->stash(
         create_flag => 1,
         form => $form,
-        description => 'PBX Device',
+        description => $c->loc('PBX Device'),
     );
 }
 
@@ -998,7 +1014,7 @@ sub pbx_device_base :Chained('base') :PathPart('pbx/device') :CaptureArgs(1) {
         NGCP::Panel::Utils::Message->error(
             c => $c,
             error => "invalid voip pbx device id $dev_id",
-            desc  => "PBX device with id $dev_id does not exist.",
+            desc  => $c->loc('PBX device with id [_1] does not exist.',$dev_id),
         );
         NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for_action('/customer/details', [$c->req->captures->[0]]));
     }
@@ -1006,7 +1022,7 @@ sub pbx_device_base :Chained('base') :PathPart('pbx/device') :CaptureArgs(1) {
         NGCP::Panel::Utils::Message->error(
             c => $c,
             error => "invalid voip pbx device id $dev_id for customer id '".$c->stash->{contract}->id."'",
-            desc  => "PBX device with id $dev_id does not exist for this customer.",
+            desc  => $c->loc('PBX device with id [_1] does not exist for this customer.',$dev_id),
         );
         NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for_action('/customer/details', [$c->req->captures->[0]]));
     }
@@ -1076,7 +1092,7 @@ sub pbx_device_edit :Chained('pbx_device_base') :PathPart('edit') :Args(0) {
                             c => $c,
                             error => "invalid provisioning subscriber_id '".$line->field('subscriber_id')->value.
                                 "' for contract id '".$c->stash->{contract}->id."'",
-                            desc  => "Invalid provisioning subscriber id detected.",
+                            desc  => $c->loc('Invalid provisioning subscriber id detected.'),
                         );
                         # TODO: throw exception here!
                         $err = 1;
@@ -1094,13 +1110,13 @@ sub pbx_device_edit :Chained('pbx_device_base') :PathPart('edit') :Args(0) {
                 }
             });
             unless($err) {
-                $c->flash(messages => [{type => 'success', text => 'PBX device successfully updated'}]);
+                $c->flash(messages => [{type => 'success', text => $c->loc('PBX device successfully updated') }]);
             }
         } catch ($e) {
             NGCP::Panel::Utils::Message->error(
                 c => $c,
                 error => $e,
-                desc  => "Failed to update PBX device",
+                desc  => $c->loc('Failed to update PBX device'),
             );
         }
 
@@ -1110,7 +1126,7 @@ sub pbx_device_edit :Chained('pbx_device_base') :PathPart('edit') :Args(0) {
     $c->stash(
         edit_flag => 1,
         form => $form,
-        description => 'PBX Device',
+        description => $c->loc('PBX Device'),
     );
 }
 
@@ -1119,12 +1135,12 @@ sub pbx_device_delete :Chained('pbx_device_base') :PathPart('delete') :Args(0) {
 
     try {
         $c->stash->{pbx_device}->delete;
-        $c->flash(messages => [{type => 'success', text => 'PBX Device successfully deleted' }]);
+        $c->flash(messages => [{type => 'success', text => $c->loc('PBX Device successfully deleted') }]);
     } catch($e) {
         NGCP::Panel::Utils::Message->error(
             c => $c,
             error => "failed to delete PBX device with id '".$c->stash->{pbx_device}->id."': $e",
-            desc => "Failed to delete PBX device",
+            desc => $c->loc('Failed to delete PBX device'),
         );
     }
 
@@ -1147,7 +1163,7 @@ sub pbx_device_sync :Chained('pbx_device_base') :PathPart('sync') :Args(0) {
     );
 
     if($posted && $form->validated) {
-        $c->flash(messages => [{type => 'success', text => 'Successfully redirected request to device'}]);
+        $c->flash(messages => [{type => 'success', text => $c->loc('Successfully redirected request to device') }]);
         NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for_action('/customer/details', [ $c->req->captures->[0] ]));
     }
     my $dev = $c->stash->{pbx_device};

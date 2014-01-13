@@ -19,8 +19,8 @@ sub prod_list :Chained('/') :PathPart('product') :CaptureArgs(0) {
             class => { 'not in' => ['sippeering', 'pstnpeering', 'reseller'] }
         });
     $c->stash->{product_dt_columns} = NGCP::Panel::Utils::Datatables::set_columns($c, [
-        { name => 'id', search => 1, title => '#' },
-        { name => 'name', search => 1, title => 'Name' },
+        { name => 'id', search => 1, title => $c->loc('#') },
+        { name => 'name', search => 1, title => $c->loc('Name') },
     ]);
 
     $c->stash(

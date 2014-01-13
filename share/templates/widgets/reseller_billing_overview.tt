@@ -4,17 +4,17 @@
             <div class="plan-title">Billing</div>
             <div class="plan-price">
                 <span>[% profiles.count %]</span>
-                <span class="term">Billing Profile[% profiles.count == 1 ? "" : "s" %]</span>
+                <span class="term">[% profiles.count == 1 ? c.loc('Billing Profile') : c.loc('Billing Profiles') %]</span>
             </div>
         </div>
         <div class="plan-features">
             <ul>
-                <li><strong>[% FILTER format("%.02f") %][% (reseller_sum || 0) / 100.0 %][% END %]</strong> Reseller Cost</li>
-                <li><strong>[% FILTER format("%.02f") %][% (customer_sum || 0) / 100.0 %][% END %]</strong> Customer Revenue</li>
+                <li><strong>[% FILTER format("%.02f") %][% (reseller_sum || 0) / 100.0 %][% END %]</strong> [% c.loc('Reseller Cost') %]</li>
+                <li><strong>[% FILTER format("%.02f") %][% (customer_sum || 0) / 100.0 %][% END %]</strong> [% c.loc('Customer Revenue') %]</li>
             </ul>
         </div>
         <div class="plan-actions">
-            <a href="[% c.uri_for('/billing') %]" class="btn">Configure</a>
+            <a href="[% c.uri_for('/billing') %]" class="btn">[% c.loc('Configure') %]</a>
         </div>
     </div>
 </div>

@@ -1,20 +1,20 @@
 <div class="plan-container">
     <div class="plan">
         <div class="plan-header">
-            <div class="plan-title">Peerings</div>
+            <div class="plan-title">[% c.loc('Peerings') %]</div>
             <div class="plan-price">
                 <span>[% groups.count %]</span>
-                <span class="term">Peering Group[% groups.count == 1 ? "" : "s" %]</span>
+                <span class="term">[% groups.count == 1 ? c.loc('Peering Group') : c.loc('Peering Groups') %]</span>
             </div>
         </div>
         <div class="plan-features">
             <ul>
-                <li><strong>[% hosts.count %]</strong> Peering Server[% hosts.count == 1 ? "" : "s" %]</li>
-                <li><strong>[% rules.count %]</strong> Peering Rule[% rules.count == 1 ? "" : "s" %]</li>
+                <li><strong>[% hosts.count %]</strong> [% hosts.count == 1 ? c.loc('Peering Server') : c.loc('Peering Servers') %]</li>
+                <li><strong>[% rules.count %]</strong> [% rules.count == 1 ? c.loc('Peering Rule') : c.loc('Peering Rules') %]</li>
             </ul>
         </div>
         <div class="plan-actions">
-            <a href="[% c.uri_for('/peering') %]" class="btn">Configure</a>
+            <a href="[% c.uri_for('/peering') %]" class="btn">[% c.loc('Configure') %]</a>
         </div>
     </div>
 </div>

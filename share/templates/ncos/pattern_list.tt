@@ -1,7 +1,8 @@
-[% site_config.title = 'Number Patterns for ' _ level_result.level -%]
+[% site_config.title = c.loc('Number Patterns for [_1]', level_result.level) -%]
 
 [%
-    helper.name = 'Number Pattern';
+    helper.name = c.loc('Number Pattern');
+    helper.identifier = 'number_pattern';
     helper.messages = messages;
     helper.dt_columns = pattern_dt_columns;
     helper.length_change = 1;
@@ -16,11 +17,11 @@
 
     UNLESS c.user.read_only;
         helper.dt_buttons = [
-            { name = 'Edit', uri = helper.tmpuri _ "/'+full.id+'/edit", class = 'btn-small btn-primary', icon = 'icon-edit' },
-            { name = 'Delete', uri = helper.tmpuri _ "/'+full.id+'/delete", class = 'btn-small btn-secondary', icon = 'icon-trash' },
+            { name = c.loc('Edit'), uri = helper.tmpuri _ "/'+full.id+'/edit", class = 'btn-small btn-primary', icon = 'icon-edit' },
+            { name = c.loc('Delete'), uri = helper.tmpuri _ "/'+full.id+'/delete", class = 'btn-small btn-secondary', icon = 'icon-trash' },
         ];
         helper.top_buttons = [
-            { name = 'Create Pattern Entry', uri = c.uri_for_action( "/ncos/pattern_create", [c.req.captures.0] ), icon = 'icon-star' },
+            { name = c.loc('Create Pattern Entry'), uri = c.uri_for_action( "/ncos/pattern_create", [c.req.captures.0] ), icon = 'icon-star' },
         ];
     END;
 
@@ -30,12 +31,12 @@
 <div id="number_patterns_local_ac">
     <input id="local_ac" type="checkbox" name="local_ac" disabled="disabled"
         [% IF local_ac_checked %]checked="checked"[% END %]>
-    <label for="local_ac">Include local area code</label>
+    <label for="local_ac">[% c.loc('Include local area code') %]</label>
 
     <div>
         <a class="btn btn-primary btn-small"
             href="[% c.uri_for_action("/ncos/pattern_edit_local_ac", [c.req.captures.0]) %]">
-            <i class="icon-edit"></i> Edit
+            <i class="icon-edit"></i> [% c.loc('Edit') %]
         </a>
     </div>
 </div>

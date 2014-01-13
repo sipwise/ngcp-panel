@@ -1,7 +1,7 @@
-[% site_config.title = 'Subscriber Preferences for ' _ subscriber.username _ '@' _ subscriber.domain.domain  -%]
+[% site_config.title = c.loc('Subscriber Preferences for [_1]@[_2]', subscriber.username, subscriber.domain.domain) -%]
 
 [% 
-    helper.name = 'Subscriber';
+    helper.name = c.loc('Subscriber');
     helper.messages = messages;
     
     helper.edit_preference = edit_preference;
@@ -23,7 +23,7 @@
 
 <div class="row">
     <span>
-    <a class="btn btn-primary btn-large" href="[% c.uri_for('/back') %]"><i class="icon-arrow-left"></i> Back</a>
+    <a class="btn btn-primary btn-large" href="[% c.uri_for('/back') %]"><i class="icon-arrow-left"></i> [% c.loc('Back') %]</a>
     </span>
 </div>
 [% back_created = 1 %]
@@ -41,7 +41,7 @@
 <div class="accordion" id="preference_groups">
     <div class="accordion-group">
         <div class="accordion-heading">
-            <a class="accordion-toggle" data-toggle="collapse" data-parent="#preference_groups" href="#collapse_cf">Call Forwards</a>
+            <a class="accordion-toggle" data-toggle="collapse" data-parent="#preference_groups" href="#collapse_cf">[% c.loc('Call Forwards') %]</a>
         </div>
         <div class="accordion-body collapse" id="collapse_cf">
             <div class="accordion-inner">
@@ -49,21 +49,21 @@
                 <table class="table table-bordered table-striped table-highlight table-hover" id="preferences_table_cf">
                     <thead>
                         <tr>
-                            <th>Type</th>
-                            <th>Answer Timeout</th>
-                            <th>Destinations</th>
-                            <th>Timeset</th>
+                            <th>[% c.loc('Type') %]</th>
+                            <th>[% c.loc('Answer Timeout') %]</th>
+                            <th>[% c.loc('Destinations') %]</th>
+                            <th>[% c.loc('Timeset') %]</th>
                             [% # one for actions -%]
                             <th class="ngcp-actions-column"></th>
                         </tr>
                     </thead>
                     <tbody>
-                    [% FOR cf IN [ { type = "cfu", desc = "Unconditional" },
-                                   { type = "cfb", desc = "Busy" },
-                                   { type = "cft", desc = "Timeout" },
-                                   { type = "cfna", desc = "Unavailable" } ] -%]
+                    [% FOR cf IN [ { type = "cfu", desc = c.loc("Call Forward Unconditional") },
+                                   { type = "cfb", desc = c.loc("Call Forward Busy") },
+                                   { type = "cft", desc = c.loc("Call Forward Timeout") },
+                                   { type = "cfna", desc = c.loc("Call Forward Unavailable") } ] -%]
                         <tr class="sw_action_row">
-                            <td>Call Forward [% cf.desc %]</td>
+                            <td>[% cf.desc %]</td>
                             <td>
                                 [% cf_ringtimeout _ 's' IF cf.type == "cft" && cf_destinations.${cf.type}.size %]
                             </td>
@@ -78,7 +78,7 @@
 
                                         [% dset_unique_id = cf.type _ "dset" _ idx _ jdx _ maps.id -%]
                                         <a href="#" data-toggle="modal" data-target="#[% dset_unique_id %]" class="pull-right"><i class="icon-question-sign"></i></a>
-                                        [% modal_header_dynamic(m.header = 'Destination Set "' _ maps.dset_name _ '" Details', m.id=dset_unique_id) %]
+                                        [% modal_header_dynamic(m.header = c.loc('Destination Set "[_1]" Details', maps.dset_name), m.id=dset_unique_id) %]
                                         <div class="modal-body">
                                             [% FOR d IN maps.destinations -%]
                                                 [% d.as_string %] <span class="pull-right">for [% d.timeout %]s</span><br/>
@@ -104,7 +104,7 @@
                                     [% IF maps.tset_name.defined -%]
                                         [% tset_unique_id = cf.type _ idx _ jdx _ maps.id -%]
                                         <a href="#" data-toggle="modal" data-target="#[% tset_unique_id %]" class="pull-right"><i class="icon-question-sign"></i></a>
-                                        [% modal_header_dynamic(m.header = 'Timeset "' _ maps.tset_name _ '" Details', m.id=tset_unique_id) %]
+                                        [% modal_header_dynamic(m.header = c.loc('Timeset "[_1]" Details', maps.tset_name), m.id=tset_unique_id) %]
                                         <div class="modal-body">
                                         [% FOR p IN maps.periods -%]
                                             [% p.as_string %]<br/>
@@ -119,9 +119,9 @@
                             <td class="ngcp-actions-column">
                                 <div class="sw_actions">
                                     [% UNLESS (c.user.roles == "admin" || c.user.roles == "reseller") && c.user.read_only -%]
-                                    <a class="btn btn-primary btn-small" href="[% c.uri_for_action("/subscriber/preferences_callforward", [c.req.captures.0], cf.type) %]"><i class="icon-edit"></i> Edit</a>
+                                    <a class="btn btn-primary btn-small" href="[% c.uri_for_action("/subscriber/preferences_callforward", [c.req.captures.0], cf.type) %]"><i class="icon-edit"></i> [% c.loc('Edit') %]</a>
                                     [% IF cf_destinations.${cf.type}.size -%]
-                                    <a class="btn btn-secondary btn-small" data-confirm="Delete" href="[% c.uri_for_action("/subscriber/preferences_callforward_delete", [c.req.captures.0], cf.type) %]"><i class="icon-trash"></i> Delete</a>
+                                    <a class="btn btn-secondary btn-small" data-confirm="Delete" href="[% c.uri_for_action("/subscriber/preferences_callforward_delete", [c.req.captures.0], cf.type) %]"><i class="icon-trash"></i> [% c.loc('Delete') %]</a>
                                     [% END -%]
                                     [% END -%]
                                 </div>
@@ -138,7 +138,7 @@
 
     <div class="accordion-group">
         <div class="accordion-heading">
-            <a class="accordion-toggle" data-toggle="collapse" data-parent="#preference_groups" href="#collapse_vm">Voicemail and Voicebox</a>
+            <a class="accordion-toggle" data-toggle="collapse" data-parent="#preference_groups" href="#collapse_vm">[% c.loc('Voicemail and Voicebox') %]</a>
         </div>
         <div class="accordion-body collapse" id="collapse_vm">
             <div class="accordion-inner">
@@ -146,64 +146,64 @@
                 <table class="table table-bordered table-striped table-highlight table-hover" id="preferences_table_vm">
                     <thead>
                         <tr>
-                            <th>Name</th>
-                            <th>Value</th>
+                            <th>[% c.loc('Name') %]</th>
+                            <th>[% c.loc('Value') %]</th>
                             [% # one for actions -%]
                             <th class="ngcp-actions-column"></th>
                         </tr>
                     </thead>
                     <tbody>
                         <tr class="sw_action_row">
-                            <td>PIN</td>
+                            <td>[% c.loc('PIN') %]</td>
                             <td>
                                 [% subscriber.provisioning_voip_subscriber.voicemail_user.password %]
                             </td>
                             <td class="ngcp-actions-column">
                                 <div class="sw_actions">
                                     [% IF (c.user.roles == "admin" || c.user.roles == "reseller") && c.user.read_only != 1 -%]
-                                    <a class="btn btn-primary btn-small" href="[% c.uri_for_action("/subscriber/edit_voicebox", [c.req.captures.0], 'pin') %]"><i class="icon-edit"></i> Edit</a>
+                                    <a class="btn btn-primary btn-small" href="[% c.uri_for_action("/subscriber/edit_voicebox", [c.req.captures.0], 'pin') %]"><i class="icon-edit"></i> [% c.loc('Edit') %]</a>
                                     [% END -%]
                                 </div>
 
                             </td>
                         </tr>
                         <tr class="sw_action_row">
-                            <td>Email</td>
+                            <td>[% c.loc('Email') %]</td>
                             <td>
                                 [% subscriber.provisioning_voip_subscriber.voicemail_user.email %]
                             </td>
                             <td class="ngcp-actions-column">
                                 <div class="sw_actions">
                                     [% IF (c.user.roles == "admin" || c.user.roles == "reseller") && c.user.read_only != 1 -%]
-                                    <a class="btn btn-primary btn-small" href="[% c.uri_for_action("/subscriber/edit_voicebox", [c.req.captures.0], 'email') %]"><i class="icon-edit"></i> Edit</a>
+                                    <a class="btn btn-primary btn-small" href="[% c.uri_for_action("/subscriber/edit_voicebox", [c.req.captures.0], 'email') %]"><i class="icon-edit"></i> [% c.loc('Edit') %]</a>
                                     [% END -%]
                                 </div>
 
                             </td>
                         </tr>
                         <tr class="sw_action_row">
-                            <td>Delete after sending Email</td>
+                            <td>[% c.loc('Delete after sending Email') %]</td>
                             <td>
                                 [% subscriber.provisioning_voip_subscriber.voicemail_user.get_column('delete') %]
                             </td>
                             <td class="ngcp-actions-column">
                                 <div class="sw_actions">
                                     [% IF (c.user.roles == "admin" || c.user.roles == "reseller") && c.user.read_only != 1 -%]
-                                    <a class="btn btn-primary btn-small" href="[% c.uri_for_action("/subscriber/edit_voicebox", [c.req.captures.0], 'delete') %]"><i class="icon-edit"></i> Edit</a>
+                                    <a class="btn btn-primary btn-small" href="[% c.uri_for_action("/subscriber/edit_voicebox", [c.req.captures.0], 'delete') %]"><i class="icon-edit"></i> [% c.loc('Edit') %]</a>
                                     [% END -%]
                                 </div>
 
                             </td>
                         </tr>
                         <tr class="sw_action_row">
-                            <td>Attach WAV in Email</td>
+                            <td>[% c.loc('Attach WAV in Email') %]</td>
                             <td>
                                 [% subscriber.provisioning_voip_subscriber.voicemail_user.attach %]
                             </td>
                             <td class="ngcp-actions-column">
                                 <div class="sw_actions">
                                     [% IF (c.user.roles == "admin" || c.user.roles == "reseller") && c.user.read_only != 1 -%]
-                                    <a class="btn btn-primary btn-small" href="[% c.uri_for_action("/subscriber/edit_voicebox", [c.req.captures.0], 'attach') %]"><i class="icon-edit"></i> Edit</a>
+                                    <a class="btn btn-primary btn-small" href="[% c.uri_for_action("/subscriber/edit_voicebox", [c.req.captures.0], 'attach') %]"><i class="icon-edit"></i> [% c.loc('Edit') %]</a>
                                     [% END -%]
                                 </div>
 
@@ -219,7 +219,7 @@
     [% IF c.config.features.faxserver -%]
     <div class="accordion-group">
         <div class="accordion-heading">
-            <a class="accordion-toggle" data-toggle="collapse" data-parent="#preference_groups" href="#collapse_fax">Fax2Mail and Sendfax</a>
+            <a class="accordion-toggle" data-toggle="collapse" data-parent="#preference_groups" href="#collapse_fax">[% c.loc('Fax2Mail and Sendfax') %]</a>
         </div>
         <div class="accordion-body collapse" id="collapse_fax">
             <div class="accordion-inner">
@@ -227,8 +227,8 @@
                 <table class="table table-bordered table-striped table-highlight table-hover" id="preferences_table_fax">
                     <thead>
                         <tr>
-                            <th>Name</th>
-                            <th>Value</th>
+                            <th>[% c.loc('Name') %]</th>
+                            <th>[% c.loc('Value') %]</th>
                             [% # one for actions -%]
                             <th class="ngcp-actions-column"></th>
                         </tr>
@@ -239,86 +239,96 @@
                             faxdests = subscriber.provisioning_voip_subscriber.voip_fax_destinations.all; 
                         -%]
                         <tr class="sw_action_row">
-                            <td>Name in Fax Header for Sendfax</td>
+                            <td>[% c.loc('Name in Fax Header for Sendfax') %]</td>
                             <td>
                                 [% faxpref.name %]
                             </td>
                             <td class="ngcp-actions-column">
                                 <div class="sw_actions">
                                     [% IF (c.user.roles == "admin" || c.user.roles == "reseller") && c.user.read_only != 1 -%]
-                                    <a class="btn btn-primary btn-small" href="[% c.uri_for_action("/subscriber/edit_fax", [c.req.captures.0], 'name') %]"><i class="icon-edit"></i> Edit</a>
+                                    <a class="btn btn-primary btn-small" href="[% c.uri_for_action("/subscriber/edit_fax", [c.req.captures.0], 'name') %]">
+                                        <i class="icon-edit"></i> [% c.loc('Edit') %]
+                                    </a>
                                     [% END -%]
                                 </div>
 
                             </td>
                         </tr>
                         <tr class="sw_action_row">
-                            <td>Password for Sendfax</td>
+                            <td>[% c.loc('Password for Sendfax') %]</td>
                             <td>
                                 [% faxpref.password %]
                             </td>
                             <td class="ngcp-actions-column">
                                 <div class="sw_actions">
                                     [% IF (c.user.roles == "admin" || c.user.roles == "reseller") && c.user.read_only != 1 -%]
-                                    <a class="btn btn-primary btn-small" href="[% c.uri_for_action("/subscriber/edit_fax", [c.req.captures.0], 'password') %]"><i class="icon-edit"></i> Edit</a>
+                                    <a class="btn btn-primary btn-small" href="[% c.uri_for_action("/subscriber/edit_fax", [c.req.captures.0], 'password') %]">
+                                        <i class="icon-edit"></i> [% c.loc('Edit') %]
+                                    </a>
                                     [% END -%]
                                 </div>
 
                             </td>
                         </tr>
                         <tr class="sw_action_row">
-                            <td>Active</td>
+                            <td>[% c.loc('Active') %]</td>
                             <td>
-                                [% faxpref.active ? 'yes' : 'no' %]
+                                [% faxpref.active ? c.loc('yes') : c.loc('no') %]
                             </td>
                             <td class="ngcp-actions-column">
                                 <div class="sw_actions">
                                     [% IF (c.user.roles == "admin" || c.user.roles == "reseller") && c.user.read_only != 1 -%]
-                                    <a class="btn btn-primary btn-small" href="[% c.uri_for_action("/subscriber/edit_fax", [c.req.captures.0], 'active') %]"><i class="icon-edit"></i> Edit</a>
+                                    <a class="btn btn-primary btn-small" href="[% c.uri_for_action("/subscriber/edit_fax", [c.req.captures.0], 'active') %]">
+                                        <i class="icon-edit"></i> [% c.loc('Edit') %]
+                                    </a>
                                     [% END -%]
                                 </div>
 
                             </td>
                         </tr>
                         <tr class="sw_action_row">
-                            <td>Send Reports</td>
+                            <td>[% c.loc('Send Reports') %]</td>
                             <td>
-                                [% faxpref.send_status ? 'yes' : 'no' %]
+                                [% faxpref.send_status ? c.loc('yes') : ('no') %]
                             </td>
                             <td class="ngcp-actions-column">
                                 <div class="sw_actions">
                                     [% IF (c.user.roles == "admin" || c.user.roles == "reseller") && c.user.read_only != 1 -%]
-                                    <a class="btn btn-primary btn-small" href="[% c.uri_for_action("/subscriber/edit_fax", [c.req.captures.0], 'send_status') %]"><i class="icon-edit"></i> Edit</a>
+                                    <a class="btn btn-primary btn-small" href="[% c.uri_for_action("/subscriber/edit_fax", [c.req.captures.0], 'send_status') %]">
+                                        <i class="icon-edit"></i> [% c.loc('Edit') %]
+                                    </a>
                                     [% END -%]
                                 </div>
 
                             </td>
                         </tr>
                         <tr class="sw_action_row">
-                            <td>Send Copies</td>
+                            <td>[% c.loc('Send Copies') %]</td>
                             <td>
-                                [% faxpref.send_copy ? 'yes' : 'no' %]
+                                [% faxpref.send_copy ? c.loc('yes') : c.loc('no') %]
                             </td>
                             <td class="ngcp-actions-column">
                                 <div class="sw_actions">
                                     [% IF (c.user.roles == "admin" || c.user.roles == "reseller") && c.user.read_only != 1 -%]
-                                    <a class="btn btn-primary btn-small" href="[% c.uri_for_action("/subscriber/edit_fax", [c.req.captures.0], 'send_copy') %]"><i class="icon-edit"></i> Edit</a>
+                                    <a class="btn btn-primary btn-small" href="[% c.uri_for_action("/subscriber/edit_fax", [c.req.captures.0], 'send_copy') %]">
+                                        <i class="icon-edit"></i> [% c.loc('Edit') %]
+                                    </a>
                                     [% END -%]
                                 </div>
 
                             </td>
                         </tr>
                         <tr class="sw_action_row">
-                            <td>Destinations</td>
+                            <td>[% c.loc('Destinations') %]</td>
                             <td>
                                 [% FOR faxdest IN faxdests -%]
-                                    [% faxdest.destination %] as [% faxdest.filetype %]<br/>
+                                    [% c.loc('[_1] as [_2]', faxdest.destination, faxdest.filetype) %]<br/>
                                 [% END -%]
                             </td>
                             <td class="ngcp-actions-column">
                                 <div class="sw_actions">
                                     [% IF (c.user.roles == "admin" || c.user.roles == "reseller") && c.user.read_only != 1 -%]
-                                    <a class="btn btn-primary btn-small" href="[% c.uri_for_action("/subscriber/edit_fax", [c.req.captures.0], 'destinations') %]"><i class="icon-edit"></i> Edit</a>
+                                    <a class="btn btn-primary btn-small" href="[% c.uri_for_action("/subscriber/edit_fax", [c.req.captures.0], 'destinations') %]"><i class="icon-edit"></i> [% c.loc('Edit') %]</a>
                                     [% END -%]
                                 </div>
 
@@ -335,24 +345,27 @@
     [% IF c.config.features.cloudpbx -%]
     <div class="accordion-group">
         <div class="accordion-heading">
-            <a class="accordion-toggle" data-toggle="collapse" data-parent="#preference_groups" href="#collapse_aa">Auto Attendant Slots</a>
+            <a class="accordion-toggle" data-toggle="collapse" data-parent="#preference_groups" href="#collapse_aa">[% c.loc('Auto Attendant Slots') %]</a>
         </div>
         <div class="accordion-body collapse" id="collapse_aa">
             <div class="accordion-inner">
 
                 [% IF (c.user.roles == "admin" || c.user.roles == "reseller") && c.user.read_only != 1 -%]
-                <a class="btn btn-tertiary btn-large" href="[% c.uri_for_action('/subscriber/edit_autoattendant', [c.req.captures.0]) %]"><i class="icon-star"></i> Edit Slots</a>
+                <a class="btn btn-tertiary btn-large" href="[% c.uri_for_action('/subscriber/edit_autoattendant', [c.req.captures.0]) %]">
+                    <i class="icon-star"></i> [% c.loc('Edit Slots') %]
+                </a>
                 [% END -%]
 [%
     helper.messages = '';
-    helper.name = 'Autoattendant';
+    helper.name = c.loc('Autoattendant');
+    helper.identifier = 'autoattendant';
     helper.column_sort = 'choice';
     helper.dt_columns = aa_dt_columns;
     helper.length_change = 1;
     helper.ajax_uri = c.uri_for_action('/subscriber/ajax_autoattendant', [c.req.captures.0]);
 
     helper.dt_buttons = [
-        { name = 'Delete', uri = "preferences/autoattendant/'+full.id+'/delete", class = 'btn-small btn-secondary', icon = 'icon-trash' },
+        { name = c.loc('Delete'), uri = "preferences/autoattendant/'+full.id+'/delete", class = 'btn-small btn-secondary', icon = 'icon-trash' },
     ];
 
     PROCESS 'helpers/datatables.tt';
@@ -364,24 +377,25 @@
 
     <div class="accordion-group">
         <div class="accordion-heading">
-            <a class="accordion-toggle" data-toggle="collapse" data-parent="#preference_groups" href="#collapse_speed">Speed Dial</a>
+            <a class="accordion-toggle" data-toggle="collapse" data-parent="#preference_groups" href="#collapse_speed">[% c.loc('Speed Dial') %]</a>
         </div>
         <div class="accordion-body collapse" id="collapse_speed">
             <div class="accordion-inner">
 
                 [% IF (c.user.roles == "admin" || c.user.roles == "reseller") && c.user.read_only != 1 -%]
-                <a class="btn btn-tertiary btn-large" href="[% c.uri_for_action('/subscriber/create_speeddial', [c.req.captures.0]) %]"><i class="icon-star"></i> Create Slot</a>
+                <a class="btn btn-tertiary btn-large" href="[% c.uri_for_action('/subscriber/create_speeddial', [c.req.captures.0]) %]"><i class="icon-star"></i> [% c.loc('Create Slot') %]</a>
                 [% END -%]
 [%
     helper.messages = '';
-    helper.name = 'Speeddial';
+    helper.name = c.loc('Speeddial');
+    helper.identifier = 'subs_speeddial';
     helper.column_sort = 'slot';
     helper.dt_columns = sd_dt_columns;
     helper.ajax_uri = c.uri_for_action('/subscriber/ajax_speeddial', [c.req.captures.0]);
 
     helper.dt_buttons = [
-        { name = 'Edit', uri = "preferences/speeddial/'+full.id+'/edit", class = 'btn-small btn-primary', icon = 'icon-edit' },
-        { name = 'Delete', uri = "preferences/speeddial/'+full.id+'/delete", class = 'btn-small btn-secondary', icon = 'icon-trash' },
+        { name = c.loc('Edit'), uri = "preferences/speeddial/'+full.id+'/edit", class = 'btn-small btn-primary', icon = 'icon-edit' },
+        { name = c.loc('Delete'), uri = "preferences/speeddial/'+full.id+'/delete", class = 'btn-small btn-secondary', icon = 'icon-trash' },
     ];
 
     PROCESS 'helpers/datatables.tt';
@@ -392,7 +406,7 @@
 
     <div class="accordion-group">
         <div class="accordion-heading">
-            <a class="accordion-toggle" data-toggle="collapse" data-parent="#preference_groups" href="#collapse_rm">Reminder</a>
+            <a class="accordion-toggle" data-toggle="collapse" data-parent="#preference_groups" href="#collapse_rm">[% c.loc('Reminder') %]</a>
         </div>
         <div class="accordion-body collapse" id="collapse_rm">
             <div class="accordion-inner">
@@ -400,8 +414,8 @@
                 <table class="table table-bordered table-striped table-highlight table-hover" id="preferences_table_rm">
                     <thead>
                         <tr>
-                            <th>Time</th>
-                            <th>Recurrence</th>
+                            <th>[% c.loc('Time') %]</th>
+                            <th>[% c.loc('Recurrence') %]</th>
                             [% # one for actions -%]
                             <th class="ngcp-actions-column"></th>
                         </tr>
@@ -417,7 +431,9 @@
                             <td class="ngcp-actions-column">
                                 <div class="sw_actions">
                                     [% IF (c.user.roles == "admin" || c.user.roles == "reseller") && c.user.read_only != 1 -%]
-                                    <a class="btn btn-primary btn-small" href="[% c.uri_for_action("/subscriber/edit_reminder", [c.req.captures.0]) %]"><i class="icon-edit"></i> Edit</a>
+                                    <a class="btn btn-primary btn-small" href="[% c.uri_for_action("/subscriber/edit_reminder", [c.req.captures.0]) %]">
+                                        <i class="icon-edit"></i> [% c.loc('Edit') %]
+                                    </a>
                                     [% END -%]
                                 </div>
 
@@ -433,22 +449,24 @@
 [% UNLESS c.user.roles == 'subscriber' || c.user.roles == 'subscriberadmin' -%]
     <div class="accordion-group">
         <div class="accordion-heading">
-            <a class="accordion-toggle" data-toggle="collapse" data-parent="#preference_groups" href="#collapse_ts">Trusted Sources</a>
+            <a class="accordion-toggle" data-toggle="collapse" data-parent="#preference_groups" href="#collapse_ts">[% c.loc('Trusted Sources') %]</a>
         </div>
         <div class="accordion-body collapse" id="collapse_ts">
             <div class="accordion-inner">
 
                 [% IF (c.user.roles == "admin" || c.user.roles == "reseller") && c.user.read_only != 1 -%]
-                <a class="btn btn-tertiary btn-large" href="[% c.uri_for_action("/subscriber/create_trusted", [c.req.captures.0]) %]"><i class="icon-star"></i> Create</a>
+                <a class="btn btn-tertiary btn-large" href="[% c.uri_for_action("/subscriber/create_trusted", [c.req.captures.0]) %]">
+                    <i class="icon-star"></i> [% c.loc('Create') %]
+                </a>
                 [% END -%]
                 <div class="ngcp-separator"></div>
 
                 <table class="table table-bordered table-striped table-highlight table-hover" id="preferences_table_ts">
                     <thead>
                         <tr>
-                            <th>Source IP</th>
-                            <th>Protocol</th>
-                            <th>From-Pattern</th>
+                            <th>[% c.loc('Source IP') %]</th>
+                            <th>[% c.loc('Protocol') %]</th>
+                            <th>[% c.loc('From-Pattern') %]</th>
                             [% # one for actions -%]
                             <th class="ngcp-actions-column"></th>
                         </tr>
@@ -468,8 +486,8 @@
                             <td class="ngcp-actions-column">
                                 <div class="sw_actions">
                                     [% IF (c.user.roles == "admin" || c.user.roles == "reseller") && c.user.read_only != 1 -%]
-                                    <a class="btn btn-primary btn-small" href="[% c.uri_for_action("/subscriber/edit_trusted", [c.req.captures.0, trusted.id]) %]"><i class="icon-edit"></i> Edit</a>
-                                    <a class="btn btn-secondary btn-small" href="[% c.uri_for_action("/subscriber/delete_trusted", [c.req.captures.0, trusted.id]) %]" data-confirm="Delete"><i class="icon-trash"></i> Delete</a>
+                                    <a class="btn btn-primary btn-small" href="[% c.uri_for_action("/subscriber/edit_trusted", [c.req.captures.0, trusted.id]) %]"><i class="icon-edit"></i> [% c.loc('Edit') %]</a>
+                                    <a class="btn btn-secondary btn-small" href="[% c.uri_for_action("/subscriber/delete_trusted", [c.req.captures.0, trusted.id]) %]" data-confirm="Delete"><i class="icon-trash"></i> [% c.loc('Delete') %]</a>
                                     [% END -%]
                                 </div>
 
@@ -513,15 +531,15 @@
 
     <div class="modal-body">
     <div class="row" style="margin-left: 10px">
-        <a class="btn btn-primary btn-medium" href="[% c.uri_for_action('/subscriber/preferences_callforward_destinationset_create', [c.req.captures.0], cf_type) %]"><i class="icon-star"></i>Create New</a>
+        <a class="btn btn-primary btn-medium" href="[% c.uri_for_action('/subscriber/preferences_callforward_destinationset_create', [c.req.captures.0], cf_type) %]"><i class="icon-star"></i>[% c.loc('Create New') %]</a>
     </div>
     <div class="ngcp-separator"></div>
     [% IF cf_sets.size -%]
     <table class="table table-bordered table-striped table-highlight table-hover">
         <thead>
             <tr>
-                <th>Name</th>
-                <th>Values</th>
+                <th>[% c.loc('Name') %]</th>
+                <th>[% c.loc('Values') %]</th>
                 <th></th>
             </tr>
         </thead>
@@ -531,16 +549,16 @@
                 <td>[% set.name %]</td>
                 <td>
                     [% FOREACH d IN set.destinations -%]
-                        [% d.as_string %] <span class="pull-right">for [% d.timeout %]s</span><br/>
+                        [% c.loc('[_1]<span class="pull-right">for [_2]s</span>', d.as_string, d.timeout) %]<br/>
                     [% END -%]
                 </td>
                 <td class="ngcp-actions-column">
                     <div class="sw_actions pull-right">
                         <a class="btn btn-small btn-primary" href="[% c.uri_for_action('/subscriber/preferences_callforward_destinationset_edit', [ c.req.captures.0, set.id ], cf_type) %]">
-                            <i class="icon-edit"></i> Edit
+                            <i class="icon-edit"></i> [% c.loc('Edit') %]
                         </a>
                         <a class="btn btn-small btn-secondary" data-confirm="Delete" href="[% c.uri_for_action('/subscriber/preferences_callforward_destinationset_delete', [ c.req.captures.0, set.id ], cf_type) %]">
-                            <i class="icon-trash"></i> Delete
+                            <i class="icon-trash"></i> [% c.loc('Delete') %]
                         </a>
                     </div>
                 </td>
@@ -563,15 +581,15 @@
 
     <div class="modal-body">
     <div class="row" style="margin-left: 10px">
-        <a class="btn btn-primary btn-medium" href="[% c.uri_for_action('/subscriber/preferences_callforward_timeset_create', [c.req.captures.0], cf_type) %]"><i class="icon-star"></i>Create New</a>
+        <a class="btn btn-primary btn-medium" href="[% c.uri_for_action('/subscriber/preferences_callforward_timeset_create', [c.req.captures.0], cf_type) %]"><i class="icon-star"></i>[% c.loc('Create New') %]</a>
     </div>
     <div class="ngcp-separator"></div>
     [% IF cf_sets.size -%]
     <table class="table table-bordered table-striped table-highlight table-hover">
         <thead>
             <tr>
-                <th>Name</th>
-                <th>Values</th>
+                <th>[% c.loc('Name') %]</th>
+                <th>[% c.loc('Values') %]</th>
                 <th></th>
             </tr>
         </thead>
@@ -587,10 +605,10 @@
                 <td class="ngcp-actions-column">
                     <div class="sw_actions pull-right">
                         <a class="btn btn-small btn-primary" href="[% c.uri_for_action('/subscriber/preferences_callforward_timeset_edit', [ c.req.captures.0, set.id ], cf_type) %]">
-                            <i class="icon-edit"></i> Edit
+                            <i class="icon-edit"></i> [% c.loc('Edit') %]
                         </a>
                         <a class="btn btn-small btn-secondary" data-confirm="Delete" href="[% c.uri_for_action('/subscriber/preferences_callforward_timeset_delete', [ c.req.captures.0, set.id ], cf_type) %]">
-                            <i class="icon-trash"></i> Delete
+                            <i class="icon-trash"></i> [% c.loc('Delete') %]
                         </a>
                     </div>
                 </td>

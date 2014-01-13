@@ -1,8 +1,8 @@
-[% site_config.title = 'Registered Devices for ' _ subscriber.username _ '@' _ subscriber.domain.domain  -%]
+[% site_config.title = c.loc('Registered Devices for [_1]@[_2]', subscriber.username, subscriber.domain.domain) -%]
 
 <div class="row">
     <span class="pull-left" style="margin:0 5px 0 5px;">
-        <a class="btn btn-primary btn-large" href="[% c.uri_for('/back') %]"><i class="icon-arrow-left"></i> Back</a>
+        <a class="btn btn-primary btn-large" href="[% c.uri_for('/back') %]"><i class="icon-arrow-left"></i> [% c.loc('Back') %]</a>
     </span>
 </div>
 [% back_created = 1 -%]
@@ -10,7 +10,7 @@
 <div class="ngcp-separator"></div>
 
 [%
-    helper.name = 'Registered Devices';
+    helper.name = c.loc('Registered Devices');
     helper.dt_columns = reg_dt_columns;
     helper.column_sort = 'expires';
     helper.form_object = form;

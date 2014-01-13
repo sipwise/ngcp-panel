@@ -1,4 +1,4 @@
-[% site_config.title = 'Peer Host "' _ server.name _ '" – Preferences' -%]
+[% site_config.title = c.loc('Peer Host "[_1]" – Preferences',server.name) -%]
 
 [%
     helper.messages = messages;
@@ -14,10 +14,10 @@
     helper.man_aip_grp_rs = man_aip_grp_rs;
 
     helper.dt_buttons = [
-        { name = 'Edit', uri = c.uri_for_action("/peering/servers_preferences_root", [c.req.captures.0, c.req.captures.1]), class = 'btn-small btn-primary', icon = 'icon-edit' },
+        { name = c.loc('Edit'), uri = c.uri_for_action("/peering/servers_preferences_root", [c.req.captures.0, c.req.captures.1]), class = 'btn-small btn-primary', icon = 'icon-edit' },
     ];
     helper.top_buttons = [
-        { name = 'Back', uri = c.uri_for(group.id, "servers"), icon = 'icon-arrow-left' },
+        { name = c.loc('Back'), uri = c.uri_for(group.id, "servers"), icon = 'icon-arrow-left' },
     ];
 
     PROCESS 'helpers/pref_table.tt';

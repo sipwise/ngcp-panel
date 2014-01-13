@@ -4,12 +4,12 @@
 		
 		<div class="error-container">
 			
-			<h1>Forbidden!</h1>
+			<h1>[% c.loc('Forbidden!') %]</h1>
 			
-			<h2>[% c.response.status %] Access Denied</h2>
+			<h2>[% c.loc('[_1] Access Denied', c.response.status) %]</h2>
 			
 			<div class="error-details">
-				Sorry, an error has occured, requested operation denied!
+				[% c.loc('Sorry, an error has occured, requested operation denied!') %]
 				
 			</div> <!-- /error-details -->
 			
@@ -17,13 +17,13 @@
 				<a href="[% c.uri_for('/back') %]" class="btn btn-large btn-primary">
 					<i class="icon-chevron-left"></i>
 					&nbsp;
-					Back
+					[% c.loc('Back') %]
 				</a>
 				
 				<a href="mailto:[% c.config.contact.email %]" class="btn btn-large">
 					<i class="icon-envelope"></i>
 					&nbsp;
-					Contact Support						
+					[% c.loc('Contact Support') %]						
 				</a>
 				
 			</div> <!-- /error-actions -->

@@ -20,7 +20,7 @@
 
     <div class="row">
         <span>
-            <a class="btn btn-primary btn-large" href="[% c.uri_for('/back') %]"><i class="icon-arrow-left"></i> Back</a>
+            <a class="btn btn-primary btn-large" href="[% c.uri_for('/back') %]"><i class="icon-arrow-left"></i> [% c.loc('Back') %]</a>
         </span>
     </div>
     [% back_created = 1 -%]
@@ -34,13 +34,13 @@
 
     <div class="ngcp-statistics">
 
-        <p>Click&amp;Drag on the graphs to zoom individual ranges.</p>
+        <p>[% c.loc('Click&Drag on the graphs to zoom individual ranges.') | html %]</p>
 
         <div class="row-fluid">
           [% even = 0 %]
           [% FOREACH item IN plotdata %]
             <h3>[% item.title %]</h3>
-            <div id="plot_[% item.name | replace('[^a-zA-Z0-9_]+', '_') %]" class="ngcp-plot"><div style="margin: 20px;"><img src="/img/loader.gif" alt="loading" style="margin-right: 10px;"/>loading...</div></div>
+            <div id="plot_[% item.name | replace('[^a-zA-Z0-9_]+', '_') %]" class="ngcp-plot"><div style="margin: 20px;"><img src="/img/loader.gif" alt="loading" style="margin-right: 10px;"/>[% c.loc('loading...') %]</div></div>
           [% END %]
         </div>
     </div>

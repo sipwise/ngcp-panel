@@ -43,7 +43,7 @@ sub auto :Private {
             NGCP::Panel::Utils::Message->error(
                 c => $c,
                 error => "No product for customer contract id $contract_id found",
-                desc  => "No product for this customer contract found.",
+                desc  => $c->loc('No product for this customer contract found.'),
             );
             NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for('/sound'));
         }
@@ -80,7 +80,7 @@ sub contract_sets_list :Chained('/') :PathPart('sound/contract') :CaptureArgs(1)
         NGCP::Panel::Utils::Message->error(
             c => $c,
             error => "Invalid contract id $contract_id found",
-            desc  => "Invalid contract id found",
+            desc  => $c->loc('Invalid contract id found'),
         );
         NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for('/sound'));
     }
@@ -88,7 +88,7 @@ sub contract_sets_list :Chained('/') :PathPart('sound/contract') :CaptureArgs(1)
         NGCP::Panel::Utils::Message->error(
             c => $c,
             error => "access violatio, subscriberadmin ".$c->user->uuid." with contract id ".$c->user->account_id." tries to access foreign contract id $contract_id",
-            desc  => "Invalid contract id found",
+            desc  => $c->loc('Invalid contract id found'),
         );
         NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for('/sound'));
     }
@@ -97,7 +97,7 @@ sub contract_sets_list :Chained('/') :PathPart('sound/contract') :CaptureArgs(1)
         NGCP::Panel::Utils::Message->error(
             c => $c,
             error => "Contract id $contract_id not found",
-            desc  => "Invalid contract id detected",
+            desc  => $c->loc('Invalid contract id detected'),
         );
         NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for('/sound'));
     }
@@ -133,13 +133,21 @@ sub base :Chained('sets_list') :PathPart('') :CaptureArgs(1) {
     my ($self, $c, $set_id) = @_;
 
     unless($set_id && $set_id->is_integer) {
-        $c->flash(messages => [{type => 'error', text => 'Invalid sound set id detected'}]);
+        NGCP::Panel::Utils::Message->error(
+            c     => $c,
+            log   => 'Invalid sound set id detected',
+            desc  => $c->loc('Invalid sound set id detected'),
+        );
         NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for('/sound'));
     }
 
     my $res = $c->stash->{sets_rs}->find($set_id);
     unless(defined($res)) {
-        $c->flash(messages => [{type => 'error', text => 'Sound set does not exist'}]);
+        NGCP::Panel::Utils::Message->error(
+            c     => $c,
+            log   => 'Sound set does not exist',
+            desc  => $c->loc('Sound set does not exist'),
+        );
         NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for('/sound'));
     }
     $c->stash(set_result => $res);
@@ -228,10 +236,13 @@ sub edit :Chained('base') :PathPart('edit') {
             });
             delete $c->session->{created_objects}->{reseller};
             delete $c->session->{created_objects}->{contract};
-            $c->flash(messages => [{type => 'success', text => 'Sound set successfully updated'}]);
+            $c->flash(messages => [{type => 'success', text => $c->loc('Sound set successfully updated')}]);
         } catch($e) {
-            $c->log->error("failed to update sound set: $e");
-            $c->flash(messages => [{type => 'error', text => 'Sound set successfully updated'}]);
+            NGCP::Panel::Utils::Message->error(
+                c     => $c,
+                error => $e,
+                desc  => $c->loc('Failed to update sound set'),
+            );
         };
         NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for('/sound'));
     }
@@ -261,10 +272,13 @@ sub delete :Chained('base') :PathPart('delete') {
 
             $c->stash->{set_result}->delete;
         });
-        $c->flash(messages => [{type => 'success', text => 'Sound set successfully deleted'}]);
+        $c->flash(messages => [{type => 'success', text => $c->loc('Sound set successfully deleted')}]);
     } catch($e) {
-        $c->log->error("failed to delete sound set: $e");
-        $c->flash(messages => [{type => 'error', text => 'Delete failed.'}]);
+        NGCP::Panel::Utils::Message->error(
+            c     => $c,
+            error => $e,
+            desc  => $c->loc('Failed to delete sound set'),
+        );
     };
     NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for('/sound'));
 }
@@ -367,10 +381,13 @@ sub create :Chained('sets_list') :PathPart('create') :Args() {
             });
 
             delete $c->session->{created_objects}->{reseller};
-            $c->flash(messages => [{type => 'success', text => 'Sound set successfully created'}]);
+            $c->flash(messages => [{type => 'success', text => $c->loc('Sound set successfully created')}]);
         } catch($e) {
-            $c->log->error("failed to create sound set: $e");
-            $c->flash(messages => [{type => 'error', text => 'Failed to create sound set'}]);
+            NGCP::Panel::Utils::Message->error(
+                c     => $c,
+                error => $e,
+                desc  => $c->loc('Failed to create sound set'),
+            );
         }
         NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for('/sound'));
     }
@@ -453,18 +470,30 @@ sub handles_base :Chained('handles_list') :PathPart('') :CaptureArgs(1) {
     my ($self, $c, $handle_id) = @_;
 
     unless($handle_id && $handle_id->is_integer) {
-        $c->flash(messages => [{type => 'error', text => 'Invalid sound handle id detected'}]);
+        NGCP::Panel::Utils::Message->error(
+            c     => $c,
+            log   => 'Invalid sound handle id detected',
+            desc  => $c->loc('Invalid sound handle id detected'),
+        );
         NGCP::Panel::Utils::Navigation::back_or($c, $c->stash->{handles_base_uri});
     }
     my @tmph = $c->stash->{handles_rs}->all;
     unless($c->stash->{handles_rs}->find({ 'handles.id' => $handle_id })) {
-        $c->flash(messages => [{type => 'error', text => 'Sound handle id does not exist'}]);
+        NGCP::Panel::Utils::Message->error(
+            c     => $c,
+            log   => 'Sound handle id does not exist',
+            desc  => $c->loc('Sound handle id does not exist'),
+        );
         NGCP::Panel::Utils::Navigation::back_or($c, $c->stash->{handles_base_uri});
     }
 
     my $res = $c->stash->{files_rs}->find_or_create(handle_id => $handle_id);
     unless(defined $res ) {
-        $c->flash(messages => [{type => 'error', text => 'Sound handle not found'}]);
+        NGCP::Panel::Utils::Message->error(
+            c     => $c,
+            log   => 'Sound handle not found',
+            desc  => $c->loc('Sound handle not found'),
+        );
         NGCP::Panel::Utils::Navigation::back_or($c, $c->stash->{handles_base_uri});
     }
     $c->stash(file_result => $res);
@@ -500,7 +529,11 @@ sub handles_edit :Chained('handles_base') :PathPart('edit') {
             
             my $ft = File::Type->new();
             unless ($ft->checktype_contents($soundfile) eq 'audio/x-wav') {
-                $c->flash(messages => [{type => 'error', text => 'Invalid file type detected, only WAV supported'}]);
+                NGCP::Panel::Utils::Message->error(
+                    c     => $c,
+                    log   => 'Invalid file type detected, only WAV supported',
+                    desc  => $c->loc('Invalid file type detected, only WAV supported'),
+                );
                 NGCP::Panel::Utils::Navigation::back_or($c, $c->stash->{handles_base_uri});
             }
             
@@ -515,7 +548,7 @@ sub handles_edit :Chained('handles_base') :PathPart('edit') {
                         NGCP::Panel::Utils::Message->error(
                             c => $c,
                             error => "Failed to clear audio cache for " . $file_result->handle->group->name . " at appserver",
-                            desc  => "Failed to clear audio cache.",
+                            desc  => $c->loc('Failed to clear audio cache.'),
                         );
                         NGCP::Panel::Utils::Navigation::back_or($c, $c->stash->{handles_base_uri});
                     }
@@ -534,7 +567,7 @@ sub handles_edit :Chained('handles_base') :PathPart('edit') {
                         NGCP::Panel::Utils::Message->error(
                             c => $c,
                             error => "Failed to clear audio cache for " . $file_result->handle->group->name . " on $service",
-                            desc  => "Failed to clear audio cache.",
+                            desc  => $c->loc('Failed to clear audio cache.'),
                         );
                         NGCP::Panel::Utils::Navigation::back_or($c, $c->stash->{handles_base_uri});
                     }
@@ -550,8 +583,11 @@ sub handles_edit :Chained('handles_base') :PathPart('edit') {
                 $soundfile = NGCP::Panel::Utils::Sounds::transcode_file(
                     $upload->tempname, 'WAV', $target_codec);
             } catch ($e) {
-                $c->flash(messages => [{type => 'error', text => 'Transcoding audio file failed'}]);
-                $c->log->error("failed to transcode audio file: $e");
+                NGCP::Panel::Utils::Message->error(
+                    c     => $c,
+                    log   => 'Transcoding audio file failed',
+                    desc  => $c->loc('Transcoding audio file failed'),
+                );
                 NGCP::Panel::Utils::Navigation::back_or($c, $c->stash->{handles_base_uri});
             }
            
@@ -562,20 +598,26 @@ sub handles_edit :Chained('handles_base') :PathPart('edit') {
                     data => $soundfile,
                     codec => $target_codec,
                 });
-                $c->flash(messages => [{type => 'success', text => 'Sound handle successfully uploaded'}]);
+                $c->flash(messages => [{type => 'success', text => $c->loc('Sound handle successfully uploaded') }]);
             } catch($e) {
-                $c->log->error("failed to update sound handle with data: $e");
-                $c->flash(messages => [{type => 'error', text => 'Failed to update sound handle upload'}]);
+                NGCP::Panel::Utils::Message->error(
+                    c     => $c,
+                    error => $e,
+                    desc  => $c->loc('Failed to update uploaded sound handle'),
+                );
             }
         } else {
             try {
                 $file_result->update({
                     loopplay => $form->values->{loopplay},
                 });
-                $c->flash(messages => [{type => 'success', text => 'Sound handle successfully updated'}]);
+                $c->flash(messages => [{type => 'success', text => $c->loc('Sound handle successfully updated') }]);
             } catch($e) {
-                $c->log->error("failed to update sound handle: $e");
-                $c->flash(messages => [{type => 'error', text => 'Failed to update sound handle'}]);
+                NGCP::Panel::Utils::Message->error(
+                    c     => $c,
+                    error => $e,
+                    desc  => $c->loc('Failed to update sound handle'),
+                );
             }
         }
         NGCP::Panel::Utils::Navigation::back_or($c, $c->stash->{handles_base_uri});
@@ -590,10 +632,13 @@ sub handles_delete :Chained('handles_base') :PathPart('delete') {
     
     try {
         $c->stash->{file_result}->delete;
-        $c->flash(messages => [{type => 'success', text => 'Sound handle successfully deleted'}]);
+        $c->flash(messages => [{type => 'success', text => $c->loc('Sound handle successfully deleted')}]);
     } catch($e) {
-        $c->log->error("failed to delete sound handle: $e");
-        $c->flash(messages => [{type => 'error', text => 'Failed to delete sound handle'}]);
+        NGCP::Panel::Utils::Message->error(
+            c     => $c,
+            error => $e,
+            desc  => $c->loc('Failed to delete sound handle'),
+        );
     };
     NGCP::Panel::Utils::Navigation::back_or($c, $c->stash->{handles_base_uri});
 }
@@ -611,8 +656,11 @@ sub handles_download :Chained('handles_base') :PathPart('download') :Args(0) {
             $data = NGCP::Panel::Utils::Sounds::transcode_data(
                 $file->data, $file->codec, 'WAV');
         } catch($e) {
-            $c->log->error("failed to transcode audio file: $e");
-            $c->flash(messages => [{type => 'error', text => 'Failed to transcode audio file'}]);
+            NGCP::Panel::Utils::Message->error(
+                c     => $c,
+                error => $e,
+                desc  => $c->loc('Failed to transcode audio file'),
+            );
             NGCP::Panel::Utils::Navigation::back_or($c, $c->stash->{handles_base_uri});
         }
     } else {

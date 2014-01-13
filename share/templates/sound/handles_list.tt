@@ -1,6 +1,6 @@
-[% site_config.title = 'Manage Sound Set ' _ set_result.name -%]
+[% site_config.title = c.loc('Manage Sound Set [_1]', set_result.name) -%]
 
-<a class="btn btn-large btn-primary" href="[% c.uri_for('/back') %]"><i class="icon-arrow-left"></i> Back</a>
+<a class="btn btn-large btn-primary" href="[% c.uri_for('/back') %]"><i class="icon-arrow-left"></i> [% c.loc('Back') %]</a>
 [% back_created = 1 -%]
 
 [% IF messages -%]
@@ -26,9 +26,9 @@
     <thead>
         <tr>
             [% # one for description -%]
-            <th>Name</th>
-            <th>Filename</th>
-            <th>Loop</th>
+            <th>[% c.loc('Name') %]</th>
+            <th>[% c.loc('Filename') %]</th>
+            <th>[% c.loc('Loop') %]</th>
             [% # one for actions -%]
             <th></th>
         </tr>
@@ -49,12 +49,12 @@
                     <div class="sw_actions pull-right">
                         [% IF r.get_column("filename").size -%]
                             [% UNLESS c.user.read_only -%]
-                            <a class="btn btn-small btn-primary" href="[% handles_base_uri _ "/" _ r.get_column("handleid") _ "/edit" %]"><i class="icon-edit"></i> Edit</a>
-                            <a class="btn btn-small btn-secondary" data-confirm="Delete" href="[% handles_base_uri _ "/" _ r.get_column("handleid") _ "/delete" %]"><i class="icon-edit"></i> Delete</a>
+                            <a class="btn btn-small btn-primary" href="[% handles_base_uri _ "/" _ r.get_column("handleid") _ "/edit" %]"><i class="icon-edit"></i> [% c.loc('Edit') %]</a>
+                            <a class="btn btn-small btn-secondary" data-confirm="Delete" href="[% handles_base_uri _ "/" _ r.get_column("handleid") _ "/delete" %]"><i class="icon-edit"></i> [% c.loc('Delete') %]</a>
                             [% END -%]
-                            <a class="btn btn-small btn-tertiary" href="[% c.uri_for_action('/sound/handles_download', [c.req.captures.0, r.get_column('handleid')]) %]"><i class="icon-play"></i> Play</a>
+                            <a class="btn btn-small btn-tertiary" href="[% c.uri_for_action('/sound/handles_download', [c.req.captures.0, r.get_column('handleid')]) %]"><i class="icon-play"></i> [% c.loc('Play') %]</a>
                         [% ELSIF !c.user.read_only -%]
-                            <a class="btn btn-small btn-primary" href="[% handles_base_uri _ "/" _ r.get_column("handleid") _ "/edit" %]"><i class="icon-edit"></i> Upload</a>
+                            <a class="btn btn-small btn-primary" href="[% handles_base_uri _ "/" _ r.get_column("handleid") _ "/edit" %]"><i class="icon-edit"></i> [% c.loc('Upload') %]</a>
                         [% END -%]
                     </div>
                 </td>

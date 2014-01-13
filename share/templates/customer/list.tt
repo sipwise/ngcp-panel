@@ -1,6 +1,7 @@
-[% META title = 'Customers' -%]
+[%  site_config.title = c.loc('Customers') -%]
 [%
-    helper.name = 'Customer';
+    helper.name = c.loc('Customer');
+    helper.identifier = 'Customer';
     helper.data = contracts;
     helper.messages = messages;
     helper.dt_columns = contract_dt_columns;
@@ -14,20 +15,20 @@
 
     UNLESS c.user.read_only;
         helper.dt_buttons = [
-            { name = 'Edit', uri = "/customer/'+full.id+'/edit", class = 'btn-small btn-primary', icon = 'icon-edit' },
-            { name = 'Terminate', uri = "/customer/'+full.id+'/terminate", class = 'btn-small btn-secondary', icon = 'icon-remove' },
-            { name = 'Details', uri = "/customer/'+full.id+'/details", class = 'btn-small btn-tertiary', icon = 'icon-list' },
+            { name = c.loc('Edit'), uri = "/customer/'+full.id+'/edit", class = 'btn-small btn-primary', icon = 'icon-edit' },
+            { name = c.loc('Terminate'), uri = "/customer/'+full.id+'/terminate", class = 'btn-small btn-secondary', icon = 'icon-remove' },
+            { name = c.loc('Details'), uri = "/customer/'+full.id+'/details", class = 'btn-small btn-tertiary', icon = 'icon-list' },
         ];
         helper.top_buttons = [
-            { name = 'Create Customer', uri = c.uri_for_action('/customer/create'), icon = 'icon-star' },
+            { name = c.loc('Create Customer'), uri = c.uri_for_action('/customer/create'), icon = 'icon-star' },
         ];
     ELSE;
         helper.dt_buttons = [
-            { name = 'Details', uri = "/customer/'+full.id+'/details", class = 'btn-small btn-tertiary', icon = 'icon-list' },
+            { name = c.loc('Details'), uri = "/customer/'+full.id+'/details", class = 'btn-small btn-tertiary', icon = 'icon-list' },
         ];
     END;
 
-    IF helper.edit_flag; helper.name = 'Customer #' _ contract.id; END;
+    IF helper.edit_flag; helper.name = c.loc('Customer #[_1]',contract.id); END;
 
     PROCESS 'helpers/datatables.tt';
 -%]

@@ -29,19 +29,19 @@ sub list_reseller :Chained('/') :PathPart('reseller') :CaptureArgs(0) {
     );
 
     $c->stash->{reseller_dt_columns} = NGCP::Panel::Utils::Datatables::set_columns($c, [
-        { name => "id", search => 1, title => "#" },
-        { name => "contract_id", search => 1, title => "Contract #" },
-        { name => "name", search => 1, title => "Name" },
-        { name => "status", search => 1, title => "Status" },
+        { name => "id", search => 1, title => $c->loc("#") },
+        { name => "contract_id", search => 1, title => $c->loc("Contract #") },
+        { name => "name", search => 1, title => $c->loc("Name") },
+        { name => "status", search => 1, title => $c->loc("Status") },
     ]);
 
     # we need this in ajax_contracts also
     $c->stash->{contract_dt_columns} = NGCP::Panel::Utils::Datatables::set_columns($c, [
-        { name => "id", search => 1, title => "#" },
-        { name => "external_id", search => 1, title => "External #" },
-        { name => "contact.email", search => 1, title => "Contact Email" },
-        { name => "billing_mappings.billing_profile.name", search => 1, title => "Billing Profile" },
-        { name => "status", search => 1, title => "Status" },
+        { name => "id", search => 1, title => $c->loc("#") },
+        { name => "external_id", search => 1, title => $c->loc("External #") },
+        { name => "contact.email", search => 1, title => $c->loc("Contact Email") },
+        { name => "billing_mappings.billing_profile.name", search => 1, title => $c->loc("Billing Profile") },
+        { name => "status", search => 1, title => $c->loc("Status") },
     ]);
 }
 
@@ -88,12 +88,12 @@ sub create :Chained('list_reseller') :PathPart('create') :Args(0) {
             delete $c->session->{created_objects}->{contract};
             $c->session->{created_objects}->{reseller} = { id => $reseller->id };
 
-            $c->flash(messages => [{type => 'success', text => 'Reseller successfully created'}]);
+            $c->flash(messages => [{type => 'success', text => $c->loc('Reseller successfully created') }]);
         } catch($e) {
             NGCP::Panel::Utils::Message->error(
                 c => $c,
                 error => $e,
-                desc  => "Failed to create reseller.",
+                desc  => $c->loc("Failed to create reseller."),
             );
         }
         NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for('/reseller'));
@@ -108,47 +108,55 @@ sub base :Chained('list_reseller') :PathPart('') :CaptureArgs(1) {
     my ($self, $c, $reseller_id) = @_;
 
     unless($reseller_id && $reseller_id->is_int) {
-        $c->flash(messages => [{type => 'error', text => 'Invalid reseller id detected'}]);
+        NGCP::Panel::Utils::Message->error(
+            c     => $c,
+            log   => 'Invalid reseller id detected',
+            desc  => $c->loc('Invalid reseller id detected'),
+        );
         $c->response->redirect($c->uri_for());
         return;
     }
     $c->stash->{contact_dt_columns} = NGCP::Panel::Utils::Datatables::set_columns($c, [
-        { name => "id", search => 1, title => "#" },
-        { name => "firstname", search => 1, title => "First Name" },
-        { name => "lastname", search => 1, title => "Last Name" },
-        { name => "company", search => 1, title => "Company" },
-        { name => "email", search => 1, title => "Email" },     
+        { name => "id", search => 1, title => $c->loc('#') },
+        { name => "firstname", search => 1, title => $c->loc('First Name') },
+        { name => "lastname", search => 1, title => $c->loc('Last Name') },
+        { name => "company", search => 1, title => $c->loc('Company') },
+        { name => "email", search => 1, title => $c->loc('Email') },     
     ]);
     $c->stash->{reseller_dt_columns} = NGCP::Panel::Utils::Datatables::set_columns($c, [
-        { name => "id", search => 1, title => "#" },
-        { name => "name", search => 1, title => "Name" },
-        { name => "status", search => 1, title => "Status" },
+        { name => "id", search => 1, title => $c->loc('#') },
+        { name => "name", search => 1, title => $c->loc('Name') },
+        { name => "status", search => 1, title => $c->loc('Status') },
     ]);
     $c->stash->{admin_dt_columns} = NGCP::Panel::Utils::Datatables::set_columns($c, [
-        { name => "id", search => 1, title => "#" },
-        { name => "login", search => 1, title => "Name" },
-        { name => "is_master", title => "Master" },
-        { name => "is_active", title => "Active" },
-        { name => "read_only", title => "Read-Only" },
-        { name => "show_passwords", title => "Show Passwords" },
-        { name => "call_data", title => "Show CDRs" },
+        { name => "id", search => 1, title => $c->loc('#') },
+        { name => "login", search => 1, title => $c->loc('Name') },
+        { name => "is_master", title => $c->loc('Master') },
+        { name => "is_active", title => $c->loc('Active') },
+        { name => "read_only", title => $c->loc('Read-Only') },
+        { name => "show_passwords", title => $c->loc('Show Passwords') },
+        { name => "call_data", title => $c->loc('Show CDRs') },
     ]);
     $c->stash->{customer_dt_columns} = NGCP::Panel::Utils::Datatables::set_columns($c, [
-        { name => "id", search => 1, title => "#" },
-        { name => "external_id", search => 1, title => "External #" },
-        { name => "billing_mappings.product.name", search => 1, title => "Product" },
-        { name => "contact.email", search => 1, title => "Contact Email" },
-        { name => "status", search => 1, title => "Status" },
+        { name => "id", search => 1, title => $c->loc('#') },
+        { name => "external_id", search => 1, title => $c->loc('External #') },
+        { name => "billing_mappings.product.name", search => 1, title => $c->loc('Product') },
+        { name => "contact.email", search => 1, title => $c->loc('Contact Email') },
+        { name => "status", search => 1, title => $c->loc('Status') },
     ]);
     $c->stash->{domain_dt_columns} = NGCP::Panel::Utils::Datatables::set_columns($c, [
-        { name => "id", search => 1, title => "#" },
-        { name => "domain", search => 1, title => "Domain" },
-        { name => "domain_resellers.reseller.name", search => 1, title => "Reseller" },
+        { name => "id", search => 1, title => $c->loc('#') },
+        { name => "domain", search => 1, title => $c->loc('Domain') },
+        { name => "domain_resellers.reseller.name", search => 1, title => $c->loc('Reseller') },
     ]);
 
     $c->stash(reseller => $c->stash->{resellers}->search_rs({ id => $reseller_id }));
     unless($c->stash->{reseller}->first) {
-        $c->flash(messages => [{type => 'error', text => 'Reseller not found'}]);
+        NGCP::Panel::Utils::Message->error(
+            c     => $c,
+            log   => 'Reseller not found',
+            desc  => $c->loc('Reseller not found'),
+        );
         NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for('/reseller'));
     }
 }
@@ -221,12 +229,12 @@ sub edit :Chained('base') :PathPart('edit') :Args(0) {
 
             delete $c->session->{created_objects}->{contract};
             delete $c->session->{edit_contract_id};
-            $c->flash(messages => [{type => 'success', text => 'Reseller successfully updated'}]);
+            $c->flash(messages => [{type => 'success', text => $c->loc('Reseller successfully updated')}]);
         } catch($e) {
             NGCP::Panel::Utils::Message->error(
                 c => $c,
                 error => $e,
-                desc  => "Failed to update reseller.",
+                desc  => $c->loc('Failed to update reseller.'),
             );
         }
         NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for('/reseller'));
@@ -245,7 +253,11 @@ sub terminate :Chained('base') :PathPart('terminate') :Args(0) {
     my $reseller = $c->stash->{reseller}->first;
 
     if ($reseller->id == 1) {
-        $c->flash(messages => [{type => 'error', text => 'Cannot terminate reseller with the id 1'}]);
+        NGCP::Panel::Utils::Message->error(
+            c     => $c,
+            log   => 'Cannot terminate reseller with the id 1',
+            desc  => $c->loc('Cannot terminate reseller with the id 1'),
+        );
         NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for('/reseller'));
     }
 
@@ -258,12 +270,12 @@ sub terminate :Chained('base') :PathPart('terminate') :Args(0) {
                 $self->_handle_reseller_status_change($c,$reseller);
             }
         });
-        $c->flash(messages => [{type => 'success', text => 'Successfully terminated reseller'}]);
+        $c->flash(messages => [{type => 'success', text => $c->loc('Successfully terminated reseller')}]);
     } catch($e) {
         NGCP::Panel::Utils::Message->error(
             c => $c,
             error => $e,
-            desc  => "Failed to terminate reseller.",
+            desc  => $c->loc('Failed to terminate reseller.'),
         );
     }
     NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for('/reseller'));
@@ -392,7 +404,9 @@ sub create_defaults :Path('create_defaults') :Args(0) {
             desc  => "Failed to create reseller.",
         );
     };
-    $c->flash(messages => [{type => 'success', text => "Reseller successfully created with login <b>".$defaults{admins}->{login}."</b> and password <b>".$defaults{admins}->{md5pass}."</b>, please review your settings below" }]);
+    $c->flash(messages => [{type => 'success', text => 
+            $c->loc("Reseller successfully created with login <b>[_1]</b> and password <b>[_2]</b>, please review your settings below",
+                $defaults{admins}->{login},$defaults{admins}->{md5pass}) }]);
     $c->res->redirect($c->uri_for_action('/reseller/details', [$r{resellers}->id]));
     $c->detach;
     return;

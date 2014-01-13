@@ -1,8 +1,8 @@
-[% site_config.title = 'Voicebox Messages for ' _ subscriber.username _ '@' _ subscriber.domain.domain  -%]
+[% site_config.title = c.loc('Voicebox Messages for [_1]@[_2]', subscriber.username, subscriber.domain.domain) -%]
 
 <div class="row">
     <span class="pull-left" style="margin:0 5px 0 5px;">
-        <a class="btn btn-primary btn-large" href="[% c.uri_for('/back') %]"><i class="icon-arrow-left"></i> Back</a>
+        <a class="btn btn-primary btn-large" href="[% c.uri_for('/back') %]"><i class="icon-arrow-left"></i> [% c.loc('Back') %]</a>
     </span>
 </div>
 [% back_created = 1 -%]
@@ -10,7 +10,7 @@
 <div class="ngcp-separator"></div>
 
 [%
-    helper.name = 'Voicemails';
+    helper.name = c.loc('Voicemails');
     helper.column_sort = 'origtime';
     helper.dt_columns = vm_dt_columns;
 
@@ -18,8 +18,8 @@
     helper.ajax_uri = c.uri_for_action('/subscriber/ajax_voicemails', [c.req.captures.0]);
 
     helper.dt_buttons = [
-        { name = 'Play', uri = "voicemail/'+full.id+'/play", class = 'btn-small btn-tertiary', icon = 'icon-play' },
-        { name = 'Delete', uri = "voicemail/'+full.id+'/delete", class = 'btn-small btn-secondary', icon = 'icon-trash' },
+        { name = c.loc('Play'), uri = "voicemail/'+full.id+'/play", class = 'btn-small btn-tertiary', icon = 'icon-play' },
+        { name = c.loc('Delete'), uri = "voicemail/'+full.id+'/delete", class = 'btn-small btn-secondary', icon = 'icon-trash' },
     ];
    
 

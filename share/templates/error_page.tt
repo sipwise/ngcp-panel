@@ -4,24 +4,23 @@
 		
 		<div class="error-container">
 			
-			<h1>Sorry!</h1>
+			<h1>[% c.loc('Sorry!') %]</h1>
 			
-			<h2>[% c.response.status %] Internal server error </h2>
+			<h2>[% c.loc('[_1] Internal server error', c.response.status) %]</h2>
 			
 			<div class="error-details">
-				<p>We are terribly sorry, an exceptional error has occured:</p>
-				<div><strong>incident number:</strong> [% exception_incident %]</div>
-				<div><strong>time of incident:</strong> [% exception_timestamp %]</div>
+				<p>[% c.loc('We are terribly sorry, an exceptional error has occured:') %]</p>
+				<div><strong>[% c.loc('incident number:') %]</strong> [% exception_incident %]</div>
+				<div><strong>[% c.loc('time of incident:') %]</strong> [% exception_timestamp %]</div>
 				<br/>
-				<p>Details have been logged on the server. If you want to report the error,
-				describe what you were doing or attempting to do just before.</p>
+				<p>[% c.loc('Details have been logged on the server. If you want to report the error, describe what you were doing or attempting to do just before.') %]</p>
 			</div> <!-- /error-details -->
 			
 			<div class="error-actions">
 				<a href="[% c.uri_for('/back') %]" class="btn btn-large btn-primary ngcp-error-button">
-					<i class="icon-chevron-left"></i> Back to Dashboard</a> 
+					<i class="icon-chevron-left"></i> [% c.loc('Back to Dashboard') %]</a> 
 				<a href="mailto:[% c.config.contact.email %]?subject=NGCP-Panel Incident [% exception_incident %]" class="btn btn-large ngcp-error-button">
-					<i class="icon-envelope"></i> Contact Support</a>
+					<i class="icon-envelope"></i> [% c.loc('Contact Support') %]</a>
 				
 			</div> <!-- /error-actions -->
 						

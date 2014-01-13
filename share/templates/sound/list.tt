@@ -1,6 +1,7 @@
-[% META title = 'Sound Sets' -%]
+[% site_config.title = c.loc('Sound Sets') -%]
 [%
-    helper.name = 'Sound Sets';
+    helper.name = c.loc('Sound Set');
+    helper.identifier = 'sound_set';
     helper.messages = messages;
     helper.dt_columns = soundset_dt_columns;
     helper.length_change = 1;
@@ -13,16 +14,16 @@
 
     UNLESS c.user.read_only;
         helper.dt_buttons = [
-            { name = 'Edit', uri = "/sound/'+full.id+'/edit", class = 'btn-small btn-primary', icon = 'icon-edit' },
-            { name = 'Delete', uri = "/sound/'+full.id+'/delete", class = 'btn-small btn-secondary', icon = 'icon-trash' },
-            { name = 'Files', uri = "/sound/'+full.id+'/handles", class = 'btn-small btn-tertiary', icon = 'icon-list' },
+            { name = c.loc('Edit'), uri = "/sound/'+full.id+'/edit", class = 'btn-small btn-primary', icon = 'icon-edit' },
+            { name = c.loc('Delete'), uri = "/sound/'+full.id+'/delete", class = 'btn-small btn-secondary', icon = 'icon-trash' },
+            { name = c.loc('Files'), uri = "/sound/'+full.id+'/handles", class = 'btn-small btn-tertiary', icon = 'icon-list' },
         ];
         helper.top_buttons = [
-            { name = 'Create Sound Set', uri = c.uri_for('/sound/create'), icon = 'icon-star' },
+            { name = c.loc('Create Sound Set'), uri = c.uri_for('/sound/create'), icon = 'icon-star' },
         ];
     ELSE;
         helper.dt_buttons = [
-            { name = 'Files', uri = "/sound/'+full.id+'/handles", class = 'btn-small btn-tertiary', icon = 'icon-list' },
+            { name = c.loc('Files'), uri = "/sound/'+full.id+'/handles", class = 'btn-small btn-tertiary', icon = 'icon-list' },
         ];
     END;
 

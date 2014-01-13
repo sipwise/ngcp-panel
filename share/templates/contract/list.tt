@@ -1,9 +1,10 @@
-[% site_config.title = "Contracts" -%]
+[% site_config.title = c.loc('Contracts') -%]
 [%
-    helper.name = "Contract";
+    helper.name = c.loc('Contract');
     IF edit_flag;
-        helper.name = "Contract #" _ contract.id;
+        helper.name = c.loc('Contract #[_1]', contract.id);
     END;
+    helper.identifier = 'contract';
     helper.data = contracts;
     helper.messages = messages;
     helper.dt_columns = contract_dt_columns;
@@ -17,11 +18,11 @@
 
     UNLESS c.user.read_only;
         helper.dt_buttons = [
-            { name = 'Edit', uri = "/contract/'+full.id+'/edit", class = 'btn-small btn-primary', icon = 'icon-edit' },
+            { name = c.loc('Edit'), uri = "/contract/'+full.id+'/edit", class = 'btn-small btn-primary', icon = 'icon-edit' },
         ];
         helper.top_buttons = [
-            { name = 'Create Peering Contract', uri = c.uri_for_action('/contract/peering_create'), icon = 'icon-star' },
-            { name = 'Create Reseller Contract', uri = c.uri_for_action('/contract/reseller_create'), icon = 'icon-star' },
+            { name = c.loc('Create Peering Contract'), uri = c.uri_for_action('/contract/peering_create'), icon = 'icon-star' },
+            { name = c.loc('Create Reseller Contract'), uri = c.uri_for_action('/contract/reseller_create'), icon = 'icon-star' },
         ];
     END;
 

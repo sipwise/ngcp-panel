@@ -13,7 +13,7 @@
                       [%- IF c.user.roles == 'admin' || c.user.roles == 'reseller' -%]
                         [% login_name = c.user.login %]
                       [%- ELSE -%]
-                        [% login_name = c.user.webusername %]@[% c.user.domain.domain %]
+                        [% login_name = c.user.webusername _'@'_ c.user.domain.domain %]
                       [%- END -%]
                       <i class="icon-user"></i> [% c.loc("Logged in as [_1]", login_name) %]
                     </li>
@@ -159,11 +159,11 @@ $(function () {
         $('#'+lastTab).parent().addClass("open");
     }
     if($('.accordion-body').length) {
-        $('#content').children('.container').prepend('<a href="#" id="toggle-accordions" class="btn btn-small btn-tertiary pull-right ngcp-accordion-closed"><i class="icon-resize-full"></i> Expand Groups</a>');
+        $('#content').children('.container').prepend('<a href="#" id="toggle-accordions" class="btn btn-small btn-tertiary pull-right ngcp-accordion-closed"><i class="icon-resize-full"></i> [% c.loc('Expand Groups') %]</a>');
         $('#toggle-accordions').click(function() {
             if($('#toggle-accordions').hasClass('ngcp-accordion-closed')) {
                 $('#toggle-accordions').removeClass('ngcp-accordion-closed');
-                $('#toggle-accordions').html('<i class="icon-resize-small"></i> Collapse Groups');
+                $('#toggle-accordions').html('<i class="icon-resize-small"></i> [% c.loc('Collapse Groups') %]');
                 $('.accordion-body').each(function() {
                     $(this).removeClass('collapse');
                     $(this).addClass('in');
@@ -177,7 +177,7 @@ $(function () {
                 });
             } else {
                 $('#toggle-accordions').addClass('ngcp-accordion-closed');
-                $('#toggle-accordions').html('<i class="icon-resize-full"></i> Expand Groups');
+                $('#toggle-accordions').html('<i class="icon-resize-full"></i> [% c.loc('Expand Groups') %]');
                 $('.accordion-body').each(function() {
                     $(this).removeClass('in');
                     $(this).addClass('collapse');

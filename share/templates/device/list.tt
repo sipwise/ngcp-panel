@@ -1,8 +1,8 @@
-[% META title = 'Device Management' -%]
+[%site_config.title = c.loc('Device Management') -%]
 
 <div class="row">
     <span>
-        <a class="btn btn-primary btn-large" href="[% c.uri_for('/back') %]"><i class="icon-arrow-left"></i> Back</a>
+        <a class="btn btn-primary btn-large" href="[% c.uri_for('/back') %]"><i class="icon-arrow-left"></i> [% c.loc('Back') %]</a>
     </span>
 </div>
 [% back_created = 1 -%]
@@ -19,18 +19,19 @@
 
     <div class="accordion-group">
         <div class="accordion-heading">
-            <a class="accordion-toggle" data-toggle="collapse" data-parent="#device_details" href="#collapse_devmod">Device Models</a>
+            <a class="accordion-toggle" data-toggle="collapse" data-parent="#device_details" href="#collapse_devmod">[% c.loc('Device Models') %]</a>
         </div>
         <div class="accordion-body collapse" id="collapse_devmod">
             <div class="accordion-inner">
                 [% UNLESS c.user.read_only -%]
                 <span>
-                    <a class="btn btn-primary btn-large" href="[% c.uri_for('/device/model/create') %]"><i class="icon-star"></i> Create Device Model</a>
+                    <a class="btn btn-primary btn-large" href="[% c.uri_for('/device/model/create') %]"><i class="icon-star"></i> [% c.loc('Create Device Model') %]</a>
                 </span>
                 <div class="ngcp-separator"></div>
                 [% END -%]
 [%
-    helper.name = 'Device Model';
+    helper.name = c.loc('Device Model');
+    helper.identifier = 'device_model';
     helper.data = devmod;
     helper.dt_columns = devmod_dt_columns;
     helper.length_change = 1;
@@ -43,8 +44,8 @@
 
     UNLESS c.user.read_only;
         helper.dt_buttons = [
-            { name = 'Delete', uri = "/device/model/'+full.id+'/delete", class = 'btn-small btn-secondary', icon = 'icon-trash' },
-            { name = 'Edit', uri = "/device/model/'+full.id+'/edit", class = 'btn-small btn-primary', icon = 'icon-edit' },
+            { name = c.loc('Delete'), uri = "/device/model/'+full.id+'/delete", class = 'btn-small btn-secondary', icon = 'icon-trash' },
+            { name = c.loc('Edit'), uri = "/device/model/'+full.id+'/edit", class = 'btn-small btn-primary', icon = 'icon-edit' },
         ];
     END;
 
@@ -56,18 +57,19 @@
 
     <div class="accordion-group">
         <div class="accordion-heading">
-            <a class="accordion-toggle" data-toggle="collapse" data-parent="#device_details" href="#collapse_devfw">Device Firmwares</a>
+            <a class="accordion-toggle" data-toggle="collapse" data-parent="#device_details" href="#collapse_devfw">[% c.loc('Device Firmwares') %]</a>
         </div>
         <div class="accordion-body collapse" id="collapse_devfw">
             <div class="accordion-inner">
                 [% UNLESS c.user.read_only -%]
                 <span>
-                    <a class="btn btn-primary btn-large" href="[% c.uri_for('/device/firmware/create') %]"><i class="icon-star"></i> Upload Device Firmware</a>
+                    <a class="btn btn-primary btn-large" href="[% c.uri_for('/device/firmware/create') %]"><i class="icon-star"></i> [% c.loc('Upload Device Firmware') %]</a>
                 </span>
                 <div class="ngcp-separator"></div>
                 [% END -%]
 [%
-    helper.name = 'Device Firmware';
+    helper.name = c.loc('Device Firmware');
+    helper.identifier = 'device_firmware';
     helper.data = devfw;
     helper.dt_columns = devfw_dt_columns;
     helper.length_change = 1;
@@ -80,9 +82,9 @@
 
     UNLESS c.user.read_only;
         helper.dt_buttons = [
-            { name = 'Delete', uri = "/device/firmware/'+full.id+'/delete", class = 'btn-small btn-secondary', icon = 'icon-trash' },
-            { name = 'Edit', uri = "/device/firmware/'+full.id+'/edit", class = 'btn-small btn-primary', icon = 'icon-edit' },
-            { name = 'Download', uri = "/device/firmware/'+full.id+'/download", class = 'btn-small btn-tertiary', icon = 'icon-download-alt' },
+            { name = c.loc('Delete'), uri = "/device/firmware/'+full.id+'/delete", class = 'btn-small btn-secondary', icon = 'icon-trash' },
+            { name = c.loc('Edit'), uri = "/device/firmware/'+full.id+'/edit", class = 'btn-small btn-primary', icon = 'icon-edit' },
+            { name = c.loc('Download'), uri = "/device/firmware/'+full.id+'/download", class = 'btn-small btn-tertiary', icon = 'icon-download-alt' },
         ];
     END;
 
@@ -94,18 +96,19 @@
 
     <div class="accordion-group">
         <div class="accordion-heading">
-            <a class="accordion-toggle" data-toggle="collapse" data-parent="#device_details" href="#collapse_devconf">Device Configurations</a>
+            <a class="accordion-toggle" data-toggle="collapse" data-parent="#device_details" href="#collapse_devconf">[% c.loc('Device Configurations') %]</a>
         </div>
         <div class="accordion-body collapse" id="collapse_devconf">
             <div class="accordion-inner">
                 [% UNLESS c.user.read_only -%]
                 <span>
-                    <a class="btn btn-primary btn-large" href="[% c.uri_for('/device/config/create') %]"><i class="icon-star"></i> Create Device Configuration</a>
+                    <a class="btn btn-primary btn-large" href="[% c.uri_for('/device/config/create') %]"><i class="icon-star"></i> [% c.loc('Create Device Configuration') %]</a>
                 </span>
                 <div class="ngcp-separator"></div>
                 [% END -%]
 [%
-    helper.name = 'Device Configuration';
+    helper.name = c.loc('Device Configuration');
+    helper.identifier = 'device_configuration';
     helper.data = devconf;
     helper.dt_columns = devconf_dt_columns;
     helper.length_change = 1;
@@ -118,9 +121,9 @@
 
     UNLESS c.user.read_only;
         helper.dt_buttons = [
-            { name = 'Delete', uri = "/device/config/'+full.id+'/delete", class = 'btn-small btn-secondary', icon = 'icon-trash' },
-            { name = 'Edit', uri = "/device/config/'+full.id+'/edit", class = 'btn-small btn-primary', icon = 'icon-edit' },
-            { name = 'Download', uri = "/device/config/'+full.id+'/download", class = 'btn-small btn-tertiary', icon = 'icon-download-alt' },
+            { name = c.loc('Delete'), uri = "/device/config/'+full.id+'/delete", class = 'btn-small btn-secondary', icon = 'icon-trash' },
+            { name = c.loc('Edit'), uri = "/device/config/'+full.id+'/edit", class = 'btn-small btn-primary', icon = 'icon-edit' },
+            { name = c.loc('Download'), uri = "/device/config/'+full.id+'/download", class = 'btn-small btn-tertiary', icon = 'icon-download-alt' },
         ];
     END;
 
@@ -132,18 +135,19 @@
 
     <div class="accordion-group">
         <div class="accordion-heading">
-            <a class="accordion-toggle" data-toggle="collapse" data-parent="#device_details" href="#collapse_devprof">Device Profiles</a>
+            <a class="accordion-toggle" data-toggle="collapse" data-parent="#device_details" href="#collapse_devprof">[% c.loc('Device Profiles') %]</a>
         </div>
         <div class="accordion-body collapse" id="collapse_devprof">
             <div class="accordion-inner">
                 [% UNLESS c.user.read_only -%]
                 <span>
-                    <a class="btn btn-primary btn-large" href="[% c.uri_for('/device/profile/create') %]"><i class="icon-star"></i> Create Device Profile</a>
+                    <a class="btn btn-primary btn-large" href="[% c.uri_for('/device/profile/create') %]"><i class="icon-star"></i> [% c.loc('Create Device Profile') %]</a>
                 </span>
                 <div class="ngcp-separator"></div>
                 [% END -%]
 [%
-    helper.name = 'Device Profile';
+    helper.name = c.loc('Device Profile');
+    helper.identifier = 'device_profile';
     helper.data = devprof;
     helper.dt_columns = devprof_dt_columns;
     helper.length_change = 1;
@@ -156,8 +160,8 @@
 
     UNLESS c.user.read_only;
         helper.dt_buttons = [
-            { name = 'Delete', uri = "/device/profile/'+full.id+'/delete", class = 'btn-small btn-secondary', icon = 'icon-trash' },
-            { name = 'Edit', uri = "/device/profile/'+full.id+'/edit", class = 'btn-small btn-primary', icon = 'icon-edit' },
+            { name = c.loc('Delete'), uri = "/device/profile/'+full.id+'/delete", class = 'btn-small btn-secondary', icon = 'icon-trash' },
+            { name = c.loc('Edit'), uri = "/device/profile/'+full.id+'/edit", class = 'btn-small btn-primary', icon = 'icon-edit' },
         ];
     END;
 

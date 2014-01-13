@@ -1,8 +1,8 @@
-[% site_config.title = 'Reseller Details for ' _ reseller.first.name -%]
+[% site_config.title = c.loc('Reseller Details for [_1]', reseller.first.name) -%]
 
 <div class="row">
     <span>
-        <a class="btn btn-primary btn-large" href="[% c.uri_for('/back') %]"><i class="icon-arrow-left"></i> Back</a>
+        <a class="btn btn-primary btn-large" href="[% c.uri_for('/back') %]"><i class="icon-arrow-left"></i> [% c.loc('Back') %]</a>
     </span>
 </div>
 [% back_created = 1 -%]
@@ -14,7 +14,7 @@
         <div class="alert alert-[% m.type %]">[% m.text %]</div>
     [% END -%]
     [% IF reseller.first.status != "active" -%]
-        <div class="alert">Reseller is <b>[% reseller.first.status %]</b></div>
+        <div class="alert">[% c.loc('Reseller is <b>[_1]</b>', reseller.first.status) %]</div>
     [% END -%]
 [% messages = [] -%]
 </div>
@@ -24,12 +24,13 @@
 
     <div class="accordion-group">
         <div class="accordion-heading">
-            <a class="accordion-toggle" data-toggle="collapse" data-parent="#reseller_details" href="#collapse_reseller">Reseller Base Information</a>
+            <a class="accordion-toggle" data-toggle="collapse" data-parent="#reseller_details" href="#collapse_reseller">[% c.loc('Reseller Base Information') %]</a>
         </div>
         <div class="accordion-body collapse" id="collapse_reseller">
             <div class="accordion-inner">
 [%
-    helper.name = 'Reseller';
+    helper.name = c.loc('Reseller');
+    helper.identifier = 'Reseller';
     helper.messages = messages;
     helper.dt_columns = reseller_dt_columns;
     helper.paginate = 'false';
@@ -43,7 +44,7 @@
 
     UNLESS c.user.read_only;
         helper.dt_buttons = [
-            { name = 'Edit', uri = "/reseller/'+full.id+'/edit", class = 'btn-small btn-primary', icon = 'icon-edit' },
+            { name = c.loc('Edit'), uri = "/reseller/'+full.id+'/edit", class = 'btn-small btn-primary', icon = 'icon-edit' },
         ];
     END;
 
@@ -55,12 +56,13 @@
 
     <div class="accordion-group">
         <div class="accordion-heading">
-            <a class="accordion-toggle" data-toggle="collapse" data-parent="#reseller_details" href="#collapse_contract">Reseller Contract</a>
+            <a class="accordion-toggle" data-toggle="collapse" data-parent="#reseller_details" href="#collapse_contract">[% c.loc('Reseller Contract') %]</a>
         </div>
         <div class="accordion-body collapse" id="collapse_contract">
             <div class="accordion-inner">
 [%
-    helper.name = 'Contract';
+    helper.name = c.loc('Contract');
+    helper.identifier = "Contract";
     helper.messages = messages;
     helper.dt_columns = contract_dt_columns;
     helper.close_target = close_target;
@@ -74,7 +76,7 @@
 
     UNLESS c.user.read_only;
         helper.dt_buttons = [
-            { name = 'Edit', uri = "/contract/'+full.id+'/edit", class = 'btn-small btn-primary', icon = 'icon-edit' },
+            { name = c.loc('Edit'), uri = "/contract/'+full.id+'/edit", class = 'btn-small btn-primary', icon = 'icon-edit' },
         ];
     END;
 
@@ -86,12 +88,12 @@
 
     <div class="accordion-group">
         <div class="accordion-heading">
-            <a class="accordion-toggle" data-toggle="collapse" data-parent="#reseller_details" href="#collapse_contact">Reseller Contact</a>
+            <a class="accordion-toggle" data-toggle="collapse" data-parent="#reseller_details" href="#collapse_contact">[% c.loc('Reseller Contact') %]</a>
         </div>
         <div class="accordion-body collapse" id="collapse_contact">
             <div class="accordion-inner">
 [%
-    helper.name = 'Contact';
+    helper.name = c.loc('Contact');
     helper.messages = messages;
     helper.dt_columns = contact_dt_columns;
     helper.close_target = c.uri_for('');
@@ -105,7 +107,7 @@
 
     UNLESS c.user.read_only;
         helper.dt_buttons = [
-            { name = 'Edit', uri = "/contact/'+full.id+'/edit/noreseller", class = 'btn-small btn-primary', icon = 'icon-edit' },
+            { name = c.loc('Edit'), uri = "/contact/'+full.id+'/edit/noreseller", class = 'btn-small btn-primary', icon = 'icon-edit' },
         ];
     END;
 
@@ -117,12 +119,13 @@
 
     <div class="accordion-group">
         <div class="accordion-heading">
-            <a class="accordion-toggle" data-toggle="collapse" data-parent="#reseller_details" href="#collapse_admin">Administrator Logins</a>
+            <a class="accordion-toggle" data-toggle="collapse" data-parent="#reseller_details" href="#collapse_admin">[% c.loc('Administrator Logins') %]</a>
         </div>
         <div class="accordion-body collapse" id="collapse_admin">
             <div class="accordion-inner">
 [%
-    helper.name = 'Administrator';
+    helper.name = c.loc('Administrator');
+    helper.identifier = 'Administrator';
     helper.messages = messages;
     helper.dt_columns = admin_dt_columns;
     helper.close_target = close_target;
@@ -133,8 +136,8 @@
 
     UNLESS c.user.read_only;
         helper.dt_buttons = [
-            { name = 'Edit', uri = "/administrator/'+full.id+'/edit", class = 'btn-small btn-primary', icon = 'icon-edit' },
-            { name = 'Delete', uri = "/administrator/'+full.id+'/delete", class = 'btn-small btn-secondary', icon = 'icon-trash' },
+            { name = c.loc('Edit'), uri = "/administrator/'+full.id+'/edit", class = 'btn-small btn-primary', icon = 'icon-edit' },
+            { name = c.loc('Delete'), uri = "/administrator/'+full.id+'/delete", class = 'btn-small btn-secondary', icon = 'icon-trash' },
         ];
     END;
 
@@ -146,12 +149,13 @@
 
     <div class="accordion-group">
         <div class="accordion-heading">
-            <a class="accordion-toggle" data-toggle="collapse" data-parent="#reseller_details" href="#collapse_domain">Domains</a>
+            <a class="accordion-toggle" data-toggle="collapse" data-parent="#reseller_details" href="#collapse_domain">[% c.loc('Domains') %]</a>
         </div>
         <div class="accordion-body collapse" id="collapse_domain">
             <div class="accordion-inner">
 [%
-    helper.name = 'Domain';
+    helper.name = c.loc('Domain');
+    helper.identifier = 'Domain';
     helper.messages = messages;
     helper.dt_columns = domain_dt_columns;
     helper.paginate = 'true';
@@ -164,12 +168,12 @@
 
     UNLESS c.user.read_only;
         helper.dt_buttons = [
-            { name = 'Delete', uri = "/domain/'+full.id+'/delete", class = 'btn-small btn-secondary', icon = 'icon-trash' },
-            { name = 'Preferences', uri = "/domain/'+full.id+'/preferences", class = 'btn-small btn-tertiary', icon = 'icon-list' },
+            { name = c.loc('Delete'), uri = "/domain/'+full.id+'/delete", class = 'btn-small btn-secondary', icon = 'icon-trash' },
+            { name = c.loc('Preferences'), uri = "/domain/'+full.id+'/preferences", class = 'btn-small btn-tertiary', icon = 'icon-list' },
         ];
     ELSE;
         helper.dt_buttons = [
-            { name = 'Preferences', uri = "/domain/'+full.id+'/preferences", class = 'btn-small btn-tertiary', icon = 'icon-list' },
+            { name = c.loc('Preferences'), uri = "/domain/'+full.id+'/preferences", class = 'btn-small btn-tertiary', icon = 'icon-list' },
         ];
     END;
 
@@ -181,12 +185,13 @@
 
     <div class="accordion-group">
         <div class="accordion-heading">
-            <a class="accordion-toggle" data-toggle="collapse" data-parent="#reseller_details" href="#collapse_customer">Customers</a>
+            <a class="accordion-toggle" data-toggle="collapse" data-parent="#reseller_details" href="#collapse_customer">[% c.loc('Customers') %]</a>
         </div>
         <div class="accordion-body collapse" id="collapse_customer">
             <div class="accordion-inner">
 [%
-    helper.name = 'Customer';
+    helper.name = c.loc('Customer');
+    helper.identifier = "Customer";
     helper.messages = messages;
     helper.dt_columns = customer_dt_columns;
     helper.paginate = 'true';
@@ -199,13 +204,13 @@
 
     UNLESS c.user.read_only;
         helper.dt_buttons = [
-            { name = 'Edit', uri = "/contract/'+full.id+'/edit", class = 'btn-small btn-primary', icon = 'icon-edit' },
-            { name = 'Terminate', uri = "/customer/'+full.id+'/terminate", class = 'btn-small btn-secondary', icon = 'icon-remove' },
-            { name = 'Details', uri = "/customer/'+full.id+'/details", class = 'btn-small btn-tertiary', icon = 'icon-list' },
+            { name = c.loc('Edit'), uri = "/contract/'+full.id+'/edit", class = 'btn-small btn-primary', icon = 'icon-edit' },
+            { name = c.loc('Terminate'), uri = "/customer/'+full.id+'/terminate", class = 'btn-small btn-secondary', icon = 'icon-remove' },
+            { name = c.loc('Details'), uri = "/customer/'+full.id+'/details", class = 'btn-small btn-tertiary', icon = 'icon-list' },
         ];
     ELSE;
         helper.dt_buttons = [
-            { name = 'Details', uri = "/customer/'+full.id+'/details", class = 'btn-small btn-tertiary', icon = 'icon-list' },
+            { name = c.loc('Details'), uri = "/customer/'+full.id+'/details", class = 'btn-small btn-tertiary', icon = 'icon-list' },
         ];
     END;
 

@@ -1,4 +1,4 @@
-[% META title = 'Call Distribution' -%]
+[% site_config.title = c.loc('Call Distribution') -%]
 
     <style>
         #circle circle {
@@ -36,24 +36,24 @@
 
     <div class="row">
         <span>
-            <a class="btn btn-primary btn-large" href="[% c.uri_for('/back') %]"><i class="icon-arrow-left"></i> Back</a>
+            <a class="btn btn-primary btn-large" href="[% c.uri_for('/back') %]"><i class="icon-arrow-left"></i> [% c.loc('Back') %]</a>
         </span>
     </div>
     [% back_created = 1 -%]
     <div class="ngcp-separator"></div>
 
-    <p>Mouseover on a country name to focus on calls to or from a single country. The thickness of links between countries encodes the relative frequency of calls between two countries: thicker links represent more calls.</p>
-    <p>Links are colored by the more frequent origin. Mouseover on a link to see the direction details.</p>
+    <p>[% c.loc('Mouseover on a country name to focus on calls to or from a single country. The thickness of links between countries encodes the relative frequency of calls between two countries: thicker links represent more calls.') %]</p>
+    <p>[% c.loc('Links are colored by the more frequent origin. Mouseover on a link to see the direction details.') %]</p>
 
     <div class="row-fluid" style="margin-top:50px">
         <div class="span3">
-            <label>From Date: <input type="text" id="datepicker_start" class="ngcp-datepicker" rel="tooltip" data-original-title="YYYY-MM-DD" value="2013-11-27"/></label>
+            <label>[% c.loc('From Date:') %] <input type="text" id="datepicker_start" class="ngcp-datepicker" rel="tooltip" data-original-title="YYYY-MM-DD" value="2013-11-27"/></label>
         </div>
         <div class="span3">
-            <label>To Date: <input type="text" id="datepicker_end" class="ngcp-datepicker" rel="tooltip" data-original-title="YYYY-MM-DD" value="2013-11-27"/></label>
+            <label>[% c.loc('To Date:') %] <input type="text" id="datepicker_end" class="ngcp-datepicker" rel="tooltip" data-original-title="YYYY-MM-DD" value="2013-11-27"/></label>
         </div>
         <div class="span2">
-            <a href="#" id="load-chord" class="btn btn-primary"><i class="icon-repeat" style="padding-top:3px"></i> Reload</a>
+            <a href="#" id="load-chord" class="btn btn-primary"><i class="icon-repeat" style="padding-top:3px"></i> [% c.loc('Reload') %]</a>
         </div>
     </div>
     <script>

@@ -1,6 +1,7 @@
-[% META title = 'Resellers' -%]
+[% site_config.title = c.loc('Resellers') -%]
 [%
-    helper.name = 'Resellers';
+    helper.name = c.loc('Resellers');
+    helper.identifier = 'Resellers';
     helper.data = resellers;
     helper.messages = messages;
     helper.dt_columns = reseller_dt_columns;
@@ -14,17 +15,17 @@
 
     UNLESS c.user.read_only;
         helper.dt_buttons = [
-            { name = 'Edit', uri = "/reseller/'+full.id+'/edit", class = 'btn-small btn-primary', icon = 'icon-edit' },
-            { name = 'Terminate', uri = "/reseller/'+full.id+'/terminate", class = 'btn-small btn-secondary', icon = 'icon-remove' },
-            { name = 'Details', uri = "/reseller/'+full.id+'/details", class = 'btn-small btn-tertiary', icon = 'icon-list' },
+            { name = c.loc('Edit'), uri = "/reseller/'+full.id+'/edit", class = 'btn-small btn-primary', icon = 'icon-edit' },
+            { name = c.loc('Terminate'), uri = "/reseller/'+full.id+'/terminate", class = 'btn-small btn-secondary', icon = 'icon-remove' },
+            { name = c.loc('Details'), uri = "/reseller/'+full.id+'/details", class = 'btn-small btn-tertiary', icon = 'icon-list' },
         ];
         helper.top_buttons = [
-            { name = 'Create Reseller', uri = c.uri_for('/reseller/create'), icon = 'icon-star' },
-            { name = 'Create Reseller with default values', uri = c.uri_for('/reseller/create_defaults'), icon = 'icon-star', method = 'post' },
+            { name = c.loc('Create Reseller'), uri = c.uri_for('/reseller/create'), icon = 'icon-star' },
+            { name = c.loc('Create Reseller with default values'), uri = c.uri_for('/reseller/create_defaults'), icon = 'icon-star', method = 'post' },
         ];
     ELSE;
         helper.dt_buttons = [
-            { name = 'Details', uri = "/reseller/'+full.id+'/details", class = 'btn-small btn-tertiary', icon = 'icon-list' },
+            { name = c.loc('Details'), uri = "/reseller/'+full.id+'/details", class = 'btn-small btn-tertiary', icon = 'icon-list' },
         ];
     END;
 

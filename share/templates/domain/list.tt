@@ -1,6 +1,7 @@
-[% META title = 'Domains' -%]
+[% site_config.title = c.loc('Domains') -%]
 [%
-    helper.name = 'Domain';
+    helper.name = c.loc('Domain');
+    helper.identifier = 'Domain';
     helper.data = domains;
     helper.messages = messages;
     helper.dt_columns = domain_dt_columns;
@@ -14,15 +15,15 @@
 
     UNLESS c.user.read_only;
         helper.dt_buttons = [
-            { name = 'Delete', uri = "/domain/'+full.id+'/delete", class = 'btn-small btn-secondary', icon = 'icon-trash' },
-            { name = 'Preferences', uri = "/domain/'+full.id+'/preferences", class = 'btn-small btn-tertiary', icon = 'icon-list' },
+            { name = c.loc('Delete'), uri = "/domain/'+full.id+'/delete", class = 'btn-small btn-secondary', icon = 'icon-trash' },
+            { name = c.loc('Preferences'), uri = "/domain/'+full.id+'/preferences", class = 'btn-small btn-tertiary', icon = 'icon-list' },
         ];
         helper.top_buttons = [
-            { name = 'Create Domain', uri = c.uri_for('/domain/create'), icon = 'icon-star' },
+            { name = c.loc('Create Domain'), uri = c.uri_for('/domain/create'), icon = 'icon-star' },
         ];
     ELSE;
         helper.dt_buttons = [
-            { name = 'Preferences', uri = "/domain/'+full.id+'/preferences", class = 'btn-small btn-tertiary', icon = 'icon-list' },
+            { name = c.loc('Preferences'), uri = "/domain/'+full.id+'/preferences", class = 'btn-small btn-tertiary', icon = 'icon-list' },
         ];
     END;
 

@@ -1,8 +1,8 @@
-[% site_config.title = 'Call List for ' _ subscriber.username _ '@' _ subscriber.domain.domain  -%]
+[% site_config.title = c.loc('Call List for [_1]@[_2]', subscriber.username, subscriber.domain.domain) -%]
 
 <div class="row">
     <span class="pull-left" style="margin:0 5px 0 5px;">
-        <a class="btn btn-primary btn-large" href="[% c.uri_for('/back') %]"><i class="icon-arrow-left"></i> Back</a>
+        <a class="btn btn-primary btn-large" href="[% c.uri_for('/back') %]"><i class="icon-arrow-left"></i> [% c.loc('Back') %]</a>
     </span>
 </div>
 [% back_created = 1 -%]

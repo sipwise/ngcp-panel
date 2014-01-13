@@ -1,7 +1,8 @@
-[% site_config.title = 'SIP Peering Group ' _ group.name -%]
-<h3>Peering Servers</h3>
+[% site_config.title = c.loc('SIP Peering Group [_1]', group.name) -%]
+<h3>[% c.loc('Peering Servers') %]</h3>
 [%
-    helper.name = 'Peering Servers';
+    helper.name = c.loc('Peering Server');
+    helper.identifier = 'peering_servers';
     helper.messages = messages;
     helper.dt_columns = server_dt_columns;
 
@@ -14,16 +15,16 @@
     helper.tmpuri = c.uri_for_action("/peering/servers_root", [c.req.captures.0]);
     UNLESS c.user.read_only;
         helper.dt_buttons = [
-            { name = 'Edit', uri = helper.tmpuri _ "/'+full.id+'/edit", class = 'btn-small btn-primary', icon = 'icon-edit' },
-            { name = 'Delete', uri = helper.tmpuri _ "/'+full.id+'/delete", class = 'btn-small btn-secondary', icon = 'icon-trash' },
-            { name = 'Preferences', uri = helper.tmpuri _ "/'+full.id+'/preferences", class = 'btn-small btn-tertiary', icon = 'icon-list' },
+            { name = c.loc('Edit'), uri = helper.tmpuri _ "/'+full.id+'/edit", class = 'btn-small btn-primary', icon = 'icon-edit' },
+            { name = c.loc('Delete'), uri = helper.tmpuri _ "/'+full.id+'/delete", class = 'btn-small btn-secondary', icon = 'icon-trash' },
+            { name = c.loc('Preferences'), uri = helper.tmpuri _ "/'+full.id+'/preferences", class = 'btn-small btn-tertiary', icon = 'icon-list' },
         ];
         helper.top_buttons = [
-            { name = 'Create Peering Server', uri = helper.tmpuri _ "/create", icon = 'icon-star' },
+            { name = c.loc('Create Peering Server'), uri = helper.tmpuri _ "/create", icon = 'icon-star' },
         ];
     ELSE;
         helper.dt_buttons = [
-            { name = 'Preferences', uri = helper.tmpuri _ "/'+full.id+'/preferences", class = 'btn-small btn-tertiary', icon = 'icon-list' },
+            { name = c.loc('Preferences'), uri = helper.tmpuri _ "/'+full.id+'/preferences", class = 'btn-small btn-tertiary', icon = 'icon-list' },
         ];
     END;
 
@@ -31,9 +32,10 @@
 -%]
 
 <div class="ngcp-separator"></div>
-<h3>Peering Rules</h3>
+<h3>[% c.loc('Peering Rules') %]</h3>
 [%
-    helper.name = 'Peering Rules';
+    helper.name = c.loc('Peering Rule');
+    helper.identifier = 'PeeringRules';
     helper.messages = rules_messages;
     helper.dt_columns = rules_dt_columns;
     helper.close_target = close_target;
@@ -45,11 +47,11 @@
     helper.tmpuri = c.uri_for(group.id, "rules");
     UNLESS c.user.read_only;
         helper.dt_buttons = [
-            { name = 'Edit', uri = helper.tmpuri _ "/'+full[\"id\"]+'/edit", class = 'btn-small btn-primary', icon = 'icon-edit' },
-            { name = 'Delete', uri = helper.tmpuri _ "/'+full[\"id\"]+'/delete", class = 'btn-small btn-secondary', icon = 'icon-trash' },
+            { name = c.loc('Edit'), uri = helper.tmpuri _ "/'+full[\"id\"]+'/edit", class = 'btn-small btn-primary', icon = 'icon-edit' },
+            { name = c.loc('Delete'), uri = helper.tmpuri _ "/'+full[\"id\"]+'/delete", class = 'btn-small btn-secondary', icon = 'icon-trash' },
         ];
         helper.top_buttons = [
-            { name = 'Create Peering Rule', uri = helper.tmpuri _ "/create", icon = 'icon-star' },
+            { name = c.loc('Create Peering Rule'), uri = helper.tmpuri _ "/create", icon = 'icon-star' },
         ];
     ELSE;
         helper.dt_buttons = [];

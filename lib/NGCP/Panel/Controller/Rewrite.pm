@@ -28,10 +28,10 @@ sub set_list :Chained('/') :PathPart('rewrite') :CaptureArgs(0) {
         });
     }
     $c->stash->{set_dt_columns} = NGCP::Panel::Utils::Datatables::set_columns($c, [
-        { name => 'id', search => 1, title => '#' },
-        { name => 'reseller.name', search => 1, title => 'Reseller' },
-        { name => 'name', search => 1, title => 'Name' },
-        { name => 'description', search => 1, title => 'Description' },
+        { name => 'id', search => 1, title => $c->loc('#') },
+        { name => 'reseller.name', search => 1, title => $c->loc('Reseller') },
+        { name => 'name', search => 1, title => $c->loc('Name') },
+        { name => 'description', search => 1, title => $c->loc('Description') },
     ]);
     
     $c->stash(template => 'rewrite/set_list.tt');
@@ -52,13 +52,21 @@ sub set_base :Chained('set_list') :PathPart('') :CaptureArgs(1) {
     my ($self, $c, $set_id) = @_;
 
     unless($set_id && $set_id->is_integer) {
-        $c->flash(messages => [{type => 'error', text => 'Invalid rewrite rule set id detected'}]);
+        NGCP::Panel::Utils::Message->error(
+            c     => $c,
+            log   => 'Invalid rewrite rule set id detected',
+            desc  => $c->loc('Invalid rewrite rule set id detected'),
+        );
         NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for('/rewrite'));
     }
 
     my $res = $c->stash->{sets_rs}->find($set_id);
     unless(defined($res)) {
-        $c->flash(messages => [{type => 'error', text => 'Rewrite rule set does not exist'}]);
+        NGCP::Panel::Utils::Message->error(
+            c     => $c,
+            log   => 'Rewrite rule set does not exist',
+            desc  => $c->loc('Rewrite rule set does not exist'),
+        );
         NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for('/rewrite'));
     }
     $c->stash(set_result => $res);
@@ -98,12 +106,12 @@ sub set_edit :Chained('set_base') :PathPart('edit') {
             }
             $c->stash->{set_result}->update($form->values);
             delete $c->session->{created_objects}->{reseller};
-            $c->flash(messages => [{type => 'success', text => 'Rewrite rule set successfully updated'}]);
+            $c->flash(messages => [{type => 'success', text => $c->loc('Rewrite rule set successfully updated')}]);
         } catch($e) {
             NGCP::Panel::Utils::Message->error(
                 c => $c,
                 error => $e,
-                desc  => "Failed to update rewrite rule set.",
+                desc  => $c->loc('Failed to update rewrite rule set.'),
             );
         }
         NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for('/rewrite'));
@@ -118,12 +126,12 @@ sub set_delete :Chained('set_base') :PathPart('delete') {
     
     try {
         $c->stash->{set_result}->delete;
-        $c->flash(messages => [{type => 'success', text => 'Rewrite rule set successfully deleted'}]);
+        $c->flash(messages => [{type => 'success', text => $c->loc('Rewrite rule set successfully deleted')}]);
     } catch($e) {
         NGCP::Panel::Utils::Message->error(
             c => $c,
             error => $e,
-            desc  => "Failed to delete rewrite rule set.",
+            desc  => $c->loc('Failed to delete rewrite rule set.'),
         );
     }
     NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for('/rewrite'));
@@ -165,12 +173,12 @@ sub set_clone :Chained('set_base') :PathPart('clone') {
                 });
             }
 
-            $c->flash(messages => [{type => 'success', text => 'Rewrite rule set successfully cloned'}]);
+            $c->flash(messages => [{type => 'success', text => $c->loc('Rewrite rule set successfully cloned')}]);
         } catch($e) {
             NGCP::Panel::Utils::Message->error(
                 c => $c,
                 error => $e,
-                desc  => "Failed to clone rewrite rule set.",
+                desc  => $c->loc('Failed to clone rewrite rule set.'),
             );
         }
         NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for('/rewrite'));
@@ -216,12 +224,12 @@ sub set_create :Chained('set_list') :PathPart('create') :Args(0) {
             }
             $c->stash->{sets_rs}->create($form->values);
             delete $c->session->{created_objects}->{reseller};
-            $c->flash(messages => [{type => 'success', text => 'Rewrite rule set successfully created'}]);
+            $c->flash(messages => [{type => 'success', text => $c->loc('Rewrite rule set successfully created')}]);
         } catch($e) {
             NGCP::Panel::Utils::Message->error(
                 c => $c,
                 error => $e,
-                desc  => "Failed to create rewrite rule set.",
+                desc  => $c->loc('Failed to create rewrite rule set.'),
             );
         }
         NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for('/rewrite'));
@@ -279,7 +287,7 @@ sub rules_root :Chained('rules_list') :PathPart('') :Args(0) {
             NGCP::Panel::Utils::Message->error(
                 c => $c,
                 error => $e,
-                desc  => "Failed to move rewrite rule.",
+                desc  => $c->loc('Failed to move rewrite rule.'),
             );
         }
     }
@@ -334,13 +342,21 @@ sub rules_base :Chained('rules_list') :PathPart('') :CaptureArgs(1) {
     my ($self, $c, $rule_id) = @_;
 
     unless($rule_id && $rule_id->is_integer) {
-        $c->flash(messages => [{type => 'error', text => 'Invalid rewrite rule id detected'}]);
+        NGCP::Panel::Utils::Message->error(
+            c     => $c,
+            log   => 'Invalid rewrite rule id detected',
+            desc  => $c->loc('Invalid rewrite rule id detected'),
+        );
         NGCP::Panel::Utils::Navigation::back_or($c, $c->stash->{rules_uri});
     }
 
     my $res = $c->stash->{rules_rs}->find($rule_id);
     unless(defined($res)) {
-        $c->flash(messages => [{type => 'error', text => 'Rewrite rule does not exist'}]);
+        NGCP::Panel::Utils::Message->error(
+            c     => $c,
+            log   => 'Rewrite rule does not exist',
+            desc  => $c->loc('Rewrite rule does not exist'),
+        );
         NGCP::Panel::Utils::Navigation::back_or($c, $c->stash->{rules_uri});
     }
     $c->stash(rule_result => $res);
@@ -366,12 +382,12 @@ sub rules_edit :Chained('rules_base') :PathPart('edit') {
         try {
             $c->stash->{rule_result}->update($form->values);
             $self->_sip_dialplan_reload();
-            $c->flash(messages => [{type => 'success', text => 'Rewrite rule successfully updated'}]);
+            $c->flash(messages => [{type => 'success', text => $c->loc('Rewrite rule successfully updated')}]);
         } catch($e) {
             NGCP::Panel::Utils::Message->error(
                 c => $c,
                 error => $e,
-                desc  => "Failed to update rewrite rule.",
+                desc  => $c->loc('Failed to update rewrite rule.'),
             );
         }
         NGCP::Panel::Utils::Navigation::back_or($c, $c->stash->{rules_uri});
@@ -387,12 +403,12 @@ sub rules_delete :Chained('rules_base') :PathPart('delete') {
     try {
         $c->stash->{rule_result}->delete;
         $self->_sip_dialplan_reload();
-        $c->flash(messages => [{type => 'success', text => 'Rewrite rule successfully deleted'}]);
+        $c->flash(messages => [{type => 'success', text => $c->loc('Rewrite rule successfully deleted') }]);
     } catch($e) {
         NGCP::Panel::Utils::Message->error(
             c => $c,
             error => $e,
-            desc  => "Failed to delete rewrite rule.",
+            desc  => $c->loc('Failed to delete rewrite rule.'),
         );
     };
     NGCP::Panel::Utils::Navigation::back_or($c, $c->stash->{rules_uri});
@@ -419,12 +435,12 @@ sub rules_create :Chained('rules_list') :PathPart('create') :Args(0) {
             $form->values->{priority} = int($last_priority) + 1;
             $c->stash->{rules_rs}->create($form->values);
             $self->_sip_dialplan_reload();
-            $c->flash(messages => [{type => 'success', text => 'Rewrite rule successfully created'}]);
+            $c->flash(messages => [{type => 'success', text => $c->loc('Rewrite rule successfully created') }]);
         } catch($e) {
             NGCP::Panel::Utils::Message->error(
                 c => $c,
                 error => $e,
-                desc  => "Failed to create rewrite rule.",
+                desc  => $c->loc('Failed to create rewrite rule.'),
             );
         }
         NGCP::Panel::Utils::Navigation::back_or($c, $c->stash->{rules_uri});

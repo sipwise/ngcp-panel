@@ -2,16 +2,16 @@
 <div class="plan-container">
     <div class="plan">
         <div class="plan-header">
-            <div class="plan-title">Registered Devices</div>
+            <div class="plan-title">[% c.loc('Registered Devices') %]</div>
             <div class="plan-price">
                 <span>[% reg_count %]</span>
-                <span class="term">Registered Device[% reg_count != 1 ? 's' : '' %]</span>
+                <span class="term">[% reg_count == 1 ? c.loc('Registered Device') : c.loc('Registered Devices') %]</span>
             </div>
         </div>
         <div class="plan-features large">
             <ul>
                 [% IF reg_count == 0 -%]
-                <li>No devices registered</li>
+                <li>[% c.loc('No devices registered') %]</li>
                 [% ELSE -%]
                     [% FOR reg IN regs.all -%]
                     <li>
@@ -30,7 +30,7 @@
             </ul>
         </div>
         <div class="plan-actions">
-            <a href="[% c.uri_for_action('/subscriber/reglist', [subscriber.id]) %]" class="btn">View All Registered Devices</a>
+            <a href="[% c.uri_for_action('/subscriber/reglist', [subscriber.id]) %]" class="btn">[% c.loc('View All Registered Devices') %]</a>
         </div>
     </div>
 </div>

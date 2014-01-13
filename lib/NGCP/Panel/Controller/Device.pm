@@ -33,10 +33,10 @@ sub base :Chained('/') :PathPart('device') :CaptureArgs(0) {
         $devmod_rs = $devmod_rs->search({ reseller_id => $c->user->voip_subscriber->contract->contact->reseller_id });
     }
     $c->stash->{devmod_dt_columns} = NGCP::Panel::Utils::Datatables::set_columns($c, [
-        { name => 'id', search => 1, title => '#' },
-        { name => 'reseller.name', search => 1, title => 'Reseller' },
-        { name => 'vendor', search => 1, title => 'Vendor' },
-        { name => 'model', search => 1, title => 'Model' },
+        { name => 'id', search => 1, title => $c->loc('#') },
+        { name => 'reseller.name', search => 1, title => $c->loc('Reseller') },
+        { name => 'vendor', search => 1, title => $c->loc('Vendor') },
+        { name => 'model', search => 1, title => $c->loc('Model') },
     ]);
 
     my $devfw_rs = $c->model('DB')->resultset('autoprov_firmwares');
@@ -55,12 +55,12 @@ sub base :Chained('/') :PathPart('device') :CaptureArgs(0) {
     }
 
     $c->stash->{devfw_dt_columns} = NGCP::Panel::Utils::Datatables::set_columns($c, [
-        { name => 'id', search => 1, title => '#' },
-        { name => 'device.reseller.name', search => 1, title => 'Reseller' },
-        { name => 'device.vendor', search => 1, title => 'Device Vendor' },
-        { name => 'device.model', search => 1, title => 'Device Model' },
-        { name => 'filename', search => 1, title => 'Firmware File' },
-        { name => 'version', search => 1, title => 'Version' },
+        { name => 'id', search => 1, title => $c->loc('#') },
+        { name => 'device.reseller.name', search => 1, title => $c->loc('Reseller') },
+        { name => 'device.vendor', search => 1, title => $c->loc('Device Vendor') },
+        { name => 'device.model', search => 1, title => $c->loc('Device Model') },
+        { name => 'filename', search => 1, title => $c->loc('Firmware File') },
+        { name => 'version', search => 1, title => $c->loc('Version') },
     ]);
 
     my $devconf_rs = $c->model('DB')->resultset('autoprov_configs');
@@ -79,11 +79,11 @@ sub base :Chained('/') :PathPart('device') :CaptureArgs(0) {
     }
 
     $c->stash->{devconf_dt_columns} = NGCP::Panel::Utils::Datatables::set_columns($c, [
-        { name => 'id', search => 1, title => '#' },
-        { name => 'device.reseller.name', search => 1, title => 'Reseller' },
-        { name => 'device.vendor', search => 1, title => 'Device Vendor' },
-        { name => 'device.model', search => 1, title => 'Device Model' },
-        { name => 'version', search => 1, title => 'Version' },
+        { name => 'id', search => 1, title => $c->loc('#') },
+        { name => 'device.reseller.name', search => 1, title => $c->loc('Reseller') },
+        { name => 'device.vendor', search => 1, title => $c->loc('Device Vendor') },
+        { name => 'device.model', search => 1, title => $c->loc('Device Model') },
+        { name => 'version', search => 1, title => $c->loc('Version') },
     ]);
 
     my $devprof_rs = $c->model('DB')->resultset('autoprov_profiles');
@@ -101,13 +101,13 @@ sub base :Chained('/') :PathPart('device') :CaptureArgs(0) {
         });
     }
     $c->stash->{devprof_dt_columns} = NGCP::Panel::Utils::Datatables::set_columns($c, [
-        { name => 'id', search => 1, title => '#' },
-        { name => 'config.device.reseller.name', search => 1, title => 'Reseller' },
-        { name => 'name', search => 1, title => 'Name' },
-        { name => 'config.device.vendor', search => 1, title => 'Device Vendor' },
-        { name => 'config.device.model', search => 1, title => 'Device Model' },
-#        { name => 'firmware.filename', search => 1, title => 'Firmware File' },
-        { name => 'config.version', search => 1, title => 'Configuration Version' },
+        { name => 'id', search => 1, title => $c->loc('#') },
+        { name => 'config.device.reseller.name', search => 1, title => $c->loc('Reseller') },
+        { name => 'name', search => 1, title => $c->loc('Name') },
+        { name => 'config.device.vendor', search => 1, title => $c->loc('Device Vendor') },
+        { name => 'config.device.model', search => 1, title => $c->loc('Device Model') },
+#        { name => 'firmware.filename', search => 1, title => $c->loc('Firmware File') },
+        { name => 'config.version', search => 1, title => $c->loc('Configuration Version') },
     ]);
 
     $c->stash(
@@ -195,13 +195,13 @@ sub devmod_create :Chained('base') :PathPart('model/create') :Args(0) :Does(ACL)
 
                 delete $c->session->{created_objects}->{reseller};
                 $c->session->{created_objects}->{device} = { id => $devmod->id };
-                $c->flash(messages => [{type => 'success', text => 'Successfully created device model'}]);
+                $c->flash(messages => [{type => 'success', text => $c->loc('Successfully created device model')}]);
             });
         } catch($e) {
             NGCP::Panel::Utils::Message->error(
                 c => $c,
                 error => $e,
-                desc => "Failed to create device model",
+                desc => $c->loc('Failed to create device model'),
             );
         }
         NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for('/device'));
@@ -220,7 +220,7 @@ sub devmod_base :Chained('base') :PathPart('model') :CaptureArgs(1) {
         NGCP::Panel::Utils::Message->error(
             c => $c,
             error => "invalid device model id '$devmod_id'",
-            desc => "Invalid device model id",
+            desc => $c->loc('Invalid device model id'),
         );
         NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for('/device'));
     }
@@ -230,7 +230,7 @@ sub devmod_base :Chained('base') :PathPart('model') :CaptureArgs(1) {
         NGCP::Panel::Utils::Message->error(
             c => $c,
             error => "device model with id '$devmod_id' not found",
-            desc => "Device model not found",
+            desc => $c->loc('Device model not found'),
         );
         NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for('/device'));
     }
@@ -246,7 +246,7 @@ sub devmod_delete :Chained('devmod_base') :PathPart('delete') :Args(0) :Does(ACL
         NGCP::Panel::Utils::Message->error(
             c => $c,
             error => "failed to delete device model with id '".$c->stash->{devmod}->id."': $e",
-            desc => "Failed to delete device model",
+            desc => $c->loc('Failed to delete device model'),
         );
     }
 
@@ -334,7 +334,7 @@ sub devmod_edit :Chained('devmod_base') :PathPart('edit') :Args(0) :Does(ACL) :A
             NGCP::Panel::Utils::Message->error(
                 c => $c,
                 error => $e,
-                desc => "Failed to update device model",
+                desc => $c->loc('Failed to update device model'),
             );
         }
         NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for('/device'));
@@ -351,7 +351,7 @@ sub devmod_download_frontimage :Chained('devmod_base') :PathPart('frontimage') :
 
     my $devmod = $c->stash->{devmod};
     unless($devmod->front_image) {
-        $c->response->body("404 - No front image available for this device model");
+        $c->response->body($c->loc('404 - No front image available for this device model'));
         $c->response->status(404);
         return;
     }
@@ -364,7 +364,7 @@ sub devmod_download_macimage :Chained('devmod_base') :PathPart('macimage') :Args
 
     my $devmod = $c->stash->{devmod};
     unless($devmod->mac_image) {
-        $c->response->body("404 - No mac image available for this device model");
+        $c->response->body($c->loc('404 - No mac image available for this device model'));
         $c->response->status(404);
         return;
     }
@@ -416,13 +416,13 @@ sub devfw_create :Chained('base') :PathPart('firmware/create') :Args(0) :Does(AC
                 my $devfw = $devmod->create_related('autoprov_firmwares', $form->params);
                 delete $c->session->{created_objects}->{device};
                 $c->session->{created_objects}->{firmware} = { id => $devfw->id };
-                $c->flash(messages => [{type => 'success', text => 'Successfully created device firmware'}]);
+                $c->flash(messages => [{type => 'success', text => $c->loc('Successfully created device firmware')}]);
             });
         } catch($e) {
             NGCP::Panel::Utils::Message->error(
                 c => $c,
                 error => $e,
-                desc => "Failed to create device firmware",
+                desc => $c->loc('Failed to create device firmware'),
             );
         }
         NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for('/device'));
@@ -441,7 +441,7 @@ sub devfw_base :Chained('base') :PathPart('firmware') :CaptureArgs(1) :Does(ACL)
         NGCP::Panel::Utils::Message->error(
             c => $c,
             error => "invalid device firmware id '$devfw_id'",
-            desc => "Invalid device firmware id",
+            desc => $c->loc('Invalid device firmware id'),
         );
         NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for('/device'));
     }
@@ -451,7 +451,7 @@ sub devfw_base :Chained('base') :PathPart('firmware') :CaptureArgs(1) :Does(ACL)
         NGCP::Panel::Utils::Message->error(
             c => $c,
             error => "device firmware with id '$devfw_id' not found",
-            desc => "Device firmware not found",
+            desc => $c->loc('Device firmware not found'),
         );
         NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for('/device'));
     }
@@ -462,12 +462,12 @@ sub devfw_delete :Chained('devfw_base') :PathPart('delete') :Args(0) {
 
     try {
         $c->stash->{devfw}->delete;
-        $c->flash(messages => [{type => 'success', text => 'Device firmware successfully deleted' }]);
+        $c->flash(messages => [{type => 'success', text => $c->loc('Device firmware successfully deleted') }]);
     } catch($e) {
         NGCP::Panel::Utils::Message->error(
             c => $c,
             error => "failed to delete device firmware with id '".$c->stash->{devfw}->id."': $e",
-            desc => "Failed to delete device firmware",
+            desc => $c->loc('Failed to delete device firmware'),
         );
     }
 
@@ -513,13 +513,13 @@ sub devfw_edit :Chained('devfw_base') :PathPart('edit') :Args(0) {
 
                 $c->stash->{devfw}->update($form->params);
                 delete $c->session->{created_objects}->{device};
-                $c->flash(messages => [{type => 'success', text => 'Successfully updated device firmware'}]);
+                $c->flash(messages => [{type => 'success', text => $c->loc('Successfully updated device firmware')}]);
             });
         } catch($e) {
             NGCP::Panel::Utils::Message->error(
                 c => $c,
                 error => $e,
-                desc => "Failed to update device firmware",
+                desc => $c->loc('Failed to update device firmware'),
             );
         }
         NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for('/device'));
@@ -579,13 +579,13 @@ sub devconf_create :Chained('base') :PathPart('config/create') :Args(0) :Does(AC
                 my $devconf = $devmod->create_related('autoprov_configs', $form->params);
                 delete $c->session->{created_objects}->{device};
                 $c->session->{created_objects}->{config} = { id => $devconf->id };
-                $c->flash(messages => [{type => 'success', text => 'Successfully created device configuration'}]);
+                $c->flash(messages => [{type => 'success', text => $c->loc('Successfully created device configuration')}]);
             });
         } catch($e) {
             NGCP::Panel::Utils::Message->error(
                 c => $c,
                 error => $e,
-                desc => "Failed to create device configuration",
+                desc => $c->loc('Failed to create device configuration'),
             );
         }
         NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for('/device'));
@@ -604,7 +604,7 @@ sub devconf_base :Chained('base') :PathPart('config') :CaptureArgs(1) :Does(ACL)
         NGCP::Panel::Utils::Message->error(
             c => $c,
             error => "invalid device config id '$devconf_id'",
-            desc => "Invalid device configuration id",
+            desc => $c->loc('Invalid device configuration id'),
         );
         NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for('/device'));
     }
@@ -614,7 +614,7 @@ sub devconf_base :Chained('base') :PathPart('config') :CaptureArgs(1) :Does(ACL)
         NGCP::Panel::Utils::Message->error(
             c => $c,
             error => "device configuration with id '$devconf_id' not found",
-            desc => "Device configuration not found",
+            desc => $c->loc('Device configuration not found'),
         );
         NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for('/device'));
     }
@@ -625,12 +625,12 @@ sub devconf_delete :Chained('devconf_base') :PathPart('delete') :Args(0) {
 
     try {
         $c->stash->{devconf}->delete;
-        $c->flash(messages => [{type => 'success', text => 'Device configuration successfully deleted' }]);
+        $c->flash(messages => [{type => 'success', text => $c->loc('Device configuration successfully deleted') }]);
     } catch($e) {
         NGCP::Panel::Utils::Message->error(
             c => $c,
             error => "failed to delete device configuration with id '".$c->stash->{devconf}->id."': $e",
-            desc => "Failed to delete device configuration",
+            desc => $c->loc('Failed to delete device configuration'),
         );
     }
 
@@ -670,7 +670,7 @@ sub devconf_edit :Chained('devconf_base') :PathPart('edit') :Args(0) {
 
                 $c->stash->{devconf}->update($form->params);
                 delete $c->session->{created_objects}->{device};
-                $c->flash(messages => [{type => 'success', text => 'Successfully updated device configuration'}]);
+                $c->flash(messages => [{type => 'success', text => $c->loc('Successfully updated device configuration')}]);
             });
         } catch($e) {
             NGCP::Panel::Utils::Message->error(
@@ -737,13 +737,13 @@ sub devprof_create :Chained('base') :PathPart('profile/create') :Args(0) :Does(A
                 $c->model('DB')->resultset('autoprov_profiles')->create($form->params);
 
                 delete $c->session->{created_objects}->{config};
-                $c->flash(messages => [{type => 'success', text => 'Successfully created device profile'}]);
+                $c->flash(messages => [{type => 'success', text => $c->loc('Successfully created device profile')}]);
             });
         } catch($e) {
             NGCP::Panel::Utils::Message->error(
                 c => $c,
                 error => $e,
-                desc => "Failed to create device profile",
+                desc => $c->loc('Failed to create device profile'),
             );
         }
         NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for('/device'));
@@ -762,7 +762,7 @@ sub devprof_base :Chained('base') :PathPart('profile') :CaptureArgs(1) :Does(ACL
         NGCP::Panel::Utils::Message->error(
             c => $c,
             error => "invalid device profile id '$devprof_id'",
-            desc => "Invalid device profile id",
+            desc => $c->loc('Invalid device profile id'),
         );
         NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for('/device'));
     }
@@ -772,7 +772,7 @@ sub devprof_base :Chained('base') :PathPart('profile') :CaptureArgs(1) :Does(ACL
         NGCP::Panel::Utils::Message->error(
             c => $c,
             error => "device profile with id '$devprof_id' not found",
-            desc => "Device profile not found",
+            desc => $c->loc('Device profile not found'),
         );
         NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for('/device'));
     }
@@ -783,12 +783,12 @@ sub devprof_get_lines :Chained('devprof_base') :PathPart('lines/ajax') :Args(0) 
 
     my $resultset = $c->stash->{devprof}->config->device->autoprov_device_line_ranges;
     my $cols = NGCP::Panel::Utils::Datatables::set_columns($c, [
-        { name => 'id', search => 1, title => 'ID' },
-        { name => 'name', search => 1, title => 'Name' },
-        { name => 'num_lines', search => 1, title => 'Number of Lines/Keys' },
-        { name => 'can_private', search => 1, title => 'Private Line' },
-        { name => 'can_shared', search => 1, title => 'Shared Line' },
-        { name => 'can_blf', search => 1, title => 'BLF Key' },
+        { name => 'id', search => 1, title => $c->loc('ID') },
+        { name => 'name', search => 1, title => $c->loc('Name') },
+        { name => 'num_lines', search => 1, title => $c->loc('Number of Lines/Keys') },
+        { name => 'can_private', search => 1, title => $c->loc('Private Line') },
+        { name => 'can_shared', search => 1, title => $c->loc('Shared Line') },
+        { name => 'can_blf', search => 1, title => $c->loc('BLF Key') },
     ]);
     NGCP::Panel::Utils::Datatables::process($c, $resultset, $cols);
     $c->detach( $c->view("JSON") );
@@ -800,12 +800,12 @@ sub devprof_delete :Chained('devprof_base') :PathPart('delete') :Args(0) :Does(A
 
     try {
         $c->stash->{devprof}->delete;
-        $c->flash(messages => [{type => 'success', text => 'Device profile successfully deleted' }]);
+        $c->flash(messages => [{type => 'success', text => $c->loc('Device profile successfully deleted') }]);
     } catch($e) {
         NGCP::Panel::Utils::Message->error(
             c => $c,
             error => "failed to delete device profile with id '".$c->stash->{devprof}->id."': $e",
-            desc => "Failed to delete device profile",
+            desc => $c->loc('Failed to delete device profile'),
         );
     }
 
@@ -846,13 +846,13 @@ sub devprof_edit :Chained('devprof_base') :PathPart('edit') :Args(0) :Does(ACL) 
                 $c->stash->{devprof}->update($form->params);
 
                 delete $c->session->{created_objects}->{config};
-                $c->flash(messages => [{type => 'success', text => 'Successfully updated device profile'}]);
+                $c->flash(messages => [{type => 'success', text => $c->loc('Successfully updated device profile')}]);
             });
         } catch($e) {
             NGCP::Panel::Utils::Message->error(
                 c => $c,
                 error => $e,
-                desc => "Failed to update device profile",
+                desc => $c->loc('Failed to update device profile'),
             );
         }
         NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for('/device'));

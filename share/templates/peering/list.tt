@@ -1,6 +1,7 @@
-[% META title = 'SIP Peering Groups' -%]
+[% site_config.title = c.loc('SIP Peering Groups') -%]
 [%
-    helper.name = 'SIP Peering Groups';
+    helper.name = c.loc('SIP Peering Group');
+    helper.identifier = 'sip_peering_group';
     helper.messages = messages;
     helper.dt_columns = peering_group_dt_columns;
     helper.length_change = 1;
@@ -13,16 +14,16 @@
 
     UNLESS c.user.read_only;
         helper.dt_buttons = [
-            { name = 'Edit', uri = "/peering/'+full.id+'/edit", class = 'btn-small btn-primary', icon = 'icon-edit' },
-            { name = 'Delete', uri = "/peering/'+full.id+'/delete", class = 'btn-small btn-secondary', icon = 'icon-trash' },
-            { name = 'Details', uri = "/peering/'+full.id+'/servers", class = 'btn-small btn-tertiary', icon = 'icon-list' },
+            { name = c.loc('Edit'), uri = "/peering/'+full.id+'/edit", class = 'btn-small btn-primary', icon = 'icon-edit' },
+            { name = c.loc('Delete'), uri = "/peering/'+full.id+'/delete", class = 'btn-small btn-secondary', icon = 'icon-trash' },
+            { name = c.loc('Details'), uri = "/peering/'+full.id+'/servers", class = 'btn-small btn-tertiary', icon = 'icon-list' },
         ];
         helper.top_buttons = [
-            { name = 'Create Peering Group', uri = c.uri_for('/peering/create'), icon = 'icon-star' },
+            { name = c.loc('Create Peering Group'), uri = c.uri_for('/peering/create'), icon = 'icon-star' },
         ];
     ELSE;
         helper.dt_buttons = [
-            { name = 'Details', uri = "/peering/'+full.id+'/servers", class = 'btn-small btn-tertiary', icon = 'icon-list' },
+            { name = c.loc('Details'), uri = "/peering/'+full.id+'/servers", class = 'btn-small btn-tertiary', icon = 'icon-list' },
         ];
     END;
 

@@ -1,6 +1,7 @@
-[% META title = 'NCOS Levels' -%]
+[% site_config.title = c.loc('NCOS Levels') -%]
 [%
-    helper.name = 'NCOS Levels';
+    helper.name = c.loc('NCOS Level');
+    helper.identifier = 'ncos_level';
     helper.messages = messages;
     helper.dt_columns = level_dt_columns;
     helper.length_change = 1;
@@ -13,16 +14,16 @@
 
     UNLESS c.user.read_only;
         helper.dt_buttons = [
-            { name = 'Edit', uri = "/ncos/'+full[\"id\"]+'/edit", class = 'btn-small btn-primary', icon = 'icon-edit' },
-            { name = 'Delete', uri = "/ncos/'+full[\"id\"]+'/delete", class = 'btn-small btn-secondary', icon = 'icon-trash' },
-            { name = 'Patterns', uri = "/ncos/'+full[\"id\"]+'/pattern", class = 'btn-small btn-tertiary', icon = 'icon-list' },
+            { name = c.loc('Edit'), uri = "/ncos/'+full[\"id\"]+'/edit", class = 'btn-small btn-primary', icon = 'icon-edit' },
+            { name = c.loc('Delete'), uri = "/ncos/'+full[\"id\"]+'/delete", class = 'btn-small btn-secondary', icon = 'icon-trash' },
+            { name = c.loc('Patterns'), uri = "/ncos/'+full[\"id\"]+'/pattern", class = 'btn-small btn-tertiary', icon = 'icon-list' },
         ];
         helper.top_buttons = [
-            { name = 'Create NCOS Level', uri = c.uri_for('/ncos/create'), icon = 'icon-star' },
+            { name = c.loc('Create NCOS Level'), uri = c.uri_for('/ncos/create'), icon = 'icon-star' },
         ];
     ELSE;
         helper.dt_buttons = [
-            { name = 'Patterns', uri = "/ncos/'+full[\"id\"]+'/pattern", class = 'btn-small btn-tertiary', icon = 'icon-list' },
+            { name = c.loc('Patterns'), uri = "/ncos/'+full[\"id\"]+'/pattern", class = 'btn-small btn-tertiary', icon = 'icon-list' },
         ];
     END;
 

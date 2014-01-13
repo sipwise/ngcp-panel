@@ -2,16 +2,16 @@
 <div class="plan-container">
     <div class="plan">
         <div class="plan-header">
-            <div class="plan-title">Call List</div>
+            <div class="plan-title">[% c.loc('Call List') %]</div>
             <div class="plan-price">
                 <span>[% calls.count %]</span>
-                <span class="term">Recent Call[% calls.count != 1 ? 's' : '' %]</span>
+                <span class="term">[% calls.count != 1 ? c.loc('Recent Calls') : c.loc('Recent Call') %]</span>
             </div>
         </div>
         <div class="plan-features large">
             <ul>
                 [% IF calls.count == 0 -%]
-                <li>No calls yet</li>
+                <li>[% c.loc('No calls yet') %]</li>
                 [% ELSE -%]
                     [% FOR call IN calls.all -%]
                     <li>
@@ -46,7 +46,7 @@
             </ul>
         </div>
         <div class="plan-actions">
-            <a href="[% c.uri_for_action('/subscriber/calllist', [subscriber.id]) %]" class="btn">View Call List</a>
+            <a href="[% c.uri_for_action('/subscriber/calllist', [subscriber.id]) %]" class="btn">[% c.loc('View Call List') %]</a>
         </div>
     </div>
 </div>

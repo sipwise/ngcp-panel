@@ -1,13 +1,12 @@
 <body class="login">
     <div class="account-container login stacked">
         <div class="content clearfix">
-            <h1>[% realm FILTER ucfirst %] Sign In</h1>
-            <p>Sign in using your [% realm %] credentials:</p>
+            <h1>[% c.loc('[_1] Sign In', realm.ucfirst) %]</h1>
+            <p>[% c.loc('Sign in using your [_1] credentials:', realm) %]</p>
             [% form.render %]
         </div>
     </div>
     <div class="login-extra">
-        Go to 
         [% 
             realms = ['subscriber', 'admin'];
             links = [];
@@ -17,16 +16,15 @@
                     links.push(link);
                 END;
             END;
-            links.join(' or ');
         -%]
-        login.
+        [% c.loc('Go to [_1] login.', links.join(c.loc(' or '))) %]
         <br/>
     </div>
 
 [%#
     TODO: load this only if a signup plugin is installed      
     <div class="login-extra">
-        Don't have an account? <a href="signup.html">Sign Up</a><br/>
+        c.loc('Don't have an account?') <a href="signup.html">c.loc('Sign Up')</a><br/>
     </div>
 %]
 

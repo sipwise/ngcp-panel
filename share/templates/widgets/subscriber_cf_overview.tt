@@ -1,8 +1,8 @@
 [%
-  cfs = [ { type = "cfu", desc = "Unconditional" },
-          { type = "cfb", desc = "Busy" },
-          { type = "cft", desc = "Timeout" },
-          { type = "cfna", desc = "Unavailable" } ];
+  cfs = [ { type = "cfu", desc = c.loc("Call Forward Unconditional") },
+          { type = "cfb", desc = c.loc("Call Forward Busy") },
+          { type = "cft", desc = c.loc("Call Forward Timeout") },
+          { type = "cfna", desc = c.loc("Call Forward Unavailable") } ];
   cfcount = 0;
   FOR cf IN cfs;
     IF cf_destinations.${cf.type}.size;
@@ -14,24 +14,24 @@
 <div class="plan-container">
     <div class="plan">
         <div class="plan-header">
-            <div class="plan-title">Call Forwards</div>
+            <div class="plan-title">[% c.loc('Call Forwards') %]</div>
             <div class="plan-price">
                 <span>[% cfcount %]</span>
-                <span class="term">Call Forward[% cfcount != 1 ? 's' : '' %] Configured</span>
+                <span class="term">[% cfcount == 1 ? c.loc('Call Forward Configured') : c.loc('Call Forwards Configured') %]</span>
             </div>
         </div>
         <div class="plan-features large">
             <ul>
             [% FOR cf IN cfs -%]
                 <li>
-                    Call Forward [% cf.desc %] [% cf_destinations.${cf.type}.size ? '<strong style="color:green">active' : '<strong color="grey">inactive' %]</strong>
+                    [% cf.desc %] [% cf_destinations.${cf.type}.size ? '<strong style="color:green">active' : '<strong color="grey">inactive' %]</strong>
                 </li>
 
             [% END -%]
             </ul>
         </div>
         <div class="plan-actions">
-            <a href="[% c.uri_for_action('/subscriber/preferences', [subscriber.id]) %]" class="btn">Configure Line Settings</a>
+            <a href="[% c.uri_for_action('/subscriber/preferences', [subscriber.id]) %]" class="btn">[% c.loc('Configure Line Settings') %]</a>
         </div>
     </div>
 </div>

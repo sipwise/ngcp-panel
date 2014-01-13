@@ -1,21 +1,21 @@
 <div class="plan-container">
     <div class="plan">
         <div class="plan-header">
-            <div class="plan-title">Resellers</div>
+            <div class="plan-title">[% c.loc('Resellers') %]</div>
             <div class="plan-price">
                 <span>[% resellers.count %]</span>
-                <span class="term">Reseller[% resellers.count == 1 ? "" : "s" %]</span>
+                <span class="term">[% resellers.count == 1 ? c.loc('Reseller') : c.loc('Resellers') %]</span>
             </div>
         </div>
         <div class="plan-features">
             <ul>
-                <li><strong>[% domains.count %]</strong> Domain[% domains.count == 1 ? "" : "s" %]</li>
-                <li><strong>[% customers.count %]</strong> Customer[% customers.count == 1 ? "" : "s" %]</li>
-                <li><strong>[% subscribers.count %]</strong> Subscriber[% subscribers.count == 1 ? "" : "s" %]</li>
+                <li><strong>[% domains.count %]</strong> [% domains.count == 1 ? c.loc('Domain') : c.loc('Domains') %]</li>
+                <li><strong>[% customers.count %]</strong> [% customers.count == 1 ? c.loc('Customer') : c.loc('Customers') %]</li>
+                <li><strong>[% subscribers.count %]</strong> [% subscribers.count == 1 ? c.loc('Subscriber') : c.loc('Subscribers') %]</li>
             </ul>
         </div>
         <div class="plan-actions">
-            <a href="[% c.uri_for('/reseller') %]" class="btn">Configure</a>
+            <a href="[% c.uri_for('/reseller') %]" class="btn">[% c.loc('Configure') %]</a>
         </div>
     </div>
 </div>

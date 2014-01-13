@@ -1,16 +1,16 @@
 <div class="plan-container">
     <div class="plan">
         <div class="plan-header">
-            <div class="plan-title">Voicebox Messages</div>
+            <div class="plan-title">[% c.loc('Voicebox Messages') %]</div>
             <div class="plan-price">
                 <span>[% vmails.count %]</span>
-                <span class="term">New Message[% vmails.count != 1 ? 's' : '' %]</span>
+                <span class="term">[% vmails.count == 1 ? c.loc('New Message') : c.loc('New Messages') %]</span>
             </div>
         </div>
         <div class="plan-features large">
             <ul>
                 [% IF vmails.count == 0 -%]
-                <li>No new messages</li>
+                <li>[% c.loc('No new messages') %]</li>
                 [% ELSE -%]
                     [% FOR vmail IN vmails.all -%]
                     <li>
@@ -32,7 +32,7 @@
             </ul>
         </div>
         <div class="plan-actions">
-            <a href="[% c.uri_for_action('/subscriber/voicemails', [subscriber.id]) %]" class="btn">View Voicebox Messages</a>
+            <a href="[% c.uri_for_action('/subscriber/voicemails', [subscriber.id]) %]" class="btn">[% c.loc('View Voicebox Messages') %]</a>
         </div>
     </div>
 </div>

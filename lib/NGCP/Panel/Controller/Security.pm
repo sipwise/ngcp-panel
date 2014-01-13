@@ -142,7 +142,7 @@ EOF
 
     $dispatcher->dispatch("loadbalancer", 1, 1, $xml);
 
-    $c->flash(messages => [{type => 'success', text => 'IP successfully unbanned'}]);
+    $c->flash(messages => [{type => 'success', text => $c->loc('IP successfully unbanned')}]);
     NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for('/security'));
 }
 
@@ -173,7 +173,7 @@ EOF
         $dispatcher->dispatch("loadbalancer", 1, 1, $xml);
     }
 
-    $c->flash(messages => [{type => 'success', text => 'User successfully unbanned'}]);
+    $c->flash(messages => [{type => 'success', text => $c->loc('User successfully unbanned')}]);
     NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for('/security'));
 }
 

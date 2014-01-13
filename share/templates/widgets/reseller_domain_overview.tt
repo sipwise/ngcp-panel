@@ -1,20 +1,20 @@
 <div class="plan-container">
     <div class="plan">
         <div class="plan-header">
-            <div class="plan-title">Domains</div>
+            <div class="plan-title">[% c.loc('Domains') %]</div>
             <div class="plan-price">
                 <span>[% domains.count %]</span>
-                <span class="term">Domain[% domains.count == 1 ? "" : "s" %]</span>
+                <span class="term">[% domains.count == 1 ? c.loc('Domain') : c.loc('Domains') %]</span>
             </div>
         </div>
         <div class="plan-features">
             <ul>
-                <li><strong>[% rwr_sets.count %]</strong> Rewrite Rule Set[% rwr_sets.count == 1 ? "" : "s" %]</li>
-                <li><strong>[% sound_sets.count %]</strong> Sound Set[% sound_sets.count == 1 ? "" : "s" %]</li>
+                <li><strong>[% rwr_sets.count %]</strong> [% rwr_sets.count == 1 ? c.loc('Rewrite Rule Set') : c.loc('Rewrite Rule Sets') %]</li>
+                <li><strong>[% sound_sets.count %]</strong> [% sound_sets.count == 1 ? c.loc('Sound Set') : c.loc('Sound Set') %]</li>
             </ul>
         </div>
         <div class="plan-actions">
-            <a href="[% c.uri_for('/domain') %]" class="btn">Configure</a>
+            <a href="[% c.uri_for('/domain') %]" class="btn">[% c.loc('Configure') %]</a>
         </div>
     </div>
 </div>

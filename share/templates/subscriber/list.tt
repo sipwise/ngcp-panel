@@ -1,6 +1,7 @@
-[% META title = 'Subscribers' -%]
+[% site_config.title = c.loc('Subscribers') -%]
 [%
-    helper.name = 'Subscriber';
+    helper.name = c.loc('Subscriber');
+    helper.identifier = 'subscriber';
     helper.data = subscribers;
     helper.messages = messages;
     helper.column_sort = 'status';
@@ -15,17 +16,17 @@
 
     UNLESS c.user.read_only;
         helper.dt_buttons = [
-            { name = 'Terminate', uri = "/subscriber/'+full.id+'/terminate", class = 'btn-small btn-secondary', icon = 'icon-remove', condition = 'full.status != "terminated"' },
-            { name = 'Details', uri = "/subscriber/'+full.id+'/details", class = 'btn-small btn-tertiary', icon = 'icon-th-list', condition = 'full.status != "terminated"' },
-            { name = 'Customer', uri = "/customer/'+full.contract_id+'/details", class = 'btn-small btn-tertiary', icon = 'icon-user' },
+            { name = c.loc('Terminate'), uri = "/subscriber/'+full.id+'/terminate", class = 'btn-small btn-secondary', icon = 'icon-remove', condition = 'full.status != "terminated"' },
+            { name = c.loc('Details'), uri = "/subscriber/'+full.id+'/details", class = 'btn-small btn-tertiary', icon = 'icon-th-list', condition = 'full.status != "terminated"' },
+            { name = c.loc('Customer'), uri = "/customer/'+full.contract_id+'/details", class = 'btn-small btn-tertiary', icon = 'icon-user' },
         ];
         helper.top_buttons = [
-            { name = 'Create Subscriber', uri = c.uri_for_action('/subscriber/create_list'), icon = 'icon-star' },
+            { name = c.loc('Create Subscriber'), uri = c.uri_for_action('/subscriber/create_list'), icon = 'icon-star' },
         ];
     ELSE;
         helper.dt_buttons = [
-            { name = 'Details', uri = "/subscriber/'+full.id+'/details", class = 'btn-small btn-tertiary', icon = 'icon-th-list', condition = 'full.status != "terminated"' },
-            { name = 'Customer', uri = "/customer/'+full.contract_id+'/details", class = 'btn-small btn-tertiary', icon = 'icon-user' },
+            { name = c.loc('Details'), uri = "/subscriber/'+full.id+'/details", class = 'btn-small btn-tertiary', icon = 'icon-th-list', condition = 'full.status != "terminated"' },
+            { name = c.loc('Customer'), uri = "/customer/'+full.contract_id+'/details", class = 'btn-small btn-tertiary', icon = 'icon-user' },
         ];
     END;
 

@@ -1,13 +1,13 @@
-[% site_config.title = 'Rewrite Rules for ' _ set_result.name -%]
+[% site_config.title = c.loc('Rewrite Rules for [_1]', set_result.name) -%]
 
 <div class="row">
     <span>
-        <a class="btn btn-primary btn-large" href="[% c.uri_for('/back') %]"><i class="icon-arrow-left"></i> Back</a>
+        <a class="btn btn-primary btn-large" href="[% c.uri_for('/back') %]"><i class="icon-arrow-left"></i> $c->loc('Back')</a>
     </span>
     [% back_created = 1 -%]
     [% UNLESS c.user.read_only -%]
     <span>
-    <a class="btn btn-primary btn-large" href="[% c.uri_for_action('/rewrite/rules_create', [c.req.captures.0]) %]"><i class="icon-star"></i> Create Rewrite Rule</a>
+    <a class="btn btn-primary btn-large" href="[% c.uri_for_action('/rewrite/rules_create', [c.req.captures.0]) %]"><i class="icon-star"></i> $c->loc('Create Rewrite Rule')</a>
     </span>
     [% END -%]
 </div>
@@ -27,9 +27,9 @@
     <thead>
         <tr>
             <th></th>
-            <th>Match Pattern</th>
-            <th>Replacement Pattern</th>
-            <th>Description</th>
+            <th>[% c.loc('Match Pattern') %]</th>
+            <th>[% c.loc('Replacement Pattern') %]</th>
+            <th>[% c.loc('Description') %]</th>
             <th class="ngcp-actions-column"></th>
         </tr>
     </thead>
@@ -51,10 +51,10 @@
             [% UNLESS c.user.read_only -%]
                 <div class="sw_actions pull-right">
                     <a class="btn btn-small btn-primary" href="[% c.uri_for_action('/rewrite/rules_edit',[set_result.id, r.id]) %]">
-                        <i class="icon-edit"></i> Edit
+                        <i class="icon-edit"></i> [% c.loc('Edit') %]
                     </a>
                     <a data-confirm="Delete" class="btn btn-small btn-secondary" href="[% c.uri_for_action('/rewrite/rules_delete',[set_result.id, r.id]) %]">
-                        <i class="icon-trash"></i> Delete
+                        <i class="icon-trash"></i> [% c.loc('Delete') %]
                     </a>
                 </div>
             [% END -%]
@@ -68,7 +68,7 @@
 <div class="accordion" id="rewrite_rules">
     <div class="accordion-group">
         <div class="accordion-heading">
-            <a class="accordion-toggle" data-toggle="collapse" data-parent="#rewrite_rules" href="#collapse_icaller">Inbound Rewrite Rules for Caller</a>
+            <a class="accordion-toggle" data-toggle="collapse" data-parent="#rewrite_rules" href="#collapse_icaller">[% c.loc('Inbound Rewrite Rules for Caller') %]</a>
         </div>
         <div class="accordion-body collapse" id="collapse_icaller">
             <div class="accordion-inner">
@@ -78,7 +78,7 @@
     </div>
     <div class="accordion-group">
         <div class="accordion-heading">
-            <a class="accordion-toggle" data-toggle="collapse" data-parent="#rewrite_rules" href="#collapse_icallee">Inbound Rewrite Rules for Callee</a>
+            <a class="accordion-toggle" data-toggle="collapse" data-parent="#rewrite_rules" href="#collapse_icallee">[% c.loc('Inbound Rewrite Rules for Callee') %]</a>
         </div>
         <div class="accordion-body collapse" id="collapse_icallee">
             <div class="accordion-inner">
@@ -88,7 +88,7 @@
     </div>
     <div class="accordion-group">
         <div class="accordion-heading">
-            <a class="accordion-toggle" data-toggle="collapse" data-parent="#rewrite_rules" href="#collapse_ocaller">Outbound Rewrite Rules for Caller</a>
+            <a class="accordion-toggle" data-toggle="collapse" data-parent="#rewrite_rules" href="#collapse_ocaller">[% c.loc('Outbound Rewrite Rules for Caller') %]</a>
         </div>
         <div class="accordion-body collapse" id="collapse_ocaller">
             <div class="accordion-inner">
@@ -98,7 +98,7 @@
     </div>
     <div class="accordion-group">
         <div class="accordion-heading">
-            <a class="accordion-toggle" data-toggle="collapse" data-parent="#rewrite_rules" href="#collapse_ocallee">Outbound Rewrite Rules for Callee</a>
+            <a class="accordion-toggle" data-toggle="collapse" data-parent="#rewrite_rules" href="#collapse_ocallee">[% c.loc('Outbound Rewrite Rules for Callee') %]</a>
         </div>
         <div class="accordion-body collapse" id="collapse_ocallee">
             <div class="accordion-inner">
@@ -111,7 +111,7 @@
 [% IF edit_flag || create_flag -%]
 [%
     PROCESS "helpers/modal.tt";
-    modal_header(m.name = 'Rule',
+    modal_header(m.name = c.loc('Rule'),
                  m.create_flag = create_flag);
 -%]
 

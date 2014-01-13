@@ -1,4 +1,4 @@
-[% site_config.title = 'Call Flow for Call-ID ' _ callid  -%]
+[% site_config.title = c.loc('Call Flow for Call-ID [_1]', callid) -%]
 
 <script type="text/javascript" src="/js/libs/jquery.popup.js"></script>
 <script type="text/javascript">
@@ -12,8 +12,8 @@
 
 <div class="row">
     <span class="pull-left" style="margin:0 5px 0 5px;">
-        <a class="btn btn-primary btn-large" href="[% c.uri_for('/back') %]"><i class="icon-arrow-left"></i> Back</a>
-        <a class="btn btn-primary btn-large" href="[% c.uri_for_action('/subscriber/get_pcap', c.req.captures) %]"><i class="icon-file"></i> Download PCAP</a>
+        <a class="btn btn-primary btn-large" href="[% c.uri_for('/back') %]"><i class="icon-arrow-left"></i> [% c.loc('Back') %]</a>
+        <a class="btn btn-primary btn-large" href="[% c.uri_for_action('/subscriber/get_pcap', c.req.captures) %]"><i class="icon-file"></i> [% c.loc('Download PCAP') %]</a>
     </span>
 </div>
 [% back_created = 1 -%]
