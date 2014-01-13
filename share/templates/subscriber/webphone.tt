@@ -98,8 +98,7 @@
 
             sip_configuration = data.aaData.sip;
             sip_configuration.register = true;
-            //sip_configuration.trace_sip = true;
-            /*
+            sip_configuration.trace_sip = true;
             phone = new JsSIP.UA(sip_configuration);
 
             // ws connection events
@@ -134,7 +133,6 @@
             });
 
             phone.start();
-            */
 
             xmpp_configuration = data.aaData.xmpp;
             // chat client modifies it, so make a copy to have the original
@@ -239,11 +237,17 @@
                                 })
                                 .mouseleave(function(obj) {
                                     $(obj.currentTarget).find('.xmpp-roster-entry-col3').hide();
-                                });
+                                })
+                                .find('[rel="tooltip"]').tooltip({'html': false});
 
                             $('#' + jidid).find('.xmpp-roster-entry-ctrl-chat').click(function(obj) {
                                 console.log("start chat");
                                 create_chat_window($(obj.target).parents("li.xmpp-roster-entry"), jidid, item.jid.bare);
+                            });
+                            $('#' + jidid).find('.xmpp-roster-entry-ctrl-phone').click(function(obj) {
+                                console.log("start chat");
+                                //create_chat_window($(obj.target).parents("li.xmpp-roster-entry"), jidid, item.jid.bare);
+                                call(item.jid.bare);
                             });
 
                             // we get a presence callback where we'll show it
@@ -279,7 +283,7 @@
 
         }
 
-        function call() {
+        function call(dest_uri) {
             var eventHandlers = {
                 'progress': function(e) {
                     console.log("call in progress");
@@ -314,7 +318,7 @@
               'mediaConstraints': {'audio': true, 'video': false}
             };
 
-            phone.call('sip:voicebox@pbx1.demo.sipwise.com', options);
+            phone.call('sip:' + dest_uri, options);
         }
 
         function roster_asc_sort(a, b) {
@@ -341,9 +345,9 @@
             '    </div>' +
             '    <div class="xmpp-roster-entry-col3" style="float:right; padding:20px 0 20px 0; margin:0; display:none;">' +
             '        <div style="float:right; font-size:1.5em">' +
-            '            <span class="fa fa-comment xmpp-roster-entry-ctrl xmpp-roster-entry-ctrl-chat"></span>' +
-            '            <span class="fa fa-phone xmpp-roster-entry-ctrl xmpp-roster-entry-ctrl-phone"></span>' +
-            '            <span class="fa fa-file-text xmpp-roster-entry-ctrl xmpp-roster-entry-ctrl-fax"></span>' +
+            '            <span class="fa fa-comment xmpp-roster-entry-ctrl xmpp-roster-entry-ctrl-chat" rel="tooltip" title="Start Chat"></span>' +
+            '            <span class="fa fa-phone xmpp-roster-entry-ctrl xmpp-roster-entry-ctrl-phone" rel="tooltip" title="Make Call"></span>' +
+            '            <span class="fa fa-file-text xmpp-roster-entry-ctrl xmpp-roster-entry-ctrl-fax" rel="tooltip" title="Send Fax"></span>' +
             '        </div>' +
             '    </div>' +
             '</li>';
@@ -519,9 +523,7 @@
         </ul>
     </div>
     
-<!--
     <video id="selfView" autoplay hidden=true></video>
     <video id="remoteView" autoplay hidden=true></video>
--->
 
 [% # vim: set tabstop=4 syntax=html expandtab: -%]
