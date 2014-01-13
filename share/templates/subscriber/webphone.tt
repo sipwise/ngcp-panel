@@ -273,7 +273,7 @@
 
         function create_xmpp_entry_dom(jidid, jid, name) {
             var entry = 
-            '<li id="' + jidid + '" class="xmpp-roster-entry row span6" style="clear:both; float:left; padding:0; margin:1px; background:#f9f9f9;">' +
+            '<li id="' + jidid + '" class="xmpp-roster-entry row span6" style="clear:both; float:left; padding:0; margin:1px; background:#f0f0f0;">' +
             '    <div class="xmpp-roster-entry-col1 unavailable" style="float:left; width:10px; padding:0; margin:0; ">&nbsp;</div>' +
             '    <div class="xmpp-roster-entry-col2 span3" style="float:left; padding:20px; margin:0;">' +
             '        <div>' +
@@ -283,7 +283,7 @@
             '            <span class="xmpp-roster-entry-details" style="font-size:1em; font-weight:normal;">' + jid + '</span>' +
             '        </div>' +
             '    </div>' +
-            '    <div class="xmpp-roster-entry-col3 span2" style="float:left; padding:20px 0 20px 0; margin:0; display:none;">' +
+            '    <div class="xmpp-roster-entry-col3" style="float:right; padding:20px 0 20px 0; margin:0; display:none;">' +
             '        <div style="float:right; font-size:1.5em">' +
             '            <span class="fa fa-comment xmpp-roster-entry-ctrl xmpp-roster-entry-ctrl-chat"></span>' +
             '            <span class="fa fa-phone xmpp-roster-entry-ctrl xmpp-roster-entry-ctrl-phone"></span>' +
