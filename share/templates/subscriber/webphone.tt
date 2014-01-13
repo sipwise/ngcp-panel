@@ -48,8 +48,10 @@
     <!--<script type="text/javascript" src="/js/libs/stanzaio.bundle.min.js"></script>-->
     <script type="text/javascript" src="/js/libs/stanzaio.bundle.js"></script>
     <script type="text/javascript" src="/js/libs/bootstrap-select.min.js"></script>
+    <script type="text/javascript" src="/js/libs/bootstrap-switch.js"></script>
     <script type="text/javascript" src="/js/libs/jquery.slimscroll.min.js"></script>
     <link rel="stylesheet" type="text/css" href="/css/bootstrap-select/bootstrap-select.min.css"/>
+    <link rel="stylesheet" type="text/css" href="/css/bootstrap-switch/bootstrap-switch.css"/>
     <link rel="stylesheet" type="text/css" href="/font/font-awesome/css/font-awesome.min.css"/>
     <script type="text/javascript">
 
@@ -61,6 +63,7 @@
         var orig_page_title = document.title;
         var window_focus = true;
         var window_timeout;
+        var xmpp_show_offline = false;
 
         $.ajax({
             url: "[% c.uri_for_action('/subscriber/webphone_ajax', c.req.captures) %]"
@@ -193,7 +196,8 @@
                             console.log(item.name);
                             var jidid = item.jid.bare.replace(/[^a-zA-Z0-9_]/g, '-');
                             var entry = create_xmpp_entry_dom(jidid, item.jid.bare, item.name || item.jid.bare);
-                            $("#xmpp-roster").append(entry);
+                            $('#xmpp-roster').append(entry);
+                            $('#xmpp-roster li').sort(roster_asc_sort).appendTo('#xmpp-roster');
                             equalHeights($('#' + jidid).find('.xmpp-roster-entry-col1'), $('#' + jidid).find('.xmpp-roster-entry-col2'));
                             $('#' + jidid)
                                 .mouseenter(function(obj) {
@@ -207,6 +211,9 @@
                                 console.log("start chat");
                                 create_chat_window($(obj.target).parents("li.xmpp-roster-entry"), jidid, item.jid.bare);
                             });
+
+                            // we get a presence callback where we'll show it
+                            $(entry).hide();
                         });
                     }
                     $('#xmpp-pres').val(xmpp_last_state);
@@ -229,6 +236,11 @@
 
                 $("#xmpp-roster #" + jidid + " .xmpp-roster-entry-col1").removeClass().addClass("xmpp-roster-entry-col1 " + show);
                 console.log("+++++++ type=" + pres.type + ", show=" + pres.show);
+                if(show != 'unavailable' || xmpp_show_offline) {
+                    $("#xmpp-roster #" + jidid).show();
+                } else {
+                    $("#xmpp-roster #" + jidid).hide();
+                }
             });
 
         }
@@ -269,6 +281,10 @@
             };
 
             phone.call('sip:voicebox@pbx1.demo.sipwise.com', options);
+        }
+
+        function roster_asc_sort(a, b) {
+            return ($(b).find('.xmpp-roster-entry-name').text().toLowerCase()) < ($(a).find('.xmpp-roster-entry-name').text().toLowerCase()) ? 1 : -1;    
         }
 
         function create_xmpp_entry_dom(jidid, jid, name) {
@@ -360,6 +376,20 @@
         $(function() {
             $('.selectpicker').selectpicker();
 
+            $('#xmpp-toggle-offline').bootstrapSwitch();
+            $('#xmpp-toggle-offline').bootstrapSwitch('setSizeClass', 'switch-mini');
+            $('#xmpp-toggle-offline').on('switch-change', function(obj) {
+                if(obj.currentTarget.checked) {
+                    console.log("show offline entries");
+                    xmpp_show_offline = true;
+                    $('.xmpp-roster-entry').show();
+                } else {
+                    console.log("hide offline entries");
+                    xmpp_show_offline = false;
+                    $('.xmpp-roster-entry-col1.unavailable').parent().hide();
+                }
+            });
+
             $('#xmpp-pres').change(function(obj) {
                 var show = obj.currentTarget[obj.currentTarget.selectedIndex].value;
                 xmpp_last_state = show;
@@ -420,21 +450,27 @@
     </div>
     -->
 
-    <div class="row">
+    <div>
         <h3>Buddy List</h3>
-        <select id="xmpp-pres" class="selectpicker span6">
-            [% FOR opt IN 
-                [
-                    { n = "unavailable", d = "Offline" },
-                    { n = "available", d = "Available" },
-                    { n = "away", d = "Away" },
-                    { n = "xa", d = "Extended Away" },
-                    { n = "dnd", d = "Do Not Disturb" },
-                ]
-            -%]
-                <option value="[% opt.n %]" data-content="<span class='xmpp-roster-entry-col1 [% opt.n %]'>&nbsp;</span><span> [% opt.d %]</span>">[% opt.d %]</option>
-            [% END -%]
-        </select>
+        <div class="row span6" style="margin:0; clear:both; padding:10px;">
+            <label for="xmpp-toggle-offline" style="float:left; margin-right: 10px;">Show offline Users</label>
+            <input id="xmpp-toggle-offline" style="float:left" type="checkbox" data-on="success" data-off="default" data-on-label="YES" data-off-label="NO">
+        </div>
+        <div class="row span6" style="margin:0; clear:both;">
+            <select id="xmpp-pres" class="selectpicker span6">
+                [% FOR opt IN 
+                    [
+                        { n = "unavailable", d = "Offline" },
+                        { n = "available", d = "Available" },
+                        { n = "away", d = "Away" },
+                        { n = "xa", d = "Extended Away" },
+                        { n = "dnd", d = "Do Not Disturb" },
+                    ]
+                -%]
+                    <option value="[% opt.n %]" data-content="<span class='xmpp-roster-entry-col1 [% opt.n %]'>&nbsp;</span><span> [% opt.d %]</span>">[% opt.d %]</option>
+                [% END -%]
+            </select>
+        </div>
         <ul id="xmpp-roster" class="span8" style="list-style-type:none; padding:0; margin:0;">
         </ul>
     </div>
