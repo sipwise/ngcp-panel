@@ -6,7 +6,8 @@
     }
 
     #xmpp-roster .popover {
-        max-width: 100%; 
+        max-width: 100%;
+        min-height: 150px;
     }
 
     .xmpp-roster-entry-col1.available {
@@ -47,7 +48,7 @@
     <!--<script type="text/javascript" src="/js/libs/stanzaio.bundle.min.js"></script>-->
     <script type="text/javascript" src="/js/libs/stanzaio.bundle.js"></script>
     <script type="text/javascript" src="/js/libs/bootstrap-select.min.js"></script>
-    <script type="text/javascript" src="/js/libs/bootstrap-select.min.js"></script>
+    <script type="text/javascript" src="/js/libs/jquery.slimscroll.min.js"></script>
     <link rel="stylesheet" type="text/css" href="/css/bootstrap-select/bootstrap-select.min.css"/>
     <link rel="stylesheet" type="text/css" href="/font/font-awesome/css/font-awesome.min.css"/>
     <script type="text/javascript">
@@ -158,7 +159,8 @@
                 if(!chat_win.length) {
                     chat_win = create_chat_window($('#xmpp-roster #' + jidid), jidid, jid);
                 }
-                $(chat_win).find('.xmpp-chat-history').append('<li><em>' + msg + '</em></li>');
+                $(chat_win).find('.xmpp-chat-history').append('<li><em>' + msg + '</em></li>')
+                    .slimScroll({ scrollBy: '50px' });
             });
 
             chat.on('chat', function(obj) {
@@ -170,7 +172,8 @@
                 if(!chat_win.length) {
                     chat_win = create_chat_window($('#xmpp-roster #' + jidid), jidid, jid);
                 }
-                $(chat_win).find('.xmpp-chat-history').append('<li>recv: ' + obj.body + '</li>');
+                $(chat_win).find('.xmpp-chat-history').append('<li>recv: ' + obj.body + '</li>')
+                    .slimScroll({ scrollBy: '50px' });
                 raise_attention('chat');
             });
 
@@ -299,10 +302,16 @@
                 container: '#' + jidid,
                 trigger: 'manual',
                 title: '<div>&nbsp;<span class="pull-left">' + jid + '</span><span class="xmpp-chat-close pull-right fa fa-times"></span></div>',
-                content: '<div class="span4" style="margin:10px;"><ul class="xmpp-chat-history" style="list-style-type:none; margin:0; min-height:30px;"></ul><input data-jid="'+ jid + '" type="text" class="xmpp-chat-input" style="width:100%; margin:0;"/></div>'
+                content: '<div class="span4" style="margin:10px;"><ul class="xmpp-chat-history" style="list-style-type:none; margin:0; min-height:100px;"></ul><input data-jid="'+ jid + '" type="text" class="xmpp-chat-input" style="width:100%; margin:10px 0 0 0;"/></div>'
             });
             $(parent).popover("show");
             $(parent).find(".xmpp-chat-input").focus();
+            $(parent).find(".xmpp-chat-history").slimScroll({
+                height: '100px',
+                railVisible: true,
+                alwaysVisible: true,
+                start: 'bottom'
+            });
             return $(parent).find(".popover");
         }
 
@@ -368,7 +377,9 @@
                     if(obj.which == 13 && $(obj.target).val().length) {
                         obj.preventDefault();
                         chat.sendMessage({ to: $(obj.target).data("jid"), body: $(obj.target).val() });
-                        $(obj.target).prev("ul").append("<li>sent: " + $(obj.target).val() + "</li>");
+                        var chat_win = $(obj.target).parent().find(".xmpp-chat-history");
+                        $(chat_win).append("<li>sent: " + $(obj.target).val() + "</li>")
+                            .slimScroll({ scrollBy: '50px' });
                         $(obj.target).val("");
                     } else {
                         // TODO: send chatState message somehow
