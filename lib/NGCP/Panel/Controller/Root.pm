@@ -32,7 +32,7 @@ sub auto :Private {
         if(index($c->controller->catalyst_component_name, 'NGCP::Panel::Controller::API') == 0) {
             $c->log->debug("++++++ Root::auto unauthenticated API request");
             my $ssl_dn = $c->request->env->{SSL_CLIENT_M_DN} // ""; 
-            my $ssl_sn = hex $c->request->env->{SSL_CLIENT_M_SERIAL} // 0;
+            my $ssl_sn = hex ($c->request->env->{SSL_CLIENT_M_SERIAL} // 0);
             if($ssl_sn) {
                 $c->log->debug("++++++ Root::auto API request with client auth sn '$ssl_sn'");
                 unless($ssl_dn eq "/CN=Sipwise NGCP API client certificate") {
