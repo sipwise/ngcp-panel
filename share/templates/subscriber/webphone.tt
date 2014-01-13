@@ -37,6 +37,27 @@
         padding: 4px;
     }
 
+    .xmpp-chat-time {
+        font-style:italic;
+        color: #999;
+    }
+    .xmpp-chat-sent {
+        float: right;
+        clear: both;
+        margin-right: 15px;
+        margin-left: 30px;
+        text-align: right;
+        color: #333;
+    }
+    .xmpp-chat-recv {
+        float: left;
+        clear: both;
+        margin-left: 0px;
+        margin-right: 30px;
+        text-align: left;
+        color: #666;
+    }
+
 </style>
 
 <div class="row">
@@ -69,6 +90,7 @@
         var window_focus = true;
         var window_timeout;
         var xmpp_show_offline = false;
+        var xmpp_last_time = "";
 
         $.ajax({
             url: "[% c.uri_for_action('/subscriber/webphone_ajax', c.req.captures) %]"
@@ -180,8 +202,15 @@
                 if(!chat_win.length) {
                     chat_win = create_chat_window($('#xmpp-roster #' + jidid), jidid, jid);
                 }
-                $(chat_win).find('.xmpp-chat-history').append('<li>recv: ' + obj.body + '</li>')
+
+                var now = get_time_string();
+                if(now != xmpp_last_time) {
+                    xmpp_last_time = now;
+                    $(chat_win).find('.xmpp-chat-history').append('<li><span class="xmpp-chat-recv"><span class="xmpp-chat-time">' + now + '</span></span></li>')
+                }
+                $(chat_win).find('.xmpp-chat-history').append('<li><span class="xmpp-chat-recv">' + obj.body + '</span></li>')
                     .slimScroll({ scrollBy: '50px' });
+
                 raise_attention('chat');
             });
 
@@ -290,6 +319,12 @@
 
         function roster_asc_sort(a, b) {
             return ($(b).find('.xmpp-roster-entry-name').text().toLowerCase()) < ($(a).find('.xmpp-roster-entry-name').text().toLowerCase()) ? 1 : -1;    
+        }
+
+        function get_time_string() {
+            var now = new Date();
+            //return ((now.getHours() < 10)?"0":"") + now.getHours() +":"+ ((now.getMinutes() < 10)?"0":"") + now.getMinutes() +":"+ ((now.getSeconds() < 10)?"0":"") + now.getSeconds();
+            return ((now.getHours() < 10)?"0":"") + now.getHours() +":"+ ((now.getMinutes() < 10)?"0":"") + now.getMinutes();
         }
 
         function create_xmpp_entry_dom(jidid, jid, name) {
@@ -413,7 +448,12 @@
                         obj.preventDefault();
                         chat.sendMessage({ to: $(obj.target).data("jid"), body: $(obj.target).val() });
                         var chat_win = $(obj.target).parent().find(".xmpp-chat-history");
-                        $(chat_win).append("<li>sent: " + $(obj.target).val() + "</li>")
+                        var now = get_time_string();
+                        if(now != xmpp_last_time) {
+                            xmpp_last_time = now;
+                            $(chat_win).append('<li><span class="xmpp-chat-sent"><span class="xmpp-chat-time">' + now + '</span></span></li>')
+                        }
+                        $(chat_win).append('<li><span class="xmpp-chat-sent">' + $(obj.target).val() + '</span></li>')
                             .slimScroll({ scrollBy: '50px' });
                         $(obj.target).val("");
                     } else {
