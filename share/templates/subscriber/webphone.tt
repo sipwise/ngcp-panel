@@ -32,6 +32,11 @@
         cursor: pointer;
     }
 
+    .has-switch label.switch-mini {
+        /* make more space on left/right */
+        padding: 4px;
+    }
+
 </style>
 
 <div class="row">
@@ -453,8 +458,7 @@
     <div>
         <h3>Buddy List</h3>
         <div class="row span6" style="margin:0; clear:both; padding:10px;">
-            <label for="xmpp-toggle-offline" style="float:left; margin-right: 10px;">Show offline Users</label>
-            <input id="xmpp-toggle-offline" style="float:left" type="checkbox" data-on="success" data-off="default" data-on-label="YES" data-off-label="NO">
+            <input id="xmpp-toggle-offline" style="float:left" type="checkbox" data-on="success" data-off="default" data-on-label="Show Offline Users" data-off-label="Hide Offline Users">
         </div>
         <div class="row span6" style="margin:0; clear:both;">
             <select id="xmpp-pres" class="selectpicker span6">
