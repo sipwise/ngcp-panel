@@ -80,7 +80,7 @@ msgid "A PIN code which may be used in a VSC to disable the outgoing user block 
 msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:75
-msgid "A list of shell patterns specifying which CLIs are allowed to be set by the subscriber. \"*\", \"?\" and \"x-y\" with \"x\" and \"y\" representing numbers from 0 to 9 may be used as wildcards as usual in shell patterns."
+msgid "A list of shell patterns specifying which CLIs are allowed to be set by the subscriber. \"*\", \"?\" and \"[x-y]\" with \"x\" and \"y\" representing numbers from 0 to 9 may be used as wildcards as usual in shell patterns."
 msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:49 lib/NGCP/Panel/Utils/DbStrings.pm:95
@@ -101,6 +101,10 @@ msgstr ""
 
 #: share/templates/administrator/list.tt:21 share/templates/administrator/list.tt:29
 msgid "API key"
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm:186
+msgid "Access Restrictions"
 msgstr ""
 
 #: lib/NGCP/Panel/Controller/Customer.pm:681
@@ -367,6 +371,10 @@ msgstr ""
 msgid "CLI of CloudPBX Pilot Subscriber"
 msgstr ""
 
+#: lib/NGCP/Panel/Utils/DbStrings.pm:185
+msgid "Call Blockings"
+msgstr ""
+
 #: share/templates/calls/chord.tt:1 share/templates/widgets/admin_topmenu_settings.tt:9
 msgid "Call Distribution"
 msgstr ""
@@ -400,7 +408,7 @@ msgstr ""
 msgid "Call Forward Unconditional"
 msgstr ""
 
-#: share/templates/subscriber/preferences.tt:44 share/templates/widgets/subscriber_cf_overview.tt:17
+#: lib/NGCP/Panel/Utils/DbStrings.pm:184 share/templates/subscriber/preferences.tt:44 share/templates/widgets/subscriber_cf_overview.tt:17
 msgid "Call Forwards"
 msgstr ""
 
@@ -501,6 +509,10 @@ msgstr ""
 msgid "Clone"
 msgstr ""
 
+#: lib/NGCP/Panel/Utils/DbStrings.pm:192
+msgid "Cloud PBX"
+msgstr ""
+
 #: lib/NGCP/Panel/Utils/DbStrings.pm:170
 msgid "CloudPBX Hunt Group List"
 msgstr ""
@@ -574,11 +586,11 @@ msgid "Contacts"
 msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:19
-msgid "Contains wildcarded SIP usernames (the localpart of the whole SIP URI, eg., \"user\" of SIP URI \"user@example.com\") that are (not) allowed to be called by the subscriber. \"*\", \"?\" and \"x-y\" with \"x\" and \"y\" representing numbers from 0 to 9 may be used as wildcards like in shell patterns."
+msgid "Contains wildcarded SIP usernames (the localpart of the whole SIP URI, eg., \"user\" of SIP URI \"user@example.com\") that are (not) allowed to be called by the subscriber. \"*\", \"?\" and \"[x-y]\" with \"x\" and \"y\" representing numbers from 0 to 9 may be used as wildcards like in shell patterns."
 msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:13
-msgid "Contains wildcarded SIP usernames (the localpart of the whole SIP URI, eg., \"user\" of SIP URI \"user@example.com\") that are (not) allowed to call the subscriber. \"*\", \"?\" and \"x-y\" with \"x\" and \"y\" representing numbers from 0 to 9 may be used as wildcards like in shell patterns."
+msgid "Contains wildcarded SIP usernames (the localpart of the whole SIP URI, eg., \"user\" of SIP URI \"user@example.com\") that are (not) allowed to call the subscriber. \"*\", \"?\" and \"[x-y]\" with \"x\" and \"y\" representing numbers from 0 to 9 may be used as wildcards like in shell patterns."
 msgstr ""
 
 #: share/templates/contract/list.tt:3 share/templates/reseller/details.tt:64
@@ -1692,6 +1704,10 @@ msgstr ""
 msgid "Internal manual allowed source IP group #"
 msgstr ""
 
+#: lib/NGCP/Panel/Utils/DbStrings.pm:191
+msgid "Internals"
+msgstr ""
+
 #: lib/NGCP/Panel/Controller/Subscriber.pm:510 lib/NGCP/Panel/Controller/Subscriber.pm:781
 msgid "Invalid Call Forward type."
 msgstr ""
@@ -1972,6 +1988,10 @@ msgstr ""
 msgid "Mouseover on a country name to focus on calls to or from a single country. The thickness of links between countries encodes the relative frequency of calls between two countries: thicker links represent more calls."
 msgstr ""
 
+#: lib/NGCP/Panel/Utils/DbStrings.pm:188
+msgid "NAT and Media Flow Control"
+msgstr ""
+
 #: lib/NGCP/Panel/Utils/DbStrings.pm:52 share/templates/ncos/list.tt:3
 msgid "NCOS Level"
 msgstr ""
@@ -2074,6 +2094,10 @@ msgstr ""
 
 #: lib/NGCP/Panel/Controller/Subscriber.pm:113 lib/NGCP/Panel/Controller/Subscriber.pm:1934
 msgid "Number"
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm:187
+msgid "Number Manipulations"
 msgstr ""
 
 #: share/templates/ncos/pattern_list.tt:4
@@ -2399,6 +2423,10 @@ msgstr ""
 msgid "Reminder"
 msgstr ""
 
+#: lib/NGCP/Panel/Utils/DbStrings.pm:189
+msgid "Remote Authentication"
+msgstr ""
+
 #: share/templates/rewrite/rules_list.tt:31
 msgid "Replacement Pattern"
 msgstr ""
@@ -2638,6 +2666,10 @@ msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:161
 msgid "Send the calls from/to the subscribers through the cloud pbx module."
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm:190
+msgid "Session Timers"
 msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:102
@@ -3345,6 +3377,10 @@ msgstr ""
 
 #: lib/NGCP/Panel/Controller/Peering.pm:82
 msgid "Weight"
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm:193
+msgid "XMPP Settings"
 msgstr ""
 
 #: lib/NGCP/Panel/Controller/Billing.pm:78

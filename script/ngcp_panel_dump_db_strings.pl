@@ -28,12 +28,17 @@ HEADER_END
 my $rs = $s->resultset('voip_preferences');
 
 for my $row ($rs->all) {
-    print $fh '    $c->loc("'.$row->label."\");\n"
+    print $fh _string_to_line($row->label)
         if ($row->label);
     #as for [...] -> need to quote this in db
     #print $fh '    $c->loc(\''.$row->description =~ s/'/\\'/rg =~ s/([\[\]])/~$1/rg ."');\n"
-    print $fh '    $c->loc(\''.$row->description =~ s/'/\\'/rg =~ s/([\[\]])//rg ."');\n"
+    print $fh _string_to_line($row->description)
         if ($row->description);
+}
+
+for my $row ($s->resultset('voip_preference_groups')->all) {
+    print $fh _string_to_line($row->name)
+        if ($row->name);
 }
 
 print $fh <<FOOTER_END;
@@ -53,6 +58,11 @@ it under the same terms as Perl itself.
 FOOTER_END
 
 close $fh;
+
+sub _string_to_line {
+    my $string = shift;
+    return '    $c->loc(\'' . $string =~ s/'/\\'/rg =~ s/([\[\]])/~$1/rg ."');\n";
+}
 
 __END__
 

@@ -23,7 +23,7 @@
 [% FOREACH group IN helper.pref_groups %]
 <div class="accordion-group">
     <div class="accordion-heading">
-        <a class="accordion-toggle" data-toggle="collapse" data-parent="#preference_groups" href="#collapse[% group.id %]">[% group.name %]</a>
+        <a class="accordion-toggle" data-toggle="collapse" data-parent="#preference_groups" href="#collapse[% group.id %]">[% c.loc(group.name) %]</a>
     </div>
     <div class="accordion-body collapse" id="collapse[% group.id %]">
     <div class="accordion-inner">
