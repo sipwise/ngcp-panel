@@ -1,51 +1,58 @@
 <!--
 	Bootstrap Sync URI:    http://[% client.ip %]/form-submit
 	Bootstrap Sync Method: POST
-	Bootstrap Sync Params: 447=2,445=[% server.uri %],264=2
+	Bootstrap Sync Params: [4.1.4.7430] 447=2,445=[% server.uri %],264=2
+                         [5.0.1.4068] 342=2,340=[% server.uri %],125=2
 -->
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <PHONE_CONFIG>
   <ALL
+[% shared_line = 0 %]
+[% FOR range IN phone.lineranges -%]
+  [% FOR line IN range.lines -%]
+    [% key = line.keynum + 1 -%]
+    [% IF range.name == "Phone Keys" -%]
+      [% IF line.type == "private" %]
+    reg.[% key %].address="[% line.username %]@[% line.domain %]"
+    reg.[% key %].auth.userId="[% line.username %]"
+    reg.[% key %].auth.password="[% line.password %]"
+    reg.[% key %].displayName="[% line.displayname %]"
+    reg.[% key %].label="[% line.username %]"
+    reg.[% key %].type="private"
+      [% ELSIF line.type == "shared" -%]
+    reg.[% key %].address="[% line.username %]@[% line.domain %]"
+    reg.[% key %].auth.userId="[% line.username %]"
+    reg.[% key %].auth.password="[% line.password %]"
+    reg.[% key %].displayName="[% line.displayname %]"
+    reg.[% key %].label="[% line.username %]"
+    reg.[% key %].type="shared"
+    reg.[% key %].bargeInEnabled="1"
+    reg.[% key %].strictLineSeize="1"
+      [% ELSIF line.type == "blf" -%]
+      [% shared_line = shared_line + 1 -%]
+    attendant.resourceList.[% shared_line %].address="[% line.username %]@[% line.domain %]"
+    attendant.resourceList.[% shared_line %].label="[% line.displayname %]"
+    attendant.resourceList.[% shared_line %].type="automata"
+      [% END -%]
+    [% END -%]
+  [% END -%]
+[% END -%]
+    voIpProt.SIP.outboundProxy.address="[% line.domain %]"
+    voIpProt.server.1.address="[% line.domain %]"
+    voIpProt.server.1.port="5060"
     dialplan.digitmap=""
     dialplan.digitmap.timeOut=""
     feature.presence.enabled="1"
+    feature.callPark.enabled="1"
+    feature.directedCallPickup.enabled="1"
+    feature.groupCallPickup.enabled="1"
     pres.idleTimeout.offHours.enabled="0"
     pres.idleTimeout.officeHours.enabled="0"
     call.directedCallPickupMethod="native"
-    call.directedCallPickupString="dpickup"
     call.parkedCallRetrieveMethod="native"
-    call.parkedCallRetrieveString="ppickup"
-    attendant.behaviors.display.remoteCallerID.normal="1"
-    attendant.behaviors.display.spontaneousCallAppearances.normal="0"
+    attendant.behaviors.display.remoteCallerID.automata="1"
+    attendant.behaviors.display.spontaneousCallAppearances.automata="0"
     voIpProt.SIP.useCompleteUriForRetrieve="1"
     voIpProt.SIP.strictReplacesHeader="1"
-    [% FOR range IN phone.lineranges -%]
-      [% FOR line IN range.lines -%]
-        [% key = line.keynum + 1 -%]
-        [% IF range.name == "Phone Keys" -%]
-          [% IF line.type == "private" -%]
-            reg.[% key %].address="sip:[% line.username %]@[% line.domain %]"
-            reg.[% key %].auth.password="[% line.password %]"
-            reg.[% key %].auth.userId="[% line.username %]"
-            reg.[% key %].displayName="[% line.displayname %]"
-            reg.[% key %].label="[% line.displayname %]"
-	    reg.[% key %].type="private"
-	    voIpProt.server.[% key %].address="[% line.domain %]"
-          [% ELSIF line.type == "shared" -%]
-            reg.[% key %].address="sip:[% line.username %]@[% line.domain %]"
-            reg.[% key %].auth.password="[% line.password %]"
-            reg.[% key %].auth.userId="[% line.username %]"
-            reg.[% key %].displayName="[% line.displayname %]"
-            reg.[% key %].label="[% line.displayname %]"
-	    reg.[% key %].type="shared"
-	    voIpProt.server.[% key %].address="[% line.domain %]"
-          [% ELSIF line.type == "blf" -%]
-            attendant.resourceList.[% key %].address="sip:[% line.username %]@[% line.domain %]"
-            attendant.resourceList.[% key %].label="[% line.displayname %]"
-            attendant.resourceList.[% key %].type="normal"
-          [% END -%]
-        [% END -%]
-      [% END -%]
-    [% END -%]
   />
 </PHONE_CONFIG>
