@@ -153,6 +153,7 @@ sub create_subscriber {
             username => $params->{username},
             domain_id => $billing_domain->id,
             status => $params->{status},
+            external_id => ((defined $params->{external_id} && length $params->{external_id}) ? $params->{external_id} : undef), # make null if empty
             primary_number_id => undef, # will be filled in next step
         });
         my ($cli);
