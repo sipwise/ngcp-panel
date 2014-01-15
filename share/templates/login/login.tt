@@ -24,7 +24,7 @@
 [%#
     TODO: load this only if a signup plugin is installed      
     <div class="login-extra">
-        c.loc('Don't have an account?') <a href="signup.html">c.loc('Sign Up')</a><br/>
+        c.loc("Don't have an account?") <a href="signup.html">c.loc('Sign Up')</a><br/>
     </div>
 %]
 

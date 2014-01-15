@@ -2,12 +2,12 @@
 
 <div class="row">
     <span>
-        <a class="btn btn-primary btn-large" href="[% c.uri_for('/back') %]"><i class="icon-arrow-left"></i> $c->loc('Back')</a>
+        <a class="btn btn-primary btn-large" href="[% c.uri_for('/back') %]"><i class="icon-arrow-left"></i> [% c.loc('Back') %]</a>
     </span>
     [% back_created = 1 -%]
     [% UNLESS c.user.read_only -%]
     <span>
-    <a class="btn btn-primary btn-large" href="[% c.uri_for_action('/rewrite/rules_create', [c.req.captures.0]) %]"><i class="icon-star"></i> $c->loc('Create Rewrite Rule')</a>
+    <a class="btn btn-primary btn-large" href="[% c.uri_for_action('/rewrite/rules_create', [c.req.captures.0]) %]"><i class="icon-star"></i> [% c.loc('Create Rewrite Rule') %]</a>
     </span>
     [% END -%]
 </div>

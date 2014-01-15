@@ -59,19 +59,19 @@ sub stash_soundset_list {
     }
 
     my $dt_fields = [
-        { name => 'id', search => 1, title => '#' },
-        { name => 'name', search => 1, title => 'Name' },
-        { name => 'description', search => 1, title => 'Description' },
+        { name => 'id', search => 1, title => $c->loc('#') },
+        { name => 'name', search => 1, title => $c->loc('Name') },
+        { name => 'description', search => 1, title => $c->loc('Description') },
     ];
 
     if($c->user->roles eq "admin") {
         splice @{ $dt_fields }, 1, 0,
-            { name => 'reseller.name', search => 1, title => 'Reseller' };
+            { name => 'reseller.name', search => 1, title => $c->loc('Reseller') };
         splice @{ $dt_fields }, 2, 0,
-            { name => 'contract.contact.email', search => 1, title => 'Customer' };
+            { name => 'contract.contact.email', search => 1, title => $c->loc('Customer') };
     } elsif($c->user->roles eq "reseller") {
         splice @{ $dt_fields }, 1, 0,
-            { name => 'contract.contact.email', search => 1, title => 'Customer' };
+            { name => 'contract.contact.email', search => 1, title => $c->loc('Customer') };
         $sets_rs = $sets_rs->search({ reseller_id => $c->user->reseller_id });
     } elsif($c->user->roles eq "subscriberadmin" && !$contract) {
         $sets_rs = $sets_rs->search({ 'me.contract_id' => $c->user->account_id });
