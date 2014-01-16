@@ -358,6 +358,7 @@ sub edit :Chained('base') :PathPart('edit') :Args(0) {
                 }
                 my $old_bprof_id = $billing_mapping->billing_profile_id;
                 $c->log->debug(">>>>>>>>>>> old bprof_id=$old_bprof_id");
+                my $old_prepaid = $billing_mapping->billing_profile->prepaid;
                 $contract->update($form->params);
                 if($bprof_id != $old_bprof_id) {
                     $contract->billing_mappings->create({
@@ -365,6 +366,30 @@ sub edit :Chained('base') :PathPart('edit') :Args(0) {
                         product_id => $product_id,
                         start_date => NGCP::Panel::Utils::DateTime::current_local,
                     });
+                    my $new_billing_profile = $c->model('DB')->resultset('billing_profiles')->find($bprof_id);
+                    if($old_prepaid && !$new_billing_profile->prepaid) {
+                        foreach my $sub($contract->voip_subscribers->all) {
+                            my $prov_sub = $sub->provisioning_voip_subscriber;
+                            next unless($prov_sub);
+                            my $pref = NGCP::Panel::Utils::Preferences::get_usr_preference_rs(
+                                c => $c, attribute => 'prepaid', prov_subscriber => $prov_sub);
+                            if($pref->first) {
+                                $pref->first->delete;
+                            }
+                        }
+                    } elsif(!$old_prepaid && $new_billing_profile->prepaid) {
+                        foreach my $sub($contract->voip_subscribers->all) {
+                            my $prov_sub = $sub->provisioning_voip_subscriber;
+                            next unless($prov_sub);
+                            my $pref = NGCP::Panel::Utils::Preferences::get_usr_preference_rs(
+                                c => $c, attribute => 'prepaid', prov_subscriber => $prov_sub);
+                            if($pref->first) {
+                                $pref->first->update({ value => 1 });
+                            } else {
+                                $pref->create({ value => 1 });
+                            }
+                        }
+                    }
                 }
 
                 unless ( defined $schema->resultset('billing_profiles')
@@ -548,6 +573,16 @@ sub subscriber_create :Chained('base') :PathPart('subscriber/create') :Args(0) {
                     admin_default => $pbxadmin,
                     preferences => $preferences,
                 );
+
+                if($c->stash->{billing_mapping}->billing_profile->prepaid) {
+                    my $pref = NGCP::Panel::Utils::Preferences::get_usr_preference_rs(
+                        c => $c, attribute => 'prepaid', prov_subscriber => $billing_subscriber->provisioning_voip_subscriber);
+                    if($pref->first) {
+                        $pref->first->update({ 'value' => 1 });
+                    } else {
+                        $pref->create({ 'value' => 1 });
+                    }
+                }
 
                 NGCP::Panel::Utils::Subscriber::update_pbx_group_prefs(
                     c => $c,
