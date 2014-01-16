@@ -1,3 +1,19 @@
+ngcp-panel (1.1.8) unstable; urgency=low
+
+  [ Gerhard Jungwirth ]
+  * [ca45155] MT#5465 preferences_enum stop using default_val
+  * [2585ea4] MT#4871 selenium-tests: unskip tests, timer information
+  * [c4fd5cb] MT#4871 Change screenres of selenium-tests to 1024x768
+  * [f7b2968] MT#4771 fix selenium resolution for reseller test
+  * [35e77d8] MT#4771 increase wait-timeout on admin-login test
+  * [154cead] MT#5661 change selection of customers when bprof is updated
+
+  [ Andreas Granig ]
+  * [5cda7fc] MT#5629 Fix setting external_id in customer ctx.
+  * [46ecb86] MT#5661 Update prepaid pref on bilprof change
+
+ -- Andreas Granig <agranig@sipwise.com>  Thu, 16 Jan 2014 14:20:59 +0100
+
 ngcp-panel (1.1.7) unstable; urgency=low
 
   [ Andreas Granig ]
