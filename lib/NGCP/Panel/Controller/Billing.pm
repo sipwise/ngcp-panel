@@ -13,6 +13,7 @@ use NGCP::Panel::Form::BillingZone;
 use NGCP::Panel::Form::BillingPeaktimeWeekdays;
 use NGCP::Panel::Form::BillingPeaktimeSpecial;
 use NGCP::Panel::Form::BillingFeeUpload;
+use NGCP::Panel::Utils::Contract;
 use NGCP::Panel::Utils::Message;
 use NGCP::Panel::Utils::Navigation;
 use NGCP::Panel::Utils::Datatables;
@@ -138,20 +139,16 @@ sub edit :Chained('base') :PathPart('edit') {
                 # if prepaid flag changed, update all subscribers for customers
                 # who currently have the billing profile active
                 my $rs = $schema->resultset('billing_mappings')->search({
-                    start_date => [ -or =>
-                        { '<=' => NGCP::Panel::Utils::DateTime::current_local },
-                        { -is  => undef },
-                    ],
-                    end_date => [ -or =>
-                        { '>=' => NGCP::Panel::Utils::DateTime::current_local },
-                        { -is  => undef },
-                    ],
                     billing_profile_id => $c->stash->{profile_result}->id,
                 });
+                my $contract_rs = NGCP::Panel::Utils::Contract::get_contract_rs(
+        schema => $c->model('DB'));
                 if($old_prepaid && !$c->stash->{profile_result}->prepaid) {
                     foreach my $map($rs->all) {
                         my $contract = $map->contract;
                         next unless($contract->contact->reseller_id); # skip non-customers
+                        my $chosen_contract = $contract_rs->find({id => $contract->id});
+                        next unless( defined $chosen_contract && $chosen_contract->get_column('billing_mapping_id') == $map->id ); # is not current mapping
                         foreach my $sub($contract->voip_subscribers->all) {
                             my $prov_sub = $sub->provisioning_voip_subscriber;
                             next unless($sub->provisioning_voip_subscriber);
@@ -166,6 +163,8 @@ sub edit :Chained('base') :PathPart('edit') {
                     foreach my $map($rs->all) {
                         my $contract = $map->contract;
                         next unless($contract->contact->reseller_id); # skip non-customers
+                        my $chosen_contract = $contract_rs->find({id => $contract->id});
+                        next unless( defined $chosen_contract && $chosen_contract->get_column('billing_mapping_id') == $map->id ); # is not current mapping
                         foreach my $sub($contract->voip_subscribers->all) {
                             my $prov_sub = $sub->provisioning_voip_subscriber;
                             next unless($prov_sub);
