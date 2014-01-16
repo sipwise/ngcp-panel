@@ -189,6 +189,21 @@ sub create_list :Chained('sub_list') :PathPart('create') :Args(0) :Does(ACL) :AC
                 my $voip_preferences = $schema->resultset('voip_preferences')->search({
                     'usr_pref' => 1,
                 });
+
+                my $rs = NGCP::Panel::Utils::Contract::get_contract_rs(
+                    schema => $c->model('DB'));
+                my $billing_contract = $rs->find($contract->id);
+                use Data::Printer; p $billing_contract;
+                my $billing_mapping = $c->model('DB')->resultset('billing_mappings')->find(
+                    $billing_contract->get_column('billing_mapping_id'));
+
+                if($billing_mapping->billing_profile->prepaid) {
+                    $voip_preferences->find({ 'attribute' => 'prepaid' })
+                        ->voip_usr_preferences->create({ 
+                            'subscriber_id' => $prov_subscriber->id,
+                            'value' => 1,
+                        });
+                }
                 $voip_preferences->find({ 'attribute' => 'account_id' })
                     ->voip_usr_preferences->create({ 
                         'subscriber_id' => $prov_subscriber->id,

@@ -16,6 +16,8 @@ use NGCP::Panel::Form::BillingFeeUpload;
 use NGCP::Panel::Utils::Message;
 use NGCP::Panel::Utils::Navigation;
 use NGCP::Panel::Utils::Datatables;
+use NGCP::Panel::Utils::Preferences;
+use NGCP::Panel::Utils::DateTime;
 
 my @WEEKDAYS = map { langinfo($_) } (DAY_2, DAY_3, DAY_4, DAY_5, DAY_6, DAY_7, DAY_1);
 #Monday Tuesday Wednesday Thursday Friday Saturday Sunday
@@ -127,7 +129,58 @@ sub edit :Chained('base') :PathPart('edit') {
                 $form->values->{reseller_id} = $c->user->reseller_id;
             }
             delete $form->values->{reseller};
-            $c->stash->{profile_result}->update($form->values);
+            my $old_prepaid = $c->stash->{profile_result}->prepaid;
+
+            my $schema = $c->model('DB');
+            $schema->txn_do(sub {
+                $c->stash->{profile_result}->update($form->values);
+
+                # if prepaid flag changed, update all subscribers for customers
+                # who currently have the billing profile active
+                my $rs = $schema->resultset('billing_mappings')->search({
+                    start_date => [ -or =>
+                        { '<=' => NGCP::Panel::Utils::DateTime::current_local },
+                        { -is  => undef },
+                    ],
+                    end_date => [ -or =>
+                        { '>=' => NGCP::Panel::Utils::DateTime::current_local },
+                        { -is  => undef },
+                    ],
+                    billing_profile_id => $c->stash->{profile_result}->id,
+                });
+                if($old_prepaid && !$c->stash->{profile_result}->prepaid) {
+                    foreach my $map($rs->all) {
+                        my $contract = $map->contract;
+                        next unless($contract->contact->reseller_id); # skip non-customers
+                        foreach my $sub($contract->voip_subscribers->all) {
+                            my $prov_sub = $sub->provisioning_voip_subscriber;
+                            next unless($sub->provisioning_voip_subscriber);
+                            my $pref = NGCP::Panel::Utils::Preferences::get_usr_preference_rs(
+                                c => $c, attribute => 'prepaid', prov_subscriber => $prov_sub);
+                            if($pref->first) {
+                                $pref->first->delete;
+                            }
+                        }
+                    }
+                } elsif(!$old_prepaid && $c->stash->{profile_result}->prepaid) {
+                    foreach my $map($rs->all) {
+                        my $contract = $map->contract;
+                        next unless($contract->contact->reseller_id); # skip non-customers
+                        foreach my $sub($contract->voip_subscribers->all) {
+                            my $prov_sub = $sub->provisioning_voip_subscriber;
+                            next unless($prov_sub);
+                            my $pref = NGCP::Panel::Utils::Preferences::get_usr_preference_rs(
+                                c => $c, attribute => 'prepaid', prov_subscriber => $prov_sub);
+                            if($pref->first) {
+                                $pref->first->update({ value => 1 });
+                            } else {
+                                $pref->create({ value => 1 });
+                            }
+                        }
+                    }
+                }
+        
+            });
 
             delete $c->session->{created_objects}->{reseller};
             $c->flash(messages => [{type => 'success', text => 'Billing profile successfully updated'}]);
