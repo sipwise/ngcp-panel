@@ -9,6 +9,7 @@ use Data::HAL::Link qw();
 use HTTP::Status qw(:constants);
 use NGCP::Panel::Utils::DateTime;
 use NGCP::Panel::Utils::Contract;
+use NGCP::Panel::Utils::Preferences;
 use NGCP::Panel::Form::BillingProfile::Admin qw();
 
 sub hal_from_profile {
@@ -89,7 +90,51 @@ sub update_profile {
         }
     }
 
+    my $old_prepaid = $profile->prepaid;
     $profile->update($resource);
+
+    # if prepaid flag changed, update all subscribers for customers
+    # who currently have the billing profile active
+    my $rs = $c->model('DB')->resultset('billing_mappings')->search({
+        billing_profile_id => $profile->id,
+    });
+    my $contract_rs = NGCP::Panel::Utils::Contract::get_contract_rs(
+schema => $c->model('DB'));
+    if($old_prepaid && !$profile->prepaid) {
+        foreach my $map($rs->all) {
+            my $contract = $map->contract;
+            next unless($contract->contact->reseller_id); # skip non-customers
+            my $chosen_contract = $contract_rs->find({id => $contract->id});
+            next unless( defined $chosen_contract && $chosen_contract->get_column('billing_mapping_id') == $map->id ); # is not current mapping
+            foreach my $sub($contract->voip_subscribers->all) {
+                my $prov_sub = $sub->provisioning_voip_subscriber;
+                next unless($sub->provisioning_voip_subscriber);
+                my $pref = NGCP::Panel::Utils::Preferences::get_usr_preference_rs(
+                    c => $c, attribute => 'prepaid', prov_subscriber => $prov_sub);
+                if($pref->first) {
+                    $pref->first->delete;
+                }
+            }
+        }
+    } elsif(!$old_prepaid && $profile->prepaid) {
+        foreach my $map($rs->all) {
+            my $contract = $map->contract;
+            next unless($contract->contact->reseller_id); # skip non-customers
+            my $chosen_contract = $contract_rs->find({id => $contract->id});
+            next unless( defined $chosen_contract && $chosen_contract->get_column('billing_mapping_id') == $map->id ); # is not current mapping
+            foreach my $sub($contract->voip_subscribers->all) {
+                my $prov_sub = $sub->provisioning_voip_subscriber;
+                next unless($prov_sub);
+                my $pref = NGCP::Panel::Utils::Preferences::get_usr_preference_rs(
+                    c => $c, attribute => 'prepaid', prov_subscriber => $prov_sub);
+                if($pref->first) {
+                    $pref->first->update({ value => 1 });
+                } else {
+                    $pref->create({ value => 1 });
+                }
+            }
+        }
+    }
 
     return $profile;
 }

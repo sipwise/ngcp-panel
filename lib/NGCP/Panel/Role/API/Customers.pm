@@ -9,6 +9,7 @@ use Data::HAL::Link qw();
 use HTTP::Status qw(:constants);
 use NGCP::Panel::Utils::DateTime;
 use NGCP::Panel::Utils::Contract;
+use NGCP::Panel::Utils::Preferences;
 use NGCP::Panel::Form::Contract::ProductSelect qw();
 
 sub hal_from_customer {
@@ -118,7 +119,8 @@ sub update_customer {
     my ($self, $c, $customer, $old_resource, $resource, $form) = @_;
 
     my $billing_mapping = $customer->billing_mappings->find($customer->get_column('bmid'));
-    $old_resource->{billing_profile_id} = $billing_mapping->billing_profile_id; 
+    $old_resource->{billing_profile_id} = $billing_mapping->billing_profile_id;
+    $old_resource->{prepaid} =  $billing_mapping->billing_profile->prepaid;
     unless($resource->{billing_profile_id}) {
         $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Invalid 'billing_profile_id', not defined");
         return;
@@ -181,6 +183,32 @@ sub update_customer {
             c => $c,
             contract => $customer,
         );
+    }
+
+    if($billing_profile) { # check prepaid change if billing profile changed
+        if($old_resource->{prepaid} && !$billing_profile->prepaid) {
+            foreach my $sub($customer->voip_subscribers->all) {
+                my $prov_sub = $sub->provisioning_voip_subscriber;
+                next unless($prov_sub);
+                my $pref = NGCP::Panel::Utils::Preferences::get_usr_preference_rs(
+                    c => $c, attribute => 'prepaid', prov_subscriber => $prov_sub);
+                if($pref->first) {
+                    $pref->first->delete;
+                }
+            }
+        } elsif(!$old_resource->{prepaid} && $billing_profile->prepaid) {
+            foreach my $sub($customer->voip_subscribers->all) {
+                my $prov_sub = $sub->provisioning_voip_subscriber;
+                next unless($prov_sub);
+                my $pref = NGCP::Panel::Utils::Preferences::get_usr_preference_rs(
+                    c => $c, attribute => 'prepaid', prov_subscriber => $prov_sub);
+                if($pref->first) {
+                    $pref->first->update({ value => 1 });
+                } else {
+                    $pref->create({ value => 1 });
+                }
+            }
+        }
     }
 
     # TODO: what about changed product, do we allow it?
