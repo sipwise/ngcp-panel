@@ -190,7 +190,6 @@ sub create_list :Chained('sub_list') :PathPart('create') :Args(0) :Does(ACL) :AC
                 my $rs = NGCP::Panel::Utils::Contract::get_contract_rs(
                     schema => $c->model('DB'));
                 my $billing_contract = $rs->find($contract->id);
-                use Data::Printer; p $billing_contract;
                 my $billing_mapping = $c->model('DB')->resultset('billing_mappings')->find(
                     $billing_contract->get_column('billing_mapping_id'));
 
