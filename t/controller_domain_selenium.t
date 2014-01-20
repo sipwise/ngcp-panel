@@ -33,7 +33,7 @@ SKIP: {
     my ($row, $edit_link);
     try {
         $row = $d->find(xpath => '//table[@id="Domain_table"]/tbody/tr[1]');
-        $edit_link = $d->find('(//table[@id="Domain_table"]/tbody/tr[1]/td//a)[contains(text(),"Preferences")]');
+        $edit_link = $d->find(xpath => '(//table[@id="Domain_table"]/tbody/tr[1]/td//a)[contains(text(),"Preferences")]');
     } catch {
         skip ("It seems, no domains exist", 1);
     }
@@ -47,6 +47,7 @@ SKIP: {
     $d->findclick_ok(link_text => "Access Restrictions");
 
     diag("Click edit for the preference concurrent_max");
+    sleep 1;
     $row = $d->find(xpath => '//table/tbody/tr/td[normalize-space(text()) = "concurrent_max"]');
     ok($row);
     $edit_link = $d->find_child_element($row, '(./../td//a)[2]');
