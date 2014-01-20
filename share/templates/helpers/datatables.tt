@@ -218,6 +218,7 @@ $(document).ready(function() {
     PROCESS "helpers/modal.tt";
     modal_header(m.create_flag=helper.create_flag,
                  m.name = helper.name);
+        helper.form_object = translate_form( helper.form_object );
         helper.form_object.render;
     modal_footer();
     modal_script(m.close_target = helper.close_target);

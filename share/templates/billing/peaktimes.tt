@@ -82,6 +82,7 @@
 [% 
     PROCESS "helpers/modal.tt";
     modal_header(m.name = weekday.name);
+    form = translate_form(form);
 -%]
 
 <div class="modal-body">

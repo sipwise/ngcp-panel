@@ -529,7 +529,7 @@
     PROCESS "helpers/modal.tt";
     modal_header(m.create_flag = create_flag,
                  m.name = description.defined ? description : c.loc("Subscriber"));
-    form.render;
+    translate_form(form).render;
     modal_footer();
     modal_script(m.close_target = close_target);
 -%]
@@ -541,7 +541,7 @@
     PROCESS "helpers/modal.tt";
     modal_header(m.create_flag=0,
                  m.name = c.loc("Settings"));
-    form.render;
+    translate_form(form).render;
     modal_footer();
     modal_script(m.close_target = close_target);
 -%]
@@ -550,7 +550,7 @@
     PROCESS "helpers/modal.tt";
     modal_header(m.create_flag=0, m.edit_flag=0,
                  m.name = c.loc("Deployed Device"));
-    form.render;
+    translate_form(form).render;
     modal_footer();
     modal_script(m.close_target = close_target);
 -%]

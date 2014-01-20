@@ -10,6 +10,7 @@ has 'template' => ( isa => 'Str',
 has 'ajax_src' => ( isa => 'Str', is => 'rw' );
 has 'table_fields' => ( isa => 'ArrayRef', is => 'rw' );
 has 'table_titles' => ( isa => 'ArrayRef', is => 'rw' );
+has 'language_file' => (isa => 'Str', is => 'rw', default => 'dataTables.default.js' );
 
 sub render_element {
     my ($self) = @_;
@@ -27,6 +28,7 @@ sub render_element {
         table_fields => $self->table_fields,
         table_titles => $self->table_titles,
         errors => $self->errors,
+        language_file => $self->language_file,
     };
     my $t = new Template({ 
         ABSOLUTE => 1, 

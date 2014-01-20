@@ -74,9 +74,7 @@
     PROCESS "helpers/modal.tt";
     modal_header(m.create_flag=0,
                  m.name = file_result.handle.name );
--%]
-    [% form.render -%]
-[%
+    translate_form(form).render;
     modal_footer();
 -%]
 <script>

@@ -31,6 +31,9 @@ $(document).ready(function() {
 		"bInfo": true,
 		"iDisplayLength": 4,
         'iShowPages': 5,
+        "oLanguage": {
+            "sUrl": "/js/i18n/[% language_file %]"
+        },
 		"sAjaxSource": "[% ajax_src %]",
 		
 		"aoColumns": [
