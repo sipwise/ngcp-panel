@@ -423,4 +423,11 @@ textarea.ngcp-autoconf-area {
     width: 580px;
 }
 
+/* -------------
+  Login Page
+----------------*/
+div.login {
+    width: 390px;
+}
+
 /* vim: set tabstop=4 syntax=css expandtab: */
