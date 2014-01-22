@@ -1,3 +1,9 @@
+ngcp-panel (1.1.9) unstable; urgency=low
+
+  * [4fe9668] MT#5741 Allow uppercase in subscriber username
+
+ -- Andreas Granig <agranig@sipwise.com>  Wed, 22 Jan 2014 11:06:55 +0100
+
 ngcp-panel (1.1.8) unstable; urgency=low
 
   [ Gerhard Jungwirth ]
