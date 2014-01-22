@@ -11,7 +11,7 @@ sub validate {
              $self->value =~ m/\.$/ or
              $self->value =~ m/\.\./ );
     return $self->add_error("Contains invalid symbols.")
-        unless ( $self->value =~ m/^[[:lower:][:digit:]=+,;_.~'()-]+$/ );
+        unless ( $self->value =~ m/^[[:lower:][:upper:][:digit:]=+,;_.~'()-]+$/ );
     return 0;
 }
 
