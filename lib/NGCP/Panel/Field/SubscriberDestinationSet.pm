@@ -6,6 +6,7 @@ sub build_options {
     my ($self) = @_;
 
     my $form = $self->form;
+    return [] unless $form->ctx;
 
     my $active_destination_set = $form->ctx->stash->{cf_active_destination_set};
     my $destination_sets = $form->ctx->stash->{cf_destination_sets};

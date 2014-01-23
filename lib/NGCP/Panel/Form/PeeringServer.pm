@@ -61,6 +61,7 @@ has_field 'via_route' => (
 sub build_via_routes {
     my ($self) = @_;
 
+    return unless $self->form->ctx;
     my @options = ();
     push @options, { label => 'None', value => '' };
     my $sbcref = $self->form->ctx->config->{sip}->{external_sbc};

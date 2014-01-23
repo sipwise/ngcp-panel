@@ -22,6 +22,7 @@ has_field 'line.line' => (
 sub build_lines {
     my ($self) = @_;
     my $c = $self->form->ctx;
+    return [] unless $c;
     my $fdev = $c->stash->{pbx_device};
     my @options = ();
     my $i = 0;

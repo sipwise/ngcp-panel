@@ -22,6 +22,7 @@ has_field 'profile_id' => (
 sub build_profiles {
     my ($self) = @_;
     my $c = $self->form->ctx;
+    return unless $c;
     my $profile_rs = $c->stash->{autoprov_profile_rs};
     my @options = ();
     push @options, { label => '', value => undef };
@@ -73,6 +74,7 @@ has_field 'line.subscriber_id' => (
 sub build_subscribers {
     my ($self) = @_;
     my $c = $self->form->ctx;
+    return unless $c;
     my $sub_rs = $c->stash->{contract}->voip_subscribers;
     my @options = ();
     foreach my $s($sub_rs->all) {

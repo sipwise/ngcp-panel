@@ -26,14 +26,14 @@ sub set_slots {
     my @options = ();
     my @used = ();
     my $current;
-    if(defined $self->form->ctx && 
-       defined $self->form->ctx->stash->{used_sd_slots}) {
+    
+    return [] unless $self->form->ctx;
+    if(defined $self->form->ctx->stash->{used_sd_slots}) {
         foreach my $s($self->form->ctx->stash->{used_sd_slots}->all) {
             push @used, $s->slot;
         }
     }
-    if(defined $self->form->ctx && 
-       defined $self->form->ctx->stash->{speeddial}) {
+    if(defined $self->form->ctx->stash->{speeddial}) {
         $current = $self->form->ctx->stash->{speeddial}->slot;
     }
     foreach my $s(@{ $self->form->ctx->config->{speed_dial_vsc_presets}->{vsc} })

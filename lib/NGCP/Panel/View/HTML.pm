@@ -5,6 +5,8 @@ use URI::Escape qw/uri_unescape/;
 
 extends 'Catalyst::View::TT';
 
+use NGCP::Panel::Utils::I18N;
+
 __PACKAGE__->config(
     TEMPLATE_EXTENSION => '.tt',
     render_die => 1,
@@ -19,40 +21,8 @@ __PACKAGE__->config(
 );
 
 sub translate_form {
-    my ($self, $c, $form) = @_;
-    $self->_translate_fields_recursive($c, [$form->fields]);
-    return $form;
-}
-
-sub _translate_fields_recursive {
-    my ($self, $c, $fields) = @_;
-    for my $field (@$fields) {
-        $field->label( $c->loc($field->label) )
-            if $field->label;
-        if ($field->isa('HTML::FormHandler::Field::Submit')
-                || $field->isa('HTML::FormHandler::Field::Button')) {
-            $field->value( $c->loc($field->value) );
-        }
-        if ($field->isa('HTML::FormHandler::Field::Select')) {
-            for my $option (@{ $field->options }) {
-                $option->{label} = $c->loc($option->{label});
-            }
-        }
-        if ($field->element_attr->{title}[0]) {
-            $field->element_attr->{title}[0] = $c->loc($field->element_attr->{title}[0]);
-        }
-        if ($field->isa('HTML::FormHandler::Field::Compound')) {
-            $self->_translate_fields_recursive($c,[$field->fields]);
-        }
-        if($field->isa('NGCP::Panel::Field::DataTable')) {
-            for my $t (@{ $field->table_titles }) {
-                $t = $c->loc($t);
-            }
-            $field->language_file( $c->loc($field->language_file) )
-                if ($field->language_file);
-        }
-    }
-    return;
+    my $self = shift;
+    NGCP::Panel::Utils::I18N->translate_form(@_);
 }
 
 =head1 NAME

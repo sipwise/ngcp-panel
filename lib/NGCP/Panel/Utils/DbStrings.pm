@@ -191,6 +191,439 @@ sub localize {
     $c->loc('Internals');
     $c->loc('Cloud PBX');
     $c->loc('XMPP Settings');
+    return;
+}
+
+sub form_strings {
+
+    #NGCP::Panel::Form::BillingFee
+    #NGCP::Panel::Form::BillingFeeUpload
+    #NGCP::Panel::Form::BillingPeaktimeSpecial
+    #NGCP::Panel::Form::BillingPeaktimeWeekdays
+    #NGCP::Panel::Form::BillingZone
+    #NGCP::Panel::Form::CustomerBalance
+    #NGCP::Panel::Form::CustomerDailyFraud
+    #NGCP::Panel::Form::CustomerMonthlyFraud
+    #NGCP::Panel::Form::DestinationSet
+    #NGCP::Panel::Form::Login
+    #NGCP::Panel::Form::PeeringGroup
+    #NGCP::Panel::Form::PeeringRule
+    #NGCP::Panel::Form::PeeringServer
+    #NGCP::Panel::Form::Preferences
+    #NGCP::Panel::Form::Reminder
+    #NGCP::Panel::Form::Reseller
+    #NGCP::Panel::Form::Statistics
+    #NGCP::Panel::Form::Subscriber
+    #NGCP::Panel::Form::SubscriberCFAdvanced
+    #NGCP::Panel::Form::SubscriberCFSimple
+    #NGCP::Panel::Form::SubscriberCFTAdvanced
+    #NGCP::Panel::Form::SubscriberCFTSimple
+    #NGCP::Panel::Form::SubscriberEdit
+    #NGCP::Panel::Form::TimeSet
+    #NGCP::Panel::Form::Administrator::Admin
+    #NGCP::Panel::Form::Administrator::APIDownDelete
+    #NGCP::Panel::Form::Administrator::APIGenerate
+    #NGCP::Panel::Form::Administrator::Reseller
+    #NGCP::Panel::Form::BillingProfile::Admin
+    #NGCP::Panel::Form::BillingProfile::Reseller
+    #NGCP::Panel::Form::Contact::Admin
+    #NGCP::Panel::Form::Contact::Reseller
+    #NGCP::Panel::Form::Contract::Basic
+    #NGCP::Panel::Form::Contract::PeeringReseller
+    #NGCP::Panel::Form::Contract::ProductSelect
+    #NGCP::Panel::Form::Customer::PbxAdminSubscriber
+    #NGCP::Panel::Form::Customer::PbxExtensionSubscriber
+    #NGCP::Panel::Form::Customer::PbxExtensionSubscriberEdit
+    #NGCP::Panel::Form::Customer::PbxExtensionSubscriberEditAdmin
+    #NGCP::Panel::Form::Customer::PbxExtensionSubscriberEditSubadmin
+    #NGCP::Panel::Form::Customer::PbxExtensionSubscriberEditSubadminNoGroup
+    #NGCP::Panel::Form::Customer::PbxFieldDevice
+    #NGCP::Panel::Form::Customer::PbxFieldDeviceEdit
+    #NGCP::Panel::Form::Customer::PbxFieldDeviceSync
+    #NGCP::Panel::Form::Customer::PbxGroup
+    #NGCP::Panel::Form::Customer::PbxGroupBase
+    #NGCP::Panel::Form::Customer::PbxSubscriber
+    #NGCP::Panel::Form::Customer::Subscriber
+    #NGCP::Panel::Form::Device::Config
+    #NGCP::Panel::Form::Device::Firmware
+    #NGCP::Panel::Form::Device::Model
+    #NGCP::Panel::Form::Device::ModelAdmin
+    #NGCP::Panel::Form::Device::Profile
+    #NGCP::Panel::Form::Domain::Admin
+    #NGCP::Panel::Form::Domain::Reseller
+    #NGCP::Panel::Form::Domain::ResellerPbx
+    #NGCP::Panel::Form::Faxserver::Active
+    #NGCP::Panel::Form::Faxserver::Destination
+    #NGCP::Panel::Form::Faxserver::Name
+    #NGCP::Panel::Form::Faxserver::Password
+    #NGCP::Panel::Form::Faxserver::SendCopy
+    #NGCP::Panel::Form::Faxserver::SendStatus
+    #NGCP::Panel::Form::NCOS::AdminLevel
+    #NGCP::Panel::Form::NCOS::LocalAC
+    #NGCP::Panel::Form::NCOS::Pattern
+    #NGCP::Panel::Form::NCOS::ResellerLevel
+    #NGCP::Panel::Form::RewriteRule::AdminSet
+    #NGCP::Panel::Form::RewriteRule::CloneSet
+    #NGCP::Panel::Form::RewriteRule::ResellerSet
+    #NGCP::Panel::Form::RewriteRule::Rule
+    #NGCP::Panel::Form::Sound::AdminSet
+    #NGCP::Panel::Form::Sound::CustomerSet
+    #NGCP::Panel::Form::Sound::File
+    #NGCP::Panel::Form::Sound::ResellerSet
+    #NGCP::Panel::Form::Subscriber::AutoAttendant
+    #NGCP::Panel::Form::Subscriber::Location
+    #NGCP::Panel::Form::Subscriber::SpeedDial
+    #NGCP::Panel::Form::Subscriber::TrustedSource
+    #NGCP::Panel::Form::Voicemail::Attach
+    #NGCP::Panel::Form::Voicemail::Delete
+    #NGCP::Panel::Form::Voicemail::Email
+    #NGCP::Panel::Form::Voicemail::Pin
+    $c->loc('Hour');
+    $c->loc('Callee');
+    $c->loc('New Name');
+    $c->loc('Line/Key');
+    $c->loc('Loopplay');
+    $c->loc('October');
+    $c->loc('base fee charged per billing interval, float, specifying Euro');
+    $c->loc('Field');
+    $c->loc('Password');
+    $c->loc('YYYY-MM-DD HH:mm:ss');
+    $c->loc('Slot add');
+    $c->loc('Subscriber');
+    $c->loc('Source');
+    $c->loc('Host:');
+    $c->loc('First Name');
+    $c->loc('Is master');
+    $c->loc('SIP Username');
+    $c->loc('currency symbol or ISO code, string, will be used on invoices and webinterfaces');
+    $c->loc('Caller');
+    $c->loc('Line add');
+    $c->loc('Period');
+    $c->loc('PDF');
+    $c->loc('Version');
+    $c->loc('Offpeak follow rate');
+    $c->loc('Create Device Configuration');
+    $c->loc('Wednesday');
+    $c->loc('Rewrite Rule Set');
+    $c->loc('lock accounts if the daily limit is exceeded');
+    $c->loc('Sn');
+    $c->loc('Upload');
+    $c->loc('PIN');
+    $c->loc('The length of the first interval');
+    $c->loc('IVR Slots');
+    $c->loc('Soundfile');
+    $c->loc('Outbound');
+    $c->loc('Voicemail');
+    $c->loc('whitelist');
+    $c->loc('End');
+    $c->loc('Numbers');
+    $c->loc('Manage Time Sets');
+    $c->loc('Purge existing');
+    $c->loc('Interval free cash');
+    $c->loc('#');
+    $c->loc('outbound');
+    $c->loc('Send Copies');
+    $c->loc('Create Domain');
+    $c->loc('Create');
+    $c->loc('Callforward controls add');
+    $c->loc('Rm');
+    $c->loc('Fraud daily notify');
+    $c->loc('Name in Fax Header');
+    $c->loc('Uri');
+    $c->loc('only once');
+    $c->loc('Start Date/Time');
+    $c->loc('Login');
+    $c->loc('Year');
+    $c->loc('Inbound');
+    $c->loc('Create Zone');
+    $c->loc('The type of feature to use on this line/key');
+    $c->loc('Download in PEM Format');
+    $c->loc('Day');
+    $c->loc('Email');
+    $c->loc('Read only');
+    $c->loc('Serial Hunting Timeout');
+    $c->loc('External ID');
+    $c->loc('Administrative');
+    $c->loc('fraud detection threshold per day, specifying cents');
+    $c->loc('Period add');
+    $c->loc('blacklist');
+    $c->loc('incoming and outgoing');
+    $c->loc('Supports Private Line');
+    $c->loc('Extension Number, e.g. 101');
+    $c->loc('everyday');
+    $c->loc('Currency');
+    $c->loc('Bootstrap Sync Parameters');
+    $c->loc('Is superuser');
+    $c->loc('Create Contact');
+    $c->loc('Interval charge');
+    $c->loc('Supports Busy Lamp Field');
+    $c->loc('Interval free time');
+    $c->loc('Create Group');
+    $c->loc('Firmware File');
+    $c->loc('Match pattern');
+    $c->loc('string, e.g.: on-net');
+    $c->loc('Company');
+    $c->loc('included time per billing interval, integer, specifying seconds');
+    $c->loc('string, POSIX regular expression, e.g.: ^431.+$');
+    $c->loc('global (including CSC)');
+    $c->loc('included money per billing interval, float, specifying EUR, USD, etc.');
+    $c->loc('global');
+    $c->loc('Zone Detail');
+    $c->loc('Clone');
+    $c->loc('The end time in format hh:mm:ss');
+    $c->loc('Close');
+    $c->loc('Line/Key Type');
+    $c->loc('September');
+    $c->loc('E.164 Number');
+    $c->loc('Onpeak follow interval');
+    $c->loc('Start');
+    $c->loc('foreign calls');
+    $c->loc('Contact URI');
+    $c->loc('during Time Set');
+    $c->loc('Number');
+    $c->loc('Monthly Fraud Limit');
+    $c->loc('VAT Rate');
+    $c->loc('Delete');
+    $c->loc('Profile');
+    $c->loc('Manage Destination Sets');
+    $c->loc('Mday');
+    $c->loc('Alias Number');
+    $c->loc('string, e.g.: voicebox');
+    $c->loc('Alias number');
+    $c->loc('where e-mail notifications are sent, a list of e-mail addreses separated by comma');
+    $c->loc('Level Name');
+    $c->loc('April');
+    $c->loc('Contact Email');
+    $c->loc('File Type');
+    $c->loc('Device Configuration');
+    $c->loc('Hunting Policy');
+    $c->loc('Edit time sets');
+    $c->loc('Detail');
+    $c->loc('string, empty or POSIX regular expression, e.g.: ^431.+$');
+    $c->loc('URI/Number');
+    $c->loc('Mode');
+    $c->loc('The human-readable display name (e.g. John Doe)');
+    $c->loc('Alias number add');
+    $c->loc('Billing profile');
+    $c->loc('TLS');
+    $c->loc('Destination');
+    $c->loc('Zone');
+    $c->loc('Fraud daily limit');
+    $c->loc('March');
+    $c->loc('Offpeak follow interval');
+    $c->loc('Country Code, e.g. 1 for US or 43 for Austria');
+    $c->loc('The password to log into the CSC Panel');
+    $c->loc('Name');
+    $c->loc('TCP');
+    $c->loc('E164 Number');
+    $c->loc('The username to log into the CSC Panel');
+    $c->loc('Area Code, e.g. 212 for NYC or 1 for Vienna');
+    $c->loc('Show passwords');
+    $c->loc('VAT Included');
+    $c->loc('string, rule description');
+    $c->loc('terminated');
+    $c->loc('Fraud Monthly Notify');
+    $c->loc('The length of the following intervals');
+    $c->loc('Onpeak follow rate');
+    $c->loc('Download CA Certificate');
+    $c->loc('Web Password');
+    $c->loc('Generate Certificate');
+    $c->loc('SIP Domain');
+    $c->loc('The number of Lines/Keys in this range, indexed from 0 in the config template array phone.lineranges~[~].lines~[~]');
+    $c->loc('PDF14');
+    $c->loc('foreign');
+    $c->loc('Download PKCS12');
+    $c->loc('New Description');
+    $c->loc('Call data');
+    $c->loc('Max Subscribers');
+    $c->loc('A POSIX regex matching against \'sip:user@domain\' (e.g. \'^sip:.+@example\.org$\' matching the whole URI, or \'999\' matching if the URI contains \'999\')');
+    $c->loc('Tuesday');
+    $c->loc('Onpeak init rate');
+    $c->loc('Subscriber Number, e.g. 12345678');
+    $c->loc('The Name of this range, e.g. Phone Keys or Attendant Console 1 Keys, accessible in the config template array via phone.lineranges~[~].name');
+    $c->loc('Pattern');
+    $c->loc('Postcode');
+    $c->loc('If active and a customer is selected, this sound set is used for all existing and new subscribers within this customer if no specific sound set is specified for the subscribers');
+    $c->loc('If active, this sound set is used for all existing and new subscribers if no specific sound set is specified for them');
+    $c->loc('July');
+    $c->loc('June');
+    $c->loc('Device Profile');
+    $c->loc('Thursday');
+    $c->loc('Download in PKCS12 Format');
+    $c->loc('The subscriber to use on this line/key');
+    $c->loc('The cost of each following interval in cents per second (e.g 0.90)');
+    $c->loc('Monday');
+    $c->loc('Country');
+    $c->loc('From Pattern');
+    $c->loc('Line/Key Range');
+    $c->loc('lock accounts if the monthly limit is exceeded');
+    $c->loc('A POSIX regex matching against the full Request-URI (e.g. \'^sip:.+@example\.org$\' or \'^sip:431\')');
+    $c->loc('Default for Subscribers');
+    $c->loc('Cf actions');
+    $c->loc('Active');
+    $c->loc('Key');
+    $c->loc('Is active');
+    $c->loc('Receive Reports');
+    $c->loc('Minute');
+    $c->loc('Lines/Keys in this range can be used as regular phone lines. Value is accessible in the config template via phone.lineranges~[~].lines~[~].can_private');
+    $c->loc('MAC Address Image');
+    $c->loc('Simple');
+    $c->loc('Offpeak init interval');
+    $c->loc('pending');
+    $c->loc('The line/key to use');
+    $c->loc('Group');
+    $c->loc('Download');
+    $c->loc('The SIP username for the User-Agents');
+    $c->loc('unique identifier string (only alphanumeric chars)');
+    $c->loc('after ring timeout');
+    $c->loc('all outgoing calls');
+    $c->loc('Number of Lines/Keys');
+    $c->loc('Source IP');
+    $c->loc('February');
+    $c->loc('Include local area code');
+    $c->loc('The SIP password for the User-Agents');
+    $c->loc('POST');
+    $c->loc('integer, specifying the percentage');
+    $c->loc('locked');
+    $c->loc('Last Name');
+    $c->loc('Deliver Incoming Faxes');
+    $c->loc('Parallel Ringing');
+    $c->loc('Weight');
+    $c->loc('Friday');
+    $c->loc('Free-Time Balance');
+    $c->loc('Display Name');
+    $c->loc('Linerange add');
+    $c->loc('Profile Name');
+    $c->loc('An external id, e.g. provided by a 3rd party provisioning');
+    $c->loc('Destination add');
+    $c->loc('Status');
+    $c->loc('Web Username');
+    $c->loc('Contract #');
+    $c->loc('December');
+    $c->loc('Username');
+    $c->loc('GET');
+    $c->loc('Create Device Model');
+    $c->loc('Bootstrap Sync HTTP Method');
+    $c->loc('Lock Level');
+    $c->loc('active');
+    $c->loc('trough');
+    $c->loc('Via Route');
+    $c->loc('Customer');
+    $c->loc('Save');
+    $c->loc('Callee prefix');
+    $c->loc('Lawful intercept');
+    $c->loc('Device Vendor');
+    $c->loc('Reseller');
+    $c->loc('City');
+    $c->loc('Caller pattern');
+    $c->loc('Subscriber can configure other subscribers within the Customer Account');
+    $c->loc('Free minutes may be used when calling this destination');
+    $c->loc('Repeat');
+    $c->loc('for (seconds)');
+    $c->loc('Onpeak init interval');
+    $c->loc('Offpeak init rate');
+    $c->loc('Sign In');
+    $c->loc('Push Provisioning URL');
+    $c->loc('Download CA Cert');
+    $c->loc('outgoing');
+    $c->loc('Fraud Monthly Limit');
+    $c->loc('Port');
+    $c->loc('Lines/Keys in this range can be used as shared lines. Value is accessible in the config template via phone.lineranges~[~].lines~[~].can_shared');
+    $c->loc('Content Type');
+    $c->loc('through');
+    $c->loc('Callee pattern');
+    $c->loc('PS');
+    $c->loc('all calls');
+    $c->loc('check if fees are inclusive VAT');
+    $c->loc('Street');
+    $c->loc('Cash Balance');
+    $c->loc('Direction');
+    $c->loc('Model');
+    $c->loc('Upload fees');
+    $c->loc('inbound');
+    $c->loc('Extension');
+    $c->loc('Sunday');
+    $c->loc('ANY');
+    $c->loc('Weekday');
+    $c->loc('Serial Ringing');
+    $c->loc('Destination Set');
+    $c->loc('Domain');
+    $c->loc('Replacement Pattern');
+    $c->loc('Attach WAV');
+    $c->loc('Billing Profile');
+    $c->loc('The destination for this slot; can be a number, username or full SIP URI.');
+    $c->loc('January');
+    $c->loc('August');
+    $c->loc('none');
+    $c->loc('Edit destination sets');
+    $c->loc('Send Reports');
+    $c->loc('Category:');
+    $c->loc('Seconds to wait for pick-up until engaging Call Forward (e.g. &ldquo;10&rdquo;)');
+    $c->loc('fraud detection threshold per month, specifying cents');
+    $c->loc('Use free time');
+    $c->loc('Phone Number');
+    $c->loc('Select');
+    $c->loc('Submitid');
+    $c->loc('Station Name');
+    $c->loc('SIP Password');
+    $c->loc('The IVR key to press for this destination');
+    $c->loc('Cc');
+    $c->loc('Front Image');
+    $c->loc('Ac');
+    $c->loc('Id');
+    $c->loc('The cost of the init interval in cents per second (e.g 0.90)');
+    $c->loc('human readable profile name');
+    $c->loc('Create Reseller');
+    $c->loc('UDP');
+    $c->loc('Delete WAV');
+    $c->loc('Content');
+    $c->loc('Device Model');
+    $c->loc('Protocol');
+    $c->loc('Contact');
+    $c->loc('Slot');
+    $c->loc('Callee prefix, eg: 43');
+    $c->loc('TIFF');
+    $c->loc('November');
+    $c->loc('Contract');
+    $c->loc('Lines/Keys in this range can be used as Busy Lamp Field. Value is accessible in the config template via phone.lineranges~[~].lines~[~].can_blf');
+    $c->loc('Product');
+    $c->loc('Create Billing Profile');
+    $c->loc('Hostname');
+    $c->loc('Download PEM');
+    $c->loc('Add');
+    $c->loc('Advanced');
+    $c->loc('May');
+    $c->loc('Lines/Keys');
+    $c->loc('The start time in format hh:mm:ss');
+    $c->loc('Generate');
+    $c->loc('End Date/Time');
+    $c->loc('Priority');
+    $c->loc('Wday');
+    $c->loc('Optionally set the maximum number of subscribers for this contract. Leave empty for unlimited.');
+    $c->loc('Time');
+    $c->loc('Incoming Email as CC');
+    $c->loc('Bootstrap Sync URI');
+    $c->loc('on weekdays');
+    $c->loc('Simple View');
+    $c->loc('Deliver Outgoing Faxes');
+    $c->loc('Vendor');
+    $c->loc('Create Contract');
+    $c->loc('Fraud daily lock');
+    $c->loc('Fraud Monthly Lock');
+    $c->loc('Daily Fraud Limit');
+    $c->loc('External #');
+    $c->loc('Month');
+    $c->loc('MAC Address / Identifier');
+    $c->loc('Prepaid');
+    $c->loc('Active callforward');
+    $c->loc('Advanced View');
+    $c->loc('Saturday');
+    $c->loc('Supports Shared Line');
+    $c->loc('IP Address');
+    $c->loc('Notify Emails');
+    $c->loc('Description');
+    $c->loc('Handle');
+    $c->loc('Delete Key');
 
     return;
 }

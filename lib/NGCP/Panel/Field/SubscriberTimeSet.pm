@@ -6,6 +6,7 @@ sub build_options {
     my ($self) = @_;
 
     my $form = $self->form;
+    return [] unless $form->ctx;
 
     my $active_time_set = $form->ctx->stash->{cf_active_time_set};
     my $time_sets = $form->ctx->stash->{cf_time_sets};

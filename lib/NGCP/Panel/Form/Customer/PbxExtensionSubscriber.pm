@@ -29,6 +29,7 @@ has_block 'fields' => (
 sub field_list {
     my $self = shift;
     my $c = $self->ctx;
+    return unless $c;
 
     my $group = $self->field('group');
     $group->field('id')->ajax_src(

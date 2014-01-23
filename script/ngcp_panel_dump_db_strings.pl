@@ -3,6 +3,8 @@
 use strict;
 use warnings;
 use NGCP::Schema qw();
+use lib;
+use NGCP::Panel::Utils::I18N;
 
 my $filepath = shift;
 unless ($filepath) {
@@ -39,6 +41,30 @@ for my $row ($rs->all) {
 for my $row ($s->resultset('voip_preference_groups')->all) {
     print $fh _string_to_line($row->name)
         if ($row->name);
+}
+
+print $fh "    return;\n}\n\nsub form_strings {\n\n";
+
+my $path = 'lib/NGCP/Panel/Form/*.pm lib/NGCP/Panel/Form/*/*.pm';
+my @files = < $path >;
+my $dummy = (bless {}, "dummy");
+sub dummy::loc { shift; return shift; };
+my %unique_strings;
+foreach my $mod(@files){
+    my $modname = $mod =~ s!lib/!!r =~ s!/!::!gr =~ s!\.pm$!!r;
+    eval {
+        require $mod;
+        my $form = $modname->new;
+        my $strings = NGCP::Panel::Utils::I18N->translate_form($dummy, $form, 1);
+        print $fh "    #$modname\n";
+        @unique_strings{@$strings} = 1;
+    } || print $fh "    #$modname: error\n";
+}
+
+for my $s (keys %unique_strings) {
+    next unless $s;
+    next if $s =~ /^\d+?$/;
+    print $fh _string_to_line($s);
 }
 
 print $fh <<FOOTER_END;

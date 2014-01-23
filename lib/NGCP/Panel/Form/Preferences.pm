@@ -25,6 +25,7 @@ has_block 'fields' => (
 sub field_list {
     my $self = shift;
 
+    return [] unless $self->ctx;
     my $is_subscriber = ($self->ctx->user->roles eq 'subscriber' || 
                          $self->ctx->user->roles eq 'subscriberadmin');
     
