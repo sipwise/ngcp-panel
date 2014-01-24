@@ -1,4 +1,4 @@
-[% site_config.title = 'Web Phone for ' _ subscriber.username _ '@' _ subscriber.domain.domain -%]
+[% site_config.title = c.loc('Web Phone for ') _ subscriber.username _ '@' _ subscriber.domain.domain -%]
 
 <style>
     #xmpp-roster {
@@ -66,7 +66,7 @@
 
 <div class="row">
     <span class="pull-left" style="margin:0 5px 0 5px;">
-        <a class="btn btn-primary btn-large" href="[% c.uri_for('/back') %]"><i class="icon-arrow-left"></i> Back</a>
+        <a class="btn btn-primary btn-large" href="[% c.uri_for('/back') %]"><i class="icon-arrow-left"></i> [% c.loc('Back') %]</a>
     </span>
 </div>
 [% back_created = 1 -%]
@@ -108,11 +108,11 @@
             // ws connection events
             phone.on('connected', function(e){
                 console.log("connected");
-                $("#sip-status").html("connected - registering...");
+                $("#sip-status").html("[% c.loc('connected - registering...') %]");
             });
             phone.on('disconnected', function(e){
                 console.log("disconnected");
-                $("#sip-status").html("disconnected.");
+                $("#sip-status").html("[% c.loc('disconnected.') %]");
             });
 
             // in/out call event
@@ -149,15 +149,15 @@
             // registration events
             phone.on('registered', function(e){
                 console.log("registered");
-                $("#sip-status").html("registered.");
+                $("#sip-status").html("[% c.loc('registered.') %]");
             });
             phone.on('unregistered', function(e){
                 console.log("unregistered");
-                $("#sip-status").html("unregistered.");
+                $("#sip-status").html("[% c.loc('unregistered.') %]");
             });
             phone.on('registrationFailed', function(e){
                 console.log("registrationFailed", e.data.response);
-                $("#sip-status").html("registration failed: " + e.data.response.status_code + " - " + e.data.response.reason_phrase);
+                $("#sip-status").html("[% c.loc('registration failed:') %] " + e.data.response.status_code + " - " + e.data.response.reason_phrase);
             });
 
             phone.start();
@@ -175,7 +175,7 @@
             var timer = null;
             chat.on('disconnected', function() {
                 console.log("xmpp disconnection");
-                $("#xmpp-status").html("disconnected.");
+                $("#xmpp-status").html("[% c.loc('disconnected.') %]");
                 if(timer)
                     return 1;
                 console.log("prepare re-connect timer");
@@ -202,9 +202,9 @@
                 var jid = obj.from.bare;
                 var msg;
                 if(obj.chatState == "composing") {
-                    msg = "is typing...";
+                    msg = "[% c.loc('is typing...') %]";
                 } else if(obj.chatState == "paused") {
-                    msg = "has stopped typing.";
+                    msg = "[% c.loc('has stopped typing.') %]";
                 } else if(obj.chatState == "active") {
                     // chat session started/closed
                     return;
@@ -245,7 +245,7 @@
             });
 
             chat.on('session:started', function() {
-                $("#xmpp-status").html("online.");
+                $("#xmpp-status").html("[% c.loc('online.') %]");
                 console.log("++++++++++++++++++ session started");
                 chat.enableCarbons();
                 chat.getRoster(function(err, resp) {
@@ -315,15 +315,15 @@
             var eventHandlers = {
                 'progress': function(e) {
                     console.log("call in progress", e);
-                    $("#sip-status").html("in progress");
+                    $("#sip-status").html("[% c.loc('in progress...') %]");
                 },
                 'failed': function(e) { 
                     console.log("call failed");
-                    $("#sip-status").html("call failed", e);
+                    $("#sip-status").html("[% c.loc('call failed:') %] ", e);
                 },
                 'started': function(e) {
                     console.log("call started");
-                    $("#sip-status").html("call started", e);
+                    $("#sip-status").html("[% c.loc('call started.') %]");
 
                     var rtcSession = e.sender;
 
@@ -336,7 +336,7 @@
                 },
                 'ended': function(e){ 
                     console.log("call ended");
-                    $("#sip-status").html("call ended");
+                    $("#sip-status").html("[% c.loc('call ended.') %]");
                 }
             };
 
@@ -410,8 +410,8 @@
                 html: true,
                 container: '#' + jidid,
                 trigger: 'manual',
-                title: '<div>&nbsp;<span class="pull-left">Call from ' + jid + '</span><span class="xmpp-chat-close pull-right fa fa-times"></span></div>',
-                content: '<div class="span4" style="margin:10px;"><button class="sip-accept-call" style="margin-right:20px;">Accept</button><button class="sip-reject-call">Reject</button></div>'
+                title: '<div>&nbsp;<span class="pull-left">[% c.loc('Call from') %] ' + jid + '</span><span class="xmpp-chat-close pull-right fa fa-times"></span></div>',
+                content: '<div class="span4" style="margin:10px;"><button class="sip-accept-call" style="margin-right:20px;">[% c.loc('Accept') %]</button><button class="sip-reject-call">[% c.loc('Reject') %]</button></div>'
             });
             $(parent).popover("show");
             $(parent).find(".sip-accept-call").click(function(){
@@ -437,8 +437,8 @@
                 html: true,
                 container: '#' + jidid,
                 trigger: 'manual',
-                title: '<div>&nbsp;<span class="pull-left">Calling ' + jid + '</span><span class="xmpp-chat-close pull-right fa fa-times"></span></div>',
-                content: '<div class="span4" style="margin:10px;"><button class="sip-stop-call" style="margin-right:20px;">Terminate Call</button></div>'
+                title: '<div>&nbsp;<span class="pull-left">[% c.loc('Calling') %] ' + jid + '</span><span class="xmpp-chat-close pull-right fa fa-times"></span></div>',
+                content: '<div class="span4" style="margin:10px;"><button class="sip-stop-call" style="margin-right:20px;">[% c.loc('Terminate Call') %]</button></div>'
             });
             $(parent).popover("show");
             $(parent).find(".sip-stop-call").click(function(){
@@ -469,7 +469,7 @@
         function raise_attention(type) {
             if(!window_focus) {
                 if(type == "chat") {
-                    flash_title('NEW MESSAGE');
+                    flash_title('[% c.loc('NEW MESSAGE') %]');
                 } else {
                     flash_title(type + '! ' + orig_page_title);
                 }
@@ -577,32 +577,26 @@
     </script>
 
     <div class="row">
-        <div class="span6">Phone Status: <span id="sip-status">connecting...</span></div>
+        <div class="span6">[% c.loc('Phone Status:') %] <span id="sip-status">[% c.loc('connecting...') %]</span></div>
     </div>
     <div class="row">
-        <div class="span6">Chat Status: <span id="xmpp-status">connecting...</span></div>
+        <div class="span6">[% c.loc('Chat Status:') %] <span id="xmpp-status">[% c.loc('connecting...') %]</span></div>
     </div>
-    <!--
-    <div class="row">
-        <button onclick="javascript:call();" class="btn btn-large btn-primary">Call</a>
-    </div>
-    -->
-
     <div>
-        <h3>Buddy List</h3>
+        <h3>[% c.loc('Buddy List') %]</h3>
         <div class="row span6" style="margin:0; clear:both; padding:10px;">
-            <input id="xmpp-toggle-offline" style="float:left" type="checkbox" data-on="success" data-off="default" data-on-label="Show Offline" data-off-label="Hide Offline">
-            <input id="sip_toggle_video" checked style="float:left" type="checkbox" data-on="success" data-off="default" data-on-label="Audio&amp;Video" data-off-label="Audio Only">
+            <input id="xmpp-toggle-offline" style="float:left" type="checkbox" data-on="success" data-off="default" data-on-label="[% c.loc('Show Offline') %]" data-off-label="[% c.loc('Hide Offline') %]">
+            <input id="sip_toggle_video" checked style="float:left" type="checkbox" data-on="success" data-off="default" data-on-label="[% c.loc('Audio&amp;Video') %]" data-off-label="[% c.loc('Audio Only') %]">
         </div>
         <div class="row span6" style="margin:0; clear:both;">
             <select id="xmpp-pres" class="selectpicker span6">
                 [% FOR opt IN 
                     [
-                        { n = "unavailable", d = "Offline" },
-                        { n = "available", d = "Available" },
-                        { n = "away", d = "Away" },
-                        { n = "xa", d = "Extended Away" },
-                        { n = "dnd", d = "Do Not Disturb" },
+                        { n = "unavailable", d = c.loc('Offline') },
+                        { n = "available", d = c.loc('Available') },
+                        { n = "away", d = c.loc('Away') },
+                        { n = "xa", d = c.loc('Extended Away') },
+                        { n = "dnd", d = c.loc('Do Not Disturb') },
                     ]
                 -%]
                     <option value="[% opt.n %]" data-content="<span class='xmpp-roster-entry-col1 [% opt.n %]'>&nbsp;</span><span> [% opt.d %]</span>">[% opt.d %]</option>
