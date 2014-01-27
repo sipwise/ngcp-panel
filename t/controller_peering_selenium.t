@@ -76,6 +76,7 @@ ok($row);
 $edit_link = $d->find_child_element($row, '(./td//a)[contains(text(),"Preferences")]');
 ok($edit_link);
 $d->move_to(element => $row);
+$d->find_ok(css => 'div.sw_actions.visible');
 $edit_link->click;
 
 diag('Open the tab "Number Manipulations"');
@@ -100,12 +101,13 @@ $d->navigate_ok($server_rules_uri);
 my $delete_link;
 diag('skip was here');
 diag("Delete mytestserver");
-sleep 1; #make sure, we are on the right page
+$d->find_ok(xpath => '//h3[contains(text(),"Peering Servers")]');
 $row = $d->find(xpath => '(//table/tbody/tr/td[contains(text(), "mytestserver")]/..)[1]');
 ok($row);
 $delete_link = $d->find_child_element($row, '(./td//a)[contains(text(),"Delete")]');
 ok($delete_link);
 $d->move_to(element => $row);
+$d->find_ok(css => 'div.sw_actions.visible');
 $delete_link->click;
 $d->findtext_ok("Are you sure?");
 $d->findclick_ok(id => 'dataConfirmOK');

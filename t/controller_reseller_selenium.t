@@ -30,7 +30,6 @@ ok($searchfield);
 $searchfield->send_keys('donotfindme');
 
 diag("Verify that nothing is shown");
-sleep 2; # wait for ajax
 my $elem = $d->find(css => '#Resellers_table td.dataTables_empty');
 ok($elem);
 is($elem->get_text,'No matching records found');
@@ -49,21 +48,22 @@ $d->findtext_ok("Name field is required");
 $d->findclick_ok(id => 'mod_close');
 
 diag("Click Edit on the first reseller shown (first row)");
-sleep 1; #prevent a StaleElementReferenceException
+sleep 2; #prevent a StaleElementReferenceException
 my $row = $d->find(xpath => '//*[@id="Resellers_table"]/tbody/tr[1]');
 ok($row);
 $d->move_to(element => $row);
+$d->find_ok(css => 'div.sw_actions.visible');
 my $btn = $d->find_child_element($row, './/a[contains(text(),"Edit")]');
 ok($btn);
 $btn->click;
-#is($d->find(id => "name")->get_attribute("value"), "reseller 1");
 $d->findclick_ok(id => 'mod_close');
 
 diag("Click Terminate on the first reseller shown");
-sleep 1; #prevent a StaleElementReferenceException
+sleep 2; #prevent a StaleElementReferenceException
 $row = $d->find(xpath => '//*[@id="Resellers_table"]/tbody/tr[1]');
 ok($row);
 $d->move_to(element => $row);
+$d->find_ok(css => 'div.sw_actions.visible');
 $btn = $d->find_child_element($row, './/a[contains(@class,"btn-secondary")]');
 ok($btn);
 $btn->click;

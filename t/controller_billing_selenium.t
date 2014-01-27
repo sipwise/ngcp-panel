@@ -115,11 +115,12 @@ $edit_link->click;
 $d->find_ok(xpath => '//*[@id="masthead"]//h2[contains(text(),"times for mytestprofile")]');
 
 diag("Edit Wednesday");
-$row = $d->find(xpath => '//table//td[contains(text(),"Wednesday")]');
+$d->find_ok(css => 'div.ngcp-js-loaded');
+$row = $d->find(xpath => '//table/tbody/tr/td[contains(text(),"Wednesday")]');
 ok($row);
-$d->move_to(element => ($d->find(xpath => '//h3[contains(text(),"Weekdays")]')));
-sleep 2 if ($d->browser_name_in("firefox", "htmlunit"));
 $d->move_to(element => $row);
+$d->find_ok(css => 'div.sw_actions.visible');
+# note: same as: $d->find_ok(xpath => '//table//td[contains(text(),"Wednesday")]/..//div[contains(@class,"visible")][contains(@class,"sw_actions")]');
 $d->findclick_ok(xpath => '//table//td[contains(text(),"Wednesday")]/..//a[text()[contains(.,"Edit")]]');
 $d->findtext_ok("Edit Wednesday");
 
@@ -145,7 +146,6 @@ ok($row);
 $d->move_to(element => $row);
 $edit_link = $d->find_child_element($row, './/a[contains(@class,"btn-secondary")]');
 ok($edit_link);
-sleep 2 if ($browsername eq "htmlunit");
 $edit_link->click;
 $d->findtext_ok("Are you sure?");
 $d->findclick_ok(id => 'dataConfirmOK');

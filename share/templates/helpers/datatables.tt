@@ -110,10 +110,6 @@ $(document).ready(function() {
 		],
 		"fnDrawCallback": function( oSettings ) {
                 $('.sw_actions').css('visibility','hidden');
-                $('.sw_action_row').hover(
-                    function() { $(this).find('.sw_actions').css('visibility','visible'); },
-                    function() { $(this).find('.sw_actions').css('visibility','hidden'); }
-                );
         },
         "fnRowCallback": function(nRow, aData, iDisplayIndex) {
             nRow.className = "sw_action_row";

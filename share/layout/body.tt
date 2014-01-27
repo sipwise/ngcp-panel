@@ -91,12 +91,13 @@ $(function () {
     $('[rel="tooltip"]').tooltip({'html': false});
 
     $('.sw_actions').css('visibility','hidden');
-    $('.sw_action_row').hover(
-                    function() { $(this).find('.sw_actions').css('visibility','visible'); },
-                    function() { $(this).find('.sw_actions').css('visibility','hidden'); }
-    ); 
+    $( 'table' ).on({
+        mouseover: function() { $(this).find('.sw_actions').addClass('visible').css('visibility','visible'); $('.ngcp-js-loaded').removeClass('ngcp-js-loaded'); },
+        mouseleave: function() { $(this).find('.sw_actions').css('visibility','hidden').removeClass('visible'); $('.ngcp-js-loaded').removeClass('ngcp-js-loaded'); }
+    }, ".sw_action_row");
 
     $('a[data-confirm]').live("click", function(ev) {
+        $('.ngcp-js-loaded').removeClass('ngcp-js-loaded');
         var href = $(this).attr('href');
         if (!$('#dataConfirmModal').length) {
             $('body').append(
@@ -192,6 +193,7 @@ $(function () {
             }
         });
     }
+    $('body > div:first-child').addClass('ngcp-js-loaded');
 });
 </script>
 </body>

@@ -28,18 +28,18 @@ $d->findclick_ok(link_text => "Domains");
 
 $d->find_ok(xpath => '//*[@id="masthead"]//h2[contains(text(),"Domains")]');
 SKIP: {
-    sleep 1;
     diag("Open Preferences of first Domain");
     my ($row, $edit_link);
     try {
-        $row = $d->find(xpath => '//table[@id="Domain_table"]/tbody/tr[1]');
         $edit_link = $d->find(xpath => '(//table[@id="Domain_table"]/tbody/tr[1]/td//a)[contains(text(),"Preferences")]');
+        $row = $d->find(xpath => '//table[@id="Domain_table"]/tbody/tr[1]');
     } catch {
         skip ("It seems, no domains exist", 1);
     }
 
     ok($edit_link);
     $d->move_to(element => $row);
+    $d->find_ok(css => 'div.sw_actions.visible');
     $edit_link->click;
 
     diag('Open the tab "Access Restrictions"');
@@ -47,7 +47,7 @@ SKIP: {
     $d->findclick_ok(link_text => "Access Restrictions");
 
     diag("Click edit for the preference concurrent_max");
-    sleep 1;
+    $d->find_ok(xpath => '//div[contains(@class,"open")]//a[contains(text(),"Access Restrictions")]');
     $row = $d->find(xpath => '//table/tbody/tr/td[normalize-space(text()) = "concurrent_max"]');
     ok($row);
     $edit_link = $d->find_child_element($row, '(./../td//a)[2]');

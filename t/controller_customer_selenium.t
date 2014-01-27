@@ -64,12 +64,13 @@ $d->find_ok(xpath => '//div[contains(@class,"accordion-body")]//table//td[contai
 
 diag("Edit Fraud Limits");
 $d->findclick_ok(xpath => '//div[contains(@class,"accordion-heading")]//a[contains(text(),"Fraud Limits")]');
-sleep 2 if ($d->browser_name_in("phantomjs", "chrome", "firefox")); # time to move
+$d->find_ok(css => '.open #collapse_fraud');
 $row = $d->find(xpath => '//div[contains(@class,"accordion-body")]//table//tr/td[contains(text(),"Monthly Settings")]');
 ok($row);
 $edit_link = $d->find_child_element($row, './../td//a[text()[contains(.,"Edit")]]');
 ok($edit_link);
 $d->move_to(element => $row);
+$d->find_ok(css => 'div.sw_actions.visible');
 $edit_link->click;
 
 diag("Do Edit Fraud Limits");
@@ -87,7 +88,6 @@ $edit_link = $d->find_child_element($row, '(./td//a)[contains(text(),"Terminate"
 ok($edit_link);
 $d->move_to(element => $row);
 $edit_link->click;
-#sleep 2;
 $d->findtext_ok("Are you sure?");
 $d->findclick_ok(id => 'dataConfirmOK');
 $d->findtext_ok("Customer successfully terminated");
