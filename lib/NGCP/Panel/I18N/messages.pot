@@ -2257,6 +2257,10 @@ msgstr ""
 msgid "Key"
 msgstr ""
 
+#: share/layout/body.tt:22
+msgid "Language"
+msgstr ""
+
 #: share/templates/security/list.tt:67
 msgid "Last Attempt"
 msgstr ""
