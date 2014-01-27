@@ -30,7 +30,7 @@ sub shutdown_servers {
     for my $proc ($webdriver, $plackup) {
         if ($proc) {
             require Sys::Sig;
-            $proc->kill(Sys::Sig->TERM);
+            $proc->kill(Sys::Sig->INT);
         }
     }
 }
@@ -133,8 +133,11 @@ method ACTION_testcover {
     $self->do_system(qw(cover -delete));
     @cover_opt = (
         '-Msigtrap "handler", sub { exit }, "normal-signals"',
-        '-MDevel::Cover=+ignore,ngcp_panel.psgi,+ignore,plackup',
+        #'-MDevel::Cover=+ignore,ngcp_panel.psgi,+ignore,plackup,-inc,'.join(",",grep(!/\./,@INC)),
+        '-MDevel::Cover=+ignore,ngcp_panel.psgi,+ignore,plackup,-inc,/etc,/usr,+select,lib/,+select,blib/,-silent,1',
     );
+    print "Cover opts: ";
+    print @cover_opt;
     $self->depends_on('test');
     shutdown_servers;
     sleep 5;
