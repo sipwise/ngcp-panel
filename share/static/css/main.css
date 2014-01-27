@@ -11,6 +11,10 @@ body {
     transition: none;
 }
 
+.ngcp-lang-flag {
+    padding-right: 10px;
+}
+
 /* ---------
   The modal
 ------------*/

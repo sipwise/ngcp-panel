@@ -24,8 +24,8 @@
 					</a>
 
 					<ul class="dropdown-menu pull-right">
-						<li><a href="?lang=i_default">English</a></li>
-						<li><a href="?lang=de">German</a></li>
+						<li><a href="?lang=i_default"><img src="img/lang/en.png" class="ngcp-lang-flag"/> English</a></li>
+						<li><a href="?lang=de"><img src="img/lang/de.png" class="ngcp-lang-flag"/> German</a></li>
 					</ul>
 				</li>
                     <li><a href="[% c.uri_for('/logout') %]">[% c.loc('Logout') %]</a></li>
