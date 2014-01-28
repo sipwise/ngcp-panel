@@ -13,7 +13,7 @@ sub build_form_element_class {[qw(form-horizontal)]}
 
 has_field 'reseller' => (
     type => '+NGCP::Panel::Field::Reseller',
-    not_nullable => 1,
+    validate_when_empty => 1,
 );
 
 has_field 'save' => (

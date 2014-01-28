@@ -573,6 +573,9 @@ sub subscriber_create :Chained('base') :PathPart('subscriber/create') :Args(0) {
                     $preferences->{display_name} = $form->params->{display_name}
                         if($form->params->{display_name});
                 }
+                if($c->stash->{billing_mapping}->billing_profile->prepaid) {
+                    $preferences->{prepaid} = 1;
+                }
                 $billing_subscriber = NGCP::Panel::Utils::Subscriber::create_subscriber(
                     c => $c,
                     schema => $schema,
@@ -581,16 +584,6 @@ sub subscriber_create :Chained('base') :PathPart('subscriber/create') :Args(0) {
                     admin_default => $pbxadmin,
                     preferences => $preferences,
                 );
-
-                if($c->stash->{billing_mapping}->billing_profile->prepaid) {
-                    my $pref = NGCP::Panel::Utils::Preferences::get_usr_preference_rs(
-                        c => $c, attribute => 'prepaid', prov_subscriber => $billing_subscriber->provisioning_voip_subscriber);
-                    if($pref->first) {
-                        $pref->first->update({ 'value' => 1 });
-                    } else {
-                        $pref->create({ 'value' => 1 });
-                    }
-                }
 
                 NGCP::Panel::Utils::Subscriber::update_pbx_group_prefs(
                     c => $c,

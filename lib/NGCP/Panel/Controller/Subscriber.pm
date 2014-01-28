@@ -2496,6 +2496,7 @@ sub create_registered :Chained('master') :PathPart('registered/create') :Args(0)
             my $s = $c->stash->{subscriber}->provisioning_voip_subscriber;
             my $aor = $s->username . '@' . $s->domain->domain;
             my $contact = $form->field('contact')->value;
+            my $q = $form->field('q')->value;
             my $path = $c->config->{sip}->{path} || '<sip:127.0.0.1:5060;lr>';
             my $dispatcher = NGCP::Panel::Utils::XMLDispatcher->new;
             $ret = $dispatcher->dispatch("proxy-ng", 1, 1, <<EOF );
@@ -2507,7 +2508,7 @@ sub create_registered :Chained('master') :PathPart('registered/create') :Args(0)
 <param><value><string>$aor</string></value></param>
 <param><value><string>$contact</string></value></param>
 <param><value><int>0</int></value></param>
-<param><value><double>1.00</double></value></param>
+<param><value><double>$q</double></value></param>
 <param><value><string><![CDATA[$path]]></string></value></param>
 <param><value><int>0</int></value></param>
 <param><value><int>0</int></value></param>

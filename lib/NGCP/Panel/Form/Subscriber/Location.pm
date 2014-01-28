@@ -15,6 +15,24 @@ has_field 'contact' => (
     type => 'Text',
     label => 'Contact URI',
     required => 1,
+    element_attr => {
+        rel => ['tooltip'],
+        title => ['A full SIP URI like sip:user@ip:port']
+    },
+);
+
+has_field 'q' => (
+    type => 'Float',
+    label => 'Priority (q-value)',
+    required => 1,
+    range_start => -1,
+    range_end => 1,
+    decimal_symbol => '.',
+    default => 1,
+    element_attr => {
+        rel => ['tooltip'],
+        title => ['The contact priority for serial forking (float value, higher is stronger) between -1.00 to 1.00']
+    },
 );
 
 has_field 'save' => (
@@ -27,7 +45,7 @@ has_field 'save' => (
 has_block 'fields' => (
     tag => 'div',
     class => [qw/modal-body/],
-    render_list => [qw/contact/],
+    render_list => [qw/contact q/],
 );
 
 has_block 'actions' => (

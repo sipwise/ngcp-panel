@@ -6,7 +6,7 @@ extends 'NGCP::Panel::Form::Contract::Basic';
 has_field 'product' => (
     type => '+NGCP::Panel::Field::Product',
     label => 'Product',
-    not_nullable => 1,
+    validate_when_empty => 1,
 );
 
 has_field 'max_subscribers' => (

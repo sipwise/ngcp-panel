@@ -137,7 +137,8 @@ sub create_subscriber {
     my $schema = $params{schema} // $c->model('DB');
     my $reseller = $contract->contact->reseller;
     my $billing_domain = $schema->resultset('domains')
-            ->find($params->{domain}{id});
+            ->find($params->{domain}{id} // $params->{domain_id});
+    use Data::Printer; print ">>>>>>>>>>>>>>>>>>>>>>>>>>> billing_dom\n"; p $billing_domain;
     my $prov_domain = $schema->resultset('voip_domains')
             ->find({domain => $billing_domain->domain});
     

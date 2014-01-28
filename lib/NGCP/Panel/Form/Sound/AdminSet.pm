@@ -6,13 +6,13 @@ use Moose::Util::TypeConstraints;
 
 has_field 'reseller' => (
     type => '+NGCP::Panel::Field::Reseller',
-    not_nullable => 1,
+    validate_when_empty => 1,
 );
 
 has_field 'contract' => (
     type => '+NGCP::Panel::Field::CustomerContract',
     label => 'Customer',
-    not_nullable => 0,
+    validate_when_empty => 0,
 );
 
 has_block 'fields' => (

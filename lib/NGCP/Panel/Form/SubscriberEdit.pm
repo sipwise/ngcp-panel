@@ -21,7 +21,7 @@ sub build_form_element_class {[qw(form-horizontal)]}
 has_field 'reseller' => (
     type => '+NGCP::Panel::Field::Reseller',
     label => 'Reseller',
-    not_nullable => 1,
+    validate_when_empty => 1,
 );
 
 has_field 'webusername' => (
@@ -87,13 +87,13 @@ has_field 'password' => (
 has_field 'lock' => (
     type => '+NGCP::Panel::Field::SubscriberLockSelect',
     label => 'Lock Level',
-    not_nullable => 1,
+    validate_when_empty => 1,
 );
 
 has_field 'status' => (
     type => '+NGCP::Panel::Field::SubscriberStatusSelect',
     label => 'Status',
-    not_nullable => 1,
+    validate_when_empty => 1,
 );
 
 has_field 'administrative' => (

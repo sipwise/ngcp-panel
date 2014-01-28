@@ -44,7 +44,7 @@ has_field 'direction' => (
 has_field 'billing_zone' => (
     type => '+NGCP::Panel::Field::BillingZone',
     label => 'Zone',
-    not_nullable => 1,
+    validate_when_empty => 1,
 );
 
 has_field 'onpeak_init_rate' => (

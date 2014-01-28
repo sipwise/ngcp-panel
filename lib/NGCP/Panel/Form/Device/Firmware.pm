@@ -14,7 +14,7 @@ sub build_form_element_class {[qw(form-horizontal)]}
 
 has_field 'device' => (
     type => '+NGCP::Panel::Field::Device',
-    not_nullable => 1,
+    validate_when_empty => 1,
     label => 'Device Model',
 );
 

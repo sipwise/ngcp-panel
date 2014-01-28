@@ -7,7 +7,7 @@ extends 'NGCP::Panel::Form::Customer::PbxSubscriber';
 has_field 'group' => (
     type => '+NGCP::Panel::Field::PbxGroup',
     label => 'Group',
-    not_nullable => 1,
+    validate_when_empty => 1,
 );
 
 has_field 'extension' => (

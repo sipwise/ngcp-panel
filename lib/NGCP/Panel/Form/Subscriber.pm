@@ -19,7 +19,7 @@ sub build_form_element_class {[qw(form-horizontal)]}
 has_field 'contract' => (
     type => '+NGCP::Panel::Field::CustomerContract',
     label => 'Customer',
-    not_nullable => 1,
+    validate_when_empty => 1,
 );
 
 has_field 'webusername' => (
@@ -66,7 +66,7 @@ has_field 'username' => (
 has_field 'domain' => (
     type => '+NGCP::Panel::Field::Domain',
     label => 'SIP Domain',
-    not_nullable => 1,
+    validate_when_empty => 1,
 );
 
 has_field 'password' => (
@@ -83,7 +83,6 @@ has_field 'password' => (
 has_field 'status' => (
     type => '+NGCP::Panel::Field::SubscriberStatusSelect',
     label => 'Status',
-    not_nullable => 1,
 );
 
 has_field 'administrative' => (

@@ -19,7 +19,7 @@ has_field 'id' => (
 has_field 'contract' => (
     type => '+NGCP::Panel::Field::Contract',
     label => 'Contract',
-    not_nullable => 1,
+    validate_when_empty => 1,
 );
 
 

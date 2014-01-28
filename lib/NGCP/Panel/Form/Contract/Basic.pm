@@ -14,12 +14,12 @@ sub build_form_element_class { [qw/form-horizontal/] }
 has_field 'contact' => (
     type => '+NGCP::Panel::Field::Contact',
     label => 'Contact',
-    not_nullable => 1,
+    validate_when_empty => 1,
 );
 
 has_field 'billing_profile' => (
     type => '+NGCP::Panel::Field::BillingProfile',
-    not_nullable => 1,
+    validate_when_empty => 1,
 );
 
 has_field 'status' => (

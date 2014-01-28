@@ -14,7 +14,7 @@ sub build_form_element_class { [qw/form-horizontal/] }
 has_field 'contract' => (
     type => '+NGCP::Panel::Field::ResellerContract',
     label => 'Contract',
-    not_nullable => 1,
+    validate_when_empty => 1,
 );
 
 has_field 'name' => (

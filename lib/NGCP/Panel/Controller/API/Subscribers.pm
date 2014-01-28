@@ -121,7 +121,8 @@ sub OPTIONS :Allow {
 sub POST :Allow {
     my ($self, $c) = @_;
 
-    my $guard = $c->model('DB')->txn_scope_guard;
+    my $schema = $c->model('DB');
+    my $guard = $schema->txn_scope_guard;
     {
         my $resource = $self->get_valid_post_data(
             c => $c, 
@@ -179,37 +180,8 @@ sub POST :Allow {
             }
         }
 
-
-        my $customer = NGCP::Panel::Utils::Contract::get_contract_rs(
-            schema => $c->model('DB'),
-        );
-        $customer = $customer->search({
-                'contact.reseller_id' => { '-not' => undef },
-                'me.id' => $resource->{contract_id},
-            },{
-                join => 'contact'
-            });
-        $customer = $customer->search({
-                '-or' => [
-                    'product.class' => 'sipaccount',
-                    'product.class' => 'pbxaccount',
-                ],
-            },{
-                join => {'billing_mappings' => 'product' },
-                '+select' => 'billing_mappings.id',
-                '+as' => 'bmid',
-            }); 
-        if($c->user->roles eq "admin") {
-        } elsif($c->user->roles eq "reseller") {
-            $customer = $customer->search({
-                'contact.reseller_id' => $c->user->reseller_id,
-            });
-        }
-        $customer = $customer->first;
-        unless($customer) {
-            $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Invalid 'customer_id', doesn't exist.");
-            last;
-        }
+        my $customer = $self->get_customer($c, $resource->{contract_id});
+        last unless($customer);
         if(defined $customer->max_subscribers && $customer->voip_subscribers->search({ 
                 status => { '!=' => 'terminated' }
             })->count >= $customer->max_subscribers) {
@@ -218,7 +190,76 @@ sub POST :Allow {
             last;
         }
 
-        # TODO: check if number is already taken
+        my $preferences = {};
+        my $admin = 0;
+        unless($customer->get_column('product_class') eq 'pbxaccount') {
+            delete $resource->{is_pbx_group};
+            delete $resource->{pbx_group_id};
+            $admin = $resource->{admin} // 0;
+        } elsif($c->config->{features}->{cloudpbx}) {
+            my $subs = NGCP::Panel::Utils::Subscriber::get_custom_subscriber_struct(
+                c => $c,
+                contract => $customer,
+                show_locked => 1,
+            );
+            use Data::Printer; say ">>>>>>>>>>>>>>>>>>>> subs"; p $subs;
+            my $admin_subscribers = NGCP::Panel::Utils::Subscriber::get_admin_subscribers(
+                voip_subscribers => $subs->{subscribers});
+            unless(@{ $admin_subscribers }) {
+                $admin = $resource->{admin} // 1;
+            } else {
+                $admin = $resource->{admin} // 0;
+            }
+
+            $preferences->{shared_buddylist_visibility} = 1;
+            $preferences->{display_name} = $resource->{display_name}
+                if(defined $resource->{display_name});
+
+            my $default_sound_set = $customer->voip_sound_sets
+                ->search({ contract_default => 1 })->first;
+            if($default_sound_set) {
+                $preferences->{contract_sound_set} = $default_sound_set->id;
+            }
+
+            my $admin_subscriber = $admin_subscribers->[0];
+            my $base_number = $admin_subscriber->{primary_number};
+            if($base_number) {
+                $preferences->{cloud_pbx_base_cli} = $base_number->{cc} . $base_number->{ac} . $base_number->{sn};
+            }
+        }
+
+        my $billing_profile = $self->get_billing_profile($c, $customer);
+        last unless($billing_profile);
+        if($billing_profile->prepaid) {
+            $preferences->{prepaid} = 1;
+        }
+
+        my $subscriber = $c->model('DB')->resultset('voip_subscribers')->find({
+            username => $resource->{username},
+            domain_id => $resource->{domain_id},
+            status => { '!=' => 'terminated' },
+        });
+        if($subscriber) {
+            $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Subscriber already exists.");
+            last;
+        }
+
+        my $alias_numbers = [];
+        if(ref $resource->{alias_numbers} eq "ARRAY") {
+            foreach my $num(@{ $resource->{alias_numbers} }) {
+                unless(ref $num eq "HASH") {
+                    $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Invalid parameter 'alias_numbers', must be hash or array of hashes.");
+                    last;
+                }
+                push @{ $alias_numbers }, { e164 => $num };
+            }
+        } elsif(ref $resource->{alias_numbers} eq "HASH") {
+            push @{ $alias_numbers }, { e164 => $resource->{alias_numbers} };
+        } else {
+            use Data::Printer; p $resource->{alias_numbers}; say ">>>>>>>>>>> '".(ref $resource->{alias_numbers})."'";
+            $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Invalid parameter 'alias_numbers', must be hash or array of hashes.");
+            last;
+        }
 
         # TODO: handle pbx subscribers:
             # extension
@@ -227,79 +268,35 @@ sub POST :Allow {
 
         # TODO: handle status != active
 
-        my $subscriber;
         try {
             my ($uuid_bin, $uuid_string);
             UUID::generate($uuid_bin);
             UUID::unparse($uuid_bin, $uuid_string);
 
-            my $rs = $self->item_rs($c);
-            $subscriber = $rs->create({
-                contract_id => $customer->id,
-                uuid => $uuid_string,
-                username => $resource->{username},
-                domain_id => $domain->id,
-                status => $resource->{status},
-            });
-            my $prov_subscriber = $c->model('DB')->resultset('provisioning_voip_subscribers')->create({
-                uuid => $uuid_string,
-                username => $resource->{username},
-                password => $resource->{password},
-                webusername => $resource->{webusername},
-                webpassword => $resource->{webpassword},
-                admin => $resource->{administrative},
-                account_id => $customer->id,
-                domain_id => $domain->provisioning_voip_domain->id,
-                create_timestamp => NGCP::Panel::Utils::DateTime::current_local,
-            });
+            $subscriber = NGCP::Panel::Utils::Subscriber::create_subscriber(
+                c => $c,
+                schema => $schema,
+                contract => $customer,
+                params => $resource,
+                admin_default => $admin,
+                preferences => $preferences,
+            );
 
             NGCP::Panel::Utils::Subscriber::update_subscriber_numbers(
                 schema         => $c->model('DB'),
-                primary_number => $resource->{e164},
+                alias_numbers  => $alias_numbers,
                 reseller_id    => $customer->contact->reseller_id,
                 subscriber_id  => $subscriber->id,
             );
             $subscriber->discard_changes; # reload row because of new number
 
-            my $voip_preferences = $c->model('DB')->resultset('voip_preferences')->search({
-                'usr_pref' => 1,
-            });
-            $voip_preferences->find({ 'attribute' => 'account_id' })
-                ->voip_usr_preferences->create({
-                    'subscriber_id' => $prov_subscriber->id,
-                    'value' => $customer->id,
-                });
-            my $cli;
-            if($subscriber->primary_number) {
-                $voip_preferences->find({ 'attribute' => 'ac' })
-                    ->voip_usr_preferences->create({
-                        'subscriber_id' => $prov_subscriber->id,
-                        'value' => $subscriber->primary_number->ac,
-                    });
-                $voip_preferences->find({ 'attribute' => 'cc' })
-                    ->voip_usr_preferences->create({
-                        'subscriber_id' => $prov_subscriber->id,
-                        'value' => $subscriber->primary_number->cc,
-                    });
-                $cli =  $subscriber->primary_number->cc .
-                        ($subscriber->primary_number->ac // '').
-                        $subscriber->primary_number->sn;
-                $voip_preferences->find({ 'attribute' => 'cli' })
-                    ->voip_usr_preferences->create({
-                        'subscriber_id' => $prov_subscriber->id,
-                        'value' => $cli,
-                    });
-            }
-
-            $c->model('DB')->resultset('voicemail_users')->create({
-                customer_id => $uuid_string,
-                mailbox => ($cli // 0),
-                password => sprintf("%04d", int(rand 10000)),
-                email => '',
-            });
-
             # TODO: pbx prefs (group handling, display name, extension etc)
 
+        } catch(DBIx::Class::Exception $e where { /Duplicate entry '([^']+)' for key 'number_idx'/ }) {
+            $e =~ /Duplicate entry '([^']+)' for key 'number_idx'/;
+            $c->log->error("failed to create subscribere, number $1 already exists"); # TODO: user, message, trace, ...
+            $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Number '$1' already exists.");
+            last;
         } catch($e) {
             $c->log->error("failed to create subscriber: $e"); # TODO: user, message, trace, ...
             $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "Failed to create subscriber.");

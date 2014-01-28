@@ -15,7 +15,7 @@ sub build_form_element_class {[qw(form-horizontal)]}
 
 has_field 'config' => (
     type => '+NGCP::Panel::Field::DeviceConfig',
-    not_nullable => 1,
+    validate_when_empty => 1,
     label => 'Device Configuration',
 );
 

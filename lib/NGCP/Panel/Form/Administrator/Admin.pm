@@ -10,7 +10,7 @@ for (qw(is_superuser lawful_intercept)) {
 has_field 'reseller' => (
     type => '+NGCP::Panel::Field::Reseller',
     label => 'Reseller',
-    not_nullable => 1,
+    validate_when_empty => 1,
 );
 has_block 'fields' => (
     tag => 'div',
