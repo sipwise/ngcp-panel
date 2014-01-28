@@ -93,14 +93,8 @@ sub GET :Allow {
         }
         $hal->resource($resource);
 
-        my $rname = $self->resource_name;
-        my $response = HTTP::Response->new(HTTP_OK, undef, HTTP::Headers->new(
-            (map { # XXX Data::HAL must be able to generate links with multiple relations
-                s|rel="(http://purl.org/sipwise/ngcp-api/#rel-$rname)"|rel="item $1"|;
-                s/rel=self/rel="collection self"/;
-                $_
-            } $hal->http_headers),
-        ), $hal->as_json);
+        my $response = HTTP::Response->new(HTTP_OK, undef, 
+            HTTP::Headers->new($hal->http_headers(skip_links => 1)), $hal->as_json);
         $c->response->headers($response->headers);
         $c->response->body($response->content);
         return;
