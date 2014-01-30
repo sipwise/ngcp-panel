@@ -1,3 +1,13 @@
+ngcp-panel (1.1.10) unstable; urgency=low
+
+  [ Gerhard Jungwirth ]
+  * [ffa8f62] MT#4871 fix domain test
+
+  [ Andreas Granig ]
+  * [4dc6488] MT#5823 Allow underscore in billing profile handle
+
+ -- Andreas Granig <agranig@sipwise.com>  Thu, 30 Jan 2014 15:28:55 +0100
+
 ngcp-panel (1.1.9) unstable; urgency=low
 
   * [4fe9668] MT#5741 Allow uppercase in subscriber username
