@@ -26,6 +26,9 @@
 					<ul class="dropdown-menu pull-right">
 						<li><a href="?lang=en"><img src="/img/lang/en.png" class="ngcp-lang-flag"/> English</a></li>
 						<li><a href="?lang=de"><img src="/img/lang/de.png" class="ngcp-lang-flag"/> German</a></li>
+						<li><a href="?lang=it"><img src="/img/lang/it.png" class="ngcp-lang-flag"/> Italian</a></li>
+						<li><a href="?lang=es"><img src="/img/lang/es.png" class="ngcp-lang-flag"/> Spanish</a></li>
+						<li><a href="?lang=ru"><img src="/img/lang/ru.png" class="ngcp-lang-flag"/> Russian</a></li>
 					</ul>
 				</li>
                     <li><a href="[% c.uri_for('/logout') %]">[% c.loc('Logout') %]</a></li>
