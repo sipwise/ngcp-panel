@@ -190,8 +190,8 @@ has_block 'actions' => (
 sub validate_handle {
     my ($self, $field) = @_;
 
-    unless($field->value =~ /^[a-zA-Z0-9]+$/) {
-        my $err_msg = 'Only lower-case, upper-case and digits allowed';
+    unless($field->value =~ /^\w+$/) {
+        my $err_msg = 'Only lower-case, upper-case, digits and _ allowed';
         $field->add_error($err_msg);
     }
 }
