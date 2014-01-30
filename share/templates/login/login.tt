@@ -2,7 +2,7 @@
     <div class="account-container login stacked">
         <div class="content clearfix">
             <h1>[% c.loc('[_1] Sign In', realm.ucfirst) %]</h1>
-            <p>[% c.loc('Sign in using your [_1] credentials:', realm) %]</p>
+            <p>[% c.loc('Sign in using your [_1] credentials:', realm.ucfirst) %]</p>
             [% form.render %]
         </div>
     </div>

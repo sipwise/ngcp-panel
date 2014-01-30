@@ -1,5 +1,15 @@
 [% site_config.title = c.loc('Web Phone for ') _ subscriber.username _ '@' _ subscriber.domain.domain -%]
 
+<script type="text/javascript" src="/js/libs/jssip-0.3.0.min.js"></script>
+<!--<script type="text/javascript" src="/js/libs/stanzaio.bundle.min.js"></script>-->
+<script type="text/javascript" src="/js/libs/stanzaio.bundle.js"></script>
+<script type="text/javascript" src="/js/libs/bootstrap-select.min.js"></script>
+<script type="text/javascript" src="/js/libs/bootstrap-switch.js"></script>
+<script type="text/javascript" src="/js/libs/jquery.slimscroll.min.js"></script>
+<link rel="stylesheet" type="text/css" href="/css/bootstrap-select/bootstrap-select.min.css"/>
+<link rel="stylesheet" type="text/css" href="/css/bootstrap-switch/bootstrap-switch.css"/>
+<link rel="stylesheet" type="text/css" href="/font/font-awesome/css/font-awesome.min.css"/>
+
 <style>
     #xmpp-roster {
         list-style-type: none;
@@ -62,6 +72,9 @@
         color: #666;
     }
 
+    .has-switch {
+        min-width: 200px;
+    }
 </style>
 
 <div class="row">
@@ -73,16 +86,6 @@
 
 <div class="ngcp-separator"></div>
 
-
-    <script type="text/javascript" src="/js/libs/jssip-0.3.0.min.js"></script>
-    <!--<script type="text/javascript" src="/js/libs/stanzaio.bundle.min.js"></script>-->
-    <script type="text/javascript" src="/js/libs/stanzaio.bundle.js"></script>
-    <script type="text/javascript" src="/js/libs/bootstrap-select.min.js"></script>
-    <script type="text/javascript" src="/js/libs/bootstrap-switch.js"></script>
-    <script type="text/javascript" src="/js/libs/jquery.slimscroll.min.js"></script>
-    <link rel="stylesheet" type="text/css" href="/css/bootstrap-select/bootstrap-select.min.css"/>
-    <link rel="stylesheet" type="text/css" href="/css/bootstrap-switch/bootstrap-switch.css"/>
-    <link rel="stylesheet" type="text/css" href="/font/font-awesome/css/font-awesome.min.css"/>
     <script type="text/javascript">
 
         var phone = null;
@@ -585,7 +588,7 @@
     <div>
         <h3>[% c.loc('Buddy List') %]</h3>
         <div class="row span6" style="margin:0; clear:both; padding:10px;">
-            <input id="xmpp-toggle-offline" style="float:left" type="checkbox" data-on="success" data-off="default" data-on-label="[% c.loc('Show Offline') %]" data-off-label="[% c.loc('Hide Offline') %]">
+            <input id="xmpp-toggle-offline" style="float:left;" type="checkbox" data-on="success" data-off="default" data-on-label="[% c.loc('Show Offline') %]" data-off-label="[% c.loc('Hide Offline') %]">
             <input id="sip_toggle_video" checked style="float:left" type="checkbox" data-on="success" data-off="default" data-on-label="[% c.loc('Audio&amp;Video') %]" data-off-label="[% c.loc('Audio Only') %]">
         </div>
         <div class="row span6" style="margin:0; clear:both;">

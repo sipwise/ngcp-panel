@@ -15,6 +15,10 @@ body {
     padding-right: 10px;
 }
 
+.btn [class^="icon-"] {
+    margin-top: 4px;
+}
+
 /* ---------
   The modal
 ------------*/

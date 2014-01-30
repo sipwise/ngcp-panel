@@ -153,7 +153,7 @@
 [%
     PROCESS "helpers/modal.tt";
     modal_header(m.create_flag=0,
-                 m.name = "Preference '" _ c.loc(helper.preference_meta.label) _"'");
+                 m.name = c.loc("Preference '") _ c.loc(helper.preference_meta.label) _"'");
 -%]
 
     [% IF helper.preference_meta.attribute == "allowed_ips" %]

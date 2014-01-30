@@ -1,4 +1,4 @@
-[% META title = 'System Statistics' -%]
+[% site_config.title = c.loc('System Statistics') -%]
 
     <!--[if lte IE 9]><script language="javascript" type="text/javascript" src="/js/jsrrd/flot/excanvas.min.js"></script><![endif]-->
     <script type="text/javascript" src="/js/libs/jsrrd/jsrrd/binaryXHR.js"></script>

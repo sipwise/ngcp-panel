@@ -77,7 +77,6 @@ sub auto :Private {
             }
         }
 
-
         # don't redirect to login page for ajax uris
         if($c->request->path =~ /\/ajax$/) {
             $c->response->body($c->loc("403 - Permission denied"));
@@ -102,13 +101,18 @@ sub auto :Private {
         return;
     }
 
-    if(defined $c->request->params->{lang} &&
-            $c->request->params->{lang} =~ /^\w+$/ && (
-            exists $c->installed_languages->{$c->request->params->{lang}} ||
-            $c->request->params->{lang} eq 'i_default') ) {
-        $c->session->{lang} = $c->request->params->{lang};
-        $c->response->cookies->{ngcp_panel_lang} = { value => $c->request->params->{lang}, expires =>  '+3M', };
-        $c->log->debug("Setting language to ". $c->request->params->{lang});
+    if(defined $c->request->params->{lang} && $c->request->params->{lang} =~ /^\w+$/) {
+        $c->log->debug("checking language");
+        if($c->request->params->{lang} eq "en") {
+            $c->log->debug("setting language ".$c->request->params->{lang}." to default");
+            $c->request->params->{lang} = "i_default";
+        }
+        if(exists $c->installed_languages->{$c->request->params->{lang}} ||
+           $c->request->params->{lang} eq "i_default") {
+            $c->session->{lang} = $c->request->params->{lang};
+            $c->response->cookies->{ngcp_panel_lang} = { value => $c->request->params->{lang}, expires =>  '+3M', };
+            $c->log->debug("Setting language to ". $c->request->params->{lang});
+        }
     }
     if (defined $c->session->{lang}) {
         $c->languages([$c->session->{lang}, "i_default"]);
