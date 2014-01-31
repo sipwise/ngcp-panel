@@ -26,6 +26,7 @@ $.extend( $.fn.dataTableExt.oStdClasses, {
             } );
 
 $(document).ready(function() {
+    var date_search_rendered = 0;
 	var [% helper.id_from_name %]_table = $('#[% helper.id_from_name %]_table')
 	    .dataTable( {
         "sDom": "<'row-fluid ngcp_dt_top_elements'lf<r>>t<'row-fluid'<'pull-left'i><'pull-right'p>>",
@@ -114,6 +115,43 @@ $(document).ready(function() {
                     function() { $(this).find('.sw_actions').css('visibility','visible'); },
                     function() { $(this).find('.sw_actions').css('visibility','hidden'); }
                 );
+
+                if(date_search_rendered) return;
+                date_search_rendered = 1;
+                [% has_from = 0; has_to = 0; -%]
+                [% FOR col IN helper.dt_columns -%]
+                  [% IF col.search_from_epoch && !has_from -%]
+                    var f = '<label>From Date: <input type="text" id="[% helper.id_from_name %]_datepicker_start" class="ngcp-datepicker" rel="tooltip" data-original-title="YYYY-MM-DD"/></label>';
+                    $('#[% helper.id_from_name %]_table_filter').prepend(f);
+                    $('#[% helper.id_from_name %]_datepicker_start').datepicker({
+                        "dateFormat": "yy-mm-dd",
+                        "onSelect": function(date) {
+                            [% helper.id_from_name %]_table.fnFilter(date, 0);
+                        }
+                    }).keyup( function () {
+                        [% helper.id_from_name %]_table.fnFilter(this.value, 0);
+                    });
+                    [% has_from = 1 -%]
+                  [% END -%]
+                  [% IF col.search_to_epoch && !has_to -%]
+
+                    var t = '<label>To Date: <input type="text" id="[% helper.id_from_name %]_datepicker_end" class="ngcp-datepicker" rel="tooltip" data-original-title="YYYY-MM-DD"/></label>';
+                    if($('#[% helper.id_from_name %]_datepicker_start').length > 0) {
+                        $('#[% helper.id_from_name %]_datepicker_start').parent().after(t);
+                    } else {
+                        $('#[% helper.id_from_name %]_table_filter').prepend(t);
+                    }
+                    $('#[% helper.id_from_name %]_datepicker_end').datepicker({
+                        "dateFormat": "yy-mm-dd",
+                        "onSelect": function(date) {
+                            [% helper.id_from_name %]_table.fnFilter(date, 1);
+                        }
+                    }).keyup( function () {
+                        [% helper.id_from_name %]_table.fnFilter(this.value, 1);
+                    });
+                    [% has_to = 1-%]
+                  [% END -%]
+                [% END %]
         },
         "fnRowCallback": function(nRow, aData, iDisplayIndex) {
             nRow.className = "sw_action_row";
@@ -121,40 +159,6 @@ $(document).ready(function() {
         },
 	} );
 
-    [% has_from = 0; has_to = 0; -%]
-    [% FOR col IN helper.dt_columns -%]
-      [% IF col.search_from_epoch && !has_from -%]
-        var f = '<label>From Date: <input type="text" id="[% helper.id_from_name %]_datepicker_start" class="ngcp-datepicker" rel="tooltip" data-original-title="YYYY-MM-DD"/></label>';
-        $('#[% helper.id_from_name %]_table_filter').prepend(f);
-        $('#[% helper.id_from_name %]_datepicker_start').datepicker({
-            "dateFormat": "yy-mm-dd",
-            "onSelect": function(date) {
-                [% helper.id_from_name %]_table.fnFilter(date, 0);
-            }
-        }).keyup( function () {
-            [% helper.id_from_name %]_table.fnFilter(this.value, 0);
-        });
-        [% has_from = 1 -%]
-      [% END -%]
-      [% IF col.search_to_epoch && !has_to -%]
-
-        var t = '<label>To Date: <input type="text" id="[% helper.id_from_name %]_datepicker_end" class="ngcp-datepicker" rel="tooltip" data-original-title="YYYY-MM-DD"/></label>';
-        if($('#[% helper.id_from_name %]_datepicker_start').length > 0) {
-            $('#[% helper.id_from_name %]_datepicker_start').parent().after(t);
-        } else {
-            $('#[% helper.id_from_name %]_table_filter').prepend(t);
-        }
-        $('#[% helper.id_from_name %]_datepicker_end').datepicker({
-            "dateFormat": "yy-mm-dd",
-            "onSelect": function(date) {
-                [% helper.id_from_name %]_table.fnFilter(date, 1);
-            }
-        }).keyup( function () {
-            [% helper.id_from_name %]_table.fnFilter(this.value, 1);
-        });
-        [% has_to = 1-%]
-      [% END -%]
-    [% END %]
 } );
 </script>
 

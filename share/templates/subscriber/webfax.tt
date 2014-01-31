@@ -1,0 +1,19 @@
+[% site_config.title = c.loc('Fax Journal for [_1]@[_2]', subscriber.username, subscriber.domain.domain) -%]
+
+[%
+    helper.name = c.loc('Fax');
+    helper.dt_columns = fax_dt_columns;
+    helper.column_sort = 'the_timestamp';
+    helper.form_object = form;
+    helper.create_flag = create_flag;
+    helper.ajax_uri = c.uri_for_action('/subscriber/webfax_ajax', [c.req.captures.0]);
+    helper.messages = messages;
+
+    helper.top_buttons = [
+        { name = c.loc('Send Fax'), uri = c.uri_for_action('/subscriber/webfax_send', [ subscriber.id ]), icon = 'icon-print' },
+    ];
+
+    PROCESS 'helpers/datatables.tt';
+%]
+
+[% # vim: set tabstop=4 syntax=html expandtab: -%]

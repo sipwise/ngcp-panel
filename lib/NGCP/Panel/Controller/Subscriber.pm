@@ -14,6 +14,7 @@ use NGCP::Panel::Utils::Preferences;
 use NGCP::Panel::Utils::Message;
 use NGCP::Panel::Utils::DateTime;
 use NGCP::Panel::Utils::Sems;
+use NGCP::Panel::Utils::Hylafax;
 use NGCP::Panel::Form::Subscriber;
 use NGCP::Panel::Form::SubscriberEdit;
 use NGCP::Panel::Form::Customer::PbxExtensionSubscriberEdit;
@@ -41,6 +42,7 @@ use NGCP::Panel::Form::Faxserver::Active;
 use NGCP::Panel::Form::Faxserver::SendStatus;
 use NGCP::Panel::Form::Faxserver::SendCopy;
 use NGCP::Panel::Form::Faxserver::Destination;
+use NGCP::Panel::Form::Subscriber::Webfax;
 
 use NGCP::Panel::Utils::XMLDispatcher;
 use UUID;
@@ -294,7 +296,102 @@ sub base :Chained('sub_list') :PathPart('') :CaptureArgs(1) {
         { name => "choice", search => 1, title => $c->loc('Slot') },
         { name => "destination", search => 1, title => $c->loc('Destination') },
     ]);
+    $c->stash->{fax_dt_columns} = NGCP::Panel::Utils::Datatables::set_columns($c, [
+        { name => "id", search => 1, title => $c->loc('#') },
+        { name => "the_timestamp", search_from_epoch => 1, search_to_epoch => 1, title => $c->loc('Timestamp') },
+        { name => "status", search => 1, title => $c->loc('Status') },
+        { name => "duration", search => 1, title => $c->loc('Duration') },
+        { name => "direction", search => 1, title => $c->loc('Direction') },
+        { name => "peer_number", search => 1, title => $c->loc('Peer Number') },
+        { name => "pages", search => 1, title => $c->loc('Pages') },
+    ]);
 }
+
+sub webfax :Chained('base') :PathPart('webfax') :Args(0) {
+    my ($self, $c) = @_;
+
+    $c->stash(
+        template => 'subscriber/webfax.tt',
+    );
+}
+
+sub webfax_send :Chained('base') :PathPart('webfax/send') :Args(0) {
+    my ($self, $c) = @_;
+
+    my $subscriber = $c->stash->{subscriber};
+    my $form = NGCP::Panel::Form::Subscriber::Webfax->new;
+    my $posted = ($c->request->method eq 'POST');
+
+    my $params = {};
+    if($posted) {
+         $c->req->params->{faxfile} = $c->req->upload('faxfile');
+    }
+    $form->process(
+        posted => $posted,
+        params => $c->req->params,
+    );
+
+    NGCP::Panel::Utils::Navigation::check_form_buttons(
+        c => $c,
+        form => $form,
+        fields => {},
+        back_uri => $c->uri_for_action('/subscriber/webfax', $c->req->captures),
+    );
+
+    if($posted && $form->validated) {
+        try {
+            if(defined $form->params->{faxfile}) {
+                NGCP::Panel::Utils::Hylafax::send_fax(
+                    c => $c,
+                    subscriber => $subscriber,
+                    destination => $form->params->{destination},
+                    #resolution => 'low', # opt (low, medium, extended)
+                    #notify => 'someone@example.org', # TODO: handle in send_fax, read from prefs!
+                    #coverpage => 1,
+                    upload => $form->params->{faxfile},
+                );
+            } else {
+                NGCP::Panel::Utils::Hylafax::send_fax(
+                    c => $c,
+                    subscriber => $subscriber,
+                    destination => $form->params->{destination},
+                    #resolution => 'low', # opt (low, medium, extended)
+                    #notify => 'someone@example.org', # TODO: handle in send_fax, read from prefs!
+                    #coverpage => 1,
+                    data => $form->params->{data},
+                );
+            }
+        } catch($e) {
+            NGCP::Panel::Utils::Message->error(
+                c     => $c,
+                error => "failed to send fax: $e",
+                desc  => $c->loc('Internal error while sending fax'),
+            );
+            NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for_action('/subscriber/webfax', $c->req->captures));
+            return;
+        }
+    }
+
+    $c->stash(
+        template => 'subscriber/webfax.tt',
+        form => $form,
+        create_flag => 1,
+    );
+}
+
+sub webfax_ajax :Chained('base') :PathPart('webfax/ajax') :Args(0) {
+    my ($self, $c) = @_;
+
+    my $s = $c->stash->{subscriber}->provisioning_voip_subscriber;
+    my $fax_rs = $c->model('DB')->resultset('fax_journal')->search({
+        subscriber_id => $s->id,
+    });
+
+    NGCP::Panel::Utils::Datatables::process($c, $fax_rs, $c->stash->{fax_dt_columns});
+
+    $c->detach( $c->view("JSON") );
+}
+
 
 sub webphone :Chained('base') :PathPart('webphone') :Args(0) {
     my ($self, $c) = @_;
