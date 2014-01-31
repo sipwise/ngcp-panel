@@ -138,6 +138,11 @@ sub delete :Chained('base') :PathPart('delete') {
     my ($self, $c) = @_;
     
     try {
+        # manually delete hosts in group to let triggers hit in
+        foreach my $p ($c->stash->{group_result}->voip_peer_hosts->all) {
+            $p->voip_peer_preferences->delete_all;
+            $p->delete;
+        }
         $c->stash->{group_result}->delete;
         $self->_sip_lcr_reload;
         $c->flash(messages => [{type => 'success', text => $c->loc('Peering Group successfully deleted') }]);
