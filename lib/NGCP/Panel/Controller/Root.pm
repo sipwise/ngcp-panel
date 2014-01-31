@@ -18,6 +18,28 @@ sub auto :Private {
 
     $c->log->debug("*** Root::auto called");
 
+    if(defined $c->request->params->{lang} && $c->request->params->{lang} =~ /^\w+$/) {
+        $c->log->debug("checking language");
+        if($c->request->params->{lang} eq "en") {
+            $c->log->debug("setting language ".$c->request->params->{lang}." to default");
+            $c->request->params->{lang} = "i-default";
+        }
+        if(exists $c->installed_languages->{$c->request->params->{lang}} ||
+           $c->request->params->{lang} eq "i-default") {
+            $c->session->{lang} = $c->request->params->{lang};
+            $c->response->cookies->{ngcp_panel_lang} = { value => $c->request->params->{lang}, expires =>  '+3M', };
+            $c->log->debug("Setting language to ". $c->request->params->{lang});
+        }
+    }
+    if (defined $c->session->{lang}) {
+        $c->languages([$c->session->{lang}, "i-default"]);
+    } elsif ( $c->req->cookie('ngcp_panel_lang') ) {
+        $c->session->{lang} = $c->req->cookie('ngcp_panel_lang')->value;
+    } else {
+        $c->languages([ map { s/^en.*$/i-default/r } @{ $c->languages } ]);
+        $c->session->{lang} = $c->language;
+    }
+
     if (
         __PACKAGE__ eq $c->controller->catalyst_component_name
         or 'NGCP::Panel::Controller::Login' eq $c->controller->catalyst_component_name
@@ -99,26 +121,6 @@ sub auto :Private {
         $c->session(target => $target);
         $c->response->redirect($c->uri_for('/login/subscriber'));
         return;
-    }
-
-    if(defined $c->request->params->{lang} && $c->request->params->{lang} =~ /^\w+$/) {
-        $c->log->debug("checking language");
-        if($c->request->params->{lang} eq "en") {
-            $c->log->debug("setting language ".$c->request->params->{lang}." to default");
-            $c->request->params->{lang} = "i_default";
-        }
-        if(exists $c->installed_languages->{$c->request->params->{lang}} ||
-           $c->request->params->{lang} eq "i_default") {
-            $c->session->{lang} = $c->request->params->{lang};
-            $c->response->cookies->{ngcp_panel_lang} = { value => $c->request->params->{lang}, expires =>  '+3M', };
-            $c->log->debug("Setting language to ". $c->request->params->{lang});
-        }
-    }
-    if (defined $c->session->{lang}) {
-        $c->languages([$c->session->{lang}, "i_default"]);
-    } elsif ( $c->req->cookie('ngcp_panel_lang') ) {
-        $c->session->{lang} = $c->req->cookie('ngcp_panel_lang')->value;
-        $c->languages([$c->session->{lang}, "i_default"]);
     }
 
     $c->log->debug("*** Root::auto grant access for authenticated user");
