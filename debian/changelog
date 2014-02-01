@@ -1,4 +1,4 @@
-ngcp-panel (1.2.0) UNRELEASED; urgency=low
+ngcp-panel (1.2.0+0~mr3.3) unstable; urgency=low
 
   [ Lars Dieckow ]
   * [aba646f] MT#3929 certificate management
@@ -134,6 +134,62 @@ ngcp-panel (1.2.0) UNRELEASED; urgency=low
   * [7e3a299] MT#5355 Implement peer_auth api calls to sems.
   * [5e5fbee] MT#5307 Fix GD::Simple to avoid race conditions
   * [6d4ba44] MT#3929 Add gnutls-bin dependency for certtool
+  * [1fc3981] Set to sane dev default values.
+  * [12edcd6] MT#3929 Set sane expiry values for prod usage.
+  * [883cd9a] MT#5199 Store client cert in DB and offer P12 fmt.
+  * [89f76c6] MT#5199 Add openssl dependency for P12 creation.
+  * [7d7f712] MT#5199 Make debian lint happy.
+  * [329b831] MT#5199 Offer API CA Cert for download too.
+  * [1d873fc] MT#4229 Remove dump from logfile.
+  * [e8fa8b2] MT#5349 API: Implement domain preferences. WIP.
+  * [efafd55] MT#3931 API: Use TryCatch instead of Try::Tiny
+  * [a737e3f] MT#5349 API: skip updating prefs with null value
+  * [5929bcd] MT#5349 API: add method to fetch dompref meta data
+  * [de6ac98] MT#5349 API: Implement validation for dom prefs.
+  * [8cdf9c7] MT#5349 API: Implement GET for special domprefs
+  * [57f4df4] Enable debug in local config for dev.
+  * [ee9d4fa] MT#5349 API: Implement PUT/PATCH on special dprefs
+  * [1359aa5] MT#5349 API: Implement special dompref removal.
+  * [ce93199] MT#5349 API: return reseller_id for domain.
+  * [9651c81] MT#3933 API: fetch and create subscriber. WIP.
+  * [aa5eee6] MT#5575 Migrate clear_audio_cache to Sems helper.
+  * [ce01267] MT#3933 API: Check for max_subscribers on create
+  * [de9fc52] MT#5575 Clear audio cache on sems-pbx too.
+  * [215fb14] MT#5173 Add Polycom sync settings to config
+  * [b098c10] MT#5575 Properly clear pbx audio cache for moh/pbx
+  * [0fd10e0] MT#5575 Clear audio cache only on specific service
+  * [71658e1] MT#5599 Rework auth/authz for pwd-based API access
+  * [af5ec8d] MT#5599 Define new auth module dependency.
+  * [6a9f455] MT#5599 API: remove middleware handling.
+  * [6e60f43] MT#5599 Fix pwd-based api auth.
+  * [6cd4ef0] MT#5629 Fix setting external_id in customer ctx.
+  * [f31c2fc] MT#5661 Update prepaid pref on bilprof change
+  * [cd15599] MT#5661 API: fix prepaid flag changes.
+  * [e86a5d8] MT#5741 Allow upperchase in subscriber username
+  * [aef3a49] MT#5797 Skip Link hdrs for fetching collections.
+  * [d508a51] MT#3933 API: tighten subscriber creation.
+  * [8544fd0] MT#3933 API: add form for subscriber validation.
+  * [d1bcc66] MT#5811 Basic framework for sip/xmpp via WS
+  * [03a6f37] MT#5811 Add inbound/outbound xmpp chat skeleton
+  * [ba52803] MT#5811 Implement xmpp reconnection
+  * [33001ef] MT#5811 Prettify roster and add chat window
+  * [7f15cba] MT#5811 Implement display of chat state
+  * [676b440] MT#5811 Flash title on out-of-focus, autofocus chat input
+  * [0977136] MT#5811 Make chat history scrollable
+  * [db4e2ac] MT#5811 Move ctrl buttons in roster to far right
+  * [3cca489] MT#5811 Add toggle for offline roster entries
+  * [21750d5] MT#5811 Cosmetical change for offline toggle
+  * [cc79ba0] MT#5811 Prettify chat window. Still needs work
+  * [fbc7e5e] MT#5811 Activate basic phone functionality
+  * [6772459] MT#5811 Make video calls basically working
+  * [4215935] MT#5811 Prepare for localization
+  * [eaad8df] MT#3961 Rework German localization.
+  * [3525445] MT#3961 Update German translation.
+  * [fbecee5] MT#3961 Prepare languages it, es and ru.
+  * [43291e9] MT#5823 Allow underscore in billing profile handle
+  * [75fccd3] MT#3961 Install I18N folder in debian.
+  * [b88d36b] MT#5083 Implement sendfax in ngcp-panel.
+  * [8c3a279] MT#5473 Fix deleting peering groups.
 
   [ Gerhard Jungwirth ]
   * [9b0cc33] MT#4767 Show missing registered devices
@@ -186,6 +242,32 @@ ngcp-panel (1.2.0) UNRELEASED; urgency=low
   * [9fed076] MT#4967 Disallow subscriberadmin to change status
   * [dfe18e5] MT#4967 Do not show password on edit
   * [f316797] MT#4967 "Unsteal" number on subadmin terminate
+  * [ac17c54] MT#4871 Change screenres of selenium-tests to 1024x768
+  * [11841b2] MT#5465 preferences_enum stop using default_val
+  * [fdd4c48] MT#4771 fix selenium resolution for reseller test
+  * [a66fd07] MT#4771 fix customer test, select product
+  * [d4c0d8d] MT#4771 increase wait-timeout on admin-login test
+  * [b0d1d25] MT#4967 update all cloudpbx-subscribers on change of head one
+  * [ef80d19] MT#4967 change primary number of extension-subscribers by extension
+  * [ef6bfee] MT#4967 update cloud_pbx_base_cli and other settings on cloudpbx-subscribers
+  * [029c51f] MT#5661 change selection of customers when bprof is updated
+  * [cbd0438] MT#4871 fix domain test
+  * [1bf73a7] MT#3961 Prepare for localization
+  * [a272512] MT#3961 Prepare to localize DB-Strings
+  * [43a7211] provide a mechanism to update README
+  * [1f37a80] MT#3961 Provide Dropdown to change the language
+  * [9040831] MT#3961 more translations
+  * [f1a210f] MT#3961 using specific identifier for datatables table
+  * [d989abc] MT#3961 Translate everything
+  * [f7d4d8b] MT#3961 I18N-ize missing strings
+  * [8981667] MT#3961 Translate Preference groups
+  * [32bff20] MT#3961 fix translated login form
+  * [4ab0097] MT#3961 translate HTML::FormHandler forms
+  * [ede44ba] MT#3961 automatic extraction of formhandler strings
+  * [e4b4138] MT#3961 Add flags to language menu
+  * [3f813d6] MT#3961 fix image file path
+  * [cc5d36d] MT#3961 Localize the menu title "Language"
+  * [360d622] MT#3961 check language before login, map en to i-default
 
   [ Andrew Pogrebennyk ]
   * [cc9fe6e] MT#3997 MT#5193 Fix build_via_routes with only one external sbc.
@@ -207,13 +289,18 @@ ngcp-panel (1.2.0) UNRELEASED; urgency=low
   * [51a27c8] MT#4895 fix last commit
   * [b8eaea0] MT#4895 fix last commit
   * [193ab53] MT#4895 fix last commit
+  * [6775371] MT#5587 Remove apache migration stuff.
+  * [0ad4699] config for polycom phones
 
   [ Michael Prokop ]
   * [47e6925] MT#5215 Add new packages for REST feature to Depends
   * [6dbb4b5] MT#5215 Add libjson-pointer-perl + libjson-types-perl to Depends
   * [ffa81f5] MT#5365 Add further packages to (Build-)Depends
+  * [679c866] MT#5395 Add further packages to (Build-)Depends
 
- -- Alex Lutay <taurus@taurus-laptop>  Fri, 13 Dec 2013 10:07:58 +0100
+  [ Sipwise Jenkins Builder ]
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Sat, 01 Feb 2014 19:52:07 +0100
 
 ngcp-panel (1.1.6) unstable; urgency=low
 
