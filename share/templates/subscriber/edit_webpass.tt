@@ -1,0 +1,77 @@
+[% site_config.title = c.loc('User Details for [_1]@[_2]', subscriber.username, subscriber.domain.domain) -%]
+
+<div class="row">
+    <span class="pull-left" style="margin:0 5px 0 5px;">
+        <a class="btn btn-primary btn-large" href="[% c.uri_for('/back') %]"><i class="icon-arrow-left"></i> [% c.loc('Back') %]</a>
+        <a class="btn btn-primary btn-large" href="[% c.uri_for_action('/subscriber/webpass_edit', [ subscriber.id ]) %]"><i class="icon-edit"></i> [% c.loc('Change Password') %]</a>
+    </span>
+</div>
+[% back_created = 1 -%]
+
+<div class="row">
+    [% FOREACH m IN messages -%]
+        <div class="alert alert-[% m.type %]">[% m.text %]</div>
+    [% END -%]
+</div>
+
+<div class="ngcp-separator"></div>
+
+<table class="table table-bordered table-striped table-highlight table-hover" id="subscribers_table">
+    <thead>
+        <tr>
+            <th>[% c.loc('Setting') %]</th>
+            <th>[% c.loc('Values') %]</th>
+        </tr>
+    </thead>
+    <tbody>
+        [% IF c.user.roles == "admin" || c.user.roles == "reseller" -%]
+        <tr class="sw_action_row">
+            <td>[% c.loc('Customer #') %]</td>
+            <td>[% subscriber.contract.id %]</td>
+        </tr>
+        [% END;
+        
+            elements = [];
+
+            elements.push({ value = subscriber.provisioning_voip_subscriber.webusername, desc = c.loc('Web Username') });
+            elements.push({ value = '******', desc = c.loc('Web Password') });
+            elements.push({ value = subscriber.username _ '@' _ subscriber.domain.domain, desc = c.loc('SIP URI') });
+            #elements.push({ value = , desc = c.loc('Primary Number') });
+
+        -%]
+        [% FOR elem IN elements -%]
+            <tr>
+                <td>[% elem.desc %]</td>
+                <td>[% elem.value %]</td>
+            </tr>
+        [% END -%]
+        <tr>
+            <td>[% c.loc('Numbers') %]</td>
+            <td>
+                [% FOR num IN subscriber.voip_numbers.all -%]
+                    [% num.cc %] [% num.ac %] [% num.sn %]<br/>
+                [% END -%]
+            </td>
+        </tr>
+    </tbody>
+</table>
+
+
+[% IF edit_flag == 1 -%]
+<!-- edit master data -->
+[%
+    IF form.has_for_js;
+        form.render_repeatable_js;
+    END;
+    PROCESS "helpers/modal.tt";
+    modal_header(m.create_flag=0,
+                 m.name = description);
+    form = translate_form(form);
+    form.render;
+    modal_footer();
+    modal_script(m.close_target = close_target);
+-%]
+[% END -%]
+
+
+[% # vim: set tabstop=4 syntax=html expandtab: -%]

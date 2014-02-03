@@ -32,6 +32,7 @@ use NGCP::Panel::Form::Voicemail::Email;
 use NGCP::Panel::Form::Voicemail::Attach;
 use NGCP::Panel::Form::Voicemail::Delete;
 use NGCP::Panel::Form::Reminder;
+use NGCP::Panel::Form::Subscriber::EditWebpass;
 use NGCP::Panel::Form::Subscriber::TrustedSource;
 use NGCP::Panel::Form::Subscriber::Location;
 use NGCP::Panel::Form::Subscriber::SpeedDial;
@@ -1793,9 +1794,6 @@ sub master :Chained('base') :PathPart('details') :CaptureArgs(0) {
         attribute => 'lock',
         prov_subscriber => $c->stash->{subscriber}->provisioning_voip_subscriber,
     );
-    $c->stash(
-        template => 'subscriber/master.tt',
-    );
 }
 
 sub details :Chained('master') :PathPart('') :Args(0) :Does(ACL) :ACLDetachTo('/denied_page') :AllowedRole(admin) :AllowedRole(reseller) :AllowedRole('subscriberadmin') {
@@ -2094,6 +2092,65 @@ sub aliases_ajax :Chained('master') :PathPart('aliases/ajax') :Args(0) :Does(ACL
     NGCP::Panel::Utils::Datatables::process($c, $num_rs, $alias_columns);
     
     $c->detach( $c->view("JSON") );
+}
+
+
+sub webpass :Chained('base') :PathPart('webpass') :Args(0) {
+    my ($self, $c) = @_;
+
+    $c->detach('/denied_page')
+        if(($c->user->roles eq "admin" || $c->user->roles eq "reseller") && $c->user->read_only);
+
+
+    $c->stash(
+        template => 'subscriber/edit_webpass.tt',
+    );
+}
+
+sub webpass_edit :Chained('base') :PathPart('webpass/edit') :Args(0) {
+    my ($self, $c) = @_;
+
+    $c->detach('/denied_page')
+        if(($c->user->roles eq "admin" || $c->user->roles eq "reseller") && $c->user->read_only);
+
+
+    my $form = NGCP::Panel::Form::Subscriber::EditWebpass->new;
+    my $posted = ($c->request->method eq 'POST');
+
+
+    $form->process(
+        posted => $posted,
+        params => $c->request->params,
+    );
+
+    if($posted && $form->validated) {
+
+        my $schema = $c->model('DB');
+        try {
+            my $subscriber = $c->stash->{subscriber};
+            my $prov_subscriber = $subscriber->provisioning_voip_subscriber;
+            $schema->txn_do(sub {
+                $prov_subscriber->update({
+                    webpassword => $form->value->{webpassword} });
+                $c->flash(messages => [{type => 'success', text => $c->loc('Successfully updated password') }]);
+            });
+        } catch($e) {
+            NGCP::Panel::Utils::Message->error(
+                c     => $c,
+                error => $e,
+                desc  => $c->loc('Failed to update subscriber (webpassword).'),
+            );
+        }
+
+        NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for_action('/subscriber/webpass', [$c->req->captures->[0]]));
+    }
+
+    $c->stash(
+        edit_flag => 1,
+        form => $form,
+        close_target => $c->uri_for_action('/subscriber/webpass', [$c->req->captures->[0]]),
+        template => 'subscriber/edit_webpass.tt',
+    );
 }
 
 sub edit_voicebox :Chained('base') :PathPart('preferences/voicebox/edit') :Args(1) {
