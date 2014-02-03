@@ -18,12 +18,6 @@ has_field 'submitid' => ( type => 'Hidden' );
 sub build_render_list {[qw/submitid fields actions/]}
 sub build_form_element_class {[qw(form-horizontal)]}
 
-has_field 'reseller' => (
-    type => '+NGCP::Panel::Field::Reseller',
-    label => 'Reseller',
-    validate_when_empty => 1,
-);
-
 has_field 'webusername' => (
     type => 'Text',
     label => 'Web Username',
@@ -76,7 +70,7 @@ has_field 'alias_number_add' => (
 has_field 'password' => (
     type => 'Text',
     label => 'SIP Password',
-    required => 1,
+    required => 0, # optional on edit
     minlength => 6,
     element_attr => { 
         rel => ['tooltip'], 
@@ -117,7 +111,6 @@ has_field 'external_id' => (
     },
 );
 
-
 has_field 'save' => (
     type => 'Submit',
     value => 'Save',
@@ -137,12 +130,6 @@ has_block 'actions' => (
     class => [qw/modal-footer/],
     render_list => [qw/save/],
 );
-
-sub update_fields {
-    my $self = shift;
-
-    $self->field('password')->required(0); # optional on edit
-}
 
 1;
 
