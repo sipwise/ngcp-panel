@@ -8,8 +8,9 @@
         <li><a href="[% c.uri_for_action('/subscriber/calllist', [subscriber.id]) %]">[% c.loc('Call List') %]</a></li>
         <li><a href="[% c.uri_for_action('/subscriber/voicemails', [subscriber.id]) %]">[% c.loc('Voicebox Messages') %]</a></li>
         <li><a href="[% c.uri_for_action('/subscriber/reglist', [subscriber.id]) %]">[% c.loc('Registered Devices') %]</a></li>
-        <li><a href="[% c.uri_for_action('/subscriber/preferences', [subscriber.id]) %]">[% c.loc('Line Settings') %]</a></li>
+        <li><a href="[% c.uri_for_action('/subscriber/preferences', [subscriber.id]) %]">[% c.loc('Subscriber Settings') %]</a></li>
         <li><a href="[% c.uri_for_action('/customer/details', [c.user.account_id]) %]">[% c.loc('Customer Settings') %]</a></li>
+        <li><a href="[% c.uri_for_action('/subscriber/webpass', [subscriber.id]) %]">[% c.loc('User Details') %]</a></li>
     </ul>
 </li>
 [% # vim: set tabstop=4 syntax=html expandtab: -%]
