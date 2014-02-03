@@ -19,6 +19,11 @@ body {
     margin-top: 4px;
 }
 
+/* fix bootstrap dropdown menu for mobile */
+.dropdown-backdrop {
+    display: none;
+}
+
 /* ---------
   The modal
 ------------*/
