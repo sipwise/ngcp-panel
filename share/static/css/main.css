@@ -31,7 +31,7 @@ body {
 div.ngcp-modal {
     max-width: 816px;
     width: 100%;
-    margin: -250px 0 0 -408px;
+    margin: -275px 0 0 -408px;
     top: 50%;
     left: 50%; /* override responsive css (bootstrap-responsive.css) */
     display: block;
@@ -39,6 +39,15 @@ div.ngcp-modal {
 @media (max-width: 830px) {
     div.ngcp-modal {
         margin-left: -50%;
+    }
+}
+@media (max-height: 550px) { /* our modal is 550px in total */
+    /* takes care, buttons in .modal-footer stay visible */
+    div.ngcp-modal {
+        top: 0;
+        bottom: 0;
+        overflow-y: scroll;
+        margin-top: 0;
     }
 }
 
