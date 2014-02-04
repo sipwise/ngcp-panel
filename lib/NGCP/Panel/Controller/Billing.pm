@@ -365,11 +365,14 @@ sub fees_upload :Chained('fees_list') :PathPart('upload') :Args(0) {
         my @cols = $c->config->{fees_csv}->{element_order};
         $csv->column_names (@cols);
         if ($c->req->params->{purge_existing}) {
-            $c->stash->{'profile_result'}->billing_fees->delete_all;
+            $c->stash->{'profile_result'}->billing_fees->delete;
         }
 
         my @fails = ();
         my $linenum = 0;
+
+        my @fees = ();
+        my %zones = ();
         try {
             $c->model('DB')->txn_do(sub {
                 while(my $row = $csv->getline_hr($upload->fh)) {
@@ -378,19 +381,25 @@ sub fees_upload :Chained('fees_list') :PathPart('upload') :Args(0) {
                         push @fails, $linenum;
                         next;
                     }
-                    my $zone = $c->stash->{'profile_result'}
-                        ->billing_zones
-                        ->find_or_create({
-                            zone => $row->{zone},
-                            detail => $row->{zone_detail}
-                        });
-                    $row->{billing_zone_id} = $zone->id;
+                    my $k = $row->{zone}.'__NGCP__'.$row->{zone_detail};
+                    unless(exists $zones{$k}) {
+                        my $zone = $c->stash->{'profile_result'}
+                            ->billing_zones
+                            ->find_or_create({
+                                zone => $row->{zone},
+                                detail => $row->{zone_detail}
+                            });
+                        $zones{$k} = $zone->id;
+                    }
+                    $row->{billing_zone_id} = $zones{$k};
                     delete $row->{zone};
                     delete $row->{zone_detail};
-                    $c->stash->{'profile_result'}
-                        ->billing_fees->create($row);
+                    push @fees, $row;
                 }
+                $c->stash->{'profile_result'}
+                    ->billing_fees->populate(\@fees);
             });
+
             my $text = $c->loc('Billing Fee successfully uploaded');
             if(@fails) {
                 $text .= $c->loc(", but skipped the following line numbers: ") . (join ", ", @fails);
