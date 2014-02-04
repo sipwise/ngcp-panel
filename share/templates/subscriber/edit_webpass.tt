@@ -66,8 +66,7 @@
     PROCESS "helpers/modal.tt";
     modal_header(m.create_flag=0,
                  m.name = description);
-    form = translate_form(form);
-    form.render;
+    translate_form(form).render;
     modal_footer();
     modal_script(m.close_target = close_target);
 -%]

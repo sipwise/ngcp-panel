@@ -391,7 +391,7 @@ msgstr "Nur Audio"
 
 #: share/templates/subscriber/webphone.tt:592
 msgid "Audio&amp;Video"
-msgstr "Audio&amp;Video"
+msgstr "Audio&Video"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:556
 msgid "August"
@@ -5252,7 +5252,7 @@ msgstr ""
 
 #: share/templates/helpers/datatables.tt:73
 msgid "dataTables.default.js"
-msgstr ""
+msgstr "dataTables.de.js"
 
 #: share/templates/subscriber/webphone.tt:118
 #: share/templates/subscriber/webphone.tt:181

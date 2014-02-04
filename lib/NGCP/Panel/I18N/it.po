@@ -8,10 +8,10 @@ msgstr ""
 "Project-Id-Version: I 18N\n"
 "POT-Creation-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "PO-Revision-Date: 2014-01-30 14:49+0100\n"
-"Last-Translator: Andreas Granig <agranig@sipwise.com>\n"
+"Last-Translator: Daniel Grotti <dgrotti@sipwise.com>\n"
 "Language-Team: Italian\n"
 "MIME-Version: 1.0\n"
-"Content-Type: text/plain; charset=ASCII\n"
+"Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Language: it\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
@@ -20,7 +20,8 @@ msgstr ""
 msgid ""
 "\"Calling line identification restriction\" - if set to true, the CLI is not "
 "displayed on outgoing calls."
-msgstr ""
+msgstr "\"Mascheramento numero chiamante\" - se configurato, il numero chiamante CLI non "
+"verrà visualizzato per chiamate in uscita."
 
 #: lib/NGCP/Panel/Controller/Administrator.pm:29
 #: lib/NGCP/Panel/Controller/Billing.pm:263
@@ -65,108 +66,115 @@ msgstr ""
 #. (c.response.status)
 #: share/templates/denied_page.tt:9
 msgid "%1 Access Denied"
-msgstr ""
+msgstr "%1 Accesso Negato"
 
 #. (c.response.status)
 #: share/templates/error_page.tt:9
 msgid "%1 Internal server error"
-msgstr ""
+msgstr "%1 Errore interno"
 
 #. (c.response.status)
 #: share/templates/notfound_page.tt:9
 msgid "%1 Not found"
-msgstr ""
+msgstr "%1 Non trovato"
 
 #. (realm.ucfirst)
 #: share/templates/login/login.tt:4
 msgid "%1 Sign In"
-msgstr ""
+msgstr "%1 Entra"
 
 #. (faxdest.destination, faxdest.filetype)
 #: share/templates/subscriber/preferences.tt:325
 msgid "%1 as %2"
-msgstr ""
+msgstr "%1 come %2"
 
 #. (subscriber_count,contract.max_subscribers,                                c.config.features.cloudpbx ? c.loc('(including PBX groups)
 #. (subscriber_count, contract.max_subscribers,                            c.config.features.cloudpbx ? c.loc('(including PBX groups)
 #: share/templates/customer/details.tt:167
 #: share/templates/customer/details.tt:242
 msgid "%1 of maximum %2 subscribers %3created"
-msgstr ""
+msgstr "%1 di un massimo di %2 subscribers %3creati"
 
 #. (d.as_string, d.timeout)
 #: share/templates/subscriber/preferences.tt:552
 msgid "%1<span class=\"pull-right\">for %2s</span>"
-msgstr ""
+msgstr "%1<span class=\"pull-right\">per %2s</span>"
 
 #: lib/NGCP/Panel/Controller/Billing.pm:396
 msgid ", but skipped the following line numbers: "
-msgstr ""
+msgstr ", ma ha saltato i seguenti numeri di riga: "
 
 #: lib/NGCP/Panel/Controller/Root.pm:82
 msgid "403 - Permission denied"
-msgstr ""
+msgstr "403 - Permesso negato"
 
 #: lib/NGCP/Panel/Controller/Device.pm:354
 msgid "404 - No front image available for this device model"
-msgstr ""
+msgstr "404 - Nessuna immagine frontale disponibile per questo modello di dispositivo"
 
 #: lib/NGCP/Panel/Controller/Device.pm:367
 msgid "404 - No mac image available for this device model"
-msgstr ""
+msgstr "404 - Nessun immagine mac disponibile per questo modello di dispositivo"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:57
 msgid ""
 "A PIN code which may be used in a VSC to disable the outgoing user block "
 "list and NCOS level for a call."
-msgstr ""
+msgstr "Un codice PIN che possa essere usato in un VSC per disabilitare "
+"la lista di chiamate in uscita bloccate ed il livello NCOS per una chiamata"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:439
 msgid ""
 "A POSIX regex matching against 'sip:user@domain' (e.g. '^sip:.+@example\\.org"
 "$' matching the whole URI, or '999' matching if the URI contains '999')"
-msgstr ""
+msgstr "Una POSIX regexp che corrisponda a 'sip:user@domain' (es. '^sip:.+@example\\.org"
+"$' che corrisponde alla URI completa, oppure '999' che corrisponde a tutte le URI contenenti '999')"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:460
 msgid ""
 "A POSIX regex matching against the full Request-URI (e.g. '^sip:.+@example\\."
 "org$' or '^sip:431')"
-msgstr ""
+msgstr "Una POSIX regexp che corrisponda alla Request-URI completa (es. '^sip:.+@example\\."
+"org$' o '^sip:431')"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:75
 msgid ""
 "A list of shell patterns specifying which CLIs are allowed to be set by the "
 "subscriber. \"*\", \"?\" and \"[x-y]\" with \"x\" and \"y\" representing "
 "numbers from 0 to 9 may be used as wildcards as usual in shell patterns."
-msgstr ""
+msgstr "Una lista di pattern che specifichino quali CLI il subscriber ha il "
+"permesso di configurare. \"*\", \"?\" e \"[x-y]\" con \"x\" e \"y\" che rappresentano "
+"numeri da 0 a 9 possono essere usati come caratteri jolly."
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:49 lib/NGCP/Panel/Utils/DbStrings.pm:95
 msgid ""
 "A numeric string intended to be used in rewrite rules for emergency numbers."
 msgstr ""
+"Una stringa numerica che possa essere utilizzata nelle Rewrite Rules per i numeri di emergenza."
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:63
 msgid "A password used for authentication against the peer host."
-msgstr ""
+msgstr "Una password usata per autenticarsi verso il peer host."
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:67
 msgid ""
 "A realm (hostname) used to identify and for authentication against a peer "
 "host."
-msgstr ""
+msgstr "Un realm (nome host) usato come identificazione e autenticazione verso un peer "
+"host."
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:61
 msgid "A username used for authentication against the peer host."
-msgstr ""
+msgstr "Una nome utente usato per autenticarsi verso il peer host."
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:546
 msgid "ANY"
-msgstr ""
+msgstr "QUALSIASI"
 
 #: share/templates/administrator/list.tt:21
 #: share/templates/administrator/list.tt:29
 msgid "API key"
-msgstr ""
+msgstr "chiave API"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:572
 msgid "Ac"
@@ -174,196 +182,197 @@ msgstr ""
 
 #: share/templates/subscriber/webphone.tt:417
 msgid "Accept"
-msgstr ""
+msgstr "Accetta"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:186
 msgid "Access Restrictions"
-msgstr ""
+msgstr "Restrizioni di Accesso"
 
 #: lib/NGCP/Panel/Controller/Customer.pm:709
 msgid "Account balance successfully changed!"
-msgstr ""
+msgstr "Saldo del conto cabiato con successto!"
 
 #: lib/NGCP/Panel/Controller/Administrator.pm:37
 #: lib/NGCP/Panel/Controller/Reseller.pm:135
 #: lib/NGCP/Panel/Utils/DbStrings.pm:463
 #: share/templates/subscriber/preferences.tt:274
 msgid "Active"
-msgstr ""
+msgstr "Attivo"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:618
 msgid "Active callforward"
-msgstr ""
+msgstr "Attiva deviazione di chiamata"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:593
 msgid "Add"
-msgstr ""
+msgstr "Aggiungi"
 
 #: share/templates/customer/details.tt:108
 msgid "Address"
-msgstr ""
+msgstr "Indirizzo"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:346
 #: share/templates/subscriber/master.tt:71
 msgid "Administrative"
-msgstr ""
+msgstr "Amministrativo"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:22
 msgid "Administrative Block List for inbound calls"
-msgstr ""
+msgstr "Lista per blocco chiamate in ingresso (Livello amministratore)"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:28
 msgid "Administrative Block List for outbound calls"
-msgstr ""
+msgstr "Lista per blocco chiamate in uscita (Livello amministratore)"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:20
 msgid "Administrative Block Mode for inbound calls"
-msgstr ""
+msgstr "Lista per blocco chiamate in ingresso (Livello amministratore)"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:26
 msgid "Administrative Block Mode for outbound calls"
-msgstr ""
+msgstr "Modalità di blocco per chiamate in uscita (Livello amministratore)"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:54
 msgid "Administrative NCOS Level"
-msgstr ""
+msgstr "Livello NCOS (Livello amministratore)"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:58
 msgid "Administrative PIN to bypass outbound Block List"
-msgstr ""
+msgstr "PIN per eludere lista blocco chiamate in uscita (Livello amministratore)"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:24
 msgid "Administratively block anonymous inbound calls"
-msgstr ""
+msgstr "Blocco chiamate anonime in ingresso (Livello aministratore)"
 
 #: share/templates/administrator/list.tt:3
 #: share/templates/reseller/details.tt:127
 msgid "Administrator"
-msgstr ""
+msgstr "Amministratore"
 
 #: share/templates/reseller/details.tt:122
 msgid "Administrator Logins"
-msgstr ""
+msgstr "Accesso Amministratori"
 
 #: lib/NGCP/Panel/Controller/Administrator.pm:140
 msgid "Administrator not found"
-msgstr ""
+msgstr "Amministratore non trovato"
 
 #: lib/NGCP/Panel/Controller/Administrator.pm:111
 msgid "Administrator successfully created"
-msgstr ""
+msgstr "Amministratore creato con successo"
 
 #: lib/NGCP/Panel/Controller/Administrator.pm:213
 msgid "Administrator successfully deleted"
-msgstr ""
+msgstr "Amministratore eliminato con successo"
 
 #: lib/NGCP/Panel/Controller/Administrator.pm:187
 msgid "Administrator successfully updated"
-msgstr ""
+msgstr "Amministratore aggiornato con successo"
 
 #: share/templates/administrator/list.tt:1
 #: share/templates/widgets/admin_topmenu_settings.tt:22
 #: share/templates/widgets/reseller_topmenu_settings.tt:8
 msgid "Administrators"
-msgstr ""
+msgstr "Amministratori"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:594
 msgid "Advanced"
-msgstr ""
+msgstr "Avanzato"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:619
 msgid "Advanced View"
-msgstr ""
+msgstr "Vista Avanzata"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:390
 msgid "Alias Number"
-msgstr ""
+msgstr "Numero Alias"
 
 #: share/templates/subscriber/master.tt:85
 msgid "Alias Numbers"
-msgstr ""
+msgstr "Numeri Alias"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:392
 msgid "Alias number"
-msgstr ""
+msgstr "numero Alias"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:406
 msgid "Alias number add"
-msgstr ""
+msgstr "Aggiungere numero Alias"
 
 #: share/templates/widgets/admin_system_overview.tt:7
 msgid "All services running"
-msgstr ""
+msgstr "Tutti i servizi in esecuzione"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:143 lib/NGCP/Panel/Utils/DbStrings.pm:145
 msgid "Allow access from the given list of IP addresses and/or IP nets."
-msgstr ""
+msgstr "Abilita accesso dalla seguente lista di indirizzi IP e/o reti IP."
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:156
 msgid "Allow calls to foreign domains"
-msgstr ""
+msgstr "Abilita chiamate a domini esterni"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:64
 msgid "Allow inbound calls from foreign subscribers"
-msgstr ""
+msgstr "Abilita chiamate in ingresso da subscriber esterni"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:157
 msgid "Allow outbound calls of local subscribers to foreign domains"
-msgstr ""
+msgstr "Abilita chiamate in uscita da subscriber locali verso domini esterni"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:65
 msgid ""
 "Allow unauthenticated inbound calls from FOREIGN domain to users within this "
 "domain. Use with care - it allows to flood your users with voice spam."
-msgstr ""
+msgstr "Abilita chiamate in ingresso non autenticate da domini ESTERNI a utenti "
+"di questo dominio. Usare con cautela - permette di inondare i vostri utenti con chiamate spam."
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:74
 msgid "Allowed CLIs for outbound calls"
-msgstr ""
+msgstr "CLIs abilitati per chiamate in ingresso"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:142
 msgid "Allowed source IPs"
-msgstr ""
+msgstr "IP sorgenti abilitati"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:497
 msgid "An external id, e.g. provided by a 3rd party provisioning"
-msgstr ""
+msgstr "Un ID esterno, es. fornito da un sistema di provisioning ti terze parti"
 
 #: share/templates/subscriber/preferences.tt:53
 msgid "Answer Timeout"
-msgstr ""
+msgstr "Timeout di risposta"
 
 #: share/templates/widgets/admin_system_overview.tt:12
 msgid "Applications <strong>Ok</strong>"
-msgstr ""
+msgstr "Applicazioni <strong>Ok</strong>"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:395
 msgid "April"
-msgstr ""
+msgstr "Aprile"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:46
 msgid "Area Code"
-msgstr ""
+msgstr "Codice di Area"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:420
 msgid "Area Code, e.g. 212 for NYC or 1 for Vienna"
-msgstr ""
+msgstr "Codice di Area, es. 212 per NYC o 1 per Vienna"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:552
 msgid "Attach WAV"
-msgstr ""
+msgstr "Allega WAV"
 
 #: share/templates/subscriber/preferences.tt:199
 msgid "Attach WAV in Email"
-msgstr ""
+msgstr "Allega WAV nella Email"
 
 #: share/templates/helpers/pref_table.tt:37
 msgid "Attribute"
-msgstr ""
+msgstr "Attributo"
 
 #: share/templates/subscriber/webphone.tt:592
 msgid "Audio Only"
-msgstr ""
+msgstr "Solo Audio"
 
 #: share/templates/subscriber/webphone.tt:592
 msgid "Audio&amp;Video"
@@ -371,7 +380,7 @@ msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:556
 msgid "August"
-msgstr ""
+msgstr "Agosto"
 
 #: lib/NGCP/Panel/Controller/Subscriber.pm:3002
 msgid "Auto Attendant Slot"
@@ -387,15 +396,15 @@ msgstr ""
 
 #: share/templates/subscriber/webphone.tt:599
 msgid "Available"
-msgstr ""
+msgstr "Disponibile"
 
 #: share/templates/subscriber/webphone.tt:600
 msgid "Away"
-msgstr ""
+msgstr "Assente"
 
 #: lib/NGCP/Panel/Controller/Device.pm:791
 msgid "BLF Key"
-msgstr ""
+msgstr "chiave BLF"
 
 #: share/templates/billing/peaktimes.tt:5
 #: share/templates/callflow/callmap.tt:15 share/templates/calls/chord.tt:39
@@ -415,45 +424,45 @@ msgstr ""
 #: share/templates/subscriber/voicemail.tt:5
 #: share/templates/subscriber/webphone.tt:82
 msgid "Back"
-msgstr ""
+msgstr "Indietro"
 
 #: share/templates/error_page.tt:21 share/templates/notfound_page.tt:20
 msgid "Back to Dashboard"
-msgstr ""
+msgstr "Ritorna alla Dashboard"
 
 #: share/templates/security/list.tt:22
 msgid "Banned IPs"
-msgstr ""
+msgstr "IP Bloccati"
 
 #: share/templates/security/list.tt:57
 msgid "Banned Users"
-msgstr ""
+msgstr "Utenti Bloccati"
 
 #: share/templates/widgets/admin_billing_overview.tt:4
 #: share/templates/widgets/admin_topmenu_settings.tt:29
 #: share/templates/widgets/reseller_topmenu_settings.tt:13
 msgid "Billing"
-msgstr ""
+msgstr "Fatturazione"
 
 #: share/templates/billing/fees.tt:4
 msgid "Billing Fee"
-msgstr ""
+msgstr "Costo"
 
 #: lib/NGCP/Panel/Controller/Billing.pm:290
 msgid "Billing Fee does not exist!"
-msgstr ""
+msgstr "Costo non esistente!"
 
 #: lib/NGCP/Panel/Controller/Billing.pm:332
 msgid "Billing Fee successfully created!"
-msgstr ""
+msgstr "Costo creato con successo!"
 
 #: lib/NGCP/Panel/Controller/Billing.pm:394
 msgid "Billing Fee successfully uploaded"
-msgstr ""
+msgstr "Costo aggiornato con successo"
 
 #: share/templates/billing/fees.tt:1
 msgid "Billing Fees"
-msgstr ""
+msgstr "Costi Fatturazione"
 
 #: lib/NGCP/Panel/Controller/Contract.pm:29
 #: lib/NGCP/Panel/Controller/Contract.pm:372
@@ -463,190 +472,190 @@ msgstr ""
 #: share/templates/widgets/admin_billing_overview.tt:7
 #: share/templates/widgets/reseller_billing_overview.tt:7
 msgid "Billing Profile"
-msgstr ""
+msgstr "Profilo di Fatturazione"
 
 #: share/templates/customer/details.tt:139
 msgid "Billing Profile Name"
-msgstr ""
+msgstr "Nome Profilo di Fatturazione"
 
 #: lib/NGCP/Panel/Controller/Billing.pm:87
 msgid "Billing Profile does not exist!"
-msgstr ""
+msgstr "Profilo di Fatturazione non esistente!"
 
 #: lib/NGCP/Panel/Controller/Billing.pm:440
 msgid "Billing Profile successfully changed!"
-msgstr ""
+msgstr "Profilo di Fatturazione cambiato con successo!"
 
 #: share/templates/billing/list.tt:1 share/templates/customer/details.tt:131
 #: share/templates/widgets/admin_billing_overview.tt:7
 #: share/templates/widgets/reseller_billing_overview.tt:7
 msgid "Billing Profiles"
-msgstr ""
+msgstr "Profili di Fatturazione"
 
 #: lib/NGCP/Panel/Controller/Billing.pm:267 share/templates/billing/zones.tt:3
 msgid "Billing Zone"
-msgstr ""
+msgstr "Zona di Fatturazione"
 
 #: lib/NGCP/Panel/Controller/Billing.pm:499
 msgid "Billing Zone successfully created"
-msgstr ""
+msgstr "Zona di Fatturazione creata con successo!"
 
 #: share/templates/billing/zones.tt:1
 msgid "Billing Zones"
-msgstr ""
+msgstr "Zone di Fatturazione"
 
 #: lib/NGCP/Panel/Controller/Billing.pm:453
 msgid "Billing fee not found!"
-msgstr ""
+msgstr "Costo non trovato!"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:407
 msgid "Billing profile"
-msgstr ""
+msgstr "Profilo di fatturazione"
 
 #: lib/NGCP/Panel/Controller/Billing.pm:238
 msgid "Billing profile successfully created"
-msgstr ""
+msgstr "Profilo di fatturazione creato con successo"
 
 #: lib/NGCP/Panel/Controller/Billing.pm:458
 msgid "Billing profile successfully deleted!"
-msgstr ""
+msgstr "Profilo di fatturazione eliminato con successo!"
 
 #: lib/NGCP/Panel/Controller/Billing.pm:181
 msgid "Billing profile successfully updated"
-msgstr ""
+msgstr "Profilo di fatturazione aggiornato con successo"
 
 #: lib/NGCP/Panel/Controller/Billing.pm:528
 msgid "Billing zone does not exist!"
-msgstr ""
+msgstr "Zona di fatturazione non esistente!"
 
 #: lib/NGCP/Panel/Controller/Billing.pm:539
 msgid "Billing zone successfully deleted"
-msgstr ""
+msgstr "Zona di fatturazione eliminata con successo"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:12
 msgid "Block List for inbound calls"
-msgstr ""
+msgstr "Lista di blocco chiamate in ingresso"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:18
 msgid "Block List for outbound calls"
-msgstr ""
+msgstr "Lista di blocco chiamate in uscita"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:10
 msgid "Block Mode for inbound calls"
-msgstr ""
+msgstr "Modalità di blocco per chiamate in ingresso"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:16
 msgid "Block Mode for outbound calls"
-msgstr ""
+msgstr "Modalità di blocco per chiamate in uscita"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:14
 msgid "Block anonymous inbound calls"
-msgstr ""
+msgstr "Blocco chiamate anonime in ingresso"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:506
 msgid "Bootstrap Sync HTTP Method"
-msgstr ""
+msgstr "Metodo Bootstrap Sync HTTP"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:355
 msgid "Bootstrap Sync Parameters"
-msgstr ""
+msgstr "Parametri Bootstrap Sync"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:605
 msgid "Bootstrap Sync URI"
-msgstr ""
+msgstr "URI Bootstrap Sync"
 
 #: share/templates/subscriber/webphone.tt:589
 msgid "Buddy List"
-msgstr ""
+msgstr "Lista Contatti"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:172
 msgid "CLI of CloudPBX Pilot Subscriber"
-msgstr ""
+msgstr "CLI del Subscriber Pilota per CloudPBX"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:185
 msgid "Call Blockings"
-msgstr ""
+msgstr "Bloccaggi Chiamate"
 
 #: share/templates/calls/chord.tt:1
 #: share/templates/widgets/admin_topmenu_settings.tt:9
 msgid "Call Distribution"
-msgstr ""
+msgstr "Distribuzione Chiamate"
 
 #: share/templates/callflow/list.tt:17
 #: share/templates/subscriber/master.tt:217
 msgid "Call Flow"
-msgstr ""
+msgstr "Flusso di Chiamata"
 
 #. (callid)
 #: share/templates/callflow/callmap.tt:1
 #: share/templates/subscriber/callmap.tt:1
 msgid "Call Flow for Call-ID %1"
-msgstr ""
+msgstr "Flusso di chiamata per Call-ID %1"
 
 #: lib/NGCP/Panel/Controller/Subscriber.pm:562
 #: lib/NGCP/Panel/Controller/Subscriber.pm:833
 #: share/templates/subscriber/preferences.tt:62
 #: share/templates/widgets/subscriber_cf_overview.tt:3
 msgid "Call Forward Busy"
-msgstr ""
+msgstr "Deviazione di Chiamata su Occupato"
 
 #: share/templates/widgets/subscriber_cf_overview.tt:20
 msgid "Call Forward Configured"
-msgstr ""
+msgstr "Deviazione di Chiamata Configurato"
 
 #: lib/NGCP/Panel/Controller/Subscriber.pm:563
 #: lib/NGCP/Panel/Controller/Subscriber.pm:834
 #: share/templates/subscriber/preferences.tt:63
 #: share/templates/widgets/subscriber_cf_overview.tt:4
 msgid "Call Forward Timeout"
-msgstr ""
+msgstr "Deviazione di Chiamata su Non Risposta"
 
 #: lib/NGCP/Panel/Controller/Subscriber.pm:564
 #: lib/NGCP/Panel/Controller/Subscriber.pm:835
 #: share/templates/subscriber/preferences.tt:64
 #: share/templates/widgets/subscriber_cf_overview.tt:5
 msgid "Call Forward Unavailable"
-msgstr ""
+msgstr "Deviazione di chiamata su Non Disposnibile"
 
 #: lib/NGCP/Panel/Controller/Subscriber.pm:561
 #: lib/NGCP/Panel/Controller/Subscriber.pm:832
 #: share/templates/subscriber/preferences.tt:61
 #: share/templates/widgets/subscriber_cf_overview.tt:2
 msgid "Call Forward Unconditional"
-msgstr ""
+msgstr "Deviazione di Chiamata Incondizionata"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:184
 #: share/templates/subscriber/preferences.tt:44
 #: share/templates/widgets/subscriber_cf_overview.tt:17
 msgid "Call Forwards"
-msgstr ""
+msgstr "Deviazioni di Chiamata"
 
 #: share/templates/widgets/subscriber_cf_overview.tt:20
 msgid "Call Forwards Configured"
-msgstr ""
+msgstr "Deviazioni di Chiamata Configurati"
 
 #: share/templates/subscriber/master.tt:106
 msgid "Call History"
-msgstr ""
+msgstr "Storico Chiamate"
 
 #: share/templates/widgets/subscriber_calls_overview.tt:5
 #: share/templates/widgets/subscriber_topmenu_settings.tt:8
 #: share/templates/widgets/subscriberadmin_topmenu_settings.tt:8
 msgid "Call List"
-msgstr ""
+msgstr "Lista Chiamate"
 
 #. (subscriber.username, subscriber.domain.domain)
 #: share/templates/subscriber/calllist.tt:1
 msgid "Call List for %1@%2"
-msgstr ""
+msgstr "Lista Chiamate per %1@%2"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:437
 msgid "Call data"
-msgstr ""
+msgstr "Dati Chiamata"
 
 #: share/templates/subscriber/webphone.tt:416
 msgid "Call from"
-msgstr ""
+msgstr "Chiamata da"
 
 #: lib/NGCP/Panel/Controller/Callflow.pm:25
 #: lib/NGCP/Panel/Controller/Subscriber.pm:1686
@@ -656,95 +665,95 @@ msgstr ""
 #: lib/NGCP/Panel/Controller/Subscriber.pm:1667
 #: lib/NGCP/Panel/Utils/DbStrings.pm:282
 msgid "Callee"
-msgstr ""
+msgstr "Chiamato"
 
 #: lib/NGCP/Panel/Controller/Peering.pm:88
 msgid "Callee Pattern"
-msgstr ""
+msgstr "Pattern Chiamato"
 
 #: lib/NGCP/Panel/Controller/Peering.pm:87
 msgid "Callee Prefix"
-msgstr ""
+msgstr "Prefisso Chiamato"
 
 #: lib/NGCP/Panel/Controller/Callflow.pm:27
 msgid "Callee UUID"
-msgstr ""
+msgstr "UUID Chiamato"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:534
 msgid "Callee pattern"
-msgstr ""
+msgstr "Pattern chiamato"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:513
 msgid "Callee prefix"
-msgstr ""
+msgstr "Prefisso chiamato"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:584
 msgid "Callee prefix, eg: 43"
-msgstr ""
+msgstr "Prefisso chiamato, es: 43"
 
 #: lib/NGCP/Panel/Controller/Subscriber.pm:1666
 #: lib/NGCP/Panel/Controller/Subscriber.pm:1674
 #: lib/NGCP/Panel/Utils/DbStrings.pm:299
 msgid "Caller"
-msgstr ""
+msgstr "Chiamante"
 
 #: lib/NGCP/Panel/Controller/Peering.pm:89
 msgid "Caller Pattern"
-msgstr ""
+msgstr "Pattern Chiamante"
 
 #: lib/NGCP/Panel/Controller/Callflow.pm:26
 msgid "Caller UUID"
-msgstr ""
+msgstr "UUID Chiamante"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:518
 msgid "Caller pattern"
-msgstr ""
+msgstr "Pattern chiamante"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:328
 msgid "Callforward controls add"
-msgstr ""
+msgstr "Aggiungere controllo deviazione chiamata"
 
 #: share/templates/subscriber/webphone.tt:443
 msgid "Calling"
-msgstr ""
+msgstr "Chiamata"
 
 #: lib/NGCP/Panel/Controller/Customer.pm:753
 msgid "Can't create a PBX group without having an administrative subscriber."
-msgstr ""
+msgstr "Non è possibile create un gruppo PBX senza avere un subcriber amministratore."
 
 #: lib/NGCP/Panel/Controller/Administrator.pm:208
 msgid "Cannot delete myself"
-msgstr ""
+msgstr "Non è possibile eliminare sè stessi."
 
 #: lib/NGCP/Panel/Controller/Contract.pm:196
 #: lib/NGCP/Panel/Controller/Customer.pm:437
 msgid "Cannot terminate contract with the id 1"
-msgstr ""
+msgstr "Non è possibile terminare il contratto con id 1"
 
 #: lib/NGCP/Panel/Controller/Reseller.pm:259
 msgid "Cannot terminate reseller with the id 1"
-msgstr ""
+msgstr "Non è possibile terminare il rivenditore con id 1"
 
 #: share/templates/callflow/list.tt:3
 msgid "Captured Calls"
-msgstr ""
+msgstr "Chiamate Catturate"
 
 #: share/templates/subscriber/master.tt:199
 #: share/templates/subscriber/master.tt:205
 msgid "Captured Dialogs"
-msgstr ""
+msgstr "Dialoghi Catturati"
 
 #: share/templates/customer/details.tt:407
 msgid "Cash"
-msgstr ""
+msgstr "Saldo"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:539
 msgid "Cash Balance"
-msgstr ""
+msgstr "Accredito Conto"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:560
 msgid "Category:"
-msgstr ""
+msgstr "Categoria:"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:570
 msgid "Cc"
@@ -752,42 +761,44 @@ msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:462
 msgid "Cf actions"
-msgstr ""
+msgstr "azioni Cf"
 
 #: share/templates/subscriber/webphone.tt:586
 msgid "Chat Status:"
-msgstr ""
+msgstr "Stato Chat:"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:163
 msgid ""
 "Choose the logic for RTP/SRTP transcoding (SAVP profile) for the RTP relay"
 msgstr ""
+"Scegliere la logica di transcodifica RTP/SRTP (profilo SAVP) per flusso RTP"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:165
 msgid ""
 "Choose the logic for local RTCP feedback (AVPF profile) for the RTP relay"
 msgstr ""
+"Scegliere la logica per feedback RTPC (profilo AVPF) per flusso RTP"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:155
 msgid "Choose the logic of IPv4/IPv6 autodetection for the RTP relay"
-msgstr ""
+msgstr "Scegliere la logica per autorilevamento IPv4/IPv6 per flusso RTP"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:517
 msgid "City"
-msgstr ""
+msgstr "Città"
 
 #: share/templates/statistics/list.tt:37
 msgid "Click&Drag on the graphs to zoom individual ranges."
-msgstr ""
+msgstr "Clicca e trascina sui grafici per ingrandire una determinata zona."
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:372
 #: share/templates/rewrite/set_list.tt:24
 msgid "Clone"
-msgstr ""
+msgstr "Clona"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:374
 msgid "Close"
-msgstr ""
+msgstr "Chiudi"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:192
 msgid "Cloud PBX"
@@ -795,15 +806,15 @@ msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:170
 msgid "CloudPBX Hunt Group List"
-msgstr ""
+msgstr "CloudPBX List Gruppo di Ricerca"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:166
 msgid "CloudPBX Hunt Policy"
-msgstr ""
+msgstr "CloudPBX Modalità di Ricerca"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:168
 msgid "CloudPBX Serial Hunt Timeout"
-msgstr ""
+msgstr "CloudPBX Timeout Ricerca Seriale"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:160
 msgid "CloudPBX Subscriber"
@@ -811,18 +822,18 @@ msgstr ""
 
 #: share/layout/body.tt:166
 msgid "Collapse Groups"
-msgstr ""
+msgstr "Riduci Gruppi"
 
 #: lib/NGCP/Panel/Controller/Contact.pm:34
 #: lib/NGCP/Panel/Controller/Reseller.pm:123
 #: lib/NGCP/Panel/Utils/DbStrings.pm:365
 #: share/templates/customer/details.tt:104
 msgid "Company"
-msgstr ""
+msgstr "Azienda"
 
 #: lib/NGCP/Panel/Controller/Device.pm:110
 msgid "Configuration Version"
-msgstr ""
+msgstr "Versione Configurazione"
 
 #: share/templates/widgets/admin_billing_overview.tt:18
 #: share/templates/widgets/admin_peering_overview.tt:17
@@ -831,22 +842,22 @@ msgstr ""
 #: share/templates/widgets/reseller_customer_overview.tt:17
 #: share/templates/widgets/reseller_domain_overview.tt:17
 msgid "Configure"
-msgstr ""
+msgstr "Configura"
 
 #: share/templates/widgets/subscriber_cf_overview.tt:34
 msgid "Configure Line Settings"
-msgstr ""
+msgstr "Configura Subscriber"
 
 #: lib/NGCP/Panel/Controller/Subscriber.pm:1681
 #: lib/NGCP/Panel/Utils/DbStrings.pm:582 share/templates/contact/list.tt:3
 #: share/templates/reseller/details.tt:96
 #: share/templates/widgets/reseller_customer_overview.tt:12
 msgid "Contact"
-msgstr ""
+msgstr "Contatto"
 
 #: share/templates/customer/details.tt:75
 msgid "Contact Details"
-msgstr ""
+msgstr "Dettagli Contatto"
 
 #: lib/NGCP/Panel/Controller/Contract.pm:27
 #: lib/NGCP/Panel/Controller/Contract.pm:371
@@ -858,39 +869,39 @@ msgstr ""
 #: lib/NGCP/Panel/Controller/Subscriber.pm:108
 #: lib/NGCP/Panel/Utils/DbStrings.pm:396
 msgid "Contact Email"
-msgstr ""
+msgstr "Email Contatto"
 
 #: share/templates/denied_page.tt:26 share/templates/error_page.tt:23
 #: share/templates/notfound_page.tt:26
 msgid "Contact Support"
-msgstr ""
+msgstr "Supporto Contatto"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:381
 msgid "Contact URI"
-msgstr ""
+msgstr "URI Contatto"
 
 #: lib/NGCP/Panel/Controller/Contact.pm:112
 msgid "Contact not found"
-msgstr ""
+msgstr "Contatto non trovato"
 
 #: lib/NGCP/Panel/Controller/Contact.pm:156
 msgid "Contact successfully changed"
-msgstr ""
+msgstr "Contatto cambiato con successo"
 
 #: lib/NGCP/Panel/Controller/Contact.pm:81
 msgid "Contact successfully created"
-msgstr ""
+msgstr "Contatto creato con successo"
 
 #: lib/NGCP/Panel/Controller/Contact.pm:185
 msgid "Contact successfully deleted"
-msgstr ""
+msgstr "Contatto eliminato con successo"
 
 #: share/templates/contact/list.tt:1
 #: share/templates/widgets/admin_topmenu_settings.tt:26
 #: share/templates/widgets/reseller_customer_overview.tt:12
 #: share/templates/widgets/reseller_topmenu_settings.tt:10
 msgid "Contacts"
-msgstr ""
+msgstr "Contatti"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:19
 msgid ""
@@ -900,6 +911,11 @@ msgid ""
 "representing numbers from 0 to 9 may be used as wildcards like in shell "
 "patterns."
 msgstr ""
+"Contiene nomi patter di nomi utente SIP (la parte utente della URI SIP, es., "
+"\"user\" per URI SIP \"user@example.com\") che (non) sono abilitati ad essere "
+"chiamati dal subscriber. \"*\", \"?\" e \"[x-y]\" con \"x\" e \"y\" "
+"che reppresentano numeri da 0 a 9 possono essere usati come caratteri jolly"
+
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:13
 msgid ""
@@ -908,213 +924,218 @@ msgid ""
 "subscriber. \"*\", \"?\" and \"[x-y]\" with \"x\" and \"y\" representing "
 "numbers from 0 to 9 may be used as wildcards like in shell patterns."
 msgstr ""
+"Contiene nomi patter di nomi utente SIP (la parte utente della URI SIP, es., "
+"\"user\" per URI SIP \"user@example.com\") che (non) sono abilitati a "
+"chiamare il subscriber. \"*\", \"?\" e \"[x-y]\" con \"x\" e \"y\" "
+"che reppresentano numeri da 0 a 9 possono essere usati come caratteri jolly"
+
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:579
 msgid "Content"
-msgstr ""
+msgstr "Contenuto"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:532
 msgid "Content Type"
-msgstr ""
+msgstr "Tipo di Contenuto"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:587 share/templates/contract/list.tt:3
 #: share/templates/reseller/details.tt:64
 msgid "Contract"
-msgstr ""
+msgstr "Contratto"
 
 #: lib/NGCP/Panel/Controller/Reseller.pm:33
 #: lib/NGCP/Panel/Controller/Subscriber.pm:107
 #: lib/NGCP/Panel/Utils/DbStrings.pm:501
 msgid "Contract #"
-msgstr ""
+msgstr "Contratto #"
 
 #. (contract.id)
 #: share/templates/contract/list.tt:5
 msgid "Contract #%1"
-msgstr ""
+msgstr "Contratto #%1"
 
 #. ($contract_id)
 #: lib/NGCP/Panel/Controller/Contract.pm:308
 #: lib/NGCP/Panel/Controller/Contract.pm:433
 msgid "Contract #%1 successfully created"
-msgstr ""
+msgstr "Contratto #%1 creato con successo"
 
 #: share/templates/customer/details.tt:399
 msgid "Contract Balance"
-msgstr ""
+msgstr "Saldo Cliente"
 
 #: lib/NGCP/Panel/Controller/Contract.pm:84
 msgid "Contract does not exist"
-msgstr ""
+msgstr "Contratto non esistente"
 
 #: lib/NGCP/Panel/Controller/Contract.pm:176
 msgid "Contract successfully changed!"
-msgstr ""
+msgstr "Contratto cambiato con successo!"
 
 #: lib/NGCP/Panel/Controller/Contract.pm:210
 msgid "Contract successfully terminated"
-msgstr ""
+msgstr "Contratto terminato con successo"
 
 #: share/templates/contract/list.tt:1
 msgid "Contracts"
-msgstr ""
+msgstr "Contratti"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:456
 msgid "Country"
-msgstr ""
+msgstr "Nazione"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:44
 msgid "Country Code"
-msgstr ""
+msgstr "Codice Nazione"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:414
 msgid "Country Code, e.g. 1 for US or 43 for Austria"
-msgstr ""
+msgstr "Codice Nazione, es. 1 per US o 43 per Austria"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:327 share/templates/billing/zones.tt:21
 #: share/templates/subscriber/preferences.tt:459
 msgid "Create"
-msgstr ""
+msgstr "Crea"
 
 #. (m.name)
 #: share/templates/helpers/modal.tt:6
 msgid "Create %1"
-msgstr ""
+msgstr "Creat %1"
 
 #: share/templates/administrator/list.tt:25
 msgid "Create Administrator"
-msgstr ""
+msgstr "Crea Amministratore"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:590 share/templates/billing/list.tt:22
 msgid "Create Billing Profile"
-msgstr ""
+msgstr "Crea Profilo Fatturazione"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:357 share/templates/contact/list.tt:22
 msgid "Create Contact"
-msgstr ""
+msgstr "Crea Contatto"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:610
 msgid "Create Contract"
-msgstr ""
+msgstr "Crea Contratto"
 
 #: share/templates/customer/list.tt:23
 msgid "Create Customer"
-msgstr ""
+msgstr "Crea Cliente"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:305 share/templates/device/list.tt:105
 msgid "Create Device Configuration"
-msgstr ""
+msgstr "Crea Configurazione Dispositivo"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:505 share/templates/device/list.tt:28
 msgid "Create Device Model"
-msgstr ""
+msgstr "Creat Modello Dispositivo"
 
 #: share/templates/device/list.tt:144
 msgid "Create Device Profile"
-msgstr ""
+msgstr "Crea Profilo Dispositivo"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:326 share/templates/domain/list.tt:22
 msgid "Create Domain"
-msgstr ""
+msgstr "Crea Dominio"
 
 #: share/templates/billing/fees.tt:23
 msgid "Create Fee Entry"
-msgstr ""
+msgstr "Crea Singolo Costo"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:361
 msgid "Create Group"
-msgstr ""
+msgstr "Crea Gruppo"
 
 #: share/templates/ncos/list.tt:22
 msgid "Create NCOS Level"
-msgstr ""
+msgstr "Crea Livello NCOS"
 
 #: share/templates/subscriber/preferences.tt:534
 #: share/templates/subscriber/preferences.tt:584
 msgid "Create New"
-msgstr ""
+msgstr "Crea Nuovo"
 
 #: share/templates/customer/details.tt:306
 msgid "Create PBX Device"
-msgstr ""
+msgstr "Crea Dispositivo PBX"
 
 #: share/templates/customer/details.tt:245
 msgid "Create PBX Group"
-msgstr ""
+msgstr "Crea Gruppo PBX"
 
 #: share/templates/ncos/pattern_list.tt:24
 msgid "Create Pattern Entry"
-msgstr ""
+msgstr "Crea Singolo Pattern"
 
 #: share/templates/contract/list.tt:24
 msgid "Create Peering Contract"
-msgstr ""
+msgstr "Crea Contratto Peer"
 
 #: share/templates/peering/list.tt:22
 msgid "Create Peering Group"
-msgstr ""
+msgstr "Crea Gruppo Peer"
 
 #: share/templates/peering/servers_rules.tt:54
 msgid "Create Peering Rule"
-msgstr ""
+msgstr "Crea Regole Peer"
 
 #: share/templates/peering/servers_rules.tt:23
 msgid "Create Peering Server"
-msgstr ""
+msgstr "Crea Server Peer"
 
 #: share/templates/subscriber/master.tt:169
 msgid "Create Permanent Registration"
-msgstr ""
+msgstr "Crea Registrazione Permanente"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:576 share/templates/reseller/list.tt:23
 msgid "Create Reseller"
-msgstr ""
+msgstr "Crea Rivenditore"
 
 #: share/templates/contract/list.tt:25
 msgid "Create Reseller Contract"
-msgstr ""
+msgstr "Crea Contratto Rivenditore"
 
 #: share/templates/reseller/list.tt:24
 msgid "Create Reseller with default values"
-msgstr ""
+msgstr "Crea Rivenditore con valori di default"
 
 #: share/templates/rewrite/rules_list.tt:10
 msgid "Create Rewrite Rule"
-msgstr ""
+msgstr "Crea Rewrite Rule"
 
 #: share/templates/rewrite/set_list.tt:27
 msgid "Create Rewrite Rule Set"
-msgstr ""
+msgstr "Crea un set di Rewrite Rule"
 
 #: share/templates/subscriber/preferences.tt:386
 msgid "Create Slot"
-msgstr ""
+msgstr "Crea Slot"
 
 #: share/templates/customer/details.tt:382 share/templates/sound/list.tt:22
 msgid "Create Sound Set"
-msgstr ""
+msgstr "Crea un set di Suoni"
 
 #: share/templates/billing/peaktimes.tt:74
 msgid "Create Special Off-Peak Date"
-msgstr ""
+msgstr "Crea Data Speciale di Fuori Picco"
 
 #: share/templates/customer/details.tt:170
 #: share/templates/customer/details.tt:179
 #: share/templates/subscriber/list.tt:24
 msgid "Create Subscriber"
-msgstr ""
+msgstr "Crea Subscriber"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:338
 msgid "Create Zone"
-msgstr ""
+msgstr "Crea Zona"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:354
 msgid "Currency"
-msgstr ""
+msgstr "Valuta"
 
 #: share/templates/customer/details.tt:416
 msgid "Current totals"
-msgstr ""
+msgstr "Totale"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:511 lib/NGCP/Panel/Utils/Sounds.pm:71
 #: lib/NGCP/Panel/Utils/Sounds.pm:74 share/templates/customer/list.tt:3
@@ -1124,62 +1145,64 @@ msgstr ""
 #: share/templates/widgets/admin_reseller_overview.tt:13
 #: share/templates/widgets/reseller_customer_overview.tt:7
 msgid "Customer"
-msgstr ""
+msgstr "Cliente"
 
 #: share/templates/subscriber/master.tt:51
 msgid "Customer #"
-msgstr ""
+msgstr "Cliente #"
 
 #. (contract.id)
 #: share/templates/customer/list.tt:31
 msgid "Customer #%1"
-msgstr ""
+msgstr "Cliente #%1"
 
 #. ($contract_id)
 #: lib/NGCP/Panel/Controller/Customer.pm:189
 msgid "Customer #%1 successfully created"
-msgstr ""
+msgstr "Cliente #%1 creato con successo"
 
 #. ($contract_id)
 #: lib/NGCP/Panel/Controller/Customer.pm:415
 msgid "Customer #%1 successfully updated"
-msgstr ""
+msgstr "Cliente #%1 aggiornato con successo"
 
 #: share/templates/customer/details.tt:2
 msgid "Customer Details"
-msgstr ""
+msgstr "Dettagli Cliente"
 
 #. (contract.id,product.name)
 #: share/templates/customer/details.tt:4
 msgid "Customer Details for #%1 (%2)"
-msgstr ""
+msgstr "Dettagli Cliente per #%1 (%2)"
 
 #: share/templates/widgets/admin_billing_overview.tt:14
 #: share/templates/widgets/reseller_billing_overview.tt:13
 msgid "Customer Revenue"
-msgstr ""
+msgstr "Entrate Cliente"
 
 #: share/templates/widgets/subscriberadmin_topmenu_settings.tt:12
 msgid "Customer Settings"
-msgstr ""
+msgstr "Configurazioni Cliente"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:181
 msgid "Customer Sound Set"
-msgstr ""
+msgstr "Suoni Cliente"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:182
 msgid ""
 "Customer specific Sound Set used for PBX auto-attendant prompts, customer-"
 "specific announcements etc."
 msgstr ""
+"Specifici suoni del Cliente usati per i prompt IVR del PBX, annunci "
+"specifici del cliente etc."
 
 #: lib/NGCP/Panel/Controller/Customer.pm:451
 msgid "Customer successfully terminated"
-msgstr ""
+msgstr "Cliente terminato con successo"
 
 #: lib/NGCP/Panel/Controller/Customer.pm:246
 msgid "Customer was not found"
-msgstr ""
+msgstr "Cliente non è stato trovato"
 
 #: share/templates/customer/list.tt:1 share/templates/reseller/details.tt:188
 #: share/templates/widgets/admin_reseller_overview.tt:13
@@ -1188,15 +1211,15 @@ msgstr ""
 #: share/templates/widgets/reseller_customer_overview.tt:7
 #: share/templates/widgets/reseller_topmenu_settings.tt:9
 msgid "Customers"
-msgstr ""
+msgstr "Clienti"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:613
 msgid "Daily Fraud Limit"
-msgstr ""
+msgstr "Limite Frode Giornaliera"
 
 #: share/templates/customer/details.tt:488
 msgid "Daily Settings"
-msgstr ""
+msgstr "Frode Giornaliera"
 
 #: share/layout/body.tt:39 share/templates/dashboard.tt:1
 msgid "Dashboard"
@@ -1204,27 +1227,27 @@ msgstr ""
 
 #: share/templates/customer/details.tt:138
 msgid "Date"
-msgstr ""
+msgstr "Data"
 
 #: share/templates/billing/peaktimes.tt:56
 msgid "Date Definition"
-msgstr ""
+msgstr "Definizione Data"
 
 #: share/templates/billing/peaktimes.tt:53
 msgid "Dates"
-msgstr ""
+msgstr "Date"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:341
 msgid "Day"
-msgstr ""
+msgstr "Giorno"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:502
 msgid "December"
-msgstr ""
+msgstr "Dicembre"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:461
 msgid "Default for Subscribers"
-msgstr ""
+msgstr "Default per i Subscriber"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:386
 #: share/templates/administrator/list.tt:20 share/templates/billing/fees.tt:20
@@ -1254,31 +1277,31 @@ msgstr ""
 #: share/templates/subscriber/preferences.tt:611
 #: share/templates/subscriber/voicemail.tt:22
 msgid "Delete"
-msgstr ""
+msgstr "Elimina"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:626
 msgid "Delete Key"
-msgstr ""
+msgstr "Elimina Chiave"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:578
 msgid "Delete WAV"
-msgstr ""
+msgstr "Elimina WAV"
 
 #: share/templates/subscriber/preferences.tt:185
 msgid "Delete after sending Email"
-msgstr ""
+msgstr "Elimina dopo aver inviato Email"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:489
 msgid "Deliver Incoming Faxes"
-msgstr ""
+msgstr "Consegna Fax in ingresso"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:608
 msgid "Deliver Outgoing Faxes"
-msgstr ""
+msgstr "Consegna Fax in Uscita"
 
 #: share/templates/customer/details.tt:552
 msgid "Deployed Device"
-msgstr ""
+msgstr "Dispositivo Installato"
 
 #: lib/NGCP/Panel/Controller/NCOS.pm:217 lib/NGCP/Panel/Controller/NCOS.pm:33
 #: lib/NGCP/Panel/Controller/Peering.pm:30
@@ -1287,44 +1310,44 @@ msgstr ""
 #: lib/NGCP/Panel/Utils/DbStrings.pm:624 lib/NGCP/Panel/Utils/Sounds.pm:64
 #: share/templates/rewrite/rules_list.tt:32
 msgid "Description"
-msgstr ""
+msgstr "Descrizione"
 
 #: lib/NGCP/Panel/Controller/Subscriber.pm:290
 #: lib/NGCP/Panel/Controller/Subscriber.pm:295
 #: lib/NGCP/Panel/Utils/DbStrings.pm:409
 msgid "Destination"
-msgstr ""
+msgstr "Destinazione"
 
 #: lib/NGCP/Panel/Controller/Billing.pm:265
 msgid "Destination Pattern"
-msgstr ""
+msgstr "Pattern Destinazione"
 
 #: lib/NGCP/Panel/Controller/Subscriber.pm:1113
 #: lib/NGCP/Panel/Utils/DbStrings.pm:549
 msgid "Destination Set"
-msgstr ""
+msgstr "Set di Destinazione"
 
 #. (maps.dset_name)
 #: share/templates/subscriber/preferences.tt:81
 msgid "Destination Set \"%1\" Details"
-msgstr ""
+msgstr "Set di Destinazione \"%1\" Dettagli"
 
 #: lib/NGCP/Panel/Controller/Subscriber.pm:1002
 msgid "Destination Sets"
-msgstr ""
+msgstr "Set di Destinazioni"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:498
 msgid "Destination add"
-msgstr ""
+msgstr "Aggiungi Destinazione"
 
 #: share/templates/subscriber/preferences.tt:322
 #: share/templates/subscriber/preferences.tt:54
 msgid "Destinations"
-msgstr ""
+msgstr "Destinazioni"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:401
 msgid "Detail"
-msgstr ""
+msgstr "Dettaglio"
 
 #: share/templates/customer/details.tt:213
 #: share/templates/customer/details.tt:285 share/templates/customer/list.tt:20
@@ -1334,106 +1357,108 @@ msgstr ""
 #: share/templates/reseller/list.tt:28 share/templates/subscriber/list.tt:20
 #: share/templates/subscriber/list.tt:28
 msgid "Details"
-msgstr ""
+msgstr "Dettagli"
 
 #: share/templates/error_page.tt:16
 msgid ""
 "Details have been logged on the server. If you want to report the error, "
 "describe what you were doing or attempting to do just before."
 msgstr ""
+"Dettagli sono stati registrati sul server. Se volete segnalare l'errore, "
+"descrivete cosa stavate facendo o tendando di fare appena prima."
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:398 share/templates/device/list.tt:110
 msgid "Device Configuration"
-msgstr ""
+msgstr "Configuratione Dispositivo"
 
 #: share/templates/device/list.tt:99
 msgid "Device Configurations"
-msgstr ""
+msgstr "Configurazione Dispositivi"
 
 #: share/templates/device/list.tt:71
 msgid "Device Firmware"
-msgstr ""
+msgstr "Firmware Dispositivo"
 
 #: share/templates/device/list.tt:60
 msgid "Device Firmwares"
-msgstr ""
+msgstr "Firmware Dispositivi"
 
 #: share/templates/device/list.tt:1
 #: share/templates/widgets/admin_topmenu_settings.tt:36
 #: share/templates/widgets/reseller_topmenu_settings.tt:18
 msgid "Device Management"
-msgstr ""
+msgstr "Gestione Dispositivo"
 
 #: lib/NGCP/Panel/Controller/Device.pm:108
 #: lib/NGCP/Panel/Controller/Device.pm:61
 #: lib/NGCP/Panel/Controller/Device.pm:85
 #: lib/NGCP/Panel/Utils/DbStrings.pm:580 share/templates/device/list.tt:33
 msgid "Device Model"
-msgstr ""
+msgstr "Modello Dispositivo"
 
 #: share/templates/device/list.tt:22
 msgid "Device Models"
-msgstr ""
+msgstr "Modelli Dispositvo"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:450
 #: share/templates/customer/details.tt:315 share/templates/device/list.tt:149
 msgid "Device Profile"
-msgstr ""
+msgstr "Profilo Dispositivo"
 
 #: share/templates/device/list.tt:138
 msgid "Device Profiles"
-msgstr ""
+msgstr "Profili Dispositivo"
 
 #: lib/NGCP/Panel/Controller/Device.pm:107
 #: lib/NGCP/Panel/Controller/Device.pm:60
 #: lib/NGCP/Panel/Controller/Device.pm:84
 #: lib/NGCP/Panel/Utils/DbStrings.pm:515
 msgid "Device Vendor"
-msgstr ""
+msgstr "Vendor Dispositivo"
 
 #: lib/NGCP/Panel/Controller/Device.pm:617
 msgid "Device configuration not found"
-msgstr ""
+msgstr "Configurazione dispositivo non trovata"
 
 #: lib/NGCP/Panel/Controller/Device.pm:628
 msgid "Device configuration successfully deleted"
-msgstr ""
+msgstr "Configurazione dispositivo eliminata con successo"
 
 #: lib/NGCP/Panel/Controller/Device.pm:454
 msgid "Device firmware not found"
-msgstr ""
+msgstr "Firmware dispositivo non trovato"
 
 #: lib/NGCP/Panel/Controller/Device.pm:465
 msgid "Device firmware successfully deleted"
-msgstr ""
+msgstr "Firmware dispositivo eliminato con successo"
 
 #: lib/NGCP/Panel/Controller/Device.pm:233
 msgid "Device model not found"
-msgstr ""
+msgstr "Modello dispositivo non trovato"
 
 #: lib/NGCP/Panel/Controller/Device.pm:775
 msgid "Device profile not found"
-msgstr ""
+msgstr "Profilo dispositivo non trovato"
 
 #: lib/NGCP/Panel/Controller/Device.pm:803
 msgid "Device profile successfully deleted"
-msgstr ""
+msgstr "Profilo dispositivo eliminato con successo"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:540
 msgid "Direction"
-msgstr ""
+msgstr "Direzione"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:148
 msgid "Disable NAT SIP pings"
-msgstr ""
+msgstr "Disabilita NAT SIP pings"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:494
 msgid "Display Name"
-msgstr ""
+msgstr "Nome Visuallizzato"
 
 #: share/templates/subscriber/webphone.tt:602
 msgid "Do Not Disturb"
-msgstr ""
+msgstr "Non Disturbare"
 
 #: lib/NGCP/Panel/Controller/Domain.pm:31
 #: lib/NGCP/Panel/Controller/Reseller.pm:149
@@ -1444,28 +1469,28 @@ msgstr ""
 #: share/templates/widgets/admin_reseller_overview.tt:12
 #: share/templates/widgets/reseller_domain_overview.tt:7
 msgid "Domain"
-msgstr ""
+msgstr "Dominio"
 
 #. (domain.domain)
 #: share/templates/domain/preferences.tt:1
 msgid "Domain \"%1\"  Preferences"
-msgstr ""
+msgstr "Dominio \"%1\" Preferenze"
 
 #: lib/NGCP/Panel/Controller/Domain.pm:171
 msgid "Domain does not exist"
-msgstr ""
+msgstr "Dominio non esistente"
 
 #: lib/NGCP/Panel/Controller/Domain.pm:148
 msgid "Domain successfully created"
-msgstr ""
+msgstr "Dominio creato con successo"
 
 #: lib/NGCP/Panel/Controller/Domain.pm:251
 msgid "Domain successfully deleted!"
-msgstr ""
+msgstr "Dominio eliminato con successo!"
 
 #: lib/NGCP/Panel/Controller/Domain.pm:218
 msgid "Domain successfully updated"
-msgstr ""
+msgstr "Dominio aggiornato con successo"
 
 #: share/templates/domain/list.tt:1 share/templates/reseller/details.tt:152
 #: share/templates/widgets/admin_reseller_overview.tt:12
@@ -1474,64 +1499,66 @@ msgstr ""
 #: share/templates/widgets/reseller_domain_overview.tt:7
 #: share/templates/widgets/reseller_topmenu_settings.tt:11
 msgid "Domains"
-msgstr ""
+msgstr "Domini"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:149
 msgid ""
 "Don't do NAT ping for domain/user. Use with caution: this only makes sense "
 "on the access network which does not need pings (e.g. CDMA)"
 msgstr ""
+"Non abilitare NAT ping per dominio/utente. Usare con cautela: questo ha senso solo "
+"su rete di accesso che non necessita ping (es. CDMA)" 
 
 #: share/templates/login/login.tt:27
 msgid "Don't have an account?"
-msgstr ""
+msgstr "Non avete un account?"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:475 share/templates/device/list.tt:126
 #: share/templates/device/list.tt:87
 msgid "Download"
-msgstr ""
+msgstr "Scarica"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:527
 msgid "Download CA Cert"
-msgstr ""
+msgstr "Scarica Cert CA"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:428
 msgid "Download CA Certificate"
-msgstr ""
+msgstr "Scarica Certificato CA"
 
 #: share/templates/callflow/callmap.tt:16
 #: share/templates/subscriber/callmap.tt:16
 msgid "Download PCAP"
-msgstr ""
+msgstr "Scarica PCAP"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:592
 msgid "Download PEM"
-msgstr ""
+msgstr "Scarica PEM"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:435
 msgid "Download PKCS12"
-msgstr ""
+msgstr "Scarica PKCS12"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:340
 msgid "Download in PEM Format"
-msgstr ""
+msgstr "Scarica in Formato PEM"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:452
 msgid "Download in PKCS12 Format"
-msgstr ""
+msgstr "Scarica in Formato PKCS12"
 
 #: lib/NGCP/Panel/Controller/Subscriber.pm:1670
 #: lib/NGCP/Panel/Controller/Subscriber.pm:1676
 msgid "Duration"
-msgstr ""
+msgstr "Durata"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:377
 msgid "E.164 Number"
-msgstr ""
+msgstr "Numero E.164"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:418
 msgid "E164 Number"
-msgstr ""
+msgstr "Numero E164"
 
 #: share/templates/administrator/list.tt:19 share/templates/billing/fees.tt:19
 #: share/templates/billing/list.tt:17 share/templates/billing/peaktimes.tt:43
@@ -1577,32 +1604,32 @@ msgstr ""
 #: share/templates/subscriber/preferences.tt:558
 #: share/templates/subscriber/preferences.tt:608
 msgid "Edit"
-msgstr ""
+msgstr "Modifica"
 
 #. (m.name)
 #: share/templates/helpers/modal.tt:6
 msgid "Edit %1"
-msgstr ""
+msgstr "Modifica %1"
 
 #: share/templates/customer/details.tt:82
 msgid "Edit Contact"
-msgstr ""
+msgstr "Modifica Contatto"
 
 #: share/templates/subscriber/preferences.tt:355
 msgid "Edit Slots"
-msgstr ""
+msgstr "Modifica Slots"
 
 #: share/templates/billing/fees.tt:25
 msgid "Edit Zones"
-msgstr ""
+msgstr "Modifica Zone"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:558
 msgid "Edit destination sets"
-msgstr ""
+msgstr "Modifica set di destinationi"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:400
 msgid "Edit time sets"
-msgstr ""
+msgstr "Modifica set di orari"
 
 #: lib/NGCP/Panel/Controller/Contact.pm:35
 #: lib/NGCP/Panel/Controller/Reseller.pm:124
@@ -1614,51 +1641,51 @@ msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:110
 msgid "Emergency CLI"
-msgstr ""
+msgstr "CLI di Emergenza"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:48
 msgid "Emergency Prefix variable"
-msgstr ""
+msgstr "Prefisso di Emergenza"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:94
 msgid "Emergency Suffix variable"
-msgstr ""
+msgstr "Suffisso di Emergenza"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:126
 msgid "Enable Apple/Google Mobile Push"
-msgstr ""
+msgstr "Abilita Apple/Google Mobile Push"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:68
 msgid "Enable Peer Authentication"
-msgstr ""
+msgstr "Abilita Autenticazione Peer"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:91
 msgid "Enable Prepaid"
-msgstr ""
+msgstr "Abilita Prepagato"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:97
 msgid "Enable SIP Session Timers."
-msgstr ""
+msgstr "Abilita SIP Session Timers."
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:96
 msgid "Enable Session-Timers"
-msgstr ""
+msgstr "Abilita Session-Timers"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:318
 msgid "End"
-msgstr ""
+msgstr "Fine"
 
 #: lib/NGCP/Panel/Controller/Billing.pm:562
 msgid "End Date"
-msgstr ""
+msgstr "Data di Fine"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:599
 msgid "End Date/Time"
-msgstr ""
+msgstr "Data/Ora di Fine"
 
 #: share/layout/body.tt:162 share/layout/body.tt:180
 msgid "Expand Groups"
-msgstr ""
+msgstr "Espandi Gruppi"
 
 #: lib/NGCP/Panel/Controller/Subscriber.pm:1682
 msgid "Expires"
@@ -1666,25 +1693,26 @@ msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:177
 msgid "Export subscriber to shared XMPP Buddylist"
-msgstr ""
+msgstr "Esporta subscriber su lista contatti XMPP condivisa"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:178
 msgid ""
 "Export this subscriber into the shared XMPP buddy list for the customer."
 msgstr ""
+"Esporta questo subscriber nella lista contatti XMPP per il cliente."
 
 #: share/templates/subscriber/webphone.tt:601
 msgid "Extended Away"
-msgstr ""
+msgstr "Assento da Tempo"
 
 #: lib/NGCP/Panel/Controller/Customer.pm:299
 #: lib/NGCP/Panel/Utils/DbStrings.pm:544
 msgid "Extension"
-msgstr ""
+msgstr "Interno"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:352
 msgid "Extension Number, e.g. 101"
-msgstr ""
+msgstr "Numero Interno, es. 101"
 
 #: lib/NGCP/Panel/Controller/Contract.pm:26
 #: lib/NGCP/Panel/Controller/Contract.pm:370
@@ -1695,428 +1723,428 @@ msgstr ""
 #: lib/NGCP/Panel/Utils/DbStrings.pm:614
 #: share/templates/subscriber/master.tt:72
 msgid "External #"
-msgstr ""
+msgstr "Codice Esterno #"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:77
 msgid "External Contract #"
-msgstr ""
+msgstr "Codice Esterno Contratto #"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:345
 msgid "External ID"
-msgstr ""
+msgstr "ID Codice Esterno"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:78
 msgid "External Subscriber #"
-msgstr ""
+msgstr "Codice Esterno Subscriber #"
 
 #: share/templates/security/list.tt:66
 msgid "Fail Count"
-msgstr ""
+msgstr "Conteggio Errori"
 
 #: lib/NGCP/Panel/Controller/Subscriber.pm:2570
 msgid "Failed to add registered device."
-msgstr ""
+msgstr "Aggiunta dispositivo registrato fallita."
 
 #: lib/NGCP/Panel/Controller/Sound.pm:551
 #: lib/NGCP/Panel/Controller/Sound.pm:570
 msgid "Failed to clear audio cache."
-msgstr ""
+msgstr "Cancellazione cache audio fallita."
 
 #: lib/NGCP/Panel/Controller/Customer.pm:685
 msgid "Failed to clear fraud interval."
-msgstr ""
+msgstr "Cancellazione intervallo di frode fallita."
 
 #: lib/NGCP/Panel/Controller/Rewrite.pm:181
 msgid "Failed to clone rewrite rule set."
-msgstr ""
+msgstr "Copia del set di rewrite rule fallita."
 
 #: lib/NGCP/Panel/Controller/NCOS.pm:193
 msgid "Failed to create NCOS level."
-msgstr ""
+msgstr "Creazione livello NCOS fallita."
 
 #: lib/NGCP/Panel/Controller/NCOS.pm:336
 msgid "Failed to create NCOS pattern."
-msgstr ""
+msgstr "Creazione pattern NCOS fallita."
 
 #: lib/NGCP/Panel/Controller/Customer.pm:988
 msgid "Failed to create PBX device"
-msgstr ""
+msgstr "Creazione dispositivo PBX fallita."
 
 #: lib/NGCP/Panel/Controller/Customer.pm:819
 msgid "Failed to create PBX group."
-msgstr ""
+msgstr "Creazione gruppo PBX fallita."
 
 #: lib/NGCP/Panel/Controller/Administrator.pm:116
 msgid "Failed to create administrator."
-msgstr ""
+msgstr "Creazione amministratore fallita."
 
 #: lib/NGCP/Panel/Controller/Billing.pm:243
 msgid "Failed to create billing profile."
-msgstr ""
+msgstr "Creazione profilo di fatturazione fallita."
 
 #: lib/NGCP/Panel/Controller/Billing.pm:504
 msgid "Failed to create billing zone."
-msgstr ""
+msgstr "Creazione zona di fatturazione fallita."
 
 #: lib/NGCP/Panel/Controller/Contact.pm:86
 msgid "Failed to create contact."
-msgstr ""
+msgstr "Creazione contatto fallita."
 
 #: lib/NGCP/Panel/Controller/Customer.pm:271
 msgid "Failed to create contract balance."
-msgstr ""
+msgstr "Creazione saldo del contratto fallita."
 
 #: lib/NGCP/Panel/Controller/Contract.pm:314
 #: lib/NGCP/Panel/Controller/Contract.pm:439
 msgid "Failed to create contract."
-msgstr ""
+msgstr "Creazione del contratto fallita."
 
 #: lib/NGCP/Panel/Controller/Customer.pm:195
 msgid "Failed to create customer contract."
-msgstr ""
+msgstr "Creazione del contratto cliente fallita."
 
 #: lib/NGCP/Panel/Controller/Device.pm:588
 msgid "Failed to create device configuration"
-msgstr ""
+msgstr "Creazione della configurazione dispositivo fallita."
 
 #: lib/NGCP/Panel/Controller/Device.pm:425
 msgid "Failed to create device firmware"
-msgstr ""
+msgstr "Creazione del firmware dispositivo fallita."
 
 #: lib/NGCP/Panel/Controller/Device.pm:204
 msgid "Failed to create device model"
-msgstr ""
+msgstr "Creazione del modello dispositivo fallita."
 
 #: lib/NGCP/Panel/Controller/Device.pm:746
 msgid "Failed to create device profile"
-msgstr ""
+msgstr "Creazione del profilo dispositivo fallita."
 
 #: lib/NGCP/Panel/Controller/Domain.pm:142
 msgid "Failed to create domain."
-msgstr ""
+msgstr "Creazione del dominio fallita."
 
 #: lib/NGCP/Panel/Controller/Peering.pm:183
 msgid "Failed to create peering group."
-msgstr ""
+msgstr "Creazione del gruppo di peer fallita."
 
 #: lib/NGCP/Panel/Controller/Peering.pm:455
 msgid "Failed to create peering rule."
-msgstr ""
+msgstr "Creazione regole peer fallita."
 
 #: lib/NGCP/Panel/Controller/Peering.pm:236
 msgid "Failed to create peering server."
-msgstr ""
+msgstr "Creazione del server peer fallita."
 
 #: lib/NGCP/Panel/Controller/Reseller.pm:96
 msgid "Failed to create reseller."
-msgstr ""
+msgstr "Creazione del rivenditore fallita."
 
 #: lib/NGCP/Panel/Controller/Rewrite.pm:232
 msgid "Failed to create rewrite rule set."
-msgstr ""
+msgstr "Creazione set di rewrite rule fallita."
 
 #: lib/NGCP/Panel/Controller/Rewrite.pm:443
 msgid "Failed to create rewrite rule."
-msgstr ""
+msgstr "Creazione rewrite rule fallita."
 
 #: lib/NGCP/Panel/Controller/Sound.pm:389
 msgid "Failed to create sound set"
-msgstr ""
+msgstr "Creazione set di suoni fallita."
 
 #: lib/NGCP/Panel/Controller/Billing.pm:770
 msgid "Failed to create special offpeak entry."
-msgstr ""
+msgstr "Creazione di fuori picco speciale fallita."
 
 #: lib/NGCP/Panel/Controller/Subscriber.pm:2776
 msgid "Failed to create speed dial slot."
-msgstr ""
+msgstr "Creazione slot chiamata rapida fallita."
 
 #: lib/NGCP/Panel/Controller/Customer.pm:605
 #: lib/NGCP/Panel/Controller/Subscriber.pm:253
 msgid "Failed to create subscriber."
-msgstr ""
+msgstr "Creazione subscriber fallita."
 
 #: lib/NGCP/Panel/Controller/Subscriber.pm:2616
 msgid "Failed to create trusted source."
-msgstr ""
+msgstr "Creazione sorgente sicura fallita."
 
 #: lib/NGCP/Panel/Controller/Subscriber.pm:1603
 msgid "Failed to delete Call Forward."
-msgstr ""
+msgstr "Eliminazione deviazione di chiamata fallita."
 
 #: lib/NGCP/Panel/Controller/NCOS.pm:149
 msgid "Failed to delete NCOS level."
-msgstr ""
+msgstr "Eliminazione livello NCOS fallita."
 
 #: lib/NGCP/Panel/Controller/NCOS.pm:307
 msgid "Failed to delete NCOS pattern."
-msgstr ""
+msgstr "Eliminazione pattern NCOS fallita."
 
 #: lib/NGCP/Panel/Controller/Customer.pm:1136
 msgid "Failed to delete PBX device"
-msgstr ""
+msgstr "Eliminazione dispositivo PBX fallita."
 
 #: lib/NGCP/Panel/Controller/Administrator.pm:218
 msgid "Failed to delete administrator."
-msgstr ""
+msgstr "Eliminazione amministratore fallita."
 
 #: lib/NGCP/Panel/Controller/Subscriber.pm:2928
 msgid "Failed to delete auto attendant slot."
-msgstr ""
+msgstr "Eliminazione slot IVR fallita."
 
 #: lib/NGCP/Panel/Controller/Billing.pm:544
 msgid "Failed to delete billing zone."
-msgstr ""
+msgstr "Eliminazione zona di fatturazione fallita."
 
 #: lib/NGCP/Panel/Controller/Contact.pm:190
 msgid "Failed to delete contact."
-msgstr ""
+msgstr "Eliminazione contatto fallita."
 
 #: lib/NGCP/Panel/Controller/Device.pm:633
 msgid "Failed to delete device configuration"
-msgstr ""
+msgstr "Eliminazione configurazione dispositivo fallita."
 
 #: lib/NGCP/Panel/Controller/Device.pm:470
 msgid "Failed to delete device firmware"
-msgstr ""
+msgstr "Eliminazione firmware dispositivo fallita."
 
 #: lib/NGCP/Panel/Controller/Device.pm:249
 msgid "Failed to delete device model"
-msgstr ""
+msgstr "Eliminazione modello dispositivo fallita."
 
 #: lib/NGCP/Panel/Controller/Device.pm:808
 msgid "Failed to delete device profile"
-msgstr ""
+msgstr "Eliminazione profilo dispositivo fallita."
 
 #: lib/NGCP/Panel/Controller/Domain.pm:243
 msgid "Failed to delete domain."
-msgstr ""
+msgstr "Eliminazione dominio fallita."
 
 #: lib/NGCP/Panel/Controller/Peering.pm:148
 msgid "Failed to delete peering group."
-msgstr ""
+msgstr "Eliminazione gruppo peer fallita."
 
 #: lib/NGCP/Panel/Controller/Peering.pm:547
 msgid "Failed to delete peering rule."
-msgstr ""
+msgstr "Eliminazione regole peer fallita."
 
 #: lib/NGCP/Panel/Controller/Peering.pm:327
 msgid "Failed to delete peering server."
-msgstr ""
+msgstr "Eliminazione server peer fallita."
 
 #: lib/NGCP/Panel/Controller/Subscriber.pm:2506
 msgid "Failed to delete registered device."
-msgstr ""
+msgstr "Eliminazione dispositivo registrato fallita."
 
 #: lib/NGCP/Panel/Controller/Rewrite.pm:134
 msgid "Failed to delete rewrite rule set."
-msgstr ""
+msgstr "Eliminazione set rewrite rule fallita."
 
 #: lib/NGCP/Panel/Controller/Rewrite.pm:411
 msgid "Failed to delete rewrite rule."
-msgstr ""
+msgstr "Eliminazione rewrite rule fallita."
 
 #: lib/NGCP/Panel/Controller/Sound.pm:640
 msgid "Failed to delete sound handle"
-msgstr ""
+msgstr "Eliminazione riferimento suono fallita."
 
 #: lib/NGCP/Panel/Controller/Sound.pm:280
 msgid "Failed to delete sound set"
-msgstr ""
+msgstr "Eliminazione set di suoni fallita."
 
 #: lib/NGCP/Panel/Controller/Billing.pm:737
 msgid "Failed to delete special offpeak entry."
-msgstr ""
+msgstr "Eliminazione fuori picco speciale fallita."
 
 #: lib/NGCP/Panel/Controller/Subscriber.pm:2822
 msgid "Failed to delete speed dial slot."
-msgstr ""
+msgstr "Eliminazione slot chiamata rapida fallita."
 
 #: lib/NGCP/Panel/Controller/Subscriber.pm:2718
 msgid "Failed to delete trusted source."
-msgstr ""
+msgstr "Eliminazione sorgente sicura fallita."
 
 #: lib/NGCP/Panel/Controller/Subscriber.pm:2446
 msgid "Failed to delete voicemail message."
-msgstr ""
+msgstr "Eliminazione messagio casella di posta fallita."
 
 #: lib/NGCP/Panel/Controller/Subscriber.pm:2471
 msgid "Failed to find registered device."
-msgstr ""
+msgstr "Ricerca dispositivo registrato fallita."
 
 #: lib/NGCP/Panel/Controller/Subscriber.pm:2015
 msgid "Failed to find voicemail user."
-msgstr ""
+msgstr "Ricerca utente casella vocale fallita."
 
 #: lib/NGCP/Panel/Controller/Rewrite.pm:290
 msgid "Failed to move rewrite rule."
-msgstr ""
+msgstr "Spostamento rewrite rule fallito."
 
 #: lib/NGCP/Panel/Controller/Subscriber.pm:800
 #: lib/NGCP/Panel/Controller/Subscriber.pm:955
 msgid "Failed to save Call Forward."
-msgstr ""
+msgstr "Salvataggio Deviazione di Chiamata fallito."
 
 #: lib/NGCP/Panel/Controller/Contract.pm:215
 #: lib/NGCP/Panel/Controller/Customer.pm:456
 msgid "Failed to terminate contract."
-msgstr ""
+msgstr "Terminazione contratto fallita."
 
 #: lib/NGCP/Panel/Controller/Reseller.pm:278
 msgid "Failed to terminate reseller."
-msgstr ""
+msgstr "Terminazione rivenditore fallita."
 
 #: lib/NGCP/Panel/Controller/Subscriber.pm:413
 msgid "Failed to terminate subscriber."
-msgstr ""
+msgstr "Terminazione subscriber fallita."
 
 #: lib/NGCP/Panel/Controller/Sound.pm:662
 msgid "Failed to transcode audio file"
-msgstr ""
+msgstr "Transcodifica file audio fallita."
 
 #: lib/NGCP/Panel/Controller/NCOS.pm:373
 msgid "Failed to update NCOS level setting."
-msgstr ""
+msgstr "Aggiornamento configurazione livello NCOS fallito."
 
 #: lib/NGCP/Panel/Controller/NCOS.pm:126
 msgid "Failed to update NCOS level."
-msgstr ""
+msgstr "Aggiornamento livello NCOS fallito."
 
 #: lib/NGCP/Panel/Controller/NCOS.pm:284
 msgid "Failed to update NCOS pattern."
-msgstr ""
+msgstr "Aggiornamento pattern  NCOS fallito."
 
 #: lib/NGCP/Panel/Controller/Customer.pm:1112
 msgid "Failed to update PBX device"
-msgstr ""
+msgstr "Aggiornamento dispositivo PBX fallito."
 
 #: lib/NGCP/Panel/Controller/Customer.pm:902
 msgid "Failed to update PBX group."
-msgstr ""
+msgstr "Aggiornamento gruppo PBX fallito."
 
 #: lib/NGCP/Panel/Controller/Administrator.pm:192
 msgid "Failed to update administrator."
-msgstr ""
+msgstr "Aggiornamento amministratore fallito."
 
 #: lib/NGCP/Panel/Controller/Subscriber.pm:2992
 msgid "Failed to update autoattendant slots"
-msgstr ""
+msgstr "Aggiornamento slot IVR fallito."
 
 #: lib/NGCP/Panel/Controller/Billing.pm:186
 msgid "Failed to update billing profile."
-msgstr ""
+msgstr "Aggiornamento profilo fatturazione fallito."
 
 #: lib/NGCP/Panel/Controller/Contact.pm:162
 msgid "Failed to update contact."
-msgstr ""
+msgstr "Aggiornamento contatto fallito."
 
 #: lib/NGCP/Panel/Controller/Contract.pm:181
 msgid "Failed to update contract."
-msgstr ""
+msgstr "Aggiornamento contratto fallito."
 
 #: lib/NGCP/Panel/Controller/Customer.pm:421
 msgid "Failed to update customer contract."
-msgstr ""
+msgstr "Aggiornamento contratto cliente fallito."
 
 #: lib/NGCP/Panel/Controller/Device.pm:522
 msgid "Failed to update device firmware"
-msgstr ""
+msgstr "Aggiornamento firmware dispositivo fallito."
 
 #: lib/NGCP/Panel/Controller/Device.pm:337
 msgid "Failed to update device model"
-msgstr ""
+msgstr "Aggiornamento modello dispositivo fallito."
 
 #: lib/NGCP/Panel/Controller/Device.pm:855
 msgid "Failed to update device profile"
-msgstr ""
+msgstr "Aggiornamento profilo dispositivo fallito."
 
 #: lib/NGCP/Panel/Controller/Domain.pm:210
 msgid "Failed to update domain."
-msgstr ""
+msgstr "Aggiornamento dominio fallito."
 
 #: lib/NGCP/Panel/Controller/Subscriber.pm:2239
 msgid "Failed to update fax setting."
-msgstr ""
+msgstr "Aggiornamento configuratione fax fallito."
 
 #: lib/NGCP/Panel/Controller/Peering.pm:523
 msgid "Failed to update peering rule."
-msgstr ""
+msgstr "Aggiornamento regole peer fallito."
 
 #: lib/NGCP/Panel/Controller/Peering.pm:303
 msgid "Failed to update peering server."
-msgstr ""
+msgstr "Aggiornamento server peer fallito."
 
 #: lib/NGCP/Panel/Controller/Subscriber.pm:2305
 msgid "Failed to update reminder setting."
-msgstr ""
+msgstr "Aggiornamento configurazione promemoria fallito."
 
 #: lib/NGCP/Panel/Controller/Reseller.pm:237
 msgid "Failed to update reseller."
-msgstr ""
+msgstr "Aggiornamento rivenditore fallito."
 
 #: lib/NGCP/Panel/Controller/Rewrite.pm:114
 msgid "Failed to update rewrite rule set."
-msgstr ""
+msgstr "Aggiornamento set rewrite rule fallito."
 
 #: lib/NGCP/Panel/Controller/Rewrite.pm:390
 msgid "Failed to update rewrite rule."
-msgstr ""
+msgstr "Aggiornamento rewrite rule fallito."
 
 #: lib/NGCP/Panel/Controller/Sound.pm:619
 msgid "Failed to update sound handle"
-msgstr ""
+msgstr "Aggiornamento riferimento suono fallito."
 
 #: lib/NGCP/Panel/Controller/Sound.pm:244
 msgid "Failed to update sound set"
-msgstr ""
+msgstr "Aggiornamento set di suoni fallito."
 
 #: lib/NGCP/Panel/Controller/Billing.pm:718
 msgid "Failed to update special offpeak entry."
-msgstr ""
+msgstr "Aggiornamento fuori picco speciale fallito."
 
 #: lib/NGCP/Panel/Controller/Subscriber.pm:1963
 msgid "Failed to update subscriber."
-msgstr ""
+msgstr "Aggiornamento subscriber fallito."
 
 #: lib/NGCP/Panel/Controller/Subscriber.pm:2690
 msgid "Failed to update trusted source."
-msgstr ""
+msgstr "Aggiornamento sorgente fidata fallito."
 
 #: lib/NGCP/Panel/Controller/Sound.pm:606
 msgid "Failed to update uploaded sound handle"
-msgstr ""
+msgstr "Aggiornamento riferimento suono caricato fallito."
 
 #: lib/NGCP/Panel/Controller/Subscriber.pm:2093
 msgid "Failed to update voicemail setting."
-msgstr ""
+msgstr "Aggiornamento configurazione casella vocale fallito."
 
 #: lib/NGCP/Panel/Controller/Billing.pm:402
 msgid "Failed to upload Billing Fees"
-msgstr ""
+msgstr "Caricamento costi di fatturazione fallito"
 
 #: share/templates/subscriber/preferences.tt:222
 msgid "Fax2Mail and Sendfax"
-msgstr ""
+msgstr "Fax2Mail e Sendfax"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:482
 msgid "February"
-msgstr ""
+msgstr "Febbraio"
 
 #: share/templates/billing/list.tt:18
 msgid "Fees"
-msgstr ""
+msgstr "Costi"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:288
 msgid "Field"
-msgstr ""
+msgstr "Campo"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:397
 msgid "File Type"
-msgstr ""
+msgstr "Tipo di File"
 
 #: share/templates/sound/handles_list.tt:30
 msgid "Filename"
-msgstr ""
+msgstr "Nome File"
 
 #: share/templates/customer/details.tt:379
 #: share/templates/customer/details.tt:386 share/templates/sound/list.tt:19
@@ -2126,7 +2154,7 @@ msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:79
 msgid "Find Subscriber by UUID"
-msgstr ""
+msgstr "Trova Subscriber con UUID"
 
 #: lib/NGCP/Panel/Controller/Device.pm:109
 #: lib/NGCP/Panel/Controller/Device.pm:62
@@ -2138,17 +2166,19 @@ msgstr ""
 #: lib/NGCP/Panel/Controller/Reseller.pm:121
 #: lib/NGCP/Panel/Utils/DbStrings.pm:295
 msgid "First Name"
-msgstr ""
+msgstr "Nome"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:80
 msgid ""
 "For incoming calls from this peer, find the destination subscriber by a uuid "
 "parameter in R-URI which has been sent in Contact at outbound registration."
 msgstr ""
+"Per chiamate in ingresso da questo peer, trova il subscriber chiamato con il "
+"parametro uuid nella R-URI, che è stato inviato nel Contact durante la registrazione."
 
 #: share/templates/denied_page.tt:7
 msgid "Forbidden!"
-msgstr ""
+msgstr "Vietato!"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:183
 msgid ""
@@ -2157,77 +2187,85 @@ msgid ""
 "When enabling this option in a peer, make sure you trust it, as the NGCP "
 "will become an open relay for it!"
 msgstr ""
+"Forza le chiamate da questo utente/dominio/peer ad essere inviate verso PSTN anche se "
+"il chiamato è locale. Usare con cautela, perchè questa opzione può "
+"incrementare i vostri costi! Quando si abilita tale opzione su un peer, siate certi che il "
+"peer sia fidato, visto che NGCP sarà un open relay per lui!"
+ 
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:93
 msgid ""
 "Force calls to this user to be treated as if the user was not local. This "
 "helps in migration scenarios."
 msgstr ""
+"Forza le chiamate verso questo utente/dominio ad essere trattate come se "
+"l'utente non fosse locale. Questo aiuta in caso di scenari di migrazione."
+
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:92
 msgid "Force inbound calls to peer"
-msgstr ""
+msgstr "Forza chiamate in ingresso verso i peer"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:112
 msgid "Force outbound call via socket"
-msgstr ""
+msgstr "Forza socket per chiamate in uscita"
 
 #: share/templates/customer/details.tt:443
 msgid "Fraud Limits"
-msgstr ""
+msgstr "Limite di Frode"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:529
 msgid "Fraud Monthly Limit"
-msgstr ""
+msgstr "Limite di Frode Mensile"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:612
 msgid "Fraud Monthly Lock"
-msgstr ""
+msgstr "Blocca Frode Mensile"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:425
 msgid "Fraud Monthly Notify"
-msgstr ""
+msgstr "Notifica Frode Mensile"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:411
 msgid "Fraud daily limit"
-msgstr ""
+msgstr "Limite Frode Giornaliero"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:611
 msgid "Fraud daily lock"
-msgstr ""
+msgstr "Blocca frode giornaliera"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:330
 msgid "Fraud daily notify"
-msgstr ""
+msgstr "Notifica frode giornaliera"
 
 #: lib/NGCP/Panel/Controller/Customer.pm:646
 msgid "Fraud settings successfully changed!"
-msgstr ""
+msgstr "Configurazione frode modificata con successo!"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:520
 msgid "Free minutes may be used when calling this destination"
-msgstr ""
+msgstr "Minuti gratuiti possono essere usati per chiamare questa destinazione"
 
 #: share/templates/customer/details.tt:408
 msgid "Free time"
-msgstr ""
+msgstr "Tempo Gratuito"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:493
 msgid "Free-Time Balance"
-msgstr ""
+msgstr "Accredito Tempo Gratuito"
 
 #: lib/NGCP/Panel/Controller/Billing.pm:638
 #: lib/NGCP/Panel/Utils/DbStrings.pm:492
 msgid "Friday"
-msgstr ""
+msgstr "Venerdí"
 
 #: share/templates/calls/chord.tt:50
 msgid "From Date:"
-msgstr ""
+msgstr "Data Iniziale:"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:457
 msgid "From Pattern"
-msgstr ""
+msgstr "Pattern From"
 
 #: share/templates/subscriber/preferences.tt:469
 msgid "From-Pattern"
@@ -2235,7 +2273,7 @@ msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:571
 msgid "Front Image"
-msgstr ""
+msgstr "Immagine Frontale"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:504
 msgid "GET"
@@ -2243,28 +2281,28 @@ msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:598
 msgid "Generate"
-msgstr ""
+msgstr "Genera"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:430
 msgid "Generate Certificate"
-msgstr ""
+msgstr "Genera Certificato"
 
 #. (links.join(c.loc(' or ')
 #: share/templates/login/login.tt:20
 msgid "Go to %1 login."
-msgstr ""
+msgstr "Vai al %1 login."
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:474
 msgid "Group"
-msgstr ""
+msgstr "Gruppo"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:139 lib/NGCP/Panel/Utils/DbStrings.pm:141
 msgid "Group of addresses and/or IP nets allowed access."
-msgstr ""
+msgstr "Gruppo di indirizzi e/o reti IP abilitati all'accesso"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:625
 msgid "Handle"
-msgstr ""
+msgstr "Riferimento"
 
 #: share/templates/widgets/admin_system_overview.tt:14
 msgid "Hardware <strong>Ok</strong>"
@@ -2272,15 +2310,15 @@ msgstr ""
 
 #: share/templates/subscriber/webphone.tt:591
 msgid "Hide Offline"
-msgstr ""
+msgstr "Nascondi Offline"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:42
 msgid "Hide own number for outbound calls"
-msgstr ""
+msgstr "Nascondere il proprio numero per chiamate in uscita"
 
 #: share/layout/body.tt:49
 msgid "Home"
-msgstr ""
+msgstr "Casa"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:294
 msgid "Host:"
@@ -2289,20 +2327,20 @@ msgstr ""
 #: lib/NGCP/Panel/Controller/Peering.pm:79
 #: lib/NGCP/Panel/Utils/DbStrings.pm:591
 msgid "Hostname"
-msgstr ""
+msgstr "Nome Host"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:281
 msgid "Hour"
-msgstr ""
+msgstr "Ora"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:399
 #: share/templates/customer/details.tt:261
 msgid "Hunting Policy"
-msgstr ""
+msgstr "Modalità di Ricerca"
 
 #: share/templates/customer/details.tt:262
 msgid "Hunting Timeout"
-msgstr ""
+msgstr "Timeout di Ricerca"
 
 #: lib/NGCP/Panel/Controller/Device.pm:786
 msgid "ID"
@@ -2315,7 +2353,7 @@ msgstr ""
 #: lib/NGCP/Panel/Controller/Peering.pm:78
 #: lib/NGCP/Panel/Utils/DbStrings.pm:622
 msgid "IP Address"
-msgstr ""
+msgstr "Indirizzo IP"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:150
 msgid "IP Header Field"
@@ -2323,15 +2361,15 @@ msgstr ""
 
 #: lib/NGCP/Panel/Controller/Security.pm:145
 msgid "IP successfully unbanned"
-msgstr ""
+msgstr "IP bannato con successo"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:154
 msgid "IPv4/IPv6 briding mode"
-msgstr ""
+msgstr "IPv4/IPv6 modalità bridging"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:313
 msgid "IVR Slots"
-msgstr ""
+msgstr "Slot IVR"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:573
 msgid "Id"
@@ -2343,111 +2381,122 @@ msgid ""
 "existing and new subscribers within this customer if no specific sound set "
 "is specified for the subscribers"
 msgstr ""
+"Se attivo e un cliente è stato selezionato, questo set di suoni verrà "
+"usato per tutti i subscribers esistenti appartenenti a questo cliente, se nessun set  "
+"di suoni è stato specificato per i lsubscriber"
+
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:447
 msgid ""
 "If active, this sound set is used for all existing and new subscribers if no "
 "specific sound set is specified for them"
 msgstr ""
+"Se attivo, questo set di suoni verrà usato per tutti i subscribers esistenti e futuri, se "
+"nessun specifico set di suoni è stato specificato per loro"
+
+
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:146
 msgid "Ignore allowed IPs"
-msgstr ""
+msgstr "Ignora IP abilitati"
+
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:147
 msgid "Ignore preferences \"allowed_ips\" and \"man_allowed_ips\"."
-msgstr ""
+msgstr "Ingonra le preferenze \"allowed_ips\" e \"man_allowed_ips\"."
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:337
 msgid "Inbound"
-msgstr ""
+msgstr "In ingresso"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:116
 msgid "Inbound Network-Provided Number"
-msgstr ""
+msgstr "Network-Provided Number in Ingresso"
 
 #: share/templates/rewrite/rules_list.tt:81
 msgid "Inbound Rewrite Rules for Callee"
-msgstr ""
+msgstr "Rewrite Rules in Ingresso per Chiamato"
 
 #: share/templates/rewrite/rules_list.tt:71
 msgid "Inbound Rewrite Rules for Caller"
-msgstr ""
+msgstr "Rewrite Rules in Ingresso per Chiamante"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:114
 msgid "Inbound User-Provided Number"
-msgstr ""
+msgstr "User-Provided Number in Ingresso"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:134
 msgid "Inbound User-Provided Redirecting Number"
-msgstr ""
+msgstr "User-Provided Redirecting Number in Ingresso"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:483
 #: share/templates/ncos/pattern_list.tt:34
 msgid "Include local area code"
-msgstr ""
+msgstr "Includi codice di area locale"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:604
 msgid "Incoming Email as CC"
-msgstr ""
+msgstr "Email in arrivo in CC"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:15
 msgid ""
 "Incoming anonymous calls (with calling line identification restriction) are "
 "blocked if set to true."
 msgstr ""
+"Se settato a vero, le chiamate anonime in ingresso (con restrizione del CLI) saranno "
+"bloccate"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:84
 msgid "Internal # for inbound callee rewrite rule set"
-msgstr ""
+msgstr "# interno per set di rewrite rules in ingresso per chiamato"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:83
 msgid "Internal # for inbound caller rewrite rule set"
-msgstr ""
+msgstr "# interno per set di rewrite rules in ingresso per chiamante"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:86
 msgid "Internal # for outbound callee rewrite rule set"
-msgstr ""
+msgstr "# interno per set di rewrite rules in uscita per chiamato"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:85
 msgid "Internal # for outbound caller rewrite rule set"
-msgstr ""
+msgstr "# interno per set di rewrite rules in uscita per chiamante"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:51
 msgid "Internal Administrative NCOS Level #"
-msgstr ""
+msgstr "Livello di NCOS Amministrativo Interno #"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:32
 msgid "Internal Call Forward Busy map #"
-msgstr ""
+msgstr "Mappatura Interna Deviazione di Chiamata su Occupato #"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:36
 msgid "Internal Call Forward Timeout #"
-msgstr ""
+msgstr "Deviazione di Chiamata su Timeout Interna #"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:34
 msgid "Internal Call Forward Unavailable #"
-msgstr ""
+msgstr "Deviazione di Chiamata non Disponibile Interna #"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:30
 msgid "Internal Call Forward Unconditional #"
-msgstr ""
+msgstr "Deviazione di Chiamata Incondizionata Interna #"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:76
 msgid "Internal Contract #"
-msgstr ""
+msgstr "Contratto Interno #"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:50
 msgid "Internal NCOS Level #"
-msgstr ""
+msgstr "Livello NCOS Interno #"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:138
 msgid "Internal allowed source IP group #"
-msgstr ""
+msgstr "Gruppo IP sorgenti abilitati interno #"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:140
 msgid "Internal manual allowed source IP group #"
-msgstr ""
+msgstr "Gruppo IP sorgenti abilitati manuali interno #"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:191
 msgid "Internals"
@@ -2455,199 +2504,199 @@ msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:358
 msgid "Interval charge"
-msgstr ""
+msgstr "Addebito per intervallo"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:322
 msgid "Interval free cash"
-msgstr ""
+msgstr "Credito gratuito per intervallo"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:360
 msgid "Interval free time"
-msgstr ""
+msgstr "Tempo gratuito per intervallo"
 
 #: lib/NGCP/Panel/Controller/Subscriber.pm:569
 #: lib/NGCP/Panel/Controller/Subscriber.pm:840
 msgid "Invalid Call Forward type."
-msgstr ""
+msgstr "Tipo di Deviazione di Chiamata non valido."
 
 #: lib/NGCP/Panel/Controller/NCOS.pm:71
 msgid "Invalid NCOS level id detected"
-msgstr ""
+msgstr "Id Livello NCOS non valido"
 
 #: lib/NGCP/Panel/Controller/NCOS.pm:243
 msgid "Invalid NCOS pattern id detected"
-msgstr ""
+msgstr "Id Pattern NCOS non valido"
 
 #: lib/NGCP/Panel/Controller/Administrator.pm:135
 msgid "Invalid administrator id detected"
-msgstr ""
+msgstr "Id amministratore non valido"
 
 #: lib/NGCP/Panel/Controller/Billing.pm:281
 msgid "Invalid billing fee id detected!"
-msgstr ""
+msgstr "Id costo di fatturazione non valido!"
 
 #: lib/NGCP/Panel/Controller/Billing.pm:521
 msgid "Invalid billing zone id detected"
-msgstr ""
+msgstr "Id zona di fatturazione non valido"
 
 #: lib/NGCP/Panel/Controller/Contact.pm:106
 msgid "Invalid contact id detected"
-msgstr ""
+msgstr "Id contatto non valido"
 
 #: lib/NGCP/Panel/Controller/Contract.pm:357
 #: lib/NGCP/Panel/Controller/Sound.pm:100
 msgid "Invalid contract id detected"
-msgstr ""
+msgstr "Id contratto non valido"
 
 #: lib/NGCP/Panel/Controller/Contract.pm:68
 msgid "Invalid contract id detected!"
-msgstr ""
+msgstr "Id contratto non valido"
 
 #: lib/NGCP/Panel/Controller/Sound.pm:83 lib/NGCP/Panel/Controller/Sound.pm:91
 msgid "Invalid contract id found"
-msgstr ""
+msgstr "Trovao id contratto non valido"
 
 #: lib/NGCP/Panel/Controller/Customer.pm:212
 msgid "Invalid customer contract id"
-msgstr ""
+msgstr "Id contratto cliente non valido"
 
 #: lib/NGCP/Panel/Controller/Device.pm:607
 msgid "Invalid device configuration id"
-msgstr ""
+msgstr "Id configurazione dispositivo non valido"
 
 #: lib/NGCP/Panel/Controller/Device.pm:444
 msgid "Invalid device firmware id"
-msgstr ""
+msgstr "Id firmware dispositivo non valido"
 
 #: lib/NGCP/Panel/Controller/Device.pm:223
 msgid "Invalid device model id"
-msgstr ""
+msgstr "Id modello dispositivo non valido"
 
 #: lib/NGCP/Panel/Controller/Device.pm:765
 msgid "Invalid device profile id"
-msgstr ""
+msgstr "Id profilo dispositivo non valido"
 
 #: lib/NGCP/Panel/Controller/Domain.pm:163
 msgid "Invalid domain id detected"
-msgstr ""
+msgstr "Id dominio non valido"
 
 #: lib/NGCP/Panel/Controller/Subscriber.pm:2222
 msgid "Invalid fax setting."
-msgstr ""
+msgstr "Configurazione fax non valida."
 
 #: lib/NGCP/Panel/Controller/Sound.pm:535
 msgid "Invalid file type detected, only WAV supported"
-msgstr ""
+msgstr "Tipio di file non valido, tipo di file supportato: WAV "
 
 #. ($type)
 #: lib/NGCP/Panel/Controller/Customer.pm:630
 #: lib/NGCP/Panel/Controller/Customer.pm:667
 msgid "Invalid fraud interval '%1'!"
-msgstr ""
+msgstr "Intervallo di frode non valido '%1'!"
 
 #: lib/NGCP/Panel/Controller/Peering.pm:56
 msgid "Invalid group id detected"
-msgstr ""
+msgstr "Id gruppo non valido"
 
 #: lib/NGCP/Panel/Controller/Billing.pm:676
 msgid "Invalid peaktime date id detected!"
-msgstr ""
+msgstr "Id data ora di picco non valida!"
 
 #: lib/NGCP/Panel/Controller/Peering.pm:475
 msgid "Invalid peering rule id detected"
-msgstr ""
+msgstr "Id regola di peer non valido"
 
 #: lib/NGCP/Panel/Controller/Peering.pm:256
 msgid "Invalid peering server id"
-msgstr ""
+msgstr "Id server peer non valido"
 
 #: lib/NGCP/Panel/Controller/Customer.pm:293
 msgid "Invalid product id for this customer contract."
-msgstr ""
+msgstr "Id prodotto non valido per questo contratto cliente."
 
 #: lib/NGCP/Panel/Controller/Billing.pm:74
 msgid "Invalid profile id detected!"
-msgstr ""
+msgstr "Id profilo non valido!"
 
 #: lib/NGCP/Panel/Controller/Customer.pm:1088
 #: lib/NGCP/Panel/Controller/Customer.pm:964
 msgid "Invalid provisioning subscriber id detected."
-msgstr ""
+msgstr "Id creazione subscriber non valido."
 
 #: lib/NGCP/Panel/Controller/Customer.pm:105
 #: lib/NGCP/Panel/Controller/Reseller.pm:114
 msgid "Invalid reseller id detected"
-msgstr ""
+msgstr "Reseller id non valido"
 
 #: lib/NGCP/Panel/Controller/Domain.pm:67
 msgid "Invalid reseller id detected."
-msgstr ""
+msgstr "Reseller id non valido"
 
 #: lib/NGCP/Panel/Controller/Rewrite.pm:348
 msgid "Invalid rewrite rule id detected"
-msgstr ""
+msgstr "Rewrite rule non valida"
 
 #: lib/NGCP/Panel/Controller/Rewrite.pm:58
 msgid "Invalid rewrite rule set id detected"
-msgstr ""
+msgstr "Id set rewrite rule non valido"
 
 #: lib/NGCP/Panel/Controller/Sound.pm:476
 msgid "Invalid sound handle id detected"
-msgstr ""
+msgstr "Id riferimento suoni non valido"
 
 #: lib/NGCP/Panel/Controller/Sound.pm:139
 msgid "Invalid sound set id detected"
-msgstr ""
+msgstr "Id set di suoni non valido"
 
 #: lib/NGCP/Panel/Controller/Subscriber.pm:270
 msgid "Invalid subscriber id detected"
-msgstr ""
+msgstr "Subscriber id non valido"
 
 #: lib/NGCP/Panel/Controller/Subscriber.pm:2076
 msgid "Invalid voicemail setting."
-msgstr ""
+msgstr "Configurazione casella vocale non valida"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:465
 msgid "Is active"
-msgstr ""
+msgstr "attivo"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:296
 msgid "Is master"
-msgstr ""
+msgstr "master"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:356
 msgid "Is superuser"
-msgstr ""
+msgstr "superutente"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:555
 msgid "January"
-msgstr ""
+msgstr "Gennaio"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:448
 msgid "July"
-msgstr ""
+msgstr "Luglio"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:449
 msgid "June"
-msgstr ""
+msgstr "Giugno"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:464
 msgid "Key"
-msgstr ""
+msgstr "Chiave"
 
 #: share/layout/body.tt:22
 msgid "Language"
-msgstr ""
+msgstr "Lingua"
 
 #: share/templates/security/list.tt:67
 msgid "Last Attempt"
-msgstr ""
+msgstr "Ultimo Tentativo"
 
 #: lib/NGCP/Panel/Controller/Contact.pm:33
 #: lib/NGCP/Panel/Controller/Reseller.pm:122
 #: lib/NGCP/Panel/Utils/DbStrings.pm:488
 msgid "Last Name"
-msgstr ""
+msgstr "Cognome"
 
 #: lib/NGCP/Panel/Controller/Administrator.pm:43
 msgid "Lawful Intercept"
@@ -2659,87 +2708,97 @@ msgstr ""
 
 #: lib/NGCP/Panel/Controller/NCOS.pm:31 lib/NGCP/Panel/Utils/DbStrings.pm:394
 msgid "Level Name"
-msgstr ""
+msgstr "Nome Livello"
 
 #: share/templates/customer/details.tt:451
 msgid "Limit"
-msgstr ""
+msgstr "Limite"
 
 #: share/templates/widgets/subscriber_topmenu_settings.tt:11
 #: share/templates/widgets/subscriberadmin_topmenu_settings.tt:11
 msgid "Line Settings"
-msgstr ""
+msgstr "Configurazione Subscriber"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:300
 msgid "Line add"
-msgstr ""
+msgstr "Aggiungi linea"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:284
 msgid "Line/Key"
-msgstr ""
+msgstr "Linea/Tasto"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:458
 msgid "Line/Key Range"
-msgstr ""
+msgstr "Range Linea/Tasto"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:375
 msgid "Line/Key Type"
-msgstr ""
+msgstr "Tipo Linea/Tasto"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:495
 msgid "Linerange add"
-msgstr ""
+msgstr "Aggiungi range linea"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:596
 msgid "Lines/Keys"
-msgstr ""
+msgstr "Linee/Tasti"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:588
 msgid ""
 "Lines/Keys in this range can be used as Busy Lamp Field. Value is accessible "
 "in the config template via phone.lineranges[].lines[].can_blf"
 msgstr ""
+"Linee/Tasti in questo range possono essere usati come BLF. Il valore è "
+"accessibile nel template di configurazione attraverso phone.lineranges[].lines[].can_blf"
+
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:468
 msgid ""
 "Lines/Keys in this range can be used as regular phone lines. Value is "
 "accessible in the config template via phone.lineranges[].lines[].can_private"
 msgstr ""
+"Linee/Tasti in questo range possono essere usati come linee telefoniche regolari. Il valore è "
+"accessibile nel template di configurazione attraverso phone.lineranges[].lines[].can_private"
+
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:531
 msgid ""
 "Lines/Keys in this range can be used as shared lines. Value is accessible in "
 "the config template via phone.lineranges[].lines[].can_shared"
 msgstr ""
+"Linee/Tasti in questo range possono essere usati come linee condivise. Il valore è "
+"accessibile nel template di configurazione attraverso phone.lineranges[].lines[].can_shared"
 
 #: share/templates/calls/chord.tt:46
 msgid ""
 "Links are colored by the more frequent origin. Mouseover on a link to see "
 "the direction details."
 msgstr ""
+"I collegamenti sono colorati come origine piú frequente. Passare il "
+"mouse sopra il link per avere i dettagli di direzione."  
 
 #: share/templates/helpers/datatables.tt:208
 msgid "Loading..."
-msgstr ""
+msgstr "Caricamento..."
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:507 lib/NGCP/Panel/Utils/DbStrings.pm:8
 #: share/templates/customer/details.tt:452
 msgid "Lock Level"
-msgstr ""
+msgstr "Livello di Blocco"
 
 #. (login_name)
 #: share/layout/body.tt:18
 msgid "Logged in as %1"
-msgstr ""
+msgstr "Accesso effettuato come %1"
 
 #: lib/NGCP/Panel/Controller/Administrator.pm:35
 #: lib/NGCP/Panel/Utils/DbStrings.pm:335
 msgid "Login"
-msgstr ""
+msgstr "Accesso"
 
 #: share/layout/body.tt:31
 msgid "Logout"
-msgstr ""
+msgstr "Esci"
 
 #: share/templates/sound/handles_list.tt:31
 msgid "Loop"
@@ -2747,37 +2806,37 @@ msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:285
 msgid "Loopplay"
-msgstr ""
+msgstr "Riproduci in Loop"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:616
 #: share/templates/customer/details.tt:314
 msgid "MAC Address / Identifier"
-msgstr ""
+msgstr "Indirizzo MAC / Identificativo"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:469
 msgid "MAC Address Image"
-msgstr ""
+msgstr "Immagine Indirizzo MAC"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:388
 msgid "Manage Destination Sets"
-msgstr ""
+msgstr "Gestisci Set Destinazioni"
 
 #. (set_result.name)
 #: share/templates/sound/handles_list.tt:1
 msgid "Manage Sound Set %1"
-msgstr ""
+msgstr "Gestisci Set di Suoni %1"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:320
 msgid "Manage Time Sets"
-msgstr ""
+msgstr "Gestisci Set Temporali"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:144
 msgid "Manually defined allowed source IPs"
-msgstr ""
+msgstr "IP sorgenti abilitati definiti manualmente"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:412
 msgid "March"
-msgstr ""
+msgstr "Marzo"
 
 #: lib/NGCP/Panel/Controller/Administrator.pm:36
 #: lib/NGCP/Panel/Controller/Reseller.pm:134
@@ -2790,60 +2849,67 @@ msgstr ""
 
 #: lib/NGCP/Panel/Controller/Billing.pm:266
 msgid "Match Direction"
-msgstr ""
+msgstr "Direzione"
 
 #: share/templates/rewrite/rules_list.tt:30
 msgid "Match Pattern"
-msgstr ""
+msgstr "Pattern Sorgente"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:363
 msgid "Match pattern"
-msgstr ""
+msgstr "Pattern sorgente"
 
 #: lib/NGCP/Panel/Controller/Customer.pm:54
 msgid "Max Number of Subscribers"
-msgstr ""
+msgstr "Numero Massimo di Subscribers"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:438
 msgid "Max Subscribers"
-msgstr ""
+msgstr "Subscribers Massimi"
 
 #. (contract.max_subscribers,                            c.config.features.cloudpbx ? c.loc('(including PBX groups)
 #: share/templates/customer/details.tt:175
 #: share/templates/customer/details.tt:250
 msgid "Maximum number of %1 subscribers %2created"
-msgstr ""
+msgstr "Numero massimo di %1 subscribers %2creati"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:73
 msgid ""
 "Maximum number of concurrent outgoing sessions (calls) coming from a "
 "subscriber or going to a peer."
 msgstr ""
+"Numero massimo di sessioni in uscita simultanee (chiamate) proveninenti da "
+"un subscriber o in uscita verso un peer."
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:133
 msgid ""
 "Maximum number of concurrent outgoing sessions (calls) for subscribers "
 "within the same account"
 msgstr ""
+"Numero massimo di sessioni in uscita simultanee (chiamate), per subscribers "
+"appartenenti allo stesso cliente"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:71
 msgid "Maximum number of concurrent sessions (calls) for a subscriber or peer."
-msgstr ""
+msgstr "Numero massimo di sessioni simultanee (chiamate), per un subscriber o un peer."
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:131
 msgid ""
 "Maximum number of concurrent sessions (calls) for subscribers within the "
 "same account"
 msgstr ""
+"Numero massimo di sessioni simultanee (chiamate), per subscribers "
+"appartenenti allo stesso cliente"
+
 
 #: lib/NGCP/Panel/Controller/Customer.pm:485
 #: lib/NGCP/Panel/Controller/Customer.pm:739
 msgid "Maximum number of subscribers for this customer reached"
-msgstr ""
+msgstr "Raggiunto numero massimo di subscribers per questo cliente"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:595
 msgid "May"
-msgstr ""
+msgstr "Maggio"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:389
 msgid "Mday"
@@ -2852,45 +2918,45 @@ msgstr ""
 #: lib/NGCP/Panel/Controller/Callflow.pm:28
 #: lib/NGCP/Panel/Controller/Subscriber.pm:1687
 msgid "Method"
-msgstr ""
+msgstr "Metodo"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:467
 msgid "Minute"
-msgstr ""
+msgstr "Minuto"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:158
 msgid "Mobile Push Expiry Timeout"
-msgstr ""
+msgstr "Timeout Scadenza Mobile Push"
 
 #: lib/NGCP/Panel/Controller/NCOS.pm:32 lib/NGCP/Panel/Utils/DbStrings.pm:404
 msgid "Mode"
-msgstr ""
+msgstr "Modo"
 
 #: lib/NGCP/Panel/Controller/Device.pm:39
 #: lib/NGCP/Panel/Utils/DbStrings.pm:541
 msgid "Model"
-msgstr ""
+msgstr "Modello"
 
 #: lib/NGCP/Panel/Controller/Billing.pm:634
 #: lib/NGCP/Panel/Utils/DbStrings.pm:455
 msgid "Monday"
-msgstr ""
+msgstr "Lunedì"
 
 #: share/templates/widgets/admin_topmenu_settings.tt:4
 msgid "Monitoring & Statistics"
-msgstr ""
+msgstr "Monitoraggio & Statistiche"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:615
 msgid "Month"
-msgstr ""
+msgstr "Mese"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:384
 msgid "Monthly Fraud Limit"
-msgstr ""
+msgstr "Limite Frode Mensile"
 
 #: share/templates/customer/details.tt:459
 msgid "Monthly Settings"
-msgstr ""
+msgstr "Frode Mensile"
 
 #: share/templates/calls/chord.tt:45
 msgid ""
@@ -2898,56 +2964,59 @@ msgid ""
 "The thickness of links between countries encodes the relative frequency of "
 "calls between two countries: thicker links represent more calls."
 msgstr ""
+"Passare il mouse sopra il nome di una nazione per focalizzarsi su chiamate da e verso una singola nazione."
+"Lo spessore dei collegamenti tra le nazioni codifica la frequenza relativa di chiamate tra due nazioni: collegamenti "
+"più spessi rappresentano più chiamate."
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:188
 msgid "NAT and Media Flow Control"
-msgstr ""
+msgstr "Controllo Flusso Audio/Video e NAT"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:52 share/templates/ncos/list.tt:3
 msgid "NCOS Level"
-msgstr ""
+msgstr "Livello NCOS"
 
 #: share/templates/ncos/list.tt:1
 #: share/templates/widgets/admin_topmenu_settings.tt:32
 #: share/templates/widgets/reseller_topmenu_settings.tt:15
 msgid "NCOS Levels"
-msgstr ""
+msgstr "Livelli NCOS"
 
 #: lib/NGCP/Panel/Controller/NCOS.pm:81
 msgid "NCOS level does not exist"
-msgstr ""
+msgstr "Livello NCOS inesistente"
 
 #: lib/NGCP/Panel/Controller/NCOS.pm:188
 msgid "NCOS level successfully created"
-msgstr ""
+msgstr "Livello NCOS creato con successo"
 
 #: lib/NGCP/Panel/Controller/NCOS.pm:144
 msgid "NCOS level successfully deleted"
-msgstr ""
+msgstr "Livello NCOS eliminato con successo"
 
 #: lib/NGCP/Panel/Controller/NCOS.pm:121
 msgid "NCOS level successfully updated"
-msgstr ""
+msgstr "Livello NCOS aggiornato con successo"
 
 #: lib/NGCP/Panel/Controller/NCOS.pm:253
 msgid "NCOS pattern does not exist"
-msgstr ""
+msgstr "Pattern NCOS inesistente"
 
 #: lib/NGCP/Panel/Controller/NCOS.pm:331
 msgid "NCOS pattern successfully created"
-msgstr ""
+msgstr "Pattern NCOS creato con successo"
 
 #: lib/NGCP/Panel/Controller/NCOS.pm:302
 msgid "NCOS pattern successfully deleted"
-msgstr ""
+msgstr "Pattern NCOS eliminato con successo"
 
 #: lib/NGCP/Panel/Controller/NCOS.pm:279
 msgid "NCOS pattern successfully updated"
-msgstr ""
+msgstr "Pattern NCOS aggiornato con succcesso"
 
 #: share/templates/subscriber/webphone.tt:475
 msgid "NEW MESSAGE"
-msgstr ""
+msgstr "NUOVO MESSAGGIO"
 
 #: lib/NGCP/Panel/Controller/Billing.pm:37
 #: lib/NGCP/Panel/Controller/Customer.pm:298
@@ -2973,15 +3042,15 @@ msgstr ""
 #: share/templates/subscriber/preferences.tt:541
 #: share/templates/subscriber/preferences.tt:591
 msgid "Name"
-msgstr ""
+msgstr "Nome"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:331
 msgid "Name in Fax Header"
-msgstr ""
+msgstr "Nome intestazione Fax"
 
 #: share/templates/subscriber/preferences.tt:242
 msgid "Name in Fax Header for Sendfax"
-msgstr ""
+msgstr "Nome intestazione fax per Sendfax"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:40
 msgid "Network-Provided CLI"
@@ -2993,101 +3062,101 @@ msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:436
 msgid "New Description"
-msgstr ""
+msgstr "Nuova Descrizione"
 
 #: share/templates/widgets/subscriber_vm_overview.tt:7
 msgid "New Message"
-msgstr ""
+msgstr "Nuovo Messaggio"
 
 #: share/templates/widgets/subscriber_vm_overview.tt:7
 msgid "New Messages"
-msgstr ""
+msgstr "Nuovi Messaggi"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:283
 msgid "New Name"
-msgstr ""
+msgstr "Nuovo nome"
 
 #: lib/NGCP/Panel/Controller/Billing.pm:359
 msgid "No Billing Fee file specified!"
-msgstr ""
+msgstr "Nessun file costo di fatturazione specificato!"
 
 #: share/templates/widgets/subscriber_calls_overview.tt:14
 msgid "No calls yet"
-msgstr ""
+msgstr "Nessuna chiamata ancora"
 
 #: share/templates/widgets/subscriber_reg_overview.tt:14
 msgid "No devices registered"
-msgstr ""
+msgstr "Nessun dispositivo registrato"
 
 #: share/templates/widgets/subscriber_vm_overview.tt:13
 msgid "No new messages"
-msgstr ""
+msgstr "Nessun nuovo messaggio"
 
 #: lib/NGCP/Panel/Controller/Customer.pm:287
 #: lib/NGCP/Panel/Controller/Sound.pm:46
 msgid "No product for this customer contract found."
-msgstr ""
+msgstr "Nessun contratto trovato per questo cliente."
 
 #: lib/NGCP/Panel/Controller/Subscriber.pm:2907
 msgid "No such auto attendant id."
-msgstr ""
+msgstr "Nessuno id per IVR."
 
 #: lib/NGCP/Panel/Controller/Subscriber.pm:2801
 msgid "No such speed dial id."
-msgstr ""
+msgstr "Nessun id chiamata rapida."
 
 #: lib/NGCP/Panel/Controller/Subscriber.pm:2400
 msgid "No such voicemail file."
-msgstr ""
+msgstr "Nessun file casella vocale."
 
 #: share/templates/customer/details.tt:453
 msgid "Notify"
-msgstr ""
+msgstr "Notifica"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:623
 msgid "Notify Emails"
-msgstr ""
+msgstr "Email di Notifica"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:586
 msgid "November"
-msgstr ""
+msgstr "Novembre"
 
 #: lib/NGCP/Panel/Controller/Subscriber.pm:113
 #: lib/NGCP/Panel/Controller/Subscriber.pm:1993
 #: lib/NGCP/Panel/Utils/DbStrings.pm:383
 msgid "Number"
-msgstr ""
+msgstr "Numero"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:187
 msgid "Number Manipulations"
-msgstr ""
+msgstr "Manipolazioni Numero"
 
 #: share/templates/ncos/pattern_list.tt:4
 msgid "Number Pattern"
-msgstr ""
+msgstr "Pattern Numero"
 
 #. (level_result.level)
 #: share/templates/ncos/pattern_list.tt:1
 msgid "Number Patterns for %1"
-msgstr ""
+msgstr "Patterns Numero per %1"
 
 #: lib/NGCP/Panel/Controller/Device.pm:788
 #: lib/NGCP/Panel/Utils/DbStrings.pm:480
 msgid "Number of Lines/Keys"
-msgstr ""
+msgstr "Numero per Linee/Tasti"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:319
 msgid "Numbers"
-msgstr ""
+msgstr "Numeri"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:286
 msgid "October"
-msgstr ""
+msgstr "Ottobre"
 
 #. (profile.name)
 #: share/templates/billing/peaktimes.tt:1
 msgid "Off-peak-times for %1"
-msgstr ""
+msgstr "Orari fuori-picco per %1"
 
 #: share/templates/subscriber/webphone.tt:598
 msgid "Offline"
@@ -3095,35 +3164,35 @@ msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:413
 msgid "Offpeak follow interval"
-msgstr ""
+msgstr "Intervallo successivo fuori picco"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:304
 msgid "Offpeak follow rate"
-msgstr ""
+msgstr "Tasso successivo fuori picco"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:471
 msgid "Offpeak init interval"
-msgstr ""
+msgstr "Intervallo iniziale fuori picco"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:524
 msgid "Offpeak init rate"
-msgstr ""
+msgstr "Tasso iniziale fuori picco"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:378
 msgid "Onpeak follow interval"
-msgstr ""
+msgstr "Intervallo successivo di picco"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:427
 msgid "Onpeak follow rate"
-msgstr ""
+msgstr "Tasso successivo di picco"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:523
 msgid "Onpeak init interval"
-msgstr ""
+msgstr "Intervallo iniziale di picco"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:441
 msgid "Onpeak init rate"
-msgstr ""
+msgstr "Tasso iniziale di picco"
 
 #: share/templates/notfound_page.tt:7
 msgid "Oops!"
@@ -3134,96 +3203,98 @@ msgid ""
 "Optionally set the maximum number of subscribers for this contract. Leave "
 "empty for unlimited."
 msgstr ""
+"Opzionalmente settare il numero massimo di subscribers per questo contratto. Lasciare "
+"vuoto per illimitato."
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:315
 msgid "Outbound"
-msgstr ""
+msgstr "Uscita"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:136
 msgid "Outbound Diversion Header"
-msgstr ""
+msgstr "Diversion Header in Uscita"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:120
 msgid "Outbound From-Display Field"
-msgstr ""
+msgstr "Campo From-Display in Uscita"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:118
 msgid "Outbound From-Username Field"
-msgstr ""
+msgstr "Campo From-Username in Uscita"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:122
 msgid "Outbound PAI-Username Field"
-msgstr ""
+msgstr "Campo PAI-Username in Uscita"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:124
 msgid "Outbound PPI-Username Field"
-msgstr ""
+msgstr "Campo PPI-Username in Uscita"
 
 #: share/templates/rewrite/rules_list.tt:101
 msgid "Outbound Rewrite Rules for Callee"
-msgstr ""
+msgstr "Rewrite Rules in Uscita per Chiamato"
 
 #: share/templates/rewrite/rules_list.tt:91
 msgid "Outbound Rewrite Rules for Caller"
-msgstr ""
+msgstr "Rewrite Rules in Uscita per Chiamante"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:113
 msgid "Outbound socket to be used for SIP communication to this entity"
-msgstr ""
+msgstr "Socket di uscita usata per comunicazioni SIP verso questo sistema"
 
 #: lib/NGCP/Panel/Controller/Customer.pm:1122
 #: lib/NGCP/Panel/Controller/Customer.pm:998
 msgid "PBX Device"
-msgstr ""
+msgstr "Dispositivo PBX"
 
 #: lib/NGCP/Panel/Controller/Customer.pm:1131
 msgid "PBX Device successfully deleted"
-msgstr ""
+msgstr "Dispositivo PBX eliminato con successo"
 
 #: share/templates/customer/details.tt:302
 msgid "PBX Devices"
-msgstr ""
+msgstr "Dispositivi PBX"
 
 #: lib/NGCP/Panel/Controller/Customer.pm:829
 #: share/templates/customer/details.tt:189
 #: share/templates/subscriber/master.tt:68
 msgid "PBX Group"
-msgstr ""
+msgstr "Gruppo PBX"
 
 #: share/templates/customer/details.tt:235
 msgid "PBX Groups"
-msgstr ""
+msgstr "Gruppi PBX"
 
 #: lib/NGCP/Panel/Controller/Customer.pm:982
 msgid "PBX device successfully created"
-msgstr ""
+msgstr "Dispositivo PBX creato con successo"
 
 #: lib/NGCP/Panel/Controller/Customer.pm:1106
 msgid "PBX device successfully updated"
-msgstr ""
+msgstr "Dispositivo PBX aggiornato con successo"
 
 #. ($dev_id)
 #: lib/NGCP/Panel/Controller/Customer.pm:1018
 msgid "PBX device with id %1 does not exist for this customer."
-msgstr ""
+msgstr "Dispositivo PBX con id %1 non esiste per questo cliente."
 
 #. ($dev_id)
 #: lib/NGCP/Panel/Controller/Customer.pm:1010
 msgid "PBX device with id %1 does not exist."
-msgstr ""
+msgstr "Dispositivo PBX con id %1 non esiste."
 
 #: lib/NGCP/Panel/Controller/Customer.pm:814
 msgid "PBX group successfully created."
-msgstr ""
+msgstr "Gruppo PBX creato con successo."
 
 #: lib/NGCP/Panel/Controller/Customer.pm:897
 msgid "PBX group successfully updated."
-msgstr ""
+msgstr "Gruppo PBX aggiornato con successo"
 
 #. ($group_id)
 #: lib/NGCP/Panel/Controller/Customer.pm:841
 msgid "PBX group with id %1 does not exist."
-msgstr ""
+msgstr "Gruppo PBX con id %1 non esiste."
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:302
 msgid "PDF"
@@ -3240,7 +3311,7 @@ msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:56
 msgid "PIN to bypass outbound Block List"
-msgstr ""
+msgstr "PIN per bypassare Lista Blocco Chiamate in uscita"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:485
 msgid "POST"
@@ -3252,7 +3323,7 @@ msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:490
 msgid "Parallel Ringing"
-msgstr ""
+msgstr "Chiamate Parallele"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:289
 msgid "Password"
@@ -3260,7 +3331,7 @@ msgstr ""
 
 #: share/templates/subscriber/preferences.tt:258
 msgid "Password for Sendfax"
-msgstr ""
+msgstr "Password per Sendfax"
 
 #: lib/NGCP/Panel/Controller/NCOS.pm:216 lib/NGCP/Panel/Utils/DbStrings.pm:444
 msgid "Pattern"
@@ -3272,153 +3343,153 @@ msgstr ""
 
 #: lib/NGCP/Panel/Controller/Billing.pm:684
 msgid "Peaktime date does not exist!"
-msgstr ""
+msgstr "Data orario di picco non esistente!"
 
 #: share/templates/billing/list.tt:19
 msgid "Peaktimes"
-msgstr ""
+msgstr "Orari di picco"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:66
 msgid "Peer Authentication Domain"
-msgstr ""
+msgstr "Dominio di Autenticazione Peer"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:62
 msgid "Peer Authentication Password"
-msgstr ""
+msgstr "Password di Autenticazione Peer"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:60
 msgid "Peer Authentication User"
-msgstr ""
+msgstr "User di Autenticazione Peer"
 
 #. (server.name)
 #: share/templates/peering/preferences.tt:1
 msgid "Peer Host \"%1\"  Preferences"
-msgstr ""
+msgstr "Peer Host \"%1\"  Preferenze"
 
 #: lib/NGCP/Panel/Controller/Subscriber.pm:546
 msgid "Peer registration error"
-msgstr ""
+msgstr "Errore registrazione peer"
 
 #: share/templates/widgets/admin_billing_overview.tt:12
 msgid "Peering Costs"
-msgstr ""
+msgstr "Costi Peer"
 
 #: share/templates/widgets/admin_peering_overview.tt:7
 msgid "Peering Group"
-msgstr ""
+msgstr "Gruppo Peer"
 
 #: lib/NGCP/Panel/Controller/Peering.pm:143
 msgid "Peering Group successfully deleted"
-msgstr ""
+msgstr "Gruppi peer eliminati con successo"
 
 #: share/templates/widgets/admin_peering_overview.tt:7
 msgid "Peering Groups"
-msgstr ""
+msgstr "Gruppi Peer"
 
 #: share/templates/peering/servers_rules.tt:37
 #: share/templates/widgets/admin_peering_overview.tt:13
 msgid "Peering Rule"
-msgstr ""
+msgstr "Regola Peer"
 
 #: lib/NGCP/Panel/Controller/Peering.pm:487
 msgid "Peering Rule does not exist"
-msgstr ""
+msgstr "Regola peer non esistente"
 
 #: share/templates/peering/servers_rules.tt:35
 #: share/templates/widgets/admin_peering_overview.tt:13
 msgid "Peering Rules"
-msgstr ""
+msgstr "Regole Peer"
 
 #: share/templates/peering/servers_rules.tt:4
 #: share/templates/widgets/admin_peering_overview.tt:12
 msgid "Peering Server"
-msgstr ""
+msgstr "Server Peer"
 
 #: share/templates/peering/servers_rules.tt:2
 #: share/templates/widgets/admin_peering_overview.tt:12
 msgid "Peering Servers"
-msgstr ""
+msgstr "Servers Peer"
 
 #: lib/NGCP/Panel/Controller/Peering.pm:68
 msgid "Peering group does not exist"
-msgstr ""
+msgstr "Gruppo pieer non esistente"
 
 #: lib/NGCP/Panel/Controller/Peering.pm:178
 msgid "Peering group successfully created"
-msgstr ""
+msgstr "Gruppo peer creato con successo"
 
 #: lib/NGCP/Panel/Controller/Peering.pm:518
 msgid "Peering rule successfully changed"
-msgstr ""
+msgstr "Regola peer cambiata con successo"
 
 #: lib/NGCP/Panel/Controller/Peering.pm:450
 msgid "Peering rule successfully created"
-msgstr ""
+msgstr "Regola peer creata con successo"
 
 #: lib/NGCP/Panel/Controller/Peering.pm:542
 msgid "Peering rule successfully deleted"
-msgstr ""
+msgstr "Regola peer eliminata con successo"
 
 #: lib/NGCP/Panel/Controller/Peering.pm:268
 msgid "Peering server does not exist"
-msgstr ""
+msgstr "Server peer non esistente"
 
 #: lib/NGCP/Panel/Controller/Peering.pm:231
 msgid "Peering server successfully created"
-msgstr ""
+msgstr "Server peer creato con successo"
 
 #: lib/NGCP/Panel/Controller/Peering.pm:322
 msgid "Peering server successfully deleted"
-msgstr ""
+msgstr "Server peer eliminato con successo"
 
 #: lib/NGCP/Panel/Controller/Peering.pm:298
 msgid "Peering server successfully updated"
-msgstr ""
+msgstr "Server peer aggiornato con successo"
 
 #: share/templates/widgets/admin_peering_overview.tt:4
 #: share/templates/widgets/admin_topmenu_settings.tt:30
 msgid "Peerings"
-msgstr ""
+msgstr "Peers"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:301
 msgid "Period"
-msgstr ""
+msgstr "Periodo"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:348
 msgid "Period add"
-msgstr ""
+msgstr "Aggiungi periodo"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:564
 msgid "Phone Number"
-msgstr ""
+msgstr "Numero di Telefono"
 
 #: share/templates/subscriber/webphone.tt:583
 msgid "Phone Status:"
-msgstr ""
+msgstr "Stato Telefono:"
 
 #: share/templates/customer/details.tt:116
 msgid "Phone/Fax"
-msgstr ""
+msgstr "Telefono/Fax"
 
 #: share/templates/sound/handles_list.tt:55
 #: share/templates/subscriber/master.tt:144
 #: share/templates/subscriber/master.tt:148
 #: share/templates/subscriber/voicemail.tt:21
 msgid "Play"
-msgstr ""
+msgstr "Riproduci"
 
 #: lib/NGCP/Panel/Controller/Peering.pm:80
 #: lib/NGCP/Panel/Utils/DbStrings.pm:530
 msgid "Port"
-msgstr ""
+msgstr "Porta"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:445
 msgid "Postcode"
-msgstr ""
+msgstr "Codice Postale"
 
 #: share/templates/helpers/pref_table.tt:156
 msgid "Preference '"
-msgstr ""
+msgstr "Preferenza '"
 
 #: share/templates/customer/details.tt:216
 #: share/templates/customer/details.tt:288 share/templates/domain/list.tt:19
@@ -3429,26 +3500,26 @@ msgstr ""
 #: share/templates/reseller/details.tt:176
 #: share/templates/subscriber/master.tt:6
 msgid "Preferences"
-msgstr ""
+msgstr "Preferenze"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:617
 msgid "Prepaid"
-msgstr ""
+msgstr "Prepagato"
 
 #: share/templates/customer/details.tt:187
 #: share/templates/customer/details.tt:260
 #: share/templates/subscriber/master.tt:75
 msgid "Primary Number"
-msgstr ""
+msgstr "Numero Primario"
 
 #: lib/NGCP/Panel/Controller/Peering.pm:29
 #: lib/NGCP/Panel/Utils/DbStrings.pm:600
 msgid "Priority"
-msgstr ""
+msgstr "Priorità"
 
 #: lib/NGCP/Panel/Controller/Device.pm:789
 msgid "Private Line"
-msgstr ""
+msgstr "Linea Privata"
 
 #: lib/NGCP/Panel/Controller/Contract.pm:28
 #: lib/NGCP/Panel/Controller/Customer.pm:119
@@ -3456,25 +3527,25 @@ msgstr ""
 #: lib/NGCP/Panel/Controller/Reseller.pm:143
 #: lib/NGCP/Panel/Utils/DbStrings.pm:589
 msgid "Product"
-msgstr ""
+msgstr "Prodotto"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:387
 msgid "Profile"
-msgstr ""
+msgstr "Profilo"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:496
 msgid "Profile Name"
-msgstr ""
+msgstr "Nome Profilo"
 
 #: lib/NGCP/Panel/Controller/Peering.pm:81
 #: lib/NGCP/Panel/Utils/DbStrings.pm:581
 #: share/templates/subscriber/preferences.tt:468
 msgid "Protocol"
-msgstr ""
+msgstr "Protocollo"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:321
 msgid "Purge existing"
-msgstr ""
+msgstr "Elimina esistenti"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:526
 msgid "Push Provisioning URL"
@@ -3482,44 +3553,44 @@ msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:164
 msgid "RTCP Feedback Mode"
-msgstr ""
+msgstr "Modalità RTCP Feedback"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:152
 msgid "RTP-Proxy Mode"
-msgstr ""
+msgstr "Modalità RTP-Proxy"
 
 #: lib/NGCP/Panel/Controller/Administrator.pm:38
 msgid "Read Only"
-msgstr ""
+msgstr "Sola Lettura"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:343
 msgid "Read only"
-msgstr ""
+msgstr "Sola lettura"
 
 #: lib/NGCP/Panel/Controller/Reseller.pm:136
 msgid "Read-Only"
-msgstr ""
+msgstr "Sola-Lettura"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:466
 msgid "Receive Reports"
-msgstr ""
+msgstr "Ricevi Reports"
 
 #: share/templates/widgets/subscriber_calls_overview.tt:8
 msgid "Recent Call"
-msgstr ""
+msgstr "Chiamata Recente"
 
 #: share/templates/widgets/subscriber_calls_overview.tt:8
 msgid "Recent Calls"
-msgstr ""
+msgstr "Chiamate Recenti"
 
 #: share/templates/subscriber/preferences.tt:418
 msgid "Recurrence"
-msgstr ""
+msgstr "Ricorrenza"
 
 #: lib/NGCP/Panel/Controller/Subscriber.pm:2579
 #: share/templates/widgets/subscriber_reg_overview.tt:8
 msgid "Registered Device"
-msgstr ""
+msgstr "Dispositivo Registrato"
 
 #: share/templates/customer/details.tt:191
 #: share/templates/subscriber/master.tt:163
@@ -3530,45 +3601,45 @@ msgstr ""
 #: share/templates/widgets/subscriber_topmenu_settings.tt:10
 #: share/templates/widgets/subscriberadmin_topmenu_settings.tt:10
 msgid "Registered Devices"
-msgstr ""
+msgstr "Dispositivi Registrati"
 
 #. (subscriber.username, subscriber.domain.domain)
 #: share/templates/subscriber/reglist.tt:1
 msgid "Registered Devices for %1@%2"
-msgstr ""
+msgstr "Dispositivi Registrati per %1@%2"
 
 #: share/templates/subscriber/webphone.tt:417
 msgid "Reject"
-msgstr ""
+msgstr "Rifuita"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:108
 msgid "Reject Emergency Calls"
-msgstr ""
+msgstr "Rifiuta Chiamate di Emergenza"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:109
 msgid "Reject emergency calls from this user or domain."
-msgstr ""
+msgstr "Rifiuta chiamte di emergenza da questo utente o dominio."
 
 #: share/templates/calls/chord.tt:56
 msgid "Reload"
-msgstr ""
+msgstr "Ricarica"
 
 #: share/templates/subscriber/preferences.tt:409
 msgid "Reminder"
-msgstr ""
+msgstr "Promemoria"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:189
 msgid "Remote Authentication"
-msgstr ""
+msgstr "Autenticazione Remota"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:521
 msgid "Repeat"
-msgstr ""
+msgstr "Ripeti"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:551
 #: share/templates/rewrite/rules_list.tt:31
 msgid "Replacement Pattern"
-msgstr ""
+msgstr "Pattern Sostitutivo"
 
 #: lib/NGCP/Panel/Controller/Administrator.pm:32
 #: lib/NGCP/Panel/Controller/Billing.pm:38
@@ -3586,53 +3657,53 @@ msgstr ""
 #: share/templates/reseller/details.tt:32
 #: share/templates/widgets/admin_reseller_overview.tt:7
 msgid "Reseller"
-msgstr ""
+msgstr "Rivenditore"
 
 #: share/templates/reseller/details.tt:27
 msgid "Reseller Base Information"
-msgstr ""
+msgstr "Informazioni Base Rivenditore"
 
 #: share/templates/reseller/details.tt:91
 msgid "Reseller Contact"
-msgstr ""
+msgstr "Contatto Rivenditore"
 
 #: share/templates/reseller/details.tt:59
 msgid "Reseller Contract"
-msgstr ""
+msgstr "Contratto Rivenditore"
 
 #: share/templates/widgets/reseller_billing_overview.tt:12
 msgid "Reseller Cost"
-msgstr ""
+msgstr "Costo Rivenditore"
 
 #. (reseller.first.name)
 #: share/templates/reseller/details.tt:1
 msgid "Reseller Details for %1"
-msgstr ""
+msgstr "Dettagli Rivenditore per %1"
 
 #: share/templates/widgets/admin_billing_overview.tt:13
 msgid "Reseller Revenue"
-msgstr ""
+msgstr "Entrate Rivenditore"
 
 #: share/templates/widgets/admin_topmenu_settings.tt:25
 msgid "Reseller and Peering Contracts"
-msgstr ""
+msgstr "Contratti Rivenditori e Peers"
 
 #. (reseller.first.status)
 #: share/templates/reseller/details.tt:17
 msgid "Reseller is <b>%1</b>"
-msgstr ""
+msgstr "Rivenditore è <b>%1</b>"
 
 #: lib/NGCP/Panel/Controller/Reseller.pm:158
 msgid "Reseller not found"
-msgstr ""
+msgstr "Rivenditore non trovato"
 
 #: lib/NGCP/Panel/Controller/Domain.pm:79
 msgid "Reseller not found."
-msgstr ""
+msgstr "Rivenditore non trovato"
 
 #: lib/NGCP/Panel/Controller/Reseller.pm:91
 msgid "Reseller successfully created"
-msgstr ""
+msgstr "Rivenditore creato con successo"
 
 #. ($defaults{admins}->{login},$defaults{admins}->{md5pass})
 #: lib/NGCP/Panel/Controller/Reseller.pm:409
@@ -3640,75 +3711,77 @@ msgid ""
 "Reseller successfully created with login <b>%1</b> and password <b>%2</b>, "
 "please review your settings below"
 msgstr ""
+"Rivenditore creato con successo con utente di accesso <b>%1</b> e password <b>%2</b>, "
+"prego rivedere la configurazione di seguito" 
 
 #: lib/NGCP/Panel/Controller/Reseller.pm:232
 msgid "Reseller successfully updated"
-msgstr ""
+msgstr "Rivenditore aggiornato con successo"
 
 #: share/templates/reseller/list.tt:1 share/templates/reseller/list.tt:3
 #: share/templates/widgets/admin_reseller_overview.tt:4
 #: share/templates/widgets/admin_reseller_overview.tt:7
 #: share/templates/widgets/admin_topmenu_settings.tt:23
 msgid "Resellers"
-msgstr ""
+msgstr "Rivenditori"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:307 lib/NGCP/Panel/Utils/DbStrings.pm:81
 #: share/templates/rewrite/set_list.tt:3
 #: share/templates/widgets/reseller_domain_overview.tt:12
 msgid "Rewrite Rule Set"
-msgstr ""
+msgstr "Set di Rewrite Rule"
 
 #: share/templates/rewrite/set_list.tt:1
 #: share/templates/widgets/admin_topmenu_settings.tt:31
 #: share/templates/widgets/reseller_domain_overview.tt:12
 #: share/templates/widgets/reseller_topmenu_settings.tt:14
 msgid "Rewrite Rule Sets"
-msgstr ""
+msgstr "Rewrite Rule"
 
 #. (set_result.name)
 #: share/templates/rewrite/rules_list.tt:1
 msgid "Rewrite Rules for %1"
-msgstr ""
+msgstr "Rewrite Rules per %1"
 
 #: lib/NGCP/Panel/Controller/Rewrite.pm:358
 msgid "Rewrite rule does not exist"
-msgstr ""
+msgstr "Rewrite rule non esistente"
 
 #: lib/NGCP/Panel/Controller/Rewrite.pm:68
 msgid "Rewrite rule set does not exist"
-msgstr ""
+msgstr "Set di Rewrite rule non esistente"
 
 #: lib/NGCP/Panel/Controller/Rewrite.pm:176
 msgid "Rewrite rule set successfully cloned"
-msgstr ""
+msgstr "Set di Rewrite rule clonato con successo"
 
 #: lib/NGCP/Panel/Controller/Rewrite.pm:227
 msgid "Rewrite rule set successfully created"
-msgstr ""
+msgstr "Set di Rewrite rule creato con successo"
 
 #: lib/NGCP/Panel/Controller/Rewrite.pm:129
 msgid "Rewrite rule set successfully deleted"
-msgstr ""
+msgstr "Set di Rewrite rule eliminato con successo"
 
 #: lib/NGCP/Panel/Controller/Rewrite.pm:109
 msgid "Rewrite rule set successfully updated"
-msgstr ""
+msgstr "Set di Rewrite rule caricato con successo"
 
 #: lib/NGCP/Panel/Controller/Rewrite.pm:438
 msgid "Rewrite rule successfully created"
-msgstr ""
+msgstr "Rewrite rule creata con successo"
 
 #: lib/NGCP/Panel/Controller/Rewrite.pm:406
 msgid "Rewrite rule successfully deleted"
-msgstr ""
+msgstr "Rewrite rule eliminata con successo"
 
 #: lib/NGCP/Panel/Controller/Rewrite.pm:385
 msgid "Rewrite rule successfully updated"
-msgstr ""
+msgstr "Rewrite rule caricata con successo"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:38
 msgid "Ring Timeout for CFT"
-msgstr ""
+msgstr "Tempo di Squillo per CFT"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:329
 msgid "Rm"
@@ -3716,59 +3789,61 @@ msgstr ""
 
 #: share/templates/rewrite/rules_list.tt:114
 msgid "Rule"
-msgstr ""
+msgstr "Regola"
 
 #: share/templates/rewrite/set_list.tt:23
 #: share/templates/rewrite/set_list.tt:31
 msgid "Rules"
-msgstr ""
+msgstr "Regole"
 
 #: share/templates/callflow/list.tt:1
 #: share/templates/widgets/admin_topmenu_settings.tt:11
 msgid "SIP Call Flows"
-msgstr ""
+msgstr "Flusso Chiamate SIP"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:431
 msgid "SIP Domain"
-msgstr ""
+msgstr "Dominio SIP"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:568
 #: share/templates/subscriber/master.tt:65
 msgid "SIP Password"
-msgstr ""
+msgstr "Password SIP"
 
 #: share/templates/peering/list.tt:3
 msgid "SIP Peering Group"
-msgstr ""
+msgstr "Gruppo SIP Peer"
 
 #. (group.name)
 #: share/templates/peering/servers_rules.tt:1
 msgid "SIP Peering Group %1"
-msgstr ""
+msgstr "Gruppo SIP Peer %1"
 
 #: share/templates/peering/list.tt:1
 msgid "SIP Peering Groups"
-msgstr ""
+msgstr "Gruppi SIP Peer"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:99
 msgid ""
 "SIP Session Timers refresh interval (seconds). Should be always greater than "
 "min_timer preference. SBC will make refresh at the half of this interval."
 msgstr ""
+"Intervallo di refresh (secondi) per SIP Session Timers. Dovrebbe sempre essere maggiore della "
+"preferenza min_timer. SBC genererà un refresh alla metà di questo intervallo."
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:105
 msgid "SIP Session Timers refresh method."
-msgstr ""
+msgstr "Metodo di refresh per SIP Session Timers."
 
 #: share/templates/customer/details.tt:186
 #: share/templates/customer/details.tt:259
 #: share/templates/subscriber/master.tt:63
 msgid "SIP URI"
-msgstr ""
+msgstr "URI SIP"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:297
 msgid "SIP Username"
-msgstr ""
+msgstr "Nome Utente SIP"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:41
 msgid ""
@@ -3781,6 +3856,14 @@ msgid ""
 "preference) SIP signalling. Automatically set to the primary E.164 number "
 "specified in the subscriber details."
 msgstr ""
+"Nome Utente SIP (la parte locale dell'intera URI SIP, es., \"user\" della URI SIP "
+"\"user@example.com\"). \"network-provided CLI\" - specifica il nome utente SIP usato "
+"per chiamate in uscita nei campi SIP \"From"\" e \"P-Asserted-Identity\ (come user- "
+"e network-provided number). Il contenuto del campo \"From\" può essere "
+"sovrascritto dalla preferenza \"user_cli\" e/o dallo stesso SIP client (se permesso "
+"dalla preferenza \"allowed_clis\"). Il valore viene automaticamente settato al Numero "
+"Primario E.164, specificato nei dettagli del subscriber." 
+
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:90
 msgid ""
@@ -3791,6 +3874,13 @@ msgid ""
 "sends a CLI which is not allowed by \"allowed_clis\" or if \"allowed_clis\" "
 "is not set."
 msgstr ""
+"Nome Utente SIP (la parte locale dell'intera URI SIP, es., \"user\" della URI SIP "
+"\"user@example.com\"). \"user-provided CLI\" - specifica il nome utente SIP usato "
+"per chiamate in uscita. Se settato, questo valore viene inserito nel campo SIP \"From\" (come "
+"user-provided calling number) se un client SIP invia un CLI che non è presente "
+"nella lista di \"allowed_clis\" oppure se \"allowed_clis\" non è settato."
+
+
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:111
 msgid ""
@@ -3798,57 +3888,74 @@ msgid ""
 "\"user@example.com\"). Emergency CLI which can be used in rewrite rules as "
 "substitution value."
 msgstr ""
+"Nome Utente SIP (la parte locale dell'intera URI SIP, es., \"user\" della URI SIP "
+"\"user@example.com\"). CLI di emergenza che può essere usato nelle rewrite rules "
+"come valore sostitutivo.
+
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:162
 msgid "SRTP Transcoding Mode"
-msgstr ""
+msgstr "Modalità Transcodifica SRTP"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:25
 msgid ""
 "Same as \"block_in_clir\" but may only be set by administrators and is "
 "applied prior to the user setting."
 msgstr ""
+"Lo stesso di \"block_in_clir\" ma può essere settato solo da amministratori "
+"ed è applicato con priorità maggiore rispetto ai settaggi utente."
+
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:23
 msgid ""
 "Same as \"block_in_list\" but may only be set by administrators and is "
 "applied prior to the user setting."
 msgstr ""
+"Lo stesso di \"block_in_list\" ma può essere settato solo da amministratori "
+"ed è applicato con priorità maggiore rispetto ai settaggi utente."
+
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:21
 msgid "Same as \"block_in_mode\" but may only be set by administrators."
-msgstr ""
+msgstr "Lo stesso di \"block_in_mode\" ma può essere settato solo da amministratori."
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:29
 msgid ""
 "Same as \"block_out_list\" but may only be set by administrators and is "
 "applied prior to the user setting."
 msgstr ""
+"Lo stesso di \"block_out_list\" ma può essere settato solo da amministratori "
+"ed è applicato con priorità maggiore rispetto ai settaggi utente."
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:27
 msgid "Same as \"block_out_mode\" but may only be set by administrators."
-msgstr ""
+msgstr "Lo stesso di \"block_out_mode\" ma può essere settato solo da amministratori."
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:59
 msgid ""
 "Same as \"block_out_override_pin\" but additionally disables the "
 "administrative block list and NCOS level."
 msgstr ""
+"Lo stesso di \"block_out_override_pin\" ma disabilita ulteriormente "
+"la lista blocco chiamate (livello amministratore) e livello NCOS."
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:55
 msgid ""
 "Same as \"ncos\", but may only be set by administrators and is applied prior "
 "to the user setting."
 msgstr ""
+"Lo stesso di \"ncos\" ma può essere settato solo da amministratori "
+"ed è applicato con priorità maggiore rispetto ai settaggi utente."
+
 
 #: lib/NGCP/Panel/Controller/Billing.pm:639
 #: lib/NGCP/Panel/Utils/DbStrings.pm:620
 msgid "Saturday"
-msgstr ""
+msgstr "Sabato"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:512
 msgid "Save"
-msgstr ""
+msgstr "Salva"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:129
 msgid ""
@@ -3856,37 +3963,47 @@ msgid ""
 "primary E164 number and aliases. If it mathes, take UPN as valid wihout "
 "allowed_clis check and copy UPN to network-provided number (NPN)."
 msgstr ""
+"Ricerca per un riscontro parziale di user-provided number (UPN) con "
+"il numero primario E164 e numeri alias del subscriber. Se c'è riscontro, "
+"accetta UPN come valido senza controllo su allowed_clis e copia UPN in "
+"network-provided number (NPN)."
+
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:561
 msgid ""
 "Seconds to wait for pick-up until engaging Call Forward (e.g. "
 "&ldquo;10&rdquo;)"
 msgstr ""
+"Secondi di attesa per rispondere prima che si attivi la Deviazione di Chiamata "
+"(es. &ldquo;10&rdquo;)"
+
 
 #: share/templates/security/list.tt:1
 #: share/templates/widgets/admin_topmenu_settings.tt:34
 msgid "Security Bans"
-msgstr ""
+msgstr "Blocchi di Sicurezza"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:9
 msgid ""
 "See \"lock_voip_account_subscriber\" for a list of possible values. A lock "
 "value of \"none\" will not be returned to the caller. Read-only setting."
 msgstr ""
+"Vedere "lock_voip_account_subscriber\" per una lista di possibili valori. Un valore "
+"di blocco \"none\" non sarà ritornato al chiamante. Valore in Sola-Lettura."
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:565
 msgid "Select"
-msgstr ""
+msgstr "Seleziona"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:325
 #: share/templates/subscriber/preferences.tt:306
 msgid "Send Copies"
-msgstr ""
+msgstr "Invia Copie"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:559
 #: share/templates/subscriber/preferences.tt:290
 msgid "Send Reports"
-msgstr ""
+msgstr "Invia Reports"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:127
 msgid ""
@@ -3894,6 +4011,9 @@ msgid ""
 "registered. This can not be used together with CFNA as call will be then "
 "simply forwarded."
 msgstr ""
+"Invia chiamata in ingresso al server di Mobile Push quando il subscriber chiamato non "
+"è registrato. Questo non può essere ustao insieme a CFNA visto che la "
+"chiamata in quel caso sarà semplicemente deviata."
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:88
 msgid ""
@@ -3901,22 +4021,25 @@ msgid ""
 "INVITE to the subscriber. If a 404 is received the SIP AOR is sent as "
 "request URI as fallback."
 msgstr ""
+"Invia il numero primario E164 invece che AOR SIP come nomeutente nella URI "
+"quando si invia un INVITE al subscriber. Se si riceve un 404, allora la AOR SIP sarà "
+"inviata come R-URI di fallback."
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:161
 msgid "Send the calls from/to the subscribers through the cloud pbx module."
-msgstr ""
+msgstr "Invia chiamate da/a subscriber attraverso il modulo cloude pbx."
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:376
 msgid "September"
-msgstr ""
+msgstr "Settembre"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:344
 msgid "Serial Hunting Timeout"
-msgstr ""
+msgstr "Timeout Ricerca Seriale"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:548
 msgid "Serial Ringing"
-msgstr ""
+msgstr "Squillo Seriale"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:190
 msgid "Session Timers"
@@ -3924,41 +4047,43 @@ msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:102
 msgid "Session-Timer Max Refresh Interval"
-msgstr ""
+msgstr "Intervallo Massimo di Refresh Session-Timer"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:100
 msgid "Session-Timer Min Refresh Interval"
-msgstr ""
+msgstr "Intervallo Minimo di Refresh Session-Timer"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:98
 msgid "Session-Timer Refresh Interval"
-msgstr ""
+msgstr "Intervallo di Refresh Session-Timer"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:104
 msgid "Session-Timer Refresh Method"
-msgstr ""
+msgstr "Metodo di Refresh Session-Timer"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:101
 msgid ""
 "Set Min-SE value in SBC. This is also used to build 422 reply if remote Min-"
 "SE is smaller than local Min-SE."
 msgstr ""
+"Setta il valore Min-SE in SBC. Questo viene anche usato per creare risposte di tipo 422 "
+"se il valore remoto di Min-SE è minore di quello locale." 
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:153
 msgid "Set RTP relay mode for this peer/domain/user"
-msgstr ""
+msgstr "Setta la modalità di relay RTP per questo peer/dominio/utente"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:103
 msgid "Sets upper limit on accepted Min-SE value in in SBC."
-msgstr ""
+msgstr "Setta limite massimo accettato per il valore Min-SE in SBC."
 
 #: share/templates/subscriber/master.tt:44
 msgid "Setting"
-msgstr ""
+msgstr "Settaggio"
 
 #: lib/NGCP/Panel/Controller/NCOS.pm:368
 msgid "Setting successfully updated"
-msgstr ""
+msgstr "Settaggio aggiornato con successo"
 
 #: share/templates/customer/details.tt:543
 #: share/templates/widgets/admin_topmenu_settings.tt:18
@@ -3966,50 +4091,50 @@ msgstr ""
 #: share/templates/widgets/subscriber_topmenu_settings.tt:4
 #: share/templates/widgets/subscriberadmin_topmenu_settings.tt:4
 msgid "Settings"
-msgstr ""
+msgstr "Settaggi"
 
 #: lib/NGCP/Panel/Controller/Device.pm:790
 msgid "Shared Line"
-msgstr ""
+msgstr "Linea Condivisa"
 
 #: lib/NGCP/Panel/Controller/Administrator.pm:40
 #: lib/NGCP/Panel/Controller/Reseller.pm:138
 msgid "Show CDRs"
-msgstr ""
+msgstr "Mostra CDRs"
 
 #: share/templates/subscriber/webphone.tt:591
 msgid "Show Offline"
-msgstr ""
+msgstr "Mostra Offline"
 
 #: lib/NGCP/Panel/Controller/Administrator.pm:39
 #: lib/NGCP/Panel/Controller/Reseller.pm:137
 msgid "Show Passwords"
-msgstr ""
+msgstr "Mostra Passwords"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:421
 msgid "Show passwords"
-msgstr ""
+msgstr "Mostra Passwords"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:525
 msgid "Sign In"
-msgstr ""
+msgstr "Accedi"
 
 #: share/templates/login/login.tt:27
 msgid "Sign Up"
-msgstr ""
+msgstr "Registrati"
 
 #. (realm.ucfirst)
 #: share/templates/login/login.tt:5
 msgid "Sign in using your %1 credentials:"
-msgstr ""
+msgstr "Accedi usando le tue %1 credenziali:"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:470
 msgid "Simple"
-msgstr ""
+msgstr "Semplice"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:607
 msgid "Simple View"
-msgstr ""
+msgstr "Vista Semplice"
 
 #: lib/NGCP/Panel/Controller/Subscriber.pm:289
 #: lib/NGCP/Panel/Controller/Subscriber.pm:294
@@ -4019,7 +4144,7 @@ msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:291
 msgid "Slot add"
-msgstr ""
+msgstr "Aggiungi Slot"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:309
 msgid "Sn"
@@ -4027,107 +4152,114 @@ msgstr ""
 
 #: share/templates/error_page.tt:7
 msgid "Sorry!"
-msgstr ""
+msgstr "Siamo desolati!"
 
 #: share/templates/notfound_page.tt:12
 msgid "Sorry, an error has occured, Requested page not found!"
-msgstr ""
+msgstr "Mi spiace, si è verificato un errore, la pagina richiesta non è stata trovata!"
 
 #: share/templates/denied_page.tt:12
 msgid "Sorry, an error has occured, requested operation denied!"
-msgstr ""
+msgstr "Mi spiace, si è verificato un errore, l'operazione richiesta non è permessa!"
+
 
 #: share/templates/customer/details.tt:370 share/templates/sound/list.tt:3
 #: share/templates/widgets/reseller_domain_overview.tt:13
 msgid "Sound Set"
-msgstr ""
+msgstr "Suoni"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:107
 msgid "Sound Set used for system prompts like error announcements etc."
-msgstr ""
+msgstr "Set di Suoni usati dai prompt di sistema come annunci di errore ecc."
+
 
 #: share/templates/customer/details.tt:364 share/templates/sound/list.tt:1
 #: share/templates/widgets/admin_topmenu_settings.tt:33
 #: share/templates/widgets/reseller_topmenu_settings.tt:16
 msgid "Sound Sets"
-msgstr ""
+msgstr "Suoni"
 
 #: lib/NGCP/Panel/Controller/Sound.pm:485
 msgid "Sound handle id does not exist"
-msgstr ""
+msgstr "Id di riferimento suono non esistente"
 
 #: lib/NGCP/Panel/Controller/Sound.pm:495
 msgid "Sound handle not found"
-msgstr ""
+msgstr "Riferimento suono non trovato"
 
 #: lib/NGCP/Panel/Controller/Sound.pm:635
 msgid "Sound handle successfully deleted"
-msgstr ""
+msgstr "Riferimento suono eliminato con successo"
 
 #: lib/NGCP/Panel/Controller/Sound.pm:614
 msgid "Sound handle successfully updated"
-msgstr ""
+msgstr "Riferimento suono aggiornato con successo"
 
 #: lib/NGCP/Panel/Controller/Sound.pm:601
 msgid "Sound handle successfully uploaded"
-msgstr ""
+msgstr "Riferimento suono caricato con successo"
 
 #: lib/NGCP/Panel/Controller/Sound.pm:149
 msgid "Sound set does not exist"
-msgstr ""
+msgstr "Set di suoni non esistente"
 
 #: lib/NGCP/Panel/Controller/Sound.pm:384
 msgid "Sound set successfully created"
-msgstr ""
+msgstr "Set di suoni creato con successo"
 
 #: lib/NGCP/Panel/Controller/Sound.pm:275
 msgid "Sound set successfully deleted"
-msgstr ""
+msgstr "Set di suoni eliminato con successo"
 
 #: lib/NGCP/Panel/Controller/Sound.pm:239
 msgid "Sound set successfully updated"
-msgstr ""
+msgstr "Set di suoni aggiornato con successo"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:314
 msgid "Soundfile"
-msgstr ""
+msgstr "File Audio"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:293
 msgid "Source"
-msgstr ""
+msgstr "Sorgente"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:481
 #: share/templates/subscriber/preferences.tt:467
 msgid "Source IP"
-msgstr ""
+msgstr "IP Sorgente"
 
 #: lib/NGCP/Panel/Controller/Billing.pm:264
 msgid "Source Pattern"
-msgstr ""
+msgstr "Pattern Sorgente"
 
 #: lib/NGCP/Panel/Controller/Billing.pm:765
 msgid "Special offpeak entry successfully created"
-msgstr ""
+msgstr "Fuori picco speciale creato con successo"
 
 #: lib/NGCP/Panel/Controller/Billing.pm:713
 msgid "Special offpeak entry successfully updated"
-msgstr ""
+msgstr "Fuori picco speciale aggiornato con successo"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:39
 msgid ""
 "Specifies how many seconds the system should wait before redirecting the "
 "call if \"cft\" is set."
 msgstr ""
+"Specifica quanti secondi il sistema dovrebbe attendere prima di redirigiere la "
+"chiamata se \"cft\" è settato."
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:53
 msgid "Specifies the NCOS level that applies to the user."
-msgstr ""
+msgstr "Specifica il livello NCOS da applicare all'utente."
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:82
 msgid ""
 "Specifies the list of caller and callee rewrite rules which should be "
 "applied for incoming and outgoing calls."
 msgstr ""
+"Specifica la lista di rewrite rule per chiamante e chiamato da applicare "
+"per le chiamate in ingresso e uscita."
+
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:11
 msgid ""
@@ -4136,6 +4268,12 @@ msgid ""
 "listed in the block list), with a true value it is a whitelist (reject all "
 "calls except from numbers listed in the block list)."
 msgstr ""
+"Specifica la modalità della lista di blocco per chiamate in ingresso. "
+"Se non settata o settata ad un valore falso, è in modalità blacklist "
+"(accetta tutte le chiamate tranne che dai numeri specificati nella lista), con "
+"un valore vero è in modalità whitelist (rifiuta tutte le chiamate "
+"tranne che dai numeri specificati nella lista)." 
+
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:17
 msgid ""
@@ -4144,6 +4282,13 @@ msgid ""
 "listed in the block list), with a true value it is a whitelist (deny all "
 "calls except to numbers listed in the block list)."
 msgstr ""
+"Specifica la modalità della lista di blocco per chiamate in uscita. "
+"Se non settata o settata ad un valore falso, è in modalità blacklist "
+"(permetti tutte le chiamate tranne che ai numeri specificati nella lista), con "
+"un valore vero è in modalità whitelist (rifiuta tutte le chiamate "
+"tranne che ai numeri specificati nella lista)."
+
+
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:135
 msgid ""
@@ -4152,52 +4297,57 @@ msgid ""
 "header. Same validation rules as for UPN apply to UPRN. NGCP does not stack "
 "UPRNs up if the call is forwarded several times."
 msgstr ""
+"Specifica il modo per ottenere il valore di User-Provided Redirecting CLI. Possibili "
+"opzioni sono usare NPN del subscriber deviante, oppure rispettare il campo Diversion "
+"in ingresso. Le stesse regole di convalida come a UPN si applicano a UPRN. NGCP non "
+"accumula gli UPRN se la chiamata viene deviata più volte."
+
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:69
 msgid "Specifies whether registration at the peer host is desired."
-msgstr ""
+msgstr "Specifica se si desidera effettuare la registrazione ad un host remoto."
 
 #: share/templates/subscriber/preferences.tt:380
 msgid "Speed Dial"
-msgstr ""
+msgstr "Chiamata Rapida"
 
 #: lib/NGCP/Panel/Controller/Subscriber.pm:2787
 #: lib/NGCP/Panel/Controller/Subscriber.pm:2883
 msgid "Speed Dial Slot"
-msgstr ""
+msgstr "Slot Chiamata Veloce"
 
 #: share/templates/subscriber/preferences.tt:390
 msgid "Speeddial"
-msgstr ""
+msgstr "Chiamata Rapida"
 
 #: share/templates/customer/details.tt:429
 msgid "Spent this interval"
-msgstr ""
+msgstr "Speso in questo intervallo"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:379
 msgid "Start"
-msgstr ""
+msgstr "Inizio"
 
 #: share/templates/billing/peaktimes.tt:26
 msgid "Start - End"
-msgstr ""
+msgstr "Inizio - Fine"
 
 #: lib/NGCP/Panel/Controller/Billing.pm:561
 msgid "Start Date"
-msgstr ""
+msgstr "Data di Inizio"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:334
 msgid "Start Date/Time"
-msgstr ""
+msgstr "Data/Orario di Inizio"
 
 #: lib/NGCP/Panel/Controller/Subscriber.pm:1669
 msgid "Start Time"
-msgstr ""
+msgstr "Orario di Inizio"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:567
 #: share/templates/customer/details.tt:312
 msgid "Station Name"
-msgstr ""
+msgstr "Nome Stazione"
 
 #: lib/NGCP/Panel/Controller/Contract.pm:30
 #: lib/NGCP/Panel/Controller/Contract.pm:373
@@ -4212,15 +4362,15 @@ msgstr ""
 #: lib/NGCP/Panel/Utils/DbStrings.pm:499
 #: share/templates/subscriber/master.tt:58
 msgid "Status"
-msgstr ""
+msgstr "Stato"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:538
 msgid "Street"
-msgstr ""
+msgstr "Via"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:566
 msgid "Submitid"
-msgstr ""
+msgstr "Sottoscritta"
 
 #: lib/NGCP/Panel/Controller/Subscriber.pm:1994
 #: lib/NGCP/Panel/Utils/DbStrings.pm:292
@@ -4240,42 +4390,42 @@ msgstr ""
 
 #: lib/NGCP/Panel/Controller/Subscriber.pm:1972
 msgid "Subscriber Master Data"
-msgstr ""
+msgstr "Dati Principali Subscriber"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:442
 msgid "Subscriber Number, e.g. 12345678"
-msgstr ""
+msgstr "Numero Subscriber, es. 12345678"
 
 #. (subscriber.username, subscriber.domain.domain)
 #: share/templates/subscriber/preferences.tt:1
 msgid "Subscriber Preferences for %1@%2"
-msgstr ""
+msgstr "Preferenza Subscriber per %1@%2"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:519
 msgid "Subscriber can configure other subscribers within the Customer Account"
-msgstr ""
+msgstr "Subscriber può configurare altri subscribers all'interno dello stesso Cliente"
 
 #: lib/NGCP/Panel/Controller/Subscriber.pm:280
 msgid "Subscriber does not exist"
-msgstr ""
+msgstr "Subscriber non esistente"
 
 #. (prov_lock_string)
 #: share/templates/subscriber/master.tt:20
 msgid "Subscriber is locked for <b>%1</b>"
-msgstr ""
+msgstr "Subscriber bloccato per <b>%1</b>"
 
 #. (subscriber.status)
 #: share/templates/subscriber/master.tt:17
 msgid "Subscriber status is <b>%1</b>"
-msgstr ""
+msgstr "Stato subscriber è <b>%1</b>"
 
 #: lib/NGCP/Panel/Controller/Subscriber.pm:248
 msgid "Subscriber successfully created!"
-msgstr ""
+msgstr "Subscriber creato con successo!"
 
 #: lib/NGCP/Panel/Controller/Customer.pm:600
 msgid "Subscriber successfully created."
-msgstr ""
+msgstr "Subscriber creato con successo."
 
 #: share/templates/customer/details.tt:160
 #: share/templates/subscriber/list.tt:1
@@ -4288,158 +4438,158 @@ msgstr ""
 
 #: lib/NGCP/Panel/Controller/Subscriber.pm:2565
 msgid "Successfully added registered device"
-msgstr ""
+msgstr "Dispositivo registrato aggiunto con successo"
 
 #: lib/NGCP/Panel/Controller/Subscriber.pm:924
 msgid "Successfully cleared Call Forward"
-msgstr ""
+msgstr "Deviazione eliminate con successo"
 
 #: lib/NGCP/Panel/Controller/Customer.pm:691
 msgid "Successfully cleared fraud interval!"
-msgstr ""
+msgstr "Intervallo frode eliminato con successo!"
 
 #: lib/NGCP/Panel/Controller/Device.pm:582
 msgid "Successfully created device configuration"
-msgstr ""
+msgstr "Configurazione dispositivo creata con successo"
 
 #: lib/NGCP/Panel/Controller/Device.pm:419
 msgid "Successfully created device firmware"
-msgstr ""
+msgstr "Firmware dispositivo creato con successo"
 
 #: lib/NGCP/Panel/Controller/Device.pm:198
 msgid "Successfully created device model"
-msgstr ""
+msgstr "Modello dispositivo creato con successo"
 
 #: lib/NGCP/Panel/Controller/Device.pm:740
 msgid "Successfully created device profile"
-msgstr ""
+msgstr "Profilo dispositivo creato con successo"
 
 #: lib/NGCP/Panel/Controller/Subscriber.pm:2771
 msgid "Successfully created speed dial slot"
-msgstr ""
+msgstr "Slot chiamata rapida creato con successo"
 
 #: lib/NGCP/Panel/Controller/Subscriber.pm:2611
 msgid "Successfully created trusted source"
-msgstr ""
+msgstr "Sorgente fidata creata con successo"
 
 #: lib/NGCP/Panel/Controller/Subscriber.pm:1598
 msgid "Successfully deleted Call Forward"
-msgstr ""
+msgstr "Deviazione di chiamata eliminata con successo"
 
 #: lib/NGCP/Panel/Controller/Subscriber.pm:2923
 msgid "Successfully deleted auto attendant slot"
-msgstr ""
+msgstr "Slot IVR eliminato con successo"
 
 #: lib/NGCP/Panel/Controller/Subscriber.pm:2516
 msgid "Successfully deleted registered device"
-msgstr ""
+msgstr "Dispositivo registrato eliminato con successo"
 
 #: lib/NGCP/Panel/Controller/Subscriber.pm:2817
 msgid "Successfully deleted speed dial slot"
-msgstr ""
+msgstr "Slot chiamata rapida eliminato con successo"
 
 #: lib/NGCP/Panel/Controller/Subscriber.pm:2713
 msgid "Successfully deleted trusted source"
-msgstr ""
+msgstr "Sorgente fidata eliminata con successo"
 
 #: lib/NGCP/Panel/Controller/Subscriber.pm:2441
 msgid "Successfully deleted voicemail"
-msgstr ""
+msgstr "Casella Vocale eliminata con successo"
 
 #: lib/NGCP/Panel/Controller/Customer.pm:1159
 msgid "Successfully redirected request to device"
-msgstr ""
+msgstr "Richiesta rediretta al dispositivo con sucesso"
 
 #: lib/NGCP/Panel/Controller/Subscriber.pm:795
 #: lib/NGCP/Panel/Controller/Subscriber.pm:949
 msgid "Successfully saved Call Forward"
-msgstr ""
+msgstr "Deviazione di Chiamata salvata con successo"
 
 #: lib/NGCP/Panel/Controller/Reseller.pm:273
 msgid "Successfully terminated reseller"
-msgstr ""
+msgstr "Rivenditore terminato con successo"
 
 #: lib/NGCP/Panel/Controller/Subscriber.pm:408
 msgid "Successfully terminated subscriber"
-msgstr ""
+msgstr "Subscriber terminato con successo"
 
 #: lib/NGCP/Panel/Controller/Subscriber.pm:2987
 msgid "Successfully updated auto attendant slots"
-msgstr ""
+msgstr "Slot IVR aggiornati con successo"
 
 #: lib/NGCP/Panel/Controller/Device.pm:673
 msgid "Successfully updated device configuration"
-msgstr ""
+msgstr "Configurazione dispositivo aggiornata con successo"
 
 #: lib/NGCP/Panel/Controller/Device.pm:516
 msgid "Successfully updated device firmware"
-msgstr ""
+msgstr "Firmware dispositivo aggiornato con successo"
 
 #: lib/NGCP/Panel/Controller/Device.pm:849
 msgid "Successfully updated device profile"
-msgstr ""
+msgstr "Profilo dispositivo aggiornato con successo"
 
 #: lib/NGCP/Panel/Controller/Subscriber.pm:2230
 msgid "Successfully updated fax setting"
-msgstr ""
+msgstr "Configurazione fax aggiornata con successo"
 
 #: lib/NGCP/Panel/Controller/Subscriber.pm:2300
 msgid "Successfully updated reminder setting"
-msgstr ""
+msgstr "Configurazione promemoria aggiornata con successo"
 
 #: lib/NGCP/Panel/Controller/Subscriber.pm:2867
 msgid "Successfully updated speed dial slot"
-msgstr ""
+msgstr "Slot chiamata rapida aggiornato con successo"
 
 #: lib/NGCP/Panel/Controller/Subscriber.pm:1958
 msgid "Successfully updated subscriber"
-msgstr ""
+msgstr "Subscriber aggiornato con successo"
 
 #: lib/NGCP/Panel/Controller/Subscriber.pm:2685
 msgid "Successfully updated trusted source"
-msgstr ""
+msgstr "Sorgente fidata aggiornata con successo"
 
 #: lib/NGCP/Panel/Controller/Subscriber.pm:2084
 msgid "Successfully updated voicemail setting"
-msgstr ""
+msgstr "Configurazione casella vocale aggiornata con successo"
 
 #: lib/NGCP/Panel/Controller/Billing.pm:640
 #: lib/NGCP/Panel/Utils/DbStrings.pm:545
 msgid "Sunday"
-msgstr ""
+msgstr "Domenica"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:359
 msgid "Supports Busy Lamp Field"
-msgstr ""
+msgstr "Supporto BLF"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:351
 msgid "Supports Private Line"
-msgstr ""
+msgstr "Support Linea Privata"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:621
 msgid "Supports Shared Line"
-msgstr ""
+msgstr "Supporto Linea Condivisa"
 
 #: share/templates/customer/details.tt:344
 msgid "Sync Device"
-msgstr ""
+msgstr "Sync Dispositivo"
 
 #: share/templates/widgets/admin_system_overview.tt:13
 msgid "System <strong>Ok</strong>"
-msgstr ""
+msgstr "Sistema <strong>Ok</strong>"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:106
 msgid "System Sound Set"
-msgstr ""
+msgstr "Set Suoni Sistema"
 
 #: share/templates/statistics/list.tt:1
 #: share/templates/widgets/admin_topmenu_settings.tt:8
 msgid "System Statistics"
-msgstr ""
+msgstr "Statistiche Sistema"
 
 #: share/templates/widgets/admin_system_overview.tt:4
 msgid "System Status"
-msgstr ""
+msgstr "Stato Sistema"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:417
 msgid "TCP"
@@ -4458,48 +4608,54 @@ msgstr ""
 #: share/templates/reseller/details.tt:208 share/templates/reseller/list.tt:19
 #: share/templates/subscriber/list.tt:19
 msgid "Terminate"
-msgstr ""
+msgstr "Termina"
 
 #: share/templates/subscriber/webphone.tt:444
 msgid "Terminate Call"
-msgstr ""
+msgstr "Termina Chiamata"
 
 #: lib/NGCP/Panel/Controller/Subscriber.pm:360
 msgid "Terminating own subscriber is prohibited."
-msgstr ""
+msgstr "Terminare il proprio subscriber è proibito."
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:569
 msgid "The IVR key to press for this destination"
-msgstr ""
+msgstr "Il tasto IVR da premere per questa destinazione"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:443
 msgid ""
 "The Name of this range, e.g. Phone Keys or Attendant Console 1 Keys, "
 "accessible in the config template array via phone.lineranges[].name"
 msgstr ""
+"Il nome di questo range, es. Phone Keys or Attendant Console 1 Keys, "
+"accessibile nel template di configurazione attraverso phone.lineranges[].name"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:117
 msgid ""
 "The SIP header field to fetch the network-provided-number from for inbound "
 "calls"
 msgstr ""
+"Header SIP da cui prendere il network-provided-number per chiamate in ingresso"
+
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:115
 msgid ""
 "The SIP header field to fetch the user-provided-number from for inbound calls"
 msgstr ""
+"Header SIP da cui prendere lo user-provided-number per chiamate in ingresso"
+
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:151
 msgid "The SIP header to take the IP address for logging it into CDRs."
-msgstr ""
+msgstr "Header SIP da cui prendere l'indirizzo IP da inserire nelle CDRs"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:484
 msgid "The SIP password for the User-Agents"
-msgstr ""
+msgstr "La password SIP per lo User-Agents"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:476
 msgid "The SIP username for the User-Agents"
-msgstr ""
+msgstr "Il nomeutente SIP per lo User-Agents"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:47
 msgid ""
@@ -4507,54 +4663,74 @@ msgid ""
 "area code. Defaults to the area code of the E.164 number if the subscriber "
 "has one."
 msgstr ""
+"Il codice area che verrà usato per instradare numeri chiamati senza un "
+"codice area. Il valore di default è quello dell'AC del numero primario E.164 se "
+"il subscriber ne ha uno." 
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:173
 msgid "The base CLI for the PBX extension."
-msgstr ""
+msgstr "Il CLI base per le estensioni PBX."
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:137
 msgid ""
 "The content to put into the Diversion header for outbound calls (use \"None"
 "\" to not set header at all)"
 msgstr ""
+"Il contenuto da mettere nell'header Diversion per chiamate in uscita (usare "
+"\"None\" per non settare questo header"
+
+
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:121
 msgid ""
 "The content to put into the From display-name for outbound calls from the "
 "platform to the subscriber"
 msgstr ""
+"Il contenuto da mettere nella parte display-name dell'header From per chiamate in uscita "
+"dalla piattaforma al subscriber"
+
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:119
 msgid ""
 "The content to put into the From username for outbound calls from the "
 "platform to the subscriber"
 msgstr ""
+"Il contenuto da mettere nello username dell'header From per chiamate in uscita "
+"dalla piattaforma al subscriber"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:176
 msgid ""
 "The content to put into the History-Info  header for outbound calls (use "
 "\"None\" to not set header at all)"
 msgstr ""
+"Il contenuto da mettere nell'header History-Info per chiamate in uscita (usare "
+"\"None\" per non settare questo header"
+
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:123
 msgid ""
 "The content to put into the P-Asserted-Identity username for outbound calls "
 "from the platform to the subscriber (use \"None\" to not set header at all)"
 msgstr ""
+"Il contenuto da mettere nello username dell'header P-Asserted-Identity per chiamate in uscita "
+"dalla piattaforma al subscriber (usare \"None\" per non settare questo header"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:125
 msgid ""
 "The content to put into the P-Preferred-Identity username for outbound calls "
 "from the platform to the subscriber (use \"None\" to not set header at all)"
 msgstr ""
+"Il contenuto da mettere nello username dell'header P-Preferred-Identity per chiamate in uscita "
+"dalla piattaforma al subscriber (usare \"None\" per non settare questo header"
+
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:454
 msgid "The cost of each following interval in cents per second (e.g 0.90)"
-msgstr ""
+msgstr "Il costo di ogni intervallo successivo in cents per secondo (es. 0.90)"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:574
 msgid "The cost of the init interval in cents per second (e.g 0.90)"
-msgstr ""
+msgstr "Il costo dell'intervallo iniziale in cents per secondo (es. 0.90)"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:45
 msgid ""
@@ -4562,15 +4738,22 @@ msgid ""
 "country code. Defaults to the country code of the E.164 number if the "
 "subscriber has one."
 msgstr ""
+"Il Codice Nazione che verrà usato per l'instradamento di numeri chiamati "
+"senza un codice nazione. Il valore di default è quello del CC del numero "
+"primario E.164 se il subscriber ne ha uno." 
+
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:554
 msgid ""
 "The destination for this slot; can be a number, username or full SIP URI."
 msgstr ""
+"La destinazione per questo slot; può essere un numero, nomeutente o URI SIP completa."
+
+
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:373
 msgid "The end time in format hh:mm:ss"
-msgstr ""
+msgstr "L'orario di fine nel formato hh:mm:ss"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:159
 msgid ""
@@ -4578,187 +4761,212 @@ msgid ""
 "within this time, otherwise he should treat the request as outdated and "
 "ignore."
 msgstr ""
+"L'intervallo di scadenza per una richiesta di push inviata. Il client dovrebbe "
+"registrarsi entro questo tempo, altrimenti dovrebbe trattare la richiesta come "
+"scaduta e ignorarla."
+
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:405
 msgid "The human-readable display name (e.g. John Doe)"
-msgstr ""
+msgstr "Il display-name in linguaggio leggibile (es. John Doe)"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:167
 msgid "The hunting policy for PBX hunt groups."
-msgstr ""
+msgstr "Il metodo di ricerca per un gruppo di chiamata PBX"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:33
 msgid ""
 "The id pointing to the \"Call Forward Busy\" entry in the voip_cf_mappings "
 "table"
 msgstr ""
+"L'id che punta alla entry \"Deviazione di Chiamata su Occupato\" nella tabella "
+"voip_cf_mappings"
+
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:37
 msgid ""
 "The id pointing to the \"Call Forward Timeout\" entry in the "
 "voip_cf_mappings table"
 msgstr ""
+"L'id che punta alla entry \"Deviazione di Chiamata su Timeout\" nella tabella "
+"voip_cf_mappings"
+
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:35
 msgid ""
 "The id pointing to the \"Call Forward Unavailable\" entry in the "
 "voip_cf_mappings table"
 msgstr ""
+"L'id che punta alla entry \"Deviazione di Chiamata su Non Disponibile\" nella tabella "
+"voip_cf_mappings"
+
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:31
 msgid ""
 "The id pointing to the \"Call Forward Unconditional\" entry in the "
 "voip_cf_mappings table"
 msgstr ""
+"L'id che punta alla entry \"Deviazione di Chiamata Incondizionata\" nella tabella "
+"voip_cf_mappings"
+
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:312
 msgid "The length of the first interval"
-msgstr ""
+msgstr "La Lunghezza the primo intervallo"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:426
 msgid "The length of the following intervals"
-msgstr ""
+msgstr "La lunghezza degli intervalli successivi"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:473
 msgid "The line/key to use"
-msgstr ""
+msgstr "Linea/Tasto da usare"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:171
 msgid "The members (as SIP URIs) of the PBX hunt group."
-msgstr ""
+msgstr "I membri (come URI SIP) del gruppo di chiamata PBX."
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:180
 msgid ""
 "The network-provided display name used for XMPP contacts and optionally SIP "
 "outbound header manipulation."
 msgstr ""
+"Il diplay-name network-provided usato per contatti XMPP e opzionalmente manipolazioni "
+"header SIP in uscita."
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:432
 msgid ""
 "The number of Lines/Keys in this range, indexed from 0 in the config "
 "template array phone.lineranges[].lines[]"
 msgstr ""
+"Numero di Linee/Tasti in questo range, indicizzato da 0 nell'array del "
+"template di configurazione phone.lineranges[].lines[]"
+
+
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:415
 msgid "The password to log into the CSC Panel"
-msgstr ""
+msgstr "La password per accedere alla interfaccia CSC"
+
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:169
 msgid "The serial timeout for hunting in PBX hunt groups."
-msgstr ""
+msgstr "Il timeout per la ricerca seriale in un gruppo di chiamata PBX."
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:597
 msgid "The start time in format hh:mm:ss"
-msgstr ""
+msgstr "L'orario di inizio nel formato hh:mm:ss"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:175
 msgid ""
 "The string to be used as a User-Agent header replacement if ua_header_mode "
 "is set to \"replace\"."
 msgstr ""
+"La stringa da inserire nell'header User-Agents se ua_header_mode "
+"è settato a \"replace\".
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:453
 msgid "The subscriber to use on this line/key"
-msgstr ""
+msgstr "Il subscriber da usare in questa linea/tasto"
 
 #: lib/NGCP/Panel/Controller/Billing.pm:611
 msgid "The timerange you wanted to delete does not exist."
-msgstr ""
+msgstr "Il range temporale che si vuole eliminare non esiste."
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:339
 msgid "The type of feature to use on this line/key"
-msgstr ""
+msgstr "Il tipo di confgurazione di si vuole usare su questa linea/tasto"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:419
 msgid "The username to log into the CSC Panel"
-msgstr ""
+msgstr "Il nome utente per accedere alla interfaccia CSC"
 
 #: lib/NGCP/Panel/Controller/Billing.pm:579
 msgid "This weekday does not exist."
-msgstr ""
+msgstr "Questa giorno della settmana non esiste."
 
 #: lib/NGCP/Panel/Controller/Billing.pm:637
 #: lib/NGCP/Panel/Utils/DbStrings.pm:451
 msgid "Thursday"
-msgstr ""
+msgstr "Giovedì"
 
 #: lib/NGCP/Panel/Controller/Subscriber.pm:1675
 #: lib/NGCP/Panel/Utils/DbStrings.pm:603
 #: share/templates/subscriber/preferences.tt:417
 msgid "Time"
-msgstr ""
+msgstr "Orario"
 
 #: lib/NGCP/Panel/Controller/Subscriber.pm:1553
 msgid "Time Set"
-msgstr ""
+msgstr "Settaggio Temporale"
 
 #: lib/NGCP/Panel/Controller/Subscriber.pm:1366
 msgid "Time Sets"
-msgstr ""
+msgstr "Settaggi Temporali"
 
 #: share/templates/subscriber/preferences.tt:55
 msgid "Timeset"
-msgstr ""
+msgstr "Settaggi temporali"
 
 #. (maps.tset_name)
 #: share/templates/subscriber/preferences.tt:107
 msgid "Timeset \"%1\" Details"
-msgstr ""
+msgstr "Settaggi temporali \"%1\" Dettagli"
 
 #: lib/NGCP/Panel/Controller/Callflow.pm:24
 #: lib/NGCP/Panel/Controller/Subscriber.pm:1685
 msgid "Timestamp"
-msgstr ""
+msgstr "Orario"
 
 #: share/templates/calls/chord.tt:53
 msgid "To Date:"
-msgstr ""
+msgstr "Data Finale:"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:132
 msgid "Total max of outbound calls of Customer"
-msgstr ""
+msgstr "Numero massimo totale di chiamate in uscita del Cliente"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:72
 msgid "Total max of outbound concurrent calls"
-msgstr ""
+msgstr "Numero massimo totale di chiamate contemporanee in uscita"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:130
 msgid "Total max of overall calls of Customer"
-msgstr ""
+msgstr "Numero massimo di chiamate globali del Cliente"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:70
 msgid "Total max of overall concurrent calls"
-msgstr ""
+msgstr "Numero massimo di chiamate contemporanee globali"
 
 #: lib/NGCP/Panel/Controller/Subscriber.pm:2422
 msgid "Transcode of audio file failed."
-msgstr ""
+msgstr "Transcodifica file audio fallita."
 
 #: lib/NGCP/Panel/Controller/Sound.pm:589
 msgid "Transcoding audio file failed"
-msgstr ""
+msgstr "Transcodifica file audio fallita"
 
 #: lib/NGCP/Panel/Controller/Subscriber.pm:2626
 #: lib/NGCP/Panel/Controller/Subscriber.pm:2700
 msgid "Trusted Source"
-msgstr ""
+msgstr "Sorgente Fidata"
 
 #: share/templates/subscriber/preferences.tt:452
 msgid "Trusted Sources"
-msgstr ""
+msgstr "IP Sorgenti Fidati"
 
 #: lib/NGCP/Panel/Controller/Subscriber.pm:2641
 msgid "Trusted source entry not found."
-msgstr ""
+msgstr "IP Sorgente Fidata non trovata."
 
 #: lib/NGCP/Panel/Controller/Billing.pm:635
 #: lib/NGCP/Panel/Utils/DbStrings.pm:440
 msgid "Tuesday"
-msgstr ""
+msgstr "Martedì"
 
 #: share/templates/subscriber/preferences.tt:52
 msgid "Type"
-msgstr ""
+msgstr "Tipo"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:577
 msgid "UDP"
@@ -4766,7 +4974,7 @@ msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:403
 msgid "URI/Number"
-msgstr ""
+msgstr "URI/Numero"
 
 #: lib/NGCP/Panel/Controller/Subscriber.pm:111
 #: share/templates/subscriber/master.tt:73
@@ -4775,24 +4983,24 @@ msgstr ""
 
 #: share/templates/security/list.tt:43 share/templates/security/list.tt:82
 msgid "Unban"
-msgstr ""
+msgstr "Sblocca"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:310
 #: share/templates/sound/handles_list.tt:57
 msgid "Upload"
-msgstr ""
+msgstr "Carica"
 
 #: share/templates/device/list.tt:66
 msgid "Upload Device Firmware"
-msgstr ""
+msgstr "Carica Firmware Dispositivo"
 
 #: share/templates/billing/fees.tt:24
 msgid "Upload Fees as CSV"
-msgstr ""
+msgstr "Carica Costo come CSV"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:542
 msgid "Upload fees"
-msgstr ""
+msgstr "Carica costi"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:332
 msgid "Uri"
@@ -4800,19 +5008,19 @@ msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:87
 msgid "Use Number instead of Contact first for outbound calls"
-msgstr ""
+msgstr "Usa Numero prima invece del Contact per chiamate in uscita"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:563
 msgid "Use free time"
-msgstr ""
+msgstr "Usa tempo gratuito"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:128
 msgid "Use valid Alias CLI as NPN"
-msgstr ""
+msgstr "Usa un CLI Alias valido come NPN"
 
 #: share/templates/security/list.tt:65
 msgid "User"
-msgstr ""
+msgstr "Utente"
 
 #: lib/NGCP/Panel/Controller/Subscriber.pm:1680
 msgid "User Agent"
@@ -4820,11 +5028,11 @@ msgstr ""
 
 #: lib/NGCP/Panel/Controller/Security.pm:176
 msgid "User successfully unbanned"
-msgstr ""
+msgstr "Utente sbloccato con successo"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:174
 msgid "User-Agent header passing mode."
-msgstr ""
+msgstr "Modalità di passaggio header User-Agent."
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:89
 msgid "User-Provided Number"
@@ -4833,15 +5041,15 @@ msgstr ""
 #: lib/NGCP/Panel/Controller/Subscriber.pm:109
 #: lib/NGCP/Panel/Utils/DbStrings.pm:503
 msgid "Username"
-msgstr ""
+msgstr "Nome Utente"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:422
 msgid "VAT Included"
-msgstr ""
+msgstr "IVA Inclusa"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:385
 msgid "VAT Rate"
-msgstr ""
+msgstr "Aliquota IVA"
 
 #: share/templates/customer/details.tt:53
 #: share/templates/customer/details.tt:91
@@ -4849,13 +5057,13 @@ msgstr ""
 #: share/templates/subscriber/preferences.tt:150
 #: share/templates/subscriber/preferences.tt:231
 msgid "Value"
-msgstr ""
+msgstr "Valore"
 
 #: share/templates/subscriber/master.tt:45
 #: share/templates/subscriber/preferences.tt:542
 #: share/templates/subscriber/preferences.tt:592
 msgid "Values"
-msgstr ""
+msgstr "Valori"
 
 #: lib/NGCP/Panel/Controller/Device.pm:38
 #: lib/NGCP/Panel/Utils/DbStrings.pm:609
@@ -4866,7 +5074,7 @@ msgstr ""
 #: lib/NGCP/Panel/Controller/Device.pm:86
 #: lib/NGCP/Panel/Utils/DbStrings.pm:303
 msgid "Version"
-msgstr ""
+msgstr "Versione"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:510
 msgid "Via Route"
@@ -4878,47 +5086,47 @@ msgstr ""
 
 #: share/templates/widgets/subscriber_reg_overview.tt:33
 msgid "View All Registered Devices"
-msgstr ""
+msgstr "Visualizza Tutti i Dispositivi Registrati"
 
 #: share/templates/widgets/subscriber_calls_overview.tt:49
 msgid "View Call List"
-msgstr ""
+msgstr "Visualizza Lista Chiamate"
 
 #: share/templates/widgets/admin_system_overview.tt:18
 msgid "View Statistics"
-msgstr ""
+msgstr "Visualizza Statistiche"
 
 #: share/templates/widgets/subscriber_vm_overview.tt:35
 msgid "View Voicebox Messages"
-msgstr ""
+msgstr "Visualizza Messaggi Casella Vocale"
 
 #: share/templates/subscriber/master.tt:128
 msgid "Voice Mails"
-msgstr ""
+msgstr "Mail Vocali"
 
 #: share/templates/widgets/subscriber_topmenu_settings.tt:9
 #: share/templates/widgets/subscriber_vm_overview.tt:4
 #: share/templates/widgets/subscriberadmin_topmenu_settings.tt:9
 msgid "Voicebox Messages"
-msgstr ""
+msgstr "Messaggi Casella Vocale"
 
 #. (subscriber.username, subscriber.domain.domain)
 #: share/templates/subscriber/voicemail.tt:1
 msgid "Voicebox Messages for %1@%2"
-msgstr ""
+msgstr "Messaggi Casella Vocale per %1@%2"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:316
 msgid "Voicemail"
-msgstr ""
+msgstr "Casella Vocale"
 
 #: share/templates/subscriber/preferences.tt:141
 msgid "Voicemail and Voicebox"
-msgstr ""
+msgstr "Casella Vocale"
 
 #: share/templates/subscriber/master.tt:133
 #: share/templates/subscriber/voicemail.tt:13
 msgid "Voicemails"
-msgstr ""
+msgstr "Caselle Vocali"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:601
 msgid "Wday"
@@ -4926,44 +5134,44 @@ msgstr ""
 
 #: share/templates/error_page.tt:12
 msgid "We are terribly sorry, an exceptional error has occured:"
-msgstr ""
+msgstr "Mi spiace, si è verificato un errore eccezionale:"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:429
 #: share/templates/subscriber/master.tt:61
 msgid "Web Password"
-msgstr ""
+msgstr "Password Web"
 
 #: share/templates/subscriber/webphone.tt:1
 msgid "Web Phone for "
-msgstr ""
+msgstr "Telefono Web per "
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:500
 #: share/templates/subscriber/master.tt:59
 msgid "Web Username"
-msgstr ""
+msgstr "Nome Utente Web"
 
 #: lib/NGCP/Panel/Controller/Billing.pm:636
 #: lib/NGCP/Panel/Utils/DbStrings.pm:306
 msgid "Wednesday"
-msgstr ""
+msgstr "Mercoledì"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:547
 #: share/templates/billing/peaktimes.tt:25
 msgid "Weekday"
-msgstr ""
+msgstr "Giorno della settimana"
 
 #: share/templates/billing/peaktimes.tt:20
 msgid "Weekdays"
-msgstr ""
+msgstr "Giorni della settimana"
 
 #: lib/NGCP/Panel/Controller/Peering.pm:82
 #: lib/NGCP/Panel/Utils/DbStrings.pm:491
 msgid "Weight"
-msgstr ""
+msgstr "Peso"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:193
 msgid "XMPP Settings"
-msgstr ""
+msgstr "Configurazione XMPP"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:290
 msgid "YYYY-MM-DD HH:mm:ss"
@@ -4971,50 +5179,50 @@ msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:336
 msgid "Year"
-msgstr ""
+msgstr "Anno"
 
 #: lib/NGCP/Panel/Controller/Billing.pm:81
 #: lib/NGCP/Panel/Utils/DbStrings.pm:410
 msgid "Zone"
-msgstr ""
+msgstr "Zona"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:371
 msgid "Zone Detail"
-msgstr ""
+msgstr "Dettaglio Zona"
 
 #: lib/NGCP/Panel/Controller/Billing.pm:82
 msgid "Zone Details"
-msgstr ""
+msgstr "Dettagli Zone"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:508
 msgid "active"
-msgstr ""
+msgstr "attivo"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:478
 msgid "after ring timeout"
-msgstr ""
+msgstr "timeout dopo lo squillo"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:536
 msgid "all calls"
-msgstr ""
+msgstr "tutte le chiamate"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:479
 #: share/templates/customer/details.tt:11
 msgid "all outgoing calls"
-msgstr ""
+msgstr "tuttel le chiamate in uscita"
 
 #: share/layout/body.tt:79
 msgid "all rights reserved"
-msgstr ""
+msgstr "tutti i diritti riservarti"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:287
 msgid "base fee charged per billing interval, float, specifying Euro"
-msgstr ""
+msgstr "addebitato base per intervallo fatturazione, decimale, specificato in Euro"
 
 #: share/templates/customer/details.tt:460
 #: share/templates/customer/details.tt:489
 msgid "billing profile default"
-msgstr ""
+msgstr "profilo fatturazione di default"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:349
 msgid "blacklist"
@@ -5022,145 +5230,147 @@ msgstr ""
 
 #: share/templates/subscriber/webphone.tt:342
 msgid "call ended."
-msgstr ""
+msgstr "chiamata terminata."
 
 #: share/templates/subscriber/webphone.tt:325
 msgid "call failed:"
-msgstr ""
+msgstr "chiamata fallita."
 
 #: share/templates/subscriber/webphone.tt:329
 msgid "call started."
-msgstr ""
+msgstr "chiamata iniziata."
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:537
 msgid "check if fees are inclusive VAT"
-msgstr ""
+msgstr "controlla che i costi siano con IVA inclusa"
 
 #: share/templates/rewrite/set_list.tt:16
 msgid "cloned Rewrite Rule Set"
-msgstr ""
+msgstr "clona Set di Reqrite rule"
 
 #: share/templates/subscriber/webphone.tt:114
 msgid "connected - registering..."
-msgstr ""
+msgstr "connesso - registrazione in corso..."
 
 #: share/templates/subscriber/webphone.tt:583
 #: share/templates/subscriber/webphone.tt:586
 msgid "connecting..."
-msgstr ""
+msgstr "connessione in corso..."
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:298
 msgid ""
 "currency symbol or ISO code, string, will be used on invoices and "
 "webinterfaces"
 msgstr ""
+"simbolo valute o codice ISO, stringa,sarà usata per le fatture e"
+"nella interfaccia grafica"
 
 #: share/templates/helpers/datatables.tt:73
 msgid "dataTables.default.js"
-msgstr ""
+msgstr "dataTables.it.js"
 
 #: share/templates/subscriber/webphone.tt:118
 #: share/templates/subscriber/webphone.tt:181
 msgid "disconnected."
-msgstr ""
+msgstr "disconnesso."
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:382
 msgid "during Time Set"
-msgstr ""
+msgstr "durante settaggi temporali"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:353
 msgid "everyday"
-msgstr ""
+msgstr "ogni giorno"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:522
 msgid "for (seconds)"
-msgstr ""
+msgstr "per (secondi)"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:434
 msgid "foreign"
-msgstr ""
+msgstr "esterne"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:380
 #: share/templates/customer/details.tt:10
 msgid "foreign calls"
-msgstr ""
+msgstr "chiamate esterne"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:347
 msgid "fraud detection threshold per day, specifying cents"
-msgstr ""
+msgstr "Soglia giornalineria rilevazione frode, specificata in cents"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:562
 msgid "fraud detection threshold per month, specifying cents"
-msgstr ""
+msgstr "Soglia mensile rilevazione frode, specificata in cents"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:370
 msgid "global"
-msgstr ""
+msgstr "globale"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:368
 msgid "global (including CSC)"
-msgstr ""
+msgstr "globale (includendo CSC)"
 
 #: share/templates/customer/details.tt:13
 msgid "global (including web login)"
-msgstr ""
+msgstr "global (includendo accesso web)"
 
 #: share/templates/subscriber/webphone.tt:210
 msgid "has stopped typing."
-msgstr ""
+msgstr "ha interrotto la scrittura."
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:575
 msgid "human readable profile name"
-msgstr ""
+msgstr "nome profile leggibile"
 
 #: share/templates/subscriber/webphone.tt:321
 msgid "in progress..."
-msgstr ""
+msgstr "in corso..."
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:543
 msgid "inbound"
-msgstr ""
+msgstr "ingresso"
 
 #: share/templates/error_page.tt:13
 msgid "incident number:"
-msgstr ""
+msgstr "numero di incidenti:"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:369
 msgid "included money per billing interval, float, specifying EUR, USD, etc."
-msgstr ""
+msgstr "soldi inclusi per intervallo di fatturazione, decimale, specificato in EUR, USD, etc."
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:366
 msgid "included time per billing interval, integer, specifying seconds"
-msgstr ""
+msgstr "tempo incluso per intervallo di fatturazione, intero, specifcato in secondi"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:350
 #: share/templates/customer/details.tt:12
 msgid "incoming and outgoing"
-msgstr ""
+msgstr "ingresso e uscita"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:486
 msgid "integer, specifying the percentage"
-msgstr ""
+msgstr "intero, specificato in percentuale"
 
 #: share/templates/subscriber/webphone.tt:208
 msgid "is typing..."
-msgstr ""
+msgstr "sta scrivendo..."
 
 #: share/templates/statistics/list.tt:43
 msgid "loading..."
-msgstr ""
+msgstr "caricando..."
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:308
 msgid "lock accounts if the daily limit is exceeded"
-msgstr ""
+msgstr "blocca cliente se eccede il limite giornaliero"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:459
 msgid "lock accounts if the monthly limit is exceeded"
-msgstr ""
+msgstr "blocca cliente se eccede il limite mensile"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:487
 msgid "locked"
-msgstr ""
+msgstr "bloccato"
 
 #: share/templates/subscriber/preferences.tt:276
 #: share/templates/subscriber/preferences.tt:308
@@ -5169,11 +5379,11 @@ msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:557 share/templates/customer/details.tt:9
 msgid "none"
-msgstr ""
+msgstr "nessuno"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:606
 msgid "on weekdays"
-msgstr ""
+msgstr "durante settimane"
 
 #: share/templates/subscriber/webphone.tt:251
 msgid "online."
@@ -5181,77 +5391,79 @@ msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:333
 msgid "only once"
-msgstr ""
+msgstr "solo una volta"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:324
 msgid "outbound"
-msgstr ""
+msgstr "uscita"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:528
 msgid "outgoing"
-msgstr ""
+msgstr "in uscita"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:472
 msgid "pending"
-msgstr ""
+msgstr "pendente"
 
 #: share/templates/subscriber/webphone.tt:155
 msgid "registered."
-msgstr ""
+msgstr "registrato."
 
 #: share/templates/subscriber/webphone.tt:163
 msgid "registration failed:"
-msgstr ""
+msgstr "registrazione fallita:"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:367
 msgid "string, POSIX regular expression, e.g.: ^431.+$"
-msgstr ""
+msgstr "stringa, espressione regolare POSIX, es.: ^431.+$"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:364
 msgid "string, e.g.: on-net"
-msgstr ""
+msgstr "stringa, es.: on-net"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:391
 msgid "string, e.g.: voicebox"
-msgstr ""
+msgstr "stringa, es.: voicebox"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:402
 msgid "string, empty or POSIX regular expression, e.g.: ^431.+$"
-msgstr ""
+msgstr "stringa, vuota o espressione regolare POSIX, es.: ^431.+$"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:423
 msgid "string, rule description"
-msgstr ""
+msgstr "stringa, descrizione regola"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:424
 msgid "terminated"
-msgstr ""
+msgstr "terminato"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:533
 msgid "through"
-msgstr ""
+msgstr "attraverso"
 
 #: share/templates/error_page.tt:14
 msgid "time of incident:"
-msgstr ""
+msgstr "time incidente:"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:509
 msgid "trough"
-msgstr ""
+msgstr "attraverso"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:477
 msgid "unique identifier string (only alphanumeric chars)"
-msgstr ""
+msgstr "stringa identificativa unica (solo caratteri alfanumerici)"
 
 #: share/templates/subscriber/webphone.tt:159
 msgid "unregistered."
-msgstr ""
+msgstr "deregistrato."
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:393
 msgid ""
 "where e-mail notifications are sent, a list of e-mail addreses separated by "
 "comma"
 msgstr ""
+"dove inviare la notifica email, una lista di indirizzi e-mail separati da "
+"virgola"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:317
 msgid "whitelist"
@@ -5261,4 +5473,4 @@ msgstr ""
 #: share/templates/subscriber/preferences.tt:292
 #: share/templates/subscriber/preferences.tt:308
 msgid "yes"
-msgstr ""
+msgstr "si"

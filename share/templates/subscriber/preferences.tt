@@ -517,7 +517,7 @@
 [% IF cf_form.has_for_js -%]
 [% cf_form.render_repeatable_js %]
 [% END -%]
-[% cf_form.render %]
+[% translate_form(cf_form).render %]
 
 [%
     modal_footer();
