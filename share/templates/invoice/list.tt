@@ -1,11 +1,28 @@
-[% site_config.title = c.loc('InvoicePeriods') -%]
+[% site_config.title = c.loc('Billing Profiles') -%]
 [%
-    helper.name = c.loc('InvoicePeriods');
-    helper.name_single = c.loc('InvoicePeriod');
-    helper.identifier = 'InvoicePeriod';
-    helper.top_buttons = "";
-  
-    PROCESS 'helpers/datatables_vars.tt';
+    helper.name = c.loc('Billing Profile');
+    helper.identifier = 'billing_profile';
+    helper.messages = messages;
+    helper.dt_columns = profile_dt_columns;
+    helper.length_change = 1;
+
+    helper.close_target = close_target;
+    helper.create_flag = create_flag;
+    helper.edit_flag = edit_flag;
+    helper.form_object = form;
+    helper.ajax_uri = c.uri_for( c.controller.action_for('ajax') );
+
+    UNLESS c.user.read_only;
+        helper.dt_buttons = [
+            { name = c.loc('Edit'), uri = "/billing/'+full[\"id\"]+'/edit", class = 'btn-small btn-primary', icon = 'icon-edit' },
+            { name = c.loc('Fees'), uri = "/billing/'+full[\"id\"]+'/fees", class = 'btn-small btn-tertiary', icon = 'icon-shopping-cart' },
+            { name = c.loc('Peaktimes'), uri = "/billing/'+full[\"id\"]+'/peaktimes", class = 'btn-small btn-tertiary', icon = 'icon-time' },
+        ];
+        helper.top_buttons = [
+            { name = c.loc('Create Billing Profile'), uri = c.uri_for('/billing/create'), icon = 'icon-star' },
+        ];
+    END;
+
     PROCESS 'helpers/datatables.tt';
 -%]
 [% # vim: set tabstop=4 syntax=html expandtab: -%]

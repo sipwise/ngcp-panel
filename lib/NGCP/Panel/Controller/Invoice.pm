@@ -1,13 +1,12 @@
-package NGCP::Panel::Controller::Invoice;
+package NGCP::Panel::Controller::Billing;
 use Sipwise::Base;
-use Data::Dumper;
 #use Text::CSV_XS;
 #use DateTime::Format::ISO8601;
 
 BEGIN { extends 'Catalyst::Controller'; }
 
 #use NGCP::Panel::Utils::Contract;
-use NGCP::Panel::Utils::Message;
+#use NGCP::Panel::Utils::Message;
 #use NGCP::Panel::Utils::Navigation;
 #use NGCP::Panel::Utils::Datatables;
 #use NGCP::Panel::Utils::Preferences;
@@ -22,33 +21,14 @@ sub auto :Does(ACL) :ACLDetachTo('/denied_page') :AllowedRole(admin) :AllowedRol
 
 sub invoice_list :Chained('/') :PathPart('invoice') :CaptureArgs(0) {
     my ( $self, $c ) = @_;
-    $c->log->debug("Irkas debug");
     
     my $dispatch_to = '_invoice_resultset_' . $c->user->roles;
-    my $invoice_rs = $self->$dispatch_to($c);
-    $c->log->debug($dispatch_to);
-    my $dumpedstr = Data::Dumper::Dumper($invoice_rs);
-    $c->log->debug("debug string 1");
-    print STDERR "STDERR";
-    print "STDOUT";
-    $c->log->debug( sub { Data::Dumper::Dumper($invoice_rs) } );
-    $c->log->debug( { 
-        filter => \&Data::Dumper::Dumper,
-        value  => $invoice_rs,
-    } );
-    $c->log->debug("debug string 2");
-    $c->log->debug(Data::Dumper::Dumper($invoice_rs));
-    $c->log->debug("debug string 3");
-    $c->log->debug($dumpedstr);
-    $c->log->debug("debug string 4");
+    my $profiles_rs = $self->$dispatch_to($c);
     $c->stash(invoice_rs => $invoice_rs);
-    $c->log->debug(Dumper($invoice_rs));
-    #To don't keep names, which are view thing, we can put all names in some separated storage, and make it hierarchically, e.g.: name => "Name", name.reseller => "Reseller name", name.reseller.billingprofile => "Name of this billing reseller".
-    #in some free and good day )
-    #as the most often name is just Name - it may save 1-2 letters, but of course we will loose on searching
     $c->stash->{invoice_dt_columns} = NGCP::Panel::Utils::Datatables::set_columns($c, [
-        { name => "id", "search" => 1, "title" => $c->loc("Internal Id") },
-        { name => "serial", "search" => 1, "title" => $c->loc("Peer Id") },
+        { name => "id", "search" => 1, "title" => $c->loc("#") },
+        { name => "name", "search" => 1, "title" => $c->loc("Name") },
+        { name => "reseller.name", "search" => 1, "title" => $c->loc("Reseller") },
     ]);
 
     $c->stash(template => 'invoice/list.tt');
@@ -56,15 +36,14 @@ sub invoice_list :Chained('/') :PathPart('invoice') :CaptureArgs(0) {
 
 sub _invoice_resultset_admin {
     my ($self, $c) = @_;
-    my $rs = $c->model('DB')->resultset('invoices');
-    $c->log->debug(Dumper($rs));
+    my $rs = $c->model('DB')->resultset('invoice_profiles');
     return $rs;
 }
 
 sub _invoice_resultset_reseller {
     my ($self, $c) = @_;
-    my $rs = $c->model('DB')->resultset('invoices');
-    $c->log->debug(Dumper($rs));
+    my $rs = $c->model('DB')->resultset('admins')
+        ->find($c->user->id)->reseller->invoice_profiles;
     return $rs;
 }
 
@@ -75,7 +54,7 @@ sub root :Chained('invoice_list') :PathPart('') :Args(0) {
 sub ajax :Chained('invoice_list') :PathPart('ajax') :Args(0) {
     my ($self, $c) = @_;
     
-    my $resultset = $c->stash->{invoice_rs};
+    my $resultset = $c->stash->{profiles_rs};
     NGCP::Panel::Utils::Datatables::process($c, $resultset, $c->stash->{invoice_dt_columns});
     
     $c->detach( $c->view("JSON") );
@@ -92,15 +71,119 @@ sub base :Chained('invoice_list') :PathPart('') :CaptureArgs(1) {
 
     $c->stash->{zone_dt_columns} = NGCP::Panel::Utils::Datatables::set_columns($c, [
         { name => 'id', search => 1, title => $c->loc('#') },
-   ]);
+        { name => 'zone', search => 1, title => $c->loc('Zone') },
+        { name => 'detail', search => 1, title => $c->loc('Zone Details') },
+    ]);
     
-    my $res = $c->stash->{invoice_rs}->find($invoice_id);
+    my $res = $c->stash->{profiles_rs}->find($invoice_id);
     unless(defined($res)) {
-        $c->flash(messages => [{type => 'error', text => $c->loc('Invoice does not exist!')}]);
+        $c->flash(messages => [{type => 'error', text => $c->loc('Billing Profile does not exist!')}]);
         $c->response->redirect($c->uri_for());
         return;
     }
-   $c->stash(invoice_result => $res);
+    $c->stash(profile => {$res->get_inflated_columns});
+    $c->stash(invoice_result => $res);
+}
+
+sub edit :Chained('base') :PathPart('edit') {
+    my ($self, $c) = @_;
+
+    my $posted = ($c->request->method eq 'POST');
+    my $form;
+    my $params = $c->stash->{profile};
+    $params->{reseller}{id} = delete $params->{reseller_id};
+    $params = $params->merge($c->session->{created_objects});
+    if($c->user->is_superuser) {
+        $form = NGCP::Panel::Form::BillingProfile::Admin->new;
+    } else {
+        $form = NGCP::Panel::Form::BillingProfile::Reseller->new;
+    }
+    $form->process(
+        posted => $posted,
+        params => $c->request->params,
+        item => $params,
+    );
+    NGCP::Panel::Utils::Navigation::check_form_buttons(
+        c => $c,
+        form => $form,
+        fields => {
+            'reseller.create' => $c->uri_for('/reseller/create'),
+        },
+        back_uri => $c->req->uri,
+    );
+    if($posted && $form->validated) {
+        try {
+            if($c->user->is_superuser) {
+                $form->values->{reseller_id} = $form->values->{reseller}{id};   
+            } else {
+                $form->values->{reseller_id} = $c->user->reseller_id;
+            }
+            delete $form->values->{reseller};
+            my $old_prepaid = $c->stash->{invoice_result}->prepaid;
+
+            my $schema = $c->model('DB');
+            $schema->txn_do(sub {
+                $c->stash->{invoice_result}->update($form->values);
+
+                # if prepaid flag changed, update all subscribers for customers
+                # who currently have the invoice profile active
+                my $rs = $schema->resultset('invoice_mappings')->search({
+                    invoice_invoice_id => $c->stash->{invoice_result}->id,
+                });
+                my $contract_rs = NGCP::Panel::Utils::Contract::get_contract_rs(
+        schema => $c->model('DB'));
+                if($old_prepaid && !$c->stash->{invoice_result}->prepaid) {
+                    foreach my $map($rs->all) {
+                        my $contract = $map->contract;
+                        next unless($contract->contact->reseller_id); # skip non-customers
+                        my $chosen_contract = $contract_rs->find({id => $contract->id});
+                        next unless( defined $chosen_contract && $chosen_contract->get_column('invoice_mapping_id') == $map->id ); # is not current mapping
+                        foreach my $sub($contract->voip_subscribers->all) {
+                            my $prov_sub = $sub->provisioning_voip_subscriber;
+                            next unless($sub->provisioning_voip_subscriber);
+                            my $pref = NGCP::Panel::Utils::Preferences::get_usr_preference_rs(
+                                c => $c, attribute => 'prepaid', prov_subscriber => $prov_sub);
+                            if($pref->first) {
+                                $pref->first->delete;
+                            }
+                        }
+                    }
+                } elsif(!$old_prepaid && $c->stash->{invoice_result}->prepaid) {
+                    foreach my $map($rs->all) {
+                        my $contract = $map->contract;
+                        next unless($contract->contact->reseller_id); # skip non-customers
+                        my $chosen_contract = $contract_rs->find({id => $contract->id});
+                        next unless( defined $chosen_contract && $chosen_contract->get_column('invoice_mapping_id') == $map->id ); # is not current mapping
+                        foreach my $sub($contract->voip_subscribers->all) {
+                            my $prov_sub = $sub->provisioning_voip_subscriber;
+                            next unless($prov_sub);
+                            my $pref = NGCP::Panel::Utils::Preferences::get_usr_preference_rs(
+                                c => $c, attribute => 'prepaid', prov_subscriber => $prov_sub);
+                            if($pref->first) {
+                                $pref->first->update({ value => 1 });
+                            } else {
+                                $pref->create({ value => 1 });
+                            }
+                        }
+                    }
+                }
+        
+            });
+
+            delete $c->session->{created_objects}->{reseller};
+            $c->flash(messages => [{type => 'success', text => $c->loc('Billing profile successfully updated')}]);
+        } catch($e) {
+            NGCP::Panel::Utils::Message->error(
+                c => $c,
+                error => $e,
+                desc  => $c->loc("Failed to update invoice profile."),
+            );
+        }
+        NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for('/invoice'));
+    }
+
+    $c->stash(edit_flag => 1);
+    $c->stash(form => $form);
 }
 
 sub create :Chained('invoice_list') :PathPart('create') :Args(0) {
