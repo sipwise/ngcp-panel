@@ -16,6 +16,13 @@ require Catalyst::ActionRole::CheckTrailingSlash;
 require Catalyst::ActionRole::HTTPMethods;
 require Catalyst::ActionRole::RequireSSL;
 
+class_has 'api_description' => (
+    is => 'ro',
+    isa => 'Str',
+    default => 
+        'Specifies a SIP Domain to be used as host part for SIP <a href="#subscribers">Subscribers</a>. You need a domain before you can create a subscriber. Multiple domains can be created. A domain could also be an IPv4 or IPv6 address (whereas the latter needs to be enclosed in square brackets, e.g. [::1]).'
+);
+
 with 'NGCP::Panel::Role::API';
 with 'NGCP::Panel::Role::API::Domains';
 

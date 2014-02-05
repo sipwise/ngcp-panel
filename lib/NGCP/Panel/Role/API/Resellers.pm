@@ -10,6 +10,11 @@ use HTTP::Status qw(:constants);
 use NGCP::Panel::Utils::DateTime;
 use NGCP::Panel::Form::Reseller qw();
 
+sub get_form {
+    my ($self, $c) = @_;
+    return NGCP::Panel::Form::Reseller->new;
+}
+
 sub hal_from_reseller {
     my ($self, $c, $reseller, $form) = @_;
 
@@ -41,7 +46,7 @@ sub hal_from_reseller {
         relation => 'ngcp:'.$self->resource_name,
     );
 
-    $form //= NGCP::Panel::Form::Reseller->new;
+    $form //= $self->get_form($c);
     return unless $self->validate_form(
         c => $c,
         form => $form,
@@ -65,7 +70,7 @@ sub reseller_by_id {
 sub update_reseller {
     my ($self, $c, $reseller, $old_resource, $resource, $form) = @_;
 
-    $form //= NGCP::Panel::Form::Reseller->new;
+    $form //= $self->get_form($c);
     $resource->{contract_id} //= undef;
     return unless $self->validate_form(
         c => $c,

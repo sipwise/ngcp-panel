@@ -17,7 +17,7 @@ has_field 'source' => (
     maxlength => 255,
     element_attr => {
         rel => ['tooltip'],
-        title => ['string, empty or POSIX regular expression, e.g.: ^431.+$']
+        title => ['A POSIX regular expression to match the calling number (e.g. ^.+$).']
     },
 );
 
@@ -27,7 +27,7 @@ has_field 'destination' => (
     required => 1,
     element_attr => {
         rel => ['tooltip'],
-        title => ['string, POSIX regular expression, e.g.: ^431.+$']
+        title => ['A POSIX regular expression to match the called number (e.g. ^431.+$).']
     },
 );
 
@@ -39,12 +39,20 @@ has_field 'direction' => (
     ],
     default => 'out',
     required => 1,
+    element_attr => {
+        rel => ['tooltip'],
+        title => ['The call direction when to apply this fee (either for inbound or outbound calls).']
+    },
 );
 
 has_field 'billing_zone' => (
     type => '+NGCP::Panel::Field::BillingZone',
     label => 'Zone',
     validate_when_empty => 1,
+    element_attr => {
+        rel => ['tooltip'],
+        title => ['The billing zone id this fee belongs to.']
+    },
 );
 
 has_field 'onpeak_init_rate' => (
@@ -52,7 +60,7 @@ has_field 'onpeak_init_rate' => (
     precision => 18,
     element_attr => {
         rel => ['tooltip'],
-        title => ['The cost of the init interval in cents per second (e.g 0.90)']
+        title => ['The cost of the first interval in cents per second (e.g. 0.90).']
     },
     default => 0,
 );
@@ -61,7 +69,7 @@ has_field 'onpeak_init_interval' => (
     type => 'Integer',
     element_attr => {
         rel => ['tooltip'],
-        title => ['The length of the first interval']
+        title => ['The length of the first interval in seconds (e.g. 60).']
     },
     default => 60,
     required => 1,
@@ -73,7 +81,7 @@ has_field 'onpeak_follow_rate' => (
     precision => 18,
     element_attr => {
         rel => ['tooltip'],
-        title => ['The cost of each following interval in cents per second (e.g 0.90)']
+        title => ['The cost of each following interval in cents per second (e.g. 0.90).']
     },
     default => 0,
 );
@@ -82,7 +90,7 @@ has_field 'onpeak_follow_interval' => (
     type => 'Integer',
     element_attr => {
         rel => ['tooltip'],
-        title => ['The length of the following intervals']
+        title => ['The length of each following interval in seconds (e.g. 30).']
     },
     default => 60,
     required => 1,
@@ -94,7 +102,7 @@ has_field 'offpeak_init_rate' => (
     precision => 18,
     element_attr => {
         rel => ['tooltip'],
-        title => ['The cost of the init interval in cents per second (e.g 0.90)']
+        title => ['The cost of the first interval in cents per second (e.g. 0.90).']
     },
     default => 0,
 );
@@ -103,7 +111,7 @@ has_field 'offpeak_init_interval' => (
     type => 'Integer',
     element_attr => {
         rel => ['tooltip'],
-        title => ['The length of the first interval']
+        title => ['The length of the first interval in seconds (e.g. 60).']
     },
     default => 60,
     required => 1,
@@ -115,7 +123,7 @@ has_field 'offpeak_follow_rate' => (
     precision => 18,
     element_attr => {
         rel => ['tooltip'],
-        title => ['The cost of each following interval in cents per second (e.g 0.90)']
+        title => ['The cost of each following interval in cents per second (e.g. 0.90).']
     },
     default => 0,
 );
@@ -124,7 +132,7 @@ has_field 'offpeak_follow_interval' => (
     type => 'Integer',
     element_attr => {
         rel => ['tooltip'],
-        title => ['The length of the following intervals']
+        title => ['The length of each following interval in seconds (e.g. 30).']
     },
     default => 60,
     required => 1,
@@ -135,7 +143,7 @@ has_field 'use_free_time' => (
     type => 'Boolean',
     element_attr => {
         rel => ['tooltip'],
-        title => ['Free minutes may be used when calling this destination']
+        title => ['Whether free minutes may be used when calling this destination.']
     },
     default => 0,
 );

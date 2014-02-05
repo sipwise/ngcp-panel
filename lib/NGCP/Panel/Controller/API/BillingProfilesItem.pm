@@ -4,7 +4,6 @@ use namespace::sweep;
 use HTTP::Headers qw();
 use HTTP::Status qw(:constants);
 use MooseX::ClassAttribute qw(class_has);
-use NGCP::Panel::Form::BillingProfile::Admin qw();
 use NGCP::Panel::Utils::DateTime;
 use NGCP::Panel::Utils::ValidateJSON qw();
 use Path::Tiny qw(path);
@@ -105,7 +104,7 @@ sub PATCH :Allow {
         my $resource = $self->apply_patch($c, $old_resource, $json);
         last unless $resource;
 
-        my $form = NGCP::Panel::Form::BillingProfile::Admin->new;
+        my $form = $self->get_form($c);
         $profile = $self->update_profile($c, $profile, $old_resource, $resource, $form);
         last unless $profile;
 
@@ -145,7 +144,7 @@ sub PUT :Allow {
         last unless $resource;
         my $old_resource = { $profile->get_inflated_columns };
 
-        my $form = NGCP::Panel::Form::BillingProfile::Admin->new;
+        my $form = $self->get_form($c);
         use Data::Printer; p $profile;
         $profile = $self->update_profile($c, $profile, $old_resource, $resource, $form);
         use Data::Printer; p $profile;

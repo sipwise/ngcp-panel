@@ -19,6 +19,13 @@ require Catalyst::ActionRole::CheckTrailingSlash;
 require Catalyst::ActionRole::HTTPMethods;
 require Catalyst::ActionRole::RequireSSL;
 
+class_has 'api_description' => (
+    is => 'ro',
+    isa => 'Str',
+    default => 
+        'Defines an actual user who can log into the web panel, register devices via SIP and/or XMPP and place and receive calls via SIP. A subscriber always belongs to a <a href="#customers">Customer</a> and is placed inside a <a href="#domains">Domain</a>.'
+);
+
 with 'NGCP::Panel::Role::API';
 with 'NGCP::Panel::Role::API::Subscribers';
 

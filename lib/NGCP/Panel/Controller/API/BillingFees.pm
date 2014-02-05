@@ -8,13 +8,19 @@ use HTTP::Headers qw();
 use HTTP::Status qw(:constants);
 use MooseX::ClassAttribute qw(class_has);
 use NGCP::Panel::Utils::DateTime;
-use NGCP::Panel::Form::BillingFee qw();
 use Path::Tiny qw(path);
 BEGIN { extends 'Catalyst::Controller::ActionRole'; }
 require Catalyst::ActionRole::ACL;
 require Catalyst::ActionRole::CheckTrailingSlash;
 require Catalyst::ActionRole::HTTPMethods;
 require Catalyst::ActionRole::RequireSSL;
+
+class_has 'api_description' => ( 
+    is => 'ro',
+    isa => 'Str',
+    default => 
+        'Specifies the fees to be applied for a call if it matches the source or destination number of the call.'
+);
 
 with 'NGCP::Panel::Role::API';
 with 'NGCP::Panel::Role::API::BillingFees';
@@ -76,7 +82,7 @@ sub GET :Allow {
             rows => $rows,
         });
         my (@embedded, @links);
-        my $form = NGCP::Panel::Form::BillingFee->new;
+        my $form = $self->get_form($c);
         for my $fee ($fees->all) {
             push @embedded, $self->hal_from_fee($c, $fee, $form);
             push @links, Data::HAL::Link->new(
@@ -156,7 +162,7 @@ sub POST :Allow {
             $reseller_id = $c->user->contract->contact->reseller_id;
         }
 
-        my $form = NGCP::Panel::Form::BillingFee->new;
+        my $form = $self->get_form($c);
         my $billing_profile_id = $resource->{billing_profile_id} // undef;
 
         my $profile;

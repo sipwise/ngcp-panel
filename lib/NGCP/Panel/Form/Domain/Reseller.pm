@@ -19,6 +19,10 @@ has_field 'domain' => (
     type => 'Text',
     required => 1,
     label => 'SIP Domain',
+    element_attr => {
+        rel => ['tooltip'],
+        title => ['The fully qualified domain name (e.g. sip.example.org).']
+    },
 );
 
 has_field 'save' => (

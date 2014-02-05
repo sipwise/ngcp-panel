@@ -4,7 +4,6 @@ use namespace::sweep;
 use HTTP::Headers qw();
 use HTTP::Status qw(:constants);
 use MooseX::ClassAttribute qw(class_has);
-use NGCP::Panel::Form::BillingFee qw();
 use NGCP::Panel::Utils::DateTime;
 use NGCP::Panel::Utils::ValidateJSON qw();
 use Path::Tiny qw(path);
@@ -105,7 +104,7 @@ sub PATCH :Allow {
         my $resource = $self->apply_patch($c, $old_resource, $json);
         last unless $resource;
 
-        my $form = NGCP::Panel::Form::BillingFee->new;
+        my $form = $self->get_form($c);
         $fee = $self->update_fee($c, $fee, $old_resource, $resource, $form);
         last unless $fee;
 
@@ -145,7 +144,7 @@ sub PUT :Allow {
         last unless $resource;
         my $old_resource = { $fee->get_inflated_columns };
 
-        my $form = NGCP::Panel::Form::BillingFee->new;
+        my $form = $self->get_form($c);
         $fee = $self->update_fee($c, $fee, $old_resource, $resource, $form);
         last unless $fee;
 

@@ -9,6 +9,11 @@ use Data::HAL::Link qw();
 use HTTP::Status qw(:constants);
 use NGCP::Panel::Form::Contact::Admin;
 
+sub get_form {
+    my ($self, $c) = @_;
+    return NGCP::Panel::Form::Contact::Admin->new;
+}
+
 sub hal_from_contact {
     my ($self, $c, $contact, $form) = @_;
     my %resource = $contact->get_inflated_columns;
@@ -28,7 +33,7 @@ sub hal_from_contact {
         relation => 'ngcp:'.$self->resource_name,
     );
 
-    $form //= NGCP::Panel::Form::Contact::Admin->new;
+    $form //= $self->get_form($c);
     $self->validate_form(
         c => $c,
         resource => \%resource,
@@ -53,7 +58,7 @@ sub contact_by_id {
 sub update_contact {
     my ($self, $c, $contact, $old_resource, $resource, $form) = @_;
 
-    $form //= NGCP::Panel::Form::Contact::Admin->new;
+    $form //= $self->get_form($c);
     # TODO: for some reason, formhandler lets missing reseller_id slip thru
     $resource->{reseller_id} //= undef; 
     return unless $self->validate_form(

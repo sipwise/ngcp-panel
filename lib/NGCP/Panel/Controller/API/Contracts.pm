@@ -9,13 +9,19 @@ use HTTP::Status qw(:constants);
 use MooseX::ClassAttribute qw(class_has);
 use NGCP::Panel::Utils::DateTime;
 use NGCP::Panel::Utils::Contract;
-use NGCP::Panel::Form::Contract::PeeringReseller qw();
 use Path::Tiny qw(path);
 BEGIN { extends 'Catalyst::Controller::ActionRole'; }
 require Catalyst::ActionRole::ACL;
 require Catalyst::ActionRole::CheckTrailingSlash;
 require Catalyst::ActionRole::HTTPMethods;
 require Catalyst::ActionRole::RequireSSL;
+
+class_has 'api_description' => (
+    is => 'ro',
+    isa => 'Str',
+    default => 
+        'Defines a billing container for peerings and resellers. A <a href="#billingprofiles">Billing Profile</a> is assigned to a contract, and it has <a href="#contractbalances">Contract Balances</a> indicating the saldo of the contract for current and past billing intervals.'
+);
 
 with 'NGCP::Panel::Role::API';
 with 'NGCP::Panel::Role::API::Contracts';
@@ -66,7 +72,7 @@ sub GET :Allow {
             rows => $rows,
         });
         my (@embedded, @links);
-        my $form = NGCP::Panel::Form::Contract::PeeringReseller->new;
+        my $form = $self->get_form($c);
         for my $contract ($contracts->all) {
             push @embedded, $self->hal_from_contract($c, $contract, $form);
             push @links, Data::HAL::Link->new(
@@ -152,7 +158,7 @@ sub POST :Allow {
 
 
         $resource->{contact_id} //= undef;
-        my $form = NGCP::Panel::Form::Contract::PeeringReseller->new;
+        my $form = $self->get_form($c);
         last unless $self->validate_form(
             c => $c,
             resource => $resource,

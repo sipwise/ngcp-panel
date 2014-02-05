@@ -16,6 +16,13 @@ require Catalyst::ActionRole::CheckTrailingSlash;
 require Catalyst::ActionRole::HTTPMethods;
 require Catalyst::ActionRole::RequireSSL;
 
+class_has 'api_description' => (
+    is => 'ro',
+    isa => 'Str',
+    default => 
+        'Specifies certain settings (preferences) for a <a href="#domains">Domain</a>. The full list of settings can be obtained via <a href="/api/domainpreferencedefs/">DomainPreferenceDefs</a>.'
+);
+
 with 'NGCP::Panel::Role::API';
 with 'NGCP::Panel::Role::API::DomainPreferences';
 

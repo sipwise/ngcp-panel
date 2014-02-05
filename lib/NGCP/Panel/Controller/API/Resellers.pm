@@ -8,13 +8,19 @@ use HTTP::Headers qw();
 use HTTP::Status qw(:constants);
 use MooseX::ClassAttribute qw(class_has);
 use NGCP::Panel::Utils::DateTime;
-use NGCP::Panel::Form::Reseller qw();
 use Path::Tiny qw(path);
 BEGIN { extends 'Catalyst::Controller::ActionRole'; }
 require Catalyst::ActionRole::ACL;
 require Catalyst::ActionRole::CheckTrailingSlash;
 require Catalyst::ActionRole::HTTPMethods;
 require Catalyst::ActionRole::RequireSSL;
+
+class_has 'api_description' => ( 
+    is => 'ro',
+    isa => 'Str',
+    default => 
+        'Defines a reseller on the system. A reseller can manage his own <a href="#domains">Domains</a> and <a href="#customers">Customers</a>.'
+);
 
 with 'NGCP::Panel::Role::API';
 with 'NGCP::Panel::Role::API::Resellers';
@@ -56,7 +62,7 @@ sub GET :Allow {
             rows => $rows,
         });
         my (@embedded, @links);
-        my $form = NGCP::Panel::Form::Reseller->new;
+        my $form = $self->get_form($c);
         for my $reseller ($resellers->all) {
             push @embedded, $self->hal_from_reseller($c, $reseller, $form);
             push @links, Data::HAL::Link->new(
@@ -128,7 +134,7 @@ sub POST :Allow {
         );
         last unless $resource;
 
-        my $form = NGCP::Panel::Form::Reseller->new;
+        my $form = $self->get_form($c);
         $resource->{contract_id} //= undef;
         last unless $self->validate_form(
             c => $c,

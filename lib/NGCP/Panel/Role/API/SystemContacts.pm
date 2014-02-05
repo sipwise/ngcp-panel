@@ -9,6 +9,11 @@ use Data::HAL::Link qw();
 use HTTP::Status qw(:constants);
 use NGCP::Panel::Form::Contact::Reseller;
 
+sub get_form {
+    my ($self, $c) = @_;
+    return NGCP::Panel::Form::Contact::Reseller->new;
+}
+
 sub hal_from_contact {
     my ($self, $c, $contact, $form) = @_;
     my %resource = $contact->get_inflated_columns;
@@ -29,7 +34,7 @@ sub hal_from_contact {
         relation => 'ngcp:'.$self->resource_name,
     );
 
-    $form //= NGCP::Panel::Form::Contact::Reseller->new;
+    $form //= $self->get_form($c);
 
     # TODO: i'd expect reseller to be removed automatically
     delete $resource{reseller_id};
@@ -57,7 +62,7 @@ sub contact_by_id {
 sub update_contact {
     my ($self, $c, $contact, $old_resource, $resource, $form) = @_;
 
-    $form //= NGCP::Panel::Form::Contact::Reseller->new;
+    $form //= $self->get_form($c);
     delete $resource->{reseller_id};
     return unless $self->validate_form(
         c => $c,

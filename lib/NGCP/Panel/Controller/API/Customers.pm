@@ -9,13 +9,19 @@ use HTTP::Status qw(:constants);
 use MooseX::ClassAttribute qw(class_has);
 use NGCP::Panel::Utils::DateTime;
 use NGCP::Panel::Utils::Contract;
-use NGCP::Panel::Form::Contract::ProductSelect qw();
 use Path::Tiny qw(path);
 BEGIN { extends 'Catalyst::Controller::ActionRole'; }
 require Catalyst::ActionRole::ACL;
 require Catalyst::ActionRole::CheckTrailingSlash;
 require Catalyst::ActionRole::HTTPMethods;
 require Catalyst::ActionRole::RequireSSL;
+
+class_has 'api_description' => (
+    is => 'ro',
+    isa => 'Str',
+    default => 
+        'Defines a billing container for end customers. Customers usually have one or more <a href="#subscribers">Subscribers</a>. A <a href="#billingprofiles">Billing Profile</a> is assigned to a customer, and it has <a href="#contractbalances">Contract Balances</a> indicating the saldo of the customer for current and past billing intervals.'
+);
 
 with 'NGCP::Panel::Role::API';
 with 'NGCP::Panel::Role::API::Customers';
@@ -83,7 +89,7 @@ sub GET :Allow {
             rows => $rows,
         });
         my (@embedded, @links);
-        my $form = NGCP::Panel::Form::Contract::ProductSelect->new;
+        my $form = $self->get_form($c);
         for my $customer($customers->all) {
             push @embedded, $self->hal_from_customer($c, $customer, $form);
             push @links, Data::HAL::Link->new(
@@ -175,7 +181,7 @@ sub POST :Allow {
         $resource->{product_id} = $product->id;
 
         $resource->{contact_id} //= undef;
-        my $form = NGCP::Panel::Form::Contract::ProductSelect->new;
+        my $form = $self->get_form($c);
         last unless $self->validate_form(
             c => $c,
             resource => $resource,

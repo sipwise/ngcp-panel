@@ -7,7 +7,6 @@ use Data::HAL::Link qw();
 use HTTP::Headers qw();
 use HTTP::Status qw(:constants);
 use MooseX::ClassAttribute qw(class_has);
-use NGCP::Panel::Form::Contact::Reseller qw();
 use NGCP::Panel::Utils::DateTime;
 use Path::Tiny qw(path);
 use Safe::Isa qw($_isa);
@@ -16,6 +15,13 @@ require Catalyst::ActionRole::ACL;
 require Catalyst::ActionRole::CheckTrailingSlash;
 require Catalyst::ActionRole::HTTPMethods;
 require Catalyst::ActionRole::RequireSSL;
+
+class_has 'api_description' => (
+    is => 'ro',
+    isa => 'Str',
+    default => 
+        'Defines a physical or legal person\'s address (postal and/or email) to be used in <a href="#contracts">System Contracts</a> (contracts for peerings and resellers).'
+);
 
 with 'NGCP::Panel::Role::API';
 with 'NGCP::Panel::Role::API::SystemContacts';
@@ -58,7 +64,7 @@ sub GET :Allow {
             rows => $rows,
         });
         my (@embedded, @links);
-        my $form = NGCP::Panel::Form::Contact::Reseller->new;
+        my $form = $self->get_form($c);
         for my $contact ($contacts->search({}, {order_by => {-asc => 'me.id'}, prefetch => ['reseller']})->all) {
             push @embedded, $self->hal_from_contact($c, $contact, $form);
             push @links, Data::HAL::Link->new(
@@ -127,7 +133,7 @@ sub POST :Allow {
         );
         last unless $resource;
 
-        my $form = NGCP::Panel::Form::Contact::Reseller->new;
+        my $form = $self->get_form($c);
         last unless $self->validate_form(
             c => $c,
             resource => $resource,

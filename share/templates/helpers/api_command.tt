@@ -3,10 +3,10 @@
 
 [% IF extended -%]
 <p>
-    Note that you <b>MUST</b> to pass the following additional headers for this request:
+    Note that you <b>MUST</b> pass the following additional headers for this request:
     <ul>
         <li><b>Prefer</b>
-            <p>This header tells the API which type of response it expects. The following values are possible:
+            <p>This header tells the API which type of response the client expects. The following values are possible:
             <ul>
                 <li><b>return=minimal</b> tells the API to respond with a <b>204 No Content</b> if the operation has been performed successfully, without returning the updated resource in the body.</li>
                 <li><b>return=representation</b> will let the API respond with <b>200 OK</b> with the full representation of the updated resource in the body.</li>

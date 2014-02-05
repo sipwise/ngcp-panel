@@ -12,6 +12,11 @@ use NGCP::Panel::Utils::Contract;
 use NGCP::Panel::Utils::Preferences;
 use NGCP::Panel::Form::BillingProfile::Admin qw();
 
+sub get_form {
+    my ($self, $c) = @_;
+    return NGCP::Panel::Form::BillingProfile::Admin->new;
+}
+
 sub hal_from_profile {
     my ($self, $c, $profile, $form) = @_;
 
@@ -38,7 +43,7 @@ sub hal_from_profile {
         relation => 'ngcp:'.$self->resource_name,
     );
 
-    $form //= NGCP::Panel::Form::BillingProfile::Admin->new;
+    $form //= $self->get_form($c);
     return unless $self->validate_form(
         c => $c,
         form => $form,
@@ -72,7 +77,7 @@ sub profile_by_id {
 sub update_profile {
     my ($self, $c, $profile, $old_resource, $resource, $form) = @_;
 
-    $form //= NGCP::Panel::Form::BillingProfile::Admin->new;
+    $form //= $self->get_form($c);
     # TODO: for some reason, formhandler lets missing reseller slip thru
     $resource->{reseller_id} //= undef;
     return unless $self->validate_form(

@@ -40,12 +40,36 @@ sub auto :Private {
 
 sub GET : Allow {
     my ($self, $c) = @_;
+
+    my @colls = $self->get_collections;
+    foreach my $coll(@colls) {
+        my $mod = $coll;
+        $mod =~ s/^.+\/([a-zA-Z0-9_]+)\.pm$/$1/;
+        next if($mod eq "DomainPreferenceDefs"); # not a "real" collection
+        my $rel = lc $mod;
+        my $full_mod = 'NGCP::Panel::Controller::API::'.$mod;
+
+        my $role = $full_mod->config->{action}->{GET}->{AllowedRole};
+        if(ref $role eq "ARRAY") {
+            next unless grep @{ $role }, $c->user->roles;
+        } else {
+            next unless $role eq $c->user->roles;
+        }
+
+        my $form = $full_mod->get_form($c);
+        $c->stash->{collections}->{$rel} = { 
+            name => $mod, 
+            description => $full_mod->api_description,
+            fields => $self->get_collection_properties($form),
+        };
+    }
+
     $c->stash(template => 'api/root.tt');
     $c->forward($c->view);
     $c->response->headers(HTTP::Headers->new(
         Content_Language => 'en',
         Content_Type => 'application/xhtml+xml',
-        $self->collections_link_headers,
+        #$self->collections_link_headers,
     ));
     return;
 }
@@ -69,7 +93,7 @@ sub OPTIONS : Allow {
     return;
 }
 
-sub collections_link_headers : Private {
+sub get_collections {
     my ($self) = @_;
 
     # figure out base path of our api modules
@@ -87,6 +111,14 @@ sub collections_link_headers : Private {
         ->not($rootrule)
         ->not($itemrule);
     my @colls = $rule->in($libpath);
+
+    return @colls;
+}
+
+sub collections_link_headers : Private {
+    my ($self) = @_;
+
+    my @colls = $self->get_collections;
 
     # create Link header for each of the collections
     my @links = ();
@@ -106,6 +138,81 @@ sub invalid_user : Private {
     #$self->error($c, HTTP_FORBIDDEN, "Invalid certificate serial number '$ssl_client_m_serial'.");
     $self->error($c, HTTP_FORBIDDEN, "Invalid user");
     return;
+}
+
+sub field_to_json : Private {
+    my ($self, $name) = @_;
+
+    given($name) {
+        when(/Float|Integer|Money|PosInteger|Minute|Hour|MonthDay|Year/) {
+            return "Number";
+        }
+        when(/Boolean/) {
+            return "Boolean";
+        }
+        when(/Repeatable/) {
+            return "Array";
+        }
+        when(/\+NGCP::Panel::Field::Regex/) {
+            return "String";
+        }
+        when(/\+NGCP::Panel::Field::EmailList/) {
+            return "String";
+        }
+        when(/\+NGCP::Panel::Field::SubscriberStatusSelect/) {
+            return "String";
+        }
+        when(/\+NGCP::Panel::Field::SubscriberLockSelect/) {
+            return "Number";
+        }
+        when(/\+NGCP::Panel::Field::E164/) {
+            return "Object";
+        }
+        when(/\+NGCP::Panel::Field::AliasNumber/) {
+            return "Array";
+        }
+        # usually {xxx}{id}
+        when(/\+NGCP::Panel::Field::/) {
+            return "Number";
+        }
+        default {
+            return "String";
+        }
+    } 
+}
+
+sub get_collection_properties {
+    my ($self, $form) = @_;
+    
+    my @props = ();
+    foreach my $f($form->fields) {
+        next if (
+            $f->type eq "Hidden" ||
+            $f->type eq "Button" ||
+            $f->type eq "Submit" ||
+            0);
+        my @types = ();
+        push @types, 'null' unless $f->required;
+        push @types, $self->field_to_json($f->type);
+        my $name = $f->name;
+        if($f->type =~ /^\+NGCP::Panel::Field::/) {
+            if($f->type =~ /E164/) {
+                $name = 'primary_number';
+            } elsif($f->type =~ /AliasNumber/) {
+                $name = 'alias_numbers';
+            } elsif($f->type !~ /Regex|EmailList|SubscriberStatusSelect|SubscriberLockSelect/) {
+                $name .= '_id';
+            }
+        }
+        my $desc;
+        if($f->element_attr) {
+            $desc = $f->element_attr->{title}->[0];
+        } else {
+            $desc = $name;
+        }
+        push @props, { name => $name, description => $desc, types => \@types };
+    }
+    return \@props;
 }
 
 sub end : Private {

@@ -11,6 +11,11 @@ use NGCP::Panel::Utils::DateTime;
 use NGCP::Panel::Utils::Contract;
 use NGCP::Panel::Form::BillingFee qw();
 
+sub get_form {
+    my ($self, $c) = @_;
+    return NGCP::Panel::Form::BillingFee->new;
+}
+
 sub hal_from_fee {
     my ($self, $c, $fee, $form) = @_;
 
@@ -33,7 +38,7 @@ sub hal_from_fee {
         relation => 'ngcp:'.$self->resource_name,
     );
 
-    $form //= NGCP::Panel::Form::BillingFee->new;
+    $form //= $self->get_form($c);
     return unless $self->validate_form(
         c => $c,
         form => $form,
@@ -79,7 +84,7 @@ sub update_fee {
     } else {
         $reseller_id = $c->user->contract->contact->reseller_id;
     }
-    $form //= NGCP::Panel::Form::BillingFee->new;
+    $form //= $self->get_form($c);
     # TODO: for some reason, formhandler lets missing profile/zone id
     my $billing_profile_id = $resource->{billing_profile_id} // undef;
 

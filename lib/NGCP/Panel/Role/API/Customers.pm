@@ -12,6 +12,11 @@ use NGCP::Panel::Utils::Contract;
 use NGCP::Panel::Utils::Preferences;
 use NGCP::Panel::Form::Contract::ProductSelect qw();
 
+sub get_form {
+    my ($self, $c) = @_;
+    return NGCP::Panel::Form::Contract::PeeringReseller->new;
+}
+
 sub hal_from_customer {
     my ($self, $c, $customer, $form) = @_;
 
@@ -62,7 +67,7 @@ sub hal_from_customer {
         relation => 'ngcp:'.$self->resource_name,
     );
 
-    $form //= NGCP::Panel::Form::Contract::ProductSelect->new;
+    $form //= $self->get_form($c);
     return unless $self->validate_form(
         c => $c,
         form => $form,
@@ -126,7 +131,7 @@ sub update_customer {
         return;
     }
    
-    $form //= NGCP::Panel::Form::Contract::ProductSelect->new;
+    $form //= $self->get_form($c);
     # TODO: for some reason, formhandler lets missing contact_id slip thru
     $resource->{contact_id} //= undef; 
     return unless $self->validate_form(

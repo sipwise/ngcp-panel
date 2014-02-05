@@ -53,16 +53,11 @@
         { level = 2,    id = 'intro',         title = 'Introduction',                                   },
         { level = 2,    id = 'auth',          title = 'Authentication',                                 },
         { level = 2,    id = 'relations',     title = 'Resources',                                      },
-
-        { level = 3,    id = 'rel-systemcontacts',  title = 'System Contacts',             uri = '/api/contacts/'    },
-#        { level = 3,    id = 'rel-resellers', title = 'Resellers',            uri = '/api/resellers/'   },
-#        { level = 3,    id = 'rel-admins',    title = 'Admins',               uri = '/api/admins/'      },
-#        { level = 3,    id = 'rel-customers', title = 'Customers',            uri = '/api/customers/'   },
-
-#        { level = 3,    id = 'rel-billingprofiles', title = 'Billing Profiles', uri = '/api/billing/'   },
-
-        { level = 2,    id = 'definitions',   title = 'Definitions',                                    },
     ];
+    FOREACH col IN collections.keys.sort;
+        chapters.push({ level = 3, id = col, title = collections.$col.name, uri = '/api/' _ col _ '/' });
+    END;
+    chapters.push({ level = 2,    id = 'definitions',   title = 'Definitions' });
 -%]
     <h1>Sipwise NGCP HTTP API Documentation</h1>
     <div class="content">
@@ -91,8 +86,14 @@
     [% END -%]
     <div class="chapter">
 [%
+    IF chapter.level != 3;
         t = 'api/root/' _ chapter.id _ '.tt';
         INCLUDE $t level=chapter.level title=chapter.title id=chapter.id uri=chapter.uri;
+    ELSE;
+        t = 'api/root/collection.tt';
+        colname = chapter.id;
+        INCLUDE $t level=chapter.level title=chapter.title id=chapter.id uri=chapter.uri col=collections.$colname;
+    END;
 -%]
     </div>
 [% END -%]
