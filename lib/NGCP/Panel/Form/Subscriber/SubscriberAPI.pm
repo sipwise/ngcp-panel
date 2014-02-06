@@ -26,7 +26,7 @@ has_field 'alias_numbers' => (
     wrapper_class => [qw/hfh-rep/],
     element_attr => {
         rel => ['tooltip'],
-        title => ['Additional E.164 numbers mapped to this subscriber for inbound calls.']
+        title => ['Additional E.164 numbers (each containing a cc, ac and sn attribute) mapped to this subscriber for inbound calls.']
     },
 );
 

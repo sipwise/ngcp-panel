@@ -52,7 +52,7 @@ Accept-Post: application/hal+json; profile="http://purl.org/sipwise/ngcp-api/#re
     To define the page number and the rows per page to return, you can pass the parameters <i>page</i> and <i>rows</i>. Default values are <i>page=1</i> and <i>rows=10</i>, if you do not provide them.
 </p>
 [%
-    cmd = 'curl -i -X GET -H \'Connection: close\' --cert NGCP-API-client-certificate.pem --cacert ca-cert.pem \'https://example.org:1443/api/' _ id _ '/?page=1&rows=2\'';
+    cmd = 'curl -i -X GET -H \'Connection: close\' --cert NGCP-API-client-certificate.pem --cacert ca-cert.pem \'https://example.org:1443/api/' _ id _ '/?page=1&rows=1\'';
     INCLUDE helpers/api_command.tt cmd=cmd level=level+3;
 
     props = '            "id" : 1';
@@ -311,7 +311,7 @@ Preference-Applied: return=minimal';
 -%]
 </p>
 
-<h[% level + 2 %]>Update specific fields of an existing <i>systemcontacts</i> item</h[% level + 2 %]>
+<h[% level + 2 %]>Update specific fields of an existing <i>[% id %]</i> item</h[% level + 2 %]>
 <p>
 [%
     props = ''; rem = 0; rep = 0;

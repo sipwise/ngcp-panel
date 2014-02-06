@@ -56,7 +56,7 @@ has_field 'e164' => (
     do_wrapper => 1,
     element_attr => {
         rel => ['tooltip'],
-        title => ['The main E.164 number used for inbound and outbound calls.']
+        title => ['The main E.164 number (containing a cc, ac and sn attribute) used for inbound and outbound calls.']
     },
 );
 

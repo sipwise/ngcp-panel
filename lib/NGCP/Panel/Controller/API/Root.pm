@@ -159,6 +159,9 @@ sub field_to_json : Private {
         when(/\+NGCP::Panel::Field::EmailList/) {
             return "String";
         }
+        when(/\+NGCP::Panel::Field::Identifier/) {
+            return "String";
+        }
         when(/\+NGCP::Panel::Field::SubscriberStatusSelect/) {
             return "String";
         }
@@ -200,7 +203,7 @@ sub get_collection_properties {
                 $name = 'primary_number';
             } elsif($f->type =~ /AliasNumber/) {
                 $name = 'alias_numbers';
-            } elsif($f->type !~ /Regex|EmailList|SubscriberStatusSelect|SubscriberLockSelect/) {
+            } elsif($f->type !~ /Regex|EmailList|SubscriberStatusSelect|SubscriberLockSelect|Identifier/) {
                 $name .= '_id';
             }
         }
