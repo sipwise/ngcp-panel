@@ -1,4 +1,4 @@
-[% site_config.title = c.loc('Peer Host "[_1]" – Preferences',server.name) -%]
+[% site_config.title = c.loc('Peer Host "[_1]" - Preferences',server.name) -%]
 
 [%
     helper.messages = messages;

@@ -91,7 +91,7 @@ sub index :Path Form {
             return;
         } else {
             $c->log->debug("*** Login::index auth failed");
-            $form->add_form_error('Invalid username/password');
+            $form->add_form_error($c->loc('Invalid username/password'));
         }
     } else {
         # initial get

@@ -1,4 +1,4 @@
-[% site_config.title = c.loc('Domain "[_1]" – Preferences', domain.domain) -%]
+[% site_config.title = c.loc('Domain "[_1]" - Preferences', domain.domain) -%]
 
 [% 
     helper.name = c.loc('Domain');
