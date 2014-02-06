@@ -15,50 +15,86 @@ has_field 'firstname' => (
     type => 'Text',
     label => 'First Name',
     maxlength => 127,
+    element_attr => {
+        rel => ['tooltip'],
+        title => ['The given name of the contact.']
+    },
 );
 
 has_field 'lastname' => (
     type => 'Text',
     label => 'Last Name',
     maxlength => 127,
+    element_attr => {
+        rel => ['tooltip'],
+        title => ['The surname of the contact.']
+    },
 );
 
 has_field 'company' => (
     type => 'Text',
     label => 'Company',
     maxlength => 127,
+    element_attr => {
+        rel => ['tooltip'],
+        title => ['The company name of the contact.']
+    },
 );
 
 has_field 'email' => (
     type => 'Email',
     required => 1,
     maxlength => 255,
+    element_attr => {
+        rel => ['tooltip'],
+        title => ['The email address of the contact.']
+    },
 );
 
 has_field 'street' => (
     type => 'Text',
     maxlength => 127,
+    element_attr => {
+        rel => ['tooltip'],
+        title => ['The street name of the contact.']
+    },
 );
 
 has_field 'postcode' => (
     type => 'Text',
     maxlength => 16,
+    element_attr => {
+        rel => ['tooltip'],
+        title => ['The postal code of the contact.']
+    },
 );
 
 has_field 'city' => (
     type => 'Text',
     maxlength => 127,
+    element_attr => {
+        rel => ['tooltip'],
+        title => ['The city name of the contact.']
+    },
 );
 
 has_field 'country' => (
     type => 'Text',
     maxlength => 2,
+    element_attr => {
+        rel => ['tooltip'],
+        title => ['The two-letter ISO 3166-1 country code of the contact (e.g. US or DE).']
+    },
 );
 
 has_field 'phonenumber' => (
     type => 'Text',
     maxlength => 31,
     label => 'Phone Number',
+    element_attr => {
+        rel => ['tooltip'],
+        title => ['The phone number of the contact.']
+    },
 );
 
 has_field 'save' => (

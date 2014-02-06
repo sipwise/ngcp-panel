@@ -60,7 +60,7 @@ sub GET : Allow {
         $c->stash->{collections}->{$rel} = { 
             name => $mod, 
             description => $full_mod->api_description,
-            fields => $self->get_collection_properties($form),
+            fields => $form ? $self->get_collection_properties($form) : [],
         };
     }
 

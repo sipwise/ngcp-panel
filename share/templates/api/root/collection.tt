@@ -14,11 +14,15 @@
 
 <h[% level + 1 %]>Properties</h[% level + 1%]>
 
+[% UNLESS col.fields.size -%]
+See description how to obtain properties, if any.
+[% ELSE -%]
 <ul id="[% id %]-props">
 [% FOREACH f IN col.fields -%]
     <li><b>[% f.name %] </b>(<i>[% f.types.join(', ') %]</i>): [% f.description %]</li>
 [% END -%]
 </ul>
+[% END -%]
 
 <h[% level + 1 %]>Examples</h[% level + 1 %]>
 <div class="examples">
@@ -307,7 +311,7 @@ Preference-Applied: return=minimal';
 -%]
 </p>
 
-<h[% level + 2 %]>Update specific fields of an existing <i>systemcontacts</i> entry</h[% level + 2 %]>
+<h[% level + 2 %]>Update specific fields of an existing <i>systemcontacts</i> item</h[% level + 2 %]>
 <p>
 [%
     props = ''; rem = 0; rep = 0;

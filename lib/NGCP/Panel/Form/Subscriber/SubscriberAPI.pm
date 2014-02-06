@@ -9,6 +9,10 @@ sub build_form_element_class {[qw(form-horizontal)]}
 has_field 'display_name' => (
     type => 'Text',
     label => 'Display Name',
+    element_attr => {
+        rel => ['tooltip'],
+        title => ['The person\'s name, which is then used in XMPP contact lists or auto-provisioned phones, and which can be used as network-provided display name in SIP calls.']
+    },
 );
 
 has_field 'alias_numbers' => (
@@ -20,22 +24,38 @@ has_field 'alias_numbers' => (
         controls_div => 1,
     },
     wrapper_class => [qw/hfh-rep/],
+    element_attr => {
+        rel => ['tooltip'],
+        title => ['Additional E.164 numbers mapped to this subscriber for inbound calls.']
+    },
 );
 
 has_field 'lock' => (
     type => '+NGCP::Panel::Field::SubscriberLockSelect',
     label => 'Lock Level',
+    element_attr => {
+        rel => ['tooltip'],
+        title => ['The lock level of the subscriber.']
+    },
 );
 
 has_field 'is_pbx_group' => (
     type => 'Boolean',
     label => 'Is PBX Group?',
     default => 0,
+    element_attr => {
+        rel => ['tooltip'],
+        title => ['Whether this subscriber is used as PBX group.']
+    },
 );
 
 has_field 'pbx_group' => (
     type => '+NGCP::Panel::Field::SubscriberPbxGroup',
     label => 'PBX Group',
+    element_attr => {
+        rel => ['tooltip'],
+        title => ['The PBX group id this subscriber belongs to.']
+    },
 );
 
 has_field 'save' => (

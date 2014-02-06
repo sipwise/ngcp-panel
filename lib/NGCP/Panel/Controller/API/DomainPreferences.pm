@@ -20,7 +20,7 @@ class_has 'api_description' => (
     is => 'ro',
     isa => 'Str',
     default => 
-        'Specifies certain settings (preferences) for a <a href="#domains">Domain</a>. The full list of settings can be obtained via <a href="/api/domainpreferencedefs/">DomainPreferenceDefs</a>.'
+        'Specifies certain properties (preferences) for a <a href="#domains">Domain</a>. The full list of properties can be obtained via <a href="/api/domainpreferencedefs/">DomainPreferenceDefs</a>.'
 );
 
 with 'NGCP::Panel::Role::API';
@@ -63,9 +63,8 @@ sub GET :Allow {
             rows => $rows,
         });
         my (@embedded, @links);
-        my $form = $self->get_form($c);
         for my $domain ($domains->search({}, {order_by => {-asc => 'me.id'}})->all) {
-            push @embedded, $self->hal_from_item($c, $domain, $form);
+            push @embedded, $self->hal_from_item($c, $domain);
             push @links, Data::HAL::Link->new(
                 relation => 'ngcp:'.$self->resource_name,
                 href     => sprintf('%s%d', $self->dispatch_path, $domain->id),

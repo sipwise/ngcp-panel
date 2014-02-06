@@ -21,7 +21,7 @@ has_field 'name' => (
     maxlength => 31,
     element_attr => {
         rel => ['tooltip'],
-        title => ['human readable profile name']
+        title => ['A human readable profile name.']
     },
 );
 
@@ -30,20 +30,24 @@ has_field 'handle' => (
     required => 1,
     element_attr => {
         rel => ['tooltip'],
-        title => ['unique identifier string (only alphanumeric chars)']
+        title => ['A unique identifier string (only alphanumeric chars and _).']
     },
 );
 
 has_field 'prepaid' => (
     type => 'Boolean',
     default => 0,
+    element_attr => {
+        rel => ['tooltip'],
+        title => ['Whether customers using this profile are handled prepaid.']
+    },
 );
 
 has_field 'interval_charge' => (
     type => 'Money',
     element_attr => {
         rel => ['tooltip'],
-        title => ['base fee charged per billing interval, float, specifying Euro']
+        title => ['The base fee charged per billing interval (a monthly fixed fee, e.g. 10) in Euro/Dollars/etc. This fee can be used on the invoice.']
     },
     default => '0',
 );
@@ -52,7 +56,7 @@ has_field 'interval_free_time' => (
     type => 'Integer',
     element_attr => {
         rel => ['tooltip'],
-        title => ['included time per billing interval, integer, specifying seconds']
+        title => ['The included free minutes per billing interval (in seconds, e.g. 60000 for 1000 free minutes).']
     },
     default => '0',
 );
@@ -61,7 +65,7 @@ has_field 'interval_free_cash' => (
     type => 'Money',
     element_attr => {
         rel => ['tooltip'],
-        title => ['included money per billing interval, float, specifying EUR, USD, etc.']
+        title => ['The included free money per billing interval (in Euro, Dollars etc., e.g. 10).']
     },
     default => '0',
 );
@@ -71,7 +75,7 @@ has_field 'fraud_interval_limit' => (
     label => 'Fraud Monthly Limit',
     element_attr => {
         rel => ['tooltip'],
-        title => ['fraud detection threshold per month, specifying cents']
+        title => ['The fraud detection threshold per month (in cents, e.g. 10000).']
     },
 );
 
@@ -87,7 +91,7 @@ has_field 'fraud_interval_lock' => (
     ],
     element_attr => {
         rel => ['tooltip'],
-        title => ['lock accounts if the monthly limit is exceeded']
+        title => ['Options to lock customer if the monthly limit is exceeded.']
     },
 );
 
@@ -97,7 +101,7 @@ has_field 'fraud_interval_notify' => (
     maxlength => 255,
     element_attr => {
         rel => ['tooltip'],
-        title => ['where e-mail notifications are sent, a list of e-mail addreses separated by comma']
+        title => ['Comma-Separated list of Email addresses to send notifications when tresholds are exceeded.']
     },
 );
 
@@ -105,7 +109,7 @@ has_field 'fraud_daily_limit' => (
     type => 'Integer',
     element_attr => {
         rel => ['tooltip'],
-        title => ['fraud detection threshold per day, specifying cents']
+        title => ['The fraud detection threshold per day (in cents, e.g. 1000).']
     },
     required => 0,
     default => undef,
@@ -122,7 +126,7 @@ has_field 'fraud_daily_lock' => (
     ],
     element_attr => {
         rel => ['tooltip'],
-        title => ['lock accounts if the daily limit is exceeded']
+        title => ['Options to lock customer if the daily limit is exceeded.']
     },
 );
 
@@ -131,7 +135,7 @@ has_field 'fraud_daily_notify' => (
     maxlength => 255,
     element_attr => {
         rel => ['tooltip'],
-        title => ['where e-mail notifications are sent, a list of e-mail addreses separated by comma']
+        title => ['Comma-Separated list of Email addresses to send notifications when tresholds are exceeded.']
     },
 );
 
@@ -140,7 +144,7 @@ has_field 'currency' => (
     maxlength => 31,
     element_attr => {
         rel => ['tooltip'],
-        title => ['currency symbol or ISO code, string, will be used on invoices and webinterfaces']
+        title => ['The currency symbol or ISO code, used on invoices and webinterfaces.']
     },
 );
 
@@ -151,7 +155,7 @@ has_field 'vat_rate' => (
     range_end => 100,
     element_attr => {
         rel => ['tooltip'],
-        title => ['integer, specifying the percentage']
+        title => ['The VAT rate in percentage (e.g. 20).']
     },
 );
 
@@ -160,7 +164,7 @@ has_field 'vat_included' => (
     label => 'VAT Included',
     element_attr => {
         rel => ['tooltip'],
-        title => ['check if fees are inclusive VAT']
+        title => ['Whether the fees already incluside VAT.']
     },
     default => 0,
 );

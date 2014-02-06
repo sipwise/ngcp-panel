@@ -20,6 +20,10 @@ has_field 'contract' => (
     type => '+NGCP::Panel::Field::CustomerContract',
     label => 'Customer',
     validate_when_empty => 1,
+    element_attr => {
+        rel => ['tooltip'],
+        title => ['The contract used for this subscriber.']
+    },
 );
 
 has_field 'webusername' => (
@@ -28,7 +32,7 @@ has_field 'webusername' => (
     required => 0,
     element_attr => { 
         rel => ['tooltip'], 
-        title => ['The username to log into the CSC Panel'] 
+        title => ['The username to log into the CSC Panel.'] 
     },
 );
 
@@ -39,7 +43,7 @@ has_field 'webpassword' => (
     minlength => 6,
     element_attr => { 
         rel => ['tooltip'], 
-        title => ['The password to log into the CSC Panel'] 
+        title => ['The password to log into the CSC Panel.'] 
     },
 );
 
@@ -50,6 +54,10 @@ has_field 'e164' => (
     label => 'E164 Number',
     do_label => 1,
     do_wrapper => 1,
+    element_attr => {
+        rel => ['tooltip'],
+        title => ['The main E.164 number used for inbound and outbound calls.']
+    },
 );
 
 has_field 'username' => (
@@ -59,7 +67,7 @@ has_field 'username' => (
     noupdate => 1,
     element_attr => { 
         rel => ['tooltip'], 
-        title => ['The SIP username for the User-Agents'] 
+        title => ['The username for SIP and XMPP services.'] 
     },
 );
 
@@ -67,6 +75,10 @@ has_field 'domain' => (
     type => '+NGCP::Panel::Field::Domain',
     label => 'SIP Domain',
     validate_when_empty => 1,
+    element_attr => {
+        rel => ['tooltip'],
+        title => ['The domain name or domain id this subscriber belongs to.']
+    },
 );
 
 has_field 'password' => (
@@ -76,13 +88,17 @@ has_field 'password' => (
     minlength => 6,
     element_attr => { 
         rel => ['tooltip'], 
-        title => ['The SIP password for the User-Agents'] 
+        title => ['The password to authenticate for SIP and XMPP services.'] 
     },
 );
 
 has_field 'status' => (
     type => '+NGCP::Panel::Field::SubscriberStatusSelect',
     label => 'Status',
+    element_attr => {
+        rel => ['tooltip'],
+        title => ['The status of the subscriber.']
+    },
 );
 
 has_field 'administrative' => (
@@ -91,7 +107,7 @@ has_field 'administrative' => (
     required => 0,
     element_attr => { 
         rel => ['tooltip'], 
-        title => ['Subscriber can configure other subscribers within the Customer Account'] 
+        title => ['Whether the subscriber can configure other subscribers within his Customer account.'] 
     },
 );
 
@@ -102,7 +118,7 @@ has_field 'external_id' => (
     required => 0,
     element_attr => { 
         rel => ['tooltip'], 
-        title => ['An external id, e.g. provided by a 3rd party provisioning'] 
+        title => ['An external id, e.g. provided by a 3rd party provisioning.'] 
     },
 );
 

@@ -21,7 +21,7 @@ has_field 'zone' => (
     required => 1,
     element_attr => {
         rel => ['tooltip'],
-        title => ['string, e.g.: on-net']
+        title => ['A short name for the zone (e.g. US).']
     },
 );
 
@@ -30,7 +30,7 @@ has_field 'detail' => (
     maxlength => 127,
     element_attr => {
         rel => ['tooltip'],
-        title => ['string, e.g.: voicebox']
+        title => ['The detailed name for the zone (e.g. US Mobile Numbers).']
     },
 );
 

@@ -15,17 +15,29 @@ has_field 'contract' => (
     type => '+NGCP::Panel::Field::ResellerContract',
     label => 'Contract',
     validate_when_empty => 1,
+    element_attr => {
+        rel => ['tooltip'],
+        title => ['The contract used for this reseller.']
+    },
 );
 
 has_field 'name' => (
     type => 'Text',
     required => 1,
+    element_attr => {
+        rel => ['tooltip'],
+        title => ['The name of the reseller.']
+    },
 );
 
 
 has_field 'status' => (
     type => '+NGCP::Panel::Field::ResellerStatusSelect',
     required => 1,
+    element_attr => {
+        rel => ['tooltip'],
+        title => ['The status of the reseller.']
+    },
 );
 
 has_field 'save' => (

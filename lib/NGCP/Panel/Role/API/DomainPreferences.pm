@@ -13,16 +13,11 @@ use NGCP::Panel::Utils::Prosody;
 
 sub get_form {
     my ($self, $c) = @_;
-    if($c->user->roles eq "admin") {
-        return NGCP::Panel::Form::Domain::Admin->new;
-    } elsif($c->user->roles eq "reseller") {
-        return NGCP::Panel::Form::Domain::Reseller->new;
-    }
     return;
 }
 
 sub hal_from_item {
-    my ($self, $c, $item, $form) = @_;
+    my ($self, $c, $item) = @_;
 
     my $hal = Data::HAL->new(
         links => [

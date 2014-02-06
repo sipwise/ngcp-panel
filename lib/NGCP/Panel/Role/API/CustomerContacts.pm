@@ -8,10 +8,15 @@ use Data::HAL qw();
 use Data::HAL::Link qw();
 use HTTP::Status qw(:constants);
 use NGCP::Panel::Form::Contact::Admin;
+use NGCP::Panel::Form::Contact::Reseller;
 
 sub get_form {
     my ($self, $c) = @_;
-    return NGCP::Panel::Form::Contact::Admin->new;
+    if($c->user->roles eq "admin") {
+        return NGCP::Panel::Form::Contact::Admin->new;
+    } elsif($c->user->roles eq "reseller") {
+        return NGCP::Panel::Form::Contact::Reseller->new;
+    }
 }
 
 sub hal_from_contact {

@@ -6,6 +6,10 @@ extends 'NGCP::Panel::Form::BillingProfile::Reseller';
 has_field 'reseller' => (
     type => '+NGCP::Panel::Field::Reseller',
     validate_when_empty => 1,
+    element_attr => {
+        rel => ['tooltip'],
+        title => ['The reseller id this profile belongs to.']
+    },
 );
 
 has_block 'fields' => (

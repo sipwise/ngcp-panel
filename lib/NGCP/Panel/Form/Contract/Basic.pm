@@ -15,11 +15,19 @@ has_field 'contact' => (
     type => '+NGCP::Panel::Field::Contact',
     label => 'Contact',
     validate_when_empty => 1,
+    element_attr => {
+        rel => ['tooltip'],
+        title => ['The contact id this contract belongs to.']
+    },
 );
 
 has_field 'billing_profile' => (
     type => '+NGCP::Panel::Field::BillingProfile',
     validate_when_empty => 1,
+    element_attr => {
+        rel => ['tooltip'],
+        title => ['The billing profile id used to charge this contract.']
+    },
 );
 
 has_field 'status' => (
@@ -32,12 +40,20 @@ has_field 'status' => (
         { label => 'locked', value => 'locked' },
         { label => 'terminated', value => 'terminated' },
     ],
+    element_attr => {
+        rel => ['tooltip'],
+        title => ['The status of the contract.']
+    },
 );
 
 has_field 'external_id' => (
     type => 'Text',
     label => 'External #',
     required => 0,
+    element_attr => { 
+        rel => ['tooltip'], 
+        title => ['An external id, e.g. provided by a 3rd party provisioning'] 
+    },
 );
 
 has_field 'save' => (

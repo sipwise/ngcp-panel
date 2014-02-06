@@ -7,6 +7,10 @@ use Moose::Util::TypeConstraints;
 has_field 'reseller' => (
     type => '+NGCP::Panel::Field::Reseller',
     validate_when_empty => 1,
+    element_attr => {
+        rel => ['tooltip'],
+        title => ['The reseller id this contact belongs to.']
+    },
 );
 
 has_block 'fields' => (
