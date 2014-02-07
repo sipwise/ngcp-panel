@@ -15,12 +15,20 @@ has_field 'device' => (
     type => '+NGCP::Panel::Field::Device',
     validate_when_empty => 1,
     label => 'Device Model',
+    element_attr => {
+        rel => ['tooltip'],
+        title => ['The device model this config belongs to.']
+    },
 );
 
 has_field 'version' => (
     type => 'Text',
     required => 1,
     label => 'Version',
+    element_attr => {
+        rel => ['tooltip'],
+        title => ['The config version (e.g. 1.0).']
+    },
 );
 
 has_field 'content_type' => (
@@ -28,6 +36,10 @@ has_field 'content_type' => (
     required => 1,
     label => 'Content Type',
     default => 'text/xml',
+    element_attr => {
+        rel => ['tooltip'],
+        title => ['The HTTP Content-Type how to deliver the config to the device (e.g. text/plain).']
+    },
 );
 
 has_field 'data' => (
@@ -38,6 +50,10 @@ has_field 'data' => (
     rows => 10,
     maxlength => '67108864', # 64MB
     element_class => [qw/ngcp-autoconf-area/],
+    element_attr => {
+        rel => ['tooltip'],
+        title => ['The templatized configuration content.']
+    },
 );
 
 has_field 'save' => (

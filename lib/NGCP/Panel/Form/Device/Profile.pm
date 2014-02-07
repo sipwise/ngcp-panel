@@ -17,12 +17,20 @@ has_field 'config' => (
     type => '+NGCP::Panel::Field::DeviceConfig',
     validate_when_empty => 1,
     label => 'Device Configuration',
+    element_attr => {
+        rel => ['tooltip'],
+        title => ['The device config to use for this profile.']
+    },
 );
 
 has_field 'name' => (
     type => 'Text',
     required => 1,
     label => 'Profile Name',
+    element_attr => {
+        rel => ['tooltip'],
+        title => ['The profile name as seen by the end customer when he provisions a new device.']
+    },
 );
 
 has_field 'save' => (

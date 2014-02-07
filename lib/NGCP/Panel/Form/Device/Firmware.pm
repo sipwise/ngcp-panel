@@ -16,12 +16,20 @@ has_field 'device' => (
     type => '+NGCP::Panel::Field::Device',
     validate_when_empty => 1,
     label => 'Device Model',
+    element_attr => {
+        rel => ['tooltip'],
+        title => ['The device model id this firmware belongs to.']
+    },
 );
 
 has_field 'version' => (
     type => 'Text',
     required => 1,
     label => 'Version',
+    element_attr => {
+        rel => ['tooltip'],
+        title => ['The version of this firmware (e.g. 5.3a)']
+    },
 );
 
 has_field 'data' => (
@@ -29,6 +37,10 @@ has_field 'data' => (
     required => 1,
     label => 'Firmware File',
     max_size => '67108864', # 64MB
+    element_attr => {
+        rel => ['tooltip'],
+        title => ['The actual firmware data.']
+    },
 );
 
 has_field 'save' => (

@@ -24,6 +24,10 @@ has_field 'slot' => (
         controls_div => 1,
     },
     wrapper_class => [qw/hfh-rep-block/],
+    element_attr => {
+        rel => ['tooltip'],
+        title => ['The available slots for this auto attendant. Each entry has properties choice, destination.']
+    },
 );
 
 has_field 'slot.id' => (

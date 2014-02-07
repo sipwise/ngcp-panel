@@ -18,12 +18,20 @@ has_field 'vendor' => (
     type => 'Text',
     required => 1,
     label => 'Vendor',
+    element_attr => {
+        rel => ['tooltip'],
+        title => ['The vendor name of this device (e.g. Cisco).']
+    },
 );
 
 has_field 'model' => (
     type => 'Text',
     required => 1,
     label => 'Model',
+    element_attr => {
+        rel => ['tooltip'],
+        title => ['The model name of this device (e.g. SPA504G).']
+    },
 );
 
 has_field 'front_image' => (
@@ -31,6 +39,10 @@ has_field 'front_image' => (
     required => 0,
     label => 'Front Image',
     max_size => '67108864', # 64MB
+    element_attr => {
+        rel => ['tooltip'],
+        title => ['An image of the front view of the device.']
+    },
 );
 
 has_field 'mac_image' => (
@@ -38,6 +50,10 @@ has_field 'mac_image' => (
     required => 0,
     label => 'MAC Address Image',
     max_size => '67108864', # 64MB
+    element_attr => {
+        rel => ['tooltip'],
+        title => ['An image showing where to read the MAC address from (usually a sticker on the back).']
+    },
 );
 
 has_field 'sync_uri' => (
@@ -45,6 +61,10 @@ has_field 'sync_uri' => (
     required => 0,
     label => 'Bootstrap Sync URI',
     default => 'http://[% client.ip %]/admin/resync',
+    element_attr => {
+        rel => ['tooltip'],
+        title => ['A templatized URL called to set the actual provisioning URL (e.g. http://[% client.ip %]/admin/resync).']
+    },
 );
 
 has_field 'sync_method' => (
@@ -56,6 +76,10 @@ has_field 'sync_method' => (
         { label => 'POST', value => 'POST' },
     ],
     default => 'GET',
+    element_attr => {
+        rel => ['tooltip'],
+        title => ['The HTTP method used to set the actual provisioning URL (either GET or POST).']
+    },
 );
 
 has_field 'sync_params' => (
@@ -63,6 +87,10 @@ has_field 'sync_params' => (
     required => 0,
     label => 'Bootstrap Sync Parameters',
     default => '[% server.uri %]/$MA',
+    element_attr => {
+        rel => ['tooltip'],
+        title => ['GET/POST parameters sent to the device for setting the actual provisioning URL (e.g. [% server.uri %]/$MA or provurl=[% server.uri %]).']
+    },
 );
 
 has_field 'linerange' => (
@@ -76,6 +104,10 @@ has_field 'linerange' => (
         controls_div => 1,
     },
     wrapper_class => [qw/hfh-rep-block/],
+    element_attr => {
+        rel => ['tooltip'],
+        title => ['An array of key ranges (e.g. the keys on the phone, or the keys on the first attendant console). Each element has properties name, num_lines, can_private, can_shared, can_blf.']
+    },
 );
 
 has_field 'linerange.id' => (

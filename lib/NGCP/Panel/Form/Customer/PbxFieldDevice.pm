@@ -18,6 +18,10 @@ has_field 'profile_id' => (
     required => 1,
     label => 'Device Profile',
     options_method => \&build_profiles,
+    element_attr => {
+        rel => ['tooltip'],
+        title => ['The device profile to use for this phone.']
+    },
 );
 sub build_profiles {
     my ($self) = @_;
@@ -36,12 +40,20 @@ has_field 'identifier' => (
     type => 'Text',
     required => 1,
     label => 'MAC Address / Identifier',
+    element_attr => {
+        rel => ['tooltip'],
+        title => ['The MAC address of this phone (e.g 001122aabbcc).']
+    },
 );
 
 has_field 'station_name' => (
     type => 'Text',
     required => 1,
     label => 'Station Name',
+    element_attr => {
+        rel => ['tooltip'],
+        title => ['The name of the owner of the phone (e.g. Reception).']
+    },
 );
 
 has_field 'line' => (
@@ -55,6 +67,10 @@ has_field 'line' => (
         controls_div => 1,
     },
     wrapper_class => [qw/hfh-rep-block/],
+    element_attr => {
+        rel => ['tooltip'],
+        title => ['The line definition. Each element has properties subscriber_id, line, type.']
+    },
 );
 
 has_field 'line.id' => (

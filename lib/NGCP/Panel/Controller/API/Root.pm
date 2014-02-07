@@ -193,6 +193,7 @@ sub get_collection_properties {
             $f->type eq "Hidden" ||
             $f->type eq "Button" ||
             $f->type eq "Submit" ||
+            $f->type eq "AddElement" ||
             0);
         my @types = ();
         push @types, 'null' unless $f->required;
