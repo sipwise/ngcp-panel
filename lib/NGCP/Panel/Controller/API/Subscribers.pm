@@ -68,7 +68,10 @@ sub GET :Allow {
         my (@embedded, @links);
         my $form = $self->get_form($c);
         for my $subscriber ($subscribers->search({}, {order_by => {-asc => 'me.id'}})->all) {
-            push @embedded, $self->hal_from_item($c, $subscriber, $form);
+            say ">>>>>>>>>>> transforming item into resource";
+            my $resource = $self->transform_resource($c, $subscriber, $form);
+            use Data::Printer; p $resource;
+            push @embedded, $self->hal_from_item($c, $subscriber, $resource, $form);
             push @links, Data::HAL::Link->new(
                 relation => 'ngcp:'.$self->resource_name,
                 href     => sprintf('%s%d', $self->dispatch_path, $subscriber->id),
@@ -137,143 +140,14 @@ sub POST :Allow {
         );
         last unless $resource;
 
-        my $domain;
-        if($resource->{domain}) {
-            $domain = $c->model('DB')->resultset('domains')
-                ->search({ domain => $resource->{domain} });
-            if($c->user->roles eq "admin") {
-            } elsif($c->user->roles eq "reseller") {
-                $domain = $domain->search({ 
-                    'domain_resellers.reseller_id' => $c->user->reseller_id,
-                }, {
-                    join => 'domain_resellers',
-                });
-            }
-            $domain = $domain->first;
-            unless($domain) {
-                $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Invalid 'domain', doesn't exist.");
-                last;
-            }
-            delete $resource->{domain};
-            $resource->{domain_id} = $domain->id;
-        }
-
-        $resource->{e164} = delete $resource->{primary_number};
-        $resource->{contract_id} = delete $resource->{customer_id};
-        $resource->{status} //= 'active';
-        $resource->{administrative} //= 0;
-
-        my $form = $self->get_form($c);
-        last unless $self->validate_form(
-            c => $c,
-            resource => $resource,
-            form => $form,
-        );
-
-        unless($domain) {
-            $domain = $c->model('DB')->resultset('domains')->search($resource->{domain_id});
-            if($c->user->roles eq "admin") {
-            } elsif($c->user->roles eq "reseller") {
-                $domain = $domain->search({ 
-                    'domain_resellers.reseller_id' => $c->user->reseller_id,
-                }, {
-                    join => 'domain_resellers',
-                });
-            }
-            $domain = $domain->first;
-            unless($domain) {
-                $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Invalid 'domain', doesn't exist.");
-                last;
-            }
-        }
-
-        my $customer = $self->get_customer($c, $resource->{contract_id});
-        last unless($customer);
-        if(defined $customer->max_subscribers && $customer->voip_subscribers->search({ 
-                status => { '!=' => 'terminated' }
-            })->count >= $customer->max_subscribers) {
-            
-            $self->error($c, HTTP_FORBIDDEN, "Maximum number of subscribers reached.");
-            last;
-        }
-
-        my $preferences = {};
-        my $admin = 0;
-        unless($customer->get_column('product_class') eq 'pbxaccount') {
-            delete $resource->{is_pbx_group};
-            delete $resource->{pbx_group_id};
-            $admin = $resource->{admin} // 0;
-        } elsif($c->config->{features}->{cloudpbx}) {
-            my $subs = NGCP::Panel::Utils::Subscriber::get_custom_subscriber_struct(
-                c => $c,
-                contract => $customer,
-                show_locked => 1,
-            );
-            use Data::Printer; say ">>>>>>>>>>>>>>>>>>>> subs"; p $subs;
-            my $admin_subscribers = NGCP::Panel::Utils::Subscriber::get_admin_subscribers(
-                voip_subscribers => $subs->{subscribers});
-            unless(@{ $admin_subscribers }) {
-                $admin = $resource->{admin} // 1;
-            } else {
-                $admin = $resource->{admin} // 0;
-            }
-
-            $preferences->{shared_buddylist_visibility} = 1;
-            $preferences->{display_name} = $resource->{display_name}
-                if(defined $resource->{display_name});
-
-            my $default_sound_set = $customer->voip_sound_sets
-                ->search({ contract_default => 1 })->first;
-            if($default_sound_set) {
-                $preferences->{contract_sound_set} = $default_sound_set->id;
-            }
-
-            my $admin_subscriber = $admin_subscribers->[0];
-            my $base_number = $admin_subscriber->{primary_number};
-            if($base_number) {
-                $preferences->{cloud_pbx_base_cli} = $base_number->{cc} . $base_number->{ac} . $base_number->{sn};
-            }
-        }
-
-        my $billing_profile = $self->get_billing_profile($c, $customer);
-        last unless($billing_profile);
-        if($billing_profile->prepaid) {
-            $preferences->{prepaid} = 1;
-        }
-
-        my $subscriber = $c->model('DB')->resultset('voip_subscribers')->find({
-            username => $resource->{username},
-            domain_id => $resource->{domain_id},
-            status => { '!=' => 'terminated' },
-        });
-        if($subscriber) {
-            $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Subscriber already exists.");
-            last;
-        }
-
-        my $alias_numbers = [];
-        if(ref $resource->{alias_numbers} eq "ARRAY") {
-            foreach my $num(@{ $resource->{alias_numbers} }) {
-                unless(ref $num eq "HASH") {
-                    $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Invalid parameter 'alias_numbers', must be hash or array of hashes.");
-                    last;
-                }
-                push @{ $alias_numbers }, { e164 => $num };
-            }
-        } elsif(ref $resource->{alias_numbers} eq "HASH") {
-            push @{ $alias_numbers }, { e164 => $resource->{alias_numbers} };
-        } else {
-            use Data::Printer; p $resource->{alias_numbers}; say ">>>>>>>>>>> '".(ref $resource->{alias_numbers})."'";
-            $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Invalid parameter 'alias_numbers', must be hash or array of hashes.");
-            last;
-        }
-
-        # TODO: handle pbx subscribers:
-            # extension
-            # is group
-            # default sound set
-
-        # TODO: handle status != active
+        my $r = $self->prepare_resource($c, $schema, $resource);
+        last unless($r);
+        my $subscriber;
+        my $customer = $r->{customer};
+        my $admin = $r->{admin};
+        my $alias_numbers = $r->{alias_numbers};
+        my $preferences = $r->{preferences};
+        $resource = $r->{resource};
 
         try {
             my ($uuid_bin, $uuid_string);
@@ -283,7 +157,7 @@ sub POST :Allow {
             $subscriber = NGCP::Panel::Utils::Subscriber::create_subscriber(
                 c => $c,
                 schema => $schema,
-                contract => $customer,
+                contract => $r->{customer},
                 params => $resource,
                 admin_default => $admin,
                 preferences => $preferences,

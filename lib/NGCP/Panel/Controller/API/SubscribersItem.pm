@@ -51,7 +51,9 @@ sub GET :Allow {
         my $subscriber = $self->item_by_id($c, $id);
         last unless $self->resource_exists($c, subscriber => $subscriber);
 
-        my $hal = $self->hal_from_item($c, $subscriber);
+        my $form = $self->get_form($c);
+        my $resource = $self->transform_resource($c, $subscriber, $form);
+        my $hal = $self->hal_from_item($c, $subscriber, $resource, $form);
 
         my $response = HTTP::Response->new(HTTP_OK, undef, HTTP::Headers->new(
             (map { # XXX Data::HAL must be able to generate links with multiple relations
@@ -85,6 +87,56 @@ sub OPTIONS :Allow {
     $c->response->body(JSON::to_json({ methods => $allowed_methods })."\n");
     return;
 }
+
+sub PUT :Allow {
+    my ($self, $c, $id) = @_;
+    my $guard = $c->model('DB')->txn_scope_guard;
+
+        my $preference = $self->require_preference($c);
+        last unless $preference;
+
+        my $subscriber = $self->item_by_id($c, $id);
+        last unless $self->resource_exists($c, subscriber => $subscriber);
+        my $resource = $self->get_valid_put_data(
+            c => $c,
+            id => $id,
+            media_type => 'application/json',
+        );
+        last unless $resource;
+
+        say ">>>>>>>>>>>>>> new resource:";
+        use Data::Printer; p $resource;
+
+        my $form = $self->get_form($c);
+        my $old_resource = $self->transform_resource($c, $subscriber, $form);
+
+        say ">>>>>>>>>>>>>> old resource:";
+        use Data::Printer; p $old_resource;
+
+        $subscriber = $self->update_item($c, $subscriber, $old_resource, $resource, $form);
+        last unless $subscriber;
+
+        say ">>>>>>>>>>>>> updated item";
+
+        $guard->commit;
+
+        if ('minimal' eq $preference) {
+            $c->response->status(HTTP_NO_CONTENT);
+            $c->response->header(Preference_Applied => 'return=minimal');
+            $c->response->body(q());
+        } else {
+            my $hal = $self->hal_from_item($c, $subscriber, $form);
+            my $response = HTTP::Response->new(HTTP_OK, undef, HTTP::Headers->new(
+                $hal->http_headers,
+            ), $hal->as_json);
+            $c->response->headers($response->headers);
+            $c->response->header(Preference_Applied => 'return=representation');
+            $c->response->body($response->content);
+        }
+    
+    return;
+}
+
 
 sub DELETE :Allow {
     my ($self, $c, $id) = @_;
