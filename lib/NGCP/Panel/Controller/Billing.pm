@@ -201,9 +201,8 @@ sub create :Chained('profile_list') :PathPart('create') :Args(0) {
     my $params = {};
     $params->{reseller}{id} = delete $params->{reseller_id};
     $params = $params->merge($c->session->{created_objects});
-    if($c->user->is_superuser && $no_reseller) {
-        $form = NGCP::Panel::Form::BillingProfile::Reseller->new;
-    } elsif($c->user->is_superuser) {
+    # no_reseller - sounds as "!reseller", and thus !$no_reseller => !(!reseller) => reseller, but old code meant axacly admin view for this case, so, we can suppose that no_reseller could be number of reseller
+    if($c->user->is_superuser && !$no_reseller) {
         $form = NGCP::Panel::Form::BillingProfile::Admin->new;
     } else {
         $form = NGCP::Panel::Form::BillingProfile::Reseller->new;
