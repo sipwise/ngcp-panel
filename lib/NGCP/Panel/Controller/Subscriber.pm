@@ -420,7 +420,7 @@ sub webphone_ajax :Chained('base') :PathPart('webphone/ajax') :Args(0) {
     my $config = {
         sip => {
             # wss/5061 vs ws/5060
-            ws_servers => 'ws://' . $subscriber->domain->domain . ':5060/ws',
+            ws_servers => 'wss://' . $c->request->uri->host . ':' . $c->request->uri->port . '/wss/sip/',
             uri => 'sip:' . $subscriber->username . '@' . $subscriber->domain->domain,
             password => $subscriber->password,
         },
@@ -428,7 +428,7 @@ sub webphone_ajax :Chained('base') :PathPart('webphone/ajax') :Args(0) {
             # wss/5281 vs ws/5280
             # - ws causes "insecure" error in firefox
             # - wss fails if self signed cert is not accepted in firefox/chromium
-            wsURL => 'wss://' . $subscriber->domain->domain . ':5281/xmpp-websocket/',
+            wsURL => 'wss://' . $c->request->uri->host . ':' . $c->request->uri->port . '/wss/xmpp/',
             jid => $subscriber->username . '@' . $subscriber->domain->domain,
             server => $subscriber->domain->domain,
             credentials => { password => $subscriber->password },
