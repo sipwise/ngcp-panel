@@ -214,9 +214,14 @@ sub _prune_row {
 
 sub error_page :Private {
     my ($self,$c) = @_;
-    
     $c->log->error( 'Failed to find path ' . $c->request->path );
-    $c->stash(template => 'notfound_page.tt');
+   
+    if($c->request->path =~ /^api\/.+/) {
+        $c->response->content_type('application/json');
+        $c->response->body(JSON::to_json({ code => 404, message => 'Path not found' })."\n");
+    } else {
+        $c->stash(template => 'notfound_page.tt');
+    }
     $c->response->status(404);
 }
 
@@ -224,7 +229,12 @@ sub denied_page :Private {
     my ($self,$c) = @_;
     
     $c->log->error('Access denied to path ' . $c->request->path );
-    $c->stash(template => 'denied_page.tt');
+    if($c->request->path =~ /^api\/.+/) {
+        $c->response->content_type('application/json');
+        $c->response->body(JSON::to_json({ code => 403, message => 'Path forbidden' })."\n");
+    } else {
+        $c->stash(template => 'denied_page.tt');
+    }
     $c->response->status(403);
 }
 
