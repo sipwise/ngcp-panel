@@ -4,19 +4,21 @@
 #
 # Andreas Granig <agranig@sipwise.com>, 2014.
 # Jon Bonilla <jbonilla@sipwise.com>, 2014.
+# Victor Seva <vseva@sipwise.com>, 2014.
+#
 msgid ""
 msgstr ""
 "Project-Id-Version: I 18N\n"
 "POT-Creation-Date: YEAR-MO-DA HO:MI+ZONE\n"
-"PO-Revision-Date: 2014-02-10 08:52+0100\n"
-"Last-Translator: Jon Bonilla <jbonilla@sipwise.com>\n"
-"Language-Team: Spanish <>\n"
+"PO-Revision-Date: 2014-02-12 10:08+0100\n"
+"Last-Translator: Victor Seva <vseva@sipwise.com>\n"
+"Language-Team: Spanish; Castilian <>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Language: es\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
-"X-Generator: Lokalize 1.5\n"
+"X-Generator: Gtranslator 2.91.6\n"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:43
 msgid ""
@@ -24,8 +26,7 @@ msgid ""
 "displayed on outgoing calls."
 msgstr ""
 "\"Restricción de identificador de llamada\" - Si seleccionado, el "
-"identificador "
-"no se muestra en las llamadas salientes."
+"identificador no se muestra en las llamadas salientes."
 
 #: lib/NGCP/Panel/Controller/Administrator.pm:29
 #: lib/NGCP/Panel/Controller/Billing.pm:263
@@ -133,9 +134,9 @@ msgid ""
 "A POSIX regex matching against 'sip:user@domain' (e.g. '^sip:.+@example\\.org"
 "$' matching the whole URI, or '999' matching if the URI contains '999')"
 msgstr ""
-"Una expresión regular POSIX que coincida con 'sip:user@domain' (e.g. "
-"'^sip:.+@example\\.org$' validando toda la URI o '999' validando si la URI "
-"contiene '999')"
+"Una expresión regular POSIX que coincida con 'sip:user@domain' (e.g. '^sip:."
+"+@example\\.org$' validando toda la URI o '999' validando si la URI contiene "
+"'999')"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:460
 msgid ""
@@ -152,10 +153,8 @@ msgid ""
 "numbers from 0 to 9 may be used as wildcards as usual in shell patterns."
 msgstr ""
 "Una lista de patrones shell especificando qué CLIs se permite usar al "
-"suscriptor. "
-"\"*\", \"?\" y \"[x-y]\" con \"x\" e \"y\" representando números de 0 a 9 "
-"pueden ser usados "
-"como comodines."
+"suscriptor. \"*\", \"?\" y \"[x-y]\" con \"x\" e \"y\" representando números "
+"de 0 a 9 pueden ser usados como comodines."
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:49 lib/NGCP/Panel/Utils/DbStrings.pm:95
 msgid ""
@@ -339,8 +338,8 @@ msgid ""
 "domain. Use with care - it allows to flood your users with voice spam."
 msgstr ""
 "Permitir llamadas entrantes no autenticadas desde dominios EXTERNOS a "
-"usuarios "
-"de este dominio. Usar con precaución, permite la entrada de llamadas de SPAM."
+"usuarios de este dominio. Usar con precaución, permite la entrada de "
+"llamadas de SPAM."
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:74
 msgid "Allowed CLIs for outbound calls"
@@ -898,8 +897,8 @@ msgid "Contact Email"
 msgstr "Correo del Contacto"
 
 #: share/templates/denied_page.tt:26 share/templates/error_page.tt:23
-#, fuzzy
 #: share/templates/notfound_page.tt:26
+#, fuzzy
 msgid "Contact Support"
 msgstr "Contactar Soporte"
 
@@ -938,11 +937,10 @@ msgid ""
 "representing numbers from 0 to 9 may be used as wildcards like in shell "
 "patterns."
 msgstr ""
-"Contiene los nombres de usuario SIP (p.e. \"user\" en \"userdomain.com\") que "
-"se permiten ser llamados por el suscriptor. \"*\", \"?\" y [x-y] con \"x\" e "
-"\"y\" "
-"representando números del 0 al 9 pueden ser usados como comodines como "
-"en los patrones de consola."
+"Contiene los nombres de usuario SIP (p.e. \"user\" en \"userdomain.com\") "
+"que se permiten ser llamados por el suscriptor. \"*\", \"?\" y [x-y] con \"x"
+"\" e \"y\" representando números del 0 al 9 pueden ser usados como comodines "
+"como en los patrones de consola."
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:13
 msgid ""
@@ -951,10 +949,10 @@ msgid ""
 "subscriber. \"*\", \"?\" and \"[x-y]\" with \"x\" and \"y\" representing "
 "numbers from 0 to 9 may be used as wildcards like in shell patterns."
 msgstr ""
-"Contiene los nombres de usuario SIP (p.e. \"user\" en \"userdomain.com\") que "
-"se permiten llamar al suscriptor. \"*\", \"?\" y [x-y] con \"x\" e \"y\" "
-"representando números del 0 al 9 pueden ser usados como comodines como "
-"en los patrones de consola."
+"Contiene los nombres de usuario SIP (p.e. \"user\" en \"userdomain.com\") "
+"que se permiten llamar al suscriptor. \"*\", \"?\" y [x-y] con \"x\" e \"y\" "
+"representando números del 0 al 9 pueden ser usados como comodines como en "
+"los patrones de consola."
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:579
 msgid "Content"
@@ -1395,8 +1393,7 @@ msgid ""
 "describe what you were doing or attempting to do just before."
 msgstr ""
 "Los detalles se han registrado en el servidor. Si usted desea reportar un "
-"error. "
-"describa lo que estaba haciendo o intentando hacer."
+"error. describa lo que estaba haciendo o intentando hacer."
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:398 share/templates/device/list.tt:110
 msgid "Device Configuration"
@@ -1539,8 +1536,7 @@ msgid ""
 "on the access network which does not need pings (e.g. CDMA)"
 msgstr ""
 "No hacer NAT ping para el usuario/dominio. Usar con precaución: Únicamente "
-"tiene "
-"sentido en redes que no lo requieren como por ejemplo CDMA"
+"tiene sentido en redes que no lo requieren como por ejemplo CDMA"
 
 #: share/templates/login/login.tt:27
 msgid "Don't have an account?"
@@ -1733,7 +1729,8 @@ msgstr "Exportar suscriptor a lista de contactos XMPP compartida"
 msgid ""
 "Export this subscriber into the shared XMPP buddy list for the customer."
 msgstr ""
-"Exportar este suscriptor a lista de contactos XMPP compartida para el cliente."
+"Exportar este suscriptor a lista de contactos XMPP compartida para el "
+"cliente."
 
 #: share/templates/subscriber/webphone.tt:601
 msgid "Extended Away"
@@ -1749,7 +1746,6 @@ msgid "Extension Number, e.g. 101"
 msgstr "Número de Extensión, p.e. 101"
 
 #: lib/NGCP/Panel/Controller/Contract.pm:26
-#, fuzzy
 #: lib/NGCP/Panel/Controller/Contract.pm:370
 #: lib/NGCP/Panel/Controller/Customer.pm:118
 #: lib/NGCP/Panel/Controller/Customer.pm:48
@@ -1757,6 +1753,7 @@ msgstr "Número de Extensión, p.e. 101"
 #: lib/NGCP/Panel/Controller/Reseller.pm:41
 #: lib/NGCP/Panel/Utils/DbStrings.pm:614
 #: share/templates/subscriber/master.tt:72
+#, fuzzy
 msgid "External #"
 msgstr "External #"
 
@@ -2218,8 +2215,8 @@ msgid ""
 "parameter in R-URI which has been sent in Contact at outbound registration."
 msgstr ""
 "Para las llamadas entrantes desde este peer, encontrar al suscriptor de "
-"destino por el parámetro UUID en la cabecera RURI, el cual ha sido fijado "
-"en la cabecera Contact durante el registro hacia el peer."
+"destino por el parámetro UUID en la cabecera RURI, el cual ha sido fijado en "
+"la cabecera Contact durante el registro hacia el peer."
 
 #: share/templates/denied_page.tt:7
 msgid "Forbidden!"
@@ -2232,21 +2229,19 @@ msgid ""
 "When enabling this option in a peer, make sure you trust it, as the NGCP "
 "will become an open relay for it!"
 msgstr ""
-"Forzar que las llamadas desde este usuario/dominio/peer sean rutadas a "
-"la PSTN aunque el destino sea local. Usar con precaución ya que esta "
-"preferencia "
-"puede incrementar sus costes. Cuando habilite esta opción en un peer "
-"asegúrese "
-"de confiar en él ya que el sistema se convierte en un \"open relay\" para "
-"éste."
+"Forzar que las llamadas desde este usuario/dominio/peer sean rutadas a la "
+"PSTN aunque el destino sea local. Usar con precaución ya que esta "
+"preferencia puede incrementar sus costes. Cuando habilite esta opción en un "
+"peer asegúrese de confiar en él ya que el sistema se convierte en un \"open "
+"relay\" para éste."
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:93
 msgid ""
 "Force calls to this user to be treated as if the user was not local. This "
 "helps in migration scenarios."
 msgstr ""
-"Forzar a que las llamadas a este usuario sean tratadas como no locales. "
-"Esta preferencia es útil en escenarios de migración de sistemas."
+"Forzar a que las llamadas a este usuario sean tratadas como no locales. Esta "
+"preferencia es útil en escenarios de migración de sistemas."
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:92
 #, fuzzy
@@ -2437,9 +2432,9 @@ msgid ""
 "existing and new subscribers within this customer if no specific sound set "
 "is specified for the subscribers"
 msgstr ""
-"Si activo y un cliente es seleccionado, el grupo de locuciones se usará "
-"para todos los suscriptores nuevos y existentes de este cliente a no ser que "
-"un grupo específico sea especificado para los suscriptores"
+"Si activo y un cliente es seleccionado, el grupo de locuciones se usará para "
+"todos los suscriptores nuevos y existentes de este cliente a no ser que un "
+"grupo específico sea especificado para los suscriptores"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:447
 msgid ""
@@ -2674,8 +2669,8 @@ msgid "Invalid profile id detected!"
 msgstr "Id de perfil inválido detectado"
 
 #: lib/NGCP/Panel/Controller/Customer.pm:1088
-#, fuzzy
 #: lib/NGCP/Panel/Controller/Customer.pm:964
+#, fuzzy
 msgid "Invalid provisioning subscriber id detected."
 msgstr "Invalid provisioning subscriber id detected."
 
@@ -2809,8 +2804,8 @@ msgid ""
 "Lines/Keys in this range can be used as Busy Lamp Field. Value is accessible "
 "in the config template via phone.lineranges[].lines[].can_blf"
 msgstr ""
-"Líneas/Botones en este rango pueden ser usadas para presencia BLF. "
-"El valor es accesible en la plantilla de configuración del terminal"
+"Líneas/Botones en este rango pueden ser usadas para presencia BLF. El valor "
+"es accesible en la plantilla de configuración del terminal"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:468
 #, fuzzy
@@ -2818,9 +2813,9 @@ msgid ""
 "Lines/Keys in this range can be used as regular phone lines. Value is "
 "accessible in the config template via phone.lineranges[].lines[].can_private"
 msgstr ""
-"Líneas/Botones en este rango pueden ser usadas para presencia "
-"configurar líneas adicionales.  El valor es accesible en la plantilla "
-"de configuración del terminal"
+"Líneas/Botones en este rango pueden ser usadas para presencia configurar "
+"líneas adicionales.  El valor es accesible en la plantilla de configuración "
+"del terminal"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:531
 #, fuzzy
@@ -2828,16 +2823,16 @@ msgid ""
 "Lines/Keys in this range can be used as shared lines. Value is accessible in "
 "the config template via phone.lineranges[].lines[].can_shared"
 msgstr ""
-"Líneas/Botones en este rango pueden ser usadas para línea compartida. "
-"El valor es accesible en la plantilla de configuración del terminal"
+"Líneas/Botones en este rango pueden ser usadas para línea compartida. El "
+"valor es accesible en la plantilla de configuración del terminal"
 
 #: share/templates/calls/chord.tt:46
 msgid ""
 "Links are colored by the more frequent origin. Mouseover on a link to see "
 "the direction details."
 msgstr ""
-"Enlaces son coloreados por origen más frecuente. Poner el cursos sobre "
-"ellos para ver los detalles de la dirección."
+"Enlaces son coloreados por origen más frecuente. Poner el cursos sobre ellos "
+"para ver los detalles de la dirección."
 
 #: share/templates/helpers/datatables.tt:208
 msgid "Loading..."
@@ -2902,8 +2897,8 @@ msgid "March"
 msgstr "Marzo"
 
 #: lib/NGCP/Panel/Controller/Administrator.pm:36
-#, fuzzy
 #: lib/NGCP/Panel/Controller/Reseller.pm:134
+#, fuzzy
 msgid "Master"
 msgstr "Master"
 
@@ -2943,8 +2938,8 @@ msgid ""
 "Maximum number of concurrent outgoing sessions (calls) coming from a "
 "subscriber or going to a peer."
 msgstr ""
-"Máximo número de llamadas salientes provenientes de un suscriptor "
-"o dirigidas a un peer"
+"Máximo número de llamadas salientes provenientes de un suscriptor o "
+"dirigidas a un peer"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:133
 msgid ""
@@ -3026,10 +3021,8 @@ msgid ""
 "calls between two countries: thicker links represent more calls."
 msgstr ""
 "Poner cursor sobre nombre del país para resaltar llamadas de o hacia el "
-"mismo. "
-"El espesor del trazo entre países indica la frecuencia relativa de llamadas "
-"entre "
-"los mismos."
+"mismo. El espesor del trazo entre países indica la frecuencia relativa de "
+"llamadas entre los mismos."
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:188
 msgid "NAT and Media Flow Control"
@@ -3524,8 +3517,8 @@ msgid "Peering server successfully updated"
 msgstr "Servidor de peering modificado con éxito"
 
 #: share/templates/widgets/admin_peering_overview.tt:4
-#, fuzzy
 #: share/templates/widgets/admin_topmenu_settings.tt:30
+#, fuzzy
 msgid "Peerings"
 msgstr "Peerings"
 
@@ -3723,7 +3716,6 @@ msgid "Replacement Pattern"
 msgstr "Patrón de reemplazo"
 
 #: lib/NGCP/Panel/Controller/Administrator.pm:32
-#, fuzzy
 #: lib/NGCP/Panel/Controller/Billing.pm:38
 #: lib/NGCP/Panel/Controller/Contact.pm:31
 #: lib/NGCP/Panel/Controller/Customer.pm:49
@@ -3738,6 +3730,7 @@ msgstr "Patrón de reemplazo"
 #: share/templates/customer/details.tt:45
 #: share/templates/reseller/details.tt:32
 #: share/templates/widgets/admin_reseller_overview.tt:7
+#, fuzzy
 msgid "Reseller"
 msgstr "Reseller"
 
@@ -3793,8 +3786,8 @@ msgid ""
 "Reseller successfully created with login <b>%1</b> and password <b>%2</b>, "
 "please review your settings below"
 msgstr ""
-"Reseller creado con éxito con acceso <b>%1</b> y contraseña <b>%2</b>, "
-"Por favor revise sus preferencias"
+"Reseller creado con éxito con acceso <b>%1</b> y contraseña <b>%2</b>, Por "
+"favor revise sus preferencias"
 
 #: lib/NGCP/Panel/Controller/Reseller.pm:232
 msgid "Reseller successfully updated"
@@ -3911,9 +3904,9 @@ msgid ""
 "SIP Session Timers refresh interval (seconds). Should be always greater than "
 "min_timer preference. SBC will make refresh at the half of this interval."
 msgstr ""
-"Intervalo de refresco de los SIP Session Timers en segundos. "
-"Debería ser siempre superior al valo mínimo de la preferencia min_timer. "
-"El SBC hará el refresco a la mitad del intervalo."
+"Intervalo de refresco de los SIP Session Timers en segundos. Debería ser "
+"siempre superior al valo mínimo de la preferencia min_timer. El SBC hará el "
+"refresco a la mitad del intervalo."
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:105
 msgid "SIP Session Timers refresh method."
@@ -4023,16 +4016,16 @@ msgid ""
 "Same as \"block_out_override_pin\" but additionally disables the "
 "administrative block list and NCOS level."
 msgstr ""
-"Igual que \"block_out_override_pin\" pero adicionalmente deshabilita "
-"el bloqueo administrativo y el nivel NCOS."
+"Igual que \"block_out_override_pin\" pero adicionalmente deshabilita el "
+"bloqueo administrativo y el nivel NCOS."
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:55
 msgid ""
 "Same as \"ncos\", but may only be set by administrators and is applied prior "
 "to the user setting."
 msgstr ""
-"Igual que \"ncos\" pero únicamente puede ser modificado por "
-"administradores y tiene precedencia."
+"Igual que \"ncos\" pero únicamente puede ser modificado por administradores "
+"y tiene precedencia."
 
 #: lib/NGCP/Panel/Controller/Billing.pm:639
 #: lib/NGCP/Panel/Utils/DbStrings.pm:620
@@ -4050,18 +4043,17 @@ msgid ""
 "allowed_clis check and copy UPN to network-provided number (NPN)."
 msgstr ""
 "Buscar por una coincidencia parcial del UPN (CLI proporcionado por el "
-"usuario) "
-"con el número E164 principal y los alias. SI existe coincidencia, valida el "
-"UPN "
-"sin comprobar allowed_clis y copia UPN a NPN (CLI proporcionado por la red)."
+"usuario) con el número E164 principal y los alias. SI existe coincidencia, "
+"valida el UPN sin comprobar allowed_clis y copia UPN a NPN (CLI "
+"proporcionado por la red)."
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:561
 msgid ""
 "Seconds to wait for pick-up until engaging Call Forward (e.g. "
 "&ldquo;10&rdquo;)"
 msgstr ""
-"Segundos a esperar por la captura antes de ejecutar un desvío "
-"(p.e. &ldquo;10&rdquo)"
+"Segundos a esperar por la captura antes de ejecutar un desvío (p.e. "
+"&ldquo;10&rdquo)"
 
 #: share/templates/security/list.tt:1
 #: share/templates/widgets/admin_topmenu_settings.tt:34
@@ -4073,9 +4065,8 @@ msgid ""
 "See \"lock_voip_account_subscriber\" for a list of possible values. A lock "
 "value of \"none\" will not be returned to the caller. Read-only setting."
 msgstr ""
-"Ver \"lock_voip_account_subscriber\" para una lista de valores posibles. "
-"Un valor de \"none\" no será devuelto al llamante. Preferencia de sólo "
-"lectura."
+"Ver \"lock_voip_account_subscriber\" para una lista de valores posibles. Un "
+"valor de \"none\" no será devuelto al llamante. Preferencia de sólo lectura."
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:565
 msgid "Select"
@@ -4107,9 +4098,9 @@ msgid ""
 "INVITE to the subscriber. If a 404 is received the SIP AOR is sent as "
 "request URI as fallback."
 msgstr ""
-"Enviar el número E164 en vez del AOR SIP en la RURI cuando se envía un INVITE "
-"al subscriptor. Si se recibe un 404 de vuelta, entonces se hace un reintento "
-"con el AOR."
+"Enviar el número E164 en vez del AOR SIP en la RURI cuando se envía un "
+"INVITE al subscriptor. Si se recibe un 404 de vuelta, entonces se hace un "
+"reintento con el AOR."
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:161
 msgid "Send the calls from/to the subscribers through the cloud pbx module."
@@ -4232,9 +4223,9 @@ msgid "Simple View"
 msgstr "Vista simple"
 
 #: lib/NGCP/Panel/Controller/Subscriber.pm:289
-#, fuzzy
 #: lib/NGCP/Panel/Controller/Subscriber.pm:294
 #: lib/NGCP/Panel/Utils/DbStrings.pm:583
+#, fuzzy
 msgid "Slot"
 msgstr "Entrada"
 
@@ -4356,8 +4347,8 @@ msgid ""
 "Specifies the list of caller and callee rewrite rules which should be "
 "applied for incoming and outgoing calls."
 msgstr ""
-"Especifica la lista de reglas de reescritura de origen y destino que "
-"han de aplicarse para las llamadas entrantes y salientes."
+"Especifica la lista de reglas de reescritura de origen y destino que han de "
+"aplicarse para las llamadas entrantes y salientes."
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:11
 msgid ""
@@ -4366,8 +4357,8 @@ msgid ""
 "listed in the block list), with a true value it is a whitelist (reject all "
 "calls except from numbers listed in the block list)."
 msgstr ""
-"Especifica el modo de funcionamiento de la lista de bloqueo de entrantes. "
-"Si no seleccionado o con valor falso, es una lista negra (acepta todas las "
+"Especifica el modo de funcionamiento de la lista de bloqueo de entrantes. Si "
+"no seleccionado o con valor falso, es una lista negra (acepta todas las "
 "llamadas excepto de los números de la lista negra); con un valor verdadero "
 "es una lista blanca (rechaza las llamadas excepto de los números "
 "especificados en la lista)."
@@ -4379,11 +4370,11 @@ msgid ""
 "listed in the block list), with a true value it is a whitelist (deny all "
 "calls except to numbers listed in the block list)."
 msgstr ""
-"Especifica el modo de funcionamiento de la lista de bloqueo de salientes. "
-"Si no seleccionado o con valor falso, es una lista negra (acepta todas las "
-"llamadas excepto a los números de la lista negra); con un valor verdadero "
-"es una lista blanca (rechaza las llamadas excepto a los números "
-"especificados en la lista)."
+"Especifica el modo de funcionamiento de la lista de bloqueo de salientes. Si "
+"no seleccionado o con valor falso, es una lista negra (acepta todas las "
+"llamadas excepto a los números de la lista negra); con un valor verdadero es "
+"una lista blanca (rechaza las llamadas excepto a los números especificados "
+"en la lista)."
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:135
 #, fuzzy
@@ -4464,9 +4455,8 @@ msgid "Street"
 msgstr "Calle"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:566
-#, fuzzy
 msgid "Submitid"
-msgstr "Submitid"
+msgstr "Enviado"
 
 #: lib/NGCP/Panel/Controller/Subscriber.pm:1994
 #: lib/NGCP/Panel/Utils/DbStrings.pm:292
@@ -4672,19 +4662,17 @@ msgid "Sync Device"
 msgstr "Sincronizar dispositivo"
 
 #: share/templates/widgets/admin_system_overview.tt:13
-#, fuzzy
 msgid "System <strong>Ok</strong>"
-msgstr "System <strong>Ok</strong>"
+msgstr "Sistema <strong>Ok</strong>"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:106
 msgid "System Sound Set"
 msgstr "Grupo de locuciones de sistema"
 
 #: share/templates/statistics/list.tt:1
-#, fuzzy
 #: share/templates/widgets/admin_topmenu_settings.tt:8
 msgid "System Statistics"
-msgstr "System Statistics"
+msgstr "EStadísitcas del Sistema"
 
 #: share/templates/widgets/admin_system_overview.tt:4
 msgid "System Status"
@@ -4722,13 +4710,13 @@ msgid "The IVR key to press for this destination"
 msgstr "El código del IVR para este destino"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:443
-#, fuzzy
 msgid ""
 "The Name of this range, e.g. Phone Keys or Attendant Console 1 Keys, "
 "accessible in the config template array via phone.lineranges[].name"
 msgstr ""
-"The Name of this range, e.g. Phone Keys or Attendant Console 1 Keys, "
-"accessible in the config template array via phone.lineranges[].name"
+"Nombre de este rango, e.g. Phone Keys or Attendant Console 1 Keys, "
+"accesibles en el array de la plantilla de configuración via phone."
+"lineranges[].name"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:117
 #, fuzzy
@@ -4742,7 +4730,8 @@ msgstr ""
 msgid ""
 "The SIP header field to fetch the user-provided-number from for inbound calls"
 msgstr ""
-"La cabecera SIP de la cual extraer el CLI de usuario de las llamadas entrantes"
+"La cabecera SIP de la cual extraer el CLI de usuario de las llamadas "
+"entrantes"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:151
 msgid "The SIP header to take the IP address for logging it into CDRs."
@@ -4763,9 +4752,8 @@ msgid ""
 "area code. Defaults to the area code of the E.164 number if the subscriber "
 "has one."
 msgstr ""
-"El código de área que será usado para rutar las llamadas marcadas sin "
-"código de área. Por defecto, el valor del código del número E164 del "
-"suscriptor."
+"El código de área que será usado para rutar las llamadas marcadas sin código "
+"de área. Por defecto, el valor del código del número E164 del suscriptor."
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:173
 msgid "The base CLI for the PBX extension."
@@ -4800,8 +4788,8 @@ msgid ""
 "The content to put into the History-Info  header for outbound calls (use "
 "\"None\" to not set header at all)"
 msgstr ""
-"El contenido a poner en el History-Info para llamadas salientes (Usar "
-"\"none\" para no enviar la cebecera)"
+"El contenido a poner en el History-Info para llamadas salientes (Usar \"none"
+"\" para no enviar la cebecera)"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:123
 msgid ""
@@ -4820,14 +4808,14 @@ msgstr ""
 "plataforma al suscriptor"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:454
-#, fuzzy
 msgid "The cost of each following interval in cents per second (e.g 0.90)"
-msgstr "The cost of each following interval in cents per second (e.g 0.90)"
+msgstr ""
+"Coste de cada uno de los siguientes intervalos en céntimos por segundo (e.g "
+"0.90)"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:574
-#, fuzzy
 msgid "The cost of the init interval in cents per second (e.g 0.90)"
-msgstr "The cost of the init interval in cents per second (e.g 0.90)"
+msgstr "Coste del inicio del intervalo en céntimos por segundo (e.g 0.90)"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:45
 msgid ""
@@ -4835,16 +4823,15 @@ msgid ""
 "country code. Defaults to the country code of the E.164 number if the "
 "subscriber has one."
 msgstr ""
-"El código de país que será usado para rutar las llamadas marcadas sin "
-"código de país. Por defecto, el valor del código del número E164 del "
-"suscriptor."
+"El código de país que será usado para rutar las llamadas marcadas sin código "
+"de país. Por defecto, el valor del código del número E164 del suscriptor."
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:554
 msgid ""
 "The destination for this slot; can be a number, username or full SIP URI."
 msgstr ""
-"El destino para esta entrada; Puede ser un número, un nombre de usuario o una "
-"URI SIP."
+"El destino para esta entrada; Puede ser un número, un nombre de usuario o "
+"una URI SIP."
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:373
 msgid "The end time in format hh:mm:ss"
@@ -4857,52 +4844,48 @@ msgid ""
 "ignore."
 msgstr ""
 "El periodo de validez de una petición push. El cliente debe registrase en "
-"este intervalo o de otra forma debería tratar esta petición como inválida "
-"e ignorarla."
+"este intervalo o de otra forma debería tratar esta petición como inválida e "
+"ignorarla."
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:405
-#, fuzzy
 msgid "The human-readable display name (e.g. John Doe)"
-msgstr "The human-readable display name (e.g. John Doe)"
+msgstr "Display name legible (e.g. Juan Nadie)"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:167
 msgid "The hunting policy for PBX hunt groups."
 msgstr "Política de captura para los grupo de captura."
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:33
-#, fuzzy
 msgid ""
 "The id pointing to the \"Call Forward Busy\" entry in the voip_cf_mappings "
 "table"
 msgstr ""
-"The id pointing to the \"Call Forward Busy\" entry in the voip_cf_mappings "
-"table"
+"El id señalando a la entrada \"Call Forward Busy\" en la tabla "
+"voip_cf_mappings"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:37
-#, fuzzy
 msgid ""
 "The id pointing to the \"Call Forward Timeout\" entry in the "
 "voip_cf_mappings table"
 msgstr ""
-"The id pointing to the \"Call Forward Timeout\" entry in the "
-"voip_cf_mappings table"
+"El id señalando a la entrada \"Call Forward Timeout\" en la tabla "
+"voip_cf_mappings"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:35
-#, fuzzy
 msgid ""
 "The id pointing to the \"Call Forward Unavailable\" entry in the "
 "voip_cf_mappings table"
 msgstr ""
-"The id pointing to the \"Call Forward Unavailable\" entry in the "
-"voip_cf_mappings table"
+"El id señalando a la entrada \"Call Forward Unavailable\" en la tabla "
+"voip_cf_mappings"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:31
 msgid ""
 "The id pointing to the \"Call Forward Unconditional\" entry in the "
 "voip_cf_mappings table"
 msgstr ""
-"The id pointing to the \"Call Forward Unconditional\" entry in the "
-"voip_cf_mappings table"
+"El id señalando a la entrada \"Call Forward Unconditional\" en la tabla "
+"voip_cf_mappings"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:312
 msgid "The length of the first interval"
@@ -4921,31 +4904,28 @@ msgid "The members (as SIP URIs) of the PBX hunt group."
 msgstr "Los miembros (como direcciones SIP) del grupo de captura de la PBX"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:180
-#, fuzzy
 msgid ""
 "The network-provided display name used for XMPP contacts and optionally SIP "
 "outbound header manipulation."
 msgstr ""
-"The network-provided display name used for XMPP contacts and optionally SIP "
-"outbound header manipulation."
+"Display name proporcionado por la red utilizado por los contactos XMPP y "
+"opcionalmente en la manipulación de la cabecera SIP outbound."
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:432
-#, fuzzy
 msgid ""
 "The number of Lines/Keys in this range, indexed from 0 in the config "
 "template array phone.lineranges[].lines[]"
 msgstr ""
-"The number of Lines/Keys in this range, indexed from 0 in the config "
-"template array phone.lineranges[].lines[]"
+"Número de Líneas/Botones en este rango, indexados desde 0 en el array phone."
+"lineranges[].lines[] de la plantilla de configuración"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:415
 msgid "The password to log into the CSC Panel"
 msgstr "La contraseña para acceder al panel de usuario"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:169
-#, fuzzy
 msgid "The serial timeout for hunting in PBX hunt groups."
-msgstr "The serial timeout for hunting in PBX hunt groups."
+msgstr "Tiempo de espera serie para la selección en los grupos PBX"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:597
 msgid "The start time in format hh:mm:ss"
@@ -5008,15 +4988,13 @@ msgid "Timeset \"%1\" Details"
 msgstr "Detalles del Grupo de Tiempos \"%1\""
 
 #: lib/NGCP/Panel/Controller/Callflow.pm:24
-#, fuzzy
 #: lib/NGCP/Panel/Controller/Subscriber.pm:1685
 msgid "Timestamp"
-msgstr "Timestamp"
+msgstr "Marca de tiempo"
 
 #: share/templates/calls/chord.tt:53
-#, fuzzy
 msgid "To Date:"
-msgstr "To Date:"
+msgstr "A la Fecha:"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:132
 msgid "Total max of outbound calls of Customer"
@@ -5103,9 +5081,8 @@ msgid "Uri"
 msgstr "Uri"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:87
-#, fuzzy
 msgid "Use Number instead of Contact first for outbound calls"
-msgstr "Use Number instead of Contact first for outbound calls"
+msgstr "Usar primero el Número en vez de Contacto para llamadas salientes"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:563
 msgid "Use free time"
@@ -5129,12 +5106,10 @@ msgid "User successfully unbanned"
 msgstr "Usuario desbaneado con éxito"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:174
-#, fuzzy
 msgid "User-Agent header passing mode."
 msgstr "User-Agent header passing mode."
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:89
-#, fuzzy
 msgid "User-Provided Number"
 msgstr "User-Provided Number"
 
@@ -5144,9 +5119,8 @@ msgid "Username"
 msgstr "Nombre de usuario"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:422
-#, fuzzy
 msgid "VAT Included"
-msgstr "VAT Included"
+msgstr "VAT Incluido"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:385
 #, fuzzy
@@ -5184,9 +5158,8 @@ msgid "Via Route"
 msgstr "Via Route"
 
 #: lib/NGCP/Panel/Controller/Peering.pm:83
-#, fuzzy
 msgid "Via Route Set"
-msgstr "Route"
+msgstr "Conjunto Via Route"
 
 #: share/templates/widgets/subscriber_reg_overview.tt:33
 msgid "View All Registered Devices"
@@ -5246,9 +5219,8 @@ msgid "Web Password"
 msgstr "Contraseña web"
 
 #: share/templates/subscriber/webphone.tt:1
-#, fuzzy
 msgid "Web Phone for "
-msgstr "Web Phone for "
+msgstr "Teléfono Web para "
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:500
 #: share/templates/subscriber/master.tt:59
@@ -5341,7 +5313,7 @@ msgstr "llamada terminada."
 
 #: share/templates/subscriber/webphone.tt:325
 msgid "call failed:"
-msgstr "llamada fallida;"
+msgstr "llamada fallida:"
 
 #: share/templates/subscriber/webphone.tt:329
 msgid "call started."
@@ -5587,5 +5559,3 @@ msgstr "lista blanca"
 #: share/templates/subscriber/preferences.tt:308
 msgid "yes"
 msgstr "sí"
-
-
