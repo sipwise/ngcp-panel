@@ -1993,7 +1993,10 @@ sub edit_master :Chained('master') :PathPart('edit') :Args(0) :Does(ACL) :ACLDet
                 unless ($subadmin_pbx) {
                     for my $num($subscriber->voip_numbers->all) {
                         next if($subscriber->primary_number && $num->id == $subscriber->primary_number->id);
-                        $num->delete;
+                        $num->update({
+                            subscriber_id => undef,
+                            reseller_id => undef,
+                        });
                     }
                 }
 

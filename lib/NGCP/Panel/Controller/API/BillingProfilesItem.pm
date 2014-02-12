@@ -145,9 +145,7 @@ sub PUT :Allow {
         my $old_resource = { $profile->get_inflated_columns };
 
         my $form = $self->get_form($c);
-        use Data::Printer; p $profile;
         $profile = $self->update_profile($c, $profile, $old_resource, $resource, $form);
-        use Data::Printer; p $profile;
         last unless $profile;
 
         $guard->commit;

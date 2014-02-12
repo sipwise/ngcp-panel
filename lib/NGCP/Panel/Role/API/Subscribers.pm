@@ -12,6 +12,7 @@ use Test::More;
 use NGCP::Panel::Form::Subscriber::SubscriberAPI;
 use NGCP::Panel::Utils::XMLDispatcher;
 use NGCP::Panel::Utils::Prosody;
+use NGCP::Panel::Utils::Subscriber;
 
 sub get_form {
     my ($self, $c) = @_;
@@ -34,8 +35,7 @@ sub transform_resource {
     }
 
     $form //= $self->get_form($c);
-
-    $self->validate_form(
+    last unless $self->validate_form(
         c => $c,
         resource => \%resource,
         form => $form,
@@ -167,7 +167,7 @@ sub get_billing_profile {
 }
 
 sub prepare_resource {
-    my ($self, $c, $schema, $resource) = @_;
+    my ($self, $c, $schema, $resource, $update) = @_;
 
     my $domain;
     if($resource->{domain}) {
@@ -189,7 +189,6 @@ sub prepare_resource {
         delete $resource->{domain};
         $resource->{domain_id} = $domain->id;
     }
-
     $resource->{e164} = delete $resource->{primary_number};
     $resource->{contract_id} = delete $resource->{customer_id};
     $resource->{status} //= 'active';
@@ -221,7 +220,7 @@ sub prepare_resource {
 
     my $customer = $self->get_customer($c, $resource->{contract_id});
     return unless($customer);
-    if(defined $customer->max_subscribers && $customer->voip_subscribers->search({ 
+    if(!$update && defined $customer->max_subscribers && $customer->voip_subscribers->search({ 
             status => { '!=' => 'terminated' }
         })->count >= $customer->max_subscribers) {
         
@@ -241,7 +240,6 @@ sub prepare_resource {
             contract => $customer,
             show_locked => 1,
         );
-        use Data::Printer; say ">>>>>>>>>>>>>>>>>>>> subs"; p $subs;
         my $admin_subscribers = NGCP::Panel::Utils::Subscriber::get_admin_subscribers(
             voip_subscribers => $subs->{subscribers});
         unless(@{ $admin_subscribers }) {
@@ -278,9 +276,16 @@ sub prepare_resource {
         domain_id => $resource->{domain_id},
         status => { '!=' => 'terminated' },
     });
-    if($subscriber) {
-        $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Subscriber already exists.");
-        return;
+    if($update) {
+        unless($subscriber) {
+            $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Subscriber does not exist.");
+            return;
+        }
+    } else {
+        if($subscriber) {
+            $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Subscriber already exists.");
+            return;
+        }
     }
 
     my $alias_numbers = [];
@@ -297,7 +302,6 @@ sub prepare_resource {
     } elsif(ref $resource->{alias_numbers} eq "HASH") {
         push @{ $alias_numbers }, { e164 => $resource->{alias_numbers} };
     } else {
-        use Data::Printer; p $resource->{alias_numbers}; say ">>>>>>>>>>> '".(ref $resource->{alias_numbers})."'";
         $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Invalid parameter 'alias_numbers', must be hash or array of hashes.");
         return;
     }
@@ -320,25 +324,44 @@ sub prepare_resource {
 }
 
 sub update_item {
-    my ($self, $c, $item, $old_resource, $resource, $form) = @_;
+    my ($self, $c, $item, $full_resource, $resource, $form) = @_;
 
-    $form //= $self->get_form($c);
+    my $subscriber = $item;
+    my $customer = $full_resource->{customer};
+    my $admin = $full_resource->{admin};
+    my $alias_numbers = $full_resource->{alias_numbers};
+    my $preferences = $full_resource->{preferences};
 
-    print ">>>>>>>>>>>>> validate before update\n";
-
-    $resource->{e164} = delete $resource->{primary_number};
-
-    return unless $self->validate_form(
-        c => $c,
-        form => $form,
-        resource => $resource,
+    NGCP::Panel::Utils::Subscriber::update_subscriber_numbers(
+        schema => $c->model('DB'),
+        primary_number => $resource->{e164},
+        alias_numbers => $alias_numbers,
+        reseller_id => $customer->contact->reseller_id,
+        subscriber_id => $subscriber->id,
     );
 
-    print ">>>>>>>>>>>>> update\n";
-    $item->update($resource);
-    print ">>>>>>>>>>>>> done update\n";
+    my $billing_res = {
+        external_id => $resource->{external_id},
+        status => $resource->{status},
+    };
+    my $provisioning_res = {
+        password => $resource->{password},
+        webusername => $resource->{webusername},
+        webpassword => $resource->{webpassword},
+        admin => $resource->{administrative},
+        is_pbx_group => $resource->{is_pbx_group},
+        pbx_group_id => $resource->{pbx_group_id},
+        modify_timestamp => NGCP::Panel::Utils::DateTime::current_local,
 
-    return $item;
+    };
+
+    $subscriber->update($billing_res);
+    $subscriber->provisioning_voip_subscriber->update($provisioning_res);
+    $subscriber->discard_changes;
+
+    # TODO: status handling (termination, ...)
+
+    return $subscriber;
 }
 
 1;

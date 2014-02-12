@@ -65,8 +65,6 @@ sub validate {
     my $data = $self->field('data')->value;
     my $upload = $self->field('faxfile')->value;
 
-    use Data::Printer; print ">>>>>>>>>>>>>>>>>>>>>> upload\n"; p $data; p $upload; p $self->fields;
-
     unless($data || $upload) {
         $self->field('faxfile')->add_error("You need to specify a file to fax, if no text is entered in the content field");
     }
