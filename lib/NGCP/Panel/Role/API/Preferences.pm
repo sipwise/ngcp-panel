@@ -1,4 +1,4 @@
-package NGCP::Panel::Role::API::DomainPreferences;
+package NGCP::Panel::Role::API::Preferences;
 use Moose::Role;
 use Sipwise::Base;
 
@@ -17,7 +17,7 @@ sub get_form {
 }
 
 sub hal_from_item {
-    my ($self, $c, $item) = @_;
+    my ($self, $c, $item, $type) = @_;
 
     my $hal = Data::HAL->new(
         links => [
@@ -30,20 +30,30 @@ sub hal_from_item {
             Data::HAL::Link->new(relation => 'collection', href => sprintf("%s", $self->dispatch_path)),
             Data::HAL::Link->new(relation => 'profile', href => 'http://purl.org/sipwise/ngcp-api/'),
             Data::HAL::Link->new(relation => 'self', href => sprintf("%s%d", $self->dispatch_path, $item->id)),
-            Data::HAL::Link->new(relation => 'ngcp:domains', href => sprintf("/api/domains/%d", $item->id)),
+            Data::HAL::Link->new(relation => "ngcp:$type", href => sprintf("/api/%s/%d", $type, $item->id)),
         ],
         relation => 'ngcp:'.$self->resource_name,
     );
 
-    my $resource = $self->get_resource($c, $item);
+    my $resource = $self->get_resource($c, $item, $type);
+    use Data::Printer; p $resource;
     $hal->resource($resource);
     return $hal;
 }
 
 sub get_resource {
-    my ($self, $c, $item) = @_;
+    my ($self, $c, $item, $type) = @_;
 
-    my $prefs = $item->provisioning_voip_domain->voip_dom_preferences->search({
+    my $prefs;
+    if($type eq "subscribers") {
+        $prefs = $item->provisioning_voip_subscriber->voip_usr_preferences;
+    } elsif($type eq "domains") {
+        $prefs = $item->provisioning_voip_domain->voip_dom_preferences;
+    } elsif($type eq "peerings") {
+        $prefs = $item->voip_peer_preferences;
+        return;
+    }
+    $prefs = $prefs->search({
     }, {
         join => 'attribute',
         order_by => { '-asc' => 'id' },
@@ -123,8 +133,6 @@ sub get_resource {
 
         }
 
-
-
         given($pref->attribute->data_type) {
             when("int")     { $value = int($pref->value) if($pref->value->is_int) }
             when("boolean") { $value = JSON::Types::bool($pref->value) if(defined $pref->value) }
@@ -139,49 +147,145 @@ sub get_resource {
         }
 
     }
-    $resource->{domain_id} = int($item->id);
-    $resource->{domainpreferences_id} = int($item->id);
+
+    if($type eq "domains") {
+        $resource->{domain_id} = int($item->id);
+        $resource->{id} = int($item->id);
+    } elsif($type eq "subscribers") {
+        $resource->{subscriber_id} = int($item->id);
+        $resource->{id} = int($item->id);
+    } elsif($type eq "peerings") {
+        $resource->{peering_id} = int($item->id);
+        $resource->{id} = int($item->id);
+    }
     return $resource;
 }
 
 sub item_rs {
-    my ($self, $c) = @_;
-
-    # we actually return the domain rs here, as we can easily
-    # go to dom_preferences from there
+    my ($self, $c, $type) = @_;
     my $item_rs;
-    if($c->user->roles eq "admin") {
-        $item_rs = $c->model('DB')->resultset('domains');
-    } elsif($c->user->roles eq "reseller") {
-        $item_rs = $c->model('DB')->resultset('admins')->find(
-                { id => $c->user->id, } )
-            ->reseller
-            ->domain_resellers
-            ->search_related('domain');
+
+    if($type eq "domains") {
+        # we actually return the domain rs here, as we can easily
+        # go to dom_preferences from there
+        if($c->user->roles eq "admin") {
+            $item_rs = $c->model('DB')->resultset('domains');
+        } elsif($c->user->roles eq "reseller") {
+            $item_rs = $c->model('DB')->resultset('admins')->find(
+                    { id => $c->user->id, } )
+                ->reseller
+                ->domain_resellers
+                ->search_related('domain');
+        }
+    } elsif($type eq "subscribers") {
+        if($c->user->roles eq "admin") {
+            $item_rs = $c->model('DB')->resultset('voip_subscribers');
+        } elsif($c->user->roles eq "reseller") {
+            $item_rs = $c->model('DB')->resultset('voip_subscribers')->search({
+                'contact.reseller_id' => $c->user->reseller_id,
+                'status' => { '!=' => 'terminated' },
+            }, {
+                join => { 'contract' => 'contact' },
+            });
+        }
+    } elsif($type eq "peerings") {
+        if($c->user->roles eq "admin") {
+            $item_rs = $c->model('DB')->resultset('voip_peer_hosts');
+        } else {
+            return;
+        }
     }
     return $item_rs;
 }
 
 sub item_by_id {
-    my ($self, $c, $id) = @_;
+    my ($self, $c, $id, $type) = @_;
 
-    my $item_rs = $self->item_rs($c);
+    my $item_rs = $self->item_rs($c, $type);
     return $item_rs->find($id);
 }
 
+sub get_preference_rs {
+    my ($self, $c, $type, $elem, $attr) = @_;
+    my $rs;
+    if($type eq "domains") {
+        $rs = NGCP::Panel::Utils::Preferences::get_dom_preference_rs(
+            c => $c,
+            attribute => $attr,
+            prov_domain => $elem,
+        );
+    } elsif($type eq "subscribers") {
+        $rs = NGCP::Panel::Utils::Preferences::get_usr_preference_rs(
+            c => $c,
+            attribute => $attr,
+            prov_subscriber => $elem,
+        );
+    } elsif($type eq "peerings") {
+        $rs = NGCP::Panel::Utils::Preferences::get_peer_preference_rs(
+            c => $c,
+            attribute => $attr,
+            peer_host => $elem,
+        );
+    }
+    return $rs;
+}
+
 sub update_item {
-    my ($self, $c, $item, $old_resource, $resource, $replace) = @_;
+    my ($self, $c, $item, $old_resource, $resource, $replace, $type) = @_;
 
     delete $resource->{id};
-    delete $resource->{domain_id};
-    delete $resource->{domainpreferences_id};
+    my $accessor;
+    my $elem;
+    my $pref_type;
+    my $reseller_id;
+    my $full_rs;
+
+    print ">>>>>>>>>> before cleanup\n";
+    use Data::Printer; p $resource;
+
+    if($type eq "domains") {
+        delete $resource->{domain_id};
+        delete $resource->{domainpreferences_id};
+        delete $old_resource->{domain_id};
+        delete $old_resource->{domainpreferences_id};
+        $accessor = $item->domain;
+        $elem = $item->provisioning_voip_domain;
+        $full_rs = $elem->voip_dom_preferences;
+        $pref_type = 'dom_pref';
+        $reseller_id = $item->domain_resellers->first->reseller_id;
+    } elsif($type eq "subscribers") {
+        delete $resource->{subscriber_id};
+        delete $resource->{subscriberpreferences_id};
+        delete $old_resource->{subscriber_id};
+        delete $old_resource->{subscriberpreferences_id};
+        $accessor = $item->username . '@' . $item->domain->domain;
+        $elem = $item->provisioning_voip_subscriber;
+        $full_rs = $elem->voip_usr_preferences;
+        $pref_type = 'usr_pref';
+        $reseller_id = $item->contract->contact->reseller_id;
+    } elsif($type eq "peerings") {
+        delete $resource->{peer_id};
+        delete $resource->{peerpreferences_id};
+        delete $old_resource->{peer_id};
+        delete $old_resource->{peerpreferences_id};
+        $accessor = $item->name;
+        $elem = $item;
+        $full_rs = $elem->voip_peer_preferences;
+        $pref_type = 'peer_pref';
+        $reseller_id = 1;
+    } else {
+        return;
+    }
+
+    print ">>>>>>>>>> after cleanup\n";
+    use Data::Printer; p $resource;
 
     if($replace) {
         # in case of PUT, we remove all old entries
         try {
-            $item->provisioning_voip_domain->voip_dom_preferences->delete_all;
+            $full_rs->delete_all;
         } catch($e) {
-            $c->log->error("failed to clear preferences for domain '".$item->domain."': $e");
+            $c->log->error("failed to clear preferences for '$accessor': $e");
             $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "Internal Server Error.");
             return;
         };
@@ -192,17 +296,14 @@ sub update_item {
                 given($k) {
 
                     # no special treatment for *_sound_set deletion, as id is stored in right name
+                    $c->log->debug("+++++++++++++ check $k for deletion");
 
                     when(/^rewrite_rule_set$/) {
                         $c->log->debug("+++++++++++++ check $k for deletion");
                         unless(exists $resource->{$k}) {
                             $c->log->debug("+++++++++++++ $k marked for deletion");
                             foreach my $p(qw/caller_in_dpid callee_in_dpid caller_out_dpid callee_out_dpid/) {
-                                my $rs = NGCP::Panel::Utils::Preferences::get_dom_preference_rs(
-                                    c => $c,
-                                    attribute => 'rewrite_' . $p,
-                                    prov_domain => $item->provisioning_voip_domain,
-                                );
+                                my $rs = $self->get_preference_rs($c, $type, $elem, 'rewrite_' . $p);
                                 next unless $rs; # unknown resource, just ignore
                                 $rs->delete_all;
                             }
@@ -210,22 +311,14 @@ sub update_item {
                     }
                     when(/^(adm_)?ncos$/) {
                         unless(exists $resource->{$k}) {
-                            my $rs = NGCP::Panel::Utils::Preferences::get_dom_preference_rs(
-                                c => $c,
-                                attribute => $k . '_id',
-                                prov_domain => $item->provisioning_voip_domain,
-                            );
+                            my $rs = $self->get_preference_rs($c, $type, $elem, $k . '_id');
                             next unless $rs; # unknown resource, just ignore
                             $rs->delete_all;
                         }
                     }
                     when(/^(man_)?allowed_ips$/) {
                         unless(exists $resource->{$k}) {
-                            my $rs = NGCP::Panel::Utils::Preferences::get_dom_preference_rs(
-                                c => $c,
-                                attribute => $k . '_grp',
-                                prov_domain => $item->provisioning_voip_domain,
-                            );
+                            my $rs = $self->get_preference_rs($c, $type, $elem, $k . '_grp');
                             next unless $rs; # unknown resource, just ignore
                             if($rs->first) {
                                 $c->model('DB')->resultset('voip_allowed_ip_groups')->search({
@@ -237,22 +330,15 @@ sub update_item {
                     }
                     default {
                         unless(exists $resource->{$k}) {
-                            my $rs = NGCP::Panel::Utils::Preferences::get_dom_preference_rs(
-                                c => $c,
-                                attribute => $k,
-                                prov_domain => $item->provisioning_voip_domain,
-                            );
+                            my $rs = $self->get_preference_rs($c, $type, $elem, $k);
                             next unless $rs; # unknown resource, just ignore
                             $rs->delete_all;
                         }
                     }
                 }
             }
-
-            # TODO: also go over special cases (rewrite_rule_set) and delete them
-            # if not available in $resource
         } catch($e) {
-            $c->log->error("failed to clear preference for domain '".$item->domain."': $e");
+            $c->log->error("failed to clear preference for '$accessor': $e");
             $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "Internal Server Error.");
             return;
         };
@@ -260,13 +346,9 @@ sub update_item {
 
     foreach my $pref(keys %{ $resource }) {
         next unless(defined $resource->{$pref});
-        my $rs = NGCP::Panel::Utils::Preferences::get_dom_preference_rs(
-            c => $c,
-            attribute => $pref,
-            prov_domain => $item->provisioning_voip_domain,
-        );
+        my $rs = $self->get_preference_rs($c, $type, $elem, $pref);
         unless($rs) {
-            $c->log->debug("removing unknown dom_preference '$pref' from update");
+            $c->log->debug("removing unknown preference '$pref' from update");
             next;
         }
         $rs = $rs->search(undef, {
@@ -275,7 +357,7 @@ sub update_item {
 
         # TODO: can't we get this via $rs->search_related or $rs->related_resultset?
         my $meta = $c->model('DB')->resultset('voip_preferences')->find({
-            attribute => $pref, 'dom_pref' => 1,
+            attribute => $pref, $pref_type => 1,
         });
         unless($meta) {
             $c->log->error("failed to get voip_preference entry for '$pref'");
@@ -301,21 +383,17 @@ sub update_item {
 
                     my $rwr_set = $c->model('DB')->resultset('voip_rewrite_rule_sets')->find({
                         name => $resource->{$pref},
-                        reseller_id => $item->domain_resellers->first->reseller_id,
+                        reseller_id => $reseller_id,
                     });
                     
                     unless($rwr_set) {
-                        $c->log->error("no rewrite rule set '".$resource->{$pref}."' for reseller id ".$item->domain_resellers->first->reseller_id." found");
+                        $c->log->error("no rewrite rule set '".$resource->{$pref}."' for reseller id $reseller_id found");
                         $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Unknown rewrite_rule_set '".$resource->{$pref}."'");
                         return;
                     }
 
                     foreach my $k(qw/caller_in_dpid callee_in_dpid caller_out_dpid callee_out_dpid/) {
-                        my $rs = NGCP::Panel::Utils::Preferences::get_dom_preference_rs(
-                            c => $c,
-                            attribute => 'rewrite_'.$k,
-                            prov_domain => $item->provisioning_voip_domain,
-                        );
+                        my $rs = $self->get_preference_rs($c, $type, $elem, 'rewrite_'.$k);
                         if($rs->first) {
                             $rs->first->update({ value => $rwr_set->$k });
                         } else {
@@ -328,18 +406,14 @@ sub update_item {
                     my $pref_name = $pref . "_id";
                     my $ncos = $c->model('DB')->resultset('ncos_levels')->find({
                         level => $resource->{$pref},
-                        reseller_id => $item->domain_resellers->first->reseller_id,
+                        reseller_id => $reseller_id,
                     });
                     unless($ncos) {
-                        $c->log->error("no ncos level '".$resource->{$pref}."' for reseller id ".$item->domain_resellers->first->reseller_id." found");
+                        $c->log->error("no ncos level '".$resource->{$pref}."' for reseller id $reseller_id found");
                         $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Unknown ncos_level '".$resource->{$pref}."'");
                         return;
                     }
-                    my $rs = NGCP::Panel::Utils::Preferences::get_dom_preference_rs(
-                        c => $c,
-                        attribute => $pref_name,
-                        prov_domain => $item->provisioning_voip_domain,
-                    );
+                    my $rs = $self->get_preference_rs($c, $type, $elem, $pref_name);
                     if($rs->first) {
                         $rs->first->update({ value => $ncos->id });
                     } else {
@@ -351,18 +425,14 @@ sub update_item {
                     # TODO: not applicable for domains, but for subs, check for contract_id!
                     my $set = $c->model('DB')->resultset('voip_sound_sets')->find({
                         name => $resource->{$pref},
-                        reseller_id => $item->domain_resellers->first->reseller_id,
+                        reseller_id => $reseller_id,
                     });
                     unless($set) {
-                        $c->log->error("no $pref '".$resource->{$pref}."' for reseller id ".$item->domain_resellers->first->reseller_id." found");
+                        $c->log->error("no $pref '".$resource->{$pref}."' for reseller id $reseller_id found");
                         $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Unknown $pref'".$resource->{$pref}."'");
                         return;
                     }
-                    my $rs = NGCP::Panel::Utils::Preferences::get_dom_preference_rs(
-                        c => $c,
-                        attribute => $pref,
-                        prov_domain => $item->provisioning_voip_domain,
-                    );
+                    my $rs = $self->get_preference_rs($c, $type, $elem, $pref);
                     if($rs->first) {
                         $rs->first->update({ value => $set->id });
                     } else {
@@ -374,11 +444,7 @@ sub update_item {
                     my $pref_name = $pref . "_grp";
                     my $aig_rs;
                     my $seq;
-                    my $rs = NGCP::Panel::Utils::Preferences::get_dom_preference_rs(
-                        c => $c,
-                        attribute => $pref_name,
-                        prov_domain => $item->provisioning_voip_domain,
-                    );
+                    my $rs = $self->get_preference_rs($c, $type, $elem, $pref_name);
                     if($rs->first) {
                         $aig_rs = $c->model('DB')->resultset('voip_allowed_ip_groups')->search({
                             group_id => $rs->first->value
@@ -415,20 +481,20 @@ sub update_item {
                     if($meta->max_occur != 1) {
                         $rs->delete_all;
                         foreach my $v(@{ $resource->{$pref} }) {
-                            return unless $self->check_pref_value($c, $meta, $v);
+                            return unless $self->check_pref_value($c, $meta, $v, $pref_type);
                             $rs->create({ value => $v });
                         }
                     } elsif($rs->first) {
-                        return unless $self->check_pref_value($c, $meta, $resource->{$pref});
+                        return unless $self->check_pref_value($c, $meta, $resource->{$pref}, $pref_type);
                         $rs->first->update({ value => $resource->{$pref} });
                     } else {
-                        return unless $self->check_pref_value($c, $meta, $resource->{$pref});
+                        return unless $self->check_pref_value($c, $meta, $resource->{$pref}, $pref_type);
                         $rs->create({ value => $resource->{$pref} });
                     }
                 }
             }
         } catch($e) {
-            $c->log->error("failed to update preference for domain '".$item->domain."': $e");
+            $c->log->error("failed to update preference for '$accessor': $e");
             $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "Internal Server Error.");
             return;
         }
@@ -438,7 +504,7 @@ sub update_item {
 }
 
 sub check_pref_value {
-    my ($self, $c, $meta, $value) = @_;
+    my ($self, $c, $meta, $value, $pref_type) = @_;
     my $err;
 
     my $vtype = ref $value;
@@ -461,7 +527,7 @@ sub check_pref_value {
     if($meta->data_type eq "enum") {
         my $enum = $c->model('DB')->resultset('voip_preferences_enum')->find({
             preference_id => $meta->id,
-            dom_pref => 1,
+            $pref_type => 1,
             value => $value,
         });
         unless($enum) {

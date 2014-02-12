@@ -434,7 +434,9 @@ sub get_usr_preference_rs {
 
     my $pref_rs = $c->model('DB')->resultset('voip_preferences')->find({
             attribute => $attribute, 'usr_pref' => 1,
-        })->voip_usr_preferences;
+        });
+    return unless($pref_rs);
+    $pref_rs = $pref_rs->voip_usr_preferences;
     if($prov_subscriber) {
         $pref_rs = $pref_rs->search({
                 subscriber_id => $prov_subscriber->id,
@@ -456,6 +458,22 @@ sub get_dom_preference_rs {
     return unless($preference);
     return $preference->voip_dom_preferences->search_rs({
             domain_id => $prov_domain->id,
+        });
+}
+
+sub get_peer_preference_rs {
+    my %params = @_;
+
+    my $c = $params{c};
+    my $attribute = $params{attribute};
+    my $host = $params{peer_host};
+
+    my $preference = $c->model('DB')->resultset('voip_preferences')->find({
+            attribute => $attribute, 'peer_pref' => 1,
+        });
+    return unless($preference);
+    return $preference->voip_peer_preferences->search_rs({
+            peer_host_id => $host->id,
         });
 }
 
