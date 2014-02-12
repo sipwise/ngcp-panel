@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: I 18N\n"
 "POT-Creation-Date: YEAR-MO-DA HO:MI+ZONE\n"
-"PO-Revision-Date: 2014-02-12 10:08+0100\n"
+"PO-Revision-Date: 2014-02-12 10:37+0100\n"
 "Last-Translator: Victor Seva <vseva@sipwise.com>\n"
 "Language-Team: Spanish; Castilian <>\n"
 "MIME-Version: 1.0\n"
@@ -837,7 +837,6 @@ msgid "CloudPBX Hunt Policy"
 msgstr "Política de captura del CloudPBX"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:168
-#, fuzzy
 msgid "CloudPBX Serial Hunt Timeout"
 msgstr "Timeout del Serial Hunt del CloudPBX"
 
@@ -985,9 +984,8 @@ msgid "Contract #%1 successfully created"
 msgstr "Contrato #%1 creado con éxito"
 
 #: share/templates/customer/details.tt:399
-#, fuzzy
 msgid "Contract Balance"
-msgstr "Contract Balance"
+msgstr "Balance del Contrato"
 
 #: lib/NGCP/Panel/Controller/Contract.pm:84
 msgid "Contract does not exist"
@@ -1161,7 +1159,6 @@ msgid "Currency"
 msgstr "Divisa"
 
 #: share/templates/customer/details.tt:416
-#, fuzzy
 msgid "Current totals"
 msgstr "Total actual"
 
@@ -1753,24 +1750,20 @@ msgstr "Número de Extensión, p.e. 101"
 #: lib/NGCP/Panel/Controller/Reseller.pm:41
 #: lib/NGCP/Panel/Utils/DbStrings.pm:614
 #: share/templates/subscriber/master.tt:72
-#, fuzzy
 msgid "External #"
-msgstr "External #"
+msgstr "Externo #"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:77
-#, fuzzy
 msgid "External Contract #"
-msgstr "External Contract #"
+msgstr "Contrato Externo #"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:345
-#, fuzzy
 msgid "External ID"
-msgstr "External ID"
+msgstr "ID Externo"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:78
-#, fuzzy
 msgid "External Subscriber #"
-msgstr "External Subscriber #"
+msgstr "Suscriptor Externo #"
 
 #: share/templates/security/list.tt:66
 msgid "Fail Count"
@@ -1981,9 +1974,8 @@ msgid "Failed to delete rewrite rule."
 msgstr "Fallo al borrar regla de reescritura."
 
 #: lib/NGCP/Panel/Controller/Sound.pm:640
-#, fuzzy
 msgid "Failed to delete sound handle"
-msgstr "Failed to delete sound handle"
+msgstr "Fallo al borrar el manejador de sonido"
 
 #: lib/NGCP/Panel/Controller/Sound.pm:280
 msgid "Failed to delete sound set"
@@ -4672,7 +4664,7 @@ msgstr "Grupo de locuciones de sistema"
 #: share/templates/statistics/list.tt:1
 #: share/templates/widgets/admin_topmenu_settings.tt:8
 msgid "System Statistics"
-msgstr "EStadísitcas del Sistema"
+msgstr "Estadísticas del Sistema"
 
 #: share/templates/widgets/admin_system_overview.tt:4
 msgid "System Status"
