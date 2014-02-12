@@ -5727,7 +5727,7 @@ msgstr "conectando..."
 #: share/templates/helpers/datatables.tt:74
 #, fuzzy
 msgid "dataTables.default.js"
-msgstr "dataTables.default.js"
+msgstr "dataTables.es.js"
 
 #: share/templates/subscriber/webphone.tt:118
 #: share/templates/subscriber/webphone.tt:181
