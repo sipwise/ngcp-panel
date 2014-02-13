@@ -5725,7 +5725,6 @@ msgid "connecting..."
 msgstr "conectando..."
 
 #: share/templates/helpers/datatables.tt:74
-#, fuzzy
 msgid "dataTables.default.js"
 msgstr "dataTables.es.js"
 
