@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: I 18N\n"
 "POT-Creation-Date: YEAR-MO-DA HO:MI+ZONE\n"
-"PO-Revision-Date: 2014-02-12 11:28+0100\n"
+"PO-Revision-Date: 2014-02-13 14:34+0100\n"
 "Last-Translator: Victor Seva <vseva@sipwise.com>\n"
 "Language-Team: Spanish; Castilian <>\n"
 "Language: es\n"
@@ -87,7 +87,7 @@ msgstr "%1 No encontrado"
 #. (realm.ucfirst)
 #: share/templates/login/login.tt:4
 msgid "%1 Sign In"
-msgstr "%1 Acceder"
+msgstr "Iniciar sesión %1"
 
 #. (faxdest.destination, faxdest.filetype)
 #: share/templates/subscriber/preferences.tt:325
@@ -2246,7 +2246,6 @@ msgstr "Fax"
 
 #. (subscriber.username, subscriber.domain.domain)
 #: share/templates/subscriber/webfax.tt:1
-#, fuzzy
 msgid "Fax Journal for %1@%2"
 msgstr "Lista de llamadas para %1@%2"
 
@@ -2331,18 +2330,16 @@ msgstr ""
 "preferencia es útil en escenarios de migración de sistemas."
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:94
-#, fuzzy
 msgid "Force inbound calls to peer"
-msgstr "Force inbound calls to peer"
+msgstr "Forzar llamadas entrantes al peer"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:114
 msgid "Force outbound call via socket"
 msgstr "Forzar llamada saliente via socket"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:76
-#, fuzzy
 msgid "Force outbound calls to peer"
-msgstr "Force inbound calls to peer"
+msgstr "Forzar llamadas salientes al peer"
 
 #: share/templates/customer/details.tt:443
 msgid "Fraud Limits"
@@ -2435,7 +2432,6 @@ msgid "Group of addresses and/or IP nets allowed access."
 msgstr "Grupo de direcciones y/o redes con acceso permitido"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:680
-#, fuzzy
 msgid "Handle"
 msgstr "Manejo"
 
@@ -2492,21 +2488,18 @@ msgid "IP Address"
 msgstr "Dirección IP"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:152
-#, fuzzy
 msgid "IP Header Field"
-msgstr "IP Header Field"
+msgstr "Campo IP Header"
 
 #: lib/NGCP/Panel/Controller/Security.pm:145
 msgid "IP successfully unbanned"
 msgstr "IP desbaneada con éxito"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:156
-#, fuzzy
 msgid "IPv4/IPv6 briding mode"
-msgstr "IPv4/IPv6 briding mode"
+msgstr "Modo IPv4/IPv6 briding"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:316
-#, fuzzy
 msgid "IVR Slots"
 msgstr "Entradas de IVR"
 
@@ -2538,7 +2531,6 @@ msgid "Ignore allowed IPs"
 msgstr "Ignorar IPs permitidas"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:149
-#, fuzzy
 msgid "Ignore preferences \"allowed_ips\" and \"man_allowed_ips\"."
 msgstr "Ignorar preferencias \"allowed_ips\" y \"man_allowed_ips\"."
 
@@ -2564,7 +2556,6 @@ msgid "Inbound User-Provided Number"
 msgstr "CLI de usuario entrante"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:136
-#, fuzzy
 msgid "Inbound User-Provided Redirecting Number"
 msgstr "CLI de usuario desviador entrante"
 
@@ -2640,7 +2631,6 @@ msgid "Internal manual allowed source IP group #"
 msgstr "Grupo interno manual de IPs de origen permitidos"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:191
-#, fuzzy
 msgid "Internals"
 msgstr "Interiores"
 
@@ -2762,9 +2752,8 @@ msgstr "Id de perfil inválido detectado"
 
 #: lib/NGCP/Panel/Controller/Customer.pm:1088
 #: lib/NGCP/Panel/Controller/Customer.pm:964
-#, fuzzy
 msgid "Invalid provisioning subscriber id detected."
-msgstr "Invalid provisioning subscriber id detected."
+msgstr "Detectado id provisioning subscriber inválido."
 
 #: lib/NGCP/Panel/Controller/Customer.pm:105
 #: lib/NGCP/Panel/Controller/Reseller.pm:114
@@ -2784,9 +2773,8 @@ msgid "Invalid rewrite rule set id detected"
 msgstr "Id de grupo de reglas de reescritura inválido detectado"
 
 #: lib/NGCP/Panel/Controller/Sound.pm:476
-#, fuzzy
 msgid "Invalid sound handle id detected"
-msgstr "Invalid sound handle id detected"
+msgstr "Detectado id de sound handle inválido"
 
 #: lib/NGCP/Panel/Controller/Sound.pm:139
 msgid "Invalid sound set id detected"
@@ -2805,7 +2793,6 @@ msgid "Invalid voicemail setting."
 msgstr "Preferencia de buzón de voz inválida"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:342
-#, fuzzy
 msgid "Is PBX Group?"
 msgstr "Grupo PBX"
 
@@ -2814,7 +2801,6 @@ msgid "Is active"
 msgstr "Está activo"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:299
-#, fuzzy
 msgid "Is master"
 msgstr "Es master"
 
@@ -2861,7 +2847,6 @@ msgid "Lawful intercept"
 msgstr "Intercepción Legal"
 
 #: lib/NGCP/Panel/Controller/NCOS.pm:31 lib/NGCP/Panel/Utils/DbStrings.pm:409
-#, fuzzy
 msgid "Level Name"
 msgstr "Nombre de etiqueta"
 
@@ -2895,7 +2880,6 @@ msgid "Lines/Keys"
 msgstr "Líneas/Botones"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:637
-#, fuzzy
 msgid ""
 "Lines/Keys in this range can be used as Busy Lamp Field. Value is accessible "
 "in the config template via phone.lineranges[].lines[].can_blf"
@@ -2904,7 +2888,6 @@ msgstr ""
 "es accesible en la plantilla de configuración del terminal"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:496
-#, fuzzy
 msgid ""
 "Lines/Keys in this range can be used as regular phone lines. Value is "
 "accessible in the config template via phone.lineranges[].lines[].can_private"
@@ -2914,7 +2897,6 @@ msgstr ""
 "del terminal"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:576
-#, fuzzy
 msgid ""
 "Lines/Keys in this range can be used as shared lines. Value is accessible in "
 "the config template via phone.lineranges[].lines[].can_shared"
@@ -2941,7 +2923,6 @@ msgstr "Nivel de bloqueo"
 
 #. (login_name)
 #: share/layout/body.tt:18
-#, fuzzy
 msgid "Logged in as %1"
 msgstr "Accedido como %1"
 
@@ -2994,13 +2975,12 @@ msgstr "Marzo"
 
 #: lib/NGCP/Panel/Controller/Administrator.pm:36
 #: lib/NGCP/Panel/Controller/Reseller.pm:134
-#, fuzzy
 msgid "Master"
-msgstr "Master"
+msgstr "Principal"
 
 #: share/templates/subscriber/master.tt:31
 msgid "Master Data"
-msgstr "Master Data"
+msgstr "Datos Principales"
 
 #: lib/NGCP/Panel/Controller/Billing.pm:266
 msgid "Match Direction"
@@ -3008,12 +2988,11 @@ msgstr "Coincidir dirección"
 
 #: share/templates/rewrite/rules_list.tt:30
 msgid "Match Pattern"
-msgstr "Coincidir Patrón"
+msgstr "Patrón de Búsqueda"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:377
-#, fuzzy
 msgid "Match pattern"
-msgstr "Coincidir Patrón"
+msgstr "Patrón de búsqueda"
 
 #: lib/NGCP/Panel/Controller/Customer.pm:54
 msgid "Max Number of Subscribers"
@@ -3368,12 +3347,10 @@ msgstr ""
 "Dejar en blanco para ilimitados."
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:418
-#, fuzzy
 msgid "Options to lock customer if the daily limit is exceeded."
 msgstr "bloquear cuentas si el límite diario se excede"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:497
-#, fuzzy
 msgid "Options to lock customer if the monthly limit is exceeded."
 msgstr "bloquear cuentas si el límite mensual se excede"
 
@@ -3382,29 +3359,24 @@ msgid "Outbound"
 msgstr "Saliente"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:138
-#, fuzzy
 msgid "Outbound Diversion Header"
-msgstr "Outbound Diversion Header"
+msgstr "Cabecera Outbound Diversion"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:122
-#, fuzzy
 msgid "Outbound From-Display Field"
-msgstr "Outbound From-Display Field"
+msgstr "Campo Outbound From-Display"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:120
-#, fuzzy
 msgid "Outbound From-Username Field"
-msgstr "Outbound From-Username Field"
+msgstr "Campo Outbound From-Username"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:124
-#, fuzzy
 msgid "Outbound PAI-Username Field"
-msgstr "Outbound PAI-Username Field"
+msgstr "Campo Outbound PAI-Username"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:126
-#, fuzzy
 msgid "Outbound PPI-Username Field"
-msgstr "Outbound PPI-Username Field"
+msgstr "Campo Outbound PPI-Username"
 
 #: share/templates/rewrite/rules_list.tt:101
 msgid "Outbound Rewrite Rules for Callee"
@@ -3503,7 +3475,6 @@ msgid "Pages"
 msgstr "Páginas"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:522
-#, fuzzy
 msgid "Parallel Ringing"
 msgstr "Parallel Ringing"
 
@@ -3545,12 +3516,10 @@ msgstr "Usuario de la autenticación al peer"
 
 #. (server.name)
 #: share/templates/peering/preferences.tt:1
-#, fuzzy
 msgid "Peer Host \"%1\" - Preferences"
 msgstr "Preferencias del servidor de peer %1"
 
 #: lib/NGCP/Panel/Controller/Subscriber.pm:306
-#, fuzzy
 msgid "Peer Number"
 msgstr "Número de teléfono"
 
@@ -3636,7 +3605,6 @@ msgstr "Servidor de peering modificado con éxito"
 
 #: share/templates/widgets/admin_peering_overview.tt:4
 #: share/templates/widgets/admin_topmenu_settings.tt:30
-#, fuzzy
 msgid "Peerings"
 msgstr "Peerings"
 
@@ -3708,9 +3676,8 @@ msgid "Priority"
 msgstr "Prioridad"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:552
-#, fuzzy
 msgid "Priority (q-value)"
-msgstr "Prioridad"
+msgstr "Prioridad (valor q)"
 
 #: lib/NGCP/Panel/Controller/Device.pm:789
 msgid "Private Line"
@@ -4256,7 +4223,7 @@ msgstr "Serial Ringing"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:190
 msgid "Session Timers"
-msgstr "Session Timers"
+msgstr "Tiempos de Sesión"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:104
 #, fuzzy
@@ -4287,9 +4254,8 @@ msgstr ""
 "remoto es menor que el MIN_SE local."
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:155
-#, fuzzy
 msgid "Set RTP relay mode for this peer/domain/user"
-msgstr "Set RTP relay mode for this peer/domain/user"
+msgstr "Establece el modo de retransmisión RTP para este peer/dominio/usuario"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:105
 msgid "Sets upper limit on accepted Min-SE value in in SBC."
@@ -4359,12 +4325,10 @@ msgstr "Vista simple"
 #: lib/NGCP/Panel/Controller/Subscriber.pm:292
 #: lib/NGCP/Panel/Controller/Subscriber.pm:297
 #: lib/NGCP/Panel/Utils/DbStrings.pm:632
-#, fuzzy
 msgid "Slot"
 msgstr "Entrada"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:293
-#, fuzzy
 msgid "Slot add"
 msgstr "Añadir entrada"
 
@@ -4377,14 +4341,13 @@ msgid "Sorry!"
 msgstr "¡Lo sentimos!"
 
 #: share/templates/notfound_page.tt:12
-#, fuzzy
 msgid "Sorry, an error has occured, Requested page not found!"
-msgstr "Sorry, an error has occured, Requested page not found!"
+msgstr ""
+"Lo sentimos, se ha producido un error, página solicitada no encontrada!"
 
 #: share/templates/denied_page.tt:12
-#, fuzzy
 msgid "Sorry, an error has occured, requested operation denied!"
-msgstr "Sorry, an error has occured, requested operation denied!"
+msgstr "Lo sentimos, se ha producido un error, operación solicitada denegada!"
 
 #: share/templates/customer/details.tt:370 share/templates/sound/list.tt:3
 #: share/templates/widgets/reseller_domain_overview.tt:13
@@ -4456,7 +4419,6 @@ msgid "Source Pattern"
 msgstr "Patrón de origen"
 
 #: lib/NGCP/Panel/Controller/Billing.pm:774
-#, fuzzy
 msgid "Special offpeak entry successfully created"
 msgstr "Special offpeak entry successfully created"
 
@@ -4511,7 +4473,6 @@ msgstr ""
 "en la lista)."
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:137
-#, fuzzy
 msgid ""
 "Specifies the way to obtain the User-Provided Redirecting CLI. Possible "
 "options are use NPN of forwarding subscriber or respect inbound Diversion "
@@ -4610,9 +4571,8 @@ msgid "Subscriber %1@%2"
 msgstr "Suscriptor %1@%2"
 
 #: lib/NGCP/Panel/Controller/Subscriber.pm:2067
-#, fuzzy
 msgid "Subscriber Master Data"
-msgstr "Subscriber Master Data"
+msgstr "Datos Principales del Suscriptor"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:462
 msgid "Subscriber Number, e.g. 12345678"
@@ -4625,9 +4585,8 @@ msgstr "Preferencias del suscriptor %1@%2"
 
 #: share/templates/widgets/subscriber_topmenu_settings.tt:11
 #: share/templates/widgets/subscriberadmin_topmenu_settings.tt:11
-#, fuzzy
 msgid "Subscriber Settings"
-msgstr "Suscriptores"
+msgstr "Configuraciones de Suscriptor"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:559
 msgid "Subscriber can configure other subscribers within the Customer Account"
@@ -5821,16 +5780,14 @@ msgid "on weekdays"
 msgstr "entre semana"
 
 #: share/templates/subscriber/webphone.tt:251
-#, fuzzy
 msgid "online."
-msgstr "online."
+msgstr "conectado."
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:341
 msgid "only once"
 msgstr "sólo una vez"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:571
-#, fuzzy
 msgid "or File"
 msgstr "Archivos"
 
