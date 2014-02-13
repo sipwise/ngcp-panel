@@ -1,10 +1,12 @@
 package NGCP::Panel::Form::Subscriber::TrustedSource;
 
+use Sipwise::Base;
 use HTML::FormHandler::Moose;
 extends 'HTML::FormHandler';
 use Moose::Util::TypeConstraints;
 
 use HTML::FormHandler::Widget::Block::Bootstrap;
+use Data::Validate::IP qw/is_ipv4 is_ipv6/;
 
 has '+widget_wrapper' => ( default => 'Bootstrap' );
 has_field 'submitid' => ( type => 'Hidden' );
@@ -53,6 +55,27 @@ has_block 'actions' => (
     class => [qw/modal-footer/],
     render_list => [qw/save/],
 );
+
+sub validate_src_ip {
+    my ($self, $field) = @_;
+
+    my ($ip, $net) = split /\//, $field->value;
+    if(is_ipv4($ip)) {
+        return 1 unless(defined $net);
+        unless($net->is_int && $net >= 0 && $net <= 32) {
+            $field->add_error("Invalid IPv4 network portion, must be 0 <= net <= 32");
+        }
+    } elsif(is_ipv6($ip)) {
+        return 1 unless(defined $net);
+        unless($net->is_int && $net >= 0 && $net <= 128) {
+            $field->add_error("Invalid IPv4 network portion, must be 0 <= net <= 128");
+        }
+    } else {
+        $field->add_error("Invalid IPv4 or IPv6 address, must be valid address with optional /net suffix."); 
+    }
+
+    return 1;
+}
 
 1;
 # vim: set tabstop=4 expandtab:
