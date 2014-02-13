@@ -606,12 +606,24 @@ sub preferences_edit :Chained('preferences_base') :PathPart('edit') :Args(0) {
             $c, $prov_subscriber, $old_auth_prefs);
     }
 
-    NGCP::Panel::Utils::Preferences::create_preference_form( c => $c,
-        pref_rs => $pref_rs,
-        enums   => \@enums,
-        base_uri => $c->uri_for_action('/subscriber/preferences', [$c->req->captures->[0]]),
-        edit_uri => $c->uri_for_action('/subscriber/preferences_edit', $c->req->captures),
-    );
+    try {
+        NGCP::Panel::Utils::Preferences::create_preference_form( c => $c,
+            pref_rs => $pref_rs,
+            enums   => \@enums,
+            base_uri => $c->uri_for_action('/subscriber/preferences', [$c->req->captures->[0]]),
+            edit_uri => $c->uri_for_action('/subscriber/preferences_edit', $c->req->captures),
+        );
+    } catch($e) {
+        NGCP::Panel::Utils::Message->error(
+            c     => $c,
+            log   => "Failed to handle preference: $e",
+            desc  => $c->loc('Failed to handle preference'),
+        );
+       
+        NGCP::Panel::Utils::Navigation::back_or($c, 
+            $c->uri_for_action('/subscriber/preferences', [$c->req->captures->[0]]));
+        return;
+    }
 
     if(keys %{ $old_auth_prefs }) {
         my $new_auth_prefs = {};

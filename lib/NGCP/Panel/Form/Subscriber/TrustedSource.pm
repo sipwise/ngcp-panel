@@ -59,19 +59,9 @@ has_block 'actions' => (
 sub validate_src_ip {
     my ($self, $field) = @_;
 
-    my ($ip, $net) = split /\//, $field->value;
-    if(is_ipv4($ip)) {
-        return 1 unless(defined $net);
-        unless($net->is_int && $net >= 0 && $net <= 32) {
-            $field->add_error("Invalid IPv4 network portion, must be 0 <= net <= 32");
-        }
-    } elsif(is_ipv6($ip)) {
-        return 1 unless(defined $net);
-        unless($net->is_int && $net >= 0 && $net <= 128) {
-            $field->add_error("Invalid IPv4 network portion, must be 0 <= net <= 128");
-        }
-    } else {
-        $field->add_error("Invalid IPv4 or IPv6 address, must be valid address with optional /net suffix."); 
+    my $ip = $field->value;
+    unless(is_ipv4($ip) || is_ipv6($ip)) {
+        $field->add_error("Invalid IPv4 or IPv6 address."); 
     }
 
     return 1;

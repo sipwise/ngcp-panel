@@ -105,19 +105,19 @@ sub field_list {
                     name => $meta->attribute,
                     type => 'Text',
                     do_label => 0,
-                    do_wrapper => 0,
+                    do_wrapper => 1,
+                    element_attr => {
+                        class => ['ngcp_pref_input'],
+                    }
                 };
             }
         }
-        
         $field->{label} = $is_subscriber ? $meta->label : $meta->attribute;
         push @field_list, $field;
     }
     
     return \@field_list;
 }
-
-
 
 has_field 'save' => (
     type => 'Submit',
