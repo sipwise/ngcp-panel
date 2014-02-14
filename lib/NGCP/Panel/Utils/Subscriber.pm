@@ -562,6 +562,56 @@ sub update_subadmin_sub_aliases {
     }
 }
 
+sub terminate {
+    my %params = @_;
+
+    my $c = $params{c};
+    my $subscriber = $params{subscriber};
+
+    my $schema = $c->model('DB');
+    $schema->txn_do(sub {
+        if($subscriber->provisioning_voip_subscriber->is_pbx_group) {
+            my $pbx_group = $schema->resultset('voip_pbx_groups')->find({
+                subscriber_id => $subscriber->provisioning_voip_subscriber->id
+            });
+            if($pbx_group) {
+                $pbx_group->provisioning_voip_subscribers->update_all({
+                    pbx_group_id => undef,
+                });
+            }
+            $pbx_group->delete;
+        }
+        my $prov_subscriber = $subscriber->provisioning_voip_subscriber;
+        if($prov_subscriber) {
+            update_pbx_group_prefs(
+                c => $c,
+                schema => $schema,
+                old_group_id => $prov_subscriber->voip_pbx_group->id,
+                new_group_id => undef,
+                username => $prov_subscriber->username,
+                domain => $prov_subscriber->domain->domain,
+            ) if($prov_subscriber->voip_pbx_group);
+            $prov_subscriber->delete;
+        }
+        if ($c->user->roles eq 'subscriberadmin') {
+            update_subadmin_sub_aliases(
+                schema => $schema,
+                subscriber_id => $subscriber->id,
+                contract_id => $subscriber->contract_id,
+                alias_selected => [], #none, thus moving them back to our subadmin
+                sadmin_id => $schema->resultset('voip_subscribers')
+                    ->find({uuid => $c->user->uuid})->id
+            );
+        } else {
+            $subscriber->voip_numbers->update_all({
+                subscriber_id => undef,
+                reseller_id => undef,
+            });
+        }
+        $subscriber->update({ status => 'terminated' });
+    });
+}
+
 1;
 
 =head1 NAME

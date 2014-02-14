@@ -3,7 +3,7 @@ use Moose::Role;
 use Sipwise::Base;
 
 use boolean qw(true);
-use Try::Tiny;
+use TryCatch;
 use Data::HAL qw();
 use Data::HAL::Link qw();
 use HTTP::Status qw(:constants);
@@ -331,6 +331,34 @@ sub update_item {
     my $admin = $full_resource->{admin};
     my $alias_numbers = $full_resource->{alias_numbers};
     my $preferences = $full_resource->{preferences};
+
+    my $old_lock = $
+    if($subscriber->status ne $resource->{status}) {
+        if($resource->{status} eq 'locked') {
+            $resource->{lock} = 4;
+        } elsif($subscriber->status eq 'locked' && $resource->{status} eq 'active') {
+            $resource->{lock} ||= 0;
+        } elsif($resource->{status} eq 'terminated') {
+            try {
+                NGCP::Panel::Utils::Subscriber::terminate(c => $c, subscriber => $subscriber);
+            } catch($e) {
+                $c->log->error("failed to terminate subscriber id ".$subscriber->id);
+                $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "Failed to terminate subscriber");
+            }
+            return;
+        }
+    }
+    try {
+        NGCP::Panel::Utils::Subscriber::lock_provisoning_voip_subscriber(
+            c => $c,
+            prov_subscriber => $subscriber->provisioning_voip_subscriber,
+            level => $resource->{lock},
+        );
+    } catch($e) {
+        $c->log->error("failed to lock subscriber id ".$subscriber->id." with level ".$resource->{lock});
+        $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "Failed to update subscriber lock");
+        return;
+    }
 
     NGCP::Panel::Utils::Subscriber::update_subscriber_numbers(
         schema => $c->model('DB'),
