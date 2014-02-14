@@ -8,6 +8,7 @@ use Data::HAL qw();
 use Data::HAL::Link qw();
 use HTTP::Status qw(:constants);
 use JSON::Types;
+use Data::Validate::IP qw/is_ipv4 is_ipv6/;
 use NGCP::Panel::Utils::XMLDispatcher;
 use NGCP::Panel::Utils::Prosody;
 
@@ -467,7 +468,10 @@ sub update_item {
                     }
 
                     foreach my $ip(@{ $resource->{$pref} }) {
-                        # TODO: check for valid ipv4/v6
+                        unless($self->validate_ipnet($c, $pref, $ip)) {
+                            $c->log->error("invalid $pref entry '$ip'");
+                            return;
+                        }
                         $aig_rs->create({ ipnet => $ip });
                     }
 
@@ -537,6 +541,28 @@ sub check_pref_value {
         }
     }
 
+    return 1;
+}
+
+sub validate_ipnet {
+    my ($self, $c, $pref, $ipnet) = @_;
+    my ($ip, $net) = split /\//, $ipnet;
+    if(is_ipv4($ip)) {
+        return 1 unless(defined $net);
+        unless($net->is_int && $net >= 0 && $net <= 32) {
+            $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Invalid IPv4 network portion in $pref entry '$ipnet', must be 0 <= net <= 32");
+            return;
+        }
+    } elsif(is_ipv6($ip)) {
+        return 1 unless(defined $net);
+        unless($net->is_int && $net >= 0 && $net <= 128) {
+            $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Invalid IPv6 network portion in $pref entry '$ipnet', must be 0 <= net <= 128");
+            return;
+        }
+    } else {
+        $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Invalid IPv4 or IPv6 address in $pref entry '$ipnet', must be valid address with optional /net suffix");
+        return;
+    }
     return 1;
 }
 

@@ -332,7 +332,6 @@ sub update_item {
     my $alias_numbers = $full_resource->{alias_numbers};
     my $preferences = $full_resource->{preferences};
 
-    my $old_lock = $
     if($subscriber->status ne $resource->{status}) {
         if($resource->{status} eq 'locked') {
             $resource->{lock} = 4;

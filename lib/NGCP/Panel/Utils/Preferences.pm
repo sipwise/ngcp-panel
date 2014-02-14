@@ -18,7 +18,7 @@ sub validate_ipnet {
     } elsif(is_ipv6($ip)) {
         return 1 unless(defined $net);
         unless($net->is_int && $net >= 0 && $net <= 128) {
-            $field->add_error("Invalid IPv4 network portion, must be 0 <= net <= 128");
+            $field->add_error("Invalid IPv6 network portion, must be 0 <= net <= 128");
             return;
         }
     } else {
