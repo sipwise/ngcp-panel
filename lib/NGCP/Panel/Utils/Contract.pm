@@ -191,6 +191,95 @@ sub get_contract_rs {
     return $rs;
 }
 
+sub get_contracts_rs_sippbx{
+    my %params = @_;
+    #pass here $c isn't very good idea, it doesn't allow "simple" call with really relevant information
+    my $c = $params{c};
+    # we only return customers, that is, contracts with contacts with a
+    # reseller
+    my $customers = get_contract_rs(
+        schema => $c->model('DB'),
+    );
+    #really here we don't need role - we can pass only reseller_id, reseller_id should be tacken according to role in other method
+    my @reseller_condition = ({ '-not' => undef });
+    if($c->user->roles eq "reseller") {
+        push @reseller_condition, $c->user->reseller_id;
+    } elsif($c->user->roles eq "subscriberadmin") {
+        push @reseller_condition, $c->user->contract->contact->reseller_id;
+    } elsif($c->user->roles eq "admin") {
+    }
+    my $reseller_condition =  $#reseller_condition > 1 
+        ? { '-and' => \@reseller_condition } 
+        : $reseller_condition[0];
+    $customers = $customers->search({
+            'contact.reseller_id' => $reseller_condition ,
+        },{
+            join => 'contact'
+    });
+    
+    $customers = $customers->search({
+            '-or' => [
+                'product.class' => 'sipaccount',
+                'product.class' => 'pbxaccount',
+            ],
+        },{
+            join => {'billing_mappings' => 'product' },
+            '+select' => 'billing_mappings.id',
+            '+as' => 'bmid',
+    });
+    
+    return $customers;
+}
+
+sub get_contract_calls_rs{
+    my %params = @_;
+    (my ($c,$contract_id,$stime,$etime)) = @params{qw/c contract_id stime etime/};
+    
+    # SELECT 'out' as direction, SUM(c.source_customer_cost) AS cost, b.zone,
+                         # COUNT(*) AS number, SUM(c.duration) AS duration
+                    # FROM accounting.cdr c
+                    # LEFT JOIN billing.voip_subscribers v ON c.source_user_id = v.uuid
+                    # LEFT JOIN billing.billing_zones_history b ON b.id = c.source_customer_billing_zone_id
+                   # WHERE v.contract_id = ?
+                     # AND c.call_status = 'ok'
+                         # $start_time $end_time
+                   # GROUP BY b.zone 
+
+    my $zonecalls_rs = $c->model('DB')->resultset('cdr')->search( {
+#        source_user_id => { 'in' => [ map {$_->uuid} @{$contract->{subscriber}} ] },
+        call_status       => 'ok',
+        source_user_id    => { '!=' => '0' },
+        source_account_id => $contract_id,
+        # start_time        => 
+            # [ -and =>
+                # { '>=' => $stime->epoch},
+                # { '<=' => $etime->epoch},
+            # ],
+
+            # { 
+            # '>=' => ["unix_timestamp(?)", $stime], 
+# '<=' => ["unix_timestamp(?)",$etime] },
+#                { '>=' => \[ "unix_timestamp(?)", $stime ] },
+#                { '<=' => \[ "unix_timestamp(?)", $etime ] },
+#requires fix: 757           #$self->_assert_bindval_matches_bindtype(@sub_bind);
+#in SQL::Abstract, 
+ 
+    },{
+        'select'   => [ 
+            { sum         => 'me.source_customer_cost', -as => 'cost', }, 
+            { sum         => 'me.source_customer_free_time', -as => 'free_time', } , 
+            { sum         => 'me.duration', -as => 'duration', } , 
+            { count       => '*', -as => 'number', } ,
+            'billing_zones_history.zone', 
+        ],
+        'as' => [qw/cost free_time duration number zone/],
+        join        => 'billing_zones_history',
+        group_by    => 'billing_zones_history.zone',
+    } );    
+    
+    return $zonecalls_rs;
+}
+
 1;
 
 =head1 NAME

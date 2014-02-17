@@ -57,15 +57,22 @@ __PACKAGE__->config(
     },
     'View::HTML' => {
         INCLUDE_PATH => [
-            '/usr/share/ngcp-panel/templates',
-            '/usr/share/ngcp-panel/layout',
-            '/usr/share/ngcp-panel/static',
             __PACKAGE__->path_to('share', 'templates'),
             __PACKAGE__->path_to('share', 'layout'),
             __PACKAGE__->path_to('share', 'static'),
         ],
         ABSOLUTE => 1,
         EVAL_PERL => 1,
+    },
+    'View::SVG' => {
+        INCLUDE_PATH => [
+            __PACKAGE__->path_to('share', 'templates'),
+            __PACKAGE__->path_to('share', 'layout'),
+            __PACKAGE__->path_to('share', 'static'),
+        ],
+        ABSOLUTE => 1,
+        EVAL_PERL => 1,
+        WRAPPER   => '',
     },
     'View::JSON' => {
         #Set the stash keys to be exposed to a JSON response
@@ -75,7 +82,6 @@ __PACKAGE__->config(
 
     'Plugin::Static::Simple' => {
         include_path => [
-            '/usr/share/ngcp-panel/static',
             __PACKAGE__->path_to('share', 'static'),
         ],
         mime_types => {

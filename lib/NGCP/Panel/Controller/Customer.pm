@@ -53,30 +53,7 @@ sub list_customer :Chained('/') :PathPart('customer') :CaptureArgs(0) {
         { name => "status", search => 1, title => $c->loc("Status") },
         { name => "max_subscribers", search => 1, title => $c->loc("Max Number of Subscribers") },
     ]);
-
-    my $rs = NGCP::Panel::Utils::Contract::get_contract_rs(
-        schema => $c->model('DB'));
-    if($c->user->roles eq "reseller") {
-        $rs = $rs->search({
-            'contact.reseller_id' => $c->user->reseller_id,
-        }, {
-            join => 'contact',
-        });
-    } elsif($c->user->roles eq "subscriberadmin") {
-        $rs = $rs->search({
-            'contact.reseller_id' => $c->user->contract->contact->reseller_id,
-        }, {
-            join => 'contact',
-        });
-    }
-    $rs = $rs->search({
-            '-or' => [
-                'product.class' => 'sipaccount',
-                'product.class' => 'pbxaccount',
-            ],
-        }, {
-            'join' => {'billing_mappings' => 'product'},
-        });
+    my $rs = NGCP::Panel::Utils::Contract::get_contracts_rs_sippbx( c => $c );
 
     $c->stash(
         contract_select_rs => $rs,
@@ -238,7 +215,6 @@ sub base :Chained('list_customer') :PathPart('') :CaptureArgs(1) {
             $c->detach('/denied_page');
         }
     }
-
     unless(defined($contract_rs->first)) {
         NGCP::Panel::Utils::Message->error(
             c     => $c,
@@ -252,6 +228,7 @@ sub base :Chained('list_customer') :PathPart('') :CaptureArgs(1) {
 
     my $stime = NGCP::Panel::Utils::DateTime::current_local()->truncate(to => 'month');
     my $etime = $stime->clone->add(months => 1);
+    
     my $balance = $contract_rs->first->contract_balances
         ->find({
             start => { '>=' => $stime },
@@ -280,12 +257,20 @@ sub base :Chained('list_customer') :PathPart('') :CaptureArgs(1) {
             });
     }
 
+    my $zonecalls_rs = NGCP::Panel::Utils::Contract::get_contract_calls_rs(
+        c => $c,
+        contract_id => $contract_id,
+        stime => $stime,
+        etime => $etime,
+    );
+    
     my $product_id = $contract_rs->first->get_column('product_id');
     NGCP::Panel::Utils::Message->error(
         c => $c,
         error => "No product for customer contract id $contract_id found",
         desc  => $c->loc('No product for this customer contract found.'),
     ) unless($product_id);
+    
     my $product = $c->model('DB')->resultset('products')->find($product_id);
     NGCP::Panel::Utils::Message->error(
         c => $c,
@@ -318,6 +303,7 @@ sub base :Chained('list_customer') :PathPart('') :CaptureArgs(1) {
     $c->stash(template => 'customer/details.tt'); 
     $c->stash(contract => $contract_rs->first);
     $c->stash(contract_rs => $contract_rs);
+    $c->stash(zonecalls_rs => $zonecalls_rs);
     $c->stash(billing_mapping => $billing_mapping);
 }
 
@@ -714,6 +700,40 @@ sub edit_balance :Chained('base') :PathPart('balance/edit') :Args(0) {
     $c->stash(close_target => $c->uri_for_action("/customer/details", [$c->stash->{contract}->id]));
     $c->stash(form => $form);
     $c->stash(edit_flag => 1);
+}
+#https://10.15.20.100:1444/customer/3/balance/edit?back=https%3A%2F%2F10.15.20.100%3A1444%2Fcustomer%2F3%2Fdetails
+sub calls :Chained('base') :PathPart('calls') :Args(0) {
+    my ($self, $c) = @_;
+    
+#    my $contract_id = $c->stash->{contract}->id;
+#    my $stime = NGCP::Panel::Utils::DateTime::current_local()->truncate(to => 'month');
+#    my $etime = $stime->clone->add(months => 1);
+    
+#    my $zonecalls_rs = NGCP::Panel::Utils::Contract::get_contract_calls_rs(
+#        c => $c,
+#        contract_id => $contract_id,
+#        stime => $stime,
+#        etime => $etime,
+#    );
+    $c->stash(template => 'customer/calls.tt'); 
+    #$c->stash(zonecalls_rs => $c->stash{zonecalls_rs});
+    #$c->detach($c->view('SVG'));
+#    return;
+    #$c->response->body(JSON::to_json({ methods => $allowed_methods })."\n");
+    #$c->stash(template => 'customer/calls_svg.tt'); 
+
+    #$c->stash(close_target => $c->uri_for_action("/customer/details", [$c->stash->{contract}->id]));
+    #$c->stash(template => 'customer/calls.tt'); 
+#    $c->stash(contract => $contract_rs->first);
+}
+sub calls_svg :Chained('base') :PathPart('calls/svg') :Args(0) {
+    my ($self, $c) = @_;
+    
+    #die();
+    #$c->view('SVG');
+    $c->response->content_type('image/svg+xml');
+    $c->stash(template => 'customer/calls_svg.tt'); 
+    $c->detach($c->view('SVG'));
 }
 
 sub pbx_group_ajax :Chained('base') :PathPart('pbx/group/ajax') :Args(0) {

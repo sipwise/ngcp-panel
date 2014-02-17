@@ -13,6 +13,8 @@ initHelper('close_target');
 initHelper('create_flag');
 initHelper('form_object',form);
 initHelper('ajax_uri', c.uri_for( c.controller.action_for('ajax') ));
+
+#here we can generate couple of variants, selection of proper variant will be exact view responsibility
 UNLESS c.user.read_only;
     initHelper('dt_buttons',[
         { name = c.loc('Edit'), uri = "/${helper.identifier}'+full[\"id\"]+'/edit", class = 'btn-small btn-primary', icon = 'icon-edit' },
@@ -21,33 +23,5 @@ UNLESS c.user.read_only;
         { name = c.loc("Create ${helper.name_single}"), uri = c.uri_for("/${helper.identifier}/create"), icon = 'icon-star' },
     ] );
 END;
-#someIndex='blahblahblah';
-#initHelper('someIndex');
-#Dumper.dump_html(helper);
-#UNLESS helper.messages.defined; helper.messages = messages; END;
-#UNLESS helper.length_change.defined; helper.length_change = 1; END;
-#UNLESS helper.dt_columns.defined; helper.dt_columns = ${"${helper.identifier}_dt_columns"} || dt_columns; END;
-#UNLESS helper.close_target.defined; helper.close_target = close_target; END;
-#UNLESS helper.create_flag.defined; helper.create_flag = create_flag; END;
 
-# DEFAULT
-# helper.messages = messages
-# helper.length_change = 1
-# helper.dt_columns = ${"${helper.identifier}_dt_columns"} || dt_columns
-# helper.close_target = close_target
-# helper.create_flag = create_flag
-# helper.edit_flag = edit_flag
-# helper.form_object = form
-# helper.ajax_uri = c.uri_for( c.controller.action_for('ajax') );
-
-# UNLESS c.user.read_only;
-    # DEFAULT
-        # helper.dt_buttons = [
-            # { name = c.loc('Edit'), uri = "/${helper.identifier}'+full[\"id\"]+'/edit", class = 'btn-small btn-primary', icon = 'icon-edit' },
-        # ]
-        # helper.top_buttons = [
-            # { name = c.loc("Create ${helper.name_single}"), uri = c.uri_for("/${helper.identifier}/create"), icon = 'icon-star' },
-        # ]
-    # ;
-# END;
 -%]

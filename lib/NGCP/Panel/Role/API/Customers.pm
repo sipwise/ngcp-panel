@@ -87,36 +87,9 @@ sub hal_from_customer {
 
 sub customer_by_id {
     my ($self, $c, $id) = @_;
-
-    # we only return customers, that is, contracts with contacts with a
-    # reseller
-    my $customers = NGCP::Panel::Utils::Contract::get_contract_rs(
-        schema => $c->model('DB'),
+    my $customers = NGCP::Panel::Utils::Contract::get_contracts_rs_sippbx(
+        c => $c,
     );
-    $customers = $customers->search({
-            'contact.reseller_id' => { '-not' => undef },
-        },{
-            join => 'contact'
-        });
-
-    $customers = $customers->search({
-            '-or' => [
-                'product.class' => 'sipaccount',
-                'product.class' => 'pbxaccount',
-            ],
-        },{
-            join => {'billing_mappings' => 'product' },
-            '+select' => 'billing_mappings.id',
-            '+as' => 'bmid',
-        });
-
-    if($c->user->roles eq "admin") {
-    } elsif($c->user->roles eq "reseller") {
-        $customers = $customers->search({
-            'contact.reseller_id' => $c->user->reseller_id,
-        });
-    } 
-
     return $customers->find($id);
 }
 

@@ -437,6 +437,83 @@
         </div>
     </div>
 
+
+[% MACRO accordion_group BLOCK%]
+    <div class="accordion-group">
+        <div class="accordion-heading">
+            <a class="accordion-toggle" data-toggle="collapse" data-parent="#customer_details" href="#[%id%]">[% c.loc(title) %]</a>
+        </div>
+[% MACRO accordion_group_internal BLOCK%]
+        <div class="accordion-body collapse" id="[%id%]">
+            <div class="accordion-inner">
+                <table class="table table-bordered table-striped table-highlight table-hover">
+[% content %]
+                </table>
+            </div>
+        </div>
+[%END%]
+[%content%]
+    </div>
+[%END%]
+
+[% USE Dumper %]
+
+[%# Dumper.dump(zonecalls_rs)%]
+[%# zonecalls_rs.size%]
+[% WRAPPER accordion_group id="collapse_calls" title='Balance details' %]
+[% WRAPPER accordion_group_internal id="collapse_calls" title='Balance details' %]
+                    <thead>
+                        <tr>
+                            <th>[% c.loc('Zone') %]</th>
+                            <th>[% c.loc('Calls amount') %]</th>
+                            <th>[% c.loc('Duration') %]</th>
+                            <th>[% c.loc('Free time') %]</th>
+                            <th>[% c.loc('Cash') %]</th>
+                            <th class="ngcp-actions-column"></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        [%# Dumper.dump_html(zonecalls_rs.as_query)%]
+                        [% FOR call IN zonecalls_rs.all -%]
+                        [% total_number = total_number + call.get_column('number') %]
+                        [% total_duration = total_duration + call.get_column('duration') %]
+                        [% total_free_time = total_free_time + call.get_column('free_time') %]
+                        [% total_cost = total_cost + call.get_column('cost') %]
+                        <tr class="sw_action_row">
+                            <td>[% call.get_column('zone') %]</td>
+                            <td><div class="pull-right">[% call.get_column('number') %]</div></td>
+                            <td><div class="pull-right">[% call.get_column('duration')|format('%.3f') %]</div></td>
+                            <td><div class="pull-right">[% call.get_column('free_time')|format('%d') %]</div></td>
+                            <td><div class="pull-right">[% money_format( call.get_column('cost') / 100 ) %]</div></td>
+                            <td class="ngcp-actions-column">
+                                <div class="sw_actions pull-right">
+                                    <a class="btn btn-small btn-primary" 
+                                       href="[% c.uri_for_action("/customer/calls", [contract.id]) %]">
+                                        <i class="icon-edit"></i> [% c.loc('Edit') %]
+                                    </a>
+                                </div>
+                            </td>
+                        </tr>
+                        [%END%]
+                        <tr>
+                            <td>[% c.loc('Total') %]</td>
+                            <td><div class="pull-right">[% total_number %]</td>
+                            <td><div class="pull-right">[% total_duration | format('%.3f') %]</div</td>
+                            <td><div class="pull-right">[% total_free_time | format('%d')%]</div</td>
+                            <td><div class="pull-right">[% money_format( total_cost / 100 ) %]</div></td>
+                            <td class="ngcp-actions-column">
+                                <div class="sw_actions pull-right">
+                                    <a class="btn btn-small btn-primary" 
+                                       href="[% c.uri_for_action("/customer/calls", [contract.id]) %]">
+                                        <i class="icon-edit"></i> [% c.loc('Edit') %]
+                                    </a>
+                                </div>
+                            </td>
+                        </tr>
+                    </tbody>
+[%END%]
+[%END%]
+   
     [% IF c.user.roles == 'admin' || c.user.roles == 'reseller' %]
     <div class="accordion-group">
         <div class="accordion-heading">
