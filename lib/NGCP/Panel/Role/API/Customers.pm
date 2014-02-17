@@ -177,7 +177,21 @@ sub update_customer {
         }
     }
 
+    my $old_ext_id = $customer->external_id;
+
     $customer->update($resource);
+
+    if($customer->external_id ne $old_ext_id) {
+        foreach my $sub($customer->voip_subscribers->all) {
+            my $prov_sub = $sub->provisioning_voip_subscriber;
+            next unless($prov_sub);
+            NGCP::Panel::Utils::Subscriber::update_preferences(
+                c => $c,
+                prov_subscriber => $prov_sub,
+                preferences => { ext_contract_id => $customer->external_id }
+            );
+        }
+    }
 
     if($old_resource->{status} ne $resource->{status}) {
         if($customer->id == 1) {

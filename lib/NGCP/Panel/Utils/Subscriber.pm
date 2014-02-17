@@ -198,19 +198,10 @@ sub create_subscriber {
         $preferences->{cli} = $cli
             if(defined $cli);
 
-        foreach my $k(keys %{ $preferences } ) {
-            my $pref = NGCP::Panel::Utils::Preferences::get_usr_preference_rs(
-                c => $c, attribute => $k, prov_subscriber => $prov_subscriber);
-            if($pref->first && $pref->first->attribute->max_occur == 1) {
-                $pref->first->update({ 
-                    'value' => $preferences->{$k},
-                });
-            } else {
-                $pref->create({ 
-                    'value' => $preferences->{$k},
-                });
-            }
-        }
+        update_preferences(c => $c, 
+            prov_subscriber => $prov_subscriber, 
+            preferences => $preferences
+        );
 
         $schema->resultset('voicemail_users')->create({
             customer_id => $uuid_string,
@@ -228,6 +219,27 @@ sub create_subscriber {
 
         return $billing_subscriber;
     });
+}
+
+sub update_preferences {
+    my (%params) = @_;
+    my $c = $params{c};
+    my $prov_subscriber = $params{prov_subscriber};
+    my $preferences = $params{preferences};
+
+    foreach my $k(keys %{ $preferences } ) {
+        my $pref = NGCP::Panel::Utils::Preferences::get_usr_preference_rs(
+            c => $c, attribute => $k, prov_subscriber => $prov_subscriber);
+        if($pref->first && $pref->first->attribute->max_occur == 1) {
+            $pref->first->update({ 
+                'value' => $preferences->{$k},
+            });
+        } else {
+            $pref->create({ 
+                'value' => $preferences->{$k},
+            });
+        }
+    }
 }
 
 sub get_custom_subscriber_struct {
@@ -527,9 +539,11 @@ sub update_subscriber_numbers {
         subscriber_id => undef,
         reseller_id => undef,
     });
-    $prov_subs->voip_dbaliases->search({
-        id => { 'not in' => \@dbnums },
-    })->delete;
+    if($prov_subs) {
+        $prov_subs->voip_dbaliases->search({
+            id => { 'not in' => \@dbnums },
+        })->delete;
+    }
 
     return;
 }

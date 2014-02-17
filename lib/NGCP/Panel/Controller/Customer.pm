@@ -367,7 +367,21 @@ sub edit :Chained('base') :PathPart('edit') :Args(0) {
                 my $old_bprof_id = $billing_mapping->billing_profile_id;
                 $c->log->debug(">>>>>>>>>>> old bprof_id=$old_bprof_id");
                 my $old_prepaid = $billing_mapping->billing_profile->prepaid;
+                my $old_ext_id = $contract->external_id;
                 $contract->update($form->params);
+
+                if($contract->external_id ne $old_ext_id) {
+                    foreach my $sub($contract->voip_subscribers->all) {
+                        my $prov_sub = $sub->provisioning_voip_subscriber;
+                        next unless($prov_sub);
+                        NGCP::Panel::Utils::Subscriber::update_preferences(
+                            c => $c, 
+                            prov_subscriber => $prov_sub, 
+                            preferences => { ext_contract_id => $contract->external_id }
+                        );
+                    }
+                }
+
                 if($bprof_id != $old_bprof_id) {
                     $contract->billing_mappings->create({
                         billing_profile_id => $bprof_id,
@@ -572,6 +586,12 @@ sub subscriber_create :Chained('base') :PathPart('subscriber/create') :Args(0) {
                     $preferences->{shared_buddylist_visibility} = 1;
                     $preferences->{display_name} = $form->params->{display_name}
                         if($form->params->{display_name});
+                }
+                if($c->stash->{contract}->external_id) {
+                    $preferences->{ext_contract_id} = $c->stash->{contract}->external_id;
+                }
+                if($c->stash->{external_id}) {
+                    $preferences->{ext_subscriber_id} = $c->stash->{external_id};
                 }
                 if($c->stash->{billing_mapping}->billing_profile->prepaid) {
                     $preferences->{prepaid} = 1;
