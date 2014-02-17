@@ -41,11 +41,16 @@ sub auto :Private {
 sub GET : Allow {
     my ($self, $c) = @_;
 
+    my $blacklist = {
+        "DomainPreferenceDefs" => 1,
+        "SubscriberPreferenceDefs" => 1,
+    };
+
     my @colls = $self->get_collections;
     foreach my $coll(@colls) {
         my $mod = $coll;
         $mod =~ s/^.+\/([a-zA-Z0-9_]+)\.pm$/$1/;
-        next if($mod eq "DomainPreferenceDefs"); # not a "real" collection
+        next if(exists $blacklist->{$mod});
         my $rel = lc $mod;
         my $full_mod = 'NGCP::Panel::Controller::API::'.$mod;
 

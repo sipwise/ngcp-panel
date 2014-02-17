@@ -416,6 +416,10 @@ div.ngcp-modal .control-group.error .dataTables_wrapper input[type="text"] {
    padding: 4px 0;
    width: 100%;
 }
+.modal-body .control-group .controls input.ngcp_pref_input {
+    width: 220px;
+    float: left;
+}
 .modal-body .control-group .controls input.ngcp_e164_cc {
     width: 15%;
 }

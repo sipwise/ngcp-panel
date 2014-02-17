@@ -50,9 +50,9 @@ sub validate {
     for my $sub_error( keys %sub_errors ) {
         $self->add_error($sub_error);
     }
-    $self->field('cc')->clear_errors;
-    $self->field('ac')->clear_errors;
-    $self->field('sn')->clear_errors;
+    $self->field('cc')->clear_errors if $self->field('cc');
+    $self->field('ac')->clear_errors if $self->field('ac');
+    $self->field('sn')->clear_errors if $self->field('sn');
 
     if ($self->has_errors) {
         #dont add more errors

@@ -195,8 +195,7 @@ sub require_preference {
     my @preference = grep { 'return' eq $_->[0] } split_header_words($c->request->header('Prefer'));
     return $preference[0][1]
         if 1 == @preference && ('minimal' eq $preference[0][1] || 'representation' eq $preference[0][1]);
-    $self->error($c, HTTP_BAD_REQUEST, "This request is required to express an expectation about the response. Use the 'Prefer' header with either 'return=representation' or 'return='minimal' preference.");
-    return;
+    return 'minimal';
 }
 
 sub require_wellformed_json {

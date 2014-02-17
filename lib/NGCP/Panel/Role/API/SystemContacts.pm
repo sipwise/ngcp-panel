@@ -3,7 +3,7 @@ use Moose::Role;
 use Sipwise::Base;
 
 use boolean qw(true);
-use Try::Tiny;
+use TryCatch;
 use Data::HAL qw();
 use Data::HAL::Link qw();
 use HTTP::Status qw(:constants);

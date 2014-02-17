@@ -138,7 +138,6 @@ sub create_subscriber {
     my $reseller = $contract->contact->reseller;
     my $billing_domain = $schema->resultset('domains')
             ->find($params->{domain}{id} // $params->{domain_id});
-    use Data::Printer; print ">>>>>>>>>>>>>>>>>>>>>>>>>>> billing_dom\n"; p $billing_domain;
     my $prov_domain = $schema->resultset('voip_domains')
             ->find({domain => $billing_domain->domain});
     
@@ -328,8 +327,14 @@ sub update_subscriber_numbers {
             id => $subscriber_id,
         });
     my $prov_subs = $billing_subs->provisioning_voip_subscriber;
+    my @nums = (); my @dbnums = ();
 
-    if (defined $primary_number) {
+    if(exists $params{primary_number} && !defined $primary_number) {
+        $billing_subs->update({
+            primary_number_id => undef,
+        });
+    }
+    elsif(defined $primary_number) {
 
         my $old_cc;
         my $old_ac;
@@ -383,12 +388,21 @@ sub update_subscriber_numbers {
                     primary_number_id => $number->id,
                 });
             if(defined $prov_subs) {
-                $schema->resultset('voip_dbaliases')->create({
+                my $dbalias = $prov_subs->voip_dbaliases->find({
                     username => $cli,
-                    domain_id => $prov_subs->domain->id,
-                    subscriber_id => $prov_subs->id,
-                    is_primary => 1,
                 });
+                if($dbalias) {
+                    if(!$dbalias->is_primary) {
+                        $dbalias->update({ is_primary => 1 });
+                    }
+                } else {
+                    $dbalias = $prov_subs->voip_dbaliases->create({
+                        username => $cli,
+                        domain_id => $prov_subs->domain->id,
+                        is_primary => 1,
+                    });
+                }
+                push @dbnums, $dbalias->id;
                 if(defined $prov_subs->voicemail_user) {
                     $prov_subs->voicemail_user->update({
                         mailbox => $cli,
@@ -456,9 +470,6 @@ sub update_subscriber_numbers {
 
 
     if(defined $alias_numbers && ref($alias_numbers) eq 'ARRAY') {
-        # note that this only adds new alias numbers
-        # old entries in voip_numbers and voip_dbaliases are usually deleted
-        # before calling this sub
         my $number;
         for my $alias(@$alias_numbers) {
 
@@ -488,14 +499,37 @@ sub update_subscriber_numbers {
                     subscriber_id => $subscriber_id,
                 });
             }
-            $schema->resultset('voip_dbaliases')->create({
-                username => $number->cc . ($number->ac // '') . $number->sn,
-                subscriber_id => $prov_subs->id,
-                domain_id     => $prov_subs->domain->id,
-                is_primary => 0,
+            push @nums, $number->id;
+            my $cli = $number->cc . ($number->ac // '') . $number->sn;
+            my $dbalias = $prov_subs->voip_dbaliases->find({
+                username => $cli,
             });
+            if($dbalias) {
+                if($dbalias->is_primary) {
+                    $dbalias->update({ is_primary => 0 });
+                }
+            } else {
+                $dbalias = $prov_subs->voip_dbaliases->create({
+                    username => $cli,
+                    domain_id => $prov_subs->domain->id,
+                    is_primary => 0,
+                });
+            }
+            push @dbnums, $dbalias->id;
         }
     }
+
+    push @nums, $billing_subs->primary_number_id
+        if($billing_subs->primary_number_id);
+    $billing_subs->voip_numbers->search({
+        id => { 'not in' => \@nums },
+    })->update_all({
+        subscriber_id => undef,
+        reseller_id => undef,
+    });
+    $prov_subs->voip_dbaliases->search({
+        id => { 'not in' => \@dbnums },
+    })->delete;
 
     return;
 }
@@ -526,6 +560,56 @@ sub update_subadmin_sub_aliases {
             });
         }
     }
+}
+
+sub terminate {
+    my %params = @_;
+
+    my $c = $params{c};
+    my $subscriber = $params{subscriber};
+
+    my $schema = $c->model('DB');
+    $schema->txn_do(sub {
+        if($subscriber->provisioning_voip_subscriber->is_pbx_group) {
+            my $pbx_group = $schema->resultset('voip_pbx_groups')->find({
+                subscriber_id => $subscriber->provisioning_voip_subscriber->id
+            });
+            if($pbx_group) {
+                $pbx_group->provisioning_voip_subscribers->update_all({
+                    pbx_group_id => undef,
+                });
+            }
+            $pbx_group->delete;
+        }
+        my $prov_subscriber = $subscriber->provisioning_voip_subscriber;
+        if($prov_subscriber) {
+            update_pbx_group_prefs(
+                c => $c,
+                schema => $schema,
+                old_group_id => $prov_subscriber->voip_pbx_group->id,
+                new_group_id => undef,
+                username => $prov_subscriber->username,
+                domain => $prov_subscriber->domain->domain,
+            ) if($prov_subscriber->voip_pbx_group);
+            $prov_subscriber->delete;
+        }
+        if ($c->user->roles eq 'subscriberadmin') {
+            update_subadmin_sub_aliases(
+                schema => $schema,
+                subscriber_id => $subscriber->id,
+                contract_id => $subscriber->contract_id,
+                alias_selected => [], #none, thus moving them back to our subadmin
+                sadmin_id => $schema->resultset('voip_subscribers')
+                    ->find({uuid => $c->user->uuid})->id
+            );
+        } else {
+            $subscriber->voip_numbers->update_all({
+                subscriber_id => undef,
+                reseller_id => undef,
+            });
+        }
+        $subscriber->update({ status => 'terminated' });
+    });
 }
 
 1;

@@ -17,7 +17,7 @@ require Catalyst::ActionRole::HTTPMethods;
 require Catalyst::ActionRole::RequireSSL;
 
 with 'NGCP::Panel::Role::API';
-with 'NGCP::Panel::Role::API::DomainPreferences';
+with 'NGCP::Panel::Role::API::Preferences';
 
 class_has('resource_name', is => 'ro', default => 'domainpreferences');
 class_has('dispatch_path', is => 'ro', default => '/api/domainpreferences/');
@@ -48,10 +48,10 @@ sub GET :Allow {
     my ($self, $c, $id) = @_;
     {
         last unless $self->valid_id($c, $id);
-        my $domain = $self->item_by_id($c, $id);
+        my $domain = $self->item_by_id($c, $id, "domains");
         last unless $self->resource_exists($c, domainpreference => $domain);
 
-        my $hal = $self->hal_from_item($c, $domain);
+        my $hal = $self->hal_from_item($c, $domain, "domains");
 
         my $response = HTTP::Response->new(HTTP_OK, undef, HTTP::Headers->new(
             (map { # XXX Data::HAL must be able to generate links with multiple relations
@@ -101,15 +101,15 @@ sub PATCH :Allow {
         );
         last unless $json;
 
-        my $domain = $self->item_by_id($c, $id);
+        my $domain = $self->item_by_id($c, $id, "domains");
         last unless $self->resource_exists($c, domainpreferences => $domain);
-        my $old_resource = $self->get_resource($c, $domain);
+        my $old_resource = $self->get_resource($c, $domain, "domains");
         my $resource = $self->apply_patch($c, $old_resource, $json);
         last unless $resource;
 
         # last param is "no replace" to NOT delete existing prefs
         # for proper PATCH behavior
-        $domain = $self->update_item($c, $domain, $old_resource, $resource, 0);
+        $domain = $self->update_item($c, $domain, $old_resource, $resource, 0, "domains");
         last unless $domain;
 
         $guard->commit; 
@@ -119,7 +119,7 @@ sub PATCH :Allow {
             $c->response->header(Preference_Applied => 'return=minimal');
             $c->response->body(q());
         } else {
-            my $hal = $self->hal_from_item($c, $domain);
+            my $hal = $self->hal_from_item($c, $domain, "domains");
             my $response = HTTP::Response->new(HTTP_OK, undef, HTTP::Headers->new(
                 $hal->http_headers,
             ), $hal->as_json);
@@ -138,7 +138,7 @@ sub PUT :Allow {
         my $preference = $self->require_preference($c);
         last unless $preference;
 
-        my $domain = $self->item_by_id($c, $id);
+        my $domain = $self->item_by_id($c, $id, "domains");
         last unless $self->resource_exists($c, systemcontact => $domain);
         my $resource = $self->get_valid_put_data(
             c => $c,
@@ -146,11 +146,11 @@ sub PUT :Allow {
             media_type => 'application/json',
         );
         last unless $resource;
-        my $old_resource = $self->get_resource($c, $domain);
+        my $old_resource = $self->get_resource($c, $domain, "domains");
 
         # last param is "replace" to delete all existing prefs
         # for proper PUT behavior
-        $domain = $self->update_item($c, $domain, $old_resource, $resource, 1);
+        $domain = $self->update_item($c, $domain, $old_resource, $resource, 1, "domains");
         last unless $domain;
 
         $guard->commit; 
@@ -160,7 +160,7 @@ sub PUT :Allow {
             $c->response->header(Preference_Applied => 'return=minimal');
             $c->response->body(q());
         } else {
-            my $hal = $self->hal_from_item($c, $domain);
+            my $hal = $self->hal_from_item($c, $domain, "domains");
             my $response = HTTP::Response->new(HTTP_OK, undef, HTTP::Headers->new(
                 $hal->http_headers,
             ), $hal->as_json);

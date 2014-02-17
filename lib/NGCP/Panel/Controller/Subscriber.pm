@@ -420,7 +420,7 @@ sub webphone_ajax :Chained('base') :PathPart('webphone/ajax') :Args(0) {
     my $config = {
         sip => {
             # wss/5061 vs ws/5060
-            ws_servers => 'ws://' . $subscriber->domain->domain . ':5060/ws',
+            ws_servers => 'wss://' . $c->request->uri->host . ':' . $c->request->uri->port . '/wss/sip/',
             uri => 'sip:' . $subscriber->username . '@' . $subscriber->domain->domain,
             password => $subscriber->password,
         },
@@ -428,7 +428,7 @@ sub webphone_ajax :Chained('base') :PathPart('webphone/ajax') :Args(0) {
             # wss/5281 vs ws/5280
             # - ws causes "insecure" error in firefox
             # - wss fails if self signed cert is not accepted in firefox/chromium
-            wsURL => 'wss://' . $subscriber->domain->domain . ':5281/xmpp-websocket/',
+            wsURL => 'wss://' . $c->request->uri->host . ':' . $c->request->uri->port . '/wss/xmpp/',
             jid => $subscriber->username . '@' . $subscriber->domain->domain,
             server => $subscriber->domain->domain,
             credentials => { password => $subscriber->password },
@@ -460,49 +460,8 @@ sub terminate :Chained('base') :PathPart('terminate') :Args(0) :Does(ACL) :ACLDe
         NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for('/subscriber'));
     }
 
-    my $schema = $c->model('DB');
     try {
-        $schema->txn_do(sub {
-            if($subscriber->provisioning_voip_subscriber->is_pbx_group) {
-                my $pbx_group = $schema->resultset('voip_pbx_groups')->find({
-                    subscriber_id => $subscriber->provisioning_voip_subscriber->id
-                });
-                if($pbx_group) {
-                    $pbx_group->provisioning_voip_subscribers->update_all({
-                        pbx_group_id => undef,
-                    });
-                }
-                $pbx_group->delete;
-            }
-            my $prov_subscriber = $subscriber->provisioning_voip_subscriber;
-            if($prov_subscriber) {
-                NGCP::Panel::Utils::Subscriber::update_pbx_group_prefs(
-                    c => $c,
-                    schema => $schema,
-                    old_group_id => $prov_subscriber->voip_pbx_group->id,
-                    new_group_id => undef,
-                    username => $prov_subscriber->username,
-                    domain => $prov_subscriber->domain->domain,
-                ) if($prov_subscriber->voip_pbx_group);
-                $prov_subscriber->delete;
-            }
-            if ($c->user->roles eq 'subscriberadmin') {
-                NGCP::Panel::Utils::Subscriber::update_subadmin_sub_aliases(
-                    schema => $schema,
-                    subscriber_id => $subscriber->id,
-                    contract_id => $subscriber->contract_id,
-                    alias_selected => [], #none, thus moving them back to our subadmin
-                    sadmin_id => $schema->resultset('voip_subscribers')
-                        ->find({uuid => $c->user->uuid})->id
-                );
-            } else {
-                $subscriber->voip_numbers->update_all({
-                    subscriber_id => undef,
-                    reseller_id => undef,
-                });
-            }
-            $subscriber->update({ status => 'terminated' });
-        });
+        NGCP::Panel::Utils::Subscriber::terminate(c => $c, subscriber => $subscriber);
         $c->flash(messages => [{type => 'success', text => $c->loc('Successfully terminated subscriber') }]);
     } catch($e) {
         NGCP::Panel::Utils::Message->error(
@@ -606,12 +565,24 @@ sub preferences_edit :Chained('preferences_base') :PathPart('edit') :Args(0) {
             $c, $prov_subscriber, $old_auth_prefs);
     }
 
-    NGCP::Panel::Utils::Preferences::create_preference_form( c => $c,
-        pref_rs => $pref_rs,
-        enums   => \@enums,
-        base_uri => $c->uri_for_action('/subscriber/preferences', [$c->req->captures->[0]]),
-        edit_uri => $c->uri_for_action('/subscriber/preferences_edit', $c->req->captures),
-    );
+    try {
+        NGCP::Panel::Utils::Preferences::create_preference_form( c => $c,
+            pref_rs => $pref_rs,
+            enums   => \@enums,
+            base_uri => $c->uri_for_action('/subscriber/preferences', [$c->req->captures->[0]]),
+            edit_uri => $c->uri_for_action('/subscriber/preferences_edit', $c->req->captures),
+        );
+    } catch($e) {
+        NGCP::Panel::Utils::Message->error(
+            c     => $c,
+            log   => "Failed to handle preference: $e",
+            desc  => $c->loc('Failed to handle preference'),
+        );
+       
+        NGCP::Panel::Utils::Navigation::back_or($c, 
+            $c->uri_for_action('/subscriber/preferences', [$c->req->captures->[0]]));
+        return;
+    }
 
     if(keys %{ $old_auth_prefs }) {
         my $new_auth_prefs = {};
@@ -1993,7 +1964,10 @@ sub edit_master :Chained('master') :PathPart('edit') :Args(0) :Does(ACL) :ACLDet
                 unless ($subadmin_pbx) {
                     for my $num($subscriber->voip_numbers->all) {
                         next if($subscriber->primary_number && $num->id == $subscriber->primary_number->id);
-                        $num->delete;
+                        $num->update({
+                            subscriber_id => undef,
+                            reseller_id => undef,
+                        });
                     }
                 }
 

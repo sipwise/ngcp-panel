@@ -90,8 +90,9 @@ sub OPTIONS :Allow {
 
 sub PUT :Allow {
     my ($self, $c, $id) = @_;
-    my $guard = $c->model('DB')->txn_scope_guard;
-
+    my $schema = $c->model('DB');
+    my $guard = $schema->txn_scope_guard;
+    {
         my $preference = $self->require_preference($c);
         last unless $preference;
 
@@ -103,20 +104,14 @@ sub PUT :Allow {
             media_type => 'application/json',
         );
         last unless $resource;
-
-        say ">>>>>>>>>>>>>> new resource:";
-        use Data::Printer; p $resource;
+        my $update = 1;
+        my $r = $self->prepare_resource($c, $schema, $resource, $update);
+        last unless $r;
+        $resource = $r->{resource};
 
         my $form = $self->get_form($c);
-        my $old_resource = $self->transform_resource($c, $subscriber, $form);
-
-        say ">>>>>>>>>>>>>> old resource:";
-        use Data::Printer; p $old_resource;
-
-        $subscriber = $self->update_item($c, $subscriber, $old_resource, $resource, $form);
+        $subscriber = $self->update_item($c, $subscriber, $r, $resource, $form);
         last unless $subscriber;
-
-        say ">>>>>>>>>>>>> updated item";
 
         $guard->commit;
 
@@ -125,7 +120,8 @@ sub PUT :Allow {
             $c->response->header(Preference_Applied => 'return=minimal');
             $c->response->body(q());
         } else {
-            my $hal = $self->hal_from_item($c, $subscriber, $form);
+            $resource = $self->transform_resource($c, $subscriber, $form);
+            my $hal = $self->hal_from_item($c, $subscriber, $resource, $form);
             my $response = HTTP::Response->new(HTTP_OK, undef, HTTP::Headers->new(
                 $hal->http_headers,
             ), $hal->as_json);
@@ -133,7 +129,58 @@ sub PUT :Allow {
             $c->response->header(Preference_Applied => 'return=representation');
             $c->response->body($response->content);
         }
-    
+    }
+    return;
+}
+
+sub PATCH :Allow {
+    my ($self, $c, $id) = @_;
+    my $schema = $c->model('DB');
+    my $guard = $schema->txn_scope_guard;
+    {
+        my $preference = $self->require_preference($c);
+        last unless $preference;
+
+        my $subscriber = $self->item_by_id($c, $id);
+        last unless $self->resource_exists($c, subscriber => $subscriber);
+        my $json = $self->get_valid_patch_data(
+            c => $c,
+            id => $id,
+            media_type => 'application/json-patch+json',
+            ops => ["add", "replace", "copy", "remove"],
+        );
+        last unless $json;
+
+        my $form = $self->get_form($c);
+        my $old_resource = $self->transform_resource($c, $subscriber, $form);
+        my $resource = $self->apply_patch($c, $old_resource, $json);
+        last unless $resource;
+
+        my $update = 1;
+        my $r = $self->prepare_resource($c, $schema, $resource, $update);
+        last unless $r;
+        $resource = $r->{resource};
+
+        $subscriber = $self->update_item($c, $subscriber, $r, $resource, $form);
+        last unless $subscriber;
+
+        $guard->commit;
+
+        if ('minimal' eq $preference) {
+            $c->response->status(HTTP_NO_CONTENT);
+            $c->response->header(Preference_Applied => 'return=minimal');
+            $c->response->body(q());
+        } else {
+            $resource = $self->transform_resource($c, $subscriber, $form);
+            my $hal = $self->hal_from_item($c, $subscriber, $resource, $form);
+            my $response = HTTP::Response->new(HTTP_OK, undef, HTTP::Headers->new(
+                $hal->http_headers,
+            ), $hal->as_json);
+            $c->response->headers($response->headers);
+            $c->response->header(Preference_Applied => 'return=representation');
+            $c->response->body($response->content);
+        }
+    }
     return;
 }
 

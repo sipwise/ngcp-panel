@@ -1,4 +1,4 @@
-package NGCP::Panel::Controller::API::DomainPreferences;
+package NGCP::Panel::Controller::API::SubscriberPreferences;
 use Sipwise::Base;
 use namespace::sweep;
 use boolean qw(true);
@@ -20,15 +20,15 @@ class_has 'api_description' => (
     is => 'ro',
     isa => 'Str',
     default => 
-        'Specifies certain properties (preferences) for a <a href="#domains">Domain</a>. The full list of properties can be obtained via <a href="/api/domainpreferencedefs/">DomainPreferenceDefs</a>.'
+        'Specifies certain properties (preferences) for a <a href="#subscribers">Subscriber</a>. The full list of properties can be obtained via <a href="/api/subscriberpreferencedefs/">SubscriberPreferenceDefs</a>.'
 );
 
 with 'NGCP::Panel::Role::API';
 with 'NGCP::Panel::Role::API::Preferences';
 
-class_has('resource_name', is => 'ro', default => 'domainpreferences');
-class_has('dispatch_path', is => 'ro', default => '/api/domainpreferences/');
-class_has('relation', is => 'ro', default => 'http://purl.org/sipwise/ngcp-api/#rel-domainpreferences');
+class_has('resource_name', is => 'ro', default => 'subscriberpreferences');
+class_has('dispatch_path', is => 'ro', default => '/api/subscriberpreferences/');
+class_has('relation', is => 'ro', default => 'http://purl.org/sipwise/ngcp-api/#rel-subscriberpreferences');
 
 __PACKAGE__->config(
     action => {
@@ -56,18 +56,19 @@ sub GET :Allow {
     my $page = $c->request->params->{page} // 1;
     my $rows = $c->request->params->{rows} // 10;
     {
-        my $domains = $self->item_rs($c, "domains");
-        my $total_count = int($domains->count);
-        $domains = $domains->search(undef, {
+        my $subscribers = $self->item_rs($c, "subscribers");
+        my $total_count = int($subscribers->count);
+        $subscribers = $subscribers->search(undef, {
             page => $page,
             rows => $rows,
         });
         my (@embedded, @links);
-        for my $domain ($domains->search({}, {order_by => {-asc => 'me.id'}})->all) {
-            push @embedded, $self->hal_from_item($c, $domain, "domains");
+        for my $subscriber ($subscribers->search({}, {order_by => {-asc => 'me.id'}})->all) {
+            next unless($subscriber->provisioning_voip_subscriber);
+            push @embedded, $self->hal_from_item($c, $subscriber, "subscribers");
             push @links, Data::HAL::Link->new(
                 relation => 'ngcp:'.$self->resource_name,
-                href     => sprintf('%s%d', $self->dispatch_path, $domain->id),
+                href     => sprintf('%s%d', $self->dispatch_path, $subscriber->id),
             );
         }
         push @links,

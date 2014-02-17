@@ -105,7 +105,6 @@ sub DELETE :Allow {
         $domain->delete;
 
         try {
-            use Data::Printer; p $self->config->{features};
             unless($c->config->{features}->{debug}) {
                 $self->xmpp_domain_disable($c, $domain);
                 $self->sip_domain_reload($c);

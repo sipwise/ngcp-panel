@@ -1,11 +1,14 @@
-package NGCP::Panel::Controller::API::BillingProfilesItem;
+package NGCP::Panel::Controller::API::SubscriberPreferencesItem;
 use Sipwise::Base;
 use namespace::sweep;
+use boolean qw(true);
+use Data::HAL qw();
+use Data::HAL::Link qw();
 use HTTP::Headers qw();
 use HTTP::Status qw(:constants);
 use MooseX::ClassAttribute qw(class_has);
-use NGCP::Panel::Utils::DateTime;
 use NGCP::Panel::Utils::ValidateJSON qw();
+use NGCP::Panel::Utils::DateTime;
 use Path::Tiny qw(path);
 use Safe::Isa qw($_isa);
 BEGIN { extends 'Catalyst::Controller::ActionRole'; }
@@ -14,11 +17,11 @@ require Catalyst::ActionRole::HTTPMethods;
 require Catalyst::ActionRole::RequireSSL;
 
 with 'NGCP::Panel::Role::API';
-with 'NGCP::Panel::Role::API::BillingProfiles';
+with 'NGCP::Panel::Role::API::Preferences';
 
-class_has('resource_name', is => 'ro', default => 'billingprofiles');
-class_has('dispatch_path', is => 'ro', default => '/api/billingprofiles/');
-class_has('relation', is => 'ro', default => 'http://purl.org/sipwise/ngcp-api/#rel-billingprofiles');
+class_has('resource_name', is => 'ro', default => 'subscriberpreferences');
+class_has('dispatch_path', is => 'ro', default => '/api/subscriberpreferences/');
+class_has('relation', is => 'ro', default => 'http://purl.org/sipwise/ngcp-api/#rel-subscriberpreferences');
 
 __PACKAGE__->config(
     action => {
@@ -45,12 +48,11 @@ sub GET :Allow {
     my ($self, $c, $id) = @_;
     {
         last unless $self->valid_id($c, $id);
-        my $profile = $self->profile_by_id($c, $id);
-        last unless $self->resource_exists($c, billingprofile => $profile);
+        my $subscriber = $self->item_by_id($c, $id, "subscribers");
+        last unless $self->resource_exists($c, subscriberpreference => $subscriber);
 
-        my $hal = $self->hal_from_profile($c, $profile);
+        my $hal = $self->hal_from_item($c, $subscriber, "subscribers");
 
-        # TODO: we don't need reseller stuff here!
         my $response = HTTP::Response->new(HTTP_OK, undef, HTTP::Headers->new(
             (map { # XXX Data::HAL must be able to generate links with multiple relations
                 s|rel="(http://purl.org/sipwise/ngcp-api/#rel-resellers)"|rel="item $1"|;
@@ -92,30 +94,32 @@ sub PATCH :Allow {
         last unless $preference;
 
         my $json = $self->get_valid_patch_data(
-            c => $c, 
+            c => $c,
             id => $id,
             media_type => 'application/json-patch+json',
+            ops => [qw/add replace remove copy/],
         );
         last unless $json;
 
-        my $profile = $self->profile_by_id($c, $id);
-        last unless $self->resource_exists($c, billingprofile => $profile);
-        my $old_resource = { $profile->get_inflated_columns };
+        my $subscriber = $self->item_by_id($c, $id, "subscribers");
+        last unless $self->resource_exists($c, subscriberpreferences => $subscriber);
+        my $old_resource = $self->get_resource($c, $subscriber, "subscribers");
         my $resource = $self->apply_patch($c, $old_resource, $json);
         last unless $resource;
 
-        my $form = $self->get_form($c);
-        $profile = $self->update_profile($c, $profile, $old_resource, $resource, $form);
-        last unless $profile;
+        # last param is "no replace" to NOT delete existing prefs
+        # for proper PATCH behavior
+        $subscriber = $self->update_item($c, $subscriber, $old_resource, $resource, 0, "subscribers");
+        last unless $subscriber;
 
-        $guard->commit;
+        $guard->commit; 
 
         if ('minimal' eq $preference) {
             $c->response->status(HTTP_NO_CONTENT);
             $c->response->header(Preference_Applied => 'return=minimal');
             $c->response->body(q());
         } else {
-            my $hal = $self->hal_from_profile($c, $profile, $form);
+            my $hal = $self->hal_from_item($c, $subscriber, "subscribers");
             my $response = HTTP::Response->new(HTTP_OK, undef, HTTP::Headers->new(
                 $hal->http_headers,
             ), $hal->as_json);
@@ -134,28 +138,29 @@ sub PUT :Allow {
         my $preference = $self->require_preference($c);
         last unless $preference;
 
-        my $profile = $self->profile_by_id($c, $id);
-        last unless $self->resource_exists($c, billingprofile => $profile );
+        my $subscriber = $self->item_by_id($c, $id, "subscribers");
+        last unless $self->resource_exists($c, systemcontact => $subscriber);
         my $resource = $self->get_valid_put_data(
             c => $c,
             id => $id,
             media_type => 'application/json',
         );
         last unless $resource;
-        my $old_resource = { $profile->get_inflated_columns };
+        my $old_resource = $self->get_resource($c, $subscriber, "subscribers");
 
-        my $form = $self->get_form($c);
-        $profile = $self->update_profile($c, $profile, $old_resource, $resource, $form);
-        last unless $profile;
+        # last param is "replace" to delete all existing prefs
+        # for proper PUT behavior
+        $subscriber = $self->update_item($c, $subscriber, $old_resource, $resource, 1, "subscribers");
+        last unless $subscriber;
 
-        $guard->commit;
+        $guard->commit; 
 
         if ('minimal' eq $preference) {
             $c->response->status(HTTP_NO_CONTENT);
             $c->response->header(Preference_Applied => 'return=minimal');
             $c->response->body(q());
         } else {
-            my $hal = $self->hal_from_profile($c, $profile, $form);
+            my $hal = $self->hal_from_item($c, $subscriber, "subscribers");
             my $response = HTTP::Response->new(HTTP_OK, undef, HTTP::Headers->new(
                 $hal->http_headers,
             ), $hal->as_json);
@@ -166,8 +171,6 @@ sub PUT :Allow {
     }
     return;
 }
-
-# we don't allow to DELETE a billing profile
 
 sub end : Private {
     my ($self, $c) = @_;

@@ -97,7 +97,7 @@ has_field 'status' => (
     label => 'Status',
     element_attr => {
         rel => ['tooltip'],
-        title => ['The status of the subscriber.']
+        title => ['The status of the subscriber (one of "active", "locked", "terminated").']
     },
 );
 

@@ -3,6 +3,30 @@ use strict;
 use warnings;
 
 use NGCP::Panel::Form::Preferences;
+use Sipwise::Base;
+use Data::Validate::IP qw/is_ipv4 is_ipv6/;
+
+sub validate_ipnet {
+    my ($field) = @_;
+    my ($ip, $net) = split /\//, $field->value;
+    if(is_ipv4($ip)) {
+        return 1 unless(defined $net);
+        unless($net->is_int && $net >= 0 && $net <= 32) {
+            $field->add_error("Invalid IPv4 network portion, must be 0 <= net <= 32");
+            return;
+        }
+    } elsif(is_ipv6($ip)) {
+        return 1 unless(defined $net);
+        unless($net->is_int && $net >= 0 && $net <= 128) {
+            $field->add_error("Invalid IPv6 network portion, must be 0 <= net <= 128");
+            return;
+        }
+    } else {
+        $field->add_error("Invalid IPv4 or IPv6 address, must be valid address with optional /net suffix.");
+        return;
+    }
+    return 1;
+}
 
 sub load_preference_list {
     my %params = @_;
@@ -193,6 +217,9 @@ sub create_preference_form {
         my $preference_id = $c->stash->{preference}->first ? $c->stash->{preference}->first->id : undef;
         my $attribute = $c->stash->{preference_meta}->attribute;
        if ($attribute eq "allowed_ips") {
+            unless(validate_ipnet($form->field($attribute))) {
+                goto OUT;
+            }
 
             unless (defined $aip_group_id) {
                 #TODO put this in a transaction
@@ -218,7 +245,9 @@ sub create_preference_form {
                 ipnet => $form->field($attribute)->value,
             });
        } elsif ($attribute eq "man_allowed_ips") {
-
+            unless(validate_ipnet($form->field($attribute))) {
+                goto OUT;
+            }
             unless (defined $man_aip_group_id) {
                 #TODO put this in a transaction
                 my $new_group = $c->model('DB')->resultset('voip_aig_sequence')
@@ -258,7 +287,7 @@ sub create_preference_form {
             );
             $c->flash(messages => [{type => 'success', text => "Preference $attribute successfully updated."}]);
             $c->response->redirect($base_uri);
-            return;
+            return 1;
         } elsif ($attribute eq "ncos" || $attribute eq "adm_ncos") {
             my $selected_level = $c->stash->{ncos_levels_rs}->find(
                 $form->field($attribute)->value
@@ -278,7 +307,7 @@ sub create_preference_form {
 
             $c->flash(messages => [{type => 'success', text => "Preference $attribute successfully updated."}]);
             $c->response->redirect($base_uri);
-            return;
+            return 1;
         } elsif ($attribute eq "sound_set") {
             my $selected_set = $c->stash->{sound_sets_rs}->find(
                 $form->field($attribute)->value
@@ -296,7 +325,7 @@ sub create_preference_form {
 
             $c->flash(messages => [{type => 'success', text => "Preference $attribute successfully updated."}]);
             $c->response->redirect($base_uri);
-            return;
+            return 1;
         } elsif ($attribute eq "contract_sound_set") {
             my $selected_set = $c->stash->{contract_sound_sets_rs}->find(
                 $form->field($attribute)->value
@@ -314,7 +343,7 @@ sub create_preference_form {
 
             $c->flash(messages => [{type => 'success', text => "Preference $attribute successfully updated."}]);
             $c->response->redirect($base_uri);
-            return;
+            return 1;
         } else {
             if( ($c->stash->{preference_meta}->data_type ne 'enum' &&
                 $form->field($attribute)->value eq '') ||
@@ -336,9 +365,11 @@ sub create_preference_form {
             }
             $c->flash(messages => [{type => 'success', text => "Preference $attribute successfully updated."}]);
             $c->response->redirect($base_uri);
-            return;
+            return 1;
          }
     }
+
+    OUT:
     
     my $delete_param = $c->request->params->{delete};
     my $deactivate_param = $c->request->params->{deactivate};
@@ -396,6 +427,8 @@ sub create_preference_form {
     $c->stash(form       => $form,
               aip_grp_rs => $aip_grp_rs,
               man_aip_grp_rs => $man_aip_grp_rs);
+
+    return 1;
 }
 
 sub set_rewrite_preferences {
@@ -434,7 +467,9 @@ sub get_usr_preference_rs {
 
     my $pref_rs = $c->model('DB')->resultset('voip_preferences')->find({
             attribute => $attribute, 'usr_pref' => 1,
-        })->voip_usr_preferences;
+        });
+    return unless($pref_rs);
+    $pref_rs = $pref_rs->voip_usr_preferences;
     if($prov_subscriber) {
         $pref_rs = $pref_rs->search({
                 subscriber_id => $prov_subscriber->id,
@@ -456,6 +491,22 @@ sub get_dom_preference_rs {
     return unless($preference);
     return $preference->voip_dom_preferences->search_rs({
             domain_id => $prov_domain->id,
+        });
+}
+
+sub get_peer_preference_rs {
+    my %params = @_;
+
+    my $c = $params{c};
+    my $attribute = $params{attribute};
+    my $host = $params{peer_host};
+
+    my $preference = $c->model('DB')->resultset('voip_preferences')->find({
+            attribute => $attribute, 'peer_pref' => 1,
+        });
+    return unless($preference);
+    return $preference->voip_peer_preferences->search_rs({
+            peer_host_id => $host->id,
         });
 }
 

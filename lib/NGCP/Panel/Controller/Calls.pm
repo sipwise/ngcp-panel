@@ -47,8 +47,6 @@ sub calls_matrix_ajax :Chained('/') :PathPart('calls/ajax') :Args(0) {
         $to_epoch = NGCP::Panel::Utils::DateTime::current_local->truncate(to => 'day')->add(days => 1)->epoch();
      }
 
-     use Data::Printer; p $from_epoch; p $to_epoch;
-
      my $rs = $c->model('DB')->resultset('cdr')->search({
         -and => [
             start_time => { '>=' => $from_epoch },

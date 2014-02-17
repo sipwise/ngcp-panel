@@ -574,6 +574,12 @@
                 }
             };
 
+            $('#xmpp-buddy-add').click(function(obj) {
+                var jid = $('#xmpp-buddy-add-jid').val();
+                console.log(">>>>>>>>> adding jid " + jid);
+                chat.subscribe(jid);
+            });
+
         });
 
 
@@ -590,6 +596,14 @@
         <div class="row span6" style="margin:0; clear:both; padding:10px;">
             <input id="xmpp-toggle-offline" style="float:left;" type="checkbox" data-on="success" data-off="default" data-on-label="[% c.loc('Show Offline') %]" data-off-label="[% c.loc('Hide Offline') %]">
             <input id="sip_toggle_video" checked style="float:left" type="checkbox" data-on="success" data-off="default" data-on-label="[% c.loc('Audio&amp;Video') %]" data-off-label="[% c.loc('Audio Only') %]">
+        </div>
+        <div class="span6" style="margin:0; clear:both; padding:0;">
+            <div class="span4" style="margin:0;">
+                <input type="text" id="xmpp-buddy-add-jid" class="span4"/>
+            </div>
+            <div class="span2" style="margin:0; float:right;">
+                <button class="btn btn-primary btn-medium" id="xmpp-buddy-add"><i class="icon-plus"></i> Add Buddy</button>
+            </div>
         </div>
         <div class="row span6" style="margin:0; clear:both;">
             <select id="xmpp-pres" class="selectpicker span6">
