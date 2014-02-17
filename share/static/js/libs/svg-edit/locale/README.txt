@@ -13,6 +13,5 @@ Languages Already Translated By Humans:
   * lang.fr.js
   * lang.ja.js
   * lang.nl.js
-  * lang.pl.js
   * lang.ro.js
   * lang.sk.js
