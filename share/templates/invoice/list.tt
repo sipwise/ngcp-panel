@@ -1,8 +1,8 @@
-[% site_config.title = c.loc('Invoices') -%]
+[% site_config.title = c.loc('InvoicePeriods') -%]
 [%
-    helper.name = c.loc('Invoices');
-    helper.name_single = c.loc('Invoice');
-    helper.identifier = 'invoice';
+    helper.name = c.loc('InvoicePeriods');
+    helper.name_single = c.loc('InvoicePeriod');
+    helper.identifier = 'InvoicePeriod';
     helper.top_buttons = "";
   
     PROCESS 'helpers/datatables_vars.tt';

@@ -1,79 +1,42 @@
-<svg width="215mm" height="297mm" viewBox="0 0 215 297" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" stroke-width="0" stroke="#000000" fill="#000000" font-size="4pt" font-family="HelveticaNeue-Light" xml:space="preserve" text-anchor="start">
+<svg width="215mm" height="600mm" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+ <g>
+  <title>TitlePage</title>
+  <image xlink:href="images/logo.png" height="20mm" width="20mm" y="15mm" x="15mm" id="titlepage_logo"/>
+  <text xml:space="preserve" y="15mm"  x="40mm" text-anchor="left" stroke-width="0" stroke="#000000" fill="#000000" font-size="24" font-family="serif" id="titlepage_customername">{CustomerName}</text>
+  <text xml:space="preserve" y="40mm"  x="40mm" text-anchor="left" stroke-width="0" stroke="#000000" fill="#000000" font-size="24" font-family="serif" id="titlepage_customeraddress">{CustomerAddress}</text>
+  <text xml:space="preserve" y="60mm" x="40mm" text-anchor="left" stroke-width="0" stroke="#000000" fill="#000000" font-size="24" font-family="serif" id="titlepage_companyname">{CompanyName}</text>
+  <text xml:space="preserve" y="80mm" x="40mm" text-anchor="left" stroke-width="0" stroke="#000000" fill="#000000" font-size="24" font-family="serif" id="titlepage_companyaddress">{CompanyAddress}</text>
 
-	<style>
-<![CDATA[
-.address .company{
-	font-weight: bold
-}
-g {
-    /*
-    fill:#000000;fill-opacity:1;fill-rule:nonzero;
-    stroke:none;
-    */
-    //font-family:HelveticaNeue;
-    //font-family:Arial;
-    font-family:HelveticaNeue-Light;
-    font-variant:normal;
-    //font-weight:300;
-    font-size:2.6pt;
-    writing-mode:lr;
-    -inkscape-font-specification:HelveticaNeue-Light;
-}
-]]>
-	</style>
-    
-    
-    <g>
-        <title>MidPage</title>
-    </g>
-    <g>
-        <title>LastPage</title>
-    </g>
-    <g y="0" x="0" width="215" height="297" id="titlepage">
-    
-        <title>TitlePage</title>
+ <g y="95mm" x="40mm" text-anchor="start" stroke-width="1" stroke="#000000" fill="#000000" font-size="24" font-family="serif" xml:space="preserve" id="titlepage_companyaddress_custom_1">
+  <!--rect x="35mm" y="95mm" height="20mm" width="80mm" stroke-width="0.25mm" stroke="#000000" fill="#FFFFFF" id="titlepage_companyaddress_custom_border"/-->
+  <text y="95mm" id="titlepage_companyaddress_custom_1">address line 1</text>
+  <text y="100mm" id="titlepage_companyaddress_custom_2">address line 2</text>
+  <text y="105mm" id="titlepage_companyaddress_custom_3">address line 3</text>
+ </g>
 
-        <rect x="0" y="0" width="214.6" height="296.6" stroke-width="0.1" stroke="#FF0000" fill="#FFFFFF" id="totalborder"/>
+  <text xml:space="preserve" y="130mm" x="10mm" text-anchor="end" stroke-width="0" stroke="#000000" fill="#000000" font-size="14" font-family="serif" id="calls_title">
+   <tspan x="15mm" id="calls_zone" text-anchor="start">Zone</tspan>
+   <tspan x="105mm" id="calls_number">Number</tspan>
+   <tspan x="140mm" id="calls_duration">Duration</tspan>
+   <tspan x="170mm" id="calls_freetime">Free time</tspan>
+   <tspan x="200mm" id="calls_cost">Cost</tspan>
+  </text>
+[%calls_height_start = 130-%]
+<!--[% FOR call IN zonecalls_rs.all -%]-->
+<!--[% total_number = total_number + call.get_column('number') -%]-->
+<!--[% total_duration = total_duration + call.get_column('duration') -%]-->
+<!--[% total_free_time = total_free_time + call.get_column('free_time') -%]-->
+<!--[% total_cost = total_cost + call.get_column('cost') -%]-->
+  <text xml:space="preserve" y="[% calls_height_start + ( 10 * loop.count ) %]mm" x="10mm" text-anchor="end" stroke-width="0" stroke="#000000" fill="#000000" font-size="14" font-family="serif" id="calls[%loop.count-%]">
+   <tspan x="15mm" id="calls_zone[%loop.count-%]" text-anchor="start">[% call.get_column('zone') %]</tspan>
+   <tspan x="105mm" id="calls_number[%loop.count-%]">[% call.get_column('number') %]</tspan>
+   <tspan x="140mm" id="calls_duration[%loop.count-%]">[% call.get_column('duration')|format('%.3f') %]</tspan>
+   <tspan x="170mm" id="calls_freetime[%loop.count-%]">[% call.get_column('free_time')|format('%d') %]</tspan>
+   <tspan x="200mm" id="calls_cost[%loop.count-%]">[% ( call.get_column('cost') / 100 ) |format('%.2f') %]</tspan>
+  </text>
+<!--[%END -%]-->
 
-        <g y="40" x="10" width="50" height="30"  id="titlepage_companyaddress_custom" transform="translate(10, 40)">
-            <rect x="0" y="0" width="50" height="30" stroke-width="0.25" fill="#FFFFFF" id="titlepage_companyaddress_custom_border"/>
-            <text x="5" y="7" id="titlepage_companyaddress_custom_1">address line 1</text>
-            <text x="5" y="17" id="titlepage_companyaddress_custom_2">address line 2</text>
-            <text x="5" y="27" id="titlepage_companyaddress_custom_3">address line 3</text>
-        </g>
-        <g y="135" x="10" width="195" height="150" id="titlepage_invoicedetails_head" transform="translate(10, 135)">
-            <text id="calls_title" text-anchor="end">
-                <tspan x="5" id="calls_zone" text-anchor="start">Zone</tspan>
-                <tspan x="95" id="calls_number">Number</tspan>
-                <tspan x="130" id="calls_duration">Duration</tspan>
-                <tspan x="160" id="calls_freetime">Free time</tspan>
-                <tspan x="190" id="calls_cost">Cost</tspan>
-            </text>
-    <!--[%calls_height_start = 135-%]-->
-    <!--[% FOR call IN zonecalls_rs.all -%]-->
-    <!--[% total_number = total_number + call.get_column('number') -%]-->
-    <!--[% total_duration = total_duration + call.get_column('duration') -%]-->
-    <!--[% total_free_time = total_free_time + call.get_column('free_time') -%]-->
-    <!--[% total_cost = total_cost + call.get_column('cost') -%]-->
-    <!--[% calls_height_start + ( 10 * ( loop.count - 1 ) ) %]-->
-            <text y="10" text-anchor="end" id="calls[%loop.count-%]">
-                <tspan y="10" x="5" id="calls_zone[%loop.count-%]" text-anchor="start"><!--{[% call.get_column('zone') %]}--><!--[%#-->Example zone<!--%]--></tspan>
-                <tspan y="10" x="95" id="calls_number[%loop.count-%]"><!--{[% call.get_column('number') %]}--><!--[%#-->0<!--%]--></tspan>
-                <tspan y="10" x="130" id="calls_duration[%loop.count-%]"><!--{[% call.get_column('duration')|format('%.3f') %]}--><!--[%#-->0.000<!--%]--></tspan>
-                <tspan y="10" x="160" id="calls_freetime[%loop.count-%]"><!--{[% call.get_column('free_time')|format('%d') %]}--><!--[%#-->0.0<!--%]--></tspan>
-                <tspan y="10" x="190" id="calls_cost[%loop.count-%]"><!--{[% ( call.get_column('cost') / 100 ) |format('%.2f') %]}--><!--[%#-->0.00<!--%]--></tspan>
-            </text>
-    <!--[%END -%]-->
-        </g>
-    </g>
-    <g id="bgpage">
-        <title>Background</title>
-        <g y="270" x="5" width="205" height="18" transform="translate(5, 270)" class="address" font-size="2pt" id="bgpage_companyaddress_sipwise">
-            <rect x="0"    y="0" width="205" height="18" stroke-width="0.25" fill="#FFFFFF" id="titlepage_companyaddress_sipwise__border"/>
-            <text x="2"    y="5" id="bgpage_companyaddress_sipwise__company" class="company">{<!--{[%}-->provider.company<!--{%]}-->}</text>
-            <text x="2"   y="10" id="bgpage_companyaddress_sipwise__address">{<!--{[%}-->provider.street<!--{%]}-->}, Postcode {<!--{[%}-->provider.postcode<!--{%]}-->} {<!--{[%}-->provider.city<!--{%]}-->} {<!--{[%}-->provider.country<!--{%]}-->}</text>
-            <text x="2"   y="15" id="bgpage_companyaddress_sipwise__contact">{<!--{[%}-->provider.firstname<!--{%]}-->} {<!--{[%}-->provider.lastname<!--{%]}-->}. Phone: {<!--{[%}-->provider.phone<!--{%]}-->}. Mobile: {<!--{[%}-->provider.mobile<!--{%]}-->}. Fax: {<!--{[%}-->provider.fax<!--{%]}-->}</text>
-            <text x="203" y="15" id="bgpage_companyaddress_sipwise__contact" text-anchor="end" >Page {<!--{[%}-->page<!--{%]}-->}</text>
-        </g>
-    </g>
+  <rect x="0.25mm" y="296.5mm" height="11.5mm" width="214.5mm" stroke-width="0.5mm" stroke="#000000" fill="#7f7f7f" id="pageseparator_1"/>
+
+ </g>
 </svg>

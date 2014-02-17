@@ -125,7 +125,8 @@ sub hal_from_customer {
 
 sub customer_by_id {
     my ($self, $c, $id) = @_;
-    my $customers = $self->item_rs($c);
+        c => $c,
+    );
     return $customers->find($id);
 }
 
