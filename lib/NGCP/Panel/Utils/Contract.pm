@@ -217,6 +217,7 @@ sub get_contracts_rs_sippbx{
     my $reseller_condition;
     if($c->user->roles eq "reseller") {
         $reseller_condition = $c->user->reseller_id;
+        $reseller_condition = $c->user->reseller_id;
     } elsif($c->user->roles eq "subscriberadmin") {
         $reseller_condition = $c->user->contract->contact->reseller_id;
     } elsif($c->user->roles eq "admin") {
