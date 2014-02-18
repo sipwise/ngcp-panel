@@ -216,9 +216,11 @@ sub get_contracts_rs_sippbx{
         $reseller_condition = $c->user->contract->contact->reseller_id;
     } elsif($c->user->roles eq "admin") {
     }
-    $customers = $customers->search({
-            'contact.reseller_id' => $reseller_condition ,
-    });
+    if ($reseller_condition){
+        $customers = $customers->search({
+                'contact.reseller_id' => $reseller_condition ,
+        });
+    }
     
     $customers = $customers->search({
             '-or' => [
