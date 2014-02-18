@@ -201,20 +201,23 @@ sub get_contracts_rs_sippbx{
         schema => $c->model('DB'),
     );
     #really here we don't need role - we can pass only reseller_id, reseller_id should be tacken according to role in other method
-    my @reseller_condition = ({ '-not' => undef });
-    if($c->user->roles eq "reseller") {
-        push @reseller_condition, $c->user->reseller_id;
-    } elsif($c->user->roles eq "subscriberadmin") {
-        push @reseller_condition, $c->user->contract->contact->reseller_id;
-    } elsif($c->user->roles eq "admin") {
-    }
-    my $reseller_condition =  $#reseller_condition > 1 
-        ? { '-and' => \@reseller_condition } 
-        : $reseller_condition[0];
+    
+    #for all
     $customers = $customers->search({
-            'contact.reseller_id' => $reseller_condition ,
+            'contact.reseller_id' => { '-not' => undef },
         },{
             join => 'contact'
+    });
+
+    my $reseller_condition;
+    if($c->user->roles eq "reseller") {
+        $reseller_condition = $c->user->reseller_id;
+    } elsif($c->user->roles eq "subscriberadmin") {
+        $reseller_condition = $c->user->contract->contact->reseller_id;
+    } elsif($c->user->roles eq "admin") {
+    }
+    $customers = $customers->search({
+            'contact.reseller_id' => $reseller_condition ,
     });
     
     $customers = $customers->search({
