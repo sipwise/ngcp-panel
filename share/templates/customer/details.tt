@@ -399,13 +399,7 @@
         </div>
     </div>
 
-
-[% MACRO accordion_group BLOCK%]
-    <div class="accordion-group">
-        <div class="accordion-heading">
-            <a class="accordion-toggle" data-toggle="collapse" data-parent="#customer_details" href="#[%id%]">[% c.loc(title) %]</a>
-        </div>
-[% MACRO accordion_group_internal BLOCK%]
+[%BLOCK accordion_group_internal %]
         <div class="accordion-body collapse" id="[%id%]">
             <div class="accordion-inner">
                 <table class="table table-bordered table-striped table-highlight table-hover">
@@ -414,6 +408,12 @@
             </div>
         </div>
 [%END%]
+
+[%BLOCK accordion_group %]
+    <div class="accordion-group">
+        <div class="accordion-heading">
+            <a class="accordion-toggle" data-toggle="collapse" data-parent="#customer_details" href="#[%id%]">[% c.loc(title) %]</a>
+        </div>
 [%content%]
     </div>
 [%END%]
@@ -422,7 +422,7 @@
 
 [%# Dumper.dump(zonecalls_rs)%]
 [%# zonecalls_rs.size%]
-[% WRAPPER accordion_group id="collapse_calls" title='Balance details' %]
+[% WRAPPER accordion_group id="collapse_calls" title=c.loc('Balance details') %]
 [% WRAPPER accordion_group_internal id="collapse_calls" title='Balance details' %]
                     <thead>
                         <tr>
