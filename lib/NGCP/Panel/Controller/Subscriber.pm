@@ -200,11 +200,25 @@ sub create_list :Chained('sub_list') :PathPart('create') :Args(0) :Does(ACL) :AC
                             'value' => 1,
                         });
                 }
+                if(defined $billing_subscriber->external_id) {
+                    $voip_preferences->find({ 'attribute' => 'ext_subscriber_id' })
+                        ->voip_usr_preferences->create({ 
+                            'subscriber_id' => $prov_subscriber->id,
+                            'value' => $billing_subscriber->external_id,
+                        });
+                }
                 $voip_preferences->find({ 'attribute' => 'account_id' })
                     ->voip_usr_preferences->create({ 
                         'subscriber_id' => $prov_subscriber->id,
                         'value' => $prov_subscriber->contract->id,
                     });
+                if($contract->external_id) {
+                    $voip_preferences->find({ 'attribute' => 'ext_contract_id' })
+                        ->voip_usr_preferences->create({ 
+                            'subscriber_id' => $prov_subscriber->id,
+                            'value' => $contract->external_id,
+                        });
+                }
                 $voip_preferences->find({ 'attribute' => 'ac' })
                     ->voip_usr_preferences->create({ 
                         'subscriber_id' => $prov_subscriber->id,
@@ -1809,6 +1823,15 @@ sub edit_master :Chained('master') :PathPart('edit') :Args(0) {
                     status => $form->params->{status},
                     external_id => $form->params->{external_id},
                 });
+                if(defined $subscriber->external_id) {
+                    my $ext_pref = NGCP::Panel::Utils::Preferences::get_usr_preference_rs(
+                        c => $c, attribute => 'ext_subscriber_id', prov_subscriber => $prov_subscriber);
+                    unless($ext_pref->first) {
+                        $ext_pref->create({ value => $subscriber->external_id });
+                    } else {
+                        $ext_pref->first->update({ value => $subscriber->external_id });
+                    }
+                }
                 if($subscriber->status eq 'locked') {
                     $form->values->{lock} = 4; # update lock below
                 } elsif($old_status eq 'locked' && $subscriber->status eq 'active') {
