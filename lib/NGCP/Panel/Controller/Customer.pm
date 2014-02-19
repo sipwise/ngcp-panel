@@ -590,8 +590,8 @@ sub subscriber_create :Chained('base') :PathPart('subscriber/create') :Args(0) {
                 if($c->stash->{contract}->external_id) {
                     $preferences->{ext_contract_id} = $c->stash->{contract}->external_id;
                 }
-                if($c->stash->{external_id}) {
-                    $preferences->{ext_subscriber_id} = $c->stash->{external_id};
+                if(defined $form->params->{external_id}) {
+                    $preferences->{ext_subscriber_id} = $form->params->{external_id};
                 }
                 if($c->stash->{billing_mapping}->billing_profile->prepaid) {
                     $preferences->{prepaid} = 1;
