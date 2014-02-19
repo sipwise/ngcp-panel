@@ -1,3 +1,9 @@
+ngcp-panel (1.1.12) unstable; urgency=low
+
+  * [509047f] MT#5929 Fix ext_subscriber_id and ext_contract_id
+
+ -- Andreas Granig <agranig@sipwise.com>  Wed, 19 Feb 2014 10:24:31 +0100
+
 ngcp-panel (1.1.11) unstable; urgency=low
 
   * [6593759] MT#5967 Perform trusted source ip/net validation.
