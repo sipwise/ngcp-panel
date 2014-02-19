@@ -273,6 +273,7 @@ sub peering_create :Chained('peering_list') :PathPart('create') :Args(0) {
                 delete $form->params->{contract};
                 my $bprof_id = $form->params->{billing_profile}{id};
                 delete $form->params->{billing_profile};
+                $form->params->{external_id} = $form->field('external_id')->value;
                 $form->{create_timestamp} = $form->{modify_timestamp} = NGCP::Panel::Utils::DateTime::current_local;
                 my $contract = $schema->resultset('contracts')->create($form->params);
                 my $billing_profile = $schema->resultset('billing_profiles')->find($bprof_id);
@@ -393,6 +394,7 @@ sub reseller_create :Chained('reseller_list') :PathPart('create') :Args(0) {
                 delete $form->params->{contract};
                 my $bprof_id = $form->params->{billing_profile}{id};
                 delete $form->params->{billing_profile};
+                $form->params->{external_id} = $form->field('external_id')->value;
                 $form->{create_timestamp} = $form->{modify_timestamp} = NGCP::Panel::Utils::DateTime::current_local;
                 my $contract = $schema->resultset('contracts')->create($form->params);
                 my $billing_profile = $schema->resultset('billing_profiles')->find($bprof_id);

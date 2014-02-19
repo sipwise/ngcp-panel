@@ -153,6 +153,7 @@ sub create :Chained('list_customer') :PathPart('create') :Args(0) {
                 my $bprof_id = $form->params->{billing_profile}{id};
                 delete $form->params->{billing_profile};
                 $form->{create_timestamp} = $form->{modify_timestamp} = NGCP::Panel::Utils::DateTime::current_local;
+                $form->params->{external_id} = $form->field('external_id')->value;
                 my $product_id = $form->params->{product}{id};
                 delete $form->params->{product};
                 unless($product_id) {
@@ -353,16 +354,18 @@ sub edit :Chained('base') :PathPart('edit') :Args(0) {
                 $form->{modify_timestamp} = NGCP::Panel::Utils::DateTime::current_local;
                 my $product_id = $form->params->{product}{id} || $billing_mapping->product_id;
                 delete $form->params->{product};
+                $form->params->{external_id} = $form->field('external_id')->value;
                 unless($form->params->{max_subscribers} && length($form->params->{max_subscribers})) {
                     $form->params->{max_subscribers} = undef;
                 }
                 my $old_bprof_id = $billing_mapping->billing_profile_id;
                 $c->log->debug(">>>>>>>>>>> old bprof_id=$old_bprof_id");
                 my $old_prepaid = $billing_mapping->billing_profile->prepaid;
-                my $old_ext_id = $contract->external_id;
+                my $old_ext_id = $contract->external_id // '';
                 $contract->update($form->params);
+                my $new_ext_id = $contract->external_id // '';
 
-                if($contract->external_id ne $old_ext_id) {
+                if($old_ext_id ne $new_ext_id) { # undef is '' so we don't bail out here
                     foreach my $sub($contract->voip_subscribers->all) {
                         my $prov_sub = $sub->provisioning_voip_subscriber;
                         next unless($prov_sub);
