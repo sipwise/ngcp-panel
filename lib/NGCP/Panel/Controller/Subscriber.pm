@@ -167,6 +167,7 @@ sub create_list :Chained('sub_list') :PathPart('create') :Args(0) :Does(ACL) :AC
                     username => $c->request->params->{username},
                     domain_id => $billing_domain->id,
                     status => $c->request->params->{status},
+                    external_id => $form->field('external_id')->value, # null if empty
                 });
 
                 my $prov_subscriber = $schema->resultset('provisioning_voip_subscribers')->create({
@@ -1965,10 +1966,12 @@ sub edit_master :Chained('master') :PathPart('edit') :Args(0) :Does(ACL) :ACLDet
                     domain => $subscriber->domain->domain,
                 ) if($pbx_ext && defined $old_group_id && $old_group_id != $prov_subscriber->pbx_group_id);
 
+                my $old_ext_id = $subscriber->external_id;
                 $subscriber->update({
                     status => $form->params->{status},
-                    external_id => $form->params->{external_id},
+                    external_id => $form->field('external_id')->value, # null if empty
                 });
+
                 if(defined $subscriber->external_id) {
                     my $ext_pref = NGCP::Panel::Utils::Preferences::get_usr_preference_rs(
                         c => $c, attribute => 'ext_subscriber_id', prov_subscriber => $prov_subscriber);
@@ -1977,6 +1980,10 @@ sub edit_master :Chained('master') :PathPart('edit') :Args(0) :Does(ACL) :ACLDet
                     } else {
                         $ext_pref->first->update({ value => $subscriber->external_id });
                     }
+                } elsif(defined $old_ext_id) {
+                    NGCP::Panel::Utils::Preferences::get_usr_preference_rs(
+                        c => $c, attribute => 'ext_subscriber_id', prov_subscriber => $prov_subscriber)
+                    ->delete;
                 }
                 if($subscriber->status eq 'locked') {
                     $form->values->{lock} = 4; # update lock below

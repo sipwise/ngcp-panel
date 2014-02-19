@@ -231,13 +231,17 @@ sub update_preferences {
         my $pref = NGCP::Panel::Utils::Preferences::get_usr_preference_rs(
             c => $c, attribute => $k, prov_subscriber => $prov_subscriber);
         if($pref->first && $pref->first->attribute->max_occur == 1) {
-            $pref->first->update({ 
-                'value' => $preferences->{$k},
-            });
+            unless(defined $preferences->{$k}) {
+                $pref->first->delete;
+            } else {
+                $pref->first->update({ 
+                    'value' => $preferences->{$k},
+                });
+            }
         } else {
             $pref->create({ 
                 'value' => $preferences->{$k},
-            });
+            }) if(defined $preferences->{$k});
         }
     }
 }
