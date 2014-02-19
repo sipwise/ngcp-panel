@@ -1,3 +1,9 @@
+ngcp-panel (1.1.13) unstable; urgency=low
+
+  * [4ddbdf5] MT#5929 More external_id fixes.
+
+ -- Andreas Granig <agranig@sipwise.com>  Wed, 19 Feb 2014 18:00:39 +0100
+
 ngcp-panel (1.1.12) unstable; urgency=low
 
   * [509047f] MT#5929 Fix ext_subscriber_id and ext_contract_id
