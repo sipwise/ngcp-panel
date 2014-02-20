@@ -321,11 +321,47 @@ sub devmod_edit :Chained('devmod_base') :PathPart('edit') :Args(0) :Does(ACL) :A
                 my $linerange = delete $form->params->{linerange};
                 $c->stash->{devmod}->update($form->params);
 
-                $c->stash->{devmod}->autoprov_device_line_ranges->delete_all;
+                my @existing_range = ();
+                my $range_rs = $c->stash->{devmod}->autoprov_device_line_ranges;
                 foreach my $range(@{ $linerange }) {
-                    delete $range->{id};
-                    $c->stash->{devmod}->autoprov_device_line_ranges->create($range);
+                    next unless(defined $range);
+                    my $old_range;
+                    if(defined $range->{id}) {
+                        # should be an existing range, do update
+                        $old_range = $range_rs->find($range->{id});
+                        delete $range->{id};
+                        unless($old_range) {
+                            $old_range = $range_rs->create($range);
+                        } else {
+                            # formhandler only passes set check-boxes, so explicitely unset here
+                            $range->{can_private} //= 0;
+                            $range->{can_shared} //= 0;
+                            $range->{can_blf} //= 0;
+                            $old_range->update($range);
+                        }
+                    } else {
+                        # new range
+                        $old_range = $range_rs->create($range);
+                    }
+                    push @existing_range, $old_range->id; # mark as valid (delete others later)
+
+                    # delete field device line assignments with are out-of-range or use a
+                    # feature which is not supported anymore after edit
+                    foreach my $fielddev_line($c->model('DB')->resultset('autoprov_field_device_lines')
+                        ->search({ linerange_id => $old_range->id })->all) {
+                        if($fielddev_line->key_num >= $old_range->num_lines ||
+                           ($fielddev_line->line_type eq 'private' && !$old_range->can_private) ||
+                           ($fielddev_line->line_type eq 'shared' && !$old_range->can_shared) ||
+                           ($fielddev_line->line_type eq 'blf' && !$old_range->can_blf)) {
+
+                           $fielddev_line->delete;
+                       }
+                    }
                 }
+                # delete invalid range ids (e.g. removed ones)
+                $range_rs->search({
+                    id => { 'not in' => \@existing_range },
+                })->delete_all;
 
                 delete $c->session->{created_objects}->{reseller};
                 $c->flash(messages => [{type => 'success', text => 'Successfully updated device model'}]);
