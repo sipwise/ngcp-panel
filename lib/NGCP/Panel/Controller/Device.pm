@@ -110,11 +110,35 @@ sub base :Chained('/') :PathPart('device') :CaptureArgs(0) {
         { name => 'config.version', search => 1, title => $c->loc('Configuration Version') },
     ]);
 
+    my $fielddev_rs = $c->model('DB')->resultset('autoprov_field_devices');
+    if($c->user->roles eq "subscriberadmin" || $c->user->roles eq "subscriber") {
+        $fielddev_rs = $fielddev_rs->search({
+        	'device.reseller_id' => $c->user->voip_subscriber->contract->contact->reseller_id,
+            }, { 
+                join => { 'profile' => { 'config' => 'device' } },
+        });
+    } elsif($c->user->roles eq "reseller") {
+        $fielddev_rs = $fielddev_rs->search({
+                'device.reseller_id' => $c->user->reseller_id
+            }, { 
+                join => { 'profile' => { 'config' => 'device' } },
+        });
+    }
+    $c->stash->{fielddev_dt_columns} = NGCP::Panel::Utils::Datatables::set_columns($c, [
+        { name => 'id', search => 1, title => $c->loc('#') },
+        { name => 'identifier', search => 1, title => $c->loc('MAC Address / Identifier') },
+        { name => 'profile.name', search => 1, title => $c->loc('Profile Name') },
+        { name => 'contract.id', search => 1, title => $c->loc('Customer #') },
+        { name => 'contract.contact.email', search => 1, title => $c->loc('Customer Email') },
+    ]);
+
+
     $c->stash(
         devmod_rs   => $devmod_rs,
         devfw_rs   => $devfw_rs,
         devconf_rs   => $devconf_rs,
         devprof_rs   => $devprof_rs,
+        fielddev_rs => $fielddev_rs,
         template => 'device/list.tt',
     );
 }
@@ -898,6 +922,14 @@ sub devprof_edit :Chained('devprof_base') :PathPart('edit') :Args(0) :Does(ACL) 
         devprof_edit_flag => 1,
         form => $form,
     );
+}
+
+sub dev_field_ajax :Chained('base') :PathPart('device/ajax') :Args(0) :Does(ACL) :ACLDetachTo('/denied_page') :AllowedRole(admin) :AllowedRole(reseller) {
+    my ($self, $c) = @_;
+
+    my $resultset = $c->stash->{fielddev_rs};
+    NGCP::Panel::Utils::Datatables::process($c, $resultset, $c->stash->{fielddev_dt_columns});
+    $c->detach( $c->view("JSON") );
 }
 
 sub dev_field_config :Chained('/') :PathPart('device/autoprov/config') :Args() {
