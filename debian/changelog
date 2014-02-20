@@ -1,3 +1,10 @@
+ngcp-panel (1.1.14) unstable; urgency=medium
+
+  [ Andreas Granig ]
+  * [bf482b0] MT#5929 Add script to clean up ext_xxx_id settings
+
+ -- Victor Seva <vseva@sipwise.com>  Thu, 20 Feb 2014 11:11:53 +0100
+
 ngcp-panel (1.1.13) unstable; urgency=low
 
   * [4ddbdf5] MT#5929 More external_id fixes.
