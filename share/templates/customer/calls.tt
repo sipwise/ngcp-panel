@@ -66,6 +66,7 @@
 [%END%]
 
 <script type="text/javascript" src="/js/libs/svg-edit/embedapi.js"></script>
+<script type="text/javascript" src="/js/background.js"></script>
 <script type="text/javascript">
 var svgCanvas = null;
 
@@ -105,14 +106,16 @@ function showSvgData(data, error) {
     }
     else
     {
-        alert('Congratulations. Your SVG string is back in the host page, do with it what you will\n\n' + data);
+        //alert('Congratulations. Your SVG string is back in the host page, do with it what you will\n\n' + data);
+        //alert(encodeURIComponent(data));//works in ie
+        background('[%- c.uri_for_action("/customer/calls_svg", [contract.id]) -%]','template='+encodeURIComponent(data));
         var img = document.getElementById('svgpreview'); //new Image();
         img.src = "data:image/svg+xml," + encodeURIComponent(data);
     }			
 }
 
-function loadSvg() {
-    background( '[%- c.uri_for_action("/customer/calls_svg", [contract.id]) -%]','', function(httpResponse){
+function loadSvg(params) {
+    background( '[%- c.uri_for_action("/customer/calls_svg", [contract.id]) -%]'+params,'', function(httpResponse){
 //            alert(httpResponse);
         svgCanvas.setSvgString(httpResponse);});
     //'/customer/[%contract.id%]/calls/svg'
@@ -124,72 +127,16 @@ function saveSvg() {
     svgCanvas.getSvgString()(handleSvgData);
 }
 
-// Background fetches a page into the specified element
-function fetch_into(div, uri, q, callback) {
-	var xmlHttpReq = false;
-//	alert(q);
-// Mozilla/Safari 
-	if (window.XMLHttpRequest) {
-		xmlHttpReq = new XMLHttpRequest();
-		if (typeof xmlHttpReq.overrideMimeType != 'undefined') { 
-			xmlHttpReq.overrideMimeType('text/xml');
-		}
-	}
-// IE 
-	else if (window.ActiveXObject) {
-		xmlHttpReq = new ActiveXObject("Microsoft.XMLHTTP");
-	}
-	xmlHttpReq.open('POST', uri, true);
-//	xmlHttpReq.open('GET', uri, true);
-	xmlHttpReq.setRequestHeader('Content-Type','application/x-www-form-urlencoded');
-	xmlHttpReq.onreadystatechange = function() {
-		if (xmlHttpReq.readyState == 4) {
-			document.getElementById(div).innerHTML=xmlHttpReq.responseText;
-			if(typeof callback == 'function'){
-				callback.call();
-			}else{
-				eval(callback);
-			}
-		}
-	}
-//	alert(q);
-	xmlHttpReq.send(q);
-}
-function background(uri,q,callback) {
-	var xmlHttpReq = false;
-	if (window.XMLHttpRequest) {
-	    xmlHttpReq = new XMLHttpRequest();
-//	    xmlHttpReq.overrideMimeType('text/xml');
-	} else if (window.ActiveXObject) {
-	    xmlHttpReq = new ActiveXObject("Microsoft.XMLHTTP");
-	}
-
-	xmlHttpReq.open('POST', uri, true);
-	xmlHttpReq.setRequestHeader('Content-Type','application/x-www-form-urlencoded');
-	if(callback)
-		xmlHttpReq.onreadystatechange = function(){
-			if (xmlHttpReq.readyState == 4) {
-				if(typeof callback == 'function'){
-//                    alert(xmlHttpReq.responseText);
-					callback(xmlHttpReq.responseText);
-				}else{
-					eval(callback);
-				}
-			}
-		}
-	xmlHttpReq.send(q);
-}
-
 function showSvg(){
     svgCanvas.getSvgString()(showSvgData);
 }
 </script>
 
 
-<button onclick="loadSvg();">Reload invoice template</button>
+<button onclick="loadSvg('/raw');">Reload invoice template</button>
 <button onclick="showSvg();">Refresh Preview</button>
 <button onclick="saveSvg();">Save template</button>
 <br/>
 
-<iframe type="text/html" src="/js/libs/svg-edit/svg-editor.htm" width="700px" height="600px" left="50px" id="svgedit" onload="init_embed();loadSvg();"></iframe><iframe src="[%- c.uri_for_action('/customer/calls_svg', [contract.id]) -%]" width="700px" height="600px" id="svgpreview"><canvas id="svgpreview_canvas" width="200" height="200"></canvas>
+<iframe type="text/html" src="/js/libs/svg-edit/svg-editor.htm" width="550px" height="600px" left="50px" id="svgedit" onload="init_embed();loadSvg('/raw');" class="display:inline;"></iframe><iframe src="[%- c.uri_for_action('/customer/calls_svg', [contract.id]) -%]" width="550px" height="600px" id="svgpreview" class="display:inline;"><canvas id="svgpreview_canvas" width="200" height="200"></canvas>
 

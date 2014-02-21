@@ -356,7 +356,7 @@ TO-DOS
 				}
 			});
 			editor.curConfig = curConfig; // Update exported value
-            alert('359:unit='+editor.curConfig.baseUnit);
+            //alert('359:unit='+editor.curConfig.baseUnit);
 		};
 
 		/**
