@@ -19,6 +19,7 @@ use NGCP::Panel::Utils::Navigation;
 use NGCP::Panel::Utils::DateTime;
 use NGCP::Panel::Utils::Subscriber;
 use NGCP::Panel::Utils::Sounds;
+use NGCP::Panel::Utils::InvoiceTemplate;
 use Template;
 
 =head1 NAME
@@ -726,14 +727,79 @@ sub calls :Chained('base') :PathPart('calls') :Args(0) {
     #$c->stash(template => 'customer/calls.tt'); 
 #    $c->stash(contract => $contract_rs->first);
 }
-sub calls_svg :Chained('base') :PathPart('calls/svg') :Args(0) {
-    my ($self, $c) = @_;
+sub loglong{
+    my ($str) = @_;
+    use Data::Dumper;
+    open(my $log,">>/tmp/irka.log");
+    print $log Dumper($str);
+    close $log;
+}
+sub calls_svg :Chained('base') :PathPart('calls/template') :Args {
+    my ($self, $c, $tt_type, $tt_viewmode ) = @_;
+    
     
     #die();
     #$c->view('SVG');
+    #handle request
+    $tt_viewmode //= '';
+    my $invoicetemplate = $c->request->body_parameters->{template} || '';
+    $c->log->debug("1.invoicetemplate is empty=".($invoicetemplate?0:1).";viewbox=".($invoicetemplate !~/^<svg.*?viewbox.*?>/is ).";\n");
+    
+    if(!$invoicetemplate){
+        #getCustomerActiveInvoiceTemplateFromDB.
+    }
+    if(!$invoicetemplate){
+        #getDefault
+        try{
+            NGCP::Panel::Utils::InvoiceTemplate::getDefault( c => $c, invoicetemplate => \$invoicetemplate );
+        } catch($e) {
+            NGCP::Panel::Utils::Message->error(
+                c => $c,
+                error => 'default invoice template error',
+                desc  => $c->loc('There is no one invoice template in the system.'),
+            );
+        }
+    }#else{
+    #here we have invoice content - of customer or default, so no checking of invoicetemplate is necessary
+    #if($invoicetemplate){
+        #sub candidate, preSaveCustomTemplate
+        #if it is presaving, making it for default  isn't necessary, default should contain it
+        #but while let it be here
+        $c->log->debug("3.invoicetemplate is empty=".($invoicetemplate?0:1).";viewbox=".($invoicetemplate !~/^<svg.*?viewbox.*?>/is).";\n");
+        if( $invoicetemplate !~/^<svg.*?viewbox.*?>/is ){
+            (my ($width))  = ($invoicetemplate =~/^<svg.*?width.*?(\d+).*?>/is );
+            $c->log->debug("width=$width;\n");
+            (my ($height)) = ($invoicetemplate =~/^<svg.*?height.*?(\d+).*?>/is );
+            my($replaced) = $invoicetemplate =~s/^<svg(.*?(?:width.*?height|height.*width).*?\d+.*? )/<svg $1 viewBox="0 0 $width $height" /i;
+            $c->log->debug("replaced=$replaced;\n");
+            #storeToDB
+        }
+    #}
+    
+    #prepare response
     $c->response->content_type('image/svg+xml');
-    $c->stash(template => 'customer/calls_svg.tt'); 
-    $c->detach($c->view('SVG'));
+    $c->log->debug("tt_viewmode=$tt_viewmode;\n");
+    if($tt_viewmode eq 'raw'){
+        $c->stash->{VIEW_NO_TT_PROCESS} = 1;
+        $c->response->body($invoicetemplate);
+        return;
+    }else{
+        my $contacts = $c->model('DB')->resultset('contacts')->search({ id => $c->stash->{contract}->id });
+        #some preprocessing should be done only before showing. So, there will be:
+            #preSaveCustomTemplate prerpocessing
+            #preShowCustomTemplate prerpocessing
+        {
+            #preShowInvoice
+            $invoicetemplate =~s/{?<!--{|}-->}?//g;
+        }
+        
+        $c->stash( provider => $contacts->first );
+        use irka;
+        irka::loglong(\$invoicetemplate);
+        $c->stash( template => \$invoicetemplate ); 
+        $c->log->debug("before_detach;\n");
+        $c->detach($c->view('SVG'));
+    }
 }
 
 sub pbx_group_ajax :Chained('base') :PathPart('pbx/group/ajax') :Args(0) {

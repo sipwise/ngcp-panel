@@ -275,11 +275,11 @@ sub get_contract_calls_rs{
             { sum         => 'me.source_customer_free_time', -as => 'free_time', } , 
             { sum         => 'me.duration', -as => 'duration', } , 
             { count       => '*', -as => 'number', } ,
-            'billing_zones_history.zone', 
+            'source_customer_billing_zones_history.zone', 
         ],
         'as' => [qw/cost free_time duration number zone/],
-        join        => 'billing_zones_history',
-        group_by    => 'billing_zones_history.zone',
+        join        => 'source_customer_billing_zones_history',
+        group_by    => 'source_customer_billing_zones_history.zone',
     } );    
     
     return $zonecalls_rs;
