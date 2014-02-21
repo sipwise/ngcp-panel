@@ -183,6 +183,8 @@
     helper.data = fielddev;
     helper.dt_columns = fielddev_dt_columns;
     helper.length_change = 1;
+    helper.edit_flag = 0;
+    helper.create_flag = 0;
 
     helper.ajax_uri = c.uri_for('/device/device/ajax');
 
