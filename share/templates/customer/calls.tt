@@ -81,10 +81,8 @@ function init_embed() {
     {
         doc = frame.contentWindow.document;
     }
-    
     var mainButton = doc.getElementById('main_button');
     mainButton.style.display = 'none';
-    loadSvg();
 }
 
 function handleSvgData(data, error) {
@@ -99,7 +97,7 @@ function handleSvgData(data, error) {
     }			
 }
 
-function showSvgData(data, error) {
+function showSvgDataParsed(data, error) {
     if (error)
     {
         alert('error ' + error);
@@ -108,16 +106,23 @@ function showSvgData(data, error) {
     {
         //alert('Congratulations. Your SVG string is back in the host page, do with it what you will\n\n' + data);
         //alert(encodeURIComponent(data));//works in ie
-        background('[%- c.uri_for_action("/customer/calls_svg", [contract.id]) -%]','template='+encodeURIComponent(data));
-        var img = document.getElementById('svgpreview'); //new Image();
-        img.src = "data:image/svg+xml," + encodeURIComponent(data);
+        background('[%- c.uri_for_action("/customer/calls_svg", [contract.id]) -%]'+'/svg','template='+encodeURIComponent(data),
+            function(httpResponse){
+                //alert(httpResponse);
+                var img = document.getElementById('svgpreview'); //new Image();
+                img.src = "data:image/svg+xml," + encodeURIComponent(httpResponse);
+            });
     }			
 }
 
 function loadSvg(params) {
-    background( '[%- c.uri_for_action("/customer/calls_svg", [contract.id]) -%]'+params,'', function(httpResponse){
-//            alert(httpResponse);
-        svgCanvas.setSvgString(httpResponse);});
+    //alert('[%- c.uri_for_action("/customer/calls_svg", [contract.id]) -%]'+params);
+    background( '[%- c.uri_for_action("/customer/calls_svg", [contract.id]) -%]'+params,'',
+        function(httpResponse){
+            //alert(httpResponse);
+            svgCanvas.setSvgString(httpResponse);
+        }
+    );
     //'/customer/[%contract.id%]/calls/svg'
     //var svgexample = '<svg width="640" height="480" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns="http://www.w3.org/2000/svg"><g><title>Layer 1</title><rect stroke-width="5" stroke="#000000" fill="#FF0000" id="svg_1" height="35" width="51" y="35" x="32"/><ellipse ry="15" rx="24" stroke-width="5" stroke="#000000" fill="#0000ff" id="svg_2" cy="60" cx="66"/></g></svg>';
     //svgCanvas.setSvgString(svgexample);
@@ -127,16 +132,16 @@ function saveSvg() {
     svgCanvas.getSvgString()(handleSvgData);
 }
 
-function showSvg(){
-    svgCanvas.getSvgString()(showSvgData);
+function showSvgParsed(){
+    svgCanvas.getSvgString()(showSvgDataParsed);
 }
 </script>
 
 
-<button onclick="loadSvg('/raw');">Reload invoice template</button>
-<button onclick="showSvg();">Refresh Preview</button>
+<button onclick="loadSvg('/svg/raw');">Reload invoice template</button>
+<button onclick="showSvgParsed();">Refresh Preview</button>
 <button onclick="saveSvg();">Save template</button>
 <br/>
 
-<iframe type="text/html" src="/js/libs/svg-edit/svg-editor.htm" width="550px" height="600px" left="50px" id="svgedit" onload="init_embed();loadSvg('/raw');" class="display:inline;"></iframe><iframe src="[%- c.uri_for_action('/customer/calls_svg', [contract.id]) -%]" width="550px" height="600px" id="svgpreview" class="display:inline;"><canvas id="svgpreview_canvas" width="200" height="200"></canvas>
+<iframe type="text/html" src="/js/libs/svg-edit/svg-editor.htm" width="550px" height="600px" left="50px" id="svgedit" onload="init_embed();loadSvg('/svg/raw');" class="display:inline;"></iframe><iframe src="[%- c.uri_for_action('/customer/calls_svg', [contract.id]) -%]" width="550px" height="600px" id="svgpreview" class="display:inline;"><canvas id="svgpreview_canvas" width="200" height="200"></canvas>
 

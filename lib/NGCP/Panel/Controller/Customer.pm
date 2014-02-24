@@ -765,22 +765,23 @@ sub calls_svg :Chained('base') :PathPart('calls/template') :Args {
         #sub candidate, preSaveCustomTemplate
         #if it is presaving, making it for default  isn't necessary, default should contain it
         #but while let it be here
-        $c->log->debug("3.invoicetemplate is empty=".($invoicetemplate?0:1).";viewbox=".($invoicetemplate !~/^<svg.*?viewbox.*?>/is).";\n");
-        if( $invoicetemplate !~/^<svg.*?viewbox.*?>/is ){
-            (my ($width))  = ($invoicetemplate =~/^<svg.*?width.*?(\d+).*?>/is );
-            $c->log->debug("width=$width;\n");
-            (my ($height)) = ($invoicetemplate =~/^<svg.*?height.*?(\d+).*?>/is );
-            my($replaced) = $invoicetemplate =~s/^<svg(.*?(?:width.*?height|height.*width).*?\d+.*? )/<svg $1 viewBox="0 0 $width $height" /i;
-            $c->log->debug("replaced=$replaced;\n");
-            #storeToDB
-        }
+        ##moved to correct place - to js, generating svg
+#####        $c->log->debug("3.invoicetemplate is empty=".($invoicetemplate?0:1).";viewbox=".($invoicetemplate !~/^<svg.*?viewbox.*?>/is).";\n");
+#####        if( $invoicetemplate !~/^<svg.*?viewbox.*?>/is ){
+#####            (my ($width))  = ($invoicetemplate =~/^<svg.*?width.*?(\d+).*?>/is );
+#####            $c->log->debug("width=$width;\n");
+#####            (my ($height)) = ($invoicetemplate =~/^<svg.*?height.*?(\d+).*?>/is );
+#####            my($replaced) = $invoicetemplate =~s/^<svg(.*?(?:width.*?height|height.*width).*?\d+.*? )/<svg $1 viewBox="0 0 $width $height" /i;
+#####            $c->log->debug("replaced=$replaced;\n");
+#####            #storeToDB
+#####        }
     #}
     
     #prepare response
     $c->response->content_type('image/svg+xml');
     $c->log->debug("tt_viewmode=$tt_viewmode;\n");
     if($tt_viewmode eq 'raw'){
-        $c->stash->{VIEW_NO_TT_PROCESS} = 1;
+        #$c->stash->{VIEW_NO_TT_PROCESS} = 1;
         $c->response->body($invoicetemplate);
         return;
     }else{
@@ -790,12 +791,12 @@ sub calls_svg :Chained('base') :PathPart('calls/template') :Args {
             #preShowCustomTemplate prerpocessing
         {
             #preShowInvoice
-            $invoicetemplate =~s/{?<!--{|}-->}?//g;
+            $invoicetemplate =~s/(?:{\s*)?<!--{|}-->(?:\s*})?//gs;
         }
         
         $c->stash( provider => $contacts->first );
-        use irka;
-        irka::loglong(\$invoicetemplate);
+        #use irka;
+        #irka::loglong(\$invoicetemplate);
         $c->stash( template => \$invoicetemplate ); 
         $c->log->debug("before_detach;\n");
         $c->detach($c->view('SVG'));
