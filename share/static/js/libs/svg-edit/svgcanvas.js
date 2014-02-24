@@ -4116,72 +4116,87 @@ this.svgToString = function(elem, indent) {
 			childs = elem.childNodes;
 		
 		for (i = 0; i < indent; i++) {out.push(' ');}
-		out.push("<"); out.push(elem.nodeName);
 		if (elem.id === 'svgcontent') {
-			// Process root element separately
-			var res = getResolution();
-			
-			var vb = "";
-			// TODO: Allow this by dividing all values by current baseVal
-			// Note that this also means we should properly deal with this on import
-//			if (curConfig.baseUnit !== "px") {
-//				var unit = curConfig.baseUnit;
-//				var unit_m = svgedit.units.getTypeMap()[unit];
-//				res.w = svgedit.units.shortFloat(res.w / unit_m)
-//				res.h = svgedit.units.shortFloat(res.h / unit_m)
-//				vb = ' viewBox="' + [0, 0, res.w, res.h].join(' ') + '"';
-//				res.w += unit;
-//				res.h += unit;
-//			}
-			
-			if (unit !== "px") {
-				res.w = svgedit.units.convertUnit(res.w, unit) + unit;
-				res.h = svgedit.units.convertUnit(res.h, unit) + unit;
-			}
-			
-			out.push(' width="' + res.w + '" height="' + res.h + '"' + vb + ' xmlns="'+NS.SVG+'"');
-			
-			var nsuris = {};
-			
-			// Check elements for namespaces, add if found
-			$(elem).find('*').andSelf().each(function() {
-				var el = this;
-				// for some elements have no attribute
-				var uri = this.namespaceURI;
-				if(uri && !nsuris[uri] && nsMap[uri] && nsMap[uri] !== 'xmlns' && nsMap[uri] !== 'xml' ) {
-					nsuris[uri] = true;
-					out.push(" xmlns:" + nsMap[uri] + '="' + uri +'"');
-				}
-		
-				$.each(this.attributes, function(i, attr) {
-					var uri = attr.namespaceURI;
-					if (uri && !nsuris[uri] && nsMap[uri] !== 'xmlns' && nsMap[uri] !== 'xml' ) {
-						nsuris[uri] = true;
-						out.push(" xmlns:" + nsMap[uri] + '="' + uri +'"');
-					}
-				});
-			});
-			
-			i = attrs.length;
-			var attr_names = ['width', 'height', 'xmlns', 'x', 'y', 'viewBox', 'id', 'overflow'];
-			while (i--) {
-				attr = attrs.item(i);
-				var attrVal = toXml(attr.nodeValue);
-				
-				// Namespaces have already been dealt with, so skip
-				if (attr.nodeName.indexOf('xmlns:') === 0) {continue;}
+            //alert('QQQQQ');
+            //alert(svgroot.outerSvgTag);
+            if( svgroot.outerSvgTag )
+            {
+                out.push(svgroot.outerSvgTag);
+            }else{
 
-				// only serialize attributes we don't use internally
-				if (attrVal != "" && attr_names.indexOf(attr.localName) == -1) {
+                out.push("<"); out.push(elem.nodeName);
 
-					if (!attr.namespaceURI || nsMap[attr.namespaceURI]) {
-						out.push(' '); 
-						out.push(attr.nodeName); out.push("=\"");
-						out.push(attrVal); out.push("\"");
-					}
-				}
-			}
+                // Process root element separately
+                var res = getResolution();
+                
+                var vb = "";
+                // TODO: Allow this by dividing all values by current baseVal
+                // Note that this also means we should properly deal with this on import
+    //			if (curConfig.baseUnit !== "px") {
+    //				var unit = curConfig.baseUnit;
+    //				var unit_m = svgedit.units.getTypeMap()[unit];
+    //				res.w = svgedit.units.shortFloat(res.w / unit_m)
+    //				res.h = svgedit.units.shortFloat(res.h / unit_m)
+    //				vb = ' viewBox="' + [0, 0, res.w, res.h].join(' ') + '"';
+    //				res.w += unit;
+    //				res.h += unit;
+    //			}
+                
+                if (unit !== "px") {
+                    res.w = svgedit.units.convertUnit(res.w, unit) + unit;
+                    res.h = svgedit.units.convertUnit(res.h, unit) + unit;
+                }
+                
+                out.push(' width="' + res.w + '" height="' + res.h + '"' + vb + ' xmlns="'+NS.SVG+'"');
+                
+                var nsuris = {};
+                
+                // Check elements for namespaces, add if found
+                $(elem).find('*').andSelf().each(function() {
+                    var el = this;
+                    // for some elements have no attribute
+                    var uri = this.namespaceURI;
+                    if(uri && !nsuris[uri] && nsMap[uri] && nsMap[uri] !== 'xmlns' && nsMap[uri] !== 'xml' ) {
+                        nsuris[uri] = true;
+                        out.push(" xmlns:" + nsMap[uri] + '="' + uri +'"');
+                    }
+            
+                    $.each(this.attributes, function(i, attr) {
+                        var uri = attr.namespaceURI;
+                        if (uri && !nsuris[uri] && nsMap[uri] !== 'xmlns' && nsMap[uri] !== 'xml' ) {
+                            nsuris[uri] = true;
+                            out.push(" xmlns:" + nsMap[uri] + '="' + uri +'"');
+                        }
+                    });
+                });
+                
+                i = attrs.length;
+                var attr_names = ['width', 'height', 'xmlns', 'x', 'y', 'viewBox', 'id', 'overflow'];
+                while (i--) {
+                    attr = attrs.item(i);
+                    var attrVal = toXml(attr.nodeValue);
+                    
+                    // Namespaces have already been dealt with, so skip
+                    if (attr.nodeName.indexOf('xmlns:') === 0) {continue;}
+
+                    // only serialize attributes we don't use internally
+                    if (attrVal != "" && attr_names.indexOf(attr.localName) == -1) {
+
+                        if (!attr.namespaceURI || nsMap[attr.namespaceURI]) {
+                            out.push(' '); 
+                            out.push(attr.nodeName); out.push("=\"");
+                            out.push(attrVal); out.push("\"");
+                        }
+                    }
+                }
+            
+            
+            
+            }
+
+
 		} else {
+            out.push("<"); out.push(elem.nodeName);
 			// Skip empty defs
 			if (elem.nodeName === 'defs' && !elem.firstChild) {return;}
 		
@@ -4743,6 +4758,13 @@ this.setSvgString = function(xmlString) {
 		}
 		
 		svgroot.appendChild(svgcontent);
+        //var startre=;
+        //svgroot.outerSvgTag = outerSvgTag;
+        svgroot.outerSvgTag = xmlString.match(/^\<svg[^\>]*\>/);
+        //console.log(outerSvgTag[0]);
+        //alert(outerSvgTag[0]);
+        //alert('svgroot.innerHTML='+svgroot.outerHTML);
+        //alert('svgroot.textContent='+svgroot.parentNode.textContent);
 		var content = $(svgcontent);
 		
 		canvas.current_drawing_ = new svgedit.draw.Drawing(svgcontent, idprefix);

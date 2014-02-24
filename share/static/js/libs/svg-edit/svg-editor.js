@@ -174,7 +174,7 @@ TO-DOS
 					retrieving: 'Retrieving \'%s\' ...'
 				}
 			};
-        alert('QQ');
+        //alert('QQ');
 		function loadSvgString (str, callback) {
 			var success = svgCanvas.setSvgString(str) !== false;
 			callback = callback || $.noop;
