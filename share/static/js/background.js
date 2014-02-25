@@ -1,7 +1,7 @@
 function background(uri,q,callback) {
 	var xmlHttpReq = false;
-	alert(uri);
-	alert(q);
+	//alert(uri);
+	//alert(q);
 
 	if (window.XMLHttpRequest) {
 	    xmlHttpReq = new XMLHttpRequest();

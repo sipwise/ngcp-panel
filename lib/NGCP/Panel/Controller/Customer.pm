@@ -16,6 +16,7 @@ use NGCP::Panel::Form::Customer::PbxGroup;
 use NGCP::Panel::Form::Customer::PbxFieldDevice;
 use NGCP::Panel::Form::Customer::PbxFieldDeviceEdit;
 use NGCP::Panel::Form::Customer::PbxFieldDeviceSync;
+use NGCP::Panel::Form::Customer::InvoiceTemplate;
 use NGCP::Panel::Utils::Message;
 use NGCP::Panel::Utils::Navigation;
 use NGCP::Panel::Utils::DateTime;
@@ -840,17 +841,30 @@ sub loglong{
     print $log Dumper($str);
     close $log;
 }
+
 sub calls_svg :Chained('base') :PathPart('calls/template') :Args {
-    my ($self, $c, $tt_type, $tt_viewmode ) = @_;
+    my ($self, $c, $in);
+    ($self,$c,@$in{qw/tt_type tt_viewmode tt_sourcestate/}) = @_;
     
     
     #die();
     #$c->view('SVG');
     #handle request
-    $tt_viewmode //= '';
+#    my $tt_viewmode //= '';
+#    my $tt_state    //= 'saved';
+#    my $tt_type    //= 'svg';
     my $invoicetemplate = $c->request->body_parameters->{template} || '';
-    $c->log->debug("1.invoicetemplate is empty=".($invoicetemplate?0:1).";viewbox=".($invoicetemplate !~/^<svg.*?viewbox.*?>/is ).";\n");
     
+    
+    #$c->log->debug("1.invoicetemplate is empty=".($invoicetemplate?0:1).";viewbox=".($invoicetemplate !~/^<svg.*?viewbox.*?>/is ).";\n");
+    $c->log->debug("1.invoicetemplate is empty=".($invoicetemplate?0:1).";viewbox=".($invoicetemplate !~/^<svg.*?viewbox.*?>/is ).";\n");
+    my $form = NGCP::Panel::Form::Customer::InvoiceTemplate->new;
+    $form->process(
+        posted => 1,
+        params => $in,
+        action => $c->uri_for_action("/customer/calls_svg", [$c->stash->{contract}->id]),
+    );
+    $form->validate();
     if(!$invoicetemplate){
         #getCustomerActiveInvoiceTemplateFromDB.
     }
@@ -885,8 +899,8 @@ sub calls_svg :Chained('base') :PathPart('calls/template') :Args {
     
     #prepare response
     $c->response->content_type('image/svg+xml');
-    $c->log->debug("tt_viewmode=$tt_viewmode;\n");
-    if($tt_viewmode eq 'raw'){
+    $c->log->debug("tt_viewmode=".$in->{tt_viewmode}.";\n");
+    if($in->{tt_viewmode} eq 'raw'){
         #$c->stash->{VIEW_NO_TT_PROCESS} = 1;
         $c->response->body($invoicetemplate);
         return;
