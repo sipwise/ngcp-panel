@@ -87,7 +87,7 @@ function init_embed() {
 }
 
 function loadSvg(params) {
-    alert('[%- c.uri_for_action("/customer/calls_svg", [contract.id]) -%]'+params);
+    //alert('[%- c.uri_for_action("/customer/calls_svg", [contract.id]) -%]'+params);
     background( '[%- c.uri_for_action("/customer/calls_svg", [contract.id]) -%]'+params,'',
         function(httpResponse){
             //alert(httpResponse);
@@ -110,58 +110,12 @@ function handleShowSvgParsedData(data, error) {
     else
     {
         //alert('Congratulations. Your SVG string is back in the host page, do with it what you will\n\n' + data);
-        //alert(encodeURIComponent(data));
-        var q = '[%- c.uri_for_action("/customer/calls_svg", [contract.id]) -%]'+'/svg/parsed/previewed'; 
-        //alert(q);
-        //alert(data);
-        background( q ,'template='+encodeURIComponent(data),
+        //alert(encodeURIComponent(data));//works in ie
+        background('[%- c.uri_for_action("/customer/calls_svg", [contract.id]) -%]'+'/svg','template='+encodeURIComponent(data),
             function(httpResponse){
                 //alert(httpResponse);
-                var previewIframe = document.getElementById('svgpreview'); //new Image();
-                
-                var previewDoc = previewIframe.contentWindow.document;
-                //if(previewIframe.contentDocument) { 
-                //  doc = previewIframe.contentDocument; 
-                //} else {
-                //  doc = previewIframe.contentWindow.document; 
-                //}
-                //previewIframe.contentWindow.document.body.innerHTML='<html></html>';
-                //alert(doc);
-                
-                
-                var pages = new Array();
-                pages = httpResponse.match(/(<svg[\r\n\t\s\S\w\W]*?(?:\/svg>))/gi );
-                if(!pages){
-                    pages = new Array();
-                }
-                alert('images='+previewDoc.images.length+';pages='+pages.length);
-                if(pages.length > 0 ){
-                    previewIframe.src = '';
-                    previewDoc.body.innerHTML = '<html><body>'+httpResponse+'</body></html>';
-                    alert(previewDoc.body.innerHTML);
-                    /*
-                    var i;
-                    for( i = 0; i < previewDoc.images.length; i++ ){
-                        var img = previewDoc.images[i];
-                        img.parentElement.remove(img);
-                    }
-                    
-                    for( i = 0; i < pages.length; i++ ){
-                        img = previewDoc.createElement('img');
-                        //alert(img);
-                        //img.width=215;
-                        //img.heith=297;
-                        img.src = "data:image/svg+xml," + encodeURIComponent(pages[i]);
-                    }
-                    alert('images='+previewDoc.images.length);
-                    alert(previewDoc.body.innerHTML);
-                    */
-                }else{
-                    previewIframe.src = "data:image/svg+xml," + encodeURIComponent(httpResponse);
-                }
-                //alert(img.outerHTML);
-                //alert(img.html());
-                
+                var img = document.getElementById('svgpreview'); //new Image();
+                img.src = "data:image/svg+xml," + encodeURIComponent(httpResponse);
             }
         );
     }			
@@ -178,13 +132,11 @@ function handleSaveSvgData(data, error) {
     else
     {
         //alert('Congratulations. Your SVG string is back in the host page, do with it what you will\n\n' + data);
-        //alert(encodeURIComponent(data));//works in ie
-        background('[%- c.uri_for_action("/customer/calls_svg", [contract.id]) -%]'+'/svg/parsed/saved','template='+encodeURIComponent(data));
+        return data;
     }			
 }
 </script>
 
-<button onclick="loadSvg('/svg/raw/default');">Load system default invoice template</button>
 <button onclick="loadSvg('/svg/raw/saved');">Load saved invoice template</button>
 <button onclick="loadSvg('/svg/raw/previewed');">Load previewed template</button>
 <button onclick="showSvgParsed();">Refresh Preview</button>

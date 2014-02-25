@@ -17,8 +17,6 @@ use NGCP::Panel::Form::Customer::PbxFieldDevice;
 use NGCP::Panel::Form::Customer::PbxFieldDeviceEdit;
 use NGCP::Panel::Form::Customer::PbxFieldDeviceSync;
 use NGCP::Panel::Form::Customer::InvoiceTemplate;
-use PDF::WebKit;
-use NGCP::Panel::Model::DB::InvoiceTemplate;
 use NGCP::Panel::Utils::Message;
 use NGCP::Panel::Utils::Navigation;
 use NGCP::Panel::Utils::DateTime;
@@ -844,11 +842,8 @@ sub calls :Chained('base') :PathPart('calls') :Args(0) {
 }
 
 sub calls_svg :Chained('base') :PathPart('calls/template') :Args {
-    my ($self, $c) = @_;
-    #$c->log->debug($c->model('DB'));
-    #return;
-    #my $db = NGCP::Panel::Model::DB::InvoiceTemplate->new();
-    #$c->log->debug($db);
+    my ($self, $c, $in);
+    ($self,$c,@$in{qw/tt_type tt_viewmode tt_sourcestate/}) = @_;
     
     #my $contract_id = $in->{contract_id} = ;
 
@@ -884,41 +879,26 @@ sub calls_svg :Chained('base') :PathPart('calls/template') :Args {
     );
     #$validator->validate_form();
     
-    #multi return...
-    $c->log->debug("validated=".$validator->validated.";\n");
-    if(!$validator->validated){
-        return;
-    }
-    my $in_validated = $validator->fif;
-    use irka;
-    use Data::Dumper;
-    irka::loglong(Dumper($in));
-    irka::loglong(Dumper($in_validated));
-
-    #dirty hack 1
-    #really model logic should recieve validated input, but raw input also should be saved somewhere
-    $in = $in_validated;
+    #die();
+    #$c->view('SVG');
+    #handle request
+#    my $tt_viewmode //= '';
+#    my $tt_state    //= 'saved';
+#    my $tt_type    //= 'svg';
+    my $invoicetemplate = $c->request->body_parameters->{template} || '';
     
-    #dirty hack 2
-    #validate methods in form configuration don't change fields values, will find why later
-    if($in->{tt_type} eq 'svgpdf'){
-        $in->{tt_type} = 'svg';
-        $in->{tt_output_type} = 'pdf';
-    }elsif($in->{tt_type} eq 'html'){
-        $in->{tt_output_type} = 'html';
-    }
     
-    irka::loglong(Dumper($in));
-
-    #model logic
-    my $tt_string_default = '';
-    my $tt_string_customer = '';
-    my $tt_string_force_default = ( $in->{tt_sourcestate} eq 'default' );
-    $c->log->debug("force_default=$tt_string_force_default;");
-    if(!$in->{tt_string} && !$tt_string_force_default){
-        #here we also may be better should contact model, not DB directly. Will return to this separation later
-        #at the end - we can figure out rather basic controller behaviour
-        ($out->{tt_id}) = $backend->getCustomerInvoiceTemplate( %$in, result => \$tt_string_customer );
+    #$c->log->debug("1.invoicetemplate is empty=".($invoicetemplate?0:1).";viewbox=".($invoicetemplate !~/^<svg.*?viewbox.*?>/is ).";\n");
+    $c->log->debug("1.invoicetemplate is empty=".($invoicetemplate?0:1).";viewbox=".($invoicetemplate !~/^<svg.*?viewbox.*?>/is ).";\n");
+    my $form = NGCP::Panel::Form::Customer::InvoiceTemplate->new;
+    $form->process(
+        posted => 1,
+        params => $in,
+        action => $c->uri_for_action("/customer/calls_svg", [$c->stash->{contract}->id]),
+    );
+    $form->validate();
+    if(!$invoicetemplate){
+        #getCustomerActiveInvoiceTemplateFromDB.
     }
     
     #we need to get default to 1) sanitize (if in->tt_string) or 2)if not in->tt_string and no customer->tt_string
@@ -967,15 +947,8 @@ sub calls_svg :Chained('base') :PathPart('calls/template') :Args {
     #/model logic
     
     #prepare response
-    #mess,mess,mess here
-    if($in->{tt_output_type} eq 'svg'){
-        $c->response->content_type('text/html');
-#        $c->response->content_type('image/svg+xml');
-    }elsif($in->{tt_output_type} eq 'pdf'){
-        $c->response->content_type('application/pdf');
-    }elsif($in->{tt_output_type} eq 'html'){
-        $c->response->content_type('text/html');
-    }
+    $c->response->content_type('image/svg+xml');
+    $c->log->debug("tt_viewmode=".$in->{tt_viewmode}.";\n");
     if($in->{tt_viewmode} eq 'raw'){
         #$c->stash->{VIEW_NO_TT_PROCESS} = 1;
         $c->response->body($out->{tt_string});
