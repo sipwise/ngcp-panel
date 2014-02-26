@@ -1,4 +1,4 @@
-ngcp-panel (1.2.0+0~mr3.3) unstable; urgency=low
+ngcp-panel (1.2.0+0~mr3.2.1) unstable; urgency=low
 
   [ Lars Dieckow ]
   * [aba646f] MT#3929 certificate management
@@ -190,6 +190,29 @@ ngcp-panel (1.2.0+0~mr3.3) unstable; urgency=low
   * [75fccd3] MT#3961 Install I18N folder in debian.
   * [b88d36b] MT#5083 Implement sendfax in ngcp-panel.
   * [8c3a279] MT#5473 Fix deleting peering groups.
+  * [8a6f96d] MT#5867 fix responsive top menu design
+  * [84e465f] MT#3961 Add Italian translation.
+  * [9587330] MT#5251 Optimize billing fees upload.
+  * [c799df3] MT#3925 API: dynamically render API documentation.
+  * [2c49abb] MT#3925 Add more field descriptions to forms.
+  * [1f9e407] MT#3925 API: more doc and description fixes.
+  * [0f26d8f] MT#3961 Update German localization.
+  * [0218de9] MT#5833 Update italian translation.
+  * [bc08567] MT#5811 Properly set websocket paths.
+  * [6dfd792] MT#5835 Update spanish datatables translations.
+  * [10373d6] MT#5083 Add webfax to subscriber top menu
+  * [2f749a3] MT#3933 API: add subscriber editing via PUT/PATCH
+  * [eb1464f] MT#3925 Return json error for 403/404 on /api/.+
+  * [da79426] MT#3933 API: Implement subscriber preferences.
+  * [f7de0b6] MT#5967 Perform trusted source ip/net validation.
+  * [71b8d2e] MT#5967 Validate (man_)allowed_ip input.
+  * [74d8f83] MT#5811 Prepare adding chat buddy.
+  * [c61b9ee] MT#3933 API: Handle subscriber lock/termination
+  * [d445274] MT#5967 API: validate allowed ip entries.
+  * [74aeb79] MT#5929 Fix lock, ext_xxx_id and dbalias handling.
+  * [4456bd0] MT#5929 Fix ext_subscriber_id handling.
+  * [432080d] MT#5929 More external_id fixes.
+  * [e4990ed] MT#5929 Add script to clean up ext_xxx_id settings
 
   [ Gerhard Jungwirth ]
   * [9b0cc33] MT#4767 Show missing registered devices
@@ -268,6 +291,10 @@ ngcp-panel (1.2.0+0~mr3.3) unstable; urgency=low
   * [3f813d6] MT#3961 fix image file path
   * [cc5d36d] MT#3961 Localize the menu title "Language"
   * [360d622] MT#3961 check language before login, map en to i-default
+  * [4e6e9ef] 5861: remove unused fields from SubscriberEdit
+  * [f99ce65] MT#5859 let subscriber change his webpassword
+  * [381c440] MT#5859 rename "Line Settings"
+  * [b424c56] MT#5867 fix modal height on small screens
 
   [ Andrew Pogrebennyk ]
   * [cc9fe6e] MT#3997 MT#5193 Fix build_via_routes with only one external sbc.
@@ -281,6 +308,8 @@ ngcp-panel (1.2.0+0~mr3.3) unstable; urgency=low
   * [86600a6] Start changelog for 1.1.3
   * [d52049a] MT#3997 MT#5193 Fix build_via_routes with only one external sbc.
   * [7587e66] MT#5193 MT#5195 Fix "Use of uninitialized value" when external_sbc is empty
+  * [d713bdc] MT#5835 Translate javascript datatables file to Spanish.
+  * [95cac29] MT#5837 Unify some terms; improve subscriber details look.
 
   [ Victor Seva ]
   * [62bcb09] MT#4435 generate just ngcp-panel
@@ -291,6 +320,11 @@ ngcp-panel (1.2.0+0~mr3.3) unstable; urgency=low
   * [193ab53] MT#4895 fix last commit
   * [6775371] MT#5587 Remove apache migration stuff.
   * [0ad4699] config for polycom phones
+  * [ca4df9c] MT#5835 Spanish translation by Jon
+  * [6d5ec21] MT#5835 Spanish translation update
+  * [0bf4d26] MT#5835 Spanish translation update
+  * [2e0bbde] MT#5835 Spanish translation update
+  * [4b2f507] MT#5835 Spanish translation update
 
   [ Michael Prokop ]
   * [47e6925] MT#5215 Add new packages for REST feature to Depends
@@ -298,9 +332,13 @@ ngcp-panel (1.2.0+0~mr3.3) unstable; urgency=low
   * [ffa81f5] MT#5365 Add further packages to (Build-)Depends
   * [679c866] MT#5395 Add further packages to (Build-)Depends
 
+  [ Alexander Lutay ]
+  * [c754aff] MT#5837 Add Russian localisation
+  * [5be3f87] MT#5835 Fixed Spanish datatables translations.
+
   [ Sipwise Jenkins Builder ]
 
- -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Sat, 01 Feb 2014 19:52:07 +0100
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Wed, 26 Feb 2014 10:51:50 +0100
 
 ngcp-panel (1.1.6) unstable; urgency=low
 
