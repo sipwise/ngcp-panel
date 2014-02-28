@@ -171,5 +171,41 @@
         </div>
     </div>
 
+    <div class="accordion-group">
+        <div class="accordion-heading">
+            <a class="accordion-toggle" data-toggle="collapse" data-parent="#device_details" href="#collapse_fielddev">[% c.loc('Deployed Devices') %]</a>
+        </div>
+        <div class="accordion-body collapse" id="collapse_fielddev">
+            <div class="accordion-inner">
+[%
+    helper.name = c.loc('Deployed Device');
+    helper.identifier = 'field_device';
+    helper.data = fielddev;
+    helper.dt_columns = fielddev_dt_columns;
+    helper.length_change = 1;
+    helper.edit_flag = 0;
+    helper.create_flag = 0;
+
+    helper.ajax_uri = c.uri_for('/device/device/ajax');
+
+    UNLESS c.user.read_only;
+        helper.dt_buttons = [
+            { name = c.loc('Delete'), uri = "/customer/' + full.contract_id + '/pbx/device/'+full.id+'/delete", class = 'btn-small btn-secondary', icon = 'icon-trash' },
+            { name = c.loc('Customer'), uri = "/customer/' + full.contract_id + '/details", class = 'btn-small btn-tertiary', icon = 'icon-user' },
+        ];
+    ELSE;
+        helper.dt_buttons = [
+            { name = c.loc('Customer'), uri = "/customer/' + full.contract_id + '/details", class = 'btn-small btn-tertiary', icon = 'icon-user' },
+        ];
+    END;
+
+    PROCESS 'helpers/datatables.tt';
+-%]
+            </div>
+        </div>
+    </div>
+
+
+
 </div>
 [% # vim: set tabstop=4 syntax=html expandtab: -%]

@@ -110,11 +110,35 @@ sub base :Chained('/') :PathPart('device') :CaptureArgs(0) {
         { name => 'config.version', search => 1, title => $c->loc('Configuration Version') },
     ]);
 
+    my $fielddev_rs = $c->model('DB')->resultset('autoprov_field_devices');
+    if($c->user->roles eq "subscriberadmin" || $c->user->roles eq "subscriber") {
+        $fielddev_rs = $fielddev_rs->search({
+        	'device.reseller_id' => $c->user->voip_subscriber->contract->contact->reseller_id,
+            }, { 
+                join => { 'profile' => { 'config' => 'device' } },
+        });
+    } elsif($c->user->roles eq "reseller") {
+        $fielddev_rs = $fielddev_rs->search({
+                'device.reseller_id' => $c->user->reseller_id
+            }, { 
+                join => { 'profile' => { 'config' => 'device' } },
+        });
+    }
+    $c->stash->{fielddev_dt_columns} = NGCP::Panel::Utils::Datatables::set_columns($c, [
+        { name => 'id', search => 1, title => $c->loc('#') },
+        { name => 'identifier', search => 1, title => $c->loc('MAC Address / Identifier') },
+        { name => 'profile.name', search => 1, title => $c->loc('Profile Name') },
+        { name => 'contract.id', search => 1, title => $c->loc('Customer #') },
+        { name => 'contract.contact.email', search => 1, title => $c->loc('Customer Email') },
+    ]);
+
+
     $c->stash(
         devmod_rs   => $devmod_rs,
         devfw_rs   => $devfw_rs,
         devconf_rs   => $devconf_rs,
         devprof_rs   => $devprof_rs,
+        fielddev_rs => $fielddev_rs,
         template => 'device/list.tt',
     );
 }
@@ -321,11 +345,47 @@ sub devmod_edit :Chained('devmod_base') :PathPart('edit') :Args(0) :Does(ACL) :A
                 my $linerange = delete $form->params->{linerange};
                 $c->stash->{devmod}->update($form->params);
 
-                $c->stash->{devmod}->autoprov_device_line_ranges->delete_all;
+                my @existing_range = ();
+                my $range_rs = $c->stash->{devmod}->autoprov_device_line_ranges;
                 foreach my $range(@{ $linerange }) {
-                    delete $range->{id};
-                    $c->stash->{devmod}->autoprov_device_line_ranges->create($range);
+                    next unless(defined $range);
+                    my $old_range;
+                    if(defined $range->{id}) {
+                        # should be an existing range, do update
+                        $old_range = $range_rs->find($range->{id});
+                        delete $range->{id};
+                        unless($old_range) {
+                            $old_range = $range_rs->create($range);
+                        } else {
+                            # formhandler only passes set check-boxes, so explicitely unset here
+                            $range->{can_private} //= 0;
+                            $range->{can_shared} //= 0;
+                            $range->{can_blf} //= 0;
+                            $old_range->update($range);
+                        }
+                    } else {
+                        # new range
+                        $old_range = $range_rs->create($range);
+                    }
+                    push @existing_range, $old_range->id; # mark as valid (delete others later)
+
+                    # delete field device line assignments with are out-of-range or use a
+                    # feature which is not supported anymore after edit
+                    foreach my $fielddev_line($c->model('DB')->resultset('autoprov_field_device_lines')
+                        ->search({ linerange_id => $old_range->id })->all) {
+                        if($fielddev_line->key_num >= $old_range->num_lines ||
+                           ($fielddev_line->line_type eq 'private' && !$old_range->can_private) ||
+                           ($fielddev_line->line_type eq 'shared' && !$old_range->can_shared) ||
+                           ($fielddev_line->line_type eq 'blf' && !$old_range->can_blf)) {
+
+                           $fielddev_line->delete;
+                       }
+                    }
                 }
+                # delete invalid range ids (e.g. removed ones)
+                $range_rs->search({
+                    id => { 'not in' => \@existing_range },
+                })->delete_all;
 
                 delete $c->session->{created_objects}->{reseller};
                 $c->flash(messages => [{type => 'success', text => 'Successfully updated device model'}]);
@@ -862,6 +922,14 @@ sub devprof_edit :Chained('devprof_base') :PathPart('edit') :Args(0) :Does(ACL) 
         devprof_edit_flag => 1,
         form => $form,
     );
+}
+
+sub dev_field_ajax :Chained('base') :PathPart('device/ajax') :Args(0) :Does(ACL) :ACLDetachTo('/denied_page') :AllowedRole(admin) :AllowedRole(reseller) {
+    my ($self, $c) = @_;
+
+    my $resultset = $c->stash->{fielddev_rs};
+    NGCP::Panel::Utils::Datatables::process($c, $resultset, $c->stash->{fielddev_dt_columns});
+    $c->detach( $c->view("JSON") );
 }
 
 sub dev_field_config :Chained('/') :PathPart('device/autoprov/config') :Args() {

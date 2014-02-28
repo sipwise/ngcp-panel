@@ -60,6 +60,14 @@ sub transform_resource {
             push @{ $resource{alias_numbers} }, $alias;
         }
     }
+
+    my $pref = NGCP::Panel::Utils::Preferences::get_usr_preference_rs(
+        c => $c, attribute => 'lock', 
+        prov_subscriber => $item->provisioning_voip_subscriber);
+    if($pref->first) {
+        $resource{lock} = $pref->first->value;
+    }
+
     $resource{customer_id} = int(delete $resource{contract_id});
     $resource{id} = int($item->id);
     $resource{domain} = $item->domain->domain;
@@ -264,6 +272,12 @@ sub prepare_resource {
             $preferences->{cloud_pbx_base_cli} = $base_number->{cc} . $base_number->{ac} . $base_number->{sn};
         }
     }
+    if(exists $resource->{external_id}) {
+        $preferences->{ext_subscriber_id} = $resource->{external_id};
+    }
+    if(defined $customer->external_id) {
+        $preferences->{ext_contract_id} = $customer->external_id;
+    }
 
     my $billing_profile = $self->get_billing_profile($c, $customer);
     return unless($billing_profile);
@@ -320,6 +334,7 @@ sub prepare_resource {
         alias_numbers => $alias_numbers,
         preferences => $preferences,
     };
+
     return $r;
 }
 
@@ -347,16 +362,18 @@ sub update_item {
             return;
         }
     }
-    try {
-        NGCP::Panel::Utils::Subscriber::lock_provisoning_voip_subscriber(
-            c => $c,
-            prov_subscriber => $subscriber->provisioning_voip_subscriber,
-            level => $resource->{lock},
-        );
-    } catch($e) {
-        $c->log->error("failed to lock subscriber id ".$subscriber->id." with level ".$resource->{lock});
-        $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "Failed to update subscriber lock");
-        return;
+    if(defined $resource->{lock}) {
+        try {
+            NGCP::Panel::Utils::Subscriber::lock_provisoning_voip_subscriber(
+                c => $c,
+                prov_subscriber => $subscriber->provisioning_voip_subscriber,
+                level => $resource->{lock},
+            );
+        } catch($e) {
+            $c->log->error("failed to lock subscriber id ".$subscriber->id." with level ".$resource->{lock});
+            $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "Failed to update subscriber lock");
+            return;
+        }
     }
 
     NGCP::Panel::Utils::Subscriber::update_subscriber_numbers(
@@ -385,6 +402,11 @@ sub update_item {
     $subscriber->update($billing_res);
     $subscriber->provisioning_voip_subscriber->update($provisioning_res);
     $subscriber->discard_changes;
+    NGCP::Panel::Utils::Subscriber::update_preferences(
+        c => $c, 
+        prov_subscriber => $subscriber->provisioning_voip_subscriber,
+        preferences => $preferences
+    );
 
     # TODO: status handling (termination, ...)
 
