@@ -38,6 +38,8 @@ sub process
     }
     return 1;
 }
+#method is necessary to apply APP specific template configurations, e.g. path, tt file extensions etc
+#may be moved to main view class, but as on template_invoice experiments stage it would be ok to leave it in separated class
 sub getTemplateContent{
     my ( $self, $c, $template ) = @_;
     if(defined $template){

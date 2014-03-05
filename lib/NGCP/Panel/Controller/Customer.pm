@@ -17,6 +17,8 @@ use NGCP::Panel::Form::Customer::PbxFieldDevice;
 use NGCP::Panel::Form::Customer::PbxFieldDeviceEdit;
 use NGCP::Panel::Form::Customer::PbxFieldDeviceSync;
 use NGCP::Panel::Form::Customer::InvoiceTemplate;
+
+use NGCP::Panel::Model::DB::InvoiceTemplate;
 use NGCP::Panel::Utils::Message;
 use NGCP::Panel::Utils::Navigation;
 use NGCP::Panel::Utils::DateTime;
@@ -834,44 +836,66 @@ sub calls :Chained('base') :PathPart('calls') :Args(0) {
     #$c->stash(template => 'customer/calls.tt'); 
 #    $c->stash(contract => $contract_rs->first);
 }
-sub loglong{
-    my ($str) = @_;
-    use Data::Dumper;
-    open(my $log,">>/tmp/irka.log");
-    print $log Dumper($str);
-    close $log;
-}
 
 sub calls_svg :Chained('base') :PathPart('calls/template') :Args {
-    my ($self, $c, $in);
-    ($self,$c,@$in{qw/tt_type tt_viewmode tt_sourcestate/}) = @_;
+    my ($self, $c) = @_;
+    #$c->log->debug($c->model('DB'));
+    #return;
+    #my $db = NGCP::Panel::Model::DB::InvoiceTemplate->new();
+    #$c->log->debug($db);
+    
+    #my $contract_id = $in->{contract_id} = ;
+
+    no warnings 'uninitialized';
+
+    my($validator,$db,$in);
+
+    #input
+    (undef,undef,@$in{qw/contract_id tt_type tt_viewmode tt_sourcestate tt_id/}) = ( $c->stash->{contract}->id, @_ );
+    $in->{tt_string} = $c->request->body_parameters->{template} || '';
+    
+    #output
+    my $tt_string;
+
+    #input checking & simple preprocessing
+    $validator = NGCP::Panel::Form::Customer::InvoiceTemplate->new;
+#    $form->schema( $c->model('DB::InvoiceTemplate')->schema );
+    #to common form package ? removing is necessary due to FormHandler param presence evaluation - it is based on key presence, not on defined/not defined value
+    foreach ( keys %$in) { if(!( defined $in->{$_} )){ delete $in->{$_}; } };
+
+    #storage
+    #pass scheme here is ugly, and should be moved somehow to DB::Base
+    $db = NGCP::Panel::Model::DB::InvoiceTemplate->new( schema => $c->model('DB') );
     
     
-    #die();
-    #$c->view('SVG');
-    #handle request
-#    my $tt_viewmode //= '';
-#    my $tt_state    //= 'saved';
-#    my $tt_type    //= 'svg';
-    my $invoicetemplate = $c->request->body_parameters->{template} || '';
-    
-    
-    #$c->log->debug("1.invoicetemplate is empty=".($invoicetemplate?0:1).";viewbox=".($invoicetemplate !~/^<svg.*?viewbox.*?>/is ).";\n");
-    $c->log->debug("1.invoicetemplate is empty=".($invoicetemplate?0:1).";viewbox=".($invoicetemplate !~/^<svg.*?viewbox.*?>/is ).";\n");
-    my $form = NGCP::Panel::Form::Customer::InvoiceTemplate->new;
-    $form->process(
+    #really, we don't need a form here at all
+    #just use as already implemented fields checking and defaults applying
+    $validator->setup_form(
         posted => 1,
         params => $in,
-        action => $c->uri_for_action("/customer/calls_svg", [$c->stash->{contract}->id]),
     );
-    $form->validate();
-    if(!$invoicetemplate){
-        #getCustomerActiveInvoiceTemplateFromDB.
+    
+    
+    $c->log->debug("validated=".$validator->validated.";\n");
+    my $in_validated = $validator->fif;
+    #dirty hack
+    $in = $in_validated;
+    
+    #really this is for code for field default in validator. The question is how to pass DB model to validator (formhandler) - ideologically correctly?
+    $tt_string = $in->{tt_string};
+    if(!$tt_string){
+        #here we also may be better should contact model, not DB directly. Will return to this separation later
+        #at the end - we can figure out rather basic controller behaviour
+        $tt_string = $db->getCustomerInvoiceTemplate( %$in );
     }
-    if(!$invoicetemplate){
+
+
+    if(!$tt_string){
         #getDefault
+        NGCP::Panel::Utils::InvoiceTemplate::getDefaultInvoiceTemplate( c => $c, result => \$tt_string );
         try{
-            NGCP::Panel::Utils::InvoiceTemplate::getDefault( c => $c, invoicetemplate => \$invoicetemplate );
+            #Utils... mmm - maybe model?
+            NGCP::Panel::Utils::InvoiceTemplate::getDefaultInvoiceTemplate( c => $c, result => \$tt_string );
         } catch($e) {
             NGCP::Panel::Utils::Message->error(
                 c => $c,
@@ -880,18 +904,18 @@ sub calls_svg :Chained('base') :PathPart('calls/template') :Args {
             );
         }
     }#else{
-    #here we have invoice content - of customer or default, so no checking of invoicetemplate is necessary
-    #if($invoicetemplate){
+#    #here we have invoice content - of customer or default, so no checking of tt_string is necessary
+    #if($tt_string){
         #sub candidate, preSaveCustomTemplate
         #if it is presaving, making it for default  isn't necessary, default should contain it
         #but while let it be here
         ##moved to correct place - to js, generating svg
-#####        $c->log->debug("3.invoicetemplate is empty=".($invoicetemplate?0:1).";viewbox=".($invoicetemplate !~/^<svg.*?viewbox.*?>/is).";\n");
-#####        if( $invoicetemplate !~/^<svg.*?viewbox.*?>/is ){
-#####            (my ($width))  = ($invoicetemplate =~/^<svg.*?width.*?(\d+).*?>/is );
+#####        $c->log->debug("3.tt_string is empty=".($tt_string?0:1).";viewbox=".($tt_string !~/^<svg.*?viewbox.*?>/is).";\n");
+#####        if( $tt_string !~/^<svg.*?viewbox.*?>/is ){
+#####            (my ($width))  = ($tt_string =~/^<svg.*?width.*?(\d+).*?>/is );
 #####            $c->log->debug("width=$width;\n");
-#####            (my ($height)) = ($invoicetemplate =~/^<svg.*?height.*?(\d+).*?>/is );
-#####            my($replaced) = $invoicetemplate =~s/^<svg(.*?(?:width.*?height|height.*width).*?\d+.*? )/<svg $1 viewBox="0 0 $width $height" /i;
+#####            (my ($height)) = ($tt_string =~/^<svg.*?height.*?(\d+).*?>/is );
+#####            my($replaced) = $tt_string =~s/^<svg(.*?(?:width.*?height|height.*width).*?\d+.*? )/<svg $1 viewBox="0 0 $width $height" /i;
 #####            $c->log->debug("replaced=$replaced;\n");
 #####            #storeToDB
 #####        }
@@ -899,25 +923,27 @@ sub calls_svg :Chained('base') :PathPart('calls/template') :Args {
     
     #prepare response
     $c->response->content_type('image/svg+xml');
-    $c->log->debug("tt_viewmode=".$in->{tt_viewmode}.";\n");
+    #$c->log->debug("tt_viewmode=".$in->{tt_viewmode}.";\n");
+    $c->log->debug("tt_viewmode=;\n");
     if($in->{tt_viewmode} eq 'raw'){
         #$c->stash->{VIEW_NO_TT_PROCESS} = 1;
-        $c->response->body($invoicetemplate);
+        $c->response->body($tt_string);
         return;
     }else{
-        my $contacts = $c->model('DB')->resultset('contacts')->search({ id => $c->stash->{contract}->id });
+        my $contacts = $c->model('DB')->resultset('contacts')->search({ id => $in->{contract_id} });
         #some preprocessing should be done only before showing. So, there will be:
             #preSaveCustomTemplate prerpocessing
             #preShowCustomTemplate prerpocessing
         {
             #preShowInvoice
-            $invoicetemplate =~s/(?:{\s*)?<!--{|}-->(?:\s*})?//gs;
+            #also to model
+            $tt_string =~s/(?:{\s*)?<!--{|}-->(?:\s*})?//gs;
         }
         
         $c->stash( provider => $contacts->first );
         #use irka;
-        #irka::loglong(\$invoicetemplate);
-        $c->stash( template => \$invoicetemplate ); 
+        #irka::loglong(\$tt_string);
+        $c->stash( template => \$tt_string ); 
         $c->log->debug("before_detach;\n");
         $c->detach($c->view('SVG'));
     }

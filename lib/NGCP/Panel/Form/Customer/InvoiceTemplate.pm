@@ -4,44 +4,47 @@ use HTML::FormHandler::Moose;
 extends 'HTML::FormHandler';
 
 use Moose::Util::TypeConstraints;
-enum 'TemplateType' => [ qw/svg/ ];#html
+enum 'TemplateType' => [ qw/svg html/ ];#html
 enum 'TemplateViewMode' => [ qw/raw parsed/ ];
 enum 'TemplateSourceState' => [ qw/saved previewed/ ];
 no Moose::Util::TypeConstraints;
 
-#while use only for validation, no rendering is necessary
-#use HTML::FormHandler::Widget::Block::Bootstrap;
-
-#looks as often repeated
-#has '+widget_wrapper' => ( default => 'Bootstrap' );
-#sub build_form_element_class { [qw/form-horizontal/] }
-
-#Attempt to use Moose to validation
-#has 'sort_order' => (
-#      is  => 'ro',
-#      isa => enum([qw[ ascending descending ]]),
-#);
+has '+use_fields_for_input_without_param' => ( default => 1 );
 
 has_field 'tt_type' => (
-#    is => 'rw',
-#    isa => enum([qw[ svg ]]),#html
     type => 'Text',
-    required => 0,
-    #apply => [ 'enum' ],
-    #apply => [ { check => [qw/svg/] } ],
+    required => 1,
+    default => 'svg',
+    #apply => [ qw/svg/ ],
     apply => [ 'TemplateType' ],
-    
 );
 
 has_field 'tt_viewmode' => (
     type => 'Text',
     required => 0,
+    apply => [ 'TemplateViewMode' ],
+    #check => [ qw/raw parsed/ ],
+    default => 'parsed',
 );
 
 has_field 'tt_sourcestate' => (
     type => 'Text',
     required => 1,
+    default => 'saved',
+    apply => [ 'TemplateSourceState' ],
+    #check => [ qw/saved previewed/ ],
 );
+
+has_field 'tt_string' => (
+    type     => 'Text',
+    #default  => \&
+    #apply    => [ { check => \&validate_tt_string } ],
+    required => 0,
+);
+
+sub validate_tt_string{
+    #here could be following: take default from file and get all variables and validate variables from customer string
+};
 
 1;
 
@@ -51,7 +54,7 @@ NGCP::Panel::Form::InvoiceTemplate
 
 =head1 DESCRIPTION
 
-Form to modify a invoice template.
+Form to modify an invoice template.
 
 =head1 METHODS
 
