@@ -94,7 +94,7 @@ Depends: libcatalyst-actionrole-acl-perl,
          liburi-encode-perl,
          libxml-mini-perl,
          ngcp-schema,
-         ngcp-templates-ce-ngcp-panel (> 3.0.19) | ngcp-templates-pro-ngcp-panel (> 3.0.19),
+         ngcp-templates-ce-ngcp-panel (>= 3.0.19) | ngcp-templates-pro-ngcp-panel (>= 3.0.19),
          ${misc:Depends},
          ${perl:Depends}
 Description: Catalyst based application
