@@ -135,7 +135,7 @@ Depends: gnutls-bin,
          liburi-encode-perl,
          libxml-mini-perl,
          ngcp-schema,
-         ngcp-templates-ce-ngcp-panel (> 3.0.19) | ngcp-templates-pro-ngcp-panel (> 3.0.19),
+         ngcp-templates-ce-ngcp-panel (>= 3.0.19) | ngcp-templates-pro-ngcp-panel (>= 3.0.19),
          openssl,
          ${misc:Depends},
          ${perl:Depends}
