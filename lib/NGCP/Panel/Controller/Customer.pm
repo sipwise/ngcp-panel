@@ -17,6 +17,8 @@ use NGCP::Panel::Form::Customer::PbxFieldDevice;
 use NGCP::Panel::Form::Customer::PbxFieldDeviceEdit;
 use NGCP::Panel::Form::Customer::PbxFieldDeviceSync;
 use NGCP::Panel::Form::Customer::InvoiceTemplate;
+
+use NGCP::Panel::Model::DB::InvoiceTemplate;
 use NGCP::Panel::Utils::Message;
 use NGCP::Panel::Utils::Navigation;
 use NGCP::Panel::Utils::DateTime;
@@ -839,25 +841,36 @@ sub calls :Chained('base') :PathPart('calls') :Args(0) {
         $c->stash(zonecalls_rs => [1..100] );
     }
     $c->stash(template => 'customer/calls.tt'); 
+    #$c->stash(zonecalls_rs => $c->stash{zonecalls_rs});
+    #$c->detach($c->view('SVG'));
+#    return;
+    #$c->response->body(JSON::to_json({ methods => $allowed_methods })."\n");
+    #$c->stash(template => 'customer/calls_svg.tt'); 
+
+    #$c->stash(close_target => $c->uri_for_action("/customer/details", [$c->stash->{contract}->id]));
+    #$c->stash(template => 'customer/calls.tt'); 
+#    $c->stash(contract => $contract_rs->first);
 }
 
 sub calls_svg :Chained('base') :PathPart('calls/template') :Args {
-    my ($self, $c, $in);
-    ($self,$c,@$in{qw/tt_type tt_viewmode tt_sourcestate/}) = @_;
+    my ($self, $c) = @_;
+    #$c->log->debug($c->model('DB'));
+    #return;
+    #my $db = NGCP::Panel::Model::DB::InvoiceTemplate->new();
+    #$c->log->debug($db);
     
     #my $contract_id = $in->{contract_id} = ;
 
     no warnings 'uninitialized';
 
-    my($validator,$backend,$in);
+    my($validator,$db,$in);
 
     #input
-    (undef,undef,@$in{qw/tt_type tt_viewmode tt_sourcestate tt_output_type tt_id/}) = @_ ;
-    $in->{contract_id} = $c->stash->{contract}->id;
+    (undef,undef,@$in{qw/contract_id tt_type tt_viewmode tt_sourcestate tt_id/}) = ( $c->stash->{contract}->id, @_ );
     $in->{tt_string} = $c->request->body_parameters->{template} || '';
     
     #output
-    my $out={};
+    my $tt_string;
 
     #input checking & simple preprocessing
     $validator = NGCP::Panel::Form::Customer::InvoiceTemplate->new;
@@ -867,45 +880,37 @@ sub calls_svg :Chained('base') :PathPart('calls/template') :Args {
 
     #storage
     #pass scheme here is ugly, and should be moved somehow to DB::Base
-    $backend = NGCP::Panel::Model::DB::InvoiceTemplate->new( schema => $c->model('DB') );
+    $db = NGCP::Panel::Model::DB::InvoiceTemplate->new( schema => $c->model('DB') );
     
     
     #really, we don't need a form here at all
-    #just use as already implemented fields checking and defaults applying  
-    #$validator->setup_form(
-    $validator->process(
+    #just use as already implemented fields checking and defaults applying
+    $validator->setup_form(
         posted => 1,
         params => $in,
     );
-    #$validator->validate_form();
-    
-    #die();
-    #$c->view('SVG');
-    #handle request
-#    my $tt_viewmode //= '';
-#    my $tt_state    //= 'saved';
-#    my $tt_type    //= 'svg';
-    my $invoicetemplate = $c->request->body_parameters->{template} || '';
     
     
-    #$c->log->debug("1.invoicetemplate is empty=".($invoicetemplate?0:1).";viewbox=".($invoicetemplate !~/^<svg.*?viewbox.*?>/is ).";\n");
-    $c->log->debug("1.invoicetemplate is empty=".($invoicetemplate?0:1).";viewbox=".($invoicetemplate !~/^<svg.*?viewbox.*?>/is ).";\n");
-    my $form = NGCP::Panel::Form::Customer::InvoiceTemplate->new;
-    $form->process(
-        posted => 1,
-        params => $in,
-        action => $c->uri_for_action("/customer/calls_svg", [$c->stash->{contract}->id]),
-    );
-    $form->validate();
-    if(!$invoicetemplate){
-        #getCustomerActiveInvoiceTemplateFromDB.
+    $c->log->debug("validated=".$validator->validated.";\n");
+    my $in_validated = $validator->fif;
+    #dirty hack
+    $in = $in_validated;
+    
+    #really this is for code for field default in validator. The question is how to pass DB model to validator (formhandler) - ideologically correctly?
+    $tt_string = $in->{tt_string};
+    if(!$tt_string){
+        #here we also may be better should contact model, not DB directly. Will return to this separation later
+        #at the end - we can figure out rather basic controller behaviour
+        $tt_string = $db->getCustomerInvoiceTemplate( %$in );
     }
-    
-    #we need to get default to 1) sanitize (if in->tt_string) or 2)if not in->tt_string and no customer->tt_string
-    if($in->{tt_string} || !$tt_string_customer || $tt_string_force_default ){
+
+
+    if(!$tt_string){
+        #getDefault
+        NGCP::Panel::Utils::InvoiceTemplate::getDefaultInvoiceTemplate( c => $c, result => \$tt_string );
         try{
-            #Utils... mmm - if it were model - there would be no necessity in utils using
-            NGCP::Panel::Utils::InvoiceTemplate::getDefaultInvoiceTemplate( c => $c, type => $in->{tt_type}, result => \$tt_string_default );
+            #Utils... mmm - maybe model?
+            NGCP::Panel::Utils::InvoiceTemplate::getDefaultInvoiceTemplate( c => $c, result => \$tt_string );
         } catch($e) {
             NGCP::Panel::Utils::Message->error(
                 c => $c,
@@ -913,140 +918,49 @@ sub calls_svg :Chained('base') :PathPart('calls/template') :Args {
                 desc  => $c->loc('There is no one invoice template in the system.'),
             );
         }
-        if($in->{tt_string} && !$tt_string_force_default){
-            #sanitize
-            my $tt_string_sanitized = $in->{tt_string};
-            $tt_string_sanitized =~s/<script.*?\/script>//gs;
-            my $tokens_re = qr/\[%(.*?)%\]/;
-            my $token_shape_re = qr/\s+/;
-            my %tokens_valid = map{$_=~s/$token_shape_re//sg; $_ => 1;} ($tt_string_default=~/$tokens_re/sg);
-            foreach( $tt_string_sanitized=~/$tokens_re/sg ){
-                my $token_shape=$_;
-                $token_shape=~s/$token_shape_re//sg;
-                if(! exists $tokens_valid{$token_shape}){
-                    $c->log->debug('Not allowed token in invoice template:'.$_.";\n");
-                    $tt_string_sanitized=~s/(?:\[%)+\s*\Q$_\E\s*(?:%\])+//g;
-                }
-            }
-            #/sanitize - to sub, later
-
-            #irka::loglong(Dumper($tt_string_sanitized));
-            $backend->storeCustomerInvoiceTemplate( 
-                %$in,
-                tt_string_sanitized => \$tt_string_sanitized,
-            );
-            
-            $out->{tt_string} = $tt_string_sanitized;
-        }elsif(!$tt_string_customer || $tt_string_force_default){
-            $out->{tt_string} = $tt_string_default;
-            $c->log->debug("apply default;");
-        }
-    }else{#we have customer template, we don't have dynamic template string, we weren't requested to show default
-        $out->{tt_string} = $tt_string_customer;
-    }
-    #/model logic
+    }#else{
+#    #here we have invoice content - of customer or default, so no checking of tt_string is necessary
+    #if($tt_string){
+        #sub candidate, preSaveCustomTemplate
+        #if it is presaving, making it for default  isn't necessary, default should contain it
+        #but while let it be here
+        ##moved to correct place - to js, generating svg
+#####        $c->log->debug("3.tt_string is empty=".($tt_string?0:1).";viewbox=".($tt_string !~/^<svg.*?viewbox.*?>/is).";\n");
+#####        if( $tt_string !~/^<svg.*?viewbox.*?>/is ){
+#####            (my ($width))  = ($tt_string =~/^<svg.*?width.*?(\d+).*?>/is );
+#####            $c->log->debug("width=$width;\n");
+#####            (my ($height)) = ($tt_string =~/^<svg.*?height.*?(\d+).*?>/is );
+#####            my($replaced) = $tt_string =~s/^<svg(.*?(?:width.*?height|height.*width).*?\d+.*? )/<svg $1 viewBox="0 0 $width $height" /i;
+#####            $c->log->debug("replaced=$replaced;\n");
+#####            #storeToDB
+#####        }
+    #}
     
     #prepare response
     $c->response->content_type('image/svg+xml');
-    $c->log->debug("tt_viewmode=".$in->{tt_viewmode}.";\n");
+    #$c->log->debug("tt_viewmode=".$in->{tt_viewmode}.";\n");
+    $c->log->debug("tt_viewmode=;\n");
     if($in->{tt_viewmode} eq 'raw'){
         #$c->stash->{VIEW_NO_TT_PROCESS} = 1;
-        $c->response->body($out->{tt_string});
+        $c->response->body($tt_string);
         return;
     }else{
-
         my $contacts = $c->model('DB')->resultset('contacts')->search({ id => $in->{contract_id} });
-        $c->stash( provider => $contacts->first );
-
         #some preprocessing should be done only before showing. So, there will be:
         #preSaveCustomTemplate prerpocessing
         #preShowCustomTemplate prerpocessing
         {
             #preShowInvoice
             #also to model
-            $out->{tt_string}=~s/(?:{\s*)?<!--{|}-->(?:\s*})?//gs;
+            $tt_string =~s/(?:{\s*)?<!--{|}-->(?:\s*})?//gs;
         }
-
-        if( ($in->{tt_output_type} eq 'svg') || ( $in->{tt_output_type} eq 'html') ){
-            #$c->response->content_type('image/svg+xml');
-            $c->stash( template => \$out->{tt_string} ); 
-            $c->detach( $c->view('SVG') );
-        }elsif($in->{tt_output_type} eq 'pdf'){
-            $c->response->content_type('application/pdf');
-            my $svg = $c->view('SVG')->getTemplateProcessed($c,\$out->{tt_string}, $c->stash );
-            my(@pages) = $svg=~/(<svg.*?(?:\/svg>))/sig;
-            
-            #$c->log->debug($svg);
-            #my $kit = PDF::WebKit->new(\$svg, page_size => 'A4');
-            #push @{ $kit->stylesheets }, "/path/to/css/file";
-            # Get an inline PDF
-            #$out->{tt_string} = $kit->to_pdf;
-            #$c->response->body($out->{tt_string});
-            my ($tempdirbase,$tempdir );
-            use File::Temp qw/tempfile tempdir/;
-        #my($fh, $tempfilename) = tempfile();
-            $tempdirbase = join('/',File::Spec->tmpdir,@$in{qw/contract_id tt_type tt_sourcestate/}, $out->{tt_id});
-            use File::Path qw( mkpath );
-            ! -e $tempdirbase and mkpath( $tempdirbase, 0, 0777 );
-            $tempdir = tempdir( DIR =>  $tempdirbase , CLEANUP => 1 );
-            $c->log->debug("tempdirbase=$tempdirbase; tempdir=$tempdir;");
-            #try{
-            #} catch($e){
-            #    NGCP::Panel::Utils::Message->error(
-            #        c => $c,
-            #        error => "Can't create temporary directory at: $tempdirbase;" ,
-            #        desc  => $c->loc("Can't create temporary directory."),
-            #    );
-            #}
-            my $pagenum = 1;
-            my @pagefiles;
-            foreach my $page (@pages){
-                my $fh;
-                my $pagefile = "$tempdir/$pagenum.svg";
-                push @pagefiles, $pagefile;
-                open($fh,">",$pagefile);
-                #try{
-                #} catch($e){
-                #    NGCP::Panel::Utils::Message->error(
-                #        c => $c,
-                #        error => "Can't create temporary page file at: $tempdirbase/$page.svg;" ,
-                #        desc  => $c->loc("Can't create temporary file."),
-                #    );
-                #}
-                print $fh $page;
-                close $fh;
-                $pagenum++;
-            }
-            
-            #$fh->unlink_on_destroy( 0 );
-            #my $filename = "/tmp/bbb.svg";
-            #open my $fh, ">$filename";
-            #binmode $fh;
-            #print $fh $svg;
-            #close $fh;
-            #my $cmd = "/tmp/wkhtmltox/bin/wkhtmltopdf $filename - ";
-            my $cmd = "rsvg-convert -f pdf ".join(" ", @pagefiles);
-            $c->log->debug($cmd);
-            
-            #`chmod ugo+rwx $filename`;
-            
-            #binmode(STDOUT);
-            #binmode(STDIN);
-            #$out->{tt_string} = `$cmd`;
-            {
-                #$cmd = "fc-list";
-                open B, "$cmd |"; 
-                binmode B; 
-                local $/ = undef; 
-                $out->{tt_string} = <B>;
-                close B;
-            }
-            $c->response->body($out->{tt_string});
-            return;
-
-            #$out->{tt_string} = `cat $filename `;
-        }
-
+        
+        $c->stash( provider => $contacts->first );
+        #use irka;
+        #irka::loglong(\$tt_string);
+        $c->stash( template => \$tt_string ); 
+        $c->log->debug("before_detach;\n");
+        $c->detach($c->view('SVG'));
     }
 }
 
