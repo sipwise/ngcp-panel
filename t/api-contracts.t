@@ -27,7 +27,7 @@ $ua->ssl_opts(
 {
     $req = HTTP::Request->new('OPTIONS', $uri.'/api/contracts/');
     $res = $ua->request($req);
-    ok($res->code == 200, "check options request");
+    is($res->code, 200, "check options request");
     ok($res->header('Accept-Post') eq "application/hal+json; profile=http://purl.org/sipwise/ngcp-api/#rel-contracts", "check Accept-Post header in options response");
     my $opts = JSON::from_json($res->decoded_content);
     my @hopts = split /\s*,\s*/, $res->header('Allow');
@@ -48,7 +48,7 @@ $req->content(JSON::to_json({
     reseller_id => 1,
 }));
 $res = $ua->request($req);
-ok($res->code == 201, "create test billing profile");
+is($res->code, 201, "create test billing profile");
 # TODO: get id from body once the API returns it
 my $billing_profile_id = $res->header('Location');
 $billing_profile_id =~ s/^.+\/(\d+)$/$1/;
@@ -71,10 +71,10 @@ my @allcontracts = ();
         email     => "sys_contact\@syscontact.invalid",
     }));
     $res = $ua->request($req);
-    ok($res->code == 201, "create system contact");
+    is($res->code, 201, "create system contact");
     $req = HTTP::Request->new('GET', $uri.'/'.$res->header('Location'));
     $res = $ua->request($req);
-    ok($res->code == 200, "fetch system contact");
+    is($res->code, 200, "fetch system contact");
     $syscontact = JSON::from_json($res->decoded_content);
 
     # create 6 new reseller contracts
@@ -89,7 +89,7 @@ my @allcontracts = ();
             billing_profile_id => $billing_profile_id,
         }));
         $res = $ua->request($req);
-        ok($res->code == 201, "create test reseller contract $i");
+        is($res->code, 201, "create test reseller contract $i");
         $contracts{$res->header('Location')} = 1;
         push @allcontracts, $res->header('Location');
         $firstcontract = $res->header('Location') unless $firstcontract;
@@ -105,7 +105,7 @@ my @allcontracts = ();
         type => "invalid",
     }));
     $res = $ua->request($req);
-    ok($res->code == 422, "create contract with invalid type");
+    is($res->code, 422, "create contract with invalid type");
     my $err = JSON::from_json($res->decoded_content);
     ok($err->{code} eq "422", "check error code in body");
     ok($err->{message} =~ /Invalid 'type'/, "check error message in body");
@@ -118,7 +118,7 @@ my @allcontracts = ();
         billing_profile_id => 999999,
     }));
     $res = $ua->request($req);
-    ok($res->code == 422, "create contract with invalid billing profile");
+    is($res->code, 422, "create contract with invalid billing profile");
     $err = JSON::from_json($res->decoded_content);
     ok($err->{code} eq "422", "check error code in body");
     ok($err->{message} =~ /Invalid 'billing_profile_id'/, "check error message in body");
@@ -131,7 +131,7 @@ my @allcontracts = ();
         contact_id => $customer_contact_id,
     }));
     $res = $ua->request($req);
-    ok($res->code == 422, "create contract with invalid contact");
+    is($res->code, 422, "create contract with invalid contact");
     $err = JSON::from_json($res->decoded_content);
     ok($err->{code} eq "422", "check error code in body");
     ok($err->{message} =~ /The contact_id is not a valid ngcp:systemcontacts item/, "check error message in body");
@@ -143,7 +143,7 @@ my @allcontracts = ();
         billing_profile_id => $billing_profile_id,
     }));
     $res = $ua->request($req);
-    ok($res->code == 422, "create contract without contact");
+    is($res->code, 422, "create contract without contact");
 
     # try to create invalid contract with invalid status
     $req->content(JSON::to_json({
@@ -153,7 +153,7 @@ my @allcontracts = ();
         status => "invalid",
     }));
     $res = $ua->request($req);
-    ok($res->code == 422, "create contract with invalid status");
+    is($res->code, 422, "create contract with invalid status");
     $err = JSON::from_json($res->decoded_content);
     ok($err->{code} eq "422", "check error code in body");
     ok($err->{message} =~ /field='status'/, "check error message in body");
@@ -162,7 +162,7 @@ my @allcontracts = ();
     my $nexturi = $uri.'/api/contracts/?page=1&rows=5';
     do {
         $res = $ua->get($nexturi);
-        ok($res->code == 200, "fetch contacts page");
+        is($res->code, 200, "fetch contacts page");
         my $collection = JSON::from_json($res->decoded_content);
         my $selfuri = $uri . $collection->{_links}->{self}->{href};
         ok($selfuri eq $nexturi, "check _links.self.href of collection");
@@ -221,14 +221,14 @@ my @allcontracts = ();
              
     } while($nexturi);
 
-    ok(keys %contracts == 0, "check if all test contracts have been found");
+    is(scalar(keys %contracts), 0, "check if all test contracts have been found");
 }
 
 # test contacts item
 {
     $req = HTTP::Request->new('OPTIONS', $uri.'/'.$firstcontract);
     $res = $ua->request($req);
-    ok($res->code == 200, "check options on item");
+    is($res->code, 200, "check options on item");
     my @hopts = split /\s*,\s*/, $res->header('Allow');
     my $opts = JSON::from_json($res->decoded_content);
     ok(exists $opts->{methods} && ref $opts->{methods} eq "ARRAY", "check for valid 'methods' in body");
@@ -243,7 +243,7 @@ my @allcontracts = ();
 
     $req = HTTP::Request->new('GET', $uri.'/'.$firstcontract);
     $res = $ua->request($req);
-    ok($res->code == 200, "fetch one contract item");
+    is($res->code, 200, "fetch one contract item");
     my $contract = JSON::from_json($res->decoded_content);
     ok(exists $contract->{status}, "check existence of status");
     ok(exists $contract->{type}, "check existence of type");
@@ -261,12 +261,12 @@ my @allcontracts = ();
     $req->remove_header('Content-Type');
     $req->header('Prefer' => "return=minimal");
     $res = $ua->request($req);
-    ok($res->code == 415, "check put missing content type");
+    is($res->code, 415, "check put missing content type");
 
     # check if it fails with unsupported content type
     $req->header('Content-Type' => 'application/xxx');
     $res = $ua->request($req);
-    ok($res->code == 415, "check put invalid content type");
+    is($res->code, 415, "check put invalid content type");
 
     $req->remove_header('Content-Type');
     $req->header('Content-Type' => 'application/json');
@@ -274,12 +274,12 @@ my @allcontracts = ();
     # check if it fails with missing Prefer
     $req->remove_header('Prefer');
     $res = $ua->request($req);
-    ok($res->code == 400, "check put missing prefer");
+    is($res->code, 400, "check put missing prefer");
 
     # check if it fails with invalid Prefer
     $req->header('Prefer' => "return=invalid");
     $res = $ua->request($req);
-    ok($res->code == 400, "check put invalid prefer");
+    is($res->code, 400, "check put invalid prefer");
 
 
     $req->remove_header('Prefer');
@@ -287,12 +287,12 @@ my @allcontracts = ();
 
     # check if it fails with missing body
     $res = $ua->request($req);
-    ok($res->code == 400, "check put no body");
+    is($res->code, 400, "check put no body");
 
     # check if put is ok
     $req->content(JSON::to_json($contract));
     $res = $ua->request($req);
-    ok($res->code == 200, "check put successful");
+    is($res->code, 200, "check put successful");
 
     my $new_contract = JSON::from_json($res->decoded_content);
     is_deeply($old_contract, $new_contract, "check put if unmodified put returns the same");
@@ -310,7 +310,7 @@ my @allcontracts = ();
         [ { op => 'replace', path => '/status', value => 'pending' } ]
     ));
     $res = $ua->request($req);
-    ok($res->code == 200, "check patched contract item");
+    is($res->code, 200, "check patched contract item");
     my $mod_contact = JSON::from_json($res->decoded_content);
     ok($mod_contact->{status} eq "pending", "check patched replace op");
     ok($mod_contact->{_links}->{self}->{href} eq $firstcontract, "check patched self link");
@@ -321,37 +321,37 @@ my @allcontracts = ();
         [ { op => 'replace', path => '/status', value => undef } ]
     ));
     $res = $ua->request($req);
-    ok($res->code == 422, "check patched undef status");
+    is($res->code, 422, "check patched undef status");
 
     $req->content(JSON::to_json(
         [ { op => 'replace', path => '/status', value => 'invalid' } ]
     ));
     $res = $ua->request($req);
-    ok($res->code == 422, "check patched invalid status");
+    is($res->code, 422, "check patched invalid status");
 
     $req->content(JSON::to_json(
         [ { op => 'replace', path => '/contact_id', value => 99999 } ]
     ));
     $res = $ua->request($req);
-    ok($res->code == 422, "check patched invalid contact_id");
+    is($res->code, 422, "check patched invalid contact_id");
 
     $req->content(JSON::to_json(
         [ { op => 'replace', path => '/contact_id', value => $customer_contact_id } ]
     ));
     $res = $ua->request($req);
-    ok($res->code == 422, "check patched customer contact_id");
+    is($res->code, 422, "check patched customer contact_id");
 
     $req->content(JSON::to_json(
         [ { op => 'replace', path => '/billing_profile_id', value => undef } ]
     ));
     $res = $ua->request($req);
-    ok($res->code == 422, "check patched undef billing_profile_id");
+    is($res->code, 422, "check patched undef billing_profile_id");
 
     $req->content(JSON::to_json(
         [ { op => 'replace', path => '/billing_profile_id', value => 99999 } ]
     ));
     $res = $ua->request($req);
-    ok($res->code == 422, "check patched invalid billing_profile_id");
+    is($res->code, 422, "check patched invalid billing_profile_id");
 }
 
 # terminate
@@ -359,7 +359,7 @@ my @allcontracts = ();
     # check if deletion of contact fails before terminating the contracts
     $req = HTTP::Request->new('DELETE', $uri.'/'.$syscontact->{_links}->{self}->{href});
     $res = $ua->request($req);
-    ok($res->code == 423, "check locked status for deleting used contact");
+    is($res->code, 423, "check locked status for deleting used contact");
 
     my $pc;
     foreach my $contract(@allcontracts) {
@@ -370,7 +370,7 @@ my @allcontracts = ();
             { "op" => "replace", "path" => "/status", "value" => "terminated" }
         ]));
         $res = $ua->request($req);
-        ok($res->code == 200, "check termination of contract");
+        is($res->code, 200, "check termination of contract");
         $pc = JSON::from_json($res->decoded_content);
         ok($pc->{status} eq "terminated", "check termination status of contract");
     }
@@ -378,14 +378,14 @@ my @allcontracts = ();
     # check if we can still get the terminated contract
     $req = HTTP::Request->new('GET', $uri.'/'.$pc->{_links}->{self}->{href});
     $res = $ua->request($req);
-    ok($res->code == 404, "check fetching of terminated contract");
+    is($res->code, 404, "check fetching of terminated contract");
 
     # check if deletion of contact is now ok
     # TODO: are we supposed to be able to delete a contact for a terminated
     # contract? there are still DB contstraints in the way!
     #$req = HTTP::Request->new('DELETE', $uri.'/'.$syscontact->{_links}->{self}->{href});
     #$res = $ua->request($req);
-    #ok($res->code == 204, "check deletion of unused contact");
+    #is($res->code, 204, "check deletion of unused contact");
 }
 
 done_testing;

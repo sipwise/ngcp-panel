@@ -32,7 +32,8 @@ $ua->ssl_opts(
     SSL_ca_file   => $ssl_ca_cert,
 );
 $res = $ua->get($uri.'/api/');
-ok($res->code == 400, "check invalid client certificate");
+is($res->code, 400, "check invalid client certificate")
+    || note ($res->message);
 
 # unauth cert
 $ua->ssl_opts(
@@ -41,7 +42,8 @@ $ua->ssl_opts(
     SSL_ca_file   => $ssl_ca_cert,
 );
 $res = $ua->get($uri.'/api/');
-ok($res->code == 403, "check unauthorized client certificate");
+is($res->code, 403, "check unauthorized client certificate")
+    || note ($res->message);
 
 # successful auth
 $ua->ssl_opts(
@@ -50,7 +52,8 @@ $ua->ssl_opts(
     SSL_ca_file   => $ssl_ca_cert,
 );
 $res = $ua->get($uri.'/api/');
-ok($res->code == 200, "check valid client certificate");
+is($res->code, 200, "check valid client certificate")
+    || note ($res->message);
 
 #my @links = $res->header('Link');
 #ok(grep /^<\/api\/contacts\/>; rel="collection /, @links);

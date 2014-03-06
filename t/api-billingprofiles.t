@@ -25,7 +25,7 @@ $ua->ssl_opts(
 {
     $req = HTTP::Request->new('OPTIONS', $uri.'/api/billingprofiles/');
     $res = $ua->request($req);
-    ok($res->code == 200, "check options request");
+    is($res->code, 200, "check options request");
     ok($res->header('Accept-Post') eq "application/hal+json; profile=http://purl.org/sipwise/ngcp-api/#rel-billingprofiles", "check Accept-Post header in options response");
     my $opts = JSON::from_json($res->decoded_content);
     my @hopts = split /\s*,\s*/, $res->header('Allow');
@@ -53,7 +53,7 @@ my @allprofiles = ();
             name => "test api name $i".time,
         }));
         $res = $ua->request($req);
-        ok($res->code == 201, "create test billing profile $i");
+        is($res->code, 201, "create test billing profile $i");
         $profiles{$res->header('Location')} = 1;
         push @allprofiles, $res->header('Location');
         $firstprofile = $res->header('Location') unless $firstprofile;
@@ -67,7 +67,7 @@ my @allprofiles = ();
         name => "test api name",
     }));
     $res = $ua->request($req);
-    ok($res->code == 422, "create profile without reseller_id");
+    is($res->code, 422, "create profile without reseller_id");
     my $err = JSON::from_json($res->decoded_content);
     ok($err->{code} eq "422", "check error code in body");
     ok($err->{message} =~ /field='reseller_id'/, "check error message in body");
@@ -79,7 +79,7 @@ my @allprofiles = ();
         reseller_id => undef,
     }));
     $res = $ua->request($req);
-    ok($res->code == 422, "create profile with empty reseller_id");
+    is($res->code, 422, "create profile with empty reseller_id");
     $err = JSON::from_json($res->decoded_content);
     ok($err->{code} eq "422", "check error code in body");
     ok($err->{message} =~ /field='reseller_id'/, "check error message in body");
@@ -91,7 +91,7 @@ my @allprofiles = ();
         reseller_id => 99999,
     }));
     $res = $ua->request($req);
-    ok($res->code == 422, "create profile with invalid reseller_id");
+    is($res->code, 422, "create profile with invalid reseller_id");
     $err = JSON::from_json($res->decoded_content);
     ok($err->{code} eq "422", "check error code in body");
     ok($err->{message} =~ /Invalid 'reseller_id'/, "check error message in body");
@@ -102,7 +102,7 @@ my @allprofiles = ();
     my $nexturi = $uri.'/api/billingprofiles/?page=1&rows=5';
     do {
         $res = $ua->get($nexturi);
-        ok($res->code == 200, "fetch profile page");
+        is($res->code, 200, "fetch profile page");
         my $collection = JSON::from_json($res->decoded_content);
         my $selfuri = $uri . $collection->{_links}->{self}->{href};
         ok($selfuri eq $nexturi, "check _links.self.href of collection");
@@ -157,14 +157,14 @@ my @allprofiles = ();
              
     } while($nexturi);
 
-    ok(keys %profiles == 0, "check if all test billing profiles have been found");
+    is(scalar(keys %profiles), 0, "check if all test billing profiles have been found");
 }
 
 # test profile item
 {
     $req = HTTP::Request->new('OPTIONS', $uri.'/'.$firstprofile);
     $res = $ua->request($req);
-    ok($res->code == 200, "check options on item");
+    is($res->code, 200, "check options on item");
     my @hopts = split /\s*,\s*/, $res->header('Allow');
     my $opts = JSON::from_json($res->decoded_content);
     ok(exists $opts->{methods} && ref $opts->{methods} eq "ARRAY", "check for valid 'methods' in body");
@@ -179,7 +179,7 @@ my @allprofiles = ();
 
     $req = HTTP::Request->new('GET', $uri.'/'.$firstprofile);
     $res = $ua->request($req);
-    ok($res->code == 200, "fetch one contract item");
+    is($res->code, 200, "fetch one contract item");
     my $profile = JSON::from_json($res->decoded_content);
     ok(exists $profile->{reseller_id} && $profile->{reseller_id}->is_int, "check existence of reseller_id");
     ok(exists $profile->{handle}, "check existence of handle");
@@ -195,12 +195,12 @@ my @allprofiles = ();
     $req->remove_header('Content-Type');
     $req->header('Prefer' => "return=minimal");
     $res = $ua->request($req);
-    ok($res->code == 415, "check put missing content type");
+    is($res->code, 415, "check put missing content type");
 
     # check if it fails with unsupported content type
     $req->header('Content-Type' => 'application/xxx');
     $res = $ua->request($req);
-    ok($res->code == 415, "check put invalid content type");
+    is($res->code, 415, "check put invalid content type");
 
     $req->remove_header('Content-Type');
     $req->header('Content-Type' => 'application/json');
@@ -208,12 +208,12 @@ my @allprofiles = ();
     # check if it fails with missing Prefer
     $req->remove_header('Prefer');
     $res = $ua->request($req);
-    ok($res->code == 400, "check put missing prefer");
+    is($res->code, 400, "check put missing prefer");
 
     # check if it fails with invalid Prefer
     $req->header('Prefer' => "return=invalid");
     $res = $ua->request($req);
-    ok($res->code == 400, "check put invalid prefer");
+    is($res->code, 400, "check put invalid prefer");
 
 
     $req->remove_header('Prefer');
@@ -221,12 +221,12 @@ my @allprofiles = ();
 
     # check if it fails with missing body
     $res = $ua->request($req);
-    ok($res->code == 400, "check put no body");
+    is($res->code, 400, "check put no body");
 
     # check if put is ok
     $req->content(JSON::to_json($profile));
     $res = $ua->request($req);
-    ok($res->code == 200, "check put successful");
+    is($res->code, 200, "check put successful");
 
     my $new_profile = JSON::from_json($res->decoded_content);
     is_deeply($old_profile, $new_profile, "check put if unmodified put returns the same");
@@ -243,7 +243,7 @@ my @allprofiles = ();
         [ { op => 'replace', path => '/name', value => 'patched name '.$t } ]
     ));
     $res = $ua->request($req);
-    ok($res->code == 200, "check patched profile item");
+    is($res->code, 200, "check patched profile item");
     my $mod_profile = JSON::from_json($res->decoded_content);
     ok($mod_profile->{name} eq "patched name $t", "check patched replace op");
     ok($mod_profile->{_links}->{self}->{href} eq $firstprofile, "check patched self link");
@@ -254,13 +254,13 @@ my @allprofiles = ();
         [ { op => 'replace', path => '/reseller_id', value => undef } ]
     ));
     $res = $ua->request($req);
-    ok($res->code == 422, "check patched undef reseller");
+    is($res->code, 422, "check patched undef reseller");
 
     $req->content(JSON::to_json(
         [ { op => 'replace', path => '/reseller_id', value => 99999 } ]
     ));
     $res = $ua->request($req);
-    ok($res->code == 422, "check patched invalid reseller");
+    is($res->code, 422, "check patched invalid reseller");
 
     # TODO: invalid handle etc
 }

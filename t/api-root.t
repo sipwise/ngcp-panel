@@ -26,11 +26,11 @@ $ua->ssl_opts(
     # test some uri params
     $req = HTTP::Request->new('OPTIONS', $uri.'/api/?foo=bar&bla');
     $res = $ua->request($req);
-    ok($res->code == 200, "check options request with uri params");
+    is($res->code, 200, "check options request with uri params");
 
     $req = HTTP::Request->new('OPTIONS', $uri.'/api/');
     $res = $ua->request($req);
-    ok($res->code == 200, "check options request");
+    is($res->code, 200, "check options request");
     my $opts = JSON::from_json($res->decoded_content);
     my @hopts = split /\s*,\s*/, $res->header('Allow');
     ok(exists $opts->{methods} && ref $opts->{methods} eq "ARRAY", "check for valid 'methods' in body");
