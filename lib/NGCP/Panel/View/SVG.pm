@@ -38,17 +38,26 @@ sub process
     }
     return 1;
 }
-#method is necessary to apply APP specific template configurations, e.g. path, tt file extensions etc
-#may be moved to main view class, but as on template_invoice experiments stage it would be ok to leave it in separated class
-sub getTemplateContent{
+sub getTemplate{
     my ( $self, $c, $template ) = @_;
     if(defined $template){
         $c->log->debug("getTemplateContent: template=$template;");
     }
     $template ||= ( $c->stash->{template} ||  $c->action . $self->config->{TEMPLATE_EXTENSION} );
-    $c->log->debug("getTemplateContent: template=$template;");
+    $c->log->debug("getTemplate: template=$template;");
+    return $template;
+}
+#method is necessary to apply APP specific template configurations, e.g. path, tt file extensions etc
+#may be moved to main view class, but as on template_invoice experiments stage it would be ok to leave it in separated class
+sub getTemplateContent{
+    my ( $self, $c, $template ) = @_;
     
-    return $self->{template}->context->insert($template);
+    return $self->{template}->context->insert($self->getTemplate($c,$template));
+}
+sub getTemplateProcessed{
+    my ( $self, $c, $template ) = @_;
+    
+    return $self->{template}->context->process($self->getTemplate($c,$template));
 }
 
 1;

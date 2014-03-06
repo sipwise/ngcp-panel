@@ -4,10 +4,11 @@ use HTML::FormHandler::Moose;
 extends 'HTML::FormHandler';
 
 use Moose::Util::TypeConstraints;
-enum 'TemplateType' => [ qw/svg html/ ];#html
+enum 'TemplateType' => [ qw/svg html svgpdf/ ];#html
+enum 'TemplateTypeOutput' => [ qw/svg html pdf/ ];#html
 enum 'TemplateViewMode' => [ qw/raw parsed/ ];
 enum 'TemplateSourceState' => [ qw/saved previewed default/ ];
-no Moose::Util::TypeConstraints;
+#no Moose::Util::TypeConstraints;
 
 has '+use_fields_for_input_without_param' => ( default => 1 );
 
@@ -15,8 +16,20 @@ has_field 'tt_type' => (
     type => 'Text',
     required => 1,
     default => 'svg',
-    #apply => [ qw/svg/ ],
-    apply => [ 'TemplateType' ],
+    apply => [ 
+        { type => 'TemplateType' },
+        #{ transform => sub{ $_[0] eq 'svgpdf' and return 'svg'; } },
+    ],
+);
+
+has_field 'tt_output_type' => (
+    type => 'Text',
+    required => 1,
+    default => 'svg',
+    apply => [ 
+        { type => 'TemplateTypeOutput' },
+        #{ when => { tt_type => 'svgpdf' }, transform => sub{ 'pdf' } },
+    ],
 );
 
 has_field 'tt_viewmode' => (
@@ -56,9 +69,33 @@ has_field 'tt_id' => (
     required => 0,
 );
 
-sub validate_tt_string{
+#sub validate_tt_string{
     #here could be following: take default from file and get all variables and validate variables from customer string
+#};
+sub validate_tt_type {
+    my ( $self, $field ) = @_; # self is the form
+    use irka;
+    use Data::Dumper;
+    irka::loglong("\n\n\nin validate\naaaaaaaaaaaaaaaaaaaaa\naaaaaaaaaaaaaaa\n");
+    die();
+    if( $self->field('tt_type')->value eq 'svgpdf'){
+        $self->field('tt_output_type')->value('pdf');
+        $self->field('tt_type')->value('svg');
+    }
+    return 1;
 };
+sub validate {
+    my $self = shift;
+    use irka;
+    use Data::Dumper;
+    irka::loglong("\n\n\nin validate\naaaaaaaaaaaaaaaaaaaaa\naaaaaaaaaaaaaaa\n");
+    die();
+    if( $self->field('tt_type')->value eq 'svgpdf'){
+        $self->field('tt_output_type')->value('pdf');
+        $self->field('tt_type')->value('svg');
+    }
+    return 1;
+}
 
 1;
 
