@@ -924,7 +924,7 @@ sub calls_svg :Chained('base') :PathPart('calls/template') :Args {
             );
             
             $output_string = $tt_string_sanitized;
-        }elsif(!$tt_string_customer){
+        }elsif(!$tt_string_customer || $tt_string_force_default){
             $output_string = $tt_string_default;
         }
     }else{#we have customer template, we don't have dynamic template string, we weren't requested to show default
