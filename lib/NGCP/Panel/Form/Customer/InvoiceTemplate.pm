@@ -6,7 +6,7 @@ extends 'HTML::FormHandler';
 use Moose::Util::TypeConstraints;
 enum 'TemplateType' => [ qw/svg html/ ];#html
 enum 'TemplateViewMode' => [ qw/raw parsed/ ];
-enum 'TemplateSourceState' => [ qw/saved previewed/ ];
+enum 'TemplateSourceState' => [ qw/saved previewed default/ ];
 no Moose::Util::TypeConstraints;
 
 has '+use_fields_for_input_without_param' => ( default => 1 );
@@ -36,6 +36,20 @@ has_field 'tt_sourcestate' => (
 );
 
 has_field 'tt_string' => (
+    type     => 'Text',
+    #default  => \&
+    #apply    => [ { check => \&validate_tt_string } ],
+    required => 0,
+);
+
+has_field 'contract_id' => (
+    type     => 'Text',
+    #default  => \&
+    #apply    => [ { check => \&validate_tt_string } ],
+    required => 1,
+);
+
+has_field 'tt_id' => (
     type     => 'Text',
     #default  => \&
     #apply    => [ { check => \&validate_tt_string } ],
