@@ -835,21 +835,9 @@ sub calls :Chained('base') :PathPart('calls') :Args(0) {
             stime => $stime,
             etime => $etime,
         );
-        #my @array = $zonecalls_rs->all();
-        #s$zonecalls_rs = [@array,@array,@array,@array,@array,@array,@array,@array,@array,@array,@array,@array,@array,@array,@array];
-        #$c->stash(zonecalls_rs => $zonecalls_rs);
-        $c->stash(zonecalls_rs => [1..100] );
+        $c->stash(zonecalls_rs => $zonecalls_rs);
     }
     $c->stash(template => 'customer/calls.tt'); 
-    #$c->stash(zonecalls_rs => $c->stash{zonecalls_rs});
-    #$c->detach($c->view('SVG'));
-#    return;
-    #$c->response->body(JSON::to_json({ methods => $allowed_methods })."\n");
-    #$c->stash(template => 'customer/calls_svg.tt'); 
-
-    #$c->stash(close_target => $c->uri_for_action("/customer/details", [$c->stash->{contract}->id]));
-    #$c->stash(template => 'customer/calls.tt'); 
-#    $c->stash(contract => $contract_rs->first);
 }
 
 sub calls_svg :Chained('base') :PathPart('calls/template') :Args {
@@ -863,14 +851,20 @@ sub calls_svg :Chained('base') :PathPart('calls/template') :Args {
 
     no warnings 'uninitialized';
 
-    my($validator,$db,$in);
+    my($validator,$backend,$in);
 
     #input
-    (undef,undef,@$in{qw/contract_id tt_type tt_viewmode tt_sourcestate tt_id/}) = ( $c->stash->{contract}->id, @_ );
+    (undef,undef,@$in{qw/tt_type tt_viewmode tt_sourcestate tt_id/}) = @_ ;
+    $in->{contract_id} = $c->stash->{contract}->id;
     $in->{tt_string} = $c->request->body_parameters->{template} || '';
     
+    #use irka;
+    #use Data::Dumper;
+    #irka::loglong(Dumper($in));
+    #return;
+    
     #output
-    my $tt_string;
+    my $output_string;
 
     #input checking & simple preprocessing
     $validator = NGCP::Panel::Form::Customer::InvoiceTemplate->new;
@@ -880,7 +874,7 @@ sub calls_svg :Chained('base') :PathPart('calls/template') :Args {
 
     #storage
     #pass scheme here is ugly, and should be moved somehow to DB::Base
-    $db = NGCP::Panel::Model::DB::InvoiceTemplate->new( schema => $c->model('DB') );
+    $backend = NGCP::Panel::Model::DB::InvoiceTemplate->new( schema => $c->model('DB') );
     
     
     #really, we don't need a form here at all
@@ -895,22 +889,24 @@ sub calls_svg :Chained('base') :PathPart('calls/template') :Args {
     my $in_validated = $validator->fif;
     #dirty hack
     $in = $in_validated;
+
     
     #really this is for code for field default in validator. The question is how to pass DB model to validator (formhandler) - ideologically correctly?
-    $tt_string = $in->{tt_string};
-    if(!$tt_string){
+    #real logic
+    my $tt_string_default = '';
+    my $tt_string_customer = '';
+    my $tt_string_force_default = $in->{tt_sourcestate} eq 'default';
+    if(!$in->{tt_string} && !$tt_string_force_default){
         #here we also may be better should contact model, not DB directly. Will return to this separation later
         #at the end - we can figure out rather basic controller behaviour
-        $tt_string = $db->getCustomerInvoiceTemplate( %$in );
+        $backend->getCustomerInvoiceTemplate( %$in, result => \$tt_string_customer );
     }
-
-
-    if(!$tt_string){
-        #getDefault
-        NGCP::Panel::Utils::InvoiceTemplate::getDefaultInvoiceTemplate( c => $c, result => \$tt_string );
+    
+    #we need to get default to 1) sanitize (if in->tt_string) or 2)if not in->tt_string and no customer->tt_string
+    if($in->{tt_string} || !$tt_string_customer || $tt_string_force_default ){
         try{
             #Utils... mmm - maybe model?
-            NGCP::Panel::Utils::InvoiceTemplate::getDefaultInvoiceTemplate( c => $c, result => \$tt_string );
+            NGCP::Panel::Utils::InvoiceTemplate::getDefaultInvoiceTemplate( c => $c, result => \$tt_string_default );
         } catch($e) {
             NGCP::Panel::Utils::Message->error(
                 c => $c,
@@ -918,8 +914,32 @@ sub calls_svg :Chained('base') :PathPart('calls/template') :Args {
                 desc  => $c->loc('There is no one invoice template in the system.'),
             );
         }
-    }#else{
-#    #here we have invoice content - of customer or default, so no checking of tt_string is necessary
+        if($in->{tt_string} && !$tt_string_force_default){
+            #sanitize
+            my $tt_string_sanitized = $in->{tt_string};
+            my $tokens_re = qr/\[%(.*?)%\]/;
+            my $token_shape_re = qr/\s+/;
+            my %tokens_valid = map{$_=~s/$token_shape_re//sg; $_ => 1;} ($tt_string_default=~/$tokens_re/sg);
+            foreach( $tt_string_sanitized=~/$tokens_re/sg ){
+                my $token_shape=$_;
+                $token_shape=~s/$token_shape_re//sg;
+                if(! exists $tokens_valid{$token_shape}){
+                    $tt_string_sanitized=~s/\Q$_\E//g;
+                }
+            }
+
+            $backend->storeCustomerInvoiceTemplate( 
+                %$in,
+                tt_string_sanitized => \$tt_string_sanitized,
+            );
+            
+            $output_string = $tt_string_sanitized;
+        }elsif(!$tt_string_customer){
+            $output_string = $tt_string_default;
+        }
+    }else{#we have customer template, we don't have dynamic template string, we weren't requested to show default
+        $output_string = $tt_string_customer;
+    }
     #if($tt_string){
         #sub candidate, preSaveCustomTemplate
         #if it is presaving, making it for default  isn't necessary, default should contain it
@@ -930,7 +950,7 @@ sub calls_svg :Chained('base') :PathPart('calls/template') :Args {
 #####            (my ($width))  = ($tt_string =~/^<svg.*?width.*?(\d+).*?>/is );
 #####            $c->log->debug("width=$width;\n");
 #####            (my ($height)) = ($tt_string =~/^<svg.*?height.*?(\d+).*?>/is );
-#####            my($replaced) = $tt_string =~s/^<svg(.*?(?:width.*?height|height.*width).*?\d+.*? )/<svg $1 viewBox="0 0 $width $height" /i;
+#####            my($replaced) = $output_string =~s/^<svg(.*?(?:width.*?height|height.*width).*?\d+.*? )/<svg $1 viewBox="0 0 $width $height" /i;
 #####            $c->log->debug("replaced=$replaced;\n");
 #####            #storeToDB
 #####        }
@@ -942,7 +962,7 @@ sub calls_svg :Chained('base') :PathPart('calls/template') :Args {
     $c->log->debug("tt_viewmode=;\n");
     if($in->{tt_viewmode} eq 'raw'){
         #$c->stash->{VIEW_NO_TT_PROCESS} = 1;
-        $c->response->body($tt_string);
+        $c->response->body($output_string);
         return;
     }else{
         my $contacts = $c->model('DB')->resultset('contacts')->search({ id => $in->{contract_id} });
@@ -952,13 +972,13 @@ sub calls_svg :Chained('base') :PathPart('calls/template') :Args {
         {
             #preShowInvoice
             #also to model
-            $tt_string =~s/(?:{\s*)?<!--{|}-->(?:\s*})?//gs;
+            $output_string =~s/(?:{\s*)?<!--{|}-->(?:\s*})?//gs;
         }
         
         $c->stash( provider => $contacts->first );
         #use irka;
-        #irka::loglong(\$tt_string);
-        $c->stash( template => \$tt_string ); 
+        #irka::loglong(\$output_string);
+        $c->stash( template => \$output_string ); 
         $c->log->debug("before_detach;\n");
         $c->detach($c->view('SVG'));
     }

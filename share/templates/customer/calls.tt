@@ -111,7 +111,7 @@ function handleShowSvgParsedData(data, error) {
     {
         //alert('Congratulations. Your SVG string is back in the host page, do with it what you will\n\n' + data);
         //alert(encodeURIComponent(data));//works in ie
-        background('[%- c.uri_for_action("/customer/calls_svg", [contract.id]) -%]'+'/svg','template='+encodeURIComponent(data),
+        background('[%- c.uri_for_action("/customer/calls_svg", [contract.id]) -%]'+'/svg/parsed/previewed','template='+encodeURIComponent(data),
             function(httpResponse){
                 //alert(httpResponse);
                 var img = document.getElementById('svgpreview'); //new Image();
@@ -132,11 +132,13 @@ function handleSaveSvgData(data, error) {
     else
     {
         //alert('Congratulations. Your SVG string is back in the host page, do with it what you will\n\n' + data);
-        return data;
+        //alert(encodeURIComponent(data));//works in ie
+        background('[%- c.uri_for_action("/customer/calls_svg", [contract.id]) -%]'+'/svg/parsed/saved','template='+encodeURIComponent(data));
     }			
 }
 </script>
 
+<button onclick="loadSvg('/svg/raw/default');">Load system default invoice template</button>
 <button onclick="loadSvg('/svg/raw/saved');">Load saved invoice template</button>
 <button onclick="loadSvg('/svg/raw/previewed');">Load previewed template</button>
 <button onclick="showSvgParsed();">Refresh Preview</button>
