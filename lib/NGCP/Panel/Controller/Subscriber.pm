@@ -383,15 +383,16 @@ sub webfax_send :Chained('base') :PathPart('webfax/send') :Args(0) {
                 error => "failed to send fax: $e",
                 desc  => $c->loc('Internal error while sending fax'),
             );
-            NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for_action('/subscriber/webfax', $c->req->captures));
-            return;
         }
+        NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for_action('/subscriber/webfax', $c->req->captures));
+        return;
     }
 
     $c->stash(
         template => 'subscriber/webfax.tt',
         form => $form,
         create_flag => 1,
+        close_target => $c->uri_for_action('/subscriber/webfax', [$c->req->captures->[0]]),
     );
 }
 
@@ -399,8 +400,11 @@ sub webfax_ajax :Chained('base') :PathPart('webfax/ajax') :Args(0) {
     my ($self, $c) = @_;
 
     my $s = $c->stash->{subscriber}->provisioning_voip_subscriber;
+    my $kam_subscriber = $c->model('DB')->resultset('subscriber')->find({
+        uuid => $s->uuid
+    });
     my $fax_rs = $c->model('DB')->resultset('fax_journal')->search({
-        subscriber_id => $s->id,
+        subscriber_id => $kam_subscriber->id,
     });
 
     NGCP::Panel::Utils::Datatables::process($c, $fax_rs, $c->stash->{fax_dt_columns});
