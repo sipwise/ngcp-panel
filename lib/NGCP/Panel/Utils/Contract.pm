@@ -51,8 +51,12 @@ sub create_contract_balance {
             });
         });
     } catch($e) {
-        $c->log->error("Creating contract balance failed: " . $e);
-        $e->rethrow;
+        if ($e =~ /Duplicate entry/) {
+            $c->log->warn("Creating contract balance failed: Duplicate entry. Ignoring!");
+        } else {
+            $c->log->error("Creating contract balance failed: " . $e);
+            $e->rethrow;
+        }
     }
 }
 
