@@ -858,11 +858,6 @@ sub calls_svg :Chained('base') :PathPart('calls/template') :Args {
     $in->{contract_id} = $c->stash->{contract}->id;
     $in->{tt_string} = $c->request->body_parameters->{template} || '';
     
-    #use irka;
-    #use Data::Dumper;
-    #irka::loglong(Dumper($in));
-    #return;
-    
     #output
     my $output_string;
 
@@ -878,21 +873,35 @@ sub calls_svg :Chained('base') :PathPart('calls/template') :Args {
     
     
     #really, we don't need a form here at all
-    #just use as already implemented fields checking and defaults applying
+    #just use as already implemented fields checking and defaults applying  
     $validator->setup_form(
         posted => 1,
         params => $in,
     );
     
-    
+    #multi return...
     $c->log->debug("validated=".$validator->validated.";\n");
+    if(!$validator->validated){
+        return;
+    }
     my $in_validated = $validator->fif;
-    #dirty hack
-    $in = $in_validated;
+    #use irka;
+    #use Data::Dumper;
+    #irka::loglong(Dumper($in));
+    #irka::loglong(Dumper($in_validated));
 
+    #dirty hack 1
+    $in = $in_validated;
     
-    #really this is for code for field default in validator. The question is how to pass DB model to validator (formhandler) - ideologically correctly?
-    #real logic
+    #dirty hack 2
+    #validate methods don't work in form configuration, will find why later
+    if($in->{tt_type} eq 'svgpdf'){
+        $in->{tt_type} = 'svg';
+        $in->{tt_output_type} = 'pdf';
+    }
+
+
+    #model logic
     my $tt_string_default = '';
     my $tt_string_customer = '';
     my $tt_string_force_default = $in->{tt_sourcestate} eq 'default';
@@ -905,7 +914,7 @@ sub calls_svg :Chained('base') :PathPart('calls/template') :Args {
     #we need to get default to 1) sanitize (if in->tt_string) or 2)if not in->tt_string and no customer->tt_string
     if($in->{tt_string} || !$tt_string_customer || $tt_string_force_default ){
         try{
-            #Utils... mmm - maybe model?
+            #Utils... mmm - if it were model - there would be no necessity in utils using
             NGCP::Panel::Utils::InvoiceTemplate::getDefaultInvoiceTemplate( c => $c, result => \$tt_string_default );
         } catch($e) {
             NGCP::Panel::Utils::Message->error(
@@ -917,17 +926,23 @@ sub calls_svg :Chained('base') :PathPart('calls/template') :Args {
         if($in->{tt_string} && !$tt_string_force_default){
             #sanitize
             my $tt_string_sanitized = $in->{tt_string};
+            $tt_string_sanitized =~s/<script.*?\/script>//gs;
             my $tokens_re = qr/\[%(.*?)%\]/;
             my $token_shape_re = qr/\s+/;
             my %tokens_valid = map{$_=~s/$token_shape_re//sg; $_ => 1;} ($tt_string_default=~/$tokens_re/sg);
+            #use irka;
+            #use Data::Dumper;
+            #irka::loglong(Dumper(\%tokens_valid));
             foreach( $tt_string_sanitized=~/$tokens_re/sg ){
                 my $token_shape=$_;
                 $token_shape=~s/$token_shape_re//sg;
                 if(! exists $tokens_valid{$token_shape}){
-                    $tt_string_sanitized=~s/\Q$_\E//g;
+                    $c->log->debug('Not allowed token in invoice template:'.$_.";\n");
+                    $tt_string_sanitized=~s/(?:\[%)+\s*\Q$_\E\s*(?:%\])+//g;
                 }
             }
 
+            #irka::loglong(Dumper($tt_string_sanitized));
             $backend->storeCustomerInvoiceTemplate( 
                 %$in,
                 tt_string_sanitized => \$tt_string_sanitized,
@@ -940,31 +955,21 @@ sub calls_svg :Chained('base') :PathPart('calls/template') :Args {
     }else{#we have customer template, we don't have dynamic template string, we weren't requested to show default
         $output_string = $tt_string_customer;
     }
-    #if($tt_string){
-        #sub candidate, preSaveCustomTemplate
-        #if it is presaving, making it for default  isn't necessary, default should contain it
-        #but while let it be here
-        ##moved to correct place - to js, generating svg
-#####        $c->log->debug("3.tt_string is empty=".($tt_string?0:1).";viewbox=".($tt_string !~/^<svg.*?viewbox.*?>/is).";\n");
-#####        if( $tt_string !~/^<svg.*?viewbox.*?>/is ){
-#####            (my ($width))  = ($tt_string =~/^<svg.*?width.*?(\d+).*?>/is );
-#####            $c->log->debug("width=$width;\n");
-#####            (my ($height)) = ($tt_string =~/^<svg.*?height.*?(\d+).*?>/is );
-#####            my($replaced) = $output_string =~s/^<svg(.*?(?:width.*?height|height.*width).*?\d+.*? )/<svg $1 viewBox="0 0 $width $height" /i;
-#####            $c->log->debug("replaced=$replaced;\n");
-#####            #storeToDB
-#####        }
-    #}
+    #/model logic
     
     #prepare response
-    $c->response->content_type('image/svg+xml');
-    #$c->log->debug("tt_viewmode=".$in->{tt_viewmode}.";\n");
-    $c->log->debug("tt_viewmode=;\n");
+    #mess,mess,mess here
+    if($in->{tt_type} eq 'svg'){
+        $c->response->content_type('image/svg+xml');
+    }elsif($in->{tt_type} eq 'pdf'){
+        $c->response->content_type('application/pdf');
+    }
     if($in->{tt_viewmode} eq 'raw'){
         #$c->stash->{VIEW_NO_TT_PROCESS} = 1;
         $c->response->body($output_string);
         return;
     }else{
+
         my $contacts = $c->model('DB')->resultset('contacts')->search({ id => $in->{contract_id} });
         #some preprocessing should be done only before showing. So, there will be:
         #preSaveCustomTemplate prerpocessing
@@ -976,11 +981,15 @@ sub calls_svg :Chained('base') :PathPart('calls/template') :Args {
         }
         
         $c->stash( provider => $contacts->first );
-        #use irka;
-        #irka::loglong(\$output_string);
-        $c->stash( template => \$output_string ); 
-        $c->log->debug("before_detach;\n");
-        $c->detach($c->view('SVG'));
+        
+        if($in->{tt_type} eq 'svg'){
+            #$c->response->content_type('image/svg+xml');
+            $c->stash( template => \$output_string ); 
+            $c->detach($c->view('SVG'));
+        }elsif($in->{tt_type} eq 'pdf'){
+            #$c->response->content_type('application/pdf');
+            my $svg = $c->view('SVG')->getTemplateProcessed($c,$output_string);
+        }
     }
 }
 
