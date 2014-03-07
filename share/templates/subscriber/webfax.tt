@@ -1,10 +1,11 @@
-[% site_config.title = c.loc('Fax Journal for [_1]@[_2]', subscriber.username, subscriber.domain.domain) -%]
+[% site_config.title = c.loc('Received Fax Journal for [_1]@[_2]', subscriber.username, subscriber.domain.domain) -%]
 
 [%
     helper.name = c.loc('Fax');
     helper.dt_columns = fax_dt_columns;
     helper.column_sort = 'the_timestamp';
     helper.form_object = form;
+    helper.close_target = close_target;
     helper.create_flag = create_flag;
     helper.ajax_uri = c.uri_for_action('/subscriber/webfax_ajax', [c.req.captures.0]);
     helper.messages = messages;

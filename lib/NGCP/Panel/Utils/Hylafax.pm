@@ -26,7 +26,7 @@ sub send_fax {
         $number = $sender;
     }
     if($prov_subscriber->voip_fax_preference) {
-        $sender = $prov_subscriber->voip_fax_preference->name;
+        $sender = $prov_subscriber->voip_fax_preference->name // $sender;
         if($prov_subscriber->voip_fax_preference->password) {
             push @sendfax_args, '-o '.$number.':'.$prov_subscriber->voip_fax_preference->password;
         } else {
