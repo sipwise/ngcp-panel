@@ -1,3 +1,14 @@
+ngcp-panel (1.1.15) unstable; urgency=medium
+
+  [ Alexander Lutay ]
+  * [dbe1295] MT#5955 Increase window size to support selenium tests with iceweasel >=24
+  * [7215751] MT#6169 Fix warning obsolete-relation-form-in-source
+
+  [ Andreas Granig ]
+  * [8380e44] MT#5473 Fix deleting peering groups.
+
+ -- Andrew Pogrebennyk <apogrebennyk@sipwise.com>  Fri, 07 Mar 2014 16:03:19 +0100
+
 ngcp-panel (1.1.14) unstable; urgency=medium
 
   [ Andreas Granig ]
