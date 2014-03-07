@@ -14,11 +14,19 @@ sub build_form_element_class {[qw(form-horizontal)]}
 has_field 'name' => (
     type => 'Text',
     required => 1,
+    element_attr => {
+        rel => ['tooltip'],
+        title => ['The name of the Rewrite Rule Set.'],
+    },
 );
 
 has_field 'description' => (
     type => 'Text',
     required => 0,
+    element_attr => {
+        rel => ['tooltip'],
+        title => ['Arbitrary text.'],
+    },
 );
 
 has_field 'save' => (
