@@ -41,7 +41,7 @@ sub process
 sub getTemplate{
     my ( $self, $c, $template ) = @_;
     if(defined $template){
-        $c->log->debug("getTemplateContent: template=$template;");
+        $c->log->debug("getTemplate: template=$template;");
     }
     $template ||= ( $c->stash->{template} ||  $c->action . $self->config->{TEMPLATE_EXTENSION} );
     $c->log->debug("getTemplate: template=$template;");
@@ -55,9 +55,9 @@ sub getTemplateContent{
     return $self->{template}->context->insert($self->getTemplate($c,$template));
 }
 sub getTemplateProcessed{
-    my ( $self, $c, $template ) = @_;
+    my ( $self, $c, $template, $stash ) = @_;
     
-    return $self->{template}->context->process($self->getTemplate($c,$template));
+    return $self->{template}->context->process($template, $stash);
 }
 
 1;

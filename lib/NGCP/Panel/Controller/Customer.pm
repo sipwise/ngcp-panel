@@ -17,7 +17,7 @@ use NGCP::Panel::Form::Customer::PbxFieldDevice;
 use NGCP::Panel::Form::Customer::PbxFieldDeviceEdit;
 use NGCP::Panel::Form::Customer::PbxFieldDeviceSync;
 use NGCP::Panel::Form::Customer::InvoiceTemplate;
-
+use PDF::WebKit;
 use NGCP::Panel::Model::DB::InvoiceTemplate;
 use NGCP::Panel::Utils::Message;
 use NGCP::Panel::Utils::Navigation;
@@ -875,10 +875,10 @@ sub calls_svg :Chained('base') :PathPart('calls/template') :Args {
         return;
     }
     my $in_validated = $validator->fif;
-    #use irka;
-    #use Data::Dumper;
-    #irka::loglong(Dumper($in));
-    #irka::loglong(Dumper($in_validated));
+    use irka;
+    use Data::Dumper;
+    irka::loglong(Dumper($in));
+    irka::loglong(Dumper($in_validated));
 
     #dirty hack 1
     $in = $in_validated;
@@ -889,6 +889,7 @@ sub calls_svg :Chained('base') :PathPart('calls/template') :Args {
         $in->{tt_type} = 'svg';
         $in->{tt_output_type} = 'pdf';
     }
+    irka::loglong(Dumper($in));
 
 
     #model logic
@@ -949,9 +950,9 @@ sub calls_svg :Chained('base') :PathPart('calls/template') :Args {
     
     #prepare response
     #mess,mess,mess here
-    if($in->{tt_type} eq 'svg'){
+    if($in->{tt_output_type} eq 'svg'){
         $c->response->content_type('image/svg+xml');
-    }elsif($in->{tt_type} eq 'pdf'){
+    }elsif($in->{tt_output_type} eq 'pdf'){
         $c->response->content_type('application/pdf');
     }
     if($in->{tt_viewmode} eq 'raw'){
@@ -972,14 +973,19 @@ sub calls_svg :Chained('base') :PathPart('calls/template') :Args {
         
         $c->stash( provider => $contacts->first );
         
-        if($in->{tt_type} eq 'svg'){
+        if($in->{tt_output_type} eq 'svg'){
             #$c->response->content_type('image/svg+xml');
-            $c->stash( template => \$output_string ); 
-            $c->detach($c->view('SVG'));
-        }elsif($in->{tt_type} eq 'pdf'){
-            #$c->response->content_type('application/pdf');
-            my $svg = $c->view('SVG')->getTemplateProcessed($c,$output_string);
+        }elsif($in->{tt_output_type} eq 'pdf'){
+            $c->response->content_type('application/pdf');
+            my $svg = $c->view('SVG')->getTemplateProcessed($c,\$output_string, $c->stash );
+            $c->log->debug($svg);
+            my $kit = PDF::WebKit->new(\$svg, page_size => 'Letter');
+            #push @{ $kit->stylesheets }, "/path/to/css/file";
+            # Get an inline PDF
+            $output_string = $kit->to_pdf;
         }
+        $c->stash( template => \$output_string ); 
+        $c->detach($c->view('SVG'));
     }
 }
 
