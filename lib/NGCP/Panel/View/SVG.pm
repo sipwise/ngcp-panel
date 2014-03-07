@@ -55,9 +55,9 @@ sub getTemplateContent{
     return $self->{template}->context->insert($self->getTemplate($c,$template));
 }
 sub getTemplateProcessed{
-    my ( $self, $c, $template ) = @_;
+    my ( $self, $c, $template, $stash ) = @_;
     
-    return $self->{template}->context->process($self->getTemplate($c,$template));
+    return $self->{template}->context->process($template, $stash);
 }
 
 1;
