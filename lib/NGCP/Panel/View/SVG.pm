@@ -20,7 +20,7 @@ __PACKAGE__->config(
 sub process
 {
     my ( $self, $c ) = @_;
-    $c->res->content_type("image/svg+xml");
+    #$c->res->content_type("image/svg+xml");
 
 
     if($c->stash->{VIEW_NO_TT_PROCESS}) {

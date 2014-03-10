@@ -1,5 +1,8 @@
-<svg width="215mm" height="297mm" viewBox="0 0 215 297" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" stroke-width="0" stroke="#000000" fill="#000000" font-size="4pt" font-family="HelveticaNeue-Light" xml:space="preserve" text-anchor="start">
+<!--{[%PROCESS 'customer/calls_template.tt' -%]}-->
 
+
+<!--{[%row_vertical_interval = 10 -%]}-->
+<svg width="215mm" height="297mm" viewBox="0 0 215 297" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" stroke-width="0" stroke="#000000" fill="#000000" font-size="4pt" font-family="HelveticaNeue-Light" xml:space="preserve" text-anchor="start">
 	<style>
 <![CDATA[
 .address .company{
@@ -21,14 +24,8 @@ g {
 }
 ]]>
 	</style>
-    
-    
-    <g>
-        <title>MidPage</title>
-    </g>
-    <g>
-        <title>LastPage</title>
-    </g>
+<!--pageSet>    
+<page-->
     <g y="0" x="0" width="215" height="297" id="titlepage">
     
         <title>TitlePage</title>
@@ -42,6 +39,8 @@ g {
             <text x="5" y="27" id="titlepage_companyaddress_custom_3">address line 3</text>
         </g>
         <g y="135" x="10" width="195" height="150" id="titlepage_invoicedetails_head" transform="translate(10, 135)">
+
+        <!--{[%MACRO titlerow BLOCK-%]}-->
             <text id="calls_title" text-anchor="end">
                 <tspan x="5" id="calls_zone" text-anchor="start">Zone</tspan>
                 <tspan x="95" id="calls_number">Number</tspan>
@@ -49,8 +48,8 @@ g {
                 <tspan x="160" id="calls_freetime">Free time</tspan>
                 <tspan x="190" id="calls_cost">Cost</tspan>
             </text>
-    <!--{[% row_vertical_interval = 10 -%]}-->
-    <!--{[%MACRO datarow BLOCK -%]}-->
+    <!--{[%END-%]}-->
+    <!--{[%MACRO datarow(call) BLOCK-%]}-->
             <text y="10" text-anchor="end" id="calls[%loop.count-%]" class="datarow">
                 <tspan x="5" id="calls_zone[%loop.count-%]" text-anchor="start"><!--{[% call.get_column('zone') %]}--><!--{[%#}-->Example zone<!--{%]}--></tspan>
                 <tspan x="95" id="calls_number[%loop.count-%]"><!--{[% call.get_column('number') %]}--><!--{[%#}-->0<!--{%]}--></tspan>
@@ -59,20 +58,7 @@ g {
                 <tspan x="190" id="calls_cost[%loop.count-%]"><!--{[% ( call.get_column('cost') / 100 ) |format('%.2f') %]}--><!--{[%#}-->0.00<!--{%]}--></tspan>
             </text>
     <!--{[%END-%]}-->
-        <!--{[% BLOCK adjustrow  -%]}-->
-            <!--{[% heights = datarow.match('(?s)(<text[^>]*\s+y\s?=.*?)(\d+)(.*)' ) -%]}-->
-            <!--{[% y = heights.1 + ( row_vertical_interval * ( rownumber - 1 ) ) %]}-->
-            <!--{[% heights.0 _ y _ heights.2 %]}-->
-        <!--{[%END -%]}-->
-    <!--{[% FOR call IN zonecalls_rs.all -%]}-->
-
-        <!--{[% total_number = total_number + call.get_column('number') -%]}-->
-        <!--{[% total_duration = total_duration + call.get_column('duration') -%]}-->
-        <!--{[% total_free_time = total_free_time + call.get_column('free_time') -%]}-->
-        <!--{[% total_cost = total_cost + call.get_column('cost') -%]}-->
-        <!--{[%PROCESS adjustrow rownumber = loop.count -%]}-->
-        <!--{[%END -%]}-->
-    <!--{[%MACRO totalrow BLOCK -%]}-->
+    <!--{[%MACRO totalrow BLOCK-%]}-->
             <text y="20" text-anchor="end" id="calls_total" class="datarow">
                 <tspan x="5" id="calls_total_title" text-anchor="start">Total:</tspan>
                 <tspan x="95" id="calls_total_number"><!--{[% total_number %]}--><!--{[%#}-->0<!--{%]}--></tspan>
@@ -82,9 +68,22 @@ g {
             </text>
     <!--{[%END-%]}-->
 
-          <!--{[%PROCESS adjustrow datarow=totalrow, rownumber = zonecalls_rs.all.size -%]}-->
-  
+<!--{[% titlerow -%]}-->
+<!--{[% total = {} -%]}-->
+<!--{[% list_calls(zonecalls_rs, 'datarow', total, 'svg', row_vertical_interval) -%]}-->
+<!--{[% adjustrow (total, 'totalrow', 'svg', row_vertical_interval, zonecalls_rs.size) -%]}-->
+
+
         </g>
+    </g>
+<!--/page>
+<page-->
+    <g id="midpage">
+        <title>MidPage</title>
+  
+    </g>
+    <g id="lastpage">
+        <title>LastPage</title>
     </g>
     <g id="bgpage">
         <title>Background</title>
@@ -96,4 +95,6 @@ g {
             <text x="203" y="15" id="bgpage_companyaddress_sipwise__contact" text-anchor="end" >Page {<!--{[%}-->page<!--{%]}-->}</text>
         </g>
     </g>
+<!--/page>
+</pageSet-->
 </svg>

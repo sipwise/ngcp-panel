@@ -419,7 +419,6 @@
 [%END%]
 
 [% USE Dumper %]
-
 [%# Dumper.dump(zonecalls_rs)%]
 [%# zonecalls_rs.size%]
 [% WRAPPER accordion_group id="collapse_calls" title=c.loc('Balance details') %]
@@ -436,7 +435,7 @@
                     </thead>
                     <tbody>
                         [%# Dumper.dump_html(zonecalls_rs.as_query)%]
-                        [% FOR call IN zonecalls_rs.all -%]
+                        [% FOR call IN zonecalls_rs -%]
                         [% total_number = total_number + call.get_column('number') %]
                         [% total_duration = total_duration + call.get_column('duration') %]
                         [% total_free_time = total_free_time + call.get_column('free_time') %]
