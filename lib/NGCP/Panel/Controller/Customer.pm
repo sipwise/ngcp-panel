@@ -354,9 +354,19 @@ sub base :Chained('list_customer') :PathPart('') :CaptureArgs(1) {
     $c->stash(template => 'customer/details.tt'); 
     $c->stash(contract => $contract_first);
     $c->stash(contract_rs => $contract_rs);
-    $c->stash(zonecalls_rs => $zonecalls_rs);
-    $c->stash(billing_mapping => $billing_mapping);
-    return;
+        $zonecalls_rs = [$zonecalls_rs->all()];
+        my @array = @$zonecalls_rs;
+        #@array = (@array,@array,@array,@array,@array,@array,@array,@array,@array,@array,@array,@array,@array,@array,@array);
+        $zonecalls_rs = [@array,@array,@array,@array,@array,@array,@array,@array,@array,@array,@array,@array,@array,@array,@array];
+        #$zonecalls_rs = [ 1..100 ];
+    
+    use irka;
+    use Data::Dumper;
+    irka::loglong(Dumper($zonecalls_rs) );
+
+    $c->stash(zonecalls_rs => $zonecalls_rs );
+    
+    $c->stash(billing_mapping => $billing_mapping );
 }
 
 sub edit :Chained('base') :PathPart('edit') :Args(0) {
@@ -825,7 +835,10 @@ sub calls :Chained('base') :PathPart('calls') :Args(0) {
             stime => $stime,
             etime => $etime,
         );
-        $c->stash(zonecalls_rs => $zonecalls_rs);
+        #my @array = $zonecalls_rs->all();
+        #s$zonecalls_rs = [@array,@array,@array,@array,@array,@array,@array,@array,@array,@array,@array,@array,@array,@array,@array];
+        #$c->stash(zonecalls_rs => $zonecalls_rs);
+        $c->stash(zonecalls_rs => [1..100] );
     }
     $c->stash(template => 'customer/calls.tt'); 
 }
@@ -844,7 +857,7 @@ sub calls_svg :Chained('base') :PathPart('calls/template') :Args {
     my($validator,$backend,$in);
 
     #input
-    (undef,undef,@$in{qw/tt_type tt_viewmode tt_sourcestate tt_id/}) = @_ ;
+    (undef,undef,@$in{qw/tt_type tt_viewmode tt_sourcestate tt_output_type tt_id/}) = @_ ;
     $in->{contract_id} = $c->stash->{contract}->id;
     $in->{tt_string} = $c->request->body_parameters->{template} || '';
     
@@ -864,10 +877,12 @@ sub calls_svg :Chained('base') :PathPart('calls/template') :Args {
     
     #really, we don't need a form here at all
     #just use as already implemented fields checking and defaults applying  
-    $validator->setup_form(
+    #$validator->setup_form(
+    $validator->process(
         posted => 1,
         params => $in,
     );
+    #$validator->validate_form();
     
     #multi return...
     $c->log->debug("validated=".$validator->validated.";\n");
@@ -884,18 +899,21 @@ sub calls_svg :Chained('base') :PathPart('calls/template') :Args {
     $in = $in_validated;
     
     #dirty hack 2
-    #validate methods don't work in form configuration, will find why later
+    #validate methods in form configuration don't change fields values, will find why later
     if($in->{tt_type} eq 'svgpdf'){
         $in->{tt_type} = 'svg';
         $in->{tt_output_type} = 'pdf';
+    }elsif($in->{tt_type} eq 'html'){
+        $in->{tt_output_type} = 'html';
     }
+    
     irka::loglong(Dumper($in));
-
 
     #model logic
     my $tt_string_default = '';
     my $tt_string_customer = '';
-    my $tt_string_force_default = $in->{tt_sourcestate} eq 'default';
+    my $tt_string_force_default = ( $in->{tt_sourcestate} eq 'default' );
+    $c->log->debug("force_default=$tt_string_force_default;");
     if(!$in->{tt_string} && !$tt_string_force_default){
         #here we also may be better should contact model, not DB directly. Will return to this separation later
         #at the end - we can figure out rather basic controller behaviour
@@ -906,7 +924,7 @@ sub calls_svg :Chained('base') :PathPart('calls/template') :Args {
     if($in->{tt_string} || !$tt_string_customer || $tt_string_force_default ){
         try{
             #Utils... mmm - if it were model - there would be no necessity in utils using
-            NGCP::Panel::Utils::InvoiceTemplate::getDefaultInvoiceTemplate( c => $c, result => \$tt_string_default );
+            NGCP::Panel::Utils::InvoiceTemplate::getDefaultInvoiceTemplate( c => $c, type => $in->{tt_type}, result => \$tt_string_default );
         } catch($e) {
             NGCP::Panel::Utils::Message->error(
                 c => $c,
@@ -942,6 +960,7 @@ sub calls_svg :Chained('base') :PathPart('calls/template') :Args {
             $output_string = $tt_string_sanitized;
         }elsif(!$tt_string_customer || $tt_string_force_default){
             $output_string = $tt_string_default;
+            $c->log->debug("apply default;");
         }
     }else{#we have customer template, we don't have dynamic template string, we weren't requested to show default
         $output_string = $tt_string_customer;
@@ -954,6 +973,8 @@ sub calls_svg :Chained('base') :PathPart('calls/template') :Args {
         $c->response->content_type('image/svg+xml');
     }elsif($in->{tt_output_type} eq 'pdf'){
         $c->response->content_type('application/pdf');
+    }elsif($in->{tt_output_type} eq 'html'){
+        $c->response->content_type('text/html');
     }
     if($in->{tt_viewmode} eq 'raw'){
         #$c->stash->{VIEW_NO_TT_PROCESS} = 1;
@@ -973,19 +994,47 @@ sub calls_svg :Chained('base') :PathPart('calls/template') :Args {
         
         $c->stash( provider => $contacts->first );
         
-        if($in->{tt_output_type} eq 'svg'){
+        if($in->{tt_output_type} eq 'svg' || $in->{tt_output_type} eq 'html'){
             #$c->response->content_type('image/svg+xml');
+            $c->stash( template => \$output_string ); 
+            $c->detach($c->view('SVG'));
         }elsif($in->{tt_output_type} eq 'pdf'){
             $c->response->content_type('application/pdf');
             my $svg = $c->view('SVG')->getTemplateProcessed($c,\$output_string, $c->stash );
-            $c->log->debug($svg);
-            my $kit = PDF::WebKit->new(\$svg, page_size => 'Letter');
+            #$c->log->debug($svg);
+            my $kit = PDF::WebKit->new(\$svg, page_size => 'A4');
             #push @{ $kit->stylesheets }, "/path/to/css/file";
             # Get an inline PDF
             $output_string = $kit->to_pdf;
+            $c->response->body($output_string);
+            
+            use File::Temp qw/tempfile/;
+            my($fh, $filename) = tempfile();
+            
+            #$fh->unlink_on_destroy( 0 );
+            #my $filename = "/tmp/bbb.svg";
+            #open my $fh, ">$filename";
+            #binmode $fh;
+            #print $fh $svg;
+            #close $fh;
+            #my $cmd = "/tmp/wkhtmltox/bin/wkhtmltopdf $filename - ";
+            #$c->log->debug($cmd);
+            
+            #`chmod ugo+rwx $filename`;
+            
+            #binmode(STDOUT);
+            #binmode(STDIN);
+            #$output_string = `$cmd`;
+            
+            #open B, "$cmd |"; 
+            #binmode B; 
+            #$/ = undef; 
+            #$output_string = <B>;
+            #close B;
+            
+            #$output_string = `cat $filename `;
         }
-        $c->stash( template => \$output_string ); 
-        $c->detach($c->view('SVG'));
+
     }
 }
 

@@ -72,30 +72,18 @@ has_field 'tt_id' => (
 #sub validate_tt_string{
     #here could be following: take default from file and get all variables and validate variables from customer string
 #};
-sub validate_tt_type {
-    my ( $self, $field ) = @_; # self is the form
-    use irka;
-    use Data::Dumper;
-    irka::loglong("\n\n\nin validate\naaaaaaaaaaaaaaaaaaaaa\naaaaaaaaaaaaaaa\n");
-    die();
-    if( $self->field('tt_type')->value eq 'svgpdf'){
-        $self->field('tt_output_type')->value('pdf');
-        $self->field('tt_type')->value('svg');
-    }
-    return 1;
-};
-sub validate {
-    my $self = shift;
-    use irka;
-    use Data::Dumper;
-    irka::loglong("\n\n\nin validate\naaaaaaaaaaaaaaaaaaaaa\naaaaaaaaaaaaaaa\n");
-    die();
-    if( $self->field('tt_type')->value eq 'svgpdf'){
-        $self->field('tt_output_type')->value('pdf');
-        $self->field('tt_type')->value('svg');
-    }
-    return 1;
-}
+#sub validate {
+#    my ( $self ) = @_; # self is the form
+#    if( $self->field('tt_type')->value eq 'svgpdf'){
+#        use irka;
+#        use Data::Dumper;
+#        irka::loglong("\n\n\nin validate\nBBBBBBBBBBBBBBBBBBBBB\naaaaaaaaaaaaaaa\n");
+#        #die();
+#        $self->field('tt_output_type')->value('pdf');
+#        $self->field('tt_type')->value('svg');
+#    }
+#    return 1;
+#};
 
 1;
 

@@ -4760,7 +4760,7 @@ this.setSvgString = function(xmlString) {
 		svgroot.appendChild(svgcontent);
         //var startre=;
         //svgroot.outerSvgTag = outerSvgTag;
-        svgroot.outerSvgTag = xmlString.match(/^\<svg[^\>]*\>/);
+        svgroot.outerSvgTag = xmlString.match(/\<svg[^\>]*\>/);
         //console.log(outerSvgTag[0]);
         //alert(outerSvgTag[0]);
         //alert('svgroot.innerHTML='+svgroot.outerHTML);
