@@ -1,7 +1,6 @@
 <!--{[%PROCESS 'customer/calls_template.tt' -%]}-->
-
-
 <!--{[%row_vertical_interval = 10 -%]}-->
+<!--{[%MACRO document_header BLOCK-%]}-->
 <svg width="215mm" height="297mm" viewBox="0 0 215 297" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" stroke-width="0" stroke="#000000" fill="#000000" font-size="4pt" font-family="HelveticaNeue-Light" xml:space="preserve" text-anchor="start">
 	<style>
 <![CDATA[
@@ -42,6 +41,9 @@ g, text, tspan {
 	</style>
 <!--pageSet>    
 <page-->
+<!--{[%END-%]}-->
+
+<!--{[%MACRO titlepage(callsdata) BLOCK-%]}-->
     <g y="0" x="0" width="215" height="297" id="titlepage">
     
         <title>TitlePage</title>
@@ -63,8 +65,7 @@ g, text, tspan {
             <text x="2"    y="25" style="font-family: 'Delicious'; font-weight:normal; font-style: normal">Text using CSS @font-face</text>
         </g>
 
-        
-        <g y="40" x="105" width="100" height="28" transform="translate(105, 40)" class="address" id="titlepage_companyaddress_sipwise">
+        <g y="40" x="105" width="100" height="28" transform="translate(105, 40)" class="address" font-size="2pt" id="titlepage_companyaddress_sipwise">
             <rect x="0"    y="0" width="100" height="28" stroke-width="0.25" fill="#FFFFFF" id="titlepage_companyaddress_sipwise__border"/>
             <text x="2"    y="5" id="titlepage_companyaddress_sipwise__company" class="company">{<!--{[%}-->client.company<!--{%]}-->}</text>
             <text x="2"   y="10" id="titlepage_companyaddress_sipwise__address">{<!--{[%}-->client.street<!--{%]}-->}, Postcode {<!--{[%}-->client.postcode<!--{%]}-->} </text>
@@ -78,8 +79,7 @@ g, text, tspan {
             <text x="5" y="17" id="titlepage_companyaddress_custom_2">address line 2</text>
             <text x="5" y="27" id="titlepage_companyaddress_custom_3">address line 3</text>
         </g>
-        <g y="135" x="10" width="195" height="150" id="titlepage_invoicedetails_head" transform="translate(10, 135)">
-
+        <g y="135" x="10" width="195" height="150" id="titlepage_invoicedetails" transform="translate(10, 135)" rows="5">
         <!--{[%MACRO titlerow BLOCK-%]}-->
             <text id="calls_title" text-anchor="end">
                 <tspan x="5" id="calls_number" text-anchor="start">#</tspan>
@@ -108,27 +108,41 @@ g, text, tspan {
                 <tspan x="190" id="calls_total_cost"><!--{[% ( total_cost / 100 )|format('%.2f') %]}--><!--{[%#}-->0.00<!--{%]}--></tspan>
             </text>
     <!--{[%END-%]}-->
-
 <!--{[% titlerow -%]}-->
 <!--{[% total = {} -%]}-->
-<!--{[% list_calls(zonecalls_rs, 'datarow', total, 'svg', row_vertical_interval) -%]}-->
+<!--{[% list_calls(callsdata, 'datarow', total, 'svg', row_vertical_interval) -%]}-->
 <!--{[% adjustrow (total, 'totalrow', 'svg', row_vertical_interval, zonecalls_rs.size) -%]}-->
 
 
         </g>
     </g>
+<!--{[%END-%]}-->
 <!--/page>
 <page-->
+<!--{[%MACRO midpage BLOCK-%]}-->
     <g id="midpage">
         <title>MidPage</title>
-  
+        <g y="15" x="10" width="195" height="150" id="midpage_invoicedetails" transform="translate(10, 15)" rows="15">
+<!--{[% titlerow -%]}-->
+<!--{[% list_calls(zonecalls_rs, 'datarow', total, 'svg', row_vertical_interval) -%]}-->
+<!--{[% adjustrow (total, 'totalrow', 'svg', row_vertical_interval, zonecalls_rs.size) -%]}-->
+        </g>
     </g>
+<!--{[%END-%]}-->
+<!--{[%MACRO lastpage BLOCK-%]}-->
     <g id="lastpage">
         <title>LastPage</title>
+        <g y="15" x="10" width="195" height="150" id="lastpage_invoicedetails" transform="translate(10, 15)" rows="10">
+<!--{[% titlerow -%]}-->
+<!--{[% list_calls(zonecalls_rs, 'datarow', total, 'svg', row_vertical_interval) -%]}-->
+<!--{[% adjustrow (total, 'totalrow', 'svg', row_vertical_interval, zonecalls_rs.size) -%]}-->
+        </g>
     </g>
+<!--{[%END-%]}-->
+<!--{[%MACRO bgpage BLOCK-%]}-->
     <g id="bgpage">
         <title>Background</title>
-        <g y="270" x="5" width="205" height="18" transform="translate(5, 270)" class="address" id="bgpage_companyaddress_sipwise">
+        <g y="270" x="5" width="205" height="18" transform="translate(5, 270)" class="address" font-size="2pt" id="bgpage_companyaddress_sipwise">
             <rect x="0"    y="0" width="205" height="18" stroke-width="0.25" fill="#FFFFFF" id="bgpage_companyaddress_sipwise__border"/>
             <text x="2"    y="5" id="bgpage_companyaddress_sipwise__company" class="company">{<!--{[%}-->provider.company<!--{%]}-->}</text>
             <text x="2"   y="10" id="bgpage_companyaddress_sipwise__address">{<!--{[%}-->provider.street<!--{%]}-->}, Postcode {<!--{[%}-->provider.postcode<!--{%]}-->} {<!--{[%}-->provider.city<!--{%]}-->} {<!--{[%}-->provider.country<!--{%]}-->}</text>
@@ -137,6 +151,14 @@ g, text, tspan {
             <text x="203" y="15" id="bgpage_companyaddress_sipwise__page_num" text-anchor="end" >{<!--{[%}-->page<!--{%]}-->}</text>
         </g>
     </g>
+<!--{[%END-%]}-->
+<!--{[%MACRO document_footer BLOCK-%]}-->
 <!--/page>
 </pageSet-->
 </svg>
+<!--{[%END-%]}-->
+
+<!--{[% show_pages(zonecalls_rs,'title')-%]}-->
+<!--{[%# show_pages('mid')-%]}-->
+<!--{[%# show_pages('last')-%]}-->
+<!--{[%# show_pages('all')-%]}-->
