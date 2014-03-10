@@ -27,7 +27,6 @@
     <tbody>
         [%# Dumper.dump_html(zonecalls_rs.as_query)%]
         [% FOR call IN zonecalls_rs -%]
-        [%IF call.1; call = call.1; END%]
         [% total_number = total_number + call.get_column('number') %]
         [% total_duration = total_duration + call.get_column('duration') %]
         [% total_free_time = total_free_time + call.get_column('free_time') %]
@@ -116,6 +115,8 @@ function handleShowSvgParsedData(data, error) {
                 //alert(httpResponse);
                 var img = document.getElementById('svgpreview'); //new Image();
                 img.src = "data:image/svg+xml," + encodeURIComponent(httpResponse);
+                alert(img.outerHTML);
+                alert(img.html());
             }
         );
     }			
