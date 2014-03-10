@@ -354,17 +354,17 @@ sub base :Chained('list_customer') :PathPart('') :CaptureArgs(1) {
     $c->stash(template => 'customer/details.tt'); 
     $c->stash(contract => $contract_first);
     $c->stash(contract_rs => $contract_rs);
-        $zonecalls_rs = [$zonecalls_rs->all()];
-        my @array = @$zonecalls_rs;
-        #@array = (@array,@array,@array,@array,@array,@array,@array,@array,@array,@array,@array,@array,@array,@array,@array);
-        $zonecalls_rs = [@array,@array,@array,@array,@array,@array,@array,@array,@array,@array,@array,@array,@array,@array,@array];
-        #$zonecalls_rs = [ 1..100 ];
+        #$zonecalls_rs = [$zonecalls_rs->all()];
+        #my @array = @$zonecalls_rs;
+        ##@array = (@array,@array,@array,@array,@array,@array,@array,@array,@array,@array,@array,@array,@array,@array,@array);
+        #$zonecalls_rs = [@array,@array,@array,@array,@array,@array,@array,@array,@array,@array,@array,@array,@array,@array,@array];
+        ##$zonecalls_rs = [ 1..100 ];
     
-    use irka;
-    use Data::Dumper;
-    irka::loglong(Dumper($zonecalls_rs) );
+    #use irka;
+    #use Data::Dumper;
+    #irka::loglong(Dumper($zonecalls_rs) );
 
-    $c->stash(zonecalls_rs => $zonecalls_rs );
+    $c->stash(zonecalls_rs => $zonecalls_rs->all() );
     
     $c->stash(billing_mapping => $billing_mapping );
 }
@@ -837,8 +837,8 @@ sub calls :Chained('base') :PathPart('calls') :Args(0) {
         );
         #my @array = $zonecalls_rs->all();
         #s$zonecalls_rs = [@array,@array,@array,@array,@array,@array,@array,@array,@array,@array,@array,@array,@array,@array,@array];
-        #$c->stash(zonecalls_rs => $zonecalls_rs);
-        $c->stash(zonecalls_rs => [1..100] );
+        $c->stash(zonecalls_rs => $zonecalls_rs);
+        #$c->stash(zonecalls_rs => [1..100] );
     }
     $c->stash(template => 'customer/calls.tt'); 
 }
