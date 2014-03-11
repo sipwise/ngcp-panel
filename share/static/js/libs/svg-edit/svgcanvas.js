@@ -4119,9 +4119,9 @@ this.svgToString = function(elem, indent) {
 		if (elem.id === 'svgcontent') {
             //alert('QQQQQ');
             //alert(svgroot.outerSvgTag);
-            if( svgroot.outerSvgTag )
+            if( svgroot.outerSvgTagStart )
             {
-                out.push(svgroot.outerSvgTag);
+                out.push(svgroot.outerSvgTagStart);
             }else{
 
                 out.push("<"); out.push(elem.nodeName);
@@ -4193,7 +4193,6 @@ this.svgToString = function(elem, indent) {
             
             
             }
-
 
 		} else {
             out.push("<"); out.push(elem.nodeName);
@@ -4278,7 +4277,12 @@ this.svgToString = function(elem, indent) {
 				out.push("\n");
 				for (i = 0; i < indent; i++) {out.push(' ');}
 			}
-			out.push("</"); out.push(elem.nodeName); out.push(">");
+            if( elem.id === 'svgcontent' && svgroot.outerSvgTagEnd )
+            {
+                out.push(svgroot.outerSvgTagEnd);
+            }else{
+                out.push("</"); out.push(elem.nodeName); out.push(">");
+            }
 		} else {
 			out.push("/>");
 		}
@@ -4760,7 +4764,8 @@ this.setSvgString = function(xmlString) {
 		svgroot.appendChild(svgcontent);
         //var startre=;
         //svgroot.outerSvgTag = outerSvgTag;
-        svgroot.outerSvgTag = xmlString.match(/\<svg[^\>]*\>/);
+        svgroot.outerSvgTagStart = xmlString.match(/^(?:[\n\r\t\s]|.)*?(?:\<svg)[^\>]*\>/);
+        svgroot.outerSvgTagEnd   = xmlString.match(/<\/svg>(?:[\n\r\t\s]|.)*$/);
         //console.log(outerSvgTag[0]);
         //alert(outerSvgTag[0]);
         //alert('svgroot.innerHTML='+svgroot.outerHTML);
