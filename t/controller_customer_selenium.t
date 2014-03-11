@@ -32,8 +32,12 @@ $d->findclick_ok(link_text => "Customers");
 diag("Create a Customer");
 $d->find_ok(xpath => '//*[@id="masthead"]//h2[contains(text(),"Customers")]');
 $d->findclick_ok(link_text => 'Create Customer');
+$d->fill_element_ok([css => '#contactidtable_filter input', 'thisshouldnotexist']);
+$d->find_ok(css => 'tr > td.dataTables_empty');
 $d->fill_element_ok([css => '#contactidtable_filter input', 'default-customer']);
 $d->select_if_unselected_ok(xpath => '//table[@id="contactidtable"]/tbody/tr[1]/td[contains(text(),"default-customer")]/..//input[@type="checkbox"]');
+$d->fill_element_ok([css => '#billing_profileidtable_filter input', 'thisshouldnotexist']);
+$d->find_ok(css => 'tr > td.dataTables_empty');
 $d->fill_element_ok([css => '#billing_profileidtable_filter input', 'Default Billing Profile']);
 $d->select_if_unselected_ok(xpath => '//table[@id="billing_profileidtable"]/tbody/tr[1]/td[contains(text(),"Default Billing Profile")]/..//input[@type="checkbox"]');
 $d->fill_element_ok([id => 'external_id', $rnd_id]);
@@ -41,6 +45,8 @@ $d->findclick_ok(id => 'save');
 
 diag("Open Details for our just created Customer");
 sleep 2; #Else we might search on the previous page
+$d->fill_element_ok([css => '#Customer_table_filter input', 'thisshouldnotexist']);
+$d->find_ok(css => 'tr > td.dataTables_empty');
 $d->fill_element_ok([css => '#Customer_table_filter input', $rnd_id]);
 my $row = $d->find(xpath => '(//table/tbody/tr/td[contains(text(), "'.$rnd_id.'")]/..)[1]');
 ok($row);
@@ -77,6 +83,8 @@ $d->find_ok(xpath => '//div[contains(@class,"accordion-body")]//table//td[contai
 
 diag("Terminate our customer");
 $d->findclick_ok(xpath => '//a[contains(@class,"btn-primary") and text()[contains(.,"Back")]]');
+$d->fill_element_ok([css => '#Customer_table_filter input', 'thisshouldnotexist']);
+$d->find_ok(css => 'tr > td.dataTables_empty');
 $d->fill_element_ok([css => '#Customer_table_filter input', $rnd_id]);
 $row = $d->find(xpath => '(//table/tbody/tr/td[contains(text(), "'.$rnd_id.'")]/..)[1]');
 ok($row);
