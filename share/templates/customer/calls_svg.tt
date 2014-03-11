@@ -27,7 +27,7 @@ g {
 <!--pageSet-->
 <!--{[%END-%]}-->
 
-<!--{[%MACRO titlepage(callsdata) BLOCK-%]}-->
+<!--{[%MACRO titlepage(callsdata, page) BLOCK-%]}-->
 <!--page-->
     <g y="0" x="0" width="215" height="297" id="titlepage">
     
@@ -92,7 +92,7 @@ g {
 <!--/page-->
 <!--{[%END-%]}-->
 
-<!--{[%MACRO midpage(callsdata) BLOCK-%]}-->
+<!--{[%MACRO midpage(callsdata, page) BLOCK-%]}-->
 <!--page-->
     <g id="midpage">
         <title>MidPage</title>
@@ -140,7 +140,7 @@ g {
 <!--{[%END-%]}-->
 
 
-<!--{[%MACRO lastpage(callsdata) BLOCK-%]}-->
+<!--{[%MACRO lastpage(callsdata, page) BLOCK-%]}-->
 <!--page-->
     <g id="lastpage">
         <title>LastPage</title>
@@ -187,7 +187,7 @@ g {
 <!--/page-->
 <!--{[%END-%]}-->
 
-<!--{[%MACRO bgpage BLOCK-%]}-->
+<!--{[%MACRO bgpage( page ) BLOCK-%]}-->
 <!--page-->
     <g id="bgpage">
         <title>Background</title>
@@ -196,7 +196,8 @@ g {
             <text x="2"    y="5" id="bgpage_companyaddress_sipwise__company" class="company">{<!--{[%}-->provider.company<!--{%]}-->}</text>
             <text x="2"   y="10" id="bgpage_companyaddress_sipwise__address">{<!--{[%}-->provider.street<!--{%]}-->}, Postcode {<!--{[%}-->provider.postcode<!--{%]}-->} {<!--{[%}-->provider.city<!--{%]}-->} {<!--{[%}-->provider.country<!--{%]}-->}</text>
             <text x="2"   y="15" id="bgpage_companyaddress_sipwise__contact">{<!--{[%}-->provider.firstname<!--{%]}-->} {<!--{[%}-->provider.lastname<!--{%]}-->}. Phone: {<!--{[%}-->provider.phone<!--{%]}-->}. Mobile: {<!--{[%}-->provider.mobile<!--{%]}-->}. Fax: {<!--{[%}-->provider.fax<!--{%]}-->}</text>
-            <text x="203" y="15" id="bgpage_companyaddress_sipwise__contact" text-anchor="end" >Page {<!--{[%}-->page<!--{%]}-->}</text>
+            <text x="200" y="15" id="bgpage_companyaddress_sipwise__page_title" text-anchor="end" >Page </text>
+            <text x="203" y="15" id="bgpage_companyaddress_sipwise__page_num" text-anchor="end" >{<!--{[%}-->page<!--{%]}-->}</text>
         </g>
     </g>
 <!--/page-->
@@ -205,11 +206,11 @@ g {
 
 <!--{[%MACRO document_footer BLOCK-%]}-->
 <!--/pageSet-->
-</svg>
+</svg> 
 <!--{[%END-%]}-->
 
 
 <!--{[%# show_pages(zonecalls_rs,'title')-%]}-->
-<!--{[%# show_pages('mid')-%]}-->
+<!--{[%# show_pages('mid',3)-%]}-->
 <!--{[%# show_pages('last')-%]}-->
 <!--{[% show_pages( zonecalls_rs,'all' )-%]}-->
