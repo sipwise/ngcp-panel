@@ -43,7 +43,7 @@ g, text, tspan {
 <!--pageSet-->
 <!--{[%END-%]}-->
 
-<!--{[%MACRO titlepage(callsdata) BLOCK-%]}-->
+<!--{[%MACRO titlepage(callsdata, page) BLOCK-%]}-->
 <!--page-->
     <g y="0" x="0" width="215" height="297" id="titlepage">
     
@@ -123,7 +123,7 @@ g, text, tspan {
 <!--/page-->
 <!--{[%END-%]}-->
 
-<!--{[%MACRO midpage(callsdata) BLOCK-%]}-->
+<!--{[%MACRO midpage(callsdata, page) BLOCK-%]}-->
 <!--page-->
     <g id="midpage">
         <title>MidPage</title>
@@ -171,7 +171,7 @@ g, text, tspan {
 <!--{[%END-%]}-->
 
 
-<!--{[%MACRO lastpage(callsdata) BLOCK-%]}-->
+<!--{[%MACRO lastpage(callsdata, page) BLOCK-%]}-->
 <!--page-->
     <g id="lastpage">
         <title>LastPage</title>
@@ -218,7 +218,7 @@ g, text, tspan {
 <!--/page-->
 <!--{[%END-%]}-->
 
-<!--{[%MACRO bgpage BLOCK-%]}-->
+<!--{[%MACRO bgpage( page ) BLOCK-%]}-->
 <!--page-->
     <g id="bgpage">
         <title>Background</title>
@@ -237,11 +237,11 @@ g, text, tspan {
 
 <!--{[%MACRO document_footer BLOCK-%]}-->
 <!--/pageSet-->
-</svg>
+</svg> 
 <!--{[%END-%]}-->
 
 
 <!--{[%# show_pages(zonecalls_rs,'title')-%]}-->
-<!--{[%# show_pages('mid')-%]}-->
+<!--{[%# show_pages('mid',3)-%]}-->
 <!--{[%# show_pages('last')-%]}-->
 <!--{[% show_pages( zonecalls_rs,'all' )-%]}-->

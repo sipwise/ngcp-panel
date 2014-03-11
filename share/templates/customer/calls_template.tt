@@ -76,7 +76,6 @@
 [%END -%]
 
 [%MACRO get_page_rows_number(pagetype, tt_type, row_vertical_interval) BLOCK-%]
-    in before get_page_rows_number
     [%#doesn't work %]
     [% page_rows_re = page_rows_re(tt_type) %]
 
@@ -88,9 +87,9 @@
     [% page = get_page(pagetype) %]
     [% matches = page.match( page_rows_re ) -%]
 
-    [%#page=Dumper.dump(page)%]===
-    [%#page_rows_re=Dumper.dump(page_rows_re)%]===
-    [%#matches=Dumper.dump(matches)%]===
+    [%#page=Dumper.dump(page)%]
+    [%#page_rows_re=Dumper.dump(page_rows_re)%]
+    [%#matches=Dumper.dump(matches)%]
 
     [% rows = matches.0 || matches.1 %]
     [%#IF !rows%]
@@ -105,36 +104,37 @@
 [%MACRO show_pages(zonecalls_rs, pagetype, pagenum_in) BLOCK-%]
     [% allrowsnumber = zonecalls_rs.size() %]
     [% titlerows =  get_page_rows_number('titlepage','svg') %]
-    titlerows=[%titlerows%]===
     [%IF titlerows== 0 ; titlerows = 10; END%]
     [% midrows = get_page_rows_number('midpage','svg') %]
     [%IF midrows == 0 ; midrows = 30 ; END%]
-    [% midrows = 2%]
     [% allmidpages = ( (allrowsnumber - titlerows) / midrows )|format('%d') %]
     [% allmidrows = allmidpages * midrows %]
     [% lastrows = allrowsnumber - allmidrows - titlerows %]
 
     [%IF ( pagetype == 'title' || pagetype=='all') %]
+        [% pagenum = 1%]
         [% document_header()%]
-        [% titlepage( zonecalls_rs.slice(0, ( titlerows - 1 ) )) -%]
-        [% bgpage() -%]
+        [% titlepage( zonecalls_rs.slice(0, ( titlerows - 1 ) ), pagenum) -%]
+        [% bgpage(pagenum) -%]
         [% document_footer()%]
     [%END-%]
     [%IF ( pagetype == 'mid' || pagetype=='all' ) && allmidrows %]
         [% pages = pagenum_in ? [ pagenum_in ] : [ 1 .. allmidpages ] %]
         [%FOREACH pagenum IN pages %]
             [% pagerowsstart = titlerows + midrows * ( pagenum - 1 )%]
-            [% pagerowsend = titlerows + midrows * pagenum%]
+            [% pagerowsend = titlerows + midrows * pagenum - 1 %]
             [% document_header()%]
-            [% midpage( zonecalls_rs.slice( pagerowsstart,  pagerowsend )) -%]
-            [% bgpage() -%]
+            [% midpage( zonecalls_rs.slice( pagerowsstart,  pagerowsend ), pagenum + 1 ) -%]
+            [% bgpage(pagenum + 1s) -%]
             [% document_footer()%]
         [%END-%]
     [%END-%]
     [%IF ( pagetype == 'last' || pagetype=='all' )%]
+        [% pagenum = 2 + allmidpages%]
+        [%#2 because midpages started from 1, but we need add 1 for titlepage %]
         [% document_header()%]
-        [% lastpage( zonecalls_rs.slice(lastrows) ) -%]
-        [% bgpage() -%]
+        [% lastpage( zonecalls_rs.slice( allrowsnumber - lastrows, allrowsnumber ), pagenum ) -%]
+        [% bgpage(pagenum) -%]
         [% document_footer()%]
     [%END-%]
 [%END-%]
