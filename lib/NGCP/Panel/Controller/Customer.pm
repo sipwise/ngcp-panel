@@ -192,7 +192,7 @@ sub create :Chained('list_customer') :PathPart('create') :Args(0) {
 
 sub base :Chained('list_customer') :PathPart('') :CaptureArgs(1) {
     my ($self, $c, $contract_id) = @_;
-
+    $c->log->debug('list_customer => base');
     unless($contract_id && $contract_id->is_integer) {
         NGCP::Panel::Utils::Message->error(
             c => $c,
@@ -268,13 +268,6 @@ sub base :Chained('list_customer') :PathPart('') :CaptureArgs(1) {
             });
     }
 
-    my $zonecalls_rs = NGCP::Panel::Utils::Contract::get_contract_calls_rs(
-        c => $c,
-        contract_id => $contract_id,
-        stime => $stime,
-        etime => $etime,
-    );
-    
     my $product_id = $contract_rs->first->get_column('product_id');
     NGCP::Panel::Utils::Message->error(
         c => $c,
@@ -354,18 +347,6 @@ sub base :Chained('list_customer') :PathPart('') :CaptureArgs(1) {
     $c->stash(template => 'customer/details.tt'); 
     $c->stash(contract => $contract_first);
     $c->stash(contract_rs => $contract_rs);
-    
-    #FAKE FAKE FAKE FAKE
-        $zonecalls_rs = [$zonecalls_rs->all()];
-        my @array = @$zonecalls_rs;
-        ##@array = (@array,@array,@array,@array,@array,@array,@array,@array,@array,@array,@array,@array,@array,@array,@array);
-        $zonecalls_rs = [@array,@array,@array,@array,@array,@array,@array,@array,@array,@array,@array,@array,@array,@array,@array];
-        ##$zonecalls_rs = [ 1..100 ];
-        my $i = 1;
-        $zonecalls_rs = [map{[$i++,$_]}@$zonecalls_rs];
-    
-    $c->stash(zonecalls_rs => $zonecalls_rs );
-    
     $c->stash(billing_mapping => $billing_mapping );
 }
 
@@ -542,7 +523,16 @@ sub terminate :Chained('base') :PathPart('terminate') :Args(0) {
 sub details :Chained('base') :PathPart('details') :Args(0) {
     my ($self, $c) = @_;
 
-    return;
+    NGCP::Panel::Utils::Sounds::stash_soundset_list(c => $c, contract => $c->stash->{contract});
+    $c->stash->{contact_hash} = { $c->stash->{contract}->contact->get_inflated_columns };
+    if(defined $c->stash->{contract}->max_subscribers) {
+       $c->stash->{subscriber_count} = $c->stash->{contract}->voip_subscribers
+        ->search({ status => { -not_in => ['terminated'] } })
+        ->count;
+    }
+    #didn't find a way to make it correct with chain
+    $c->forward('invoice_data');
+    #$self->invoice_data($c);
 }
 
 sub subscriber_create :Chained('base') :PathPart('subscriber/create') :Args(0) {
@@ -822,47 +812,22 @@ sub edit_balance :Chained('base') :PathPart('balance/edit') :Args(0) {
     $c->stash(edit_flag => 1);
 }
 
-sub calls :Chained('base') :PathPart('calls') :Args(0) {
+sub invoice :Chained('base') :PathPart('invoice') :CaptureArgs(0) {
     my ($self, $c) = @_;
-    
-    if( ! $c->stash->{zonecalls_rs} ){
-        my $contract_id = $c->stash->{contract}->id;
-        my $stime = NGCP::Panel::Utils::DateTime::current_local()->truncate(to => 'month');
-        my $etime = $stime->clone->add(months => 1);
-        my $zonecalls_rs = NGCP::Panel::Utils::Contract::get_contract_calls_rs(
-            c => $c,
-            contract_id => $contract_id,
-            stime => $stime,
-            etime => $etime,
-        );
-        #my @array = $zonecalls_rs->all();
-        #s$zonecalls_rs = [@array,@array,@array,@array,@array,@array,@array,@array,@array,@array,@array,@array,@array,@array,@array];
-        #$c->stash(zonecalls_rs => $zonecalls_rs);
-        $c->stash(zonecalls_rs => [1..100] );
-    }
-    $c->stash(template => 'customer/calls.tt'); 
+    $c->stash(template => 'customer/invoice.tt'); 
 }
 
-sub calls_svg :Chained('base') :PathPart('calls/template') :Args {
+sub invoice_template_list :Chained('invoice') :PathPart('') :CaptureArgs(0) {
     my ($self, $c) = @_;
-    #$c->log->debug($c->model('DB'));
-    #return;
-    #my $db = NGCP::Panel::Model::DB::InvoiceTemplate->new();
-    #$c->log->debug($db);
-    
-    #my $contract_id = $in->{contract_id} = ;
+    my($validator,$backend,$in,$out);
 
-    no warnings 'uninitialized';
-
-    my($validator,$backend,$in);
-
+    #this is just copy-paste from method above
+    #of course we are chained and we can put in and out to stash
     #input
-    (undef,undef,@$in{qw/tt_type tt_viewmode tt_sourcestate tt_output_type tt_id/}) = @_ ;
     $in->{contract_id} = $c->stash->{contract}->id;
-    $in->{tt_string} = $c->request->body_parameters->{template} || '';
     
     #output
-    my $out={};
+    $out={};
 
     #input checking & simple preprocessing
     $validator = NGCP::Panel::Form::Customer::InvoiceTemplate->new;
@@ -873,7 +838,6 @@ sub calls_svg :Chained('base') :PathPart('calls/template') :Args {
     #storage
     #pass scheme here is ugly, and should be moved somehow to DB::Base
     $backend = NGCP::Panel::Model::DB::InvoiceTemplate->new( schema => $c->model('DB') );
-    
     
     #really, we don't need a form here at all
     #just use as already implemented fields checking and defaults applying  
@@ -890,10 +854,87 @@ sub calls_svg :Chained('base') :PathPart('calls/template') :Args {
         return;
     }
     my $in_validated = $validator->fif;
-    use irka;
-    use Data::Dumper;
-    irka::loglong(Dumper($in));
-    irka::loglong(Dumper($in_validated));
+
+    #dirty hack 1
+    #really model logic should recieve validated input, but raw input also should be saved somewhere
+    $in = $in_validated;
+    #think about it more
+    
+    #$out->{invoice_template_list} = $backend->getCustomerInvoiceTemplateList( %$in );
+    $c->stash(invoice_template_list => $backend->getCustomerInvoiceTemplateList( %$in ) );
+}
+
+sub invoice_data :Chained('invoice_template_list') :PathPart('') :CaptureArgs(0) {
+    my ($self, $c) = @_;
+    $c->log->debug('calls_list');
+    my $contract_id = $c->stash->{contract}->id;
+    my $stime = NGCP::Panel::Utils::DateTime::current_local()->truncate(to => 'month');
+    my $etime = $stime->clone->add(months => 1);
+
+    #look, NGCP::Panel::Utils::Contract - it is kind of backend separation here
+    my $zonecalls_rs = NGCP::Panel::Utils::Contract::get_contract_calls_rs(
+        c => $c,
+        contract_id => $contract_id,
+        stime => $stime,
+        etime => $etime,
+    );
+    #FAKE FAKE FAKE FAKE
+    $zonecalls_rs = [$zonecalls_rs->all()];
+    my $i = 1;
+    $zonecalls_rs = [map{[$i++,$_]} (@$zonecalls_rs) x 21];
+    $c->stash(zonecalls_rs => $zonecalls_rs );
+}
+
+sub invoice_template :Chained('invoice_data') :PathPart('') :CaptureArgs(5) {
+    my ($self, $c) = @_;
+    #$c->log->debug($c->model('DB'));
+    #return;
+    #my $db = NGCP::Panel::Model::DB::InvoiceTemplate->new();
+    $c->log->debug('invoice_template');
+    
+    #my $contract_id = $in->{contract_id} = ;
+
+    #no warnings 'uninitialized';
+
+    my($validator,$backend,$in,$out);
+
+    #input
+    (undef,undef,@$in{qw/tt_type tt_viewmode tt_sourcestate tt_output_type tt_id/}) = @_ ;
+    $in->{contract_id} = $c->stash->{contract}->id;
+    $in->{tt_string} = $c->request->body_parameters->{template} || '';
+    
+    #output
+    $out={};
+
+    #input checking & simple preprocessing
+    $validator = NGCP::Panel::Form::Customer::InvoiceTemplate->new;
+#    $form->schema( $c->model('DB::InvoiceTemplate')->schema );
+    #to common form package ? removing is necessary due to FormHandler param presence evaluation - it is based on key presence, not on defined/not defined value
+    foreach ( keys %$in) { if(!( defined $in->{$_} )){ delete $in->{$_}; } };
+
+    #storage
+    #pass scheme here is ugly, and should be moved somehow to DB::Base
+    $backend = NGCP::Panel::Model::DB::InvoiceTemplate->new( schema => $c->model('DB') );
+    
+    #really, we don't need a form here at all
+    #just use as already implemented fields checking and defaults applying  
+    #$validator->setup_form(
+    $validator->process(
+        posted => 1,
+        params => $in,
+    );
+    #$validator->validate_form();
+    
+    #multi return...
+    $c->log->debug("validated=".$validator->validated.";\n");
+    if(!$validator->validated){
+        return;
+    }
+    my $in_validated = $validator->fif;
+    #use irka;
+    #use Data::Dumper;
+    #irka::loglong(Dumper($in));
+    #irka::loglong(Dumper($in_validated));
 
     #dirty hack 1
     #really model logic should recieve validated input, but raw input also should be saved somewhere
@@ -901,6 +942,7 @@ sub calls_svg :Chained('base') :PathPart('calls/template') :Args {
     
     #dirty hack 2
     #validate methods in form configuration don't change fields values, will find why later
+    #for other values see defaults in form
     if($in->{tt_type} eq 'svgpdf'){
         $in->{tt_type} = 'svg';
         $in->{tt_output_type} = 'pdf';
@@ -908,7 +950,7 @@ sub calls_svg :Chained('base') :PathPart('calls/template') :Args {
         $in->{tt_output_type} = 'html';
     }
     
-    irka::loglong(Dumper($in));
+    #irka::loglong(Dumper($in));
 
     #model logic
     my $tt_string_default = '';
