@@ -122,6 +122,63 @@ sub OPTIONS :Allow {
     return;
 }
 
+sub POST :Allow {
+    my ($self, $c) = @_;
+
+    my $guard = $c->model('DB')->txn_scope_guard;
+    {
+        my $schema = $c->model('DB');
+        my $resource = $self->get_valid_post_data(
+            c => $c,
+            media_type => 'application/json',
+        );
+        last unless $resource;
+
+        unless(defined $resource->{reseller_id}) {
+            try {
+                $resource->{reseller_id} = $c->user->contract->contact->reseller_id;
+            }
+        }
+        my $reseller = $c->model('DB')->resultset('resellers')->find($resource->{reseller_id});
+        unless($reseller) {
+            $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Invalid 'reseller_id', doesn't exist.");
+            last;
+        }
+
+        my $form = $self->get_form($c);
+        last unless $self->validate_form(
+            c => $c,
+            resource => $resource,
+            form => $form,
+        );
+
+        my $ruleset_test = $schema->resultset('voip_rewrite_rule_sets')->search_rs({
+                name => $resource->{name}
+            })->first;
+        if ($ruleset_test) {
+            $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Ruleset with this 'name' already exists.");
+            last;
+        }
+
+        my $ruleset;
+
+        try {
+            $ruleset = $schema->resultset('voip_rewrite_rule_sets')->create($resource);
+        } catch($e) {
+            $c->log->error("failed to create rewriteruleset: $e"); # TODO: user, message, trace, ...
+            $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "Failed to create rewriteruleset.");
+            last;
+        }
+
+        $guard->commit;
+
+        $c->response->status(HTTP_CREATED);
+        $c->response->header(Location => sprintf('/%s%d', $c->request->path, $ruleset->id));
+        $c->response->body(q());
+    }
+    return;
+}
+
 sub end : Private {
     my ($self, $c) = @_;
 

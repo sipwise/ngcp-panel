@@ -127,6 +127,64 @@ sub OPTIONS :Allow {
     return;
 }
 
+sub POST :Allow {
+    my ($self, $c) = @_;
+
+    my $guard = $c->model('DB')->txn_scope_guard;
+    {
+        my $schema = $c->model('DB');
+        my $resource = $self->get_valid_post_data(
+            c => $c,
+            media_type => 'application/json',
+        );
+        last unless $resource;
+
+        unless($resource->{direction} && ($resource->{direction} eq "in" || $resource->{direction} eq "out") ) {
+            $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Invalid 'direction', must be 'in' or 'out'.");
+            last;
+        }
+        unless($resource->{field} && ($resource->{field} eq "callee" || $resource->{field} eq "caller") ) {
+            $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Invalid 'field', must be 'callee' or 'caller'.");
+            last;
+        }
+        my $set_id = delete $resource->{set_id}; # keep this, cause formhandler doesn't know it
+
+        my $form = $self->get_form($c);
+        last unless $self->validate_form(
+            c => $c,
+            resource => $resource,
+            form => $form,
+        );
+
+        my $rule;
+
+        unless(defined $set_id) {
+            $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Required: 'set_id'");
+            last;
+        }
+        my $ruleset = $schema->resultset('voip_rewrite_rule_sets')->find($set_id);
+        unless($ruleset) {
+            $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Invalid 'set_id'.");
+            last;
+        }
+        $resource->{set_id} = $ruleset->id;
+        try {
+            $rule = $schema->resultset('voip_rewrite_rules')->create($resource);
+        } catch($e) {
+            $c->log->error("failed to create rewriterule: $e"); # TODO: user, message, trace, ...
+            $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "Failed to create rewriterule.");
+            last;
+        }
+
+        $guard->commit;
+
+        $c->response->status(HTTP_CREATED);
+        $c->response->header(Location => sprintf('/%s%d', $c->request->path, $rule->id));
+        $c->response->body(q());
+    }
+    return;
+}
+
 sub end : Private {
     my ($self, $c) = @_;
 
