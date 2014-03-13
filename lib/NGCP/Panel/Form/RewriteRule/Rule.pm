@@ -15,6 +15,10 @@ has_field 'match_pattern' => (
     type => '+NGCP::Panel::Field::Regexp',
     required => 1,
     inflate_default_method => \&inflate_pattern,
+    element_attr => {
+        rel => ['tooltip'],
+        title => ['Match pattern, a regular expression.'],
+    },
 );
 
 has_field 'replace_pattern' => (
@@ -22,11 +26,19 @@ has_field 'replace_pattern' => (
     required => 1,
     label => 'Replacement Pattern',
     inflate_default_method => \&inflate_pattern,
+    element_attr => {
+        rel => ['tooltip'],
+        title => ['Replacement pattern.'],
+    },
 );
 
 has_field 'description' => (
     type => 'Text',
     required => 1,
+    element_attr => {
+        rel => ['tooltip'],
+        title => ['Arbitrary text.'],
+    },
 );
 
 has_field 'direction' => (
@@ -35,6 +47,10 @@ has_field 'direction' => (
         { label => 'Inbound', value => 'in'},
         { label => 'Outbound', value => 'out'},
     ],
+    element_attr => {
+        rel => ['tooltip'],
+        title => ['Inbound (in) or Outbound (out).']
+    },
 );
 
 has_field 'field' => (
@@ -43,6 +59,10 @@ has_field 'field' => (
         { label => 'Callee', value => 'callee'},
         { label => 'Caller', value => 'caller'},
     ],
+    element_attr => {
+        rel => ['tooltip'],
+        title => ['caller or callee.']
+    },
 );
 
 has_field 'save' => (

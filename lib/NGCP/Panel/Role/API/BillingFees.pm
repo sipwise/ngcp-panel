@@ -79,7 +79,7 @@ sub update_fee {
 
     my $reseller_id;
     if($c->user->roles eq "admin") {
-    } elsif($c->user->roles eq "admin") {
+    } elsif($c->user->roles eq "reseller") {
         $reseller_id = $c->user->reseller_id;
     } else {
         $reseller_id = $c->user->contract->contact->reseller_id;

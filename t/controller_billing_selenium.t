@@ -92,6 +92,8 @@ $d->findclick_ok(link_text => "Edit Zones");
 $d->find_ok(xpath => '//*[@id="masthead"]//h2[contains(text(),"Billing Zones")]');
 
 diag("Delete testingzone");
+$d->fill_element_ok([xpath => '//div[contains(@class, "dataTables_filter")]//input', 'thisshouldnotexist']);
+$d->find_ok(css => 'tr > td.dataTables_empty');
 $d->fill_element_ok([xpath => '//div[contains(@class, "dataTables_filter")]//input', 'testingdetail']);
 $row = $d->find(xpath => '//div[contains(@class,"dataTables_wrapper")]//td[contains(text(),"testingzone")]/..');
 ok($row);
@@ -139,7 +141,6 @@ $d->fill_element_ok([name => 'end', "2008-02-28 13:37:00"]);
 $d->findclick_ok(name => 'save');
 
 diag("Find/delete my created date definition");
-$d->fill_element_ok([xpath => '//div[contains(@class, "dataTables_filter")]//input', '2008-02-28']);
 $row = $d->find(xpath => '//div[contains(@class,"dataTables_wrapper")]//td[contains(text(),"2008-02-28")]/..');
 ok($row);
 $d->move_to(element => $row);
