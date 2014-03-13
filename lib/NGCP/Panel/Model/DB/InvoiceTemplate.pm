@@ -7,6 +7,7 @@ sub getCustomerInvoiceTemplate{
     my ($contract_id,$tt_sourcestate,$tt_type) = @params{qw/contract_id tt_sourcestate tt_type/};
 
     my $result = '';
+    my $tt_id = '';
     
     #my $tt_record = $self->resultset('invoice_template')->search({
     my $tt_record = $self->schema->resultset('invoice_template')->search({
@@ -20,11 +21,12 @@ sub getCustomerInvoiceTemplate{
     #if('saved' eq $tt_sourcestate){
     if( $tt_record ){
         $result = $tt_record->get_column( 'base64_'.$tt_sourcestate );
+        $tt_id = $tt_record->get_column( 'id' );
     }
     if( $result && exists $params{result} ){
         ${$params{result}} = $result;
     }
-    return \$result;
+    return ( $tt_id,\$result, $tt_record );#sgorila hata, gori i saray
 }
 
 sub storeCustomerInvoiceTemplate{
