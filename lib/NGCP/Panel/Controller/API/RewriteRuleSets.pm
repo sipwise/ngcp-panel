@@ -26,9 +26,9 @@ class_has 'api_description' => (
 with 'NGCP::Panel::Role::API';
 with 'NGCP::Panel::Role::API::RewriteRuleSets';
 
-class_has('resource_name', is => 'ro', default => 'rewrite');
-class_has('dispatch_path', is => 'ro', default => '/api/rewrite/');
-class_has('relation', is => 'ro', default => 'http://purl.org/sipwise/ngcp-api/#rel-rewrite');
+class_has('resource_name', is => 'ro', default => 'rewriterulesets');
+class_has('dispatch_path', is => 'ro', default => '/api/rewriterulesets/');
+class_has('relation', is => 'ro', default => 'http://purl.org/sipwise/ngcp-api/#rel-rewriterulesets');
 
 __PACKAGE__->config(
     action => {
@@ -65,7 +65,7 @@ sub GET :Allow {
         });
         my (@embedded, @links);
         for my $set ($rwr_set->search({}, {order_by => {-asc => 'me.id'}})->all) {
-            push @embedded, $self->hal_from_item($c, $set, "rewrite");
+            push @embedded, $self->hal_from_item($c, $set, "rewriterulesets");
             push @links, Data::HAL::Link->new(
                 relation => 'ngcp:'.$self->resource_name,
                 href     => sprintf('%s%d', $self->dispatch_path, $set->id),

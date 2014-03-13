@@ -69,12 +69,6 @@ sub item_rs {
         } else {
             return;
         }
-    } elsif($type eq "rules") {
-        if($c->user->roles eq "admin") {
-            $item_rs = $c->model('DB')->resultset('voip_rewrite_rules');
-        } else {
-            return;
-        }
     } else {
         die "You should not reach this";
     }
