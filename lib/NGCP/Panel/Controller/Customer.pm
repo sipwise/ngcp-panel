@@ -862,7 +862,7 @@ sub calls_svg :Chained('base') :PathPart('calls/template') :Args {
     $in->{tt_string} = $c->request->body_parameters->{template} || '';
     
     #output
-    my $output_string;
+    my $out={};
 
     #input checking & simple preprocessing
     $validator = NGCP::Panel::Form::Customer::InvoiceTemplate->new;
@@ -896,6 +896,7 @@ sub calls_svg :Chained('base') :PathPart('calls/template') :Args {
     irka::loglong(Dumper($in_validated));
 
     #dirty hack 1
+    #really model logic should recieve validated input, but raw input also should be saved somewhere
     $in = $in_validated;
     
     #dirty hack 2
@@ -917,7 +918,7 @@ sub calls_svg :Chained('base') :PathPart('calls/template') :Args {
     if(!$in->{tt_string} && !$tt_string_force_default){
         #here we also may be better should contact model, not DB directly. Will return to this separation later
         #at the end - we can figure out rather basic controller behaviour
-        $backend->getCustomerInvoiceTemplate( %$in, result => \$tt_string_customer );
+        ($out->{tt_id}) = $backend->getCustomerInvoiceTemplate( %$in, result => \$tt_string_customer );
     }
     
     #we need to get default to 1) sanitize (if in->tt_string) or 2)if not in->tt_string and no customer->tt_string
@@ -939,9 +940,6 @@ sub calls_svg :Chained('base') :PathPart('calls/template') :Args {
             my $tokens_re = qr/\[%(.*?)%\]/;
             my $token_shape_re = qr/\s+/;
             my %tokens_valid = map{$_=~s/$token_shape_re//sg; $_ => 1;} ($tt_string_default=~/$tokens_re/sg);
-            #use irka;
-            #use Data::Dumper;
-            #irka::loglong(Dumper(\%tokens_valid));
             foreach( $tt_string_sanitized=~/$tokens_re/sg ){
                 my $token_shape=$_;
                 $token_shape=~s/$token_shape_re//sg;
@@ -950,6 +948,7 @@ sub calls_svg :Chained('base') :PathPart('calls/template') :Args {
                     $tt_string_sanitized=~s/(?:\[%)+\s*\Q$_\E\s*(?:%\])+//g;
                 }
             }
+            #/sanitize - to sub, later
 
             #irka::loglong(Dumper($tt_string_sanitized));
             $backend->storeCustomerInvoiceTemplate( 
@@ -957,13 +956,13 @@ sub calls_svg :Chained('base') :PathPart('calls/template') :Args {
                 tt_string_sanitized => \$tt_string_sanitized,
             );
             
-            $output_string = $tt_string_sanitized;
+            $out->{tt_string} = $tt_string_sanitized;
         }elsif(!$tt_string_customer || $tt_string_force_default){
-            $output_string = $tt_string_default;
+            $out->{tt_string} = $tt_string_default;
             $c->log->debug("apply default;");
         }
     }else{#we have customer template, we don't have dynamic template string, we weren't requested to show default
-        $output_string = $tt_string_customer;
+        $out->{tt_string} = $tt_string_customer;
     }
     #/model logic
     
@@ -979,38 +978,72 @@ sub calls_svg :Chained('base') :PathPart('calls/template') :Args {
     }
     if($in->{tt_viewmode} eq 'raw'){
         #$c->stash->{VIEW_NO_TT_PROCESS} = 1;
-        $c->response->body($output_string);
+        $c->response->body($out->{tt_string});
         return;
     }else{
 
         my $contacts = $c->model('DB')->resultset('contacts')->search({ id => $in->{contract_id} });
+        $c->stash( provider => $contacts->first );
+
         #some preprocessing should be done only before showing. So, there will be:
         #preSaveCustomTemplate prerpocessing
         #preShowCustomTemplate prerpocessing
         {
             #preShowInvoice
             #also to model
-            $output_string =~s/(?:{\s*)?<!--{|}-->(?:\s*})?//gs;
+            $out->{tt_string}=~s/(?:{\s*)?<!--{|}-->(?:\s*})?//gs;
         }
-        
-        $c->stash( provider => $contacts->first );
-        
-        if($in->{tt_output_type} eq 'svg' || $in->{tt_output_type} eq 'html'){
+
+        if( ($in->{tt_output_type} eq 'svg') || ( $in->{tt_output_type} eq 'html') ){
             #$c->response->content_type('image/svg+xml');
-            $c->stash( template => \$output_string ); 
-            $c->detach($c->view('SVG'));
+            $c->stash( template => \$out->{tt_string} ); 
+            $c->detach( $c->view('SVG') );
         }elsif($in->{tt_output_type} eq 'pdf'){
             $c->response->content_type('application/pdf');
-            my $svg = $c->view('SVG')->getTemplateProcessed($c,\$output_string, $c->stash );
+            my $svg = $c->view('SVG')->getTemplateProcessed($c,\$out->{tt_string}, $c->stash );
+            my(@pages) = $svg=~/(<svg.*?(?:\/svg>))/sig;
+            
             #$c->log->debug($svg);
-            my $kit = PDF::WebKit->new(\$svg, page_size => 'A4');
+            #my $kit = PDF::WebKit->new(\$svg, page_size => 'A4');
             #push @{ $kit->stylesheets }, "/path/to/css/file";
             # Get an inline PDF
-            $output_string = $kit->to_pdf;
-            $c->response->body($output_string);
-            
-            use File::Temp qw/tempfile/;
-            my($fh, $filename) = tempfile();
+            #$out->{tt_string} = $kit->to_pdf;
+            #$c->response->body($out->{tt_string});
+            my ($tempdirbase,$tempdir );
+            use File::Temp qw/tempfile tempdir/;
+        #my($fh, $tempfilename) = tempfile();
+            $tempdirbase = join('/',File::Spec->tmpdir,@$in{qw/contract_id tt_type tt_sourcestate/}, $out->{tt_id});
+            use File::Path qw( mkpath );
+            ! -e $tempdirbase and mkpath( $tempdirbase, 0, 0777 );
+            $tempdir = tempdir( DIR =>  $tempdirbase , CLEANUP => 1 );
+            $c->log->debug("tempdirbase=$tempdirbase; tempdir=$tempdir;");
+            #try{
+            #} catch($e){
+            #    NGCP::Panel::Utils::Message->error(
+            #        c => $c,
+            #        error => "Can't create temporary directory at: $tempdirbase;" ,
+            #        desc  => $c->loc("Can't create temporary directory."),
+            #    );
+            #}
+            my $pagenum = 1;
+            my @pagefiles;
+            foreach my $page (@pages){
+                my $fh;
+                my $pagefile = "$tempdir/$pagenum.svg";
+                push @pagefiles, $pagefile;
+                open($fh,">",$pagefile);
+                #try{
+                #} catch($e){
+                #    NGCP::Panel::Utils::Message->error(
+                #        c => $c,
+                #        error => "Can't create temporary page file at: $tempdirbase/$page.svg;" ,
+                #        desc  => $c->loc("Can't create temporary file."),
+                #    );
+                #}
+                print $fh $page;
+                close $fh;
+                $pagenum++;
+            }
             
             #$fh->unlink_on_destroy( 0 );
             #my $filename = "/tmp/bbb.svg";
@@ -1019,21 +1052,26 @@ sub calls_svg :Chained('base') :PathPart('calls/template') :Args {
             #print $fh $svg;
             #close $fh;
             #my $cmd = "/tmp/wkhtmltox/bin/wkhtmltopdf $filename - ";
-            #$c->log->debug($cmd);
+            my $cmd = "rsvg-convert -f pdf ".join(" ", @pagefiles);
+            $c->log->debug($cmd);
             
             #`chmod ugo+rwx $filename`;
             
             #binmode(STDOUT);
             #binmode(STDIN);
-            #$output_string = `$cmd`;
-            
-            #open B, "$cmd |"; 
-            #binmode B; 
-            #$/ = undef; 
-            #$output_string = <B>;
-            #close B;
-            
-            #$output_string = `cat $filename `;
+            #$out->{tt_string} = `$cmd`;
+            {
+                #$cmd = "fc-list";
+                open B, "$cmd |"; 
+                binmode B; 
+                local $/ = undef; 
+                $out->{tt_string} = <B>;
+                close B;
+            }
+            $c->response->body($out->{tt_string});
+            return;
+
+            #$out->{tt_string} = `cat $filename `;
         }
 
     }
