@@ -24,11 +24,6 @@ $ua->ssl_opts(
 {
     $req = HTTP::Request->new('PATCH', $uri.'/api/systemcontacts/1');
 
-    $res = $ua->request($req);
-    is($res->code, 400, "check patch missing Prefer code");
-    $body = JSON::from_json($res->decoded_content);
-    ok($body->{message} =~ /Use the 'Prefer' header/, "check patch missing Prefer response");
-
     $req->header('Prefer' => 'return=minimal');
     $res = $ua->request($req);
     is($res->code, 415, "check patch missing media type");
@@ -43,7 +38,7 @@ $ua->ssl_opts(
     $res = $ua->request($req);
     is($res->code, 400, "check patch missing body");
     $body = JSON::from_json($res->decoded_content);
-    ok($body->{message} =~ /is missing a message body/, "check patch missing body response");
+    like($body->{message}, qr/is missing a message body/, "check patch missing body response");
 
     $req->content(JSON::to_json(
         { foo => 'bar' },
@@ -51,7 +46,7 @@ $ua->ssl_opts(
     $res = $ua->request($req);
     is($res->code, 400, "check patch no array body");
     $body = JSON::from_json($res->decoded_content);
-    ok($body->{message} =~ /must be an array/, "check patch missing body response");
+    like($body->{message}, qr/must be an array/, "check patch missing body response");
     
     $req->content(JSON::to_json(
         [{ foo => 'bar' }],
@@ -59,7 +54,7 @@ $ua->ssl_opts(
     $res = $ua->request($req);
     is($res->code, 400, "check patch no op in body");
     $body = JSON::from_json($res->decoded_content);
-    ok($body->{message} =~ /must have an 'op' field/, "check patch no op in body response");
+    like($body->{message}, qr/must have an 'op' field/, "check patch no op in body response");
 
     $req->content(JSON::to_json(
         [{ op => 'bar' }],
@@ -67,23 +62,23 @@ $ua->ssl_opts(
     $res = $ua->request($req);
     is($res->code, 400, "check patch invalid op in body");
     $body = JSON::from_json($res->decoded_content);
-    ok($body->{message} =~ /Invalid PATCH op /, "check patch no op in body response");
+    like($body->{message}, qr/Invalid PATCH op /, "check patch no op in body response");
 
     $req->content(JSON::to_json(
-        [{ op => 'test' }],
+        [{ op => 'replace' }],
     ));
     $res = $ua->request($req);
     is($res->code, 400, "check patch missing fields for op");
     $body = JSON::from_json($res->decoded_content);
-    ok($body->{message} =~ /Missing PATCH keys /, "check patch missing fields for op response");
+    like($body->{message}, qr/Missing PATCH keys /, "check patch missing fields for op response");
 
     $req->content(JSON::to_json(
-        [{ op => 'test', path => '/foo', value => 'bar', invalid => 'sna' }],
+        [{ op => 'replace', path => '/foo', value => 'bar', invalid => 'sna' }],
     ));
     $res = $ua->request($req);
     is($res->code, 400, "check patch extra fields for op");
     $body = JSON::from_json($res->decoded_content);
-    ok($body->{message} =~ /Invalid PATCH key /, "check patch extra fields for op response");
+    like($body->{message}, qr/Invalid PATCH key /, "check patch extra fields for op response");
 }
 
 done_testing;

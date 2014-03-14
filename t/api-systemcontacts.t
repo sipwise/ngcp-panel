@@ -154,7 +154,7 @@ my @allcontacts = ();
     delete $contact->{_embedded};
     $req = HTTP::Request->new('PUT', $uri.'/'.$firstcontact);
     $req->header('Prefer' => 'return=minimal');
-    
+
     # check if it fails without content type
     $req->remove_header('Content-Type');
     $res = $ua->request($req);
@@ -168,16 +168,10 @@ my @allcontacts = ();
     $req->remove_header('Content-Type');
     $req->header('Content-Type' => 'application/json');
 
-    # check if it fails with missing Prefer
-    $req->remove_header('Prefer');
-    $res = $ua->request($req);
-    is($res->code, 400, "check put missing prefer");
-
     # check if it fails with invalid Prefer
     $req->header('Prefer' => "return=invalid");
     $res = $ua->request($req);
     is($res->code, 400, "check put invalid prefer");
-
 
     $req->remove_header('Prefer');
     $req->header('Prefer' => "return=representation");
