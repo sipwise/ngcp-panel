@@ -25,7 +25,7 @@ $ua->ssl_opts(
 {
     $req = HTTP::Request->new('OPTIONS', $uri.'/api/systemcontacts/');
     $res = $ua->request($req);
-    ok($res->code == 200, "check options request");
+    is($res->code, 200, "check options request");
     ok($res->header('Accept-Post') eq "application/hal+json; profile=http://purl.org/sipwise/ngcp-api/#rel-systemcontacts", "check Accept-Post header in options response");
     my $opts = JSON::from_json($res->decoded_content);
     my @hopts = split /\s*,\s*/, $res->header('Allow');
@@ -51,7 +51,7 @@ my @allcontacts = ();
             email     => "test.$i\@test.invalid",
         }));
         $res = $ua->request($req);
-        ok($res->code == 201, "create test contact $i");
+        is($res->code, 201, "create test contact $i");
         $contacts{$res->header('Location')} = 1;
         push @allcontacts, $res->header('Location');
         $firstcontact = $res->header('Location') unless $firstcontact;
@@ -65,7 +65,7 @@ my @allcontacts = ();
         lastname  => "Test_Last_invalid",
     }));
     $res = $ua->request($req);
-    ok($res->code == 422, "create invalid test contact with missing email");
+    is($res->code, 422, "create invalid test contact with missing email");
     my $email_err = JSON::from_json($res->decoded_content);
     ok($email_err->{code} eq "422", "check error code in body");
     ok($email_err->{message} =~ /field=\'email\'/, "check error message in body");
@@ -74,7 +74,7 @@ my @allcontacts = ();
     my $nexturi = $uri.'/api/systemcontacts/?page=1&rows=5';
     do {
         $res = $ua->get($nexturi);
-        ok($res->code == 200, "fetch contacts page");
+        is($res->code, 200, "fetch contacts page");
         my $collection = JSON::from_json($res->decoded_content);
         my $selfuri = $uri . $collection->{_links}->{self}->{href};
         ok($selfuri eq $nexturi, "check _links.self.href of collection");
@@ -119,14 +119,14 @@ my @allcontacts = ();
              
     } while($nexturi);
 
-    ok(keys %contacts == 0, "check if all test contacts have been found");
+    is(scalar(keys %contacts), 0, "check if all test contacts have been found");
 }
 
 # test contacts item
 {
     $req = HTTP::Request->new('OPTIONS', $uri.'/'.$firstcontact);
     $res = $ua->request($req);
-    ok($res->code == 200, "check options on item");
+    is($res->code, 200, "check options on item");
     my @hopts = split /\s*,\s*/, $res->header('Allow');
     my $opts = JSON::from_json($res->decoded_content);
     ok(exists $opts->{methods} && ref $opts->{methods} eq "ARRAY", "check for valid 'methods' in body");
@@ -140,7 +140,7 @@ my @allcontacts = ();
 
     $req = HTTP::Request->new('GET', $uri.'/'.$firstcontact);
     $res = $ua->request($req);
-    ok($res->code == 200, "fetch one contact item");
+    is($res->code, 200, "fetch one contact item");
     my $contact = JSON::from_json($res->decoded_content);
     ok(exists $contact->{firstname}, "check existence of firstname");
     ok(exists $contact->{lastname}, "check existence of lastname");
@@ -154,42 +154,36 @@ my @allcontacts = ();
     delete $contact->{_embedded};
     $req = HTTP::Request->new('PUT', $uri.'/'.$firstcontact);
     $req->header('Prefer' => 'return=minimal');
-    
+
     # check if it fails without content type
     $req->remove_header('Content-Type');
     $res = $ua->request($req);
-    ok($res->code == 415, "check put missing content type");
+    is($res->code, 415, "check put missing content type");
 
     # check if it fails with unsupported content type
     $req->header('Content-Type' => 'application/xxx');
     $res = $ua->request($req);
-    ok($res->code == 415, "check put invalid content type");
+    is($res->code, 415, "check put invalid content type");
 
     $req->remove_header('Content-Type');
     $req->header('Content-Type' => 'application/json');
 
-    # check if it fails with missing Prefer
-    $req->remove_header('Prefer');
-    $res = $ua->request($req);
-    ok($res->code == 400, "check put missing prefer");
-
     # check if it fails with invalid Prefer
     $req->header('Prefer' => "return=invalid");
     $res = $ua->request($req);
-    ok($res->code == 400, "check put invalid prefer");
-
+    is($res->code, 400, "check put invalid prefer");
 
     $req->remove_header('Prefer');
     $req->header('Prefer' => "return=representation");
 
     # check if it fails with missing body
     $res = $ua->request($req);
-    ok($res->code == 400, "check put no body");
+    is($res->code, 400, "check put no body");
 
     # check if put is ok
     $req->content(JSON::to_json($contact));
     $res = $ua->request($req);
-    ok($res->code == 200, "check put successful");
+    is($res->code, 200, "check put successful");
 
     my $new_contact = JSON::from_json($res->decoded_content);
     is_deeply($old_contact, $new_contact, "check put if unmodified put returns the same");
@@ -198,7 +192,7 @@ my @allcontacts = ();
     $contact->{reseller_id} = 1;
     $req->content(JSON::to_json($contact));
     $res = $ua->request($req);
-    ok($res->code == 200, "check put successful");
+    is($res->code, 200, "check put successful");
     $new_contact = JSON::from_json($res->decoded_content);
     ok(!exists $new_contact->{reseller_id}, "check put if reseller_id is absent");
     ok(!exists $new_contact->{_links}->{'ngcp:resellers'}, "check put absence of ngcp:resellers relation");
@@ -211,7 +205,7 @@ my @allcontacts = ();
         [ { op => 'replace', path => '/firstname', value => 'patchedfirst' } ]
     ));
     $res = $ua->request($req);
-    ok($res->code == 200, "check patched contact item");
+    is($res->code, 200, "check patched contact item");
     my $mod_contact = JSON::from_json($res->decoded_content);
     ok($mod_contact->{firstname} eq "patchedfirst", "check patched replace op");
 
@@ -219,7 +213,7 @@ my @allcontacts = ();
         [ { op => 'replace', path => '/firstname', value => undef } ]
     ));
     $res = $ua->request($req);
-    ok($res->code == 200, "check patched contact item");
+    is($res->code, 200, "check patched contact item");
     $mod_contact = JSON::from_json($res->decoded_content);
     ok(exists $mod_contact->{firstname} && !defined $mod_contact->{firstname}, "check patched replace op for undef");
 
@@ -227,7 +221,7 @@ my @allcontacts = ();
         [ { op => 'replace', path => '/email', value => undef } ]
     ));
     $res = $ua->request($req);
-    ok($res->code == 422, "check patched contact with unset email");
+    is($res->code, 422, "check patched contact with unset email");
 }
 
 # DELETE
@@ -235,7 +229,7 @@ my @allcontacts = ();
     foreach my $contact(@allcontacts) {
         $req = HTTP::Request->new('DELETE', $uri.'/'.$contact);
         $res = $ua->request($req);
-        ok($res->code == 204, "check delete of contact");
+        is($res->code, 204, "check delete of contact");
     }
 }
 

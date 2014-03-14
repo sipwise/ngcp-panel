@@ -27,7 +27,7 @@ $ua->ssl_opts(
 {
     $req = HTTP::Request->new('OPTIONS', $uri.'/api/customers/');
     $res = $ua->request($req);
-    ok($res->code == 200, "check options request");
+    is($res->code, 200, "check options request");
     ok($res->header('Accept-Post') eq "application/hal+json; profile=http://purl.org/sipwise/ngcp-api/#rel-customers", "check Accept-Post header in options response");
     my $opts = JSON::from_json($res->decoded_content);
     my @hopts = split /\s*,\s*/, $res->header('Allow');
@@ -50,7 +50,7 @@ $req->content(JSON::to_json({
     reseller_id => $reseller_id,
 }));
 $res = $ua->request($req);
-ok($res->code == 201, "create test billing profile");
+is($res->code, 201, "create test billing profile");
 # TODO: get id from body once the API returns it
 my $billing_profile_id = $res->header('Location');
 $billing_profile_id =~ s/^.+\/(\d+)$/$1/;
@@ -58,7 +58,7 @@ $billing_profile_id =~ s/^.+\/(\d+)$/$1/;
 # fetch a system contact for later tests
 $req = HTTP::Request->new('GET', $uri.'/api/systemcontacts/?page=1&rows=1');
 $res = $ua->request($req);
-ok($res->code == 200, "fetch system contacts");
+is($res->code, 200, "fetch system contacts");
 my $sysct = JSON::from_json($res->decoded_content);
 my $system_contact_id = $sysct->{_embedded}->{'ngcp:systemcontacts'}->{id};
 
@@ -77,10 +77,10 @@ my @allcustomers = ();
         reseller_id => $reseller_id,
     }));
     $res = $ua->request($req);
-    ok($res->code == 201, "create customer contact");
+    is($res->code, 201, "create customer contact");
     $req = HTTP::Request->new('GET', $uri.'/'.$res->header('Location'));
     $res = $ua->request($req);
-    ok($res->code == 200, "fetch system contact");
+    is($res->code, 200, "fetch system contact");
     $custcontact = JSON::from_json($res->decoded_content);
 
     # create 6 new customers
@@ -97,8 +97,8 @@ my @allcustomers = ();
             external_id => undef,
         }));
         $res = $ua->request($req);
-        ok($res->code == 201, "create test customer $i");
-        $customers{$res->header('Location')} = 1;
+        is($res->code, 201, "create test customer $i");
+        $customers{$res->header('Location') // ''} = 1;
         push @allcustomers, $res->header('Location');
         $firstcustomer = $res->header('Location') unless $firstcustomer;
     }
@@ -115,7 +115,7 @@ my @allcustomers = ();
         type => "invalid",
     }));
     $res = $ua->request($req);
-    ok($res->code == 422, "create customer with invalid type");
+    is($res->code, 422, "create customer with invalid type");
     my $err = JSON::from_json($res->decoded_content);
     ok($err->{code} eq "422", "check error code in body");
     ok($err->{message} =~ /Invalid 'type'/, "check error message in body");
@@ -130,7 +130,7 @@ my @allcustomers = ();
         billing_profile_id => 999999,
     }));
     $res = $ua->request($req);
-    ok($res->code == 422, "create customer with invalid billing profile");
+    is($res->code, 422, "create customer with invalid billing profile");
     $err = JSON::from_json($res->decoded_content);
     ok($err->{code} eq "422", "check error code in body");
     ok($err->{message} =~ /Invalid 'billing_profile_id'/, "check error message in body");
@@ -145,7 +145,7 @@ my @allcustomers = ();
         contact_id => $system_contact_id,
     }));
     $res = $ua->request($req);
-    ok($res->code == 422, "create customer with invalid contact");
+    is($res->code, 422, "create customer with invalid contact");
     $err = JSON::from_json($res->decoded_content);
     ok($err->{code} eq "422", "check error code in body");
     ok($err->{message} =~ /The contact_id is not a valid ngcp:customercontacts item/, "check error message in body");
@@ -159,7 +159,7 @@ my @allcustomers = ();
         external_id => undef,
     }));
     $res = $ua->request($req);
-    ok($res->code == 422, "create customer without contact");
+    is($res->code, 422, "create customer without contact");
 
     # try to create invalid customer with invalid status
     $req->content(JSON::to_json({
@@ -171,7 +171,7 @@ my @allcustomers = ();
         status => "invalid",
     }));
     $res = $ua->request($req);
-    ok($res->code == 422, "create customer with invalid status");
+    is($res->code, 422, "create customer with invalid status");
     $err = JSON::from_json($res->decoded_content);
     ok($err->{code} eq "422", "check error code in body");
     ok($err->{message} =~ /field='status'/, "check error message in body");
@@ -186,7 +186,7 @@ my @allcustomers = ();
         status => "active",
     }));
     $res = $ua->request($req);
-    ok($res->code == 422, "create customer with invalid max_subscribers");
+    is($res->code, 422, "create customer with invalid max_subscribers");
     $err = JSON::from_json($res->decoded_content);
     ok($err->{code} eq "422", "check error code in body");
     ok($err->{message} =~ /field='max_subscribers'/, "check error message in body");
@@ -195,7 +195,7 @@ my @allcustomers = ();
     my $nexturi = $uri.'/api/customers/?page=1&rows=5';
     do {
         $res = $ua->get($nexturi);
-        ok($res->code == 200, "fetch contacts page");
+        is($res->code, 200, "fetch contacts page");
         my $collection = JSON::from_json($res->decoded_content);
         my $selfuri = $uri . $collection->{_links}->{self}->{href};
         ok($selfuri eq $nexturi, "check _links.self.href of collection");
@@ -253,14 +253,14 @@ my @allcustomers = ();
              
     } while($nexturi);
 
-    ok(keys %customers == 0, "check if all test customers have been found");
+    is(scalar(keys %customers), 0, "check if all test customers have been found");
 }
 
 # test contacts item
 {
     $req = HTTP::Request->new('OPTIONS', $uri.'/'.$firstcustomer);
     $res = $ua->request($req);
-    ok($res->code == 200, "check options on item");
+    is($res->code, 200, "check options on item");
     my @hopts = split /\s*,\s*/, $res->header('Allow');
     my $opts = JSON::from_json($res->decoded_content);
     ok(exists $opts->{methods} && ref $opts->{methods} eq "ARRAY", "check for valid 'methods' in body");
@@ -275,7 +275,7 @@ my @allcustomers = ();
 
     $req = HTTP::Request->new('GET', $uri.'/'.$firstcustomer);
     $res = $ua->request($req);
-    ok($res->code == 200, "fetch one customer item");
+    is($res->code, 200, "fetch one customer item");
     my $customer = JSON::from_json($res->decoded_content);
     ok(exists $customer->{status}, "check existence of status");
     ok(exists $customer->{type}, "check existence of type");
@@ -295,38 +295,32 @@ my @allcustomers = ();
     $req->remove_header('Content-Type');
     $req->header('Prefer' => "return=minimal");
     $res = $ua->request($req);
-    ok($res->code == 415, "check put missing content type");
+    is($res->code, 415, "check put missing content type");
 
     # check if it fails with unsupported content type
     $req->header('Content-Type' => 'application/xxx');
     $res = $ua->request($req);
-    ok($res->code == 415, "check put invalid content type");
+    is($res->code, 415, "check put invalid content type");
 
     $req->remove_header('Content-Type');
     $req->header('Content-Type' => 'application/json');
 
-    # check if it fails with missing Prefer
-    $req->remove_header('Prefer');
-    $res = $ua->request($req);
-    ok($res->code == 400, "check put missing prefer");
-
     # check if it fails with invalid Prefer
     $req->header('Prefer' => "return=invalid");
     $res = $ua->request($req);
-    ok($res->code == 400, "check put invalid prefer");
-
+    is($res->code, 400, "check put invalid prefer");
 
     $req->remove_header('Prefer');
     $req->header('Prefer' => "return=representation");
 
     # check if it fails with missing body
     $res = $ua->request($req);
-    ok($res->code == 400, "check put no body");
+    is($res->code, 400, "check put no body");
 
     # check if put is ok
     $req->content(JSON::to_json($customer));
     $res = $ua->request($req);
-    ok($res->code == 200, "check put successful");
+    is($res->code, 200, "check put successful");
 
     my $new_customer = JSON::from_json($res->decoded_content);
     is_deeply($old_customer, $new_customer, "check put if unmodified put returns the same");
@@ -344,7 +338,7 @@ my @allcustomers = ();
         [ { op => 'replace', path => '/status', value => 'pending' } ]
     ));
     $res = $ua->request($req);
-    ok($res->code == 200, "check patched customer item");
+    is($res->code, 200, "check patched customer item");
     my $mod_contact = JSON::from_json($res->decoded_content);
     ok($mod_contact->{status} eq "pending", "check patched replace op");
     ok($mod_contact->{_links}->{self}->{href} eq $firstcustomer, "check patched self link");
@@ -355,43 +349,43 @@ my @allcustomers = ();
         [ { op => 'replace', path => '/status', value => undef } ]
     ));
     $res = $ua->request($req);
-    ok($res->code == 422, "check patched undef status");
+    is($res->code, 422, "check patched undef status");
 
     $req->content(JSON::to_json(
         [ { op => 'replace', path => '/status', value => 'invalid' } ]
     ));
     $res = $ua->request($req);
-    ok($res->code == 422, "check patched invalid status");
+    is($res->code, 422, "check patched invalid status");
 
     $req->content(JSON::to_json(
         [ { op => 'replace', path => '/contact_id', value => 99999 } ]
     ));
     $res = $ua->request($req);
-    ok($res->code == 422, "check patched invalid contact_id");
+    is($res->code, 422, "check patched invalid contact_id");
 
     $req->content(JSON::to_json(
         [ { op => 'replace', path => '/contact_id', value => $system_contact_id } ]
     ));
     $res = $ua->request($req);
-    ok($res->code == 422, "check patched system contact_id");
+    is($res->code, 422, "check patched system contact_id");
 
     $req->content(JSON::to_json(
         [ { op => 'replace', path => '/billing_profile_id', value => undef } ]
     ));
     $res = $ua->request($req);
-    ok($res->code == 422, "check patched undef billing_profile_id");
+    is($res->code, 422, "check patched undef billing_profile_id");
 
     $req->content(JSON::to_json(
         [ { op => 'replace', path => '/billing_profile_id', value => 99999 } ]
     ));
     $res = $ua->request($req);
-    ok($res->code == 422, "check patched invalid billing_profile_id");
+    is($res->code, 422, "check patched invalid billing_profile_id");
 
     $req->content(JSON::to_json(
         [ { op => 'replace', path => '/max_subscribers', value => "abc" } ]
     ));
     $res = $ua->request($req);
-    ok($res->code == 422, "check patched invalid max_subscribers");
+    is($res->code, 422, "check patched invalid max_subscribers");
 }
 
 # terminate
@@ -399,7 +393,7 @@ my @allcustomers = ();
     # check if deletion of contact fails before terminating the customers
     $req = HTTP::Request->new('DELETE', $uri.'/'.$custcontact->{_links}->{self}->{href});
     $res = $ua->request($req);
-    ok($res->code == 423, "check locked status for deleting used contact");
+    is($res->code, 423, "check locked status for deleting used contact");
 
     my $pc;
     foreach my $customer(@allcustomers) {
@@ -410,7 +404,7 @@ my @allcustomers = ();
             { "op" => "replace", "path" => "/status", "value" => "terminated" }
         ]));
         $res = $ua->request($req);
-        ok($res->code == 200, "check termination of customer");
+        is($res->code, 200, "check termination of customer");
         $pc = JSON::from_json($res->decoded_content);
         ok($pc->{status} eq "terminated", "check termination status of customer");
     }
@@ -418,14 +412,14 @@ my @allcustomers = ();
     # check if we can still get the terminated customer
     $req = HTTP::Request->new('GET', $uri.'/'.$pc->{_links}->{self}->{href});
     $res = $ua->request($req);
-    ok($res->code == 404, "check fetching of terminated customer");
+    is($res->code, 404, "check fetching of terminated customer");
 
     # check if deletion of contact is now ok
     # TODO: are we supposed to be able to delete a contact for a terminated
     # customer? there are still DB contstraints in the way!
     #$req = HTTP::Request->new('DELETE', $uri.'/'.$custcontact->{_links}->{self}->{href});
     #$res = $ua->request($req);
-    #ok($res->code == 204, "check deletion of unused contact");
+    #is($res->code, 204, "check deletion of unused contact");
 }
 
 done_testing;

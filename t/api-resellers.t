@@ -25,7 +25,7 @@ $ua->ssl_opts(
 {
     $req = HTTP::Request->new('OPTIONS', $uri.'/api/resellers/');
     $res = $ua->request($req);
-    ok($res->code == 200, "check options request");
+    is($res->code, 200, "check options request");
     ok($res->header('Accept-Post') eq "application/hal+json; profile=http://purl.org/sipwise/ngcp-api/#rel-resellers", "check Accept-Post header in options response");
     my $opts = JSON::from_json($res->decoded_content);
     my @hopts = split /\s*,\s*/, $res->header('Allow');
@@ -57,7 +57,7 @@ my @allresellers = ();
         lastname => "api test last",
     }));
     $res = $ua->request($req);
-    ok($res->code == 201, "create system contact");
+    is($res->code, 201, "create system contact");
     $syscontact = $res->header('Location');
     # TODO: should be returned in post result
     my $contact_id = $syscontact;
@@ -75,7 +75,7 @@ my @allresellers = ();
     }));
     for(my $i = 1; $i <= 7; ++$i) { # create one more for later tests
         $res = $ua->request($req);
-        ok($res->code == 201, "create reseller contract");
+        is($res->code, 201, "create reseller contract");
         my $syscontract = $res->header('Location');
         # TODO: should be returned in post result
         my $contract_id = $syscontract;
@@ -98,7 +98,7 @@ my @allresellers = ();
             status => "active",
         }));
         $res = $ua->request($req);
-        ok($res->code == 201, "create test reseller $i");
+        is($res->code, 201, "create test reseller $i");
         $resellers{$res->header('Location')} = 1;
         push @allresellers, $res->header('Location');
         $firstreseller = $res->header('Location') unless $firstreseller;
@@ -114,7 +114,7 @@ my @allresellers = ();
         status => "active",
     }));
     $res = $ua->request($req);
-    ok($res->code == 422, "create reseller without contract_id");
+    is($res->code, 422, "create reseller without contract_id");
     $err = JSON::from_json($res->decoded_content);
     ok($err->{code} eq "422", "check error code in body");
     ok($err->{message} =~ /field='contract_id'/, "check error message in body");
@@ -126,7 +126,7 @@ my @allresellers = ();
         status => "active",
     }));
     $res = $ua->request($req);
-    ok($res->code == 422, "create reseller with empty contract_id");
+    is($res->code, 422, "create reseller with empty contract_id");
     $err = JSON::from_json($res->decoded_content);
     ok($err->{code} eq "422", "check error code in body");
     ok($err->{message} =~ /field='contract_id'/, "check error message in body");
@@ -138,7 +138,7 @@ my @allresellers = ();
         status => "active",
     }));
     $res = $ua->request($req);
-    ok($res->code == 422, "create reseller with existing contract_id");
+    is($res->code, 422, "create reseller with existing contract_id");
     $err = JSON::from_json($res->decoded_content);
     ok($err->{code} eq "422", "check error code in body");
     ok($err->{message} =~ /reseller with this contract already exists/, "check error message in body");
@@ -150,7 +150,7 @@ my @allresellers = ();
         status => "active",
     }));
     $res = $ua->request($req);
-    ok($res->code == 422, "create reseller with existing name");
+    is($res->code, 422, "create reseller with existing name");
     $err = JSON::from_json($res->decoded_content);
     ok($err->{code} eq "422", "check error code in body");
     ok($err->{message} =~ /reseller with this name already exists/, "check error message in body");
@@ -161,7 +161,7 @@ my @allresellers = ();
         status => "active",
     }));
     $res = $ua->request($req);
-    ok($res->code == 422, "create reseller with missing name");
+    is($res->code, 422, "create reseller with missing name");
     $err = JSON::from_json($res->decoded_content);
     ok($err->{code} eq "422", "check error code in body");
     ok($err->{message} =~ /field='name'/, "check error message in body");
@@ -172,7 +172,7 @@ my @allresellers = ();
         name => "test reseller $t 999",
     }));
     $res = $ua->request($req);
-    ok($res->code == 422, "create reseller with invalid status");
+    is($res->code, 422, "create reseller with invalid status");
     $err = JSON::from_json($res->decoded_content);
     ok($err->{code} eq "422", "check error code in body");
     ok($err->{message} =~ /field='status'/, "check error message in body");
@@ -184,7 +184,7 @@ my @allresellers = ();
         status => "invalid",
     }));
     $res = $ua->request($req);
-    ok($res->code == 422, "create reseller with invalid status");
+    is($res->code, 422, "create reseller with invalid status");
     $err = JSON::from_json($res->decoded_content);
     ok($err->{code} eq "422", "check error code in body");
     ok($err->{message} =~ /field='status'/, "check error message in body");
@@ -193,7 +193,7 @@ my @allresellers = ();
     my $nexturi = $uri.'/api/resellers/?page=1&rows=5';
     do {
         $res = $ua->get($nexturi);
-        ok($res->code == 200, "fetch reseller page");
+        is($res->code, 200, "fetch reseller page");
         my $collection = JSON::from_json($res->decoded_content);
         my $selfuri = $uri . $collection->{_links}->{self}->{href};
         ok($selfuri eq $nexturi, "check _links.self.href of collection");
@@ -245,14 +245,14 @@ my @allresellers = ();
              
     } while($nexturi);
 
-    ok(keys %resellers == 0, "check if all test resellers have been found");
+    is(scalar(keys %resellers), 0, "check if all test resellers have been found");
 }
 
 # test reseller item
 {
     $req = HTTP::Request->new('OPTIONS', $uri.'/'.$firstreseller);
     $res = $ua->request($req);
-    ok($res->code == 200, "check options on item");
+    is($res->code, 200, "check options on item");
     my @hopts = split /\s*,\s*/, $res->header('Allow');
     my $opts = JSON::from_json($res->decoded_content);
     ok(exists $opts->{methods} && ref $opts->{methods} eq "ARRAY", "check for valid 'methods' in body");
@@ -267,7 +267,7 @@ my @allresellers = ();
 
     $req = HTTP::Request->new('GET', $uri.'/'.$firstreseller);
     $res = $ua->request($req);
-    ok($res->code == 200, "fetch one item");
+    is($res->code, 200, "fetch one item");
     my $reseller = JSON::from_json($res->decoded_content);
     ok(exists $reseller->{id} && $reseller->{id}->is_int, "check existence of id");
     ok(exists $reseller->{contract_id} && $reseller->{contract_id}->is_int, "check existence of contract_id");
@@ -279,30 +279,25 @@ my @allresellers = ();
     delete $reseller->{_links};
     delete $reseller->{_embedded};
     $req = HTTP::Request->new('PUT', $uri.'/'.$firstreseller);
-    
+
     # check if it fails without content type
     $req->remove_header('Content-Type');
     $req->header('Prefer' => "return=minimal");
     $res = $ua->request($req);
-    ok($res->code == 415, "check put missing content type");
+    is($res->code, 415, "check put missing content type");
 
     # check if it fails with unsupported content type
     $req->header('Content-Type' => 'application/xxx');
     $res = $ua->request($req);
-    ok($res->code == 415, "check put invalid content type");
+    is($res->code, 415, "check put invalid content type");
 
     $req->remove_header('Content-Type');
     $req->header('Content-Type' => 'application/json');
 
-    # check if it fails with missing Prefer
-    $req->remove_header('Prefer');
-    $res = $ua->request($req);
-    ok($res->code == 400, "check put missing prefer");
-
     # check if it fails with invalid Prefer
     $req->header('Prefer' => "return=invalid");
     $res = $ua->request($req);
-    ok($res->code == 400, "check put invalid prefer");
+    is($res->code, 400, "check put invalid prefer");
 
 
     $req->remove_header('Prefer');
@@ -310,12 +305,12 @@ my @allresellers = ();
 
     # check if it fails with missing body
     $res = $ua->request($req);
-    ok($res->code == 400, "check put no body");
+    is($res->code, 400, "check put no body");
 
     # check if put is ok
     $req->content(JSON::to_json($reseller));
     $res = $ua->request($req);
-    ok($res->code == 200, "check put successful");
+    is($res->code, 200, "check put successful");
 
     my $new_reseller = JSON::from_json($res->decoded_content);
     is_deeply($old_reseller, $new_reseller, "check put if unmodified put returns the same");
@@ -331,7 +326,7 @@ my @allresellers = ();
         [ { op => 'replace', path => '/name', value => 'patched name '.$t } ]
     ));
     $res = $ua->request($req);
-    ok($res->code == 200, "check patched reseller item");
+    is($res->code, 200, "check patched reseller item");
     my $mod_reseller = JSON::from_json($res->decoded_content);
     ok($mod_reseller->{name} eq "patched name $t", "check patched replace op");
     ok($mod_reseller->{_links}->{self}->{href} eq $firstreseller, "check patched self link");
@@ -341,43 +336,43 @@ my @allresellers = ();
         [ { op => 'replace', path => '/contract_id', value => undef } ]
     ));
     $res = $ua->request($req);
-    ok($res->code == 422, "check patched undef contract_id");
+    is($res->code, 422, "check patched undef contract_id");
 
     $req->content(JSON::to_json(
         [ { op => 'replace', path => '/contract_id', value => 99999 } ]
     ));
     $res = $ua->request($req);
-    ok($res->code == 422, "check patched invalid contract_id");
+    is($res->code, 422, "check patched invalid contract_id");
 
     $req->content(JSON::to_json(
         [ { op => 'replace', path => '/contract_id', value => $secondcontract_id } ]
     ));
     $res = $ua->request($req);
-    ok($res->code == 422, "check patched existing contract_id");
+    is($res->code, 422, "check patched existing contract_id");
 
     $req->content(JSON::to_json(
         [ { op => 'replace', path => '/name', value => "test reseller $t 2" } ]
     ));
     $res = $ua->request($req);
-    ok($res->code == 422, "check patched existing name");
+    is($res->code, 422, "check patched existing name");
 
     $req->content(JSON::to_json(
         [ { op => 'replace', path => '/name', value => undef } ]
     ));
     $res = $ua->request($req);
-    ok($res->code == 422, "check patched undef name");
+    is($res->code, 422, "check patched undef name");
 
     $req->content(JSON::to_json(
         [ { op => 'replace', path => '/status', value => "invalid"} ]
     ));
     $res = $ua->request($req);
-    ok($res->code == 422, "check patched invalid status");
+    is($res->code, 422, "check patched invalid status");
 
     $req->content(JSON::to_json(
         [ { op => 'replace', path => '/status', value => undef} ]
     ));
     $res = $ua->request($req);
-    ok($res->code == 422, "check patched undef status");
+    is($res->code, 422, "check patched undef status");
 }
 
 # TODO: terminate our contracts and resellers again

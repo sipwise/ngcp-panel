@@ -100,10 +100,10 @@ sub validate_form {
             if $resource->{$k}->$_isa('DateTime');
         $resource->{$k} = $resource->{$k} + 0
             if(defined $resource->{$k} && (
-               $resource->{$k}->is_int || $resource->{$k}->is_decimal) && (
                $form->field($k)->$_isa('HTML::FormHandler::Field::Integer') ||
                $form->field($k)->$_isa('HTML::FormHandler::Field::Money') ||
-               $form->field($k)->$_isa('HTML::FormHandler::Field::Float')));
+               $form->field($k)->$_isa('HTML::FormHandler::Field::Float')) &&
+               ($resource->{$k}->is_int || $resource->{$k}->is_decimal));
 
         # only do this for converting back from obj to hal
         # otherwise it breaks db fields with the \0 and \1 notation
@@ -192,10 +192,11 @@ sub valid_precondition {
 
 sub require_preference {
     my ($self, $c) = @_;
+    return 'minimal' unless $c->request->header('Prefer');
     my @preference = grep { 'return' eq $_->[0] } split_header_words($c->request->header('Prefer'));
     return $preference[0][1]
         if 1 == @preference && ('minimal' eq $preference[0][1] || 'representation' eq $preference[0][1]);
-    return 'minimal';
+    $self->error($c, HTTP_BAD_REQUEST, "Header 'Prefer' must be either 'return=minimal' or 'return=representation'.");
 }
 
 sub require_wellformed_json {

@@ -25,7 +25,7 @@ $ua->ssl_opts(
 {
     $req = HTTP::Request->new('OPTIONS', $uri.'/api/billingfees/');
     $res = $ua->request($req);
-    ok($res->code == 200, "check options request");
+    is($res->code, 200, "check options request");
     ok($res->header('Accept-Post') eq "application/hal+json; profile=http://purl.org/sipwise/ngcp-api/#rel-billingfees", "check Accept-Post header in options response");
     my $opts = JSON::from_json($res->decoded_content);
     my @hopts = split /\s*,\s*/, $res->header('Allow');
@@ -49,7 +49,7 @@ $req->content(JSON::to_json({
     name => "test api name $t",
 }));
 $res = $ua->request($req);
-ok($res->code == 201, "create test billing profile");
+is($res->code, 201, "create test billing profile");
 my $billing_profile_id = $res->header('Location');
 # TODO: get it from body!
 $billing_profile_id =~ s/^.+\/(\d+)$/$1/;
@@ -64,7 +64,7 @@ $req->content(JSON::to_json({
     detail => "test zone from api",
 }));
 $res = $ua->request($req);
-ok($res->code == 201, "create test billing zone");
+is($res->code, 201, "create test billing zone");
 my $billing_zone_id = $res->header('Location');
 # TODO: get it from body!
 $billing_zone_id =~ s/^.+\/(\d+)$/$1/;
@@ -93,7 +93,7 @@ my @allfees = ();
             offpeak_follow_interval => 30,
         }));
         $res = $ua->request($req);
-        ok($res->code == 201, "create test billing fee $i");
+        is($res->code, 201, "create test billing fee $i");
         $fees{$res->header('Location')} = 1;
         push @allfees, $res->header('Location');
         $firstfee = $res->header('Location') unless $firstfee;
@@ -117,7 +117,7 @@ my @allfees = ();
         offpeak_follow_interval => 30,
     }));
     $res = $ua->request($req);
-    ok($res->code == 422, "create profile without billing_profile_id");
+    is($res->code, 422, "create profile without billing_profile_id");
     my $err = JSON::from_json($res->decoded_content);
     ok($err->{code} eq "422", "check error code in body");
     ok($err->{message} =~ /Invalid 'billing_profile_id'/, "check error message in body");
@@ -140,7 +140,7 @@ my @allfees = ();
         offpeak_follow_interval => 30,
     }));
     $res = $ua->request($req);
-    ok($res->code == 422, "create profile with invalid billing_profile_id");
+    is($res->code, 422, "create profile with invalid billing_profile_id");
     $err = JSON::from_json($res->decoded_content);
     ok($err->{code} eq "422", "check error code in body");
     ok($err->{message} =~ /Invalid 'billing_profile_id'/, "check error message in body");
@@ -163,7 +163,7 @@ my @allfees = ();
         offpeak_follow_interval => 30,
     }));
     $res = $ua->request($req);
-    ok($res->code == 422, "create profile without billing_zone_id");
+    is($res->code, 422, "create profile without billing_zone_id");
     $err = JSON::from_json($res->decoded_content);
     ok($err->{code} eq "422", "check error code in body");
     ok($err->{message} =~ /field='billing_zone_id'/, "check error message in body");
@@ -186,7 +186,7 @@ my @allfees = ();
         offpeak_follow_interval => 30,
     }));
     $res = $ua->request($req);
-    ok($res->code == 422, "create profile without billing_profile_id");
+    is($res->code, 422, "create profile without billing_profile_id");
     $err = JSON::from_json($res->decoded_content);
     ok($err->{code} eq "422", "check error code in body");
     ok($err->{message} =~ /Invalid 'billing_zone_id'/, "check error message in body");
@@ -197,7 +197,7 @@ my @allfees = ();
     my $nexturi = $uri.'/api/billingfees/?page=1&rows=5';
     do {
         $res = $ua->get($nexturi);
-        ok($res->code == 200, "fetch fees page");
+        is($res->code, 200, "fetch fees page");
         my $collection = JSON::from_json($res->decoded_content);
         my $selfuri = $uri . $collection->{_links}->{self}->{href};
         ok($selfuri eq $nexturi, "check _links.self.href of collection");
@@ -249,7 +249,7 @@ my @allfees = ();
              
     } while($nexturi);
 
-    ok(keys %fees == 0, "check if all test billing fees have been found");
+    is(scalar(keys %fees), 0, "check if all test billing fees have been found");
 
     # try to create fee with implicit zone which already exists
     $req = HTTP::Request->new('POST', $uri.'/api/billingfees/');
@@ -270,16 +270,16 @@ my @allfees = ();
         offpeak_follow_interval => 30,
     }));
     $res = $ua->request($req);
-    ok($res->code == 201, "create profile fee with existing implicit zone");
+    is($res->code, 201, "create profile fee with existing implicit zone");
     $req = HTTP::Request->new('GET', $uri.$res->header('Location'));
     $res = $ua->request($req);
-    ok($res->code == 200, "fetch profile fee with existing implicit zone");
+    is($res->code, 200, "fetch profile fee with existing implicit zone");
     my $z_fee = JSON::from_json($res->decoded_content);
     ok(exists $z_fee->{billing_zone_id} && $z_fee->{billing_zone_id} == $billing_zone_id, "check if implicit zone returns the correct zone id");
     
     $req = HTTP::Request->new('DELETE', $uri.$z_fee->{_links}->{'self'}->{href});
     $res = $ua->request($req);
-    ok($res->code == 204, "delete fee of existing implicit zone");
+    is($res->code, 204, "delete fee of existing implicit zone");
 
     # try to create fee with implicit zone which doesn't exist yet
     my $t = time;
@@ -301,20 +301,20 @@ my @allfees = ();
         offpeak_follow_interval => 30,
     }));
     $res = $ua->request($req);
-    ok($res->code == 201, "create profile fee with new implicit zone");
+    is($res->code, 201, "create profile fee with new implicit zone");
     $req = HTTP::Request->new('GET', $uri.$res->header('Location'));
     $res = $ua->request($req);
-    ok($res->code == 200, "fetch profile fee with new implicit zone");
+    is($res->code, 200, "fetch profile fee with new implicit zone");
     $z_fee = JSON::from_json($res->decoded_content);
     ok(exists $z_fee->{billing_zone_id} && $z_fee->{billing_zone_id} > $billing_zone_id, "check if implicit zone returns a new zone id");
 
     $req = HTTP::Request->new('DELETE', $uri.$z_fee->{_links}->{'ngcp:billingzones'}->{href});
     $res = $ua->request($req);
-    ok($res->code == 204, "delete new implicit zone");
+    is($res->code, 204, "delete new implicit zone");
 
     $req = HTTP::Request->new('GET', $uri.$z_fee->{_links}->{'self'}->{href});
     $res = $ua->request($req);
-    ok($res->code == 404, "check if fee is deleted when zone is deleted");
+    is($res->code, 404, "check if fee is deleted when zone is deleted");
 }
 
 
@@ -323,7 +323,7 @@ my @allfees = ();
 {
     $req = HTTP::Request->new('OPTIONS', $uri.'/'.$firstfee);
     $res = $ua->request($req);
-    ok($res->code == 200, "check options on item");
+    is($res->code, 200, "check options on item");
     my @hopts = split /\s*,\s*/, $res->header('Allow');
     my $opts = JSON::from_json($res->decoded_content);
     ok(exists $opts->{methods} && ref $opts->{methods} eq "ARRAY", "check for valid 'methods' in body");
@@ -338,7 +338,7 @@ my @allfees = ();
 
     $req = HTTP::Request->new('GET', $uri.'/'.$firstfee);
     $res = $ua->request($req);
-    ok($res->code == 200, "fetch one fee item");
+    is($res->code, 200, "fetch one fee item");
     my $fee = JSON::from_json($res->decoded_content);
     ok(exists $fee->{billing_profile_id} && $fee->{billing_profile_id} == $billing_profile_id, "check existence of billing_profile_id");
     ok(exists $fee->{billing_zone_id} && $fee->{billing_zone_id} == $billing_zone_id, "check existence of billing_zone_id");
@@ -351,43 +351,37 @@ my @allfees = ();
     delete $fee->{_links};
     delete $fee->{_embedded};
     $req = HTTP::Request->new('PUT', $uri.'/'.$firstfee);
-    
+
     # check if it fails without content type
     $req->remove_header('Content-Type');
     $req->header('Prefer' => "return=minimal");
     $res = $ua->request($req);
-    ok($res->code == 415, "check put missing content type");
+    is($res->code, 415, "check put missing content type");
 
     # check if it fails with unsupported content type
     $req->header('Content-Type' => 'application/xxx');
     $res = $ua->request($req);
-    ok($res->code == 415, "check put invalid content type");
+    is($res->code, 415, "check put invalid content type");
 
     $req->remove_header('Content-Type');
     $req->header('Content-Type' => 'application/json');
 
-    # check if it fails with missing Prefer
-    $req->remove_header('Prefer');
-    $res = $ua->request($req);
-    ok($res->code == 400, "check put missing prefer");
-
     # check if it fails with invalid Prefer
     $req->header('Prefer' => "return=invalid");
     $res = $ua->request($req);
-    ok($res->code == 400, "check put invalid prefer");
-
+    is($res->code, 400, "check put invalid prefer");
 
     $req->remove_header('Prefer');
     $req->header('Prefer' => "return=representation");
 
     # check if it fails with missing body
     $res = $ua->request($req);
-    ok($res->code == 400, "check put no body");
+    is($res->code, 400, "check put no body");
 
     # check if put is ok
     $req->content(JSON::to_json($fee));
     $res = $ua->request($req);
-    ok($res->code == 200, "check put successful");
+    is($res->code, 200, "check put successful");
 
     my $new_fee = JSON::from_json($res->decoded_content);
     is_deeply($old_fee, $new_fee, "check put if unmodified put returns the same");
@@ -403,7 +397,7 @@ my @allfees = ();
         [ { op => 'replace', path => '/direction', value => 'in' } ]
     ));
     $res = $ua->request($req);
-    ok($res->code == 200, "check patched fee item");
+    is($res->code, 200, "check patched fee item");
     my $mod_fee = JSON::from_json($res->decoded_content);
     ok($mod_fee->{direction} eq "in", "check patched replace op");
     ok($mod_fee->{_links}->{self}->{href} eq $firstfee, "check patched self link");
@@ -413,25 +407,25 @@ my @allfees = ();
         [ { op => 'replace', path => '/billing_profile_id', value => undef } ]
     ));
     $res = $ua->request($req);
-    ok($res->code == 422, "check patched undef billing_profile_id");
+    is($res->code, 422, "check patched undef billing_profile_id");
 
     $req->content(JSON::to_json(
         [ { op => 'replace', path => '/billing_profile_id', value => 99999 } ]
     ));
     $res = $ua->request($req);
-    ok($res->code == 422, "check patched invalid billing_profile_id");
+    is($res->code, 422, "check patched invalid billing_profile_id");
 
     $req->content(JSON::to_json(
         [ { op => 'replace', path => '/billing_zone_id', value => undef } ]
     ));
     $res = $ua->request($req);
-    ok($res->code == 422, "check patched undef billing_zone_id");
+    is($res->code, 422, "check patched undef billing_zone_id");
 
     $req->content(JSON::to_json(
         [ { op => 'replace', path => '/billing_zone_id', value => 99999 } ]
     ));
     $res = $ua->request($req);
-    ok($res->code == 422, "check patched invalid billing_zone_id");
+    is($res->code, 422, "check patched invalid billing_zone_id");
 }
 
 {
@@ -439,20 +433,20 @@ my @allfees = ();
     foreach my $f(@allfees) {
         $req = HTTP::Request->new('DELETE', $uri.'/'.$f);
         $res = $ua->request($req);
-        ok($res->code == 204, "check delete of fee");
+        is($res->code, 204, "check delete of fee");
         $ff = $f unless $ff;
     }
     $req = HTTP::Request->new('GET', $uri.'/'.$ff);
     $res = $ua->request($req);
-    ok($res->code == 404, "check if deleted fee is really gone");
+    is($res->code, 404, "check if deleted fee is really gone");
 
     $req = HTTP::Request->new('DELETE', $uri.'/api/billingzones/'.$billing_zone_id);
     $res = $ua->request($req);
-    ok($res->code == 204, "check delete of zone");
+    is($res->code, 204, "check delete of zone");
 
     $req = HTTP::Request->new('GET', $uri.'/api/billingzones/'.$billing_zone_id);
     $res = $ua->request($req);
-    ok($res->code == 404, "check if deleted zone is really gone");
+    is($res->code, 404, "check if deleted zone is really gone");
 }
 
 done_testing;
