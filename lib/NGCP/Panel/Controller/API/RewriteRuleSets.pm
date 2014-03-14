@@ -184,6 +184,8 @@ sub POST :Allow {
             last;
         }
 
+        my $rewriterules = $resource->{rewriterules};
+
         my $form = $self->get_form($c);
         last unless $self->validate_form(
             c => $c,
@@ -207,6 +209,32 @@ sub POST :Allow {
             $c->log->error("failed to create rewriteruleset: $e"); # TODO: user, message, trace, ...
             $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "Failed to create rewriteruleset.");
             last;
+        }
+
+        if ($rewriterules) {
+            my $i = 30;
+            if (ref($rewriterules) ne "ARRAY") {
+                $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "rewriterules must be an array.");
+            }
+            for my $rule (@{ $rewriterules }) {
+                use DDP; p $rule;
+                my $rule_form = $self->get_form($c, "rules");
+                last unless $self->validate_form(
+                    c => $c,
+                    resource => $rule,
+                    form => $rule_form,
+                );
+                try {
+                    $ruleset->voip_rewrite_rules->create({
+                        %{ $rule },
+                        priority => $i++,
+                    });
+                } catch($e) {
+                    $c->log->error("failed to create rewriterules: $e"); # TODO: user, message, trace, ...
+                    $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "Failed to create rewrite rules.");
+                    last;
+                }
+            }
         }
 
         $guard->commit;

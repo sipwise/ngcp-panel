@@ -102,7 +102,7 @@ sub PATCH :Allow {
 
         my $ruleset = $self->item_by_id($c, $id, "rulesets");
         last unless $self->resource_exists($c, ruleset => $ruleset);
-        my $old_resource = { $ruleset->get_inflated_columns };
+        my $old_resource = $self->hal_from_item($c, $ruleset, "rewriterulesets")->resource;
         my $resource = $self->apply_patch($c, $old_resource, $json);
         last unless $resource;
 
