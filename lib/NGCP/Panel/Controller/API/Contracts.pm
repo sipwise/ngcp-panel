@@ -23,7 +23,6 @@ class_has 'api_description' => (
         'Defines a billing container for peerings and resellers. A <a href="#billingprofiles">Billing Profile</a> is assigned to a contract, and it has <a href="#contractbalances">Contract Balances</a> indicating the saldo of the contract for current and past billing intervals.'
 );
 
-with 'NGCP::Panel::Role::API';
 with 'NGCP::Panel::Role::API::Contracts';
 
 class_has('resource_name', is => 'ro', default => 'contracts');
@@ -56,16 +55,7 @@ sub GET :Allow {
     my $page = $c->request->params->{page} // 1;
     my $rows = $c->request->params->{rows} // 10;
     {
-        my $contracts = NGCP::Panel::Utils::Contract::get_contract_rs(
-            schema => $c->model('DB'),
-        );
-        $contracts = $contracts->search({
-                'contact.reseller_id' => undef 
-            },{
-                join => 'contact',
-                '+select' => 'billing_mappings.id',
-                '+as' => 'bmid',
-            });
+        my $contracts = $self->item_rs($c);
         my $total_count = int($contracts->count);
         $contracts = $contracts->search(undef, {
             page => $page,

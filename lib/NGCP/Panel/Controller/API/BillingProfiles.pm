@@ -22,7 +22,6 @@ class_has 'api_description' => (
         'Defines a collection of <a href="#billingfees">Billing Fees</a> and <a href="#billingzones">Billing Zones</a> and can be assigned to <a href="#customers">Customers</a> and <a href="#contracts">System Contracts</a>.'
 );
 
-with 'NGCP::Panel::Role::API';
 with 'NGCP::Panel::Role::API::BillingProfiles';
 
 class_has('resource_name', is => 'ro', default => 'billingprofiles');
@@ -55,13 +54,7 @@ sub GET :Allow {
     my $page = $c->request->params->{page} // 1;
     my $rows = $c->request->params->{rows} // 10;
     {
-        my $profiles = $c->model('DB')->resultset('billing_profiles');
-        if($c->user->roles eq "admin") {
-        } elsif($c->user->roles eq "reseller") {
-            $profiles = $profiles->search({ reseller_id => $c->user->reseller_id });
-        } else {
-            $profiles = $profiles->search({ reseller_id => $c->user->contract->contact->reseller_id});
-        }
+        my $profiles = $self->item_rs($c);
         my $total_count = int($profiles->count);
         $profiles = $profiles->search(undef, {
             page => $page,

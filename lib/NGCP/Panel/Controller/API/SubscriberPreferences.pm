@@ -23,7 +23,6 @@ class_has 'api_description' => (
         'Specifies certain properties (preferences) for a <a href="#subscribers">Subscriber</a>. The full list of properties can be obtained via <a href="/api/subscriberpreferencedefs/">SubscriberPreferenceDefs</a>.'
 );
 
-with 'NGCP::Panel::Role::API';
 with 'NGCP::Panel::Role::API::Preferences';
 
 class_has('resource_name', is => 'ro', default => 'subscriberpreferences');

@@ -1,6 +1,7 @@
 package NGCP::Panel::Role::API::Customers;
 use Moose::Role;
 use Sipwise::Base;
+with 'NGCP::Panel::Role::API';
 
 use boolean qw(true);
 use TryCatch;
@@ -11,6 +12,37 @@ use NGCP::Panel::Utils::DateTime;
 use NGCP::Panel::Utils::Contract;
 use NGCP::Panel::Utils::Preferences;
 use NGCP::Panel::Form::Contract::ProductSelect qw();
+
+sub item_rs {
+    my ($self, $c) = @_;
+
+    my $item_rs = NGCP::Panel::Utils::Contract::get_contract_rs(
+        schema => $c->model('DB'),
+    );
+    $item_rs = $item_rs->search({
+            'contact.reseller_id' => { '-not' => undef },
+        },{
+            join => 'contact',
+        });
+    $item_rs = $item_rs->search({
+                '-or' => [
+                    'product.class' => 'sipaccount',
+                    'product.class' => 'pbxaccount',
+                ],
+            },{
+                join => {'billing_mappings' => 'product' },
+                '+select' => 'billing_mappings.id',
+                '+as' => 'bmid',
+            });
+    if($c->user->roles eq "admin") {
+    } elsif($c->user->roles eq "reseller") {
+        $item_rs = $item_rs->search({
+            'contact.reseller_id' => $c->user->reseller_id,
+        });
+    }
+
+    return $item_rs;
+}
 
 sub get_form {
     my ($self, $c) = @_;
@@ -88,35 +120,7 @@ sub hal_from_customer {
 sub customer_by_id {
     my ($self, $c, $id) = @_;
 
-    # we only return customers, that is, contracts with contacts with a
-    # reseller
-    my $customers = NGCP::Panel::Utils::Contract::get_contract_rs(
-        schema => $c->model('DB'),
-    );
-    $customers = $customers->search({
-            'contact.reseller_id' => { '-not' => undef },
-        },{
-            join => 'contact'
-        });
-
-    $customers = $customers->search({
-            '-or' => [
-                'product.class' => 'sipaccount',
-                'product.class' => 'pbxaccount',
-            ],
-        },{
-            join => {'billing_mappings' => 'product' },
-            '+select' => 'billing_mappings.id',
-            '+as' => 'bmid',
-        });
-
-    if($c->user->roles eq "admin") {
-    } elsif($c->user->roles eq "reseller") {
-        $customers = $customers->search({
-            'contact.reseller_id' => $c->user->reseller_id,
-        });
-    } 
-
+    my $customers = $self->item_rs($c);
     return $customers->find($id);
 }
 

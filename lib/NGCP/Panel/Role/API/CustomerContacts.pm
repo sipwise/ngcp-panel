@@ -1,6 +1,7 @@
 package NGCP::Panel::Role::API::CustomerContacts;
 use Moose::Role;
 use Sipwise::Base;
+with 'NGCP::Panel::Role::API';
 
 use boolean qw(true);
 use TryCatch;
@@ -9,6 +10,24 @@ use Data::HAL::Link qw();
 use HTTP::Status qw(:constants);
 use NGCP::Panel::Form::Contact::Admin;
 use NGCP::Panel::Form::Contact::Reseller;
+
+sub item_rs {
+    my ($self, $c) = @_;
+
+    my $item_rs = $c->model('DB')->resultset('contacts')
+        ->search({ reseller_id => { '-not' => undef } });
+    if($c->user->roles eq "admin") {
+    } elsif($c->user->roles eq "reseller") {
+        $item_rs = $item_rs->search({
+            reseller_id => $c->user->reseller_id,
+        });
+    } else {
+        $item_rs = $item_rs->search({
+            reseller_id => $c->user->contract->contact->reseller_id,
+        });
+    }
+    return $item_rs;
+}
 
 sub get_form {
     my ($self, $c) = @_;
@@ -54,9 +73,7 @@ sub hal_from_contact {
 sub contact_by_id {
     my ($self, $c, $id) = @_;
 
-    # we only return system contacts, that is, a contact without reseller
-    my $contact_rs = $c->model('DB')->resultset('contacts')
-        ->search({ reseller_id => {'-not' => undef } });
+    my $contact_rs = $self->item_rs($c);
     return $contact_rs->find($id);
 }
 

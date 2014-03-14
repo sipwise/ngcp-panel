@@ -1,6 +1,7 @@
 package NGCP::Panel::Role::API::BillingFees;
 use Moose::Role;
 use Sipwise::Base;
+with 'NGCP::Panel::Role::API';
 
 use boolean qw(true);
 use TryCatch;
@@ -10,6 +11,27 @@ use HTTP::Status qw(:constants);
 use NGCP::Panel::Utils::DateTime;
 use NGCP::Panel::Utils::Contract;
 use NGCP::Panel::Form::BillingFee qw();
+
+sub item_rs {
+    my ($self, $c) = @_;
+
+    my $item_rs = $c->model('DB')->resultset('billing_fees');
+    if($c->user->roles eq "admin") {
+    } elsif($c->user->roles eq "reseller") {
+        $item_rs = $item_rs->search({
+            'billing_profile.reseller_id' => $c->user->reseller_id
+        }, {
+            join => 'billing_profile',
+        });
+    } else {
+        $item_rs = $item_rs->search({
+            'billing_profile.reseller_id' => $c->user->contract->contact->reseller_id,
+        }, {
+            join => 'billing_profile',
+        });
+    }
+    return $item_rs;
+}
 
 sub get_form {
     my ($self, $c) = @_;
@@ -55,23 +77,8 @@ sub hal_from_fee {
 sub fee_by_id {
     my ($self, $c, $id) = @_;
 
-    my $fees = $c->model('DB')->resultset('billing_fees');
-    if($c->user->roles eq "admin") {
-    } elsif($c->user->roles eq "reseller") {
-        $fees = $fees->search({
-            'billing_profile.reseller_id' => $c->user->reseller_id,
-        }, {
-            join => 'billing_profile',
-        });
-    } else {
-        $fees = $fees->search({
-            'billing_profile.reseller_id' => $c->user->contract->contact->reseller_id,
-        }, {
-            join => 'billin_profile',
-        });
-    }
-
-    return $fees->find($id);
+    my $item_rs = $self->item_rs($c);
+    return $item_rs->find($id);
 }
 
 sub update_fee {

@@ -23,7 +23,6 @@ class_has 'api_description' => (
         'Defines a physical or legal person\'s address (postal and/or email) to be used to identify <a href="#customers">Customers</a>.'
 );
 
-with 'NGCP::Panel::Role::API';
 with 'NGCP::Panel::Role::API::CustomerContacts';
 
 class_has('resource_name', is => 'ro', default => 'customercontacts');
@@ -56,8 +55,7 @@ sub GET :Allow {
     my $page = $c->request->params->{page} // 1;
     my $rows = $c->request->params->{rows} // 10;
     {
-        my $contacts = $c->model('DB')->resultset('contacts')
-            ->search({ reseller_id => { '-not' => undef } });
+        my $contacts = $self->item_rs($c);
         my $total_count = int($contacts->count);
         $contacts = $contacts->search(undef, {
             page => $page,

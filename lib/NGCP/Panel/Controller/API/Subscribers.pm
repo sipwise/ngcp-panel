@@ -26,7 +26,38 @@ class_has 'api_description' => (
         'Defines an actual user who can log into the web panel, register devices via SIP and/or XMPP and place and receive calls via SIP. A subscriber always belongs to a <a href="#customers">Customer</a> and is placed inside a <a href="#domains">Domain</a>.'
 );
 
-with 'NGCP::Panel::Role::API';
+class_has 'query_params' => (
+    is => 'ro',
+    isa => 'ArrayRef',
+    default => sub {[
+        {
+            param => 'username',
+            description => 'Search for specific SIP username',
+            query => {
+                first => sub {
+                    my $q = shift;
+                    return { username => { like => $q } };
+                },
+                second => sub {},
+            }
+        },
+        {
+            param => 'domain',
+            description => 'Filter for subscribers in specific domain',
+            query => {
+                first => sub {
+                    my $q = shift;
+                    return { 'domain.domain' => { like => $q } };
+                },
+                second => sub {
+                    my $q = shift;
+                    return { 'join' => 'domain' };
+                }
+            }
+        },
+    ]},
+);
+
 with 'NGCP::Panel::Role::API::Subscribers';
 
 class_has('resource_name', is => 'ro', default => 'subscribers');

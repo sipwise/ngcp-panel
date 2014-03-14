@@ -61,11 +61,17 @@ sub GET : Allow {
             next unless $role eq $c->user->roles;
         }
 
+        my $query_params = [];
+        if($full_mod->can('query_params')) {
+            $query_params = $full_mod->query_params;
+        }
+
         my $form = $full_mod->get_form($c);
         $c->stash->{collections}->{$rel} = { 
             name => $mod, 
             description => $full_mod->api_description,
             fields => $form ? $self->get_collection_properties($form) : [],
+            query_params => $query_params,
         };
     }
 

@@ -1,6 +1,7 @@
 package NGCP::Panel::Role::API::Domains;
 use Moose::Role;
 use Sipwise::Base;
+with 'NGCP::Panel::Role::API';
 
 use boolean qw(true);
 use TryCatch;

@@ -1,6 +1,7 @@
 package NGCP::Panel::Role::API::Subscribers;
 use Moose::Role;
 use Sipwise::Base;
+with 'NGCP::Panel::Role::API';
 
 use boolean qw(true);
 use TryCatch;
@@ -116,6 +117,7 @@ sub item_rs {
             join => { 'contract' => 'contact' },
         });
     }
+
     return $item_rs;
 }
 

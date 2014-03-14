@@ -22,7 +22,24 @@ class_has 'api_description' => (
         'Specifies the fees to be applied for a call if it matches the source or destination number of the call.'
 );
 
-with 'NGCP::Panel::Role::API';
+class_has 'query_params' => (
+    is => 'ro',
+    isa => 'ArrayRef',
+    default => sub {[
+        {
+            param => 'billing_profile_id',
+            description => 'Filter for fees belonging to a specific billing profile',
+            query => {
+                first => sub {
+                    my $q = shift;
+                    { billing_profile_id => $q };
+                },
+                second => sub {},
+            },
+        },
+    ]},
+);
+
 with 'NGCP::Panel::Role::API::BillingFees';
 
 class_has('resource_name', is => 'ro', default => 'billingfees');
@@ -55,27 +72,7 @@ sub GET :Allow {
     my $page = $c->request->params->{page} // 1;
     my $rows = $c->request->params->{rows} // 10;
     {
-        my $fees = $c->model('DB')->resultset('billing_fees');
-        if($c->request->query_parameters->{billing_profile_id}) {
-            $fees = $fees->search({ 
-                billing_profile_id => $c->request->query_parameters->{billing_profile_id},
-            });
-        };
-
-        if($c->user->roles eq "admin") {
-        } elsif($c->user->roles eq "reseller") {
-            $fees = $fees->search({ 
-                'billing_profile.reseller_id' => $c->user->reseller_id 
-            }, {
-                join => 'billing_profile',
-            });
-        } else {
-            $fees = $fees->search({ 
-                'billing_profile.reseller_id' => $c->user->contract->contact->reseller_id,
-            }, {
-                join => 'billing_profile',
-            });
-        }
+        my $fees = $self->item_rs($c);
         my $total_count = int($fees->count);
         $fees = $fees->search(undef, {
             page => $page,
