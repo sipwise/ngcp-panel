@@ -1091,7 +1091,7 @@ sub dev_static_jitsi_config :Chained('/') :PathPart('device/autoprov/static/jits
     my $xmppacc = 'accxmppngcp'.$user.$domain;
     $sipacc =~ s/[^a-zA-Z0-9]//g;
     $xmppacc =~ s/[^a-zA-Z0-9]//g;
-    my $provserver = 'https://' . $c->req->uri->host . ':' . $c->req->uri->port .
+    my $provserver = 'https\://' . $c->req->uri->host . '\:' . $c->req->uri->port .
             '/device/autoprov/static/jitsi';
     my $server_ip;
     if(defined $c->config->{sip}->{lb}) {
@@ -1112,9 +1112,10 @@ sub dev_static_jitsi_config :Chained('/') :PathPart('device/autoprov/static/jits
     $c->log->info("jitsiprov gathered required information, sipacc=$sipacc, xmppacc=$xmppacc");
 
     my $config = <<"EOF";
-net.java.sip.communicator.plugin.provisioning.URL=$provserver?user\=\${username}&pass\=\${password}&uuid\=\${uuid}
+net.java.sip.communicator.plugin.provisioning.METHOD=Manual
+net.java.sip.communicator.plugin.provisioning.URL=$provserver?user\\=\${username}&pass\\=\${password}&uuid\\=\${uuid}
 net.java.sip.communicator.impl.protocol.sip.$sipacc=$sipacc
-net.java.sip.communicator.impl.protocol.sip.$sipacc.ACCOUNT_UID=SIP\:$user\@$domain
+net.java.sip.communicator.impl.protocol.sip.$sipacc.ACCOUNT_UID=SIP\\:$user\@$domain
 net.java.sip.communicator.impl.protocol.sip.$sipacc.DEFAULT_ENCRYPTION=true
 net.java.sip.communicator.impl.protocol.sip.$sipacc.DEFAULT_SIPZRTP_ATTRIBUTE=true
 net.java.sip.communicator.impl.protocol.sip.$sipacc.DTMF_METHOD=AUTO_DTMF
@@ -1123,7 +1124,7 @@ net.java.sip.communicator.impl.protocol.sip.$sipacc.PASSWORD=$pass
 net.java.sip.communicator.impl.protocol.sip.$sipacc.ENCRYPTION_PROTOCOL.ENCRYPTION_PROTOCOL.ZRTP=0
 net.java.sip.communicator.impl.protocol.sip.$sipacc.ENCRYPTION_PROTOCOL_STATUS.ENCRYPTION_PROTOCOL_STATUS.ZRTP=true
 net.java.sip.communicator.impl.protocol.sip.$sipacc.FORCE_P2P_MODE=false
-net.java.sip.communicator.impl.protocol.sip.$sipacc.VOICEMAIL_CHECK_URI=sip\:voicebox\@$domain
+net.java.sip.communicator.impl.protocol.sip.$sipacc.VOICEMAIL_CHECK_URI=sip\\:voicebox\@$domain
 net.java.sip.communicator.impl.protocol.sip.$sipacc.VOICEMAIL_URI=
 net.java.sip.communicator.impl.protocol.sip.$sipacc.IS_PRESENCE_ENABLED=false
 net.java.sip.communicator.impl.protocol.sip.$sipacc.KEEP_ALIVE_INTERVAL=25
@@ -1143,7 +1144,7 @@ net.java.sip.communicator.impl.protocol.sip.$sipacc.XCAP_ENABLE=false
 net.java.sip.communicator.impl.protocol.sip.$sipacc.XIVO_ENABLE=false
 net.java.sip.communicator.impl.protocol.sip.$sipacc.cusax.XMPP_ACCOUNT_ID=$xmppacc
 net.java.sip.communicator.impl.protocol.jabber.$xmppacc=$xmppacc
-net.java.sip.communicator.impl.protocol.jabber.$xmppacc.ACCOUNT_UID=Jabber\:$user\@$domain\@$domain
+net.java.sip.communicator.impl.protocol.jabber.$xmppacc.ACCOUNT_UID=Jabber\\:$user\@$domain\@$domain
 net.java.sip.communicator.impl.protocol.jabber.$xmppacc.ALLOW_NON_SECURE=false
 net.java.sip.communicator.impl.protocol.jabber.$xmppacc.AUTO_DISCOVER_JINGLE_NODES=true
 net.java.sip.communicator.impl.protocol.jabber.$xmppacc.AUTO_DISCOVER_STUN=true
