@@ -198,7 +198,7 @@ function handleSaveSvgData(data, error) {
     <div class="accordion-inner" style="overflow:auto; height: 300px;">
     [% IF write_access -%]
     <span>
-        <a class="btn btn-primary btn-large" href="[% c.uri_for_action('/customer/invoice', [contract.id]) %]" onclick="loadSvg('/svg/raw/default');void(0);">[% c.loc('Create invoice template')%] <i class="icon-edit"></i></a>
+        <a class="btn btn-primary btn-large" href="javascript:loadSvg('/svg/raw/default');void(0);">[% c.loc('Create invoice template')%] <i class="icon-edit"></i></a>
     </span>
     <div class="ngcp-separator"></div>
     [% END -%]
@@ -222,26 +222,26 @@ function handleSaveSvgData(data, error) {
                 <div class="sw_actions pull-right">
                     [% IF write_access -%]
                     <a class="btn btn-small btn-primary" 
-                       href="[% c.uri_for_action("/customer/invoice", [contract.id]) %]" onclick="loadSvg('/svg/raw/previewed');void(0);">
+                       href="javascript:loadSvg('/svg/raw/previewed');void(0);">
                         <i class="icon-edit"></i> [% c.loc('Edit previewed') %]
                     </a>
                     <a class="btn btn-small btn-primary" 
-                       href="[% c.uri_for_action("/customer/invoice", [contract.id]) %]" onclick="loadSvg('/svg/raw/saved');void(0);">
+                       href="javascript:loadSvg('/svg/raw/saved');void(0);">
                         <i class="icon-edit"></i> [% c.loc('Edit saved') %]
                     </a>
                     [%IF !template.is_active%]
                     <a class="btn btn-small btn-primary" 
-                       href="[% c.uri_for_action("/customer/invoice", [contract.id]) %]" onclick="makeDefault();void(0);">
+                       href="javascript:makeDefault();void(0);">
                         <i class="icon-edit"></i> [% c.loc('Make active') %]
                     </a>
                     [%END%]
                     [%END%]
                     <a class="btn btn-small btn-primary" 
-                       href="[% c.uri_for_action("/customer/invoice", [contract.id]) %]" onclick="loadSvg('/svg/raw/saved/zip');void(0);">
+                       href="javascript:loadSvg('/svg/raw/saved/zip');void(0);">
                         <i class="icon-edit"></i> [% c.loc('Download source') %]
                     </a>
                     <a class="btn btn-small btn-primary" 
-                       href="[% c.uri_for_action("/customer/invoice", [contract.id]) %]" onclick="loadSvg('/svg/parsed/saved/pdf');void(0);">
+                       href="javascript:loadSvg('/svg/parsed/saved/pdf');void(0);">
                         <i class="icon-edit"></i> [% c.loc('Download invoice') %]
                     </a>
                 </div>

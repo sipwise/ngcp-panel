@@ -55,7 +55,7 @@
 
     [% row = get_row(data, rowtype) %]
     [% IF tt_type == 'svg'  -%]
-        [% y_re = '(?s)(<(?:g)[^>]*\s+y\s?=.*?)(\d+)(.*)' -%]
+        [% y_re = '(?s)(<(?:text)[^>]*\s+y\s?=.*?)(\d+)(.*)' -%]
     [%END%]
     [% matches = row.match( y_re ) -%]
     [% IF matches.size > 0  -%]

@@ -4118,7 +4118,7 @@ this.svgToString = function(elem, indent) {
 		for (i = 0; i < indent; i++) {out.push(' ');}
 		if (elem.id === 'svgcontent') {
             //alert('QQQQQ');
-            //alert(svgroot.outerSvgTag);
+            //alert(svgroot.outerSvgTagStart);
             if( svgroot.outerSvgTagStart )
             {
                 out.push(svgroot.outerSvgTagStart);
@@ -4189,11 +4189,7 @@ this.svgToString = function(elem, indent) {
                         }
                     }
                 }
-            
-            
-            
             }
-
 		} else {
             out.push("<"); out.push(elem.nodeName);
 			// Skip empty defs
@@ -4238,7 +4234,9 @@ this.svgToString = function(elem, indent) {
 		}
 
 		if (elem.hasChildNodes()) {
-			out.push(">");
+            if( !( elem.id === 'svgcontent' && svgroot.outerSvgTagStart ) ){
+                out.push(">");
+            }
 			indent++;
 			var bOneLine = false;
 			
@@ -4284,7 +4282,9 @@ this.svgToString = function(elem, indent) {
                 out.push("</"); out.push(elem.nodeName); out.push(">");
             }
 		} else {
-			out.push("/>");
+            if( !( elem.id === 'svgcontent' && svgroot.outerSvgTagStart ) ){
+                out.push("/>");
+            }
 		}
 	}
 	return out.join('');
