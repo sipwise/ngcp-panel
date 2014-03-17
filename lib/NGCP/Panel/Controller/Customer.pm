@@ -812,13 +812,30 @@ sub edit_balance :Chained('base') :PathPart('balance/edit') :Args(0) {
     $c->stash(edit_flag => 1);
 }
 
-sub invoice :Chained('base') :PathPart('invoice') :CaptureArgs(0) {
+sub invoice_data :Chained('base') :PathPart('invoice') :CaptureArgs(0) {
     my ($self, $c) = @_;
-    $c->stash(template => 'customer/invoice.tt'); 
-}
+    $c->log->debug('invoice_data');
+    my $contract_id = $c->stash->{contract}->id;
+    my $stime = NGCP::Panel::Utils::DateTime::current_local()->truncate(to => 'month');
+    my $etime = $stime->clone->add(months => 1);
 
-sub invoice_template_list :Chained('invoice') :PathPart('') :CaptureArgs(0) {
+    #look, NGCP::Panel::Utils::Contract - it is kind of backend separation here
+    my $zonecalls_rs = NGCP::Panel::Utils::Contract::get_contract_calls_rs(
+        c => $c,
+        contract_id => $contract_id,
+        stime => $stime,
+        etime => $etime,
+    );
+    #FAKE FAKE FAKE FAKE
+    $zonecalls_rs = [$zonecalls_rs->all()];
+    my $i = 1;
+    $zonecalls_rs = [map{[$i++,$_]} (@$zonecalls_rs) x 21];
+    $c->stash(zonecalls_rs => $zonecalls_rs );
+}
+#method separated as some day 
+sub invoice_template_list :Chained('invoice_data') :PathPart('') :CaptureArgs(0) {
     my ($self, $c) = @_;
+    $c->log->debug('invoice_template_list');
     my($validator,$backend,$in,$out);
 
     #this is just copy-paste from method above
@@ -861,31 +878,14 @@ sub invoice_template_list :Chained('invoice') :PathPart('') :CaptureArgs(0) {
     #think about it more
     
     #$out->{invoice_template_list} = $backend->getCustomerInvoiceTemplateList( %$in );
-    $c->stash(invoice_template_list => $backend->getCustomerInvoiceTemplateList( %$in ) );
+    $c->stash( invoice_template_list => $backend->getCustomerInvoiceTemplateList( %$in )->all );
 }
-
-sub invoice_data :Chained('invoice_template_list') :PathPart('') :CaptureArgs(0) {
+sub invoice :Chained('invoice_template_list') :PathPart('') :Args(0) {
     my ($self, $c) = @_;
-    $c->log->debug('calls_list');
-    my $contract_id = $c->stash->{contract}->id;
-    my $stime = NGCP::Panel::Utils::DateTime::current_local()->truncate(to => 'month');
-    my $etime = $stime->clone->add(months => 1);
-
-    #look, NGCP::Panel::Utils::Contract - it is kind of backend separation here
-    my $zonecalls_rs = NGCP::Panel::Utils::Contract::get_contract_calls_rs(
-        c => $c,
-        contract_id => $contract_id,
-        stime => $stime,
-        etime => $etime,
-    );
-    #FAKE FAKE FAKE FAKE
-    $zonecalls_rs = [$zonecalls_rs->all()];
-    my $i = 1;
-    $zonecalls_rs = [map{[$i++,$_]} (@$zonecalls_rs) x 21];
-    $c->stash(zonecalls_rs => $zonecalls_rs );
+    $c->stash(template => 'customer/invoice.tt'); 
 }
 
-sub invoice_template :Chained('invoice_data') :PathPart('') :CaptureArgs(5) {
+sub invoice_template :Chained('invoice_data') :PathPart('template') :Args {
     my ($self, $c) = @_;
     #$c->log->debug($c->model('DB'));
     #return;
@@ -894,7 +894,7 @@ sub invoice_template :Chained('invoice_data') :PathPart('') :CaptureArgs(5) {
     
     #my $contract_id = $in->{contract_id} = ;
 
-    #no warnings 'uninitialized';
+    no warnings 'uninitialized';
 
     my($validator,$backend,$in,$out);
 
@@ -949,7 +949,8 @@ sub invoice_template :Chained('invoice_data') :PathPart('') :CaptureArgs(5) {
     }elsif($in->{tt_type} eq 'html'){
         $in->{tt_output_type} = 'html';
     }
-    
+    #use irka;
+    #use Data::Dumper;
     #irka::loglong(Dumper($in));
 
     #model logic

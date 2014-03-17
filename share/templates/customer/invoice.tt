@@ -1,19 +1,154 @@
 [% IF c.user.roles == "subscriber" || c.user.roles == "subscriberadmin" -%]
-    [% site_config.title = c.loc('Customer Calls') -%]
+    [% site_config.title = c.loc('Invoice template manager') -%]
 [% ELSE -%]
-    [% site_config.title = c.loc('Customer Calls for #[_1] ([_2])',contract.id, product.name) -%]
+    [% site_config.title = c.loc('Customer Invoice template for #[_1] ([_2])',contract.id, product.name) -%]
 [% END -%]
 
-[% BLOCK accordion_group_internal %]
-<div class="accordion-inner">
-    <table class="table table-bordered table-striped table-highlight table-hover">
-[% content %]
-    </table>
-</div>
+[% IF !c.user.read_only && (c.user.roles == 'admin' || c.user.roles == 'reseller') -%]
+[% write_access = 1 %]
 [%END%]
 
+
+<div class="row">
+    <span>
+        <a class="btn btn-primary btn-large" href="[% c.uri_for('/back') %]"><i class="icon-arrow-left"></i> [% c.loc('Back') %]</a>
+    </span>
+</div>
+<div class="ngcp-separator"></div>
+[% back_created = 1 -%]
+
+
 [% USE Dumper %]
-[% WRAPPER accordion_group_internal id="collapse_calls" title='Balance details' %]
+
+<script type="text/javascript" src="/js/libs/svg-edit/embedapi.js"></script>
+<script type="text/javascript">
+var svgCanvas = null;
+
+function init_embed() {
+    var frame = document.getElementById('svgedit');
+    svgCanvas = new embedded_svg_edit(frame);
+    
+    // Hide main button, as we will be controlling new/load/save etc from the host document
+    var doc;
+    doc = frame.contentDocument;
+    if (!doc)
+    {
+        doc = frame.contentWindow.document;
+    }
+    var mainButton = doc.getElementById('main_button');
+    mainButton.style.display = 'none';
+}
+
+function loadSvg(params) {
+    alert('[%- c.uri_for_action("/customer/invoice_template", [contract.id]) -%]'+params);
+    $.ajax({
+        url: '[%- c.uri_for_action("/customer/invoice_template", [contract.id]) -%]'+params,
+    }).done(function(svgParsedString){
+            //alert(httpResponse);
+            svgCanvas.setSvgString(svgParsedString);
+    });
+    //'/customer/[%contract.id%]/calls/svg'
+    //var svgexample = '<svg width="640" height="480" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns="http://www.w3.org/2000/svg"><g><title>Layer 1</title><rect stroke-width="5" stroke="#000000" fill="#FF0000" id="svg_1" height="35" width="51" y="35" x="32"/><ellipse ry="15" rx="24" stroke-width="5" stroke="#000000" fill="#0000ff" id="svg_2" cy="60" cx="66"/></g></svg>';
+    //svgCanvas.setSvgString(svgexample);
+}
+
+function showSvgParsed(){
+    svgCanvas.getSvgString()(handleShowSvgParsedData);
+}
+function handleShowSvgParsedData(svgString, error) {
+    if (error)
+    {
+        alert('error ' + error);
+    }
+    else
+    {
+        //alert('Congratulations. Your SVG string is back in the host page, do with it what you will\n\n' + data);
+        //alert(encodeURIComponent(data));
+        var q = '[%- c.uri_for_action("/customer/invoice_template", [contract.id]) -%]'+'/svg/parsed/previewed'; 
+        //alert(q);
+        //alert(data);
+        $.post( q, { template: svgString })
+        .done( function( svgParsedString ) {
+            //alert(svgParsedString);
+            var previewIframe = document.getElementById('svgpreview'); //new Image();
+            var previewDoc = previewIframe.contentWindow.document;
+            //if(previewIframe.contentDocument) { 
+            //  doc = previewIframe.contentDocument; 
+            //} else {
+            //  doc = previewIframe.contentWindow.document; 
+            //}
+            //previewIframe.contentWindow.document.body.innerHTML='<html></html>';
+            //alert(doc);
+            var pages = new Array();
+            pages = svgParsedString.match(/(<svg[\r\n\t\s\S\w\W]*?(?:\/svg>))/gi );
+            if(!pages){
+                pages = new Array();
+            }
+            alert('images='+previewDoc.images.length+';pages='+pages.length);
+            if(pages.length > 0 ){
+                previewIframe.src = '';
+                previewDoc.body.innerHTML = '<html><body>'+svgParsedString+'</body></html>';
+                alert(previewDoc.body.innerHTML);
+                /*
+                var i;
+                for( i = 0; i < previewDoc.images.length; i++ ){
+                    var img = previewDoc.images[i];
+                    img.parentElement.remove(img);
+                }
+                
+                for( i = 0; i < pages.length; i++ ){
+                    img = previewDoc.createElement('img');
+                    //alert(img);
+                    //img.width=215;
+                    //img.heith=297;
+                    img.src = "data:image/svg+xml," + encodeURIComponent(pages[i]);
+                }
+                alert('images='+previewDoc.images.length);
+                alert(previewDoc.body.innerHTML);
+                */
+            }else{
+                previewIframe.src = "data:image/svg+xml," + encodeURIComponent(svgParsedString);
+            }
+            //alert(img.outerHTML);
+            //alert(img.html());
+        });
+    }
+}
+
+function saveSvg() {			
+    svgCanvas.getSvgString()(handleSaveSvgData);
+}
+function handleSaveSvgData(data, error) {
+    if (error)
+    {
+        alert('error ' + error);
+    }
+    else
+    {
+        var q = '[%- c.uri_for_action("/customer/invoice_template", [contract.id]) -%]'+'/svg/parsed/saved'; 
+        //alert(q);
+        //alert(data);
+        //alert('Congratulations. Your SVG string is back in the host page, do with it what you will\n\n' + data);
+        //alert(encodeURIComponent(data));//works in ie
+        $.post( q, { template: encodeURIComponent(data) })
+        .done(function( httpResponse ) {
+
+        });
+    }			
+}
+</script>
+
+
+<div class="accordion" id="customer_invoice_template">
+
+<div class="accordion-group">
+    <div class="accordion-heading">
+        <a class="accordion-toggle" data-toggle="collapse" data-parent="#customer_invoice_template" href="#collapse_calls">[% c.loc('Invoice details') %]</a>
+    </div>
+    
+    <div class="accordion-body collapse" id="collapse_calls">
+    <div class="accordion-inner" style="overflow:auto; height: 300px;">
+    <table class="table table-bordered table-striped table-highlight table-hover">
     <thead>
         <tr>
             <th>[% c.loc('Zone') %]</th>
@@ -38,158 +173,99 @@
             <td><div class="pull-right">[% call.get_column('duration')|format('%.3f') %]</div></td>
             <td><div class="pull-right">[% call.get_column('free_time')|format('%d') %]</div></td>
             <td><div class="pull-right">[% money_format( call.get_column('cost') / 100 ) %]</div></td>
+        </tr>
+        [%END%]
+        <tr>
+            <td>[% c.loc('Total') %]</td>
+            <td><div class="pull-right">[% total_number %]</div></td>
+            <td><div class="pull-right">[% total_duration | format('%.3f') %]</div></td>
+            <td><div class="pull-right">[% total_free_time | format('%d')%]</div></td>
+            <td><div class="pull-right">[% money_format( total_cost / 100 ) %]</div></td>
+        </tr>
+    </tbody>
+    </table>
+    </div>
+    </div>
+</div>
+
+<span>
+
+<div class="accordion-group">
+    <div class="accordion-heading">
+        <a class="accordion-toggle" data-toggle="collapse" data-parent="#customer_invoice_template" href="#collapse_invoice_template_list">[% c.loc('Invoice Templates') %]</a>
+    </div>
+    <div class="accordion-body collapse" id="collapse_invoice_template_list">
+    <div class="accordion-inner" style="overflow:auto; height: 300px;">
+    [% IF write_access -%]
+    <span>
+        <a class="btn btn-primary btn-large" href="[% c.uri_for_action('/customer/invoice', [contract.id]) %]" onclick="loadSvg('/svg/raw/default');void(0);">[% c.loc('Create invoice template')%] <i class="icon-edit"></i></a>
+    </span>
+    <div class="ngcp-separator"></div>
+    [% END -%]
+    <table class="table table-bordered table-striped table-highlight table-hover">
+    <thead>
+        <tr>
+            <th>[% c.loc('Active') %]</th>
+            <th>[% c.loc('Type') %]</th>
+            <th>[%# c.loc('Name') %]</th>
+            <th class="ngcp-actions-column"></th>
+        </tr>
+    </thead>
+    <tbody>
+        [%# Dumper.dump_html(invoice_template_list.as_query)%]
+        [% FOR template IN invoice_template_list -%]
+        <tr class="sw_action_row">
+            <td>[% template.get_column('is_active') %]</td>
+            <td>[% template.get_column('type') %]</td>
+            <td>[%# template.get_column('name') %]</td>
             <td class="ngcp-actions-column">
                 <div class="sw_actions pull-right">
+                    [% IF write_access -%]
                     <a class="btn btn-small btn-primary" 
-                       href="[% c.uri_for_action("/customer/calls", [contract.id]) %]">
-                        <i class="icon-edit"></i> [% c.loc('Edit') %]
+                       href="[% c.uri_for_action("/customer/invoice", [contract.id]) %]" onclick="loadSvg('/svg/raw/previewed');void(0);">
+                        <i class="icon-edit"></i> [% c.loc('Edit previewed') %]
+                    </a>
+                    <a class="btn btn-small btn-primary" 
+                       href="[% c.uri_for_action("/customer/invoice", [contract.id]) %]" onclick="loadSvg('/svg/raw/saved');void(0);">
+                        <i class="icon-edit"></i> [% c.loc('Edit saved') %]
+                    </a>
+                    [%IF !template.is_active%]
+                    <a class="btn btn-small btn-primary" 
+                       href="[% c.uri_for_action("/customer/invoice", [contract.id]) %]" onclick="makeDefault();void(0);">
+                        <i class="icon-edit"></i> [% c.loc('Make active') %]
+                    </a>
+                    [%END%]
+                    [%END%]
+                    <a class="btn btn-small btn-primary" 
+                       href="[% c.uri_for_action("/customer/invoice", [contract.id]) %]" onclick="loadSvg('/svg/raw/saved/zip');void(0);">
+                        <i class="icon-edit"></i> [% c.loc('Download source') %]
+                    </a>
+                    <a class="btn btn-small btn-primary" 
+                       href="[% c.uri_for_action("/customer/invoice", [contract.id]) %]" onclick="loadSvg('/svg/parsed/saved/pdf');void(0);">
+                        <i class="icon-edit"></i> [% c.loc('Download invoice') %]
                     </a>
                 </div>
             </td>
         </tr>
         [%END%]
-        <tr>
-            <td>[% c.loc('Total') %]</td>
-            <td><div class="pull-right">[% total_number %]</td>
-            <td><div class="pull-right">[% total_duration | format('%.3f') %]</div</td>
-            <td><div class="pull-right">[% total_free_time | format('%d')%]</div</td>
-            <td><div class="pull-right">[% money_format( total_cost / 100 ) %]</div></td>
-            <td class="ngcp-actions-column">
-                <div class="sw_actions pull-right">
-                    <a class="btn btn-small btn-primary" 
-                       href="[% c.uri_for_action("/customer/calls", [contract.id]) %]">
-                        <i class="icon-edit"></i> [% c.loc('Edit') %]
-                    </a>
-                </div>
-            </td>
-        </tr>
     </tbody>
-[%END%]
+    </table>
 
-<script type="text/javascript" src="/js/libs/svg-edit/embedapi.js"></script>
-<script type="text/javascript" src="/js/background.js"></script>
-<script type="text/javascript">
-var svgCanvas = null;
-
-function init_embed() {
-    var frame = document.getElementById('svgedit');
-    svgCanvas = new embedded_svg_edit(frame);
-    
-    // Hide main button, as we will be controlling new/load/save etc from the host document
-    var doc;
-    doc = frame.contentDocument;
-    if (!doc)
-    {
-        doc = frame.contentWindow.document;
-    }
-    var mainButton = doc.getElementById('main_button');
-    mainButton.style.display = 'none';
-}
-
-function loadSvg(params) {
-    alert('[%- c.uri_for_action("/customer/calls_svg", [contract.id]) -%]'+params);
-    background( '[%- c.uri_for_action("/customer/calls_svg", [contract.id]) -%]'+params,'',
-        function(httpResponse){
-            //alert(httpResponse);
-            svgCanvas.setSvgString(httpResponse);
-        }
-    );
-    //'/customer/[%contract.id%]/calls/svg'
-    //var svgexample = '<svg width="640" height="480" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns="http://www.w3.org/2000/svg"><g><title>Layer 1</title><rect stroke-width="5" stroke="#000000" fill="#FF0000" id="svg_1" height="35" width="51" y="35" x="32"/><ellipse ry="15" rx="24" stroke-width="5" stroke="#000000" fill="#0000ff" id="svg_2" cy="60" cx="66"/></g></svg>';
-    //svgCanvas.setSvgString(svgexample);
-}
-
-function showSvgParsed(){
-    svgCanvas.getSvgString()(handleShowSvgParsedData);
-}
-function handleShowSvgParsedData(data, error) {
-    if (error)
-    {
-        alert('error ' + error);
-    }
-    else
-    {
-        //alert('Congratulations. Your SVG string is back in the host page, do with it what you will\n\n' + data);
-        //alert(encodeURIComponent(data));
-        var q = '[%- c.uri_for_action("/customer/calls_svg", [contract.id]) -%]'+'/svg/parsed/previewed'; 
-        //alert(q);
-        //alert(data);
-        background( q ,'template='+encodeURIComponent(data),
-            function(httpResponse){
-                //alert(httpResponse);
-                var previewIframe = document.getElementById('svgpreview'); //new Image();
-                
-                var previewDoc = previewIframe.contentWindow.document;
-                //if(previewIframe.contentDocument) { 
-                //  doc = previewIframe.contentDocument; 
-                //} else {
-                //  doc = previewIframe.contentWindow.document; 
-                //}
-                //previewIframe.contentWindow.document.body.innerHTML='<html></html>';
-                //alert(doc);
-                
-                
-                var pages = new Array();
-                pages = httpResponse.match(/(<svg[\r\n\t\s\S\w\W]*?(?:\/svg>))/gi );
-                if(!pages){
-                    pages = new Array();
-                }
-                alert('images='+previewDoc.images.length+';pages='+pages.length);
-                if(pages.length > 0 ){
-                    previewIframe.src = '';
-                    previewDoc.body.innerHTML = '<html><body>'+httpResponse+'</body></html>';
-                    alert(previewDoc.body.innerHTML);
-                    /*
-                    var i;
-                    for( i = 0; i < previewDoc.images.length; i++ ){
-                        var img = previewDoc.images[i];
-                        img.parentElement.remove(img);
-                    }
-                    
-                    for( i = 0; i < pages.length; i++ ){
-                        img = previewDoc.createElement('img');
-                        //alert(img);
-                        //img.width=215;
-                        //img.heith=297;
-                        img.src = "data:image/svg+xml," + encodeURIComponent(pages[i]);
-                    }
-                    alert('images='+previewDoc.images.length);
-                    alert(previewDoc.body.innerHTML);
-                    */
-                }else{
-                    previewIframe.src = "data:image/svg+xml," + encodeURIComponent(httpResponse);
-                }
-                //alert(img.outerHTML);
-                //alert(img.html());
-                
-            }
-        );
-    }			
-}
-
-function saveSvg() {			
-    svgCanvas.getSvgString()(handleSvgData);
-}
-function handleSaveSvgData(data, error) {
-    if (error)
-    {
-        alert('error ' + error);
-    }
-    else
-    {
-        //alert('Congratulations. Your SVG string is back in the host page, do with it what you will\n\n' + data);
-        //alert(encodeURIComponent(data));//works in ie
-        background('[%- c.uri_for_action("/customer/calls_svg", [contract.id]) -%]'+'/svg/parsed/saved','template='+encodeURIComponent(data));
-    }			
-}
-</script>
-
-<button onclick="loadSvg('/svg/raw/default');">Load system default invoice template</button>
-<button onclick="loadSvg('/svg/raw/saved');">Load saved invoice template</button>
-<button onclick="loadSvg('/svg/raw/previewed');">Load previewed template</button>
 <button onclick="showSvgParsed();">Refresh Preview</button>
 <button onclick="saveSvg();">Save template</button>
+<!--upload css-->
+<!--name-->
 <br/>
 [%initial = 'saved'%]
-<iframe type="text/html" src="/js/libs/svg-edit/svg-editor.htm" width="600px" height="600px" id="svgedit" onload="init_embed();loadSvg('/svg/raw/[%- initial -%]');" class="display:inline;"></iframe><iframe src="[%- c.uri_for_action('/customer/calls_svg', [contract.id]) -%]/svg/parsed/[%- initial -%]" width="550px" height="600px" id="svgpreview" class="display:inline;"><canvas id="svgpreview_canvas" width="200" height="200"></canvas>
+<iframe type="text/html" src="/js/libs/svg-edit/svg-editor.htm" width="600px" height="600px" id="svgedit" onload="init_embed();loadSvg('/svg/raw/[%- initial -%]');" class="display:inline;"></iframe><iframe src="[%- c.uri_for_action('/customer/invoice_template', [contract.id]) -%]/svg/parsed/[%- initial -%]" width="550px" height="600px" id="svgpreview" class="display:inline;"><canvas id="svgpreview_canvas" width="200" height="200"></canvas>
+
+
+    </div>
+    </div>
+    </div>
+</span>
+
+</div>
+
+
 

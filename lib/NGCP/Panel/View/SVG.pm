@@ -56,7 +56,11 @@ sub getTemplateContent{
 }
 sub getTemplateProcessed{
     my ( $self, $c, $template, $stash ) = @_;
+    #$c->log->debug("getTemplateProcessed: template=$template;");
+    #my $result = $self->{template}->context->process($template, $stash);
+    #$c->log->debug("getTemplateProcessed: result=$result;");
     
+    #return $result
     return $self->{template}->context->process($template, $stash);
 }
 

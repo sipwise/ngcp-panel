@@ -56,14 +56,14 @@ has_field 'tt_string' => (
 );
 
 has_field 'contract_id' => (
-    type     => 'Number',
+    type     => 'Text',
     #default  => \&
     #apply    => [ { check => \&validate_tt_string } ],
     required => 1,
 );
 
 has_field 'tt_id' => (
-    type     => 'Number',
+    type     => 'Text',
     #default  => \&
     #apply    => [ { check => \&validate_tt_string } ],
     required => 0,

@@ -1,4 +1,4 @@
-<!--{[%PROCESS 'customer/calls_template.tt' -%]}-->
+<!--{[%PROCESS 'customer/invoice_template.tt' -%]}-->
 <!--{[%row_vertical_interval = 10 -%]}-->
 
 <!--{[%MACRO document_header BLOCK-%]}-->
@@ -578,18 +578,19 @@ g, text, tspan {
     fill:#000000;fill-opacity:1;fill-rule:nonzero;
     stroke:none;
     //font-family: impact, georgia, times, serif;
-    //font-family:HelveticaNeue;
     //font-family:Arial;
     //font-family:HelveticaNeue-Light;
     //font-weight:300;
     //-inkscape-font-specification:HelveticaNeue-Light;
-    */
     font-family:Times;
+    */
+    font-family:HelveticaNeue;
     font-variant:normal;
     font-size:2.6pt;
     writing-mode:lr;
-    color: #FF0000;
+    fill: #FF0000;
 }
+
 ]]>
 	</style>
 <!--pageSet-->
@@ -645,7 +646,9 @@ g, text, tspan {
             </text>
     <!--{[%END-%]}-->
     <!--{[%MACRO datarow(call) BLOCK-%]}-->
-            <text y="10" text-anchor="end" id="calls[%loop.count-%]" class="datarow">
+            <g y="10" text-anchor="end" id="calls[%loop.count-%]_group" class="datarow">
+            <rect width="200" height="10" stroke-width="0.05" stroke="#FF0000" fill="#CCCCCC" id="calls[%loop.count-%]_textborder"/>
+            <text text-anchor="end" id="calls[%loop.count-%]_text" class="datarow">
                 <tspan x="5" id="calls_number[%loop.count-%]" text-anchor="start"><!--{[% call.0 %]}--><!--{[%#}-->1<!--{%]}--></tspan>
                 <!--{[%IF call.1; call = call.1; END%]}-->
                 <tspan x="15" id="calls_zone[%loop.count-%]" text-anchor="start"><!--{[% call.get_column('zone') %]}--><!--{[%#}-->Example zone<!--{%]}--></tspan>
@@ -654,6 +657,7 @@ g, text, tspan {
                 <tspan x="160" id="calls_freetime[%loop.count-%]"><!--{[% call.get_column('free_time')|format('%d') %]}--><!--{[%#}-->0.0<!--{%]}--></tspan>
                 <tspan x="190" id="calls_cost[%loop.count-%]"><!--{[% ( call.get_column('cost') / 100 ) |format('%.2f') %]}--><!--{[%#}-->0.00<!--{%]}--></tspan>
             </text>
+            </g>
     <!--{[%END-%]}-->
     <!--{[%MACRO totalrow BLOCK-%]}-->
             <text y="20" text-anchor="end" id="calls_total" class="datarow">

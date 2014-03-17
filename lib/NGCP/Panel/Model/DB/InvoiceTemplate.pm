@@ -77,5 +77,12 @@ sub storeCustomerInvoiceTemplate{
         }
     });
 }
-
+sub getCustomerInvoiceTemplateList{
+    my $self = shift;
+    my (%params) = @_;
+    my ($contract_id,$tt_sourcestate,$tt_type, $tt_string, $tt_id) = @params{qw/contract_id tt_sourcestate tt_type tt_string_sanitized tt_id/};
+    return $self->schema->resultset('invoice_template')->search({
+        reseller_id => $contract_id,
+    });
+}
 1;
