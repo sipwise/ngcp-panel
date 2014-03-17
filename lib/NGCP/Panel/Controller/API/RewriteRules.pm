@@ -21,12 +21,40 @@ class_has 'api_description' => (
         'Defines a set of Rewrite Rules which are grouped in <a href="#rewriterulesets">Rewrite Rule Sets</a>. They can be used to alter incoming and outgoing numbers.',
 );
 
-with 'NGCP::Panel::Role::API';
 with 'NGCP::Panel::Role::API::RewriteRules';
 
 class_has('resource_name', is => 'ro', default => 'rewriterules');
 class_has('dispatch_path', is => 'ro', default => '/api/rewriterules/');
 class_has('relation', is => 'ro', default => 'http://purl.org/sipwise/ngcp-api/#rel-rewriterules');
+
+class_has 'query_params' => (
+    is => 'ro',
+    isa => 'ArrayRef',
+    default => sub {[
+        {
+            param => 'description',
+            description => 'Filter rules for a certain description (wildcards possible).',
+            query => {
+                first => sub {
+                    my $q = shift;
+                    return { description => { like => $q } };
+                },
+                second => sub {},
+            },
+        },
+        {
+            param => 'set_id',
+            description => 'Filter for rules belonging to a specific rewriteruleset.',
+            query => {
+                first => sub {
+                    my $q = shift;
+                    return { set_id => $q };
+                },
+                second => sub {},
+            },
+        },
+    ]},
+);
 
 __PACKAGE__->config(
     action => {
@@ -56,12 +84,6 @@ sub GET :Allow {
     my $rows = $c->request->params->{rows} // 10;
     {
         my $rules = $self->item_rs($c, "rules");
-
-        if($c->request->query_parameters->{set_id}) { #TODO: naming? document?
-            $rules = $rules->search({
-                set_id => $c->request->query_parameters->{set_id},
-            });
-        }
 
         my $total_count = int($rules->count);
         $rules = $rules->search(undef, {

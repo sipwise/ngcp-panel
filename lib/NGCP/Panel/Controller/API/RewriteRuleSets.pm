@@ -23,7 +23,46 @@ class_has 'api_description' => (
         'Defines a collection of <a href="#rewriterules">Rewrite Rules</a>.',
 );
 
-with 'NGCP::Panel::Role::API';
+class_has 'query_params' => (
+    is => 'ro',
+    isa => 'ArrayRef',
+    default => sub {[
+        {
+            param => 'reseller_id',
+            description => 'Filter for rewriterulesets belonging to a specific reseller',
+            query => {
+                first => sub {
+                    my $q = shift;
+                    { reseller_id => $q };
+                },
+                second => sub {},
+            },
+        },
+        {
+            param => 'description',
+            description => 'Filter rulesets for a certain description (wildcards possible).',
+            query => {
+                first => sub {
+                    my $q = shift;
+                    return { description => { like => $q } };
+                },
+                second => sub {},
+            },
+        },
+        {
+            param => 'name',
+            description => 'Filter rulesets for a certain name (wildcards possible).',
+            query => {
+                first => sub {
+                    my $q = shift;
+                    return { name => { like => $q } };
+                },
+                second => sub {},
+            },
+        },
+    ]},
+);
+
 with 'NGCP::Panel::Role::API::RewriteRuleSets';
 
 class_has('resource_name', is => 'ro', default => 'rewriterulesets');
