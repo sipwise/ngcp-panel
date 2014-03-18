@@ -2,26 +2,35 @@
 #USE Dumper;
 
 #we can't use DEFAULT directive - it treats false the same as undefined, which doesn't allow to keep default filled values and switch them off by customization
+MACRO clearHelper() BLOCK;
+    FOREACH identifier in [ 'messages', 'length_change', 'dt_columns', 'close_target', 'create_flag', 'form_object', 'ajax_uri' ];
+        helper.${identifier} = '';
+    END
+END;
 MACRO initHelper(var,value) BLOCK;
 #    Dumper.dump(helper);
-    UNLESS helper.${var}.defined; helper.${var} = value || ${var}; END;
+    identifier = "${helper.identifier}" _ "_" _ var;
+    UNLESS helper.${var}.defined; helper.${var} = helper.${var} || value || ${"${identifier}"} || ${var}; END;
 END;
-initHelper('messages');
-initHelper('length_change');
-initHelper('dt_columns', ${"${helper.identifier}_dt_columns"} );
-initHelper('close_target');
-initHelper('create_flag');
-initHelper('form_object',form);
-initHelper('ajax_uri', c.uri_for( c.controller.action_for('ajax') ));
-
-#here we can generate couple of variants, selection of proper variant will be exact view responsibility
-UNLESS c.user.read_only;
-    initHelper('dt_buttons',[
-        { name = c.loc('Edit'), uri = "/${helper.identifier}'+full[\"id\"]+'/edit", class = 'btn-small btn-primary', icon = 'icon-edit' },
-    ] );
-    initHelper('top_buttons',[
-        { name = c.loc("Create ${helper.name_single}"), uri = c.uri_for("/${helper.identifier}/create"), icon = 'icon-star' },
-    ] );
+MACRO initHelperAuto() BLOCK;
+    FOREACH identifier in [ 'messages', 'length_change', 'dt_columns', 'close_target', 'create_flag' ];
+        initHelper(identifier);
+    END
+    initHelper('form_object',form);
+    initHelper('ajax_uri', c.uri_for( c.controller.action_for('ajax') ));
 END;
 
+IF !no_auto_helper;
+    clearHelper();
+    initHelperAuto();
+    #here we can generate couple of variants, selection of proper variant will be exact view responsibility
+    UNLESS c.user.read_only;
+        initHelper('dt_buttons',[
+            { name = c.loc('Edit'), uri = "/${helper.identifier}'+full[\"id\"]+'/edit", class = 'btn-small btn-primary', icon = 'icon-edit' },
+        ] );
+        initHelper('top_buttons',[
+            { name = c.loc("Create ${helper.name_single}"), uri = c.uri_for("/${helper.identifier}/create"), icon = 'icon-star' },
+        ] );
+    END;
+END;
 -%]

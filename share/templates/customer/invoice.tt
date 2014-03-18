@@ -1,3 +1,9 @@
+[% USE Dumper %]
+
+[%PROCESS 'helpers/datatables_vars.tt'
+    no_auto_helper = 1 
+-%]
+
 [% IF c.user.roles == "subscriber" || c.user.roles == "subscriberadmin" -%]
     [% site_config.title = c.loc('Invoice template manager') -%]
 [% ELSE -%]
@@ -7,18 +13,6 @@
 [% IF !c.user.read_only && (c.user.roles == 'admin' || c.user.roles == 'reseller') -%]
 [% write_access = 1 %]
 [%END%]
-
-
-<div class="row">
-    <span>
-        <a class="btn btn-primary btn-large" href="[% c.uri_for('/back') %]"><i class="icon-arrow-left"></i> [% c.loc('Back') %]</a>
-    </span>
-</div>
-<div class="ngcp-separator"></div>
-[% back_created = 1 -%]
-
-
-[% USE Dumper %]
 
 <script type="text/javascript" src="/js/libs/svg-edit/embedapi.js"></script>
 <script type="text/javascript">
@@ -40,16 +34,12 @@ function init_embed() {
 }
 
 function loadSvg(params) {
-    alert('[%- c.uri_for_action("/customer/invoice_template", [contract.id]) -%]'+params);
+    //alert('[%- c.uri_for_action("/customer/invoice_template", [contract.id]) -%]'+params);
     $.ajax({
         url: '[%- c.uri_for_action("/customer/invoice_template", [contract.id]) -%]'+params,
     }).done(function(svgParsedString){
-            //alert(httpResponse);
             svgCanvas.setSvgString(svgParsedString);
     });
-    //'/customer/[%contract.id%]/calls/svg'
-    //var svgexample = '<svg width="640" height="480" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns="http://www.w3.org/2000/svg"><g><title>Layer 1</title><rect stroke-width="5" stroke="#000000" fill="#FF0000" id="svg_1" height="35" width="51" y="35" x="32"/><ellipse ry="15" rx="24" stroke-width="5" stroke="#000000" fill="#0000ff" id="svg_2" cy="60" cx="66"/></g></svg>';
-    //svgCanvas.setSvgString(svgexample);
 }
 
 function showSvgParsed(){
@@ -62,23 +52,11 @@ function handleShowSvgParsedData(svgString, error) {
     }
     else
     {
-        //alert('Congratulations. Your SVG string is back in the host page, do with it what you will\n\n' + data);
-        //alert(encodeURIComponent(data));
         var q = '[%- c.uri_for_action("/customer/invoice_template", [contract.id]) -%]'+'/svg/parsed/previewed'; 
-        //alert(q);
-        //alert(data);
         $.post( q, { template: svgString })
         .done( function( svgParsedString ) {
-            //alert(svgParsedString);
             var previewIframe = document.getElementById('svgpreview'); //new Image();
             var previewDoc = previewIframe.contentWindow.document;
-            //if(previewIframe.contentDocument) { 
-            //  doc = previewIframe.contentDocument; 
-            //} else {
-            //  doc = previewIframe.contentWindow.document; 
-            //}
-            //previewIframe.contentWindow.document.body.innerHTML='<html></html>';
-            //alert(doc);
             var pages = new Array();
             pages = svgParsedString.match(/(<svg[\r\n\t\s\S\w\W]*?(?:\/svg>))/gi );
             if(!pages){
@@ -89,28 +67,9 @@ function handleShowSvgParsedData(svgString, error) {
                 previewIframe.src = '';
                 previewDoc.body.innerHTML = '<html><body>'+svgParsedString+'</body></html>';
                 alert(previewDoc.body.innerHTML);
-                /*
-                var i;
-                for( i = 0; i < previewDoc.images.length; i++ ){
-                    var img = previewDoc.images[i];
-                    img.parentElement.remove(img);
-                }
-                
-                for( i = 0; i < pages.length; i++ ){
-                    img = previewDoc.createElement('img');
-                    //alert(img);
-                    //img.width=215;
-                    //img.heith=297;
-                    img.src = "data:image/svg+xml," + encodeURIComponent(pages[i]);
-                }
-                alert('images='+previewDoc.images.length);
-                alert(previewDoc.body.innerHTML);
-                */
             }else{
                 previewIframe.src = "data:image/svg+xml," + encodeURIComponent(svgParsedString);
             }
-            //alert(img.outerHTML);
-            //alert(img.html());
         });
     }
 }
@@ -126,10 +85,6 @@ function handleSaveSvgData(data, error) {
     else
     {
         var q = '[%- c.uri_for_action("/customer/invoice_template", [contract.id]) -%]'+'/svg/parsed/saved'; 
-        //alert(q);
-        //alert(data);
-        //alert('Congratulations. Your SVG string is back in the host page, do with it what you will\n\n' + data);
-        //alert(encodeURIComponent(data));//works in ie
         $.post( q, { template: encodeURIComponent(data) })
         .done(function( httpResponse ) {
 
@@ -138,6 +93,13 @@ function handleSaveSvgData(data, error) {
 }
 </script>
 
+<div class="row">
+    <span>
+        <a class="btn btn-primary btn-large" href="[% c.uri_for('/back') %]"><i class="icon-arrow-left"></i> [% c.loc('Back') %]</a>
+    </span>
+</div>
+<div class="ngcp-separator"></div>
+[% back_created = 1 -%]
 
 <div class="accordion" id="customer_invoice_template">
 
@@ -148,6 +110,17 @@ function handleSaveSvgData(data, error) {
     
     <div class="accordion-body collapse" id="collapse_calls">
     <div class="accordion-inner" style="overflow:auto; height: 300px;">
+    
+    
+[%
+    clearHelper();
+    helper.name = c.loc('Invoice Details');
+    helper.name_single = c.loc('Invoice Record');
+    helper.identifier = 'invoice_details';
+    initHelperAuto();
+    PROCESS 'helpers/datatables.tt';
+-%]
+    
     <table class="table table-bordered table-striped table-highlight table-hover">
     <thead>
         <tr>

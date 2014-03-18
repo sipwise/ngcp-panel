@@ -820,17 +820,17 @@ sub invoice_data :Chained('base') :PathPart('invoice') :CaptureArgs(0) {
     my $etime = $stime->clone->add(months => 1);
 
     #look, NGCP::Panel::Utils::Contract - it is kind of backend separation here
-    my $zonecalls_rs = NGCP::Panel::Utils::Contract::get_contract_calls_rs(
+    my $invoice_details = NGCP::Panel::Utils::Contract::get_contract_calls_rs(
         c => $c,
         contract_id => $contract_id,
         stime => $stime,
         etime => $etime,
     );
     #FAKE FAKE FAKE FAKE
-    $zonecalls_rs = [$zonecalls_rs->all()];
+    $invoice_details = [$invoice_details->all()];
     my $i = 1;
-    $zonecalls_rs = [map{[$i++,$_]} (@$zonecalls_rs) x 21];
-    $c->stash(zonecalls_rs => $zonecalls_rs );
+    $invoice_details = [map{[$i++,$_]} (@$invoice_details) x 21];
+    $c->stash(invoice_details => $invoice_details );
 }
 #method separated as some day 
 sub invoice_template_list :Chained('invoice_data') :PathPart('') :CaptureArgs(0) {
