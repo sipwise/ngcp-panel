@@ -22,7 +22,6 @@ class_has 'api_description' => (
         'Defines a reseller on the system. A reseller can manage his own <a href="#domains">Domains</a> and <a href="#customers">Customers</a>.'
 );
 
-with 'NGCP::Panel::Role::API';
 with 'NGCP::Panel::Role::API::Resellers';
 
 class_has('resource_name', is => 'ro', default => 'resellers');
@@ -55,7 +54,7 @@ sub GET :Allow {
     my $page = $c->request->params->{page} // 1;
     my $rows = $c->request->params->{rows} // 10;
     {
-        my $resellers = $c->model('DB')->resultset('resellers');
+        my $resellers = $self->item_rs($c);
         my $total_count = int($resellers->count);
         $resellers = $resellers->search(undef, {
             page => $page,

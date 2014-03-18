@@ -23,7 +23,6 @@ class_has 'api_description' => (
         'Specifies certain properties (preferences) for a <a href="#domains">Domain</a>. The full list of properties can be obtained via <a href="/api/domainpreferencedefs/">DomainPreferenceDefs</a>.'
 );
 
-with 'NGCP::Panel::Role::API';
 with 'NGCP::Panel::Role::API::Preferences';
 
 class_has('resource_name', is => 'ro', default => 'domainpreferences');

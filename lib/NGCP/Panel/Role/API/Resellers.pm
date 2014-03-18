@@ -1,6 +1,10 @@
 package NGCP::Panel::Role::API::Resellers;
 use Moose::Role;
 use Sipwise::Base;
+with 'NGCP::Panel::Role::API' => {
+    -alias       =>{ item_rs  => '_item_rs', },
+    -excludes    => [ 'item_rs' ],
+};
 
 use boolean qw(true);
 use TryCatch;
@@ -9,6 +13,14 @@ use Data::HAL::Link qw();
 use HTTP::Status qw(:constants);
 use NGCP::Panel::Utils::DateTime;
 use NGCP::Panel::Form::Reseller qw();
+
+sub item_rs {
+    my ($self, $c) = @_;
+
+    # no restriction needed, as only admins have access here?
+    my $item_rs = $c->model('DB')->resultset('resellers');
+    return $item_rs;
+}
 
 sub get_form {
     my ($self, $c) = @_;
@@ -62,8 +74,7 @@ sub hal_from_reseller {
 sub reseller_by_id {
     my ($self, $c, $id) = @_;
 
-    my $resellers = $c->model('DB')->resultset('resellers');
-    # no restriction needed, as only admins have access here?
+    my $resellers = $self->item_rs($c);
     return $resellers->find($id);
 }
 

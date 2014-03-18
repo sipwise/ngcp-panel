@@ -13,7 +13,6 @@ require Catalyst::ActionRole::ACL;
 require Catalyst::ActionRole::HTTPMethods;
 require Catalyst::ActionRole::RequireSSL;
 
-with 'NGCP::Panel::Role::API';
 with 'NGCP::Panel::Role::API::CustomerContacts';
 
 class_has('resource_name', is => 'ro', default => 'customercontacts');

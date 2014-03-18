@@ -23,7 +23,6 @@ class_has 'api_description' => (
         'Defines a billing container for end customers. Customers usually have one or more <a href="#subscribers">Subscribers</a>. A <a href="#billingprofiles">Billing Profile</a> is assigned to a customer, and it has <a href="#contractbalances">Contract Balances</a> indicating the saldo of the customer for current and past billing intervals.'
 );
 
-with 'NGCP::Panel::Role::API';
 with 'NGCP::Panel::Role::API::Customers';
 
 class_has('resource_name', is => 'ro', default => 'customers');
@@ -56,33 +55,7 @@ sub GET :Allow {
     my $page = $c->request->params->{page} // 1;
     my $rows = $c->request->params->{rows} // 10;
     {
-        my $customers = NGCP::Panel::Utils::Contract::get_contract_rs(
-            schema => $c->model('DB'),
-        );
-        $customers = $customers->search({
-                'contact.reseller_id' => { '-not' => undef },
-            },{
-                join => 'contact'
-            });
-
-        $customers = $customers->search({
-                '-or' => [
-                    'product.class' => 'sipaccount',
-                    'product.class' => 'pbxaccount',
-                ],
-            },{
-                join => {'billing_mappings' => 'product' },
-                '+select' => 'billing_mappings.id',
-                '+as' => 'bmid',
-            });
-
-        if($c->user->roles eq "admin") {
-        } elsif($c->user->roles eq "reseller") {
-            $customers = $customers->search({
-                'contact.reseller_id' => $c->user->reseller_id,
-            });
-        }
-
+        my $customers = $self->item_rs($c);
         my $total_count = int($customers->count);
         $customers = $customers->search(undef, {
             page => $page,

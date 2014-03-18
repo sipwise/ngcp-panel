@@ -1,6 +1,10 @@
 package NGCP::Panel::Role::API::BillingProfiles;
 use Moose::Role;
 use Sipwise::Base;
+with 'NGCP::Panel::Role::API' => {
+    -alias       =>{ item_rs  => '_item_rs', },
+    -excludes    => [ 'item_rs' ],
+};
 
 use boolean qw(true);
 use TryCatch;
@@ -11,6 +15,19 @@ use NGCP::Panel::Utils::DateTime;
 use NGCP::Panel::Utils::Contract;
 use NGCP::Panel::Utils::Preferences;
 use NGCP::Panel::Form::BillingProfile::Admin qw();
+
+sub item_rs {
+    my ($self, $c) = @_;
+
+    my $item_rs = $c->model('DB')->resultset('billing_profiles');
+    if($c->user->roles eq "admin") {
+    } elsif($c->user->roles eq "reseller") {
+        $item_rs = $item_rs->search({ reseller_id => $c->user->reseller_id });
+    } else {
+        $item_rs = $item_rs->search({ reseller_id => $c->user->contract->contact->reseller_id});
+    }
+    return $item_rs;
+}
 
 sub get_form {
     my ($self, $c) = @_;
@@ -59,18 +76,7 @@ sub hal_from_profile {
 sub profile_by_id {
     my ($self, $c, $id) = @_;
 
-    my $profiles = $c->model('DB')->resultset('billing_profiles');
-    if($c->user->roles eq "admin") {
-    } elsif($c->user->roles eq "reseller") {
-        $profiles = $profiles->search({
-            reseller_id => $c->user->reseller_id,
-        });
-    } else {
-        $profiles = $profiles->search({
-            reseller_id => $c->user->contract->contact->reseller_id,
-        });
-    }
-
+    my $profiles = $self->item_rs($c);
     return $profiles->find($id);
 }
 

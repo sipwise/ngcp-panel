@@ -1,6 +1,10 @@
 package NGCP::Panel::Role::API::RewriteRules;
 use Moose::Role;
 use Sipwise::Base;
+with 'NGCP::Panel::Role::API' => {
+    -alias       =>{ item_rs  => '_item_rs', },
+    -excludes    => [ 'item_rs' ],
+};
 
 use boolean qw(true);
 use TryCatch;

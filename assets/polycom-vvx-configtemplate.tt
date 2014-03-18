@@ -2,41 +2,63 @@
 	Bootstrap Sync URI:    http://[% client.ip %]/form-submit
 	Bootstrap Sync Method: POST
 	Bootstrap Sync Params: [4.1.4.7430] 447=2,445=[% server.uri %],264=2
+                         [4.1.6.4835] 470=2,468=[% server.uri %],259=2
                          [5.0.1.4068] 342=2,340=[% server.uri %],125=2
 -->
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <PHONE_CONFIG>
   <ALL
-[% shared_line = 0 %]
+[% shared_line = 0 -%]
+[% reg_line = 0 -%]
+[% l = 0 -%]
+[% lr = 0 -%]
+[% reg_key = {} -%]
 [% FOR range IN phone.lineranges -%]
   [% FOR line IN range.lines -%]
-    [% key = line.keynum + 1 -%]
-    [% IF range.name == "Phone Keys" -%]
+    [% IF range.name == "Phone Keys" or range.name == "Attendant Console 1" -%]
+      [% key = lr + line.keynum -%]
+      [% reg_key.$key = 1 -%]
       [% IF line.type == "private" %]
-    reg.[% key %].address="[% line.username %]@[% line.domain %]"
-    reg.[% key %].auth.userId="[% line.username %]"
-    reg.[% key %].auth.password="[% line.password %]"
-    reg.[% key %].displayName="[% line.displayname %]"
-    reg.[% key %].label="[% line.username %]"
-    reg.[% key %].type="private"
+        [% reg_line = reg_line + 1 -%]
+    reg.[% reg_line %].address="[% line.username %]@[% line.domain %]"
+    reg.[% reg_line %].auth.userId="[% line.username %]"
+    reg.[% reg_line %].auth.password="[% line.password %]"
+    reg.[% reg_line %].displayName="[% line.displayname %]"
+    reg.[% reg_line %].label="[% line.username %]"
+    reg.[% reg_line %].type="private"
+    lineKey.[% key + 1 -%].category="Line"
+    lineKey.[% key + 1 -%].index="[% reg_line %]"
       [% ELSIF line.type == "shared" -%]
-    reg.[% key %].address="[% line.username %]@[% line.domain %]"
-    reg.[% key %].auth.userId="[% line.username %]"
-    reg.[% key %].auth.password="[% line.password %]"
-    reg.[% key %].displayName="[% line.displayname %]"
-    reg.[% key %].label="[% line.username %]"
-    reg.[% key %].type="shared"
-    reg.[% key %].bargeInEnabled="1"
-    reg.[% key %].strictLineSeize="1"
+        [% reg_line = reg_line + 1 -%]
+    reg.[% reg_line %].address="[% line.username %]@[% line.domain %]"
+    reg.[% reg_line %].auth.userId="[% line.username %]"
+    reg.[% reg_line %].auth.password="[% line.password %]"
+    reg.[% reg_line %].displayName="[% line.displayname %]"
+    reg.[% reg_line %].label="[% line.username %]"
+    reg.[% reg_line %].type="shared"
+    reg.[% reg_line %].bargeInEnabled="1"
+    reg.[% reg_line %].strictLineSeize="1"
+    lineKey.[% key + 1 -%].category="Line"
+    lineKey.[% key + 1 -%].index="[% reg_line %]"
       [% ELSIF line.type == "blf" -%]
       [% shared_line = shared_line + 1 -%]
     attendant.resourceList.[% shared_line %].address="[% line.username %]@[% line.domain %]"
     attendant.resourceList.[% shared_line %].label="[% line.displayname %]"
     attendant.resourceList.[% shared_line %].type="automata"
+    lineKey.[% key + 1 -%].category="BLF"
+    lineKey.[% key + 1 -%].index="0"
       [% END -%]
     [% END -%]
   [% END -%]
+  [% lr = lr + range.num_lines -%]
+  [% WHILE l <  lr -%]
+    [% IF not reg_key.$l -%]
+    lineKey.[% l + 1 -%].category="Unassigned"
+    [% END -%]
+    [% l = l + 1 -%]
+  [% END -%]
 [% END -%]
+    lineKey.reassignment.enabled="1"
     voIpProt.SIP.outboundProxy.address="[% line.domain %]"
     voIpProt.server.1.address="[% line.domain %]"
     voIpProt.server.1.port="5060"

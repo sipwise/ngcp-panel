@@ -1,6 +1,10 @@
 package NGCP::Panel::Role::API::BillingZones;
 use Moose::Role;
 use Sipwise::Base;
+with 'NGCP::Panel::Role::API' => {
+    -alias       =>{ item_rs  => '_item_rs', },
+    -excludes    => [ 'item_rs' ],
+};
 
 use boolean qw(true);
 use TryCatch;
@@ -10,6 +14,27 @@ use HTTP::Status qw(:constants);
 use NGCP::Panel::Utils::DateTime;
 use NGCP::Panel::Utils::Contract;
 use NGCP::Panel::Form::BillingZone qw();
+
+sub item_rs {
+    my ($self, $c) = @_;
+
+    my $item_rs = $c->model('DB')->resultset('billing_zones');
+    if($c->user->roles eq "admin") {
+    } elsif($c->user->roles eq "reseller") {
+        $item_rs = $item_rs->search({
+                'billing_profile.reseller_id' => $c->user->reseller_id
+            }, {
+                join => 'billing_profile',
+            });
+    } else {
+        $item_rs = $item_rs->search({
+                'billing_profile.reseller_id' => $c->user->contract->contact->reseller_id,
+            }, {
+                join => 'billing_profile',
+            });
+    }
+    return $item_rs;
+}
 
 sub get_form {
     my ($self, $c) = @_;
@@ -55,22 +80,7 @@ sub hal_from_zone {
 sub zone_by_id {
     my ($self, $c, $id) = @_;
 
-    my $zones = $c->model('DB')->resultset('billing_zones');
-    if($c->user->roles eq "admin") {
-    } elsif($c->user->roles eq "reseller") {
-        $zones = $zones->search({
-            'billing_profile.reseller_id' => $c->user->reseller_id,
-        }, {
-            join => 'billin_profile',
-        });
-    } else {
-        $zones = $zones->search({
-            'billing_profile.reseller_id' => $c->user->contract->contact->reseller_id,
-        }, {
-            join => 'billin_profile',
-        });
-    }
-
+    my $zones = $self->item_rs($c);
     return $zones->find($id);
 }
 

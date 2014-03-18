@@ -406,5 +406,27 @@ sub log_response {
         ($c->response->body // '') . "'");
 }
 
+
+sub item_rs {}
+around 'item_rs' => sub {
+    my ($orig, $self, @orig_params) = @_;
+    my $item_rs = $self->$orig(@orig_params);
+
+    # no query params defined in collection controller
+    unless($self->can('query_params') && @{ $self->query_params }) {
+        return $item_rs;
+    }
+
+    my $c = $orig_params[0];
+    foreach my $param(keys $c->req->query_params) {
+        my @p = grep { $_->{param} eq $param } @{ $self->query_params };
+        my $q = $c->req->query_params->{$param}; # TODO: arrayref?
+        if(@p) {
+            $item_rs = $item_rs->search($p[0]->{query}->{first}($q), $p[0]->{query}->{second}($q));
+        }
+    }
+    return $item_rs;
+};
+
 1;
 # vim: set tabstop=4 expandtab:

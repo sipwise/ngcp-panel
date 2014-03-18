@@ -22,7 +22,24 @@ class_has 'api_description' => (
         'Defines zones used to group destinations within <a href="#billingprofiles">Billing Profiles</a>. The zones can be used to group customer\'s calls, like calls within his country or any calls to mobile numbers.'
 );
 
-with 'NGCP::Panel::Role::API';
+class_has 'query_params' => (
+    is => 'ro',
+    isa => 'ArrayRef',
+    default => sub {[
+        {
+            param => 'billing_profile_id',
+            description => 'Filter for zones belonging to a specific billing profile',
+            query => {
+                first => sub {
+                    my $q = shift;
+                    { billing_profile_id => $q };
+                },
+                second => sub {},
+            },
+        },
+    ]},
+);
+
 with 'NGCP::Panel::Role::API::BillingZones';
 
 class_has('resource_name', is => 'ro', default => 'billingzones');
@@ -55,27 +72,7 @@ sub GET :Allow {
     my $page = $c->request->params->{page} // 1;
     my $rows = $c->request->params->{rows} // 10;
     {
-        my $zones = $c->model('DB')->resultset('billing_zones');
-        if($c->request->query_parameters->{billing_profile_id}) {
-            $zones = $zones->search({ 
-                billing_profile_id => $c->request->query_parameters->{billing_profile_id},
-            });
-        };
-
-        if($c->user->roles eq "admin") {
-        } elsif($c->user->roles eq "reseller") {
-            $zones = $zones->search({ 
-                'billing_profile.reseller_id' => $c->user->reseller_id 
-            }, {
-                join => 'billing_profile',
-            });
-        } else {
-            $zones = $zones->search({ 
-                'billing_profile.reseller_id' => $c->user->contract->contact->reseller_id,
-            }, {
-                join => 'billing_profile',
-            });
-        }
+        my $zones = $self->item_rs($c);
         my $total_count = int($zones->count);
         $zones = $zones->search(undef, {
             page => $page,
