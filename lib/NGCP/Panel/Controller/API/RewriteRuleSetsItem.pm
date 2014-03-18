@@ -169,6 +169,28 @@ sub PUT :Allow {
     return;
 }
 
+sub DELETE :Allow {
+    my ($self, $c, $id) = @_;
+    my $guard = $c->model('DB')->txn_scope_guard;
+    {
+        my $ruleset = $self->item_by_id($c, $id, "rulesets");
+        last unless $self->resource_exists($c, ruleset => $ruleset);
+        try {
+            $ruleset->voip_rewrite_rules->delete;
+            $ruleset->delete;
+        } catch($e) {
+            $c->log->error("Failed to delete rewriteruleset with id '$id': $e");
+            $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "Internal Server Error");
+            last;
+        }
+        $guard->commit;
+
+        $c->response->status(HTTP_NO_CONTENT);
+        $c->response->body(q());
+    }
+    return;
+}
+
 sub end : Private {
     my ($self, $c) = @_;
 

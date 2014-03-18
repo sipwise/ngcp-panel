@@ -161,14 +161,6 @@ sub POST :Allow {
         );
         last unless $resource;
 
-        unless($resource->{direction} && ($resource->{direction} eq "in" || $resource->{direction} eq "out") ) {
-            $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Invalid 'direction', must be 'in' or 'out'.");
-            last;
-        }
-        unless($resource->{field} && ($resource->{field} eq "callee" || $resource->{field} eq "caller") ) {
-            $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Invalid 'field', must be 'callee' or 'caller'.");
-            last;
-        }
         my $set_id = delete $resource->{set_id}; # keep this, cause formhandler doesn't know it
 
         my $form = $self->get_form($c);
