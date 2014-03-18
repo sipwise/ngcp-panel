@@ -424,7 +424,7 @@
                     </thead>
                     <tbody>
                         [%# Dumper.dump_html(zonecalls_rs.as_query)%]
-                        [% FOR call IN zonecalls_rs -%]
+                        [% FOR call IN invoice_details -%]
                         [%IF call.1; call = call.1; END%]
                         [% total_number = total_number + call.get_column('number') %]
                         [% total_duration = total_duration + call.get_column('duration') %]

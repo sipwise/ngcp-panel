@@ -113,12 +113,13 @@ function handleSaveSvgData(data, error) {
     
     
 [%
-    clearHelper();
-    helper.name = c.loc('Invoice Details');
-    helper.name_single = c.loc('Invoice Record');
-    helper.identifier = 'invoice_details';
-    initHelperAuto();
-    PROCESS 'helpers/datatables.tt';
+#while we don't due to local
+#    clearHelper();
+#    helper.name = c.loc('Invoice Details');
+#    helper.name_single = c.loc('Invoice Record');
+#    helper.identifier = 'invoice_details';
+#    initHelperAuto();
+#    PROCESS 'helpers/datatables.tt';
 -%]
     
     <table class="table table-bordered table-striped table-highlight table-hover">
