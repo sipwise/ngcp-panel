@@ -26,7 +26,7 @@ $ua->ssl_opts(
     $req = HTTP::Request->new('OPTIONS', $uri.'/api/systemcontacts/');
     $res = $ua->request($req);
     is($res->code, 200, "check options request");
-    ok($res->header('Accept-Post') eq "application/hal+json; profile=http://purl.org/sipwise/ngcp-api/#rel-systemcontacts", "check Accept-Post header in options response");
+    is($res->header('Accept-Post'), "application/hal+json; profile=http://purl.org/sipwise/ngcp-api/#rel-systemcontacts", "check Accept-Post header in options response");
     my $opts = JSON::from_json($res->decoded_content);
     my @hopts = split /\s*,\s*/, $res->header('Allow');
     ok(exists $opts->{methods} && ref $opts->{methods} eq "ARRAY", "check for valid 'methods' in body");
@@ -67,7 +67,7 @@ my @allcontacts = ();
     $res = $ua->request($req);
     is($res->code, 422, "create invalid test contact with missing email");
     my $email_err = JSON::from_json($res->decoded_content);
-    ok($email_err->{code} eq "422", "check error code in body");
+    is($email_err->{code}, "422", "check error code in body");
     ok($email_err->{message} =~ /field=\'email\'/, "check error message in body");
 
     # iterate over contacts collection to check next/prev links
@@ -77,7 +77,7 @@ my @allcontacts = ();
         is($res->code, 200, "fetch contacts page");
         my $collection = JSON::from_json($res->decoded_content);
         my $selfuri = $uri . $collection->{_links}->{self}->{href};
-        ok($selfuri eq $nexturi, "check _links.self.href of collection");
+        is($selfuri, $nexturi, "check _links.self.href of collection");
         my $colluri = URI->new($selfuri);
 
         ok($collection->{total_count} > 0, "check 'total_count' of collection");
@@ -207,7 +207,7 @@ my @allcontacts = ();
     $res = $ua->request($req);
     is($res->code, 200, "check patched contact item");
     my $mod_contact = JSON::from_json($res->decoded_content);
-    ok($mod_contact->{firstname} eq "patchedfirst", "check patched replace op");
+    is($mod_contact->{firstname}, "patchedfirst", "check patched replace op");
 
     $req->content(JSON::to_json(
         [ { op => 'replace', path => '/firstname', value => undef } ]

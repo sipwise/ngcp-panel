@@ -26,7 +26,7 @@ $ua->ssl_opts(
     $req = HTTP::Request->new('OPTIONS', $uri.'/api/billingfees/');
     $res = $ua->request($req);
     is($res->code, 200, "check options request");
-    ok($res->header('Accept-Post') eq "application/hal+json; profile=http://purl.org/sipwise/ngcp-api/#rel-billingfees", "check Accept-Post header in options response");
+    is($res->header('Accept-Post'), "application/hal+json; profile=http://purl.org/sipwise/ngcp-api/#rel-billingfees", "check Accept-Post header in options response");
     my $opts = JSON::from_json($res->decoded_content);
     my @hopts = split /\s*,\s*/, $res->header('Allow');
     ok(exists $opts->{methods} && ref $opts->{methods} eq "ARRAY", "check for valid 'methods' in body");
@@ -119,7 +119,7 @@ my @allfees = ();
     $res = $ua->request($req);
     is($res->code, 422, "create profile without billing_profile_id");
     my $err = JSON::from_json($res->decoded_content);
-    ok($err->{code} eq "422", "check error code in body");
+    is($err->{code}, "422", "check error code in body");
     ok($err->{message} =~ /Invalid 'billing_profile_id'/, "check error message in body");
 
     # try to create fee with invalid billing_profile_id
@@ -142,7 +142,7 @@ my @allfees = ();
     $res = $ua->request($req);
     is($res->code, 422, "create profile with invalid billing_profile_id");
     $err = JSON::from_json($res->decoded_content);
-    ok($err->{code} eq "422", "check error code in body");
+    is($err->{code}, "422", "check error code in body");
     ok($err->{message} =~ /Invalid 'billing_profile_id'/, "check error message in body");
 
     # try to create fee with missing billing_zone_id
@@ -165,7 +165,7 @@ my @allfees = ();
     $res = $ua->request($req);
     is($res->code, 422, "create profile without billing_zone_id");
     $err = JSON::from_json($res->decoded_content);
-    ok($err->{code} eq "422", "check error code in body");
+    is($err->{code}, "422", "check error code in body");
     ok($err->{message} =~ /field='billing_zone_id'/, "check error message in body");
 
     # try to create fee with invalid billing_zone_id
@@ -188,7 +188,7 @@ my @allfees = ();
     $res = $ua->request($req);
     is($res->code, 422, "create profile without billing_profile_id");
     $err = JSON::from_json($res->decoded_content);
-    ok($err->{code} eq "422", "check error code in body");
+    is($err->{code}, "422", "check error code in body");
     ok($err->{message} =~ /Invalid 'billing_zone_id'/, "check error message in body");
 
     # TODO: check for wrong values in rates, prepaid etc
@@ -200,7 +200,7 @@ my @allfees = ();
         is($res->code, 200, "fetch fees page");
         my $collection = JSON::from_json($res->decoded_content);
         my $selfuri = $uri . $collection->{_links}->{self}->{href};
-        ok($selfuri eq $nexturi, "check _links.self.href of collection");
+        is($selfuri, $nexturi, "check _links.self.href of collection");
         my $colluri = URI->new($selfuri);
 
         ok($collection->{total_count} > 0, "check 'total_count' of collection");
@@ -399,9 +399,9 @@ my @allfees = ();
     $res = $ua->request($req);
     is($res->code, 200, "check patched fee item");
     my $mod_fee = JSON::from_json($res->decoded_content);
-    ok($mod_fee->{direction} eq "in", "check patched replace op");
-    ok($mod_fee->{_links}->{self}->{href} eq $firstfee, "check patched self link");
-    ok($mod_fee->{_links}->{collection}->{href} eq '/api/billingfees/', "check patched collection link");
+    is($mod_fee->{direction}, "in", "check patched replace op");
+    is($mod_fee->{_links}->{self}->{href}, $firstfee, "check patched self link");
+    is($mod_fee->{_links}->{collection}->{href}, '/api/billingfees/', "check patched collection link");
     
     $req->content(JSON::to_json(
         [ { op => 'replace', path => '/billing_profile_id', value => undef } ]
