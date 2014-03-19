@@ -5,6 +5,7 @@ use Child qw(child);
 use Capture::Tiny qw(capture);
 use TryCatch;
 use MooseX::Method::Signatures;
+use LWP::UserAgent;
 extends 'Module::Build';
 
 our ($plackup, $webdriver, @cover_opt, $mysqld);
@@ -40,13 +41,18 @@ sub _test_preconditions {
 
     require Getopt::Long;
     my %opt = (server => 'http://localhost:5000');
-    Getopt::Long::GetOptions(\%opt, 'webdriver=s', 'server:s', 'help|?', 'man', 'wd-server=s', 'schema-base-dir=s', 'mysqld-port=s', 'mysql-dump=s@')
+    Getopt::Long::GetOptions(\%opt, 'webdriver=s', 'server:s', 'help|?', 'man', 'wd-server=s', 'schema-base-dir=s', 'mysqld-port=s', 'mysql-dump=s@', 'no-junit')
         or die 'could not process command-line options';
 
     require Pod::Usage;
     Pod::Usage::pod2usage(-exitval => 1, -input => 'Build.PL') if $opt{help};
     Pod::Usage::pod2usage(-exitval => 0, -input => 'Build.PL', -verbose => 2) if $opt{man};
     Pod::Usage::pod2usage("$0: --webdriver option required.\nRun `perldoc Build.PL`") unless $opt{webdriver};
+
+    if ($opt{'no-junit'}) {
+        delete $self->tap_harness_args->{formatter_class};
+        $self->tap_harness_args->{verbosity} = 1;
+    }
 
     if ($opt{'wd-server'}) {
         my ($wd_host, $wd_port) = $opt{'wd-server'} =~ m{([^/:]+):([0-9]+)};
@@ -105,6 +111,26 @@ sub _test_preconditions {
     $ENV{CATALYST_SERVER} = $opt{server};
 }
 
+sub _download_certs {
+    my ($self) = @_;
+    my $uri = $ENV{CATALYST_SERVER};
+    use File::Temp qw/tempfile/;
+    my ($ua, $req, $res);
+    $ua = LWP::UserAgent->new(cookie_jar => {}, ssl_opts => {verify_hostname => 0});
+    $res = $ua->post($uri.'/login/admin', {username => 'administrator', password => 'administrator'}, 'Referer' => $uri.'/login/admin');
+    $res = $ua->get($uri.'/dashboard/');
+    $res = $ua->get($uri.'/administrator/1/api_key');
+    if ($res->decoded_content =~ m/gen\.generate/) { # key need to be generated first
+        $res = $ua->post($uri.'/administrator/1/api_key', {'gen.generate' => 'foo'}, 'Referer' => $uri.'/dashboard');
+    }
+    my (undef, $tmp_apiclient_filename) = tempfile;
+    my (undef, $tmp_apica_filename) = tempfile;
+    $res = $ua->post($uri.'/administrator/1/api_key', {'pem.download' => 'foo'}, 'Referer' => $uri.'/dashboard', ':content_file' => $tmp_apiclient_filename);
+    $res = $ua->post($uri.'/administrator/1/api_key', {'ca.download' => 'foo'}, 'Referer' => $uri.'/dashboard', ':content_file' => $tmp_apica_filename);
+    $ENV{API_SSL_CLIENT_CERT} = $tmp_apiclient_filename;
+    $ENV{API_SSL_CA_CERT} = $tmp_apica_filename;
+}
+
 around('ACTION_test', sub {
     my $super = shift;
     my $self = shift;
@@ -161,6 +187,15 @@ method ACTION_test_selenium {
     $self->_test_preconditions;
     $self->test_files('t/*_selenium.t t/admin-login.t');
     $self->generic_test(type => 'default');
+}
+
+method ACTION_test_api {
+    $self->depends_on('code');
+    $self->_test_preconditions;
+    $self->_download_certs;
+    $self->test_files('t/api-*.t');
+    $self->generic_test(type => 'default');
+    unlink ($ENV{API_SSL_CLIENT_CERT}, $ENV{API_SSL_CA_CERT}); # created by _download_certs()
 }
 
 method ACTION_readme {
