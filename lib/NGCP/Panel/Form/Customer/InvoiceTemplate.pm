@@ -1,11 +1,11 @@
 package NGCP::Panel::Form::Customer::InvoiceTemplate;
 
 use HTML::FormHandler::Moose;
-extends 'HTML::FormHandler';
+extends 'NGCP::Panel::Form::ValidatorBase';
 
 use Moose::Util::TypeConstraints;
 enum 'TemplateType' => [ qw/svg html svgpdf/ ];#html
-enum 'TemplateTypeOutput' => [ qw/svg html pdf/ ];#html
+enum 'TemplateTypeOutput' => [ qw/svg html pdf svgzip htmlzip pdfzip/ ];#html
 enum 'TemplateViewMode' => [ qw/raw parsed/ ];
 enum 'TemplateSourceState' => [ qw/saved previewed default/ ];
 #no Moose::Util::TypeConstraints;

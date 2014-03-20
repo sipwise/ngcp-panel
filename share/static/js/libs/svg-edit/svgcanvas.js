@@ -2467,7 +2467,9 @@ var getMouseTarget = this.getMouseTarget = function(evt) {
 	
 	 //TODO(rafaelcastrocouto): User preference for shift key and zoom factor
 	$(container).bind("mousewheel DOMMouseScroll", function(e){
-		//if (!e.shiftKey) {return;}
+        return;
+        //shiftKey, ctrlKey, altKey
+        if (!e.shiftKey) {return;}
 		e.preventDefault();
 		var evt = e.originalEvent;
 
@@ -2485,6 +2487,7 @@ var getMouseTarget = this.getMouseTarget = function(evt) {
 		if (!delta) {return;}
 
 		bbox.factor = Math.max(3/4, Math.min(4/3, (delta)));
+		//bbox.factor = 1;
 	
 		call("zoomed", bbox);
 	});

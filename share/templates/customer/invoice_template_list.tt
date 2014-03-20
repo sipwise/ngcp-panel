@@ -1,0 +1,61 @@
+    <div class="accordion-inner" style="overflow:auto; height: 300px;">
+    [% IF write_access -%]
+    <span>
+        <a class="btn btn-primary btn-large" onclick="loadSvg('/svg/raw/default');void(0);">[% c.loc('Create invoice template')%] <i class="icon-edit"></i></a>
+    </span>
+    <div class="ngcp-separator"></div>
+    [% END -%]
+    <table class="table table-bordered table-striped table-highlight table-hover">
+    <thead>
+        <tr>
+            <th>[% c.loc('Active') %]</th>
+            <th>[% c.loc('Type') %]</th>
+            <th>[% c.loc('Name') %]</th>
+            <th class="ngcp-actions-column"></th>
+        </tr>
+    </thead>
+    <tbody>
+        [%# Dumper.dump_html(invoice_template_list.as_query)%]
+        [% FOR template IN invoice_template_list -%]
+        <tr class="sw_action_row">
+            <td>[% template.get_column('is_active') %]</td>
+            <td>[% template.get_column('type') %]</td>
+            <td>[%# template.get_column('name') %]</td>
+
+            <td class="ngcp-actions-column">
+                <div class="sw_actions">
+                    [% IF write_access -%]
+                    <a class="btn btn-primary btn-small"
+                       onclick="loadSvg('/svg/raw/previewed');void(0);">
+                        <i class="icon-edit"></i> [% c.loc('Edit previewed') %]
+                    </a>
+                    <a class="btn btn-small btn-primary" 
+                       onclick="loadSvg('/svg/raw/saved');void(0);">
+                        <i class="icon-edit"></i> [% c.loc('Edit saved') %]
+                    </a>
+                    [%IF !template.is_active%]
+                    <a class="btn btn-small btn-primary" 
+                       onclick="makeDefault();void(0);">
+                        <i class="icon-edit"></i> [% c.loc('Make active') %]
+                    </a>
+                    [%END%]
+                    <a class="btn btn-small btn-primary" data-confirm="Delete" 
+                       onclick="fetch_into('collapse_invoice_template_list', '[%- c.uri_for_action("/customer/invoice_template", [contract.id]) -%]', q, callback);void(0);">
+                        <i class="icon-trash"></i> [% c.loc('Delete') %]
+                    </a>
+                    [%END%]
+                    <a class="btn btn-small btn-primary" 
+                       onclick="loadSvg('/svg/raw/saved/zip');void(0);">
+                        <i class="icon-download"></i>[% c.loc('Download source') %]
+                    </a>
+                    <a class="btn btn-small btn-primary" 
+                       onclick="loadSvg('/svg/parsed/saved/pdf');void(0);">
+                        <i class="icon-download"></i> [% c.loc('Download invoice') %]
+                    </a>
+                </div>
+            </td>
+        </tr>
+        [%END%]
+    </tbody>
+    </table>
+    </div>

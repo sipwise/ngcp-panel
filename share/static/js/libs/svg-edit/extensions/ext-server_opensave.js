@@ -107,12 +107,13 @@ svgEditor.addExtension("server_opensave", {
 		});
 
 		// Do nothing if client support is found
-		if (window.FileReader) {return;}
+		//if (window.FileReader) {return;}
 		
 		// Change these to appropriate script file
 		open_svg_action = svgEditor.curConfig.extPath + 'fileopen.php?type=load_svg';
 		import_svg_action = svgEditor.curConfig.extPath + 'fileopen.php?type=import_svg';
-		import_img_action = svgEditor.curConfig.extPath + 'fileopen.php?type=import_img';
+		//import_img_action = svgEditor.curConfig.extPath + 'fileopen.php?type=import_img';
+		import_img_action = '/customer/auxembedimage?type=import_img';
 		
 		// Set up function for PHP uploader to use
 		svgEditor.processFile = function(str64, type) {
@@ -123,7 +124,6 @@ svgEditor.addExtension("server_opensave", {
 			}
 		
 			$('#dialog_box').hide();
-
 			if (type !== 'import_img') {
 				xmlstr = svgedit.utilities.decode64(str64);
 			}

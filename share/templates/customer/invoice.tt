@@ -15,9 +15,9 @@
 [%END%]
 
 <script type="text/javascript" src="/js/libs/svg-edit/embedapi.js"></script>
+<script type="text/javascript" src="/js/background.js"></script>
 <script type="text/javascript">
 var svgCanvas = null;
-
 function init_embed() {
     var frame = document.getElementById('svgedit');
     svgCanvas = new embedded_svg_edit(frame);
@@ -29,8 +29,8 @@ function init_embed() {
     {
         doc = frame.contentWindow.document;
     }
-    var mainButton = doc.getElementById('main_button');
-    mainButton.style.display = 'none';
+    //var mainButton = doc.getElementById('main_button');
+    //mainButton.style.display = 'none';
 }
 
 function loadSvg(params) {
@@ -105,10 +105,10 @@ function handleSaveSvgData(data, error) {
 
 <div class="accordion-group">
     <div class="accordion-heading">
-        <a class="accordion-toggle" data-toggle="collapse" data-parent="#customer_invoice_template" href="#collapse_calls">[% c.loc('Invoice details') %]</a>
+        <a class="accordion-toggle" data-toggle="collapse" data-parent="#customer_invoice_template" href="#collapse_invoice_details">[% c.loc('Invoice details') %]</a>
     </div>
     
-    <div class="accordion-body collapse" id="collapse_calls">
+    <div class="accordion-body collapse" id="collapse_invoice_details">
     <div class="accordion-inner" style="overflow:auto; height: 300px;">
     
     
@@ -134,8 +134,8 @@ function handleSaveSvgData(data, error) {
         </tr>
     </thead>
     <tbody>
-        [%# Dumper.dump_html(zonecalls_rs.as_query)%]
-        [% FOR call IN zonecalls_rs -%]
+        [%# Dumper.dump_html(invoice_details.as_query)%]
+        [% FOR call IN invoice_details -%]
         [%IF call.1; call = call.1; END%]
         [% total_number = total_number + call.get_column('number') %]
         [% total_duration = total_duration + call.get_column('duration') %]
@@ -169,77 +169,22 @@ function handleSaveSvgData(data, error) {
         <a class="accordion-toggle" data-toggle="collapse" data-parent="#customer_invoice_template" href="#collapse_invoice_template_list">[% c.loc('Invoice Templates') %]</a>
     </div>
     <div class="accordion-body collapse" id="collapse_invoice_template_list">
-    <div class="accordion-inner" style="overflow:auto; height: 300px;">
-    [% IF write_access -%]
-    <span>
-        <a class="btn btn-primary btn-large" href="javascript:loadSvg('/svg/raw/default');void(0);">[% c.loc('Create invoice template')%] <i class="icon-edit"></i></a>
-    </span>
-    <div class="ngcp-separator"></div>
-    [% END -%]
-    <table class="table table-bordered table-striped table-highlight table-hover">
-    <thead>
-        <tr>
-            <th>[% c.loc('Active') %]</th>
-            <th>[% c.loc('Type') %]</th>
-            <th>[%# c.loc('Name') %]</th>
-            <th class="ngcp-actions-column"></th>
-        </tr>
-    </thead>
-    <tbody>
-        [%# Dumper.dump_html(invoice_template_list.as_query)%]
-        [% FOR template IN invoice_template_list -%]
-        <tr class="sw_action_row">
-            <td>[% template.get_column('is_active') %]</td>
-            <td>[% template.get_column('type') %]</td>
-            <td>[%# template.get_column('name') %]</td>
-            <td class="ngcp-actions-column">
-                <div class="sw_actions pull-right">
-                    [% IF write_access -%]
-                    <a class="btn btn-small btn-primary" 
-                       href="javascript:loadSvg('/svg/raw/previewed');void(0);">
-                        <i class="icon-edit"></i> [% c.loc('Edit previewed') %]
-                    </a>
-                    <a class="btn btn-small btn-primary" 
-                       href="javascript:loadSvg('/svg/raw/saved');void(0);">
-                        <i class="icon-edit"></i> [% c.loc('Edit saved') %]
-                    </a>
-                    [%IF !template.is_active%]
-                    <a class="btn btn-small btn-primary" 
-                       href="javascript:makeDefault();void(0);">
-                        <i class="icon-edit"></i> [% c.loc('Make active') %]
-                    </a>
-                    [%END%]
-                    [%END%]
-                    <a class="btn btn-small btn-primary" 
-                       href="javascript:loadSvg('/svg/raw/saved/zip');void(0);">
-                        <i class="icon-edit"></i> [% c.loc('Download source') %]
-                    </a>
-                    <a class="btn btn-small btn-primary" 
-                       href="javascript:loadSvg('/svg/parsed/saved/pdf');void(0);">
-                        <i class="icon-edit"></i> [% c.loc('Download invoice') %]
-                    </a>
-                </div>
-            </td>
-        </tr>
-        [%END%]
-    </tbody>
-    </table>
-
-<button onclick="showSvgParsed();">Refresh Preview</button>
-<button onclick="saveSvg();">Save template</button>
-<!--upload css-->
-<!--name-->
-<br/>
-[%initial = 'saved'%]
-<iframe type="text/html" src="/js/libs/svg-edit/svg-editor.htm" width="600px" height="600px" id="svgedit" onload="init_embed();loadSvg('/svg/raw/[%- initial -%]');" class="display:inline;"></iframe><iframe src="[%- c.uri_for_action('/customer/invoice_template', [contract.id]) -%]/svg/parsed/[%- initial -%]" width="550px" height="600px" id="svgpreview" class="display:inline;"><canvas id="svgpreview_canvas" width="200" height="200"></canvas>
-
-
+    [%PROCESS 'customer/invoice_template_list.tt'%]
     </div>
-    </div>
-    </div>
+</div>
 </span>
 
+<div style="visibility:visible;" id="invoice_template_form">
+<div class="ngcp-separator"></div>
+<span>
+    <a class="btn btn-primary btn-large" onclick="showSvgParsed();void(0);">[% c.loc('Refresh Preview')%] <i class="icon-refresh"></i></a>
+</span>
+<span>
+    <a class="btn btn-primary btn-large" onclick="saveSvg();void(0);">[% c.loc('Save template')%] <i class="icon-disk"></i></a>
+</span>
+<div class="ngcp-separator"></div>
+[%initial = 'default'%]
+<iframe type="text/html" src="/js/libs/svg-edit/svg-editor.htm" width="550px" height="750px" id="svgedit" onload="init_embed();loadSvg('/svg/raw/[%- initial -%]');" style="border-width:0px;"></iframe><iframe src="[%- c.uri_for_action('/customer/invoice_template', [contract.id]) -%]/svg/parsed/[%- initial -%]" width="600px" height="750px" id="svgpreview" style="border-width:0px;"></iframe>
 </div>
 
-
-
+</div>

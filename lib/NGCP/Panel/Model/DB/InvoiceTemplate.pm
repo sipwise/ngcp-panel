@@ -85,4 +85,26 @@ sub getCustomerInvoiceTemplateList{
         reseller_id => $contract_id,
     });
 }
+sub deleteCustomerInvoiceTemplate{
+    my $self = shift;
+    my (%params) = @_;
+    my ($contract_id,$tt_id) = @params{qw/contract_id tt_id/};
+    return $self->schema->resultset('invoice_template')->search({
+        reseller_id => $contract_id,
+        id => $tt_id,
+    })->delete_all;
+}
+sub checkCustomerInvoiceTemplateContract{
+    my $self = shift;
+    my (%params) = @_;
+    my ($contract_id,$tt_id) = @params{qw/contract_id tt_id/};
+    my $tt_record = $self->schema->resultset('invoice_template')->search({
+        reseller_id => $contract_id,
+        id => $tt_id,
+    });
+    if($tt_record->get_column('id')){
+        return 1;
+    }
+    return 0;
+}
 1;

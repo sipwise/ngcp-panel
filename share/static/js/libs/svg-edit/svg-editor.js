@@ -68,20 +68,21 @@ TO-DOS
 			curConfig = {
 				// We do not put on defaultConfig to simplify object copying
 				//   procedures (we obtain instead from defaultExtensions)
-				extensions: []
+				extensions: [],
 			},
 			defaultExtensions = [
-				'ext-overview_window.js',
-				'ext-markers.js',
-				'ext-connector.js',
-				'ext-eyedropper.js',
-				'ext-shapes.js',
-				'ext-imagelib.js',
+				//'ext-overview_window.js',
+				//'ext-markers.js',
+				//'ext-connector.js',
+				//'ext-eyedropper.js',
+				//'ext-shapes.js',
+				//'ext-imagelib.js',
+				'ext-server_opensave.js',
 				'ext-grid.js',
-				'ext-polygon.js',
-				'ext-star.js',
-				'ext-panning.js',
-				'ext-storage.js'
+				//'ext-polygon.js',
+				//'ext-star.js',
+				//'ext-panning.js',
+				//'ext-storage.js'
 			],
 			defaultConfig = {
 				// Todo: svgcanvas.js also sets and checks: show_outside_canvas, selectNew; add here?

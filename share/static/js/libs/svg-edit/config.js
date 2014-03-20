@@ -50,6 +50,7 @@ svgEditor.setConfig({
 // EXTENSION CONFIG
 svgEditor.setConfig({
 	extensions: [
+        'ext-server_opensave.js'
 		// 'ext-overview_window.js', 'ext-markers.js', 'ext-connector.js', 'ext-eyedropper.js', 'ext-shapes.js', 'ext-imagelib.js', 'ext-grid.js', 'ext-polygon.js', 'ext-star.js', 'ext-panning.js', 'ext-storage.js'
 	]
 	// , noDefaultExtensions: false, // noDefaultExtensions can only be meaningfully used in config.js or in the URL

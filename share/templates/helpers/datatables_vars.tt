@@ -2,20 +2,20 @@
 #USE Dumper;
 
 #we can't use DEFAULT directive - it treats false the same as undefined, which doesn't allow to keep default filled values and switch them off by customization
-MACRO clearHelper() BLOCK;
+MACRO clearHelper BLOCK;
     FOREACH identifier in [ 'messages', 'length_change', 'dt_columns', 'close_target', 'create_flag', 'form_object', 'ajax_uri' ];
         helper.${identifier} = '';
-    END
+    END;
 END;
 MACRO initHelper(var,value) BLOCK;
 #    Dumper.dump(helper);
     identifier = "${helper.identifier}" _ "_" _ var;
     UNLESS helper.${var}.defined; helper.${var} = helper.${var} || value || ${"${identifier}"} || ${var}; END;
 END;
-MACRO initHelperAuto() BLOCK;
+MACRO initHelperAuto BLOCK;
     FOREACH identifier in [ 'messages', 'length_change', 'dt_columns', 'close_target', 'create_flag' ];
         initHelper(identifier);
-    END
+    END;
     initHelper('form_object',form);
     initHelper('ajax_uri', c.uri_for( c.controller.action_for('ajax') ));
 END;

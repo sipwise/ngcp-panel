@@ -1,5 +1,6 @@
 package NGCP::Panel::Controller::Customer;
 use Sipwise::Base;
+use MIME::Base64 qw(encode_base64);
 use namespace::sweep;
 BEGIN { extends 'Catalyst::Controller'; }
 use JSON qw(decode_json encode_json);
@@ -812,6 +813,111 @@ sub edit_balance :Chained('base') :PathPart('balance/edit') :Args(0) {
     $c->stash(edit_flag => 1);
 }
 
+sub invoice_delete :Chained('base') :PathPart('invoice_template/delete') :CaptureArgs(1) {
+    my ($self, $c) = @_;
+    $c->log->debug('invoice_delete');
+    my($validator,$backend,$in,$out);
+
+    (undef,undef,@$in{qw/tt_id/}) = @_;
+    #check that this id really belongs to specified contract? or just add contract condition to delete query?
+    #checking is more universal
+    #this is just copy-paste from method above
+    #of course we are chained and we can put in and out to stash
+    #input
+    $in->{contract_id} = $c->stash->{contract}->id;
+    
+    #output
+    $out={};
+
+    #storage
+    #pass scheme here is ugly, and should be moved somehow to DB::Base
+    $backend = NGCP::Panel::Model::DB::InvoiceTemplate->new( schema => $c->model('DB') );
+
+    #input checking & simple preprocessing
+    $validator = NGCP::Panel::Form::Customer::InvoiceTemplate->new( backend => $backend );
+#    $form->schema( $c->model('DB::InvoiceTemplate')->schema );
+    #to common form package ? removing is necessary due to FormHandler param presence evaluation - it is based on key presence, not on defined/not defined value
+    #in future this method should be called by ControllerBase
+    $validator->remove_undef_in($in);
+    
+    #really, we don't need a form here at all
+    #just use as already implemented fields checking and defaults applying  
+    #$validator->setup_form(
+    $validator->process(
+        posted => 1,
+        params => $in,
+    );
+    #$validator->validate_form();
+    
+    #multi return...
+    $c->log->debug("validated=".$validator->validated.";\n");
+    if(!$validator->validated){
+        return;
+    }
+    my $in_validated = $validator->fif;
+
+    #dirty hack 1
+    #really model logic should recieve validated input, but raw input also should be saved somewhere
+    $in = $in_validated;
+    #think about it more
+    
+    $backend->deleteCustomerInvoiceTemplate(%$in);
+}
+
+sub invoice_template_aux_embedImage :Chained('list_customer') :PathPart('auxembedimage') :Args(0) {
+    my ($self, $c) = @_;
+    
+    #I know somewhere is logging of all visited methods
+    $c->log->debug('invoice_template_aux_handleImageUpload');
+    my($validator,$backend,$in,$out);
+    
+    #$upload->basename;
+    #$upload->copy_to;
+    #$upload->fh;
+    #$upload->filename;
+    #$upload->headers;
+    #$upload->link_to;
+    #$upload->size;
+    #$upload->slurp;
+    #$upload->tempname;
+    #$upload->type;
+    $in = $c->request->parameters;
+    $in->{svg_file} = $c->request->upload('svg_file');
+    #$in->{}
+    if($in->{svg_file}) {
+        my $ft = File::Type->new();
+        $out->{image_content} = $in->{svg_file}->slurp;
+        $out->{image_content_mimetype} = $ft->mime_type($out->{image_content});
+        $out->{image_content_base64} = encode_base64($out->{image_content}, '');
+    }
+    $c->log->debug('mime-type '.$out->{image_content_mimetype});
+    #$c->response->body($in->{svg_file}->slurp);
+    $c->stash(out => $out);
+    $c->stash(in => $in);
+    $c->stash(template => 'customer/invoice_template_aux_embedimage.tt');
+    $c->detach( $c->view('SVG') );
+
+    #$c->log->debug('filename='.);
+
+    
+	#$type = $_REQUEST['type'];
+	#if (!in_array($type, array('load_svg', 'import_svg', 'import_img'))) {
+	#	exit;
+	#}
+	#require('allowedMimeTypes.php');
+	#$file = $_FILES['svg_file']['tmp_name'];
+	#$output = file_get_contents($file);
+	#$prefix = '';
+	#// Make Data URL prefix for import image
+	#if ($type == 'import_img') {
+	#	$info = getimagesize($file);
+	#	if (!in_array($info['mime'], $allowedMimeTypesBySuffix)) {
+	#		exit;
+	#	}
+	#	$prefix = 'data:' . $info['mime'] . ';base64,';
+	#}
+    
+}
 sub invoice_data :Chained('base') :PathPart('invoice') :CaptureArgs(0) {
     my ($self, $c) = @_;
     $c->log->debug('invoice_data');
@@ -846,15 +952,16 @@ sub invoice_template_list :Chained('invoice_data') :PathPart('') :CaptureArgs(0)
     #output
     $out={};
 
-    #input checking & simple preprocessing
-    $validator = NGCP::Panel::Form::Customer::InvoiceTemplate->new;
-#    $form->schema( $c->model('DB::InvoiceTemplate')->schema );
-    #to common form package ? removing is necessary due to FormHandler param presence evaluation - it is based on key presence, not on defined/not defined value
-    foreach ( keys %$in) { if(!( defined $in->{$_} )){ delete $in->{$_}; } };
-
     #storage
     #pass scheme here is ugly, and should be moved somehow to DB::Base
     $backend = NGCP::Panel::Model::DB::InvoiceTemplate->new( schema => $c->model('DB') );
+
+    #input checking & simple preprocessing
+    $validator = NGCP::Panel::Form::Customer::InvoiceTemplate->new(backend => $backend);
+#    $form->schema( $c->model('DB::InvoiceTemplate')->schema );
+    #to common form package ? removing is necessary due to FormHandler param presence evaluation - it is based on key presence, not on defined/not defined value
+    #in future this method should be called by ControllerBase
+    $validator->remove_undef_in($in);
     
     #really, we don't need a form here at all
     #just use as already implemented fields checking and defaults applying  

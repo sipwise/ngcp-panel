@@ -1,0 +1,9 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta charset="utf-8" />
+<script>
+window.parent.window.svgEditor.processFile("data:[%out.image_content_mimetype%];base64,[%out.image_content_base64%]", "[%in.type%]");
+</script>
+</head><body></body>
+</html>

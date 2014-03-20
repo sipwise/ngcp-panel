@@ -400,8 +400,8 @@
     </div>
 
 [%# USE Dumper %]
-[%# Dumper.dump(zonecalls_rs)%]
-[%# zonecalls_rs.size%]
+[%# Dumper.dump(invoice_details)%]
+[%# invoice_details.size%]
     <div class="accordion-group">
         <div class="accordion-heading">
             <a class="accordion-toggle" data-toggle="collapse" data-parent="#customer_details" href="#collapse_calls">[% c.loc('Balance details') %]</a>
@@ -423,7 +423,7 @@
                         </tr>
                     </thead>
                     <tbody>
-                        [%# Dumper.dump_html(zonecalls_rs.as_query)%]
+                        [%# Dumper.dump_html(invoice_details.as_query)%]
                         [% FOR call IN invoice_details -%]
                         [%IF call.1; call = call.1; END%]
                         [% total_number = total_number + call.get_column('number') %]
