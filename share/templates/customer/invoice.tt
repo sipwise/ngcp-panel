@@ -55,7 +55,10 @@ function handleShowSvgParsedData(svgString, error) {
         var q = '[%- c.uri_for_action("/customer/invoice_template", [contract.id]) -%]'+'/svg/parsed/previewed'; 
         $.post( q, { template: svgString })
         .done( function( svgParsedString ) {
-            var previewIframe = document.getElementById('svgpreview'); //new Image();
+            var previewIframe = document.getElementById('svgpreview'); 
+            previewIframe.src = q;
+            /*
+            //new Image();
             var previewDoc = previewIframe.contentWindow.document;
             var pages = new Array();
             pages = svgParsedString.match(/(<svg[\r\n\t\s\S\w\W]*?(?:\/svg>))/gi );
@@ -66,10 +69,13 @@ function handleShowSvgParsedData(svgString, error) {
             if(pages.length > 0 ){
                 previewIframe.src = '';
                 previewDoc.body.innerHTML = '<html><body>'+svgParsedString+'</body></html>';
-                alert(previewDoc.body.innerHTML);
+                previewIframe.src = "data:text/html," + encodeURIComponent(svgParsedString);
+                //previewDoc.body.innerHTML = '<html><body>'+svgParsedString+'</body></html>';
+                //alert(previewDoc.body.innerHTML);
             }else{
                 previewIframe.src = "data:image/svg+xml," + encodeURIComponent(svgParsedString);
             }
+            */
         });
     }
 }

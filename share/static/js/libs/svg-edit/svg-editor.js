@@ -934,10 +934,12 @@ TO-DOS
 				var selLayerNames = $('#selLayerNames').empty();
 				var drawing = svgCanvas.getCurrentDrawing();
 				var currentLayerName = drawing.getCurrentLayerName();
-				var layer = svgCanvas.getCurrentDrawing().getNumLayers();
+				var layersNum = svgCanvas.getCurrentDrawing().getNumLayers();
 				var icon = $.getSvgIcon('eye');
 				// we get the layers in the reverse z-order (the layer rendered on top is listed first)
-				while (layer--) {
+                var layer = 0;
+				//while (layer--) {
+				for (layer=0; layer < layersNum; layer++) {
 					var name = drawing.getLayerName(layer);
 					var layerTr = $('<tr class="layer">').toggleClass('layersel', name === currentLayerName);
 					var layerVis = $('<td class="layervis">').toggleClass('layerinvis', !drawing.getLayerVisibility(name));
@@ -956,6 +958,14 @@ TO-DOS
 						$('#layerlist tr.layer').removeClass('layersel');
 						$(this.parentNode).addClass('layersel');
 						svgCanvas.setCurrentLayer(this.textContent);
+                        var applyLayerEyeVisibility = function(){
+                            var row = $(this.parentNode).prevAll().length;
+                            var name = $('#layerlist tr.layer:eq(' + row + ') td.layername').text();
+                            var vis = !$(this).hasClass('layerinvis');
+                            svgCanvas.setLayerVisibility(name, vis);
+                        };
+                        $('#layerlist td.layervis').each(applyLayerEyeVisibility);
+                        svgCanvas.setLayerVisibility(this.textContent, true);
 						evt.preventDefault();
 					})
 					.mouseover(function() {
@@ -964,6 +974,7 @@ TO-DOS
 					.mouseout(function() {
 						toggleHighlightLayer();
 					});
+                $('#layerlist td.layername').first().mouseup();
 				$('#layerlist td.layervis').click(function() {
 					var row = $(this.parentNode).prevAll().length;
 					var name = $('#layerlist tr.layer:eq(' + row + ') td.layername').text();
