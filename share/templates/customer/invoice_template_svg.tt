@@ -51,9 +51,9 @@ g, text, tspan {
     //font-family:HelveticaNeue-Light;
     //font-weight:300;
     //-inkscape-font-specification:HelveticaNeue-Light;
-    font-family:Times;
-    */
     font-family:HelveticaNeue;
+    */
+    font-family:Times;
     font-variant:normal;
     font-size:2.6pt;
     writing-mode:lr;
@@ -137,7 +137,7 @@ g, text, tspan {
 <!--{[% titlerow -%]}-->
 <!--{[% total = {} -%]}-->
 <!--{[% list_calls(callsdata, 'datarow', total, 'svg', row_vertical_interval) -%]}-->
-<!--{[% adjustrow (total, 'totalrow', 'svg', row_vertical_interval, invoice_details.size) -%]}-->
+<!--{[% adjustrow (total, 'totalrow', 'svg', row_vertical_interval, callsdata.size) -%]}-->
 
 
         </g>
@@ -184,7 +184,7 @@ g, text, tspan {
 <!--{[% titlerow -%]}-->
 <!--{[% total = {} -%]}-->
 <!--{[% list_calls(callsdata, 'datarow', total, 'svg', row_vertical_interval) -%]}-->
-<!--{[% adjustrow (total, 'totalrow', 'svg', row_vertical_interval, invoice_details.size) -%]}-->
+<!--{[% adjustrow (total, 'totalrow', 'svg', row_vertical_interval, callsdata.size) -%]}-->
         </g>
 
     </g>
@@ -233,7 +233,7 @@ g, text, tspan {
         
 <!--{[% titlerow -%]}-->
 <!--{[% list_calls(callsdata, 'datarow', total, 'svg', row_vertical_interval) -%]}-->
-<!--{[% adjustrow (total, 'totalrow', 'svg', row_vertical_interval, invoice_details.size) -%]}-->
+<!--{[% adjustrow (total, 'totalrow', 'svg', row_vertical_interval, callsdata.size) -%]}-->
         </g>
     </g>
 <!--/page-->
@@ -243,7 +243,7 @@ g, text, tspan {
 <!--page-->
     <g id="bgpage">
         <title>Background</title>
-        <rect x="0" y="0" width="214.6" height="296.6" stroke-width="0.1" stroke="#FF0000" fill="#FFFFFF" id="totalborder"/>
+        <rect x="0" y="0" width="214.6" height="296.6" stroke-width="0.1" stroke="#FF0000" fill="#FFFFFF" fill-opacity="0" id="totalborder"/>
         <g y="270" x="5" width="205" height="18" transform="translate(5, 270)" class="address" id="bgpage_companyaddress_sipwise">
             <rect x="0"    y="0" width="205" height="18" stroke-width="0.25" fill="#FFFFFF" id="bgpage_companyaddress_sipwise__border"/>
             <text x="2"    y="5" id="bgpage_companyaddress_sipwise__company" class="company">{<!--{[%}-->provider.company<!--{%]}-->}</text>
