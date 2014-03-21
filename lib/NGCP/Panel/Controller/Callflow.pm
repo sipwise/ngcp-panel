@@ -28,10 +28,6 @@ sub root :Chained('/') :PathPart('callflow') :CaptureArgs(0) {
         { name => "cseq_method", search => 1, title => $c->loc('Method') },
     ]);
 
-    $c->stash->{calls_rs} = $c->model('DB')->resultset('messages')->search(undef, {
-        order_by => { -asc => 'timestamp' },
-    });
-
 }
 
 sub index :Chained('root') :PathPart('') :Args(0) {
@@ -45,13 +41,24 @@ sub index :Chained('root') :PathPart('') :Args(0) {
 
 sub ajax :Chained('root') :PathPart('ajax') :Args(0) {
     my ( $self, $c ) = @_;
-    my $calls_rs = $c->stash->{calls_rs}->search_rs(undef,{
-        select => [\'distinct(call_id)', 'caller_uuid', 'callee_uuid', 'cseq_method', 'timestamp'],
-        as     => ['call_id', 'caller_uuid', 'callee_uuid', 'cseq_method', 'timestamp'],
-    });
+
+    my $calls_rs_cb = sub {
+        my %params = @_;
+        my $total_count =  $c->model('DB')->resultset('messages')->search(undef,{select => \'distinct(call_id)'})->count;
+        my $base_rs =  $c->model('DB')->resultset('messages_custom');
+        my $searchstring = $params{searchstring} ? $params{searchstring}.'%' : '';
+
+        my @bind_vals = (($searchstring) x 3, $params{offset}, $params{rows});
+
+        my $new_rs = $base_rs->search(undef,{
+            bind => \@bind_vals,
+        });
+        return ($new_rs, $total_count, $total_count);
+    };
+
     NGCP::Panel::Utils::Datatables::process(
         $c,
-        $calls_rs,
+        $calls_rs_cb,
         $c->stash->{capture_dt_columns},
     );
     $c->detach( $c->view("JSON") );
