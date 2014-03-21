@@ -21,7 +21,7 @@ sub root :Chained('/') :PathPart('callflow') :CaptureArgs(0) {
     my ( $self, $c ) = @_;
 
     $c->stash->{capture_dt_columns} = NGCP::Panel::Utils::Datatables::set_columns($c, [
-        { name => "timestamp", search => 0, title => $c->loc('Timestamp'), literal_sql => "min(timestamp)" },
+        { name => "timestamp", search => 0, title => $c->loc('Timestamp') },
         { name => "call_id", search => 1, title => $c->loc('Call-ID') },
         { name => "caller_uuid", search => 1, title => $c->loc('Caller UUID') },
         { name => "callee_uuid", search => 1, title => $c->loc('Callee UUID') },
@@ -46,7 +46,8 @@ sub index :Chained('root') :PathPart('') :Args(0) {
 sub ajax :Chained('root') :PathPart('ajax') :Args(0) {
     my ( $self, $c ) = @_;
     my $calls_rs = $c->stash->{calls_rs}->search_rs(undef,{
-        group_by => 'call_id'
+        select => [\'distinct(call_id)', 'caller_uuid', 'callee_uuid', 'cseq_method', 'timestamp'],
+        as     => ['call_id', 'caller_uuid', 'callee_uuid', 'cseq_method', 'timestamp'],
     });
     NGCP::Panel::Utils::Datatables::process(
         $c,
