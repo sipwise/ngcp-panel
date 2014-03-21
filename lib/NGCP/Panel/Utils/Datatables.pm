@@ -10,39 +10,43 @@ use DateTime::Format::Strptime;
 sub process {
     my ($c, $rs, $cols, $row_func) = @_;
 
+    my $use_rs_cb = ('CODE' eq (ref $rs));
     my $aaData = [];
-    my $totalRecords = $rs->count;
     my $displayRecords = 0;
+
+    my $totalRecords = $use_rs_cb ? 0 : $rs->count;
 
     # check if we need to join more tables
     # TODO: can we nest it deeper than once level?
-    for my $c(@{ $cols }) {
-        my @parts = split /\./, $c->{name};
-        if($c->{literal_sql}) {
-            $rs = $rs->search_rs(undef, {
-                '+select' => [ \[$c->{literal_sql}] ],
-                '+as' => [ $c->{accessor} ],
-            });
-        } elsif(@parts == 2) {
-            $rs = $rs->search_rs(undef, {
-                join => $parts[0],
-                '+select' => [ $c->{name} ],
-                '+as' => [ $c->{accessor} ],
-            });
-        } elsif(@parts == 3) {
-            $rs = $rs->search_rs(undef, {
-                join => { $parts[0] => $parts[1] },
-                '+select' => [ $parts[1].'.'.$parts[2] ],
-                '+as' => [ $c->{accessor} ],
-            });
-        } elsif(@parts == 4) {
-            $rs = $rs->search_rs(undef, {
-                join => { $parts[0] => { $parts[1] => $parts[2] } },
-                '+select' => [ $parts[2].'.'.$parts[3] ],
-                '+as' => [ $c->{accessor} ],
-            });
-        } elsif(@parts > 4) {
-            # TODO throw an error for now as we only support up to 3 levels
+    unless ($use_rs_cb) {
+        for my $c(@{ $cols }) {
+            my @parts = split /\./, $c->{name};
+            if($c->{literal_sql}) {
+                $rs = $rs->search_rs(undef, {
+                    '+select' => [ \[$c->{literal_sql}] ],
+                    '+as' => [ $c->{accessor} ],
+                });
+            } elsif(@parts == 2) {
+                $rs = $rs->search_rs(undef, {
+                    join => $parts[0],
+                    '+select' => [ $c->{name} ],
+                    '+as' => [ $c->{accessor} ],
+                });
+            } elsif(@parts == 3) {
+                $rs = $rs->search_rs(undef, {
+                    join => { $parts[0] => $parts[1] },
+                    '+select' => [ $parts[1].'.'.$parts[2] ],
+                    '+as' => [ $c->{accessor} ],
+                });
+            } elsif(@parts == 4) {
+                $rs = $rs->search_rs(undef, {
+                    join => { $parts[0] => { $parts[1] => $parts[2] } },
+                    '+select' => [ $parts[2].'.'.$parts[3] ],
+                    '+as' => [ $c->{accessor} ],
+                });
+            } elsif(@parts > 4) {
+                # TODO throw an error for now as we only support up to 3 levels
+            }
         }
     }
 
@@ -57,7 +61,7 @@ sub process {
             if $col->{literal_sql};
         push @searchColumns, $stmt if $col->{search};
     }
-    if($searchString) {
+    if($searchString && ! $use_rs_cb) {
         $rs = $rs->search([@searchColumns]);
     }
 
@@ -91,7 +95,7 @@ sub process {
         }
     }
 
-    $displayRecords = $rs->count;
+    $displayRecords = $use_rs_cb ? 0 : $rs->count;
 
     # show specific row on top (e.g. if we come back from a newly created entry)
     my $topId = $c->request->params->{iIdOnTop};
@@ -108,7 +112,7 @@ sub process {
     # sorting
     my $sortColumn = $c->request->params->{iSortCol_0};
     my $sortDirection = $c->request->params->{sSortDir_0} || 'asc';
-    if(defined $sortColumn && defined $sortDirection) {
+    if(defined $sortColumn && defined $sortDirection && ! $use_rs_cb) {
         if('desc' eq lc $sortDirection) {
             $sortDirection = 'desc';
         } else {
@@ -135,11 +139,19 @@ sub process {
     # pagination
     my $pageStart = $c->request->params->{iDisplayStart};
     my $pageSize = $c->request->params->{iDisplayLength};
-    if(defined $pageStart && defined $pageSize && $pageSize > 0) {
-        $rs = $rs->search(undef, {
-            offset => $pageStart,
-            rows => $pageSize,
-        });
+    if ($use_rs_cb) {
+        ($rs, $totalRecords, $displayRecords) = $rs->(
+                offset       => $pageStart || 0,
+                rows         => $pageSize  || 5,
+                searchstring => $searchString,
+            );
+    } else {
+        if(defined $pageStart && defined $pageSize && $pageSize > 0) {
+            $rs = $rs->search(undef, {
+                offset => $pageStart,
+                rows => $pageSize,
+            });
+        }
     }
 
     for my $row ($rs->all) {
@@ -205,5 +217,37 @@ sub _get_joined_column_name {
 
 
 1;
+
+
+__END__
+
+=encoding UTF-8
+
+=head1 NAME
+
+NGCP::Panel::Utils::Datatables
+
+=head1 DESCRIPTION
+
+=head1 METHODS
+
+=head2 C<process>
+
+Query DB on datatables ajax request.
+
+Format of the resultset callback (if used):
+    Arguments as hash
+    ARGUMENTS: offset, rows, searchstring
+    RETURNS: ($rs, $totalcount, $displaycount)
+
+=head1 AUTHOR
+
+Gerhard Jungwirth C<< <gjungwirth@sipwise.com> >>
+
+=head1 LICENSE
+
+This library is free software. You can redistribute it and/or modify
+it under the same terms as Perl itself.
+
 
 # vim: set tabstop=4 expandtab:
