@@ -21,7 +21,7 @@ sub root :Chained('/') :PathPart('callflow') :CaptureArgs(0) {
     my ( $self, $c ) = @_;
 
     $c->stash->{capture_dt_columns} = NGCP::Panel::Utils::Datatables::set_columns($c, [
-        { name => "timestamp", search => 0, title => $c->loc('Timestamp') },
+        { name => "min_timestamp", search => 0, title => $c->loc('Timestamp') },
         { name => "call_id", search => 1, title => $c->loc('Call-ID') },
         { name => "caller_uuid", search => 1, title => $c->loc('Caller UUID') },
         { name => "callee_uuid", search => 1, title => $c->loc('Callee UUID') },
