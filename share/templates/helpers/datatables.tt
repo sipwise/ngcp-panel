@@ -50,7 +50,7 @@ $(document).ready(function() {
         [% ELSE %]
             "bLengthChange": false,
         [% END %]
-        "bSort": true,
+        "bSort": [% IF helper.no_sort %] false [% ELSE %] true [% END %],
         "bInfo": true,
         "iDisplayLength": 5,
         'iShowPages': 5,
