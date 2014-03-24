@@ -19,9 +19,10 @@
 <script type="text/javascript">
 var svgCanvas = null;
 function init_embed() {
-    var frame = document.getElementById('svgedit');
-    svgCanvas = new embedded_svg_edit(frame);
-    
+    var svgEditFrameName = 'svgedit';
+    var frame = document.getElementById(svgEditFrameName);
+    svgCanvas = new EmbeddedSVGEdit(frame);
+    //svgCanvas.zoomImage(2);
     // Hide main button, as we will be controlling new/load/save etc from the host document
     var doc;
     doc = frame.contentDocument;
@@ -32,13 +33,36 @@ function init_embed() {
     //var mainButton = doc.getElementById('main_button');
     //mainButton.style.display = 'none';
 }
-
 function loadSvg(params) {
     //alert('[%- c.uri_for_action("/customer/invoice_template", [contract.id]) -%]'+params);
     $.ajax({
         url: '[%- c.uri_for_action("/customer/invoice_template", [contract.id]) -%]'+params,
     }).done(function(svgParsedString){
-            svgCanvas.setSvgString(svgParsedString);
+        svgCanvas.setSvgString(svgParsedString)(
+        function(data,error){
+            if(error){
+            }else{
+                //var svgEditIframe = $("#svgedit").contents().find('#fit_to_canvas');
+                //var objToClick = $("#svgedit").contents().find('#fit_to_canvas');
+                svgCanvas.zoomChanged('', 'canvas');
+                //alert('iframe id='+objToClick.attr("someattr")+';');
+                //alert('mousedown='+objToClick.attr("onmousedown")+';');
+                //alert('click='+objToClick.attr("onclick")+';');
+                //alert('mouseup='+objToClick.attr("onmouseup")+';');
+                //alert($._data(objToClick,'events'));
+                //.contents().find('#fit_to_canvas')
+                //alert(jQuery.data($("#svgedit"),'mouseup'));
+                //objToClick.bind('click',function(){alert('Bound onclick for canvas option.');});
+                //jQuery.each(objToClick.data('mouseup'), function(i, event){alert('i='+i+';event='+event);});
+                //alert('iframe id='+$("#svgedit").contents().find('#iframebutton').attr("onclick")+';');
+                //$("#svgedit").contents().find('#iframebutton').click();
+                //objToClick.mousedown();
+                //objToClick.mouseup();
+                //objToClick.click();
+                //$("#svgedit").contents().find('#fit_to_canvas').mousedown();
+            }
+        }
+        );
     });
 }
 
@@ -56,26 +80,27 @@ function handleShowSvgParsedData(svgString, error) {
         $.post( q, { template: svgString })
         .done( function( svgParsedString ) {
             var previewIframe = document.getElementById('svgpreview'); 
-            previewIframe.src = q;
-            /*
-            //new Image();
-            var previewDoc = previewIframe.contentWindow.document;
-            var pages = new Array();
-            pages = svgParsedString.match(/(<svg[\r\n\t\s\S\w\W]*?(?:\/svg>))/gi );
-            if(!pages){
-                pages = new Array();
-            }
-            alert('images='+previewDoc.images.length+';pages='+pages.length);
-            if(pages.length > 0 ){
-                previewIframe.src = '';
-                previewDoc.body.innerHTML = '<html><body>'+svgParsedString+'</body></html>';
-                previewIframe.src = "data:text/html," + encodeURIComponent(svgParsedString);
-                //previewDoc.body.innerHTML = '<html><body>'+svgParsedString+'</body></html>';
-                //alert(previewDoc.body.innerHTML);
+            if ($.browser.msie) {
+                previewIframe.src = q;
             }else{
-                previewIframe.src = "data:image/svg+xml," + encodeURIComponent(svgParsedString);
+                //new Image();
+                var previewDoc = previewIframe.contentWindow.document;
+                var pages = new Array();
+                pages = svgParsedString.match(/(<svg[\r\n\t\s\S\w\W]*?(?:\/svg>))/gi );
+                if(!pages){
+                    pages = new Array();
+                }
+                alert('images='+previewDoc.images.length+';pages='+pages.length);
+                if(pages.length > 0 ){
+                    previewIframe.src = '';
+                    previewDoc.body.innerHTML = '<html><body>'+svgParsedString+'</body></html>';
+                    previewIframe.src = "data:text/html," + encodeURIComponent(svgParsedString);
+                    //previewDoc.body.innerHTML = '<html><body>'+svgParsedString+'</body></html>';
+                    //alert(previewDoc.body.innerHTML);
+                }else{
+                    previewIframe.src = "data:image/svg+xml," + encodeURIComponent(svgParsedString);
+                }
             }
-            */
         });
     }
 }

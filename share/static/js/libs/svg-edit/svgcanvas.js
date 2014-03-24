@@ -1217,10 +1217,11 @@ var getMouseTarget = this.getMouseTarget = function(evt) {
 		// this makes it easier to indentify as being a selector grip
 		return selectorManager.selectorParentGroup;
 	}
-
-	while (mouse_target.parentNode !== (current_group || current_layer)) {
-		mouse_target = mouse_target.parentNode;
-	}
+    if(mouse_target){
+        while (mouse_target.parentNode !== (current_group || current_layer)) {
+            mouse_target = mouse_target.parentNode;
+        }
+    }
 	
 //	
 //	// go up until we hit a child of a layer
