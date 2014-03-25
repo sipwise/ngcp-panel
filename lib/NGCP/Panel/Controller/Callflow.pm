@@ -44,7 +44,7 @@ sub ajax :Chained('root') :PathPart('ajax') :Args(0) {
 
     my $calls_rs_cb = sub {
         my %params = @_;
-        my $total_count =  $c->model('DB')->resultset('messages')->search(undef,{select => \'distinct(call_id)'})->count;
+        my $total_count =  $c->model('DB')->resultset('messages')->search(undef,{group_by => 'call_id'})->count;
         my $base_rs =  $c->model('DB')->resultset('messages_custom');
         my $searchstring = $params{searchstring} ? $params{searchstring}.'%' : '';
 
