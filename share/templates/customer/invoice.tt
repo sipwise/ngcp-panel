@@ -1,4 +1,9 @@
 [% USE Dumper %]
+[% USE format %]
+[% money_format = format('%.2f') %]
+[% IF !c.user.read_only && (c.user.roles == 'admin' || c.user.roles == 'reseller') -%]
+[% write_access = 1 %]
+[%END%]
 
 [%PROCESS 'helpers/datatables_vars.tt'
     no_auto_helper = 1 
@@ -10,9 +15,6 @@
     [% site_config.title = c.loc('Customer Invoice template for #[_1] ([_2])',contract.id, product.name) -%]
 [% END -%]
 
-[% IF !c.user.read_only && (c.user.roles == 'admin' || c.user.roles == 'reseller') -%]
-[% write_access = 1 %]
-[%END%]
 
 <script type="text/javascript" src="/js/libs/svg-edit/embedapi.js"></script>
 <script type="text/javascript" src="/js/background.js"></script>
@@ -22,7 +24,6 @@ function init_embed() {
     var svgEditFrameName = 'svgedit';
     var frame = document.getElementById(svgEditFrameName);
     svgCanvas = new EmbeddedSVGEdit(frame);
-    //svgCanvas.zoomImage(2);
     // Hide main button, as we will be controlling new/load/save etc from the host document
     var doc;
     doc = frame.contentDocument;
@@ -33,42 +34,118 @@ function init_embed() {
     //var mainButton = doc.getElementById('main_button');
     //mainButton.style.display = 'none';
 }
-function loadSvg(params) {
-    //alert('[%- c.uri_for_action("/customer/invoice_template", [contract.id]) -%]'+params);
-    $.ajax({
-        url: '[%- c.uri_for_action("/customer/invoice_template", [contract.id]) -%]'+params,
-    }).done(function(svgParsedString){
-        svgCanvas.setSvgString(svgParsedString)(
+function setSvgStringToEditor( svgParsedString ){
+    svgCanvas.setSvgString( svgParsedString )(
         function(data,error){
             if(error){
             }else{
-                //var svgEditIframe = $("#svgedit").contents().find('#fit_to_canvas');
-                //var objToClick = $("#svgedit").contents().find('#fit_to_canvas');
                 svgCanvas.zoomChanged('', 'canvas');
-                //alert('iframe id='+objToClick.attr("someattr")+';');
-                //alert('mousedown='+objToClick.attr("onmousedown")+';');
-                //alert('click='+objToClick.attr("onclick")+';');
-                //alert('mouseup='+objToClick.attr("onmouseup")+';');
-                //alert($._data(objToClick,'events'));
-                //.contents().find('#fit_to_canvas')
-                //alert(jQuery.data($("#svgedit"),'mouseup'));
-                //objToClick.bind('click',function(){alert('Bound onclick for canvas option.');});
-                //jQuery.each(objToClick.data('mouseup'), function(i, event){alert('i='+i+';event='+event);});
-                //alert('iframe id='+$("#svgedit").contents().find('#iframebutton').attr("onclick")+';');
-                //$("#svgedit").contents().find('#iframebutton').click();
-                //objToClick.mousedown();
-                //objToClick.mouseup();
-                //objToClick.click();
-                //$("#svgedit").contents().find('#fit_to_canvas').mousedown();
             }
         }
-        );
+    );
+}
+var uriForAction = function( data, type ){
+    //also we can think about getting URI's via ajax )
+    var q_template;
+    switch(type){
+    case 'invoice_template_previewed':
+        //q_template = '[%- c.uri_for_action("/customer/invoice_template", ['contract_id','svg','parsed','previewed','svg','tt_id']) -%]';
+        q_template = '[%- c.uri_for_action("/customer/invoice_template", ["contract_id"]) -%]'+'/svg/parsed/previewed/svg/tt_id';
+        break;
+    case 'invoice_template_saved':
+        //q_template = '[%- c.uri_for_action("/customer/invoice_template", ['contract_id','svg','parsed','saved','svg','tt_id']) -%]';
+        q_template = '[%- c.uri_for_action("/customer/invoice_template", ["contract_id"]) -%]'+'/svg/parsed/previewed/svg/tt_id';
+        break;
+    case 'invoice_template_list':
+        q_template = '[%- c.uri_for_action("/customer/invoice_template_list", ['contract_id']) -%]';
+        break;
+    case 'invoice_template':
+    default:
+        //q_template = '[%- c.uri_for_action("/customer/invoice_template", ['contract_id','tt_type','tt_viewmode','tt_sourcestate','tt_output_type','tt_id']) -%]';
+        q_template = '[%- c.uri_for_action("/customer/invoice_template", ["contract_id"]) -%]'+'/tt_type/tt_viewmode/tt_sourcestate/tt_output_type/tt_id';
+        break;
+    }
+    //alert('1.q_template='+q_template);
+    //alert('contract_id='+data.contract_id+';tt_id='+data.tt_id);
+    if(!data.tt_id){data.tt_id = '';}
+    if(!data.tt_type){data.tt_type = 'svg';}
+    if(!data.tt_output_type){data.tt_output_type = 'svg';}
+    var params = ['contract_id','tt_id','tt_type','tt_output_type','tt_viewmode','tt_sourcestate'];
+    params.forEach(function(key){
+        q_template=q_template.replace(key,data[key]);
+    });
+    /*
+    q_template=q_template.replace('contract_id',data.contract_id);
+    q_template=q_template.replace('tt_id',data.tt_id);
+    q_template=q_template.replace('tt_type',data.tt_type);
+    q_template=q_template.replace('tt_output_type',data.tt_output_type);
+    q_template=q_template.replace('tt_viewmode',data.tt_viewmode);
+    q_template=q_template.replace('tt_sourcestate',data.tt_sourcestate);
+    */
+    q_template=q_template.replace(/([^:])\/{2,}/g,'$1/');
+    q_template=q_template.replace(/\/+$/,'');
+    //alert('2.q_template='+q_template);
+    return q_template;
+}
+//function loadInvoiceTemplateData(params) {
+//function loadInvoiceTemplateData(tt_type,tt_viewmode,tt_sourcestate,tt_output_type,tt_id,contract_id) {
+function loadInvoiceTemplateData( data ){
+    //params spec: tt_type=[svg|html]/tt_viewmode[parsed|raw]/tt_sourcestate[default|previewed]/tt_output_type[svg|pdf|html|json|svgzip|pdfzip|htmlzip]/tt_id
+    //tt_output_type=svg really outputs text/html mimetype. But it will be couple of <svg> tags (<svg> per page).
+    var q = uriForAction( data, 'invoice_template' );
+    alert('loadInvoiceTemplateData: q='+q+';');
+    $.ajax({
+        url: q,
+        datatype: "json",
+    }).done(function(jsonres){
+        var templatedata = $.parseJson(res);
+        svgRawString = templatedata.template.raw;
+        setSvgStringToEditor( svgRawString );
     });
 }
-
-function showSvgParsed(){
-    svgCanvas.getSvgString()(handleShowSvgParsedData);
+function fetchSvgToEditor( data ) {
+    var q = uriForAction( data, 'invoice_template' );
+    //alert('fetchSvgToEditor: q='+q+';');
+    $.ajax({
+        url: q,
+    }).done( function ( httpResponse ){ 
+        setSvgStringToEditor( httpResponse );
+    } );
 }
+
+var setSvgStringToPreview = function( svgParsedString, q ) {
+    var previewIframe = document.getElementById('svgpreview'); 
+    if ($.browser.msie) {
+        //we need to repeat query to server for msie if we don't want send template string via GET method
+        previewIframe.src = q;
+    }else{
+        previewIframe.src = "data:text/html," + encodeURIComponent(svgParsedString);
+    }
+}
+function refreshTemplateList ( contract_id ){
+    fetch_into(
+        'collapse_invoice_template_list',
+        uriForAction( {'contract_id': contract_id}, 'invoice_template_list' ),
+        '',
+        function(){ mainWrapperInit(); }
+    );
+}
+function savePreviewedAndShowParsed( data ){
+    var svgString = svgCanvas.getSvgString(handleShowSvgParsedData);
+    var q = uriForAction( data, 'invoice_template_previewed' ); 
+    alert('svgString='+svgString+'; q='+q+';');
+    //save 
+    $.post( q, { template: svgString } )
+    .done( function( httpResponse ){
+        // & show template
+        alert('httpResponse='+httpResponse+';');
+        
+        setSvgStringToPreview( httpResponse, q )
+        //refresh list after saving
+        refreshTemplateList( data.contract_id );
+    } );
+}
+
 function handleShowSvgParsedData(svgString, error) {
     if (error)
     {
@@ -76,6 +153,8 @@ function handleShowSvgParsedData(svgString, error) {
     }
     else
     {
+        return svgString;
+        /*
         var q = '[%- c.uri_for_action("/customer/invoice_template", [contract.id]) -%]'+'/svg/parsed/previewed'; 
         $.post( q, { template: svgString })
         .done( function( svgParsedString ) {
@@ -101,26 +180,16 @@ function handleShowSvgParsedData(svgString, error) {
                     previewIframe.src = "data:image/svg+xml," + encodeURIComponent(svgParsedString);
                 }
             }
-        });
+        });*/
     }
 }
-
-function saveSvg() {			
-    svgCanvas.getSvgString()(handleSaveSvgData);
-}
-function handleSaveSvgData(data, error) {
-    if (error)
-    {
-        alert('error ' + error);
-    }
-    else
-    {
-        var q = '[%- c.uri_for_action("/customer/invoice_template", [contract.id]) -%]'+'/svg/parsed/saved'; 
-        $.post( q, { template: encodeURIComponent(data) })
-        .done(function( httpResponse ) {
-
-        });
-    }			
+function saveTemplate( contract_id, tt_id ) {			
+    var svgString = svgCanvas.getSvgString();
+    var q = uriForAction( data, 'invoice_template_saved' ); 
+    $.post( q, { template: encodeURIComponent( svgString ) })
+    .done( function( httpResponse ) {
+        refreshTemplateList( data.contract_id );
+    });
 }
 </script>
 
@@ -145,17 +214,18 @@ function handleSaveSvgData(data, error) {
     
 [%
 #while we don't due to local
-#    clearHelper();
-#    helper.name = c.loc('Invoice Details');
-#    helper.name_single = c.loc('Invoice Record');
-#    helper.identifier = 'invoice_details';
-#    initHelperAuto();
-#    PROCESS 'helpers/datatables.tt';
+    clearHelper();
+    helper.name = c.loc('Invoice Details');
+    helper.name_single = c.loc('Invoice Record');
+    helper.identifier = 'invoice_details';
+    initHelperAuto();
+    PROCESS 'helpers/datatables.tt';
 -%]
     
     <table class="table table-bordered table-striped table-highlight table-hover">
     <thead>
         <tr>
+            <th>[% c.loc('Num') %]</th>
             <th>[% c.loc('Zone') %]</th>
             <th>[% c.loc('Calls amount') %]</th>
             <th>[% c.loc('Duration') %]</th>
@@ -167,12 +237,13 @@ function handleSaveSvgData(data, error) {
     <tbody>
         [%# Dumper.dump_html(invoice_details.as_query)%]
         [% FOR call IN invoice_details -%]
-        [%IF call.1; call = call.1; END%]
+        [%IF call.1; row_number = call.0; call = call.1; END%]
         [% total_number = total_number + call.get_column('number') %]
         [% total_duration = total_duration + call.get_column('duration') %]
         [% total_free_time = total_free_time + call.get_column('free_time') %]
         [% total_cost = total_cost + call.get_column('cost') %]
         <tr class="sw_action_row">
+            <td>[% row_number %]</td>
             <td>[% call.get_column('zone') %]</td>
             <td><div class="pull-right">[% call.get_column('number') %]</div></td>
             <td><div class="pull-right">[% call.get_column('duration')|format('%.3f') %]</div></td>
@@ -181,7 +252,7 @@ function handleSaveSvgData(data, error) {
         </tr>
         [%END%]
         <tr>
-            <td>[% c.loc('Total') %]</td>
+            <td colspan="2">[% c.loc('Total') %]</td>
             <td><div class="pull-right">[% total_number %]</div></td>
             <td><div class="pull-right">[% total_duration | format('%.3f') %]</div></td>
             <td><div class="pull-right">[% total_free_time | format('%d')%]</div></td>
@@ -200,22 +271,43 @@ function handleSaveSvgData(data, error) {
         <a class="accordion-toggle" data-toggle="collapse" data-parent="#customer_invoice_template" href="#collapse_invoice_template_list">[% c.loc('Invoice Templates') %]</a>
     </div>
     <div class="accordion-body collapse" id="collapse_invoice_template_list">
-    [%PROCESS 'customer/invoice_template_list.tt'%]
+    [%PROCESS 'customer/invoice_template_list.tt' %]
     </div>
 </div>
 </span>
 
+[%#It can be separated later to form template and loaded with ajax and fillinform template::toolkit plugin. %]
+[%#It is reliable and easy to implement solution, but requires additional modules. For now populate small form with jquery.%]
+[%# USE FillInForm %]
 <div style="visibility:visible;" id="invoice_template_form">
+<form name="invoice_template" id="invoice_template" action="[%- c.uri_for_action('/customer/invoice_template', [contract.id]) -%]">
+<input type="hidden" name="tt_id" value="">
 <div class="ngcp-separator"></div>
 <span>
-    <a class="btn btn-primary btn-large" onclick="showSvgParsed();void(0);">[% c.loc('Refresh Preview')%] <i class="icon-refresh"></i></a>
+    <a class="btn btn-primary btn-large" onclick="
+    savePreviewedAndShowParsed({
+        contract_id:'[%contract.id%]',
+        tt_id: $('form[name=invoice_template] input[name=tt_id]').val()
+    });void(0);">[% c.loc('Refresh Preview')%] <i class="icon-refresh"></i></a>
 </span>
 <span>
-    <a class="btn btn-primary btn-large" onclick="saveSvg();void(0);">[% c.loc('Save template')%] <i class="icon-disk"></i></a>
+    <a class="btn btn-primary btn-large" onclick="saveTemplate({contract_id:'[%contract.id%]',tt_id: $('form[name=invoice_template] input[name=tt_id]').val()});void(0);">[% c.loc('Save template')%] <i class="icon-disk"></i></a>
 </span>
 <div class="ngcp-separator"></div>
 [%initial = 'default'%]
-<iframe type="text/html" src="/js/libs/svg-edit/svg-editor.htm" width="550px" height="750px" id="svgedit" onload="init_embed();loadSvg('/svg/raw/[%- initial -%]');" style="border-width:0px;"></iframe><iframe src="[%- c.uri_for_action('/customer/invoice_template', [contract.id]) -%]/svg/parsed/[%- initial -%]" width="600px" height="750px" id="svgpreview" style="border-width:0px;"></iframe>
+<iframe 
+    type="text/html" 
+    src="/js/libs/svg-edit/svg-editor.htm" id="svgedit" onload="
+    init_embed();
+    fetchSvgToEditor({
+        tt_viewmode: 'raw', 
+        tt_sourcestate: '[%initial%]',
+        contract_id: '[%contract.id%]',
+        tt_id: $('form[name=invoice_template] input[name=tt_id]').val()
+    });" width="550px" height="750px" style="border-width:0px;"></iframe><iframe 
+    src="[%- c.uri_for_action('/customer/invoice_template', [contract.id]) -%]/svg/parsed/[%- initial -%]" id="svgpreview"
+    width="600px" height="750px" style="border-width:0px;"></iframe>
 </div>
+</form>
 
 </div>

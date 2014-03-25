@@ -134,10 +134,9 @@ g, text, tspan {
             </text>
     <!--{[%END-%]}-->
 
-<!--{[% titlerow -%]}-->
-<!--{[% total = {} -%]}-->
-<!--{[% list_calls(callsdata, 'datarow', total, 'svg', row_vertical_interval) -%]}-->
-<!--{[% adjustrow (total, 'totalrow', 'svg', row_vertical_interval, callsdata.size) -%]}-->
+<!--{[% titlerow(page) -%]}-->
+<!--{[% list_calls(callsdata, page, 'datarow', total, 'svg', row_vertical_interval) -%]}-->
+<!--{[% adjustrow (total, page, 'totalrow', 'svg', row_vertical_interval, callsdata.size) -%]}-->
 
 
         </g>
@@ -181,10 +180,9 @@ g, text, tspan {
                 <tspan x="190" id="midpage_calls_total_cost"><!--{[% ( total_cost / 100 )|format('%.2f') %]}--><!--{[%#}-->0.00<!--{%]}--></tspan>
             </text>
     <!--{[%END-%]}-->
-<!--{[% titlerow -%]}-->
-<!--{[% total = {} -%]}-->
-<!--{[% list_calls(callsdata, 'datarow', total, 'svg', row_vertical_interval) -%]}-->
-<!--{[% adjustrow (total, 'totalrow', 'svg', row_vertical_interval, callsdata.size) -%]}-->
+    <!--{[% titlerow(page) -%]}-->
+    <!--{[% list_calls(callsdata, page, 'datarow', total, 'svg', row_vertical_interval) -%]}-->
+    <!--{[% adjustrow (total, page, 'totalrow', 'svg', row_vertical_interval, callsdata.size) -%]}-->
         </g>
 
     </g>
@@ -232,8 +230,8 @@ g, text, tspan {
 
         
 <!--{[% titlerow -%]}-->
-<!--{[% list_calls(callsdata, 'datarow', total, 'svg', row_vertical_interval) -%]}-->
-<!--{[% adjustrow (total, 'totalrow', 'svg', row_vertical_interval, callsdata.size) -%]}-->
+<!--{[% list_calls(callsdata, page, 'datarow', total, 'svg', row_vertical_interval) -%]}-->
+<!--{[% adjustrow (total, page, 'totalrow', 'svg', row_vertical_interval, callsdata.size) -%]}-->
         </g>
     </g>
 <!--/page-->

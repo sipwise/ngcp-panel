@@ -812,10 +812,29 @@ sub edit_balance :Chained('base') :PathPart('balance/edit') :Args(0) {
     $c->stash(form => $form);
     $c->stash(edit_flag => 1);
 }
-
-sub invoice_delete :Chained('base') :PathPart('invoice_template/delete') :CaptureArgs(1) {
+sub invoice_data :Chained('base') :PathPart('invoice') :CaptureArgs(0) {
     my ($self, $c) = @_;
-    $c->log->debug('invoice_delete');
+    $c->log->debug('invoice_data');
+    my $contract_id = $c->stash->{contract}->id;
+    my $stime = NGCP::Panel::Utils::DateTime::current_local()->truncate(to => 'month');
+    my $etime = $stime->clone->add(months => 1);
+
+    #look, NGCP::Panel::Utils::Contract - it is kind of backend separation here
+    my $invoice_details = NGCP::Panel::Utils::Contract::get_contract_calls_rs(
+        c => $c,
+        contract_id => $contract_id,
+        stime => $stime,
+        etime => $etime,
+    );
+    #FAKE FAKE FAKE FAKE
+    $invoice_details = [$invoice_details->all()];
+    my $i = 1;
+    $invoice_details = [map{[$i++,$_]} (@$invoice_details) x 21];
+    $c->stash(invoice_details => $invoice_details );
+}
+sub invoice_template_delete :Chained('base') :PathPart('invoice_template/delete') :Args(1) {
+    my ($self, $c) = @_;
+    $c->log->debug('invoice_template_delete');
     my($validator,$backend,$in,$out);
 
     (undef,undef,@$in{qw/tt_id/}) = @_;
@@ -862,76 +881,33 @@ sub invoice_delete :Chained('base') :PathPart('invoice_template/delete') :Captur
     #think about it more
     
     $backend->deleteCustomerInvoiceTemplate(%$in);
+    $c->forward( 'invoice_template_list' );
 }
-
-sub invoice_template_aux_embedImage :Chained('list_customer') :PathPart('auxembedimage') :Args(0) {
-    my ($self, $c) = @_;
-    
-    #I know somewhere is logging of all visited methods
-    $c->log->debug('invoice_template_aux_handleImageUpload');
-    my($validator,$backend,$in,$out);
-    
-    #todo
-    #mime-type and type checking in form
-    
-    $in = $c->request->parameters;
-    $in->{svg_file} = $c->request->upload('svg_file');
-    if($in->{svg_file}) {
-        my $ft = File::Type->new();
-        $out->{image_content} = $in->{svg_file}->slurp;
-        $out->{image_content_mimetype} = $ft->mime_type($out->{image_content});
-        $out->{image_content_base64} = encode_base64($out->{image_content}, '');
-    }
-    $c->log->debug('mime-type '.$out->{image_content_mimetype});
-    $c->stash(out => $out);
-    $c->stash(in => $in);
-    $c->stash(template => 'customer/invoice_template_aux_embedimage.tt');
-    $c->detach( $c->view('SVG') );
-    
-}
-sub invoice_data :Chained('base') :PathPart('invoice') :CaptureArgs(0) {
-    my ($self, $c) = @_;
-    $c->log->debug('invoice_data');
-    my $contract_id = $c->stash->{contract}->id;
-    my $stime = NGCP::Panel::Utils::DateTime::current_local()->truncate(to => 'month');
-    my $etime = $stime->clone->add(months => 1);
-
-    #look, NGCP::Panel::Utils::Contract - it is kind of backend separation here
-    my $invoice_details = NGCP::Panel::Utils::Contract::get_contract_calls_rs(
-        c => $c,
-        contract_id => $contract_id,
-        stime => $stime,
-        etime => $etime,
-    );
-    #FAKE FAKE FAKE FAKE
-    $invoice_details = [$invoice_details->all()];
-    my $i = 1;
-    $invoice_details = [map{[$i++,$_]} (@$invoice_details) x 21];
-    $c->stash(invoice_details => $invoice_details );
-}
-sub invoice_template_list :Chained('invoice_data') :PathPart('') :CaptureArgs(0) {
-    my ($self, $c) = @_;
-    $c->log->debug('invoice_template_list');
+sub invoice_template_list_data :Chained('invoice_data') :PathPart('') :CaptureArgs(0) {
+    my ($self, $c) = @_; 
+    $c->log->debug('invoice_template_list_data');
     my($validator,$backend,$in,$out);
     $in->{contract_id} = $c->stash->{contract}->id;
     $backend = NGCP::Panel::Model::DB::InvoiceTemplate->new( schema => $c->model('DB') );
-    $c->stash( invoice_template_list => $backend->getCustomerInvoiceTemplateList( %$in )->all );
+    my $records = $backend->getCustomerInvoiceTemplateList( %$in );
+    $c->stash( invoice_template_list => $records );
+}
+sub invoice_template_list :Chained('base') :PathPart('') :Args(0) {
+    my ($self, $c) = @_;
+    $c->log->debug('invoice_template_list');
+    $c->stash( template => 'customer/invoice_template_list.tt' ); 
+    $c->forward( 'invoice_template_list_data' );
+    $c->detach($c->view('SVG'));#just no wrapper - aybe there is some other way?
 }
 
-sub invoice :Chained('invoice_template_list') :PathPart('') :Args(0) {
+sub invoice :Chained('invoice_template_list_data') :PathPart('') :Args(0) {
     my ($self, $c) = @_;
     $c->stash(template => 'customer/invoice.tt'); 
 }
 
 sub invoice_template :Chained('invoice_data') :PathPart('template') :Args {
     my ($self, $c) = @_;
-    #$c->log->debug($c->model('DB'));
-    #return;
-    #my $db = NGCP::Panel::Model::DB::InvoiceTemplate->new();
     $c->log->debug('invoice_template');
-    
-    #my $contract_id = $in->{contract_id} = ;
-
     no warnings 'uninitialized';
 
     my($validator,$backend,$in,$out);
@@ -970,28 +946,11 @@ sub invoice_template :Chained('invoice_data') :PathPart('template') :Args {
         return;
     }
     my $in_validated = $validator->fif;
-    #use irka;
-    #use Data::Dumper;
-    #irka::loglong(Dumper($in));
-    #irka::loglong(Dumper($in_validated));
 
     #dirty hack 1
     #really model logic should recieve validated input, but raw input also should be saved somewhere
     $in = $in_validated;
     
-    #dirty hack 2
-    #validate methods in form configuration don't change fields values, will find why later
-    #for other values see defaults in form
-    if($in->{tt_type} eq 'svgpdf'){
-        $in->{tt_type} = 'svg';
-        $in->{tt_output_type} = 'pdf';
-    }elsif($in->{tt_type} eq 'html'){
-        $in->{tt_output_type} = 'html';
-    }
-    #use irka;
-    #use Data::Dumper;
-    #irka::loglong(Dumper($in));
-
     #model logic
     my $tt_string_default = '';
     my $tt_string_customer = '';
@@ -1000,7 +959,7 @@ sub invoice_template :Chained('invoice_data') :PathPart('template') :Args {
     if(!$in->{tt_string} && !$tt_string_force_default){
         #here we also may be better should contact model, not DB directly. Will return to this separation later
         #at the end - we can figure out rather basic controller behaviour
-        ($out->{tt_id}) = $backend->getCustomerInvoiceTemplate( %$in, result => \$tt_string_customer );
+        ($out->{tt_id},undef,$out->{tt_data}) = $backend->getCustomerInvoiceTemplate( %$in, result => \$tt_string_customer );
     }
     
     #we need to get default to 1) sanitize (if in->tt_string) or 2)if not in->tt_string and no customer->tt_string
@@ -1032,7 +991,6 @@ sub invoice_template :Chained('invoice_data') :PathPart('template') :Args {
             }
             #/sanitize - to sub, later
 
-            #irka::loglong(Dumper($tt_string_sanitized));
             $backend->storeCustomerInvoiceTemplate( 
                 %$in,
                 tt_string_sanitized => \$tt_string_sanitized,
@@ -1052,23 +1010,26 @@ sub invoice_template :Chained('invoice_data') :PathPart('template') :Args {
     #mess,mess,mess here
     if($in->{tt_output_type} eq 'svg'){
         $c->response->content_type('text/html');
+        #multi-svg document (as well as one-svg documet) is shown ok with text/html
 #        $c->response->content_type('image/svg+xml');
     }elsif($in->{tt_output_type} eq 'pdf'){
         $c->response->content_type('application/pdf');
     }elsif($in->{tt_output_type} eq 'html'){
         $c->response->content_type('text/html');
+    }elsif($in->{tt_output_type}=~m'zip'){
+        $c->response->content_type('application/zip');
     }
+    
     if($in->{tt_viewmode} eq 'raw'){
         #$c->stash->{VIEW_NO_TT_PROCESS} = 1;
         $c->response->body($out->{tt_string});
         return;
-    }else{
+    }else{#parsed
 
         my $contacts = $c->model('DB')->resultset('contacts')->search({ id => $in->{contract_id} });
         $c->stash( provider => $contacts->first );
 
         #some preprocessing should be done only before showing. So, there will be:
-        #preSaveCustomTemplate prerpocessing
         #preShowCustomTemplate prerpocessing
         {
             #preShowInvoice
@@ -1082,20 +1043,30 @@ sub invoice_template :Chained('invoice_data') :PathPart('template') :Args {
             #$c->response->content_type('image/svg+xml');
             $c->stash( template => \$out->{tt_string} ); 
             $c->detach( $c->view('SVG') );
+        }elsif($in->{tt_output_type} eq 'json'){
+            my $aaData = {
+                template =>{
+                    raw => $out->{tt_string}, 
+                    parsed => $c->view('SVG')->getTemplateProcessed($c,\$out->{tt_string}, $c->stash ),
+                },
+                form => {
+                    tt_id => $out->{tt_data}->get_column('id'),
+                }
+            };
+            foreach(qw/name is_active/){
+                $aaData->{form}->{$_} = $out->{tt_data}->get_column($_);
+            }
+            #$c->stash( aaData => $out ); 
+            $c->detach( $c->view('JSON') );
         }elsif($in->{tt_output_type} eq 'pdf'){
             $c->response->content_type('application/pdf');
             my $svg = $c->view('SVG')->getTemplateProcessed($c,\$out->{tt_string}, $c->stash );
             my(@pages) = $svg=~/(<svg.*?(?:\/svg>))/sig;
             
             #$c->log->debug($svg);
-            #my $kit = PDF::WebKit->new(\$svg, page_size => 'A4');
-            #push @{ $kit->stylesheets }, "/path/to/css/file";
-            # Get an inline PDF
-            #$out->{tt_string} = $kit->to_pdf;
-            #$c->response->body($out->{tt_string});
             my ($tempdirbase,$tempdir );
             use File::Temp qw/tempfile tempdir/;
-        #my($fh, $tempfilename) = tempfile();
+            #my($fh, $tempfilename) = tempfile();
             $tempdirbase = join('/',File::Spec->tmpdir,@$in{qw/contract_id tt_type tt_sourcestate/}, $out->{tt_id});
             use File::Path qw( mkpath );
             ! -e $tempdirbase and mkpath( $tempdirbase, 0, 0777 );
@@ -1129,13 +1100,6 @@ sub invoice_template :Chained('invoice_data') :PathPart('template') :Args {
                 $pagenum++;
             }
             
-            #$fh->unlink_on_destroy( 0 );
-            #my $filename = "/tmp/bbb.svg";
-            #open my $fh, ">$filename";
-            #binmode $fh;
-            #print $fh $svg;
-            #close $fh;
-            #my $cmd = "/tmp/wkhtmltox/bin/wkhtmltopdf $filename - ";
             my $cmd = "rsvg-convert -f pdf ".join(" ", @pagefiles);
             $c->log->debug($cmd);
             #`chmod ugo+rwx $filename`;
@@ -1158,19 +1122,31 @@ sub invoice_template :Chained('invoice_data') :PathPart('template') :Args {
     }
 }
 
-sub subscriber_ajax :Chained('base') :PathPart('subscriber/ajax') :Args(0) {
+sub invoice_template_aux_embedImage :Chained('list_customer') :PathPart('auxembedimage') :Args(0) {
     my ($self, $c) = @_;
-    my $res = $c->stash->{contract}->voip_subscribers->search({
-        'provisioning_voip_subscriber.is_pbx_group' => 0,
-        'me.status' => { '!=' => 'terminated' },
-
-    },{
-        join => 'provisioning_voip_subscriber',
-    });
-    NGCP::Panel::Utils::Datatables::process($c, $res, $c->stash->{subscriber_dt_columns});
-    $c->detach( $c->view("JSON") );
+    
+    #I know somewhere is logging of all visited methods
+    $c->log->debug('invoice_template_aux_handleImageUpload');
+    my($validator,$backend,$in,$out);
+    
+    #todo
+    #mime-type and type checking in form
+    
+    $in = $c->request->parameters;
+    $in->{svg_file} = $c->request->upload('svg_file');
+    if($in->{svg_file}) {
+        my $ft = File::Type->new();
+        $out->{image_content} = $in->{svg_file}->slurp;
+        $out->{image_content_mimetype} = $ft->mime_type($out->{image_content});
+        $out->{image_content_base64} = encode_base64($out->{image_content}, '');
+    }
+    $c->log->debug('mime-type '.$out->{image_content_mimetype});
+    $c->stash(out => $out);
+    $c->stash(in => $in);
+    $c->stash(template => 'customer/invoice_template_aux_embedimage.tt');
+    $c->detach( $c->view('SVG') );
+    
 }
-
 sub pbx_group_ajax :Chained('base') :PathPart('pbx/group/ajax') :Args(0) {
     my ($self, $c) = @_;
     my $res = $c->stash->{contract}->voip_subscribers->search({

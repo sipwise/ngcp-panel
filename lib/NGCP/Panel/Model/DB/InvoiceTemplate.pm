@@ -4,17 +4,22 @@ use base NGCP::Panel::Model::DB::Base;
 sub getCustomerInvoiceTemplate{
     my $self = shift;
     my (%params) = @_;
-    my ($contract_id,$tt_sourcestate,$tt_type) = @params{qw/contract_id tt_sourcestate tt_type/};
+    my ($contract_id,$tt_sourcestate,$tt_type,$tt_id) = @params{qw/contract_id tt_sourcestate tt_type tt_id/};
 
     my $result = '';
-    my $tt_id = '';
     
+    my $conditions = {};
     #my $tt_record = $self->resultset('invoice_template')->search({
-    my $tt_record = $self->schema->resultset('invoice_template')->search({
-        reseller_id => $contract_id,
-        is_active   => 1,
-        type        => $tt_type
-    })->first;
+    if($tt_id){
+        $conditions = { id => $tt_id };
+    }else{
+        $conditions = {
+            reseller_id => $contract_id,
+            is_active   => 1,
+            type        => $tt_type
+        };
+    }
+    my $tt_record = $self->schema->resultset('invoice_template')->search($conditions)->first;
     #here may be base64 decoding
     
     #here we will rely on form checking and defaults
@@ -26,7 +31,7 @@ sub getCustomerInvoiceTemplate{
     if( $result && exists $params{result} ){
         ${$params{result}} = $result;
     }
-    return ( $tt_id,\$result, $tt_record );#sgorila hata, gori i saray
+    return ( $tt_id, \$result, $tt_record );#sgorila hata, gori i saray
 }
 
 sub storeCustomerInvoiceTemplate{
@@ -81,9 +86,10 @@ sub getCustomerInvoiceTemplateList{
     my $self = shift;
     my (%params) = @_;
     my ($contract_id,$tt_sourcestate,$tt_type, $tt_string, $tt_id) = @params{qw/contract_id tt_sourcestate tt_type tt_string_sanitized tt_id/};
-    return $self->schema->resultset('invoice_template')->search({
+    
+    return [ $self->schema->resultset('invoice_template')->search({
         reseller_id => $contract_id,
-    });
+    })->all ];
 }
 sub deleteCustomerInvoiceTemplate{
     my $self = shift;

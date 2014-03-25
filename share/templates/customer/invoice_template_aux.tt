@@ -1,5 +1,6 @@
 [%USE Dumper%]
 [%USE Math%]
+[% total = {perpage => [], global => {} } -%]
 
 [%MACRO row_y_re(tt_type) BLOCK -%]
     [% IF tt_type == 'svg'  -%]
@@ -50,7 +51,7 @@
     [%page%]
 [%END%]
 
-[%MACRO adjustrow(data, rowtype, tt_type, row_vertical_interval, rownumber) BLOCK -%]
+[%MACRO adjustrow(data, page, rowtype, tt_type, row_vertical_interval, rownumber) BLOCK -%]
     [%# y_re = row_y_re(tt_type) %]
 
     [% row = get_row(data, rowtype) %]
@@ -65,13 +66,17 @@
     [%row%]
 [%END -%]
 
-[%MACRO list_calls(callsdata, rowtype, total, tt_type, row_vertical_interval) BLOCK-%]
+[%MACRO list_calls(callsdata, page, rowtype, total, tt_type, row_vertical_interval) BLOCK-%]
     [% FOR call IN callsdata -%][%#invoice_details%]
-        [% total.number = total.number + call.get_column('number') -%]
-        [% total.duration = total.duration + call.get_column('duration') -%]
-        [% total.free_time = total.free_time + call.get_column('free_time') -%]
-        [% total.cost = total.cost + call.get_column('cost') -%]
-        [% adjustrow(call, rowtype,  tt_type, row_vertical_interval, loop.count) -%]
+        [% total.global.number = total.number + call.get_column('number') -%]
+        [% total.global.duration = total.duration + call.get_column('duration') -%]
+        [% total.global.free_time = total.free_time + call.get_column('free_time') -%]
+        [% total.global.cost = total.cost + call.get_column('cost') -%]
+        [% total.perpage.${page}.number = total.number + call.get_column('number') -%]
+        [% total.perpage.${page}.duration = total.duration + call.get_column('duration') -%]
+        [% total.perpage.${page}.free_time = total.free_time + call.get_column('free_time') -%]
+        [% total.perpage.${page}.cost = total.cost + call.get_column('cost') -%]
+        [% adjustrow(call, page, rowtype,  tt_type, row_vertical_interval, loop.count) -%]
     [%END -%]
 [%END -%]
 

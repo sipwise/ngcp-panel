@@ -4,7 +4,7 @@ use HTML::FormHandler::Moose;
 extends 'NGCP::Panel::Form::ValidatorBase';
 
 use Moose::Util::TypeConstraints;
-enum 'TemplateType' => [ qw/svg html svgpdf/ ];#html
+enum 'TemplateType' => [ qw/svg html/ ];#html
 enum 'TemplateTypeOutput' => [ qw/svg html pdf svgzip htmlzip pdfzip/ ];#html
 enum 'TemplateViewMode' => [ qw/raw parsed/ ];
 enum 'TemplateSourceState' => [ qw/saved previewed default/ ];
@@ -18,7 +18,6 @@ has_field 'tt_type' => (
     default => 'svg',
     apply => [ 
         { type => 'TemplateType' },
-        #{ transform => sub{ $_[0] eq 'svgpdf' and return 'svg'; } },
     ],
 );
 
@@ -28,7 +27,6 @@ has_field 'tt_output_type' => (
     default => 'svg',
     apply => [ 
         { type => 'TemplateTypeOutput' },
-        #{ when => { tt_type => 'svgpdf' }, transform => sub{ 'pdf' } },
     ],
 );
 
@@ -68,22 +66,6 @@ has_field 'tt_id' => (
     #apply    => [ { check => \&validate_tt_string } ],
     required => 0,
 );
-
-#sub validate_tt_string{
-    #here could be following: take default from file and get all variables and validate variables from customer string
-#};
-#sub validate {
-#    my ( $self ) = @_; # self is the form
-#    if( $self->field('tt_type')->value eq 'svgpdf'){
-#        use irka;
-#        use Data::Dumper;
-#        irka::loglong("\n\n\nin validate\nBBBBBBBBBBBBBBBBBBBBB\naaaaaaaaaaaaaaa\n");
-#        #die();
-#        $self->field('tt_output_type')->value('pdf');
-#        $self->field('tt_type')->value('svg');
-#    }
-#    return 1;
-#};
 
 1;
 
