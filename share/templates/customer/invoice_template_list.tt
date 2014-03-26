@@ -33,7 +33,7 @@
         <tr class="sw_action_row">
             <td>[% template.get_column('is_active') %]</td>
             <td>[% template.get_column('type') %]</td>
-            <td>=[%template.get_column('id')%]:[%- c.uri_for_action("/customer/invoice_template_delete", [contract.id, template.get_column('id')]) -%]= [%# template.get_column('name') %]</td>
+            <td>=[%- c.uri_for_action("/customer/invoice_template_delete", [contract.id, template.get_column('id')]) -%]= [%# template.get_column('name') %]</td>
 
             <td class="ngcp-actions-column">
                 <div class="sw_actions">
