@@ -826,7 +826,7 @@ sub invoice_data :Chained('base') :PathPart('invoice') :CaptureArgs(0) {
         stime => $stime,
         etime => $etime,
     );
-    #FAKE FAKE FAKE FAKE
+    #TODO: FAKE FAKE FAKE FAKE
     $invoice_details = [$invoice_details->all()];
     my $i = 1;
     $invoice_details = [map{[$i++,$_]} (@$invoice_details) x 21];
@@ -928,8 +928,7 @@ sub invoice_template :Chained('invoice_data') :PathPart('template') :Args {
     $validator = NGCP::Panel::Form::Customer::InvoiceTemplate->new;
 #    $form->schema( $c->model('DB::InvoiceTemplate')->schema );
     #to common form package ? removing is necessary due to FormHandler param presence evaluation - it is based on key presence, not on defined/not defined value
-    foreach ( keys %$in) { if(!( defined $in->{$_} )){ delete $in->{$_}; } };
-
+    $validator->remove_undef_in($in);
     
     #really, we don't need a form here at all
     #just use as already implemented fields checking and defaults applying  
@@ -1016,6 +1015,8 @@ sub invoice_template :Chained('invoice_data') :PathPart('template') :Args {
         $c->response->content_type('application/pdf');
     }elsif($in->{tt_output_type} eq 'html'){
         $c->response->content_type('text/html');
+    }elsif($in->{tt_output_type} eq 'json'){
+        $c->response->content_type('application/json');
     }elsif($in->{tt_output_type}=~m'zip'){
         $c->response->content_type('application/zip');
     }
@@ -1035,32 +1036,43 @@ sub invoice_template :Chained('invoice_data') :PathPart('template') :Args {
             #preShowInvoice
             #even better - to template filters
             #also to model
-            $out->{tt_string}=~s/(?:{\s*)?<!--{|}-->(?:\s*})?//gs;
-            $out->{tt_string}=~s/(<g .*?(id *=["' ]+(?:title|bg|mid)page["' ]+)?.*?)(?:display="none")(?(2)(?:.*?>)($2.*?>))/$1$3/gs;
+            $out->{tt_string_prepared}=$out->{tt_string_stored}=$out->{tt_string};
+            $out->{tt_string_prepared}=~s/(?:{\s*)?<!--{|}-->(?:\s*})?//gs;
+            $out->{tt_string_prepared}=~s/(<g .*?(id *=["' ]+(?:title|bg|mid)page["' ]+)?.*?)(?:display="none")(?(2)(?:.*?>)($2.*?>))/$1$3/gs;
         }
 
         if( ($in->{tt_output_type} eq 'svg') || ( $in->{tt_output_type} eq 'html') ){
             #$c->response->content_type('image/svg+xml');
-            $c->stash( template => \$out->{tt_string} ); 
+            $c->stash( template => \$out->{tt_string_prepared} ); 
             $c->detach( $c->view('SVG') );
         }elsif($in->{tt_output_type} eq 'json'){
+        #method
+            $c->log->debug('prepare json');
+            
             my $aaData = {
                 template =>{
-                    raw => $out->{tt_string}, 
-                    parsed => $c->view('SVG')->getTemplateProcessed($c,\$out->{tt_string}, $c->stash ),
+                    raw => $out->{tt_string_stored}, 
+                    parsed => $c->view('SVG')->getTemplateProcessed($c, \$out->{tt_string_prepared}, $c->stash ),
                 },
-                form => {
-                    tt_id => $out->{tt_data}->get_column('id'),
-                }
             };
-            foreach(qw/name is_active/){
-                $aaData->{form}->{$_} = $out->{tt_data}->get_column($_);
+            #can be empty if we just load default
+            if($out->{tt_data}){
+                $aaData->{form} = {
+                    tt_id => $out->{tt_data}->get_column('id'),
+                };
+                foreach(qw/name is_active/){
+                    $aaData->{form}->{$_} = $out->{tt_data}->get_column($_);
+                }
+            }else{
+                #if we didn't have tt_data - then we have empty form fields with applied defaults
+                $aaData->{form} = $in;
             }
-            #$c->stash( aaData => $out ); 
+            $c->stash( aaData => $aaData ); 
             $c->detach( $c->view('JSON') );
         }elsif($in->{tt_output_type} eq 'pdf'){
+        #method
             $c->response->content_type('application/pdf');
-            my $svg = $c->view('SVG')->getTemplateProcessed($c,\$out->{tt_string}, $c->stash );
+            my $svg = $c->view('SVG')->getTemplateProcessed($c,\$out->{tt_string_prepared}, $c->stash );
             my(@pages) = $svg=~/(<svg.*?(?:\/svg>))/sig;
             
             #$c->log->debug($svg);
@@ -1111,10 +1123,10 @@ sub invoice_template :Chained('invoice_data') :PathPart('template') :Args {
                 open B, "$cmd |"; 
                 binmode B; 
                 local $/ = undef; 
-                $out->{tt_string} = <B>;
+                $out->{tt_string_pdf} = <B>;
                 close B;
             }
-            $c->response->body($out->{tt_string});
+            $c->response->body($out->{tt_string_pdf});
             return;
             #$out->{tt_string} = `cat $filename `;
         }

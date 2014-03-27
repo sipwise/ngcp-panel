@@ -92,7 +92,7 @@
 <script src="/js/Theme.js"></script>
 
 <script>
-$(function () {
+var mainWrapperInit = function () {
     Theme.init ();
 
     $('[rel="tooltip"]').tooltip({'html': false});
@@ -199,7 +199,8 @@ $(function () {
             }
         });
     }
-});
+};
+$(mainWrapperInit);
 </script>
 </body>
 [% # vim: set tabstop=4 syntax=html expandtab: -%]

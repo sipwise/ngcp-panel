@@ -1,24 +1,39 @@
 package NGCP::Panel::Model::DB::InvoiceTemplate;
 use base NGCP::Panel::Model::DB::Base;
 
-sub getCustomerInvoiceTemplate{
-    my $self = shift;
-    my (%params) = @_;
-    my ($contract_id,$tt_sourcestate,$tt_type,$tt_id) = @params{qw/contract_id tt_sourcestate tt_type tt_id/};
+use irka;
+use Data::Dumper;
 
-    my $result = '';
-    
+sub getDefaultConditions{
+    my $self = shift;
+    my ($params) = @_;
+    irka::loglong(Dumper($params));
+    my ($contract_id,$tt_sourcestate,$tt_type,$tt_id) = @$params{qw/contract_id tt_sourcestate tt_type tt_id/};
     my $conditions = {};
+    irka::loglong("getDefaultConditions: tt_id=$tt_id;\n");
     #my $tt_record = $self->resultset('invoice_template')->search({
     if($tt_id){
         $conditions = { id => $tt_id };
     }else{
         $conditions = {
             reseller_id => $contract_id,
+            type        => $tt_type,
             is_active   => 1,
-            type        => $tt_type
         };
     }
+    return $conditions;
+}
+sub getCustomerInvoiceTemplate{
+    my $self = shift;
+    my (%params) = @_;
+    my ($contract_id,$tt_sourcestate,$tt_type,$tt_id) = @params{qw/contract_id tt_sourcestate tt_type tt_id/};
+
+    irka::loglong("getCustomerInvoiceTemplate: tt_id=$tt_id;\n");
+    irka::loglong(Dumper(\%params));
+    my $result = '';
+    
+    my $conditions = $self->getDefaultConditions(\%params);
+    #my $tt_record = $self->resultset('invoice_template')->search({
     my $tt_record = $self->schema->resultset('invoice_template')->search($conditions)->first;
     #here may be base64 decoding
     
@@ -31,13 +46,13 @@ sub getCustomerInvoiceTemplate{
     if( $result && exists $params{result} ){
         ${$params{result}} = $result;
     }
-    return ( $tt_id, \$result, $tt_record );#sgorila hata, gori i saray
+    return ( $tt_id, \$result, $tt_record );#tt_record - sgorila hata, gori i saray
 }
 
 sub storeCustomerInvoiceTemplate{
     my $self = shift;
     my (%params) = @_;
-    my ($contract_id,$tt_sourcestate,$tt_type, $tt_string, $tt_id) = @params{qw/contract_id tt_sourcestate tt_type tt_string_sanitized tt_id/};
+    my ($contract_id, $tt_sourcestate, $tt_type,$tt_string,$tt_id,$is_active,$name) = @params{qw/contract_id tt_sourcestate tt_type tt_string_sanitized tt_id is_active name/};
 
     #my $tt_record = $self->resultset('invoice_template')->search({
     $self->schema->txn_do(sub {
@@ -49,11 +64,7 @@ sub storeCustomerInvoiceTemplate{
 #            'base64_'.$tt_sourcestate => $$tt_string,
 #        });
 
-        my $tt_record = $self->schema->resultset('invoice_template')->search({
-            reseller_id => $contract_id,
-            type        => $tt_type,
-            is_active   => 1,
-        })->first;
+
         #here may be base64 decoding
 
 #        $self->schema->resultset('ivoice_template')->search({
@@ -63,22 +74,22 @@ sub storeCustomerInvoiceTemplate{
 #            is_active   => 0,
 #        });
         
-        if( !$tt_record ){
+        if( !$tt_id ){
             $self->schema->resultset('invoice_template')->create({
                 reseller_id => $contract_id,
                 type        => $tt_type,
                 is_active   => 1,
+                name        => $name,
                 'base64_'.$tt_sourcestate => $$tt_string,
             });
         }else{
-            $self->schema->resultset('invoice_template')->update({
-                reseller_id => $contract_id,
-                type        => $tt_type,
-                is_active   => 1,
+            my $conditions = $self->getDefaultConditions(\%params);
+            my $tt_record = $self->schema->resultset('invoice_template')->search($conditions);
+            $tt_record->update({
+                is_active   => $is_active,
+                name        => $name,
                 'base64_'.$tt_sourcestate => $$tt_string,
-                id          => $tt_record->get_column( 'id' ),
-            },
-            {   key => 'id' });
+            });
         }
     });
 }

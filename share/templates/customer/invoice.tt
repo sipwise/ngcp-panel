@@ -18,15 +18,16 @@
 
 <script type="text/javascript" src="/js/libs/svg-edit/embedapi.js"></script>
 <script type="text/javascript" src="/js/background.js"></script>
+<script type="text/javascript" src="/js/jquery.loadJSON.js"></script>
 <script type="text/javascript">
+//constructor
 var svgCanvasEmbed = null;
 function init_embed() {
     var svgEditFrameName = 'svgedit';
     var frame = document.getElementById(svgEditFrameName);
     svgCanvasEmbed = new EmbeddedSVGEdit(frame);
     // Hide main button, as we will be controlling new/load/save etc from the host document
-    var doc;
-    doc = frame.contentDocument;
+    var doc = frame.contentDocument;
     if (!doc)
     {
         doc = frame.contentWindow.document;
@@ -34,15 +35,9 @@ function init_embed() {
     //var mainButton = doc.getElementById('main_button');
     //mainButton.style.display = 'none';
 }
-function setSvgStringToEditor( svgParsedString ){
-    svgCanvasEmbed.setSvgString( svgParsedString )(
-        function(data,error){
-            if(error){
-            }else{
-                svgCanvasEmbed.zoomChanged('', 'canvas');
-            }
-        }
-    );
+//private
+function getSvgString(){
+    return svgCanvasEmbed.frame.contentWindow.svgCanvas.getSvgString();
 }
 var uriForAction = function( data, type ){
     //also we can think about getting URI's via ajax )
@@ -54,7 +49,7 @@ var uriForAction = function( data, type ){
         break;
     case 'invoice_template_saved':
         //q_template = '[%- c.uri_for_action("/customer/invoice_template", ['contract_id','svg','parsed','saved','svg','tt_id']) -%]';
-        q_template = '[%- c.uri_for_action("/customer/invoice_template", ["contract_id"]) -%]'+'/svg/parsed/previewed/svg/tt_id';
+        q_template = '[%- c.uri_for_action("/customer/invoice_template", ["contract_id"]) -%]'+'/svg/parsed/saved/svg/tt_id';
         break;
     case 'invoice_template_list':
         q_template = '[%- c.uri_for_action("/customer/invoice_template_list", ['contract_id']) -%]';
@@ -65,62 +60,53 @@ var uriForAction = function( data, type ){
         q_template = '[%- c.uri_for_action("/customer/invoice_template", ["contract_id"]) -%]'+'/tt_type/tt_viewmode/tt_sourcestate/tt_output_type/tt_id';
         break;
     }
-    //alert('1.q_template='+q_template);
-    //alert('contract_id='+data.contract_id+';tt_id='+data.tt_id);
     if(!data.tt_id){data.tt_id = '';}
     if(!data.tt_type){data.tt_type = 'svg';}
     if(!data.tt_output_type){data.tt_output_type = 'svg';}
+    if(!data.tt_viewmode){data.tt_viewmode = 'both';}
     var params = ['contract_id','tt_id','tt_type','tt_output_type','tt_viewmode','tt_sourcestate'];
     params.forEach(function(key){
         q_template=q_template.replace(key,data[key]);
     });
-    /*
-    q_template=q_template.replace('contract_id',data.contract_id);
-    q_template=q_template.replace('tt_id',data.tt_id);
-    q_template=q_template.replace('tt_type',data.tt_type);
-    q_template=q_template.replace('tt_output_type',data.tt_output_type);
-    q_template=q_template.replace('tt_viewmode',data.tt_viewmode);
-    q_template=q_template.replace('tt_sourcestate',data.tt_sourcestate);
-    */
-    q_template=q_template.replace(/([^:])\/{2,}/g,'$1/');
     q_template=q_template.replace(/\/+$/,'');
-    //alert('2.q_template='+q_template);
     return q_template;
 }
-//function loadInvoiceTemplateData(params) {
-//function loadInvoiceTemplateData(tt_type,tt_viewmode,tt_sourcestate,tt_output_type,tt_id,contract_id) {
-function loadInvoiceTemplateData( data ){
-    //params spec: tt_type=[svg|html]/tt_viewmode[parsed|raw]/tt_sourcestate[default|previewed]/tt_output_type[svg|pdf|html|json|svgzip|pdfzip|htmlzip]/tt_id
-    //tt_output_type=svg really outputs text/html mimetype. But it will be couple of <svg> tags (<svg> per page).
-    var q = uriForAction( data, 'invoice_template' );
-    alert('loadInvoiceTemplateData: q='+q+';');
-    $.ajax({
-        url: q,
-        datatype: "json",
-    }).done(function(jsonres){
-        var templatedata = $.parseJson(res);
-        svgRawString = templatedata.template.raw;
-        setSvgStringToEditor( svgRawString );
-    });
+function setSvgStringToEditor( svgParsedString ){
+    alert('setSvgStringToEditor: '+svgParsedString);
+    svgCanvasEmbed.setSvgString( svgParsedString )(
+        function(data,error){
+            if(error){
+            }else{
+                svgCanvasEmbed.zoomChanged('', 'canvas');
+            }
+        }
+    );
 }
-function fetchSvgToEditor( data ) {
-    var q = uriForAction( data, 'invoice_template' );
-    //alert('fetchSvgToEditor: q='+q+';');
-    $.ajax({
-        url: q,
-    }).done( function ( httpResponse ){ 
-        setSvgStringToEditor( httpResponse );
-    } );
-}
-
-var setSvgStringToPreview = function( svgParsedString, q ) {
+function setSvgStringToPreview( svgParsedString, q, data ) {
     var previewIframe = document.getElementById('svgpreview'); 
+    alert('setSvgStringToPreview: svgParsedString='+svgParsedString+';');
     if ($.browser.msie) {
         //we need to repeat query to server for msie if we don't want send template string via GET method
+        if(!q){
+            var dataPreview = data;
+            dataPreview.tt_viewmode = 'parsed';
+            dataPreview.tt_type = 'svg';
+            dataPreview.tt_sourcestate = dataPreview.tt_sourcestate || 'saved';
+            q = uriForAction( dataPreview, 'invoice_template' );
+        }
         previewIframe.src = q;
     }else{
         previewIframe.src = "data:text/html," + encodeURIComponent(svgParsedString);
     }
+}
+function fetchSvgToEditor( data ) {
+    var q = uriForAction( data, 'invoice_template' );
+    alert('fetchSvgToEditor: q='+q+';');
+    $.ajax({
+        url: q,
+    }).done( function ( httpResponse ){ 
+        setSvgStringToEditor( httpResponse );
+    });
 }
 function refreshTemplateList ( contract_id ){
     fetch_into(
@@ -130,28 +116,56 @@ function refreshTemplateList ( contract_id ){
         function(){ mainWrapperInit(); }
     );
 }
-function getSvgString(){
-    return svgCanvasEmbed.frame.contentWindow.svgCanvas.getSvgString();
+//public
+function fetchInvoiceTemplateData( data ){
+    //params spec: tt_type=[svg|html]/tt_viewmode[parsed|raw]/tt_sourcestate[saved|previewed|default]/tt_output_type[svg|pdf|html|json|svgzip|pdfzip|htmlzip]/tt_id
+    //tt_output_type=svg really outputs text/html mimetype. But it will be couple of <svg> tags (<svg> per page).
+    data.tt_output_type = 'json';
+    var q = uriForAction( data, 'invoice_template' );
+    alert('fetchInvoiceTemplateData: q='+q+';');
+    $.ajax({
+        url: q,
+        datatype: "json",
+    //}).done( function( jsonres ){
+    }).done( function( templatedata ){
+        if(templatedata.aaData){
+            if( templatedata.aaData.template ){
+                setSvgStringToEditor( templatedata.aaData.template.raw );
+                setSvgStringToPreview( templatedata.aaData.template.parsed );
+            }
+            if( templatedata.aaData.form ){
+                $('form[name=invoice_template]').loadJSON(templatedata.aaData.form);
+            }
+        }
+        //can use some plugin for jquery like populate for more complex forms
+        /*
+        $.each(templatedata.aaData.form, function( key, value ){
+            var field = $('form[name=invoice_template] input[name='+key+']');
+            field.val(value);
+        });
+        */
+    });
 }
 function savePreviewedAndShowParsed( data ){
     var svgString = getSvgString();
     var q = uriForAction( data, 'invoice_template_previewed' ); 
-    //alert('svgString='+svgString+'; q='+q+';');
+    //alert('savePreviewedAndShowParsed: svgString='+svgString+'; q='+q+';');
+    //alert('savePreviewedAndShowParsed: q='+q+';');
     //save 
     $.post( q, { template: svgString } )
     .done( function( httpResponse ){
         // & show template
-        //alert('httpResponse='+httpResponse+';');
-        
+        //alert('savePreviewedAndShowParsed: httpResponse='+httpResponse+';');
         setSvgStringToPreview( httpResponse, q )
         //refresh list after saving
         refreshTemplateList( data.contract_id );
     } );
 }
-
-function saveTemplate( contract_id, tt_id ) {			
+function saveTemplate( data ) {	
     var svgString = getSvgString();
+    data.tt_sourcestate='saved';
     var q = uriForAction( data, 'invoice_template_saved' ); 
+    alert('saveTemplate: q='+q+';');
     $.post( q, { template: encodeURIComponent( svgString ) })
     .done( function( httpResponse ) {
         refreshTemplateList( data.contract_id );
@@ -251,9 +265,22 @@ function getTtIdVal(){
     return $('form[name=invoice_template] input[name=tt_id]').val();
 }
 </script>
-<form name="invoice_template" id="invoice_template" action="[%- c.uri_for_action('/customer/invoice_template', [contract.id]) -%]">
+<form name="invoice_template" id="invoice_template" action="[%- c.uri_for_action('/customer/invoice_template', [contract.id]) -%]"  class="form-horizontal" enctype="multipart/form-data" method="post">
 <input type="hidden" name="tt_id" value="">
 <div class="ngcp-separator"></div>
+<div class="control-group">
+    <label class="control-label" for="name">[%c.loc('Template name')%]</label>
+    <div class="controls">
+    <input type="text" name="name" id="name" value="" />
+    </div>
+</div>
+<div class="ngcp-separator"></div>
+<div class="control-group">
+    <label class="control-label" for="is_active">[%c.loc('Active')%]</label>
+    <div class="controls" class="checkbox">
+    <input type="checkbox" name="is_active" id="is_active" value="1" />
+    </div>
+</div>
 <span>
     <a class="btn btn-primary btn-large" onclick="
     savePreviewedAndShowParsed({
@@ -262,9 +289,15 @@ function getTtIdVal(){
     });void(0);">[% c.loc('Refresh Preview')%] <i class="icon-refresh"></i></a>
 </span>
 <span>
-    <a class="btn btn-primary btn-large" onclick="saveTemplate({contract_id:'[%contract.id%]',tt_id: $('form[name=invoice_template] input[name=tt_id]').val()});void(0);">[% c.loc('Save template')%] <i class="icon-disk"></i></a>
+    <a class="btn btn-primary btn-large" onclick="
+    alert('tt_id='+getTtIdVal()+';');
+    saveTemplate({
+        contract_id:'[%contract.id%]',
+        tt_id: getTtIdVal(),
+    });void(0);">[% c.loc('Save template')%] <i class="icon-disk"></i></a>
 </span>
 <div class="ngcp-separator"></div>
+
 [%initial = 'default'%]
 <iframe 
     type="text/html" 
