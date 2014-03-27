@@ -3,7 +3,7 @@
 POT="lib/NGCP/Panel/I18N/messages.pot"
 
 DIRS=""
-for d in $(cat etc/i18n.inc); do 
+for d in lib/NGCP/Panel/Role lib/NGCP/Panel/Field lib/NGCP/Panel/AuthenticationStore lib/NGCP/Panel/Form lib/NGCP/Panel/Render lib/NGCP/Panel/Controller lib/NGCP/Panel/Model lib/NGCP/Panel/Utils lib/NGCP/Panel/Widget lib/NGCP/Panel/View lib/NGCP/Panel/Cache share/templates share/layout; do
 	DIRS="$DIRS --directory $d"; 
 done
 
@@ -18,5 +18,5 @@ xgettext.pl \
 
 for po in $(find lib/NGCP/Panel/I18N -name "*.po"); do
 	echo; echo "Merging $po"; echo
-	msgmerge --update $po $POT
+	msgmerge --no-fuzzy-matching --update $po $POT
 done
