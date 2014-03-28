@@ -897,7 +897,7 @@ sub invoice_template_list :Chained('base') :PathPart('') :Args(0) {
     $c->log->debug('invoice_template_list');
     $c->stash( template => 'customer/invoice_template_list.tt' ); 
     $c->forward( 'invoice_template_list_data' );
-    $c->detach($c->view('SVG'));#just no wrapper - aybe there is some other way?
+    $c->detach($c->view('SVG'));#just no wrapper - maybe there is some other way?
 }
 
 sub invoice :Chained('invoice_template_list_data') :PathPart('') :Args(0) {
@@ -960,6 +960,17 @@ sub invoice_template :Chained('invoice_data') :PathPart('template') :Args {
         #here we also may be better should contact model, not DB directly. Will return to this separation later
         #at the end - we can figure out rather basic controller behaviour
         ($out->{tt_id},undef,$out->{tt_data}) = $backend->getCustomerInvoiceTemplate( %$in, result => \$tt_string_customer );
+
+        $out->{json} = {
+            tt_data => { 
+                tt_id => $out->{tt_data}->get_column('id'),
+            },
+        };
+        foreach(qw/name is_active/){
+            $out->{json}->{tt_data}->{$_} = $out->{tt_data}->get_column($_);
+        }
+        
+        
     }
     
     #we need to get default to 1) sanitize (if in->tt_string) or 2)if not in->tt_string and no customer->tt_string
@@ -991,10 +1002,17 @@ sub invoice_template :Chained('invoice_data') :PathPart('template') :Args {
             }
             #/sanitize - to sub, later
 
-            $backend->storeCustomerInvoiceTemplate( 
+            my($tt_stored) = $backend->storeCustomerInvoiceTemplate( 
                 %$in,
                 tt_string_sanitized => \$tt_string_sanitized,
             );
+            
+            $out->{json} = {
+                tt_data => { 
+                    tt_id => $tt_stored->{tt_id},
+                },
+            };
+
             
             $out->{tt_string} = $tt_string_sanitized;
         }elsif(!$tt_string_customer || $tt_string_force_default){
@@ -1057,13 +1075,8 @@ sub invoice_template :Chained('invoice_data') :PathPart('template') :Args {
                 },
             };
             #can be empty if we just load default
-            if($out->{tt_data}){
-                $aaData->{form} = {
-                    tt_id => $out->{tt_data}->get_column('id'),
-                };
-                foreach(qw/name is_active/){
-                    $aaData->{form}->{$_} = $out->{tt_data}->get_column($_);
-                }
+            if($out->{json} && $out->{json}->{tt_data}){
+                $aaData->{form} = $out->{json}->{tt_data};
             }else{
                 #if we didn't have tt_data - then we have empty form fields with applied defaults
                 $aaData->{form} = $in;

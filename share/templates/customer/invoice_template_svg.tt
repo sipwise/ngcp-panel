@@ -24,7 +24,7 @@
  </style>
 </defs>
 
-<style>
+<style type="text/css">
 <![CDATA[
 .address, .company{
 	font-weight: bold;

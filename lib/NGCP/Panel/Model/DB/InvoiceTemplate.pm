@@ -7,11 +7,10 @@ use Data::Dumper;
 sub getDefaultConditions{
     my $self = shift;
     my ($params) = @_;
-    irka::loglong(Dumper($params));
+    #irka::loglong(Dumper($params));
     my ($contract_id,$tt_sourcestate,$tt_type,$tt_id) = @$params{qw/contract_id tt_sourcestate tt_type tt_id/};
     my $conditions = {};
     irka::loglong("getDefaultConditions: tt_id=$tt_id;\n");
-    #my $tt_record = $self->resultset('invoice_template')->search({
     if($tt_id){
         $conditions = { id => $tt_id };
     }else{
@@ -29,7 +28,7 @@ sub getCustomerInvoiceTemplate{
     my ($contract_id,$tt_sourcestate,$tt_type,$tt_id) = @params{qw/contract_id tt_sourcestate tt_type tt_id/};
 
     irka::loglong("getCustomerInvoiceTemplate: tt_id=$tt_id;\n");
-    irka::loglong(Dumper(\%params));
+    #irka::loglong(Dumper(\%params));
     my $result = '';
     
     my $conditions = $self->getDefaultConditions(\%params);
@@ -73,25 +72,40 @@ sub storeCustomerInvoiceTemplate{
 #        })->update_all({
 #            is_active   => 0,
 #        });
-        
+        #I think that SQl + DBI are much more flexible and compact 
+        my $tt_record_created;
+        my $tt_record_updated;
         if( !$tt_id ){
-            $self->schema->resultset('invoice_template')->create({
+            $tt_record_created = $self->schema->resultset('invoice_template')->create({
                 reseller_id => $contract_id,
                 type        => $tt_type,
-                is_active   => 1,
+                is_active   => $is_active,
                 name        => $name,
                 'base64_'.$tt_sourcestate => $$tt_string,
             });
+            if($tt_record_created){
+                $tt_id = $tt_record_created->id();
+            }
         }else{
             my $conditions = $self->getDefaultConditions(\%params);
-            my $tt_record = $self->schema->resultset('invoice_template')->search($conditions);
-            $tt_record->update({
+            $tt_record_updated = $self->schema->resultset('invoice_template')->search($conditions);
+            $tt_record_updated->update({
                 is_active   => $is_active,
                 name        => $name,
                 'base64_'.$tt_sourcestate => $$tt_string,
             });
         }
+        if($is_active && $tt_id){
+            $self->schema->resultset('invoice_template')->search({
+                reseller_id => $contract_id,
+                type        => $tt_type,
+                id          => {'!=' => $tt_id },
+            })->update_all({
+                is_active => 0,
+            });
+        }
     });
+    return { tt_id => $tt_id };
 }
 sub getCustomerInvoiceTemplateList{
     my $self = shift;

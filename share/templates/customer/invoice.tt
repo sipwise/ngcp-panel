@@ -159,10 +159,21 @@ function savePreviewedAndShowParsed( data ){
 function saveTemplate( data ) {	
     var svgString = getSvgString();
     data.tt_sourcestate='saved';
+    data.tt_output_type = 'json';
     var q = uriForAction( data, 'invoice_template_saved' ); 
     //alert('saveTemplate: q='+q+';');
-    $.post( q, { template: svgString })
-    .done( function( httpResponse ) {
+        url: q,
+        datatype: "json",
+
+    $.ajax( 
+        type: "POST",
+        url: q,
+        dataType: 'json',
+        data: { template: svgString },
+    ).done( function( jsonResponse ) {
+        if(jsonResponse.aaData && jsonResponse.aaData.form){
+            $('form[name=invoice_template]').loadJSON(jsonResponse.aaData.form);
+        }
         refreshTemplateList( data.contract_id );
     });
 }
