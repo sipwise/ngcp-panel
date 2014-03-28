@@ -170,11 +170,9 @@ function saveTemplate( data ) {
         datatype: 'json',
         data: { template: svgString },
     } ).done( function( jsonResponse ) {
-        alert('Form!');
         if(jsonResponse.aaData && jsonResponse.aaData.form){
             $('form[name=invoice_template]').loadJSON(jsonResponse.aaData.form);
         }
-        alert('Refresh!');
         refreshTemplateList( data.contract_id );
     });
 }
