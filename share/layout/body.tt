@@ -105,6 +105,7 @@ var mainWrapperInit = function () {
 
     $('a[data-confirm]').live("click", function(ev) {
         var href = $(this).attr('href');
+        //var onclick = $(this).attr('onclick');
         if (!$('#dataConfirmModal').length) {
             $('body').append(
                 '<div id="dataConfirmModal" class="modal" role="dialog" aria-labelledby="dataConfirmLabel" aria-hidden="true">'+
@@ -113,12 +114,15 @@ var mainWrapperInit = function () {
                 '</div>'+
                 '<div class="modal-footer">'+
                   '<button class="btn" data-dismiss="modal" aria-hidden="true" id="dataConfirmCancel">Cancel</button>'+
-                  '<a class="btn btn-primary" id="dataConfirmOK">OK</a>'+
+                  '<a class="btn btn-primary ngcp-noback-link" data-dismiss="modal" aria-hidden="true" id="dataConfirmOK">OK</a>'+
                 '</div>'+
               '</div>'
             );
         } 
         $('#dataConfirmOK').attr('href', href);
+        if( href.search(/^javascript:/i ) > -1 ){
+            $('#dataConfirmOK').attr('onclick', href);
+        }
         $('#dataConfirmOK').text($(this).attr('data-confirm'));
         if($('#mod_edit').length) {
             $('#mod_edit').modal('hide');
@@ -139,6 +143,8 @@ var mainWrapperInit = function () {
         if(_text == "Back" ||
            $(this).hasClass('ngcp-error-button') ||
            $(this).hasClass('accordion-toggle') ||
+           $(this).hasClass('ngcp-noback-link') ||
+           ( $(this).attr('href').search(/^javascript:/i) > -1) ||
            $(this).parents('#footer').length ||
            $(this).parents('#topbar').length)  {
 
