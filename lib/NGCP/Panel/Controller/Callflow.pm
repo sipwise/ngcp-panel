@@ -21,16 +21,12 @@ sub root :Chained('/') :PathPart('callflow') :CaptureArgs(0) {
     my ( $self, $c ) = @_;
 
     $c->stash->{capture_dt_columns} = NGCP::Panel::Utils::Datatables::set_columns($c, [
-        { name => "timestamp", search => 0, title => $c->loc('Timestamp'), literal_sql => "min(timestamp)" },
+        { name => "min_timestamp", search => 0, title => $c->loc('Timestamp') },
         { name => "call_id", search => 1, title => $c->loc('Call-ID') },
         { name => "caller_uuid", search => 1, title => $c->loc('Caller UUID') },
         { name => "callee_uuid", search => 1, title => $c->loc('Callee UUID') },
         { name => "cseq_method", search => 1, title => $c->loc('Method') },
     ]);
-
-    $c->stash->{calls_rs} = $c->model('DB')->resultset('messages')->search(undef, {
-        order_by => { -asc => 'timestamp' },
-    });
 
 }
 
@@ -45,12 +41,24 @@ sub index :Chained('root') :PathPart('') :Args(0) {
 
 sub ajax :Chained('root') :PathPart('ajax') :Args(0) {
     my ( $self, $c ) = @_;
-    my $calls_rs = $c->stash->{calls_rs}->search_rs(undef,{
-        group_by => 'call_id'
-    });
+
+    my $calls_rs_cb = sub {
+        my %params = @_;
+        my $total_count =  $c->model('DB')->resultset('messages')->search(undef,{group_by => 'call_id'})->count;
+        my $base_rs =  $c->model('DB')->resultset('messages_custom');
+        my $searchstring = $params{searchstring} ? $params{searchstring}.'%' : '';
+
+        my @bind_vals = (($searchstring) x 3, $params{offset}, $params{rows});
+
+        my $new_rs = $base_rs->search(undef,{
+            bind => \@bind_vals,
+        });
+        return ($new_rs, $total_count, $total_count);
+    };
+
     NGCP::Panel::Utils::Datatables::process(
         $c,
-        $calls_rs,
+        $calls_rs_cb,
         $c->stash->{capture_dt_columns},
     );
     $c->detach( $c->view("JSON") );

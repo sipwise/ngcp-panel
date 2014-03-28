@@ -17,8 +17,11 @@ use NGCP::Panel::Form::RewriteRule::ResellerSet;
 use NGCP::Panel::Form::RewriteRule::Rule;
 
 sub get_form {
-    my ($self, $c) = @_;
+    my ($self, $c, $type) = @_;
 
+    if ($type && $type eq "rules") {
+        return NGCP::Panel::Form::RewriteRule::Rule->new;
+    }
     if($c->user->roles eq "admin") {
         return NGCP::Panel::Form::RewriteRule::AdminSet->new;
     } else {
@@ -29,8 +32,20 @@ sub get_form {
 sub hal_from_item {
     my ($self, $c, $item, $type) = @_;
     my $form;
+    my $rwr_form = $self->get_form($c, "rules");
     
     my %resource = $item->get_inflated_columns;
+    my @rewriterules;
+    for my $rule ( $item->voip_rewrite_rules->all ) {
+        my $rule_resource = { $rule->get_inflated_columns };
+        return unless $self->validate_form(
+            c => $c,
+            form => $rwr_form,
+            resource => $rule_resource,
+            run => 0,
+        );
+        push @rewriterules, $rule_resource;
+    }
 
     my $hal = Data::HAL->new(
         links => [
@@ -55,6 +70,7 @@ sub hal_from_item {
         resource => \%resource,
         run => 0,
     );
+    $resource{rewriterules} = \@rewriterules;
     $hal->resource(\%resource);
     return $hal;
 }
@@ -66,12 +82,6 @@ sub item_rs {
     if($type eq "rulesets") {
         if($c->user->roles eq "admin") {
             $item_rs = $c->model('DB')->resultset('voip_rewrite_rule_sets');
-        } else {
-            return;
-        }
-    } elsif($type eq "rules") {
-        if($c->user->roles eq "admin") {
-            $item_rs = $c->model('DB')->resultset('voip_rewrite_rules');
         } else {
             return;
         }
@@ -99,6 +109,17 @@ sub update_item {
         unless($reseller) {
             $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Invalid 'reseller_id'");
             return;
+        }
+    }
+
+    if ($resource->{rewriterules}) {
+        $item->voip_rewrite_rules->delete;
+        my $i = 30;
+        for my $rule (@{ $resource->{rewriterules} }) {
+            $item->voip_rewrite_rules->create({
+                %{ $rule },
+                priority => $i++,
+            });
         }
     }
 

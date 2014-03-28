@@ -26,7 +26,7 @@ $ua->ssl_opts(
     $req = HTTP::Request->new('OPTIONS', $uri.'/api/billingprofiles/');
     $res = $ua->request($req);
     is($res->code, 200, "check options request");
-    ok($res->header('Accept-Post') eq "application/hal+json; profile=http://purl.org/sipwise/ngcp-api/#rel-billingprofiles", "check Accept-Post header in options response");
+    is($res->header('Accept-Post'), "application/hal+json; profile=http://purl.org/sipwise/ngcp-api/#rel-billingprofiles", "check Accept-Post header in options response");
     my $opts = JSON::from_json($res->decoded_content);
     my @hopts = split /\s*,\s*/, $res->header('Allow');
     ok(exists $opts->{methods} && ref $opts->{methods} eq "ARRAY", "check for valid 'methods' in body");
@@ -69,7 +69,7 @@ my @allprofiles = ();
     $res = $ua->request($req);
     is($res->code, 422, "create profile without reseller_id");
     my $err = JSON::from_json($res->decoded_content);
-    ok($err->{code} eq "422", "check error code in body");
+    is($err->{code}, "422", "check error code in body");
     ok($err->{message} =~ /field='reseller_id'/, "check error message in body");
 
     # try to create profile with empty reseller_id
@@ -81,7 +81,7 @@ my @allprofiles = ();
     $res = $ua->request($req);
     is($res->code, 422, "create profile with empty reseller_id");
     $err = JSON::from_json($res->decoded_content);
-    ok($err->{code} eq "422", "check error code in body");
+    is($err->{code}, "422", "check error code in body");
     ok($err->{message} =~ /field='reseller_id'/, "check error message in body");
 
     # try to create profile with invalid reseller_id
@@ -93,7 +93,7 @@ my @allprofiles = ();
     $res = $ua->request($req);
     is($res->code, 422, "create profile with invalid reseller_id");
     $err = JSON::from_json($res->decoded_content);
-    ok($err->{code} eq "422", "check error code in body");
+    is($err->{code}, "422", "check error code in body");
     ok($err->{message} =~ /Invalid 'reseller_id'/, "check error message in body");
 
     # TODO: check for wrong values in prepaid, fees etc
@@ -105,7 +105,7 @@ my @allprofiles = ();
         is($res->code, 200, "fetch profile page");
         my $collection = JSON::from_json($res->decoded_content);
         my $selfuri = $uri . $collection->{_links}->{self}->{href};
-        ok($selfuri eq $nexturi, "check _links.self.href of collection");
+        is($selfuri, $nexturi, "check _links.self.href of collection");
         my $colluri = URI->new($selfuri);
 
         ok($collection->{total_count} > 0, "check 'total_count' of collection");
@@ -205,11 +205,6 @@ my @allprofiles = ();
     $req->remove_header('Content-Type');
     $req->header('Content-Type' => 'application/json');
 
-    # check if it fails with missing Prefer
-    $req->remove_header('Prefer');
-    $res = $ua->request($req);
-    is($res->code, 400, "check put missing prefer");
-
     # check if it fails with invalid Prefer
     $req->header('Prefer' => "return=invalid");
     $res = $ua->request($req);
@@ -245,9 +240,9 @@ my @allprofiles = ();
     $res = $ua->request($req);
     is($res->code, 200, "check patched profile item");
     my $mod_profile = JSON::from_json($res->decoded_content);
-    ok($mod_profile->{name} eq "patched name $t", "check patched replace op");
-    ok($mod_profile->{_links}->{self}->{href} eq $firstprofile, "check patched self link");
-    ok($mod_profile->{_links}->{collection}->{href} eq '/api/billingprofiles/', "check patched collection link");
+    is($mod_profile->{name}, "patched name $t", "check patched replace op");
+    is($mod_profile->{_links}->{self}->{href}, $firstprofile, "check patched self link");
+    is($mod_profile->{_links}->{collection}->{href}, '/api/billingprofiles/', "check patched collection link");
     
 
     $req->content(JSON::to_json(

@@ -157,6 +157,7 @@ Build.PL - NGCP-Panel build system including test fixtures
     --schema-base-dir directory of NGCP::Schema if its not yet installed
     --mysqld-port     port where the mysqld should be started
     --mysql-dump      one or more mysql dumps to be imported to our mysqld
+    --no-junit        don't output junit but normal TAP, for manual testing
     --help            brief help message
     --man             full documentation
 

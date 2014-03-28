@@ -28,7 +28,7 @@ $ua->ssl_opts(
     $req = HTTP::Request->new('OPTIONS', $uri.'/api/customers/');
     $res = $ua->request($req);
     is($res->code, 200, "check options request");
-    ok($res->header('Accept-Post') eq "application/hal+json; profile=http://purl.org/sipwise/ngcp-api/#rel-customers", "check Accept-Post header in options response");
+    is($res->header('Accept-Post'), "application/hal+json; profile=http://purl.org/sipwise/ngcp-api/#rel-customers", "check Accept-Post header in options response");
     my $opts = JSON::from_json($res->decoded_content);
     my @hopts = split /\s*,\s*/, $res->header('Allow');
     ok(exists $opts->{methods} && ref $opts->{methods} eq "ARRAY", "check for valid 'methods' in body");
@@ -117,7 +117,7 @@ my @allcustomers = ();
     $res = $ua->request($req);
     is($res->code, 422, "create customer with invalid type");
     my $err = JSON::from_json($res->decoded_content);
-    ok($err->{code} eq "422", "check error code in body");
+    is($err->{code}, "422", "check error code in body");
     ok($err->{message} =~ /Invalid 'type'/, "check error message in body");
 
     # try to create invalid customer with wrong billing profile
@@ -132,7 +132,7 @@ my @allcustomers = ();
     $res = $ua->request($req);
     is($res->code, 422, "create customer with invalid billing profile");
     $err = JSON::from_json($res->decoded_content);
-    ok($err->{code} eq "422", "check error code in body");
+    is($err->{code}, "422", "check error code in body");
     ok($err->{message} =~ /Invalid 'billing_profile_id'/, "check error message in body");
 
     # try to create invalid customer with systemcontact
@@ -147,7 +147,7 @@ my @allcustomers = ();
     $res = $ua->request($req);
     is($res->code, 422, "create customer with invalid contact");
     $err = JSON::from_json($res->decoded_content);
-    ok($err->{code} eq "422", "check error code in body");
+    is($err->{code}, "422", "check error code in body");
     ok($err->{message} =~ /The contact_id is not a valid ngcp:customercontacts item/, "check error message in body");
     
     # try to create invalid customer without contact
@@ -173,7 +173,7 @@ my @allcustomers = ();
     $res = $ua->request($req);
     is($res->code, 422, "create customer with invalid status");
     $err = JSON::from_json($res->decoded_content);
-    ok($err->{code} eq "422", "check error code in body");
+    is($err->{code}, "422", "check error code in body");
     ok($err->{message} =~ /field='status'/, "check error message in body");
 
     # try to create invalid customer with invalid max_subscribers
@@ -188,7 +188,7 @@ my @allcustomers = ();
     $res = $ua->request($req);
     is($res->code, 422, "create customer with invalid max_subscribers");
     $err = JSON::from_json($res->decoded_content);
-    ok($err->{code} eq "422", "check error code in body");
+    is($err->{code}, "422", "check error code in body");
     ok($err->{message} =~ /field='max_subscribers'/, "check error message in body");
 
     # iterate over customers collection to check next/prev links and status
@@ -198,7 +198,7 @@ my @allcustomers = ();
         is($res->code, 200, "fetch contacts page");
         my $collection = JSON::from_json($res->decoded_content);
         my $selfuri = $uri . $collection->{_links}->{self}->{href};
-        ok($selfuri eq $nexturi, "check _links.self.href of collection");
+        is($selfuri, $nexturi, "check _links.self.href of collection");
         my $colluri = URI->new($selfuri);
 
         ok($collection->{total_count} > 0, "check 'total_count' of collection");
@@ -305,16 +305,10 @@ my @allcustomers = ();
     $req->remove_header('Content-Type');
     $req->header('Content-Type' => 'application/json');
 
-    # check if it fails with missing Prefer
-    $req->remove_header('Prefer');
-    $res = $ua->request($req);
-    is($res->code, 400, "check put missing prefer");
-
     # check if it fails with invalid Prefer
     $req->header('Prefer' => "return=invalid");
     $res = $ua->request($req);
     is($res->code, 400, "check put invalid prefer");
-
 
     $req->remove_header('Prefer');
     $req->header('Prefer' => "return=representation");
@@ -346,9 +340,9 @@ my @allcustomers = ();
     $res = $ua->request($req);
     is($res->code, 200, "check patched customer item");
     my $mod_contact = JSON::from_json($res->decoded_content);
-    ok($mod_contact->{status} eq "pending", "check patched replace op");
-    ok($mod_contact->{_links}->{self}->{href} eq $firstcustomer, "check patched self link");
-    ok($mod_contact->{_links}->{collection}->{href} eq '/api/customers/', "check patched collection link");
+    is($mod_contact->{status}, "pending", "check patched replace op");
+    is($mod_contact->{_links}->{self}->{href}, $firstcustomer, "check patched self link");
+    is($mod_contact->{_links}->{collection}->{href}, '/api/customers/', "check patched collection link");
     
 
     $req->content(JSON::to_json(
@@ -412,7 +406,7 @@ my @allcustomers = ();
         $res = $ua->request($req);
         is($res->code, 200, "check termination of customer");
         $pc = JSON::from_json($res->decoded_content);
-        ok($pc->{status} eq "terminated", "check termination status of customer");
+        is($pc->{status}, "terminated", "check termination status of customer");
     }
 
     # check if we can still get the terminated customer

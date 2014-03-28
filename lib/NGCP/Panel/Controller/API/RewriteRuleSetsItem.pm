@@ -16,12 +16,11 @@ require Catalyst::ActionRole::ACL;
 require Catalyst::ActionRole::HTTPMethods;
 require Catalyst::ActionRole::RequireSSL;
 
-with 'NGCP::Panel::Role::API';
 with 'NGCP::Panel::Role::API::RewriteRuleSets';
 
-class_has('resource_name', is => 'ro', default => 'rewrite');
-class_has('dispatch_path', is => 'ro', default => '/api/rewrite/');
-class_has('relation', is => 'ro', default => 'http://purl.org/sipwise/ngcp-api/#rel-rewrite');
+class_has('resource_name', is => 'ro', default => 'rewriterulesets');
+class_has('dispatch_path', is => 'ro', default => '/api/rewriterulesets/');
+class_has('relation', is => 'ro', default => 'http://purl.org/sipwise/ngcp-api/#rel-rewriterulesets');
 
 __PACKAGE__->config(
     action => {
@@ -52,7 +51,7 @@ sub GET :Allow {
         my $ruleset = $self->item_by_id($c, $id, "rulesets");
         last unless $self->resource_exists($c, ruleset => $ruleset);
 
-        my $hal = $self->hal_from_item($c, $ruleset, "rewrite");
+        my $hal = $self->hal_from_item($c, $ruleset, "rewriterulesets");
 
         my $response = HTTP::Response->new(HTTP_OK, undef, HTTP::Headers->new(
             (map { # XXX Data::HAL must be able to generate links with multiple relations
@@ -103,7 +102,7 @@ sub PATCH :Allow {
 
         my $ruleset = $self->item_by_id($c, $id, "rulesets");
         last unless $self->resource_exists($c, ruleset => $ruleset);
-        my $old_resource = { $ruleset->get_inflated_columns };
+        my $old_resource = $self->hal_from_item($c, $ruleset, "rewriterulesets")->resource;
         my $resource = $self->apply_patch($c, $old_resource, $json);
         last unless $resource;
 
@@ -118,7 +117,7 @@ sub PATCH :Allow {
             $c->response->header(Preference_Applied => 'return=minimal');
             $c->response->body(q());
         } else {
-            my $hal = $self->hal_from_item($c, $ruleset, "rulesets");
+            my $hal = $self->hal_from_item($c, $ruleset, "rewriterulesets");
             my $response = HTTP::Response->new(HTTP_OK, undef, HTTP::Headers->new(
                 $hal->http_headers,
             ), $hal->as_json);
@@ -158,7 +157,7 @@ sub PUT :Allow {
             $c->response->header(Preference_Applied => 'return=minimal');
             $c->response->body(q());
         } else {
-            my $hal = $self->hal_from_item($c, $ruleset, "rulesets");
+            my $hal = $self->hal_from_item($c, $ruleset, "rewriterulesets");
             my $response = HTTP::Response->new(HTTP_OK, undef, HTTP::Headers->new(
                 $hal->http_headers,
             ), $hal->as_json);
@@ -166,6 +165,28 @@ sub PUT :Allow {
             $c->response->header(Preference_Applied => 'return=representation');
             $c->response->body($response->content);
         }
+    }
+    return;
+}
+
+sub DELETE :Allow {
+    my ($self, $c, $id) = @_;
+    my $guard = $c->model('DB')->txn_scope_guard;
+    {
+        my $ruleset = $self->item_by_id($c, $id, "rulesets");
+        last unless $self->resource_exists($c, ruleset => $ruleset);
+        try {
+            $ruleset->voip_rewrite_rules->delete;
+            $ruleset->delete;
+        } catch($e) {
+            $c->log->error("Failed to delete rewriteruleset with id '$id': $e");
+            $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "Internal Server Error");
+            last;
+        }
+        $guard->commit;
+
+        $c->response->status(HTTP_NO_CONTENT);
+        $c->response->body(q());
     }
     return;
 }

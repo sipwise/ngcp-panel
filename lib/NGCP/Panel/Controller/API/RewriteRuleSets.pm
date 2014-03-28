@@ -23,12 +23,51 @@ class_has 'api_description' => (
         'Defines a collection of <a href="#rewriterules">Rewrite Rules</a>.',
 );
 
-with 'NGCP::Panel::Role::API';
+class_has 'query_params' => (
+    is => 'ro',
+    isa => 'ArrayRef',
+    default => sub {[
+        {
+            param => 'reseller_id',
+            description => 'Filter for rewriterulesets belonging to a specific reseller',
+            query => {
+                first => sub {
+                    my $q = shift;
+                    { reseller_id => $q };
+                },
+                second => sub {},
+            },
+        },
+        {
+            param => 'description',
+            description => 'Filter rulesets for a certain description (wildcards possible).',
+            query => {
+                first => sub {
+                    my $q = shift;
+                    return { description => { like => $q } };
+                },
+                second => sub {},
+            },
+        },
+        {
+            param => 'name',
+            description => 'Filter rulesets for a certain name (wildcards possible).',
+            query => {
+                first => sub {
+                    my $q = shift;
+                    return { name => { like => $q } };
+                },
+                second => sub {},
+            },
+        },
+    ]},
+);
+
 with 'NGCP::Panel::Role::API::RewriteRuleSets';
 
-class_has('resource_name', is => 'ro', default => 'rewrite');
-class_has('dispatch_path', is => 'ro', default => '/api/rewrite/');
-class_has('relation', is => 'ro', default => 'http://purl.org/sipwise/ngcp-api/#rel-rewrite');
+class_has('resource_name', is => 'ro', default => 'rewriterulesets');
+class_has('dispatch_path', is => 'ro', default => '/api/rewriterulesets/');
+class_has('relation', is => 'ro', default => 'http://purl.org/sipwise/ngcp-api/#rel-rewriterulesets');
 
 __PACKAGE__->config(
     action => {
@@ -65,7 +104,7 @@ sub GET :Allow {
         });
         my (@embedded, @links);
         for my $set ($rwr_set->search({}, {order_by => {-asc => 'me.id'}})->all) {
-            push @embedded, $self->hal_from_item($c, $set, "rewrite");
+            push @embedded, $self->hal_from_item($c, $set, "rewriterulesets");
             push @links, Data::HAL::Link->new(
                 relation => 'ngcp:'.$self->resource_name,
                 href     => sprintf('%s%d', $self->dispatch_path, $set->id),
@@ -119,6 +158,91 @@ sub OPTIONS :Allow {
     ));
     $c->response->content_type('application/json');
     $c->response->body(JSON::to_json({ methods => $allowed_methods })."\n");
+    return;
+}
+
+sub POST :Allow {
+    my ($self, $c) = @_;
+
+    my $guard = $c->model('DB')->txn_scope_guard;
+    {
+        my $schema = $c->model('DB');
+        my $resource = $self->get_valid_post_data(
+            c => $c,
+            media_type => 'application/json',
+        );
+        last unless $resource;
+
+        unless(defined $resource->{reseller_id}) {
+            try {
+                $resource->{reseller_id} = $c->user->contract->contact->reseller_id;
+            }
+        }
+        my $reseller = $c->model('DB')->resultset('resellers')->find($resource->{reseller_id});
+        unless($reseller) {
+            $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Invalid 'reseller_id', doesn't exist.");
+            last;
+        }
+
+        my $rewriterules = $resource->{rewriterules};
+
+        my $form = $self->get_form($c);
+        last unless $self->validate_form(
+            c => $c,
+            resource => $resource,
+            form => $form,
+        );
+
+        my $ruleset_test = $schema->resultset('voip_rewrite_rule_sets')->search_rs({
+                name => $resource->{name}
+            })->first;
+        if ($ruleset_test) {
+            $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Ruleset with this 'name' already exists.");
+            last;
+        }
+
+        my $ruleset;
+
+        try {
+            $ruleset = $schema->resultset('voip_rewrite_rule_sets')->create($resource);
+        } catch($e) {
+            $c->log->error("failed to create rewriteruleset: $e"); # TODO: user, message, trace, ...
+            $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "Failed to create rewriteruleset.");
+            last;
+        }
+
+        if ($rewriterules) {
+            my $i = 30;
+            if (ref($rewriterules) ne "ARRAY") {
+                $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "rewriterules must be an array.");
+            }
+            for my $rule (@{ $rewriterules }) {
+                use DDP; p $rule;
+                my $rule_form = $self->get_form($c, "rules");
+                last unless $self->validate_form(
+                    c => $c,
+                    resource => $rule,
+                    form => $rule_form,
+                );
+                try {
+                    $ruleset->voip_rewrite_rules->create({
+                        %{ $rule },
+                        priority => $i++,
+                    });
+                } catch($e) {
+                    $c->log->error("failed to create rewriterules: $e"); # TODO: user, message, trace, ...
+                    $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "Failed to create rewrite rules.");
+                    last;
+                }
+            }
+        }
+
+        $guard->commit;
+
+        $c->response->status(HTTP_CREATED);
+        $c->response->header(Location => sprintf('/%s%d', $c->request->path, $ruleset->id));
+        $c->response->body(q());
+    }
     return;
 }
 

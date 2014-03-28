@@ -39,7 +39,7 @@ sub hal_from_item {
             Data::HAL::Link->new(relation => 'profile', href => 'http://purl.org/sipwise/ngcp-api/'),
             Data::HAL::Link->new(relation => 'self', href => sprintf("%s%d", $self->dispatch_path, $item->id)),
             Data::HAL::Link->new(relation => "ngcp:$type", href => sprintf("/api/%s/%d", $type, $item->id)),
-            Data::HAL::Link->new(relation => "ngcp:rewrite", href => sprintf("/api/rewrite/%d", $item->set_id)), #TODO: naming?
+            Data::HAL::Link->new(relation => "ngcp:rewriterulesets", href => sprintf("/api/rewriterulesets/%d", $item->set_id)),
         ],
         relation => 'ngcp:'.$self->resource_name,
     );
@@ -59,13 +59,7 @@ sub item_rs {
     my ($self, $c, $type) = @_;
     my $item_rs;
 
-    if($type eq "rulesets") {
-        if($c->user->roles eq "admin") {
-            $item_rs = $c->model('DB')->resultset('voip_rewrite_rule_sets');
-        } else {
-            return;
-        }
-    } elsif($type eq "rules") {
+    if($type eq "rules") {
         if($c->user->roles eq "admin") {
             $item_rs = $c->model('DB')->resultset('voip_rewrite_rules');
         } else {

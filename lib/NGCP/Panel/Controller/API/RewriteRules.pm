@@ -21,12 +21,40 @@ class_has 'api_description' => (
         'Defines a set of Rewrite Rules which are grouped in <a href="#rewriterulesets">Rewrite Rule Sets</a>. They can be used to alter incoming and outgoing numbers.',
 );
 
-with 'NGCP::Panel::Role::API';
 with 'NGCP::Panel::Role::API::RewriteRules';
 
 class_has('resource_name', is => 'ro', default => 'rewriterules');
 class_has('dispatch_path', is => 'ro', default => '/api/rewriterules/');
 class_has('relation', is => 'ro', default => 'http://purl.org/sipwise/ngcp-api/#rel-rewriterules');
+
+class_has 'query_params' => (
+    is => 'ro',
+    isa => 'ArrayRef',
+    default => sub {[
+        {
+            param => 'description',
+            description => 'Filter rules for a certain description (wildcards possible).',
+            query => {
+                first => sub {
+                    my $q = shift;
+                    return { description => { like => $q } };
+                },
+                second => sub {},
+            },
+        },
+        {
+            param => 'set_id',
+            description => 'Filter for rules belonging to a specific rewriteruleset.',
+            query => {
+                first => sub {
+                    my $q = shift;
+                    return { set_id => $q };
+                },
+                second => sub {},
+            },
+        },
+    ]},
+);
 
 __PACKAGE__->config(
     action => {
@@ -56,12 +84,6 @@ sub GET :Allow {
     my $rows = $c->request->params->{rows} // 10;
     {
         my $rules = $self->item_rs($c, "rules");
-
-        if($c->request->query_parameters->{set_id}) { #TODO: naming? document?
-            $rules = $rules->search({
-                set_id => $c->request->query_parameters->{set_id},
-            });
-        }
 
         my $total_count = int($rules->count);
         $rules = $rules->search(undef, {
@@ -124,6 +146,56 @@ sub OPTIONS :Allow {
     ));
     $c->response->content_type('application/json');
     $c->response->body(JSON::to_json({ methods => $allowed_methods })."\n");
+    return;
+}
+
+sub POST :Allow {
+    my ($self, $c) = @_;
+
+    my $guard = $c->model('DB')->txn_scope_guard;
+    {
+        my $schema = $c->model('DB');
+        my $resource = $self->get_valid_post_data(
+            c => $c,
+            media_type => 'application/json',
+        );
+        last unless $resource;
+
+        my $set_id = delete $resource->{set_id}; # keep this, cause formhandler doesn't know it
+
+        my $form = $self->get_form($c);
+        last unless $self->validate_form(
+            c => $c,
+            resource => $resource,
+            form => $form,
+        );
+
+        my $rule;
+
+        unless(defined $set_id) {
+            $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Required: 'set_id'");
+            last;
+        }
+        my $ruleset = $schema->resultset('voip_rewrite_rule_sets')->find($set_id);
+        unless($ruleset) {
+            $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Invalid 'set_id'.");
+            last;
+        }
+        $resource->{set_id} = $ruleset->id;
+        try {
+            $rule = $schema->resultset('voip_rewrite_rules')->create($resource);
+        } catch($e) {
+            $c->log->error("failed to create rewriterule: $e"); # TODO: user, message, trace, ...
+            $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "Failed to create rewriterule.");
+            last;
+        }
+
+        $guard->commit;
+
+        $c->response->status(HTTP_CREATED);
+        $c->response->header(Location => sprintf('/%s%d', $c->request->path, $rule->id));
+        $c->response->body(q());
+    }
     return;
 }
 

@@ -16,7 +16,6 @@ require Catalyst::ActionRole::ACL;
 require Catalyst::ActionRole::HTTPMethods;
 require Catalyst::ActionRole::RequireSSL;
 
-with 'NGCP::Panel::Role::API';
 with 'NGCP::Panel::Role::API::RewriteRules';
 
 class_has('resource_name', is => 'ro', default => 'rewriterules');
@@ -166,6 +165,27 @@ sub PUT :Allow {
             $c->response->header(Preference_Applied => 'return=representation');
             $c->response->body($response->content);
         }
+    }
+    return;
+}
+
+sub DELETE :Allow {
+    my ($self, $c, $id) = @_;
+    my $guard = $c->model('DB')->txn_scope_guard;
+    {
+        my $rule = $self->item_by_id($c, $id, "rules");
+        last unless $self->resource_exists($c, rule => $rule);
+        try {
+            $rule->delete;
+        } catch($e) {
+            $c->log->error("Failed to delete rewriterule with id '$id': $e");
+            $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "Internal Server Error");
+            last;
+        }
+        $guard->commit;
+
+        $c->response->status(HTTP_NO_CONTENT);
+        $c->response->body(q());
     }
     return;
 }

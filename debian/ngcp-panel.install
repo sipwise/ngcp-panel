@@ -3,3 +3,4 @@ script/ngcp_panel_fastcgi.pl usr/share/ngcp-panel/
 ngcp_panel.conf		etc/ngcp-panel/
 share/*			usr/share/ngcp-panel/
 lib/NGCP/Panel/I18N/*	usr/share/perl5/NGCP/Panel/I18N
+script/*		usr/share/ngcp-panel/script
