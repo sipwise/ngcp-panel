@@ -157,7 +157,7 @@ var mainWrapperInit = function () {
         }
         var _href = $(this).attr('href');
         var _back = 'back=[% backuri | uri %]';
-        if(_href == null) {
+        if(_href == null || _href.match(/[&\?]back=/)) {
             // ignore 
         } else if(_href.match(/\?/)) {
             $(this).attr('href', _href + '&' + _back);
