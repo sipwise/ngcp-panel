@@ -69,10 +69,12 @@ var uriForAction = function( data, type ){
         q_template=q_template.replace(key,data[key]);
     });
     q_template=q_template.replace(/\/+$/,'');
+    q_template=q_template+'?'+$('form[name=invoice_template]').serialize();
+    //alert('q_template='+q_template);
     return q_template;
 }
 function setSvgStringToEditor( svgParsedString ){
-    alert('setSvgStringToEditor: '+svgParsedString);
+    //alert('setSvgStringToEditor: '+svgParsedString);
     svgCanvasEmbed.setSvgString( svgParsedString )(
         function(data,error){
             if(error){
@@ -84,7 +86,7 @@ function setSvgStringToEditor( svgParsedString ){
 }
 function setSvgStringToPreview( svgParsedString, q, data ) {
     var previewIframe = document.getElementById('svgpreview'); 
-    alert('setSvgStringToPreview: svgParsedString='+svgParsedString+';');
+    //alert('setSvgStringToPreview: svgParsedString='+svgParsedString+';');
     if ($.browser.msie) {
         //we need to repeat query to server for msie if we don't want send template string via GET method
         if(!q){
@@ -101,7 +103,7 @@ function setSvgStringToPreview( svgParsedString, q, data ) {
 }
 function fetchSvgToEditor( data ) {
     var q = uriForAction( data, 'invoice_template' );
-    alert('fetchSvgToEditor: q='+q+';');
+    //alert('fetchSvgToEditor: q='+q+';');
     $.ajax({
         url: q,
     }).done( function ( httpResponse ){ 
@@ -122,7 +124,7 @@ function fetchInvoiceTemplateData( data ){
     //tt_output_type=svg really outputs text/html mimetype. But it will be couple of <svg> tags (<svg> per page).
     data.tt_output_type = 'json';
     var q = uriForAction( data, 'invoice_template' );
-    alert('fetchInvoiceTemplateData: q='+q+';');
+    //alert('fetchInvoiceTemplateData: q='+q+';');
     $.ajax({
         url: q,
         datatype: "json",
@@ -137,13 +139,6 @@ function fetchInvoiceTemplateData( data ){
                 $('form[name=invoice_template]').loadJSON(templatedata.aaData.form);
             }
         }
-        //can use some plugin for jquery like populate for more complex forms
-        /*
-        $.each(templatedata.aaData.form, function( key, value ){
-            var field = $('form[name=invoice_template] input[name='+key+']');
-            field.val(value);
-        });
-        */
     });
 }
 function savePreviewedAndShowParsed( data ){
@@ -165,8 +160,8 @@ function saveTemplate( data ) {
     var svgString = getSvgString();
     data.tt_sourcestate='saved';
     var q = uriForAction( data, 'invoice_template_saved' ); 
-    alert('saveTemplate: q='+q+';');
-    $.post( q, { template: encodeURIComponent( svgString ) })
+    //alert('saveTemplate: q='+q+';');
+    $.post( q, { template: svgString })
     .done( function( httpResponse ) {
         refreshTemplateList( data.contract_id );
     });
@@ -290,7 +285,7 @@ function getTtIdVal(){
 </span>
 <span>
     <a class="btn btn-primary btn-large" onclick="
-    alert('tt_id='+getTtIdVal()+';');
+    //alert('tt_id='+getTtIdVal()+';');
     saveTemplate({
         contract_id:'[%contract.id%]',
         tt_id: getTtIdVal(),

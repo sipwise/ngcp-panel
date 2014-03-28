@@ -916,6 +916,7 @@ sub invoice_template :Chained('invoice_data') :PathPart('template') :Args {
     (undef,undef,@$in{qw/tt_type tt_viewmode tt_sourcestate tt_output_type tt_id/}) = @_ ;
     $in->{contract_id} = $c->stash->{contract}->id;
     $in->{tt_string} = $c->request->body_parameters->{template} || '';
+    foreach(qw/name is_active/){$in->{$_} = $c->request->parameters->{$_};}
     
     #output
     $out={};
