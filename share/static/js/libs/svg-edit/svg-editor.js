@@ -1889,7 +1889,7 @@ TO-DOS
 				if (!z_info) {return;}
 				var zoomlevel = z_info.zoom,
 					bb = z_info.bbox;
-
+                //alert('zoomlevel='+zoomlevel+'; bb.width='+bb.width+';bb.height='+bb.height);
 				if (zoomlevel < 0.001) {
 					changeZoom({value: 0.1});
 					return;
@@ -1912,7 +1912,9 @@ TO-DOS
 			};
 
 			changeZoom = function(ctl) {
+                
 				var zoomlevel = ctl.value / 100;
+                //alert('zoomLevel='+zoomlevel);
 				if (zoomlevel < 0.001) {
 					ctl.value = 0.1;
 					return;
@@ -1929,6 +1931,7 @@ TO-DOS
 					zoom: zoomlevel
 				}, true);
 			};
+            //changeZoom({value: 200});
 
 			$('#cur_context_panel').delegate('a', 'click', function() {
 				var link = $(this);
@@ -3185,7 +3188,7 @@ TO-DOS
 					$('#option_lists').append(list);
 				}
 				list.find('li').bind('mouseup', callback);
-
+                //alert('binded');
 				$(window).mouseup(function(evt) {
 					if (!on_button) {
 						button.removeClass('down');
@@ -3264,6 +3267,7 @@ TO-DOS
 			editor.addDropDown('#zoom_dropdown', function() {
 				var item = $(this);
 				var val = item.data('val');
+                //alert('zoom_dropdown.val='+val);
 				if (val) {
 					zoomChanged(window, val);
 				} else {
@@ -3387,11 +3391,12 @@ TO-DOS
 				multiplier = multiplier ? res.zoom * multiplier : 1;
 				// setResolution(res.w * multiplier, res.h * multiplier, true);
 				$('#zoom').val(multiplier * 100);
+                //alert('multiplier='+multiplier);
 				svgCanvas.setZoom(multiplier);
 				zoomDone();
 				updateCanvas(true);
 			};
-
+            
 			var dblclickZoom = function() {
 				if (toolButtonClick('#tool_zoom')) {
 					zoomImage();
@@ -3729,7 +3734,8 @@ TO-DOS
 				var saveChanges = function() {
 					svgCanvas.clearSelection();
 					hideSourceEditor();
-					zoomImage();
+					//zoomImage();
+                    zoomChanged('', 'canvas');
 					populateLayers();
 					updateTitle();
 					prepPaints();
@@ -5048,6 +5054,8 @@ TO-DOS
 					$('#tool_pos' + this.id.substr(10))[0].title = this.title;
 				});
 			};
+            //changeZoom({value: 200});
+            
 		};
 
 		editor.ready = function (cb) {
@@ -5107,6 +5115,8 @@ TO-DOS
 					}
 				});
 			});
+            //changeZoom({value: 200});
+            //zoomImage(2);
 		};
 
 		editor.loadFromDataURI = function(str) {
@@ -5132,5 +5142,5 @@ TO-DOS
 
 	// Run init once DOM is loaded
 	$(svgEditor.init);
-
+    //$(svgEditor.init.zoomImage)(2);
 }());

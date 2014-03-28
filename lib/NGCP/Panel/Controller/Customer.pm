@@ -961,15 +961,16 @@ sub invoice_template :Chained('invoice_data') :PathPart('template') :Args {
         #at the end - we can figure out rather basic controller behaviour
         ($out->{tt_id},undef,$out->{tt_data}) = $backend->getCustomerInvoiceTemplate( %$in, result => \$tt_string_customer );
 
-        $out->{json} = {
-            tt_data => { 
-                tt_id => $out->{tt_data}->get_column('id'),
-            },
-        };
-        foreach(qw/name is_active/){
-            $out->{json}->{tt_data}->{$_} = $out->{tt_data}->get_column($_);
+        if($out->{tt_data}){
+            $out->{json} = {
+                tt_data => { 
+                    tt_id => $out->{tt_data}->get_column('id'),
+                },
+            };
+            foreach(qw/name is_active/){
+                $out->{json}->{tt_data}->{$_} = $out->{tt_data}->get_column($_);
+            }
         }
-        
         
     }
     

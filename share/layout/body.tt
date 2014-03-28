@@ -140,11 +140,16 @@ var mainWrapperInit = function () {
     -%]
     $('a').each(function() {
         var _text = $(this).text().trim();
+        var href = $(this).attr('href');
+        var javascriptLink = 0;
+        if(href && ( href.search(/^javascript:/i) > -1 ) ){
+            javascriptLink = 1;
+        }
         if(_text == "Back" ||
            $(this).hasClass('ngcp-error-button') ||
            $(this).hasClass('accordion-toggle') ||
            $(this).hasClass('ngcp-noback-link') ||
-           ( $(this).attr('href').search(/^javascript:/i) > -1) ||
+           javascriptLink ||
            $(this).parents('#footer').length ||
            $(this).parents('#topbar').length)  {
 
@@ -171,7 +176,7 @@ var mainWrapperInit = function () {
         $('#'+lastTab).addClass("in");
         $('#'+lastTab).parent().addClass("open");
     }
-    if($('.accordion-body').length) {
+    if($('.accordion-body').length && !$('#toggle-accordions').length) {
         $('#content').children('.container').prepend('<a href="#" id="toggle-accordions" class="btn btn-small btn-tertiary pull-right ngcp-accordion-closed"><i class="icon-resize-full"></i> [% c.loc('Expand Groups') %]</a>');
         $('#toggle-accordions').click(function() {
             if($('#toggle-accordions').hasClass('ngcp-accordion-closed')) {

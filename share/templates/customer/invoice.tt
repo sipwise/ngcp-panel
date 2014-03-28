@@ -49,7 +49,7 @@ var uriForAction = function( data, type ){
         break;
     case 'invoice_template_saved':
         //q_template = '[%- c.uri_for_action("/customer/invoice_template", ['contract_id','svg','parsed','saved','svg','tt_id']) -%]';
-        q_template = '[%- c.uri_for_action("/customer/invoice_template", ["contract_id"]) -%]'+'/svg/parsed/saved/svg/tt_id';
+        q_template = '[%- c.uri_for_action("/customer/invoice_template", ["contract_id"]) -%]'+'/svg/parsed/saved/tt_output_type/tt_id';
         break;
     case 'invoice_template_list':
         q_template = '[%- c.uri_for_action("/customer/invoice_template_list", ['contract_id']) -%]';
@@ -130,6 +130,8 @@ function fetchInvoiceTemplateData( data ){
         datatype: "json",
     //}).done( function( jsonres ){
     }).done( function( templatedata ){
+        //alert(templatedata);
+        //alert(templatedata.aaData);
         if(templatedata.aaData){
             if( templatedata.aaData.template ){
                 setSvgStringToEditor( templatedata.aaData.template.raw );
@@ -161,19 +163,18 @@ function saveTemplate( data ) {
     data.tt_sourcestate='saved';
     data.tt_output_type = 'json';
     var q = uriForAction( data, 'invoice_template_saved' ); 
-    //alert('saveTemplate: q='+q+';');
+    alert('saveTemplate: q='+q+';');
+    $.ajax( {
         url: q,
-        datatype: "json",
-
-    $.ajax( 
         type: "POST",
-        url: q,
-        dataType: 'json',
+        datatype: 'json',
         data: { template: svgString },
-    ).done( function( jsonResponse ) {
+    } ).done( function( jsonResponse ) {
+        alert('Form!');
         if(jsonResponse.aaData && jsonResponse.aaData.form){
             $('form[name=invoice_template]').loadJSON(jsonResponse.aaData.form);
         }
+        alert('Refresh!');
         refreshTemplateList( data.contract_id );
     });
 }
