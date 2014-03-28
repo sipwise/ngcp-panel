@@ -1,3 +1,15 @@
+ngcp-panel (1.1.16) unstable; urgency=low
+
+  * [3ad7906] MT#5751 prevent staleelement exception when searching datatables
+  * [d8416d2] MT#5751 test stability: dataTables filter
+  * [13a1b9b] MT#5751 tests: fix peering server table selection
+  * [75dc5f6] MT#4369 optimize callflow using a custom query
+  * [ca80237] MT#4369 disable sorting on callflow page
+  * [e3d7e30] MT#4369 use min_timestamp
+  * [be1e53e] MT#4369 callflow: count total correctly
+
+ -- Gerhard Jungwirth <gjungwirth@sipwise.com>  Fri, 28 Mar 2014 15:12:35 +0100
+
 ngcp-panel (1.1.15) unstable; urgency=medium
 
   [ Alexander Lutay ]
