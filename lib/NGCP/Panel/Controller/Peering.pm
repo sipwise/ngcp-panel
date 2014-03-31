@@ -119,12 +119,12 @@ sub edit :Chained('base') :PathPart('edit') {
             $c->stash->{group_result}->update($form->custom_get_values);
             $self->_sip_lcr_reload;
             delete $c->session->{created_objects}->{contract};
-            $c->flash(messages => [{type => 'success', text => $c->('Peering group successfully updated')}]);
+            $c->flash(messages => [{type => 'success', text => $c->loc('Peering group successfully updated')}]);
         } catch ($e) {
             NGCP::Panel::Utils::Message->error(
                 c => $c,
                 error => $e,
-                desc  => $c->('Failed to update peering group.'),
+                desc  => $c->loc('Failed to update peering group.'),
             );
         };
         NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for)
