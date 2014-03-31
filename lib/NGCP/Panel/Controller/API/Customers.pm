@@ -23,6 +23,37 @@ class_has 'api_description' => (
         'Defines a billing container for end customers. Customers usually have one or more <a href="#subscribers">Subscribers</a>. A <a href="#billingprofiles">Billing Profile</a> is assigned to a customer, and it has <a href="#contractbalances">Contract Balances</a> indicating the saldo of the customer for current and past billing intervals.'
 );
 
+class_has 'query_params' => (
+    is => 'ro',
+    isa => 'ArrayRef',
+    default => sub {[
+        {
+            param => 'reseller_id',
+            description => 'Filter for customers belonging to a specific reseller',
+            query => {
+                first => sub {
+                    my $q = shift;
+                    { 'contact.reseller_id' => $q };
+                },
+                second => sub {
+                    { join => 'contact' };
+                },
+            },
+        },
+        {
+            param => 'contact_id',
+            description => 'Filter for customers belonging to a specific contact',
+            query => {
+                first => sub {
+                    my $q = shift;
+                    { contact_id => $q };
+                },
+                second => sub { },
+            },
+        },
+    ]},
+);
+
 with 'NGCP::Panel::Role::API::Customers';
 
 class_has('resource_name', is => 'ro', default => 'customers');

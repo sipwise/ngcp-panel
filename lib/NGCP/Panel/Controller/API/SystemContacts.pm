@@ -23,6 +23,24 @@ class_has 'api_description' => (
         'Defines a physical or legal person\'s address (postal and/or email) to be used in <a href="#contracts">System Contracts</a> (contracts for peerings and resellers).'
 );
 
+class_has 'query_params' => (
+    is => 'ro',
+    isa => 'ArrayRef',
+    default => sub {[
+        {
+            param => 'email',
+            description => 'Filter for contacts matching an email pattern',
+            query => {
+                first => sub {
+                    my $q = shift;
+                    { email => { like => $q } };
+                },
+                second => sub {},
+            },
+        },
+    ]},
+);
+
 with 'NGCP::Panel::Role::API::SystemContacts';
 
 class_has('resource_name', is => 'ro', default => 'systemcontacts');

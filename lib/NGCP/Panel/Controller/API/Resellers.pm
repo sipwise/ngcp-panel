@@ -22,6 +22,24 @@ class_has 'api_description' => (
         'Defines a reseller on the system. A reseller can manage his own <a href="#domains">Domains</a> and <a href="#customers">Customers</a>.'
 );
 
+class_has 'query_params' => (
+    is => 'ro',
+    isa => 'ArrayRef',
+    default => sub {[
+        {
+            param => 'name',
+            description => 'Filter for resellers matching the given name pattern',
+            query => {
+                first => sub {
+                    my $q = shift;
+                    { name => { like => $q } };
+                },
+                second => sub {},
+            },
+        },
+    ]},
+);
+
 with 'NGCP::Panel::Role::API::Resellers';
 
 class_has('resource_name', is => 'ro', default => 'resellers');

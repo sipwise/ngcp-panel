@@ -23,6 +23,35 @@ class_has 'api_description' => (
         'Defines a physical or legal person\'s address (postal and/or email) to be used to identify <a href="#customers">Customers</a>.'
 );
 
+class_has 'query_params' => (
+    is => 'ro',
+    isa => 'ArrayRef',
+    default => sub {[
+        {
+            param => 'email',
+            description => 'Filter for contacts matching an email pattern',
+            query => {
+                first => sub {
+                    my $q = shift;
+                    { email => { like => $q } };
+                },
+                second => sub {},
+            },
+        },
+        {
+            param => 'reseller_id',
+            description => 'Filter for contacts belonging to a specific reseller',
+            query => {
+                first => sub {
+                    my $q = shift;
+                    { reseller_id => $q };
+                },
+                second => sub {},
+            },
+        },
+    ]},
+);
+
 with 'NGCP::Panel::Role::API::CustomerContacts';
 
 class_has('resource_name', is => 'ro', default => 'customercontacts');

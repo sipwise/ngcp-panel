@@ -21,12 +21,6 @@ class_has 'api_description' => (
         'Defines a set of Rewrite Rules which are grouped in <a href="#rewriterulesets">Rewrite Rule Sets</a>. They can be used to alter incoming and outgoing numbers.',
 );
 
-with 'NGCP::Panel::Role::API::RewriteRules';
-
-class_has('resource_name', is => 'ro', default => 'rewriterules');
-class_has('dispatch_path', is => 'ro', default => '/api/rewriterules/');
-class_has('relation', is => 'ro', default => 'http://purl.org/sipwise/ngcp-api/#rel-rewriterules');
-
 class_has 'query_params' => (
     is => 'ro',
     isa => 'ArrayRef',
@@ -55,6 +49,13 @@ class_has 'query_params' => (
         },
     ]},
 );
+
+
+with 'NGCP::Panel::Role::API::RewriteRules';
+
+class_has('resource_name', is => 'ro', default => 'rewriterules');
+class_has('dispatch_path', is => 'ro', default => '/api/rewriterules/');
+class_has('relation', is => 'ro', default => 'http://purl.org/sipwise/ngcp-api/#rel-rewriterules');
 
 __PACKAGE__->config(
     action => {

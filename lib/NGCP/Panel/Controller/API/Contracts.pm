@@ -23,6 +23,35 @@ class_has 'api_description' => (
         'Defines a billing container for peerings and resellers. A <a href="#billingprofiles">Billing Profile</a> is assigned to a contract, and it has <a href="#contractbalances">Contract Balances</a> indicating the saldo of the contract for current and past billing intervals.'
 );
 
+class_has 'query_params' => (
+    is => 'ro',
+    isa => 'ArrayRef',
+    default => sub {[
+        {
+            param => 'contact_id',
+            description => 'Filter for contracts with a specific contact id',
+            query => {
+                first => sub {
+                    my $q = shift;
+                    { contact_id => $q };
+                },
+                second => sub {},
+            },
+        },
+        {
+            param => 'status',
+            description => 'Filter for contracts with a specific status (except "terminated")',
+            query => {
+                first => sub {
+                    my $q = shift;
+                    { status => $q };
+                },
+                second => sub {},
+            },
+        },
+    ]},
+);
+
 with 'NGCP::Panel::Role::API::Contracts';
 
 class_has('resource_name', is => 'ro', default => 'contracts');
