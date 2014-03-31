@@ -1,0 +1,42 @@
+[%# USE Dumper %]
+[%# Dumper.dump(invoice_details)%]
+[%# invoice_details.size%]
+
+    <table class="table table-bordered table-striped table-highlight table-hover">
+    <thead>
+        <tr>
+            <th>[% c.loc('Num') %]</th>
+            <th>[% c.loc('Zone') %]</th>
+            <th>[% c.loc('Calls amount') %]</th>
+            <th>[% c.loc('Duration') %]</th>
+            <th>[% c.loc('Free time') %]</th>
+            <th>[% c.loc('Cash') %]</th>
+            <th class="ngcp-actions-column"></th>
+        </tr>
+    </thead>
+    <tbody>
+        [%# Dumper.dump_html(invoice_details.as_query)%]
+        [% FOR call IN invoice_details -%]
+        [%IF call.1; row_number = call.0; call = call.1; END%]
+        [% total_number = total_number + call.get_column('number') %]
+        [% total_duration = total_duration + call.get_column('duration') %]
+        [% total_free_time = total_free_time + call.get_column('free_time') %]
+        [% total_cost = total_cost + call.get_column('cost') %]
+        <tr class="sw_action_row">
+            <td>[% row_number %]</td>
+            <td>[% call.get_column('zone') %]</td>
+            <td><div class="pull-right">[% call.get_column('number') %]</div></td>
+            <td><div class="pull-right">[% call.get_column('duration')|format('%.3f') %]</div></td>
+            <td><div class="pull-right">[% call.get_column('free_time')|format('%d') %]</div></td>
+            <td><div class="pull-right">[% money_format( call.get_column('cost') / 100 ) %]</div></td>
+        </tr>
+        [%END%]
+        <tr>
+            <td colspan="2">[% c.loc('Total') %]</td>
+            <td><div class="pull-right">[% total_number %]</div></td>
+            <td><div class="pull-right">[% total_duration | format('%.3f') %]</div></td>
+            <td><div class="pull-right">[% total_free_time | format('%d')%]</div></td>
+            <td><div class="pull-right">[% money_format( total_cost / 100 ) %]</div></td>
+        </tr>
+    </tbody>
+    </table>

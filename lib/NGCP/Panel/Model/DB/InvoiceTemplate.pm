@@ -137,6 +137,19 @@ sub activateCustomerInvoiceTemplate{
         $self->deactivateOtherTemplates($contract_id,$tt_id);
      });
 }
+sub deactivateCustomerInvoiceTemplate{
+    my $self = shift;
+    my (%params) = @_;
+    my ($contract_id,$tt_id) = @params{qw/contract_id tt_id/};
+    $self->schema->txn_do(sub {
+        $self->schema->resultset('invoice_template')->search({
+            reseller_id => $contract_id,
+            id => $tt_id,
+        })->update({
+            is_active => 0,
+        });
+     });
+}
 sub deactivateOtherTemplates{
     my $self = shift;
     my ($contract_id,$tt_id) = @_;

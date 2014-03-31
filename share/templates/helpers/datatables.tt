@@ -5,7 +5,7 @@
         FOR col IN helper.dt_columns;
             IF !col.accessor;
                 col.accessor = col.name;
-                col.accessor.replace('\.','_');
+                col.accessor = col.accessor.replace('\.','_');
             END;
             NEXT UNLESS col.title;
             helper.column_titles.push(col.title);

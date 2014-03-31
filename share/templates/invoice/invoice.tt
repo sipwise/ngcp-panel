@@ -21,24 +21,24 @@
 <script type="text/javascript" src="/js/jquery.loadJSON.js"></script>
 <script type="text/javascript">
 var uriForAction = function( data, type ){
-    //also we can think about getting URI's via ajax )
+    //also we can think about getting URIs via ajax )
     var q_template;
     switch(type){
     case 'invoice_template_previewed':
-        //q_template = '[%- c.uri_for_action("/customer/invoice_template", ['contract_id','svg','parsed','previewed','svg','tt_id']) -%]';
-        q_template = '[%- c.uri_for_action("/customer/invoice_template", ["contract_id"]) -%]'+'/svg/parsed/previewed/svg/tt_id';
+        //q_template = '[%- c.uri_for_action("/reseller/invoice_template", ['contract_id','svg','parsed','previewed','svg','tt_id']) -%]';
+        q_template = '[%- c.uri_for_action("/reseller/invoice_template", ["contract_id"]) -%]'+'/svg/parsed/previewed/svg/tt_id';
         break;
     case 'invoice_template_saved':
-        //q_template = '[%- c.uri_for_action("/customer/invoice_template", ['contract_id','svg','parsed','saved','svg','tt_id']) -%]';
-        q_template = '[%- c.uri_for_action("/customer/invoice_template", ["contract_id"]) -%]'+'/svg/parsed/saved/tt_output_type/tt_id';
+        //q_template = '[%- c.uri_for_action("/reseller/invoice_template", ['contract_id','svg','parsed','saved','svg','tt_id']) -%]';
+        q_template = '[%- c.uri_for_action("/reseller/invoice_template", ["contract_id"]) -%]'+'/svg/parsed/saved/tt_output_type/tt_id';
         break;
     case 'invoice_template_list':
-        q_template = '[%- c.uri_for_action("/customer/invoice_template_list", ['contract_id']) -%]';
+        q_template = '[%- c.uri_for_action("/reseller/invoice_template_list", ['contract_id']) -%]';
         break;
     case 'invoice_template':
     default:
-        //q_template = '[%- c.uri_for_action("/customer/invoice_template", ['contract_id','tt_type','tt_viewmode','tt_sourcestate','tt_output_type','tt_id']) -%]';
-        q_template = '[%- c.uri_for_action("/customer/invoice_template", ["contract_id"]) -%]'+'/tt_type/tt_viewmode/tt_sourcestate/tt_output_type/tt_id';
+        //q_template = '[%- c.uri_for_action("/reseller/invoice_template", ['contract_id','tt_type','tt_viewmode','tt_sourcestate','tt_output_type','tt_id']) -%]';
+        q_template = '[%- c.uri_for_action("/reseller/invoice_template", ["contract_id"]) -%]'+'/tt_type/tt_viewmode/tt_sourcestate/tt_output_type/tt_id';
         break;
     }
     if(!data.tt_id){data.tt_id = '';}
@@ -89,49 +89,12 @@ var uriForAction = function( data, type ){
     ];
     helper.name_single = c.loc('Invoice Record');
     helper.identifier = 'invoice_details_raw';
-    helper.ajax_uri = c.uri_for_action( '/customer/invoice_details_ajax', [ contract.id ] ) ;
+    helper.ajax_uri = c.uri_for_action( '/reseller/invoice_details_ajax', [ contract.id ] ) ;
     initHelperAuto();
     PROCESS 'helpers/datatables.tt';
 -%]
-    [%Dumper.dump_html(helper.ajax_uri)%]
-    <table class="table table-bordered table-striped table-highlight table-hover">
-    <thead>
-        <tr>
-            <th>[% c.loc('Num') %]</th>
-            <th>[% c.loc('Zone') %]</th>
-            <th>[% c.loc('Calls amount') %]</th>
-            <th>[% c.loc('Duration') %]</th>
-            <th>[% c.loc('Free time') %]</th>
-            <th>[% c.loc('Cash') %]</th>
-            <th class="ngcp-actions-column"></th>
-        </tr>
-    </thead>
-    <tbody>
-        [%# Dumper.dump_html(invoice_details.as_query)%]
-        [% FOR call IN invoice_details -%]
-        [%IF call.1; row_number = call.0; call = call.1; END%]
-        [% total_number = total_number + call.get_column('number') %]
-        [% total_duration = total_duration + call.get_column('duration') %]
-        [% total_free_time = total_free_time + call.get_column('free_time') %]
-        [% total_cost = total_cost + call.get_column('cost') %]
-        <tr class="sw_action_row">
-            <td>[% row_number %]</td>
-            <td>[% call.get_column('zone') %]</td>
-            <td><div class="pull-right">[% call.get_column('number') %]</div></td>
-            <td><div class="pull-right">[% call.get_column('duration')|format('%.3f') %]</div></td>
-            <td><div class="pull-right">[% call.get_column('free_time')|format('%d') %]</div></td>
-            <td><div class="pull-right">[% money_format( call.get_column('cost') / 100 ) %]</div></td>
-        </tr>
-        [%END%]
-        <tr>
-            <td colspan="2">[% c.loc('Total') %]</td>
-            <td><div class="pull-right">[% total_number %]</div></td>
-            <td><div class="pull-right">[% total_duration | format('%.3f') %]</div></td>
-            <td><div class="pull-right">[% total_free_time | format('%d')%]</div></td>
-            <td><div class="pull-right">[% money_format( total_cost / 100 ) %]</div></td>
-        </tr>
-    </tbody>
-    </table>
+    [%PROCESS 'invoice/invoice_details_list.tt' %]
+
     </div>
     </div>
 </div>
@@ -143,13 +106,13 @@ var uriForAction = function( data, type ){
         <a class="accordion-toggle" data-toggle="collapse" data-parent="#customer_invoice_template" href="#collapse_invoice_template_list">[% c.loc('Invoice Templates') %]</a>
     </div>
     <div class="accordion-body collapse" id="collapse_invoice_template_list">
-    [%PROCESS 'customer/invoice_template_list.tt' %]
+    [%PROCESS 'invoice/invoice_template_list.tt' %]
     </div>
 </div>
 </span>
 
 <div style="visibility:visible;" id="invoice_template_form">
-[%PROCESS 'customer/invoice_template_form.tt' %]
+[%PROCESS 'invoice/invoice_template_form.tt' %]
 </div>
 
 </div>

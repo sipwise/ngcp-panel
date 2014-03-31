@@ -219,6 +219,22 @@
             </div>
         </div>
     </div>
+    <div class="accordion-group">
+        <div class="accordion-heading">
+            <a class="accordion-toggle" data-toggle="collapse" data-parent="#reseller_details" href="#collapse_calls">[% c.loc('Balance details') %]</a>
+        </div>
+        <div class="accordion-body collapse" id="collapse_calls">
+            <div class="accordion-inner" style="height: 300px; overflow: auto;">
+                <span>
+                    <a class="btn btn-primary btn-large" href="[% c.uri_for_action('/reseller/invoice', [contract.id]) %]">[% c.loc('Invoice Template')%] <i class="icon-edit"></i></a>
+                </span>
+                <div class="ngcp-separator"></div>
+
+[%PROCESS 'invoice/invoice_template_list.tt' %]
+
+                </div>
+        </div>
+    </div>
 
     <div class="accordion-group">
         <div class="accordion-heading">

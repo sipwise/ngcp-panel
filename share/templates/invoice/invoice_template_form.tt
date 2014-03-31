@@ -10,7 +10,7 @@ function formToUri(q){
 }
 
 </script>
-<form name="invoice_template" id="invoice_template" action="[%- c.uri_for_action('/customer/invoice_template', [contract.id]) -%]"  class="form-horizontal" enctype="multipart/form-data" method="post">
+<form name="invoice_template" id="invoice_template" action="[%- c.uri_for_action('/reseller/invoice_template', [contract.id]) -%]"  class="form-horizontal" enctype="multipart/form-data" method="post">
 <input type="hidden" name="tt_id" value="">
 <div class="ngcp-separator"></div>
 [% IF write_access -%]
@@ -63,7 +63,7 @@ function formToUri(q){
         contract_id: '[%contract.id%]',
         tt_id: getTtIdVal(),
     });" width="550px" height="750px" style="border-width:0px;"></iframe><iframe 
-    src="[%- c.uri_for_action('/customer/invoice_template', [contract.id]) -%]/svg/parsed/[%- initial -%]" id="svgpreview"
+    src="[%- c.uri_for_action('/reseller/invoice_template', [contract.id]) -%]/svg/parsed/[%- initial -%]" id="svgpreview"
     width="600px" height="750px" style="border-width:0px;"></iframe>
 </div>
 </form>
