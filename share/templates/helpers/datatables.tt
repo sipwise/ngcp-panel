@@ -3,6 +3,10 @@
         helper.column_titles = [];
         helper.column_fields = [];
         FOR col IN helper.dt_columns;
+            IF !col.accessor;
+                col.accessor = col.name;
+                col.accessor.replace('\.','_');
+            END;
             NEXT UNLESS col.title;
             helper.column_titles.push(col.title);
             helper.column_fields.push(col.accessor);
@@ -80,7 +84,7 @@ $(document).ready(function() {
                 "mRender": function ( data, type, full ) {
                     if(data == null)
                         return '';
-                    return String(data).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+                    return String(data).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');//"
                 }
             },
 		    [% END -%]

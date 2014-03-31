@@ -1,0 +1,69 @@
+[%#It can be separated later to form template and loaded with ajax and fillinform template::toolkit plugin. %]
+[%#It is reliable and easy to implement solution, but requires additional modules. For now populate small form with jquery.%]
+[%# USE FillInForm %]
+<script>
+function getTtIdVal(){
+    return $('form[name=invoice_template] input[name=tt_id]').val();
+}
+function formToUri(q){
+    return q+'?'+$('form[name=invoice_template]').serialize()
+}
+
+</script>
+<form name="invoice_template" id="invoice_template" action="[%- c.uri_for_action('/customer/invoice_template', [contract.id]) -%]"  class="form-horizontal" enctype="multipart/form-data" method="post">
+<input type="hidden" name="tt_id" value="">
+<div class="ngcp-separator"></div>
+[% IF write_access -%]
+<span>
+    <a class="btn btn-primary btn-large" onclick="fetchInvoiceTemplateData({
+        tt_sourcestate: 'default',
+        contract_id: '[%contract.id%]',
+    });void(0);">[% c.loc('Create from scratch')%] <i class="icon-edit"></i></a>
+</span>
+<div class="ngcp-separator"></div>
+[% END -%]
+<div class="control-group">
+    <label class="control-label" for="name">[%c.loc('Template name')%]</label>
+    <div class="controls">
+    <input type="text" name="name" id="name" value="" />
+    </div>
+</div>
+<div class="ngcp-separator"></div>
+<div class="control-group">
+    <label class="control-label" for="is_active">[%c.loc('Active')%]</label>
+    <div class="controls" class="checkbox">
+    <input type="checkbox" name="is_active" id="is_active" value="1" />
+    </div>
+</div>
+<span>
+    <a class="btn btn-primary btn-large" onclick="
+    savePreviewedAndShowParsed({
+        contract_id:'[%contract.id%]',
+        tt_id: getTtIdVal(),
+    });void(0);">[% c.loc('Refresh Preview')%] <i class="icon-refresh"></i></a>
+</span>
+<span>
+    <a class="btn btn-primary btn-large" onclick="
+    //alert('tt_id='+getTtIdVal()+';');
+    saveTemplate({
+        contract_id:'[%contract.id%]',
+        tt_id: getTtIdVal(),
+    });void(0);">[% c.loc('Save template')%] <i class="icon-disk"></i></a>
+</span>
+<div class="ngcp-separator"></div>
+
+[%initial = 'default'%]
+<iframe 
+    type="text/html" 
+    src="/js/libs/svg-edit/svg-editor.htm" id="svgedit" onload="
+    init_embed();
+    fetchSvgToEditor({
+        tt_viewmode: 'raw', 
+        tt_sourcestate: '[%initial%]',
+        contract_id: '[%contract.id%]',
+        tt_id: getTtIdVal(),
+    });" width="550px" height="750px" style="border-width:0px;"></iframe><iframe 
+    src="[%- c.uri_for_action('/customer/invoice_template', [contract.id]) -%]/svg/parsed/[%- initial -%]" id="svgpreview"
+    width="600px" height="750px" style="border-width:0px;"></iframe>
+</div>
+</form>

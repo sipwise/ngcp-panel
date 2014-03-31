@@ -96,13 +96,7 @@ sub storeCustomerInvoiceTemplate{
             });
         }
         if($is_active && $tt_id){
-            $self->schema->resultset('invoice_template')->search({
-                reseller_id => $contract_id,
-                type        => $tt_type,
-                id          => {'!=' => $tt_id },
-            })->update_all({
-                is_active => 0,
-            });
+            $self->deactivateOtherTemplates($contract_id,$tt_id);
         }
     });
     return { tt_id => $tt_id };
@@ -112,6 +106,10 @@ sub getCustomerInvoiceTemplateList{
     my (%params) = @_;
     my ($contract_id,$tt_sourcestate,$tt_type, $tt_string, $tt_id) = @params{qw/contract_id tt_sourcestate tt_type tt_string_sanitized tt_id/};
     
+    #return [
+        #$self->schema->resultset('invoice_template_fake')->find(\'select * from invoice_template')->all
+        #$self->schema->resultset('invoice_template')->name(\'(select * from invoice_template)')->all
+    #];
     return [ $self->schema->resultset('invoice_template')->search({
         reseller_id => $contract_id,
     })->all ];
@@ -124,6 +122,31 @@ sub deleteCustomerInvoiceTemplate{
         reseller_id => $contract_id,
         id => $tt_id,
     })->delete_all;
+}
+sub activateCustomerInvoiceTemplate{
+    my $self = shift;
+    my (%params) = @_;
+    my ($contract_id,$tt_id) = @params{qw/contract_id tt_id/};
+    $self->schema->txn_do(sub {
+        $self->schema->resultset('invoice_template')->search({
+            reseller_id => $contract_id,
+            id => $tt_id,
+        })->update({
+            is_active => 1,
+        });
+        $self->deactivateOtherTemplates($contract_id,$tt_id);
+     });
+}
+sub deactivateOtherTemplates{
+    my $self = shift;
+    my ($contract_id,$tt_id) = @_;
+    $self->schema->resultset('invoice_template')->search({
+        reseller_id => $contract_id,
+        id          => {'!=' => $tt_id },
+        is_active   => 1,
+    })->update_all({
+        is_active => 0,
+    });
 }
 sub checkCustomerInvoiceTemplateContract{
     my $self = shift;

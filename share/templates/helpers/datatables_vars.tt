@@ -1,3 +1,4 @@
+[% USE JSON.Escape( pretty => 0 ) %];
 [%-
 #USE Dumper;
 
@@ -12,12 +13,25 @@ MACRO initHelper(var,value) BLOCK;
     identifier = "${helper.identifier}" _ "_" _ var;
     UNLESS helper.${var}.defined; helper.${var} = helper.${var} || value || ${"${identifier}"} || ${var}; END;
 END;
+MACRO initDtColumns BLOCK;
+    FOR col in helper.dt_columns;
+        IF ! col.accessor;
+            col.accessor = col.name.replace('\.','_');
+        END;
+    END;
+END;
 MACRO initHelperAuto BLOCK;
     FOREACH identifier in [ 'messages', 'length_change', 'dt_columns', 'close_target', 'create_flag' ];
         initHelper(identifier);
     END;
+    #;
     initHelper('form_object',form);
     initHelper('ajax_uri', c.uri_for( c.controller.action_for('ajax') ));
+    IF ! helper.ajax_uri.search('[\?&]dt_columns=');
+        initDtColumns();
+        helper.dt_columns_json = helper.dt_columns.json() | url;
+        helper.ajax_uri = helper.ajax_uri _ '?dt_columns=' _ helper.dt_columns_json;
+    END;
 END;
 
 IF !no_auto_helper;

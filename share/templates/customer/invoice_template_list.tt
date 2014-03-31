@@ -6,15 +6,6 @@
 [%END%]
 
     <div class="accordion-inner" style="overflow:auto; height: 300px;">
-    [% IF write_access -%]
-    <span>
-        <a class="btn btn-primary btn-large" onclick="fetchInvoiceTemplateData({
-            tt_sourcestate: 'default',
-            contract_id: '[%contract.id%]',
-        });void(0);">[% c.loc('Create invoice template')%] <i class="icon-edit"></i></a>
-    </span>
-    <div class="ngcp-separator"></div>
-    [% END -%]
     [%IF invoice_template_list.size %]
     <table class="table table-bordered table-striped table-highlight table-hover">
     <thead>
@@ -30,7 +21,7 @@
         [%# Dumper.dump_html(invoice_template_list.as_query)%]
         [%# Dumper.dump_html(template)%]
         <tr class="sw_action_row">
-            <td>[% template.get_column('is_active') %]</td>
+            <td><input type="radio" name="is_active" value="[%template.get_column('is_active')%]" [%IF template.get_column('is_active') %] checked [%END%] onclick="javascript:fetch_into('collapse_invoice_template_list', '[%- c.uri_for_action("/customer/invoice_template_activate", [contract.id, template.get_column('id')]) -%]','',function(){ mainWrapperInit(); });void(0);"></td>
             <td>[% template.get_column('type') %]</td>
             <td>[% template.get_column('name') %]</td>
 
@@ -59,24 +50,24 @@
                     </a>
                     [%END%]
                     [%IF !template.is_active%]
-                    <a class="btn btn-small btn-primary" 
+                    <!--a class="btn btn-small btn-primary" 
                        onclick="switchDefault();void(0);">
                         <i class="icon-edit"></i> [% c.loc('Make active') %]
-                    </a>
+                    </a-->
                     [%END%]
                     <a class="btn btn-small btn-secondary ngcp-noback-button" data-confirm="Delete" 
                        href="javascript:fetch_into('collapse_invoice_template_list', '[%- c.uri_for_action("/customer/invoice_template_delete", [contract.id, template.get_column('id')]) -%]','',function(){ mainWrapperInit(); });void(0);">
                         <i class="icon-trash"></i> [% c.loc('Delete') %]
                     </a>
                     [%END%]
-                    <a class="btn btn-small btn-primary" 
+                    <!--a class="btn btn-small btn-primary" 
                        onclick="loadSvg('/svg/raw/saved/zip');void(0);">
                         <i class="icon-download"></i>[% c.loc('Download source') %]
                     </a>
                     <a class="btn btn-small btn-primary" 
                        onclick="loadSvg('/svg/parsed/saved/pdf');void(0);">
                         <i class="icon-download"></i> [% c.loc('Download invoice') %]
-                    </a>
+                    </a-->
                 </div>
             </td>
         </tr>

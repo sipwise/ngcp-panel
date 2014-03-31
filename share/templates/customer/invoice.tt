@@ -20,25 +20,6 @@
 <script type="text/javascript" src="/js/background.js"></script>
 <script type="text/javascript" src="/js/jquery.loadJSON.js"></script>
 <script type="text/javascript">
-//constructor
-var svgCanvasEmbed = null;
-function init_embed() {
-    var svgEditFrameName = 'svgedit';
-    var frame = document.getElementById(svgEditFrameName);
-    svgCanvasEmbed = new EmbeddedSVGEdit(frame);
-    // Hide main button, as we will be controlling new/load/save etc from the host document
-    var doc = frame.contentDocument;
-    if (!doc)
-    {
-        doc = frame.contentWindow.document;
-    }
-    //var mainButton = doc.getElementById('main_button');
-    //mainButton.style.display = 'none';
-}
-//private
-function getSvgString(){
-    return svgCanvasEmbed.frame.contentWindow.svgCanvas.getSvgString();
-}
 var uriForAction = function( data, type ){
     //also we can think about getting URI's via ajax )
     var q_template;
@@ -69,114 +50,13 @@ var uriForAction = function( data, type ){
         q_template=q_template.replace(key,data[key]);
     });
     q_template=q_template.replace(/\/+$/,'');
-    q_template=q_template+'?'+$('form[name=invoice_template]').serialize();
+    //q_template=q_template+'?'+$('form[name=invoice_template]').serialize();
     //alert('q_template='+q_template);
     return q_template;
 }
-function setSvgStringToEditor( svgParsedString ){
-    //alert('setSvgStringToEditor: '+svgParsedString);
-    svgCanvasEmbed.setSvgString( svgParsedString )(
-        function(data,error){
-            if(error){
-            }else{
-                svgCanvasEmbed.zoomChanged('', 'canvas');
-            }
-        }
-    );
-}
-function setSvgStringToPreview( svgParsedString, q, data ) {
-    var previewIframe = document.getElementById('svgpreview'); 
-    //alert('setSvgStringToPreview: svgParsedString='+svgParsedString+';');
-    if ($.browser.msie) {
-        //we need to repeat query to server for msie if we don't want send template string via GET method
-        if(!q){
-            var dataPreview = data;
-            dataPreview.tt_viewmode = 'parsed';
-            dataPreview.tt_type = 'svg';
-            dataPreview.tt_sourcestate = dataPreview.tt_sourcestate || 'saved';
-            q = uriForAction( dataPreview, 'invoice_template' );
-        }
-        previewIframe.src = q;
-    }else{
-        previewIframe.src = "data:text/html," + encodeURIComponent(svgParsedString);
-    }
-}
-function fetchSvgToEditor( data ) {
-    var q = uriForAction( data, 'invoice_template' );
-    //alert('fetchSvgToEditor: q='+q+';');
-    $.ajax({
-        url: q,
-    }).done( function ( httpResponse ){ 
-        setSvgStringToEditor( httpResponse );
-    });
-}
-function refreshTemplateList ( contract_id ){
-    fetch_into(
-        'collapse_invoice_template_list',
-        uriForAction( {'contract_id': contract_id}, 'invoice_template_list' ),
-        '',
-        function(){ mainWrapperInit(); }
-    );
-}
-//public
-function fetchInvoiceTemplateData( data ){
-    //params spec: tt_type=[svg|html]/tt_viewmode[parsed|raw]/tt_sourcestate[saved|previewed|default]/tt_output_type[svg|pdf|html|json|svgzip|pdfzip|htmlzip]/tt_id
-    //tt_output_type=svg really outputs text/html mimetype. But it will be couple of <svg> tags (<svg> per page).
-    data.tt_output_type = 'json';
-    var q = uriForAction( data, 'invoice_template' );
-    //alert('fetchInvoiceTemplateData: q='+q+';');
-    $.ajax({
-        url: q,
-        datatype: "json",
-    //}).done( function( jsonres ){
-    }).done( function( templatedata ){
-        //alert(templatedata);
-        //alert(templatedata.aaData);
-        if(templatedata.aaData){
-            if( templatedata.aaData.template ){
-                setSvgStringToEditor( templatedata.aaData.template.raw );
-                setSvgStringToPreview( templatedata.aaData.template.parsed );
-            }
-            if( templatedata.aaData.form ){
-                $('form[name=invoice_template]').loadJSON(templatedata.aaData.form);
-            }
-        }
-    });
-}
-function savePreviewedAndShowParsed( data ){
-    var svgString = getSvgString();
-    var q = uriForAction( data, 'invoice_template_previewed' ); 
-    //alert('savePreviewedAndShowParsed: svgString='+svgString+'; q='+q+';');
-    //alert('savePreviewedAndShowParsed: q='+q+';');
-    //save 
-    $.post( q, { template: svgString } )
-    .done( function( httpResponse ){
-        // & show template
-        //alert('savePreviewedAndShowParsed: httpResponse='+httpResponse+';');
-        setSvgStringToPreview( httpResponse, q )
-        //refresh list after saving
-        refreshTemplateList( data.contract_id );
-    } );
-}
-function saveTemplate( data ) {	
-    var svgString = getSvgString();
-    data.tt_sourcestate='saved';
-    data.tt_output_type = 'json';
-    var q = uriForAction( data, 'invoice_template_saved' ); 
-    alert('saveTemplate: q='+q+';');
-    $.ajax( {
-        url: q,
-        type: "POST",
-        datatype: 'json',
-        data: { template: svgString },
-    } ).done( function( jsonResponse ) {
-        if(jsonResponse.aaData && jsonResponse.aaData.form){
-            $('form[name=invoice_template]').loadJSON(jsonResponse.aaData.form);
-        }
-        refreshTemplateList( data.contract_id );
-    });
-}
+
 </script>
+<script type="text/javascript" src="/js/invoice_template.js"></script>
 
 <div class="row">
     <span>
@@ -198,15 +78,22 @@ function saveTemplate( data ) {
     
     
 [%
-#while we don't due to local
     clearHelper();
     helper.name = c.loc('Invoice Details');
+    helper.dt_columns = [
+        { name => 'zone', title => c.loc('Zone'), search=> 1 },
+        { name => 'number', title => c.loc('Calls amount') },
+        { name => 'duration', title => c.loc('Duration') },
+        { name => 'free_time', title => c.loc('Free time') },
+        { name => 'cost', title => c.loc('Cash') },
+    ];
     helper.name_single = c.loc('Invoice Record');
-    helper.identifier = 'invoice_details';
+    helper.identifier = 'invoice_details_raw';
+    helper.ajax_uri = c.uri_for_action( '/customer/invoice_details_ajax', [ contract.id ] ) ;
     initHelperAuto();
     PROCESS 'helpers/datatables.tt';
 -%]
-    
+    [%Dumper.dump_html(helper.ajax_uri)%]
     <table class="table table-bordered table-striped table-highlight table-hover">
     <thead>
         <tr>
@@ -261,62 +148,8 @@ function saveTemplate( data ) {
 </div>
 </span>
 
-[%#It can be separated later to form template and loaded with ajax and fillinform template::toolkit plugin. %]
-[%#It is reliable and easy to implement solution, but requires additional modules. For now populate small form with jquery.%]
-[%# USE FillInForm %]
 <div style="visibility:visible;" id="invoice_template_form">
-<script>
-function getTtIdVal(){
-    return $('form[name=invoice_template] input[name=tt_id]').val();
-}
-</script>
-<form name="invoice_template" id="invoice_template" action="[%- c.uri_for_action('/customer/invoice_template', [contract.id]) -%]"  class="form-horizontal" enctype="multipart/form-data" method="post">
-<input type="hidden" name="tt_id" value="">
-<div class="ngcp-separator"></div>
-<div class="control-group">
-    <label class="control-label" for="name">[%c.loc('Template name')%]</label>
-    <div class="controls">
-    <input type="text" name="name" id="name" value="" />
-    </div>
+[%PROCESS 'customer/invoice_template_form.tt' %]
 </div>
-<div class="ngcp-separator"></div>
-<div class="control-group">
-    <label class="control-label" for="is_active">[%c.loc('Active')%]</label>
-    <div class="controls" class="checkbox">
-    <input type="checkbox" name="is_active" id="is_active" value="1" />
-    </div>
-</div>
-<span>
-    <a class="btn btn-primary btn-large" onclick="
-    savePreviewedAndShowParsed({
-        contract_id:'[%contract.id%]',
-        tt_id: getTtIdVal(),
-    });void(0);">[% c.loc('Refresh Preview')%] <i class="icon-refresh"></i></a>
-</span>
-<span>
-    <a class="btn btn-primary btn-large" onclick="
-    //alert('tt_id='+getTtIdVal()+';');
-    saveTemplate({
-        contract_id:'[%contract.id%]',
-        tt_id: getTtIdVal(),
-    });void(0);">[% c.loc('Save template')%] <i class="icon-disk"></i></a>
-</span>
-<div class="ngcp-separator"></div>
-
-[%initial = 'default'%]
-<iframe 
-    type="text/html" 
-    src="/js/libs/svg-edit/svg-editor.htm" id="svgedit" onload="
-    init_embed();
-    fetchSvgToEditor({
-        tt_viewmode: 'raw', 
-        tt_sourcestate: '[%initial%]',
-        contract_id: '[%contract.id%]',
-        tt_id: getTtIdVal(),
-    });" width="550px" height="750px" style="border-width:0px;"></iframe><iframe 
-    src="[%- c.uri_for_action('/customer/invoice_template', [contract.id]) -%]/svg/parsed/[%- initial -%]" id="svgpreview"
-    width="600px" height="750px" style="border-width:0px;"></iframe>
-</div>
-</form>
 
 </div>

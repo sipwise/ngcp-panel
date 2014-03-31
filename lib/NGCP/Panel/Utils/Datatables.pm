@@ -18,35 +18,34 @@ sub process {
 
     # check if we need to join more tables
     # TODO: can we nest it deeper than once level?
-    unless ($use_rs_cb) {
-        for my $c(@{ $cols }) {
-            my @parts = split /\./, $c->{name};
-            if($c->{literal_sql}) {
-                $rs = $rs->search_rs(undef, {
-                    '+select' => [ \[$c->{literal_sql}] ],
-                    '+as' => [ $c->{accessor} ],
-                });
-            } elsif(@parts == 2) {
-                $rs = $rs->search_rs(undef, {
-                    join => $parts[0],
-                    '+select' => [ $c->{name} ],
-                    '+as' => [ $c->{accessor} ],
-                });
-            } elsif(@parts == 3) {
-                $rs = $rs->search_rs(undef, {
-                    join => { $parts[0] => $parts[1] },
-                    '+select' => [ $parts[1].'.'.$parts[2] ],
-                    '+as' => [ $c->{accessor} ],
-                });
-            } elsif(@parts == 4) {
-                $rs = $rs->search_rs(undef, {
-                    join => { $parts[0] => { $parts[1] => $parts[2] } },
-                    '+select' => [ $parts[2].'.'.$parts[3] ],
-                    '+as' => [ $c->{accessor} ],
-                });
-            } elsif(@parts > 4) {
-                # TODO throw an error for now as we only support up to 3 levels
-            }
+    set_columns($c, $cols);
+    for my $c(@{ $cols }) {
+        my @parts = split /\./, $c->{name};
+        if($c->{literal_sql}) {
+            $rs = $rs->search_rs(undef, {
+                '+select' => [ \[$c->{literal_sql}] ],
+                '+as' => [ $c->{accessor} ],
+            });
+        } elsif(@parts == 2) {
+            $rs = $rs->search_rs(undef, {
+                join => $parts[0],
+                '+select' => [ $c->{name} ],
+                '+as' => [ $c->{accessor} ],
+            });
+        } elsif(@parts == 3) {
+            $rs = $rs->search_rs(undef, {
+                join => { $parts[0] => $parts[1] },
+                '+select' => [ $parts[1].'.'.$parts[2] ],
+                '+as' => [ $c->{accessor} ],
+            });
+        } elsif(@parts == 4) {
+            $rs = $rs->search_rs(undef, {
+                join => { $parts[0] => { $parts[1] => $parts[2] } },
+                '+select' => [ $parts[2].'.'.$parts[3] ],
+                '+as' => [ $c->{accessor} ],
+            });
+        } elsif(@parts > 4) {
+            # TODO throw an error for now as we only support up to 3 levels
         }
     }
 

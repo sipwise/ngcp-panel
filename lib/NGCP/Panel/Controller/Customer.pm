@@ -827,10 +827,76 @@ sub invoice_data :Chained('base') :PathPart('invoice') :CaptureArgs(0) {
         etime => $etime,
     );
     #TODO: FAKE FAKE FAKE FAKE
-    $invoice_details = [$invoice_details->all()];
+    my $invoice_details_raw = $invoice_details;
+    $invoice_details = [$invoice_details_raw->all()];
     my $i = 1;
     $invoice_details = [map{[$i++,$_]} (@$invoice_details) x 21];
-    $c->stash(invoice_details => $invoice_details );
+    $c->stash( invoice_details => $invoice_details );
+    $c->stash( invoice_details_raw => $invoice_details_raw );
+}
+sub invoice_details_ajax :Chained('base') :PathPart('invoice/details/ajax') :Args(0) {
+    my ($self, $c) = @_;
+    my $dt_columns_json = $c->request->parameters->{dt_columns};
+    use JSON;
+    #use irka;
+    #use Data::Dumper;
+    #irka::loglong(Dumper($dt_columns));
+    $c->forward( 'invoice_data' );
+    my $dt_columns = from_json($dt_columns_json);
+    NGCP::Panel::Utils::Datatables::process($c, $c->stash->{invoice_details_raw}, $dt_columns );
+    $c->detach( $c->view("JSON") );
+}
+
+sub invoice_template_activate :Chained('base') :PathPart('invoice_template/activate') :Args(1) {
+    my ($self, $c) = @_;
+    $c->log->debug('invoice_template_activate');
+    my($validator,$backend,$in,$out);
+
+    (undef,undef,@$in{qw/tt_id/}) = @_;
+    #check that this id really belongs to specified contract? or just add contract condition to delete query?
+    #checking is more universal
+    #this is just copy-paste from method above
+    #of course we are chained and we can put in and out to stash
+    #input
+    $in->{contract_id} = $c->stash->{contract}->id;
+    
+    #output
+    $out={};
+
+    #storage
+    #pass scheme here is ugly, and should be moved somehow to DB::Base
+    $backend = NGCP::Panel::Model::DB::InvoiceTemplate->new( schema => $c->model('DB') );
+
+    #input checking & simple preprocessing
+    $validator = NGCP::Panel::Form::Customer::InvoiceTemplate->new( backend => $backend );
+#    $form->schema( $c->model('DB::InvoiceTemplate')->schema );
+    #to common form package ? removing is necessary due to FormHandler param presence evaluation - it is based on key presence, not on defined/not defined value
+    #in future this method should be called by ControllerBase
+    $validator->remove_undef_in($in);
+    
+    #really, we don't need a form here at all
+    #just use as already implemented fields checking and defaults applying  
+    #$validator->setup_form(
+    $validator->process(
+        posted => 1,
+        params => $in,
+    );
+    #$validator->validate_form();
+    
+    #multi return...
+    $c->log->debug("validated=".$validator->validated.";\n");
+    if(!$validator->validated){
+        return;
+    }
+    my $in_validated = $validator->fif;
+
+    #dirty hack 1
+    #really model logic should recieve validated input, but raw input also should be saved somewhere
+    $in = $in_validated;
+    #think about it more
+    
+    $backend->activateCustomerInvoiceTemplate(%$in);
+    $c->forward( 'invoice_template_list' );
 }
 sub invoice_template_delete :Chained('base') :PathPart('invoice_template/delete') :Args(1) {
     my ($self, $c) = @_;
@@ -883,6 +949,7 @@ sub invoice_template_delete :Chained('base') :PathPart('invoice_template/delete'
     $backend->deleteCustomerInvoiceTemplate(%$in);
     $c->forward( 'invoice_template_list' );
 }
+
 sub invoice_template_list_data :Chained('invoice_data') :PathPart('') :CaptureArgs(0) {
     my ($self, $c) = @_; 
     $c->log->debug('invoice_template_list_data');
