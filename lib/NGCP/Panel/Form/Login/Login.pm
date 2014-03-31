@@ -1,4 +1,4 @@
-package NGCP::Panel::Form::Login;
+package NGCP::Panel::Form::Login::Login;
 
 use HTML::FormHandler::Moose;
 extends 'HTML::FormHandler';

@@ -24,8 +24,9 @@ Catalyst Controller.
 sub index :Path {
     my ( $self, $c, $realm ) = @_;
 
+    my $role = $c->user->roles;
     $c->logout;
-    $c->response->redirect($c->uri_for('/login'));
+    $c->response->redirect($c->uri_for('/login', $role));
 }
 
 

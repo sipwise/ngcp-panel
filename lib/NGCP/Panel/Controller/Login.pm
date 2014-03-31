@@ -4,7 +4,8 @@ use Sipwise::Base;
 
 BEGIN { extends 'Catalyst::Controller'; }
 
-use NGCP::Panel::Form::Login;
+use NGCP::Panel::Form::Login::Login;
+use NGCP::Panel::Form::Login::Signup;
 
 =head1 NAME
 
@@ -23,7 +24,13 @@ Catalyst Controller.
 
 =cut
 
-sub index :Path Form {
+sub auto {
+    my ($self, $c) = @_;
+    $c->log->debug(__PACKAGE__ . '::auto');
+    return 1;
+}
+
+sub index :Chained('/') :PathPart('login') {
     my ( $self, $c, $realm ) = @_;
 
     $c->log->debug("*** Login::index");
@@ -31,7 +38,7 @@ sub index :Path Form {
         unless($realm and ($realm eq 'admin' or $realm eq 'reseller'));
 
     my $posted = ($c->req->method eq 'POST');
-    my $form = NGCP::Panel::Form::Login->new;
+    my $form = NGCP::Panel::Form::Login::Login->new;
     $form->process(
         posted => $posted,
         params => $c->request->params,
@@ -105,6 +112,26 @@ sub index :Path Form {
     $c->stash(form => $form);
     $c->stash(realm => $realm);
     $c->stash(template => 'login/login.tt');
+}
+
+sub signup :Chained('/') :PathPart('login/signup') :Args(0) {
+    my ( $self, $c ) = @_;
+
+    $c->log->debug("*** Login::signup");
+
+    my $posted = ($c->req->method eq 'POST');
+    my $form = NGCP::Panel::Form::Login::Signup->new;
+    $form->process(
+        posted => $posted,
+        params => $c->request->params,
+    );
+
+    if($posted && $form->validated) {
+        $c->log->debug("signup form validated");
+    }
+
+    $c->stash(form => $form);
+    $c->stash(template => 'login/signup.tt');
 }
 
 

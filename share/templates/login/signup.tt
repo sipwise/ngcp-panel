@@ -1,0 +1,41 @@
+<body class="login">
+    <div class="account-container register stacked">
+        <div class="content clearfix">
+            <h1>[% c.loc('Create Your Account') %]</h1>
+
+            <div class="login-social">
+                <p>[% c.loc('Sign in using one of those service:') %]</p>
+                <div class="twitter">
+                    <a href="#" class="btn_1">[% c.loc('Login with Twitter') %]</a>
+                </div>
+                <div class="fb">
+                    <a href="#" class="btn_2">[% c.loc('Login with Facebook') %]</a>
+                </div>
+            </div>
+
+            <p>[% c.loc('Create your account:') %]</p>
+            [% translate_form(form).render %]
+
+        </div>
+    </div>
+
+    <div class="login-extra">
+        [% c.loc("Already have an account?") %] <a href="[% c.uri_for('/login/subscriber') %]">[% c.loc('Sign In Here!') %]</a><br/>
+    </div>
+
+
+    <script src="/js/libs/jquery-1.7.2.min.js"></script>
+    <script src="/js/libs/jquery-ui-1.10.3.custom.min.js"></script>
+    <script src="/js/libs/jquery.ui.touch-punch.min.js"></script>
+    <script src="/js/libs/bootstrap/bootstrap.min.js"></script>
+    <script src="/js/Theme.js"></script>
+    <script src="/js/signin.js"></script>
+
+    <script>
+        $(function () {
+            Theme.init();
+            localStorage.clear();
+        });
+    </script>
+</body>
+[% # vim: set tabstop=4 syntax=html expandtab: -%]
