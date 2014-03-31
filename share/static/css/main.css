@@ -456,4 +456,12 @@ div.login {
     width: 390px;
 }
 
+.login-fields input {
+    color: #444;
+}
+
+.login-actions div label.checkbox {
+    font-size: 12px;
+}
+
 /* vim: set tabstop=4 syntax=css expandtab: */
