@@ -21,7 +21,7 @@
         [%# Dumper.dump_html(invoice_template_list.as_query)%]
         [%# Dumper.dump_html(template)%]
         <tr class="sw_action_row">
-            <td><input type="radio" name="is_active" value="[%template.get_column('is_active')%]" [%IF template.get_column('is_active') %] checked [%END%] onclick="javascript:fetch_into('collapse_invoice_template_list', '[%- c.uri_for_action("/customer/invoice_template_activate", [contract.id, template.get_column('id')]) -%]','',function(){ mainWrapperInit(); });void(0);"></td>
+            <td><input type="radio" name="is_active" value="[%template.get_column('is_active')%]" [%IF template.get_column('is_active') %] checked [%END%] onclick="javascript:fetch_into('collapse_invoice_template_list', '[%- c.uri_for_action("/customer/invoice_template_activate", [contract.id, template.get_column('id'),template.get_column('is_active')]) -%]','',function(){ mainWrapperInit(); });void(0);"></td>
             <td>[% template.get_column('type') %]</td>
             <td>[% template.get_column('name') %]</td>
 

@@ -841,18 +841,18 @@ sub invoice_details_ajax :Chained('base') :PathPart('invoice/details/ajax') :Arg
     #use irka;
     #use Data::Dumper;
     #irka::loglong(Dumper($dt_columns));
-    $c->forward( 'invoice_data' );
+    $c->forward( 'invoice_details_ajax' );
     my $dt_columns = from_json($dt_columns_json);
     NGCP::Panel::Utils::Datatables::process($c, $c->stash->{invoice_details_raw}, $dt_columns );
     $c->detach( $c->view("JSON") );
 }
 
-sub invoice_template_activate :Chained('base') :PathPart('invoice_template/activate') :Args(1) {
+sub invoice_template_activate :Chained('base') :PathPart('invoice_template/activate') :Args(2) {
     my ($self, $c) = @_;
     $c->log->debug('invoice_template_activate');
     my($validator,$backend,$in,$out);
 
-    (undef,undef,@$in{qw/tt_id/}) = @_;
+    (undef,undef,@$in{qw/tt_id is_active/}) = @_;
     #check that this id really belongs to specified contract? or just add contract condition to delete query?
     #checking is more universal
     #this is just copy-paste from method above
@@ -894,8 +894,11 @@ sub invoice_template_activate :Chained('base') :PathPart('invoice_template/activ
     #really model logic should recieve validated input, but raw input also should be saved somewhere
     $in = $in_validated;
     #think about it more
-    
-    $backend->activateCustomerInvoiceTemplate(%$in);
+    if( ! $in->{is_active} ){
+        $backend->activateCustomerInvoiceTemplate(%$in);
+    }else{
+        $backend->deactivateCustomerInvoiceTemplate(%$in);
+    }
     $c->forward( 'invoice_template_list' );
 }
 sub invoice_template_delete :Chained('base') :PathPart('invoice_template/delete') :Args(1) {

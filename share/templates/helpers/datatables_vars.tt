@@ -1,4 +1,4 @@
-[% USE JSON.Escape( pretty => 0 ) %];
+[% USE JSON.Escape( pretty => 0 ) %]
 [%-
 #USE Dumper;
 
