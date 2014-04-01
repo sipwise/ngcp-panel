@@ -53,12 +53,14 @@ has_field 'period.row.year' => (
 );
 has_field 'period.row.year.from' => (
     type => 'Year',
+    range_start => '2014',
     label => 'Year',
     empty_select => '',
     wrapper_class => [qw/hfh-rep-field ngcp-timeset-field/],
 );
 has_field 'period.row.year.to' => (
     type => 'Year',
+    range_start => '2014',
     label => 'through',
     empty_select => '',
     wrapper_class => [qw/hfh-rep-field ngcp-timeset-field/],
