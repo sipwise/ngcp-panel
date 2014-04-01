@@ -630,6 +630,71 @@ sub terminate {
     });
 }
 
+sub field_to_destination {
+    my %params = @_;
+
+    my $number = $params{number};
+    my $domain = $params{domain};
+    my $d = $params{destination};
+    my $uri = $params{uri};
+
+    if($d eq "voicebox") {
+        $d = "sip:vmu$number\@voicebox.local";
+    } elsif($d eq "fax2mail") {
+        $d = "sip:$number\@fax2mail.local";
+    } elsif($d eq "conference") {
+        $d = "sip:conf=$number\@conference.local";
+    } elsif($d eq "callingcard") {
+        $d = "sip:callingcard\@app.local";
+    } elsif($d eq "callthrough") {
+        $d = "sip:callthrough\@app.local";
+    } elsif($d eq "localuser") {
+        $d = "sip:localuser\@app.local";
+    } elsif($d eq "autoattendant") {
+        $d = "sip:auto-attendant\@app.local";
+    } elsif($d eq "officehours") {
+        $d = "sip:office-hours\@app.local";
+    } elsif($d eq "uri") {
+        $d = $uri;
+    }
+    # TODO: check for valid dest here
+    if($d !~ /\@/) {
+        $d .= '@'.$domain;
+    }
+    if($d !~ /^sip:/) {
+        $d = 'sip:' . $d;
+    }
+    return $d;
+}
+
+sub destination_to_field {
+    my ($d) = @_;
+
+    $d //= "";
+    my $duri = undef;
+    if($d =~ /\@voicebox\.local$/) {
+        $d = 'voicebox';
+    } elsif($d =~ /\@fax2mail\.local$/) {
+        $d = 'fax2mail';
+    } elsif($d =~ /\@conference\.local$/) {
+        $d = 'conference';
+    } elsif($d =~ /^sip:callingcard\@app\.local$/) {
+        $d = 'callingcard';
+    } elsif($d =~ /^sip:callthrough\@app\.local$/) {
+        $d = 'callthrough';
+    } elsif($d =~ /^sip:localuser\@.+\.local$/) {
+        $d = 'localuser';
+    } elsif($d =~ /^sip:auto-attendant\@app\.local$/) {
+        $d = 'autoattendant';
+    } elsif($d =~ /^sip:office-hours\@app\.local$/) {
+        $d = 'officehours';
+    } else {
+        $duri = $d;
+        $d = 'uri';
+    }
+    return ($d, $duri);
+}
+
 1;
 
 =head1 NAME
