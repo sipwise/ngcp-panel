@@ -177,7 +177,16 @@ sub POST :Allow {
             $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Required: 'set_id'");
             last;
         }
-        my $ruleset = $schema->resultset('voip_rewrite_rule_sets')->find($set_id);
+
+        my $reseller_id;
+        if($c->user->roles eq "reseller") {
+            $reseller_id = $c->user->reseller_id;
+        }
+
+        my $ruleset = $schema->resultset('voip_rewrite_rule_sets')->find({
+                id => $set_id,
+                ($reseller_id ? (reseller_id => $reseller_id) : ()),
+            });
         unless($ruleset) {
             $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Invalid 'set_id'.");
             last;

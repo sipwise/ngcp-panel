@@ -173,11 +173,17 @@ sub POST :Allow {
         );
         last unless $resource;
 
-        unless(defined $resource->{reseller_id}) {
+        my $reseller_id;
+        if($c->user->roles eq "admin") {
             try {
-                $resource->{reseller_id} = $c->user->contract->contact->reseller_id;
-            }
+                $reseller_id = $resource->{reseller_id}
+                     || $c->user->contract->contact->reseller_id;
+             }
+        } elsif($c->user->roles eq "reseller") {
+            $reseller_id = $c->user->reseller_id;
         }
+        $resource->{reseller_id} = $reseller_id;
+
         my $reseller = $c->model('DB')->resultset('resellers')->find($resource->{reseller_id});
         unless($reseller) {
             $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Invalid 'reseller_id', doesn't exist.");

@@ -82,8 +82,9 @@ sub item_rs {
     if($type eq "rulesets") {
         if($c->user->roles eq "admin") {
             $item_rs = $c->model('DB')->resultset('voip_rewrite_rule_sets');
-        } else {
-            return;
+        } elsif($c->user->roles eq "reseller") {
+            $item_rs = $c->model('DB')->resultset('voip_rewrite_rule_sets')
+                ->search_rs({reseller_id => $c->user->reseller_id});
         }
     } else {
         die "You should not reach this";
@@ -102,6 +103,10 @@ sub update_item {
     my ($self, $c, $item, $old_resource, $resource, $form) = @_;
 
     delete $resource->{id};
+
+    if($c->user->roles eq "reseller") {
+        $resource->{reseller_id} = $old_resource->{reseller_id}; # prohibit change
+    }
 
     if($old_resource->{reseller_id} != $resource->{reseller_id}) {
         my $reseller = $c->model('DB')->resultset('resellers')

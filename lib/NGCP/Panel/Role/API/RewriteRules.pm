@@ -62,8 +62,12 @@ sub item_rs {
     if($type eq "rules") {
         if($c->user->roles eq "admin") {
             $item_rs = $c->model('DB')->resultset('voip_rewrite_rules');
-        } else {
-            return;
+        } elsif ($c->user->roles eq "reseller") {
+            $item_rs = $c->model('DB')->resultset('voip_rewrite_rules')->search_rs({
+                    'ruleset.reseller_id' => $c->user->reseller_id,
+                },{
+                    join => 'ruleset'
+                });
         }
     } else {
         die "You should not reach this";
