@@ -61,7 +61,7 @@ Build-Depends: debhelper (>= 8),
                libxml-mini-perl,
                ngcp-schema,
                openssl
-Standards-Version: 3.9.4
+Standards-Version: 3.9.5
 Homepage: http://sipwise.com/
 
 Package: ngcp-panel
