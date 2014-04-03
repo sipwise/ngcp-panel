@@ -1,0 +1,7 @@
+[%PROCESS 'helpers/modal.tt'-%]
+[%#USE Dumper%]
+[%form=translate_form(form)%]
+[%modal_header()%]
+[%#Dumper.dump_html(form)%]
+[%form.render()%]
+[%modal_footer()%]

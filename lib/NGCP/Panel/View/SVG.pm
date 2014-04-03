@@ -14,8 +14,13 @@ __PACKAGE__->config(
     WRAPPER => '',
     FILTERS => {},
     ABSOLUTE => 0,
-    expose_methods => [],
+    expose_methods => [qw/translate_form/],
 );
+#copy-paste from html, method is too small to move it to separate class
+sub translate_form {
+    my $self = shift;
+    NGCP::Panel::Utils::I18N->translate_form(@_);
+}
 
 sub process
 {

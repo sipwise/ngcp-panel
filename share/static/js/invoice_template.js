@@ -10,8 +10,8 @@ function init_embed() {
     {
         doc = frame.contentWindow.document;
     }
-    //var mainButton = doc.getElementById('main_button');
-    //mainButton.style.display = 'none';
+    var mainButton = doc.getElementById('main_button');
+    mainButton.style.display = 'none';
 }
 //private
 function getSvgString(){
@@ -54,10 +54,11 @@ function fetchSvgToEditor( data ) {
         setSvgStringToEditor( httpResponse );
     });
 }
-function refreshTemplateList ( contract_id ){
+function refreshAccordionAjaxList ( item, data ){
+    alert('refreshAccordionAjaxList: q='+uriForAction( data, item + '_list' )+';item='+item);
     fetch_into(
-        'collapse_invoice_template_list',
-        uriForAction( {'contract_id': contract_id}, 'invoice_template_list' ),
+        'collapse_' +item + '_list',
+        uriForAction( data, item + '_list' ),
         '',
         function(){ mainWrapperInit(); }
     );
@@ -100,7 +101,7 @@ function savePreviewedAndShowParsed( data ){
         //alert('savePreviewedAndShowParsed: httpResponse='+httpResponse+';');
         setSvgStringToPreview( httpResponse, q )
         //refresh list after saving
-        refreshTemplateList( data.contract_id );
+        refreshAccordionAjaxList( 'invoice_template', data );
     } );
 }
 function saveTemplate( data ) {	
@@ -119,6 +120,56 @@ function saveTemplate( data ) {
         if(jsonResponse.aaData && jsonResponse.aaData.form){
             $('form[name=invoice_template]').loadJSON(jsonResponse.aaData.form);
         }
-        refreshTemplateList( data.contract_id );
+        refreshAccordionAjaxList( 'invoice_template', data );
+    });
+}
+function processModalFormAjax( form, callback ) {
+    //preventDefault();
+    alert(form.attr('action')+'?'+form.serialize());
+    var item = form.attr('id');
+    $.ajax( {
+        url: form.attr('action'),
+        type: "POST",
+        data: form.serialize(),
+    } ).done( function( responseText, textStatus, request ) {
+        /*
+        var headers = request.getAllResponseHeaders();
+        var i =0;
+        alert('headers='+headers);
+        for(i=0; i<headers.length; i++){
+            alert('i='+i+';header='+headers[i]);
+        }
+        */
+        var status = request.getResponseHeader('X-Form-Status');
+        //alert('header='+request.getResponseHeader('X-Form-Status'));
+        var targetNames = [ item + '_messages','messages' ];
+        if('error' == status){
+            targetNames.unshift(item+'_form_modal');
+        }
+/*
+        if(var targetDirect = request.getResponseHeader('X-Ajax-Target')){
+            targetNames.unshift(targetDirect);
+        }
+*/
+        
+        var target,i=0;
+        while( (!target) && ( i < targetNames.length ) ){
+            target = document.getElementById(targetNames[i++]);
+            //alert('i='+(i-1)+';name='+targetNames[i-1]+';target='+target);
+        }
+        //alert('target='+target);
+        if(target){
+            target.innerHTML=responseText;
+        }
+        if('error' != status){
+            refreshAccordionAjaxList( item, form.serializeObject() );
+        }
+        if(callback){
+            if(typeof callback == 'function'){
+				callback(status);
+			}else{
+				eval(callback);
+			}
+        }
     });
 }

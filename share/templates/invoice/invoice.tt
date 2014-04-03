@@ -1,24 +1,24 @@
 [% USE Dumper %]
 [% USE format %]
 [% money_format = format('%.2f') %]
-[% IF !c.user.read_only && (c.user.roles == 'admin' || c.user.roles == 'reseller') -%]
 [% write_access = 1 %]
-[%END%]
 
 [%PROCESS 'helpers/datatables_vars.tt'
     no_auto_helper = 1 
 -%]
+[%PROCESS 'helpers/modal.tt' -%]
+[%mf_helper = {
+    ajax_load => 1,
+}%]
+[%modal_script( m = mf_helper )%]
 
-[% IF c.user.roles == "subscriber" || c.user.roles == "subscriberadmin" -%]
-    [% site_config.title = c.loc('Invoice template manager') -%]
-[% ELSE -%]
-    [% site_config.title = c.loc('Customer Invoice template for #[_1] ([_2])',contract.id, product.name) -%]
-[% END -%]
+[% site_config.title = c.loc('Invoice template for [_1]', reseller.first.name) -%]
 
 
 <script type="text/javascript" src="/js/libs/svg-edit/embedapi.js"></script>
 <script type="text/javascript" src="/js/background.js"></script>
 <script type="text/javascript" src="/js/jquery.loadJSON.js"></script>
+<script type="text/javascript" src="/js/jquery.serializeObject.js"></script>
 <script type="text/javascript">
 var uriForAction = function( data, type ){
     //also we can think about getting URIs via ajax )
@@ -54,7 +54,6 @@ var uriForAction = function( data, type ){
     //alert('q_template='+q_template);
     return q_template;
 }
-
 </script>
 <script type="text/javascript" src="/js/invoice_template.js"></script>
 
@@ -62,7 +61,20 @@ var uriForAction = function( data, type ){
     <span>
         <a class="btn btn-primary btn-large" href="[% c.uri_for('/back') %]"><i class="icon-arrow-left"></i> [% c.loc('Back') %]</a>
     </span>
+    <span>
+        <!--a class="btn btn-primary btn-large" href="[% c.uri_for('/reseller/invoice_create') %]">[% c.loc('Create invoices template')%] <i class="icon-edit"></i></a-->
+        <a class="btn btn-primary btn-large" onclick="$(this).css('outline', 'none');fetch_into('invoice_template_form_modal', '[%- c.uri_for_action("/reseller/invoice_template_form", [contract.id]) -%]','item=invoice_template',function(){modalFormScript();});void(0);">[% c.loc('Create invoices template')%] <i class="icon-edit"></i></a>
+    </span>
 </div>
+
+[% IF reseller.first.status != "active" -%]
+    [%messages.unshift( c.loc('Reseller is <b>[_1]</b>', reseller.first.status) ); %]
+[% END -%]
+<div class="row" id="messages">
+[%PROCESS 'helpers/ajax_messages.tt' -%]
+</div>
+
+
 <div class="ngcp-separator"></div>
 [% back_created = 1 -%]
 
@@ -111,8 +123,13 @@ var uriForAction = function( data, type ){
 </div>
 </span>
 
+
 <div style="visibility:visible;" id="invoice_template_form">
 [%PROCESS 'invoice/invoice_template_form.tt' %]
 </div>
 
 </div>
+
+<div id="invoice_template_form_modal">
+</div>
+

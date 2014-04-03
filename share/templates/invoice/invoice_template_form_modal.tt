@@ -1,0 +1,2 @@
+[%m.name = "Invoice Template"%]
+[%PROCESS 'helpers/ajax_form_modal.tt'-%]

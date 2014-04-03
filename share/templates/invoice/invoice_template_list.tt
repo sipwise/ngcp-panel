@@ -11,8 +11,8 @@
     <thead>
         <tr>
             <th>[% c.loc('Active') %]</th>
-            <th>[% c.loc('Type') %]</th>
             <th>[% c.loc('Name') %]</th>
+            <th>[% c.loc('Type') %]</th>
             <th class="ngcp-actions-column"></th>
         </tr>
     </thead>
@@ -21,53 +21,34 @@
         [%# Dumper.dump_html(invoice_template_list.as_query)%]
         [%# Dumper.dump_html(template)%]
         <tr class="sw_action_row">
-            <td><input type="radio" name="is_active" value="[%template.get_column('is_active')%]" [%IF template.get_column('is_active') %] checked [%END%] onclick="javascript:fetch_into('collapse_invoice_template_list', '[%- c.uri_for_action("/reseller/invoice_template_activate", [contract.id, template.get_column('id'),template.get_column('is_active')]) -%]','',function(){ mainWrapperInit(); });void(0);"></td>
-            <td>[% template.get_column('type') %]</td>
+            <td style="font-size: 20px;">[%IF template.get_column('is_active') > 0; '✓'; END%]</td><!--✓-->
             <td>[% template.get_column('name') %]</td>
-
+            <td>[% template.get_column('type') %]</td>
             <td class="ngcp-actions-column">
                 <div class="sw_actions">
-                    
                     [% IF write_access -%]
-                    [%IF template.get_column('base64_previewed')%]
-                    <a class="btn btn-primary btn-small"
-                       onclick="fetchInvoiceTemplateData({
-    tt_sourcestate: 'previewed',
-    contract_id: '[%contract.id%]',
-    tt_id: '[%template.get_column('id')%]',
-});">
-                        <i class="icon-edit"></i> [% c.loc('Edit previewed') %]
+                    <a class="btn btn-small btn-primary" 
+                       onclick="alert('[%- c.uri_for_action("/reseller/invoice_template_form", [contract.id])%]');fetch_into('invoice_template_form_modal', '[%- c.uri_for_action("/reseller/invoice_template_form", [contract.id]) -%]','item=invoice_template&tt_id=[%template.get_column('id')%]',function(){modalFormScript();});void(0);
+                       ">
+                        <i class="icon-edit"></i> [% c.loc('Edit template info') %]
                     </a>
-                    [%END%]
-                    [%IF template.get_column('base64_saved')%]
                     <a class="btn btn-small btn-primary" 
                        onclick="fetchInvoiceTemplateData({
     tt_sourcestate: 'saved',
     contract_id: '[%contract.id%]',
     tt_id: '[%template.get_column('id')%]',
 });">
-                        <i class="icon-edit"></i> [% c.loc('Edit saved') %]
+                        <i class="icon-edit"></i> [% c.loc('Edit template') %]
                     </a>
-                    [%END%]
-                    [%IF !template.is_active%]
-                    <!--a class="btn btn-small btn-primary" 
-                       onclick="switchDefault();void(0);">
-                        <i class="icon-edit"></i> [% c.loc('Make active') %]
-                    </a-->
-                    [%END%]
+                    <a class="btn btn-small btn-primary ngcp-noback-button" data-confirm="[%IF template.get_column('is_active'); c.loc('Deactivate'); ELSE; c.loc('Activate'); END%]"
+                       href="javascript:fetch_into('collapse_invoice_template_list', '[%- c.uri_for_action("/reseller/invoice_template_activate", [contract.id, template.get_column('id'),template.get_column('is_active')]) -%]','',function(){ mainWrapperInit(); });void(0);">
+                        <i class="icon-edit"></i> [%IF template.get_column('is_active'); c.loc('Deactivate'); ELSE; c.loc('Activate'); END%]
+                    </a>
                     <a class="btn btn-small btn-secondary ngcp-noback-button" data-confirm="Delete" 
                        href="javascript:fetch_into('collapse_invoice_template_list', '[%- c.uri_for_action("/reseller/invoice_template_delete", [contract.id, template.get_column('id')]) -%]','',function(){ mainWrapperInit(); });void(0);">
                         <i class="icon-trash"></i> [% c.loc('Delete') %]
                     </a>
                     [%END%]
-                    <!--a class="btn btn-small btn-primary" 
-                       onclick="loadSvg('/svg/raw/saved/zip');void(0);">
-                        <i class="icon-download"></i>[% c.loc('Download source') %]
-                    </a>
-                    <a class="btn btn-small btn-primary" 
-                       onclick="loadSvg('/svg/parsed/saved/pdf');void(0);">
-                        <i class="icon-download"></i> [% c.loc('Download invoice') %]
-                    </a-->
                 </div>
             </td>
         </tr>

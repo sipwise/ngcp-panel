@@ -27,19 +27,28 @@ sub getCustomerInvoiceTemplate{
     my (%params) = @_;
     my ($contract_id,$tt_sourcestate,$tt_type,$tt_id) = @params{qw/contract_id tt_sourcestate tt_type tt_id/};
 
-    irka::loglong("getCustomerInvoiceTemplate: tt_id=$tt_id;\n");
+    #irka::loglong("getCustomerInvoiceTemplate: tt_id=$tt_id;\n");
     #irka::loglong(Dumper(\%params));
     my $result = '';
     
     my $conditions = $self->getDefaultConditions(\%params);
     #my $tt_record = $self->resultset('invoice_templates')->search({
-    my $tt_record = $self->schema->resultset('invoice_templates')->search($conditions)->first;
+    my $tt_record = $self->schema->resultset('invoice_templates')->search( 
+        { id => $tt_id }, {
+        #'+select' => [{'reseller_id' =>'contract_id','-as'=>'contract_id'},{'id' => 'tt_id','-as'=>'tt_id'}]
+        '+select' => [
+            [ 'reseller_id', {'-as'=>'contract_id'}],
+            [ 'id', {'-as'=>'tt_id'}],
+        ],
+        #'+select' => [qw/reseller_id id/],
+        #'+as'     => [qw/contract_id tt_id/]
+    })->first;
     #here may be base64 decoding
     
     #here we will rely on form checking and defaults
     #if('saved' eq $tt_sourcestate){
     if( $tt_record ){
-        $result = $tt_record->get_column( 'base64_'.$tt_sourcestate );
+        $tt_sourcestate and $result = $tt_record->get_column( 'base64_'.$tt_sourcestate );
         $tt_id = $tt_record->get_column( 'id' );
     }
     if( $result && exists $params{result} ){
@@ -101,6 +110,37 @@ sub storeCustomerInvoiceTemplate{
     });
     return { tt_id => $tt_id };
 }
+sub storeInvoiceTemplateInfo{
+    my $self = shift;
+    my (%params) = @_;
+    my ($contract_id,$tt_id,$is_active,$name) = @params{qw/contract_id tt_id is_active name/};
+
+    #my $tt_record = $self->resultset('invoice_templates')->search({
+    $self->schema->txn_do(sub {
+        my $tt_record_created;
+        my $tt_record_updated;
+        if( !$tt_id ){
+            $tt_record_created = $self->schema->resultset('invoice_templates')->create({
+                reseller_id => $contract_id,
+                is_active   => $is_active,
+                name        => $name,
+            });
+            if($tt_record_created){
+                $tt_id = $tt_record_created->id();
+            }
+        }else{
+            $tt_record_updated = $self->schema->resultset('invoice_templates')->search({ id => $tt_id });
+            $tt_record_updated->update({
+                is_active   => $is_active,
+                name        => $name,
+            });
+        }
+        if($is_active && $tt_id){
+            $self->deactivateOtherTemplates($contract_id,$tt_id);
+        }
+    });
+    return { tt_id => $tt_id };
+}
 sub getCustomerInvoiceTemplateList{
     my $self = shift;
     my (%params) = @_;
@@ -110,9 +150,6 @@ sub getCustomerInvoiceTemplateList{
         #$self->schema->resultset('invoice_template_fake')->find(\'select * from invoice_templates')->all
         #$self->schema->resultset('invoice_templates')->name(\'(select * from invoice_templates)')->all
     #];
-    use irka;
-    use Data::Dumper;
-    irka::loglong(Dumper(\%INC));
     return [ $self->schema->resultset('invoice_templates')->search({
         reseller_id => $contract_id,
     })->all ];

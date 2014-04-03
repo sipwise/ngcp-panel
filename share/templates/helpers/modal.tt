@@ -28,20 +28,40 @@
 
 [% MACRO modal_script BLOCK %]
 <script>
-    $(function () {
+    var modalFormScript = function (repeat) {
         $('#mod_edit').modal({keyboard: false, backdrop: 'static'});
         $('.mod_close').click(function(event) {
+            [%IF m.close_target_direct%]
+            [%m.close_target_direct%]
+            [%ELSIF m.ajax_load%]
+            $('#mod_edit').modal('hide');
+            [%ELSE%]
             console.log("redirecting to [% m.close_target ? m.close_target : c.uri_for() %]");
             window.location.href="[% m.close_target ? m.close_target : c.uri_for() %]";
+            [%END%]
         });
 
         // on clicking a button within the form, add a hidden field "submitid"
         // determining the name of the button being clicked
         $('input[type=button]').click(function() {
             $(this).parents('form').find('#submitid').attr('value', $(this).attr('name'));
+            [%IF !m.ajax_load%]
             $(this).parents('form').submit();
+            [%ELSE%]
+            $('#mod_edit').modal('hide');
+            processModalFormAjax($(this).parents('form'),function(status){
+                //alert('in callback: status='+status);
+                if( status == 'error' ){
+                    modalFormScript();
+                }
+                [%m.ajax_callback%]
+            });
+            [%END%]   
         });
-    });
+    };
+    [%IF !m.ajax_load%]$(modalFormScript);[%ELSE%]
+    //$('#'+$(this).parents('form').id()+' :input:enabled:visible:first').focus();
+    [%END%]
 </script>
 [% END -%]
 

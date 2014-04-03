@@ -1,0 +1,4 @@
+[% FOREACH m IN messages -%]
+    <div class="alert alert-[% m.type %]">[% m.text %]</div>
+[% END -%]
+[% messages = [] -%]

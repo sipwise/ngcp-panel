@@ -230,7 +230,7 @@
                 </span>
                 <div class="ngcp-separator"></div>
 
-[%PROCESS 'invoice/invoice_template_list.tt' %]
+[%PROCESS 'invoice/invoice_details_list.tt' %]
 
                 </div>
         </div>
