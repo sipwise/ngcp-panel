@@ -121,13 +121,15 @@ var uriForAction = function( data, type ){
         <a class="accordion-toggle" data-toggle="collapse" data-parent="#customer_invoice_template" href="#collapse_invoice_template_list">[% c.loc('Invoice Templates') %]</a>
     </div>
     <div class="accordion-body collapse" id="collapse_invoice_template_list">
+    <div class="accordion-inner" style="overflow:auto; height: 300px;" id="invoice_template_list">
     [%PROCESS 'invoice/invoice_template_list.tt' %]
+    </div>
     </div>
 </div>
 </span>
 
 
-<div style="visibility:visible;" id="invoice_template_form">
+<div style="display:none;" id="invoice_template_form">
 [%PROCESS 'invoice/invoice_template_form.tt' %]
 </div>
 

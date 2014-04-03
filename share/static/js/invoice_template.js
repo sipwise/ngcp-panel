@@ -56,12 +56,15 @@ function fetchSvgToEditor( data ) {
 }
 function refreshAccordionAjaxList ( item, data ){
     alert('refreshAccordionAjaxList: q='+uriForAction( data, item + '_list' )+';item='+item);
-    fetch_into(
-        'collapse_' +item + '_list',
-        uriForAction( data, item + '_list' ),
-        '',
-        function(){ mainWrapperInit(); }
-    );
+    var target = $('#'+ item + '_list');
+    if(target){
+        fetch_into(
+            item + '_list',
+            uriForAction( data, item + '_list' ),
+            '',
+            function(){ mainWrapperInit(); }
+        );
+    }
 }
 function refreshMessagesAjax (  ){
     alert('refreshMessagesAjax: q='+uriForAction( {}, 'messages' ));
@@ -76,7 +79,7 @@ function fetchInvoiceTemplateData( data ){
     //tt_output_type=svg really outputs text/html mimetype. But it will be couple of <svg> tags (<svg> per page).
     data.tt_output_type = 'json';
     var q = uriForAction( data, 'invoice_template' );
-    //alert('fetchInvoiceTemplateData: q='+q+';');
+    alert('fetchInvoiceTemplateData: q='+q+';');
     $.ajax({
         url: q,
         datatype: "json",
@@ -92,6 +95,7 @@ function fetchInvoiceTemplateData( data ){
             if( templatedata.aaData.form ){
                 $('form[name=invoice_template]').loadJSON(templatedata.aaData.form);
             }
+            $('#invoice_template_form').css('display','block');//document.getElementById('invoice_template_form');;
         }
     });
 }

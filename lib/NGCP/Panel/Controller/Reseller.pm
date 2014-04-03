@@ -683,11 +683,7 @@ sub invoice :Chained('invoice_template_list_data') :PathPart('') :Args(0) {
     $c->stash(template => 'invoice/invoice.tt'); 
 }
 
-sub invoice_template_info :Chained('invoice_details') :PathPart('template') :CaptureArgs(0) {
-
-
-}
-sub invoice_template :Chained('invoice_template_info') :PathPart('template') :Args {
+sub invoice_template :Chained('invoice_details') :PathPart('template') :Args {
     my ($self, $c) = @_;
     $c->log->debug('invoice_template');
     no warnings 'uninitialized';
@@ -725,7 +721,7 @@ sub invoice_template :Chained('invoice_template_info') :PathPart('template') :Ar
     #multi return...
     $c->log->debug("validated=".$validator->validated.";\n");
     if(!$validator->validated){
-        return;
+        #return;
     }
     my $in_validated = $validator->fif;
 

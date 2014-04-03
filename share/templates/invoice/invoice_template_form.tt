@@ -3,13 +3,13 @@
 [%# USE FillInForm %]
 <script>
 function getTtIdVal(){
-    return $('form[id=invoice_template] input[name=tt_id]').val();
+    return getForm().$('input[name=tt_id]').val();
 }
 function formToUri(q){
-    return q+'?'+$('form[id=invoice_template]').serialize();
+    return q+'?'+getForm().serialize();
 }
 function formSerialize(){
-    return $('form[id=invoice_template]').serialize();
+    return getForm().serialize();
 }
 function getForm(){
     return $('form[id=invoice_template]');
@@ -17,38 +17,22 @@ function getForm(){
 </script>
 <form name="invoice_template_old" id="invoice_template_old" action="[%- c.uri_for_action('/reseller/invoice_template', [contract.id]) -%]"  class="form-horizontal" enctype="multipart/form-data" method="post">
 <input type="hidden" name="tt_id" value="">
-<div class="ngcp-separator"></div>
-[% IF write_access -%]
-<!--span>
-    <a class="btn btn-primary btn-large" onclick="fetchInvoiceTemplateData({
+<input type="hidden" name="contract_id" value="">
+<span>
+    <a class="btn btn-primary btn-small"  data-confirm="[%c.loc('Overwrite changes');%]" href="javascript:fetchInvoiceTemplateData({
         tt_sourcestate: 'default',
         contract_id: '[%contract.id%]',
-    });void(0);">[% c.loc('Create from scratch')%] <i class="icon-edit"></i></a>
-</span-->
-<div class="ngcp-separator"></div>
-[% END -%]
-<div class="control-group">
-    <label class="control-label" for="name">[%c.loc('Template name')%]</label>
-    <div class="controls">
-    <input type="text" name="name" id="name" value="" />
-    </div>
-</div>
-<div class="ngcp-separator"></div>
-<div class="control-group">
-    <label class="control-label" for="is_active">[%c.loc('Active')%]</label>
-    <div class="controls" class="checkbox">
-    <input type="checkbox" name="is_active" id="is_active" value="1" />
-    </div>
-</div>
+    });void(0);">[% c.loc('Load default')%] <i class="icon-edit"></i></a>
+</span>
 <span>
-    <a class="btn btn-primary btn-large" onclick="
+    <a class="btn btn-primary btn-small" onclick="
     savePreviewedAndShowParsed({
         contract_id:'[%contract.id%]',
         tt_id: getTtIdVal(),
     });void(0);">[% c.loc('Refresh Preview')%] <i class="icon-refresh"></i></a>
 </span>
 <span>
-    <a class="btn btn-primary btn-large" onclick="
+    <a class="btn btn-primary btn-small" onclick="
     //alert('tt_id='+getTtIdVal()+';');
     saveTemplate({
         contract_id:'[%contract.id%]',

@@ -5,7 +5,6 @@
 [% write_access = 1 %]
 [%END%]
 
-    <div class="accordion-inner" style="overflow:auto; height: 300px;">
     [%IF invoice_template_list.size %]
     <table class="table table-bordered table-striped table-highlight table-hover">
     <thead>
@@ -41,11 +40,11 @@
                         <i class="icon-edit"></i> [% c.loc('Edit template') %]
                     </a>
                     <a class="btn btn-small btn-primary ngcp-noback-button" data-confirm="[%IF template.get_column('is_active'); c.loc('Deactivate'); ELSE; c.loc('Activate'); END%]"
-                       href="javascript:fetch_into('collapse_invoice_template_list', '[%- c.uri_for_action("/reseller/invoice_template_activate", [contract.id, template.get_column('id'),template.get_column('is_active')]) -%]','',function(){ refreshMessagesAjax();mainWrapperInit(); });void(0);">
+                       href="javascript:fetch_into('invoice_template_list', '[%- c.uri_for_action("/reseller/invoice_template_activate", [contract.id, template.get_column('id'),template.get_column('is_active')]) -%]','',function(){ refreshMessagesAjax();mainWrapperInit(); });void(0);">
                         <i class="icon-edit"></i> [%IF template.get_column('is_active'); c.loc('Deactivate'); ELSE; c.loc('Activate'); END%]
                     </a>
                     <a class="btn btn-small btn-secondary ngcp-noback-button" data-confirm="Delete" 
-                       href="javascript:fetch_into('collapse_invoice_template_list', '[%- c.uri_for_action("/reseller/invoice_template_delete", [contract.id, template.get_column('id')]) -%]','',function(){ refreshMessagesAjax();mainWrapperInit(); });void(0);">
+                       href="javascript:fetch_into('invoice_template_list', '[%- c.uri_for_action("/reseller/invoice_template_delete", [contract.id, template.get_column('id')]) -%]','',function(){ refreshMessagesAjax();mainWrapperInit(); });void(0);">
                         <i class="icon-trash"></i> [% c.loc('Delete') %]
                     </a>
                     [%END%]
@@ -56,5 +55,4 @@
     </tbody>
     </table>
     [%END%]
-    </div>
 

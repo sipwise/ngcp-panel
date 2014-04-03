@@ -92,8 +92,8 @@
 <script src="/js/Theme.js"></script>
 
 <script>
+Theme.init ();
 var mainWrapperInit = function () {
-    Theme.init ();
 
     $('[rel="tooltip"]').tooltip({'html': false});
 
@@ -167,17 +167,10 @@ var mainWrapperInit = function () {
         return true;
     });
 
-    [%# open last accordion tab if possible -%]
-    $('.accordion').on('shown', function (e) {
-        localStorage.setItem('lastTab', $(".accordion .in").attr('id'));
-    });
-    var lastTab = localStorage.getItem('lastTab');
-    if (lastTab) {
-        $('#'+lastTab).addClass("in");
-        $('#'+lastTab).parent().addClass("open");
-    }
-    if($('.accordion-body').length && !$('#toggle-accordions').length) {
-        $('#content').children('.container').prepend('<a href="#" id="toggle-accordions" class="btn btn-small btn-tertiary pull-right ngcp-accordion-closed"><i class="icon-resize-full"></i> [% c.loc('Expand Groups') %]</a>');
+    if($('.accordion-body').length) {
+        if(!$('#toggle-accordions').length){
+            $('#content').children('.container').prepend('<a href="#" id="toggle-accordions" class="btn btn-small btn-tertiary pull-right ngcp-accordion-closed"><i class="icon-resize-full"></i> [% c.loc('Expand Groups') %]</a>');
+        }
         $('#toggle-accordions').click(function() {
             if($('#toggle-accordions').hasClass('ngcp-accordion-closed')) {
                 $('#toggle-accordions').removeClass('ngcp-accordion-closed');
@@ -211,7 +204,24 @@ var mainWrapperInit = function () {
         });
     }
 };
-$(mainWrapperInit);
+$( document ).ready(function() {
+    Theme.init();
+    mainWrapperInit();
+    [%# open last accordion tab if possible -%]
+    $('.accordion').on('shown', function (e) {
+        localStorage.setItem('lastTab', $(".accordion .in").attr('id'));
+    });
+    var lastTab = localStorage.getItem('lastTab');
+    if (lastTab) {
+        $('#'+lastTab).removeClass('collapse');
+        $('#'+lastTab).parent().addClass("open");
+/*
+        $('#'+lastTab).addClass("in");
+        $('#'+lastTab).attr('style', 'height:auto;');
+*/
+    }
+});
+//$(function(){Theme.init();mainWrapperInit();});
 </script>
 </body>
 [% # vim: set tabstop=4 syntax=html expandtab: -%]
