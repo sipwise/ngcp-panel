@@ -423,6 +423,13 @@ sub create_defaults :Path('create_defaults') :Args(0) :Does(ACL) :ACLDetachTo('/
     $c->detach;
     return;
 }
+sub messages :Chained('list_reseller') :PathPart('messages') :Args(0) {
+    my ($self, $c) = @_;
+    $c->log->debug('messages');
+    $c->stash( messages => $c->flash->{messages} );
+    $c->stash( template => 'helpers/ajax_messages.tt' );
+    $c->detach( $c->view('SVG') );
+}
 sub invoice_details :Chained('base') :PathPart('invoice') :CaptureArgs(0) {
     my ($self, $c) = @_;
     $c->log->debug('invoice_details');
@@ -431,6 +438,7 @@ sub invoice_details :Chained('base') :PathPart('invoice') :CaptureArgs(0) {
     my $etime = $stime->clone->add(months => 1);
 
     #look, NGCP::Panel::Utils::Contract - it is kind of backend separation here
+    #my $form = NGCP::Panel::Form::InvoiceTemplate::Basic->new( );
     my $invoice_details = NGCP::Panel::Utils::Contract::get_contract_calls_rs(
         c => $c,
         contract_id => $contract_id,
@@ -444,6 +452,7 @@ sub invoice_details :Chained('base') :PathPart('invoice') :CaptureArgs(0) {
     $invoice_details = [map{[$i++,$_]} (@$invoice_details) x 21];
     $c->stash( invoice_details => $invoice_details );
     $c->stash( invoice_details_raw => $invoice_details_raw );
+    #$c->stash( invoice_template_form => $form );
 }
 sub invoice_details_ajax :Chained('base') :PathPart('invoice/details/ajax') :Args(0) {
     my ($self, $c) = @_;
@@ -457,6 +466,86 @@ sub invoice_details_ajax :Chained('base') :PathPart('invoice/details/ajax') :Arg
     NGCP::Panel::Utils::Datatables::process($c, $c->stash->{invoice_details_raw}, $dt_columns );
     $c->detach( $c->view("JSON") );
 }
+sub invoice_template_form :Chained('base') :PathPart('invoice/template/form') :Args(0) {
+    my ($self, $c) = @_;
+    $c->log->debug($c->action);
+    my($validator,$backend,$in,$out);
+    $backend = NGCP::Panel::Model::DB::InvoiceTemplate->new( schema => $c->model('DB') );
+    
+    #from parameters
+    $in = $c->request->parameters;
+    $in->{contract_id} = $c->stash->{contract}->id;
+    #(undef,undef,@$in{qw/tt_id/}) = @_;
+
+    if($in->{tt_id}){
+        #always was sure that i'm calm and even friendly person, but I would kill with pleasure author of dbix.
+        my $db_object;
+        ($out->{tt_id},undef,$db_object) = $backend->getCustomerInvoiceTemplate( %$in );
+        $out->{tt_data}->{tt_id} = $db_object->get_column('id');
+        $out->{tt_data}->{contract_id} = $db_object->get_column('reseller_id');
+        foreach(qw/name is_active/){$out->{tt_data}->{$_} = $db_object->get_column($_);}
+    }
+    if(!$out->{tt_data}){
+        $out->{tt_data} = $in;
+    }
+    $validator = NGCP::Panel::Form::InvoiceTemplate::Basic->new( backend => $backend );
+    $validator->remove_undef_in($in);
+    #need to think how to automate it - maybe through form showing param through args? what about args for uri_for_action?
+    #join('/',$c->controller,$c->action)
+    $validator->action( $c->uri_for_action('reseller/invoice_template_form',[$in->{contract_id}]) );
+    $validator->name( 'invoice_template' );#from parameters
+    #my $posted = 0;
+    my $posted = exists $in->{submitid};
+    $c->log->debug("posted=$posted;");
+    $validator->process(
+        posted => $posted,
+        params => $in,
+        #item => $in,
+        item => $out->{tt_data},
+        #item   => $out->{tt_data},
+    );
+    my $in_validated = $validator->fif;
+    if($posted){
+        #$c->forward('invoice_template_save');
+        if($validator->validated) {
+            try {
+                $backend->storeInvoiceTemplateInfo(%$in_validated);
+                $c->flash(messages => [{type => 'success', text => $c->loc(
+                    $in->{tt_id}
+                    ?'Invoice template updated'
+                    :'Invoice template created'
+                ) }]);
+            } catch($e) {
+                NGCP::Panel::Utils::Message->error(
+                    c => $c,
+                    error => $e,
+                    desc  => $c->loc(
+                        $in->{tt_id}
+                        ?'Failed to update invoice template.'
+                        :'Failed to create invoice template.'
+                    ),
+                );
+            }
+            $c->stash( messages => $c->flash->{messages} );
+            $c->stash( template => 'helpers/ajax_messages.tt' );
+        }else{
+            $c->stash( m        => {create_flag => !$in->{tt_id}} );
+            $c->stash( form     => $validator );
+            #$c->stash( template => 'helpers/ajax_form_modal.tt' );
+            $c->stash( template => 'invoice/invoice_template_form_modal.tt' );
+            $c->response->headers->header( 'X-Form-Status' => 'error' );
+        }
+    }else{
+        #$c->stash( in       => $in );
+        #$c->stash( out      => $out );
+        $c->stash( m        => {create_flag => !$in->{tt_id}} );
+        $c->stash( form     => $validator );
+        #$c->stash( template => 'helpers/ajax_form_modal.tt' );
+        $c->stash( template => 'invoice/invoice_template_form_modal.tt' );
+    }
+    $c->detach( $c->view("SVG") );#to the sake of nowrapper
+}
+
 
 sub invoice_template_activate :Chained('base') :PathPart('invoice_template/activate') :Args(2) {
     my ($self, $c) = @_;
@@ -497,7 +586,7 @@ sub invoice_template_activate :Chained('base') :PathPart('invoice_template/activ
     #multi return...
     $c->log->debug("validated=".$validator->validated.";\n");
     if(!$validator->validated){
-        return;
+        #return;
     }
     my $in_validated = $validator->fif;
 
@@ -510,6 +599,11 @@ sub invoice_template_activate :Chained('base') :PathPart('invoice_template/activ
     }else{
         $backend->deactivateCustomerInvoiceTemplate(%$in);
     }
+    $c->flash(messages => [{type => 'success', text => $c->loc(
+        $in->{is_active}
+        ? 'Invoice template deactivated'
+        :'Invoice template activated'
+    ) }]);
     $c->forward( 'invoice_template_list' );
 }
 sub invoice_template_delete :Chained('base') :PathPart('invoice_template/delete') :Args(1) {
@@ -551,7 +645,7 @@ sub invoice_template_delete :Chained('base') :PathPart('invoice_template/delete'
     #multi return...
     $c->log->debug("validated=".$validator->validated.";\n");
     if(!$validator->validated){
-        return;
+        #return;
     }
     my $in_validated = $validator->fif;
 
@@ -561,6 +655,9 @@ sub invoice_template_delete :Chained('base') :PathPart('invoice_template/delete'
     #think about it more
     
     $backend->deleteCustomerInvoiceTemplate(%$in);
+    $c->flash(messages => [{type => 'success', text => $c->loc(
+        'Invoice template deleted'
+    ) }]);
     $c->forward( 'invoice_template_list' );
 }
 
@@ -586,7 +683,11 @@ sub invoice :Chained('invoice_template_list_data') :PathPart('') :Args(0) {
     $c->stash(template => 'invoice/invoice.tt'); 
 }
 
-sub invoice_template :Chained('invoice_details') :PathPart('template') :Args {
+sub invoice_template_info :Chained('invoice_details') :PathPart('template') :CaptureArgs(0) {
+
+
+}
+sub invoice_template :Chained('invoice_template_info') :PathPart('template') :Args {
     my ($self, $c) = @_;
     $c->log->debug('invoice_template');
     no warnings 'uninitialized';
@@ -652,7 +753,6 @@ sub invoice_template :Chained('invoice_details') :PathPart('template') :Args {
                 $out->{json}->{tt_data}->{$_} = $out->{tt_data}->get_column($_);
             }
         }
-        
     }
     
     #we need to get default to 1) sanitize (if in->tt_string) or 2)if not in->tt_string and no customer->tt_string

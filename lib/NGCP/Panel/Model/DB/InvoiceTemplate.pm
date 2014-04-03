@@ -33,22 +33,26 @@ sub getCustomerInvoiceTemplate{
     
     my $conditions = $self->getDefaultConditions(\%params);
     #my $tt_record = $self->resultset('invoice_templates')->search({
+    #it is hard to express my disappointment by DBIx implementation. Where pure SQL is easy to automate, flexible and powerful, with DBIx you can't even get DB as aliases, only additional accessors, which aren't a option. What a poor "wonabe hibernate" idea and implementation.
     my $tt_record = $self->schema->resultset('invoice_templates')->search( 
         { id => $tt_id }, {
         #'+select' => [{'reseller_id' =>'contract_id','-as'=>'contract_id'},{'id' => 'tt_id','-as'=>'tt_id'}]
-        '+select' => [
-            [ 'reseller_id', {'-as'=>'contract_id'}],
-            [ 'id', {'-as'=>'tt_id'}],
-        ],
+        #'+select' => [
+        #    [ 'reseller_id', {'-as'=>'contract_id'}],
+        #    [ 'id', {'-as'=>'tt_id'}],
+        #],
         #'+select' => [qw/reseller_id id/],
         #'+as'     => [qw/contract_id tt_id/]
-    })->first;
+        #'-as'     => [{reseller_id=>contract_id},{ id=>tt_id}]
+    }
+    )->first;
     #here may be base64 decoding
     
     #here we will rely on form checking and defaults
     #if('saved' eq $tt_sourcestate){
     if( $tt_record ){
         $tt_sourcestate and $result = $tt_record->get_column( 'base64_'.$tt_sourcestate );
+        #$tt_record->contract_id
         $tt_id = $tt_record->get_column( 'id' );
     }
     if( $result && exists $params{result} ){

@@ -35,6 +35,9 @@ var uriForAction = function( data, type ){
     case 'invoice_template_list':
         q_template = '[%- c.uri_for_action("/reseller/invoice_template_list", ['contract_id']) -%]';
         break;
+    case 'messages':
+        q_template = '[%- c.uri_for_action("/reseller/messages") -%]';
+        break;
     case 'invoice_template':
     default:
         //q_template = '[%- c.uri_for_action("/reseller/invoice_template", ['contract_id','tt_type','tt_viewmode','tt_sourcestate','tt_output_type','tt_id']) -%]';

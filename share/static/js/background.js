@@ -33,6 +33,10 @@ function fetch_into(div, uri, q, callback) {
 	//alert(uri);
 	//alert(q);
 // Mozilla/Safari 
+    var target = document.getElementById(div);
+    if(!target){
+        return;
+    }
 	if (window.XMLHttpRequest) {
 		xmlHttpReq = new XMLHttpRequest();
 		if (typeof xmlHttpReq.overrideMimeType != 'undefined') { 
@@ -49,12 +53,14 @@ function fetch_into(div, uri, q, callback) {
 	xmlHttpReq.setRequestHeader('Content-Type','application/x-www-form-urlencoded');
 	xmlHttpReq.onreadystatechange = function() {
 		if (xmlHttpReq.readyState == 4) {
-			document.getElementById(div).innerHTML=xmlHttpReq.responseText;
-			if(typeof callback == 'function'){
-				callback.call();
-			}else{
-				eval(callback);
-			}
+            target.innerHTML=xmlHttpReq.responseText;
+            if(callback){
+                if(typeof callback == 'function'){
+                    callback.call();
+                }else{
+                    eval(callback);
+                }
+            }
 		}
 	}
 //	alert(q);

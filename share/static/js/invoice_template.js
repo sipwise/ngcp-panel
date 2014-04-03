@@ -63,6 +63,13 @@ function refreshAccordionAjaxList ( item, data ){
         function(){ mainWrapperInit(); }
     );
 }
+function refreshMessagesAjax (  ){
+    alert('refreshMessagesAjax: q='+uriForAction( {}, 'messages' ));
+    fetch_into(
+        'messages',
+        uriForAction( {}, 'messages' )
+    );
+}
 //public
 function fetchInvoiceTemplateData( data ){
     //params spec: tt_type=[svg|html]/tt_viewmode[parsed|raw]/tt_sourcestate[saved|previewed|default]/tt_output_type[svg|pdf|html|json|svgzip|pdfzip|htmlzip]/tt_id
