@@ -49,11 +49,17 @@
             $(this).parents('form').submit();
             [%ELSE%]
             $('#mod_edit').modal('hide');
-            processModalFormAjax($(this).parents('form'),function(status){
+            processModalFormAjax($(this).parents('form'),function(status,form){
                 //alert('in callback: status='+status);
                 if( status == 'error' ){
                     modalFormScript();
                 }
+                [%IF m.ajax_list_refresh%]
+                if( status != 'error' ){
+                    //form object is necessary to compose uri for refresh
+                    refreshAjaxList( '[%m.ajax_list_refresh%]', form.serializeObject() );
+                }
+                [%END%]
                 [%m.ajax_callback%]
             });
             [%END%]   

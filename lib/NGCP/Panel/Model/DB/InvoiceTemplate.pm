@@ -92,8 +92,8 @@ sub storeCustomerInvoiceTemplate{
             $tt_record_created = $self->schema->resultset('invoice_templates')->create({
                 reseller_id => $contract_id,
                 type        => $tt_type,
-                is_active   => $is_active,
-                name        => $name,
+#                is_active   => $is_active,
+#                name        => $name,
                 'base64_'.$tt_sourcestate => $$tt_string,
             });
             if($tt_record_created){
@@ -103,14 +103,14 @@ sub storeCustomerInvoiceTemplate{
             my $conditions = $self->getDefaultConditions(\%params);
             $tt_record_updated = $self->schema->resultset('invoice_templates')->search($conditions);
             $tt_record_updated->update({
-                is_active   => $is_active,
-                name        => $name,
+#                is_active   => $is_active,
+#                name        => $name,
                 'base64_'.$tt_sourcestate => $$tt_string,
             });
         }
-        if($is_active && $tt_id){
-            $self->deactivateOtherTemplates($contract_id,$tt_id);
-        }
+#        if($is_active && $tt_id){
+#            $self->deactivateOtherTemplates($contract_id,$tt_id);
+#        }
     });
     return { tt_id => $tt_id };
 }

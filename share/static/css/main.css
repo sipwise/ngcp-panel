@@ -276,6 +276,11 @@ div.ngcp_dt_top_elements > div:first-child + div + div > div {
     text-align: center;
 }
 
+.ngcp_current_edit td  {
+    background: #dff0d8 !important;
+    background-color: #dff0d8 !important;
+}
+
 /* ---------
   sw_actions (Action Buttons)
 ------------*/

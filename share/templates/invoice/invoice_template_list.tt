@@ -4,7 +4,9 @@
 [% IF !c.user.read_only && (c.user.roles == 'admin' || c.user.roles == 'reseller') -%]
 [% write_access = 1 %]
 [%END%]
-
+<script>
+var staticContainerId='invoice_template_list';
+</script>
     [%IF invoice_template_list.size %]
     <table class="table table-bordered table-striped table-highlight table-hover">
     <thead>
@@ -19,7 +21,7 @@
         [% FOR template IN invoice_template_list -%]
         [%# Dumper.dump_html(invoice_template_list.as_query)%]
         [%# Dumper.dump_html(template)%]
-        <tr class="sw_action_row">
+        <tr class="sw_action_row" data-id="[%template.get_column('id')%]">
             <td style="font-size: 20px;">[%IF template.get_column('is_active') > 0; '✓'; END%]</td><!--✓-->
             <td>[% template.get_column('name') %]</td>
             <td>[% template.get_column('type') %]</td>
@@ -27,7 +29,7 @@
                 <div class="sw_actions">
                     [% IF write_access -%]
                     <a class="btn btn-small btn-primary" 
-                       onclick="alert('[%- c.uri_for_action("/reseller/invoice_template_form", [contract.id])%]');fetch_into('invoice_template_form_modal', '[%- c.uri_for_action("/reseller/invoice_template_form", [contract.id]) -%]','item=invoice_template&tt_id=[%template.get_column('id')%]',function(){modalFormScript();});void(0);
+                       onclick="fetch_into('invoice_template_info_form', '[%- c.uri_for_action("/reseller/invoice_template_info", [contract.id]) -%]','item=invoice_template_info&tt_id=[%template.get_column('id')%]',function(){modalFormScript();});void(0);
                        ">
                         <i class="icon-edit"></i> [% c.loc('Edit template info') %]
                     </a>
@@ -36,15 +38,15 @@
     tt_sourcestate: 'saved',
     contract_id: '[%contract.id%]',
     tt_id: '[%template.get_column('id')%]',
-});">
+});listSetCurrentEdit('[%template.get_column('id')%]', $(this).closest('tr') );">
                         <i class="icon-edit"></i> [% c.loc('Edit template') %]
                     </a>
                     <a class="btn btn-small btn-primary ngcp-noback-button" data-confirm="[%IF template.get_column('is_active'); c.loc('Deactivate'); ELSE; c.loc('Activate'); END%]"
-                       href="javascript:fetch_into('invoice_template_list', '[%- c.uri_for_action("/reseller/invoice_template_activate", [contract.id, template.get_column('id'),template.get_column('is_active')]) -%]','',function(){ refreshMessagesAjax();mainWrapperInit(); });void(0);">
+                       href="javascript:fetch_into(staticContainerId, '[%- c.uri_for_action("/reseller/invoice_template_activate", [contract.id, template.get_column('id'),template.get_column('is_active')]) -%]','',function(){ refreshMessagesAjax();mainWrapperInit(); listRestoreCurrentEdit('',staticContainerId);});void(0);">
                         <i class="icon-edit"></i> [%IF template.get_column('is_active'); c.loc('Deactivate'); ELSE; c.loc('Activate'); END%]
                     </a>
                     <a class="btn btn-small btn-secondary ngcp-noback-button" data-confirm="Delete" 
-                       href="javascript:fetch_into('invoice_template_list', '[%- c.uri_for_action("/reseller/invoice_template_delete", [contract.id, template.get_column('id')]) -%]','',function(){ refreshMessagesAjax();mainWrapperInit(); });void(0);">
+                       href="javascript:fetch_into(staticContainerId, '[%- c.uri_for_action("/reseller/invoice_template_delete", [contract.id, template.get_column('id')]) -%]','',function(){ refreshMessagesAjax();mainWrapperInit();listRestoreCurrentEdit('',staticContainerId);if('[%template.get_column('id')%]' === getCurrentEditId('', staticContainerId)){clearTemplateForm({contract_id: '[%contract.id%]'});} });void(0);">
                         <i class="icon-trash"></i> [% c.loc('Delete') %]
                     </a>
                     [%END%]

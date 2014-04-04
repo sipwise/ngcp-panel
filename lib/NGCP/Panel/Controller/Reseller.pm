@@ -452,7 +452,6 @@ sub invoice_details :Chained('base') :PathPart('invoice') :CaptureArgs(0) {
     $invoice_details = [map{[$i++,$_]} (@$invoice_details) x 21];
     $c->stash( invoice_details => $invoice_details );
     $c->stash( invoice_details_raw => $invoice_details_raw );
-    #$c->stash( invoice_template_form => $form );
 }
 sub invoice_details_ajax :Chained('base') :PathPart('invoice/details/ajax') :Args(0) {
     my ($self, $c) = @_;
@@ -466,7 +465,7 @@ sub invoice_details_ajax :Chained('base') :PathPart('invoice/details/ajax') :Arg
     NGCP::Panel::Utils::Datatables::process($c, $c->stash->{invoice_details_raw}, $dt_columns );
     $c->detach( $c->view("JSON") );
 }
-sub invoice_template_form :Chained('base') :PathPart('invoice/template/form') :Args(0) {
+sub invoice_template_info :Chained('base') :PathPart('invoice/template/info') :Args(0) {
     my ($self, $c) = @_;
     $c->log->debug($c->action);
     my($validator,$backend,$in,$out);
@@ -492,8 +491,8 @@ sub invoice_template_form :Chained('base') :PathPart('invoice/template/form') :A
     $validator->remove_undef_in($in);
     #need to think how to automate it - maybe through form showing param through args? what about args for uri_for_action?
     #join('/',$c->controller,$c->action)
-    $validator->action( $c->uri_for_action('reseller/invoice_template_form',[$in->{contract_id}]) );
-    $validator->name( 'invoice_template' );#from parameters
+    $validator->action( $c->uri_for_action('reseller/invoice_template_info',[$in->{contract_id}]) );
+    $validator->name( 'invoice_template_info' );#from parameters
     #my $posted = 0;
     my $posted = exists $in->{submitid};
     $c->log->debug("posted=$posted;");
@@ -506,7 +505,6 @@ sub invoice_template_form :Chained('base') :PathPart('invoice/template/form') :A
     );
     my $in_validated = $validator->fif;
     if($posted){
-        #$c->forward('invoice_template_save');
         if($validator->validated) {
             try {
                 $backend->storeInvoiceTemplateInfo(%$in_validated);
@@ -532,7 +530,7 @@ sub invoice_template_form :Chained('base') :PathPart('invoice/template/form') :A
             $c->stash( m        => {create_flag => !$in->{tt_id}} );
             $c->stash( form     => $validator );
             #$c->stash( template => 'helpers/ajax_form_modal.tt' );
-            $c->stash( template => 'invoice/invoice_template_form_modal.tt' );
+            $c->stash( template => 'invoice/invoice_template_info_form.tt' );
             $c->response->headers->header( 'X-Form-Status' => 'error' );
         }
     }else{
@@ -541,7 +539,7 @@ sub invoice_template_form :Chained('base') :PathPart('invoice/template/form') :A
         $c->stash( m        => {create_flag => !$in->{tt_id}} );
         $c->stash( form     => $validator );
         #$c->stash( template => 'helpers/ajax_form_modal.tt' );
-        $c->stash( template => 'invoice/invoice_template_form_modal.tt' );
+        $c->stash( template => 'invoice/invoice_template_info_form.tt' );
     }
     $c->detach( $c->view("SVG") );#to the sake of nowrapper
 }
@@ -743,6 +741,7 @@ sub invoice_template :Chained('invoice_details') :PathPart('template') :Args {
             $out->{json} = {
                 tt_data => { 
                     tt_id => $out->{tt_data}->get_column('id'),
+                    base64_previewed => ( $out->{tt_data}->get_column('base64_previewed') ? 1 : 0),
                 },
             };
             foreach(qw/name is_active/){

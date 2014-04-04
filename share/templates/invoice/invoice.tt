@@ -8,8 +8,9 @@
 -%]
 [%PROCESS 'helpers/modal.tt' -%]
 [%mf_helper = {
-    ajax_load => 1,
-}%]
+    ajax_load         => 1,
+    ajax_list_refresh => 'invoice_template',
+ }%]
 [%modal_script( m = mf_helper )%]
 
 [% site_config.title = c.loc('Invoice template for [_1]', reseller.first.name) -%]
@@ -19,6 +20,8 @@
 <script type="text/javascript" src="/js/background.js"></script>
 <script type="text/javascript" src="/js/jquery.loadJSON.js"></script>
 <script type="text/javascript" src="/js/jquery.serializeObject.js"></script>
+<script type="text/javascript" src="/js/modalAjax.js"></script>
+<script type="text/javascript" src="/js/invoice_template.js"></script>
 <script type="text/javascript">
 var uriForAction = function( data, type ){
     //also we can think about getting URIs via ajax )
@@ -53,12 +56,9 @@ var uriForAction = function( data, type ){
         q_template=q_template.replace(key,data[key]);
     });
     q_template=q_template.replace(/\/+$/,'');
-    //q_template=q_template+'?'+$('form[name=invoice_template]').serialize();
-    //alert('q_template='+q_template);
     return q_template;
 }
 </script>
-<script type="text/javascript" src="/js/invoice_template.js"></script>
 
 <div class="row">
     <span>
@@ -66,7 +66,7 @@ var uriForAction = function( data, type ){
     </span>
     <span>
         <!--a class="btn btn-primary btn-large" href="[% c.uri_for('/reseller/invoice_create') %]">[% c.loc('Create invoices template')%] <i class="icon-edit"></i></a-->
-        <a class="btn btn-primary btn-large" onclick="$(this).css('outline', 'none');fetch_into('invoice_template_form_modal', '[%- c.uri_for_action("/reseller/invoice_template_form", [contract.id]) -%]','item=invoice_template',function(){modalFormScript();});void(0);">[% c.loc('Create invoices template')%] <i class="icon-edit"></i></a>
+        <a class="btn btn-primary btn-large" onclick="$(this).css('outline', 'none');fetch_into('invoice_template_info_form', '[%- c.uri_for_action("/reseller/invoice_template_info", [contract.id]) -%]','item=invoice_template_info',function(){modalFormScript();});void(0);">[% c.loc('Create invoices template')%] <i class="icon-edit"></i></a>
     </span>
 </div>
 
@@ -129,12 +129,12 @@ var uriForAction = function( data, type ){
 </span>
 
 
-<div style="display:none;" id="invoice_template_form">
-[%PROCESS 'invoice/invoice_template_form.tt' %]
+<div style="display:none;" id="invoice_template_editor_form">
+[%PROCESS 'invoice/invoice_template_editor_form.tt' %]
 </div>
 
 </div>
 
-<div id="invoice_template_form_modal">
+<div id="invoice_template_info_form">
 </div>
 

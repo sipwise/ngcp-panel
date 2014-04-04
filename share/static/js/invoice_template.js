@@ -54,27 +54,8 @@ function fetchSvgToEditor( data ) {
         setSvgStringToEditor( httpResponse );
     });
 }
-function refreshAccordionAjaxList ( item, data ){
-    alert('refreshAccordionAjaxList: q='+uriForAction( data, item + '_list' )+';item='+item);
-    var target = $('#'+ item + '_list');
-    if(target){
-        fetch_into(
-            item + '_list',
-            uriForAction( data, item + '_list' ),
-            '',
-            function(){ mainWrapperInit(); }
-        );
-    }
-}
-function refreshMessagesAjax (  ){
-    alert('refreshMessagesAjax: q='+uriForAction( {}, 'messages' ));
-    fetch_into(
-        'messages',
-        uriForAction( {}, 'messages' )
-    );
-}
 //public
-function fetchInvoiceTemplateData( data ){
+function fetchInvoiceTemplateData( data, noshowform ){
     //params spec: tt_type=[svg|html]/tt_viewmode[parsed|raw]/tt_sourcestate[saved|previewed|default]/tt_output_type[svg|pdf|html|json|svgzip|pdfzip|htmlzip]/tt_id
     //tt_output_type=svg really outputs text/html mimetype. But it will be couple of <svg> tags (<svg> per page).
     data.tt_output_type = 'json';
@@ -92,12 +73,26 @@ function fetchInvoiceTemplateData( data ){
                 setSvgStringToEditor( templatedata.aaData.template.raw );
                 setSvgStringToPreview( templatedata.aaData.template.parsed );
             }
+            $('#load_previewed_control').css('display', 'none' );
             if( templatedata.aaData.form ){
-                $('form[name=invoice_template]').loadJSON(templatedata.aaData.form);
+                $('form[name=invoice_template_editor]').loadJSON(templatedata.aaData.form);
+                if(templatedata.aaData.form.base64_previewed){
+                    $('#load_previewed_control').css('display', 'inline' );
+                }
             }
-            $('#invoice_template_form').css('display','block');//document.getElementById('invoice_template_form');;
+            if( !noshowform ){
+                $('#invoice_template_editor_form').css('display','block');
+            }
         }
     });
+}
+function clearTemplateForm(data){
+    $('#invoice_template_editor_form').css('display','none');
+    if(!data){
+        data = {};
+    }
+    data.tt_sourcestate = 'default';
+    fetchInvoiceTemplateData(data, 1);
 }
 function savePreviewedAndShowParsed( data ){
     var svgString = getSvgString();
@@ -112,7 +107,7 @@ function savePreviewedAndShowParsed( data ){
         //alert('savePreviewedAndShowParsed: httpResponse='+httpResponse+';');
         setSvgStringToPreview( httpResponse, q )
         //refresh list after saving
-        refreshAccordionAjaxList( 'invoice_template', data );
+        refreshAjaxList( 'invoice_template', data );
     } );
 }
 function saveTemplate( data ) {	
@@ -129,58 +124,8 @@ function saveTemplate( data ) {
         data: { template: svgString },
     } ).done( function( jsonResponse ) {
         if(jsonResponse.aaData && jsonResponse.aaData.form){
-            $('form[name=invoice_template]').loadJSON(jsonResponse.aaData.form);
+            $('form[name=invoice_template_editor]').loadJSON(jsonResponse.aaData.form);
         }
-        refreshAccordionAjaxList( 'invoice_template', data );
-    });
-}
-function processModalFormAjax( form, callback ) {
-    //preventDefault();
-    alert(form.attr('action')+'?'+form.serialize());
-    var item = form.attr('id');
-    $.ajax( {
-        url: form.attr('action'),
-        type: "POST",
-        data: form.serialize(),
-    } ).done( function( responseText, textStatus, request ) {
-        /*
-        var headers = request.getAllResponseHeaders();
-        var i =0;
-        alert('headers='+headers);
-        for(i=0; i<headers.length; i++){
-            alert('i='+i+';header='+headers[i]);
-        }
-        */
-        var status = request.getResponseHeader('X-Form-Status');
-        //alert('header='+request.getResponseHeader('X-Form-Status'));
-        var targetNames = [ item + '_messages','messages' ];
-        if('error' == status){
-            targetNames.unshift(item+'_form_modal');
-        }
-/*
-        if(var targetDirect = request.getResponseHeader('X-Ajax-Target')){
-            targetNames.unshift(targetDirect);
-        }
-*/
-        
-        var target,i=0;
-        while( (!target) && ( i < targetNames.length ) ){
-            target = document.getElementById(targetNames[i++]);
-            //alert('i='+(i-1)+';name='+targetNames[i-1]+';target='+target);
-        }
-        //alert('target='+target);
-        if(target){
-            target.innerHTML=responseText;
-        }
-        if('error' != status){
-            refreshAccordionAjaxList( item, form.serializeObject() );
-        }
-        if(callback){
-            if(typeof callback == 'function'){
-				callback(status);
-			}else{
-				eval(callback);
-			}
-        }
+        refreshAjaxList( 'invoice_template', data );
     });
 }
