@@ -39,6 +39,7 @@ sub _test_preconditions {
     my ($self) = @_;
 
     require Getopt::Long;
+    Getopt::Long::Configure('pass_through');
     my %opt = (server => 'http://localhost:5000', webdriver => 'external');
     Getopt::Long::GetOptions(\%opt, 'webdriver=s', 'server:s', 'help|?', 'man', 'wd-server=s',
         'schema-base-dir=s', 'mysqld-port=s', 'mysql-dump=s@', 'no-junit', 'run-server')
@@ -136,6 +137,7 @@ sub _download_certs {
     $res = $ua->post($uri.'/administrator/1/api_key', {'ca.download' => 'foo'}, 'Referer' => $uri.'/dashboard', ':content_file' => $tmp_apica_filename);
     $ENV{API_SSL_CLIENT_CERT} = $tmp_apiclient_filename;
     $ENV{API_SSL_CA_CERT} = $tmp_apica_filename;
+    print "Client cert: $tmp_apiclient_filename - CA cert: $tmp_apica_filename\n" if $self->verbose;
 }
 
 around('ACTION_test', sub {
