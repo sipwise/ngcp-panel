@@ -162,7 +162,7 @@ my @allcontracts = ();
     my $nexturi = $uri.'/api/contracts/?page=1&rows=5';
     do {
         $res = $ua->get($nexturi);
-        is($res->code, 200, "fetch contacts page");
+        is($res->code, 200, "fetch contracts page");
         my $collection = JSON::from_json($res->decoded_content);
         my $selfuri = $uri . $collection->{_links}->{self}->{href};
         ok($selfuri eq $nexturi, "check _links.self.href of collection");

@@ -44,13 +44,29 @@ $ua->ssl_opts(
     }
 
     my @links = $res->header('Link');
-    my $rels = { contracts => 1, contacts => 1, };
+    my $rels = { contracts => 1,
+                 subscriberpreferences => 1,
+                 subscriberpreferencedefs => 1,
+                 domainpreferencedefs => 1,
+                 billingzones => 1,
+                 systemcontacts => 1,
+                 domains => 1,
+                 billingfees => 1,
+                 resellers => 1,
+                 customercontacts => 1,
+                 billingprofiles => 1,
+                 customers => 1,
+                 domainpreferences => 1,
+                 subscribers => 1,
+                  };
     foreach my $link(@links) {
-        ok($link =~ /^<\/api\/[a-z]+\/>; rel=\"collection http:\/\/purl\.org\/sipwise\/ngcp-api\/#rel-([a-z]+s)\"$/, "check for valid link syntax");
-        ok(exists $rels->{$1}, "check for '$1' collection in Link");
-        delete $rels->{$1};
+        my $rex = qr/^<\/api\/[a-z]+\/>; rel=\"collection http:\/\/purl\.org\/sipwise\/ngcp-api\/#rel-([a-z]+s)\"$/;
+        like($link, $rex, "check for valid link syntax");
+        my ($relname) = ($link =~ $rex);
+        ok(exists $rels->{$relname}, "check for '$relname' collection in Link");
+        delete $rels->{$relname};
     }
-    ok(keys %{ $rels } == 0, "check if all collections are present in Link");
+    is(scalar (keys %{ $rels }), 0, "check if all collections are present in Link");
 }
 
 done_testing;
