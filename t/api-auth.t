@@ -25,25 +25,35 @@ my $ssl_ca_cert = $ENV{API_SSL_CA_CERT} || "/etc/ssl/ngcp/api/ca-cert.pem";
 my ($ua, $res);
 $ua = LWP::UserAgent->new;
 
-# invalid cert
-$ua->ssl_opts(
-    SSL_cert_file => $invalid_ssl_client_cert,
-    SSL_key_file  => $invalid_ssl_client_key,
-    SSL_ca_file   => $ssl_ca_cert,
-);
-$res = $ua->get($uri.'/api/');
-is($res->code, 400, "check invalid client certificate")
-    || note ($res->message);
+SKIP: {
+    if (! -e $invalid_ssl_client_cert) {
+        skip ("Skip Invalid client certificate, we have none", 1);
+    }
+    # invalid cert
+    $ua->ssl_opts(
+        SSL_cert_file => $invalid_ssl_client_cert,
+        SSL_key_file  => $invalid_ssl_client_key,
+        SSL_ca_file   => $ssl_ca_cert,
+    );
+    $res = $ua->get($uri.'/api/');
+    is($res->code, 400, "check invalid client certificate")
+        || note ($res->message);
+}
 
-# unauth cert
-$ua->ssl_opts(
-    SSL_cert_file => $unauth_ssl_client_cert,
-    SSL_key_file  => $unauth_ssl_client_key,
-    SSL_ca_file   => $ssl_ca_cert,
-);
-$res = $ua->get($uri.'/api/');
-is($res->code, 403, "check unauthorized client certificate")
-    || note ($res->message);
+SKIP: {
+    if (! -e $unauth_ssl_client_cert) {
+        skip ("Skip unauthorized client certificate, we have none", 1);
+    }
+    # unauth cert
+    $ua->ssl_opts(
+        SSL_cert_file => $unauth_ssl_client_cert,
+        SSL_key_file  => $unauth_ssl_client_key,
+        SSL_ca_file   => $ssl_ca_cert,
+    );
+    $res = $ua->get($uri.'/api/');
+    is($res->code, 403, "check unauthorized client certificate")
+        || note ($res->message);
+}
 
 # successful auth
 $ua->ssl_opts(
