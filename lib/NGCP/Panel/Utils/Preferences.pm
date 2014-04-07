@@ -214,68 +214,102 @@ sub create_preference_form {
         back_uri => $c->req->uri,
     );
     if($posted && $form->validated) {
-        my $preference_id = $c->stash->{preference}->first ? $c->stash->{preference}->first->id : undef;
-        my $attribute = $c->stash->{preference_meta}->attribute;
+       my $preference_id = $c->stash->{preference}->first ? $c->stash->{preference}->first->id : undef;
+       my $attribute = $c->stash->{preference_meta}->attribute;
        if ($attribute eq "allowed_ips") {
             unless(validate_ipnet($form->field($attribute))) {
                 goto OUT;
             }
 
             unless (defined $aip_group_id) {
-                #TODO put this in a transaction
-                my $new_group = $c->model('DB')->resultset('voip_aig_sequence')
-                    ->create({});
-                my $aig_preference_id = $c->model('DB')
-                    ->resultset('voip_preferences')
-                    ->find({ attribute => 'allowed_ips_grp' })
-                    ->id;
-                $pref_rs->create({
-                        value => $new_group->id,
-                        attribute_id => $aig_preference_id,
-                    });
-                $aip_group_id = $new_group->id;
-                $aip_grp_rs = $c->model('DB')->resultset('voip_allowed_ip_groups')
-                    ->search({ group_id => $aip_group_id });
-                $c->model('DB')->resultset('voip_aig_sequence')->search_rs({
-                        id => { '<' => $new_group->id },
-                    })->delete_all;
+                try {
+                    my $new_group = $c->model('DB')->resultset('voip_aig_sequence')
+                        ->create({});
+                    my $aig_preference_id = $c->model('DB')
+                        ->resultset('voip_preferences')
+                        ->find({ attribute => 'allowed_ips_grp' })
+                        ->id;
+                    $pref_rs->create({
+                            value => $new_group->id,
+                            attribute_id => $aig_preference_id,
+                        });
+                    $aip_group_id = $new_group->id;
+                    $aip_grp_rs = $c->model('DB')->resultset('voip_allowed_ip_groups')
+                        ->search({ group_id => $aip_group_id });
+                    $c->model('DB')->resultset('voip_aig_sequence')->search_rs({
+                            id => { '<' => $new_group->id },
+                        })->delete_all;
+                } catch($e) {
+                    $c->log->error("failed to generate ip group sequence: $e");
+                    $c->flash(messages => [{type => 'error', text => "Failed to generate ip group sequence."}]);
+                    $c->response->redirect($base_uri);
+                    return 1;
+                }
             }
-            $aip_grp_rs->create({
-                group_id => $aip_group_id,
-                ipnet => $form->field($attribute)->value,
-            });
+            try {
+                $aip_grp_rs->create({
+                    group_id => $aip_group_id,
+                    ipnet => $form->field($attribute)->value,
+                });
+            } catch($e) {
+                $c->log->error("failed to create allowed_ip_grp: $e");
+                $c->flash(messages => [{type => 'error', text => "Failed to create allowed_ip_grp."}]);
+                $c->response->redirect($base_uri);
+                return 1;
+            }
        } elsif ($attribute eq "man_allowed_ips") {
             unless(validate_ipnet($form->field($attribute))) {
                 goto OUT;
             }
             unless (defined $man_aip_group_id) {
-                #TODO put this in a transaction
-                my $new_group = $c->model('DB')->resultset('voip_aig_sequence')
-                    ->create({});
-                my $man_aig_preference_id = $c->model('DB')
-                    ->resultset('voip_preferences')
-                    ->find({ attribute => 'man_allowed_ips_grp' })
-                    ->id;
-                $pref_rs->create({
-                        value => $new_group->id,
-                        attribute_id => $man_aig_preference_id,
-                    });
-                $man_aip_group_id = $new_group->id;
-                $man_aip_grp_rs = $c->model('DB')->resultset('voip_allowed_ip_groups')
-                    ->search({ group_id => $man_aip_group_id });
-                $c->model('DB')->resultset('voip_aig_sequence')->search_rs({
-                        id => { '<' => $new_group->id },
-                    })->delete_all;
+                try {
+                    my $new_group = $c->model('DB')->resultset('voip_aig_sequence')
+                        ->create({});
+                    my $man_aig_preference_id = $c->model('DB')
+                        ->resultset('voip_preferences')
+                        ->find({ attribute => 'man_allowed_ips_grp' })
+                        ->id;
+                    $pref_rs->create({
+                            value => $new_group->id,
+                            attribute_id => $man_aig_preference_id,
+                        });
+                    $man_aip_group_id = $new_group->id;
+                    $man_aip_grp_rs = $c->model('DB')->resultset('voip_allowed_ip_groups')
+                        ->search({ group_id => $man_aip_group_id });
+                    $c->model('DB')->resultset('voip_aig_sequence')->search_rs({
+                            id => { '<' => $new_group->id },
+                        })->delete_all;
+
+                } catch($e) {
+                    $c->log->error("failed to create manual ip group sequence: $e");
+                    $c->flash(messages => [{type => 'error', text => "Failed to generate manual ip group sequence."}]);
+                    $c->response->redirect($base_uri);
+                    return 1;
+                }
             }
-            $man_aip_grp_rs->create({
-                group_id => $man_aip_group_id,
-                ipnet => $form->field($attribute)->value,
-            });
+            try {
+                $man_aip_grp_rs->create({
+                    group_id => $man_aip_group_id,
+                    ipnet => $form->field($attribute)->value,
+                });
+            } catch($e) {
+                $c->log->error("failed to create man_allowed_ip_grp: $e");
+                $c->flash(messages => [{type => 'error', text => "Failed to create man_allowed_ip_grp."}]);
+                $c->response->redirect($base_uri);
+                return 1;
+            }
         } elsif ($c->stash->{preference_meta}->max_occur != 1) {
-            $pref_rs->create({
-                attribute_id => $c->stash->{preference_meta}->id,
-                value => $form->field($c->stash->{preference_meta}->attribute)->value,
-            });
+            try {
+                $pref_rs->create({
+                    attribute_id => $c->stash->{preference_meta}->id,
+                    value => $form->field($c->stash->{preference_meta}->attribute)->value,
+                });
+            } catch($e) {
+                $c->log->error("failed to create preference $attribute: $e");
+                $c->flash(messages => [{type => 'error', text => "Failed to delete preference $attribute."}]);
+                $c->response->redirect($base_uri);
+                return 1;
+            }
         } elsif ($attribute eq "rewrite_rule_set") {
             my $selected_rwrs = $c->stash->{rwr_sets_rs}->find(
                 $form->field($attribute)->value
@@ -295,14 +329,20 @@ sub create_preference_form {
             my $attribute_id = $c->model('DB')->resultset('voip_preferences')
                 ->find({attribute => $attribute."_id"})->id;
 
-
-            my $preference = $pref_rs->search({ attribute_id => $attribute_id });
-            if(!defined $selected_level) {
-                $preference->first->delete if $preference->first;
-            } elsif($preference->first) {
-                $preference->first->update({ value => $selected_level->id });
-            } else {
-                $preference->create({ value => $selected_level->id });
+            try {
+                my $preference = $pref_rs->search({ attribute_id => $attribute_id });
+                if(!defined $selected_level) {
+                    $preference->first->delete if $preference->first;
+                } elsif($preference->first) {
+                    $preference->first->update({ value => $selected_level->id });
+                } else {
+                    $preference->create({ value => $selected_level->id });
+                }
+            } catch($e) {
+                $c->log->error("failed to update preference $attribute: $e");
+                $c->flash(messages => [{type => 'error', text => "Failed to update preference $attribute."}]);
+                $c->response->redirect($base_uri);
+                return 1;
             }
 
             $c->flash(messages => [{type => 'success', text => "Preference $attribute successfully updated."}]);
@@ -313,14 +353,21 @@ sub create_preference_form {
                 $form->field($attribute)->value
             );
 
-            my $preference = $pref_rs->search({
-                attribute_id => $c->stash->{preference_meta}->id });
-            if(!defined $selected_set) {
-                $preference->first->delete if $preference->first;
-            } elsif($preference->first) {
-                $preference->first->update({ value => $selected_set->id });
-            } else {
-                $preference->create({ value => $selected_set->id });
+            try {
+                my $preference = $pref_rs->search({
+                    attribute_id => $c->stash->{preference_meta}->id });
+                if(!defined $selected_set) {
+                    $preference->first->delete if $preference->first;
+                } elsif($preference->first) {
+                    $preference->first->update({ value => $selected_set->id });
+                } else {
+                    $preference->create({ value => $selected_set->id });
+                }
+            } catch($e) {
+                $c->log->error("failed to update preference $attribute: $e");
+                $c->flash(messages => [{type => 'error', text => "Failed to update preference $attribute."}]);
+                $c->response->redirect($base_uri);
+                return 1;
             }
 
             $c->flash(messages => [{type => 'success', text => "Preference $attribute successfully updated."}]);
@@ -331,14 +378,21 @@ sub create_preference_form {
                 $form->field($attribute)->value
             );
 
-            my $preference = $pref_rs->search({
-                attribute_id => $c->stash->{preference_meta}->id });
-            if(!defined $selected_set) {
-                $preference->first->delete if $preference->first;
-            } elsif($preference->first) {
-                $preference->first->update({ value => $selected_set->id });
-            } else {
-                $preference->create({ value => $selected_set->id });
+            try {
+                my $preference = $pref_rs->search({
+                    attribute_id => $c->stash->{preference_meta}->id });
+                if(!defined $selected_set) {
+                    $preference->first->delete if $preference->first;
+                } elsif($preference->first) {
+                    $preference->first->update({ value => $selected_set->id });
+                } else {
+                    $preference->create({ value => $selected_set->id });
+                }
+            } catch($e) {
+                $c->log->error("failed to update preference $attribute: $e");
+                $c->flash(messages => [{type => 'error', text => "Failed to update preference $attribute."}]);
+                $c->response->redirect($base_uri);
+                return 1;
             }
 
             $c->flash(messages => [{type => 'success', text => "Preference $attribute successfully updated."}]);
@@ -346,22 +400,43 @@ sub create_preference_form {
             return 1;
         } else {
             if( ($c->stash->{preference_meta}->data_type ne 'enum' &&
-                $form->field($attribute)->value eq '') ||
+                (!defined $form->field($attribute)->value || $form->field($attribute)->value eq '')) ||
                 ($c->stash->{preference_meta}->data_type eq 'enum' &&
                 ! defined $form->field($attribute)->value)
                 ) {
-                my $preference = $pref_rs->find($preference_id);
-                $preference->delete if $preference;
+                try {
+                    my $preference = $pref_rs->find($preference_id);
+                    $preference->delete if $preference;
+                } catch($e) {
+                    $c->log->error("failed to delete preference $attribute: $e");
+                    $c->flash(messages => [{type => 'error', text => "Failed to delete preference $attribute."}]);
+                    $c->response->redirect($base_uri);
+                    return 1;
+                }
             } elsif($c->stash->{preference_meta}->data_type eq 'boolean' && 
                     $form->field($attribute)->value == 0) {
-                my $preference = $pref_rs->find($preference_id);
-                $preference->delete if $preference;
+                try {
+                    my $preference = $pref_rs->find($preference_id);
+                    $preference->delete if $preference;
+                } catch($e) {
+                    $c->log->error("failed to delete preference $attribute: $e");
+                    $c->flash(messages => [{type => 'error', text => "Failed to delete preference $attribute."}]);
+                    $c->response->redirect($base_uri);
+                    return 1;
+                }
             } else {
-                $pref_rs->update_or_create({
-                    id => $preference_id,
-                    attribute_id => $c->stash->{preference_meta}->id,
-                    value => $form->field($attribute)->value,
-                });
+                try {
+                    $pref_rs->update_or_create({
+                        id => $preference_id,
+                        attribute_id => $c->stash->{preference_meta}->id,
+                        value => $form->field($attribute)->value,
+                    });
+                } catch($e) {
+                    $c->log->error("failed to update preference $attribute: $e");
+                    $c->flash(messages => [{type => 'error', text => "Failed to update preference $attribute."}]);
+                    $c->response->redirect($base_uri);
+                    return 1;
+                }
             }
             $c->flash(messages => [{type => 'success', text => "Preference $attribute successfully updated."}]);
             $c->response->redirect($base_uri);

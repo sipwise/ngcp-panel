@@ -22,6 +22,24 @@ class_has 'api_description' => (
         'Defines a collection of <a href="#billingfees">Billing Fees</a> and <a href="#billingzones">Billing Zones</a> and can be assigned to <a href="#customers">Customers</a> and <a href="#contracts">System Contracts</a>.'
 );
 
+class_has 'query_params' => (
+    is => 'ro',
+    isa => 'ArrayRef',
+    default => sub {[
+        {
+            param => 'reseller_id',
+            description => 'Filter for billing profiles belonging to a specific reseller',
+            query => {
+                first => sub {
+                    my $q = shift;
+                    { reseller_id => $q };
+                },
+                second => sub {},
+            },
+        },
+    ]},
+);
+
 with 'NGCP::Panel::Role::API::BillingProfiles';
 
 class_has('resource_name', is => 'ro', default => 'billingprofiles');
@@ -32,7 +50,7 @@ __PACKAGE__->config(
     action => {
         map { $_ => {
             ACLDetachTo => '/api/root/invalid_user',
-            AllowedRole => 'admin',
+            AllowedRole => [qw/admin reseller/],
             Args => 0,
             Does => [qw(ACL CheckTrailingSlash RequireSSL)],
             Method => $_,

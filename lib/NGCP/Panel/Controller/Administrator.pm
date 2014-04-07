@@ -290,7 +290,7 @@ sub api_key :Chained('base') :PathPart('api_key') :Args(0) {
     );
 }
 
-$CLASS->meta->make_immutable;
+__PACKAGE__->meta->make_immutable;
 
 __END__
 

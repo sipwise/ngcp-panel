@@ -23,6 +23,37 @@ class_has 'api_description' => (
         'Specifies a SIP Domain to be used as host part for SIP <a href="#subscribers">Subscribers</a>. You need a domain before you can create a subscriber. Multiple domains can be created. A domain could also be an IPv4 or IPv6 address (whereas the latter needs to be enclosed in square brackets, e.g. [::1]).'
 );
 
+class_has 'query_params' => (
+    is => 'ro',
+    isa => 'ArrayRef',
+    default => sub {[
+        {
+            param => 'reseller_id',
+            description => 'Filter for domains belonging to a specific reseller',
+            query => {
+                first => sub {
+                    my $q = shift;
+                    { 'domain_resellers.reseller_id' => $q };
+                },
+                second => sub {
+                    { join => 'domain_resellers' };
+                },
+            },
+        },
+        {
+            param => 'domain',
+            description => 'Filter for domains matching the given pattern',
+            query => {
+                first => sub {
+                    my $q = shift;
+                    { domain => { like => $q } };
+                },
+                second => sub { },
+            },
+        },
+    ]},
+);
+
 with 'NGCP::Panel::Role::API::Domains';
 
 class_has('resource_name', is => 'ro', default => 'domains');

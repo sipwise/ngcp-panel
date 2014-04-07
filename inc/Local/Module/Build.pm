@@ -1,8 +1,7 @@
 package Local::Module::Build;
-use Sipwise::Base;
-use Moose qw(around);
+use Moose qw(around extends);
 use Child qw(child);
-use Capture::Tiny qw(capture);
+use Capture::Tiny;
 use TryCatch;
 use MooseX::Method::Signatures;
 use LWP::UserAgent;
@@ -10,7 +9,7 @@ extends 'Module::Build';
 
 our ($plackup, $webdriver, @cover_opt, $mysqld);
 
-method wait_socket($host, $port) {
+method wait_socket($host, $port, $timeout=90) {
     require IO::Socket::IP;
     my $timer = 0;
     while (1) {
@@ -22,8 +21,8 @@ method wait_socket($host, $port) {
         last if $sock;
         sleep 1;
         $timer++;
-        die sprintf('socket %s:%s is not accessible within 30 seconds after start', $host, $port)
-            if $timer > 90;
+        die sprintf('socket %s:%s is not accessible within %d seconds after start', $host, $port, $timeout)
+            if $timer > $timeout;
     };
 }
 
@@ -40,14 +39,15 @@ sub _test_preconditions {
     my ($self) = @_;
 
     require Getopt::Long;
-    my %opt = (server => 'http://localhost:5000');
-    Getopt::Long::GetOptions(\%opt, 'webdriver=s', 'server:s', 'help|?', 'man', 'wd-server=s', 'schema-base-dir=s', 'mysqld-port=s', 'mysql-dump=s@', 'no-junit')
+    Getopt::Long::Configure('pass_through');
+    my %opt = (server => 'http://localhost:5000', webdriver => 'external');
+    Getopt::Long::GetOptions(\%opt, 'webdriver=s', 'server:s', 'help|?', 'man', 'wd-server=s',
+        'schema-base-dir=s', 'mysqld-port=s', 'mysql-dump=s@', 'no-junit', 'run-server')
         or die 'could not process command-line options';
 
     require Pod::Usage;
     Pod::Usage::pod2usage(-exitval => 1, -input => 'Build.PL') if $opt{help};
     Pod::Usage::pod2usage(-exitval => 0, -input => 'Build.PL', -verbose => 2) if $opt{man};
-    Pod::Usage::pod2usage("$0: --webdriver option required.\nRun `perldoc Build.PL`") unless $opt{webdriver};
 
     if ($opt{'no-junit'}) {
         delete $self->tap_harness_args->{formatter_class};
@@ -86,29 +86,37 @@ sub _test_preconditions {
     }
 
     require URI;
+    unless ($opt{server} =~ m|^https?://|) {
+        die "Wrong format of server argument, should start with 'http(s)'.";
+    }
     my $uri = URI->new($opt{server});
 
-    require File::Which;
-    $ENV{ NGCP_PANEL_CONFIG_LOCAL_SUFFIX } = "testing";
-    $plackup = child {
-        my $out_fh = IO::File->new("panel_debug_stdout", "w+");
-        my $err_fh = IO::File->new("panel_debug_stderr", "w+");
-        $out_fh->autoflush(1);
-        $err_fh->autoflush(1);
-        local $| = 1;
-        capture {
-        exec $^X,
-            '-Ilib',
-            exists $opt{'schema-base-dir'} ? "-Mblib=$opt{'schema-base-dir'}" : (),
-            @cover_opt,
-            scalar File::Which::which('plackup'),
-            sprintf('--listen=%s:%s', $uri->host, $uri->port),
-            'ngcp_panel.psgi';
-        } stdout => $out_fh, stderr => $err_fh;
-    };
-
-    $self->wait_socket($uri->host, $uri->port);
+    if( $opt{'run-server'} ) {
+        require File::Which;
+        $ENV{ NGCP_PANEL_CONFIG_LOCAL_SUFFIX } = "testing";
+        $plackup = child {
+            my $out_fh = IO::File->new("panel_debug_stdout", "w+");
+            my $err_fh = IO::File->new("panel_debug_stderr", "w+");
+            $out_fh->autoflush(1);
+            $err_fh->autoflush(1);
+            local $| = 1;
+            Capture::Tiny::capture {
+            exec $^X,
+                '-Ilib',
+                exists $opt{'schema-base-dir'} ? "-Mblib=$opt{'schema-base-dir'}" : (),
+                @cover_opt,
+                scalar File::Which::which('plackup'),
+                sprintf('--listen=%s:%s', $uri->host, $uri->port),
+                'ngcp_panel.psgi';
+            } stdout => $out_fh, stderr => $err_fh;
+        };
+        $self->wait_socket($uri->host, $uri->port);
+    }
+    
     $ENV{CATALYST_SERVER} = $opt{server};
+    if ($self->verbose) {
+        print("Server is: ".$opt{server}."\n");
+    }
 }
 
 sub _download_certs {
@@ -129,6 +137,7 @@ sub _download_certs {
     $res = $ua->post($uri.'/administrator/1/api_key', {'ca.download' => 'foo'}, 'Referer' => $uri.'/dashboard', ':content_file' => $tmp_apica_filename);
     $ENV{API_SSL_CLIENT_CERT} = $tmp_apiclient_filename;
     $ENV{API_SSL_CA_CERT} = $tmp_apica_filename;
+    print "Client cert: $tmp_apiclient_filename - CA cert: $tmp_apica_filename\n" if $self->verbose;
 }
 
 around('ACTION_test', sub {
@@ -167,14 +176,6 @@ method ACTION_testcover {
     $self->do_system(qw(cover));
 }
 
-method ACTION_test_tap {
-    $self->depends_on('code');
-    $self->_test_preconditions;
-    system( "mkdir -p tap" );
-    $ENV{PERL_TEST_HARNESS_DUMP_TAP} = "tap/";
-    $self->generic_test(type => 'default');
-}
-
 method ACTION_test_servers {
     $self->depends_on('code');
     $self->_test_preconditions;
@@ -205,3 +206,5 @@ method ACTION_readme {
 }
 
 END { shutdown_servers }
+
+1;

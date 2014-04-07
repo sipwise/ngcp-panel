@@ -30,29 +30,35 @@ around handle => sub {
         peering_sum => $c->model('DB')->resultset('contract_balances')->search_rs({
             'start' => { '>=' => $stime },
             'end' => { '<' => $etime},
-            'product.class' => 'sippeering',
-        }, {
-            join => {
-                'contract' => { 'billing_mappings' => 'product' },
-            },
+            -exists => $c->model('DB')->resultset('billing_mappings')->search({
+                    contract_id => \'= me.contract_id',
+                    'product.class' => 'sippeering',
+                },{
+                    alias => 'myinner',
+                    join => 'product',
+                })->as_query,
         })->get_column('cash_balance_interval')->sum,
         reseller_sum => $c->model('DB')->resultset('contract_balances')->search_rs({
             'start' => { '>=' => $stime },
             'end' => { '<' => $etime},
-            'product.class' => 'reseller',
-        }, {
-            join => {
-                'contract' => { 'billing_mappings' => 'product' },
-            },
+            -exists => $c->model('DB')->resultset('billing_mappings')->search({
+                    contract_id => \'= me.contract_id',
+                    'product.class' => 'reseller',
+                },{
+                    alias => 'myinner',
+                    join => 'product',
+                })->as_query,
         })->get_column('cash_balance_interval')->sum,
         customer_sum => $c->model('DB')->resultset('contract_balances')->search_rs({
             'start' => { '>=' => $stime },
             'end' => { '<' => $etime},
-            'billing_mappings.product_id' => undef,
-        }, {
-            join => {
-                'contract' => 'billing_mappings',
-            },
+            -exists => $c->model('DB')->resultset('billing_mappings')->search({
+                    contract_id => \'= me.contract_id',
+                    'product.class' => 'sipaccount',
+                },{
+                    alias => 'myinner',
+                    join => 'product',
+                })->as_query,
         })->get_column('cash_balance_interval')->sum,
     );
     return;

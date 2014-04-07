@@ -61,17 +61,12 @@ Build-Depends: debhelper (>= 8),
                libxml-mini-perl,
                ngcp-schema,
                openssl
-Standards-Version: 3.9.4
+Standards-Version: 3.9.5
 Homepage: http://sipwise.com/
 
 Package: ngcp-panel
 Architecture: all
 Pre-Depends: nginx-common
-# only for trunk installations, remove it
-Replaces: ngcp-panel-common (<= 1.0.15),
-          ngcp-panel-nginx (<= 1.0.15)
-Breaks: ngcp-panel-common (<= 1.0.15),
-        ngcp-panel-nginx (<= 1.0.15)
 Depends: gettext,
          gnutls-bin,
          libautodie-perl (>= 2.21~),

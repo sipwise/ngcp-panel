@@ -21,12 +21,6 @@ class_has 'api_description' => (
         'Defines a set of Rewrite Rules which are grouped in <a href="#rewriterulesets">Rewrite Rule Sets</a>. They can be used to alter incoming and outgoing numbers.',
 );
 
-with 'NGCP::Panel::Role::API::RewriteRules';
-
-class_has('resource_name', is => 'ro', default => 'rewriterules');
-class_has('dispatch_path', is => 'ro', default => '/api/rewriterules/');
-class_has('relation', is => 'ro', default => 'http://purl.org/sipwise/ngcp-api/#rel-rewriterules');
-
 class_has 'query_params' => (
     is => 'ro',
     isa => 'ArrayRef',
@@ -56,11 +50,18 @@ class_has 'query_params' => (
     ]},
 );
 
+
+with 'NGCP::Panel::Role::API::RewriteRules';
+
+class_has('resource_name', is => 'ro', default => 'rewriterules');
+class_has('dispatch_path', is => 'ro', default => '/api/rewriterules/');
+class_has('relation', is => 'ro', default => 'http://purl.org/sipwise/ngcp-api/#rel-rewriterules');
+
 __PACKAGE__->config(
     action => {
         map { $_ => {
             ACLDetachTo => '/api/root/invalid_user',
-            AllowedRole => 'admin',
+            AllowedRole => [qw/admin reseller/],
             Args => 0,
             Does => [qw(ACL CheckTrailingSlash RequireSSL)],
             Method => $_,
@@ -176,7 +177,16 @@ sub POST :Allow {
             $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Required: 'set_id'");
             last;
         }
-        my $ruleset = $schema->resultset('voip_rewrite_rule_sets')->find($set_id);
+
+        my $reseller_id;
+        if($c->user->roles eq "reseller") {
+            $reseller_id = $c->user->reseller_id;
+        }
+
+        my $ruleset = $schema->resultset('voip_rewrite_rule_sets')->find({
+                id => $set_id,
+                ($reseller_id ? (reseller_id => $reseller_id) : ()),
+            });
         unless($ruleset) {
             $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Invalid 'set_id'.");
             last;

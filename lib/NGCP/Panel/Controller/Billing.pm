@@ -785,7 +785,7 @@ sub peaktime_specials_create :Chained('peaktimes_list') :PathPart('date/create')
     $c->stash(peaktimes_special_createflag => 1);
 }
 
-$CLASS->meta->make_immutable;
+__PACKAGE__->meta->make_immutable;
 
 1;
 

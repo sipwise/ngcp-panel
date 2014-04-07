@@ -4,13 +4,15 @@ use namespace::sweep;
 BEGIN { extends 'Catalyst::Controller'; }
 use DateTime qw();
 use HTTP::Status qw(HTTP_SEE_OTHER);
+use File::Type;
 use NGCP::Panel::Form::Reseller;
+use NGCP::Panel::Form::Reseller::Branding;
 use NGCP::Panel::Utils::Contract;
 use NGCP::Panel::Utils::DateTime;
 use NGCP::Panel::Utils::Message;
 use NGCP::Panel::Utils::Navigation;
 
-sub auto :Does(ACL) :ACLDetachTo('/denied_page') :AllowedRole(admin) {
+sub auto {
     my ($self, $c) = @_;
     $c->log->debug(__PACKAGE__ . '::auto');
     NGCP::Panel::Utils::Navigation::check_redirect_chain(c => $c);
@@ -45,11 +47,11 @@ sub list_reseller :Chained('/') :PathPart('reseller') :CaptureArgs(0) {
     ]);
 }
 
-sub root :Chained('list_reseller') :PathPart('') :Args(0) {
+sub root :Chained('list_reseller') :PathPart('') :Args(0) :Does(ACL) :ACLDetachTo('/denied_page') :AllowedRole(admin) {
     my ($self, $c) = @_;
 }
 
-sub ajax :Chained('list_reseller') :PathPart('ajax') :Args(0) {
+sub ajax :Chained('list_reseller') :PathPart('ajax') :Args(0) :Does(ACL) :ACLDetachTo('/denied_page') :AllowedRole(admin) {
     my ($self, $c) = @_;
     my $resellers = $c->stash->{resellers};
     NGCP::Panel::Utils::Datatables::process($c, $resellers, $c->stash->{reseller_dt_columns});
@@ -57,7 +59,7 @@ sub ajax :Chained('list_reseller') :PathPart('ajax') :Args(0) {
     return;
 }
 
-sub create :Chained('list_reseller') :PathPart('create') :Args(0) {
+sub create :Chained('list_reseller') :PathPart('create') :Args(0) :Does(ACL) :ACLDetachTo('/denied_page') :AllowedRole(admin) {
     my ($self, $c) = @_;
 
     $c->detach('/denied_page')
@@ -116,6 +118,9 @@ sub base :Chained('list_reseller') :PathPart('') :CaptureArgs(1) {
         $c->response->redirect($c->uri_for());
         return;
     }
+    $c->detach('/denied_page')
+    	if($c->user->roles eq "reseller" && $c->user->reseller_id != $reseller_id);
+
     $c->stash->{contact_dt_columns} = NGCP::Panel::Utils::Datatables::set_columns($c, [
         { name => "id", search => 1, title => $c->loc('#') },
         { name => "firstname", search => 1, title => $c->loc('First Name') },
@@ -159,9 +164,12 @@ sub base :Chained('list_reseller') :PathPart('') :CaptureArgs(1) {
         );
         NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for('/reseller'));
     }
+
+    $c->stash->{branding} = $c->stash->{reseller}->first->branding;
+
 }
 
-sub reseller_contacts :Chained('base') :PathPart('contacts/ajax') :Args(0) {
+sub reseller_contacts :Chained('base') :PathPart('contacts/ajax') :Args(0) :Does(ACL) :ACLDetachTo('/denied_page') :AllowedRole(admin) {
     my ($self, $c) = @_;
     my $rs = $c->stash->{reseller}->first->contract->search_related_rs('contact');
     NGCP::Panel::Utils::Datatables::process($c, $rs, $c->stash->{contact_dt_columns});
@@ -169,7 +177,7 @@ sub reseller_contacts :Chained('base') :PathPart('contacts/ajax') :Args(0) {
     return;
 }
 
-sub reseller_single :Chained('base') :PathPart('single/ajax') :Args(0) {
+sub reseller_single :Chained('base') :PathPart('single/ajax') :Args(0) :Does(ACL) :ACLDetachTo('/denied_page') :AllowedRole(admin) {
     my ($self, $c) = @_;
 
     NGCP::Panel::Utils::Datatables::process($c, $c->stash->{reseller}, $c->stash->{reseller_dt_columns});
@@ -177,7 +185,7 @@ sub reseller_single :Chained('base') :PathPart('single/ajax') :Args(0) {
     return;
 }
 
-sub reseller_admin :Chained('base') :PathPart('admins/ajax') :Args(0) {
+sub reseller_admin :Chained('base') :PathPart('admins/ajax') :Args(0) :Does(ACL) :ACLDetachTo('/denied_page') :AllowedRole(admin) {
     my ($self, $c) = @_;
     my $rs = $c->stash->{reseller}->first->search_related_rs('admins');
     NGCP::Panel::Utils::Datatables::process($c, $rs, $c->stash->{admin_dt_columns});
@@ -185,7 +193,7 @@ sub reseller_admin :Chained('base') :PathPart('admins/ajax') :Args(0) {
     return;
 }
 
-sub edit :Chained('base') :PathPart('edit') :Args(0) {
+sub edit :Chained('base') :PathPart('edit') :Args(0) :Does(ACL) :ACLDetachTo('/denied_page') :AllowedRole(admin) {
     my ($self, $c) = @_;
 
     $c->detach('/denied_page')
@@ -247,7 +255,7 @@ sub edit :Chained('base') :PathPart('edit') :Args(0) {
     return;
 }
 
-sub terminate :Chained('base') :PathPart('terminate') :Args(0) {
+sub terminate :Chained('base') :PathPart('terminate') :Args(0) :Does(ACL) :ACLDetachTo('/denied_page') :AllowedRole(admin) {
     my ($self, $c) = @_;
 
     my $reseller = $c->stash->{reseller}->first;
@@ -305,13 +313,13 @@ sub _handle_reseller_status_change {
     }
 }
 
-sub details :Chained('base') :PathPart('details') :Args(0) {
+sub details :Chained('base') :PathPart('details') :Args(0) :Does(ACL) :ACLDetachTo('/denied_page') :AllowedRole(admin) {
     my ($self, $c) = @_;
     $c->stash(template => 'reseller/details.tt');
     return;
 }
 
-sub ajax_contract :Chained('list_reseller') :PathPart('ajax_contract') :Args(0) {
+sub ajax_contract :Chained('list_reseller') :PathPart('ajax_contract') :Args(0) :Does(ACL) :ACLDetachTo('/denied_page') :AllowedRole(admin) {
     my ($self, $c) = @_;
  
     my $edit_contract_id = $c->session->{edit_contract_id};
@@ -334,7 +342,7 @@ sub ajax_contract :Chained('list_reseller') :PathPart('ajax_contract') :Args(0) 
     $c->detach( $c->view("JSON") );
 }
 
-sub create_defaults :Path('create_defaults') :Args(0) {
+sub create_defaults :Path('create_defaults') :Args(0) :Does(ACL) :ACLDetachTo('/denied_page') :AllowedRole(admin) {
     my ($self, $c) = @_;
     $c->detach('/denied_page') unless $c->request->method eq 'POST';
     $c->detach('/denied_page')
@@ -410,6 +418,128 @@ sub create_defaults :Path('create_defaults') :Args(0) {
     $c->res->redirect($c->uri_for_action('/reseller/details', [$r{resellers}->id]));
     $c->detach;
     return;
+}
+
+sub edit_branding_css :Chained('base') :PathPart('css/edit') :Args(0) :Does(ACL) :ACLDetachTo('/denied_page') :AllowedRole(admin) :AllowedRole(reseller) {
+    my ($self, $c) = @_;
+
+    $c->detach('/denied_page')
+    	if($c->user->read_only);
+    $c->stash(template => 'reseller/details.tt');
+
+    my $reseller = $c->stash->{reseller}->first;
+    my $branding = $reseller->branding;
+
+    my $posted = $c->request->method eq 'POST';
+    my $form = NGCP::Panel::Form::Reseller::Branding->new;
+
+    if($posted) {
+        $c->req->params->{logo} = $c->req->upload('logo');
+    }
+
+    my $params = $branding ? { $branding->get_inflated_columns } : {};
+    $form->process(
+        posted => $posted,
+        params => $c->request->params,
+        item => $params,
+    );
+    NGCP::Panel::Utils::Navigation::check_form_buttons(
+        c => $c,
+        form => $form,
+        fields => {},
+        back_uri => $c->uri_for('/reseller/details', $c->req->captures),
+    );
+
+    if($posted && $form->validated) {
+        try {
+            $c->model('DB')->txn_do(sub {
+                if($c->user->roles eq "admin") {
+                    $form->params->{reseller_id} = $reseller->id;
+                } elsif($c->user->roles eq "reseller") {
+                    $form->params->{reseller_id} = $c->user->reseller_id;
+                }
+                delete $form->params->{reseller};
+                delete $form->params->{back};
+
+                my $ft = File::Type->new();
+                if($form->params->{logo}) {
+                    my $logo = delete $form->params->{logo};
+                    $form->params->{logo} = $logo->slurp;
+                    $form->params->{logo_image_type} = $ft->mime_type($form->params->{logo});
+                } else {
+                    delete $form->params->{logo};
+                }
+
+                unless(defined $branding) {
+                    $c->model('DB')->resultset('reseller_brandings')->create($form->params);
+                } else {
+                    $branding->update($form->params);
+                }
+            });
+
+            $c->flash(messages => [{type => 'success', text => $c->loc('Reseller branding successfully updated')}]);
+        } catch($e) {
+            NGCP::Panel::Utils::Message->error(
+                c => $c,
+                error => $e,
+                desc  => $c->loc('Failed to update reseller branding'),
+            );
+        }
+        NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for_action('/reseller/details', $c->req->captures));
+    }
+
+    $c->stash(close_target => $c->uri_for());
+    $c->stash(branding_form => $form);
+    $c->stash(branding_edit_flag => 1);
+    $c->stash(close_target => $c->uri_for_action('/reseller/details', $c->req->captures));
+
+    return;
+}
+
+sub get_branding_logo :Chained('base') :PathPart('css/logo/download') :Args(0) {
+    my ($self, $c) = @_;
+
+
+    my $reseller = $c->stash->{reseller}->first;
+    my $branding = $reseller->branding;
+
+    unless($branding || $branding->logo) {
+        $c->response->body($c->loc('404 - No branding logo available for this reseller'));
+        $c->response->status(404);
+        return;
+    }
+    $c->response->content_type($branding->logo_image_type);
+    $c->response->body($branding->logo);
+}
+
+sub delete_branding_logo :Chained('base') :PathPart('css/logo/delete') :Args(0) :Does(ACL) :ACLDetachTo('/denied_page') :AllowedRole(admin) :AllowedRole(reseller) {
+    my ($self, $c) = @_;
+
+
+    my $reseller = $c->stash->{reseller}->first;
+    my $branding = $reseller->branding;
+
+    if($branding) {
+        $branding->update({ logo => undef, logo_image_type => undef });
+    }
+
+    $c->response->redirect($c->uri_for_action('/reseller/details', $c->req->captures));
+}
+
+sub get_branding_css :Chained('base') :PathPart('css/download') :Args(0) {
+    my ($self, $c) = @_;
+
+
+    my $reseller = $c->stash->{reseller}->first;
+    my $branding = $reseller->branding;
+
+    unless($branding || $branding->css) {
+        $c->response->body($c->loc('404 - No branding css available for this reseller'));
+        $c->response->status(404);
+        return;
+    }
+    $c->response->content_type('text/css');
+    $c->response->body($branding->css);
 }
 
 __PACKAGE__->meta->make_immutable;

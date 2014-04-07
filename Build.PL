@@ -1,10 +1,11 @@
 use lib 'inc';
-use Local::Module::Build qw();
+use Local::Module::Build;
 
 my $builder = Local::Module::Build->new(
     module_name         => 'NGCP::Panel',
-    license             => 'restrictive',
+    license             => 'perl',
     dist_version_from   => 'lib/NGCP/Panel.pm',
+    dist_abstract       => 'Sipwise Configuration Panel',
     tap_harness_args    => {
         timer           => 1,
         formatter_class => 'TAP::Formatter::JUnit',
@@ -14,7 +15,6 @@ my $builder = Local::Module::Build->new(
         'lib' => 0,
         'Module::Build' => '0.4004',
         'Moose' => 2,
-        'Sipwise::Base' => 0,
     },
     requires => {
         'base' => 0,
@@ -81,6 +81,7 @@ my $builder = Local::Module::Build->new(
         'Scalar::Util' => 0,
         'Sereal::Decoder' => 0,
         'Sereal::Encoder' => 0,
+        'Sipwise::Base' => 0,
         'strict' => 0,
         'Template' => 0,
         'Text::CSV_XS' => 0,
@@ -145,44 +146,24 @@ Build.PL - NGCP-Panel build system including test fixtures
     ./Build test --webdriver=selenium-rc # from CPAN distro Alien-SeleniumRC
     ./Build test --webdriver=external --wd-server=127.0.0.1:5555
 
-    ./Build test_tap --webdriver=external # outputs tap to tap/ folder
-
     ./Build testcover --webdriver='phantomjs --webdriver=4444'
+    ./Build test_api
+    ./Build test_api --schema-base-dir=path/to/schema --server=https://1.2.3.4:1443
 
 =head2 Options
 
-    --webdriver       (required) external webdriver command
-    --wd-server       HOST:PORT of an external webdriver to connect to
-    --server          URI for socket test server
-    --schema-base-dir directory of NGCP::Schema if its not yet installed
     --mysqld-port     port where the mysqld should be started
     --mysql-dump      one or more mysql dumps to be imported to our mysqld
     --no-junit        don't output junit but normal TAP, for manual testing
+    --run-server      panel should be started by build script
+    --schema-base-dir directory of NGCP::Schema if its not yet installed
+    --server          URI for socket test server
+    --webdriver       Command to be run as Webdriver
+    --wd-server       HOST:PORT of an external webdriver to connect to
     --help            brief help message
     --man             full documentation
 
 =head1 OPTIONS
-
-=head2 C<--webdriver>
-
-(required) command to launch a webdriver
-external if the webdriver is launched externally
-
-=head2 C<--wd-server>
-
-Host:Port of the webdriver to which the tests should connect.
-Default is set by Test::WebDriver to localhost:4444
-
-=head2 C<--server>
-
-URI for the HTTP::Server::PSGI socket server run for testing,
-default C<http://localhost:5000>
-
-=head2 C<--schema-base-dir>
-
-If the NGCP::Schema is not installed to a known path to perl, this
-option can specify the base directory of its development location.
-It will then be included via blib, so we have access to its lib and share.
 
 =head2 C<--mysqld-port>
 
@@ -196,6 +177,34 @@ If this option and C<--mysqld-port> are supplied, a mysqld will be started
 and be used for the tests. It will import all dumps supplied with this option.
 This option can be set multiple times. In this case all specified files will
 be dumped into the database.
+
+=head2 C<--run-server>
+
+Does not take an argument. Indicates the ./Build script should start a
+server running the panel by itself on the Address given by the --server
+argument.
+
+=head2 C<--schema-base-dir>
+
+If the NGCP::Schema is not installed to a known path to perl, this
+option can specify the base directory of its development location.
+It will then be included via blib, so we have access to its lib and share.
+
+=head2 C<--server>
+
+URI for the HTTP::Server::PSGI socket server run for testing,
+default C<http://localhost:5000>
+
+=head2 C<--webdriver>
+
+command to launch a webdriver
+external if the webdriver is launched externally
+this command is no longer required
+
+=head2 C<--wd-server>
+
+Host:Port of the webdriver to which the tests should connect.
+Default is set by Test::WebDriver to localhost:4444
 
 =head2 C<--help>
 

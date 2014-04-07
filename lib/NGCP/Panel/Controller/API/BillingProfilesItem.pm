@@ -23,7 +23,7 @@ __PACKAGE__->config(
     action => {
         map { $_ => {
             ACLDetachTo => '/api/root/invalid_user',
-            AllowedRole => 'admin',
+            AllowedRole => [qw/admin reseller/],
             Args => 1,
             Does => [qw(ACL RequireSSL)],
             Method => $_,

@@ -82,7 +82,6 @@ sub validate_form {
     # move {xxx_id} into {xxx}{id} for FormHandler
     foreach my $key(keys %{ $resource } ) {
         if($key =~ /^(.+)_id$/ && $key ne "external_id") {
-            $c->log->debug("++++++++++++ moving key $key with value " .  ($resource->{$key} // '<null>') . " to $1/id");
             push @normalized, $1;
             $resource->{$1}{id} = delete $resource->{$key};
         }
@@ -92,7 +91,6 @@ sub validate_form {
     my %fields = map { $_->name => undef } $form->fields;
     for my $k (keys %{ $resource }) {
         unless(exists $fields{$k}) {
-            $c->log->debug("+++++++++ deleting unknown key '$k' from message"); # TODO: user, message trace, ...
             delete $resource->{$k};
         }
 

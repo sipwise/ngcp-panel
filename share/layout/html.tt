@@ -34,6 +34,15 @@
         <script type="text/javascript" src="/js/plugins/msgbox/jquery.msgbox.js"></script>
         <link rel="stylesheet" type="text/css" href="/js/plugins/msgbox/jquery.msgbox.css" />
         <link rel="stylesheet" type="text/css" href="/css/main.css" />
+
+        [% IF c.user -%]
+        [% IF c.user.roles == "reseller" && c.user.reseller.branding.css -%]
+        <link rel="stylesheet" href="[% c.uri_for_action('/reseller/get_branding_css', [c.user.reseller_id]) %]">
+        [% ELSIF c.user.roles != "admin" && c.user.contract.contact.reseller.branding.css -%]
+        <link rel="stylesheet" href="[% c.uri_for_action('/reseller/get_branding_css', [c.user.contract.contact.reseller_id]) %]">
+        [% END -%]
+        [% END -%]
+
     </head>
     [% content %]
 </html>
