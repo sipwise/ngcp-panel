@@ -14,6 +14,7 @@ use NGCP::Panel::Utils::Navigation;
 use NGCP::Panel::Form::InvoiceTemplate::Basic;
 use NGCP::Panel::Model::DB::InvoiceTemplate;
 use NGCP::Panel::Utils::InvoiceTemplate;
+use JSON;
 
 sub auto {
     my ($self, $c) = @_;
@@ -456,7 +457,6 @@ sub invoice_details :Chained('base') :PathPart('invoice') :CaptureArgs(0) {
 sub invoice_details_ajax :Chained('base') :PathPart('invoice/details/ajax') :Args(0) {
     my ($self, $c) = @_;
     my $dt_columns_json = $c->request->parameters->{dt_columns};
-    use JSON;
     #use irka;
     #use Data::Dumper;
     #irka::loglong(Dumper($dt_columns));
@@ -812,7 +812,10 @@ sub invoice_template :Chained('invoice_details') :PathPart('template') :Args {
     }elsif($in->{tt_output_type} eq 'html'){
         $c->response->content_type('text/html');
     }elsif($in->{tt_output_type} eq 'json'){
-        $c->response->content_type('application/json');
+        #$c->response->content_type('application/json');
+        #IE  prompts to save json file.
+        $c->response->content_type('text/html');
+        #$c->response->content_type('text/javascript');
     }elsif($in->{tt_output_type}=~m'zip'){
         $c->response->content_type('application/zip');
     }
@@ -858,8 +861,10 @@ sub invoice_template :Chained('invoice_details') :PathPart('template') :Args {
                 #if we didn't have tt_data - then we have empty form fields with applied defaults
                 $aaData->{form} = $in;
             }
-            $c->stash( aaData => $aaData ); 
-            $c->detach( $c->view('JSON') );
+            #$c->stash( to_json( { aaData => $aaData} ) ); 
+            #$c->detach( $c->view('SVG') );#ie doesn't serve correctly json
+            $c->response->body( to_json( { aaData => $aaData} ) );
+            #$c->detach( $c->view('SVG') );#ie doesn't serve correctly json
         }elsif($in->{tt_output_type} eq 'pdf'){
         #method
             $c->response->content_type('application/pdf');

@@ -1,5 +1,5 @@
 function refreshAjaxList ( item, data ){
-    alert('refreshAjaxList: q='+uriForAction( data, item + '_list' )+';item='+item);
+    //alert('refreshAjaxList: q='+uriForAction( data, item + '_list' )+';item='+item);
     var target = $('#'+ item + '_list');
     if(target){
         fetch_into(
@@ -14,7 +14,7 @@ function refreshAjaxList ( item, data ){
     }
 }
 function refreshMessagesAjax (  ){
-    alert('refreshMessagesAjax: q='+uriForAction( {}, 'messages' ));
+    //alert('refreshMessagesAjax: q='+uriForAction( {}, 'messages' ));
     fetch_into(
         'messages',
         uriForAction( {}, 'messages' )
@@ -22,7 +22,7 @@ function refreshMessagesAjax (  ){
 }
 function processModalFormAjax( form, callback ) {
     //preventDefault();
-    alert(form.attr('action')+'?'+form.serialize());
+    //alert(form.attr('action')+'?'+form.serialize());
     var item = form.attr('id');
     $.ajax( {
         url: form.attr('action'),
@@ -73,7 +73,7 @@ function listRestoreCurrentEdit(staticContainer, staticContainerId){
     }
     if(staticContainer){
         var id = getCurrentEditId(staticContainer, staticContainerId);
-        alert('listRestoreCurrentEdit:id='+id+';');
+        //alert('listRestoreCurrentEdit:id='+id+';');
         if(id){
             var tr = staticContainer.find('tr[data-id='+id+']');
             if(tr){
@@ -101,7 +101,7 @@ function setCurrentEditId(id, staticContainer, staticContainerId){
     }
 }
 function listSetCurrentEdit( id, tr, staticContainer ) {
-    alert('listSetCurrentEdit: id='+id+';tr='+tr+';');
+    //alert('listSetCurrentEdit: id='+id+';tr='+tr+';');
     var curclass = 'ngcp_current_edit';
     if(!staticContainer){
         staticContainer = tr.closest('.accordion-inner');

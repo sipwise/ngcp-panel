@@ -30,15 +30,17 @@ function setSvgStringToEditor( svgParsedString ){
 }
 function setSvgStringToPreview( svgParsedString, q, data ) {
     var previewIframe = document.getElementById('svgpreview'); 
-    //alert('setSvgStringToPreview: svgParsedString='+svgParsedString+';');
+    //alert('setSvgStringToPreview: svgParsedString='+svgParsedString+';data='+data+';');
     if ($.browser.msie) {
         //we need to repeat query to server for msie if we don't want send template string via GET method
         if(!q){
             var dataPreview = data;
             dataPreview.tt_viewmode = 'parsed';
             dataPreview.tt_type = 'svg';
+            dataPreview.tt_output_type = 'svg';
             dataPreview.tt_sourcestate = dataPreview.tt_sourcestate || 'saved';
             q = uriForAction( dataPreview, 'invoice_template' );
+            //alert('setSvgStringToPreview: q='+q+';');
         }
         previewIframe.src = q;
     }else{
@@ -60,20 +62,31 @@ function fetchInvoiceTemplateData( data, noshowform ){
     //tt_output_type=svg really outputs text/html mimetype. But it will be couple of <svg> tags (<svg> per page).
     data.tt_output_type = 'json';
     var q = uriForAction( data, 'invoice_template' );
-    alert('fetchInvoiceTemplateData: q='+q+';');
-    $.ajax({
+    //alert('fetchInvoiceTemplateData: q='+q+';');
+    var queryObj = {
         url: q,
-        datatype: "json",
-    //}).done( function( jsonres ){
-    }).done( function( templatedata ){
-        //alert(templatedata);
+        type: 'POST',
+    };
+    //if (!$.browser.msie) {
+        //msie prompts to save
+        queryObj.dataType = "json";
+    //}
+    queryObj.contentType = 'application/x-www-form-urlencoded;charset=utf-8';
+    //alert('QQQ');
+    $.ajax( queryObj ).done( function( templatedata ){
         //alert(templatedata.aaData);
-        if(templatedata.aaData){
+        //alert(templatedata.aaData);
+        //if ($.browser.msie) {
+            //alert(templatedata);
+            //templatedata = jQuery.parseJSON(templatedata);
+            //alert(templatedata);
+        //}
+        if(templatedata && templatedata.aaData){
             if( templatedata.aaData.template ){
                 setSvgStringToEditor( templatedata.aaData.template.raw );
-                setSvgStringToPreview( templatedata.aaData.template.parsed );
+                setSvgStringToPreview( templatedata.aaData.template.parsed, '', data );
             }
-            $('#load_previewed_control').css('display', 'none' );
+            $('#load_previewed_control').css('visibility', 'visible' );
             if( templatedata.aaData.form ){
                 $('form[name=invoice_template_editor]').loadJSON(templatedata.aaData.form);
                 if(templatedata.aaData.form.base64_previewed){
@@ -81,18 +94,19 @@ function fetchInvoiceTemplateData( data, noshowform ){
                 }
             }
             if( !noshowform ){
-                $('#invoice_template_editor_form').css('display','block');
+                $('#invoice_template_editor_form').css('visibility','visible');
             }
         }
     });
 }
 function clearTemplateForm(data){
-    $('#invoice_template_editor_form').css('display','none');
+    $('#invoice_template_editor_form').css('visibility','hidden');
+    $('#load_previewed_control').css('display', 'none' );
     if(!data){
         data = {};
     }
     data.tt_sourcestate = 'default';
-    fetchInvoiceTemplateData(data, 1);
+    fetchInvoiceTemplateData(data, 1);//1 = no show form again, just clear it up to default state
 }
 function savePreviewedAndShowParsed( data ){
     var svgString = getSvgString();
@@ -105,7 +119,7 @@ function savePreviewedAndShowParsed( data ){
     .done( function( httpResponse ){
         // & show template
         //alert('savePreviewedAndShowParsed: httpResponse='+httpResponse+';');
-        setSvgStringToPreview( httpResponse, q )
+        setSvgStringToPreview( httpResponse, q, data )
         //refresh list after saving
         refreshAjaxList( 'invoice_template', data );
     } );
@@ -116,11 +130,11 @@ function saveTemplate( data ) {
     data.tt_output_type = 'json';
     var q = uriForAction( data, 'invoice_template_saved' ); 
     q=formToUri(q);
-    alert('saveTemplate: q='+q+';');
+    //alert('saveTemplate: q='+q+';');
     $.ajax( {
         url: q,
         type: "POST",
-        datatype: 'json',
+        //datatype: 'json',
         data: { template: svgString },
     } ).done( function( jsonResponse ) {
         if(jsonResponse.aaData && jsonResponse.aaData.form){
@@ -129,3 +143,4 @@ function saveTemplate( data ) {
         refreshAjaxList( 'invoice_template', data );
     });
 }
+

@@ -93,20 +93,20 @@ var uriForAction = function( data, type ){
     
     
 [%
-    clearHelper();
-    helper.name = c.loc('Invoice Details');
-    helper.dt_columns = [
-        { name => 'zone', title => c.loc('Zone'), search=> 1 },
-        { name => 'number', title => c.loc('Calls amount') },
-        { name => 'duration', title => c.loc('Duration') },
-        { name => 'free_time', title => c.loc('Free time') },
-        { name => 'cost', title => c.loc('Cash') },
-    ];
-    helper.name_single = c.loc('Invoice Record');
-    helper.identifier = 'invoice_details_raw';
-    helper.ajax_uri = c.uri_for_action( '/reseller/invoice_details_ajax', [ contract.id ] ) ;
-    initHelperAuto();
-    PROCESS 'helpers/datatables.tt';
+    #clearHelper();
+    #helper.name = c.loc('Invoice Details');
+    #helper.dt_columns = [
+    #    { name => 'zone', title => c.loc('Zone'), search=> 1 },
+    #    { name => 'number', title => c.loc('Calls amount') },
+    #    { name => 'duration', title => c.loc('Duration') },
+    #    { name => 'free_time', title => c.loc('Free time') },
+    #    { name => 'cost', title => c.loc('Cash') },
+    #];
+    #helper.name_single = c.loc('Invoice Record');
+    #helper.identifier = 'invoice_details_raw';
+    #helper.ajax_uri = c.uri_for_action( '/reseller/invoice_details_ajax', [ contract.id ] ) ;
+    #initHelperAuto();
+    #PROCESS 'helpers/datatables.tt';
 -%]
     [%PROCESS 'invoice/invoice_details_list.tt' %]
 
@@ -121,15 +121,15 @@ var uriForAction = function( data, type ){
         <a class="accordion-toggle" data-toggle="collapse" data-parent="#customer_invoice_template" href="#collapse_invoice_template_list">[% c.loc('Invoice Templates') %]</a>
     </div>
     <div class="accordion-body collapse" id="collapse_invoice_template_list">
-    <div class="accordion-inner" style="overflow:auto; height: 300px;" id="invoice_template_list">
+    <div class="accordion-inner" style="overflow:auto; height:300px;" id="invoice_template_list">
     [%PROCESS 'invoice/invoice_template_list.tt' %]
     </div>
     </div>
 </div>
 </span>
 
-
-<div style="display:none;" id="invoice_template_editor_form">
+<!--with display:none only the opera works with svg, others cant operate geometry on start and fail with a lot of svg related errors-->
+<div style="visibility:hidden;" id="invoice_template_editor_form">
 [%PROCESS 'invoice/invoice_template_editor_form.tt' %]
 </div>
 
