@@ -10,11 +10,11 @@ use HTTP::Status qw(:constants);
 use NGCP::Panel::Utils::DateTime;
 use NGCP::Panel::Utils::Contract;
 use NGCP::Panel::Utils::Preferences;
-use NGCP::Panel::Form::Contract::ProductSelect qw();
+use NGCP::Panel::Form::Contract::ProductOptional;
 
 sub get_form {
     my ($self, $c) = @_;
-    return NGCP::Panel::Form::Contract::PeeringReseller->new;
+    return NGCP::Panel::Form::Contract::ProductOptional->new;
 }
 
 sub hal_from_customer {
@@ -177,11 +177,11 @@ sub update_customer {
         }
     }
 
-    my $old_ext_id = $customer->external_id;
+    my $old_ext_id = $customer->external_id // '';
 
     $customer->update($resource);
 
-    if($customer->external_id ne $old_ext_id) {
+    if(($customer->external_id // '') ne $old_ext_id) {
         foreach my $sub($customer->voip_subscribers->all) {
             my $prov_sub = $sub->provisioning_voip_subscriber;
             next unless($prov_sub);

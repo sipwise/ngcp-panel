@@ -20,7 +20,7 @@ sub hal_from_contract {
     my ($self, $c, $contract, $form) = @_;
 
     my $billing_mapping = $contract->billing_mappings->find($contract->get_column('bmid'));
-    my $billing_profile_id = $billing_mapping->billing_profile->id;
+    my $billing_profile_id = $billing_mapping->billing_profile_id;
     my $stime = NGCP::Panel::Utils::DateTime::current_local()->truncate(to => 'month');
     my $etime = $stime->clone->add(months => 1);
     my $contract_balance = $contract->contract_balances
@@ -36,7 +36,7 @@ sub hal_from_contract {
                 contract => $contract,
             );
         } catch($e) {
-            $self->log->error("Failed to create current contract balance for contract id '".$contract->id."': $e");
+            $c->log->error("Failed to create current contract balance for contract id '".$contract->id."': $e");
             $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "Internal Server Error.");
             return;
         }
