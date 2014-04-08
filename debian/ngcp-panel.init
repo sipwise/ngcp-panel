@@ -27,6 +27,11 @@ NPROC=1
 
 OPTIONS="--listen $USOCKET --daemon --pidfile $PIDFILE --nproc $NPROC"
 
+if ! [ -x "$DAEMON" ] ; then
+  log_warning_msg "File $DAEMON not available/executable."
+  exit 0
+fi
+
 check_running() {
   if [ -s $PIDFILE ]; then
     kill -0 $(cat $PIDFILE) >/dev/null 2>&1
