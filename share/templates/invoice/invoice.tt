@@ -93,20 +93,20 @@ var uriForAction = function( data, type ){
     
     
 [%
-    #clearHelper();
-    #helper.name = c.loc('Invoice Details');
-    #helper.dt_columns = [
-    #    { name => 'zone', title => c.loc('Zone'), search=> 1 },
-    #    { name => 'number', title => c.loc('Calls amount') },
-    #    { name => 'duration', title => c.loc('Duration') },
-    #    { name => 'free_time', title => c.loc('Free time') },
-    #    { name => 'cost', title => c.loc('Cash') },
-    #];
-    #helper.name_single = c.loc('Invoice Record');
-    #helper.identifier = 'invoice_details_raw';
-    #helper.ajax_uri = c.uri_for_action( '/reseller/invoice_details_ajax', [ contract.id ] ) ;
-    #initHelperAuto();
-    #PROCESS 'helpers/datatables.tt';
+    clearHelper();
+    helper.name = c.loc('Invoice Details');
+    helper.dt_columns = [
+        { name => 'zone', title => c.loc('Zone'), search=> 1 },
+        { name => 'number', title => c.loc('Calls amount') },
+        { name => 'duration', title => c.loc('Duration') },
+        { name => 'free_time', title => c.loc('Free time') },
+        { name => 'cost', title => c.loc('Cash') },
+    ];
+    helper.name_single = c.loc('Invoice Record');
+    helper.identifier = 'invoice_details_raw';
+    helper.ajax_uri = c.uri_for_action( '/reseller/invoice_details_ajax', [ contract.id ] ) ;
+    initHelperAuto();
+    PROCESS 'helpers/datatables.tt';
 -%]
     [%PROCESS 'invoice/invoice_details_list.tt' %]
 

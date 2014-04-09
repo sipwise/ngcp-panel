@@ -34,6 +34,7 @@ function formSerialize(){
 <span>
     <a class="btn btn-secondary btn-small"  data-confirm="[%c.loc('Overwrite changes');%]" href="javascript:fetchInvoiceTemplateData({
         tt_sourcestate: 'default',
+        tt_id: getTtIdVal(),
         contract_id: '[%contract.id%]',
     });void(0);">[% c.loc('Load default')%] <i class="icon-edit"></i></a>
 </span>

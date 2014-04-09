@@ -2,66 +2,31 @@
 <!--{[%row_vertical_interval = 10 -%]}-->
 
 <!--{[%MACRO document_header BLOCK-%]}-->
-<svg width="215mm" height="297mm" viewBox="0 0 215 297" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:space="preserve" stroke-width="0" stroke="#000000" fill="#000000" font-size="4pt" font-family="HelveticaNeue-Light" text-anchor="start">
+<svg width="215mm" height="297mm" viewBox="0 0 215 297" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:space="preserve" stroke-width="0" stroke="#000000" fill="#000000" font-size="4pt" text-anchor="start">
 
-<defs >
- <!--font-face font-family="Tomson Talks">
-  <font-face-src>
-   <font-face-uri xlink:href="../font/TomsonTalks.svg#TomsonTalks">
-    <font-face-format string="svg"/>
-   </font-face-uri>
-  </font-face-src>
- </font-face-->
-  <style type="text/css">
-   <![CDATA[
-    /*
-    @font-face {
-        font-family: Delicious;
-        src: url('http://nimbupani.com/demo/svgfonts/delicious-roman.otf');
-    }
-    */
-   ]]>
- </style>
-</defs>
-
+<defs>
 <style type="text/css">
 <![CDATA[
 .address, .company{
 	font-weight: bold;
 	font-size: 2pt;
 }
-.test1{
-    font-family: arial;
-}
-.test2{
-    font-family: sans;
-}
-.test3{
-    font-family: times;
-}
-.test4{
-    font-family: impact;
-}
 g, text, tspan {
-    /*
-    fill:#000000;fill-opacity:1;fill-rule:nonzero;
-    stroke:none;
-    //font-family: impact, georgia, times, serif;
-    //font-family:Arial;
-    //font-family:HelveticaNeue-Light;
-    //font-weight:300;
-    //-inkscape-font-specification:HelveticaNeue-Light;
-    font-family:HelveticaNeue;
-    */
-    font-family:Times;
+    font-family:Arial;
     font-variant:normal;
     font-size:2.6pt;
     writing-mode:lr;
-    fill: #FF0000;
+    fill: #224422;
 }
-
+.h1 {
+    font-size:8pt;
+}
+.h3 {
+    font-size:3.5pt;
+}
 ]]>
-	</style>
+</style>
+</defs>
 <!--pageSet-->
 <!--{[%END-%]}-->
 
@@ -71,38 +36,45 @@ g, text, tspan {
     
         <title>TitlePage</title>
 
-         
-        <g y="10" x="10" width="100" height="30" transform="translate(10, 10)" >
-            <text x="2"    y="5"  font-family="'BoisterBlack'" >Test1 class text</text>
-            <text x="2"    y="10" font-family="Serif">Test2 class text</text>
-            <text x="2"    y="15" font-family="FreeSerif">Test3 class text</text>
-            <text x="2"    y="20" font-family="Times">Test4 class text</text>
-            <text x="2"    y="25" style="font-family: 'Delicious'; font-weight:normal; font-style: normal">Text using CSS @font-face</text>
-        </g>
-        <g y="10" x="105" width="100" height="30" transform="translate(105, 10)" >
-            <text x="2"    y="5"  class="test1">Test1 class text</text>
-            <text x="2"    y="10" class="test2">Test2 class text</text>
-            <text x="2"    y="15" class="test3">Test3 class text</text>
-            <text x="2"    y="20" class="test4">Test4 class text</text>
-            <text x="2"    y="25" style="font-family: 'Delicious'; font-weight:normal; font-style: normal">Text using CSS @font-face</text>
-        </g>
+        <text x="20" y="65" id="titlepage_clientaddress__contact" class="h3">[ %client.firstname%] [ %client.lastname%]</text>
+        <text x="20" y="75" id="titlepage_clientaddress__address" class="h3">[ %client.street%]</text>
+        <text x="20" y="85" id="titlepage_clientaddress__city" class="h3">[ %client.postcode%] [ %client.city%] [ %client.country%]</text>
+
+        <text x="190" y="65" id="titlepage_clientinfo__accountid" class="h3" text-anchor="end">Account ID: [ %client.id%]</text>
+        <text x="190" y="75" id="titlepage_clientinfo__vatid" class="h3" text-anchor="end">VAT ID: [ %client.vatid%]</text>
+
+        <text x="190" y="90" id="titlepage_invoiceinfo__date" class="h3" text-anchor="end">[%provider.city%], [%date%]</text>
+        
+        <text x="20" y="110" font-weight="bold" class="h1">Invoice [ %invoice.number%]</text>
+ 
+        <path stroke="#888888" stroke-width="0.25" fill="none" d="m10,130l190,0"/>
+        <path stroke="#888888" stroke-width="0.25" fill="none" d="m10,190l190,0"/>
+        
+        <text x="15"  y="125">Description</text>
+        <text x="195" y="125" text-anchor="end">Description</text>
+        <text x="15"  y="140">Discount (Wire Transfer)</text>
+        <text x="195" y="140" text-anchor="end">[ %invoice.discount%]</text>
+        <text x="15"  y="150">Service Allowance</text>
+        <text x="195" y="150" text-anchor="end">[ %invoice.serviceallowance%]</text>
+        <text x="15"  y="160">Cloud PBX Account [ %date.month_start%] - [ %date.month_end%] [ %date.year%]</text>
+        <text x="195" y="160" text-anchor="end">[ %invoice.cloud_pbx_amount%]</text>
+        <text x="15"  y="170">Discount (12M reduced Service Fee)</text>
+        <text x="195" y="170" text-anchor="end">[ %invoice.discount%]</text>
+        <text x="15"  y="180">Voice Termination Fees [ %date.month_start%] - [ %date.month_end%] [ %date.year%]</text>
+        <text x="195" y="180" text-anchor="end">[ %invoice.voice_termination_fees%]</text>
+
+        <text x="45"  y="200">Sum EUR (net):</text>
+        <text x="195" y="200" text-anchor="end">[ %invoice.amount_netto%]</text>
+        <text x="45"  y="210">incl. 20% VAT:</text>
+        <text x="195" y="210" text-anchor="end">[ %invoice.amount_vat%]</text>
+        <text x="45"  y="220">Invoice Sum EUR:</text>
+        <text x="195" y="220" text-anchor="end">[ %invoice.amount%]</text>
+        <text x="45"  y="230">incl. last month Debit of EUR [ %invoice.debit%] - to be paid:</text>
+        <text x="195" y="230" text-anchor="end">[ %invoice.amount_payment%]</text>
+        
 
         
-        <g y="40" x="105" width="100" height="28" transform="translate(105, 40)" class="address" id="titlepage_companyaddress_sipwise">
-            <rect x="0"    y="0" width="100" height="28" stroke-width="0.25" fill="#FFFFFF" id="titlepage_companyaddress_sipwise__border"/>
-            <text x="2"    y="5" id="titlepage_companyaddress_sipwise__company" class="company">{<!--{[%}-->client.company<!--{%]}-->}</text>
-            <text x="2"   y="10" id="titlepage_companyaddress_sipwise__address">{<!--{[%}-->client.street<!--{%]}-->}, Postcode {<!--{[%}-->client.postcode<!--{%]}-->} </text>
-            <text x="2"   y="15" id="titlepage_companyaddress_sipwise__address">{<!--{[%}-->client.city<!--{%]}-->} {<!--{[%}-->client.country<!--{%]}-->}</text>
-            <text x="2"   y="20" id="titlepage_companyaddress_sipwise__contact">{<!--{[%}-->client.firstname<!--{%]}-->} {<!--{[%}-->client.lastname<!--{%]}-->}</text>
-            <text x="2"   y="25" id="titlepage_companyaddress_sipwise__contact">Phone: {<!--{[%}-->client.phone<!--{%]}-->}. Mobile: {<!--{[%}-->client.mobile<!--{%]}-->}. Fax: {<!--{[%}-->client.fax<!--{%]}-->}</text>
-        </g>
-        <g y="40" x="10" width="50" height="30"  id="titlepage_companyaddress_custom" transform="translate(10, 40)">
-            <rect x="0" y="0" width="50" height="30" stroke-width="0.25" fill="#FFFFFF" id="titlepage_companyaddress_custom_border"/>
-            <text x="5" y="7" id="titlepage_companyaddress_custom_1">address line 1</text>
-            <text x="5" y="17" id="titlepage_companyaddress_custom_2">address line 2</text>
-            <text x="5" y="27" id="titlepage_companyaddress_custom_3">address line 3</text>
-        </g>
-        <g y="135" x="10" width="195" height="150" id="titlepage_invoicedetails" transform="translate(10, 135)" rows="5">
+        <g y="265" x="10" width="195" height="150" id="titlepage_invoicedetails" transform="translate(10, 265)" rows="0">
         <!--{[%MACRO titlerow BLOCK-%]}-->
             <text id="titlepage_calls_title" text-anchor="end">
                 <tspan x="5"   id="titlepage_calls_number" text-anchor="start">#</tspan>
@@ -134,12 +106,15 @@ g, text, tspan {
             </text>
     <!--{[%END-%]}-->
 
+
+<!--{[%IF callsdata.size%]}-->
 <!--{[% titlerow(page) -%]}-->
 <!--{[% list_calls(callsdata, page, 'datarow', total, 'svg', row_vertical_interval) -%]}-->
 <!--{[% adjustrow (total, page, 'totalrow', 'svg', row_vertical_interval, callsdata.size) -%]}-->
-
+<!--{[%END%]}-->
 
         </g>
+        <image height="30" width="60" y="15" x="140" xlink:href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAJYAAABPCAYAAAAJMDwFAAAABHNCSVQICAgIfAhkiAAAGUpJREFU eJztXXtcVOXWft65cRsGuYkgiKSioqaCmoLo0eMV7WReSrP6NMIvT0e8ZH12Tn2nzqclaioeO1qW xzJTtDiaipUX0EwzMfCGFxAQA5KrMAxzn/X9McwetjMgKHPBfPrNL9z73e969t5rr3ft9a53bUZE hEd4hDaGwNEEHuHhhMjRBNoCGo0GxcXFKCsrQ15eHvLz81FcXIzS0lLU1tZCqVRCp9PBxcUF7u7u 8Pb2RpcuXdC1a1eEhYUhNDQUgYGB8PX1dfSpPDRoF4pFRKivr4dCoUBpaSny8vJw/Phx7Nu3D0VF RVaPYYxBJBJBKBSCMQaBQACDwQC9Xg+DwQCdTmf1OLFYjHHjxmHy5MkYOHAgunTpAqlUCg8PDwgE jwx8S8Gc2cfKycnBd999h6KiImRnZyMjI4O3PyAgAH379kXv3r3h5eUFNzc3uLu7w83NDWKxmFMI iUQCsVgMrVYLhUKBuro6KJVKqNVqKJVKKBQKaDQa5OfnIzs7G7m5uWh8WSIjIxETE4OQkBCMGTMG AwcOtPOVaH9wOsWSy+VYsmQJjhw5ArlcjsrKSgBGSzJkyBC89dZb6NmzJwQCAVxcXCCVSiGVSttE tkaj4YZOvV6PyspKbN68GTt37oRCoQAAeHt7w8vLC8OGDcO///1vuLi4tInshw7kBJDL5ZSTk0PB wcEEgACQj48PhYeHU2JioqPpcfjwww+pR48e5Ofnx/GMiYmhvLw8UigUjqbnVHCoYikUCtqwYQMN GTKEu1Fz5syhlStXUnl5uSOpNYuamhr6xz/+Qc8++yzHe/jw4bRixQpHU3MaOEyxDh8+TP7+/tyN WbNmDeXl5ZFOp3MUpVZDrVZTQUEBrV69mjuP8PBwSklJcTQ1h8PuimUwGGjAgAEEgFxdXWnChAn2 pmAzDB06lGQyGQGgxMTE3/XwaFfFunjxIkVERBAAeuaZZygrK8ue4u2C69ev07BhwwgAeXt709Wr Vx1NySGwm2KdOHGCe5rT0tJIo9HYS7TdUV9fT7t27eKscmVlpaMp2R12CTf88ssviI2NBRHhs88+ w4wZM2wt0ilw48YNdO/eHQCgUql+X6EJW2uuSqWi8PBwAkC7du2ytTinw7Fjx0gikZBEIqHffvvN 0XTsBptbrBdeeAFffPEF9uzZg+nTp9tSlNNi9ZrVeCP5DcRMjUH3gd2h1WvhIfZAmF8YhnYbilE9 RzmaYpvDpop15coVREREYOLEifj666/h5uZmK1FOA71BD7VWjbM3z+L1r15H1s0s6JgOTMBAegIj BgETwEAGECPAAIABLiIX9OzUEyumrEBs91i4iF3gKnZ19OncN2yqWCNGjMCZM2eQkpKCKVOm2EqM U0Cr0yLtUhq+u/wdNh3fBMCoLDHdYhDUIQhebl7w8fCBv9QfbhI3KNQKlMnLUFVfBYVagdu1t5FV lIXyunIAQHS3aLwU8xIm9JmAzt6dHXlq9wWbKZZGo0FoaCiEQiF+/fVXW4hwGqRfTcfi3YtxqeQS 9AY9hncfjjcnvonwgHB0knWC1PXec5n1mnqUy8txs/ImUrNSkXw0GQAQ3CEYTw98GhtmbbD1abQt bOW8nT17lmQyGQ0cONBWIpwCs7fMJiSAhPOEFJsUS/nl+W3W919T/0peiV6EBFDYsjAqqixqs75t DZspVnp6Orm7u9OYMWNsJcKhuFN/h2JWxhASQLFJsXTo4iGbyCmrLaP4bfEknCckJIAOXDhgEzlt DZspVlZWFnXo0IF69+5tKxEORefXOxMSQCsOrqBaZa3N5R2+fJhYAiPBPAHt+tn5wzY287EMBgO6 dOkCxhhu3bplCxEOQ+j/hOLWnVt47+n3sGzCMrvJvVN/B96LvQEC8pbnoVvHbnaT3VrYLNdWIBCg e/fuqKiowKFDh2wlxu5YeWgliqqLMLnfZLsqFQB0cO+AC29fgJAJMXLNSLvKbi1smsT9wQcfQKVS YceOHdBqtbYUZRdUK6qRfDQZLiIXfD3/a4dw6BfcD/NGzEPxnWIsTlnsEA4tgq3HWtNM/6VLl2wt yub4JvsbQgIc7uNU1lVSwJIA6vpmV4fyaA42X3byzTffQCqVYsCAAcjJybG1OJti7eG1cJe4Y2zE WIfy8PHwQSevTqiUV+JU3imHcmkKNlcsPz8/fPzxx9DpdBg7dizOnTtna5E2Q8b1DMR0i4GryPFT LdMip0GuliP9WrqjqViFXRbKzZo1C8nJySgpKcGgQYNw7do13vKq9gCtzugjdvPv5hRzeCPDjc67 3qB3MBPrsNsKzMTEROzevRv+/v7o1asXli1bhvz8fHuJf2CIRWIAxhtJcPxDodMbF9w6AxdrsOvS 3hkzZiA7Oxu9evXCqlWrMGLECMycOdOeFB4YRVVFUOvUjqaB1KxUgAFebl6OpmIVdl8zHhQUhCtX ruD7779HcXExdu/eDVdXV6SlpdmbSqvxx95/xM+FP0OhVjiaCvZf3A8/dz88PfBpR1OxCocVIxg7 diyICJ06dQIRoaqqylFUWoylE5aiWlmNs4VnHcojpyQHcqUcbmI3hPqGOpRLU3BolYtr165Bo9Eg MDAQzz//vNU2er1zOKfFxcXYv2U/UAtM3TTVoVw2Hd+EamU1PvmvTxzKozk4VLE+++wzVFZWIj4+ 3ur+4uJiSKVSMMbg5eWF6OhofPHFFwDAVY0xGAxt8oZJRLxqNHl5eViwYAE6d+4MsViM4OBg/Gvd vyDME0KtV2PYymEPLPN+cKX0CjZmbISXqxfG9RnnEA4tgcOKgtTW1mLEiBE4f/68VcU4deoUYmJi 4OnpiSFDhqCiogLnz5/ntZFIJIiIiMDQoUPRr18/BAUFgTEGoVDIlS8ylTACzMpjKmOk1+shl8tx +fJlZGZmIjs722JIDggIQHh4OLy8vBAUFIT58+fj9fTXcSTnCF4Z+Qo2Pb/JdhfpLmQWZmLwe4Ph 4+6D4tXFThH2aAoOq4+Vm5uL8+fPY8uWLRb7Vq9ejWXLjBO8qampGDVqFKqrq5Gbm4uKigqUlJQg Pz8fP/zwA86cOYPs7Ow24RQeHo4pU6agX79+CAwM5Aq0hYaG8vL1/9PrP3jm42ew+cRmXPvtGg4v OQyhQNgmHJpCytkUzN02FwwMBxYccGqlAhxosbp168ZV3gsKCuK2v/jii9i+fTsAoKKiosVV9qqq qlBeXo7q6mquFJFcLodSqUR1dTUYY/D09IRIJEJQUBA8PT3h7e0NPz8/dOrUqdX81Vo1Zn86G19n fQ13sTtSX0nF+L7jW91PSzDlwynYd2EfQMDldy4jIijCJnLaFI6YoLx69SoBoPj4eNJqtUREVFVV RdHR0QSAHn/8cVIqlY6g1mokfplIvot8CQmgScmTKP1qOtWp6h6436yiLFr17SpiCYyQAIpcHkm/ Vv3aBoztA4co1vDhw0kkEtGOHTuIiOj27dv02GOPcWWM5HK5I2jdN7KKsuilbS8REkBIAA1aMYgW 7VpEx64ea1U/Ko2Klu5ZSmPWjiHvhd6EeaCuy7rS7rO7SaFuXwVG7D4U3rhxA0888QQ8PT1RUFCA zMxMDB48GIDRt1q6dKk96bQpKuoqkLA9AXuz94IR46Zb/KX+GBAyAF19u6Kzd2dIXaRIiE2AzE3G O35f1j5M2TQFIKCjV0dsfXEr4vrFgTHmiNN5MNhbk998800CQElJSbR9+3YCQC4uLrR161Z7U7EZ lGolfXT8I5qxaQbFrIyhsGVhJFsg4xZEIAEUsCSAvsr8ivR6PXdcSXUJIQG0OGWxA9m3DexqsWpr axEdHY2bN28iPj4eycnJkMlkSE9PR2RkpL1o2BVavRbF1cWorq+GSquCWqfGrapbSNieALVOjbi+ cUiemYzuHbujoq4Cff/eF8Hewch8K9PR1B8M9tJgg8FAJ0+eJADEGCMA1LNnz99liR8iopr6Ghrw 7gDCyyC8DNr24zbSaDU0Yd0EQoLxtjS2Zu0Ndom8ExEYY5z/RESIi4vDqVOn4OPjYw8KTgeZmwxZ /5uF9c+uR6hvKOZsm4NhScPgJjHGyworCrna9O0S9tLg/Px8rk5ncnJyu34a2xol1SW0cNdCzv9C Aujdb94lIqPVMhgMDmbYethtrrBr16748ccf8c477yAxMfHRVx4aIbBDINY9sw7Fq4rhKfEEANQo awCYrX17g92c9/Z6gewNpUaJ3Nu5eDzkcegNegiYoF1eN6f7MsUjPBxodhK6qKgIW7ZswYULF1Bc XGz1yTEYDAgJCcHnn38OmUxmsX/9+vXYunUr6uvrodfr0bNnT6SmpsLd3Z3XTqfTYfbs2Thy5Eiz hAUCAfz9/TF+/Hi89dZbj77Y5aSwsFg1NTU4dOgQZs2a1erOTpw4gdjYWO7fpolma1AqlXB1Nc7Q KxQKjB07FqdPn261TADYuXPnPXPnNRoNl05jlY9GidhVsThXZFyeljg6EWufWdtk1sLZgrOIWRUD rUELEJA6P7XZNOGUsymYuWUmwABfd19c+PsFBHUwT77frLyJyP+LRFU9P20ntkcs9v15H7w9vC36 1Ol1OHXjFD45+Qm2n9lu3tHMGBTZJRIH/nIAgR0CuW0FFQUY/cFoFFYVNntsc/jLqL9g7Yy13KIT nget0Wjw0ksvYdasWfc1rh88eJD7Ozs7G5WVlVxOFADe30lJSVzb8vJynD59+r59iVmzZmHhwoVN 7p82bRqefPJJPPnkk1i8eLHVrNSN6RtxrugcGIwcNhzbgMKKwib7jPtnHLQGLRgxgAGLUhahsq6y yfYzt8wEAwMjhsr6SqxIW8HbP2nDJFQpq4zyGQBmvF4/5P6AxF2JFv3JVXKMWz8OI9eMxPafjErF iBkVg1n/MTD8UvQL3jnwDq+v+V/MR2FlIU92a36MMWxM34jNJzZzffKGwqNHjyI1NRUAWpWVyRgD EXEWCDCnFDfup/HfNTU1Fv201t0zyQWADRs2YPz48YiLi+O16dGjB27cuMG1O3ToENzd3bFiBf/G fnvpW6CxXhNQXlfeZEWXiroKo3wQQMCv1b82uXqnqKrhm4rMvFxLoVZAp9dBJDTegjvKO2BgIGas U2qkQAADCsoLLPqMXB6JG2U3OIUhIu7YppaEETNuv1h8kbf9yJUjZnmtBCPG9ftTwU9YgAUA7rJY iYn8J6OlFoSI0LVrV16d0aioKAwdOrTVfbW2fWNr+MYbb/D2HT58GKWlpRZvpO+9957FBzRNF9Wk KGiBeNONb6wwVtuRsV1TDxkAyFxl5j5YgxIwGLncFZlZfnA58sryzErYiC+xBv7N/P4Q/gfr5wFw VrVhR8uuQQMm9ZvE/c2zWHl5ebwbQESYNGkS4uLiIBaLm+xcIBBg0KBB6N+/P2/73r17sWPHDqSk pODw4cP3ZtmYMBG2b98OpVJpsU+hUGDLli1cLQgT599++w23bt1CSEgIAODq1atQKpU8y9b47yZx PyNySx52U79WFHfb3G1I+jYJaRfToNKpzPtNytUIpiGXmbUBZp1k1h9KBkglUkyPnI6/xf2t6dNo eAg6enaEoCVLIpgxe2P2E7Px3JDnuM2cYpWXl5s7bkBwcDA+/fRTBAQE3FuAFbi6uiI+Ph45OTmt UizTzW9q5Q4AxMTEYOzYsaipqeE4q1Qq5OTkcIoVFRUFT09P1NTUcBfb1NbZArRDwobgq1e+wroj 67B0z9ImLWC9uh45pcYHqrGlear/U9jzyp5ml9wzMIiF4ubPvUFJT//PaXTu0LJqzYwxSEQS3jZO saw9xQEBAVZDCLZGS3ytwYMHw9vbm+er6fV61NXVcf+Ojo5GbGwsDhw4wOtz/fr1CA4OblvSbQDG GIRM2KzF1Bl0uKO8Yz6mwb/a++peAIBY2PTI0hpIhBK4iO//Ey2cYnXs2BEAf6g4d+4cXn75ZYwY MQIymQyMMUilUgQFBTlFmsvdCkhEFm98+/fvx6ZNm3Dx4kUIhULExsZi6lTHrgtsFvcYhoUCIaQS qdmnarBs205tw5zoOW1G4+4kxNaC52PJZDLU1tYCMCvYl19+iT179nBtTCEDoVCIPn36YPPmzU6h ZCZY8y/mz58PvV7PWwrWXuEucUefoD44dv2YcUODv/byZy/jr6l/RaBXIARMAIlYAn+pP3oH9caf R/4ZIT4hLRfCgCfefwJigdn6EQganYZ7EQr1CcXeV/fC3cXdahc8xdq4cSNefPFF3s1hjEGr1Vo4 vYwxnD17FlFRUUhOTrZ4o3Q2NBUYbW9gjMFP6md21htCHgYYUCovRam8lNd+3/l9WHloJR7v/DhS 5qWgV2Cv5vtveCO8evtqs+2ul1+HxwIP0MfW3Rbe4ztjxgxERUVZ9XGsDTsm67Vw4UK8/fbbzRJ5 hLZDQmwCXEWuEAgExvuApmNXpgDmheILiPh7BPaf399s38SIi0s1B9Mbabm83Op+nmK5urri5MmT POW6lyNtUrBPP/0U9fX19yT00MBKGMBeCOwQiF/e/sWYBNho5OfiT3eBi6OB8Nqe11CleMACLI3O WySwPt1s4XC4uroiMzMTR48exfTp0xEVFYX+/fujT58+6NOnD7fc3ETYNERWVlZyUft2j5YqjAOz WXoH9kZNcg1G9hiJjtKOcBW6Gl0YUyAU4MW2AKPlyi3LNUbsmwKZg6RN/mB8e+0f3N/qHCbQTHbD 6NGjMXr0aLO8BstVX1+PK1euYPLkySgrK+OUS6PR4Pr16y2/Mm2MNstZMgUvW2ONWhipb2vI3GTI WJqBnJIc5JblQqFWQKs3lrQ0kAHV9dV4bc9r3NBmGi4//+lzDA4bzPXDm21omCFIfjYZPh5Np427 id0wLWpak/tbXLvBdOM8PDwwaNAghIeH4/bt20ZijaLa9kTj0AIRQSgUNjlDcPDgQXh4eGDkyJFW eQoFQgsFMZVjvCcaboajUtsigiKaXHY/vs949H23L+/c8sryeG3cxG6o1/LdmGmR0x7oc3ZW371N F6mpX21tLQoLC3nzdEDbRbMb33hTdZjGJYsUCgVWrlzJKbbpGJFIZFGHISMjA4wxTJ48GaNGjYJA IMCZM2csZPbu1NtiW9qlZqoMWtGhW9XWP+0iZMImj7E1NDoN/4Fhln4zV7yt0eYb5c0Mly0Az2Ll 5+fj3XffbdbyGAwGnDhxgvs+jsnHkkgkeOyxxx6IjAmmE4+Pj4dGo+HtY4yhpKQER48etTjO1dWV N/F969YtTJo0ySJU8vzzz+Pnn3+Gt7fZP5g5eCb+mfFPLpLNGMP7h96HUqNE78De8PUwJxR6unry OTW8lT314VOYGz0XA0IGcBFwARPgtvx2mw+XKq0KmYWZVqdwGGPQG/TIuJaBlMwU844GDmF+Ybz2 cX3jcKX0ijlTAoRx68dhydglGBo21JhjZeWhEAvFEAvF8HT1RGQoP5bJU6xu3Vr+0Z+7J3Z9fHza NKLNGMPWrVvv2QYwW9jGPiEAfPvtt9BoNBYT0Hl5eZDL5TzF6uLbBTCYswoIxtf49UfXQyQQ8RL+ uLylhhtlUsSyujIkfZcEiVBiMZnflljz3RosT1sOrV7bbN8qrcp4Hg3nbVKaqZH8+/Sn/n/CB0c+ 4D1Uap0a7x96Hy4iF+uGhgAmML4sCIVCqLVqaDaZjQA3dhUUmHN+WuIr3Z0CMmbMGHh4eFhte/eQ 2RLc62bcbYVcXFywc+dOXhs3Nzfe8Nzcgg5fD19M7DfR2HfjrAEG6EgHtV7N/VR6lXl/w/8bp7xo DBpee41Bw7dWLXg5ML2B3Q2VVoUf835EjbIGSq0SSl3TP17qTQPHAGkAIrvwrUvfzn0R4hXChSUa O/JqvRoqncryp1dBqVVCpVOhTlUHrUGLv+01Z01wV9002dyitBLwrUViYiJX08oaJBIJ19Z03INO AzUOdXTu3Bnp6ekWbaZOncqr7Gc6bvjw4fDz8+O1dZO4YcPMDRALxJy1spkzTsYh0hpEAhEETABq +M/E2YR6TT0ul16+Zw6YCabkQVMKzPtT34evlL9OwMfDBx+98JGRFwTGPK8WjttchgUB1367xm3n zs7X1xfPPfdciy8mEcHb2xuXL1/G+vXrm207b948riIeEcHf37/ZlBig5VZz0aJFKCgowLBhljVB 3d3dUVJSwntjk8lkSEtLs1jMAQDdO3ZH3cY6iJjI/PQCfOvSWl2z1p4BvlJfLnu0MQaEDOCGH1Nc alh387l5uXkh+rHoFvMwKZ+BDDj5xknMjZlrtd3EfhNxbfk1GMhgPq6FMkxKOCNqhnnb3YspDAYD 8vPzm1QwT0/P+6qABxir7olEIotUnMLCQoSFhVm0Ly0thVwut9guk8lanSNmMBha9dZ6+sZpvPrl q6hX15uzMgHrytYcrAx7gV6ByHg9o8lD1n6/Fh8e/xCMMUSGRGL3f+/m7b9UfAlzts2BXGl5bXii GYNIIELiHxMxb8S8FhIGNh7biE3HN0FPepDh3ieqM+gwssdIbJ1r9omdYl1hU4rlBNQe4T7RvnNI HsFp4ZSK1R6XlD8CHw4rx20NjxTq4YFTKJZYLLYIc9y9PvAR2hecwnkHgHXr1iEpKYmbE7x+/frv tijbwwCnUSwAXPH/0NBQR1N5hAeEUynWIzw8+H9EVzl+44UOGwAAAABJRU5ErkJggg== "/>
     </g>
 <!--/page-->
 <!--{[%END-%]}-->
