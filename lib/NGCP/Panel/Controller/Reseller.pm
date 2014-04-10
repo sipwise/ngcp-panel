@@ -460,7 +460,7 @@ sub invoice_details_ajax :Chained('base') :PathPart('invoice/details/ajax') :Arg
     #use irka;
     #use Data::Dumper;
     #irka::loglong(Dumper($dt_columns));
-    $c->forward( 'invoice_details_ajax' );
+    $c->forward( 'invoice_details' );
     my $dt_columns = from_json($dt_columns_json);
     NGCP::Panel::Utils::Datatables::process($c, $c->stash->{invoice_details_raw}, $dt_columns );
     $c->detach( $c->view("JSON") );
@@ -819,6 +819,8 @@ sub invoice_template :Chained('invoice_details') :PathPart('template') :Args {
     }elsif($in->{tt_output_type}=~m'zip'){
         $c->response->content_type('application/zip');
     }
+    
+    #$out->{tt_string}=~s/(<g .*?(id *=["' ]+(?:title|bg|mid)page["' ]+)?.*?)(?:display="none")(?(2)(?:.*?>)($2.*?>))/$1$3/gs;
     
     if($in->{tt_viewmode} eq 'raw'){
         #$c->stash->{VIEW_NO_TT_PROCESS} = 1;
