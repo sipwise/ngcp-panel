@@ -1,0 +1,75 @@
+[% site_config.title = c.loc('Panel Branding') -%]
+
+<div class="row">
+    <span>
+        <a class="btn btn-primary btn-large" href="[% c.uri_for('/back') %]"><i class="icon-arrow-left"></i> [% c.loc('Back') %]</a>
+    </span>
+</div>
+[% back_created = 1 -%]
+
+<div class="ngcp-separator"></div>
+
+<div class="row">
+    [% FOREACH m IN messages -%]
+        <div class="alert alert-[% m.type %]">[% m.text %]</div>
+    [% END -%]
+    [% IF reseller.first.status != "active" -%]
+        <div class="alert">[% c.loc('Reseller is <b>[_1]</b>', reseller.first.status) %]</div>
+    [% END -%]
+[% messages = [] -%]
+</div>
+
+
+            [% UNLESS c.user.read_only -%]
+            <span>
+                <a href="[% c.uri_for_action('/reseller/edit_branding_css', c.req.captures) %]" class="btn btn-large btn-primary"><i class="icon-edit"></i> Edit Branding</a>
+                [% IF branding.logo -%]
+                <a href="[% c.uri_for_action('/reseller/delete_branding_logo', c.req.captures) %]" class="btn btn-large btn-primary"><i class="icon-trash"></i> Delete Logo</a>
+                [% END -%]
+            </span>
+            <div class="ngcp-separator"></div>
+            [% END -%]
+
+            [% IF branding.defined -%]
+                [% IF branding.logo.defined -%]
+                    <h3>Custom Logo</h3>
+                    <img src="[% c.uri_for_action('/reseller/get_branding_logo', c.req.captures) %]">
+                    <p>
+                        [% c.loc("You can use the logo by adding the following CSS to the Custom CSS below:") %]
+<pre>
+#header .brand {
+    background: url([% c.uri_for_action('/reseller/get_branding_logo', c.req.captures) %]) no-repeat 0 0;
+    background-size: 280px 32px;
+}
+</pre>
+                    </p>
+                [% ELSE -%]
+                    No logo uploaded.
+                [% END -%]
+
+
+                <h3>Custom CSS</h3>
+                <p>
+                <pre style="color:#000">
+[% branding.css %]
+                </pre>
+                </p>
+            [% ELSE -%]
+                No branding specified, using standard branding.
+            [% END -%]
+
+[% IF branding_edit_flag == 1 -%]
+[%
+    IF form.has_for_js;
+        form.render_repeatable_js;
+    END;
+    PROCESS "helpers/modal.tt";
+    modal_header(m.edit_flag = branding_edit_flag,
+                 m.name = "Reseller Branding");
+    translate_form(branding_form).render;
+    modal_footer();
+    modal_script(m.close_target = close_target);
+-%]
+[% END -%]
+
+[% # vim: set tabstop=4 syntax=html expandtab: -%]

@@ -265,6 +265,7 @@
                 No branding specified, using standard branding.
             [% END -%]
 
+            </div>
         </div>
     </div>
 
