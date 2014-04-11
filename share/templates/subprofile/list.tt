@@ -1,0 +1,32 @@
+[% site_config.title = c.loc('Subscriber Profiles') -%]
+[%
+    helper.name = c.loc('Subscriber Profile');
+    helper.identifier = 'subscriber_profile';
+    helper.messages = messages;
+    helper.dt_columns = profile_dt_columns;
+    helper.length_change = 1;
+
+    helper.close_target = close_target;
+    helper.create_flag = create_flag;
+    helper.edit_flag = edit_flag;
+    helper.form_object = form;
+    helper.ajax_uri = c.uri_for_action( "/subscriberprofile/ajax" );
+
+    IF clone_flag;
+        helper.name = c.loc('cloned Subscriber Profile');
+    END;
+
+    UNLESS c.user.read_only;
+        helper.dt_buttons = [
+            { name = c.loc('Edit'), uri = "/subscriberprofile/'+full.id+'/edit", class = 'btn-small btn-primary', icon = 'icon-edit' },
+            { name = c.loc('Delete'), uri = "/subscriberprofile/'+full.id+'/delete", class = 'btn-small btn-secondary', icon = 'icon-trash' },
+            { name = c.loc('Clone'), uri = "/subscriberprofile/'+full.id+'/clone", class = 'btn-small btn-tertiary', icon = 'icon-retweet' },
+        ];
+        helper.top_buttons = [
+            { name = c.loc('Create Subscriber Profile'), uri = c.uri_for('/subscriberprofile/create'), icon = 'icon-star' },
+        ];
+    END;
+
+    PROCESS 'helpers/datatables.tt';
+-%]
+[% # vim: set tabstop=4 syntax=html expandtab: -%]
