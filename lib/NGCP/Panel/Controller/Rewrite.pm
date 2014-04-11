@@ -22,7 +22,7 @@ sub set_list :Chained('/') :PathPart('rewrite') :CaptureArgs(0) {
     my ( $self, $c ) = @_;
 
     $c->stash->{sets_rs} = $c->model('DB')->resultset('voip_rewrite_rule_sets');
-    unless($c->user->is_superuser) {
+    unless($c->user->roles eq "admin") {
         $c->stash->{sets_rs} = $c->stash->{sets_rs}->search({
             reseller_id => $c->user->reseller_id
         });
@@ -80,7 +80,7 @@ sub set_edit :Chained('set_base') :PathPart('edit') {
     $params->{reseller}{id} = delete $params->{reseller_id};
     $params = $params->merge($c->session->{created_objects});
     my $form;
-    if($c->user->is_superuser) {
+    if($c->user->roles eq "admin") {
         $form = NGCP::Panel::Form::RewriteRule::AdminSet->new;
     } else {
         $form = NGCP::Panel::Form::RewriteRule::ResellerSet->new;
@@ -100,7 +100,7 @@ sub set_edit :Chained('set_base') :PathPart('edit') {
     );
     if($posted && $form->validated) {
         try {
-            if($c->user->is_superuser) {
+            if($c->user->roles eq "admin") {
                 $form->values->{reseller_id} = $form->values->{reseller}{id};
                 delete $form->values->{reseller};
             }
@@ -157,21 +157,24 @@ sub set_clone :Chained('set_base') :PathPart('clone') {
     );
     if($posted && $form->validated) {
         try {
-            my $new_set = $c->stash->{sets_rs}->create({
-                %{ $form->values },
-                reseller_id => $c->stash->{set_result}->reseller_id,
-            });
-            my @old_rules = $c->stash->{set_result}->voip_rewrite_rules->all;
-            for my $rule (@old_rules) {
-                $new_set->voip_rewrite_rules->create({
-                    match_pattern => $rule->match_pattern,
-                    replace_pattern => $rule->replace_pattern,
-                    description => $rule->description,
-                    direction => $rule->direction,
-                    field => $rule->field,
-                    priority => $rule->priority,
+            my $schema = $c->model('DB');
+            $schema->txn_do(sub {
+                my $new_set = $c->stash->{sets_rs}->create({
+                    %{ $form->values },
+                    reseller_id => $c->stash->{set_result}->reseller_id,
                 });
-            }
+                my @old_rules = $c->stash->{set_result}->voip_rewrite_rules->all;
+                for my $rule (@old_rules) {
+                    $new_set->voip_rewrite_rules->create({
+                        match_pattern => $rule->match_pattern,
+                        replace_pattern => $rule->replace_pattern,
+                        description => $rule->description,
+                        direction => $rule->direction,
+                        field => $rule->field,
+                        priority => $rule->priority,
+                    });
+                }
+            });
 
             $c->flash(messages => [{type => 'success', text => $c->loc('Rewrite rule set successfully cloned')}]);
         } catch($e) {
@@ -196,7 +199,7 @@ sub set_create :Chained('set_list') :PathPart('create') :Args(0) {
     my $params = {};
     $params = $params->merge($c->session->{created_objects});
     my $form;
-    if($c->user->is_superuser) {
+    if($c->user->roles eq "admin") {
         $form = NGCP::Panel::Form::RewriteRule::AdminSet->new;
     } else {
         $form = NGCP::Panel::Form::RewriteRule::ResellerSet->new;
@@ -216,7 +219,7 @@ sub set_create :Chained('set_list') :PathPart('create') :Args(0) {
     );
     if($posted && $form->validated) {
         try {
-            if($c->user->is_superuser) {
+            if($c->user->roles eq "admin") {
                 $form->values->{reseller_id} = $form->values->{reseller}{id};
                 delete $form->values->{reseller};
             } else {
