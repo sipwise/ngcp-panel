@@ -85,10 +85,41 @@ var uriForAction = function( data, type ){
 
 <div class="accordion-group">
     <div class="accordion-heading">
-        <a class="accordion-toggle" data-toggle="collapse" data-parent="#customer_invoice_template" href="#collapse_invoice_details">[% c.loc('Invoice details') %]</a>
+        <a class="accordion-toggle" data-toggle="collapse" data-parent="#customer_invoice_template" href="#collapse_invoice_details_zones">[% c.loc('Invoice details') %]</a>
     </div>
     
-    <div class="accordion-body collapse" id="collapse_invoice_details">
+    <div class="accordion-body collapse" id="collapse_invoice_details_zones">
+    <div class="accordion-inner" style="overflow:auto; height: 300px;">
+    
+    
+[%
+    clearHelper();
+    helper.name = c.loc('Invoice Connection Fees');
+    helper.dt_columns = [
+        { name => 'source_customer_billing_zones_history.zone', title => c.loc('Zone'), search=> 1 },
+        { name => 'number', title => c.loc('Calls') },
+        { name => 'duration', title => c.loc('Usage') },
+        { name => 'free_time', title => c.loc('Free time') },
+        { name => 'cost', title => c.loc('Amount EUR') },
+    ];
+    helper.name_single = c.loc('Invoice Connections Records');
+    helper.identifier = 'invoice_details_zones_raw';
+    helper.ajax_uri = c.uri_for_action( '/reseller/invoice_details_zones_ajax', [ contract.id ] ) ;
+    initHelperAuto();
+    PROCESS 'helpers/datatables.tt';
+-%]
+    [%PROCESS 'invoice/invoice_details_zones_list.tt' %]
+
+    </div>
+    </div>
+</div>
+
+<div class="accordion-group">
+    <div class="accordion-heading">
+        <a class="accordion-toggle" data-toggle="collapse" data-parent="#customer_invoice_template" href="#collapse_invoice_details_zones">[% c.loc('Invoice details') %]</a>
+    </div>
+    
+    <div class="accordion-body collapse" id="collapse_invoice_details_zones">
     <div class="accordion-inner" style="overflow:auto; height: 300px;">
     
     
@@ -96,19 +127,19 @@ var uriForAction = function( data, type ){
     clearHelper();
     helper.name = c.loc('Invoice Details');
     helper.dt_columns = [
-        { name => 'zone', title => c.loc('Zone'), search=> 1 },
-        { name => 'number', title => c.loc('Calls amount') },
-        { name => 'duration', title => c.loc('Duration') },
+        { name => 'source_customer_billing_zones_history.zone', title => c.loc('Zone'), search=> 1 },
+        { name => 'number', title => c.loc('Calls') },
+        { name => 'duration', title => c.loc('Usage') },
         { name => 'free_time', title => c.loc('Free time') },
-        { name => 'cost', title => c.loc('Cash') },
+        { name => 'cost', title => c.loc('Amount EUR') },
     ];
-    helper.name_single = c.loc('Invoice Record');
-    helper.identifier = 'invoice_details_raw';
-    helper.ajax_uri = c.uri_for_action( '/reseller/invoice_details_ajax', [ contract.id ] ) ;
+    helper.name_single = c.loc('Invoice Connections Records');
+    helper.identifier = 'invoice_details_zones_raw';
+    helper.ajax_uri = c.uri_for_action( '/reseller/invoice_details_zones_ajax', [ contract.id ] ) ;
     initHelperAuto();
     PROCESS 'helpers/datatables.tt';
 -%]
-    [%PROCESS 'invoice/invoice_details_list.tt' %]
+    [%PROCESS 'invoice/invoice_details_zones_list.tt' %]
 
     </div>
     </div>

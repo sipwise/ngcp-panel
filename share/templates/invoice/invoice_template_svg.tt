@@ -33,7 +33,7 @@ g, text, tspan {
 <!--pageSet-->
 <!--{[%END-%]}-->
 
-<!--{[%MACRO titlepage(callsdata, page) BLOCK-%]}-->
+<!--{[%MACRO titlepage(zonesdata, callsdata, page) BLOCK-%]}-->
 <!--page-->
     <g y="0" x="0" width="215" height="297" id="titlepage" display="none">
     
@@ -61,7 +61,7 @@ g, text, tspan {
         <text x="195" y="140" text-anchor="end">[%invoice.serviceallowance%]</text>
         <text x="15"  y="150">Cloud PBX Account [%date.month_start%] - [%date.month_end%] [%date.year%]</text>
         <text x="195" y="150" text-anchor="end">[%invoice.cloud_pbx_amount%]</text>
-        <text x="15"  y="160">Discount (12M reduced Service Fee)</text>
+        <text x="15"  y="160">Discount (12M reduced Service Fee):</text>
         <text x="195" y="160" text-anchor="end">[%invoice.discount%]</text>
         <text x="15"  y="170">Voice Termination Fees [%date.month_start%] - [%date.month_end%] [%date.year%]</text>
         <text x="195" y="170" text-anchor="end">[%invoice.voice_termination_fees%]</text>
@@ -82,87 +82,46 @@ g, text, tspan {
         <text x="15" y="255">More details can be found online at www.sipwise.net in My Account.</text>
         <text x="15" y="260">With best regards,</text>
         <text x="15" y="265">Your Sipwise Team</text>
-    
-        
-        
-        <g y="265" x="10" width="195" height="150" id="titlepage_invoicedetails" transform="translate(10, 265)" rows="0" style="display:none;">
-        <!--{[%MACRO titlerow BLOCK-%]}-->
-            <text id="titlepage_calls_title" text-anchor="end">
-                <tspan x="5"   id="titlepage_calls_number" text-anchor="start">#</tspan>
-                <tspan x="15"  id="titlepage_calls_zone" text-anchor="start">Zone</tspan>
-                <tspan x="95"  id="titlepage_calls_number">Number</tspan>
-                <tspan x="130" id="titlepage_calls_duration">Duration</tspan>
-                <tspan x="160" id="titlepage_calls_freetime">Free time</tspan>
-                <tspan x="190" id="titlepage_calls_cost">Cost</tspan>
-            </text>
-    <!--{[%END-%]}-->
-    <!--{[%MACRO datarow(call) BLOCK-%]}-->
-            <text y="10" text-anchor="end" id="titlepage_calls[%loop.count-%]_text" class="datarow">
-                <tspan x="5" id="titlepage_calls_number[%loop.count-%]" text-anchor="start"><!--{[% call.0 %]}--><!--{[%#}-->1<!--{%]}--></tspan>
-                <!--{[%IF call.1; call = call.1; END%]}-->
-                <tspan x="15" id="titlepage_calls_zone[%loop.count-%]" text-anchor="start"><!--{[% call.get_column('zone') %]}--><!--{[%#}-->Example zone<!--{%]}--></tspan>
-                <tspan x="95" id="titlepage_calls_number[%loop.count-%]"><!--{[% call.get_column('number') %]}--><!--{[%#}-->0<!--{%]}--></tspan>
-                <tspan x="130" id="titlepage_calls_duration[%loop.count-%]"><!--{[% call.get_column('duration')|format('%.3f') %]}--><!--{[%#}-->0.000<!--{%]}--></tspan>
-                <tspan x="160" id="titlepage_calls_freetime[%loop.count-%]"><!--{[% call.get_column('free_time')|format('%d') %]}--><!--{[%#}-->0.0<!--{%]}--></tspan>
-                <tspan x="190" id="titlepage_calls_cost[%loop.count-%]"><!--{[% ( call.get_column('cost') / 100 ) |format('%.2f') %]}--><!--{[%#}-->0.00<!--{%]}--></tspan>
-            </text>
-    <!--{[%END-%]}-->
-    <!--{[%MACRO totalrow BLOCK-%]}-->
-            <text y="20" text-anchor="end" id="titlepage_calls_total" class="datarow">
-                <tspan x="5" id="titlepage_calls_total_title" text-anchor="start">Total:</tspan>
-                <tspan x="95" id="titlepage_calls_total_number"><!--{[% total_number %]}--><!--{[%#}-->0<!--{%]}--></tspan>
-                <tspan x="130" id="titlepage_calls_total_duration"><!--{[% total_duration|format('%.3f') %]}--><!--{[%#}-->0.000<!--{%]}--></tspan>
-                <tspan x="160" id="titlepage_calls_total_freetime"><!--{[% total_free_time|format('%d') %]}--><!--{[%#}-->0.0<!--{%]}--></tspan>
-                <tspan x="190" id="titlepage_calls_total_cost"><!--{[% ( total_cost / 100 )|format('%.2f') %]}--><!--{[%#}-->0.00<!--{%]}--></tspan>
-            </text>
-    <!--{[%END-%]}-->
-
-
-<!--{[%IF callsdata.size%]}-->
-<!--{[% titlerow(page) -%]}-->
-<!--{[% list_calls(callsdata, page, 'datarow', total, 'svg', row_vertical_interval) -%]}-->
-<!--{[% adjustrow (total, page, 'totalrow', 'svg', row_vertical_interval, callsdata.size) -%]}-->
-<!--{[%END%]}-->
-
-        </g>
     </g>
 <!--/page-->
 <!--{[%END-%]}-->
 
-<!--{[%MACRO midpage(callsdata, page) BLOCK-%]}-->
+<!--{[%MACRO zonepage(callsdata, page) BLOCK-%]}-->
 <!--page-->
-    <g id="midpage" display="none">
-        <title>MidPage</title>
+    <g id="zonepage" display="none">
+        <title>ZonePage</title>
 
-        <g y="15" x="10" width="195" height="150" id="midpage_invoicedetails" transform="translate(10, 15)" rows="15">
+        <g y="50" x="10" width="195" height="150" id="zonepage_invoicedetails" transform="translate(10, 50)" zonerows="20">
         <!--{[%MACRO titlerow BLOCK-%]}-->
-            <text id="midpage_calls_title" text-anchor="end">
-                <tspan x="5" id="midpage_calls_number" text-anchor="start">#</tspan>
-                <tspan x="15" id="midpage_calls_zone" text-anchor="start">Zone</tspan>
-                <tspan x="95" id="midpage_calls_number">Number</tspan>
-                <tspan x="130" id="midpage_calls_duration">Duration</tspan>
-                <tspan x="160" id="midpage_calls_freetime">Free time</tspan>
-                <tspan x="190" id="midpage_calls_cost">Cost</tspan>
+            <!--path stroke="#888888" stroke-width="0.25" fill="none" d="m5,45l200,0"/>
+            <path stroke="#888888" stroke-width="0.25" fill="none" d="m5,245l200,0"/-->
+            <text id="zonepage_calls_title" text-anchor="end">
+                <tspan x="5" id="zonepage_calls_num" text-anchor="start">#</tspan>
+                <tspan x="15" id="zonepage_calls_zone" text-anchor="start">Zone</tspan>
+                <tspan x="95" id="zonepage_calls_number">Calls</tspan>
+                <tspan x="130" id="zonepage_calls_duration">Usage</tspan>
+                <tspan x="160" id="zonepage_calls_freetime">Free time</tspan>
+                <tspan x="190" id="zonepage_calls_cost">Amount EUR</tspan>
             </text>
     <!--{[%END-%]}-->
     <!--{[%MACRO datarow(call) BLOCK-%]}-->
-            <text y="10" text-anchor="end" id="midpage_calls[%loop.count-%]" class="datarow">
-                <tspan x="5" id="midpage_calls_number[%loop.count-%]" text-anchor="start"><!--{[% call.0 %]}--><!--{[%#}-->1<!--{%]}--></tspan>
+            <text y="10" text-anchor="end" id="zonepage_calls[%loop.count-%]" class="datarow">
+                <tspan x="5" id="zonepage_calls_num[%loop.count-%]" text-anchor="start"><!--{[% call.0 %]}--><!--{[%#}-->1<!--{%]}--></tspan>
                 <!--{[%IF call.1; call = call.1; END%]}-->
-                <tspan x="15" id="midpage_calls_zone[%loop.count-%]" text-anchor="start"><!--{[% call.get_column('zone') %]}--><!--{[%#}-->Example zone<!--{%]}--></tspan>
-                <tspan x="95" id="midpage_calls_number[%loop.count-%]"><!--{[% call.get_column('number') %]}--><!--{[%#}-->0<!--{%]}--></tspan>
-                <tspan x="130" id="midpage_calls_duration[%loop.count-%]"><!--{[% call.get_column('duration')|format('%.3f') %]}--><!--{[%#}-->0.000<!--{%]}--></tspan>
-                <tspan x="160" id="midpage_calls_freetime[%loop.count-%]"><!--{[% call.get_column('free_time')|format('%d') %]}--><!--{[%#}-->0.0<!--{%]}--></tspan>
-                <tspan x="190" id="midpage_calls_cost[%loop.count-%]"><!--{[% ( call.get_column('cost') / 100 ) |format('%.2f') %]}--><!--{[%#}-->0.00<!--{%]}--></tspan>
+                <tspan x="15" id="zonepage_calls_zone[%loop.count-%]" text-anchor="start"><!--{[% call.get_column('zone') %]}--><!--{[%#}-->Example zone<!--{%]}--></tspan>
+                <tspan x="95" id="zonepage_calls_number[%loop.count-%]"><!--{[% call.get_column('number') %]}--><!--{[%#}-->0<!--{%]}--></tspan>
+                <tspan x="130" id="zonepage_calls_duration[%loop.count-%]"><!--{[% call.get_column('duration')|format('%.3f') %]}--><!--{[%#}-->0.000<!--{%]}--></tspan>
+                <tspan x="160" id="zonepage_calls_freetime[%loop.count-%]"><!--{[% call.get_column('free_time')|format('%d') %]}--><!--{[%#}-->0.0<!--{%]}--></tspan>
+                <tspan x="190" id="zonepage_calls_cost[%loop.count-%]"><!--{[% ( call.get_column('cost') / 100 ) |format('%.2f') %]}--><!--{[%#}-->0.00<!--{%]}--></tspan>
             </text>
     <!--{[%END-%]}-->
     <!--{[%MACRO totalrow BLOCK-%]}-->
-            <text y="20" text-anchor="end" id="midpage_calls_total" class="datarow">
-                <tspan x="5" id="midpage_calls_total_title" text-anchor="start">Total:</tspan>
-                <tspan x="95" id="midpage_calls_total_number"><!--{[% total_number %]}--><!--{[%#}-->0<!--{%]}--></tspan>
-                <tspan x="130" id="midpage_calls_total_duration"><!--{[% total_duration|format('%.3f') %]}--><!--{[%#}-->0.000<!--{%]}--></tspan>
-                <tspan x="160" id="midpage_calls_total_freetime"><!--{[% total_free_time|format('%d') %]}--><!--{[%#}-->0.0<!--{%]}--></tspan>
-                <tspan x="190" id="midpage_calls_total_cost"><!--{[% ( total_cost / 100 )|format('%.2f') %]}--><!--{[%#}-->0.00<!--{%]}--></tspan>
+            <text y="20" text-anchor="end" id="zonepage_calls_total" class="datarow">
+                <tspan x="5" id="zonepage_calls_total_title" text-anchor="start">Total:</tspan>
+                <tspan x="95" id="zonepage_calls_total_number"><!--{[% total_number %]}--><!--{[%#}-->0<!--{%]}--></tspan>
+                <tspan x="130" id="zonepage_calls_total_duration"><!--{[% total_duration|format('%.3f') %]}--><!--{[%#}-->0.000<!--{%]}--></tspan>
+                <tspan x="160" id="zonepage_calls_total_freetime"><!--{[% total_free_time|format('%d') %]}--><!--{[%#}-->0.0<!--{%]}--></tspan>
+                <tspan x="190" id="zonepage_calls_total_cost"><!--{[% ( total_cost / 100 )|format('%.2f') %]}--><!--{[%#}-->0.00<!--{%]}--></tspan>
             </text>
     <!--{[%END-%]}-->
     <!--{[% titlerow(page) -%]}-->
@@ -175,41 +134,43 @@ g, text, tspan {
 <!--{[%END-%]}-->
 
 
-<!--{[%MACRO lastpage(callsdata, page) BLOCK-%]}-->
+<!--{[%MACRO callpage(callsdata, page) BLOCK-%]}-->
 <!--page-->
-    <g id="lastpage" display="none">
-        <title>LastPage</title>
-        <g y="15" x="10" width="195" height="150" id="lastpage_invoicedetails" transform="translate(10, 15)">
+    <g id="callpage" display="none">
+        <title>CallPage</title>
+        <g y="50" x="10" width="195" height="150" id="callpage_invoicedetails" transform="translate(10, 50)">
 
 
         <!--{[%MACRO titlerow BLOCK-%]}-->
-            <text id="lastpage_calls_title" text-anchor="end">
-                <tspan x="5" id="lastpage_calls_number" text-anchor="start">#</tspan>
-                <tspan x="15" id="lastpage_calls_zone" text-anchor="start">Zone</tspan>
-                <tspan x="95" id="lastpage_calls_number">Number</tspan>
-                <tspan x="130" id="lastpage_calls_duration">Duration</tspan>
-                <tspan x="160" id="lastpage_calls_freetime">Free time</tspan>
-                <tspan x="190" id="lastpage_calls_cost">Cost</tspan>
+            <text id="callpage_calls_title" text-anchor="end">
+                <tspan x="5" id="callpage_calls_num" text-anchor="start">#</tspan>
+                <tspan x="15" id="callpage_calls_starttime" text-anchor="start">Start time</tspan>
+                <tspan x="70" id="callpage_calls_duration">Duration</tspan>
+                <tspan x="110" id="callpage_calls_destination">Destination</tspan>
+                <tspan x="150" id="callpage_calls_type">Type</tspan>
+                <tspan x="180" id="callpage_calls_zone" text-anchor="start">Zone/Detail</tspan>
+                <tspan x="200" id="callpage_calls_cost">Amount EUR</tspan>
             </text>
     <!--{[%END-%]}-->
     <!--{[%MACRO datarow(call) BLOCK-%]}-->
-            <text y="10" text-anchor="end" id="lastpage_calls[%loop.count-%]" class="datarow">
-                <tspan x="5" id="lastpage_calls_number[%loop.count-%]" text-anchor="start"><!--{[% call.0 %]}--><!--{[%#}-->1<!--{%]}--></tspan>
+            <text y="10" text-anchor="end" id="callpage_calls[%loop.count-%]" class="datarow">
+                <tspan x="5" id="callpage_calls_num[%loop.count-%]" text-anchor="start"><!--{[% call.0 %]}--><!--{[%#}-->1<!--{%]}--></tspan>
                 <!--{[%IF call.1; call = call.1; END%]}-->
-                <tspan x="15" id="lastpage_calls_zone[%loop.count-%]" text-anchor="start"><!--{[% call.get_column('zone') %]}--><!--{[%#}-->Example zone<!--{%]}--></tspan>
-                <tspan x="95" id="lastpage_calls_number[%loop.count-%]"><!--{[% call.get_column('number') %]}--><!--{[%#}-->0<!--{%]}--></tspan>
-                <tspan x="130" id="lastpage_calls_duration[%loop.count-%]"><!--{[% call.get_column('duration')|format('%.3f') %]}--><!--{[%#}-->0.000<!--{%]}--></tspan>
-                <tspan x="160" id="lastpage_calls_freetime[%loop.count-%]"><!--{[% call.get_column('free_time')|format('%d') %]}--><!--{[%#}-->0.0<!--{%]}--></tspan>
-                <tspan x="190" id="lastpage_calls_cost[%loop.count-%]"><!--{[% ( call.get_column('cost') / 100 ) |format('%.2f') %]}--><!--{[%#}-->0.00<!--{%]}--></tspan>
+                <tspan x="15" id="callpage_calls_start_time%loop.count-%]"><!--{[% call.get_column('start_time') %]}--><!--{[%#}-->0001/01/31 23:59:59<!--{%]}--></tspan>
+                <tspan x="70" id="callpage_calls_duration[%loop.count-%]"><!--{[% call.get_column('duration')|format('%.3f') %]}--><!--{[%#}-->0.000<!--{%]}--></tspan>
+                <tspan x="110" id="callpage_calls_destination[%loop.count-%]"><!--{[% call.get_column('destination').replace('(.*?)\d{4}$','$1****') %]}--><!--{[%#}-->+00000000****<!--{%]}--></tspan>
+                <tspan x="150" id="callpage_calls_type[%loop.count-%]"><!--{[% call.get_column('call_type') %]}--><!--{[%#}-->call<!--{%]}--></tspan>
+                <tspan x="180" id="callpage_calls_zone[%loop.count-%]" text-anchor="start"><!--{[% call.get_column('zone') _ '/' _ call.get_column('zone_detail') %]}--><!--{[%#}-->Example zone/Fixed<!--{%]}--></tspan>
+                <tspan x="200" id="callpage_calls_cost[%loop.count-%]"><!--{[% ( call.get_column('cost') / 100 ) |format('%.2f') %]}--><!--{[%#}-->0.00<!--{%]}--></tspan>
             </text>
     <!--{[%END-%]}-->
     <!--{[%MACRO totalrow BLOCK-%]}-->
-            <text y="20" text-anchor="end" id="lastpage_calls_total" class="datarow">
-                <tspan x="5" id="lastpage_calls_total_title" text-anchor="start">Total:</tspan>
-                <tspan x="95" id="lastpage_calls_total_number"><!--{[% total_number %]}--><!--{[%#}-->0<!--{%]}--></tspan>
-                <tspan x="130" id="lastpage_calls_total_duration"><!--{[% total_duration|format('%.3f') %]}--><!--{[%#}-->0.000<!--{%]}--></tspan>
-                <tspan x="160" id="lastpage_calls_total_freetime"><!--{[% total_free_time|format('%d') %]}--><!--{[%#}-->0.0<!--{%]}--></tspan>
-                <tspan x="190" id="lastpage_calls_total_cost"><!--{[% ( total_cost / 100 )|format('%.2f') %]}--><!--{[%#}-->0.00<!--{%]}--></tspan>
+            <text y="20" text-anchor="end" id="callpage_calls_total" class="datarow">
+                <tspan x="5" id="callpage_calls_total_title" text-anchor="start">Total:</tspan>
+                <tspan x="95" id="callpage_calls_total_number"><!--{[% total_number %]}--><!--{[%#}-->0<!--{%]}--></tspan>
+                <tspan x="130" id="callpage_calls_total_duration"><!--{[% total_duration|format('%.3f') %]}--><!--{[%#}-->0.000<!--{%]}--></tspan>
+                <tspan x="160" id="callpage_calls_total_freetime"><!--{[% total_free_time|format('%d') %]}--><!--{[%#}-->0.0<!--{%]}--></tspan>
+                <tspan x="190" id="callpage_calls_total_cost"><!--{[% ( total_cost / 100 )|format('%.2f') %]}--><!--{[%#}-->0.00<!--{%]}--></tspan>
             </text>
     <!--{[%END-%]}-->
 
@@ -247,6 +208,7 @@ g, text, tspan {
 <!--{[%END-%]}-->
 
 <!--{[%# show_pages(invoice_details,'title')-%]}-->
-<!--{[%# show_pages('mid',3)-%]}-->
+<!--{[%# show_pages('zone',3)-%]}-->
 <!--{[%# show_pages('last')-%]}-->
-<!--{[% show_pages( invoice_details,'all' )-%]}-->
+<!--{[%invoice_details_calls = []%]}-->
+<!--{[% show_pages( invoice_details_zones, invoice_details_calls, 'all' )-%]}-->

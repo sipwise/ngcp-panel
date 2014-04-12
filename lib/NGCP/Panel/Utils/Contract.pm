@@ -260,7 +260,7 @@ sub get_contract_calls_rs{
 #        source_user_id => { 'in' => [ map {$_->uuid} @{$contract->{subscriber}} ] },
         call_status       => 'ok',
         source_user_id    => { '!=' => '0' },
-        source_account_id => $contract_id,
+#        source_account_id => $contract_id,
 #         start_time        =>
 #             [ -and =>
 #                 { '>=' => $stime->epoch},
@@ -282,8 +282,10 @@ sub get_contract_calls_rs{
             { sum         => 'me.duration', -as => 'duration' },
             { count       => '*', -as => 'number' },
             'source_customer_billing_zones_history.zone',
+            'source_customer_billing_zones_history.detail', 
         ],
-        'as' => [qw/cost free_time duration number zone/],
+        '+as' => [qw/cost free_time duration number zone zone_detail/],
+        #alias => 
         join        => 'source_customer_billing_zones_history',
         group_by    => 'source_customer_billing_zones_history.zone',
     } );

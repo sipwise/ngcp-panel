@@ -318,8 +318,10 @@ sub _handle_reseller_status_change {
 sub details :Chained('base') :PathPart('details') :Args(0) :Does(ACL) :ACLDetachTo('/denied_page') :AllowedRole(admin) {
     my ($self, $c) = @_;
     #didn't find a way to make it correct with chain
-    $c->forward('invoice_details');
-    #$self->invoice_details($c);
+    $c->forward('invoice_details_zones');
+    $c->forward('invoice_details_calls');
+    #$self->invoice_details_zones($c);
+    #$self->invoice_details_calles($c);
     $c->stash(template => 'reseller/details.tt');
     return;
 }
@@ -429,9 +431,9 @@ sub messages :Chained('list_reseller') :PathPart('messages') :Args(0) {
     $c->log->debug('messages');
     $c->stash( messages => $c->flash->{messages} );
     $c->stash( template => 'helpers/ajax_messages.tt' );
-    $c->detach( $c->view('SVG') );
+    $c->detach( $c->view('SVG') );#no wrapper view
 }
-sub invoice_details :Chained('base') :PathPart('invoice') :CaptureArgs(0) {
+sub invoice_details_zones :Chained('base') :PathPart('invoice') :CaptureArgs(0) {
     my ($self, $c) = @_;
     $c->log->debug('invoice_details');
     my $contract_id = $c->stash->{contract}->id;
@@ -440,29 +442,63 @@ sub invoice_details :Chained('base') :PathPart('invoice') :CaptureArgs(0) {
 
     #look, NGCP::Panel::Utils::Contract - it is kind of backend separation here
     #my $form = NGCP::Panel::Form::InvoiceTemplate::Basic->new( );
-    my $invoice_details = NGCP::Panel::Utils::Contract::get_contract_calls_rs(
+    my $invoice_details_zones = NGCP::Panel::Utils::Contract::get_contract_zonesfees_rs(
         c => $c,
         contract_id => $contract_id,
         stime => $stime,
         etime => $etime,
     );
     #TODO: FAKE FAKE FAKE FAKE
-    my $invoice_details_raw = $invoice_details;
-    $invoice_details = [$invoice_details_raw->all()];
+    my $invoice_details_zones_raw = $invoice_details_zones;
+    $invoice_details_zones = [$invoice_details_zones_raw->all()];
     my $i = 1;
-    $invoice_details = [map{[$i++,$_]} (@$invoice_details) x 21];
-    $c->stash( invoice_details => $invoice_details );
-    $c->stash( invoice_details_raw => $invoice_details_raw );
+    $invoice_details_zones = [map{[$i++,$_]} (@$invoice_details_zones) x 21];
+    $c->stash( invoice_details_zones => $invoice_details_zones );
+    $c->stash( invoice_details_zones_raw => $invoice_details_zones_raw );
 }
-sub invoice_details_ajax :Chained('base') :PathPart('invoice/details/ajax') :Args(0) {
+sub invoice_details_calls :Chained('invoice_details_zones') :PathPart('') :CaptureArgs(0) {
+    my ($self, $c) = @_;
+    $c->log->debug('invoice_details_calls');
+    my $contract_id = $c->stash->{contract}->id;
+    my $stime = NGCP::Panel::Utils::DateTime::current_local()->truncate(to => 'month');
+    my $etime = $stime->clone->add(months => 1);
+
+    #look, NGCP::Panel::Utils::Contract - it is kind of backend separation here
+    #my $form = NGCP::Panel::Form::InvoiceTemplate::Basic->new( );
+    my $invoice_details_calls = NGCP::Panel::Utils::Contract::get_contract_calls_rs(
+        c => $c,
+        contract_id => $contract_id,
+        stime => $stime,
+        etime => $etime,
+    );
+    #TODO: FAKE FAKE FAKE FAKE
+    my $invoice_details_calls_raw = $invoice_details_calls;
+    $invoice_details_calls = [$invoice_details_calls_raw->all()];
+    my $i = 1;
+    $invoice_details_calls = [map{[$i++,$_]} (@$invoice_details_calls) x 21];
+    $c->stash( invoice_details_calls => $invoice_details_calls );
+    $c->stash( invoice_details_calls_raw => $invoice_details_calls_raw );
+}
+sub invoice_details_zones_ajax :Chained('base') :PathPart('invoice/details/zones/ajax') :Args(0) {
     my ($self, $c) = @_;
     my $dt_columns_json = $c->request->parameters->{dt_columns};
     #use irka;
     #use Data::Dumper;
     #irka::loglong(Dumper($dt_columns));
-    $c->forward( 'invoice_details' );
+    $c->forward( 'invoice_details_zones' );
     my $dt_columns = from_json($dt_columns_json);
-    NGCP::Panel::Utils::Datatables::process($c, $c->stash->{invoice_details_raw}, $dt_columns );
+    NGCP::Panel::Utils::Datatables::process($c, $c->stash->{invoice_details_zones_raw}, $dt_columns );
+    $c->detach( $c->view("JSON") );
+}
+sub invoice_details_calls_ajax :Chained('base') :PathPart('invoice/details/calls/ajax') :Args(0) {
+    my ($self, $c) = @_;
+    my $dt_columns_json = $c->request->parameters->{dt_columns};
+    #use irka;
+    #use Data::Dumper;
+    #irka::loglong(Dumper($dt_columns));
+    $c->forward( 'invoice_details_calls' );
+    my $dt_columns = from_json($dt_columns_json);
+    NGCP::Panel::Utils::Datatables::process($c, $c->stash->{invoice_details_calls_raw}, $dt_columns );
     $c->detach( $c->view("JSON") );
 }
 sub invoice_template_info :Chained('base') :PathPart('invoice/template/info') :Args(0) {
@@ -659,7 +695,7 @@ sub invoice_template_delete :Chained('base') :PathPart('invoice_template/delete'
     $c->forward( 'invoice_template_list' );
 }
 
-sub invoice_template_list_data :Chained('invoice_details') :PathPart('') :CaptureArgs(0) {
+sub invoice_template_list_data :Chained('invoice_details_zones') :PathPart('') :CaptureArgs(0) {
     my ($self, $c) = @_; 
     $c->log->debug('invoice_template_list_data');
     my($validator,$backend,$in,$out);
@@ -681,7 +717,7 @@ sub invoice :Chained('invoice_template_list_data') :PathPart('') :Args(0) {
     $c->stash(template => 'invoice/invoice.tt'); 
 }
 
-sub invoice_template :Chained('invoice_details') :PathPart('template') :Args {
+sub invoice_template :Chained('invoice_details_calls') :PathPart('template') :Args {
     my ($self, $c) = @_;
     $c->log->debug('invoice_template');
     no warnings 'uninitialized';

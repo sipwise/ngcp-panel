@@ -1,5 +1,3 @@
-[%#It can be separated later to form template and loaded with ajax and fillinform template::toolkit plugin. %]
-[%#It is reliable and easy to implement solution, but requires additional modules. For now populate small form with jquery.%]
 [%# USE FillInForm %]
 <script>
 function getTtIdVal(){
