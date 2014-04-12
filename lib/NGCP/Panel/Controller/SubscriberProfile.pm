@@ -116,9 +116,15 @@ sub create :Chained('profile_list') :PathPart('create') :Args(0) {
                     name => $name,
                     description => $desc,
                 });
-                
-                # TODO: save profile_attributes here too
-
+              
+                # TODO: should we rather take the name and load the id from db,
+                # instead of trusting the id coming from user input?
+                foreach my $attr(keys %{ $form->values }) {
+                    next unless($form->values->{$attr});
+                    $profile->profile_attributes->create({
+                        attribute_id => $form->values->{$attr},
+                    });
+                }
 
                 delete $c->session->{created_objects}->{reseller};
             });
@@ -140,10 +146,14 @@ sub create :Chained('profile_list') :PathPart('create') :Args(0) {
 sub edit :Chained('base') :PathPart('edit') {
     my ($self, $c) = @_;
 
+    my $profile = $c->stash->{profile_result};
     my $posted = ($c->request->method eq 'POST');
-    my $params = { $c->stash->{profile_result}->get_inflated_columns };
+    my $params = { $profile->get_inflated_columns };
     $params->{reseller}{id} = delete $params->{reseller_id};
     $params = $params->merge($c->session->{created_objects});
+    foreach my $old_attr($profile->profile_attributes->all) {
+        $params->{$old_attr->attribute->attribute} = $old_attr->attribute->id;
+    }
     my $form;
     if($c->user->roles eq "admin") {
         $form = NGCP::Panel::Form::SubscriberProfile::Admin->new(ctx => $c);
@@ -167,12 +177,38 @@ sub edit :Chained('base') :PathPart('edit') {
     );
     if($posted && $form->validated) {
         try {
-            if($c->user->is_superuser) {
-                $form->values->{reseller_id} = $form->values->{reseller}{id};
+            my $schema = $c->model('DB');
+            $schema->txn_do(sub {
+                my $reseller_id;
+                if($c->user->roles eq "admin") {
+                    $reseller_id = $form->values->{reseller}{id};
+                } else {
+                    $reseller_id = $c->user->reseller_id;
+                }
                 delete $form->values->{reseller};
-            }
-            $c->stash->{profile_result}->update($form->values);
-            delete $c->session->{created_objects}->{reseller};
+                my $name = delete $form->values->{name};
+                my $desc = delete $form->values->{description};
+                unless($name eq $profile->name && $desc eq $profile->description) {
+                    $profile->update({
+                        name => $name,
+                        description => $desc,
+                    });
+                }
+
+                # TODO: reuse attributes for efficiency reasons?
+                $profile->profile_attributes->delete_all;
+              
+                # TODO: should we rather take the name and load the id from db,
+                # instead of trusting the id coming from user input?
+                foreach my $attr(keys %{ $form->values }) {
+                    next unless($form->values->{$attr});
+                    $profile->profile_attributes->create({
+                        attribute_id => $form->values->{$attr},
+                    });
+                }
+
+                delete $c->session->{created_objects}->{reseller};
+            });
             $c->flash(messages => [{type => 'success', text => $c->loc('Subscriber profile successfully updated')}]);
         } catch($e) {
             NGCP::Panel::Utils::Message->error(
@@ -234,7 +270,7 @@ sub clone :Chained('base') :PathPart('clone') {
                 my @old_attributes = $c->stash->{profile_result}->profile_attributes->all;
                 for my $attr (@old_attributes) {
                     $new_profile->profile_attributes->create({
-                        attribute_id => $attr->id,
+                        attribute_id => $attr->attribute_id,
                     });
                 }
             });
@@ -256,234 +292,6 @@ sub clone :Chained('base') :PathPart('clone') {
 }
 
 
-=pod
-sub rules_list :Chained('set_base') :PathPart('rules') :CaptureArgs(0) {
-    my ( $self, $c ) = @_;
-    
-    my $rules_rs = $c->stash->{profile_result}->voip_rewrite_rules;
-    $c->stash(rules_rs => $rules_rs);
-    $c->stash(rules_uri => $c->uri_for_action("/rewrite/rules_root", [$c->req->captures->[0]]));
-
-    $c->stash(template => 'rewrite/rules_list.tt');
-}
-
-sub rules_root :Chained('rules_list') :PathPart('') :Args(0) {
-    my ($self, $c) = @_;
-    
-    my $rules_rs    = $c->stash->{rules_rs};
-    my $param_move  = $c->req->params->{move};
-    my $param_where = $c->req->params->{where};
-    
-    my $elem = $rules_rs->find($param_move)
-        if ($param_move && $param_move->is_integer && $param_where);
-    if($elem) {
-        my $use_next = ($param_where eq "down") ? 1 : 0;
-        my $swap_elem = $rules_rs->search({
-            field => $elem->field,
-            direction => $elem->direction,
-            priority => { ($use_next ? '>' : '<') => $elem->priority },
-        },{
-            order_by => {($use_next ? '-asc' : '-desc') => 'priority'}
-        })->first;
-        try {
-            if ($swap_elem) {
-                my $tmp_priority = $swap_elem->priority;
-                $swap_elem->priority($elem->priority);
-                $elem->priority($tmp_priority);
-                $swap_elem->update;
-                $elem->update;
-            } elsif($use_next) {
-                my $last_priority = $c->stash->{rules_rs}->get_column('priority')->max() || 49;
-                $elem->priority(int($last_priority) + 1);
-                $elem->update;
-            } else {
-                my $last_priority = $c->stash->{rules_rs}->get_column('priority')->min() || 1;
-                $elem->priority(int($last_priority) - 1);
-                $elem->update;
-            }
-        } catch($e) {
-            NGCP::Panel::Utils::Message->error(
-                c => $c,
-                error => $e,
-                desc  => $c->loc('Failed to move rewrite rule.'),
-            );
-        }
-    }
-    
-    my @caller_in = $rules_rs->search({
-        field => 'caller',
-        direction => 'in',
-    },{
-        order_by => { -asc => 'priority' },
-    })->all;
-    
-    my @callee_in = $rules_rs->search({
-        field => 'callee',
-        direction => 'in',
-    },{
-        order_by => { -asc => 'priority' },
-    })->all;
-    
-    my @caller_out = $rules_rs->search({
-        field => 'caller',
-        direction => 'out',
-    },{
-        order_by => { -asc => 'priority' },
-    })->all;
-    
-    my @callee_out = $rules_rs->search({
-        field => 'callee',
-        direction => 'out',
-    },{
-        order_by => { -asc => 'priority' },
-    })->all;
-    
-    for my $row (@caller_in, @callee_in, @caller_out, @callee_out) {
-        my $mp = $row->match_pattern;
-        my $rp = $row->replace_pattern;
-        $mp =~ s/\$avp\(s\:(\w+)\)/\${$1}/g;
-        $rp =~ s/\$avp\(s\:(\w+)\)/\${$1}/g;
-        $row->match_pattern($mp);
-        $row->replace_pattern($rp);
-    }
-    
-    $c->stash(rules => {
-        caller_in  => \@caller_in,
-        callee_in  => \@callee_in,
-        caller_out => \@caller_out,
-        callee_out => \@callee_out,
-    });
-    return;
-}
-
-sub rules_base :Chained('rules_list') :PathPart('') :CaptureArgs(1) {
-    my ($self, $c, $rule_id) = @_;
-
-    unless($rule_id && $rule_id->is_integer) {
-        NGCP::Panel::Utils::Message->error(
-            c     => $c,
-            log   => 'Invalid rewrite rule id detected',
-            desc  => $c->loc('Invalid rewrite rule id detected'),
-        );
-        NGCP::Panel::Utils::Navigation::back_or($c, $c->stash->{rules_uri});
-    }
-
-    my $res = $c->stash->{rules_rs}->find($rule_id);
-    unless(defined($res)) {
-        NGCP::Panel::Utils::Message->error(
-            c     => $c,
-            log   => 'Rewrite rule does not exist',
-            desc  => $c->loc('Rewrite rule does not exist'),
-        );
-        NGCP::Panel::Utils::Navigation::back_or($c, $c->stash->{rules_uri});
-    }
-    $c->stash(rule_result => $res);
-}
-
-sub rules_edit :Chained('rules_base') :PathPart('edit') {
-    my ($self, $c) = @_;
-
-    my $posted = ($c->request->method eq 'POST');
-    my $form = NGCP::Panel::Form::RewriteRule::Rule->new;
-    $form->process(
-        posted => $posted,
-        params => $c->request->params,
-        item   => $c->stash->{rule_result},
-    );
-    NGCP::Panel::Utils::Navigation::check_form_buttons(
-        c => $c,
-        form => $form,
-        fields => {},
-        back_uri => $c->req->uri,
-    );
-    if($posted && $form->validated) {
-        try {
-            $c->stash->{rule_result}->update($form->values);
-            $self->_sip_dialplan_reload();
-            $c->flash(messages => [{type => 'success', text => $c->loc('Rewrite rule successfully updated')}]);
-        } catch($e) {
-            NGCP::Panel::Utils::Message->error(
-                c => $c,
-                error => $e,
-                desc  => $c->loc('Failed to update rewrite rule.'),
-            );
-        }
-        NGCP::Panel::Utils::Navigation::back_or($c, $c->stash->{rules_uri});
-    }
-
-    $c->stash(form => $form);
-    $c->stash(edit_flag => 1);
-}
-
-sub rules_delete :Chained('rules_base') :PathPart('delete') {
-    my ($self, $c) = @_;
-    
-    try {
-        $c->stash->{rule_result}->delete;
-        $self->_sip_dialplan_reload();
-        $c->flash(messages => [{type => 'success', text => $c->loc('Rewrite rule successfully deleted') }]);
-    } catch($e) {
-        NGCP::Panel::Utils::Message->error(
-            c => $c,
-            error => $e,
-            desc  => $c->loc('Failed to delete rewrite rule.'),
-        );
-    };
-    NGCP::Panel::Utils::Navigation::back_or($c, $c->stash->{rules_uri});
-}
-
-sub rules_create :Chained('rules_list') :PathPart('create') :Args(0) {
-    my ($self, $c) = @_;
-
-    my $posted = ($c->request->method eq 'POST');
-    my $form = NGCP::Panel::Form::RewriteRule::Rule->new;
-    $form->process(
-        posted => $posted,
-        params => $c->request->params,
-    );
-    NGCP::Panel::Utils::Navigation::check_form_buttons(
-        c => $c,
-        form => $form,
-        fields => {},
-        back_uri => $c->req->uri,
-    );
-    if($posted && $form->validated) {
-        try {
-            my $last_priority = $c->stash->{rules_rs}->get_column('priority')->max() || 49;
-            $form->values->{priority} = int($last_priority) + 1;
-            $c->stash->{rules_rs}->create($form->values);
-            $self->_sip_dialplan_reload();
-            $c->flash(messages => [{type => 'success', text => $c->loc('Rewrite rule successfully created') }]);
-        } catch($e) {
-            NGCP::Panel::Utils::Message->error(
-                c => $c,
-                error => $e,
-                desc  => $c->loc('Failed to create rewrite rule.'),
-            );
-        }
-        NGCP::Panel::Utils::Navigation::back_or($c, $c->stash->{rules_uri});
-    }
-
-    $c->stash(form => $form);
-    $c->stash(create_flag => 1);
-}
-
-sub _sip_dialplan_reload {
-    my ($self) = @_;
-    my $dispatcher = NGCP::Panel::Utils::XMLDispatcher->new;
-    $dispatcher->dispatch("proxy-ng", 1, 1, <<EOF );
-<?xml version="1.0" ?>
-<methodCall>
-<methodName>dialplan.reload</methodName>
-<params/>
-</methodCall>
-EOF
-
-    return 1;
-}
-
-=cut
-
 __PACKAGE__->meta->make_immutable;
 
 1;
@@ -494,95 +302,12 @@ NGCP::Panel::Controller::SubscriberProfile - Manage Subscriber Profiles
 
 =head1 DESCRIPTION
 
-Show/Edit/Create/Delete Rewrite Rule Sets.
-
-Show/Edit/Create/Delete Rewrite Rules within Rewrite Rule Sets.
-
-=head1 METHODS
-
-=head2 set_list
-
-Basis for provisioning.voip_rewrite_rule_sets.
-
-=head2 set_root
-
-Display rewrite rule sets through F<rewrite/set_list.tt> template.
-
-=head2 set_ajax
-
-Get provisioning.voip_rewrite_rule_sets from the database and
-output them as JSON.
-The format is meant for parsing with datatables.
-
-=head2 set_base
-
-Fetch a provisioning.voip_rewrite_rule_set from the database by its id.
-
-=head2 set_edit
-
-Show a modal to edit a rewrite rule set determined by L</set_base>.
-The form used is L<NGCP::Panel::Form::RewriteRuleSet>.
-
-=head2 set_delete
-
-Delete a rewrite rule set determined by L</set_base>.
-
-=head2 set_clone
-
-Deep copy a rewrite rule set determined by L</set_base>. The user can enter
-a new name and description. The reseller is not configurable, but set by the
-original rewrite rule set. The rewrite rules of the original rwrs are then
-cloned and assigned to the new rwrs.
-
-=head2 set_create
-
-Show a modal to create a new rewrite rule set using the form
-L<NGCP::Panel::Form::RewriteRuleSet>.
-
-=head2 rules_list
-
-Basis for provisioning.voip_rewrite_rules. Chained from L</set_base> and
-therefore handles only rules for a certain rewrite rule set.
-
-=head2 rules_root
-
-Display rewrite rule sets through F<rewrite/rules_list.tt> template.
-The rules are stashed to rules hashref which contains the keys
-"caller_in", "callee_in", "caller_out", "callee_out".
-
-It swaps priority of two elements if "move" and "where" GET params are set.
-
-It modifies match_pattern and replace_pattern field to a certain output format
-using regex.
-
-=head2 rules_base
-
-Fetch a rewrite rule from the database by its id. Will only find rules under
-the current rule_set.
-
-=head2 rules_edit
-
-Show a modal to edit a rewrite rule determined by L</rules_base>.
-The form used is L<NGCP::Panel::Form::RewriteRule>.
-
-=head2 rules_delete
-
-Delete a rewrite rule determined by L</rules_base>.
-
-=head2 rules_create
-
-Show a modal to create a new rewrite rule using the form
-L<NGCP::Panel::Form::RewriteRule>.
-
-=head2 _sip_dialplan_reload
-
-This is ported from ossbss.
-
-Reloads dialplan cache of sip proxies.
+Show/Edit/Create/Delete Subscriber Profiles, allowing to define which user preferences
+an end user can actually view/edit via the CSC.
 
 =head1 AUTHOR
 
-Gerhard Jungwirth C<< <gjungwirth@sipwise.com> >>
+Andreas Granig C<< <agranig@sipwise.com> >>
 
 =head1 LICENSE
 
