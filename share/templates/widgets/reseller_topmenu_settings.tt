@@ -5,6 +5,7 @@
         <b class="caret"></b>
     </a>
     <ul class="dropdown-menu">
+        <li><a href="[% c.uri_for_action('/reseller/css', [c.user.reseller_id]) %]">[% c.loc('Panel Branding') %]</a></li>
         <li><a href="[% c.uri_for('/administrator') %]">[% c.loc('Administrators') %]</a></li>
         <li><a href="[% c.uri_for('/customer') %]">[% c.loc('Customers') %]</a></li>
         <li><a href="[% c.uri_for('/contact') %]">[% c.loc('Contacts') %]</a></li>

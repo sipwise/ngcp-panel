@@ -420,12 +420,25 @@ sub create_defaults :Path('create_defaults') :Args(0) :Does(ACL) :ACLDetachTo('/
     return;
 }
 
+sub css :Chained('base') :PathPart('css') :Args(0) :Does(ACL) :ACLDetachTo('/denied_page') :AllowedRole(admin) :AllowedRole(reseller) {
+    my ($self, $c) = @_;
+    $c->stash(template => 'reseller/branding.tt');
+    return;
+}
+
 sub edit_branding_css :Chained('base') :PathPart('css/edit') :Args(0) :Does(ACL) :ACLDetachTo('/denied_page') :AllowedRole(admin) :AllowedRole(reseller) {
     my ($self, $c) = @_;
 
     $c->detach('/denied_page')
     	if($c->user->read_only);
-    $c->stash(template => 'reseller/details.tt');
+    my $back;
+    if($c->user->roles eq "admin") {
+        $c->stash(template => 'reseller/details.tt');
+        $back = $c->uri_for_action('/reseller/details', $c->req->captures);
+    } else {
+        $c->stash(template => 'reseller/branding.tt');
+        $back = $c->uri_for_action('/reseller/css', $c->req->captures);
+    }
 
     my $reseller = $c->stash->{reseller}->first;
     my $branding = $reseller->branding;
@@ -447,7 +460,7 @@ sub edit_branding_css :Chained('base') :PathPart('css/edit') :Args(0) :Does(ACL)
         c => $c,
         form => $form,
         fields => {},
-        back_uri => $c->uri_for('/reseller/details', $c->req->captures),
+        back_uri => $back,
     );
 
     if($posted && $form->validated) {
@@ -485,13 +498,13 @@ sub edit_branding_css :Chained('base') :PathPart('css/edit') :Args(0) :Does(ACL)
                 desc  => $c->loc('Failed to update reseller branding'),
             );
         }
-        NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for_action('/reseller/details', $c->req->captures));
+        NGCP::Panel::Utils::Navigation::back_or($c, $back);
     }
 
     $c->stash(close_target => $c->uri_for());
     $c->stash(branding_form => $form);
     $c->stash(branding_edit_flag => 1);
-    $c->stash(close_target => $c->uri_for_action('/reseller/details', $c->req->captures));
+    $c->stash(close_target => $back);
 
     return;
 }
@@ -515,6 +528,12 @@ sub get_branding_logo :Chained('base') :PathPart('css/logo/download') :Args(0) {
 sub delete_branding_logo :Chained('base') :PathPart('css/logo/delete') :Args(0) :Does(ACL) :ACLDetachTo('/denied_page') :AllowedRole(admin) :AllowedRole(reseller) {
     my ($self, $c) = @_;
 
+    my $back;
+    if($c->user->roles eq "admin") {
+        $back = $c->uri_for_action('/reseller/details', $c->req->captures);
+    } else {
+        $back = $c->uri_for_action('/reseller/css', $c->req->captures);
+    }
 
     my $reseller = $c->stash->{reseller}->first;
     my $branding = $reseller->branding;
@@ -523,7 +542,7 @@ sub delete_branding_logo :Chained('base') :PathPart('css/logo/delete') :Args(0) 
         $branding->update({ logo => undef, logo_image_type => undef });
     }
 
-    $c->response->redirect($c->uri_for_action('/reseller/details', $c->req->captures));
+    $c->response->redirect($back);
 }
 
 sub get_branding_css :Chained('base') :PathPart('css/download') :Args(0) {
