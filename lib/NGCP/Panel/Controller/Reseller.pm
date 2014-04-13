@@ -11,10 +11,12 @@ use NGCP::Panel::Utils::Contract;
 use NGCP::Panel::Utils::DateTime;
 use NGCP::Panel::Utils::Message;
 use NGCP::Panel::Utils::Navigation;
+
 use NGCP::Panel::Form::InvoiceTemplate::Basic;
 use NGCP::Panel::Model::DB::InvoiceTemplate;
 use NGCP::Panel::Utils::InvoiceTemplate;
 use JSON;
+use Number::Phone;
 
 sub auto {
     my ($self, $c) = @_;
@@ -471,11 +473,20 @@ sub invoice_details_calls :Chained('invoice_details_zones') :PathPart('') :Captu
         stime => $stime,
         etime => $etime,
     );
+    #$invoice_details_calls
     #TODO: FAKE FAKE FAKE FAKE
     my $invoice_details_calls_raw = $invoice_details_calls;
+    #foreach my $call(@$invoice_details_calls_raw) {
+    #    next unless($call->source_cli && $call->source_cli =~ /^\d{5,}$/ && 
+    #        $call->destination_user_in && $call->destination_user_in =~ /^\d{5,}$/);
+    #    my $s = Number::Phone->new($call->source_cli);
+    #    my $d = Number::Phone->new($call->destination_user_in);
+    #    next unless($s && $d);
+    #}
+    
     $invoice_details_calls = [$invoice_details_calls_raw->all()];
     my $i = 1;
-    $invoice_details_calls = [map{[$i++,$_]} (@$invoice_details_calls) x 21];
+    $invoice_details_calls = [map{[$i++,$_]} (@$invoice_details_calls) x 1];
     $c->stash( invoice_details_calls => $invoice_details_calls );
     $c->stash( invoice_details_calls_raw => $invoice_details_calls_raw );
 }
@@ -695,7 +706,7 @@ sub invoice_template_delete :Chained('base') :PathPart('invoice_template/delete'
     $c->forward( 'invoice_template_list' );
 }
 
-sub invoice_template_list_data :Chained('invoice_details_zones') :PathPart('') :CaptureArgs(0) {
+sub invoice_template_list_data :Chained('invoice_details_calls') :PathPart('') :CaptureArgs(0) {
     my ($self, $c) = @_; 
     $c->log->debug('invoice_template_list_data');
     my($validator,$backend,$in,$out);

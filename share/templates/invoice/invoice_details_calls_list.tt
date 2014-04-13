@@ -1,4 +1,6 @@
 [%# USE Dumper %]
+[% USE date %]
+[% USE Math %]
 [%# Dumper.dump(invoice_details_zones)%]
 [%# invoice_details_zones.size%]
 
@@ -12,31 +14,28 @@
             <th>[% c.loc('Type') %]</th>
             <th>[% c.loc('Zone/Details') %]</th>
             <th>[% c.loc('Cash') %]</th>
-            <th class="ngcp-actions-column"></th>
         </tr>
     </thead>
     <tbody>
         [%# Dumper.dump_html(invoice_details_zones.as_query)%]
-        [% FOR call IN invoice_details_zones -%]
+        [% FOR call IN invoice_details_calls -%]
         [%IF call.1; row_number = call.0; call = call.1; END%]
         [% total_duration = total_duration + call.get_column('duration') %]
-        [% total_cost = total_cost + call.get_column('cost') %]
+        [% total_cost = total_cost + call.get_column('source_customer_cost') / 100 %]
         <tr class="sw_action_row">
             <td>[% row_number %]</td>
-            <td><div class="pull-right">[% call.get_column('start_time') %]</div></td>
+            <td><div class="pull-right">[% date.format(Math.int(call.get_column('start_time')),'%Y-%m-%d %H:%M:%S') %]</div></td>
             <td><div class="pull-right">[% call.get_column('duration')|format('%.3f') %]</div></td>
-            <td><div class="pull-right">[% call.get_column('destination')%][%#to mscro or view .replace('(.*?)\d{4}$','$1****') %]</div></td>
+            <td><div class="pull-right">[% call.get_column('destination_user_in').replace('(.*?)\d{4}$','$1****') %][%#to mscro or view .replace('(.*?)\d{4}$','$1****') %]</div></td>
             <td><div class="pull-right">[% call.get_column('call_type') %]</div></td>
-            <td>[% call.get_column('zone') _ '/' _ call.get_column('detail') %]</td>
-            <td><div class="pull-right">[% money_format( call.get_column('cost') / 100 ) %]</div></td>
+            <td>[% call.get_column('zone') _ '/' _ call.get_column('zone_detail') %]</td>
+            <td><div class="pull-right">[% money_format( call.get_column('source_customer_cost') / 100 ) %]</div></td>
         </tr>
         [%END%]
         <tr>
             <td colspan="2">[% c.loc('Total') %]</td>
-            <td><div class="pull-right">[% total_number %]</div></td>
             <td><div class="pull-right">[% total_duration | format('%.3f') %]</div></td>
-            <td><div class="pull-right">[% total_free_time | format('%d')%]</div></td>
-            <td><div class="pull-right">[% money_format( total_cost / 100 ) %]</div></td>
+            <td><div class="pull-right" colspan="4">[% money_format( total_cost ) %]</div></td>
         </tr>
     </tbody>
     </table>
