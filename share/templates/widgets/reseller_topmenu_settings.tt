@@ -11,6 +11,7 @@
         <li><a href="[% c.uri_for('/contact') %]">[% c.loc('Contacts') %]</a></li>
         <li><a href="[% c.uri_for('/domain') %]">[% c.loc('Domains') %]</a></li>
         <li><a href="[% c.uri_for('/subscriber') %]">[% c.loc('Subscribers') %]</a></li>
+        <li><a href="[% c.uri_for('/subscriberprofile') %]">[% c.loc('Subscriber Profiles') %]</a></li>
         <li><a href="[% c.uri_for('/billing') %]">[% c.loc('Billing') %]</a></li>
         <li><a href="[% c.uri_for('/rewrite') %]">[% c.loc('Rewrite Rule Sets') %]</a></li>
         <li><a href="[% c.uri_for('/ncos') %]">[% c.loc('NCOS Levels') %]</a></li>

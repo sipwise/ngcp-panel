@@ -16,7 +16,7 @@ has_field 'catalog' => (
 has_block 'fields' => (
     tag => 'div',
     class => [qw/modal-body/],
-    render_list => [qw/catalog name description/],
+    render_list => [qw/catalog name description catalog_default/],
 );
 
 1;

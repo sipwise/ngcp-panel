@@ -281,6 +281,7 @@ sub profile_list :Chained('catalog_base') :PathPart('profile') :CaptureArgs(0) {
         { name => 'id', search => 1, title => $c->loc('#') },
         { name => 'name', search => 1, title => $c->loc('Name') },
         { name => 'description', search => 1, title => $c->loc('Description') },
+        { name => 'catalog_default', search => 0, title => $c->loc('Default') },
     ]);
     
     $c->stash(template => 'subprofile/profile_list.tt');
@@ -331,7 +332,7 @@ sub profile_create :Chained('profile_list') :PathPart('create') :Args(0) :Does(A
     my $params = {};
     $params = $params->merge($c->session->{created_objects});
     my $form = NGCP::Panel::Form::SubscriberProfile::Profile->new(ctx => $c);
-    $form->create_structure($form->field_names);
+    #$form->create_structure($form->field_names);
     $form->process(
         posted => $posted,
         params => $c->request->params,
@@ -347,19 +348,28 @@ sub profile_create :Chained('profile_list') :PathPart('create') :Args(0) :Does(A
         try {
             my $schema = $c->model('DB');
             $schema->txn_do(sub {
-                my $name = delete $form->values->{name};
-                my $desc = delete $form->values->{description};
-                my $profile = $c->stash->{cat}->voip_subscriber_profiles->create({
-                    name => $name,
-                    description => $desc,
-                });
+                my $attributes = delete $form->values->{attribute};
+                if($form->values->{catalog_default}) {
+                    # new profile is default, clear any previous default profiles
+                    $c->stash->{cat}->voip_subscriber_profiles->update({
+                        catalog_default => 0,
+                    });
+                } elsif(!$c->stash->{cat}->voip_subscriber_profiles->search({
+                      catalog_default => 1,
+                  })->count) {
+
+                  # no previous default profile, make this one default
+                  $form->values->{catalog_default} = 1;
+                }
+                my $profile = $c->stash->{cat}->voip_subscriber_profiles->create($form->values);
               
                 # TODO: should we rather take the name and load the id from db,
                 # instead of trusting the id coming from user input?
-                foreach my $attr(keys %{ $form->values }) {
-                    next unless($form->values->{$attr});
+                use Data::Printer; p $attributes;
+                foreach my $attr(keys %{ $attributes }) {
+                    next unless($attributes->{$attr});
                     $profile->profile_attributes->create({
-                        attribute_id => $form->values->{$attr},
+                        attribute_id => $attributes->{$attr},
                     });
                 }
             });
@@ -385,10 +395,10 @@ sub profile_edit :Chained('profile_base') :PathPart('edit') :Does(ACL) :ACLDetac
     my $posted = ($c->request->method eq 'POST');
     my $params = { $profile->get_inflated_columns };
     foreach my $old_attr($profile->profile_attributes->all) {
-        $params->{$old_attr->attribute->attribute} = $old_attr->attribute->id;
+        $params->{attribute}{$old_attr->attribute->attribute} = $old_attr->attribute->id;
     }
     my $form = NGCP::Panel::Form::SubscriberProfile::Profile->new(ctx => $c);
-    $form->create_structure($form->field_names);
+    #$form->create_structure($form->field_names);
     $form->process(
         posted => $posted,
         params => $c->request->params,
@@ -404,24 +414,33 @@ sub profile_edit :Chained('profile_base') :PathPart('edit') :Does(ACL) :ACLDetac
         try {
             my $schema = $c->model('DB');
             $schema->txn_do(sub {
-                my $name = delete $form->values->{name};
-                my $desc = delete $form->values->{description};
-                unless($name eq $profile->name && $desc eq $profile->description) {
-                    $profile->update({
-                        name => $name,
-                        description => $desc,
+                my $attributes = delete $form->values->{attribute};
+                if($form->values->{catalog_default}) {
+                    # new profile is default, clear any previous default profiles
+                    $c->stash->{cat}->voip_subscriber_profiles->search({
+                        id => { '!=' => $profile->id },
+                    })->update({
+                        catalog_default => 0,
                     });
+                } elsif(!$c->stash->{cat}->voip_subscriber_profiles->search({
+                      catalog_default => 1,
+                  })->count) {
+
+                  # no previous default profile, make this one default
+                  $form->values->{catalog_default} = 1;
                 }
+
+                $profile->update($form->values);
 
                 # TODO: reuse attributes for efficiency reasons?
                 $profile->profile_attributes->delete;
               
                 # TODO: should we rather take the name and load the id from db,
                 # instead of trusting the id coming from user input?
-                foreach my $attr(keys %{ $form->values }) {
-                    next unless($form->values->{$attr});
+                foreach my $attr(keys %{ $attributes }) {
+                    next unless($attributes->{$attr});
                     $profile->profile_attributes->create({
-                        attribute_id => $form->values->{$attr},
+                        attribute_id => $attributes->{$attr},
                     });
                 }
 
@@ -447,13 +466,21 @@ sub profile_delete :Chained('profile_base') :PathPart('delete') :Does(ACL) :ACLD
     try {
         my $schema = $c->model('DB');
         $schema->txn_do(sub{
+            my $profile = $c->stash->{profile};
             $schema->resultset('provisioning_voip_subscribers')->search({
-                profile_id => $c->stash->{profile}->id,
+                profile_id => $profile->id,
             })->update({
                 # TODO: set this to another profile, or reject deletion if profile is in use
                 profile_id => undef,
             });
-            $c->stash->{profile}->delete;
+            if($profile->catalog_default && $c->stash->{cat}->voip_subscriber_profiles->count > 1) {
+                $c->stash->{cat}->voip_subscriber_profiles->search({
+                    id => { '!=' => $profile->id },
+                })->first->update({
+                      catalog_default => 1,
+                });
+            }
+            $profile->delete;
         });
         $c->flash(messages => [{type => 'success', text => $c->loc('Subscriber profile successfully deleted')}]);
     } catch($e) {
@@ -488,11 +515,9 @@ sub profile_clone :Chained('profile_base') :PathPart('clone') :Does(ACL) :ACLDet
         try {
             my $schema = $c->model('DB');
             $schema->txn_do(sub {
-                my $new_profile = $c->stash->{cat}->voip_subscriber_profiles->create({
-                    %{ $form->values },
-                    catalog_id => $c->stash->{cat}->id,
-                });
-
+                $form->values->{catalog_default} = 0;
+                $form->values->{catalog_id} = $c->stash->{cat}->id;
+                my $new_profile = $c->stash->{cat}->voip_subscriber_profiles->create($form->values);
                 my @old_attributes = $c->stash->{profile}->profile_attributes->all;
                 foreach my $attr (@old_attributes) {
                     $new_profile->profile_attributes->create({

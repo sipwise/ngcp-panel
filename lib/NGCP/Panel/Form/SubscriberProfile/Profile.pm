@@ -29,6 +29,22 @@ has_field 'description' => (
     },
 );
 
+has_field 'catalog_default' => (
+    type => 'Boolean',
+    label => 'Default Profile',
+    required => 0,
+    element_attr => {
+        rel => ['tooltip'],
+        title => ['Make this profile automatically the default profile for new subscribers having this profile catalog.'],
+    },
+);
+
+has_field 'attribute' => (
+    type => 'Compound',
+    label => 'Attributes',
+    #do_label => 1,
+);
+
 has_field 'save' => (
     type => 'Submit',
     value => 'Save',
@@ -39,7 +55,7 @@ has_field 'save' => (
 has_block 'fields' => (
     tag => 'div',
     class => [qw/modal-body/],
-    render_list => [qw/name description/],
+    render_list => [qw/name description catalog_default attribute/],
 );
 
 has_block 'actions' => (
@@ -61,7 +77,7 @@ sub field_list {
     my $fields = [];
     foreach my $pref($pref_rs->all) {
         my $desc = $pref->description;
-        push @{ $fields }, $pref->attribute => {
+        push @{ $fields }, 'attribute.'.$pref->attribute => {
             type => 'Checkbox',
             label => $pref->attribute,
             checkbox_value => $pref->id,
