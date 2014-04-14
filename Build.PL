@@ -85,6 +85,7 @@ my $builder = Local::Module::Build->new(
         'Sipwise::Base' => 0,
         'strict' => 0,
         'Template' => 0,
+        'Template::Plugin::JSON::Escape' => 0,
         'Text::CSV_XS' => 0,
         'Types::Path::Tiny' => 0,
         'Time::HiRes' => 0,
