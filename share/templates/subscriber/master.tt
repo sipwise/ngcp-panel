@@ -90,6 +90,12 @@
                                 [% END -%]
                             </td>
                         </tr>
+                        <tr>
+                            <td>[% c.loc('Subscriber Profile') %]</td>
+                            <td>
+                                [% subscriber.provisioning_voip_subscriber.voip_subscriber_profile.name %]
+                            </td>
+                        </tr>
                     </tbody>
                 </table>
             </div>

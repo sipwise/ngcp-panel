@@ -111,6 +111,16 @@ has_field 'external_id' => (
     },
 );
 
+has_field 'profile' => (
+    type => '+NGCP::Panel::Field::SubscriberProfile',
+    label => 'Subscriber Profile',
+    validate_when_empty => 0,
+    element_attr => {
+        rel => ['tooltip'],
+        title => ['The subscriber profile defining the feature set for this subscriber.']
+    },
+);
+
 has_field 'save' => (
     type => 'Submit',
     value => 'Save',
@@ -122,7 +132,7 @@ has_field 'save' => (
 has_block 'fields' => (
     tag => 'div',
     class => [qw/modal-body/],
-    render_list => [qw/e164 alias_number alias_number_add webusername webpassword password lock status external_id administrative/ ],
+    render_list => [qw/e164 alias_number alias_number_add webusername webpassword password lock status external_id administrative profile/ ],
 );
 
 has_block 'actions' => (

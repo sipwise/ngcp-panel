@@ -9,7 +9,7 @@ use NGCP::Panel::Form::SubscriberProfile::Clone;
 use NGCP::Panel::Utils::Message;
 use NGCP::Panel::Utils::Navigation;
 
-sub auto :Does(ACL) :ACLDetachTo('/denied_page') :AllowedRole(admin) :AllowedRole(reseller) {
+sub auto {
     my ($self, $c) = @_;
     $c->log->debug(__PACKAGE__ . '::auto');
     NGCP::Panel::Utils::Navigation::check_redirect_chain(c => $c);
@@ -21,11 +21,16 @@ sub profile_list :Chained('/') :PathPart('subscriberprofile') :CaptureArgs(0) {
 
     $c->stash->{profiles_rs} = $c->model('DB')->resultset('voip_subscriber_profiles');
     if($c->user->roles eq "admin") {
-    } else {
+    } elsif($c->user->roles eq "reseller") {
         $c->stash->{profiles_rs} = $c->stash->{profiles_rs}->search({
             reseller_id => $c->user->reseller_id
         });
+    } else {
+        $c->stash->{profiles_rs} = $c->stash->{profiles_rs}->search({
+            reseller_id => $c->user->voip_subscriber->contract->contact->reseller_id,
+        });
     }
+
     $c->stash->{profile_dt_columns} = NGCP::Panel::Utils::Datatables::set_columns($c, [
         { name => 'id', search => 1, title => $c->loc('#') },
         { name => 'reseller.name', search => 1, title => $c->loc('Reseller') },
@@ -36,7 +41,7 @@ sub profile_list :Chained('/') :PathPart('subscriberprofile') :CaptureArgs(0) {
     $c->stash(template => 'subprofile/list.tt');
 }
 
-sub root :Chained('profile_list') :PathPart('') :Args(0) {
+sub root :Chained('profile_list') :PathPart('') :Args(0) :Does(ACL) :ACLDetachTo('/denied_page') :AllowedRole(admin) :AllowedRole(reseller) {
     my ($self, $c) = @_;
 }
 
@@ -47,7 +52,7 @@ sub ajax :Chained('profile_list') :PathPart('ajax') :Args(0) {
     $c->detach( $c->view("JSON") );
 }
 
-sub base :Chained('profile_list') :PathPart('') :CaptureArgs(1) {
+sub base :Chained('profile_list') :PathPart('') :CaptureArgs(1) :Does(ACL) :ACLDetachTo('/denied_page') :AllowedRole(admin) :AllowedRole(reseller) {
     my ($self, $c, $profile_id) = @_;
 
     unless($profile_id && $profile_id->is_integer) {
@@ -71,7 +76,7 @@ sub base :Chained('profile_list') :PathPart('') :CaptureArgs(1) {
     $c->stash(profile_result => $res);
 }
 
-sub create :Chained('profile_list') :PathPart('create') :Args(0) {
+sub create :Chained('profile_list') :PathPart('create') :Args(0) :Does(ACL) :ACLDetachTo('/denied_page') :AllowedRole(admin) :AllowedRole(reseller) {
     my ($self, $c) = @_;
 
     my $posted = ($c->request->method eq 'POST');
@@ -143,7 +148,7 @@ sub create :Chained('profile_list') :PathPart('create') :Args(0) {
     $c->stash(create_flag => 1);
 }
 
-sub edit :Chained('base') :PathPart('edit') {
+sub edit :Chained('base') :PathPart('edit') :Does(ACL) :ACLDetachTo('/denied_page') :AllowedRole(admin) :AllowedRole(reseller) {
     my ($self, $c) = @_;
 
     my $profile = $c->stash->{profile_result};
@@ -224,7 +229,7 @@ sub edit :Chained('base') :PathPart('edit') {
     $c->stash(edit_flag => 1);
 }
 
-sub delete :Chained('base') :PathPart('delete') {
+sub delete :Chained('base') :PathPart('delete') :Does(ACL) :ACLDetachTo('/denied_page') :AllowedRole(admin) :AllowedRole(reseller) {
     my ($self, $c) = @_;
     
     try {
@@ -240,7 +245,7 @@ sub delete :Chained('base') :PathPart('delete') {
     NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for('/subscriberprofile'));
 }
 
-sub clone :Chained('base') :PathPart('clone') {
+sub clone :Chained('base') :PathPart('clone') :Does(ACL) :ACLDetachTo('/denied_page') :AllowedRole(admin) :AllowedRole(reseller) {
     my ($self, $c) = @_;
 
     my $posted = ($c->request->method eq 'POST');

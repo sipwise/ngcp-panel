@@ -115,6 +115,7 @@ sub sub_list :Chained('/') :PathPart('subscriber') :CaptureArgs(0) {
         { name => "status", search => 1, title => $c->loc('Status') },
         { name => "number", search => 1, title => $c->loc('Number'), literal_sql => "concat(primary_number.cc, primary_number.ac, primary_number.sn)"},
         { name => "primary_number.cc", search => 1, title => "" }, #need this to get the relationship
+        { name => "provisioning_voip_subscriber.voip_subscriber_profile.name", search => 1, title => $c->loc('Profile') },
     ]);
 }
 
@@ -142,6 +143,7 @@ sub create_list :Chained('sub_list') :PathPart('create') :Args(0) :Does(ACL) :AC
             'domain.create' => $c->uri_for('/domain/create'),
             'reseller.create' => $c->uri_for('/reseller/create'),
             'contract.create' => $c->uri_for('/customer/create'),
+            'profile.create' => $c->uri_for('/subscriberprofile/create'),
         },
         back_uri => $c->req->uri,
     );
@@ -161,6 +163,27 @@ sub create_list :Chained('sub_list') :PathPart('create') :Args(0) :Does(ACL) :AC
                     ->find({domain => $billing_domain->domain});
 
                 my $reseller = $contract->contact->reseller;
+                my $profile;
+                if($form->values->{profile}{id}) {
+                    my $profile_rs = $c->model('DB')->resultset('voip_subscriber_profiles');
+                    if($c->user->roles eq "admin") {
+                    } elsif($c->user->roles eq "reseller") {
+                        $profile_rs = $profile_rs->search({
+                            reseller_id => $c->user->reseller_id,
+                        });
+                    }
+                         
+                    $profile = $profile_rs->find($form->values->{profile}{id});
+                    unless($profile) {
+                        NGCP::Panel::Utils::Message->error(
+                            c => $c,
+                            error => 'invalid subscriber profile id ' . $form->values->{profile}{id},
+                            desc  => $c->loc('Invalid subscriber profile id'),
+                        );
+                        return;
+                    }
+                    delete $form->values->{profile};
+                }
 
                 my $billing_subscriber = $contract->voip_subscribers->create({
                     uuid => $uuid_string,
@@ -179,6 +202,7 @@ sub create_list :Chained('sub_list') :PathPart('create') :Args(0) :Does(ACL) :AC
                     admin => $c->request->params->{administrative} || 0,
                     account_id => $contract->id,
                     domain_id => $prov_domain->id,
+                    profile_id => $profile ? $profile->id : undef,
                     create_timestamp => NGCP::Panel::Utils::DateTime::current_local,
                 });
 
@@ -1790,6 +1814,8 @@ sub edit_master :Chained('master') :PathPart('edit') :Args(0) :Does(ACL) :ACLDet
         $c->request->params->{status} = $subscriber->status;
     }
     unless($posted) {
+        $params->{profile}{id} = $prov_subscriber->voip_subscriber_profile ?
+            $prov_subscriber->voip_subscriber_profile->id : undef;
         $params->{webusername} = $prov_subscriber->webusername;
         $params->{administrative} = $prov_subscriber->admin;
         if($subscriber->primary_number) {
@@ -1808,9 +1834,11 @@ sub edit_master :Chained('master') :PathPart('edit') :Args(0) :Does(ACL) :ACLDet
                     $params->{extension} = $full;
                 }
             }
-            if($pbx_ext) {
-                $params->{group}{id} = $prov_subscriber->pbx_group_id;
-            }
+        }
+        if($pbx_ext) {
+            $params->{group}{id} = $prov_subscriber->pbx_group_id;
+            # TODO: rework to store ext in sub
+            #$params->{extension} = $prov_subscriber->pbx_group_id;
         }
 
         my @alias_options = ();
@@ -1846,6 +1874,7 @@ sub edit_master :Chained('master') :PathPart('edit') :Args(0) :Does(ACL) :ACLDet
         form => $form,
         fields => {
             $pbx_ext ? ('group.create' => $c->uri_for_action('/customer/pbx_group_create', [$prov_subscriber->account_id])) : (),
+            'profile.create' => $c->uri_for_action('/subscriberprofile/create'),
         },
         back_uri => $c->req->uri,
     );
@@ -1870,6 +1899,32 @@ sub edit_master :Chained('master') :PathPart('edit') :Args(0) :Does(ACL) :ACLDet
                 $prov_params->{pbx_group_id} = $form->params->{group}{id}
                     if($pbx_ext);
                 my $old_group_id = $prov_subscriber->pbx_group_id;
+
+                my $profile;
+                if($form->values->{profile}{id}) {
+                    my $profile_rs = $c->model('DB')->resultset('voip_subscriber_profiles');
+                    if($c->user->roles eq "admin") {
+                    } elsif($c->user->roles eq "reseller") {
+                        $profile_rs = $profile_rs->search({
+                            reseller_id => $c->user->reseller_id,
+                        });
+                    }
+                         
+                    $profile = $profile_rs->find($form->values->{profile}{id});
+                    unless($profile) {
+                        NGCP::Panel::Utils::Message->error(
+                            c => $c,
+                            error => 'invalid subscriber profile id ' . $form->values->{profile}{id},
+                            desc  => $c->loc('Invalid subscriber profile id'),
+                        );
+                        return;
+                    }
+                    delete $form->values->{profile};
+                    $prov_params->{profile_id} = $profile->id;
+                } else {
+                    $prov_params->{profile_id} = undef;
+                }
+
                 $prov_subscriber->update($prov_params);
 
                 NGCP::Panel::Utils::Subscriber::update_pbx_group_prefs(

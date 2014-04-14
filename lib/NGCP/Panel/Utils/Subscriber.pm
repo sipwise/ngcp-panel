@@ -140,6 +140,22 @@ sub create_subscriber {
             ->find($params->{domain}{id} // $params->{domain_id});
     my $prov_domain = $schema->resultset('voip_domains')
             ->find({domain => $billing_domain->domain});
+
+    my $profile;
+    if($params->{profile}{id}) {
+        my $profile_rs = $c->model('DB')->resultset('voip_subscriber_profiles');
+        if($c->user->roles eq "admin") {
+        } elsif($c->user->roles eq "reseller") {
+            $profile_rs = $profile_rs->search({
+                reseller_id => $c->user->reseller_id,
+            });
+        }
+        $profile = $profile_rs->find($params->{profile}{id});
+        unless($profile) {
+            $c->log->error("invalid subscriber profile id '".$params->{profile}{id}."' detected");
+            return;
+        }
+    }
     
     $schema->txn_do(sub {
         my ($uuid_bin, $uuid_string);
@@ -187,6 +203,7 @@ sub create_subscriber {
             domain_id => $prov_domain->id,
             is_pbx_group => $params->{is_pbx_group} // 0,
             pbx_group_id => $params->{pbx_group_id},
+            profile_id => $profile ? $profile->id : undef,
             create_timestamp => NGCP::Panel::Utils::DateTime::current_local,
         });
 
