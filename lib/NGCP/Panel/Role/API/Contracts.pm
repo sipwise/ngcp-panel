@@ -81,7 +81,9 @@ sub hal_from_contract {
             Data::HAL::Link->new(relation => 'profile', href => 'http://purl.org/sipwise/ngcp-api/'),
             Data::HAL::Link->new(relation => 'self', href => sprintf("%s%d", $self->dispatch_path, $contract->id)),
             Data::HAL::Link->new(relation => 'ngcp:systemcontacts', href => sprintf("/api/systemcontacts/%d", $contract->contact->id)),
-            Data::HAL::Link->new(relation => 'ngcp:billingprofiles', href => sprintf("/api/billingprofiles/%d", $billing_profile_id)),
+            $billing_profile_id
+                ? Data::HAL::Link->new(relation => 'ngcp:billingprofiles', href => sprintf("/api/billingprofiles/%d", $billing_profile_id))
+                : (),
             Data::HAL::Link->new(relation => 'ngcp:contractbalances', href => sprintf("/api/contractbalances/%d", $contract_balance->id)),
         ],
         relation => 'ngcp:'.$self->resource_name,
@@ -97,7 +99,7 @@ sub hal_from_contract {
 
     $resource{id} = int($contract->id);
     $resource{type} = $billing_mapping->product->class;
-    $resource{billing_profile_id} = int($billing_profile_id);
+    $resource{billing_profile_id} = $billing_profile_id ? int($billing_profile_id) : undef;
     $hal->resource({%resource});
     return $hal;
 }
