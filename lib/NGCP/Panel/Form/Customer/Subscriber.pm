@@ -98,13 +98,13 @@ has_field 'external_id' => (
     },
 );
 
-has_field 'profile' => (
-    type => '+NGCP::Panel::Field::SubscriberProfile',
+has_field 'profile_set' => (
+    type => '+NGCP::Panel::Field::SubscriberProfileSet',
     label => 'Subscriber Profile',
     validate_when_empty => 0,
     element_attr => {
         rel => ['tooltip'],
-        title => ['The subscriber profile defining the feature set for this subscriber.']
+        title => ['The profile set defining the possible feature sets for this subscriber.']
     },
 );
 
@@ -120,7 +120,7 @@ has_field 'save' => (
 has_block 'fields' => (
     tag => 'div',
     class => [qw/modal-body/],
-    render_list => [qw/domain e164 webusername webpassword username password status external_id administrative profile/ ],
+    render_list => [qw/domain e164 webusername webpassword username password status external_id administrative profile_set/ ],
 );
 
 has_block 'actions' => (

@@ -29,13 +29,13 @@ has_field 'description' => (
     },
 );
 
-has_field 'catalog_default' => (
+has_field 'set_default' => (
     type => 'Boolean',
     label => 'Default Profile',
     required => 0,
     element_attr => {
         rel => ['tooltip'],
-        title => ['Make this profile automatically the default profile for new subscribers having this profile catalog.'],
+        title => ['Make this profile automatically the default profile for new subscribers having this profile set.'],
     },
 );
 
@@ -55,7 +55,7 @@ has_field 'save' => (
 has_block 'fields' => (
     tag => 'div',
     class => [qw/modal-body/],
-    render_list => [qw/name description catalog_default attribute/],
+    render_list => [qw/name description set_default attribute/],
 );
 
 has_block 'actions' => (

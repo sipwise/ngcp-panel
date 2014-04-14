@@ -1,19 +1,19 @@
-[% site_config.title = c.loc('Subscriber Profile Catalogs') -%]
+[% site_config.title = c.loc('Subscriber Profile Sets') -%]
 [%
-    helper.name = c.loc('Subscriber Profile Catalogs');
-    helper.identifier = 'subscriber_profile_catalogs';
+    helper.name = c.loc('Subscriber Profile Sets');
+    helper.identifier = 'subscriber_profile_sets';
     helper.messages = messages;
-    helper.dt_columns = cat_dt_columns;
+    helper.dt_columns = set_dt_columns;
     helper.length_change = 1;
 
     helper.close_target = close_target;
     helper.create_flag = create_flag;
     helper.edit_flag = edit_flag;
     helper.form_object = form;
-    helper.ajax_uri = c.uri_for_action( "/subscriberprofile/catalog_ajax" );
+    helper.ajax_uri = c.uri_for_action( "/subscriberprofile/set_ajax" );
 
     IF clone_flag;
-        helper.name = c.loc('cloned Subscriber Profile Catalog');
+        helper.name = c.loc('cloned Subscriber Profile Set');
     END;
 
     UNLESS c.user.read_only;
@@ -24,7 +24,7 @@
             { name = c.loc('Profiles'), uri = "/subscriberprofile/'+full.id+'/profile", class = 'btn-small btn-primary', icon = 'icon-list' },
         ];
         helper.top_buttons = [
-            { name = c.loc('Create Subscriber Profile Catalog'), uri = c.uri_for_action('/subscriberprofile/catalog_create'), icon = 'icon-star' },
+            { name = c.loc('Create Subscriber Profile Set'), uri = c.uri_for_action('/subscriberprofile/set_create'), icon = 'icon-star' },
         ];
     END;
 

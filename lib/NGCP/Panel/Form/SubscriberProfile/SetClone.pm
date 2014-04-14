@@ -1,4 +1,4 @@
-package NGCP::Panel::Form::SubscriberProfile::CatalogReseller;
+package NGCP::Panel::Form::SubscriberProfile::SetClone;
 
 use HTML::FormHandler::Moose;
 extends 'HTML::FormHandler';
@@ -14,24 +14,18 @@ sub build_form_element_class {[qw(form-horizontal)]}
 has_field 'name' => (
     type => 'Text',
     required => 1,
-    element_attr => {
-        rel => ['tooltip'],
-        title => ['The name of the Subscriber Profile Catalog.'],
-    },
+    label => 'New Name',
 );
 
 has_field 'description' => (
     type => 'Text',
     required => 0,
-    element_attr => {
-        rel => ['tooltip'],
-        title => ['Arbitrary text.'],
-    },
+    label => 'New Description',
 );
 
-has_field 'save' => (
+has_field 'clone' => (
     type => 'Submit',
-    value => 'Save',
+    value => 'Clone',
     element_class => [qw/btn btn-primary/],
     label => '',
 );
@@ -39,13 +33,13 @@ has_field 'save' => (
 has_block 'fields' => (
     tag => 'div',
     class => [qw/modal-body/],
-    render_list => [qw/reseller name description/],
+    render_list => [qw/name description/],
 );
 
 has_block 'actions' => (
     tag => 'div',
     class => [qw/modal-footer/],
-    render_list => [qw/save/],
+    render_list => [qw/clone/],
 );
 
 1;

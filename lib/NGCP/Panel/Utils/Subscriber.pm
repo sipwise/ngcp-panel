@@ -141,20 +141,24 @@ sub create_subscriber {
     my $prov_domain = $schema->resultset('voip_domains')
             ->find({domain => $billing_domain->domain});
 
-    my $profile;
-    if($params->{profile}{id}) {
-        my $profile_rs = $c->model('DB')->resultset('voip_subscriber_profiles');
+    my ($profile_set, $profile);
+    if($params->{profile_set}{id}) {
+        my $profile_set_rs = $c->model('DB')->resultset('voip_subscriber_profile_sets');
         if($c->user->roles eq "admin") {
         } elsif($c->user->roles eq "reseller") {
-            $profile_rs = $profile_rs->search({
+            $profile_set_rs = $profile_set_rs->search({
                 reseller_id => $c->user->reseller_id,
             });
         }
-        $profile = $profile_rs->find($params->{profile}{id});
-        unless($profile) {
-            $c->log->error("invalid subscriber profile id '".$params->{profile}{id}."' detected");
+        $profile_set = $profile_set_rs->find($params->{profile_set}{id});
+        unless($profile_set) {
+            $c->log->error("invalid subscriber profile set id '".$params->{profile_set}{id}."' detected");
             return;
         }
+        # TODO: use profile from user input if given
+        $profile = $profile_set->voip_subscriber_profiles->find({
+            set_default => 1,
+        });
     }
     
     $schema->txn_do(sub {
@@ -203,6 +207,7 @@ sub create_subscriber {
             domain_id => $prov_domain->id,
             is_pbx_group => $params->{is_pbx_group} // 0,
             pbx_group_id => $params->{pbx_group_id},
+            profile_set_id => $profile_set ? $profile_set->id : undef,
             profile_id => $profile ? $profile->id : undef,
             create_timestamp => NGCP::Panel::Utils::DateTime::current_local,
         });

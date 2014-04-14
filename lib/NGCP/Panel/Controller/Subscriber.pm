@@ -143,7 +143,6 @@ sub create_list :Chained('sub_list') :PathPart('create') :Args(0) :Does(ACL) :AC
             'domain.create' => $c->uri_for('/domain/create'),
             'reseller.create' => $c->uri_for('/reseller/create'),
             'contract.create' => $c->uri_for('/customer/create'),
-            'profile.create' => $c->uri_for('/subscriberprofile/create'),
         },
         back_uri => $c->req->uri,
     );
@@ -163,26 +162,31 @@ sub create_list :Chained('sub_list') :PathPart('create') :Args(0) :Does(ACL) :AC
                     ->find({domain => $billing_domain->domain});
 
                 my $reseller = $contract->contact->reseller;
-                my $profile;
-                if($form->values->{profile}{id}) {
-                    my $profile_rs = $c->model('DB')->resultset('voip_subscriber_profiles');
+                my ($profile_set, $profile);
+                if($form->values->{profile_set}{id}) {
+                    my $profile_set_rs = $c->model('DB')->resultset('voip_subscriber_profile_sets');
                     if($c->user->roles eq "admin") {
                     } elsif($c->user->roles eq "reseller") {
-                        $profile_rs = $profile_rs->search({
+                        $profile_set_rs = $profile_set_rs->search({
                             reseller_id => $c->user->reseller_id,
                         });
                     }
                          
-                    $profile = $profile_rs->find($form->values->{profile}{id});
-                    unless($profile) {
+                    $profile_set = $profile_set_rs->find($form->values->{profile_set}{id});
+                    unless($profile_set) {
                         NGCP::Panel::Utils::Message->error(
                             c => $c,
-                            error => 'invalid subscriber profile id ' . $form->values->{profile}{id},
-                            desc  => $c->loc('Invalid subscriber profile id'),
+                            error => 'invalid subscriber profile set id ' . $form->values->{profile_set}{id},
+                            desc  => $c->loc('Invalid subscriber profile set id'),
                         );
                         return;
                     }
-                    delete $form->values->{profile};
+                    delete $form->values->{profile_set};
+                    $profile = $profile_set->voip_subscriber_profiles->find({
+                        set_default => 1,
+                    });
+                    # TODO should we report an error if no default profile is found? Otherwise
+                    # the subscriber has full feature access.
                 }
 
                 my $billing_subscriber = $contract->voip_subscribers->create({
@@ -202,6 +206,7 @@ sub create_list :Chained('sub_list') :PathPart('create') :Args(0) :Does(ACL) :AC
                     admin => $c->request->params->{administrative} || 0,
                     account_id => $contract->id,
                     domain_id => $prov_domain->id,
+                    profile_set_id => $profile_set ? $profile_set->id : undef,
                     profile_id => $profile ? $profile->id : undef,
                     create_timestamp => NGCP::Panel::Utils::DateTime::current_local,
                 });
@@ -1832,6 +1837,8 @@ sub edit_master :Chained('master') :PathPart('edit') :Args(0) :Does(ACL) :ACLDet
         $c->request->params->{status} = $subscriber->status;
     }
     unless($posted) {
+        $params->{profile_set}{id} = $prov_subscriber->voip_subscriber_profile_set ?
+            $prov_subscriber->voip_subscriber_profile_set->id : undef;
         $params->{profile}{id} = $prov_subscriber->voip_subscriber_profile ?
             $prov_subscriber->voip_subscriber_profile->id : undef;
         $params->{webusername} = $prov_subscriber->webusername;
@@ -1892,7 +1899,6 @@ sub edit_master :Chained('master') :PathPart('edit') :Args(0) :Does(ACL) :ACLDet
         form => $form,
         fields => {
             $pbx_ext ? ('group.create' => $c->uri_for_action('/customer/pbx_group_create', [$prov_subscriber->account_id])) : (),
-            'profile.create' => $c->uri_for_action('/subscriberprofile/create'),
         },
         back_uri => $c->req->uri,
     );
@@ -1918,28 +1924,37 @@ sub edit_master :Chained('master') :PathPart('edit') :Args(0) :Does(ACL) :ACLDet
                     if($pbx_ext);
                 my $old_group_id = $prov_subscriber->pbx_group_id;
 
-                my $profile;
-                if($form->values->{profile}{id}) {
-                    my $profile_rs = $c->model('DB')->resultset('voip_subscriber_profiles');
+                my ($profile_set, $profile);
+                if($form->values->{profile_set}{id}) {
+                    my $profile_set_rs = $c->model('DB')->resultset('voip_subscriber_profile_sets');
                     if($c->user->roles eq "admin") {
                     } elsif($c->user->roles eq "reseller") {
-                        $profile_rs = $profile_rs->search({
+                        $profile_set_rs = $profile_set_rs->search({
                             reseller_id => $c->user->reseller_id,
                         });
                     }
                          
-                    $profile = $profile_rs->find($form->values->{profile}{id});
-                    unless($profile) {
+                    $profile_set = $profile_set_rs->find($form->values->{profile_set}{id});
+                    unless($profile_set) {
                         NGCP::Panel::Utils::Message->error(
                             c => $c,
-                            error => 'invalid subscriber profile id ' . $form->values->{profile}{id},
-                            desc  => $c->loc('Invalid subscriber profile id'),
+                            error => 'invalid subscriber profile set id ' . $form->values->{profile_set}{id},
+                            desc  => $c->loc('Invalid subscriber profile set id'),
                         );
                         return;
                     }
-                    delete $form->values->{profile};
-                    $prov_params->{profile_id} = $profile->id;
+                    delete $form->values->{profile_set};
+                    $prov_params->{profile_set_id} = $profile_set->id;
+
+                    $profile = $profile_set->voip_subscriber_profiles->find({
+                        set_default => 1,
+                    });
+                    $prov_params->{profile_id} = $profile ? $profile->id : undef;
+
+                    # TODO should we report an error if no default profile is found? Otherwise
+                    # the subscriber has full feature access.
                 } else {
+                    $prov_params->{profile_set_id} = undef;
                     $prov_params->{profile_id} = undef;
                 }
 
