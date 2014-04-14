@@ -137,6 +137,12 @@ has_field 'cfna.times' => (
     do_label => 0,
 );
 
+has_field 'cft.ringtimeout' => (
+    type => 'PosInteger',
+    do_wrapper => 1,
+    do_label => 0,
+);
+
 has_block 'fields' => (
     tag => 'div',
     class => [qw(modal-body)],

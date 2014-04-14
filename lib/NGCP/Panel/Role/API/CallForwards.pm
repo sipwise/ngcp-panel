@@ -30,6 +30,10 @@ sub hal_from_item {
 
     die "no provisioning_voip_subscriber" unless $prov_subs;
 
+    my $ringtimeout_preference = NGCP::Panel::Utils::Preferences::get_usr_preference_rs(
+            c => $c, attribute => 'ringtimeout', prov_subscriber => $prov_subs)->first;
+    $ringtimeout_preference = $ringtimeout_preference ? $ringtimeout_preference->value : undef;
+
     my %resource = (subscriber_id => $prov_subs->id);
 
     my $hal = Data::HAL->new(
@@ -60,6 +64,8 @@ sub hal_from_item {
             $resource{$cf_type} = {};
         }
     }
+
+    $resource{cft}{ringtimeout} = $ringtimeout_preference;
 
     $form //= $self->get_form($c);
     return unless $self->validate_form(
@@ -105,7 +111,9 @@ sub update_item {
 
     delete $resource->{id};
     my $billing_subscriber_id = $item->id; # note that this belongs to provisioning_voip_subscribers
-    my $prov_subscriber_id = $item->provisioning_voip_subscriber->id;
+    my $prov_subs = $item->provisioning_voip_subscriber;
+    die "need provisioning_voip_subscriber" unless $prov_subs;
+    my $prov_subscriber_id = $prov_subs->id;
 
     for my $type (qw/cfu cfb cft cfna/) {
         my $mapping = $c->model('DB')->resultset('voip_cf_mappings')->search_rs({
@@ -131,7 +139,6 @@ sub update_item {
         }
 
         try {
-            my $prov_subs = $item->provisioning_voip_subscriber;
             my $primary_nr_rs = $item->primary_number;
             my $number;
             if ($primary_nr_rs) {
@@ -183,10 +190,28 @@ sub update_item {
                     %$t
                 });
             }
+            unless ( $dset && $dset->voip_cf_destinations->count ) {
+                $mapping->delete;
+            }
         } catch($e) {
             $c->log->error("Error Updating '$type': $e");
             $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "CallForward '$type' could not be updated.");
             return;
+        }
+    }
+
+    if ($resource->{cft}{ringtimeout} && $resource->{cft}{ringtimeout} > 0) {
+        my $ringtimeout_preference = NGCP::Panel::Utils::Preferences::get_usr_preference_rs(
+            c => $c, attribute => 'ringtimeout', prov_subscriber => $prov_subs);
+
+        if($ringtimeout_preference->first) {
+            $ringtimeout_preference->first->update({
+                value => $resource->{cft}{ringtimeout},
+            });
+        } else {
+            $ringtimeout_preference->create({
+                value => $resource->{cft}{ringtimeout},
+            });
         }
     }
 
