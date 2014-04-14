@@ -19,8 +19,8 @@ use NGCP::Panel::Form::Contract::ProductOptional;
 sub item_rs {
     my ($self, $c) = @_;
 
-    my $item_rs = NGCP::Panel::Utils::Contract::get_contract_rs(
-        schema => $c->model('DB'),
+    my $item_rs = NGCP::Panel::Utils::Contract::get_contracts_rs_sippbx(
+        c => $c,
     );
     $item_rs = $item_rs->search({
             'contact.reseller_id' => { '-not' => undef },
@@ -122,7 +122,6 @@ sub hal_from_customer {
 
 sub customer_by_id {
     my ($self, $c, $id) = @_;
-    my $customers = NGCP::Panel::Utils::Contract::get_contracts_rs_sippbx(
     my $customers = $self->item_rs($c);
     return $customers->find($id);
 }
