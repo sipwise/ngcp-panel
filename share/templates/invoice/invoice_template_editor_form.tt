@@ -36,12 +36,52 @@ function formSerialize(){
         contract_id: '[%contract.id%]',
     });void(0);">[% c.loc('Load default')%] <i class="icon-edit"></i></a>
 </span>
+<span>
+    <a class="btn btn-secondary btn-small"  data-confirm="[%c.loc('Overwrite changes');%]" href="javascript:fetchInvoiceTemplateData({
+        tt_sourcestate: 'saved',
+        tt_id: getTtIdVal(),
+        contract_id: '[%contract.id%]',
+    });void(0);">[% c.loc('Load saved')%] <i class="icon-edit"></i></a>
+</span>
 <span id="load_previewed_control" style="display:none;">
     <a class="btn btn-secondary btn-small"  data-confirm="[%c.loc('Overwrite changes');%]" href="javascript:fetchInvoiceTemplateData({
         tt_sourcestate: 'previewed',
         tt_id: getTtIdVal(),
         contract_id: '[%contract.id%]',
     });void(0);">[% c.loc('Load previewed')%] <i class="icon-edit"></i></a>
+</span>
+<div class="ngcp-separator"></div>
+<span>
+    <a class="btn btn-primary btn-small" href="javascript:window.open(uriForAction({
+        tt_sourcestate: 'previewed',
+        tt_output_type : 'svg',
+        tt_id: getTtIdVal(),
+        contract_id: '[%contract.id%]',
+    }),'_blank');void(0);">[% c.loc('Previewed SVG')%] <i class="icon-edit"></i></a>
+</span>
+<span>
+    <a class="btn btn-primary btn-small" href="javascript:window.open(uriForAction({
+        tt_sourcestate: 'previewed',
+        tt_output_type : 'pdf',
+        tt_id: getTtIdVal(),
+        contract_id: '[%contract.id%]',
+    }),'_blank');void(0);">[% c.loc('Previewed PDF')%] <i class="icon-edit"></i></a>
+</span>
+<span>
+    <a class="btn btn-primary btn-small" href="javascript:window.open(uriForAction({
+        tt_sourcestate: 'saved',
+        tt_output_type : 'svg',
+        tt_id: getTtIdVal(),
+        contract_id: '[%contract.id%]',
+    }),'_blank');void(0);">[% c.loc('Saved SVG')%] <i class="icon-edit"></i></a>
+</span>
+<span>
+    <a class="btn btn-primary btn-small" href="javascript:window.open(uriForAction({
+        tt_sourcestate: 'saved',
+        tt_output_type : 'pdf',
+        tt_id: getTtIdVal(),
+        contract_id: '[%contract.id%]',
+    }),'_blank');void(0);">[% c.loc('Saved PDF')%] <i class="icon-edit"></i></a>
 </span>
 [%initial = 'default'%]
 <div class="ngcp-separator"></div>

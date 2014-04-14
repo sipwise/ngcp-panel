@@ -12,6 +12,7 @@ var staticContainerId='invoice_template_list';
     <thead>
         <tr>
             <th>[% c.loc('Active') %]</th>
+            <th>[% c.loc('Id') %]</th>
             <th>[% c.loc('Name') %]</th>
             <th>[% c.loc('Type') %]</th>
             <th class="ngcp-actions-column"></th>
@@ -23,6 +24,7 @@ var staticContainerId='invoice_template_list';
         [%# Dumper.dump_html(template)%]
         <tr class="sw_action_row" data-id="[%template.get_column('id')%]">
             <td style="font-size: 20px;">[%IF template.get_column('is_active') > 0; '✓'; END%]</td><!--✓-->
+            <td>[% template.get_column('id') %]</td>
             <td>[% template.get_column('name') %]</td>
             <td>[% template.get_column('type') %]</td>
             <td class="ngcp-actions-column">
