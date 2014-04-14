@@ -695,6 +695,17 @@ sub destination_to_field {
     return ($d, $duri);
 }
 
+sub callforward_create_or_update_quickset_destinations {
+    my %params = @_;
+
+    my $mapping = $params{mapping};
+    my $type = $params{type};
+    my $destinations = $params{destinations};
+    my $schema = $params{schema};
+    
+    return;
+}
+
 1;
 
 =head1 NAME

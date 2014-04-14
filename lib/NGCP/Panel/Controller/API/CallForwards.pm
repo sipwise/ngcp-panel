@@ -70,12 +70,14 @@ sub GET :Allow {
             rows => $rows,
         });
         my (@embedded, @links);
-        for my $cf ($cfs->search({}, {order_by => ['subscriber_id', 'type']})->all) {
-            push @embedded, $self->hal_from_item($c, $cf, "callforwards");
-            push @links, Data::HAL::Link->new(
-                relation => 'ngcp:'.$self->resource_name,
-                href     => sprintf('%s%s', $self->dispatch_path, $cf->subscriber_id),
-            );
+        for my $cf ($cfs->all) {
+            try {
+                push @embedded, $self->hal_from_item($c, $cf, "callforwards");
+                push @links, Data::HAL::Link->new(
+                    relation => 'ngcp:'.$self->resource_name,
+                    href     => sprintf('%s%s', $self->dispatch_path, $cf->id),
+                );
+            }
         }
         push @links,
             Data::HAL::Link->new(

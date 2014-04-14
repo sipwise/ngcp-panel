@@ -85,6 +85,112 @@ sub OPTIONS :Allow {
     return;
 }
 
+sub PATCH :Allow {
+    my ($self, $c, $id) = @_;
+    my $guard = $c->model('DB')->txn_scope_guard;
+    {
+        my $preference = $self->require_preference($c);
+        last unless $preference;
+
+        my $json = $self->get_valid_patch_data(
+            c => $c,
+            id => $id,
+            media_type => 'application/json-patch+json',
+            ops => [qw/add replace remove copy/],
+        );
+        last unless $json;
+
+        my $callforward = $self->item_by_id($c, $id, "callforwards");
+        last unless $self->resource_exists($c, callforward => $callforward);
+        my $old_resource = $self->hal_from_item($c, $callforward, "callforwards")->resource;
+        my $resource = $self->apply_patch($c, $old_resource, $json);
+        last unless $resource;
+
+        my $form = $self->get_form($c);
+        $callforward = $self->update_item($c, $callforward, $old_resource, $resource, $form);
+        last unless $callforward;
+
+        $guard->commit; 
+
+        if ('minimal' eq $preference) {
+            $c->response->status(HTTP_NO_CONTENT);
+            $c->response->header(Preference_Applied => 'return=minimal');
+            $c->response->body(q());
+        } else {
+            my $hal = $self->hal_from_item($c, $callforward, "callforwards");
+            my $response = HTTP::Response->new(HTTP_OK, undef, HTTP::Headers->new(
+                $hal->http_headers,
+            ), $hal->as_json);
+            $c->response->headers($response->headers);
+            $c->response->header(Preference_Applied => 'return=representation');
+            $c->response->body($response->content);
+        }
+    }
+    return;
+}
+
+sub PUT :Allow {
+    my ($self, $c, $id) = @_;
+    my $guard = $c->model('DB')->txn_scope_guard;
+    {
+        my $preference = $self->require_preference($c);
+        last unless $preference;
+
+        my $callforward = $self->item_by_id($c, $id, "callforwards");
+        last unless $self->resource_exists($c, callforward => $callforward);
+        my $resource = $self->get_valid_put_data(
+            c => $c,
+            id => $id,
+            media_type => 'application/json',
+        );
+        last unless $resource;
+        my $old_resource = undef;
+
+        my $form = $self->get_form($c);
+        $callforward = $self->update_item($c, $callforward, $old_resource, $resource, $form);
+        last unless $callforward;
+
+        $guard->commit; 
+
+        if ('minimal' eq $preference) {
+            $c->response->status(HTTP_NO_CONTENT);
+            $c->response->header(Preference_Applied => 'return=minimal');
+            $c->response->body(q());
+        } else {
+            my $hal = $self->hal_from_item($c, $callforward, "callforwards");
+            my $response = HTTP::Response->new(HTTP_OK, undef, HTTP::Headers->new(
+                $hal->http_headers,
+            ), $hal->as_json);
+            $c->response->headers($response->headers);
+            $c->response->header(Preference_Applied => 'return=representation');
+            $c->response->body($response->content);
+        }
+    }
+    return;
+}
+
+sub DELETE :Allow {
+    my ($self, $c, $id) = @_;
+    my $guard = $c->model('DB')->txn_scope_guard;
+    {
+        my $ruleset = $self->item_by_id($c, $id, "callforwards");
+        last unless $self->resource_exists($c, ruleset => $ruleset);
+        try {
+            $ruleset->voip_rewrite_rules->delete;
+            $ruleset->delete;
+        } catch($e) {
+            $c->log->error("Failed to delete rewriteruleset with id '$id': $e");
+            $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "Internal Server Error");
+            last;
+        }
+        $guard->commit;
+
+        $c->response->status(HTTP_NO_CONTENT);
+        $c->response->body(q());
+    }
+    return;
+}
+
 sub end : Private {
     my ($self, $c) = @_;
 
