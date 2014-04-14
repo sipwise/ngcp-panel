@@ -1,4 +1,4 @@
-package NGCP::Panel::Form::SubscriberProfile::Reseller;
+package NGCP::Panel::Form::SubscriberProfile::Profile;
 
 use HTML::FormHandler::Moose;
 extends 'HTML::FormHandler';
@@ -39,7 +39,7 @@ has_field 'save' => (
 has_block 'fields' => (
     tag => 'div',
     class => [qw/modal-body/],
-    render_list => [qw/reseller name description/],
+    render_list => [qw/name description/],
 );
 
 has_block 'actions' => (

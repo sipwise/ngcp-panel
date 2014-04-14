@@ -1,7 +1,7 @@
-package NGCP::Panel::Form::SubscriberProfile::Admin;
+package NGCP::Panel::Form::SubscriberProfile::CatalogAdmin;
 
 use HTML::FormHandler::Moose;
-extends 'NGCP::Panel::Form::SubscriberProfile::Reseller';
+extends 'NGCP::Panel::Form::SubscriberProfile::CatalogReseller';
 use Moose::Util::TypeConstraints;
 
 has_field 'reseller' => (
@@ -9,7 +9,7 @@ has_field 'reseller' => (
     validate_when_empty => 1,
     element_attr => {
         rel => ['tooltip'],
-        title => ['The reseller this Subscriber Profile belongs to.'],
+        title => ['The reseller this Subscriber Profile Catalog belongs to.'],
     },
 );
 
