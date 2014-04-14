@@ -553,6 +553,24 @@ sub preferences :Chained('base') :PathPart('preferences') :Args(0) {
             c => $c, attribute => 'ringtimeout', prov_subscriber => $prov_subscriber)
         ->first;
     $c->stash(cf_ringtimeout => $ringtimeout_preference ? $ringtimeout_preference->value : undef);
+
+    if($prov_subscriber->profile_id && (
+       $c->user->roles eq "subscriberadmin" || $c->user->roles eq "subscriber")) {
+        my @attribute_ids = $prov_subscriber->voip_subscriber_profile->profile_attributes->get_column('attribute_id')->all;
+        my @newprefgroups = ();
+        foreach my $grp(@{ $c->stash->{pref_groups} }) {
+            my @newgrp = ();
+            foreach my $pref(@{ $grp->{prefs} }) {
+                my $pref_id = $pref->id;
+                if(grep { /^$pref_id$/ } @attribute_ids) {
+                    push @newgrp, $pref;
+                }
+            }
+            $grp->{prefs} = \@newgrp;
+            push @newprefgroups, $grp if @newgrp;
+        }
+        $c->stash->{pref_groups} = \@newprefgroups;
+    }
 }
 
 sub preferences_base :Chained('base') :PathPart('preferences') :CaptureArgs(1) {
