@@ -88,7 +88,7 @@ __PACKAGE__->config(
 
     'Plugin::Static::Simple' => {
         include_path => [
-            '/usr/share/ngcp-panel/templates',
+            '/usr/share/ngcp-panel/static',
             __PACKAGE__->path_to('share', 'static'),
         ],
         mime_types => {
