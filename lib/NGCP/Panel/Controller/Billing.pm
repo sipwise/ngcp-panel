@@ -396,6 +396,9 @@ sub fees_upload :Chained('fees_list') :PathPart('upload') :Args(0) {
                     delete $row->{zone_detail};
                     push @fees, $row;
                 }
+                unless ($csv->eof()) {
+                    die "Some lines could not be parsed. Did not reach eof. Last successful: $linenum.";
+                }
                 $c->stash->{'profile_result'}
                     ->billing_fees->populate(\@fees);
             });
