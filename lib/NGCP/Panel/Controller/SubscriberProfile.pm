@@ -54,6 +54,16 @@ sub set_ajax :Chained('set_list') :PathPart('ajax') :Args(0) :Does(ACL) :ACLDeta
     $c->detach( $c->view("JSON") );
 }
 
+sub set_ajax_reseller :Chained('set_list') :PathPart('ajax/reseller') :Args(1) :Does(ACL) :ACLDetachTo('/denied_page') :AllowedRole(admin) :AllowedRole(reseller) {
+    my ($self, $c, $reseller_id) = @_;
+    my $rs = $c->stash->{set_rs};
+    $rs = $rs->search({
+        reseller_id => $reseller_id,
+    });
+    NGCP::Panel::Utils::Datatables::process($c, $rs, $c->stash->{set_dt_columns});
+    $c->detach( $c->view("JSON") );
+}
+
 sub set_base :Chained('set_list') :PathPart('') :CaptureArgs(1) {
     my ($self, $c, $set_id) = @_;
 
@@ -279,6 +289,7 @@ sub profile_list :Chained('set_base') :PathPart('profile') :CaptureArgs(0) {
 
     $c->stash->{profile_dt_columns} = NGCP::Panel::Utils::Datatables::set_columns($c, [
         { name => 'id', search => 1, title => $c->loc('#') },
+        { name => 'profile_set.name', search => 0, title => $c->loc('Profile Set') },
         { name => 'name', search => 1, title => $c->loc('Name') },
         { name => 'description', search => 1, title => $c->loc('Description') },
         { name => 'set_default', search => 0, title => $c->loc('Default') },

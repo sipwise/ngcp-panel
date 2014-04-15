@@ -7,7 +7,7 @@ has '+widget' => (default => ''); # leave this empty, as there is no widget ...
 has 'template' => ( isa => 'Str',
                     is => 'rw',
                     default => 'helpers/datatables_field.tt' );
-has 'ajax_src' => ( isa => 'Str', is => 'rw' );
+has 'ajax_src' => ( isa => 'Str', is => 'rw', default => '/emptyajax' );
 has 'table_fields' => ( isa => 'ArrayRef', is => 'rw' );
 has 'table_titles' => ( isa => 'ArrayRef', is => 'rw' );
 has 'language_file' => (isa => 'Str', is => 'rw', default => 'dataTables.default.js' );

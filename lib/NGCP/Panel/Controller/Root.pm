@@ -238,6 +238,18 @@ sub denied_page :Private {
     $c->response->status(403);
 }
 
+sub emptyajax :Chained('/') :PathPart('emptyajax') :Args(0) {
+    my ($self, $c) = @_;
+
+    $c->stash(
+        aaData => [],
+        iTotalDisplayRecords => 0,
+        iTotalRecords => 0,
+        sEcho => $c->request->params->{sEcho} // 1,
+    );
+    $c->detach( $c->view("JSON") );
+}
+
 __PACKAGE__->meta->make_immutable;
 
 1;

@@ -162,6 +162,7 @@ sub create_list :Chained('sub_list') :PathPart('create') :Args(0) :Does(ACL) :AC
                     ->find({domain => $billing_domain->domain});
 
                 my $reseller = $contract->contact->reseller;
+
                 my ($profile_set, $profile);
                 if($form->values->{profile_set}{id}) {
                     my $profile_set_rs = $c->model('DB')->resultset('voip_subscriber_profile_sets');
@@ -182,11 +183,17 @@ sub create_list :Chained('sub_list') :PathPart('create') :Args(0) :Does(ACL) :AC
                         return;
                     }
                     delete $form->values->{profile_set};
+                }
+                if($form->values->{profile}{id}) {
+                    $profile = $profile_set->voip_subscriber_profiles->find({
+                        id => $form->values->{profile}{id},
+                    });
+                    delete $form->values->{profile};
+                }
+                if($profile_set && !$profile) {
                     $profile = $profile_set->voip_subscriber_profiles->find({
                         set_default => 1,
                     });
-                    # TODO should we report an error if no default profile is found? Otherwise
-                    # the subscriber has full feature access.
                 }
 
                 my $billing_subscriber = $contract->voip_subscribers->create({
@@ -1809,7 +1816,8 @@ sub edit_master :Chained('master') :PathPart('edit') :Args(0) :Does(ACL) :ACLDet
             $c->stash(customer_id => $subscriber->contract->id);
             $form = NGCP::Panel::Form::Customer::PbxExtensionSubscriberEditSubadminNoGroup->new(ctx => $c);
         } else {
-            $form = NGCP::Panel::Form::SubscriberEdit->new;
+            $form = NGCP::Panel::Form::SubscriberEdit->new(ctx => $c);
+            $is_admin = 1;
         }
     }
 
@@ -1944,18 +1952,29 @@ sub edit_master :Chained('master') :PathPart('edit') :Args(0) :Does(ACL) :ACLDet
                         return;
                     }
                     delete $form->values->{profile_set};
-                    $prov_params->{profile_set_id} = $profile_set->id;
+                } else {
+                    $profile_set = $prov_subscriber->voip_subscriber_profile_set;
+                }
 
+                if($profile_set && $form->values->{profile}{id}) {
+                    $profile = $profile_set->voip_subscriber_profiles->find({
+                        id => $form->values->{profile}{id},
+                    });
+                }
+                if($profile_set && !$profile) {
                     $profile = $profile_set->voip_subscriber_profiles->find({
                         set_default => 1,
                     });
+                }
+                if($c->user->roles eq "admin" || $c->user->roles eq "reseller") {
+                    $prov_params->{profile_set_id} = $profile_set ? $profile_set->id : undef;
                     $prov_params->{profile_id} = $profile ? $profile->id : undef;
-
-                    # TODO should we report an error if no default profile is found? Otherwise
-                    # the subscriber has full feature access.
                 } else {
-                    $prov_params->{profile_set_id} = undef;
-                    $prov_params->{profile_id} = undef;
+                    # if the subscriberadmin set the profile, then use it; otherwise
+                    # keep it at old value (e.g. if he unset it)
+                    if($prov_subscriber->voip_subscriber_profile_set && $profile) {
+                        $prov_params->{profile_id} = $profile->id;
+                    }
                 }
 
                 $prov_subscriber->update($prov_params);

@@ -19,7 +19,7 @@ has_field 'alias_select' => (
 has_block 'fields' => (
     tag => 'div',
     class => [qw/modal-body/],
-    render_list => [qw/group extension display_name webusername webpassword password external_id alias_select profile_set/ ],
+    render_list => [qw/group extension display_name webusername webpassword password external_id alias_select profile/ ],
 );
 
 sub update_fields {
@@ -36,6 +36,13 @@ sub update_fields {
     $group->field('id')->ajax_src(
         $c->uri_for_action('/customer/pbx_group_ajax', [$c->stash->{customer_id}])->as_string
     );
+
+    my $profile_set = $c->stash->{subscriber}->provisioning_voip_subscriber->voip_subscriber_profile_set;
+    if($profile_set) {
+        $self->field('profile')->field('id')->ajax_src(
+            $c->uri_for_action('/subscriberprofile/profile_ajax', [$profile_set->id])->as_string
+        );
+    }
 
     $self->field('password')->required(0); # optional on edit
 }
