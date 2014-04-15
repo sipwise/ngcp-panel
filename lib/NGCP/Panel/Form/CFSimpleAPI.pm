@@ -17,7 +17,7 @@ has_field 'cfu' => (
     type => 'Compound',
     do_wrapper => 1,
     do_label => 0,
-    required => 1,
+    required => 0,
     element_attr => { 
         rel => ['tooltip'], 
         title => ['Call Forward Unconditional'] 
@@ -28,7 +28,7 @@ has_field 'cfb' => (
     type => 'Compound',
     do_wrapper => 1,
     do_label => 0,
-    required => 1,
+    required => 0,
     element_attr => { 
         rel => ['tooltip'], 
         title => ['Call Forward Busy'] 
@@ -39,7 +39,7 @@ has_field 'cft' => (
     type => 'Compound',
     do_wrapper => 1,
     do_label => 0,
-    required => 1,
+    required => 0,
     element_attr => { 
         rel => ['tooltip'], 
         title => ['Call Forward Timeout'] 
@@ -50,7 +50,7 @@ has_field 'cfna' => (
     type => 'Compound',
     do_wrapper => 1,
     do_label => 0,
-    required => 1,
+    required => 0,
     element_attr => { 
         rel => ['tooltip'], 
         title => ['Call Forward Unavailable'] 
@@ -68,7 +68,7 @@ has_field 'cfu.destinations.destination' => (
 );
 
 has_field 'cfu.destinations.timeout' => (
-    type => 'Text',
+    type => 'PosInteger',
 );
 
 has_field 'cfu.times' => (
@@ -88,7 +88,7 @@ has_field 'cfb.destinations.destination' => (
 );
 
 has_field 'cfb.destinations.timeout' => (
-    type => 'Text',
+    type => 'PosInteger',
 );
 
 has_field 'cfb.times' => (
@@ -108,7 +108,7 @@ has_field 'cft.destinations.destination' => (
 );
 
 has_field 'cft.destinations.timeout' => (
-    type => 'Text',
+    type => 'PosInteger',
 );
 
 has_field 'cft.times' => (
@@ -128,7 +128,7 @@ has_field 'cfna.destinations.destination' => (
 );
 
 has_field 'cfna.destinations.timeout' => (
-    type => 'Text',
+    type => 'PosInteger',
 );
 
 has_field 'cfna.times' => (

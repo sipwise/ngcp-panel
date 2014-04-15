@@ -115,6 +115,24 @@ sub update_item {
     die "need provisioning_voip_subscriber" unless $prov_subs;
     my $prov_subscriber_id = $prov_subs->id;
 
+    return unless $self->validate_form(
+        c => $c,
+        form => $form,
+        resource => $resource,
+        run => 1,
+    );
+
+    for my $type (qw/cfu cfb cft cfna/) {
+        next unless "ARRAY" eq ref $resource->{$type}{destinations};
+        for my $d (@{ $resource->{$type}{destinations} }) {
+            if (exists $d->{timeout} && ! $d->{timeout}->is_integer) {
+                $c->log->error("Invalid timeout in '$type'");
+                $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Invalid timeout in '$type'");
+                return;
+            }
+        }
+    }
+
     for my $type (qw/cfu cfb cft cfna/) {
         my $mapping = $c->model('DB')->resultset('voip_cf_mappings')->search_rs({
             subscriber_id => $prov_subscriber_id,
@@ -214,13 +232,6 @@ sub update_item {
             });
         }
     }
-
-    return unless $self->validate_form(
-        c => $c,
-        form => $form,
-        resource => $resource,
-        run => 0,
-    );
 
     return $item;
 }
