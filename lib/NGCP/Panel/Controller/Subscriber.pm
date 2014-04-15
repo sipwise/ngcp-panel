@@ -1952,8 +1952,13 @@ sub edit_master :Chained('master') :PathPart('edit') :Args(0) :Does(ACL) :ACLDet
                         return;
                     }
                     delete $form->values->{profile_set};
-                } else {
-                    $profile_set = $prov_subscriber->voip_subscriber_profile_set;
+                } elsif(exists $form->params->{profile_set}{id}) {
+                    # if the param has been passed and is empty, clear it
+
+                    # however, make sure the subscriber can't eliminate it
+                    unless($c->user->roles eq "admin" || $c->user->roles eq "reseller") {
+                        $profile_set = $prov_subscriber->voip_subscriber_profile_set;
+                    }
                 }
 
                 if($profile_set && $form->values->{profile}{id}) {
