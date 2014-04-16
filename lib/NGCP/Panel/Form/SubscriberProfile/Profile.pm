@@ -70,8 +70,15 @@ sub field_list {
     return unless $c;
 
     my $pref_rs = $c->model('DB')->resultset('voip_preferences')->search({
-        usr_pref => 1,
-        expose_to_customer => 1,
+        -or => [
+        {
+            usr_pref => 1,
+            expose_to_customer => 1,
+        },
+        {
+            attribute => { -in => [qw/cfu cft cfna cfb/] },
+        }
+        ],
     });
     
     my $fields = [];

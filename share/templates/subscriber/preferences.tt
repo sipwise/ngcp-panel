@@ -39,6 +39,13 @@
 <div class="ngcp-separator"></div>
 
 <div class="accordion" id="preference_groups">
+
+
+    [% IF 
+        ((c.user.roles == "subscriber" || c.user.roles == "subscriberadmin") && special_prefs.check && special_prefs.callforward.active) ||
+        ((c.user.roles == "subscriber" || c.user.roles == "subscriberadmin") && !special_prefs.check) ||
+        c.user.roles == "admin" || c.user.roles == "reseller" -%]
+
     <div class="accordion-group">
         <div class="accordion-heading">
             <a class="accordion-toggle" data-toggle="collapse" data-parent="#preference_groups" href="#collapse_cf">[% c.loc('Call Forwards') %]</a>
@@ -62,6 +69,9 @@
                                    { type = "cfb", desc = c.loc("Call Forward Busy") },
                                    { type = "cft", desc = c.loc("Call Forward Timeout") },
                                    { type = "cfna", desc = c.loc("Call Forward Unavailable") } ] -%]
+                        [% IF c.user.roles == "subscriber" || c.user.roles == "subscriberadmin" -%]
+                          [% NEXT IF special_prefs.check && !special_prefs.callforward.${cf.type} -%]
+                        [% END -%]
                         <tr class="sw_action_row">
                             <td>[% cf.desc %]</td>
                             <td>
@@ -135,6 +145,7 @@
             </div>
         </div>
     </div>
+    [% END -%]
 
     <div class="accordion-group">
         <div class="accordion-heading">
