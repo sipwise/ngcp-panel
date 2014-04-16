@@ -63,6 +63,7 @@ $ua->ssl_opts(
                  domainpreferences => 1,
                  subscribers => 1,
                  callforwards => 1,
+                 cfdestinationsets => 1,
                   };
     foreach my $link(@links) {
         my $rex = qr/^<\/api\/[a-z]+\/>; rel=\"collection http:\/\/purl\.org\/sipwise\/ngcp-api\/#rel-([a-z]+s)\"$/;

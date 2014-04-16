@@ -190,7 +190,6 @@ sub update_item {
                 }
             }
             for my $d (@{ $resource->{$type}{destinations} }) {
-                $c->log->debug("fooobar $d");
                 delete $d->{destination_set_id};
                 $d->{destination} = NGCP::Panel::Utils::Subscriber::field_to_destination(
                         destination => $d->{destination},
