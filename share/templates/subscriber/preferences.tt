@@ -441,7 +441,10 @@
                             </td>
                             <td class="ngcp-actions-column">
                                 <div class="sw_actions">
-                                    [% IF (c.user.roles == "admin" || c.user.roles == "reseller") && c.user.read_only != 1 -%]
+                                    [% IF 
+                                        ((c.user.roles == "admin" || c.user.roles == "reseller") && c.user.read_only != 1) ||
+                                        c.user.roles == "subscriber" || c.user.roles == "subscriberadmin"
+                                    -%]
                                     <a class="btn btn-primary btn-small" href="[% c.uri_for_action("/subscriber/edit_reminder", [c.req.captures.0]) %]">
                                         <i class="icon-edit"></i> [% c.loc('Edit') %]
                                     </a>
