@@ -9,6 +9,7 @@ use NGCP::Panel::Form::CustomerBalance;
 use NGCP::Panel::Form::Customer::Subscriber;
 use NGCP::Panel::Form::Customer::PbxAdminSubscriber;
 use NGCP::Panel::Form::Customer::PbxExtensionSubscriber;
+use NGCP::Panel::Form::Customer::PbxExtensionSubscriberSubadmin;
 use NGCP::Panel::Form::Customer::PbxGroupBase;
 use NGCP::Panel::Form::Customer::PbxGroup;
 use NGCP::Panel::Form::Customer::PbxFieldDevice;
@@ -499,6 +500,9 @@ sub subscriber_create :Chained('base') :PathPart('subscriber/create') :Args(0) {
     my $posted = ($c->request->method eq 'POST');
     my $admin_subscribers = NGCP::Panel::Utils::Subscriber::get_admin_subscribers(
         voip_subscribers => $c->stash->{subscribers});
+    $c->stash->{admin_subscriber} = $c->model('DB')->resultset('voip_subscribers')->find(
+        $admin_subscribers->[0]->{id},
+    );
 
     if($c->config->{features}->{cloudpbx} && $pbx) {
         $c->stash(customer_id => $c->stash->{contract}->id);
@@ -507,7 +511,11 @@ sub subscriber_create :Chained('base') :PathPart('subscriber/create') :Args(0) {
             $pbxadmin = 1;
             $form = NGCP::Panel::Form::Customer::PbxAdminSubscriber->new(ctx => $c);
         } else {
-            $form = NGCP::Panel::Form::Customer::PbxExtensionSubscriber->new(ctx => $c);
+            if($c->user->roles eq "subscriberadmin") {
+                $form = NGCP::Panel::Form::Customer::PbxExtensionSubscriberSubadmin->new(ctx => $c);
+            } else {
+                $form = NGCP::Panel::Form::Customer::PbxExtensionSubscriber->new(ctx => $c);
+            }
         }
     } else {
         $form = NGCP::Panel::Form::Customer::Subscriber->new;
@@ -568,6 +576,10 @@ sub subscriber_create :Chained('base') :PathPart('subscriber/create') :Args(0) {
                     my $default_sound_set = $c->stash->{contract}->voip_sound_sets->search({ contract_default => 1 })->first;
                     if($default_sound_set) {
                         $preferences->{contract_sound_set} = $default_sound_set->id;
+                    }
+                    if($c->stash->{admin_subscriber}) {
+                        my $profile_set = $c->stash->{admin_subscriber}->provisioning_voip_subscriber->voip_subscriber_profile_set;
+                        $form->params->{profile_set}{id} = $profile_set->id;
                     }
 
                     # TODO: if number changes, also update cloud_pbx_base_cli

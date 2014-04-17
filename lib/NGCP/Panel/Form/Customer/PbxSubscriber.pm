@@ -112,7 +112,8 @@ has_field 'save' => (
 has_block 'fields' => (
     tag => 'div',
     class => [qw/modal-body/],
-    render_list => [qw/display_name webusername webpassword username password status external_id profile_set profile/ ],
+    #render_list => [qw/display_name webusername webpassword username password status external_id profile_set profile/ ],
+    render_list => [qw/display_name webusername webpassword username password status profile_set profile/ ],
 );
 
 has_block 'actions' => (

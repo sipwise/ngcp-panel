@@ -155,10 +155,17 @@ sub create_subscriber {
             $c->log->error("invalid subscriber profile set id '".$params->{profile_set}{id}."' detected");
             return;
         }
+        if($params->{profile}{id}) {
+            $profile = $profile_set->voip_subscriber_profiles->find({
+                id => $params->{profile}{id},
+            });
+        }
         # TODO: use profile from user input if given
-        $profile = $profile_set->voip_subscriber_profiles->find({
-            set_default => 1,
-        });
+        unless($profile) {
+            $profile = $profile_set->voip_subscriber_profiles->find({
+                set_default => 1,
+            });
+        }
     }
     
     $schema->txn_do(sub {
