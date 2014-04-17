@@ -1815,14 +1815,12 @@ sub edit_master :Chained('master') :PathPart('edit') :Args(0) :Does(ACL) :ACLDet
     my $form; my $pbx_ext; my $is_admin; my $subadmin_pbx;
     
     if ($c->config->{features}->{cloudpbx} && $prov_subscriber->voip_pbx_group) {
+        $c->stash(customer_id => $subscriber->contract->id);
+        $pbx_ext = 1;
         if($c->user->roles eq 'subscriberadmin') {
-            $pbx_ext = 1;
             $subadmin_pbx = 1;
-            $c->stash(customer_id => $subscriber->contract->id);
             $form = NGCP::Panel::Form::Customer::PbxExtensionSubscriberEditSubadmin->new(ctx => $c);
         } else {
-            $pbx_ext = 1;
-            $c->stash(customer_id => $subscriber->contract->id);
             $is_admin = 1;
             $form = NGCP::Panel::Form::Customer::PbxExtensionSubscriberEditAdmin->new(ctx => $c);
         }
@@ -1969,12 +1967,9 @@ sub edit_master :Chained('master') :PathPart('edit') :Args(0) :Does(ACL) :ACLDet
                     }
                     delete $form->values->{profile_set};
                 } elsif(exists $form->params->{profile_set}{id}) {
-                    # if the param has been passed and is empty, clear it
-
-                    # however, make sure the subscriber can't eliminate it
-                    unless($c->user->roles eq "admin" || $c->user->roles eq "reseller") {
-                        $profile_set = $prov_subscriber->voip_subscriber_profile_set;
-                    }
+                    # if the param has been passed and is empty, clear it (by doing nothing)
+                } else {
+                    $profile_set = $prov_subscriber->voip_subscriber_profile_set;
                 }
 
                 if($profile_set && $form->values->{profile}{id}) {

@@ -27,8 +27,28 @@ has_field 'alias_number_add' => (
 has_block 'fields' => (
     tag => 'div',
     class => [qw/modal-body/],
-    render_list => [qw/group extension alias_number alias_number_add display_name webusername webpassword password status external_id profile_set/ ],
+    render_list => [qw/group extension alias_number alias_number_add display_name webusername webpassword password status external_id profile_set profile/ ],
 );
+
+sub field_list {
+    my ($self) = @_;
+
+    my $c = $self->ctx;
+    return unless($c);
+
+    my $profile_set = $self->field('profile_set');
+    $profile_set->field('id')->ajax_src(
+        $c->uri_for_action('/subscriberprofile/set_ajax_reseller', [$c->stash->{subscriber}->contract->contact->reseller_id])->as_string
+    );
+
+    my $set_id = $c->stash->{subscriber}->provisioning_voip_subscriber->profile_set_id;
+    if($set_id) {
+        my $profile = $self->field('profile');
+        $profile->field('id')->ajax_src(
+            $c->uri_for_action('/subscriberprofile/profile_ajax', [$set_id])->as_string
+        );
+    }
+}
 
 1;
 
