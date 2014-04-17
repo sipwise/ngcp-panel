@@ -223,8 +223,6 @@ sub edit :Chained('base') :PathPart('edit') :Args(0) :Does(ACL) :ACLDetachTo('/d
     );
 
     if($posted && $form->validated) {
-        # TODO: why is this needed here?
-        delete $form->params->{back};
         try {
             $c->model('DB')->txn_do(sub {
                 $form->params->{contract_id} = delete $form->params->{contract}{id};
