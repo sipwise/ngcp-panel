@@ -179,57 +179,34 @@
                         <i class="icon-star"></i> [% c.loc('Create Subscriber') %]
                     </a>
                 [% END -%]
-                <div class="ngcp-separator"></div>
-                <table class="table table-bordered table-striped table-highlight table-hover" id="subscribers_table">
-                    <thead>
-                        <tr>
-                            <th>[% c.loc('SIP URI') %]</th>
-                            <th>[% c.loc('Primary Number') %]</th>
-                            [% IF c.config.features.cloudpbx && product.class == 'pbxaccount' -%]
-                            <th>[% c.loc('PBX Group') %]</th>
-                            [% END -%]
-                            <th>[% c.loc('Registered Devices') %]</th>
-                            <th class="ngcp-actions-column"></th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        [% FOR subscriber IN subscribers -%]
-                        <tr class="sw_action_row">
-                            <td>[% subscriber.username %]@[% subscriber.domain %]</td>
-                            <td>[% subscriber.primary_number.cc %] [% subscriber.primary_number.ac %] [% subscriber.primary_number.sn %]</td>
-                            [% IF c.config.features.cloudpbx && product.class == 'pbxaccount' -%]
-                            <td>
-                                [% subscriber.voip_pbx_group.name -%]
-                            </td>
-                            [% END -%]
-                            <td>
-                                [% FOR location IN subscriber.locations -%]
-                                    [% location.user_agent %]<br/>
-                                [% END -%]
-                            </td>
-                            <td class="ngcp-actions-column">
-                                <div class="sw_actions">
-                                    <a class="btn btn-primary btn-small" href="[% c.uri_for_action("/subscriber/details", [subscriber.id]) %]">
-                                        <i class="icon-th-list"></i> [% c.loc('Details') %]
-                                    </a>
-                                    <a class="btn btn-tertiary btn-small" href="[% c.uri_for_action("/subscriber/preferences", [subscriber.id]) %]">
-                                        <i class="icon-list"></i> [% c.loc('Preferences') %]
-                                    </a>
-                                    [% IF (!c.user.readonly && (c.user.role == 'admin' || c.user.role == 'reseller')) || c.user.uuid != subscriber.uuid -%]
-                                    <a class="btn btn-secondary btn-small" href="[% c.uri_for_action("/subscriber/terminate", [subscriber.id]) %]" data-confirm="Terminate">
-                                        <i class="icon-remove"></i> [% c.loc('Terminate') %]</a>
-                                    [% END -%]
-                                </div>
-                            </td>
-                        </tr>
-                        [% END -%]
-                    </tbody>
-                </table>
+
+[%
+    helper.name = c.loc('Subscribers');
+    helper.identifier = 'subscribers';
+    helper.dt_columns = subscriber_dt_columns;
+    helper.ajax_uri = c.uri_for_action('/customer/subscriber_ajax', [ c.req.captures.0 ]);
+
+    UNLESS c.user.read_only;
+        helper.dt_buttons = [
+            { name = c.loc('Terminate'), uri = "/subscriber/'+full.id+'/terminate", class = 'btn-small btn-secondary', icon = 'icon-remove' },
+            { name = c.loc('Details'), uri = "/subscriber/'+full.id+'/details", class = 'btn-small btn-primary', icon = 'icon-th-list' },
+            { name = c.loc('Preferences'), uri = "/subscriber/'+full.id+'/preferences", class = 'btn-small btn-tertiary', icon = 'icon-list' },
+        ];
+    ELSE;
+        helper.dt_buttons = [
+            { name = c.loc('Details'), uri = "/subscriber/'+full.id+'/details", class = 'btn-small btn-primary', icon = 'icon-th-list' },
+            { name = c.loc('Preferences'), uri = "/subscriber/'+full.id+'/preferences", class = 'btn-small btn-tertiary', icon = 'icon-list' },
+        ];
+    END;
+
+    PROCESS 'helpers/datatables.tt';
+%]
+
             </div>
         </div>
     </div>
 
-    [% IF c.config.features.cloudpbx && product.class == 'pbxaccount' && subscribers.size -%]
+    [% IF c.config.features.cloudpbx && product.class == 'pbxaccount' && subscribers.count -%]
     <div class="accordion-group">
         <div class="accordion-heading">
             <a class="accordion-toggle" data-toggle="collapse" data-parent="#customer_details" href="#collapse_pbxgroups">[% c.loc('PBX Groups') %]</a>
@@ -251,48 +228,29 @@
                     </div>
                 [% END -%]
 
-                <div class="ngcp-separator"></div>
-                <table class="table table-bordered table-striped table-highlight table-hover" id="subscribers_table">
-                    <thead>
-                        <tr>
-                            <th>[% c.loc('Name') %]</th>
-                            <th>[% c.loc('SIP URI') %]</th>
-                            <th>[% c.loc('Primary Number') %]</th>
-                            <th>[% c.loc('Hunting Policy') %]</th>
-                            <th>[% c.loc('Hunting Timeout') %]</th>
-                            <th class="ngcp-actions-column"></th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        [% FOR subscriber IN pbx_groups -%]
-                        <tr class="sw_action_row">
-                            <td>[% subscriber.voip_pbx_group.name %]</td>
-                            <td>[% subscriber.username %]@[% subscriber.domain %]</td>
-                            <td>[% subscriber.primary_number.cc %] [% subscriber.primary_number.ac %] [% subscriber.primary_number.sn %]</td>
-                            <td>[% subscriber.voip_pbx_group.hunt_policy %]</td>
-                            <td>[% subscriber.voip_pbx_group.hunt_policy_timeout %]</td>
-                            <td class="ngcp-actions-column">
-                                <div class="sw_actions">
-                                    [% UNLESS c.user.readonly -%]
-                                    <a class="btn btn-secondary btn-small" href="[% c.uri_for_action("/subscriber/terminate", [subscriber.id]) %]" data-confirm="Terminate">
-                                        <i class="icon-remove"></i> [% c.loc('Terminate') %]
-                                    </a>
-                                    <a class="btn btn-primary btn-small" href="[% c.uri_for_action("/customer/pbx_group_edit", [contract.id, subscriber.voip_pbx_group.id]) %]">
-                                        <i class="icon-edit"></i> [% c.loc('Edit') %]
-                                    </a>
-                                    [% END -%]
-                                    <a class="btn btn-primary btn-small" href="[% c.uri_for_action("/subscriber/details", [subscriber.id]) %]">
-                                        <i class="icon-th-list"></i> [% c.loc('Details') %]
-                                    </a>
-                                    <a class="btn btn-tertiary btn-small" href="[% c.uri_for_action("/subscriber/preferences", [subscriber.id]) %]">
-                                        <i class="icon-list"></i> [% c.loc('Preferences') %]
-                                    </a>
-                                </div>
-                            </td>
-                        </tr>
-                        [% END -%]
-                    </tbody>
-                </table>
+[%
+    helper.name = c.loc('PBX Groups');
+    helper.identifier = 'pbx_groups';
+    helper.dt_columns = pbxgroup_dt_columns;
+    helper.ajax_uri = c.uri_for_action('/customer/pbx_group_ajax', [ c.req.captures.0 ]);
+
+    UNLESS c.user.read_only;
+        helper.dt_buttons = [
+            { name = c.loc('Terminate'), uri = "/subscriber/'+full.id+'/terminate", class = 'btn-small btn-secondary', icon = 'icon-remove' },
+            { name = c.loc('Details'), uri = "/subscriber/'+full.id+'/details", class = 'btn-small btn-primary', icon = 'icon-th-list' },
+            { name = c.loc('Preferences'), uri = "/subscriber/'+full.id+'/preferences", class = 'btn-small btn-tertiary', icon = 'icon-list' },
+        ];
+    ELSE;
+        helper.dt_buttons = [
+            { name = c.loc('Details'), uri = "/subscriber/'+full.id+'/details", class = 'btn-small btn-primary', icon = 'icon-th-list' },
+            { name = c.loc('Preferences'), uri = "/subscriber/'+full.id+'/preferences", class = 'btn-small btn-tertiary', icon = 'icon-list' },
+        ];
+    END;
+
+    PROCESS 'helpers/datatables.tt';
+%]
+
+
             </div>
         </div>
     </div>

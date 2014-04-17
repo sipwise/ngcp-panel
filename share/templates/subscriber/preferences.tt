@@ -1,4 +1,10 @@
-[% site_config.title = c.loc('Subscriber Preferences for [_1]@[_2]', subscriber.username, subscriber.domain.domain) -%]
+[%
+    IF subscriber.provisioning_voip_subscriber.is_pbx_group;
+        site_config.title = c.loc('PBX Group Preferences for [_1]@[_2]', subscriber.username, subscriber.domain.domain);
+    ELSE;
+        site_config.title = c.loc('Subscriber Preferences for [_1]@[_2]', subscriber.username, subscriber.domain.domain);
+    END;
+-%]
 
 [% 
     helper.name = c.loc('Subscriber');

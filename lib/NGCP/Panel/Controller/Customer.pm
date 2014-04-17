@@ -281,19 +281,35 @@ sub base :Chained('list_customer') :PathPart('') :CaptureArgs(1) {
         desc  => $c->loc('Invalid product id for this customer contract.'),
     ) unless($product);
 
-    $c->stash->{pbxgroup_dt_columns} = NGCP::Panel::Utils::Datatables::set_columns($c, [
+    $c->stash->{subscriber_dt_columns} = NGCP::Panel::Utils::Datatables::set_columns($c, [
         { name => "id", search => 1, title => $c->loc("#") },
-        { name => "name", search => 1, title => $c->loc("Name") },
-        { name => "extension", search => 1, title => $c->loc("Extension") },
+        { name => "username", search => 1, title => $c->loc("Name") },
+        { name => "provisioning_voip_subscriber.pbx_extension", search => 1, title => $c->loc("Extension") },
     ]);
 
-    my $subs = NGCP::Panel::Utils::Subscriber::get_custom_subscriber_struct(
-        c => $c,
-        contract => $contract_rs->first,
-        show_locked => 1,
-    );
-    $c->stash->{subscribers} = $subs->{subscribers};
-    $c->stash->{pbx_groups} = $subs->{pbx_groups};
+    $c->stash->{pbxgroup_dt_columns} = NGCP::Panel::Utils::Datatables::set_columns($c, [
+        { name => "id", search => 1, title => $c->loc("#") },
+        { name => "username", search => 1, title => $c->loc("Name") },
+        { name => "provisioning_voip_subscriber.pbx_extension", search => 1, title => $c->loc("Extension") },
+        { name => "provisioning_voip_subscriber.pbx_hunt_policy", search => 1, title => $c->loc("Hunt Policy") },
+        { name => "provisioning_voip_subscriber.pbx_hunt_timeout", search => 1, title => $c->loc("Serial Hunt Timeout") },
+    ]);
+    $c->stash->{subscribers} = $c->model('DB')->resultset('voip_subscribers')->search({
+        contract_id => $contract_id,
+        status => { '!=' => 'terminated' },
+        'provisioning_voip_subscriber.is_pbx_group' => 0,
+    }, {
+        join => 'provisioning_voip_subscriber',
+    });
+    if($c->config->{features}->{cloudpbx}) {
+        $c->stash->{pbx_groups} = $c->model('DB')->resultset('voip_subscribers')->search({
+            contract_id => $contract_id,
+            status => { '!=' => 'terminated' },
+            'provisioning_voip_subscriber.is_pbx_group' => 1,
+        }, {
+            join => 'provisioning_voip_subscriber',
+        });
+    }
 
     my $field_devs = [ $c->model('DB')->resultset('autoprov_field_devices')->search({
         'contract_id' => $contract_rs->first->id
@@ -498,16 +514,15 @@ sub subscriber_create :Chained('base') :PathPart('subscriber/create') :Args(0) {
     $pbx = 1 if $c->stash->{product}->class eq 'pbxaccount';
     my $form;
     my $posted = ($c->request->method eq 'POST');
-    my $admin_subscribers = NGCP::Panel::Utils::Subscriber::get_admin_subscribers(
-        voip_subscribers => $c->stash->{subscribers});
-    $c->stash->{admin_subscriber} = $c->model('DB')->resultset('voip_subscribers')->find(
-        $admin_subscribers->[0]->{id},
-    );
+    my $admin_subscribers = $c->stash->{subscribers}->search({
+        'provisioning_voip_subscriber.admin' => 1,
+    });
+    $c->stash->{admin_subscriber} = $admin_subscribers->first;
 
     if($c->config->{features}->{cloudpbx} && $pbx) {
         $c->stash(customer_id => $c->stash->{contract}->id);
         # we need to create an admin subscriber first
-        unless(@{ $admin_subscribers }) {
+        unless($c->stash->{admin_subscriber}) {
             $pbxadmin = 1;
             $form = NGCP::Panel::Form::Customer::PbxAdminSubscriber->new(ctx => $c);
         } else {
@@ -549,18 +564,18 @@ sub subscriber_create :Chained('base') :PathPart('subscriber/create') :Args(0) {
             $schema->txn_do(sub {
                 my $preferences = {};
                 if($pbx && !$pbxadmin) {
-                    my $admin = $admin_subscribers->[0];
-                    $form->params->{domain}{id} = $admin->{domain_id};
+                    my $admin = $c->stash->{admin_subscriber};
+                    $form->params->{domain}{id} = $admin->domain_id;
                     # TODO: make DT selection multi-select capable
                     $form->params->{pbx_group_id} = $form->params->{group}{id};
                     delete $form->params->{group};
-                    my $base_number = $admin->{primary_number};
+                    my $base_number = $admin->primary_number;
                     if($base_number) {
-                        $preferences->{cloud_pbx_base_cli} = $base_number->{cc} . $base_number->{ac} . $base_number->{sn};
-                        if($form->params->{extension}) {
-                            $form->params->{e164}{cc} = $base_number->{cc};
-                            $form->params->{e164}{ac} = $base_number->{ac};
-                            $form->params->{e164}{sn} = $base_number->{sn} . $form->params->{extension};
+                        $preferences->{cloud_pbx_base_cli} = $base_number->cc . $base_number->ac . $base_number->sn;
+                        if($form->params->{pbx_extension}) {
+                            $form->params->{e164}{cc} = $base_number->cc;
+                            $form->params->{e164}{ac} = $base_number->ac;
+                            $form->params->{e164}{sn} = $base_number->sn . $form->params->{pbx_extension};
                         }
                     }
                 }
@@ -838,10 +853,26 @@ sub calls_svg :Chained('base') :PathPart('calls/template') :Args {
     }
 }
 
+sub subscriber_ajax :Chained('base') :PathPart('subscriber/ajax') :Args(0) {
+    my ($self, $c) = @_;
+    my $res = $c->stash->{contract}->voip_subscribers->search({
+        'provisioning_voip_subscriber.is_pbx_group' => 0,
+        status => { '!=' => 'terminated' },
+
+    },{
+        join => 'provisioning_voip_subscriber',
+    });
+    NGCP::Panel::Utils::Datatables::process($c, $res, $c->stash->{subscriber_dt_columns});
+    $c->detach( $c->view("JSON") );
+}
+
 sub pbx_group_ajax :Chained('base') :PathPart('pbx/group/ajax') :Args(0) {
     my ($self, $c) = @_;
-    my $res = $c->model('DB')->resultset('voip_pbx_groups')->search({
-        contract_id => $c->stash->{contract}->id,
+    my $res = $c->stash->{contract}->voip_subscribers->search({
+        'provisioning_voip_subscriber.is_pbx_group' => 1,
+
+    },{
+        join => 'provisioning_voip_subscriber',
     });
     NGCP::Panel::Utils::Datatables::process($c, $res, $c->stash->{pbxgroup_dt_columns});
     $c->detach( $c->view("JSON") );
@@ -866,9 +897,11 @@ sub pbx_group_create :Chained('base') :PathPart('pbx/group/create') :Args(0) {
     }
 
     my $posted = ($c->request->method eq 'POST');
-    my $admin_subscribers = NGCP::Panel::Utils::Subscriber::get_admin_subscribers(
-          voip_subscribers => $c->stash->{subscribers});
-    unless(@{ $admin_subscribers }) {
+    my $admin_subscribers = $c->stash->{subscribers}->search({
+        'provisioning_voip_subscriber.admin' => 1,
+    });
+    $c->stash->{admin_subscriber} = $admin_subscribers->first;
+    unless($c->stash->{admin_subscriber}) {
         NGCP::Panel::Utils::Message->error(
             c => $c,
             error => 'cannot create pbx group without having an admin subscriber',
@@ -896,27 +929,24 @@ sub pbx_group_create :Chained('base') :PathPart('pbx/group/create') :Args(0) {
             my $schema = $c->model('DB');
             $schema->txn_do( sub {
                 my $preferences = {};
-                my $admin = $admin_subscribers->[0];
+                my $admin = $c->stash->{admin_subscriber};
 
-                my $base_number = $admin->{primary_number};
+                my $base_number = $admin->primary_number;
                 if($base_number) {
-                    $preferences->{cloud_pbx_base_cli} = $base_number->{cc} . $base_number->{ac} . $base_number->{sn};
-                    if($form->params->{extension}) {
-                        $form->params->{e164}{cc} = $base_number->{cc};
-                        $form->params->{e164}{ac} = $base_number->{ac};
-                        $form->params->{e164}{sn} = $base_number->{sn} . $form->params->{extension};
+                    $preferences->{cloud_pbx_base_cli} = $base_number->cc . $base_number->ac . $base_number->sn;
+                    if($form->params->{pbx_extension}) {
+                        $form->params->{e164}{cc} = $base_number->cc;
+                        $form->params->{e164}{ac} = $base_number->ac;
+                        $form->params->{e164}{sn} = $base_number->sn . $form->params->{pbx_extension};
                     }
 
                 }
-
                 $form->params->{is_pbx_group} = 1;
-                $form->params->{domain}{id} = $admin->{domain_id};
+                $form->params->{domain}{id} = $admin->domain_id;
                 $form->params->{status} = 'active';
-                $form->params->{username} = lc $form->params->{name};
-                $form->params->{username} =~ s/\s+/_/g;
                 $preferences->{cloud_pbx} = 1;
                 $preferences->{cloud_pbx_hunt_policy} = $form->params->{hunt_policy};
-                $preferences->{cloud_pbx_hunt_timeout} = $form->params->{hunt_policy_timeout};
+                $preferences->{cloud_pbx_hunt_timeout} = $form->params->{hunt_timeout};
                 my $billing_subscriber = NGCP::Panel::Utils::Subscriber::create_subscriber(
                     c => $c,
                     schema => $schema,
@@ -925,12 +955,7 @@ sub pbx_group_create :Chained('base') :PathPart('pbx/group/create') :Args(0) {
                     admin_default => 0,
                     preferences => $preferences,
                 );
-                foreach my $k(qw/is_pbx_group username password e164 pbx_group domain status/) {
-                    delete $form->params->{$k};
-                }
-                $form->params->{subscriber_id} = $billing_subscriber->provisioning_voip_subscriber->id;
-                my $group = $c->stash->{contract}->voip_pbx_groups->create($form->params);
-                $c->session->{created_objects}->{group} = { id => $group->id };
+                $c->session->{created_objects}->{group} = { id => $billing_subscriber->id };
             });
 
             $c->flash(messages => [{type => 'success', text => $c->loc('PBX group successfully created.')}]);
@@ -955,7 +980,7 @@ sub pbx_group_create :Chained('base') :PathPart('pbx/group/create') :Args(0) {
 sub pbx_group_base :Chained('base') :PathPart('pbx/group') :CaptureArgs(1) {
     my ($self, $c, $group_id) = @_;
 
-    my $group = $c->model('DB')->resultset('voip_pbx_groups')->find($group_id);
+    my $group = $c->stash->{pbx_groups}->find($group_id);
     unless($group) {
         NGCP::Panel::Utils::Message->error(
             c => $c,

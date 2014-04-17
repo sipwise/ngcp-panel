@@ -10,7 +10,7 @@ has_field 'group' => (
     validate_when_empty => 1,
 );
 
-has_field 'extension' => (
+has_field 'pbx_extension' => (
     type => '+NGCP::Panel::Field::PosInteger',
     element_attr => { 
         rel => ['tooltip'], 
@@ -23,7 +23,7 @@ has_field 'extension' => (
 has_block 'fields' => (
     tag => 'div',
     class => [qw/modal-body/],
-    render_list => [qw/group extension display_name webusername webpassword username password status external_id profile_set/ ],
+    render_list => [qw/group pbx_extension display_name webusername webpassword username password status external_id profile/ ],
 );
 
 sub field_list {
@@ -35,6 +35,15 @@ sub field_list {
     $group->field('id')->ajax_src(
         $c->uri_for_action('/customer/pbx_group_ajax', [$c->stash->{customer_id}])->as_string
     );
+
+    if($c->stash->{admin_subscriber}) {
+        my $profile_set = $c->stash->{admin_subscriber}->provisioning_voip_subscriber->voip_subscriber_profile_set;
+        if($profile_set) {
+            $self->field('profile')->field('id')->ajax_src(
+                $c->uri_for_action('/subscriberprofile/profile_ajax', [$profile_set->id])->as_string
+            );
+        }
+    }
 }
 
 

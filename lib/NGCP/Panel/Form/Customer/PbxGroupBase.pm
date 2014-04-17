@@ -12,7 +12,7 @@ has_field 'submitid' => ( type => 'Hidden' );
 sub build_render_list {[qw/submitid fields actions/]}
 sub build_form_element_class {[qw(form-horizontal)]}
 
-has_field 'hunt_policy' => (
+has_field 'pbx_hunt_policy' => (
     type => 'Select',
     required => 1,
     label => 'Hunting Policy',
@@ -23,7 +23,7 @@ has_field 'hunt_policy' => (
     default => 'serial',
 );
 
-has_field 'hunt_policy_timeout' => (
+has_field 'pbx_hunt_timeout' => (
     type => '+NGCP::Panel::Field::PosInteger',
     required => 1,
     label => 'Serial Hunting Timeout',
@@ -40,7 +40,7 @@ has_field 'save' => (
 has_block 'fields' => (
     tag => 'div',
     class => [qw/modal-body/],
-    render_list => [qw/hunt_policy hunt_policy_timeout/],
+    render_list => [qw/pbx_hunt_policy pbx_hunt_timeout/],
 );
 
 has_block 'actions' => (

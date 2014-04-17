@@ -3,13 +3,13 @@ package NGCP::Panel::Form::Customer::PbxGroup;
 use HTML::FormHandler::Moose;
 extends 'NGCP::Panel::Form::Customer::PbxGroupBase';
 
-has_field 'name' => (
+has_field 'username' => (
     type => 'Text',
     required => 1,
     label => 'Name',
 );
 
-has_field 'extension' => (
+has_field 'pbx_extension' => (
     type => 'Text',
     required => 1,
     label => 'Extension',
@@ -18,14 +18,14 @@ has_field 'extension' => (
 has_block 'fields' => (
     tag => 'div',
     class => [qw/modal-body/],
-    render_list => [qw/name extension hunt_policy hunt_policy_timeout/],
+    render_list => [qw/username pbx_extension pbx_hunt_policy pbx_hunt_timeout/],
 );
 
-sub validate_name {
+sub validate_username {
     my ($self, $field) = @_;
 
-    unless($field->value =~ /^[a-zA-Z0-9_\-\s]+$/) {
-        $field->add_error("Invalid group name, must only contain letters, digits, - and _ and spaces");
+    unless($field->value =~ /^[a-zA-Z0-9_\-]+$/) {
+        $field->add_error("Invalid group name, must only contain letters, digits, - and _");
     }
 }
 

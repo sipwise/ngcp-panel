@@ -12,7 +12,7 @@ has_field 'id' => (
     # this is set in the form:
     #ajax_src => '/',
     table_titles => ['#', 'Name', 'Extension'],
-    table_fields => ['id', 'name', 'extension'],
+    table_fields => ['id', 'username', 'provisioning_voip_subscriber_pbx_extension'],
 );
 
 has_field 'create' => (

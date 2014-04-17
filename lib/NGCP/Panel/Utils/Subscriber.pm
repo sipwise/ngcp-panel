@@ -115,16 +115,6 @@ sub get_lock_string {
     return $LOCK{$level};
 }
 
-sub get_admin_subscribers {
-    my %params = @_;
-    my $subs = $params{voip_subscribers};
-    my @subscribers = ();
-    foreach my $s(@{ $subs }) {
-        push @subscribers, $s if($s->{admin});
-    }
-    return \@subscribers;
-}
-
 sub create_subscriber {
     my %params = @_;
     my $c = $params{c};
@@ -214,6 +204,7 @@ sub create_subscriber {
             domain_id => $prov_domain->id,
             is_pbx_group => $params->{is_pbx_group} // 0,
             pbx_group_id => $params->{pbx_group_id},
+            pbx_extension => $params->{pbx_extension},
             profile_set_id => $profile_set ? $profile_set->id : undef,
             profile_id => $profile ? $profile->id : undef,
             create_timestamp => NGCP::Panel::Utils::DateTime::current_local,
@@ -275,47 +266,6 @@ sub update_preferences {
     }
 }
 
-sub get_custom_subscriber_struct {
-    my %params = @_;
-
-    my $c = $params{c};
-    my $contract = $params{contract};
-
-    my @subscribers = ();
-    my @pbx_groups = ();
-    my $voip_sub_rs = $contract->voip_subscribers;
-    if($params{show_locked}) {
-        $voip_sub_rs = $voip_sub_rs->search_rs({ status => { -in => [ 'active', 'locked' ] } });
-    } else {
-        $voip_sub_rs = $voip_sub_rs->search_rs({ status => 'active' });
-    }
-    foreach my $s($voip_sub_rs->all) {
-        my $sub = { $s->get_columns };
-        if($c->config->{features}->{cloudpbx}) {
-            $sub->{voip_pbx_group} = { $s->provisioning_voip_subscriber->voip_pbx_group->get_columns }
-                if($s->provisioning_voip_subscriber->voip_pbx_group);
-        }
-        $sub->{domain} = $s->domain->domain;
-        $sub->{admin} = $s->provisioning_voip_subscriber->admin if
-            $s->provisioning_voip_subscriber;
-        $sub->{primary_number} = {$s->primary_number->get_columns} if(defined $s->primary_number);
-        $sub->{locations} = [ map { { $_->get_columns } } $c->model('DB')->resultset('location')->
-            search({
-                username => $s->username,
-                ($c->config->{features}->{multidomain}) ? (domain => $s->domain->domain) : (),
-            })->all ];
-        if($c->config->{features}->{cloudpbx} && $s->provisioning_voip_subscriber->is_pbx_group) {
-            my $grp = $contract->voip_pbx_groups->find({ subscriber_id => $s->provisioning_voip_subscriber->id });
-            $sub->{voip_pbx_group} = { $grp->get_columns } if $grp;
-            push @pbx_groups, $sub;
-        } else {
-            push @subscribers, $sub;
-        }
-    }
-
-    return { subscribers => \@subscribers, pbx_groups => \@pbx_groups };
-}
-
 sub update_pbx_group_prefs {
     my %params = @_;
 
@@ -333,7 +283,7 @@ sub update_pbx_group_prefs {
 
     my $uri = "sip:$username\@$domain";
     if($old_group_id) {
-        $old_grp_subscriber= $c->model('DB')->resultset('voip_pbx_groups')
+        $old_grp_subscriber= $c->stash->{pbx_groups}
                         ->find($old_group_id)
                         ->provisioning_voip_subscriber;
         if($old_grp_subscriber) {
@@ -345,7 +295,7 @@ sub update_pbx_group_prefs {
         }
     }
     if($new_group_id) {
-        $new_grp_subscriber = $c->model('DB')->resultset('voip_pbx_groups')
+        $new_grp_subscriber = $c->stash->{pbx_groups}
                         ->find($new_group_id)
                         ->provisioning_voip_subscriber;
         if($new_grp_subscriber) {
@@ -477,7 +427,7 @@ sub update_subscriber_numbers {
 
         if ( (defined $old_cc && defined $old_sn)
                 && $billing_subs->contract->billing_mappings->first->product->class eq "pbxaccount"
-                && ! defined $prov_subs->voip_pbx_group
+                && ! defined $prov_subs->pbx_group_id
                 && $prov_subs->admin ) {
             my $customer_subscribers_rs = $billing_subs->contract->voip_subscribers;
             my $my_cc = $primary_number->{cc};
@@ -618,26 +568,23 @@ sub terminate {
     my $schema = $c->model('DB');
     $schema->txn_do(sub {
         if($subscriber->provisioning_voip_subscriber->is_pbx_group) {
-            my $pbx_group = $schema->resultset('voip_pbx_groups')->find({
-                subscriber_id => $subscriber->provisioning_voip_subscriber->id
+            my $group = $schema->resultset('provisioning_voip_subscribers')->search({
+                pbx_group_id => $subscriber->id
             });
-            if($pbx_group) {
-                $pbx_group->provisioning_voip_subscribers->update_all({
-                    pbx_group_id => undef,
-                });
-            }
-            $pbx_group->delete;
+            $group->update({
+                pbx_group_id => undef,
+            });
         }
         my $prov_subscriber = $subscriber->provisioning_voip_subscriber;
         if($prov_subscriber) {
             update_pbx_group_prefs(
                 c => $c,
                 schema => $schema,
-                old_group_id => $prov_subscriber->voip_pbx_group->id,
+                old_group_id => $prov_subscriber->pbx_group_id,
                 new_group_id => undef,
                 username => $prov_subscriber->username,
                 domain => $prov_subscriber->domain->domain,
-            ) if($prov_subscriber->voip_pbx_group);
+            ) if($prov_subscriber->pbx_group_id);
             $prov_subscriber->delete;
         }
         if ($c->user->roles eq 'subscriberadmin') {
