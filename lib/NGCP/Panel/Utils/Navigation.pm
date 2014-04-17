@@ -76,6 +76,8 @@ sub check_form_buttons {
             $c->detach;
         }
     }
+    delete $form->params->{back} if $posted;
+    delete $form->values->{back} if $posted;
 }
 
 sub back_or {
