@@ -3,7 +3,7 @@ package NGCP::Panel::Utils::InvoiceTemplate;
 
 use strict;
 use warnings;
-use Moose;
+#use Moose;
 use Sipwise::Base;
 
 sub getDefaultInvoiceTemplate{

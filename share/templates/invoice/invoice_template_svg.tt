@@ -175,7 +175,7 @@ g, text, tspan {
     <!--{[%MACRO totalrow(data, page, pagelocal, pageslocalnum) BLOCK-%]}-->
             <text y="20" text-anchor="end" id="callpage_calls_total" class="datarow">
                 <tspan x="0" id="callpage_calls_total_title" text-anchor="start">Total:</tspan>
-                <tspan x="65" id="callpage_calls_total_duration"><!--{[% data.duration|format('%.3f') %]}--><!--{[%#}-->0.000<!--{%]}--></tspan>
+                <tspan x="60" id="callpage_calls_total_duration"><!--{[% data.duration|format('%.3f') %]}--><!--{[%#}-->0.000<!--{%]}--></tspan>
                <tspan x="185" id="callpage_calls_total_cost"><!--{[% ( data.cost / 100 )|format('%.2f') %]}--><!--{[%#}-->0.00<!--{%]}--></tspan>
             </text>
             <rect x="0" y="15" width="195" height="0.1" stroke="#444444" stroke-width="0.08" fill="none"/>

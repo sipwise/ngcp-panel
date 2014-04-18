@@ -13,7 +13,7 @@
  }%]
 [%modal_script( m = mf_helper )%]
 
-[% site_config.title = c.loc('Invoice template for [_1]', reseller.first.name) -%]
+[% site_config.title = c.loc('Invoice template for [_1]', provider.name ) -%]
 
 
 <script type="text/javascript" src="/js/libs/svg-edit/embedapi.js"></script>
@@ -28,23 +28,23 @@ var uriForAction = function( data, type ){
     var q_template;
     switch(type){
     case 'invoice_template_previewed':
-        //q_template = '[%- c.uri_for_action("/reseller/invoice_template", ['contract_id','svg','parsed','previewed','svg','tt_id']) -%]';
-        q_template = '[%- c.uri_for_action("/reseller/invoice_template", ["contract_id"]) -%]'+'/svg/parsed/previewed/svg/tt_id';
+        //q_template = '[%- c.uri_for_action("/invoice/invoice_template", ['contract_id','svg','parsed','previewed','svg','tt_id']) -%]';
+        q_template = '[%- c.uri_for_action("/invoice/invoice_template", ["contract_id"]) -%]'+'/svg/parsed/previewed/svg/tt_id';
         break;
     case 'invoice_template_saved':
-        //q_template = '[%- c.uri_for_action("/reseller/invoice_template", ['contract_id','svg','parsed','saved','svg','tt_id']) -%]';
-        q_template = '[%- c.uri_for_action("/reseller/invoice_template", ["contract_id"]) -%]'+'/svg/parsed/saved/tt_output_type/tt_id';
+        //q_template = '[%- c.uri_for_action("/invoice/invoice_template", ['contract_id','svg','parsed','saved','svg','tt_id']) -%]';
+        q_template = '[%- c.uri_for_action("/invoice/invoice_template", ["contract_id"]) -%]'+'/svg/parsed/saved/tt_output_type/tt_id';
         break;
     case 'invoice_template_list':
-        q_template = '[%- c.uri_for_action("/reseller/invoice_template_list", ['contract_id']) -%]';
+        q_template = '[%- c.uri_for_action("/invoice/invoice_template_list", ['contract_id']) -%]';
         break;
     case 'messages':
-        q_template = '[%- c.uri_for_action("/reseller/messages") -%]';
+        q_template = '[%- c.uri_for_action("/invoice/messages") -%]';
         break;
     case 'invoice_template':
     default:
-        //q_template = '[%- c.uri_for_action("/reseller/invoice_template", ['contract_id','tt_type','tt_viewmode','tt_sourcestate','tt_output_type','tt_id']) -%]';
-        q_template = '[%- c.uri_for_action("/reseller/invoice_template", ["contract_id"]) -%]'+'/tt_type/tt_viewmode/tt_sourcestate/tt_output_type/tt_id';
+        //q_template = '[%- c.uri_for_action("/invoice/invoice_template", ['contract_id','tt_type','tt_viewmode','tt_sourcestate','tt_output_type','tt_id']) -%]';
+        q_template = '[%- c.uri_for_action("/invoice/invoice_template", ["contract_id"]) -%]'+'/tt_type/tt_viewmode/tt_sourcestate/tt_output_type/tt_id';
         break;
     }
     if(!data.tt_id){data.tt_id = '';}
@@ -65,8 +65,8 @@ var uriForAction = function( data, type ){
         <a class="btn btn-primary btn-large" href="[% c.uri_for('/back') %]"><i class="icon-arrow-left"></i> [% c.loc('Back') %]</a>
     </span>
     <span>
-        <!--a class="btn btn-primary btn-large" href="[% c.uri_for('/reseller/invoice_create') %]">[% c.loc('Create invoices template')%] <i class="icon-edit"></i></a-->
-        <a class="btn btn-primary btn-large" onclick="$(this).css('outline', 'none');fetch_into('invoice_template_info_form', '[%- c.uri_for_action("/reseller/invoice_template_info", [contract.id]) -%]','item=invoice_template_info',function(){modalFormScript();});void(0);">[% c.loc('Create invoices template')%] <i class="icon-edit"></i></a>
+        <!--a class="btn btn-primary btn-large" href="[% c.uri_for('/invoice/invoice_create') %]">[% c.loc('Create invoices template')%] <i class="icon-edit"></i></a-->
+        <a class="btn btn-primary btn-large" onclick="$(this).css('outline', 'none');fetch_into('invoice_template_info_form', '[%- c.uri_for_action("/invoice/invoice_template_info", [provider.id]) -%]','item=invoice_template_info',function(){modalFormScript();});void(0);">[% c.loc('Create invoices template')%] <i class="icon-edit"></i></a>
     </span>
 </div>
 
@@ -103,8 +103,8 @@ var uriForAction = function( data, type ){
         { name => 'cost', title => c.loc('Amount EUR') },
     ];
     helper.name_single = c.loc('Invoice Connections Records');
-    helper.identifier = 'invoice_details_zones_raw';
-    helper.ajax_uri = c.uri_for_action( '/reseller/invoice_details_zones_ajax', [ contract.id ] ) ;
+    helper.identifier = 'invoice_details_zones_ajax';
+    helper.ajax_uri = c.uri_for_action( '/invoice/ajax_allmighty', [ provider.id, 'invoice_details_zones' ] ) ;
     initHelperAuto();
     PROCESS 'helpers/datatables.tt';
 -%]
@@ -135,8 +135,8 @@ var uriForAction = function( data, type ){
         { name => 'source_customer_cost', title => c.loc('Amount EUR') },
     ];
     helper.name_single = c.loc('Invoice calls');
-    helper.identifier = 'invoice_details_calls_raw';
-    helper.ajax_uri = c.uri_for_action( '/reseller/invoice_details_calls_ajax', [ contract.id ] ) ;
+    helper.identifier = 'invoice_details_calls_ajax';
+    helper.ajax_uri = c.uri_for_action( '/invoice/ajax_allmighty', [ provider.id, 'invoice_details_calls' ] ) ;
     initHelperAuto();
     PROCESS 'helpers/datatables.tt';
 -%]

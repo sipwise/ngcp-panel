@@ -31,24 +31,24 @@ var staticContainerId='invoice_template_list';
                 <div class="sw_actions">
                     [% IF write_access -%]
                     <a class="btn btn-small btn-primary" 
-                       onclick="fetch_into('invoice_template_info_form', '[%- c.uri_for_action("/reseller/invoice_template_info", [contract.id]) -%]','item=invoice_template_info&tt_id=[%template.get_column('id')%]',function(){modalFormScript();});void(0);
+                       onclick="fetch_into('invoice_template_info_form', '[%- c.uri_for_action("/invoice/invoice_template_info", [provider.id]) -%]','item=invoice_template_info&tt_id=[%template.get_column('id')%]',function(){modalFormScript();});void(0);
                        ">
                         <i class="icon-edit"></i> [% c.loc('Edit template info') %]
                     </a>
                     <a class="btn btn-small btn-primary" 
                        onclick="fetchInvoiceTemplateData({
     tt_sourcestate: 'saved',
-    contract_id: '[%contract.id%]',
+    contract_id: '[%provider.id%]',
     tt_id: '[%template.get_column('id')%]',
 });listSetCurrentEdit('[%template.get_column('id')%]', $(this).closest('tr') );">
                         <i class="icon-edit"></i> [% c.loc('Edit template') %]
                     </a>
                     <a class="btn btn-small btn-primary ngcp-noback-button" data-confirm="[%IF template.get_column('is_active'); c.loc('Deactivate'); ELSE; c.loc('Activate'); END%]"
-                       href="javascript:fetch_into(staticContainerId, '[%- c.uri_for_action("/reseller/invoice_template_activate", [contract.id, template.get_column('id'),template.get_column('is_active')]) -%]','',function(){ refreshMessagesAjax();mainWrapperInit(); listRestoreCurrentEdit('',staticContainerId);});void(0);">
+                       href="javascript:fetch_into(staticContainerId, '[%- c.uri_for_action("/invoice/invoice_template_activate", [provider.id, template.get_column('id'),template.get_column('is_active')]) -%]','',function(){ refreshMessagesAjax();mainWrapperInit(); listRestoreCurrentEdit('',staticContainerId);});void(0);">
                         <i class="icon-edit"></i> [%IF template.get_column('is_active'); c.loc('Deactivate'); ELSE; c.loc('Activate'); END%]
                     </a>
                     <a class="btn btn-small btn-secondary ngcp-noback-button" data-confirm="Delete" 
-                       href="javascript:fetch_into(staticContainerId, '[%- c.uri_for_action("/reseller/invoice_template_delete", [contract.id, template.get_column('id')]) -%]','',function(){ refreshMessagesAjax();mainWrapperInit();listRestoreCurrentEdit('',staticContainerId);if('[%template.get_column('id')%]' === getCurrentEditId('', staticContainerId)){clearTemplateForm({contract_id: '[%contract.id%]'});} });void(0);">
+                       href="javascript:fetch_into(staticContainerId, '[%- c.uri_for_action("/invoice/invoice_template_delete", [provider.id, template.get_column('id')]) -%]','',function(){ refreshMessagesAjax();mainWrapperInit();listRestoreCurrentEdit('',staticContainerId);if('[%template.get_column('id')%]' === getCurrentEditId('', staticContainerId)){clearTemplateForm({contract_id: '[%provider.id%]'});} });void(0);">
                         <i class="icon-trash"></i> [% c.loc('Delete') %]
                     </a>
                     [%END%]
@@ -60,3 +60,4 @@ var staticContainerId='invoice_template_list';
     </table>
     [%END%]
 
+ 

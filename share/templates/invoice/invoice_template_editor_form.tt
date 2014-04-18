@@ -3,20 +3,14 @@
 function getTtIdVal(){
     return $('form[id=invoice_template_editor] :input[name=tt_id]').val();
 }
-function formToUri(q){
-    return q+'?'+$('form[id=invoice_template_editor]').serialize();
-}
-function formSerialize(){
-    return $('form[id=invoice_template_editor]').serialize();
-}
 </script>
-<form name="invoice_template_editor" id="invoice_template_editor" action="[%- c.uri_for_action('/reseller/invoice_template', [contract.id]) -%]"  class="form-horizontal" enctype="multipart/form-data" method="post">
+<form name="invoice_template_editor" id="invoice_template_editor" action="[%- c.uri_for_action('/invoice/invoice_template', [provider.id]) -%]"  class="form-horizontal" enctype="multipart/form-data" method="post">
 <input type="hidden" name="tt_id" value="">
 <input type="hidden" name="contract_id" value="">
 <span>
     <a class="btn btn-primary btn-small" onclick="
     savePreviewedAndShowParsed({
-        contract_id:'[%contract.id%]',
+        contract_id:'[%provider.id%]',
         tt_id: getTtIdVal(),
     });void(0);">[% c.loc('Refresh Preview')%] <i class="icon-refresh"></i></a>
 </span>
@@ -24,7 +18,7 @@ function formSerialize(){
     <a class="btn btn-primary btn-small" onclick="
     //alert('tt_id='+getTtIdVal()+';');
     saveTemplate({
-        contract_id:'[%contract.id%]',
+        contract_id:'[%provider.id%]',
         tt_id: getTtIdVal(),
     });void(0);">[% c.loc('Save template')%] <i class="icon-disk"></i></a>
 </span>
@@ -33,21 +27,21 @@ function formSerialize(){
     <a class="btn btn-secondary btn-small"  data-confirm="[%c.loc('Overwrite changes');%]" href="javascript:fetchInvoiceTemplateData({
         tt_sourcestate: 'default',
         tt_id: getTtIdVal(),
-        contract_id: '[%contract.id%]',
+        contract_id: '[%provider.id%]',
     });void(0);">[% c.loc('Load default')%] <i class="icon-edit"></i></a>
 </span>
 <span>
     <a class="btn btn-secondary btn-small"  data-confirm="[%c.loc('Overwrite changes');%]" href="javascript:fetchInvoiceTemplateData({
         tt_sourcestate: 'saved',
         tt_id: getTtIdVal(),
-        contract_id: '[%contract.id%]',
+        contract_id: '[%provider.id%]',
     });void(0);">[% c.loc('Load saved')%] <i class="icon-edit"></i></a>
 </span>
 <span id="load_previewed_control" style="display:none;">
     <a class="btn btn-secondary btn-small"  data-confirm="[%c.loc('Overwrite changes');%]" href="javascript:fetchInvoiceTemplateData({
         tt_sourcestate: 'previewed',
         tt_id: getTtIdVal(),
-        contract_id: '[%contract.id%]',
+        contract_id: '[%provider.id%]',
     });void(0);">[% c.loc('Load previewed')%] <i class="icon-edit"></i></a>
 </span>
 <div class="ngcp-separator"></div>
@@ -56,7 +50,7 @@ function formSerialize(){
         tt_sourcestate: 'previewed',
         tt_output_type : 'svg',
         tt_id: getTtIdVal(),
-        contract_id: '[%contract.id%]',
+        contract_id: '[%provider.id%]',
     }),'_blank');void(0);">[% c.loc('Previewed SVG')%] <i class="icon-edit"></i></a>
 </span>
 <span>
@@ -64,7 +58,7 @@ function formSerialize(){
         tt_sourcestate: 'previewed',
         tt_output_type : 'pdf',
         tt_id: getTtIdVal(),
-        contract_id: '[%contract.id%]',
+        contract_id: '[%provider.id%]',
     }),'_blank');void(0);">[% c.loc('Previewed PDF')%] <i class="icon-edit"></i></a>
 </span>
 <span>
@@ -72,7 +66,7 @@ function formSerialize(){
         tt_sourcestate: 'saved',
         tt_output_type : 'svg',
         tt_id: getTtIdVal(),
-        contract_id: '[%contract.id%]',
+        contract_id: '[%provider.id%]',
     }),'_blank');void(0);">[% c.loc('Saved SVG')%] <i class="icon-edit"></i></a>
 </span>
 <span>
@@ -80,7 +74,7 @@ function formSerialize(){
         tt_sourcestate: 'saved',
         tt_output_type : 'pdf',
         tt_id: getTtIdVal(),
-        contract_id: '[%contract.id%]',
+        contract_id: '[%provider.id%]',
     }),'_blank');void(0);">[% c.loc('Saved PDF')%] <i class="icon-edit"></i></a>
 </span>
 [%initial = 'default'%]
@@ -92,10 +86,10 @@ function formSerialize(){
     fetchSvgToEditor({
         tt_viewmode: 'raw', 
         tt_sourcestate: '[%initial%]',
-        contract_id: '[%contract.id%]',
+        contract_id: '[%provider.id%]',
         tt_id: getTtIdVal(),
     });" width="550px" height="750px" style="border-width:0px;"></iframe><iframe 
-    src="[%- c.uri_for_action('/reseller/invoice_template', [contract.id]) -%]/svg/parsed/[%- initial -%]" id="svgpreview"
+    src="[%- c.uri_for_action('/invoice/invoice_template', [provider.id]) -%]/svg/parsed/[%- initial -%]" id="svgpreview"
     width="600px" height="750px" style="border-width:0px;"></iframe>
 </div>
 </form>

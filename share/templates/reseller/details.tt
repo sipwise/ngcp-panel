@@ -4,7 +4,11 @@
     <span>
         <a class="btn btn-primary btn-large" href="[% c.uri_for('/back') %]"><i class="icon-arrow-left"></i> [% c.loc('Back') %]</a>
     </span>
+<span>
+    <a class="btn btn-primary btn-large" href="[% c.uri_for_action('invoice/invoice_template', [reseller.first.id]) %]">[% c.loc('Invoice Template')%] <i class="icon-edit"></i></a>
+</span>
 </div>
+
 [% back_created = 1 -%]
 
 <div class="ngcp-separator"></div>
@@ -19,9 +23,7 @@
 [% messages = [] -%]
 </div>
 
-
 <div class="accordion" id="reseller_details">
-
     <div class="accordion-group">
         <div class="accordion-heading">
             <a class="accordion-toggle" data-toggle="collapse" data-parent="#reseller_details" href="#collapse_reseller">[% c.loc('Reseller Base Information') %]</a>
@@ -219,39 +221,6 @@
             </div>
         </div>
     </div>
-    <div class="accordion-group">
-        <div class="accordion-heading">
-            <a class="accordion-toggle" data-toggle="collapse" data-parent="#reseller_details" href="#collapse_zones">[% c.loc('Invoice details. Connection fees.') %]</a>
-        </div>
-        <div class="accordion-body collapse" id="collapse_zones">
-            <div class="accordion-inner" style="height: 300px; overflow: auto;">
-                <span>
-                    <a class="btn btn-primary btn-large" href="[% c.uri_for_action('/reseller/invoice', [contract.id]) %]">[% c.loc('Invoice Template')%] <i class="icon-edit"></i></a>
-                </span>
-                <div class="ngcp-separator"></div>
-
-[%PROCESS 'invoice/invoice_details_zones_list.tt' %]
-
-            </div>
-        </div>
-    </div>
-    <div class="accordion-group">
-        <div class="accordion-heading">
-            <a class="accordion-toggle" data-toggle="collapse" data-parent="#reseller_details" href="#collapse_calls">[% c.loc('Invoice details. Calls.') %]</a>
-        </div>
-        <div class="accordion-body collapse" id="collapse_calls">
-            <div class="accordion-inner" style="height: 300px; overflow: auto;">
-                <span>
-                    <a class="btn btn-primary btn-large" href="[% c.uri_for_action('/reseller/invoice', [contract.id]) %]">[% c.loc('Invoice Template')%] <i class="icon-edit"></i></a>
-                </span>
-                <div class="ngcp-separator"></div>
-
-[%PROCESS 'invoice/invoice_details_calls_list.tt' %]
-
-                </div>
-        </div>
-    </div>
-
     <div class="accordion-group">
         <div class="accordion-heading">
             <a class="accordion-toggle" data-toggle="collapse" data-parent="#reseller_details" href="#collapse_branding">[% c.loc('Branding') %]</a>

@@ -218,4 +218,27 @@ sub checkCustomerInvoiceTemplateContract{
     }
     return 0;
 }
+
+sub getInvoiceClient{
+    my $self = shift;
+    my (%params) = @_;
+    my ($client_id) = @params{qw/client_id/};
+    return $tt_record = $self->schema->resultset('invoice_templates')->search({
+        reseller_id => $client_id,
+    });
+}
+sub getInvoiceProviderClients{
+    my $self = shift;
+    my (%params) = @_;
+    my ($provider_id) = @params{qw/provider_id/};
+    #$schema->resultset('contracts')
+    #very optimistic programming style
+    return NGCP::Panel::Utils::Contract::get_contract_rs(
+            schema => $self->schema,
+        )->search_rs({
+            'contact.reseller_id' => $provider_id,
+        },{
+            join => 'contact',
+    });
+}
 1;
