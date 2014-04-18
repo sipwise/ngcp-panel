@@ -31,6 +31,8 @@ sub field_list {
     my $c = $self->ctx;
     return unless $c;
 
+    print "+++++++++++++++++++++++++++++ PbxExtensionSubscribert field_list\n";
+
     my $group = $self->field('group');
     $group->field('id')->ajax_src(
         $c->uri_for_action('/customer/pbx_group_ajax', [$c->stash->{customer_id}])->as_string
@@ -38,7 +40,7 @@ sub field_list {
 
     if($c->stash->{admin_subscriber}) {
         my $profile_set = $c->stash->{admin_subscriber}->provisioning_voip_subscriber->voip_subscriber_profile_set;
-        if($profile_set) {
+        if($profile_set && $self->field('profile')) {
             $self->field('profile')->field('id')->ajax_src(
                 $c->uri_for_action('/subscriberprofile/profile_ajax', [$profile_set->id])->as_string
             );

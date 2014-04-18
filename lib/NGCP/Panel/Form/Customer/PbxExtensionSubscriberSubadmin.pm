@@ -10,7 +10,7 @@ has_field 'group' => (
     validate_when_empty => 1,
 );
 
-has_field 'extension' => (
+has_field 'pbx_extension' => (
     type => '+NGCP::Panel::Field::PosInteger',
     element_attr => { 
         rel => ['tooltip'], 
@@ -23,7 +23,7 @@ has_field 'extension' => (
 has_block 'fields' => (
     tag => 'div',
     class => [qw/modal-body/],
-    render_list => [qw/group extension display_name webusername webpassword username password status profile/ ],
+    render_list => [qw/group pbx_extension display_name webusername webpassword username password status profile/ ],
 );
 
 sub field_list {

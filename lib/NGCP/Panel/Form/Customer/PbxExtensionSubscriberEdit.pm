@@ -10,7 +10,7 @@ has_field 'group' => (
     validate_when_empty => 1,
 );
 
-has_field 'extension' => (
+has_field 'pbx_extension' => (
     type => '+NGCP::Panel::Field::PosInteger',
     element_attr => { 
         rel => ['tooltip'], 
@@ -23,7 +23,7 @@ has_field 'extension' => (
 has_block 'fields' => (
     tag => 'div',
     class => [qw/modal-body/],
-    render_list => [qw/group extension display_name webusername webpassword password status external_id profile_set/ ],
+    render_list => [qw/group pbx_extension webusername webpassword password status external_id profile/ ],
 );
 
 sub update_fields {
@@ -31,6 +31,8 @@ sub update_fields {
     my $c = $self->ctx;
     my $pkg = __PACKAGE__;
     $c->log->debug("my form: $pkg");
+
+    print "+++++++++++++++++++++++++++++ PbxExtensionSubscriberEdit update_fields\n";
 
     my $group = $self->field('group');
     $group->field('id')->ajax_src(

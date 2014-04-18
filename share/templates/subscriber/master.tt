@@ -41,7 +41,7 @@
             <div class="accordion-inner">
 
                 [% UNLESS (c.user.roles == "admin" || c.user.roles == "reseller") && c.user.read_only -%]
-                <a class="btn btn-tertiary btn-large" href="[% c.uri_for_action('/subscriber/edit_master', [ subscriber.id ]) %]"><i class="icon-edit"></i> [% c.loc('Edit') %]</a>
+                <a class="btn btn-primary btn-large" href="[% c.uri_for_action('/subscriber/edit_master', [ subscriber.id ]) %]"><i class="icon-edit"></i> [% c.loc('Edit') %]</a>
                 [% END -%]
                 <div class="ngcp-separator"></div>
 
@@ -71,8 +71,8 @@
                             IF (c.user.roles == "admin" || c.user.roles == "reseller") && c.user.show_passwords;
                             elements.push({ value = subscriber.provisioning_voip_subscriber.password, desc = c.loc('SIP Password') });
                             END;
-                            IF subscriber.provisioning_voip_subscriber.voip_pbx_group.defined;
-                            elements.push({ value = subscriber.provisioning_voip_subscriber.voip_pbx_group.name, desc = c.loc('PBX Group') });
+                            IF subscriber.provisioning_voip_subscriber.pbx_group_id.defined;
+                            elements.push({ value = subscriber.provisioning_voip_subscriber.voip_pbx_group.username, desc = c.loc('PBX Group') });
                             END;
                             IF c.user.roles == "admin" || c.user.roles == "reseller";
                             elements.push({ value = subscriber.provisioning_voip_subscriber.admin ? 'yes' : 'no', desc = c.loc('Administrative') });
@@ -97,6 +97,12 @@
                                 [% END -%]
                             </td>
                         </tr>
+                        [% IF subscriber.provisioning_voip_subscriber.pbx_extension -%]
+                        <tr>
+                            <td>[% c.loc('Extension') %]</td>
+                            <td>[% subscriber.provisioning_voip_subscriber.pbx_extension %]</td>
+                        </tr>
+                        [% END -%]
                         <tr>
                             <td>[% c.loc('Subscriber Profile Set') %]</td>
                             <td>

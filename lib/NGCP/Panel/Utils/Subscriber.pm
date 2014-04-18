@@ -205,6 +205,8 @@ sub create_subscriber {
             is_pbx_group => $params->{is_pbx_group} // 0,
             pbx_group_id => $params->{pbx_group_id},
             pbx_extension => $params->{pbx_extension},
+            pbx_hunt_policy => $params->{pbx_hunt_policy},
+            pbx_hunt_timeout => $params->{pbx_hunt_timeout},
             profile_set_id => $profile_set ? $profile_set->id : undef,
             profile_id => $profile ? $profile->id : undef,
             create_timestamp => NGCP::Panel::Utils::DateTime::current_local,

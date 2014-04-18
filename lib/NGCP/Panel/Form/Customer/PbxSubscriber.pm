@@ -13,6 +13,19 @@ has_field 'submitid' => ( type => 'Hidden' );
 sub build_render_list {[qw/submitid fields actions/]}
 sub build_form_element_class { [qw/form-horizontal/] }
 
+has_field 'e164' => (
+    type => '+NGCP::Panel::Field::E164',
+    order => 99,
+    required => 0,
+    label => 'E164 Number',
+    do_label => 1,
+    do_wrapper => 1,
+    element_attr => {
+        rel => ['tooltip'],
+        title => ['The main E.164 number (containing a cc, ac and sn attribute) used for inbound and outbound calls.']
+    },
+);
+
 has_field 'display_name' => (
     type => 'Text',
     element_attr => { 
@@ -113,7 +126,7 @@ has_block 'fields' => (
     tag => 'div',
     class => [qw/modal-body/],
     #render_list => [qw/display_name webusername webpassword username password status external_id profile_set profile/ ],
-    render_list => [qw/display_name webusername webpassword username password status profile_set profile/ ],
+    render_list => [qw/e164 display_name webusername webpassword username password status profile_set profile/ ],
 );
 
 has_block 'actions' => (
@@ -121,6 +134,23 @@ has_block 'actions' => (
     class => [qw/modal-footer/],
     render_list => [qw/save/],
 );
+
+sub field_list {
+    my ($self) = @_;
+
+    my $c = $self->ctx;
+    return unless($c);
+
+    print "++++++++++++++++++++++++++++++++++++++++ PbxSubscriber field_list\n";
+
+    my $profile_set = $self->field('profile_set');
+    if($profile_set) {
+        $profile_set->field('id')->ajax_src(
+            $c->uri_for_action('/subscriberprofile/set_ajax_reseller', [$c->stash->{contract}->contact->reseller_id])->as_string
+        );
+    }
+
+}
 
 1;
 

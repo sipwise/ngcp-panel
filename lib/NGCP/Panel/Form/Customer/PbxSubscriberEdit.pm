@@ -1,10 +1,17 @@
-package NGCP::Panel::Form::Customer::PbxExtensionSubscriberEditAdmin;
+package NGCP::Panel::Form::Customer::PbxSubscriberEdit;
 
 use HTML::FormHandler::Moose;
-use NGCP::Panel::Field::PosInteger;
-extends 'NGCP::Panel::Form::Customer::PbxExtensionSubscriberEdit';
+extends 'NGCP::Panel::Form::Customer::PbxSubscriber';
+use Moose::Util::TypeConstraints;
 
-with 'NGCP::Panel::Render::RepeatableJs';
+use HTML::FormHandler::Widget::Block::Bootstrap;
+
+use NGCP::Panel::Field::PbxGroup;
+
+has '+widget_wrapper' => ( default => 'Bootstrap' );
+has_field 'submitid' => ( type => 'Hidden' );
+sub build_render_list {[qw/submitid fields actions/]}
+sub build_form_element_class { [qw/form-horizontal/] }
 
 has_field 'alias_number' => (
     type => '+NGCP::Panel::Field::AliasNumber',
@@ -27,23 +34,20 @@ has_field 'alias_number_add' => (
 has_block 'fields' => (
     tag => 'div',
     class => [qw/modal-body/],
-    render_list => [qw/group pbx_extension alias_number alias_number_add webusername webpassword password status external_id profile/ ],
+    render_list => [qw/e164 alias_number alias_number_add webusername webpassword password status profile_set profile/ ],
 );
 
-sub field_list {
+has_block 'actions' => (
+    tag => 'div',
+    class => [qw/modal-footer/],
+    render_list => [qw/save/],
+);
+
+sub update_fields {
     my ($self) = @_;
 
     my $c = $self->ctx;
     return unless($c);
-
-    print "+++++++++++++++++++++++++++++ PbxExtensionSubscriberEditAdmin field_list\n";
-
-    my $profile_set = $self->field('profile_set');
-    if($profile_set) {
-        $profile_set->field('id')->ajax_src(
-            $c->uri_for_action('/subscriberprofile/set_ajax_reseller', [$c->stash->{subscriber}->contract->contact->reseller_id])->as_string
-        );
-    }
 
     my $set_id = $c->stash->{subscriber}->provisioning_voip_subscriber->profile_set_id;
     if($set_id) {
@@ -55,6 +59,7 @@ sub field_list {
         }
     }
 }
+
 
 1;
 

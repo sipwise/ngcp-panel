@@ -17,6 +17,7 @@ use NGCP::Panel::Utils::Sems;
 use NGCP::Panel::Utils::Hylafax;
 use NGCP::Panel::Form::Subscriber;
 use NGCP::Panel::Form::SubscriberEdit;
+use NGCP::Panel::Form::Customer::PbxSubscriberEdit;
 use NGCP::Panel::Form::Customer::PbxExtensionSubscriberEdit;
 use NGCP::Panel::Form::Customer::PbxExtensionSubscriberEditAdmin;
 use NGCP::Panel::Form::Customer::PbxExtensionSubscriberEditSubadmin;
@@ -1765,6 +1766,24 @@ sub master :Chained('base') :PathPart('details') :CaptureArgs(0) {
         attribute => 'lock',
         prov_subscriber => $c->stash->{subscriber}->provisioning_voip_subscriber,
     );
+
+    $c->stash->{contract} = $c->stash->{subscriber}->contract;
+    $c->stash->{subscribers} = $c->model('DB')->resultset('voip_subscribers')->search({
+        contract_id => $c->stash->{contract}->id,
+        status => { '!=' => 'terminated' },
+        'provisioning_voip_subscriber.is_pbx_group' => 0,
+    }, {
+        join => 'provisioning_voip_subscriber',
+    });
+    if($c->config->{features}->{cloudpbx}) {
+        $c->stash->{pbx_groups} = $c->model('DB')->resultset('voip_subscribers')->search({
+            contract_id => $c->stash->{contract}->id,
+            status => { '!=' => 'terminated' },
+            'provisioning_voip_subscriber.is_pbx_group' => 1,
+        }, {
+            join => 'provisioning_voip_subscriber',
+        });
+    }
 }
 
 sub details :Chained('master') :PathPart('') :Args(0) :Does(ACL) :ACLDetachTo('/denied_page') :AllowedRole(admin) :AllowedRole(reseller) :AllowedRole('subscriberadmin') {
@@ -1814,15 +1833,25 @@ sub edit_master :Chained('master') :PathPart('edit') :Args(0) :Does(ACL) :ACLDet
 
     my $form; my $pbx_ext; my $is_admin; my $subadmin_pbx;
     
-    if ($c->config->{features}->{cloudpbx} && $prov_subscriber->voip_pbx_group) {
+    if ($c->config->{features}->{cloudpbx}) {
         $c->stash(customer_id => $subscriber->contract->id);
-        $pbx_ext = 1;
-        if($c->user->roles eq 'subscriberadmin') {
-            $subadmin_pbx = 1;
-            $form = NGCP::Panel::Form::Customer::PbxExtensionSubscriberEditSubadmin->new(ctx => $c);
+        if($subscriber->provisioning_voip_subscriber->admin) {
+            if($c->user->roles eq 'subscriberadmin') {
+                $subadmin_pbx = 1;
+                $form = NGCP::Panel::Form::Customer::PbxExtensionSubscriberEditSubadmin->new(ctx => $c);
+            } else {
+                $is_admin = 1;
+                $form = NGCP::Panel::Form::Customer::PbxSubscriberEdit->new(ctx => $c);
+            }
         } else {
-            $is_admin = 1;
-            $form = NGCP::Panel::Form::Customer::PbxExtensionSubscriberEditAdmin->new(ctx => $c);
+            if($c->user->roles eq 'subscriberadmin') {
+                $subadmin_pbx = 1;
+                $form = NGCP::Panel::Form::Customer::PbxExtensionSubscriberEdit->new(ctx => $c);
+            } else {
+                $is_admin = 1;
+                $form = NGCP::Panel::Form::Customer::PbxExtensionSubscriberEditAdmin->new(ctx => $c);
+            }
+            $pbx_ext = 1;
         }
     } else {
         if($c->user->roles eq 'subscriberadmin') {
@@ -1841,15 +1870,12 @@ sub edit_master :Chained('master') :PathPart('edit') :Args(0) :Does(ACL) :ACLDet
     my $lock = $c->stash->{prov_lock};
     my $base_number;
     if($pbx_ext) {
-        my $subs = NGCP::Panel::Utils::Subscriber::get_custom_subscriber_struct(
-            c => $c,
-            contract => $subscriber->contract,
-            show_locked => 0,
-        );
-        my $admin_subscribers = NGCP::Panel::Utils::Subscriber::get_admin_subscribers(
-            voip_subscribers => $subs->{subscribers}
-        );
-        $base_number = $admin_subscribers->[0]->{primary_number};
+        say ">>>>>>>>>>>>> check admin subscriber";
+        my $admin_subscribers = $c->stash->{subscribers}->search({
+            'provisioning_voip_subscriber.admin' => 1,
+        });
+        $c->stash->{admin_subscriber} = $admin_subscribers->first;
+        $base_number = $c->stash->{admin_subscriber}->primary_number;
     }
 
     # we don't change this on edit
@@ -1864,29 +1890,30 @@ sub edit_master :Chained('master') :PathPart('edit') :Args(0) :Does(ACL) :ACLDet
         $params->{profile}{id} = $prov_subscriber->voip_subscriber_profile ?
             $prov_subscriber->voip_subscriber_profile->id : undef;
         $params->{webusername} = $prov_subscriber->webusername;
+        $params->{webpassword} = $prov_subscriber->webpassword;
+        $params->{password} = $prov_subscriber->password;
         $params->{administrative} = $prov_subscriber->admin;
+        say ">>>>>>>>>>>>> check primary number";
         if($subscriber->primary_number) {
             $params->{e164}->{cc} = $subscriber->primary_number->cc;
             $params->{e164}->{ac} = $subscriber->primary_number->ac;
             $params->{e164}->{sn} = $subscriber->primary_number->sn;
-
-            if($base_number && $pbx_ext) {
-                my $pbx_base_num = $base_number->{cc} .
-                    ($base_number->{ac} // '').
-                    $base_number->{sn};
-                my $full =  $subscriber->primary_number->cc .
-                    ($subscriber->primary_number->ac // '').
-                    $subscriber->primary_number->sn;
-                if($full =~ s/^${pbx_base_num}(.+)$/$1/) {
-                    $params->{extension} = $full;
-                }
-            }
         }
+        if(defined $prov_subscriber->pbx_extension) {
+            $params->{pbx_extension} = $prov_subscriber->pbx_extension;
+        }
+
         if($pbx_ext) {
             $params->{group}{id} = $prov_subscriber->pbx_group_id;
-            # TODO: rework to store ext in sub
-            #$params->{extension} = $prov_subscriber->pbx_group_id;
         }
+
+=pod
+        my $display_pref = NGCP::Panel::Utils::Preferences::get_usr_preference_rs(
+            c => $c, attribute => 'display_name', prov_subscriber => $prov_subscriber);
+        if($display_pref->first) {
+            $params->{display_name} = $display_pref->first->value;
+        }
+=cut
 
         my @alias_options = ();
         my @alias_nums = ();
@@ -1935,13 +1962,17 @@ sub edit_master :Chained('master') :PathPart('edit') :Args(0) :Does(ACL) :ACLDet
         try {
             $schema->txn_do(sub {
                 my $prov_params = {};
+                $prov_params->{pbx_extension} = $form->params->{pbx_extension};
                 $prov_params->{webusername} = $form->params->{webusername};
                 $prov_params->{webpassword} = $form->params->{webpassword}
                     if($form->params->{webpassword});
                 $prov_params->{password} = $form->params->{password}
                     if($form->params->{password});
-                $prov_params->{admin} = $form->params->{administrative} // 0
-                    if($is_admin);
+                if($is_admin) {
+                    if(exists $form->params->{administrative}) {
+                        $prov_params->{admin} = $form->params->{administrative} // 0;
+                    }
+                }
                 $prov_params->{pbx_group_id} = $form->params->{group}{id}
                     if($pbx_ext);
                 my $old_group_id = $prov_subscriber->pbx_group_id;
@@ -2057,10 +2088,15 @@ sub edit_master :Chained('master') :PathPart('edit') :Args(0) :Does(ACL) :ACLDet
                 }
 
                 if($subscriber->primary_number) {
+                    my $old_number = { 
+                        cc => $subscriber->primary_number->cc,
+                        ac => $subscriber->primary_number->ac,
+                        sn => $subscriber->primary_number->sn,
+                    };
                     if($pbx_ext) {
                         $form->params->{e164}{cc} = $subscriber->primary_number->cc;
                         $form->params->{e164}{ac} = $subscriber->primary_number->ac;
-                        $form->params->{e164}{sn} = $base_number->{sn} . $form->params->{extension};
+                        $form->params->{e164}{sn} = $base_number->sn . $form->params->{pbx_extension};
                     }
 
                     NGCP::Panel::Utils::Subscriber::update_subscriber_numbers(
@@ -2070,6 +2106,49 @@ sub edit_master :Chained('master') :PathPart('edit') :Args(0) :Does(ACL) :ACLDet
                         primary_number => $form->params->{e164},
                         $subadmin_pbx ? () : (alias_numbers  => $form->values->{alias_number}),
                     );
+
+                    # update the primary number and the cloud_pbx_base_cli pref for all other subscribers
+                    # if the primary number of the admin changed
+                    $subscriber->discard_changes; # reload row because of potential new number
+                    my $new_number = { 
+                        cc => $subscriber->primary_number->cc,
+                        ac => $subscriber->primary_number->ac,
+                        sn => $subscriber->primary_number->sn,
+                    };
+                    if($subscriber->provisioning_voip_subscriber->admin && 
+                       !is_deeply($old_number, $new_number)) {
+                        foreach my $sub($c->stash->{subscribers}->all, $c->stash->{pbx_groups}->all) {
+                            my $base_pref = NGCP::Panel::Utils::Preferences::get_usr_preference_rs(
+                                    c => $c, attribute => 'cloud_pbx_base_cli', 
+                                    prov_subscriber => $sub->provisioning_voip_subscriber);
+                            my $val = $form->params->{e164}{cc} . 
+                                      ($form->params->{e164}{ac} // '') .
+                                      $form->params->{e164}{sn};
+                            if($base_pref->first) {
+                                $base_pref->first->update({ value => $val });
+                            } else {
+                                $base_pref->create({ value => $val });
+                            }
+
+                            if($sub->id == $subscriber->id) {
+                                next;
+                            }
+                            unless(defined $sub->provisioning_voip_subscriber->pbx_extension) {
+                                next;
+                            }
+                            my $num = {
+                                cc => $form->params->{e164}{cc},
+                                ac => $form->params->{e164}{ac},
+                                sn => $form->params->{e164}{sn} . $sub->provisioning_voip_subscriber->pbx_extension,
+                            };
+                            NGCP::Panel::Utils::Subscriber::update_subscriber_numbers(
+                                schema => $schema,
+                                subscriber_id => $sub->id,
+                                reseller_id => $sub->contract->contact->reseller_id,
+                                primary_number => $num,
+                            );
+                        }
+                    }
                 } else {
                     NGCP::Panel::Utils::Subscriber::update_subscriber_numbers(
                         schema => $schema,
