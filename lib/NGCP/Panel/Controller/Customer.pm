@@ -10,7 +10,7 @@ use NGCP::Panel::Form::Customer::Subscriber;
 use NGCP::Panel::Form::Customer::PbxAdminSubscriber;
 use NGCP::Panel::Form::Customer::PbxExtensionSubscriber;
 use NGCP::Panel::Form::Customer::PbxExtensionSubscriberSubadmin;
-use NGCP::Panel::Form::Customer::PbxGroupBase;
+use NGCP::Panel::Form::Customer::PbxGroupEdit;
 use NGCP::Panel::Form::Customer::PbxGroup;
 use NGCP::Panel::Form::Customer::PbxFieldDevice;
 use NGCP::Panel::Form::Customer::PbxFieldDeviceEdit;
@@ -1000,8 +1000,8 @@ sub pbx_group_edit :Chained('pbx_group_base') :PathPart('edit') :Args(0) {
 
     my $posted = ($c->request->method eq 'POST');
     my $form;
-    $form = NGCP::Panel::Form::Customer::PbxGroupBase->new;
-    my $params = { $c->stash->{pbx_group}->get_inflated_columns };
+    $form = NGCP::Panel::Form::Customer::PbxGroupEdit->new;
+    my $params = { $c->stash->{pbx_group}->provisioning_voip_subscriber->get_inflated_columns };
     $params = $params->merge($c->session->{created_objects});
     $form->process(
         posted => $posted,
@@ -1018,16 +1018,16 @@ sub pbx_group_edit :Chained('pbx_group_base') :PathPart('edit') :Args(0) {
         try {
             my $schema = $c->model('DB');
             $schema->txn_do(sub {
-                $c->stash->{pbx_group}->update($form->params);
+                $c->stash->{pbx_group}->provisioning_voip_subscriber->update($form->params);
                 my $hunt_policy = NGCP::Panel::Utils::Preferences::get_usr_preference_rs(
                     c => $c, 
                     prov_subscriber => $c->stash->{pbx_group}->provisioning_voip_subscriber,
                     attribute => 'cloud_pbx_hunt_policy'
                 );
                 if($hunt_policy->first) {
-                    $hunt_policy->first->update({ value => $form->params->{hunt_policy} });
+                    $hunt_policy->first->update({ value => $form->params->{pbx_hunt_policy} });
                 } else {
-                    $hunt_policy->create({ value => $form->params->{hunt_policy} });
+                    $hunt_policy->create({ value => $form->params->{pbx_hunt_policy} });
                 }
                 my $hunt_timeout = NGCP::Panel::Utils::Preferences::get_usr_preference_rs(
                     c => $c, 
@@ -1035,9 +1035,9 @@ sub pbx_group_edit :Chained('pbx_group_base') :PathPart('edit') :Args(0) {
                     attribute => 'cloud_pbx_hunt_timeout'
                 );
                 if($hunt_timeout->first) {
-                    $hunt_timeout->first->update({ value => $form->params->{hunt_policy_timeout} });
+                    $hunt_timeout->first->update({ value => $form->params->{pbx_hunt_timeout} });
                 } else {
-                    $hunt_timeout->create({ value => $form->params->{hunt_policy_timeout} });
+                    $hunt_timeout->create({ value => $form->params->{pbx_hunt_timeout} });
                 }
             });
 
