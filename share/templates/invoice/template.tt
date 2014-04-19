@@ -28,12 +28,12 @@ var uriForAction = function( data, type ){
     var q_template;
     switch(type){
     case 'invoice_template_previewed':
-        //q_template = '[%- c.uri_for_action("/invoice/invoice_template", ['contract_id','svg','parsed','previewed','svg','tt_id']) -%]';
-        q_template = '[%- c.uri_for_action("/invoice/invoice_template", ["contract_id"]) -%]'+'/svg/parsed/previewed/svg/tt_id';
+        //q_template = '[%- c.uri_for_action("/invoice/invoice_template_view", ['contract_id','svg','parsed','previewed','svg','tt_id']) -%]';
+        q_template = '[%- c.uri_for_action("/invoice/invoice_template_view", ["contract_id"]) -%]'+'/svg/parsed/previewed/svg/tt_id';
         break;
     case 'invoice_template_saved':
-        //q_template = '[%- c.uri_for_action("/invoice/invoice_template", ['contract_id','svg','parsed','saved','svg','tt_id']) -%]';
-        q_template = '[%- c.uri_for_action("/invoice/invoice_template", ["contract_id"]) -%]'+'/svg/parsed/saved/tt_output_type/tt_id';
+        //q_template = '[%- c.uri_for_action("/invoice/invoice_template_view", ['contract_id','svg','parsed','saved','svg','tt_id']) -%]';
+        q_template = '[%- c.uri_for_action("/invoice/invoice_template_view", ["contract_id"]) -%]'+'/svg/parsed/saved/tt_output_type/tt_id';
         break;
     case 'invoice_template_list':
         q_template = '[%- c.uri_for_action("/invoice/invoice_template_list", ['contract_id']) -%]';
@@ -43,8 +43,8 @@ var uriForAction = function( data, type ){
         break;
     case 'invoice_template':
     default:
-        //q_template = '[%- c.uri_for_action("/invoice/invoice_template", ['contract_id','tt_type','tt_viewmode','tt_sourcestate','tt_output_type','tt_id']) -%]';
-        q_template = '[%- c.uri_for_action("/invoice/invoice_template", ["contract_id"]) -%]'+'/tt_type/tt_viewmode/tt_sourcestate/tt_output_type/tt_id';
+        //q_template = '[%- c.uri_for_action("/invoice/invoice_template_view", ['contract_id','tt_type','tt_viewmode','tt_sourcestate','tt_output_type','tt_id']) -%]';
+        q_template = '[%- c.uri_for_action("/invoice/invoice_template_view", ["contract_id"]) -%]'+'/tt_type/tt_viewmode/tt_sourcestate/tt_output_type/tt_id';
         break;
     }
     if(!data.tt_id){data.tt_id = '';}
@@ -65,7 +65,6 @@ var uriForAction = function( data, type ){
         <a class="btn btn-primary btn-large" href="[% c.uri_for('/back') %]"><i class="icon-arrow-left"></i> [% c.loc('Back') %]</a>
     </span>
     <span>
-        <!--a class="btn btn-primary btn-large" href="[% c.uri_for('/invoice/invoice_create') %]">[% c.loc('Create invoices template')%] <i class="icon-edit"></i></a-->
         <a class="btn btn-primary btn-large" onclick="$(this).css('outline', 'none');fetch_into('invoice_template_info_form', '[%- c.uri_for_action("/invoice/invoice_template_info", [provider.id]) -%]','item=invoice_template_info',function(){modalFormScript();});void(0);">[% c.loc('Create invoices template')%] <i class="icon-edit"></i></a>
     </span>
 </div>
@@ -121,21 +120,36 @@ var uriForAction = function( data, type ){
     
     <div class="accordion-body collapse" id="collapse_invoice_details_calls">
     <div class="accordion-inner" style="overflow:auto; height: 300px;">
-    
+    <input type="button" value="qqqqqqq" onclick="
+var oTable = $('#invoice_details_calls_ajax_table').dataTable();
+alert( oTable );
+var i;
+obj = oTable.fnSettings();
+obj = $('#invoice_details_calls_ajax_datepicker_start').datepicker();
+for (i in obj){
+    alert('i='+i+'; o='+obj[i]+';');
+}
+//alert( $('#invoice_details_calls_ajax_datepicker_start').datepicker() );
+//function(){return s(this[j.ext.iApiIndex])};
+//oTable.fnSettings = function(){alert('j'+j+';iApiIndex'+j.ext.iApiIndex+';');return s(this[j.ext.iApiIndex])};
+alert( oTable.fnSettings().oPreviousSearch.sSearch );//
+oTable.fnClose();
+">
     
 [%
     clearHelper();
     helper.name = c.loc('Invoice Calls');
     helper.dt_columns = [
-        { name => 'start_time', title => c.loc('Start time'), search=> 1 },
+        { name => 'start_time', title => c.loc('Start time'), search_from_epoch => 1, search_to_epoch=>1 },
         { name => 'duration', title => c.loc('Duration') },
-        { name => 'destination_user', title => c.loc('Destination') },
-        { name => 'call_type', title => c.loc('Type') },
+        { name => 'destination_user', title => c.loc('Destination'), search => 1 },
+        { name => 'call_type', title => c.loc('Type'), search => 1 },
         { name => 'source_customer_billing_zones_history.zone', title => c.loc('Zone'), search=> 1 },
         { name => 'source_customer_cost', title => c.loc('Amount EUR') },
     ];
     helper.name_single = c.loc('Invoice calls');
     helper.identifier = 'invoice_details_calls_ajax';
+    helper.id_from_name = 'start_time';
     helper.ajax_uri = c.uri_for_action( '/invoice/ajax_allmighty', [ provider.id, 'invoice_details_calls' ] ) ;
     initHelperAuto();
     PROCESS 'helpers/datatables.tt';
