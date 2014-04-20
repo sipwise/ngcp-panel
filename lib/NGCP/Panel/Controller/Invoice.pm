@@ -5,6 +5,9 @@ BEGIN { extends 'Catalyst::Controller'; }
 use DateTime qw();
 use HTTP::Status qw(HTTP_SEE_OTHER);
 use File::Type;
+use MIME::Base64 qw(encode_base64);
+
+
 use NGCP::Panel::Utils::Contract;
 use NGCP::Panel::Utils::Message;
 
@@ -22,24 +25,16 @@ sub auto {
     return 1;
 }
 
-sub list_invoice_template :Chained('/') :PathPart('invoice') :CaptureArgs(0) {
+sub invoice :Chained('/') :PathPart('invoice') :CaptureArgs(0) {
     my ($self, $c) = @_;
-
-    $c->stash(
-        resellers => $c->model('DB')
-            ->resultset('resellers')->search({
-                status => { '!=' => 'terminated' }
-            }),
-        template => 'invoice/invoice.tt'
-    );
 }
 
-sub root :Chained('list_invoice_template') :PathPart('') :Args(0) :Does(ACL) :ACLDetachTo('/denied_page') :AllowedRole(admin)
+sub root :Chained('invoice') :PathPart('') :Args(0) :Does(ACL) :ACLDetachTo('/denied_page') :AllowedRole(admin)
 {
     my ($self, $c) = @_;
 }
 
-sub messages :Chained('list_invoice_template') :PathPart('messages') :Args(0) {
+sub messages :Chained('invoice') :PathPart('messages') :Args(0) {
     my ($self, $c) = @_;
     $c->log->debug('messages');
     $c->stash( messages => $c->flash->{messages} );
@@ -47,7 +42,7 @@ sub messages :Chained('list_invoice_template') :PathPart('messages') :Args(0) {
     $c->detach( $c->view('SVG') );#no wrapper view
 }
 
-sub ajax_allmighty :Chained('base') :PathPart('ajaxall') :Args(1) {
+sub ajax_datatables_data :Chained('base') :PathPart('ajax') :Args(1) {
     my ($self, $c, $item ) = @_;
     my $dt_columns_json = $c->request->parameters->{dt_columns};
     $c->forward( $item );
@@ -56,9 +51,10 @@ sub ajax_allmighty :Chained('base') :PathPart('ajaxall') :Args(1) {
     $c->detach( $c->view("JSON") );
 }
 
-sub base :Chained('list_invoice_template') :PathPart('') :CaptureArgs(1) {
+sub base :Chained('invoice') :PathPart('') :CaptureArgs(1) {
     my ($self, $c, $reseller_id) = @_;
-
+    $c->log->debug('base');
+  
     unless($reseller_id && $reseller_id->is_int) {
         NGCP::Panel::Utils::Message->error(
             c     => $c,
@@ -70,9 +66,13 @@ sub base :Chained('list_invoice_template') :PathPart('') :CaptureArgs(1) {
     }
     $c->detach('/denied_page')
     	if($c->user->roles eq "reseller" && $c->user->reseller_id != $reseller_id);
+    
+    my $reseller = $c->model('DB')->resultset('resellers')->search({
+        status => { '!=' => 'terminated' },
+        id => $reseller_id
+    });
 
-    $c->stash(reseller => $c->stash->{resellers}->search_rs({ id => $reseller_id }));
-    unless($c->stash->{reseller}->first) {
+    unless($reseller->first) {
         NGCP::Panel::Utils::Message->error(
             c     => $c,
             log   => 'Reseller not found',
@@ -80,39 +80,18 @@ sub base :Chained('list_invoice_template') :PathPart('') :CaptureArgs(1) {
         );
         NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for('/reseller'));
     }
-    $c->stash(contract => $c->stash->{resellers}->search_rs({ id => $reseller_id })->first->contract );
-    $c->stash(provider => $c->stash->{resellers}->first );
-}
-sub details :Chained('base') :PathPart('') :Args(0) :Does(ACL) :ACLDetachTo('/denied_page') :AllowedRole(admin)
-{
-    my ($self, $c) = @_;
-    $c->forward('invoice_details_zones');
-    $c->forward('invoice_details_calls');
-    $c->forward('invoice_template_list_data');
-    #$self->invoice_details_zones($c);
-    #$self->invoice_details_calles($c);
+    $c->stash(
+        provider    => $reseller->first,
+        provider_rs => $reseller,
+        contract    => $reseller->search_rs({ id => $reseller_id })->first->contract 
+    );
 }
 
-sub invoice_base :Chained('base') :PathPart('') :CaptureArgs(0) {
-    my ($self, $c) = @_;
-    my($validator,$backend,$in,$out);
-    $backend = NGCP::Panel::Model::DB::InvoiceTemplate->new( schema => $c->model('DB') );
-    $c->log->debug('invoice_base');
-    my $client_id = $c->stash->{client} ? $c->stash->{client}->id : undef ;
-    my $client;
-    if($client_id){
-        $client = $backend->getClient($client_id);
-    }else{
-        #$c->stash->{provider}->id;
-    }
-    $c->stash( provider => $c->stash->{reseller}->first );
-}
 
-sub invoice_details_zones :Chained('invoice_base') :PathPart('') :CaptureArgs(0) {
+sub invoice_details_zones :Chained('base') :PathPart('') :CaptureArgs(0) {
     my ($self, $c) = @_;
     $c->log->debug('invoice_details_zones');
-    $c->forward( 'invoice_base' );
-    my $contract_id = $c->stash->{provider}->id;
+    my $provider_id = $c->stash->{provider}->id;
     my $stime = NGCP::Panel::Utils::DateTime::current_local()->truncate(to => 'month');
     my $etime = $stime->clone->add(months => 1);
 
@@ -120,7 +99,7 @@ sub invoice_details_zones :Chained('invoice_base') :PathPart('') :CaptureArgs(0)
     #my $form = NGCP::Panel::Form::InvoiceTemplate::Basic->new( );
     my $invoice_details_zones = NGCP::Panel::Utils::Contract::get_contract_zonesfees_rs(
         c => $c,
-        contract_id => $contract_id,
+        provider_id => $provider_id,
         stime => $stime,
         etime => $etime,
     );
@@ -132,11 +111,11 @@ sub invoice_details_zones :Chained('invoice_base') :PathPart('') :CaptureArgs(0)
     $c->stash( invoice_details_zones => $invoice_details_zones );
     $c->stash( invoice_details_zones_ajax => $invoice_details_zones_ajax );
 }
+
 sub invoice_details_calls :Chained('invoice_details_zones') :PathPart('') :CaptureArgs(0) {
     my ($self, $c) = @_;
     $c->log->debug('invoice_details_calls');
-    $c->forward( 'invoice_base' );
-    my $contract_id = $c->stash->{provider}->id;
+    my $provider_id = $c->stash->{provider}->id;
     my $stime = NGCP::Panel::Utils::DateTime::current_local()->truncate(to => 'month');
     my $etime = $stime->clone->add(months => 1);
 
@@ -144,7 +123,7 @@ sub invoice_details_calls :Chained('invoice_details_zones') :PathPart('') :Captu
     #my $form = NGCP::Panel::Form::InvoiceTemplate::Basic->new( );
     my $invoice_details_calls = NGCP::Panel::Utils::Contract::get_contract_calls_rs(
         c => $c,
-        contract_id => $contract_id,
+        provider_id => $provider_id,
         stime => $stime,
         etime => $etime,
     );
@@ -165,7 +144,29 @@ sub invoice_details_calls :Chained('invoice_details_zones') :PathPart('') :Captu
     $c->stash( invoice_details_calls => $invoice_details_calls );
     $c->stash( invoice_details_calls_ajax => $invoice_details_calls_ajax );
 }
-sub invoice_template_info :Chained('invoice_base') :PathPart('invoice/template/info') :Args(0) {
+
+sub invoice_list :Chained('invoice_details_calls') :PathPart('list') :Args(0) {
+    my ($self, $c) = @_;
+    $c->stash( template => 'invoice/list.tt' );
+}
+
+sub template_base :Chained('base') :PathPart('template') :CaptureArgs(0) {
+    my ($self, $c) = @_;
+    my($validator,$backend,$in,$out);
+    $backend = NGCP::Panel::Model::DB::InvoiceTemplate->new( schema => $c->model('DB') );
+    $c->log->debug('template_base');
+    $c->forward( 'template_list_data' );
+    my $client_id = $c->stash->{client} ? $c->stash->{client}->id : undef ;
+    my $client;
+    if($client_id){
+        $client = $backend->getClient($client_id);
+    }else{
+        #$c->stash->{provider}->id;
+    }
+    #$c->stash( provider => $c->stash->{reseller}->first );
+}
+
+sub template_info :Chained('template_base') :PathPart('info') :Args(0) {
     my ($self, $c) = @_;
     $c->log->debug($c->action);
     my($validator,$backend,$in,$out);
@@ -173,7 +174,7 @@ sub invoice_template_info :Chained('invoice_base') :PathPart('invoice/template/i
     
     #from parameters
     $in = $c->request->parameters;
-    $in->{contract_id} = $c->stash->{provider}->id;
+    $in->{provider_id} = $c->stash->{provider}->id;
     #(undef,undef,@$in{qw/tt_id/}) = @_;
 
     if($in->{tt_id}){
@@ -181,7 +182,9 @@ sub invoice_template_info :Chained('invoice_base') :PathPart('invoice/template/i
         my $db_object;
         ($out->{tt_id},undef,$db_object) = $backend->getCustomerInvoiceTemplate( %$in );
         $out->{tt_data}->{tt_id} = $db_object->get_column('id');
-        $out->{tt_data}->{contract_id} = $db_object->get_column('reseller_id');
+        if(!$c->stash->{provider}){
+            
+        }
         foreach(qw/name is_active/){$out->{tt_data}->{$_} = $db_object->get_column($_);}
     }
     if(!$out->{tt_data}){
@@ -191,8 +194,8 @@ sub invoice_template_info :Chained('invoice_base') :PathPart('invoice/template/i
     $validator->remove_undef_in($in);
     #need to think how to automate it - maybe through form showing param through args? what about args for uri_for_action?
     #join('/',$c->controller,$c->action)
-    $validator->action( $c->uri_for_action('invoice/invoice_template_info',[$in->{contract_id}]) );
-    $validator->name( 'invoice_template_info' );#from parameters
+    $validator->action( $c->uri_for_action('invoice/template_info',[$in->{provider_id}]) );
+    $validator->name( 'template_info' );#from parameters
     #my $posted = 0;
     my $posted = exists $in->{submitid};
     $c->log->debug("posted=$posted;");
@@ -230,7 +233,7 @@ sub invoice_template_info :Chained('invoice_base') :PathPart('invoice/template/i
             $c->stash( m        => {create_flag => !$in->{tt_id}} );
             $c->stash( form     => $validator );
             #$c->stash( template => 'helpers/ajax_form_modal.tt' );
-            $c->stash( template => 'invoice/invoice_template_info_form.tt' );
+            $c->stash( template => 'invoice/template_info_form.tt' );
             $c->response->headers->header( 'X-Form-Status' => 'error' );
         }
     }else{
@@ -239,15 +242,14 @@ sub invoice_template_info :Chained('invoice_base') :PathPart('invoice/template/i
         $c->stash( m        => {create_flag => !$in->{tt_id}} );
         $c->stash( form     => $validator );
         #$c->stash( template => 'helpers/ajax_form_modal.tt' );
-        $c->stash( template => 'invoice/invoice_template_info_form.tt' );
+        $c->stash( template => 'invoice/template_info_form.tt' );
     }
     $c->detach( $c->view("SVG") );#to the sake of nowrapper
 }
 
-
-sub invoice_template_activate :Chained('invoice_base') :PathPart('invoice/template/activate') :Args(2) {
+sub template_activate :Chained('template_base') :PathPart('activate') :Args(2) {
     my ($self, $c) = @_;
-    $c->log->debug('invoice_template_activate');
+    $c->log->debug('template_activate');
     my($validator,$backend,$in,$out);
 
     (undef,undef,@$in{qw/tt_id is_active/}) = @_;
@@ -256,7 +258,7 @@ sub invoice_template_activate :Chained('invoice_base') :PathPart('invoice/templa
     #this is just copy-paste from method above
     #of course we are chained and we can put in and out to stash
     #input
-    $in->{contract_id} = $c->stash->{provider}->id;
+    $in->{provider_id} = $c->stash->{provider}->id;
     
     #output
     $out={};
@@ -302,11 +304,11 @@ sub invoice_template_activate :Chained('invoice_base') :PathPart('invoice/templa
         ? 'Invoice template deactivated'
         :'Invoice template activated'
     ) }]);
-    $c->forward( 'invoice_template_list' );
+    $c->forward( 'template_list' );
 }
-sub invoice_template_delete :Chained('invoice_base') :PathPart('invoice/template/delete') :Args(1) {
+sub template_delete :Chained('template_base') :PathPart('delete') :Args(1) {
     my ($self, $c) = @_;
-    $c->log->debug('invoice_template_delete');
+    $c->log->debug('template_delete');
     my($validator,$backend,$in,$out);
 
     (undef,undef,@$in{qw/tt_id/}) = @_;
@@ -315,7 +317,7 @@ sub invoice_template_delete :Chained('invoice_base') :PathPart('invoice/template
     #this is just copy-paste from method above
     #of course we are chained and we can put in and out to stash
     #input
-    $in->{contract_id} = $c->stash->{provider}->id;
+    $in->{provider_id} = $c->stash->{provider}->id;
     
     #output
     $out={};
@@ -356,41 +358,40 @@ sub invoice_template_delete :Chained('invoice_base') :PathPart('invoice/template
     $c->flash(messages => [{type => 'success', text => $c->loc(
         'Invoice template deleted'
     ) }]);
-    $c->forward( 'invoice_template_list' );
+    $c->forward( 'template_list' );
 }
 
-sub invoice_template_list_data :Chained('invoice_details_calls') :PathPart('') :CaptureArgs(0) {
+sub template_list_data :Chained('base') :PathPart('') :CaptureArgs(0) {
     my ($self, $c) = @_; 
-    $c->log->debug('invoice_template_list_data');
+    $c->log->debug('template_list_data');
     my($validator,$backend,$in,$out);
-    $in->{contract_id} = $c->stash->{provider}->id;
+    $in->{provider_id} = $c->stash->{provider}->id;
     $backend = NGCP::Panel::Model::DB::InvoiceTemplate->new( schema => $c->model('DB') );
     my $records = $backend->getCustomerInvoiceTemplateList( %$in );
-    $c->stash( invoice_template_list => $records );
+    $c->stash( template_list => $records );
 }
-sub invoice_template_list :Chained('invoice_base') :PathPart('invoice/template') :Args(0) {
+sub template_list :Chained('template_base') :PathPart('list') :Args(0) {
     my ($self, $c) = @_;
-    $c->log->debug('invoice_template_list');
-    $c->stash( template => 'invoice/invoice_template_list.tt' ); 
-    $c->forward( 'invoice_template_list_data' );
+    $c->log->debug('template_list');
+    $c->stash( template => 'invoice/template_list.tt' ); 
     $c->detach($c->view('SVG'));#just no wrapper - maybe there is some other way?
 }
 
-sub invoice :Chained('invoice_template_list_data') :PathPart('invoice') :Args(0) {
+sub template :Chained('template_base') :PathPart('') :Args(0) {
     my ($self, $c) = @_;
-    $c->stash(template => 'invoice/invoice.tt'); 
+    $c->stash(template => 'invoice/template.tt'); 
 }
 
-sub invoice_template :Chained('invoice_details_calls') :PathPart('template') :Args {
+sub template_view :Chained('template_base') :PathPart('view') :Args {
     my ($self, $c) = @_;
-    $c->log->debug('invoice_template');
+    $c->log->debug('template_view');
     no warnings 'uninitialized';
 
     my($validator,$backend,$in,$out);
 
     #input
     (undef,undef,@$in{qw/tt_type tt_viewmode tt_sourcestate tt_output_type tt_id/}) = @_ ;
-    $in->{contract_id} = $c->stash->{provider}->id;
+    $in->{provider_id} = $c->stash->{provider}->id;
     #$in->{client_id} = ;
     $in->{tt_string} = $c->request->body_parameters->{template} || '';
     foreach(qw/name is_active/){$in->{$_} = $c->request->parameters->{$_};}
@@ -529,7 +530,7 @@ sub invoice_template :Chained('invoice_details_calls') :PathPart('template') :Ar
         return;
     }else{#parsed
 
-        my $contacts = $c->model('DB')->resultset('contacts')->search({ id => $in->{contract_id} });
+        my $contacts = $c->model('DB')->resultset('contacts')->search({ id => $in->{provider_id} });
         $c->stash( provider => $contacts->first );
 
         #some preprocessing should be done only before showing. So, there will be:
@@ -578,7 +579,7 @@ sub invoice_template :Chained('invoice_details_calls') :PathPart('template') :Ar
             my ($tempdirbase,$tempdir );
             use File::Temp qw/tempfile tempdir/;
             #my($fh, $tempfilename) = tempfile();
-            $tempdirbase = join('/',File::Spec->tmpdir,@$in{qw/contract_id tt_type tt_sourcestate/}, $out->{tt_id});
+            $tempdirbase = join('/',File::Spec->tmpdir,@$in{qw/provider_id tt_type tt_sourcestate/}, $out->{tt_id});
             use File::Path qw( mkpath );
             ! -e $tempdirbase and mkpath( $tempdirbase, 0, 0777 );
             $tempdir = tempdir( DIR =>  $tempdirbase , CLEANUP => 1 );
@@ -633,11 +634,11 @@ sub invoice_template :Chained('invoice_details_calls') :PathPart('template') :Ar
     }
 }
 
-sub invoice_template_aux_embedImage :Chained('list_reseller') :PathPart('auxembedimage') :Args(0) {
+sub template_aux_embedImage :Chained('invoice') :PathPart('auxembedimage') :Args(0) {
     my ($self, $c) = @_;
     
     #I know somewhere is logging of all visited methods
-    $c->log->debug('invoice_template_aux_handleImageUpload');
+    $c->log->debug('template_aux_embedImage');
     my($validator,$backend,$in,$out);
     
     #todo
@@ -654,7 +655,7 @@ sub invoice_template_aux_embedImage :Chained('list_reseller') :PathPart('auxembe
     $c->log->debug('mime-type '.$out->{image_content_mimetype});
     $c->stash(out => $out);
     $c->stash(in => $in);
-    $c->stash(template => 'invoice/invoice_template_aux_embedimage.tt');
+    $c->stash(template => 'invoice/template_editor_aux_embedimage.tt');
     $c->detach( $c->view('SVG') );
     
 }

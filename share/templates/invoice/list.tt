@@ -1,11 +1,111 @@
-[% site_config.title = c.loc('InvoicePeriods') -%]
+[% USE Dumper %]
+[% USE format %]
+[% money_format = format('%.2f') %]
+[% write_access = 1 %]
+
+[%PROCESS 'helpers/datatables_vars.tt'
+    no_auto_helper = 1 
+-%]
+
+[% site_config.title = c.loc('Invoices for [_1]', provider.name ) -%]
+
+<div class="row">
+    <span>
+        <a class="btn btn-primary btn-large" href="[% c.uri_for('/back') %]"><i class="icon-arrow-left"></i> [% c.loc('Back') %]</a>
+    </span>
+</div>
+
+[% IF reseller.first.status != "active" -%]
+    [%messages.unshift( c.loc('Reseller is <b>[_1]</b>', reseller.first.status) ); %]
+[% END -%]
+<div class="row" id="messages">
+[%PROCESS 'helpers/ajax_messages.tt' -%]
+</div>
+
+
+<div class="ngcp-separator"></div>
+[% back_created = 1 -%]
+
+<div class="accordion" id="invoice">
+
+<div class="accordion-group">
+    <div class="accordion-heading">
+        <a class="accordion-toggle" data-toggle="collapse" data-parent="#customer_invoice" href="#collapse_invoice_details_zones">[% c.loc('Invoice Connection Fees') %]</a>
+    </div>
+    
+    <div class="accordion-body collapse" id="collapse_invoice_details_zones">
+    <div class="accordion-inner" style="overflow:auto; height: 300px;">
+    
+    
 [%
-    helper.name = c.loc('InvoicePeriods');
-    helper.name_single = c.loc('InvoicePeriod');
-    helper.identifier = 'InvoicePeriod';
-    helper.top_buttons = "";
-  
-    PROCESS 'helpers/datatables_vars.tt';
+    clearHelper();
+    helper.name = c.loc('Invoice Connection Fees');
+    helper.dt_columns = [
+        { name => 'source_customer_billing_zones_history.zone', title => c.loc('Zone'), search=> 1 },
+        { name => 'number', title => c.loc('Calls') },
+        { name => 'duration', title => c.loc('Usage') },
+        { name => 'free_time', title => c.loc('Free time') },
+        { name => 'cost', title => c.loc('Amount EUR') },
+    ];
+    helper.name_single = c.loc('Invoice Connections Records');
+    helper.identifier = 'invoice_details_zones_ajax';
+    helper.ajax_uri = c.uri_for_action( '/invoice/ajax_datatables_data', [ provider.id, 'invoice_details_zones' ] ) ;
+    initHelperAuto();
     PROCESS 'helpers/datatables.tt';
 -%]
-[% # vim: set tabstop=4 syntax=html expandtab: -%]
+    [%PROCESS 'invoice/invoice_details_zones_list.tt' %]
+
+    </div>
+    </div>
+</div>
+
+<div class="accordion-group">
+    <div class="accordion-heading">
+        <a class="accordion-toggle" data-toggle="collapse" data-parent="#customer_invoice" href="#collapse_invoice_details_calls">[% c.loc('Invoice Calls') %]</a>
+    </div>
+    
+    <div class="accordion-body collapse" id="collapse_invoice_details_calls">
+    <div class="accordion-inner" style="overflow:auto; height: 300px;">
+    <input type="button" value="qqqqqqq" onclick="
+var oTable = $('#invoice_details_calls_ajax_table').dataTable();
+alert( oTable );
+var i;
+obj = oTable.fnSettings();
+obj = $('#invoice_details_calls_ajax_datepicker_start').datepicker();
+for (i in obj){
+    alert('i='+i+'; o='+obj[i]+';');
+}
+//alert( $('#invoice_details_calls_ajax_datepicker_start').datepicker() );
+//function(){return s(this[j.ext.iApiIndex])};
+//oTable.fnSettings = function(){alert('j'+j+';iApiIndex'+j.ext.iApiIndex+';');return s(this[j.ext.iApiIndex])};
+alert( oTable.fnSettings().oPreviousSearch.sSearch );//
+oTable.fnClose();
+">
+    
+[%
+    clearHelper();
+    helper.name = c.loc('Invoice Calls');
+    helper.dt_columns = [
+        { name => 'start_time', title => c.loc('Start time'), search_from_epoch => 1, search_to_epoch=>1 },
+        { name => 'duration', title => c.loc('Duration') },
+        { name => 'destination_user', title => c.loc('Destination'), search => 1 },
+        { name => 'call_type', title => c.loc('Type'), search => 1 },
+        { name => 'source_customer_billing_zones_history.zone', title => c.loc('Zone'), search=> 1 },
+        { name => 'source_customer_cost', title => c.loc('Amount EUR') },
+    ];
+    helper.name_single = c.loc('Invoice calls');
+    helper.identifier = 'invoice_details_calls_ajax';
+    helper.id_from_name = 'start_time';
+    helper.ajax_uri = c.uri_for_action( '/invoice/ajax_datatables_data', [ provider.id, 'invoice_details_calls' ] ) ;
+    initHelperAuto();
+    PROCESS 'helpers/datatables.tt';
+-%]
+    [%PROCESS 'invoice/invoice_details_calls_list.tt' %]
+
+    </div>
+    </div>
+</div>
+</div>
+
+
+

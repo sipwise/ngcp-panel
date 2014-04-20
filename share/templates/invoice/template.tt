@@ -9,7 +9,7 @@
 [%PROCESS 'helpers/modal.tt' -%]
 [%mf_helper = {
     ajax_load         => 1,
-    ajax_list_refresh => 'invoice_template',
+    ajax_list_refresh => 'template',
  }%]
 [%modal_script( m = mf_helper )%]
 
@@ -27,31 +27,31 @@ var uriForAction = function( data, type ){
     //also we can think about getting URIs via ajax )
     var q_template;
     switch(type){
-    case 'invoice_template_previewed':
-        //q_template = '[%- c.uri_for_action("/invoice/invoice_template_view", ['contract_id','svg','parsed','previewed','svg','tt_id']) -%]';
-        q_template = '[%- c.uri_for_action("/invoice/invoice_template_view", ["contract_id"]) -%]'+'/svg/parsed/previewed/svg/tt_id';
+    case 'template_previewed':
+        //q_template = '[%- c.uri_for_action("/invoice/template_view", ['provider_id','svg','parsed','previewed','svg','tt_id']) -%]';
+        q_template = '[%- c.uri_for_action("/invoice/template_view", ['provider_id']) -%]'+'/svg/parsed/previewed/svg/tt_id';
         break;
-    case 'invoice_template_saved':
-        //q_template = '[%- c.uri_for_action("/invoice/invoice_template_view", ['contract_id','svg','parsed','saved','svg','tt_id']) -%]';
-        q_template = '[%- c.uri_for_action("/invoice/invoice_template_view", ["contract_id"]) -%]'+'/svg/parsed/saved/tt_output_type/tt_id';
+    case 'template_saved':
+        //q_template = '[%- c.uri_for_action("/invoice/template_view", ['provider_id','svg','parsed','saved','svg','tt_id']) -%]';
+        q_template = '[%- c.uri_for_action("/invoice/template_view", ['provider_id']) -%]'+'/svg/parsed/saved/tt_output_type/tt_id';
         break;
-    case 'invoice_template_list':
-        q_template = '[%- c.uri_for_action("/invoice/invoice_template_list", ['contract_id']) -%]';
+    case 'template_list':
+        q_template = '[%- c.uri_for_action("/invoice/template_list", ['provider_id']) -%]';
         break;
     case 'messages':
         q_template = '[%- c.uri_for_action("/invoice/messages") -%]';
         break;
-    case 'invoice_template':
+    case 'template':
     default:
-        //q_template = '[%- c.uri_for_action("/invoice/invoice_template_view", ['contract_id','tt_type','tt_viewmode','tt_sourcestate','tt_output_type','tt_id']) -%]';
-        q_template = '[%- c.uri_for_action("/invoice/invoice_template_view", ["contract_id"]) -%]'+'/tt_type/tt_viewmode/tt_sourcestate/tt_output_type/tt_id';
+        //q_template = '[%- c.uri_for_action("/invoice/template_view", ['provider_id','tt_type','tt_viewmode','tt_sourcestate','tt_output_type','tt_id']) -%]';
+        q_template = '[%- c.uri_for_action("/invoice/template_view", ['provider_id']) -%]'+'/tt_type/tt_viewmode/tt_sourcestate/tt_output_type/tt_id';
         break;
     }
     if(!data.tt_id){data.tt_id = '';}
     if(!data.tt_type){data.tt_type = 'svg';}
     if(!data.tt_output_type){data.tt_output_type = 'svg';}
     if(!data.tt_viewmode){data.tt_viewmode = 'both';}
-    var params = ['contract_id','tt_id','tt_type','tt_output_type','tt_viewmode','tt_sourcestate'];
+    var params = ['provider_id','tt_id','tt_type','tt_output_type','tt_viewmode','tt_sourcestate'];
     params.forEach(function(key){
         q_template=q_template.replace(key,data[key]);
     });
@@ -65,7 +65,10 @@ var uriForAction = function( data, type ){
         <a class="btn btn-primary btn-large" href="[% c.uri_for('/back') %]"><i class="icon-arrow-left"></i> [% c.loc('Back') %]</a>
     </span>
     <span>
-        <a class="btn btn-primary btn-large" onclick="$(this).css('outline', 'none');fetch_into('invoice_template_info_form', '[%- c.uri_for_action("/invoice/invoice_template_info", [provider.id]) -%]','item=invoice_template_info',function(){modalFormScript();});void(0);">[% c.loc('Create invoices template')%] <i class="icon-edit"></i></a>
+        <a class="btn btn-primary btn-large" onclick="$(this).css('outline', 'none');fetch_into('template_info_form', '[%- c.uri_for_action("/invoice/template_info", [provider.id]) -%]','item=template_info',function(){modalFormScript();});void(0);">[% c.loc('Create invoices template')%] <i class="icon-edit"></i></a>
+    </span>
+    <span>
+        <a class="btn btn-primary btn-large" onclick="$(this).css('outline', 'none');fetch_into('template_info_form', '[%- c.uri_for_action("/invoice/template_info", [provider.id]) -%]','item=template_info',function(){modalFormScript();});void(0);">[% c.loc('Create invoices template')%] <i class="icon-edit"></i></a>
     </span>
 </div>
 
@@ -80,11 +83,11 @@ var uriForAction = function( data, type ){
 <div class="ngcp-separator"></div>
 [% back_created = 1 -%]
 
-<div class="accordion" id="customer_invoice_template">
+<div class="accordion" id="invoice_template">
 
 <div class="accordion-group">
     <div class="accordion-heading">
-        <a class="accordion-toggle" data-toggle="collapse" data-parent="#customer_invoice_template" href="#collapse_invoice_details_zones">[% c.loc('Invoice Connection Fees') %]</a>
+        <a class="accordion-toggle" data-toggle="collapse" data-parent="#invoice_template" href="#collapse_invoice_details_zones">[% c.loc('Invoice Connection Fees') %]</a>
     </div>
     
     <div class="accordion-body collapse" id="collapse_invoice_details_zones">
@@ -103,7 +106,7 @@ var uriForAction = function( data, type ){
     ];
     helper.name_single = c.loc('Invoice Connections Records');
     helper.identifier = 'invoice_details_zones_ajax';
-    helper.ajax_uri = c.uri_for_action( '/invoice/ajax_allmighty', [ provider.id, 'invoice_details_zones' ] ) ;
+    helper.ajax_uri = c.uri_for_action( '/invoice/ajax_datatables_data', [ provider.id, 'invoice_details_zones' ] ) ;
     initHelperAuto();
     PROCESS 'helpers/datatables.tt';
 -%]
@@ -115,7 +118,7 @@ var uriForAction = function( data, type ){
 
 <div class="accordion-group">
     <div class="accordion-heading">
-        <a class="accordion-toggle" data-toggle="collapse" data-parent="#customer_invoice_template" href="#collapse_invoice_details_calls">[% c.loc('Invoice Calls') %]</a>
+        <a class="accordion-toggle" data-toggle="collapse" data-parent="#invoice_template" href="#collapse_invoice_details_calls">[% c.loc('Invoice Calls') %]</a>
     </div>
     
     <div class="accordion-body collapse" id="collapse_invoice_details_calls">
@@ -149,8 +152,7 @@ oTable.fnClose();
     ];
     helper.name_single = c.loc('Invoice calls');
     helper.identifier = 'invoice_details_calls_ajax';
-    helper.id_from_name = 'start_time';
-    helper.ajax_uri = c.uri_for_action( '/invoice/ajax_allmighty', [ provider.id, 'invoice_details_calls' ] ) ;
+    helper.ajax_uri = c.uri_for_action( '/invoice/ajax_datatables_data', [ provider.id, 'invoice_details_calls' ] ) ;
     initHelperAuto();
     PROCESS 'helpers/datatables.tt';
 -%]
@@ -164,23 +166,23 @@ oTable.fnClose();
 
 <div class="accordion-group">
     <div class="accordion-heading">
-        <a class="accordion-toggle" data-toggle="collapse" data-parent="#customer_invoice_template" href="#collapse_invoice_template_list">[% c.loc('Invoice Templates') %]</a>
+        <a class="accordion-toggle" data-toggle="collapse" data-parent="#invoice_template" href="#collapse_template_list">[% c.loc('Invoice Templates') %]</a>
     </div>
-    <div class="accordion-body collapse" id="collapse_invoice_template_list">
-    <div class="accordion-inner" style="overflow:auto; height:300px;" id="invoice_template_list">
-    [%PROCESS 'invoice/invoice_template_list.tt' %]
+    <div class="accordion-body collapse" id="collapse_template_list">
+    <div class="accordion-inner" style="overflow:auto; height:300px;" id="template_list">
+    [%PROCESS 'invoice/template_list.tt' %]
     </div>
     </div>
 </div>
 </span>
 
 <!--with display:none only the opera works with svg, others cant operate geometry on start and fail with a lot of svg related errors-->
-<div style="visibility:hidden;" id="invoice_template_editor_form">
-[%PROCESS 'invoice/invoice_template_editor_form.tt' %]
+<div style="visibility:hidden;" id="template_editor_form">
+[%PROCESS 'invoice/template_editor_form.tt' %]
 </div>
 
 </div>
 
-<div id="invoice_template_info_form">
+<div id="template_info_form">
 </div>
 

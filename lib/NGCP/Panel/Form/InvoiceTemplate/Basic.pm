@@ -58,7 +58,7 @@ has_field 'tt_string' => (
     required => 0,
 );
 
-has_field 'contract_id' => (
+has_field 'provider_id' => (
     type     => 'Hidden',
     #default  => \&
     #apply    => [ { check => \&validate_tt_string } ],
@@ -94,7 +94,7 @@ has_field 'save' => (
 has_block 'fields' => (
     tag => 'div',
     class => [qw/modal-body/],
-    render_list => [qw/name tt_id is_active submitid contract_id/],
+    render_list => [qw/name tt_id is_active submitid provider_id/],
 );
 
 has_block 'actions' => (

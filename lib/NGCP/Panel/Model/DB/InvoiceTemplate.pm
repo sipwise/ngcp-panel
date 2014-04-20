@@ -8,14 +8,14 @@ sub getDefaultConditions{
     my $self = shift;
     my ($params) = @_;
     #irka::loglong(Dumper($params));
-    my ($contract_id,$tt_sourcestate,$tt_type,$tt_id) = @$params{qw/contract_id tt_sourcestate tt_type tt_id/};
+    my ($provider_id,$tt_sourcestate,$tt_type,$tt_id) = @$params{qw/provider_id tt_sourcestate tt_type tt_id/};
     my $conditions = {};
     irka::loglong("getDefaultConditions: tt_id=$tt_id;\n");
     if($tt_id){
         $conditions = { id => $tt_id };
     }else{
         $conditions = {
-            reseller_id => $contract_id,
+            reseller_id => $provider_id,
             type        => $tt_type,
             is_active   => 1,
         };
@@ -25,7 +25,7 @@ sub getDefaultConditions{
 sub getCustomerInvoiceTemplate{
     my $self = shift;
     my (%params) = @_;
-    my ($contract_id,$tt_sourcestate,$tt_type,$tt_id) = @params{qw/contract_id tt_sourcestate tt_type tt_id/};
+    my ($provider_id,$tt_sourcestate,$tt_type,$tt_id) = @params{qw/provider_id tt_sourcestate tt_type tt_id/};
 
     #irka::loglong("getCustomerInvoiceTemplate: tt_id=$tt_id;\n");
     #irka::loglong(Dumper(\%params));
@@ -36,14 +36,14 @@ sub getCustomerInvoiceTemplate{
     #it is hard to express my disappointment by DBIx implementation. Where pure SQL is easy to automate, flexible and powerful, with DBIx you can't even get DB as aliases, only additional accessors, which aren't a option. What a poor "wonabe hibernate" idea and implementation.
     my $tt_record = $self->schema->resultset('invoice_templates')->search( 
         { id => $tt_id }, {
-        #'+select' => [{'reseller_id' =>'contract_id','-as'=>'contract_id'},{'id' => 'tt_id','-as'=>'tt_id'}]
+        #'+select' => [{'reseller_id' =>'provider_id','-as'=>'provider_id'},{'id' => 'tt_id','-as'=>'tt_id'}]
         #'+select' => [
-        #    [ 'reseller_id', {'-as'=>'contract_id'}],
+        #    [ 'reseller_id', {'-as'=>'provider_id'}],
         #    [ 'id', {'-as'=>'tt_id'}],
         #],
         #'+select' => [qw/reseller_id id/],
-        #'+as'     => [qw/contract_id tt_id/]
-        #'-as'     => [{reseller_id=>contract_id},{ id=>tt_id}]
+        #'+as'     => [qw/provider_id tt_id/]
+        #'-as'     => [{reseller_id=>provider_id},{ id=>tt_id}]
     }
     )->first;
     #here may be base64 decoding
@@ -52,7 +52,7 @@ sub getCustomerInvoiceTemplate{
     #if('saved' eq $tt_sourcestate){
     if( $tt_record ){
         $tt_sourcestate and $result = $tt_record->get_column( 'base64_'.$tt_sourcestate );
-        #$tt_record->contract_id
+        #$tt_record->reseller_id
         $tt_id = $tt_record->get_column( 'id' );
     }
     if( $result && exists $params{result} ){
@@ -64,13 +64,13 @@ sub getCustomerInvoiceTemplate{
 sub storeCustomerInvoiceTemplate{
     my $self = shift;
     my (%params) = @_;
-    my ($contract_id, $tt_sourcestate, $tt_type,$tt_string,$tt_id,$is_active,$name) = @params{qw/contract_id tt_sourcestate tt_type tt_string_sanitized tt_id is_active name/};
+    my ($provider_id, $tt_sourcestate, $tt_type,$tt_string,$tt_id,$is_active,$name) = @params{qw/provider_id tt_sourcestate tt_type tt_string_sanitized tt_id is_active name/};
 
     #my $tt_record = $self->resultset('invoice_templates')->search({
     $self->schema->txn_do(sub {
 #reseller_id and is_active aren't unique key, because is_active can kepp some 0 values for one reseller, we shouldn't keep active and inactive in one table
 #        $self->schema->resultset('invoice_templates')->update_or_create({
-#            reseller_id => $contract_id,
+#            reseller_id => $provider_id,
 #            type        => $tt_type,
 #            is_active   => 1,
 #            'base64_'.$tt_sourcestate => $$tt_string,
@@ -80,7 +80,7 @@ sub storeCustomerInvoiceTemplate{
         #here may be base64 decoding
 
 #        $self->schema->resultset('ivoice_template')->search({
-#            reseller_id => $contract_id,
+#            reseller_id => $provider_id,
 #            type        => $tt_type,
 #        })->update_all({
 #            is_active   => 0,
@@ -90,7 +90,7 @@ sub storeCustomerInvoiceTemplate{
         my $tt_record_updated;
         if( !$tt_id ){
             $tt_record_created = $self->schema->resultset('invoice_templates')->create({
-                reseller_id => $contract_id,
+                reseller_id => $provider_id,
                 type        => $tt_type,
 #                is_active   => $is_active,
 #                name        => $name,
@@ -109,7 +109,7 @@ sub storeCustomerInvoiceTemplate{
             });
         }
 #        if($is_active && $tt_id){
-#            $self->deactivateOtherTemplates($contract_id,$tt_id);
+#            $self->deactivateOtherTemplates($provider_id,$tt_id);
 #        }
     });
     return { tt_id => $tt_id };
@@ -117,7 +117,7 @@ sub storeCustomerInvoiceTemplate{
 sub storeInvoiceTemplateInfo{
     my $self = shift;
     my (%params) = @_;
-    my ($contract_id,$tt_id,$is_active,$name) = @params{qw/contract_id tt_id is_active name/};
+    my ($provider_id,$tt_id,$is_active,$name) = @params{qw/provider_id tt_id is_active name/};
 
     #my $tt_record = $self->resultset('invoice_templates')->search({
     $self->schema->txn_do(sub {
@@ -125,7 +125,7 @@ sub storeInvoiceTemplateInfo{
         my $tt_record_updated;
         if( !$tt_id ){
             $tt_record_created = $self->schema->resultset('invoice_templates')->create({
-                reseller_id => $contract_id,
+                reseller_id => $provider_id,
                 is_active   => $is_active,
                 name        => $name,
             });
@@ -140,7 +140,7 @@ sub storeInvoiceTemplateInfo{
             });
         }
         if($is_active && $tt_id){
-            $self->deactivateOtherTemplates($contract_id,$tt_id);
+            $self->deactivateOtherTemplates($provider_id,$tt_id);
         }
     });
     return { tt_id => $tt_id };
@@ -148,46 +148,46 @@ sub storeInvoiceTemplateInfo{
 sub getCustomerInvoiceTemplateList{
     my $self = shift;
     my (%params) = @_;
-    my ($contract_id,$tt_sourcestate,$tt_type, $tt_string, $tt_id) = @params{qw/contract_id tt_sourcestate tt_type tt_string_sanitized tt_id/};
+    my ($provider_id,$tt_sourcestate,$tt_type, $tt_string, $tt_id) = @params{qw/provider_id tt_sourcestate tt_type tt_string_sanitized tt_id/};
     
     #return [
         #$self->schema->resultset('invoice_template_fake')->find(\'select * from invoice_templates')->all
         #$self->schema->resultset('invoice_templates')->name(\'(select * from invoice_templates)')->all
     #];
     return [ $self->schema->resultset('invoice_templates')->search({
-        reseller_id => $contract_id,
+        reseller_id => $provider_id,
     })->all ];
 }
 sub deleteCustomerInvoiceTemplate{
     my $self = shift;
     my (%params) = @_;
-    my ($contract_id,$tt_id) = @params{qw/contract_id tt_id/};
+    my ($provider_id, $tt_id) = @params{qw/provider_id tt_id/};
     return $self->schema->resultset('invoice_templates')->search({
-        reseller_id => $contract_id,
+        reseller_id => $provider_id,
         id => $tt_id,
     })->delete_all;
 }
 sub activateCustomerInvoiceTemplate{
     my $self = shift;
     my (%params) = @_;
-    my ($contract_id,$tt_id) = @params{qw/contract_id tt_id/};
+    my ($provider_id, $tt_id) = @params{qw/provider_id tt_id/};
     $self->schema->txn_do(sub {
         $self->schema->resultset('invoice_templates')->search({
-            reseller_id => $contract_id,
+            reseller_id => $provider_id,
             id => $tt_id,
         })->update({
             is_active => 1,
         });
-        $self->deactivateOtherTemplates($contract_id,$tt_id);
+        $self->deactivateOtherTemplates($provider_id,$tt_id);
      });
 }
 sub deactivateCustomerInvoiceTemplate{
     my $self = shift;
     my (%params) = @_;
-    my ($contract_id,$tt_id) = @params{qw/contract_id tt_id/};
+    my ($provider_id, $tt_id) = @params{qw/provider_id tt_id/};
     $self->schema->txn_do(sub {
         $self->schema->resultset('invoice_templates')->search({
-            reseller_id => $contract_id,
+            reseller_id => $provider_id,
             id => $tt_id,
         })->update({
             is_active => 0,
@@ -196,9 +196,9 @@ sub deactivateCustomerInvoiceTemplate{
 }
 sub deactivateOtherTemplates{
     my $self = shift;
-    my ($contract_id,$tt_id) = @_;
+    my ($provider_id,$tt_id) = @_;
     $self->schema->resultset('invoice_templates')->search({
-        reseller_id => $contract_id,
+        reseller_id => $provider_id,
         id          => {'!=' => $tt_id },
         is_active   => 1,
     })->update_all({
@@ -208,9 +208,9 @@ sub deactivateOtherTemplates{
 sub checkCustomerInvoiceTemplateContract{
     my $self = shift;
     my (%params) = @_;
-    my ($contract_id,$tt_id) = @params{qw/contract_id tt_id/};
+    my ($provider_id,$tt_id) = @params{qw/provider_id tt_id/};
     my $tt_record = $self->schema->resultset('invoice_templates')->search({
-        reseller_id => $contract_id,
+        reseller_id => $provider_id,
         id => $tt_id,
     });
     if($tt_record->get_column('id')){

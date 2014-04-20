@@ -1,6 +1,5 @@
 package NGCP::Panel::Controller::Customer;
 use Sipwise::Base;
-use MIME::Base64 qw(encode_base64);
 use namespace::sweep;
 BEGIN { extends 'Catalyst::Controller'; }
 use JSON qw(decode_json encode_json);
