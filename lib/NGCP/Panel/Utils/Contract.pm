@@ -324,7 +324,6 @@ sub get_contract_zonesfees_rs {
                 { '<=' => $etime->epoch},
             ],
         source_account_id => $contract_id,
-    },{
         'select'   => [
             { sum         => 'me.source_customer_cost', -as => 'customercost' },
             { sum         => 'me.source_carrier_cost', -as => 'carriercost' },
@@ -366,7 +365,6 @@ sub get_contract_zonesfees_rs {
     } );
 
     return ($zonecalls_rs_in, $zonecalls_rs_out);
-}
 
 
 sub get_contract_zonesfees {

@@ -22,12 +22,12 @@ sub getDefaultConditions{
     }
     return $conditions;
 }
-sub getCustomerInvoiceTemplate{
+sub getInvoiceTemplate{
     my $self = shift;
     my (%params) = @_;
     my ($provider_id,$tt_sourcestate,$tt_type,$tt_id) = @params{qw/provider_id tt_sourcestate tt_type tt_id/};
 
-    #irka::loglong("getCustomerInvoiceTemplate: tt_id=$tt_id;\n");
+    #irka::loglong("getInvoiceTemplate: tt_id=$tt_id;\n");
     #irka::loglong(Dumper(\%params));
     my $result = '';
     
@@ -61,7 +61,7 @@ sub getCustomerInvoiceTemplate{
     return ( $tt_id, \$result, $tt_record );#tt_record - sgorila hata, gori i saray
 }
 
-sub storeCustomerInvoiceTemplate{
+sub storeInvoiceTemplateContent{
     my $self = shift;
     my (%params) = @_;
     my ($provider_id, $tt_sourcestate, $tt_type,$tt_string,$tt_id,$is_active,$name) = @params{qw/provider_id tt_sourcestate tt_type tt_string_sanitized tt_id is_active name/};
@@ -145,7 +145,7 @@ sub storeInvoiceTemplateInfo{
     });
     return { tt_id => $tt_id };
 }
-sub getCustomerInvoiceTemplateList{
+sub getInvoiceTemplateList{
     my $self = shift;
     my (%params) = @_;
     my ($provider_id,$tt_sourcestate,$tt_type, $tt_string, $tt_id) = @params{qw/provider_id tt_sourcestate tt_type tt_string_sanitized tt_id/};
@@ -154,11 +154,11 @@ sub getCustomerInvoiceTemplateList{
         #$self->schema->resultset('invoice_template_fake')->find(\'select * from invoice_templates')->all
         #$self->schema->resultset('invoice_templates')->name(\'(select * from invoice_templates)')->all
     #];
-    return [ $self->schema->resultset('invoice_templates')->search({
+    return $self->schema->resultset('invoice_templates')->search({
         reseller_id => $provider_id,
-    })->all ];
+    });
 }
-sub deleteCustomerInvoiceTemplate{
+sub deleteInvoiceTemplate{
     my $self = shift;
     my (%params) = @_;
     my ($provider_id, $tt_id) = @params{qw/provider_id tt_id/};
@@ -167,7 +167,7 @@ sub deleteCustomerInvoiceTemplate{
         id => $tt_id,
     })->delete_all;
 }
-sub activateCustomerInvoiceTemplate{
+sub activateInvoiceTemplate{
     my $self = shift;
     my (%params) = @_;
     my ($provider_id, $tt_id) = @params{qw/provider_id tt_id/};
@@ -181,7 +181,7 @@ sub activateCustomerInvoiceTemplate{
         $self->deactivateOtherTemplates($provider_id,$tt_id);
      });
 }
-sub deactivateCustomerInvoiceTemplate{
+sub deactivateInvoiceTemplate{
     my $self = shift;
     my (%params) = @_;
     my ($provider_id, $tt_id) = @params{qw/provider_id tt_id/};
@@ -205,7 +205,7 @@ sub deactivateOtherTemplates{
         is_active => 0,
     });
 }
-sub checkCustomerInvoiceTemplateContract{
+sub checkInvoiceTemplateProvider{
     my $self = shift;
     my (%params) = @_;
     my ($provider_id,$tt_id) = @params{qw/provider_id tt_id/};
@@ -219,7 +219,7 @@ sub checkCustomerInvoiceTemplateContract{
     return 0;
 }
 
-sub getInvoiceClient{
+sub getInvoiceClientContactInfo{
     my $self = shift;
     my (%params) = @_;
     my ($client_id) = @params{qw/client_id/};
@@ -227,18 +227,154 @@ sub getInvoiceClient{
         reseller_id => $client_id,
     });
 }
+
 sub getInvoiceProviderClients{
     my $self = shift;
     my (%params) = @_;
     my ($provider_id) = @params{qw/provider_id/};
     #$schema->resultset('contracts')
+#    my $mapping_rs = $schema->resultset('billing_mappings');
+#    my $rs = $schema->resultset('contracts')
+#        ->search({
+#            'me.status' => { '!=' => 'terminated' },
+#            'billing_mappings.id' => {
+#                '=' => $mapping_rs->search({
+#                    contract_id => { -ident => 'me.id' },
+#                    start_date => [ -or =>
+#                        { '<=' => NGCP::Panel::Utils::DateTime::current_local },
+#                        { -is  => undef },
+#                    ],
+#                    end_date => [ -or =>
+#                        { '>=' => NGCP::Panel::Utils::DateTime::current_local },
+#                        { -is  => undef },
+#                    ],
+#                },{
+#                    alias => 'bilmap',
+#                    rows => 1,
+#                    order_by => {-desc => ['bilmap.start_date', 'bilmap.id']},
+#                })->get_column('id')->as_query,
+#            },
+#        },{
+#            'join' => 'billing_mappings',
+#            '+select' => [
+#                'billing_mappings.id',
+#                'billing_mappings.start_date',
+#                'billing_mappings.product_id',
+#            ],
+#            '+as' => [
+#                'billing_mapping_id',
+#                'billing_mapping_start_date',
+#                'product_id',
+#            ],
+#            alias => 'me',
+#        });
+#
+#    return $rs;
+
+
     #very optimistic programming style
-    return NGCP::Panel::Utils::Contract::get_contract_rs(
-            schema => $self->schema,
-        )->search_rs({
-            'contact.reseller_id' => $provider_id,
-        },{
-            join => 'contact',
-    });
+
+    #return NGCP::Panel::Utils::Contract::get_contract_rs(
+    #        schema => $self->schema,
+    #    )->search_rs({
+    #        'contact.reseller_id' => $provider_id,
+    #    },{
+    #        join => 'contact',
+    #});
+    return $self->schema->resultset('contacts')->search_rs({},{});
 }
+
+sub get_contract_calls_rs{
+    my $self = shift;
+    my %params = @_;
+    (my($c,$provider_id,$client_id,$stime,$etime)) = @params{qw/c provider_id client_id stime etime/};
+    my $source_account_id_condition;
+    if(!$client_id){
+        $source_account_id_condition = { 'in' => $self->getInvoiceProviderClients(%params)->search_rs({},{
+            'select' => 'me.id',
+        })->as_query() };
+    }else{
+        $source_account_id_condition = $client_id;
+    }
+    my $zonecalls_rs = $self->schema->resultset('cdr')->search( {
+#        source_user_id => { 'in' => [ map {$_->uuid} @{$contract->{subscriber}} ] },
+        call_status       => 'ok',
+        source_user_id    => { '!=' => '0' },
+        
+        #source_account_id => $source_account_id_condition,
+        #-or => [
+        #    source_user_id => voip_subscribers.uuid,
+        #    destination_user_id => voip_subscribers.uuid,
+        #],
+        #start_time        => 
+        #    [ -and =>
+        #        { '>=' => $stime->epoch},
+        #        { '<=' => $etime->epoch},
+        #    ],
+    },{
+        '+select' => [
+            'source_customer_billing_zones_history.zone', 
+            'source_customer_billing_zones_history.detail', 
+            'destination_user_in',
+        ],
+        '+as'  => [qw/zone zone_detail destination/],
+        'join' => ['source_customer_billing_zones_history','contracts'],
+        'rows' => 37,
+    } );    
+    
+    return $zonecalls_rs;
+}
+sub get_contract_zonesfees_rs {
+    my $self = shift;
+    my %params = @_;
+    (my ($c,$provider_id,$client_id,$stime,$etime)) = @params{qw/c provider_id client_id stime etime/};
+    my $source_account_id_condition;
+    if(!$client_id){
+        $source_account_id_condition = { 'in' => $self->getInvoiceProviderClients(%params)->search_rs({},{
+            'select' => 'me.id',
+        })->as_query() };
+    }else{
+        $source_account_id_condition = $client_id;
+    }
+    
+    # SELECT 'out' as direction, SUM(c.source_customer_cost) AS cost, b.zone,
+                         # COUNT(*) AS number, SUM(c.duration) AS duration
+                    # FROM accounting.cdr c
+                    # LEFT JOIN billing.voip_subscribers v ON c.source_user_id = v.uuid
+                    # LEFT JOIN billing.billing_zones_history b ON b.id = c.source_customer_billing_zone_id
+                   # WHERE v.contract_id = ?
+                     # AND c.call_status = 'ok'
+                         # $start_time $end_time
+                   # GROUP BY b.zone 
+
+    my $zonecalls_rs = $self->schema->resultset('cdr')->search( {
+#        source_user_id => { 'in' => [ map {$_->uuid} @{$contract->{subscriber}} ] },
+        call_status       => 'ok',
+        source_user_id    => { '!=' => '0' },
+        source_account_id => $source_account_id_condition,
+        # start_time        => 
+            # [ -and =>
+                # { '>=' => $stime->epoch},
+                # { '<=' => $etime->epoch},
+            # ],
+
+    },{
+        '+select'   => [ 
+            { sum         => 'me.source_customer_cost', -as => 'cost', }, 
+            { sum         => 'me.source_customer_free_time', -as => 'free_time', } , 
+            { sum         => 'me.duration', -as => 'duration', } , 
+            { count       => '*', -as => 'number', } ,
+            'source_customer_billing_zones_history.zone', 
+            'source_customer_billing_zones_history.detail', 
+        ],
+        '+as' => [qw/cost free_time duration number zone zone_detail/],
+        #alias => 
+        join        => 'source_customer_billing_zones_history',
+        group_by    => 'source_customer_billing_zones_history.zone',
+        #order_by    => 'source_customer_billing_zones_history.zone',
+    } );    
+    
+    return $zonecalls_rs;
+}
+
 1;

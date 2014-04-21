@@ -91,15 +91,19 @@ sub base :Chained('invoice') :PathPart('') :CaptureArgs(1) {
 sub invoice_details_zones :Chained('base') :PathPart('') :CaptureArgs(0) {
     my ($self, $c) = @_;
     $c->log->debug('invoice_details_zones');
+    my($validator,$backend,$in,$out);
+    $backend = NGCP::Panel::Model::DB::InvoiceTemplate->new( schema => $c->model('DB') );
     my $provider_id = $c->stash->{provider}->id;
+    my $client_id = $c->stash->{client} ? $c->stash->{client}->id : undef;
     my $stime = NGCP::Panel::Utils::DateTime::current_local()->truncate(to => 'month');
     my $etime = $stime->clone->add(months => 1);
 
     #look, NGCP::Panel::Utils::Contract - it is kind of backend separation here
     #my $form = NGCP::Panel::Form::InvoiceTemplate::Basic->new( );
-    my $invoice_details_zones = NGCP::Panel::Utils::Contract::get_contract_zonesfees_rs(
+    my $invoice_details_zones = $backend->get_contract_zonesfees_rs(
         c => $c,
         provider_id => $provider_id,
+        client_id => $client_id,
         stime => $stime,
         etime => $etime,
     );
@@ -115,15 +119,18 @@ sub invoice_details_zones :Chained('base') :PathPart('') :CaptureArgs(0) {
 sub invoice_details_calls :Chained('invoice_details_zones') :PathPart('') :CaptureArgs(0) {
     my ($self, $c) = @_;
     $c->log->debug('invoice_details_calls');
+    my $backend = NGCP::Panel::Model::DB::InvoiceTemplate->new( schema => $c->model('DB') );
     my $provider_id = $c->stash->{provider}->id;
+    my $client_id = $c->stash->{client} ? $c->stash->{client}->id : undef;
     my $stime = NGCP::Panel::Utils::DateTime::current_local()->truncate(to => 'month');
     my $etime = $stime->clone->add(months => 1);
 
     #look, NGCP::Panel::Utils::Contract - it is kind of backend separation here
     #my $form = NGCP::Panel::Form::InvoiceTemplate::Basic->new( );
-    my $invoice_details_calls = NGCP::Panel::Utils::Contract::get_contract_calls_rs(
+    my $invoice_details_calls = $backend->get_contract_calls_rs(
         c => $c,
         provider_id => $provider_id,
+        client_id => $client_id,
         stime => $stime,
         etime => $etime,
     );
@@ -147,7 +154,12 @@ sub invoice_details_calls :Chained('invoice_details_zones') :PathPart('') :Captu
 
 sub invoice_list :Chained('invoice_details_calls') :PathPart('list') :Args(0) {
     my ($self, $c) = @_;
-    $c->stash( template => 'invoice/list.tt' );
+    my $backend = NGCP::Panel::Model::DB::InvoiceTemplate->new( schema => $c->model('DB') );
+    $c->forward( 'template_list_data' );
+    $c->stash( 
+        client_contacts_list => $backend->getInvoiceProviderClients( provider_id => $provider_id ),
+        template    => 'invoice/list.tt',
+    );
 }
 
 sub template_base :Chained('base') :PathPart('template') :CaptureArgs(0) {
@@ -156,13 +168,13 @@ sub template_base :Chained('base') :PathPart('template') :CaptureArgs(0) {
     $backend = NGCP::Panel::Model::DB::InvoiceTemplate->new( schema => $c->model('DB') );
     $c->log->debug('template_base');
     $c->forward( 'template_list_data' );
-    my $client_id = $c->stash->{client} ? $c->stash->{client}->id : undef ;
-    my $client;
-    if($client_id){
-        $client = $backend->getClient($client_id);
-    }else{
-        #$c->stash->{provider}->id;
-    }
+    #my $client_id = $c->stash->{client} ? $c->stash->{client}->id : undef ;
+    #my $client;
+    #if($client_id){
+    #    $client = $backend->getClient($client_id);
+    #}else{
+    #    #$c->stash->{provider}->id;
+    #}
     #$c->stash( provider => $c->stash->{reseller}->first );
 }
 
@@ -180,11 +192,9 @@ sub template_info :Chained('template_base') :PathPart('info') :Args(0) {
     if($in->{tt_id}){
         #always was sure that i'm calm and even friendly person, but I would kill with pleasure author of dbix.
         my $db_object;
-        ($out->{tt_id},undef,$db_object) = $backend->getCustomerInvoiceTemplate( %$in );
+        ($out->{tt_id},undef,$db_object) = $backend->getInvoiceTemplate( %$in );
         $out->{tt_data}->{tt_id} = $db_object->get_column('id');
-        if(!$c->stash->{provider}){
-            
-        }
+        $out->{tt_data}->{provider_id} = $db_object->get_column('reseller_id');
         foreach(qw/name is_active/){$out->{tt_data}->{$_} = $db_object->get_column($_);}
     }
     if(!$out->{tt_data}){
@@ -295,9 +305,9 @@ sub template_activate :Chained('template_base') :PathPart('activate') :Args(2) {
     $in = $in_validated;
     #think about it more
     if( ! $in->{is_active} ){
-        $backend->activateCustomerInvoiceTemplate(%$in);
+        $backend->activateInvoiceTemplate(%$in);
     }else{
-        $backend->deactivateCustomerInvoiceTemplate(%$in);
+        $backend->deactivateInvoiceTemplate(%$in);
     }
     $c->flash(messages => [{type => 'success', text => $c->loc(
         $in->{is_active}
@@ -354,7 +364,7 @@ sub template_delete :Chained('template_base') :PathPart('delete') :Args(1) {
     $in = $in_validated;
     #think about it more
     
-    $backend->deleteCustomerInvoiceTemplate(%$in);
+    $backend->deleteInvoiceTemplate(%$in);
     $c->flash(messages => [{type => 'success', text => $c->loc(
         'Invoice template deleted'
     ) }]);
@@ -367,7 +377,7 @@ sub template_list_data :Chained('base') :PathPart('') :CaptureArgs(0) {
     my($validator,$backend,$in,$out);
     $in->{provider_id} = $c->stash->{provider}->id;
     $backend = NGCP::Panel::Model::DB::InvoiceTemplate->new( schema => $c->model('DB') );
-    my $records = $backend->getCustomerInvoiceTemplateList( %$in );
+    my $records = [$backend->getInvoiceTemplateList( %$in )->all];
     $c->stash( template_list => $records );
 }
 sub template_list :Chained('template_base') :PathPart('list') :Args(0) {
@@ -437,7 +447,7 @@ sub template_view :Chained('template_base') :PathPart('view') :Args {
     if(!$in->{tt_string} && !$tt_string_force_default){
         #here we also may be better should contact model, not DB directly. Will return to this separation later
         #at the end - we can figure out rather basic controller behaviour
-        ($out->{tt_id},undef,$out->{tt_data}) = $backend->getCustomerInvoiceTemplate( %$in, result => \$tt_string_customer );
+        ($out->{tt_id},undef,$out->{tt_data}) = $backend->getInvoiceTemplate( %$in, result => \$tt_string_customer );
 
         if($out->{tt_data}){
             $out->{json} = {
@@ -481,7 +491,7 @@ sub template_view :Chained('template_base') :PathPart('view') :Args {
             }
             #/sanitize - to sub, later
 
-            my($tt_stored) = $backend->storeCustomerInvoiceTemplate( 
+            my($tt_stored) = $backend->storeInvoiceTemplateContent( 
                 %$in,
                 tt_string_sanitized => \$tt_string_sanitized,
             );

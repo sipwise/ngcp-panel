@@ -13,6 +13,9 @@
     <span>
         <a class="btn btn-primary btn-large" href="[% c.uri_for('/back') %]"><i class="icon-arrow-left"></i> [% c.loc('Back') %]</a>
     </span>
+    <span>
+        <a class="btn btn-primary btn-large" href="[% c.uri_for_action('invoice/template', [reseller.first.id]) %]">[% c.loc('Invoice Template')%] <i class="icon-edit"></i></a>
+    </span>
 </div>
 
 [% IF reseller.first.status != "active" -%]

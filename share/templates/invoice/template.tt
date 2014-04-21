@@ -68,7 +68,7 @@ var uriForAction = function( data, type ){
         <a class="btn btn-primary btn-large" onclick="$(this).css('outline', 'none');fetch_into('template_info_form', '[%- c.uri_for_action("/invoice/template_info", [provider.id]) -%]','item=template_info',function(){modalFormScript();});void(0);">[% c.loc('Create invoices template')%] <i class="icon-edit"></i></a>
     </span>
     <span>
-        <a class="btn btn-primary btn-large" onclick="$(this).css('outline', 'none');fetch_into('template_info_form', '[%- c.uri_for_action("/invoice/template_info", [provider.id]) -%]','item=template_info',function(){modalFormScript();});void(0);">[% c.loc('Create invoices template')%] <i class="icon-edit"></i></a>
+        <a class="btn btn-primary btn-large" href="[%- c.uri_for_action("/invoice/invoice_list", [provider.id]) -%]">[% c.loc('Invoices')%] <i class="icon-edit"></i></a>
     </span>
 </div>
 
@@ -83,104 +83,14 @@ var uriForAction = function( data, type ){
 <div class="ngcp-separator"></div>
 [% back_created = 1 -%]
 
-<div class="accordion" id="invoice_template">
-
-<div class="accordion-group">
-    <div class="accordion-heading">
-        <a class="accordion-toggle" data-toggle="collapse" data-parent="#invoice_template" href="#collapse_invoice_details_zones">[% c.loc('Invoice Connection Fees') %]</a>
-    </div>
-    
-    <div class="accordion-body collapse" id="collapse_invoice_details_zones">
-    <div class="accordion-inner" style="overflow:auto; height: 300px;">
-    
-    
-[%
-    clearHelper();
-    helper.name = c.loc('Invoice Connection Fees');
-    helper.dt_columns = [
-        { name => 'source_customer_billing_zones_history.zone', title => c.loc('Zone'), search=> 1 },
-        { name => 'number', title => c.loc('Calls') },
-        { name => 'duration', title => c.loc('Usage') },
-        { name => 'free_time', title => c.loc('Free time') },
-        { name => 'cost', title => c.loc('Amount EUR') },
-    ];
-    helper.name_single = c.loc('Invoice Connections Records');
-    helper.identifier = 'invoice_details_zones_ajax';
-    helper.ajax_uri = c.uri_for_action( '/invoice/ajax_datatables_data', [ provider.id, 'invoice_details_zones' ] ) ;
-    initHelperAuto();
-    PROCESS 'helpers/datatables.tt';
--%]
-    [%PROCESS 'invoice/invoice_details_zones_list.tt' %]
-
-    </div>
-    </div>
+<div class="accordion-inner" style="overflow:auto; height:300px;" id="template_list">
+[%PROCESS 'invoice/template_list.tt' %]
 </div>
 
-<div class="accordion-group">
-    <div class="accordion-heading">
-        <a class="accordion-toggle" data-toggle="collapse" data-parent="#invoice_template" href="#collapse_invoice_details_calls">[% c.loc('Invoice Calls') %]</a>
-    </div>
-    
-    <div class="accordion-body collapse" id="collapse_invoice_details_calls">
-    <div class="accordion-inner" style="overflow:auto; height: 300px;">
-    <input type="button" value="qqqqqqq" onclick="
-var oTable = $('#invoice_details_calls_ajax_table').dataTable();
-alert( oTable );
-var i;
-obj = oTable.fnSettings();
-obj = $('#invoice_details_calls_ajax_datepicker_start').datepicker();
-for (i in obj){
-    alert('i='+i+'; o='+obj[i]+';');
-}
-//alert( $('#invoice_details_calls_ajax_datepicker_start').datepicker() );
-//function(){return s(this[j.ext.iApiIndex])};
-//oTable.fnSettings = function(){alert('j'+j+';iApiIndex'+j.ext.iApiIndex+';');return s(this[j.ext.iApiIndex])};
-alert( oTable.fnSettings().oPreviousSearch.sSearch );//
-oTable.fnClose();
-">
-    
-[%
-    clearHelper();
-    helper.name = c.loc('Invoice Calls');
-    helper.dt_columns = [
-        { name => 'start_time', title => c.loc('Start time'), search_from_epoch => 1, search_to_epoch=>1 },
-        { name => 'duration', title => c.loc('Duration') },
-        { name => 'destination_user', title => c.loc('Destination'), search => 1 },
-        { name => 'call_type', title => c.loc('Type'), search => 1 },
-        { name => 'source_customer_billing_zones_history.zone', title => c.loc('Zone'), search=> 1 },
-        { name => 'source_customer_cost', title => c.loc('Amount EUR') },
-    ];
-    helper.name_single = c.loc('Invoice calls');
-    helper.identifier = 'invoice_details_calls_ajax';
-    helper.ajax_uri = c.uri_for_action( '/invoice/ajax_datatables_data', [ provider.id, 'invoice_details_calls' ] ) ;
-    initHelperAuto();
-    PROCESS 'helpers/datatables.tt';
--%]
-    [%PROCESS 'invoice/invoice_details_calls_list.tt' %]
-
-    </div>
-    </div>
-</div>
-
-<span>
-
-<div class="accordion-group">
-    <div class="accordion-heading">
-        <a class="accordion-toggle" data-toggle="collapse" data-parent="#invoice_template" href="#collapse_template_list">[% c.loc('Invoice Templates') %]</a>
-    </div>
-    <div class="accordion-body collapse" id="collapse_template_list">
-    <div class="accordion-inner" style="overflow:auto; height:300px;" id="template_list">
-    [%PROCESS 'invoice/template_list.tt' %]
-    </div>
-    </div>
-</div>
-</span>
 
 <!--with display:none only the opera works with svg, others cant operate geometry on start and fail with a lot of svg related errors-->
 <div style="visibility:hidden;" id="template_editor_form">
 [%PROCESS 'invoice/template_editor_form.tt' %]
-</div>
-
 </div>
 
 <div id="template_info_form">
