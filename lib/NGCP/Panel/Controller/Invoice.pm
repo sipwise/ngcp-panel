@@ -156,6 +156,7 @@ sub invoice_list :Chained('invoice_details_calls') :PathPart('list') :Args(0) {
     my ($self, $c) = @_;
     my $backend = NGCP::Panel::Model::DB::InvoiceTemplate->new( schema => $c->model('DB') );
     $c->forward( 'template_list_data' );
+    my $provider_id = $c->stash->{provider}->id;
     $c->stash( 
         client_contacts_list => $backend->getInvoiceProviderClients( provider_id => $provider_id ),
         template    => 'invoice/list.tt',
@@ -167,7 +168,6 @@ sub template_base :Chained('base') :PathPart('template') :CaptureArgs(0) {
     my($validator,$backend,$in,$out);
     $backend = NGCP::Panel::Model::DB::InvoiceTemplate->new( schema => $c->model('DB') );
     $c->log->debug('template_base');
-    $c->forward( 'template_list_data' );
     #my $client_id = $c->stash->{client} ? $c->stash->{client}->id : undef ;
     #my $client;
     #if($client_id){
@@ -383,12 +383,14 @@ sub template_list_data :Chained('base') :PathPart('') :CaptureArgs(0) {
 sub template_list :Chained('template_base') :PathPart('list') :Args(0) {
     my ($self, $c) = @_;
     $c->log->debug('template_list');
+    $c->forward( 'template_list_data' );
     $c->stash( template => 'invoice/template_list.tt' ); 
     $c->detach($c->view('SVG'));#just no wrapper - maybe there is some other way?
 }
 
 sub template :Chained('template_base') :PathPart('') :Args(0) {
     my ($self, $c) = @_;
+    $c->forward('invoice_list');
     $c->stash(template => 'invoice/template.tt'); 
 }
 
@@ -399,6 +401,12 @@ sub template_view :Chained('template_base') :PathPart('view') :Args {
 
     my($validator,$backend,$in,$out);
 
+#fake data
+    $c->forward('invoice_details_calls');
+    $c->forward('invoice_details_zones');
+    #invoice number and data
+    #client info
+    
     #input
     (undef,undef,@$in{qw/tt_type tt_viewmode tt_sourcestate tt_output_type tt_id/}) = @_ ;
     $in->{provider_id} = $c->stash->{provider}->id;

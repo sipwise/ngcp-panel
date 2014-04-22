@@ -274,14 +274,13 @@ sub getInvoiceProviderClients{
 
     #very optimistic programming style
 
-    #return NGCP::Panel::Utils::Contract::get_contract_rs(
-    #        schema => $self->schema,
-    #    )->search_rs({
-    #        'contact.reseller_id' => $provider_id,
-    #    },{
-    #        join => 'contact',
-    #});
-    return $self->schema->resultset('contacts')->search_rs({},{});
+    return NGCP::Panel::Utils::Contract::get_contract_rs(
+            schema => $self->schema,
+        )->search_rs({
+            'contact.reseller_id' => $provider_id,
+        },{
+            join => 'contact',
+    });
 }
 
 sub get_contract_calls_rs{
@@ -291,26 +290,51 @@ sub get_contract_calls_rs{
     my $source_account_id_condition;
     if(!$client_id){
         $source_account_id_condition = { 'in' => $self->getInvoiceProviderClients(%params)->search_rs({},{
-            'select' => 'me.id',
-        })->as_query() };
+                'select' => 'me.id',
+            })->as_query()
+            #$self->schema('contracts')->search_rs({},{
+            #    'select' => 'me.id',
+            #    'join'   => 'contact',
+            #})->as_query() 
+        };
     }else{
         $source_account_id_condition = $client_id;
     }
-    my $zonecalls_rs = $self->schema->resultset('cdr')->search( {
+    $sql = '
+    select cdr.* from accounting.cdr 
+        inner join contracts on cdr.source_account_id=contracts.id
+            and contracts.status != "terminated"
+        inner join contacts on contracts.contact_id=contacts.id 
+            and contacts.reseller_id=1 and contacts.reseller_id!=contacts.id 
+    where
+        cdr.source_user_id != 0
+        and cdr.call_status="ok" 
+        and exists (select * 
+            from billing_mappings
+            inner join products on billing_mappings.product_id=products.id and products.class in("sipaccount","pbxaccount")
+            where contracts.id=billing_mappings.contract_id
+                and (billing_mappings.start_date >= now() OR start_date IS NULL)
+                and (billing_mappings.end_date <= now() OR end_date IS NULL)
+        )
+        order by cdr.start_time
+        ';
+    my $calls_rs = $self->schema->resultset('cdr')->search( {
 #        source_user_id => { 'in' => [ map {$_->uuid} @{$contract->{subscriber}} ] },
-        call_status       => 'ok',
-        source_user_id    => { '!=' => '0' },
-        
-        #source_account_id => $source_account_id_condition,
-        #-or => [
-        #    source_user_id => voip_subscribers.uuid,
-        #    destination_user_id => voip_subscribers.uuid,
-        #],
-        #start_time        => 
-        #    [ -and =>
-        #        { '>=' => $stime->epoch},
-        #        { '<=' => $etime->epoch},
-        #    ],
+        'call_status'       => 'ok',
+        'source_user_id'    => { '!=' => '0' },
+        'contact.id'        => { '!=' => $provider_id },
+        '-and'              => [ 
+            #'contact.reseller_id' => $provider_id, 
+            'contact.reseller_id' => { '!=' => undef },
+        ],
+        'source_account.status'    => { '!=' => 'terminated'},
+        '-exists'           => $self->schema->resultset('billing_mappings')->search({
+            'contract_id' => \'= source_account.id',
+            'product.class' => [ "sipaccount", "pbxaccount" ],
+        },{
+            alias => 'billing_mappings_top',
+            join => 'product',
+        })->as_query,
     },{
         '+select' => [
             'source_customer_billing_zones_history.zone', 
@@ -318,11 +342,15 @@ sub get_contract_calls_rs{
             'destination_user_in',
         ],
         '+as'  => [qw/zone zone_detail destination/],
-        'join' => ['source_customer_billing_zones_history','contracts'],
-        'rows' => 37,
+        'join' => [
+            {
+                'source_account' => 'contact',
+            },
+            'source_customer_billing_zones_history', 
+        ]
     } );    
     
-    return $zonecalls_rs;
+    return $calls_rs;
 }
 sub get_contract_zonesfees_rs {
     my $self = shift;
@@ -351,7 +379,8 @@ sub get_contract_zonesfees_rs {
 #        source_user_id => { 'in' => [ map {$_->uuid} @{$contract->{subscriber}} ] },
         call_status       => 'ok',
         source_user_id    => { '!=' => '0' },
-        source_account_id => $source_account_id_condition,
+        #source_account_id => $source_account_id_condition,
+        
         # start_time        => 
             # [ -and =>
                 # { '>=' => $stime->epoch},
