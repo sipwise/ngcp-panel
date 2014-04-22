@@ -281,11 +281,24 @@ sub base :Chained('list_customer') :PathPart('') :CaptureArgs(1) {
         desc  => $c->loc('Invalid product id for this customer contract.'),
     ) unless($product);
 
-    $c->stash->{subscriber_dt_columns} = NGCP::Panel::Utils::Datatables::set_columns($c, [
-        { name => "id", search => 1, title => $c->loc("#") },
-        { name => "username", search => 1, title => $c->loc("Name") },
-        { name => "provisioning_voip_subscriber.pbx_extension", search => 1, title => $c->loc("Extension") },
-    ]);
+    # only show the extension if it's a pbx extension. otherwise (and in case of a pilot?) show the
+    # number
+
+    if($c->config->{features}->{cloudpbx} && $product->class eq "pbxaccount") {
+        $c->stash->{subscriber_dt_columns} = NGCP::Panel::Utils::Datatables::set_columns($c, [
+            { name => "id", search => 1, title => $c->loc("#") },
+            { name => "username", search => 1, title => $c->loc("Name") },
+            { name => "provisioning_voip_subscriber.pbx_extension", search => 1, title => $c->loc("Extension") },
+        ]);
+    } else {
+        $c->stash->{subscriber_dt_columns} = NGCP::Panel::Utils::Datatables::set_columns($c, [
+            { name => "id", search => 1, title => $c->loc("#") },
+            { name => "username", search => 1, title => $c->loc("Name") },
+            { name => "domain.domain", search => 1, title => $c->loc('Domain') },
+            { name => "number", search => 1, title => $c->loc('Number'), literal_sql => "concat(primary_number.cc, primary_number.ac, primary_number.sn)"},
+            { name => "primary_number.cc", search => 1, title => "" }, #need this to get the relationship
+        ]);
+    }
 
     $c->stash->{pbxgroup_dt_columns} = NGCP::Panel::Utils::Datatables::set_columns($c, [
         { name => "id", search => 1, title => $c->loc("#") },
@@ -533,7 +546,7 @@ sub subscriber_create :Chained('base') :PathPart('subscriber/create') :Args(0) {
             }
         }
     } else {
-        $form = NGCP::Panel::Form::Customer::Subscriber->new;
+        $form = NGCP::Panel::Form::Customer::Subscriber->new(ctx => $c);
     }
 
     my $params = {};
@@ -857,7 +870,7 @@ sub subscriber_ajax :Chained('base') :PathPart('subscriber/ajax') :Args(0) {
     my ($self, $c) = @_;
     my $res = $c->stash->{contract}->voip_subscribers->search({
         'provisioning_voip_subscriber.is_pbx_group' => 0,
-        status => { '!=' => 'terminated' },
+        'me.status' => { '!=' => 'terminated' },
 
     },{
         join => 'provisioning_voip_subscriber',
@@ -945,8 +958,8 @@ sub pbx_group_create :Chained('base') :PathPart('pbx/group/create') :Args(0) {
                 $form->params->{domain}{id} = $admin->domain_id;
                 $form->params->{status} = 'active';
                 $preferences->{cloud_pbx} = 1;
-                $preferences->{cloud_pbx_hunt_policy} = $form->params->{hunt_policy};
-                $preferences->{cloud_pbx_hunt_timeout} = $form->params->{hunt_timeout};
+                $preferences->{cloud_pbx_hunt_policy} = $form->params->{pbx_hunt_policy};
+                $preferences->{cloud_pbx_hunt_timeout} = $form->params->{pbx_hunt_timeout};
                 my $billing_subscriber = NGCP::Panel::Utils::Subscriber::create_subscriber(
                     c => $c,
                     schema => $schema,

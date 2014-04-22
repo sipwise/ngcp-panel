@@ -129,6 +129,17 @@ has_block 'actions' => (
     render_list => [qw/save/],
 );
 
+sub update_fields {
+    my $self = shift;
+    my $c = $self->ctx;
+    return unless $c;
+
+    if($self->field('profile_set')) {
+        $self->field('profile_set')->field('id')->ajax_src(
+            $c->uri_for_action('/subscriberprofile/set_ajax_reseller', [$c->stash->{contract}->contact->reseller_id])->as_string
+        );
+    }
+}
 
 1;
 
