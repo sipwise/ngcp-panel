@@ -1,7 +1,7 @@
 package NGCP::Panel::Model::DB::InvoiceTemplate;
 use base NGCP::Panel::Model::DB::Base;
 
-use irka;
+#use irka;
 use Data::Dumper;
 
 sub getDefaultConditions{
@@ -10,7 +10,7 @@ sub getDefaultConditions{
     #irka::loglong(Dumper($params));
     my ($provider_id,$tt_sourcestate,$tt_type,$tt_id) = @$params{qw/provider_id tt_sourcestate tt_type tt_id/};
     my $conditions = {};
-    irka::loglong("getDefaultConditions: tt_id=$tt_id;\n");
+    #irka::loglong("getDefaultConditions: tt_id=$tt_id;\n");
     if($tt_id){
         $conditions = { id => $tt_id };
     }else{
