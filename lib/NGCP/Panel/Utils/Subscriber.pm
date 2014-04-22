@@ -314,6 +314,8 @@ sub update_pbx_group_prefs {
 sub update_subscriber_numbers {
     my %params = @_;
 
+    print ">>>>>>>>>>>>>>>>>>> update_subscriber_numbers\n";
+
     my $schema         = $params{schema};
     my $subscriber_id  = $params{subscriber_id};
     my $reseller_id    = $params{reseller_id};
@@ -327,18 +329,20 @@ sub update_subscriber_numbers {
     my @nums = (); my @dbnums = ();
 
     if(exists $params{primary_number} && !defined $primary_number) {
+        print ">>>>>>>>>>>>>>>>> discard primary number\n";
         $billing_subs->update({
             primary_number_id => undef,
         });
     }
     elsif(defined $primary_number) {
+        print ">>>>>>>>>>>>>>>>> update primary number\n";
 
         my $old_cc;
         my $old_ac;
         my $old_sn;
         if (defined $billing_subs->primary_number) {
             $old_cc = $billing_subs->primary_number->cc;
-            $old_ac = $billing_subs->primary_number->ac;
+            $old_ac = ($billing_subs->primary_number->ac // '');
             $old_sn = $billing_subs->primary_number->sn;
         }
 
@@ -467,6 +471,9 @@ sub update_subscriber_numbers {
 
 
     if(defined $alias_numbers && ref($alias_numbers) eq 'ARRAY') {
+        print ">>>>>>>>>>>>>>>>>>> update alias numbers\n";
+        use Data::Printer; p $alias_numbers;
+
         my $number;
         for my $alias(@$alias_numbers) {
 
@@ -514,17 +521,24 @@ sub update_subscriber_numbers {
             }
             push @dbnums, $dbalias->id;
         }
+    } else {
+        push @nums, $billing_subs->voip_numbers->get_column('id')->all;
+        push @dbnums, $prov_subs->voip_dbaliases->get_column('id')->all;
     }
 
     push @nums, $billing_subs->primary_number_id
         if($billing_subs->primary_number_id);
+    print ">>>>>>>>>>>>>< updating number list\n";
+    use Data::Printer; p @nums;
     $billing_subs->voip_numbers->search({
         id => { 'not in' => \@nums },
-    })->update_all({
+    })->update({
         subscriber_id => undef,
         reseller_id => undef,
     });
     if($prov_subs) {
+        print ">>>>>>>>>>>>>< updating alias number list\n";
+        use Data::Printer; p @nums;
         $prov_subs->voip_dbaliases->search({
             id => { 'not in' => \@dbnums },
         })->delete;

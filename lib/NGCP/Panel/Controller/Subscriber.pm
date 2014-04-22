@@ -1838,7 +1838,7 @@ sub edit_master :Chained('master') :PathPart('edit') :Args(0) :Does(ACL) :ACLDet
         if($subscriber->provisioning_voip_subscriber->admin) {
             if($c->user->roles eq 'subscriberadmin') {
                 $subadmin_pbx = 1;
-                $form = NGCP::Panel::Form::Customer::PbxExtensionSubscriberEditSubadmin->new(ctx => $c);
+                $form = NGCP::Panel::Form::Customer::PbxExtensionSubscriberEditSubadminNoGroup->new(ctx => $c);
             } else {
                 $is_admin = 1;
                 $form = NGCP::Panel::Form::Customer::PbxSubscriberEdit->new(ctx => $c);
@@ -1846,7 +1846,7 @@ sub edit_master :Chained('master') :PathPart('edit') :Args(0) :Does(ACL) :ACLDet
         } else {
             if($c->user->roles eq 'subscriberadmin') {
                 $subadmin_pbx = 1;
-                $form = NGCP::Panel::Form::Customer::PbxExtensionSubscriberEdit->new(ctx => $c);
+                $form = NGCP::Panel::Form::Customer::PbxExtensionSubscriberEditSubadmin->new(ctx => $c);
             } else {
                 $is_admin = 1;
                 $form = NGCP::Panel::Form::Customer::PbxExtensionSubscriberEditAdmin->new(ctx => $c);
@@ -2075,7 +2075,7 @@ sub edit_master :Chained('master') :PathPart('edit') :Args(0) :Does(ACL) :ACLDet
                                     domain_id => $prov_subscriber->domain->id,
                                 })->delete_all;
 
-                if ($subadmin_pbx) {
+                if ($subadmin_pbx && !$prov_subscriber->admin) {
                     NGCP::Panel::Utils::Subscriber::update_subadmin_sub_aliases(
                         schema => $schema,
                         subscriber_id => $subscriber->id,
@@ -2088,12 +2088,15 @@ sub edit_master :Chained('master') :PathPart('edit') :Args(0) :Does(ACL) :ACLDet
                 }
 
                 if($subscriber->primary_number) {
+                    say ">>>>>>>>>>>>>>>>> get old num";
                     my $old_number = { 
                         cc => $subscriber->primary_number->cc,
                         ac => $subscriber->primary_number->ac,
                         sn => $subscriber->primary_number->sn,
                     };
+                    say ">>>>>>>>>>>>>>>>> check pbx ext";
                     if($pbx_ext) {
+                        say ">>>>>>>>>>>>>>>>> get pbx ext";
                         $form->params->{e164}{cc} = $subscriber->primary_number->cc;
                         $form->params->{e164}{ac} = $subscriber->primary_number->ac;
                         $form->params->{e164}{sn} = $base_number->sn . $form->params->{pbx_extension};
@@ -2103,8 +2106,8 @@ sub edit_master :Chained('master') :PathPart('edit') :Args(0) :Does(ACL) :ACLDet
                         schema => $schema,
                         subscriber_id =>$subscriber->id,
                         reseller_id => $subscriber->contract->contact->reseller_id,
-                        primary_number => $form->params->{e164},
-                        $subadmin_pbx ? () : (alias_numbers  => $form->values->{alias_number}),
+                        exists $form->params->{e164} ? (primary_number => $form->params->{e164}) : (),
+                        $subadmin_pbx && $prov_subscriber->admin ? () : (alias_numbers  => $form->values->{alias_number}),
                     );
 
                     # update the primary number and the cloud_pbx_base_cli pref for all other subscribers
@@ -2155,7 +2158,9 @@ sub edit_master :Chained('master') :PathPart('edit') :Args(0) :Does(ACL) :ACLDet
                         subscriber_id =>$subscriber->id,
                         reseller_id => $subscriber->contract->contact->reseller_id,
                         primary_number => $form->values->{e164},
-                        $subadmin_pbx ? () : (alias_numbers  => $form->values->{alias_number}),
+                        # only update alias list if we're the subadmin but are not editing ourselves,
+                        # otherwise we might whipe out our own numbers
+                        $subadmin_pbx && $prov_subscriber->admin ? () : (alias_numbers  => $form->values->{alias_number}),
                     );
                 }
 
