@@ -95,6 +95,11 @@ sub item_by_id {
 sub update_item {
     my ($self, $c, $item, $old_resource, $resource, $form) = @_;
 
+    if (ref $resource ne "HASH") {
+        $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Must be a hash.");
+        return;
+    }
+
     delete $resource->{id};
     my $schema = $c->model('DB');
 
@@ -104,55 +109,51 @@ sub update_item {
         resource => $resource,
     );
 
-    if (! exists $resource->{destinations} ) {
-        $resource->{destinations} = [];
-    }
-    if (ref $resource->{destinations} ne "ARRAY") {
-        $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Invalid field 'destinations'. Must be an array.");
-        return;
-    }
-    for my $d (@{ $resource->{destinations} }) {
-        if (exists $d->{timeout} && ! $d->{timeout}->is_integer) {
-            $c->log->error("Invalid field 'timeout'.");
-            $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Invalid field 'timeout'.");
+    my $mappings_rs = $item->provisioning_voip_subscriber->voip_cf_mappings;
+    my $p_subs_id = $item->provisioning_voip_subscriber->id;
+    my @new_mappings;
+    my $dsets_rs = $c->model('DB')->resultset('voip_cf_destination_sets');
+    my $tsets_rs = $c->model('DB')->resultset('voip_cf_time_sets');
+
+    for my $type ( qw/cfu cfb cft cfna/) {
+        if (ref $resource->{$type} ne "ARRAY") {
+            $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Invalid field '$type'. Must be an array.");
             return;
         }
-    }
-
-    my $subscriber = $schema->resultset('provisioning_voip_subscribers')->find($resource->{subscriber_id});
-    unless ($subscriber) {
-        $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Invalid 'subscriber_id'.");
-        return;
+        for my $mapping (@{ $resource->{$type} }) {
+            unless ($mapping->{destinationset}) {
+                $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Invalid field 'destinationset' in '$type'. Must be defined.");
+                return;
+            }
+            my $dset = $dsets_rs->find({subscriber_id => $p_subs_id, name => $mapping->{destinationset}, });
+            unless ($dset) {
+                $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Invalid 'destinationset'. Could not be found.");
+                return;
+            }
+            my $tset;
+            if ($mapping->{timeset}) {
+                $tset = $tsets_rs->find({subscriber_id => $p_subs_id, name => $mapping->{timeset}, });
+                unless ($tset) {
+                    $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Invalid 'timeset'. Could not be found.");
+                    return;
+                }
+            }
+            push @new_mappings, $mappings_rs->new_result({
+                    destination_set_id => $dset->id,
+                    time_set_id => $tset ? $tset->id : undef,
+                    type => $type,
+                });
+        }
     }
 
     try {
-        my $primary_nr_rs = $subscriber->voip_subscriber->primary_number;
-        my $number;
-        if ($primary_nr_rs) {
-            $number = $primary_nr_rs->cc . ($primary_nr_rs->ac //'') . $primary_nr_rs->sn;
-        } else {
-            $number = ''
-        }
-        my $domain = $subscriber->domain->domain // '';
-
-        $item->update({
-                name => $resource->{name},
-                subscriber_id => $resource->{subscriber_id},
-            })->discard_changes;
-        $item->voip_cf_destinations->delete;
-        for my $d ( @{$resource->{destinations}} ) {
-            delete $d->{destination_set_id};
-            $d->{destination} = NGCP::Panel::Utils::Subscriber::field_to_destination(
-                    destination => $d->{destination},
-                    number => $number,
-                    domain => $domain,
-                    uri => $d->{destination},
-                );
-            $item->create_related("voip_cf_destinations", $d);
+        $mappings_rs->delete;
+        for my $mapping ( @new_mappings ) {
+            $mapping->insert;
         }
     } catch($e) {
-        $c->log->error("failed to create cfdestinationset: $e");
-        $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "Failed to create cfdestinationset.");
+        $c->log->error("failed to create cfmapping: $e");
+        $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "Failed to create cfmapping.");
         return;
     };
 

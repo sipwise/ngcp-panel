@@ -100,15 +100,15 @@ sub PATCH :Allow {
         );
         last unless $json;
 
-        my $dset = $self->item_by_id($c, $id);
-        last unless $self->resource_exists($c, destinationset => $dset);
-        my $old_resource = $self->hal_from_item($c, $dset, "destinationsets")->resource;
+        my $item = $self->item_by_id($c, $id);
+        last unless $self->resource_exists($c, subs_for_cfmapping => $item);
+        my $old_resource = $self->hal_from_item($c, $item, "cfmappings")->resource;
         my $resource = $self->apply_patch($c, $old_resource, $json);
         last unless $resource;
 
         my $form = $self->get_form($c);
-        $dset = $self->update_item($c, $dset, $old_resource, $resource, $form);
-        last unless $dset;
+        $item = $self->update_item($c, $item, $old_resource, $resource, $form);
+        last unless $item;
 
         $guard->commit; 
 
@@ -117,7 +117,7 @@ sub PATCH :Allow {
             $c->response->header(Preference_Applied => 'return=minimal');
             $c->response->body(q());
         } else {
-            my $hal = $self->hal_from_item($c, $dset, "destinationsets");
+            my $hal = $self->hal_from_item($c, $item, "cfmappings");
             my $response = HTTP::Response->new(HTTP_OK, undef, HTTP::Headers->new(
                 $hal->http_headers,
             ), $hal->as_json);
@@ -136,19 +136,19 @@ sub PUT :Allow {
         my $preference = $self->require_preference($c);
         last unless $preference;
 
-        my $dset = $self->item_by_id($c, $id);
-        last unless $self->resource_exists($c, destinationset => $dset);
+        my $item = $self->item_by_id($c, $id);
+        last unless $self->resource_exists($c, subs_for_cfmapping => $item);
         my $resource = $self->get_valid_put_data(
             c => $c,
             id => $id,
             media_type => 'application/json',
         );
         last unless $resource;
-        my $old_resource = { $dset->get_inflated_columns };
+        my $old_resource = undef; # unused: { $dset->get_inflated_columns };
 
         my $form = $self->get_form($c);
-        $dset = $self->update_item($c, $dset, $old_resource, $resource, $form);
-        last unless $dset;
+        $item = $self->update_item($c, $item, $old_resource, $resource, $form);
+        last unless $item;
 
         $guard->commit;
 
@@ -157,7 +157,7 @@ sub PUT :Allow {
             $c->response->header(Preference_Applied => 'return=minimal');
             $c->response->body(q());
         } else {
-            my $hal = $self->hal_from_item($c, $dset, "destinationsets");
+            my $hal = $self->hal_from_item($c, $item, "cfmappings");
             my $response = HTTP::Response->new(HTTP_OK, undef, HTTP::Headers->new(
                 $hal->http_headers,
             ), $hal->as_json);
@@ -165,27 +165,6 @@ sub PUT :Allow {
             $c->response->header(Preference_Applied => 'return=representation');
             $c->response->body($response->content);
         }
-    }
-    return;
-}
-
-sub DELETE :Allow {
-    my ($self, $c, $id) = @_;
-    my $guard = $c->model('DB')->txn_scope_guard;
-    {
-        my $rule = $self->item_by_id($c, $id, "rules");
-        last unless $self->resource_exists($c, rule => $rule);
-        try {
-            $rule->delete;
-        } catch($e) {
-            $c->log->error("Failed to delete rewriterule with id '$id': $e");
-            $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "Internal Server Error");
-            last;
-        }
-        $guard->commit;
-
-        $c->response->status(HTTP_NO_CONTENT);
-        $c->response->body(q());
     }
     return;
 }
