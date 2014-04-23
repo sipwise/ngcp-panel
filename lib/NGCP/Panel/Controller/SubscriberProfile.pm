@@ -443,16 +443,45 @@ sub profile_edit :Chained('profile_base') :PathPart('edit') :Does(ACL) :ACLDetac
 
                 $profile->update($form->values);
 
+
+                my %old_attributes = map { $_ => 1 } 
+                    $profile->profile_attributes->get_column('attribute_id')->all;
+
                 # TODO: reuse attributes for efficiency reasons?
                 $profile->profile_attributes->delete;
               
                 # TODO: should we rather take the name and load the id from db,
                 # instead of trusting the id coming from user input?
                 foreach my $attr(keys %{ $attributes }) {
-                    next unless($attributes->{$attr});
+                    my $id = $attributes->{$attr};
+                    next unless($id);
+                    # mark as seen, so later we can unprovision the remaining ones,
+                    # which are the ones not set here
+                    delete $old_attributes{$id};
                     $profile->profile_attributes->create({
-                        attribute_id => $attributes->{$attr},
+                        attribute_id => $id,
                     });
+                }
+
+                # go over remaining attributes (those which were set before but are not set anymore)
+                # and clear them from usr-preferences
+                if(keys %old_attributes) {
+                    my $cfs = $c->model('DB')->resultset('voip_preferences')->search({
+                        id => { -in => [ keys %old_attributes ] },
+                        attribute => { -in => [qw/cfu cfb cft cfna/] },
+                    });
+                    my @subs = $c->model('DB')->resultset('provisioning_voip_subscribers')
+                        ->search({
+                            profile_id => $profile->id,
+                        })->all;
+                    foreach my $sub(@subs) {
+                        $sub->voip_usr_preferences->search({
+                            attribute_id => { -in => [ keys %old_attributes ] },
+                        })->delete;
+                        $sub->voip_cf_mappings->search({
+                            type => { -in => [ map { $_->attribute } $cfs->all ] },
+                        })->delete;
+                    }
                 }
 
             });
