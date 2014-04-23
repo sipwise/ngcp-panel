@@ -1,9 +1,10 @@
 [%USE Dumper%]
 [%USE Math%]
 [%USE date%]
+[%USE format %]
 
-[%MACRO date_format(dateval) BLOCK%]
-[%date.format(dateval,'%B')%] [%ordinate(date.format(dateval,'%e'))%] [%date.format(dateval,'%Y')%]
+[%MACRO date_format(dateval,noyear) BLOCK%]
+[%date.format(dateval,'%B')%] [%ordinate(date.format(dateval,'%e'))%] [%IF !noyear; date.format(dateval,'%Y'); END%]
 [%END%]
 
 [%MACRO ordinate(num) BLOCK -%]

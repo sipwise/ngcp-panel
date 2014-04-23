@@ -1,4 +1,7 @@
 <!--{[%PROCESS 'invoice/invoice_template_aux.tt' -%]}-->
+<!--{[%PROCESS 'invoice/invoice_template_lorem.tt' -%]}-->
+[% money_format = format('%.2f') %]
+
 <!--{[%row_vertical_interval = 10 -%]}-->
 
 <!--{[%MACRO document_header BLOCK-%]}-->
@@ -52,7 +55,7 @@ g, text, tspan {
         <text x="190" y="55" id="titlepage_clientinfo__accountid" class="h3" text-anchor="end">Account ID: [%client.id%]</text>
         <text x="190" y="65" id="titlepage_clientinfo__vatid" class="h3" text-anchor="end">VAT ID: [%client.vatid%]</text>
 
-        <text x="190" y="80" id="titlepage_invoiceinfo__date" class="h3" text-anchor="end">[%provider.city%], [%date_format(date.now)%]</text>
+        <text x="190" y="75" id="titlepage_invoiceinfo__date" class="h3" text-anchor="end">[%provider.city%], [%date_format(date.now)%]</text>
         
         <text x="20" y="95" font-weight="bold" class="h1">Invoice [%invoice.number%]</text>
  
@@ -62,27 +65,27 @@ g, text, tspan {
         <text x="15"  y="115">Description</text>
         <text x="195" y="115" text-anchor="end">Amount</text>
         <text x="15"  y="130">Discount (Wire Transfer)</text>
-        <text x="195" y="130" text-anchor="end">[%invoice.discount%]</text>
+        <text x="195" y="130" text-anchor="end">[%money_format(invoice.discount_wire_transfer)%]</text>
         <text x="15"  y="140">Service Allowance</text>
-        <text x="195" y="140" text-anchor="end">[%invoice.serviceallowance%]</text>
+        <text x="195" y="140" text-anchor="end">[%money_format(invoice.serviceallowance)%]</text>
         <text x="15"  y="150">Cloud PBX Account [%date.month_start%] - [%date.month_end%] [%date.year%]</text>
-        <text x="195" y="150" text-anchor="end">[%invoice.cloud_pbx_amount%]</text>
+        <text x="195" y="150" text-anchor="end">[%money_format(invoice.cloud_pbx_amount)%]</text>
         <text x="15"  y="160">Discount (12M reduced Service Fee)</text>
-        <text x="195" y="160" text-anchor="end">[%invoice.discount%]</text>
+        <text x="195" y="160" text-anchor="end">[%money_format(invoice.discount_service)%]</text>
         <text x="15"  y="170">Voice Termination Fees [%date.month_start%] - [%date.month_end%] [%date.year%]</text>
-        <text x="195" y="170" text-anchor="end">[%invoice.voice_termination_fees%]</text>
+        <text x="195" y="170" text-anchor="end">[%money_format(invoice.voice_termination_fees)%]</text>
 
         <text x="45"  y="190">Sum EUR (net):</text>
-        <text x="195" y="190" text-anchor="end">[%invoice.amount_netto%]</text>
+        <text x="195" y="190" text-anchor="end">[%money_format(invoice.amount_netto)%]</text>
         <text x="45"  y="200">incl. 20% VAT:</text>
-        <text x="195" y="200" text-anchor="end">[%invoice.amount_vat%]</text>
+        <text x="195" y="200" text-anchor="end">[%money_format(invoice.amount_vat)%]</text>
         <text x="45"  y="210">Invoice Sum EUR:</text>
-        <text x="195" y="210" text-anchor="end">[%invoice.amount%]</text>
-        <text x="45"  y="220">incl. last month Debit of EUR [%invoice.debit%] - to be paid:</text>
-        <text x="195" y="220" text-anchor="end">[%invoice.amount_payment%]</text>
+        <text x="195" y="210" text-anchor="end">[%money_format(invoice.amount)%]</text>
+        <text x="45"  y="220">incl. last month Debit of EUR [%money_format(invoice.debit)%] - to be paid:</text>
+        <text x="195" y="220" text-anchor="end">[%money_format(invoice.amount_payment)%]</text>
         
         <text x="15" y="230">The amount will be booked via SEPA from your account</text>
-        <text x="15" y="235">AT1234567890 (BIC: ABCDEFG1234)</text>
+        <text x="15" y="235">[%client.sepa%] (BIC: [%client.bic%])</text>
         <text x="15" y="240">on [%invoice.date.month%] 25th earliest.</text>
         <text x="15" y="250" style="font-size:1.8pt;">Please note: You can file a complaint regarding this issue within 3 months of receiption of  this invoice in written form.</text>
         <text x="15" y="255">More details can be found online at www.sipwise.net in My Account.</text>
@@ -199,7 +202,7 @@ g, text, tspan {
         <path stroke="#888888" stroke-width="0.25" fill="none" d="m10,278l195,0"/>            
             
         <text x="105" y="282" text-anchor="middle" class="bgpage">[%provider.company%] [%if(', ', provider.street )%] [%if(', ', provider.postcode _ ' ' _ provider.city _ ' ' _ provider.country ) %]</text>
-        <text x="105" y="286" text-anchor="middle" class="bgpage">[%if('FN ', provider.fn )%] [%if('VAT ', provider.vat )%] [%provider.atu%] [%if('IBAN ', provider.iban )%] [%if('BIC ', provider.bic )%]</text>
+        <text x="105" y="286" text-anchor="middle" class="bgpage">[%if('FN ', provider.fn )%] [%if('VAT ', provider.vat )%] [%if('IBAN ', provider.iban )%] [%if('BIC ', provider.bic )%]</text>
         <text x="105" y="290" text-anchor="middle" class="bgpage">[%if('Phone: ', provider.phone _' ' _ provider.mobile)%] [%if('Fax: ', provider.fax)%] [%provider.url%] [%provider.email%]</text>
         
         <!--{[%IF page > 1%]}-->
