@@ -32,9 +32,11 @@ class_has 'query_params' => (
             query => {
                 first => sub {
                     my $q = shift;
-                    { subscriber_id => $q };
+                    return { 'voip_subscriber.id' => $q };
                 },
-                second => sub {},
+                second => sub {
+                    return { join => {subscriber => 'voip_subscriber'}};
+                },
             },
         },
         {
@@ -177,11 +179,16 @@ sub POST :Allow {
             last;
         }
 
-        my $subscriber = $schema->resultset('provisioning_voip_subscribers')->find({
+        my $b_subscriber = $schema->resultset('voip_subscribers')->find({
                 id => $resource->{subscriber_id},
             });
-        unless($subscriber) {
+        unless($b_subscriber) {
             $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Invalid 'subscriber_id'.");
+            last;
+        }
+        my $subscriber = $b_subscriber->provisioning_voip_subscriber;
+        unless($subscriber) {
+            $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Invalid subscriber.");
             last;
         }
         if (! exists $resource->{destinations} ) {
@@ -192,7 +199,7 @@ sub POST :Allow {
             last;
         }
         try {
-            my $primary_nr_rs = $subscriber->voip_subscriber->primary_number;
+            my $primary_nr_rs = $b_subscriber->primary_number;
             my $number;
             if ($primary_nr_rs) {
                 $number = $primary_nr_rs->cc . ($primary_nr_rs->ac //'') . $primary_nr_rs->sn;
@@ -203,7 +210,7 @@ sub POST :Allow {
 
             $dset = $schema->resultset('voip_cf_destination_sets')->create({
                     name => $resource->{name},
-                    subscriber_id => $resource->{subscriber_id},
+                    subscriber_id => $subscriber->id,
                 });
             for my $d ( @{$resource->{destinations}} ) {
                 delete $d->{destination_set_id};

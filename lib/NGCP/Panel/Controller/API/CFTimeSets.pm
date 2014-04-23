@@ -32,9 +32,11 @@ class_has 'query_params' => (
             query => {
                 first => sub {
                     my $q = shift;
-                    { subscriber_id => $q };
+                    return { 'voip_subscriber.id' => $q };
                 },
-                second => sub {},
+                second => sub {
+                    return { join => {subscriber => 'voip_subscriber'}};
+                },
             },
         },
         {
@@ -176,12 +178,16 @@ sub POST :Allow {
             $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Required: 'subscriber_id'");
             last;
         }
-
-        my $subscriber = $schema->resultset('provisioning_voip_subscribers')->find({
+        my $b_subscriber = $schema->resultset('voip_subscribers')->find({
                 id => $resource->{subscriber_id},
             });
-        unless($subscriber) {
+        unless($b_subscriber) {
             $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Invalid 'subscriber_id'.");
+            last;
+        }
+        my $subscriber = $b_subscriber->provisioning_voip_subscriber;
+        unless($subscriber) {
+            $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Invalid subscriber.");
             last;
         }
         if (! exists $resource->{times} ) {
@@ -194,7 +200,7 @@ sub POST :Allow {
         try {
             $tset = $schema->resultset('voip_cf_time_sets')->create({
                     name => $resource->{name},
-                    subscriber_id => $resource->{subscriber_id},
+                    subscriber_id => $subscriber->id,
                 });
             for my $t ( @{$resource->{times}} ) {
                 delete $t->{time_set_id};

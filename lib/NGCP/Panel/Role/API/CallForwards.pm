@@ -86,7 +86,7 @@ sub item_rs {
     $item_rs = $c->model('DB')->resultset('voip_subscribers')
         ->search(
             { status => { '!=' => 'terminated' } },
-            { prefetch => 'provisioning_voip_subscriber',}
+            { prefetch => 'provisioning_voip_subscriber',},
         );
     if($c->user->roles eq "reseller") {
         $item_rs = $item_rs->search({
@@ -197,15 +197,11 @@ sub update_item {
                         domain => $domain,
                         uri => $d->{destination},
                     );
-                $dset->voip_cf_destinations->update_or_create({
-                    %$d
-                });
+                $dset->voip_cf_destinations->update_or_create($d);
             }
             for my $t (@{ $resource->{$type}{times} }) {
                 delete $t->{time_set_id};
-                $tset->voip_cf_periods->update_or_create({
-                    %$t
-                });
+                $tset->voip_cf_periods->update_or_create($t);
             }
             unless ( $dset && $dset->voip_cf_destinations->count ) {
                 $mapping->delete;

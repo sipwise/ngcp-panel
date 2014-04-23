@@ -34,6 +34,7 @@ sub hal_from_item {
     $resource{times} = \@times;
 
     my $b_subs_id = $item->subscriber->voip_subscriber->id;
+    $resource{subscriber_id} = $b_subs_id;
 
     my $hal = Data::HAL->new(
         links => [
@@ -102,16 +103,21 @@ sub update_item {
         return;
     }
 
-    my $subscriber = $schema->resultset('provisioning_voip_subscribers')->find($resource->{subscriber_id});
-    unless ($subscriber) {
+    my $b_subscriber = $schema->resultset('voip_subscribers')->find($resource->{subscriber_id});
+    unless ($b_subscriber) {
         $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Invalid 'subscriber_id'.");
         return;
+    }
+    my $subscriber = $b_subscriber->provisioning_voip_subscriber;
+    unless($subscriber) {
+        $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Invalid subscriber.");
+        last;
     }
 
     try {
         $item->update({
                 name => $resource->{name},
-                subscriber_id => $resource->{subscriber_id},
+                subscriber_id => $subscriber->id,
             })->discard_changes;
         $item->voip_cf_periods->delete;
         for my $t ( @{$resource->{times}} ) {

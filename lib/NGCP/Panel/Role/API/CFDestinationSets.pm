@@ -38,6 +38,7 @@ sub hal_from_item {
     $resource{destinations} = \@destinations;
 
     my $b_subs_id = $item->subscriber->voip_subscriber->id;
+    $resource{subscriber_id} = $b_subs_id;
 
     my $hal = Data::HAL->new(
         links => [
@@ -113,14 +114,19 @@ sub update_item {
         }
     }
 
-    my $subscriber = $schema->resultset('provisioning_voip_subscribers')->find($resource->{subscriber_id});
-    unless ($subscriber) {
+    my $b_subscriber = $schema->resultset('voip_subscribers')->find($resource->{subscriber_id});
+    unless ($b_subscriber) {
         $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Invalid 'subscriber_id'.");
         return;
     }
+    my $subscriber = $b_subscriber->provisioning_voip_subscriber;
+    unless($subscriber) {
+        $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Invalid subscriber.");
+        last;
+    }
 
     try {
-        my $primary_nr_rs = $subscriber->voip_subscriber->primary_number;
+        my $primary_nr_rs = $b_subscriber->primary_number;
         my $number;
         if ($primary_nr_rs) {
             $number = $primary_nr_rs->cc . ($primary_nr_rs->ac //'') . $primary_nr_rs->sn;
@@ -131,7 +137,7 @@ sub update_item {
 
         $item->update({
                 name => $resource->{name},
-                subscriber_id => $resource->{subscriber_id},
+                subscriber_id => $subscriber->id,
             })->discard_changes;
         $item->voip_cf_destinations->delete;
         for my $d ( @{$resource->{destinations}} ) {
