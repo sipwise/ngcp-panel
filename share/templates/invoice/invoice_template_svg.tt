@@ -1,7 +1,6 @@
 <!--{[%PROCESS 'invoice/invoice_template_aux.tt' -%]}-->
 <!--{[%PROCESS 'invoice/invoice_template_lorem.tt' -%]}-->
-[% money_format = format('%.2f') %]
-
+<!--{[%money_format = format('%.2f') %]}-->
 <!--{[%row_vertical_interval = 10 -%]}-->
 
 <!--{[%MACRO document_header BLOCK-%]}-->
