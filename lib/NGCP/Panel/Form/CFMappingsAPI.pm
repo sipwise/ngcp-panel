@@ -105,7 +105,7 @@ has_field 'cfna.timeset' => (
     do_label => 0,
 );
 
-has_field 'cft.ringtimeout' => (
+has_field 'cft_ringtimeout' => (
     type => 'PosInteger',
     do_wrapper => 1,
     do_label => 0,

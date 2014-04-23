@@ -13,6 +13,7 @@ use Data::HAL::Link qw();
 use HTTP::Status qw(:constants);
 use JSON::Types;
 use NGCP::Panel::Utils::Subscriber;
+use NGCP::Panel::Utils::Preferences;
 use NGCP::Panel::Form::CFMappingsAPI;
 
 sub get_form {
@@ -27,6 +28,10 @@ sub hal_from_item {
     my $resource = { subscriber_id => $item->id, cfu => [], cfb => [], cfna => [], cft => [], };
     my $b_subs_id = $item->id;
     my $p_subs_id = $item->provisioning_voip_subscriber->id;
+
+    my $ringtimeout_preference = NGCP::Panel::Utils::Preferences::get_usr_preference_rs(
+            c => $c, attribute => 'ringtimeout', prov_subscriber => $item->provisioning_voip_subscriber)->first;
+    $ringtimeout_preference = $ringtimeout_preference ? $ringtimeout_preference->value : undef;
 
     for my $mapping ($item->provisioning_voip_subscriber->voip_cf_mappings->all) {
         my $dset = $mapping->destination_set ? $mapping->destination_set->name : undef;
@@ -61,6 +66,7 @@ sub hal_from_item {
         resource => $resource,
         run => 0,
     );
+    $resource->{cft_ringtimeout} = $ringtimeout_preference;
     $hal->resource($resource);
     return $hal;
 }
@@ -151,6 +157,22 @@ sub update_item {
         for my $mapping ( @new_mappings ) {
             $mapping->insert;
         }
+
+        if ($resource->{cft_ringtimeout} && $resource->{cft_ringtimeout} > 0) {
+            my $ringtimeout_preference = NGCP::Panel::Utils::Preferences::get_usr_preference_rs(
+                c => $c, attribute => 'ringtimeout', prov_subscriber => $item->provisioning_voip_subscriber);
+
+            if($ringtimeout_preference->first) {
+                $ringtimeout_preference->first->update({
+                    value => $resource->{cft_ringtimeout},
+                });
+            } else {
+                $ringtimeout_preference->create({
+                    value => $resource->{cft_ringtimeout},
+                });
+            }
+        }
+
     } catch($e) {
         $c->log->error("failed to create cfmapping: $e");
         $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "Failed to create cfmapping.");
