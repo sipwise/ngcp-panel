@@ -523,7 +523,9 @@ sub update_subscriber_numbers {
         }
     } else {
         push @nums, $billing_subs->voip_numbers->get_column('id')->all;
-        push @dbnums, $prov_subs->voip_dbaliases->get_column('id')->all;
+        if($prov_subs) {
+            push @dbnums, $prov_subs->voip_dbaliases->get_column('id')->all;
+        }
     }
 
     push @nums, $billing_subs->primary_number_id
