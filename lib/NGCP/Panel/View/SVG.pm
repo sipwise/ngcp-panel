@@ -7,6 +7,7 @@ use strict;
 extends 'Catalyst::View::TT';
 
 
+
 __PACKAGE__->config(
     TEMPLATE_EXTENSION => '.tt',
     render_die => 1,
@@ -26,7 +27,14 @@ sub process
 {
     my ( $self, $c ) = @_;
     #$c->res->content_type("image/svg+xml");
-
+    $self->{template}->context->define_vmethod(
+        hash => get_column => sub {
+            my($item,$col) = @_;
+            if('HASH' eq ref $item){
+                return $item->{$col};
+            }
+        }
+    );
 
     if($c->stash->{VIEW_NO_TT_PROCESS}) {
         $c->log->debug("VIEW_NO_TT_PROCESS=".$c->stash->{VIEW_NO_TT_PROCESS}.";\n");

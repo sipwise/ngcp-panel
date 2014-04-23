@@ -196,8 +196,8 @@
         [%END-%]
     [%END-%]
     
-    [%# total.pagetype.zone.global.import(total.global)%]
-    [%# total.pagetype.zone.perpage.import(total.perpage)%]
+    [% total.pagetype.call.global = total.pagetype.call.global.import(total.global)%]
+    [% total.pagetype.call.perpage = total.pagetype.call.perpage.import(total.perpage)%]
 
     [% total.global = {}%]
     [% total.perpage = [] %]

@@ -2,7 +2,7 @@
 USE Date;
 USE Math;
 
-DEFAULT date.month_end = date_format('00:00:00 00-' _ (Math.int(date.format(date.now(),'%m'))+1) _ date.format(date.now(),'-%Y'), noyear = 1 );
+DEFAULT date.month_end = date_format('00:00:00 00-' _ (Math.int(date.format(date.now(),'%m')) + 1) _ date.format(date.now(),'-%Y'), noyear = 1 );
 DEFAULT date.month_start = date_format('00:00:00 01-' _ date.format(date.now(),'%m-%Y'), noyear = 1 );
 DEFAULT date.year=date.format(date.now(),'%Y');
 
@@ -48,4 +48,36 @@ DEFAULT client.sepa='AT1234567890';
 DEFAULT client.street='Client Street';
 DEFAULT client.vatid='AA1234';
 END;
+invoice_details_zones = [];
+invoice_details_calls = [];
+IF !invoice_details_calls.size();
+    i=1;
+    WHILE i <= 44;
+        invoice_details_calls.push([i,{
+            start_time           => date.format(date.now(),'%s'),
+            source_customer_cost => i / 10,
+            duration             => i * 10,
+            destination_user_in  => '+1234567890',
+            call_type            => 'call',
+            zone                 => 'Example Zone',
+            zone_detail          => 'Default',
+        }]);
+        i = i + 1;
+    END;
+END;
+IF !invoice_details_zones.size();
+    i=1;
+    WHILE i <= 45;
+        invoice_details_zones.push([i,{
+            number               => i * 2 ,
+            cost                 => i / 10,
+            duration             => i * 10,
+            free_time            => i / 10,
+            zone                 => 'Example Zone',
+            zone_detail          => 'Default',
+        }]);
+        i = i + 1;
+    END;
+END;
+
 %]
