@@ -607,7 +607,9 @@ sub subscriber_create :Chained('base') :PathPart('subscriber/create') :Args(0) {
                     }
                     if($c->stash->{admin_subscriber}) {
                         my $profile_set = $c->stash->{admin_subscriber}->provisioning_voip_subscriber->voip_subscriber_profile_set;
-                        $form->params->{profile_set}{id} = $profile_set->id;
+                        if($profile_set) {
+                            $form->params->{profile_set}{id} = $profile_set->id;
+                        }
                     }
 
                     # TODO: if number changes, also update cloud_pbx_base_cli
