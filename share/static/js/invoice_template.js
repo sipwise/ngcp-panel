@@ -90,7 +90,7 @@ function fetchInvoiceTemplateData( data, noshowform ){
 //            $('#load_saved_control').css('visibility', 'visible' );
             if( templatedata.aaData.form ){
                 $('form[name=template_editor]').loadJSON(templatedata.aaData.form);
-                $('#load_previewed_control').css('display', 'inline' );
+                //$('#load_previewed_control').css('display', 'inline' );
                 $('#load_saved_control').css('display', 'inline' );
             }
             if( !noshowform ){
@@ -101,7 +101,7 @@ function fetchInvoiceTemplateData( data, noshowform ){
 }
 function clearTemplateForm(data){
     $('#template_editor_form').css('visibility','hidden');
-    $('#load_previewed_control').css('display', 'none' );
+    //$('#load_previewed_control').css('display', 'none' );
     $('#load_saved_control').css('display', 'none' );
     if(!data){
         data = {};
@@ -121,7 +121,7 @@ function savePreviewedAndShowParsed( data ){
         // & show template
         //alert('savePreviewedAndShowParsed: httpResponse='+httpResponse+';');
         setSvgStringToPreview( httpResponse, q, data )
-        $('#load_previewed_control').css('display', 'inline' );
+        //$('#load_previewed_control').css('display', 'inline' );
         //refresh list after saving - there is nothin that can be cahnged in templates list after preview refresh
         //refreshAjaxList( 'template', data );
     } );

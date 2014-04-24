@@ -20,6 +20,13 @@ function getTtIdVal(){
         tt_id: getTtIdVal(),
     });void(0);">[% c.loc('Refresh Preview')%] <i class="icon-refresh"></i></a>
 </span>
+<span id="load_saved_control" style="display:none;">
+    <a class="btn btn-secondary btn-small"  data-confirm="[%c.loc('Overwrite changes');%]" href="javascript:fetchInvoiceTemplateData({
+        tt_sourcestate: 'saved',
+        tt_id: getTtIdVal(),
+        provider_id: '[%provider.id%]',
+    });void(0);">[% c.loc('Load saved')%] <i class="icon-edit"></i></a>
+</span>
 <span>
     <a class="btn btn-primary btn-small" onclick="
     //alert('tt_id='+getTtIdVal()+';');
@@ -28,37 +35,31 @@ function getTtIdVal(){
         tt_id: getTtIdVal(),
     });void(0);">[% c.loc('Save template')%] <i class="icon-disk"></i></a>
 </span>
-<div class="ngcp-separator"></div>
-<span>
+<!--div class="ngcp-separator"></div-->
+<!--span>
     <a class="btn btn-secondary btn-small"  data-confirm="[%c.loc('Overwrite changes');%]" href="javascript:fetchInvoiceTemplateData({
         tt_sourcestate: 'default',
         tt_id: getTtIdVal(),
         provider_id: '[%provider.id%]',
     });void(0);">[% c.loc('Load default')%] <i class="icon-edit"></i></a>
-</span>
-<span>
-    <a class="btn btn-secondary btn-small"  data-confirm="[%c.loc('Overwrite changes');%]" href="javascript:fetchInvoiceTemplateData({
-        tt_sourcestate: 'saved',
-        tt_id: getTtIdVal(),
-        provider_id: '[%provider.id%]',
-    });void(0);">[% c.loc('Load saved')%] <i class="icon-edit"></i></a>
-</span>
-<span id="load_previewed_control" style="display:none;">
+</span-->
+
+<!--span id="load_previewed_control" style="display:none;visibility:hidden;">
     <a class="btn btn-secondary btn-small"  data-confirm="[%c.loc('Overwrite changes');%]" href="javascript:fetchInvoiceTemplateData({
         tt_sourcestate: 'previewed',
         tt_id: getTtIdVal(),
         provider_id: '[%provider.id%]',
     });void(0);">[% c.loc('Load previewed')%] <i class="icon-edit"></i></a>
-</span>
+</span-->
 <div class="ngcp-separator"></div>
-<span>
+<!--span>
     <a class="btn btn-primary btn-small" href="javascript:window.open(uriForAction({
         tt_sourcestate: 'previewed',
         tt_output_type : 'svg',
         tt_id: getTtIdVal(),
         provider_id: '[%provider.id%]',
     }),'_blank');void(0);">[% c.loc('Previewed SVG')%] <i class="icon-edit"></i></a>
-</span>
+</span-->
 <span>
     <a class="btn btn-primary btn-small" href="javascript:window.open(uriForAction({
         tt_sourcestate: 'previewed',
@@ -67,7 +68,7 @@ function getTtIdVal(){
         provider_id: '[%provider.id%]',
     }),'_blank');void(0);">[% c.loc('Previewed PDF')%] <i class="icon-edit"></i></a>
 </span>
-<span>
+<!--span>
     <a class="btn btn-primary btn-small" href="javascript:window.open(uriForAction({
         tt_sourcestate: 'saved',
         tt_output_type : 'svg',
@@ -82,7 +83,7 @@ function getTtIdVal(){
         tt_id: getTtIdVal(),
         provider_id: '[%provider.id%]',
     }),'_blank');void(0);">[% c.loc('Saved PDF')%] <i class="icon-edit"></i></a>
-</span>
+</span-->
 [%initial = 'default'%]
 <div class="ngcp-separator"></div>
 <iframe 
