@@ -73,7 +73,7 @@ has_field 'ca.download' => (
 
 has_field 'ca.description' => (
     type => 'Display',
-    html => '<div class="ngcp-form-desc">The Server Certificate used to sign the above\'s Client Certificates. Needed if you want to verify the server connection in your API client, and the server certificate is not signed by a well-known CA or is self-signed.</div>',
+    html => '<div class="ngcp-form-desc">The Server Certificate. Needed if you want to verify the server connection in your API client, and the server certificate is not signed by a well-known CA or is self-signed.</div>',
     do_wrapper => 0,
     do_label => 0,
 );

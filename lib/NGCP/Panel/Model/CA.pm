@@ -37,9 +37,12 @@ sub make_client {
     $c->log->debug($tmpl);
     $client_signing_template->spew($tmpl);
     my $client_cert = Path::Tiny->tempfile;
-    $command = sprintf 'certtool -c --load-privkey %s --outfile %s --load-ca-certificate %s --load-ca-privkey %s ' .
-      '--template %s 1>&- 2>&-', $client_key->stringify, $client_cert->stringify, $c->config->{ssl}->{certfile},
-      $c->config->{ssl}->{keyfile}, $client_signing_template->stringify;
+    $command = sprintf
+        'certtool -c --load-privkey %s --outfile %s --load-ca-certificate %s --load-ca-privkey %s --template %s 1>&- 2>&-',
+        $client_key->stringify, $client_cert->stringify,
+        ($c->config->{ssl}->{rest_api_certfile} || $c->config->{ssl}->{certfile}),
+        ($c->config->{ssl}->{rest_api_keyfile}  || $c->config->{ssl}->{keyfile}),
+        $client_signing_template->stringify;
     $c->log->debug($command);
     system $command;
     my $cert = $client_cert->slurp . $client_key->slurp =~ s/.*(?=-----BEGIN RSA PRIVATE KEY-----)//mrs;
@@ -55,7 +58,8 @@ sub make_pkcs12 {
     my $cert_file = Path::Tiny->tempfile;
     $cert_file->spew($cert);
     my $p12_file = Path::Tiny->tempfile;
-    my $command = sprintf 'openssl pkcs12 -export -in %s -inkey %s -out %s -password pass:%s -name "NGCP API Client Certificate %d"', $cert_file->stringify, $cert_file->stringify, $p12_file->stringify, $pass, $serial;
+    my $command = sprintf 'openssl pkcs12 -export -in %s -inkey %s -out %s -password pass:%s -name "NGCP API Client Certificate %d"',
+        $cert_file->stringify, $cert_file->stringify, $p12_file->stringify, $pass, $serial;
     $c->log->debug($command);
     system $command;
     my $p12 = $p12_file->slurp({binmode => ":raw"});
@@ -68,7 +72,7 @@ sub make_pkcs12 {
 sub get_server_cert {
     my ($self, $c) = @_;
 
-    my $cert_file = Path::Tiny->new($c->config->{ssl}->{certfile});
+    my $cert_file = Path::Tiny->new($c->config->{ssl}->{server_certfile} || $c->config->{ssl}->{certfile});
     return $cert_file->slurp;
 }
 
