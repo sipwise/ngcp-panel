@@ -196,7 +196,7 @@ g, text, tspan {
 <!--page-->
     <g id="bgpage">
        <title>Background</title>
-        <rect x="0" y="0" width="214.9" height="296.8" stroke-width="0.1" stroke="#FF0000" fill="#FFFFFF" fill-opacity="0" id="totalborder"/>
+        <!--rect x="0" y="0" width="214.9" height="296.8" stroke-width="0.1" stroke="#FF0000" fill="#FFFFFF" fill-opacity="0" id="totalborder"/-->
         
         <path stroke="#888888" stroke-width="0.25" fill="none" d="m10,278l195,0"/>            
             
