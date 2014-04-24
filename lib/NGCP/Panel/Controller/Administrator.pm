@@ -227,7 +227,16 @@ sub api_key :Chained('base') :PathPart('api_key') :Args(0) {
     my $cert;
     if ($c->req->body_parameters->{'gen.generate'}) {
         $serial = time;
-        $cert = $c->model('CA')->make_client($c, $serial);
+        try {
+            $cert = $c->model('CA')->make_client($c, $serial);
+        } catch ($e) {
+            NGCP::Panel::Utils::Message->error(
+                c => $c,
+                error => $e,
+                desc  => $c->loc("Failed to generate client certificate."),
+            );
+            NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for('/administrator'));
+        }
         my $updated;
         while (!$updated) {
             try {

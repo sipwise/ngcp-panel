@@ -29,7 +29,17 @@ sub COMPONENT {
 sub make_client {
     my ($self, $c, $serial) = @_;
     my $client_key = Path::Tiny->tempfile;
-    my $command = sprintf 'certtool -p --bits 3248 --outfile %s 1>&- 2>&-', $client_key->stringify;
+    my $command = 'openssl x509 -noout -purpose -in ' . ($c->config->{ssl}->{rest_api_certfile} || $c->config->{ssl}->{certfile});
+    $c->log->debug($command);
+    my ($stdout, $stderr) = capture {
+        try {
+            system $command;
+        };
+    };
+    unless ($stdout =~ m/SSL (client|server) CA : Yes/) {
+        die [$c->loc('Cannot use the configured certificate for signing client certificates'), "showdetails"];
+    }
+    $command = sprintf 'certtool -p --bits 3248 --outfile %s 1>&- 2>&-', $client_key->stringify;
     $c->log->debug($command);
     system $command;
     my $client_signing_template = Path::Tiny->tempfile;
@@ -38,13 +48,23 @@ sub make_client {
     $client_signing_template->spew($tmpl);
     my $client_cert = Path::Tiny->tempfile;
     $command = sprintf
-        'certtool -c --load-privkey %s --outfile %s --load-ca-certificate %s --load-ca-privkey %s --template %s 1>&- 2>&-',
+        'certtool -c --load-privkey %s --outfile %s --load-ca-certificate %s --load-ca-privkey %s --template %s',
         $client_key->stringify, $client_cert->stringify,
         ($c->config->{ssl}->{rest_api_certfile} || $c->config->{ssl}->{certfile}),
         ($c->config->{ssl}->{rest_api_keyfile}  || $c->config->{ssl}->{keyfile}),
         $client_signing_template->stringify;
     $c->log->debug($command);
-    system $command;
+    my $exep;
+    ($stdout, $stderr) = capture {
+        try {
+            system $command;
+        } catch ($e) {
+            $exep = $e;
+        };
+    };
+    $c->log->debug($stdout) if $stdout;
+    $c->log->warn($stderr) if $stderr;
+    die $exep if $exep;
     my $cert = $client_cert->slurp . $client_key->slurp =~ s/.*(?=-----BEGIN RSA PRIVATE KEY-----)//mrs;
     $client_cert->remove;
     $client_key->remove;
