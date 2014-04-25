@@ -70,9 +70,13 @@ $ua->ssl_opts(
                  pbxdeviceprofiles => 1,
                  pbxdeviceconfigs => 1,
                  pbxdevicemodels => 1,
+                 speeddials => 1,
+                 emailtemplates => 1,
+                 subscriberprofiles => 1,
+                 subscriberprofilesets => 1,
                   };
     foreach my $link(@links) {
-        my $rex = qr/^<\/api\/[a-z]+\/>; rel=\"collection http:\/\/purl\.org\/sipwise\/ngcp-api\/#rel-([a-z]+s)\"$/;
+        my $rex = qr!^</api/[a-z]+/>; rel="collection http://purl\.org/sipwise/ngcp-api/#rel-([a-z]+s)"$!;
         like($link, $rex, "check for valid link syntax");
         my ($relname) = ($link =~ $rex);
         ok(exists $rels->{$relname}, "check for '$relname' collection in Link");
