@@ -52,6 +52,17 @@ sub tmpl_ajax :Chained('tmpl_list') :PathPart('ajax') :Args(0) {
     $c->detach( $c->view("JSON") );
 }
 
+sub tmpl_ajax_reseller :Chained('tmpl_list') :PathPart('ajax') :Args(1) {
+    my ($self, $c, $reseller_id) = @_;
+
+    my $rs = $c->stash->{tmpl_rs}->search({
+        reseller_id => $reseller_id,
+    });
+    NGCP::Panel::Utils::Datatables::process($c, $rs, $c->stash->{template_dt_columns});
+
+    $c->detach( $c->view("JSON") );
+}
+
 sub tmpl_create :Chained('tmpl_list') :PathPart('create') :Args(0) {
     my ($self, $c) = @_;
 
@@ -145,7 +156,16 @@ sub tmpl_delete :Chained('tmpl_base') :PathPart('delete') {
     my ($self, $c) = @_;
 
     try {
-        # manually delete hosts in group to let triggers hit in
+        $c->model('DB')->resultset('contracts')->search({
+            subscriber_email_template_id => $c->stash->{tmpl}->id,
+        })->update({
+            subscriber_email_template_id => undef,
+        });
+        $c->model('DB')->resultset('contracts')->search({
+            passreset_email_template_id => $c->stash->{tmpl}->id,
+        })->update({
+            passreset_email_template_id => undef,
+        });
         $c->stash->{tmpl}->delete;
         $c->flash(messages => [{type => 'success', text => $c->loc('Email template successfully deleted') }]);
     } catch ($e) {

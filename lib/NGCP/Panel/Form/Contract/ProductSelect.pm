@@ -19,11 +19,10 @@ has_field 'max_subscribers' => (
     },
 );
 
-
 has_block 'fields' => (
     tag => 'div',
     class => [qw/modal-body/],
-    render_list => [qw/contact billing_profile product max_subscribers status external_id/],
+    render_list => [qw/contact billing_profile product max_subscribers status external_id subscriber_email_template passreset_email_template/],
 );
 
 1;

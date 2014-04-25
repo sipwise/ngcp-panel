@@ -56,6 +56,22 @@ has_field 'external_id' => (
     },
 );
 
+has_field 'subscriber_email_template' => (
+    type => '+NGCP::Panel::Field::EmailTemplate',
+    label => 'Subscriber Creation Email Template',
+    do_label => 1,
+    required => 0,
+);
+
+has_field 'passreset_email_template' => (
+    type => '+NGCP::Panel::Field::EmailTemplate',
+    label => 'Password Reset Email Template',
+    do_label => 1,
+    required => 0,
+);
+
+
+
 has_field 'save' => (
     type => 'Submit',
     value => 'Save',
@@ -66,7 +82,7 @@ has_field 'save' => (
 has_block 'fields' => (
     tag => 'div',
     class => [qw/modal-body/],
-    render_list => [qw/contact billing_profile status external_id/],
+    render_list => [qw/contact billing_profile status external_id subscriber_email_template passreset_email_template/],
 );
 
 has_block 'actions' => (
@@ -74,6 +90,21 @@ has_block 'actions' => (
     class => [qw/modal-footer/],
     render_list => [qw/save/],
 );
+
+sub update_fields {
+    my $self = shift;
+    my $c = $self->ctx;
+    return unless $c;
+
+    foreach my $field(qw/subscriber_email_template passreset_email_template/) {
+        my $email = $self->field($field);
+        if($email && $c->stash->{contract}) {
+            $email->field('id')->ajax_src(
+                $c->uri_for_action('/emailtemplate/tmpl_ajax_reseller', [$c->stash->{contract}->contact->reseller_id])->as_string
+            );
+        }
+    }
+}
 
 1;
 # vim: set tabstop=4 expandtab:
