@@ -1,0 +1,7 @@
+Hi, [% username %]!
+
+Please visit [% url %]. lalalala.    
+
+--
+Regards,
+test foo

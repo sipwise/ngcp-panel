@@ -32,6 +32,7 @@
         <li><a href="[% c.uri_for('/rewrite') %]">[% c.loc('Rewrite Rule Sets') %]</a></li>
         <li><a href="[% c.uri_for('/ncos') %]">[% c.loc('NCOS Levels') %]</a></li>
         <li><a href="[% c.uri_for('/sound') %]">[% c.loc('Sound Sets') %]</a></li>
+        <li><a href="[% c.uri_for('/emailtemplate') %]">[% c.loc('Email Templates') %]</a></li>
         <li><a href="[% c.uri_for('/security') %]">[% c.loc('Security Bans') %]</a></li>
         [% IF c.config.features.cloudpbx -%]
         <li><a href="[% c.uri_for('/device') %]">[% c.loc('Device Management') %]</a></li>

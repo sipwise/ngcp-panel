@@ -24,6 +24,7 @@ use Catalyst qw/
     Session::Store::FastMmap
     Session::State::Cookie
     I18N
+    Email
 /;
 #    EnableMiddleware
 use Log::Log4perl::Catalyst qw();
@@ -84,6 +85,18 @@ __PACKAGE__->config(
         #Set the stash keys to be exposed to a JSON response
         #(sEcho iTotalRecords iTotalDisplayRecords aaData) for datatables
         expose_stash    => [ qw(sEcho iTotalRecords iTotalDisplayRecords aaData) ],
+    },
+    'View::TT' => {
+        INCLUDE_PATH => [
+            '/usr/share/ngcp-panel/templates',
+            '/usr/share/ngcp-panel/layout',
+            '/usr/share/ngcp-panel/static',
+            __PACKAGE__->path_to('share', 'templates'),
+            __PACKAGE__->path_to('share', 'layout'),
+            __PACKAGE__->path_to('share', 'static'),
+        ],
+        ABSOLUTE => 1,
+        EVAL_PERL => 1,
     },
 
     'Plugin::Static::Simple' => {
@@ -172,6 +185,8 @@ __PACKAGE__->config(
 #    ],
 );
 __PACKAGE__->config( default_view => 'HTML' );
+
+__PACKAGE__->config( email => ['Sendmail'] );
 
 __PACKAGE__->log(Log::Log4perl::Catalyst->new($logger_config));
 
