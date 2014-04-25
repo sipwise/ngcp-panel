@@ -111,9 +111,9 @@ sub create :Chained('list_customer') :PathPart('create') :Args(0) {
     my $params = {};
     $params = $params->merge($c->session->{created_objects});
     if($c->config->{features}->{cloudpbx}) {
-        $form = NGCP::Panel::Form::Contract::ProductSelect->new;
+        $form = NGCP::Panel::Form::Contract::ProductSelect->new(ctx => $c);
     } else {
-        $form = NGCP::Panel::Form::Contract::Basic->new;
+        $form = NGCP::Panel::Form::Contract::Basic->new(ctx => $c);
     }
     $form->process(
         posted => $posted,
@@ -342,6 +342,17 @@ sub base :Chained('list_customer') :PathPart('') :CaptureArgs(1) {
 sub edit :Chained('base') :PathPart('edit') :Args(0) {
     my ($self, $c) = @_;
 
+    $fooo = breakme;
+    # We now optionally get email templates via the form for subscriber creation
+    # and for password reset. Change DB schema to store those ids, and if they are
+    # not null, hide webpassword field and let user change pass on first login, and
+    # also provide a way to reset a lost password.
+    #
+    # also provide config option for password policy
+    #
+    # also provide option whether or not passwords are completely hidden (at least
+    # from subscriber(admin)) and let them be generated automatically
+
     my $contract = $c->stash->{contract};
     my $billing_mapping = $c->stash->{billing_mapping};
     my $posted = ($c->request->method eq 'POST');
@@ -352,9 +363,9 @@ sub edit :Chained('base') :PathPart('edit') :Args(0) {
     $params->{billing_profile}{id} = $billing_mapping->billing_profile_id;
     $params = $params->merge($c->session->{created_objects});
     if($c->config->{features}->{cloudpbx}) {
-        $form = NGCP::Panel::Form::Contract::ProductSelect->new;
+        $form = NGCP::Panel::Form::Contract::ProductSelect->new(ctx => $c);
     } else {
-        $form = NGCP::Panel::Form::Contract::Basic->new;
+        $form = NGCP::Panel::Form::Contract::Basic->new(ctx => $c);
     }
     $form->process(
         posted => $posted,
@@ -925,7 +936,7 @@ sub pbx_group_create :Chained('base') :PathPart('pbx/group/create') :Args(0) {
         NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for_action('/customer/details', $c->req->captures));
     }
     my $form;
-    $form = NGCP::Panel::Form::Customer::PbxGroup->new;
+    $form = NGCP::Panel::Form::Customer::PbxGroup->new(ctx => $c);
     my $params = {};
     $params = $params->merge($c->session->{created_objects});
     $form->process(
