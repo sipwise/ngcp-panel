@@ -16,7 +16,7 @@ DEFAULT invoice.date.month=date.format(date.now(),'%B');
 DEFAULT invoice.debit='500';
 DEFAULT invoice.discount_service='10';
 DEFAULT invoice.discount_wire_transfer='40';
-DEFAULT invoice.number=Math.int(Math.rand(999999))|format('%06d');
+DEFAULT invoice.serial=Math.int(Math.rand(999999))|format('%06d');
 DEFAULT invoice.serviceallowance='69';
 DEFAULT invoice.voice_termination_fees='10';
 END;

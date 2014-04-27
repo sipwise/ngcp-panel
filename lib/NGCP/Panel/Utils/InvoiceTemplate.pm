@@ -30,7 +30,8 @@ sub convertSvg2Pdf{
     #my($fh, $tempfilename) = tempfile();
     $tempdirbase = join('/',File::Spec->tmpdir,@$in{qw/provider_id tt_type tt_sourcestate/}, $out->{tt_id});
     ! -e $tempdirbase and mkpath( $tempdirbase, 0, 0777 );
-    $tempdir = tempdir( DIR =>  $tempdirbase , CLEANUP => 1 );
+    $tempdir = tempdir( DIR =>  $tempdirbase , CLEANUP => 0 );
+    #print "tempdirbase=$tempdirbase; tempdir=$tempdir;$!;\n\n\n";
     $c and $c->log->debug("tempdirbase=$tempdirbase; tempdir=$tempdir;");
     #try{
     #} catch($e){
@@ -61,11 +62,12 @@ sub convertSvg2Pdf{
     }
     
     my $cmd = "rsvg-convert -f pdf ".join(" ", @pagefiles);
+    #print $cmd;
+    #die();
     $c and $c->log->debug($cmd);
-    #`chmod ugo+rwx $filename`;
-    #binmode(STDOUT);
+    #$cmd = "chmod ugo+rwx $filename";
     #binmode(STDIN);
-    #$out->{tt_string} = `$cmd`;
+    #$out->{tt_string_pdf} = `$cmd`;
     {
         #$cmd = "fc-list";
         open B, "$cmd |"; 

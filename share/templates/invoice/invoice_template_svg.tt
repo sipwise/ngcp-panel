@@ -56,7 +56,7 @@ g, text, tspan {
 
         <text x="190" y="75" id="titlepage_invoiceinfo__date" class="h3" text-anchor="end">[%provider.city%], [%date_format(date.now)%]</text>
         
-        <text x="20" y="95" font-weight="bold" class="h1">Invoice [%invoice.number%]</text>
+        <text x="20" y="95" font-weight="bold" class="h1">Invoice [%invoice.serial%]</text>
  
         <path stroke="#888888" stroke-width="0.25" fill="none" d="m10,120l190,0"/>
         <path stroke="#888888" stroke-width="0.25" fill="none" d="m10,180l190,0"/>

@@ -159,40 +159,25 @@
     [% allcallpages = allmidcallpages + ( lastcallrows ? 1 : 0 ) %]
     
     
-    [%IF ( pagetype == 'title' || pagetype=='all') %]
-        [% pagenum = 1%]
-        [% document_header()%]
-        
-        [% titlepage( 
-            ( titlezonerows > 0 && invoice_details_zones.size > 0 ) ? invoice_details_zones.slice(0, titlezonerows - 1 ) : [], 
-            
-            ( titlecallrows > 0 && invoice_details_calls.size > 0 ) ? invoice_details_calls.slice(0, titlecallrows - 1 ) : [], 
-            pagenum,
-            titlezoneinterval
-            titlecallinterval
-        ) -%]
-        [% bgpage(pagenum) -%]
-        [% document_footer()%]
-    [%END-%]
     [%IF ( pagetype == 'zone' || pagetype=='all' ) && allzonerowsnumber %]
         [% pages = pagenum_in ? [ pagenum_in ] : [ 1 .. allmidzonepages ] %]
         [%FOREACH pagenum IN pages %]
             [% pagerowsstart = titlezonerows + midzonerows * ( pagenum - 1 )%]
             [% pagerowsend = titlezonerows + midzonerows * pagenum - 1 %]
             [%# pagerowsend = pagerowsend > invoice_details_zones.size() - 1 ? invoice_details_zones.size() - 1 : pagerowsend  %]
-            [% document_header()%]
-            [% zonepage( invoice_details_zones.slice( pagerowsstart,  pagerowsend ), total, pagenum + 1, pagenum, allzonepages, midzoneinterval ) -%]
+            [% output = output _ document_header()%]
+            [% output = output _ zonepage( invoice_details_zones.slice( pagerowsstart,  pagerowsend ), total, pagenum + 1, pagenum, allzonepages, midzoneinterval ) -%]
             [%#+1 because of 1 for titlepage %]
-            [% bgpage(pagenum + 1, pagenum, allzonepages) -%]
-            [% document_footer()%]
+            [% output = output _ bgpage(pagenum + 1, pagenum, allzonepages) -%]
+            [% output = output _ document_footer()%]
         [%END-%]
         [%IF lastzonerows > 0 %]
             [%#2 because zonepages started from 1, not from 0, and we need add 1 for titlepage %]
             [% pagenum = 2 + allmidzonepages %]
-            [% document_header()%]
-            [% zonepage( invoice_details_zones.slice( allzonerowsnumber - lastzonerows ), total, pagenum, allzonepages, allzonepages, midzoneinterval ) -%]
-            [% bgpage(pagenum, allzonepages, allzonepages) -%]
-            [% document_footer()%]
+            [% output = output _ document_header()%]
+            [% output = output _ zonepage( invoice_details_zones.slice( allzonerowsnumber - lastzonerows ), total, pagenum, allzonepages, allzonepages, midzoneinterval ) -%]
+            [% output = output _ bgpage(pagenum, allzonepages, allzonepages) -%]
+            [% output = output _ document_footer()%]
         [%END-%]
     [%END-%]
     
@@ -207,21 +192,39 @@
         [%FOREACH pagenum IN pages %]
             [% pagerowsstart = titlecallrows + midcallrows * ( pagenum - 1 )%]
             [% pagerowsend = titlecallrows + midcallrows * pagenum - 1 %]
-            [% document_header()%]
-            [% callpage( invoice_details_calls.slice( pagerowsstart,  pagerowsend ), total, pagenum + 1 + allzonepages, pagenum, allcallpages, midcallinterval ) -%]
+            [% output = output _ document_header()%]
+            [% output = output _ callpage( invoice_details_calls.slice( pagerowsstart,  pagerowsend ), total, pagenum + 1 + allzonepages, pagenum, allcallpages, midcallinterval ) -%]
             [%#+1 because of 1 for titlepage %]
-            [% bgpage(pagenum + 1 + allzonepages, pagenum, allcallpages ) -%]
-            [% document_footer()%]
+            [% output = output _ bgpage(pagenum + 1 + allzonepages, pagenum, allcallpages ) -%]
+            [% output = output _ document_footer()%]
         [%END-%]
         [%IF lastcallrows > 0 %]
             [%#2 because callpages started from 1, not from 0, and we need add 1 for titlepage %]
             [% pagenum = 2 + allmidcallpages + ( allzonepages ?  1 : 0 ) %]
-            [% document_header()%]
-            [% callpage( invoice_details_calls.slice( allcallrowsnumber - lastcallrows ), total, pagenum, allcallpages, allcallpages, midcallinterval ) -%]
-            [% bgpage(pagenum, allcallpages, allcallpages) -%]
-            [% document_footer()%]
+            [% output = output _ document_header()%]
+            [% output = output _ callpage( invoice_details_calls.slice( allcallrowsnumber - lastcallrows ), total, pagenum, allcallpages, allcallpages, midcallinterval ) -%]
+            [% output = output _ bgpage(pagenum, allcallpages, allcallpages) -%]
+            [% output = output _ document_footer()%]
         [%END-%]
     [%END-%]
+
     [% total.pagetype.call.global = total.pagetype.call.global.import(total.global)%]
     [% total.pagetype.call.perpage = total.pagetype.call.perpage.import(total.perpage)%]
+
+    [%IF ( pagetype == 'title' || pagetype=='all') %]
+        [% pagenum = 1%]
+        [% output_title = output_title _ document_header()%]
+        
+        [% output_title = output_title _ titlepage( 
+            ( titlezonerows > 0 && invoice_details_zones.size > 0 ) ? invoice_details_zones.slice(0, titlezonerows - 1 ) : [], 
+            
+            ( titlecallrows > 0 && invoice_details_calls.size > 0 ) ? invoice_details_calls.slice(0, titlecallrows - 1 ) : [], 
+            pagenum,
+            titlezoneinterval
+            titlecallinterval
+        ) -%]
+        [% output_title = output_title _ bgpage(pagenum) -%]
+        [% output_title = output_title _ document_footer()-%]
+    [%END-%]
+    [% output_title _ output-%]
 [%END-%]
