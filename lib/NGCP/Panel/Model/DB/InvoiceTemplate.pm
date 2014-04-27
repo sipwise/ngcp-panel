@@ -231,81 +231,98 @@ sub getInvoiceClientContactInfo{
 sub getInvoiceProviderClients{
     my $self = shift;
     my (%params) = @_;
-    my ($provider_id) = @params{qw/provider_id/};
-    #$schema->resultset('contracts')
-#    my $mapping_rs = $schema->resultset('billing_mappings');
-#    my $rs = $schema->resultset('contracts')
-#        ->search({
-#            'me.status' => { '!=' => 'terminated' },
-#            'billing_mappings.id' => {
-#                '=' => $mapping_rs->search({
-#                    contract_id => { -ident => 'me.id' },
-#                    start_date => [ -or =>
-#                        { '<=' => NGCP::Panel::Utils::DateTime::current_local },
-#                        { -is  => undef },
-#                    ],
-#                    end_date => [ -or =>
-#                        { '>=' => NGCP::Panel::Utils::DateTime::current_local },
-#                        { -is  => undef },
-#                    ],
-#                },{
-#                    alias => 'bilmap',
-#                    rows => 1,
-#                    order_by => {-desc => ['bilmap.start_date', 'bilmap.id']},
-#                })->get_column('id')->as_query,
-#            },
-#        },{
-#            'join' => 'billing_mappings',
-#            '+select' => [
-#                'billing_mappings.id',
-#                'billing_mappings.start_date',
-#                'billing_mappings.product_id',
-#            ],
-#            '+as' => [
-#                'billing_mapping_id',
-#                'billing_mapping_start_date',
-#                'product_id',
-#            ],
-#            alias => 'me',
-#        });
-#
-#    return $rs;
-
-
-    #very optimistic programming style
-
-    return NGCP::Panel::Utils::Contract::get_contract_rs(
-            schema => $self->schema,
-        )->search_rs({
-            'contact.reseller_id' => $provider_id,
-        },{
-            join => 'contact',
+    my ($provider_contact_id,$stime,$etime) = @params{qw/provider_contact_id stime etime/};
+    $stime ||= NGCP::Panel::Utils::DateTime::current_local()->truncate( to => 'month' );
+    $etime ||= $stime->clone->add( months => 1);
+    $self->schema->resultset('contacts')->search_rs({
+        '-and'  =>  
+            [ 
+                'reseller_id' => $provider_contact_id, #$client_contract_id - contract of the client
+                'id' => { '!=' => $provider_contact_id },
+            ],
+        '-exists' => $self->schema->resultset('billing_mappings')->search({
+            'contract.contact_id' => \' = contacts.id',
+            'product.class' => [ "sipaccount", "pbxaccount" ],
+            '-and'          => [
+                    'start_date'    => [ -or =>
+                        { '<=' => $etime->epoch },
+                        { -is  => undef },
+                    ],
+                    'end_date' => [ -or =>
+                        { '>=' => $stime->epoch },
+                        { -is  => undef },
+                    ],
+                ]
+            },{
+                alias => 'billing_mappings_top',
+                join => ['product','contract'],
+        })->as_query
     });
 }
 
 sub get_contract_calls_rs{
     my $self = shift;
     my %params = @_;
-    (my($c,$provider_id,$client_id,$stime,$etime)) = @params{qw/c provider_id client_id stime etime/};
+    (my($c,$provider_contact_id,$client_contact_id,$stime,$etime)) = @params{qw/c provider_id client_id stime etime/};#I think it may be a record (very long var name)
     my $source_account_id_condition;
-    if(!$client_id){
-        $source_account_id_condition = { 'in' => $self->getInvoiceProviderClients(%params)->search_rs({},{
-                'select' => 'me.id',
-            })->as_query()
-            #$self->schema('contracts')->search_rs({},{
-            #    'select' => 'me.id',
-            #    'join'   => 'contact',
-            #})->as_query() 
-        };
+    $stime ||= NGCP::Panel::Utils::DateTime::current_local()->truncate( to => 'month' );
+    $etime ||= $stime->clone->add( months => 1 );
+    if(!$client_contract_id){
+        #$source_account_id_condition = { 
+        #   'in' => $self->getInvoiceProviderClients(%params)->search_rs({},{
+        #       'select' => 'me.id',
+        #   })->as_query() 
+        #};
+        $source_account_id_condition = { 'in' => $self->getInvoiceProviderClients(
+            provider_contact_id => $provider_contact_id,
+            stime               => $stime,
+            etime               => $etime,
+        )->search_rs(undef,{
+            'select'    => 'me.id',
+        })->as_query };
     }else{
-        $source_account_id_condition = $client_id;
+        $source_account_id_condition = $client_contract_id;
     }
-    $sql = '
-    select cdr.* from accounting.cdr 
+    #I find that sql is more compact and clear
+    $sql_of_all_provider_contract_id_clients_contact_ids_sip_pbx = ['
+    select contacts.*
+    from contacts 
+    where        
+        contacts.reseller_id=?
+        and exists (select * 
+            from billing_mappings
+            inner join contracts on contracts.id=billing_mappings.contract_id
+            inner join products on billing_mappings.product_id=products.id and products.class in("sipaccount","pbxaccount")
+            where contracts.contact_id=contacts.id
+                and (start_date <= ? OR start_date IS NULL)
+                and (end_date >= ? OR end_date IS NULL)
+    )',$provider_contract_id, $etime->epoch, $stime->epoch];
+    $sql_of_all_client_contract_id_calls = '
+    select cdr.* 
+    from accounting.cdr  
         inner join contracts on cdr.source_account_id=contracts.id
             and contracts.status != "terminated"
-        inner join contacts on contracts.contact_id=contacts.id 
-            and contacts.reseller_id=1 and contacts.reseller_id!=contacts.id 
+    where
+        cdr.source_user_id != 0
+        and cdr.call_status="ok" 
+        and exists (select * 
+            from billing_mappings
+            inner join products on billing_mappings.product_id=products.id and products.class in("sipaccount","pbxaccount")
+            where contracts.id=billing_mappings.contract_id
+                and (billing_mappings.start_date >= now() OR start_date IS NULL)
+                and (billing_mappings.end_date <= now() OR end_date IS NULL)
+        )
+        and contracts.contact_id=22 
+        order by cdr.start_time
+    ';
+
+    $sql_of_all_provider_contact_id_clients_calls = '
+    select cdr.* 
+    from contacts 
+        inner join contracts on contracts.contact_id=contacts.id 
+            and contacts.reseller_id=2 and contacts.reseller_id!=contacts.id
+        inner join accounting.cdr on cdr.source_account_id=contracts.id
+            and contracts.status != "terminated"
     where
         cdr.source_user_id != 0
         and cdr.call_status="ok" 
@@ -317,20 +334,28 @@ sub get_contract_calls_rs{
                 and (billing_mappings.end_date <= now() OR end_date IS NULL)
         )
         order by cdr.start_time
-        ';
+    ';
     my $calls_rs = $self->schema->resultset('cdr')->search( {
 #        source_user_id => { 'in' => [ map {$_->uuid} @{$contract->{subscriber}} ] },
         'call_status'       => 'ok',
         'source_user_id'    => { '!=' => '0' },
-        'contact.id'        => { '!=' => $provider_id },
+        'contact.id'        => { '!=' => $provider_contact_id },
         '-and'              => [ 
-            #'contact.reseller_id' => $provider_id, 
+            #'contact.reseller_id' => $provider_id, #$client_contract_id - contract of the client
             'contact.reseller_id' => { '!=' => undef },
         ],
         'source_account.status'    => { '!=' => 'terminated'},
         '-exists'           => $self->schema->resultset('billing_mappings')->search({
-            'contract_id' => \'= source_account.id',
+            'contract_id'   => \'= source_account.id',
             'product.class' => [ "sipaccount", "pbxaccount" ],
+            'start_date'    => [ -or =>
+                { '<=' => 'cdr.start_time' },
+                { -is  => undef },
+            ],
+            'end_date' => [ -or =>
+                { '>=' => 'cdr.start_time' },
+                { -is  => undef },
+            ],
         },{
             alias => 'billing_mappings_top',
             join => 'product',
@@ -400,7 +425,7 @@ sub get_contract_zonesfees_rs {
         #alias => 
         join        => 'source_customer_billing_zones_history',
         group_by    => 'source_customer_billing_zones_history.zone',
-        #order_by    => 'source_customer_billing_zones_history.zone',
+        order_by    => 'source_customer_billing_zones_history.zone',
     } );    
     
     return $zonecalls_rs;

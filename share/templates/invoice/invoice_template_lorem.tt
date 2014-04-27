@@ -21,6 +21,7 @@ DEFAULT invoice.serviceallowance='69';
 DEFAULT invoice.voice_termination_fees='10';
 END;
 
+IF !provider;
 DEFAULT provider.bic='ABCDEFG1234';
 DEFAULT provider.city='Provider City';
 DEFAULT provider.company='Provider Gmbh.';
@@ -35,6 +36,11 @@ DEFAULT provider.postcode='65104';
 DEFAULT provider.street='Provider Street';
 DEFAULT provider.url='http://www.provider.com/';
 DEFAULT provider.vat='UATAA1234AA1234';
+ELSE;
+    FOREACH i in ['bic','city','company','country','email','fax','fn','iban','mobile','phone','postcode','street','url','vat'];
+        provider.${i} = provider.get_column($i);
+    END;
+END;
 
 IF !client.id;
 DEFAULT client.bic='ABCDEFG1234';

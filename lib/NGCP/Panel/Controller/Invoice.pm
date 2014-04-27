@@ -489,6 +489,9 @@ sub template_view :Chained('template_base') :PathPart('view') :Args {
             my $tokens_re = qr/\[%(.*?)%\]/;
             my $token_shape_re = qr/\s+/;
             my %tokens_valid = map{$_=~s/$token_shape_re//sg; $_ => 1;} ($tt_string_default=~/$tokens_re/sg);
+            #use irka;
+            #use Data::Dumper;
+            #irka::loglong(Dumper(\%tokens_valid));
             foreach( $tt_string_sanitized=~/$tokens_re/sg ){
                 my $token_shape=$_;
                 $token_shape=~s/$token_shape_re//sg;
@@ -558,8 +561,7 @@ sub template_view :Chained('template_base') :PathPart('view') :Args {
             #even better - to template filters
             #also to model
             $out->{tt_string_prepared}=$out->{tt_string_stored}=$out->{tt_string};
-            $out->{tt_string_prepared}=~s/(?:{\s*)?<!--{|}-->(?:\s*})?//gs;
-            $out->{tt_string_prepared}=~s/(<g .*?(id *=["' ]+(?:title|bg|mid)page["' ]+)?.*?)(?:display="none")(?(2)(?:.*?>)($2.*?>))/$1$3/gs;
+            NGCP::Panel::Utils::InvoiceTemplate::preprocessInvoiceTemplateSvg($in,\$out->{tt_string_prepared});
         }
 
         if( ($in->{tt_output_type} eq 'svg') || ( $in->{tt_output_type} eq 'html') ){
@@ -591,59 +593,7 @@ sub template_view :Chained('template_base') :PathPart('view') :Args {
         #method
             $c->response->content_type('application/pdf');
             my $svg = $c->view('SVG')->getTemplateProcessed($c,\$out->{tt_string_prepared}, $c->stash );
-            my(@pages) = $svg=~/(<svg.*?(?:\/svg>))/sig;
-            
-            #$c->log->debug($svg);
-            my ($tempdirbase,$tempdir );
-            use File::Temp qw/tempfile tempdir/;
-            #my($fh, $tempfilename) = tempfile();
-            $tempdirbase = join('/',File::Spec->tmpdir,@$in{qw/provider_id tt_type tt_sourcestate/}, $out->{tt_id});
-            use File::Path qw( mkpath );
-            ! -e $tempdirbase and mkpath( $tempdirbase, 0, 0777 );
-            $tempdir = tempdir( DIR =>  $tempdirbase , CLEANUP => 1 );
-            $c->log->debug("tempdirbase=$tempdirbase; tempdir=$tempdir;");
-            #try{
-            #} catch($e){
-            #    NGCP::Panel::Utils::Message->error(
-            #        c => $c,
-            #        error => "Can't create temporary directory at: $tempdirbase;" ,
-            #        desc  => $c->loc("Can't create temporary directory."),
-            #    );
-            #}
-            my $pagenum = 1;
-            my @pagefiles;
-            foreach my $page (@pages){
-                my $fh;
-                my $pagefile = "$tempdir/$pagenum.svg";
-                push @pagefiles, $pagefile;
-                open($fh,">",$pagefile);
-                #try{
-                #} catch($e){
-                #    NGCP::Panel::Utils::Message->error(
-                #        c => $c,
-                #        error => "Can't create temporary page file at: $tempdirbase/$page.svg;" ,
-                #        desc  => $c->loc("Can't create temporary file."),
-                #    );
-                #}
-                print $fh $page;
-                close $fh;
-                $pagenum++;
-            }
-            
-            my $cmd = "rsvg-convert -f pdf ".join(" ", @pagefiles);
-            $c->log->debug($cmd);
-            #`chmod ugo+rwx $filename`;
-            #binmode(STDOUT);
-            #binmode(STDIN);
-            #$out->{tt_string} = `$cmd`;
-            {
-                #$cmd = "fc-list";
-                open B, "$cmd |"; 
-                binmode B; 
-                local $/ = undef; 
-                $out->{tt_string_pdf} = <B>;
-                close B;
-            }
+            NGCP::Panel::Utils::InvoiceTemplate::convertSvg2Pdf($c,\$svg,$in,$out);
             $c->response->body($out->{tt_string_pdf});
             return;
             #$out->{tt_string} = `cat $filename `;

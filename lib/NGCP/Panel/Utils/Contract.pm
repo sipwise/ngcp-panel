@@ -13,8 +13,6 @@ sub create_contract_balance {
     my $contract = $params{contract};
     my $profile = $params{profile};
 
-    my ($cash_balance, $cash_balance_interval,
-        $free_time_balance, $free_time_balance_interval) = (0,0,0,0);
 
     # first, calculate start and end time of current billing profile
     # (we assume billing interval of 1 month)
@@ -22,20 +20,13 @@ sub create_contract_balance {
     my $etime = $stime->clone->add(months => 1)->subtract(seconds => 1);
 
     # calculate free_time/cash ratio
-    my $free_time = $profile->interval_free_time || 0;
-    my $free_cash = $profile->interval_free_cash || 0;
-    if($free_time or $free_cash) {
-        $etime->add(seconds => 1);
-        my $ctime = NGCP::Panel::Utils::DateTime::current_local->truncate(to => 'day');
-        my $ratio = ($etime->epoch - $ctime->epoch) / ($etime->epoch - $stime->epoch);
-        
-        $cash_balance = sprintf("%.4f", $free_cash * $ratio);
-        $cash_balance_interval = 0;
-
-        $free_time_balance = sprintf("%.0f", $free_time * $ratio);
-        $free_time_balance_interval = 0;
-        $etime->subtract(seconds => 1);
-    }
+    my ($cash_balance, $cash_balance_interval,
+        $free_time_balance, $free_time_balance_interval) = get_contract_balance_values(
+        interval_free_time => ( $profile->interval_free_time || 0 ),
+        interval_free_cash => ( $profile->interval_free_cash || 0 ),
+        stime => $stime,
+        etime => $etime,
+    );
 
     try {
         my $schema = $c->model('DB');
@@ -60,7 +51,27 @@ sub create_contract_balance {
     };
     return;
 }
+sub get_contract_balance_values{
+    my %params = @_;
+    my($free_time,$free_cash,$stime,$etime) = @params{qw/interval_free_time interval_free_cash stime etime/};
+    my ($cash_balance, $cash_balance_interval,
+        $free_time_balance, $free_time_balance_interval) = (0,0,0,0);
+    if($free_time or $free_cash) {
+        $etime->add(seconds => 1);
+        my $ctime = NGCP::Panel::Utils::DateTime::current_local->truncate(to => 'day');
+        if( ( $ctime->epoch >= $stime->epoch ) && ( $ctime->epoch <= $stime->epoch ) ){
+            my $ratio = ($etime->epoch - $ctime->epoch) / ($etime->epoch - $stime->epoch);
+            
+            $cash_balance = sprintf("%.4f", $free_cash * $ratio);
+            $cash_balance_interval = 0;
 
+            $free_time_balance = sprintf("%.0f", $free_time * $ratio);
+            $free_time_balance_interval = 0;
+        }
+        $etime->subtract(seconds => 1);
+    }
+    return ($cash_balance,$cash_balance_interval,$free_time_balance,$free_time_balance_interval);
+}
 sub recursively_lock_contract {
     my %params = @_;
 

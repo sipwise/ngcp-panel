@@ -5,6 +5,8 @@ use strict;
 use warnings;
 #use Moose;
 use Sipwise::Base;
+use File::Temp qw/tempfile tempdir/;
+use File::Path qw/mkpath/;
 
 sub getDefaultInvoiceTemplate{
     my (%in) = @_;
@@ -17,6 +19,72 @@ sub getDefaultInvoiceTemplate{
         ${$in{result}} = $result;
     }
     return \$result;
+}
+sub convertSvg2Pdf{
+    my($c,$svg_ref,$in,$out) = @_;
+    my $svg = $$svg_ref;
+    my(@pages) = $svg=~/(<svg.*?(?:\/svg>))/sig;
+    
+    #$c->log->debug($svg);
+    my ($tempdirbase,$tempdir );
+    #my($fh, $tempfilename) = tempfile();
+    $tempdirbase = join('/',File::Spec->tmpdir,@$in{qw/provider_id tt_type tt_sourcestate/}, $out->{tt_id});
+    ! -e $tempdirbase and mkpath( $tempdirbase, 0, 0777 );
+    $tempdir = tempdir( DIR =>  $tempdirbase , CLEANUP => 1 );
+    $c and $c->log->debug("tempdirbase=$tempdirbase; tempdir=$tempdir;");
+    #try{
+    #} catch($e){
+    #    NGCP::Panel::Utils::Message->error(
+    #        c => $c,
+    #        error => "Can't create temporary directory at: $tempdirbase;" ,
+    #        desc  => $c->loc("Can't create temporary directory."),
+    #    );
+    #}
+    my $pagenum = 1;
+    my @pagefiles;
+    foreach my $page (@pages){
+        my $fh;
+        my $pagefile = "$tempdir/$pagenum.svg";
+        push @pagefiles, $pagefile;
+        open($fh,">",$pagefile);
+        #try{
+        #} catch($e){
+        #    NGCP::Panel::Utils::Message->error(
+        #        c => $c,
+        #        error => "Can't create temporary page file at: $tempdirbase/$page.svg;" ,
+        #        desc  => $c->loc("Can't create temporary file."),
+        #    );
+        #}
+        print $fh $page;
+        close $fh;
+        $pagenum++;
+    }
+    
+    my $cmd = "rsvg-convert -f pdf ".join(" ", @pagefiles);
+    $c and $c->log->debug($cmd);
+    #`chmod ugo+rwx $filename`;
+    #binmode(STDOUT);
+    #binmode(STDIN);
+    #$out->{tt_string} = `$cmd`;
+    {
+        #$cmd = "fc-list";
+        open B, "$cmd |"; 
+        binmode B; 
+        local $/ = undef; 
+        $out->{tt_string_pdf} = <B>;
+        close B;
+    }
+}
+sub preprocessInvoiceTemplateSvg{
+    my($in,$svg_ref) = @_;
+    no warnings 'uninitialized';
+    #print "1.\n\n\n\n\nsvg=".$out->{tt_string_prepared}.";";
+    $$svg_ref=~s/(?:{\s*)?<!--{|}-->(?:\s*})?//gs;
+    $$svg_ref=~s/(<g .*?(id *=["' ]+(?:title|bg|mid)page["' ]+)?.*?)(?:display="none")(?(2)(?:.*?>)($2.*?>))/$1$3/gs;
+    if($in->{no_fake_data}){
+        $$svg_ref=~s/\[%[^\[\%]+lorem.*?%\]//gs;        
+    }
+    #print "\n\n2.\n\n\n\nsvg=".$out->{tt_string_prepared}.";";
 }
 
 1;

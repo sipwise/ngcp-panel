@@ -166,7 +166,7 @@ g, text, tspan {
             <text y="10" text-anchor="end" id="callpage_calls[%loop.count-%]" class="widedatarow">
                 <tspan x="0" id="callpage_calls_num[%loop.count-%]" text-anchor="start" class="widedatarow"><!--{[% call.0 %]}--><!--{[%#}-->1<!--{%]}--></tspan>
                 <!--{[%IF call.1; call = call.1; END%]}-->
-                <tspan x="10" id="callpage_calls_start_time%loop.count-%]" text-anchor="start" class="widedatarow"><!--{[% date.format(Math.int(call.get_column('start_time')),'%Y-%m-%d %H:%M:%S') %]}--><!--{[%#}-->0001-01-31 23:59:59<!--{%]}--></tspan>
+                <tspan x="10" id="callpage_calls_start_time[%loop.count-%]" text-anchor="start" class="widedatarow"><!--{[% date.format(Math.int(call.get_column('start_time')),'%Y-%m-%d %H:%M:%S') %]}--><!--{[%#}-->0001-01-31 23:59:59<!--{%]}--></tspan>
                 <tspan x="60" id="callpage_calls_duration[%loop.count-%]" class="widedatarow"><!--{[% call.get_column('duration')|format('%.3f') %]}--><!--{[%#}-->0.000<!--{%]}--></tspan>
                 <tspan x="90" id="callpage_calls_destination[%loop.count-%]" class="widedatarow"><!--{[% call.get_column('destination_user_in').replace('(.*?)\d{4}$','$1****') %]}--><!--{[%#}-->+00000000****<!--{%]}--></tspan>
                 <tspan x="105" id="callpage_calls_type[%loop.count-%]" class="widedatarow"><!--{[% call.get_column('call_type') %]}--><!--{[%#}-->call<!--{%]}--></tspan>

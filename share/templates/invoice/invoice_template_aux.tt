@@ -123,7 +123,7 @@
     [% matches = page.match( page_interval_re ) -%]
 
     [%interval = matches.0 || matches.1 %]
-    [%interval = Math.int(rows)%]
+    [%interval = Math.int(interval)%]
     [%interval%]
 [%END -%]
 
@@ -137,7 +137,7 @@
     [% midzonerows = get_page_rows_number('zonepage','svg') %]
     [% titlezoneinterval =  get_page_interval('titlepage','svg','zone') %]
     [% midzoneinterval =  get_page_interval('zonepage','svg') %]
-    [% midzonerows = get_page_rows_number('zonepage','svg') %]
+    [% midzonerows = Math.int(get_page_rows_number('zonepage','svg')) %]
     [% midzonerows = ( midzonerows < 1 ) ? 30 : midzonerows %]
     
     [% allmidzonepages = ( (allzonerowsnumber - titlezonerows) / midzonerows )|format('%d') %]
@@ -148,7 +148,7 @@
     
     [% allcallrowsnumber = invoice_details_calls.size() %]
     [% titlecallrows =  get_page_rows_number('titlepage','svg','call') %]
-    [% midcallrows = get_page_rows_number('callpage','svg') %]
+    [% midcallrows = Math.int(get_page_rows_number('callpage','svg')) %]
     [% midcallrows = ( midcallrows < 1 ) ? 30 : midcallrows %]
     [% titlecallinterval =  get_page_interval('titlepage','svg', 'call') %]
     [% midcallinterval =  get_page_interval('callpage','svg') %]
@@ -174,7 +174,7 @@
         [% bgpage(pagenum) -%]
         [% document_footer()%]
     [%END-%]
-    [%IF ( pagetype == 'zone' || pagetype=='all' ) && allmidzonerows %]
+    [%IF ( pagetype == 'zone' || pagetype=='all' ) && allzonerowsnumber %]
         [% pages = pagenum_in ? [ pagenum_in ] : [ 1 .. allmidzonepages ] %]
         [%FOREACH pagenum IN pages %]
             [% pagerowsstart = titlezonerows + midzonerows * ( pagenum - 1 )%]

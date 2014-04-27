@@ -23,8 +23,7 @@ sub translate_form {
     NGCP::Panel::Utils::I18N->translate_form(@_);
 }
 
-sub process
-{
+sub process{
     my ( $self, $c ) = @_;
     #$c->res->content_type("image/svg+xml");
     $self->{template}->context->define_vmethod(
@@ -54,10 +53,10 @@ sub process
 sub getTemplate{
     my ( $self, $c, $template ) = @_;
     if(defined $template){
-        $c->log->debug("getTemplate: template=$template;");
+        $c and $c->log->debug("getTemplate: template=$template;");
     }
-    $template ||= ( $c->stash->{template} ||  $c->action . $self->config->{TEMPLATE_EXTENSION} );
-    $c->log->debug("getTemplate: template=$template;");
+    $c and $template ||= ( $c->stash->{template} ||  $c->action . $self->config->{TEMPLATE_EXTENSION} );
+    $c and $c->log->debug("getTemplate: template=$template;");
     return $template;
 }
 #method is necessary to apply APP specific template configurations, e.g. path, tt file extensions etc
@@ -69,6 +68,14 @@ sub getTemplateContent{
 }
 sub getTemplateProcessed{
     my ( $self, $c, $template, $stash ) = @_;
+    $self->{template}->context->define_vmethod(
+        hash => get_column => sub {
+            my($item,$col) = @_;
+            if('HASH' eq ref $item){
+                return $item->{$col};
+            }
+        }
+    );
     #$c->log->debug("getTemplateProcessed: template=$template;");
     #my $result = $self->{template}->context->process($template, $stash);
     #$c->log->debug("getTemplateProcessed: result=$result;");
