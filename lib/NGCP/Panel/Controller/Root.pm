@@ -45,6 +45,7 @@ sub auto :Private {
         or 'NGCP::Panel::Controller::Login' eq $c->controller->catalyst_component_name
         or $c->req->uri->path =~ m|^/device/autoprov/.+|
         or $c->req->uri->path =~ m|^/recoverwebpassword/?$|
+        or $c->req->uri->path =~ m|^/resetwebpassword/?$|
     ) {
         $c->log->debug("*** Root::auto skip authn, grant access to " . $c->request->path);
         return 1;
