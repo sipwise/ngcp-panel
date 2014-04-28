@@ -46,6 +46,7 @@ use NGCP::Panel::Form::Faxserver::SendCopy;
 use NGCP::Panel::Form::Faxserver::Destination;
 use NGCP::Panel::Form::Subscriber::Webfax;
 use NGCP::Panel::Form::Subscriber::ResetPassword;
+use NGCP::Panel::Form::Subscriber::RecoverPassword;
 
 use NGCP::Panel::Utils::XMLDispatcher;
 use UUID;
@@ -581,6 +582,71 @@ sub reset_webpassword :Chained('base') :PathPart('resetwebpassword') :Args(0) {
         );
     }
     NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for('/subscriber'));
+}
+
+sub reset_webpassword_nosubscriber :Chained('/') :PathPart('resetwebpassword') :Args(0) {
+    my ($self, $c) = @_;
+
+    my $posted = $c->req->method eq "POST";
+    my $form = NGCP::Panel::Form::Subscriber::RecoverPassword->new;
+    my $params = {};
+    $form->process(
+        posted => $posted,
+        params => $c->req->params,
+        item => $params,
+    );
+    NGCP::Panel::Utils::Navigation::check_form_buttons(
+        c => $c,
+        form => $form,
+        fields => {},
+        back_uri => $c->req->uri,
+    );
+    if($posted && $form->validated) {
+        try {
+            my $schema = $c->model('DB');
+            $schema->txn_do(sub {
+                my ($user, $domain) = split /\@/, $form->params->{username};
+                my $subscriber = $schema->resultset('voip_subscribers')->find({
+                    username => $user,
+                    'domain.domain' => $domain,
+                },{
+                    join => 'domain',
+                });
+
+                # don't inform about unknown users
+                if($subscriber) {
+                    # don't clear web password, a user might just have guessed it and
+                    # could then block the legit user out
+                    my ($uuid_bin, $uuid_string);
+                    UUID::generate($uuid_bin);
+                    UUID::unparse($uuid_bin, $uuid_string);
+                    $subscriber->password_resets->delete; # clear any old entries of this subscriber
+                    $subscriber->password_resets->create({
+                        uuid => $uuid_string,
+                        timestamp => NGCP::Panel::Utils::DateTime::current_local->epoch,
+                    });
+                    my $url = $c->uri_for_action('/subscriber/recover_webpassword')->as_string . '?uuid=' . $uuid_string;
+                    NGCP::Panel::Utils::Email::password_reset($c, $subscriber, $url);
+                }
+            });
+            $c->flash(messages => [{type => 'success', text => $c->loc('Successfully reset web password, please check your email') }]);
+        } catch($e) {
+            NGCP::Panel::Utils::Message->error(
+                c     => $c,
+                error => $e,
+                desc  => $c->loc('Failed to reset web password.'),
+            );
+        }
+        $c->res->redirect($c->uri_for('/login/subscriber'));
+    }
+
+    $c->stash(
+        form => $form,
+        edit_flag => 1,
+        template => 'subscriber/recoverpassword.tt',
+        close_target => $c->uri_for('/login/subscriber'),
+    );
+
 }
 
 sub recover_webpassword :Chained('/') :PathPart('recoverwebpassword') :Args(0) {
