@@ -6,6 +6,7 @@ use Sipwise::Base;
 use DBIx::Class::Exception;
 use NGCP::Panel::Utils::DateTime;
 use NGCP::Panel::Utils::Preferences;
+use NGCP::Panel::Utils::Email;
 use UUID qw/generate unparse/;
 
 my %LOCK = (
@@ -163,6 +164,16 @@ sub create_subscriber {
         UUID::generate($uuid_bin);
         UUID::unparse($uuid_bin, $uuid_string);
 
+        my $contact;
+        if($params->{email}) {
+            $contact = $c->model('DB')->resultset('contacts')->create({
+                reseller_id => $contract->contact->reseller_id,
+                email => $params->{email},
+            });
+            delete $params->{email};
+        }
+
+
         # TODO: check if we find a reseller and contract and domains
 
         my $billing_subscriber = $contract->voip_subscribers->create({
@@ -172,6 +183,7 @@ sub create_subscriber {
             status => $params->{status},
             external_id => ((defined $params->{external_id} && length $params->{external_id}) ? $params->{external_id} : undef), # make null if empty
             primary_number_id => undef, # will be filled in next step
+            contact_id => $contact ? $contact->id : undef,
         });
         my ($cli);
         if(defined $params->{e164}{cc} && $params->{e164}{cc} ne '') {
@@ -237,6 +249,10 @@ sub create_subscriber {
                 domain_id => $prov_subscriber->domain->id,
                 subscriber_id => $prov_subscriber->id,
             });
+        }
+
+        if($contract->subscriber_email_template_id) {
+            NGCP::Panel::Utils::Email::new_subscriber($c, $billing_subscriber);
         }
 
         return $billing_subscriber;
@@ -445,6 +461,7 @@ sub update_subscriber_numbers {
                 })->voip_usr_preferences;
             $usr_preferences_base_cli_rs->search_rs({subscriber_id=>$prov_subs->id})->update_all({value => $new_base_cli});
             for my $sub ($customer_subscribers_rs->all) {
+                next unless($sub->provisioning_voip_subscriber); # terminated etc
                 next if $sub->id == $billing_subs->id; # myself
                 next unless $sub->primary_number;
                 next unless $sub->primary_number->cc == $old_cc;

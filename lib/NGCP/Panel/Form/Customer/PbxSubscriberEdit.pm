@@ -31,10 +31,20 @@ has_field 'alias_number_add' => (
     element_class => [qw/btn btn-primary pull-right/],
 );
 
+has_field 'email' => (
+    type => 'Email',
+    required => 0,
+    maxlength => 255,
+    element_attr => {
+        rel => ['tooltip'],
+        title => ['The email address of the subscriber.']
+    },
+);
+
 has_block 'fields' => (
     tag => 'div',
     class => [qw/modal-body/],
-    render_list => [qw/e164 alias_number alias_number_add webusername webpassword password status profile_set profile/ ],
+    render_list => [qw/e164 alias_number alias_number_add email webusername webpassword password status profile_set profile/ ],
 );
 
 has_block 'actions' => (

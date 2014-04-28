@@ -50,6 +50,10 @@
                     -%]
                     <a class="btn btn-primary btn-large" href="[% href %]"><i class="icon-edit"></i> [% c.loc('Edit') %]</a>
                 [% END -%]
+                [% IF subscriber.contract.passreset_email_template -%]
+                    <a class="btn btn-primary btn-large" href="[% c.uri_for_action('/subscriber/reset_webpassword', [subscriber.id]) %]"><i class="icon-repeat"></i> [% c.loc('Reset Web Password') %]</a>
+                [% END -%]
+                
                 <div class="ngcp-separator"></div>
 
                 <table class="table table-bordered table-striped table-highlight table-hover" id="subscribers_table">
@@ -70,21 +74,24 @@
                             elements = [];
 
                             elements.push({ value = subscriber.status, desc = c.loc('Status') });
+                            IF subscriber.contact;
+                                elements.push({ value = subscriber.contact.email, desc = c.loc('Email Address') });
+                            END;
                             elements.push({ value = subscriber.provisioning_voip_subscriber.webusername, desc = c.loc('Web Username') });
                             IF (c.user.roles == "admin" || c.user.roles == "reseller") && c.user.show_passwords;
-                            elements.push({ value = subscriber.provisioning_voip_subscriber.webpassword, desc = c.loc('Web Password') });
+                                elements.push({ value = subscriber.provisioning_voip_subscriber.webpassword, desc = c.loc('Web Password') });
                             END;
                             elements.push({ value = subscriber.username _ '@' _ subscriber.domain.domain, desc = c.loc('SIP URI') });
                             IF (c.user.roles == "admin" || c.user.roles == "reseller") && c.user.show_passwords;
-                            elements.push({ value = subscriber.provisioning_voip_subscriber.password, desc = c.loc('SIP Password') });
+                                elements.push({ value = subscriber.provisioning_voip_subscriber.password, desc = c.loc('SIP Password') });
                             END;
                             IF subscriber.provisioning_voip_subscriber.pbx_group_id.defined;
-                            elements.push({ value = subscriber.provisioning_voip_subscriber.voip_pbx_group.username, desc = c.loc('PBX Group') });
+                                elements.push({ value = subscriber.provisioning_voip_subscriber.voip_pbx_group.username, desc = c.loc('PBX Group') });
                             END;
                             IF c.user.roles == "admin" || c.user.roles == "reseller";
-                            elements.push({ value = subscriber.provisioning_voip_subscriber.admin ? 'yes' : 'no', desc = c.loc('Administrative') });
-                            elements.push({ value = subscriber.external_id, desc = c.loc('External #')});
-                            elements.push({ value = subscriber.uuid, desc = c.loc('UUID') });
+                                elements.push({ value = subscriber.provisioning_voip_subscriber.admin ? 'yes' : 'no', desc = c.loc('Administrative') });
+                                elements.push({ value = subscriber.external_id, desc = c.loc('External #')});
+                                elements.push({ value = subscriber.uuid, desc = c.loc('UUID') });
                             END;
                             elements.push({ value = subscriber.primary_number.cc _ ' ' _ subscriber.primary_number.ac _ ' ' _ subscriber.primary_number.sn, desc = c.loc('Primary Number') });
 

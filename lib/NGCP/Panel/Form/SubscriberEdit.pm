@@ -18,6 +18,16 @@ has_field 'submitid' => ( type => 'Hidden' );
 sub build_render_list {[qw/submitid fields actions/]}
 sub build_form_element_class {[qw(form-horizontal)]}
 
+has_field 'email' => (
+    type => 'Email',
+    required => 0,
+    maxlength => 255,
+    element_attr => {
+        rel => ['tooltip'],
+        title => ['The email address of the subscriber.']
+    },
+);
+
 has_field 'webusername' => (
     type => 'Text',
     label => 'Web Username',
@@ -142,7 +152,7 @@ has_field 'save' => (
 has_block 'fields' => (
     tag => 'div',
     class => [qw/modal-body/],
-    render_list => [qw/e164 alias_number alias_number_add webusername webpassword password lock status external_id administrative profile_set profile/ ],
+    render_list => [qw/e164 alias_number alias_number_add email webusername webpassword password lock status external_id administrative profile_set profile/ ],
 );
 
 has_block 'actions' => (

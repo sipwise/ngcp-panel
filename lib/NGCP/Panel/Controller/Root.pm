@@ -44,6 +44,7 @@ sub auto :Private {
         __PACKAGE__ eq $c->controller->catalyst_component_name
         or 'NGCP::Panel::Controller::Login' eq $c->controller->catalyst_component_name
         or $c->req->uri->path =~ m|^/device/autoprov/.+|
+        or $c->req->uri->path =~ m|^/recoverwebpassword/?$|
     ) {
         $c->log->debug("*** Root::auto skip authn, grant access to " . $c->request->path);
         return 1;
@@ -72,7 +73,7 @@ sub auto :Private {
                         is_active => 1, # TODO: abused as password until NoPassword handler is available
                     }, 'api_admin_cert');
                 unless($c->user_exists)  {
-                    $c->log->debug("+++++ invalid api login");
+                    $c->log->warn("invalid api login from '".$c->req->address."'");
                     $c->detach(qw(API::Root invalid_user), [$ssl_sn]) unless $c->user_exists;
                 } else {
                     $c->log->debug("++++++ admin '".$c->user->login."' authenticated via api_admin_cert");
@@ -88,6 +89,7 @@ sub auto :Private {
                 unless($c->user_exists && $c->user->is_active)  {
                     $c->user->logout if($c->user);
                     $c->log->debug("+++++ invalid api admin http login");
+                    $c->log->warn("invalid api http login from '".$c->req->address."'");
                     my $r = $c->get_auth_realm($realm);
                     $r->credential->authorization_required_response($c, $r);
                     return;

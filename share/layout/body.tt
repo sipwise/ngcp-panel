@@ -10,12 +10,16 @@
             <div id="top-nav">
                 <ul class="pull-right">
                     <li>
-                      [%- IF c.user.roles == 'admin' || c.user.roles == 'reseller' -%]
-                        [% login_name = c.user.login %]
+                      [% IF c.user -%]
+                        [%- IF c.user.roles == 'admin' || c.user.roles == 'reseller' -%]
+                          [% login_name = c.user.login %]
+                        [%- ELSE -%]
+                          [% login_name = c.user.webusername _'@'_ c.user.domain.domain %]
+                        [%- END -%]
+                        <i class="icon-user"></i> [% c.loc("Logged in as [_1]", login_name) %]
                       [%- ELSE -%]
-                        [% login_name = c.user.webusername _'@'_ c.user.domain.domain %]
+                        <i class="icon-user"></i> [% c.loc("Not logged in") %]
                       [%- END -%]
-                      <i class="icon-user"></i> [% c.loc("Logged in as [_1]", login_name) %]
                     </li>
                     <li class="dropdown">
 					<a href="#" class="dropdown-toggle" data-toggle="dropdown">
