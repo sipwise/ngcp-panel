@@ -1,5 +1,15 @@
 <body class="login">
     <div class="account-container login stacked">
+
+[% IF messages -%]
+<div>
+    [% FOREACH m IN messages -%]
+        <div class="alert alert-[% m.type %]">[% m.text %]</div>
+    [% END -%]
+</div>
+[% END -%]
+
+
         <div class="content clearfix">
             <h1>[% c.loc('[_1] Sign In', realm.ucfirst) %]</h1>
             <p>[% c.loc('Sign in using your [_1] credentials:', realm.ucfirst) %]</p>

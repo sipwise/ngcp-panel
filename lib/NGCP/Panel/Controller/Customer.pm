@@ -133,6 +133,10 @@ sub create :Chained('list_customer') :PathPart('create') :Args(0) {
             $schema->txn_do(sub {
                 $form->params->{contact_id} = $form->params->{contact}{id};
                 delete $form->params->{contact};
+                $form->params->{subscriber_email_template_id} = $form->params->{subscriber_email_template}{id};
+                delete $form->params->{subscriber_email_template};
+                $form->params->{passreset_email_template_id} = $form->params->{passreset_email_template}{id};
+                delete $form->params->{passreset_email_template};
                 my $bprof_id = $form->params->{billing_profile}{id};
                 delete $form->params->{billing_profile};
                 $form->{create_timestamp} = $form->{modify_timestamp} = NGCP::Panel::Utils::DateTime::current_local;
@@ -324,6 +328,8 @@ sub base :Chained('list_customer') :PathPart('') :CaptureArgs(1) {
         });
     }
 
+    NGCP::Panel::Utils::Sounds::stash_soundset_list(c => $c, contract => $c->stash->{contract});
+
     my $field_devs = [ $c->model('DB')->resultset('autoprov_field_devices')->search({
         'contract_id' => $contract_rs->first->id
     })->all ];
@@ -342,7 +348,7 @@ sub base :Chained('list_customer') :PathPart('') :CaptureArgs(1) {
 sub edit :Chained('base') :PathPart('edit') :Args(0) {
     my ($self, $c) = @_;
 
-    $fooo = breakme;
+    #$fooo = breakme;
     # We now optionally get email templates via the form for subscriber creation
     # and for password reset. Change DB schema to store those ids, and if they are
     # not null, hide webpassword field and let user change pass on first login, and
@@ -361,6 +367,8 @@ sub edit :Chained('base') :PathPart('edit') :Args(0) {
     $params->{contact}{id} = delete $params->{contact_id};
     $params->{product}{id} = $billing_mapping->product_id;
     $params->{billing_profile}{id} = $billing_mapping->billing_profile_id;
+    $params->{subscriber_email_template}{id} = delete $params->{subscriber_email_template_id};
+    $params->{passreset_email_template}{id} = delete $params->{passreset_email_template_id};
     $params = $params->merge($c->session->{created_objects});
     if($c->config->{features}->{cloudpbx}) {
         $form = NGCP::Panel::Form::Contract::ProductSelect->new(ctx => $c);
@@ -385,6 +393,10 @@ sub edit :Chained('base') :PathPart('edit') :Args(0) {
             $schema->txn_do(sub {
                 $form->params->{contact_id} = $form->params->{contact}{id};
                 delete $form->params->{contact};
+                $form->params->{subscriber_email_template_id} = $form->params->{subscriber_email_template}{id};
+                delete $form->params->{subscriber_email_template};
+                $form->params->{passreset_email_template_id} = $form->params->{passreset_email_template}{id};
+                delete $form->params->{passreset_email_template};
                 my $bprof_id = $form->params->{billing_profile}{id};
                 delete $form->params->{billing_profile};
                 $form->{modify_timestamp} = NGCP::Panel::Utils::DateTime::current_local;
@@ -507,7 +519,6 @@ sub terminate :Chained('base') :PathPart('terminate') :Args(0) {
 sub details :Chained('base') :PathPart('details') :Args(0) {
     my ($self, $c) = @_;
 
-    NGCP::Panel::Utils::Sounds::stash_soundset_list(c => $c, contract => $c->stash->{contract});
     $c->stash->{contact_hash} = { $c->stash->{contract}->contact->get_inflated_columns };
     if(defined $c->stash->{contract}->max_subscribers) {
        $c->stash->{subscriber_count} = $c->stash->{contract}->voip_subscribers

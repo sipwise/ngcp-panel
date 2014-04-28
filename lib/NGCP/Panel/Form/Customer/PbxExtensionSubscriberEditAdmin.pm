@@ -27,7 +27,7 @@ has_field 'alias_number_add' => (
 has_block 'fields' => (
     tag => 'div',
     class => [qw/modal-body/],
-    render_list => [qw/group pbx_extension alias_number alias_number_add webusername webpassword password status external_id profile_set profile/ ],
+    render_list => [qw/group pbx_extension alias_number alias_number_add email webusername webpassword password status external_id profile_set profile/ ],
 );
 
 sub field_list {

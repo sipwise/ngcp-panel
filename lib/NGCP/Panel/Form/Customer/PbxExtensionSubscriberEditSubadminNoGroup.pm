@@ -19,7 +19,7 @@ has_field 'alias_select' => (
 has_block 'fields' => (
     tag => 'div',
     class => [qw/modal-body/],
-    render_list => [qw/webusername webpassword password external_id alias_select profile/ ],
+    render_list => [qw/email webusername webpassword password external_id alias_select profile/ ],
 );
 
 sub update_fields {

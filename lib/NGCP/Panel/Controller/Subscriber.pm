@@ -45,6 +45,7 @@ use NGCP::Panel::Form::Faxserver::SendStatus;
 use NGCP::Panel::Form::Faxserver::SendCopy;
 use NGCP::Panel::Form::Faxserver::Destination;
 use NGCP::Panel::Form::Subscriber::Webfax;
+use NGCP::Panel::Form::Subscriber::ResetPassword;
 
 use NGCP::Panel::Utils::XMLDispatcher;
 use UUID;
@@ -358,6 +359,16 @@ sub base :Chained('sub_list') :PathPart('') :CaptureArgs(1) {
         { name => "peer_number", search => 1, title => $c->loc('Peer Number') },
         { name => "pages", search => 1, title => $c->loc('Pages') },
     ]);
+
+    if($c->config->{features}->{cloudpbx}) {
+        $c->stash->{pbx_groups} = $c->model('DB')->resultset('voip_subscribers')->search({
+            contract_id => $c->stash->{subscriber}->contract->id,
+            status => { '!=' => 'terminated' },
+            'provisioning_voip_subscriber.is_pbx_group' => 1,
+        }, {
+            join => 'provisioning_voip_subscriber',
+        });
+    }
 }
 
 sub webfax :Chained('base') :PathPart('webfax') :Args(0) {
@@ -527,6 +538,133 @@ sub terminate :Chained('base') :PathPart('terminate') :Args(0) :Does(ACL) :ACLDe
         );
     }
     NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for('/subscriber'));
+}
+
+sub reset_webpassword :Chained('base') :PathPart('resetwebpassword') :Args(0) {
+    my ($self, $c) = @_;
+    my $subscriber = $c->stash->{subscriber};
+
+    if($c->user->roles eq 'subscriberadmin' && $c->user->voip_subscriber->contract_id != $subscriber->contract_id) {
+        NGCP::Panel::Utils::Message->error(
+            c     => $c,
+            error => 'unauthorized password reset for subscriber uuid '.$c->user->uuid,
+            desc  => $c->loc('Invalid password reset attempt.'),
+        );
+        NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for('/subscriber'));
+    }
+
+    try {
+        my $schema = $c->model('DB');
+        $schema->txn_do(sub {
+            $subscriber->provisioning_voip_subscriber->update({
+                webpassword => undef,
+            });
+            my ($uuid_bin, $uuid_string);
+            UUID::generate($uuid_bin);
+            UUID::unparse($uuid_bin, $uuid_string);
+            $subscriber->password_resets->delete; # clear any old entries of this subscriber
+            $subscriber->password_resets->create({
+                uuid => $uuid_string,
+                timestamp => NGCP::Panel::Utils::DateTime::current_local->epoch,
+            });
+            my $url = $c->uri_for_action('/subscriber/recover_webpassword')->as_string . '?uuid=' . $uuid_string;
+            NGCP::Panel::Utils::Email::password_reset($c, $subscriber, $url);
+
+
+        });
+        $c->flash(messages => [{type => 'success', text => $c->loc('Successfully reset web password, please check your email at [_1]', $subscriber->contact ? $subscriber->contact->email : $subscriber->contract->contact->email) }]);
+    } catch($e) {
+        NGCP::Panel::Utils::Message->error(
+            c     => $c,
+            error => $e,
+            desc  => $c->loc('Failed to reset web password.'),
+        );
+    }
+    NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for('/subscriber'));
+}
+
+sub recover_webpassword :Chained('/') :PathPart('recoverwebpassword') :Args(0) {
+    my ($self, $c) = @_;
+
+    $c->log->debug("++++++++++++++++++++ password recovery attempt");
+
+    $c->user->logout if($c->user);
+
+    my $posted = $c->req->method eq "POST";
+    my ($uuid_bin, $uuid_string);
+    $uuid_string = $c->req->params->{uuid} // '';
+
+    unless($posted) {
+        unless($uuid_string && UUID::parse($uuid_string, $uuid_bin) != -1) {
+            $c->log->warn("invalid password recovery attempt for uuid '$uuid_string' from '".$c->req->address."'");
+            $c->detach('/denied_page')
+        }
+
+        my $rs = $c->model('DB')->resultset('password_resets')->search({
+            uuid => $uuid_string,
+            timestamp => { '>=' => (NGCP::Panel::Utils::DateTime::current_local->epoch - 86400) },
+        });
+
+        my $subscriber = $rs->first ? $rs->first->voip_subscriber : undef;
+        unless($subscriber) {
+            $c->log->warn("invalid password recovery attempt for uuid '$uuid_string' from '".$c->req->address."'");
+            $c->detach('/denied_page');
+        }
+    }
+
+    my $form = NGCP::Panel::Form::Subscriber::ResetPassword->new;
+    my $params = {
+        uuid => $uuid_string,
+    };
+    $form->process(
+        posted => $posted,
+        params => $c->req->params,
+        item => $params,
+    );
+    NGCP::Panel::Utils::Navigation::check_form_buttons(
+        c => $c,
+        form => $form,
+        fields => {},
+        back_uri => $c->req->uri,
+    );
+    if($posted && $form->validated) {
+        my $subscriber;
+        try {
+            my $schema = $c->model('DB');
+            $schema->txn_do(sub {
+                my $rs = $c->model('DB')->resultset('password_resets')->search({
+                    uuid => $uuid_string,
+                    timestamp => { '>=' => (NGCP::Panel::Utils::DateTime::current_local->epoch - 86400) },
+                });
+
+                $subscriber = $rs->first ? $rs->first->voip_subscriber : undef;
+                unless($subscriber && $subscriber->provisioning_voip_subscriber) {
+                    $c->log->warn("invalid password recovery attempt for uuid '$uuid_string' from '".$c->req->address."'");
+                    $c->detach('/denied_page');
+                }
+                $subscriber->provisioning_voip_subscriber->update({
+                    webpassword => $form->params->{password},
+                });
+                $rs->delete;
+            });
+        } catch($e) {
+            $c->log->error("failed to recover web password: $e");
+            $c->detach('/denied_page');
+        }
+
+        $c->log->debug("+++++++++++++++++++++++ successfully recovered subscriber " . $subscriber->username . '@' . $subscriber->domain->domain);
+        $c->flash(messages => [{type => 'success', text => $c->loc('Web password successfully recovered, please re-login.') }]);
+        $c->res->redirect($c->uri_for('/login/subscriber'));
+        return;
+
+    }
+
+    $c->stash(
+        form => $form,
+        edit_flag => 1,
+        template => 'subscriber/recoverpassword.tt',
+        close_target => $c->uri_for('/login/subscriber'),
+    );
 }
 
 sub preferences :Chained('base') :PathPart('preferences') :Args(0) {
@@ -1775,15 +1913,6 @@ sub master :Chained('base') :PathPart('details') :CaptureArgs(0) {
     }, {
         join => 'provisioning_voip_subscriber',
     });
-    if($c->config->{features}->{cloudpbx}) {
-        $c->stash->{pbx_groups} = $c->model('DB')->resultset('voip_subscribers')->search({
-            contract_id => $c->stash->{contract}->id,
-            status => { '!=' => 'terminated' },
-            'provisioning_voip_subscriber.is_pbx_group' => 1,
-        }, {
-            join => 'provisioning_voip_subscriber',
-        });
-    }
 }
 
 sub details :Chained('master') :PathPart('') :Args(0) :Does(ACL) :ACLDetachTo('/denied_page') :AllowedRole(admin) :AllowedRole(reseller) :AllowedRole('subscriberadmin') {
@@ -1906,6 +2035,9 @@ sub edit_master :Chained('master') :PathPart('edit') :Args(0) :Does(ACL) :ACLDet
         if($pbx_ext) {
             $params->{group}{id} = $prov_subscriber->pbx_group_id;
         }
+        if($subscriber->contact) {
+            $params->{email} = $subscriber->contact->email;
+        }
 
 =pod
         my $display_pref = NGCP::Panel::Utils::Preferences::get_usr_preference_rs(
@@ -1959,8 +2091,23 @@ sub edit_master :Chained('master') :PathPart('edit') :Args(0) :Does(ACL) :ACLDet
             # we never return from here
         }
         my $schema = $c->model('DB');
-        try {
+#        try {
             $schema->txn_do(sub {
+
+                my $email = delete $form->params->{email};
+                if($email) {
+                    if($subscriber->contact) {
+                        $subscriber->contact->update({
+                            email => $email,
+                        });
+                    } else {
+                        my $contact = $c->model('DB')->resultset('contacts')->create({
+                            reseller_id => $subscriber->contract->contact->reseller_id,
+                            email => $email,
+                        });
+                        $subscriber->update({ contact_id => $contact->id });
+                    }
+                }
                 my $prov_params = {};
                 $prov_params->{pbx_extension} = $form->params->{pbx_extension};
                 $prov_params->{webusername} = $form->params->{webusername};
@@ -2177,6 +2324,7 @@ sub edit_master :Chained('master') :PathPart('edit') :Args(0) :Does(ACL) :ACLDet
             });
             delete $c->session->{created_objects}->{group};
             $c->flash(messages => [{type => 'success', text => $c->loc('Successfully updated subscriber') }]);
+=pod            
         } catch($e) {
             NGCP::Panel::Utils::Message->error(
                 c     => $c,
@@ -2184,6 +2332,7 @@ sub edit_master :Chained('master') :PathPart('edit') :Args(0) :Does(ACL) :ACLDet
                 desc  => $c->loc('Failed to update subscriber.'),
             );
         }
+=cut        
 
         NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for_action('/subscriber/details', [$c->req->captures->[0]]));
     }

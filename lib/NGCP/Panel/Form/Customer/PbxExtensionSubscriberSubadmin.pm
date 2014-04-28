@@ -23,7 +23,7 @@ has_field 'pbx_extension' => (
 has_block 'fields' => (
     tag => 'div',
     class => [qw/modal-body/],
-    render_list => [qw/group pbx_extension display_name webusername webpassword username password status profile/ ],
+    render_list => [qw/group pbx_extension display_name email webusername webpassword username password status profile/ ],
 );
 
 sub field_list {

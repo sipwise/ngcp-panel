@@ -37,6 +37,16 @@ has_field 'display_name' => (
     label => 'Display Name',
 );
 
+has_field 'email' => (
+    type => 'Email',
+    required => 0,
+    maxlength => 255,
+    element_attr => {
+        rel => ['tooltip'],
+        title => ['The email address of the subscriber.']
+    },
+);
+
 
 has_field 'webusername' => (
     type => 'Text',
@@ -127,7 +137,7 @@ has_block 'fields' => (
     tag => 'div',
     class => [qw/modal-body/],
     #render_list => [qw/display_name webusername webpassword username password status external_id profile_set profile/ ],
-    render_list => [qw/e164 display_name webusername webpassword username password status profile_set profile/ ],
+    render_list => [qw/e164 display_name email webusername webpassword username password status profile_set profile/ ],
 );
 
 has_block 'actions' => (

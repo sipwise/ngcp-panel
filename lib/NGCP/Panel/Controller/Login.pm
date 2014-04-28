@@ -90,6 +90,7 @@ sub index :Path Form {
             $c->response->redirect($target);
             return;
         } else {
+            $c->log->warn("invalid http login from '".$c->req->address."'");
             $c->log->debug("*** Login::index auth failed");
             $form->add_form_error($c->loc('Invalid username/password'));
         }

@@ -15,5 +15,11 @@ has_field 'contact.id' => (
     table_fields => ['id', 'firstname', 'lastname', 'email'],
 );
 
+has_block 'fields' => (
+    tag => 'div',
+    class => [qw/modal-body/],
+    render_list => [qw/contact billing_profile status external_id/],
+);
+
 1;
 # vim: set tabstop=4 expandtab:
