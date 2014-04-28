@@ -7,6 +7,17 @@
 [%date.format(dateval,'%B')%] [%ordinate(date.format(dateval,'%e'))%] [%IF !noyear; date.format(dateval,'%Y'); END%]
 [%END%]
 
+[%
+dateval.value = date.now();
+dateval.month_end = date_format('00:00:00 00-' _ (Math.int(date.format(dateval.value,'%m')) + 1) _ date.format(dateval.value,'-%Y'), noyear = 1 );
+dateval.month_start = date_format('00:00:00 01-' _ date.format(dateval.value,'%m-%Y'), noyear = 1 );
+dateval.year=date.format(dateval.value,'%Y');
+
+invoice.serial=Math.int(invoice.serial)|format('%06d');
+invoice.month=date.format(invoice.start,'%B');
+%]
+
+
 [%MACRO ordinate(num) BLOCK -%]
     [% IF num.search('(?<!1)1$') -%]
         [% sfx = 'st' -%]
@@ -24,6 +35,13 @@
     [%value_clear = value.replace('[ ,]','')%]
     [% IF value_clear -%]
         [% prefix _ value -%]
+    [%END%]
+[%END%]
+
+[%MACRO ife(value,suffix) BLOCK -%]
+    [%value_clear = value.replace('[ ,]','')%]
+    [% IF value_clear -%]
+        [% value _ suffix -%]
     [%END%]
 [%END%]
 
@@ -79,11 +97,11 @@
         [% total.global.number = total.global.number + calldata.get_column('number') -%]
         [% total.global.duration = total.global.duration + calldata.get_column('duration') -%]
         [% total.global.free_time = total.global.free_time + calldata.get_column('free_time') -%]
-        [% total.global.cost = total.global.cost + calldata.get_column('cost') -%]
+        [% total.global.cost = total.global.cost + ( Math.int(calldata.get_column('cost')) / 100 ) -%]
         [% total.perpage.${pagelocal}.number = total.perpage.${pagelocal}.number + calldata.get_column('number') -%]
         [% total.perpage.${pagelocal}.duration = total.perpage.${pagelocal}.duration + calldata.get_column('duration') -%]
         [% total.perpage.${pagelocal}.free_time = total.perpage.${pagelocal}.free_time + calldata.get_column('free_time') -%]
-        [% total.perpage.${pagelocal}.cost = total.perpage.${pagelocal}.cost + calldata.get_column('cost') -%]
+        [% total.perpage.${pagelocal}.cost = total.perpage.${pagelocal}.cost + ( Math.int(calldata.get_column('cost')) / 100) -%]
         [% adjustrow(call, page, pagelocal, pageslocalnum, rowtype,  tt_type, rows_interval, loop.count) -%]
     [%END -%]
 [%END -%]
@@ -92,9 +110,9 @@
     [% FOR call IN callsdata -%][%#invoice_details%]
         [%IF call.1; calldata = call.1; END%]
         [% total.global.duration = total.global.duration + calldata.get_column('duration') -%]
-        [% total.global.cost = total.global.cost + calldata.get_column('source_customer_cost') -%]
+        [% total.global.cost = total.global.cost + ( Math.int(calldata.get_column('source_customer_cost')) / 100 ) -%]
         [% total.perpage.${pagelocal}.duration = total.perpage.${pagelocal}.duration + calldata.get_column('duration') -%]
-        [% total.perpage.${pagelocal}.cost = total.perpage.${pagelocal}.cost + calldata.get_column('source_customer_cost') -%]
+        [% total.perpage.${pagelocal}.cost = total.perpage.${pagelocal}.cost + ( Math.int(calldata.get_column('source_customer_cost')) / 100 ) -%]
         [% adjustrow(call, page, pagelocal, pageslocalnum, rowtype,  tt_type, rows_interval, loop.count) -%]
     [%END -%]
 [%END -%]
@@ -180,9 +198,13 @@
             [% output = output _ document_footer()%]
         [%END-%]
     [%END-%]
+
+    [%#Dumper.dump(total)%]
     
-    [% total.pagetype.call.global = total.pagetype.call.global.import(total.global)%]
-    [% total.pagetype.call.perpage = total.pagetype.call.perpage.import(total.perpage)%]
+    [% total.pagetype.call.global.import(total.global)%]
+    [%# total.pagetype.call.perpage.import(total.perpage)%]
+
+    [%#Dumper.dump(total)%]
 
     [% total.global = {}%]
     [% total.perpage = [] %]
@@ -208,9 +230,16 @@
         [%END-%]
     [%END-%]
 
-    [% total.pagetype.call.global = total.pagetype.call.global.import(total.global)%]
-    [% total.pagetype.call.perpage = total.pagetype.call.perpage.import(total.perpage)%]
-
+    [%# Dumper.dump(total)%]
+    
+    [% total.pagetype.zone.global.import(total.global)%]
+    [%# total.pagetype.zone.perpage = total.pagetype.zone.perpage.import(total.perpage)%]
+    
+    [%DEFAULT invoice.amount_netto = total.pagetype.call.global.cost + total.pagetype.zone.global.cost %]
+    [%DEFAULT invoice.amount_vat = invoice.amount_netto * 0.2 %]
+    [%DEFAULT invoice.amount = invoice.amount_netto + invoice.amount_vat %]
+    [%DEFAULT invoice.amount_payment = invoice.amount - invoice.debit %]
+    
     [%IF ( pagetype == 'title' || pagetype=='all') %]
         [% pagenum = 1%]
         [% output_title = output_title _ document_header()%]

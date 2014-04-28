@@ -1,19 +1,25 @@
 #!/usr/bin/perl -w
-use lib '/media/sf_/usr/share/VMHost/ngcp-panel/lib';
+#use lib '/media/sf_/usr/share/VMHost/ngcp-panel/lib';
 use strict;
 
+use Getopt::Long;
 use DBI;
 use Data::Dumper;
-use NGCP::Panel::Utils::DateTime;
 use DateTime::TimeZone;
-#use Net::Domain qw(hostfqdn);
-#use LWP::UserAgent;
+use Test::MockObject;
+
+use Sipwise::Base;
+
+use NGCP::Panel;
+use NGCP::Panel::Utils::DateTime;
 use NGCP::Panel::Utils::Contract;
 use NGCP::Panel::Utils::InvoiceTemplate;
-use NGCP::Panel;
 use NGCP::Panel::View::SVG;
-use Test::MockObject;
-use Sipwise::Base;
+
+my $opt = {};
+Getopt::Long::GetOptions($opt, 'reseller_id:i@', 'client_contact_id:i@', 'stime:s', 'etime:s', 'help|?')
+    or die 'could not process command-line options';
+
 my $debug = 0;
 
 my ($dbuser, $dbpass);
@@ -31,37 +37,27 @@ if(-f $mfile) {
 print "using user '$dbuser' with pass '$dbpass'\n"
 	if($debug);
 
-#my ($ua, $req, $res);
-#use LWP::UserAgent;
-#use HTTP::Request;
-#$ua = LWP::UserAgent->new;
-#$req = HTTP::Request->new('OPTIONS', 'https://192.168.56.7:1444/invoice/3/template');
-##$res = $ua->request($req);
-#my $controller = NGCP::Panel->controller('Invoice'); 
-#my $c = NGCP::Panel->prepare($ua); 
-##$c->request->param->{tt_id} = 126; 
-##$c->request->method( 'POST' );
-##$c->request->uri( 'https://192.168.56.7:1444/invoice/3/template');
-#die();
 my $dbh = DBI->connect('dbi:mysql:billing;host=localhost', $dbuser, $dbpass)
 	or die "failed to connect to billing DB\n";
-
-
-my $stime = NGCP::Panel::Utils::DateTime::current_local()->truncate( to => 'month' );
-my $etime_plus = $stime->clone->add( months => 1 );
-my $etime = $etime_plus->clone->subtract( seconds => 1 );
-
 my $c_mock = Test::MockObject->new();
 $c_mock->set_false(qw/debug/);
 my $view = NGCP::Panel::View::SVG->new($c_mock,{});
+
+
+my $stime = $opt->{stime} 
+    ? NGCP::Panel::Utils::DateTime::new_local(split(/\D+/,$opt->{stime})) 
+    : NGCP::Panel::Utils::DateTime::current_local()->truncate( to => 'month' );
+my $etime = $opt->{etime} 
+    ? NGCP::Panel::Utils::DateTime::new_local(split(/\D+/,$opt->{etime})) 
+    : $stime->clone->add( months => 1 )->subtract( seconds => 1 );
+
 my $svg_default = $view->getTemplateContent(undef,'invoice/invoice_template_svg.tt');
 NGCP::Panel::Utils::InvoiceTemplate::preprocessInvoiceTemplateSvg( {no_fake_data => 1}, \$svg_default);
-#print $etime->ymd;
 
-foreach my $provider_contract( @{$dbh->selectall_arrayref('select contracts.*,resellers.id as reseller_core_id from resellers inner join contracts on resellers.contract_id=contracts.id where resellers.status != "terminated"',  { Slice => {} } ) } ){
+foreach my $provider_contract( @{$dbh->selectall_arrayref('select contracts.*,resellers.id as reseller_core_id from resellers inner join contracts on resellers.contract_id=contracts.id where resellers.status != "terminated"'.ify('and resellers.id', @{$opt->{reseller_id}}),  { Slice => {} }, @{$opt->{reseller_id}} ) } ){
     my $provider_contact = $dbh->selectrow_hashref('select * from contacts where id=?', undef, $provider_contract->{contact_id} );
 
-    foreach my $client_contact (@{ $dbh->selectall_arrayref('select contacts.* from contacts where reseller_id = ?',  { Slice => {} }, $provider_contract->{reseller_core_id} ) } ){
+    foreach my $client_contact (@{ $dbh->selectall_arrayref('select contacts.* from contacts where reseller_id = ?'.ify(' and contacts.id', @{$opt->{client_contact_id}}),  { Slice => {} }, $provider_contract->{reseller_core_id}, @{$opt->{client_contact_id}} ) } ){
         my $client_contract = $dbh->selectrow_hashref('select contracts.* from contracts where contracts.contact_id=? ', undef, $client_contact->{id} );
 
         if( my $billing_profile = $dbh->selectrow_hashref('select billing_profiles.* 
@@ -76,23 +72,9 @@ foreach my $provider_contract( @{$dbh->selectall_arrayref('select contracts.*,re
         and (billing_mappings.end_date >= ? OR billing_mappings.end_date IS NULL)'
 , undef, $client_contract->{id}, $etime->epoch, $stime->epoch 
 ) ){
-            my $invoice;
-            if(!(my $contract_balance = $dbh->selectrow_hashref('select * from contract_balances where contract_id=? and date(start)=? and date(end)=?',undef,$client_contract->{id},$stime->ymd,$etime->ymd))){
-
-                
-                @$contract_balance{qw/cash_balance cash_balance_interval free_time_balance free_time_balance_interval/} = NGCP::Panel::Utils::Contract::get_contract_balance_values(
-                    %$billing_profile,
-                    stime => $stime,
-                    etime => $etime->datetime,
-                );
-                $dbh->do('insert into contract_balances(contract_id,cash_balance,cash_balance_interval,free_time_balance,free_time_balance_interval,start,end,invoice_id)values(?,?,?,?,?,?,?,?)',undef,$client_contract->{id},@$contract_balance{qw/cash_balance cash_balance_interval free_time_balance free_time_balance_interval/},$stime->datetime, $etime->datetime,undef );
-                $invoice = create_invoice($client_contract->{id},$stime, $etime);
-                $contract_balance = $dbh->selectrow_hashref('select * from contract_balances where id=?',undef,$dbh->last_insert_id(undef,'billing','contract_balances','id'));
-            }else{
-                if(!$contract_balance->{invoice_id} || !( $invoice = $dbh->selectrow_hashref('select * from invoices where id=?',undef,$contract_balance->{invoice_id} ))){
-                    $invoice = create_invoice($client_contract->{id},$stime, $etime);
-                }
-            }
+            my ($contract_balance,$invoice)=({},{});
+            ($contract_balance,$invoice) = get_contract_balance($client_contract,$billing_profile,$contract_balance,$invoice,$stime,$etime);
+            
             my $invoice_details_calls = $dbh->selectall_arrayref('select cdr.*,bzh.zone, bzh.detail as zone_detail 
     from accounting.cdr 
         LEFT JOIN billing.billing_zones_history bzh ON bzh.id = cdr.source_customer_billing_zone_id
@@ -106,7 +88,7 @@ foreach my $provider_contract( @{$dbh->selectall_arrayref('select contracts.*,re
         limit 25'
         , { Slice => {} }
 #, $client_contract->{id},$stime->epoch,$etime->epoch
-);
+            );
             my $invoice_details_zones = $dbh->selectall_arrayref('select SUM(cdr.source_customer_cost) AS cost, COUNT(*) AS number, SUM(cdr.duration) AS duration,sum(cdr.source_customer_free_time) as free_time, bzh.zone
     from accounting.cdr 
         LEFT JOIN billing.billing_zones_history bzh ON bzh.id = cdr.source_customer_billing_zone_id
@@ -120,7 +102,6 @@ foreach my $provider_contract( @{$dbh->selectall_arrayref('select contracts.*,re
         order by bzh.zone'
         , {Slice => {} }
 #, $client_contract->{id},$stime->epoch,$etime->epoch
-        
             );
             my $i = 1;
             $invoice_details_calls = [map{[$i++,$_]} (@$invoice_details_calls) x 1];
@@ -133,10 +114,10 @@ foreach my $provider_contract( @{$dbh->selectall_arrayref('select contracts.*,re
                 provider_id    => $provider_contract->{reseller_core_id},
                 tt_type        => 'svg',
                 tt_sourcestate => 'saved',
-                tt_id          => 1,
+                tt_id          => $provider_contract->{reseller_core_id},
             };
             $out = {
-                tt_id => 1,
+                tt_id => $provider_contract->{reseller_core_id},
             };
             my $stash = {
                 provider => $provider_contact,
@@ -146,24 +127,40 @@ foreach my $provider_contract( @{$dbh->selectall_arrayref('select contracts.*,re
                 invoice_details_calls => $invoice_details_calls,
             };
             my $svg = $dbh->selectrow_array('select base64_saved from invoice_templates where is_active = 1 and type = "svg" and reseller_id=?',undef,$provider_contract->{reseller_core_id});
-            if(!$svg){
-                $svg = $svg_default;
-                #print "svg=$svg;";
-            }else{
+            if($svg){
                 NGCP::Panel::Utils::InvoiceTemplate::preprocessInvoiceTemplateSvg($in,\$svg);
+            }else{
+                $svg = $svg_default;
             }
             $svg = $view->getTemplateProcessed($c_mock,\$svg, $stash );
+            #print $svg;
+            #die();
             NGCP::Panel::Utils::InvoiceTemplate::convertSvg2Pdf(undef,\$svg,$in,$out);
-            binmode(STDOUT);
-            print $out->{tt_string_pdf};
-            die;
             
-            #my $result = $c->forward($controller, 'invoice_templaet', [] ); 
-            
-            #$req = HTTP::Request->new('OPTIONS', $uri.'/invoice/'..'/');
-            #$res = $ua->request($req);
+            #binmode(STDOUT);
+            #print $out->{tt_string_pdf};
+            #die;
+            $dbh->do('update invoices set data=? where id=?',undef,$out->{tt_string_pdf},$invoice->{id});
         }
     }
+}
+sub get_contract_balance{
+    my($client_contract,$billing_profile,$contract_balance,$invoice,$stime,$etime) = @_;
+    if(!($contract_balance = $dbh->selectrow_hashref('select * from contract_balances where contract_id=? and date(start)=? and date(end)=?',undef,$client_contract->{id},$stime->ymd,$etime->ymd))){
+        @$contract_balance{qw/cash_balance cash_balance_interval free_time_balance free_time_balance_interval/} = NGCP::Panel::Utils::Contract::get_contract_balance_values(
+            %$billing_profile,
+            stime => $stime,
+            etime => $etime,
+        );
+        $dbh->do('insert into contract_balances(contract_id,cash_balance,cash_balance_interval,free_time_balance,free_time_balance_interval,start,end,invoice_id)values(?,?,?,?,?,?,?,?)',undef,$client_contract->{id},@$contract_balance{qw/cash_balance cash_balance_interval free_time_balance free_time_balance_interval/},$stime->datetime, $etime->datetime,undef );
+        $invoice = create_invoice($client_contract->{id},$stime, $etime);
+        $contract_balance = $dbh->selectrow_hashref('select * from contract_balances where id=?',undef,$dbh->last_insert_id(undef,'billing','contract_balances','id'));                
+    }else{
+        if(!$contract_balance->{invoice_id} || !( $invoice = $dbh->selectrow_hashref('select * from invoices where id=?',undef,$contract_balance->{invoice_id} ))){
+            $invoice = create_invoice($client_contract->{id},$stime, $etime);
+        }
+    }
+    return ($contract_balance,$invoice);
 }
 sub create_invoice{
     my($contract_id, $stime, $etime) = @_;
@@ -176,7 +173,10 @@ sub create_invoice{
     return $dbh->selectrow_hashref('select * from invoices where id=?',undef, $invoice_id);    
 }
 
-
+sub ify{
+    my $key = shift;
+    return ( $#_  == 0 ) ? ' '.$key.' = ? ': ( ( $#_  > 0 ) ? ( ' '.$key. 'in('.('?'x($#_+1)).') ') : '' );
+}
 
 
 

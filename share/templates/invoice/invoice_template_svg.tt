@@ -2,7 +2,6 @@
 <!--{[%PROCESS 'invoice/invoice_template_lorem.tt' -%]}-->
 <!--{[%money_format = format('%.2f') %]}-->
 <!--{[%row_vertical_interval = 10 -%]}-->
-
 <!--{[%MACRO document_header BLOCK-%]}-->
 <svg width="215mm" height="297mm" viewBox="0 0 215 297" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:space="preserve" stroke-width="0" stroke="#000000" fill="#000000" font-size="4pt" text-anchor="start">
 
@@ -54,7 +53,7 @@ g, text, tspan {
         <text x="190" y="55" id="titlepage_clientinfo__accountid" class="h3" text-anchor="end">Account ID: [%client.id%]</text>
         <text x="190" y="65" id="titlepage_clientinfo__vatid" class="h3" text-anchor="end">VAT ID: [%client.vatid%]</text>
 
-        <text x="190" y="75" id="titlepage_invoiceinfo__date" class="h3" text-anchor="end">[%provider.city%], [%date_format(date.now)%]</text>
+        <text x="190" y="75" id="titlepage_invoiceinfo__date" class="h3" text-anchor="end">[%ife(provider.city,', ')%] [%date_format(date.now)%]</text>
         
         <text x="20" y="95" font-weight="bold" class="h1">Invoice [%invoice.serial%]</text>
  
@@ -67,11 +66,11 @@ g, text, tspan {
         <text x="195" y="130" text-anchor="end">[%money_format(invoice.discount_wire_transfer)%]</text>
         <text x="15"  y="140">Service Allowance</text>
         <text x="195" y="140" text-anchor="end">[%money_format(invoice.serviceallowance)%]</text>
-        <text x="15"  y="150">Cloud PBX Account [%date.month_start%] - [%date.month_end%] [%date.year%]</text>
+        <text x="15"  y="150">Cloud PBX Account [%dateval.month_start%] - [%dateval.month_end%] [%dateval.year%]</text>
         <text x="195" y="150" text-anchor="end">[%money_format(invoice.cloud_pbx_amount)%]</text>
         <text x="15"  y="160">Discount (12M reduced Service Fee)</text>
         <text x="195" y="160" text-anchor="end">[%money_format(invoice.discount_service)%]</text>
-        <text x="15"  y="170">Voice Termination Fees [%date.month_start%] - [%date.month_end%] [%date.year%]</text>
+        <text x="15"  y="170">Voice Termination Fees [%dateval.month_start%] - [%dateval.month_end%] [%dateval.year%]</text>
         <text x="195" y="170" text-anchor="end">[%money_format(invoice.voice_termination_fees)%]</text>
 
         <text x="45"  y="190">Sum EUR (net):</text>
@@ -85,7 +84,7 @@ g, text, tspan {
         
         <text x="15" y="230">The amount will be booked via SEPA from your account</text>
         <text x="15" y="235">[%client.sepa%] (BIC: [%client.bic%])</text>
-        <text x="15" y="240">on [%invoice.date.month%] 25th earliest.</text>
+        <text x="15" y="240">on [%invoice.month%] 25th earliest.</text>
         <text x="15" y="250" style="font-size:1.8pt;">Please note: You can file a complaint regarding this issue within 3 months of receiption of  this invoice in written form.</text>
         <text x="15" y="255">More details can be found online at www.sipwise.net in My Account.</text>
         <text x="15" y="260">With best regards,</text>
@@ -128,7 +127,7 @@ g, text, tspan {
                 <tspan x="95" id="zonepage_calls_total_number"><!--{[% data.number %]}--><!--{[%#}-->0<!--{%]}--></tspan>
                 <tspan x="130" id="zonepage_calls_total_duration"><!--{[% data.duration|format('%.3f') %]}--><!--{[%#}-->0.000<!--{%]}--></tspan>
                 <tspan x="160" id="zonepage_calls_total_freetime"><!--{[% data.free_time|format('%d') %]}--><!--{[%#}-->0.0<!--{%]}--></tspan>
-                <tspan x="190" id="zonepage_calls_total_cost"><!--{[% ( data.cost / 100 )|format('%.2f') %]}--><!--{[%#}-->0.00<!--{%]}--></tspan>
+                <tspan x="190" id="zonepage_calls_total_cost"><!--{[% ( data.cost )|format('%.2f') %]}--><!--{[%#}-->0.00<!--{%]}--></tspan>
             </text>
             <rect x="0" y="15" width="195" height="0.1" stroke="#444444" stroke-width="0.08" fill="none"/>
     <!--{[%END-%]}-->
@@ -147,7 +146,7 @@ g, text, tspan {
 <!--page-->
     <g id="callpage" display="none">
         <title>CallPage</title>
-        <g y="50" x="10" width="195" height="150" id="callpage_invoicedetails" transform="translate(10, 50)" rows="20" rows-interval="20">
+        <g y="50" x="10" width="195" height="150" id="callpage_invoicedetails" transform="translate(10, 50)" rows="20" rows-interval="10">
 
 
         <!--{[%MACRO titlerow BLOCK-%]}-->
@@ -178,7 +177,7 @@ g, text, tspan {
             <text y="20" text-anchor="end" id="callpage_calls_total" class="datarow">
                 <tspan x="0" id="callpage_calls_total_title" text-anchor="start">Total:</tspan>
                 <tspan x="60" id="callpage_calls_total_duration"><!--{[% data.duration|format('%.3f') %]}--><!--{[%#}-->0.000<!--{%]}--></tspan>
-               <tspan x="185" id="callpage_calls_total_cost"><!--{[% ( data.cost / 100 )|format('%.2f') %]}--><!--{[%#}-->0.00<!--{%]}--></tspan>
+               <tspan x="185" id="callpage_calls_total_cost"><!--{[% ( data.cost )|format('%.2f') %]}--><!--{[%#}-->0.00<!--{%]}--></tspan>
             </text>
             <rect x="0" y="15" width="195" height="0.1" stroke="#444444" stroke-width="0.08" fill="none"/>
     <!--{[%END-%]}-->
