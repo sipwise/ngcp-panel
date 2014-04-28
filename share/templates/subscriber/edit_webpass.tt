@@ -3,7 +3,11 @@
 <div class="row">
     <span class="pull-left" style="margin:0 5px 0 5px;">
         <a class="btn btn-primary btn-large" href="[% c.uri_for('/back') %]"><i class="icon-arrow-left"></i> [% c.loc('Back') %]</a>
-        <a class="btn btn-primary btn-large" href="[% c.uri_for_action('/subscriber/webpass_edit', [ subscriber.id ]) %]"><i class="icon-edit"></i> [% c.loc('Change Password') %]</a>
+        [% IF subscriber.contract.passreset_email_template -%]
+            <a class="btn btn-secondary btn-large" href="[% c.uri_for_action('/subscriber/reset_webpassword', [subscriber.id]) %]" data-confirm="Reset"><i class="icon-repeat"></i> [% c.loc('Reset Web Password') %]</a>
+        [% ELSE -%]
+            <a class="btn btn-primary btn-large" href="[% c.uri_for_action('/subscriber/webpass_edit', [ subscriber.id ]) %]"><i class="icon-edit"></i> [% c.loc('Change Password') %]</a>
+        [% END -%]
     </span>
 </div>
 [% back_created = 1 -%]
@@ -33,6 +37,9 @@
         
             elements = [];
 
+            IF subscriber.contact;
+                elements.push({ value = subscriber.contact.email, desc = c.loc('Email Address') });
+            END;
             elements.push({ value = subscriber.provisioning_voip_subscriber.webusername, desc = c.loc('Web Username') });
             elements.push({ value = '******', desc = c.loc('Web Password') });
             elements.push({ value = subscriber.username _ '@' _ subscriber.domain.domain, desc = c.loc('SIP URI') });
