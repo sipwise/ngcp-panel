@@ -51,7 +51,7 @@
                     <a class="btn btn-primary btn-large" href="[% href %]"><i class="icon-edit"></i> [% c.loc('Edit') %]</a>
                 [% END -%]
                 [% IF subscriber.contract.passreset_email_template -%]
-                    <a class="btn btn-primary btn-large" href="[% c.uri_for_action('/subscriber/reset_webpassword', [subscriber.id]) %]"><i class="icon-repeat"></i> [% c.loc('Reset Web Password') %]</a>
+                    <a class="btn btn-secondary btn-large" href="[% c.uri_for_action('/subscriber/reset_webpassword', [subscriber.id]) %]" data-confirm="Reset"><i class="icon-repeat"></i> [% c.loc('Reset Web Password') %]</a>
                 [% END -%]
                 
                 <div class="ngcp-separator"></div>
