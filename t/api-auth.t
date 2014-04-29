@@ -6,21 +6,21 @@ use Test::More;
 my $uri = $ENV{CATALYST_SERVER} || ('https://'.hostfqdn.':4443');
 
 my $valid_ssl_client_cert = $ENV{API_SSL_CLIENT_CERT} || 
-    "/etc/ssl/ngcp/api/NGCP-API-client-certificate.pem";
+    "/etc/ngcp-panel/api_ssl/NGCP-API-client-certificate.pem";
 my $valid_ssl_client_key = $ENV{API_SSL_CLIENT_KEY} ||
     $valid_ssl_client_cert;
 
 my $invalid_ssl_client_cert = $ENV{API_SSL_INVALID_CLIENT_CERT} || 
-    "/etc/ssl/ngcp/api/NGCP-API-client-certificate.invalid.pem";
+    "/etc/ngcp-panel/api_ssl/NGCP-API-client-certificate.invalid.pem";
 my $invalid_ssl_client_key = $ENV{API_SSL_INVALID_CLIENT_KEY} ||
     $invalid_ssl_client_cert;
 
 my $unauth_ssl_client_cert = $ENV{API_SSL_UNAUTH_CLIENT_CERT} || 
-    "/etc/ssl/ngcp/api/NGCP-API-client-certificate.unauth.pem";
+    "/etc/ngcp-panel/api_ssl/NGCP-API-client-certificate.unauth.pem";
 my $unauth_ssl_client_key = $ENV{API_SSL_UNAUTH_CLIENT_KEY} ||
     $unauth_ssl_client_cert;
 
-my $ssl_ca_cert = $ENV{API_SSL_CA_CERT} || "/etc/ssl/ngcp/api/ca-cert.pem";
+my $ssl_ca_cert = $ENV{API_SSL_CA_CERT} || "/etc/ngcp-panel/api_ssl/api_ca.crt";
 
 my ($ua, $res);
 $ua = LWP::UserAgent->new;

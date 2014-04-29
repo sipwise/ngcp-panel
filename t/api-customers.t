@@ -9,10 +9,10 @@ use Test::More;
 my $uri = $ENV{CATALYST_SERVER} || ('https://'.hostfqdn.':4443');
 
 my $valid_ssl_client_cert = $ENV{API_SSL_CLIENT_CERT} || 
-    "/etc/ssl/ngcp/api/NGCP-API-client-certificate.pem";
+    "/etc/ngcp-panel/api_ssl/NGCP-API-client-certificate.pem";
 my $valid_ssl_client_key = $ENV{API_SSL_CLIENT_KEY} ||
     $valid_ssl_client_cert;
-my $ssl_ca_cert = $ENV{API_SSL_CA_CERT} || "/etc/ssl/ngcp/api/ca-cert.pem";
+my $ssl_ca_cert = $ENV{API_SSL_CA_CERT} || "/etc/ngcp-panel/api_ssl/api_ca.crt";
 
 my ($ua, $req, $res);
 $ua = LWP::UserAgent->new;

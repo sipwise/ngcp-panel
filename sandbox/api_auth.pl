@@ -4,9 +4,9 @@ use LWP::UserAgent;
 
 my $ua = LWP::UserAgent->new();
 $ua->ssl_opts(
-    SSL_cert_file => '/etc/ssl/ngcp/api/NGCP-API-client-certificate-1385650532.pem',
-    SSL_key_file  => '/etc/ssl/ngcp/api/NGCP-API-client-certificate-1385650532.pem',
-    SSL_ca_file   => '/etc/ssl/ngcp/api/ca-cert.pem',
+    SSL_cert_file => '/etc/ngcp-panel/api_ssl/NGCP-API-client-certificate-1385650532.pem',
+    SSL_key_file  => '/etc/ngcp-panel/api_ssl/NGCP-API-client-certificate-1385650532.pem',
+    SSL_ca_file   => '/etc/ngcp-panel/api_ssl/api_ca.crt',
 );
 my $can_accept = HTTP::Message::decodable;
 my $res = $ua->get(

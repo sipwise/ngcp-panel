@@ -1,9 +1,9 @@
 <?php
 $ua = curl_init();
 $options = array( 
-    CURLOPT_SSLCERT => '/etc/ssl/ngcp/api/NGCP-API-client-certificate-1385650532.pem',
-    CURLOPT_SSLKEY  => '/etc/ssl/ngcp/api/NGCP-API-client-certificate-1385650532.pem',
-    CURLOPT_CAINFO => '/etc/ssl/ngcp/api/ca-cert.pem',
+    CURLOPT_SSLCERT => '/etc/ngcp-panel/api_ssl/NGCP-API-client-certificate-1385650532.pem',
+    CURLOPT_SSLKEY  => '/etc/ngcp-panel/api_ssl/NGCP-API-client-certificate-1385650532.pem',
+    CURLOPT_CAINFO => '/etc/ngcp-panel/api_ssl/api_ca.crt',
     CURLOPT_SSL_VERIFYPEER => true,
     CURLOPT_RETURNTRANSFER => true,
 );
