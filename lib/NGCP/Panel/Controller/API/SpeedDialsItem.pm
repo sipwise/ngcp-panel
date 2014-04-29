@@ -101,13 +101,9 @@ sub PUT :Allow {
             media_type => 'application/json',
         );
         last unless $resource;
-        my $update = 1;
-        my $r = $self->prepare_resource($c, $schema, $resource, $update);
-        last unless $r;
-        $resource = $r->{resource};
 
         my $form = $self->get_form($c);
-        $subscriber = $self->update_item($c, $subscriber, $r, $resource, $form);
+        $subscriber = $self->update_item($c, $subscriber, undef, $resource, $form);
         last unless $subscriber;
 
         $guard->commit;
@@ -117,8 +113,7 @@ sub PUT :Allow {
             $c->response->header(Preference_Applied => 'return=minimal');
             $c->response->body(q());
         } else {
-            $resource = $self->transform_resource($c, $subscriber, $form);
-            my $hal = $self->hal_from_item($c, $subscriber, $resource, $form);
+            my $hal = $self->hal_from_item($c, $subscriber);
             my $response = HTTP::Response->new(HTTP_OK, undef, HTTP::Headers->new(
                 $hal->http_headers,
             ), $hal->as_json);
@@ -149,16 +144,11 @@ sub PATCH :Allow {
         last unless $json;
 
         my $form = $self->get_form($c);
-        my $old_resource = $self->transform_resource($c, $subscriber, $form);
+        my $old_resource = $self->hal_from_item($c, $subscriber)->resource;
         my $resource = $self->apply_patch($c, $old_resource, $json);
         last unless $resource;
 
-        my $update = 1;
-        my $r = $self->prepare_resource($c, $schema, $resource, $update);
-        last unless $r;
-        $resource = $r->{resource};
-
-        $subscriber = $self->update_item($c, $subscriber, $r, $resource, $form);
+        $subscriber = $self->update_item($c, $subscriber, undef, $resource, $form);
         last unless $subscriber;
 
         $guard->commit;
@@ -168,8 +158,7 @@ sub PATCH :Allow {
             $c->response->header(Preference_Applied => 'return=minimal');
             $c->response->body(q());
         } else {
-            $resource = $self->transform_resource($c, $subscriber, $form);
-            my $hal = $self->hal_from_item($c, $subscriber, $resource, $form);
+            my $hal = $self->hal_from_item($c, $subscriber);
             my $response = HTTP::Response->new(HTTP_OK, undef, HTTP::Headers->new(
                 $hal->http_headers,
             ), $hal->as_json);

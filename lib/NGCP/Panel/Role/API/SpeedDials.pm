@@ -13,7 +13,7 @@ use Data::HAL::Link qw();
 use HTTP::Status qw(:constants);
 use JSON::Types;
 use Test::More;
-use NGCP::Panel::Form::Subscriber::SubscriberAPI;
+use NGCP::Panel::Form::Subscriber::SpeedDialAPI;
 use NGCP::Panel::Utils::XMLDispatcher;
 use NGCP::Panel::Utils::Prosody;
 use NGCP::Panel::Utils::Subscriber;
@@ -21,7 +21,7 @@ use NGCP::Panel::Utils::Subscriber;
 sub get_form {
     my ($self, $c) = @_;
 
-    return '';# NGCP::Panel::Form::Subscriber::SubscriberAPI->new;
+    return NGCP::Panel::Form::Subscriber::SpeedDialAPI->new(ctx => $c);
 }
 
 sub hal_from_item {
@@ -45,6 +45,14 @@ sub hal_from_item {
             Data::HAL::Link->new(relation => 'ngcp:subscribers', href => sprintf("/api/subscribers/%d", $item->id)),
         ],
         relation => 'ngcp:'.$self->resource_name,
+    );
+
+    my $form = $self->get_form($c);
+    return unless $self->validate_form(
+        c => $c,
+        form => $form,
+        resource => $resource,
+        run => 0,
     );
 
     $hal->resource($resource);
@@ -77,78 +85,41 @@ sub item_by_id {
 }
 
 sub update_item {
-    my ($self, $c, $item, $full_resource, $resource, $form) = @_;
+    my ($self, $c, $item, $old_resource, $resource, $form) = @_;
+    # $old_resource is unused
 
-    my $subscriber = $item;
-    my $customer = $full_resource->{customer};
-    my $admin = $full_resource->{admin};
-    my $alias_numbers = $full_resource->{alias_numbers};
-    my $preferences = $full_resource->{preferences};
+    my $billing_subs = $item;
+    my $prov_subs = $billing_subs->provisioning_voip_subscriber;
+    my $speeddials_rs = $prov_subs->voip_speed_dials;
 
-    if($subscriber->status ne $resource->{status}) {
-        if($resource->{status} eq 'locked') {
-            $resource->{lock} = 4;
-        } elsif($subscriber->status eq 'locked' && $resource->{status} eq 'active') {
-            $resource->{lock} ||= 0;
-        } elsif($resource->{status} eq 'terminated') {
-            try {
-                NGCP::Panel::Utils::Subscriber::terminate(c => $c, subscriber => $subscriber);
-            } catch($e) {
-                $c->log->error("failed to terminate subscriber id ".$subscriber->id);
-                $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "Failed to terminate subscriber");
-            }
-            return;
-        }
-    }
-    if(defined $resource->{lock}) {
-        try {
-            NGCP::Panel::Utils::Subscriber::lock_provisoning_voip_subscriber(
-                c => $c,
-                prov_subscriber => $subscriber->provisioning_voip_subscriber,
-                level => $resource->{lock},
-            );
-        } catch($e) {
-            $c->log->error("failed to lock subscriber id ".$subscriber->id." with level ".$resource->{lock});
-            $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "Failed to update subscriber lock");
-            return;
-        };
+    if (ref $resource->{speeddials} ne "ARRAY") {
+        $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Invalid field 'speeddials'. Must be an array.");
+        return;
     }
 
-    NGCP::Panel::Utils::Subscriber::update_subscriber_numbers(
-        schema => $c->model('DB'),
-        primary_number => $resource->{e164},
-        alias_numbers => $alias_numbers,
-        reseller_id => $customer->contact->reseller_id,
-        subscriber_id => $subscriber->id,
-    );
-
-    my $billing_res = {
-        external_id => $resource->{external_id},
-        status => $resource->{status},
-    };
-    my $provisioning_res = {
-        password => $resource->{password},
-        webusername => $resource->{webusername},
-        webpassword => $resource->{webpassword},
-        admin => $resource->{administrative},
-        is_pbx_group => $resource->{is_pbx_group},
-        pbx_group_id => $resource->{pbx_group_id},
-        modify_timestamp => NGCP::Panel::Utils::DateTime::current_local,
-
-    };
-
-    $subscriber->update($billing_res);
-    $subscriber->provisioning_voip_subscriber->update($provisioning_res);
-    $subscriber->discard_changes;
-    NGCP::Panel::Utils::Subscriber::update_preferences(
+    $form //= $self->get_form($c);
+    return unless $self->validate_form(
         c => $c,
-        prov_subscriber => $subscriber->provisioning_voip_subscriber,
-        preferences => $preferences,
+        form => $form,
+        resource => $resource,
     );
 
-    # TODO: status handling (termination, ...)
+    try {
+        my $domain = $prov_subs->domain->domain // '';
+        $speeddials_rs->delete;
+        for my $spd (@{ $resource->{speeddials} }) {
+            $speeddials_rs->create({
+                destination => $self->get_sip_uri($spd->{destination}, $domain),
+                slot => $spd->{slot},
+            });
+        }
+    } catch($e) {
+        $c->log->error("failed to update speeddials: $e");
+        $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "Failed to update speeddials.");
+        return;
+    };
 
-    return $subscriber;
+    return $billing_subs;
 }
 
 sub speeddials_from_subscriber {
@@ -159,6 +130,18 @@ sub speeddials_from_subscriber {
         push @speeddials, {slot => $s->slot, destination => $s->destination};
     }
     return \@speeddials;
+}
+
+sub get_sip_uri {
+    my ($self, $d, $domain) = @_;
+
+    if($d !~ /\@/) {
+        $d .= '@'.$domain;
+    }
+    if($d !~ /^sip:/) {
+        $d = 'sip:' . $d;
+    }
+    return $d;
 }
 
 1;

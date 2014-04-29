@@ -30,6 +30,20 @@ class_has 'query_params' => (
     is => 'ro',
     isa => 'ArrayRef',
     default => sub {[
+        {
+            param => 'nonempty',
+            description => 'Filter for subscribers with nonempty speeddials',
+            query => {
+                first => sub {
+                    return unless shift;
+                    { 'voip_speed_dials.id' => { '!=' => undef } };
+                },
+                second => sub {
+                    return unless shift;
+                    { prefetch => { provisioning_voip_subscriber => 'voip_speed_dials' } };
+                },
+            },
+        },
     ]},
 );
 
