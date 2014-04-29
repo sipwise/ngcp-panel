@@ -81,6 +81,7 @@ my $builder = Local::Module::Build->new(
         'Scalar::Util' => 0,
         'Sereal::Decoder' => 0,
         'Sereal::Encoder' => 0,
+        'String::MkPasswd' => 0,
         'Sipwise::Base' => 0,
         'strict' => 0,
         'Template' => 0,

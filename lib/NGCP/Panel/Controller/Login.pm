@@ -35,6 +35,7 @@ sub index :Path Form {
     $form->process(
         posted => $posted,
         params => $c->request->params,
+        item => { username => $c->stash->{username} },
     );
 
     if($posted && $form->validated) {

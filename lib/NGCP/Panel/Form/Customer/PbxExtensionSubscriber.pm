@@ -31,8 +31,6 @@ sub field_list {
     my $c = $self->ctx;
     return unless $c;
 
-    print "+++++++++++++++++++++++++++++ PbxExtensionSubscribert field_list\n";
-
     my $group = $self->field('group');
     $group->field('id')->ajax_src(
         $c->uri_for_action('/customer/pbx_group_ajax', [$c->stash->{customer_id}])->as_string
@@ -46,6 +44,16 @@ sub field_list {
             );
         }
     }
+
+    if($c->config->{security}->{password_sip_autogenerate}) {
+        $self->field('password')->inactive(1);
+        $self->field('password')->required(0);
+    }
+    if($c->config->{security}->{password_web_autogenerate}) {
+        $self->field('webpassword')->inactive(1);
+        $self->field('webpassword')->required(0);
+    }
+
 }
 
 

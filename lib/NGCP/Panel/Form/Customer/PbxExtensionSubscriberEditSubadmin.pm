@@ -37,16 +37,22 @@ sub update_fields {
         $c->uri_for_action('/customer/pbx_group_ajax', [$c->stash->{customer_id}])->as_string
     );
 
-    print ">>>>>>>>>>>>>>>>>>>>>> PbxExtensionSubscriberEditSubadmin update_fields\n";
     my $profile_set = $c->stash->{subscriber}->provisioning_voip_subscriber->voip_subscriber_profile_set;
-    print ">>>>>>>>>>>>>>>>>>>>>> got profile set?\n";
     if($profile_set && $self->field('profile')) {
-        print ">>>>>>>>>>>>>>>>>>>>>> yes, got profile set\n";
         $self->field('profile')->field('id')->ajax_src(
             $c->uri_for_action('/subscriberprofile/profile_ajax', [$profile_set->id])->as_string
         );
     }
 
+    if($c->user->roles eq "subscriberadmin") {
+        if(!$c->config->{security}->{password_sip_expose_subadmin}) {
+            $self->field('password')->inactive(1);
+        }
+        if(!$c->config->{security}->{password_web_expose_subadmin}) {
+            $self->field('webpassword')->inactive(1);
+        }
+    }
+    
     $self->field('password')->required(0); # optional on edit
 }
 

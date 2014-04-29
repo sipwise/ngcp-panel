@@ -153,150 +153,34 @@ sub create_list :Chained('sub_list') :PathPart('create') :Args(0) :Does(ACL) :AC
         my $schema = $c->model('DB');
         try {
             $schema->txn_do(sub {
-                my ($uuid_bin, $uuid_string);
-                UUID::generate($uuid_bin);
-                UUID::unparse($uuid_bin, $uuid_string);
-
-                my $contract = $schema->resultset('contracts')
-                    ->find($form->params->{contract}{id});
-                my $billing_domain = $schema->resultset('domains')
-                    ->find($form->params->{domain}{id});
-                my $prov_domain = $schema->resultset('voip_domains')
-                    ->find({domain => $billing_domain->domain});
-
-                my $reseller = $contract->contact->reseller;
-
-                my ($profile_set, $profile);
-                if($form->values->{profile_set}{id}) {
-                    my $profile_set_rs = $c->model('DB')->resultset('voip_subscriber_profile_sets');
-                    if($c->user->roles eq "admin") {
-                    } elsif($c->user->roles eq "reseller") {
-                        $profile_set_rs = $profile_set_rs->search({
-                            reseller_id => $c->user->reseller_id,
-                        });
-                    }
-                         
-                    $profile_set = $profile_set_rs->find($form->values->{profile_set}{id});
-                    unless($profile_set) {
-                        NGCP::Panel::Utils::Message->error(
-                            c => $c,
-                            error => 'invalid subscriber profile set id ' . $form->values->{profile_set}{id},
-                            desc  => $c->loc('Invalid subscriber profile set id'),
-                        );
-                        return;
-                    }
-                    delete $form->values->{profile_set};
-                }
-                if($form->values->{profile}{id}) {
-                    $profile = $profile_set->voip_subscriber_profiles->find({
-                        id => $form->values->{profile}{id},
-                    });
-                    delete $form->values->{profile};
-                }
-                if($profile_set && !$profile) {
-                    $profile = $profile_set->voip_subscriber_profiles->find({
-                        set_default => 1,
-                    });
-                }
-
-                my $billing_subscriber = $contract->voip_subscribers->create({
-                    uuid => $uuid_string,
-                    username => $c->request->params->{username},
-                    domain_id => $billing_domain->id,
-                    status => $c->request->params->{status},
-                    external_id => $form->field('external_id')->value, # null if empty
+                my $preferences = {};
+                my $contract_rs = NGCP::Panel::Utils::Contract::get_contracts_rs_sippbx( c => $c );
+                $contract_rs = $contract_rs->search({
+                    'me.id' => $form->params->{contract}{id},
+                }, {
+                    '+select' => 'billing_mappings.id',
+                    '+as' => 'bmid',
                 });
+                my $contract = $contract_rs->first;
+                my $billing_mapping = $contract->billing_mappings->find($contract->get_column('bmid'));
 
-                my $prov_subscriber = $schema->resultset('provisioning_voip_subscribers')->create({
-                    uuid => $uuid_string,
-                    username => $c->request->params->{username},
-                    password => $c->request->params->{password},
-                    webusername => $c->request->params->{webusername} || $c->request->params->{username},
-                    webpassword => $c->request->params->{webpassword},
-                    admin => $c->request->params->{administrative} || 0,
-                    account_id => $contract->id,
-                    domain_id => $prov_domain->id,
-                    profile_set_id => $profile_set ? $profile_set->id : undef,
-                    profile_id => $profile ? $profile->id : undef,
-                    create_timestamp => NGCP::Panel::Utils::DateTime::current_local,
-                });
-
-                NGCP::Panel::Utils::Subscriber::update_subscriber_numbers(
-                    schema         => $schema,
-                    primary_number => $form->values->{e164},
-                    reseller_id    => $reseller->id,
-                    subscriber_id  => $billing_subscriber->id,
-                );
-
-                my $cli = 0;
-                my $voip_preferences = $schema->resultset('voip_preferences')->search({
-                    'usr_pref' => 1,
-                });
-
-                my $rs = NGCP::Panel::Utils::Contract::get_contract_rs(
-                    schema => $c->model('DB'));
-                my $billing_contract = $rs->find($contract->id);
-                my $billing_mapping = $c->model('DB')->resultset('billing_mappings')->find(
-                    $billing_contract->get_column('billing_mapping_id'));
-
-                if($billing_mapping->billing_profile->prepaid) {
-                    $voip_preferences->find({ 'attribute' => 'prepaid' })
-                        ->voip_usr_preferences->create({ 
-                            'subscriber_id' => $prov_subscriber->id,
-                            'value' => 1,
-                        });
-                }
-                if(defined $billing_subscriber->external_id) {
-                    $voip_preferences->find({ 'attribute' => 'ext_subscriber_id' })
-                        ->voip_usr_preferences->create({ 
-                            'subscriber_id' => $prov_subscriber->id,
-                            'value' => $billing_subscriber->external_id,
-                        });
-                }
-                $voip_preferences->find({ 'attribute' => 'account_id' })
-                    ->voip_usr_preferences->create({ 
-                        'subscriber_id' => $prov_subscriber->id,
-                        'value' => $prov_subscriber->contract->id,
-                    });
                 if($contract->external_id) {
-                    $voip_preferences->find({ 'attribute' => 'ext_contract_id' })
-                        ->voip_usr_preferences->create({ 
-                            'subscriber_id' => $prov_subscriber->id,
-                            'value' => $contract->external_id,
-                        });
+                    $preferences->{ext_contract_id} = $c->stash->{contract}->external_id;
                 }
-                $voip_preferences->find({ 'attribute' => 'ac' })
-                    ->voip_usr_preferences->create({ 
-                        'subscriber_id' => $prov_subscriber->id,
-                        'value' => $c->request->params->{'e164.ac'},
-                    }) if (defined $c->request->params->{'e164.ac'} && 
-                           length($c->request->params->{'e164.ac'}) > 0);
-                if(defined $c->request->params->{'e164.cc'} &&
-                   length($c->request->params->{'e164.cc'}) > 0) {
-
-                        $voip_preferences->find({ 'attribute' => 'cc' })
-                            ->voip_usr_preferences->create({ 
-                                'subscriber_id' => $prov_subscriber->id,
-                                'value' => $c->request->params->{'e164.cc'},
-                            });
-                        $cli = $c->request->params->{'e164.cc'} .
-                                  (defined $c->request->params->{'e164.ac'} &&
-                                   length($c->request->params->{'e164.ac'}) > 0 ?
-                                   $c->request->params->{'e164.ac'} : ''
-                                  ) .
-                                  $c->request->params->{'e164.sn'};
-                        $voip_preferences->find({ 'attribute' => 'cli' })
-                            ->voip_usr_preferences->create({ 
-                                'subscriber_id' => $prov_subscriber->id,
-                                'value' => $cli,
-                            });
+                if(defined $form->params->{external_id}) {
+                    $preferences->{ext_subscriber_id} = $form->params->{external_id};
                 }
-                $schema->resultset('voicemail_users')->create({
-                    customer_id => $uuid_string,
-                    mailbox => $cli,
-                    password => sprintf("%04d", int(rand 10000)),
-                    email => '',
-                });
+                if($billing_mapping->billing_profile->prepaid) {
+                    $preferences->{prepaid} = 1;
+                }
+                my $billing_subscriber = NGCP::Panel::Utils::Subscriber::create_subscriber(
+                    c => $c,
+                    schema => $schema,
+                    contract => $contract,
+                    params => $form->params,
+                    admin_default => 0,
+                    preferences => $preferences,
+                );
 
                 delete $c->session->{created_objects}->{reseller};
                 delete $c->session->{created_objects}->{contract};
@@ -563,7 +447,7 @@ sub reset_webpassword :Chained('base') :PathPart('resetwebpassword') :Args(0) {
             $subscriber->password_resets->delete; # clear any old entries of this subscriber
             $subscriber->password_resets->create({
                 uuid => $uuid_string,
-                timestamp => NGCP::Panel::Utils::DateTime::current_local->epoch,
+                timestamp => NGCP::Panel::Utils::DateTime::current_local->epoch + 86400,
             });
             my $url = $c->uri_for_action('/subscriber/recover_webpassword')->as_string . '?uuid=' . $uuid_string;
             NGCP::Panel::Utils::Email::password_reset($c, $subscriber, $url);
@@ -668,7 +552,7 @@ sub recover_webpassword :Chained('/') :PathPart('recoverwebpassword') :Args(0) {
 
         my $rs = $c->model('DB')->resultset('password_resets')->search({
             uuid => $uuid_string,
-            timestamp => { '>=' => (NGCP::Panel::Utils::DateTime::current_local->epoch - 86400) },
+            timestamp => { '>=' => NGCP::Panel::Utils::DateTime::current_local->epoch },
         });
 
         my $subscriber = $rs->first ? $rs->first->voip_subscriber : undef;
@@ -700,7 +584,7 @@ sub recover_webpassword :Chained('/') :PathPart('recoverwebpassword') :Args(0) {
             $schema->txn_do(sub {
                 my $rs = $c->model('DB')->resultset('password_resets')->search({
                     uuid => $uuid_string,
-                    timestamp => { '>=' => (NGCP::Panel::Utils::DateTime::current_local->epoch - 86400) },
+                    timestamp => { '>=' => NGCP::Panel::Utils::DateTime::current_local->epoch },
                 });
 
                 $subscriber = $rs->first ? $rs->first->voip_subscriber : undef;
@@ -720,6 +604,7 @@ sub recover_webpassword :Chained('/') :PathPart('recoverwebpassword') :Args(0) {
 
         $c->log->debug("+++++++++++++++++++++++ successfully recovered subscriber " . $subscriber->username . '@' . $subscriber->domain->domain);
         $c->flash(messages => [{type => 'success', text => $c->loc('Web password successfully recovered, please re-login.') }]);
+        $c->flash(username => $subscriber->username . '@' . $subscriber->domain->domain);
         $c->res->redirect($c->uri_for('/login/subscriber'));
         return;
 

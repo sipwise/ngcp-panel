@@ -19,7 +19,7 @@ has_field 'alias_select' => (
 has_block 'fields' => (
     tag => 'div',
     class => [qw/modal-body/],
-    render_list => [qw/email webusername webpassword password external_id alias_select profile/ ],
+    render_list => [qw/email webusername webpassword password alias_select profile/ ],
 );
 
 sub update_fields {
@@ -37,6 +37,15 @@ sub update_fields {
         $self->field('profile')->field('id')->ajax_src(
             $c->uri_for_action('/subscriberprofile/profile_ajax', [$profile_set->id])->as_string
         );
+    }
+
+    if($c->user->roles eq "subscriberadmin") {
+        if(!$c->config->{security}->{password_sip_expose_subadmin}) {
+            $self->field('password')->inactive(1);
+        }
+        if(!$c->config->{security}->{password_web_expose_subadmin}) {
+            $self->field('webpassword')->inactive(1);
+        }
     }
 
     $self->field('password')->required(0); # optional on edit

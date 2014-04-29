@@ -42,6 +42,15 @@ sub field_list {
             $c->uri_for_action('/subscriberprofile/profile_ajax', [$profile_set->id])->as_string
         );
     }
+
+    if($c->config->{security}->{password_sip_autogenerate}) {
+        $self->field('password')->inactive(1);
+        $self->field('password')->required(0);
+    }
+    if($c->config->{security}->{password_web_autogenerate}) {
+        $self->field('webpassword')->inactive(1);
+        $self->field('webpassword')->required(0);
+    }
 }
 
 

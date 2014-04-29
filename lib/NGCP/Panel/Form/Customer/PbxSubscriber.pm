@@ -153,8 +153,6 @@ sub field_list {
     my $c = $self->ctx;
     return unless($c);
 
-    print "++++++++++++++++++++++++++++++++++++++++ PbxSubscriber field_list\n";
-
     my $profile_set = $self->field('profile_set');
     if($profile_set) {
         $profile_set->field('id')->ajax_src(
@@ -162,6 +160,14 @@ sub field_list {
         );
     }
 
+    if($c->config->{security}->{password_sip_autogenerate}) {
+        $self->field('password')->inactive(1);
+        $self->field('password')->required(0);
+    }
+    if($c->config->{security}->{password_web_autogenerate}) {
+        $self->field('webpassword')->inactive(1);
+        $self->field('webpassword')->required(0);
+    }
 }
 
 sub validate_password {

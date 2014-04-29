@@ -150,6 +150,15 @@ sub update_fields {
             $c->uri_for_action('/subscriberprofile/set_ajax_reseller', [$c->stash->{contract}->contact->reseller_id])->as_string
         );
     }
+
+    if($c->config->{security}->{password_sip_autogenerate}) {
+        $self->field('password')->inactive(1);
+        $self->field('password')->required(0);
+    }
+    if($c->config->{security}->{password_web_autogenerate}) {
+        $self->field('webpassword')->inactive(1);
+        $self->field('webpassword')->required(0);
+    }
 }
 
 sub validate_password {

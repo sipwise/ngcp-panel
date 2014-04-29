@@ -117,6 +117,7 @@
                             <td>[% subscriber.provisioning_voip_subscriber.pbx_extension %]</td>
                         </tr>
                         [% END -%]
+                        [% UNLESS subscriber.provisioning_voip_subscriber.is_pbx_group -%]
                         <tr>
                             <td>[% c.loc('Subscriber Profile Set') %]</td>
                             <td>
@@ -129,6 +130,7 @@
                                 [% subscriber.provisioning_voip_subscriber.voip_subscriber_profile.name %]
                             </td>
                         </tr>
+                        [% END -%]
                         [% IF subscriber.provisioning_voip_subscriber.is_pbx_group -%]
                         <tr>
                             <td>[% c.loc('Hunt Policy') %]</td>

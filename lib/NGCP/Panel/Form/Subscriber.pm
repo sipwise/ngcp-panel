@@ -180,21 +180,30 @@ sub validate_webpassword {
     NGCP::Panel::Utils::Form::validate_password(c => $c, field => $field);
 }
 
-=pod
-# we don't have a contract here, so we can't filter on it yet
-# (would only be possible via javascript, no framework for that yet)
 sub update_fields {
     my $self = shift;
     my $c = $self->ctx;
     return unless $c;
 
+    if($c->config->{security}->{password_sip_autogenerate}) {
+        $self->field('password')->inactive(1);
+        $self->field('password')->required(0);
+    }
+    if($c->config->{security}->{password_web_autogenerate}) {
+        $self->field('webpassword')->inactive(1);
+        $self->field('webpassword')->required(0);
+    }
+
+=pod
+# we don't have a contract here, so we can't filter on it yet
+# (would only be possible via javascript, no framework for that yet)
     if($self->field('profile_set')) {
         $self->field('profile_set')->field('id')->ajax_src(
             $c->uri_for_action('/subscriberprofile/set_ajax_reseller', [$c->stash->{contract}->contact->reseller_id])->as_string
         );
     }
-}
 =cut
+}
 
 1;
 

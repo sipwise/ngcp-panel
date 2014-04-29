@@ -42,9 +42,9 @@ has_field 'body' => (
     default =>
 'Dear Customer,
 
-A new subscriber [% subscriber %] has been created. 
+A new subscriber [% subscriber %] has been created for you.
 
-Go to [% url %] to log into your self-care interface.
+Please go to [% url %] to set your password and log into your self-care interface.
 
 Your faithful Sipwise system
 

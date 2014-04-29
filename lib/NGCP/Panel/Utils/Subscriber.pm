@@ -4,6 +4,7 @@ use warnings;
 
 use Sipwise::Base;
 use DBIx::Class::Exception;
+use String::MkPasswd;
 use NGCP::Panel::Utils::DateTime;
 use NGCP::Panel::Utils::Preferences;
 use NGCP::Panel::Utils::Email;
@@ -158,6 +159,22 @@ sub create_subscriber {
             });
         }
     }
+
+    my $passlen = $c->config->{security}->{password_min_length} || 8;
+    if($c->config->{security}->{password_sip_autogenerate}) {
+        $params->{password} = String::MkPasswd::mkpasswd(
+            -length => $passlen,
+            -minnum => 1, -minlower => 1, -minupper => 1, -minspecial => 1,
+            -distribute => 1, -fatal => 1,
+        );
+    }
+    if($c->config->{security}->{password_web_autogenerate}) {
+        $params->{webpassword} = String::MkPasswd::mkpasswd(
+            -length => $passlen,
+            -minnum => 1, -minlower => 1, -minupper => 1, -minspecial => 1,
+            -distribute => 1, -fatal => 1,
+        );
+    }
     
     $schema->txn_do(sub {
         my ($uuid_bin, $uuid_string);
@@ -252,7 +269,16 @@ sub create_subscriber {
         }
 
         if($contract->subscriber_email_template_id) {
-            NGCP::Panel::Utils::Email::new_subscriber($c, $billing_subscriber);
+            my ($uuid_bin, $uuid_string);
+            UUID::generate($uuid_bin);
+            UUID::unparse($uuid_bin, $uuid_string);
+            $billing_subscriber->password_resets->create({
+                uuid => $uuid_string,
+                # for new subs, let the link be valid for a year
+                timestamp => NGCP::Panel::Utils::DateTime::current_local->epoch + 31536000,
+            });
+            my $url = $c->uri_for_action('/subscriber/recover_webpassword')->as_string . '?uuid=' . $uuid_string;
+            NGCP::Panel::Utils::Email::new_subscriber($c, $billing_subscriber, $url);
         }
 
         return $billing_subscriber;
