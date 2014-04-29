@@ -21,6 +21,9 @@ sub epoch_local {
 sub new_local {
     my %params;
     @params{qw/year month day hour minute second nanosecond/} = @_;
+    foreach(keys %params){
+        !defined $params{$_} and delete $params{$_};
+    }
     return DateTime->new(
         time_zone => DateTime::TimeZone->new(name => 'local'),
         %params,
