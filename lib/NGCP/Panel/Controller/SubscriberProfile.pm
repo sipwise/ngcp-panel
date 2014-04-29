@@ -405,7 +405,6 @@ sub profile_create :Chained('profile_list') :PathPart('create') :Args(0) :Does(A
               
                 # TODO: should we rather take the name and load the id from db,
                 # instead of trusting the id coming from user input?
-                use Data::Printer; p $attributes;
                 foreach my $attr(keys %{ $attributes }) {
                     next unless($attributes->{$attr});
                     $profile->profile_attributes->create({

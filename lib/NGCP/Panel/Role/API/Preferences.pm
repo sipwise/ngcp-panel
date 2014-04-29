@@ -41,7 +41,6 @@ sub hal_from_item {
     );
 
     my $resource = $self->get_resource($c, $item, $type);
-    use Data::Printer; p $resource;
     $hal->resource($resource);
     return $hal;
 }
@@ -246,9 +245,6 @@ sub update_item {
     my $reseller_id;
     my $full_rs;
 
-    print ">>>>>>>>>> before cleanup\n";
-    use Data::Printer; p $resource;
-
     if($type eq "domains") {
         delete $resource->{domain_id};
         delete $resource->{domainpreferences_id};
@@ -282,9 +278,6 @@ sub update_item {
     } else {
         return;
     }
-
-    print ">>>>>>>>>> after cleanup\n";
-    use Data::Printer; p $resource;
 
     if($replace) {
         # in case of PUT, we remove all old entries

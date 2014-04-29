@@ -514,9 +514,6 @@ sub update_subscriber_numbers {
 
 
     if(defined $alias_numbers && ref($alias_numbers) eq 'ARRAY') {
-        print ">>>>>>>>>>>>>>>>>>> update alias numbers\n";
-        use Data::Printer; p $alias_numbers;
-
         my $number;
         for my $alias(@$alias_numbers) {
 
@@ -573,8 +570,6 @@ sub update_subscriber_numbers {
 
     push @nums, $billing_subs->primary_number_id
         if($billing_subs->primary_number_id);
-    print ">>>>>>>>>>>>>< updating number list\n";
-    use Data::Printer; p @nums;
     $billing_subs->voip_numbers->search({
         id => { 'not in' => \@nums },
     })->update({
@@ -582,8 +577,6 @@ sub update_subscriber_numbers {
         reseller_id => undef,
     });
     if($prov_subs) {
-        print ">>>>>>>>>>>>>< updating alias number list\n";
-        use Data::Printer; p @nums;
         $prov_subs->voip_dbaliases->search({
             id => { 'not in' => \@dbnums },
         })->delete;
