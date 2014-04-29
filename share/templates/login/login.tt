@@ -29,7 +29,7 @@
         -%]
         [% c.loc('Go to [_1] login.', links.join(c.loc(' or '))) %]
         <br/>
-        [% IF realm == 'subscriber' -%]
+        [% IF realm == 'subscriber' && c.config.security.password_allow_recovery -%]
         [% c.loc('Forgot your password?') %] <a href="[% c.uri_for_action('/subscriber/reset_webpassword_nosubscriber') %]">[% c.loc('Reset Password') %]</a>.
         <br/>
         [% END -%]

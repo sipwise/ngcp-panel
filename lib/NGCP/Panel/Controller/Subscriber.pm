@@ -584,6 +584,9 @@ sub reset_webpassword :Chained('base') :PathPart('resetwebpassword') :Args(0) {
 sub reset_webpassword_nosubscriber :Chained('/') :PathPart('resetwebpassword') :Args(0) {
     my ($self, $c) = @_;
 
+    $c->detach('/denied_page')
+        unless($c->config->{security}->{password_allow_recovery});
+
     my $posted = $c->req->method eq "POST";
     my $form = NGCP::Panel::Form::Subscriber::RecoverPassword->new;
     my $params = {};
