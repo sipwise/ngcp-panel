@@ -1,0 +1,4 @@
+ngcp-panel: source-is-missing share/static/js/libs/d3.v2.min-2.8.1.js
+ngcp-panel: source-is-missing share/static/js/libs/svg-edit/jquery.js
+ngcp-panel: source-is-missing share/static/js/libs/svg-edit/svgedit.compiled.js
+ngcp-panel: source-is-missing share/static/js/plugins/hoverIntent/jquery.hoverIntent.minified.js
