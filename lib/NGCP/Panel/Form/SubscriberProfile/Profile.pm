@@ -99,21 +99,6 @@ sub field_list {
     return $fields;
 }
 
-sub field_names {
-    my $self = shift;
-
-    my %list = @{ $self->field_list };
-    return [ sort keys %list ];
-}
-
-sub create_structure {
-    my $self = shift;
-    my $field_list = shift;
-    
-    my $list = $self->block('fields')->render_list;
-    $self->block('fields')->render_list([ @{ $list }, @{ $field_list } ]);
-}
-
 1;
 
 # vim: set tabstop=4 expandtab:
