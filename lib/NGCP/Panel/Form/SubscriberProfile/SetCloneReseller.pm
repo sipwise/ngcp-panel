@@ -1,4 +1,4 @@
-package NGCP::Panel::Form::SubscriberProfile::SetClone;
+package NGCP::Panel::Form::SubscriberProfile::SetCloneReseller;
 
 use HTML::FormHandler::Moose;
 extends 'HTML::FormHandler';

@@ -6,7 +6,8 @@ BEGIN { extends 'Catalyst::Controller'; }
 use NGCP::Panel::Form::SubscriberProfile::SetAdmin;
 use NGCP::Panel::Form::SubscriberProfile::SetReseller;
 use NGCP::Panel::Form::SubscriberProfile::Profile;
-use NGCP::Panel::Form::SubscriberProfile::SetClone;
+use NGCP::Panel::Form::SubscriberProfile::SetCloneReseller;
+use NGCP::Panel::Form::SubscriberProfile::SetCloneAdmin;
 use NGCP::Panel::Form::SubscriberProfile::ProfileClone;
 use NGCP::Panel::Utils::Message;
 use NGCP::Panel::Utils::Navigation;
@@ -231,8 +232,14 @@ sub set_clone :Chained('set_base') :PathPart('clone') :Does(ACL) :ACLDetachTo('/
 
     my $posted = ($c->request->method eq 'POST');
     my $params = { $c->stash->{set}->get_inflated_columns };
+    $params->{reseller}{id} = delete $params->{reseller_id};
     $params = $params->merge($c->session->{created_objects});
-    my $form = NGCP::Panel::Form::SubscriberProfile::SetClone->new;
+    my $form;
+    if($c->user->roles eq "admin") {
+        $form = NGCP::Panel::Form::SubscriberProfile::SetCloneAdmin->new;
+    } else {
+        $form = NGCP::Panel::Form::SubscriberProfile::SetCloneReseller->new;
+    }
     $form->process(
         posted => $posted,
         params => $c->request->params,
@@ -248,6 +255,13 @@ sub set_clone :Chained('set_base') :PathPart('clone') :Does(ACL) :ACLDetachTo('/
         try {
             my $schema = $c->model('DB');
             $schema->txn_do(sub {
+                my $reseller_id;
+                if($c->user->roles eq "admin") {
+                    $reseller_id = $form->params->{reseller}{id};
+                } else {
+                    $reseller_id = $c->stash->{set}->reseller_id,
+                }
+                delete $form->params->{reseller};
                 my $new_set = $schema->resultset('voip_subscriber_profile_sets')->create({
                     %{ $form->values },
                     reseller_id => $c->stash->{set}->reseller_id,
