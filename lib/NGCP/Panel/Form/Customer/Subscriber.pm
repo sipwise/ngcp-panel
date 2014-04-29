@@ -9,6 +9,7 @@ use HTML::FormHandler::Widget::Block::Bootstrap;
 use NGCP::Panel::Field::Domain;
 use NGCP::Panel::Field::PosInteger;
 use NGCP::Panel::Field::Identifier;
+use NGCP::Panel::Utils::Form;
 
 has '+widget_wrapper' => ( default => 'Bootstrap' );
 has_field 'submitid' => ( type => 'Hidden' );
@@ -149,6 +150,22 @@ sub update_fields {
             $c->uri_for_action('/subscriberprofile/set_ajax_reseller', [$c->stash->{contract}->contact->reseller_id])->as_string
         );
     }
+}
+
+sub validate_password {
+    my ($self, $field) = @_;
+    my $c = $self->form->ctx;
+    return unless $c;
+
+    NGCP::Panel::Utils::Form::validate_password(c => $c, field => $field);
+}
+
+sub validate_webpassword {
+    my ($self, $field) = @_;
+    my $c = $self->form->ctx;
+    return unless $c;
+
+    NGCP::Panel::Utils::Form::validate_password(c => $c, field => $field);
 }
 
 1;

@@ -10,6 +10,7 @@ use NGCP::Panel::Field::Domain;
 use NGCP::Panel::Field::CustomerContract;
 use NGCP::Panel::Field::PosInteger;
 use NGCP::Panel::Field::Identifier;
+use NGCP::Panel::Utils::Form;
 
 has '+widget_wrapper' => ( default => 'Bootstrap' );
 has_field 'submitid' => ( type => 'Hidden' );
@@ -162,6 +163,22 @@ has_block 'actions' => (
     class => [qw/modal-footer/],
     render_list => [qw/save/],
 );
+
+sub validate_password {
+    my ($self, $field) = @_;
+    my $c = $self->form->ctx;
+    return unless $c;
+
+    NGCP::Panel::Utils::Form::validate_password(c => $c, field => $field);
+}
+
+sub validate_webpassword {
+    my ($self, $field) = @_;
+    my $c = $self->form->ctx;
+    return unless $c;
+
+    NGCP::Panel::Utils::Form::validate_password(c => $c, field => $field);
+}
 
 =pod
 # we don't have a contract here, so we can't filter on it yet
