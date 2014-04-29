@@ -7,6 +7,19 @@ use DBI;
 use Data::Dumper;
 use DateTime::TimeZone;
 use Test::MockObject;
+use Email::MIME;
+use Email::Sender::Simple qw(sendmail);
+use Email::Sender::Transport::SMTP;
+#use IO::All;
+
+#apt-get install libemail-send-perl
+#apt-get install libemail-sender-perl
+#apt-get install libtest-mockobject-perl
+
+#apt-get install libnet-smtp-ssl-perl
+#apt-get install libio-all-perl
+
+
 
 use Sipwise::Base;
 
@@ -39,6 +52,22 @@ print "using user '$dbuser' with pass '$dbpass'\n"
 
 my $dbh = DBI->connect('dbi:mysql:billing;host=localhost', $dbuser, $dbpass)
 	or die "failed to connect to billing DB\n";
+    
+my $email_transport = Email::Sender::Transport::SMTP->new({
+    sasl_username => 'ipeshinskaya',
+
+    #host => 'mail.sipwise.com',
+    #port => 587,
+    #sasl_password => 'KfC4pXuV',
+    #ssl => 0,
+    
+    host => 'smtp.googlemail.com',
+    port => 465,
+    ssl => 1,
+    sasl_password => '',
+});
+
+
 my $c_mock = Test::MockObject->new();
 $c_mock->set_false(qw/debug/);
 my $view = NGCP::Panel::View::SVG->new($c_mock,{});
@@ -57,10 +86,11 @@ NGCP::Panel::Utils::InvoiceTemplate::preprocessInvoiceTemplateSvg( {no_fake_data
 foreach my $provider_contract( @{$dbh->selectall_arrayref('select contracts.*,resellers.id as reseller_core_id from resellers inner join contracts on resellers.contract_id=contracts.id where resellers.status != "terminated"'.ify('and resellers.id', @{$opt->{reseller_id}}),  { Slice => {} }, @{$opt->{reseller_id}} ) } ){
     my $provider_contact = $dbh->selectrow_hashref('select * from contacts where id=?', undef, $provider_contract->{contact_id} );
 
+    #according to /reseller/ajax_reseller_filter
     foreach my $client_contact (@{ $dbh->selectall_arrayref('select contacts.* from contacts where reseller_id = ?'.ify(' and contacts.id', @{$opt->{client_contact_id}}),  { Slice => {} }, $provider_contract->{reseller_core_id}, @{$opt->{client_contact_id}} ) } ){
         my $client_contract = $dbh->selectrow_hashref('select contracts.* from contracts where contracts.contact_id=? ', undef, $client_contact->{id} );
 
-        if( my $billing_profile = $dbh->selectrow_hashref('select billing_profiles.* 
+        if( my $billing_profile = $dbh->selectrow_hashref('select distinct billing_profiles.* 
     from billing_mappings
     inner join billing_profiles on billing_mappings.billing_profile_id=billing_profiles.id
     inner join contracts on contracts.id=billing_mappings.contract_id
@@ -70,7 +100,7 @@ foreach my $provider_contract( @{$dbh->selectall_arrayref('select contracts.*,re
         and contracts.contact_id=?
         and (billing_mappings.start_date <= ? OR billing_mappings.start_date IS NULL)
         and (billing_mappings.end_date >= ? OR billing_mappings.end_date IS NULL)'
-, undef, $client_contract->{id}, $etime->epoch, $stime->epoch 
+, undef, $client_contact->{id}, $etime->epoch, $stime->epoch 
 ) ){
             my ($contract_balance,$invoice)=({},{});
             ($contract_balance,$invoice) = get_contract_balance($client_contract,$billing_profile,$contract_balance,$invoice,$stime,$etime);
@@ -81,13 +111,13 @@ foreach my $provider_contract( @{$dbh->selectall_arrayref('select contracts.*,re
     where
         cdr.source_user_id != 0
         and cdr.call_status="ok" 
---        and cdr.source_account_id=?
---        and cdr.start_time >= ?
---        and cdr.start_time <= ?
+        and cdr.source_account_id=?
+        and cdr.start_time >= ?
+        and cdr.start_time <= ?
         order by cdr.start_time
-        limit 25'
+--        limit 25'
         , { Slice => {} }
-#, $client_contract->{id},$stime->epoch,$etime->epoch
+, $client_contract->{id},$stime->epoch,$etime->epoch
             );
             my $invoice_details_zones = $dbh->selectall_arrayref('select SUM(cdr.source_customer_cost) AS cost, COUNT(*) AS number, SUM(cdr.duration) AS duration,sum(cdr.source_customer_free_time) as free_time, bzh.zone
     from accounting.cdr 
@@ -95,13 +125,13 @@ foreach my $provider_contract( @{$dbh->selectall_arrayref('select contracts.*,re
     where
         cdr.source_user_id != 0
         and cdr.call_status="ok" 
---        and cdr.source_account_id=?
---        and cdr.start_time >= ?
---        and cdr.start_time <= ?
+        and cdr.source_account_id=?
+        and cdr.start_time >= ?
+        and cdr.start_time <= ?
         group by bzh.zone
         order by bzh.zone'
         , {Slice => {} }
-#, $client_contract->{id},$stime->epoch,$etime->epoch
+, $client_contract->{id},$stime->epoch,$etime->epoch
             );
             my $i = 1;
             $invoice_details_calls = [map{[$i++,$_]} (@$invoice_details_calls) x 1];
@@ -141,6 +171,7 @@ foreach my $provider_contract( @{$dbh->selectall_arrayref('select contracts.*,re
             #print $out->{tt_string_pdf};
             #die;
             $dbh->do('update invoices set data=? where id=?',undef,$out->{tt_string_pdf},$invoice->{id});
+            email($provider_contact,$client_contact,$invoice,\$out->{tt_string_pdf});
         }
     }
 }
@@ -178,8 +209,43 @@ sub ify{
     return ( $#_  == 0 ) ? ' '.$key.' = ? ': ( ( $#_  > 0 ) ? ( ' '.$key. 'in('.('?'x($#_+1)).') ') : '' );
 }
 
-
-
-
-
-# OPTIONS tests
+sub email{
+#todo: repeat my old function based on templates and store into utils
+    my($provider_contact,$client_contact,$invoice,$pdf_ref)=@_;
+    $client_contact->{email} //= ''; 
+    if(1 or $client_contact->{email}){
+        my $email = Email::MIME->create(
+            header => [
+                From    => $provider_contact->{email},
+                #To      => $client_contact->{email},
+                To      => 'ipeshinskaya@gmail.com',
+                #To      => 'ipeshinskaya@sipwise.com',
+                Subject => 'Invoice #'.$invoice->{serial},
+            ],
+            parts => [
+                Email::MIME->create(
+                    attributes => {
+                        filename     => "invoice_$invoice->{serial}.pdf",
+                        content_type => "application/pdf",
+                        encoding     => "base64",
+                        #encoding     => "quoted-printable",
+                        disposition  => "attachment",
+                    },
+                    #body => io( $pdf_ref )->all,
+                    body => $pdf_ref,
+                ),
+                Email::MIME->create(
+                    attributes => {
+                        encoding     => "quoted-printable",
+                        content_type => "text/plain",
+                        charset      => "US-ASCII",
+                    },
+                    body_str => "Dear Customer!\n\nEmail:$client_contact->{email}\n\nSome text from sales here. Using loc somehow?\n Best regards,",
+                ),            
+            ]
+        );
+        sendmail($email, { transport => $email_transport });
+        #sendmail($email);
+        print "Error sending email: $@" if $@;
+    }
+}

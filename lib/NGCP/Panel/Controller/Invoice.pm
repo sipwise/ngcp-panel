@@ -157,10 +157,15 @@ sub invoice_list :Chained('invoice_details_calls') :PathPart('list') :Args(0) {
     my $backend = NGCP::Panel::Model::DB::InvoiceTemplate->new( schema => $c->model('DB') );
     $c->forward( 'template_list_data' );
     my $provider_id = $c->stash->{provider}->id;
+    my $invoice_list = $backend->getProviderInvoiceList(
+        provider_id => $provider_id,
+    );
     $c->stash( 
         client_contacts_list => $backend->getInvoiceProviderClients( provider_id => $provider_id ),
+        invoice_list  =>  [$invoice_list->all],
         template    => 'invoice/list.tt',
     );
+    #$c->detach( $c->view() );
 }
 
 sub template_base :Chained('base') :PathPart('template') :CaptureArgs(0) {

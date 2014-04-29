@@ -14,7 +14,7 @@
         <a class="btn btn-primary btn-large" href="[% c.uri_for('/back') %]"><i class="icon-arrow-left"></i> [% c.loc('Back') %]</a>
     </span>
     <span>
-        <a class="btn btn-primary btn-large" href="[% c.uri_for_action('invoice/template', [reseller.first.id]) %]">[% c.loc('Invoice Template')%] <i class="icon-edit"></i></a>
+        <a class="btn btn-primary btn-large" href="[% c.uri_for_action('invoice/template', [provider.id]) %]">[% c.loc('Invoice Template')%] <i class="icon-edit"></i></a>
     </span>
 </div>
 
@@ -30,8 +30,20 @@
 [% back_created = 1 -%]
 
 <div class="accordion" id="invoice">
-
 <div class="accordion-group">
+    <div class="accordion-heading">
+        <a class="accordion-toggle" data-toggle="collapse" data-parent="#invoice" href="#collapse_invoice_list">[% c.loc('Invoices') %]</a>
+    </div>
+    
+    <div class="accordion-body collapse" id="collapse_invoice_list">
+    <div class="accordion-inner" style="overflow:auto; height: 300px;">
+
+    </div>
+    </div>
+</div>
+
+
+<!--div class="accordion-group">
     <div class="accordion-heading">
         <a class="accordion-toggle" data-toggle="collapse" data-parent="#customer_invoice" href="#collapse_invoice_details_zones">[% c.loc('Invoice Connection Fees') %]</a>
     </div>
@@ -107,7 +119,7 @@ oTable.fnClose();
 
     </div>
     </div>
-</div>
+</div-->
 </div>
 
 
