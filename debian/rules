@@ -10,3 +10,6 @@ export DH_OPTIONS
 
 override_dh_auto_test:
 	echo "TODO / FIXME  - skipping dh_auto_test"
+
+override_dh_auto_install:
+	dh_auto_install --destdir=debian/ngcp-panel

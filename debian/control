@@ -139,3 +139,12 @@ Depends: gettext,
 Description: Catalyst based application
  A completely overhauled provisioning interface for the
  NGCP system.
+
+Package: ngcp-panel-tools
+Architecture: all
+Depends: openssl
+Description: Tools from ngcp-panel application
+ A completely overhauled provisioning interface for the
+ NGCP system.
+ .
+ This package contains some helper tools from ngcp-panel
