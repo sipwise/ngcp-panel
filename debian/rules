@@ -13,3 +13,8 @@ override_dh_auto_test:
 
 override_dh_auto_install:
 	dh_auto_install --destdir=debian/ngcp-panel
+
+override_dh_fixperms:
+	dh_fixperms
+	find debian/ngcp-panel/usr/share/ngcp-panel/static \
+		-type f -exec chmod 644 {} \;

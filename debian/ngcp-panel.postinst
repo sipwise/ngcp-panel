@@ -19,7 +19,7 @@ esac
 # the dir structure
 if [ ! -d /etc/ssl/ngcp/api ]; then
     mkdir -p /etc/ssl/ngcp/api
-    chown www-data.www-data /etc/ssl/ngcp/api
+    chown www-data:www-data /etc/ssl/ngcp/api
 fi
 
 # remove default debian site
