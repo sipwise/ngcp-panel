@@ -328,21 +328,31 @@ sub base :Chained('list_customer') :PathPart('') :CaptureArgs(1) {
         });
     }
 
-    NGCP::Panel::Utils::Sounds::stash_soundset_list(c => $c, contract => $c->stash->{contract});
-
     my $field_devs = [ $c->model('DB')->resultset('autoprov_field_devices')->search({
         'contract_id' => $contract_rs->first->id
     })->all ];
+
+    # contents of details page:
+    my $contract_first = $contract_rs->first;
+    NGCP::Panel::Utils::Sounds::stash_soundset_list(c => $c, contract => $contract_first);
+    $c->stash->{contact_hash} = { $contract_first->contact->get_inflated_columns };
+    if(defined $contract_first->max_subscribers) {
+       $c->stash->{subscriber_count} = $contract_first->voip_subscribers
+        ->search({ status => { -not_in => ['terminated'] } })
+        ->count;
+    }
+
     $c->stash(pbx_devices => $field_devs);
 
     $c->stash(product => $product);
     $c->stash(balance => $balance);
     $c->stash(fraud => $contract_rs->first->contract_fraud_preference);
     $c->stash(template => 'customer/details.tt'); 
-    $c->stash(contract => $contract_rs->first);
+    $c->stash(contract => $contract_first);
     $c->stash(contract_rs => $contract_rs);
     $c->stash(zonecalls_rs => $zonecalls_rs);
     $c->stash(billing_mapping => $billing_mapping);
+    return;
 }
 
 sub edit :Chained('base') :PathPart('edit') :Args(0) {
@@ -518,12 +528,7 @@ sub terminate :Chained('base') :PathPart('terminate') :Args(0) {
 sub details :Chained('base') :PathPart('details') :Args(0) {
     my ($self, $c) = @_;
 
-    $c->stash->{contact_hash} = { $c->stash->{contract}->contact->get_inflated_columns };
-    if(defined $c->stash->{contract}->max_subscribers) {
-       $c->stash->{subscriber_count} = $c->stash->{contract}->voip_subscribers
-        ->search({ status => { -not_in => ['terminated'] } })
-        ->count;
-    }
+    return;
 }
 
 sub subscriber_create :Chained('base') :PathPart('subscriber/create') :Args(0) {
