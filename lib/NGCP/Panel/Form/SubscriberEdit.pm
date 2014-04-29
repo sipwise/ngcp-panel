@@ -10,6 +10,7 @@ use NGCP::Panel::Field::Domain;
 use NGCP::Panel::Field::CustomerContract;
 use NGCP::Panel::Field::Reseller;
 use NGCP::Panel::Field::PosInteger;
+use NGCP::Panel::Utils::Form;
 
 with 'NGCP::Panel::Render::RepeatableJs';
 
@@ -179,6 +180,22 @@ sub field_list {
             $c->uri_for_action('/subscriberprofile/profile_ajax', [$set_id])->as_string
         );
     }
+}
+
+sub validate_password {
+    my ($self, $field) = @_;
+    my $c = $self->form->ctx;
+    return unless $c;
+
+    NGCP::Panel::Utils::Form::validate_password(c => $c, field => $field);
+}
+
+sub validate_webpassword {
+    my ($self, $field) = @_;
+    my $c = $self->form->ctx;
+    return unless $c;
+
+    NGCP::Panel::Utils::Form::validate_password(c => $c, field => $field);
 }
 
 1;

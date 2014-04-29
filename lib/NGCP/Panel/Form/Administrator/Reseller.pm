@@ -2,6 +2,7 @@ package NGCP::Panel::Form::Administrator::Reseller;
 use HTML::FormHandler::Moose;
 use HTML::FormHandler::Widget::Block::Bootstrap;
 use Moose::Util::TypeConstraints;
+use NGCP::Panel::Utils::Form;
 extends 'HTML::FormHandler';
 
 has '+widget_wrapper' => (default => 'Bootstrap');
@@ -10,7 +11,7 @@ sub build_render_list {[qw/submitid fields actions/]}
 sub build_form_element_class {[qw(form-horizontal)]}
 
 has_field 'login' => (type => 'Text', required => 1, minlength => 5);
-has_field 'md5pass' => (type => 'Password', required => 1, label => 'Password', minlength => 6);
+has_field 'md5pass' => (type => 'Password', required => 1, label => 'Password');
 for (qw(is_active show_passwords call_data)) {
     has_field $_ => (type => 'Boolean', default => 1);
 }
@@ -26,5 +27,13 @@ has_block 'fields' => (
     )],
 );
 has_block 'actions' => (tag => 'div', class => [qw(modal-footer)], render_list => [qw(save)],);
+
+sub validate_md5pass {
+    my ($self, $field) = @_;
+    my $c = $self->form->ctx;
+    return unless $c;
+
+    NGCP::Panel::Utils::Form::validate_password(c => $c, field => $field);
+}
 
 1;

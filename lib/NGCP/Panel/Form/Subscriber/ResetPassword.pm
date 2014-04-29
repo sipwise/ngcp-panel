@@ -6,6 +6,7 @@ use Moose::Util::TypeConstraints;
 
 use HTML::FormHandler::Widget::Block::Bootstrap;
 use NGCP::Panel::Field::PosInteger;
+use NGCP::Panel::Utils::Form;
 
 has '+widget_wrapper' => ( default => 'Bootstrap' );
 has_field 'submitid' => ( type => 'Hidden' );
@@ -43,6 +44,14 @@ has_block 'actions' => (
     class => [qw/modal-footer/],
     render_list => [qw/save/],
 );
+
+sub validate_password {
+    my ($self, $field) = @_;
+    my $c = $self->form->ctx;
+    return unless $c;
+
+    NGCP::Panel::Utils::Form::validate_password(c => $c, field => $field);
+}
 
 1;
 # vim: set tabstop=4 expandtab:

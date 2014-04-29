@@ -7,6 +7,7 @@ use Moose::Util::TypeConstraints;
 use HTML::FormHandler::Widget::Block::Bootstrap;
 
 use NGCP::Panel::Field::PbxGroup;
+use NGCP::Panel::Utils::Form;
 with 'NGCP::Panel::Render::RepeatableJs';
 
 has '+widget_wrapper' => ( default => 'Bootstrap' );
@@ -161,6 +162,22 @@ sub field_list {
         );
     }
 
+}
+
+sub validate_password {
+    my ($self, $field) = @_;
+    my $c = $self->form->ctx;
+    return unless $c;
+
+    NGCP::Panel::Utils::Form::validate_password(c => $c, field => $field);
+}
+
+sub validate_webpassword {
+    my ($self, $field) = @_;
+    my $c = $self->form->ctx;
+    return unless $c;
+
+    NGCP::Panel::Utils::Form::validate_password(c => $c, field => $field);
 }
 
 1;

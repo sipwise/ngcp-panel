@@ -3,6 +3,7 @@ package NGCP::Panel::Form::Faxserver::Password;
 use HTML::FormHandler::Moose;
 extends 'HTML::FormHandler';
 use Moose::Util::TypeConstraints;
+use NGCP::Panel::Utils::Form;
 
 use HTML::FormHandler::Widget::Block::Bootstrap;
 
@@ -35,6 +36,14 @@ has_block 'actions' => (
     class => [qw/modal-footer/],
     render_list => [qw/save/],
 );
+
+sub validate_password {
+    my ($self, $field) = @_;
+    my $c = $self->form->ctx;
+    return unless $c;
+
+    NGCP::Panel::Utils::Form::validate_password(c => $c, field => $field);
+}
 
 1;
 # vim: set tabstop=4 expandtab:

@@ -81,9 +81,9 @@ sub create :Chained('list_admin') :PathPart('create') :Args(0) {
     my $params = {};
     $params = $params->merge($c->session->{created_objects});
     if($c->user->is_superuser) {
-        $form = NGCP::Panel::Form::Administrator::Admin->new;
+        $form = NGCP::Panel::Form::Administrator::Admin->new(ctx => $c);
     } else {
-        $form = NGCP::Panel::Form::Administrator::Reseller->new;
+        $form = NGCP::Panel::Form::Administrator::Reseller->new(ctx => $c);
     }
     $form->process(
         posted => ($c->request->method eq 'POST'),
@@ -150,9 +150,9 @@ sub edit :Chained('base') :PathPart('edit') :Args(0) {
     $params->{reseller}{id} = delete $params->{reseller_id};
     $params = $params->merge($c->session->{created_objects});
     if($c->user->is_superuser) {
-        $form = NGCP::Panel::Form::Administrator::Admin->new;
+        $form = NGCP::Panel::Form::Administrator::Admin->new(ctx => $c);
     } else {
-        $form = NGCP::Panel::Form::Administrator::Reseller->new;
+        $form = NGCP::Panel::Form::Administrator::Reseller->new(ctx => $c);
     }
     $form->field('md5pass')->{required} = 0;
 
