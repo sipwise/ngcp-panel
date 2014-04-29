@@ -557,9 +557,6 @@ sub reset_webpassword :Chained('base') :PathPart('resetwebpassword') :Args(0) {
     try {
         my $schema = $c->model('DB');
         $schema->txn_do(sub {
-            $subscriber->provisioning_voip_subscriber->update({
-                webpassword => undef,
-            });
             my ($uuid_bin, $uuid_string);
             UUID::generate($uuid_bin);
             UUID::unparse($uuid_bin, $uuid_string);
