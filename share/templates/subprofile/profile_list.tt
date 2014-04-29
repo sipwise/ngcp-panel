@@ -17,15 +17,24 @@
     END;
 
     UNLESS c.user.read_only;
-        helper.dt_buttons = [
-            { name = c.loc('Edit'), uri = "/subscriberprofile/" _ set.id _ "/profile/'+full.id+'/edit", class = 'btn-small btn-primary', icon = 'icon-edit' },
-            { name = c.loc('Delete'), uri = "/subscriberprofile/" _ set.id _ "/profile/'+full.id+'/delete", class = 'btn-small btn-secondary', icon = 'icon-trash' },
-            { name = c.loc('Clone'), uri = "/subscriberprofile/" _ set.id _ "/profile/'+full.id+'/clone", class = 'btn-small btn-tertiary', icon = 'icon-retweet' },
-        ];
-        helper.top_buttons = [
-            { name = c.loc('Profile Sets'), uri = c.uri_for('/subscriberprofile'), icon = 'icon-list' },
-            { name = c.loc('Create Subscriber Profile'), uri = c.uri_for_action('/subscriberprofile/profile_create', c.req.captures), icon = 'icon-star' },
-        ];
+        UNLESS c.user.roles == "reseller" && !c.config.profile_sets.reseller_edit;
+            helper.dt_buttons = [
+                { name = c.loc('Edit'), uri = "/subscriberprofile/" _ set.id _ "/profile/'+full.id+'/edit", class = 'btn-small btn-primary', icon = 'icon-edit' },
+                { name = c.loc('Delete'), uri = "/subscriberprofile/" _ set.id _ "/profile/'+full.id+'/delete", class = 'btn-small btn-secondary', icon = 'icon-trash' },
+                { name = c.loc('Clone'), uri = "/subscriberprofile/" _ set.id _ "/profile/'+full.id+'/clone", class = 'btn-small btn-tertiary', icon = 'icon-retweet' },
+            ];
+            helper.top_buttons = [
+                { name = c.loc('Profile Sets'), uri = c.uri_for('/subscriberprofile'), icon = 'icon-list' },
+                { name = c.loc('Create Subscriber Profile'), uri = c.uri_for_action('/subscriberprofile/profile_create', c.req.captures), icon = 'icon-star' },
+            ];
+        ELSE;
+            helper.dt_buttons = [
+                { name = c.loc('Edit'), uri = "/subscriberprofile/" _ set.id _ "/profile/'+full.id+'/edit", class = 'btn-small btn-primary', icon = 'icon-edit' },
+            ];
+            helper.top_buttons = [
+                { name = c.loc('Profile Sets'), uri = c.uri_for('/subscriberprofile'), icon = 'icon-list' },
+            ];
+        END;
     ELSE;
         helper.top_buttons = [
             { name = c.loc('Profile Sets'), uri = c.uri_for('/subscriberprofile'), icon = 'icon-list' },

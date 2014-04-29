@@ -93,6 +93,7 @@ sub field_list {
             #    title => [$pref->description],
             #    checked => 'checked',
             },
+            disabled => $c->user->roles eq "reseller" && !$c->config->{profile_sets}->{reseller_edit} ? 1 : 0,
         };
     }
 

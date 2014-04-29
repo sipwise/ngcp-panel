@@ -17,15 +17,21 @@
     END;
 
     UNLESS c.user.read_only;
-        helper.dt_buttons = [
-            { name = c.loc('Edit'), uri = "/subscriberprofile/'+full.id+'/edit", class = 'btn-small btn-primary', icon = 'icon-edit' },
-            { name = c.loc('Delete'), uri = "/subscriberprofile/'+full.id+'/delete", class = 'btn-small btn-secondary', icon = 'icon-trash' },
-            { name = c.loc('Clone'), uri = "/subscriberprofile/'+full.id+'/clone", class = 'btn-small btn-tertiary', icon = 'icon-retweet' },
-            { name = c.loc('Profiles'), uri = "/subscriberprofile/'+full.id+'/profile", class = 'btn-small btn-primary', icon = 'icon-list' },
-        ];
-        helper.top_buttons = [
-            { name = c.loc('Create Subscriber Profile Set'), uri = c.uri_for_action('/subscriberprofile/set_create'), icon = 'icon-star' },
-        ];
+        UNLESS c.user.roles == "reseller" && !c.config.profile_sets.reseller_edit;
+            helper.dt_buttons = [
+                { name = c.loc('Edit'), uri = "/subscriberprofile/'+full.id+'/edit", class = 'btn-small btn-primary', icon = 'icon-edit' },
+                { name = c.loc('Delete'), uri = "/subscriberprofile/'+full.id+'/delete", class = 'btn-small btn-secondary', icon = 'icon-trash' },
+                { name = c.loc('Clone'), uri = "/subscriberprofile/'+full.id+'/clone", class = 'btn-small btn-tertiary', icon = 'icon-retweet' },
+                { name = c.loc('Profiles'), uri = "/subscriberprofile/'+full.id+'/profile", class = 'btn-small btn-primary', icon = 'icon-list' },
+            ];
+            helper.top_buttons = [
+                { name = c.loc('Create Subscriber Profile Set'), uri = c.uri_for_action('/subscriberprofile/set_create'), icon = 'icon-star' },
+            ];
+        ELSE;
+            helper.dt_buttons = [
+                { name = c.loc('Profiles'), uri = "/subscriberprofile/'+full.id+'/profile", class = 'btn-small btn-primary', icon = 'icon-list' },
+            ];
+        END;
     END;
 
     PROCESS 'helpers/datatables.tt';

@@ -92,6 +92,9 @@ sub set_base :Chained('set_list') :PathPart('') :CaptureArgs(1) {
 sub set_create :Chained('set_list') :PathPart('create') :Args(0) :Does(ACL) :ACLDetachTo('/denied_page') :AllowedRole(admin) :AllowedRole(reseller) {
     my ($self, $c) = @_;
 
+    $c->detach('/denied_page')
+        if($c->user->roles eq "reseller" && !$c->config->{profile_sets}->{reseller_edit});
+
     my $posted = ($c->request->method eq 'POST');
     my $params = {};
     $params = $params->merge($c->session->{created_objects});
@@ -146,6 +149,9 @@ sub set_create :Chained('set_list') :PathPart('create') :Args(0) :Does(ACL) :ACL
 
 sub set_edit :Chained('set_base') :PathPart('edit') :Does(ACL) :ACLDetachTo('/denied_page') :AllowedRole(admin) :AllowedRole(reseller) {
     my ($self, $c) = @_;
+
+    $c->detach('/denied_page')
+        if($c->user->roles eq "reseller" && !$c->config->{profile_sets}->{reseller_edit});
 
     my $set = $c->stash->{set};
     my $posted = ($c->request->method eq 'POST');
@@ -203,6 +209,9 @@ sub set_edit :Chained('set_base') :PathPart('edit') :Does(ACL) :ACLDetachTo('/de
 
 sub set_delete :Chained('set_base') :PathPart('delete') :Does(ACL) :ACLDetachTo('/denied_page') :AllowedRole(admin) :AllowedRole(reseller) {
     my ($self, $c) = @_;
+
+    $c->detach('/denied_page')
+        if($c->user->roles eq "reseller" && !$c->config->{profile_sets}->{reseller_edit});
     
     try {
         my $schema = $c->model('DB');
@@ -229,6 +238,9 @@ sub set_delete :Chained('set_base') :PathPart('delete') :Does(ACL) :ACLDetachTo(
 
 sub set_clone :Chained('set_base') :PathPart('clone') :Does(ACL) :ACLDetachTo('/denied_page') :AllowedRole(admin) :AllowedRole(reseller) {
     my ($self, $c) = @_;
+
+    $c->detach('/denied_page')
+        if($c->user->roles eq "reseller" && !$c->config->{profile_sets}->{reseller_edit});
 
     my $posted = ($c->request->method eq 'POST');
     my $params = { $c->stash->{set}->get_inflated_columns };
@@ -353,6 +365,9 @@ sub profile_base :Chained('profile_list') :PathPart('') :CaptureArgs(1) :Does(AC
 sub profile_create :Chained('profile_list') :PathPart('create') :Args(0) :Does(ACL) :ACLDetachTo('/denied_page') :AllowedRole(admin) :AllowedRole(reseller) {
     my ($self, $c) = @_;
 
+    $c->detach('/denied_page')
+        if($c->user->roles eq "reseller" && !$c->config->{profile_sets}->{reseller_edit});
+
     my $posted = ($c->request->method eq 'POST');
     my $params = {};
     $params = $params->merge($c->session->{created_objects});
@@ -454,6 +469,10 @@ sub profile_edit :Chained('profile_base') :PathPart('edit') :Does(ACL) :ACLDetac
                   # no previous default profile, make this one default
                   $form->values->{set_default} = 1;
                 }
+                if($c->user->roles eq "reseller" && !$c->config->{profile_sets}->{reseller_edit}) {
+                    # only allow generic fields to be updated
+                    delete $form->values->{attribute};
+                }
 
                 $profile->update($form->values);
 
@@ -516,6 +535,9 @@ sub profile_edit :Chained('profile_base') :PathPart('edit') :Does(ACL) :ACLDetac
 
 sub profile_delete :Chained('profile_base') :PathPart('delete') :Does(ACL) :ACLDetachTo('/denied_page') :AllowedRole(admin) :AllowedRole(reseller) {
     my ($self, $c) = @_;
+
+    $c->detach('/denied_page')
+        if($c->user->roles eq "reseller" && !$c->config->{profile_sets}->{reseller_edit});
     
     try {
         my $schema = $c->model('DB');
@@ -549,6 +571,9 @@ sub profile_delete :Chained('profile_base') :PathPart('delete') :Does(ACL) :ACLD
 
 sub profile_clone :Chained('profile_base') :PathPart('clone') :Does(ACL) :ACLDetachTo('/denied_page') :AllowedRole(admin) :AllowedRole(reseller) {
     my ($self, $c) = @_;
+
+    $c->detach('/denied_page')
+        if($c->user->roles eq "reseller" && !$c->config->{profile_sets}->{reseller_edit});
 
     my $posted = ($c->request->method eq 'POST');
     my $params = { $c->stash->{profile}->get_inflated_columns };
