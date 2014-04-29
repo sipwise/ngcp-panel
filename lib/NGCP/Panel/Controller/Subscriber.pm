@@ -445,9 +445,15 @@ sub reset_webpassword :Chained('base') :PathPart('resetwebpassword') :Args(0) {
             UUID::generate($uuid_bin);
             UUID::unparse($uuid_bin, $uuid_string);
             $subscriber->password_resets->delete; # clear any old entries of this subscriber
+
+            # if reset from a logged in user, clear old pass (to force setting new one)
+            # and let reset link be valid for a year
+            $subscriber->provisioning_voip_subscriber->update({
+                webpassword => undef,
+            });
             $subscriber->password_resets->create({
                 uuid => $uuid_string,
-                timestamp => NGCP::Panel::Utils::DateTime::current_local->epoch + 86400,
+                timestamp => NGCP::Panel::Utils::DateTime::current_local->epoch + 31536000,
             });
             my $url = $c->uri_for_action('/subscriber/recover_webpassword')->as_string . '?uuid=' . $uuid_string;
             NGCP::Panel::Utils::Email::password_reset($c, $subscriber, $url);
