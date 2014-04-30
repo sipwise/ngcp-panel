@@ -239,9 +239,10 @@ sub getProviderInvoiceList{
                 'contact.reseller_id' => $provider_reseller_id, #$client_contract_id - contract of the client
             ],
     },{
-        '+select'   => ['contract_balances.invoice_id','contract_balances.start','contract_balances.end','contract_balances.cash_balance','contract_balances.free_time_balance'],
-        '+as'   => ['invoice_id','contract_balance_start','contract_balance_end','cash_balance','free_time_balance'],
-        'prefetch'  => [ {'contract_balances' => { 'contract' => 'contact' }} ],
+        '+select'   => ['contract_balances.invoice_id','contract_balances.start','contract_balances.end','contract_balances.cash_balance','contract_balances.free_time_balance','reseller.id','reseller.name','contact.id',],
+        '+as'       => ['invoice_id','contract_balance_start','contract_balance_end','cash_balance','free_time_balance', 'reseller_id', 'reseller_name',,'client_contact_id' ],
+        'prefetch'  => [ {'contract_balances' => { 'contract' => { 'contact' => 'reseller' } } } ],
+        'order_by'  => [ { '-desc' => 'contract_balances.start' },{ '-asc' => 'contract_balances.end' }, ]
     });
 }
 sub getInvoice{
