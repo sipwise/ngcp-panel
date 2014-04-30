@@ -1956,7 +1956,6 @@ sub edit_master :Chained('master') :PathPart('edit') :Args(0) :Does(ACL) :ACLDet
     my $lock = $c->stash->{prov_lock};
     my $base_number;
     if($pbx_ext) {
-        say ">>>>>>>>>>>>> check admin subscriber";
         my $admin_subscribers = $c->stash->{subscribers}->search({
             'provisioning_voip_subscriber.admin' => 1,
         });
@@ -1979,7 +1978,6 @@ sub edit_master :Chained('master') :PathPart('edit') :Args(0) :Does(ACL) :ACLDet
         $params->{webpassword} = $prov_subscriber->webpassword;
         $params->{password} = $prov_subscriber->password;
         $params->{administrative} = $prov_subscriber->admin;
-        say ">>>>>>>>>>>>> check primary number";
         if($subscriber->primary_number) {
             $params->{e164}->{cc} = $subscriber->primary_number->cc;
             $params->{e164}->{ac} = $subscriber->primary_number->ac;
@@ -2128,6 +2126,30 @@ sub edit_master :Chained('master') :PathPart('edit') :Args(0) :Does(ACL) :ACLDet
                     }
                 }
 
+                # if the profile changed, clear any preferences which are not in the new profile
+                if($prov_subscriber->voip_subscriber_profile) {
+                    my %old_profile_attributes = map { $_ => 1 }
+                        $prov_subscriber->voip_subscriber_profile
+                        ->profile_attributes->get_column('attribute_id')->all;
+                    if($profile) {
+                        foreach my $attr_id($profile->profile_attributes->get_column('attribute_id')->all) {
+                            delete $old_profile_attributes{$attr_id};
+                        }
+                    }
+                    if(keys %old_profile_attributes) {
+                        my $cfs = $c->model('DB')->resultset('voip_preferences')->search({
+                            id => { -in => [ keys %old_profile_attributes ] },
+                            attribute => { -in => [qw/cfu cfb cft cfna/] },
+                        });
+                        $prov_subscriber->voip_usr_preferences->search({
+                            attribute_id => { -in => [ keys %old_profile_attributes ] },
+                        })->delete;
+                        $prov_subscriber->voip_cf_mappings->search({
+                            type => { -in => [ map { $_->attribute } $cfs->all ] },
+                        })->delete;
+                    }
+                }
+
                 $prov_subscriber->update($prov_params);
 
                 NGCP::Panel::Utils::Subscriber::update_pbx_group_prefs(
@@ -2192,15 +2214,12 @@ sub edit_master :Chained('master') :PathPart('edit') :Args(0) :Does(ACL) :ACLDet
                 }
 
                 if($subscriber->primary_number) {
-                    say ">>>>>>>>>>>>>>>>> get old num";
                     my $old_number = { 
                         cc => $subscriber->primary_number->cc,
                         ac => $subscriber->primary_number->ac,
                         sn => $subscriber->primary_number->sn,
                     };
-                    say ">>>>>>>>>>>>>>>>> check pbx ext";
                     if($pbx_ext) {
-                        say ">>>>>>>>>>>>>>>>> get pbx ext";
                         $form->params->{e164}{cc} = $subscriber->primary_number->cc;
                         $form->params->{e164}{ac} = $subscriber->primary_number->ac;
                         $form->params->{e164}{sn} = $base_number->sn . $form->params->{pbx_extension};
