@@ -10,7 +10,9 @@
         <li><a href="[% c.uri_for_action('/subscriber/reglist', [subscriber.id]) %]">[% c.loc('Registered Devices') %]</a></li>
         <li><a href="[% c.uri_for_action('/subscriber/preferences', [subscriber.id]) %]">[% c.loc('Subscriber Settings') %]</a></li>
         <li><a href="[% c.uri_for_action('/subscriber/webpass', [subscriber.id]) %]">[% c.loc('User Details') %]</a></li>
+        [% IF c.config.features.faxserver -%]
         <li><a href="[% c.uri_for_action('/subscriber/webfax', [subscriber.id]) %]">[% c.loc('Web Fax') %]</a></li>
+        [% END -%]
     </ul>
 </li>
 [% # vim: set tabstop=4 syntax=html expandtab: -%]
