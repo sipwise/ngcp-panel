@@ -133,9 +133,9 @@ sub create :Chained('list_customer') :PathPart('create') :Args(0) {
             $schema->txn_do(sub {
                 $form->params->{contact_id} = $form->params->{contact}{id};
                 delete $form->params->{contact};
-                $form->params->{subscriber_email_template_id} = $form->params->{subscriber_email_template}{id};
+                $form->params->{subscriber_email_template_id} = $form->params->{subscriber_email_template}{id} || undef;
                 delete $form->params->{subscriber_email_template};
-                $form->params->{passreset_email_template_id} = $form->params->{passreset_email_template}{id};
+                $form->params->{passreset_email_template_id} = $form->params->{passreset_email_template}{id} || undef;
                 delete $form->params->{passreset_email_template};
                 my $bprof_id = $form->params->{billing_profile}{id};
                 delete $form->params->{billing_profile};
