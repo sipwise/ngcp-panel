@@ -47,7 +47,7 @@ my @allcontacts = ();
     if(ref $reseller->{_embedded}->{'ngcp:resellers'} eq 'ARRAY') {
         $reseller = $reseller->{_embedded}->{'ngcp:resellers'}->[0]->{id};
     } elsif(ref $reseller->{_embedded}->{'ngcp:resellers'} eq 'HASH') {
-        $reseller = $reseller->{_embedded}->{'ngcp:resellers'}->{href};
+        $reseller = $reseller->{_embedded}->{'ngcp:resellers'}->{id};
     } else {
         # TODO: hm, no resellers, we should create one
         ok(0 == 1, "check if we found a reseller");
