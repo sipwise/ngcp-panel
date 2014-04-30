@@ -1,0 +1,39 @@
+[%USE Date%]
+[%manip=date.manip%]
+
+    <table class="table table-bordered table-striped table-highlight table-hover">
+    <thead>
+        <tr>
+            <th>[% c.loc('Serial') %]</th>
+            <th>[% c.loc('Start') %]</th>
+            <th>[% c.loc('End') %]</th>
+            <th>[% c.loc('Cache Balance') %]</th>
+            <th>[% c.loc('Free time balance') %]</th>
+            <th class="ngcp-actions-column"></th>
+        </tr>
+    </thead>
+    <tbody>
+        [%# Dumper.dump_html(invoice_details_zones.as_query)%]
+        [%FOREACH invoice IN invoice_list -%]
+        <tr class="sw_action_row">
+            <td><div class="pull-right">[% invoice.get_column('serial')|format('%06d') %]</div></td>
+            <td><div class="pull-right">[% invoice.get_column('contract_balance_start') %]</div></td>
+            <td><div class="pull-right">[% invoice.get_column('contract_balance_end') %]</div></td>
+            <td><div class="pull-right">[% invoice.get_column('cash_balance') %]</div></td>
+            <td><div class="pull-right">[% invoice.get_column('free_time_balance') %]</div></td>
+            <td><a class="btn btn-small btn-primary" href="javascript:window.open('[%c.uri_for_action("/invoice/invoice_data",[invoice.get_column('invoice_id')])%]','_blank');void(0);">
+                    <i class="icon-edit"></i> [% c.loc('View invoice') %]
+                </a>
+            </td>
+        </tr>
+        [%END%]
+     </tbody>
+    </table>
+
+    
+    
+    
+    
+    
+    
+    

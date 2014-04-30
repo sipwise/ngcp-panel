@@ -58,7 +58,7 @@ my $email_transport = Email::Sender::Transport::SMTP->new({
 
     #host => 'mail.sipwise.com',
     #port => 587,
-    #sasl_password => 'KfC4pXuV',
+    #sasl_password => '',
     #ssl => 0,
     
     host => 'smtp.googlemail.com',

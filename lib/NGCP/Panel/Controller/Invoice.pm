@@ -168,6 +168,15 @@ sub invoice_list :Chained('invoice_details_calls') :PathPart('list') :Args(0) {
     #$c->detach( $c->view() );
 }
 
+sub invoice_data :Chained('invoice') :PathPart('data') :Args(1) {
+    my ($self, $c) = @_;
+    my ($invoice_id) = pop;
+    my $backend = NGCP::Panel::Model::DB::InvoiceTemplate->new( schema => $c->model('DB') );
+    my $invoice = $backend->getInvoice(invoice_id => $invoice_id);
+    $c->response->content_type('application/pdf');
+    $c->response->body( $invoice->first->get_column('data') );
+}
+
 sub template_base :Chained('base') :PathPart('template') :CaptureArgs(0) {
     my ($self, $c) = @_;
     my($validator,$backend,$in,$out);

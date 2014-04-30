@@ -233,15 +233,24 @@ sub getProviderInvoiceList{
     my ($provider_reseller_id,$stime,$etime) = @params{qw/provider_id stime etime/};
     $stime ||= NGCP::Panel::Utils::DateTime::current_local()->truncate( to => 'month' );
     $etime ||= $stime->clone->add( months => 1);
-    $self->schema->resultset('contacts')->search_rs({
+    $self->schema->resultset('invoices')->search({
         '-and'  =>  
             [ 
-                'reseller_id' => $provider_reseller_id, #$client_contract_id - contract of the client
+                'contact.reseller_id' => $provider_reseller_id, #$client_contract_id - contract of the client
             ],
     },{
-        '+select'   => ['contract_balances.invoice_id','contract_balances.start','contract_balances.end'],
-        'join'      => [{ 'contracts' => {'contract_balances' => 'invoice' }}]
+        '+select'   => ['contract_balances.invoice_id','contract_balances.start','contract_balances.end','contract_balances.cash_balance','contract_balances.free_time_balance'],
+        '+as'   => ['invoice_id','contract_balance_start','contract_balance_end','cash_balance','free_time_balance'],
+        'prefetch'  => [ {'contract_balances' => { 'contract' => 'contact' }} ],
     });
+}
+sub getInvoice{
+    my $self = shift;
+    my (%params) = @_;
+    my ($invoice_id) = @params{qw/invoice_id/};
+    return $self->schema->resultset('invoices')->search({
+        'id'  => $invoice_id,
+    },undef );
 }
 sub getInvoiceProviderClients{
     my $self = shift;

@@ -37,7 +37,7 @@
     
     <div class="accordion-body collapse" id="collapse_invoice_list">
     <div class="accordion-inner" style="overflow:auto; height: 300px;">
-
+[%PROCESS 'invoice/invoice_list.tt' %]
     </div>
     </div>
 </div>
