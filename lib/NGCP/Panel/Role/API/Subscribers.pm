@@ -21,7 +21,7 @@ use NGCP::Panel::Utils::Subscriber;
 sub get_form {
     my ($self, $c) = @_;
 
-    return NGCP::Panel::Form::Subscriber::SubscriberAPI->new;
+    return NGCP::Panel::Form::Subscriber::SubscriberAPI->new(ctx => $c);
 }
 
 sub transform_resource {
@@ -244,18 +244,24 @@ sub prepare_resource {
     my $preferences = {};
     my $admin = 0;
     unless($customer->get_column('product_class') eq 'pbxaccount') {
-        delete $resource->{is_pbx_group};
-        delete $resource->{pbx_group_id};
+        for my $pref(qw/is_pbx_group pbx_group_id pbx_extension pbx_hunt_policy pbx_hunt_timeout/) {
+            delete $resource->{$pref};
+        }
         $admin = $resource->{admin} // 0;
     } elsif($c->config->{features}->{cloudpbx}) {
-        my $subs = NGCP::Panel::Utils::Subscriber::get_custom_subscriber_struct(
-            c => $c,
-            contract => $customer,
-            show_locked => 1,
-        );
-        my $admin_subscribers = NGCP::Panel::Utils::Subscriber::get_admin_subscribers(
-            voip_subscribers => $subs->{subscribers});
-        unless(@{ $admin_subscribers }) {
+        my $subs = $c->model('DB')->resultset('voip_subscribers')->search({
+            contract_id => $customer->id,
+            status => { '!=' => 'terminated' },
+            'provisioning_voip_subscriber.is_pbx_group' => 0,
+        }, {
+            join => 'provisioning_voip_subscriber',
+        });
+        my $admin_subscribers = $subs->search({
+            'provisioning_voip_subscriber.admin' => 1,
+        });
+        my $admin_subscriber = $admin_subscribers->first;
+
+        unless($admin_subscriber) {
             $admin = $resource->{admin} // 1;
         } else {
             $admin = $resource->{admin} // 0;
@@ -271,10 +277,9 @@ sub prepare_resource {
             $preferences->{contract_sound_set} = $default_sound_set->id;
         }
 
-        my $admin_subscriber = $admin_subscribers->[0];
-        my $base_number = $admin_subscriber->{primary_number};
+        my $base_number = $admin_subscriber->primary_number;
         if($base_number) {
-            $preferences->{cloud_pbx_base_cli} = $base_number->{cc} . $base_number->{ac} . $base_number->{sn};
+            $preferences->{cloud_pbx_base_cli} = $base_number->cc . ($base_number->ac // '') . $base_number->sn;
         }
     }
     if(exists $resource->{external_id}) {
@@ -381,6 +386,59 @@ sub update_item {
         }
     }
 
+    my ($profile_set, $profile);
+    if($resource->{profile_set_id}) {
+        my $profile_set_rs = $c->model('DB')->resultset('voip_subscriber_profile_sets');
+        if($c->user->roles eq "admin") {
+        } elsif($c->user->roles eq "reseller") {
+            $profile_set_rs = $profile_set_rs->search({
+                reseller_id => $c->user->reseller_id,
+            });
+        }
+
+        $profile_set = $profile_set_rs->find($resource->{profile_set_id});
+        unless($profile_set) {
+            $c->log->error("invalid subscriber profile set id '" . $resource->{profile_set_id} . "'");
+            $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "Invalid profile_set_id parameter");
+            return;
+        }
+    }
+
+    if($profile_set && $resource->{profile_id}) {
+        $profile = $profile_set->voip_subscriber_profiles->find({
+            id => $resource->{profile_id},
+        });
+    }
+    if($profile_set && !$profile) {
+        $profile = $profile_set->voip_subscriber_profiles->find({
+            set_default => 1,
+        });
+    }
+
+    # if the profile changed, clear any preferences which are not in the new profile
+    if($subscriber->provisioning_voip_subscriber->voip_subscriber_profile) {
+        my %old_profile_attributes = map { $_ => 1 }
+            $subscriber->provisioning_voip_subscriber->voip_subscriber_profile
+            ->profile_attributes->get_column('attribute_id')->all;
+        if($profile) {
+            foreach my $attr_id($profile->profile_attributes->get_column('attribute_id')->all) {
+                delete $old_profile_attributes{$attr_id};
+            }
+        }
+        if(keys %old_profile_attributes) {
+            my $cfs = $c->model('DB')->resultset('voip_preferences')->search({
+                id => { -in => [ keys %old_profile_attributes ] },
+                attribute => { -in => [qw/cfu cfb cft cfna/] },
+            });
+            $subscriber->provisioning_voip_subscriber->voip_usr_preferences->search({
+                attribute_id => { -in => [ keys %old_profile_attributes ] },
+            })->delete;
+            $subscriber->provisioning_voip_subscriber->voip_cf_mappings->search({
+                type => { -in => [ map { $_->attribute } $cfs->all ] },
+            })->delete;
+        }
+    }
+
     NGCP::Panel::Utils::Subscriber::update_subscriber_numbers(
         schema => $c->model('DB'),
         primary_number => $resource->{e164},
@@ -401,8 +459,14 @@ sub update_item {
         is_pbx_group => $resource->{is_pbx_group},
         pbx_group_id => $resource->{pbx_group_id},
         modify_timestamp => NGCP::Panel::Utils::DateTime::current_local,
-
+        profile_set_id => $profile_set ? $profile_set->id : undef,
+        profile_id => $profile ? $profile->id : undef,
     };
+    if($resource->{is_pbx_group}) {
+        $provisioning_res->{pbx_hunt_policy} = $resource->{pbx_hunt_policy};
+        $provisioning_res->{pbx_hunt_timeout} = $resource->{pbx_hunt_timeout};
+        $provisioning_res->{pbx_group_id} = undef;
+    }
 
     $subscriber->update($billing_res);
     $subscriber->provisioning_voip_subscriber->update($provisioning_res);

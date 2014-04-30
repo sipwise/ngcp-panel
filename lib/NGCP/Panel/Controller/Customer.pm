@@ -407,7 +407,6 @@ sub edit :Chained('base') :PathPart('edit') :Args(0) {
                     $form->params->{max_subscribers} = undef;
                 }
                 my $old_bprof_id = $billing_mapping->billing_profile_id;
-                $c->log->debug(">>>>>>>>>>> old bprof_id=$old_bprof_id");
                 my $old_prepaid = $billing_mapping->billing_profile->prepaid;
                 my $old_ext_id = $contract->external_id // '';
                 $contract->update($form->params);

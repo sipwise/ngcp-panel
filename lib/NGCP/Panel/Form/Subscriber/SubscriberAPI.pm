@@ -58,6 +58,16 @@ has_field 'pbx_group' => (
     },
 );
 
+has_field 'profile' => (
+    type => '+NGCP::Panel::Field::SubscriberProfile',
+    label => 'Subscriber Profile',
+    validate_when_empty => 0,
+    element_attr => {
+        rel => ['tooltip'],
+        title => ['The profile defining the actual feature set for this subscriber.']
+    },
+);
+
 has_field 'save' => (
     type => 'Submit',
     value => 'Save',
@@ -69,7 +79,7 @@ has_field 'save' => (
 has_block 'fields' => (
     tag => 'div',
     class => [qw/modal-body/],
-    render_list => [qw/contract domain e164 alias_number webusername webpassword username password status lock external_id administrative is_pbx_group pbx_group display_name/ ],
+    render_list => [qw/contract domain e164 alias_number webusername webpassword username password status lock external_id administrative is_pbx_group pbx_group display_name profile_set profile/ ],
 );
 
 has_block 'actions' => (
@@ -77,6 +87,11 @@ has_block 'actions' => (
     class => [qw/modal-footer/],
     render_list => [qw/save/],
 );
+
+# override parent here to prevent any password magic
+sub update_fields {
+    my $self = shift;
+}
 
 1;
 

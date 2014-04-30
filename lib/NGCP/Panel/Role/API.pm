@@ -90,6 +90,10 @@ sub validate_form {
     # remove unknown keys
     my %fields = map { $_->name => undef } $form->fields;
     for my $k (keys %{ $resource }) {
+        #if($resource->{$k}->$_isa('JSON::XS::Boolean') || $resource->{$k}->$_isa('JSON::PP::Boolean')) {
+        if($resource->{$k}->$_isa('JSON::PP::Boolean')) {
+            $resource->{$k} = $resource->{$k} ? 1 : 0;
+        }
         unless(exists $fields{$k}) {
             delete $resource->{$k};
         }

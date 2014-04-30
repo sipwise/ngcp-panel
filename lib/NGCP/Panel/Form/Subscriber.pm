@@ -181,15 +181,15 @@ sub validate_webpassword {
 }
 
 sub update_fields {
-    my $self = shift;
+    my ($self) = @_;
     my $c = $self->ctx;
     return unless $c;
 
-    if($c->config->{security}->{password_sip_autogenerate}) {
+    if($c->config->{security}->{password_sip_autogenerate} && $self->field('password')) {
         $self->field('password')->inactive(1);
         $self->field('password')->required(0);
     }
-    if($c->config->{security}->{password_web_autogenerate}) {
+    if($c->config->{security}->{password_web_autogenerate} && $self->field('webpassword')) {
         $self->field('webpassword')->inactive(1);
         $self->field('webpassword')->required(0);
     }
@@ -203,6 +203,7 @@ sub update_fields {
         );
     }
 =cut
+
 }
 
 1;

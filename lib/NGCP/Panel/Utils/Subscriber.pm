@@ -356,8 +356,6 @@ sub update_pbx_group_prefs {
 sub update_subscriber_numbers {
     my %params = @_;
 
-    print ">>>>>>>>>>>>>>>>>>> update_subscriber_numbers\n";
-
     my $schema         = $params{schema};
     my $subscriber_id  = $params{subscriber_id};
     my $reseller_id    = $params{reseller_id};
@@ -371,13 +369,11 @@ sub update_subscriber_numbers {
     my @nums = (); my @dbnums = ();
 
     if(exists $params{primary_number} && !defined $primary_number) {
-        print ">>>>>>>>>>>>>>>>> discard primary number\n";
         $billing_subs->update({
             primary_number_id => undef,
         });
     }
     elsif(defined $primary_number) {
-        print ">>>>>>>>>>>>>>>>> update primary number\n";
 
         my $old_cc;
         my $old_ac;
