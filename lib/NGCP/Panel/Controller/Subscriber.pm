@@ -165,7 +165,7 @@ sub create_list :Chained('sub_list') :PathPart('create') :Args(0) :Does(ACL) :AC
                 my $billing_mapping = $contract->billing_mappings->find($contract->get_column('bmid'));
 
                 if($contract->external_id) {
-                    $preferences->{ext_contract_id} = $c->stash->{contract}->external_id;
+                    $preferences->{ext_contract_id} = $contract->external_id;
                 }
                 if(defined $form->params->{external_id}) {
                     $preferences->{ext_subscriber_id} = $form->params->{external_id};
