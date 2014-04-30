@@ -1,6 +1,6 @@
 #!/bin/sh
-BASE="/usr/share/ngcp-panel-tools"
 DEST=${1:-/etc/ngcp-panel/api_ssl}
+BASE=${2:-/usr/share/ngcp-panel-tools}
 
 mkdir -p ${DEST}
 

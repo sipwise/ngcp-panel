@@ -8,16 +8,91 @@
   [% END -%]
 </h[% level %]>
 
-Authentication and authorization on the Sipwise NGCP HTTP API is performed via <b>SSL Client Certificates</b>. You can generate and download certificates for administrators and resellers via the <b>NGCP Panel</b> in the <b>Administrators</b> view.
+Authentication and authorization on the Sipwise NGCP HTTP API is performed via <b>HTTP Basic Auth</b> or <b>SSL Client Certificates</b>.
 
-You will need two files:
+<h[% level + 1 %]>HTTP Basic Auth</h[% level + 1 %]>
+You can authenticate against the API using your normal <b>NGCP Panel</b> administrator or reseller login credentials with the realm <span>api_admin_http</span>.
+
+<h[% level + 2 %]>Examples</h[% level + 2 %]>
+<div class="examples">
+
+<h5>Using cURL on the Shell</h5>
+<p>
+With cURL, use <span>--user username:password</span> option to specify your access credentials. Specifying the realm is not needed here.
+
+<code>
+curl -i -X GET --user myuser:mypassword https://example.org:1443/api/
+</code>
+
+Additionally use the <span>--insecure</span> option if you are testing against a self-signed server certificate.
+</p>
+
+<h5>Using Perl LWP::UserAgent</h5>
+<p>
+With LWP::UserAgent, set the credentials using the <span>credentials()</span> function. The first parameter is your server (credentials are only sent if the host:port in the request matches the one specified here), the second one is the realm (always <span>api_admin_http</span>), the third one is your username, and the fourth is the password.
+
+<code>
+#!/usr/bin/perl -w
+use strict;
+use LWP::UserAgent;
+
+my $ua = LWP::UserAgent->new();
+# set to 0 if using a self-signed certificate
+$ua->ssl_opts(verify_hostname => 1);
+$ua->credentials('example.org:1443', 'api_admin_http', 'myuser', 'mypassword');
+
+my $res = $ua->get('https://example.org:1443/api/');
+if($res->is_success) {
+    print $res->as_string;
+} else {
+    print STDERR $res->status_line, "\n";
+}
+</code>
+</p>
+
+<h5>Using PHP cURL</h5>
+<p>
+
+Same as with Perl's LWP::UserAgent described above, you have to set the credentials using <span>curl_setopt_array()</span> with the parameter <span>CURLOPT_USERPWD</span> specifying your username and password.
+
+<code>
+$ua = curl_init();
+$options = array(
+    CURLOPT_USERPWD => "myuser:mypassword",
+    CURLOPT_RETURNTRANSFER => true,
+    // set to false if using a self-signed certificate
+    CURLOPT_SSL_VERIFYHOST => false,
+    CURLOPT_SSL_VERIFYPEER => false,
+);
+curl_setopt_array($ua , $options);
+curl_setopt($ua, CURLOPT_URL, 'https://example.org:1443/api/');
+$res = curl_exec($ua);
+if(!$res) {
+    echo "Curl Error : " . curl_error($ua);
+}
+else {
+    echo $res;
+}
+</code>
+</p>
+
+</div>
+
+<h[% level + 1 %]>SSL Client Certificates</h[% level + 1 %]>
+You can generate and download client certificates for administrators and resellers via the <b>NGCP Panel</b> in the <b>Administrators</b> view. In order to do so, your server certificate MUST support <span>SSL client CA</span> and <span>SSL client CA</span>. You can verify it with the following command:
+
+<code>
+openssl x509 -purpose -noout -in /path/to/ca-cert.pem
+</code>
+
+For the actual client authentication, you will need two files which you can download from the panel after creating the client certificates:
 
 <ol>
     <li>The client certificate generated via the NGCP Panel. This is usually labelled <span>NGCP-API-client-certificate-xxxxx.pem</span>.</li>
     <li>The CA certificate used to sign the server certificate, in case it as been self-signed or the CA is not recognized by the client host environment.</li>
 </ol>
 
-<h[% level + 1 %]>Examples</h[% level + 1 %]>
+<h[% level + 2 %]>Examples</h[% level + 2 %]>
 <div class="examples">
 
 <h5>Using cURL on the Shell</h5>
@@ -27,6 +102,8 @@ With cURL, use <span>--cert /path/to/NGCP-API-client-certificate-xxxxx.pem</span
 <code>
 curl -i -X GET --cert /path/to/NGCP-API-client-certificate-xxxxx.pem --cacert /path/to/ca-cert.pem https://example.org:1443/api/
 </code>
+
+Additionally use the <span>--insecure</span> option if you are testing against a self-signed server certificate.
 </p>
 
 <h5>Using Perl LWP::UserAgent</h5>
@@ -43,7 +120,10 @@ $ua->ssl_opts(
     SSL_cert_file => '/path/to/NGCP-API-client-certificate-xxxxx.pem',
     SSL_key_file  => '/path/to/NGCP-API-client-certificate-xxxxx.pem',
     SSL_ca_file   => '/path/to/ca-cert.pem',
+    # set to 0 if using a self-signed certificate
+    verify_hostname => 1,
 );
+
 my $res = $ua->get('https://example.org:1443/api/');
 if($res->is_success) {
     print $res->as_string;
@@ -64,8 +144,10 @@ $options = array(
     CURLOPT_SSLCERT => '/path/to/NGCP-API-client-certificate-xxxxx.pem',
     CURLOPT_SSLKEY  => '/path/to/NGCP-API-client-certificate-xxxxx.pem',
     CURLOPT_CAINFO =>  '/path/to/ca-cert.pem',
-    CURLOPT_SSL_VERIFYPEER => true,
     CURLOPT_RETURNTRANSFER => true,
+    // set to false if using a self-signed certificate
+    CURLOPT_SSL_VERIFYPEER => true,
+    CURLOPT_SSL_VERIFYHOST => true,
 );
 curl_setopt_array($ua , $options);
 curl_setopt($ua, CURLOPT_URL, 'https://example.org:1443/api/');
