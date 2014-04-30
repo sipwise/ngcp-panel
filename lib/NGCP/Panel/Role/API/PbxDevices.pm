@@ -12,10 +12,11 @@ use Data::HAL qw();
 use Data::HAL::Link qw();
 use HTTP::Status qw(:constants);
 use JSON::Types;
+use NGCP::Panel::Form::Customer::PbxFieldDeviceAPI;
 
 sub get_form {
     my ($self, $c) = @_;
-    return NGCP::Panel::Form::Customer::PbxFieldDevice->new;
+    return NGCP::Panel::Form::Customer::PbxFieldDeviceAPI->new(ctx => $c);
 }
 
 sub hal_from_item {
@@ -52,15 +53,16 @@ sub hal_from_item {
         ],
         relation => 'ngcp:'.$self->resource_name,
     );
-
-#    $form //= $self->get_form($c);
-#    return unless $self->validate_form(
-#        c => $c,
-#        form => $form,
-#        resource => \%resource,
-#        run => 0,
-#    );
+    use DDP; p %resource;
+    $form //= $self->get_form($c);
+    return unless $self->validate_form(
+        c => $c,
+        form => $form,
+        resource => \%resource,
+        run => 0,
+    );
     $resource{lines} = \@lines;
+    p %resource;
     $hal->resource(\%resource);
     return $hal;
 }

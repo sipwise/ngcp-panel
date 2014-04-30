@@ -147,66 +147,57 @@ sub POST :Allow {
             form => $form,
         );
 
-        my $dset;
-
-        unless(defined $resource->{subscriber_id}) {
-            $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Required: 'subscriber_id'");
+        my $iden_device = $schema->resultset('autoprov_field_devices')->find({identifier => $resource->{identifier}});
+        if ($iden_device) {
+            $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Entry with given 'identifier' already exists.");
             last;
         }
-
-        my $b_subscriber = $schema->resultset('voip_subscribers')->find({
-                id => $resource->{subscriber_id},
-            });
-        unless($b_subscriber) {
-            $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Invalid 'subscriber_id'.");
-            last;
-        }
-        my $subscriber = $b_subscriber->provisioning_voip_subscriber;
-        unless($subscriber) {
-            $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Invalid subscriber.");
-            last;
-        }
-        if (! exists $resource->{destinations} ) {
-            $resource->{destinations} = [];
-        }
-        if (ref $resource->{destinations} ne "ARRAY") {
-            $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Invalid field 'destinations'. Must be an array.");
-            last;
-        }
-        try {
-            my $primary_nr_rs = $b_subscriber->primary_number;
-            my $number;
-            if ($primary_nr_rs) {
-                $number = $primary_nr_rs->cc . ($primary_nr_rs->ac //'') . $primary_nr_rs->sn;
-            } else {
-                $number = ''
+        for my $line ( @{$resource->{lines}} ) {
+            unless ($line->{subscriber_id} && $line->{subscriber_id} > 0) {
+                $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Invalid line. Invalid 'subscriber_id'.");
+                return;
             }
-            my $domain = $subscriber->domain->domain // '';
+            my $b_subs = $schema->resultset('voip_subscribers')->find($line->{subscriber_id});
+            my $p_subs = $b_subs ? $b_subs->provisioning_voip_subscriber : undef;
+            unless ($p_subs) {
+                $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Invalid 'subscriber_id'. Could not find subscriber.");
+                return;
+            }
+            $resource->{subscriber_id} = $p_subs->id;
+            unless ($line->{linerange_id} && $line->{linerange_id} > 0) {
+                $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Invalid line. Invalid 'linerange_id'.");
+                return;
+            }
+            my $tmp_linerange = $schema->resultset('autoprov_device_line_ranges')->find($line->{linerange_id});
+            unless ($tmp_linerange) {
+                $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Invalid 'linerange_id'. Could not find autoprov_device_line_range.");
+                return;
+            }
+        }
 
-            $dset = $schema->resultset('voip_cf_destination_sets')->create({
-                    name => $resource->{name},
-                    subscriber_id => $subscriber->id,
+        my $device;
+
+        try {
+
+            $device = $schema->resultset('autoprov_field_devices')->create({
+                    profile_id => $resource->{profile_id},
+                    contract_id => $resource->{contract_id},
+                    identifier => $resource->{identifier},
+                    station_name => $resource->{station_name},
                 });
-            for my $d ( @{$resource->{destinations}} ) {
-                delete $d->{destination_set_id};
-                $d->{destination} = NGCP::Panel::Utils::Subscriber::field_to_destination(
-                        destination => $d->{destination},
-                        number => $number,
-                        domain => $domain,
-                        uri => $d->{destination},
-                    );
-                $dset->create_related("voip_cf_destinations", $d);
+            for my $line ( @{$resource->{lines}} ) {
+                $device->create_related("autoprov_field_device_lines", $line); #TODO error check
             }
         } catch($e) {
-            $c->log->error("failed to create cfdestinationset: $e");
-            $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "Failed to create cfdestinationset.");
+            $c->log->error("failed to create pbxdevice: $e");
+            $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "Failed to create pbxdevice.");
             last;
-        }
+        };
 
         $guard->commit;
 
         $c->response->status(HTTP_CREATED);
-        $c->response->header(Location => sprintf('/%s%d', $c->request->path, $dset->id));
+        $c->response->header(Location => sprintf('/%s%d', $c->request->path, $device->id));
         $c->response->body(q());
     }
     return;
