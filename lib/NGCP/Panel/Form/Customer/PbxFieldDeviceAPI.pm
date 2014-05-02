@@ -6,8 +6,16 @@ use Moose::Util::TypeConstraints;
 
 use HTML::FormHandler::Widget::Block::Bootstrap;
 
-has_field 'profile_id' => (
+has_field 'customer' => (
+    type => '+NGCP::Panel::Field::CustomerContract',
+    label => 'Customer',
+    validate_when_empty => 1,
+    element_attr => {
+        rel => ['tooltip'],
+        title => ['The customer contract this device is belonging to.']
+    },
 );
+
 has_field 'profile' => (
     type => 'Compound',
 );
@@ -15,12 +23,6 @@ has_field 'profile.id' => (
     type => '+NGCP::Panel::Field::PosInteger',
     required => 1,
     label => 'Device Profile',
-);
-has_field 'contract' => (
-    type => 'Compound',
-);
-has_field 'contract.id' => (
-    type => 'Text',
 );
 
 has_field 'identifier' => (
@@ -46,65 +48,57 @@ has_field 'lines' => (
         controls_div => 1,
     },
     wrapper_class => [qw/hfh-rep-block/],
+    element_attr => {
+        rel => ['tooltip'],
+        title => ["The lines for this pbx device. Required keys are 'linerange' (name of range to use), 'key_num' (key number in line range, starting from 0), 'type' (one of 'private', 'shared', 'blf'), 'subscriber_id' (the subscriber mapped to this key)."],
+    },
 );
 
-has_field 'lines.id' => (
-    type => 'Hidden',
+has_field 'lines.linerange' => (
+    type => 'Text',
+    required => 1,
+    label => 'Linerange',
+    element_attr => {
+        rel => ['tooltip'],
+        title => ['The linerange name to use.'],
+    },
 );
 
 has_field 'lines.subscriber_id' => (
     type => '+NGCP::Panel::Field::PosInteger',
     required => 1,
     label => 'Subscriber',
-    options_method => \&build_subscribers,
     element_attr => {
         rel => ['tooltip'],
         title => ['The subscriber to use on this line/key'],
     },
 );
 
-has_field 'lines.line' => (
-    type => 'Select',
+has_field 'lines.key_num' => (
+    type => '+NGCP::Panel::Field::PosInteger',
     required => 1,
-    label => 'Line/Key',
+    label => 'Line/Key Number (starting from 0)',
     element_attr => {
         rel => ['tooltip'],
-        title => ['The line/key to use'],
+        title => ['The line/key to use (starting from 0)'],
     },
 );
-sub validate_line_line {
-    my ($self, $field) = @_;
-    $field->clear_errors;
-    unless($field->value =~ /^\d+\.\d+\.\d+$/) {
-        my $err_msg = 'Invalid line value';
-        $field->add_error($err_msg);
-    }
-    return;
-}
 
 has_field 'lines.type' => (
     type => 'Select',
     required => 1,
     label => 'Line/Key Type',
-    options => [],
-    no_option_validation => 1,
+    options => [
+        { label => "private", value => "private" },
+        { label => "shared", value => "shared" },
+        { label => "blf", value => "blf" },
+    ],
     element_attr => {
         rel => ['tooltip'],
         title => ['The type of feature to use on this line/key'],
     },
     element_class => [qw/ngcp-linetype-select/],
 );
-sub validate_line_type {
-    my ($self, $field) = @_;
-    $field->clear_errors;
-    unless($field->value eq 'private' ||
-           $field->value eq 'shared' ||
-           $field->value eq 'blf') {
-        my $err_msg = 'Invalid line type, must be private, shared or blf';
-        $field->add_error($err_msg);
-    }
-    return;
-}
 
 1;
 # vim: set tabstop=4 expandtab:

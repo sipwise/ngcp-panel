@@ -25,6 +25,39 @@ class_has 'query_params' => (
     is => 'ro',
     isa => 'ArrayRef',
     default => sub {[
+        {
+            param => 'customer_id',
+            description => 'Search for PBX devices belonging to a specific customer',
+            query => {
+                first => sub {
+                    my $q = shift;
+                    return { contract_id => $q };
+                },
+                second => sub {},
+            },
+        },
+        {
+            param => 'profile_id',
+            description => 'Search for PBX devices with a specific autoprovisioning device profile',
+            query => {
+                first => sub {
+                    my $q = shift;
+                    return { profile_id => $q };
+                },
+                second => sub {},
+            },
+        },
+        {
+            param => 'identifier',
+            description => 'Search for PBX devices matching an identifier/MAC pattern (wildcards possible)',
+            query => {
+                first => sub {
+                    my $q = shift;
+                    return { identifier => { like => $q } };
+                },
+                second => sub {},
+            },
+        }
     ]},
 );
 
@@ -152,6 +185,32 @@ sub POST :Allow {
             $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Entry with given 'identifier' already exists.");
             last;
         }
+       
+        my $customer_rs = $schema->resultset('contracts')->search({
+            id => $resource->{customer_id},
+            status => { '!=' => 'terminated' },
+        });
+        if($c->user->roles eq "admin") {
+        } elsif($c->user->roles eq "reseller") {
+            $customer_rs = $customer_rs->search({
+                'contact.reseller_id' => $c->user->reseller_id,
+            }, {
+                join => 'contact',
+            });
+        }
+        my $customer = $customer_rs->first;
+        unless($customer) {
+            $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Invalid customer_id, does not exist.");
+            last;
+        }
+        my $dev_model = $self->model_from_profile_id($c, $resource->{profile_id});
+        last unless($dev_model);
+        
+        unless($dev_model->reseller_id == $customer->contact->reseller_id) {
+            $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Invalid customer_id and profile_id combination, both must belong to the same reseller.");
+            last;
+        }
+
         for my $line ( @{$resource->{lines}} ) {
             unless ($line->{subscriber_id} && $line->{subscriber_id} > 0) {
                 $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Invalid line. Invalid 'subscriber_id'.");
@@ -163,30 +222,39 @@ sub POST :Allow {
                 $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Invalid 'subscriber_id'. Could not find subscriber.");
                 return;
             }
-            $resource->{subscriber_id} = $p_subs->id;
-            unless ($line->{linerange_id} && $line->{linerange_id} > 0) {
-                $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Invalid line. Invalid 'linerange_id'.");
+            $line->{subscriber_id} = $p_subs->id;
+            unless(defined $line->{linerange}) {
+                $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Invalid line. Invalid 'linerange'.");
                 return;
             }
-            my $tmp_linerange = $schema->resultset('autoprov_device_line_ranges')->find($line->{linerange_id});
-            unless ($tmp_linerange) {
-                $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Invalid 'linerange_id'. Could not find autoprov_device_line_range.");
+            my $linerange = $dev_model->autoprov_device_line_ranges->find({
+                name => $line->{linerange}
+            });
+            unless($linerange) {
+                $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Invalid 'linerange', does not exist.");
                 return;
             }
+            delete $line->{linerange};
+            $line->{linerange_id} = $linerange->id;
+            if($line->{key_num} >= $linerange->num_lines) {
+                $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Invalid 'key_num', out of range for this linerange.");
+                return;
+            }
+
+            $line->{line_type} = delete $line->{type};
         }
 
         my $device;
 
         try {
-
             $device = $schema->resultset('autoprov_field_devices')->create({
                     profile_id => $resource->{profile_id},
-                    contract_id => $resource->{contract_id},
+                    contract_id => $customer->id,
                     identifier => $resource->{identifier},
                     station_name => $resource->{station_name},
                 });
             for my $line ( @{$resource->{lines}} ) {
-                $device->create_related("autoprov_field_device_lines", $line); #TODO error check
+                $device->autoprov_field_device_lines->create($line);
             }
         } catch($e) {
             $c->log->error("failed to create pbxdevice: $e");

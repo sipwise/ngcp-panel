@@ -24,18 +24,6 @@ sub hal_from_item {
     my $form;
     my $type = 'pbxdevices';
 
-    my %resource = $item->get_inflated_columns;
-    my @lines;
-    for my $line ($item->autoprov_field_device_lines->all) {
-        my $p_subs = $line->provisioning_voip_subscriber;
-        my $b_subs = $p_subs ? $p_subs->voip_subscriber : undef;
-
-        push @lines, {
-            ($line->get_inflated_columns),
-            $b_subs ? (subscriber_id => $b_subs->id) : (),
-        };
-    }
-
     my $hal = Data::HAL->new(
         links => [
             Data::HAL::Link->new(
@@ -53,8 +41,36 @@ sub hal_from_item {
         ],
         relation => 'ngcp:'.$self->resource_name,
     );
-    use DDP; p %resource;
-    $form //= $self->get_form($c);
+
+    my $resource = $self->resource_from_item($c, $item);
+    $hal->resource($resource);
+    return $hal;
+}
+
+sub resource_from_item {
+    my ($self, $c, $item) = @_;
+
+    my %resource = $item->get_inflated_columns;
+    my @lines;
+    for my $line ($item->autoprov_field_device_lines->all) {
+        my $p_subs = $line->provisioning_voip_subscriber;
+        my $b_subs = $p_subs ? $p_subs->voip_subscriber : undef;
+        my $line_attr = { $line->get_inflated_columns };
+        foreach my $f(qw/id device_id linerange_id linerange_num/) {
+            delete $line_attr->{$f};
+        }
+        foreach my $f(qw/key_num/) {
+            $line_attr->{$f} = int($line_attr->{$f});
+        }
+        $line_attr->{subscriber_id} = int($b_subs->id)
+            if($b_subs);
+        $line_attr->{linerange} = $line->autoprov_device_line_range->name;
+        $line_attr->{type} = delete $line_attr->{line_type};
+        push @lines, $line_attr;
+    }
+    $resource{customer_id} = delete $resource{contract_id};
+
+    my $form = $self->get_form($c);
     return unless $self->validate_form(
         c => $c,
         form => $form,
@@ -62,9 +78,8 @@ sub hal_from_item {
         run => 0,
     );
     $resource{lines} = \@lines;
-    p %resource;
-    $hal->resource(\%resource);
-    return $hal;
+    $resource{id} = int($item->id);
+    return \%resource;
 }
 
 sub item_rs {
@@ -98,64 +113,120 @@ sub update_item {
         resource => $resource,
     );
 
-    if (! exists $resource->{destinations} ) {
-        $resource->{destinations} = [];
-    }
-    if (ref $resource->{destinations} ne "ARRAY") {
-        $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Invalid field 'destinations'. Must be an array.");
+    my $iden_device = $schema->resultset('autoprov_field_devices')->find({identifier => $resource->{identifier}});
+    if($iden_device && $iden_device->id != $item->id) {
+        $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Entry with given 'identifier' already exists.");
         return;
     }
-    for my $d (@{ $resource->{destinations} }) {
-        if (exists $d->{timeout} && ! $d->{timeout}->is_integer) {
-            $c->log->error("Invalid field 'timeout'.");
-            $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Invalid field 'timeout'.");
+
+    my $customer_rs = $schema->resultset('contracts')->search({
+        id => $resource->{customer_id},
+        status => { '!=' => 'terminated' },
+    });
+    if($c->user->roles eq "admin") {
+    } elsif($c->user->roles eq "reseller") {
+        $customer_rs = $customer_rs->search({
+            'contact.reseller_id' => $c->user->reseller_id,
+        }, {
+            join => 'contact',
+        });
+    }
+    my $customer = $customer_rs->first;
+    unless($customer) {
+        $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Invalid customer_id, does not exist.");
+        return;
+    }
+    $resource->{contract_id} = delete $resource->{customer_id};
+    
+    my $dev_model = $self->model_from_profile_id($c, $resource->{profile_id});
+    return unless($dev_model);
+    unless($dev_model->reseller_id == $customer->contact->reseller_id) {
+        $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Invalid customer_id and profile_id combination, both must belong to the same reseller.");
+        return;
+    }
+
+    my @oldlines = $item->autoprov_field_device_lines->all;
+    my $i = 0;
+    for my $line ( @{$resource->{lines}} ) {
+        my $oldline = delete $oldlines[$i++];
+        unless ($line->{subscriber_id} && $line->{subscriber_id} > 0) {
+            $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Invalid line. Invalid 'subscriber_id'.");
             return;
         }
-    }
+        my $b_subs = $schema->resultset('voip_subscribers')->find($line->{subscriber_id});
+        my $p_subs = $b_subs ? $b_subs->provisioning_voip_subscriber : undef;
+        unless ($p_subs) {
+            $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Invalid 'subscriber_id'. Could not find subscriber.");
+            return;
+        }
+        $line->{subscriber_id} = $p_subs->id;
+        unless(defined $line->{linerange}) {
+            $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Invalid line. Invalid 'linerange'.");
+            return;
+        }
+        my $linerange = $dev_model->autoprov_device_line_ranges->find({
+            name => $line->{linerange}
+        });
+        unless($linerange) {
+            $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Invalid 'linerange', does not exist.");
+            return;
+        }
+        delete $line->{linerange};
+        $line->{linerange_id} = $linerange->id;
+        if($line->{key_num} >= $linerange->num_lines) {
+            $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Invalid 'key_num', out of range for this linerange.");
+            return;
+        }
 
-    my $b_subscriber = $schema->resultset('voip_subscribers')->find($resource->{subscriber_id});
-    unless ($b_subscriber) {
-        $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Invalid 'subscriber_id'.");
-        return;
-    }
-    my $subscriber = $b_subscriber->provisioning_voip_subscriber;
-    unless($subscriber) {
-        $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Invalid subscriber.");
-        last;
-    }
+        $line->{line_type} = delete $line->{type};
 
-    try {
-        my $primary_nr_rs = $b_subscriber->primary_number;
-        my $number;
-        if ($primary_nr_rs) {
-            $number = $primary_nr_rs->cc . ($primary_nr_rs->ac //'') . $primary_nr_rs->sn;
+        if($oldline) {
+            $oldline->update($line);
         } else {
-            $number = ''
+            $item->autoprov_field_device_lines->create($line);
         }
-        my $domain = $subscriber->domain->domain // '';
+    }
+    foreach my $oldline(@oldlines) {
+        $oldline->delete if($oldline);
+    }
 
-        $item->update({
-                name => $resource->{name},
-                subscriber_id => $subscriber->id,
-            })->discard_changes;
-        $item->voip_cf_destinations->delete;
-        for my $d ( @{$resource->{destinations}} ) {
-            delete $d->{destination_set_id};
-            $d->{destination} = NGCP::Panel::Utils::Subscriber::field_to_destination(
-                    destination => $d->{destination},
-                    number => $number,
-                    domain => $domain,
-                    uri => $d->{destination},
-                );
-            $item->create_related("voip_cf_destinations", $d);
-        }
-    } catch($e) {
-        $c->log->error("failed to create cfdestinationset: $e");
-        $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "Failed to create cfdestinationset.");
-        return;
-    };
-
+    my $lines = delete $resource->{lines};
+    $item->update($resource);
+    
     return $item;
+}
+
+sub model_from_profile_id {
+    my ($self, $c, $profile_id) = @_;
+
+    my $profile_rs = $c->model('DB')->resultset('autoprov_profiles')->search({
+       id => $profile_id,
+    });
+    if($c->user->roles eq "admin") {
+    } elsif($c->user->roles eq "reseller") {
+        $profile_rs = $profile_rs->search({
+            reseller_id => $c->user->reseller_id,
+        });
+    }
+    my $profile = $profile_rs->first;
+    unless($profile) {
+        $c->log->error("failed to find device profile with id 'profile_id'");
+        $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "Invalid profile_id, device profile does not exist.");
+        return;
+    }
+    my $config = $profile->config;
+    unless($config) {
+        $c->log->error("device profile with id '" . $profile->id . "' doesn't have a config");
+        $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "Invalid profile_id, device profile does not have a config.");
+        return;
+    }
+    unless($config->device) {
+        $c->log->error("device config id '" . $config->id . "' doesn't have a device model");
+        $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "Invalid profile_id, device profile config does not have a device model.");
+        return;
+    }
+
+    return $config->device;
 }
 
 1;

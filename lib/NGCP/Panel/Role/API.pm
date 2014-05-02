@@ -424,6 +424,7 @@ around 'item_rs' => sub {
     foreach my $param(keys $c->req->query_params) {
         my @p = grep { $_->{param} eq $param } @{ $self->query_params };
         my $q = $c->req->query_params->{$param}; # TODO: arrayref?
+        $q =~ s/\*/\%/g;
         if(@p) {
             $item_rs = $item_rs->search($p[0]->{query}->{first}($q), $p[0]->{query}->{second}($q));
         }

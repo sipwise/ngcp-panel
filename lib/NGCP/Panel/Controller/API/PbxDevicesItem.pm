@@ -100,15 +100,15 @@ sub PATCH :Allow {
         );
         last unless $json;
 
-        my $dset = $self->item_by_id($c, $id);
-        last unless $self->resource_exists($c, destinationset => $dset);
-        my $old_resource = $self->hal_from_item($c, $dset, "destinationsets")->resource;
+        my $device = $self->item_by_id($c, $id);
+        last unless $self->resource_exists($c, pbxdevice => $device);
+        my $old_resource = $self->resource_from_item($c, $device);
         my $resource = $self->apply_patch($c, $old_resource, $json);
         last unless $resource;
 
         my $form = $self->get_form($c);
-        $dset = $self->update_item($c, $dset, $old_resource, $resource, $form);
-        last unless $dset;
+        $device = $self->update_item($c, $device, $old_resource, $resource, $form);
+        last unless $device;
 
         $guard->commit; 
 
@@ -117,7 +117,7 @@ sub PATCH :Allow {
             $c->response->header(Preference_Applied => 'return=minimal');
             $c->response->body(q());
         } else {
-            my $hal = $self->hal_from_item($c, $dset, "destinationsets");
+            my $hal = $self->hal_from_item($c, $device, "pbxdevices");
             my $response = HTTP::Response->new(HTTP_OK, undef, HTTP::Headers->new(
                 $hal->http_headers,
             ), $hal->as_json);
@@ -136,19 +136,19 @@ sub PUT :Allow {
         my $preference = $self->require_preference($c);
         last unless $preference;
 
-        my $dset = $self->item_by_id($c, $id);
-        last unless $self->resource_exists($c, destinationset => $dset);
+        my $device = $self->item_by_id($c, $id);
+        last unless $self->resource_exists($c, pbxdevice => $device);
         my $resource = $self->get_valid_put_data(
             c => $c,
             id => $id,
             media_type => 'application/json',
         );
         last unless $resource;
-        my $old_resource = { $dset->get_inflated_columns };
+        my $old_resource = $self->resource_from_item($c, $device);
 
         my $form = $self->get_form($c);
-        $dset = $self->update_item($c, $dset, $old_resource, $resource, $form);
-        last unless $dset;
+        $device = $self->update_item($c, $device, $old_resource, $resource, $form);
+        last unless $device;
 
         $guard->commit;
 
@@ -157,7 +157,7 @@ sub PUT :Allow {
             $c->response->header(Preference_Applied => 'return=minimal');
             $c->response->body(q());
         } else {
-            my $hal = $self->hal_from_item($c, $dset, "destinationsets");
+            my $hal = $self->hal_from_item($c, $device, "pbxdevices");
             my $response = HTTP::Response->new(HTTP_OK, undef, HTTP::Headers->new(
                 $hal->http_headers,
             ), $hal->as_json);
@@ -173,12 +173,12 @@ sub DELETE :Allow {
     my ($self, $c, $id) = @_;
     my $guard = $c->model('DB')->txn_scope_guard;
     {
-        my $rule = $self->item_by_id($c, $id, "rules");
-        last unless $self->resource_exists($c, rule => $rule);
+        my $device = $self->item_by_id($c, $id);
+        last unless $self->resource_exists($c, pbxdevice => $device);
         try {
-            $rule->delete;
+            $device->delete;
         } catch($e) {
-            $c->log->error("Failed to delete rewriterule with id '$id': $e");
+            $c->log->error("Failed to delete pbx field device with id '$id': $e");
             $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "Internal Server Error");
             last;
         }
