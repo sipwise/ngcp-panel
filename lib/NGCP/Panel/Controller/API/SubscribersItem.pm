@@ -51,7 +51,7 @@ sub GET :Allow {
         last unless $self->resource_exists($c, subscriber => $subscriber);
 
         my $form = $self->get_form($c);
-        my $resource = $self->transform_resource($c, $subscriber, $form);
+        my $resource = $self->resource_from_item($c, $subscriber, $form);
         my $hal = $self->hal_from_item($c, $subscriber, $resource, $form);
 
         my $response = HTTP::Response->new(HTTP_OK, undef, HTTP::Headers->new(
@@ -119,7 +119,7 @@ sub PUT :Allow {
             $c->response->header(Preference_Applied => 'return=minimal');
             $c->response->body(q());
         } else {
-            $resource = $self->transform_resource($c, $subscriber, $form);
+            $resource = $self->resource_from_item($c, $subscriber, $form);
             my $hal = $self->hal_from_item($c, $subscriber, $resource, $form);
             my $response = HTTP::Response->new(HTTP_OK, undef, HTTP::Headers->new(
                 $hal->http_headers,
@@ -151,7 +151,7 @@ sub PATCH :Allow {
         last unless $json;
 
         my $form = $self->get_form($c);
-        my $old_resource = $self->transform_resource($c, $subscriber, $form);
+        my $old_resource = $self->resource_from_item($c, $subscriber, $form);
         my $resource = $self->apply_patch($c, $old_resource, $json);
         last unless $resource;
 
@@ -170,7 +170,7 @@ sub PATCH :Allow {
             $c->response->header(Preference_Applied => 'return=minimal');
             $c->response->body(q());
         } else {
-            $resource = $self->transform_resource($c, $subscriber, $form);
+            $resource = $self->resource_from_item($c, $subscriber, $form);
             my $hal = $self->hal_from_item($c, $subscriber, $resource, $form);
             my $response = HTTP::Response->new(HTTP_OK, undef, HTTP::Headers->new(
                 $hal->http_headers,

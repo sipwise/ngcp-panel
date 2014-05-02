@@ -24,7 +24,7 @@ sub get_form {
     return NGCP::Panel::Form::Subscriber::SubscriberAPI->new(ctx => $c);
 }
 
-sub transform_resource {
+sub resource_from_item {
     my ($self, $c, $item, $form) = @_;
 
     my $bill_resource = { $item->get_inflated_columns };
@@ -36,6 +36,12 @@ sub transform_resource {
     unless($customer->get_column('product_class') eq 'pbxaccount') {
         delete $resource{is_pbx_group};
         delete $resource{pbx_group_id};
+    }
+    delete $resource{contact_id};
+    if($item->contact) {
+        $resource{email} = $item->contact->email;
+    } else {
+        $resource{email} = undef;
     }
 
     $form //= $self->get_form($c);
@@ -206,6 +212,8 @@ sub prepare_resource {
     $resource->{contract_id} = delete $resource->{customer_id};
     $resource->{status} //= 'active';
     $resource->{administrative} //= 0;
+    $resource->{profile_set}{id} = delete $resource->{profile_set_id};
+    $resource->{profile}{id} = delete $resource->{profile_id};
 
     my $form = $self->get_form($c);
     return unless $self->validate_form(
@@ -439,6 +447,25 @@ sub update_item {
         }
     }
 
+    if($resource->{email}) {
+        my $contact = $subscriber->contact;
+        if($contact && $contact->email ne $resource->{email}) {
+            $contact->update({
+                email => $resource->{email}
+            });
+        } elsif(!$contact) {
+            $contact = $c->model('DB')->resultset('contacts')->create({
+                reseller_id => $subscriber->contract->contact->reseller_id,
+                email => $resource->{email},
+            });
+        } # else old email == new email, nothing to do
+        $resource->{contact_id} = $contact->id;
+    } elsif($subscriber->contact) {
+        $subscriber->contact->delete;
+        $resource->{contact_id} = undef; # mark for clearance
+    }
+    delete $resource->{email};
+
     NGCP::Panel::Utils::Subscriber::update_subscriber_numbers(
         schema => $c->model('DB'),
         primary_number => $resource->{e164},
@@ -450,6 +477,7 @@ sub update_item {
     my $billing_res = {
         external_id => $resource->{external_id},
         status => $resource->{status},
+        contact_id => $resource->{contact_id},
     };
     my $provisioning_res = {
         password => $resource->{password},

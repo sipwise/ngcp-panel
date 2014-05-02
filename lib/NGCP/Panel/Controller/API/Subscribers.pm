@@ -99,7 +99,7 @@ sub GET :Allow {
         my (@embedded, @links);
         my $form = $self->get_form($c);
         for my $subscriber ($subscribers->search({}, {order_by => {-asc => 'me.id'}})->all) {
-            my $resource = $self->transform_resource($c, $subscriber, $form);
+            my $resource = $self->resource_from_item($c, $subscriber, $form);
             push @embedded, $self->hal_from_item($c, $subscriber, $resource, $form);
             push @links, Data::HAL::Link->new(
                 relation => 'ngcp:'.$self->resource_name,
