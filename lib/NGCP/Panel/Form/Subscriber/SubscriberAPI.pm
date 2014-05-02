@@ -90,7 +90,16 @@ has_block 'actions' => (
 
 # override parent here to prevent any password magic
 sub update_fields {
-    my $self = shift;
+    my ($self) = @_;
+    my $c = $self->ctx;
+    return unless $c;
+
+    if($c->config->{security}->{password_sip_autogenerate}) {
+        $self->field('password')->required(0);
+    }
+    if($c->config->{security}->{password_web_autogenerate}) {
+        $self->field('webpassword')->required(0);
+    }
 }
 
 1;

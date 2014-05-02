@@ -161,14 +161,14 @@ sub create_subscriber {
     }
 
     my $passlen = $c->config->{security}->{password_min_length} || 8;
-    if($c->config->{security}->{password_sip_autogenerate}) {
+    if($c->config->{security}->{password_sip_autogenerate} && !$params->{password}) {
         $params->{password} = String::MkPasswd::mkpasswd(
             -length => $passlen,
             -minnum => 1, -minlower => 1, -minupper => 1, -minspecial => 1,
             -distribute => 1, -fatal => 1,
         );
     }
-    if($c->config->{security}->{password_web_autogenerate}) {
+    if($c->config->{security}->{password_web_autogenerate} && !$params->{webpassword}) {
         $params->{webpassword} = String::MkPasswd::mkpasswd(
             -length => $passlen,
             -minnum => 1, -minlower => 1, -minupper => 1, -minspecial => 1,
