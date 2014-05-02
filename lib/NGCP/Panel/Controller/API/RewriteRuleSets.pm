@@ -223,7 +223,6 @@ sub POST :Allow {
                 $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "rewriterules must be an array.");
             }
             for my $rule (@{ $rewriterules }) {
-                use DDP; p $rule;
                 my $rule_form = $self->get_form($c, "rules");
                 last unless $self->validate_form(
                     c => $c,
