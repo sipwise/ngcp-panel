@@ -168,9 +168,9 @@ sub update_customer {
     }
     delete $resource->{billing_profile_id};
 
-
+    my $custcontact;
     if($old_resource->{contact_id} != $resource->{contact_id}) {
-        my $custcontact = $c->model('DB')->resultset('contacts')
+        $custcontact = $c->model('DB')->resultset('contacts')
             ->search({ reseller_id => { '-not' => undef }})
             ->find($resource->{contact_id});
         unless($custcontact) {
@@ -179,6 +179,31 @@ sub update_customer {
         }
         unless($billing_profile->reseller_id == $custcontact->reseller_id) {
             $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Invalid 'contact_id', reseller doesn't match billing profile reseller");
+            return;
+        }
+    } else {
+        $custcontact = $customer->contact;
+    }
+
+    my $oldsubtmpl = $old_resource->{subscriber_email_template_id} // 0;
+    if($resource->{subscriber_email_template_id} && 
+       $oldsubtmpl != $resource->{subscriber_email_template_id}) {
+        my $tmpl = $c->model('DB')->resultset('email_templates')
+            ->search({ reseller_id => $custcontact->reseller_id })
+            ->find($resource->{subscriber_email_template_id});
+        unless($tmpl) {
+            $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Invalid 'subscriber_email_template_id', doesn't exist for reseller assigned to customer contact");
+            return;
+        }
+    }
+    my $oldpasstmpl = $old_resource->{passreset_email_template_id} // 0;
+    if($resource->{passreset_email_template_id} && 
+       $oldpasstmpl != $resource->{passreset_email_template_id}) {
+        my $tmpl = $c->model('DB')->resultset('email_templates')
+            ->search({ reseller_id => $custcontact->reseller_id })
+            ->find($resource->{passreset_email_template_id});
+        unless($tmpl) {
+            $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Invalid 'passreset_email_template_id', doesn't exist for reseller assigned to customer contact");
             return;
         }
     }

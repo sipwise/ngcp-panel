@@ -220,6 +220,16 @@ sub POST :Allow {
             $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "The reseller of the contact doesn't match the reseller of the billing profile");
             last;
         }
+        if($customer->subscriber_email_template_id && 
+           $customer->subscriber_email_template->reseller_id != $customer->contact->reseller_id) {
+            $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Invalid 'subscriber_email_template_id', doesn't exist for reseller assigned to customer contact");
+            return;
+        }
+        if($customer->passreset_email_template_id && 
+           $customer->passreset_email_template->reseller_id != $customer->contact->reseller_id) {
+            $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Invalid 'passreset_email_template_id', doesn't exist for reseller assigned to customer contact");
+            return;
+        }
 
         try {
             $customer->billing_mappings->create({
