@@ -1,4 +1,4 @@
-package NGCP::Panel::Role::API::PbxDeviceProfiles;
+package NGCP::Panel::Role::API::PbxDeviceModels;
 use Moose::Role;
 use Sipwise::Base;
 with 'NGCP::Panel::Role::API' => {
@@ -12,17 +12,17 @@ use Data::HAL qw();
 use Data::HAL::Link qw();
 use HTTP::Status qw(:constants);
 use JSON::Types;
-use NGCP::Panel::Form::Device::Profile;
+use NGCP::Panel::Form::Device::Model;
 
 sub get_form {
     my ($self, $c) = @_;
-    return NGCP::Panel::Form::Device::Profile->new;
+    return NGCP::Panel::Form::Device::Model->new;
 }
 
 sub hal_from_item {
     my ($self, $c, $item) = @_;
     my $form;
-    my $type = 'pbxdeviceprofiles';
+    my $type = 'pbxdevicemodels';
 
     my $hal = Data::HAL->new(
         links => [
@@ -36,7 +36,6 @@ sub hal_from_item {
             Data::HAL::Link->new(relation => 'profile', href => 'http://purl.org/sipwise/ngcp-api/'),
             Data::HAL::Link->new(relation => 'self', href => sprintf("%s%d", $self->dispatch_path, $item->id)),
             Data::HAL::Link->new(relation => "ngcp:$type", href => sprintf("/api/%s/%d", $type, $item->id)),
-            Data::HAL::Link->new(relation => 'ngcp:pbxdeviceconfigs', href => sprintf("/api/pbxdeviceconfigs/%d", $item->config_id)),
         ],
         relation => 'ngcp:'.$self->resource_name,
     );
@@ -50,7 +49,8 @@ sub resource_from_item {
     my ($self, $c, $item) = @_;
 
     my %resource = $item->get_inflated_columns;
-    delete $resource{config_id};
+    delete $resource{front_image};
+    delete $resource{mac_image};
 
     my $form = $self->get_form($c);
     return unless $self->validate_form(
@@ -60,13 +60,18 @@ sub resource_from_item {
         run => 0,
     );
     $resource{id} += 0;
+    $resource{reseller_id} += 0;
 
     return \%resource;
 }
 
 sub item_rs {
     my ($self, $c) = @_;
-    my $item_rs = $c->model('DB')->resultset('autoprov_profiles');
+    my $item_rs = $c->model('DB')->resultset('autoprov_devices');
+    if($c->user->roles eq "admin") {
+    } elsif ($c->user->roles eq "reseller") {
+        $item_rs = $item_rs->search({ reseller_id => $c->user->reseller_id });
+    }
 
     return $item_rs;
 }

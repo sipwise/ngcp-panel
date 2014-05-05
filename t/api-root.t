@@ -69,6 +69,7 @@ $ua->ssl_opts(
                  pbxdevices => 1,
                  pbxdeviceprofiles => 1,
                  pbxdeviceconfigs => 1,
+                 pbxdevicemodels => 1,
                   };
     foreach my $link(@links) {
         my $rex = qr/^<\/api\/[a-z]+\/>; rel=\"collection http:\/\/purl\.org\/sipwise\/ngcp-api\/#rel-([a-z]+s)\"$/;
