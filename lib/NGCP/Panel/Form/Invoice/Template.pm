@@ -1,4 +1,4 @@
-package NGCP::Panel::Form::InvoiceTemplate::Basic;
+package NGCP::Panel::Form::Invoice::Template;
 
 use HTML::FormHandler::Moose;
 extends 'NGCP::Panel::Form::ValidatorBase';
