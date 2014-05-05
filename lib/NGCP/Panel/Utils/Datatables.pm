@@ -8,7 +8,7 @@ use Scalar::Util qw/blessed/;
 use DateTime::Format::Strptime;
 
 sub process {
-    my ($c, $rs, $cols, $row_func) = @_;
+    my ($c_, $rs, $cols, $row_func) = @_;
 
     my $use_rs_cb = ('CODE' eq (ref $rs));
     my $aaData = [];
@@ -18,43 +18,33 @@ sub process {
 
     # check if we need to join more tables
     # TODO: can we nest it deeper than once level?
-    set_columns($c, $cols);
+    set_columns($c_, $cols);
     for my $c(@{ $cols }) {
         my @parts = split /\./, $c->{name};
         if($c->{literal_sql}) {
-            $rs = $rs->search_rs(undef, {
+           $rs = $rs->search_rs(undef, {
                 '+select' => [ \[$c->{literal_sql}] ],
                 '+as' => [ $c->{accessor} ],
             });
-        } elsif(@parts == 2) {
+        } elsif( @parts > 1 ) {
+            my $join = $parts[$#parts-1];
+            foreach my $table(reverse @parts[0..($#parts-2)]){
+                $join = { $table => $join };
+            }
             $rs = $rs->search_rs(undef, {
-                join => $parts[0],
-                '+select' => [ $c->{name} ],
+                join => $join,
+                '+select' => [ $parts[($#parts-1)].'.'.$parts[$#parts] ],
                 '+as' => [ $c->{accessor} ],
             });
-        } elsif(@parts == 3) {
-            $rs = $rs->search_rs(undef, {
-                join => { $parts[0] => $parts[1] },
-                '+select' => [ $parts[1].'.'.$parts[2] ],
-                '+as' => [ $c->{accessor} ],
-            });
-        } elsif(@parts == 4) {
-            $rs = $rs->search_rs(undef, {
-                join => { $parts[0] => { $parts[1] => $parts[2] } },
-                '+select' => [ $parts[2].'.'.$parts[3] ],
-                '+as' => [ $c->{accessor} ],
-            });
-        } elsif(@parts > 4) {
-            # TODO throw an error for now as we only support up to 3 levels
         }
     }
 
     # generic searching
     my @searchColumns = ();
-    my $searchString = $c->request->params->{sSearch} // "";
+    my $searchString = $c_->request->params->{sSearch} // "";
     foreach my $col(@{ $cols }) {
         # avoid amigious column names if we have the same column in different joined tables
-        my $name = _get_joined_column_name($col->{name});
+        my $name = _get_joined_column_name_($col->{name});
         my $stmt = { $name => { like => '%'.$searchString.'%' } };
         $stmt = \[$col->{literal_sql} . " LIKE ?", [ {} => '%'.$searchString.'%'] ]
             if $col->{literal_sql};
@@ -65,8 +55,8 @@ sub process {
     }
 
     # data-range searching
-    my $from_date = $c->request->params->{sSearch_0} // "";
-    my $to_date = $c->request->params->{sSearch_1} // "";
+    my $from_date = $c_->request->params->{sSearch_0} // "";
+    my $to_date = $c_->request->params->{sSearch_1} // "";
     my $parser = DateTime::Format::Strptime->new(
         #pattern => '%Y-%m-%d %H:%M',
         pattern => '%Y-%m-%d',
@@ -80,7 +70,7 @@ sub process {
     @searchColumns = ();
     foreach my $c(@{ $cols }) {
         # avoid amigious column names if we have the same column in different joined tables
-        my $name = _get_joined_column_name($c->{name});
+        my $name = _get_joined_column_name_($c->{name});
 
         if($c->{search_from_epoch} && $from_date) {
             $rs = $rs->search({
@@ -97,7 +87,7 @@ sub process {
     $displayRecords = $use_rs_cb ? 0 : $rs->count;
 
     # show specific row on top (e.g. if we come back from a newly created entry)
-    my $topId = $c->request->params->{iIdOnTop};
+    my $topId = $c_->request->params->{iIdOnTop};
     if(defined $topId) {
         if(defined(my $row = $rs->find($topId))) {
             push @{ $aaData }, _prune_row($cols, $row->get_inflated_columns);
@@ -109,8 +99,8 @@ sub process {
     }
 
     # sorting
-    my $sortColumn = $c->request->params->{iSortCol_0};
-    my $sortDirection = $c->request->params->{sSortDir_0} || 'asc';
+    my $sortColumn = $c_->request->params->{iSortCol_0};
+    my $sortDirection = $c_->request->params->{sSortDir_0} || 'asc';
     if(defined $sortColumn && defined $sortDirection && ! $use_rs_cb) {
         if('desc' eq lc $sortDirection) {
             $sortDirection = 'desc';
@@ -122,7 +112,7 @@ sub process {
         my @displayedFields = ();
         for my $c(@{ $cols }) {
             next unless $c->{title};
-            my $name = _get_joined_column_name($c->{name});
+            my $name = _get_joined_column_name_($c->{name});
             push @displayedFields, $name;
         }
         # ... and pick the name defined by the dt index
@@ -136,8 +126,7 @@ sub process {
     }
 
     # pagination
-    my $pageStart = $c->request->params->{iDisplayStart};
-    my $pageSize = $c->request->params->{iDisplayLength};
+    my $pageSize = $c_->request->params->{iDisplayLength};
     if ($use_rs_cb) {
         ($rs, $totalRecords, $displayRecords) = $rs->(
                 offset       => $pageStart || 0,
@@ -160,11 +149,11 @@ sub process {
         }
     }
 
-    $c->stash(
+    $c_->stash(
         aaData               => $aaData,
         iTotalRecords        => $totalRecords,
         iTotalDisplayRecords => $displayRecords,
-        sEcho                => int($c->request->params->{sEcho} // 1),
+        sEcho                => int($c_->request->params->{sEcho} // 1),
     );
 
 }
@@ -206,14 +195,31 @@ sub _get_joined_column_name {
         } elsif(@parts == 3) {
             $name = $parts[1].'.'.$parts[2];
         } elsif(@parts == 4) {
+            #I can suggest that in this case parts[1]may be  schema name. If it isn't, then it will be incorrect sql for example for order (and in other cases too). But I didn't see schema names usage in tt (at least accounting or billing). So, switched to new sub.
             $name = $parts[1].'.'.$parts[2].'.'.$parts[3];
         } else {
             # TODO throw an error for now as we only support one and two level
+            $name = join('.',@parts[1 .. $#parts]);
         }
     }
     return $name;
 }
 
+sub _get_joined_column_name_{
+    my $cname = shift;
+    my $name;
+    if($cname !~ /\./) {
+        $name = 'me.'.$cname;
+    } else {
+        my @parts = split /\./, $cname;
+        if(@parts == 2){
+            $name = $cname;
+        }else{
+            $name = join('.',@parts[($#parts-1) .. $#parts]);
+        }
+    }
+    return $name;
+}
 
 1;
 

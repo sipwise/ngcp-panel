@@ -37,7 +37,42 @@
     
     <div class="accordion-body collapse" id="collapse_invoice_list">
     <div class="accordion-inner" style="overflow:auto; height: 300px;">
-[%PROCESS 'invoice/invoice_list.tt' %]
+
+[%#    [%IF 0 && c.user.roles == 'admin' %]
+[%#        { name => 'reseller_id', title => c.loc('Reseller Id')},
+[%#        { name => 'reseller_name', title => c.loc('Reseller Name')},
+[%#    [%END%]
+[%#        { name => 'client_contact_id', title => c.loc('Client')},
+[%#        { name => 'contract_balance_start', title => c.loc('Period Start')},
+[%#        { name => 'contract_balance_end', title => c.loc('Period End')},
+[%#        { name => 'cash_balance', title => c.loc('Cash balance')},
+[%#        { name => 'free_time_balance', title => c.loc('Free time balance')},%]
+[%#, title => c.loc('Reseller #')%]
+[%#, title => c.loc('Reseller name')%]
+[%#Dumper.dump_html(invoice_list_ajax)%]
+[%
+    clearHelper();
+    helper.name_single = c.loc('Invoices');
+    helper.name = c.loc('Invoices');
+    helper.dt_columns = [
+        { name => 'contract_balances.contract.contact.reseller_id'},
+        { name => 'contract_balances.contract.contact.reseller.name'},
+        { name => 'contract_balances.contract.contact.id', title => c.loc('Client')},
+        { name => 'contract_balances.invoice_id', title => c.loc('Invoice #')},
+        { name => 'contract_balances.start', title => c.loc('Period Start')},
+        { name => 'contract_balances.end', title => c.loc('Period End')},
+        { name => 'contract_balances.cash_balance', title => c.loc('Cash balance')},
+        { name => 'contract_balances.free_time_balance', title => c.loc('Free Time balance')},
+    ];
+    helper.dt_buttons = [
+        { name = c.loc('View PDF'), uri = "javascript:window.open(\\'/invoice/data/' + full.contract_balances_invoice_id + '\\',\\'_blank\\');void(0);", class = 'btn-small btn-primary', icon = 'icon-edit' },
+    ];
+    helper.identifier = 'invoice_list_data_ajax';
+    helper.ajax_uri = c.uri_for_action( '/invoice/ajax_datatables_data', [ provider.id, 'invoice_list_data' ] ) ;
+    initHelperAuto();
+    PROCESS 'helpers/datatables.tt';
+-%]
+[%#PROCESS 'invoice/invoice_list.tt' %]
     </div>
     </div>
 </div>

@@ -155,6 +155,7 @@ sub invoice_details_calls :Chained('invoice_details_zones') :PathPart('') :Captu
 sub invoice_list :Chained('invoice_details_calls') :PathPart('list') :Args(0) {
     my ($self, $c) = @_;
     my $backend = NGCP::Panel::Model::DB::InvoiceTemplate->new( schema => $c->model('DB') );
+    $c->log->debug('invoice_list');
     $c->forward( 'template_list_data' );
     my $provider_id = $c->stash->{provider}->id;
     my $invoice_list = $backend->getProviderInvoiceList(
@@ -162,19 +163,36 @@ sub invoice_list :Chained('invoice_details_calls') :PathPart('list') :Args(0) {
     );
     $c->stash( 
         client_contacts_list => $backend->getInvoiceProviderClients( provider_id => $provider_id ),
-        invoice_list  =>  [$invoice_list->all],
-        template    => 'invoice/list.tt',
+        invoice_list         => [$invoice_list->all],
+        #invoice_list_ajax    => $invoice_list,
+        template             => 'invoice/list.tt',
+    );
+    #$c->detach( $c->view() );
+}
+sub invoice_list_data :Chained('invoice') :PathPart('list') :Args(0) {
+    my ($self, $c) = @_;
+    my $backend = NGCP::Panel::Model::DB::InvoiceTemplate->new( schema => $c->model('DB') );
+    $c->log->debug('invoice_list_data');
+    my $provider_id = $c->stash->{provider}->id;
+    my $invoice_list_ajax = $backend->getProviderInvoiceListAjax(
+        provider_id => $provider_id,
+    );
+    $c->stash( 
+        invoice_list_data_ajax    => $invoice_list_ajax,
     );
     #$c->detach( $c->view() );
 }
 
+
 sub invoice_data :Chained('invoice') :PathPart('data') :Args(1) {
     my ($self, $c) = @_;
     my ($invoice_id) = pop;
+    $c->log->debug('invoice_data');
     my $backend = NGCP::Panel::Model::DB::InvoiceTemplate->new( schema => $c->model('DB') );
     my $invoice = $backend->getInvoice(invoice_id => $invoice_id);
     $c->response->content_type('application/pdf');
     $c->response->body( $invoice->first->get_column('data') );
+    return;
 }
 
 sub template_base :Chained('base') :PathPart('template') :CaptureArgs(0) {

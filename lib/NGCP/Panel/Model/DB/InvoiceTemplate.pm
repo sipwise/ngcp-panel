@@ -239,12 +239,35 @@ sub getProviderInvoiceList{
                 'contact.reseller_id' => $provider_reseller_id, #$client_contract_id - contract of the client
             ],
     },{
-        '+select'   => ['contract_balances.invoice_id','contract_balances.start','contract_balances.end','contract_balances.cash_balance','contract_balances.free_time_balance','reseller.id','reseller.name','contact.id',],
-        '+as'       => ['invoice_id','contract_balance_start','contract_balance_end','cash_balance','free_time_balance', 'reseller_id', 'reseller_name',,'client_contact_id' ],
-        'prefetch'  => [ {'contract_balances' => { 'contract' => { 'contact' => 'reseller' } } } ],
-        'order_by'  => [ { '-desc' => 'contract_balances.start' },{ '-asc' => 'contract_balances.end' }, ]
+        'select'   => [ 'contract_balances.invoice_id','contract_balances.start','contract_balances.end','contract_balances.cash_balance','contract_balances.free_time_balance','reseller.id','reseller.name','contact.id',],
+        'as'       => [ 'invoice_id','contract_balance_start','contract_balance_end','cash_balance','free_time_balance', 'reseller_id', 'reseller_name','client_contact_id' ],
+        'prefetch' => [ {'contract_balances' => { 'contract' => { 'contact' => 'reseller' } } } ],
+        #'collapse' => 1,
+        'order_by' => [ { '-desc' => 'contract_balances.start' },{ '-asc' => 'contract_balances.end' }, ],
+        'alias'    => 'me',
     });
 }
+sub getProviderInvoiceListAjax{
+    my $self = shift;
+    my (%params) = @_;
+    my ($provider_reseller_id,$stime,$etime) = @params{qw/provider_id stime etime/};
+    $stime ||= NGCP::Panel::Utils::DateTime::current_local()->truncate( to => 'month' );
+    $etime ||= $stime->clone->add( months => 1);
+    $self->schema->resultset('invoices')->search({
+        '-and'  =>  
+            [ 
+                'contact.reseller_id' => $provider_reseller_id, #$client_contract_id - contract of the client
+            ],
+    },{
+        #'select'   => [ 'contract_balances.invoice_id','contract_balances.start','contract_balances.end','contract_balances.cash_balance','contract_balances.free_time_balance','reseller.id','reseller.name','contact.id',],
+        #'as'       => [ 'invoice_id','contract_balance_start','contract_balance_end','cash_balance','free_time_balance', 'reseller_id', 'reseller_name','client_contact_id' ],
+        #'prefetch' => [ {'contract_balances' => { 'contract' => { 'contact' => 'reseller' } } } ],
+        ##'collapse' => 1,
+        #'order_by' => [ { '-desc' => 'contract_balances.start' },{ '-asc' => 'contract_balances.end' }, ],
+        #'alias'    => 'me',
+    });
+}
+
 sub getInvoice{
     my $self = shift;
     my (%params) = @_;

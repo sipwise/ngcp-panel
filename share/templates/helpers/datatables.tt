@@ -94,11 +94,15 @@ $(document).ready(function() {
                     [% FOR button IN helper.dt_buttons -%]
                       [% confirm_delete = button.name == "Delete" ? 'data-confirm="Delete"' : '' -%]
                       [% confirm_delete = button.name == "Terminate" ? 'data-confirm="Terminate"' : confirm_delete -%]
+                      [%IF !( button.uri.search('[\?\&]back=|^javascript:') ); %]
+                        [% backuri = backuri | uri%]
+                        [% button.uri = button.uri _ '?back=' _ backuri %]
+                      [%END%]
                       [% IF button.condition -%]
                         if([% button.condition %]) {
                       [% END -%]
                         html +=
-                           '<a class="btn [% button.class %]" href="[% button.uri %]?back=[% backuri | uri %]" [% confirm_delete %]>' +
+                           '<a class="btn [% button.class %]" href="[% button.uri %]" [% confirm_delete %]>' +
                               '<i class="[% button.icon %]"></i> [% button.name %]' +
                             '</a>';
                       [% IF button.condition -%]
