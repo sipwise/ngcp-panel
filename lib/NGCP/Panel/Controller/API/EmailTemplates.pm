@@ -161,6 +161,16 @@ sub POST :Allow {
         }
 
         my $item;
+        $item = $c->model('DB')->resultset('email_templates')->find({
+            reseller_id => $resource->{reseller_id},
+            name => $resource->{name},
+        });
+        if($item) {
+            $c->log->error("email template with name '$$resource{name}' already exists for reseller_id '$$resource{reseller_id}'"); # TODO: user, message, trace, ...
+            $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Email template with this name already exists for this reseller");
+            last;
+        }
+
         try {
             $item = $c->model('DB')->resultset('email_templates')->create($resource);
         } catch($e) {

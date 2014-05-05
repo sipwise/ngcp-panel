@@ -88,6 +88,16 @@ sub update_item {
         $resource->{reseller_id} = $c->user->reseller_id;
     }
 
+    my $dup_item = $c->model('DB')->resultset('email_templates')->find({
+        reseller_id => $resource->{reseller_id},
+        name => $resource->{name},
+    });
+    if($dup_item && $dup_item->id != $item->id) {
+        $c->log->error("email template with name '$$resource{name}' already exists for reseller_id '$$resource{reseller_id}'"); # TODO: user, message, trace, ...
+        $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Email template with this name already exists for this reseller");
+        return;
+    }
+
     $item->update($resource);
 
     return $item;
