@@ -193,7 +193,7 @@ sub DELETE :Allow {
         my $item = $self->item_by_id($c, $id);
         last unless $self->resource_exists($c, subscriberprofileset => $item);
 
-        $schema->resultset('provisioning_voip_subscribers')->search({
+        $c->model('DB')->resultset('provisioning_voip_subscribers')->search({
             profile_set_id => $item->id,
         })->update({
             profile_set_id => undef,
