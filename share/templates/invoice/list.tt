@@ -6,6 +6,12 @@
 [%PROCESS 'helpers/datatables_vars.tt'
     no_auto_helper = 1 
 -%]
+[%PROCESS 'helpers/modal.tt' -%]
+[%mf_helper = {
+    ajax_load         => 1,
+    ajax_list_refresh => 'template',
+ }%]
+[%modal_script( m = mf_helper )%]
 
 [% site_config.title = c.loc('Invoices for [_1]', provider.name ) -%]
 
@@ -32,21 +38,49 @@
 <div class="accordion" id="invoice">
 <div class="accordion-group">
     <div class="accordion-heading">
+        <a class="accordion-toggle" data-toggle="collapse" data-parent="#invoice" href="#collapse_client_list">[% c.loc('Clients') %]</a>
+    </div>
+    
+    <div class="accordion-body collapse" id="collapse_client_list">
+    <div class="accordion-inner" style="overflow:auto; height: 500px;">
+[%#Dumper.dump_html(provider_client_list_ajax)%]
+[%
+    clearHelper();
+    helper.name = c.loc('Clients');
+    helper.name_single = c.loc('client');
+    helper.dt_columns = [
+        { name => 'id', title => c.loc('Client Contact Id'), search => 1},
+        { name => 'contracts.id', title => c.loc('Client Contract Id'), search => 1},
+        { name => 'contracts.external_id', title => c.loc('External #'), search => 1 },
+        { name => 'email', title => c.loc('Contact Email'), search => 1 },
+        { name => 'contracts.billing_mappings.billing_profile.name', title => c.loc('Billing Profile'), search => 1 },
+        { name => 'contracts.status', title => c.loc('Status'), search => 1 },
+    ];
+    helper.dt_buttons = [
+        { name = c.loc('View invoices'), uri = "javascript:alert('+full.id+');invoicesTable = \$(\\'#invoice_list_data_ajax_table\\');if(invoicesTable){invoicesTable.attr(\\'paramsJSON\\',JSON.stringify({\\'client_contact_id\\':'+full.id+'}));invoicesTable.dataTable().fnDraw();}void(0);", class = 'btn-small btn-primary', icon = 'icon-glass' },
+        { name = c.loc('Generate invoice'), uri = "javascript:void(0);", class = 'btn-small btn-primary', icon = 'icon-star' },
+    ];
+    helper.identifier = 'provider_client_list_ajax';
+    helper.ajax_uri = c.uri_for_action( '/invoice/ajax_datatables_data', [ provider.id, 'provider_client_list' ] ) ;
+    initHelperAuto();
+    PROCESS 'helpers/datatables.tt';
+    datatables.clients = {helper => {}};
+    datatables.clients.helper.import(helper);
+-%]
+[%#PROCESS 'invoice/invoice_list.tt' %]
+    </div>
+    </div>
+    </div>
+
+    
+    <div class="accordion-group">
+    <div class="accordion-heading">
         <a class="accordion-toggle" data-toggle="collapse" data-parent="#invoice" href="#collapse_invoice_list">[% c.loc('Invoices') %]</a>
     </div>
     
     <div class="accordion-body collapse" id="collapse_invoice_list">
-    <div class="accordion-inner" style="overflow:auto; height: 300px;">
+    <div class="accordion-inner" style="overflow:auto; height: 500px;">
 
-[%#    [%IF 0 && c.user.roles == 'admin' %]
-[%#        { name => 'reseller_id', title => c.loc('Reseller Id')},
-[%#        { name => 'reseller_name', title => c.loc('Reseller Name')},
-[%#    [%END%]
-[%#        { name => 'client_contact_id', title => c.loc('Client')},
-[%#        { name => 'contract_balance_start', title => c.loc('Period Start')},
-[%#        { name => 'contract_balance_end', title => c.loc('Period End')},
-[%#        { name => 'cash_balance', title => c.loc('Cash balance')},
-[%#        { name => 'free_time_balance', title => c.loc('Free time balance')},%]
 [%#, title => c.loc('Reseller #')%]
 [%#, title => c.loc('Reseller name')%]
 [%#Dumper.dump_html(invoice_list_ajax)%]
@@ -57,25 +91,27 @@
     helper.dt_columns = [
         { name => 'contract_balances.contract.contact.reseller_id'},
         { name => 'contract_balances.contract.contact.reseller.name'},
-        { name => 'contract_balances.contract.contact.id', title => c.loc('Client')},
-        { name => 'contract_balances.invoice_id', title => c.loc('Invoice #')},
-        { name => 'contract_balances.start', title => c.loc('Period Start')},
+        { name => 'contract_balances.contract.contact.id', title => c.loc('Client'), search => 1},
+        { name => 'contract_balances.invoice_id', title => c.loc('Invoice #'), search => 1},
+        { name => 'contract_balances.start', title => c.loc('Period Start'), search_from_epoch => 1, search_to_epoch => 1, search_use_datetime => 1 },
         { name => 'contract_balances.end', title => c.loc('Period End')},
         { name => 'contract_balances.cash_balance', title => c.loc('Cash balance')},
         { name => 'contract_balances.free_time_balance', title => c.loc('Free Time balance')},
     ];
     helper.dt_buttons = [
-        { name = c.loc('View PDF'), uri = "javascript:window.open(\\'/invoice/data/' + full.contract_balances_invoice_id + '\\',\\'_blank\\');void(0);", class = 'btn-small btn-primary', icon = 'icon-edit' },
+        { name = c.loc('View invoice PDF'), uri = "javascript:window.open(\\'/invoice/data/' + full.contract_balances_invoice_id + '\\',\\'_blank\\');void(0);", class = 'btn-small btn-primary', icon = 'icon-edit' },
     ];
     helper.identifier = 'invoice_list_data_ajax';
     helper.ajax_uri = c.uri_for_action( '/invoice/ajax_datatables_data', [ provider.id, 'invoice_list_data' ] ) ;
     initHelperAuto();
     PROCESS 'helpers/datatables.tt';
+    datatables.invoices = {helper => {}};
+    datatables.invoices.helper.import(helper);
 -%]
 [%#PROCESS 'invoice/invoice_list.tt' %]
     </div>
     </div>
-</div>
+    </div>
 
 
 <!--div class="accordion-group">
@@ -156,6 +192,7 @@ oTable.fnClose();
     </div>
 </div-->
 </div>
-
+<div id="invoice_generate_form">
+</div>
 
 

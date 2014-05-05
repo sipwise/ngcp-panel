@@ -174,8 +174,10 @@ sub invoice_list_data :Chained('invoice') :PathPart('list') :Args(0) {
     my $backend = NGCP::Panel::Model::DB::InvoiceTemplate->new( schema => $c->model('DB') );
     $c->log->debug('invoice_list_data');
     my $provider_id = $c->stash->{provider}->id;
+    my $client_contact_id = $c->request->parameters->{client_contact_id};
     my $invoice_list_ajax = $backend->getProviderInvoiceListAjax(
         provider_id => $provider_id,
+        $client_contact_id ? ( client_contact_id => $client_contact_id):(),
     );
     $c->stash( 
         invoice_list_data_ajax    => $invoice_list_ajax,
@@ -183,6 +185,19 @@ sub invoice_list_data :Chained('invoice') :PathPart('list') :Args(0) {
     #$c->detach( $c->view() );
 }
 
+sub provider_client_list :Chained('invoice') :PathPart('clients/list') :Args(0) {
+    my ($self, $c) = @_;
+    my $backend = NGCP::Panel::Model::DB::InvoiceTemplate->new( schema => $c->model('DB') );
+    $c->log->debug('provider_client_list');
+    my $provider_id = $c->stash->{provider}->id;
+    my $provider_client_list_ajax = $backend->getInvoiceProviderClients(
+        provider_id => $provider_id,
+    );
+    $c->stash( 
+        provider_client_list_ajax    => $provider_client_list_ajax,
+    );
+    #$c->detach( $c->view() );
+}
 
 sub invoice_data :Chained('invoice') :PathPart('data') :Args(1) {
     my ($self, $c) = @_;
@@ -194,6 +209,88 @@ sub invoice_data :Chained('invoice') :PathPart('data') :Args(1) {
     $c->response->body( $invoice->first->get_column('data') );
     return;
 }
+
+sub invoice_generate :Chained('base') :PathPart('generate') :Args(0) {
+    my ($self, $c) = @_;
+    $c->log->debug($c->action);
+    my($validator,$backend,$in,$out);
+    $backend = NGCP::Panel::Model::DB::InvoiceTemplate->new( schema => $c->model('DB') );
+    
+    #from parameters
+    $in = $c->request->parameters;
+    $in->{provider_id} = $c->stash->{provider}->id;
+    #(undef,undef,@$in{qw/tt_id/}) = @_;
+
+    if($in->{tt_id}){
+        #always was sure that i'm calm and even friendly person, but I would kill with pleasure author of dbix.
+        my $db_object;
+        ($out->{tt_id},undef,$db_object) = $backend->getInvoiceTemplate( %$in );
+        $out->{tt_data}->{tt_id} = $db_object->get_column('id');
+        $out->{tt_data}->{provider_id} = $db_object->get_column('reseller_id');
+        foreach(qw/name is_active/){$out->{tt_data}->{$_} = $db_object->get_column($_);}
+    }
+    if(!$out->{tt_data}){
+        $out->{tt_data} = $in;
+    }
+    $validator = NGCP::Panel::Form::Invoice::Template->new( backend => $backend );
+    $validator->remove_undef_in($in);
+    #need to think how to automate it - maybe through form showing param through args? what about args for uri_for_action?
+    #join('/',$c->controller,$c->action)
+    $validator->action( $c->uri_for_action('invoice/generate',[$in->{provider_id}]) );
+    $validator->name( 'invoice_generate' );#from parameters
+    #my $posted = 0;
+    my $posted = exists $in->{submitid};
+    $c->log->debug("posted=$posted;");
+    $validator->process(
+        posted => $posted,
+        params => $in,
+        #item => $in,
+        item => $out->{tt_data},
+        #item   => $out->{tt_data},
+    );
+    my $in_validated = $validator->fif;
+    if($posted){
+        if($validator->validated) {
+            try {
+                $backend->storeInvoiceTemplateInfo(%$in_validated);
+                $c->flash(messages => [{type => 'success', text => $c->loc(
+                    $in->{tt_id}
+                    ?'Invoice template updated'
+                    :'Invoice template created'
+                ) }]);
+            } catch($e) {
+                NGCP::Panel::Utils::Message->error(
+                    c => $c,
+                    error => $e,
+                    desc  => $c->loc(
+                        $in->{tt_id}
+                        ?'Failed to update invoice template.'
+                        :'Failed to create invoice template.'
+                    ),
+                );
+            }
+            $c->stash( messages => $c->flash->{messages} );
+            $c->stash( template => 'helpers/ajax_messages.tt' );
+        }else{
+            #$c->stash( m        => {create_flag => !$in->{tt_id}} );
+            #$c->stash( form     => $validator );
+            ##$c->stash( template => 'helpers/ajax_form_modal.tt' );
+            #$c->stash( template => 'invoice/template_info_form.tt' );
+            $c->response->headers->header( 'X-Form-Status' => 'error' );
+        }
+    }
+    if(!$validator->validated){
+        #$c->stash( in       => $in );
+        #$c->stash( out      => $out );
+        $c->stash( m        => {create_flag => !$in->{tt_id}} );
+        $c->stash( form     => $validator );
+        #$c->stash( template => 'helpers/ajax_form_modal.tt' );
+        $c->stash( template => 'invoice/template_info_form.tt' );
+    }
+    $c->detach( $c->view("SVG") );#to the sake of nowrapper
+}
+
+
 
 sub template_base :Chained('base') :PathPart('template') :CaptureArgs(0) {
     my ($self, $c) = @_;

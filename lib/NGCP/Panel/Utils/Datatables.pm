@@ -52,17 +52,18 @@ sub process {
     }
 
     # data-range searching
-    my $from_date = $c_->request->params->{sSearch_0} // "";
-    my $to_date = $c_->request->params->{sSearch_1} // "";
+    my $from_date_in = $c_->request->params->{sSearch_0} // "";
+    my $to_date_in = $c_->request->params->{sSearch_1} // "";
+    my($from_date,$to_date);
     my $parser = DateTime::Format::Strptime->new(
         #pattern => '%Y-%m-%d %H:%M',
         pattern => '%Y-%m-%d',
     );
     if($from_date) {
-        $from_date = $parser->parse_datetime($from_date);
+        $from_date = $parser->parse_datetime($from_date_in);
     }
     if($to_date) {
-        $to_date = $parser->parse_datetime($to_date);
+        $to_date = $parser->parse_datetime($to_date_in);
     }
     @searchColumns = ();
     foreach my $c(@{ $cols }) {
@@ -71,12 +72,12 @@ sub process {
 
         if($c->{search_from_epoch} && $from_date) {
             $rs = $rs->search({
-                $name => { '>=' => $from_date->epoch },
+                $name => { '>=' => $c->{search_use_datetime} ? $from_date_in : $from_date->epoch },
             });
         }
         if($c->{search_to_epoch} && $to_date) {
             $rs = $rs->search({
-                $name => { '<=' => $to_date->epoch },
+                $name => { '<=' => $c->{search_use_datetime} ? $to_date_in : $to_date->epoch },
             });
         }
     }

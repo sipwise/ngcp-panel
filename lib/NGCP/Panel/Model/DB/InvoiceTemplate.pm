@@ -219,14 +219,14 @@ sub checkInvoiceTemplateProvider{
     return 0;
 }
 
-sub getInvoiceClientContactInfo{
-    my $self = shift;
-    my (%params) = @_;
-    my ($client_id) = @params{qw/client_id/};
-    return $tt_record = $self->schema->resultset('invoice_templates')->search({
-        reseller_id => $client_id,
-    });
-}
+#sub getInvoiceClientContactInfo{
+#    my $self = shift;
+#    my (%params) = @_;
+#    my ($client_id) = @params{qw/client_id/};
+#    return $tt_record = $self->schema->resultset('contacts')->search({
+#        reseller_id => $client_id,
+#    });
+#}
 sub getProviderInvoiceList{
     my $self = shift;
     my (%params) = @_;
@@ -250,13 +250,14 @@ sub getProviderInvoiceList{
 sub getProviderInvoiceListAjax{
     my $self = shift;
     my (%params) = @_;
-    my ($provider_reseller_id,$stime,$etime) = @params{qw/provider_id stime etime/};
+    my ($provider_reseller_id,$client_contact_id,$stime,$etime) = @params{qw/provider_id client_contact_id stime etime/};
     $stime ||= NGCP::Panel::Utils::DateTime::current_local()->truncate( to => 'month' );
     $etime ||= $stime->clone->add( months => 1);
     $self->schema->resultset('invoices')->search({
         '-and'  =>  
             [ 
                 'contact.reseller_id' => $provider_reseller_id, #$client_contract_id - contract of the client
+                $client_contact_id ? ('contact.id' => $client_contact_id) : (), #$client_contract_id - contract of the client
             ],
     },{
         #'select'   => [ 'contract_balances.invoice_id','contract_balances.start','contract_balances.end','contract_balances.cash_balance','contract_balances.free_time_balance','reseller.id','reseller.name','contact.id',],
@@ -279,28 +280,27 @@ sub getInvoice{
 sub getInvoiceProviderClients{
     my $self = shift;
     my (%params) = @_;
-    my ($provider_contact_id,$stime,$etime) = @params{qw/provider_contact_id stime etime/};
+    my ($provider_contact_id,$stime,$etime) = @params{qw/provider_id stime etime/};
     $stime ||= NGCP::Panel::Utils::DateTime::current_local()->truncate( to => 'month' );
     $etime ||= $stime->clone->add( months => 1);
     $self->schema->resultset('contacts')->search_rs({
         '-and'  =>  
             [ 
-                'reseller_id' => $provider_contact_id, #$client_contract_id - contract of the client
-                'id' => { '!=' => $provider_contact_id },
+                'me.reseller_id' => $provider_contact_id, #$client_contract_id - contract of the client
             ],
         '-exists' => $self->schema->resultset('billing_mappings')->search({
-            'contract.contact_id' => \' = contacts.id',
+            'contract.contact_id' => \' = me.id',
             'product.class' => [ "sipaccount", "pbxaccount" ],
-            '-and'          => [
-                    'start_date'    => [ -or =>
-                        { '<=' => $etime->epoch },
-                        { -is  => undef },
-                    ],
-                    'end_date' => [ -or =>
-                        { '>=' => $stime->epoch },
-                        { -is  => undef },
-                    ],
-                ]
+            #'-and'          => [
+            #        'start_date'    => [ -or =>
+            #            { '<=' => $etime->epoch },
+            #            { -is  => undef },
+            #        ],
+            #        'end_date' => [ -or =>
+            #            { '>=' => $stime->epoch },
+            #            { -is  => undef },
+            #        ],
+            #    ]
             },{
                 alias => 'billing_mappings_top',
                 join => ['product','contract'],
