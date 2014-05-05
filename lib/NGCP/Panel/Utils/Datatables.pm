@@ -12,9 +12,6 @@ sub process {
 
     my $use_rs_cb = ('CODE' eq (ref $rs));
     my $aaData = [];
-    my $displayRecords = 0;
-
-    my $totalRecords = $use_rs_cb ? 0 : $rs->count;
 
     # check if we need to join more tables
     # TODO: can we nest it deeper than once level?
@@ -84,7 +81,8 @@ sub process {
         }
     }
 
-    $displayRecords = $use_rs_cb ? 0 : $rs->count;
+    my $totalRecords = $use_rs_cb ? 0 : $rs->count;
+    my $displayRecords = $use_rs_cb ? 0 : $rs->count;
 
     # show specific row on top (e.g. if we come back from a newly created entry)
     my $topId = $c_->request->params->{iIdOnTop};
@@ -126,6 +124,7 @@ sub process {
     }
 
     # pagination
+    my $pageStart = $c_->request->params->{iDisplayStart};
     my $pageSize = $c_->request->params->{iDisplayLength};
     if ($use_rs_cb) {
         ($rs, $totalRecords, $displayRecords) = $rs->(
