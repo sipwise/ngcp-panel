@@ -18,7 +18,7 @@ class_has 'api_description' => (
     is => 'ro',
     isa => 'Str',
     default => 
-        'TODO',
+        'Specifies a PBX device deployed at a customer.',
 );
 
 class_has 'query_params' => (
