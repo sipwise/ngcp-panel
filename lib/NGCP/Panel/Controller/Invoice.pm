@@ -11,7 +11,7 @@ use MIME::Base64 qw(encode_base64);
 use NGCP::Panel::Utils::Contract;
 use NGCP::Panel::Utils::Message;
 
-use NGCP::Panel::Form::InvoiceTemplate::Basic;
+use NGCP::Panel::Form::Invoice::Template;
 use NGCP::Panel::Model::DB::InvoiceTemplate;
 use NGCP::Panel::Utils::InvoiceTemplate;
 
@@ -99,7 +99,7 @@ sub invoice_details_zones :Chained('base') :PathPart('') :CaptureArgs(0) {
     my $etime = $stime->clone->add(months => 1);
 
     #look, NGCP::Panel::Utils::Contract - it is kind of backend separation here
-    #my $form = NGCP::Panel::Form::InvoiceTemplate::Basic->new( );
+    #my $form = NGCP::Panel::Form::Invoice::Template->new( );
     my $invoice_details_zones = $backend->get_contract_zonesfees_rs(
         c => $c,
         provider_id => $provider_id,
@@ -126,7 +126,7 @@ sub invoice_details_calls :Chained('invoice_details_zones') :PathPart('') :Captu
     my $etime = $stime->clone->add(months => 1);
 
     #look, NGCP::Panel::Utils::Contract - it is kind of backend separation here
-    #my $form = NGCP::Panel::Form::InvoiceTemplate::Basic->new( );
+    #my $form = NGCP::Panel::Form::Invoice::Template->new( );
     my $invoice_details_calls = $backend->get_contract_calls_rs(
         c => $c,
         provider_id => $provider_id,
@@ -232,7 +232,7 @@ sub template_info :Chained('template_base') :PathPart('info') :Args(0) {
     if(!$out->{tt_data}){
         $out->{tt_data} = $in;
     }
-    $validator = NGCP::Panel::Form::InvoiceTemplate::Basic->new( backend => $backend );
+    $validator = NGCP::Panel::Form::Invoice::Template->new( backend => $backend );
     $validator->remove_undef_in($in);
     #need to think how to automate it - maybe through form showing param through args? what about args for uri_for_action?
     #join('/',$c->controller,$c->action)
@@ -310,7 +310,7 @@ sub template_activate :Chained('template_base') :PathPart('activate') :Args(2) {
     $backend = NGCP::Panel::Model::DB::InvoiceTemplate->new( schema => $c->model('DB') );
 
     #input checking & simple preprocessing
-    $validator = NGCP::Panel::Form::InvoiceTemplate::Basic->new( backend => $backend );
+    $validator = NGCP::Panel::Form::Invoice::Template->new( backend => $backend );
 #    $form->schema( $c->model('DB::InvoiceTemplate')->schema );
     #to common form package ? removing is necessary due to FormHandler param presence evaluation - it is based on key presence, not on defined/not defined value
     #in future this method should be called by ControllerBase
@@ -369,7 +369,7 @@ sub template_delete :Chained('template_base') :PathPart('delete') :Args(1) {
     $backend = NGCP::Panel::Model::DB::InvoiceTemplate->new( schema => $c->model('DB') );
 
     #input checking & simple preprocessing
-    $validator = NGCP::Panel::Form::InvoiceTemplate::Basic->new( backend => $backend );
+    $validator = NGCP::Panel::Form::Invoice::Template->new( backend => $backend );
 #    $form->schema( $c->model('DB::InvoiceTemplate')->schema );
     #to common form package ? removing is necessary due to FormHandler param presence evaluation - it is based on key presence, not on defined/not defined value
     #in future this method should be called by ControllerBase
@@ -454,7 +454,7 @@ sub template_view :Chained('template_base') :PathPart('view') :Args {
     $backend = NGCP::Panel::Model::DB::InvoiceTemplate->new( schema => $c->model('DB') );
 
     #input checking & simple preprocessing
-    $validator = NGCP::Panel::Form::InvoiceTemplate::Basic->new;
+    $validator = NGCP::Panel::Form::Invoice::Template->new;
 #    $form->schema( $c->model('DB::InvoiceTemplate')->schema );
     #to common form package ? removing is necessary due to FormHandler param presence evaluation - it is based on key presence, not on defined/not defined value
     $validator->remove_undef_in($in);
