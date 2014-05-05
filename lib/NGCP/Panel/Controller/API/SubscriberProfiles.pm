@@ -1,4 +1,4 @@
-package NGCP::Panel::Controller::API::EmailTemplates;
+package NGCP::Panel::Controller::API::SubscriberProfiles;
 use Sipwise::Base;
 use namespace::sweep;
 use boolean qw(true);
@@ -20,7 +20,7 @@ class_has 'api_description' => (
     is => 'ro',
     isa => 'Str',
     default => 
-        'Defines email templates to be send when new subscribers are created or when passwords are reset.',
+        'Defines subscriber profiles which specify the available features for a subscriber.',
 );
 
 class_has 'query_params' => (
@@ -28,12 +28,12 @@ class_has 'query_params' => (
     isa => 'ArrayRef',
     default => sub {[
         {
-            param => 'reseller_id',
-            description => 'Filter for email templates belonging to a specific reseller',
+            param => 'profile_set_id',
+            description => 'Filter for profiles  belonging to a specific profile set',
             query => {
                 first => sub {
                     my $q = shift;
-                    { reseller_id => $q };
+                    { set_id => $q };
                 },
                 second => sub {},
             },
@@ -41,11 +41,11 @@ class_has 'query_params' => (
     ]},
 );
 
-with 'NGCP::Panel::Role::API::EmailTemplates';
+with 'NGCP::Panel::Role::API::SubscriberProfiles';
 
-class_has('resource_name', is => 'ro', default => 'emailtemplates');
-class_has('dispatch_path', is => 'ro', default => '/api/emailtemplates/');
-class_has('relation', is => 'ro', default => 'http://purl.org/sipwise/ngcp-api/#rel-emailtemplates');
+class_has('resource_name', is => 'ro', default => 'subscriberprofiles');
+class_has('dispatch_path', is => 'ro', default => '/api/subscriberprofiles/');
+class_has('relation', is => 'ro', default => 'http://purl.org/sipwise/ngcp-api/#rel-subscriberprofiles');
 
 __PACKAGE__->config(
     action => {
@@ -81,7 +81,7 @@ sub GET :Allow {
         });
         my (@embedded, @links);
         my $form = $self->get_form($c);
-        for my $item ($items->search({}, {order_by => {-asc => 'me.id'}, prefetch => ['reseller']})->all) {
+        for my $item ($items->search({}, {order_by => {-asc => 'me.id'}})->all) {
             push @embedded, $self->hal_from_item($c, $item, $form);
             push @links, Data::HAL::Link->new(
                 relation => 'ngcp:'.$self->resource_name,
@@ -142,6 +142,12 @@ sub OPTIONS :Allow {
 sub POST :Allow {
     my ($self, $c) = @_;
 
+    if($c->user->roles eq "reseller" && !$c->config->{profile_sets}->{reseller_edit}) {
+        $c->log->error("profile creation by reseller forbidden via config");
+        $self->error($c, HTTP_FORBIDDEN, "Subscriber profile creation forbidden for resellers.");
+        return;
+    }
+
     my $guard = $c->model('DB')->txn_scope_guard;
     {
         my $resource = $self->get_valid_post_data(
@@ -149,6 +155,8 @@ sub POST :Allow {
             media_type => 'application/json',
         );
         last unless $resource;
+
+        my $attributes = delete $resource->{attributes};
 
         my $form = $self->get_form($c);
         last unless $self->validate_form(
@@ -160,23 +168,60 @@ sub POST :Allow {
         } elsif($c->user->roles eq "reseller") {
             $resource->{reseller_id} = $c->user->reseller_id;
         }
+        $resource->{set_id} = delete $resource->{profile_set_id};
 
-        my $item;
-        $item = $c->model('DB')->resultset('email_templates')->find({
-            reseller_id => $resource->{reseller_id},
-            name => $resource->{name},
-        });
-        if($item) {
-            $c->log->error("email template with name '$$resource{name}' already exists for reseller_id '$$resource{reseller_id}'"); # TODO: user, message, trace, ...
-            $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Email template with this name already exists for this reseller");
+        my $set = $c->model('DB')->resultset('voip_subscriber_profile_sets');
+        if($c->user->roles eq "reseller") {
+            $set = $set->search({
+                reseller_id => $c->user->reseller_id,
+            });
+        }
+        $set = $set->find($resource->{set_id});
+        unless($set) {
+            $c->log->error("subscriber profile set with id '$$resource{set_id}' does not exist"); # TODO: user, message, trace, ...
+            $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Invalid 'profile_set_id', does not exist");
             last;
         }
 
+        my $item;
+        $item = $set->voip_subscriber_profiles->find({
+            name => $resource->{name},
+        });
+        if($item) {
+            $c->log->error("subscriber profile with name '$$resource{name}' already exists for profile_set_id '$$resource{set_id}'"); # TODO: user, message, trace, ...
+            $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Subscriber profile with this name already exists for this profile set");
+            last;
+        }
+        if($resource->{set_default}) {
+            $set->voip_subscriber_profiles->update({
+                set_default => 0,
+            });
+        }
+        unless($set->voip_subscriber_profiles->count) {
+            $resource->{set_default} = 1;
+        }
+
         try {
-            $item = $c->model('DB')->resultset('email_templates')->create($resource);
+            $item = $set->voip_subscriber_profiles->create($resource);
+            my $meta_rs = $c->model('DB')->resultset('voip_preferences')->search({
+                -or => [
+                {
+                    usr_pref => 1,
+                    expose_to_customer => 1,
+                },
+                {
+                    attribute => { -in => [qw/cfu cft cfna cfb/] },
+                },
+                ],
+            });
+            foreach my $a(@{ $attributes }) {
+                my $meta = $meta_rs->find({ attribute => $a });
+                next unless $meta;
+                $item->profile_attributes->create({ attribute_id => $meta->id });
+            }
         } catch($e) {
-            $c->log->error("failed to create email template: $e"); # TODO: user, message, trace, ...
-            $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "Failed to create email template.");
+            $c->log->error("failed to create subscriber profile: $e"); # TODO: user, message, trace, ...
+            $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "Failed to create subscriber profile.");
             last;
         }
 
