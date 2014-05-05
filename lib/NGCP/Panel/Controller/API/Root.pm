@@ -206,7 +206,7 @@ sub get_collection_properties {
             $f->type eq "Submit" ||
             0);
         my @types = ();
-        push @types, 'null' unless $f->required;
+        push @types, 'null' unless ($f->required || $f->validate_when_empty);
         push @types, $self->field_to_json($f->type);
         my $name = $f->name;
         if($f->type =~ /^\+NGCP::Panel::Field::/) {
