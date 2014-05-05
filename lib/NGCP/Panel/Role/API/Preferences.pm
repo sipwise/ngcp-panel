@@ -12,6 +12,7 @@ use Data::HAL qw();
 use Data::HAL::Link qw();
 use HTTP::Status qw(:constants);
 use JSON::Types;
+use Safe::Isa qw($_isa);
 use Data::Validate::IP qw/is_ipv4 is_ipv6/;
 use NGCP::Panel::Utils::XMLDispatcher;
 use NGCP::Panel::Utils::Prosody;
@@ -366,6 +367,9 @@ sub update_item {
 
         try {
             my $vtype = ref $resource->{$pref};
+            if($meta->data_type eq "boolean" && JSON::is_bool($resource->{$pref})) {
+                $vtype = "";
+            }
             if($meta->max_occur == 1 && $vtype ne "") {
                 $c->log->error("preference '$pref' has max_occur '".$meta->max_occur."', but value got passed in as '$vtype', expected flat value");
                 $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Invalid data type '$vtype' for preference '$pref', expected flat value");
@@ -510,6 +514,9 @@ sub check_pref_value {
     my $err;
 
     my $vtype = ref $value;
+    if($meta->data_type eq "boolean" && JSON::is_bool($value)) {
+        $vtype = "";
+    }
     unless($vtype eq "") {
         $c->log->error("preference '".$meta->attribute."' has invalid value data structure, expected plain value");
         $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Invalid data structure as value for element in preference '".$meta->attribute."', expected plain value");
