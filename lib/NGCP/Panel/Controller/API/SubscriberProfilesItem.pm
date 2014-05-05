@@ -169,6 +169,12 @@ sub PUT :Allow {
 sub DELETE :Allow {
     my ($self, $c, $id) = @_;
 
+    if($c->user->roles eq "reseller" && !$c->config->{profile_sets}->{reseller_edit}) {
+        $c->log->error("profile deletion by reseller forbidden via config");
+        $self->error($c, HTTP_FORBIDDEN, "Subscriber profile deletion forbidden for resellers.");
+        return;
+    }
+
     my $guard = $c->model('DB')->txn_scope_guard;
     {
         my $item = $self->item_by_id($c, $id);
