@@ -193,17 +193,14 @@ sub DELETE :Allow {
         my $item = $self->item_by_id($c, $id);
         last unless $self->resource_exists($c, subscriberprofileset => $item);
 
-        $c->model('DB')->resultset('contracts')->search({
-            subscriber_email_template_id => $item->id,
+        $schema->resultset('provisioning_voip_subscribers')->search({
+            profile_set_id => $item->id,
         })->update({
-            subscriber_email_template_id => undef,
-        });
-        $c->model('DB')->resultset('contracts')->search({
-            passreset_email_template_id => $item->id,
-        })->update({
-            passreset_email_template_id => undef,
+            profile_set_id => undef,
+            profile_id => undef,
         });
 
+        $item->voip_subscriber_profiles->delete;
         $item->delete;
 
         $guard->commit;

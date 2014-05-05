@@ -137,7 +137,7 @@ sub update_item {
             set_default => 1,
         });
     } elsif(!$item->set_default && $resource->{set_default}) {
-        $set->voip_subscriber_profiles->all->update({
+        $set->voip_subscriber_profiles->update({
             set_default => 0,
         });
     }
