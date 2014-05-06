@@ -30,7 +30,33 @@
 <div class="row" id="messages">
 [%PROCESS 'helpers/ajax_messages.tt' -%]
 </div>
-
+<script>
+function applyClientFilter(tr,contact_id){
+    localStorage.setItem('datatables.paramsJSON',JSON.stringify({'client_contact_id':contact_id}));invoicesTable = $('#invoice_list_data_ajax_table');
+    if(invoicesTable){
+        invoicesTable.dataTable().fnDraw();
+    }
+/*
+    var tr = obj.closest('tr');
+    alert('obj.innerhtml='+obj.innerHTML);
+    alert('tr.innerhtml='+tr.innerHTML);
+    for (var i in obj){
+        alert('i='+i+'; val='+obj[i]+';');
+    }
+    alert(tr.nodeName);
+*/
+    var table = tr.closest('table');
+    var classSelected = 'ngcp_current_edit';
+    //var dataTable = table.DataTable();
+    if ( tr.hasClass(classSelected) ) {
+        tr.removeClass(classSelected);
+    }
+    else {
+        table.find('tr.'+classSelected).removeClass(classSelected);
+        tr.addClass(classSelected);
+    }
+}
+</script>
 
 <div class="ngcp-separator"></div>
 [% back_created = 1 -%]
@@ -57,7 +83,7 @@
         { name => 'contracts.status', title => c.loc('Status'), search => 1 },
     ];
     helper.dt_buttons = [
-        { name = c.loc('View invoices'), uri = "javascript:alert('+full.id+');invoicesTable = \$(\\'#invoice_list_data_ajax_table\\');if(invoicesTable){invoicesTable.attr(\\'paramsJSON\\',JSON.stringify({\\'client_contact_id\\':'+full.id+'}));invoicesTable.dataTable().fnDraw();}void(0);", class = 'btn-small btn-primary', icon = 'icon-glass' },
+        { name => c.loc('View invoices'), uri=>'javascript:void(0);', onclick = "applyClientFilter(\$(this).closest(\\'tr\\'),'+full.id+');", class = 'btn-small btn-primary', icon = 'icon-glass' },
         { name = c.loc('Generate invoice'), uri = "javascript:void(0);", class = 'btn-small btn-primary', icon = 'icon-star' },
     ];
     helper.identifier = 'provider_client_list_ajax';
