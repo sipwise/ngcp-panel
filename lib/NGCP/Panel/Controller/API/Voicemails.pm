@@ -33,9 +33,10 @@ class_has 'query_params' => (
             query => {
                 first => sub {
                     my $q = shift;
+                    # join is already done in get_item_rs
                     { 'voip_subscriber.id' => $q };
                 },
-                second => sub { join => 'foo' },
+                second => sub { },
             },
         },
     ]},
