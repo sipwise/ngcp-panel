@@ -53,8 +53,9 @@ sub GET : Allow {
         next if(exists $blacklist->{$mod});
         my $rel = lc $mod;
         my $full_mod = 'NGCP::Panel::Controller::API::'.$mod;
+        my $full_item_mod = 'NGCP::Panel::Controller::API::'.$mod.'Item';
 
-        my $role = $full_mod->config->{action}->{GET}->{AllowedRole};
+        my $role = $full_mod->config->{action}->{OPTIONS}->{AllowedRole};
         if(ref $role eq "ARRAY") {
             next unless grep @{ $role }, $c->user->roles;
         } else {
@@ -65,6 +66,9 @@ sub GET : Allow {
         if($full_mod->can('query_params')) {
             $query_params = $full_mod->query_params;
         }
+        my $actions = [ keys %{ $full_mod->config->{action} } ];
+        my $item_actions = [ keys %{ $full_item_mod->config->{action} } ];
+
 
         my $form = $full_mod->get_form($c);
         $c->stash->{collections}->{$rel} = { 
@@ -72,7 +76,10 @@ sub GET : Allow {
             description => $full_mod->api_description,
             fields => $form ? $self->get_collection_properties($form) : [],
             query_params => $query_params,
+            actions => $actions,
+            item_actions => $item_actions,
         };
+
     }
 
     $c->stash(template => 'api/root.tt');

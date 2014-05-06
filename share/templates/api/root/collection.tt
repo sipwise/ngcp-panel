@@ -12,6 +12,31 @@
 
 [% col.description %]
 
+<h[% level + 1 %]>Collection Actions</h[% level + 1%]>
+Allowed methods for the collection as in <span>METHOD [% uri %]</span>
+[% UNLESS col.actions.size -%]
+None.
+[% ELSE -%]
+<ul id="[% id %]-actions">
+    [% FOR a IN col.actions -%]
+    <li>[% a %]</li>
+    [% END -%]
+</ul>
+[% END -%]
+
+<h[% level + 1 %]>Item Actions</h[% level + 1%]>
+Allowed methods for a collection item as in <span>METHOD [% uri %]id</span>
+[% UNLESS col.item_actions.size -%]
+None.
+[% ELSE -%]
+<ul id="[% id %]-itemactions">
+    [% FOR a IN col.item_actions -%]
+    <li>[% a %]</li>
+    [% END -%]
+</ul>
+[% END -%]
+
+
 <h[% level + 1 %]>Properties</h[% level + 1%]>
 
 [% UNLESS col.fields.size -%]
@@ -39,6 +64,7 @@ None.
 <h[% level + 1 %]>Examples</h[% level + 1 %]>
 <div class="examples">
 
+[% IF col.actions.grep('^OPTIONS$').size -%]
 <h[% level + 2 %]>Request available HTTP methods on the URI</h[% level + 2 %]>
 <p>
 [%
@@ -55,7 +81,9 @@ Accept-Post: application/hal+json; profile="http://purl.org/sipwise/ngcp-api/#re
     INCLUDE helpers/api_req_res.tt request=request response=response  level=level+3;
 -%]
 </p>
+[% END -%]
 
+[% IF col.actions.grep('^GET$').size -%]
 <h[% level + 2 %]>Request the entire <i>[% id %]</i> collection</h[% level + 2 %]>
 <p>
 <p>
@@ -144,7 +172,9 @@ Content-Type: application/hal+json; profile="http://purl.org/sipwise/ngcp-api/"
     INCLUDE helpers/api_req_res.tt request=request response=response level=level+3;
 -%]
 </p>
+[% END -%]
 
+[% IF col.item_actions.grep('^GET$').size -%]
 <h[% level + 2 %]>Request a specific <i>[% id %]</i> item</h[% level + 2 %]>
 <p>
 
@@ -203,7 +233,9 @@ Link: </api/' _ id _ '/1>; rel="item self"
     INCLUDE helpers/api_req_res.tt request=request response=response level=level+3;
 -%]
 </p>
+[% END -%]
 
+[% IF col.actions.grep('^POST$').size -%]
 <h[% level + 2 %]>Create a new <i>[% id %]</i> item</h[% level + 2 %]>
 <p>
 [%
@@ -262,7 +294,9 @@ Location: /api/' _ id _ '/2';
     INCLUDE helpers/api_req_res.tt request=request response=response level=level+3;
 %]
 </p>
+[% END -%]
 
+[% IF col.item_actions.grep('^PUT$').size -%]
 <h[% level + 2 %]>Update an existing <i>[% id %]</i> item</h[% level + 2 %]>
 <p>
 [%
@@ -322,7 +356,9 @@ Preference-Applied: return=minimal';
     INCLUDE helpers/api_req_res.tt request=request response=response level=level+3;
 -%]
 </p>
+[% END -%]
 
+[% IF col.item_actions.grep('^PATCH$').size -%]
 <h[% level + 2 %]>Update specific fields of an existing <i>[% id %]</i> item</h[% level + 2 %]>
 <p>
 [%
@@ -442,6 +478,25 @@ Preference-Applied: return=minimal';
     INCLUDE helpers/api_req_res.tt request=request response=response level=level+3;
 -%]
 </p>
+[% END -%]
+
+[% IF col.item_actions.grep('^DELETE$').size -%]
+<h[% level + 2 %]>Delete a specific <i>[% id %]</i> item</h[% level + 2 %]>
+<p>
+
+[%
+    cmd = 'curl -i -X DELETE -H \'Connection: close\' --cert NGCP-API-client-certificate.pem --cacert ca-cert.pem \'https://example.org:1443/api/' _ id _ '/1\'';
+    INCLUDE helpers/api_command.tt cmd=cmd level=level+3;
+
+    request =
+'DELETE /api/' _ id _ '/1 HTTP/1.1';
+    response =
+'HTTP/1.1 204 No Content';
+
+    INCLUDE helpers/api_req_res.tt request=request response=response level=level+3;
+-%]
+</p>
+[% END -%]
 
 </div>
 [% # vim: set tabstop=4 syntax=html expandtab: -%]
