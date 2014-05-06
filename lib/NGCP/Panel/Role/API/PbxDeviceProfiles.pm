@@ -59,7 +59,6 @@ sub resource_from_item {
         resource => \%resource,
         run => 0,
     );
-    $resource{id} += 0;
 
     return \%resource;
 }
@@ -67,6 +66,12 @@ sub resource_from_item {
 sub item_rs {
     my ($self, $c) = @_;
     my $item_rs = $c->model('DB')->resultset('autoprov_profiles');
+    if($c->user->roles eq "admin") {
+    } elsif ($c->user->roles eq "reseller") {
+        $item_rs = $item_rs->search(
+            { 'device.reseller_id' => $c->user->reseller_id, },
+            { prefetch => { 'config' => 'device', }});
+    }
 
     return $item_rs;
 }

@@ -18,13 +18,35 @@ class_has 'api_description' => (
     is => 'ro',
     isa => 'Str',
     default => 
-        'TODO',
+        'Specifies a model to be set in <a href="#pbxdeviceconfigs">PbxDeviceConfigs</a>.',
 );
 
 class_has 'query_params' => (
     is => 'ro',
     isa => 'ArrayRef',
     default => sub {[
+        {
+            param => 'model',
+            description => 'Filter for models matching a model name pattern',
+            query => {
+                first => sub {
+                    my $q = shift;
+                    { model => { like => $q } };
+                },
+                second => sub {},
+            },
+        },
+        {
+            param => 'vendor',
+            description => 'Filter for models matching a vendor name pattern',
+            query => {
+                first => sub {
+                    my $q = shift;
+                    { vendor => { like => $q } };
+                },
+                second => sub {},
+            },
+        },
     ]},
 );
 

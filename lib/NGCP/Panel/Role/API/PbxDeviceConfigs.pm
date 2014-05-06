@@ -53,13 +53,12 @@ sub resource_from_item {
     delete $resource{device_id};
 
     my $form = $self->get_form($c);
-#    return unless $self->validate_form(
-#        c => $c,
-#        form => $form,
-#        resource => \%resource,
-#        run => 0,
-#    );
-    $resource{id} += 0;
+    return unless $self->validate_form(
+        c => $c,
+        form => $form,
+        resource => \%resource,
+        run => 0,
+    );
 
     return \%resource;
 }
@@ -67,6 +66,12 @@ sub resource_from_item {
 sub item_rs {
     my ($self, $c) = @_;
     my $item_rs = $c->model('DB')->resultset('autoprov_configs');
+    if($c->user->roles eq "admin") {
+    } elsif ($c->user->roles eq "reseller") {
+        $item_rs = $item_rs->search(
+            { 'device.reseller_id' => $c->user->reseller_id, },
+            { prefetch => 'device', });
+    }
 
     return $item_rs;
 }

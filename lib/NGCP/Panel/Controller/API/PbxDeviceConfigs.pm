@@ -18,13 +18,35 @@ class_has 'api_description' => (
     is => 'ro',
     isa => 'Str',
     default => 
-        'TODO',
+        'Specifies a config to be set in <a href="#pbxdeviceprofiles">PbxDeviceProfiles</a>.',
 );
 
 class_has 'query_params' => (
     is => 'ro',
     isa => 'ArrayRef',
     default => sub {[
+        {
+            param => 'content_type',
+            description => 'Filter for configs matching a content_type pattern',
+            query => {
+                first => sub {
+                    my $q = shift;
+                    { content_type => { like => $q } };
+                },
+                second => sub {},
+            },
+        },
+        {
+            param => 'version',
+            description => 'Filter for configs matching a version name pattern',
+            query => {
+                first => sub {
+                    my $q = shift;
+                    { version => { like => $q } };
+                },
+                second => sub {},
+            },
+        },
     ]},
 );
 

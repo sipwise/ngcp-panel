@@ -18,13 +18,24 @@ class_has 'api_description' => (
     is => 'ro',
     isa => 'Str',
     default => 
-        'TODO',
+        'Specifies a profile to be set in <a href="#pbxdevices">PbxDevices</a>.',
 );
 
 class_has 'query_params' => (
     is => 'ro',
     isa => 'ArrayRef',
     default => sub {[
+        {
+            param => 'name',
+            description => 'Filter for profiles matching a name pattern',
+            query => {
+                first => sub {
+                    my $q = shift;
+                    { name => { like => $q } };
+                },
+                second => sub {},
+            },
+        },
     ]},
 );
 
