@@ -111,9 +111,10 @@ $(document).ready(function() {
                         if([% button.condition %]) {
                       [% END -%]
                         html +=
-                           '<a class="btn [% button.class %]" href="[% button.uri %]" [% confirm_delete %][%IF button.onclick -%] onclick="[%button.onclick%]"[%END%]>' +
+                           '<a class="btn [% button.class %]" href="[% button.uri %]" [% confirm_delete %][%IF button.onclick -%] onclick="[%button.onclick%]"[%END%][%IF button.tooltip -%] rel="tooltip" data-original-title="[%button.tooltip%]"[%END%]>' +
                               '<i class="[% button.icon %]"></i> [% button.name %]' +
                             '</a>';
+                            
                       [% IF button.condition -%]
                         }
                       [% END -%]
@@ -132,6 +133,9 @@ $(document).ready(function() {
                     function() { $(this).find('.sw_actions').css('visibility','visible'); },
                     function() { $(this).find('.sw_actions').css('visibility','hidden'); }
                 );
+                if ($('.sw_actions').find("[rel=tooltip]").length) {
+                    $('.sw_actions').find("[rel=tooltip]").tooltip();
+                }
 
                 if(date_search_rendered) return;
                 date_search_rendered = 1;
