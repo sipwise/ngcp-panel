@@ -59,10 +59,10 @@ sub process {
         #pattern => '%Y-%m-%d %H:%M',
         pattern => '%Y-%m-%d',
     );
-    if($from_date) {
+    if($from_date_in) {
         $from_date = $parser->parse_datetime($from_date_in);
     }
-    if($to_date) {
+    if($to_date_in) {
         $to_date = $parser->parse_datetime($to_date_in);
     }
     @searchColumns = ();
