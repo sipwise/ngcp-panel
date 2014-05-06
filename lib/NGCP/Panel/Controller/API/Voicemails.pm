@@ -20,7 +20,7 @@ class_has 'api_description' => (
     is => 'ro',
     isa => 'Str',
     default => 
-        'Defines the meta information like duration, callerid etc for voicemail recordings. The actual recordings can be fetched via the related ngcp:voicemailrecordings relation.',
+        'Defines the meta information like duration, callerid etc for voicemail recordings. The actual recordings can be fetched via the <a href="#voicemailrecordings">VoicemailRecordings</a> relation.',
 );
 
 class_has 'query_params' => (
