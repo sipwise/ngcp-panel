@@ -2,6 +2,7 @@ package NGCP::Panel::Controller::Customer;
 use Sipwise::Base;
 use namespace::sweep;
 BEGIN { extends 'Catalyst::Controller'; }
+use JSON qw(decode_json encode_json);
 use NGCP::Panel::Utils::Contract;
 use NGCP::Panel::Form::CustomerMonthlyFraud;
 use NGCP::Panel::Form::CustomerDailyFraud;
@@ -558,6 +559,9 @@ sub subscriber_create :Chained('base') :PathPart('subscriber/create') :Args(0) {
     });
     $c->stash->{admin_subscriber} = $admin_subscribers->first;
 
+    
+    my $params = {};
+
     if($c->config->{features}->{cloudpbx} && $pbx) {
         $c->stash(customer_id => $c->stash->{contract}->id);
         # we need to create an admin subscriber first
@@ -570,12 +574,17 @@ sub subscriber_create :Chained('base') :PathPart('subscriber/create') :Args(0) {
             } else {
                 $form = NGCP::Panel::Form::Customer::PbxExtensionSubscriber->new(ctx => $c);
             }
+            NGCP::Panel::Utils::Subscriber::prepare_alias_select(
+                c => $c,
+                subscriber => $c->stash->{admin_subscriber},
+                params => $params,
+                unselect => 1, # no numbers assigned yet, keep selection list empty
+            );
         }
     } else {
         $form = NGCP::Panel::Form::Customer::Subscriber->new(ctx => $c);
     }
 
-    my $params = {};
     $params = $params->merge($c->session->{created_objects});
     $form->process(
         posted => $posted,
@@ -671,6 +680,17 @@ sub subscriber_create :Chained('base') :PathPart('subscriber/create') :Args(0) {
                     username => $form->params->{username},
                     domain => $billing_subscriber->domain->domain,
                 ) if($pbx && !$pbxadmin && $form->params->{pbx_group_id});
+
+                if($pbx && !$pbxadmin) {
+                    NGCP::Panel::Utils::Subscriber::update_subadmin_sub_aliases(
+                        schema => $schema,
+                        subscriber_id => $billing_subscriber->id,
+                        contract_id => $billing_subscriber->contract_id,
+                        alias_selected => decode_json($form->value->{alias_select}),
+                        sadmin_id => $c->stash->{admin_subscriber}->id,
+                    );
+                }
+
             });
 
             delete $c->session->{created_objects}->{domain};

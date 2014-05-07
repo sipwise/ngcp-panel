@@ -13,6 +13,24 @@ has_field 'e164' => (
     do_wrapper => 1,
 );
 
+has_field 'e164range' => (
+    type => '+NGCP::Panel::Field::E164RangeRepeat',
+    setup_for_js => 1,
+    do_wrapper => 1,
+    do_label => 0,
+    tags => {
+        controls_div => 1,
+    },
+    wrapper_class => [qw/hfh-rep/],
+);
+
+has_field 'e164range_add' => (
+    type => 'AddElement',
+    repeatable => 'e164range',
+    value => 'Add another range',
+    element_class => [qw/btn btn-primary pull-right/],
+);
+
 has_field 'domain' => (
     type => '+NGCP::Panel::Field::Domain',
     label => 'SIP Domain',
@@ -22,7 +40,7 @@ has_field 'domain' => (
 has_block 'fields' => (
     tag => 'div',
     class => [qw/modal-body/],
-    render_list => [qw/domain e164 display_name email webusername webpassword username password status external_id profile_set/ ],
+    render_list => [qw/domain e164 e164range e164range_add display_name email webusername webpassword username password status external_id profile_set/ ],
 );
 
 1;

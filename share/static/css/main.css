@@ -427,8 +427,13 @@ div.ngcp-modal .control-group.error .dataTables_wrapper input[type="text"] {
     width: 15%;
 }
 .modal-body .control-group .controls input.ngcp_e164_sn {
-    width: 67%;
-    float: right;
+    width: 67.9%;
+}
+.modal-body .control-group .controls input.ngcp_e164_snbase {
+    width: 60%;
+}
+.modal-body .control-group .controls input.ngcp_e164_snlength {
+    width: 7.1%;
 }
 .modal-body div.ngcp_field_inline {
     display: inline-block;

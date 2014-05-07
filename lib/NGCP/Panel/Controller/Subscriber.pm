@@ -18,8 +18,6 @@ use NGCP::Panel::Utils::Hylafax;
 use NGCP::Panel::Form::Subscriber;
 use NGCP::Panel::Form::SubscriberEdit;
 use NGCP::Panel::Form::Customer::PbxSubscriberEdit;
-use NGCP::Panel::Form::Customer::PbxExtensionSubscriberEdit;
-use NGCP::Panel::Form::Customer::PbxExtensionSubscriberEditAdmin;
 use NGCP::Panel::Form::Customer::PbxExtensionSubscriberEditSubadmin;
 use NGCP::Panel::Form::Customer::PbxExtensionSubscriberEditSubadminNoGroup;
 use NGCP::Panel::Form::SubscriberCFSimple;
@@ -1918,6 +1916,7 @@ sub edit_master :Chained('master') :PathPart('edit') :Args(0) :Does(ACL) :ACLDet
     my $prov_subscriber = $subscriber->provisioning_voip_subscriber;
 
     my $form; my $pbx_ext; my $is_admin; my $subadmin_pbx;
+    my $base_number;
     
     if ($c->config->{features}->{cloudpbx}) {
         $c->stash(customer_id => $subscriber->contract->id);
@@ -1930,15 +1929,22 @@ sub edit_master :Chained('master') :PathPart('edit') :Args(0) :Does(ACL) :ACLDet
                 $form = NGCP::Panel::Form::Customer::PbxSubscriberEdit->new(ctx => $c);
             }
         } else {
+            my $admin_subscribers = $c->stash->{subscribers}->search({
+                'provisioning_voip_subscriber.admin' => 1,
+            });
+            $c->stash->{admin_subscriber} = $admin_subscribers->first;
+            $base_number = $c->stash->{admin_subscriber}->primary_number;
+
             if($c->user->roles eq 'subscriberadmin') {
                 $subadmin_pbx = 1;
                 $form = NGCP::Panel::Form::Customer::PbxExtensionSubscriberEditSubadmin->new(ctx => $c);
             } else {
                 $is_admin = 1;
-                $form = NGCP::Panel::Form::Customer::PbxExtensionSubscriberEditAdmin->new(ctx => $c);
+                $form = NGCP::Panel::Form::Customer::PbxExtensionSubscriber->new(ctx => $c);
             }
             $pbx_ext = 1;
         }
+
     } else {
         if($c->user->roles eq 'subscriberadmin') {
             $subadmin_pbx = 1;
@@ -1954,15 +1960,6 @@ sub edit_master :Chained('master') :PathPart('edit') :Args(0) :Does(ACL) :ACLDet
 
     my $params = {};
     my $lock = $c->stash->{prov_lock};
-    my $base_number;
-    if($pbx_ext) {
-        my $admin_subscribers = $c->stash->{subscribers}->search({
-            'provisioning_voip_subscriber.admin' => 1,
-        });
-        $c->stash->{admin_subscriber} = $admin_subscribers->first;
-        $base_number = $c->stash->{admin_subscriber}->primary_number;
-    }
-
     # we don't change this on edit
     $c->request->params->{username} = $prov_subscriber->username;
     if ($subadmin_pbx) {
@@ -2002,21 +1999,11 @@ sub edit_master :Chained('master') :PathPart('edit') :Args(0) :Does(ACL) :ACLDet
         }
 =cut
 
-        my @alias_options = ();
-        my @alias_nums = ();
-        my $num_rs = $c->model('DB')->resultset('voip_numbers')->search_rs({
-            'subscriber.contract_id' => $subscriber->contract_id,
-        },{
-            prefetch => 'subscriber',
-        });
-        for my $num($num_rs->all) {
-            next if ($num->voip_subscribers->first); # is a primary number
-            next unless ($num->subscriber_id == $subscriber->id);
-            push @alias_nums, { e164 => { cc => $num->cc, ac => $num->ac, sn => $num->sn } };
-            push @alias_options, $num->id;
-        }
-        $params->{alias_number} = \@alias_nums;
-        $params->{alias_select} = encode_json(\@alias_options);
+        NGCP::Panel::Utils::Subscriber::prepare_alias_select(
+            c => $c,
+            subscriber => $subscriber,
+            params => $params,
+        );
 
         $params->{status} = $subscriber->status;
         $params->{external_id} = $subscriber->external_id;
@@ -2322,7 +2309,7 @@ sub edit_master :Chained('master') :PathPart('edit') :Args(0) :Does(ACL) :ACLDet
 
 }
 
-sub aliases_ajax :Chained('master') :PathPart('aliases/ajax') :Args(0) :Does(ACL) :ACLDetachTo('/denied_page') :AllowedRole(subscriberadmin) {
+sub aliases_ajax :Chained('master') :PathPart('aliases/ajax') :Args(0) :Does(ACL) :ACLDetachTo('/denied_page') :AllowedRole(admin) :AllowedRole(reseller) :AllowedRole(subscriberadmin) {
     my ($self, $c) = @_;
 
     my $subscriber = $c->stash->{subscriber};

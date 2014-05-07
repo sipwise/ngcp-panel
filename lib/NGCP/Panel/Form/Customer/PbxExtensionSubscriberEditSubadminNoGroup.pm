@@ -4,33 +4,16 @@ use HTML::FormHandler::Moose;
 use NGCP::Panel::Field::PosInteger;
 extends 'NGCP::Panel::Form::Customer::PbxSubscriber';
 
-has_field 'alias_select' => (
-    type => '+NGCP::Panel::Field::DataTable',
-    label => 'Numbers',
-    do_label => 0,
-    do_wrapper => 0,
-    required => 0,
-    template => 'helpers/datatables_multifield.tt',
-    ajax_src => '/invalid',
-    table_titles => ['#', 'Number', 'Subscriber'],
-    table_fields => ['id', 'number', 'subscriber_username'],
-);
-
 has_block 'fields' => (
     tag => 'div',
     class => [qw/modal-body/],
-    render_list => [qw/email webusername webpassword password alias_select profile/ ],
+    render_list => [qw/alias_select email webusername webpassword password profile/ ],
 );
 
 sub update_fields {
     my $self = shift;
     my $c = $self->ctx;
-    my $pkg = __PACKAGE__;
-    $c->log->debug("my form: $pkg");
-
-    $self->field('alias_select')->ajax_src(
-            "".$c->uri_for_action("/subscriber/aliases_ajax", $c->req->captures)
-        );
+    return unless $c;
 
     my $profile_set = $c->stash->{subscriber}->provisioning_voip_subscriber->voip_subscriber_profile_set;
     if($profile_set) {

@@ -9,6 +9,7 @@ use NGCP::Panel::Utils::DateTime;
 use NGCP::Panel::Utils::Preferences;
 use NGCP::Panel::Utils::Email;
 use UUID qw/generate unparse/;
+use JSON qw/decode_json encode_json/;
 
 my %LOCK = (
     0, 'none',
@@ -215,7 +216,6 @@ sub create_subscriber {
                 primary_number => $params->{e164},
             );
         }
-
         unless(exists $params->{password}) {
             my ($pass_bin, $pass_str);
             UUID::generate($pass_bin);
@@ -280,6 +280,32 @@ sub create_subscriber {
             my $url = $c->uri_for_action('/subscriber/recover_webpassword')->as_string . '?uuid=' . $uuid_string;
             NGCP::Panel::Utils::Email::new_subscriber($c, $billing_subscriber, $url);
         }
+
+        if(defined $params->{e164range} && ref $params->{e164range} eq "ARRAY") {
+            my @alias_numbers = ();
+            foreach my $range(@{ $params->{e164range} }) {
+                if(defined $range->{e164range}{cc} && $range->{e164range}{cc} ne '') {
+                    my $len = $range->{e164range}{snlength};
+                    foreach my $ext(0 .. int("9" x $len)) {
+                        $range->{e164range}{sn} = sprintf("%s%0".$len."d", $range->{e164range}{snbase}, $ext);
+                        push @alias_numbers, { e164 => {
+                            cc => $range->{e164range}{cc},   
+                            ac => $range->{e164range}{ac},   
+                            sn => $range->{e164range}{sn},   
+                        }};
+                    }
+                }
+            }
+            if(@alias_numbers) {
+                update_subscriber_numbers(
+                    schema => $schema,
+                    subscriber_id => $billing_subscriber->id,
+                    reseller_id => $reseller->id,
+                    alias_numbers => \@alias_numbers,
+                );
+            }
+        }
+
 
         return $billing_subscriber;
     });
@@ -730,6 +756,32 @@ sub callforward_create_or_update_quickset_destinations {
     my $schema = $params{schema};
     
     return;
+}
+
+sub prepare_alias_select {
+    my (%p) = @_;
+    my $c = $p{c};
+    my $subscriber = $p{subscriber};
+    my $params = $p{params};
+    my $unselect = $p{unselect} // 0;
+
+    my @alias_options = ();
+    my @alias_nums = ();
+    my $num_rs = $c->model('DB')->resultset('voip_numbers')->search_rs({
+        'subscriber.contract_id' => $subscriber->contract_id,
+    },{
+        prefetch => 'subscriber',
+    });
+    for my $num($num_rs->all) {
+        next if ($num->voip_subscribers->first); # is a primary number
+        next unless ($num->subscriber_id == $subscriber->id);
+        push @alias_nums, { e164 => { cc => $num->cc, ac => $num->ac, sn => $num->sn } };
+        unless($unselect) {
+            push @alias_options, $num->id;
+        }
+    }
+    $params->{alias_number} = \@alias_nums;
+    $params->{alias_select} = encode_json(\@alias_options);
 }
 
 1;
