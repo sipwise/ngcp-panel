@@ -60,6 +60,7 @@ sub resource_from_item {
         run => 0,
     );
 
+    $resource{id} = int($item->id);
     return \%resource;
 }
 

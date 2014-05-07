@@ -59,8 +59,9 @@ sub resource_from_item {
         resource => \%resource,
         run => 0,
     );
-    $resource{reseller_id} = $item->reseller_id + 0;
 
+    $resource{reseller_id} = int($item->reseller_id);
+    $resource{id} = int($item->id);
     return \%resource;
 }
 
