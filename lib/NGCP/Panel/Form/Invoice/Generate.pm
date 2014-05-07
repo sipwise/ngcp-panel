@@ -1,16 +1,19 @@
 package NGCP::Panel::Form::Invoice::Generate;
 
+use Sipwise::Base;
 use HTML::FormHandler::Moose;
+#extends qw/HTML::FormHandler NGCP::Panel::Form::ValidatorBase/;
 extends 'NGCP::Panel::Form::ValidatorBase';
-extends 'HTML::FormHandler::Field::Compound';
-
 use Moose::Util::TypeConstraints;
-use HTML::FormHandler::Widget::Block::Bootstrap;
+
+use DateTime;
+use DateTime::Format::Strptime;
 
 has '+widget_wrapper' => ( default => 'Bootstrap' );
-has '+use_fields_for_input_without_param' => ( default => 1 );
-sub build_render_list {[qw/fields actions/]}
+has_field 'submitid' => ( type => 'Hidden' );
+sub build_render_list {[qw/submitid fields actions/]}
 sub build_form_element_class { [qw/form-horizontal/] }
+
 
 has_field 'submitid' => ( type => 'Hidden' );
 
@@ -44,6 +47,55 @@ has_field 'end' => (
     label => 'End Date/Time',
     required => 1,
 );
+
+has_field 'save' => (
+    type => 'Submit',
+    value => 'Generate',
+    element_class => [qw/btn btn-primary/],
+    do_label => 0,
+);
+has_field 'client_contact_id' => (
+    type => 'Hidden',
+    required => 1,
+);
+
+has_block 'fields' => (
+    tag => 'div',
+    class => [qw/modal-body/],
+    render_list => [qw/start end/],
+);
+
+has_block 'actions' => (
+    tag => 'div',
+    class => [qw/modal-footer/],
+    render_list => [qw/save/],
+);
+
+sub validate {
+    my $self = shift;
+    my $start = $self->field('start');
+    my $end = $self->field('end');
+    my $parser = DateTime::Format::Strptime->new(
+        pattern => '%Y-%m-%d %H:%M:%S',
+    );
+
+    my $sdate = $parser->parse_datetime($start->value);
+    unless($sdate) {
+        $start->add_error("Invalid date format, must be YYYY-MM-DD hh:mm:ss");
+    }
+    my $edate = $parser->parse_datetime($end->value);
+    unless($edate) {
+        $end->add_error("Invalid date format, must be YYYY-MM-DD hh:mm:ss");
+    }
+
+    #unless(DateTime->compare($sdate, $edate) == -1) {
+    #    my $err_msg = 'End time must be later than start time';
+    #    $start->add_error($err_msg);
+    #    $end->add_error($err_msg);
+    #}
+    #if(!$self->backend->checkSipPbxAccount()){
+    #}
+}
 
 1;
 

@@ -14,6 +14,8 @@
 [%modal_script( m = mf_helper )%]
 
 [% site_config.title = c.loc('Invoices for [_1]', provider.name ) -%]
+<script type="text/javascript" src="/js/background.js"></script>
+<script type="text/javascript" src="/js/modalAjax.js"></script>
 
 <div class="row">
     <span>
@@ -82,8 +84,8 @@ function applyClientFilter(table,tr,contact_id){
         { name => 'contracts.status', title => c.loc('Status'), search => 1 },
     ];
     helper.dt_buttons = [
-        { name = c.loc('Generate invoice'), uri = 'javascript:void(0);', onclick='', class = 'btn-small btn-primary', icon = 'icon-star' },
-        { name => c.loc('Filter invoices'), uri=>'javascript:void(0);', onclick = "applyClientFilter(\\'\\',\$(this).closest(\\'tr\\'),'+full.id+');", class = 'btn-small btn-primary', icon = 'icon-glass', tooltip='Click twice to clear client filter.' },
+        { name => c.loc('Generate invoice'), uri => 'javascript:void(0);', onclick => "fetch_into(\\'invoice_generate_form\\', \\'" _ c.uri_for_action('/invoice/invoice_generate', [ provider.id]) _ "\\',\\'item=invoice_generate&client_contact_id='+full.id+'\\',function(){modalFormScript();});void(0);", class => 'btn-small btn-primary', icon => 'icon-star' },
+        { name => c.loc('Filter invoices'), uri=>'javascript:void(0);', onclick => "applyClientFilter(\\'\\',\$(this).closest(\\'tr\\'),'+full.id+');", class => 'btn-small btn-primary', icon => 'icon-glass', tooltip => 'Click twice to clear client filter.' },
     ];
     helper.identifier = 'provider_client_list_ajax';
     helper.ajax_uri = c.uri_for_action( '/invoice/ajax_datatables_data', [ provider.id, 'provider_client_list' ] ) ;

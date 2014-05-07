@@ -3,15 +3,16 @@ use Sipwise::Base;
 use namespace::sweep;
 BEGIN { extends 'Catalyst::Controller'; }
 use DateTime qw();
+use DateTime::Format::Strptime;
 use HTTP::Status qw(HTTP_SEE_OTHER);
 use File::Type;
 use MIME::Base64 qw(encode_base64);
-
 
 use NGCP::Panel::Utils::Contract;
 use NGCP::Panel::Utils::Message;
 
 use NGCP::Panel::Form::Invoice::Template;
+use NGCP::Panel::Form::Invoice::Generate;
 use NGCP::Panel::Model::DB::InvoiceTemplate;
 use NGCP::Panel::Utils::InvoiceTemplate;
 
@@ -218,43 +219,119 @@ sub invoice_generate :Chained('base') :PathPart('generate') :Args(0) {
     
     #from parameters
     $in = $c->request->parameters;
+    my $parser = DateTime::Format::Strptime->new(
+        #pattern => '%Y-%m-%d %H:%M',
+        pattern => '%Y-%m-%d',
+    );
+    if($in->{start}) {
+        $in->{stime} = $parser->parse_datetime($in->{start});
+    }
+    if($in->{end}) {
+        $in->{etime} = $parser->parse_datetime($in->{end});
+    }
     $in->{provider_id} = $c->stash->{provider}->id;
-    #(undef,undef,@$in{qw/tt_id/}) = @_;
+    #$in->{client_contact_id} = $c->request->parameters->{client_contact_id};
+    #(undef,undef,@$in{qw/client_contact_id/}) = @_;
 
-    if($in->{tt_id}){
+    if($in->{invoice_id}){
         #always was sure that i'm calm and even friendly person, but I would kill with pleasure author of dbix.
         my $db_object;
-        ($out->{tt_id},undef,$db_object) = $backend->getInvoiceTemplate( %$in );
-        $out->{tt_data}->{tt_id} = $db_object->get_column('id');
-        $out->{tt_data}->{provider_id} = $db_object->get_column('reseller_id');
-        foreach(qw/name is_active/){$out->{tt_data}->{$_} = $db_object->get_column($_);}
+        ($out->{invoice_id},undef,$db_object) = $backend->getInvoiceTemplate( %$in );
+        $out->{invoice_data}->{invoice_id} = $db_object->get_column('id');
+        $out->{invoice_data}->{provider_id} = $db_object->get_column('reseller_id');
+        foreach(qw/name is_active/){$out->{invoice_data}->{$_} = $db_object->get_column($_);}
     }
-    if(!$out->{tt_data}){
-        $out->{tt_data} = $in;
+    if(!$out->{invoice_data}){
+        $out->{invoice_data} = $in;
     }
-    $validator = NGCP::Panel::Form::Invoice::Template->new( backend => $backend );
+    $validator = NGCP::Panel::Form::Invoice::Generate->new( backend => $backend );
     $validator->remove_undef_in($in);
     #need to think how to automate it - maybe through form showing param through args? what about args for uri_for_action?
     #join('/',$c->controller,$c->action)
-    $validator->action( $c->uri_for_action('invoice/generate',[$in->{provider_id}]) );
+    $validator->action( $c->uri_for_action('invoice/invoice_generate',[$in->{provider_id}]) );
     $validator->name( 'invoice_generate' );#from parameters
     #my $posted = 0;
     my $posted = exists $in->{submitid};
     $c->log->debug("posted=$posted;");
+    #todo: validate that customer is not terminated and is sip/pbx account
     $validator->process(
         posted => $posted,
         params => $in,
         #item => $in,
-        item => $out->{tt_data},
-        #item   => $out->{tt_data},
+        item => $out->{invoice_data},
+        #item   => $out->{invoice_data},
     );
     my $in_validated = $validator->fif;
     if($posted){
         if($validator->validated) {
+        
+            #copy/pasted from NGCP\Panel\Role\API\Customers.pm 
+            my $customer = $backend->getInvoiceClientContactInfo($in);
+            my $contract_balance = $backend->getContractBalance($in);
+            if(!$contract_balance){
+                my $billing_profile = $backend->getBillingProfile($in);
+                NGCP::Panel::Utils::Contract::create_contract_balance(
+                    c => $c,
+                    profile  => $billing_profile,
+                    contract => $customer,
+                );
+                $contract_balance = $backend->getContractBalance($in);
+            }
+            #my $billing_mapping = $customer->billing_mappings->find($customer->get_column('bmid'));
+            #my $billing_profile_id = $billing_mapping->billing_profile->id;
+            #my $stime = NGCP::Panel::Utils::DateTime::current_local()->truncate(to => 'month');
+            #my $etime = $stime->clone->add(months => 1);
+            #my $contract_balance = $customer->contract_balances
+            #    ->find({
+            #        start => { '>=' => $stime },
+            #        end => { '<' => $etime },
+            #        });
+            #unless($contract_balance) {
+            #    try {
+            #        NGCP::Panel::Utils::Contract::create_contract_balance(
+            #            c => $c,
+            #            profile => $billing_mapping->billing_profile,
+            #            contract => $customer,
+            #        );
+            #    } catch($e) {
+            #        $self->log->error("Failed to create current contract balance for customer contract id '".$customer->id."': $e");
+            #        $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "Internal Server Error.");
+            #        return;
+            #    };
+            #    $contract_balance = $customer->contract_balances->find({
+            #        start => { '>=' => $stime },
+            #        end => { '<' => $etime },
+            #    });
+            #}
+            
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
             try {
-                $backend->storeInvoiceTemplateInfo(%$in_validated);
+                #$backend->storeInvoiceTemplateInfo(%$in_validated);
                 $c->flash(messages => [{type => 'success', text => $c->loc(
-                    $in->{tt_id}
+                    $in->{invoice_id}
                     ?'Invoice template updated'
                     :'Invoice template created'
                 ) }]);
@@ -263,7 +340,7 @@ sub invoice_generate :Chained('base') :PathPart('generate') :Args(0) {
                     c => $c,
                     error => $e,
                     desc  => $c->loc(
-                        $in->{tt_id}
+                        $in->{invoice_id}
                         ?'Failed to update invoice template.'
                         :'Failed to create invoice template.'
                     ),
@@ -272,7 +349,7 @@ sub invoice_generate :Chained('base') :PathPart('generate') :Args(0) {
             $c->stash( messages => $c->flash->{messages} );
             $c->stash( template => 'helpers/ajax_messages.tt' );
         }else{
-            #$c->stash( m        => {create_flag => !$in->{tt_id}} );
+            #$c->stash( m        => {create_flag => !$in->{invoice_id}} );
             #$c->stash( form     => $validator );
             ##$c->stash( template => 'helpers/ajax_form_modal.tt' );
             #$c->stash( template => 'invoice/template_info_form.tt' );
@@ -282,10 +359,10 @@ sub invoice_generate :Chained('base') :PathPart('generate') :Args(0) {
     if(!$validator->validated){
         #$c->stash( in       => $in );
         #$c->stash( out      => $out );
-        $c->stash( m        => {create_flag => !$in->{tt_id}} );
+        $c->stash( m        => {create_flag => !$in->{invoice_id}} );
         $c->stash( form     => $validator );
         #$c->stash( template => 'helpers/ajax_form_modal.tt' );
-        $c->stash( template => 'invoice/template_info_form.tt' );
+        $c->stash( template => 'invoice/invoice_generate_form.tt' );
     }
     $c->detach( $c->view("SVG") );#to the sake of nowrapper
 }
