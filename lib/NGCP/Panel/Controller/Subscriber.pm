@@ -224,6 +224,16 @@ sub base :Chained('sub_list') :PathPart('') :CaptureArgs(1) {
     $c->stash(subscriber => $res);
 
     $c->stash->{contract} = $c->stash->{subscriber}->contract;
+    my $contract_rs = NGCP::Panel::Utils::Contract::get_contracts_rs_sippbx( c => $c );
+    $contract_rs = $contract_rs->search({
+        'me.id' => $c->stash->{contract}->id,
+    }, {
+        '+select' => 'billing_mappings.id',
+        '+as' => 'bmid',
+    });
+    my $contract = $contract_rs->first;
+    my $billing_mapping = $contract->billing_mappings->find($contract->get_column('bmid'));
+    $c->stash->{billing_mapping} = $billing_mapping;
 
     $c->stash->{subscribers} = $c->model('DB')->resultset('voip_subscribers')->search({
         contract_id => $c->stash->{contract}->id,
@@ -233,12 +243,10 @@ sub base :Chained('sub_list') :PathPart('') :CaptureArgs(1) {
         join => 'provisioning_voip_subscriber',
     });
 
-    if($c->config->{features}->{cloudpbx}) {
-            my $admin_subscribers = $c->stash->{subscribers}->search({
-                'provisioning_voip_subscriber.admin' => 1,
-            });
-            $c->stash->{admin_subscriber} = $admin_subscribers->first;
-    }
+    my $admin_subscribers = $c->stash->{subscribers}->search({
+        'provisioning_voip_subscriber.admin' => 1,
+    });
+    $c->stash->{admin_subscriber} = $admin_subscribers->first;
 
     $c->stash->{sd_dt_columns} = NGCP::Panel::Utils::Datatables::set_columns($c, [
         { name => "id", search => 1, title => $c->loc('#') },
@@ -260,7 +268,7 @@ sub base :Chained('sub_list') :PathPart('') :CaptureArgs(1) {
         { name => "pages", search => 1, title => $c->loc('Pages') },
     ]);
 
-    if($c->config->{features}->{cloudpbx}) {
+    if($c->stash->{billing_mapping}->product->class eq "pbxaccount") {
         $c->stash->{pbx_groups} = $c->model('DB')->resultset('voip_subscribers')->search({
             contract_id => $c->stash->{subscriber}->contract->id,
             status => { '!=' => 'terminated' },
@@ -1926,7 +1934,7 @@ sub edit_master :Chained('master') :PathPart('edit') :Args(0) :Does(ACL) :ACLDet
     my $form; my $pbx_ext; my $is_admin; my $subadmin_pbx;
     my $base_number;
     
-    if ($c->config->{features}->{cloudpbx}) {
+    if($c->stash->{billing_mapping}->product->class eq "pbxaccount") {
         $c->stash(customer_id => $subscriber->contract->id);
         if($subscriber->provisioning_voip_subscriber->admin) {
             if($c->user->roles eq 'subscriberadmin') {
