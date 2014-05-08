@@ -74,6 +74,8 @@ $ua->ssl_opts(
                  emailtemplates => 1,
                  subscriberprofiles => 1,
                  subscriberprofilesets => 1,
+                 voicemails => 1,
+                 voicemailrecordings => 1,
                   };
     foreach my $link(@links) {
         my $rex = qr!^</api/[a-z]+/>; rel="collection http://purl\.org/sipwise/ngcp-api/#rel-([a-z]+s)"$!;
