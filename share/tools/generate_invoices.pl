@@ -83,12 +83,21 @@ my $etime = $opt->{etime}
 my $svg_default = $view->getTemplateContent(undef,'invoice/invoice_template_svg.tt');
 NGCP::Panel::Utils::InvoiceTemplate::preprocessInvoiceTemplateSvg( {no_fake_data => 1}, \$svg_default);
 
+
+my $invoices = {};
+
 foreach my $provider_contract( @{$dbh->selectall_arrayref('select contracts.*,resellers.id as reseller_core_id from resellers inner join contracts on resellers.contract_id=contracts.id where resellers.status != "terminated"'.ify('and resellers.id', @{$opt->{reseller_id}}),  { Slice => {} }, @{$opt->{reseller_id}} ) } ){
+    print "reseller_id=".$provider_contract->{reseller_core_id}.";\n";
     my $provider_contact = $dbh->selectrow_hashref('select * from contacts where id=?', undef, $provider_contract->{contact_id} );
 
     #according to /reseller/ajax_reseller_filter
     foreach my $client_contact (@{ $dbh->selectall_arrayref('select contacts.* from contacts where reseller_id = ?'.ify(' and contacts.id', @{$opt->{client_contact_id}}),  { Slice => {} }, $provider_contract->{reseller_core_id}, @{$opt->{client_contact_id}} ) } ){
+        print "reseller_id=".$provider_contract->{reseller_core_id}.";contact_id=".$client_contact->{id}.";\n";
+        
+        $invoices->{$client_contact->{id}} ||= [];
+        
         foreach my $client_contract (@{ $dbh->selectall_arrayref('select contracts.* from contracts where contracts.contact_id=? ', { Slice => {} }, $client_contact->{id} ) }){
+            print "reseller_id=".$provider_contract->{reseller_core_id}.";conatct_id=".$client_contact->{id}.";contract_id=".$client_contract->{id}.";\n";
 
             if( my $billing_profile = $dbh->selectrow_hashref('select distinct billing_profiles.* 
         from billing_mappings
@@ -170,12 +179,16 @@ foreach my $provider_contract( @{$dbh->selectall_arrayref('select contracts.*,re
                 #binmode(STDOUT);
                 #print $out->{tt_string_pdf};
                 #die;
-                $dbh->do('update invoices set data=? where id=?',undef,$out->{tt_string_pdf},$invoice->{id});
-                email($provider_contact,$client_contact,$invoice,\$out->{tt_string_pdf});
+                $invoice->{data} = $out->{tt_string_pdf};
+                push @{$invoices->{$client_contact->{id}}}, $invoice;
+                $dbh->do('update invoices set data=? where id=?',undef,$out->{tt_string_pdf},$invoice->{id});    
+            }else{#if billing profile
+                print "No billing profile;\n"
             }
-        }
-    }
-}
+        }#foreach contract
+        email($provider_contact,$client_contact,$invoices->{$client_contact->{id}} );
+    }#foreach client contact
+}#foreach reseller
 sub get_contract_balance{
     my($client_contract,$billing_profile,$contract_balance,$invoice,$stime,$etime) = @_;
     if(!($contract_balance = $dbh->selectrow_hashref('select * from contract_balances where contract_id=? and date(start)=? and date(end)=?',undef,$client_contract->{id},$stime->ymd,$etime->ymd))){
@@ -212,29 +225,36 @@ sub ify{
 
 sub email{
 #todo: repeat my old function based on templates and store into utils
-    my($provider_contact,$client_contact,$invoice,$pdf_ref)=@_;
+    my($provider_contact,$client_contact,$client_invoices)=@_;
+    if(@$client_invoices < 1 ){
+        return;
+    }
     $client_contact->{email} //= ''; 
     if(1 or $client_contact->{email}){
+        my @attachments = map {
+            my $invoice = $_;
+            Email::MIME->create(
+                attributes => {
+                    filename     => "invoice_".$invoice->{serial}.".pdf",
+                    content_type => "application/pdf",
+                    encoding     => "base64",
+                    #encoding     => "quoted-printable",
+                    disposition  => "attachment",
+                },
+                #body => io( $pdf_ref )->all,
+                body => $invoice->{data},
+            );
+        } @$client_invoices;
         my $email = Email::MIME->create(
             header => [
                 From    => $provider_contact->{email},
                 #To      => $client_contact->{email},
-                To      => 'ipeshinskaya@gmail.com',
-                #To      => 'ipeshinskaya@sipwise.com',
-                Subject => 'Invoice #'.$invoice->{serial},
+                #To      => 'ipeshinskaya@gmail.com',
+                To      => 'ipeshinskaya@sipwise.com',
+                Subject => 'Invoices', #todo: ask sales about subject
             ],
             parts => [
-                Email::MIME->create(
-                    attributes => {
-                        filename     => "invoice_$invoice->{serial}.pdf",
-                        content_type => "application/pdf",
-                        encoding     => "base64",
-                        #encoding     => "quoted-printable",
-                        disposition  => "attachment",
-                    },
-                    #body => io( $pdf_ref )->all,
-                    body => $pdf_ref,
-                ),
+                @attachments,
                 Email::MIME->create(
                     attributes => {
                         encoding     => "quoted-printable",

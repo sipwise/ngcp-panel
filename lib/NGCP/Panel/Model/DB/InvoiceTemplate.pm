@@ -219,18 +219,18 @@ sub checkInvoiceTemplateProvider{
     return 0;
 }
 
-sub getInvoiceClientContactInfo{
+sub getInvoiceClientContractInfo{
     my $self = shift;
     my (%params) = @_;
-    my ($client_contact_id) = @params{qw/client_contact_id/};
-    return  $self->schema->resultset('contacts')->search({
-        id => $client_contact_id,
+    my ($client_contract_id) = @params{qw/client_contract_id/};
+    return  $self->schema->resultset('contracts')->search({
+        id => $client_contract_id,
     });
 }
 sub getBillingProfile{
     my $self = shift;
     my (%params) = @_;
-    my ($client_contact_id, $stime, $etime) = @params{qw/client_contact_id start end/};
+    my ($client_contract_id, $stime, $etime) = @params{qw/client_contract_id start end/};
     #select distinct billing_profiles.* 
     #from billing_mappings
     #inner join billing_profiles on billing_mappings.billing_profile_id=billing_profiles.id
@@ -242,7 +242,7 @@ sub getBillingProfile{
     #    and (billing_mappings.start_date <= ? OR billing_mappings.start_date IS NULL)
     #    and (billing_mappings.end_date >= ? OR billing_mappings.end_date IS NULL)
     return  $self->schema->resultset('billing_profiles')->search({
-        'contract.contact_id' => $client_contact_id,
+        'contract.id' => $client_contract_id,
         #'contract.status' => { '!=' => 'terminated' },
         'product.class' => { '-in' => [qw/sipaccount pbxaccount/] },
         'billing_mappings.start_date' => [

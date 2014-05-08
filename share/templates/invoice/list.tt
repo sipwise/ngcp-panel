@@ -81,10 +81,11 @@ function applyClientFilter(table,tr,contact_id){
         { name => 'contracts.external_id', title => c.loc('External #'), search => 1 },
         { name => 'email', title => c.loc('Contact Email'), search => 1 },
         { name => 'contracts.billing_mappings.billing_profile.name', title => c.loc('Billing Profile'), search => 1 },
+        { name => 'contracts.billing_mappings.product.name', title => c.loc('Product'), search => 1 },
         { name => 'contracts.status', title => c.loc('Status'), search => 1 },
     ];
     helper.dt_buttons = [
-        { name => c.loc('Generate invoice'), uri => 'javascript:void(0);', onclick => "fetch_into(\\'invoice_generate_form\\', \\'" _ c.uri_for_action('/invoice/invoice_generate', [ provider.id]) _ "\\',\\'item=invoice_generate&client_contact_id='+full.id+'\\',function(){modalFormScript();});void(0);", class => 'btn-small btn-primary', icon => 'icon-star' },
+        { name => c.loc('Generate invoice'), uri => 'javascript:void(0);', onclick => "fetch_into(\\'invoice_generate_form\\', \\'" _ c.uri_for_action('/invoice/invoice_generate', [ provider.id]) _ "\\',\\'item=invoice_generate&client_contract_id='+full.contract_id+'\\',function(){modalFormScript();});void(0);", class => 'btn-small btn-primary', icon => 'icon-star' },
         { name => c.loc('Filter invoices'), uri=>'javascript:void(0);', onclick => "applyClientFilter(\\'\\',\$(this).closest(\\'tr\\'),'+full.id+');", class => 'btn-small btn-primary', icon => 'icon-glass', tooltip => 'Click twice to clear client filter.' },
     ];
     helper.identifier = 'provider_client_list_ajax';
@@ -119,6 +120,7 @@ function applyClientFilter(table,tr,contact_id){
         { name => 'contract_balances.contract.contact.reseller_id'},
         { name => 'contract_balances.contract.contact.reseller.name'},
         { name => 'contract_balances.contract.contact.id', title => c.loc('Client'), search => 1},
+        { name => 'contract_balances.contract.id', title => c.loc('Contract'), search => 1},
         { name => 'contract_balances.invoice_id', title => c.loc('Invoice #'), search => 1},
         { name => 'contract_balances.start', title => c.loc('Period Start'), search_from_epoch => 1, search_to_epoch => 1, search_use_datetime => 1 },
         { name => 'contract_balances.end', title => c.loc('Period End')},

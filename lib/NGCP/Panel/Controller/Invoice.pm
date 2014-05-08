@@ -264,70 +264,22 @@ sub invoice_generate :Chained('base') :PathPart('generate') :Args(0) {
     my $in_validated = $validator->fif;
     if($posted){
         if($validator->validated) {
-        
             #copy/pasted from NGCP\Panel\Role\API\Customers.pm 
-            my $customer = $backend->getInvoiceClientContactInfo($in);
+            my $client_contract = $backend->getInvoiceClientContractInfo($in);
+            my $client_contact = $backend->getInvoiceClientContactInfo($in);
             my $contract_balance = $backend->getContractBalance($in);
+            #$c->log->debug("customer->id="..";");
             if(!$contract_balance){
                 my $billing_profile = $backend->getBillingProfile($in);
                 NGCP::Panel::Utils::Contract::create_contract_balance(
                     c => $c,
                     profile  => $billing_profile,
-                    contract => $customer,
+                    contract => $client_contract,
                 );
                 $contract_balance = $backend->getContractBalance($in);
             }
-            #my $billing_mapping = $customer->billing_mappings->find($customer->get_column('bmid'));
-            #my $billing_profile_id = $billing_mapping->billing_profile->id;
-            #my $stime = NGCP::Panel::Utils::DateTime::current_local()->truncate(to => 'month');
-            #my $etime = $stime->clone->add(months => 1);
-            #my $contract_balance = $customer->contract_balances
-            #    ->find({
-            #        start => { '>=' => $stime },
-            #        end => { '<' => $etime },
-            #        });
-            #unless($contract_balance) {
-            #    try {
-            #        NGCP::Panel::Utils::Contract::create_contract_balance(
-            #            c => $c,
-            #            profile => $billing_mapping->billing_profile,
-            #            contract => $customer,
-            #        );
-            #    } catch($e) {
-            #        $self->log->error("Failed to create current contract balance for customer contract id '".$customer->id."': $e");
-            #        $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "Internal Server Error.");
-            #        return;
-            #    };
-            #    $contract_balance = $customer->contract_balances->find({
-            #        start => { '>=' => $stime },
-            #        end => { '<' => $etime },
-            #    });
-            #}
-            
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
+                   
+     
             try {
                 #$backend->storeInvoiceTemplateInfo(%$in_validated);
                 $c->flash(messages => [{type => 'success', text => $c->loc(
@@ -607,11 +559,6 @@ sub template_view :Chained('template_base') :PathPart('view') :Args {
 
     my($validator,$backend,$in,$out);
 
-#fake data
-    $c->forward('invoice_details_calls');
-    $c->forward('invoice_details_zones');
-    #invoice number and data
-    #client info
     
     #input
     (undef,undef,@$in{qw/tt_type tt_viewmode tt_sourcestate tt_output_type tt_id/}) = @_ ;
