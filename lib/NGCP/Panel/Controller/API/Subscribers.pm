@@ -23,7 +23,9 @@ class_has 'api_description' => (
     is => 'ro',
     isa => 'Str',
     default => 
-        'Defines an actual user who can log into the web panel, register devices via SIP and/or XMPP and place and receive calls via SIP. A subscriber always belongs to a <a href="#customers">Customer</a> and is placed inside a <a href="#domains">Domain</a>.'
+        'Defines an actual user who can log into the web panel, register devices via SIP and/or '.
+        'XMPP and place and receive calls via SIP. A subscriber always belongs to a '.
+        '<a href="#customers">Customer</a> and is placed inside a <a href="#domains">Domain</a>.',
 );
 
 class_has 'query_params' => (
@@ -39,7 +41,7 @@ class_has 'query_params' => (
                     return { username => { like => $q } };
                 },
                 second => sub {},
-            }
+            },
         },
         {
             param => 'domain',
@@ -52,8 +54,55 @@ class_has 'query_params' => (
                 second => sub {
                     my $q = shift;
                     return { 'join' => 'domain' };
-                }
-            }
+                },
+            },
+        },
+        {
+            param => 'customer_id',
+            description => 'Filter for subscribers of a specific customer.',
+            query => {
+                first => sub {
+                    my $q = shift;
+                    return { 'contract_id' => $q };
+                },
+                second => sub {
+                    return { };
+                },
+            },
+        },
+        {
+            param => 'is_pbx_group',
+            description => 'Filter for subscribers who are (not) pbx_groups.',
+            query => {
+                first => sub {
+                    my $q = shift;
+                    if ($q) {
+                        return { 'provisioning_voip_subscriber.is_pbx_group' => 1 };
+                    } else {
+                        return { 'provisioning_voip_subscriber.is_pbx_group' => 0 };
+                    }
+                },
+                second => sub {
+                    return { join => 'provisioning_voip_subscriber' };
+                },
+            },
+        },
+        {
+            param => 'is_admin',
+            description => 'Filter for subscribers who are (not) pbx subscriber admins.',
+            query => {
+                first => sub {
+                    my $q = shift;
+                    if ($q) {
+                        return { 'provisioning_voip_subscriber.admin' => 1 };
+                    } else {
+                        return { 'provisioning_voip_subscriber.admin' => 0 };
+                    }
+                },
+                second => sub {
+                    return { join => 'provisioning_voip_subscriber' };
+                },
+            },
         },
     ]},
 );
@@ -73,7 +122,7 @@ __PACKAGE__->config(
             Does => [qw(ACL CheckTrailingSlash RequireSSL)],
             Method => $_,
             Path => __PACKAGE__->dispatch_path,
-        } } @{ __PACKAGE__->allowed_methods }
+        } } @{ __PACKAGE__->allowed_methods },
     },
     action_roles => [qw(HTTPMethods)],
 );
@@ -83,6 +132,7 @@ sub auto :Private {
 
     $self->set_body($c);
     $self->log_request($c);
+    return 1;
 }
 
 sub GET :Allow {
@@ -227,6 +277,7 @@ sub end : Private {
     my ($self, $c) = @_;
 
     $self->log_response($c);
+    return;
 }
 
 # vim: set tabstop=4 expandtab:
