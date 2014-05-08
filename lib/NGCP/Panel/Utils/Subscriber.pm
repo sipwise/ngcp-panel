@@ -611,25 +611,47 @@ sub update_subadmin_sub_aliases {
     my %params = @_;
 
     my $schema         = $params{schema};
-    my $subscriber_id  = $params{subscriber_id};
-    my $sadmin_id      = $params{sadmin_id};
+    my $subscriber     = $params{subscriber};
+    my $sadmin         = $params{sadmin};
     my $contract_id    = $params{contract_id};
     my $alias_selected = $params{alias_selected};
+
+    print ">>>>>>>>>> update sub aliases\n";
+    use Data::Printer; p %params;
 
     my $num_rs = $schema->resultset('voip_numbers')->search_rs({
         'subscriber.contract_id' => $contract_id,
     },{
         prefetch => 'subscriber',
     });
+
     for my $num ($num_rs->all) {
         next if ($num->voip_subscribers->first); # is a primary number
+        my $tmpsubscriber;
         if ($num->id ~~ $alias_selected) {
-            $num->update({
-                subscriber_id => $subscriber_id
+            $tmpsubscriber = $subscriber;
+        } elsif ($num->subscriber_id == $subscriber->id) { #unselected
+            $tmpsubscriber = $sadmin
+        } else {
+            next;
+        }
+        $num->update({
+            subscriber_id => $tmpsubscriber->id,
+        });
+        my $dbnum = $schema->resultset('voip_dbaliases')->find({
+            username => $num->cc . ($num->ac // '') . $num->sn,
+            domain_id => $subscriber->provisioning_voip_subscriber->domain_id,
+        });
+        if($dbnum) {
+            $dbnum->update({
+                subscriber_id => $tmpsubscriber->provisioning_voip_subscriber->id,
             });
-        } elsif ($num->subscriber_id == $subscriber_id) { #unselected
-            $num->update({
-                subscriber_id => $sadmin_id
+        } else {
+            $schema->resultset('voip_dbaliases')->create({
+                username => $num->cc . ($num->ac // '') . $num->sn,
+                domain_id => $subscriber->provisioning_voip_subscriber->domain_id,
+                subscriber_id => $tmpsubscriber->provisioning_voip_subscriber->id,
+                is_primary => 0,
             });
         }
     }
@@ -663,14 +685,13 @@ sub terminate {
             ) if($prov_subscriber->pbx_group_id);
             $prov_subscriber->delete;
         }
-        if ($c->user->roles eq 'subscriberadmin') {
+        if(!$prov_subscriber->admin && $c->stash->{admin_subscriber}) {
             update_subadmin_sub_aliases(
                 schema => $schema,
-                subscriber_id => $subscriber->id,
+                subscriber => $subscriber,
                 contract_id => $subscriber->contract_id,
                 alias_selected => [], #none, thus moving them back to our subadmin
-                sadmin_id => $schema->resultset('voip_subscribers')
-                    ->find({uuid => $c->user->uuid})->id
+                sadmin => $c->stash->{admin_subscriber},
             );
         } else {
             $subscriber->voip_numbers->update_all({

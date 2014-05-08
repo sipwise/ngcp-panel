@@ -223,6 +223,24 @@ sub base :Chained('sub_list') :PathPart('') :CaptureArgs(1) {
 
     $c->stash(subscriber => $res);
 
+    $c->stash->{contract} = $c->stash->{subscriber}->contract;
+
+    $c->stash->{subscribers} = $c->model('DB')->resultset('voip_subscribers')->search({
+        contract_id => $c->stash->{contract}->id,
+        status => { '!=' => 'terminated' },
+        'provisioning_voip_subscriber.is_pbx_group' => 0,
+    }, {
+        join => 'provisioning_voip_subscriber',
+    });
+
+    if($c->config->{features}->{cloudpbx} && $res->provisioning_voip_subscriber && 
+       !$res->provisioning_voip_subscriber->admin) {
+            my $admin_subscribers = $c->stash->{subscribers}->search({
+                'provisioning_voip_subscriber.admin' => 1,
+            });
+            $c->stash->{admin_subscriber} = $admin_subscribers->first;
+    }
+
     $c->stash->{sd_dt_columns} = NGCP::Panel::Utils::Datatables::set_columns($c, [
         { name => "id", search => 1, title => $c->loc('#') },
         { name => "slot", search => 1, title => $c->loc('Slot') },
@@ -1859,15 +1877,6 @@ sub master :Chained('base') :PathPart('details') :CaptureArgs(0) {
         attribute => 'lock',
         prov_subscriber => $c->stash->{subscriber}->provisioning_voip_subscriber,
     );
-
-    $c->stash->{contract} = $c->stash->{subscriber}->contract;
-    $c->stash->{subscribers} = $c->model('DB')->resultset('voip_subscribers')->search({
-        contract_id => $c->stash->{contract}->id,
-        status => { '!=' => 'terminated' },
-        'provisioning_voip_subscriber.is_pbx_group' => 0,
-    }, {
-        join => 'provisioning_voip_subscriber',
-    });
 }
 
 sub details :Chained('master') :PathPart('') :Args(0) :Does(ACL) :ACLDetachTo('/denied_page') :AllowedRole(admin) :AllowedRole(reseller) :AllowedRole('subscriberadmin') {
@@ -1929,10 +1938,6 @@ sub edit_master :Chained('master') :PathPart('edit') :Args(0) :Does(ACL) :ACLDet
                 $form = NGCP::Panel::Form::Customer::PbxSubscriberEdit->new(ctx => $c);
             }
         } else {
-            my $admin_subscribers = $c->stash->{subscribers}->search({
-                'provisioning_voip_subscriber.admin' => 1,
-            });
-            $c->stash->{admin_subscriber} = $admin_subscribers->first;
             $base_number = $c->stash->{admin_subscriber}->primary_number;
 
             if($c->user->roles eq 'subscriberadmin') {
@@ -2173,30 +2178,14 @@ sub edit_master :Chained('master') :PathPart('edit') :Args(0) :Does(ACL) :ACLDet
                     $form->values->{lock} ||= 0; # update lock below
                 }
 
-                unless ($subadmin_pbx) {
-                    for my $num($subscriber->voip_numbers->all) {
-                        next if($subscriber->primary_number && $num->id == $subscriber->primary_number->id);
-                        $num->update({
-                            subscriber_id => undef,
-                            reseller_id => undef,
-                        });
-                    }
-                }
-
-                $schema->resultset('voip_dbaliases')->search({
-                                    subscriber_id => $prov_subscriber->id,
-                                    domain_id => $prov_subscriber->domain->id,
-                                })->delete_all;
-
-                if ($subadmin_pbx && !$prov_subscriber->admin) {
+                if(!$prov_subscriber->admin && exists $form->params->{alias_select} && 
+                   $c->stash->{admin_subscriber}) {
                     NGCP::Panel::Utils::Subscriber::update_subadmin_sub_aliases(
                         schema => $schema,
-                        subscriber_id => $subscriber->id,
+                        subscriber => $subscriber,
                         contract_id => $subscriber->contract_id,
-                        alias_selected => decode_json($form->value->{alias_select}),
-                        sadmin_id => $c->model('DB')
-                            ->resultset('voip_subscribers')
-                            ->find({uuid => $c->user->uuid})->id
+                        alias_selected => decode_json($form->values->{alias_select}),
+                        sadmin => $c->stash->{admin_subscriber},
                     );
                 }
 
@@ -2369,7 +2358,7 @@ sub webpass_edit :Chained('base') :PathPart('webpass/edit') :Args(0) {
             my $prov_subscriber = $subscriber->provisioning_voip_subscriber;
             $schema->txn_do(sub {
                 $prov_subscriber->update({
-                    webpassword => $form->value->{webpassword} });
+                    webpassword => $form->values->{webpassword} });
                 $c->flash(messages => [{type => 'success', text => $c->loc('Successfully updated password') }]);
             });
         } catch($e) {
