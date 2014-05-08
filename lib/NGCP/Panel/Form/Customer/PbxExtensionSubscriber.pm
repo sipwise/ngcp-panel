@@ -20,45 +20,25 @@ has_field 'pbx_extension' => (
     label => 'Extension',
 );
 
-has_field 'alias_select' => (
-    type => '+NGCP::Panel::Field::DataTable',
-    label => 'Numbers',
-    do_label => 0,
-    do_wrapper => 0,
-    required => 0,
-    template => 'helpers/datatables_multifield.tt',
-    ajax_src => '/invalid',
-    table_titles => ['#', 'Number', 'Subscriber'],
-    table_fields => ['id', 'number', 'subscriber_username'],
-);
-
-
 has_block 'fields' => (
     tag => 'div',
     class => [qw/modal-body/],
     render_list => [qw/group alias_select pbx_extension display_name email webusername webpassword username password status external_id profile_set profile/ ],
 );
 
-sub field_list {
+override 'field_list' => sub {
     my $self = shift;
     my $c = $self->ctx;
     return unless $c;
 
-    print ">>>>>>>>>>>>>> PbxExtensionSubscriber::field_list\n";
+    super();
 
-    if($self->field('alias_select') && $c->stash->{admin_subscriber}) {
-        print ">>>>>>>>>>>>>>>> setting alias_select, url=" . $c->uri_for_action("/subscriber/aliases_ajax", [$c->stash->{admin_subscriber}->id]) . "\n";
-        $self->field('alias_select')->ajax_src(
-                $c->uri_for_action("/subscriber/aliases_ajax", [$c->stash->{admin_subscriber}->id])->as_string
-            );
-    }
+    print ">>>>>>>>>>>>>> PbxExtensionSubscriber::field_list\n";
 
     my $group = $self->field('group');
     $group->field('id')->ajax_src(
         $c->uri_for_action('/customer/pbx_group_ajax', [$c->stash->{customer_id}])->as_string
     );
-
-
 
 
     if($c->stash->{subscriber}) {
@@ -104,7 +84,7 @@ sub field_list {
         $self->field('webpassword')->required(0);
     }
 
-}
+};
 
 
 1;

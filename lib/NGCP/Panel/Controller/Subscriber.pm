@@ -233,8 +233,7 @@ sub base :Chained('sub_list') :PathPart('') :CaptureArgs(1) {
         join => 'provisioning_voip_subscriber',
     });
 
-    if($c->config->{features}->{cloudpbx} && $res->provisioning_voip_subscriber && 
-       !$res->provisioning_voip_subscriber->admin) {
+    if($c->config->{features}->{cloudpbx}) {
             my $admin_subscribers = $c->stash->{subscribers}->search({
                 'provisioning_voip_subscriber.admin' => 1,
             });
@@ -2178,8 +2177,7 @@ sub edit_master :Chained('master') :PathPart('edit') :Args(0) :Does(ACL) :ACLDet
                     $form->values->{lock} ||= 0; # update lock below
                 }
 
-                if(!$prov_subscriber->admin && exists $form->params->{alias_select} && 
-                   $c->stash->{admin_subscriber}) {
+                if(exists $form->params->{alias_select} && $c->stash->{admin_subscriber}) {
                     NGCP::Panel::Utils::Subscriber::update_subadmin_sub_aliases(
                         schema => $schema,
                         subscriber => $subscriber,

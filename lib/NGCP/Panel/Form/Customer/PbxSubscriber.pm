@@ -28,6 +28,18 @@ has_field 'e164' => (
     },
 );
 
+has_field 'alias_select' => (
+    type => '+NGCP::Panel::Field::DataTable',
+    label => 'Numbers',
+    do_label => 0,
+    do_wrapper => 0,
+    required => 0,
+    template => 'helpers/datatables_multifield.tt',
+    ajax_src => '/invalid',
+    table_titles => ['#', 'Number', 'Subscriber'],
+    table_fields => ['id', 'number', 'subscriber_username'],
+);
+
 has_field 'display_name' => (
     type => 'Text',
     element_attr => { 
@@ -147,11 +159,28 @@ has_block 'actions' => (
     render_list => [qw/save/],
 );
 
+
 sub field_list {
     my ($self) = @_;
 
     my $c = $self->ctx;
     return unless($c);
+
+    if($self->field('alias_select')) {
+        my $sub;
+        if($c->stash->{admin_subscriber}) {
+            $sub = $c->stash->{admin_subscriber};
+        } elsif($c->stash->{subscriber} && $c->stash->{subscriber}->provisioning_voip_subscriber->admin) {
+            $sub = $c->stash->{subscriber};
+        }
+
+        if($sub) {
+            print ">>>>>>>>>>>>>>>> setting alias_select, url=" . $c->uri_for_action("/subscriber/aliases_ajax", [$sub->id]) . "\n";
+            $self->field('alias_select')->ajax_src(
+                    $c->uri_for_action("/subscriber/aliases_ajax", [$sub->id])->as_string
+                );
+        }
+    }
 
     my $profile_set = $self->field('profile_set');
     if($profile_set) {
