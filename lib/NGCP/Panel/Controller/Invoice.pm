@@ -266,7 +266,7 @@ sub invoice_generate :Chained('base') :PathPart('generate') :Args(0) {
         if($validator->validated) {
             #copy/pasted from NGCP\Panel\Role\API\Customers.pm 
             my $client_contract = $backend->getInvoiceClientContractInfo($in);
-            my $client_contact = $backend->getInvoiceClientContactInfo($in);
+            my $client_contact = $client_contract->contact;
             my $contract_balance = $backend->getContractBalance($in);
             #$c->log->debug("customer->id="..";");
             if(!$contract_balance){
