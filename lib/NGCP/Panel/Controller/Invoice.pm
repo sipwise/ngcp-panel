@@ -153,7 +153,7 @@ sub invoice_details_calls :Chained('invoice_details_zones') :PathPart('') :Captu
     $c->stash( invoice_details_calls_ajax => $invoice_details_calls_ajax );
 }
 
-sub invoice_list :Chained('invoice_details_calls') :PathPart('list') :Args(0) {
+sub invoice_list :Chained('base') :PathPart('list') :Args(0) {
     my ($self, $c) = @_;
     my $backend = NGCP::Panel::Model::DB::InvoiceTemplate->new( schema => $c->model('DB') );
     $c->log->debug('invoice_list');
@@ -219,6 +219,7 @@ sub invoice_generate :Chained('base') :PathPart('generate') :Args(0) {
     
     #from parameters
     $in = $c->request->parameters;
+    
     my $parser = DateTime::Format::Strptime->new(
         #pattern => '%Y-%m-%d %H:%M',
         pattern => '%Y-%m-%d',
@@ -265,8 +266,10 @@ sub invoice_generate :Chained('base') :PathPart('generate') :Args(0) {
     if($posted){
         if($validator->validated) {
             #copy/pasted from NGCP\Panel\Role\API\Customers.pm 
-            my $client_contract = $backend->getInvoiceClientContractInfo($in);
-            my $client_contact = $client_contract->contact;
+            my $client_contract  = $backend->getContractInfo('contract_id' => $in->{client_contract_id});
+            my $client_contact   = $backend->getContactInfo('contact_id' => $client_contract->contact_id);
+            my $provider_contract = $backend->getContractInfo('contract_id' => $c->stash->{provider}->contract_id);
+            my $provider_contact = $backend->getContactInfo('contact_id' => $provider_contract->id);
             my $contract_balance = $backend->getContractBalance($in);
             #$c->log->debug("customer->id="..";");
             if(!$contract_balance){
@@ -275,11 +278,51 @@ sub invoice_generate :Chained('base') :PathPart('generate') :Args(0) {
                     c => $c,
                     profile  => $billing_profile,
                     contract => $client_contract,
+                    stime    => $in->{stime},
+                    etime    => $in->{etime},
                 );
                 $contract_balance = $backend->getContractBalance($in);
             }
-                   
-     
+            my $invoice;
+            if($contract_balance->invoice_id){
+                $invoice = $backend->getInvoice('invoice_id' => $contract_balance->invoice_id);
+            }else{
+                $invoice = $backend->createInvoice(
+                    'contract_balance' => $contract_balance,
+                    stime              => $in->{stime},
+                    etime              => $in->{etime},
+                );
+            }
+            $c->forward('invoice_details_calls');
+            $c->forward('invoice_details_zones');
+            #additions for generations
+            $in = {
+                %$in,
+                no_fake_data   => 1,
+                tt_type        => 'svg',
+                tt_sourcestate => 'saved',
+                tt_id          => $c->stash->{provider}->id,
+            };
+            $out = {
+                %$out,
+                tt_id          => $c->stash->{provider}->id,
+            };
+            my $stash = {
+                provider => $provider_contact,
+                client   => $client_contact,
+                invoice  => $invoice,
+                invoice_details_zones => $c->stash->{invoice_details_zones},
+                invoice_details_calls => $c->stash->{invoice_details_calls},
+            };
+            my $svg = '';
+            $backend->getInvoiceTemplate( %$in, result => \$svg );#provider_id in i is enough
+            if(!$svg){
+                NGCP::Panel::Utils::InvoiceTemplate::getDefaultInvoiceTemplate( c => $c, type => 'svg', result => \$svg );
+                NGCP::Panel::Utils::InvoiceTemplate::preprocessInvoiceTemplateSvg( {no_fake_data => 1}, \$svg);
+            }
+            $svg = $c->view('SVG')->getTemplateProcessed($c,\$svg, $stash );
+            NGCP::Panel::Utils::InvoiceTemplate::convertSvg2Pdf($c,\$svg,$in,$out);
+            $backend->storeInvoiceData($invoice,\$out->{tt_string_pdf});
             try {
                 #$backend->storeInvoiceTemplateInfo(%$in_validated);
                 $c->flash(messages => [{type => 'success', text => $c->loc(

@@ -219,12 +219,20 @@ sub checkInvoiceTemplateProvider{
     return 0;
 }
 
-sub getInvoiceClientContractInfo{
+sub getContractInfo{
     my $self = shift;
     my (%params) = @_;
-    my ($client_contract_id) = @params{qw/client_contract_id/};
+    my ($contract_id) = @params{qw/contract_id/};
     return  $self->schema->resultset('contracts')->search({
-        id => $client_contract_id,
+        id => $contract_id,
+    });
+}
+sub getContactInfo{
+    my $self = shift;
+    my (%params) = @_;
+    my ($contact_id) = @params{qw/contact_id/};
+    return  $self->schema->resultset('contacts')->search({
+        id => $contact_id,
     });
 }
 sub getBillingProfile{
@@ -286,6 +294,7 @@ sub getContractBalance{
         'join' => [ 'contract' ],
     });
 }
+
 sub getProviderInvoiceList{
     my $self = shift;
     my (%params) = @_;
@@ -327,7 +336,52 @@ sub getProviderInvoiceListAjax{
         #'alias'    => 'me',
     });
 }
+sub createInvoice{
+    my $self = shift;
+    my (%params) = @_;
+    my ($contract_balance,$data,$stime,$etime) = @params{qw/contract_balance data stime etime/};
+    
+    #    my($contract_id, $stime, $etime) = @_;
+    ##my $invoice_serial = $dbh->selectrow_array('select max(invoices.serial) from invoices inner join contract_balances on invoices.id=contract_balances.invoice_id where contract_balances.contract_id=?',undef,$contract_id );    
+    #my $invoice_serial = $dbh->selectrow_array('select max(invoices.serial) from invoices'); 
+    #$invoice_serial += 1;
+    #$dbh->do('insert into invoices(year,month,serial)values(?,?,?)', undef, $stime->year, $stime->month,$invoice_serial );
+    #my $invoice_id = $dbh->last_insert_id(undef,'billing','invoices','id');
+    #$dbh->do('update contract_balances set invoice_id = ? where contract_id=? and start=? and end=?', undef, $invoice_id,$contract_id, $stime->datetime, $etime->datetime );
+    #return $dbh->selectrow_hashref('select * from invoices where id=?',undef, $invoice_id);    
+    
+    
+    
+    my $invoice_serial = $self->schema->resultset('invoices')->search(undef, {
+        'select'  => { 'max' => 'me.serial', '-as' => 'serial_max'},
+    })->first->get_column('serial_max');
+    $invoice_serial +=1;
 
+    my $invoice_record = $self->schema->resultset('invoices')->create({
+        year   => $stime->year,
+        month  => $stime->month,
+        serial => $invoice_serial,
+        data   => $data,
+    });
+    if($invoice_record){
+        $self->schema->resultset('contract_balances')->search({
+            id   => $contract_balance->id,
+        })->update({
+            invoice_id => $invoice_record->id()
+        });
+    }
+    return $invoice_record;
+}
+sub storeInvoiceData{
+    my $self = shift;
+    my (%params) = @_;
+    my ($invoice,$data_ref) = @params{qw/invoice data/};
+    $self->schema->resultset('invoices')->search({
+        id   => $invoice->id,
+    })->update({
+        data => $invoice->data
+    });    
+}
 sub getInvoice{
     my $self = shift;
     my (%params) = @_;

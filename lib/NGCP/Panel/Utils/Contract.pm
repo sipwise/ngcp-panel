@@ -16,8 +16,8 @@ sub create_contract_balance {
 
     # first, calculate start and end time of current billing profile
     # (we assume billing interval of 1 month)
-    my $stime = NGCP::Panel::Utils::DateTime::current_local->truncate(to => 'month');
-    my $etime = $stime->clone->add(months => 1)->subtract(seconds => 1);
+    my $stime = $params{stime} || NGCP::Panel::Utils::DateTime::current_local->truncate(to => 'month');
+    my $etime = $params{etime} || $stime->clone->add(months => 1)->subtract(seconds => 1);
 
     # calculate free_time/cash ratio
     my ($cash_balance, $cash_balance_interval,
