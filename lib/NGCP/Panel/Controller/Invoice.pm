@@ -222,7 +222,7 @@ sub invoice_generate :Chained('base') :PathPart('generate') :Args(0) {
     
     my $parser = DateTime::Format::Strptime->new(
         #pattern => '%Y-%m-%d %H:%M',
-        pattern => '%Y-%m-%d',
+        pattern => '%Y-%m-%d %H:%M:%S',
     );
     if($in->{start}) {
         $in->{stime} = $parser->parse_datetime($in->{start});
@@ -230,6 +230,7 @@ sub invoice_generate :Chained('base') :PathPart('generate') :Args(0) {
     if($in->{end}) {
         $in->{etime} = $parser->parse_datetime($in->{end});
     }
+    #$c->log->debug("stime=".$in->{stime}.";etime=".$in->{etime}.";");
     $in->{provider_id} = $c->stash->{provider}->id;
     #$in->{client_contact_id} = $c->request->parameters->{client_contact_id};
     #(undef,undef,@$in{qw/client_contact_id/}) = @_;
@@ -262,14 +263,22 @@ sub invoice_generate :Chained('base') :PathPart('generate') :Args(0) {
         item => $out->{invoice_data},
         #item   => $out->{invoice_data},
     );
+            use irka;
+            use Data::Dumper;
+            irka::loglong(Dumper($in));
     my $in_validated = $validator->fif;
     if($posted){
-        if($validator->validated) {
+        $c->log->debug("validated=".$validator->validated.";");
+        if(1 || $validator->validated) {
             #copy/pasted from NGCP\Panel\Role\API\Customers.pm 
+            use irka;
+            use Data::Dumper;
+            irka::loglong(Dumper($in));
+            #$c->log->debug('getInvoice:contract_id='.Dumper($in).';');
             my $client_contract  = $backend->getContractInfo('contract_id' => $in->{client_contract_id});
-            my $client_contact   = $backend->getContactInfo('contact_id' => $client_contract->contact_id);
+            my $client_contact   = $backend->getContactInfo('contact_id' => $client_contract->get_column('contact_id') );
             my $provider_contract = $backend->getContractInfo('contract_id' => $c->stash->{provider}->contract_id);
-            my $provider_contact = $backend->getContactInfo('contact_id' => $provider_contract->id);
+            my $provider_contact = $backend->getContactInfo('contact_id' => $provider_contract->get_column('id'));
             my $contract_balance = $backend->getContractBalance($in);
             #$c->log->debug("customer->id="..";");
             if(!$contract_balance){
@@ -284,14 +293,17 @@ sub invoice_generate :Chained('base') :PathPart('generate') :Args(0) {
                 $contract_balance = $backend->getContractBalance($in);
             }
             my $invoice;
-            if($contract_balance->invoice_id){
-                $invoice = $backend->getInvoice('invoice_id' => $contract_balance->invoice_id);
+            if($contract_balance->get_column('invoice_id')){
+                $invoice = $backend->getInvoice('invoice_id' => $contract_balance->get_column('invoice_id') );
+                #$c->log->debug('getInvoice:invoice.id='.$invoice->get_column('id').';');
+                $c->log->debug('getInvoice:invoice.id='.$contract_balance->get_column('invoice_id').';');
             }else{
                 $invoice = $backend->createInvoice(
                     'contract_balance' => $contract_balance,
                     stime              => $in->{stime},
                     etime              => $in->{etime},
                 );
+                $c->log->debug('createInvoice:invoice.id='.$invoice->get_column('id').';');
             }
             $c->forward('invoice_details_calls');
             $c->forward('invoice_details_zones');
@@ -322,7 +334,7 @@ sub invoice_generate :Chained('base') :PathPart('generate') :Args(0) {
             }
             $svg = $c->view('SVG')->getTemplateProcessed($c,\$svg, $stash );
             NGCP::Panel::Utils::InvoiceTemplate::convertSvg2Pdf($c,\$svg,$in,$out);
-            $backend->storeInvoiceData($invoice,\$out->{tt_string_pdf});
+            $backend->storeInvoiceData('invoice'=>$invoice,'data'=>\$out->{tt_string_pdf});
             try {
                 #$backend->storeInvoiceTemplateInfo(%$in_validated);
                 $c->flash(messages => [{type => 'success', text => $c->loc(

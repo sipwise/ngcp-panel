@@ -54,7 +54,8 @@ has_field 'save' => (
     element_class => [qw/btn btn-primary/],
     do_label => 0,
 );
-has_field 'client_contact_id' => (
+
+has_field 'client_contract_id' => (
     type => 'Hidden',
     required => 1,
 );
@@ -62,7 +63,7 @@ has_field 'client_contact_id' => (
 has_block 'fields' => (
     tag => 'div',
     class => [qw/modal-body/],
-    render_list => [qw/start end/],
+    render_list => [qw/start end client_contract_id/],
 );
 
 has_block 'actions' => (

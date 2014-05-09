@@ -225,7 +225,7 @@ sub getContractInfo{
     my ($contract_id) = @params{qw/contract_id/};
     return  $self->schema->resultset('contracts')->search({
         id => $contract_id,
-    });
+    })->first;
 }
 sub getContactInfo{
     my $self = shift;
@@ -233,12 +233,12 @@ sub getContactInfo{
     my ($contact_id) = @params{qw/contact_id/};
     return  $self->schema->resultset('contacts')->search({
         id => $contact_id,
-    });
+    })->first;
 }
 sub getBillingProfile{
     my $self = shift;
     my (%params) = @_;
-    my ($client_contract_id, $stime, $etime) = @params{qw/client_contract_id start end/};
+    my ($client_contract_id, $stime, $etime) = @params{qw/client_contract_id stime etime/};
     #select distinct billing_profiles.* 
     #from billing_mappings
     #inner join billing_profiles on billing_mappings.billing_profile_id=billing_profiles.id
@@ -263,12 +263,12 @@ sub getBillingProfile{
         ],
     },{
         'join' => [ { 'billing_mappings' => [ 'product', 'contract' ] } ],
-    });
+    })->first;
 }
 sub getContractBalance{
     my $self = shift;
-    my (%params) = @_;
-    my ($client_contact_id, $stime, $etime) = @params{qw/client_contact_id start end/};
+    my ($params) = @_;
+    my ($client_contract_id, $stime, $etime) = @$params{qw/client_contract_id stime etime/};
     #select distinct billing_profiles.* 
     #from billing_mappings
     #inner join billing_profiles on billing_mappings.billing_profile_id=billing_profiles.id
@@ -280,19 +280,17 @@ sub getContractBalance{
     #    and (billing_mappings.start_date <= ? OR billing_mappings.start_date IS NULL)
     #    and (billing_mappings.end_date >= ? OR billing_mappings.end_date IS NULL)
     return  $self->schema->resultset('contract_balances')->search({
-        'contract.contact_id' => $client_contact_id,
+        'contract_id' => $client_contract_id,
         #'contract.status' => { '!=' => 'terminated' },
         'start' => [
-            { '<='  => $etime->epoch },
+            { '<='  => $etime->ymd },
             { '-is' => undef },
         ],
         'end' => [
-            { '>='  => $stime->epoch },
+            { '>='  => $stime->ymd },
             { '-is' => undef },
         ],
-    },{
-        'join' => [ 'contract' ],
-    });
+    },undef)->first;
 }
 
 sub getProviderInvoiceList{
@@ -349,37 +347,46 @@ sub createInvoice{
     #my $invoice_id = $dbh->last_insert_id(undef,'billing','invoices','id');
     #$dbh->do('update contract_balances set invoice_id = ? where contract_id=? and start=? and end=?', undef, $invoice_id,$contract_id, $stime->datetime, $etime->datetime );
     #return $dbh->selectrow_hashref('select * from invoices where id=?',undef, $invoice_id);    
+    my $invoice;
     
+    if( $contract_balance->get_column('invoice_id')){
+        $invoice = $self->schema->resultset('invoices')->search({
+            id   =>  $contract_balance->get_column('invoice_id'),
+        })->first;
+    }else{
     
-    
-    my $invoice_serial = $self->schema->resultset('invoices')->search(undef, {
-        'select'  => { 'max' => 'me.serial', '-as' => 'serial_max'},
-    })->first->get_column('serial_max');
-    $invoice_serial +=1;
+        my $invoice_serial = $self->schema->resultset('invoices')->search(undef, {
+            'select'  => { 'max' => 'me.serial', '-as' => 'serial_max'},
+        })->first->get_column('serial_max');
+        $invoice_serial +=1;
 
-    my $invoice_record = $self->schema->resultset('invoices')->create({
-        year   => $stime->year,
-        month  => $stime->month,
-        serial => $invoice_serial,
-        data   => $data,
-    });
-    if($invoice_record){
-        $self->schema->resultset('contract_balances')->search({
-            id   => $contract_balance->id,
-        })->update({
-            invoice_id => $invoice_record->id()
+        my $invoice_record = $self->schema->resultset('invoices')->create({
+            year   => $stime->year,
+            month  => $stime->month,
+            serial => $invoice_serial,
+            data   => $data,
         });
+        if($invoice_record){
+            $self->schema->resultset('contract_balances')->search({
+                id   => $contract_balance->get_column('id'),
+            })->update({
+                invoice_id => $invoice_record->id()
+            });
+            $invoice = $self->schema->resultset('invoices')->search({
+                id   =>  $invoice_record->id(),
+            })->first;
+        }
     }
-    return $invoice_record;
+    return $invoice;
 }
 sub storeInvoiceData{
     my $self = shift;
     my (%params) = @_;
     my ($invoice,$data_ref) = @params{qw/invoice data/};
     $self->schema->resultset('invoices')->search({
-        id   => $invoice->id,
+        id   => $invoice->get_column('id'),
     })->update({
-        data => $invoice->data
+        data => $$data_ref
     });    
 }
 sub getInvoice{
@@ -388,7 +395,7 @@ sub getInvoice{
     my ($invoice_id) = @params{qw/invoice_id/};
     return $self->schema->resultset('invoices')->search({
         'id'  => $invoice_id,
-    },undef );
+    }, undef )->first;
 }
 sub getInvoiceProviderClients{
     my $self = shift;
