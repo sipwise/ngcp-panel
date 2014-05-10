@@ -22,8 +22,8 @@ function refreshMessagesAjax (  ){
 }
 function processModalFormAjax( form, callback ) {
     //preventDefault();
-    //alert(form.attr('action')+'?'+form.serialize());
     var item = form.attr('id');
+    //alert(form.attr('action')+'?'+form.serialize()+';itemname='+item+';');
     $.ajax( {
         url: form.attr('action'),
         type: "POST",

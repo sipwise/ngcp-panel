@@ -49,7 +49,7 @@ has_field 'end' => (
 );
 
 has_field 'save' => (
-    type => 'Submit',
+    type => 'Button',
     value => 'Generate',
     element_class => [qw/btn btn-primary/],
     do_label => 0,
