@@ -263,78 +263,18 @@ sub invoice_generate :Chained('base') :PathPart('generate') :Args(0) {
         item => $out->{invoice_data},
         #item   => $out->{invoice_data},
     );
-            use irka;
-            use Data::Dumper;
-            irka::loglong(Dumper($in));
     my $in_validated = $validator->fif;
     if($posted){
         $c->log->debug("validated=".$validator->validated.";");
-        if(1 || $validator->validated) {
+        if($validator->validated) {
             #copy/pasted from NGCP\Panel\Role\API\Customers.pm 
-            use irka;
-            use Data::Dumper;
-            irka::loglong(Dumper($in));
+            
+            #use irka;
+            #use Data::Dumper;
+            #irka::loglong(Dumper($in));
+            
             #$c->log->debug('getInvoice:contract_id='.Dumper($in).';');
-            my $client_contract  = $backend->getContractInfo('contract_id' => $in->{client_contract_id});
-            my $client_contact   = $backend->getContactInfo('contact_id' => $client_contract->get_column('contact_id') );
-            my $provider_contract = $backend->getContractInfo('contract_id' => $c->stash->{provider}->contract_id);
-            my $provider_contact = $backend->getContactInfo('contact_id' => $provider_contract->get_column('id'));
-            my $contract_balance = $backend->getContractBalance($in);
-            #$c->log->debug("customer->id="..";");
-            if(!$contract_balance){
-                my $billing_profile = $backend->getBillingProfile($in);
-                NGCP::Panel::Utils::Contract::create_contract_balance(
-                    c => $c,
-                    profile  => $billing_profile,
-                    contract => $client_contract,
-                    stime    => $in->{stime},
-                    etime    => $in->{etime},
-                );
-                $contract_balance = $backend->getContractBalance($in);
-            }
-            my $invoice;
-            if($contract_balance->get_column('invoice_id')){
-                $invoice = $backend->getInvoice('invoice_id' => $contract_balance->get_column('invoice_id') );
-                #$c->log->debug('getInvoice:invoice.id='.$invoice->get_column('id').';');
-                $c->log->debug('getInvoice:invoice.id='.$contract_balance->get_column('invoice_id').';');
-            }else{
-                $invoice = $backend->createInvoice(
-                    'contract_balance' => $contract_balance,
-                    stime              => $in->{stime},
-                    etime              => $in->{etime},
-                );
-                $c->log->debug('createInvoice:invoice.id='.$invoice->get_column('id').';');
-            }
-            $c->forward('invoice_details_calls');
-            $c->forward('invoice_details_zones');
-            #additions for generations
-            $in = {
-                %$in,
-                no_fake_data   => 1,
-                tt_type        => 'svg',
-                tt_sourcestate => 'saved',
-                tt_id          => $c->stash->{provider}->id,
-            };
-            $out = {
-                %$out,
-                tt_id          => $c->stash->{provider}->id,
-            };
-            my $stash = {
-                provider => $provider_contact,
-                client   => $client_contact,
-                invoice  => $invoice,
-                invoice_details_zones => $c->stash->{invoice_details_zones},
-                invoice_details_calls => $c->stash->{invoice_details_calls},
-            };
-            my $svg = '';
-            $backend->getInvoiceTemplate( %$in, result => \$svg );#provider_id in i is enough
-            if(!$svg){
-                NGCP::Panel::Utils::InvoiceTemplate::getDefaultInvoiceTemplate( c => $c, type => 'svg', result => \$svg );
-                NGCP::Panel::Utils::InvoiceTemplate::preprocessInvoiceTemplateSvg( {no_fake_data => 1}, \$svg);
-            }
-            $svg = $c->view('SVG')->getTemplateProcessed($c,\$svg, $stash );
-            NGCP::Panel::Utils::InvoiceTemplate::convertSvg2Pdf($c,\$svg,$in,$out);
-            $backend->storeInvoiceData('invoice'=>$invoice,'data'=>\$out->{tt_string_pdf});
+            $c->forward('generate_invoice',[$in, $out]);
             try {
                 #$backend->storeInvoiceTemplateInfo(%$in_validated);
                 $c->flash(messages => [{type => 'success', text => $c->loc(
@@ -347,9 +287,7 @@ sub invoice_generate :Chained('base') :PathPart('generate') :Args(0) {
                     c => $c,
                     error => $e,
                     desc  => $c->loc(
-                        $in->{invoice_id}
-                        ?'Failed to update invoice template.'
-                        :'Failed to create invoice template.'
+                        'Failed to generate invoice.'
                     ),
                 );
             }
@@ -374,7 +312,76 @@ sub invoice_generate :Chained('base') :PathPart('generate') :Args(0) {
     $c->detach( $c->view("SVG") );#to the sake of nowrapper
 }
 
+#absolutely Model method
+sub generate_invoice :Private{
+    my ($self, $c, $in, $out) = @_;
 
+    my $backend = NGCP::Panel::Model::DB::InvoiceTemplate->new( schema => $c->model('DB') );
+    $c->log->debug('generate_invoice;');
+    
+    my $provider = $c->stash->{provider};
+    #$Data::Dumper::Maxdepth = 1;
+    
+    my $client_contract  = $backend->getContractInfo('contract_id' => $in->{client_contract_id});
+    my $client_contact   = $backend->getContactInfo('contact_id' => $client_contract->get_column('contact_id') );
+    my $provider_contract = $backend->getContractInfo('contract_id' => $provider->get_column('contract_id') );
+    my $provider_contact = $backend->getContactInfo('contact_id' => $provider_contract->get_column('id'));
+    my $contract_balance = $backend->getContractBalance($in);
+    #$c->log->debug("customer->id="..";");
+    if(!$contract_balance){
+        my $billing_profile = $backend->getBillingProfile($in);
+        NGCP::Panel::Utils::Contract::create_contract_balance(
+            c => $c,
+            profile  => $billing_profile,
+            contract => $client_contract,
+            stime    => $in->{stime},
+            etime    => $in->{etime},
+        );
+        $contract_balance = $backend->getContractBalance($in);
+    }
+    my $invoice;
+    if($contract_balance->get_column('invoice_id')){
+        $invoice = $backend->getInvoice('invoice_id' => $contract_balance->get_column('invoice_id') );
+        #$c->log->debug('getInvoice:invoice.id='.$invoice->get_column('id').';');
+    }else{
+        $invoice = $backend->createInvoice(
+            'contract_balance' => $contract_balance,
+            stime              => $in->{stime},
+            etime              => $in->{etime},
+        );
+        $c->log->debug('createInvoice:invoice.id='.$invoice->get_column('id').';');
+    }
+    $c->forward('invoice_details_calls');
+    $c->forward('invoice_details_zones');
+    #additions for generations
+    $in = {
+        %$in,
+        no_fake_data   => 1,
+        tt_type        => 'svg',
+        tt_sourcestate => 'saved',
+        tt_id          => $in->{provider_id},
+    };
+    $out = {
+        %$out,
+        tt_id          => $in->{provider_id},
+    };
+    my $stash = {
+        provider => $provider_contact,
+        client   => $client_contact,
+        invoice  => $invoice,
+        invoice_details_zones => $c->stash->{invoice_details_zones},
+        invoice_details_calls => $c->stash->{invoice_details_calls},
+    };
+    my $svg = '';
+    $backend->getInvoiceTemplate( %$in, result => \$svg );#provider_id in $in is enough
+    if(!$svg){
+        NGCP::Panel::Utils::InvoiceTemplate::getDefaultInvoiceTemplate( c => $c, type => 'svg', result => \$svg );
+        NGCP::Panel::Utils::InvoiceTemplate::preprocessInvoiceTemplateSvg( {no_fake_data => 1}, \$svg);
+    }
+    $svg = $c->view('SVG')->getTemplateProcessed($c,\$svg, $stash );
+    NGCP::Panel::Utils::InvoiceTemplate::convertSvg2Pdf($c,\$svg,$in,$out);
+    $backend->storeInvoiceData('invoice'=>$invoice,'data'=>\$out->{tt_string_pdf});
+}
 
 sub template_base :Chained('base') :PathPart('template') :CaptureArgs(0) {
     my ($self, $c) = @_;
