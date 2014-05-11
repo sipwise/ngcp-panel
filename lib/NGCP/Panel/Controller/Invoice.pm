@@ -90,21 +90,19 @@ sub base :Chained('invoice') :PathPart('') :CaptureArgs(1) {
 
 
 sub invoice_details_zones :Chained('base') :PathPart('') :CaptureArgs(0) {
-    my ($self, $c) = @_;
+    my ($self, $c, $in) = @_;
     $c->log->debug('invoice_details_zones');
-    my($validator,$backend,$in,$out);
-    $backend = NGCP::Panel::Model::DB::InvoiceTemplate->new( schema => $c->model('DB') );
+    my $backend = NGCP::Panel::Model::DB::InvoiceTemplate->new( schema => $c->model('DB') );
     my $provider_id = $c->stash->{provider}->id;
-    my $client_id = $c->stash->{client} ? $c->stash->{client}->id : undef;
-    my $stime = NGCP::Panel::Utils::DateTime::current_local()->truncate(to => 'month');
-    my $etime = $stime->clone->add(months => 1);
+    my $stime = $in->{stime} || NGCP::Panel::Utils::DateTime::current_local()->truncate(to => 'month');
+    my $etime = $in->{etime} || $stime->clone->add(months => 1);
 
     #look, NGCP::Panel::Utils::Contract - it is kind of backend separation here
     #my $form = NGCP::Panel::Form::Invoice::Template->new( );
     my $invoice_details_zones = $backend->get_contract_zonesfees_rs(
         c => $c,
         provider_id => $provider_id,
-        client_id => $client_id,
+        %$in,
         stime => $stime,
         etime => $etime,
     );
@@ -112,26 +110,25 @@ sub invoice_details_zones :Chained('base') :PathPart('') :CaptureArgs(0) {
     my $invoice_details_zones_ajax = $invoice_details_zones;
     $invoice_details_zones = [$invoice_details_zones_ajax->all()];
     my $i = 1;
-    $invoice_details_zones = [map{[$i++,$_]} (@$invoice_details_zones) x 21];
+    $invoice_details_zones = [map{[$i++,$_]} (@$invoice_details_zones) x 1];
     $c->stash( invoice_details_zones => $invoice_details_zones );
     $c->stash( invoice_details_zones_ajax => $invoice_details_zones_ajax );
 }
 
 sub invoice_details_calls :Chained('invoice_details_zones') :PathPart('') :CaptureArgs(0) {
-    my ($self, $c) = @_;
+    my ($self, $c, $in) = @_;
     $c->log->debug('invoice_details_calls');
     my $backend = NGCP::Panel::Model::DB::InvoiceTemplate->new( schema => $c->model('DB') );
     my $provider_id = $c->stash->{provider}->id;
-    my $client_id = $c->stash->{client} ? $c->stash->{client}->id : undef;
-    my $stime = NGCP::Panel::Utils::DateTime::current_local()->truncate(to => 'month');
-    my $etime = $stime->clone->add(months => 1);
+    my $stime = $in->{stime} || NGCP::Panel::Utils::DateTime::current_local()->truncate(to => 'month');
+    my $etime = $in->{etime} || $stime->clone->add(months => 1);
 
     #look, NGCP::Panel::Utils::Contract - it is kind of backend separation here
     #my $form = NGCP::Panel::Form::Invoice::Template->new( );
     my $invoice_details_calls = $backend->get_contract_calls_rs(
         c => $c,
         provider_id => $provider_id,
-        client_id => $client_id,
+        %$in,
         stime => $stime,
         etime => $etime,
     );
@@ -267,20 +264,11 @@ sub invoice_generate :Chained('base') :PathPart('generate') :Args(0) {
     if($posted){
         $c->log->debug("validated=".$validator->validated.";");
         if($validator->validated) {
-            #copy/pasted from NGCP\Panel\Role\API\Customers.pm 
-            
-            #use irka;
-            #use Data::Dumper;
-            #irka::loglong(Dumper($in));
-            
-            #$c->log->debug('getInvoice:contract_id='.Dumper($in).';');
             $c->forward('generate_invoice',[$in, $out]);
+            
             try {
-                #$backend->storeInvoiceTemplateInfo(%$in_validated);
                 $c->flash(messages => [{type => 'success', text => $c->loc(
-                    $in->{invoice_id}
-                    ?'Invoice template updated'
-                    :'Invoice template created'
+                    'Invoice generated'
                 ) }]);
             } catch($e) {
                 NGCP::Panel::Utils::Message->error(
@@ -351,8 +339,8 @@ sub generate_invoice :Private{
         );
         $c->log->debug('createInvoice:invoice.id='.$invoice->get_column('id').';');
     }
-    $c->forward('invoice_details_calls');
-    $c->forward('invoice_details_zones');
+    $c->forward('invoice_details_calls',[$in]);
+    $c->forward('invoice_details_zones',[$in]);
     #additions for generations
     $in = {
         %$in,
@@ -380,7 +368,7 @@ sub generate_invoice :Private{
     }
     $svg = $c->view('SVG')->getTemplateProcessed($c,\$svg, $stash );
     NGCP::Panel::Utils::InvoiceTemplate::convertSvg2Pdf($c,\$svg,$in,$out);
-    $backend->storeInvoiceData('invoice'=>$invoice,'data'=>\$out->{tt_string_pdf});
+    #$backend->storeInvoiceData('invoice'=>$invoice,'data'=>\$out->{tt_string_pdf});
 }
 
 sub template_base :Chained('base') :PathPart('template') :CaptureArgs(0) {
