@@ -150,7 +150,7 @@ sub get_customer {
             'contact.reseller_id' => { '-not' => undef },
             'me.id' => $customer_id,
         },{
-            join => 'contact'
+            join => 'contact',
         });
     $customer = $customer->search({
             '-or' => [
@@ -245,7 +245,7 @@ sub prepare_resource {
     my $customer = $self->get_customer($c, $resource->{contract_id});
     return unless($customer);
     if(!$update && defined $customer->max_subscribers && $customer->voip_subscribers->search({ 
-            status => { '!=' => 'terminated' }
+            status => { '!=' => 'terminated' },
         })->count >= $customer->max_subscribers) {
         
         $self->error($c, HTTP_FORBIDDEN, "Maximum number of subscribers reached.");
@@ -288,7 +288,7 @@ sub prepare_resource {
             $preferences->{contract_sound_set} = $default_sound_set->id;
         }
 
-        my $base_number = $admin_subscriber->primary_number;
+        my $base_number = $admin_subscriber ? $admin_subscriber->primary_number : undef;
         if($base_number) {
             $preferences->{cloud_pbx_base_cli} = $base_number->cc . ($base_number->ac // '') . $base_number->sn;
         }
@@ -394,7 +394,7 @@ sub update_item {
             $c->log->error("failed to lock subscriber id ".$subscriber->id." with level ".$resource->{lock});
             $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "Failed to update subscriber lock");
             return;
-        }
+        };
     }
 
     my ($profile_set, $profile);
@@ -454,7 +454,7 @@ sub update_item {
         my $contact = $subscriber->contact;
         if($contact && $contact->email ne $resource->{email}) {
             $contact->update({
-                email => $resource->{email}
+                email => $resource->{email},
             });
         } elsif(!$contact) {
             $contact = $c->model('DB')->resultset('contacts')->create({
@@ -505,7 +505,7 @@ sub update_item {
     NGCP::Panel::Utils::Subscriber::update_preferences(
         c => $c, 
         prov_subscriber => $subscriber->provisioning_voip_subscriber,
-        preferences => $preferences
+        preferences => $preferences,
     );
 
     # TODO: status handling (termination, ...)
