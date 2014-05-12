@@ -29,6 +29,7 @@
     [%messages.unshift( c.loc('Reseller is <b>[_1]</b>', reseller.first.status) ); %]
 [% END -%]
 <div class="row" id="messages">
+[%#here can be just initial messages state, but now it is th same with ajax messages, so there is no sense in repetition-%]
 [%PROCESS 'helpers/ajax_messages.tt' -%]
 </div>
 <script>
@@ -128,6 +129,7 @@ function applyClientFilter(table,tr,contact_id){
         { name => 'contract_balances.free_time_balance', title => c.loc('Free Time balance')},
     ];
     helper.dt_buttons = [
+        { name = c.loc('Delete'), uri = "javascript:fetch_into(\\'messages\\', \\'" _ c.uri_for_action('/invoice/invoice_delete', [ provider.id ] ) _ "\\',\\'invoice_id='+full.contract_balances_invoice_id+'\\',function(){" _ helper.id_from_name _ "_table.fnDraw();});void(0);", class = 'btn-small btn-secondary', icon = 'icon-trash' },
         { name = c.loc('View invoice PDF'), uri = "javascript:window.open(\\'/invoice/data/' + full.contract_balances_invoice_id + '\\',\\'_blank\\');void(0);", class = 'btn-small btn-primary', icon = 'icon-edit' },
     ];
     helper.identifier = 'invoice_list_data_ajax';

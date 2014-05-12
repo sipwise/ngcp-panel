@@ -7,10 +7,8 @@ use Data::Dumper;
 sub getDefaultConditions{
     my $self = shift;
     my ($params) = @_;
-    #irka::loglong(Dumper($params));
     my ($provider_id,$tt_sourcestate,$tt_type,$tt_id) = @$params{qw/provider_id tt_sourcestate tt_type tt_id/};
     my $conditions = {};
-    #irka::loglong("getDefaultConditions: tt_id=$tt_id;\n");
     if($tt_id){
         $conditions = { id => $tt_id };
     }else{
@@ -27,24 +25,12 @@ sub getInvoiceTemplate{
     my (%params) = @_;
     my ($provider_id,$tt_sourcestate,$tt_type,$tt_id) = @params{qw/provider_id tt_sourcestate tt_type tt_id/};
 
-    #irka::loglong("getInvoiceTemplate: tt_id=$tt_id;\n");
-    #irka::loglong(Dumper(\%params));
     my $result = '';
     
-    my $conditions = $self->getDefaultConditions(\%params);
-    #my $tt_record = $self->resultset('invoice_templates')->search({
-    #it is hard to express my disappointment by DBIx implementation. Where pure SQL is easy to automate, flexible and powerful, with DBIx you can't even get DB as aliases, only additional accessors, which aren't a option. What a poor "wonabe hibernate" idea and implementation.
+    #it is hard to express my disappointment by DBIx implementation. Where pure SQL is easy to automate, flexible and powerful, with DBIx you can't even get DB as aliases, only additional accessors, which aren't an option. What a poor "wonabe hibernate" idea and implementation.
     my $tt_record = $self->schema->resultset('invoice_templates')->search( 
         { id => $tt_id }, {
-        #'+select' => [{'reseller_id' =>'provider_id','-as'=>'provider_id'},{'id' => 'tt_id','-as'=>'tt_id'}]
-        #'+select' => [
-        #    [ 'reseller_id', {'-as'=>'provider_id'}],
-        #    [ 'id', {'-as'=>'tt_id'}],
-        #],
-        #'+select' => [qw/reseller_id id/],
-        #'+as'     => [qw/provider_id tt_id/]
-        #'-as'     => [{reseller_id=>provider_id},{ id=>tt_id}]
-    }
+        }
     )->first;
     #here may be base64 decoding
     
@@ -52,7 +38,6 @@ sub getInvoiceTemplate{
     #if('saved' eq $tt_sourcestate){
     if( $tt_record ){
         $tt_sourcestate and $result = $tt_record->get_column( 'base64_'.$tt_sourcestate );
-        #$tt_record->reseller_id
         $tt_id = $tt_record->get_column( 'id' );
     }
     if( $result && exists $params{result} ){
@@ -77,15 +62,6 @@ sub storeInvoiceTemplateContent{
 #        });
 
 
-        #here may be base64 decoding
-
-#        $self->schema->resultset('ivoice_template')->search({
-#            reseller_id => $provider_id,
-#            type        => $tt_type,
-#        })->update_all({
-#            is_active   => 0,
-#        });
-        #I think that SQl + DBI are much more flexible and compact 
         my $tt_record_created;
         my $tt_record_updated;
         if( !$tt_id ){
@@ -119,7 +95,6 @@ sub storeInvoiceTemplateInfo{
     my (%params) = @_;
     my ($provider_id,$tt_id,$is_active,$name) = @params{qw/provider_id tt_id is_active name/};
 
-    #my $tt_record = $self->resultset('invoice_templates')->search({
     $self->schema->txn_do(sub {
         my $tt_record_created;
         my $tt_record_updated;
@@ -150,10 +125,6 @@ sub getInvoiceTemplateList{
     my (%params) = @_;
     my ($provider_id,$tt_sourcestate,$tt_type, $tt_string, $tt_id) = @params{qw/provider_id tt_sourcestate tt_type tt_string_sanitized tt_id/};
     
-    #return [
-        #$self->schema->resultset('invoice_template_fake')->find(\'select * from invoice_templates')->all
-        #$self->schema->resultset('invoice_templates')->name(\'(select * from invoice_templates)')->all
-    #];
     return $self->schema->resultset('invoice_templates')->search({
         reseller_id => $provider_id,
     });
@@ -396,6 +367,21 @@ sub getInvoice{
     return $self->schema->resultset('invoices')->search({
         'id'  => $invoice_id,
     }, undef )->first;
+}
+sub deleteInvoice{
+    my $self = shift;
+    my (%params) = @_;
+    my ($invoice_id) = @params{qw/invoice_id/};
+    
+    $self->schema->resultset('invoices')->search({
+        'id'  => $invoice_id,
+    }, undef )->delete;
+    
+    $self->schema->resultset('contract_balances')->search({
+        'invoice_id'  => $invoice_id,
+    }, undef )->update({
+        'invoice_id'  => undef,    
+    });
 }
 sub getInvoiceProviderClients{
     my $self = shift;

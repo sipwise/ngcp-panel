@@ -13,6 +13,7 @@ use NGCP::Panel::Utils::Message;
 
 use NGCP::Panel::Form::Invoice::Template;
 use NGCP::Panel::Form::Invoice::Generate;
+use NGCP::Panel::Form::Invoice::Basic;
 use NGCP::Panel::Model::DB::InvoiceTemplate;
 use NGCP::Panel::Utils::InvoiceTemplate;
 
@@ -208,6 +209,64 @@ sub invoice_data :Chained('invoice') :PathPart('data') :Args(1) {
     return;
 }
 
+sub invoice_delete :Chained('base') :PathPart('delete') :Args(0) {
+    my ($self, $c) = @_;
+    $c->log->debug('invoice_delete');
+    my($validator,$backend,$in,$out);
+
+    $in = $c->request->parameters;
+    #check that this id really belongs to specified contract? or just add contract condition to delete query?
+    #checking is more universal
+    #this is just copy-paste from method above
+    #of course we are chained and we can put in and out to stash
+    #input
+    $in->{provider_id} = $c->stash->{provider}->id;
+    
+    #output
+    $out={};
+
+    #storage
+    #pass scheme here is ugly, and should be moved somehow to DB::Base
+    $backend = NGCP::Panel::Model::DB::InvoiceTemplate->new( schema => $c->model('DB') );
+
+    #input checking & simple preprocessing
+    $validator = NGCP::Panel::Form::Invoice::Basic->new( backend => $backend );
+#    $form->schema( $c->model('DB::InvoiceTemplate')->schema );
+    #to common form package ? removing is necessary due to FormHandler param presence evaluation - it is based on key presence, not on defined/not defined value
+    #in future this method should be called by ControllerBase
+    $validator->remove_undef_in($in);
+    
+    #really, we don't need a form here at all
+    #just use as already implemented fields checking and defaults applying  
+    #$validator->setup_form(
+    $validator->process(
+        posted => 1,
+        params => $in,
+    );
+    #$validator->validate_form();
+    
+    #multi return...
+    $c->log->debug("validated=".$validator->validated.";\n");
+    if(!$validator->validated){
+        #return;
+    }
+    my $in_validated = $validator->fif;
+
+    #dirty hack 1
+    #really model logic should recieve validated input, but raw input also should be saved somewhere
+    
+    #---------------> $in = $in_validated;
+    
+    #think about it more
+    
+    $backend->deleteInvoice(%$in);
+    #$c->flash(messages => [{type => 'success', text => $c->loc(
+    $c->stash(messages => [{type => 'success', text => $c->loc(
+        'Invoice deleted'
+    ) }]);
+    $c->stash( template => 'helpers/ajax_messages.tt' );
+    $c->detach( $c->view("SVG") );
+}
 sub invoice_generate :Chained('base') :PathPart('generate') :Args(0) {
     my ($self, $c) = @_;
     $c->log->debug($c->action);
@@ -216,52 +275,27 @@ sub invoice_generate :Chained('base') :PathPart('generate') :Args(0) {
     
     #from parameters
     $in = $c->request->parameters;
-    
-    my $parser = DateTime::Format::Strptime->new(
-        #pattern => '%Y-%m-%d %H:%M',
-        pattern => '%Y-%m-%d %H:%M:%S',
-    );
-    if($in->{start}) {
-        $in->{stime} = $parser->parse_datetime($in->{start});
-    }
-    if($in->{end}) {
-        $in->{etime} = $parser->parse_datetime($in->{end});
-    }
-    #$c->log->debug("stime=".$in->{stime}.";etime=".$in->{etime}.";");
     $in->{provider_id} = $c->stash->{provider}->id;
-    #$in->{client_contact_id} = $c->request->parameters->{client_contact_id};
-    #(undef,undef,@$in{qw/client_contact_id/}) = @_;
 
-    if($in->{invoice_id}){
-        #always was sure that i'm calm and even friendly person, but I would kill with pleasure author of dbix.
-        my $db_object;
-        ($out->{invoice_id},undef,$db_object) = $backend->getInvoiceTemplate( %$in );
-        $out->{invoice_data}->{invoice_id} = $db_object->get_column('id');
-        $out->{invoice_data}->{provider_id} = $db_object->get_column('reseller_id');
-        foreach(qw/name is_active/){$out->{invoice_data}->{$_} = $db_object->get_column($_);}
-    }
-    if(!$out->{invoice_data}){
-        $out->{invoice_data} = $in;
-    }
+
     $validator = NGCP::Panel::Form::Invoice::Generate->new( backend => $backend );
     $validator->remove_undef_in($in);
     #need to think how to automate it - maybe through form showing param through args? what about args for uri_for_action?
-    #join('/',$c->controller,$c->action)
     $validator->action( $c->uri_for_action('invoice/invoice_generate',[$in->{provider_id}]) );
     $validator->name( 'invoice_generate' );#from parameters
-    #my $posted = 0;
     my $posted = exists $in->{submitid};
     $c->log->debug("posted=$posted;");
     #todo: validate that customer is not terminated and is sip/pbx account
     $validator->process(
         posted => $posted,
         params => $in,
-        #item => $in,
-        item => $out->{invoice_data},
-        #item   => $out->{invoice_data},
+        #no edit supposed for invoice - just creation and deletion, so item from DB is not used
+        item => $in,
     );
     my $in_validated = $validator->fif;
     if($posted){
+        $c->forward('parse_invoice_period',[$in]);
+        $c->log->debug("stime=".$in->{stime}.";etime=".$in->{etime}.";");
         $c->log->debug("validated=".$validator->validated.";");
         if($validator->validated) {
             $c->forward('generate_invoice',[$in, $out]);
@@ -282,19 +316,12 @@ sub invoice_generate :Chained('base') :PathPart('generate') :Args(0) {
             $c->stash( messages => $c->flash->{messages} );
             $c->stash( template => 'helpers/ajax_messages.tt' );
         }else{
-            #$c->stash( m        => {create_flag => !$in->{invoice_id}} );
-            #$c->stash( form     => $validator );
-            ##$c->stash( template => 'helpers/ajax_form_modal.tt' );
-            #$c->stash( template => 'invoice/template_info_form.tt' );
             $c->response->headers->header( 'X-Form-Status' => 'error' );
         }
     }
     if(!$validator->validated){
-        #$c->stash( in       => $in );
-        #$c->stash( out      => $out );
         $c->stash( m        => {create_flag => !$in->{invoice_id}} );
         $c->stash( form     => $validator );
-        #$c->stash( template => 'helpers/ajax_form_modal.tt' );
         $c->stash( template => 'invoice/invoice_generate_form.tt' );
     }
     $c->detach( $c->view("SVG") );#to the sake of nowrapper
@@ -303,7 +330,7 @@ sub invoice_generate :Chained('base') :PathPart('generate') :Args(0) {
 #absolutely Model method
 sub generate_invoice :Private{
     my ($self, $c, $in, $out) = @_;
-
+    $out ||={};
     my $backend = NGCP::Panel::Model::DB::InvoiceTemplate->new( schema => $c->model('DB') );
     $c->log->debug('generate_invoice;');
     
@@ -369,6 +396,20 @@ sub generate_invoice :Private{
     $svg = $c->view('SVG')->getTemplateProcessed($c,\$svg, $stash );
     NGCP::Panel::Utils::InvoiceTemplate::convertSvg2Pdf($c,\$svg,$in,$out);
     #$backend->storeInvoiceData('invoice'=>$invoice,'data'=>\$out->{tt_string_pdf});
+}
+sub parse_invoice_period :Private{
+    my ($self, $c, $in) = @_;
+
+    my $parser = DateTime::Format::Strptime->new(
+        #pattern => '%Y-%m-%d %H:%M:%S',
+        pattern => '%Y-%m-%d',
+    );
+    if($in->{start}) {
+        $in->{stime} = $parser->parse_datetime($in->{start})->truncate(to => 'day');
+    }
+    if($in->{end}) {
+        $in->{etime} = $parser->parse_datetime($in->{end})->truncate(to => 'day')->add(days => 1)->subtract(seconds => 1);
+    }
 }
 
 sub template_base :Chained('base') :PathPart('template') :CaptureArgs(0) {

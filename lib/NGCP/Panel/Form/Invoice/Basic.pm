@@ -1,4 +1,4 @@
-package NGCP::Panel::Form::Invoice::Generate;
+package NGCP::Panel::Form::Invoice::Basic;
 
 use Sipwise::Base;
 use HTML::FormHandler::Moose;
