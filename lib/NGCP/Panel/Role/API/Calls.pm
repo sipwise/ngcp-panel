@@ -20,7 +20,6 @@ sub item_rs {
     my $item_rs = $c->model('DB')->resultset('cdr');
     if($c->user->roles eq "admin") {
     } elsif($c->user->roles eq "reseller") {
-        print ">>>>>>>>>>>>>> filtering s/d_provider_id " . $c->user->reseller->contract_id . "\n";
         $item_rs = $item_rs->search({ 
             -or => [
                 { source_provider_id => $c->user->reseller->contract_id },

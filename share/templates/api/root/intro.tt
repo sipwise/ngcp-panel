@@ -69,4 +69,22 @@ Due to the JSON-HAL structure, all related resources are hyperlinked, which impl
 
 As a consequence, this means that a client implemented against the API <b>should not hardcode URIs</b>, rather than using the hyperlinks provided in the resources.
 
+<h[% level + 1%]>Query Parameters</h[% level + 1%]>
+
+
+Some collections define query paramters to filter the output. Typical use cases are limiting collections to a specific reseller or a specific customer.
+
+Query parameters are appended to the URL like in the following example:
+
+<code>
+curl -X GET 'https://example.org:1443/api/somecollection/?param_one=1&param2=something
+</code>
+
+Some query parameters allow wildcard/pattern matching, which is expressed by a '*' like this:
+
+<code>
+curl -X GET 'https://example.org:1443/api/somecollection/?param=*something*
+</code>
+
+
 [% # vim: set tabstop=4 syntax=html expandtab: -%]

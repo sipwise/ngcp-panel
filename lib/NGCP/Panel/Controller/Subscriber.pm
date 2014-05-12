@@ -15,6 +15,7 @@ use NGCP::Panel::Utils::Message;
 use NGCP::Panel::Utils::DateTime;
 use NGCP::Panel::Utils::Sems;
 use NGCP::Panel::Utils::Hylafax;
+use NGCP::Panel::Utils::Kamailio;
 use NGCP::Panel::Form::Subscriber;
 use NGCP::Panel::Form::SubscriberEdit;
 use NGCP::Panel::Form::Customer::PbxSubscriberEdit;
@@ -2871,21 +2872,9 @@ sub delete_registered :Chained('registered') :PathPart('delete') :Args(0) {
     my $ret;
 
     try {
-        my $s = $c->stash->{subscriber}->provisioning_voip_subscriber;
-        my $aor = $s->username . '@' . $s->domain->domain;
-        my $contact = $c->stash->{registered}->contact;
-        my $dispatcher = NGCP::Panel::Utils::XMLDispatcher->new;
-        $ret = $dispatcher->dispatch("proxy-ng", 1, 1, <<EOF );
-<?xml version="1.0" ?>
-<methodCall>
-<methodName>ul.rm_contact</methodName>
-<params>
-<param><value><string>location</string></value></param>
-<param><value><string>$aor</string></value></param>
-<param><value><string>$contact</string></value></param>
-</params>
-</methodCall>
-EOF
+        NGCP::Panel::Utils::Kamailio::delete_location_contact($c, 
+            $c->stash->{subscriber}->provisioning_voip_subscriber, 
+            $c->stash->{registered}->contact);
     } catch($e) {
         NGCP::Panel::Utils::Message->error(
             c     => $c,
@@ -2893,12 +2882,6 @@ EOF
             desc  => $c->loc('Failed to delete registered device.'),
         );
     }
-
-# TODO: how to determine if $ret was ok?
-#    unless($ret) {
-#        $c->log->error("failed to delete registered device: $e");
-#        $c->flash(messages => [{type => 'error', text => 'Failed to delete registered device'}]);
-#    }
 
     $c->flash(messages => [{type => 'success', text => $c->loc('Successfully deleted registered device')}]);
     NGCP::Panel::Utils::Navigation::back_or($c, 
@@ -2925,30 +2908,11 @@ sub create_registered :Chained('master') :PathPart('registered/create') :Args(0)
     );
     if($posted && $form->validated) {
         try {
-            my $s = $c->stash->{subscriber}->provisioning_voip_subscriber;
-            my $aor = $s->username . '@' . $s->domain->domain;
-            my $contact = $form->field('contact')->value;
-            my $q = $form->field('q')->value;
-            my $path = $c->config->{sip}->{path} || '<sip:127.0.0.1:5060;lr>';
-            my $dispatcher = NGCP::Panel::Utils::XMLDispatcher->new;
-            $ret = $dispatcher->dispatch("proxy-ng", 1, 1, <<EOF );
-<?xml version="1.0" ?>
-<methodCall>
-<methodName>ul.add</methodName>
-<params>
-<param><value><string>location</string></value></param>
-<param><value><string>$aor</string></value></param>
-<param><value><string>$contact</string></value></param>
-<param><value><int>0</int></value></param>
-<param><value><double>$q</double></value></param>
-<param><value><string><![CDATA[$path]]></string></value></param>
-<param><value><int>0</int></value></param>
-<param><value><int>0</int></value></param>
-<param><value><int>4294967295</int></value></param>
-</params>
-</methodCall>
-EOF
-            # TODO: error check
+            NGCP::Panel::Utils::Kamailio::create_location($c, 
+                $c->stash->{subscriber}->provisioning_voip_subscriber, 
+                $form->field('contact')->value,
+                $form->field('q')->value
+            );
             $c->flash(messages => [{type => 'success', text => $c->loc('Successfully added registered device')}]);
         } catch($e) {
             NGCP::Panel::Utils::Message->error(

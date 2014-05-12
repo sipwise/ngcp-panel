@@ -616,9 +616,6 @@ sub update_subadmin_sub_aliases {
     my $contract_id    = $params{contract_id};
     my $alias_selected = $params{alias_selected};
 
-    print ">>>>>>>>>> update sub aliases\n";
-    use Data::Printer; p %params;
-
     my $num_rs = $schema->resultset('voip_numbers')->search_rs({
         'subscriber.contract_id' => $contract_id,
     },{
