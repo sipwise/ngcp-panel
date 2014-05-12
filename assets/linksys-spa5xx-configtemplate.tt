@@ -12,6 +12,9 @@
   <Attendant_Console_Call_unPark_Code>*88</Attendant_Console_Call_unPark_Code>
   <Linksys_Key_System>Yes</Linksys_Key_System>
   <Subscribe_Expires>300</Subscribe_Expires>
+  <RTP_Packet_Size>0.020</RTP_Packet_Size>
+  <RFC_2543_Call_Hold>No</RFC_2543_Call_Hold>
+  <CW_Setting>Yes</CW_Setting>
   [% FOR range IN phone.lineranges -%]
     [% 
       used_keys = [];
