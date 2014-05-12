@@ -486,7 +486,7 @@ sub update_item {
         webusername => $resource->{webusername},
         webpassword => $resource->{webpassword},
         admin => $resource->{administrative},
-        is_pbx_group => $resource->{is_pbx_group},
+        is_pbx_group => $resource->{is_pbx_group} // 0,
         pbx_group_id => $resource->{pbx_group_id},
         modify_timestamp => NGCP::Panel::Utils::DateTime::current_local,
         profile_set_id => $profile_set ? $profile_set->id : undef,
