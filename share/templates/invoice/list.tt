@@ -9,6 +9,7 @@
 [%PROCESS 'helpers/modal.tt' -%]
 [%mf_helper = {
     ajax_load         => 1,
+    ajax_callback     => 'refreshInvoicesTable();'
 }%]
 [%modal_script( m = mf_helper )%]
 
@@ -33,6 +34,12 @@
 [%PROCESS 'helpers/ajax_messages.tt' -%]
 </div>
 <script>
+function refreshInvoicesTable(){
+    invoicesTable = $('#invoice_list_data_ajax_table');
+    if(invoicesTable){
+        invoicesTable.dataTable().fnDraw();
+    }
+}
 function applyClientFilter(table,tr,contact_id){
     var classSelected = 'ngcp_current_edit';
     if(tr){
@@ -52,10 +59,8 @@ function applyClientFilter(table,tr,contact_id){
         }
         contact_id = '';
     }
-    localStorage.setItem('datatables.paramsJSON',JSON.stringify({'client_contact_id':contact_id}));invoicesTable = $('#invoice_list_data_ajax_table');
-    if(invoicesTable){
-        invoicesTable.dataTable().fnDraw();
-    }
+    localStorage.setItem('ngcp_dt.invoice_list_data_ajax_table.paramsJSON',JSON.stringify({'client_contact_id':contact_id}));
+    refreshInvoicesTable();
 }
 </script>
 
@@ -116,6 +121,7 @@ function applyClientFilter(table,tr,contact_id){
     clearHelper();
     helper.name_single = c.loc('Invoices');
     helper.name = c.loc('Invoices');
+    helper.identifier = 'invoice_list_data_ajax';
     helper.dt_columns = [
         { name => 'contract_balances.contract.contact.reseller_id'},
         { name => 'contract_balances.contract.contact.reseller.name'},
@@ -129,10 +135,9 @@ function applyClientFilter(table,tr,contact_id){
         { name => 'contract_balances.free_time_balance', title => c.loc('Free Time balance')},
     ];
     helper.dt_buttons = [
-        { name = c.loc('Delete'), uri = "javascript:fetch_into(\\'messages\\', \\'" _ c.uri_for_action('/invoice/invoice_delete', [ provider.id ] ) _ "\\',\\'invoice_id='+full.contract_balances_invoice_id+'\\',function(){\$(\\'#" _ helper.id_from_name _ "_table\\').DataTable().fnDraw();});void(0);", class = 'btn-small btn-secondary', icon = 'icon-trash' },
+        { name = c.loc('Delete'), uri = "javascript:fetch_into(\\'messages\\', \\'" _ c.uri_for_action('/invoice/invoice_delete', [ provider.id ] ) _ "\\',\\'invoice_id='+full.contract_balances_invoice_id+'\\',function(){\$(\\'#" _ helper.identifier _ "_table\\').DataTable().fnDraw();});void(0);", class = 'btn-small btn-secondary', icon = 'icon-trash' },
         { name = c.loc('View invoice PDF'), uri = "javascript:window.open(\\'/invoice/data/' + full.contract_balances_invoice_id + '\\',\\'_blank\\');void(0);", class = 'btn-small btn-primary', icon = 'icon-edit' },
     ];
-    helper.identifier = 'invoice_list_data_ajax';
     helper.ajax_uri = c.uri_for_action( '/invoice/ajax_datatables_data', [ provider.id, 'invoice_list_data' ] ) ;
     initHelperAuto();
     PROCESS 'helpers/datatables.tt';

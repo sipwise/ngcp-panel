@@ -205,7 +205,7 @@ sub invoice_data :Chained('invoice') :PathPart('data') :Args(1) {
     my $backend = NGCP::Panel::Model::DB::InvoiceTemplate->new( schema => $c->model('DB') );
     my $invoice = $backend->getInvoice(invoice_id => $invoice_id);
     $c->response->content_type('application/pdf');
-    $c->response->body( $invoice->first->get_column('data') );
+    $c->response->body( $invoice->get_column('data') );
     return;
 }
 
@@ -395,7 +395,7 @@ sub generate_invoice :Private{
     }
     $svg = $c->view('SVG')->getTemplateProcessed($c,\$svg, $stash );
     NGCP::Panel::Utils::InvoiceTemplate::convertSvg2Pdf($c,\$svg,$in,$out);
-    #$backend->storeInvoiceData('invoice'=>$invoice,'data'=>\$out->{tt_string_pdf});
+    $backend->storeInvoiceData('invoice'=>$invoice,'data'=>\$out->{tt_string_pdf});
 }
 sub parse_invoice_period :Private{
     my ($self, $c, $in) = @_;
