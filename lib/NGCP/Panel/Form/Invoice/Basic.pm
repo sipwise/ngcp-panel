@@ -8,9 +8,7 @@ use Moose::Util::TypeConstraints;
 
 use DateTime;
 use DateTime::Format::Strptime;
-use NGCP::Panel::Utils::DateTime;
 
-has '+widget_wrapper' => ( default => 'Bootstrap' );
 has_field 'submitid' => ( type => 'Hidden' );
 sub build_render_list {[qw/submitid fields actions/]}
 sub build_form_element_class { [qw/form-horizontal/] }
@@ -29,20 +27,10 @@ has_field 'submitid' => ( type => 'Hidden' );
 #    table_titles => ['#', 'First Name', 'Last Name', 'Email'],
 #    table_fields => ['id', 'firstname', 'lastname', 'email'],
 #);
-has_field 'start' => ( 
-    type => '+NGCP::Panel::Field::DatePicker',
-    label => 'Start Date',
-    default => NGCP::Panel::Utils::DateTime::current_local()->truncate(to => 'month'),
-    required => 1,
+has_field 'invoice_id' => ( 
+    type => 'Integer',
+    required => 0,
 );
-
-has_field 'end' => ( 
-    type => '+NGCP::Panel::Field::DatePicker',
-    label => 'End Date',
-    default => NGCP::Panel::Utils::DateTime::current_local()->truncate(to => 'month')->add( months => 1)->subtract(seconds=>1)->truncate(to=>'day'),
-    required => 1,
-);
-
 has_field 'save' => (
     type => 'Button',
     value => 'Generate',
@@ -58,7 +46,7 @@ has_field 'client_contract_id' => (
 has_block 'fields' => (
     tag => 'div',
     class => [qw/modal-body/],
-    render_list => [qw/start end client_contract_id/],
+    render_list => [qw/invoice_id client_contract_id/],
 );
 
 has_block 'actions' => (
@@ -69,29 +57,6 @@ has_block 'actions' => (
 
 sub validate {
     my $self = shift;
-    my $start = $self->field('start');
-    my $end = $self->field('end');
-    my $parser = DateTime::Format::Strptime->new(
-        #pattern => '%Y-%m-%d %H:%M:%S',
-        pattern => '%Y-%m-%d',
-    );
-
-    my $sdate = $parser->parse_datetime($start->value);
-    unless($sdate) {
-        $start->add_error("Invalid date format, must be YYYY-MM-DD hh:mm:ss");
-    }
-    my $edate = $parser->parse_datetime($end->value);
-    unless($edate) {
-        $end->add_error("Invalid date format, must be YYYY-MM-DD hh:mm:ss");
-    }
-
-    #unless(DateTime->compare($sdate, $edate) == -1) {
-    #    my $err_msg = 'End time must be later than start time';
-    #    $start->add_error($err_msg);
-    #    $end->add_error($err_msg);
-    #}
-    #if(!$self->backend->checkSipPbxAccount()){
-    #}
 }
 
 1;

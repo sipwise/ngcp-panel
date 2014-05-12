@@ -85,8 +85,8 @@ function applyClientFilter(table,tr,contact_id){
         { name => 'contracts.status', title => c.loc('Status'), search => 1 },
     ];
     helper.dt_buttons = [
-        { name => c.loc('Filter invoices'), uri=>'javascript:void(0);', onclick => "applyClientFilter(\\'\\',\$(this).closest(\\'tr\\'),'+full.id+');", class => 'btn-small btn-primary', icon => 'icon-glass', tooltip => 'Click twice to clear client filter.' },
         { name => c.loc('Generate invoice'), uri => 'javascript:void(0);', onclick => "fetch_into(\\'invoice_generate_form\\', \\'" _ c.uri_for_action('/invoice/invoice_generate', [ provider.id]) _ "\\',\\'item=invoice_generate&client_contract_id='+full.contracts_id+'\\',function(){modalFormScript();});void(0);", class => 'btn-small btn-primary', icon => 'icon-star' },
+        { name => c.loc('Filter invoices'), uri=>'javascript:void(0);', onclick => "applyClientFilter(\\'\\',\$(this).closest(\\'tr\\'),'+full.id+');", class => 'btn-small btn-primary', icon => 'icon-glass', tooltip => 'Click twice to clear client filter.' },
     ];
     helper.identifier = 'provider_client_list_ajax';
     helper.ajax_uri = c.uri_for_action( '/invoice/ajax_datatables_data', [ provider.id, 'provider_client_list' ] ) ;
@@ -129,7 +129,7 @@ function applyClientFilter(table,tr,contact_id){
         { name => 'contract_balances.free_time_balance', title => c.loc('Free Time balance')},
     ];
     helper.dt_buttons = [
-        { name = c.loc('Delete'), uri = "javascript:fetch_into(\\'messages\\', \\'" _ c.uri_for_action('/invoice/invoice_delete', [ provider.id ] ) _ "\\',\\'invoice_id='+full.contract_balances_invoice_id+'\\',function(){" _ helper.id_from_name _ "_table.fnDraw();});void(0);", class = 'btn-small btn-secondary', icon = 'icon-trash' },
+        { name = c.loc('Delete'), uri = "javascript:fetch_into(\\'messages\\', \\'" _ c.uri_for_action('/invoice/invoice_delete', [ provider.id ] ) _ "\\',\\'invoice_id='+full.contract_balances_invoice_id+'\\',function(){\$(\\'#" _ helper.id_from_name _ "_table\\').DataTable().fnDraw();});void(0);", class = 'btn-small btn-secondary', icon = 'icon-trash' },
         { name = c.loc('View invoice PDF'), uri = "javascript:window.open(\\'/invoice/data/' + full.contract_balances_invoice_id + '\\',\\'_blank\\');void(0);", class = 'btn-small btn-primary', icon = 'icon-edit' },
     ];
     helper.identifier = 'invoice_list_data_ajax';
