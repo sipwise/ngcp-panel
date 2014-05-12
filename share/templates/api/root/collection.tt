@@ -13,9 +13,9 @@
 [% col.description %]
 
 <h[% level + 1 %]>Collection Actions</h[% level + 1%]>
-Allowed methods for the collection as in <span>METHOD [% uri %]</span>
+Allowed methods for the collection as in <span>METHOD [% uri %]</span>:
 [% UNLESS col.actions.size -%]
-None.
+<br/>None.
 [% ELSE -%]
 <ul id="[% id %]-actions">
     [% FOR a IN col.actions -%]
@@ -25,9 +25,9 @@ None.
 [% END -%]
 
 <h[% level + 1 %]>Item Actions</h[% level + 1%]>
-Allowed methods for a collection item as in <span>METHOD [% uri %]id</span>
+Allowed methods for a collection item as in <span>METHOD [% uri %]id</span>:
 [% UNLESS col.item_actions.size -%]
-None.
+<br/>None.
 [% ELSE -%]
 <ul id="[% id %]-itemactions">
     [% FOR a IN col.item_actions -%]

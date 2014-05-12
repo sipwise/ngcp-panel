@@ -76,12 +76,15 @@ sub validate_form {
     my $resource = $params{resource};
     my $form = $params{form};
     my $run = $params{run} // 1;
+    my $exceptions = $params{exceptions} // [];
+    push @{ $exceptions }, "external_id";
 
     my @normalized = ();
 
     # move {xxx_id} into {xxx}{id} for FormHandler
     foreach my $key(keys %{ $resource } ) {
-        if($key =~ /^(.+)_id$/ && $key ne "external_id") {
+        my $skip_normalize = grep {/^$key$/} @{ $exceptions };
+        if($key =~ /^(.+)_id$/ && !$skip_normalize && !exists $resource->{$1}) {
             push @normalized, $1;
             $resource->{$1}{id} = delete $resource->{$key};
         }

@@ -67,7 +67,7 @@ sub GET : Allow {
             $query_params = $full_mod->query_params;
         }
         my $actions = [ keys %{ $full_mod->config->{action} } ];
-        my $item_actions = [ keys %{ $full_item_mod->config->{action} } ];
+        my $item_actions = $full_item_mod->can('config') ? [ keys %{ $full_item_mod->config->{action} } ] : [];
 
 
         my $form = $full_mod->get_form($c);
