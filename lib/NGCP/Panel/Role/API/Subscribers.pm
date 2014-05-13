@@ -416,8 +416,6 @@ sub update_item {
         }
     }
 
-    use Data::Printer; p $resource;
-
     if($profile_set && $resource->{profile}{id}) {
         $profile = $profile_set->voip_subscriber_profiles->find({
             id => $resource->{profile}{id},
