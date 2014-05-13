@@ -1,3 +1,27 @@
+ngcp-panel (1.2.1.1+0~mr3.2.2.1) unstable; urgency=low
+
+  [ Gerhard Jungwirth ]
+  * [14a455e] MT#4369 optimize callflow using a custom query
+  * [c2d8b90] MT#4369 disable sorting on callflow page
+  * [ed1444d] MT#4369 use min_timestamp
+  * [b985fd5] MT#4369 callflow: count total correctly
+  * [ec9df27] MT#6443 Calculate dashboard costs correctly
+  * [9f2d9f6] MT#6493 Start years selection in 2014
+  * [ee68273] MT#6663 Make API more robust when contract has no billing_profile
+  * [cc65152] MT#6295 API: allow tests without invalid/unauth cert
+  * [747fd22] MT#6295 API: fix tests Prefer header no longer required
+  * [5dc25bb] MT#6295 fix api-root test
+  * [d08c36f] MT#6295 API: fix failing customers and contracts requests
+  * [a723332] MT#6195 api tests: provide ./Build test_api
+  * [253bfb0] MT#6665 show error on parsing billing fees
+
+  [ Andreas Granig ]
+  * [98d730d] MT#6459 Fix peering contract and peer auth pref.
+
+  [ Sipwise Jenkins Builder ]
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Tue, 13 May 2014 12:04:33 +0200
+
 ngcp-panel (1.2.1.0+0~mr3.2.2.0) unstable; urgency=low
 
   [ Alexander Lutay ]
