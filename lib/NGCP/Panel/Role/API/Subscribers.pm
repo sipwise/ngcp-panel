@@ -399,7 +399,7 @@ sub update_item {
     }
 
     my ($profile_set, $profile);
-    if($resource->{profile_set_id}) {
+    if($resource->{profile_set}{id}) {
         my $profile_set_rs = $c->model('DB')->resultset('voip_subscriber_profile_sets');
         if($c->user->roles eq "admin") {
         } elsif($c->user->roles eq "reseller") {
@@ -408,17 +408,19 @@ sub update_item {
             });
         }
 
-        $profile_set = $profile_set_rs->find($resource->{profile_set_id});
+        $profile_set = $profile_set_rs->find($resource->{profile_set}{id});
         unless($profile_set) {
-            $c->log->error("invalid subscriber profile set id '" . $resource->{profile_set_id} . "'");
+            $c->log->error("invalid subscriber profile set id '" . $resource->{profile_set}{id} . "'");
             $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "Invalid profile_set_id parameter");
             return;
         }
     }
 
-    if($profile_set && $resource->{profile_id}) {
+    use Data::Printer; p $resource;
+
+    if($profile_set && $resource->{profile}{id}) {
         $profile = $profile_set->voip_subscriber_profiles->find({
-            id => $resource->{profile_id},
+            id => $resource->{profile}{id},
         });
     }
     if($profile_set && !$profile) {
