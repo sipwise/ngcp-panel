@@ -32,14 +32,14 @@ has_field 'submitid' => ( type => 'Hidden' );
 has_field 'start' => ( 
     type => '+NGCP::Panel::Field::DatePicker',
     label => 'Start Date',
-    default => NGCP::Panel::Utils::DateTime::current_local()->truncate(to => 'month'),
+    default => NGCP::Panel::Utils::DateTime::current_local()->truncate(to => 'month')->ymd,
     required => 1,
 );
 
 has_field 'end' => ( 
     type => '+NGCP::Panel::Field::DatePicker',
     label => 'End Date',
-    default => NGCP::Panel::Utils::DateTime::current_local()->truncate(to => 'month')->add( months => 1)->subtract(seconds=>1)->truncate(to=>'day'),
+    default => NGCP::Panel::Utils::DateTime::current_local()->truncate(to => 'month')->add( months => 1)->subtract(seconds=>1)->ymd,
     required => 1,
 );
 
