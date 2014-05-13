@@ -77,7 +77,7 @@ Some collections define query paramters to filter the output. Typical use cases 
 Query parameters are appended to the URL like in the following example:
 
 <code>
-curl -X GET 'https://example.org:1443/api/somecollection/?param_one=1&param2=something
+curl -X GET 'https://example.org:1443/api/somecollection/?param_one=1&amp;param2=something
 </code>
 
 Some query parameters allow wildcard/pattern matching, which is expressed by a '*' like this:
