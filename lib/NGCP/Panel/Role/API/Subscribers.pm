@@ -44,6 +44,8 @@ sub resource_from_item {
         $resource{email} = undef;
     }
 
+    $resource{administrative} = delete $resource{admin};
+
     $form //= $self->get_form($c);
     last unless $self->validate_form(
         c => $c,
@@ -225,6 +227,8 @@ sub prepare_resource {
         resource => $resource,
         form => $form,
     );
+
+    use Data::Printer; p $resource;
 
     unless($domain) {
         $domain = $c->model('DB')->resultset('domains')->search($resource->{domain_id});
