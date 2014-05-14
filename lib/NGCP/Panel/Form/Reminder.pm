@@ -14,6 +14,11 @@ sub build_form_element_class {[qw(form-horizontal)]}
 has_field 'time' => (
     type => 'Text',
     label => 'Time',
+    required => 1,
+    element_attr => {
+        rel => ['tooltip'],
+        title => ['The time the reminder call is triggered.']
+    },
 );
 
 has_field 'recur' => (
@@ -25,6 +30,10 @@ has_field 'recur' => (
         { label => 'on weekdays', value => 'weekdays' },
         { label => 'everyday', value => 'always' },
     ],
+    element_attr => {
+        rel => ['tooltip'],
+        title => ['The reminder recurrence (one of never, weekdays, always).']
+    },
 );
 
 has_field 'save' => (
@@ -50,9 +59,13 @@ sub validate_time {
     my ($self, $field) = @_;
 
     my ($hour, $minute, $second) = split /:/, $field->value;
+    $second //= '00';
     unless(defined $hour && int($hour) >= 0 && int($hour) <= 23 &&
            defined $minute && $minute =~ /^[0-5]\d$/) {
         $field->add_error("Invalid time format, must be HH:MM");
+    }
+    if($second !~ /^[0-5]\d$/) {
+        $field->add_error("Invalid time format, must be HH:MM:SS");
     }
 }
 
