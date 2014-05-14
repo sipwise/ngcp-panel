@@ -262,13 +262,20 @@ sub delete :Chained('base') :PathPart('delete') {
         $schema->txn_do(sub {
 
             # remove all usr_preferenes where this set is assigned
-            my $pref_rs = NGCP::Panel::Utils::Preferences::get_usr_preference_rs(
-                c => $c, attribute => 'contract_sound_set', 
-            );
-            $pref_rs->search({ value => $c->stash->{set_result}->id })
-                ->delete_all;
-
-            # TODO: what about normal sound_sets for usr/dom/peer?
+            if($c->stash->{set_result}->contract_id) {
+                my $pref_rs = NGCP::Panel::Utils::Preferences::get_usr_preference_rs(
+                    c => $c, attribute => 'contract_sound_set', 
+                );
+                $pref_rs->search({ value => $c->stash->{set_result}->id })->delete;
+            }
+            foreach my $p(qw/usr dom peer/) {
+                $schema->resultset("voip_".$p."_preferences")->search({
+                    'attribute.attribute' => 'sound_set',
+                    value => $c->stash->{set_result}->id,
+                },{
+                    join => 'attribute',
+                })->delete_all; # explicit delete_all, otherwise query fails
+            }
 
             $c->stash->{set_result}->delete;
         });
@@ -358,7 +365,7 @@ sub create :Chained('sets_list') :PathPart('create') :Args() {
                         reseller_id => $form->values->{reseller_id},
                         contract_id => $form->values->{contract_id},
                         contract_default => 1,
-                    })->update_all({ contract_default => 0 });
+                    })->update({ contract_default => 0 });
                 }
                 my $set = $c->stash->{sets_rs}->create($form->values);
 

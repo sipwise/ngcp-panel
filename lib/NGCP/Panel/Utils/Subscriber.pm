@@ -161,6 +161,12 @@ sub create_subscriber {
         }
     }
 
+    # if there is a contract default sound set, use it.
+    my $default_sound_set = $contract->voip_sound_sets->search({ contract_default => 1 })->first;
+    if($default_sound_set) {
+        $preferences->{contract_sound_set} = $default_sound_set->id;
+    }
+
     my $passlen = $c->config->{security}->{password_min_length} || 8;
     if($c->config->{security}->{password_sip_autogenerate} && !$params->{password}) {
         $params->{password} = String::MkPasswd::mkpasswd(
