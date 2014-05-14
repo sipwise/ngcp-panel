@@ -17,6 +17,10 @@ has_field 'src_ip' => (
     type => 'Text',
     label => 'Source IP',
     required => 1,
+    element_attr => {
+        rel => ['tooltip'],
+        title => ['The source IP address.']
+    },
 );
 
 has_field 'protocol' => (
@@ -29,12 +33,20 @@ has_field 'protocol' => (
         { label => 'TLS', value => 'TLS' },
         { label => 'ANY', value => 'ANY' },
     ],
+    element_attr => {
+        rel => ['tooltip'],
+        title => ['The transport protocol (one of UDP, TCP, TLS, ANY).']
+    },
 );
 
 has_field 'from_pattern' => (
     type => 'Text',
     label => 'From Pattern',
     required => 0,
+    element_attr => {
+        rel => ['tooltip'],
+        title => ['A regular expression matching the From URI.']
+    },
 );
 
 has_field 'save' => (
