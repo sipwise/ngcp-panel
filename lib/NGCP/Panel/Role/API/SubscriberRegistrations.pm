@@ -17,7 +17,15 @@ use NGCP::Panel::Utils::Kamailio;
 sub item_rs {
     my ($self, $c) = @_;
 
-    my $item_rs = $c->model('DB')->resultset('location');
+    my @joins = ('subscriber');
+    if($c->config->{features}->{multidomain}) {
+        push @joins, 'domain';
+    }
+    my $item_rs = $c->model('DB')->resultset('location')->search({
+        
+    },{
+        join => \@joins,
+    });
     if($c->user->roles eq "admin") {
     } elsif($c->user->roles eq "reseller") {
         $item_rs = $item_rs->search({ 
@@ -38,6 +46,7 @@ sub hal_from_item {
     my ($self, $c, $item, $form) = @_;
     $form //= $self->get_form($c);
     my $resource = $self->resource_from_item($c, $item, $form);
+    return unless $resource;
 
     my $hal = Data::HAL->new(
         links => [
@@ -97,14 +106,13 @@ sub subscriber_from_item {
     });
     if($c->config->{features}->{multidomain}) {
         $sub_rs = $sub_rs->search({
-            'domain.domain' => $item->domain,
+            'domain.domain' => $item->domain->domain,
         }, {
             join => 'domain',
         });
     }
     my $sub = $sub_rs->first;
     unless($sub && $sub->provisioning_voip_subscriber) {
-        $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "No subscriber for location entry found");
         return;
     }
     return $sub;

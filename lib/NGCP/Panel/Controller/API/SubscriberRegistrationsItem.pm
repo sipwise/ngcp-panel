@@ -48,6 +48,10 @@ sub GET :Allow {
         last unless $self->resource_exists($c, subscriberregistration => $item);
 
         my $hal = $self->hal_from_item($c, $item);
+        unless($hal) {
+            $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Invalid location entry");
+            last;
+        }
 
         my $response = HTTP::Response->new(HTTP_OK, undef, HTTP::Headers->new(
             (map { # XXX Data::HAL must be able to generate links with multiple relations

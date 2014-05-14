@@ -27,6 +27,25 @@ class_has 'query_params' => (
     is => 'ro',
     isa => 'ArrayRef',
     default => sub {[
+        {
+            param => 'subscriber_id',
+            description => 'Filter for registrations of a specific subscriber',
+            query => {
+                first => sub {
+                    my $q = shift;
+                    my $h = 
+                    return { 
+                        'voip_subscriber.id' => $q,
+                        'domain.id' => { -ident => 'subscriber.domain_id' },
+                    };
+                },
+                second => sub {
+                    return {
+                        join => [{ subscriber => 'voip_subscriber' }, 'domain']
+                    };
+                },
+            },
+        },
     ]},
 );
 
@@ -71,7 +90,9 @@ sub GET :Allow {
         my (@embedded, @links);
         my $form = $self->get_form($c);
         for my $item ($items->search({}, {order_by => {-asc => 'me.id'}})->all) {
-            push @embedded, $self->hal_from_item($c, $item, $form);
+            my $halitem = $self->hal_from_item($c, $item, $form);
+            next unless($halitem);
+            push @embedded, $halitem;
             push @links, Data::HAL::Link->new(
                 relation => 'ngcp:'.$self->resource_name,
                 href     => sprintf('/%s%d', $c->request->path, $item->id),
