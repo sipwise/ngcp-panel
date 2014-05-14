@@ -57,7 +57,8 @@ sub create_contract_balance {
             $c->log->error("Creating contract balance failed: " . $e);
             $e->rethrow;
         }
-    }
+    };
+    return;
 }
 
 sub recursively_lock_contract {
@@ -97,7 +98,7 @@ sub recursively_lock_contract {
 
     # then, check all child contracts in case of reseller
     my $resellers = $c->model('DB')->resultset('resellers')->search({
-        contract_id => $contract->id
+        contract_id => $contract->id,
     });
     for my $reseller($resellers->all) {
 
@@ -122,8 +123,7 @@ sub recursively_lock_contract {
                 'contact.reseller_id' => $reseller->id,
             }, {
                 join => 'contact',
-            }
-        );
+            });
         for my $customer($customers->all) {
             $customer->update({ status => $status });
             for my $subscriber($customer->voip_subscribers->all) {
@@ -151,6 +151,7 @@ sub recursively_lock_contract {
             }
         }
     }
+    return;
 }
 
 sub get_contract_rs {
@@ -210,7 +211,7 @@ sub get_contracts_rs_sippbx{
     $customers = $customers->search({
             'contact.reseller_id' => { '-not' => undef },
         },{
-            join => 'contact'
+            join => 'contact',
     });
 
     my $reseller_condition;
@@ -244,29 +245,29 @@ sub get_contract_calls_rs{
     my %params = @_;
     (my ($c,$contract_id,$stime,$etime)) = @params{qw/c contract_id stime etime/};
     
-    # SELECT 'out' as direction, SUM(c.source_customer_cost) AS cost, b.zone,
-                         # COUNT(*) AS number, SUM(c.duration) AS duration
-                    # FROM accounting.cdr c
-                    # LEFT JOIN billing.voip_subscribers v ON c.source_user_id = v.uuid
-                    # LEFT JOIN billing.billing_zones_history b ON b.id = c.source_customer_billing_zone_id
-                   # WHERE v.contract_id = ?
-                     # AND c.call_status = 'ok'
-                         # $start_time $end_time
-                   # GROUP BY b.zone 
+#     SELECT 'out' as direction, SUM(c.source_customer_cost) AS cost, b.zone,
+#                          COUNT(*) AS number, SUM(c.duration) AS duration
+#                     FROM accounting.cdr c
+#                     LEFT JOIN billing.voip_subscribers v ON c.source_user_id = v.uuid
+#                     LEFT JOIN billing.billing_zones_history b ON b.id = c.source_customer_billing_zone_id
+#                    WHERE v.contract_id = ?
+#                      AND c.call_status = 'ok'
+#                          $start_time $end_time
+#                    GROUP BY b.zone 
 
     my $zonecalls_rs = $c->model('DB')->resultset('cdr')->search( {
 #        source_user_id => { 'in' => [ map {$_->uuid} @{$contract->{subscriber}} ] },
         call_status       => 'ok',
         source_user_id    => { '!=' => '0' },
         source_account_id => $contract_id,
-        # start_time        => 
-            # [ -and =>
-                # { '>=' => $stime->epoch},
-                # { '<=' => $etime->epoch},
-            # ],
+#         start_time        =>
+#             [ -and =>
+#                 { '>=' => $stime->epoch},
+#                 { '<=' => $etime->epoch},
+#             ],
 
-            # { 
-            # '>=' => ["unix_timestamp(?)", $stime], 
+#             {
+#             '>=' => ["unix_timestamp(?)", $stime],
 # '<=' => ["unix_timestamp(?)",$etime] },
 #                { '>=' => \[ "unix_timestamp(?)", $stime ] },
 #                { '<=' => \[ "unix_timestamp(?)", $etime ] },
@@ -275,21 +276,132 @@ sub get_contract_calls_rs{
  
     },{
         'select'   => [ 
-            { sum         => 'me.source_customer_cost', -as => 'cost', }, 
-            { sum         => 'me.source_customer_free_time', -as => 'free_time', } , 
-            { sum         => 'me.duration', -as => 'duration', } , 
-            { count       => '*', -as => 'number', } ,
-            'source_customer_billing_zones_history.zone', 
+            { sum         => 'me.source_customer_cost', -as => 'cost' },
+            { sum         => 'me.source_customer_free_time', -as => 'free_time' },
+            { sum         => 'me.duration', -as => 'duration' },
+            { count       => '*', -as => 'number' },
+            'source_customer_billing_zones_history.zone',
         ],
         'as' => [qw/cost free_time duration number zone/],
         join        => 'source_customer_billing_zones_history',
         group_by    => 'source_customer_billing_zones_history.zone',
-    } );    
-    
+    } );
+
     return $zonecalls_rs;
 }
 
+sub get_contract_zonesfees_rs {
+    my %params = @_;
+    my $c = $params{c};
+    my $provider_id = $params{provider_id};
+    my $client_contact_id = $params{client_contact_id};
+    my $client_contract_id = $params{client_contract_id};
+    my $stime = $params{stime};
+    my $etime = $params{etime};
+    my $contract_id = $params{contract_id};
+
+    # should not be neccessary, done before
+#    $stime ||= NGCP::Panel::Utils::DateTime::current_local()->truncate( to => 'month' );
+#    $etime ||= $stime->clone->add( months => 1 );
+
+#     SELECT 'out' as direction, SUM(c.source_customer_cost) AS cost, b.zone,
+#                          COUNT(*) AS number, SUM(c.duration) AS duration
+#                     FROM accounting.cdr c
+#                     LEFT JOIN billing.voip_subscribers v ON c.source_user_id = v.uuid
+#                     LEFT JOIN billing.billing_zones_history b ON b.id = c.source_customer_billing_zone_id
+#                    WHERE v.contract_id = ?
+#                      AND c.call_status = 'ok'
+#                          $start_time $end_time
+#                    GROUP BY b.zone
+
+    my $zonecalls_rs_out = $c->model('DB')->resultset('cdr')->search( {
+#        source_user_id => { 'in' => [ map {$_->uuid} @{$contract->{subscriber}} ] },
+        'call_status'       => 'ok',
+        'source_user_id'    => { '!=' => '0' },
+        start_time        =>
+            [ -and =>
+                { '>=' => $stime->epoch},
+                { '<=' => $etime->epoch},
+            ],
+        source_account_id => $contract_id,
+    },{
+        'select'   => [
+            { sum         => 'me.source_customer_cost', -as => 'customercost' },
+            { sum         => 'me.source_carrier_cost', -as => 'carriercost' },
+            { sum         => 'me.source_reseller_cost', -as => 'resellercost' },
+            { sum         => 'me.source_customer_free_time', -as => 'free_time' },
+            { sum         => 'me.duration', -as => 'duration' },
+            { count       => '*', -as => 'number' },
+            'source_customer_billing_zones_history.zone',
+        ],
+        'as' => [qw/customercost carriercost resellercost free_time duration number zone/],
+        join        => 'source_customer_billing_zones_history',
+        group_by    => 'source_customer_billing_zones_history.zone',
+        order_by    => 'source_customer_billing_zones_history.zone',
+    } );
+
+    my $zonecalls_rs_in = $c->model('DB')->resultset('cdr')->search( {
+        'call_status'       => 'ok',
+        #'destination_user_id'    => { '!=' => '0' },
+        start_time        =>
+            [ -and =>
+                { '>=' => $stime->epoch},
+                { '<=' => $etime->epoch},
+            ],
+        destination_account_id => $contract_id,
+    },{
+        'select'   => [
+            { sum         => 'me.destination_customer_cost', -as => 'customercost' },
+            { sum         => 'me.destination_carrier_cost', -as => 'carriercost' },
+            { sum         => 'me.destination_reseller_cost', -as => 'resellercost' },
+            { sum         => 'me.destination_customer_free_time', -as => 'free_time' },
+            { sum         => 'me.duration', -as => 'duration' },
+            { count       => '*', -as => 'number' },
+            'destination_customer_billing_zones_history.zone',
+        ],
+        'as' => [qw/customercost carriercost resellercost free_time duration number zone/],
+        join        => 'destination_customer_billing_zones_history',
+        group_by    => 'destination_customer_billing_zones_history.zone',
+        order_by    => 'destination_customer_billing_zones_history.zone',
+    } );
+
+    return ($zonecalls_rs_in, $zonecalls_rs_out);
+}
+
+
+sub get_contract_zonesfees {
+    my %params = @_;
+    my $c = $params{c};
+    my $provider_id = $params{provider_id};
+    my $client_contact_id = $params{client_contact_id};
+    my $client_contract_id = $params{client_contract_id};
+    my $stime = $params{stime};
+    my $etime = $params{etime};
+    my $contract_id = $params{contract_id};
+
+    my ($zonecalls_rs_in, $zonecalls_rs_out) = get_contract_zonesfees_rs(%params);
+
+    my %zones;
+    for my $zone ($zonecalls_rs_in->all, $zonecalls_rs_out->all) {
+        my $zname = $zone->get_column('zone') // '';
+
+        my %cols = $zone->get_inflated_columns;
+        $zones{$zname}{customercost} += $cols{customercost} || 0;
+        $zones{$zname}{carriercost} += $cols{carriercost} || 0;
+        $zones{$zname}{resellercost} += $cols{resellercost} || 0;
+        $zones{$zname}{duration} += $cols{duration} || 0;
+        $zones{$zname}{free_time} += $cols{free_time} || 0;
+        $zones{$zname}{number} += $cols{number} || 0;
+
+        delete $zones{$zname}{zone};
+    }
+
+    return \%zones;
+}
+
 1;
+
+__END__
 
 =head1 NAME
 
