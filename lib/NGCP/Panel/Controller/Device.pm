@@ -1028,6 +1028,7 @@ sub dev_field_config :Chained('/') :PathPart('device/autoprov/config') :Args() {
             };
             # TODO: only push password for private/shared line?
             push @{ $range->{lines} }, {
+                extension => $sub->pbx_extension,
                 username => $sub->username,
                 domain => $sub->domain->domain,
                 password => $sub->password,

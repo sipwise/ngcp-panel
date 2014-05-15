@@ -30,7 +30,7 @@
         <Short_Name_[% key %]_>[% line.displayname %]</Short_Name_[% key %]_>
         <Share_Call_Appearance_[% key %]_>[% line.type == "shared" ? line.type : "private" %]</Share_Call_Appearance_[% key %]_>
         [% IF line.type == "blf" -%]
-          <Extended_Function_[% key %]_>fnc=blf+cp+sd;sub=[% line.username %]@[% line.domain %]</Extended_Function_[% key %]_>
+          <Extended_Function_[% key %]_>fnc=blf+cp+sd;sub=[% line.username %]@[% line.domain %];ext=[% line.extension %]@[% line.domain %]</Extended_Function_[% key %]_>
         [% ELSIF line.type == "shared" && barge_in == 0 -%]
           <SCA_Barge-In_Enable>Yes</SCA_Barge-In_Enable>
           [% barge_in = 1 -%]
@@ -53,9 +53,9 @@
           <Extension_[% key %]_>Disabled</Extension_[% key %]_>
         [% END -%]
       [% ELSIF range.name == "Attendant Console 1" -%]
-        <Unit_1_Key_[% key %]>fnc=sd+cp+blf;sub=[% line.username %]@[% line.domain %]</Unit_1_Key_[% key %]>
+        <Unit_1_Key_[% key %]>fnc=sd+cp+blf;sub=[% line.username %]@[% line.domain %];ext=[% line.extension %]@[% line.domain %]</Unit_1_Key_[% key %]>
       [% ELSIF range.name == "Attendant Console 2" -%]
-        <Unit_2_Key_[% key %]>fnc=sd+cp+blf;sub=[% line.username %]@[% line.domain %]</Unit_2_Key_[% key %]>
+        <Unit_2_Key_[% key %]>fnc=sd+cp+blf;sub=[% line.username %]@[% line.domain %];ext=[% line.extension %]@[% line.domain %]</Unit_2_Key_[% key %]>
       [% END -%]
     [% END -%]
     [% FOR key IN [1 .. range.num_lines] -%]
