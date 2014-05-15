@@ -7,12 +7,20 @@ use Moose::Util::TypeConstraints;
 has_field 'reseller' => (
     type => '+NGCP::Panel::Field::Reseller',
     validate_when_empty => 1,
+    element_attr => {
+        rel => ['tooltip'],
+        title => ['The reseller this sound set belongs to.'],
+    },
 );
 
 has_field 'contract' => (
     type => '+NGCP::Panel::Field::CustomerContract',
     label => 'Customer',
     validate_when_empty => 0,
+    element_attr => {
+        rel => ['tooltip'],
+        title => ['The contract this sound set belongs to. If set, the sound set becomes a customer sound set instead of a system sound set.'],
+    },
 );
 
 has_block 'fields' => (

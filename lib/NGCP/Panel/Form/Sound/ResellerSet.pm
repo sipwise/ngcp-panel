@@ -21,10 +21,18 @@ has_field 'name' => (
     type => 'Text',
     label => 'Name',
     required => 1,
+    element_attr => {
+        rel => ['tooltip'],
+        title => ['The name of the sound set'],
+    },
 );
 
 has_field 'description' => (
     type => 'Text',
+    element_attr => {
+        rel => ['tooltip'],
+        title => ['The description of the sound set'],
+    },
 );
 
 has_field 'contract_default' => (
