@@ -23,17 +23,34 @@ sub get_valid_post_data {
 
     my $c = $params{c};
     my $media_type = $params{media_type};
+    my $json =  $self->get_valid_raw_post_data(%params);
+    return unless $self->require_wellformed_json($c, $media_type, $json);
+    return JSON::from_json($json);
+}
+
+sub get_valid_raw_post_data {
+    my ($self, %params) = @_;
+
+    my $c = $params{c};
+    my $media_type = $params{media_type};
 
     return unless $self->forbid_link_header($c);
     return unless $self->valid_media_type($c, $media_type);
     return unless $self->require_body($c);
-    my $json =  $c->stash->{body};
-    return unless $self->require_wellformed_json($c, $media_type, $json);
-
-    return JSON::from_json($json);
+    return $c->stash->{body};
 }
 
 sub get_valid_put_data {
+    my ($self, %params) = @_;
+
+    my $c = $params{c};
+    my $media_type = $params{media_type};
+    my $json =  $self->get_valid_raw_put_data(%params);
+    return unless $self->require_wellformed_json($c, $media_type, $json);
+    return JSON::from_json($json);
+}
+
+sub get_valid_raw_put_data {
     my ($self, %params) = @_;
 
     my $c = $params{c};
@@ -44,10 +61,7 @@ sub get_valid_put_data {
     return unless $self->forbid_link_header($c);
     return unless $self->valid_media_type($c, $media_type);
     return unless $self->require_body($c);
-    my $json =  $c->stash->{body};
-    return unless $self->require_wellformed_json($c, $media_type, $json);
-
-    return JSON::from_json($json);
+    return $c->stash->{body};
 }
 
 sub get_valid_patch_data {
