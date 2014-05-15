@@ -17,6 +17,14 @@ sub epoch_local {
         epoch => $epoch,
     );
 }
+sub from_string {
+    my $s = shift;
+    # just for convenience, if date is passed like xxxx-xx-xx xx:xx:xx,
+    # convert it to xxxx-xx-xxTxx:xx:xx
+    $s =~ s/^(\d{4}\-\d{2}\-\d{2})\s+(\d.+)$/$1T$2/;
+    my $ts = DateTime::Format::ISO8601->parse_datetime($s);
+    return $ts;
+}
 
 sub new_local {
     my %params;

@@ -804,6 +804,19 @@ sub edit_balance :Chained('base') :PathPart('balance/edit') :Args(0) {
     $c->stash(form => $form);
     $c->stash(edit_flag => 1);
 }
+sub subscriber_ajax :Chained('base') :PathPart('subscriber/ajax') :Args(0) {
+    my ($self, $c) = @_;
+    my $res = $c->stash->{contract}->voip_subscribers->search({
+        'provisioning_voip_subscriber.is_pbx_group' => 0,
+        'me.status' => { '!=' => 'terminated' },
+
+    },{
+        join => 'provisioning_voip_subscriber',
+    });
+    NGCP::Panel::Utils::Datatables::process($c, $res, $c->stash->{subscriber_dt_columns});
+    $c->detach( $c->view("JSON") );
+}
+
 sub pbx_group_ajax :Chained('base') :PathPart('pbx/group/ajax') :Args(0) {
     my ($self, $c) = @_;
     my $res = $c->stash->{contract}->voip_subscribers->search({
