@@ -26,7 +26,7 @@ __PACKAGE__->config(
             Does => [qw(ACL CheckTrailingSlash RequireSSL)],
             Method => $_,
             Path => __PACKAGE__->dispatch_path,
-        } } @{ __PACKAGE__->allowed_methods }
+        } } @{ __PACKAGE__->allowed_methods },
     },
     action_roles => [qw(HTTPMethods)],
 );
@@ -36,6 +36,7 @@ sub auto :Private {
 
     $self->set_body($c);
     $self->log_request($c);
+    return 1;
 }
 
 sub GET : Allow {
@@ -240,6 +241,7 @@ sub end : Private {
     my ($self, $c) = @_;
     
     #$self->log_response($c);
+    return 1;
 }
 
 # vim: set tabstop=4 expandtab:
