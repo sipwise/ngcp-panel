@@ -155,7 +155,7 @@ sub invoice_list :Chained('base') :PathPart('list') :Args(0) {
     my ($self, $c) = @_;
     my $backend = NGCP::Panel::Model::DB::InvoiceTemplate->new( schema => $c->model('DB') );
     $c->log->debug('invoice_list');
-    $c->forward( 'template_list_data' );
+    #$c->forward( 'template_list_data' );
     my $provider_id = $c->stash->{provider}->id;
     my $invoice_list = $backend->getProviderInvoiceList(
         provider_id => $provider_id,
@@ -168,7 +168,7 @@ sub invoice_list :Chained('base') :PathPart('list') :Args(0) {
     );
     #$c->detach( $c->view() );
 }
-sub invoice_list_data :Chained('invoice') :PathPart('list') :Args(0) {
+sub invoice_list_data :Chained('base') :PathPart('list') :Args(0) {
     my ($self, $c) = @_;
     my $backend = NGCP::Panel::Model::DB::InvoiceTemplate->new( schema => $c->model('DB') );
     $c->log->debug('invoice_list_data');
@@ -184,7 +184,7 @@ sub invoice_list_data :Chained('invoice') :PathPart('list') :Args(0) {
     #$c->detach( $c->view() );
 }
 
-sub provider_client_list :Chained('invoice') :PathPart('clients/list') :Args(0) {
+sub provider_client_list :Chained('base') :PathPart('clients/list') :Args(0) {
     my ($self, $c) = @_;
     my $backend = NGCP::Panel::Model::DB::InvoiceTemplate->new( schema => $c->model('DB') );
     $c->log->debug('provider_client_list');
@@ -253,7 +253,7 @@ sub invoice_delete :Chained('base') :PathPart('delete') :Args(0) {
     my $in_validated = $validator->fif;
 
     #dirty hack 1
-    #really model logic should recieve validated input, but raw input also should be saved somewhere
+    #really model logic should receive validated input, but raw input also should be saved somewhere
     
     #---------------> $in = $in_validated;
     
@@ -639,7 +639,7 @@ sub template_list :Chained('template_base') :PathPart('list') :Args(0) {
 
 sub template :Chained('template_base') :PathPart('') :Args(0) {
     my ($self, $c) = @_;
-    $c->forward('invoice_list');
+    $c->forward('template_list_data');
     $c->stash(template => 'invoice/template.tt'); 
 }
 
@@ -730,8 +730,9 @@ sub template_view :Chained('template_base') :PathPart('view') :Args {
             #sanitize
             my $tt_string_sanitized = $in->{tt_string};
             $tt_string_sanitized =~s/<script.*?\/script>//gs;
+            $tt_string_sanitized =~s/&#x27;/'/gs;
             my $tokens_re = qr/\[%(.*?)%\]/;
-            my $token_shape_re = qr/\s+/;
+            my $token_shape_re = qr/\s*/;
             my %tokens_valid = map{$_=~s/$token_shape_re//sg; $_ => 1;} ($tt_string_default=~/$tokens_re/sg);
             #use irka;
             #use Data::Dumper;

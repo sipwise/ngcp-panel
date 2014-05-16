@@ -125,10 +125,12 @@ var mainWrapperInit = function () {
         }
         $('#dataConfirmOK').text($(this).attr('data-confirm'));
         if($('#mod_edit').length) {
-            $('#mod_edit').modal('hide');
-            $('#dataConfirmCancel').live("click", function(ev) {
-                $('#mod_edit').modal('show');
-            });
+            if(!$(this).attr('cancel-hide')){
+                $('#mod_edit').modal('hide');
+                $('#dataConfirmCancel').live("click", function(ev) {
+                    $('#mod_edit').modal('show');
+                });
+            }
         }
         $('#dataConfirmModal').modal({show:true});
         return false;

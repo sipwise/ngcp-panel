@@ -33,7 +33,7 @@ function getTtIdVal(){
         tt_sourcestate: 'saved',
         tt_id: getTtIdVal(),
         provider_id: '[%provider.id%]',
-    });void(0);">[% c.loc('Discard Changes')%] <i class="icon-edit"></i></a>
+    });void(0);" cancel-hide="1">[% c.loc('Discard Changes')%] <i class="icon-edit"></i></a>
 </span>
 [%IF viewmode == 'development' %]
 <div class="ngcp-separator"></div>
@@ -42,7 +42,7 @@ function getTtIdVal(){
         tt_sourcestate: 'default',
         tt_id: getTtIdVal(),
         provider_id: '[%provider.id%]',
-    });void(0);">[% c.loc('Load default')%] <i class="icon-edit"></i></a>
+    });void(0);" cancel-hide="1">[% c.loc('Load default')%] <i class="icon-edit"></i></a>
 </span>
 
 <span id="load_previewed_control" style="display:none;visibility:hidden;">
@@ -50,7 +50,7 @@ function getTtIdVal(){
         tt_sourcestate: 'previewed',
         tt_id: getTtIdVal(),
         provider_id: '[%provider.id%]',
-    });void(0);">[% c.loc('Load previewed')%] <i class="icon-edit"></i></a>
+    });void(0);" cancel-hide="1">[% c.loc('Load previewed')%] <i class="icon-edit"></i></a>
 </span>
 [%END%]
 <div class="ngcp-separator"></div>

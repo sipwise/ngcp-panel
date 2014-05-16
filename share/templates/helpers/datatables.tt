@@ -111,7 +111,7 @@ $(document).ready(function() {
                         if([% button.condition %]) {
                       [% END -%]
                         html +=
-                           '<a class="btn [% button.class %]" href="[% button.uri %]" [% confirm_delete %][%IF button.onclick -%] onclick="[%button.onclick%]"[%END%][%IF button.tooltip -%] rel="tooltip" data-original-title="[%button.tooltip%]"[%END%]>' +
+                           '<a class="btn [% button.class %]" href="[% button.uri %]" [% confirm_delete %][%IF button.onclick -%] onclick="[%button.onclick%]"[%END%][%IF button.tooltip -%] rel="tooltip" data-original-title="[%button.tooltip%]"[%END%] [% button.attributes %]>' +
                               '<i class="[% button.icon %]"></i> [% button.name %]' +
                             '</a>';
                             

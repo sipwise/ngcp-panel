@@ -222,7 +222,7 @@ invoice.month=date.format(invoice.start,'%B');
         [%END-%]
         [%IF lastcallrows > 0 %]
             [%#2 because callpages started from 1, not from 0, and we need add 1 for titlepage %]
-            [% pagenum = 2 + allmidcallpages + ( allzonepages ?  1 : 0 ) %]
+            [% pagenum = 1 + 1 + allmidcallpages + allzonepages %]
             [% output = output _ document_header()%]
             [% output = output _ callpage( invoice_details_calls.slice( allcallrowsnumber - lastcallrows ), total, pagenum, allcallpages, allcallpages, midcallinterval ) -%]
             [% output = output _ bgpage(pagenum, allcallpages, allcallpages) -%]

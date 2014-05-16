@@ -44,11 +44,11 @@ tt_id: '[%template.get_column('id')%]',
                     <i class="icon-edit"></i> [% c.loc('Edit template') %]
                 </a>
                 <a class="btn btn-small btn-primary ngcp-noback-button" data-confirm="[%IF template.get_column('is_active'); c.loc('Deactivate'); ELSE; c.loc('Activate'); END%]"
-                   href="javascript:fetch_into(staticContainerId, '[%- c.uri_for_action("/invoice/template_activate", [provider.id, template.get_column('id'),template.get_column('is_active')]) -%]','',function(){ refreshMessagesAjax();mainWrapperInit(); listRestoreCurrentEdit('',staticContainerId);});void(0);">
+                   href="javascript:fetch_into(staticContainerId, '[%- c.uri_for_action("/invoice/template_activate", [provider.id, template.get_column('id'),template.get_column('is_active')]) -%]','',function(){ refreshMessagesAjax();mainWrapperInit(); listRestoreCurrentEdit('',staticContainerId);});void(0);" cancel-hide="1">
                     <i class="icon-edit"></i> [%IF template.get_column('is_active'); c.loc('Deactivate'); ELSE; c.loc('Activate'); END%]
                 </a>
                 <a class="btn btn-small btn-secondary ngcp-noback-button" data-confirm="Delete" 
-                   href="javascript:fetch_into(staticContainerId, '[%- c.uri_for_action("/invoice/template_delete", [provider.id, template.get_column('id')]) -%]','',function(){ refreshMessagesAjax();mainWrapperInit();listRestoreCurrentEdit('',staticContainerId);if('[%template.get_column('id')%]' === getCurrentEditId('', staticContainerId)){clearTemplateForm({provider_id: '[%provider.id%]'});} });void(0);">
+                   href="javascript:fetch_into(staticContainerId, '[%- c.uri_for_action("/invoice/template_delete", [provider.id, template.get_column('id')]) -%]','',function(){ refreshMessagesAjax();mainWrapperInit();listRestoreCurrentEdit('',staticContainerId);if('[%template.get_column('id')%]' === getCurrentEditId('', staticContainerId)){clearTemplateForm({provider_id: '[%provider.id%]'});} });void(0);" cancel-hide="1">
                     <i class="icon-trash"></i> [% c.loc('Delete') %]
                 </a>
                 [%END%]

@@ -253,13 +253,15 @@ sub getContractBalance{
     return  $self->schema->resultset('contract_balances')->search({
         'contract_id' => $client_contract_id,
         #'contract.status' => { '!=' => 'terminated' },
-        'start' => [
-            { '<='  => $etime->ymd },
-            { '-is' => undef },
-        ],
-        'end' => [
-            { '>='  => $stime->ymd },
-            { '-is' => undef },
+        '-and'  =>  [
+            'start' => [
+                { '='  => $stime->datetime },
+                { '-is' => undef },
+            ],
+            'end' => [
+                { '='  => $etime->datetime },
+                { '-is' => undef },
+            ],
         ],
     },undef)->first;
 }
