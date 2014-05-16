@@ -46,6 +46,7 @@ sub get_valid_put_data {
     my $c = $params{c};
     my $media_type = $params{media_type};
     my $json =  $self->get_valid_raw_put_data(%params);
+    return unless $json;
     return unless $self->require_wellformed_json($c, $media_type, $json);
     return JSON::from_json($json);
 }

@@ -23,6 +23,7 @@ $ua->ssl_opts(
 
 # OPTIONS tests
 {
+    diag("server is $uri");
     # test some uri params
     $req = HTTP::Request->new('OPTIONS', $uri.'/api/?foo=bar&bla');
     $res = $ua->request($req);
@@ -76,6 +77,14 @@ $ua->ssl_opts(
                  subscriberprofilesets => 1,
                  voicemails => 1,
                  voicemailrecordings => 1,
+                 soundsets => 1,
+                 soundfiles => 1,
+                 soundfilerecordings => 1,
+                 reminders => 1,
+                 trustedsources => 1,
+                 voicemailsettings => 1,
+                 subscriberregistrations => 1,
+                 calls => 1,
                   };
     foreach my $link(@links) {
         my $rex = qr!^</api/[a-z]+/>; rel="collection http://purl\.org/sipwise/ngcp-api/#rel-([a-z]+s)"$!;
