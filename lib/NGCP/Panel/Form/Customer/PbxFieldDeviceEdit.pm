@@ -25,16 +25,14 @@ sub build_lines {
     return [] unless $c;
     my $fdev = $c->stash->{pbx_device};
     my @options = ();
-    my $i = 0;
     foreach my $range($fdev->profile->config->device->autoprov_device_line_ranges->all) {
         push @options, { label => '', value => '' };
-        for(my $j = 0; $j < $range->num_lines; ++$j) {
+        for(my $i = 0; $i < $range->num_lines; ++$i) {
             push @options, { 
-                label => $range->name . ' - Key/Line ' . $j,
-                value => $range->id . '.' . $i . '.' . $j,
+                label => $range->name . ' - Key/Line ' . $i,
+                value => $range->id . '.' . $i,
             };
         }
-        $i++;
     }
     return \@options;
 }

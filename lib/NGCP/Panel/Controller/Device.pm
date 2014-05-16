@@ -1034,7 +1034,6 @@ sub dev_field_config :Chained('/') :PathPart('device/autoprov/config') :Args() {
                 password => $sub->password,
                 displayname => $display_name,
                 keynum => $line->key_num,
-                rangenum => $line->linerange_num,
                 type => $line->line_type,
             };
         }

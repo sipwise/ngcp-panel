@@ -1170,12 +1170,11 @@ sub pbx_device_create :Chained('base') :PathPart('pbx/device/create') :Args(0) {
                         $err = 1;
                         last;
                     }
-                    my ($range_id, $range_num, $key_num) = split /\./, $line->field('line')->value;
+                    my ($range_id, $key_num) = split /\./, $line->field('line')->value;
                     my $type = $line->field('type')->value;
                     $fdev->autoprov_field_device_lines->create({
                         subscriber_id => $prov_subscriber->id,
                         linerange_id => $range_id,
-                        linerange_num => $range_num,
                         key_num => $key_num,
                         line_type => $type,
                     });
@@ -1244,7 +1243,7 @@ sub pbx_device_edit :Chained('pbx_device_base') :PathPart('edit') :Args(0) {
     foreach my $line($c->stash->{pbx_device}->autoprov_field_device_lines->all) {
         push @lines, {
             subscriber_id => $line->subscriber_id,
-            line => $line->linerange_id . '.' . $line->linerange_num . '.' . $line->key_num,
+            line => $line->linerange_id . '.' . $line->key_num,
             type => $line->line_type,
         };
     }
@@ -1294,12 +1293,11 @@ sub pbx_device_edit :Chained('pbx_device_base') :PathPart('edit') :Args(0) {
                         $err = 1;
                         last;
                     }
-                    my ($range_id, $range_num, $key_num) = split /\./, $line->field('line')->value;
+                    my ($range_id, $key_num) = split /\./, $line->field('line')->value;
                     my $type = $line->field('type')->value;
                     $fdev->autoprov_field_device_lines->create({
                         subscriber_id => $prov_subscriber->id,
                         linerange_id => $range_id,
-                        linerange_num => $range_num,
                         key_num => $key_num,
                         line_type => $type,
                     });

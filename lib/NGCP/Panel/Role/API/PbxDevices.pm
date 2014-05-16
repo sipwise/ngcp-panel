@@ -56,7 +56,7 @@ sub resource_from_item {
         my $p_subs = $line->provisioning_voip_subscriber;
         my $b_subs = $p_subs ? $p_subs->voip_subscriber : undef;
         my $line_attr = { $line->get_inflated_columns };
-        foreach my $f(qw/id device_id linerange_id linerange_num/) {
+        foreach my $f(qw/id device_id linerange_id/) {
             delete $line_attr->{$f};
         }
         foreach my $f(qw/key_num/) {

@@ -657,7 +657,7 @@
 
                 $('#line\\.' + line_id + '\\.line').append('<option value=""></option>');
                 for(var j = 0; j < range.num_lines; ++j) {
-                    $('#line\\.' + line_id + '\\.line').append('<option id="line.' + line_id + '.line.' + j + '" value="' + range.id + '.' + i + '.' + j + '">' + range.name + ' - Key/Line ' + j + '</option>');
+                    $('#line\\.' + line_id + '\\.line').append('<option id="line.' + line_id + '.line.' + j + '" value="' + range.id + '.' + j + '">' + range.name + ' - Key/Line ' + j + '</option>');
                 }
             }
             $('#line\\.' + line_id + '\\.line').change(function(obj) {
@@ -667,7 +667,6 @@
 
         function handle_change_line(obj, active_type) {
             var range_id;
-            var range_num;
             var key_num;
 
             var line_id = $(obj.currentTarget).attr("id").replace(/^line\.(\d+)\..+$/, "$1");
@@ -675,12 +674,21 @@
 
             $(obj.currentTarget).find('option:selected').each(function() {
                 console.log("selected line key ", $(this).attr('value'));
-                range_id = $(this).attr('value').replace(/^(\d+)\.(\d+)\.(\d+)$/, "$1");
-                range_num = $(this).attr('value').replace(/^(\d+)\.(\d+)\.(\d+)$/, "$2");
-                key_num = $(this).attr('value').replace(/^(\d+)\.(\d+)\.(\d+)$/, "$3");
+                range_id = $(this).attr('value').replace(/^(\d+)\.(\d+)$/, "$1");
+                key_num = $(this).attr('value').replace(/^(\d+)\.(\d+)$/, "$2");
+                console.log("+++++++ range_id=" + range_id + ", key_num=" + key_num);
             });
-            var range = aaData[range_num];
-            console.log("setting line_id " + line_id + ", range for range_num " + range_num + " is ", range);
+            var range;
+            console.log("+++++++ checking ranges");
+            for(var i = 0; i < aaData.length; ++i) {
+                range = aaData[i];
+                console.log("+++++++ checking range_id " + range_id + " against aaData id " + range.id);
+                if(range.id == range_id) {
+                    console.log("+++++++ found, range name=" + range.name);
+                    break;
+                }
+            }
+            console.log("setting line_id " + line_id + ", range is ", range);
 
             $('#line\\.' + line_id + '\\.type option').remove();
             if(range && +range.can_private) { // cast to int
@@ -700,7 +708,7 @@
         [% ELSIF edit_flag == 1 -%]
             var linekeys = {
             [% FOR line IN pbx_device.autoprov_field_device_lines.all -%]
-                '[% line.linerange_id %].[% line.linerange_num %].[% line.key_num %]':'[% line.line_type %]'[% line == bx_device.autoprov_field_device_lines.all.last ? '' : ',' %]
+                '[% line.linerange_id %].[% line.key_num %]':'[% line.line_type %]'[% line == pbx_device.autoprov_field_device_lines.all.last ? '' : ',' %]
             [% END -%]
             };
             var prof_id;
