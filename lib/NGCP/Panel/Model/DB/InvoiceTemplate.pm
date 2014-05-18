@@ -522,4 +522,72 @@ sub get_contract_zonesfees_rs {
     return $zonecalls_rs;
 }
 
+sub checkResellerClientContract{
+    my($self,$in) = @_;
+    my $res = 0;
+    
+    if($in->{client_contract_id} && $in->{provider_id}){
+        if(my $contract = $self->schema->resultset('contracts')->search({
+            'contact.reseller_id' => $in->{provider_id},
+            'me.id' => $in->{client_contract_id},
+        },{
+            'join' => 'contact',
+        })->first){
+            $res = $contract->get_column('id');
+        }
+    }
+    return $res;
+}
+
+sub checkResellerClientContact{
+    my($self,$in) = @_;
+    my $res = 0;
+    
+    if($in->{client_contact_id} && $in->{provider_id}){
+        if(my $contact = $self->schema->resultset('contacts')->search({
+            'reseller_id' => $in->{provider_id},
+            'id' => $in->{client_contact_id},
+        })->first){
+            $res = $contact->get_column('id');
+        }
+    }
+    return $res;
+}
+
+sub checkResellerInvoice{
+    my($self,$in) = @_;
+    my $res = 0;
+    
+    if($in->{invoice_id} && $in->{provider_id}){
+        if(my $invoice = $self->schema->resultset('invoices')->search({
+            'contact.reseller_id' => $in->{provider_id},
+            'id' => $in->{client_contact_id},
+        },{
+            'join' => { 'contract_balances' => { 'contract' => 'contact' }},
+        })->first){
+            $res = $invoice->get_column('id');
+        }
+    }
+    return $res;
+}
+
+sub checkResellerInvoiceTemplate{
+    my($self,$in) = @_;
+    my $res = 0;
+    #no warnings 'uninitialized';
+    #$in->{c}->log->debug("checkResellerInvoiceTemplate: tt_id=".$in->{tt_id}.";provider_id=".$in->{provider_id}.";");
+
+    if($in->{tt_id} && $in->{provider_id}){
+        #$in->{c}->log->debug("checkResellerInvoiceTemplate: tt_id=".$in->{tt_id}.";provider_id=".$in->{provider_id}.";");
+        if(my $tt = $self->schema->resultset('invoice_templates')->search({
+            'reseller_id' => $in->{provider_id},
+            'id' => $in->{tt_id},
+        })->first){
+            $res = $tt->get_column('id');
+        }
+    }
+    #$in->{c}->log->debug("checkResellerInvoiceTemplate: res=".$res.";");
+    return $res;
+}
+
 1;

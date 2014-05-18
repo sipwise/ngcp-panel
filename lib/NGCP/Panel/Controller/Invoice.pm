@@ -55,25 +55,33 @@ sub ajax_datatables_data :Chained('base') :PathPart('ajax') :Args(1) {
 
 sub base :Chained('invoice') :PathPart('') :CaptureArgs(1) {
     my ($self, $c, $reseller_id) = @_;
-    $c->log->debug('base');
+    $c->log->debug("base: reseller_id=$reseller_id; uri_for=".$c->uri_for().";");
   
-    unless($reseller_id && $reseller_id->is_int) {
+    my $error_exit_sub = sub {
+        my($log, $desc) = @_;
+        $desc //= $log;
         NGCP::Panel::Utils::Message->error(
             c     => $c,
-            log   => 'Invalid reseller id detected',
-            desc  => $c->loc('Invalid reseller id detected'),
+            log   => $log,
+            desc  => $c->loc($desc),
         );
-        $c->response->redirect($c->uri_for());
+        NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for('/reseller'));
+        #$c->response->redirect($c->uri_for('/reseller'));
+        $c->detach();
+    };
+    unless($reseller_id && $reseller_id->is_int) {
+        $error_exit_sub->('Invalid reseller id detected');
         return;
     }
+    
     $c->detach('/denied_page')
     	if($c->user->roles eq "reseller" && $c->user->reseller_id != $reseller_id);
+    
     
     my $reseller = $c->model('DB')->resultset('resellers')->search({
         status => { '!=' => 'terminated' },
         id => $reseller_id
     });
-
     unless($reseller->first) {
         NGCP::Panel::Utils::Message->error(
             c     => $c,
@@ -81,6 +89,39 @@ sub base :Chained('invoice') :PathPart('') :CaptureArgs(1) {
             desc  => $c->loc('Reseller not found'),
         );
         NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for('/reseller'));
+    }
+
+    my $backend = NGCP::Panel::Model::DB::InvoiceTemplate->new( schema => $c->model('DB') );
+    my $in = $c->request->parameters;
+    $in->{provider_id} = $reseller_id;
+    $in->{c} = $c;
+    
+    foreach(qw/provider_id client_contract_id client_contact_id invoice_id tt_id/){ $in->{$_} //= ''; $c->log->debug("base: $_=".$in->{$_}.";");}
+   
+
+    if($in->{client_contact_id}){
+        if(!$backend->checkResellerClientContact($in)){
+            $error_exit_sub->('Invalid contact id detected');
+            return;
+        }
+    }
+    if($in->{client_contract_id}){
+        if(!$backend->checkResellerClientContract($in)){
+            $error_exit_sub->('Invalid contract id detected');
+            return;
+        }
+    }
+    if($in->{invoice_id}){
+        if(!$backend->checkResellerInvoice($in)){
+            $error_exit_sub->('Invalid invoice id detected');
+            return;
+        }
+    }
+    if($in->{tt_id}){
+        if(!$backend->checkResellerInvoiceTemplate($in)){
+            $error_exit_sub->('Invalid invoice template id detected');
+            return;
+        }
     }
     $c->stash(
         provider    => $reseller->first,
@@ -198,7 +239,7 @@ sub provider_client_list :Chained('base') :PathPart('clients/list') :Args(0) {
     #$c->detach( $c->view() );
 }
 
-sub invoice_data :Chained('invoice') :PathPart('data') :Args(1) {
+sub invoice_data :Chained('base') :PathPart('data') :Args(1) {
     my ($self, $c) = @_;
     my ($invoice_id) = pop;
     $c->log->debug('invoice_data');

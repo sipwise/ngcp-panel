@@ -148,8 +148,19 @@ function applyClientFilter(table,tr,contact_id){
         { name => 'contract_balances.free_time_balance', title => c.loc('Free Time balance')},
     ];
     helper.dt_buttons = [
-        { name = c.loc('Delete'), uri = "javascript:fetch_into(\\'messages\\', \\'" _ c.uri_for_action('/invoice/invoice_delete', [ provider.id ] ) _ "\\',\\'invoice_id='+full.contract_balances_invoice_id+'\\',function(){\$(\\'#" _ helper.identifier _ "_table\\').DataTable().fnDraw();});void(0);", class = 'btn-small btn-secondary', icon = 'icon-trash', attributes= ' cancel-hide="1"' },
-        { name = c.loc('View invoice PDF'), uri = "javascript:window.open(\\'/invoice/data/' + full.contract_balances_invoice_id + '\\',\\'_blank\\');void(0);", class = 'btn-small btn-primary', icon = 'icon-edit' },
+        { 
+            name = c.loc('Delete'), 
+            uri = "javascript:fetch_into(\\'messages\\', \\'" _ c.uri_for_action('/invoice/invoice_delete', [ provider.id ] ) _ "\\',\\'invoice_id='+full.contract_balances_invoice_id+'\\',function(){\$(\\'#" _ helper.identifier _ "_table\\').DataTable().fnDraw();});void(0);", 
+            class = 'btn-small btn-secondary', 
+            icon = 'icon-trash', 
+            attributes= ' cancel-hide="1"' 
+        },
+        { 
+            name = c.loc('View invoice PDF'), 
+            uri = "javascript:window.open(\\'" _ c.uri_for_action('/invoice/invoice_data', [ provider.id ] ) _ "/' + full.contract_balances_invoice_id + '\\',\\'_blank\\');void(0);", 
+            class = 'btn-small btn-primary', 
+            icon = 'icon-edit' 
+        },
     ];
     helper.ajax_uri = c.uri_for_action( '/invoice/ajax_datatables_data', [ provider.id, 'invoice_list_data' ] ) ;
     initHelperAuto();
