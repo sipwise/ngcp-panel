@@ -222,7 +222,7 @@ sub get_collection_properties {
                 $name = 'primary_number';
             } elsif($f->type =~ /AliasNumber/) {
                 $name = 'alias_numbers';
-            } elsif($f->type !~ /Regex|EmailList|SubscriberStatusSelect|SubscriberLockSelect|Identifier/) {
+            } elsif($f->type !~ /Regex|EmailList|SubscriberStatusSelect|SubscriberLockSelect|Identifier|PosInteger/) {
                 $name .= '_id';
             }
         }

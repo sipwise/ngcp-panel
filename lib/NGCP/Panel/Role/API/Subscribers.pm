@@ -37,6 +37,10 @@ sub resource_from_item {
         delete $resource{is_pbx_group};
         delete $resource{pbx_group_id};
     }
+    unless($resource{is_pbx_group}) {
+        delete $resource{pbx_hunt_policy};
+        delete $resource{pbx_hunt_timeout};
+    }
     delete $resource{contact_id};
     if($item->contact) {
         $resource{email} = $item->contact->email;
@@ -228,8 +232,6 @@ sub prepare_resource {
         resource => $resource,
         form => $form,
     );
-
-    use Data::Printer; p $resource;
 
     unless($domain) {
         $domain = $c->model('DB')->resultset('domains')->search($resource->{domain_id});

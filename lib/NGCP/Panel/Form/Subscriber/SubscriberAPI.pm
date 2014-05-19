@@ -26,7 +26,7 @@ has_field 'alias_numbers' => (
     wrapper_class => [qw/hfh-rep/],
     element_attr => {
         rel => ['tooltip'],
-        title => ['Additional E.164 numbers (each containing a cc, ac and sn attribute) mapped to this subscriber for inbound calls.']
+        title => ['Additional E.164 numbers (each containing a cc, ac and sn attribute) mapped to this subscriber for inbound calls.'],
     },
 );
 
@@ -35,7 +35,7 @@ has_field 'lock' => (
     label => 'Lock Level',
     element_attr => {
         rel => ['tooltip'],
-        title => ['The lock level of the subscriber.']
+        title => ['The lock level of the subscriber.'],
     },
 );
 
@@ -45,7 +45,7 @@ has_field 'is_pbx_group' => (
     default => 0,
     element_attr => {
         rel => ['tooltip'],
-        title => ['Whether this subscriber is used as PBX group.']
+        title => ['Whether this subscriber is used as PBX group.'],
     },
 );
 
@@ -54,7 +54,27 @@ has_field 'pbx_group' => (
     label => 'PBX Group',
     element_attr => {
         rel => ['tooltip'],
-        title => ['The PBX group id this subscriber belongs to.']
+        title => ['The PBX group id this subscriber belongs to.'],
+    },
+);
+
+has_field 'pbx_hunt_policy' => (
+    type => 'Select',
+    options => [
+        { value => 'serial', label => 'serial'},
+        { value => 'parallel', label => 'parallel'},
+    ],
+    element_attr => {
+        rel => ['tooltip'],
+        title => ["'serial' or 'parallel'."],
+    },
+);
+
+has_field 'pbx_hunt_timeout' => (
+    type => '+NGCP::Panel::Field::PosInteger',
+    element_attr => {
+        rel => ['tooltip'],
+        title => ['Serial Hunting Timeout'],
     },
 );
 
@@ -64,7 +84,7 @@ has_field 'profile' => (
     validate_when_empty => 0,
     element_attr => {
         rel => ['tooltip'],
-        title => ['The profile defining the actual feature set for this subscriber.']
+        title => ['The profile defining the actual feature set for this subscriber.'],
     },
 );
 
@@ -100,6 +120,7 @@ sub update_fields {
     if($c->config->{security}->{password_web_autogenerate}) {
         $self->field('webpassword')->required(0);
     }
+    return;
 }
 
 1;
