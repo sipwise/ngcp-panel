@@ -293,12 +293,10 @@ sub get_contract_calls_rs{
 sub get_contract_zonesfees_rs {
     my %params = @_;
     my $c = $params{c};
-    my $provider_id = $params{provider_id};
-    my $client_contact_id = $params{client_contact_id};
-    my $client_contract_id = $params{client_contract_id};
     my $stime = $params{stime};
     my $etime = $params{etime};
     my $contract_id = $params{contract_id};
+    my $subscriber_uuid = $params{subscriber_uuid};
 
     # should not be neccessary, done before
 #    $stime ||= NGCP::Panel::Utils::DateTime::current_local()->truncate( to => 'month' );
@@ -315,9 +313,8 @@ sub get_contract_zonesfees_rs {
 #                    GROUP BY b.zone
 
     my $zonecalls_rs_out = $c->model('DB')->resultset('cdr')->search( {
-#        source_user_id => { 'in' => [ map {$_->uuid} @{$contract->{subscriber}} ] },
         'call_status'       => 'ok',
-        'source_user_id'    => { '!=' => '0' },
+        'source_user_id'    => ($subscriber_uuid || { '!=' => '0' }),
         start_time        =>
             [ -and =>
                 { '>=' => $stime->epoch},
@@ -342,7 +339,7 @@ sub get_contract_zonesfees_rs {
 
     my $zonecalls_rs_in = $c->model('DB')->resultset('cdr')->search( {
         'call_status'       => 'ok',
-        #'destination_user_id'    => { '!=' => '0' },
+        'destination_user_id'    => ($subscriber_uuid || { '!=' => '0' }),
         start_time        =>
             [ -and =>
                 { '>=' => $stime->epoch},
@@ -371,13 +368,6 @@ sub get_contract_zonesfees_rs {
 
 sub get_contract_zonesfees {
     my %params = @_;
-    my $c = $params{c};
-    my $provider_id = $params{provider_id};
-    my $client_contact_id = $params{client_contact_id};
-    my $client_contract_id = $params{client_contract_id};
-    my $stime = $params{stime};
-    my $etime = $params{etime};
-    my $contract_id = $params{contract_id};
 
     my ($zonecalls_rs_in, $zonecalls_rs_out) = get_contract_zonesfees_rs(%params);
 

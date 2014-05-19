@@ -52,6 +52,7 @@ sub GET :Allow {
         last unless $self->resource_exists($c, deviceprofile => $field_dev);
 
         my $hal = $self->hal_from_item($c, $field_dev);
+        last unless $hal;
 
         my $response = HTTP::Response->new(HTTP_OK, undef, HTTP::Headers->new(
             (map { # XXX Data::HAL must be able to generate links with multiple relations

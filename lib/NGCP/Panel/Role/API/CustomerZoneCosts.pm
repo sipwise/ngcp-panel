@@ -52,6 +52,7 @@ sub hal_from_item {
     );
 
     my $resource = $self->resource_from_item($c, $item);
+    return unless $resource;
     $hal->resource($resource);
     return $hal;
 }
@@ -62,12 +63,24 @@ sub resource_from_item {
     my %resource;
 
     my ($stime, $etime, $subscriber_id) = $self->get_query_params($c);
+    my $subscriber_uuid;
+    if ($subscriber_id) {
+        my $subscriber = $c->model('DB')->resultset('voip_subscribers')->find({ id => $subscriber_id });
+        unless ($subscriber) {
+            $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Invalid subscriber_id. Subscriber not found.");
+            $c->log->debug("invalid subscriber");
+            return;
+        }
+        $subscriber_uuid = $subscriber->uuid;
+        $c->log->debug("filtering by subscriber $subscriber_uuid");
+    }
 
     my $zonecalls = NGCP::Panel::Utils::Contract::get_contract_zonesfees(
         c => $c,
         contract_id => $item->id,
         stime => $stime,
         etime => $etime,
+        subscriber_uuid => $subscriber_uuid,
     );
 
     $resource{customer_id} = int($item->id);

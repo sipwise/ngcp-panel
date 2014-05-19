@@ -85,13 +85,17 @@ sub GET :Allow {
         my $query_string = $self->query_param_string($c);
         return unless $query_string;
         my (@embedded, @links);
+        my $error_flag = 0;
         for my $dev ($field_devs->search({}, {order_by => {-asc => 'me.id'}})->all) {
-            push @embedded, $self->hal_from_item($c, $dev);
+            my $hal = $self->hal_from_item($c, $dev);
+            $error_flag = 1 unless $hal;
+            push @embedded, $hal;
             push @links, Data::HAL::Link->new(
                 relation => 'ngcp:'.$self->resource_name,
                 href     => sprintf('%s%d?%s', $self->dispatch_path, $dev->id, $query_string),
             );
         }
+        last if $error_flag;
         push @links,
             Data::HAL::Link->new(
                 relation => 'curies',
