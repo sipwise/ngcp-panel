@@ -2004,13 +2004,11 @@ sub edit_master :Chained('master') :PathPart('edit') :Args(0) :Does(ACL) :ACLDet
             $params->{email} = $subscriber->contact->email;
         }
 
-=pod
-        my $display_pref = NGCP::Panel::Utils::Preferences::get_usr_preference_rs(
-            c => $c, attribute => 'display_name', prov_subscriber => $prov_subscriber);
-        if($display_pref->first) {
-            $params->{display_name} = $display_pref->first->value;
-        }
-=cut
+#        my $display_pref = NGCP::Panel::Utils::Preferences::get_usr_preference_rs(
+#            c => $c, attribute => 'display_name', prov_subscriber => $prov_subscriber);
+#        if($display_pref->first) {
+#            $params->{display_name} = $display_pref->first->value;
+#        }
 
         NGCP::Panel::Utils::Subscriber::prepare_alias_select(
             c => $c,
@@ -2065,7 +2063,7 @@ sub edit_master :Chained('master') :PathPart('edit') :Args(0) :Does(ACL) :ACLDet
                 }
                 my $prov_params = {};
                 $prov_params->{pbx_extension} = $form->params->{pbx_extension};
-                $prov_params->{webusername} = $form->params->{webusername};
+                $prov_params->{webusername} = $form->params->{webusername} || undef;
                 $prov_params->{webpassword} = $form->params->{webpassword}
                     if($form->params->{webpassword});
                 $prov_params->{password} = $form->params->{password}
@@ -2283,15 +2281,15 @@ sub edit_master :Chained('master') :PathPart('edit') :Args(0) :Does(ACL) :ACLDet
             });
             delete $c->session->{created_objects}->{group};
             $c->flash(messages => [{type => 'success', text => $c->loc('Successfully updated subscriber') }]);
-=pod            
-        } catch($e) {
-            NGCP::Panel::Utils::Message->error(
-                c     => $c,
-                error => $e,
-                desc  => $c->loc('Failed to update subscriber.'),
-            );
-        }
-=cut        
+
+#        } catch($e) {
+#            NGCP::Panel::Utils::Message->error(
+#                c     => $c,
+#                error => $e,
+#                desc  => $c->loc('Failed to update subscriber.'),
+#            );
+#        }
+
 
         NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for_action('/subscriber/details', [$c->req->captures->[0]]));
     }
