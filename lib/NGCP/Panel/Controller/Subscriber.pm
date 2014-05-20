@@ -1949,7 +1949,7 @@ sub edit_master :Chained('master') :PathPart('edit') :Args(0) :Does(ACL) :ACLDet
         try {
             $schema->txn_do(sub {
                 my $prov_params = {};
-                $prov_params->{webusername} = $form->params->{webusername};
+                $prov_params->{webusername} = $form->params->{webusername} || undef;
                 $prov_params->{webpassword} = $form->params->{webpassword}
                     if($form->params->{webpassword});
                 $prov_params->{password} = $form->params->{password}
