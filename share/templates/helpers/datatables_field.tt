@@ -33,6 +33,9 @@ $(document).ready(function() {
 		
 		"aoColumns": [
                         [% FOREACH f IN table_fields -%]
+                            [%index = loop.count - 1%]
+                            [%IF table_titles.${index} %]
+                        [% f = f.replace('\.','_');%]
 		    		    { 
                            "mData": "[% f %]",
                            "mRender": function ( data, type, full ) {
@@ -41,6 +44,7 @@ $(document).ready(function() {
                                 return String(data).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
                             }
                         },
+                            [% END -%]
                         [% END -%]
 		    		    { "mRender": function ( data, type, full ) {
                                 return '<input type="checkbox" value="' + full.id + '"/>';
@@ -73,7 +77,9 @@ $(document).ready(function() {
             <thead>
                 <tr>
                     [% FOREACH t IN table_titles %]
+                        [%IF t%]
                         <th>[% t %]</th>
+                        [% END %]
                     [% END %]
                     <th class="span"></th>
                 </tr>
