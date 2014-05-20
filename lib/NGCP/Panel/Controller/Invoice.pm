@@ -7,6 +7,9 @@ use DateTime::Format::Strptime;
 use HTTP::Status qw(HTTP_SEE_OTHER);
 use File::Type;
 use MIME::Base64 qw(encode_base64);
+use JSON;
+use Number::Phone;
+use URI::Encode;
 
 use NGCP::Panel::Utils::Contract;
 use NGCP::Panel::Utils::Message;
@@ -16,9 +19,6 @@ use NGCP::Panel::Form::Invoice::Generate;
 use NGCP::Panel::Form::Invoice::Basic;
 use NGCP::Panel::Model::DB::InvoiceTemplate;
 use NGCP::Panel::Utils::InvoiceTemplate;
-
-use JSON;
-use Number::Phone;
 
 sub auto {
     my ($self, $c) = @_;
@@ -319,7 +319,15 @@ sub invoice_generate :Chained('base') :PathPart('generate') :Args(0) {
     $in->{provider_id} = $c->stash->{provider}->id;
 
 
-    $validator = NGCP::Panel::Form::Invoice::Generate->new( backend => $backend );
+    $validator = NGCP::Panel::Form::Invoice::Generate->new( 
+        #backend => $backend, 
+        #client_contract_ajax_src => $c->uri_for_action( '/invoice/ajax_datatables_data', [ $self->provider_id, 'invoice_list_data' ],
+    );
+    $validator->field('client_contract_id')->ajax_src(  
+        $c->uri_for_action( 
+            '/invoice/ajax_datatables_data', 
+            [ $in->{provider_id}, 'provider_client_list' ] ,
+        )->as_string());
     $validator->remove_undef_in($in);
     #need to think how to automate it - maybe through form showing param through args? what about args for uri_for_action?
     $validator->action( $c->uri_for_action('invoice/invoice_generate',[$in->{provider_id}]) );

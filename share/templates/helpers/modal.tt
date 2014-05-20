@@ -40,6 +40,11 @@
             window.location.href="[% m.close_target ? m.close_target : c.uri_for() %]";
             [%END%]
         });
+        [%IF m.ajax_load%]
+        $('#mod_edit script').each(function( key, value ) {
+            eval(value.innerHTML);
+        });
+        [%END%]
 
         // on clicking a button within the form, add a hidden field "submitid"
         // determining the name of the button being clicked

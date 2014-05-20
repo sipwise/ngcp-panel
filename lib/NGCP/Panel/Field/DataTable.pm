@@ -1,6 +1,9 @@
 package NGCP::Panel::Field::DataTable;
 use HTML::FormHandler::Moose;
 use Template;
+use JSON;
+use URI::Encode;
+
 extends 'HTML::FormHandler::Field';
 
 has '+widget' => (default => ''); # leave this empty, as there is no widget ...
@@ -17,7 +20,12 @@ sub render_element {
     my $output = '';
 
     (my $tablename = $self->html_name) =~ s!\.!!g;
-
+    if($self->ajax_src !~/dt_columns/){
+        my $i = 0;
+        my $dt_columns = [ map {{name=>$_,title=>$self->table_titles->[$i++],}} @{$self->table_fields} ];
+        my $decoder = URI::Encode->new;
+        $self->ajax_src( $self->ajax_src.($self->ajax_src!~/\?/?'?':'&').'dt_columns='.$decoder->encode(to_json($dt_columns)) );
+    }
     my $vars = {
         label => $self->label,
         field_name => $self->html_name,
@@ -30,6 +38,7 @@ sub render_element {
         errors => $self->errors,
         language_file => $self->language_file,
     };
+    
     my $t = new Template({ 
         ABSOLUTE => 1, 
         INCLUDE_PATH => [

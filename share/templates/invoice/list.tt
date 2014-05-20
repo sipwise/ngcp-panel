@@ -62,6 +62,14 @@ function applyClientFilter(table,tr,contact_id){
     localStorage.setItem('ngcp_dt.invoice_list_data_ajax_table.paramsJSON',JSON.stringify({'client_contact_id':contact_id}));
     refreshInvoicesTable();
 }
+function showGenerateForm(contract_id, contact_id){
+    fetch_into(
+        'invoice_generate_form', 
+        '[%c.uri_for_action("/invoice/invoice_generate", [ provider.id])%]',
+        'item=invoice_generate&client_contract_id='+contract_id,
+        function(){modalFormScript();}
+    );
+}
 </script>
 
 <div class="ngcp-separator"></div>
@@ -93,7 +101,7 @@ function applyClientFilter(table,tr,contact_id){
         { 
             name => c.loc('Generate invoice'), 
             uri => 'javascript:void(0);', 
-            onclick => "fetch_into(\\'invoice_generate_form\\', \\'" _ c.uri_for_action('/invoice/invoice_generate', [ provider.id]) _ "\\',\\'item=invoice_generate&client_contract_id='+full.contracts_id+'\\',function(){modalFormScript();});void(0);", 
+            onclick => "showGenerateForm('+full.contracts_id+');void(0);", 
             class => 'btn-small btn-primary', 
             icon => 'icon-star' 
         },
