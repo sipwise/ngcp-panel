@@ -48,7 +48,7 @@ sub auto :Private {
             NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for('/sound'));
         }
         my $product = $c->model('DB')->resultset('products')->find({ 
-            id => $product_id, class => 'pbxaccount' 
+            id => $product_id, class => 'pbxaccount',
         });
         unless($product) {
             $c->detach('/denied_page');
@@ -65,12 +65,13 @@ sub sets_list :Chained('/') :PathPart('sound') :CaptureArgs(0) {
     if($c->stash->{contract_rs}) {
         NGCP::Panel::Utils::Sounds::stash_soundset_list(
             c => $c, 
-            contract => $c->stash->{contract_rs}->first
+            contract => $c->stash->{contract_rs}->first,
         );
     } else {
         NGCP::Panel::Utils::Sounds::stash_soundset_list(c => $c);
     }
     $c->stash(template => 'sound/list.tt');
+    return;
 }
 
 sub contract_sets_list :Chained('/') :PathPart('sound/contract') :CaptureArgs(1) {
@@ -107,10 +108,12 @@ sub contract_sets_list :Chained('/') :PathPart('sound/contract') :CaptureArgs(1)
         contract => $contract,
     );
     $c->stash(template => 'sound/list.tt');
+    return;
 }
 
 sub root :Chained('sets_list') :PathPart('') :Args(0) {
     my ($self, $c) = @_;
+    return;
 }
 
 sub ajax :Chained('sets_list') :PathPart('ajax') :Args(0) {
@@ -119,6 +122,7 @@ sub ajax :Chained('sets_list') :PathPart('ajax') :Args(0) {
     my $resultset = $c->stash->{sets_rs};
     NGCP::Panel::Utils::Datatables::process($c, $resultset, $c->stash->{soundset_dt_columns});
     $c->detach( $c->view("JSON") );
+    return;
 }
 
 sub contract_ajax :Chained('contract_sets_list') :PathPart('ajax') :Args(0) {
@@ -127,6 +131,7 @@ sub contract_ajax :Chained('contract_sets_list') :PathPart('ajax') :Args(0) {
     my $resultset = $c->stash->{sets_rs};
     NGCP::Panel::Utils::Datatables::process($c, $resultset, $c->stash->{soundset_dt_columns});
     $c->detach( $c->view("JSON") );
+    return;
 }
 
 sub base :Chained('sets_list') :PathPart('') :CaptureArgs(1) {
@@ -151,6 +156,7 @@ sub base :Chained('sets_list') :PathPart('') :CaptureArgs(1) {
         NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for('/sound'));
     }
     $c->stash(set_result => $res);
+    return;
 }
 
 sub edit :Chained('base') :PathPart('edit') {
@@ -168,6 +174,10 @@ sub edit :Chained('base') :PathPart('edit') {
         $form = NGCP::Panel::Form::Sound::ResellerSet->new;
     } else {
         $form = NGCP::Panel::Form::Sound::CustomerSet->new;
+    }
+    unless ($c->config->{features}->{cloudpbx} || $params->{contract}{id} ) {
+        my $form_render_list = $form->block('fields')->render_list;
+        $form->block('fields')->render_list([ grep {$_ !~ m/^contract(_default)?/} @{ $form_render_list } ]);
     }
     $form->process(
         posted => $posted,
@@ -251,6 +261,7 @@ sub edit :Chained('base') :PathPart('edit') {
         form => $form,
         edit_flag => 1,
     );
+    return;
 }
 
 sub delete :Chained('base') :PathPart('delete') {
@@ -288,6 +299,7 @@ sub delete :Chained('base') :PathPart('delete') {
         );
     };
     NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for('/sound'));
+    return;
 }
 
 sub create :Chained('sets_list') :PathPart('create') :Args() {
@@ -316,6 +328,10 @@ sub create :Chained('sets_list') :PathPart('create') :Args() {
         }
     } else {
         $form = NGCP::Panel::Form::Sound::CustomerSet->new;
+    }
+    unless ($c->config->{features}->{cloudpbx}) {
+        my $form_render_list = $form->block('fields')->render_list;
+        $form->block('fields')->render_list([ grep {$_ !~ m/^contract(_default)?/} @{ $form_render_list } ]);
     }
     $form->process(
         posted => $posted,
@@ -403,6 +419,7 @@ sub create :Chained('sets_list') :PathPart('create') :Args() {
         form => $form,
         create_flag => 1,
     );
+    return;
 }
 
 sub handles_list :Chained('base') :PathPart('handles') :CaptureArgs(0) {
@@ -467,6 +484,7 @@ sub handles_list :Chained('base') :PathPart('handles') :CaptureArgs(0) {
     $c->stash(has_edit => 1);
     $c->stash(has_delete => 1);
     $c->stash(template => 'sound/handles_list.tt');
+    return;
 }
 
 sub handles_root :Chained('handles_list') :PathPart('') :Args(0) {
@@ -504,6 +522,7 @@ sub handles_base :Chained('handles_list') :PathPart('') :CaptureArgs(1) {
         NGCP::Panel::Utils::Navigation::back_or($c, $c->stash->{handles_base_uri});
     }
     $c->stash(file_result => $res);
+    return;
 }
 
 sub handles_edit :Chained('handles_base') :PathPart('edit') {
@@ -632,6 +651,7 @@ sub handles_edit :Chained('handles_base') :PathPart('edit') {
 
     $c->stash(form => $form);
     $c->stash(edit_flag => 1);
+    return;
 }
 
 sub handles_delete :Chained('handles_base') :PathPart('delete') {
@@ -648,6 +668,7 @@ sub handles_delete :Chained('handles_base') :PathPart('delete') {
         );
     };
     NGCP::Panel::Utils::Navigation::back_or($c, $c->stash->{handles_base_uri});
+    return;
 }
 
 sub handles_download :Chained('handles_base') :PathPart('download') :Args(0) {
@@ -677,12 +698,15 @@ sub handles_download :Chained('handles_base') :PathPart('download') :Args(0) {
     $c->response->header ('Content-Disposition' => 'attachment; filename="' . $filename . '"');
     $c->response->content_type('audio/x-wav');
     $c->response->body($data);
+    return;
 }
 
 
 __PACKAGE__->meta->make_immutable;
 
 1;
+
+__END__
 
 =head1 NAME
 
