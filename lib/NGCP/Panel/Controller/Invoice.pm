@@ -16,7 +16,8 @@ use NGCP::Panel::Utils::Message;
 
 use NGCP::Panel::Form::Invoice::Template;
 use NGCP::Panel::Form::Invoice::Generate;
-use NGCP::Panel::Form::Invoice::Basic;
+use NGCP::Panel::Form::Invoice::Send;
+#use NGCP::Panel::Form::Invoice::Basic;
 use NGCP::Panel::Model::DB::InvoiceTemplate;
 use NGCP::Panel::Utils::InvoiceTemplate;
 
@@ -323,11 +324,19 @@ sub invoice_generate :Chained('base') :PathPart('generate') :Args(0) {
         #backend => $backend, 
         #client_contract_ajax_src => $c->uri_for_action( '/invoice/ajax_datatables_data', [ $self->provider_id, 'invoice_list_data' ],
     );
-    $validator->field('client_contract_id')->ajax_src(  
-        $c->uri_for_action( 
-            '/invoice/ajax_datatables_data', 
-            [ $in->{provider_id}, 'provider_client_list' ] ,
-        )->as_string());
+    
+    #todo: try to move it tp frp, template. really this is view responsibility
+    #cpan is out again
+    #if(!$in->{client_contract_id}){
+        $validator->field('client_contract_id')->ajax_src(  
+            $c->uri_for_action( 
+                '/invoice/ajax_datatables_data', 
+                [ $in->{provider_id}, 'provider_client_list' ] ,
+            )->as_string());  
+    #}else{
+    #    $validator->field('client_contract_id',$validator->field('client_contract_id_hidden'));
+    #    $validator->field('client_contract_id')->name('client_contract_id');
+    #}
     $validator->remove_undef_in($in);
     #need to think how to automate it - maybe through form showing param through args? what about args for uri_for_action?
     $validator->action( $c->uri_for_action('invoice/invoice_generate',[$in->{provider_id}]) );
@@ -459,6 +468,74 @@ sub parse_invoice_period :Private{
     if($in->{end}) {
         $in->{etime} = $parser->parse_datetime($in->{end})->truncate(to => 'day')->add(days => 1)->subtract(seconds => 1);
     }
+}
+sub invoice_send :Chained('base') :PathPart('send') :Args(0) {
+    my ($self, $c) = @_;
+    $c->log->debug($c->action);
+    my($validator,$backend,$in,$out);
+    $backend = NGCP::Panel::Model::DB::InvoiceTemplate->new( schema => $c->model('DB') );
+    
+    #from parameters
+    $in = $c->request->parameters;
+    $in->{provider_id} = $c->stash->{provider}->id;
+
+
+    $validator = NGCP::Panel::Form::Invoice::Send->new( 
+        backend => $backend, 
+    );
+    $validator->remove_undef_in($in);
+    #need to think how to automate it - maybe through form showing param through args? what about args for uri_for_action?
+    $validator->action( $c->uri_for_action('invoice/invoice_send',[$in->{provider_id}]) );
+    $validator->name( 'invoice_send' );#from parameters
+    
+    my $posted = exists $in->{submitid};
+    $c->log->debug("posted=$posted;");
+    
+    if($in->{invoice_id} && !$in->{email}){
+        if(my $invoice_contact = $backend->getInvoiceContact(%$in)){
+            $in->{email} = $invoice_contact->get_column('email');
+        }
+    }
+    
+    #todo: validate that customer is not terminated and is sip/pbx account
+    $validator->process(
+        posted => $posted,
+        params => $in,
+        #no edit supposed for invoice - just creation and deletion, so item from DB is not used
+        item => $in,
+    );
+    my $in_validated = $validator->fif;
+    if($posted){
+        $c->log->debug("validated=".$validator->validated.";");
+        if($validator->validated) {
+            
+            #logic here
+            
+            try {
+                $c->flash(messages => [{type => 'success', text => $c->loc(
+                    'Invoice generated'
+                ) }]);
+            } catch($e) {
+                NGCP::Panel::Utils::Message->error(
+                    c => $c,
+                    error => $e,
+                    desc  => $c->loc(
+                        'Failed to generate invoice.'
+                    ),
+                );
+            }
+            $c->stash( messages => $c->flash->{messages} );
+            $c->stash( template => 'helpers/ajax_messages.tt' );
+        }else{
+            $c->response->headers->header( 'X-Form-Status' => 'error' );
+        }
+    }
+    if(!$validator->validated){
+        $c->stash( m        => {create_flag => !$in->{invoice_id}} );
+        $c->stash( form     => $validator );
+        $c->stash( template => 'invoice/invoice_send_form.tt' );
+    }
+    $c->detach( $c->view("SVG") );#to the sake of nowrapper
 }
 
 sub template_base :Chained('base') :PathPart('template') :CaptureArgs(0) {

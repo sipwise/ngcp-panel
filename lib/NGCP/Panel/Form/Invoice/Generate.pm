@@ -1,12 +1,7 @@
 package NGCP::Panel::Form::Invoice::Generate;
 
-#use Sipwise::Base;
 use HTML::FormHandler::Moose;
-#extends qw/HTML::FormHandler NGCP::Panel::Form::ValidatorBase/;
 extends 'NGCP::Panel::Form::ValidatorBase';
-#extends qw/NGCP::Panel::Form::ValidatorBase HTML::FormHandler::Field::Compound/;
-#extends 'HTML::FormHandler::Field::Compound';
-#use Moose::Util::TypeConstraints;
 
 use DateTime;
 use DateTime::Format::Strptime;
@@ -21,6 +16,7 @@ has_field 'client_contract_id' => (
     is => 'rw',
     type => '+NGCP::Panel::Field::DataTable',
     label => 'Contract',
+    name => 'client_contract_id',
     do_label => 0,
     do_wrapper => 0,
     required => 1,
@@ -28,28 +24,10 @@ has_field 'client_contract_id' => (
     #we will set it in controller 
     #ajax_src => $c->uri_for_action( '/invoice/ajax_datatables_data', [ $self->provider_id, 'invoice_list_data' ],
     ajax_src => '',
-
-#        { name => 'contracts.id', title => c.loc('Client Contract Id'), search => 1},
-#        { name => 'contracts.external_id', title => c.loc('External #'), search => 1 },
-#        { name => 'email', title => c.loc('Contact Email'), search => 1 },
-#        { name => 'contracts.billing_mappings.billing_profile.name', title => c.loc('Billing Profile'), search => 1 },
-#        { name => 'contracts.billing_mappings.product.name', title => c.loc('Product'), search => 1 },
-#        { name => 'contracts.status', title => c.loc('Status'), search => 1 },
     table_titles => ['Contract Id',  'First Name', 'Last Name', 'Email'],
     table_fields => ['contracts.id', 'firstname', 'lastname',   'email'],
 );
 
-#has_field 'contract.id' => (
-#    type => '+NGCP::Panel::Field::DataTable',
-#    label => 'Client',
-#    do_label => 0,
-#    do_wrapper => 0,
-#    required => 1,
-#    template => 'helpers/datatables_field.tt',
-#    ajax_src => '/contact/ajax_noreseller',
-#    table_titles => ['#', 'First Name', 'Last Name', 'Email'],
-#    table_fields => ['id', 'firstname', 'lastname', 'email'],
-#);
 has_field 'start' => ( 
     type => '+NGCP::Panel::Field::DatePicker',
     label => 'Start Date',
@@ -71,10 +49,10 @@ has_field 'save' => (
     do_label => 0,
 );
 
-#has_field 'client_contract_id' => (
-#    type => 'Hidden',
-#    required => 1,
-#);
+has_field 'client_contract_id_hidden' => (
+    type => 'Hidden',
+    required => 1,
+);
 
 has_block 'fields' => (
     tag => 'div',

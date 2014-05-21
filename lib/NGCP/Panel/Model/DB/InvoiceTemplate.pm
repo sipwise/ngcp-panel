@@ -367,8 +367,20 @@ sub getInvoice{
     my (%params) = @_;
     my ($invoice_id) = @params{qw/invoice_id/};
     return $self->schema->resultset('invoices')->search({
-        'id'  => $invoice_id,
+        'me.id'  => $invoice_id,
     }, undef )->first;
+}
+sub getInvoiceContact{
+    my $self = shift;
+    my (%params) = @_;
+    my ($invoice_id) = @params{qw/invoice_id/};
+    return $self->schema->resultset('invoices')->search({
+        'me.id'  => $invoice_id,
+    }, {
+        '+select' => ['contact.email'],
+        '+as'     => ['email'],
+        'join'    => [ {'contract_balances' => { 'contract' => 'contact' } } ],
+    } )->first;
 }
 sub deleteInvoice{
     my $self = shift;
@@ -546,7 +558,7 @@ sub checkResellerClientContact{
     if($in->{client_contact_id} && $in->{provider_id}){
         if(my $contact = $self->schema->resultset('contacts')->search({
             'reseller_id' => $in->{provider_id},
-            'id' => $in->{client_contact_id},
+            'me.id' => $in->{client_contact_id},
         })->first){
             $res = $contact->get_column('id');
         }
@@ -561,7 +573,7 @@ sub checkResellerInvoice{
     if($in->{invoice_id} && $in->{provider_id}){
         if(my $invoice = $self->schema->resultset('invoices')->search({
             'contact.reseller_id' => $in->{provider_id},
-            'id' => $in->{client_contact_id},
+            'me.id' => $in->{invoice_id},
         },{
             'join' => { 'contract_balances' => { 'contract' => 'contact' }},
         })->first){
@@ -581,7 +593,7 @@ sub checkResellerInvoiceTemplate{
         #$in->{c}->log->debug("checkResellerInvoiceTemplate: tt_id=".$in->{tt_id}.";provider_id=".$in->{provider_id}.";");
         if(my $tt = $self->schema->resultset('invoice_templates')->search({
             'reseller_id' => $in->{provider_id},
-            'id' => $in->{tt_id},
+            'me.id' => $in->{tt_id},
         })->first){
             $res = $tt->get_column('id');
         }

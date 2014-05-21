@@ -35,6 +35,7 @@
             [%m.close_target_direct%]
             [%ELSIF m.ajax_load%]
             $('#mod_edit').modal('hide');
+            $('#mod_edit').parent('div').html('');
             [%ELSE%]
             console.log("redirecting to [% m.close_target ? m.close_target : c.uri_for() %]");
             window.location.href="[% m.close_target ? m.close_target : c.uri_for() %]";
@@ -63,6 +64,7 @@
                 if( status != 'error' ){
                     //form object is necessary to compose uri for refresh
                     refreshAjaxList( '[%m.ajax_list_refresh%]', form.serializeObject() );
+                    $('#mod_edit').parent('div').html('');
                 }
                 [%END%]
                 [%m.ajax_callback%]
