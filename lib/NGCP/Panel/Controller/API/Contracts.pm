@@ -85,11 +85,7 @@ sub GET :Allow {
     my $rows = $c->request->params->{rows} // 10;
     {
         my $contracts = $self->item_rs($c);
-        my $total_count = int($contracts->count);
-        $contracts = $contracts->search(undef, {
-            page => $page,
-            rows => $rows,
-        });
+        (my $total_count, $contracts) = $self->paginate_order_collection($c, $contracts);
         my (@embedded, @links);
         my $form = $self->get_form($c);
         for my $contract ($contracts->all) {

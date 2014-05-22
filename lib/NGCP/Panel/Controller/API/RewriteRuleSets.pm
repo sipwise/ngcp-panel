@@ -97,11 +97,7 @@ sub GET :Allow {
     my $rows = $c->request->params->{rows} // 10;
     {
         my $rwr_set = $self->item_rs($c, "rulesets");
-        my $total_count = int($rwr_set->count);
-        $rwr_set = $rwr_set->search(undef, {
-            page => $page,
-            rows => $rows,
-        });
+        (my $total_count, $rwr_set) = $self->paginate_order_collection($c, $rwr_set);
         my (@embedded, @links);
         for my $set ($rwr_set->search({}, {order_by => {-asc => 'me.id'}})->all) {
             push @embedded, $self->hal_from_item($c, $set, "rewriterulesets");

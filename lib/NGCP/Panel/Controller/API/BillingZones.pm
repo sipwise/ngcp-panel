@@ -73,11 +73,7 @@ sub GET :Allow {
     my $rows = $c->request->params->{rows} // 10;
     {
         my $zones = $self->item_rs($c);
-        my $total_count = int($zones->count);
-        $zones = $zones->search(undef, {
-            page => $page,
-            rows => $rows,
-        });
+        (my $total_count, $zones) = $self->paginate_order_collection($c, $zones);
         my (@embedded, @links);
         my $form = $self->get_form($c);
         for my $zone ($zones->all) {

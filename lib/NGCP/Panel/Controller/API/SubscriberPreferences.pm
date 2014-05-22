@@ -56,11 +56,7 @@ sub GET :Allow {
     my $rows = $c->request->params->{rows} // 10;
     {
         my $subscribers = $self->item_rs($c, "subscribers");
-        my $total_count = int($subscribers->count);
-        $subscribers = $subscribers->search(undef, {
-            page => $page,
-            rows => $rows,
-        });
+        (my $total_count, $subscribers) = $self->paginate_order_collection($c, $subscribers);
         my (@embedded, @links);
         for my $subscriber ($subscribers->search({}, {order_by => {-asc => 'me.id'}})->all) {
             next unless($subscriber->provisioning_voip_subscriber);

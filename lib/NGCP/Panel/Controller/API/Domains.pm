@@ -87,11 +87,7 @@ sub GET :Allow {
     my $rows = $c->request->params->{rows} // 10;
     {
         my $domains = $self->item_rs($c);
-        my $total_count = int($domains->count);
-        $domains = $domains->search(undef, {
-            page => $page,
-            rows => $rows,
-        });
+        (my $total_count, $domains) = $self->paginate_order_collection($c, $domains);
         my (@embedded, @links);
         my $form = $self->get_form($c);
         for my $domain ($domains->search({}, {order_by => {-asc => 'me.id'}})->all) {

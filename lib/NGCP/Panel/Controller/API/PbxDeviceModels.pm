@@ -86,11 +86,7 @@ sub GET :Allow {
     {
         my $field_devs = $self->item_rs($c);
 
-        my $total_count = int($field_devs->count);
-        $field_devs = $field_devs->search(undef, {
-            page => $page,
-            rows => $rows,
-        });
+        (my $total_count, $field_devs) = $self->paginate_order_collection($c, $field_devs);
         my (@embedded, @links);
         for my $dev ($field_devs->search({}, {order_by => {-asc => 'me.id'}})->all) {
             push @embedded, $self->hal_from_item($c, $dev);

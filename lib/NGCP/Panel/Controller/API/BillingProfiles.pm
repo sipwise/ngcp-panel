@@ -73,11 +73,7 @@ sub GET :Allow {
     my $rows = $c->request->params->{rows} // 10;
     {
         my $profiles = $self->item_rs($c);
-        my $total_count = int($profiles->count);
-        $profiles = $profiles->search(undef, {
-            page => $page,
-            rows => $rows,
-        });
+        (my $total_count, $profiles) = $self->paginate_order_collection($c, $profiles);
         my (@embedded, @links);
         my $form = $self->get_form($c);
         for my $profile ($profiles->all) {

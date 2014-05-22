@@ -64,11 +64,7 @@ sub GET :Allow {
     my $rows = $c->request->params->{rows} // 10;
     {
         my $cfs = $self->item_rs($c, "callforwards");
-        my $total_count = int($cfs->count);
-        $cfs = $cfs->search(undef, {
-            page => $page,
-            rows => $rows,
-        });
+        (my $total_count, $cfs) = $self->paginate_order_collection($c, $cfs);
         my (@embedded, @links);
         for my $cf ($cfs->all) {
             try {

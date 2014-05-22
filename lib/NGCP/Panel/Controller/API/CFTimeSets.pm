@@ -89,11 +89,7 @@ sub GET :Allow {
     {
         my $timesets = $self->item_rs($c);
 
-        my $total_count = int($timesets->count);
-        $timesets = $timesets->search(undef, {
-            page => $page,
-            rows => $rows,
-        });
+        (my $total_count, $timesets) = $self->paginate_order_collection($c, $timesets);
         my (@embedded, @links);
         for my $tset ($timesets->search({}, {order_by => {-asc => 'me.id'}})->all) {
             push @embedded, $self->hal_from_item($c, $tset, "cftimesets");

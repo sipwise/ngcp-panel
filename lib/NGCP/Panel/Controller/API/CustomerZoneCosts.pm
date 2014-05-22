@@ -77,11 +77,7 @@ sub GET :Allow {
     {
         my $field_devs = $self->item_rs($c);
 
-        my $total_count = int($field_devs->count);
-        $field_devs = $field_devs->search(undef, {
-            page => $page,
-            rows => $rows,
-        });
+        (my $total_count, $field_devs) = $self->paginate_order_collection($c, $field_devs);
         my $query_string = $self->query_param_string($c);
         return unless $query_string;
         my (@embedded, @links);

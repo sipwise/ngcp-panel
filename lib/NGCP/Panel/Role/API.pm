@@ -351,6 +351,35 @@ sub resource_exists {
     return;
 }
 
+sub paginate_order_collection {
+    my ($self, $c, $item_rs) = @_;
+
+    my $page = $c->request->params->{page} // 1;
+    my $rows = $c->request->params->{rows} // 10;
+    my $order_by = $c->request->params->{order_by};
+    my $direction = $c->request->params->{order_by_direction} // "asc";
+    my $total_count = int($item_rs->count);
+    $item_rs = $item_rs->search(undef, {
+        page => $page,
+        rows => $rows,
+    });
+    if ($order_by && $item_rs->result_source->has_column($order_by)) {
+        my $me = $item_rs->current_source_alias;
+        if (lc($direction) eq 'desc') {
+            $item_rs = $item_rs->search(undef, {
+                order_by => {-desc => "$me.$order_by"},
+            });
+            $c->log->debug("ordering by $me.$order_by DESC");
+        } else {
+            $item_rs = $item_rs->search(undef, {
+                order_by => "$me.$order_by",
+            });
+            $c->log->debug("ordering by $me.$order_by");
+        }
+    }
+    return ($total_count, $item_rs);
+}
+
 sub apply_patch {
     my ($self, $c, $entity, $json) = @_;
     my $patch = JSON::decode_json($json);

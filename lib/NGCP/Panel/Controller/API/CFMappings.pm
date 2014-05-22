@@ -66,11 +66,7 @@ sub GET :Allow {
     {
         my $items = $self->item_rs($c); # items is actually a voip_subscribers
 
-        my $total_count = int($items->count);
-        $items = $items->search(undef, {
-            page => $page,
-            rows => $rows,
-        });
+        (my $total_count, $items) = $self->paginate_order_collection($c, $items);
         my (@embedded, @links);
         for my $subs ($items->search({}, {order_by => {-asc => 'me.id'}})->all) {
             push @embedded, $self->hal_from_item($c, $subs, "cfmappings");

@@ -73,11 +73,7 @@ sub GET :Allow {
     my $rows = $c->request->params->{rows} // 10;
     {
         my $fees = $self->item_rs($c);
-        my $total_count = int($fees->count);
-        $fees = $fees->search(undef, {
-            page => $page,
-            rows => $rows,
-        });
+        (my $total_count, $fees) = $self->paginate_order_collection($c, $fees);
         my (@embedded, @links);
         my $form = $self->get_form($c);
         for my $fee ($fees->all) {

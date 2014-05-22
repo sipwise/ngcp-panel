@@ -87,11 +87,7 @@ sub GET :Allow {
     my $rows = $c->request->params->{rows} // 10;
     {
         my $customers = $self->item_rs($c);
-        my $total_count = int($customers->count);
-        $customers = $customers->search(undef, {
-            page => $page,
-            rows => $rows,
-        });
+        (my $total_count, $customers) = $self->paginate_order_collection($c, $customers);
         my (@embedded, @links);
         my $form = $self->get_form($c);
         for my $customer($customers->all) {

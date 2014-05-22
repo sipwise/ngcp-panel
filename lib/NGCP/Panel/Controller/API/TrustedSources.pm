@@ -78,11 +78,7 @@ sub GET :Allow {
     my $rows = $c->request->params->{rows} // 10;
     {
         my $items = $self->item_rs($c);
-        my $total_count = int($items->count);
-        $items = $items->search(undef, {
-            page => $page,
-            rows => $rows,
-        });
+        (my $total_count, $items) = $self->paginate_order_collection($c, $items);
         my (@embedded, @links);
         my $form = $self->get_form($c);
         for my $item ($items->search({}, {order_by => {-asc => 'me.id'}})->all) {

@@ -89,11 +89,7 @@ sub GET :Allow {
     {
         my $dsets = $self->item_rs($c);
 
-        my $total_count = int($dsets->count);
-        $dsets = $dsets->search(undef, {
-            page => $page,
-            rows => $rows,
-        });
+        (my $total_count, $dsets) = $self->paginate_order_collection($c, $dsets);
         my (@embedded, @links);
         for my $dset ($dsets->search({}, {order_by => {-asc => 'me.id'}})->all) {
             push @embedded, $self->hal_from_item($c, $dset, "cfdestinationsets");
