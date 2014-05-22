@@ -43,22 +43,45 @@ check_running() {
   fi
 }
 
-_start() {
-  rm -f $PIDFILE 2>/dev/null
-
-  if [ -r ${PIDFILE}.startup ] ; then
-    log_action_begin_msg "$NAME is already starting up, ignoring startup request now..."
-    log_end_msg 0
+# this is a workaround for slow startup of ngcp-panel and generation of its pidfile
+check_for_ongoing_startup() {
+  # if no other ngcp-panel init script is running store our PID
+  if ! [ -r "${PIDFILE}.startup" ] ; then
+    echo "$$" > "${PIDFILE}.startup"
     return 0
   fi
 
-  touch ${PIDFILE}.startup
+  # another init script started up but didn't log a PID?
+  local startup_pid="$(cat ${PIDFILE}.startup)"
+  if [ -z "$startup_pid" ] ; then
+    log_action_begin_msg "$NAME seems to be starting up with invalid PID, forcing start..."
+    echo "$$" > "${PIDFILE}.startup"
+    log_end_msg $?
+    return 0
+  fi
+
+  # another init script started but was interrupted?
+  if ! ps -o pid "$startup_pid" | grep -q -- "$startup_pid" ; then
+    log_action_begin_msg "$NAME seems to have been interrupted during startup, forcing start..."
+    echo "$$" > "${PIDFILE}.startup"
+    log_end_msg $?
+    return 0
+  fi
+
+  log_action_begin_msg "$NAME is already starting up, ignoring startup request now..."
+  log_end_msg 0
+  return 1
+}
+
+_start() {
+  rm -f $PIDFILE 2>/dev/null
+  check_for_ongoing_startup || return 0
   start-stop-daemon --start --quiet \
         --pidfile $PIDFILE \
         --exec $DAEMON --chdir $HOMEDIR \
         --user $USER --group $GROUP --chuid $USER:$GROUP \
         -- $OPTIONS || log_failure_msg "error"
-  rm -f ${PIDFILE}.startup
+  rm -f "${PIDFILE}.startup"
   sleep 1
   if check_running ; then
     return 0
