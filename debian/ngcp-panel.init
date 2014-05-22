@@ -54,22 +54,19 @@ check_for_ongoing_startup() {
   # another init script started up but didn't log a PID?
   local startup_pid="$(cat ${PIDFILE}.startup)"
   if [ -z "$startup_pid" ] ; then
-    log_action_begin_msg "$NAME seems to be starting up with invalid PID, forcing start..."
+    log_progress_msg "starting up with invalid PID, forcing start"
     echo "$$" > "${PIDFILE}.startup"
-    log_end_msg $?
     return 0
   fi
 
   # another init script started but was interrupted?
   if ! ps -o pid "$startup_pid" | grep -q -- "$startup_pid" ; then
-    log_action_begin_msg "$NAME seems to have been interrupted during startup, forcing start..."
+    log_progress_msg "interrupted during startup, forcing start"
     echo "$$" > "${PIDFILE}.startup"
-    log_end_msg $?
     return 0
   fi
 
-  log_action_begin_msg "$NAME is already starting up, ignoring startup request now..."
-  log_end_msg 0
+  log_progress_msg "is already starting up, ignored"
   return 1
 }
 
@@ -80,7 +77,7 @@ _start() {
         --pidfile $PIDFILE \
         --exec $DAEMON --chdir $HOMEDIR \
         --user $USER --group $GROUP --chuid $USER:$GROUP \
-        -- $OPTIONS || log_failure_msg "error"
+        -- $OPTIONS >/dev/null || log_failure_msg "error"
   rm -f "${PIDFILE}.startup"
   sleep 1
   if check_running ; then
@@ -131,7 +128,7 @@ mkdir -p $HOMERUN && chown -R $USER:$GROUP $HOMERUN
 
 case "$1" in
   start)
-        log_daemon_msg "Starting $DESC: $NAME"
+        log_daemon_msg "Starting $DESC"
         if check_running; then
             log_progress_msg "already running"
             log_end_msg 0
@@ -157,7 +154,7 @@ case "$1" in
         exit $status
         ;;
   status)
-        log_daemon_msg "Status of $DESC: "
+        log_action_msg "Status of $DESC"
         if [ -s $PIDFILE ]; then
           status_of_proc -p$PIDFILE $DAEMON $NAME ; exit $?
         else
