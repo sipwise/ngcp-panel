@@ -45,11 +45,20 @@ check_running() {
 
 _start() {
   rm -f $PIDFILE 2>/dev/null
+
+  if [ -r ${PIDFILE}.startup ] ; then
+    log_action_begin_msg "$NAME is already starting up, ignoring startup request now..."
+    log_end_msg 0
+    return 0
+  fi
+
+  touch ${PIDFILE}.startup
   start-stop-daemon --start --quiet \
         --pidfile $PIDFILE \
         --exec $DAEMON --chdir $HOMEDIR \
         --user $USER --group $GROUP --chuid $USER:$GROUP \
         -- $OPTIONS || log_failure_msg "error"
+  rm -f ${PIDFILE}.startup
   sleep 1
   if check_running ; then
     return 0
