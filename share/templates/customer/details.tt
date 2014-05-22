@@ -226,6 +226,10 @@
                         [% c.loc('Maximum number of [_1] subscribers [_2]created',contract.max_subscribers,
                             c.config.features.cloudpbx ? c.loc('(including PBX groups) ') : '') %]
                     </div>
+                [% ELSE %]
+                    <a class="btn btn-large btn-primary" href="[% c.uri_for_action('/customer/pbx_group_create', [ c.req.captures.0 ]) %]">
+                        <i class="icon-star"></i> [% c.loc('Create PBX Group') %]
+                    </a>
                 [% END -%]
 
 [%
