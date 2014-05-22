@@ -159,9 +159,9 @@ case "$1" in
   status)
         log_daemon_msg "Status of $DESC: "
         if [ -s $PIDFILE ]; then
-          status_of_proc -p$PIDFILE $DAEMON $NAME
+          status_of_proc -p$PIDFILE $DAEMON $NAME ; exit $?
         else
-          status_of_proc $DAEMON $NAME
+          status_of_proc $DAEMON $NAME; exit $?
         fi
         ;;
   *)
