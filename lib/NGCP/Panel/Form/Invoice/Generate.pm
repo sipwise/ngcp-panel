@@ -16,7 +16,7 @@ has_field 'client_contract_id' => (
     is => 'rw',
     type => '+NGCP::Panel::Field::DataTable',
     label => 'Contract',
-    name => 'client_contract_id',
+    #name => 'client_contract_id',
     do_label => 0,
     do_wrapper => 0,
     required => 1,
@@ -49,10 +49,10 @@ has_field 'save' => (
     do_label => 0,
 );
 
-has_field 'client_contract_id_hidden' => (
-    type => 'Hidden',
-    required => 1,
-);
+#has_field 'client_contract_id_hidden' => (
+#    type => 'Hidden',
+#    required => 1,
+#);
 
 has_block 'fields' => (
     tag => 'div',
