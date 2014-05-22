@@ -353,7 +353,7 @@ sub invoice_generate :Chained('base') :PathPart('generate') :Args(0) {
     my $in_validated = $validator->fif;
     if($posted){
         $c->forward('parse_invoice_period',[$in]);
-        $c->log->debug("stime=".$in->{stime}.";etime=".$in->{etime}.";");
+        #$c->log->debug("stime=".$in->{stime}.";etime=".$in->{etime}.";");
         $c->log->debug("validated=".$validator->validated.";");
         if($validator->validated) {
             $c->forward('generate_invoice',[$in, $out]);
@@ -513,14 +513,14 @@ sub invoice_send :Chained('base') :PathPart('send') :Args(0) {
             
             try {
                 $c->flash(messages => [{type => 'success', text => $c->loc(
-                    'Invoice generated'
+                    'Invoice sent'
                 ) }]);
             } catch($e) {
                 NGCP::Panel::Utils::Message->error(
                     c => $c,
                     error => $e,
                     desc  => $c->loc(
-                        'Failed to generate invoice.'
+                        'Failed to send invoice.'
                     ),
                 );
             }

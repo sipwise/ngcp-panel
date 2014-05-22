@@ -60,13 +60,13 @@
                 if( status == 'error' ){
                     modalFormScript();
                 }
-                [%IF m.ajax_list_refresh%]
                 if( status != 'error' ){
                     //form object is necessary to compose uri for refresh
+                [%IF m.ajax_list_refresh%]
                     refreshAjaxList( '[%m.ajax_list_refresh%]', form.serializeObject() );
+                [%END%]
                     $('#mod_edit').parent('div').html('');
                 }
-                [%END%]
                 [%m.ajax_callback%]
             });
             [%END%]   

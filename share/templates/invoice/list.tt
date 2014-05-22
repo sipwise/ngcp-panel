@@ -24,6 +24,11 @@
     <span>
         <a class="btn btn-primary btn-large" href="[% c.uri_for_action('invoice/template', [provider.id]) %]">[% c.loc('Invoice Template')%] <i class="icon-edit"></i></a>
     </span>
+    <span>
+    <a class="btn btn-primary btn-large" onclick="javascript:$(this).css('outline', 'none');generateInvoiceForm();void(0);">[% c.loc('Generate invoice')%] <i class="icon-edit"></i></a>
+</span>
+
+    
 </div>
 
 [% IF reseller.first.status != "active" -%]
@@ -66,7 +71,9 @@ function generateInvoiceForm(contract_id, contact_id){
     fetch_into(
         'invoice_generate_form', 
         '[%c.uri_for_action("/invoice/invoice_generate", [ provider.id])%]',
-        'item=invoice_generate&client_contract_id='+contract_id,
+        'item=invoice_generate'
+            +(contract_id?'&client_contract_id='+contract_id:'')
+            +(contact_id?'&client_contact_id='+contact_id:''),
         function(){modalFormScript();}
     );
 }
@@ -96,7 +103,7 @@ function deleteInvoice(invoice_id,table_name){
 [% back_created = 1 -%]
 
 <div class="accordion" id="invoice">
-<div class="accordion-group">
+<!--div class="accordion-group">
     <div class="accordion-heading">
         <a class="accordion-toggle" data-toggle="collapse" data-parent="#invoice" href="#collapse_client_list">[% c.loc('Clients') %]</a>
     </div>
@@ -144,7 +151,7 @@ function deleteInvoice(invoice_id,table_name){
 [%#PROCESS 'invoice/invoice_list.tt' %]
     </div>
     </div>
-    </div>
+    </div-->
 
     
     <div class="accordion-group">
