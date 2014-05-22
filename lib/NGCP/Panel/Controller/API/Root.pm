@@ -70,8 +70,17 @@ sub GET : Allow {
         my $actions = [ keys %{ $full_mod->config->{action} } ];
         my $item_actions = $full_item_mod->can('config') ? [ keys %{ $full_item_mod->config->{action} } ] : [];
 
-
         my $form = $full_mod->get_form($c);
+
+        my $sorting_cols = [];
+        my $item_rs;
+        try {
+            $item_rs = $full_mod->item_rs($c, "");
+        }
+        if ($item_rs) {
+            $sorting_cols = [$item_rs->result_source->columns];
+        }
+
         $c->stash->{collections}->{$rel} = { 
             name => $mod, 
             description => $full_mod->api_description,
@@ -79,6 +88,7 @@ sub GET : Allow {
             query_params => $query_params,
             actions => $actions,
             item_actions => $item_actions,
+            sorting_cols => $sorting_cols,
         };
 
     }

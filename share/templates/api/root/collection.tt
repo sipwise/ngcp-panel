@@ -51,15 +51,13 @@ See description how to obtain properties, if any.
 
 <h[% level + 1 %]>Query Parameters</h[% level + 1%]>
 
-[% UNLESS col.query_params.size -%]
-None.
-[% ELSE -%]
 <ul id="[% id %]-qparams">
 [% FOREACH f IN col.query_params -%]
     <li><b>[% f.param %]</b>: [% f.description %]</li>
 [% END -%]
+    <li><b>order_by</b>: Order collection by a specific attribute. Possible values are: <i>[% col.sorting_cols.join(', ') %]</i></li>
+    <li><b>order_by_direction</b>: Direction which the collection should be ordered by. Possible values are: <i>asc (default), desc</i></li>
 </ul>
-[% END -%]
 
 <h[% level + 1 %]>Examples</h[% level + 1 %]>
 <div class="examples">
