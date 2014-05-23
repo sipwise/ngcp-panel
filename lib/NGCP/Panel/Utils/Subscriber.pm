@@ -809,6 +809,78 @@ sub prepare_alias_select {
     $params->{alias_select} = encode_json(\@alias_options);
 }
 
+sub normalize_callee {
+    my (%params) = @_;
+
+    my $c = $params{c};
+    my $subscriber = $params{subscriber};
+    my $callee = $params{number};
+
+    my $rwr_rs = NGCP::Panel::Utils::Preferences::get_usr_preference_rs(
+        c => $c, attribute => 'rewrite_callee_in_dpid', 
+        prov_subscriber => $subscriber->provisioning_voip_subscriber,
+    );
+    unless($rwr_rs->count) {
+        $rwr_rs = NGCP::Panel::Utils::Preferences::get_dom_preference_rs(
+            c => $c, attribute => 'rewrite_callee_in_dpid', 
+            prov_domain => $subscriber->provisioning_voip_subscriber->domain,
+        );
+    }
+    unless($rwr_rs->count) {
+        return $callee;
+    }
+
+    my $rule_rs = $c->model('DB')->resultset('voip_rewrite_rules')->search({
+        'ruleset.callee_in_dpid' => $rwr_rs->first->value,
+        direction => 'in',
+        field => 'callee',
+    }, {
+        join => 'ruleset',
+        order_by => { -asc => 'priority' }
+    });
+    my $cache = {};
+    foreach my $r($rule_rs->all) {
+        my $match = $r->match_pattern;
+        my $replace = $r->replace_pattern;
+
+        print ">>>>>>>>>>> match=$match, replace=$replace\n";
+        for my $field($match, $replace) {
+            print ">>>>>>>>>>> normalizing $field\n";
+            my @avps = ();
+            @avps = ($field =~ /\$avp\(s:caller_([^\)]+)\)/g);
+            use Data::Printer; p @avps;
+            for my $avp(@avps) {
+                print ">>>>>>>>>> checking avp $avp\n";
+                if(!exists $cache->{$avp}) {
+                    my $pref_rs = NGCP::Panel::Utils::Preferences::get_usr_preference_rs(
+                        c => $c, attribute => $avp,
+                        prov_subscriber => $subscriber->provisioning_voip_subscriber,
+                    );
+                    unless($pref_rs->count) {
+                        $pref_rs = NGCP::Panel::Utils::Preferences::get_dom_preference_rs(
+                            c => $c, attribute => $avp,
+                            prov_domain => $subscriber->provisioning_voip_subscriber->domain,
+                        );
+                    }
+                    next unless($pref_rs->count);
+                    $cache->{$avp} = $pref_rs->first->value;
+                }
+                my $val = $cache->{$avp};
+                $field =~ s/\$avp\(s:caller_$avp\)/$val/g;
+                print ">>>>>>>>>>> normalized $field\n";
+            }
+        }
+        $replace =~ s/\\(\d{1})/\$$1/g;
+
+        print ">>>>>>>>>>> final match=$match, replace=$replace, applying to $callee\n";
+        $callee =~ s/$match/$replace/eeg;
+        print ">>>>>>>>>>> done, match=$match, replace=$replace, callee is $callee\n";
+
+    }
+
+    return $callee;
+}
+
 1;
 
 =head1 NAME
