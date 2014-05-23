@@ -40,7 +40,7 @@ has_field 'save' => (
 
 has_field 'client_contract_id' => (
     type => 'Hidden',
-    required => 1,
+    required => 0,
 );
 
 has_block 'fields' => (

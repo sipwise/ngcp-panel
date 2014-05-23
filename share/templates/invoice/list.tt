@@ -86,6 +86,7 @@ function sendInvoiceForm(invoice_id){
     );
 }
 function deleteInvoice(invoice_id,table_name){
+    //alert('table_name='+table_name+';');
     fetch_into('messages',
         '[%c.uri_for_action("/invoice/invoice_delete", [ provider.id ] )%]',
         'invoice_id='+invoice_id,
@@ -199,7 +200,7 @@ function deleteInvoice(invoice_id,table_name){
         },
         { 
             name = c.loc('Delete'), 
-            uri = "javascript:deleteInvoice(\\''+full.contract_balances_invoice_id+'\\',\\'" _ helper.identifier _ "\\');void(0);", 
+            uri = "javascript:deleteInvoice(\\''+full.contract_balances_invoice_id+'\\',\\'" _ helper.identifier _ "_table\\');void(0);", 
             class = 'btn-small btn-secondary', 
             icon = 'icon-trash', 
             attributes= ' cancel-hide="1"' 

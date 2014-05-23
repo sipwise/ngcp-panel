@@ -17,7 +17,7 @@ use NGCP::Panel::Utils::Message;
 use NGCP::Panel::Form::Invoice::Template;
 use NGCP::Panel::Form::Invoice::Generate;
 use NGCP::Panel::Form::Invoice::Send;
-#use NGCP::Panel::Form::Invoice::Basic;
+use NGCP::Panel::Form::Invoice::Basic;
 use NGCP::Panel::Model::DB::InvoiceTemplate;
 use NGCP::Panel::Utils::InvoiceTemplate;
 
