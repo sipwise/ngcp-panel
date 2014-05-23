@@ -60,7 +60,7 @@ sub GET : Allow {
         if(ref $role eq "ARRAY") {
             next unless grep @{ $role }, $c->user->roles;
         } else {
-            next unless $role eq $c->user->roles;
+            next unless $role && $role eq $c->user->roles;
         }
 
         my $query_params = [];
