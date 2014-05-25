@@ -1,0 +1,38 @@
+<script type="text/javascript">
+var uriForAction = function( data, type ){
+    //we can think about getting URIs via ajax )
+    //also we can think about more regular wrapper for all uri used in datatables
+    var q_template;
+    switch(type){
+    case 'template_previewed':
+        //q_template = '[%- c.uri_for_action("/invoice/template_view", ['provider_id','svg','parsed','previewed','svg','tt_id']) -%]';
+        q_template = '[%- c.uri_for_action("/invoice/template_view", ['provider_id']) -%]'+'/svg/parsed/previewed/svg/tt_id';
+        break;
+    case 'template_saved':
+        //q_template = '[%- c.uri_for_action("/invoice/template_view", ['provider_id','svg','parsed','saved','svg','tt_id']) -%]';
+        q_template = '[%- c.uri_for_action("/invoice/template_view", ['provider_id']) -%]'+'/svg/parsed/saved/tt_output_type/tt_id';
+        break;
+    case 'template_list':
+        q_template = '[%- c.uri_for_action("/invoice/template_list", ['provider_id']) -%]';
+        break;
+    case 'messages':
+        q_template = '[%- c.uri_for_action("/invoice/messages") -%]';
+        break;
+    case 'template':
+    default:
+        //q_template = '[%- c.uri_for_action("/invoice/template_view", ['provider_id','tt_type','tt_viewmode','tt_sourcestate','tt_output_type','tt_id']) -%]';
+        q_template = '[%- c.uri_for_action("/invoice/template_view", ['provider_id']) -%]'+'/tt_type/tt_viewmode/tt_sourcestate/tt_output_type/tt_id';
+        break;
+    }
+    if(!data.tt_id){data.tt_id = '';}
+    if(!data.tt_type){data.tt_type = 'svg';}
+    if(!data.tt_output_type){data.tt_output_type = 'svg';}
+    if(!data.tt_viewmode){data.tt_viewmode = 'both';}
+    var params = ['provider_id','tt_id','tt_type','tt_output_type','tt_viewmode','tt_sourcestate'];
+    params.forEach(function(key){
+        q_template=q_template.replace(key,data[key]);
+    });
+    q_template=q_template.replace(/\/+$/,'');
+    return q_template;
+}
+</script>

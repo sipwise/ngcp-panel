@@ -74,7 +74,8 @@ sub convertSvg2Pdf{
         binmode B; 
         local $/ = undef; 
         $out->{tt_string_pdf} = <B>;
-        close B;
+        $c->log->error("Pipe: close: !=$!; ?=$?;");
+        close B or ($? == 0 ) or $c->log->error("Error closing rsvg pipe: close: $!;");
     }
 }
 sub preprocessInvoiceTemplateSvg{

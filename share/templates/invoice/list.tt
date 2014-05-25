@@ -22,7 +22,7 @@
         <a class="btn btn-primary btn-large" href="[% c.uri_for('/back') %]"><i class="icon-arrow-left"></i> [% c.loc('Back') %]</a>
     </span>
     <span>
-        <a class="btn btn-primary btn-large" href="[% c.uri_for_action('invoice/template', [provider.id]) %]">[% c.loc('Invoice Template')%] <i class="icon-edit"></i></a>
+        <a class="btn btn-primary btn-large" href="[% c.uri_for_action('invoice/template_alt', [provider.id]) %]">[% c.loc('Invoice Template')%] <i class="icon-edit"></i></a>
     </span>
     <span>
     <a class="btn btn-primary btn-large" onclick="javascript:$(this).css('outline', 'none');generateInvoiceForm();void(0);">[% c.loc('Generate invoice')%] <i class="icon-edit"></i></a>

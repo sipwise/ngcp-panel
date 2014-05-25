@@ -1,5 +1,9 @@
 //constructor
 var svgCanvasEmbed = null;
+var svgEditor = null;
+function setNoSaveWarning(){
+    svgCanvasEmbed.frame.contentWindow.svgCanvas.undoMgr.resetUndoStack();
+}
 function init_embed() {
     var svgEditFrameName = 'svgedit';
     var frame = document.getElementById(svgEditFrameName);
@@ -12,6 +16,7 @@ function init_embed() {
     }
     var mainButton = doc.getElementById('main_button');
     mainButton.style.display = 'none';
+    svgEditor = frame.contentWindow.svgEditor;
 }
 //private
 function getSvgString(){
@@ -24,12 +29,16 @@ function setSvgStringToEditor( svgParsedString ){
             if(error){
             }else{
                 svgCanvasEmbed.zoomChanged('', 'canvas');
+                setNoSaveWarning();
             }
         }
     );
 }
 function setSvgStringToPreview( svgParsedString, q, data ) {
-    var previewIframe = document.getElementById('svgpreview'); 
+    var previewIframe = document.getElementById('svgpreview');
+    if(!previewIframe){
+        return;
+    }    
     //alert('setSvgStringToPreview: svgParsedString='+svgParsedString+';data='+data+';');
     if ($.browser.msie) {
         //we need to repeat query to server for msie if we don't want send template string via GET method
@@ -109,7 +118,7 @@ function clearTemplateForm(data){
     data.tt_sourcestate = 'default';
     fetchInvoiceTemplateData(data, 1);//1 = no show form again, just clear it up to default state
 }
-function savePreviewedAndShowParsed( data ){
+function savePreviewed( data, callback ){
     var svgString = getSvgString();
     var q = uriForAction( data, 'template_previewed' ); 
     //alert('savePreviewedAndShowParsed: svgString='+svgString+'; q='+q+';');
@@ -119,14 +128,43 @@ function savePreviewedAndShowParsed( data ){
     $.post( q, { template: svgString } )
     .done( function( httpResponse ){
         // & show template
-        //alert('savePreviewedAndShowParsed: httpResponse='+httpResponse+';');
-        setSvgStringToPreview( httpResponse, q, data )
+        //alert('savePreviewed: httpResponse='+httpResponse+';');
+        //alert('savePreviewed: callback='+callback+'; typeof='+(typeof callback)+';');
+        
+        //setSvgStringToPreview( httpResponse, q, data )
+        
+        if(typeof callback == 'function'){
+            //alert('savePreviewed.1: callback='+callback+'; typeof='+(typeof callback)+';');
+            callback(httpResponse, q, data);
+        }else{
+            eval(callback);
+        }
+        
         //$('#load_previewed_control').css('display', 'inline' );
         //refresh list after saving - there is nothin that can be cahnged in templates list after preview refresh
         //refreshAjaxList( 'template', data );
     } );
 }
-function saveTemplate( data ) {	 
+function savePreviewedAndShowParsed( data ){
+    savePreviewed(data, setSvgStringToPreview );
+    //var svgString = getSvgString();
+    //var q = uriForAction( data, 'template_previewed' ); 
+    ////alert('savePreviewedAndShowParsed: svgString='+svgString+'; q='+q+';');
+    ////alert('savePreviewedAndShowParsed: q='+q+';');
+    ////save 
+    //q=formToUri(q);
+    //$.post( q, { template: svgString } )
+    //.done( function( httpResponse ){
+    //    // & show template
+    //    //alert('savePreviewedAndShowParsed: httpResponse='+httpResponse+';');
+    //    setSvgStringToPreview( httpResponse, q, data )
+    //    //$('#load_previewed_control').css('display', 'inline' );
+    //    //refresh list after saving - there is nothin that can be cahnged in templates list after preview refresh
+    //    //refreshAjaxList( 'template', data );
+    //} );
+}
+
+function saveTemplate( data, callback ) {	 
     var svgString = getSvgString();
     data.tt_sourcestate='saved';
     data.tt_output_type = 'json';
@@ -143,6 +181,13 @@ function saveTemplate( data ) {
             $('form[name=template_editor]').loadJSON(jsonResponse.aaData.form);
         }
         $('#load_saved_control').css('display', 'inline' );
+        if(typeof callback == 'function'){
+            //alert('saveTemplate.1: callback='+callback+'; typeof='+(typeof callback)+';');
+            callback(jsonResponse, q, data);
+        }else{
+            eval(callback);
+        }
+        setNoSaveWarning();
         //refreshAjaxList( 'template', data );
     });
 }

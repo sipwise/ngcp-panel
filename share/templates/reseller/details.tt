@@ -5,9 +5,6 @@
         <a class="btn btn-primary btn-large" href="[% c.uri_for('/back') %]"><i class="icon-arrow-left"></i> [% c.loc('Back') %]</a>
     </span>
     <span>
-        <a class="btn btn-primary btn-large" href="[% c.uri_for_action('invoice/template', [reseller.first.id]) %]">[% c.loc('Invoice Template')%] <i class="icon-edit"></i></a>
-    </span>
-    <span>
         <a class="btn btn-primary btn-large" href="[% c.uri_for_action('invoice/invoice_list', [reseller.first.id]) %]">[% c.loc('Invoices')%] <i class="icon-edit"></i></a>
     </span>
 </div>
@@ -273,6 +270,37 @@
         </div>
     </div>
 
+[% IF branding_edit_flag != 1 -%]
+
+[%PROCESS 'helpers/modal.tt' -%]
+[%mf_helper = {
+    ajax_load         => 1,
+    ajax_list_refresh => 'template',
+ }%]
+[%modal_script( m = mf_helper )%]
+[%END%]
+<script type="text/javascript" src="/js/background.js"></script>
+<script type="text/javascript" src="/js/modalAjax.js"></script>
+<script type="text/javascript" src="/js/jquery.serializeObject.js"></script>
+[%PROCESS "invoice/uri_wrapper_js.tt"%]
+<div class="accordion-group">
+    <div class="accordion-heading">
+        <a class="accordion-toggle" data-toggle="collapse" data-parent="#invoice_template" href="#collapse_template_list">[% c.loc('Invoice Templates') %]</a>
+    </div>
+    <div class="accordion-body collapse" id="collapse_template_list">
+<div class="ngcp-separator"></div>
+        <a class="btn btn-primary btn-large" onclick="$(this).css('outline', 'none');fetch_into('template_info_form', '[%- c.uri_for_action("/invoice/template_info", [provider.id]) -%]','item=template_info',function(){modalFormScript();});void(0);">[% c.loc('Create invoices template')%] <i class="icon-edit"></i></a>
+<div class="ngcp-separator"></div>
+<div class="accordion-inner" style="overflow:auto; height:300px;" id="template_list">
+[%PROCESS 'invoice/template_list_alt.tt' %]
+</div>
+    </div>
+</div>
+
+    
+</div>
+
+<div id="template_info_form">
 </div>
 
 [% IF branding_edit_flag == 1 -%]

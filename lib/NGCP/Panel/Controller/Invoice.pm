@@ -759,7 +759,7 @@ sub template_list :Chained('template_base') :PathPart('list') :Args(0) {
     my ($self, $c) = @_;
     $c->log->debug('template_list');
     $c->forward( 'template_list_data' );
-    $c->stash( template => 'invoice/template_list.tt' ); 
+    $c->stash( template => 'invoice/template_list_alt.tt' ); 
     $c->detach($c->view('SVG'));#just no wrapper - maybe there is some other way?
 }
 
@@ -767,6 +767,14 @@ sub template :Chained('template_base') :PathPart('') :Args(0) {
     my ($self, $c) = @_;
     $c->forward('template_list_data');
     $c->stash(template => 'invoice/template.tt'); 
+}
+sub template_alt :Chained('template_base') :PathPart('') :Args(1) {
+    my ($self, $c) = @_;
+    my $in={};
+    (undef,undef,$in->{tt_id}) = @_;
+    #for form hidden too. And for template_view.
+    $c->stash(tt_id => $in->{tt_id});
+    $c->stash(template => 'invoice/template_alt.tt'); 
 }
 
 sub template_view :Chained('template_base') :PathPart('view') :Args {
@@ -780,6 +788,8 @@ sub template_view :Chained('template_base') :PathPart('view') :Args {
     #input
     (undef,undef,@$in{qw/tt_type tt_viewmode tt_sourcestate tt_output_type tt_id/}) = @_ ;
     $in->{provider_id} = $c->stash->{provider}->id;
+    $in->{tt_id} //= $c->request->parameters->{tt_id};
+    $in->{tt_id} //= $c->stash->{tt_id};
     #$in->{client_id} = ;
     $in->{tt_string} = $c->request->body_parameters->{template} || '';
     foreach(qw/name is_active/){$in->{$_} = $c->request->parameters->{$_};}

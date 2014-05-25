@@ -28,7 +28,7 @@
 
 [% MACRO modal_script BLOCK %]
 <script>
-    var modalFormScript = function (repeat) {
+    var modalFormScript = function (formitem,repeat) {
         $('#mod_edit').modal({keyboard: false, backdrop: 'static'});
         $('.mod_close').click(function(event) {
             [%IF m.close_target_direct%]
@@ -58,7 +58,7 @@
             processModalFormAjax($(this).parents('form'),function(status,form){
                 //alert('in callback: status='+status);
                 if( status == 'error' ){
-                    modalFormScript();
+                    modalFormScript(formitem);
                 }
                 if( status != 'error' ){
                     //form object is necessary to compose uri for refresh
