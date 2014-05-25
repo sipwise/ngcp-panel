@@ -45,7 +45,7 @@ function getTtIdVal(){
     saveTemplate({
         provider_id: '[%provider.id%]',
         tt_id: getTtIdVal(),
-    });void(0);">[% c.loc('Save template')%] <i class="icon-disk"></i></a>
+    }, refreshMessagesAjax );void(0);">[% c.loc('Save template')%] <i class="icon-disk"></i></a>
 </span>
 [%IF viewmode == 'development' %]
 <div class="ngcp-separator"></div>

@@ -106,7 +106,7 @@ function deleteInvoice(invoice_id,table_name){
 <div class="accordion" id="invoice">
 <!--div class="accordion-group">
     <div class="accordion-heading">
-        <a class="accordion-toggle" data-toggle="collapse" data-parent="#invoice" href="#collapse_client_list">[% c.loc('Clients') %]</a>
+        <a class="accordion-toggle" data-toggle="collapse" data-parent="#invoice" href="#collapse_client_list">[% c.loc('Customers') %]</a>
     </div>
     
     <div class="accordion-body collapse" id="collapse_client_list">
@@ -114,11 +114,11 @@ function deleteInvoice(invoice_id,table_name){
 [%#Dumper.dump_html(provider_client_list_ajax)%]
 [%
     clearHelper();
-    helper.name = c.loc('Clients');
-    helper.name_single = c.loc('client');
+    helper.name = c.loc('Customers');
+    helper.name_single = c.loc('customer');
     helper.dt_columns = [
-        { name => 'id', title => c.loc('Client Contact Id'), search => 1},
-        { name => 'contracts.id', title => c.loc('Client Contract Id'), search => 1},
+        { name => 'id', title => c.loc('Customer Contact Id'), search => 1},
+        { name => 'contracts.id', title => c.loc('Customer Contract Id'), search => 1},
         { name => 'contracts.external_id', title => c.loc('External #'), search => 1 },
         { name => 'email', title => c.loc('Contact Email'), search => 1 },
         { name => 'contracts.billing_mappings.billing_profile.name', title => c.loc('Billing Profile'), search => 1 },
@@ -139,7 +139,7 @@ function deleteInvoice(invoice_id,table_name){
             onclick => "applyClientFilter(\\'\\',\$(this).closest(\\'tr\\'),'+full.id+');", 
             class => 'btn-small btn-primary', 
             icon => 'icon-glass', 
-            tooltip => 'Click twice to clear client filter.' 
+            tooltip => 'Click twice to clear customer filter.' 
         },
     ];
     helper.identifier = 'provider_client_list_ajax';
@@ -174,7 +174,7 @@ function deleteInvoice(invoice_id,table_name){
     helper.dt_columns = [
         { name => 'contract_balances.contract.contact.reseller_id'},
         { name => 'contract_balances.contract.contact.reseller.name'},
-        { name => 'contract_balances.contract.contact.id', title => c.loc('Client'), search => 1},
+        { name => 'contract_balances.contract.contact.id', title => c.loc('Customer'), search => 1},
         { name => 'contract_balances.contract.id', title => c.loc('Contract'), search => 1},
         { name => 'contract_balances.invoice_id', title => c.loc('Invoice Id'), search => 1},
         { name => 'contract_balances.invoice.serial', title => c.loc('Invoice #'), search => 1},

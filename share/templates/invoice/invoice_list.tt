@@ -5,7 +5,7 @@
     [%IF 0 && c.user.roles == 'admin' %]
         <th>[% c.loc('Reseller') %]</th>
     [%END%]
-        <th>[% c.loc('Client #') %]</th>
+        <th>[% c.loc('Customer #') %]</th>
         <th>[% c.loc('Serial') %]</th>
         <th>[% c.loc('Start') %]</th>
         <th>[% c.loc('End') %]</th>

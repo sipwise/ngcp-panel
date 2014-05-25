@@ -863,6 +863,7 @@ sub template_view :Chained('template_base') :PathPart('view') :Args {
             );
         }
         if($in->{tt_string} && !$tt_string_force_default){
+            
             #sanitize
             my $tt_string_sanitized = $in->{tt_string};
             $tt_string_sanitized =~s/<script.*?\/script>//gs;
@@ -882,11 +883,29 @@ sub template_view :Chained('template_base') :PathPart('view') :Args {
                 }
             }
             #/sanitize - to sub, later
-
-            my($tt_stored) = $backend->storeInvoiceTemplateContent( 
-                %$in,
-                tt_string_sanitized => \$tt_string_sanitized,
-            );
+            
+            my($tt_stored);
+            try {
+                $tt_stored = $backend->storeInvoiceTemplateContent( 
+                    %$in,
+                    tt_string_sanitized => \$tt_string_sanitized,
+                );
+                $c->flash(messages => [{type => 'success', text => $c->loc(
+                    $in->{tt_id}
+                    ?'Invoice template updated'
+                    :'Invoice template created'
+                ) }]);
+            } catch($e) {
+                NGCP::Panel::Utils::Message->error(
+                    c => $c,
+                    error => $e,
+                    desc  => $c->loc(
+                        $in->{tt_id}
+                        ?'Failed to update invoice template.'
+                        :'Failed to create invoice template.'
+                    ),
+                );
+            }
             
             $out->{json} = {
                 tt_data => { 
@@ -894,7 +913,6 @@ sub template_view :Chained('template_base') :PathPart('view') :Args {
                 },
             };
 
-            
             $out->{tt_string} = $tt_string_sanitized;
         }elsif(!$tt_string_customer || $tt_string_force_default){
             $out->{tt_string} = $tt_string_default;
