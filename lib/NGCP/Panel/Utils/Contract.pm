@@ -59,7 +59,7 @@ sub get_contract_balance_values{
     if($free_time or $free_cash) {
         $etime->add(seconds => 1);
         my $ctime = NGCP::Panel::Utils::DateTime::current_local->truncate(to => 'day');
-        if( ( $ctime->epoch >= $stime->epoch ) && ( $ctime->epoch <= $stime->epoch ) ){
+        if( ( $ctime->epoch >= $stime->epoch ) && ( $ctime->epoch <= $etime->epoch ) ){
             my $ratio = ($etime->epoch - $ctime->epoch) / ($etime->epoch - $stime->epoch);
             
             $cash_balance = sprintf("%.4f", $free_cash * $ratio);
@@ -228,7 +228,6 @@ sub get_contracts_rs_sippbx{
     my $reseller_condition;
     if($c->user->roles eq "reseller") {
         $reseller_condition = $c->user->reseller_id;
-        $reseller_condition = $c->user->reseller_id;
     } elsif($c->user->roles eq "subscriberadmin") {
         $reseller_condition = $c->user->contract->contact->reseller_id;
     } elsif($c->user->roles eq "admin") {
@@ -271,7 +270,7 @@ sub get_contract_calls_rs{
 #        source_user_id => { 'in' => [ map {$_->uuid} @{$contract->{subscriber}} ] },
         call_status       => 'ok',
         source_user_id    => { '!=' => '0' },
-#        source_account_id => $contract_id,
+        source_account_id => $contract_id,
 #         start_time        =>
 #             [ -and =>
 #                 { '>=' => $stime->epoch},
@@ -335,6 +334,7 @@ sub get_contract_zonesfees_rs {
                 { '<=' => $etime->epoch},
             ],
         source_account_id => $contract_id,
+    },{
         'select'   => [
             { sum         => 'me.source_customer_cost', -as => 'customercost' },
             { sum         => 'me.source_carrier_cost', -as => 'carriercost' },
@@ -376,7 +376,7 @@ sub get_contract_zonesfees_rs {
     } );
 
     return ($zonecalls_rs_in, $zonecalls_rs_out);
-
+}
 
 sub get_contract_zonesfees {
     my %params = @_;

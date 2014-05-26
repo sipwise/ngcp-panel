@@ -164,7 +164,6 @@ sub base :Chained('list_reseller') :PathPart('') :CaptureArgs(1) {
         );
         NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for('/reseller'));
     }
-    $c->stash(contract => $c->stash->{resellers}->search_rs({ id => $reseller_id })->first->contract);
     $c->stash->{branding} = $c->stash->{reseller}->first->branding;
 }
 
