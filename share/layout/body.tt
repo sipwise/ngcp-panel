@@ -114,7 +114,7 @@ var mainWrapperInit = function () {
                 '</div>'+
                 '<div class="modal-footer">'+
                   '<button class="btn" data-dismiss="modal" aria-hidden="true" id="dataConfirmCancel">Cancel</button>'+
-                  '<a class="btn btn-primary ngcp-noback-link" data-dismiss="modal" aria-hidden="true" id="dataConfirmOK">OK</a>'+
+                  '<a class="btn btn-primary" id="dataConfirmOK">OK</a>'+
                 '</div>'+
               '</div>'
             );
