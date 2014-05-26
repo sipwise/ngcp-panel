@@ -83,5 +83,40 @@ sub getTemplateProcessed{
     #return $result
     return $self->{template}->context->process($template, $stash);
 }
+sub getTemplateVars{
+    my ( $self, $c, $template,$vars ) = @_;
+    #$vars //= {};
+    #
+    #$template = \'
+    #[%var = "qqq"%]
+    #
+    #';
+    #
+    #my $text = '';
+    #my $stc = {};
+    #$vars->{template_import} ||= $stc;
+    #my $importold = $Template::Stash::HASH_OPS->{ import } if defined $Template::Stash::HASH_OPS->{ import };
+    #$Template::Stash::HASH_OPS->{ import } = sub { $stc = $_[0]; };
+    #$self->{template}->context->define_vmethod(
+    #    hash => import => sub {
+    #        my($item,$col) = @_;
+    #        if('HASH' eq ref $item){
+    #            return $item->{$col};
+    #        }
+    #    }
+    #);
+    #$self->{template}->process($template,$vars,\$text);
+    #$Template::Stash::HASH_OPS->{ import } = $importold if defined $importold;
+    #
+    ##$subject ||= $stc->get('subject');
+    ##$type    ||= $stc->get('mimetype');
+    ##$from    ||= $stc->get('from');
+    #$Data::Dumper::Maxdepth = 1;
+    #use irka;
+    #use Data::Dumper;
+    #irka::loglong(Dumper($stc));
+    ##$c->log->debug("var=".$stc->get('var').";");
+    #return $stc;
+}
 
 1;

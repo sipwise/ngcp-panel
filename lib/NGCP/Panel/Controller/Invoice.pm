@@ -202,6 +202,7 @@ sub invoice_list :Chained('base') :PathPart('list') :Args(0) {
     my $invoice_list = $backend->getProviderInvoiceList(
         provider_id => $provider_id,
     );
+    $c->view('SVG')->getTemplateVars($c);
     $c->stash( 
         client_contacts_list => $backend->getInvoiceProviderClients( provider_id => $provider_id ),
         invoice_list         => [$invoice_list->all],
@@ -1035,33 +1036,13 @@ __END__
 
 =head1 NAME
 
-NGCP::Panel::Controller::Reseller - Catalyst Controller
+NGCP::Panel::Controller::Invoice - Catalyst Controller
 
 =head1 DESCRIPTION
 
 Catalyst Controller.
 
 =head1 METHODS
-
-=head2 C<reseller_contacts>
-
-=head2 C<reseller_contracts>
-
-=head2 C<reseller_single>
-
-=head2 C<reseller_admin>
-
-These are Ajax actions called from L</details>, rendering datatables with a single result each.
-
-=head2 C<details>
-
-Renders the F<reseller/details.tt> template, whose datatables relate to and are derived from a reseller id in the
-captures.
-
-=head2 C<create_defaults>
-
-Creates a reseller with all dependent contract, contact, billing mapping, admin login in a single step with default
-values. Redirects to L</details>.
 
 =head1 AUTHOR
 

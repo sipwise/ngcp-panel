@@ -21,9 +21,9 @@
     <span>
         <a class="btn btn-primary btn-large" href="[% c.uri_for('/back') %]"><i class="icon-arrow-left"></i> [% c.loc('Back') %]</a>
     </span>
-    <span>
-        <a class="btn btn-primary btn-large" href="[% c.uri_for_action('invoice/template_alt', [provider.id]) %]">[% c.loc('Invoice Template')%] <i class="icon-edit"></i></a>
-    </span>
+    <!--span>
+        <a class="btn btn-primary btn-large" href="[% c.uri_for_action('/reseller/details', [provider.id]) %]">[% c.loc('Reseller details')%] <i class="icon-edit"></i></a>
+    </span-->
     <span>
     <a class="btn btn-primary btn-large" onclick="javascript:$(this).css('outline', 'none');generateInvoiceForm();void(0);">[% c.loc('Generate invoice')%] <i class="icon-edit"></i></a>
 </span>
@@ -103,7 +103,7 @@ function deleteInvoice(invoice_id,table_name){
 <div class="ngcp-separator"></div>
 [% back_created = 1 -%]
 
-<div class="accordion" id="invoice">
+<!--div class="accordion" id="invoice"-->
 <!--div class="accordion-group">
     <div class="accordion-heading">
         <a class="accordion-toggle" data-toggle="collapse" data-parent="#invoice" href="#collapse_client_list">[% c.loc('Customers') %]</a>
@@ -155,13 +155,13 @@ function deleteInvoice(invoice_id,table_name){
     </div-->
 
     
-    <div class="accordion-group">
+    <!--div class="accordion-group">
     <div class="accordion-heading">
         <a class="accordion-toggle" data-toggle="collapse" data-parent="#invoice" href="#collapse_invoice_list">[% c.loc('Invoices') %]</a>
     </div>
     
     <div class="accordion-body collapse" id="collapse_invoice_list">
-    <div class="accordion-inner">
+    <div class="accordion-inner"-->
 
 [%#, title => c.loc('Reseller #')%]
 [%#, title => c.loc('Reseller name')%]
@@ -213,9 +213,9 @@ function deleteInvoice(invoice_id,table_name){
     datatables.invoices.helper.import(helper);
 -%]
 [%#PROCESS 'invoice/invoice_list.tt' %]
+    <!--/div>
     </div>
-    </div>
-    </div>
+    </div-->
 
 
 <!--div class="accordion-group">
@@ -295,7 +295,8 @@ oTable.fnClose();
     </div>
     </div>
 </div-->
-</div>
+<!--/div-->
+
 <div id="invoice_generate_form">
 </div>
 
