@@ -63,6 +63,12 @@ $d->findclick_ok(xpath => '//div[contains(@class,"accordion-heading")]//a[contai
 $d->findclick_ok(xpath => '//div[contains(@class,"accordion-body")]//*[contains(@class,"btn-primary") and contains(text(),"Edit Contact")]');
 $d->fill_element_ok([css => 'div.modal #firstname', "Alice"]);
 $d->fill_element_ok([id => 'company', 'Sipwise']);
+# Choosing Country:
+$d->fill_element_ok([css => '#countryidtable_filter input', 'thisshouldnotexist']);
+$d->find_ok(css => 'tr > td.dataTables_empty');
+$d->fill_element_ok([css => '#countryidtable_filter input', 'Ukraine']);
+$d->select_if_unselected_ok(xpath => '//table[@id="countryidtable"]/tbody/tr[1]/td[contains(text(),"Ukraine")]/..//input[@type="checkbox"]');
+# Save
 $d->findclick_ok(id => 'save');
 
 diag("Check if successful");
