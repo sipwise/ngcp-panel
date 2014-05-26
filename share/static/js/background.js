@@ -32,6 +32,7 @@ function fetch_into(div, uri, q, callback) {
 	var xmlHttpReq = false;
 	//alert(uri);
 	//alert(q);
+	//alert(uri+'?'+q);
 // Mozilla/Safari 
     var target = document.getElementById(div);
     if(!target){

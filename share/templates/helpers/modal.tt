@@ -63,7 +63,7 @@
                 if( status != 'error' ){
                     //form object is necessary to compose uri for refresh
                 [%IF m.ajax_list_refresh%]
-                    refreshAjaxList( '[%m.ajax_list_refresh%]', form.serializeObject() );
+                    refreshAjaxList( '[%m.ajax_list_refresh%]', form );
                 [%END%]
                     $('#mod_edit').parent('div').html('');
                 }

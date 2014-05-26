@@ -1,11 +1,11 @@
-function refreshAjaxList ( item, data ){
-    //alert('refreshAjaxList: q='+uriForAction( data, item + '_list' )+';item='+item);
+function refreshAjaxList ( item, form ){
+    //alert('refreshAjaxList: q='+uriForAction( form.serializeObject(), item + '_list' )+';item='+item);
     var target = $('#'+ item + '_list');
     if(target){
         fetch_into(
             item + '_list',
-            uriForAction( data, item + '_list' ),
-            '',
+            uriForAction( form.serializeObject(), item + '_list' ),
+            form.serialize(),
             function(){ 
                 mainWrapperInit();
                 listRestoreCurrentEdit(target);

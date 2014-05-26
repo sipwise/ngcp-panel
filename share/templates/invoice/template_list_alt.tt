@@ -35,7 +35,7 @@ var staticContainerId='template_list';
                    ">
                     <i class="icon-edit"></i> [% c.loc('Edit template info') %]
                 </a>
-                <a class="btn btn-small btn-primary" href="[%- c.uri_for_action("/invoice/template_alt", [reseller.first.id, template.get_column('id')]) -%]">
+                <a class="btn btn-small btn-primary" href="[%- c.uri_for_action("/invoice/template_alt", [ template.get_column('reseller_id'), template.get_column('id')]) -%]">
                     <i class="icon-edit"></i> [% c.loc('Edit template') %]
                 </a>
                 <a class="btn btn-small btn-secondary ngcp-noback-button" data-confirm="Delete" 
