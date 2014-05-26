@@ -1,3 +1,362 @@
+ngcp-panel (1.4.0.0+0~mr3.4.0.0) unstable; urgency=low
+
+  [ Irka ]
+  * [5818d51] test commit
+  * [7713624] Invoices - a little bit more clean. But still DB is fake, and columns titles are interesting to think about more.
+  * [fb891ee] Save state with incorrect, but fast svg template apply
+  * [4295578] add svg-edit as is, with all css, images and other resources together with js
+  * [a1af3cd] Fix after nested macro attempts
+  * [7e9a76c] Failed with condition unification for reseller_id of contracts. Return to double search using to construct query.
+  * [29e34bb] Fix applying empty search for admin
+  * [c311e74] MT#5879: add svg-edit as is, with all css, images and other resources together with js
+  * [15f71fe] MT#5879: Fix after nested macro attempts
+  * [b61732d] MT#5879: Failed with condition unification for reseller_id of contracts. Return to double search using to construct query.
+  * [9b60794] MT#5879: Fix applying empty search for admin
+  * [e66fdfc] MT#5879 get gogle trunk version of svg-edit before configurations
+  * [631a069] MT#5879 Very basic logic without storing to db. But seems as will be able to make it generic against template types.
+  * [3e393f1] MT#5879 Now Preview works correct. Time to implement saving passed template.
+  * [c1d2a54] test commit
+  * [95e5eaf] Invoices - a little bit more clean. But still DB is fake, and columns titles are interesting to think about more.
+  * [50b8977] Save state with incorrect, but fast svg template apply
+  * [00781a3] add svg-edit as is, with all css, images and other resources together with js
+  * [1cdfca1] Fix after nested macro attempts
+  * [75f16d1] Failed with condition unification for reseller_id of contracts. Return to double search using to construct query.
+  * [b79bdb3] MT#5879: Failed with condition unification for reseller_id of contracts. Return to double search using to construct query.
+  * [33b1384] MT#5879: Fix applying empty search for admin
+  * [6997e98] MT#5879 get gogle trunk version of svg-edit before configurations
+  * [0622c95] MT#5879 Very basic logic without storing to db. But seems as will be able to make it generic against template types.
+  * [792b6a5] MT#5879 Now Preview works correct. Time to implement saving passed template.
+
+  [ Alexander Lutay ]
+  * [87f5af1] MT#5955 Increase window size to support selenium tests with iceweasel >=24
+  * [8416fc1] MT#6169 Fix warning obsolete-relation-form-in-source
+  * [1c8ff01] MT#5083 Fixes for several SendFax WEB interface issues
+  * [a0c598e] MT#7155 Improve script output layout
+
+  [ Gerhard Jungwirth ]
+  * [8b7cdbb] MT#6013 ignore duplicate insert errors
+  * [20a73ec] MT#5751 prevent staleelement exception when searching datatables
+  * [cc3a7ea] MT#5751 test stability: dataTables filter
+  * [386b2f4] MT#6195 api-tests: use is instead of ok
+  * [36f2be7] MT#6195 API: rewrite: GET, PUT and PATCH implemented
+  * [10b7ed5] MT#5599 fix role check
+  * [72ae4a5] MT#4369 optimize mysql performance on callflow page
+  * [720e70b] MT#4369 optimize callflow using a custom query
+  * [a6ae6b1] MT#4369 disable sorting on callflow page
+  * [83fa455] MT#4369 use min_timestamp
+  * [11e421d] MT#6195 API: rename rewrite -> rewriterulesets
+  * [ede3d43] MT#6195 API: rewriterule/rewriteruleset: POST
+  * [c7c1e01] MT#6195 API: adapt RewriteRules to search framework
+  * [63aa4e3] MT#6195 API: rewriterule/rewriteruleset basic tests
+  * [edd904c] MT#6295 API: fix tests Prefer header no longer required
+  * [31e6c5f] MT#6195 API: ability to handle rules directly in rewriteruleset
+  * [6f368e8] MT#6195 API: rewriterule/rewriteruleset: DELETE
+  * [46e5f44] MT#6195 api tests adjustments - use is
+  * [a1309af] MT#6195 api tests: provide ./Build test_api
+  * [d313bc7] MT#4369 callflow: count total correctly
+  * [51b508f] MT#6443 Calculate dashboard costs correctly
+  * [21a5d7e] MT#6195 API rwr: Give proper reseller access
+  * [9398c10] MT#6493 Start years selection in 2014
+  * [5a7caa4] MT#6551 Cleanup Build script
+  * [d190d8e] MT#6551 Getopt allow unknown options
+  * [c6b6391] MT#6551 Add empty MANIFEST file
+  * [dfa5a2d] MT#6559 remove usage of CLASS
+  * [e4d2a22] MT#6295 fix api-root test
+  * [6d17b70] MT#6295 API: fix failing customers and contracts requests
+  * [6acd3f2] MT#6295 API: allow tests without invalid/unauth cert
+  * [266d2eb] MT#6663 Make API more robust when contract has no billing_profile
+  * [3bdc7c7] MT#6703 fix merge conflict
+  * [4eeedf3] MT#6703 normalize CRLF to LF
+  * [c169414] MT#6703 restore config paths to static and templates
+  * [7415166] MT#6703 set static path correctly
+  * [fc1c89a] MT#6497 API: get callforwards (simple)
+  * [b343f16] MT#6497 API: edit callforwards
+  * [5ae0ed4] MT#6497 API: edit cft ringtimeout
+  * [237ebda] MT#6665 show error on parsing billing fees
+  * [a7483ca] MT#6497 API: callforwards, better validation
+  * [6401583] MT#6497 API: callforwards - tests
+  * [d4cf986] MT#6497 API cfdestinationsets
+  * [2dd40a8] MT#6497 API cftimesets
+  * [a11b53a] MT#6497 API cfmappings GET
+  * [63ac992] MT#6497 API cfmappings PUT, PATCH
+  * [0feca3e] MT#6497 API cfmappings handle ringtimeout for cft
+  * [2fc4743] MT#6497 API use billing subscriber id on all places in cf_*_sets
+  * [35c5ef8] MT#6695 separate api/server certfile
+  * [24ad811] MT#6695 error checks on generating certificates
+  * [bebc4de] MT#3933 Exclude terminated subscribers from subscriberpreferences
+  * [438fba5] MT#6827 fix missing data in customer details
+  * [816fbce] MT#6827 API pbxdevices GET
+  * [d2a3348] MT#6827 API pbxdevices POST
+  * [0430f83] MT#6827 API pbxdeviceprofiles GET
+  * [313bf84] MT#6827 API pbxdeviceconfigs GET
+  * [0de65ed] MT#6827 API pbxdevicemodels GET
+  * [139dabf] MT#6827 API pbxdevice* improvements
+  * [d71f12a] MT#3937 API speeddials get
+  * [f7ebfe0] MT#3937 API speeddials put/patch
+  * [14d6b1d] MT#6985 API more subscribers filters
+  * [718f10c] MT#3941 API: add voicemail relations to test
+  * [6637824] MT#7029 API subscriber, fix creation of admin subscriber
+  * [582b835] MT#7067 fix api tests
+  * [7333869] MT#7113 API subscribers: provide hunt-policy/timeout
+  * [ae18987] MT#6841 Sound Set Customer section conditional
+  * [cd9177b] MT#7051 set webusername to NULL if empty
+  * [ac74b97] MT#3955 API callcosts: GET
+  * [1eadcf7] MT#3955 API callcosts: filter by subscriber_id
+  * [90a20dd] MT#7153 fix showing "Create PBX Group"
+  * [83d37c5] MT#7119 API order_by for collections
+  * [c93c8ee] MT#7119 fix broken soundfilerecordings collection
+  * [09ac085] MT#7119 API document sortable columns
+
+  [ Andreas Granig ]
+  * [11d83a7] MT#6283 Implement search-framework.
+  * [7d76b46] MT#6283 Fix search framework to work on debian
+  * [259cff4] MT#4235 Fix some Jitsi provisioning options.
+  * [9274c0a] MT#5837 Fix syntax error in ru translation.
+  * [dde8616] MT#6425 Improve localization script.
+  * [2a85087] MT#6425 Package localization tools.
+  * [451b6a8] MT#6425 Install gettext dependency.
+  * [32f7044] MT#6459 Fix peering contract and peer auth pref.
+  * [7cbb863] MT#6461 Let admin rebrand reseller.
+  * [45a42b9] MT#6479 API: Allow resellers to access some funcs.
+  * [861e38b] MT#6283 Add more query params to existing colls
+  * [f5ce7e9] MT#6461 Let resellers rebrand their panel
+  * [88bcc04] MT#6731 Remove "back" param from form if posted.
+  * [f88eb32] MT#6687 Use transaction when cloning set.
+  * [a9ffa23] Subscriber profile management. WIP.
+  * [54a56b5] MT#6693 Properly handle sub profile attributes.
+  * [4cf62bc] MT#6693 Assign profiles to subscribers - WIP.
+  * [a89b8ea] MT#6693 Basic pref filter based on subs profiles.
+  * [4d430b7] MT#6693 Introduce profile catalogs.
+  * [bc4bffc] MT#6693 Align subs profile CRUD to catalog schema.
+  * [8c86742] MT#6693 Rename profile categories to profile sets.
+  * [202b9c9] MT#6693 Let subadmins edit subscriber profile.
+  * [9e57582] MT#6693 Let admin/reseller clear subs profiles
+  * [40663eb] MT#6693 Filter call-forwards for subs profiles.
+  * [340542c] MT#6693 Let subscriber edit reminder.
+  * [17d4140] MT#6693 Add separate form for subadmin pbx flow.
+  * [e98c94d] MT#6693 Remove reseller "back" param workaround.
+  * [f197d4a] MT#6693 Fix profile(set) editing of pbx subs.
+  * [16b4467] MT#6693 Rework PBX subscriber/group handling.
+  * [9aead3f] MT#6693 More subscriber editing rework.
+  * [560bf47] MT#6693 Fix PBX group editing.
+  * [a3f944e] MT#6693 Show extension vs number for customer subs
+  * [ceb53a1] MT#6693 Fix subadmin subscriber editing.
+  * [92b7b5e] MT#6693 Fix initial subscriber creation.
+  * [c1307b1] MT#6693 Fix extension creation without profile set
+  * [f7f11fd] MT#6693 Allow admin to change profileset of pbxext
+  * [5aea565] MT#6693 Remove CF/prefs in case of profile edit
+  * [02610fa] MT#6789 Implement email template management.
+  * [507402c] MT#6789 Choose email template for customer - WIP
+  * [bf5ec09] MT#6789 Add subscriber email and password recovery
+  * [256de92] MT#6789 Add password recovery components.
+  * [0e7e512] MT#6789 Add password reset link to subscriber.
+  * [6b6d5e0] MT#6789 Add "forgot password" feature for subs.
+  * [2bf4fe1] MT#6831 Implement global password policy.
+  * [fd1ce99] MT#6789 Don't clear old password on pwd reset.
+  * [c5c8f10] MT#6789 Add switch to allow anonymous pwd recovery
+  * [80b4b30] MT#6693 Clean up orphaned methods.
+  * [aed5d7e] MT#6843 Implement password auto-generation.
+  * [67bf154] MT#6487 Optimize login css.
+  * [76cd2f2] MT#6693 Let reseller be chosen on profset cloning
+  * [b4ef15d] MT#6693 Deny resellers edit attribs of subprofiles
+  * [79e2274] MT#6789 Clear old password on logged-in reset.
+  * [9097768] MT#6773 Remove any Data::Printer calls
+  * [b669975] MT#6863 Hide webfax if faxserver is not enabled.
+  * [8823a94] MT#6693 Clear subscriber prefs on profile change
+  * [629f215] MT#6695 Specify ssl config dir and document auth
+  * [4341a39] MT#6871 Fix subscriber editing.
+  * [1e235be] MT#6789 Fix empty string as email template id.
+  * [a5fd61f] MT#6871 FIx subs creation if contract.external_id
+  * [8d7db36] MT#3931 Fix reseller fetch in customercontact test
+  * [976843e] MT#6827 API POST/PUT/PATCH/DELETE of field devices
+  * [e9d30a3] MT#6773 Remove DDP, shortcut for Data::Printer
+  * [88c6e4d] MT#6789 API: handle subscriber email and profile.
+  * [6a568e2] MT#6843 API: only autogen pass if not provided
+  * [1da7f9a] MT#6789 API: validate email template id
+  * [cd98d27] MT#6909 API: implement email template management.
+  * [954367a] MT#6827 Update api description for pbxdevices
+  * [f47c7d1] MT#6909 API: add reseller rel to emailtemplates
+  * [3ec2d88] MT#6909 API Check for existance of email tmpl name
+  * [427bd2e] MT#6913 API: Basic management of profile sets.
+  * [19d6b47] MT#6913 API: implement profile handling.
+  * [84cc7c3] MT#6913 API: fix profile(_set) deletion.
+  * [f305183] MT#6913 API: fix syntax error
+  * [42031a1] MT#6913 API: prevent reseller profile deletion.
+  * [c8ad008] MT#3935 API: Properly handle bool values in prefs.
+  * [6e5e1b5] MT#3941 API: Implement voicemail message handling.
+  * [4fe7db3] MT#3941 API: Prettify voicemail descriptions.
+  * [61eb05d] MT#3941 API: fix voicemail filtering.
+  * [b95daed] MT#6967 Alias range handling and first sub cleanup
+  * [bd9e9ac] MT#6969 PoC message to resync SPA.
+  * [bffe93f] MT#6979 API: expose id field in pbx device items
+  * [f96f08f] MT#4967 clean up moving alias numbers.
+  * [44a3b2d] MT#4967 Fix subadmin pbx alias number moving.
+  * [fead09e] MT#4967 Fix editing of non-pbx subscribers.
+  * [b0b0e03] MT#6871 Fix updating non-pbx subscriber.
+  * [28ee096] MT#3943 API: fetch cdrs via REST.
+  * [7cbdb27] MT#3947 API: Implement voicemail settings.
+  * [f59fa60] MT#7037 Fix MoH and default packet size.
+  * [7df32a9] MT#7039 API: implement SIP registration handling
+  * [6d64261] MT#4967 Fix html documentation.
+  * [2b2c1f0] MT#6913 API: fix profile(set) update.
+  * [9767e62] MT#6913 API: remove Data::Printer debug.
+  * [024d3fc] MT#7029 API: fix exposure of administrative flag.
+  * [74d3458] MT#7061 API: implement reminder handling.
+  * [1cc0aa6] MT#7039 API: link subscriberregistrations
+  * [b0993b6] MT#3939 API: Implement trusted source handling.
+  * [aaac4b6] MT#7067 API: Implement sound set handling.
+  * [d773562] MT#7077 Fix dots in SIP usernames for SPAs.
+  * [8e2a050] MT#7067 Document sound set form fields.
+  * [60de7de] MT#7067 API: Implement sound file handling.
+  * [df9d103] MT#6827 Deprecate linerange_num field.
+  * [388cd7c] MT#7175 Skip collection in doc if role unspecified
+  * [378f53c] MT#7191 Use DT to select contact country.
+
+  [ Victor Seva ]
+  * [0a258ae] MT#5173 update polycom config template
+  * [c1c6c3a] MT#6513 remove old Replaces/Breaks. Not needed any longer.
+  * [35d3a6a] MT#6695 scripts: add generate_ssl_key.sh
+  * [ce63522] MT#6815 create ngcp-panel-tools package
+  * [2c96735] MT#6839 fixing lintian errors/warnings
+  * [68ac88e] MT#6839 Add js sources
+  * [2ac6f58] MT#6839 clean lintian errors
+  * [f1672e9] MT#6833 MT#6695 use api_ssl directory
+  * [d45e1d5] MT#6849 add new libcatalyst-plugin-email-perl dependence
+
+  [ Michael Prokop ]
+  * [31b114a] MT#6511 Bump Standards-Version to 3.9.5
+  * [4789f25] MT#6561 Make sure daemon executable is available before executing any actions
+  * [520fce8] MT#7155 Avoid parallel startup of init script
+  * [21c6a7d] MT#7155 Make sure to also handle interrupted init script starts
+  * [92387d7] MT#7155 Return with proper exit code in status option of init script
+
+  [ Irina Peshinskaya ]
+  * [a1cf423] MT#5879 Save some intermediate state. Started to implement fields checks, format a little calls.tt.
+  * [4684209] MT#5879 Separated Model DB actions. Time spent with FormHandler and Catalyst::Adaptor.
+  * [7166688] MT#5879 Save script solution for svg text rows before delete.
+  * [d814805] MT#5879   Well, customer can save his invoice. He can't delete. But he can rewrite from default now. But specification of using default (and as action - deletion of his template - is necessary).
+  * [3e53758] MT#5879 Customer.pm wasn't saved.
+  * [bb69a3e] MT#5879 Sub validate in InvoiceTemplate form doesn't work. Start of PDF generation.
+  * [21e2f2b] MT#5879 Start with PDF::WebKit
+  * [ae53608] MT#5879 separate row listing subs in template toolkit to have possibility generate multi-parted document
+  * [54c02e3] MT#5879 Pages generated by template Toolkit first version
+  * [f5dc202] MT#5879 commented out data, faked for multipage document
+  * [d8a55f5] MT#5879 Mainly template changes to generate multipage document. now is generated, but with errors. Added rows as allowed attribute for <g. Additional changes for fake calls rows = with row numbers/
+  * [de12d32] MT#5879 Show page number on pages
+  * [6e743ae] MT#5879 Generation of pdf while through system. Image::RSVGlib in plans. Games with fonts - attention, svg template contain fon inside now. Will be removed.
+  * [7c3a045] MT#5879 Save some intermediate state. Started to implement fields checks, format a little calls.tt.
+  * [4f19965] MT#5879 Separated Model DB actions. Time spent with FormHandler and Catalyst::Adaptor.
+  * [375b4d3] MT#5879 Save script solution for svg text rows before delete.
+  * [a912f1f] MT#5879   Well, customer can save his invoice. He can't delete. But he can rewrite from default now. But specification of using default (and as action - deletion of his template - is necessary).
+  * [f45e5f6] MT#5879 Customer.pm wasn't saved.
+  * [04987fc] MT#5879 Sub validate in InvoiceTemplate form doesn't work. Start of PDF generation.
+  * [53f5c06] MT#5879 Start with PDF::WebKit
+  * [8834411] MT#5879 separate row listing subs in template toolkit to have possibility generate multi-parted document
+  * [d36699c] MT#5879 Pages generated by template Toolkit first version
+  * [44e61d9] MT#5879 commented out data, faked for multipage document
+  * [4fdee64] MT#5879 Mainly template changes to generate multipage document. now is generated, but with errors. Added rows as allowed attribute for <g. Additional changes for fake calls rows = with row numbers/
+  * [07ca4a3] MT#5879 Show page number on pages
+  * [7f6ce29] MT#5879 Generation of pdf while through system. Image::RSVGlib in plans. Games with fonts - attention, svg template contain fon inside now. Will be removed.
+  * [6fdd7d4] MT#5879 Save intermediate state with separation of invoice_template logic for further usage in admin and customer areas.
+  * [3e55715] MT#5879 Separate actions for invoice templates.  Saving and view should be separated too. Rename ttemplates: calls to invoice and "template" according to content.
+  * [5649552] MT#5879 Change work with root element so now after moving rows block columns stay on correct position.
+  * [ed6861b] MT#5879 Use identifier for datatables helper initialization.
+  * [5869b32] MT#5879 Detailes with renamed zonecalls.
+  * [c966c84] MT#5879 Some drafts: 1. Configure embeding bit-map images in svg-edit 2. Remove zooming on mousewheel in svg-edit 3. Configure svg-edit a little to make interface not such full of features. Added main-button - not hided now. maybe should be? 4. Found lost </iframe> - fixed styling and javascript in invoice interface 5. Separate templates list in new template to enable ajax loading after deletion and active selection. Added different buttons ) And other small fixes and changes
+  * [db24de1] MT#5879 1. Complete embedding bitmap images 2. Change Work with layers - always show currently selecetd, apply initial display to others. Select first on start automatically. 3. Change preview work to fetch from server scheme, to enable preview in Explorer. Maybe should be applied only to Explorer?
+  * [eab4aa6] MT#5879 Fix total location
+  * [805e9ee] MT#5879 Save a lot of commented rows related to initial zoom before delete them
+  * [bf5d8cc] MT#5879 Save intermediate state with solutions which are going to be removed.
+  * [1743673] MT#5879 Save state before switch to jsson getting of template info
+  * [bc0ce4b] MT#5879 Loading of template data to form and to server in progress. Other left: confirm on deletion )href is not used, would be good to implement using datatables at least for invoice data, and use dynamic invoice data for online generation. svg-edit: would be very nice to implement editing of rows amount and text in text boxes, and as a very  cool feature - applying styles. But next step will be cron.
+  * [4cdaa31] MT#5879 Fix double encoded template string for saving, adapted deletion confirmation to ajax loaded listing
+  * [e5932aa] MT#5879 Adapt confirmation layer to ajax loaded data => close on confirm (anyway it disappeared on confirmation as new page loaded in usual case) and apply javascript href to onclick. Don't apply back to javascript hrefs.
+  * [2d334de] MT#5879 Apply newly created id to worm to continue work with cretated template.
+  * [9228b2c] MT#5879 Well, now we delete, update and add templates almost in order.
+  * [5bbdba5] MT#5879 Just remove 2 alerts
+  * [26142a1] MT#5879 Prevent add back link again and again on applying onload method after ajax tables reload
+  * [f6fe84d] MT#5879 Datatables is shown now for invoice data but search doesn't work. Anyway switch now to invoices generation and will return to datatables later. Done: 1.Form separated for future possible load through ajax. 2.Activity switch in invoice templates table
+  * [89e6533] MT#5879 Remove artefacts from datatables vars and make possible deactivate all invoice templates.
+  * [135dad0] MT#5879 Draft of invoice template movement to reseller. 1.Remove curly brackets from svg template 2.Move invoice template templates to their own folder and change pathes accordingly. 3.Move invoice_template functionality to Reseller. maybe should be separated in new Controller. 4.Move InvoiceTemplate form to its own sppace from Customer
+  * [3c85a2e] MT#5879 Rename invoce template tables to s suffices.
+  * [59b1d7f] MT#5879 Intermediate state. Template changes not saved. Separated info form is working, axcept applying renamed fields as form values.
+  * [66376a9] MT#5879 Well, seems like all template relative info is working now again. What need n this area: 1. How about form "partial" validation - I need different fields checking of the item data for different actions. 2. To make it really DRY I need somehow alias columns in resultset data. Accessors don't work.
+  * [9aa35ef] MT#5879 Save state before new default template. Template form shown on click. Fix accordion intialization after ajax list refresh Add confirmation on default template applying
+  * [f877c90] MT#5879 Save wokring interface, but with alerts.
+  * [760e07c] MT#5879 Clear Alerts Attempt to enable edit spans or grouped texts. Seems like all texts should be ungrouped, to be ditable
+  * [6a63b84] MT#5879 Template. Fix datatables for invoice.
+  * [e9083ac] MT#5879 Fix datatables (wasn't commited, default template
+  * [5e30919] MT#5879 Draft of calls pages in template
+  * [dbf2b54] MT#5879 Templates alignments.
+  * [e9a88a5] MT#5879 Save templates state. Total isn't shown.
+  * [cf0acb0] MT#5879 Show total.
+  * [c4a4ee2] MT#5879 Temporary: avoid using external module Catalyst::Model::Adaptor.
+  * [c1d2a4b] MT#5879 Template::Plugin::JSON::Escape dependency.
+  * [d87e6b2] MT#5879 Replace invoices to separated controller.
+  * [1072f02] MT#5879 Separate template and invoice.
+  * [2c34133] MT#59879 Unify interface template names.
+  * [7720d53] MT#5879 Separate invoice and invoice template interfaces.
+  * [96bb4cb] MT#5879 Use get_contract_rs as clients list sub.
+  * [1659af9] MT#5879 Save calls queries.
+  * [e80b5df] MT#5879 Remove usage of local multiline log module.
+  * [51a51bb] MT#5879 Add librsvg package to ngcp install configuration.
+  * [fac20f3] MT#5879 Fake invoice template preview data.
+  * [00a0e08] MT#5879 Add forgotten svg markup comments.
+  * [99edada] MT#5879 And fake invoice data into aux template too.
+  * [c6d91d7] MT#5879 Remove exrescent buttons.
+  * [c96e686] MT5879 Remove debug red border
+  * [891a4c5] MT#5879 Replace buttons a little.
+  * [0d39395] MT#5879 Script to generate invoices from templates.
+  * [f63e61f] MT#5879 Mock context object to create SVG template processor
+  * [d5c2b33] MT#5879 Use total from pages
+  * [bde7cc0] MT#5879 Put PDF to DB.
+  * [1fd67eb] MT#5879 Send invoices via email.
+  * [fab290e] MT#5879 Fix creating of datetime with full parameters.
+  * [c39d6a9] MT#5879 View invoices
+  * [ebd4a41] MT#5879 Format invoice list. Just save state.
+  * [2fbc3dd] MT#5879 Save state before adding from-to search to invoices.
+  * [90cf448] MT#5879 Fix commited error with remove pageStart.
+  * [f1faaea] MT#5879 Commit doesn't work. Half of form rename.
+  * [103d763] MT#5879 Complete rename invoice forms.
+  * [280b4f3] MT#5879 Complete rename invoice forms.
+  * [7ab5ab3] MT#5879 Filter invoices by client. Generate form.
+  * [ba04a20] MT#5879 Save intermediate state.
+  * [10100ee] MT#5879 Add clear filter tooltip.
+  * [275d6a7] MT#5879 Fix datetime datatables search for no-epoch fields.
+  * [5f0c59d] MT#5879 InvoiceGeneration through web.
+  * [83db5c1] MT#5879 Multiple attachments and further web generation.
+  * [c1d5983] MT#5879 Forgot to save proper changes in controller.
+  * [d22ade4] MT#5879 Generation from web: not tested yet.
+  * [6c4f2e7] MT#5879 Web generation is working.
+  * [4494b13] MT#5879 Intermediate state before start datepeacker field.
+  * [fb2ac0d] MT#5879 Ajax form works
+  * [12dab8b] MT#5879 Save a lot of comments before deletion
+  * [8db8a16] MT#5879 Clean up queries a little.
+  * [70ae0c0] MT#5879 Invoice deletion draft
+  * [cdd05a1] MT#5879 Delete works
+  * [4a1b5c0] MT#5879 Few small fixes of some some already fixed errors.
+  * [b6361e6] MT#5879 Default for datepicker
+  * [4ed50bd] MT#5879 Lost part of merge on master head.
+  * [4dc64f5] MT#5879 Attempt to fix invoice/template
+  * [f9d0ac1] MT#5879 Save state before alternative interface.
+  * [59b7028] MT#5879 Form with datatable field for one page app.
+  * [c42b1a0] MT#5879 Form with datatable field for one page app.
+  * [59b932b] MT#5879 Form with datatable field for one page app.
+  * [7465db4] MT#5879 Send invoice to email functionality draft.
+  * [410ec47] MT#5879 Commented out client list frm invoices list interface.
+  * [749f143] MT#5879 Unsuccessful experiments with conditional flavours of fields.
+  * [088ca06] MT#5879 Fix invoice deletion after conditional fields.
+  * [63c52f3] MT#5879 Changes according to Andreas letter.
+  * [ab6414c] MT#5879 Rename clients to customers.
+  * [05f5464] MT#5879 Some small changes of big buttons
+  * [cd07b84] MT#5879 Preparations to merge into master
+  * [9cfd974] MT#5879 Preparations to merge into master
+  * [ca7e7a6] MT#5879 Small fixes for list refreshed after ajax form.
+
+  [ Sipwise Jenkins Builder ]
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Mon, 26 May 2014 15:55:16 +0200
+
 ngcp-panel (1.3.0+0~mr3.3) unstable; urgency=low
 
   [ Lars Dieckow ]
