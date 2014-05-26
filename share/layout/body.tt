@@ -110,11 +110,11 @@ var mainWrapperInit = function () {
             $('body').append(
                 '<div id="dataConfirmModal" class="modal" role="dialog" aria-labelledby="dataConfirmLabel" aria-hidden="true">'+
                 '<div class="modal-header">'+
-                  '<h3 id="dataConfirmLabel">Are you sure?</h3>'+
+                  '<h3 id="dataConfirmLabel">[% c.loc('Are you sure?') %]</h3>'+
                 '</div>'+
                 '<div class="modal-footer">'+
-                  '<button class="btn" data-dismiss="modal" aria-hidden="true" id="dataConfirmCancel">Cancel</button>'+
-                  '<a class="btn btn-primary" id="dataConfirmOK">OK</a>'+
+                  '<button class="btn" data-dismiss="modal" aria-hidden="true" id="dataConfirmCancel">[% c.loc('Cancel') %]</button>'+
+                  '<a class="btn btn-primary" id="dataConfirmOK">[% c.loc('OK') %]</a>'+
                 '</div>'+
               '</div>'
             );
