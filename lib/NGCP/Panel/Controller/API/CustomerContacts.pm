@@ -158,11 +158,13 @@ sub POST :Allow {
 
         my $form = $self->get_form($c);
         $resource->{reseller_id} //= undef;
+        $resource->{country}{id} = delete $resource->{country};
         last unless $self->validate_form(
             c => $c,
             resource => $resource,
             form => $form,
         );
+        $resource->{country} = $resource->{country}{id};
 
         my $reseller = $c->model('DB')->resultset('resellers')
             ->find($resource->{reseller_id});

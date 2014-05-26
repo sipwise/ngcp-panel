@@ -79,8 +79,9 @@ has_field 'city' => (
 );
 
 has_field 'country' => (
-    type => 'Text',
-    maxlength => 2,
+    type => '+NGCP::Panel::Field::Country',
+    validate_when_empty => 1,
+    label => 'Country',
     element_attr => {
         rel => ['tooltip'],
         title => ['The two-letter ISO 3166-1 country code of the contact (e.g. US or DE).']

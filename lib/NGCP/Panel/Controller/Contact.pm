@@ -8,6 +8,8 @@ use NGCP::Panel::Form::Contact::Admin;
 use NGCP::Panel::Utils::Message;
 use NGCP::Panel::Utils::Navigation;
 
+use Geography::Countries qw/countries country CNT_F_REGULAR CNT_I_FLAG CNT_I_CODE2/;
+
 sub auto :Does(ACL) :ACLDetachTo('/denied_page') :AllowedRole(admin) :AllowedRole(reseller) {
     my ($self, $c) = @_;
     $c->log->debug(__PACKAGE__ . '::auto');
@@ -75,6 +77,7 @@ sub create :Chained('list_contact') :PathPart('create') :Args(0) {
             if($c->user->is_superuser && $no_reseller) {
                 delete $form->values->{reseller};
             }
+            $form->values->{country} = $form->values->{country}{id};
             my $contact = $c->stash->{contacts}->create($form->values);
             delete $c->session->{created_objects}->{reseller};
             $c->session->{created_objects}->{contact} = { id => $contact->id };
@@ -121,6 +124,7 @@ sub edit :Chained('base') :PathPart('edit') :Args(0) {
     my $form;
     my $params = { $c->stash->{contact}->get_inflated_columns };
     $params = $params->merge($c->session->{created_objects});
+    $params->{country}{id} = delete $params->{country};
     if($c->user->is_superuser && $no_reseller) {
         $form = NGCP::Panel::Form::Contact::Reseller->new;
         $params->{reseller}{id} = $c->user->reseller_id;
@@ -152,6 +156,7 @@ sub edit :Chained('base') :PathPart('edit') :Args(0) {
                 $form->values->{reseller_id} = $form->values->{reseller}{id};
             }
             delete $form->values->{reseller};
+            $form->values->{country} = $form->values->{country}{id};
             $c->stash->{contact}->update($form->values);
             $c->flash(messages => [{type => 'success', text => $c->loc('Contact successfully changed')}]);
             delete $c->session->{created_objects}->{reseller};
@@ -228,6 +233,53 @@ sub ajax_noreseller :Chained('list_contact') :PathPart('ajax_noreseller') :Args(
 
     $c->detach( $c->view("JSON") );
 }
+
+sub countries_ajax :Chained('/') :PathPart('contact/country/ajax') :Args(0) {
+    my ($self, $c) = @_;
+
+    my $from = $c->request->params->{iDisplayStart} // 0;
+    my $len = $c->request->params->{iDisplayLength} // 4;
+    my $to = $from + $len - 1;
+    my $search = $c->request->params->{sSearch};
+    my $top = $c->request->params->{iIdOnTop};
+
+    my $top_entry;
+    my @aaData = map { 
+        my @c = country($_); 
+        if($c[CNT_I_CODE2]) {
+            my $e = { name => $_, id => $c[CNT_I_CODE2] };
+            if($top && !$top_entry && $top eq $e->{id}) {
+                $top_entry = $e;
+                (); # we insert it as top element after the map
+            } else {
+                $e;
+            }
+        } else { (); }
+    } countries;
+    if($top_entry) {
+        unshift @aaData, $top_entry;
+    }
+
+    if(defined $search) {
+        @aaData = map {
+            if($_->{id} =~ /$search/i || $_->{name} =~ /$search/i) {
+                $_;
+            } else { (); }
+        } @aaData;
+    }
+
+    my $count = @aaData;
+    @aaData = @aaData[$from .. ($to < $#aaData ? $to : $#aaData)];
+
+    $c->stash(aaData               => \@aaData,
+              iTotalRecords        => $count,
+              iTotalDisplayRecords => $count,
+              sEcho                => int($c->request->params->{sEcho} // 1),
+    );
+
+    $c->detach( $c->view("JSON") );
+}
+
 
 __PACKAGE__->meta->make_immutable;
 

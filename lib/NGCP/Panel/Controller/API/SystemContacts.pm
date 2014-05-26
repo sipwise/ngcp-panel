@@ -145,12 +145,14 @@ sub POST :Allow {
         );
         last unless $resource;
 
+        $resource->{country}{id} = delete $resource->{country};
         my $form = $self->get_form($c);
         last unless $self->validate_form(
             c => $c,
             resource => $resource,
             form => $form,
         );
+        $resource->{country} = $resource->{country}{id};
 
         my $now = NGCP::Panel::Utils::DateTime::current_local;
         $resource->{create_timestamp} = $now;
