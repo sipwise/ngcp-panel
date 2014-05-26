@@ -16,23 +16,25 @@ sub process {
     # check if we need to join more tables
     # TODO: can we nest it deeper than once level?
     set_columns($c_, $cols);
-    for my $c(@{ $cols }) {
-        my @parts = split /\./, $c->{name};
-        if($c->{literal_sql}) {
-           $rs = $rs->search_rs(undef, {
-                '+select' => [ \[$c->{literal_sql}] ],
-                '+as' => [ $c->{accessor} ],
-            });
-        } elsif( @parts > 1 ) {
-            my $join = $parts[$#parts-1];
-            foreach my $table(reverse @parts[0..($#parts-2)]){
-                $join = { $table => $join };
+    unless ($use_rs_cb) {
+        for my $c(@{ $cols }) {
+            my @parts = split /\./, $c->{name};
+            if($c->{literal_sql}) {
+               $rs = $rs->search_rs(undef, {
+                    '+select' => [ \[$c->{literal_sql}] ],
+                    '+as' => [ $c->{accessor} ],
+                });
+            } elsif( @parts > 1 ) {
+                my $join = $parts[$#parts-1];
+                foreach my $table(reverse @parts[0..($#parts-2)]){
+                    $join = { $table => $join };
+                }
+                $rs = $rs->search_rs(undef, {
+                    join => $join,
+                    '+select' => [ $parts[($#parts-1)].'.'.$parts[$#parts] ],
+                    '+as' => [ $c->{accessor} ],
+                });
             }
-            $rs = $rs->search_rs(undef, {
-                join => $join,
-                '+select' => [ $parts[($#parts-1)].'.'.$parts[$#parts] ],
-                '+as' => [ $c->{accessor} ],
-            });
         }
     }
 

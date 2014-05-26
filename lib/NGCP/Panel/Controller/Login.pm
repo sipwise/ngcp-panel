@@ -82,7 +82,7 @@ sub index :Path Form {
                 }, 
                 $realm);
         }
-        $res = 1;
+
         if($res) {
             # auth ok
             my $target = $c->session->{'target'} || '/';

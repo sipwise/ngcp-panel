@@ -188,7 +188,6 @@ sub create :Chained('list_customer') :PathPart('create') :Args(0) {
 
 sub base :Chained('list_customer') :PathPart('') :CaptureArgs(1) {
     my ($self, $c, $contract_id) = @_;
-    $c->log->debug('list_customer => base');
     unless($contract_id && $contract_id->is_integer) {
         NGCP::Panel::Utils::Message->error(
             c => $c,
