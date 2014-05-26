@@ -122,6 +122,7 @@ var mainWrapperInit = function () {
         $('#dataConfirmOK').attr('href', href);
         if( href.search(/^javascript:/i ) > -1 ){
             $('#dataConfirmOK').attr('onclick', href);
+            $('#dataConfirmOK').attr('data-dismiss', 'modal');
         }
         $('#dataConfirmOK').text($(this).attr('data-confirm'));
         if($('#mod_edit').length) {
