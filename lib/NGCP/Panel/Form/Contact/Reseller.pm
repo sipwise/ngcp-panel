@@ -88,6 +88,27 @@ has_field 'country' => (
     },
 );
 
+has_field 'iban' => (
+    type => 'Text',
+    maxlength => 34,
+    label => 'IBAN',
+    element_attr => {
+        rel => ['tooltip'],
+        title => ['The IBAN (International Bank Account Number) of the contact bank details.']
+    },
+);
+
+has_field 'bic' => (
+    type => 'Text',
+    minlength => 8,
+    maxlength => 11,
+    label => 'BIC/SWIFT',
+    element_attr => {
+        rel => ['tooltip'],
+        title => ['The BIC (Business Identifier Code) of the contact bank details.']
+    },
+);
+
 has_field 'phonenumber' => (
     type => 'Text',
     maxlength => 31,
@@ -109,7 +130,7 @@ has_block 'fields' => (
     tag => 'div',
     class => [qw/modal-body/],
     render_list => [qw/firstname lastname email company street postcode city
-        country phonenumber/],
+        country iban bic phonenumber/],
 );
 
 has_block 'actions' => (
