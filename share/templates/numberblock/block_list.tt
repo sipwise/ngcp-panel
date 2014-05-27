@@ -1,0 +1,28 @@
+[% site_config.title = c.loc('Number Blocks') -%]
+[%
+    helper.name = c.loc('Number Blocks');
+    helper.identifier = 'number_blocks';
+    helper.messages = messages;
+    helper.dt_columns = block_dt_columns;
+    helper.length_change = 1;
+
+    helper.close_target = close_target;
+    helper.create_flag = create_flag;
+    helper.edit_flag = edit_flag;
+    helper.form_object = form;
+    helper.ajax_uri = c.uri_for_action( "/numberblock/block_ajax" );
+
+    UNLESS c.user.read_only;
+        helper.dt_buttons = [
+            { name = c.loc('Edit'), uri = "/numberblock/'+full.id+'/edit", class = 'btn-small btn-primary', icon = 'icon-edit' },
+            { name = c.loc('Delete'), uri = "/numberblock/'+full.id+'/delete", class = 'btn-small btn-secondary', icon = 'icon-trash' },
+            { name = c.loc('Details'), uri = "/numberblock/'+full.id+'/details", class = 'btn-small btn-primary', icon = 'icon-list' },
+        ];
+        helper.top_buttons = [
+            { name = c.loc('Create Number Block'), uri = c.uri_for_action('/numberblock/block_create'), icon = 'icon-star' },
+        ];
+    END;
+
+    PROCESS 'helpers/datatables.tt';
+-%]
+[% # vim: set tabstop=4 syntax=html expandtab: -%]

@@ -14,6 +14,7 @@ has_field 'cc' => (
     },
     do_label => 0,
     do_wrapper => 0,
+    required => 1,
 );
 
 has_field 'ac' => (
@@ -25,6 +26,7 @@ has_field 'ac' => (
     },
     do_label => 0,
     do_wrapper => 0,
+    required => 0,
 );
 
 has_field 'snbase' => (
@@ -36,6 +38,7 @@ has_field 'snbase' => (
     },
     do_label => 0,
     do_wrapper => 0,
+    required => 1,
 );
 
 has_field 'snlength' => (
@@ -47,6 +50,7 @@ has_field 'snlength' => (
     },
     do_label => 0,
     do_wrapper => 0,
+    required => 1,
 );
 
 sub validate {

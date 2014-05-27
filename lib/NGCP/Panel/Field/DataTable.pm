@@ -26,6 +26,7 @@ sub render_element {
         my $decoder = URI::Encode->new;
         $self->ajax_src( $self->ajax_src.($self->ajax_src!~/\?/?'?':'&').'dt_columns='.$decoder->encode(to_json($dt_columns)) );
     }
+
     my $vars = {
         label => $self->label,
         field_name => $self->html_name,
@@ -47,8 +48,12 @@ sub render_element {
         ],
     });
 
+    use Data::Printer; p $vars;
+
     $t->process($self->template, $vars, \$output) or
         die "Failed to process Datatables field template: ".$t->error();
+
+    print $output;
 
     return $output;
 }

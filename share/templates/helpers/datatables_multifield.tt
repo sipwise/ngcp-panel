@@ -3,7 +3,7 @@
 
 var checked_fields = {};
 $(document).ready(function() {
-    
+
     JSON.parse('[% value %]').map( function (val) {
         checked_fields[val] = 1;
     });
