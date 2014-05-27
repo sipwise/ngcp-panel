@@ -86,5 +86,65 @@ Some query parameters allow wildcard/pattern matching, which is expressed by a '
 curl -X GET 'https://example.org:1443/api/somecollection/?param=*something*
 </code>
 
+<h[% level + 1%]>HTTP Response Codes</h[% level + 1%]>
+
+The REST API returns an HTTP response code with the following classes:
+
+<ul>
+<li><b>1xx</b>: <em>Provisioninal Response</em> - the client is asked to proceed with the request.</li>
+<li><b>2xx</b>: <em>Successful Response</em> - the request has successfully been received and processed.</li>
+<li><b>3xx</b>: <em>Redirection Response</em> - the client is asked to contact a different location.</li>
+<li><b>4xx</b>: <em>Client Error</em> - the client has provided incorrect information in either the credentials, the location or the data.</li>
+<li><b>5xx</b>: <em>Server Error</em> - the server failed to process the request due to an internal error.</li>
+</ul>
+
+<h[% level + 2%]>1xx Provisional Responses</h[% level + 2%]>
+
+The server sends the following provisional responses, and the user agent on the client is expected to handle it transparently without any special handling in the code using the API:
+
+<ul>
+  <li><b>100 Continue</b>: The client should continue with its request. This interim response is used to inform the client that the initial part of the request has been received and has not yet been rejected by the server. The client should continue by sending the remainder of the request or, if the request has already been completed, ignore this response.</li>
+</ul>
+
+<h[% level + 2%]>2xx Successful Responses</h[% level + 2%]>
+
+The server sends the following successful responses:
+
+<ul>
+  <li><b>200 OK</b>: The 200 code is sent in response code to a successful GET request on a collection or item, or if a PUT or PATCH request with a <em>Prefer: return=representation</em> header is processed successfully. The body contains the result of the operation.</li>
+  <li><b>201 Created</b>: The 201 code is sent in response to a successful POST request creating an item within a collection.</li>
+  <li><b>204 No Content</b>: The 204 code is sent in response to a successful PUT or PATCH request with no <em>Prefer</em> header or with <em>Prefer: return=minimal</em> and to a successful DELETE request.</li>
+</ul>
+
+<h[% level + 2%]>3xx Redirection Responses</h[% level + 2%]>
+
+The server redirects the clients using the following return codes:
+
+<ul>
+  <li><b>301 Moved Permanently</b>: The 301 code is sent in reponse to a request towards a collection without a trailing slash, e.g. <em>http://example.org:1443/api/something</em> is redirected to <em>http://example.org:1443/api/something/</em>.</li>
+</ul>
+
+<h[% level + 2%]>4xx Client Error</h[% level + 2%]>
+
+The server rejects a client request with the following response codes:
+
+<ul>
+  <li><b>400 Bad Request</b>: The 400 code is sent in response to a request not validating basic syntactical and semantical rules. These rules include a missing body in a POST, PUT or PATCH request, an invalid body in a PATCH request, invalid operations in a PATCH request, or a malformed body based on the expected content type.</li>
+  <li><b>401 Unauthorized</b>: The 401 code is sent in response to a request lacking an <em>Authorization</em> header if no SSL authentication is performed, or an <em>Authorization</em> header with invalid credentials.</li>
+  <li><b>403 Forbidden</b>: The 403 code is sent in response to a request trying to access resources which require different privileges (typically a reseller accessing resources of other resellers or of the system), or if you try to create more subscribers than allowed within a customer, or if you try to authenticate with an SSL client certificate with an invalid serial number.</li>
+  <li><b>404 Not Found</b>: The 404 code is sent in response to a request trying to access an invalid URL on the system, or if it is trying to perform an operation on an item which does not exist or the user has no access to (e.g. a reseller trying to access items of a different reseller).</li>
+  <li><b>415 Unsupported Media Type</b>: The 415 code is sent in response to a PUT, POST or PATCH request which doesn't provide an acceptable <em>Content-Type</em> header. Content types are usually <em>application/json</em> or <em>application/json-patch+json</em> for POST/PUT and PATCH, respectively. However, some resources require different content types like <em>audio/x-wav</em>.</li>
+  <li><b>422 Unprocessible Entity</b>: The 422 code is sent in response to a syntactically valid request, which fails to meet sematical conditions, like missing or invalid fields in a JSON structure. The body of the response provides more information about the exact condition that failed.</li>
+  <li><b>423 Locked</b>: The 423 code is sent if you try to delete an item which is still in use. This is typically the case when trying to delete system or customer contacts which are still bound to a contract.</li>
+</ul>
+
+<h[% level + 2%]>5xx Server Error</h[% level + 2%]>
+
+The server sends the following error codes in case of internal issues:
+
+<ul>
+  <li><b>500 Server Internal Error</b>: The 500 code is sent in response to a request which caused an unrecoverable error while processing the request. This is usually caused by database errors when modifying data, and they should never happen. If a 500 is encountered, please open a support ticket with Sipwise, providing the data you passed to the server (URL, headers, body), and the error message provided in <em>/var/log/ngcp/oss.log</em> of the server.</li>
+</ul>
+
 
 [% # vim: set tabstop=4 syntax=html expandtab: -%]
