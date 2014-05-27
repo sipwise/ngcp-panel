@@ -1,259 +1,274 @@
-[%USE Dumper%]
-[%USE Math%]
-[%USE date%]
-[%USE format %]
-
-[%MACRO date_format(dateval,noyear) BLOCK%]
-[%date.format(dateval,'%B')%] [%ordinate(date.format(dateval,'%e'))%] [%IF !noyear; date.format(dateval,'%Y'); END%]
-[%END%]
-
 [%
+USE Dumper;
+USE Math;
+USE date;
+USE format ;
+
+MACRO date_format(dateval,noyear) BLOCK;
+date.format(dateval,'%B'); ordinate(date.format(dateval,'%e')); IF !noyear; date.format(dateval,'%Y'); END;
+END;
+
+
 dateval.value = date.now();
-dateval.month_end = date_format('00:00:00 00-' _ (Math.int(date.format(dateval.value,'%m')) + 1) _ date.format(dateval.value,'-%Y'), noyear = 1 );
+dateval.month_end = date_format('00:00:00 00-' _ (Math.int(ifz(date.format(dateval.value,'%m'))) + 1) _ date.format(dateval.value,'-%Y'), noyear = 1 );
 dateval.month_start = date_format('00:00:00 01-' _ date.format(dateval.value,'%m-%Y'), noyear = 1 );
 dateval.year=date.format(dateval.value,'%Y');
 
-invoice.serial=Math.int(invoice.serial)|format('%06d');
+invoice.serial=Math.int(ifz(invoice.serial))|format('%06d');
 invoice.month=date.format(invoice.start,'%B');
-%]
+
+MACRO ordinate(num) BLOCK;
+      IF num.search('(?<!1)1$');
+          sfx = 'st';
+      ELSIF num.search('(?<!1)2$');
+          sfx = 'nd';
+      ELSIF num.search('(?<!1)3$');
+          sfx = 'rd';
+      ELSE;
+          sfx = 'th';
+     END;
+      num _ sfx;
+END;
+
+MACRO if(prefix, value) BLOCK;
+    value_clear = value.replace('[ ,]','');
+     IF value_clear ;
+         prefix _ value ;
+    END;
+END;
+
+MACRO ifz(value, default) BLOCK;
+    value_clear = value.replace(' *|\s*','');
+    IF !default; default = 0; END;
+    IF !value_clear ;
+         value = default ;
+    END;value;END;
+
+MACRO ife(value,suffix) BLOCK ;
+    value_clear = value.replace('[ ,]','');
+     IF value_clear ;
+         value _ suffix ;
+    END;
+END;
+
+MACRO get_page(pagetype) BLOCK ;
+    #use this macro until no symbolic references in tt ;
+    #data can be empty, if we just need y - it doesn't depend on data ;
+    IF pagetype == 'titlepage' ;
+        page = titlepage();
+    ELSIF pagetype == 'zonepage' ;
+        page = zonepage();
+    ELSIF pagetype == 'callpage' ;
+        page = callpage();
+    END;
+    page;
+END;
+
+MACRO adjustrow(data, page, pagelocal, pageslocalnum, rowtype, tt_type, rows_interval_in, rownumber) BLOCK ;
+    rows_interval = ( ifz(rows_interval_in) > 0 ) ? rows_interval_in : row_vertical_interval;
+    IF rowtype == 'datarow' ;
+        row = datarow(data);
+    ELSIF rowtype == 'totalrow' ;
+        row = totalrow( (pagelocal == pageslocalnum) ? data.global : data.perpage.${pagelocal} );
+    END;
+    IF tt_type == 'svg'  ;
+        y_re = '(?s)(<(?:text)[^>]*\s+y\s*=.*?)([-\d\.,]+)(.*)' ;
+    END;
+    matches = row.match( y_re ) ;
+    IF matches.size > 0  ;
+        y_old = Math.int(ifz(matches.1)) ;
+        y = ifz(y_old) + ( ifz(rows_interval) * ( ifz(rownumber) - 1 ) ) ;
+        row = matches.0 _ y _ matches.2 ;
+        matches_other = row.match('(<.*?\s+y\s*=.*?)([-\d\.,]+)', 1) ;
+        i = 0 ;
+        #matches_otherDumper.dump_html(matches_other);
+         WHILE i*2 < matches_other.size() ;
+            IF !matches_other.item(i*2).search('<text');
+                search = matches_other.item(i*2) _ matches_other.item(i*2 + 1);
+                replace = matches_other.item(i*2) _ ( Math.int( matches_other.item(i*2 + 1)) - ifz(y_old) + ifz(y)  ) ;#+ rows_interval;# + ( rowtype == 'totalrow' ? rows_interval : 0);
+                #search1= search;
+                #search= row.search(search);
+                #replace= replace;
+                row = row.replace(search, replace ) ;
+            END ;
+            i = i + 1 ;
+        END ;
+    END ;
+    row;
+END ;
+
+MACRO list_zones(callsdata, page, pagelocal, pageslocalnum, rowtype, total, tt_type, rows_interval) BLOCK;
+     FOR call IN callsdata ;#invoice_details;
+        IF call.1; calldata = call.1; ELSE; calldata = call; END;
+            FOREACH colname in ['number','duration','free_time','cost'];
+                calldata.${colname} = ifz(calldata.get_column(colname));
+            END;
+            total.global.cost = ifz(total.global.cost) + ( Math.int(calldata.cost) / 100 ) ;
+            total.global.number = ifz(total.global.number)         + calldata.number ;
+            total.global.duration = ifz(total.global.duration)     + calldata.duration ;
+            total.global.free_time = ifz(total.global.free_time)   + calldata.free_time ;
+            total.perpage.${pagelocal}.cost = ifz(total.perpage.${pagelocal}.cost) + ( Math.int(calldata.cost) / 100) ;
+            total.perpage.${pagelocal}.number = ifz(total.perpage.${pagelocal}.number)  + calldata.number ;
+            total.perpage.${pagelocal}.duration = ifz(total.perpage.${pagelocal}.duration)  + calldata.duration ;
+            total.perpage.${pagelocal}.free_time = ifz(total.perpage.${pagelocal}.free_time) + calldata.free_time ;
+            adjustrow(call, page, pagelocal, pageslocalnum, rowtype,  tt_type, rows_interval, loop.count) ;
+    END ;
+END ;
+
+MACRO list_calls(callsdata, page, pagelocal, pageslocalnum, rowtype, total, tt_type, rows_interval) BLOCK;
+     FOR call IN callsdata ;#invoice_details;
+        IF call.1; calldata = call.1; ELSE; calldata = call; END;
+            FOREACH colname in ['source_customer_cost','duration'];
+                calldata.${colname} = ifz(calldata.get_column(colname));
+            END;
+        total.global.duration = ifz(total.global.duration) + calldata.duration ;
+        total.global.cost = ifz(total.global.cost) + ( Math.int(calldata.source_customer_cost) / 100 ) ;
+        total.perpage.${pagelocal}.duration = ifz(total.perpage.${pagelocal}.duration) + calldata.duration ;
+        total.perpage.${pagelocal}.cost = ifz(total.perpage.${pagelocal}.cost) + ( Math.int(calldata.source_customer_cost) / 100 ) ;
+        adjustrow(call, page, pagelocal, pageslocalnum, rowtype,  tt_type, rows_interval, loop.count) ;
+    END ;
+END ;
+
+MACRO get_page_rows_number(pagetype, tt_type, rows_type) BLOCK;
+     IF tt_type == 'svg'  ;
+         rows_type = rows_type ? rows_type _ '-' : '' ;
+         page_rows_re = rows_type _ 'rows="([0-9]+)"' ;
+    END;
+
+    page = get_page(pagetype) ;
+    matches = page.match( page_rows_re ) ;
+
+    rows = matches.0 || matches.1 ;
+    rows = Math.int(ifz(rows));
+    ifz(rows);
+END ;
 
 
-[%MACRO ordinate(num) BLOCK -%]
-    [% IF num.search('(?<!1)1$') -%]
-        [% sfx = 'st' -%]
-    [% ELSIF num.search('(?<!1)2$') -%]
-        [% sfx = 'nd' -%]
-    [% ELSIF num.search('(?<!1)3$') -%]
-        [% sfx = 'rd' -%]
-    [% ELSE -%]
-        [% sfx = 'th' -%]
-    [%END%]
-    [% num _ sfx %]
-[%END%]
+MACRO get_page_interval(pagetype, tt_type, interval_type) BLOCK;
+     IF tt_type == 'svg'  ;
+         interval_type = interval_type ? interval_type _ '-' : '' ;
+         page_interval_re = interval_type _ 'rows-interval="([0-9]+)"' ;
+    END;
 
-[%MACRO if(prefix, value) BLOCK -%]
-    [%value_clear = value.replace('[ ,]','')%]
-    [% IF value_clear -%]
-        [% prefix _ value -%]
-    [%END%]
-[%END%]
+    page = get_page(pagetype) ;
+    matches = page.match( page_interval_re ) ;
 
-[%MACRO ife(value,suffix) BLOCK -%]
-    [%value_clear = value.replace('[ ,]','')%]
-    [% IF value_clear -%]
-        [% value _ suffix -%]
-    [%END%]
-[%END%]
+    interval = matches.0 || matches.1 ;
+    interval = Math.int(ifz(interval));
+    interval;
+END ;
 
-[%MACRO get_page(pagetype) BLOCK -%]
-    [%#use this macro until no symbolic references in tt %]
-    [%#data can be empty, if we just need y - it doesn't depend on data %]
-    [%IF pagetype == 'titlepage' %]
-        [%page = titlepage()%]
-    [%ELSIF pagetype == 'zonepage' %]
-        [%page = zonepage()%]
-    [%ELSIF pagetype == 'callpage' %]
-        [%page = callpage()%]
-    [%END%]
-    [%page%]
-[%END%]
 
-[%MACRO adjustrow(data, page, pagelocal, pageslocalnum, rowtype, tt_type, rows_interval_in, rownumber) BLOCK -%]
-    [% rows_interval = ( rows_interval_in > 0 ) ? rows_interval_in : row_vertical_interval%]
-    [%IF rowtype == 'datarow' %]
-        [%row = datarow(data)%]
-    [%ELSIF rowtype == 'totalrow' %]
-        [%row = totalrow( (pagelocal == pageslocalnum) ? data.global : data.perpage.${pagelocal} )%]
-    [%END%]
-    [% IF tt_type == 'svg'  -%]
-        [% y_re = '(?s)(<(?:text)[^>]*\s+y\s*=.*?)([-\d\.,]+)(.*)' -%]
-    [%END%]
-    [% matches = row.match( y_re ) -%]
-    [% IF matches.size > 0  -%]
-        [% y_old = Math.int(matches.1) %]
-        [% y = y_old + ( rows_interval * ( rownumber - 1 ) ) %]
-        [% row = matches.0 _ y _ matches.2 %]
-        [% matches_other = row.match('(<.*?\s+y\s*=.*?)([-\d\.,]+)', 1) %]
-        [% i = 0 %]
-        [%#matches_other[%Dumper.dump_html(matches_other)%]
-        [% WHILE i*2 < matches_other.size() %]
-            [%IF !matches_other.item(i*2).search('<text')%]
-                [% search = matches_other.item(i*2) _ matches_other.item(i*2 + 1)%]
-                [% replace = matches_other.item(i*2) _ ( Math.int( matches_other.item(i*2 + 1)) - y_old + y  ) %][%#+ rows_interval%][%# + ( rowtype == 'totalrow' ? rows_interval : 0)%]
-                [%#search1=[% search%]
-                [%#search=[% row.search(search)%]
-                [%#replace=[% replace%]
-                [% row = row.replace(search, replace ) %]
-            [%END -%]
-            [% i = i + 1 %]
-        [%END -%]
-    [%END -%]
-    [%row%]
-[%END -%]
-
-[%MACRO list_zones(callsdata, page, pagelocal, pageslocalnum, rowtype, total, tt_type, rows_interval) BLOCK-%]
-    [% FOR call IN callsdata -%][%#invoice_details%]
-        [%IF call.1; calldata = call.1; END%]
-        [% total.global.number = total.global.number + calldata.get_column('number') -%]
-        [% total.global.duration = total.global.duration + calldata.get_column('duration') -%]
-        [% total.global.free_time = total.global.free_time + calldata.get_column('free_time') -%]
-        [% total.global.cost = total.global.cost + ( Math.int(calldata.get_column('cost')) / 100 ) -%]
-        [% total.perpage.${pagelocal}.number = total.perpage.${pagelocal}.number + calldata.get_column('number') -%]
-        [% total.perpage.${pagelocal}.duration = total.perpage.${pagelocal}.duration + calldata.get_column('duration') -%]
-        [% total.perpage.${pagelocal}.free_time = total.perpage.${pagelocal}.free_time + calldata.get_column('free_time') -%]
-        [% total.perpage.${pagelocal}.cost = total.perpage.${pagelocal}.cost + ( Math.int(calldata.get_column('cost')) / 100) -%]
-        [% adjustrow(call, page, pagelocal, pageslocalnum, rowtype,  tt_type, rows_interval, loop.count) -%]
-    [%END -%]
-[%END -%]
-
-[%MACRO list_calls(callsdata, page, pagelocal, pageslocalnum, rowtype, total, tt_type, rows_interval) BLOCK-%]
-    [% FOR call IN callsdata -%][%#invoice_details%]
-        [%IF call.1; calldata = call.1; END%]
-        [% total.global.duration = total.global.duration + calldata.get_column('duration') -%]
-        [% total.global.cost = total.global.cost + ( Math.int(calldata.get_column('source_customer_cost')) / 100 ) -%]
-        [% total.perpage.${pagelocal}.duration = total.perpage.${pagelocal}.duration + calldata.get_column('duration') -%]
-        [% total.perpage.${pagelocal}.cost = total.perpage.${pagelocal}.cost + ( Math.int(calldata.get_column('source_customer_cost')) / 100 ) -%]
-        [% adjustrow(call, page, pagelocal, pageslocalnum, rowtype,  tt_type, rows_interval, loop.count) -%]
-    [%END -%]
-[%END -%]
-
-[%MACRO get_page_rows_number(pagetype, tt_type, rows_type) BLOCK-%]
-    [% IF tt_type == 'svg'  -%]
-        [% rows_type = rows_type ? rows_type _ '-' : '' %]
-        [% page_rows_re = rows_type _ 'rows="([0-9]+)"' -%]
-    [%END%]
-
-    [% page = get_page(pagetype) %]
-    [% matches = page.match( page_rows_re ) -%]
-
-    [%rows = matches.0 || matches.1 %]
-    [%rows = Math.int(rows)%]
-    [%rows%]
-[%END -%]
-
-[%MACRO get_page_interval(pagetype, tt_type, interval_type) BLOCK-%]
-    [% IF tt_type == 'svg'  -%]
-        [% interval_type = interval_type ? interval_type _ '-' : '' %]
-        [% page_interval_re = interval_type _ 'rows-interval="([0-9]+)"' -%]
-    [%END%]
-
-    [% page = get_page(pagetype) %]
-    [% matches = page.match( page_interval_re ) -%]
-
-    [%interval = matches.0 || matches.1 %]
-    [%interval = Math.int(interval)%]
-    [%interval%]
-[%END -%]
-
-[%MACRO show_pages(invoice_details_zones, invoice_details_calls, pagetype, pagenum_in) BLOCK-%]
-[%#todo: remove copypast with some macro, later%]
+MACRO show_pages(invoice_details_zones, invoice_details_calls, pagetype, pagenum_in) BLOCK;
+#todo: remove copypast with some macro, later;
     
-    [% total = {perpage => [], global => {}, pagetype => { call=> {perpage => [], global => {}}, zone => {perpage => [], global => {}} } } -%]
+     total = {perpage => [], global => {}, pagetype => { call=> {perpage => [], global => {}}, zone => {perpage => [], global => {}} } } ;
 
-    [% allzonerowsnumber = invoice_details_zones.size() %]
-    [% titlezonerows =  get_page_rows_number('titlepage','svg','zone') %]
-    [% midzonerows = get_page_rows_number('zonepage','svg') %]
-    [% titlezoneinterval =  get_page_interval('titlepage','svg','zone') %]
-    [% midzoneinterval =  get_page_interval('zonepage','svg') %]
-    [% midzonerows = Math.int(get_page_rows_number('zonepage','svg')) %]
-    [% midzonerows = ( midzonerows < 1 ) ? 30 : midzonerows %]
+     allzonerowsnumber = invoice_details_zones.size() ;
+     titlezonerows =  get_page_rows_number('titlepage','svg','zone') ;
+     midzonerows = get_page_rows_number('zonepage','svg') ;
+     titlezoneinterval =  get_page_interval('titlepage','svg','zone') ;
+     midzoneinterval =  get_page_interval('zonepage','svg') ;
+     midzonerows = Math.int(get_page_rows_number('zonepage','svg')) ;
+     midzonerows = ( midzonerows < 1 ) ? 30 : midzonerows ;
     
-    [% allmidzonepages = ( (allzonerowsnumber - titlezonerows) / midzonerows )|format('%d') %]
-    [% allmidzonerows = allmidzonepages * midzonerows %]
-    [% lastzonerows = allzonerowsnumber - allmidzonerows - titlezonerows %]
-    [% allzonepages = allmidzonepages + ( lastzonerows ? 1 : 0 ) %]
+     allmidzonepages = ( (allzonerowsnumber - titlezonerows) / midzonerows )|format('%d') ;
+     allmidzonerows = allmidzonepages * midzonerows ;
+     lastzonerows = allzonerowsnumber - allmidzonerows - titlezonerows ;
+     allzonepages = allmidzonepages + ( lastzonerows ? 1 : 0 ) ;
 
     
-    [% allcallrowsnumber = invoice_details_calls.size() %]
-    [% titlecallrows =  get_page_rows_number('titlepage','svg','call') %]
-    [% midcallrows = Math.int(get_page_rows_number('callpage','svg')) %]
-    [% midcallrows = ( midcallrows < 1 ) ? 30 : midcallrows %]
-    [% titlecallinterval =  get_page_interval('titlepage','svg', 'call') %]
-    [% midcallinterval =  get_page_interval('callpage','svg') %]
+     allcallrowsnumber = invoice_details_calls.size() ;
+     titlecallrows =  get_page_rows_number('titlepage','svg','call') ;
+     midcallrows = Math.int(get_page_rows_number('callpage','svg')) ;
+     midcallrows = ( midcallrows < 1 ) ? 30 : midcallrows ;
+     titlecallinterval =  get_page_interval('titlepage','svg', 'call') ;
+     midcallinterval =  get_page_interval('callpage','svg') ;
 
-    [% allmidcallpages = ( (allcallrowsnumber - titlecallrows) / midcallrows )|format('%d') %]
-    [% allmidcallrows = allmidcallpages * midcallrows %]
-    [% lastcallrows = allcallrowsnumber - allmidcallrows - titlecallrows %]
-    [% allcallpages = allmidcallpages + ( lastcallrows ? 1 : 0 ) %]
+     allmidcallpages = ( (allcallrowsnumber - titlecallrows) / midcallrows )|format('%d') ;
+     allmidcallrows = allmidcallpages * midcallrows ;
+     lastcallrows = allcallrowsnumber - allmidcallrows - titlecallrows ;
+     allcallpages = allmidcallpages + ( lastcallrows ? 1 : 0 ) ;
     
     
-    [%IF ( pagetype == 'zone' || pagetype=='all' ) && allzonerowsnumber %]
-        [% pages = pagenum_in ? [ pagenum_in ] : [ 1 .. allmidzonepages ] %]
-        [%FOREACH pagenum IN pages %]
-            [% pagerowsstart = titlezonerows + midzonerows * ( pagenum - 1 )%]
-            [% pagerowsend = titlezonerows + midzonerows * pagenum - 1 %]
-            [%# pagerowsend = pagerowsend > invoice_details_zones.size() - 1 ? invoice_details_zones.size() - 1 : pagerowsend  %]
-            [% output = output _ document_header()%]
-            [% output = output _ zonepage( invoice_details_zones.slice( pagerowsstart,  pagerowsend ), total, pagenum + 1, pagenum, allzonepages, midzoneinterval ) -%]
-            [%#+1 because of 1 for titlepage %]
-            [% output = output _ bgpage(pagenum + 1, pagenum, allzonepages) -%]
-            [% output = output _ document_footer()%]
-        [%END-%]
-        [%IF lastzonerows > 0 %]
-            [%#2 because zonepages started from 1, not from 0, and we need add 1 for titlepage %]
-            [% pagenum = 2 + allmidzonepages %]
-            [% output = output _ document_header()%]
-            [% output = output _ zonepage( invoice_details_zones.slice( allzonerowsnumber - lastzonerows ), total, pagenum, allzonepages, allzonepages, midzoneinterval ) -%]
-            [% output = output _ bgpage(pagenum, allzonepages, allzonepages) -%]
-            [% output = output _ document_footer()%]
-        [%END-%]
-    [%END-%]
+    IF ( pagetype == 'zone' || pagetype=='all' ) && allzonerowsnumber ;
+         pages = pagenum_in ? [ pagenum_in ] : [ 1 .. allmidzonepages ] ;
+        FOREACH pagenum IN pages ;
+             pagerowsstart = titlezonerows + midzonerows * ( pagenum - 1 );
+             pagerowsend = titlezonerows + midzonerows * pagenum - 1 ;
+            # pagerowsend = pagerowsend > invoice_details_zones.size() - 1 ? invoice_details_zones.size() - 1 : pagerowsend  ;
+             output = output _ document_header();
+             output = output _ zonepage( invoice_details_zones.slice( pagerowsstart,  pagerowsend ), total, pagenum + 1, pagenum, allzonepages, midzoneinterval ) ;
+            #+1 because of 1 for titlepage ;
+             output = output _ bgpage(pagenum + 1, pagenum, allzonepages) ;
+             output = output _ document_footer();
+        END;
+        IF lastzonerows > 0 ;
+            #2 because zonepages started from 1, not from 0, and we need add 1 for titlepage ;
+             pagenum = 2 + allmidzonepages ;
+             output = output _ document_header();
+             output = output _ zonepage( invoice_details_zones.slice( allzonerowsnumber - lastzonerows ), total, pagenum, allzonepages, allzonepages, midzoneinterval ) ;
+             output = output _ bgpage(pagenum, allzonepages, allzonepages) ;
+             output = output _ document_footer();
+        END;
+    END;
 
-    [%#Dumper.dump(total)%]
+    #Dumper.dump(total);
     
-    [% total.pagetype.call.global.import(total.global)%]
-    [%# total.pagetype.call.perpage.import(total.perpage)%]
+     total.pagetype.call.global.import(total.global);
+    # total.pagetype.call.perpage.import(total.perpage);
 
-    [%#Dumper.dump(total)%]
+    #Dumper.dump(total);
 
-    [% total.global = {}%]
-    [% total.perpage = [] %]
+     total.global = {};
+     total.perpage = [] ;
     
-    [%IF ( pagetype == 'call' || pagetype=='all' )%]
-        [% pages = pagenum_in ? [ pagenum_in ] : [ 1 .. allmidcallpages ] %]
-        [%FOREACH pagenum IN pages %]
-            [% pagerowsstart = titlecallrows + midcallrows * ( pagenum - 1 )%]
-            [% pagerowsend = titlecallrows + midcallrows * pagenum - 1 %]
-            [% output = output _ document_header()%]
-            [% output = output _ callpage( invoice_details_calls.slice( pagerowsstart,  pagerowsend ), total, pagenum + 1 + allzonepages, pagenum, allcallpages, midcallinterval ) -%]
-            [%#+1 because of 1 for titlepage %]
-            [% output = output _ bgpage(pagenum + 1 + allzonepages, pagenum, allcallpages ) -%]
-            [% output = output _ document_footer()%]
-        [%END-%]
-        [%IF lastcallrows > 0 %]
-            [%#2 because callpages started from 1, not from 0, and we need add 1 for titlepage %]
-            [% pagenum = 1 + 1 + allmidcallpages + allzonepages %]
-            [% output = output _ document_header()%]
-            [% output = output _ callpage( invoice_details_calls.slice( allcallrowsnumber - lastcallrows ), total, pagenum, allcallpages, allcallpages, midcallinterval ) -%]
-            [% output = output _ bgpage(pagenum, allcallpages, allcallpages) -%]
-            [% output = output _ document_footer()%]
-        [%END-%]
-    [%END-%]
+    IF ( pagetype == 'call' || pagetype=='all' );
+         pages = pagenum_in ? [ pagenum_in ] : [ 1 .. allmidcallpages ] ;
+        FOREACH pagenum IN pages ;
+             pagerowsstart = titlecallrows + midcallrows * ( pagenum - 1 );
+             pagerowsend = titlecallrows + midcallrows * pagenum - 1 ;
+             output = output _ document_header();
+             output = output _ callpage( invoice_details_calls.slice( pagerowsstart,  pagerowsend ), total, pagenum + 1 + allzonepages, pagenum, allcallpages, midcallinterval ) ;
+            #+1 because of 1 for titlepage ;
+             output = output _ bgpage(pagenum + 1 + allzonepages, pagenum, allcallpages ) ;
+             output = output _ document_footer();
+        END;
+        IF lastcallrows > 0 ;
+            #2 because callpages started from 1, not from 0, and we need add 1 for titlepage ;
+             pagenum = 1 + 1 + allmidcallpages + allzonepages ;
+             output = output _ document_header();
+             output = output _ callpage( invoice_details_calls.slice( allcallrowsnumber - lastcallrows ), total, pagenum, allcallpages, allcallpages, midcallinterval ) ;
+             output = output _ bgpage(pagenum, allcallpages, allcallpages) ;
+             output = output _ document_footer();
+        END;
+    END;
 
-    [%# Dumper.dump(total)%]
+    # Dumper.dump(total);
     
-    [% total.pagetype.zone.global.import(total.global)%]
-    [%# total.pagetype.zone.perpage = total.pagetype.zone.perpage.import(total.perpage)%]
+    total.pagetype.zone.global.import(total.global);
+    # total.pagetype.zone.perpage = total.pagetype.zone.perpage.import(total.perpage);
     
-    [%DEFAULT invoice.amount_netto = total.pagetype.call.global.cost + total.pagetype.zone.global.cost %]
-    [%DEFAULT invoice.amount_vat = invoice.amount_netto * 0.2 %]
-    [%DEFAULT invoice.amount = invoice.amount_netto + invoice.amount_vat %]
-    [%DEFAULT invoice.amount_payment = invoice.amount - invoice.debit %]
+    DEFAULT invoice.amount_netto = ifz(total.pagetype.call.global.cost) + ifz(total.pagetype.zone.global.cost) ;
+    DEFAULT invoice.amount_vat = ifz(invoice.amount_netto) * 0.2 ;
+    DEFAULT invoice.amount = ifz(invoice.amount_netto) + ifz(invoice.amount_vat) ;
+    DEFAULT invoice.amount_payment = invoice.amount - ifz(invoice.debit) ;
     
-    [%IF ( pagetype == 'title' || pagetype=='all') %]
-        [% pagenum = 1%]
-        [% output_title = output_title _ document_header()%]
+    IF ( pagetype == 'title' || pagetype=='all') ;
+         pagenum = 1;
+         output_title = output_title _ document_header();
         
-        [% output_title = output_title _ titlepage( 
+         output_title = output_title _ titlepage( 
             ( titlezonerows > 0 && invoice_details_zones.size > 0 ) ? invoice_details_zones.slice(0, titlezonerows - 1 ) : [], 
             
             ( titlecallrows > 0 && invoice_details_calls.size > 0 ) ? invoice_details_calls.slice(0, titlecallrows - 1 ) : [], 
             pagenum,
             titlezoneinterval
             titlecallinterval
-        ) -%]
-        [% output_title = output_title _ bgpage(pagenum) -%]
-        [% output_title = output_title _ document_footer()-%]
-    [%END-%]
-    [% output_title _ output-%]
-[%END-%]
+        ) ;
+         output_title = output_title _ bgpage(pagenum) ;
+         output_title = output_title _ document_footer();
+    END;
+     output_title _ output;
+END;
+%]
