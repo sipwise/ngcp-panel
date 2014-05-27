@@ -75,7 +75,9 @@ sub convertSvg2Pdf{
         local $/ = undef; 
         $out->{tt_string_pdf} = <B>;
         $c->log->error("Pipe: close: !=$!; ?=$?;");
-        close B or ($? == 0 ) or $c->log->error("Error closing rsvg pipe: close: $!;");
+        if($? != 0){
+            close B or ($? == 0 ) or $c->log->error("Error closing rsvg pipe: close: $!;");
+        }
     }
 }
 sub preprocessInvoiceTemplateSvg{
@@ -83,7 +85,8 @@ sub preprocessInvoiceTemplateSvg{
     no warnings 'uninitialized';
     #print "1.\n\n\n\n\nsvg=".$out->{tt_string_prepared}.";";
     $$svg_ref=~s/(?:{\s*)?<!--{|}-->(?:\s*})?//gs;
-    $$svg_ref=~s/(<g .*?(id *=["' ]+(?:title|bg|mid)page["' ]+)?.*?)(?:display="none")(?(2)(?:.*?>)($2.*?>))/$1$3/gs;
+    $$svg_ref=~s/<(g .*?)(?:display\s*=\s*["']*none["'[:blank:]]+)(.*?id *=["' ]+(?:title|bg|mid|zone|call)page["' ]+)([^>]*)>/<$1$2$3>/gs;
+    $$svg_ref=~s/<(g .*?)(id *=["' ]+(?:title|bg|mid|zone|call)page["' ]+.*?)(?:display\s*=\s*["']*none["'[:blank:]]+)([^>]*)>/<$1$2$3>/gs;
     if($in->{no_fake_data}){
         $$svg_ref=~s/\[%[^\[\%]+lorem.*?%\]//gs;        
     }

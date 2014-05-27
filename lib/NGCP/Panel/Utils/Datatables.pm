@@ -8,21 +8,23 @@ use Scalar::Util qw/blessed/;
 use DateTime::Format::Strptime;
 
 sub process {
-    my ($c_, $rs, $cols, $row_func) = @_;
+    my ($c, $rs, $cols, $row_func) = @_;
 
     my $use_rs_cb = ('CODE' eq (ref $rs));
     my $aaData = [];
+    my $displayRecords = 0;
+
 
     # check if we need to join more tables
     # TODO: can we nest it deeper than once level?
-    set_columns($c_, $cols);
+    set_columns($c, $cols);
     unless ($use_rs_cb) {
-        for my $c(@{ $cols }) {
-            my @parts = split /\./, $c->{name};
-            if($c->{literal_sql}) {
+        for my $col(@{ $cols }) {
+            my @parts = split /\./, $col->{name};
+            if($col->{literal_sql}) {
                $rs = $rs->search_rs(undef, {
-                    '+select' => [ \[$c->{literal_sql}] ],
-                    '+as' => [ $c->{accessor} ],
+                    '+select' => [ \[$col->{literal_sql}] ],
+                    '+as' => [ $col->{accessor} ],
                 });
             } elsif( @parts > 1 ) {
                 my $join = $parts[$#parts-1];
@@ -32,15 +34,17 @@ sub process {
                 $rs = $rs->search_rs(undef, {
                     join => $join,
                     '+select' => [ $parts[($#parts-1)].'.'.$parts[$#parts] ],
-                    '+as' => [ $c->{accessor} ],
+                    '+as' => [ $col->{accessor} ],
                 });
             }
         }
     }
+    #all joins already implemented, and filters aren't applied
+    my $totalRecords = $use_rs_cb ? 0 : $rs->count;
 
     # generic searching
     my @searchColumns = ();
-    my $searchString = $c_->request->params->{sSearch} // "";
+    my $searchString = $c->request->params->{sSearch} // "";
     foreach my $col(@{ $cols }) {
         # avoid amigious column names if we have the same column in different joined tables
         my $name = _get_joined_column_name_($col->{name});
@@ -54,8 +58,8 @@ sub process {
     }
 
     # data-range searching
-    my $from_date_in = $c_->request->params->{sSearch_0} // "";
-    my $to_date_in = $c_->request->params->{sSearch_1} // "";
+    my $from_date_in = $c->request->params->{sSearch_0} // "";
+    my $to_date_in = $c->request->params->{sSearch_1} // "";
     my($from_date,$to_date);
     my $parser = DateTime::Format::Strptime->new(
         #pattern => '%Y-%m-%d %H:%M',
@@ -68,27 +72,25 @@ sub process {
         $to_date = $parser->parse_datetime($to_date_in);
     }
     @searchColumns = ();
-    foreach my $c(@{ $cols }) {
+    foreach my $col(@{ $cols }) {
         # avoid amigious column names if we have the same column in different joined tables
-        my $name = _get_joined_column_name_($c->{name});
+        my $name = _get_joined_column_name_($col->{name});
 
-        if($c->{search_from_epoch} && $from_date) {
+        if($col->{search_from_epoch} && $from_date) {
             $rs = $rs->search({
-                $name => { '>=' => $c->{search_use_datetime} ? $from_date_in : $from_date->epoch },
+                $name => { '>=' => $col->{search_use_datetime} ? $from_date_in : $from_date->epoch },
             });
         }
-        if($c->{search_to_epoch} && $to_date) {
+        if($col->{search_to_epoch} && $to_date) {
             $rs = $rs->search({
-                $name => { '<=' => $c->{search_use_datetime} ? $to_date_in : $to_date->epoch },
+                $name => { '<=' => $col->{search_use_datetime} ? $to_date_in : $to_date->epoch },
             });
         }
     }
-
-    my $totalRecords = $use_rs_cb ? 0 : $rs->count;
-    my $displayRecords = $use_rs_cb ? 0 : $rs->count;
+    $displayRecords = $use_rs_cb ? 0 : $rs->count;
 
     # show specific row on top (e.g. if we come back from a newly created entry)
-    my $topId = $c_->request->params->{iIdOnTop};
+    my $topId = $c->request->params->{iIdOnTop};
     if(defined $topId) {
         if(defined(my $row = $rs->find($topId))) {
             push @{ $aaData }, _prune_row($cols, $row->get_inflated_columns);
@@ -100,8 +102,8 @@ sub process {
     }
 
     # sorting
-    my $sortColumn = $c_->request->params->{iSortCol_0};
-    my $sortDirection = $c_->request->params->{sSortDir_0} || 'asc';
+    my $sortColumn = $c->request->params->{iSortCol_0};
+    my $sortDirection = $c->request->params->{sSortDir_0} || 'asc';
     if(defined $sortColumn && defined $sortDirection && ! $use_rs_cb) {
         if('desc' eq lc $sortDirection) {
             $sortDirection = 'desc';
@@ -111,9 +113,9 @@ sub process {
 
         # first, get the fields we're actually showing
         my @displayedFields = ();
-        for my $c(@{ $cols }) {
-            next unless $c->{title};
-            my $name = _get_joined_column_name_($c->{name});
+        for my $col(@{ $cols }) {
+            next unless $col->{title};
+            my $name = _get_joined_column_name_($col->{name});
             push @displayedFields, $name;
         }
         # ... and pick the name defined by the dt index
@@ -127,8 +129,8 @@ sub process {
     }
 
     # pagination
-    my $pageStart = $c_->request->params->{iDisplayStart};
-    my $pageSize = $c_->request->params->{iDisplayLength};
+    my $pageStart = $c->request->params->{iDisplayStart};
+    my $pageSize = $c->request->params->{iDisplayLength};
     if ($use_rs_cb) {
         ($rs, $totalRecords, $displayRecords) = $rs->(
                 offset       => $pageStart || 0,
@@ -151,11 +153,11 @@ sub process {
         }
     }
 
-    $c_->stash(
+    $c->stash(
         aaData               => $aaData,
         iTotalRecords        => $totalRecords,
         iTotalDisplayRecords => $displayRecords,
-        sEcho                => int($c_->request->params->{sEcho} // 1),
+        sEcho                => int($c->request->params->{sEcho} // 1),
     );
 
 }
