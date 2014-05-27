@@ -80,7 +80,6 @@ has_field 'city' => (
 
 has_field 'country' => (
     type => '+NGCP::Panel::Field::Country',
-    validate_when_empty => 1,
     label => 'Country',
     element_attr => {
         rel => ['tooltip'],
