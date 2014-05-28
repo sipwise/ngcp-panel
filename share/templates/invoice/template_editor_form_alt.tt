@@ -47,6 +47,79 @@ function getTtIdVal(){
         tt_id: getTtIdVal(),
     }, refreshMessagesAjax );void(0);">[% c.loc('Save template')%] <i class="icon-disk"></i></a>
 </span>
+
+
+<div class="ngcp-separator"></div>
+<span>
+    <a class="btn btn-primary btn-small" onclick="
+        var divId = '#template_variables_help';
+        $(divId).draggable({
+            handle: '.modal-header',
+            cursor: 'crosshair',
+        }).css('display','block').find($('.mod_close')).click(function(event) {
+            $(divId).css('display','none');
+        });
+        void(0);">[% c.loc('Show template variables')%] <i class="icon-info-sign"></i></a>
+</span>
+<style>
+#template_variables_help{
+    display:none;
+    position:absolute;
+    top:150px;
+    left:100px;
+    width: 250px;
+    height: 500px;   
+}
+.variablekey{
+    font-weight:bold;
+    color:#2222FF;
+    font-style:italic;
+}
+.variable{
+    font-weight:bold;
+}
+</style>
+<div id="template_variables_help" class="modal ngcp-modal">
+    <div class="modal-header">
+        <h3>[%c.loc('Template variables')%]
+        <button type="button" class="close mod_close">×</button>
+        </h3>
+    </div>
+[%
+PROCESS 'invoice/invoice_template_lorem.tt';
+callsdata = invoice_details_calls.0.1;
+zonesdata = invoice_details_zones.0.1;
+%]
+<div style="overflow:auto;height:85%;">
+[%
+FOREACH varname IN ['client','provider','invoice','callsdata','zonesdata'];
+    tooltipvarindex = varname _ '_self';
+%]
+
+<ul> <span class="variable" [%IF template_variables.description.${varname}.${tooltipvarindex}%] rel="tooltip" data-original-title="[% c.loc(template_variables.description.${varname}.${tooltipvarindex}) %]" [%END%]>[%varname%]</span>
+
+[%
+    FOREACH key IN ${varname}.keys().sort();
+        IF !key.match('^_');
+%]
+
+    <li [%IF template_variables.description.${varname}.${key}%] rel="tooltip" data-original-title="[% c.loc(template_variables.description.${varname}.${key}) %]" [%END%]>[% varname %].<span class="variablekey">[%key%]</span></li>
+
+[%
+        END;
+    END;
+%]
+</ul>
+[%
+END;
+%]
+    </div>
+    <div class="modal-footer">
+        <a class="mod_close btn btn-primary btn-small">[%c.loc('Close')%]</a>
+    </div>
+</div>
+
+
 [%IF viewmode == 'development' %]
 <div class="ngcp-separator"></div>
 <span>
