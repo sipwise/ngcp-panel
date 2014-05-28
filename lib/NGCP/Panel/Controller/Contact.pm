@@ -1,4 +1,5 @@
 package NGCP::Panel::Controller::Contact;
+use Geography::Countries qw/countries country CNT_I_FLAG CNT_I_CODE2/;
 use Sipwise::Base;
 use namespace::sweep;
 BEGIN { extends 'Catalyst::Controller'; }
@@ -7,8 +8,6 @@ use NGCP::Panel::Form::Contact::Reseller;
 use NGCP::Panel::Form::Contact::Admin;
 use NGCP::Panel::Utils::Message;
 use NGCP::Panel::Utils::Navigation;
-
-use Geography::Countries qw/countries country CNT_F_REGULAR CNT_I_FLAG CNT_I_CODE2/;
 
 sub auto :Does(ACL) :ACLDetachTo('/denied_page') :AllowedRole(admin) :AllowedRole(reseller) {
     my ($self, $c) = @_;
