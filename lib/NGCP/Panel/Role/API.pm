@@ -107,34 +107,8 @@ sub validate_form {
     }
 
     # remove unknown keys
-    my %fields = map { $_->name => undef } $form->fields;
-    for my $k (keys %{ $resource }) {
-        #if($resource->{$k}->$_isa('JSON::XS::Boolean') || $resource->{$k}->$_isa('JSON::PP::Boolean')) {
-        if($resource->{$k}->$_isa('JSON::PP::Boolean')) {
-            $resource->{$k} = $resource->{$k} ? 1 : 0;
-        }
-        unless(exists $fields{$k}) {
-            delete $resource->{$k};
-        }
-
-        $resource->{$k} = DateTime::Format::RFC3339->format_datetime($resource->{$k})
-            if $resource->{$k}->$_isa('DateTime');
-        $resource->{$k} = $resource->{$k} + 0
-            if(defined $resource->{$k} && (
-               $form->field($k)->$_isa('HTML::FormHandler::Field::Integer') ||
-               $form->field($k)->$_isa('HTML::FormHandler::Field::Money') ||
-               $form->field($k)->$_isa('HTML::FormHandler::Field::Float')) &&
-               ($resource->{$k}->is_int || $resource->{$k}->is_decimal));
-
-        # only do this for converting back from obj to hal
-        # otherwise it breaks db fields with the \0 and \1 notation
-        unless($run) {
-            $resource->{$k} = JSON::Types::bool($resource->{$k})
-            #$resource->{$k} = $resource->{$k} ? true : false
-                if(defined $resource->{$k} && 
-                   $form->field($k)->$_isa('HTML::FormHandler::Field::Boolean'));
-        }
-    }
+    my %fields = map { $_->name => $_ } $form->fields;
+    $self->validate_fields($c, $resource, \%fields, $run);
 
     if($run) {
         # check keys/vals
@@ -163,6 +137,49 @@ sub validate_form {
     return 1;
 }
 
+sub validate_fields {
+    my ($self, $c, $resource, $fields, $run) = @_;
+    
+    for my $k (keys %{ $resource }) {
+        #if($resource->{$k}->$_isa('JSON::XS::Boolean') || $resource->{$k}->$_isa('JSON::PP::Boolean')) {
+        if($resource->{$k}->$_isa('JSON::PP::Boolean')) {
+            $resource->{$k} = $resource->{$k} ? 1 : 0;
+        }
+        unless(exists $fields->{$k}) {
+            delete $resource->{$k};
+        }
+        $resource->{$k} = DateTime::Format::RFC3339->format_datetime($resource->{$k})
+            if $resource->{$k}->$_isa('DateTime');
+        $resource->{$k} = $resource->{$k} + 0
+            if(defined $resource->{$k} && (
+               $fields->{$k}->$_isa('HTML::FormHandler::Field::Integer') ||
+               $fields->{$k}->$_isa('HTML::FormHandler::Field::Money') ||
+               $fields->{$k}->$_isa('HTML::FormHandler::Field::Float')) &&
+               ($resource->{$k}->is_int || $resource->{$k}->is_decimal));
+
+        if (defined $resource->{$k} &&
+                $fields->{$k}->$_isa('HTML::FormHandler::Field::Repeatable') &&
+                "ARRAY" eq ref $resource->{$k} ) {
+            for my $elem (@{ $resource->{$k} }) {
+                my ($subfield_instance) = $fields->{$k}->fields;
+                my %subfields = map { $_->name => $_ } $subfield_instance->fields;
+                $self->validate_fields($c, $elem, \%subfields, $run);
+            }
+        }
+
+        # only do this for converting back from obj to hal
+        # otherwise it breaks db fields with the \0 and \1 notation
+        unless($run) {
+            #$resource->{$k} = $resource->{$k} ? true : false
+            $resource->{$k} = JSON::Types::bool($resource->{$k})
+                if(defined $resource->{$k} &&
+                   $fields->{$k}->$_isa('HTML::FormHandler::Field::Boolean'));
+        }
+    }
+
+    return 1;
+}
+
 sub error {
     my ($self, $c, $code, $message) = @_;
 
@@ -171,6 +188,7 @@ sub error {
     $c->response->content_type('application/json');
     $c->response->status($code);
     $c->response->body(JSON::to_json({ code => $code, message => $message })."\n");
+    return;
 }
 
 sub forbid_link_header {
