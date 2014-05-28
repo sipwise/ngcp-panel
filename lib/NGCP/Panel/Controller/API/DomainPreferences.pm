@@ -58,7 +58,7 @@ sub GET :Allow {
         my $domains = $self->item_rs($c, "domains");
         (my $total_count, $domains) = $self->paginate_order_collection($c, $domains);
         my (@embedded, @links);
-        for my $domain ($domains->search({}, {order_by => {-asc => 'me.id'}})->all) {
+        for my $domain ($domains->all) {
             push @embedded, $self->hal_from_item($c, $domain, "domains");
             push @links, Data::HAL::Link->new(
                 relation => 'ngcp:'.$self->resource_name,

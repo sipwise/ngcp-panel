@@ -91,7 +91,7 @@ sub GET :Allow {
 
         (my $total_count, $dsets) = $self->paginate_order_collection($c, $dsets);
         my (@embedded, @links);
-        for my $dset ($dsets->search({}, {order_by => {-asc => 'me.id'}})->all) {
+        for my $dset ($dsets->all) {
             push @embedded, $self->hal_from_item($c, $dset, "cfdestinationsets");
             push @links, Data::HAL::Link->new(
                 relation => 'ngcp:'.$self->resource_name,

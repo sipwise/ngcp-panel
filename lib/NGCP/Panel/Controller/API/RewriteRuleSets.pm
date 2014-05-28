@@ -99,7 +99,7 @@ sub GET :Allow {
         my $rwr_set = $self->item_rs($c, "rulesets");
         (my $total_count, $rwr_set) = $self->paginate_order_collection($c, $rwr_set);
         my (@embedded, @links);
-        for my $set ($rwr_set->search({}, {order_by => {-asc => 'me.id'}})->all) {
+        for my $set ($rwr_set->all) {
             push @embedded, $self->hal_from_item($c, $set, "rewriterulesets");
             push @links, Data::HAL::Link->new(
                 relation => 'ngcp:'.$self->resource_name,

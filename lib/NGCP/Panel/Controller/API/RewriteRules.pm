@@ -88,7 +88,7 @@ sub GET :Allow {
 
         (my $total_count, $rules) = $self->paginate_order_collection($c, $rules);
         my (@embedded, @links);
-        for my $rule ($rules->search({}, {order_by => {-asc => 'me.id'}})->all) {
+        for my $rule ($rules->all) {
             push @embedded, $self->hal_from_item($c, $rule, "rewriterules");
             push @links, Data::HAL::Link->new(
                 relation => 'ngcp:'.$self->resource_name,

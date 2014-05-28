@@ -58,7 +58,7 @@ sub GET :Allow {
         my $subscribers = $self->item_rs($c, "subscribers");
         (my $total_count, $subscribers) = $self->paginate_order_collection($c, $subscribers);
         my (@embedded, @links);
-        for my $subscriber ($subscribers->search({}, {order_by => {-asc => 'me.id'}})->all) {
+        for my $subscriber ($subscribers->all) {
             next unless($subscriber->provisioning_voip_subscriber);
             push @embedded, $self->hal_from_item($c, $subscriber, "subscribers");
             push @links, Data::HAL::Link->new(

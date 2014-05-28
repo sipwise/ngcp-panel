@@ -77,7 +77,7 @@ sub GET :Allow {
         (my $total_count, $contacts) = $self->paginate_order_collection($c, $contacts);
         my (@embedded, @links);
         my $form = $self->get_form($c);
-        for my $contact ($contacts->search({}, {order_by => {-asc => 'me.id'}, prefetch => ['reseller']})->all) {
+        for my $contact ($contacts->search({}, {prefetch => ['reseller']})->all) {
             push @embedded, $self->hal_from_contact($c, $contact, $form);
             push @links, Data::HAL::Link->new(
                 relation => 'ngcp:'.$self->resource_name,

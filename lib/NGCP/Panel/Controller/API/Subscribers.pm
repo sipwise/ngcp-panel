@@ -144,7 +144,7 @@ sub GET :Allow {
         (my $total_count, $subscribers) = $self->paginate_order_collection($c, $subscribers);
         my (@embedded, @links);
         my $form = $self->get_form($c);
-        for my $subscriber ($subscribers->search({}, {order_by => {-asc => 'me.id'}})->all) {
+        for my $subscriber ($subscribers->all) {
             my $resource = $self->resource_from_item($c, $subscriber, $form);
             push @embedded, $self->hal_from_item($c, $subscriber, $resource, $form);
             push @links, Data::HAL::Link->new(

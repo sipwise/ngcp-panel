@@ -82,7 +82,7 @@ sub GET :Allow {
         return unless $query_string;
         my (@embedded, @links);
         my $error_flag = 0;
-        for my $dev ($field_devs->search({}, {order_by => {-asc => 'me.id'}})->all) {
+        for my $dev ($field_devs->all) {
             my $hal = $self->hal_from_item($c, $dev);
             $error_flag = 1 unless $hal;
             push @embedded, $hal;
