@@ -2,6 +2,14 @@
 USE Date;
 USE Math;
 
+template_variables.description = {};
+template_variables.description.import({
+    invoice => {
+        'invoice_self'  => 'Information about invoice.',
+        'amount' => 'Invoice amount with already considered discount.',
+    }
+});
+
 IF !invoice.serial;
 DEFAULT invoice.amount='1200';
 DEFAULT invoice.amount_netto='1000';
@@ -17,7 +25,15 @@ DEFAULT invoice.serviceallowance='69';
 DEFAULT invoice.voice_termination_fees='10';
 END;
 
-IF !provider;
+template_variables.description.import({
+    provider => {
+        'provider_self'  => 'Information about invoice issuer, reseller.',
+        'bic' => 'BIC information of provider.',
+        'city' => 'Provider city.',
+    }
+});
+
+IF 1 || !provider;
     DEFAULT provider.bic='ABCDEFG1234';
     DEFAULT provider.city='Provider City';
     DEFAULT provider.company='Provider Gmbh.';
@@ -45,10 +61,18 @@ ELSE;
     END;
 END;
 
+template_variables.description.import({
+    client => {
+        'client_self'  => 'Information about invoice receiver, customer.',
+        'bic'    => "Client's BIC.",
+    }
+});
+
 IF !client.id;
 DEFAULT client.bic='ABCDEFG1234';
 DEFAULT client.city='Client City';
 DEFAULT client.country='Client-Country';
+DEFAULT client.title='Herr Dipl. Ing (FH)';
 DEFAULT client.firstname='Client Firstname';
 DEFAULT client.id=Math.int(Math.rand(999999))|format('%06d');
 DEFAULT client.lastname='Client-Lastname Sr.';
@@ -57,8 +81,16 @@ DEFAULT client.sepa='AT1234567890';
 DEFAULT client.street='Client Street';
 DEFAULT client.vatid='AA1234';
 END;
+
 invoice_details_zones = [];
 invoice_details_calls = [];
+
+template_variables.description.import({
+    callsdata => {
+        'callsdata_self'  => 'Information about calls.',
+        'start_time'    => 'Call start time, Call will be included in invoice period, in which call started.',
+    }
+});
 IF !invoice_details_calls.size();
     i=1;
     WHILE i <= 44;
@@ -74,6 +106,12 @@ IF !invoice_details_calls.size();
         i = i + 1;
     END;
 END;
+template_variables.description.import({
+    zonesdata => {
+        'zonesdata_self'  => 'Information about zone fees.',
+        'number'    => 'Number of calls to the zone.',
+    }
+});
 IF !invoice_details_zones.size();
     i=1;
     WHILE i <= 45;
@@ -88,5 +126,4 @@ IF !invoice_details_zones.size();
         i = i + 1;
     END;
 END;
-
 %]
