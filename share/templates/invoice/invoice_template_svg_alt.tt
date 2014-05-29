@@ -1,6 +1,10 @@
-<?xml-stylesheet type="text/css" href="Rechnung_orig.css"?>
-<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
-<svg id="svgRoot" version="1.1" baseProfile="Full" width="595px" height="841px" viewBox="0" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:cs="http://www.pdftron.com/pdf2svg" xml:space="preserve">
+<!--{[%PROCESS 'invoice/invoice_template_aux.tt' -%]}-->
+<!--{[%PROCESS 'invoice/invoice_template_lorem.tt' -%]}-->
+<!--{[%money_format = format('%.2f') %]}-->
+<!--{[%row_vertical_interval = 10 -%]}-->
+<!--{[%MACRO document_header BLOCK-%]}-->
+<svg width="215mm" height="297mm" viewBox="0 0 215 297" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:space="preserve" stroke-width="0" stroke="#000000" fill="#000000" font-size="4pt" text-anchor="start">
+
 <style type="text/css">
 <![CDATA[
 .ps01 { stroke:#000000;fill:none; }
@@ -8,20 +12,14 @@
 .ps00 { stroke:none;fill:#000000; }
 .ps11 { stroke-width:0.03; }
 .ps10 { stroke-width:0.5; }
-.ps23 { 
-letter-spacing:0px;word-spacing:0;font-family:fnt0;font-size:10px; }
-.ps20 { 
-letter-spacing:0px;word-spacing:0;font-family:fnt0;font-size:7px; }
-.ps25 { 
-letter-spacing:0px;word-spacing:0;font-family:fnt1;font-weight:bold;font-size:10px; }
-.ps21 { 
-letter-spacing:0px;word-spacing:0;font-family:fnt1;font-weight:bold;font-size:12px; }
-.ps24 { 
-letter-spacing:0px;word-spacing:0;font-family:fnt1;font-weight:bold;font-size:14px; }
-.ps22 { 
-letter-spacing:0px;word-spacing:0;font-family:fnt1;font-weight:bold;font-size:9px; }
-.ps26 { 
-letter-spacing:0px;word-spacing:0;font-family:fnt2;font-size:12.947px; }
+.ps20,.ps21,.ps22,.ps23,.ps24,.ps25,.ps26 { letter-spacing:0px;word-spacing:0;font-family:Arial; }
+.ps20 { font-size:7px; }
+.ps21 { font-weight:bold;font-size:12px; }
+.ps22 { font-weight:bold;font-size:9px; }
+.ps23 { font-size:10px; }
+.ps24 { font-weight:bold;font-size:14px; }
+.ps25 { font-weight:bold;font-size:10px; }
+.ps26 { font-size:12.947px; }
 ]]>
 </style>
 <clipPath id="clp1" clip-rule="nonzero">
