@@ -1,0 +1,149 @@
+<?xml-stylesheet type="text/css" href="Rechnung_orig.css"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg id="svgRoot" version="1.1" baseProfile="Full" width="595px" height="841px" viewBox="0" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:cs="http://www.pdftron.com/pdf2svg" xml:space="preserve">
+<style type="text/css">
+<![CDATA[
+.ps01 { stroke:#000000;fill:none; }
+.ps02 { stroke:#97B3FC;fill:none; }
+.ps00 { stroke:none;fill:#000000; }
+.ps11 { stroke-width:0.03; }
+.ps10 { stroke-width:0.5; }
+.ps23 { 
+letter-spacing:0px;word-spacing:0;font-family:fnt0;font-size:10px; }
+.ps20 { 
+letter-spacing:0px;word-spacing:0;font-family:fnt0;font-size:7px; }
+.ps25 { 
+letter-spacing:0px;word-spacing:0;font-family:fnt1;font-weight:bold;font-size:10px; }
+.ps21 { 
+letter-spacing:0px;word-spacing:0;font-family:fnt1;font-weight:bold;font-size:12px; }
+.ps24 { 
+letter-spacing:0px;word-spacing:0;font-family:fnt1;font-weight:bold;font-size:14px; }
+.ps22 { 
+letter-spacing:0px;word-spacing:0;font-family:fnt1;font-weight:bold;font-size:9px; }
+.ps26 { 
+letter-spacing:0px;word-spacing:0;font-family:fnt2;font-size:12.947px; }
+]]>
+</style>
+<clipPath id="clp1" clip-rule="nonzero">
+<rect x="0" y="0" width="595" height="841"/>
+</clipPath>
+<g clip-path="url(#clp1)" transform="matrix(1 0 0 -1 -0 841)">
+<g id="q1" class="">
+<text transform="matrix(1 0 0 -1 0 0)"><tspan x="65" y="-686" class="ps00 ps20">NeoTel Telefonservice GmbH &amp; Co KG, 1060 Wien, Esterhazyg. 18a/15</tspan>
+<tspan x="400" y="-686" class="ps00 ps21">Rechnung</tspan>
+<tspan x="400" y="-671" class="ps00 ps22">Rechnungsnummer</tspan>
+<tspan x="519.97" y="-671" class="ps00 ps22">80001099</tspan>
+<tspan x="400" y="-660" class="ps00 ps22">Kundennummer</tspan>
+<tspan x="534.98" y="-660" class="ps00 ps22">10128</tspan>
+<tspan x="400" y="-649" class="ps00 ps22">UID-Nummer:</tspan>
+<tspan x="400" y="-638" class="ps00 ps22">Zeitraum</tspan>
+<tspan x="514.47" y="-638" class="ps00 ps22">03-04 2014</tspan>
+<tspan x="400" y="-627" class="ps00 ps22">Datum</tspan>
+<tspan x="514.96" y="-627" class="ps00 ps22">01.05.2014</tspan>
+<tspan x="65" y="-676" class="ps00 ps23">Herrr Dipl.Ing. (FH)</tspan>
+<tspan x="65" y="-664" class="ps00 ps23">Andreas Granig</tspan>
+<tspan x="65" y="-652" class="ps00 ps23">Wurlitzergasse 94/24</tspan>
+<tspan x="65" y="-640" class="ps00 ps23">1170 Wien</tspan>
+<tspan x="65" y="-628" class="ps00 ps23">&#xD6;sterreich</tspan>
+<tspan x="65" y="-592" class="ps00 ps23">Anschlussinhaber: Andreas Granig</tspan>
+<tspan x="65" y="-556" class="ps00 ps24">NeoTel - Ihre Abrechnung</tspan>
+<tspan x="65" y="-516" class="ps00 ps23">Sehr geehrter Kunde,</tspan>
+<tspan x="65" y="-492" class="ps00 ps23">f&#xFC;r die von uns erbrachten Leistungen im Zeitraum vom 01.03.2014 bis 30.04.2014 erlauben wir uns</tspan>
+<tspan x="65" y="-480" class="ps00 ps23">Folgendes in Rechnung zu stellen:</tspan>
+</text>
+<g id="q2" class="ps00 ps23">
+<g id="xfrm3" transform="matrix(133.33333 0 0 34.66667 430 741)">
+<image id="img9" width="1" height="1" transform="matrix(1 0 0 -1 0 1)" preserveAspectRatio="none" image-rendering="optimizeSpeed" xlink:href="Rechnung_orig_img9.png"/>
+</g>
+</g>
+<text transform="matrix(1 0 0 -1 0 0)"><tspan x="65" y="-58" class="ps00 ps20">NeoTel Telefonservice GmbH &amp; Co KG</tspan>
+<tspan x="65" y="-49" class="ps00 ps20">Esterhazygasse 18a/15, A-1060 Wien</tspan>
+<tspan x="65" y="-40" class="ps00 ps20">www.neotel.at</tspan>
+<tspan x="65" y="-31" class="ps00 ps20">E-Mail : kontakt@neotel.at</tspan>
+<tspan x="65" y="-22" class="ps00 ps20">Tel: +43 720 620 100</tspan>
+<tspan x="65" y="-13" class="ps00 ps20">Fax: +43 720 620 101</tspan>
+<tspan x="400" y="-58" class="ps00 ps20">DVR-Nr.: 3003113 UID-Nr.: ATU62152324</tspan>
+<tspan x="400" y="-49" class="ps00 ps20">IBAN: AT883200000008120503 BIC: RLNWATWW</tspan>
+<tspan x="400" y="-40" class="ps00 ps20">FN: 270565s Handelsgericht Wien</tspan>
+<tspan x="400" y="-31" class="ps00 ps20">Firmensitz: 1060 Wien</tspan>
+<tspan xml:space="preserve" x="400" y="-22" class="ps00 ps20">Konto-Nr.:  8120503, BLZ  32000,</tspan>
+<tspan x="400" y="-13" class="ps00 ps20">Raiffeisenlandesbank N&#xD6;-Wien</tspan>
+</text>
+<path d="M75 441 L551 441" class="ps01 ps10 ps20"/>
+<path d="M75 426 L551 426" class="ps01 ps10 ps20"/>
+<text transform="matrix(1 0 0 -1 0 0)"><tspan x="65" y="-444" class="ps00 ps10 ps25">Serviceleistungen</tspan>
+<tspan x="75" y="-431" class="ps00 ps10 ps25">Bezeichnung</tspan>
+<tspan x="350" y="-431" class="ps00 ps10 ps25">Anzahl</tspan>
+<tspan x="405" y="-431" class="ps00 ps10 ps25">Einzelpreis</tspan>
+<tspan x="483" y="-431" class="ps00 ps10 ps25">Betrag in EUR</tspan>
+<tspan x="75" y="-410" class="ps00 ps10 ps25">Monatliche Grundentgelte</tspan>
+<tspan x="75" y="-394" class="ps00 ps10 ps23">NeoTel Business Phone ISDN 01.03.2014 - 31.03.2014</tspan>
+<tspan x="375" y="-394" class="ps00 ps10 ps23">1</tspan>
+<tspan x="422.98" y="-394" class="ps00 ps10 ps23">50,00</tspan>
+<tspan x="514.98" y="-394" class="ps00 ps10 ps23">50,00</tspan>
+<tspan x="75" y="-382" class="ps00 ps10 ps23">NeoTel Business Phone ISDN 01.04.2014 - 30.04.2014</tspan>
+<tspan x="375" y="-382" class="ps00 ps10 ps23">1</tspan>
+<tspan x="422.98" y="-382" class="ps00 ps10 ps23">50,00</tspan>
+<tspan x="514.98" y="-382" class="ps00 ps10 ps23">50,00</tspan>
+<tspan x="75" y="-366" class="ps00 ps10 ps25">Summe</tspan>
+<tspan x="509.42" y="-366" class="ps00 ps10 ps25">100,00</tspan>
+</text>
+<path d="M75 362 L551 362" class="ps01 ps10 ps25"/>
+<path d="M65 338 L551 338" class="ps01 ps10 ps25"/>
+<text transform="matrix(1 0 0 -1 0 0)"><tspan x="65" y="-342" class="ps00 ps10 ps25">Gesamtsumme der Serviceleistungen</tspan>
+<tspan x="509.42" y="-342" class="ps00 ps10 ps25">100,00</tspan>
+</text>
+<path d="M75 309 L551 309" class="ps01 ps10 ps25"/>
+<path d="M75 294 L551 294" class="ps01 ps10 ps25"/>
+<text transform="matrix(1 0 0 -1 0 0)"><tspan x="65" y="-312" class="ps00 ps10 ps25">Verbindungsentgelte</tspan>
+<tspan x="75" y="-299" class="ps00 ps10 ps25">Zone</tspan>
+<tspan x="350" y="-299" class="ps00 ps10 ps25">Anzahl</tspan>
+<tspan x="410" y="-299" class="ps00 ps10 ps25">Nutzung</tspan>
+<tspan x="483" y="-299" class="ps00 ps10 ps25">Betrag in EUR</tspan>
+<tspan x="75" y="-282" class="ps00 ps10 ps23">F&#xFC;r Rufnummer 01/30123 NeoTel Business Phone</tspan>
+<tspan x="80" y="-268" class="ps00 ps10 ps23">&#xD6;sterreich Festnetz GZ</tspan>
+<tspan x="369.44" y="-268" class="ps00 ps10 ps23">1</tspan>
+<tspan x="409.08" y="-268" class="ps00 ps10 ps23">00:01:36</tspan>
+<tspan x="520.54" y="-268" class="ps00 ps10 ps23">0,04</tspan>
+<tspan x="80" y="-256" class="ps00 ps10 ps23">&#xD6;sterreich Festnetz FZ</tspan>
+<tspan x="369.44" y="-256" class="ps00 ps10 ps23">9</tspan>
+<tspan x="409.08" y="-256" class="ps00 ps10 ps23">01:50:35</tspan>
+<tspan x="520.54" y="-256" class="ps00 ps10 ps23">2,21</tspan>
+<tspan x="75" y="-244" class="ps00 ps10 ps23">Verbindungsentgelte 01/30123</tspan>
+<tspan x="520.54" y="-244" class="ps00 ps10 ps23">2,25</tspan>
+</text>
+<path d="M75 240 L551 240" class="ps01 ps10 ps23"/>
+<text transform="matrix(1 0 0 -1 0 0)"><tspan x="65" y="-214" class="ps00 ps10 ps25">Gesamtsumme der Verbindungsentgelte</tspan>
+<tspan x="520.54" y="-214" class="ps00 ps10 ps25">2,25</tspan>
+</text>
+<path d="M65 210 L551 210" class="ps01 ps10 ps25"/>
+<path d="M75 177 L551 177" class="ps01 ps10 ps25"/>
+<path d="M75 162 L551 162" class="ps01 ps10 ps25"/>
+<text transform="matrix(1 0 0 -1 0 0)"><tspan x="65" y="-180" class="ps00 ps10 ps25">Rabatte</tspan>
+<tspan x="75" y="-167" class="ps00 ps10 ps25">Bezeichnung</tspan>
+<tspan x="350" y="-167" class="ps00 ps10 ps25">Anzahl</tspan>
+<tspan x="410" y="-167" class="ps00 ps10 ps25">Einzelpreis</tspan>
+<tspan x="483" y="-167" class="ps00 ps10 ps25">Betrag in EUR</tspan>
+<tspan x="75" y="-151" class="ps00 ps10 ps23">Rabatte NeoTel Business Phone</tspan>
+<tspan xml:space="preserve" x="80" y="-137" class="ps00 ps10 ps23">Grundgeb&#xFC;hren Rabatt 01.03.2014 - 31.03.2014 </tspan>
+<tspan x="375" y="-137" class="ps00 ps10 ps23">1</tspan>
+<tspan x="419.65" y="-137" class="ps00 ps10 ps23">-35,00</tspan>
+<tspan x="511.65" y="-137" class="ps00 ps10 ps23">-35,00</tspan>
+<tspan xml:space="preserve" x="80" y="-125" class="ps00 ps10 ps23">Grundgeb&#xFC;hren Rabatt 01.04.2014 - 30.04.2014 </tspan>
+<tspan x="375" y="-125" class="ps00 ps10 ps23">1</tspan>
+<tspan x="419.65" y="-125" class="ps00 ps10 ps23">-35,00</tspan>
+<tspan x="511.65" y="-125" class="ps00 ps10 ps23">-35,00</tspan>
+<tspan x="75" y="-109" class="ps00 ps10 ps25">Summe</tspan>
+<tspan x="511.65" y="-109" class="ps00 ps10 ps25">-70,00</tspan>
+</text>
+<path d="M75 105 L551 105" class="ps01 ps10 ps25"/>
+</g>
+<g id="q4" class="">
+<g id="xfrm5" transform="matrix(595 0 0 841 0 0)">
+<clipPath id="clp2" clip-rule="nonzero">
+<rect x="0" y="0" width="100" height="100"/>
+</clipPath>
+</g>
+</g>
+</g>
+</svg> 
