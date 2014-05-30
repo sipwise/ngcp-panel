@@ -7,6 +7,7 @@ use warnings;
 use Sipwise::Base;
 use File::Temp qw/tempfile tempdir/;
 use File::Path qw/mkpath/;
+use XML::XPath;
 
 sub getDefaultInvoiceTemplate{
     my (%in) = @_;
@@ -24,7 +25,7 @@ sub convertSvg2Pdf{
     my($c,$svg_ref,$in,$out) = @_;
     my $svg = $$svg_ref;
     my(@pages) = $svg=~/(<svg.*?(?:\/svg>))/sig;
-    
+    no warnings 'uninitialized';
     #$c->log->debug($svg);
     my ($tempdirbase,$tempdir );
     #my($fh, $tempfilename) = tempfile();
@@ -60,8 +61,8 @@ sub convertSvg2Pdf{
         close $fh;
         $pagenum++;
     }
-    
-    my $cmd = "rsvg-convert -f pdf ".join(" ", @pagefiles);
+    #no unit specification in documentation. Cool!
+    my $cmd = "rsvg-convert -h 849 -w 600 -a -f pdf ".join(" ", @pagefiles);
     #print $cmd;
     #die();
     $c and $c->log->debug($cmd);
@@ -75,22 +76,47 @@ sub convertSvg2Pdf{
         local $/ = undef; 
         $out->{tt_string_pdf} = <B>;
         $c->log->error("Pipe: close: !=$!; ?=$?;");
-        if($? != 0){
-            close B or ($? == 0 ) or $c->log->error("Error closing rsvg pipe: close: $!;");
-        }
+        close B or ($? == 0 ) or $c->log->error("Error closing rsvg pipe: close: $!;");
     }
 }
 sub preprocessInvoiceTemplateSvg{
     my($in,$svg_ref) = @_;
-    no warnings 'uninitialized';
-    #print "1.\n\n\n\n\nsvg=".$out->{tt_string_prepared}.";";
-    $$svg_ref=~s/(?:{\s*)?<!--{|}-->(?:\s*})?//gs;
-    $$svg_ref=~s/<(g .*?)(?:display\s*=\s*["']*none["'[:blank:]]+)(.*?id *=["' ]+(?:title|bg|mid|zone|call)page["' ]+)([^>]*)>/<$1$2$3>/gs;
-    $$svg_ref=~s/<(g .*?)(id *=["' ]+(?:title|bg|mid|zone|call)page["' ]+.*?)(?:display\s*=\s*["']*none["'[:blank:]]+)([^>]*)>/<$1$2$3>/gs;
-    if($in->{no_fake_data}){
-        $$svg_ref=~s/\[%[^\[\%]+lorem.*?%\]//gs;        
+    
+    my $xp = XML::XPath->new($$svg_ref);
+
+    my $g = $xp->find('//g[@id="titlepage" or @id="bgpage" or
+@id="midpage" or @id="callpage" or @id="zonepage"]');
+    foreach my $node($g->get_nodelist) {
+        if($node->getAttribute('display')) {
+            $node->removeAttribute('display');
+        }
     }
-    #print "\n\n2.\n\n\n\nsvg=".$out->{tt_string_prepared}.";";
+
+    if($in->{no_fake_data}) {
+        my $comment = $xp->find('/comment()[contains(.,
+"invoice_template_lorem.tt")]');
+        foreach my $node($comment->get_nodelist) {
+            $node->getParentNode->removeChild($node);
+        }
+    }
+
+    my $comment = $xp->find('//comment()[normalize-space(.) = "{}" or
+normalize-space(.) = "{ }"]');
+    foreach my $node($comment->get_nodelist) {
+        $node->getParentNode->removeChild($node);
+    }
+
+    $$svg_ref = ($xp->findnodes('/'))[0]->toString();
+    
+    #no warnings 'uninitialized';
+    ##print "1.\n\n\n\n\nsvg=".$out->{tt_string_prepared}.";";
+    #$$svg_ref=~s/(?:{\s*)?<!--{|}-->(?:\s*})?//gs;
+    #$$svg_ref=~s/<(g .*?)(?:display\s*=\s*["']*none["'[:blank:]]+)(.*?id *=["' ]+(?:title|bg|mid|zone|call)page["' ]+)([^>]*)>/<$1$2$3>/gs;
+    #$$svg_ref=~s/<(g .*?)(id *=["' ]+(?:title|bg|mid|zone|call)page["' ]+.*?)(?:display\s*=\s*["']*none["'[:blank:]]+)([^>]*)>/<$1$2$3>/gs;
+    #if($in->{no_fake_data}){
+    #    $$svg_ref=~s/\[%[^\[\%]+lorem.*?%\]//gs;        
+    #}
+    ##print "\n\n2.\n\n\n\nsvg=".$out->{tt_string_prepared}.";";
 }
 
 1;

@@ -10,17 +10,26 @@ template_variables.description.import({
     }
 });
 
+%]
+invoice serial ======> [% invoice.serial%] <===========================
+invoice month ======> [% invoice.month%] <===========================
+invoice year ======> [% invoice.year%] <===========================
+[%;
+
 IF !invoice.serial;
+#info from db
+DEFAULT invoice.month=date.format(date.now(),'%m');
+DEFAULT invoice.serial=Math.int(Math.rand(999999))|format('%06d');
+DEFAULT invoice.year=date.format(date.now(),'%y');
+#/info from db
 DEFAULT invoice.amount='1200';
 DEFAULT invoice.amount_netto='1000';
 DEFAULT invoice.amount_payment='650';
 DEFAULT invoice.amount_vat='200';
 DEFAULT invoice.cloud_pbx_amount='921';
-DEFAULT invoice.month=date.format(date.now(),'%B');
 DEFAULT invoice.debit='500';
 DEFAULT invoice.discount_service='10';
 DEFAULT invoice.discount_wire_transfer='40';
-DEFAULT invoice.serial=Math.int(Math.rand(999999))|format('%06d');
 DEFAULT invoice.serviceallowance='69';
 DEFAULT invoice.voice_termination_fees='10';
 END;
