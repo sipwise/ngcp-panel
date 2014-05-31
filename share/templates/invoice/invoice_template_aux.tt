@@ -2,13 +2,12 @@
 USE Dumper;
 USE Math;
 USE date;
-USE format ;
+USE format;
 
 datenow.value = date.now();
 datenow.month_end   = date_format(month_end  (datenow.value), noyear = 1 );
 datenow.month_start = date_format(month_start(datenow.value), noyear = 1 );
 datenow.year=date.format(datenow.value,'%Y');
-
 IF invoice.serial;
     invoice.serial=Math.int(ifz(invoice.serial))|format('%06d');
     #invoice.date_start = '00:00:00 01-' _ invoice.month _ invoice.year;
@@ -168,11 +167,30 @@ MACRO get_page_interval(pagetype, tt_type, interval_type) BLOCK;
     interval;
 END ;
 
+#MACRO pagewithblock(level) BLOCK;
+#    #pagesrc = titlepage([],[],1,10,10);
+#    pagesrc = '<svg>' _ document_header() _ titlepage() _ document_footer() _ '</svg>';
+#    pagesrc = pagesrc.replace('<!--{|}-->','');
+#    USE xpath = XML.XPath(pagesrc);
+#    FOREACH blockid IN xpath.find('/@id[contains(.,"block_")');
+#        %]
+#        blockid=[%blockid;%]==blockid
+#        [%
+#        FOREACH blocknode IN blockid.get_nodelist();
+#
+#        %]
+#        blocknode=[%blocknode;%]==blocknode
+#        [%
+#        END;
+#    END;
+#END;
 
 MACRO show_pages(invoice_details_zones, invoice_details_calls, pagetype, pagenum_in) BLOCK;
 #todo: remove copypast with some macro, later;
     
-     total = {perpage => [], global => {}, pagetype => { call=> {perpage => [], global => {}}, zone => {perpage => [], global => {}} } } ;
+    pagewithblock();
+    
+    total = {perpage => [], global => {}, pagetype => { call=> {perpage => [], global => {}}, zone => {perpage => [], global => {}} } } ;
     alltitlepages = ifz(alltitlepages) ? alltitlepages : 1;
     allzonerowsnumber = invoice_details_zones.size() ;
     titlezonerows =  get_page_rows_number('titlepage','svg','zone') ;
@@ -239,9 +257,8 @@ MACRO show_pages(invoice_details_zones, invoice_details_calls, pagetype, pagenum
             pagerowsstart = titlecallrows + midcallrows * ( pagenum - 1 );
             pagerowsend = titlecallrows + midcallrows * pagenum - 1 ;
             output = output _ document_header();
-            output = output _ callpage( invoice_details_calls.slice( pagerowsstart,  pagerowsend ), total, pagenum + 1 + allzonepages, pagenum, allcallpages, midcallinterval ) ;
-            #+1 because of 1 for titlepage ;
-            output = output _ bgpage(pagenum + 1 + allzonepages, pagenum, allcallpages ) ;
+            output = output _ callpage( invoice_details_calls.slice( pagerowsstart,  pagerowsend ), total, pagenum + alltitlepages + allzonepages, pagenum, allcallpages, midcallinterval ) ;
+            output = output _ bgpage(pagenum + alltitlepages + allzonepages, pagenum, allcallpages ) ;
             output = output _ document_footer();
         END;
         IF lastcallrows > 0 ;

@@ -1,4 +1,5 @@
 [%
+USE Dumper;
 USE Date;
 USE Math;
 
@@ -9,12 +10,6 @@ template_variables.description.import({
         'amount' => 'Invoice amount with already considered discount.',
     }
 });
-
-%]
-invoice serial ======> [% invoice.serial%] <===========================
-invoice month ======> [% invoice.month%] <===========================
-invoice year ======> [% invoice.year%] <===========================
-[%;
 
 IF !invoice.serial;
 #info from db
