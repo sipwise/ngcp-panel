@@ -123,7 +123,7 @@ IF !invoice_details_zones.size();
             number               => i * 2 ,
             cost                 => i / 10,
             duration             => i * 10,
-            free_time            => i / 10,
+            free_time            => i * 5,
             zone                 => 'Example Zone',
             zone_detail          => 'Default',
         }]);

@@ -83,36 +83,33 @@ sub preprocessInvoiceTemplateSvg{
     my($in,$svg_ref) = @_;
     
     my $xp = XML::XPath->new($$svg_ref);
-
-    my $g = $xp->find('//g[@id="titlepage" or @id="bgpage" or
-@id="midpage" or @id="callpage" or @id="zonepage"]');
+    
+    my $g = $xp->find('//g[@id[contains(.,"page")]]');
     foreach my $node($g->get_nodelist) {
         if($node->getAttribute('display')) {
             $node->removeAttribute('display');
         }
     }
-
+    
     if($in->{no_fake_data}) {
-        my $comment = $xp->find('/comment()[contains(.,
-"invoice_template_lorem.tt")]');
+        my $comment = $xp->find('/comment()[contains(.,"invoice_template_lorem.tt")]');
         foreach my $node($comment->get_nodelist) {
             $node->getParentNode->removeChild($node);
         }
     }
-
-    my $comment = $xp->find('//comment()[normalize-space(.) = "{}" or
-normalize-space(.) = "{ }"]');
+    
+    my $comment = $xp->find('//comment()[normalize-space(.) = "{}" or normalize-space(.) = "{ }"]');
     foreach my $node($comment->get_nodelist) {
         $node->getParentNode->removeChild($node);
     }
-
+    
     $$svg_ref = ($xp->findnodes('/'))[0]->toString();
     
     #no warnings 'uninitialized';
     ##print "1.\n\n\n\n\nsvg=".$out->{tt_string_prepared}.";";
-    #$$svg_ref=~s/(?:{\s*)?<!--{|}-->(?:\s*})?//gs;
-    #$$svg_ref=~s/<(g .*?)(?:display\s*=\s*["']*none["'[:blank:]]+)(.*?id *=["' ]+(?:title|bg|mid|zone|call)page["' ]+)([^>]*)>/<$1$2$3>/gs;
-    #$$svg_ref=~s/<(g .*?)(id *=["' ]+(?:title|bg|mid|zone|call)page["' ]+.*?)(?:display\s*=\s*["']*none["'[:blank:]]+)([^>]*)>/<$1$2$3>/gs;
+    $$svg_ref=~s/(?:{\s*)?<!--{|}-->(?:\s*})?//gs;
+    $$svg_ref=~s/<(g .*?)(?:display\s*=\s*["']*none["'[:blank:]]+)(.*?id *=["' ]+page["' ]+)([^>]*)>/<$1$2$3>/gs;
+    $$svg_ref=~s/<(g .*?)(id *=["' ]+page["' ]+.*?)(?:display\s*=\s*["']*none["'[:blank:]]+)([^>]*)>/<$1$2$3>/gs;
     #if($in->{no_fake_data}){
     #    $$svg_ref=~s/\[%[^\[\%]+lorem.*?%\]//gs;        
     #}
