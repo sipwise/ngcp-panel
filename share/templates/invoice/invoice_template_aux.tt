@@ -228,7 +228,7 @@ MACRO show_pages(invoice_details_zones, invoice_details_calls, pagetype, pagenum
             output = output _ document_header();
             output = output _ zonepage( invoice_details_zones.slice( pagerowsstart,  pagerowsend ), total, pagenum + alltitlepages, pagenum, allzonepages, midzoneinterval ) ;
             #+1 because of 1 for titlepage ;
-            output = output _ bgpage(pagenum + 1, pagenum, allzonepages) ;
+            output = output _ bgpage(pagenum + alltitlepages, pagenum, allzonepages) ;
             output = output _ document_footer();
         END;
         IF lastzonerows > 0 ;

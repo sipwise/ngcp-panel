@@ -40,8 +40,9 @@ sub root :Chained('invoice') :PathPart('') :Args(0) :Does(ACL) :ACLDetachTo('/de
 sub messages :Chained('invoice') :PathPart('messages') :Args(0) {
     my ($self, $c) = @_;
     $c->log->debug('messages');
-    $c->stash( messages => $c->flash->{messages} );
-    $c->stash( template => 'helpers/ajax_messages.tt' );
+    $c->stash( 
+        messages => $c->flash->{messages} ,
+        template => 'helpers/ajax_messages.tt' );
     $c->detach( $c->view('SVG') );#no wrapper view
 }
 
@@ -443,6 +444,7 @@ sub generate_invoice :Private{
         provider => $provider_contact,
         client   => $client_contact,
         invoice  => $invoice,
+        bp       => $billing_profile,
         invoice_details_zones => $c->stash->{invoice_details_zones},
         invoice_details_calls => $c->stash->{invoice_details_calls},
     };

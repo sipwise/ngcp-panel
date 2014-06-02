@@ -162,6 +162,7 @@ foreach my $provider_contract( @{$dbh->selectall_arrayref('select contracts.*,re
                     provider => $provider_contact,
                     client   => $client_contact,
                     invoice  => $invoice,
+                    bp       => $billing_profile,
                     invoice_details_zones => $invoice_details_zones,
                     invoice_details_calls => $invoice_details_calls,
                 };

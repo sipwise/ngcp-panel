@@ -14,7 +14,7 @@
 .ps00 { stroke:none;fill:#000000; }
 .ps11 { stroke-width:0.03; }
 .ps10 { stroke-width:0.5; }
-.ps20,.ps21,.ps22,.ps23,.ps24,.ps25,.ps26,.ps27 { letter-spacing:-0.6px;word-spacing:0;font-family:Arial; }
+.ps20,.ps21,.ps22,.ps23,.ps24,.ps25,.ps26,.ps27 { letter-spacing:0px;word-spacing:0;font-family:Arial; }
 .ps20 { font-size:7px; }
 .ps21 { font-weight:bold;font-size:12px; }
 .ps22 { font-weight:bold;font-size:9px; }
@@ -75,14 +75,14 @@
 <text x="75" y="431" class="ps00 ps10 ps25" id="block_total_period_product" rows-interval="12">Monatliche Grundentgelte</text>
 
 [%period = invoice%]
-<text x="75" y="447" class="ps00 ps10 ps23" id="row_total_period_product_period_start">[%product.name%] [%date.format(period.date_start,'%d.%m.%Y')%] - [%date.format(period.date_end,'%d.%m.%Y')%]</text>
+<text x="75" y="447" class="ps00 ps10 ps23" id="row_total_period_product_period_start">[%bp.name%] [%date.format(period.date_start,'%d.%m.%Y')%] - [%date.format(period.date_end,'%d.%m.%Y')%]</text>
 <text x="375" y="447" class="ps00 ps10 ps23">1</text>
-<text x="422.98" y="447" class="ps00 ps10 ps23">50,00</text>
-<text x="540" y="447" class="ps00 ps10 ps23" text-anchor="end"  id="total_period_product_period_end">50,00</text>
+<text x="440" y="447" class="ps00 ps10 ps23" text-anchor="end">[%money_format(bp.interval_charge)%]</text>
+<text x="540" y="447" class="ps00 ps10 ps23" text-anchor="end"  id="total_period_product_period_end">[%money_format(bp.interval_charge)%]</text>
 
-<text x="75" y="459" class="ps00 ps10 ps23">[%product.name%] [%date.format(period.date_start,'%d.%m.%Y')%] - [%date.format(period.date_end,'%d.%m.%Y')%]</text>
+<text x="75" y="459" class="ps00 ps10 ps23">[%bp.name%] [%date.format(period.date_start,'%d.%m.%Y')%] - [%date.format(period.date_end,'%d.%m.%Y')%]</text>
 <text x="375" y="459" class="ps00 ps10 ps23">1</text>
-<text x="422.98" y="459" class="ps00 ps10 ps23">50,00</text>
+<text x="440" y="459" class="ps00 ps10 ps23" text-anchor="end">50,00</text>
 <text x="540" y="459" class="ps00 ps10 ps23" text-anchor="end">50,00</text>
 
 <text x="75" y="475" class="ps00 ps10 ps25" id="row_total_period_product_period_end">Summe</text>
@@ -270,11 +270,11 @@
     <!--{[%MACRO datarow(call) BLOCK-%]}-->
     <text y="0" text-anchor="start" id="callpage_calls[%loop.count-%]">
         <!--{[%IF call.1; call = call.1; END%]}-->
-        <tspan x="0" id="callpage_calls_start_time[%loop.count-%]" text-anchor="start" class="ps00 ps10 ps27"><!--{[% date.format(Math.int(call.get_column('start_time')),'%d.%m.%Y %H:%M:%S') %]}--><!--{[%#}-->31.01.0001 23:59:59<!--{%]}--></tspan>
-        <tspan x="90" id="callpage_calls_duration[%loop.count-%]" text-anchor="start" class="ps00 ps10 ps27"><!--{[% date.format(call.get_column('duration'),'%H:%M:%S', gmt => 1) %]}--><!--{[%#}-->00:00:00<!--{%]}--></tspan>
-        <tspan x="135" id="callpage_calls_destination[%loop.count-%]" text-anchor="start" class="ps00 ps10 ps27"><!--{[% call.get_column('destination_user_in').replace('(.*?)\d{4}$','$1****') %]}--><!--{[%#}-->+00000000****<!--{%]}--></tspan>
-        <tspan x="235" id="callpage_calls_zone[%loop.count-%]" text-anchor="start" class="ps00 ps10 ps27"><!--{[% call.get_column('zone') _ '/' _ call.get_column('zone_detail') %]}--><!--{[%#}-->Example zone/Fixed<!--{%]}--></tspan>
-        <tspan x="475" id="callpage_calls_cost[%loop.count-%]" text-anchor="end" class="ps00 ps10 ps27"><!--{[% ( call.get_column('source_customer_cost') / 100 ) |format('%.4f') %]}--><!--{[%#}-->0.0000<!--{%]}--></tspan>
+        <tspan x="0" id="callpage_calls_start_time[%loop.count-%]" text-anchor="start" class="ps00 ps10 ps20"><!--{[% date.format(Math.int(call.get_column('start_time')),'%d.%m.%Y %H:%M:%S') %]}--><!--{[%#}-->31.01.0001 23:59:59<!--{%]}--></tspan>
+        <tspan x="90" id="callpage_calls_duration[%loop.count-%]" text-anchor="start" class="ps00 ps10 ps20"><!--{[% date.format(call.get_column('duration'),'%H:%M:%S', gmt => 1) %]}--><!--{[%#}-->00:00:00<!--{%]}--></tspan>
+        <tspan x="135" id="callpage_calls_destination[%loop.count-%]" text-anchor="start" class="ps00 ps10 ps20"><!--{[% call.get_column('destination_user_in').replace('(.*?)\d{4}$','$1****') %]}--><!--{[%#}-->+00000000****<!--{%]}--></tspan>
+        <tspan x="235" id="callpage_calls_zone[%loop.count-%]" text-anchor="start" class="ps00 ps10 ps20"><!--{[% call.get_column('zone') _ '/' _ call.get_column('zone_detail') %]}--><!--{[%#}-->Example zone/Fixed<!--{%]}--></tspan>
+        <tspan x="475" id="callpage_calls_cost[%loop.count-%]" text-anchor="end" class="ps00 ps10 ps20"><!--{[% ( call.get_column('source_customer_cost') / 100 ) |format('%.4f') %]}--><!--{[%#}-->0.0000<!--{%]}--></tspan>
     </text>
     <!--{[%END-%]}-->
     <!--{[%MACRO totalrow(data, page, pagelocal, pageslocalnum) BLOCK-%]}-->
@@ -296,9 +296,8 @@
 
 <!--{[%MACRO bgpage( page, pagelocal, pageslocalnum ) BLOCK-%]}-->
 <!--page-->
-    <g id="bgpage">
-       <title>Background</title>
-        <!--rect x="0" y="0" width="214.9" height="296.8" stroke-width="0.1" stroke="#FF0000" fill="#FFFFFF" fill-opacity="0" id="totalborder"/-->
+    <g id="bgpage_1" display="none">
+       <title>Background_Data</title>
 
         <!--{[%IF page >= alltitlepages %]}-->
         <text x="65" y="165" class="ps00 ps23">[%client.title%]</text>
@@ -309,6 +308,13 @@
         <text x="540" y="120" class="ps00 ps20" text-anchor="end">Seite [%page%]</text>
         <text x="550" y="225" class="ps00 ps23" text-anchor="end">Datum [%date.format(datenow.value,'%d.%m.%Y')%]</text>
         <!--{[%END%]}-->
+    </g>
+<!--/page-->
+<!--page-->
+    <g id="bgpage_2">
+       <title>Background</title>
+        <!--rect x="0" y="0" width="214.9" height="296.8" stroke-width="0.1" stroke="#FF0000" fill="#FFFFFF" fill-opacity="0" id="totalborder"/-->
+
 
         <text x="65" y="783" class="ps00 ps20">[%provider.company%]</text>
         <text x="65" y="792" class="ps00 ps20">[%provider.postcode %] [% provider.city %]</text>
