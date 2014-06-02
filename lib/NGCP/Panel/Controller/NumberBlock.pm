@@ -88,7 +88,7 @@ sub block_create :Chained('block_list') :PathPart('create') :Args(0) :Does(ACL) 
     my $posted = ($c->request->method eq 'POST');
     my $params = {};
     $params = $params->merge($c->session->{created_objects});
-    $params->{reseller_list} = "";
+    $params->{reseller_list} = encode_json([]);;
 
     my $form;
     if($c->user->roles eq "admin") {
