@@ -3,6 +3,7 @@ use Sipwise::Base;
 use namespace::sweep;
 BEGIN { extends 'Catalyst::Controller'; }
 
+use NGCP::Panel::Utils::InvoiceTemplate;
 use NGCP::Panel::Form::Invoice::TemplateAdmin;
 use NGCP::Panel::Form::Invoice::TemplateReseller;
 
@@ -260,7 +261,7 @@ sub edit_content :Chained('base') :PathPart('editcontent') :Args(0) {
 }
 
 sub get_content_ajax :Chained('base') :PathPart('editcontent/get/ajax') :Args(0) {
-    my ($self, $c, @args) = @_;
+    my ($self, $c) = @_;
     my $tmpl = $c->stash->{tmpl};
 
     my $content;
@@ -283,8 +284,57 @@ sub get_content_ajax :Chained('base') :PathPart('editcontent/get/ajax') :Args(0)
         }
     }
 
+    # some part of the chain doesn't like content being encoded as utf8 at that poing
+    # already; decode here, and umlauts etc will be fine througout the chain.
+    use utf8;
+    utf8::decode($content);
+
     $c->response->content_type('text/html');
     $c->response->body($content);
+}
+
+sub set_content_ajax :Chained('base') :PathPart('editcontent/set/ajax') :Args(0) {
+    my ($self, $c, @args) = @_;
+    my $tmpl = $c->stash->{tmpl};
+
+    my $content = $c->request->body_parameters->{template};
+    unless($content) {
+        NGCP::Panel::Utils::Message->error(
+            c => $c,
+            error => 'empty svg file not allowed',
+            desc => $c->log('Attempted to save an empty invoice template'),
+        );
+        return;
+    }
+    NGCP::Panel::Utils::InvoiceTemplate::sanitize_svg(\$content);
+
+    try {
+        $tmpl->update({
+            base64_saved => $content,
+            base64_previewed => undef,
+        });
+    } catch($e) {
+        NGCP::Panel::Utils::Message->error(
+            c => $c,
+            error => $e,
+            desc => $c->loc('Failed to store invoice template'),
+        );
+        return;
+    }
+    $c->flash(messages => [{type => 'success', text => $c->loc('Invoice template successfully saved')}]);
+
+    $c->response->content_type('application/json');
+    $c->response->body('');
+    $c->detach($c->view('JSON'));
+}
+
+sub messages_ajax :Chained('template_list') :PathPart('messages') :Args(0) {
+    my ($self, $c) = @_;
+    $c->stash(
+        messages => $c->flash->{messages},
+        template => 'helpers/ajax_messages.tt',
+    );
+    $c->detach($c->view('TT'));
 }
 
 

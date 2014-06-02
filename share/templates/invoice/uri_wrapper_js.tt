@@ -1,20 +1,17 @@
 <script type="text/javascript">
 var uriForAction = function( data, type ){
     var q_template;
+    console.log("type=" + type);
     switch(type){
     case 'template_previewed':
         q_template = '[%# c.uri_for_action("/invoice/template_view", ['provider_id']) -%]'+'/svg/parsed/previewed/svg/tt_id';
         break;
     case 'template_saved':
-        q_template = '[%# c.uri_for_action("/invoice/template_view", ['provider_id']) -%]'+'/svg/parsed/saved/tt_output_type/tt_id';
-        break;
-    case 'template_list':
-        q_template = '[%# c.uri_for_action("/invoice/template_list", ['provider_id']) -%]';
+        q_template = '[% c.uri_for_action("/invoicetemplate/set_content_ajax", [tmpl.id]) -%]';
         break;
     case 'messages':
-        q_template = '[%# c.uri_for_action("/invoice/messages") -%]';
+        q_template = '[% c.uri_for_action("/invoicetemplate/messages_ajax") -%]';
         break;
-    case 'template':
     default:
         q_template = '[% c.uri_for_action("/invoicetemplate/get_content_ajax", [tmpl.id]) -%]';
         break;

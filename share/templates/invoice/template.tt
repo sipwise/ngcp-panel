@@ -4,18 +4,7 @@
     write_access = 1;
 %]
 
-[% PROCESS 'helpers/datatables_vars.tt' no_auto_helper = 1 -%]
-[%PROCESS 'helpers/modal.tt' -%]
-[%
-    mf_helper = {
-        ajax_load         => 1,
-        ajax_list_refresh => 'template',
-    }
-%]
-[% modal_script( m = mf_helper ) %]
-
 [% site_config.title = c.loc('Invoice template [_1]', tmpl.name ) -%]
-
 
 <script type="text/javascript" src="/js/libs/svg-edit/embedapi.js"></script>
 <script type="text/javascript" src="/js/background.js"></script>
@@ -32,9 +21,6 @@
     </span>
 </div>
 
-[% IF reseller.first.status != "active" -%]
-    [%messages.unshift( c.loc('Reseller is <b>[_1]</b>', reseller.first.status) ); %]
-[% END -%]
 <div class="row" id="messages">
 [%PROCESS 'helpers/ajax_messages.tt' -%]
 </div>

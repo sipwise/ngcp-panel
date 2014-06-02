@@ -9,20 +9,8 @@ use File::Temp qw/tempfile tempdir/;
 use File::Path qw/mkpath/;
 use XML::XPath;
 
-sub getDefaultInvoiceTemplate{
-    my (%in) = @_;
-    #in future may be we will store root default in Db too, but now it is convenient to edit template as file
-    my $result = $in{c}->view('SVG')->getTemplateContent($in{c}, 'invoice/invoice_template_'.$in{type}.'.tt');
-    
-    #$in{c}->log->debug("result=$result;");
-    
-    if( $result && exists $in{result} ){
-        ${$in{result}} = $result;
-    }
-    return \$result;
-}
-sub convertSvg2Pdf{
-    my($c,$svg_ref,$in,$out) = @_;
+sub svg2pdf {
+    my ($c,$svg_ref,$in,$out) = @_;
     my $svg = $$svg_ref;
     my(@pages) = $svg=~/(<svg.*?(?:\/svg>))/sig;
     no warnings 'uninitialized';
@@ -116,4 +104,21 @@ sub preprocessInvoiceTemplateSvg{
     ##print "\n\n2.\n\n\n\nsvg=".$out->{tt_string_prepared}.";";
 }
 
+sub sanitize_svg {
+    my ($svg_ref) = @_;
+
+    my $xp = XML::XPath->new($$svg_ref);
+    
+    my $s = $xp->find('//script');
+    foreach my $node($s->get_nodelist) {
+        if($node->getAttribute('display')) {
+            $node->getParentNode->removeChild($node);
+        }
+    }
+    
+    $$svg_ref = ($xp->findnodes('/'))[0]->toString();
+    return 1;
+}
+
 1;
+# vim: set tabstop=4 expandtab:
