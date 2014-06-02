@@ -403,8 +403,8 @@ sub generate_invoice :Private{
     my $provider_contact = $backend->getContactInfo('contact_id' => $provider_contract->get_column('id'));
     my $contract_balance = $backend->getContractBalance($in);
     #$c->log->debug("customer->id="..";");
+    my $billing_profile = $backend->getBillingProfile($in);
     if(!$contract_balance){
-        my $billing_profile = $backend->getBillingProfile($in);
         NGCP::Panel::Utils::Contract::create_contract_balance(
             c => $c,
             profile  => $billing_profile,

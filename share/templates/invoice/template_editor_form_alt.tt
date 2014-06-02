@@ -92,7 +92,7 @@ zonesdata = invoice_details_zones.0.1;
 %]
 <div style="overflow:auto;height:85%;">
 [%
-FOREACH varname IN ['client','provider','invoice','callsdata','zonesdata'];
+FOREACH varname IN ['client','provider','invoice','bp','callsdata','zonesdata'];
     tooltipvarindex = varname _ '_self';
 %]
 
