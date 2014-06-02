@@ -14,7 +14,7 @@
 .ps00 { stroke:none;fill:#000000; }
 .ps11 { stroke-width:0.03; }
 .ps10 { stroke-width:0.5; }
-.ps20,.ps21,.ps22,.ps23,.ps24,.ps25,.ps26 { letter-spacing:0px;word-spacing:0;font-family:Arial; }
+.ps20,.ps21,.ps22,.ps23,.ps24,.ps25,.ps26,.ps27 { letter-spacing:-0.6px;word-spacing:0;font-family:Arial; }
 .ps20 { font-size:7px; }
 .ps21 { font-weight:bold;font-size:12px; }
 .ps22 { font-weight:bold;font-size:9px; }
@@ -32,6 +32,7 @@
 <!--{[%MACRO titlepage(zonesdata, callsdata) BLOCK-%]}-->
 <!--page-->
 <g y="0" x="0" width="841" height="595" id="titlepage_1" display="none">
+<title>TitlePage_1</title>
 
 <text x="65" y="155" class="ps00 ps20">[%provider.company%][%if(', ', provider.postcode _ ' ' _ provider.city ) %][%if(', ', provider.street )%]</text>
 <text x="65" y="165" class="ps00 ps23">[%client.title%]</text>
@@ -167,41 +168,35 @@
 <!--{[% document_header -%]}-->
 <!--page-->
 <g y="0" x="0" width="841" height="595" id="titlepage_2" display="none">
-<text>
-<tspan x="65" y="152" class="ps00 ps10 ps21">Gesamtsumme der Rabatte</tspan>
-<tspan x="540" y="152" class="ps00 ps10 ps21" text-anchor="end">-70,00</tspan>
-</text>
+<title>TitlePage_2</title>
+
+<text x="65" y="152" class="ps00 ps10 ps21">Gesamtsumme der Rabatte</text>
+<text x="540" y="152" class="ps00 ps10 ps21" text-anchor="end">-70,00</text>
 
 <path d="M65 156 L551 156" class="ps01 ps10 ps20"/>
 <path d="M65 201 L551 201" class="ps01 ps10 ps21"/>
 <path d="M65 222 L551 222" class="ps01 ps10 ps21"/>
 
-<text>
-<tspan x="65" y="181" class="ps00 ps10 ps21">Summe Entgelte:</tspan>
-<tspan x="540" y="181" class="ps00 ps10 ps21" text-anchor="end">32,25</tspan>
-</text>
+<text x="65" y="181" class="ps00 ps10 ps21">Summe Entgelte:</text>
+<text x="540" y="181" class="ps00 ps10 ps21" text-anchor="end">32,25</text>
 
-<text>
-<tspan x="65" y="195" class="ps00 ps10 ps21">Umsatzsteuer (20%):</tspan>
-<tspan x="540" y="195" class="ps00 ps10 ps21" text-anchor="end">6,45</tspan>
-<tspan x="65" y="219" class="ps00 ps10 ps21">Zahlungsbetrag</tspan>
-<tspan x="540" y="219" class="ps00 ps10 ps21" text-anchor="end">38,70</tspan>
-</text>
+<text x="65" y="195" class="ps00 ps10 ps21">Umsatzsteuer (20%):</text>
+<text x="540" y="195" class="ps00 ps10 ps21" text-anchor="end">6,45</text>
 
-<text><tspan x="65" y="257" class="ps00 ps10 ps22">Der Rechnungsbetrag wird 14 Tage nach Rechnungsdatum f&#xE4;llig und wird gem&#xE4;&#xDF; vorliegendem</tspan>
-<tspan xml:space="preserve" x="65" y="269" class="ps00 ps10 ps22">Abbuchungsauftrag von Ihrem Konto IBAN , BIC  abgebucht.</tspan>
-</text>
-<text><tspan x="65" y="548" class="ps00 ps10 ps22">Mit freundlichen Gr&#xFC;&#xDF;en</tspan>
-<tspan x="65" y="533" class="ps00 ps10 ps22">Ihr [%provider.company_short%] Service Team</tspan>
-<tspan x="65" y="750" class="ps00 ps10 ps20">Etwaige Einw&#xE4;nde gegen die vorliegende Rechnung m&#xFC;ssen innerhalb von 30 Tagen ab Zustellungsdatum schriftlich erhoben werden, andernfalls gilt</tspan>
-<tspan x="65" y="758" class="ps00 ps10 ps20">die Forderung als anerkannt.</tspan>
-</text>
+<text x="65" y="219" class="ps00 ps10 ps21">Zahlungsbetrag</text>
+<text x="540" y="219" class="ps00 ps10 ps21" text-anchor="end">38,70</text>
+
+<text x="65" y="257" class="ps00 ps10 ps22">Der Rechnungsbetrag wird 14 Tage nach Rechnungsdatum f&#xE4;llig und wird gem&#xE4;&#xDF; vorliegendem</text>
+<text xml:space="preserve" x="65" y="269" class="ps00 ps10 ps22">Abbuchungsauftrag von Ihrem Konto IBAN , BIC  abgebucht.</text>
+
+<text x="65" y="548" class="ps00 ps10 ps22">Mit freundlichen Gr&#xFC;&#xDF;en</text>
+<text x="65" y="533" class="ps00 ps10 ps22">Ihr [%provider.company_short%] Service Team</text>
+<text x="65" y="750" class="ps00 ps10 ps20">Etwaige Einw&#xE4;nde gegen die vorliegende Rechnung m&#xFC;ssen innerhalb von 30 Tagen ab Zustellungsdatum schriftlich erhoben werden, andernfalls gilt</text>
+<text x="65" y="758" class="ps00 ps10 ps20">die Forderung als anerkannt.</text>
+
+</g>
 <!--/page-->
 <!--{[%END-%]}-->
-
-
-
-
 
 <!--{[%MACRO zonepage(callsdata, total, page, pagelocal, pageslocalnum, rows_interval) BLOCK-%]}-->
 <!--page-->
@@ -241,12 +236,51 @@
             </text>
             <rect x="0" y="15" width="195" height="0.1" stroke="#444444" stroke-width="0.08" fill="none"/>
     <!--{[%END-%]}-->
+
+   
+    <text x="65" y="225" class="ps00 ps24">Verbindungsentgelte</text>
+    <text x="65" y="259" class="ps00 ps23">f&#xFC;r den Abrechnungszeitraum vom [%date.format(invoice.date_start,'%d.%m.%Y')%] bis [%date.format(invoice.date_end,'%d.%m.%Y')%]</text>
+
+    <!--{MACRO titlerow BLOCK}-->
+    <text x="65" y="279" class="ps00 ps10 ps23">Rufnummer [%%]</text>
+    <path d="M65 289 L551 289" class="ps01 ps10 ps23"/>
+    <path d="M65 302 L551 302" class="ps01 ps10 ps23"/>
+    <text x="65" y="299" class="ps00 ps10 ps23">Zone</text>
+    <text x="240" y="299" class="ps00 ps10 ps23">Anzahl</text>
+    <text x="310" y="299" class="ps00 ps10 ps23">Nutzung</text>
+    <text x="380" y="299" class="ps00 ps10 ps23">Freizeit</text>
+    <text x="476" y="299" text-anchor="end" class="ps00 ps10 ps23">Betrag in EUR</text>
+    <!--{END}-->
+    
+    <g y="313" x="65" width="465" height="450" id="callpage_invoicedetails" transform="translate(65, 313)" rows="45" rows-interval="10">
+    <!--{[%MACRO datarow(call) BLOCK-%]}-->
+    <text y="0" text-anchor="start" id="zonepage_calls[%loop.count-%]">
+        <!--{[%IF call.1; call = call.1; END%]}-->
+        <tspan x="0" id="zonepage_calls_zone[%loop.count-%]" text-anchor="start" class="ps00 ps10 ps27"><!--{[% call.get_column('zone') _ '/' _ call.get_column('zone_detail') %]}--><!--{[%#}-->Example zone/Fixed<!--{%]}--></tspan>
+        <tspan x="175" id="zonepage_calls_number[%loop.count-%]" text-anchor="start" class="ps00 ps10 ps27"><!--{[% call.get_column('number') %]}--><!--{[%#}-->0<!--{%]}--></tspan>
+        <tspan x="245" id="zonepage_calls_duration[%loop.count-%]" text-anchor="start" class="ps00 ps10 ps27"><!--{[% date.format(call.get_column('duration'),'%H:%M:%S', gmt => 1) %]}--><!--{[%#}-->00:00:00<!--{%]}--></tspan>
+        <tspan x="315" id="zonepage_calls_freetime[%loop.count-%]"><!--{[% date.format(call.get_column('free_time'),'%H:%M:%S', gmt => 1) %]}--><!--{[%#}-->00:00:00<!--{%]}--></tspan>
+        <tspan x="475" id="zonepage_calls_cost[%loop.count-%]" text-anchor="end" class="ps00 ps10 ps27"><!--{[% ( call.get_column('source_customer_cost') / 100 ) |format('%.4f') %]}--><!--{[%#}-->0.0000<!--{%]}--></tspan>
+    </text>
+    <!--{[%END-%]}-->
+    <!--{[%MACRO totalrow(data, page, pagelocal, pageslocalnum) BLOCK-%]}-->
+    <text y="20" text-anchor="end" id="zonepage_calls_total" class="datarow">
+        <tspan x="0" id="zonepage_calls_total_title" text-anchor="start" class="ps00 ps10 ps23">Total:</tspan>
+        <tspan x="175" id="zonepage_calls_total_number" class="ps00 ps10 ps23"><!--{[% data.number %]}--><!--{[%#}-->0<!--{%]}--></tspan>
+        <tspan x="90" id="zonepage_calls_total_duration" text-anchor="start" class="ps00 ps10 ps23"><!--{[% date.format(data.duration,'%H:%M:%S', gmt => 1) %]}--><!--{[%#}-->0.000<!--{%]}--></tspan>
+       <tspan x="475" id="zonepage_calls_total_cost" class="ps00 ps10 ps23"><!--{[% ( data.cost )|format('%.2f') %]}--><!--{[%#}-->0.00<!--{%]}--></tspan>
+    </text>
+    <rect x="0" y="8" width="486" height="0.1" stroke="#444444" stroke-width="0.5" fill="none"/>
+    <!--{[%END-%]}-->
+    
+
+
+
     
     <!--{[% titlerow(page) -%]}-->
     <!--{[% list_zones(callsdata, page, pagelocal, pageslocalnum, 'datarow', total, 'svg', rows_interval) -%]}-->
     <!--{[%IF (pagelocal==pageslocalnum); adjustrow (total, page, pagelocal, pageslocalnum, 'totalrow', 'svg', rows_interval, callsdata.size); END -%]}-->
         </g>
-
     </g>
 <!--/page-->
 <!--{[%END-%]}-->
@@ -256,51 +290,40 @@
 <!--page-->
 <g id="callpage" display="none">
     <title>CallPage</title>
-    <tspan x="65" y="225" class="ps00 ps24">Einzelgespr&#xE4;chsnachweis</tspan>
-    <tspan x="65" y="259" class="ps00 ps23">f&#xFC;r den Abrechnungszeitraum vom [%date.format(invoice.date_start,'%d.%m.%Y')%] bis [%date.format(invoice.date_end,'%d.%m.%Y')%]</tspan>
+    <text x="65" y="225" class="ps00 ps24">Einzelgespr&#xE4;chsnachweis</text>
+    <text x="65" y="259" class="ps00 ps23">f&#xFC;r den Abrechnungszeitraum vom [%date.format(invoice.date_start,'%d.%m.%Y')%] bis [%date.format(invoice.date_end,'%d.%m.%Y')%]</text>
 
-    <!--{[%#MACRO titlerow BLOCK-%]}-->
+    <!--{MACRO titlerow BLOCK}-->
     <text x="65" y="279" class="ps00 ps10 ps23">Rufnummer [%%]</text>
-    <path d="M65 552 L551 552" class="ps01 ps10 ps23"/>
-    <path d="M65 539 L551 539" class="ps01 ps10 ps23"/>
+    <path d="M65 289 L551 289" class="ps01 ps10 ps23"/>
+    <path d="M65 302 L551 302" class="ps01 ps10 ps23"/>
     <text x="65" y="299" class="ps00 ps10 ps23">Beginnzeit</text>
     <text x="155" y="299" class="ps00 ps10 ps23">Dauer</text>
     <text x="200" y="299" class="ps00 ps10 ps23">Zielrufnummer</text>
     <text x="300" y="299" class="ps00 ps10 ps23">Zone/Destination</text>
     <text x="476" y="299" class="ps00 ps10 ps23">Betrag in EUR</text>
-    <!--{[%#END%]}-->
+    <!--{END}-->
     
-
-
-<!--tspan x="65"  class="ps00 ps10 ps27">03.03.2014 18:59:32</tspan>
-<tspan x="155" class="ps00 ps10 ps27">00:17:26</tspan>
-<tspan x="200" class="ps00 ps10 ps27">+434715***</tspan>
-<tspan x="300" class="ps00 ps10 ps27">&#xD6;sterreich Festnetz</tspan>
-<tspan x="540" class="ps00 ps10 ps27" text-anchor="end">0,3487</tspan-->
-    
-    
-    
-    <g y="313" x="65" width="465" height="450" id="callpage_invoicedetails" transform="translate(313, 65)" rows="20" rows-interval="10">
+    <g y="313" x="65" width="465" height="450" id="callpage_invoicedetails" transform="translate(65, 313)" rows="45" rows-interval="10">
     <!--{[%MACRO datarow(call) BLOCK-%]}-->
-    <text y="0" text-anchor="end" id="callpage_calls[%loop.count-%]">
+    <text y="0" text-anchor="start" id="callpage_calls[%loop.count-%]">
         <!--{[%IF call.1; call = call.1; END%]}-->
-        <tspan x="0" id="callpage_calls_start_time[%loop.count-%]" text-anchor="start" class="ps00 ps10 ps27"><!--{[% date.format(Math.int(call.get_column('start_time')),'%Y-%m-%d %H:%M:%S') %]}--><!--{[%#}-->0001-01-31 23:59:59<!--{%]}--></tspan>
-        <tspan x="90" id="callpage_calls_duration[%loop.count-%]" class="ps00 ps10 ps27"><!--{[% call.get_column('duration')|format('%.3f') %]}--><!--{[%#}-->00:00:00<!--{%]}--></tspan>
-        <tspan x="135" id="callpage_calls_destination[%loop.count-%]" class="ps00 ps10 ps27"><!--{[% call.get_column('destination_user_in').replace('(.*?)\d{4}$','$1****') %]}--><!--{[%#}-->+00000000****<!--{%]}--></tspan>
+        <tspan x="0" id="callpage_calls_start_time[%loop.count-%]" text-anchor="start" class="ps00 ps10 ps27"><!--{[% date.format(Math.int(call.get_column('start_time')),'%d.%m.%Y %H:%M:%S') %]}--><!--{[%#}-->31.01.0001 23:59:59<!--{%]}--></tspan>
+        <tspan x="90" id="callpage_calls_duration[%loop.count-%]" text-anchor="start" class="ps00 ps10 ps27"><!--{[% date.format(call.get_column('duration'),'%H:%M:%S', gmt => 1) %]}--><!--{[%#}-->00:00:00<!--{%]}--></tspan>
+        <tspan x="135" id="callpage_calls_destination[%loop.count-%]" text-anchor="start" class="ps00 ps10 ps27"><!--{[% call.get_column('destination_user_in').replace('(.*?)\d{4}$','$1****') %]}--><!--{[%#}-->+00000000****<!--{%]}--></tspan>
         <tspan x="235" id="callpage_calls_zone[%loop.count-%]" text-anchor="start" class="ps00 ps10 ps27"><!--{[% call.get_column('zone') _ '/' _ call.get_column('zone_detail') %]}--><!--{[%#}-->Example zone/Fixed<!--{%]}--></tspan>
-        <tspan x="540" id="callpage_calls_cost[%loop.count-%]" text-anchor="end" class="ps00 ps10 ps27"><!--{[% ( call.get_column('source_customer_cost') / 100 ) |format('%,4f') %]}--><!--{[%#}-->0,0000<!--{%]}--></tspan>
+        <tspan x="475" id="callpage_calls_cost[%loop.count-%]" text-anchor="end" class="ps00 ps10 ps27"><!--{[% ( call.get_column('source_customer_cost') / 100 ) |format('%.4f') %]}--><!--{[%#}-->0.0000<!--{%]}--></tspan>
     </text>
     <!--{[%END-%]}-->
     <!--{[%MACRO totalrow(data, page, pagelocal, pageslocalnum) BLOCK-%]}-->
-            <text y="20" text-anchor="end" id="callpage_calls_total" class="datarow">
-                <tspan x="0" id="callpage_calls_total_title" text-anchor="start">Total:</tspan>
-                <tspan x="60" id="callpage_calls_total_duration"><!--{[% data.duration|format('%.3f') %]}--><!--{[%#}-->0.000<!--{%]}--></tspan>
-               <tspan x="185" id="callpage_calls_total_cost"><!--{[% ( data.cost )|format('%.2f') %]}--><!--{[%#}-->0.00<!--{%]}--></tspan>
-            </text>
-            <rect x="0" y="15" width="195" height="0.1" stroke="#444444" stroke-width="0.08" fill="none"/>
+    <text y="20" text-anchor="end" id="callpage_calls_total" class="datarow">
+        <tspan x="0" id="callpage_calls_total_title" text-anchor="start" class="ps00 ps10 ps23">Total:</tspan>
+        <tspan x="90" id="callpage_calls_total_duration" text-anchor="start" class="ps00 ps10 ps23"><!--{[% date.format(data.duration,'%H:%M:%S', gmt => 1) %]}--><!--{[%#}-->0.000<!--{%]}--></tspan>
+       <tspan x="475" id="callpage_calls_total_cost" class="ps00 ps10 ps23"><!--{[% ( data.cost )|format('%.2f') %]}--><!--{[%#}-->0.00<!--{%]}--></tspan>
+    </text>
+    <rect x="0" y="8" width="486" height="0.1" stroke="#444444" stroke-width="0.5" fill="none"/>
     <!--{[%END-%]}-->
 
-        
 <!--{[% titlerow -%]}-->
 <!--{[% list_calls(callsdata, page, pagelocal, pageslocalnum, 'datarow', total, 'svg', rows_interval) -%]}-->
 <!--{[%IF (pagelocal==pageslocalnum); adjustrow(total, page, pagelocal, pageslocalnum, 'totalrow', 'svg', rows_interval, callsdata.size); END-%]}-->
@@ -308,10 +331,6 @@
     </g>
 <!--/page-->
 <!--{[%END-%]}-->
-
-
-
-
 
 <!--{[%MACRO bgpage( page, pagelocal, pageslocalnum ) BLOCK-%]}-->
 <!--page-->
@@ -324,9 +343,9 @@
         <text x="65" y="177" class="ps00 ps23">[%client.firstname%] [%client.lastname%]</text>
         <text x="65" y="189" class="ps00 ps23">[%client.street%]</text>
         <text x="65" y="201" class="ps00 ps23">[%client.postcode%] [%client.city%]</text>
-        <text x="65" y="247" class="ps00 ps25">Kunde [%client.id%]</text>
+        <text x="65" y="247" class="ps00 ps23">Kunde [%client.id%]</text>
         <text x="540" y="120" class="ps00 ps20" text-anchor="end">Seite [%page%]</text>
-        <text x="540" y="225" class="ps00 ps25" text-anchor="end">Datum [%date.format(datenow.value,'%d.%m.%Y')%]</text>
+        <text x="550" y="225" class="ps00 ps23" text-anchor="end">Datum [%date.format(datenow.value,'%d.%m.%Y')%]</text>
         <!--{[%END%]}-->
 
         <text x="65" y="783" class="ps00 ps20">[%provider.company%]</text>
