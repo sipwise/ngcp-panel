@@ -63,8 +63,11 @@ sub getTemplate{
 #may be moved to main view class, but as on template_invoice experiments stage it would be ok to leave it in separated class
 sub getTemplateContent{
     my ( $self, $c, $template ) = @_;
-    
-    return $self->{template}->context->insert($self->getTemplate($c,$template));
+   
+    my $r = $self->{template}->context->insert($self->getTemplate($c,$template));
+    use utf8;
+    utf8::decode($r);
+    return $r;
 }
 sub getTemplateProcessed{
     my ( $self, $c, $template, $stash ) = @_;
