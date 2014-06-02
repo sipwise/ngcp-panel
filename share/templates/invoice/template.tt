@@ -1,19 +1,20 @@
-[% USE Dumper %]
-[% USE format %]
-[% money_format = format('%.2f') %]
-[% write_access = 1 %]
+[% 
+    USE format;
+    money_format = format('%.2f');
+    write_access = 1;
+%]
 
-[%PROCESS 'helpers/datatables_vars.tt'
-    no_auto_helper = 1 
--%]
+[% PROCESS 'helpers/datatables_vars.tt' no_auto_helper = 1 -%]
 [%PROCESS 'helpers/modal.tt' -%]
-[%mf_helper = {
-    ajax_load         => 1,
-    ajax_list_refresh => 'template',
- }%]
-[%modal_script( m = mf_helper )%]
+[%
+    mf_helper = {
+        ajax_load         => 1,
+        ajax_list_refresh => 'template',
+    }
+%]
+[% modal_script( m = mf_helper ) %]
 
-[% site_config.title = c.loc('Invoice template for [_1]', provider.name ) -%]
+[% site_config.title = c.loc('Invoice template [_1]', tmpl.name ) -%]
 
 
 <script type="text/javascript" src="/js/libs/svg-edit/embedapi.js"></script>
@@ -22,53 +23,12 @@
 <script type="text/javascript" src="/js/jquery.serializeObject.js"></script>
 <script type="text/javascript" src="/js/modalAjax.js"></script>
 <script type="text/javascript" src="/js/invoice_template.js"></script>
-<script type="text/javascript">
-var uriForAction = function( data, type ){
-    //also we can think about getting URIs via ajax )
-    var q_template;
-    switch(type){
-    case 'template_previewed':
-        //q_template = '[%- c.uri_for_action("/invoice/template_view", ['provider_id','svg','parsed','previewed','svg','tt_id']) -%]';
-        q_template = '[%- c.uri_for_action("/invoice/template_view", ['provider_id']) -%]'+'/svg/parsed/previewed/svg/tt_id';
-        break;
-    case 'template_saved':
-        //q_template = '[%- c.uri_for_action("/invoice/template_view", ['provider_id','svg','parsed','saved','svg','tt_id']) -%]';
-        q_template = '[%- c.uri_for_action("/invoice/template_view", ['provider_id']) -%]'+'/svg/parsed/saved/tt_output_type/tt_id';
-        break;
-    case 'template_list':
-        q_template = '[%- c.uri_for_action("/invoice/template_list", ['provider_id']) -%]';
-        break;
-    case 'messages':
-        q_template = '[%- c.uri_for_action("/invoice/messages") -%]';
-        break;
-    case 'template':
-    default:
-        //q_template = '[%- c.uri_for_action("/invoice/template_view", ['provider_id','tt_type','tt_viewmode','tt_sourcestate','tt_output_type','tt_id']) -%]';
-        q_template = '[%- c.uri_for_action("/invoice/template_view", ['provider_id']) -%]'+'/tt_type/tt_viewmode/tt_sourcestate/tt_output_type/tt_id';
-        break;
-    }
-    if(!data.tt_id){data.tt_id = '';}
-    if(!data.tt_type){data.tt_type = 'svg';}
-    if(!data.tt_output_type){data.tt_output_type = 'svg';}
-    if(!data.tt_viewmode){data.tt_viewmode = 'both';}
-    var params = ['provider_id','tt_id','tt_type','tt_output_type','tt_viewmode','tt_sourcestate'];
-    params.forEach(function(key){
-        q_template=q_template.replace(key,data[key]);
-    });
-    q_template=q_template.replace(/\/+$/,'');
-    return q_template;
-}
-</script>
+
+[% PROCESS "invoice/uri_wrapper_js.tt" %]
 
 <div class="row">
     <span>
         <a class="btn btn-primary btn-large" href="[% c.uri_for('/back') %]"><i class="icon-arrow-left"></i> [% c.loc('Back') %]</a>
-    </span>
-    <span>
-        <a class="btn btn-primary btn-large" onclick="$(this).css('outline', 'none');fetch_into('template_info_form', '[%- c.uri_for_action("/invoice/template_info", [provider.id]) -%]','item=template_info',function(){modalFormScript();});void(0);">[% c.loc('Create invoices template')%] <i class="icon-edit"></i></a>
-    </span>
-    <span>
-        <a class="btn btn-primary btn-large" href="[%- c.uri_for_action("/invoice/invoice_list", [provider.id]) -%]">[% c.loc('Invoices')%] <i class="icon-edit"></i></a>
     </span>
 </div>
 
@@ -79,20 +39,11 @@ var uriForAction = function( data, type ){
 [%PROCESS 'helpers/ajax_messages.tt' -%]
 </div>
 
-
 <div class="ngcp-separator"></div>
 [% back_created = 1 -%]
 
-<div class="accordion-inner" style="overflow:auto; height:300px;" id="template_list">
-[%PROCESS 'invoice/template_list.tt' %]
-</div>
-
-
-<!--with display:none only the opera works with svg, others cant operate geometry on start and fail with a lot of svg related errors-->
-<div style="visibility:hidden;" id="template_editor_form">
+<div id="template_editor_form">
 [%PROCESS 'invoice/template_editor_form.tt' %]
 </div>
 
-<div id="template_info_form">
-</div>
-
+[% # vim: set tabstop=4 syntax=html expandtab: -%]

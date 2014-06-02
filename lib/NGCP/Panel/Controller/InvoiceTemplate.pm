@@ -32,7 +32,7 @@ sub template_list :Chained('/') :PathPart('invoicetemplate') :CaptureArgs(0) :Do
         { name => 'is_active', search => 1, title => $c->loc('Active') },
     ]);
 
-    $c->stash->{template} = 'invoice/template_list.tt';
+    $c->stash(template => 'invoice/template_list.tt');
 }
 
 sub root :Chained('template_list') :PathPart('') :Args(0) {
@@ -252,6 +252,43 @@ sub delete :Chained('base') :PathPart('delete') {
     }
     NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for('/invoicetemplate'));
 }
+
+sub edit_content :Chained('base') :PathPart('editcontent') :Args(0) {
+    my ($self, $c) = @_;
+
+    $c->stash(template => 'invoice/template.tt');
+}
+
+sub get_content_ajax :Chained('base') :PathPart('editcontent/get/ajax') :Args(0) {
+    my ($self, $c, @args) = @_;
+    my $tmpl = $c->stash->{tmpl};
+
+    my $content;
+    if($tmpl->base64_saved) {
+        $content = $tmpl->base64_saved; 
+    } else {
+        my $default = 'invoice/default/invoice_template_svg.tt';
+        my $t = Template->new({
+            ENCODING => 'UTF-8',
+            RELATIVE => 1,
+            INCLUDE_PATH => './share/templates:/usr/share/ngcp-panel/templates',
+        });
+
+        try {
+            $content = $t->context->insert($default);
+        } catch($e) {
+            # TODO: handle error!
+            $c->log->error("failed to load default invoice template: $e");
+            return;
+        }
+    }
+
+    $c->response->content_type('text/html');
+    $c->response->body($content);
+}
+
+
+
 
 __PACKAGE__->meta->make_immutable;
 1;
