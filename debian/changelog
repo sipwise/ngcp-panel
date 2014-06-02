@@ -1,3 +1,16 @@
+ngcp-panel (1.2.1.3+0~mr3.2.2.3) unstable; urgency=low
+
+  [ Andreas Granig ]
+  * [40ade6c] MT#3931 Fix reseller fetch in customercontact test
+
+  [ Gerhard Jungwirth ]
+  * [31f0db2] MT#7051 set webusername to NULL if empty
+  * [cf92dfa] MT#7183 show confirmation dialog on all languages
+
+  [ Sipwise Jenkins Builder ]
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Mon, 02 Jun 2014 10:31:27 +0200
+
 ngcp-panel (1.2.1.2+0~mr3.2.2.2) unstable; urgency=low
 
   [ Victor Seva ]
