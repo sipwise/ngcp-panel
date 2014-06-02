@@ -492,9 +492,11 @@ sub update_item {
                         }
                     } elsif($rs->first) {
                         return unless $self->check_pref_value($c, $meta, $resource->{$pref}, $pref_type);
+                        $resource->{$pref} = (!! $resource->{$pref}) if JSON::is_bool($resource->{$pref});
                         $rs->first->update({ value => $resource->{$pref} });
                     } else {
                         return unless $self->check_pref_value($c, $meta, $resource->{$pref}, $pref_type);
+                        $resource->{$pref} = (!! $resource->{$pref}) if JSON::is_bool($resource->{$pref});
                         $rs->create({ value => $resource->{$pref} });
                     }
                 }
