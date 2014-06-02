@@ -86,6 +86,35 @@ DEFAULT client.street='Client Street';
 DEFAULT client.vatid='AA1234';
 END;
 
+
+template_variables.description.import({
+    bp => {
+        'name'            => 'Billing Profile name',
+        'interval_charge' => 'Constant fee for invoice period.',
+    }
+});
+
+IF !bp.id;
+DEFAULT bp.name='Default Billing Profile';
+DEFAULT bp.interval_charge='125';
+DEFAULT bp.handle ='default';
+DEFAULT bp.prepaid = '';
+DEFAULT bp.interval_charge = '';
+DEFAULT bp.interval_free_time = '';
+DEFAULT bp.interval_free_cash = '';
+DEFAULT bp.interval_unit = '';
+DEFAULT bp.interval_count = '';
+DEFAULT bp.fraud_interval_limit = '';
+DEFAULT bp.fraud_interval_lock = '';
+DEFAULT bp.fraud_interval_notify = '';
+DEFAULT bp.fraud_daily_limit = '';
+DEFAULT bp.fraud_daily_lock = '';
+DEFAULT bp.fraud_daily_notify = '';
+DEFAULT bp.currency = '';
+DEFAULT bp.vat_rate = '';
+DEFAULT bp.vat_included = '';
+END;
+
 invoice_details_zones = [];
 invoice_details_calls = [];
 
