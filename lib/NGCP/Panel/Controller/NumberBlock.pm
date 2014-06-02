@@ -9,7 +9,7 @@ use NGCP::Panel::Form::NumberBlock::BlockReseller;
 use NGCP::Panel::Utils::Message;
 use NGCP::Panel::Utils::Navigation;
 
-sub auto :Private{
+sub auto :Private {
     my ($self, $c) = @_;
     $c->log->debug(__PACKAGE__ . '::auto');
     NGCP::Panel::Utils::Navigation::check_redirect_chain(c => $c);

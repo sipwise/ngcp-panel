@@ -34,13 +34,17 @@
 <g y="0" x="0" width="841" height="595" id="titlepage_1" display="none">
 <title>TitlePage_1</title>
 
-<text x="65" y="155" class="ps00 ps20">[%provider.company%][%if(', ', provider.postcode _ ' ' _ provider.city ) %][%if(', ', provider.street )%]</text>
-<text x="65" y="165" class="ps00 ps23">[%client.title%]</text>
+<text x="65" y="155" class="ps00 ps20">[%provider.company%], [%provider.street%], [%provider.postcode%] [% provider.city%], [%provider.country%]</text>
+
+[% IF client.company -%]
+<text x="65" y="177" class="ps00 ps23">[%client.company%]</text>
+[% ELSE -%]
 <text x="65" y="177" class="ps00 ps23">[%client.firstname%] [%client.lastname%]</text>
+[% END -%]
 <text x="65" y="189" class="ps00 ps23">[%client.street%]</text>
 <text x="65" y="201" class="ps00 ps23">[%client.postcode%] [%client.city%]</text>
 <text x="65" y="213" class="ps00 ps23">[%client.country%]</text>
-<text x="65" y="249" class="ps00 ps23">Anschlussinhaber: [%client.firstname%] [%client.lastname%]</text>
+<text x="65" y="249" class="ps00 ps23">Contract Owner: [% client.company ? client.company : client.firstname _ ' ' _ client.lastname%]</text>
 
 <text x="400" y="155" class="ps00 ps21">Rechnung</text>
 <text x="400" y="170" class="ps00 ps22">Rechnungsnummer</text>

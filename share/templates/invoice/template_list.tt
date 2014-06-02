@@ -1,63 +1,28 @@
-[% USE Dumper %]
-[% USE format %]
-[% money_format = format('%.2f') %]
-[% IF !c.user.read_only && (c.user.roles == 'admin' || c.user.roles == 'reseller') -%]
-[% write_access = 1 %]
-[%END%]
-<script>
-var staticContainerId='template_list';
-</script>
-[%IF template_list.size %]
-<table class="table table-bordered table-striped table-highlight table-hover">
-<thead>
-    <tr>
-        <th>[% c.loc('Active') %]</th>
-        <th>[% c.loc('Id') %]</th>
-        <th>[% c.loc('Name') %]</th>
-        <th>[% c.loc('Type') %]</th>
-        <th class="ngcp-actions-column"></th>
-    </tr>
-</thead>
-<tbody>
-    [% FOR template IN template_list -%]
-    [%# Dumper.dump_html(template_list.as_query)%]
-    [%# Dumper.dump_html(template)%]
-    <tr class="sw_action_row" data-id="[%template.get_column('id')%]">
-        <td style="font-size: 20px;">[%IF template.get_column('is_active') > 0; '✓'; END%]</td><!--✓-->
-        <td>[% template.get_column('id') %]</td>
-        <td>[% template.get_column('name') %]</td>
-        <td>[% template.get_column('type') %]</td>
-        <td class="ngcp-actions-column">
-            <div class="sw_actions">
-                [% IF write_access -%]
-                <a class="btn btn-small btn-primary" 
-                   onclick="fetch_into('template_info_form', '[%- c.uri_for_action("/invoice/template_info", [provider.id]) -%]','item=template_info&tt_id=[%template.get_column('id')%]',function(){modalFormScript();});void(0);
-                   ">
-                    <i class="icon-edit"></i> [% c.loc('Edit template info') %]
-                </a>
-                <a class="btn btn-small btn-primary" 
-                   onclick="fetchInvoiceTemplateData({
-tt_sourcestate: 'saved',
-provider_id: '[%provider.id%]',
-tt_id: '[%template.get_column('id')%]',
-});listSetCurrentEdit('[%template.get_column('id')%]', $(this).closest('tr') );">
-                    <i class="icon-edit"></i> [% c.loc('Edit template') %]
-                </a>
-                <a class="btn btn-small btn-primary ngcp-noback-button" data-confirm="[%IF template.get_column('is_active'); c.loc('Deactivate'); ELSE; c.loc('Activate'); END%]"
-                   href="javascript:fetch_into(staticContainerId, '[%- c.uri_for_action("/invoice/template_activate", [provider.id, template.get_column('id'),template.get_column('is_active')]) -%]','',function(){ refreshMessagesAjax();mainWrapperInit(); listRestoreCurrentEdit('',staticContainerId);});void(0);" cancel-hide="1">
-                    <i class="icon-edit"></i> [%IF template.get_column('is_active'); c.loc('Deactivate'); ELSE; c.loc('Activate'); END%]
-                </a>
-                <a class="btn btn-small btn-secondary ngcp-noback-button" data-confirm="Delete" 
-                   href="javascript:fetch_into(staticContainerId, '[%- c.uri_for_action("/invoice/template_delete", [provider.id, template.get_column('id')]) -%]','',function(){ refreshMessagesAjax();mainWrapperInit();listRestoreCurrentEdit('',staticContainerId);if('[%template.get_column('id')%]' === getCurrentEditId('', staticContainerId)){clearTemplateForm({provider_id: '[%provider.id%]'});} });void(0);" cancel-hide="1">
-                    <i class="icon-trash"></i> [% c.loc('Delete') %]
-                </a>
-                [%END%]
-            </div>
-        </td>
-    </tr>
-    [%END%]
-</tbody>
-</table>
-[%END%]
+[% site_config.title = c.loc('Invoice Templates') -%]
+[%
+    helper.name = c.loc('Invoice Template');
+    helper.identifier = "InvoiceTemplate";
+    helper.messages = messages;
+    helper.dt_columns = tmpl_dt_columns;
+    helper.paginate = 'true';
+    helper.filter = 'true';
+    helper.close_target = close_target;
+    helper.create_flag = create_flag;
+    helper.edit_flag = edit_flag;
+    helper.form_object = form;
+    helper.ajax_uri = c.uri_for_action('/invoicetemplate/ajax');
 
- 
+    UNLESS c.user.read_only;
+        helper.dt_buttons = [
+            { name = c.loc('Edit Meta'), uri = "/invoicetemplate/'+full.id+'/editinfo", class = 'btn-small btn-primary', icon = 'icon-edit' },
+            { name = c.loc('Edit Content'), uri = "/invoicetemplate/'+full.id+'/editcontent", class = 'btn-small btn-tertiary', icon = 'icon-edit' },
+            { name = c.loc('Delete'), uri = "/invoicetemplate/'+full.id+'/delete", class = 'btn-small btn-secondary', icon = 'icon-remove' },
+        ];
+        helper.top_buttons = [
+            { name = c.loc('Create Invoice Template'), uri = c.uri_for_action('/invoicetemplate/create'), class = 'btn-small btn-primary', icon = 'icon-star' },
+        ];
+    END;
+
+    PROCESS 'helpers/datatables.tt';
+-%]
+[% # vim: set tabstop=4 syntax=html expandtab: -%]

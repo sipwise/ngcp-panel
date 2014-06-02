@@ -154,6 +154,13 @@ sub base :Chained('list_reseller') :PathPart('') :CaptureArgs(1) {
         { name => "domain", search => 1, title => $c->loc('Domain') },
         { name => "domain_resellers.reseller.name", search => 1, title => $c->loc('Reseller') },
     ]);
+    $c->stash->{tmpl_dt_columns} = NGCP::Panel::Utils::Datatables::set_columns($c, [
+        { name => 'id', search => 1, title => $c->loc('#') },
+        { name => 'name', search => 1, title => $c->loc('Name') },
+        { name => 'type', search => 1, title => $c->loc('Type') },
+        { name => 'is_active', search => 1, title => $c->loc('Active') },
+    ]);
+    
 
     $c->stash(reseller => $c->stash->{resellers}->search_rs({ id => $reseller_id }));
     unless($c->stash->{reseller}->first) {
@@ -313,10 +320,6 @@ sub _handle_reseller_status_change {
 
 sub details :Chained('base') :PathPart('details') :Args(0) :Does(ACL) :ACLDetachTo('/denied_page') :AllowedRole(admin) {
     my ($self, $c) = @_;
-
-    $c->stash(provider => $c->stash->{reseller}->first);
-    #didn't find a way to make it correct with chain
-    $c->forward('/invoice/template_list_data');
 
     $c->stash(template => 'reseller/details.tt');
     return;
