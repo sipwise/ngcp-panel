@@ -139,14 +139,17 @@ sub update_item {
             type => $type,
         });
         my $mapping_count = $mapping->count;
+        my $cf_preference = NGCP::Panel::Utils::Preferences::get_usr_preference_rs(
+                c => $c, prov_subscriber => $prov_subs, attribute => $type);
         my ($dset, $tset);
         if ($mapping_count == 0) {
             next unless (defined $resource->{$type});
-            $mapping = $mapping = $c->model('DB')->resultset('voip_cf_mappings')->create({
+            $mapping = $c->model('DB')->resultset('voip_cf_mappings')->create({
                 subscriber_id => $prov_subscriber_id,
                 type => $type,
             });
             $mapping->discard_changes; # get our row
+            $cf_preference->create({ value => $mapping->id });
         } elsif ($mapping_count > 1) {
             $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Not a simple cf. Multiple $type-s configured.");
             return;
@@ -205,6 +208,7 @@ sub update_item {
             }
             unless ( $dset && $dset->voip_cf_destinations->count ) {
                 $mapping->delete;
+                $cf_preference->delete;
             }
         } catch($e) {
             $c->log->error("Error Updating '$type': $e");
