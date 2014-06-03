@@ -68,19 +68,6 @@ __PACKAGE__->config(
         ABSOLUTE => 1,
         EVAL_PERL => 1,
     },
-    'View::SVG' => {
-        INCLUDE_PATH => [
-            '/usr/share/ngcp-panel/templates',
-            '/usr/share/ngcp-panel/layout',
-            '/usr/share/ngcp-panel/static',
-            __PACKAGE__->path_to('share', 'templates'),
-            __PACKAGE__->path_to('share', 'layout'),
-            __PACKAGE__->path_to('share', 'static'),
-        ],
-        ABSOLUTE => 1,
-        EVAL_PERL => 1,
-        WRAPPER   => '',
-    },
     'View::JSON' => {
         #Set the stash keys to be exposed to a JSON response
         #(sEcho iTotalRecords iTotalDisplayRecords aaData) for datatables
