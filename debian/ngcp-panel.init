@@ -23,7 +23,12 @@ DESC="NGCP-Panel Webapp"
 DEFAULTS=/etc/default/$NAME
 USOCKET=$HOMERUN/ngcp-panel.sock
 LOGERR=/var/log/ngcp/ngcp-panel.log
-NPROC=1
+
+# Load startup options if available
+if [ -f $DEFAULTS ]; then
+   . $DEFAULTS || true
+fi
+NPROC=${NPROC:-1}
 
 OPTIONS="--listen $USOCKET --daemon --pidfile $PIDFILE --nproc $NPROC"
 
@@ -111,11 +116,6 @@ _stop() {
       return 1
   fi
 }
-
-# Load startup options if available
-if [ -f $DEFAULTS ]; then
-   . $DEFAULTS || true
-fi
 
 if [ "$RUN_DAEMON" != "yes" ]; then
     log_failure_msg "$NAME not yet configured. Edit /etc/default/$NAME first."

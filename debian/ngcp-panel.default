@@ -1,1 +1,2 @@
 RUN_DAEMON="no"
+NPROC=[% www_admin.fastcgi_workers %]
