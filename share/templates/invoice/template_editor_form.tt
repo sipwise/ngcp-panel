@@ -15,16 +15,7 @@ function formSerialize(){
 </span>
 
 <span>
-    <a class="btn btn-primary btn-small" href="javascript:
-    var previewWindow = window.open('','_blank');
-    previewWindow.blur;
-    saveTemplate({},
-        function(httpResponse, q, data) {
-            previewWindow.location.href = uriForAction();
-            previewWindow.focus;
-        }
-    );
-    void(0);"><i class="icon-eye-open"></i> [% c.loc('Preview as PDF')%]</a>
+<a class="btn btn-primary btn-small" target="_blank" href="[% c.uri_for_action('/invoicetemplate/preview_content', [ tmpl.id ]) %]"><i class="icon-eye-open"></i> [% c.loc('Preview as PDF')%]</a>
 </span>
 
 <span id="load_saved_control">

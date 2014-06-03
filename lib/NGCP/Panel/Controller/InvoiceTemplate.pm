@@ -260,6 +260,15 @@ sub edit_content :Chained('base') :PathPart('editcontent') :Args(0) {
     $c->stash(template => 'invoice/template.tt');
 }
 
+sub messages_ajax :Chained('template_list') :PathPart('messages') :Args(0) {
+    my ($self, $c) = @_;
+    $c->stash(
+        messages => $c->flash->{messages},
+        template => 'helpers/ajax_messages.tt',
+    );
+    $c->detach($c->view('TT'));
+}
+
 sub get_content_ajax :Chained('base') :PathPart('editcontent/get/ajax') :Args(0) {
     my ($self, $c) = @_;
     my $tmpl = $c->stash->{tmpl};
@@ -269,11 +278,7 @@ sub get_content_ajax :Chained('base') :PathPart('editcontent/get/ajax') :Args(0)
         $content = $tmpl->base64_saved; 
     } else {
         my $default = 'invoice/default/invoice_template_svg.tt';
-        my $t = Template->new({
-            ENCODING => 'UTF-8',
-            RELATIVE => 1,
-            INCLUDE_PATH => './share/templates:/usr/share/ngcp-panel/templates',
-        });
+        my $t = NGCP::Panel::Utils::InvoiceTemplate::get_tt();
 
         try {
             $content = $t->context->insert($default);
@@ -286,6 +291,7 @@ sub get_content_ajax :Chained('base') :PathPart('editcontent/get/ajax') :Args(0)
 
     # some part of the chain doesn't like content being encoded as utf8 at that poing
     # already; decode here, and umlauts etc will be fine througout the chain.
+    # TODO: doesn't work when loaded from db?
     use utf8;
     utf8::decode($content);
 
@@ -328,13 +334,39 @@ sub set_content_ajax :Chained('base') :PathPart('editcontent/set/ajax') :Args(0)
     $c->detach($c->view('JSON'));
 }
 
-sub messages_ajax :Chained('template_list') :PathPart('messages') :Args(0) {
-    my ($self, $c) = @_;
-    $c->stash(
-        messages => $c->flash->{messages},
-        template => 'helpers/ajax_messages.tt',
-    );
-    $c->detach($c->view('TT'));
+sub preview_content :Chained('base') :PathPart('editcontent/preview') :Args(0) {
+    my ($self, $c, @args) = @_;
+    my $tmpl = $c->stash->{tmpl};
+
+    my $svg = $tmpl->base64_saved;
+    my $pdf = '';
+    my $t = NGCP::Panel::Utils::InvoiceTemplate::get_tt();
+    my $out = '';
+    my $vars = {};
+
+    try {
+        my $no_fake = 0;
+
+        NGCP::Panel::Utils::InvoiceTemplate::preprocess_svg($no_fake, \$svg);
+        $t->process(\$svg, $vars, \$out) || do {
+            my $error = $t->error();
+            my $msg = "error processing template, type=".$error->type.", info='".$error->info."'";
+            $c->log->error($msg);
+
+            $c->response->body("500 - error creating template:\n$msg");
+            $c->response->status(500);
+            return;
+        };
+
+        NGCP::Panel::Utils::InvoiceTemplate::svg_pdf($c, \$out, \$pdf);
+    } catch($e) {
+        $c->log->error($e);
+        return;
+    }
+
+    $c->response->content_type('application/pdf');
+    $c->response->body($pdf);
+    return;
 }
 
 

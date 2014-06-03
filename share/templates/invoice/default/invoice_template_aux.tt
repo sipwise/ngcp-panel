@@ -167,24 +167,6 @@ MACRO get_page_interval(pagetype, tt_type, interval_type) BLOCK;
     interval;
 END ;
 
-#MACRO pagewithblock(level) BLOCK;
-#    #pagesrc = titlepage([],[],1,10,10);
-#    pagesrc = '<svg>' _ document_header() _ titlepage() _ document_footer() _ '</svg>';
-#    pagesrc = pagesrc.replace('<!--{|}-->','');
-#    USE xpath = XML.XPath(pagesrc);
-#    FOREACH blockid IN xpath.find('/@id[contains(.,"block_")');
-#        %]
-#        blockid=[%blockid;%]==blockid
-#        [%
-#        FOREACH blocknode IN blockid.get_nodelist();
-#
-#        %]
-#        blocknode=[%blocknode;%]==blocknode
-#        [%
-#        END;
-#    END;
-#END;
-
 MACRO show_pages(invoice_details_zones, invoice_details_calls, pagetype, pagenum_in) BLOCK;
 #todo: remove copypast with some macro, later;
     

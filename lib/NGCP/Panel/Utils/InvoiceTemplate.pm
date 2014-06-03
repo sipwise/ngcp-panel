@@ -1,74 +1,46 @@
 package NGCP::Panel::Utils::InvoiceTemplate;
-#it should be part of real model, or subcontroller
 
-use strict;
-use warnings;
-#use Moose;
 use Sipwise::Base;
-use File::Temp qw/tempfile tempdir/;
-use File::Path qw/mkpath/;
+use File::Temp;
 use XML::XPath;
+use IPC::System::Simple qw/capturex/;
+use Template;
 
-sub svg2pdf {
-    my ($c,$svg_ref,$in,$out) = @_;
+sub svg_pdf {
+    my ($c,$svg_ref,$pdf_ref) = @_;
     my $svg = $$svg_ref;
-    my(@pages) = $svg=~/(<svg.*?(?:\/svg>))/sig;
-    no warnings 'uninitialized';
-    #$c->log->debug($svg);
-    my ($tempdirbase,$tempdir );
-    #my($fh, $tempfilename) = tempfile();
-    $tempdirbase = join('/',File::Spec->tmpdir,@$in{qw/provider_id tt_type tt_sourcestate/}, $out->{tt_id});
-    ! -e $tempdirbase and mkpath( $tempdirbase, 0, 0777 );
-    $tempdir = tempdir( DIR =>  $tempdirbase , CLEANUP => 0 );
-    #print "tempdirbase=$tempdirbase; tempdir=$tempdir;$!;\n\n\n";
-    $c and $c->log->debug("tempdirbase=$tempdirbase; tempdir=$tempdir;");
-    #try{
-    #} catch($e){
-    #    NGCP::Panel::Utils::Message->error(
-    #        c => $c,
-    #        error => "Can't create temporary directory at: $tempdirbase;" ,
-    #        desc  => $c->loc("Can't create temporary directory."),
-    #    );
-    #}
+
+    #my $dir = File::Temp->newdir(); # cleans up automatically leaving scope
+    my $dir = File::Temp->newdir(undef, CLEANUP => 1);
+    my $tempdir = $dir->dirname;
     my $pagenum = 1;
     my @pagefiles;
-    foreach my $page (@pages){
+
+    # file consists of multiple svg tags (invald!), split them up:
+    my(@pages) = $svg=~/(<svg.*?(?:\/svg>))/sig;
+
+    foreach my $page(@pages) {
         my $fh;
+
         my $pagefile = "$tempdir/$pagenum.svg";
         push @pagefiles, $pagefile;
-        open($fh,">",$pagefile);
-        #try{
-        #} catch($e){
-        #    NGCP::Panel::Utils::Message->error(
-        #        c => $c,
-        #        error => "Can't create temporary page file at: $tempdirbase/$page.svg;" ,
-        #        desc  => $c->loc("Can't create temporary file."),
-        #    );
-        #}
+
+        open($fh, ">", $pagefile);
+        binmode($fh, ":utf8");
         print $fh $page;
         close $fh;
+
         $pagenum++;
     }
-    #no unit specification in documentation. Cool!
-    my $cmd = "rsvg-convert -h 849 -w 600 -a -f pdf ".join(" ", @pagefiles);
-    #print $cmd;
-    #die();
-    $c and $c->log->debug($cmd);
-    #$cmd = "chmod ugo+rwx $filename";
-    #binmode(STDIN);
-    #$out->{tt_string_pdf} = `$cmd`;
-    {
-        #$cmd = "fc-list";
-        open B, "$cmd |"; 
-        binmode B; 
-        local $/ = undef; 
-        $out->{tt_string_pdf} = <B>;
-        $c->log->error("Pipe: close: !=$!; ?=$?;");
-        close B or ($? == 0 ) or $c->log->error("Error closing rsvg pipe: close: $!;");
-    }
+
+    my @cmd_args = (qw/-h 849 -w 600 -a -f pdf/, @pagefiles);
+    $$pdf_ref = capturex([0], "/usr/bin/rsvg-convert", @cmd_args);
+
+    return 1;
 }
-sub preprocessInvoiceTemplateSvg{
-    my($in,$svg_ref) = @_;
+
+sub preprocess_svg {
+    my($no_fake_data, $svg_ref) = @_;
     
     my $xp = XML::XPath->new($$svg_ref);
     
@@ -79,7 +51,7 @@ sub preprocessInvoiceTemplateSvg{
         }
     }
     
-    if($in->{no_fake_data}) {
+    if($no_fake_data) {
         my $comment = $xp->find('/comment()[contains(.,"invoice_template_lorem.tt")]');
         foreach my $node($comment->get_nodelist) {
             $node->getParentNode->removeChild($node);
@@ -93,15 +65,9 @@ sub preprocessInvoiceTemplateSvg{
     
     $$svg_ref = ($xp->findnodes('/'))[0]->toString();
     
-    #no warnings 'uninitialized';
-    ##print "1.\n\n\n\n\nsvg=".$out->{tt_string_prepared}.";";
     $$svg_ref=~s/(?:{\s*)?<!--{|}-->(?:\s*})?//gs;
     $$svg_ref=~s/<(g .*?)(?:display\s*=\s*["']*none["'[:blank:]]+)(.*?id *=["' ]+page["' ]+)([^>]*)>/<$1$2$3>/gs;
     $$svg_ref=~s/<(g .*?)(id *=["' ]+page["' ]+.*?)(?:display\s*=\s*["']*none["'[:blank:]]+)([^>]*)>/<$1$2$3>/gs;
-    #if($in->{no_fake_data}){
-    #    $$svg_ref=~s/\[%[^\[\%]+lorem.*?%\]//gs;        
-    #}
-    ##print "\n\n2.\n\n\n\nsvg=".$out->{tt_string_prepared}.";";
 }
 
 sub sanitize_svg {
@@ -118,6 +84,23 @@ sub sanitize_svg {
     
     $$svg_ref = ($xp->findnodes('/'))[0]->toString();
     return 1;
+}
+
+sub get_tt {
+    my $tt = Template->new({
+        ENCODING => 'UTF-8',
+        RELATIVE => 1,
+        INCLUDE_PATH => './share/templates:/usr/share/ngcp-panel/templates',
+    });
+    $tt->context->define_vmethod(
+        hash => get_column => sub {
+            my($item,$col) = @_;
+            if('HASH' eq ref $item){
+                return $item->{$col};
+            }
+        }
+    );
+    return $tt;
 }
 
 1;
