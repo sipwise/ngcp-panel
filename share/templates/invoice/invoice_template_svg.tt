@@ -225,7 +225,7 @@
         <tspan x="195" id="zonepage_calls_number[%loop.count-%]" text-anchor="end" class="ps00 ps10 ps27"><!--{[% call.get_column('number') %]}--><!--{[%#}-->0<!--{%]}--></tspan>
         <tspan x="245" id="zonepage_calls_duration[%loop.count-%]" text-anchor="start" class="ps00 ps10 ps27"><!--{[% date.format(call.get_column('duration'),'%H:%M:%S', gmt => 1) %]}--><!--{[%#}-->00:00:00<!--{%]}--></tspan>
         <tspan x="315" id="zonepage_calls_freetime[%loop.count-%]" class="ps00 ps10 ps27"><!--{[% date.format(call.get_column('free_time'),'%H:%M:%S', gmt => 1) %]}--><!--{[%#}-->00:00:00<!--{%]}--></tspan>
-        <tspan x="475" id="zonepage_calls_cost[%loop.count-%]" text-anchor="end" class="ps00 ps10 ps27"><!--{[% ( call.get_column('source_customer_cost') / 100 ) |format('%.4f') %]}--><!--{[%#}-->0.0000<!--{%]}--></tspan>
+        <tspan x="475" id="zonepage_calls_cost[%loop.count-%]" text-anchor="end" class="ps00 ps10 ps27"><!--{[% ( ifz(call.get_column('source_customer_cost')) / 100 ) |format('%.4f') %]}--><!--{[%#}-->0.0000<!--{%]}--></tspan>
     </text>
     <!--{[%END-%]}-->
     <!--{[%MACRO totalrow(data, page, pagelocal, pageslocalnum) BLOCK-%]}-->
