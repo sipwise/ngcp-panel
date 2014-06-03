@@ -118,6 +118,7 @@ sub update_item {
     my $mappings_rs = $item->provisioning_voip_subscriber->voip_cf_mappings;
     my $p_subs_id = $item->provisioning_voip_subscriber->id;
     my @new_mappings;
+    my %cf_preferences;
     my $dsets_rs = $c->model('DB')->resultset('voip_cf_destination_sets');
     my $tsets_rs = $c->model('DB')->resultset('voip_cf_time_sets');
 
@@ -126,6 +127,9 @@ sub update_item {
             $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Invalid field '$type'. Must be an array.");
             return;
         }
+
+        $cf_preferences{$type} = NGCP::Panel::Utils::Preferences::get_usr_preference_rs(
+            c => $c, prov_subscriber => $item->provisioning_voip_subscriber, attribute => $type);
         for my $mapping (@{ $resource->{$type} }) {
             unless ($mapping->{destinationset}) {
                 $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Invalid field 'destinationset' in '$type'. Must be defined.");
@@ -154,8 +158,12 @@ sub update_item {
 
     try {
         $mappings_rs->delete;
+        for my $type ( qw/cfu cfb cft cfna/) {
+            $cf_preferences{$type}->delete;
+        }
         for my $mapping ( @new_mappings ) {
             $mapping->insert;
+            $cf_preferences{$mapping->type}->create({ value => $mapping->id });
         }
 
         if ($resource->{cft_ringtimeout} && $resource->{cft_ringtimeout} > 0) {
