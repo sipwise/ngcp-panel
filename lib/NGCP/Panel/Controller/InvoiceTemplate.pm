@@ -347,7 +347,7 @@ sub preview_content :Chained('base') :PathPart('editcontent/preview') :Args(0) {
 
     try {
 
-        my $dummy = NGCP::Panel::Utils::Invoice::get_dummy_data();
+        my $dummy = NGCP::Panel::Utils::InvoiceTemplate::get_dummy_data();
         NGCP::Panel::Utils::InvoiceTemplate::preprocess_svg(\$svg);
         $t->process(\$svg, $dummy, \$out) || do {
             my $error = $t->error();
