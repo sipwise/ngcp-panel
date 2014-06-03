@@ -1,4 +1,3 @@
-<!--{[%PROCESS 'invoice/default/invoice_template_lorem.tt' -%]}-->
 <!--{[%PROCESS 'invoice/default/invoice_template_aux.tt' -%]}-->
 <!--{[%money_format = format('%.2f') %]}-->
 <!--{[%row_vertical_interval = 10 -%]}-->

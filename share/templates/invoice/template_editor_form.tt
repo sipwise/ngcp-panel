@@ -57,34 +57,17 @@ function formSerialize(){
         <button type="button" class="close mod_close">×</button>
         </h3>
     </div>
-[%
-PROCESS 'invoice/default/invoice_template_lorem.tt';
-callsdata = invoice_details_calls.0.1;
-zonesdata = invoice_details_zones.0.1;
-%]
-<div style="overflow:auto;height:85%;">
-[%
-FOREACH varname IN ['client','provider','invoice','bp','callsdata','zonesdata'];
-    tooltipvarindex = varname _ '_self';
-%]
+    <div style="overflow:auto;height:85%;">
 
-<ul> <span class="variable" [%IF template_variables.description.${varname}.${tooltipvarindex}%] rel="tooltip" data-original-title="[% c.loc(template_variables.description.${varname}.${tooltipvarindex}) %]" [%END%]>[%varname%]</span>
+    [% FOREACH varname IN ['rescontact', 'customer', 'custcontact', 'billprof', 'invoice']; %]
 
-[%
-    FOREACH key IN ${varname}.keys().sort();
-        IF !key.match('^_');
-%]
+        <ul> <span class="variable">[% varname %]</span>
+        [% FOREACH key IN ${varname}.keys().sort(); -%]
+            <li>[% varname %].<span class="variablekey">[%key%]</span></li>
+        [% END -%]
+    </ul>
+    [% END -%]
 
-    <li [%IF template_variables.description.${varname}.${key}%] rel="tooltip" data-original-title="[% c.loc(template_variables.description.${varname}.${key}) %]" [%END%]>[% varname %].<span class="variablekey">[%key%]</span></li>
-
-[%
-        END;
-    END;
-%]
-</ul>
-[%
-END;
-%]
     </div>
     <div class="modal-footer">
         <a class="mod_close btn btn-primary btn-small">[%c.loc('Close')%]</a>
@@ -101,3 +84,4 @@ END;
     width="1024px" height="1500px" style="border-width:0px;"></iframe>
 </div>
 </form>
+[% # vim: set tabstop=4 syntax=html expandtab: -%]

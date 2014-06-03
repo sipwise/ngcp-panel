@@ -257,6 +257,7 @@ sub delete :Chained('base') :PathPart('delete') {
 sub edit_content :Chained('base') :PathPart('editcontent') :Args(0) {
     my ($self, $c) = @_;
 
+    $c->stash(NGCP::Panel::Utils::InvoiceTemplate::get_dummy_data());
     $c->stash(template => 'invoice/template.tt');
 }
 
@@ -345,10 +346,10 @@ sub preview_content :Chained('base') :PathPart('editcontent/preview') :Args(0) {
     my $vars = {};
 
     try {
-        my $no_fake = 0;
 
-        NGCP::Panel::Utils::InvoiceTemplate::preprocess_svg($no_fake, \$svg);
-        $t->process(\$svg, $vars, \$out) || do {
+        my $dummy = NGCP::Panel::Utils::Invoice::get_dummy_data();
+        NGCP::Panel::Utils::InvoiceTemplate::preprocess_svg(\$svg);
+        $t->process(\$svg, $dummy, \$out) || do {
             my $error = $t->error();
             my $msg = "error processing template, type=".$error->type.", info='".$error->info."'";
             $c->log->error($msg);
