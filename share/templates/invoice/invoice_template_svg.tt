@@ -2,7 +2,7 @@
 <!--{[%PROCESS 'invoice/invoice_template_aux.tt' -%]}-->
 <!--{[%money_format = format('%.2f') %]}-->
 <!--{[%row_vertical_interval = 10 -%]}-->
-<!--{[%alltitlepages = 2 -%]}-->
+<!--{[%alltitlepages = 0 -%]}-->
 <!--{[%MACRO document_header BLOCK-%]}-->
 <svg width="595px" height="841px" viewBox="0 0 595 841" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:space="preserve" stroke-width="0" stroke="#000000" fill="#000000" font-size="4pt" text-anchor="start">
 
@@ -31,7 +31,7 @@
 
 <!--{[%MACRO titlepage(zonesdata, callsdata) BLOCK-%]}-->
 <!--page-->
-<g y="0" x="0" width="841" height="595" id="titlepage_1" display="none">
+<g y="0" x="0" width="841" height="595" id="titlepage_1" >
 <title>TitlePage_1</title>
 
 <text x="65" y="155" class="ps00 ps20">[%provider.company%][%if(', ', provider.postcode _ ' ' _ provider.city ) %][%if(', ', provider.street )%]</text>
@@ -79,25 +79,19 @@
 <text x="375" y="447" class="ps00 ps10 ps23">1</text>
 <text x="440" y="447" class="ps00 ps10 ps23" text-anchor="end">[%money_format(bp.interval_charge)%]</text>
 <text x="540" y="447" class="ps00 ps10 ps23" text-anchor="end"  id="total_period_product_period_end">[%money_format(bp.interval_charge)%]</text>
-
-<text x="75" y="459" class="ps00 ps10 ps23">[%bp.name%] [%date.format(period.date_start,'%d.%m.%Y')%] - [%date.format(period.date_end,'%d.%m.%Y')%]</text>
-<text x="375" y="459" class="ps00 ps10 ps23">1</text>
-<text x="440" y="459" class="ps00 ps10 ps23" text-anchor="end">50,00</text>
-<text x="540" y="459" class="ps00 ps10 ps23" text-anchor="end">50,00</text>
-
-<text x="75" y="475" class="ps00 ps10 ps25" id="row_total_period_product_period_end">Summe</text>
-<text x="540" y="475" class="ps00 ps10 ps25" text-anchor="end">100,00</text>
-
-
+<!--475 - 461 = 14-->
+<text x="75" y="461" class="ps00 ps10 ps25" id="row_total_period_product_period_end">Summe</text>
+<text x="540" y="461" class="ps00 ps10 ps25" text-anchor="end">[%money_format(bp.interval_charge)%]</text>
+<!--362, 338-->
 <g transform="matrix(1 0 0 -1 -0 841)">
-<path d="M75 362 L551 362" class="ps01 ps10 ps25"/>
-<path d="M65 338 L551 338" class="ps01 ps10 ps25"/>
+<path d="M75 376 L551 376" class="ps01 ps10 ps25"/>
+<path d="M65 352 L551 352" class="ps01 ps10 ps25"/>
 </g>
 
-<text x="65" y="499" class="ps00 ps10 ps25">Gesamtsumme der Serviceleistungen</text>
-<text x="540" y="499" class="ps00 ps10 ps25" text-anchor="end">100,00</text>
+<text x="65" y="485" class="ps00 ps10 ps25">Gesamtsumme der Serviceleistungen</text>
+<text x="540" y="485" class="ps00 ps10 ps25" text-anchor="end">[%money_format(bp.interval_charge)%]</text>
 
-
+<!--309, 294-->
 <g transform="matrix(1 0 0 -1 -0 841)">
 <path d="M75 309 L551 309" class="ps01 ps10 ps25"/>
 <path d="M75 294 L551 294" class="ps01 ps10 ps25"/>
@@ -110,89 +104,48 @@
 <text x="410" y="542" class="ps00 ps10 ps25">Nutzung</text>
 <text x="483" y="542" class="ps00 ps10 ps25">Betrag in EUR</text>
 
-<text x="75" y="559" class="ps00 ps10 ps23">F&#xFC;r Rufnummer 01/30123 [%provider.company_short%] Business Phone</text>
+    <g y="559" x="0" width="465" height="450" id="callpage_invoicedetails" transform="translate(0, 559)" rows="44" rows-interval="12">
+    <!--{[%MACRO datarow(call) BLOCK-%]}-->
+    <text y="0" text-anchor="start" id="zonepage_calls[%loop.count-%]">
+        <!--{[%IF call.1; call = call.1; END%]}-->
+        <tspan x="80" id="zonepage_calls_zone[%loop.count-%]" text-anchor="start" class="ps00 ps10 ps27"><!--{[% call.get_column('zone') _ '/' _ call.get_column('zone_detail') %]}--><!--{[%#}-->Example zone/Fixed<!--{%]}--></tspan>
+        <tspan x="370" id="zonepage_calls_number[%loop.count-%]" text-anchor="end" class="ps00 ps10 ps27"><!--{[% call.get_column('number') %]}--><!--{[%#}-->0<!--{%]}--></tspan>
+        <tspan x="410" id="zonepage_calls_duration[%loop.count-%]" text-anchor="start" class="ps00 ps10 ps27"><!--{[% date.format(call.get_column('duration'),'%H:%M:%S', gmt => 1) %]}--><!--{[%#}-->00:00:00<!--{%]}--></tspan>
+        <tspan x="540" id="zonepage_calls_cost[%loop.count-%]" text-anchor="end" class="ps00 ps10 ps27"><!--{[% ( money_format_comma(ifz(call.get_column('source_customer_cost')) / 100 )) %]}--><!--{[%#}-->0,00<!--{%]}--></tspan>
+    </text>
+    <!--{[%END-%]}-->
+    <!--{[%MACRO totalrow(data, page, pagelocal, pageslocalnum) BLOCK-%]}-->
+        <text x="65" y="20" class="ps00 ps10 ps25">Gesamtsumme der Verbindungsentgelte</text>
+        <text x="540" y="20" class="ps00 ps10 ps25" text-anchor="end"><!--{[% money_format_comma( data.cost )%]}--><!--{[%#}-->0,00<!--{%]}--></text>
+        <rect x="65" y="8" width="486" height="0.1" class="ps01 ps10 ps23"/>
+    <!--{[%END-%]}-->
 
-<text x="80" y="573" class="ps00 ps10 ps23">&#xD6;sterreich Festnetz GZ</text>
-<text x="370" y="573" class="ps00 ps10 ps23">1</text>
-<text x="410" y="573" class="ps00 ps10 ps23">00:01:36</text>
-<text x="540" y="573" class="ps00 ps10 ps23" text-anchor="end">0,04</text>
+    <!--{[% titlerow(page) -%]}-->
+    <!--{[% list_zones(callsdata, page, pagelocal, pageslocalnum, 'datarow', total, 'svg', rows_interval) -%]}-->
+    <!--{[%IF (pagelocal==pageslocalnum); adjustrow (total, page, pagelocal, pageslocalnum, 'totalrow', 'svg', rows_interval, callsdata.size); END -%]}-->
+    </g>
+ 
 
-<text x="80" y="585" class="ps00 ps10 ps23">&#xD6;sterreich Festnetz FZ</text>
-<text x="370" y="585" class="ps00 ps10 ps23">9</text>
-<text x="410" y="585" class="ps00 ps10 ps23">01:50:35</text>
-<text x="540" y="585" class="ps00 ps10 ps23" text-anchor="end">2,21</text>
+<text x="65" y="620" class="ps00 ps10 ps21">Summe Entgelte:</text>
+<text x="540" y="620" class="ps00 ps10 ps21" text-anchor="end">32,25</text>
 
-<text x="75" y="597" class="ps00 ps10 ps23">Verbindungsentgelte 01/30123</text>
-<text x="540" y="597" class="ps00 ps10 ps23" text-anchor="end">2,25</text>
+<text x="65" y="634" class="ps00 ps10 ps21">Umsatzsteuer (20%):</text>
+<text x="540" y="634" class="ps00 ps10 ps21" text-anchor="end">6,45</text>
 
+<rect x="65" y="640" width="486" height="0.1" class="ps01 ps10 ps23"/>
+<rect x="65" y="661" width="486" height="0.1" class="ps01 ps10 ps23"/>
 
-<g transform="matrix(1 0 0 -1 -0 841)">
-<path d="M75 240 L551 240" class="ps01 ps10 ps23"/>
-</g>
+<text x="65" y="658" class="ps00 ps10 ps21">Zahlungsbetrag</text>
+<text x="540" y="658" class="ps00 ps10 ps21" text-anchor="end">38,70</text>
 
-<text x="65" y="627" class="ps00 ps10 ps25">Gesamtsumme der Verbindungsentgelte</text>
-<text x="540" y="627" class="ps00 ps10 ps25" text-anchor="end">2,25</text>
+<text x="65" y="686" class="ps00 ps10 ps22">Der Rechnungsbetrag wird 14 Tage nach Rechnungsdatum f&#xE4;llig und wird gem&#xE4;&#xDF; vorliegendem</text>
+<text xml:space="preserve" x="65" y="698" class="ps00 ps10 ps22">Abbuchungsauftrag von Ihrem Konto IBAN , BIC  abgebucht.</text>
 
-<g transform="matrix(1 0 0 -1 -0 841)">
-<path d="M65 210 L551 210" class="ps01 ps10 ps25"/>
-<path d="M75 177 L551 177" class="ps01 ps10 ps25"/>
-<path d="M75 162 L551 162" class="ps01 ps10 ps25"/>
-</g>
+<text x="65" y="729" class="ps00 ps10 ps22">Mit freundlichen Gr&#xFC;&#xDF;en</text>
+<text x="65" y="744" class="ps00 ps10 ps22">Ihr [%provider.company_short%] Service Team</text>
 
-<text x="65" y="661" class="ps00 ps10 ps25">Rabatte</text>
-
-<text x="75" y="674" class="ps00 ps10 ps25">Bezeichnung</text>
-<text x="350" y="674" class="ps00 ps10 ps25">Anzahl</text>
-<text x="410" y="674" class="ps00 ps10 ps25">Einzelpreis</text>
-<text x="483" y="674" class="ps00 ps10 ps25">Betrag in EUR</text>
-
-<text x="75" y="690" class="ps00 ps10 ps23">Rabatte [%provider.company_short%] Business Phone</text>
-
-<text xml:space="preserve" x="80" y="716" class="ps00 ps10 ps23">Grundgeb&#xFC;hren Rabatt [%date.format(invoice.date_start,'%d.%m.%Y')%] - [%date.format(invoice.date_end,'%d.%m.%Y')%] </text>
-<text x="375" y="716" class="ps00 ps10 ps23">1</text>
-<text x="420" y="716" class="ps00 ps10 ps23">-70,00</text>
-<text x="540" y="716" class="ps00 ps10 ps23" text-anchor="end">-70,00</text>
-
-<text x="75" y="732" class="ps00 ps10 ps25">Summe</text>
-<text x="540" y="732" class="ps00 ps10 ps25" text-anchor="end">-70,00</text>
-
-
-<g transform="matrix(1 0 0 -1 -0 841)">
-<path d="M75 105 L551 105" class="ps01 ps10 ps25"/>
-</g>
-
-</g>
-<!--/page-->
-<!--{[% bgpage( 1, 1, 2 ) -%]}-->
-<!--{[% document_footer -%]}-->
-<!--{[% document_header -%]}-->
-<!--page-->
-<g y="0" x="0" width="841" height="595" id="titlepage_2" display="none">
-<title>TitlePage_2</title>
-
-<text x="65" y="152" class="ps00 ps10 ps21">Gesamtsumme der Rabatte</text>
-<text x="540" y="152" class="ps00 ps10 ps21" text-anchor="end">-70,00</text>
-
-<path d="M65 156 L551 156" class="ps01 ps10 ps20"/>
-<path d="M65 201 L551 201" class="ps01 ps10 ps21"/>
-<path d="M65 222 L551 222" class="ps01 ps10 ps21"/>
-
-<text x="65" y="181" class="ps00 ps10 ps21">Summe Entgelte:</text>
-<text x="540" y="181" class="ps00 ps10 ps21" text-anchor="end">32,25</text>
-
-<text x="65" y="195" class="ps00 ps10 ps21">Umsatzsteuer (20%):</text>
-<text x="540" y="195" class="ps00 ps10 ps21" text-anchor="end">6,45</text>
-
-<text x="65" y="219" class="ps00 ps10 ps21">Zahlungsbetrag</text>
-<text x="540" y="219" class="ps00 ps10 ps21" text-anchor="end">38,70</text>
-
-<text x="65" y="257" class="ps00 ps10 ps22">Der Rechnungsbetrag wird 14 Tage nach Rechnungsdatum f&#xE4;llig und wird gem&#xE4;&#xDF; vorliegendem</text>
-<text xml:space="preserve" x="65" y="269" class="ps00 ps10 ps22">Abbuchungsauftrag von Ihrem Konto IBAN , BIC  abgebucht.</text>
-
-<text x="65" y="548" class="ps00 ps10 ps22">Mit freundlichen Gr&#xFC;&#xDF;en</text>
-<text x="65" y="533" class="ps00 ps10 ps22">Ihr [%provider.company_short%] Service Team</text>
-<text x="65" y="750" class="ps00 ps10 ps20">Etwaige Einw&#xE4;nde gegen die vorliegende Rechnung m&#xFC;ssen innerhalb von 30 Tagen ab Zustellungsdatum schriftlich erhoben werden, andernfalls gilt</text>
-<text x="65" y="758" class="ps00 ps10 ps20">die Forderung als anerkannt.</text>
+<text x="65" y="760" class="ps00 ps10 ps20">Etwaige Einw&#xE4;nde gegen die vorliegende Rechnung m&#xFC;ssen innerhalb von 30 Tagen ab Zustellungsdatum schriftlich erhoben werden, andernfalls gilt</text>
+<text x="65" y="768" class="ps00 ps10 ps20">die Forderung als anerkannt.</text>
 
 </g>
 <!--/page-->
