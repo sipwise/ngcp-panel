@@ -108,6 +108,26 @@ has_field 'bic' => (
     },
 );
 
+has_field 'vatnum' => (
+    type => 'Text',
+    label => 'VAT Number',
+    maxlength => 127,
+    element_attr => {
+        rel => ['tooltip'],
+        title => ['The VAT number of the contact.']
+    },
+);
+
+has_field 'comregnum' => (
+    type => 'Text',
+    label => 'Company Reg. Number',
+    maxlength => 31,
+    element_attr => {
+        rel => ['tooltip'],
+        title => ['The company registration number of the contact.']
+    },
+);
+
 has_field 'phonenumber' => (
     type => 'Text',
     maxlength => 31,
@@ -115,6 +135,26 @@ has_field 'phonenumber' => (
     element_attr => {
         rel => ['tooltip'],
         title => ['The phone number of the contact.']
+    },
+);
+
+has_field 'mobilenumber' => (
+    type => 'Text',
+    maxlength => 31,
+    label => 'Mobile Number',
+    element_attr => {
+        rel => ['tooltip'],
+        title => ['The mobile number of the contact.']
+    },
+);
+
+has_field 'faxnumber' => (
+    type => 'Text',
+    maxlength => 31,
+    label => 'Fax Number',
+    element_attr => {
+        rel => ['tooltip'],
+        title => ['The fax number of the contact.']
     },
 );
 
@@ -129,7 +169,7 @@ has_block 'fields' => (
     tag => 'div',
     class => [qw/modal-body/],
     render_list => [qw/firstname lastname email company street postcode city
-        country iban bic phonenumber/],
+        country iban bic vatnum comregnum phonenumber mobilenumber faxnumber/],
 );
 
 has_block 'actions' => (

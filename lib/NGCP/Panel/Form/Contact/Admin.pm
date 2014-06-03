@@ -16,8 +16,8 @@ has_field 'reseller' => (
 has_block 'fields' => (
     tag => 'div',
     class => [qw/modal-body/],
-    render_list => [qw/reseller firstname lastname email company
-        street postcode city country iban bic phonenumber/],
+    render_list => [qw/reseller firstname lastname email company street postcode city
+        country iban bic vatnum comregnum phonenumber mobilenumber faxnumber/],
 );
 
 1;
