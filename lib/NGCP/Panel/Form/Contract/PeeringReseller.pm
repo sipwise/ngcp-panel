@@ -18,7 +18,7 @@ has_field 'contact.id' => (
 has_block 'fields' => (
     tag => 'div',
     class => [qw/modal-body/],
-    render_list => [qw/contact billing_profile status external_id/],
+    render_list => [qw/contact billing_profile status external_id subscriber_email_template passreset_email_template invoice_email_template/],
 );
 
 1;
