@@ -31,7 +31,7 @@
 
 <!--{[%MACRO titlepage(zonesdata, callsdata, page, pageslocalnum, titlezoneinterval, titlecallinterval, total) BLOCK-%]}-->
 <!--page-->
-<g y="0" x="0" width="841" height="595" id="titlepage_1"  zone-rows="2" zone-rows-interval="12">
+<g y="0" x="0" width="841" height="595" id="titlepage_1"  zone-rows="2,15" zone-rows-interval="12">
 <title>TitlePage_1</title>
 
 <text x="65" y="155" class="ps00 ps20">[%provider.company%][%if(', ', provider.postcode _ ' ' _ provider.city ) %][%if(', ', provider.street )%]</text>
@@ -155,7 +155,7 @@
 
 <!--{[%MACRO zonepage(callsdata, total, page, pagelocal, pageslocalnum, rows_interval) BLOCK-%]}-->
 <!--page-->
-<g id="zonepage" display="none" rows="20" rows-interval="12">
+<g id="zonepage" display="none" rows="25" rows-interval="12">
     <title>TitlePage_ZonesAndTotal</title>
 <text x="65" y="225" class="ps00 ps10 ps25">Verbindungsentgelte</text>
 <path d="M75 228 L551 228" class="ps01 ps10 ps25"/>

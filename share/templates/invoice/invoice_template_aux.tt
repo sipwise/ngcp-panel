@@ -137,14 +137,19 @@ MACRO count_total(total, list, pagetype) BLOCK;
     total.${pagetype}.global.source_customer_cost = total.${pagetype}.global.cost;
 END;
 
-MACRO get_page_rows_number(pagetype, tt_type, rows_type) BLOCK;
+MACRO get_page_rows_number(pagetype, tt_type, rows_type, listsize) BLOCK;
     IF tt_type == 'svg'  ;
         rows_type = rows_type ? rows_type _ '-' : '' ;
-        page_rows_re = rows_type _ 'rows="([,0-9]+)"' ;
+        page_rows_re = rows_type _ 'rows="([0-9]+)(?:,([0-9]+))?"' ;
     END;
     page = get_page(pagetype);
-    matches = page.match( page_rows_re ) ;
-    rows = matches.0 || matches.1 ;
+    matches = page.match( page_rows_re );
+    IF matches.size > 0;
+        rows = matches.0;
+        IF matches.1 && matches.1 < ifz(listsize);
+            rows = matches.1;
+        END;
+    END;
     rows = Math.int(ifz(rows));
     rows;
 END ;
@@ -174,10 +179,10 @@ MACRO show_pages(invoice_details_zones, invoice_details_calls, pagetype, pagenum
     DEFAULT invoice.amount_vat = ifz(invoice.amount_netto) * ifz( bp.vat_rate) / 100 ;
     DEFAULT invoice.amount = ifz(invoice.amount_netto) + ifz(invoice.amount_vat) ;
     DEFAULT invoice.amount_payment = invoice.amount - ifz(invoice.debit) ;
-
+    
     alltitlepages = ifz(alltitlepages) ? alltitlepages : 1;
     allzonerowsnumber = invoice_details_zones.size() ;
-    titlezonerows =  get_page_rows_number('titlepage','svg','zone') ;
+    titlezonerows =  get_page_rows_number('titlepage','svg','zone',allzonerowsnumber) ;
     midzonerows = get_page_rows_number('zonepage','svg') ;
     titlezoneinterval =  get_page_interval('titlepage','svg','zone') ;
     midzoneinterval =  get_page_interval('zonepage','svg') ;
@@ -191,7 +196,7 @@ MACRO show_pages(invoice_details_zones, invoice_details_calls, pagetype, pagenum
 
     
     allcallrowsnumber = invoice_details_calls.size() ;
-    titlecallrows =  get_page_rows_number('titlepage','svg','call') ;
+    titlecallrows =  get_page_rows_number('titlepage','svg','call',allcallrowsnumber) ;
     midcallrows = Math.int(get_page_rows_number('callpage','svg')) ;
     midcallrows = ( midcallrows < 1 ) ? 30 : midcallrows ;
     titlecallinterval =  get_page_interval('titlepage','svg', 'call') ;

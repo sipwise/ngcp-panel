@@ -154,8 +154,8 @@ IF !invoice_details_zones.size();
             source_customer_cost => i * 10 ,
             duration             => i * 10,
             free_time            => i * 5,
-            zone                 => 'Example Zone',
-            zone_detail          => 'Default',
+            zone                 => 'Example Zone' _ i _ ' ',
+            zone_detail          => ' Default',
         }]);
         i = i + 1;
     END;
