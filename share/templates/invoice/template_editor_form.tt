@@ -6,7 +6,7 @@ function formSerialize(){
     return $('form[id=template_editor]').serialize();
 }
 </script>
-<form name="template_editor" id="template_editor" action="[% c.uri_for_action('/invoicetemplate/get_content_ajax', tmpl.id) -%]"  class="form-horizontal" enctype="multipart/form-data" method="post">
+<form name="template_editor" id="template_editor" action="[% c.uri_for_action('/invoicetemplate/get_content_ajax', [tmpl.id]) -%]"  class="form-horizontal" enctype="multipart/form-data" method="post">
 
 <span>
     <a class="btn btn-primary btn-small" onclick="

@@ -10,8 +10,7 @@ sub svg_pdf {
     my ($c,$svg_ref,$pdf_ref) = @_;
     my $svg = $$svg_ref;
 
-    #my $dir = File::Temp->newdir(); # cleans up automatically leaving scope
-    my $dir = File::Temp->newdir(undef, CLEANUP => 1);
+    my $dir = File::Temp->newdir(undef, CLEANUP => 0);
     my $tempdir = $dir->dirname;
     my $pagenum = 1;
     my @pagefiles;
@@ -25,6 +24,26 @@ sub svg_pdf {
         my $pagefile = "$tempdir/$pagenum.svg";
         push @pagefiles, $pagefile;
 
+
+        print ">>>>>>>>>>>>>>>>>> processing $pagefile\n";
+
+        my $xp = XML::XPath->new($page);
+        my $g = $xp->find('//g[contains(@class,"firsty-") and contains(@class,"lasty")]');
+        foreach my $node($g->get_nodelist) {
+            my $class = $node->getAttribute('class');
+            print ">>>>>>>>>>>>>>>>>> got class $class\n";
+            my $firsty = $class; my $lasty = $class;
+
+            $firsty =~ s/^.+firsty\-(\d+).*$/$1/;
+            $lasty =~ s/^.+lasty\-(\d+).*$/$1/;
+            if(length($firsty) && length($lasty)) {
+                print ">>>>>>>>>>>> we got firsty=$firsty and lasty=$lasty\n";
+                process_child_nodes($node, $firsty, $lasty);
+            }
+        }
+        $page = ($xp->findnodes('/'))[0]->toString();
+
+
         open($fh, ">", $pagefile);
         binmode($fh, ":utf8");
         print $fh $page;
@@ -33,7 +52,12 @@ sub svg_pdf {
         $pagenum++;
     }
 
-    my @cmd_args = (qw/-h 849 -w 600 -a -f pdf/, @pagefiles);
+    # For whatever reason, the pdf looks ok with zoom of 1.0 when
+    # generated via rsvg-convert, but the print result is too big,
+    # so we need to scale it down by 0.8 to get a mediabox of 595,842
+    # when using 90dpi.
+    # (it doesn't happen with inkscape, no idea what rsvg does)
+    my @cmd_args = (qw/-a -f pdf -z 0.8/, @pagefiles);
     $$pdf_ref = capturex([0], "/usr/bin/rsvg-convert", @cmd_args);
 
     return 1;
@@ -44,16 +68,11 @@ sub preprocess_svg {
     
     my $xp = XML::XPath->new($$svg_ref);
     
-    my $g = $xp->find('//g[@id[contains(.,"page")]]');
+    my $g = $xp->find('//g[@class="page"]');
     foreach my $node($g->get_nodelist) {
         if($node->getAttribute('display')) {
             $node->removeAttribute('display');
         }
-    }
-    
-    my $comment = $xp->find('//comment()[normalize-space(.) = "{}" or normalize-space(.) = "{ }"]');
-    foreach my $node($comment->get_nodelist) {
-        $node->getParentNode->removeChild($node);
     }
     
     $$svg_ref = ($xp->findnodes('/'))[0]->toString();
@@ -96,6 +115,26 @@ sub get_tt {
     return $tt;
 }
 
+sub process_child_nodes {
+    my ($node, $firsty, $y) = @_;
+    for my $attr (qw/y y1 y2/) {
+        my $a = $node->getAttribute($attr);
+        if($a) {
+            $a =~ s/^(\d+)\w*$/$1/;
+            my $delta = $a - $firsty;
+            my $newy = $y + $delta;
+
+            print ">>>>>>>>>>>>>> attr=$attr, firsty=$firsty, a=$a, delta=$delta, new=$newy\n";
+            $node->removeAttribute($attr);
+            $node->appendAttribute(XML::XPath::Node::Attribute->new($attr, $newy."mm"));
+        }
+    }
+    my @children = $node->getChildNodes();
+    foreach my $node(@children) {
+        process_child_nodes($node, $firsty, $y);
+    }
+}
+
 sub get_dummy_data {
     return {
         rescontact => {
@@ -113,9 +152,10 @@ sub get_dummy_data {
             faxnumber => '+3234567890',
             iban => 'RESIBAN1234567890',
             bic => 'RESBIC1234567890',
+            vatnum => 'RESVAT1234567890',
         },
         customer => {
-            id => rand(10000)+10000,
+            id => int(rand(10000))+10000,
             external_id => 'Resext1234567890',
         },
         custcontact => {
@@ -133,6 +173,7 @@ sub get_dummy_data {
             faxnumber => '+6234567890',
             iban => 'CUSTIBAN1234567890',
             bic => 'CUSTBIC1234567890',
+            vatnum => 'CUSTVAT1234567890',
         },
         billprof => {
             handle => 'BILPROF12345',
@@ -151,29 +192,36 @@ sub get_dummy_data {
             year => '2014',
             month => '01',
             serial => '1234567',
+            total_net => 12345,
+            vat => 12345*0.2,
+            total => 12345+(12345*0.2),
         },
         calls => [
             map {{ 
                 start_time => time,
-                source_customer_cost => rand(1000),
-                duration => rand(7200) + 10,
+                source_customer_cost => int(rand(100000)),
+                duration => int(rand(7200)) + 10,
                 destination_user_in => "1".$_."1234567890",
-                call_type => (qw/cfu cfb cft cfna/)[rand 4],
+                call_type => (qw/cfu cfb cft cfna/)[int(rand 4)],
                 zone => "Zone $_",
                 zone_detail => "Detail $_",
-            }}(1 .. 100)
+            }}(1 .. 50)
         ],
-        zones => [
-            map {{ 
-                number => rand(200),
-                cost => rand(10000),
-                duration => rand(10000),
-                free_time => 0,
-                zone => "Zone $_",
-                zone_detail => "Detail $_",
-            }}(1 .. 15)
-        ],
+        zones => {
+            totalcost => int(rand(10000))+10000,
+            data => [
+                map {{ 
+                    number => int(rand(200)),
+                    cost => int(rand(100000)),
+                    duration => int(rand(10000)),
+                    free_time => 0,
+                    zone => "Zone $_",
+                    zone_detail => "Detail $_",
+                }}(1 .. 5)
+            ],
+        },
     };
+
 }
 
 1;

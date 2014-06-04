@@ -1,283 +1,135 @@
 [%
-USE Dumper;
-USE Math;
-USE date;
-USE format;
+    USE date;
+    USE Math;
+    USE String;
 
-datenow.value = date.now();
-datenow.month_end   = date_format(month_end  (datenow.value), noyear = 1 );
-datenow.month_start = date_format(month_start(datenow.value), noyear = 1 );
-datenow.year=date.format(datenow.value,'%Y');
-IF invoice.serial;
-    invoice.serial=Math.int(ifz(invoice.serial))|format('%06d');
-    #invoice.date_start = '00:00:00 01-' _ invoice.month _ invoice.year;
-    invoice.date_start = '00:00:00 01-05-2014';
-    invoice.date_end   = month_end(invoice.date_start);
-END;
+    aux.page = 1;
 
-
-MACRO date_format(dateval,noyear) BLOCK;
-date.format(dateval,'%B'); ordinate(date.format(dateval,'%e')); IF !noyear; date.format(dateval,'%Y'); END;
-END;
-MACRO month_start(dateval) BLOCK;
-'00:00:00 01-' _ date.format(dateval,'%m-%Y');
-END;
-MACRO month_end(dateval) BLOCK;
-'00:00:00 00-' _ (Math.int(ifz(date.format(dateval,'%m'))) + 1) _ date.format(dateval,'-%Y');
-END;
-
-MACRO ordinate(num) BLOCK;
-      IF num.search('(?<!1)1$');
-          sfx = 'st';
-      ELSIF num.search('(?<!1)2$');
-          sfx = 'nd';
-      ELSIF num.search('(?<!1)3$');
-          sfx = 'rd';
-      ELSE;
-          sfx = 'th';
-     END;
-      num _ sfx;
-END;
-
-MACRO if(prefix, value) BLOCK;
-    value_clear = value.replace('[ ,]','');
-     IF value_clear ;
-         prefix _ value ;
+    MACRO date_now BLOCK;
+        date.format(date.now(), f);
     END;
-END;
 
-MACRO ifz(value, default) BLOCK;
-    value_clear = value.replace(' *|\s*','');
-    IF !default; default = 0; END;
-    IF !value_clear ;
-         value = default ;
-    END;value;END;
-
-MACRO ife(value,suffix) BLOCK ;
-    value_clear = value.replace('[ ,]','');
-     IF value_clear ;
-         value _ suffix ;
+    MACRO svgopen BLOCK;
+        aux.page = aux.page + 1;
+        '<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="' _ pagewidth _ 'mm" height="' _ pageheight _ 'mm">';
+        draw_background;
+        IF open_g;
+            '<g x="0mm" y="0mm">';
+        END;
     END;
-END;
-
-MACRO get_page(pagetype) BLOCK ;
-    #use this macro until no symbolic references in tt ;
-    #data can be empty, if we just need y - it doesn't depend on data ;
-    IF pagetype == 'titlepage' ;
-        page = titlepage();
-    ELSIF pagetype == 'zonepage' ;
-        page = zonepage();
-    ELSIF pagetype == 'callpage' ;
-        page = callpage();
+    
+    MACRO svgclose BLOCK;
+        IF close_g;
+            '</g>';
+        END;
+        '</svg>';
     END;
-    page;
-END;
 
-MACRO adjustrow(data, page, pagelocal, pageslocalnum, rowtype, tt_type, rows_interval_in, rownumber) BLOCK ;
-    rows_interval = ( ifz(rows_interval_in) > 0 ) ? rows_interval_in : row_vertical_interval;
-    IF rowtype == 'datarow' ;
-        row = datarow(data);
-    ELSIF rowtype == 'totalrow' ;
-        row = totalrow( (pagelocal == pageslocalnum) ? data.global : data.perpage.${pagelocal} );
+    MACRO newpage BLOCK;
+        svgclose(close_g=0);
+        svgopen(open_g=0);
     END;
-    IF tt_type == 'svg'  ;
-        y_re = '(?s)(<(?:text)[^>]*\s+y\s*=.*?)([-\d\.,]+)(.*)' ;
-    END;
-    matches = row.match( y_re ) ;
-    IF matches.size > 0  ;
-        y_old = Math.int(ifz(matches.1)) ;
-        y = ifz(y_old) + ( ifz(rows_interval) * ( ifz(rownumber) - 1 ) ) ;
-        row = matches.0 _ y _ matches.2 ;
-        matches_other = row.match('(<.*?\s+y\s*=.*?)([-\d\.,]+)', 1) ;
-        i = 0 ;
-        #matches_otherDumper.dump_html(matches_other);
-         WHILE i*2 < matches_other.size() ;
-            IF !matches_other.item(i*2).search('<text');
-                search = matches_other.item(i*2) _ matches_other.item(i*2 + 1);
-                replace = matches_other.item(i*2) _ ( Math.int( matches_other.item(i*2 + 1)) - ifz(y_old) + ifz(y)  ) ;#+ rows_interval;# + ( rowtype == 'totalrow' ? rows_interval : 0);
-                #search1= search;
-                #search= row.search(search);
-                #replace= replace;
-                row = row.replace(search, replace ) ;
-            END ;
-            i = i + 1 ;
-        END ;
-    END ;
-    row;
-END ;
 
-MACRO list_zones(callsdata, page, pagelocal, pageslocalnum, rowtype, total, tt_type, rows_interval) BLOCK;
-     FOR call IN callsdata ;#invoice_details;
-        IF call.1; calldata = call.1; ELSE; calldata = call; END;
-            FOREACH colname in ['number','duration','free_time','cost'];
-                calldata.${colname} = ifz(calldata.get_column(colname));
+    MACRO check_pagebreak BLOCK;
+        IF maxy <= (aux.lasty + following_height);
+            svgclose(close_g=1);
+            svgopen(open_g=1);
+            aux.lasty = miny;
+        END;
+    END;
+
+    MACRO zonelist BLOCK;
+        fontfamily = fontfamily || 'Arial';
+        fontsize = fontsize || 8;
+        y = starty;
+        FOR zone IN zones;
+            x = startx;
+            FOR f IN fields;
+                anc = f.anchor || 'start';
+                x = x + f.dx;
+                format_field(field=f, val=zone.${f.name});
+                val = aux.val;
+                '<text font-family="' _ fontfamily  _ '" font-size="' _ fontsize  _ 'pt" x="' _ x _ 'mm" y="' _ y _ 'mm" text-anchor="'_ anc _'">';
+                    val;
+                '</text>';
             END;
-            total.global.cost = ifz(total.global.cost) + ( Math.int(calldata.cost) / 100 ) ;
-            total.global.number = ifz(total.global.number)         + calldata.number ;
-            total.global.duration = ifz(total.global.duration)     + calldata.duration ;
-            total.global.free_time = ifz(total.global.free_time)   + calldata.free_time ;
-            total.perpage.${pagelocal}.cost = ifz(total.perpage.${pagelocal}.cost) + ( Math.int(calldata.cost) / 100) ;
-            total.perpage.${pagelocal}.number = ifz(total.perpage.${pagelocal}.number)  + calldata.number ;
-            total.perpage.${pagelocal}.duration = ifz(total.perpage.${pagelocal}.duration)  + calldata.duration ;
-            total.perpage.${pagelocal}.free_time = ifz(total.perpage.${pagelocal}.free_time) + calldata.free_time ;
-            adjustrow(call, page, pagelocal, pageslocalnum, rowtype,  tt_type, rows_interval, loop.count) ;
-    END ;
-END ;
-
-MACRO list_calls(callsdata, page, pagelocal, pageslocalnum, rowtype, total, tt_type, rows_interval) BLOCK;
-     FOR call IN callsdata ;#invoice_details;
-        IF call.1; calldata = call.1; ELSE; calldata = call; END;
-            FOREACH colname in ['source_customer_cost','duration'];
-                calldata.${colname} = ifz(calldata.get_column(colname));
+            y = y + offsety;
+            IF y >= maxy; 
+                svgclose(close_g=1); 
+                svgopen(open_g=1); 
+                y = miny; 
             END;
-        total.global.duration = ifz(total.global.duration) + calldata.duration ;
-        total.global.cost = ifz(total.global.cost) + ( Math.int(calldata.source_customer_cost) / 100 ) ;
-        total.perpage.${pagelocal}.duration = ifz(total.perpage.${pagelocal}.duration) + calldata.duration ;
-        total.perpage.${pagelocal}.cost = ifz(total.perpage.${pagelocal}.cost) + ( Math.int(calldata.source_customer_cost) / 100 ) ;
-        adjustrow(call, page, pagelocal, pageslocalnum, rowtype,  tt_type, rows_interval, loop.count) ;
-    END ;
-END ;
-
-MACRO get_page_rows_number(pagetype, tt_type, rows_type) BLOCK;
-     IF tt_type == 'svg'  ;
-         rows_type = rows_type ? rows_type _ '-' : '' ;
-         page_rows_re = rows_type _ 'rows="([0-9]+)"' ;
-    END;
-
-    page = get_page(pagetype) ;
-    matches = page.match( page_rows_re ) ;
-
-    rows = matches.0 || matches.1 ;
-    rows = Math.int(ifz(rows));
-    rows;
-END ;
-
-
-MACRO get_page_interval(pagetype, tt_type, interval_type) BLOCK;
-     IF tt_type == 'svg'  ;
-         interval_type = interval_type ? interval_type _ '-' : '' ;
-         page_interval_re = interval_type _ 'rows-interval="([0-9]+)"' ;
-    END;
-
-    page = get_page(pagetype) ;
-    matches = page.match( page_interval_re ) ;
-
-    interval = matches.0 || matches.1 ;
-    interval = Math.int(ifz(interval));
-    interval;
-END ;
-
-MACRO show_pages(invoice_details_zones, invoice_details_calls, pagetype, pagenum_in) BLOCK;
-#todo: remove copypast with some macro, later;
-    
-    pagewithblock();
-    
-    total = {perpage => [], global => {}, pagetype => { call=> {perpage => [], global => {}}, zone => {perpage => [], global => {}} } } ;
-    alltitlepages = ifz(alltitlepages) ? alltitlepages : 1;
-    allzonerowsnumber = invoice_details_zones.size() ;
-    titlezonerows =  get_page_rows_number('titlepage','svg','zone') ;
-    midzonerows = get_page_rows_number('zonepage','svg') ;
-    titlezoneinterval =  get_page_interval('titlepage','svg','zone') ;
-    midzoneinterval =  get_page_interval('zonepage','svg') ;
-    midzonerows = Math.int(get_page_rows_number('zonepage','svg')) ;
-    midzonerows = ( midzonerows < 1 ) ? 30 : midzonerows ;
-    
-    allmidzonepages = ( (allzonerowsnumber - titlezonerows) / midzonerows )|format('%d') ;
-    allmidzonerows = allmidzonepages * midzonerows ;
-    lastzonerows = allzonerowsnumber - allmidzonerows - titlezonerows ;
-    allzonepages = allmidzonepages + ( lastzonerows > 0 ? 1 : 0 ) ;
-
-    
-    allcallrowsnumber = invoice_details_calls.size() ;
-    titlecallrows =  get_page_rows_number('titlepage','svg','call') ;
-    midcallrows = Math.int(get_page_rows_number('callpage','svg')) ;
-    midcallrows = ( midcallrows < 1 ) ? 30 : midcallrows ;
-    titlecallinterval =  get_page_interval('titlepage','svg', 'call') ;
-    midcallinterval =  get_page_interval('callpage','svg') ;
-
-    allmidcallpages = ( (allcallrowsnumber - titlecallrows) / midcallrows )|format('%d') ;
-    allmidcallrows = allmidcallpages * midcallrows ;
-    lastcallrows = allcallrowsnumber - allmidcallrows - titlecallrows ;
-    allcallpages = allmidcallpages + ( lastcallrows > 0 ? 1 : 0 ) ;
-    
-    
-    IF ( pagetype == 'zone' || pagetype=='all' ) && allzonerowsnumber ;
-        pages = pagenum_in ? [ pagenum_in ] : [ 1 .. allmidzonepages ] ;
-        FOREACH pagenum IN pages ;
-            pagerowsstart = titlezonerows + midzonerows * ( pagenum - 1 );
-            pagerowsend = titlezonerows + midzonerows * pagenum - 1 ;
-            # pagerowsend = pagerowsend > invoice_details_zones.size() - 1 ? invoice_details_zones.size() - 1 : pagerowsend  ;
-            output = output _ document_header();
-            output = output _ zonepage( invoice_details_zones.slice( pagerowsstart,  pagerowsend ), total, pagenum + alltitlepages, pagenum, allzonepages, midzoneinterval ) ;
-            #+1 because of 1 for titlepage ;
-            output = output _ bgpage(pagenum + alltitlepages, pagenum, allzonepages) ;
-            output = output _ document_footer();
         END;
-        IF lastzonerows > 0 ;
-            #+1 is for last page number, so ( alltitlepages + allmidzonepages ) was previous page
-            pagenum = 1 + alltitlepages + allmidzonepages ;
-            output = output _ document_header();
-            output = output _ zonepage( invoice_details_zones.slice( allzonerowsnumber - lastzonerows ), total, pagenum, allzonepages, allzonepages, midzoneinterval ) ;
-            output = output _ bgpage(pagenum, allzonepages, allzonepages) ;
-            output = output _ document_footer();
-        END;
+        aux.lasty = y;
     END;
 
-    #Dumper.dump(total);
-    
-    total.pagetype.call.global.import(total.global);
-    # total.pagetype.call.perpage.import(total.perpage);
-
-    #Dumper.dump(total);
-
-    total.global = {};
-    total.perpage = [] ;
-    
-    IF ( pagetype == 'call' || pagetype=='all' );
-        pages = pagenum_in ? [ pagenum_in ] : [ 1 .. allmidcallpages ] ;
-        FOREACH pagenum IN pages ;
-            pagerowsstart = titlecallrows + midcallrows * ( pagenum - 1 );
-            pagerowsend = titlecallrows + midcallrows * pagenum - 1 ;
-            output = output _ document_header();
-            output = output _ callpage( invoice_details_calls.slice( pagerowsstart,  pagerowsend ), total, pagenum + alltitlepages + allzonepages, pagenum, allcallpages, midcallinterval ) ;
-            output = output _ bgpage(pagenum + alltitlepages + allzonepages, pagenum, allcallpages ) ;
-            output = output _ document_footer();
+    MACRO calllist BLOCK;
+        fontfamily = fontfamily || 'Arial';
+        fontsize = fontsize || 8;
+        y = starty;
+        anc = anchor || 'start';
+        FOR call IN calls;
+            x = startx;
+            FOR f IN fields;
+                anc = f.anchor || 'start';
+                x = x + f.dx;
+                format_field(field=f, val=call.${f.name});
+                val = aux.val;
+                '<text font-family="' _ fontfamily  _ '" font-size="' _ fontsize  _ 'pt" x="' _ x _ 'mm" y="' _ y _ 'mm" text-anchor="'_ anc _'">';
+                    val;
+                '</text>';
+            END;
+            y = y + offsety;
+            IF y >= maxy; 
+                svgclose(close_g=1); 
+                svgopen(open_g=1); 
+                y = miny; 
+            END;
         END;
-        IF lastcallrows > 0 ;
-            #2 because callpages started from 1, not from 0, and we need add 1 for titlepage ;
-            pagenum = 1 + alltitlepages + allmidcallpages + allzonepages ;
-            output = output _ document_header();
-            output = output _ callpage( invoice_details_calls.slice( allcallrowsnumber - lastcallrows ), total, pagenum, allcallpages, allcallpages, midcallinterval ) ;
-            output = output _ bgpage(pagenum, allcallpages, allcallpages) ;
-            output = output _ document_footer();
-        END;
+        aux.lasty = y;
     END;
 
-    # Dumper.dump(total);
-    
-    total.pagetype.zone.global.import(total.global);
-    # total.pagetype.zone.perpage = total.pagetype.zone.perpage.import(total.perpage);
-    
-    DEFAULT invoice.amount_netto = ifz(total.pagetype.call.global.cost) + ifz(total.pagetype.zone.global.cost) ;
-    DEFAULT invoice.amount_vat = ifz(invoice.amount_netto) * 0.2 ;
-    DEFAULT invoice.amount = ifz(invoice.amount_netto) + ifz(invoice.amount_vat) ;
-    DEFAULT invoice.amount_payment = invoice.amount - ifz(invoice.debit) ;
-    
-    IF ( pagetype == 'title' || pagetype=='all') ;
-         pagenum = 1;
-         output_title = output_title _ document_header();
-        
-         output_title = output_title _ titlepage( 
-            ( titlezonerows > 0 && invoice_details_zones.size > 0 ) ? invoice_details_zones.slice(0, titlezonerows - 1 ) : [], 
-            
-            ( titlecallrows > 0 && invoice_details_calls.size > 0 ) ? invoice_details_calls.slice(0, titlecallrows - 1 ) : [], 
-            pagenum,
-            titlezoneinterval
-            titlecallinterval
-        ) ;
-         output_title = output_title _ bgpage(pagenum) ;
-         output_title = output_title _ document_footer();
+    MACRO timestamp2time BLOCK;
+        t = timestamp;
+        h = Math.int(t / 3600);
+        m = Math.int((t % 3600) / 60);
+        s = Math.int((t % 3600) % 60);
+
+        hs = String.new(h); hs = hs.format("%02d");
+        ms = String.new(m); ms = ms.format("%02d");
+        ss = String.new(s); ss = ss.format("%02d");
+
+        aux.val = hs _ ':' _ ms _ ':' _ ss;
     END;
-     output_title _ output;
-END;
-%]
+
+    MACRO money_format BLOCK;
+        comma = comma || '.';
+        full = Math.int(amount / 100);
+        cent = Math.int(amount % 100);
+        cents = String.new(cent); cents = cents.format("%02d");
+        aux.val = full _ comma _ cents;
+    END;
+
+    MACRO format_field BLOCK;
+        in = val; out = '';
+        IF field.date_format;
+            out = date.format(in, field.date_format);
+        ELSIF field.timestamp2time;
+            timestamp2time(timestamp=in);
+            out = aux.val;
+        ELSIF field.money_cents;
+            money_format(amount=in, comma=field.comma);
+            out = aux.val;
+        ELSE;
+            out = in;
+        END;
+        aux.val = out;
+    END;
+
+    MACRO print_money BLOCK;
+        money_format(amount=amount, comma=comma);
+        aux.val;
+    END;
+
+-%]
+<!-- vim: set tabstop=4 syntax=html expandtab: -->

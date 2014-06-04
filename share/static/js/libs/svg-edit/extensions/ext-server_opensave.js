@@ -113,7 +113,7 @@ svgEditor.addExtension("server_opensave", {
 		open_svg_action = svgEditor.curConfig.extPath + 'fileopen.php?type=load_svg';
 		import_svg_action = svgEditor.curConfig.extPath + 'fileopen.php?type=import_svg';
 		//import_img_action = svgEditor.curConfig.extPath + 'fileopen.php?type=import_img';
-		import_img_action = '/invoice/auxembedimage?type=import_img';
+		import_img_action = '/invoicetemplate/embedimage?type=import_img';
 		
 		// Set up function for PHP uploader to use
 		svgEditor.processFile = function(str64, type) {

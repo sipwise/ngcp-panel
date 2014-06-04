@@ -3,6 +3,9 @@ use Sipwise::Base;
 use namespace::sweep;
 BEGIN { extends 'Catalyst::Controller'; }
 
+use File::Type;
+use MIME::Base64 qw(encode_base64);
+
 use NGCP::Panel::Utils::InvoiceTemplate;
 use NGCP::Panel::Form::Invoice::TemplateAdmin;
 use NGCP::Panel::Form::Invoice::TemplateReseller;
@@ -313,13 +316,18 @@ sub set_content_ajax :Chained('base') :PathPart('editcontent/set/ajax') :Args(0)
         );
         return;
     }
+
+    print ">>>>>>>>>>>>>>>>> sanitize\n";
     NGCP::Panel::Utils::InvoiceTemplate::sanitize_svg(\$content);
 
     try {
+        print ">>>>>>>>>>>>>>>>> update content\n";
         $tmpl->update({
             base64_saved => $content,
             base64_previewed => undef,
         });
+
+        print ">>>>>>>>>>>>>>>>> saved content\n";
     } catch($e) {
         NGCP::Panel::Utils::Message->error(
             c => $c,
@@ -368,6 +376,26 @@ sub preview_content :Chained('base') :PathPart('editcontent/preview') :Args(0) {
     $c->response->content_type('application/pdf');
     $c->response->body($pdf);
     return;
+}
+
+sub embed_image :Chained('/') :PathPart('invoicetemplate/embedimage') :Args(0) {
+    my ($self, $c) = @_;
+    
+    my ($in, $out);
+    $in = $c->request->parameters;
+    $in->{svg_file} = $c->request->upload('svg_file');
+    if($in->{svg_file}) {
+        my $ft = File::Type->new();
+        $out->{image_content} = $in->{svg_file}->slurp;
+        $out->{image_content_mimetype} = $ft->mime_type($out->{image_content});
+        $out->{image_content_base64} = encode_base64($out->{image_content}, '');
+    }
+    $c->log->debug('mime-type '.$out->{image_content_mimetype});
+    $c->stash(out => $out);
+    $c->stash(in => $in);
+    $c->stash(template => 'invoice/template_editor_aux_embedimage.tt');
+    $c->detach( $c->view('TT') );
+    
 }
 
 
