@@ -70,12 +70,7 @@ has_field 'passreset_email_template' => (
     required => 0,
 );
 
-has_field 'invoice_email_template' => (
-    type => '+NGCP::Panel::Field::EmailTemplate',
-    label => 'Invoice Email Template',
-    do_label => 1,
-    required => 0,
-);
+
 
 has_field 'save' => (
     type => 'Submit',
@@ -87,7 +82,7 @@ has_field 'save' => (
 has_block 'fields' => (
     tag => 'div',
     class => [qw/modal-body/],
-    render_list => [qw/contact billing_profile status external_id subscriber_email_template passreset_email_template invoice_email_template/],
+    render_list => [qw/contact billing_profile status external_id subscriber_email_template passreset_email_template/],
 );
 
 has_block 'actions' => (
@@ -101,7 +96,7 @@ sub update_fields {
     my $c = $self->ctx;
     return unless $c;
 
-    foreach my $field(qw/subscriber_email_template passreset_email_template invoice_email_template/) {
+    foreach my $field(qw/subscriber_email_template passreset_email_template/) {
         my $email = $self->field($field);
         if($email && $c->stash->{contract}) {
             $email->field('id')->ajax_src(
