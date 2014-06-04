@@ -229,12 +229,12 @@ MACRO show_pages(invoice_details_zones, invoice_details_calls, pagetype, pagenum
     lastcallrows = allcallrowsnumber - allmidcallrows - titlecallrows ;
     allcallpages = allmidcallpages + ( lastcallrows > 0 ? 1 : 0 ) ;
     IF ( pagetype == 'title' || pagetype=='all') ;
-        
         pagenum = 1;
         output_title = output_title _ document_header();
         params = { 
             'pagenum'   => pagenum, 
             'zonesdata' => ( ( titlezonerows > 0 ) && ( invoice_details_zones.size() > 0 ) ) ? invoice_details_zones.slice(0, titlezonerows - 1 ) : [],
+            'pagelocal' => pagenum,
             'pageslocalnum' => 1 + allzonepages,
             'titlezoneinterval' => titlezoneinterval ,
             'total' => total,
@@ -263,6 +263,7 @@ MACRO show_pages(invoice_details_zones, invoice_details_calls, pagetype, pagenum
             #+1 because of 1 for titlepage ;
             output = output _ bgpage(params) ;
             output = output _ document_footer();
+            allzonepages = params.pagenum;
         END;
         IF lastzonerows > 0 ;
             #+1 is for last page number, so ( alltitlepages + allmidzonepages ) was previous page
@@ -279,8 +280,8 @@ MACRO show_pages(invoice_details_zones, invoice_details_calls, pagetype, pagenum
             #pagenum could change due to invoice footer
             output = output _ bgpage(params) ;
             output = output _ document_footer();
+            allzonepages = params.pagenum;
         END;
-        allzonepages = params.pagenum;
     END;
     
     IF ( pagetype == 'call' || pagetype=='all' );

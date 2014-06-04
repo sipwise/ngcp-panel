@@ -134,7 +134,6 @@
 
     <!--{[% titlerow() -%]}-->
     <!--{[% params.rowsinterval = params.titlezoneinterval; params.data=params.zonesdata; list_zones(params); -%]}-->
-    <!--{[% Dumper.dump(params); -%]}-->
     <!--{[%IF (params.pagenum==params.pageslocalnum); 
         dy = getDy(params.titlezoneinterval, params.zonesdata.size); 
         adjustrow (params.total.zonepage.global, 'totalrow', dy, '', params); 
@@ -144,7 +143,9 @@
     y_max_invoicetotal = adjustrow ('', totalinvoice, dy, 'max', params);
     y_min_invocetail = adjustrow ('', titlepagetail, 0, 'min', params);
     IF y_max_invoicetotal > y_min_invocetail - 20;
+        params.no_show_kunde = 1;
         bgpage( params );
+            params.no_show_kunde = 0;
         params.pagenum = params.pagenum + 1;
         document_footer();
         document_header();
@@ -237,7 +238,9 @@ END -%]}-->
     y_min_invocetail = adjustrow ('', titlepagetail, 0, 'min', params);
     IF y_max_invoicetotal > ( y_min_invocetail - 20 ) || !params.data.size;
         IF params.data.size;
+            params.no_show_kunde = 1;
             bgpage( params );
+            params.no_show_kunde = 0;
             params.pagenum = params.pagenum + 1;
             document_footer();
             document_header();

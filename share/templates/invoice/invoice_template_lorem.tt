@@ -147,7 +147,7 @@ template_variables.description.import({
 });
 IF !invoice_details_zones.size();
     i=1;
-    WHILE i <= 4;
+    WHILE i <= 45;
         invoice_details_zones.push([i,{
             number               => i * 2 ,
             cost                 => i * 10 ,
