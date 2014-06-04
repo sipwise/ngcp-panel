@@ -25,6 +25,9 @@ END;
 MACRO month_end(dateval) BLOCK;
 '00:00:00 00-' _ (Math.int(ifz(date.format(dateval,'%m'))) + 1) _ date.format(dateval,'-%Y');
 END;
+MACRO money_format_comma(value) BLOCK;
+value = ifz(value); value = money_format(value);value= value.replace('\.',',');value;
+END;
 
 MACRO ordinate(num) BLOCK;
       IF num.search('(?<!1)1$');
@@ -80,43 +83,32 @@ MACRO adjustrow(data, page, pagelocal, pageslocalnum, rowtype, tt_type, rows_int
     ELSIF rowtype == 'totalrow' ;
         row = totalrow( (pagelocal == pageslocalnum) ? data.global : data.perpage.${pagelocal} );
     END;
-    IF tt_type == 'svg'  ;
-        y_re = '(?s)(<(?:text)[^>]*\s+y\s*=.*?)([-\d\.,]+)(.*)' ;
+    #to avoid errors if some node of the same type are on the root level
+    row = '<svg>' _ row _ '</svg>';
+    USE xpath = XML.XPath(row);
+    FOREACH y_attr_el IN xpath.find('//@y');
+        FOREACH y_attr_node IN y_attr_el.get_nodelist();
+            y_old = Math.int(ifz(y_attr_node.getNodeValue('y'))) ;
+            y = ifz(y_old) + ( ifz(rows_interval) * ( ifz(rownumber) - 1 ) ) ;
+            t=y_attr_node.setNodeValue(y);
+        END;
     END;
-    matches = row.match( y_re ) ;
-    IF matches.size > 0  ;
-        y_old = Math.int(ifz(matches.1)) ;
-        y = ifz(y_old) + ( ifz(rows_interval) * ( ifz(rownumber) - 1 ) ) ;
-        row = matches.0 _ y _ matches.2 ;
-        matches_other = row.match('(<.*?\s+y\s*=.*?)([-\d\.,]+)', 1) ;
-        i = 0 ;
-        #matches_otherDumper.dump_html(matches_other);
-         WHILE i*2 < matches_other.size() ;
-            IF !matches_other.item(i*2).search('<text');
-                search = matches_other.item(i*2) _ matches_other.item(i*2 + 1);
-                replace = matches_other.item(i*2) _ ( Math.int( matches_other.item(i*2 + 1)) - ifz(y_old) + ifz(y)  ) ;#+ rows_interval;# + ( rowtype == 'totalrow' ? rows_interval : 0);
-                #search1= search;
-                #search= row.search(search);
-                #replace= replace;
-                row = row.replace(search, replace ) ;
-            END ;
-            i = i + 1 ;
-        END ;
-    END ;
+    row = xpath.findnodes('/').toString();
+    row = row.replace('^<svg>|<\/svg>$','');
     row;
 END ;
 
 MACRO list_zones(callsdata, page, pagelocal, pageslocalnum, rowtype, total, tt_type, rows_interval) BLOCK;
      FOR call IN callsdata ;#invoice_details;
         IF call.1; calldata = call.1; ELSE; calldata = call; END;
-            FOREACH colname in ['number','duration','free_time','cost'];
+            FOREACH colname in ['number','duration','free_time','source_customer_cost', 'cost'];
                 calldata.${colname} = ifz(calldata.get_column(colname));
             END;
-            total.global.cost = ifz(total.global.cost) + ( Math.int(calldata.cost) / 100 ) ;
+            total.global.cost = ifz(total.global.cost) + ( Math.int(calldata.source_customer_cost) / 100 ) ;
             total.global.number = ifz(total.global.number)         + calldata.number ;
             total.global.duration = ifz(total.global.duration)     + calldata.duration ;
             total.global.free_time = ifz(total.global.free_time)   + calldata.free_time ;
-            total.perpage.${pagelocal}.cost = ifz(total.perpage.${pagelocal}.cost) + ( Math.int(calldata.cost) / 100) ;
+            total.perpage.${pagelocal}.cost = ifz(total.perpage.${pagelocal}.cost) + ( Math.int(calldata.source_customer_cost) / 100) ;
             total.perpage.${pagelocal}.number = ifz(total.perpage.${pagelocal}.number)  + calldata.number ;
             total.perpage.${pagelocal}.duration = ifz(total.perpage.${pagelocal}.duration)  + calldata.duration ;
             total.perpage.${pagelocal}.free_time = ifz(total.perpage.${pagelocal}.free_time) + calldata.free_time ;
@@ -139,14 +131,12 @@ MACRO list_calls(callsdata, page, pagelocal, pageslocalnum, rowtype, total, tt_t
 END ;
 
 MACRO get_page_rows_number(pagetype, tt_type, rows_type) BLOCK;
-     IF tt_type == 'svg'  ;
-         rows_type = rows_type ? rows_type _ '-' : '' ;
-         page_rows_re = rows_type _ 'rows="([0-9]+)"' ;
+    IF tt_type == 'svg'  ;
+        rows_type = rows_type ? rows_type _ '-' : '' ;
+        page_rows_re = rows_type _ 'rows="([,0-9]+)"' ;
     END;
-
-    page = get_page(pagetype) ;
+    page = get_page(pagetype);
     matches = page.match( page_rows_re ) ;
-
     rows = matches.0 || matches.1 ;
     rows = Math.int(ifz(rows));
     rows;
@@ -158,37 +148,17 @@ MACRO get_page_interval(pagetype, tt_type, interval_type) BLOCK;
          interval_type = interval_type ? interval_type _ '-' : '' ;
          page_interval_re = interval_type _ 'rows-interval="([0-9]+)"' ;
     END;
-
     page = get_page(pagetype) ;
     matches = page.match( page_interval_re ) ;
-
     interval = matches.0 || matches.1 ;
     interval = Math.int(ifz(interval));
     interval;
 END ;
 
-#MACRO pagewithblock(level) BLOCK;
-#    #pagesrc = titlepage([],[],1,10,10);
-#    pagesrc = '<svg>' _ document_header() _ titlepage() _ document_footer() _ '</svg>';
-#    pagesrc = pagesrc.replace('<!--{|}-->','');
-#    USE xpath = XML.XPath(pagesrc);
-#    FOREACH blockid IN xpath.find('/@id[contains(.,"block_")');
-#        %]
-#        blockid=[%blockid;%]==blockid
-#        [%
-#        FOREACH blocknode IN blockid.get_nodelist();
-#
-#        %]
-#        blocknode=[%blocknode;%]==blocknode
-#        [%
-#        END;
-#    END;
-#END;
-
 MACRO show_pages(invoice_details_zones, invoice_details_calls, pagetype, pagenum_in) BLOCK;
 #todo: remove copypast with some macro, later;
     
-    pagewithblock();
+    #pagewithblock();
     
     total = {perpage => [], global => {}, pagetype => { call=> {perpage => [], global => {}}, zone => {perpage => [], global => {}} } } ;
     alltitlepages = ifz(alltitlepages) ? alltitlepages : 1;
@@ -282,20 +252,22 @@ MACRO show_pages(invoice_details_zones, invoice_details_calls, pagetype, pagenum
     DEFAULT invoice.amount_payment = invoice.amount - ifz(invoice.debit) ;
     
     IF ( pagetype == 'title' || pagetype=='all') ;
-         pagenum = 1;
-         output_title = output_title _ document_header();
-        
-         output_title = output_title _ titlepage( 
-            ( titlezonerows > 0 && invoice_details_zones.size > 0 ) ? invoice_details_zones.slice(0, titlezonerows - 1 ) : [], 
+        pagenum = 1;
+        output_title = output_title _ document_header();
+        output_title = output_title _ titlepage( 
+            ( ( titlezonerows > 0 ) && ( invoice_details_zones.size() > 0 ) ) ? invoice_details_zones.slice(0, titlezonerows - 1 ) : [], 
             
-            ( titlecallrows > 0 && invoice_details_calls.size > 0 ) ? invoice_details_calls.slice(0, titlecallrows - 1 ) : [], 
+            ( ( titlecallrows > 0 ) && ( invoice_details_calls.size() > 0 ) ) ? invoice_details_calls.slice(0, titlecallrows - 1 ) : [], 
             pagenum,
-            titlezoneinterval
-            titlecallinterval
+            1 + allzonepages ,
+            titlezoneinterval,
+            titlecallinterval,
+            total.pagetype.zone.global,
+            total.pagetype.call.global
         ) ;
-         output_title = output_title _ bgpage(pagenum) ;
-         output_title = output_title _ document_footer();
+        output_title = output_title _ bgpage(pagenum) ;
+        output_title = output_title _ document_footer();
     END;
-     output_title _ output;
+    output_title _ output;
 END;
 %]
