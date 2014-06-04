@@ -1,1 +1,2 @@
 RUN_DAEMON="no"
+NPROC=1

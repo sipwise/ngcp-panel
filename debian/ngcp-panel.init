@@ -25,8 +25,6 @@ USOCKET=$HOMERUN/ngcp-panel.sock
 LOGERR=/var/log/ngcp/ngcp-panel.log
 NPROC=1
 
-OPTIONS="--listen $USOCKET --daemon --pidfile $PIDFILE --nproc $NPROC"
-
 if ! [ -x "$DAEMON" ] ; then
   log_warning_msg "File $DAEMON not available/executable."
   exit 0
@@ -116,6 +114,8 @@ _stop() {
 if [ -f $DEFAULTS ]; then
    . $DEFAULTS || true
 fi
+
+OPTIONS="--listen $USOCKET --daemon --pidfile $PIDFILE --nproc $NPROC"
 
 if [ "$RUN_DAEMON" != "yes" ]; then
     log_failure_msg "$NAME not yet configured. Edit /etc/default/$NAME first."
