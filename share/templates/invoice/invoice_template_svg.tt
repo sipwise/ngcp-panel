@@ -155,7 +155,7 @@
 
 <!--{[%MACRO zonepage(callsdata, total, page, pagelocal, pageslocalnum, rows_interval) BLOCK-%]}-->
 <!--page-->
-<g id="zonepage" display="none">
+<g id="zonepage" display="none" rows="20" rows-interval="12">
     <title>TitlePage_ZonesAndTotal</title>
 <text x="65" y="225" class="ps00 ps10 ps25">Verbindungsentgelte</text>
 <path d="M75 228 L551 228" class="ps01 ps10 ps25"/>
@@ -167,7 +167,7 @@
 <text x="483" y="238" class="ps00 ps10 ps25">Betrag in EUR</text>
 
     <!--{[%MACRO datarow(call) BLOCK-%]}-->
-    <text y="255" text-anchor="start" id="zonepage_datarow[%loop.count-%]" rows="20" rows-interval="12">
+    <text y="255" text-anchor="start" id="zonepage_datarow[%loop.count-%]">
         <!--{[%IF call.1; call = call.1; END%]}-->
         <tspan x="80" id="zonepage_datarow_zone[%loop.count-%]" text-anchor="start" class="ps00 ps10 ps23"><!--{[% call.get_column('zone') _ '/' _ call.get_column('zone_detail') %]}--><!--{[%#}-->Example zone/Fixed<!--{%]}--></tspan>
         <tspan x="370" id="zonepage_datarow_number[%loop.count-%]" text-anchor="end" class="ps00 ps10 ps23"><!--{[% call.get_column('number') %]}--><!--{[%#}-->0<!--{%]}--></tspan>
