@@ -29,7 +29,7 @@
 <!--pageSet-->
 <!--{[%END-%]}-->
 
-<!--{[%MACRO titlepage(zonesdata, callsdata, page, pageslocalnum, titlezoneinterval, titlecallinterval, zonestotal, callstotal) BLOCK-%]}-->
+<!--{[%MACRO titlepage(zonesdata, callsdata, page, pageslocalnum, titlezoneinterval, titlecallinterval, total) BLOCK-%]}-->
 <!--page-->
 <g y="0" x="0" width="841" height="595" id="titlepage_1"  zone-rows="2" zone-rows-interval="12">
 <title>TitlePage_1</title>
@@ -131,7 +131,7 @@
 
     <!--{[% titlerow(page) -%]}-->
     <!--{[% list_zones(zonesdata, page, page, pageslocalnum, 'datarow', total, 'svg', titlezoneinterval) -%]}-->
-    <!--{[%IF (page==pageslocalnum); adjustrow (zonestotal, page, pagelocal, pageslocalnum, 'totalrow', 'svg', titlezoneinterval, zonesdata.size); END -%]}-->
+    <!--{[%IF (page==pageslocalnum); adjustrow (total.zonepage.global, page, pagelocal, pageslocalnum, 'totalrow', 'svg', titlezoneinterval, zonesdata.size); END -%]}-->
 </g>
 <!--{[%IF (page==pageslocalnum); titlepagetail(); END -%]}-->
 <!--/page-->
@@ -195,7 +195,7 @@
 
     <!--{[% titlerow(page) -%]}-->
     <!--{[% list_zones(callsdata, page, pagelocal, pageslocalnum, 'datarow', total, 'svg', rows_interval) -%]}-->
-    <!--{[%IF (pagelocal==pageslocalnum); adjustrow (total, page, pagelocal, pageslocalnum, 'totalrow', 'svg', rows_interval, callsdata.size); END -%]}-->
+    <!--{[%IF (pagelocal==pageslocalnum); adjustrow (total.zonepage.global, page, pagelocal, pageslocalnum, 'totalrow', 'svg', rows_interval, callsdata.size); END -%]}-->
 </g>
 <!--{[%IF (page==pageslocalnum); titlepagetail(); END -%]}-->
 <!--/page-->
@@ -234,14 +234,14 @@
     <text y="20" text-anchor="end" id="callpage_calls_total" class="datarow">
         <tspan x="0" id="callpage_calls_total_title" text-anchor="start" class="ps00 ps10 ps23">Total:</tspan>
         <tspan x="90" id="callpage_calls_total_duration" text-anchor="start" class="ps00 ps10 ps23"><!--{[% date.format(data.duration,'%H:%M:%S', gmt => 1) %]}--><!--{[%#}-->0.000<!--{%]}--></tspan>
-       <tspan x="475" id="callpage_calls_total_cost" class="ps00 ps10 ps23"><!--{[% ( data.cost )|format('%.4f') %]}--><!--{[%#}-->0.0000<!--{%]}--></tspan>
+       <tspan x="475" id="callpage_calls_total_cost" class="ps00 ps10 ps23"><!--{[% data.cost|format('%.4f') %]}--><!--{[%#}-->0.0000<!--{%]}--></tspan>
     </text>
     <rect x="0" y="8" width="486" height="0.1" stroke="#444444" stroke-width="0.5" fill="none"/>
     <!--{[%END-%]}-->
 
 <!--{[% titlerow -%]}-->
 <!--{[% list_calls(callsdata, page, pagelocal, pageslocalnum, 'datarow', total, 'svg', rows_interval) -%]}-->
-<!--{[%IF (pagelocal==pageslocalnum); adjustrow(total, page, pagelocal, pageslocalnum, 'totalrow', 'svg', rows_interval, callsdata.size); END-%]}-->
+<!--{[%IF (pagelocal==pageslocalnum); adjustrow(total.callpage.global, page, pagelocal, pageslocalnum, 'totalrow', 'svg', rows_interval, callsdata.size); END-%]}-->
         </g>
     </g>
 <!--/page-->

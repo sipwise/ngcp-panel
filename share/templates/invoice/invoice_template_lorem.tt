@@ -111,7 +111,7 @@ DEFAULT bp.fraud_daily_limit = '';
 DEFAULT bp.fraud_daily_lock = '';
 DEFAULT bp.fraud_daily_notify = '';
 DEFAULT bp.currency = '';
-DEFAULT bp.vat_rate = '';
+DEFAULT bp.vat_rate = '20';
 DEFAULT bp.vat_included = '';
 END;
 
@@ -147,10 +147,11 @@ template_variables.description.import({
 });
 IF !invoice_details_zones.size();
     i=1;
-    WHILE i <= 45;
+    WHILE i <= 3;
         invoice_details_zones.push([i,{
             number               => i * 2 ,
-            cost                 => i / 10,
+            cost                 => i * 10 ,
+            source_customer_cost => i * 10 ,
             duration             => i * 10,
             free_time            => i * 5,
             zone                 => 'Example Zone',

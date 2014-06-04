@@ -81,7 +81,8 @@ MACRO adjustrow(data, page, pagelocal, pageslocalnum, rowtype, tt_type, rows_int
     IF rowtype == 'datarow' ;
         row = datarow(data);
     ELSIF rowtype == 'totalrow' ;
-        row = totalrow( (pagelocal == pageslocalnum) ? data.global : data.perpage.${pagelocal} );
+        #row = totalrow( (pagelocal == pageslocalnum) ? data.global : data.perpage.${pagelocal} );
+        row = totalrow( data );
     END;
     #to avoid errors if some node of the same type are on the root level
     row = '<svg>' _ row _ '</svg>';
@@ -101,17 +102,11 @@ END ;
 MACRO list_zones(callsdata, page, pagelocal, pageslocalnum, rowtype, total, tt_type, rows_interval) BLOCK;
      FOR call IN callsdata ;#invoice_details;
         IF call.1; calldata = call.1; ELSE; calldata = call; END;
-            FOREACH colname in ['number','duration','free_time','source_customer_cost', 'cost'];
+            FOREACH colname IN ['number','duration','free_time','source_customer_cost'];
                 calldata.${colname} = ifz(calldata.get_column(colname));
+                total.zonepage.perpage.${pagelocal}.${colname} = ifz(total.zonepage.perpage.${pagelocal}.${colname}) + calldata.${colname};
             END;
-            total.global.cost = ifz(total.global.cost) + ( Math.int(calldata.source_customer_cost) / 100 ) ;
-            total.global.number = ifz(total.global.number)         + calldata.number ;
-            total.global.duration = ifz(total.global.duration)     + calldata.duration ;
-            total.global.free_time = ifz(total.global.free_time)   + calldata.free_time ;
-            total.perpage.${pagelocal}.cost = ifz(total.perpage.${pagelocal}.cost) + ( Math.int(calldata.source_customer_cost) / 100) ;
-            total.perpage.${pagelocal}.number = ifz(total.perpage.${pagelocal}.number)  + calldata.number ;
-            total.perpage.${pagelocal}.duration = ifz(total.perpage.${pagelocal}.duration)  + calldata.duration ;
-            total.perpage.${pagelocal}.free_time = ifz(total.perpage.${pagelocal}.free_time) + calldata.free_time ;
+            total.zonepage.perpage.${pagelocal}.cost = ifz(total.perpage.${pagelocal}.cost) + ( Math.int(calldata.source_customer_cost) / 100) ;
             adjustrow(call, page, pagelocal, pageslocalnum, rowtype,  tt_type, rows_interval, loop.count) ;
     END ;
 END ;
@@ -119,16 +114,28 @@ END ;
 MACRO list_calls(callsdata, page, pagelocal, pageslocalnum, rowtype, total, tt_type, rows_interval) BLOCK;
      FOR call IN callsdata ;#invoice_details;
         IF call.1; calldata = call.1; ELSE; calldata = call; END;
-            FOREACH colname in ['source_customer_cost','duration'];
+            FOREACH colname IN ['source_customer_cost','duration'];
                 calldata.${colname} = ifz(calldata.get_column(colname));
+                total.callpage.perpage.${pagelocal}.${colname} = ifz(total.callpage.perpage.${pagelocal}.${colname}) + calldata.${colname};
             END;
-        total.global.duration = ifz(total.global.duration) + calldata.duration ;
-        total.global.cost = ifz(total.global.cost) + ( Math.int(calldata.source_customer_cost) / 100 ) ;
-        total.perpage.${pagelocal}.duration = ifz(total.perpage.${pagelocal}.duration) + calldata.duration ;
-        total.perpage.${pagelocal}.cost = ifz(total.perpage.${pagelocal}.cost) + ( Math.int(calldata.source_customer_cost) / 100 ) ;
+        total.callpage.perpage.${pagelocal}.cost = ifz(total.callpage.perpage.${pagelocal}.cost) + ( Math.int(calldata.source_customer_cost) / 100 ) ;
         adjustrow(call, page, pagelocal, pageslocalnum, rowtype,  tt_type, rows_interval, loop.count) ;
     END ;
 END ;
+
+MACRO count_total(total, list, pagetype) BLOCK;
+    FOR call IN list ;#invoice_details;
+        IF call.1; calldata = call.1; ELSE; calldata = call; END;
+        vars = ['source_customer_cost','duration'];
+        IF pagetype == 'zonepage'; vars.push('number','free_time'); END;
+        FOREACH colname IN vars;#
+            calldata.${colname} = ifz(calldata.get_column(colname));
+            total.${pagetype}.global.${colname} = ifz(total.${pagetype}.global.${colname}) + calldata.${colname};
+        END;
+        total.${pagetype}.global.cost = ifz(total.${pagetype}.global.cost) + ( Math.int(calldata.source_customer_cost) / 100 );
+    END ;
+    total.${pagetype}.global.source_customer_cost = total.${pagetype}.global.cost;
+END;
 
 MACRO get_page_rows_number(pagetype, tt_type, rows_type) BLOCK;
     IF tt_type == 'svg'  ;
@@ -160,7 +167,14 @@ MACRO show_pages(invoice_details_zones, invoice_details_calls, pagetype, pagenum
     
     #pagewithblock();
     
-    total = {perpage => [], global => {}, pagetype => { call=> {perpage => [], global => {}}, zone => {perpage => [], global => {}} } } ;
+    total = { callpage=> {perpage => [], global => {}}, zonepage => {perpage => [], global => {}} } ;
+    count_total(total, invoice_details_zones,'zonepage');
+    count_total(total, invoice_details_calls,'callpage');
+    DEFAULT invoice.amount_netto = ifz(total.callpage.global.cost) + ifz(total.zonepage.global.cost) ;
+    DEFAULT invoice.amount_vat = ifz(invoice.amount_netto) * ifz( bp.vat_rate) / 100 ;
+    DEFAULT invoice.amount = ifz(invoice.amount_netto) + ifz(invoice.amount_vat) ;
+    DEFAULT invoice.amount_payment = invoice.amount - ifz(invoice.debit) ;
+
     alltitlepages = ifz(alltitlepages) ? alltitlepages : 1;
     allzonerowsnumber = invoice_details_zones.size() ;
     titlezonerows =  get_page_rows_number('titlepage','svg','zone') ;
@@ -188,7 +202,6 @@ MACRO show_pages(invoice_details_zones, invoice_details_calls, pagetype, pagenum
     lastcallrows = allcallrowsnumber - allmidcallrows - titlecallrows ;
     allcallpages = allmidcallpages + ( lastcallrows > 0 ? 1 : 0 ) ;
     
-    
     IF ( pagetype == 'zone' || pagetype=='all' ) && allzonerowsnumber ;
         pages = pagenum_in ? [ pagenum_in ] : [ 1 .. allmidzonepages ] ;
         FOREACH pagenum IN pages ;
@@ -210,16 +223,6 @@ MACRO show_pages(invoice_details_zones, invoice_details_calls, pagetype, pagenum
             output = output _ document_footer();
         END;
     END;
-
-    #Dumper.dump(total);
-    
-    total.pagetype.call.global.import(total.global);
-    # total.pagetype.call.perpage.import(total.perpage);
-
-    #Dumper.dump(total);
-
-    total.global = {};
-    total.perpage = [] ;
     
     IF ( pagetype == 'call' || pagetype=='all' );
         pages = pagenum_in ? [ pagenum_in ] : [ 1 .. allmidcallpages ] ;
@@ -240,17 +243,7 @@ MACRO show_pages(invoice_details_zones, invoice_details_calls, pagetype, pagenum
             output = output _ document_footer();
         END;
     END;
-
-    # Dumper.dump(total);
-    
-    total.pagetype.zone.global.import(total.global);
-    # total.pagetype.zone.perpage = total.pagetype.zone.perpage.import(total.perpage);
-    
-    DEFAULT invoice.amount_netto = ifz(total.pagetype.call.global.cost) + ifz(total.pagetype.zone.global.cost) ;
-    DEFAULT invoice.amount_vat = ifz(invoice.amount_netto) * 0.2 ;
-    DEFAULT invoice.amount = ifz(invoice.amount_netto) + ifz(invoice.amount_vat) ;
-    DEFAULT invoice.amount_payment = invoice.amount - ifz(invoice.debit) ;
-    
+        
     IF ( pagetype == 'title' || pagetype=='all') ;
         pagenum = 1;
         output_title = output_title _ document_header();
@@ -262,8 +255,7 @@ MACRO show_pages(invoice_details_zones, invoice_details_calls, pagetype, pagenum
             1 + allzonepages ,
             titlezoneinterval,
             titlecallinterval,
-            total.pagetype.zone.global,
-            total.pagetype.call.global
+            total
         ) ;
         output_title = output_title _ bgpage(pagenum) ;
         output_title = output_title _ document_footer();
