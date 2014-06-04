@@ -197,7 +197,7 @@
     <!--{[% list_zones(callsdata, page, pagelocal, pageslocalnum, 'datarow', total, 'svg', rows_interval) -%]}-->
     <!--{[%IF (pagelocal==pageslocalnum); adjustrow (total.zonepage.global, page, pagelocal, pageslocalnum, 'totalrow', 'svg', rows_interval, callsdata.size); END -%]}-->
 </g>
-<!--{[%IF (page==pageslocalnum); titlepagetail(); END -%]}-->
+<!--{[%IF (pagelocal==pageslocalnum); titlepagetail(); END -%]}-->
 <!--/page-->
 <!--{[%END-%]}-->
 
