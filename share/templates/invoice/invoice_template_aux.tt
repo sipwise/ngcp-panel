@@ -76,50 +76,70 @@ MACRO get_page(pagetype) BLOCK ;
     page;
 END;
 
-MACRO adjustrow(data, page, pagelocal, pageslocalnum, rowtype, tt_type, rows_interval_in, rownumber) BLOCK ;
+MACRO getDy(rows_interval_in, rownumber) BLOCK ;
     rows_interval = ( ifz(rows_interval_in) > 0 ) ? rows_interval_in : row_vertical_interval;
+    dy = ( ifz(rows_interval) * ( ifz(rownumber) - 1 ) );
+    dy;
+END;
+
+MACRO adjustrow(data, page, pagelocal, pageslocalnum, rowtype, dy, return_y) BLOCK ;
     IF rowtype == 'datarow' ;
         row = datarow(data);
     ELSIF rowtype == 'totalrow' ;
-        #row = totalrow( (pagelocal == pageslocalnum) ? data.global : data.perpage.${pagelocal} );
         row = totalrow( data );
+    ELSE;
+        row = rowtype;
     END;
     #to avoid errors if some node of the same type are on the root level
     row = '<svg>' _ row _ '</svg>';
+    y_all = [];
     USE xpath = XML.XPath(row);
     FOREACH y_attr_el IN xpath.find('//@y');
         FOREACH y_attr_node IN y_attr_el.get_nodelist();
             y_old = Math.int(ifz(y_attr_node.getNodeValue('y'))) ;
-            y = ifz(y_old) + ( ifz(rows_interval) * ( ifz(rownumber) - 1 ) ) ;
+            y = ifz(y_old) + dy ;
+            y_all.push(y);
             t=y_attr_node.setNodeValue(y);
         END;
     END;
-    row = xpath.findnodes('/').toString();
-    row = row.replace('^<svg>|<\/svg>$','');
-    row;
+    res;
+    IF !return_y;
+        row = xpath.findnodes('/').toString();
+        row = row.replace('^<svg>|<\/svg>$','');
+        res = row;
+    ELSE;
+        y_all = y_all.nsort();
+        IF return_y != 'min';
+            y_all = y_all.reverse();
+        END;
+        res = y_all.0;
+    END;
+    res;
 END ;
 
 MACRO list_zones(callsdata, page, pagelocal, pageslocalnum, rowtype, total, tt_type, rows_interval) BLOCK;
-     FOR call IN callsdata ;#invoice_details;
+     FOREACH call IN callsdata ;#invoice_details;
         IF call.1; calldata = call.1; ELSE; calldata = call; END;
-            FOREACH colname IN ['number','duration','free_time','source_customer_cost'];
-                calldata.${colname} = ifz(calldata.get_column(colname));
-                total.zonepage.perpage.${pagelocal}.${colname} = ifz(total.zonepage.perpage.${pagelocal}.${colname}) + calldata.${colname};
-            END;
-            total.zonepage.perpage.${pagelocal}.cost = ifz(total.perpage.${pagelocal}.cost) + ( Math.int(calldata.source_customer_cost) / 100) ;
-            adjustrow(call, page, pagelocal, pageslocalnum, rowtype,  tt_type, rows_interval, loop.count) ;
+        FOREACH colname IN ['number','duration','free_time','source_customer_cost'];
+            calldata.${colname} = ifz(calldata.get_column(colname));
+            total.zonepage.perpage.${pagelocal}.${colname} = ifz(total.zonepage.perpage.${pagelocal}.${colname}) + calldata.${colname};
+        END;
+        total.zonepage.perpage.${pagelocal}.cost = ifz(total.perpage.${pagelocal}.cost) + ( Math.int(calldata.source_customer_cost) / 100) ;
+        dy = getDy(rows_interval, loop.count);
+        adjustrow(call, page, pagelocal, pageslocalnum, rowtype,  dy) ;
     END ;
 END ;
 
 MACRO list_calls(callsdata, page, pagelocal, pageslocalnum, rowtype, total, tt_type, rows_interval) BLOCK;
-     FOR call IN callsdata ;#invoice_details;
+    FOREACH call IN callsdata ;#invoice_details;
         IF call.1; calldata = call.1; ELSE; calldata = call; END;
-            FOREACH colname IN ['source_customer_cost','duration'];
-                calldata.${colname} = ifz(calldata.get_column(colname));
-                total.callpage.perpage.${pagelocal}.${colname} = ifz(total.callpage.perpage.${pagelocal}.${colname}) + calldata.${colname};
-            END;
+        FOREACH colname IN ['source_customer_cost','duration'];
+            calldata.${colname} = ifz(calldata.get_column(colname));
+            total.callpage.perpage.${pagelocal}.${colname} = ifz(total.callpage.perpage.${pagelocal}.${colname}) + calldata.${colname};
+        END;
         total.callpage.perpage.${pagelocal}.cost = ifz(total.callpage.perpage.${pagelocal}.cost) + ( Math.int(calldata.source_customer_cost) / 100 ) ;
-        adjustrow(call, page, pagelocal, pageslocalnum, rowtype,  tt_type, rows_interval, loop.count) ;
+        dy = getDy(rows_interval, loop.count());
+        adjustrow(call, page, pagelocal, pageslocalnum, rowtype,  dy) ;
     END ;
 END ;
 
@@ -146,9 +166,14 @@ MACRO get_page_rows_number(pagetype, tt_type, rows_type, listsize) BLOCK;
     matches = page.match( page_rows_re );
     IF matches.size > 0;
         rows = matches.0;
-        IF matches.1 && matches.1 < ifz(listsize);
+        #so if we can show only 2 records with all bottoms, and 13 with totalrow only, and list has 16 rows - then show 13 with totalrow only
+        #IF matches.1 && matches.1 < ifz(listsize);
+        IF matches.1 ;
             rows = matches.1;
         END;
+    END;
+    IF rows > ifz(listsize);
+        rows = ifz(listsize);
     END;
     rows = Math.int(ifz(rows));
     rows;
@@ -175,7 +200,7 @@ MACRO show_pages(invoice_details_zones, invoice_details_calls, pagetype, pagenum
     total = { callpage=> {perpage => [], global => {}}, zonepage => {perpage => [], global => {}} } ;
     count_total(total, invoice_details_zones,'zonepage');
     count_total(total, invoice_details_calls,'callpage');
-    DEFAULT invoice.amount_netto = ifz(total.callpage.global.cost) + ifz(total.zonepage.global.cost) ;
+    DEFAULT invoice.amount_netto = ifz(total.callpage.global.cost) + ifz(total.zonepage.global.cost) + ifz(bp.interval_charge);
     DEFAULT invoice.amount_vat = ifz(invoice.amount_netto) * ifz( bp.vat_rate) / 100 ;
     DEFAULT invoice.amount = ifz(invoice.amount_netto) + ifz(invoice.amount_vat) ;
     DEFAULT invoice.amount_payment = invoice.amount - ifz(invoice.debit) ;
@@ -206,7 +231,22 @@ MACRO show_pages(invoice_details_zones, invoice_details_calls, pagetype, pagenum
     allmidcallrows = allmidcallpages * midcallrows ;
     lastcallrows = allcallrowsnumber - allmidcallrows - titlecallrows ;
     allcallpages = allmidcallpages + ( lastcallrows > 0 ? 1 : 0 ) ;
-    
+    IF ( pagetype == 'title' || pagetype=='all') ;
+        pagenum = 1;
+        output_title = output_title _ document_header();
+        output_title = output_title _ titlepage( 
+            ( ( titlezonerows > 0 ) && ( invoice_details_zones.size() > 0 ) ) ? invoice_details_zones.slice(0, titlezonerows - 1 ) : [], 
+            
+            ( ( titlecallrows > 0 ) && ( invoice_details_calls.size() > 0 ) ) ? invoice_details_calls.slice(0, titlecallrows - 1 ) : [], 
+            pagenum,
+            1 + allzonepages ,
+            titlezoneinterval,
+            titlecallinterval,
+            total
+        ) ;
+        output_title = output_title _ bgpage(1 + allzonepages) ;
+        output_title = output_title _ document_footer();
+    END;    
     IF ( pagetype == 'zone' || pagetype=='all' ) && allzonerowsnumber ;
         pages = pagenum_in ? [ pagenum_in ] : [ 1 .. allmidzonepages ] ;
         FOREACH pagenum IN pages ;
@@ -224,6 +264,8 @@ MACRO show_pages(invoice_details_zones, invoice_details_calls, pagetype, pagenum
             pagenum = 1 + alltitlepages + allmidzonepages ;
             output = output _ document_header();
             output = output _ zonepage( invoice_details_zones.slice( allzonerowsnumber - lastzonerows ), total, pagenum, allzonepages, allzonepages, midzoneinterval ) ;
+            #alltitlepages could change due to invoice footer
+            pagenum = 1 + alltitlepages + allmidzonepages ;
             output = output _ bgpage(pagenum, allzonepages, allzonepages) ;
             output = output _ document_footer();
         END;
@@ -249,22 +291,7 @@ MACRO show_pages(invoice_details_zones, invoice_details_calls, pagetype, pagenum
         END;
     END;
         
-    IF ( pagetype == 'title' || pagetype=='all') ;
-        pagenum = 1;
-        output_title = output_title _ document_header();
-        output_title = output_title _ titlepage( 
-            ( ( titlezonerows > 0 ) && ( invoice_details_zones.size() > 0 ) ) ? invoice_details_zones.slice(0, titlezonerows - 1 ) : [], 
-            
-            ( ( titlecallrows > 0 ) && ( invoice_details_calls.size() > 0 ) ) ? invoice_details_calls.slice(0, titlecallrows - 1 ) : [], 
-            pagenum,
-            1 + allzonepages ,
-            titlezoneinterval,
-            titlecallinterval,
-            total
-        ) ;
-        output_title = output_title _ bgpage(pagenum) ;
-        output_title = output_title _ document_footer();
-    END;
+
     output_title _ output;
 END;
 %]

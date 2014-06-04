@@ -11,16 +11,16 @@ template_variables.description.import({
     }
 });
 
-IF !invoice.serial;
+IF 1 || !invoice.serial;
 #info from db
 DEFAULT invoice.month=date.format(date.now(),'%m');
 DEFAULT invoice.serial=Math.int(Math.rand(999999))|format('%06d');
 DEFAULT invoice.year=date.format(date.now(),'%y');
 #/info from db
-DEFAULT invoice.amount='1200';
-DEFAULT invoice.amount_netto='1000';
-DEFAULT invoice.amount_payment='650';
-DEFAULT invoice.amount_vat='200';
+DEFAULT invoice.amount='';
+DEFAULT invoice.amount_netto='';
+DEFAULT invoice.amount_payment='';
+DEFAULT invoice.amount_vat='';
 DEFAULT invoice.cloud_pbx_amount='921';
 DEFAULT invoice.debit='500';
 DEFAULT invoice.discount_service='10';
@@ -147,7 +147,7 @@ template_variables.description.import({
 });
 IF !invoice_details_zones.size();
     i=1;
-    WHILE i <= 3;
+    WHILE i <= 4;
         invoice_details_zones.push([i,{
             number               => i * 2 ,
             cost                 => i * 10 ,
