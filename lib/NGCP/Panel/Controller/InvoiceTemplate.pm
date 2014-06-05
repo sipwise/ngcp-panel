@@ -317,17 +317,14 @@ sub set_content_ajax :Chained('base') :PathPart('editcontent/set/ajax') :Args(0)
         return;
     }
 
-    print ">>>>>>>>>>>>>>>>> sanitize\n";
     NGCP::Panel::Utils::InvoiceTemplate::sanitize_svg(\$content);
 
     try {
-        print ">>>>>>>>>>>>>>>>> update content\n";
         $tmpl->update({
             base64_saved => $content,
             base64_previewed => undef,
         });
 
-        print ">>>>>>>>>>>>>>>>> saved content\n";
     } catch($e) {
         NGCP::Panel::Utils::Message->error(
             c => $c,
@@ -348,6 +345,17 @@ sub preview_content :Chained('base') :PathPart('editcontent/preview') :Args(0) {
     my $tmpl = $c->stash->{tmpl};
 
     my $svg = $tmpl->base64_saved;
+
+    unless(defined $svg) {
+        NGCP::Panel::Utils::Message->error(
+            c     => $c,
+            log   => 'Trying to preview a non-saved svg template',
+            desc  => $c->loc('Template has not been saved yet, please save before previewing.'),
+        );
+        NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for('/invoicetemplate'));
+        return;
+    }
+
     my $pdf = '';
     my $t = NGCP::Panel::Utils::InvoiceTemplate::get_tt();
     my $out = '';
@@ -360,16 +368,23 @@ sub preview_content :Chained('base') :PathPart('editcontent/preview') :Args(0) {
         $t->process(\$svg, $dummy, \$out) || do {
             my $error = $t->error();
             my $msg = "error processing template, type=".$error->type.", info='".$error->info."'";
-            $c->log->error($msg);
-
-            $c->response->body("500 - error creating template:\n$msg");
-            $c->response->status(500);
+            NGCP::Panel::Utils::Message->error(
+                c     => $c,
+                log   => $msg,
+                desc  => $c->loc('Failed to render template. Type is ' . $error->type . ', info is ' . $error->info),
+            );
+            NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for('/invoicetemplate'));
             return;
         };
 
         NGCP::Panel::Utils::InvoiceTemplate::svg_pdf($c, \$out, \$pdf);
     } catch($e) {
-        $c->log->error($e);
+        NGCP::Panel::Utils::Message->error(
+            c     => $c,
+            log   => $e,
+            desc  => $c->loc('Failed to preview template'),
+        );
+        NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for('/invoicetemplate'));
         return;
     }
 
