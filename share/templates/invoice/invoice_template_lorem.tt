@@ -1,7 +1,8 @@
 [%
 USE Dumper;
-USE Date;
+USE date;
 USE Math;
+USE format;
 
 template_variables.description = {};
 template_variables.description.import({
@@ -10,12 +11,11 @@ template_variables.description.import({
         'amount' => 'Invoice amount with already considered discount.',
     }
 });
-
 IF 1 || !invoice.serial;
 #info from db
-DEFAULT invoice.month=date.format(date.now(),'%m');
+DEFAULT invoice.month = date.format( date.now(),'%m');
 DEFAULT invoice.serial=Math.int(Math.rand(999999))|format('%06d');
-DEFAULT invoice.year=date.format(date.now(),'%y');
+DEFAULT invoice.year=date.format(date.now(),'%Y');
 #/info from db
 DEFAULT invoice.amount='';
 DEFAULT invoice.amount_netto='';
