@@ -24,20 +24,15 @@ sub svg_pdf {
         my $pagefile = "$tempdir/$pagenum.svg";
         push @pagefiles, $pagefile;
 
-
-        print ">>>>>>>>>>>>>>>>>> processing $pagefile\n";
-
         my $xp = XML::XPath->new($page);
         my $g = $xp->find('//g[contains(@class,"firsty-") and contains(@class,"lasty")]');
         foreach my $node($g->get_nodelist) {
             my $class = $node->getAttribute('class');
-            print ">>>>>>>>>>>>>>>>>> got class $class\n";
             my $firsty = $class; my $lasty = $class;
 
             $firsty =~ s/^.+firsty\-(\d+).*$/$1/;
             $lasty =~ s/^.+lasty\-(\d+).*$/$1/;
             if(length($firsty) && length($lasty)) {
-                print ">>>>>>>>>>>> we got firsty=$firsty and lasty=$lasty\n";
                 process_child_nodes($node, $firsty, $lasty);
             }
         }
@@ -124,7 +119,6 @@ sub process_child_nodes {
             my $delta = $a - $firsty;
             my $newy = $y + $delta;
 
-            print ">>>>>>>>>>>>>> attr=$attr, firsty=$firsty, a=$a, delta=$delta, new=$newy\n";
             $node->removeAttribute($attr);
             $node->appendAttribute(XML::XPath::Node::Attribute->new($attr, $newy."mm"));
         }
@@ -189,12 +183,12 @@ sub get_dummy_data {
             vat_included => 0,
         },
         invoice => {
-            year => '2014',
-            month => '01',
+            period_start => time - 2592000,
+            period_end => time,
             serial => '1234567',
-            total_net => 12345,
-            vat => 12345*0.2,
-            total => 12345+(12345*0.2),
+            amount_net => 12345,
+            amount_vat => 12345*0.2,
+            amount_total => 12345+(12345*0.2),
         },
         calls => [
             map {{ 

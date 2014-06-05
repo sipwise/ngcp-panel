@@ -108,6 +108,16 @@ has_field 'bic' => (
     },
 );
 
+has_field 'bankname' => (
+    type => 'Text',
+    maxlength => 255,
+    label => 'Bank Name',
+    element_attr => {
+        rel => ['tooltip'],
+        title => ['The bank name of the contact bank details.']
+    },
+);
+
 has_field 'vatnum' => (
     type => 'Text',
     label => 'VAT Number',
@@ -158,6 +168,106 @@ has_field 'faxnumber' => (
     },
 );
 
+has_field 'gpp0' => (
+    type => 'Text',
+    maxlength => 255,
+    label => 'General Purpose 0',
+    element_attr => {
+        rel => ['tooltip'],
+        title => ['A general purpose field for fee use.']
+    },
+);
+
+has_field 'gpp1' => (
+    type => 'Text',
+    maxlength => 255,
+    label => 'General Purpose 1',
+    element_attr => {
+        rel => ['tooltip'],
+        title => ['A general purpose field for fee use.']
+    },
+);
+
+has_field 'gpp2' => (
+    type => 'Text',
+    maxlength => 255,
+    label => 'General Purpose 2',
+    element_attr => {
+        rel => ['tooltip'],
+        title => ['A general purpose field for fee use.']
+    },
+);
+
+has_field 'gpp3' => (
+    type => 'Text',
+    maxlength => 255,
+    label => 'General Purpose 3',
+    element_attr => {
+        rel => ['tooltip'],
+        title => ['A general purpose field for fee use.']
+    },
+);
+
+has_field 'gpp4' => (
+    type => 'Text',
+    maxlength => 255,
+    label => 'General Purpose 4',
+    element_attr => {
+        rel => ['tooltip'],
+        title => ['A general purpose field for fee use.']
+    },
+);
+
+has_field 'gpp5' => (
+    type => 'Text',
+    maxlength => 255,
+    label => 'General Purpose 5',
+    element_attr => {
+        rel => ['tooltip'],
+        title => ['A general purpose field for fee use.']
+    },
+);
+
+has_field 'gpp6' => (
+    type => 'Text',
+    maxlength => 255,
+    label => 'General Purpose 6',
+    element_attr => {
+        rel => ['tooltip'],
+        title => ['A general purpose field for fee use.']
+    },
+);
+
+has_field 'gpp7' => (
+    type => 'Text',
+    maxlength => 255,
+    label => 'General Purpose 7',
+    element_attr => {
+        rel => ['tooltip'],
+        title => ['A general purpose field for fee use.']
+    },
+);
+
+has_field 'gpp8' => (
+    type => 'Text',
+    maxlength => 255,
+    label => 'General Purpose 8',
+    element_attr => {
+        rel => ['tooltip'],
+        title => ['A general purpose field for fee use.']
+    },
+);
+
+has_field 'gpp9' => (
+    type => 'Text',
+    maxlength => 255,
+    label => 'General Purpose 9',
+    element_attr => {
+        rel => ['tooltip'],
+        title => ['A general purpose field for fee use.']
+    },
+);
+
 has_field 'save' => (
     type => 'Submit',
     value => 'Save',
@@ -169,7 +279,9 @@ has_block 'fields' => (
     tag => 'div',
     class => [qw/modal-body/],
     render_list => [qw/firstname lastname email company street postcode city
-        country iban bic vatnum comregnum phonenumber mobilenumber faxnumber/],
+        country iban bic bankname vatnum comregnum phonenumber mobilenumber faxnumber
+        gpp0 gpp1 gpp2 gpp3 gpp4 gpp5 gpp6 gpp7 gpp8 gpp9
+        /],
 );
 
 has_block 'actions' => (

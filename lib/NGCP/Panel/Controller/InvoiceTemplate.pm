@@ -278,8 +278,8 @@ sub get_content_ajax :Chained('base') :PathPart('editcontent/get/ajax') :Args(0)
     my $tmpl = $c->stash->{tmpl};
 
     my $content;
-    if($tmpl->base64_saved) {
-        $content = $tmpl->base64_saved; 
+    if($tmpl->data) {
+        $content = $tmpl->data; 
     } else {
         my $default = 'invoice/default/invoice_template_svg.tt';
         my $t = NGCP::Panel::Utils::InvoiceTemplate::get_tt();
@@ -321,8 +321,7 @@ sub set_content_ajax :Chained('base') :PathPart('editcontent/set/ajax') :Args(0)
 
     try {
         $tmpl->update({
-            base64_saved => $content,
-            base64_previewed => undef,
+            data => $content,
         });
 
     } catch($e) {
@@ -344,7 +343,7 @@ sub preview_content :Chained('base') :PathPart('editcontent/preview') :Args(0) {
     my ($self, $c, @args) = @_;
     my $tmpl = $c->stash->{tmpl};
 
-    my $svg = $tmpl->base64_saved;
+    my $svg = $tmpl->data;
 
     unless(defined $svg) {
         NGCP::Panel::Utils::Message->error(

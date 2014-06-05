@@ -17,7 +17,9 @@ has_block 'fields' => (
     tag => 'div',
     class => [qw/modal-body/],
     render_list => [qw/reseller firstname lastname email company street postcode city
-        country iban bic vatnum comregnum phonenumber mobilenumber faxnumber/],
+        country iban bic bankname vatnum comregnum phonenumber mobilenumber faxnumber
+        gpp0 gpp1 gpp2 gpp3 gpp4 gpp5 gpp6 gpp7 gpp8 gpp9
+        /],
 );
 
 1;

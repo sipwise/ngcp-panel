@@ -6,10 +6,13 @@
 
         money_format(amount=(billprof.interval_charge * 100), comma='.'); fixfee = aux.val;
         money_format(amount=(zones.totalcost), comma='.'); zonefee = aux.val;
-        money_format(amount=(invoice.total_net), comma='.'); netfee = aux.val;
-        money_format(amount=(invoice.vat), comma='.'); vatfee = aux.val;
-        money_format(amount=(invoice.total), comma='.'); allfee = aux.val;
+        money_format(amount=(invoice.amount_net), comma='.'); netfee = aux.val;
+        money_format(amount=(invoice.amount_vat), comma='.'); vatfee = aux.val;
+        money_format(amount=(invoice.amount_total), comma='.'); allfee = aux.val;
         cur = billprof.currency;
+        p_start = date.format(invoice.period_start, '%Y-%m-%d');
+        p_end = date.format(invoice.period_end, '%Y-%m-%d');
+        
     -%]
 }-->
 <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="210mm" height="297mm">
@@ -57,7 +60,7 @@
             <tspan x="190mm" dy="4mm" font-weight="bold">Customer Nr.</tspan>
             <tspan x="190mm" dy="4mm">[% customer.external_id %]</tspan>
             <tspan x="190mm" dy="4mm" font-weight="bold">Invoice Period</tspan>
-            <tspan x="190mm" dy="4mm">[% invoice.year %]-[% invoice.month %]</tspan>
+            <tspan x="190mm" dy="4mm">[% p_start %] - [% p_end %]</tspan>
             <tspan x="190mm" dy="4mm" font-weight="bold">Date</tspan>
             <tspan x="190mm" dy="4mm">[% date_now(f='%Y-%m-%d') %]</tspan>
         </text>
@@ -66,7 +69,7 @@
 
         <text x="20mm" y="110mm" font-family="Verdana" font-size="8pt">
             <tspan x="20mm" dy="0mm">Dear Customer,</tspan>
-            <tspan x="20mm" dy="8mm">For our services provided in the month of [%invoice.year%]-[%invoice.month%], we invoice the following items:</tspan>
+            <tspan x="20mm" dy="8mm">For our services provided in the period of [% p_start %] to [% p_end %], we invoice the following items:</tspan>
         </text>
 
 
