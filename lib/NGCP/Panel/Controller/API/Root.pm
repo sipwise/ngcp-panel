@@ -218,18 +218,21 @@ sub field_to_json : Private {
 
 sub get_collection_properties {
     my ($self, $form) = @_;
+
+    my $renderlist = $form->form->blocks->{fields}->{render_list};
     
     my @props = ();
     foreach my $f($form->fields) {
+        my $name = $f->name;
         next if (
             $f->type eq "Hidden" ||
             $f->type eq "Button" ||
             $f->type eq "Submit" ||
             0);
+        next if(defined $renderlist && !grep {/^$name$/} @{ $renderlist });
         my @types = ();
         push @types, 'null' unless ($f->required || $f->validate_when_empty);
         push @types, $self->field_to_json($f->type);
-        my $name = $f->name;
         if($f->type =~ /^\+NGCP::Panel::Field::/) {
             if($f->type =~ /E164/) {
                 $name = 'primary_number';
@@ -249,6 +252,7 @@ sub get_collection_properties {
         }
         push @props, { name => $name, description => $desc, types => \@types };
     }
+    @props = sort{$a->{name} cmp $b->{name}} @props;
     return \@props;
 }
 

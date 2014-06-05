@@ -6,6 +6,16 @@ extends 'NGCP::Panel::Form::Subscriber';
 sub build_render_list {[qw/submitid fields actions/]}
 sub build_form_element_class {[qw(form-horizontal)]}
 
+has_field 'customer' => (
+    type => '+NGCP::Panel::Field::CustomerContract',
+    label => 'Customer',
+    validate_when_empty => 1,
+    element_attr => {
+        rel => ['tooltip'],
+        title => ['The contract used for this subscriber.']
+    },
+);
+
 has_field 'display_name' => (
     type => 'Text',
     label => 'Display Name',
@@ -38,6 +48,16 @@ has_field 'lock' => (
         title => ['The lock level of the subscriber.'],
     },
 );
+
+has_field 'pbx_extension' => (
+    type => 'Text',
+    label => 'PBX Extension',
+    element_attr => {
+        rel => ['tooltip'],
+        title => ['The PBX extension used for short dialling. If provided, the primary number will automatically be derived from the pilot subscriber\'s primary number suffixed by this extension.']
+    },
+);
+
 
 has_field 'is_pbx_group' => (
     type => 'Boolean',
@@ -99,7 +119,7 @@ has_field 'save' => (
 has_block 'fields' => (
     tag => 'div',
     class => [qw/modal-body/],
-    render_list => [qw/contract domain e164 alias_number email webusername webpassword username password status lock external_id administrative is_pbx_group pbx_group display_name profile_set profile/ ],
+    render_list => [qw/customer domain e164 alias_number email webusername webpassword username password status lock external_id administrative is_pbx_group pbx_group display_name profile_set profile/ ],
 );
 
 has_block 'actions' => (
@@ -113,6 +133,9 @@ sub update_fields {
     my ($self) = @_;
     my $c = $self->ctx;
     return unless $c;
+
+    # make sure we don't use contract, as we have customer
+    $self->field('contract')->inactive(1);
 
     if($c->config->{security}->{password_sip_autogenerate}) {
         $self->field('password')->required(0);

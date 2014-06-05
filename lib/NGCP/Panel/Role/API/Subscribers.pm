@@ -220,7 +220,6 @@ sub prepare_resource {
         $resource->{domain_id} = $domain->id;
     }
     $resource->{e164} = delete $resource->{primary_number};
-    $resource->{contract_id} = delete $resource->{customer_id};
     $resource->{status} //= 'active';
     $resource->{administrative} //= 0;
     $resource->{profile_set}{id} = delete $resource->{profile_set_id};
@@ -250,7 +249,7 @@ sub prepare_resource {
         }
     }
 
-    my $customer = $self->get_customer($c, $resource->{contract_id});
+    my $customer = $self->get_customer($c, $resource->{customer_id});
     return unless($customer);
     if(!$update && defined $customer->max_subscribers && $customer->voip_subscribers->search({ 
             status => { '!=' => 'terminated' },
@@ -284,6 +283,34 @@ sub prepare_resource {
             $admin = $resource->{admin} // 1;
         } else {
             $admin = $resource->{admin} // 0;
+        }
+
+        if($admin_subscriber) {
+            unless($resource->{pbx_extension}) {
+                $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "A pbx_extension is required if customer is PBX and pilot subscriber exists.");
+                return;
+            }
+            $resource->{e164}->{cc} = $admin_subscriber->primary_number->cc;
+            $resource->{e164}->{ac} = $admin_subscriber->primary_number->ac // '';
+            $resource->{e164}->{sn} = $admin_subscriber->primary_number->sn . $resource->{pbx_extension};
+
+            unless($resource->{is_pbx_group}) {
+                unless($resource->{pbx_group_id}) {
+                    $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "A pbx_group_id is required if customer is PBX and pilot subscriber exists.");
+                    return;
+                }
+                my $group_subscriber = $c->model('DB')->resultset('voip_subscribers')->find({
+                    id => $resource->{pbx_group_id},
+                    contract_id => $resource->{customer_id},
+                    'provisioning_voip_subscriber.is_pbx_group' => 1,
+                },{
+                    join => 'provisioning_voip_subscriber',
+                });
+                unless($group_subscriber) {
+                    $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Invalid pbx_group_id, does not exist for this contract.");
+                    return;
+                }
+            }
         }
 
         $preferences->{shared_buddylist_visibility} = 1;
