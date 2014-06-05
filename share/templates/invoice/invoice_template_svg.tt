@@ -72,15 +72,15 @@
 <text x="405" y="410" class="ps00 ps10 ps25">Einzelpreis</text>
 <text x="483" y="410" class="ps00 ps10 ps25">Betrag in EUR</text>
 
-<text x="75" y="431" class="ps00 ps10 ps25" id="block_params.total_period_product" rows-interval="12">Monatliche Grundentgelte</text>
+<text x="75" y="431" class="ps00 ps10 ps25" id="block_total_period_product" rows-interval="12">Monatliche Grundentgelte</text>
 
 [%period = invoice%]
-<text x="75" y="447" class="ps00 ps10 ps23" id="row_params.total_period_product_period_start">[%bp.name%] [%date.format(period.date_start,'%d.%m.%Y')%] - [%date.format(period.date_end,'%d.%m.%Y')%]</text>
+<text x="75" y="447" class="ps00 ps10 ps23" id="row_total_period_product_period_start">[%bp.name%] [%date.format(period.date_start,'%d.%m.%Y')%] - [%date.format(period.date_end,'%d.%m.%Y')%]</text>
 <text x="375" y="447" class="ps00 ps10 ps23">1</text>
 <text x="440" y="447" class="ps00 ps10 ps23" text-anchor="end">[%money_format_comma(bp.interval_charge)%]</text>
-<text x="540" y="447" class="ps00 ps10 ps23" text-anchor="end"  id="params.total_period_product_period_end">[%money_format_comma(bp.interval_charge)%]</text>
+<text x="540" y="447" class="ps00 ps10 ps23" text-anchor="end"  id="total_period_product_period_end">[%money_format_comma(bp.interval_charge)%]</text>
 
-<text x="75" y="461" class="ps00 ps10 ps25" id="row_params.total_period_product_period_end">Summe</text>
+<text x="75" y="461" class="ps00 ps10 ps25" id="row_total_period_product_period_end">Summe</text>
 <text x="540" y="461" class="ps00 ps10 ps25" text-anchor="end">[%money_format_comma(bp.interval_charge)%]</text>
 
 <g transform="matrix(1 0 0 -1 -0 841)">
@@ -143,9 +143,8 @@
     y_max_invoicetotal = adjustrow ('', totalinvoice, dy, 'max', params);
     y_min_invocetail = adjustrow ('', titlepagetail, 0, 'min', params);
     IF y_max_invoicetotal > y_min_invocetail - 20;
-        params.no_show_kunde = 1;
+        alltitlepages = alltitlepages + 1;
         bgpage( params );
-            params.no_show_kunde = 0;
         params.pagenum = params.pagenum + 1;
         document_footer();
         document_header();
@@ -180,7 +179,7 @@ END -%]}-->
 <!--{[%MACRO zonepage(params) BLOCK-%]}-->
 <!--page-->
 <g id="zonepage" display="none" rows="25" rows-interval="12">
-    <title>TitlePage_ZonesAndparams.total</title>
+    <title>TitlePage_ZonesAndTotal</title>
     <!--{[%MACRO titlerow BLOCK-%]}-->
     <text x="65" y="225" class="ps00 ps10 ps25">Verbindungsentgelte</text>
     <path d="M75 228 L551 228" class="ps01 ps10 ps25"/>
@@ -192,9 +191,9 @@ END -%]}-->
     <text x="483" y="238" class="ps00 ps10 ps25">Betrag in EUR</text>
 
     <!--{[%END-%]}-->
-    <!--{[%MACRO datarow(call) BLOCK-%]}-->
+    <!--{[%MACRO datarow(data) BLOCK-%]}-->
     <text y="255" text-anchor="start" id="zonepage_datarow[%loop.count-%]">
-        <!--{[%IF data.1; call = data.1; END%]}-->
+        <!--{[%IF data.1; data = data.1; END%]}-->
         <tspan x="80" id="zonepage_datarow_zone[%loop.count-%]" text-anchor="start" class="ps00 ps10 ps23"><!--{[% data.get_column('zone') _ '/' _ data.get_column('zone_detail') %]}--><!--{[%#}-->Example zone/Fixed<!--{%]}--></tspan>
         <tspan x="370" id="zonepage_datarow_number[%loop.count-%]" text-anchor="end" class="ps00 ps10 ps23"><!--{[% data.get_column('number') %]}--><!--{[%#}-->0<!--{%]}--></tspan>
         <tspan x="410" id="zonepage_datarow_duration[%loop.count-%]" text-anchor="start" class="ps00 ps10 ps23"><!--{[% date.format(data.get_column('duration'),'%H:%M:%S', gmt => 1) %]}--><!--{[%#}-->00:00:00<!--{%]}--></tspan>
@@ -238,9 +237,7 @@ END -%]}-->
     y_min_invocetail = adjustrow ('', titlepagetail, 0, 'min', params);
     IF y_max_invoicetotal > ( y_min_invocetail - 20 ) || !params.data.size;
         IF params.data.size;
-            params.no_show_kunde = 1;
             bgpage( params );
-            params.no_show_kunde = 0;
             params.pagenum = params.pagenum + 1;
             document_footer();
             document_header();
@@ -276,7 +273,7 @@ END -%]}-->
     <g y="313" x="65" width="465" height="450" id="callpage_invoicedetails" transform="translate(65, 313)" rows="44" rows-interval="10">
     <!--{[%MACRO datarow(data) BLOCK-%]}-->
     <text y="0" text-anchor="start" id="callpage_calls[%loop.count-%]">
-        <!--{[%IF data.1; call = data.1; END%]}-->
+        <!--{[%IF data.1; data = data.1; END%]}-->
         <tspan x="0" id="callpage_calls_start_time[%loop.count-%]" text-anchor="start" class="ps00 ps10 ps20"><!--{[% date.format(Math.int(data.get_column('start_time')),'%d.%m.%Y %H:%M:%S') %]}--><!--{[%#}-->31.01.0001 23:59:59<!--{%]}--></tspan>
         <tspan x="90" id="callpage_calls_duration[%loop.count-%]" text-anchor="start" class="ps00 ps10 ps20"><!--{[% date.format(data.get_column('duration'),'%H:%M:%S', gmt => 1) %]}--><!--{[%#}-->00:00:00<!--{%]}--></tspan>
         <tspan x="135" id="callpage_calls_destination[%loop.count-%]" text-anchor="start" class="ps00 ps10 ps20"><!--{[% data.get_column('destination_user_in').replace('(.*?)\d{4}$','$1****') %]}--><!--{[%#}-->+00000000****<!--{%]}--></tspan>
