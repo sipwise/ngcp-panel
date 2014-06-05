@@ -106,7 +106,7 @@
 
     <!--{[%MACRO datarow(data) BLOCK-%]}-->
     <text y="559" text-anchor="start" id="zonepage_datarow[%loop.count-%]">
-        <!--{[%IF data.1; call = data.1; END%]}-->
+        <!--{[%IF data.1; data = data.1; END%]}-->
         <tspan x="80" id="zonepage_datarow_zone[%loop.count-%]" text-anchor="start" class="ps00 ps10 ps23"><!--{[% data.get_column('zone') _ '/' _ data.get_column('zone_detail') %]}--><!--{[%#}-->Example zone/Fixed<!--{%]}--></tspan>
         <tspan x="370" id="zonepage_datarow_number[%loop.count-%]" text-anchor="end" class="ps00 ps10 ps23"><!--{[% data.get_column('number') %]}--><!--{[%#}-->0<!--{%]}--></tspan>
         <tspan x="410" id="zonepage_datarow_duration[%loop.count-%]" text-anchor="start" class="ps00 ps10 ps23"><!--{[% date.format(data.get_column('duration'),'%H:%M:%S', gmt => 1) %]}--><!--{[%#}-->00:00:00<!--{%]}--></tspan>
