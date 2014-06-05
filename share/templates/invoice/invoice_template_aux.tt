@@ -202,7 +202,7 @@ MACRO show_pages(invoice_details_zones, invoice_details_calls, pagetype, pagenum
     DEFAULT invoice.amount = ifz(invoice.amount_netto) + ifz(invoice.amount_vat) ;
     DEFAULT invoice.amount_payment = invoice.amount - ifz(invoice.debit) ;
     
-    alltitlepages = ifz(alltitlepages) ? alltitlepages : 1;
+    global.alltitlepages = ifz(global.alltitlepages) ? global.alltitlepages : 1;
     allzonerowsnumber = invoice_details_zones.size() ;
     titlezonerows =  get_page_rows_number('titlepage','zone', allzonerowsnumber) ;
     midzonerows = get_page_rows_number('zonepage') ;
@@ -243,7 +243,7 @@ MACRO show_pages(invoice_details_zones, invoice_details_calls, pagetype, pagenum
         output_title = output_title _ titlepage(params) ;
         output_title = output_title _ bgpage(params) ;
         output_title = output_title _ document_footer();
-        alltitlepages = params.pagenum;
+        global.alltitlepages = params.pagenum;
     END;    
     IF ( pagetype == 'zone' || pagetype=='all' ) && allzonerowsnumber ;
         pages = pagenum_in ? [ pagenum_in ] : [ 1 .. allmidzonepages ] ;
@@ -253,24 +253,22 @@ MACRO show_pages(invoice_details_zones, invoice_details_calls, pagetype, pagenum
             output = output _ document_header();
             params = { 
                 'data' => invoice_details_zones.slice( pagerowsstart,  pagerowsend ),
-                'pagenum'   => pagenum + alltitlepages, 
+                'pagenum'   => pagenum + global.alltitlepages, 
                 'pagelocal'   => pagenum, 
                 'pageslocalnum'  => allzonepages, 
                 'rowsinterval' => midzoneinterval ,
                 'total' => total,
             };
             output = output _ zonepage( params ) ;
-            #+1 because of 1 for titlepage ;
             output = output _ bgpage(params) ;
             output = output _ document_footer();
-            allzonepages = params.pagenum;
         END;
         IF lastzonerows > 0 ;
             #+1 is for last page number, so ( alltitlepages + allmidzonepages ) was previous page
             output = output _ document_header();
             params = { 
                 'data' => invoice_details_zones.slice( allzonerowsnumber - lastzonerows ),
-                'pagenum'   => 1 + alltitlepages + allmidzonepages, 
+                'pagenum'   => 1 + global.alltitlepages + allmidzonepages, 
                 'pagelocal'   => allzonepages, 
                 'pageslocalnum'  => allzonepages, 
                 'rowsinterval' => midzoneinterval ,
@@ -280,7 +278,6 @@ MACRO show_pages(invoice_details_zones, invoice_details_calls, pagetype, pagenum
             #pagenum could change due to invoice footer
             output = output _ bgpage(params) ;
             output = output _ document_footer();
-            allzonepages = params.pagenum;
         END;
     END;
     
@@ -292,7 +289,7 @@ MACRO show_pages(invoice_details_zones, invoice_details_calls, pagetype, pagenum
             output = output _ document_header();
             params = { 
                 'data' => invoice_details_calls.slice( pagerowsstart,  pagerowsend ),
-                'pagenum'   => pagenum + alltitlepages + allzonepages, 
+                'pagenum'   => pagenum + global.alltitlepages + allzonepages, 
                 'pagelocal'   => pagenum, 
                 'pageslocalnum'  => allcallpages, 
                 'rowsinterval' => midcallinterval ,
@@ -307,7 +304,7 @@ MACRO show_pages(invoice_details_zones, invoice_details_calls, pagetype, pagenum
             output = output _ document_header();
             params = { 
                 'data' => invoice_details_calls.slice( allcallrowsnumber - lastcallrows ),
-                'pagenum'   => 1 + alltitlepages + allmidcallpages + allzonepages , 
+                'pagenum'   => 1 + global.alltitlepages + allmidcallpages + allzonepages , 
                 'pagelocal'   => allcallpages, 
                 'pageslocalnum'  => allcallpages, 
                 'rowsinterval' => midcallinterval,

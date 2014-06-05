@@ -1,9 +1,8 @@
-<!--{[%alltitlepages = 1 -%]}-->
-<!--{[%allzonepages = 0 -%]}-->
 <!--{[%PROCESS 'invoice/invoice_template_lorem.tt' -%]}-->
 <!--{[%PROCESS 'invoice/invoice_template_aux.tt' -%]}-->
 <!--{[%money_format = format('%.2f') %]}-->
 <!--{[%row_vertical_interval = 10 -%]}-->
+<!--{[%global.alltitlepages = 1 -%]}-->
 <!--{[%MACRO document_header BLOCK-%]}-->
 <svg width="595px" height="841px" viewBox="0 0 595 841" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:space="preserve" stroke-width="0" stroke="#000000" fill="#000000" font-size="4pt" text-anchor="start">
 
@@ -143,9 +142,10 @@
     y_max_invoicetotal = adjustrow ('', totalinvoice, dy, 'max', params);
     y_min_invocetail = adjustrow ('', titlepagetail, 0, 'min', params);
     IF y_max_invoicetotal > y_min_invocetail - 20;
-        alltitlepages = alltitlepages + 1;
+        global.alltitlepages = global.alltitlepages + 1;
         bgpage( params );
         params.pagenum = params.pagenum + 1;
+        params.show_client_top = 1;
         document_footer();
         document_header();
         params.data = [];
@@ -239,6 +239,7 @@ END -%]}-->
         IF params.data.size;
             bgpage( params );
             params.pagenum = params.pagenum + 1;
+            global.alltitlepages = global.alltitlepages + 1;
             document_footer();
             document_header();
         END;
@@ -303,14 +304,14 @@ END -%]}-->
     <g id="bgpage_1" display="none">
        <title>Background_Data</title>
 
-        <!--{[%IF ( ( params.pagenum > alltitlepages ) || params.show_client_top) && !params.no_show_client_top %]}-->
+        <!--{[%IF ( ( params.pagenum > global.alltitlepages ) || params.show_client_top) && !params.no_show_client_top %]}-->
         <text x="65" y="165" class="ps00 ps23">[%client.title%]</text>
         <text x="65" y="177" class="ps00 ps23">[%client.firstname%] [%client.lastname%]</text>
         <text x="65" y="189" class="ps00 ps23">[%client.street%]</text>
         <text x="65" y="201" class="ps00 ps23">[%client.postcode%] [%client.city%]</text>
         <text x="540" y="120" class="ps00 ps20" text-anchor="end">Seite [%params.pagenum%]</text>
         <!--{[%END%]}-->
-        <!--{[%IF ( ( params.pagenum > ( alltitlepages + allzonepages ) ) || params.show_kunde) && !params.no_show_kunde%]}-->
+        <!--{[%IF ( ( params.pagenum > ( global.alltitlepages + allzonepages ) ) || params.show_kunde) && !params.no_show_kunde%]}-->
         <text x="65" y="247" class="ps00 ps23">Kunde [%client.id%]</text>
         <text x="550" y="225" class="ps00 ps23" text-anchor="end">Datum [%date.format(datenow.value,'%d.%m.%Y')%]</text>
         <!--{[%END%]}-->
