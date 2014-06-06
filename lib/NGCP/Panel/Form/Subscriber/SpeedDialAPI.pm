@@ -6,7 +6,6 @@ use Moose::Util::TypeConstraints;
 
 has_field 'speeddials' => (
     type => 'Repeatable',
-    required => 1,
 );
 
 has_field 'speeddials.slot' => (

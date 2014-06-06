@@ -104,6 +104,16 @@ sub update_item {
         resource => $resource,
     );
 
+    my %check_unique;
+    for my $spd (@{ $resource->{speeddials} }) {
+        if (exists $check_unique{$spd->{slot}}) {
+            $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Slot '$spd->{slot}' must be unique.");
+            return;
+        } else {
+            $check_unique{$spd->{slot}} = 1;
+        }
+    }
+
     try {
         my $domain = $prov_subs->domain->domain // '';
         $speeddials_rs->delete;
