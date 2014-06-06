@@ -196,6 +196,8 @@ sub create :Chained('inv_list') :PathPart('create') :Args() :Does(ACL) :ACLDetac
                 $form->params->{serial} = "test".time.int(rand(99999));
 
 
+                # TODO: vat should be moved to contracts
+                # TODO: the base fee needs to be added too!
                 $form->params->{amount_net} = $balance->cash_balance_interval;
                 $form->params->{amount_vat} = 
                     $form->params->{amount_net} * ($billing_profile->vat_rate/100); # TODO: is it really in percent?
@@ -207,6 +209,25 @@ sub create :Chained('inv_list') :PathPart('create') :Args() :Does(ACL) :ACLDetac
                 my $out = '';
                 my $pdf = '';
                 my $vars = {};
+
+                $vars->{rescontact} = { $customer->contact->reseller->contract->contact->get_inflated_columns };
+                $vars->{customer} = { $customer->get_inflated_columns };
+                $vars->{custcontact} = { $customer->contact->get_inflated_columns };
+                $vars->{billprof} = { $billing_profile->get_inflated_columns };
+                $vars->{invoice} = {
+                    period_start => $stime->epoch, # TODO: really?
+                    period_end => $etime->epoch,
+                    serial => $form->params->{serial},
+                    amount_net => $form->params->{amount_net},
+                    amount_vat => $form->params->{amount_vat},
+                    amount_total => $form->params->{amount_total},
+                };
+                $vars->{calls} = []; # TODO: outbound cdrs call list
+                $vars->{zones} = {
+                    totalcost => $form->params->{amount_net},
+                    data => [ values(%{ $zonecalls }) ],
+                };
+
 
                 try {
                     NGCP::Panel::Utils::InvoiceTemplate::preprocess_svg(\$svg);
