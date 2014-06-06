@@ -133,8 +133,8 @@ IF !invoice_details_calls.size();
             duration             => i * 10,
             destination_user_in  => '+1234567890',
             call_type            => 'call',
-            zone                 => 'Example Zone',
-            zone_detail          => 'Default',
+            zone                 => 'Example Zone' _ i _ ' ',
+            zone_detail          => ' Default',
         }]);
         i = i + 1;
     END;

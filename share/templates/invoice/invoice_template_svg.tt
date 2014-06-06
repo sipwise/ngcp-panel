@@ -1,8 +1,10 @@
 <!--{[%PROCESS 'invoice/invoice_template_lorem.tt' -%]}-->
 <!--{[%PROCESS 'invoice/invoice_template_aux.tt' -%]}-->
+
 <!--{[%money_format = format('%.2f') %]}-->
 <!--{[%row_vertical_interval = 10 -%]}-->
 <!--{[%global.alltitlepages = 1 -%]}-->
+
 <!--{[%MACRO document_header BLOCK-%]}-->
 <svg width="595px" height="841px" viewBox="0 0 595 841" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:space="preserve" stroke-width="0" stroke="#000000" fill="#000000" font-size="4pt" text-anchor="start">
 
@@ -29,79 +31,79 @@
 <!--pageSet-->
 <!--{[%END-%]}-->
 
-<!--{[%MACRO titlepage(params) BLOCK-%]}-->
+<!--{[%MACRO titlepage(ip) BLOCK-%]}-->
 <!--page-->
 <g id="titlepage_1"  zone-rows="2,15" zone-rows-interval="12">
 <title>TitlePage_1</title>
-<text x="65" y="155" class="ps00 ps20">[%provider.company%][%if(', ', provider.postcode _ ' ' _ provider.city ) %][%if(', ', provider.street )%]</text>
-<text x="65" y="165" class="ps00 ps23">[%client.title%]</text>
-<text x="65" y="177" class="ps00 ps23">[%client.firstname%] [%client.lastname%]</text>
-<text x="65" y="189" class="ps00 ps23">[%client.street%]</text>
-<text x="65" y="201" class="ps00 ps23">[%client.postcode%] [%client.city%]</text>
-<text x="65" y="213" class="ps00 ps23">[%client.country%]</text>
-<text x="65" y="249" class="ps00 ps23">Anschlussinhaber: [%client.firstname%] [%client.lastname%]</text>
 
-<text x="400" y="155" class="ps00 ps21">Rechnung</text>
-<text x="400" y="170" class="ps00 ps22">Rechnungsnummer</text>
-<text x="540" y="170" class="ps00 ps22" text-anchor="end">[%invoice.serial%]</text>
-<text x="400" y="181" class="ps00 ps22">Kundennummer</text>
-<text x="540" y="181" class="ps00 ps22" text-anchor="end">[%client.id%]</text>
-<text x="400" y="192" class="ps00 ps22">UID-Nummer:</text>
-<text x="540" y="192" class="ps00 ps22" text-anchor="end">[% client.uid %]</text>
-<text x="400" y="203" class="ps00 ps22">Zeitraum</text>
-<text x="540" y="203" class="ps00 ps22" text-anchor="end">[%invoice.month%] [%invoice.year%]</text>
-<text x="400" y="214" class="ps00 ps22">Datum</text>
-<text x="540" y="214"  class="ps00 ps22" text-anchor="end">[%date.format(datenow.value,'%d.%m.%Y')%]</text>
+    <text x="65" y="155" class="ps00 ps20">[%provider.company%][%if(', ', provider.postcode _ ' ' _ provider.city ) %][%if(', ', provider.street )%]</text>
+    <text x="65" y="165" class="ps00 ps23">[%client.title%]</text>
+    <text x="65" y="177" class="ps00 ps23">[%client.firstname%] [%client.lastname%]</text>
+    <text x="65" y="189" class="ps00 ps23">[%client.street%]</text>
+    <text x="65" y="201" class="ps00 ps23">[%client.postcode%] [%client.city%]</text>
+    <text x="65" y="213" class="ps00 ps23">[%client.country%]</text>
+    <text x="65" y="249" class="ps00 ps23">Anschlussinhaber: [%client.firstname%] [%client.lastname%]</text>
 
-<text x="65" y="285" class="ps00 ps24">[%provider.company%] - Ihre Abrechnung</text>
-<text x="65" y="325" class="ps00 ps23">Sehr geehrter Kunde,</text>
-<text x="65" y="349" class="ps00 ps23">f&#xFC;r die von uns erbrachten Leistungen im Zeitraum vom [%date.format(invoice.date_start,'%d.%m.%Y')%] bis [%date.format(invoice.date_end,'%d.%m.%Y')%] erlauben wir uns</text>
-<text x="65" y="361" class="ps00 ps23">Folgendes in Rechnung zu stellen:</text>
+    <text x="400" y="155" class="ps00 ps21">Rechnung</text>
+    <text x="400" y="170" class="ps00 ps22">Rechnungsnummer</text>
+    <text x="540" y="170" class="ps00 ps22" text-anchor="end">[%invoice.serial%]</text>
+    <text x="400" y="181" class="ps00 ps22">Kundennummer</text>
+    <text x="540" y="181" class="ps00 ps22" text-anchor="end">[%client.id%]</text>
+    <text x="400" y="192" class="ps00 ps22">UID-Nummer:</text>
+    <text x="540" y="192" class="ps00 ps22" text-anchor="end">[% client.uid %]</text>
+    <text x="400" y="203" class="ps00 ps22">Zeitraum</text>
+    <text x="540" y="203" class="ps00 ps22" text-anchor="end">[%invoice.month%] [%invoice.year%]</text>
+    <text x="400" y="214" class="ps00 ps22">Datum</text>
+    <text x="540" y="214"  class="ps00 ps22" text-anchor="end">[%date.format(datenow.value,'%d.%m.%Y')%]</text>
 
-
-<g transform="matrix(1 0 0 -1 -0 841)">
-<path d="M75 441 L551 441" class="ps01 ps10 ps20"/>
-<path d="M75 426 L551 426" class="ps01 ps10 ps20"/>
-</g>
-
-<text x="65" y="397" class="ps00 ps10 ps25">Serviceleistungen</text>
-
-<text x="75" y="410" class="ps00 ps10 ps25">Bezeichnung</text>
-<text x="350" y="410" class="ps00 ps10 ps25">Anzahl</text>
-<text x="405" y="410" class="ps00 ps10 ps25">Einzelpreis</text>
-<text x="483" y="410" class="ps00 ps10 ps25">Betrag in EUR</text>
-
-<text x="75" y="431" class="ps00 ps10 ps25" id="block_total_period_product" rows-interval="12">Monatliche Grundentgelte</text>
-
-[%period = invoice%]
-<text x="75" y="447" class="ps00 ps10 ps23" id="row_total_period_product_period_start">[%bp.name%] [%date.format(period.date_start,'%d.%m.%Y')%] - [%date.format(period.date_end,'%d.%m.%Y')%]</text>
-<text x="375" y="447" class="ps00 ps10 ps23">1</text>
-<text x="440" y="447" class="ps00 ps10 ps23" text-anchor="end">[%money_format_comma(bp.interval_charge)%]</text>
-<text x="540" y="447" class="ps00 ps10 ps23" text-anchor="end"  id="total_period_product_period_end">[%money_format_comma(bp.interval_charge)%]</text>
-
-<text x="75" y="461" class="ps00 ps10 ps25" id="row_total_period_product_period_end">Summe</text>
-<text x="540" y="461" class="ps00 ps10 ps25" text-anchor="end">[%money_format_comma(bp.interval_charge)%]</text>
-
-<g transform="matrix(1 0 0 -1 -0 841)">
-<path d="M75 376 L551 376" class="ps01 ps10 ps25"/>
-<path d="M65 352 L551 352" class="ps01 ps10 ps25"/>
-</g>
-
-<text x="65" y="485" class="ps00 ps10 ps25">Gesamtsumme der Serviceleistungen</text>
-<text x="540" y="485" class="ps00 ps10 ps25" text-anchor="end">[%money_format_comma(bp.interval_charge)%]</text>
-
-<!--{[%MACRO titlerow BLOCK-%]}-->
-
-<text x="65" y="529" class="ps00 ps10 ps25">Verbindungsentgelte</text>
-<path d="M75 532 L551 532" class="ps01 ps10 ps25"/>
-<path d="M75 547 L551 547" class="ps01 ps10 ps25"/>
+    <text x="65" y="285" class="ps00 ps24">[%provider.company%] - Ihre Abrechnung</text>
+    <text x="65" y="325" class="ps00 ps23">Sehr geehrter Kunde,</text>
+    <text x="65" y="349" class="ps00 ps23">f&#xFC;r die von uns erbrachten Leistungen im Zeitraum vom [%date.format(invoice.date_start,'%d.%m.%Y')%] bis [%date.format(invoice.date_end,'%d.%m.%Y')%] erlauben wir uns</text>
+    <text x="65" y="361" class="ps00 ps23">Folgendes in Rechnung zu stellen:</text>
 
 
-<text x="75" y="542" class="ps00 ps10 ps25">Zone</text>
-<text x="350" y="542" class="ps00 ps10 ps25">Anzahl</text>
-<text x="410" y="542" class="ps00 ps10 ps25">Nutzung</text>
-<text x="483" y="542" class="ps00 ps10 ps25">Betrag in EUR</text>
-<!--{[%END-%]}-->
+    <g transform="matrix(1 0 0 -1 -0 841)">
+    <path d="M75 441 L551 441" class="ps01 ps10 ps20"/>
+    <path d="M75 426 L551 426" class="ps01 ps10 ps20"/>
+    </g>
+
+    <text x="65" y="397" class="ps00 ps10 ps25">Serviceleistungen</text>
+
+    <text x="75" y="410" class="ps00 ps10 ps25">Bezeichnung</text>
+    <text x="350" y="410" class="ps00 ps10 ps25">Anzahl</text>
+    <text x="405" y="410" class="ps00 ps10 ps25">Einzelpreis</text>
+    <text x="483" y="410" class="ps00 ps10 ps25">Betrag in EUR</text>
+
+    <text x="75" y="431" class="ps00 ps10 ps25" id="block_total_period_product" rows-interval="12">Monatliche Grundentgelte</text>
+
+    [%period = invoice%]
+    <text x="75" y="447" class="ps00 ps10 ps23" id="row_total_period_product_period_start">[%bp.name%] [%date.format(period.date_start,'%d.%m.%Y')%] - [%date.format(period.date_end,'%d.%m.%Y')%]</text>
+    <text x="375" y="447" class="ps00 ps10 ps23">1</text>
+    <text x="440" y="447" class="ps00 ps10 ps23" text-anchor="end">[%money_format_comma(bp.interval_charge)%]</text>
+    <text x="540" y="447" class="ps00 ps10 ps23" text-anchor="end"  id="total_period_product_period_end">[%money_format_comma(bp.interval_charge)%]</text>
+
+    <text x="75" y="461" class="ps00 ps10 ps25" id="row_total_period_product_period_end">Summe</text>
+    <text x="540" y="461" class="ps00 ps10 ps25" text-anchor="end">[%money_format_comma(bp.interval_charge)%]</text>
+
+    <g transform="matrix(1 0 0 -1 -0 841)">
+    <path d="M75 376 L551 376" class="ps01 ps10 ps25"/>
+    <path d="M65 352 L551 352" class="ps01 ps10 ps25"/>
+    </g>
+
+    <text x="65" y="485" class="ps00 ps10 ps25">Gesamtsumme der Serviceleistungen</text>
+    <text x="540" y="485" class="ps00 ps10 ps25" text-anchor="end">[%money_format_comma(bp.interval_charge)%]</text>
+
+    <!--{[%MACRO titlerow BLOCK-%]}-->
+    <text x="65" y="529" class="ps00 ps10 ps25">Verbindungsentgelte</text>
+    <path d="M75 532 L551 532" class="ps01 ps10 ps25"/>
+    <path d="M75 547 L551 547" class="ps01 ps10 ps25"/>
+
+
+    <text x="75" y="542" class="ps00 ps10 ps25">Zone</text>
+    <text x="350" y="542" class="ps00 ps10 ps25">Anzahl</text>
+    <text x="410" y="542" class="ps00 ps10 ps25">Nutzung</text>
+    <text x="483" y="542" class="ps00 ps10 ps25">Betrag in EUR</text>
+    <!--{[%END-%]}-->
 
     <!--{[%MACRO datarow(data) BLOCK-%]}-->
     <text y="559" text-anchor="start" id="zonepage_datarow[%loop.count-%]">
@@ -130,32 +132,9 @@
     <text x="65" y="648" class="ps00 ps10 ps21">Zahlungsbetrag</text>
     <text x="540" y="648" class="ps00 ps10 ps21" text-anchor="end">[%money_format_comma(invoice.amount)%]</text>
     <!--{[%END-%]}-->
-
-    <!--{[% titlerow() -%]}-->
-    <!--{[% params.rowsinterval = params.titlezoneinterval; params.data=params.zonesdata; list_zones(params); -%]}-->
-    <!--{[%IF (params.pagenum==params.pageslocalnum); 
-        dy = getDy(params.titlezoneinterval, params.zonesdata.size); 
-        adjustrow (params.total.zonepage.global, 'totalrow', dy, '', params); 
-    END; -%]}-->
+<!--{[% construct_titlepage(ip); -%]}-->
 </g>
-<!--{[%IF (params.pagenum==params.pageslocalnum);
-    y_max_invoicetotal = adjustrow ('', totalinvoice, dy, 'max', params);
-    y_min_invocetail = adjustrow ('', titlepagetail, 0, 'min', params);
-    IF y_max_invoicetotal > y_min_invocetail - 20;
-        global.alltitlepages = global.alltitlepages + 1;
-        bgpage( params );
-        params.pagenum = params.pagenum + 1;
-        params.show_client_top = 1;
-        document_footer();
-        document_header();
-        params.data = [];
-        zonepage( params );
-    ELSE;
-        additions = adjustrow ('', totalinvoice, dy, '', params );
-        titlepagetail(additions);
-    END;
-END -%]}-->
-
+<!--{[% wrap_titlepage(ip); -%]}-->
 <!--/page-->
 <!--{[%END-%]}-->
 
@@ -176,10 +155,11 @@ END -%]}-->
 <!--{[%END-%]}-->
 
 
-<!--{[%MACRO zonepage(params) BLOCK-%]}-->
+<!--{[%MACRO zonepage(ip) BLOCK-%]}-->
 <!--page-->
 <g id="zonepage" display="none" rows="25" rows-interval="12">
     <title>TitlePage_ZonesAndTotal</title>
+    
     <!--{[%MACRO titlerow BLOCK-%]}-->
     <text x="65" y="225" class="ps00 ps10 ps25">Verbindungsentgelte</text>
     <path d="M75 228 L551 228" class="ps01 ps10 ps25"/>
@@ -189,8 +169,8 @@ END -%]}-->
     <text x="350" y="238" class="ps00 ps10 ps25">Anzahl</text>
     <text x="410" y="238" class="ps00 ps10 ps25">Nutzung</text>
     <text x="483" y="238" class="ps00 ps10 ps25">Betrag in EUR</text>
-
     <!--{[%END-%]}-->
+    
     <!--{[%MACRO datarow(data) BLOCK-%]}-->
     <text y="255" text-anchor="start" id="zonepage_datarow[%loop.count-%]">
         <!--{[%IF data.1; data = data.1; END%]}-->
@@ -200,7 +180,8 @@ END -%]}-->
         <tspan x="540" id="zonepage_datarow_cost[%loop.count-%]" text-anchor="end" class="ps00 ps10 ps23"><!--{[% money_format_comma(ifz(data.get_column('source_customer_cost')) / 100 ) %]}--><!--{[%#}-->0,00<!--{%]}--></tspan>
     </text>
     <!--{[%END-%]}-->
-    <!--{[%MACRO totalrow(data, params) BLOCK-%]}-->
+    
+    <!--{[%MACRO totalrow(data) BLOCK-%]}-->
         <rect x="65" y="263" width="486" height="0.1" class="ps01 ps10 ps23"/>
         <text x="65" y="275" class="ps00 ps10 ps25">Gesamtsumme der Verbindungsentgelte</text>
         <text x="540" y="275" class="ps00 ps10 ps25" text-anchor="end"><!--{[% money_format_comma( data.cost )%]}--><!--{[%#}-->0,00<!--{%]}--></text>
@@ -220,40 +201,13 @@ END -%]}-->
     <text x="540" y="354" class="ps00 ps10 ps21" text-anchor="end">[%money_format_comma(invoice.amount)%]</text>
     <!--{[%END-%]}-->
     
-    <!--{[%
-    IF params.data.size;
-        titlerow() ;
-        list_zones(params);
-        IF (params.pagelocal==params.pageslocalnum); 
-            dy = getDy(params.rowsinterval, params.data.size);
-            adjustrow (params.total.zonepage.global, 'totalrow', dy, '', params);
-        END;
-    END;
-    -%]}-->
+    <!--{[% construct_zonepage(ip);-%]}-->
 </g>
-<!--{[%IF (params.pagelocal==params.pageslocalnum);
-    dy = ifz(dy);
-    y_max_invoicetotal = adjustrow ('', totalinvoice, dy, 'max', params);
-    y_min_invocetail = adjustrow ('', titlepagetail, 0, 'min', params);
-    IF y_max_invoicetotal > ( y_min_invocetail - 20 ) || !params.data.size;
-        IF params.data.size;
-            bgpage( params );
-            params.pagenum = params.pagenum + 1;
-            global.alltitlepages = global.alltitlepages + 1;
-            document_footer();
-            document_header();
-        END;
-        y_min_invoicetotal = adjustrow ('', totalinvoice, 0, 'min', params);
-        y_min_titlerow = adjustrow ('', titlerow, 0, 'min', params);
-        dy = y_min_titlerow - y_min_invoicetotal;
-    END;
-    additions = adjustrow ('', totalinvoice, dy, '', params );
-    titlepagetail(additions);
-END -%]}-->
+<!--{[% wrap_zonepage(ip);-%]}-->
 <!--/page-->
 <!--{[%END-%]}-->
 
-<!--{[%MACRO callpage(params) BLOCK-%]}-->
+<!--{[%MACRO callpage(ip) BLOCK-%]}-->
 <!--page-->
 <g id="callpage" display="none">
     <title>CallPage</title>
@@ -286,42 +240,39 @@ END -%]}-->
     <text y="20" text-anchor="end" id="callpage_calls_total" class="datarow">
         <tspan x="0" id="callpage_calls_total_title" text-anchor="start" class="ps00 ps10 ps23">Total:</tspan>
         <tspan x="90" id="callpage_calls_total_duration" text-anchor="start" class="ps00 ps10 ps23"><!--{[% date.format(data.duration,'%H:%M:%S', gmt => 1) %]}--><!--{[%#}-->0.000<!--{%]}--></tspan>
-       <tspan x="475" id="callpage_calls_total_cost" class="ps00 ps10 ps23"><!--{[% data.cost|format('%.4f') %]}--><!--{[%#}-->0.0000<!--{%]}--></tspan>
+        <tspan x="475" id="callpage_calls_total_cost" class="ps00 ps10 ps23"><!--{[% data.cost|format('%.4f') %]}--><!--{[%#}-->0.0000<!--{%]}--></tspan>
     </text>
     <rect x="0" y="8" width="486" height="0.1" stroke="#444444" stroke-width="0.5" fill="none"/>
     <!--{[%END-%]}-->
 
-<!--{[% titlerow -%]}-->
-<!--{[% list_calls(params) -%]}-->
-<!--{[%IF (params.pagelocal==params.pageslocalnum); dy = getDy(params.rowsinterval, params.data.size); adjustrow(params.total.callpage.global, 'totalrow', dy, '', params); END-%]}-->
+<!--{[% construct_callpage(ip);-%]}-->
         </g>
     </g>
 <!--/page-->
 <!--{[%END-%]}-->
 
-<!--{[%MACRO bgpage( params ) BLOCK-%]}-->
+<!--{[%MACRO bgpage( ip ) BLOCK-%]}-->
 <!--page-->
-    <g id="bgpage_1" display="none">
+    <g id="bgpage_data" display="none">
        <title>Background_Data</title>
 
-        <!--{[%IF ( ( params.pagenum > global.alltitlepages ) || params.show_client_top) && !params.no_show_client_top %]}-->
+        <!--{[%IF ( ( ip.pagenum > global.alltitlepages ) || ip.show_client_top) && !ip.no_show_client_top %]}-->
         <text x="65" y="165" class="ps00 ps23">[%client.title%]</text>
         <text x="65" y="177" class="ps00 ps23">[%client.firstname%] [%client.lastname%]</text>
         <text x="65" y="189" class="ps00 ps23">[%client.street%]</text>
         <text x="65" y="201" class="ps00 ps23">[%client.postcode%] [%client.city%]</text>
-        <text x="540" y="120" class="ps00 ps20" text-anchor="end">Seite [%params.pagenum%]</text>
+        <text x="540" y="120" class="ps00 ps20" text-anchor="end">Seite [%ip.pagenum%]</text>
         <!--{[%END%]}-->
-        <!--{[%IF ( ( params.pagenum > ( global.alltitlepages + allzonepages ) ) || params.show_kunde) && !params.no_show_kunde%]}-->
+        <!--{[%IF ( ( ip.pagenum > ( global.alltitlepages + allzonepages ) ) || ip.show_kunde) && !ip.no_show_kunde%]}-->
         <text x="65" y="247" class="ps00 ps23">Kunde [%client.id%]</text>
         <text x="550" y="225" class="ps00 ps23" text-anchor="end">Datum [%date.format(datenow.value,'%d.%m.%Y')%]</text>
         <!--{[%END%]}-->
     </g>
 <!--/page-->
 <!--page-->
-    <g id="bgpage_2">
+    <g id="bgpage_all">
        <title>Background</title>
         <!--rect x="0" y="0" width="214.9" height="296.8" stroke-width="0.1" stroke="#FF0000" fill="#FFFFFF" fill-opacity="0" id="totalborder"/-->
-
 
         <text x="65" y="783" class="ps00 ps20">[%provider.company%]</text>
         <text x="65" y="792" class="ps00 ps20">[%provider.postcode %] [% provider.city %]</text>
@@ -347,7 +298,4 @@ END -%]}-->
 </svg> 
 <!--{[%END-%]}-->
 
-<!--{[%# show_pages(invoice_details,'title')-%]}-->
-<!--{[%# show_pages('zone',3)-%]}-->
-<!--{[%# show_pages('last')-%]}-->
 <!--{[% show_pages( invoice_details_zones, invoice_details_calls, 'all' )-%]}-->
