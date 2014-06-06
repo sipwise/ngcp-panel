@@ -110,11 +110,12 @@ sub update_item {
             $aa_rs->create({
                 destination => $self->get_sip_uri($aa->{destination}, $domain),
                 choice => $aa->{slot},
+                uuid => $prov_subs->uuid,
             });
         }
     } catch($e) {
-        $c->log->error("failed to update speeddials: $e");
-        $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "Failed to update speeddials.");
+        $c->log->error("failed to update autoattendants: $e");
+        $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "Failed to update autoattendants.");
         return;
     };
 

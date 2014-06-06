@@ -11,7 +11,6 @@ sub build_form_element_class {return [qw(form-horizontal)]}
 has_field 'slots' => (
     type => 'Repeatable',
     label => 'IVR Slots',
-    required => 1,
 );
 
 has_field 'slots.slot' => (
