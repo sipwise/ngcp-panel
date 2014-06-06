@@ -3,7 +3,6 @@ use Sipwise::Base;
 use namespace::sweep;
 BEGIN { extends 'Catalyst::Controller'; }
 use JSON qw(decode_json encode_json);
-use NGCP::Panel::Utils::Contract;
 use NGCP::Panel::Form::CustomerMonthlyFraud;
 use NGCP::Panel::Form::CustomerDailyFraud;
 use NGCP::Panel::Form::CustomerBalance;
@@ -21,6 +20,7 @@ use NGCP::Panel::Utils::Navigation;
 use NGCP::Panel::Utils::DateTime;
 use NGCP::Panel::Utils::Subscriber;
 use NGCP::Panel::Utils::Sounds;
+use NGCP::Panel::Utils::Contract;
 use Template;
 
 =head1 NAME
@@ -55,7 +55,7 @@ sub list_customer :Chained('/') :PathPart('customer') :CaptureArgs(0) {
         { name => "status", search => 1, title => $c->loc("Status") },
         { name => "max_subscribers", search => 1, title => $c->loc("Max Number of Subscribers") },
     ]);
-    my $rs = NGCP::Panel::Utils::Contract::get_contracts_rs_sippbx( c => $c );
+    my $rs = NGCP::Panel::Utils::Contract::get_customer_rs(c => $c);
 
     $c->stash(
         contract_select_rs => $rs,
@@ -234,33 +234,24 @@ sub base :Chained('list_customer') :PathPart('') :CaptureArgs(1) {
 
     my $stime = NGCP::Panel::Utils::DateTime::current_local()->truncate(to => 'month');
     my $etime = $stime->clone->add(months => 1);
-    
-    my $balance = $contract_rs->first->contract_balances
-        ->find({
-            start => { '>=' => $stime },
-            end => { '<' => $etime },
-            });
-    unless($balance) {
-        try {
-            NGCP::Panel::Utils::Contract::create_contract_balance(
-                c => $c,
-                profile => $billing_mapping->billing_profile,
-                contract => $contract_rs->first,
-            );
-        } catch($e) {
-            NGCP::Panel::Utils::Message->error(
-                c => $c,
-                error => $e,
-                desc  => $c->loc('Failed to create contract balance.'),
-            );
-            $c->response->redirect($c->uri_for());
-            return;
-        }
-        $balance = $contract_rs->first->contract_balances
-            ->find({
-                start => {'>=' => $stime},
-                end   => {'<'  => $etime},
-            });
+   
+    my $balance;
+    try {
+        $balance = NGCP::Panel::Utils::Contract::get_contract_balance(
+                    c => $c,
+                    profile => $billing_mapping->billing_profile,
+                    contract => $contract_rs->first,
+                    stime => $stime,
+                    etime => $etime
+        );
+    } catch($e) {
+        NGCP::Panel::Utils::Message->error(
+            c => $c,
+            error => $e,
+            desc  => $c->loc('Failed to get contract balance.'),
+        );
+        $c->response->redirect($c->uri_for());
+        return;
     }
 
     my $product_id = $contract_rs->first->get_column('product_id');

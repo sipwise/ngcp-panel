@@ -19,31 +19,8 @@ use NGCP::Panel::Form::Contract::ProductOptional;
 sub item_rs {
     my ($self, $c) = @_;
 
-    my $item_rs = NGCP::Panel::Utils::Contract::get_contracts_rs_sippbx(
-        c => $c,
-    );
-    $item_rs = $item_rs->search({
-            'contact.reseller_id' => { '-not' => undef },
-        },{
-            join => 'contact',
-        });
-    $item_rs = $item_rs->search({
-                '-or' => [
-                    'product.class' => 'sipaccount',
-                    'product.class' => 'pbxaccount',
-                ],
-            },{
-                join => {'billing_mappings' => 'product' },
-                '+select' => 'billing_mappings.id',
-                '+as' => 'bmid',
-            });
-    if($c->user->roles eq "admin") {
-    } elsif($c->user->roles eq "reseller") {
-        $item_rs = $item_rs->search({
-            'contact.reseller_id' => $c->user->reseller_id,
-        });
-    }
-
+    # returns a contracts rs filtered based on role
+    my $item_rs = NGCP::Panel::Utils::Contract::get_customer_rs(c => $c);
     return $item_rs;
 }
 

@@ -81,6 +81,9 @@ sub resource_from_item {
         stime => $stime,
         etime => $etime,
         subscriber_uuid => $subscriber_uuid,
+        in => 1,
+        out => 1,
+        group_by_detail => 0,
     );
 
     $resource{customer_id} = int($item->id);
@@ -132,16 +135,7 @@ sub query_param_string {
 sub item_rs {
     my ($self, $c) = @_;
 
-    my $item_rs = NGCP::Panel::Utils::Contract::get_contracts_rs_sippbx(
-        c => $c,
-    );
-    if($c->user->roles eq "admin") {
-    } elsif($c->user->roles eq "reseller") {
-        $item_rs = $item_rs->search({
-            'contact.reseller_id' => $c->user->reseller_id,
-        });
-    }
-
+    my $item_rs = NGCP::Panel::Utils::Contract::get_customer_rs(c => $c);
     return $item_rs;
 }
 

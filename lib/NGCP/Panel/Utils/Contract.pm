@@ -6,12 +6,44 @@ use Sipwise::Base;
 use DBIx::Class::Exception;
 use NGCP::Panel::Utils::DateTime;
 
+sub get_contract_balance {
+    my (%params) = @_;
+    my $c = $params{c};
+    my $contract = $params{contract};
+    my $profile = $params{profile};
+    my $stime = $params{stime};
+    my $etime = $params{etime};
+    my $schema = $params{schema} // $c->model('DB');
+
+    my $balance = $contract->contract_balances
+        ->find({
+            start => { '>=' => $stime },
+            end => { '<=' => $etime },
+        });
+    use Data::Printer; print ">>>>>>>>> get_balance\n"; p $balance;
+    unless($balance) {
+        use Data::Printer; print ">>>>>>>>> no balance\n"; p $balance;
+            $balance = create_contract_balance(
+                c => $c,
+                profile => $profile,
+                contract => $contract,
+                stime => $stime,
+                etime => $etime,
+                schema => $schema,
+            );
+        use Data::Printer; print ">>>>>>>>> created balance\n"; p $balance;
+    }
+    return $balance;
+}
+
+
 sub create_contract_balance {
     my %params = @_;
 
     my $c = $params{c};
     my $contract = $params{contract};
     my $profile = $params{profile};
+    my $schema = $params{schema} // $c->model('DB');
 
 
     # first, calculate start and end time of current billing profile
@@ -28,10 +60,10 @@ sub create_contract_balance {
         etime => $etime,
     );
 
+    my $balance;
     try {
-        my $schema = $c->model('DB');
         $schema->txn_do(sub {
-            $schema->resultset('contract_balances')->create({
+            $balance = $schema->resultset('contract_balances')->create({
                 contract_id => $contract->id,
                 cash_balance => $cash_balance,
                 cash_balance_interval => $cash_balance_interval,
@@ -40,6 +72,7 @@ sub create_contract_balance {
                 start => $stime,
                 end => $etime,
             });
+            use Data::Printer; print ">>>>>>>>> really created balance\n"; p $balance;
         });
     } catch($e) {
         if ($e =~ /Duplicate entry/) {
@@ -49,11 +82,13 @@ sub create_contract_balance {
             $e->rethrow;
         }
     };
-    return;
+    use Data::Printer; print ">>>>>>>>> returning balance\n"; p $balance;
+    return $balance;
 }
-sub get_contract_balance_values{
+
+sub get_contract_balance_values {
     my %params = @_;
-    my($free_time,$free_cash,$stime,$etime) = @params{qw/interval_free_time interval_free_cash stime etime/};
+    my($free_time, $free_cash, $stime, $etime) = @params{qw/interval_free_time interval_free_cash stime etime/};
     my ($cash_balance, $cash_balance_interval,
         $free_time_balance, $free_time_balance_interval) = (0,0,0,0);
     if($free_time or $free_cash) {
@@ -70,8 +105,9 @@ sub get_contract_balance_values{
         }
         $etime->subtract(seconds => 1);
     }
-    return ($cash_balance,$cash_balance_interval,$free_time_balance,$free_time_balance_interval);
+    return ($cash_balance, $cash_balance_interval, $free_time_balance, $free_time_balance_interval);
 }
+
 sub recursively_lock_contract {
     my %params = @_;
 
@@ -169,6 +205,7 @@ sub get_contract_rs {
     my %params = @_;
     my $schema = $params{schema};
     my $mapping_rs = $schema->resultset('billing_mappings');
+    my $dtf = $schema->storage->datetime_parser;
     my $rs = $schema->resultset('contracts')
         ->search({
             'me.status' => { '!=' => 'terminated' },
@@ -176,11 +213,11 @@ sub get_contract_rs {
                 '=' => $mapping_rs->search({
                     contract_id => { -ident => 'me.id' },
                     start_date => [ -or =>
-                        { '<=' => NGCP::Panel::Utils::DateTime::current_local },
+                        { '<=' => $dtf->format_datetime(NGCP::Panel::Utils::DateTime::current_local) },
                         { -is  => undef },
                     ],
                     end_date => [ -or =>
-                        { '>=' => NGCP::Panel::Utils::DateTime::current_local },
+                        { '>=' => $dtf->format_datetime(NGCP::Panel::Utils::DateTime::current_local) },
                         { -is  => undef },
                     ],
                 },{
@@ -207,36 +244,30 @@ sub get_contract_rs {
     return $rs;
 }
 
-sub get_contracts_rs_sippbx{
+sub get_customer_rs {
     my %params = @_;
-    #pass here $c isn't very good idea, it doesn't allow "simple" call with really relevant information
     my $c = $params{c};
-    # we only return customers, that is, contracts with contacts with a
-    # reseller
+
     my $customers = get_contract_rs(
         schema => $c->model('DB'),
     );
-    #really here we don't need role - we can pass only reseller_id, reseller_id should be tacken according to role in other method
     
-    #for all
     $customers = $customers->search({
             'contact.reseller_id' => { '-not' => undef },
         },{
             join => 'contact',
     });
 
-    my $reseller_condition;
-    if($c->user->roles eq "reseller") {
-        $reseller_condition = $c->user->reseller_id;
-    } elsif($c->user->roles eq "subscriberadmin") {
-        $reseller_condition = $c->user->contract->contact->reseller_id;
-    } elsif($c->user->roles eq "admin") {
-    }
-    if ($reseller_condition){
+    if($c->user->roles eq "admin") {
+    } elsif($c->user->roles eq "reseller") {
         $customers = $customers->search({
-                'contact.reseller_id' => $reseller_condition ,
+                'contact.reseller_id' => $c->user->reseller_id,
         });
-    }
+    } elsif($c->user->roles eq "subscriberadmin") {
+        $customers = $customers->search({
+                'contact.reseller_id' => $c->user->contract->contact->reseller_id,
+        });
+    } 
     
     $customers = $customers->search({
             '-or' => [
@@ -252,57 +283,6 @@ sub get_contracts_rs_sippbx{
     return $customers;
 }
 
-sub get_contract_calls_rs{
-    my %params = @_;
-    (my ($c,$contract_id,$stime,$etime)) = @params{qw/c contract_id stime etime/};
-    
-#     SELECT 'out' as direction, SUM(c.source_customer_cost) AS cost, b.zone,
-#                          COUNT(*) AS number, SUM(c.duration) AS duration
-#                     FROM accounting.cdr c
-#                     LEFT JOIN billing.voip_subscribers v ON c.source_user_id = v.uuid
-#                     LEFT JOIN billing.billing_zones_history b ON b.id = c.source_customer_billing_zone_id
-#                    WHERE v.contract_id = ?
-#                      AND c.call_status = 'ok'
-#                          $start_time $end_time
-#                    GROUP BY b.zone 
-
-    my $zonecalls_rs = $c->model('DB')->resultset('cdr')->search( {
-#        source_user_id => { 'in' => [ map {$_->uuid} @{$contract->{subscriber}} ] },
-        call_status       => 'ok',
-        source_user_id    => { '!=' => '0' },
-        source_account_id => $contract_id,
-#         start_time        =>
-#             [ -and =>
-#                 { '>=' => $stime->epoch},
-#                 { '<=' => $etime->epoch},
-#             ],
-
-#             {
-#             '>=' => ["unix_timestamp(?)", $stime],
-# '<=' => ["unix_timestamp(?)",$etime] },
-#                { '>=' => \[ "unix_timestamp(?)", $stime ] },
-#                { '<=' => \[ "unix_timestamp(?)", $etime ] },
-#requires fix: 757           #$self->_assert_bindval_matches_bindtype(@sub_bind);
-#in SQL::Abstract, 
- 
-    },{
-        'select'   => [ 
-            { sum         => 'me.source_customer_cost', -as => 'cost' },
-            { sum         => 'me.source_customer_free_time', -as => 'free_time' },
-            { sum         => 'me.duration', -as => 'duration' },
-            { count       => '*', -as => 'number' },
-            'source_customer_billing_zones_history.zone',
-            'source_customer_billing_zones_history.detail', 
-        ],
-        '+as' => [qw/cost free_time duration number zone zone_detail/],
-        #alias => 
-        join        => 'source_customer_billing_zones_history',
-        group_by    => 'source_customer_billing_zones_history.zone',
-    } );
-
-    return $zonecalls_rs;
-}
-
 sub get_contract_zonesfees_rs {
     my %params = @_;
     my $c = $params{c};
@@ -310,20 +290,7 @@ sub get_contract_zonesfees_rs {
     my $etime = $params{etime};
     my $contract_id = $params{contract_id};
     my $subscriber_uuid = $params{subscriber_uuid};
-
-    # should not be neccessary, done before
-#    $stime ||= NGCP::Panel::Utils::DateTime::current_local()->truncate( to => 'month' );
-#    $etime ||= $stime->clone->add( months => 1 );
-
-#     SELECT 'out' as direction, SUM(c.source_customer_cost) AS cost, b.zone,
-#                          COUNT(*) AS number, SUM(c.duration) AS duration
-#                     FROM accounting.cdr c
-#                     LEFT JOIN billing.voip_subscribers v ON c.source_user_id = v.uuid
-#                     LEFT JOIN billing.billing_zones_history b ON b.id = c.source_customer_billing_zone_id
-#                    WHERE v.contract_id = ?
-#                      AND c.call_status = 'ok'
-#                          $start_time $end_time
-#                    GROUP BY b.zone
+    my $group_detail = $params{group_by_detail};
 
     my $zonecalls_rs_out = $c->model('DB')->resultset('cdr')->search( {
         'call_status'       => 'ok',
@@ -343,10 +310,17 @@ sub get_contract_zonesfees_rs {
             { sum         => 'me.duration', -as => 'duration' },
             { count       => '*', -as => 'number' },
             'source_customer_billing_zones_history.zone',
+            $group_detail ? 'source_customer_billing_zones_history.detail' : (),
         ],
-        'as' => [qw/customercost carriercost resellercost free_time duration number zone/],
+        'as' => [
+            qw/customercost carriercost resellercost free_time duration number zone/,
+            $group_detail ? 'zone_detail' : (),
+        ],
         join        => 'source_customer_billing_zones_history',
-        group_by    => 'source_customer_billing_zones_history.zone',
+        group_by    => [
+            'source_customer_billing_zones_history.zone', 
+            $group_detail ? 'source_customer_billing_zones_history.detail' : (),
+        ],
         order_by    => 'source_customer_billing_zones_history.zone',
     } );
 
@@ -368,10 +342,17 @@ sub get_contract_zonesfees_rs {
             { sum         => 'me.duration', -as => 'duration' },
             { count       => '*', -as => 'number' },
             'destination_customer_billing_zones_history.zone',
+            $group_detail ? 'destination_customer_billing_zones_history.detail' : (),
         ],
-        'as' => [qw/customercost carriercost resellercost free_time duration number zone/],
+        'as' => [
+            qw/customercost carriercost resellercost free_time duration number zone/,
+            $group_detail ? 'zone_detail' : (),
+        ],
         join        => 'destination_customer_billing_zones_history',
-        group_by    => 'destination_customer_billing_zones_history.zone',
+        group_by    => [
+            'destination_customer_billing_zones_history.zone',
+            $group_detail ? 'destination_customer_billing_zones_history.detail' : (),
+        ],
         order_by    => 'destination_customer_billing_zones_history.zone',
     } );
 
@@ -381,24 +362,38 @@ sub get_contract_zonesfees_rs {
 sub get_contract_zonesfees {
     my %params = @_;
 
-    my ($zonecalls_rs_in, $zonecalls_rs_out) = get_contract_zonesfees_rs(%params);
+    my $c = $params{c};
+    my $in = delete $params{in};
+    my $out = delete $params{out};
 
-    my %zones;
-    for my $zone ($zonecalls_rs_in->all, $zonecalls_rs_out->all) {
-        my $zname = $zone->get_column('zone') // '';
+    my ($zonecalls_rs_in, $zonecalls_rs_out) = get_contract_zonesfees_rs(%params);
+    my @zones = (
+        $in ? $zonecalls_rs_in->all : (),
+        $out ? $zonecalls_rs_out->all : (),
+    );
+    
+    my %allzones;
+    for my $zone (@zones) {
+        my $zname = $params{group_by_detail} ? 
+            ($zone->get_column('zone')//'') . ' ' . ($zone->get_column('zone_detail')//'') :
+            ($zone->get_column('zone')//'');
 
         my %cols = $zone->get_inflated_columns;
-        $zones{$zname}{customercost} += $cols{customercost} || 0;
-        $zones{$zname}{carriercost} += $cols{carriercost} || 0;
-        $zones{$zname}{resellercost} += $cols{resellercost} || 0;
-        $zones{$zname}{duration} += $cols{duration} || 0;
-        $zones{$zname}{free_time} += $cols{free_time} || 0;
-        $zones{$zname}{number} += $cols{number} || 0;
+        if($c->user->roles eq "admin") {
+            $allzones{$zname}{carriercost} += $cols{carriercost} || 0;
+        }
+        if($c->user->roles eq "admin" || $c->user->roles eq "reseller") {
+            $allzones{$zname}{resellercost} += $cols{resellercost} || 0;
+        }
+        $allzones{$zname}{customercost} += $cols{customercost} || 0;
+        $allzones{$zname}{duration} += $cols{duration} || 0;
+        $allzones{$zname}{free_time} += $cols{free_time} || 0;
+        $allzones{$zname}{number} += $cols{number} || 0;
 
-        delete $zones{$zname}{zone};
+        delete $allzones{$zname}{zone};
     }
 
-    return \%zones;
+    return \%allzones;
 }
 
 1;

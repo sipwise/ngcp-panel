@@ -470,6 +470,7 @@ around 'item_rs' => sub {
     my $c = $orig_params[0];
     foreach my $param(keys $c->req->query_params) {
         my @p = grep { $_->{param} eq $param } @{ $self->query_params };
+        next unless($p[0]->{query}); # skip "dummy" query parameters
         my $q = $c->req->query_params->{$param}; # TODO: arrayref?
         $q =~ s/\*/\%/g;
         if(@p) {

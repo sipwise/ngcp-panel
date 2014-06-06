@@ -1,0 +1,30 @@
+<div class="control-group [% IF errors.size %]error[% END %]">
+<style>
+    #ui-datepicker-div .ui-datepicker-calendar {
+        display: none;
+    }
+</style>
+<script src="/js/libs/jquery-ui-timepicker-addon.js"></script>
+[% date_format_js = date_format_js || 'yy-mm-dd' %]
+<label class="control-label" for="[% field_id %]">[% label %]</label>
+<div class="controls">
+<input type="text" name="[% field_name %]" id="[% field_id %]" value="[%value%]" class="ngcp-datepicker" rel="tooltip" data-original-title="[% date_format_js %]" onclick="
+    $(this).datepicker({
+        changeMonth: true,
+        changeYear: true,
+        showButtonPanel: true,
+        dateFormat: '[% date_format_js %]',
+        onClose: function(dateText, inst) {
+            var month = $('#ui-datepicker-div .ui-datepicker-month :selected').val();
+            var year = $('#ui-datepicker-div .ui-datepicker-year :selected').val();
+            $(this).datepicker('setDate', new Date(year, month, 1));
+        }
+    });$(this).datepicker('show');"/>
+[% IF errors.size -%]
+<span class="help-inline">
+    [% errors.join('<br/>') %]
+</span>
+[% END -%]
+</div>
+</div>
+[% # vim: set tabstop=4 syntax=html expandtab: -%]

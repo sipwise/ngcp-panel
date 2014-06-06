@@ -133,8 +133,6 @@ sub update_item {
 
     $resource->{contract_default} //= 0;
 
-    use Data::Printer; p $item;
-    use Data::Printer; p $resource;
     $item->update($resource);
 
     if($item->contract_id && $item->contract_default && !$old_resource->{contract_default}) {

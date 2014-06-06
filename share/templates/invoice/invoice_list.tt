@@ -1,0 +1,31 @@
+[% site_config.title = c.loc('Invoices ') -%]
+[%
+    helper.name = c.loc('Invoice');
+    helper.identifier = "Invoice";
+    helper.messages = messages;
+    helper.dt_columns = inv_dt_columns;
+    helper.paginate = 'true';
+    helper.filter = 'true';
+    helper.close_target = close_target;
+    helper.create_flag = create_flag;
+    helper.edit_flag = edit_flag;
+    helper.form_object = form;
+    helper.ajax_uri = c.uri_for_action('/invoice/ajax');
+
+    UNLESS c.user.read_only;
+        helper.dt_buttons = [
+            { name = c.loc('Download'), uri = "/invoice/'+full.id+'/download", class = 'btn-small btn-primary', icon = 'icon-download-alt' },
+            { name = c.loc('Delete'), uri = "/invoice/'+full.id+'/delete", class = 'btn-small btn-secondary', icon = 'icon-remove' },
+        ];
+        helper.top_buttons = [
+            { name = c.loc('Create Invoice'), uri = c.uri_for_action('/invoice/create'), class = 'btn-small btn-primary', icon = 'icon-star' },
+        ];
+    ELSE;
+        helper.dt_buttons = [
+            { name = c.loc('Download'), uri = "/invoice/'+full.id+'/download", class = 'btn-small btn-primary', icon = 'icon-download-alt' },
+        ];
+    END;
+
+    PROCESS 'helpers/datatables.tt';
+-%]
+[% # vim: set tabstop=4 syntax=html expandtab: -%]

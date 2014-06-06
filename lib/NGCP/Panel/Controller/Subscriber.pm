@@ -153,14 +153,12 @@ sub create_list :Chained('sub_list') :PathPart('create') :Args(0) :Does(ACL) :AC
         try {
             $schema->txn_do(sub {
                 my $preferences = {};
-                my $contract_rs = NGCP::Panel::Utils::Contract::get_contracts_rs_sippbx( c => $c );
-                $contract_rs = $contract_rs->search({
+                my $contract_rs = NGCP::Panel::Utils::Contract::get_customer_rs(c => $c);
+                my $contract = $contract_rs->find({
                     'me.id' => $form->params->{contract}{id},
-                }, {
-                    '+select' => 'billing_mappings.id',
-                    '+as' => 'bmid',
                 });
-                my $contract = $contract_rs->first;
+
+
                 my $billing_mapping = $contract->billing_mappings->find($contract->get_column('bmid'));
 
                 if($contract->external_id) {
@@ -225,14 +223,10 @@ sub base :Chained('sub_list') :PathPart('') :CaptureArgs(1) {
     $c->stash(subscriber => $res);
 
     $c->stash->{contract} = $c->stash->{subscriber}->contract;
-    my $contract_rs = NGCP::Panel::Utils::Contract::get_contracts_rs_sippbx( c => $c );
-    $contract_rs = $contract_rs->search({
+    my $contract_rs = NGCP::Panel::Utils::Contract::get_customer_rs(c => $c);
+    my $contract = $contract_rs->find({
         'me.id' => $c->stash->{contract}->id,
-    }, {
-        '+select' => 'billing_mappings.id',
-        '+as' => 'bmid',
     });
-    my $contract = $contract_rs->first;
     my $billing_mapping = $contract->billing_mappings->find($contract->get_column('bmid'));
     $c->stash->{billing_mapping} = $billing_mapping;
 

@@ -38,6 +38,14 @@ class_has 'query_params' => (
                 },
             },
         },
+        {
+            param => 'start',
+            description => 'Filter for a specific start time in format YYYY-MM-DDThhmmss.',
+        },
+        {
+            param => 'end',
+            description => 'Filter for a specific end time in format YYYY-MM-DDThhmmss.',
+        },
     ]},
 );
 

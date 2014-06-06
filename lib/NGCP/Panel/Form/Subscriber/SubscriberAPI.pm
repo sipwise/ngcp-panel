@@ -119,7 +119,7 @@ has_field 'save' => (
 has_block 'fields' => (
     tag => 'div',
     class => [qw/modal-body/],
-    render_list => [qw/customer domain e164 alias_number email webusername webpassword username password status lock external_id administrative is_pbx_group pbx_group display_name profile_set profile/ ],
+    render_list => [qw/customer domain pbx_extension e164 alias_numbers email webusername webpassword username password status lock external_id administrative is_pbx_group pbx_group display_name profile_set profile/ ],
 );
 
 has_block 'actions' => (
