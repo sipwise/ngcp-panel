@@ -208,8 +208,8 @@ sub POST :Allow {
 
         try {
             unless($c->config->{features}->{debug}) {
-                $self->xmpp_domain_reload($c);
-                $self->sip_domain_reload($c, $resource);
+                $self->xmpp_domain_reload($c, $resource->{domain});
+                $self->sip_domain_reload($c);
             }
         } catch($e) {
             $c->log->error("failed to activate domain: $e"); # TODO: user, message, trace, ...

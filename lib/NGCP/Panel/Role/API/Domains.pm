@@ -142,8 +142,8 @@ EOF
 }
 
 sub xmpp_domain_reload {
-    my ($self, $c, $resource) = @_;
-    NGCP::Panel::Utils::Prosody::activate_domain($c, $resource->{domain});
+    my ($self, $c, $domain) = @_;
+    NGCP::Panel::Utils::Prosody::activate_domain($c, $domain);
 }
 
 sub xmpp_domain_disable {
