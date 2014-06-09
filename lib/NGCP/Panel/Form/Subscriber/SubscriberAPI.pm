@@ -49,6 +49,16 @@ has_field 'lock' => (
     },
 );
 
+has_field 'is_pbx_pilot' => (
+    type => 'Boolean',
+    label => 'Is PBX Pilot?',
+    default => 0,
+    element_attr => {
+        rel => ['tooltip'],
+        title => ['Whether this subscriber is used as PBX pilot subscriber.'],
+    },
+);
+
 has_field 'pbx_extension' => (
     type => 'Text',
     label => 'PBX Extension',
@@ -119,7 +129,7 @@ has_field 'save' => (
 has_block 'fields' => (
     tag => 'div',
     class => [qw/modal-body/],
-    render_list => [qw/customer domain pbx_extension e164 alias_numbers email webusername webpassword username password status lock external_id administrative is_pbx_group pbx_group display_name profile_set profile/ ],
+    render_list => [qw/customer domain pbx_extension e164 alias_numbers email webusername webpassword username password status lock external_id administrative is_pbx_group pbx_group is_pbx_pilot display_name profile_set profile/ ],
 );
 
 has_block 'actions' => (

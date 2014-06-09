@@ -237,6 +237,7 @@ sub create_subscriber {
             admin => $params->{administrative} // $administrative,
             account_id => $contract->id,
             domain_id => $prov_domain->id,
+            is_pbx_pilot => $params->{is_pbx_pilot} // 0,
             is_pbx_group => $params->{is_pbx_group} // 0,
             pbx_group_id => $params->{pbx_group_id},
             pbx_extension => $params->{pbx_extension},

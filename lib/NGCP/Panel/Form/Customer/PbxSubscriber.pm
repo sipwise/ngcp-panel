@@ -102,6 +102,16 @@ has_field 'password' => (
     },
 );
 
+has_field 'administrative' => (
+    type => 'Boolean',
+    label => 'Administrative',
+    required => 0,
+    element_attr => { 
+        rel => ['tooltip'], 
+        title => ['Whether the subscriber can configure other subscribers within his Customer account.'] 
+    },
+);
+
 has_field 'status' => (
     type => '+NGCP::Panel::Field::SubscriberStatusSelect',
     label => 'Status',
@@ -150,7 +160,7 @@ has_block 'fields' => (
     tag => 'div',
     class => [qw/modal-body/],
     #render_list => [qw/display_name webusername webpassword username password status external_id profile_set profile/ ],
-    render_list => [qw/e164 display_name email webusername webpassword username password status profile_set profile/ ],
+    render_list => [qw/e164 display_name email webusername webpassword username password administrative status profile_set profile/ ],
 );
 
 has_block 'actions' => (
@@ -168,8 +178,8 @@ sub field_list {
 
     if($self->field('alias_select')) {
         my $sub;
-        if($c->stash->{admin_subscriber}) {
-            $sub = $c->stash->{admin_subscriber};
+        if($c->stash->{pilot}) {
+            $sub = $c->stash->{pilot};
         } elsif($c->stash->{subscriber} && $c->stash->{subscriber}->provisioning_voip_subscriber->admin) {
             $sub = $c->stash->{subscriber};
         }

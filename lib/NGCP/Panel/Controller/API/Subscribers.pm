@@ -219,7 +219,6 @@ sub POST :Allow {
         last unless($r);
         my $subscriber;
         my $customer = $r->{customer};
-        my $admin = $r->{admin};
         my $alias_numbers = $r->{alias_numbers};
         my $preferences = $r->{preferences};
         $resource = $r->{resource};
@@ -234,8 +233,8 @@ sub POST :Allow {
                 schema => $schema,
                 contract => $r->{customer},
                 params => $resource,
-                admin_default => $admin,
                 preferences => $preferences,
+                admin_default => 0,
             );
 
             NGCP::Panel::Utils::Subscriber::update_subscriber_numbers(
@@ -250,7 +249,7 @@ sub POST :Allow {
 
         } catch(DBIx::Class::Exception $e where { /Duplicate entry '([^']+)' for key 'number_idx'/ }) {
             $e =~ /Duplicate entry '([^']+)' for key 'number_idx'/;
-            $c->log->error("failed to create subscribere, number $1 already exists"); # TODO: user, message, trace, ...
+            $c->log->error("failed to create subscriber, number $1 already exists"); # TODO: user, message, trace, ...
             $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Number '$1' already exists.");
             last;
         } catch($e) {

@@ -23,7 +23,7 @@ has_field 'pbx_extension' => (
 has_block 'fields' => (
     tag => 'div',
     class => [qw/modal-body/],
-    render_list => [qw/group alias_select pbx_extension display_name email webusername webpassword username password status external_id profile_set profile/ ],
+    render_list => [qw/group alias_select pbx_extension display_name email webusername webpassword username password administrative status external_id profile_set profile/ ],
 );
 
 override 'field_list' => sub {
@@ -62,10 +62,9 @@ override 'field_list' => sub {
                 );
             }
         }
-    } elsif($c->stash->{admin_subscriber}) {
-        my $profile_set = $c->stash->{admin_subscriber}->provisioning_voip_subscriber->voip_subscriber_profile_set;
+    } elsif($c->stash->{pilot}) {
+        my $profile_set = $c->stash->{pilot}->provisioning_voip_subscriber->voip_subscriber_profile_set;
         if($profile_set && $self->field('profile')) {
-            print ">>>>>>>>>>>>>> setting profile, url=" . $c->uri_for_action('/subscriberprofile/profile_ajax', [$profile_set->id]) . "\n";
             $self->field('profile')->field('id')->ajax_src(
                 $c->uri_for_action('/subscriberprofile/profile_ajax', [$profile_set->id])->as_string
             );

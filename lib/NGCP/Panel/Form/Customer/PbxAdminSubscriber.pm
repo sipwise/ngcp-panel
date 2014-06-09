@@ -40,7 +40,7 @@ has_field 'domain' => (
 has_block 'fields' => (
     tag => 'div',
     class => [qw/modal-body/],
-    render_list => [qw/domain e164 e164range e164range_add display_name email webusername webpassword username password status external_id profile_set/ ],
+    render_list => [qw/domain e164 e164range e164range_add display_name email webusername webpassword username password administrative status external_id profile_set/ ],
 );
 
 1;

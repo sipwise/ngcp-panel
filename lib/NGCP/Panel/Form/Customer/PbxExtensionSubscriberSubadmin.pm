@@ -36,7 +36,7 @@ sub field_list {
         $c->uri_for_action('/customer/pbx_group_ajax', [$c->stash->{customer_id}])->as_string
     );
 
-    my $profile_set = $c->stash->{admin_subscriber}->provisioning_voip_subscriber->voip_subscriber_profile_set;
+    my $profile_set = $c->stash->{pilot}->provisioning_voip_subscriber->voip_subscriber_profile_set;
     if($profile_set) {
         $self->field('profile')->field('id')->ajax_src(
             $c->uri_for_action('/subscriberprofile/profile_ajax', [$profile_set->id])->as_string

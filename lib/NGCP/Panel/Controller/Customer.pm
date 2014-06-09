@@ -339,17 +339,6 @@ sub base :Chained('list_customer') :PathPart('') :CaptureArgs(1) {
 sub edit :Chained('base') :PathPart('edit') :Args(0) {
     my ($self, $c) = @_;
 
-    #$fooo = breakme;
-    # We now optionally get email templates via the form for subscriber creation
-    # and for password reset. Change DB schema to store those ids, and if they are
-    # not null, hide webpassword field and let user change pass on first login, and
-    # also provide a way to reset a lost password.
-    #
-    # also provide config option for password policy
-    #
-    # also provide option whether or not passwords are completely hidden (at least
-    # from subscriber(admin)) and let them be generated automatically
-
     my $contract = $c->stash->{contract};
     my $billing_mapping = $c->stash->{billing_mapping};
     my $posted = ($c->request->method eq 'POST');
@@ -540,10 +529,9 @@ sub subscriber_create :Chained('base') :PathPart('subscriber/create') :Args(0) {
     $pbx = 1 if $c->stash->{product}->class eq 'pbxaccount';
     my $form;
     my $posted = ($c->request->method eq 'POST');
-    my $admin_subscribers = $c->stash->{subscribers}->search({
-        'provisioning_voip_subscriber.admin' => 1,
-    });
-    $c->stash->{admin_subscriber} = $admin_subscribers->first;
+    $c->stash->{pilot} = $c->stash->{subscribers}->search({
+        'provisioning_voip_subscriber.is_pbx_pilot' => 1,
+    })->first;
 
     
     my $params = {};
@@ -551,7 +539,7 @@ sub subscriber_create :Chained('base') :PathPart('subscriber/create') :Args(0) {
     if($c->config->{features}->{cloudpbx} && $pbx) {
         $c->stash(customer_id => $c->stash->{contract}->id);
         # we need to create an admin subscriber first
-        unless($c->stash->{admin_subscriber}) {
+        unless($c->stash->{pilot}) {
             $pbxadmin = 1;
             $form = NGCP::Panel::Form::Customer::PbxAdminSubscriber->new(ctx => $c);
         } else {
@@ -562,7 +550,7 @@ sub subscriber_create :Chained('base') :PathPart('subscriber/create') :Args(0) {
             }
             NGCP::Panel::Utils::Subscriber::prepare_alias_select(
                 c => $c,
-                subscriber => $c->stash->{admin_subscriber},
+                subscriber => $c->stash->{pilot},
                 params => $params,
                 unselect => 1, # no numbers assigned yet, keep selection list empty
             );
@@ -598,12 +586,12 @@ sub subscriber_create :Chained('base') :PathPart('subscriber/create') :Args(0) {
             $schema->txn_do(sub {
                 my $preferences = {};
                 if($pbx && !$pbxadmin) {
-                    my $admin = $c->stash->{admin_subscriber};
-                    $form->params->{domain}{id} = $admin->domain_id;
+                    my $pilot = $c->stash->{pilot};
+                    $form->params->{domain}{id} = $pilot->domain_id;
                     # TODO: make DT selection multi-select capable
                     $form->params->{pbx_group_id} = $form->params->{group}{id};
                     delete $form->params->{group};
-                    my $base_number = $admin->primary_number;
+                    my $base_number = $pilot->primary_number;
                     if($base_number) {
                         $preferences->{cloud_pbx_base_cli} = $base_number->cc . $base_number->ac . $base_number->sn;
                         if($form->params->{pbx_extension}) {
@@ -614,6 +602,7 @@ sub subscriber_create :Chained('base') :PathPart('subscriber/create') :Args(0) {
                     }
                 }
                 if($pbx) {
+                    $form->params->{is_pbx_pilot} = 1;
                     $preferences->{cloud_pbx} = 1;
                     if($pbxadmin && $form->params->{e164}{cc} && $form->params->{e164}{sn}) {
                         $preferences->{cloud_pbx_base_cli} = $form->params->{e164}{cc} . 
@@ -621,8 +610,8 @@ sub subscriber_create :Chained('base') :PathPart('subscriber/create') :Args(0) {
                                                              $form->params->{e164}{sn};
                     }
 
-                    if($c->stash->{admin_subscriber}) {
-                        my $profile_set = $c->stash->{admin_subscriber}->provisioning_voip_subscriber->voip_subscriber_profile_set;
+                    if($c->stash->{pilot}) {
+                        my $profile_set = $c->stash->{pilot}->provisioning_voip_subscriber->voip_subscriber_profile_set;
                         if($profile_set) {
                             $form->params->{profile_set}{id} = $profile_set->id;
                         }
@@ -649,7 +638,7 @@ sub subscriber_create :Chained('base') :PathPart('subscriber/create') :Args(0) {
                     schema => $schema,
                     contract => $c->stash->{contract},
                     params => $form->params,
-                    admin_default => $pbxadmin,
+                    admin_default => 0,
                     preferences => $preferences,
                 );
 
@@ -668,7 +657,7 @@ sub subscriber_create :Chained('base') :PathPart('subscriber/create') :Args(0) {
                         subscriber => $billing_subscriber,
                         contract_id => $billing_subscriber->contract_id,
                         alias_selected => decode_json($form->value->{alias_select}),
-                        sadmin => $c->stash->{admin_subscriber},
+                        sadmin => $c->stash->{pilot},
                     );
                 }
 
@@ -838,15 +827,14 @@ sub pbx_group_create :Chained('base') :PathPart('pbx/group/create') :Args(0) {
     }
 
     my $posted = ($c->request->method eq 'POST');
-    my $admin_subscribers = $c->stash->{subscribers}->search({
-        'provisioning_voip_subscriber.admin' => 1,
-    });
-    $c->stash->{admin_subscriber} = $admin_subscribers->first;
-    unless($c->stash->{admin_subscriber}) {
+    $c->stash->{pilot} = $c->stash->{subscribers}->search({
+        'provisioning_voip_subscriber.is_pbx_pilot' => 1,
+    })->first;
+    unless($c->stash->{pilot}) {
         NGCP::Panel::Utils::Message->error(
             c => $c,
-            error => 'cannot create pbx group without having an admin subscriber',
-            desc  => $c->loc("Can't create a PBX group without having an administrative subscriber."),
+            error => 'cannot create pbx group without having a pilot subscriber',
+            desc  => $c->loc("Can't create a PBX group without having a pilot subscriber."),
         );
         NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for_action('/customer/details', $c->req->captures));
     }
@@ -870,9 +858,9 @@ sub pbx_group_create :Chained('base') :PathPart('pbx/group/create') :Args(0) {
             my $schema = $c->model('DB');
             $schema->txn_do( sub {
                 my $preferences = {};
-                my $admin = $c->stash->{admin_subscriber};
+                my $pilot = $c->stash->{pilot};
 
-                my $base_number = $admin->primary_number;
+                my $base_number = $pilot->primary_number;
                 if($base_number) {
                     $preferences->{cloud_pbx_base_cli} = $base_number->cc . $base_number->ac . $base_number->sn;
                     if($form->params->{pbx_extension}) {
@@ -882,8 +870,9 @@ sub pbx_group_create :Chained('base') :PathPart('pbx/group/create') :Args(0) {
                     }
 
                 }
+                $form->params->{is_pbx_pilot} = 0;
                 $form->params->{is_pbx_group} = 1;
-                $form->params->{domain}{id} = $admin->domain_id;
+                $form->params->{domain}{id} = $pilot->domain_id;
                 $form->params->{status} = 'active';
                 $preferences->{cloud_pbx} = 1;
                 $preferences->{cloud_pbx_hunt_policy} = $form->params->{pbx_hunt_policy};

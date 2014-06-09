@@ -222,6 +222,7 @@ sub prepare_resource {
     $resource->{e164} = delete $resource->{primary_number};
     $resource->{status} //= 'active';
     $resource->{administrative} //= 0;
+    $resource->{is_pbx_pilot} //= 0;
     $resource->{profile_set}{id} = delete $resource->{profile_set_id};
     $resource->{profile}{id} = delete $resource->{profile_id};
 
@@ -259,10 +260,31 @@ sub prepare_resource {
         return;
     }
 
+    my $pilot;
+    if($customer->get_column('product_class') eq 'pbxaccount') {
+        $pilot = $customer->voip_subscribers->search({
+            'provisioning_voip_subscriber.is_pbx_pilot' => 1,
+        },{
+            join => 'provisioning_voip_subscriber',
+        })->first;
+
+        if($pilot && $resource->{is_pbx_pilot}) {
+                $c->log->error("failed to create subscriber, contract_id " . $customer->id . " already has pbx pilot subscriber");
+                $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Customer already has a pbx pilot subscriber.");
+                return;
+        }
+        elsif(!$pilot && !$resource->{is_pbx_pilot}) {
+                $c->log->error("failed to create subscriber, contract_id " . $customer->id . " has no pbx pilot subscriber and is_pbx_pilot is set");
+                $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Customer has no pbx pilot subscriber yet and is_pbx_pilot is not set.");
+                return;
+        }
+    }
+
+
     my $preferences = {};
     my $admin = 0;
     unless($customer->get_column('product_class') eq 'pbxaccount') {
-        for my $pref(qw/is_pbx_group pbx_group_id pbx_extension pbx_hunt_policy pbx_hunt_timeout/) {
+        for my $pref(qw/is_pbx_group pbx_group_id pbx_extension pbx_hunt_policy pbx_hunt_timeout is_pbx_pilot/) {
             delete $resource->{$pref};
         }
         $admin = $resource->{admin} // 0;
@@ -274,25 +296,15 @@ sub prepare_resource {
         }, {
             join => 'provisioning_voip_subscriber',
         });
-        my $admin_subscribers = $subs->search({
-            'provisioning_voip_subscriber.admin' => 1,
-        });
-        my $admin_subscriber = $admin_subscribers->first;
 
-        unless($admin_subscriber) {
-            $admin = $resource->{admin} // 1;
-        } else {
-            $admin = $resource->{admin} // 0;
-        }
-
-        if($admin_subscriber) {
+        if($pilot) {
             unless($resource->{pbx_extension}) {
                 $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "A pbx_extension is required if customer is PBX and pilot subscriber exists.");
                 return;
             }
-            $resource->{e164}->{cc} = $admin_subscriber->primary_number->cc;
-            $resource->{e164}->{ac} = $admin_subscriber->primary_number->ac // '';
-            $resource->{e164}->{sn} = $admin_subscriber->primary_number->sn . $resource->{pbx_extension};
+            $resource->{e164}->{cc} = $pilot->primary_number->cc;
+            $resource->{e164}->{ac} = $pilot->primary_number->ac // '';
+            $resource->{e164}->{sn} = $pilot->primary_number->sn . $resource->{pbx_extension};
 
             unless($resource->{is_pbx_group}) {
                 unless($resource->{pbx_group_id}) {
@@ -323,7 +335,7 @@ sub prepare_resource {
             $preferences->{contract_sound_set} = $default_sound_set->id;
         }
 
-        my $base_number = $admin_subscriber ? $admin_subscriber->primary_number : undef;
+        my $base_number = $pilot ? $pilot->primary_number : undef;
         if($base_number) {
             $preferences->{cloud_pbx_base_cli} = $base_number->cc . ($base_number->ac // '') . $base_number->sn;
         }
@@ -376,17 +388,11 @@ sub prepare_resource {
         return;
     }
 
-    # TODO: handle pbx subscribers:
-        # extension
-        # is group
-        # default sound set
-
     # TODO: handle status != active
 
     my $r = {
         resource => $resource,
         customer => $customer,
-        admin => $admin,
         alias_numbers => $alias_numbers,
         preferences => $preferences,
     };
@@ -399,9 +405,15 @@ sub update_item {
 
     my $subscriber = $item;
     my $customer = $full_resource->{customer};
-    my $admin = $full_resource->{admin};
     my $alias_numbers = $full_resource->{alias_numbers};
     my $preferences = $full_resource->{preferences};
+
+
+    if($subscriber->provisioning_voip_subscriber->is_pbx_pilot && !$resource->{is_pbx_pilot}) {
+        $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Cannot revoke is_pbx_pilot status from a subscriber.");
+        return;
+    }
+
 
     if($subscriber->status ne $resource->{status}) {
         if($resource->{status} eq 'locked') {
@@ -521,7 +533,8 @@ sub update_item {
         password => $resource->{password},
         webusername => $resource->{webusername},
         webpassword => $resource->{webpassword},
-        admin => $resource->{administrative},
+        admin => $resource->{administrative} // 0,
+        is_pbx_pilot => $resource->{is_pbx_pilot} // 0,
         is_pbx_group => $resource->{is_pbx_group} // 0,
         pbx_group_id => $resource->{pbx_group_id},
         modify_timestamp => NGCP::Panel::Utils::DateTime::current_local,

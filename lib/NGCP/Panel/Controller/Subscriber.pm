@@ -238,10 +238,9 @@ sub base :Chained('sub_list') :PathPart('') :CaptureArgs(1) {
         join => 'provisioning_voip_subscriber',
     });
 
-    my $admin_subscribers = $c->stash->{subscribers}->search({
-        'provisioning_voip_subscriber.admin' => 1,
-    });
-    $c->stash->{admin_subscriber} = $admin_subscribers->first;
+    $c->stash->{pilot} = $c->stash->{subscribers}->search({
+        'provisioning_voip_subscriber.is_pbx_pilot' => 1,
+    })->first;
 
     $c->stash->{sd_dt_columns} = NGCP::Panel::Utils::Datatables::set_columns($c, [
         { name => "id", search => 1, title => $c->loc('#') },
@@ -1931,7 +1930,7 @@ sub edit_master :Chained('master') :PathPart('edit') :Args(0) :Does(ACL) :ACLDet
     
     if($c->stash->{billing_mapping}->product->class eq "pbxaccount") {
         $c->stash(customer_id => $subscriber->contract->id);
-        if($subscriber->provisioning_voip_subscriber->admin) {
+        if($subscriber->provisioning_voip_subscriber->is_pbx_pilot) {
             if($c->user->roles eq 'subscriberadmin') {
                 $subadmin_pbx = 1;
                 $form = NGCP::Panel::Form::Customer::PbxExtensionSubscriberEditSubadminNoGroup->new(ctx => $c);
@@ -1940,7 +1939,7 @@ sub edit_master :Chained('master') :PathPart('edit') :Args(0) :Does(ACL) :ACLDet
                 $form = NGCP::Panel::Form::Customer::PbxSubscriberEdit->new(ctx => $c);
             }
         } else {
-            $base_number = $c->stash->{admin_subscriber}->primary_number;
+            $base_number = $c->stash->{pilot}->primary_number;
 
             if($c->user->roles eq 'subscriberadmin') {
                 $subadmin_pbx = 1;
@@ -2178,13 +2177,13 @@ sub edit_master :Chained('master') :PathPart('edit') :Args(0) :Does(ACL) :ACLDet
                     $form->values->{lock} ||= 0; # update lock below
                 }
 
-                if(exists $form->params->{alias_select} && $c->stash->{admin_subscriber}) {
+                if(exists $form->params->{alias_select} && $c->stash->{pilot}) {
                     NGCP::Panel::Utils::Subscriber::update_subadmin_sub_aliases(
                         schema => $schema,
                         subscriber => $subscriber,
                         contract_id => $subscriber->contract_id,
                         alias_selected => decode_json($form->values->{alias_select}),
-                        sadmin => $c->stash->{admin_subscriber},
+                        sadmin => $c->stash->{pilot},
                     );
                 }
 
