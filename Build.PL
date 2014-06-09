@@ -96,6 +96,7 @@ my $builder = Local::Module::Build->new(
         'URI::Escape' => 0,
         'UUID' => 0,
         'XML::Mini' => 0,
+        'XML::XPath' => 0,
         'warnings' => 0,
     },
     test_requires => {
