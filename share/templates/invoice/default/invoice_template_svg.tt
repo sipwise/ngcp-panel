@@ -10,8 +10,8 @@
         money_format(amount=(invoice.amount_vat), comma='.'); vatfee = aux.val;
         money_format(amount=(invoice.amount_total), comma='.'); allfee = aux.val;
         cur = billprof.currency;
-        p_start = date.format(invoice.period_start, '%Y-%m-%d');
-        p_end = date.format(invoice.period_end, '%Y-%m-%d');
+        p_start = date_format(thedate=invoice.period_start, format='%Y-%m-%d');
+        p_end = date_format(thedate=invoice.period_end, format='%Y-%m-%d');
         
     -%]
 }-->
@@ -62,7 +62,7 @@
             <tspan x="190mm" dy="4mm" font-weight="bold">Invoice Period</tspan>
             <tspan x="190mm" dy="4mm">[% p_start %] - [% p_end %]</tspan>
             <tspan x="190mm" dy="4mm" font-weight="bold">Date</tspan>
-            <tspan x="190mm" dy="4mm">[% date_now(f='%Y-%m-%d') %]</tspan>
+            <tspan x="190mm" dy="4mm">[% date_now(format='%Y-%m-%d') %]</tspan>
         </text>
 
         <text x="20mm" y="100mm" font-family="Verdana" font-size="12pt" font-weight="bold">Your Monthly Statement</text>
@@ -152,7 +152,7 @@
         </text>
         <line x1="22mm" y1="60mm" x2="190mm" y2="60mm" style="stroke:#000000;stroke-width:0.2mm;" />
 
-        <!--{ [% calllist(fontfamily='Verdana', fontsize=8, startx=22, starty=65, offsety=5, miny=40, maxy=260, calls=calls, fields=[{name='start_time',dx=0,date_format='%Y-%m-%d %H:%M:%S'},{name='duration',dx=50,timestamp2time=1,anchor='end'},{name='destination_user_in',dx=10},{name='zone',dx=40},{name='source_customer_cost',dx=68,money_cents=1,comma='.',anchor='end'}]) -%] }-->
+        <!--{ [% calllist(fontfamily='Verdana', fontsize=8, startx=22, starty=65, offsety=5, miny=40, maxy=260, calls=calls, fields=[{name='start_time',dx=0,date_format='%Y-%m-%d %H:%M:%S'},{name='duration',dx=50,timestamp2time=1,anchor='end'},{name='destination_user_in',dx=10,prefix='+',masklen=10,mask='xxx'},{name='zone',dx=40},{name='source_customer_cost',dx=68,money_cents=1,comma='.',anchor='end'}]) -%] }-->
         
     </g>
 

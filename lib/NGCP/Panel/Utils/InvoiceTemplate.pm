@@ -205,8 +205,8 @@ sub get_dummy_data {
             vat_included => 0,
         },
         invoice => {
-            period_start => time - 2592000,
-            period_end => time,
+            period_start => NGCP::Panel::Utils::DateTime::current_local()->truncate(to => 'month'),
+            period_end => NGCP::Panel::Utils::DateTime::current_local()->truncate(to => 'month')->add(months => 1)->subtract(seconds => 1),
             serial => '1234567',
             amount_net => 12345,
             amount_vat => 12345*0.2,

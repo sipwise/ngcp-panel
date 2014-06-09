@@ -61,6 +61,10 @@ has_field 'subscriber_email_template' => (
     label => 'Subscriber Creation Email Template',
     do_label => 1,
     required => 0,
+    element_attr => {
+        rel => ['tooltip'],
+        title => ['The email template used to notify users about subscriber creation.']
+    },
 );
 
 has_field 'passreset_email_template' => (
@@ -68,6 +72,32 @@ has_field 'passreset_email_template' => (
     label => 'Password Reset Email Template',
     do_label => 1,
     required => 0,
+    element_attr => {
+        rel => ['tooltip'],
+        title => ['The email template used to notify users about password reset.']
+    },
+);
+
+has_field 'vat_rate' => (
+    type => 'Integer',
+    label => 'VAT Rate',
+    range_start => 0,
+    range_end => 100,
+    default => 0,
+    element_attr => {
+        rel => ['tooltip'],
+        title => ['The VAT rate in percentage (e.g. 20).']
+    },
+);
+
+has_field 'add_vat' => (
+    type => 'Boolean',
+    label => 'Charge VAT',
+    element_attr => {
+        rel => ['tooltip'],
+        title => ['Whether to charge VAT in invoices.']
+    },
+    default => 0,
 );
 
 
@@ -82,7 +112,7 @@ has_field 'save' => (
 has_block 'fields' => (
     tag => 'div',
     class => [qw/modal-body/],
-    render_list => [qw/contact billing_profile status external_id subscriber_email_template passreset_email_template/],
+    render_list => [qw/contact billing_profile status external_id subscriber_email_template passreset_email_template vat_rate add_vat/],
 );
 
 has_block 'actions' => (

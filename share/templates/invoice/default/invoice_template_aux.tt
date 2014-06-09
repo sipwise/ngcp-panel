@@ -1,12 +1,17 @@
 [%
-    USE date;
+    USE date(format = '%Y-%M-%DT%h%m%s');
     USE Math;
     USE String;
 
     aux.page = 1;
 
+    MACRO date_format BLOCK;
+        d = thedate.ymd('/') _ ' ' _ thedate.hms;
+        date.format(d, format);
+    END;
+
     MACRO date_now BLOCK;
-        date.format(date.now(), f);
+        date.format(date.now(), format);
     END;
 
     MACRO svgopen BLOCK;
@@ -75,6 +80,13 @@
                 x = x + f.dx;
                 format_field(field=f, val=call.${f.name});
                 val = aux.val;
+                IF f.prefix.length;
+                    val = f.prefix _ val;
+                END;
+                IF f.masklen;
+                    l = f.masklen > val.length ? val.length : f.masklen;
+                    val = val.substr(l - 1, val.length - 1, f.mask);
+                END;
                 '<text font-family="' _ fontfamily  _ '" font-size="' _ fontsize  _ 'pt" x="' _ x _ 'mm" y="' _ y _ 'mm" text-anchor="'_ anc _'">';
                     val;
                 '</text>';

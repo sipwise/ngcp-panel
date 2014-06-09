@@ -148,27 +148,6 @@ has_field 'currency' => (
     },
 );
 
-has_field 'vat_rate' => (
-    type => 'Integer',
-    label => 'VAT Rate',
-    range_start => 0,
-    range_end => 100,
-    element_attr => {
-        rel => ['tooltip'],
-        title => ['The VAT rate in percentage (e.g. 20).']
-    },
-);
-
-has_field 'vat_included' => (
-    type => 'Boolean',
-    label => 'VAT Included',
-    element_attr => {
-        rel => ['tooltip'],
-        title => ['Whether the fees already incluside VAT.']
-    },
-    default => 0,
-);
-
 has_field 'save' => (
     type => 'Submit',
     value => 'Save',
@@ -182,7 +161,7 @@ has_block 'fields' => (
     render_list => [qw/handle name prepaid interval_charge interval_free_time interval_free_cash 
         fraud_interval_limit fraud_interval_lock fraud_interval_notify
         fraud_daily_limit fraud_daily_lock fraud_daily_notify
-        currency vat_rate vat_included id/],
+        currency id/],
 );
 
 has_block 'actions' => (

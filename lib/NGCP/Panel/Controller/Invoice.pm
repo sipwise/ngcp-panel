@@ -190,19 +190,15 @@ sub create :Chained('inv_list') :PathPart('create') :Args() :Does(ACL) :ACLDetac
                     );
                     die;
                 }
-                use Data::Printer; say ">>>>>>>>>>>>>>>>>>> balance\n"; p $balance;
 
                 # TODO: generate pdf here, then insert as data
                 $form->params->{serial} = "test".time.int(rand(99999));
 
 
-                # TODO: vat should be moved to contracts
-                # TODO: the base fee needs to be added too!
-                $form->params->{amount_net} = $balance->cash_balance_interval;
-                $form->params->{amount_vat} = 
-                    $form->params->{amount_net} * ($billing_profile->vat_rate/100); # TODO: is it really in percent?
+                $form->params->{amount_net} = $balance->cash_balance_interval + $billing_profile->interval_charge; # TODO: if not a full month, calculate fraction?
+                $form->params->{amount_net} = $customer->add_vat ?
+                    $form->params->{amount_net} * ($customer->vat_rate/100) : 0;
                 $form->params->{amount_total} = $form->params->{amount_net} + $form->params->{amount_vat};
-
 
                 my $svg = $tmpl->data;
                 my $t = NGCP::Panel::Utils::InvoiceTemplate::get_tt();
@@ -215,8 +211,8 @@ sub create :Chained('inv_list') :PathPart('create') :Args() :Does(ACL) :ACLDetac
                 $vars->{custcontact} = { $customer->contact->get_inflated_columns };
                 $vars->{billprof} = { $billing_profile->get_inflated_columns };
                 $vars->{invoice} = {
-                    period_start => $stime->epoch, # TODO: really?
-                    period_end => $etime->epoch,
+                    period_start => $stime,
+                    period_end => $etime,
                     serial => $form->params->{serial},
                     amount_net => $form->params->{amount_net},
                     amount_vat => $form->params->{amount_vat},
@@ -224,7 +220,7 @@ sub create :Chained('inv_list') :PathPart('create') :Args() :Does(ACL) :ACLDetac
                 };
                 $vars->{calls} = []; # TODO: outbound cdrs call list
                 $vars->{zones} = {
-                    totalcost => $form->params->{amount_net},
+                    totalcost => $balance->cash_balance_interval,
                     data => [ values(%{ $zonecalls }) ],
                 };
 
