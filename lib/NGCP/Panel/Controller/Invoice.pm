@@ -258,9 +258,8 @@ sub create :Chained('inv_list') :PathPart('create') :Args() :Does(ACL) :ACLDetac
                     $call->{source_customer_cost} += 0.0; # make sure it's a number
                     $call;
                 } $calllist_rs->all ];
-                my $size = @{ $calllist };
-                say ">>>>>>>>>>>>> we have $size calls in list";
-                #$calllist = [ @{ $calllist}[0 .. $size-150] ];
+
+                # TODO: index 170 seems the upper limit here, then the calllist breaks
 
                 $vars->{rescontact} = { $customer->contact->reseller->contract->contact->get_inflated_columns };
                 $vars->{customer} = { $customer->get_inflated_columns };
@@ -275,7 +274,6 @@ sub create :Chained('inv_list') :PathPart('create') :Args() :Does(ACL) :ACLDetac
                     amount_total => $form->params->{amount_total},
                 };
                 $vars->{calls} = $calllist,
-                #$vars->{calls} = [ $calllist->[0] ],
                 $vars->{zones} = {
                     totalcost => $balance->cash_balance_interval,
                     data => [ values(%{ $zonecalls }) ],

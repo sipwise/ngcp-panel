@@ -200,7 +200,7 @@ sub get_billing_profile {
 }
 
 sub prepare_resource {
-    my ($self, $c, $schema, $resource, $update) = @_;
+    my ($self, $c, $schema, $resource, $item) = @_;
 
     my $domain;
     if($resource->{domain}) {
@@ -228,7 +228,9 @@ sub prepare_resource {
     $resource->{is_pbx_pilot} //= 0;
     $resource->{profile_set}{id} = delete $resource->{profile_set_id};
     $resource->{profile}{id} = delete $resource->{profile_id};
-    my $subscriber_id = $resource->{id} // 0;
+    my $subscriber_id = $item ? $item->id : 0;
+
+    $resource->{alias_numbers} = [ map {{ e164 => $_ }} @{ $resource->{alias_numbers} // [] } ];
 
     my $form = $self->get_form($c);
     return unless $self->validate_form(
@@ -256,7 +258,7 @@ sub prepare_resource {
 
     my $customer = $self->get_customer($c, $resource->{customer_id});
     return unless($customer);
-    if(!$update && defined $customer->max_subscribers && $customer->voip_subscribers->search({ 
+    if(!$item && defined $customer->max_subscribers && $customer->voip_subscribers->search({ 
             status => { '!=' => 'terminated' },
         })->count >= $customer->max_subscribers) {
         
@@ -312,7 +314,8 @@ sub prepare_resource {
             },{
                 join => 'provisioning_voip_subscriber',
             });
-            if($ext_rs->first) {
+
+            if($ext_rs->first && $ext_rs->first->id != $subscriber_id) {
                 $c->log->error("trying to add pbx_extension to contract id " . $pilot->contract_id . ", which is already in use by subscriber id " . $ext_rs->first->id);
                 $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "The pbx_extension already exists for this customer.");
                 return;
@@ -375,7 +378,7 @@ sub prepare_resource {
         domain_id => $resource->{domain_id},
         status => { '!=' => 'terminated' },
     });
-    if($update) {
+    if($item) { # update
         unless($subscriber) {
             $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Subscriber does not exist.");
             return;
@@ -396,10 +399,8 @@ sub prepare_resource {
                 $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Invalid parameter 'alias_numbers', must be hash or array of hashes.");
                 return;
             }
-            push @{ $alias_numbers }, { e164 => $num };
+            push @{ $alias_numbers }, $num;
         }
-    } elsif(ref $resource->{alias_numbers} eq "HASH") {
-        push @{ $alias_numbers }, { e164 => $resource->{alias_numbers} };
     } else {
         $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Invalid parameter 'alias_numbers', must be hash or array of hashes.");
         return;

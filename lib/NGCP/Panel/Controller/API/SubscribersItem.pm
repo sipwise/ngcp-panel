@@ -103,8 +103,7 @@ sub PUT :Allow {
             media_type => 'application/json',
         );
         last unless $resource;
-        my $update = 1;
-        my $r = $self->prepare_resource($c, $schema, $resource, $update);
+        my $r = $self->prepare_resource($c, $schema, $resource, $subscriber);
         last unless $r;
         $resource = $r->{resource};
 
@@ -156,7 +155,7 @@ sub PATCH :Allow {
         last unless $resource;
 
         my $update = 1;
-        my $r = $self->prepare_resource($c, $schema, $resource, $update);
+        my $r = $self->prepare_resource($c, $schema, $resource, $subscriber);
         last unless $r;
         $resource = $r->{resource};
 

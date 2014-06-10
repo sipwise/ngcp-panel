@@ -541,8 +541,8 @@ sub update_subscriber_numbers {
 
     }
 
-
     if(defined $alias_numbers && ref($alias_numbers) eq 'ARRAY') {
+
         my $number;
         for my $alias(@$alias_numbers) {
 
