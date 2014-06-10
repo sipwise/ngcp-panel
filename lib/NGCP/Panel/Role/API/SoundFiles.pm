@@ -98,7 +98,7 @@ sub resource_from_item {
 
     my $resource = { $item->get_inflated_columns };
     delete $resource->{data};
-    $resource->{filename} =~ s/\.pcma$/.wav/;
+    $resource->{filename} =~ s/\.pcma$/.wav/ if $resource->{filename};
 
     $resource->{handle} = $item->handle->name;
     delete $resource->{handle_id};
