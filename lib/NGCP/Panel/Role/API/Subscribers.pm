@@ -306,6 +306,18 @@ sub prepare_resource {
                 $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "A pbx_extension is required if customer is PBX and pilot subscriber exists.");
                 return;
             }
+
+            my $ext_rs = $pilot->contract->voip_subscribers->search({
+                'provisioning_voip_subscriber.pbx_extension' => $resource->{pbx_extension},
+            },{
+                join => 'provisioning_voip_subscriber',
+            });
+            if($ext_rs->first) {
+                $c->log->error("trying to add pbx_extension to contract id " . $pilot->contract_id . ", which is already in use by subscriber id " . $ext_rs->first->id);
+                $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "The pbx_extension already exists for this customer.");
+                return;
+            }
+
             $resource->{e164}->{cc} = $pilot->primary_number->cc;
             $resource->{e164}->{ac} = $pilot->primary_number->ac // '';
             $resource->{e164}->{sn} = $pilot->primary_number->sn . $resource->{pbx_extension};
