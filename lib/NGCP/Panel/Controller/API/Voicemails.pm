@@ -39,6 +39,18 @@ class_has 'query_params' => (
                 second => sub { },
             },
         },
+        {
+            param => 'folder',
+            description => 'Filter for voicemails in a specific folder (one of INBOX, Old, Friends, Family, Cust1 to Cust4)',
+            query => {
+                first => sub {
+                    my $q = shift;
+                    # join is already done in get_item_rs
+                    { 'me.dir' => { like => '%/'.$q } };
+                },
+                second => sub { },
+            },
+        },
     ]},
 );
 
