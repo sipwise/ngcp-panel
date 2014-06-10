@@ -102,7 +102,7 @@
     END;
 
     MACRO timestamp2time BLOCK;
-        t = timestamp;
+        t = Math.int(timestamp);
         h = Math.int(t / 3600);
         m = Math.int((t % 3600) / 60);
         s = Math.int((t % 3600) % 60);

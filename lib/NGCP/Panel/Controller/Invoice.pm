@@ -191,20 +191,76 @@ sub create :Chained('inv_list') :PathPart('create') :Args() :Does(ACL) :ACLDetac
                     die;
                 }
 
-                # TODO: generate pdf here, then insert as data
-                $form->params->{serial} = "test".time.int(rand(99999));
+                $form->params->{period_start} = $stime->epoch;
+                $form->params->{period_end} = $etime->epoch;
 
+                my $vat = $customer->vat_rate // 0;
 
-                $form->params->{amount_net} = $balance->cash_balance_interval + $billing_profile->interval_charge; # TODO: if not a full month, calculate fraction?
-                $form->params->{amount_net} = $customer->add_vat ?
-                    $form->params->{amount_net} * ($customer->vat_rate/100) : 0;
+                $form->params->{amount_net} = 
+                    ($balance->cash_balance_interval // 0) + 
+                    ($billing_profile->interval_charge // 0); # TODO: if not a full month, calculate fraction?
+
+                $form->params->{amount_vat} = $customer->add_vat ?
+                    $form->params->{amount_net} * ($vat/100) : 0;
                 $form->params->{amount_total} = $form->params->{amount_net} + $form->params->{amount_vat};
+
+
+                # generate tmp serial here, derive one from after insert
+                $form->params->{serial} = "tmp".time.int(rand(99999));
+                $form->params->{data} = undef;
+                my $invoice;
+                try {
+                    $invoice = $schema->resultset('invoices')->create($form->params);
+                } catch($e) {
+                    NGCP::Panel::Utils::Message->error(
+                        c => $c,
+                        error => $e,
+                        desc  => $c->loc('Failed to save invoice meta data.'),
+                    );
+                    die;
+                }
+                my $serial = sprintf("INV%04d%02d%07d", $stime->year, $stime->month, $invoice->id);
 
                 my $svg = $tmpl->data;
                 my $t = NGCP::Panel::Utils::InvoiceTemplate::get_tt();
                 my $out = '';
                 my $pdf = '';
                 my $vars = {};
+
+
+                my $calllist_rs = $c->model('DB')->resultset('cdr')->search({
+                    source_account_id => $customer->id,
+                    call_status => 'ok',
+                    start_time => { '>=' => $stime->epoch },
+                    start_time => { '<=' => $etime->epoch },
+                },{
+                    select => [qw/
+                        source_user source_domain source_cli 
+                        destination_user_in 
+                        start_time duration call_type
+                        source_customer_cost
+                        source_customer_billing_zones_history.zone
+                        source_customer_billing_zones_history.detail
+                    /],
+                    as => [qw/
+                        source_user source_domain source_cli 
+                        destination_user_in 
+                        start_time duration call_type
+                        source_customer_cost
+                        zone 
+                        zone_detail
+                    /],
+                    join => 'source_customer_billing_zones_history',
+                });
+                my $calllist = [ map { 
+                    my $call = {$_->get_inflated_columns};
+                    $call->{start_time} = $call->{start_time}->epoch;
+                    $call->{source_customer_cost} += 0.0; # make sure it's a number
+                    $call;
+                } $calllist_rs->all ];
+                my $size = @{ $calllist };
+                say ">>>>>>>>>>>>> we have $size calls in list";
+                #$calllist = [ @{ $calllist}[0 .. $size-150] ];
 
                 $vars->{rescontact} = { $customer->contact->reseller->contract->contact->get_inflated_columns };
                 $vars->{customer} = { $customer->get_inflated_columns };
@@ -213,20 +269,21 @@ sub create :Chained('inv_list') :PathPart('create') :Args() :Does(ACL) :ACLDetac
                 $vars->{invoice} = {
                     period_start => $stime,
                     period_end => $etime,
-                    serial => $form->params->{serial},
+                    serial => $serial,
                     amount_net => $form->params->{amount_net},
                     amount_vat => $form->params->{amount_vat},
                     amount_total => $form->params->{amount_total},
                 };
-                $vars->{calls} = []; # TODO: outbound cdrs call list
+                $vars->{calls} = $calllist,
+                #$vars->{calls} = [ $calllist->[0] ],
                 $vars->{zones} = {
                     totalcost => $balance->cash_balance_interval,
                     data => [ values(%{ $zonecalls }) ],
                 };
 
-
                 try {
                     NGCP::Panel::Utils::InvoiceTemplate::preprocess_svg(\$svg);
+
                     $t->process(\$svg, $vars, \$out) || do {
                         my $error = $t->error();
                         my $msg = "error processing template, type=".$error->type.", info='".$error->info."'";
@@ -244,28 +301,23 @@ sub create :Chained('inv_list') :PathPart('create') :Args() :Does(ACL) :ACLDetac
                     NGCP::Panel::Utils::Message->error(
                         c     => $c,
                         log   => $e,
-                        desc  => $c->loc('Failed to preview template'),
+                        desc  => $c->loc('Failed to render invoice'),
                     );
                     NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for('/invoice'));
                     return;
                 }
 
-                $form->params->{data} = $pdf;
-
-                # TODO:
-                #we are two hours off when converting back from epoch due to timezone
-
-                $form->params->{period_start} = $stime->epoch;
-                $form->params->{period_end} = $etime->epoch;
-
-                my $inv = $schema->resultset('invoices')->create($form->params);
+                $invoice->update({
+                    serial => $serial,
+                    data => $pdf,
+                });
+                $c->flash(messages => [{type => 'success', text => $c->loc('Invoice #' . $invoice->id . ' successfully created')}]);
             });
-            $c->flash(messages => [{type => 'success', text => $c->loc('Invoice successfully created')}]);
         } catch($e) {
             NGCP::Panel::Utils::Message->error(
                 c => $c,
                 error => $e,
-                desc  => $c->loc('Failed to create invoice .'),
+                desc  => $c->loc('Failed to create invoice.'),
             );
         }
         NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for('/invoice'));
