@@ -140,7 +140,20 @@ sub delete :Chained('base') :PathPart('delete') {
     my ($self, $c) = @_;
 
     try {
-        $c->stash->{level_result}->delete;
+        my $schema = $c->model('DB');
+        $schema->txn_do(sub {
+            for my $pref(qw/adm_ncos_id subadm_ncos_id ncos_id/) {
+                my $rs = NGCP::Panel::Utils::Preferences::get_usr_preference_rs(
+                    c => $c, attribute => $pref,
+                );
+                next unless($rs);
+                $rs = $rs->search({
+                    value => $c->stash->{level_result}->id,
+                });
+                $rs->delete;
+            }
+            $c->stash->{level_result}->delete;
+        });
         $c->flash(messages => [{type => 'success', text => $c->loc('NCOS level successfully deleted') }]);
     } catch ($e) {
         NGCP::Panel::Utils::Message->error(
