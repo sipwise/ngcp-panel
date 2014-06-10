@@ -225,6 +225,7 @@ sub prepare_resource {
     $resource->{is_pbx_pilot} //= 0;
     $resource->{profile_set}{id} = delete $resource->{profile_set_id};
     $resource->{profile}{id} = delete $resource->{profile_id};
+    my $subscriber_id = $resource->{id} // 0;
 
     my $form = $self->get_form($c);
     return unless $self->validate_form(
@@ -268,15 +269,15 @@ sub prepare_resource {
             join => 'provisioning_voip_subscriber',
         })->first;
 
-        if($pilot && $resource->{is_pbx_pilot}) {
-                $c->log->error("failed to create subscriber, contract_id " . $customer->id . " already has pbx pilot subscriber");
-                $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Customer already has a pbx pilot subscriber.");
-                return;
+        if($pilot && $resource->{is_pbx_pilot} && $pilot->id != $subscriber_id) {
+            $c->log->error("failed to create subscriber, contract_id " . $customer->id . " already has pbx pilot subscriber");
+            $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Customer already has a pbx pilot subscriber.");
+            return;
         }
         elsif(!$pilot && !$resource->{is_pbx_pilot}) {
-                $c->log->error("failed to create subscriber, contract_id " . $customer->id . " has no pbx pilot subscriber and is_pbx_pilot is set");
-                $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Customer has no pbx pilot subscriber yet and is_pbx_pilot is not set.");
-                return;
+            $c->log->error("failed to create subscriber, contract_id " . $customer->id . " has no pbx pilot subscriber and is_pbx_pilot is set");
+            $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Customer has no pbx pilot subscriber yet and is_pbx_pilot is not set.");
+            return;
         }
     }
 
@@ -297,7 +298,7 @@ sub prepare_resource {
             join => 'provisioning_voip_subscriber',
         });
 
-        if($pilot) {
+        if($pilot && $pilot->id != $subscriber_id) {
             unless($resource->{pbx_extension}) {
                 $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "A pbx_extension is required if customer is PBX and pilot subscriber exists.");
                 return;
@@ -335,6 +336,7 @@ sub prepare_resource {
             $preferences->{contract_sound_set} = $default_sound_set->id;
         }
 
+        # TODO: if we edit the primary of the pilot, will we not get the old primary number here?
         my $base_number = $pilot ? $pilot->primary_number : undef;
         if($base_number) {
             $preferences->{cloud_pbx_base_cli} = $base_number->cc . ($base_number->ac // '') . $base_number->sn;
