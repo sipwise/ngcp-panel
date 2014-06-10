@@ -28,7 +28,7 @@ use NGCP::Panel::Utils::DateTime;
 use NGCP::Panel::Utils::Contract;
 use NGCP::Panel::Utils::InvoiceTemplate;
 use NGCP::Panel::Utils::Email;
-use NGCP::Panel::View::SVG;
+#use NGCP::Panel::View::SVG;
 
 my $debug = 0;
 
@@ -93,8 +93,9 @@ sub process_invoices{
                     print "reseller_id=".$provider_contract->{reseller_core_id}.";conatct_id=".$client_contact->{id}.";contract_id=".$client_contract->{id}.";\n";
 
                     if( my $billing_profile = get_billing_profile($client_contract, $stime, $etime) ){
-                        my $invoice = generate_invoice_data($provider_contract,$provider_contact,$client_contract,$client_contact,$billing_profile, $stime, $etime);
-                        push @{$invoices->{$client_contact->{id}}}, $invoice;
+                        if(my $invoice = generate_invoice_data($provider_contract,$provider_contact,$client_contract,$client_contact,$billing_profile, $stime, $etime)){
+                            push @{$invoices->{$client_contact->{id}}}, $invoice;
+                        }
                     }else{#if billing profile
                         print "No billing profile;\n"
                     }
@@ -160,7 +161,7 @@ sub get_billing_profile{
 sub get_invoice_data_raw{
     my($client_contract, $stime, $etime) = @_;
 
-    my $invoice_details_calls = $dbh->selectall_arrayref('select cdr.*,bzh.zone, bzh.detail as zone_detail 
+    my $invoice_details_calls = $dbh->selectall_arrayref('select cdr.*,from_unixtime(cdr.start_time) as start_time,bzh.zone, bzh.detail as zone_detail 
     from accounting.cdr 
     LEFT JOIN billing.billing_zones_history bzh ON bzh.id = cdr.source_customer_billing_zone_id
     where
@@ -202,55 +203,74 @@ sub get_invoice_data_raw{
 sub generate_invoice_data{
     my($provider_contract,$provider_contact,$client_contract,$client_contact,$billing_profile, $stime, $etime) = @_;
     
-    state ($c_mock,$view,$svg_default);
-    if(!$c_mock){
-        $c_mock = Test::MockObject->new();
-        $c_mock->set_false(qw/debug/);
-        $view = NGCP::Panel::View::SVG->new($c_mock,{});
-        $svg_default = $view->getTemplateContent(undef,'invoice/invoice_template_svg.tt');
-        NGCP::Panel::Utils::InvoiceTemplate::preprocessInvoiceTemplateSvg( { no_fake_data => 1 }, \$svg_default);
+    state ($t,$svg_default);
+    if(!$t){
+        $t = NGCP::Panel::Utils::InvoiceTemplate::get_tt();        
+        $svg_default = $t->context->insert('invoice/default/invoice_template_svg.tt');
+        NGCP::Panel::Utils::InvoiceTemplate::preprocess_svg(\$svg_default);
     }
+    my $svg = $dbh->selectrow_array('select data from invoice_templates where  type = "svg" and reseller_id=?',undef,$provider_contract->{reseller_core_id});#is_active = 1 and
+    if($svg){
+        NGCP::Panel::Utils::InvoiceTemplate::preprocess_svg(\$svg);
+    }else{
+        #$svg = $svg_default;
+        print "No saved active tempalate - no invoice;\n";
+        return;
+    }
+
+    
+    #my $zonecalls = NGCP::Panel::Utils::Contract::get_contract_zonesfees(
+    #    c => $c,
+    #    contract_id => $contract_id,
+    #    stime => $stime,
+    #    etime => $etime,
+    #    in => 0,
+    #    out => 1,
+    #    group_by_detail => 1,
+    #);
 
     my ($contract_balance,$invoice)=({},{});
     ($contract_balance,$invoice) = get_contract_balance($client_contract,$billing_profile,$contract_balance,$invoice,$stime,$etime);
     $client_contact->{country_name} = country($client_contact->{country} || '');
-    my($stash) = get_invoice_data_raw($client_contract, $stime, $etime);
-    $stash = {
-        %$stash,
-        provider => $provider_contact,
-        client   => $client_contact,
-        invoice  => $invoice,
-        bp       => $billing_profile,
+
+    # TODO: if not a full month, calculate fraction?
+    #TODO: to utils::contract and share with catalyst version
+    $invoice = {
+        %$invoice,
+        amount_net   => $contract_balance->{cash_balance_interval} + $billing_profile->{interval_charge},
+        amount_vat   => $client_contract->{add_vat} 
+            ?
+                $invoice->{amount_net} * ($client_contract->{vat_rate}/100) 
+                : 0,
+        amount_total =>  $invoice->{amount_net} + $invoice->{amount_vat},
+        period_start => $stime,
+        period_end   => $etime,
     };
-    my ($in, $out);
-    #tt_id used only as part in temporary directory
-    $in = {
-        no_fake_data   => 1,
-        provider_id    => $provider_contract->{reseller_core_id},
-        tt_type        => 'svg',
-        tt_sourcestate => 'saved',
-        tt_id          => $provider_contract->{reseller_core_id},
+    my($invoice_data) = get_invoice_data_raw($client_contract, $stime, $etime);
+    my $out = '';
+    my $pdf = '';
+    my $vars = {
+        rescontact  => $provider_contact,
+        customer    => $client_contract,
+        custcontact => $client_contact,
+        billprof    => $billing_profile,
+        calls       => $invoice_data->{invoice_details_calls},
+        zones       => {
+            totalcost => $contract_balance->{cash_balance_interval},
+            data => $invoice_data->{invoice_details_zones},        
+        },
     };
-    $out = {
-        tt_id => $provider_contract->{reseller_core_id},
-    };
-    my $svg = $dbh->selectrow_array('select base64_saved from invoice_templates where is_active = 1 and type = "svg" and reseller_id=?',undef,$provider_contract->{reseller_core_id});
-    if($svg){
-        NGCP::Panel::Utils::InvoiceTemplate::preprocessInvoiceTemplateSvg($in,\$svg);
-    }else{
-        $svg = $svg_default;
-    }
-    $svg = $view->getTemplateProcessed($c_mock,\$svg, $stash );
-    #print $svg;
-    #die();
-    NGCP::Panel::Utils::InvoiceTemplate::convertSvg2Pdf(undef,\$svg,$in,$out);
-    
-    #binmode(STDOUT);
-    #print $out->{tt_string_pdf};
-    #die;
-    $invoice->{data} = $out->{tt_string_pdf};
+    print "QQ.1;\n";
+    #print "svg=$svg;\n";
+    $out = $t->context->process(\$svg, $vars);
+    print "QQ.2;\n";
+    print "out=$out;\n";
+    NGCP::Panel::Utils::InvoiceTemplate::svg_pdf(undef, \$out, \$pdf);
+    print "QQ.3;\n";
+   
+    $invoice->{data} = $pdf;
     #set sent_date to null after each data regeneration
-    $dbh->do('update invoices set data=?,sent_date=? where id=?',undef,$out->{tt_string_pdf},undef,$invoice->{id});    
+    $dbh->do('update invoices set sent_date=?,data=?,amount_net,amount_vat,amount_total where id=?',undef,undef,@$invoice->{qw/data amount_net amount_vat amount_total id/});    
     return $invoice;
 }
 sub get_contract_balance{
@@ -276,7 +296,7 @@ sub create_invoice{
     #my $invoice_serial = $dbh->selectrow_array('select max(invoices.serial) from invoices inner join contract_balances on invoices.id=contract_balances.invoice_id where contract_balances.contract_id=?',undef,$contract_id );    
     my $invoice_serial = $dbh->selectrow_array('select max(invoices.serial) from invoices'); 
     $invoice_serial += 1;
-    $dbh->do('insert into invoices(year,month,serial)values(?,?,?)', undef, $stime->year, $stime->month,$invoice_serial );
+    $dbh->do('insert into invoices(contract_id,period_start,period_end,serial)values(?,?,?,?)', undef, $contract_id,$stime->ymd, $stime->ymd,$invoice_serial );
     my $invoice_id = $dbh->last_insert_id(undef,'billing','invoices','id');
     $dbh->do('update contract_balances set invoice_id = ? where contract_id=? and start=? and end=?', undef, $invoice_id,$contract_id, $stime->datetime, $etime->datetime );
     return $dbh->selectrow_hashref('select * from invoices where id=?',undef, $invoice_id);    
@@ -310,24 +330,24 @@ sub email{
     if(@$client_invoices < 1 ){
         return;
     }
-    state $transport_default;
-    $transport_default ||= Email::Sender::Transport::SMTP->new({
-        sasl_username => 'ipeshinskaya',
-
-        #host => 'mail.sipwise.com',
-        #port => 587,
-        #sasl_password => '',
-        #ssl => 0,
-        
-        host => 'smtp.googlemail.com',
-        port => 465,
-        ssl => 1,
-        sasl_password => 'ntjljhbyf0307',
-    });
-    
-    my $transport;
-    $transport_in and $transport = $transport_in;
-    $transport ||= $transport_default;
+    #state $transport_default;
+    #$transport_default ||= Email::Sender::Transport::SMTP->new({
+    #    sasl_username => 'ipeshinskaya',
+    #
+    #    #host => 'mail.sipwise.com',
+    #    #port => 587,
+    #    #sasl_password => '',
+    #    #ssl => 0,
+    #    
+    #    host => 'smtp.googlemail.com',
+    #    port => 465,
+    #    ssl => 1,
+    #    sasl_password => '',
+    #});
+    #
+    #my $transport;
+    #$transport_in and $transport = $transport_in;
+    #$transport ||= $transport_default;
     
     #print Dumper $transport;
     

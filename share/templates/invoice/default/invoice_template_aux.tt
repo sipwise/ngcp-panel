@@ -103,9 +103,11 @@
 
     MACRO timestamp2time BLOCK;
         t = Math.int(timestamp);
+
         h = Math.int(t / 3600);
         m = Math.int((t % 3600) / 60);
         s = Math.int((t % 3600) % 60);
+
 
         hs = String.new(h); hs = hs.format("%02d");
         ms = String.new(m); ms = ms.format("%02d");
@@ -116,6 +118,7 @@
 
     MACRO money_format BLOCK;
         comma = comma || '.';
+        amount = amount ? amount : 0 ;
         full = Math.int(amount / 100);
         cent = Math.int(amount % 100);
         cents = String.new(cent); cents = cents.format("%02d");

@@ -277,27 +277,7 @@ sub get_content_ajax :Chained('base') :PathPart('editcontent/get/ajax') :Args(0)
     my ($self, $c) = @_;
     my $tmpl = $c->stash->{tmpl};
 
-    my $content;
-    if($tmpl->data) {
-        $content = $tmpl->data; 
-    } else {
-        my $default = 'invoice/default/invoice_template_svg.tt';
-        my $t = NGCP::Panel::Utils::InvoiceTemplate::get_tt();
-
-        try {
-            $content = $t->context->insert($default);
-        } catch($e) {
-            # TODO: handle error!
-            $c->log->error("failed to load default invoice template: $e");
-            return;
-        }
-    }
-
-    # some part of the chain doesn't like content being encoded as utf8 at that poing
-    # already; decode here, and umlauts etc will be fine througout the chain.
-    # TODO: doesn't work when loaded from db?
-    use utf8;
-    utf8::decode($content);
+    my $content = NGCP::Panel::Utils::InvoiceTemplate::svg_content($tmpl->data);
 
     $c->response->content_type('text/html');
     $c->response->body($content);

@@ -53,7 +53,9 @@ sub svg_pdf {
     # when using 90dpi.
     # (it doesn't happen with inkscape, no idea what rsvg does)
     my @cmd_args = (qw/-a -f pdf -z 0.8/, @pagefiles);
-    $$pdf_ref = capturex([0], "/usr/bin/rsvg-convert", @cmd_args);
+    my $cmd = '/usr/bin/rsvg-convert';
+    my $cmd_full = $cmd.' '.join(' ', @cmd_args);
+    $c and $c->log->debug( $cmd_full );
 
     return 1;
 }
@@ -92,7 +94,7 @@ sub sanitize_svg {
             $node->getParentNode->removeChild($node);
         }
     }
-    
+    #we do here nothing against TemplateToolkit code invasion - is it correct?
     $$svg_ref = ($xp->findnodes('/'))[0]->toString();
     return 1;
 }
@@ -114,6 +116,30 @@ sub get_tt {
     return $tt;
 }
 
+sub svg_content{
+    my ($c, $content) = @_;
+    
+    if(!$content) {
+        #default is the same for all - I would like to move it as something constant to itils
+        my $default = 'invoice/default/invoice_template_svg.tt';
+        my $t = NGCP::Panel::Utils::InvoiceTemplate::get_tt();
+
+        try {
+            $content = $t->context->insert($default);
+        } catch($e) {
+            # TODO: handle error!
+            $c and $c->log->error("failed to load default invoice template: $e");
+            return;
+        }
+    }
+
+    # some part of the chain doesn't like content being encoded as utf8 at that poing
+    # already; decode here, and umlauts etc will be fine througout the chain.
+    # TODO: doesn't work when loaded from db?
+    use utf8;
+    utf8::decode($content);
+    return $content;
+}
 sub process_child_nodes {
     my ($node, $firsty, $y) = @_;
     for my $attr (qw/y y1 y2/) {
