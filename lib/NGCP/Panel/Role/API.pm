@@ -2,6 +2,7 @@ package NGCP::Panel::Role::API;
 use Moose::Role;
 use Sipwise::Base;
 
+use boolean;
 use Storable qw();
 use JSON qw();
 use JSON::Pointer;
@@ -129,6 +130,7 @@ sub validate_form {
         # otherwise it breaks db fields with the \0 and \1 notation
         unless($run) {
             $resource->{$k} = JSON::Types::bool($resource->{$k})
+            #$resource->{$k} = $resource->{$k} ? true : false
                 if(defined $resource->{$k} && 
                    $form->field($k)->$_isa('HTML::FormHandler::Field::Boolean'));
         }
@@ -479,6 +481,30 @@ around 'item_rs' => sub {
     }
     return $item_rs;
 };
+
+sub is_true {
+    my ($self, $v) = @_;
+    my $val;
+    if(ref $v eq "") {
+        $val = $v;
+    } else {
+        $val = $$v;
+    }
+    return 1 if(defined $val && $val == 1);
+    return;
+}
+
+sub is_false {
+    my ($self, $v) = @_;
+    my $val;
+    if(ref $v eq "") {
+        $val = $v;
+    } else {
+        $val = $$v;
+    }
+    return 1 unless(defined $val && $val == 1);
+    return;
+}
 
 1;
 # vim: set tabstop=4 expandtab:

@@ -33,11 +33,15 @@ sub resource_from_item {
     delete $prov_resource->{domain_id};
     delete $prov_resource->{account_id};
     my %resource = %{ $bill_resource->merge($prov_resource) };
+    $resource{administrative} = delete $resource{admin};
+
     unless($customer->get_column('product_class') eq 'pbxaccount') {
         delete $resource{is_pbx_group};
+        delete $resource{is_pbx_pilot};
+        delete $resource{pbx_extension};
         delete $resource{pbx_group_id};
     }
-    unless($resource{is_pbx_group}) {
+    unless($self->is_true($resource{is_pbx_group})) {
         delete $resource{pbx_hunt_policy};
         delete $resource{pbx_hunt_timeout};
     }
@@ -48,7 +52,6 @@ sub resource_from_item {
         $resource{email} = undef;
     }
 
-    $resource{administrative} = delete $resource{admin};
 
     $form //= $self->get_form($c);
     last unless $self->validate_form(
@@ -87,6 +90,8 @@ sub resource_from_item {
     $resource{customer_id} = int(delete $resource{contract_id});
     $resource{id} = int($item->id);
     $resource{domain} = $item->domain->domain;
+
+    use Data::Printer; p %resource;
 
     return \%resource;
 }
@@ -269,12 +274,13 @@ sub prepare_resource {
             join => 'provisioning_voip_subscriber',
         })->first;
 
-        if($pilot && $resource->{is_pbx_pilot} && $pilot->id != $subscriber_id) {
+        use Data::Printer; p $resource;
+        if($pilot && $self->is_true($resource->{is_pbx_pilot}) && $pilot->id != $subscriber_id) {
             $c->log->error("failed to create subscriber, contract_id " . $customer->id . " already has pbx pilot subscriber");
             $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Customer already has a pbx pilot subscriber.");
             return;
         }
-        elsif(!$pilot && !$resource->{is_pbx_pilot}) {
+        elsif(!$pilot && !$self->is_true($resource->{is_pbx_pilot})) {
             $c->log->error("failed to create subscriber, contract_id " . $customer->id . " has no pbx pilot subscriber and is_pbx_pilot is set");
             $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Customer has no pbx pilot subscriber yet and is_pbx_pilot is not set.");
             return;
@@ -307,7 +313,7 @@ sub prepare_resource {
             $resource->{e164}->{ac} = $pilot->primary_number->ac // '';
             $resource->{e164}->{sn} = $pilot->primary_number->sn . $resource->{pbx_extension};
 
-            unless($resource->{is_pbx_group}) {
+            unless($self->is_true($resource->{is_pbx_group})) {
                 unless($resource->{pbx_group_id}) {
                     $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "A pbx_group_id is required if customer is PBX and pilot subscriber exists.");
                     return;
@@ -411,7 +417,7 @@ sub update_item {
     my $preferences = $full_resource->{preferences};
 
 
-    if($subscriber->provisioning_voip_subscriber->is_pbx_pilot && !$resource->{is_pbx_pilot}) {
+    if($subscriber->provisioning_voip_subscriber->is_pbx_pilot && !$self->is_true($resource->{is_pbx_pilot})) {
         $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Cannot revoke is_pbx_pilot status from a subscriber.");
         return;
     }
@@ -543,7 +549,7 @@ sub update_item {
         profile_set_id => $profile_set ? $profile_set->id : undef,
         profile_id => $profile ? $profile->id : undef,
     };
-    if($resource->{is_pbx_group}) {
+    if($self->is_true($resource->{is_pbx_group})) {
         $provisioning_res->{pbx_hunt_policy} = $resource->{pbx_hunt_policy};
         $provisioning_res->{pbx_hunt_timeout} = $resource->{pbx_hunt_timeout};
         $provisioning_res->{pbx_group_id} = undef;
