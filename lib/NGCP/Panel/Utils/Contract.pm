@@ -20,9 +20,7 @@ sub get_contract_balance {
             start => { '>=' => $stime },
             end => { '<=' => $etime },
         });
-    use Data::Printer; print ">>>>>>>>> get_balance\n"; p $balance;
     unless($balance) {
-        use Data::Printer; print ">>>>>>>>> no balance\n"; p $balance;
             $balance = create_contract_balance(
                 c => $c,
                 profile => $profile,
@@ -31,7 +29,6 @@ sub get_contract_balance {
                 etime => $etime,
                 schema => $schema,
             );
-        use Data::Printer; print ">>>>>>>>> created balance\n"; p $balance;
     }
     return $balance;
 }
