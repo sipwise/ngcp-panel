@@ -11,7 +11,7 @@ use Email::MIME;
 use Email::Sender::Simple qw(sendmail);
 use Email::Sender::Transport::SMTP;
 use Template;
-
+use Geography::Countries qw/country/;
 #use IO::All;
 
 #apt-get install libemail-send-perl
@@ -132,7 +132,11 @@ sub get_provider_contact{
 sub get_provider_clients_contacts{
     my($provider_contract, $opt) = @_;
     #according to /reseller/ajax_reseller_filter
-    return $dbh->selectall_arrayref('select contacts.* from contacts where reseller_id = ?'.ify(' and contacts.id', @{$opt->{client_contact_id}}),  { Slice => {} }, $provider_contract->{reseller_core_id}, @{$opt->{client_contact_id}} )
+    my $contacts = $dbh->selectall_arrayref('select contacts.* from contacts where reseller_id = ?'.ify(' and contacts.id', @{$opt->{client_contact_id}}),  { Slice => {} }, $provider_contract->{reseller_core_id}, @{$opt->{client_contact_id}} );
+    #foreach (@$contacts){
+    #    $_->{country_name} = country($_->{country});
+    #}
+    return $contacts;
 }
 sub get_client_contracts{
     my($client_contact, $opt) = @_;
@@ -209,6 +213,7 @@ sub generate_invoice_data{
 
     my ($contract_balance,$invoice)=({},{});
     ($contract_balance,$invoice) = get_contract_balance($client_contract,$billing_profile,$contract_balance,$invoice,$stime,$etime);
+    $client_contact->{country_name} = country($client_contact->{country} || '');
     my($stash) = get_invoice_data_raw($client_contract, $stime, $etime);
     $stash = {
         %$stash,
@@ -244,7 +249,8 @@ sub generate_invoice_data{
     #print $out->{tt_string_pdf};
     #die;
     $invoice->{data} = $out->{tt_string_pdf};
-    $dbh->do('update invoices set data=? where id=?',undef,$out->{tt_string_pdf},$invoice->{id});    
+    #set sent_date to null after each data regeneration
+    $dbh->do('update invoices set data=?,sent_date=? where id=?',undef,$out->{tt_string_pdf},undef,$invoice->{id});    
     return $invoice;
 }
 sub get_contract_balance{
