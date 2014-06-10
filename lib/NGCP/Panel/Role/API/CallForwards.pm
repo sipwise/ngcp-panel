@@ -149,7 +149,6 @@ sub update_item {
                 type => $type,
             });
             $mapping->discard_changes; # get our row
-            $cf_preference->create({ value => $mapping->id });
         } elsif ($mapping_count > 1) {
             $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Not a simple cf. Multiple $type-s configured.");
             return;
@@ -160,6 +159,12 @@ sub update_item {
         }
 
         try {
+            if($cf_preference->first) {
+                $cf_preference->first->update({ value => $mapping->id });
+            } else {
+                $cf_preference->create({ value => $mapping->id });
+            }
+
             my $primary_nr_rs = $item->primary_number;
             my $number;
             if ($primary_nr_rs) {
