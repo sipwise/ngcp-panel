@@ -69,7 +69,6 @@ sub create_contract_balance {
                 start => $stime,
                 end => $etime,
             });
-            use Data::Printer; print ">>>>>>>>> really created balance\n"; p $balance;
         });
     } catch($e) {
         if ($e =~ /Duplicate entry/) {
@@ -79,7 +78,6 @@ sub create_contract_balance {
             $e->rethrow;
         }
     };
-    use Data::Printer; print ">>>>>>>>> returning balance\n"; p $balance;
     return $balance;
 }
 

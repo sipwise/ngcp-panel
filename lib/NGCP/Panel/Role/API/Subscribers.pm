@@ -91,8 +91,6 @@ sub resource_from_item {
     $resource{id} = int($item->id);
     $resource{domain} = $item->domain->domain;
 
-    use Data::Printer; p %resource;
-
     return \%resource;
 }
 
@@ -274,7 +272,6 @@ sub prepare_resource {
             join => 'provisioning_voip_subscriber',
         })->first;
 
-        use Data::Printer; p $resource;
         if($pilot && $self->is_true($resource->{is_pbx_pilot}) && $pilot->id != $subscriber_id) {
             $c->log->error("failed to create subscriber, contract_id " . $customer->id . " already has pbx pilot subscriber");
             $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Customer already has a pbx pilot subscriber.");
