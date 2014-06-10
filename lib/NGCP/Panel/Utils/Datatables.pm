@@ -166,6 +166,7 @@ sub set_columns {
     my ($c, $cols) = @_;
 
     for my $c(@{ $cols }) {
+        next if defined $c->{accessor};
         $c->{accessor} = $c->{name};
         $c->{accessor} =~ s/\./_/g;
     }

@@ -63,7 +63,7 @@ sub create :Chained('list_reseller') :PathPart('create') :Args(0) :Does(ACL) :AC
     my ($self, $c) = @_;
 
     $c->detach('/denied_page')
-    	if($c->user->read_only);
+        if($c->user->read_only);
 
     my $params = {};
     $params = $params->merge($c->session->{created_objects});
@@ -202,7 +202,7 @@ sub edit :Chained('base') :PathPart('edit') :Args(0) :Does(ACL) :ACLDetachTo('/d
     my ($self, $c) = @_;
 
     $c->detach('/denied_page')
-    	if($c->user->read_only);
+        if($c->user->read_only);
 
     my $reseller = $c->stash->{reseller}->first;
 
@@ -436,7 +436,7 @@ sub edit_branding_css :Chained('base') :PathPart('css/edit') :Args(0) :Does(ACL)
     my ($self, $c) = @_;
 
     $c->detach('/denied_page')
-    	if($c->user->read_only);
+        if($c->user->read_only);
     my $back;
     if($c->user->roles eq "admin") {
         $c->stash(template => 'reseller/details.tt');
