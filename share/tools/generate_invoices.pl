@@ -274,7 +274,11 @@ sub get_contract_balance{
         );
         $dbh->do('insert into contract_balances(contract_id,cash_balance,cash_balance_interval,free_time_balance,free_time_balance_interval,start,end,invoice_id)values(?,?,?,?,?,?,?,?)',undef,$client_contract->{id},@$contract_balance{qw/cash_balance cash_balance_interval free_time_balance free_time_balance_interval/},$stime->datetime, $etime->datetime,undef );
         $invoice = get_invoice(undef, $client_contract->{id},$stime, $etime);
-        $contract_balance = $dbh->selectrow_hashref('select * from contract_balances where id=?',undef,$dbh->last_insert_id(undef,'billing','contract_balances','id'));                
+        #my $contract_balance_id = $dbh->last_insert_id(undef,'billing','contract_balances','id');
+        #print "contract_balance_id=$contract_balance_id;\n";
+        #$contract_balance = $dbh->selectrow_hashref('select * from contract_balances where id=?',undef,);  
+        $contract_balance = $dbh->selectrow_hashref('select * from contract_balances where contract_id=? and date(start)=? and date(end)=?',undef,$client_contract->{id},$stime->ymd,$etime->ymd);
+        print Dumper $contract_balance;
     }else{
         $invoice = get_invoice($contract_balance->{invoice_id},$client_contract->{id},$stime, $etime);
     }
@@ -289,8 +293,11 @@ sub get_invoice{
         $invoice = $dbh->selectrow_hashref('select * from invoices where contract_id=? and date(period_start)=? and date(period_end)=?',undef, $contract_id, $stime->ymd, $etime->ymd); 
     }
     if(!$invoice){
-        $dbh->do('insert into invoices(contract_id,period_start,period_end)values(?,?,?)', undef, $contract_id,$stime->ymd, $stime->ymd );
+        my $serial_tmp = "tmp".time.int(rand(99999));
+        $dbh->do('insert into invoices(contract_id,period_start,period_end,serial)values(?,?,?,?)', undef, $contract_id,$stime->ymd, $stime->ymd, $serial_tmp );
         $invoice->{id} = $dbh->last_insert_id(undef,'billing','invoices','id');
+        $invoice->{serial} = NGCP::Panel::Utils::Invoice::get_invoice_serial(undef,{invoice => $invoice});
+        $dbh->do('update invoices set serial=? where id=?', undef, @$invoice{qw/serial id/} );
         $invoice = $dbh->selectrow_hashref('select * from invoices where id=?',undef, $invoice->{id});
     }
     if($invoice->{id} && !$invoice_id){
@@ -301,7 +308,6 @@ sub get_invoice{
         period_start => $stime,
         period_end   => $etime,
     };
-    $invoice->{serial} ||= NGCP::Panel::Utils::Invoice::get_invoice_serial(undef,{invoice => $invoice});
     return $invoice;
 }
 

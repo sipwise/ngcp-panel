@@ -219,7 +219,14 @@ sub create :Chained('inv_list') :PathPart('create') :Args() :Does(ACL) :ACLDetac
                     );
                     die;
                 }
-                my $serial = sprintf("INV%04d%02d%07d", $stime->year, $stime->month, $invoice->id);
+                #sprintf("INV%04d%02d%07d", $stime->year, $stime->month, $invoice->id);
+                #to make it unified for web and cron script
+                my $serial = NGCP::Panel::Utils::Invoice::get_invoice_serial($c,{
+                    invoice=>{
+                        period_start => $stime,
+                        period_end   => $etime,
+                        id           => $invoice->id,
+                }});
 
                 my $svg = $tmpl->data;
                 my $t = NGCP::Panel::Utils::InvoiceTemplate::get_tt();
