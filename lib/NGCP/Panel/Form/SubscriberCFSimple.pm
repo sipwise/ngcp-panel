@@ -45,7 +45,7 @@ sub build_destinations {
             if($c->config->{features}->{faxserver});
         push @options, { label => 'Calling Card', value => 'callingcard' }
             if($c->config->{features}->{callingcard});
-        push @options, { label => 'Call Trough', value => 'callthrough' }
+        push @options, { label => 'Call Through', value => 'callthrough' }
             if($c->config->{features}->{callthrough});
         push @options, { label => 'Auto Attendant', value => 'autoattendant' }
             if($c->config->{features}->{cloudpbx} && $c->stash->{pbx});
