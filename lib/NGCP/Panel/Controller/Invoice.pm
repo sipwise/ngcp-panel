@@ -7,6 +7,7 @@ use NGCP::Panel::Utils::Message;
 use NGCP::Panel::Utils::DateTime;
 use NGCP::Panel::Utils::Contract;
 use NGCP::Panel::Utils::InvoiceTemplate;
+use NGCP::Panel::Utils::Invoice;
 use NGCP::Panel::Form::Invoice::Invoice;
 
 sub auto :Private {
@@ -208,6 +209,9 @@ sub create :Chained('inv_list') :PathPart('create') :Args() :Does(ACL) :ACLDetac
                 # generate tmp serial here, derive one from after insert
                 $form->params->{serial} = "tmp".time.int(rand(99999));
                 $form->params->{data} = undef;
+                #maybe inflation should be applied?
+                $form->params->{period_start} = $stime->ymd.' '. $stime->hms;
+                $form->params->{period_end} = $etime->ymd.' '. $etime->hms;
                 my $invoice;
                 try {
                     $invoice = $schema->resultset('invoices')->create($form->params);
@@ -287,7 +291,6 @@ sub create :Chained('inv_list') :PathPart('create') :Args() :Does(ACL) :ACLDetac
                 };
 
                 try {
-                    NGCP::Panel::Utils::InvoiceTemplate::preprocess_svg(\$svg);
 
                     $t->process(\$svg, $vars, \$out) || do {
                         my $error = $t->error();
@@ -300,6 +303,7 @@ sub create :Chained('inv_list') :PathPart('create') :Args() :Does(ACL) :ACLDetac
                         NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for('/invoice'));
                         return;
                     };
+                    NGCP::Panel::Utils::InvoiceTemplate::preprocess_svg(\$out);
 
                     NGCP::Panel::Utils::InvoiceTemplate::svg_pdf($c, \$out, \$pdf);
                 } catch($e) {

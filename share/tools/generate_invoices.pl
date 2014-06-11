@@ -215,7 +215,7 @@ sub generate_invoice_data{
     }
     my $svg = $dbh->selectrow_array('select data from invoice_templates where  type = "svg" and reseller_id=?',undef,$provider_contract->{reseller_core_id});#is_active = 1 and
     if($svg){
-        NGCP::Panel::Utils::InvoiceTemplate::preprocess_svg(\$svg);
+        #NGCP::Panel::Utils::InvoiceTemplate::preprocess_svg(\$svg);
     }else{
         $svg = $svg_default;
         print "No saved active template - no invoice;\n";
@@ -298,7 +298,7 @@ sub get_invoice{
     }
     if(!$invoice){
         my $serial_tmp = "tmp".time.int(rand(99999));
-        $dbh->do('insert into invoices(contract_id,period_start,period_end,serial)values(?,?,?,?)', undef, $contract_id,$stime->ymd, $stime->ymd, $serial_tmp );
+        $dbh->do('insert into invoices(contract_id,period_start,period_end,serial)values(?,?,?,?)', undef, $contract_id,$stime->ymd.' '.$stime->hms, $etime->ymd.' '.$etime->hms, $serial_tmp );
         $invoice->{id} = $dbh->last_insert_id(undef,'billing','invoices','id');
         @$invoice{qw/period_start period_end/} = ($stime,$etime);
         $invoice->{serial} = NGCP::Panel::Utils::Invoice::get_invoice_serial(undef,{invoice => $invoice});
