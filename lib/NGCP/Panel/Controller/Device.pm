@@ -993,6 +993,10 @@ sub dev_field_config :Chained('/') :PathPart('device/autoprov/config') :Args() {
             stationname => $dev->station_name,
             lineranges => [],
         },
+        directory => {
+            spaurl => 'http://' . $c->req->uri->host . ':' . ($c->config->{web}->{autoprov_plain_port} // '1444') . '/pbx/directory/spa/' . $id,
+            name => 'PBX Address Book',
+        }
     };
 
     $vars->{firmware}->{baseurl} = 'http://' . $c->req->uri->host . ':' . 

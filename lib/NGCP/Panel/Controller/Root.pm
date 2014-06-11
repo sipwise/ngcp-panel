@@ -44,6 +44,7 @@ sub auto :Private {
         __PACKAGE__ eq $c->controller->catalyst_component_name
         or 'NGCP::Panel::Controller::Login' eq $c->controller->catalyst_component_name
         or $c->req->uri->path =~ m|^/device/autoprov/.+|
+        or $c->req->uri->path =~ m|^/pbx/directory/.+|
         or $c->req->uri->path =~ m|^/recoverwebpassword/?$|
         or $c->req->uri->path =~ m|^/resetwebpassword/?$|
     ) {

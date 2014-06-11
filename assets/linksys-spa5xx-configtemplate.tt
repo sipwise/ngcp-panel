@@ -3,6 +3,8 @@
   <Profile_Rule>[% config.url %]</Profile_Rule>
   <Upgrade_Enable>Yes</Upgrade_Enable>
   <Upgrade_Rule>($SWVER &lt; [% firmware.maxversion %])? [% firmware.baseurl %]/$MA/from/$SWVER/next</Upgrade_Rule>
+  <XML_Directory_Service_Name>[% directory.name %]</XML_Directory_Service_Name>
+  <XML_Directory_Service_URL>[% directory.spaurl %]</XML_Directory_Service_URL>
   <Station_Name>[% phone.stationname %]</Station_Name>
   <Station_Display_Name>[% phone.stationname %]</Station_Display_Name>
   <Server_Type>RFC3265_4235</Server_Type>
