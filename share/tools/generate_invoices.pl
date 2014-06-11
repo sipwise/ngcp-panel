@@ -54,7 +54,7 @@ my $dbh = DBI->connect('dbi:mysql:billing;host=localhost', $dbuser, $dbpass)
 
 
 my $opt = {};
-Getopt::Long::GetOptions($opt, 'reseller_id:i@', 'client_contact_id:i@', 'client_contract_id:i@', 'stime:s', 'etime:s', 'send!','sendonly!','resend','year:i','month:i','help|?')
+Getopt::Long::GetOptions($opt, 'reseller_id:i@', 'client_contact_id:i@', 'client_contract_id:i@', 'stime:s', 'etime:s', 'send!','sendonly!','resend','help|?')
     or die 'could not process command-line options';
 print Dumper $opt;
 
@@ -221,7 +221,7 @@ sub generate_invoice_data{
 
     my ($contract_balance,$invoice)=({},{});
     ($contract_balance,$invoice) = get_contract_balance($client_contract,$billing_profile,$contract_balance,$invoice,$stime,$etime);
-    print Dumper $contract_balance;
+    #print Dumper $contract_balance;
     
     $client_contact->{country} = country($client_contact->{country} || '');
     $provider_contact->{country} = country($provider_contact->{country} || '');
@@ -278,7 +278,7 @@ sub get_contract_balance{
         #print "contract_balance_id=$contract_balance_id;\n";
         #$contract_balance = $dbh->selectrow_hashref('select * from contract_balances where id=?',undef,);  
         $contract_balance = $dbh->selectrow_hashref('select * from contract_balances where contract_id=? and date(start)=? and date(end)=?',undef,$client_contract->{id},$stime->ymd,$etime->ymd);
-        print Dumper $contract_balance;
+        #print Dumper $contract_balance;
     }else{
         $invoice = get_invoice($contract_balance->{invoice_id},$client_contract->{id},$stime, $etime);
     }
@@ -359,7 +359,6 @@ sub email{
     #$transport_in and $transport = $transport_in;
     #$transport ||= $transport_default;
     
-    #print Dumper $transport;
     
     $client_contact->{email} //= '';
     if(1 or $client_contact->{email}){

@@ -197,7 +197,7 @@ sub create :Chained('inv_list') :PathPart('create') :Args() :Does(ACL) :ACLDetac
                 my $vat = $customer->vat_rate // 0;
 
                 $form->params->{amount_net} = 
-                    ($balance->cash_balance_interval // 0) + 
+                    ($balance->cash_balance_interval ? $balance->cash_balance_interval / 100 : 0) + 
                     ($billing_profile->interval_charge // 0); # TODO: if not a full month, calculate fraction?
 
                 $form->params->{amount_vat} = $customer->add_vat ?

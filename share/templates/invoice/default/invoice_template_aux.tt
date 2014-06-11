@@ -117,6 +117,7 @@
     END;
 
     MACRO money_format BLOCK;
+    #Attention! usage supposes amount in CENTS!
         comma = comma || '.';
         amount = amount ? amount : 0 ;
         full = Math.int(amount / 100);

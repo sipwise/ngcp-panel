@@ -6,9 +6,9 @@
 
         money_format(amount=(billprof.interval_charge * 100), comma='.'); fixfee = aux.val;
         money_format(amount=(zones.totalcost), comma='.'); zonefee = aux.val;
-        money_format(amount=(invoice.amount_net), comma='.'); netfee = aux.val;
-        money_format(amount=(invoice.amount_vat), comma='.'); vatfee = aux.val;
-        money_format(amount=(invoice.amount_total), comma='.'); allfee = aux.val;
+        money_format(amount=(invoice.amount_net * 100), comma='.'); netfee = aux.val;
+        money_format(amount=(invoice.amount_vat * 100), comma='.'); vatfee = aux.val;
+        money_format(amount=(invoice.amount_total * 100), comma='.'); allfee = aux.val;
         cur = billprof.currency;
         p_start = date_format(thedate=invoice.period_start, format='%Y-%m-%d');
         p_end = date_format(thedate=invoice.period_end, format='%Y-%m-%d');

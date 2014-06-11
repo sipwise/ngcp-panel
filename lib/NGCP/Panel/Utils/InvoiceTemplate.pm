@@ -62,6 +62,8 @@ sub svg_pdf {
 
 sub preprocess_svg {
     my($svg_ref) = @_;
+
+    $$svg_ref=~s/(?:{\s*)?<!--{|}-->(?:\s*})?//gs;
     
     my $xp = XML::XPath->new($$svg_ref);
     
@@ -74,7 +76,6 @@ sub preprocess_svg {
     
     $$svg_ref = ($xp->findnodes('/'))[0]->toString();
     
-    $$svg_ref=~s/(?:{\s*)?<!--{|}-->(?:\s*})?//gs;
     $$svg_ref=~s/<(g .*?)(?:display\s*=\s*["']*none["'[:blank:]]+)(.*?id *=["' ]+page[^"' ]*["' ]+)([^>]*)>/<$1$2$3>/gs;
     $$svg_ref=~s/<(g .*?)(id *=["' ]+page[^"' ]*["' ]+.*?)(?:display\s*=\s*["']*none["'[:blank:]]+)([^>]*)>/<$1$2$3>/gs;
 }
