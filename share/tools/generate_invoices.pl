@@ -296,6 +296,7 @@ sub get_invoice{
         my $serial_tmp = "tmp".time.int(rand(99999));
         $dbh->do('insert into invoices(contract_id,period_start,period_end,serial)values(?,?,?,?)', undef, $contract_id,$stime->ymd, $stime->ymd, $serial_tmp );
         $invoice->{id} = $dbh->last_insert_id(undef,'billing','invoices','id');
+        @$invoice{qw/period_start period_end/} = ($stime,$etime);
         $invoice->{serial} = NGCP::Panel::Utils::Invoice::get_invoice_serial(undef,{invoice => $invoice});
         $dbh->do('update invoices set serial=? where id=?', undef, @$invoice{qw/serial id/} );
         $invoice = $dbh->selectrow_hashref('select * from invoices where id=?',undef, $invoice->{id});
