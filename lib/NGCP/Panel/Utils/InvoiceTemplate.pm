@@ -73,10 +73,6 @@ sub preprocess_svg {
     }
     
     $$svg_ref = ($xp->findnodes('/'))[0]->toString();
-                source_user => 'user',
-                source_domain => 'example.org',
-                source_cli => '1234567890',
-                destination_user_in => "1".$_."1234567890",
     
     $$svg_ref=~s/(?:{\s*)?<!--{|}-->(?:\s*})?//gs;
     $$svg_ref=~s/<(g .*?)(?:display\s*=\s*["']*none["'[:blank:]]+)(.*?id *=["' ]+page[^"' ]*["' ]+)([^>]*)>/<$1$2$3>/gs;

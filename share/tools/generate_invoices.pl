@@ -27,6 +27,7 @@ use NGCP::Panel;
 use NGCP::Panel::Utils::DateTime;
 use NGCP::Panel::Utils::Contract;
 use NGCP::Panel::Utils::InvoiceTemplate;
+use NGCP::Panel::Utils::Invoice;
 use NGCP::Panel::Utils::Email;
 #use NGCP::Panel::View::SVG;
 
@@ -220,21 +221,20 @@ sub generate_invoice_data{
 
     my ($contract_balance,$invoice)=({},{});
     ($contract_balance,$invoice) = get_contract_balance($client_contract,$billing_profile,$contract_balance,$invoice,$stime,$etime);
+    print Dumper $contract_balance;
+    
     $client_contact->{country} = country($client_contact->{country} || '');
     $provider_contact->{country} = country($provider_contact->{country} || '');
     # TODO: if not a full month, calculate fraction?
     #TODO: to utils::contract and share with catalyst version
-    print Dumper $contract_balance;
+    my $invoice_amounts = NGCP::Panel::Utils::Invoice::get_invoice_amounts(
+        customer_contract  => $client_contract,
+        contract_balance   => $contract_balance,
+        billing_profile    => $billing_profile,
+    );
     $invoice = {
         %$invoice,
-        amount_net   => $contract_balance->{cash_balance_interval} + $billing_profile->{interval_charge},
-        amount_vat   => $client_contract->{add_vat} 
-            ?
-                $invoice->{amount_net} * ($client_contract->{vat_rate}/100) 
-                : 0,
-        amount_total =>  $invoice->{amount_net} + $invoice->{amount_vat},
-        period_start => $stime,
-        period_end   => $etime,
+        %$invoice_amounts,
     };
     my($invoice_data) = get_invoice_data_raw($client_contract, $stime, $etime);
     my $out = '';
@@ -273,24 +273,36 @@ sub get_contract_balance{
             etime => $etime,
         );
         $dbh->do('insert into contract_balances(contract_id,cash_balance,cash_balance_interval,free_time_balance,free_time_balance_interval,start,end,invoice_id)values(?,?,?,?,?,?,?,?)',undef,$client_contract->{id},@$contract_balance{qw/cash_balance cash_balance_interval free_time_balance free_time_balance_interval/},$stime->datetime, $etime->datetime,undef );
-        $invoice = create_invoice($client_contract->{id},$stime, $etime);
+        $invoice = get_invoice(undef, $client_contract->{id},$stime, $etime);
         $contract_balance = $dbh->selectrow_hashref('select * from contract_balances where id=?',undef,$dbh->last_insert_id(undef,'billing','contract_balances','id'));                
     }else{
-        if(!$contract_balance->{invoice_id} || !( $invoice = $dbh->selectrow_hashref('select * from invoices where id=?',undef,$contract_balance->{invoice_id} ))){
-            $invoice = create_invoice($client_contract->{id},$stime, $etime);
-        }
+        $invoice = get_invoice($contract_balance->{invoice_id},$client_contract->{id},$stime, $etime);
     }
     return ($contract_balance,$invoice);
 }
-sub create_invoice{
-    my($contract_id, $stime, $etime) = @_;
-    #my $invoice_serial = $dbh->selectrow_array('select max(invoices.serial) from invoices inner join contract_balances on invoices.id=contract_balances.invoice_id where contract_balances.contract_id=?',undef,$contract_id );    
-    my $invoice_serial = $dbh->selectrow_array('select max(invoices.serial * 1) from invoices'); 
-    $invoice_serial += 1;
-    $dbh->do('insert into invoices(contract_id,period_start,period_end,serial)values(?,?,?,?)', undef, $contract_id,$stime->ymd, $stime->ymd, $invoice_serial );
-    my $invoice_id = $dbh->last_insert_id(undef,'billing','invoices','id');
-    $dbh->do('update contract_balances set invoice_id = ? where contract_id=? and start=? and end=?', undef, $invoice_id,$contract_id, $stime->datetime, $etime->datetime );
-    return $dbh->selectrow_hashref('select * from invoices where id=?',undef, $invoice_id);    
+sub get_invoice{
+    my($invoice_id, $contract_id, $stime, $etime) = @_;
+    my $invoice;
+    if($invoice_id){
+        $invoice = $dbh->selectrow_hashref('select * from invoices where id=?',undef, $invoice_id); 
+    }else{
+        $invoice = $dbh->selectrow_hashref('select * from invoices where contract_id=? and date(period_start)=? and date(period_end)=?',undef, $contract_id, $stime->ymd, $etime->ymd); 
+    }
+    if(!$invoice){
+        $dbh->do('insert into invoices(contract_id,period_start,period_end)values(?,?,?)', undef, $contract_id,$stime->ymd, $stime->ymd );
+        $invoice->{id} = $dbh->last_insert_id(undef,'billing','invoices','id');
+        $invoice = $dbh->selectrow_hashref('select * from invoices where id=?',undef, $invoice->{id});
+    }
+    if($invoice->{id} && !$invoice_id){
+        $dbh->do('update contract_balances set invoice_id = ? where contract_id=? and start=? and end=?', undef, $invoice->{id},$contract_id, $stime->datetime, $etime->datetime );    
+    }
+    $invoice = {
+        %$invoice,
+        period_start => $stime,
+        period_end   => $etime,
+    };
+    $invoice->{serial} ||= NGCP::Panel::Utils::Invoice::get_invoice_serial(undef,{invoice => $invoice});
+    return $invoice;
 }
 
 sub get_email_template{
