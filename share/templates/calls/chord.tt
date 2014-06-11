@@ -1,5 +1,9 @@
 [% site_config.title = c.loc('Call Distribution') -%]
+[%
+    USE date;
+    today = date.format(date.now, '%Y-%m-%d');
 
+-%]
     <style>
         #circle circle {
           fill: none;
@@ -47,10 +51,10 @@
 
     <div class="row-fluid" style="margin-top:50px">
         <div class="span3">
-            <label>[% c.loc('From Date:') %] <input type="text" id="datepicker_start" class="ngcp-datepicker" rel="tooltip" data-original-title="YYYY-MM-DD" value="2013-11-27"/></label>
+            <label>[% c.loc('From Date:') %] <input type="text" id="datepicker_start" class="ngcp-datepicker" rel="tooltip" data-original-title="YYYY-MM-DD" value="[% today %]"/></label>
         </div>
         <div class="span3">
-            <label>[% c.loc('To Date:') %] <input type="text" id="datepicker_end" class="ngcp-datepicker" rel="tooltip" data-original-title="YYYY-MM-DD" value="2013-11-27"/></label>
+            <label>[% c.loc('To Date:') %] <input type="text" id="datepicker_end" class="ngcp-datepicker" rel="tooltip" data-original-title="YYYY-MM-DD" value="[% today %]"/></label>
         </div>
         <div class="span2">
             <a href="#" id="load-chord" class="btn btn-primary"><i class="icon-repeat" style="padding-top:3px"></i> [% c.loc('Reload') %]</a>
