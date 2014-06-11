@@ -90,7 +90,7 @@ sub process_invoices{
             if(!$opt->{sendonly}){
                 foreach my $client_contract (@{ get_client_contracts($client_contact,$opt) }){
                     
-                    print "reseller_id=".$provider_contract->{reseller_core_id}.";conatct_id=".$client_contact->{id}.";contract_id=".$client_contract->{id}.";\n";
+                    print "reseller_id=".$provider_contract->{reseller_core_id}.";contact_id=".$client_contact->{id}.";contract_id=".$client_contract->{id}.";\n";
 
                     if( my $billing_profile = get_billing_profile($client_contract, $stime, $etime) ){
                         if(my $invoice = generate_invoice_data($provider_contract,$provider_contact,$client_contract,$client_contact,$billing_profile, $stime, $etime)){
@@ -108,8 +108,8 @@ sub process_invoices{
                     join(' and ',
                         !$opt->{resend}?' invoices.sent_date is null ':(),
                         (ify(' contracts.contact_id ', (@{$opt->{client_contact_id}}, $client_contact->{id}) )),
-                        (ify(' invoices.month ', v2a($opt->{month}))),
-                        (ify(' invoices.year ', v2a($opt->{year}))),
+                        (ifk(' date(invoices.period_start) >= ?', v2a($stime->ymd))),
+                        (ifk(' date(invoices.period_start) <= ?', v2a($etime->ymd))),
                     )
                 ),  { Slice => {} }, @{$opt->{client_contact_id}}, v2a($client_contact->{id}), v2a($opt->{month}),v2a($opt->{year}) );
             }
@@ -207,34 +207,24 @@ sub generate_invoice_data{
     if(!$t){
         $t = NGCP::Panel::Utils::InvoiceTemplate::get_tt();        
         $svg_default = $t->context->insert('invoice/default/invoice_template_svg.tt');
-        NGCP::Panel::Utils::InvoiceTemplate::preprocess_svg(\$svg_default);
+        #NGCP::Panel::Utils::InvoiceTemplate::preprocess_svg(\$svg_default);
     }
     my $svg = $dbh->selectrow_array('select data from invoice_templates where  type = "svg" and reseller_id=?',undef,$provider_contract->{reseller_core_id});#is_active = 1 and
     if($svg){
         NGCP::Panel::Utils::InvoiceTemplate::preprocess_svg(\$svg);
     }else{
         #$svg = $svg_default;
-        print "No saved active tempalate - no invoice;\n";
+        print "No saved active template - no invoice;\n";
         return;
     }
 
-    
-    #my $zonecalls = NGCP::Panel::Utils::Contract::get_contract_zonesfees(
-    #    c => $c,
-    #    contract_id => $contract_id,
-    #    stime => $stime,
-    #    etime => $etime,
-    #    in => 0,
-    #    out => 1,
-    #    group_by_detail => 1,
-    #);
-
     my ($contract_balance,$invoice)=({},{});
     ($contract_balance,$invoice) = get_contract_balance($client_contract,$billing_profile,$contract_balance,$invoice,$stime,$etime);
-    $client_contact->{country_name} = country($client_contact->{country} || '');
-
+    $client_contact->{country} = country($client_contact->{country} || '');
+    $provider_contact->{country} = country($provider_contact->{country} || '');
     # TODO: if not a full month, calculate fraction?
     #TODO: to utils::contract and share with catalyst version
+    print Dumper $contract_balance;
     $invoice = {
         %$invoice,
         amount_net   => $contract_balance->{cash_balance_interval} + $billing_profile->{interval_charge},
@@ -250,6 +240,7 @@ sub generate_invoice_data{
     my $out = '';
     my $pdf = '';
     my $vars = {
+        invoice     => $invoice,
         rescontact  => $provider_contact,
         customer    => $client_contract,
         custcontact => $client_contact,
@@ -260,17 +251,17 @@ sub generate_invoice_data{
             data => $invoice_data->{invoice_details_zones},        
         },
     };
-    print "QQ.1;\n";
-    #print "svg=$svg;\n";
     $out = $t->context->process(\$svg, $vars);
-    print "QQ.2;\n";
-    print "out=$out;\n";
+    #for default template
+    $out = '<root>'.$out.'</root>';
+    NGCP::Panel::Utils::InvoiceTemplate::preprocess_svg(\$out);
+    #for default template
+    $out =~s/^<root>|<\/root>$//;
     NGCP::Panel::Utils::InvoiceTemplate::svg_pdf(undef, \$out, \$pdf);
-    print "QQ.3;\n";
-   
+    print "generated data for invoice.id=".$invoice->{id}."; invoice.serial=".$invoice->{serial}.";\n";
     $invoice->{data} = $pdf;
     #set sent_date to null after each data regeneration
-    $dbh->do('update invoices set sent_date=?,data=?,amount_net,amount_vat,amount_total where id=?',undef,undef,@$invoice->{qw/data amount_net amount_vat amount_total id/});    
+    $dbh->do('update invoices set sent_date=?,data=?,amount_net=?,amount_vat=?,amount_total=? where id=?',undef,undef,@$invoice{qw/data amount_net amount_vat amount_total id/});    
     return $invoice;
 }
 sub get_contract_balance{
@@ -294,9 +285,9 @@ sub get_contract_balance{
 sub create_invoice{
     my($contract_id, $stime, $etime) = @_;
     #my $invoice_serial = $dbh->selectrow_array('select max(invoices.serial) from invoices inner join contract_balances on invoices.id=contract_balances.invoice_id where contract_balances.contract_id=?',undef,$contract_id );    
-    my $invoice_serial = $dbh->selectrow_array('select max(invoices.serial) from invoices'); 
+    my $invoice_serial = $dbh->selectrow_array('select max(invoices.serial * 1) from invoices'); 
     $invoice_serial += 1;
-    $dbh->do('insert into invoices(contract_id,period_start,period_end,serial)values(?,?,?,?)', undef, $contract_id,$stime->ymd, $stime->ymd,$invoice_serial );
+    $dbh->do('insert into invoices(contract_id,period_start,period_end,serial)values(?,?,?,?)', undef, $contract_id,$stime->ymd, $stime->ymd, $invoice_serial );
     my $invoice_id = $dbh->last_insert_id(undef,'billing','invoices','id');
     $dbh->do('update contract_balances set invoice_id = ? where contract_id=? and start=? and end=?', undef, $invoice_id,$contract_id, $stime->datetime, $etime->datetime );
     return $dbh->selectrow_hashref('select * from invoices where id=?',undef, $invoice_id);    
@@ -408,6 +399,10 @@ sub ify{
 sub ifp{
     my ($prefix, $value) = @_;
     return $value ? $prefix.$value : $value;
+}
+sub ifk{
+    my ($key, $value) = @_;
+    return $value ? $key : ();
 }
 sub v2a{
     my($value) = @_;
