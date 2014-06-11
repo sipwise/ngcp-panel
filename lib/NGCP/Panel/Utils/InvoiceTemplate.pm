@@ -53,7 +53,7 @@ sub svg_pdf {
     # when using 90dpi.
     # (it doesn't happen with inkscape, no idea what rsvg does)
     my @cmd_args = (qw/-a -f pdf -z 0.8/, @pagefiles);
-    my $cmd = '/usr/bin/rsvg-convert';
+    my $cmd = 'rsvg-convert';
     my $cmd_full = $cmd.' '.join(' ', @cmd_args);
     $c and $c->log->debug( $cmd_full );
 
@@ -244,10 +244,13 @@ sub get_dummy_data {
         },
         calls => [
             map {{ 
+                source_user => 'user',
+                source_domain => 'example.org',
+                source_cli => '1234567890',
+                destination_user_in => "1".$_."1234567890",
                 start_time => time,
                 source_customer_cost => int(rand(100000)),
                 duration => int(rand(7200)) + 10,
-                destination_user_in => "1".$_."1234567890",
                 call_type => (qw/cfu cfb cft cfna/)[int(rand 4)],
                 zone => "Zone $_",
                 zone_detail => "Detail $_",
