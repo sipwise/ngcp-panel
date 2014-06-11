@@ -65,9 +65,10 @@ my $etime = $opt->{etime}
     ? NGCP::Panel::Utils::DateTime::new_local(split(/\D+/,$opt->{etime})) 
     : $stime->clone->add( months => 1 )->subtract( seconds => 1 );
 if( $opt->{client_contract_id} ){
-    $opt->{reseller_id} = $dbh->selectall_arrayref('select distinct contacts.reseller_id from contracts inner join contacts on contracts.contact_id=contacts.id '.ify(' where contracts.id', @{$opt->{client_contract_id}}),  { Slice => {} }, @{$opt->{client_contract_id}} );
-    $opt->{client_contact_id} = $dbh->selectall_arrayref('select distinct contracts.contact_id from contracts '.ify(' where contracts.id', @{$opt->{client_contract_id}}),  { Slice => {} }, @{$opt->{client_contract_id}} );
+    $opt->{reseller_id} = [$dbh->selectrow_array('select distinct contacts.reseller_id from contracts inner join contacts on contracts.contact_id=contacts.id '.ify(' where contracts.id', @{$opt->{client_contract_id}}),  undef, @{$opt->{client_contract_id}} )];
+    $opt->{client_contact_id} = [$dbh->selectrow_array('select distinct contracts.contact_id from contracts '.ify(' where contracts.id', @{$opt->{client_contract_id}}),  undef, @{$opt->{client_contract_id}} )];
 }
+print Dumper $opt;
 
 process_invoices();
 
@@ -191,10 +192,12 @@ sub get_invoice_data_raw{
     , $client_contract->{id},$stime->epoch,$etime->epoch
     );
     #/data for invoice generation
-    my $i = 1;
-    $invoice_details_calls = [map{[$i++,$_]} (@$invoice_details_calls) x 1];
-    $i = 1;
-    $invoice_details_zones = [map{[$i++,$_]} (@$invoice_details_zones) x 1];
+    
+    #my $i = 1;
+    #$invoice_details_calls = [map{[$i++,$_]} (@$invoice_details_calls) x 1];
+    #$i = 1;
+    #$invoice_details_zones = [map{[$i++,$_]} (@$invoice_details_zones) x 1];
+    
     my $stash = {
         invoice_details_zones => $invoice_details_zones,
         invoice_details_calls => $invoice_details_calls,
@@ -214,7 +217,7 @@ sub generate_invoice_data{
     if($svg){
         NGCP::Panel::Utils::InvoiceTemplate::preprocess_svg(\$svg);
     }else{
-        #$svg = $svg_default;
+        $svg = $svg_default;
         print "No saved active template - no invoice;\n";
         return;
     }
@@ -239,6 +242,7 @@ sub generate_invoice_data{
     my($invoice_data) = get_invoice_data_raw($client_contract, $stime, $etime);
     my $out = '';
     my $pdf = '';
+    $invoice->{data} = '';
     my $vars = {
         invoice     => $invoice,
         rescontact  => $provider_contact,
