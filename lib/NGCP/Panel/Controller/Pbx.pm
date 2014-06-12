@@ -16,10 +16,22 @@ sub auto :Private {
     return 1;
 }
 
-sub spa_directory_getsearch :Chained('/') :PathPart('pbx/directory/spasearch') :Args(1) {
+sub base :Chained('/') :PathPart('') :CaptureArgs(0) {
+    my ($self, $c) = @_;
+
+    $c->stash->{schema} = $c->config->{deviceprovisioning}->{secure} ? 'https' : 'http';
+    $c->stash->{host} = $c->config->{deviceprovisioning}->{host} // $c->req->uri->host;
+    $c->stash->{port} = $c->config->{deviceprovisioning}->{port} // 1444;
+}
+
+sub spa_directory_getsearch :Chained('base') :PathPart('pbx/directory/spasearch') :Args(1) {
     my ($self, $c, $id) = @_;
 
-    my $baseuri = 'http://' . $c->req->uri->host . ':' . ($c->config->{web}->{autoprov_plain_port} // '1444') . '/pbx/directory/spa/' . $id;
+    my $schema = $c->stash->{schema};
+    my $host = $c->stash->{host};
+    my $port = $c->stash->{port};
+
+    my $baseuri = "$schema://$host:$port/pbx/directory/spa/$id";
     my $data = '';
 
     $data = <<EOF;
@@ -42,7 +54,7 @@ EOF
     return;
 }
 
-sub spa_directory_list :Chained('/') :PathPart('pbx/directory/spa') :Args(1) {
+sub spa_directory_list :Chained('base') :PathPart('pbx/directory/spa') :Args(1) {
     my ($self, $c, $id) = @_;
 
     unless($id) {
@@ -73,7 +85,11 @@ sub spa_directory_list :Chained('/') :PathPart('pbx/directory/spa') :Args(1) {
         return;
     }
 
-    my $baseuri = 'http://' . $c->req->uri->host . ':' . ($c->config->{web}->{autoprov_plain_port} // '1444') . '/pbx/directory/spa/' . $id;
+    my $schema = $c->stash->{schema};
+    my $host = $c->stash->{host};
+    my $port = $c->stash->{port};
+
+    my $baseuri = "$schema://$host:$port/pbx/directory/spa/$id";
     my $data = '';
 
     my $delim = '?';
@@ -124,7 +140,8 @@ sub spa_directory_list :Chained('/') :PathPart('pbx/directory/spa') :Args(1) {
 
     my $nexturi =  $baseuri . $delim . 'page='.($nextpage//0);
     my $prevuri = $baseuri . $delim . 'page='.($prevpage//0);
-    my $searchuri = 'http://' . $c->req->uri->host . ':' . ($c->config->{web}->{autoprov_plain_port} // '1444') . '/pbx/directory/spasearch/' . $id;
+    
+    my $searchuri = "$schema://$host:$port/pbx/directory/spasearch/$id";
 
     $data = "<CiscoIPPhoneDirectory><Title>PBX Address Book$dirsuffix</Title><Prompt>Select the User</Prompt>";
     $data .= join '', map {"<DirectoryEntry><Name>$$_{name}</Name><Telephone>$$_{ext}</Telephone></DirectoryEntry>"} @entries; 

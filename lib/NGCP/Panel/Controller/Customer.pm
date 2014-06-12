@@ -1236,6 +1236,10 @@ sub pbx_device_sync :Chained('pbx_device_base') :PathPart('sync') :Args(0) {
     }
     my $dev = $c->stash->{pbx_device};
 
+    my $schema = $c->config->{deviceprovisioning}->{secure} ? 'https' : 'http';
+    my $host = $c->config->{deviceprovisioning}->{host} // $c->req->uri->host;
+    my $port = $c->config->{deviceprovisioning}->{port} // 1444;
+
     my $t = Template->new;
     my $conf = {
         client => {
@@ -1243,7 +1247,7 @@ sub pbx_device_sync :Chained('pbx_device_base') :PathPart('sync') :Args(0) {
             
         },
         server => {
-            uri => 'http://' . $c->req->uri->host . ':' . ($c->config->{web}->{autoprov_plain_port} // '1444') . '/device/autoprov/config',
+            uri => "$schema://$host:$port/device/autoprov/config",
         },
     };
     my ($sync_uri, $real_sync_uri) = ("", "");

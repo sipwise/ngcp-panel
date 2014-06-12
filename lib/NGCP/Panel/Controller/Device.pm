@@ -946,6 +946,10 @@ sub dev_field_config :Chained('/') :PathPart('device/autoprov/config') :Args() {
         return;
     }
 
+    my $schema = $c->config->{deviceprovisioning}->{secure} ? 'https' : 'http';
+    my $host = $c->config->{deviceprovisioning}->{host} // $c->req->uri->host;
+    my $port = $c->config->{deviceprovisioning}->{port} // 1444;
+
     if($id =~ /^[a-fA-F0-9]{12}\.cfg$/
        && $c->req->user_agent =~ /PolycomVVX/
     ) {
@@ -985,7 +989,7 @@ sub dev_field_config :Chained('/') :PathPart('device/autoprov/config') :Args() {
 
     my $vars = {
         config => {
-            url => 'http://' . $c->req->uri->host . ':' . ($c->config->{web}->{autoprov_plain_port} // '1444') . '/device/autoprov/config/' . $id,
+            url => "$schema://$host:$port/device/autoprov/config/$id",
         },
         firmware => {
         },
@@ -994,14 +998,12 @@ sub dev_field_config :Chained('/') :PathPart('device/autoprov/config') :Args() {
             lineranges => [],
         },
         directory => {
-            spaurl => 'http://' . $c->req->uri->host . ':' . ($c->config->{web}->{autoprov_plain_port} // '1444') . '/pbx/directory/spa/' . $id,
+            spaurl => "$schema://$host:$port/pbx/directory/spa/$id",
             name => 'PBX Address Book',
         }
     };
 
-    $vars->{firmware}->{baseurl} = 'http://' . $c->req->uri->host . ':' . 
-            ($c->config->{web}->{autoprov_plain_port} // '1444') . 
-            '/device/autoprov/firmware';
+    $vars->{firmware}->{baseurl} = "$schema://$host:$port/device/autoprov/firmware";
     my $latest_fw = $c->model('DB')->resultset('autoprov_firmwares')->search({
         device_id => $model->id,
     }, {
