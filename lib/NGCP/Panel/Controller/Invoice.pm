@@ -170,7 +170,19 @@ sub create :Chained('inv_list') :PathPart('create') :Args() :Does(ACL) :ACLDetac
                     out => 1,
                     group_by_detail => 1,
                 );
-
+                my $calllist_rs = NGCP::Panel::Utils::Contract::get_contract_calls_rs(
+                    c => $c,
+                    customer_contract_id => $contract_id,
+                    stime => $stime,
+                    etime => $etime,
+                );
+                my $calllist = [ map { 
+                    my $call = {$_->get_inflated_columns};
+                    $call->{start_time} = $call->{start_time}->epoch;
+                    $call->{source_customer_cost} += 0.0; # make sure it's a number
+                    $call;
+                } $calllist_rs->all ];
+                
                 my $billing_mapping = $customer->billing_mappings->find($customer->get_column('bmid'));
                 my $billing_profile = $billing_mapping->billing_profile;
 
@@ -194,13 +206,10 @@ sub create :Chained('inv_list') :PathPart('create') :Args() :Does(ACL) :ACLDetac
 
                 $form->params->{period_start} = $stime->epoch;
                 $form->params->{period_end} = $etime->epoch;
-
                 my $vat = $customer->vat_rate // 0;
-
                 $form->params->{amount_net} = 
                     ($balance->cash_balance_interval ? $balance->cash_balance_interval / 100 : 0) + 
                     ($billing_profile->interval_charge // 0); # TODO: if not a full month, calculate fraction?
-
                 $form->params->{amount_vat} = $customer->add_vat ?
                     $form->params->{amount_net} * ($vat/100) : 0;
                 $form->params->{amount_total} = $form->params->{amount_net} + $form->params->{amount_vat};
@@ -239,36 +248,7 @@ sub create :Chained('inv_list') :PathPart('create') :Args() :Does(ACL) :ACLDetac
                 my $vars = {};
 
 
-                my $calllist_rs = $c->model('DB')->resultset('cdr')->search({
-                    source_account_id => $customer->id,
-                    call_status => 'ok',
-                    start_time => { '>=' => $stime->epoch },
-                    start_time => { '<=' => $etime->epoch },
-                },{
-                    select => [qw/
-                        source_user source_domain source_cli 
-                        destination_user_in 
-                        start_time duration call_type
-                        source_customer_cost
-                        source_customer_billing_zones_history.zone
-                        source_customer_billing_zones_history.detail
-                    /],
-                    as => [qw/
-                        source_user source_domain source_cli 
-                        destination_user_in 
-                        start_time duration call_type
-                        source_customer_cost
-                        zone 
-                        zone_detail
-                    /],
-                    join => 'source_customer_billing_zones_history',
-                });
-                my $calllist = [ map { 
-                    my $call = {$_->get_inflated_columns};
-                    $call->{start_time} = $call->{start_time}->epoch;
-                    $call->{source_customer_cost} += 0.0; # make sure it's a number
-                    $call;
-                } $calllist_rs->all ];
+
 
                 # TODO: index 170 seems the upper limit here, then the calllist breaks
 

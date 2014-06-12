@@ -392,6 +392,46 @@ sub get_contract_zonesfees {
     return \%allzones;
 }
 
+sub get_contract_calls_rs{
+    my %params = @_;
+    (my($c,$customer_contract_id,$stime,$etime)) = @params{qw/c customer_contract_id stime etime/};
+
+    $stime ||= NGCP::Panel::Utils::DateTime::current_local()->truncate( to => 'month' );
+    $etime ||= $stime->clone->add( months => 1 );
+
+    my $calls_rs = $c->model('DB')->resultset('cdr')->search( {
+#        source_user_id => { 'in' => [ map {$_->uuid} @{$contract->{subscriber}} ] },
+        'call_status'       => 'ok',
+        'source_user_id'    => { '!=' => '0' },
+        'start_time'        => 
+            [ -and =>
+                { '>=' => $stime->epoch},
+                { '<=' => $etime->epoch},
+            ],
+        'source_account_id' => $customer_contract_id,
+    },{
+        select => [qw/
+            source_user source_domain source_cli 
+            destination_user_in 
+            start_time duration call_type
+            source_customer_cost
+            source_customer_billing_zones_history.zone
+            source_customer_billing_zones_history.detail
+        /],
+        as => [qw/
+            source_user source_domain source_cli 
+            destination_user_in 
+            start_time duration call_type
+            source_customer_cost
+            zone 
+            zone_detail
+        /],
+        'join' => 'source_customer_billing_zones_history', 
+        'order_by'    => 'start_time',
+    } );    
+ 
+    return $calls_rs;
+}
 1;
 
 __END__

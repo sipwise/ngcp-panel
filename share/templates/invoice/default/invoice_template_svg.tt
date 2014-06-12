@@ -99,7 +99,7 @@
         <text text-anchor="end" x="190mm" y="171mm" font-family="Verdana" font-size="8pt" font-weight="bold">Total Price in [% cur %]</text>
         <line x1="22mm" y1="173mm" x2="190mm" y2="173mm" style="stroke:#000000;stroke-width:0.2mm;" />
 
-        <!--{ [% zonelist(fontfamily='Verdana', fontsize=8, startx=22, starty=179, offsety=5, miny=40, maxy=250, zones=zones.data, fields=[{name='zone',dx=0},{name='number',dx=78,anchor='end'},{name='duration',dx=35,timestamp2time=1,anchor='end'},{name='cost',dx=55,money_cents=1,comma='.',anchor='end'}]) -%] }-->
+        <!--{ [% zonelist(fontfamily='Verdana', fontsize=8, startx=22, starty=179, offsety=5, miny=40, maxy=250, zones=zones.data, fields=[{name='zone',dx=0},{name='number',dx=78,anchor='end'},{name='duration',dx=35,timestamp2time=1,anchor='end'},{name='customercost',dx=55,money_cents=1,comma='.',anchor='end'}]) -%] }-->
 
         <!-- firsty-180 means the first y in the group is at 180mm; mandatory to automatically place the footer after the list -->
         <g class="list-footer firsty-180 lasty-[% aux.lasty %]">

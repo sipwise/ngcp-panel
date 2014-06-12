@@ -56,6 +56,8 @@ sub svg_pdf {
     my $cmd = 'rsvg-convert';
     my $cmd_full = $cmd.' '.join(' ', @cmd_args);
     $c and $c->log->debug( $cmd_full );
+    print  $cmd_full.";\n";
+    $$pdf_ref = capturex([0], $cmd, @cmd_args);
 
     return 1;
 }
@@ -64,7 +66,8 @@ sub preprocess_svg {
     my($svg_ref) = @_;
 
     $$svg_ref=~s/(?:{\s*)?<!--{|}-->(?:\s*})?//gs;
-    
+    $$svg_ref = '<root>'.$$svg_ref.'</root>';
+
     my $xp = XML::XPath->new($$svg_ref);
     
     my $g = $xp->find('//g[@class="page"]');
@@ -75,9 +78,10 @@ sub preprocess_svg {
     }
     
     $$svg_ref = ($xp->findnodes('/'))[0]->toString();
+    $$svg_ref =~s/^<root>|<\/root>$//;
     
-    $$svg_ref=~s/<(g .*?)(?:display\s*=\s*["']*none["'[:blank:]]+)(.*?id *=["' ]+page[^"' ]*["' ]+)([^>]*)>/<$1$2$3>/gs;
-    $$svg_ref=~s/<(g .*?)(id *=["' ]+page[^"' ]*["' ]+.*?)(?:display\s*=\s*["']*none["'[:blank:]]+)([^>]*)>/<$1$2$3>/gs;
+    #$$svg_ref=~s/<(g .*?)(?:display\s*=\s*["']*none["'[:blank:]]+)(.*?id *=["' ]+page[^"' ]*["' ]+)([^>]*)>/<$1$2$3>/gs;
+    #$$svg_ref=~s/<(g .*?)(id *=["' ]+page[^"' ]*["' ]+.*?)(?:display\s*=\s*["']*none["'[:blank:]]+)([^>]*)>/<$1$2$3>/gs;
 }
 
 sub sanitize_svg {

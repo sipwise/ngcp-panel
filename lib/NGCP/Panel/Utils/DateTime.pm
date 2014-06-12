@@ -27,6 +27,7 @@ sub from_string {
     # convert it to xxxx-xx-xxTxx:xx:xx
     $s =~ s/^(\d{4}\-\d{2}\-\d{2})\s+(\d.+)$/$1T$2/;
     my $ts = DateTime::Format::ISO8601->parse_datetime($s);
+    $ts->set_time_zone( DateTime::TimeZone->new(name => 'local') );
     return $ts;
 }
 

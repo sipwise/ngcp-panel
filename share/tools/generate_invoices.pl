@@ -162,12 +162,11 @@ sub get_billing_profile{
 }
 sub get_invoice_data_raw{
     my($client_contract, $stime, $etime) = @_;
-
     my $invoice_details_calls = $dbh->selectall_arrayref('select cdr.*,from_unixtime(cdr.start_time) as start_time,bzh.zone, bzh.detail as zone_detail 
     from accounting.cdr 
-    LEFT JOIN billing.billing_zones_history bzh ON bzh.id = cdr.source_customer_billing_zone_id
+    LEFT JOIN billing.billing_zones_history bzh ON bzh.bz_id = cdr.source_customer_billing_zone_id
     where
-    cdr.source_user_id != 0
+    cdr.source_user_id != "0"
     and cdr.call_status="ok" 
     and cdr.source_account_id=?
     and cdr.start_time >= ?
@@ -177,11 +176,11 @@ sub get_invoice_data_raw{
     , { Slice => {} }
     , $client_contract->{id},$stime->epoch,$etime->epoch
     );
-    my $invoice_details_zones = $dbh->selectall_arrayref('select SUM(cdr.source_customer_cost) AS cost, COUNT(*) AS number, SUM(cdr.duration) AS duration,sum(cdr.source_customer_free_time) as free_time, bzh.zone
+    my $invoice_details_zones = $dbh->selectall_arrayref('select SUM(cdr.source_customer_cost) AS customercost, COUNT(*) AS number, SUM(cdr.duration) AS duration,sum(cdr.source_customer_free_time) as free_time, bzh.zone
     from accounting.cdr 
-    LEFT JOIN billing.billing_zones_history bzh ON bzh.id = cdr.source_customer_billing_zone_id
+    LEFT JOIN billing.billing_zones_history bzh ON bzh.bz_id = cdr.source_customer_billing_zone_id
     where
-    cdr.source_user_id != 0
+    cdr.source_user_id != "0"
     and cdr.call_status="ok" 
     and cdr.source_account_id=?
     and cdr.start_time >= ?
