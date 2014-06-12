@@ -9,6 +9,7 @@ use NGCP::Panel::Utils::Contract;
 use NGCP::Panel::Utils::InvoiceTemplate;
 use NGCP::Panel::Utils::Invoice;
 use NGCP::Panel::Form::Invoice::Invoice;
+use Geography::Countries qw/country/;
 
 sub auto :Private {
     my ($self, $c) = @_;
@@ -250,8 +251,8 @@ sub create :Chained('inv_list') :PathPart('create') :Args() :Does(ACL) :ACLDetac
                 $vars->{customer} = { $customer->get_inflated_columns };
                 $vars->{custcontact} = { $customer->contact->get_inflated_columns };
                 
-                $vars->{custcontact}->{country} = $customer->contact->country_name();
-                $vars->{rescontact}->{country}  = $customer->contact->reseller->contract->contact->country_name();
+                $vars->{custcontact}->{country} = country($vars->{custcontact}->{country} || '');
+                $vars->{rescontact}->{country}  = country($vars->{rescontact}->{country} || '');
                 
                 $vars->{billprof} = { $billing_profile->get_inflated_columns };
                 $vars->{invoice} = {
