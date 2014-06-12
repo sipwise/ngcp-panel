@@ -73,30 +73,36 @@ sub spa_directory_list :Chained('/') :PathPart('pbx/directory/spa') :Args(1) {
         return;
     }
 
-    my $baseuri = 'http://' . $c->req->uri->host . ':' . ($c->config->{web}->{autoprov_plain_port} // '1444') . '/device/autoprov/directory/spa/' . $id;
+    my $baseuri = 'http://' . $c->req->uri->host . ':' . ($c->config->{web}->{autoprov_plain_port} // '1444') . '/pbx/directory/spa/' . $id;
     my $data = '';
 
     my $delim = '?';
     my $q;
+    my $dirsuffix = '';
     if(exists $c->req->params->{q} && length($c->req->params->{q})) {
         $q = $c->req->params->{q};
         $baseuri .= "?q=$q";
         $delim = '&amp;';
+        $dirsuffix = ' (Search Results)';
     }
 
 
     my $customer = $dev->contract;
 
     my $page = $c->req->params->{page} // 1;
-    my $rows = 1; # TODO: make it 30?
+    my $rows = 10;
 
-    # TODO: search for display name instead of username!
     my $rs = $customer->voip_subscribers->search({
         'status' => 'active',
         'provisioning_voip_subscriber.pbx_extension' => { '!=' => undef },
-        defined $q ? ('me.username' => { like => "%$q%" }) : (),
+        'voip_usr_preferences.value' => { '!=' => undef },
+        'attribute.attribute' => 'display_name',
+        defined $q ? ('voip_usr_preferences.value' => { like => "%$q%" }) : (),
     },{
-        join => 'provisioning_voip_subscriber',
+        join => { provisioning_voip_subscriber => { voip_usr_preferences => 'attribute'  } },
+        '+select' => [qw/voip_usr_preferences.value/],
+        '+as' => [qw/display_name/],
+        order_by => { '-asc' => 'voip_usr_preferences.value' },
     });
     my $total = $rs->count;
     my ($nextpage, $prevpage);
@@ -112,17 +118,7 @@ sub spa_directory_list :Chained('/') :PathPart('pbx/directory/spa') :Args(1) {
     foreach my $sub($rs->search(undef,{page => $page, rows => $rows})->all) {
         my $prov_sub = $sub->provisioning_voip_subscriber;
         next unless($prov_sub && $prov_sub->pbx_extension);
-        my $display_name = NGCP::Panel::Utils::Preferences::get_usr_preference_rs(
-            c => $c,
-            prov_subscriber => $sub,
-            attribute => 'display_name',
-        );
-        if($display_name->first) {
-            $display_name = $display_name->first->value;
-        } else {
-            $display_name = $sub->username;
-        };
-
+        my $display_name = $sub->get_column('display_name');
         push @entries, { name => $display_name, ext => $prov_sub->pbx_extension };
     }
 
@@ -130,7 +126,7 @@ sub spa_directory_list :Chained('/') :PathPart('pbx/directory/spa') :Args(1) {
     my $prevuri = $baseuri . $delim . 'page='.($prevpage//0);
     my $searchuri = 'http://' . $c->req->uri->host . ':' . ($c->config->{web}->{autoprov_plain_port} // '1444') . '/pbx/directory/spasearch/' . $id;
 
-    $data = '<CiscoIPPhoneDirectory><Title>PBX Address Book</Title><Prompt>Select the User</Prompt>';
+    $data = "<CiscoIPPhoneDirectory><Title>PBX Address Book$dirsuffix</Title><Prompt>Select the User</Prompt>";
     $data .= join '', map {"<DirectoryEntry><Name>$$_{name}</Name><Telephone>$$_{ext}</Telephone></DirectoryEntry>"} @entries; 
     $data .= "<SoftKeyItem><Name>Dial</Name><URL>SoftKey:Dial</URL><Position>1</Position></SoftKeyItem>";
     if($prevpage) {
@@ -140,14 +136,11 @@ sub spa_directory_list :Chained('/') :PathPart('pbx/directory/spa') :Args(1) {
     }
     $data .= "<SoftKeyItem><Name>Next</Name><URL>$nexturi</URL><Position>3</Position></SoftKeyItem>"
         if($nextpage);
-    $data .= "<SoftKeyItem><Name>Cancel</Name><URL>SoftKey:Exit</URL><Position>4</Position></SoftKeyItem>";
+    $data .= "<SoftKeyItem><Name>Cancel</Name><URL>Init:Services</URL><Position>4</Position></SoftKeyItem>";
     $data .= '</CiscoIPPhoneDirectory>';
 
     $c->log->debug("providing config to $id");
     $c->log->debug($data);
-
-    # to make the exit button really exit the xml application
-    $c->response->headers->header('Expires' => '-1');
 
     $c->response->content_type('text/xml');
     $c->response->body($data);
