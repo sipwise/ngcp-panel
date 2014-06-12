@@ -54,7 +54,7 @@ my $dbh = DBI->connect('dbi:mysql:billing;host=localhost', $dbuser, $dbpass)
 
 
 my $opt = {};
-Getopt::Long::GetOptions($opt, 'reseller_id:i@', 'client_contact_id:i@', 'client_contract_id:i@', 'stime:s', 'etime:s', 'send!','sendonly!','resend','help|?')
+Getopt::Long::GetOptions($opt, 'reseller_id:i@', 'client_contact_id:i@', 'client_contract_id:i@', 'stime:s', 'etime:s', 'send!','sendonly!','resend','regenerate!','help|?')
     or die 'could not process command-line options';
 print Dumper $opt;
 
@@ -77,20 +77,20 @@ sub process_invoices{
 
     my $invoices = {};
 
-    foreach my $provider_contract( @{ get_providers_contracts($opt) } ){
+    foreach my $provider_contract( @{ get_providers_contracts() } ){
         
         print "reseller_id=".$provider_contract->{reseller_core_id}.";\n";
         
         my $provider_contact = get_provider_contact($provider_contract);
 
-        foreach my $client_contact (@{ get_provider_clients_contacts($provider_contract,$opt) } ){
+        foreach my $client_contact (@{ get_provider_clients_contacts($provider_contract) } ){
 
             print "reseller_id=".$provider_contract->{reseller_core_id}.";contact_id=".$client_contact->{id}.";\n";
             
             $invoices->{$client_contact->{id}} ||= [];
             
             if(!$opt->{sendonly}){
-                foreach my $client_contract (@{ get_client_contracts($client_contact,$opt) }){
+                foreach my $client_contract (@{ get_client_contracts($client_contact) }){
                     
                     print "reseller_id=".$provider_contract->{reseller_core_id}.";contact_id=".$client_contact->{id}.";contract_id=".$client_contract->{id}.";\n";
 
@@ -124,7 +124,6 @@ sub process_invoices{
 }
 
 sub get_providers_contracts{
-    my ($opt) = @_;
     return $dbh->selectall_arrayref('select contracts.*,resellers.id as reseller_core_id from resellers inner join contracts on resellers.contract_id=contracts.id where resellers.status != "terminated" '.ify(' and resellers.id ', @{$opt->{reseller_id}}),  { Slice => {} }, @{$opt->{reseller_id}} );
 }
 sub get_provider_contact{
@@ -133,7 +132,7 @@ sub get_provider_contact{
     return $dbh->selectrow_hashref('select * from contacts where id=?', undef, $provider_contract->{contact_id} )
 }
 sub get_provider_clients_contacts{
-    my($provider_contract, $opt) = @_;
+    my($provider_contract) = @_;
     #according to /reseller/ajax_reseller_filter
     my $contacts = $dbh->selectall_arrayref('select contacts.* from contacts where reseller_id = ?'.ify(' and contacts.id', @{$opt->{client_contact_id}}),  { Slice => {} }, $provider_contract->{reseller_core_id}, @{$opt->{client_contact_id}} );
     #foreach (@$contacts){
@@ -142,7 +141,7 @@ sub get_provider_clients_contacts{
     return $contacts;
 }
 sub get_client_contracts{
-    my($client_contact, $opt) = @_;
+    my($client_contact) = @_;
     return $dbh->selectall_arrayref('select contracts.* from contracts where contracts.contact_id=? '.ify(' and contracts.id', @{$opt->{client_contract_id}}), { Slice => {} }, $client_contact->{id}, @{$opt->{client_contract_id}} );
 }
 sub get_billing_profile{
@@ -290,10 +289,12 @@ sub get_contract_balance{
 sub get_invoice{
     my($invoice_id, $contract_id, $stime, $etime) = @_;
     my $invoice;
-    if($invoice_id){
-        $invoice = $dbh->selectrow_hashref('select * from invoices where id=?',undef, $invoice_id); 
-    }else{
-        $invoice = $dbh->selectrow_hashref('select * from invoices where contract_id=? and date(period_start)=? and date(period_end)=?',undef, $contract_id, $stime->ymd, $etime->ymd); 
+    if($opt->{regenerate}){
+        if($invoice_id){
+            $invoice = $dbh->selectrow_hashref('select * from invoices where id=?',undef, $invoice_id); 
+        }else{
+            $invoice = $dbh->selectrow_hashref('select * from invoices where contract_id=? and date(period_start)=? and date(period_end)=?',undef, $contract_id, $stime->ymd, $etime->ymd); 
+        }
     }
     if(!$invoice){
         my $serial_tmp = "tmp".time.int(rand(99999));
