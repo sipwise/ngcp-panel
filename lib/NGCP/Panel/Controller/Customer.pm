@@ -476,14 +476,19 @@ sub terminate :Chained('base') :PathPart('terminate') :Args(0) {
 
     try {
         my $old_status = $contract->status;
-        $contract->update({ status => 'terminated' });
-        # if status changed, populate it down the chain
-        if($contract->status ne $old_status) {
-            NGCP::Panel::Utils::Contract::recursively_lock_contract(
-                c => $c,
-                contract => $contract,
-            );
-        }
+        my $schema = $c->model('DB');
+        $schema->txn_do(sub {
+            $contract->voip_contract_preferences->delete;
+            $contract->update({ status => 'terminated' });
+            # if status changed, populate it down the chain
+            if($contract->status ne $old_status) {
+                NGCP::Panel::Utils::Contract::recursively_lock_contract(
+                    c => $c,
+                    contract => $contract,
+                    schema => $schema,
+                );
+            }
+        });
         $c->flash(messages => [{type => 'success', text => $c->loc('Customer successfully terminated') }]);
     } catch ($e) {
         NGCP::Panel::Utils::Message->error(
@@ -1275,6 +1280,87 @@ sub pbx_device_sync :Chained('pbx_device_base') :PathPart('sync') :Args(0) {
         autoprov_uri => $real_sync_uri,
         autoprov_method => $dev->profile->config->device->sync_method,
         autoprov_params => \@sync_params,
+    );
+}
+
+sub preferences :Chained('base') :PathPart('preferences') :Args(0) {
+    my ($self, $c) = @_;
+
+    $self->load_preference_list($c);
+    $c->stash(template => 'customer/preferences.tt');
+}
+
+
+sub preferences_base :Chained('base') :PathPart('preferences') :CaptureArgs(1) {
+    my ($self, $c, $pref_id) = @_;
+
+    $self->load_preference_list($c);
+
+    $c->stash->{preference_meta} = $c->model('DB')
+        ->resultset('voip_preferences')
+        ->single({id => $pref_id});
+
+    $c->stash->{preference} = $c->model('DB')
+        ->resultset('voip_contract_preferences')
+        ->search({
+            attribute_id => $pref_id,
+            contract_id => $c->stash->{contract}->id,
+        });
+    my @values = $c->stash->{preference}->get_column("value")->all;
+    $c->stash->{preference_values} = \@values;
+    $c->stash(template => 'customer/preferences.tt');
+}
+
+sub preferences_edit :Chained('preferences_base') :PathPart('edit') :Args(0) {
+    my ($self, $c) = @_;
+   
+    $c->stash(edit_preference => 1);
+
+    my @enums = $c->stash->{preference_meta}
+        ->voip_preferences_enums
+        ->search({contract_pref => 1})
+        ->all;
+    
+    my $pref_rs = $c->stash->{contract}->voip_contract_preferences;
+
+    NGCP::Panel::Utils::Preferences::create_preference_form( c => $c,
+        pref_rs => $pref_rs,
+        enums   => \@enums,
+        base_uri => $c->uri_for_action('/customer/preferences', [$c->req->captures->[0]]),
+        edit_uri => $c->uri_for_action('/customer/preferences_edit', $c->req->captures),
+    );
+}
+
+sub load_preference_list :Private {
+    my ($self, $c) = @_;
+    
+    my $contract_pref_values = $c->model('DB')
+        ->resultset('voip_preferences')
+        ->search({
+                contract_id => $c->stash->{contract}->id,
+            },{
+                prefetch => 'voip_contract_preferences',
+            });
+        
+    my %pref_values;
+    foreach my $value($contract_pref_values->all) {
+    
+        $pref_values{$value->attribute} = [
+            map {$_->value} $value->voip_contract_preferences->all
+        ];
+    }
+
+    my $reseller_id = $c->stash->{contract}->contact->reseller_id;
+
+    my $ncos_levels_rs = $c->model('DB')
+        ->resultset('ncos_levels')
+        ->search_rs({ reseller_id => $reseller_id, });
+    $c->stash(ncos_levels_rs => $ncos_levels_rs,
+              ncos_levels    => [$ncos_levels_rs->all]);
+
+    NGCP::Panel::Utils::Preferences::load_preference_list( c => $c,
+        pref_values => \%pref_values,
+        contract_pref => 1,
     );
 }
 

@@ -36,11 +36,16 @@ sub load_preference_list {
     my $peer_pref = $params{peer_pref};
     my $dom_pref = $params{dom_pref};
     my $usr_pref = $params{usr_pref};
+    my $contract_pref = $params{contract_pref};
+
     my $customer_view = $params{customer_view} // 0;
     
     my @pref_groups = $c->model('DB')
         ->resultset('voip_preference_groups')
         ->search({ 'voip_preferences.internal' => { '<=' => 0 },
+            $contract_pref ? ('voip_preferences.contract_pref' => 1,
+                -or => ['voip_preferences_enums.contract_pref' => 1,
+                    'voip_preferences_enums.contract_pref' => undef]) : (),
             $peer_pref ? ('voip_preferences.peer_pref' => 1,
                 -or => ['voip_preferences_enums.peer_pref' => 1,
                     'voip_preferences_enums.peer_pref' => undef]) : (),
@@ -77,7 +82,6 @@ sub load_preference_list {
                 }
             }
             elsif($pref->attribute eq "adm_ncos") {
-                
                 if ($pref_values->{adm_ncos_id} &&
                     (my $tmp = $c->stash->{ncos_levels_rs}
                         ->find($pref_values->{adm_ncos_id}) )) {
@@ -585,6 +589,23 @@ sub get_peer_preference_rs {
         });
 }
 
+sub get_contract_preference_rs {
+    my %params = @_;
+
+    my $c = $params{c};
+    my $attribute = $params{attribute};
+    my $contract = $params{contract};
+
+    my $preference = $c->model('DB')->resultset('voip_preferences')->find({
+            attribute => $attribute, 'contract_pref' => 1,
+        });
+    return unless($preference);
+    return $preference->voip_contract_preferences->search_rs({
+            contract_id => $contract->id,
+        });
+}
+
+
 sub get_peer_auth_params {
     my ($c, $prov_subscriber, $prefs) = @_;
 
@@ -614,10 +635,8 @@ sub is_peer_auth_active {
        defined $prefs->{peer_auth_realm} &&
        defined $prefs->{peer_auth_pass}) {
 
-        $c->log->debug("+++++++++++ peer auth register is active");
         return 1;
     }
-    $c->log->debug("+++++++++++ peer auth register is NOT active");
     return;
 }
 

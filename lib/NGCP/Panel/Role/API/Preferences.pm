@@ -25,6 +25,8 @@ sub get_form {
 sub hal_from_item {
     my ($self, $c, $item, $type) = @_;
 
+    my $print_type = $type;
+    $print_type = "customers" if $print_type eq "contracts";
     my $hal = Data::HAL->new(
         links => [
             Data::HAL::Link->new(
@@ -36,7 +38,7 @@ sub hal_from_item {
             Data::HAL::Link->new(relation => 'collection', href => sprintf("%s", $self->dispatch_path)),
             Data::HAL::Link->new(relation => 'profile', href => 'http://purl.org/sipwise/ngcp-api/'),
             Data::HAL::Link->new(relation => 'self', href => sprintf("%s%d", $self->dispatch_path, $item->id)),
-            Data::HAL::Link->new(relation => "ngcp:$type", href => sprintf("/api/%s/%d", $type, $item->id)),
+            Data::HAL::Link->new(relation => "ngcp:$print_type", href => sprintf("/api/%s/%d", $print_type, $item->id)),
         ],
         relation => 'ngcp:'.$self->resource_name,
     );
@@ -56,7 +58,8 @@ sub get_resource {
         $prefs = $item->provisioning_voip_domain->voip_dom_preferences;
     } elsif($type eq "peerings") {
         $prefs = $item->voip_peer_preferences;
-        return;
+    } elsif($type eq "contracts") {
+        $prefs = $item->voip_contract_preferences;
     }
     $prefs = $prefs->search({
     }, {
@@ -69,7 +72,6 @@ sub get_resource {
         my $value;
 
         given($pref->attribute->attribute) {
-            $c->log->debug("+++++++++++++ checking preference ".$pref->attribute->attribute);
             when(/^rewrite_calle[re]_(in|out)_dpid$/) {
                 next if(exists $resource->{rewrite_rule_set});
                 my $col = $pref->attribute->attribute;
@@ -134,10 +136,15 @@ sub get_resource {
                 next;
             }
 
-            default { next if $pref->attribute->internal != 0 }
+            default { 
+                if($pref->attribute->internal != 0) {
+                    next;
+                }
+            }
 
         }
 
+        
         given($pref->attribute->data_type) {
             when("int")     { $value = int($pref->value) if($pref->value->is_int) }
             when("boolean") { $value = JSON::Types::bool($pref->value) if(defined $pref->value) }
@@ -162,7 +169,11 @@ sub get_resource {
     } elsif($type eq "peerings") {
         $resource->{peering_id} = int($item->id);
         $resource->{id} = int($item->id);
+    } elsif($type eq "contracts") {
+        $resource->{customer_id} = int($item->id);
+        $resource->{id} = int($item->id);
     }
+
     return $resource;
 }
 
@@ -200,6 +211,23 @@ sub item_rs {
         } else {
             return;
         }
+    } elsif($type eq "contracts") {
+        if($c->user->roles eq "admin") {
+            $item_rs = $c->model('DB')->resultset('contracts')->search({ 
+                status => { '!=' => 'terminated' },
+                'contact.reseller_id' => { '!=' => undef },
+
+            },{
+                join => 'contact',
+            });
+        } elsif($c->user->roles eq "reseller") {
+            $item_rs = $c->model('DB')->resultset('contracts')->search({
+                'contact.reseller_id' => $c->user->reseller_id,
+                'status' => { '!=' => 'terminated' },
+            }, {
+                join => 'contact',
+            });
+        }
     }
     return $item_rs;
 }
@@ -213,6 +241,10 @@ sub item_by_id {
 
 sub get_preference_rs {
     my ($self, $c, $type, $elem, $attr) = @_;
+
+
+    use Data::Printer; print ">>>>>>>>>>>>>>>> get_preference_rs, type=$type, elem=$elem, attr=$attr\n";
+
     my $rs;
     if($type eq "domains") {
         $rs = NGCP::Panel::Utils::Preferences::get_dom_preference_rs(
@@ -231,6 +263,12 @@ sub get_preference_rs {
             c => $c,
             attribute => $attr,
             peer_host => $elem,
+        );
+    } elsif($type eq "contracts") {
+        $rs = NGCP::Panel::Utils::Preferences::get_contract_preference_rs(
+            c => $c,
+            attribute => $attr,
+            contract => $elem,
         );
     }
     return $rs;
@@ -276,6 +314,15 @@ sub update_item {
         $full_rs = $elem->voip_peer_preferences;
         $pref_type = 'peer_pref';
         $reseller_id = 1;
+    } elsif($type eq "contracts") {
+        use Data::Printer; print ">>>>>>>>>>>>>>>> prepare resource\n"; p $resource; p $old_resource;
+        delete $resource->{customer_id};
+        delete $old_resource->{customer_id};
+        $accessor = $item->id;
+        $elem = $item;
+        $full_rs = $elem->voip_contract_preferences;
+        $pref_type = 'contract_pref';
+        $reseller_id = $item->contact->reseller_id;
     } else {
         return;
     }
@@ -283,12 +330,13 @@ sub update_item {
     if($replace) {
         # in case of PUT, we remove all old entries
         try {
-            $full_rs->delete_all;
+            $full_rs->delete;
         } catch($e) {
             $c->log->error("failed to clear preferences for '$accessor': $e");
             $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "Internal Server Error.");
             return;
         };
+        use Data::Printer; print ">>>>>>>>>>>>>>>> done deleteting old for PUT\n";
     } else {
         # in case of PATCH, we remove only those entries marked for removal in the patch
         try {
@@ -296,16 +344,12 @@ sub update_item {
                 given($k) {
 
                     # no special treatment for *_sound_set deletion, as id is stored in right name
-                    $c->log->debug("+++++++++++++ check $k for deletion");
-
                     when(/^rewrite_rule_set$/) {
-                        $c->log->debug("+++++++++++++ check $k for deletion");
                         unless(exists $resource->{$k}) {
-                            $c->log->debug("+++++++++++++ $k marked for deletion");
                             foreach my $p(qw/caller_in_dpid callee_in_dpid caller_out_dpid callee_out_dpid/) {
                                 my $rs = $self->get_preference_rs($c, $type, $elem, 'rewrite_' . $p);
                                 next unless $rs; # unknown resource, just ignore
-                                $rs->delete_all;
+                                $rs->delete;
                             }
                         }
                     }
@@ -313,7 +357,7 @@ sub update_item {
                         unless(exists $resource->{$k}) {
                             my $rs = $self->get_preference_rs($c, $type, $elem, $k . '_id');
                             next unless $rs; # unknown resource, just ignore
-                            $rs->delete_all;
+                            $rs->delete;
                         }
                     }
                     when(/^(man_)?allowed_ips$/) {
@@ -323,16 +367,16 @@ sub update_item {
                             if($rs->first) {
                                 $c->model('DB')->resultset('voip_allowed_ip_groups')->search({
                                     group_id => $rs->first->value,
-                                })->delete_all;
+                                })->delete;
                             }
-                            $rs->delete_all;
+                            $rs->delete;
                         }
                     }
                     default {
                         unless(exists $resource->{$k}) {
                             my $rs = $self->get_preference_rs($c, $type, $elem, $k);
                             next unless $rs; # unknown resource, just ignore
-                            $rs->delete_all;
+                            $rs->delete;
                         }
                     }
                 }
@@ -345,8 +389,11 @@ sub update_item {
     }
 
     foreach my $pref(keys %{ $resource }) {
+        use Data::Printer; print ">>>>>>>>>>>>>>>> handling pref $pref\n";
         next unless(defined $resource->{$pref});
+        use Data::Printer; print ">>>>>>>>>>>>>>>> $pref is defined, get rs for type $type\n";
         my $rs = $self->get_preference_rs($c, $type, $elem, $pref);
+        use Data::Printer; print ">>>>>>>>>>>>>>>> got an rs\n";
         unless($rs) {
             $c->log->debug("removing unknown preference '$pref' from update");
             next;
@@ -381,7 +428,6 @@ sub update_item {
             }
 
             given($pref) {
-                $c->log->debug("+++++++++++++ checking preference $pref for update");
                 when(/^rewrite_rule_set$/) {
 
                     my $rwr_set = $c->model('DB')->resultset('voip_rewrite_rule_sets')->find({
@@ -452,7 +498,7 @@ sub update_item {
                         $aig_rs = $c->model('DB')->resultset('voip_allowed_ip_groups')->search({
                             group_id => $rs->first->value
                         });
-                        $aig_rs->delete_all;
+                        $aig_rs->delete;
                     } else {
                         my $aig_seq = $c->model('DB')->resultset('voip_aig_sequence')->search({},{
                             for => 'update',
@@ -485,7 +531,7 @@ sub update_item {
                 default {
 
                     if($meta->max_occur != 1) {
-                        $rs->delete_all;
+                        $rs->delete;
                         foreach my $v(@{ $resource->{$pref} }) {
                             return unless $self->check_pref_value($c, $meta, $v, $pref_type);
                             $rs->create({ value => $v });

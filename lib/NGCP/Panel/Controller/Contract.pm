@@ -200,13 +200,18 @@ sub terminate :Chained('base') :PathPart('terminate') :Args(0) {
     try {
         my $old_status = $contract->status;
         $contract->update({ status => 'terminated' });
-        # if status changed, populate it down the chain
-        if($contract->status ne $old_status) {
-            NGCP::Panel::Utils::Contract::recursively_lock_contract(
-                c => $c,
-                contract => $contract,
-            );
-        }
+        my $schema = $c->model('DB');
+        $schema->txn_do(sub {
+            $contract->voip_contract_preferences->delete;
+            # if status changed, populate it down the chain
+            if($contract->status ne $old_status) {
+                NGCP::Panel::Utils::Contract::recursively_lock_contract(
+                    c => $c,
+                    contract => $contract,
+                    schema => $schema,
+                );
+            }
+        });
         $c->flash(messages => [{type => 'success', text => $c->loc('Contract successfully terminated')}]);
     } catch ($e) {
         NGCP::Panel::Utils::Message->error(

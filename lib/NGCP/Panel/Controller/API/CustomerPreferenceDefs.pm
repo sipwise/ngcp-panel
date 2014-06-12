@@ -1,4 +1,4 @@
-package NGCP::Panel::Controller::API::SubscriberPreferenceDefs;
+package NGCP::Panel::Controller::API::CustomerPreferenceDefs;
 use Sipwise::Base;
 use namespace::sweep;
 use boolean qw(true);
@@ -19,9 +19,9 @@ require Catalyst::ActionRole::RequireSSL;
 
 with 'NGCP::Panel::Role::API';
 
-class_has('resource_name', is => 'ro', default => 'subscriberpreferencedefs');
-class_has('dispatch_path', is => 'ro', default => '/api/subscriberpreferencedefs/');
-class_has('relation', is => 'ro', default => 'http://purl.org/sipwise/ngcp-api/#rel-subscriberpreferencedefs');
+class_has('resource_name', is => 'ro', default => 'customerpreferencedefs');
+class_has('dispatch_path', is => 'ro', default => '/api/customerpreferencedefs/');
+class_has('relation', is => 'ro', default => 'http://purl.org/sipwise/ngcp-api/#rel-customerpreferencedefs');
 
 __PACKAGE__->config(
     action => {
@@ -64,7 +64,7 @@ sub GET :Allow {
 
         my $preferences = $c->model('DB')->resultset('voip_preferences')->search({
             internal => 0,
-            usr_pref => 1,
+            contract_pref => 1,
         });
         my $resource = {};
         for my $pref($preferences->all) {
@@ -77,7 +77,7 @@ sub GET :Allow {
             $fields->{read_only} = JSON::Types::bool($fields->{read_only});
             if($fields->{data_type} eq "enum") {
                 my @enums = $pref->voip_preferences_enums->search({
-                    dom_pref => 1,
+                    contract_pref => 1,
                 })->all;
                 $fields->{enum_values} = [];
                 foreach my $enum(@enums) {

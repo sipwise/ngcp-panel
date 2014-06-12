@@ -1,4 +1,4 @@
-package NGCP::Panel::Controller::API::SubscriberPreferenceDefs;
+package NGCP::Panel::Controller::API::CustomerPreferences;
 use Sipwise::Base;
 use namespace::sweep;
 use boolean qw(true);
@@ -10,18 +10,24 @@ use MooseX::ClassAttribute qw(class_has);
 use NGCP::Panel::Utils::DateTime;
 use Path::Tiny qw(path);
 use Safe::Isa qw($_isa);
-use JSON::Types qw();
 BEGIN { extends 'Catalyst::Controller::ActionRole'; }
 require Catalyst::ActionRole::ACL;
 require Catalyst::ActionRole::CheckTrailingSlash;
 require Catalyst::ActionRole::HTTPMethods;
 require Catalyst::ActionRole::RequireSSL;
 
-with 'NGCP::Panel::Role::API';
+class_has 'api_description' => (
+    is => 'ro',
+    isa => 'Str',
+    default => 
+        'Specifies certain properties (preferences) for a <a href="#customers">Customer</a>. The full list of properties can be obtained via <a href="/api/customerpreferencedefs/">CustomerPreferenceDefs</a>.'
+);
 
-class_has('resource_name', is => 'ro', default => 'subscriberpreferencedefs');
-class_has('dispatch_path', is => 'ro', default => '/api/subscriberpreferencedefs/');
-class_has('relation', is => 'ro', default => 'http://purl.org/sipwise/ngcp-api/#rel-subscriberpreferencedefs');
+with 'NGCP::Panel::Role::API::Preferences';
+
+class_has('resource_name', is => 'ro', default => 'customerpreferences');
+class_has('dispatch_path', is => 'ro', default => '/api/customerpreferences/');
+class_has('relation', is => 'ro', default => 'http://purl.org/sipwise/ngcp-api/#rel-customerpreferences');
 
 __PACKAGE__->config(
     action => {
@@ -46,8 +52,19 @@ sub auto :Private {
 
 sub GET :Allow {
     my ($self, $c) = @_;
+    my $page = $c->request->params->{page} // 1;
+    my $rows = $c->request->params->{rows} // 10;
     {
-        my @links;
+        my $customers = $self->item_rs($c, "contracts");
+        (my $total_count, $customers) = $self->paginate_order_collection($c, $customers);
+        my (@embedded, @links);
+        for my $customer ($customers->all) {
+            push @embedded, $self->hal_from_item($c, $customer, "contracts");
+            push @links, Data::HAL::Link->new(
+                relation => 'ngcp:'.$self->resource_name,
+                href     => sprintf('%s%d', $self->dispatch_path, $customer->id),
+            );
+        }
         push @links,
             Data::HAL::Link->new(
                 relation => 'curies',
@@ -56,43 +73,21 @@ sub GET :Allow {
                 templated => true,
             ),
             Data::HAL::Link->new(relation => 'profile', href => 'http://purl.org/sipwise/ngcp-api/'),
-            Data::HAL::Link->new(relation => 'self', href => sprintf('%s', $self->dispatch_path));
+            Data::HAL::Link->new(relation => 'self', href => sprintf('%s?page=%s&rows=%s', $self->dispatch_path, $page, $rows));
+        if(($total_count / $rows) > $page ) {
+            push @links, Data::HAL::Link->new(relation => 'next', href => sprintf('%s?page=%d&rows=%d', $self->dispatch_path, $page + 1, $rows));
+        }
+        if($page > 1) {
+            push @links, Data::HAL::Link->new(relation => 'prev', href => sprintf('%s?page=%d&rows=%d', $self->dispatch_path, $page - 1, $rows));
+        }
 
         my $hal = Data::HAL->new(
+            embedded => [@embedded],
             links => [@links],
         );
-
-        my $preferences = $c->model('DB')->resultset('voip_preferences')->search({
-            internal => 0,
-            usr_pref => 1,
+        $hal->resource({
+            total_count => $total_count,
         });
-        my $resource = {};
-        for my $pref($preferences->all) {
-            my $fields = { $pref->get_inflated_columns };
-            # remove internal fields
-            for my $del(qw/type attribute expose_to_customer internal peer_pref usr_pref dom_pref contract_pref voip_preference_groups_id id modify_timestamp/) {
-                delete $fields->{$del};
-            }
-            $fields->{max_occur} = int($fields->{max_occur});
-            $fields->{read_only} = JSON::Types::bool($fields->{read_only});
-            if($fields->{data_type} eq "enum") {
-                my @enums = $pref->voip_preferences_enums->search({
-                    dom_pref => 1,
-                })->all;
-                $fields->{enum_values} = [];
-                foreach my $enum(@enums) {
-                    my $efields = { $enum->get_inflated_columns };
-                    for my $del(qw/id preference_id usr_pref dom_pref peer_pref contract_pref/) {
-                        delete $efields->{$del};
-                    }
-                    $efields->{default_val} = JSON::Types::bool($efields->{default_val});
-                    push @{ $fields->{enum_values} }, $efields;
-                }
-            }
-            $resource->{$pref->attribute} = $fields;
-        }
-        $hal->resource($resource);
-
         my $response = HTTP::Response->new(HTTP_OK, undef, 
             HTTP::Headers->new($hal->http_headers(skip_links => 1)), $hal->as_json);
         $c->response->headers($response->headers);

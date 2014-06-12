@@ -108,6 +108,7 @@ sub recursively_lock_contract {
 
     my $c = $params{c};
     my $contract = $params{contract};
+    my $schema = $params{schema} // $c->model('DB');
     my $status = $contract->status;
     if($status eq 'terminated') {
         $contract->autoprov_field_devices->delete_all;
@@ -139,7 +140,7 @@ sub recursively_lock_contract {
     }
 
     # then, check all child contracts in case of reseller
-    my $resellers = $c->model('DB')->resultset('resellers')->search({
+    my $resellers = $schema->resultset('resellers')->search({
         contract_id => $contract->id,
     });
     for my $reseller($resellers->all) {
