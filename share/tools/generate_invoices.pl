@@ -59,10 +59,10 @@ Getopt::Long::GetOptions($opt, 'reseller_id:i@', 'client_contact_id:i@', 'client
 print Dumper $opt;
 
 my $stime = $opt->{stime} 
-    ? NGCP::Panel::Utils::DateTime::new_local(split(/\D+/,$opt->{stime})) 
+    ? NGCP::Panel::Utils::DateTime::from_string($opt->{stime}) 
     : NGCP::Panel::Utils::DateTime::current_local()->truncate( to => 'month' );
 my $etime = $opt->{etime} 
-    ? NGCP::Panel::Utils::DateTime::new_local(split(/\D+/,$opt->{etime})) 
+    ? NGCP::Panel::Utils::DateTime::from_string($opt->{etime}) 
     : $stime->clone->add( months => 1 )->subtract( seconds => 1 );
 if( $opt->{client_contract_id} ){
     $opt->{reseller_id} = [$dbh->selectrow_array('select distinct contacts.reseller_id from contracts inner join contacts on contracts.contact_id=contacts.id '.ify(' where contracts.id', @{$opt->{client_contract_id}}),  undef, @{$opt->{client_contract_id}} )];
@@ -87,38 +87,38 @@ sub process_invoices{
 
             print "reseller_id=".$provider_contract->{reseller_core_id}.";contact_id=".$client_contact->{id}.";\n";
             
-            $invoices->{$client_contact->{id}} ||= [];
             
-            if(!$opt->{sendonly}){
-                foreach my $client_contract (@{ get_client_contracts($client_contact) }){
+            foreach my $client_contract (@{ get_client_contracts($client_contact) }){
                     
+                $invoices->{$client_contract->{id}} ||= [];
+                if(!$opt->{sendonly}){
                     print "reseller_id=".$provider_contract->{reseller_core_id}.";contact_id=".$client_contact->{id}.";contract_id=".$client_contract->{id}.";\n";
 
                     if( my $billing_profile = get_billing_profile($client_contract, $stime, $etime) ){
                         if(my $invoice = generate_invoice_data($provider_contract,$provider_contact,$client_contract,$client_contact,$billing_profile, $stime, $etime)){
-                            push @{$invoices->{$client_contact->{id}}}, $invoice;
+                            push @{$invoices->{$client_contract->{id}}}, $invoice;
                         }
                     }else{#if billing profile
                         print "No billing profile;\n"
                     }
-                }#foreach client contract
-            }else{
-                $invoices->{$client_contact->{id}} = $dbh->selectall_arrayref('select invoices.* from invoices 
-                inner join contract_balances on invoices.id=contract_balances.invoice_id 
-                inner join contracts on contracts.id=contract_balances.contract_id
-                '.ifp(' where ',
-                    join(' and ',
-                        !$opt->{resend}?' invoices.sent_date is null ':(),
-                        (ify(' contracts.contact_id ', (@{$opt->{client_contact_id}}, $client_contact->{id}) )),
-                        (ifk(' date(invoices.period_start) >= ?', v2a($stime->ymd))),
-                        (ifk(' date(invoices.period_start) <= ?', v2a($etime->ymd))),
-                    )
-                ),  { Slice => {} }, @{$opt->{client_contact_id}}, v2a($client_contact->{id}), v2a($opt->{month}),v2a($opt->{year}) );
-            }
-            if($opt->{send} || $opt->{sendonly}){
-                my $email_template = get_email_template($provider_contract);
-                email($email_template, $provider_contact, $client_contact, $invoices->{$client_contact->{id}} );
-            }
+                }else{
+                    $invoices->{$client_contract->{id}} = $dbh->selectall_arrayref('select invoices.* from invoices 
+                    inner join contract_balances on invoices.id=contract_balances.invoice_id 
+                    inner join contracts on contracts.id=contract_balances.contract_id
+                    '.ifp(' where ',
+                        join(' and ',
+                            !$opt->{resend}?' invoices.sent_date is null ':(),
+                            (ify(' contracts.contract_id ', (@{$opt->{client_contract_id}}, $client_contract->{id}) )),
+                            (ifk(' date(invoices.period_start) >= ?', v2a($stime->ymd))),
+                            (ifk(' date(invoices.period_start) <= ?', v2a($etime->ymd))),
+                        )
+                    ),  { Slice => {} }, @{$opt->{client_contract_id}}, v2a($client_contract->{id}), v2a($stime->ymd),v2a($etime->ymd) );
+                }
+                if($opt->{send} || $opt->{sendonly}){
+                    my $email_template = get_email_template($provider_contract);
+                    email($email_template, $provider_contact, $client_contact, $invoices->{$client_contract->{id}} );
+                }
+            }#foreach client contract
         }#foreach client contact
     }#foreach reseller
 }
@@ -300,6 +300,7 @@ sub get_invoice{
         my $serial_tmp = "tmp".time.int(rand(99999));
         $dbh->do('insert into invoices(contract_id,period_start,period_end,serial)values(?,?,?,?)', undef, $contract_id,$stime->ymd.' '.$stime->hms, $etime->ymd.' '.$etime->hms, $serial_tmp );
         $invoice->{id} = $dbh->last_insert_id(undef,'billing','invoices','id');
+        #are necessary here for serial generation
         @$invoice{qw/period_start period_end/} = ($stime,$etime);
         $invoice->{serial} = NGCP::Panel::Utils::Invoice::get_invoice_serial(undef,{invoice => $invoice});
         $dbh->do('update invoices set serial=? where id=?', undef, @$invoice{qw/serial id/} );
@@ -308,10 +309,13 @@ sub get_invoice{
     if($invoice->{id} && !$invoice_id){
         $dbh->do('update contract_balances set invoice_id = ? where contract_id=? and start=? and end=?', undef, $invoice->{id},$contract_id, $stime->datetime, $etime->datetime );    
     }
+    #obj value will be used in email
     $invoice = {
         %$invoice,
-        period_start => $stime,
-        period_end   => $etime,
+        period_start     => $stime,
+        period_start_obj => $stime,
+        period_end       => $etime,
+        period_end_obj   => $etime,
     };
     return $invoice;
 }
@@ -344,26 +348,7 @@ sub email{
     if(@$client_invoices < 1 ){
         return;
     }
-    #state $transport_default;
-    #$transport_default ||= Email::Sender::Transport::SMTP->new({
-    #    sasl_username => 'ipeshinskaya',
-    #
-    #    #host => 'mail.sipwise.com',
-    #    #port => 587,
-    #    #sasl_password => '',
-    #    #ssl => 0,
-    #    
-    #    host => 'smtp.googlemail.com',
-    #    port => 465,
-    #    ssl => 1,
-    #    sasl_password => '',
-    #});
-    #
-    #my $transport;
-    #$transport_in and $transport = $transport_in;
-    #$transport ||= $transport_default;
-    
-    
+
     $client_contact->{email} //= '';
     if(1 or $client_contact->{email}){
         my @attachments = map {
@@ -381,10 +366,16 @@ sub email{
             );
         } @$client_invoices;
         
+        my $invoice = $client_invoices->[0];
+        foreach (qw/period_start period_end/){
+            $invoice->{$_.'_obj'} = NGCP::Panel::Utils::DateTime::from_string($invoice->{$_}) unless $invoice->{$_.'_obj'};
+        }
+
+        
         my $tmpl_processed = NGCP::Panel::Utils::Email::process_template(undef,$email_template,{
-            provider=>$provider_contact,
-            client => $client_contact,
-            invoices => $client_invoices,
+            provider => $provider_contact,
+            client   => $client_contact,
+            invoice  => $invoice,
         });
         #print Dumper $tmpl_processed;
         my $email = Email::MIME->create(
