@@ -1997,11 +1997,11 @@ sub edit_master :Chained('master') :PathPart('edit') :Args(0) :Does(ACL) :ACLDet
             $params->{email} = $subscriber->contact->email;
         }
 
-#        my $display_pref = NGCP::Panel::Utils::Preferences::get_usr_preference_rs(
-#            c => $c, attribute => 'display_name', prov_subscriber => $prov_subscriber);
-#        if($display_pref->first) {
-#            $params->{display_name} = $display_pref->first->value;
-#        }
+        my $display_pref = NGCP::Panel::Utils::Preferences::get_usr_preference_rs(
+            c => $c, attribute => 'display_name', prov_subscriber => $prov_subscriber);
+        if($display_pref->first) {
+            $params->{display_name} = $display_pref->first->value;
+        }
 
         NGCP::Panel::Utils::Subscriber::prepare_alias_select(
             c => $c,
@@ -2037,7 +2037,7 @@ sub edit_master :Chained('master') :PathPart('edit') :Args(0) :Does(ACL) :ACLDet
             # we never return from here
         }
         my $schema = $c->model('DB');
-#        try {
+        try {
             $schema->txn_do(sub {
 
                 my $email = delete $form->params->{email};
@@ -2069,6 +2069,19 @@ sub edit_master :Chained('master') :PathPart('edit') :Args(0) :Does(ACL) :ACLDet
                 $prov_params->{pbx_group_id} = $form->params->{group}{id}
                     if($pbx_ext);
                 my $old_group_id = $prov_subscriber->pbx_group_id;
+
+
+                if($form->params->{display_name}) {
+                    my $display_pref = NGCP::Panel::Utils::Preferences::get_usr_preference_rs(
+                            c => $c, attribute => 'display_name', 
+                            prov_subscriber => $prov_subscriber);
+                    if($display_pref->first) {
+                        $display_pref->first->update({ value => $form->params->{display_name} });
+                    } else {
+                        $display_pref->create({ value => $form->params->{display_name} });
+                    }
+                }
+
 
                 my ($profile_set, $profile);
                 if($form->values->{profile_set}{id}) {
@@ -2275,13 +2288,13 @@ sub edit_master :Chained('master') :PathPart('edit') :Args(0) :Does(ACL) :ACLDet
             delete $c->session->{created_objects}->{group};
             $c->flash(messages => [{type => 'success', text => $c->loc('Successfully updated subscriber') }]);
 
-#        } catch($e) {
-#            NGCP::Panel::Utils::Message->error(
-#                c     => $c,
-#                error => $e,
-#                desc  => $c->loc('Failed to update subscriber.'),
-#            );
-#        }
+        } catch($e) {
+            NGCP::Panel::Utils::Message->error(
+                c     => $c,
+                error => $e,
+                desc  => $c->loc('Failed to update subscriber.'),
+            );
+        }
 
 
         NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for_action('/subscriber/details', [$c->req->captures->[0]]));
