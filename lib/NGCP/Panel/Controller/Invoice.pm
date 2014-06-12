@@ -204,21 +204,18 @@ sub create :Chained('inv_list') :PathPart('create') :Args() :Does(ACL) :ACLDetac
                     die;
                 }
 
-                $form->params->{period_start} = $stime->epoch;
-                $form->params->{period_end} = $etime->epoch;
-                my $vat = $customer->vat_rate // 0;
-                $form->params->{amount_net} = 
-                    ($balance->cash_balance_interval ? $balance->cash_balance_interval / 100 : 0) + 
-                    ($billing_profile->interval_charge // 0); # TODO: if not a full month, calculate fraction?
-                $form->params->{amount_vat} = $customer->add_vat ?
-                    $form->params->{amount_net} * ($vat/100) : 0;
-                $form->params->{amount_total} = $form->params->{amount_net} + $form->params->{amount_vat};
-
+                my $invoice_amounts = NGCP::Panel::Utils::Invoice::get_invoice_amounts(
+                    customer_contract => {$customer->get_inflated_columns},
+                    billing_profile   => {$billing_profile->get_inflated_columns},
+                    contract_balance  => {$balance->get_inflated_columns},
+                );
+                @{$form->params}{qw/amount_net amount_vat amount_total/} = @$invoice_amounts{qw/amount_net amount_vat amount_total/};
 
                 # generate tmp serial here, derive one from after insert
                 $form->params->{serial} = "tmp".time.int(rand(99999));
                 $form->params->{data} = undef;
-                #maybe inflation should be applied?
+                
+                #maybe inflation should be applied? Generation failed here, although the latest schema applied.
                 $form->params->{period_start} = $stime->ymd.' '. $stime->hms;
                 $form->params->{period_end} = $etime->ymd.' '. $etime->hms;
                 my $invoice;
@@ -247,14 +244,15 @@ sub create :Chained('inv_list') :PathPart('create') :Args() :Does(ACL) :ACLDetac
                 my $pdf = '';
                 my $vars = {};
 
-
-
-
                 # TODO: index 170 seems the upper limit here, then the calllist breaks
 
                 $vars->{rescontact} = { $customer->contact->reseller->contract->contact->get_inflated_columns };
                 $vars->{customer} = { $customer->get_inflated_columns };
                 $vars->{custcontact} = { $customer->contact->get_inflated_columns };
+                
+                $vars->{custcontact}->{country} = $customer->contact->country_name();
+                $vars->{rescontact}->{country}  = $customer->contact->reseller->contract->contact->country_name();
+                
                 $vars->{billprof} = { $billing_profile->get_inflated_columns };
                 $vars->{invoice} = {
                     period_start => $stime,
