@@ -86,7 +86,8 @@ has_field 'invoice_email_template' => (
     element_attr => {
         rel => ['tooltip'],
         title => ['The email template used to notify users about invoice.']
-    },);
+    },
+);
 
 has_field 'vat_rate' => (
     type => 'Integer',
@@ -109,7 +110,6 @@ has_field 'add_vat' => (
     },
     default => 0,
 );
-
 
 
 has_field 'save' => (
@@ -136,7 +136,7 @@ sub update_fields {
     my $c = $self->ctx;
     return unless $c;
 
-    foreach my $field(qw/subscriber_email_template passreset_email_template/) {
+    foreach my $field(qw/subscriber_email_template passreset_email_template invoice_email_template/) {
         my $email = $self->field($field);
         if($email && $c->stash->{contract}) {
             $email->field('id')->ajax_src(
