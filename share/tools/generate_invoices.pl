@@ -350,7 +350,7 @@ sub email{
     }
 
     $client_contact->{email} //= '';
-    if(1 or $client_contact->{email}){
+    if($client_contact->{email}){
         my @attachments = map {
             my $invoice = $_;
             Email::MIME->create(
@@ -358,10 +358,8 @@ sub email{
                     filename     => "invoice_".$invoice->{serial}.".pdf",
                     content_type => "application/pdf",
                     encoding     => "base64",
-                    #encoding     => "quoted-printable",
                     disposition  => "attachment",
                 },
-                #body => io( $pdf_ref )->all,
                 body => $invoice->{data},
             );
         } @$client_invoices;
@@ -381,9 +379,9 @@ sub email{
         my $email = Email::MIME->create(
             header => [
                 From    => $tmpl_processed->{from_email} || $provider_contact->{email},
-                #To      => $tmpl_processed->{to} || $client_contact->{email},
+                To      => $tmpl_processed->{to} || $client_contact->{email},
                 #To      => 'ipeshinskaya@gmail.com',
-                To      => 'ipeshinskaya@sipwise.com',
+                #To      => 'ipeshinskaya@sipwise.com',
                 Subject => $tmpl_processed->{subject}, #todo: ask sales about subject
             ],
             parts => [
