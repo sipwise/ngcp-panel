@@ -78,6 +78,16 @@ has_field 'passreset_email_template' => (
     },
 );
 
+has_field 'invoice_email_template' => (
+    type => '+NGCP::Panel::Field::EmailTemplate',
+    label => 'Invoice Email Template',
+    do_label => 1,
+    required => 0,
+    element_attr => {
+        rel => ['tooltip'],
+        title => ['The email template used to notify users about invoice.']
+    },);
+
 has_field 'vat_rate' => (
     type => 'Integer',
     label => 'VAT Rate',
@@ -112,7 +122,7 @@ has_field 'save' => (
 has_block 'fields' => (
     tag => 'div',
     class => [qw/modal-body/],
-    render_list => [qw/contact billing_profile status external_id subscriber_email_template passreset_email_template vat_rate add_vat invoice_email_template/],
+    render_list => [qw/contact billing_profile status external_id subscriber_email_template passreset_email_template invoice_email_template vat_rate add_vat/],
 );
 
 has_block 'actions' => (
