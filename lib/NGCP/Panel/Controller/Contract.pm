@@ -401,7 +401,8 @@ sub reseller_create :Chained('reseller_list') :PathPart('create') :Args(0) {
         c => $c,
         form => $form,
         fields => {'contact.create' => $c->uri_for('/contact/create/noreseller'),
-                   'billing_profile.create'  => $c->uri_for('/billing/create/noreseller')},
+                   'billing_profile.create'  => $c->uri_for('/billing/create/noreseller')
+        },
         back_uri => $c->req->uri,
     );
     if($posted && $form->validated) {
