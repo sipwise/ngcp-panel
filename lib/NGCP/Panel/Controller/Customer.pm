@@ -124,7 +124,11 @@ sub create :Chained('list_customer') :PathPart('create') :Args(0) {
         c => $c,
         form => $form,
         fields => {'contact.create' => $c->uri_for('/contact/create'),
-                   'billing_profile.create'  => $c->uri_for('/billing/create')},
+                   'billing_profile.create'  => $c->uri_for('/billing/create'),
+                   'subscriber_email_template.create'  => $c->uri_for('/emailtemplate/create'),
+                   'passreset_email_template.create'  => $c->uri_for('/emailtemplate/create'),
+                   'invoice_email_template.create'  => $c->uri_for('/emailtemplate/create'),
+        },
         back_uri => $c->req->uri,
     );
     if($posted && $form->validated) {
@@ -355,6 +359,7 @@ sub edit :Chained('base') :PathPart('edit') :Args(0) {
     $params->{billing_profile}{id} = $billing_mapping->billing_profile_id;
     $params->{subscriber_email_template}{id} = delete $params->{subscriber_email_template_id};
     $params->{passreset_email_template}{id} = delete $params->{passreset_email_template_id};
+    $params->{invoice_email_template}{id} = delete $params->{invoice_email_template_id};
     $params = $params->merge($c->session->{created_objects});
     if($c->config->{features}->{cloudpbx}) {
         $form = NGCP::Panel::Form::Contract::ProductSelect->new(ctx => $c);
@@ -370,7 +375,11 @@ sub edit :Chained('base') :PathPart('edit') :Args(0) {
         c => $c,
         form => $form,
         fields => {'contact.create' => $c->uri_for('/contact/create'),
-                   'billing_profile.create'  => $c->uri_for('/billing/create')},
+                   'billing_profile.create'  => $c->uri_for('/billing/create'),
+                   'subscriber_email_template.create'  => $c->uri_for('/emailtemplate/create'),
+                   'passreset_email_template.create'  => $c->uri_for('/emailtemplate/create'),
+                   'invoice_email_template.create'  => $c->uri_for('/emailtemplate/create'),
+        },
         back_uri => $c->req->uri,
     );
     if($posted && $form->validated) {

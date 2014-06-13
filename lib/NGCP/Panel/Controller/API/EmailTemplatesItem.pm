@@ -172,7 +172,13 @@ sub DELETE :Allow {
     {
         my $item = $self->item_by_id($c, $id);
         last unless $self->resource_exists($c, emailtemplate => $item);
-
+        #foreach(qw/subscriber_email_template_id passreset_email_template_id invoice_email_template_id/){
+        #    $c->model('DB')->resultset('contracts')->search({
+        #        $_ => $item->id,
+        #    })->update({
+        #        $_ => undef,
+        #    });        
+        #}
         $c->model('DB')->resultset('contracts')->search({
             subscriber_email_template_id => $item->id,
         })->update({
@@ -182,6 +188,11 @@ sub DELETE :Allow {
             passreset_email_template_id => $item->id,
         })->update({
             passreset_email_template_id => undef,
+        });
+        $c->model('DB')->resultset('contracts')->search({
+            invoice_email_template_id => $item->id,
+        })->update({
+            invoice_email_template_id => undef,
         });
 
         $item->delete;

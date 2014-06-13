@@ -226,6 +226,11 @@ sub POST :Allow {
             $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Invalid 'passreset_email_template_id', doesn't exist for reseller assigned to customer contact");
             return;
         }
+        if($customer->invoice_email_template_id && 
+           $customer->invoice_email_template->reseller_id != $customer->contact->reseller_id) {
+            $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Invalid 'invoice_email_template_id', doesn't exist for reseller assigned to customer contact");
+            return;
+        }
 
         try {
             $customer->billing_mappings->create({

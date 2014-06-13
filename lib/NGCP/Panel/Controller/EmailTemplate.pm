@@ -156,6 +156,13 @@ sub tmpl_delete :Chained('tmpl_base') :PathPart('delete') {
     my ($self, $c) = @_;
 
     try {
+        #foreach(qw/subscriber_email_template_id passreset_email_template_id invoice_email_template_id/){
+        #    $c->model('DB')->resultset('contracts')->search({
+        #        $_ => $c->stash->{tmpl}->id,
+        #    })->update({
+        #        $_ => undef,
+        #    });        
+        #}
         $c->model('DB')->resultset('contracts')->search({
             subscriber_email_template_id => $c->stash->{tmpl}->id,
         })->update({
@@ -165,6 +172,11 @@ sub tmpl_delete :Chained('tmpl_base') :PathPart('delete') {
             passreset_email_template_id => $c->stash->{tmpl}->id,
         })->update({
             passreset_email_template_id => undef,
+        });
+        $c->model('DB')->resultset('contracts')->search({
+            invoice_email_template_id => $c->stash->{tmpl}->id,
+        })->update({
+            invoice_email_template_id => undef,
         });
         $c->stash->{tmpl}->delete;
         $c->flash(messages => [{type => 'success', text => $c->loc('Email template successfully deleted') }]);

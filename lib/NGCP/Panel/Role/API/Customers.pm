@@ -77,6 +77,7 @@ sub hal_from_customer {
             Data::HAL::Link->new(relation => 'ngcp:contractbalances', href => sprintf("/api/contractbalances/%d", $contract_balance->id)),
             $customer->subscriber_email_template_id ? (Data::HAL::Link->new(relation => 'ngcp:subscriberemailtemplates', href => sprintf("/api/emailtemplates/%d", $customer->subscriber_email_template_id))) : (),
             $customer->passreset_email_template_id ? (Data::HAL::Link->new(relation => 'ngcp:passresetemailtemplates', href => sprintf("/api/emailtemplates/%d", $customer->passreset_email_template_id))) : (),
+            $customer->invoice_email_template_id ? (Data::HAL::Link->new(relation => 'ngcp:invoiceemailtemplates', href => sprintf("/api/emailtemplates/%d", $customer->invoice_email_template_id))) : (),
             Data::HAL::Link->new(relation => 'ngcp:calls', href => sprintf("/api/calls/?customer_id=%d", $customer->id)),
         ],
         relation => 'ngcp:'.$self->resource_name,
@@ -184,6 +185,17 @@ sub update_customer {
             ->find($resource->{passreset_email_template_id});
         unless($tmpl) {
             $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Invalid 'passreset_email_template_id', doesn't exist for reseller assigned to customer contact");
+            return;
+        }
+    }
+    my $oldinvtmpl = $old_resource->{invoice_email_template_id} // 0;
+    if($resource->{invoice_email_template_id} && 
+       $oldinvtmpl != $resource->{invoice_email_template_id}) {
+        my $tmpl = $c->model('DB')->resultset('email_templates')
+            ->search({ reseller_id => $custcontact->reseller_id })
+            ->find($resource->{invoice_email_template_id});
+        unless($tmpl) {
+            $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Invalid 'invoice_email_template_id', doesn't exist for reseller assigned to customer contact");
             return;
         }
     }
