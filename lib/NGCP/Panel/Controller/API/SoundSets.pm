@@ -49,6 +49,17 @@ class_has 'query_params' => (
                 second => sub {},
             },
         },
+        {
+            param => 'name',
+            description => 'Filter for sound sets with a specific name (wildcard pattern allowed)',
+            query => {
+                first => sub {
+                    my $q = shift;
+                    return { name => { like => $q } };
+                },
+                second => sub {},
+            },
+        },
     ]},
 );
 
