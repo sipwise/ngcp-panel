@@ -935,6 +935,16 @@ sub dev_field_ajax :Chained('base') :PathPart('device/ajax') :Args(0) :Does(ACL)
 sub dev_field_config :Chained('/') :PathPart('device/autoprov/config') :Args() {
     my ($self, $c, $id) = @_;
 
+=pod
+    # this is going to be used if we want to do the cert check on the server,
+    # the format is like this:
+    # /C=US/ST=708105B37234/L=CBT153908BX/O=Cisco Systems, Inc./OU=cisco.com/CN=SPA-525G2, MAC: 708105B37234, Serial: CBT153908BX/emailAddress=linksys-certadmin@cisco.com
+    # however, we should do it on nginx, but we need a proper CA cert
+    # from cisco for checking the client cert?
+    my $ssl_dn = $c->request->env->{SSL_CLIENT_M_DN} // "";
+    say ">>>>>>>>>>>>> ssl_dn=$ssl_dn";
+=cut
+
     unless($id) {
         $c->response->content_type('text/plain');
         if($c->config->{features}->{debug}) {
