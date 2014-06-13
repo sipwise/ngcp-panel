@@ -31,7 +31,7 @@
             </ul>
         </div>
         <div class="plan-actions">
-            <a href="[% c.uri_for_action('/subscriber/preferences', [subscriber.id]) %]" class="btn">[% c.loc('Configure Subscriber Settings') %]</a>
+            <a href="[% c.uri_for_action('/subscriber/preferences', [subscriber.id]) %]" class="btn">[% c.loc('Configure Preferences') %]</a>
         </div>
     </div>
 </div>

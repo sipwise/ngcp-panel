@@ -1314,6 +1314,10 @@ sub preferences_base :Chained('base') :PathPart('preferences') :CaptureArgs(1) {
     $c->stash->{preference_meta} = $c->model('DB')
         ->resultset('voip_preferences')
         ->single({id => $pref_id});
+    if($c->user->roles eq 'subscriberadmin' && !$c->stash->{preference_meta}->expose_to_customer) {
+        $c->log->error("invalid access to pref_id '$pref_id' by provisioning subscriber id '".$c->user->id."'");
+        $c->detach('/denied_page');
+    } 
 
     $c->stash->{preference} = $c->model('DB')
         ->resultset('voip_contract_preferences')
@@ -1376,6 +1380,7 @@ sub load_preference_list :Private {
     NGCP::Panel::Utils::Preferences::load_preference_list( c => $c,
         pref_values => \%pref_values,
         contract_pref => 1,
+        customer_view => ($c->user->roles eq 'subscriberadmin' ? 1 : 0),
     );
 }
 
