@@ -33,6 +33,19 @@ class_has 'query_params' => (
     isa => 'ArrayRef',
     default => sub {[
         {
+            param => 'profile_id',
+            description => 'Search for subscribers having a specific subscriber profile',
+            query => {
+                first => sub {
+                    my $q = shift;
+                    return { 'provisioning_voip_subscriber.profile_id' => $q };
+                },
+                second => sub {
+                    return { join => 'provisioning_voip_subscriber' };
+                },
+            },
+        },
+        {
             param => 'username',
             description => 'Search for specific SIP username',
             query => {
