@@ -117,6 +117,23 @@ class_has 'query_params' => (
                 },
             },
         },
+        {
+            param => 'is_pbx_pilot',
+            description => 'Filter for subscribers who are pbx pilot subscribers.',
+            query => {
+                first => sub {
+                    my $q = shift;
+                    if ($q) {
+                        return { 'provisioning_voip_subscriber.is_pbx_pilot' => 1 };
+                    } else {
+                        return { 'provisioning_voip_subscriber.is_pbx_pilot' => 0 };
+                    }
+                },
+                second => sub {
+                    return { join => 'provisioning_voip_subscriber' };
+                },
+            },
+        },
     ]},
 );
 
