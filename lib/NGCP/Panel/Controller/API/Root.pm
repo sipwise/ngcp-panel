@@ -45,6 +45,7 @@ sub GET : Allow {
     my $blacklist = {
         "DomainPreferenceDefs" => 1,
         "SubscriberPreferenceDefs" => 1,
+        "CustomerPreferenceDefs" => 1,
     };
 
     my @colls = $self->get_collections;
