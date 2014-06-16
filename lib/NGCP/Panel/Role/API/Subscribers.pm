@@ -321,6 +321,12 @@ sub prepare_resource {
                 return;
             }
 
+            unless($pilot->primary_number) {
+                $c->log->error("trying to add pbx_extension to contract id " . $pilot->contract_id . " without having a primary number on pilot subscriber id  " . $pilot->id);
+                $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "The pilot subscriber does not have a primary number.");
+                return;
+            }
+
             $resource->{e164}->{cc} = $pilot->primary_number->cc;
             $resource->{e164}->{ac} = $pilot->primary_number->ac // '';
             $resource->{e164}->{sn} = $pilot->primary_number->sn . $resource->{pbx_extension};
