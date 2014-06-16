@@ -61,6 +61,8 @@ $ua->ssl_opts(
                  customercontacts => 1,
                  billingprofiles => 1,
                  customers => 1,
+                 customerpreferences => 1,
+                 customerpreferencedefs => 1,
                  domainpreferences => 1,
                  subscribers => 1,
                  callforwards => 1,
