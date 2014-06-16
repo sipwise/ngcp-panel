@@ -230,6 +230,10 @@ sub prepare_resource {
     $resource->{profile}{id} = delete $resource->{profile_id};
     my $subscriber_id = $item ? $item->id : 0;
 
+    if(exists $resource->{alias_numbers} && ref $resource->{alias_numbers} ne "ARRAY") {
+        $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Invalid alias_numbers parameter, must be array.");
+        return;
+    }
     $resource->{alias_numbers} = [ map {{ e164 => $_ }} @{ $resource->{alias_numbers} // [] } ];
 
     my $form = $self->get_form($c);
