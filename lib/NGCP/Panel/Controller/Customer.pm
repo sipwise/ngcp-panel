@@ -135,18 +135,10 @@ sub create :Chained('list_customer') :PathPart('create') :Args(0) {
         try {
             my $schema = $c->model('DB');
             $schema->txn_do(sub {
-                #foreach(qw/contact subscriber_email_template passreset_email_template invoice_email_template/){
-                #    $form->params->{$_.'_id'} = $form->params->{$_}{id} || undef;
-                #    delete $form->params->{$_};
-                #}
-                $form->params->{contact_id} = $form->params->{contact}{id};
-                delete $form->params->{contact};
-                $form->params->{subscriber_email_template_id} = $form->params->{subscriber_email_template}{id} || undef;
-                delete $form->params->{subscriber_email_template};
-                $form->params->{passreset_email_template_id} = $form->params->{passreset_email_template}{id} || undef;
-                delete $form->params->{passreset_email_template};
-                $form->params->{invoice_email_template_id} = $form->params->{invoice_email_template}{id} || undef;
-                delete $form->params->{invoice_email_template};
+                foreach(qw/contact subscriber_email_template passreset_email_template invoice_email_template/){
+                    $form->params->{$_.'_id'} = $form->params->{$_}{id} || undef;
+                    delete $form->params->{$_};
+                }
                 my $bprof_id = $form->params->{billing_profile}{id};
                 delete $form->params->{billing_profile};
                 $form->{create_timestamp} = $form->{modify_timestamp} = NGCP::Panel::Utils::DateTime::current_local;
