@@ -1,0 +1,42 @@
+.TH NGCP-API 1
+.SH NAME
+sends a post request to NGCP REST API
+.SH SYNOPSIS
+.B ngcp-api-post
+[\fB\-f\fR \fIFILEPATH\fR]
+[\fB\-v\fR]
+[\fB\-h\fR]
+.IR URL
+[content_type]
+.SH DESCRIPTION
+.B ngcp-api-post
+sends a post request to NGCP REST API.
+.SH OPTIONS
+.TP
+.BR \-f " " \fIFILEPATH\fR
+use input file instead of stdin.
+.TP
+.BR \-v
+verbose mode.
+.TP
+.BR \-h
+print usage.
+.TP
+URL
+Url for the request
+.TP
+content_type
+The default is 'application/json'
+.SH EXAMPLES
+.TP
+echo '{ "domain" : "test", "reseller_id" : 4 }' \\
+| ngcp-api-post  https://127.0.0.1:1443/api/domains/
+.TP
+ngcp-api-post -f ../test_post.txt https://127.0.0.1:1443/api/domains/ 'application/json'
+.SH SEE ALSO
+.TP
+ngcp-api-get(1), ngcp-api-put(1), ngcp-api-patch(1), ngcp-api-delete(1)
+.TP
+https://ngcp-server.domain:1443/api
+.SH COPYRIGHT
+2014 Sipwise Development Team <support@sipwise.com>

@@ -162,7 +162,10 @@ Description: Catalyst based application
 
 Package: ngcp-panel-tools
 Architecture: all
-Depends: openssl, ${misc:Depends}, ${perl:Depends}
+Depends: curl,
+         openssl,
+         ${misc:Depends},
+         ${perl:Depends}
 Description: Tools from ngcp-panel application
  A completely overhauled provisioning interface for the
  NGCP system.

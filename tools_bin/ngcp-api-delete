@@ -1,0 +1,39 @@
+#!/bin/sh
+CURL="/usr/bin/curl"
+
+usage () {
+		cat << EOF
+Usage: $0 [OPTIONS] <url>
+
+sends a delete request to NGCP REST API
+
+OPTIONS:
+  -h this help
+  -v verbose mode
+EOF
+		exit 1
+}
+
+test -z "$APIUSER" && APIUSER="administrator:administrator"
+HEADERS="-H 'Connection: close'"
+
+while getopts "hv" OPTION
+do
+	case $OPTION in
+		h)
+			usage
+			;;
+		v)
+			VERBOSE="--verbose"
+			;;
+		?)
+			usage
+			;;
+	esac
+done
+shift $(($OPTIND - 1))
+
+URL="$1"
+test -z "$URL" && usage;
+
+${CURL} -i ${VERBOSE} -X DELETE "$HEADERS" --user "$APIUSER" --insecure "$URL"

@@ -1,0 +1,31 @@
+.TH NGCP-API 1
+.SH NAME
+sends a delete request to NGCP REST API
+.SH SYNOPSIS
+.B ngcp-api-delete
+[\fB\-v\fR]
+[\fB\-h\fR]
+.IR URL
+.SH DESCRIPTION
+.B ngcp-api-delete
+sends a delete request to NGCP REST API.
+.SH OPTIONS
+.TP
+.BR \-v
+verbose mode.
+.TP
+.BR \-h
+print usage.
+.TP
+URL
+Url for the request
+.SH EXAMPLES
+.TP
+ngcp-api-delete 'https://example.org:1443/api/domains/1'
+.SH SEE ALSO
+.TP
+ngcp-api-put(1), ngcp-api-post(1), ngcp-api-patch(1), ngcp-api-get(1)
+.TP
+https://ngcp-server.domain:1443/api
+.SH COPYRIGHT
+2014 Sipwise Development Team <support@sipwise.com>

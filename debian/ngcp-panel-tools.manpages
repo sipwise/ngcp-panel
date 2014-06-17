@@ -1,0 +1,5 @@
+tools_man/ngcp-api-delete.1
+tools_man/ngcp-api-get.1
+tools_man/ngcp-api-patch.1
+tools_man/ngcp-api-put.1
+tools_man/ngcp-api-post.1

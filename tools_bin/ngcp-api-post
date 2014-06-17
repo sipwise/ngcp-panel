@@ -1,0 +1,52 @@
+#!/bin/sh
+CURL="/usr/bin/curl"
+
+usage () {
+		cat << EOF
+Usage: $0 [OPTIONS] <url> [content-type]
+
+sends a post request to NGCP REST API
+
+OPTIONS:
+  -h this help
+  -v verbose mode
+  -f read the input info from a file instead of read stdin
+EOF
+		exit 1
+}
+
+test -z "$APIUSER" && APIUSER="administrator:administrator"
+INPUT="-T -"
+
+while getopts "f:hv" OPTION
+do
+	case $OPTION in
+		h)
+			usage
+			;;
+		f)
+			INPUT=""
+			FILE_INPUT="--data-binary @$OPTARG"
+			if [ ! -f "$OPTARG" ]; then
+				echo "No '$OPTARG' file found"
+				usage
+			fi
+			;;
+		v)
+			VERBOSE="--verbose"
+			;;
+		?)
+			usage
+			;;
+	esac
+done
+shift $(($OPTIND - 1))
+
+URL="$1"
+test -z "$URL" && usage;
+CTYPE=${2:-application/json}
+
+${CURL} -i ${VERBOSE} -X POST \
+	-H 'Connection: close' -H 'Prefer: return=representation' \
+	-H "Content-Type: $CTYPE" \
+	--user "$APIUSER" --insecure ${FILE_INPUT} "$URL" ${INPUT}
