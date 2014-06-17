@@ -109,14 +109,12 @@ sub process_invoices{
                     }
                 }else{
                     $invoices->{$client_contract->{id}} = $dbh->selectall_arrayref('select invoices.* from invoices 
-                    inner join contract_balances on invoices.id=contract_balances.invoice_id 
-                    inner join contracts on contracts.id=contract_balances.contract_id
                     '.ifp(' where ',
                         join(' and ',
                             !$opt->{resend}?' invoices.sent_date is null ':(),
-                            (ify(' contracts.id ', (@{$opt->{client_contract_id}}, $client_contract->{id}) )),
-                            (ifk(' date(invoices.period_start) >= ?', v2a($stime->ymd))),
-                            (ifk(' date(invoices.period_start) <= ?', v2a($etime->ymd))),
+                            (ify(' invoices.contract_id ', (@{$opt->{client_contract_id}}, $client_contract->{id}) )),
+                            (ifk(' date(invoices.period_start) >= ? ', v2a($stime->ymd))),
+                            (ifk(' date(invoices.period_start) <= ? ', v2a($etime->ymd))),
                         )
                     ),  { Slice => {} }, @{$opt->{client_contract_id}}, v2a($client_contract->{id}), v2a($stime->ymd),v2a($etime->ymd) );
                 }
