@@ -15,6 +15,7 @@
   <Upgrade_Rule>($SWVER &lt; [% firmware.maxversion %])? [% firmware.baseurl %]/$MA/from/$SWVER/next</Upgrade_Rule>
   <Remove_Last_Reg>No</Remove_Last_Reg>
   <RFC_2543_Call_Hold>No</RFC_2543_Call_Hold>
+  <RTP_Packet_Size>0.020</RTP_Packet_Size>
   [% range = phone.lineranges.0 -%]
   [% FOR port IN range.lines -%]
     [% p = port.keynum + 1 -%]
