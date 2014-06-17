@@ -45,7 +45,7 @@ $ua->ssl_opts(
     }
 
     my @links = $res->header('Link');
-    my $rels = { contracts => 1,
+    my $rels = { applyrewrites => 1,
                  subscriberpreferences => 1,
                  subscriberpreferencedefs => 1,
                  domainpreferencedefs => 1,
