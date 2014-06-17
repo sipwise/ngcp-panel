@@ -108,7 +108,7 @@ sub process_invoices{
                     '.ifp(' where ',
                         join(' and ',
                             !$opt->{resend}?' invoices.sent_date is null ':(),
-                            (ify(' contracts.contract_id ', (@{$opt->{client_contract_id}}, $client_contract->{id}) )),
+                            (ify(' contracts.id ', (@{$opt->{client_contract_id}}, $client_contract->{id}) )),
                             (ifk(' date(invoices.period_start) >= ?', v2a($stime->ymd))),
                             (ifk(' date(invoices.period_start) <= ?', v2a($etime->ymd))),
                         )
