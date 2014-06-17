@@ -809,20 +809,25 @@ sub prepare_alias_select {
     $params->{alias_select} = encode_json(\@alias_options);
 }
 
-sub normalize_callee {
+sub apply_rewrite {
     my (%params) = @_;
 
     my $c = $params{c};
     my $subscriber = $params{subscriber};
     my $callee = $params{number};
+    my $dir = $params{direction};
+    return $callee unless $dir ~~ [qw/caller_in callee_in caller_out callee_out/];
+
+    my ($field, $direction) = split /_/, $dir;
+    $dir = "rewrite_".$dir."_dpid";
 
     my $rwr_rs = NGCP::Panel::Utils::Preferences::get_usr_preference_rs(
-        c => $c, attribute => 'rewrite_callee_in_dpid', 
+        c => $c, attribute => $dir,
         prov_subscriber => $subscriber->provisioning_voip_subscriber,
     );
     unless($rwr_rs->count) {
         $rwr_rs = NGCP::Panel::Utils::Preferences::get_dom_preference_rs(
-            c => $c, attribute => 'rewrite_callee_in_dpid', 
+            c => $c, attribute => $dir,
             prov_domain => $subscriber->provisioning_voip_subscriber->domain,
         );
     }
@@ -831,9 +836,9 @@ sub normalize_callee {
     }
 
     my $rule_rs = $c->model('DB')->resultset('voip_rewrite_rules')->search({
-        'ruleset.callee_in_dpid' => $rwr_rs->first->value,
-        direction => 'in',
-        field => 'callee',
+        'ruleset.'.$field.'_'.$direction.'_dpid' => $rwr_rs->first->value,
+        direction => $direction,
+        field => $field,
     }, {
         join => 'ruleset',
         order_by => { -asc => 'priority' }
@@ -843,14 +848,14 @@ sub normalize_callee {
         my $match = $r->match_pattern;
         my $replace = $r->replace_pattern;
 
-        print ">>>>>>>>>>> match=$match, replace=$replace\n";
+        #print ">>>>>>>>>>> match=$match, replace=$replace\n";
         for my $field($match, $replace) {
-            print ">>>>>>>>>>> normalizing $field\n";
+            #print ">>>>>>>>>>> normalizing $field\n";
             my @avps = ();
             @avps = ($field =~ /\$avp\(s:caller_([^\)]+)\)/g);
             use Data::Printer; p @avps;
             for my $avp(@avps) {
-                print ">>>>>>>>>> checking avp $avp\n";
+                #print ">>>>>>>>>> checking avp $avp\n";
                 if(!exists $cache->{$avp}) {
                     my $pref_rs = NGCP::Panel::Utils::Preferences::get_usr_preference_rs(
                         c => $c, attribute => $avp,
@@ -867,14 +872,19 @@ sub normalize_callee {
                 }
                 my $val = $cache->{$avp};
                 $field =~ s/\$avp\(s:caller_$avp\)/$val/g;
-                print ">>>>>>>>>>> normalized $field\n";
+                #print ">>>>>>>>>>> normalized $field\n";
             }
         }
         $replace =~ s/\\(\d{1})/\$$1/g;
+        #print ">>>>>>>>>>> final match=$match, replace=$replace, applying to $callee\n";
 
-        print ">>>>>>>>>>> final match=$match, replace=$replace, applying to $callee\n";
-        $callee =~ s/$match/$replace/eeg;
-        print ">>>>>>>>>>> done, match=$match, replace=$replace, callee is $callee\n";
+        $replace =~ s/\"/\\"/g;
+        $replace = qq{"$replace"};
+        if($callee =~ s/$match/$replace/eeg) {
+            # we only process one match
+            last;
+        }
+        #print ">>>>>>>>>>> done, match=$match, replace=$replace, callee is $callee\n";
 
     }
 

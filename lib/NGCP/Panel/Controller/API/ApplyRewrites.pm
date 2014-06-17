@@ -1,4 +1,4 @@
-package NGCP::Panel::Controller::API::CallControls;
+package NGCP::Panel::Controller::API::ApplyRewrites;
 use Sipwise::Base;
 use namespace::sweep;
 use boolean qw(true);
@@ -10,20 +10,19 @@ use MooseX::ClassAttribute qw(class_has);
 use NGCP::Panel::Utils::DateTime;
 use Path::Tiny qw(path);
 use Safe::Isa qw($_isa);
-
-use NGCP::Panel::Utils::Sems;
-
 BEGIN { extends 'Catalyst::Controller::ActionRole'; }
 require Catalyst::ActionRole::ACL;
 require Catalyst::ActionRole::CheckTrailingSlash;
 require Catalyst::ActionRole::HTTPMethods;
 require Catalyst::ActionRole::RequireSSL;
 
+with 'NGCP::Panel::Role::API::ApplyRewrites';
+
 class_has 'api_description' => (
     is => 'ro',
     isa => 'Str',
     default => 
-        'Allows to place calls via the API.',
+        'Applies rewrite rules to a given number according to the given direction. It can for example be used to normalize user input to E164 using callee_in direction, or to denormalize E164 to user output using caller_out.',
 );
 
 class_has 'query_params' => (
@@ -33,11 +32,9 @@ class_has 'query_params' => (
     ]},
 );
 
-with 'NGCP::Panel::Role::API::CallControls';
-
-class_has('resource_name', is => 'ro', default => 'callcontrols');
-class_has('dispatch_path', is => 'ro', default => '/api/callcontrols/');
-class_has('relation', is => 'ro', default => 'http://purl.org/sipwise/ngcp-api/#rel-callcontrols');
+class_has('resource_name', is => 'ro', default => 'applyrewrites');
+class_has('dispatch_path', is => 'ro', default => '/api/applyrewrites/');
+class_has('relation', is => 'ro', default => 'http://purl.org/sipwise/ngcp-api/#rel-applyrewrites');
 
 __PACKAGE__->config(
     action => {
@@ -109,25 +106,29 @@ sub POST :Allow {
             last;
         }
 
-        my ($callee_user, $callee_domain) = split /\@/, $resource->{destination};
-        $callee_domain //= $subscriber->domain->domain;
-
+        my $normalized;
         try {
-            NGCP::Panel::Utils::Sems::dial_out($c, $subscriber->provisioning_voip_subscriber,
-                $callee_user, $callee_domain);
+
+            $normalized = NGCP::Panel::Utils::Subscriber::apply_rewrite(
+                c => $c, subscriber => $subscriber, 
+                number => $resource->{number}, direction => $resource->{direction},
+            );
         } catch($e) {
-            $c->log->error("failed to dial out: $e");
-            $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "Failed to create call.");
+            $c->log->error("failed to rewrite number: $e");
+            $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "Failed to rewrite number.");
             last;
         }
 
         $guard->commit;
 
+        my $res = '{ "result": "'.$normalized.'" }'."\n";
+
         $c->response->status(HTTP_OK);
-        $c->response->body(q());
+        $c->response->body($res);
     }
     return;
 }
+
 
 sub end : Private {
     my ($self, $c) = @_;
