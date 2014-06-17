@@ -111,7 +111,7 @@ sub process_invoices{
                     ),  { Slice => {} }, @{$opt->{client_contract_id}}, v2a($client_contract->{id}), v2a($stime->ymd),v2a($etime->ymd) );
                 }
                 if($opt->{send} || $opt->{sendonly}){
-                    my $email_template = get_email_template($provider_contract);
+                    my $email_template = get_email_template($provider_contract,$client_contract);
                     email($email_template, $provider_contact, $client_contact, $invoices->{$client_contract->{id}} );
                 }
             }#foreach client contract
@@ -142,6 +142,7 @@ sub get_client_contracts{
 }
 sub get_billing_profile{
     my($client_contract, $stime, $etime) = @_;
+    #don't allow auto-generation for terminated contracts
     $dbh->selectrow_hashref('select distinct billing_profiles.* 
         from billing_mappings
         inner join billing_profiles on billing_mappings.billing_profile_id=billing_profiles.id
@@ -149,7 +150,7 @@ sub get_billing_profile{
         inner join products on billing_mappings.product_id=products.id and products.class in("sipaccount","pbxaccount")
         where 
             contracts.status != "terminated"
-            and contracts.id=?
+            and contracts.id = ?
             and (billing_mappings.start_date <= ? OR billing_mappings.start_date IS NULL)
             and (billing_mappings.end_date >= ? OR billing_mappings.end_date IS NULL)'
     , undef, $client_contract->{id}, $etime->epoch, $stime->epoch 
@@ -317,15 +318,21 @@ sub get_invoice{
 }
 
 sub get_email_template{
-    my ($provider_contract) = @_;
+    my ($provider_contract,$client_contract) = @_;
     
+    #use memcache?
     state $templates;
     state $template_default;
     if(!$templates){
         $templates = $dbh->selectall_hashref('select * from email_templates where name = ?','reseller_id',undef,"invoice_email");
         $template_default = $dbh->selectrow_hashref('select * from email_templates where name = ?',undef,"invoice_default_email");
     }
-    my $res = ( $templates->{$provider_contract->{reseller_core_id}} or $template_default );
+    my $res = {};
+    if($client_contract->{invoice_email_template_id}){
+        $res = $dbh->selectrow_hashref('select * from email_templates where id = ?',undef,$client_contract->{invoice_email_template_id});
+    }else{
+        $res = ( $templates->{$provider_contract->{reseller_core_id}} or $template_default );
+    }
     return $res;
 }
 
@@ -364,7 +371,9 @@ sub email{
         foreach (qw/period_start period_end/){
             $invoice->{$_.'_obj'} = NGCP::Panel::Utils::DateTime::from_string($invoice->{$_}) unless $invoice->{$_.'_obj'};
         }
-
+        foreach (qw/month year/){
+            $invoice->{$_} = $invoice->{period_start_obj}->$_ unless $invoice->{$_};
+        }
         
         my $tmpl_processed = NGCP::Panel::Utils::Email::process_template(undef,$email_template,{
             provider => $provider_contact,
