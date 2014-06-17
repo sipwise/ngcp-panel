@@ -54,22 +54,28 @@ my $dbh = DBI->connect('dbi:mysql:billing;host=localhost', $dbuser, $dbpass)
 
 
 my $opt = {};
-Getopt::Long::GetOptions($opt, 'reseller_id:i@', 'client_contact_id:i@', 'client_contract_id:i@', 'stime:s', 'etime:s', 'send!','sendonly!','resend','regenerate!','help|?')
+Getopt::Long::GetOptions($opt, 'reseller_id:i@', 'client_contact_id:i@', 'client_contract_id:i@', 'stime:s', 'etime:s', 'send!','sendonly!','resend','regenerate!','prevmonth','help|?')
     or die 'could not process command-line options';
 print Dumper $opt;
 
-my $stime = $opt->{stime} 
-    ? NGCP::Panel::Utils::DateTime::from_string($opt->{stime}) 
-    : NGCP::Panel::Utils::DateTime::current_local()->truncate( to => 'month' );
-my $etime = $opt->{etime} 
-    ? NGCP::Panel::Utils::DateTime::from_string($opt->{etime}) 
-    : $stime->clone->add( months => 1 )->subtract( seconds => 1 );
+my ($stime,$etime);
+if($opt->{prevmonth}){
+    $stime = NGCP::Panel::Utils::DateTime::current_local()->truncate( to => 'month' )->subtract(months => 1);
+    $etime = $stime->clone->add( months => 1 )->subtract( seconds => 1 );
+}else{
+    $stime = $opt->{stime} 
+        ? NGCP::Panel::Utils::DateTime::from_string($opt->{stime}) 
+        : NGCP::Panel::Utils::DateTime::current_local()->truncate( to => 'month' );
+    $etime = $opt->{etime} 
+        ? NGCP::Panel::Utils::DateTime::from_string($opt->{etime}) 
+        : $stime->clone->add( months => 1 )->subtract( seconds => 1 );
+}
 if( $opt->{client_contract_id} ){
     $opt->{reseller_id} = [$dbh->selectrow_array('select distinct contacts.reseller_id from contracts inner join contacts on contracts.contact_id=contacts.id '.ify(' where contracts.id', @{$opt->{client_contract_id}}),  undef, @{$opt->{client_contract_id}} )];
     $opt->{client_contact_id} = [$dbh->selectrow_array('select distinct contracts.contact_id from contracts '.ify(' where contracts.id', @{$opt->{client_contract_id}}),  undef, @{$opt->{client_contract_id}} )];
 }
 print Dumper $opt;
-
+print "stime=$stime; etime=$etime;\n";
 process_invoices();
 
 
