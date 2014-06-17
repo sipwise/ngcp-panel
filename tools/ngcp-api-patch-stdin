@@ -1,0 +1,15 @@
+#!/bin/sh
+
+usage () {
+  echo "Usage: $0 <url>";
+  exit;
+}
+
+URL="$1"
+test -z "$URL" && usage;
+CTYPE="application/json-patch+json"
+test -z "$APIUSER" && APIUSER="administrator:administrator"
+
+curl -i -X PATCH \
+    -H 'Connection: close' -H 'Prefer: return=representation' -H "Content-Type: $CTYPE" \
+    --user "$APIUSER" --insecure "$URL" -T -

@@ -1,0 +1,14 @@
+#!/bin/sh
+
+usage () {
+  echo "Usage: $0 <url>";
+  exit;
+}
+
+URL="$1"
+test -z "$URL" && usage;
+test -z "$APIUSER" && APIUSER="administrator:administrator"
+
+HEADERS="-H 'Connection: close'"
+
+curl -i -X DELETE "$HEADERS" --user "$APIUSER" --insecure "$URL" 
