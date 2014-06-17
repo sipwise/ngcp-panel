@@ -10,7 +10,7 @@ sub delete_location_contact {
 
     my $aor = $prov_subscriber->username . '@' . $prov_subscriber->domain->domain;
     my $dispatcher = NGCP::Panel::Utils::XMLDispatcher->new;
-    my $ret = $dispatcher->dispatch("proxy-ng", 1, 1, <<EOF );
+    my $ret = $dispatcher->dispatch($c, "proxy-ng", 1, 1, <<EOF );
 <?xml version="1.0" ?>
 <methodCall>
 <methodName>ul.rm_contact</methodName>
@@ -29,7 +29,7 @@ sub delete_location {
 
     my $aor = $prov_subscriber->username . '@' . $prov_subscriber->domain->domain;
     my $dispatcher = NGCP::Panel::Utils::XMLDispatcher->new;
-    my $ret = $dispatcher->dispatch("proxy-ng", 1, 1, <<EOF );
+    my $ret = $dispatcher->dispatch($c, "proxy-ng", 1, 1, <<EOF );
 <?xml version="1.0" ?>
 <methodCall>
 <methodName>ul.rm</methodName>
@@ -55,7 +55,7 @@ sub create_location {
     $flags //= 0;
     $cflags //= 0;
     my $dispatcher = NGCP::Panel::Utils::XMLDispatcher->new;
-    my $ret = $dispatcher->dispatch("proxy-ng", 1, 1, <<EOF );
+    my $ret = $dispatcher->dispatch($c, "proxy-ng", 1, 1, <<EOF );
 <?xml version="1.0" ?>
 <methodCall>
 <methodName>ul.add</methodName>

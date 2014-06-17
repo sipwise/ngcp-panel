@@ -117,7 +117,7 @@ sub edit :Chained('base') :PathPart('edit') {
     if($posted && $form->validated) {
         try {
             $c->stash->{group_result}->update($form->custom_get_values);
-            $self->_sip_lcr_reload;
+            $self->_sip_lcr_reload($c);
             delete $c->session->{created_objects}->{contract};
             $c->flash(messages => [{type => 'success', text => $c->loc('Peering group successfully updated')}]);
         } catch ($e) {
@@ -144,7 +144,7 @@ sub delete :Chained('base') :PathPart('delete') {
             $p->delete;
         }
         $c->stash->{group_result}->delete;
-        $self->_sip_lcr_reload;
+        $self->_sip_lcr_reload($c);
         $c->flash(messages => [{type => 'success', text => $c->loc('Peering Group successfully deleted') }]);
     } catch ($e) {
         NGCP::Panel::Utils::Message->error(
@@ -178,7 +178,7 @@ sub create :Chained('group_list') :PathPart('create') :Args(0) {
         try {
             $c->model('DB')->resultset('voip_peer_groups')->create(
                 $formdata );
-            $self->_sip_lcr_reload;
+            $self->_sip_lcr_reload($c);
             delete $c->session->{created_objects}->{contract};
             $c->flash(messages => [{type => 'success', text => $c->loc('Peering group successfully created') }]);
         } catch ($e) {
@@ -232,7 +232,7 @@ sub servers_create :Chained('servers_list') :PathPart('create') :Args(0) {
     if($posted && $form->validated) {
         try {
             $c->stash->{group_result}->voip_peer_hosts->create($form->values);
-            $self->_sip_lcr_reload;
+            $self->_sip_lcr_reload($c);
             $c->flash(messages => [{type => 'success', text => $c->loc('Peering server successfully created') }]);
         } catch($e) {
             NGCP::Panel::Utils::Message->error(
@@ -299,7 +299,7 @@ sub servers_edit :Chained('servers_base') :PathPart('edit') :Args(0) {
     if($posted && $form->validated) {
         try {
             $c->stash->{server_result}->update($form->values);
-            $self->_sip_lcr_reload;
+            $self->_sip_lcr_reload($c);
             $c->flash(messages => [{type => 'success', text => $c->loc('Peering server successfully updated') }]);
         } catch ($e) {
             NGCP::Panel::Utils::Message->error(
@@ -323,7 +323,7 @@ sub servers_delete :Chained('servers_base') :PathPart('delete') :Args(0) {
     
     try {
         $c->stash->{server_result}->delete;
-        $self->_sip_lcr_reload;
+        $self->_sip_lcr_reload($c);
         $c->flash(messages => [{type => 'success', text => $c->loc('Peering server successfully deleted') }]);
     } catch ($e) {
         NGCP::Panel::Utils::Message->error(
@@ -451,7 +451,7 @@ sub rules_create :Chained('rules_list') :PathPart('create') :Args(0) {
         try {
             $form->values->{callee_prefix} //= '';
             $c->stash->{group_result}->voip_peer_rules->create($form->values);
-            $self->_sip_lcr_reload;
+            $self->_sip_lcr_reload($c);
             $c->flash(rules_messages => [{type => 'success', text => $c->loc('Peering rule successfully created') }]);
         } catch ($e) {
             NGCP::Panel::Utils::Message->error(
@@ -519,7 +519,7 @@ sub rules_edit :Chained('rules_base') :PathPart('edit') :Args(0) {
         try {
             $form->values->{callee_prefix} //= '';
             $c->stash->{rule_result}->update($form->values);
-            $self->_sip_lcr_reload;
+            $self->_sip_lcr_reload($c);
             $c->flash(rules_messages => [{type => 'success', text => $c->loc('Peering rule successfully changed') }]);
         } catch ($e) {
             NGCP::Panel::Utils::Message->error(
@@ -543,7 +543,7 @@ sub rules_delete :Chained('rules_base') :PathPart('delete') :Args(0) {
     
     try {
         $c->stash->{rule_result}->delete;
-        $self->_sip_lcr_reload;
+        $self->_sip_lcr_reload($c);
         $c->flash(rules_messages => [{type => 'success', text => $c->loc('Peering rule successfully deleted') }]);
     } catch ($e) {
         NGCP::Panel::Utils::Message->error(
@@ -556,9 +556,9 @@ sub rules_delete :Chained('rules_base') :PathPart('delete') :Args(0) {
 }
 
 sub _sip_lcr_reload {
-    my ($self) = @_;
+    my ($self, $c) = @_;
     my $dispatcher = NGCP::Panel::Utils::XMLDispatcher->new;
-    $dispatcher->dispatch("proxy-ng", 1, 1, <<EOF );
+    $dispatcher->dispatch($c, "proxy-ng", 1, 1, <<EOF );
 <?xml version="1.0" ?>
 <methodCall>
 <methodName>lcr.reload</methodName>

@@ -384,7 +384,7 @@ sub rules_edit :Chained('rules_base') :PathPart('edit') {
     if($posted && $form->validated) {
         try {
             $c->stash->{rule_result}->update($form->values);
-            $self->_sip_dialplan_reload();
+            $self->_sip_dialplan_reload($c);
             $c->flash(messages => [{type => 'success', text => $c->loc('Rewrite rule successfully updated')}]);
         } catch($e) {
             NGCP::Panel::Utils::Message->error(
@@ -405,7 +405,7 @@ sub rules_delete :Chained('rules_base') :PathPart('delete') {
     
     try {
         $c->stash->{rule_result}->delete;
-        $self->_sip_dialplan_reload();
+        $self->_sip_dialplan_reload($c);
         $c->flash(messages => [{type => 'success', text => $c->loc('Rewrite rule successfully deleted') }]);
     } catch($e) {
         NGCP::Panel::Utils::Message->error(
@@ -437,7 +437,7 @@ sub rules_create :Chained('rules_list') :PathPart('create') :Args(0) {
             my $last_priority = $c->stash->{rules_rs}->get_column('priority')->max() || 49;
             $form->values->{priority} = int($last_priority) + 1;
             $c->stash->{rules_rs}->create($form->values);
-            $self->_sip_dialplan_reload();
+            $self->_sip_dialplan_reload($c);
             $c->flash(messages => [{type => 'success', text => $c->loc('Rewrite rule successfully created') }]);
         } catch($e) {
             NGCP::Panel::Utils::Message->error(
@@ -454,9 +454,9 @@ sub rules_create :Chained('rules_list') :PathPart('create') :Args(0) {
 }
 
 sub _sip_dialplan_reload {
-    my ($self) = @_;
+    my ($self, $c) = @_;
     my $dispatcher = NGCP::Panel::Utils::XMLDispatcher->new;
-    $dispatcher->dispatch("proxy-ng", 1, 1, <<EOF );
+    $dispatcher->dispatch($c, "proxy-ng", 1, 1, <<EOF );
 <?xml version="1.0" ?>
 <methodCall>
 <methodName>dialplan.reload</methodName>

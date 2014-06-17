@@ -481,6 +481,7 @@ sub item_rs {}
 around 'item_rs' => sub {
     my ($orig, $self, @orig_params) = @_;
     my $item_rs = $self->$orig(@orig_params);
+    return unless($item_rs);
 
     # no query params defined in collection controller
     unless($self->can('query_params') && @{ $self->query_params }) {

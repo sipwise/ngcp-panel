@@ -569,7 +569,7 @@ sub handles_edit :Chained('handles_base') :PathPart('edit') {
             given($file_result->handle->group->name) {
                 when([qw/calling_card/]) {
                     try {
-                        NGCP::Panel::Utils::Sems::clear_audio_cache("appserver", $file_result->set_id, $file_result->handle->name);
+                        NGCP::Panel::Utils::Sems::clear_audio_cache($c, "appserver", $file_result->set_id, $file_result->handle->name);
                     } catch ($e) {
                         NGCP::Panel::Utils::Message->error(
                             c => $c,
@@ -584,10 +584,10 @@ sub handles_edit :Chained('handles_base') :PathPart('edit') {
                     try {
                         if(!$file_result->set->contract_id) {
                             $service = "appserver";
-                            NGCP::Panel::Utils::Sems::clear_audio_cache($service, $file_result->set_id, $file_result->handle->name);
+                            NGCP::Panel::Utils::Sems::clear_audio_cache($c, $service, $file_result->set_id, $file_result->handle->name);
                         } else {
                             $service = "pbx";
-                            NGCP::Panel::Utils::Sems::clear_audio_cache($service, $file_result->set_id, $file_result->handle->name);
+                            NGCP::Panel::Utils::Sems::clear_audio_cache($c, $service, $file_result->set_id, $file_result->handle->name);
                         }
                     } catch ($e) {
                         NGCP::Panel::Utils::Message->error(

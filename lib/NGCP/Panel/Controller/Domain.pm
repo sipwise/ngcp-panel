@@ -144,7 +144,7 @@ sub create :Chained('dom_list') :PathPart('create') :Args() {
             NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for('/domain'));
         }
 
-        $self->_sip_domain_reload;
+        $self->_sip_domain_reload($c);
         $c->flash(messages => [{type => 'success', text => $c->loc('Domain successfully created') }]);
         NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for('/domain'));
     }
@@ -213,7 +213,7 @@ sub edit :Chained('base') :PathPart('edit') :Args(0) {
             return;
         }
 
-        $self->_sip_domain_reload;
+        $self->_sip_domain_reload($c);
 
         $c->flash(messages => [{type => 'success', text => $c->loc('Domain successfully updated') }]);
         $c->response->redirect($c->uri_for());
@@ -246,7 +246,7 @@ sub delete :Chained('base') :PathPart('delete') :Args(0) {
         return;
     }
 
-    $self->_sip_domain_reload;
+    $self->_sip_domain_reload($c);
 
     $c->flash(messages => [{type => 'success', text => $c->loc('Domain successfully deleted!') }]);
     $c->response->redirect($c->uri_for());
@@ -370,7 +370,7 @@ sub load_preference_list :Private {
 }
 
 sub _sip_domain_reload {
-    my ($self) = @_;
+    my ($self, $c) = @_;
     my $dispatcher = NGCP::Panel::Utils::XMLDispatcher->new;
     $dispatcher->dispatch("proxy-ng", 1, 1, <<EOF );
 <?xml version="1.0" ?>

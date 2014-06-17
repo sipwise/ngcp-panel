@@ -12,7 +12,7 @@ has 'schema' => (
 );
 
 sub dispatch {
-	my ($self, $target, $all, $sync, $body) = @_;
+	my ($self, $c, $target, $all, $sync, $body) = @_;
 
     my $schema = $self->schema;
 
@@ -33,7 +33,7 @@ sub dispatch {
 
 	for my $host (@$hosts) {
 		my ($meth, $ip, $port, $path, $hostid) = ("http", $host->{ip}, $host->{port}, $host->{path}, $host->{id});
-		Log::Log4perl->get_logger($self)->info("dispatching xmlrpc $target request to ".$ip.":".$port.$path);
+		$c->log->info("dispatching xmlrpc $target request to ".$ip.":".$port.$path);
 
 		my $ret = eval {	# catch exceptions
 			my $s = Net::HTTP->new(Host => $ip, KeepAlive => 0, PeerPort => $port || 80, Timeout => 5);
@@ -72,7 +72,7 @@ sub dispatch {
 
 		# failure
 		
-		Log::Log4perl->get_logger($self)->info("failure: $@");
+		$c->log->info("failure: $@");
 
 		$all or next;
 

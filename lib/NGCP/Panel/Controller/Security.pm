@@ -34,7 +34,7 @@ sub index :Chained('/') :PathPart('security') :Args(0) {
 </methodCall>
 EOF
 
-    my $ip_res = $dispatcher->dispatch("loadbalancer", 1, 1, $ip_xml);
+    my $ip_res = $dispatcher->dispatch($c, "loadbalancer", 1, 1, $ip_xml);
 
     my @ips = ();
     for my $host (grep {$$_[1]} @$ip_res) {
@@ -70,7 +70,7 @@ EOF
 </methodCall>
 EOF
 
-    my $user_res = $dispatcher->dispatch("loadbalancer", 1, 1, $user_xml);
+    my $user_res = $dispatcher->dispatch($c, "loadbalancer", 1, 1, $user_xml);
     my @users = ();
     my $usr = {};
     for my $host (grep {$$_[1]} @$user_res) {
@@ -140,7 +140,7 @@ sub ip_unban :Chained('ip_base') :PathPart('unban') :Args(0) {
 </methodCall>
 EOF
 
-    $dispatcher->dispatch("loadbalancer", 1, 1, $xml);
+    $dispatcher->dispatch($c, "loadbalancer", 1, 1, $xml);
 
     $c->flash(messages => [{type => 'success', text => $c->loc('IP successfully unbanned')}]);
     NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for('/security'));
@@ -170,7 +170,7 @@ sub user_unban :Chained('user_base') :PathPart('unban') :Args(0) {
 </methodCall>
 EOF
 
-        $dispatcher->dispatch("loadbalancer", 1, 1, $xml);
+        $dispatcher->dispatch($c, "loadbalancer", 1, 1, $xml);
     }
 
     $c->flash(messages => [{type => 'success', text => $c->loc('User successfully unbanned')}]);
