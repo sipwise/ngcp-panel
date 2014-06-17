@@ -60,6 +60,7 @@ $ua->ssl_opts(
                  rewriterulesets => 1,
                  customercontacts => 1,
                  billingprofiles => 1,
+                 callcontrols => 1,
                  customers => 1,
                  customerpreferences => 1,
                  customerpreferencedefs => 1,
