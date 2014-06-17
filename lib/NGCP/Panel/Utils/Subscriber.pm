@@ -852,8 +852,8 @@ sub apply_rewrite {
         for my $field($match, $replace) {
             #print ">>>>>>>>>>> normalizing $field\n";
             my @avps = ();
-            @avps = ($field =~ /\$avp\(s:caller_([^\)]+)\)/g);
-            use Data::Printer; p @avps;
+            @avps = ($field =~ /\$avp\(s:calle(?:r|e)_([^\)]+)\)/g);
+            @avps = keys %{{ map { $_ => 1 } @avps }};
             for my $avp(@avps) {
                 #print ">>>>>>>>>> checking avp $avp\n";
                 if(!exists $cache->{$avp}) {
@@ -861,17 +861,17 @@ sub apply_rewrite {
                         c => $c, attribute => $avp,
                         prov_subscriber => $subscriber->provisioning_voip_subscriber,
                     );
-                    unless($pref_rs->count) {
+                    unless($pref_rs && $pref_rs->count) {
                         $pref_rs = NGCP::Panel::Utils::Preferences::get_dom_preference_rs(
                             c => $c, attribute => $avp,
                             prov_domain => $subscriber->provisioning_voip_subscriber->domain,
                         );
                     }
-                    next unless($pref_rs->count);
-                    $cache->{$avp} = $pref_rs->first->value;
+                    next unless($pref_rs);
+                    $cache->{$avp} = $pref_rs->first ? $pref_rs->first->value : '';
                 }
                 my $val = $cache->{$avp};
-                $field =~ s/\$avp\(s:caller_$avp\)/$val/g;
+                $field =~ s/\$avp\(s:calle(?:r|e)_$avp\)/$val/g;
                 #print ">>>>>>>>>>> normalized $field\n";
             }
         }
