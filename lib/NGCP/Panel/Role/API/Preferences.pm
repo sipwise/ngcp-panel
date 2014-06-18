@@ -327,10 +327,17 @@ sub update_item {
         return;
     }
 
+    # make sure to not clear any internal prefs
+    $full_rs = $full_rs->search({
+        'attribute.internal' => 0,
+    },{
+        join => 'attribute',
+    });
+
     if($replace) {
         # in case of PUT, we remove all old entries
         try {
-            $full_rs->delete;
+            $full_rs->delete_all;
         } catch($e) {
             $c->log->error("failed to clear preferences for '$accessor': $e");
             $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "Internal Server Error.");
