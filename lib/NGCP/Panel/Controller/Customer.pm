@@ -394,8 +394,17 @@ sub edit :Chained('base') :PathPart('edit') :Args(0) {
                 my $old_bprof_id = $billing_mapping->billing_profile_id;
                 my $old_prepaid = $billing_mapping->billing_profile->prepaid;
                 my $old_ext_id = $contract->external_id // '';
+                my $old_status = $contract->status;
                 $contract->update($form->params);
                 my $new_ext_id = $contract->external_id // '';
+
+                # if status changed, populate it down the chain
+                if($contract->status ne $old_status) {
+                    NGCP::Panel::Utils::Contract::recursively_lock_contract(
+                        c => $c,
+                        contract => $contract,
+                    );
+                }
 
                 if($old_ext_id ne $new_ext_id) { # undef is '' so we don't bail out here
                     foreach my $sub($contract->voip_subscribers->all) {

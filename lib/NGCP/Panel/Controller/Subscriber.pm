@@ -227,6 +227,14 @@ sub base :Chained('sub_list') :PathPart('') :CaptureArgs(1) {
     my $contract = $contract_rs->find({
         'me.id' => $c->stash->{contract}->id,
     });
+    unless(defined $contract) {
+        NGCP::Panel::Utils::Message->error(
+            c     => $c,
+            error => "subscriber id '$subscriber_id' points to non-existing contract id",
+            desc  => $c->loc('Contract does not exist for subscriber'),
+        );
+        NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for('/subscriber'));
+    }
     my $billing_mapping = $contract->billing_mappings->find($contract->get_column('bmid'));
     $c->stash->{billing_mapping} = $billing_mapping;
 
