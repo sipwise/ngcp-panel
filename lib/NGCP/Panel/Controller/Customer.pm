@@ -620,7 +620,7 @@ sub subscriber_create :Chained('base') :PathPart('subscriber/create') :Args(0) {
                     }
                 }
                 if($pbx) {
-                    $form->params->{is_pbx_pilot} = 1;
+                    $form->params->{is_pbx_pilot} = 1 if $pbxadmin;
                     $preferences->{cloud_pbx} = 1;
                     if($pbxadmin && $form->params->{e164}{cc} && $form->params->{e164}{sn}) {
                         $preferences->{cloud_pbx_base_cli} = $form->params->{e164}{cc} . 
