@@ -386,12 +386,10 @@ sub edit :Chained('base') :PathPart('edit') :Args(0) {
         try {
             my $schema = $c->model('DB');
             $schema->txn_do(sub {
-                $form->params->{contact_id} = $form->params->{contact}{id};
-                delete $form->params->{contact};
-                $form->params->{subscriber_email_template_id} = $form->params->{subscriber_email_template}{id};
-                delete $form->params->{subscriber_email_template};
-                $form->params->{passreset_email_template_id} = $form->params->{passreset_email_template}{id};
-                delete $form->params->{passreset_email_template};
+                foreach(qw/contact subscriber_email_template passreset_email_template invoice_email_template/){
+                    $form->params->{$_.'_id'} = $form->params->{$_}{id} || undef;
+                    delete $form->params->{$_};
+                }
                 my $bprof_id = $form->params->{billing_profile}{id};
                 delete $form->params->{billing_profile};
                 $form->{modify_timestamp} = NGCP::Panel::Utils::DateTime::current_local;
