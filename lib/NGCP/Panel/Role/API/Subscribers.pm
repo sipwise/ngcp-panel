@@ -299,6 +299,7 @@ sub prepare_resource {
         }
         $admin = $resource->{admin} // 0;
     } elsif($c->config->{features}->{cloudpbx}) {
+        $preferences->{cloud_pbx} = 1;
         my $subs = $c->model('DB')->resultset('voip_subscribers')->search({
             contract_id => $customer->id,
             status => { '!=' => 'terminated' },
