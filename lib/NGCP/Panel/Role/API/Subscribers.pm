@@ -568,6 +568,7 @@ sub update_item {
         modify_timestamp => NGCP::Panel::Utils::DateTime::current_local,
         profile_set_id => $profile_set ? $profile_set->id : undef,
         profile_id => $profile ? $profile->id : undef,
+        pbx_extension => $resource->{pbx_extension},
     };
     if($self->is_true($resource->{is_pbx_group})) {
         $provisioning_res->{pbx_hunt_policy} = $resource->{pbx_hunt_policy};
