@@ -67,10 +67,11 @@ sub index :Path Form {
             my $authrs = $c->model('DB')->resultset('provisioning_voip_subscribers')->search({
                 webusername => $u,
                 webpassword => $pass,
+                'voip_subscriber.status' => 'active',
                 'domain.domain' => $d,
                 'contract.status' => 'active',
             }, {
-                join => ['domain', 'contract'],
+                join => ['domain', 'contract', 'voip_subscriber'],
             });
             $res = $c->authenticate(
                 {
