@@ -35,7 +35,7 @@
     <DNS_SRV_Auto_Prefix_[% p %]_>No</DNS_SRV_Auto_Prefix_[% p %]_>
     <Proxy_Fallback_Intvl_[% p %]_>3600</Proxy_Fallback_Intvl_[% p %]_>
     <Proxy_Redundancy_Method_[% p %]_>Normal</Proxy_Redundancy_Method_[% p %]_>
-    <Display_Name_[% p %]_>[% port.displayname %]<Display_Name_[% p %]_>
+    <Display_Name_[% p %]_>[% port.displayname %]</Display_Name_[% p %]_>
     <User_ID_[% p %]_>[% port.username %]</User_ID_[% p %]_>
     <Password_[% p %]_>[% port.password %]</Password_[% p %]_>
     <Preferred_Codec_[% p %]_>G729a</Preferred_Codec_[% p %]_>
