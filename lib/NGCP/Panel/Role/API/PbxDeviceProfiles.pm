@@ -61,6 +61,7 @@ sub resource_from_item {
     );
 
     $resource{id} = int($item->id);
+    $resource{config_id} = int($item->config_id);
     return \%resource;
 }
 
@@ -83,6 +84,42 @@ sub item_by_id {
     my $item_rs = $self->item_rs($c);
     return $item_rs->find($id);
 }
+
+sub update_item {
+    my ($self, $c, $item, $old_resource, $resource, $form) = @_;
+
+    my $dup_item = $c->model('DB')->resultset('autoprov_profiles')->find({
+        config_id => $resource->{config_id},
+        name => $resource->{name},
+    });
+    if($dup_item && $dup_item->id != $item->id) {
+        $c->log->error("Pbx device profile with name '$$resource{name}' already exists for config_id '$$resource{config_id}'");
+        $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Pbx device profile with this name already exists for this config");
+        last;
+    }
+    my $config_rs = $c->model('DB')->resultset('autoprov_configs')->search({
+        id => $resource->{config_id},
+    });
+    if($c->user->roles eq "admin") {
+    } elsif($c->user->roles eq "reseller") {
+        $config_rs = $config_rs->search({
+            'device.reseller_id' => $c->user->reseller_id,
+        },{
+            join => 'device',
+        });
+    }
+    my $config = $config_rs->first;
+    unless($config) {
+        $c->log->error("Pbx device config with confg_id '$$resource{config_id}' does not exist");
+        $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Pbx device config does not exist");
+        last;
+    }
+
+    $item->update($resource);
+
+    return $item;
+}
+
 
 1;
 # vim: set tabstop=4 expandtab:

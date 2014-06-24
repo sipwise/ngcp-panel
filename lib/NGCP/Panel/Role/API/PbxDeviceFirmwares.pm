@@ -1,4 +1,4 @@
-package NGCP::Panel::Role::API::PbxDeviceConfigs;
+package NGCP::Panel::Role::API::PbxDeviceFirmwares;
 use Moose::Role;
 use Sipwise::Base;
 with 'NGCP::Panel::Role::API' => {
@@ -11,12 +11,12 @@ use TryCatch;
 use Data::HAL qw();
 use Data::HAL::Link qw();
 use HTTP::Status qw(:constants);
-use NGCP::Panel::Form::Device::ConfigAPI;
+use NGCP::Panel::Form::Device::FirmwareAPI;
 
 sub item_rs {
     my ($self, $c) = @_;
 
-    my $item_rs = $c->model('DB')->resultset('autoprov_configs');
+    my $item_rs = $c->model('DB')->resultset('autoprov_firmwares');
     if($c->user->roles eq "admin") {
     } elsif($c->user->roles eq "reseller") {
         $item_rs = $item_rs->search({
@@ -30,7 +30,7 @@ sub item_rs {
 
 sub get_form {
     my ($self, $c) = @_;
-    return NGCP::Panel::Form::Device::ConfigAPI->new(ctx => $c);
+    return NGCP::Panel::Form::Device::FirmwareAPI->new(ctx => $c);
 }
 
 sub hal_from_item {
@@ -51,7 +51,7 @@ sub hal_from_item {
             Data::HAL::Link->new(relation => 'profile', href => 'http://purl.org/sipwise/ngcp-api/'),
             Data::HAL::Link->new(relation => 'self', href => sprintf("%s%d", $self->dispatch_path, $item->id)),
             Data::HAL::Link->new(relation => 'ngcp:pbxdevicemodels', href => sprintf("/api/pbxdevicemodels/%d", $item->device_id)),
-            Data::HAL::Link->new(relation => 'ngcp:pbxdeviceconfigfiles', href => sprintf("/api/pbxdeviceconfigfiles/%d", $item->id)),
+            Data::HAL::Link->new(relation => 'ngcp:pbxdevicefirmwarebinaries', href => sprintf("/api/pbxdevicefirmwarebinaries/%d", $item->id)),
         ],
         relation => 'ngcp:'.$self->resource_name,
     );
@@ -90,8 +90,6 @@ sub update_item {
     my ($self, $c, $item, $old_resource, $resource, $form) = @_;
 
     my $binary = delete $resource->{data};
-    $resource->{content_type} = $c->request->header('Content-Type');
-
     $form //= $self->get_form($c);
     return unless $self->validate_form(
         c => $c,

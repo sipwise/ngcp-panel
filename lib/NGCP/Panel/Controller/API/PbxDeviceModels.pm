@@ -26,6 +26,17 @@ class_has 'query_params' => (
     isa => 'ArrayRef',
     default => sub {[
         {
+            param => 'reseller_id',
+            description => 'Filter for models belonging to a certain reseller',
+            query => {
+                first => sub {
+                    my $q = shift;
+                    { reseller_id => $q };
+                },
+                second => sub {},
+            },
+        },
+        {
             param => 'model',
             description => 'Filter for models matching a model name pattern',
             query => {
@@ -143,6 +154,82 @@ sub OPTIONS :Allow {
     ));
     $c->response->content_type('application/json');
     $c->response->body(JSON::to_json({ methods => $allowed_methods })."\n");
+    return;
+}
+
+sub POST :Allow {
+    my ($self, $c) = @_;
+
+    my $guard = $c->model('DB')->txn_scope_guard;
+    {
+        my $resource = $self->get_valid_post_data(
+            c => $c, 
+            media_type => 'application/json',
+        );
+        last unless $resource;
+
+        my $form = $self->get_form($c);
+        last unless $self->validate_form(
+            c => $c,
+            resource => $resource,
+            form => $form,
+        );
+
+        if($c->user->roles eq "admin") {
+        } elsif($c->user->roles eq "reseller") {
+            $resource->{reseller_id} = $c->user->reseller_id;
+        }
+
+        my $reseller = $c->model('DB')->resultset('resellers')->find($resource->{reseller_id});
+        unless($reseller) {
+            $c->log->error("invalid reseller_id '$$resource{reseller_id}', does not exist");
+            $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Invalid reseller_id, does not exist");
+            last;
+        }
+
+        my $item;
+        $item = $c->model('DB')->resultset('autoprov_devices')->find({
+            reseller_id => $resource->{reseller_id},
+            vendor => $resource->{vendor},
+            model => $resource->{model},
+        });
+        if($item) {
+            $c->log->error("device model with vendor '$$resource{vendor}' and model '$$resource{model}'already exists for reseller_id '$$resource{reseller_id}'");
+            $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Device model already exists for this reseller");
+            last;
+        }
+
+        my $linerange = delete $resource->{linerange};
+        unless(ref $linerange eq "ARRAY") {
+            $c->log->error("linerange must be array");
+            $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Invalid linerange parameter, must be array");
+            last;
+        }
+
+
+        try {
+            $item = $c->model('DB')->resultset('autoprov_devices')->create($resource);
+            foreach my $range(@{ $linerange }) {
+                unless(ref $range eq "HASH") {
+                    use Data::Dumper;
+                    $c->log->error("all elements in linerange must be hashes, but this is " . ref $range . ": " . Dumper $range);
+                    $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Invalid range definition inside linerange parameter, all must be hash");
+                    return;
+                }
+                $item->autoprov_device_line_ranges->create($range);
+            }
+        } catch($e) {
+            $c->log->error("failed to create device model: $e");
+            $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "Failed to create device model.");
+            last;
+        }
+
+        $guard->commit;
+
+        $c->response->status(HTTP_CREATED);
+        $c->response->header(Location => sprintf('/%s%d', $c->request->path, $item->id));
+        $c->response->body(q());
+    }
     return;
 }
 

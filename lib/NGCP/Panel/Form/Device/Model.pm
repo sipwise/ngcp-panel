@@ -18,12 +18,20 @@ has_field 'vendor' => (
     type => 'Text',
     required => 1,
     label => 'Vendor',
+    element_attr => {
+        rel => ['tooltip'],
+        title => ['The vendor name of this device.'],
+    },
 );
 
 has_field 'model' => (
     type => 'Text',
     required => 1,
     label => 'Model',
+    element_attr => {
+        rel => ['tooltip'],
+        title => ['The model name of this device.'],
+    },
 );
 
 has_field 'front_image' => (
@@ -45,6 +53,10 @@ has_field 'sync_uri' => (
     required => 0,
     label => 'Bootstrap Sync URI',
     default => 'http://[% client.ip %]/admin/resync',
+    element_attr => {
+        rel => ['tooltip'],
+        title => ['The sync URI to set the provisioning server of the device (e.g. http://client.ip/admin/resync. The client.ip variable is automatically expanded during provisioning time.'],
+    },
 );
 
 has_field 'sync_method' => (
@@ -56,6 +68,10 @@ has_field 'sync_method' => (
         { label => 'POST', value => 'POST' },
     ],
     default => 'GET',
+    element_attr => {
+        rel => ['tooltip'],
+        title => ['The HTTP method to set the provisioning server (one of GET, POST).'],
+    },
 );
 
 has_field 'sync_params' => (
@@ -63,6 +79,10 @@ has_field 'sync_params' => (
     required => 0,
     label => 'Bootstrap Sync Parameters',
     default => '[% server.uri %]/$MA',
+    element_attr => {
+        rel => ['tooltip'],
+        title => ['The parameters appended to the sync URI when setting the provisioning server, e.g. server.uri/$MA. The server.uri variable is automatically expanded during provisioning time.'],
+    },
 );
 
 has_field 'linerange' => (
@@ -76,6 +96,10 @@ has_field 'linerange' => (
         controls_div => 1,
     },
     wrapper_class => [qw/hfh-rep-block/],
+    element_attr => {
+        rel => ['tooltip'],
+        title => ['An array of line/key definitions for this device. Each element is a hash containing the keys name, num_lines (defining the number of lines/keys for this range), can_private, can_shared, can_blf.'],
+    },
 );
 
 has_field 'linerange.id' => (

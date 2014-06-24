@@ -1,4 +1,4 @@
-package NGCP::Panel::Controller::API::PbxDeviceConfigsItem;
+package NGCP::Panel::Controller::API::PbxDeviceFirmwaresItem;
 use Sipwise::Base;
 use namespace::sweep;
 use HTTP::Headers qw();
@@ -13,11 +13,11 @@ require Catalyst::ActionRole::ACL;
 require Catalyst::ActionRole::HTTPMethods;
 require Catalyst::ActionRole::RequireSSL;
 
-with 'NGCP::Panel::Role::API::PbxDeviceConfigs';
+with 'NGCP::Panel::Role::API::PbxDeviceFirmwares';
 
-class_has('resource_name', is => 'ro', default => 'pbxdeviceconfigs');
-class_has('dispatch_path', is => 'ro', default => '/api/pbxdeviceconfigs/');
-class_has('relation', is => 'ro', default => 'http://purl.org/sipwise/ngcp-api/#rel-pbxdeviceconfigs');
+class_has('resource_name', is => 'ro', default => 'pbxdevicefirmwares');
+class_has('dispatch_path', is => 'ro', default => '/api/pbxdevicefirmwares/');
+class_has('relation', is => 'ro', default => 'http://purl.org/sipwise/ngcp-api/#rel-pbxdevicefirmwares');
 
 __PACKAGE__->config(
     action => {
@@ -45,7 +45,7 @@ sub GET :Allow {
     {
         last unless $self->valid_id($c, $id);
         my $item = $self->item_by_id($c, $id);
-        last unless $self->resource_exists($c, pbxdeviceconfig => $item);
+        last unless $self->resource_exists($c, pbxdevicefirmware => $item);
 
         my $hal = $self->hal_from_item($c, $item);
 
@@ -90,15 +90,15 @@ sub PUT :Allow {
         last unless $preference;
 
         my $item = $self->item_by_id($c, $id);
-        last unless $self->resource_exists($c, pbxdeviceconfig => $item);
-        my $data = $self->get_valid_raw_put_data(
+        last unless $self->resource_exists($c, pbxdevicefirmware => $item);
+        my $recording = $self->get_valid_raw_put_data(
             c => $c,
             id => $id,
-            media_type => [qw#text/plain text/xml#],
+            media_type => 'application/octet-stream',
         );
-        last unless $data;
+        last unless $recording;
         my $resource = $c->req->query_params;
-        $resource->{data} = $data;
+        $resource->{data} = $recording;
         my $form = $self->get_form($c);
         my $old_resource = $self->resource_from_item($c, $item, $form);
 
@@ -131,7 +131,7 @@ sub DELETE :Allow {
     my $guard = $c->model('DB')->txn_scope_guard;
     {
         my $item = $self->item_by_id($c, $id);
-        last unless $self->resource_exists($c, pbxdeviceconfig => $item);
+        last unless $self->resource_exists($c, pbxdevicefirmware => $item);
         $item->delete;
 
         $guard->commit;

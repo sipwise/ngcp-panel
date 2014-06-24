@@ -200,9 +200,18 @@ sub forbid_link_header {
 
 sub valid_media_type {
     my ($self, $c, $media_type) = @_;
-    return 1 if($c->request->header('Content-Type') && 
+
+    my $type;
+    if(ref $media_type eq "ARRAY") {
+        $type = join ' or ', @{ $media_type };
+        return 1 if $c->request->header('Content-Type') &&
+                $c->request->header('Content-Type') ~~ $media_type;
+    } else {
+        $type = $media_type;
+        return 1 if($c->request->header('Content-Type') && 
                 index($c->request->header('Content-Type'), $media_type) == 0);
-    $self->error($c, HTTP_UNSUPPORTED_MEDIA_TYPE, "Unsupported media type, accepting '$media_type' only.");
+    }
+    $self->error($c, HTTP_UNSUPPORTED_MEDIA_TYPE, "Unsupported media type, accepting $type only.");
     return;
 }
 
