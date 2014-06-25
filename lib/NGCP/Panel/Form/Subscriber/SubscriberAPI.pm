@@ -93,10 +93,11 @@ has_field 'pbx_hunt_policy' => (
     options => [
         { value => 'serial', label => 'serial'},
         { value => 'parallel', label => 'parallel'},
+        { value => 'random', label => 'random'},
     ],
     element_attr => {
         rel => ['tooltip'],
-        title => ["'serial' or 'parallel'."],
+        title => ["On of serial, parallel, random."],
     },
 );
 

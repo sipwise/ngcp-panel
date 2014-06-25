@@ -19,6 +19,7 @@ has_field 'pbx_hunt_policy' => (
     options => [
         { label => 'Serial Ringing', value => 'serial' },
         { label => 'Parallel Ringing', value => 'parallel' },
+        { label => 'Random Ringing', value => 'random' },
     ],
     default => 'serial',
 );
