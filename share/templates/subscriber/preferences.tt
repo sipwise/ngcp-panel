@@ -160,7 +160,7 @@
                             </td>
                             <td class="ngcp-actions-column">
                                 <div class="sw_actions">
-                                    [% IF (c.user.roles == "admin" || c.user.roles == "reseller") && c.user.read_only != 1 -%]
+                                    [% IF c.user.roles == "subscriber" || c.user.roles == "subscriberadmin" || ((c.user.roles == "admin" || c.user.roles == "reseller") && c.user.read_only != 1) -%]
                                     <a class="btn btn-primary btn-small" href="[% c.uri_for_action("/subscriber/edit_voicebox", [c.req.captures.0], 'pin') %]"><i class="icon-edit"></i> [% c.loc('Edit') %]</a>
                                     [% END -%]
                                 </div>
@@ -174,7 +174,7 @@
                             </td>
                             <td class="ngcp-actions-column">
                                 <div class="sw_actions">
-                                    [% IF (c.user.roles == "admin" || c.user.roles == "reseller") && c.user.read_only != 1 -%]
+                                    [% IF c.user.roles == "subscriber" || c.user.roles == "subscriberadmin" || ((c.user.roles == "admin" || c.user.roles == "reseller") && c.user.read_only != 1) -%]
                                     <a class="btn btn-primary btn-small" href="[% c.uri_for_action("/subscriber/edit_voicebox", [c.req.captures.0], 'email') %]"><i class="icon-edit"></i> [% c.loc('Edit') %]</a>
                                     [% END -%]
                                 </div>
@@ -188,7 +188,7 @@
                             </td>
                             <td class="ngcp-actions-column">
                                 <div class="sw_actions">
-                                    [% IF (c.user.roles == "admin" || c.user.roles == "reseller") && c.user.read_only != 1 -%]
+                                    [% IF c.user.roles == "subscriber" || c.user.roles == "subscriberadmin" || ((c.user.roles == "admin" || c.user.roles == "reseller") && c.user.read_only != 1) -%]
                                     <a class="btn btn-primary btn-small" href="[% c.uri_for_action("/subscriber/edit_voicebox", [c.req.captures.0], 'delete') %]"><i class="icon-edit"></i> [% c.loc('Edit') %]</a>
                                     [% END -%]
                                 </div>
@@ -202,7 +202,7 @@
                             </td>
                             <td class="ngcp-actions-column">
                                 <div class="sw_actions">
-                                    [% IF (c.user.roles == "admin" || c.user.roles == "reseller") && c.user.read_only != 1 -%]
+                                    [% IF c.user.roles == "subscriber" || c.user.roles == "subscriberadmin" || ((c.user.roles == "admin" || c.user.roles == "reseller") && c.user.read_only != 1) -%]
                                     <a class="btn btn-primary btn-small" href="[% c.uri_for_action("/subscriber/edit_voicebox", [c.req.captures.0], 'attach') %]"><i class="icon-edit"></i> [% c.loc('Edit') %]</a>
                                     [% END -%]
                                 </div>
@@ -245,7 +245,7 @@
                             </td>
                             <td class="ngcp-actions-column">
                                 <div class="sw_actions">
-                                    [% IF (c.user.roles == "admin" || c.user.roles == "reseller") && c.user.read_only != 1 -%]
+                                    [% IF c.user.roles == "subscriber" || c.user.roles == "subscriberadmin" || ((c.user.roles == "admin" || c.user.roles == "reseller") && c.user.read_only != 1) -%]
                                     <a class="btn btn-primary btn-small" href="[% c.uri_for_action("/subscriber/edit_fax", [c.req.captures.0], 'name') %]">
                                         <i class="icon-edit"></i> [% c.loc('Edit') %]
                                     </a>
@@ -261,7 +261,7 @@
                             </td>
                             <td class="ngcp-actions-column">
                                 <div class="sw_actions">
-                                    [% IF (c.user.roles == "admin" || c.user.roles == "reseller") && c.user.read_only != 1 -%]
+                                    [% IF c.user.roles == "subscriber" || c.user.roles == "subscriberadmin" || ((c.user.roles == "admin" || c.user.roles == "reseller") && c.user.read_only != 1) -%]
                                     <a class="btn btn-primary btn-small" href="[% c.uri_for_action("/subscriber/edit_fax", [c.req.captures.0], 'password') %]">
                                         <i class="icon-edit"></i> [% c.loc('Edit') %]
                                     </a>
@@ -277,7 +277,7 @@
                             </td>
                             <td class="ngcp-actions-column">
                                 <div class="sw_actions">
-                                    [% IF (c.user.roles == "admin" || c.user.roles == "reseller") && c.user.read_only != 1 -%]
+                                    [% IF c.user.roles == "subscriber" || c.user.roles == "subscriberadmin" || ((c.user.roles == "admin" || c.user.roles == "reseller") && c.user.read_only != 1) -%]
                                     <a class="btn btn-primary btn-small" href="[% c.uri_for_action("/subscriber/edit_fax", [c.req.captures.0], 'active') %]">
                                         <i class="icon-edit"></i> [% c.loc('Edit') %]
                                     </a>
@@ -293,7 +293,7 @@
                             </td>
                             <td class="ngcp-actions-column">
                                 <div class="sw_actions">
-                                    [% IF (c.user.roles == "admin" || c.user.roles == "reseller") && c.user.read_only != 1 -%]
+                                    [% IF c.user.roles == "subscriber" || c.user.roles == "subscriberadmin" || ((c.user.roles == "admin" || c.user.roles == "reseller") && c.user.read_only != 1) -%]
                                     <a class="btn btn-primary btn-small" href="[% c.uri_for_action("/subscriber/edit_fax", [c.req.captures.0], 'send_status') %]">
                                         <i class="icon-edit"></i> [% c.loc('Edit') %]
                                     </a>
@@ -309,7 +309,7 @@
                             </td>
                             <td class="ngcp-actions-column">
                                 <div class="sw_actions">
-                                    [% IF (c.user.roles == "admin" || c.user.roles == "reseller") && c.user.read_only != 1 -%]
+                                    [% IF c.user.roles == "subscriber" || c.user.roles == "subscriberadmin" || ((c.user.roles == "admin" || c.user.roles == "reseller") && c.user.read_only != 1) -%]
                                     <a class="btn btn-primary btn-small" href="[% c.uri_for_action("/subscriber/edit_fax", [c.req.captures.0], 'send_copy') %]">
                                         <i class="icon-edit"></i> [% c.loc('Edit') %]
                                     </a>
@@ -327,7 +327,7 @@
                             </td>
                             <td class="ngcp-actions-column">
                                 <div class="sw_actions">
-                                    [% IF (c.user.roles == "admin" || c.user.roles == "reseller") && c.user.read_only != 1 -%]
+                                    [% IF c.user.roles == "subscriber" || c.user.roles == "subscriberadmin" || ((c.user.roles == "admin" || c.user.roles == "reseller") && c.user.read_only != 1) -%]
                                     <a class="btn btn-primary btn-small" href="[% c.uri_for_action("/subscriber/edit_fax", [c.req.captures.0], 'destinations') %]"><i class="icon-edit"></i> [% c.loc('Edit') %]</a>
                                     [% END -%]
                                 </div>
@@ -350,7 +350,7 @@
         <div class="accordion-body collapse" id="collapse_aa">
             <div class="accordion-inner">
 
-                [% IF (c.user.roles == "admin" || c.user.roles == "reseller") && c.user.read_only != 1 -%]
+                [% IF c.user.roles == "subscriber" || c.user.roles == "subscriberadmin" || ((c.user.roles == "admin" || c.user.roles == "reseller") && c.user.read_only != 1) -%]
                 <a class="btn btn-tertiary btn-large" href="[% c.uri_for_action('/subscriber/edit_autoattendant', [c.req.captures.0]) %]">
                     <i class="icon-star"></i> [% c.loc('Edit Slots') %]
                 </a>
@@ -382,7 +382,7 @@
         <div class="accordion-body collapse" id="collapse_speed">
             <div class="accordion-inner">
 
-                [% IF (c.user.roles == "admin" || c.user.roles == "reseller") && c.user.read_only != 1 -%]
+                [% IF c.user.roles == "subscriber" || c.user.roles == "subscriberadmin" || ((c.user.roles == "admin" || c.user.roles == "reseller") && c.user.read_only != 1) -%]
                 <a class="btn btn-tertiary btn-large" href="[% c.uri_for_action('/subscriber/create_speeddial', [c.req.captures.0]) %]"><i class="icon-star"></i> [% c.loc('Create Slot') %]</a>
                 [% END -%]
 [%
@@ -430,7 +430,7 @@
                             </td>
                             <td class="ngcp-actions-column">
                                 <div class="sw_actions">
-                                    [% IF (c.user.roles == "admin" || c.user.roles == "reseller") && c.user.read_only != 1 -%]
+                                    [% IF c.user.roles == "subscriber" || c.user.roles == "subscriberadmin" || ((c.user.roles == "admin" || c.user.roles == "reseller") && c.user.read_only != 1) -%]
                                     <a class="btn btn-primary btn-small" href="[% c.uri_for_action("/subscriber/edit_reminder", [c.req.captures.0]) %]">
                                         <i class="icon-edit"></i> [% c.loc('Edit') %]
                                     </a>
