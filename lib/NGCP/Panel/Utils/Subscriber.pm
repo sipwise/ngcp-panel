@@ -239,7 +239,6 @@ sub create_subscriber {
             domain_id => $prov_domain->id,
             is_pbx_pilot => $params->{is_pbx_pilot} // 0,
             is_pbx_group => $params->{is_pbx_group} // 0,
-            pbx_group_id => $params->{pbx_group_id},
             pbx_extension => $params->{pbx_extension},
             pbx_hunt_policy => $params->{pbx_hunt_policy},
             pbx_hunt_timeout => $params->{pbx_hunt_timeout},
@@ -352,6 +351,7 @@ sub update_pbx_group_prefs {
     my $new_group_id = $params{new_group_id};
     my $username = $params{username};
     my $domain = $params{domain};
+    my $group_rs = $params{group_rs} // $c->stash->{pbx_groups};
 
     return if(defined $old_group_id && defined $new_group_id && $old_group_id == $new_group_id);
 
@@ -360,7 +360,7 @@ sub update_pbx_group_prefs {
 
     my $uri = "sip:$username\@$domain";
     if($old_group_id) {
-        $old_grp_subscriber= $c->stash->{pbx_groups}
+        $old_grp_subscriber= $group_rs
                         ->find($old_group_id)
                         ->provisioning_voip_subscriber;
         if($old_grp_subscriber) {
@@ -372,7 +372,7 @@ sub update_pbx_group_prefs {
         }
     }
     if($new_group_id) {
-        $new_grp_subscriber = $c->stash->{pbx_groups}
+        $new_grp_subscriber = $group_rs
                         ->find($new_group_id)
                         ->provisioning_voip_subscriber;
         if($new_grp_subscriber) {
@@ -504,8 +504,7 @@ sub update_subscriber_numbers {
 
         if ( (defined $old_cc && defined $old_sn)
                 && $billing_subs->contract->billing_mappings->first->product->class eq "pbxaccount"
-                && ! defined $prov_subs->pbx_group_id
-                && $prov_subs->admin ) {
+                && $prov_subs->is_pbx_pilot ) {
             my $customer_subscribers_rs = $billing_subs->contract->voip_subscribers;
             my $my_cc = $primary_number->{cc};
             my $my_ac = $primary_number->{ac};
@@ -670,23 +669,23 @@ sub terminate {
     my $schema = $c->model('DB');
     $schema->txn_do(sub {
         if($subscriber->provisioning_voip_subscriber->is_pbx_group) {
-            my $group = $schema->resultset('provisioning_voip_subscribers')->search({
-                pbx_group_id => $subscriber->id
-            });
-            $group->update({
-                pbx_group_id => undef,
-            });
+            $schema->resultset('voip_pbx_groups')->search({
+                group_id => $subscriber->provisioning_voip_subscriber->id,
+            })->delete;
         }
         my $prov_subscriber = $subscriber->provisioning_voip_subscriber;
         if($prov_subscriber) {
-            update_pbx_group_prefs(
-                c => $c,
-                schema => $schema,
-                old_group_id => $prov_subscriber->pbx_group_id,
-                new_group_id => undef,
-                username => $prov_subscriber->username,
-                domain => $prov_subscriber->domain->domain,
-            ) if($prov_subscriber->pbx_group_id);
+            foreach my $groups($prov_subscriber->voip_pbx_groups->all) {
+                my $group_sub = $groups->group;
+                update_pbx_group_prefs(
+                    c => $c,
+                    schema => $schema,
+                    old_group_id => $group_sub->voip_subscriber->id,
+                    new_group_id => undef,
+                    username => $prov_subscriber->username,
+                    domain => $prov_subscriber->domain->domain,
+                );
+            }
             $prov_subscriber->delete;
         }
         if(!$prov_subscriber->admin && $c->stash->{admin_subscriber}) {
@@ -807,6 +806,23 @@ sub prepare_alias_select {
     }
     $params->{alias_number} = \@alias_nums;
     $params->{alias_select} = encode_json(\@alias_options);
+}
+
+sub prepare_group_select {
+    my (%p) = @_;
+    my $c = $p{c};
+    my $subscriber = $p{subscriber};
+    my $params = $p{params};
+    my $unselect = $p{unselect} // 0;
+
+    my @group_options = ();
+    my $group_rs = $c->model('DB')->resultset('voip_pbx_groups')->search({
+        'subscriber_id' => $subscriber->provisioning_voip_subscriber->id,
+    });
+    unless($unselect) {
+        @group_options = map { $_->group->voip_subscriber->id } $group_rs->all;
+    }
+    $params->{group_select} = encode_json(\@group_options);
 }
 
 sub apply_rewrite {

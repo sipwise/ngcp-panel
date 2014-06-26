@@ -207,6 +207,9 @@ sub field_to_json : Private {
         when(/\+NGCP::Panel::Field::AliasNumber/) {
             return "Array";
         }
+        when(/\+NGCP::Panel::Field::PbxGroupAPI/) {
+            return "Array";
+        }
         # usually {xxx}{id}
         when(/\+NGCP::Panel::Field::/) {
             return "Number";
@@ -239,6 +242,8 @@ sub get_collection_properties {
                 $name = 'primary_number';
             } elsif($f->type =~ /AliasNumber/) {
                 $name = 'alias_numbers';
+            } elsif($f->type =~ /PbxGroupAPI/) {
+                $name = 'pbx_group_ids';
             } elsif($f->type =~ /Country$/) {
                 $name = 'country';
             } elsif($f->type !~ /Regex|EmailList|SubscriberStatusSelect|SubscriberLockSelect|Identifier|PosInteger/) {

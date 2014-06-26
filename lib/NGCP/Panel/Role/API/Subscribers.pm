@@ -39,7 +39,6 @@ sub resource_from_item {
         delete $resource{is_pbx_group};
         delete $resource{is_pbx_pilot};
         delete $resource{pbx_extension};
-        delete $resource{pbx_group_id};
     }
     unless($self->is_true($resource{is_pbx_group})) {
         delete $resource{pbx_hunt_policy};
@@ -60,6 +59,13 @@ sub resource_from_item {
         form => $form,
         run => 0,
     );
+
+    if($customer->get_column('product_class') eq 'pbxaccount') {
+        $resource{pbx_group_ids} = [];
+        foreach my $group($item->provisioning_voip_subscriber->voip_pbx_groups->all) {
+            push @{ $resource{pbx_group_ids} }, int($group->group->voip_subscriber->id);
+        }
+    }
 
     if($item->primary_number) {
         $resource{primary_number}->{cc} = $item->primary_number->cc;
@@ -201,7 +207,8 @@ sub get_billing_profile {
 
 sub prepare_resource {
     my ($self, $c, $schema, $resource, $item) = @_;
-
+    
+    my @groups = ();
     my $domain;
     if($resource->{domain}) {
         $domain = $c->model('DB')->resultset('domains')
@@ -294,7 +301,7 @@ sub prepare_resource {
     my $preferences = {};
     my $admin = 0;
     unless($customer->get_column('product_class') eq 'pbxaccount') {
-        for my $pref(qw/is_pbx_group pbx_group_id pbx_extension pbx_hunt_policy pbx_hunt_timeout is_pbx_pilot/) {
+        for my $pref(qw/is_pbx_group pbx_extension pbx_hunt_policy pbx_hunt_timeout is_pbx_pilot/) {
             delete $resource->{$pref};
         }
         $admin = $resource->{admin} // 0;
@@ -337,20 +344,25 @@ sub prepare_resource {
             $resource->{e164}->{sn} = $pilot->primary_number->sn . $resource->{pbx_extension};
 
             unless($self->is_true($resource->{is_pbx_group})) {
-                unless($resource->{pbx_group_id}) {
-                    $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "A pbx_group_id is required if customer is PBX and pilot subscriber exists.");
-                    return;
-                }
-                my $group_subscriber = $c->model('DB')->resultset('voip_subscribers')->find({
-                    id => $resource->{pbx_group_id},
-                    contract_id => $resource->{customer_id},
-                    'provisioning_voip_subscriber.is_pbx_group' => 1,
-                },{
-                    join => 'provisioning_voip_subscriber',
-                });
-                unless($group_subscriber) {
-                    $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Invalid pbx_group_id, does not exist for this contract.");
-                    return;
+                if(exists $resource->{pbx_group_ids}) {
+                    unless(ref $resource->{pbx_group_ids} eq "ARRAY") {
+                        $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Invalid pbx_group_ids parameter, must be an array.");
+                        return;
+                    }
+                    foreach my $group_id(@{ $resource->{pbx_group_ids} }) {
+                        my $group_subscriber = $c->model('DB')->resultset('voip_subscribers')->find({
+                            id => $group_id,
+                            contract_id => $resource->{customer_id},
+                            'provisioning_voip_subscriber.is_pbx_group' => 1,
+                        },{
+                            join => 'provisioning_voip_subscriber',
+                        });
+                        unless($group_subscriber) {
+                            $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Invalid id '$group_id' in pbx_group_ids, does not exist for this customer.");
+                            return;
+                        }
+                        push @groups, $group_subscriber;
+                    }
                 }
             }
         }
@@ -424,18 +436,20 @@ sub prepare_resource {
         customer => $customer,
         alias_numbers => $alias_numbers,
         preferences => $preferences,
+        groups => \@groups,
     };
 
     return $r;
 }
 
 sub update_item {
-    my ($self, $c, $item, $full_resource, $resource, $form) = @_;
+    my ($self, $c, $schema, $item, $full_resource, $resource, $form) = @_;
 
     my $subscriber = $item;
     my $customer = $full_resource->{customer};
     my $alias_numbers = $full_resource->{alias_numbers};
     my $preferences = $full_resource->{preferences};
+    my $groups = $full_resource->{groups};
 
 
     if($subscriber->provisioning_voip_subscriber->is_pbx_pilot && !$self->is_true($resource->{is_pbx_pilot})) {
@@ -475,7 +489,7 @@ sub update_item {
 
     my ($profile_set, $profile);
     if($resource->{profile_set}{id}) {
-        my $profile_set_rs = $c->model('DB')->resultset('voip_subscriber_profile_sets');
+        my $profile_set_rs = $schema->resultset('voip_subscriber_profile_sets');
         if($c->user->roles eq "admin") {
         } elsif($c->user->roles eq "reseller") {
             $profile_set_rs = $profile_set_rs->search({
@@ -513,7 +527,7 @@ sub update_item {
             }
         }
         if(keys %old_profile_attributes) {
-            my $cfs = $c->model('DB')->resultset('voip_preferences')->search({
+            my $cfs = $schema->resultset('voip_preferences')->search({
                 id => { -in => [ keys %old_profile_attributes ] },
                 attribute => { -in => [qw/cfu cfb cft cfna/] },
             });
@@ -533,7 +547,7 @@ sub update_item {
                 email => $resource->{email},
             });
         } elsif(!$contact) {
-            $contact = $c->model('DB')->resultset('contacts')->create({
+            $contact = $schema->resultset('contacts')->create({
                 reseller_id => $subscriber->contract->contact->reseller_id,
                 email => $resource->{email},
             });
@@ -546,7 +560,7 @@ sub update_item {
     delete $resource->{email};
 
     NGCP::Panel::Utils::Subscriber::update_subscriber_numbers(
-        schema => $c->model('DB'),
+        schema => $schema,
         primary_number => $resource->{e164},
         alias_numbers => $alias_numbers,
         reseller_id => $customer->contact->reseller_id,
@@ -565,7 +579,6 @@ sub update_item {
         admin => $resource->{administrative} // 0,
         is_pbx_pilot => $resource->{is_pbx_pilot} // 0,
         is_pbx_group => $resource->{is_pbx_group} // 0,
-        pbx_group_id => $resource->{pbx_group_id},
         modify_timestamp => NGCP::Panel::Utils::DateTime::current_local,
         profile_set_id => $profile_set ? $profile_set->id : undef,
         profile_id => $profile ? $profile->id : undef,
@@ -574,7 +587,6 @@ sub update_item {
     if($self->is_true($resource->{is_pbx_group})) {
         $provisioning_res->{pbx_hunt_policy} = $resource->{pbx_hunt_policy};
         $provisioning_res->{pbx_hunt_timeout} = $resource->{pbx_hunt_timeout};
-        $provisioning_res->{pbx_group_id} = undef;
     }
 
     $subscriber->update($billing_res);
@@ -585,6 +597,52 @@ sub update_item {
         prov_subscriber => $subscriber->provisioning_voip_subscriber,
         preferences => $preferences,
     );
+
+    my @old_groups = $subscriber->provisioning_voip_subscriber
+        ->voip_pbx_groups->get_column('group_id')->all;
+    my @new_groups = ();
+    foreach my $group(@{ $groups }) {
+        push @new_groups, $group->provisioning_voip_subscriber->id;
+        unless($group->provisioning_voip_subscriber->id ~~ [ @old_groups ]) {
+            $subscriber->provisioning_voip_subscriber->voip_pbx_groups->create({
+                group_id => $group->provisioning_voip_subscriber->id,
+            });
+            NGCP::Panel::Utils::Subscriber::update_pbx_group_prefs(
+                c => $c,
+                schema => $schema,
+                old_group_id => undef,
+                new_group_id => $group->id,
+                username => $subscriber->username,
+                domain => $subscriber->domain->domain,
+                group_rs => $schema->resultset('voip_subscribers')->search({
+                    contract_id => $customer->id,
+                    status => { '!=' => 'terminated' },
+                }),
+            );
+        }
+        foreach my $group_id(@old_groups) {
+            # remove subscriber from group if not there anymore
+            unless($group_id ~~ [ @new_groups ]) {
+                my $group = $schema->resultset('provisioning_voip_subscribers')->find($group_id);
+                NGCP::Panel::Utils::Subscriber::update_pbx_group_prefs(
+                    c => $c,
+                    schema => $schema,
+                    old_group_id => $group->voip_subscriber->id,
+                    new_group_id => undef,
+                    username => $subscriber->username,
+                    domain => $subscriber->domain->domain,
+                    group_rs => $schema->resultset('voip_subscribers')->search({
+                        contract_id => $customer->id,
+                        status => { '!=' => 'terminated' },
+                    }),
+                );
+                $subscriber->provisioning_voip_subscriber->voip_pbx_groups->search({
+                    group_id => $group_id,
+                    subscriber_id => $subscriber->provisioning_voip_subscriber->id,
+                })->delete;
+            }
+        }
+    }
 
     # TODO: status handling (termination, ...)
 

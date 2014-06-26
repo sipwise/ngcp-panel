@@ -79,12 +79,18 @@ has_field 'is_pbx_group' => (
     },
 );
 
-has_field 'pbx_group' => (
-    type => '+NGCP::Panel::Field::SubscriberPbxGroup',
-    label => 'PBX Group',
+has_field 'pbx_group_ids' => (
+    type => '+NGCP::Panel::Field::PbxGroupAPI',
+    setup_for_js => 1,
+    do_wrapper => 1,
+    do_label => 0,
+    tags => { 
+        controls_div => 1,
+    },
+    wrapper_class => [qw/hfh-rep/],
     element_attr => {
         rel => ['tooltip'],
-        title => ['The PBX group id this subscriber belongs to.'],
+        title => ['An array of PBX group ids this subscriber belongs to.'],
     },
 );
 
@@ -130,7 +136,7 @@ has_field 'save' => (
 has_block 'fields' => (
     tag => 'div',
     class => [qw/modal-body/],
-    render_list => [qw/customer domain pbx_extension e164 alias_numbers email webusername webpassword username password status lock external_id administrative is_pbx_group pbx_group is_pbx_pilot display_name profile_set profile/ ],
+    render_list => [qw/customer domain pbx_extension e164 alias_numbers email webusername webpassword username password status lock external_id administrative is_pbx_group pbx_group_ids is_pbx_pilot display_name profile_set profile/ ],
 );
 
 has_block 'actions' => (

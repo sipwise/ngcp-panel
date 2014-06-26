@@ -557,7 +557,7 @@ sub subscriber_create :Chained('base') :PathPart('subscriber/create') :Args(0) {
 
     if($c->config->{features}->{cloudpbx} && $pbx) {
         $c->stash(customer_id => $c->stash->{contract}->id);
-        # we need to create an admin subscriber first
+        # we need to create a pilot subscriber first
         unless($c->stash->{pilot}) {
             $pbxadmin = 1;
             $form = NGCP::Panel::Form::Customer::PbxAdminSubscriber->new(ctx => $c);
@@ -572,6 +572,12 @@ sub subscriber_create :Chained('base') :PathPart('subscriber/create') :Args(0) {
                 subscriber => $c->stash->{pilot},
                 params => $params,
                 unselect => 1, # no numbers assigned yet, keep selection list empty
+            );
+            NGCP::Panel::Utils::Subscriber::prepare_group_select(
+                c => $c,
+                subscriber => $c->stash->{pilot},
+                params => $params,
+                unselect => 1, # no groups assigned yet, keep selection list empty
             );
         }
     } else {
@@ -604,12 +610,11 @@ sub subscriber_create :Chained('base') :PathPart('subscriber/create') :Args(0) {
             my $schema = $c->model('DB');
             $schema->txn_do(sub {
                 my $preferences = {};
+                my $pbxgroups;
                 if($pbx && !$pbxadmin) {
                     my $pilot = $c->stash->{pilot};
                     $form->params->{domain}{id} = $pilot->domain_id;
-                    # TODO: make DT selection multi-select capable
-                    $form->params->{pbx_group_id} = $form->params->{group}{id};
-                    delete $form->params->{group};
+                    $pbxgroups = decode_json($form->value->{group_select});
                     my $base_number = $pilot->primary_number;
                     if($base_number) {
                         $preferences->{cloud_pbx_base_cli} = $base_number->cc . $base_number->ac . $base_number->sn;
@@ -661,15 +666,6 @@ sub subscriber_create :Chained('base') :PathPart('subscriber/create') :Args(0) {
                     preferences => $preferences,
                 );
 
-                NGCP::Panel::Utils::Subscriber::update_pbx_group_prefs(
-                    c => $c,
-                    schema => $schema,
-                    old_group_id => undef,
-                    new_group_id => $form->params->{pbx_group_id},
-                    username => $form->params->{username},
-                    domain => $billing_subscriber->domain->domain,
-                ) if($pbx && !$pbxadmin && $form->params->{pbx_group_id});
-
                 if($pbx && !$pbxadmin) {
                     NGCP::Panel::Utils::Subscriber::update_subadmin_sub_aliases(
                         schema => $schema,
@@ -678,6 +674,22 @@ sub subscriber_create :Chained('base') :PathPart('subscriber/create') :Args(0) {
                         alias_selected => decode_json($form->value->{alias_select}),
                         sadmin => $c->stash->{pilot},
                     );
+
+                    foreach my $group_id(@{ $pbxgroups }) {
+                        my $group = $c->model('DB')->resultset('voip_subscribers')->find($group_id);
+                        next unless($group && $group->provisioning_voip_subscriber && $group->provisioning_voip_subscriber->is_pbx_group);
+                        $billing_subscriber->provisioning_voip_subscriber->voip_pbx_groups->create({
+                            group_id => $group->provisioning_voip_subscriber->id,
+                        });
+                        NGCP::Panel::Utils::Subscriber::update_pbx_group_prefs(
+                            c => $c,
+                            schema => $schema,
+                            old_group_id => undef,
+                            new_group_id => $group_id,
+                            username => $billing_subscriber->username,
+                            domain => $billing_subscriber->domain->domain,
+                        );
+                    }
                 }
 
             });

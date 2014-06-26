@@ -1998,9 +1998,6 @@ sub edit_master :Chained('master') :PathPart('edit') :Args(0) :Does(ACL) :ACLDet
             $params->{pbx_extension} = $prov_subscriber->pbx_extension;
         }
 
-        if($pbx_ext) {
-            $params->{group}{id} = $prov_subscriber->pbx_group_id;
-        }
         if($subscriber->contact) {
             $params->{email} = $subscriber->contact->email;
         }
@@ -2012,6 +2009,11 @@ sub edit_master :Chained('master') :PathPart('edit') :Args(0) :Does(ACL) :ACLDet
         }
 
         NGCP::Panel::Utils::Subscriber::prepare_alias_select(
+            c => $c,
+            subscriber => $subscriber,
+            params => $params,
+        );
+        NGCP::Panel::Utils::Subscriber::prepare_group_select(
             c => $c,
             subscriber => $subscriber,
             params => $params,
@@ -2074,9 +2076,6 @@ sub edit_master :Chained('master') :PathPart('edit') :Args(0) :Does(ACL) :ACLDet
                         $prov_params->{admin} = $form->params->{administrative} // 0;
                     }
                 }
-                $prov_params->{pbx_group_id} = $form->params->{group}{id}
-                    if($pbx_ext);
-                my $old_group_id = $prov_subscriber->pbx_group_id;
 
 
                 if($form->params->{display_name}) {
@@ -2164,14 +2163,46 @@ sub edit_master :Chained('master') :PathPart('edit') :Args(0) :Does(ACL) :ACLDet
 
                 $prov_subscriber->update($prov_params);
 
-                NGCP::Panel::Utils::Subscriber::update_pbx_group_prefs(
-                    c => $c,
-                    schema => $schema,
-                    old_group_id => $old_group_id,
-                    new_group_id => $prov_subscriber->pbx_group_id,
-                    username => $subscriber->username,
-                    domain => $subscriber->domain->domain,
-                ) if($pbx_ext && defined $old_group_id && $old_group_id != $prov_subscriber->pbx_group_id);
+                my @old_groups = $prov_subscriber->voip_pbx_groups->get_column('group_id')->all;
+                my $new_group_ids = decode_json($form->value->{group_select});
+                my @new_groups = ();
+                foreach my $group_id(@{ $new_group_ids }) {
+                    # add subscriber to group if not there yet
+                    my $group = $schema->resultset('voip_subscribers')->find($group_id);
+                    next unless($group && $group->provisioning_voip_subscriber && $group->provisioning_voip_subscriber->is_pbx_group);
+                    push @new_groups, $group->provisioning_voip_subscriber->id;
+                    unless($group->provisioning_voip_subscriber->id ~~ [ @old_groups ]) {
+                        $prov_subscriber->voip_pbx_groups->create({
+                            group_id => $group->provisioning_voip_subscriber->id,
+                        });
+                        NGCP::Panel::Utils::Subscriber::update_pbx_group_prefs(
+                            c => $c,
+                            schema => $schema,
+                            old_group_id => undef,
+                            new_group_id => $group_id,
+                            username => $subscriber->username,
+                            domain => $subscriber->domain->domain,
+                        );
+                    }
+                }
+                foreach my $group_id(@old_groups) {
+                    # remove subscriber from group if not there anymore
+                    unless($group_id ~~ [ @new_groups ]) {
+                        my $group = $schema->resultset('provisioning_voip_subscribers')->find($group_id);
+                        NGCP::Panel::Utils::Subscriber::update_pbx_group_prefs(
+                            c => $c,
+                            schema => $schema,
+                            old_group_id => $group->voip_subscriber->id,
+                            new_group_id => undef,
+                            username => $subscriber->username,
+                            domain => $subscriber->domain->domain,
+                        );
+                        $prov_subscriber->voip_pbx_groups->search({
+                            group_id => $group_id,
+                            subscriber_id => $prov_subscriber->id,
+                        })->delete;
+                    }
+                }
 
                 my $old_ext_id = $subscriber->external_id;
                 $subscriber->update({

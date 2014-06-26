@@ -6,7 +6,6 @@ use Moose::Util::TypeConstraints;
 
 use HTML::FormHandler::Widget::Block::Bootstrap;
 
-use NGCP::Panel::Field::PbxGroup;
 use NGCP::Panel::Utils::Form;
 with 'NGCP::Panel::Render::RepeatableJs';
 
@@ -26,6 +25,18 @@ has_field 'e164' => (
         rel => ['tooltip'],
         title => ['The main E.164 number (containing a cc, ac and sn attribute) used for inbound and outbound calls.']
     },
+);
+
+has_field 'group_select' => (
+    type => '+NGCP::Panel::Field::DataTable',
+    label => 'Groups',
+    do_label => 0,
+    do_wrapper => 0,
+    required => 0,
+    template => 'helpers/datatables_multifield.tt',
+    ajax_src => '/invalid',
+    table_titles => ['#', 'Name', 'Extension'],
+    table_fields => ['id', 'username', 'provisioning_voip_subscriber_pbx_extension'],
 );
 
 has_field 'alias_select' => (
@@ -180,14 +191,27 @@ sub field_list {
         my $sub;
         if($c->stash->{pilot}) {
             $sub = $c->stash->{pilot};
-        } elsif($c->stash->{subscriber} && $c->stash->{subscriber}->provisioning_voip_subscriber->admin) {
+        } elsif($c->stash->{subscriber} && $c->stash->{subscriber}->provisioning_voip_subscriber->is_pbx_pilot) {
             $sub = $c->stash->{subscriber};
         }
 
         if($sub) {
-            print ">>>>>>>>>>>>>>>> setting alias_select, url=" . $c->uri_for_action("/subscriber/aliases_ajax", [$sub->id]) . "\n";
             $self->field('alias_select')->ajax_src(
                     $c->uri_for_action("/subscriber/aliases_ajax", [$sub->id])->as_string
+                );
+        }
+    }
+    if($self->field('group_select')) {
+        my $sub;
+        if($c->stash->{pilot}) {
+            $sub = $c->stash->{pilot};
+        } elsif($c->stash->{subscriber}) {
+            $sub = $c->stash->{subscriber};
+        }
+
+        if($sub) {
+            $self->field('group_select')->ajax_src(
+                    $c->uri_for_action("/customer/pbx_group_ajax", [$sub->contract_id])->as_string
                 );
         }
     }

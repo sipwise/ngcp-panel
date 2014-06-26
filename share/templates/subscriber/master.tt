@@ -85,8 +85,16 @@
                             IF (c.user.roles == "admin" || c.user.roles == "reseller") && c.user.show_passwords;
                                 elements.push({ value = subscriber.provisioning_voip_subscriber.password, desc = c.loc('SIP Password') });
                             END;
-                            IF subscriber.provisioning_voip_subscriber.pbx_group_id.defined;
-                                elements.push({ value = subscriber.provisioning_voip_subscriber.voip_pbx_group.username, desc = c.loc('PBX Group') });
+                            IF subscriber.provisioning_voip_subscriber.voip_pbx_groups.count;
+                                group_subs = subscriber.provisioning_voip_subscriber.voip_pbx_groups.all;
+                                group_str = '';
+                                FOR group IN group_subs;
+                                    group_str = group_str _ group.group.username;
+                                    IF !loop.last;
+                                        group_str = group_str _ '<br/>';
+                                    END;
+                                END;
+                                elements.push({ value = group_str, desc = c.loc('PBX Groups') });
                             END;
                             IF c.user.roles == "admin" || c.user.roles == "reseller";
                                 elements.push({ value = subscriber.provisioning_voip_subscriber.admin ? 'yes' : 'no', desc = c.loc('Administrative') });

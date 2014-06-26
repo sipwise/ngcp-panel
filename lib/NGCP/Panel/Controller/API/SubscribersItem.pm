@@ -108,7 +108,7 @@ sub PUT :Allow {
         $resource = $r->{resource};
 
         my $form = $self->get_form($c);
-        $subscriber = $self->update_item($c, $subscriber, $r, $resource, $form);
+        $subscriber = $self->update_item($c, $schema, $subscriber, $r, $resource, $form);
         last unless $subscriber;
 
         $guard->commit;
@@ -159,7 +159,7 @@ sub PATCH :Allow {
         last unless $r;
         $resource = $r->{resource};
 
-        $subscriber = $self->update_item($c, $subscriber, $r, $resource, $form);
+        $subscriber = $self->update_item($c, $schema, $subscriber, $r, $resource, $form);
         last unless $subscriber;
 
         $guard->commit;
