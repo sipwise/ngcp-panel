@@ -72,7 +72,7 @@ sub stash_soundset_list {
     } elsif($c->user->roles eq "reseller") {
         splice @{ $dt_fields }, 1, 0,
             { name => 'contract.contact.email', search => 1, title => $c->loc('Customer') };
-        $sets_rs = $sets_rs->search({ reseller_id => $c->user->reseller_id });
+        $sets_rs = $sets_rs->search({ 'me.reseller_id' => $c->user->reseller_id });
     } elsif($c->user->roles eq "subscriberadmin" && !$contract) {
         $sets_rs = $sets_rs->search({ 'me.contract_id' => $c->user->account_id });
     }
