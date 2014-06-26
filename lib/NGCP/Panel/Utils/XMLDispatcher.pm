@@ -29,6 +29,8 @@ sub dispatch {
 	        id => $_->id}, $host_rs->all];
 	}
 
+    use Data::Dumper;
+    $c->log->info("dispatching to hosts: " . Dumper $hosts);
 	my @ret;
 
 	for my $host (@$hosts) {

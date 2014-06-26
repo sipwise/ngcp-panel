@@ -1039,6 +1039,10 @@ sub pbx_device_create :Chained('base') :PathPart('pbx/device/create') :Args(0) {
             $schema->txn_do( sub {
                 my $station_name = $form->params->{station_name};
                 my $identifier = lc $form->params->{identifier};
+                if($identifier =~ /^([a-f0-9]{2}:){5}[a-f0-9]{2}$/) {
+                    # TODO: should we really automatically strip : from identifiers?
+                    $identifier =~ s/\://g;
+                }
                 my $profile_id = $form->params->{profile_id};
                 my $fdev = $c->stash->{contract}->autoprov_field_devices->create({
                     profile_id => $profile_id,
