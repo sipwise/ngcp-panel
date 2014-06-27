@@ -14,7 +14,7 @@ sub build_form_element_class {[qw(form-horizontal)]}
 has_field 'match_pattern' => (
     type => '+NGCP::Panel::Field::Regexp',
     required => 1,
-    inflate_default_method => \&inflate_pattern,
+    inflate_default_method => \&inflate_match_pattern,
     element_attr => {
         rel => ['tooltip'],
         title => ['Match pattern, a regular expression.'],
@@ -25,7 +25,7 @@ has_field 'replace_pattern' => (
     type => 'Text',
     required => 1,
     label => 'Replacement Pattern',
-    inflate_default_method => \&inflate_pattern,
+    inflate_default_method => \&inflate_replace_pattern,
     element_attr => {
         rel => ['tooltip'],
         title => ['Replacement pattern.'],
@@ -87,10 +87,19 @@ has_block 'actions' => (
 before 'update_model' => sub {
     my $self = shift;
     $self->value->{match_pattern} =~   s/\$\{(\w+)\}/\$avp(s:$1)/g;
+    $self->value->{match_pattern} =~   s/\@\{(\w+)\}/\$(avp(s:$1)[*])/g;
     $self->value->{replace_pattern} =~ s/\$\{(\w+)\}/\$avp(s:$1)/g;
 };
 
-sub inflate_pattern {
+sub inflate_match_pattern {
+    my ($self, $value) = @_;
+    
+    $value =~ s/\$avp\(s\:(\w+)\)/\${$1}/g;
+    $value =~ s/\$\(avp\(s\:(\w+)\)\[\*\]\)/\@{$1}/g;
+    return $value;
+}
+
+sub inflate_replace_pattern {
     my ($self, $value) = @_;
     
     $value =~ s/\$avp\(s\:(\w+)\)/\${$1}/g;
@@ -103,6 +112,7 @@ sub validate {
     my $r = $self->field('replace_pattern')->value // "";
     my $_ = "";
     my $re = "s/$s/$r/";
+
     eval { use warnings FATAL => qw(all); m/$re/; };
     
     if( $@ && $self->field('match_pattern')->num_errors < 1 ) {
@@ -114,11 +124,22 @@ sub validate {
     if ( $r =~ m/\$$/ ) {
         $self->field('replace_pattern')->add_error('Cannot end with "$"');
     }
+
     if ( my ($found) = $r =~ m/^([*?])/ ) {
         $self->field('replace_pattern')->add_error("Cannot start with \"$found\"");
     }
     if ( $r =~ m/\s/ ) {
         $self->field('replace_pattern')->add_error("Spaces are not allowed in replacement pattern");
+    }
+
+    my @acount;
+    @acount = $s =~ /(\@\{\w+\})/g;
+    if(@acount > 1) {
+        $self->field('match_pattern')->add_error("Cannot use more than one array variable in match pattern");
+    }
+    @acount = $r =~ /(\@\{\w+\})/g;
+    if(@acount > 0) {
+        $self->field('match_pattern')->add_error("Cannot use array variable in replacement pattern");
     }
 }
 

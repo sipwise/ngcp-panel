@@ -861,6 +861,7 @@ sub apply_rewrite {
     });
     my $cache = {};
     foreach my $r($rule_rs->all) {
+        my @entries = ();
         my $match = $r->match_pattern;
         my $replace = $r->replace_pattern;
 
@@ -868,38 +869,79 @@ sub apply_rewrite {
         for my $field($match, $replace) {
             #print ">>>>>>>>>>> normalizing $field\n";
             my @avps = ();
-            @avps = ($field =~ /\$avp\(s:calle(?:r|e)_([^\)]+)\)/g);
+            @avps = ($field =~ /\$\(?avp\(s:calle(?:r|e)_([^\)]+)\)/g);
             @avps = keys %{{ map { $_ => 1 } @avps }};
             for my $avp(@avps) {
-                #print ">>>>>>>>>> checking avp $avp\n";
                 if(!exists $cache->{$avp}) {
-                    my $pref_rs = NGCP::Panel::Utils::Preferences::get_usr_preference_rs(
-                        c => $c, attribute => $avp,
-                        prov_subscriber => $subscriber->provisioning_voip_subscriber,
-                    );
-                    unless($pref_rs && $pref_rs->count) {
-                        $pref_rs = NGCP::Panel::Utils::Preferences::get_dom_preference_rs(
+                    if($avp eq "pbx_account_cli_list") {
+                        $cache->{$avp} = [];
+                        foreach my $sub($subscriber->contract->voip_subscribers->all) {
+                            foreach my $num($sub->voip_numbers->search({ status => 'active' })->all) {
+                                my $v = $num->cc . ($num->ac // '') . $num->sn;
+                                unless($v ~~ $cache->{$avp}) {
+                                    push @{ $cache->{$avp} }, $v;
+                                }
+                            }
+                        }
+                    } else {
+                        my $pref_rs = NGCP::Panel::Utils::Preferences::get_usr_preference_rs(
                             c => $c, attribute => $avp,
-                            prov_domain => $subscriber->provisioning_voip_subscriber->domain,
+                            prov_subscriber => $subscriber->provisioning_voip_subscriber,
                         );
+                        unless($pref_rs && $pref_rs->count) {
+                            $pref_rs = NGCP::Panel::Utils::Preferences::get_dom_preference_rs(
+                                c => $c, attribute => $avp,
+                                prov_domain => $subscriber->provisioning_voip_subscriber->domain,
+                            );
+                        }
+                        next unless($pref_rs);
+                        if($field =~ /\$\(avp/) { # $(avp(s:xxx)[*])
+                            $cache->{$avp} = [ $pref_rs->get_column('value')->all ];
+                        } else {
+                            $cache->{$avp} = $pref_rs->first ? $pref_rs->first->value : '';
+                        }
                     }
-                    next unless($pref_rs);
-                    $cache->{$avp} = $pref_rs->first ? $pref_rs->first->value : '';
                 }
                 my $val = $cache->{$avp};
-                $field =~ s/\$avp\(s:calle(?:r|e)_$avp\)/$val/g;
+                if(ref $val eq "ARRAY") {
+                    my $orig = $field; $field = [];
+                    $orig = shift @{ $orig } if(ref $orig eq "ARRAY");
+                    foreach my $v(@{ $val }) {
+                        my $tmporig = $orig;
+                        $tmporig =~ s/\$avp\(s:calle(?:r|e)_$avp\)/$v/g;
+                        $tmporig =~ s/\$\(avp\(s:calle(?:r|e)_$avp\)\[\*\]\)/$v/g;
+                        push @{ $field }, $tmporig;
+                    }
+                } else {
+                    my $orig = $field;
+                    $orig = shift @{ $orig } if(ref $orig eq "ARRAY");
+                    $orig =~ s/\$avp\(s:calle(?:r|e)_$avp\)/$val/g;
+                    $field = [] unless(ref $field eq "ARRAY");
+                    push @{ $field }, $orig;
+                }
                 #print ">>>>>>>>>>> normalized $field\n";
             }
         }
+
+        $match = [ $match ] if(ref $match ne "ARRAY");
+
+        $replace = shift @{ $replace } if(ref $replace eq "ARRAY");
         $replace =~ s/\\(\d{1})/\$$1/g;
-        #print ">>>>>>>>>>> final match=$match, replace=$replace, applying to $callee\n";
 
         $replace =~ s/\"/\\"/g;
         $replace = qq{"$replace"};
-        if($callee =~ s/$match/$replace/eeg) {
-            # we only process one match
-            last;
+
+        my $found;
+        foreach my $m(@{ $match }) {
+            if($callee =~ s/$m/$replace/eeg) {
+                # we only process one match
+                $found = 1;
+                last;
+            }
         }
+        last if $found;
+
+
         #print ">>>>>>>>>>> done, match=$match, replace=$replace, callee is $callee\n";
 
     }

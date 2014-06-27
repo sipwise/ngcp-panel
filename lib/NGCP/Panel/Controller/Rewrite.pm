@@ -327,6 +327,7 @@ sub rules_root :Chained('rules_list') :PathPart('') :Args(0) {
         my $mp = $row->match_pattern;
         my $rp = $row->replace_pattern;
         $mp =~ s/\$avp\(s\:(\w+)\)/\${$1}/g;
+        $mp =~ s/\$\(avp\(s\:(\w+)\)\[\*\]\)/\@{$1}/g;
         $rp =~ s/\$avp\(s\:(\w+)\)/\${$1}/g;
         $row->match_pattern($mp);
         $row->replace_pattern($rp);
