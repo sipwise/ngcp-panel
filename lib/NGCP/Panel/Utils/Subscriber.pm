@@ -873,7 +873,7 @@ sub apply_rewrite {
             @avps = keys %{{ map { $_ => 1 } @avps }};
             for my $avp(@avps) {
                 if(!exists $cache->{$avp}) {
-                    if($avp eq "pbx_account_cli_list") {
+                    if($avp eq "cloud_pbx_account_cli_list") {
                         $cache->{$avp} = [];
                         foreach my $sub($subscriber->contract->voip_subscribers->all) {
                             foreach my $num($sub->voip_numbers->search({ status => 'active' })->all) {
