@@ -11,7 +11,6 @@ use Email::MIME;
 use Email::Sender::Simple qw(sendmail);
 use Email::Sender::Transport::SMTP;
 use Template;
-use Geography::Countries qw/country/;
 #use IO::All;
 
 #apt-get install libemail-send-perl
@@ -30,6 +29,8 @@ use NGCP::Panel::Utils::InvoiceTemplate;
 use NGCP::Panel::Utils::Invoice;
 use NGCP::Panel::Utils::Email;
 #use NGCP::Panel::View::SVG;
+
+use Geography::Countries qw/country/;
 
 my $debug = 0;
 

@@ -9,6 +9,7 @@ use NGCP::Panel::Form::Contact::Admin;
 use NGCP::Panel::Utils::Message;
 use NGCP::Panel::Utils::Navigation;
 
+
 sub auto :Does(ACL) :ACLDetachTo('/denied_page') :AllowedRole(admin) :AllowedRole(reseller) {
     my ($self, $c) = @_;
     $c->log->debug(__PACKAGE__ . '::auto');

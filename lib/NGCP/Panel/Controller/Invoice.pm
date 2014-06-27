@@ -1,4 +1,5 @@
 package NGCP::Panel::Controller::Invoice;
+use Geography::Countries qw/country/;
 use Sipwise::Base;
 use namespace::sweep;
 BEGIN { extends 'Catalyst::Controller'; }
@@ -9,7 +10,6 @@ use NGCP::Panel::Utils::Contract;
 use NGCP::Panel::Utils::InvoiceTemplate;
 use NGCP::Panel::Utils::Invoice;
 use NGCP::Panel::Form::Invoice::Invoice;
-use Geography::Countries qw/country/;
 
 sub auto :Private {
     my ($self, $c) = @_;
