@@ -628,6 +628,7 @@ sub subscriber_create :Chained('base') :PathPart('subscriber/create') :Args(0) {
                 if($pbx) {
                     $form->params->{is_pbx_pilot} = 1 if $pbxadmin;
                     $preferences->{cloud_pbx} = 1;
+                    $preferences->{cloud_pbx_ext} = $form->params->{pbx_extension};
                     if($pbxadmin && $form->params->{e164}{cc} && $form->params->{e164}{sn}) {
                         $preferences->{cloud_pbx_base_cli} = $form->params->{e164}{cc} . 
                                                              ($form->params->{e164}{ac} // '') . 
@@ -908,6 +909,7 @@ sub pbx_group_create :Chained('base') :PathPart('pbx/group/create') :Args(0) {
                 $preferences->{cloud_pbx} = 1;
                 $preferences->{cloud_pbx_hunt_policy} = $form->params->{pbx_hunt_policy};
                 $preferences->{cloud_pbx_hunt_timeout} = $form->params->{pbx_hunt_timeout};
+                $preferences->{cloud_pbx_ext} = $form->params->{pbx_extension};
                 my $billing_subscriber = NGCP::Panel::Utils::Subscriber::create_subscriber(
                     c => $c,
                     schema => $schema,

@@ -367,6 +367,7 @@ sub prepare_resource {
             }
         }
 
+        $preferences->{cloud_pbx_ext} = $resource->{pbx_extension};
         $preferences->{shared_buddylist_visibility} = 1;
         $preferences->{display_name} = $resource->{display_name}
             if(defined $resource->{display_name});
@@ -382,6 +383,7 @@ sub prepare_resource {
         if($base_number) {
             $preferences->{cloud_pbx_base_cli} = $base_number->cc . ($base_number->ac // '') . $base_number->sn;
         }
+
     }
     if(exists $resource->{external_id}) {
         $preferences->{ext_subscriber_id} = $resource->{external_id};
