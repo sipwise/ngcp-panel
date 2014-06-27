@@ -24,9 +24,11 @@
                 { name = c.loc('Clone'), uri = "/subscriberprofile/'+full.id+'/clone", class = 'btn-small btn-tertiary', icon = 'icon-retweet' },
                 { name = c.loc('Profiles'), uri = "/subscriberprofile/'+full.id+'/profile", class = 'btn-small btn-primary', icon = 'icon-list' },
             ];
+            UNLESS c.user.roles == "reseller" && !c.config.profile_sets.reseller_edit;
             helper.top_buttons = [
                 { name = c.loc('Create Subscriber Profile Set'), uri = c.uri_for_action('/subscriberprofile/set_create'), icon = 'icon-star' },
             ];
+            END;
         ELSE;
             helper.dt_buttons = [
                 { name = c.loc('Profiles'), uri = "/subscriberprofile/'+full.id+'/profile", class = 'btn-small btn-primary', icon = 'icon-list' },
