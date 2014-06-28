@@ -100,10 +100,11 @@ has_field 'pbx_hunt_policy' => (
         { value => 'serial', label => 'serial'},
         { value => 'parallel', label => 'parallel'},
         { value => 'random', label => 'random'},
+        { value => 'circular', label => 'circular'},
     ],
     element_attr => {
         rel => ['tooltip'],
-        title => ["On of serial, parallel, random."],
+        title => ["Hunting policy, one of serial, parallel, random, circular."],
     },
 );
 
@@ -111,7 +112,7 @@ has_field 'pbx_hunt_timeout' => (
     type => '+NGCP::Panel::Field::PosInteger',
     element_attr => {
         rel => ['tooltip'],
-        title => ['Serial Hunting Timeout'],
+        title => ['Hunting Timeout'],
     },
 );
 

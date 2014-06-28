@@ -20,6 +20,7 @@ has_field 'pbx_hunt_policy' => (
         { label => 'Serial Ringing', value => 'serial' },
         { label => 'Parallel Ringing', value => 'parallel' },
         { label => 'Random Ringing', value => 'random' },
+        { label => 'Circular Ringing', value => 'circular' },
     ],
     default => 'serial',
 );
@@ -27,7 +28,7 @@ has_field 'pbx_hunt_policy' => (
 has_field 'pbx_hunt_timeout' => (
     type => '+NGCP::Panel::Field::PosInteger',
     required => 1,
-    label => 'Serial Hunting Timeout',
+    label => 'Hunting Timeout',
     default => 10,
 );
 
