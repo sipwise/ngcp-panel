@@ -372,7 +372,7 @@ sub load_preference_list :Private {
 sub _sip_domain_reload {
     my ($self, $c) = @_;
     my $dispatcher = NGCP::Panel::Utils::XMLDispatcher->new;
-    $dispatcher->dispatch("proxy-ng", 1, 1, <<EOF );
+    $dispatcher->dispatch($c, "proxy-ng", 1, 1, <<EOF );
 <?xml version="1.0" ?>
 <methodCall>
 <methodName>domain.reload</methodName>
