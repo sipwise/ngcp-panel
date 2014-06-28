@@ -69,6 +69,7 @@ sub resource_from_item {
             delete $r->{$f};
         }
         $r->{id} = int($r->{id});
+        $r->{num_lines} = int($r->{num_lines});
         foreach my $f(qw/can_private can_shared can_blf/) {
             $r->{$f} = JSON::Types::bool($r->{$f});
         }
