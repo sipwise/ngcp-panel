@@ -327,9 +327,20 @@ sub update_item {
         return;
     }
 
-    # make sure to not clear any internal prefs
+    # make sure to not clear any internal prefs, except for those defined
+    # in extra:
+    my $extra = [qw/
+        rewrite_caller_in_dpid rewrite_caller_out_dpid 
+        rewrite_callee_in_dpid rewrite_callee_out_dpid 
+        ncos_id adm_ncos_id 
+        sound_set contract_sound_set 
+        allowed_ips_grp man_allowed_ips_grp
+    /];
     $full_rs = $full_rs->search({
-        'attribute.internal' => 0,
+        -or => [
+            'attribute.internal' => 0,
+            'attribute.attribute' => { 'in' => $extra },
+        ]
     },{
         join => 'attribute',
     });
