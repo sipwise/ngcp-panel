@@ -597,7 +597,7 @@ sub update_item {
     $subscriber->provisioning_voip_subscriber->update($provisioning_res);
     $subscriber->discard_changes;
 
-    if($prov_subscriber->profile_id // 0 != $old_profile) {
+    if(($prov_subscriber->profile_id // 0) != ($old_profile // 0)) {
         my $type;
         if(defined $prov_subscriber->profile_id && defined $old_profile) {
             $type = "update_profile";

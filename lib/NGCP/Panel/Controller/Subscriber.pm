@@ -2174,7 +2174,7 @@ sub edit_master :Chained('master') :PathPart('edit') :Args(0) :Does(ACL) :ACLDet
 
                 $prov_subscriber->update($prov_params);
 
-                if($prov_subscriber->profile_id // 0 != $old_profile) {
+                if(($prov_subscriber->profile_id // 0) != ($old_profile // 0)) {
                     my $type;
                     if(defined $prov_subscriber->profile_id && defined $old_profile) {
                         $type = "update_profile";
