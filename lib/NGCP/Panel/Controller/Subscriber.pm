@@ -16,6 +16,7 @@ use NGCP::Panel::Utils::DateTime;
 use NGCP::Panel::Utils::Sems;
 use NGCP::Panel::Utils::Hylafax;
 use NGCP::Panel::Utils::Kamailio;
+use NGCP::Panel::Utils::Events;
 use NGCP::Panel::Form::Subscriber;
 use NGCP::Panel::Form::SubscriberEdit;
 use NGCP::Panel::Form::Customer::PbxSubscriberEdit;
@@ -2099,6 +2100,7 @@ sub edit_master :Chained('master') :PathPart('edit') :Args(0) :Does(ACL) :ACLDet
                     }
                 }
 
+                my $old_profile = $prov_subscriber->profile_id;
                 my ($profile_set, $profile);
                 if($form->values->{profile_set}{id}) {
                     my $profile_set_rs = $c->model('DB')->resultset('voip_subscriber_profile_sets');
@@ -2171,6 +2173,21 @@ sub edit_master :Chained('master') :PathPart('edit') :Args(0) :Does(ACL) :ACLDet
                 }
 
                 $prov_subscriber->update($prov_params);
+
+                if($prov_subscriber->profile_id // 0 != $old_profile) {
+                    my $type;
+                    if(defined $prov_subscriber->profile_id && defined $old_profile) {
+                        $type = "update_profile";
+                    } elsif(defined $prov_subscriber->profile_id) {
+                        $type = "start_profile";
+                    } else {
+                        $type = "end_profile";
+                    }
+                    NGCP::Panel::Utils::Events::insert(
+                        c => $c, schema => $schema, subscriber => $subscriber,
+                        type => $type, old => $old_profile, new => $prov_subscriber->profile_id
+                    );
+                }
 
                 my @old_groups = $prov_subscriber->voip_pbx_groups->get_column('group_id')->all;
                 my $new_group_ids = decode_json($form->value->{group_select});

@@ -17,6 +17,7 @@ use NGCP::Panel::Form::Subscriber::SubscriberAPI;
 use NGCP::Panel::Utils::XMLDispatcher;
 use NGCP::Panel::Utils::Prosody;
 use NGCP::Panel::Utils::Subscriber;
+use NGCP::Panel::Utils::Events;
 
 sub get_form {
     my ($self, $c) = @_;
@@ -452,7 +453,7 @@ sub update_item {
     my $alias_numbers = $full_resource->{alias_numbers};
     my $preferences = $full_resource->{preferences};
     my $groups = $full_resource->{groups};
-
+    my $prov_subscriber = $subscriber->provisioning_voip_subscriber;
 
     if($subscriber->provisioning_voip_subscriber->is_pbx_pilot && !$self->is_true($resource->{is_pbx_pilot})) {
         $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Cannot revoke is_pbx_pilot status from a subscriber.");
@@ -590,10 +591,27 @@ sub update_item {
         $provisioning_res->{pbx_hunt_policy} = $resource->{pbx_hunt_policy};
         $provisioning_res->{pbx_hunt_timeout} = $resource->{pbx_hunt_timeout};
     }
+    my $old_profile = $prov_subscriber->profile_id;
 
     $subscriber->update($billing_res);
     $subscriber->provisioning_voip_subscriber->update($provisioning_res);
     $subscriber->discard_changes;
+
+    if($prov_subscriber->profile_id // 0 != $old_profile) {
+        my $type;
+        if(defined $prov_subscriber->profile_id && defined $old_profile) {
+            $type = "update_profile";
+        } elsif(defined $prov_subscriber->profile_id) {
+            $type = "start_profile";
+        } else {
+            $type = "end_profile";
+        }
+        NGCP::Panel::Utils::Events::insert(
+            c => $c, schema => $schema, subscriber => $subscriber,
+            type => $type, old => $old_profile, new => $prov_subscriber->profile_id
+        );
+    }
+
     NGCP::Panel::Utils::Subscriber::update_preferences(
         c => $c, 
         prov_subscriber => $subscriber->provisioning_voip_subscriber,

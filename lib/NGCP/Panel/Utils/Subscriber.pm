@@ -8,6 +8,7 @@ use String::MkPasswd;
 use NGCP::Panel::Utils::DateTime;
 use NGCP::Panel::Utils::Preferences;
 use NGCP::Panel::Utils::Email;
+use NGCP::Panel::Utils::Events;
 use UUID qw/generate unparse/;
 use JSON qw/decode_json encode_json/;
 
@@ -285,6 +286,13 @@ sub create_subscriber {
             });
             my $url = $c->uri_for_action('/subscriber/recover_webpassword')->as_string . '?uuid=' . $uuid_string;
             NGCP::Panel::Utils::Email::new_subscriber($c, $billing_subscriber, $url);
+        }
+
+        if($prov_subscriber->profile_id) {
+            NGCP::Panel::Utils::Events::insert(
+                c => $c, schema => $schema, subscriber => $billing_subscriber,
+                type => 'start_profile', old => undef, new => $prov_subscriber->profile_id
+            );
         }
 
         if(defined $params->{e164range} && ref $params->{e164range} eq "ARRAY") {
