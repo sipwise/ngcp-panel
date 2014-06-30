@@ -242,9 +242,6 @@ sub item_by_id {
 sub get_preference_rs {
     my ($self, $c, $type, $elem, $attr) = @_;
 
-
-    use Data::Printer; print ">>>>>>>>>>>>>>>> get_preference_rs, type=$type, elem=$elem, attr=$attr\n";
-
     my $rs;
     if($type eq "domains") {
         $rs = NGCP::Panel::Utils::Preferences::get_dom_preference_rs(
@@ -315,7 +312,6 @@ sub update_item {
         $pref_type = 'peer_pref';
         $reseller_id = 1;
     } elsif($type eq "contracts") {
-        use Data::Printer; print ">>>>>>>>>>>>>>>> prepare resource\n"; p $resource; p $old_resource;
         delete $resource->{customer_id};
         delete $old_resource->{customer_id};
         $accessor = $item->id;
@@ -343,7 +339,6 @@ sub update_item {
             $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "Internal Server Error.");
             return;
         };
-        use Data::Printer; print ">>>>>>>>>>>>>>>> done deleteting old for PUT\n";
     } else {
         # in case of PATCH, we remove only those entries marked for removal in the patch
         try {
@@ -396,11 +391,8 @@ sub update_item {
     }
 
     foreach my $pref(keys %{ $resource }) {
-        use Data::Printer; print ">>>>>>>>>>>>>>>> handling pref $pref\n";
         next unless(defined $resource->{$pref});
-        use Data::Printer; print ">>>>>>>>>>>>>>>> $pref is defined, get rs for type $type\n";
         my $rs = $self->get_preference_rs($c, $type, $elem, $pref);
-        use Data::Printer; print ">>>>>>>>>>>>>>>> got an rs\n";
         unless($rs) {
             $c->log->debug("removing unknown preference '$pref' from update");
             next;
