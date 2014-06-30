@@ -45,11 +45,64 @@ sub inv_list :Chained('/') :PathPart('invoice') :CaptureArgs(0) :Does(ACL) :ACLD
     $c->stash(template => 'invoice/invoice_list.tt');
 }
 
+sub customer_inv_list :Chained('/') :PathPart('invoice/customer') :CaptureArgs(1) :Does(ACL) :ACLDetachTo('/denied_page') :AllowedRole(admin) :AllowedRole(reseller) :AllowedRole(subscriberadmin) {
+    my ( $self, $c, $contract_id ) = @_;
+
+    $c->stash->{inv_dt_columns} = NGCP::Panel::Utils::Datatables::set_columns($c, [
+        { name => "id", search => 1, title => $c->loc("#") },
+        { name => "serial", search => 1, title => $c->loc("Serial #") },
+        { name => "period_start", search => 1, title => $c->loc("Start") },
+        { name => "period_end", search => 1, title => $c->loc("End") },
+        { name => "amount_net", search => 1, title => $c->loc("Net Amount") },
+        { name => "amount_vat", search => 1, title => $c->loc("VAT Amount") },
+        { name => "amount_total", search => 1, title => $c->loc("Total Amount") },
+    ]);
+
+    unless($contract_id && $contract_id->is_int) {
+        NGCP::Panel::Utils::Message->error(
+            c => $c,
+            error => "Invalid contract id $contract_id found",
+            desc  => $c->loc('Invalid contract id found'),
+        );
+        NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for('/sound'));
+    }
+    if($c->user->roles eq "subscriberadmin" && $c->user->account_id != $contract_id) {
+        NGCP::Panel::Utils::Message->error(
+            c => $c,
+            error => "access violation, subscriberadmin ".$c->user->uuid." with contract id ".$c->user->account_id." tries to access foreign contract id $contract_id",
+            desc  => $c->loc('Invalid contract id found'),
+        );
+        NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for('/sound'));
+    }
+    my $contract = $c->model('DB')->resultset('contracts')->find($contract_id);
+    unless($contract) {
+        NGCP::Panel::Utils::Message->error(
+            c => $c,
+            error => "Contract id $contract_id not found",
+            desc  => $c->loc('Invalid contract id detected'),
+        );
+        NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for('/sound'));
+    }
+
+    $c->stash(inv_rs => $c->model('DB')->resultset('invoices')->search({
+        contract_id => $contract->id,
+    }));
+    $c->stash(template => 'sound/list.tt');
+    return;
+}
+
 sub root :Chained('inv_list') :PathPart('') :Args(0) {
     my ($self, $c) = @_;
 }
 
 sub ajax :Chained('inv_list') :PathPart('ajax') :Args(0) {
+    my ($self, $c) = @_;
+    my $rs = $c->stash->{inv_rs};
+    NGCP::Panel::Utils::Datatables::process($c, $rs, $c->stash->{inv_dt_columns});
+    $c->detach( $c->view("JSON") );
+}
+
+sub customer_ajax :Chained('customer_inv_list') :PathPart('ajax') :Args(0) {
     my ($self, $c) = @_;
     my $rs = $c->stash->{inv_rs};
     NGCP::Panel::Utils::Datatables::process($c, $rs, $c->stash->{inv_dt_columns});
