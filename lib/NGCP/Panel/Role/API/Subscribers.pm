@@ -640,27 +640,27 @@ sub update_item {
                 }),
             );
         }
-        foreach my $group_id(@old_groups) {
-            # remove subscriber from group if not there anymore
-            unless($group_id ~~ [ @new_groups ]) {
-                my $group = $schema->resultset('provisioning_voip_subscribers')->find($group_id);
-                NGCP::Panel::Utils::Subscriber::update_pbx_group_prefs(
-                    c => $c,
-                    schema => $schema,
-                    old_group_id => $group->voip_subscriber->id,
-                    new_group_id => undef,
-                    username => $subscriber->username,
-                    domain => $subscriber->domain->domain,
-                    group_rs => $schema->resultset('voip_subscribers')->search({
-                        contract_id => $customer->id,
-                        status => { '!=' => 'terminated' },
-                    }),
-                );
-                $subscriber->provisioning_voip_subscriber->voip_pbx_groups->search({
-                    group_id => $group_id,
-                    subscriber_id => $subscriber->provisioning_voip_subscriber->id,
-                })->delete;
-            }
+    }
+    foreach my $group_id(@old_groups) {
+        # remove subscriber from group if not there anymore
+        unless($group_id ~~ [ @new_groups ]) {
+            my $group = $schema->resultset('provisioning_voip_subscribers')->find($group_id);
+            NGCP::Panel::Utils::Subscriber::update_pbx_group_prefs(
+                c => $c,
+                schema => $schema,
+                old_group_id => $group->voip_subscriber->id,
+                new_group_id => undef,
+                username => $subscriber->username,
+                domain => $subscriber->domain->domain,
+                group_rs => $schema->resultset('voip_subscribers')->search({
+                    contract_id => $customer->id,
+                    status => { '!=' => 'terminated' },
+                }),
+            );
+            $subscriber->provisioning_voip_subscriber->voip_pbx_groups->search({
+                group_id => $group_id,
+                subscriber_id => $subscriber->provisioning_voip_subscriber->id,
+            })->delete;
         }
     }
 
