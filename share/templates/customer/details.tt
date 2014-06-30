@@ -483,6 +483,31 @@
         </div>
     </div>
     [% END -%]
+
+    <div class="accordion-group">
+        <div class="accordion-heading">
+            <a class="accordion-toggle" data-toggle="collapse" data-parent="#customer_details" href="#collapse_invoices">[% c.loc('Invoices') %]</a>
+        </div>
+        <div class="accordion-body collapse" id="collapse_invoices">
+            <div class="accordion-inner">
+            
+[%
+    helper.name = c.loc('Invoice');
+    helper.identifier = 'invoices';
+    helper.dt_columns = invoice_dt_columns;
+    helper.ajax_uri = c.uri_for_action('/invoice/customer_ajax', [ c.req.captures.0 ]);
+
+    helper.top_buttons = [];
+    helper.dt_buttons = [
+        { name = c.loc('Download'), uri = "/invoice/'+full.id+'/download", class = 'btn-small btn-tertiary', icon = 'icon-download-alt' },
+    ];
+
+    PROCESS 'helpers/datatables.tt';
+%]
+            </div>
+        </div>
+    </div>
+
 </div>
 
 [% IF create_flag == 1 -%]
