@@ -147,8 +147,6 @@ sub PUT :Allow {
         last unless $resource;
         my $old_resource = $self->get_resource($c, $customer, "contracts");
 
-        use Data::Printer; print ">>>>>>>>>>>>>>>> old resource\n"; p $old_resource;
-
         # last param is "replace" to delete all existing prefs
         # for proper PUT behavior
         $customer = $self->update_item($c, $customer, $old_resource, $resource, 1, "contracts");

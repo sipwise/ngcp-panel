@@ -20,7 +20,10 @@ sub item_rs {
     my ($self, $c) = @_;
 
     # returns a contracts rs filtered based on role
-    my $item_rs = NGCP::Panel::Utils::Contract::get_customer_rs(c => $c);
+    my $item_rs = NGCP::Panel::Utils::Contract::get_customer_rs(
+        c => $c,
+        include_terminated => 1,
+    );
     return $item_rs;
 }
 
@@ -132,12 +135,12 @@ sub update_customer {
     $resource->{modify_timestamp} = $now;
     my $billing_profile;
 
+    $billing_profile = $c->model('DB')->resultset('billing_profiles')->find($resource->{billing_profile_id});
+    unless($billing_profile) {
+        $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Invalid 'billing_profile_id', doesn't exist");
+        return;
+    }
     if($old_resource->{billing_profile_id} != $resource->{billing_profile_id}) {
-        $billing_profile = $c->model('DB')->resultset('billing_profiles')->find($resource->{billing_profile_id});
-        unless($billing_profile) {
-            $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Invalid 'billing_profile_id', doesn't exist");
-            return;
-        }
         unless($billing_profile->reseller_id == $customer->contact->reseller_id) {
             $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Invalid 'billing_profile_id', reseller doesn't match customer contact reseller");
             return;
