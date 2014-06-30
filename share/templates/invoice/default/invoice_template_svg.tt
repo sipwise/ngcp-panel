@@ -22,19 +22,15 @@
         <title>Background</title>
 
 
-        <text x="20mm" y="270mm">
-            <tspan x="20mm" dy="0mm">[% rescontact.company %]</tspan>
-            <tspan x="20mm" dy="5mm">[% rescontact.street %]</tspan>
-            <tspan x="20mm" dy="5mm">[% rescontact.postcode %] [% custcontact.city %]</tspan>
-            <tspan x="20mm" dy="5mm">[% rescontact.country %]</tspan>
-        </text>
+        <text x="20mm"  y="270mm">[% rescontact.company %]</text>
+        <text x="20mm"  y="275mm">[% rescontact.street %]</text>
+        <text x="20mm"  y="280mm">[% rescontact.postcode %] [% custcontact.city %]</text>
+        <text x="20mm"  y="285mm">[% rescontact.country %]</text>
 
-        <text x="190mm" y="270mm" text-anchor="end">
-            <tspan x="190mm" dy="0mm">Company Reg.Nr.: [% rescontact.comregnum %]</tspan>
-            <tspan x="190mm" dy="5mm">VAT.Nr.: [% rescontact.vatnum %]</tspan>
-            <tspan x="190mm" dy="5mm">IBAN: [% rescontact.iban %]</tspan>
-            <tspan x="190mm" dy="5mm">BIC: [% rescontact.bic %]</tspan>
-        </text>
+        <text x="190mm" y="270mm" text-anchor="end">Company Reg.Nr.: [% rescontact.comregnum %]</text>
+        <text x="190mm" y="275mm" text-anchor="end">VAT.Nr.: [% rescontact.vatnum %]</text>
+        <text x="190mm" y="280mm" text-anchor="end">IBAN: [% rescontact.iban %]</text>
+        <text x="190mm" y="285mm" text-anchor="end">BIC: [% rescontact.bic %]</text>
         <text x="105mm" y="288mm" text-anchor="middle">Page [% aux.page %]</text>
 
 
@@ -47,30 +43,24 @@
         <title>Summary</title>
         <!--{ [% draw_background %] }-->
 
-        <text x="28mm" y="60mm" font-family="Verdana" font-size="8pt">
-            <tspan x="28mm" dy="0mm">[% custcontact.firstname %] [% custcontact.lastname %]</tspan>
-            <tspan x="28mm" dy="4mm">[% custcontact.street %]</tspan>
-            <tspan x="28mm" dy="4mm">[% custcontact.postcode %] [% custcontact.city %]</tspan>
-            <tspan x="28mm" dy="4mm">[% custcontact.country %]</tspan>
-        </text>
+        <text x="28mm" y="60mm" font-family="Verdana" font-size="8pt">[% custcontact.firstname %] [% custcontact.lastname %]</text>
+        <text x="28mm" y="64mm" font-family="Verdana" font-size="8pt">[% custcontact.street %]</text>
+        <text x="28mm" y="68mm" font-family="Verdana" font-size="8pt">[% custcontact.postcode %] [% custcontact.city %]</text>
+        <text x="28mm" y="72mm" font-family="Verdana" font-size="8pt">[% custcontact.country %]</text>
 
-        <text x="190mm" y="50mm" text-anchor="end" font-family="Verdana" font-size="8pt">
-            <tspan x="190mm" dy="0mm" font-weight="bold">Invoice Nr.</tspan>
-            <tspan x="190mm" dy="4mm">[% invoice.serial %]</tspan>
-            <tspan x="190mm" dy="4mm" font-weight="bold">Customer Nr.</tspan>
-            <tspan x="190mm" dy="4mm">[% customer.external_id %]</tspan>
-            <tspan x="190mm" dy="4mm" font-weight="bold">Invoice Period</tspan>
-            <tspan x="190mm" dy="4mm">[% p_start %] - [% p_end %]</tspan>
-            <tspan x="190mm" dy="4mm" font-weight="bold">Date</tspan>
-            <tspan x="190mm" dy="4mm">[% date_now(format='%Y-%m-%d') %]</tspan>
-        </text>
+        <text x="190mm" y="50mm"  text-anchor="end" font-family="Verdana" font-size="8pt" font-weight="bold">Invoice Nr.</text>
+        <text x="190mm" y="54mm"  text-anchor="end" font-family="Verdana" font-size="8pt">[% invoice.serial %]</text>
+        <text x="190mm" y="58mm"  text-anchor="end" font-family="Verdana" font-size="8pt" font-weight="bold">Customer Nr.</text>
+        <text x="190mm" y="62mm"  text-anchor="end" font-family="Verdana" font-size="8pt">[% customer.external_id %]</text>
+        <text x="190mm" y="66mm"  text-anchor="end" font-family="Verdana" font-size="8pt" font-weight="bold">Invoice Period</text>
+        <text x="190mm" y="70mm"  text-anchor="end" font-family="Verdana" font-size="8pt">[% p_start %] - [% p_end %]</text>
+        <text x="190mm" y="74mm"  text-anchor="end" font-family="Verdana" font-size="8pt" font-weight="bold">Date</text>
+        <text x="190mm" y="78mm"  text-anchor="end" font-family="Verdana" font-size="8pt">[% date_now(format='%Y-%m-%d') %]</text>
 
         <text x="20mm" y="100mm" font-family="Verdana" font-size="12pt" font-weight="bold">Your Monthly Statement</text>
 
-        <text x="20mm" y="110mm" font-family="Verdana" font-size="8pt">
-            <tspan x="20mm" dy="0mm">Dear Customer,</tspan>
-            <tspan x="20mm" dy="8mm">For our services provided in the period of [% p_start %] to [% p_end %], we invoice the following items:</tspan>
-        </text>
+        <text x="20mm" y="110mm" font-family="Verdana" font-size="8pt">Dear Customer,</text>
+        <text x="20mm" y="118mm" font-family="Verdana" font-size="8pt">For our services provided in the period of [% p_start %] to [% p_end %], we invoice the following items:</text>
 
 
         <text x="20mm" y="130mm" font-family="Verdana" font-size="8pt" font-weight="bold">Recurring Fees</text>
@@ -126,12 +116,10 @@
             <text text-anchor="end" x="190mm" y="213mm" font-family="Verdana" font-size="8pt" font-weight="bold">[% allfee %]</text>
             <line x1="22mm" y1="215mm" x2="190mm" y2="215mm" style="stroke:#000000;stroke-width:0.2mm;" />
 
-            <text x="20mm" y="225mm" font-family="Verdana" font-size="8pt">
-                <tspan x="20mm" dy="0mm">The amount is automatically charged via SEPA within 30 days using Mandate ID MID12345 and Creditor ID CID12345</tspan>
-                <tspan x="20mm" dy="4mm">from your account with IBAN [% rescontact.iban %] and BIC [% rescontact.bic %].</tspan>
-                <tspan x="20mm" dy="8mm">With best regards,</tspan>
-                <tspan x="20mm" dy="4mm">Your [% rescontact.company %] Service Team</tspan>
-            </text>
+            <text x="20mm" y="225mm" font-family="Verdana" font-size="8pt">The amount is automatically charged via SEPA within 30 days using Mandate ID MID12345 and Creditor ID CID12345</text>
+            <text x="20mm" y="229mm" font-family="Verdana" font-size="8pt">from your account with IBAN [% rescontact.iban %] and BIC [% rescontact.bic %].</text>
+            <text x="20mm" y="237mm" font-family="Verdana" font-size="8pt">With best regards,</text>
+            <text x="20mm" y="241mm" font-family="Verdana" font-size="8pt">Your [% rescontact.company %] Service Team</text>
         </g>
 
     </g>
@@ -143,13 +131,12 @@
 
         <text x="20mm" y="50mm" font-family="Verdana" font-size="8pt" font-weight="bold">Call Details</text>
         <line x1="22mm" y1="53mm" x2="190mm" y2="53mm" style="stroke:#000000;stroke-width:0.2mm;" />
-        <text x="22mm" y="58mm" font-family="Verdana" font-size="8pt" font-weight="bold">
-            <tspan x="22mm">Start Time</tspan>
-            <tspan x="58mm">Duration</tspan>
-            <tspan x="82mm">Destination</tspan>
-            <tspan x="122mm">Zone</tspan>
-            <tspan x="162mm">Total Amount in [% cur %]</tspan>
-        </text>
+        <text x="22mm"  y="58mm" font-family="Verdana" font-size="8pt" font-weight="bold">Start Time</text>
+        <text x="58mm"  y="58mm" font-family="Verdana" font-size="8pt" font-weight="bold">Duration</text>
+        <text x="82mm"  y="58mm" font-family="Verdana" font-size="8pt" font-weight="bold">Destination</text>
+        <text x="122mm" y="58mm" font-family="Verdana" font-size="8pt" font-weight="bold">Zone</text>
+        <text x="162mm" y="58mm" font-family="Verdana" font-size="8pt" font-weight="bold">Total Amount in [% cur %]</text>
+
         <line x1="22mm" y1="60mm" x2="190mm" y2="60mm" style="stroke:#000000;stroke-width:0.2mm;" />
 
         <!--{ [% calllist(fontfamily='Verdana', fontsize=8, startx=22, starty=65, offsety=5, miny=40, maxy=260, calls=calls, fields=[{name='start_time',dx=0,date_format='%Y-%m-%d %H:%M:%S'},{name='duration',dx=50,timestamp2time=1,anchor='end'},{name='destination_user_in',dx=10,prefix='+',masklen=10,mask='xxx'},{name='zone',dx=40},{name='source_customer_cost',dx=68,money_cents=1,comma='.',anchor='end'}]) -%] }-->
