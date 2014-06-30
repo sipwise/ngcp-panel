@@ -18,6 +18,8 @@ sub insert {
         old_status => $old // '',
         new_status => $new // '',
         timestamp => NGCP::Panel::Utils::DateTime::current_local->hires_epoch,
+        export_status => 'unexported',
+        exported_at => undef,
     });
 }
 
