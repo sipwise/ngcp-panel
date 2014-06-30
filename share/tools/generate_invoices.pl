@@ -12,15 +12,7 @@ use Email::Sender::Simple qw(sendmail);
 use Email::Sender::Transport::SMTP;
 use Template;
 use Geography::Countries qw/country/;
-#use IO::All;
-
-#apt-get install libemail-send-perl
-#apt-get install libemail-sender-perl
-#apt-get install libtest-mockobject-perl
-
-#apt-get install libnet-smtp-ssl-perl
-#apt-get install libio-all-perl
-
+use Pod::Usage;
 use Sipwise::Base;
 
 use NGCP::Panel;
@@ -29,10 +21,8 @@ use NGCP::Panel::Utils::Contract;
 use NGCP::Panel::Utils::InvoiceTemplate;
 use NGCP::Panel::Utils::Invoice;
 use NGCP::Panel::Utils::Email;
-#use NGCP::Panel::View::SVG;
 
 my $debug = 0;
-
 my ($dbuser, $dbpass);
 my $mfile = '/etc/mysql/sipwise.cnf';
 if(-f $mfile) {
@@ -54,10 +44,12 @@ my $dbh = DBI->connect('dbi:mysql:billing;host=localhost', $dbuser, $dbpass)
 
 
 my $opt = {};
-Getopt::Long::GetOptions($opt, 'reseller_id:i@', 'client_contact_id:i@', 'client_contract_id:i@', 'stime:s', 'etime:s', 'send!','sendonly!','resend','regenerate!','prevmonth','help|?')
-    or die 'could not process command-line options';
+Getopt::Long::GetOptions($opt, 'reseller_id:i@', 'client_contact_id:i@', 'client_contract_id:i@', 'stime:s', 'etime:s', 'send!','sendonly!','resend','regenerate!','prevmonth','help|?','man')
+    or pod2usage(2);
 print Dumper $opt;
-
+pod2usage(1) if $opt->{help};
+pod2usage(-exitval => 0, -verbose => 2) if $opt->{man};
+    
 my ($stime,$etime);
 if($opt->{prevmonth}){
     $stime = NGCP::Panel::Utils::DateTime::current_local()->truncate( to => 'month' )->subtract(months => 1);
@@ -109,14 +101,12 @@ sub process_invoices{
                     }
                 }else{
                     $invoices->{$client_contract->{id}} = $dbh->selectall_arrayref('select invoices.* from invoices 
-                    inner join contract_balances on invoices.id=contract_balances.invoice_id 
-                    inner join contracts on contracts.id=contract_balances.contract_id
                     '.ifp(' where ',
                         join(' and ',
                             !$opt->{resend}?' invoices.sent_date is null ':(),
-                            (ify(' contracts.contract_id ', (@{$opt->{client_contract_id}}, $client_contract->{id}) )),
-                            (ifk(' date(invoices.period_start) >= ?', v2a($stime->ymd))),
-                            (ifk(' date(invoices.period_start) <= ?', v2a($etime->ymd))),
+                            (ify(' invoices.contract_id ', (@{$opt->{client_contract_id}}, $client_contract->{id}) )),
+                            (ifk(' date(invoices.period_start) >= ? ', v2a($stime->ymd))),
+                            (ifk(' date(invoices.period_start) <= ? ', v2a($etime->ymd))),
                         )
                     ),  { Slice => {} }, @{$opt->{client_contract_id}}, v2a($client_contract->{id}), v2a($stime->ymd),v2a($etime->ymd) );
                 }
@@ -427,7 +417,88 @@ sub v2a{
 }
 
 
+ __END__
 
+=head1 generate_invoices.pl
+
+Script to generate invoices and/or send them via email to customers.
+location: /usr/share/ngcp-panel/tools/generate_invoices.pl
+
+=head1 OPTIONS
+
+=item --reseller_id=ID1[,IDn]        
+
+Generate invoices only for specified resellers customers
+
+=item --client_contact_id=ID1[,IDn]  
+
+Generate invoices only for customers, defined by their contact IDs           
+
+=item --client_contract_id=ID1[,IDn] 
+
+Generate invoices only for customers, defined by their contract IDs          
+
+=item --prevmonth             
+       
+Generate invoices for calls within period of previous month.         
+
+=item --stime="YYYY-mm-DD HH:MM:SS"  
+
+Generate invoices for calls within period, started from option value. Call start_time will be bigger then option value. Default is start second of current month.         
+
+=item --etime="YYYY-mm-DD HH:MM:SS"  
+
+Generate invoices for calls within period, ended by option value. Call start_time will be less then option value. Default is last second of current month, or last second of month period, started from stime value.         
+
+=item --send                         
+
+Invoices will be sent to customers emails just after generation. Default is false.         
+
+=item --sendonly                     
+
+Makes to send invoices, which weren't sent yet, to customers. Other options: resellers, customers, period specification will be considered. Should be used to send invoices to customers monthly, after generation. Default is false.      
+    
+=head1 SAMPLES
+
+=item To generate invoices for current month:
+
+perl /usr/share/ngcp-panel/tools/generate_invoice.pl
+
+=item To generate invoices for previous month:
+
+perl /usr/share/ngcp-panel/tools/generate_invoice.pl --prevmonth
+
+Crontab example:
+#m h d M dw
+5 5 1 * * perl /usr/share/ngcp-panel-tools/generate_invoice.pl --prevmonth 2>&1 >/dev/null
+
+=item To send invoices which weren't sent yet
+
+To get invoices, which weren't sent yet, period value will be considered too. It means that started from cron to send invoices generated for previous month, script should get "--prevmonth" option.
+
+perl /usr/share/ngcp-panel/tools/generate_invoice.pl --sendonly --prevmonth
+
+Crontab example:
+#m h d M dw
+5 */2 * * * perl /usr/share/ngcp-panel-tools/generate_invoice.pl --sendonly --prevmonth 2>&1 >/dev/null
+
+=over 8
+
+=item B<-help>
+
+Print a brief help message and exits.
+
+=item B<-man>
+
+Prints the manual page and exits.
+
+=back
+
+=head1 DESCRIPTION
+
+B<generate_invoices.pl> Script to generate invoices and/or send them via email to customers..
+
+=cut
 
 
 
