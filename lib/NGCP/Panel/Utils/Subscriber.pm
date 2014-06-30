@@ -676,12 +676,45 @@ sub terminate {
 
     my $schema = $c->model('DB');
     $schema->txn_do(sub {
-        if($subscriber->provisioning_voip_subscriber->is_pbx_group) {
+        my $prov_subscriber = $subscriber->provisioning_voip_subscriber;
+        if($prov_subscriber && $prov_subscriber->is_pbx_group) {
             $schema->resultset('voip_pbx_groups')->search({
                 group_id => $subscriber->provisioning_voip_subscriber->id,
             })->delete;
+            NGCP::Panel::Utils::Events::insert(
+                c => $c, schema => $schema, type => 'end_huntgroup',
+                subscriber => $subscriber,
+                old_status => $prov_subscriber->profile_id, new_status => undef,
+            );
         }
-        my $prov_subscriber = $subscriber->provisioning_voip_subscriber;
+        if(!$prov_subscriber->is_pbx_pilot) {
+            my $pilot_rs = $schema->resultset('voip_subscribers')->search({
+                contract_id => $subscriber->contract_id,
+                status => { '!=' => 'terminated' },
+                'provisioning_voip_subscriber.is_pbx_pilot' => 1,
+            },{
+                join => 'provisioning_voip_subscriber',
+            });
+            if($pilot_rs->first) {
+                update_subadmin_sub_aliases(
+                    schema => $schema,
+                    subscriber => $subscriber,
+                    contract_id => $subscriber->contract_id,
+                    alias_selected => [], #none, thus moving them back to our subadmin
+                    sadmin => $pilot_rs->first,
+                );
+            } else {
+                $subscriber->voip_numbers->update_all({
+                    subscriber_id => undef,
+                    reseller_id => undef,
+                });
+            }
+        } else {
+            $subscriber->voip_numbers->update_all({
+                subscriber_id => undef,
+                reseller_id => undef,
+            });
+        }
         if($prov_subscriber) {
             foreach my $groups($prov_subscriber->voip_pbx_groups->all) {
                 my $group_sub = $groups->group;
@@ -695,20 +728,6 @@ sub terminate {
                 );
             }
             $prov_subscriber->delete;
-        }
-        if(!$prov_subscriber->admin && $c->stash->{admin_subscriber}) {
-            update_subadmin_sub_aliases(
-                schema => $schema,
-                subscriber => $subscriber,
-                contract_id => $subscriber->contract_id,
-                alias_selected => [], #none, thus moving them back to our subadmin
-                sadmin => $c->stash->{admin_subscriber},
-            );
-        } else {
-            $subscriber->voip_numbers->update_all({
-                subscriber_id => undef,
-                reseller_id => undef,
-            });
         }
         $subscriber->update({ status => 'terminated' });
     });

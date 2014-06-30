@@ -118,12 +118,9 @@ sub recursively_lock_contract {
     for my $subscriber($contract->voip_subscribers->all) {
         $subscriber->update({ status => $status });
         if($status eq 'terminated') {
-            $subscriber->provisioning_voip_subscriber->delete
-                if($subscriber->provisioning_voip_subscriber);
-            $subscriber->voip_numbers->update_all({
-                reseller_id => undef,
-                subscriber_id => undef,
-            });
+            NGCP::Panel::Utils::Subscriber::terminate(
+                c => $c, subscriber => $subscriber,
+            );
         } elsif($status eq 'locked') {
             NGCP::Panel::Utils::Subscriber::lock_provisoning_voip_subscriber(
                 c => $c,

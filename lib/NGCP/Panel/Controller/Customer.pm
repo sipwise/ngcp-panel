@@ -928,6 +928,11 @@ sub pbx_group_create :Chained('base') :PathPart('pbx/group/create') :Args(0) {
                     admin_default => 0,
                     preferences => $preferences,
                 );
+                NGCP::Panel::Utils::Events::insert(
+                    c => $c, schema => $schema, type => 'start_huntgroup',
+                    subscriber => $billing_subscriber, old_status => undef, 
+                    new_status => $billing_subscriber->provisioning_voip_subscriber->profile_id,
+                );
                 $c->session->{created_objects}->{group} = { id => $billing_subscriber->id };
             });
 
