@@ -28,6 +28,17 @@ class_has 'query_params' => (
     isa => 'ArrayRef',
     default => sub {[
         {
+            param => 'status',
+            description => 'Filter for customers with a specific status',
+            query => {
+                first => sub {
+                    my $q = shift;
+                    { 'me.status' => $q };
+                },
+                second => sub { },
+            },
+        },
+        {
             param => 'reseller_id',
             description => 'Filter for customers belonging to a specific reseller',
             query => {

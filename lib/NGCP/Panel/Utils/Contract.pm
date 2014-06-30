@@ -204,7 +204,7 @@ sub get_contract_rs {
     my $dtf = $schema->storage->datetime_parser;
     my $rs = $schema->resultset('contracts')
         ->search({
-            'me.status' => { '!=' => 'terminated' },
+            $params{include_terminated} ? () : ('me.status' => { '!=' => 'terminated' }),
             'billing_mappings.id' => {
                 '=' => $mapping_rs->search({
                     contract_id => { -ident => 'me.id' },
@@ -246,6 +246,7 @@ sub get_customer_rs {
 
     my $customers = get_contract_rs(
         schema => $c->model('DB'),
+        include_terminated => $params{include_terminated},
     );
     
     $customers = $customers->search({
