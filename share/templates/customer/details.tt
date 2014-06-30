@@ -164,7 +164,7 @@
             <div class="accordion-inner">
                 [% IF ((c.user.roles == "subscriberadmin" && product.class == "pbxaccount") || c.user.roles == "admin" || c.user.roles == "reseller") && contract.max_subscribers.defined && subscriber_count < contract.max_subscribers -%]
                     <div class="alert alert-info">
-                        [% c.loc('[_1] of maximum [_2] subscribers [_3]created',subscriber_count,contract.max_subscribers,
+                        [% c.loc('[_1] of maximum [_2] subscribers [_3] created',subscriber_count,contract.max_subscribers,
                                 c.config.features.cloudpbx ? c.loc('(including PBX groups) ') : '') %]
                     </div>
                     <a class="btn btn-large btn-primary" href="[% c.uri_for_action('/customer/subscriber_create', [ c.req.captures.0 ]) %]">
@@ -172,7 +172,7 @@
                     </a>
                 [% ELSIF contract.max_subscribers.defined -%]
                     <div class="alert">
-                        [% c.loc('Maximum number of [_1] subscribers [_2]created',contract.max_subscribers,
+                        [% c.loc('Maximum number of [_1] subscribers [_2] created',contract.max_subscribers,
                             c.config.features.cloudpbx ? c.loc('(including PBX groups) ') : '') %]
                     </div>
                 [% ELSIF (c.user.roles == "subscriberadmin" && product.class == "pbxaccount") || c.user.roles == "admin" || c.user.roles == "reseller" -%]
