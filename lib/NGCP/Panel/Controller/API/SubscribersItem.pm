@@ -198,8 +198,7 @@ sub DELETE :Allow {
             }
         }
 
-        $subscriber->provisioning_voip_subscriber->delete;
-        $subscriber->delete;
+        NGCP::Panel::Utils::Subscriber::terminate(c => $c, subscriber => $subscriber);
 
         $guard->commit;
 
