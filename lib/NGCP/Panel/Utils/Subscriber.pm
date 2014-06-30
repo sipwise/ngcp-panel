@@ -294,6 +294,12 @@ sub create_subscriber {
                 type => 'start_profile', old => undef, new => $prov_subscriber->profile_id
             );
         }
+        if($prov_subscriber->is_pbx_group) {
+            NGCP::Panel::Utils::Events::insert(
+                c => $c, schema => $schema, subscriber => $billing_subscriber,
+                type => 'start_huntgroup', old => undef, new => $prov_subscriber->profile_id
+            );
+        }
 
         if(defined $params->{e164range} && ref $params->{e164range} eq "ARRAY") {
             my @alias_numbers = ();
