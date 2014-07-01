@@ -235,7 +235,7 @@ sub base :Chained('list_customer') :PathPart('') :CaptureArgs(1) {
     my $billing_mapping = $contract_rs->first->billing_mappings->find($contract_rs->first->get_column('bmid'));
 
     my $stime = NGCP::Panel::Utils::DateTime::current_local()->truncate(to => 'month');
-    my $etime = $stime->clone->add(months => 1);
+    my $etime = $stime->clone->add(months => 1)->subtract(seconds => 1);
    
     my $balance;
     try {
