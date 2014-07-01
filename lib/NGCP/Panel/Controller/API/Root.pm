@@ -7,6 +7,7 @@ use HTTP::Response qw();
 use HTTP::Status qw(:constants);
 use MooseX::ClassAttribute qw(class_has);
 use File::Find::Rule;
+use JSON qw(to_json);
 BEGIN { extends 'Catalyst::Controller'; }
 require Catalyst::ActionRole::ACL;
 require Catalyst::ActionRole::CheckTrailingSlash;
@@ -82,7 +83,7 @@ sub GET : Allow {
             $sorting_cols = [$item_rs->result_source->columns];
         }
 
-        $c->stash->{collections}->{$rel} = { 
+        $c->stash->{collections}->{$rel} = {
             name => $mod, 
             description => $full_mod->api_description,
             fields => $form ? $self->get_collection_properties($form) : [],
@@ -90,6 +91,10 @@ sub GET : Allow {
             actions => $actions,
             item_actions => $item_actions,
             sorting_cols => $sorting_cols,
+            uri => "/api/$rel/",
+            sample => $full_mod->can('documentation_sample') # generate pretty json, but without outer brackets (this is tricky though)
+                ? to_json($full_mod->documentation_sample, {pretty => 1}) =~ s/(^\s*{\s*)|(\s*}\s*$)//rg =~ s/\n   /\n/rg
+                : undef,
         };
 
     }

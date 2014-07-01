@@ -30,6 +30,22 @@ class_has 'query_params' => (
     ]},
 );
 
+class_has 'documentation_sample' => (
+    is => 'ro',
+    default => sub { {
+        cfb => { "destinations" => [{
+                    "destination" => "voicebox",
+                    "priority" => "1",
+                    "timeout" => "300",
+                }],
+            "times" => [],
+        },
+        cfna => {},
+        cft => { "ringtimeout" => "199" },
+        cfu => {},
+    } },
+);
+
 with 'NGCP::Panel::Role::API::CallForwards';
 
 class_has('resource_name', is => 'ro', default => 'callforwards');

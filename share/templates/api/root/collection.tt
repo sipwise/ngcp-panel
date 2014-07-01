@@ -12,6 +12,35 @@
 
 [% col.description %]
 
+[%-
+    #props_plain = '"id" : 1';
+    props_creation_first_flag = 1;
+    FOREACH p IN col.fields;
+        NEXT IF p.types.0 == 'null';
+        IF props_creation_first_flag;
+            props_creation_first_flag = 0;
+        ELSE;
+            props_plain = props_plain _ ",\n";
+        END;
+        IF p.types.0 == "Number";
+          val = 4;
+        ELSIF p.types.0 == "String";
+          val = '"test"';
+        ELSIF p.types.0 == "Boolean";
+          val = 'true';
+        ELSIF p.types.0 == "Array";
+          val = '[]';
+        ELSE;
+          val = '"missing"';
+        END;
+        props_plain = props_plain _ '"' _ p.name _ '" : ' _ val;
+    END;
+    props_plain = props_plain _ "\n";
+    IF col.sample;
+        props_plain = col.sample _ "\n";
+    END;
+%]
+
 <h[% level + 1 %]>Collection Actions</h[% level + 1%]>
 Allowed methods for the collection as in <span>METHOD [% uri %]</span>:
 [% UNLESS col.actions.size -%]
@@ -66,7 +95,7 @@ See description how to obtain properties, if any.
 <h[% level + 2 %]>Request available HTTP methods on the URI</h[% level + 2 %]>
 <p>
 [%
-    cmd = 'curl -i -X OPTIONS -H \'Connection: close\' --cert NGCP-API-client-certificate.pem --cacert ca-cert.pem https://example.org:1443/api/' _ id  _ '/';
+    cmd = 'curl -i -X OPTIONS -H \'Connection: close\' --cert NGCP-API-client-certificate.pem --cacert ca-cert.pem https://example.org:1443' _ uri;
     INCLUDE helpers/api_command.tt cmd=cmd level=level+3;
 
     request = 
@@ -93,26 +122,7 @@ Accept-Post: application/hal+json; profile="http://purl.org/sipwise/ngcp-api/#re
     cmd = 'curl -i -X GET -H \'Connection: close\' --cert NGCP-API-client-certificate.pem --cacert ca-cert.pem \'https://example.org:1443/api/' _ id _ '/?page=1&rows=1\'';
     INCLUDE helpers/api_command.tt cmd=cmd level=level+3;
 
-    props = '            "id" : 1';
-    FOREACH p IN col.fields;
-        NEXT IF p.types.0 == 'null';
-        props = props _ ',
-';
-        IF p.types.0 == "Number";
-          val = 4;
-        ELSIF p.types.0 == "String";
-          val = '"test"';
-        ELSIF p.types.0 == "Boolean";
-          val = 'true';
-        ELSIF p.types.0 == "Array";
-          val = '[]';
-        ELSE;
-          val = '"missing"';
-        END;
-        props = props _ '            "' _ p.name _ '" : ' _ val;
-    END;
-    props = props _ ' 
-';
+    props = props_plain | indent(12);
 
     request =
 'GET /api/' _ id _ '/?page=1&rows=1 HTTP/1.1';
@@ -180,26 +190,8 @@ Content-Type: application/hal+json; profile="http://purl.org/sipwise/ngcp-api/"
     cmd = 'curl -i -X GET -H \'Connection: close\' --cert NGCP-API-client-certificate.pem --cacert ca-cert.pem \'https://example.org:1443/api/' _ id _ '/1\'';
     INCLUDE helpers/api_command.tt cmd=cmd level=level+3;
 
-    props = '   "id" : 1';
-    FOREACH p IN col.fields;
-        NEXT IF p.types.0 == 'null';
-        props = props _ ',
-';
-        IF p.types.0 == "Number";
-          val = 4;
-        ELSIF p.types.0 == "String";
-          val = '"test"';
-        ELSIF p.types.0 == "Boolean";
-          val = 'true';
-        ELSIF p.types.0 == "Array";
-          val = '[]';
-        ELSE;
-          val = '"missing"';
-        END;
-        props = props _ '   "' _ p.name _ '" : ' _ val;
-    END;
-    props = props _ ' 
-';
+    props = props_plain | indent(3);
+
     request =
 'GET /api/' _ id _ '/1 HTTP/1.1';
     response =
@@ -237,54 +229,19 @@ Link: </api/' _ id _ '/1>; rel="item self"
 <h[% level + 2 %]>Create a new <i>[% id %]</i> item</h[% level + 2 %]>
 <p>
 [%
-    props = '';
-    FOREACH p IN col.fields;
-        NEXT IF p.types.0 == 'null';
-        IF p.types.0 == "Number";
-          val = 4;
-        ELSIF p.types.0 == "String";
-          val = '"test"';
-        ELSIF p.types.0 == "Boolean";
-          val = 'true';
-        ELSIF p.types.0 == "Array";
-          val = '[]';
-        ELSE;
-          val = '"missing"';
-        END;
-        props = props _ '"' _ p.name _ '" : ' _ val;
-        props = props _ ', ';
-    END;
-    props = props.substr(0, props.length - 2);
+    props = props_plain | collapse;
 
     cmd = 'curl -i -X POST -H \'Connection: close\' -H \'Content-Type: application/json\' --cert NGCP-API-client-certificate.pem --cacert ca-cert.pem \'https://example.org:1443/api/' _ id _ '/\' --data-binary \'{ ' _ props _ ' }\'';
     INCLUDE helpers/api_command.tt cmd=cmd level=level+3;
 
-    props = '';
-    FOREACH p IN col.fields;
-        NEXT IF p.types.0 == 'null';
-        IF p.types.0 == "Number";
-          val = 4;
-        ELSIF p.types.0 == "String";
-          val = '"test"';
-        ELSIF p.types.0 == "Boolean";
-          val = 'true';
-        ELSIF p.types.0 == "Array";
-          val = '[]';
-        ELSE;
-          val = '"missing"';
-        END;
-        props = props _ '   "' _ p.name _ '" : ' _ val;
-        props = props _ ',
-';
-    END;
-    props = props.substr(0, props.length - 2);
+    props = props_plain | indent(3);
+
     request =
 'POST /api/' _ id _ '/ HTTP/1.1
 Content-Type: application/json
 
 {
-' _ props _ '
-}';
+' _ props _ '}';
     response =
 'HTTP/1.1 201 Created
 Location: /api/' _ id _ '/2';
@@ -298,55 +255,19 @@ Location: /api/' _ id _ '/2';
 <h[% level + 2 %]>Update an existing <i>[% id %]</i> item</h[% level + 2 %]>
 <p>
 [%
-    props = '';
-    FOREACH p IN col.fields;
-        NEXT IF p.types.0 == 'null';
-        IF p.types.0 == "Number";
-          val = 4;
-        ELSIF p.types.0 == "String";
-          val = '"test"';
-        ELSIF p.types.0 == "Boolean";
-          val = 'true';
-        ELSIF p.types.0 == "Array";
-          val = '[]';
-        ELSE;
-          val = '"missing"';
-        END;
-        props = props _ '"' _ p.name _ '" : ' _ val;
-        props = props _ ', ';
-    END;
-    props = props.substr(0, props.length - 2);
+    props = props_plain | collapse;
 
     cmd = 'curl -i -X PUT -H \'Connection: close\' -H \'Content-Type: application/json\' -H \'Prefer: return=minimal\' --cert NGCP-API-client-certificate.pem --cacert ca-cert.pem \'https://example.org:1443/api/' _ id _ '/2\' --data-binary \'{ ' _ props _ ' }\'';
     INCLUDE helpers/api_command.tt cmd=cmd extended=1 level=level+3;
 
-    props = '';
-    FOREACH p IN col.fields;
-        NEXT IF p.types.0 == 'null';
-        IF p.types.0 == "Number";
-          val = 4;
-        ELSIF p.types.0 == "String";
-          val = '"test"';
-        ELSIF p.types.0 == "Boolean";
-          val = 'true';
-        ELSIF p.types.0 == "Array";
-          val = '[]';
-        ELSE;
-          val = '"missing"';
-        END;
-        props = props _ '   "' _ p.name _ '" : ' _ val;
-        props = props _ ',
-';
-    END;
-    props = props.substr(0, props.length - 2);
+    props = props_plain | indent(3);
     request =
 'PUT /api/' _ id _ '/2 HTTP/1.1
 Content-Type: application/json
 Prefer: return=minimal
 
 {
-' _ props _ '
-}';
+' _ props _ '}';
     response =
 'HTTP/1.1 204 No Content
 Preference-Applied: return=minimal';
