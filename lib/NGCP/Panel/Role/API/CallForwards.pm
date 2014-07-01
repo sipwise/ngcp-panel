@@ -110,7 +110,7 @@ sub update_item {
     my ($self, $c, $item, $old_resource, $resource, $form) = @_;
 
     delete $resource->{id};
-    my $billing_subscriber_id = $item->id; # note that this belongs to provisioning_voip_subscribers
+    my $billing_subscriber_id = $item->id;
     my $prov_subs = $item->provisioning_voip_subscriber;
     die "need provisioning_voip_subscriber" unless $prov_subs;
     my $prov_subscriber_id = $prov_subs->id;
@@ -247,6 +247,7 @@ sub _contents_from_cfm {
     my $dset_item = $cfm_item->destination_set;
     for my $time ($timeset_item ? $timeset_item->voip_cf_periods->all : () ) {
         push @times, {$time->get_inflated_columns};
+        delete @{$times[-1]}{'time_set_id', 'id'};
     }
     for my $dest ($dset_item ? $dset_item->voip_cf_destinations->all : () ) {
         my ($d, $duri) = NGCP::Panel::Utils::Subscriber::destination_to_field($dest->destination);
@@ -254,6 +255,7 @@ sub _contents_from_cfm {
         push @destinations, {$dest->get_inflated_columns,
                 destination => $d,
             };
+        delete @{$destinations[-1]}{'destination_set_id', 'id'};
     }
     return {times => \@times, destinations => \@destinations};
 }
