@@ -400,6 +400,25 @@ sub paginate_order_collection {
     return ($total_count, $item_rs);
 }
 
+sub collection_nav_links {
+    my ($self, $page, $rows, $total_count, $path, $params) = @_;
+
+    $params = { %{ $params } }; #copy
+    delete @{$params}{'page', 'rows'};
+    my $rest_params = join( '&', map {"$_=".$params->{$_}} keys %{$params});
+    $rest_params = $rest_params ? "&$rest_params" : "";
+
+    my @links = (Data::HAL::Link->new(relation => 'self', href => sprintf('/%s?page=%s&rows=%s%s', $path, $page, $rows, $rest_params)));
+
+    if(($total_count / $rows) > $page ) {
+        push @links, Data::HAL::Link->new(relation => 'next', href => sprintf('/%s?page=%d&rows=%d%s', $path, $page + 1, $rows, $rest_params));
+    }
+    if($page > 1) {
+        push @links, Data::HAL::Link->new(relation => 'prev', href => sprintf('/%s?page=%d&rows=%d%s', $path, $page - 1, $rows, $rest_params));
+    }
+    return @links;
+}
+
 sub apply_patch {
     my ($self, $c, $entity, $json) = @_;
     my $patch = JSON::decode_json($json);
