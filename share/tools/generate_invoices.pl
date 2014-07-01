@@ -38,7 +38,7 @@ if(-f $mfile) {
 print "using user '$dbuser' with pass '$dbpass'\n"
     if($debug);
 
-my $dbh = DBI->connect('dbi:mysql:billing;host=localhost', $dbuser, $dbpass)
+my $dbh = DBI->connect('dbi:mysql:billing;host=localhost', $dbuser, $dbpass, {mysql_enable_utf8 => 1})
     or die "failed to connect to billing DB\n";
 
 
@@ -209,6 +209,7 @@ sub generate_invoice_data{
         #NGCP::Panel::Utils::InvoiceTemplate::preprocess_svg(\$svg_default);
     }
     my $svg = $dbh->selectrow_array('select data from invoice_templates where  type = "svg" and reseller_id=?',undef,$provider_contract->{reseller_core_id});#is_active = 1 and
+    utf8::decode($svg);
     if($svg){
         #NGCP::Panel::Utils::InvoiceTemplate::preprocess_svg(\$svg);
     }else{
