@@ -277,7 +277,7 @@ sub get_content_ajax :Chained('base') :PathPart('editcontent/get/ajax') :Args(0)
     my ($self, $c) = @_;
     my $tmpl = $c->stash->{tmpl};
 
-    my $content = NGCP::Panel::Utils::InvoiceTemplate::svg_content($tmpl->data);
+    my $content = NGCP::Panel::Utils::InvoiceTemplate::svg_content($c, $tmpl->data);
 
     $c->response->content_type('text/html');
     $c->response->body($content);
