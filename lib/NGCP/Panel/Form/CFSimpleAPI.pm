@@ -20,7 +20,9 @@ has_field 'cfu' => (
     required => 0,
     element_attr => { 
         rel => ['tooltip'], 
-        title => ['Call Forward Unconditional'] 
+        title => ['Call Forward Unconditional, Contains the keys "destinations" and "times". "destinations" is an Array of Objects ' .
+                  'having a "destination", "priority" and "timeout" field. "times" is an Array of Objects having the fields ' .
+                  '"minute", "hour", "wday", "mday", "month", "year". "times" can be empty, then the CF is applied always.'],
     },
 );
 
@@ -31,7 +33,9 @@ has_field 'cfb' => (
     required => 0,
     element_attr => { 
         rel => ['tooltip'], 
-        title => ['Call Forward Busy'] 
+        title => ['Call Forward Busy, Contains the keys "destinations" and "times". "destinations" is an Array of Objects ' .
+                  'having a "destination", "priority" and "timeout" field. "times" is an Array of Objects having the fields ' .
+                  '"minute", "hour", "wday", "mday", "month", "year". "times" can be empty, then the CF is applied always.'],
     },
 );
 
@@ -42,7 +46,9 @@ has_field 'cft' => (
     required => 0,
     element_attr => { 
         rel => ['tooltip'], 
-        title => ['Call Forward Timeout'] 
+        title => ['Call Forward Timeout, Contains the keys "destinations" and "times". "destinations" is an Array of Objects ' .
+                  'having a "destination", "priority" and "timeout" field. "times" is an Array of Objects having the fields ' .
+                  '"minute", "hour", "wday", "mday", "month", "year". "times" can be empty, then the CF is applied always.'],
     },
 );
 
@@ -53,7 +59,9 @@ has_field 'cfna' => (
     required => 0,
     element_attr => { 
         rel => ['tooltip'], 
-        title => ['Call Forward Unavailable'] 
+        title => ['Call Forward Unavailable, Contains the keys "destinations" and "times". "destinations" is an Array of Objects ' .
+                  'having a "destination", "priority" and "timeout" field. "times" is an Array of Objects having the fields ' .
+                  '"minute", "hour", "wday", "mday", "month", "year". "times" can be empty, then the CF is applied always.'],
     },
 );
 
