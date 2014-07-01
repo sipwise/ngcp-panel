@@ -192,7 +192,7 @@ my @allcustomers = ();
     ok($err->{message} =~ /field='max_subscribers'/, "check error message in body");
 
     # iterate over customers collection to check next/prev links and status
-    my $nexturi = $uri.'/api/customers/?page=1&rows=5';
+    my $nexturi = $uri.'/api/customers/?page=1&rows=5&status=active';
     do {
         $res = $ua->get($nexturi);
         is($res->code, 200, "fetch contacts page");
@@ -408,18 +408,6 @@ my @allcustomers = ();
         $pc = JSON::from_json($res->decoded_content);
         is($pc->{status}, "terminated", "check termination status of customer");
     }
-
-    # check if we can still get the terminated customer
-    $req = HTTP::Request->new('GET', $uri.'/'.$pc->{_links}->{self}->{href});
-    $res = $ua->request($req);
-    is($res->code, 404, "check fetching of terminated customer");
-
-    # check if deletion of contact is now ok
-    # TODO: are we supposed to be able to delete a contact for a terminated
-    # customer? there are still DB contstraints in the way!
-    #$req = HTTP::Request->new('DELETE', $uri.'/'.$custcontact->{_links}->{self}->{href});
-    #$res = $ua->request($req);
-    #is($res->code, 204, "check deletion of unused contact");
 }
 
 done_testing;
