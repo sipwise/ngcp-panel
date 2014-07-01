@@ -11,14 +11,9 @@ use Email::MIME;
 use Email::Sender::Simple qw(sendmail);
 use Email::Sender::Transport::SMTP;
 use Template;
-#use IO::All;
-
-#apt-get install libemail-send-perl
-#apt-get install libemail-sender-perl
-#apt-get install libtest-mockobject-perl
-
-#apt-get install libnet-smtp-ssl-perl
-#apt-get install libio-all-perl
+use Geography::Countries qw/country/;
+use Pod::Usage;
+use Log::Log4perl;
 
 use Sipwise::Base;
 
@@ -28,37 +23,53 @@ use NGCP::Panel::Utils::Contract;
 use NGCP::Panel::Utils::InvoiceTemplate;
 use NGCP::Panel::Utils::Invoice;
 use NGCP::Panel::Utils::Email;
-#use NGCP::Panel::View::SVG;
 
-use Geography::Countries qw/country/;
 
-my $debug = 0;
+Log::Log4perl::init('/etc/ngcp-ossbss/logging.conf');
+my $logger = Log::Log4perl->get_logger('NGCP::Panel');
 
-my ($dbuser, $dbpass);
-my $mfile = '/etc/mysql/sipwise.cnf';
-if(-f $mfile) {
-    open my $fh, "<", $mfile
-        or die "failed to open '$mfile': $!\n";
-    $_ = <$fh>; chomp;
-    s/^SIPWISE_DB_PASSWORD='(.+)'$/$1/;
-    $dbuser = 'sipwise'; $dbpass = $_;
-} else {
-    $dbuser = 'root';
-    $dbpass = '';
-}
-print "using user '$dbuser' with pass '$dbpass'\n"
-    if($debug);
 
-my $dbh = DBI->connect('dbi:mysql:billing;host=localhost', $dbuser, $dbpass, {mysql_enable_utf8 => 1})
+my $dbh;
+{
+    my ($dbuser, $dbpass);
+    my $mfile = '/etc/mysql/sipwise.cnf';
+    if(-f $mfile) {
+        open my $fh, "<", $mfile
+            or die "failed to open '$mfile': $!\n";
+        $_ = <$fh>; chomp;
+        s/^SIPWISE_DB_PASSWORD='(.+)'$/$1/;
+        $dbuser = 'sipwise'; $dbpass = $_;
+    } else {
+        $dbuser = 'root';
+        $dbpass = '';
+    }
+    $dbh = DBI->connect('dbi:mysql:billing;host=localhost', $dbuser, $dbpass)
     or die "failed to connect to billing DB\n";
+}
+
 
 
 
 my $opt = {};
-Getopt::Long::GetOptions($opt, 'reseller_id:i@', 'client_contact_id:i@', 'client_contract_id:i@', 'stime:s', 'etime:s', 'send!','sendonly!','resend','regenerate!','prevmonth','help|?')
-    or die 'could not process command-line options';
-print Dumper $opt;
-
+Getopt::Long::GetOptions($opt, 
+    'reseller_id:i@', 
+    'client_contact_id:i@', 
+    'client_contract_id:i@', 
+    'stime:s', 
+    'etime:s', 
+    'prevmonth',
+    'sendonly',
+    'send',
+    'resend',
+    'regenerate',
+    'allow_terminated',
+    'help|?',
+    'man'
+) or pod2usage(2);
+$logger->debug( Dumper $opt );
+pod2usage(1) if $opt->{help};
+pod2usage(-exitval => 0, -verbose => 2) if $opt->{man};
+    
 my ($stime,$etime);
 if($opt->{prevmonth}){
     $stime = NGCP::Panel::Utils::DateTime::current_local()->truncate( to => 'month' )->subtract(months => 1);
@@ -75,8 +86,8 @@ if( $opt->{client_contract_id} ){
     $opt->{reseller_id} = [$dbh->selectrow_array('select distinct contacts.reseller_id from contracts inner join contacts on contracts.contact_id=contacts.id '.ify(' where contracts.id', @{$opt->{client_contract_id}}),  undef, @{$opt->{client_contract_id}} )];
     $opt->{client_contact_id} = [$dbh->selectrow_array('select distinct contracts.contact_id from contracts '.ify(' where contracts.id', @{$opt->{client_contract_id}}),  undef, @{$opt->{client_contract_id}} )];
 }
-print Dumper $opt;
-print "stime=$stime; etime=$etime;\n";
+$logger->debug( Dumper $opt );
+$logger->debug( "stime=$stime; etime=$etime;\n" );
 process_invoices();
 
 
@@ -86,27 +97,27 @@ sub process_invoices{
 
     foreach my $provider_contract( @{ get_providers_contracts() } ){
         
-        print "reseller_id=".$provider_contract->{reseller_core_id}.";\n";
+        $logger->debug( "reseller_id=".$provider_contract->{reseller_core_id}.";\n" );
         
         my $provider_contact = get_provider_contact($provider_contract);
 
         foreach my $client_contact (@{ get_provider_clients_contacts($provider_contract) } ){
 
-            print "reseller_id=".$provider_contract->{reseller_core_id}.";contact_id=".$client_contact->{id}.";\n";
+            $logger->debug( "reseller_id=".$provider_contract->{reseller_core_id}.";contact_id=".$client_contact->{id}.";\n" );
             
             
             foreach my $client_contract (@{ get_client_contracts($client_contact) }){
                     
                 $invoices->{$client_contract->{id}} ||= [];
                 if(!$opt->{sendonly}){
-                    print "reseller_id=".$provider_contract->{reseller_core_id}.";contact_id=".$client_contact->{id}.";contract_id=".$client_contract->{id}.";\n";
+                    $logger->debug( "reseller_id=".$provider_contract->{reseller_core_id}.";contact_id=".$client_contact->{id}.";contract_id=".$client_contract->{id}.";\n");
 
                     if( my $billing_profile = get_billing_profile($client_contract, $stime, $etime) ){
                         if(my $invoice = generate_invoice_data($provider_contract,$provider_contact,$client_contract,$client_contact,$billing_profile, $stime, $etime)){
                             push @{$invoices->{$client_contract->{id}}}, $invoice;
                         }
                     }else{#if billing profile
-                        print "No billing profile;\n"
+                        $logger->debug( "No billing profile;\n");
                     }
                 }else{
                     $invoices->{$client_contract->{id}} = $dbh->selectall_arrayref('select invoices.* from invoices 
@@ -120,7 +131,7 @@ sub process_invoices{
                     ),  { Slice => {} }, @{$opt->{client_contract_id}}, v2a($client_contract->{id}), v2a($stime->ymd),v2a($etime->ymd) );
                 }
                 if($opt->{send} || $opt->{sendonly}){
-                    my $email_template = get_email_template($provider_contract);
+                    my $email_template = get_email_template($provider_contract,$client_contract);
                     email($email_template, $provider_contact, $client_contact, $invoices->{$client_contract->{id}} );
                 }
             }#foreach client contract
@@ -147,20 +158,25 @@ sub get_provider_clients_contacts{
 }
 sub get_client_contracts{
     my($client_contact) = @_;
-    return $dbh->selectall_arrayref('select contracts.* from contracts where contracts.contact_id=? '.ify(' and contracts.id', @{$opt->{client_contract_id}}), { Slice => {} }, $client_contact->{id}, @{$opt->{client_contract_id}} );
+    return $dbh->selectall_arrayref('select contracts.* from contracts where contracts.contact_id=? '
+        .( ( !$opt->{allow_terminated} ) ? ' and contracts.status != "terminated" ':'' )
+        .ify(' and contracts.id ', @{$opt->{client_contract_id}}), 
+        { Slice => {} }, 
+        $client_contact->{id}, @{$opt->{client_contract_id}} );
 }
 sub get_billing_profile{
     my($client_contract, $stime, $etime) = @_;
+    #don't allow auto-generation for terminated contracts
     $dbh->selectrow_hashref('select distinct billing_profiles.* 
         from billing_mappings
         inner join billing_profiles on billing_mappings.billing_profile_id=billing_profiles.id
         inner join contracts on contracts.id=billing_mappings.contract_id
         inner join products on billing_mappings.product_id=products.id and products.class in("sipaccount","pbxaccount")
         where 
-            contracts.status != "terminated"
-            and contracts.id=?
-            and (billing_mappings.start_date <= ? OR billing_mappings.start_date IS NULL)
-            and (billing_mappings.end_date >= ? OR billing_mappings.end_date IS NULL)'
+            contracts.id = ? '
+            .( ( !$opt->{allow_terminated} ) ? ' and contracts.status != "terminated" ':'' )
+            .' and (billing_mappings.start_date <= ? OR billing_mappings.start_date IS NULL)
+               and (billing_mappings.end_date >= ? OR billing_mappings.end_date IS NULL)'
     , undef, $client_contract->{id}, $etime->epoch, $stime->epoch 
     );
 }
@@ -222,13 +238,13 @@ sub generate_invoice_data{
         #NGCP::Panel::Utils::InvoiceTemplate::preprocess_svg(\$svg);
     }else{
         $svg = $svg_default;
-        print "No saved active template - no invoice;\n";
+        $logger->debug( "No saved active template - no invoice;\n");
         return;
     }
 
     my ($contract_balance,$invoice)=({},{});
     ($contract_balance,$invoice) = get_contract_balance($client_contract,$billing_profile,$contract_balance,$invoice,$stime,$etime);
-    #print Dumper $contract_balance;
+    #$logger->debug( Dumper $contract_balance );
     
     $client_contact->{country} = country($client_contact->{country} || '');
     $provider_contact->{country} = country($provider_contact->{country} || '');
@@ -266,7 +282,7 @@ sub generate_invoice_data{
     #for default template
     $out =~s/^<root>|<\/root>$//;
     NGCP::Panel::Utils::InvoiceTemplate::svg_pdf(undef, \$out, \$pdf);
-    print "generated data for invoice.id=".$invoice->{id}."; invoice.serial=".$invoice->{serial}.";\n";
+    $logger->debug( "generated data for invoice.id=".$invoice->{id}."; invoice.serial=".$invoice->{serial}.";\n" );
     $invoice->{data} = $pdf;
     #set sent_date to null after each data regeneration
     $dbh->do('update invoices set sent_date=?,data=?,amount_net=?,amount_vat=?,amount_total=? where id=?',undef,undef,@$invoice{qw/data amount_net amount_vat amount_total id/});    
@@ -283,10 +299,10 @@ sub get_contract_balance{
         $dbh->do('insert into contract_balances(contract_id,cash_balance,cash_balance_interval,free_time_balance,free_time_balance_interval,start,end,invoice_id)values(?,?,?,?,?,?,?,?)',undef,$client_contract->{id},@$contract_balance{qw/cash_balance cash_balance_interval free_time_balance free_time_balance_interval/},$stime->datetime, $etime->datetime,undef );
         $invoice = get_invoice(undef, $client_contract->{id},$stime, $etime);
         #my $contract_balance_id = $dbh->last_insert_id(undef,'billing','contract_balances','id');
-        #print "contract_balance_id=$contract_balance_id;\n";
+        #$logger->debug( "contract_balance_id=$contract_balance_id;\n");
         #$contract_balance = $dbh->selectrow_hashref('select * from contract_balances where id=?',undef,);  
         $contract_balance = $dbh->selectrow_hashref('select * from contract_balances where contract_id=? and date(start)=? and date(end)=?',undef,$client_contract->{id},$stime->ymd,$etime->ymd);
-        #print Dumper $contract_balance;
+        #$logger->debug( Dumper $contract_balance );
     }else{
         $invoice = get_invoice($contract_balance->{invoice_id},$client_contract->{id},$stime, $etime);
     }
@@ -327,15 +343,21 @@ sub get_invoice{
 }
 
 sub get_email_template{
-    my ($provider_contract) = @_;
+    my ($provider_contract,$client_contract) = @_;
     
+    #use memcache?
     state $templates;
     state $template_default;
     if(!$templates){
         $templates = $dbh->selectall_hashref('select * from email_templates where name = ?','reseller_id',undef,"invoice_email");
         $template_default = $dbh->selectrow_hashref('select * from email_templates where name = ?',undef,"invoice_default_email");
     }
-    my $res = ( $templates->{$provider_contract->{reseller_core_id}} or $template_default );
+    my $res = {};
+    if($client_contract->{invoice_email_template_id}){
+        $res = $dbh->selectrow_hashref('select * from email_templates where id = ?',undef,$client_contract->{invoice_email_template_id});
+    }else{
+        $res = ( $templates->{$provider_contract->{reseller_core_id}} or $template_default );
+    }
     return $res;
 }
 
@@ -343,13 +365,17 @@ sub email{
 #todo: repeat my old function based on templates and store into utils
     my($email_template,$provider_contact,$client_contact,$client_invoices,$transport_in) = @_;
     
-    #print Dumper $client_invoices;
+    #$logger->debug(Dumper $client_invoices);
     my @invoice_ids = map {$_->{id}} @$client_invoices;
 
     $provider_contact->{id} //= '';
     $client_contact->{id} //= '';
     $client_contact->{email} //= '';
-    print "send email for: provider_contact_id=".$provider_contact->{id}.";client_contact_id=".$client_contact->{id}."; client_contact->email=".$client_contact->{email}."; invoice_ids=".join(",",@invoice_ids).";\n";
+    $logger->debug("send email for: provider_contact_id=".$provider_contact->{id}.";client_contact_id=".$client_contact->{id}."; client_contact->email=".$client_contact->{email}."; invoice_ids=".join(",",@invoice_ids).";\n");
+    
+    #one-by-one
+    $client_invoices = [$client_invoices->[0]];
+    @invoice_ids = map {$_->{id}} @$client_invoices;
     
     if(@$client_invoices < 1 ){
         return;
@@ -374,14 +400,16 @@ sub email{
         foreach (qw/period_start period_end/){
             $invoice->{$_.'_obj'} = NGCP::Panel::Utils::DateTime::from_string($invoice->{$_}) unless $invoice->{$_.'_obj'};
         }
-
+        foreach (qw/month year/){
+            $invoice->{$_} = $invoice->{period_start_obj}->$_ unless $invoice->{$_};
+        }
         
         my $tmpl_processed = NGCP::Panel::Utils::Email::process_template(undef,$email_template,{
             provider => $provider_contact,
             client   => $client_contact,
             invoice  => $invoice,
         });
-        #print Dumper $tmpl_processed;
+        #$logger->debug(Dumper $tmpl_processed);
         my $email = Email::MIME->create(
             header => [
                 From    => $tmpl_processed->{from_email} || $provider_contact->{email},
@@ -404,7 +432,7 @@ sub email{
         );
         #sendmail($email, { transport => $transport });
         sendmail($email);
-        print "Error sending email: $@" if $@;
+        $logger->error("Error sending email: $@") if $@;
         $dbh->do('update invoices set sent_date=now() where '.ify( ' id ',  @invoice_ids ), undef, @invoice_ids);
     }#we have correct "To"
 }
@@ -427,7 +455,92 @@ sub v2a{
 }
 
 
+ __END__
 
+=head1 generate_invoices.pl
+
+Script to generate invoices and/or send them via email to customers.
+location: /usr/share/ngcp-panel/tools/generate_invoices.pl
+
+=head1 OPTIONS
+
+=item --reseller_id=ID1[,IDn]        
+
+Generate invoices only for specified resellers customers
+
+=item --client_contact_id=ID1[,IDn]  
+
+Generate invoices only for customers, defined by their contact IDs           
+
+=item --client_contract_id=ID1[,IDn] 
+
+Generate invoices only for customers, defined by their contract IDs          
+
+=item --prevmonth             
+       
+Generate invoices for calls within period of previous month.         
+
+=item --stime="YYYY-mm-DD HH:MM:SS"  
+
+Generate invoices for calls within period, started from option value. Call start_time will be bigger then option value. Default is start second of current month.         
+
+=item --etime="YYYY-mm-DD HH:MM:SS"  
+
+Generate invoices for calls within period, ended by option value. Call start_time will be less then option value. Default is last second of current month, or last second of month period, started from stime value.         
+
+=item --send                         
+
+Invoices will be sent to customers emails just after generation. Default is false.         
+
+=item --sendonly                     
+
+Makes to send invoices, which weren't sent yet, to customers. Other options: resellers, customers, period specification will be considered. Should be used to send invoices to customers monthly, after generation. Default is false.      
+
+=item --allow_terminated                     
+
+Generates invoices for terminated contracts too. 
+         
+=head1 SAMPLES
+
+=item To generate invoices for current month:
+
+perl /usr/share/ngcp-panel/tools/generate_invoice.pl
+
+=item To generate invoices for previous month:
+
+perl /usr/share/ngcp-panel/tools/generate_invoice.pl --prevmonth
+
+Crontab example:
+#m h d M dw
+5 5 1 * * perl /usr/share/ngcp-panel-tools/generate_invoice.pl --prevmonth 2>&1 >/dev/null
+
+=item To send invoices which weren't sent yet
+
+To get invoices, which weren't sent yet, period value will be considered too. It means that started from cron to send invoices generated for previous month, script should get "--prevmonth" option.
+
+perl /usr/share/ngcp-panel/tools/generate_invoice.pl --sendonly --prevmonth
+
+Crontab example:
+#m h d M dw
+5 */2 * * * perl /usr/share/ngcp-panel-tools/generate_invoice.pl --sendonly --prevmonth 2>&1 >/dev/null
+
+=over 8
+
+=item B<-help>
+
+Prints a brief help message and exits.
+
+=item B<-man>
+
+Prints the manual page and exits.
+
+=back
+
+=head1 DESCRIPTION
+
+B<generate_invoices.pl> Script to generate invoices and/or send them via email to customers..
+
+=cut
 
 
 
