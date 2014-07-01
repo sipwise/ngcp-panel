@@ -10,7 +10,7 @@ sub svg_pdf {
     my ($c,$svg_ref,$pdf_ref) = @_;
     my $svg = $$svg_ref;
 
-    my $dir = File::Temp->newdir(undef, CLEANUP => 0);
+    my $dir = File::Temp->newdir(undef, CLEANUP => 1);
     my $tempdir = $dir->dirname;
     my $pagenum = 1;
     my @pagefiles;
