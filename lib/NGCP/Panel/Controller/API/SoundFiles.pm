@@ -65,7 +65,7 @@ sub auto :Private {
     my ($self, $c) = @_;
 
     $self->set_body($c);
-    $self->log_request($c);
+    #$self->log_request($c);
 }
 
 sub GET :Allow {
