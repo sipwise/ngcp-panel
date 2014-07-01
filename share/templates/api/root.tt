@@ -55,7 +55,7 @@
         { level = 2,    id = 'relations',     title = 'Resources',                                      },
     ];
     FOREACH col IN collections.keys.sort;
-        chapters.push({ level = 3, id = col, title = collections.$col.name, uri = '/api/' _ col _ '/' });
+        chapters.push({ level = 3, id = col, title = collections.$col.name, uri = collections.$col.uri });
     END;
     chapters.push({ level = 2,    id = 'definitions',   title = 'Definitions' });
 -%]

@@ -30,6 +30,19 @@ class_has 'query_params' => (
     ]},
 );
 
+class_has 'documentation_sample' => (
+    is => 'ro',
+    default => sub { {
+        cfb => [{
+            "destinationset" => "quickset_cfb",
+            "timeset" => undef,
+        }],
+        cfna => [],
+        cft => [],
+        cft_ringtimeout => "200",
+        cfu => [],
+    } },
+);
 
 with 'NGCP::Panel::Role::API::CFMappings';
 
