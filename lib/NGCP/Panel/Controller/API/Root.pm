@@ -204,6 +204,9 @@ sub field_to_json : Private {
         when(/\+NGCP::Panel::Field::E164/) {
             return "Object";
         }
+        when(/Compound/) {
+            return "Object";
+        }
         when(/\+NGCP::Panel::Field::AliasNumber/) {
             return "Array";
         }

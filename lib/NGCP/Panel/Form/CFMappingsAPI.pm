@@ -20,7 +20,8 @@ has_field 'cfu' => (
     required => 0,
     element_attr => { 
         rel => ['tooltip'], 
-        title => ['Call Forward Unconditional'] 
+        title => ['Call Forward Unconditional, Number of Objects, each containing the keys, "destinationset" and ' .
+                  '"timeset". The values must be the name of a destination/time set which belongs to the same subscriber.'],
     },
 );
 
@@ -31,7 +32,8 @@ has_field 'cfb' => (
     required => 0,
     element_attr => { 
         rel => ['tooltip'], 
-        title => ['Call Forward Busy'] 
+        title => ['Call Forward Busy, Number of Objects, each containing the keys, "destinationset" and ' .
+                  '"timeset". The values must be the name of a destination/time set which belongs to the same subscriber.'],
     },
 );
 
@@ -42,7 +44,8 @@ has_field 'cft' => (
     required => 0,
     element_attr => { 
         rel => ['tooltip'], 
-        title => ['Call Forward Timeout'] 
+        title => ['Call Forward Timeout, Number of Objects, each containing the keys, "destinationset" and ' .
+                  '"timeset". The values must be the name of a destination/time set which belongs to the same subscriber.'],
     },
 );
 
@@ -53,7 +56,8 @@ has_field 'cfna' => (
     required => 0,
     element_attr => { 
         rel => ['tooltip'], 
-        title => ['Call Forward Unavailable'] 
+        title => ['Call Forward Unavailable, Number of Objects, each containing the keys, "destinationset" and ' .
+                  '"timeset". The values must be the name of a destination/time set which belongs to the same subscriber.'],
     },
 );
 
