@@ -359,7 +359,7 @@
     </div>
     [% END -%]
 
-    [% IF c.config.features.cloudpbx -%]
+    [% IF c.config.features.cloudpbx && billing_mapping.product.class == 'pbxaccount' -%]
     <div class="accordion-group">
         <div class="accordion-heading">
             <a class="accordion-toggle" data-toggle="collapse" data-parent="#preference_groups" href="#collapse_aa">[% c.loc('Auto Attendant Slots') %]</a>
