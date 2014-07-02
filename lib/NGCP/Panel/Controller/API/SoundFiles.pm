@@ -56,7 +56,7 @@ __PACKAGE__->config(
             Does => [qw(ACL CheckTrailingSlash RequireSSL)],
             Method => $_,
             Path => __PACKAGE__->dispatch_path,
-        } } @{ __PACKAGE__->allowed_methods }
+        } } @{ __PACKAGE__->allowed_methods },
     },
     action_roles => [qw(HTTPMethods)],
 );
@@ -66,6 +66,7 @@ sub auto :Private {
 
     $self->set_body($c);
     #$self->log_request($c);
+    return 1;
 }
 
 sub GET :Allow {
@@ -158,7 +159,7 @@ sub POST :Allow {
 
 
         my $set_rs = $c->model('DB')->resultset('voip_sound_sets')->search({ 
-            id => $resource->{set_id} 
+            id => $resource->{set_id},
         });
         if($c->user->roles eq "admin") {
         } elsif($c->user->roles eq "reseller") {
@@ -179,9 +180,9 @@ sub POST :Allow {
         my $handle;
         if($set->contract_id) {
             $handle_rs = $handle_rs->search({
-                'group.name' => { 'in' => ['pbx'] }
+                'group.name' => { 'in' => ['pbx'] },
             },{
-                join => 'group'
+                join => 'group',
             });
             $handle = $handle_rs->first;
             unless($handle) {
@@ -191,9 +192,9 @@ sub POST :Allow {
             }
         } else {
             $handle_rs = $handle_rs->search({
-                'group.name' => { 'not in' => ['pbx'] }
+                'group.name' => { 'not in' => ['pbx'] },
             },{
-                join => 'group'
+                join => 'group',
             });
             $handle = $handle_rs->first;
             unless($handle) {
@@ -237,6 +238,7 @@ sub end : Private {
     my ($self, $c) = @_;
 
     $self->log_response($c);
+    return 1;
 }
 
 # vim: set tabstop=4 expandtab:
