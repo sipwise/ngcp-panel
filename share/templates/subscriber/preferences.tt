@@ -153,6 +153,10 @@
     </div>
     [% END -%]
 
+    [% IF 
+        ((c.user.roles == "subscriber" || c.user.roles == "subscriberadmin") && special_prefs.check && special_prefs.voice_mail.active) ||
+        ((c.user.roles == "subscriber" || c.user.roles == "subscriberadmin") && !special_prefs.check) ||
+        c.user.roles == "admin" || c.user.roles == "reseller" -%]
     <div class="accordion-group">
         <div class="accordion-heading">
             <a class="accordion-toggle" data-toggle="collapse" data-parent="#preference_groups" href="#collapse_vm">[% c.loc('Voicemail and Voicebox') %]</a>
@@ -232,8 +236,13 @@
             </div>
         </div>
     </div>
+    [% END -%]
 
-    [% IF c.config.features.faxserver -%]
+    [% IF c.config.features.faxserver  && (
+        ((c.user.roles == "subscriber" || c.user.roles == "subscriberadmin") && special_prefs.check && special_prefs.fax_server.active) ||
+        ((c.user.roles == "subscriber" || c.user.roles == "subscriberadmin") && !special_prefs.check) ||
+        c.user.roles == "admin" || c.user.roles == "reseller"
+    ) -%]
     <div class="accordion-group">
         <div class="accordion-heading">
             <a class="accordion-toggle" data-toggle="collapse" data-parent="#preference_groups" href="#collapse_fax">[% c.loc('Fax2Mail and Sendfax') %]</a>
@@ -359,7 +368,11 @@
     </div>
     [% END -%]
 
-    [% IF c.config.features.cloudpbx -%]
+    [% IF c.config.features.cloudpbx && (
+        ((c.user.roles == "subscriber" || c.user.roles == "subscriberadmin") && special_prefs.check && special_prefs.auto_attendant.active) ||
+        ((c.user.roles == "subscriber" || c.user.roles == "subscriberadmin") && !special_prefs.check) ||
+        c.user.roles == "admin" || c.user.roles == "reseller" 
+    ) -%]
     <div class="accordion-group">
         <div class="accordion-heading">
             <a class="accordion-toggle" data-toggle="collapse" data-parent="#preference_groups" href="#collapse_aa">[% c.loc('Auto Attendant Slots') %]</a>
@@ -392,6 +405,10 @@
     </div>
     [% END -%]
 
+    [% IF 
+        ((c.user.roles == "subscriber" || c.user.roles == "subscriberadmin") && special_prefs.check && special_prefs.speed_dial.active) ||
+        ((c.user.roles == "subscriber" || c.user.roles == "subscriberadmin") && !special_prefs.check) ||
+        c.user.roles == "admin" || c.user.roles == "reseller" -%]
     <div class="accordion-group">
         <div class="accordion-heading">
             <a class="accordion-toggle" data-toggle="collapse" data-parent="#preference_groups" href="#collapse_speed">[% c.loc('Speed Dial') %]</a>
@@ -420,7 +437,12 @@
             </div>
         </div>
     </div>
+    [% END -%]
 
+    [% IF 
+        ((c.user.roles == "subscriber" || c.user.roles == "subscriberadmin") && special_prefs.check && special_prefs.reminder.active) ||
+        ((c.user.roles == "subscriber" || c.user.roles == "subscriberadmin") && !special_prefs.check) ||
+        c.user.roles == "admin" || c.user.roles == "reseller" -%]
     <div class="accordion-group">
         <div class="accordion-heading">
             <a class="accordion-toggle" data-toggle="collapse" data-parent="#preference_groups" href="#collapse_rm">[% c.loc('Reminder') %]</a>
@@ -462,6 +484,7 @@
             </div>
         </div>
     </div>
+    [% END -%]
 
 [% UNLESS c.user.roles == 'subscriber' || c.user.roles == 'subscriberadmin' -%]
     <div class="accordion-group">

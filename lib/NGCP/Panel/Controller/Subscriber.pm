@@ -706,19 +706,24 @@ sub preferences :Chained('base') :PathPart('preferences') :Args(0) {
         $c->stash->{pref_groups} = \@newprefgroups;
 
         my $special_prefs = { check => 1 };
-        foreach my $cf(qw/cfu cft cfna cfb/) {
-            my $cf_preference = $c->model('DB')->resultset('voip_preferences')->find({
-                attribute => $cf,
+        foreach my $pref(qw/cfu cft cfna cfb 
+                            speed_dial reminder auto_attendant 
+                            voice_mail fax_server/) {
+            my $preference = $c->model('DB')->resultset('voip_preferences')->find({
+                attribute => $pref,
             });
-            next unless $cf_preference;
-            my $pref_id = $cf_preference->id;
-            if(grep { /^$pref_id$/ } @attribute_ids) {
+            next unless $preference;
+            my $pref_id = $preference->id;
+            if($pref =~ /^cf/ && $pref_id ~~ [@attribute_ids]) {
                 $special_prefs->{callforward}->{active} = 1;
-                $special_prefs->{callforward}->{$cf} = 1;
+                $special_prefs->{callforward}->{$pref} = 1;
+            } elsif($pref_id ~~ [@attribute_ids]) {
+                $special_prefs->{$pref}->{active} = 1;
             }
         }
-
         $c->stash->{special_prefs} = $special_prefs;
+
+
 
     }
 }
