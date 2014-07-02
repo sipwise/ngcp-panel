@@ -15,6 +15,8 @@ sub dispatch {
 	my ($self, $c, $target, $all, $sync, $body) = @_;
 
     my $schema = $self->schema;
+    $c->log->info("dispatching to target $target, all=$all, sync=$sync");
+    $c->log->debug("dispatching body $body");
 
 	my $hosts;
 	if ($target =~ /^%TG%/) {

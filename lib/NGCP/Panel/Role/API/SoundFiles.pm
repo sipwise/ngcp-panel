@@ -14,6 +14,7 @@ use HTTP::Status qw(:constants);
 use File::Temp qw(tempfile);
 use NGCP::Panel::Form::Sound::FileAPI;
 use NGCP::Panel::Utils::Sounds;
+use NGCP::Panel::Utils::Sems;
 
 sub transcode_data {
     my ($self, $c, $from_codec, $resource) = @_;
@@ -173,6 +174,16 @@ sub update_item {
         }
     }
     $resource->{handle_id} = $handle->id;
+
+    given($handle->group->name) {
+        when([qw/calling_card/]) {
+            NGCP::Panel::Utils::Sems::clear_audio_cache($c, "appserver", $set->id, $handle->name);
+        }
+        when([qw/pbx music_on_hold/]) {
+            my $service = $set->contract_id ? "pbx" : "appserver";
+            NGCP::Panel::Utils::Sems::clear_audio_cache($c, $service, $set->id, $handle->name);
+        }
+    }
 
     if($resource->{handle} eq 'music_on_hold' && !$set->contract_id) {
         $resource->{codec} = 'PCMA';
