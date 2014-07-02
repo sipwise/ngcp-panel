@@ -242,7 +242,6 @@ my @allcustomers = ();
             }
             foreach my $c(@{ $collection->{_embedded}->{'ngcp:customers'} }) {
                 ok($c->{type} eq "sipaccount" || $c->{type} eq "pbxaccount", "check for correct customer contract type");
-                ok($c->{status} ne "terminated", "check if we don't have terminated customers in response");
                 ok(exists $c->{_links}->{'ngcp:customercontacts'}, "check presence of ngcp:customercontacts relation");
                 ok(exists $c->{_links}->{'ngcp:billingprofiles'}, "check presence of ngcp:billingprofiles relation");
                 ok(exists $c->{_links}->{'ngcp:contractbalances'}, "check presence of ngcp:contractbalances relation");
@@ -408,18 +407,6 @@ my @allcustomers = ();
         $pc = JSON::from_json($res->decoded_content);
         is($pc->{status}, "terminated", "check termination status of customer");
     }
-
-    # check if we can still get the terminated customer
-    $req = HTTP::Request->new('GET', $uri.'/'.$pc->{_links}->{self}->{href});
-    $res = $ua->request($req);
-    is($res->code, 404, "check fetching of terminated customer");
-
-    # check if deletion of contact is now ok
-    # TODO: are we supposed to be able to delete a contact for a terminated
-    # customer? there are still DB contstraints in the way!
-    #$req = HTTP::Request->new('DELETE', $uri.'/'.$custcontact->{_links}->{self}->{href});
-    #$res = $ua->request($req);
-    #is($res->code, 204, "check deletion of unused contact");
 }
 
 done_testing;
