@@ -2195,7 +2195,8 @@ sub edit_master :Chained('master') :PathPart('edit') :Args(0) :Does(ACL) :ACLDet
                 }
 
                 my @old_groups = $prov_subscriber->voip_pbx_groups->get_column('group_id')->all;
-                my $new_group_ids = decode_json($form->value->{group_select});
+                my $new_group_ids = defined $form->value->{group_select} ? 
+                    decode_json($form->value->{group_select}) : [];
                 my @new_groups = ();
                 foreach my $group_id(@{ $new_group_ids }) {
                     # add subscriber to group if not there yet
