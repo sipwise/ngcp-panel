@@ -193,6 +193,8 @@ sub get_dummy_data {
         customer => {
             id => int(rand(10000))+10000,
             external_id => 'Resext1234567890',
+            vat_rate => 20,
+            add_vat => 0,
         },
         custcontact => {
             gender => 'male',
@@ -232,8 +234,6 @@ sub get_dummy_data {
             interval_unit => 'month',
             interval_count => 1,
             currency => 'EUR',
-            vat_rate => 20,
-            vat_included => 0,
         },
         invoice => {
             period_start => NGCP::Panel::Utils::DateTime::current_local()->truncate(to => 'month'),
