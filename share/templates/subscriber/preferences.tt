@@ -368,7 +368,7 @@
     </div>
     [% END -%]
 
-    [% IF c.config.features.cloudpbx && (
+    [% IF c.config.features.cloudpbx && billing_mapping.product.class == 'pbxaccount' && (
         ((c.user.roles == "subscriber" || c.user.roles == "subscriberadmin") && special_prefs.check && special_prefs.auto_attendant.active) ||
         ((c.user.roles == "subscriber" || c.user.roles == "subscriberadmin") && !special_prefs.check) ||
         c.user.roles == "admin" || c.user.roles == "reseller" 
