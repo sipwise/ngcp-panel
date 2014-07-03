@@ -693,7 +693,7 @@ sub terminate {
                 old_status => $prov_subscriber->profile_id, new_status => undef,
             );
         }
-        if(!$prov_subscriber->is_pbx_pilot) {
+        if($prov_subscriber && !$prov_subscriber->is_pbx_pilot) {
             my $pilot_rs = $schema->resultset('voip_subscribers')->search({
                 contract_id => $subscriber->contract_id,
                 status => { '!=' => 'terminated' },
