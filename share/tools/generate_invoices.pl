@@ -373,13 +373,14 @@ sub email{
     $client_contact->{email} //= '';
     $logger->debug("send email for: provider_contact_id=".$provider_contact->{id}.";client_contact_id=".$client_contact->{id}."; client_contact->email=".$client_contact->{email}."; invoice_ids=".join(",",@invoice_ids).";\n");
     
-    #one-by-one
-    $client_invoices = [$client_invoices->[0]];
-    @invoice_ids = map {$_->{id}} @$client_invoices;
     
     if(@$client_invoices < 1 ){
         return;
     }
+    
+    #one-by-one
+    $client_invoices = [$client_invoices->[0]];
+    @invoice_ids = map {$_->{id}} @$client_invoices;
 
     $client_contact->{email} //= '';
     if($client_contact->{email}){

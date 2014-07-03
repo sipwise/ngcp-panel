@@ -139,8 +139,9 @@ sub create :Chained('template_list') :PathPart('create') :Args() {
                     $form->params->{reseller_id} = $c->user->reseller_id;
                 }
                 delete $form->params->{reseller};
-
-                my $tmpl = $c->stash->{tmpl_rs}->create($form->params);
+                my $tmpl_params = $form->params;
+                $tmpl_params->{data} //= NGCP::Panel::Utils::InvoiceTemplate::svg_content($c, $tmpl_params->{data});
+                my $tmpl = $c->stash->{tmpl_rs}->create($tmpl_params);
 
                 # deactivate other templates if this one got active
                 if($tmpl->is_active) {
@@ -385,6 +386,8 @@ sub embed_image :Chained('/') :PathPart('invoicetemplate/embedimage') :Args(0) {
         $out->{image_content_base64} = encode_base64($out->{image_content}, '');
     }
     $c->log->debug('mime-type '.$out->{image_content_mimetype});
+    $out->{image_content_mimetype} =~s!image/x-([[:alnum:]]+)!image/$1!i;
+    $c->log->debug('mime-type for pdf generation:'.$out->{image_content_mimetype});
     $c->stash(out => $out);
     $c->stash(in => $in);
     $c->stash(template => 'invoice/template_editor_aux_embedimage.tt');
