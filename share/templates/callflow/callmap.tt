@@ -13,7 +13,9 @@
 <div class="row">
     <span class="pull-left" style="margin:0 5px 0 5px;">
         <a class="btn btn-primary btn-large" href="[% c.uri_for('/back') %]"><i class="icon-arrow-left"></i> [% c.loc('Back') %]</a>
+    [% IF canvas -%]
         <a class="btn btn-primary btn-large" href="[% c.uri_for_action('/callflow/get_pcap', c.req.captures) %]"><i class="icon-file"></i> [% c.loc('Download PCAP') %]</a>
+    [% END -%]
     </span>
 </div>
 [% back_created = 1 -%]
@@ -25,7 +27,7 @@
 </div>
 
 <div class="ngcp-separator"></div>
-
+[% IF canvas -%]
 <img src="[% c.uri_for_action('/callflow/get_png', c.req.captures) %]"
     width="[% canvas.width %]" height="[% canvas.height %]" usemap="#diamap" style="min-width:[% canvas.width %]px !important" />
 <map name="diamap">
@@ -33,5 +35,6 @@
         <area shape="rect" coords="[% area.coords %]" href="javascript:pkgPopup([% area.id %])" />
     [% END -%]
 </map>
+[% END -%]
 
 [% # vim: set tabstop=4 syntax=html expandtab: -%]

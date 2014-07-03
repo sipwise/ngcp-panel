@@ -1858,13 +1858,19 @@ sub load_preference_list :Private {
 sub master :Chained('base') :PathPart('details') :CaptureArgs(0) {
     my ($self, $c) = @_;
 
-    $c->stash->{calls_dt_columns} = NGCP::Panel::Utils::Datatables::set_columns($c, [
+    my $call_cols = [
         { name => "source_user", search => 1, title => $c->loc('Caller') },
         { name => "destination_user", search => 1, title => $c->loc('Callee') },
         { name => "call_status", search => 1, title => $c->loc('Status') },
         { name => "start_time", search_from_epoch => 1, search_to_epoch => 1, title => $c->loc('Start Time') },
         { name => "duration", search => 1, title => $c->loc('Duration') },
-    ]);
+    ];
+    push @{ $call_cols }, (
+        { name => "call_id", search => 1, title => $c->loc('Call-ID') },
+        { name => "source_customer_cost", search => 1, title => $c->loc('Source Cust Cost (cents)') },
+    ) if($c->user->roles eq "admin" || $c->user->roles eq "reseller");
+    $c->stash->{calls_dt_columns} = NGCP::Panel::Utils::Datatables::set_columns($c, $call_cols);
+
     $c->stash->{vm_dt_columns} = NGCP::Panel::Utils::Datatables::set_columns($c, [
         { name => "id", search => 1, title => $c->loc('#') },
         { name => "callerid", search => 1, title => $c->loc('Caller') },

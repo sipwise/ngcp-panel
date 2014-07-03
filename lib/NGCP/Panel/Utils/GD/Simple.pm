@@ -178,7 +178,7 @@ sub AUTOLOAD {
   my($pack,$func_name) = $AUTOLOAD=~/(.+)::([^:]+)$/;
   return if $func_name eq 'DESTROY';
 
-  if (ref $self && exists $self->{gd}) {
+  if (ref $self && defined $self->{gd}) {
     $self->{gd}->$func_name(@_);
   } else {
     my @result = $IMAGECLASS->$func_name(@_);

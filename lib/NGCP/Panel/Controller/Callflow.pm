@@ -5,6 +5,7 @@ BEGIN { extends 'Catalyst::Controller'; }
 
 use NGCP::Panel::Utils::Callflow;
 use NGCP::Panel::Utils::Navigation;
+use NGCP::Panel::Utils::Message;
 
 use HTML::Entities;
 
@@ -111,6 +112,7 @@ sub get_png :Chained('callflow_base') :PathPart('png') :Args(0) {
 sub get_callmap :Chained('callflow_base') :PathPart('callmap') :Args(0) {
     my ($self, $c) = @_;
     my $cid = $c->stash->{callid};
+    $c->stash->{template} = 'callflow/callmap.tt';
 
     my $calls_rs = $c->model('DB')->resultset('messages')->search({
         'me.call_id' => { -in => [ $cid, $cid.'_b2b-1', $cid.'_pbx-1' ] },
@@ -119,12 +121,13 @@ sub get_callmap :Chained('callflow_base') :PathPart('callmap') :Args(0) {
     });
 
     my $calls = [ $calls_rs->all ];
-    my $map = NGCP::Panel::Utils::Callflow::generate_callmap($c, $calls);
-
-    $c->stash(
-        canvas => $map,
-        template => 'callflow/callmap.tt',
-    );
+    unless(@{ $calls }) {
+         $c->log->error("No packets for call-id $cid found");
+         $c->stash(messages => [{type => 'error', text => $c->loc('No packets for this Call-ID found.')}])
+    } else {
+        my $map = NGCP::Panel::Utils::Callflow::generate_callmap($c, $calls);
+        $c->stash->{canvas} = $map;
+    }
 }
 
 sub get_packet :Chained('callflow_base') :PathPart('packet') :Args() {
