@@ -664,10 +664,13 @@ sub preferences :Chained('base') :PathPart('preferences') :Args(0) {
             ->search({ type => $type });
         $cfs->{$type} = [];
         foreach my $map($maps->all) {
-            my @dset = map { { $_->get_columns } } $map->destination_set->voip_cf_destinations->search({},
-                { order_by => { -asc => 'priority' }})->all;
-            foreach my $d(@dset) {
-                $d->{as_string} = NGCP::Panel::Utils::Subscriber::destination_as_string($d);
+            my @dset = ();
+            if($map->destination_set) {
+                @dset = map { { $_->get_columns } } $map->destination_set->voip_cf_destinations->search({},
+                    { order_by => { -asc => 'priority' }})->all;
+                foreach my $d(@dset) {
+                    $d->{as_string} = NGCP::Panel::Utils::Subscriber::destination_as_string($d);
+                }
             }
             my @tset = ();
             my $tset_name = undef;
