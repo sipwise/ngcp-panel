@@ -132,7 +132,6 @@ sub process_invoices{
                 }
                 if($opt->{send} || $opt->{sendonly}){
                     my $email_template = get_email_template($provider_contract,$client_contract);
-                    my $email_template = get_email_template($provider_contract,$client_contract);
                     email($email_template, $provider_contact, $client_contact, $invoices->{$client_contract->{id}} );
                 }
             }#foreach client contract
