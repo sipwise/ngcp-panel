@@ -352,6 +352,10 @@ sub email{
     if(@$client_invoices < 1 ){
         return;
     }
+    
+    #one-by-one
+    $client_invoices = [$client_invoices->[0]];
+    @invoice_ids = map {$_->{id}} @$client_invoices;
 
     $client_contact->{email} //= '';
     if($client_contact->{email}){
