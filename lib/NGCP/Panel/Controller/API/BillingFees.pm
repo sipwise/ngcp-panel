@@ -9,6 +9,7 @@ use HTTP::Status qw(:constants);
 use MooseX::ClassAttribute qw(class_has);
 use NGCP::Panel::Utils::DateTime;
 use Path::Tiny qw(path);
+use Text::CSV_XS;
 BEGIN { extends 'Catalyst::Controller::ActionRole'; }
 require Catalyst::ActionRole::ACL;
 require Catalyst::ActionRole::CheckTrailingSlash;
@@ -64,7 +65,10 @@ sub auto :Private {
     my ($self, $c) = @_;
 
     $self->set_body($c);
-    $self->log_request($c);
+    unless(defined $c->request->header('Content-Type') && 
+      $c->request->header('Content-Type') eq 'text/csv') {
+        $self->log_request($c);
+    }
 }
 
 sub GET :Allow {
@@ -141,35 +145,53 @@ sub POST :Allow {
     my $guard = $c->model('DB')->txn_scope_guard;
     {
         my $schema = $c->model('DB');
-        my $resource = $self->get_valid_post_data(
+        my $resource;
+        my $data= $self->get_valid_raw_post_data(
             c => $c, 
-            media_type => 'application/json',
+            media_type => [qw#application/json text/csv#],
         );
-        last unless $resource;
+        last unless $data;
+
+        if($c->request->header('Content-Type') eq 'text/csv') {
+            $resource = $c->req->query_params; 
+            $resource->{purge_existing} = JSON::Types::bool($resource->{purge_existing});
+        } else {
+            last unless $self->require_wellformed_json($c, 'application/json', $data);
+            $resource = JSON::from_json($data);
+            $data = undef;
+        }
 
         my $reseller_id;
         if($c->user->roles eq "admin") {
         } elsif($c->user->roles eq "reseller") {
             $reseller_id = $c->user->reseller_id;
-        } else {
-            $reseller_id = $c->user->contract->contact->reseller_id;
+        }
+        unless($resource->{billing_profile_id}) {
+            $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Missing parameter 'billing_profile_id'.");
+            last;
+        }
+        my $profile = $schema->resultset('billing_profiles')->find($resource->{billing_profile_id});
+        unless($profile) {
+            $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Invalid 'billing_profile_id'.");
+            last;
+        }
+        if($c->user->roles ne "admin" && $profile->reseller_id != $reseller_id) {
+            $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Invalid 'billing_profile_id'.");
+            last;
         }
 
-        my $form = $self->get_form($c);
-        my $billing_profile_id = $resource->{billing_profile_id} // undef;
+        unless($data) {
 
-        my $profile;
+            my $form = $self->get_form($c);
+            my $zone;
 
-        # in case of implicit zone declaration (name/detail instead of id),
-        # find or create the zone
-        if(!defined $resource->{billing_zone_id} &&
-           defined $resource->{billing_profile_id} &&
-           defined $resource->{billing_zone_zone} &&
-           defined $resource->{billing_zone_detail}) {
+            # in case of implicit zone declaration (name/detail instead of id),
+            # find or create the zone
+            if(!defined $resource->{billing_zone_id} &&
+               defined $resource->{billing_zone_zone} &&
+               defined $resource->{billing_zone_detail}) {
 
-            $profile = $schema->resultset('billing_profiles')->find($resource->{billing_profile_id});
-            if($profile) {
-                my $zone = $profile->billing_zones->find({
+                $zone = $profile->billing_zones->find({
                     zone => $resource->{billing_zone_zone},
                     detail => $resource->{billing_zone_detail},
                 });
@@ -180,46 +202,101 @@ sub POST :Allow {
                 $resource->{billing_zone_id} = $zone->id;
                 delete $resource->{billing_zone_zone};
                 delete $resource->{billing_zone_detail};
+            } elsif(defined $resource->{billing_zone_id}) {
+                $zone = $profile->billing_zones->find($resource->{billing_zone_id});
             }
-        }
+            unless($zone) {
+                $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Invalid 'billing_zone_id'.");
+                last;
+            }
 
-        $resource->{billing_zone_id} //= undef;
-        last unless $self->validate_form(
-            c => $c,
-            resource => $resource,
-            form => $form,
-        );
-        $resource->{billing_profile_id} = $billing_profile_id;
+            last unless $self->validate_form(
+                c => $c,
+                resource => $resource,
+                form => $form,
+            );
 
-        $profile //= $schema->resultset('billing_profiles')->find($resource->{billing_profile_id});
-        unless($profile) {
-            $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Invalid 'billing_profile_id'.");
+
+            my $fee;
+            try {
+                $fee = $profile->billing_fees->create($resource);
+            } catch($e) {
+                $c->log->error("failed to create billing fee: $e"); # TODO: user, message, trace, ...
+                $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "Failed to create billing fee.");
+                last;
+            }
+            $guard->commit;
+
+            $c->response->status(HTTP_CREATED);
+            $c->response->header(Location => sprintf('%s%d', $self->dispatch_path, $fee->id));
+            $c->response->body(q());
             last;
-        }
-        if($c->user->roles ne "admin" && $profile->reseller_id != $reseller_id) {
-            $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Invalid 'billing_profile_id'.");
-            last;
-        }
-        my $zone = $profile->billing_zones->find($resource->{billing_zone_id});
-        unless($zone) {
-            $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Invalid 'billing_zone_id'.");
-            last;
+        } else {
+            # csv bulk upload
+            my $csv = Text::CSV_XS->new({allow_whitespace => 1, binary => 1, keep_meta_info => 1});
+            my @cols = @{ $c->config->{fees_csv}->{element_order} };
+
+            if ($self->is_true($resource->{purge_existing})) {
+                $profile->billing_fees->delete;
+            }
+            my @fails = ();
+            my $linenum = 0;
+            my @fees = ();
+            my %zones = ();
+
+            try {
+                foreach my $line(split /\r?\n/, $data) {
+                    ++$linenum;
+                    chomp $line;
+                    next unless length $line;
+                    unless($csv->parse($line)) {
+                        push @fails, $linenum;
+                        next;
+                    }
+                    my $row = {};
+                    my @fields = $csv->fields();
+                    unless (scalar @fields == scalar @cols) {
+                        push @fails, $linenum;
+                        next;
+                    }
+                    
+                    for(my $i = 0; $i < @cols; ++$i) {
+                        $row->{$cols[$i]} = $fields[$i];
+                    }
+
+                    my $k = $row->{zone}.'__NGCP__'.$row->{zone_detail};
+                    unless(exists $zones{$k}) {
+                        my $zone = $profile->billing_zones->find_or_create({
+                                zone => $row->{zone},
+                                detail => $row->{zone_detail}
+                            });
+                        $zones{$k} = $zone->id;
+                    }
+                    $row->{billing_zone_id} = $zones{$k};
+                    delete $row->{zone};
+                    delete $row->{zone_detail};
+                    push @fees, $row;
+                }
+                $profile->billing_fees->populate(\@fees);
+
+                my $text = $c->loc('Billing Fee successfully uploaded');
+                if(@fails) {
+                    $text .= $c->loc(", but skipped the following line numbers: ") . (join ", ", @fails);
+                }
+                $c->log->info($text);
+                $guard->commit;
+
+                $c->response->status(HTTP_CREATED);
+                $c->response->body(q());
+
+            } catch($e) {
+                $c->log->error("failed to upload csv: $e");
+                $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "Internal Server Error");
+                last;
+            };
+
         }
 
-        my $fee;
-        try {
-            $fee = $profile->billing_fees->create($resource);
-        } catch($e) {
-            $c->log->error("failed to create billing fee: $e"); # TODO: user, message, trace, ...
-            $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "Failed to create billing fee.");
-            last;
-        }
-
-        $guard->commit;
-
-        $c->response->status(HTTP_CREATED);
-        $c->response->header(Location => sprintf('%s%d', $self->dispatch_path, $fee->id));
-        $c->response->body(q());
     }
     return;
 }
