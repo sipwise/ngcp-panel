@@ -181,7 +181,7 @@ sub POST :Allow {
         }
 
         unless($data) {
-
+            delete $resource->{purge_existing};
             my $form = $self->get_form($c);
             my $zone;
 

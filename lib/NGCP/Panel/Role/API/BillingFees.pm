@@ -87,6 +87,8 @@ sub fee_by_id {
 sub update_fee {
     my ($self, $c, $fee, $old_resource, $resource, $form) = @_;
 
+    delete $resource->{purge_existing};
+
     my $reseller_id;
     if($c->user->roles eq "admin") {
     } elsif($c->user->roles eq "reseller") {
