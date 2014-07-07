@@ -29,8 +29,8 @@ svgEditor.addExtension("server_opensave", {
 				return true;
 			}
 		}
-		var open_svg_action, import_svg_action, import_img_action,
-			open_svg_form, import_svg_form, import_img_form,
+		var open_svg_action, import_svg_action, import_img_action, reimport_img_action,
+			open_svg_form, import_svg_form, import_img_form, reimport_img_form,
 			save_svg_action = svgEditor.curConfig.extPath + 'filesave.php',
 			save_img_action = svgEditor.curConfig.extPath + 'filesave.php',
 			// Create upload target (hidden iframe)
@@ -114,6 +114,7 @@ svgEditor.addExtension("server_opensave", {
 		import_svg_action = svgEditor.curConfig.extPath + 'fileopen.php?type=import_svg';
 		//import_img_action = svgEditor.curConfig.extPath + 'fileopen.php?type=import_img';
 		import_img_action = '/invoicetemplate/embedimage?type=import_img';
+		reimport_img_action = '/invoicetemplate/embedimage?type=reimport_img';
 		
 		// Set up function for PHP uploader to use
 		svgEditor.processFile = function(str64, type) {
@@ -124,7 +125,7 @@ svgEditor.addExtension("server_opensave", {
 			}
 		
 			$('#dialog_box').hide();
-			if (type !== 'import_img') {
+			if (type !== 'import_img' && type !== 'reimport_img') {
 				xmlstr = svgedit.utilities.decode64(str64);
 			}
 			
@@ -140,6 +141,9 @@ svgEditor.addExtension("server_opensave", {
 					break;
 				case 'import_img':
 					svgCanvas.setGoodImage(str64);
+					break;
+				case 'reimport_img':
+					svgEditor.setImageURL(str64);
 					break;
 			}
 		};
@@ -158,6 +162,7 @@ svgEditor.addExtension("server_opensave", {
 
 		// Create image form
 		import_img_form = open_svg_form.clone().attr('action', import_img_action);
+		reimport_img_form = open_svg_form.clone().attr({'action': reimport_img_action,style: "visibility:hidden;width: 20px; height: 1px;"});
 		
 		// It appears necessary to rebuild this input every time a file is 
 		// selected so the same file can be picked and the change event can fire.
@@ -200,11 +205,13 @@ svgEditor.addExtension("server_opensave", {
 		rebuildInput(open_svg_form);
 		rebuildInput(import_svg_form);
 		rebuildInput(import_img_form);
+		rebuildInput(reimport_img_form);
 
 		// Add forms to buttons
 		$("#tool_open").show().prepend(open_svg_form);
 		$("#tool_import").show().prepend(import_svg_form);
 		$("#tool_image").prepend(import_img_form);
+		$("#change_image_url").prepend(reimport_img_form);
 	}
 });
 
