@@ -293,12 +293,13 @@ by creating the following file and adding by calls to svgEditor.setConfig -->
 		</label>
 	</div>
 	<div class="toolset">
-		<label id="tool_image_url">url:
+		<label id="tool_image_url" style="display:none;">url:
 			<input id="image_url" type="text" title="Change URL" size="35"/>
 		</label>
-		<label id="tool_change_image">
-			<button id="change_image_url" style="display:none;">Change Image</button>
-			<span id="url_notice" title="NOTE: This image cannot be embedded. It will depend on this path to be displayed"></span>
+		<label id="tool_change_image" style="border: solid 1px black;">Change Image
+			<!--button id="change_image_url" style="display:none;">Change Image</button-->
+			<div id="change_image_url"></div>
+			<!--span id="url_notice" title="NOTE: This image cannot be embedded. It will depend on this path to be displayed"></span-->
 		</label>
 	</div>
   </div>

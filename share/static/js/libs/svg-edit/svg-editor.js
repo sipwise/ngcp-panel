@@ -1144,27 +1144,114 @@ TO-DOS
 				}
 			};
 
-			var setImageURL = editor.setImageURL = function(url) {
+			var setImageURL = editor.setImageURL = function(url, useImageData) {
 				if (!url) {
 					url = defaultImageURL;
 				}
-				svgCanvas.setImageURL(url);
-				$('#image_url').val(url);
+                useImageData = 0;
+                var setImageUrlOrData = function(url){
+                    svgCanvas.setImageURL(url);
+                    $('#image_url').val(url);
 
-				if (url.indexOf('data:') === 0) {
-					// data URI found
-					$('#image_url').hide();
-					$('#change_image_url').show();
-				} else {
-					// regular URL
-					svgCanvas.embedImage(url, function(dataURI) {
-						// Couldn't embed, so show warning
-						$('#url_notice').toggle(!dataURI);
-						defaultImageURL = url;
-					});
-					$('#image_url').show();
-					$('#change_image_url').hide();
-				}
+                    if (url.indexOf('data:') === 0) {
+                        // data URI found
+                        $('#image_url').hide();
+                        $('#change_image_url').show();
+                    } else {
+                        // regular URL
+                        svgCanvas.embedImage(url, function(dataURI) {
+                            // Couldn't embed, so show warning
+                            $('#url_notice').toggle(!dataURI);
+                            defaultImageURL = url;
+                        });
+                        $('#image_url').show();
+                        $('#change_image_url').hide();
+                    }
+                };
+                //all solution ideas are from https://developer.mozilla.org/en-US/docs/Web/API/XMLHttpRequest/Sending_and_Receiving_Binary_Data
+                //It is more reliable not to store original link and get image content on stage od saving to DB or even generation, as backend and moreover generation script may doesn't have access to the image url (which can be  accessed using cookies and so on) 
+                if(useImageData){
+                    var loadBinary = function(url,callback) {
+                        var xmlHttpReq = false;
+                        //alert(q);
+
+                        if (window.XMLHttpRequest) {
+                            xmlHttpReq = new XMLHttpRequest();
+                        } else if (window.ActiveXObject) {
+                            xmlHttpReq = new ActiveXObject("Microsoft.XMLHTTP");
+                        }
+
+                        xmlHttpReq.open('GET', url, true);
+                        //XHR binary charset opt by Marcus Granado 2006 [http://mgran.blogspot.com]
+                        //this doesn't work - data are broken anyway
+                        //if(xmlHttpReq.overrideMimeType){
+                        //    xmlHttpReq.overrideMimeType('text\/plain; charset=x-user-defined');
+                        //}
+                        xmlHttpReq.responseType = "arraybuffer";
+                        
+                        if(callback){
+                            xmlHttpReq.onreadystatechange = function(){
+                                if (xmlHttpReq.readyState == 4) {
+                                    if(typeof callback == 'function'){
+                                        callback(xmlHttpReq);
+                                    }else{
+                                        eval(callback);
+                                    }
+                                }
+                            }
+                        }
+                        xmlHttpReq.send(null);
+                    };
+                    //two functions from https://developer.mozilla.org/en-US/docs/Web/JavaScript/Base64_encoding_and_decoding#Solution_.232_.E2.80.93_rewriting_atob()_and_btoa()_using_TypedArrays_and_UTF-8
+                    function uint6ToB64 (nUint6) {
+                        return nUint6 < 26 ?
+                            nUint6 + 65
+                        : nUint6 < 52 ?
+                            nUint6 + 71
+                        : nUint6 < 62 ?
+                            nUint6 - 4
+                        : nUint6 === 62 ?
+                            43
+                        : nUint6 === 63 ?
+                            47
+                        :
+                            65;
+                    };
+                    function base64EncArr (aBytes) {
+                        var nMod3 = 2, sB64Enc = "";
+                        for (var nLen = aBytes.length, nUint24 = 0, nIdx = 0; nIdx < nLen; nIdx++) {
+                            nMod3 = nIdx % 3;
+                            if (nIdx > 0 && (nIdx * 4 / 3) % 76 === 0) { sB64Enc += "\r\n"; }
+                            nUint24 |= aBytes[nIdx] << (16 >>> nMod3 & 24);
+                            if (nMod3 === 2 || aBytes.length - nIdx === 1) {
+                                sB64Enc += String.fromCharCode(uint6ToB64(nUint24 >>> 18 & 63), uint6ToB64(nUint24 >>> 12 & 63), uint6ToB64(nUint24 >>> 6 & 63), uint6ToB64(nUint24 & 63));
+                            nUint24 = 0;
+                            }
+                        }
+                        return sB64Enc.substr(0, sB64Enc.length - 2 + nMod3) + (nMod3 === 2 ? '' : nMod3 === 1 ? '=' : '==');
+                    };
+
+                    var imageDataCallback = function(request){
+                        var contentType = ''+request.getResponseHeader('Content-Type');
+                        contentType = contentType.replace(/image\/x\-/i,'image/');
+                        var content = '';
+                        //if(request.responseBody){//ie
+                        //    content = request.responseBody;
+                        //    url = 'data:'+contentType+';base64,'+svgedit.utilities.encode64(content);
+                        //}else if(request.response){
+                            content = request.response;
+                            var byteArray = new Uint8Array(content);
+                            url = 'data:'+contentType+';base64,'+base64EncArr(byteArray);
+                        //}else{
+                        //    content = request.responseText;
+                        //    url = 'data:'+contentType+';base64,'+svgedit.utilities.encode64(content);
+                        //}
+                        setImageUrlOrData(url);
+                    };
+                    loadBinary(url,imageDataCallback);
+                }else{
+                    setImageUrlOrData(url);
+                }                
 			};
 
 			function setBackground (color, url) {
@@ -1180,7 +1267,7 @@ TO-DOS
 				var curhref = svgCanvas.getHref(selectedElement);
 				curhref = curhref.indexOf('data:') === 0 ? '' : curhref;
 				$.prompt(uiStrings.notification.enterNewImgURL, curhref, function(url) {
-					if (url) {setImageURL(url);}
+					if (url) {setImageURL(url, 1);}//useImageData=1
 				});
 			}
 
@@ -2962,7 +3049,7 @@ TO-DOS
 			});
 
 			$('#image_url').change(function() {
-				setImageURL(this.value);
+				setImageURL(this.value, 1);//useImageData = 1
 			});
 
 			$('#link_url').change(function() {
@@ -3920,7 +4007,7 @@ TO-DOS
 				$.alert(this.title);
 			});
 
-			$('#change_image_url').click(promptImgURL);
+			//$('#change_image_url').click(promptImgURL);
 
 			// added these event handlers for all the push buttons so they
 			// behave more like buttons being pressed-in and not images
