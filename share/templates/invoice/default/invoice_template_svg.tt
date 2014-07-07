@@ -92,18 +92,18 @@
         <!--{ [% zonelist(fontfamily='Verdana', fontsize=8, startx=22, starty=179, offsety=5, miny=40, maxy=250, zones=zones.data, fields=[{name='zone',dx=0},{name='number',dx=78,anchor='end'},{name='duration',dx=35,timestamp2time=1,anchor='end'},{name='customercost',dx=55,money_cents=1,comma='.',anchor='end'}]) -%] }-->
 
         <!-- firsty-180 means the first y in the group is at 180mm; mandatory to automatically place the footer after the list -->
-        <g class="list-footer firsty-180 lasty-[% aux.lasty %]">
+        <!--{<g class="list-footer firsty-180 lasty-[% aux.lasty %]">}-->
             <line x1="22mm" y1="180mm" x2="190mm" y2="180mm" style="stroke:#000000;stroke-width:0.2mm;" />
             <text x="22mm" y="184mm" font-family="Verdana" font-size="8pt" font-weight="bold">Total</text>
             <text text-anchor="end" x="190mm" y="184mm" font-family="Verdana" font-size="8pt" font-weight="bold">[% zonefee %]</text>
             <line x1="22mm" y1="186mm" x2="190mm" y2="186mm" style="stroke:#000000;stroke-width:0.2mm;" />
-        </g>
+        <!--{</g>}-->
         <!--{[% aux.lasty = aux.lasty + 20 %]}-->
 
         <!--{ [% check_pagebreak(following_height=50, miny=50, maxy=250) %] }-->
 
         <!-- firsty-197 means the first y in the group is at 197mm; mandatory to automatically place the footer after the list -->
-        <g class="list-footer firsty-197 lasty-[% aux.lasty %]">
+        <!--{<g class="list-footer firsty-197 lasty-[% aux.lasty %]">}-->
             <text x="20mm" y="197mm" font-family="Verdana" font-size="8pt" font-weight="bold">Summary</text>
             <text text-anchor="end" x="190mm" y="197mm" font-family="Verdana" font-size="8pt" font-weight="bold">in [% cur %]</text>
             <line x1="22mm" y1="199mm" x2="190mm" y2="199mm" style="stroke:#000000;stroke-width:0.2mm;" />
@@ -120,7 +120,7 @@
             <text x="20mm" y="229mm" font-family="Verdana" font-size="8pt">from your account with IBAN [% rescontact.iban %] and BIC [% rescontact.bic %].</text>
             <text x="20mm" y="237mm" font-family="Verdana" font-size="8pt">With best regards,</text>
             <text x="20mm" y="241mm" font-family="Verdana" font-size="8pt">Your [% rescontact.company %] Service Team</text>
-        </g>
+        <!--{</g>}-->
 
     </g>
 
