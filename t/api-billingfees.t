@@ -120,7 +120,7 @@ my @allfees = ();
     is($res->code, 422, "create profile without billing_profile_id");
     my $err = JSON::from_json($res->decoded_content);
     is($err->{code}, "422", "check error code in body");
-    ok($err->{message} =~ /Invalid 'billing_profile_id'/, "check error message in body");
+    ok($err->{message} =~ /Missing parameter 'billing_profile_id'/, "check error message in body");
 
     # try to create fee with invalid billing_profile_id
     $req = HTTP::Request->new('POST', $uri.'/api/billingfees/');
@@ -166,7 +166,7 @@ my @allfees = ();
     is($res->code, 422, "create profile without billing_zone_id");
     $err = JSON::from_json($res->decoded_content);
     is($err->{code}, "422", "check error code in body");
-    ok($err->{message} =~ /field='billing_zone_id'/, "check error message in body");
+    ok($err->{message} =~ /Invalid 'billing_zone_id'/, "check error message in body");
 
     # try to create fee with invalid billing_zone_id
     $req = HTTP::Request->new('POST', $uri.'/api/billingfees/');
