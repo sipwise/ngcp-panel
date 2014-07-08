@@ -203,7 +203,7 @@
 
     UNLESS c.user.read_only;
         helper.dt_buttons = [
-            { name = c.loc('Edit'), uri = "/contract/'+full.id+'/edit", class = 'btn-small btn-primary', icon = 'icon-edit' },
+            { name = c.loc('Edit'), uri = "/customer/'+full.id+'/edit", class = 'btn-small btn-primary', icon = 'icon-edit' },
             { name = c.loc('Terminate'), uri = "/customer/'+full.id+'/terminate", class = 'btn-small btn-secondary', icon = 'icon-remove' },
             { name = c.loc('Details'), uri = "/customer/'+full.id+'/details", class = 'btn-small btn-tertiary', icon = 'icon-list' },
         ];
