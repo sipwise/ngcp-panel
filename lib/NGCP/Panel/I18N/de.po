@@ -153,14 +153,11 @@ msgid "%1 as %2"
 msgstr "%1 als %2"
 
 #. (subscriber_count,contract.max_subscribers,                                c.config.features.cloudpbx ? c.loc('(including PBX groups)
+#. (subscriber_count, contract.max_subscribers,                            c.config.features.cloudpbx ? c.loc('(including PBX groups)
 #: share/templates/customer/details.tt:168
+#: share/templates/customer/details.tt:220
 msgid "%1 of maximum %2 subscribers %3 created"
 msgstr ""
-
-#. (subscriber_count, contract.max_subscribers,                            c.config.features.cloudpbx ? c.loc('(including PBX groups)
-#: share/templates/customer/details.tt:220
-msgid "%1 of maximum %2 subscribers %3created"
-msgstr "%1 von maximal %2 Subscribern %3erstellt"
 
 #. (d.as_string, d.timeout)
 #: share/templates/subscriber/preferences.tt:592
@@ -3966,13 +3963,9 @@ msgstr "Max Subscriber"
 
 #. (contract.max_subscribers,                            c.config.features.cloudpbx ? c.loc('(including PBX groups)
 #: share/templates/customer/details.tt:176
+#: share/templates/customer/details.tt:228
 msgid "Maximum number of %1 subscribers %2 created"
 msgstr ""
-
-#. (contract.max_subscribers,                            c.config.features.cloudpbx ? c.loc('(including PBX groups)
-#: share/templates/customer/details.tt:228
-msgid "Maximum number of %1 subscribers %2created"
-msgstr "Maximale Anzahl von %1 Subscriber %2erstellt"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:73
 msgid ""
@@ -8074,6 +8067,12 @@ msgstr "whitelist"
 #: share/templates/subscriber/preferences.tt:334
 msgid "yes"
 msgstr "ja"
+
+#~ msgid "%1 of maximum %2 subscribers %3created"
+#~ msgstr "%1 von maximal %2 Subscribern %3erstellt"
+
+#~ msgid "Maximum number of %1 subscribers %2created"
+#~ msgstr "Maximale Anzahl von %1 Subscriber %2erstellt"
 
 #~ msgid ""
 #~ "Can't create a PBX group without having an administrative subscriber."
