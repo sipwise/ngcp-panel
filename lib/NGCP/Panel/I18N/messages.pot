@@ -81,13 +81,9 @@ msgid "%1 as %2"
 msgstr ""
 
 #. (subscriber_count,contract.max_subscribers,                                c.config.features.cloudpbx ? c.loc('(including PBX groups)
-#: share/templates/customer/details.tt:168
-msgid "%1 of maximum %2 subscribers %3 created"
-msgstr ""
-
 #. (subscriber_count, contract.max_subscribers,                            c.config.features.cloudpbx ? c.loc('(including PBX groups)
-#: share/templates/customer/details.tt:220
-msgid "%1 of maximum %2 subscribers %3created"
+#: share/templates/customer/details.tt:168 share/templates/customer/details.tt:220
+msgid "%1 of maximum %2 subscribers %3 created"
 msgstr ""
 
 #. (d.as_string, d.timeout)
@@ -3373,13 +3369,8 @@ msgid "Max Subscribers"
 msgstr ""
 
 #. (contract.max_subscribers,                            c.config.features.cloudpbx ? c.loc('(including PBX groups)
-#: share/templates/customer/details.tt:176
+#: share/templates/customer/details.tt:176 share/templates/customer/details.tt:228
 msgid "Maximum number of %1 subscribers %2 created"
-msgstr ""
-
-#. (contract.max_subscribers,                            c.config.features.cloudpbx ? c.loc('(including PBX groups)
-#: share/templates/customer/details.tt:228
-msgid "Maximum number of %1 subscribers %2created"
 msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:73
