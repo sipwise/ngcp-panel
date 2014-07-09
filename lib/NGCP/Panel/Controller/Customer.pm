@@ -127,7 +127,7 @@ sub create :Chained('list_customer') :PathPart('create') :Args(0) {
                    'billing_profile.create'  => $c->uri_for('/billing/create'),
                    'subscriber_email_template.create'  => $c->uri_for('/emailtemplate/create'),
                    'passreset_email_template.create'  => $c->uri_for('/emailtemplate/create'),
-                   'invoice_email_template.create'  => $c->uri_for('/emailtemplate/create'),
+                   'invoice_template.create'  => $c->uri_for('/invoicetemplate/create'),
         },
         back_uri => $c->req->uri,
     );
@@ -135,7 +135,7 @@ sub create :Chained('list_customer') :PathPart('create') :Args(0) {
         try {
             my $schema = $c->model('DB');
             $schema->txn_do(sub {
-                foreach(qw/contact subscriber_email_template passreset_email_template invoice_email_template/){
+                foreach(qw/contact subscriber_email_template passreset_email_template invoice_email_template invoice_template/){
                     $form->params->{$_.'_id'} = $form->params->{$_}{id} || undef;
                     delete $form->params->{$_};
                 }
@@ -346,16 +346,18 @@ sub edit :Chained('base') :PathPart('edit') :Args(0) {
     my $posted = ($c->request->method eq 'POST');
     my $form;
     my $params = { $contract->get_inflated_columns };
-    $params->{contact}{id} = delete $params->{contact_id};
+    foreach(qw/contact subscriber_email_template passreset_email_template invoice_email_template invoice_template/){
+        $params->{$_}{id} = delete $params->{$_.'_id'};
+    }
     $params->{product}{id} = $billing_mapping->product_id;
     $params->{billing_profile}{id} = $billing_mapping->billing_profile_id;
-    $params->{subscriber_email_template}{id} = delete $params->{subscriber_email_template_id};
-    $params->{passreset_email_template}{id} = delete $params->{passreset_email_template_id};
-    $params->{invoice_email_template}{id} = delete $params->{invoice_email_template_id};
     $params = $params->merge($c->session->{created_objects});
+    $c->log->debug('customer/edit');
     if($c->config->{features}->{cloudpbx}) {
+        $c->log->debug('ProductSelect');
         $form = NGCP::Panel::Form::Contract::ProductSelect->new(ctx => $c);
     } else {
+        $c->log->debug('Basic');
         $form = NGCP::Panel::Form::Contract::Basic->new(ctx => $c);
     }
     $form->process(
@@ -371,6 +373,7 @@ sub edit :Chained('base') :PathPart('edit') :Args(0) {
                    'subscriber_email_template.create'  => $c->uri_for('/emailtemplate/create'),
                    'passreset_email_template.create'  => $c->uri_for('/emailtemplate/create'),
                    'invoice_email_template.create'  => $c->uri_for('/emailtemplate/create'),
+                   'invoice_template.create'  => $c->uri_for('/invoicetemplate/create'),
         },
         back_uri => $c->req->uri,
     );
@@ -378,7 +381,7 @@ sub edit :Chained('base') :PathPart('edit') :Args(0) {
         try {
             my $schema = $c->model('DB');
             $schema->txn_do(sub {
-                foreach(qw/contact subscriber_email_template passreset_email_template invoice_email_template/){
+                foreach(qw/contact subscriber_email_template passreset_email_template invoice_email_template invoice_template/){
                     $form->params->{$_.'_id'} = $form->params->{$_}{id} || undef;
                     delete $form->params->{$_};
                 }
