@@ -9,7 +9,7 @@ has_field 'profile_set' => (
     validate_when_empty => 1,
     element_attr => {
         rel => ['tooltip'],
-        title => ['The subscriber rofile set this profile belongs to.']
+        title => ['The subscriber profile set this profile belongs to.']
     },
 );
 
