@@ -20,7 +20,7 @@ class_has 'api_description' => (
     is => 'ro',
     isa => 'Str',
     default => 
-        'Defines a billing container for peerings and resellers. A <a href="#billingprofiles">Billing Profile</a> is assigned to a contract, and it has <a href="#contractbalances">Contract Balances</a> indicating the saldo of the contract for current and past billing intervals.'
+        'Defines a billing container for peerings and resellers. A <a href="#billingprofiles">Billing Profile</a> is assigned to a contract, and it has <a href="#contractbalances">Contract Balances</a> indicating the saldo of the contract for current and past billing intervals.',
 );
 
 class_has 'query_params' => (
@@ -67,7 +67,7 @@ __PACKAGE__->config(
             Does => [qw(ACL CheckTrailingSlash RequireSSL)],
             Method => $_,
             Path => __PACKAGE__->dispatch_path,
-        } } @{ __PACKAGE__->allowed_methods }
+        } } @{ __PACKAGE__->allowed_methods },
     },
     action_roles => [qw(HTTPMethods)],
 );
@@ -77,6 +77,7 @@ sub auto :Private {
 
     $self->set_body($c);
     $self->log_request($c);
+    return 1;
 }
 
 sub GET :Allow {
@@ -159,13 +160,6 @@ sub POST :Allow {
         );
         last unless $resource;
 
-        # TODO: check type
-        my $product_class = delete $resource->{type};
-        unless($product_class eq "sippeering" || $product_class eq "reseller") {
-            $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Invalid 'type', must be 'sippeering' or 'reseller'.");
-            last;
-        }
-
         unless(defined $resource->{billing_profile_id}) {
             $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Invalid 'billing_profile_id', not defined.");
             last;
@@ -191,6 +185,7 @@ sub POST :Allow {
             $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Invalid 'billing_profile_id'.");
             last;
         }
+        my $product_class = delete $resource->{type};
         my $product = $schema->resultset('products')->find({ class => $product_class });
         unless($product) {
             $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Invalid 'type'.");
@@ -238,6 +233,7 @@ sub end : Private {
     my ($self, $c) = @_;
 
     $self->log_response($c);
+    return;
 }
 
 # vim: set tabstop=4 expandtab:
