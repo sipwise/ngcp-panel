@@ -330,7 +330,7 @@ sub create :Chained('inv_list') :PathPart('create') :Args() :Does(ACL) :ACLDetac
                         NGCP::Panel::Utils::Message->error(
                             c     => $c,
                             log   => $msg,
-                            desc  => $c->loc('Failed to render template. Type is ' . $error->type . ', info is ' . $error->info),
+                            desc  => $c->loc('Failed to render template. Type is [_1], info is [_2].', $error->type, $error->info),
                         );
                         NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for('/invoice'));
                         return;
@@ -352,7 +352,7 @@ sub create :Chained('inv_list') :PathPart('create') :Args() :Does(ACL) :ACLDetac
                     serial => $serial,
                     data => $pdf,
                 });
-                $c->flash(messages => [{type => 'success', text => $c->loc('Invoice #' . $invoice->id . ' successfully created')}]);
+                $c->flash(messages => [{type => 'success', text => $c->loc('Invoice #[_1] successfully created', $invoice->id)}]);
             });
         } catch($e) {
             NGCP::Panel::Utils::Message->error(
