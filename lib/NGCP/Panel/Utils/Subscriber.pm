@@ -982,6 +982,41 @@ sub apply_rewrite {
     return $callee;
 }
 
+sub check_cf_ivr {
+    my (%params) = @_;
+
+    my $subscriber = $params{subscriber};
+    my $schema = $params{schema};
+    my $new_aa = $params{new_aa}; # boolean, false on delete
+    my $old_aa = $params{old_aa}; # boolean, false on create
+    if ($old_aa && !$new_aa) {
+        NGCP::Panel::Utils::Events::insert(
+            schema => $schema, subscriber => $subscriber,
+            type => 'end_ivr',
+        );
+    } elsif (!$old_aa && $new_aa) {
+        NGCP::Panel::Utils::Events::insert(
+            schema => $schema, subscriber => $subscriber,
+            type => 'start_ivr',
+        );
+    }
+    return;
+}
+
+sub check_dset_autoattendant_status {
+    my ($dset) = @_;
+
+    my $status = 0;
+    if ($dset) {
+        for my $dest ($dset->voip_cf_destinations->all) {
+            if ( (destination_to_field($dest->destination))[0] eq 'autoattendant' ) {
+                $status = 1;
+            }
+        }
+    }
+    return $status;
+}
+
 1;
 
 =head1 NAME
@@ -1001,6 +1036,23 @@ we first check, if the number is already available in voip_numbers but
 has no subscriber_id set. In that case we can just reuse that number.
 If the number does not exist at all, we just create it.
 For reference see _get_number_for_update() in ossbss.
+
+=head2 check_cf_ivr
+
+old_aa and new_aa are boolean params that determine if a cf mapping had an autoattendant
+set before and after update. it will then create the according start_ivr or
+end_ivr entry.
+
+    the logic:
+    change/delete dset:
+        check each mapping
+    change/create/delete mapping:
+        check old/new dset (may be false)
+
+=head2 check_dset_autoattendant_status
+
+Returns a boolean value, if the dset has an autoattendant destination. Can be used
+for check_cf_ivr().
 
 =head1 AUTHOR
 

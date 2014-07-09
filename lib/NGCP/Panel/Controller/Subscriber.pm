@@ -982,19 +982,17 @@ sub preferences_callforward :Chained('base') :PathPart('preferences/callforward'
             $c->model('DB')->schema->txn_do( sub {
                 my $map = $cf_mapping->first;
                 my $dest_set;
+                my $old_autoattendant = 0;
                 if($map && $map->destination_set) {
                     $dest_set = $map->destination_set;
+                    $old_autoattendant = NGCP::Panel::Utils::Subscriber::check_dset_autoattendant_status($dest_set);
+                    $dest_set->voip_cf_destinations->delete_all;
                 }
                 unless($dest_set) {
                     $dest_set = $c->model('DB')->resultset('voip_cf_destination_sets')->create({
                         name => 'quickset_'.$cf_type,
                         subscriber_id => $prov_subscriber->id,
                     });
-                } else {
-                    my @all = $dest_set->voip_cf_destinations->all;
-                    foreach my $dest(@all) {
-                        $dest->delete;
-                    }
                 }
 
                 my $numberstr = "";
@@ -1009,6 +1007,12 @@ sub preferences_callforward :Chained('base') :PathPart('preferences/callforward'
                 my $dest = $cf_form->field('destination');
                 my $d = $dest->field('destination')->value;
                 my $t = 300;
+                NGCP::Panel::Utils::Subscriber::check_cf_ivr(
+                    subscriber => $c->stash->{subscriber},
+                    schema => $c->model('DB'),
+                    old_aa => $old_autoattendant,
+                    new_aa => ($d eq 'autoattendant'),
+                );
                 if ($d eq "uri") {
                     $t = $dest->field('uri')->field('timeout')->value;
                     # TODO: check for valid timeout here
@@ -1167,14 +1171,14 @@ sub preferences_callforward_advanced :Chained('base') :PathPart('preferences/cal
     if($posted && $cf_form->validated) {
         try {
             $c->model('DB')->schema->txn_do( sub {
+                my $autoattendant_count = 0;
                 my @active = $cf_form->field('active_callforward')->fields;
-                if($cf_mapping->count) {
+                if($cf_mapping->first) { # there are mappings
                     foreach my $map($cf_mapping->all) {
+                        $autoattendant_count += NGCP::Panel::Utils::Subscriber::check_dset_autoattendant_status($map->destination_set);
                         $map->delete;
-                        foreach my $cf($cf_preference->all) {
-                            $cf->delete;
-                        }
                     }
+                    $cf_preference->delete_all;
                     unless(@active) {
                         $ringtimeout_preference->first->delete 
                             if($cf_type eq "cft" &&  $ringtimeout_preference->first);
@@ -1194,6 +1198,26 @@ sub preferences_callforward_advanced :Chained('base') :PathPart('preferences/cal
                         time_set_id => $map->field('time_set')->value,
                     });
                     $cf_preference->create({ value => $m->id });
+                    $autoattendant_count -= NGCP::Panel::Utils::Subscriber::check_dset_autoattendant_status($m->destination_set);
+                }
+                if ($autoattendant_count > 0) {
+                    while ($autoattendant_count != 0) {
+                        $autoattendant_count--;
+                        NGCP::Panel::Utils::Events::insert(
+                            schema => $c->model('DB'),
+                            subscriber => $c->stash->{subscriber},
+                            type => 'end_ivr',
+                        );
+                    }
+                } elsif ($autoattendant_count < 0) {
+                    while ($autoattendant_count != 0) {
+                        $autoattendant_count++;
+                        NGCP::Panel::Utils::Events::insert(
+                            schema => $c->model('DB'),
+                            subscriber => $c->stash->{subscriber},
+                            type => 'start_ivr',
+                        );
+                    }
                 }
                 if($cf_type eq "cft") {
                     if($ringtimeout_preference->first) {
@@ -1438,12 +1462,18 @@ sub preferences_callforward_destinationset_edit :Chained('preferences_callforwar
                 # delete whole set and mapping if empty
                 my @fields = $form->field('destination')->fields;
                 unless(@fields) {
-                    foreach my $mapping($set->voip_cf_mappings) {
+                    foreach my $mapping($set->voip_cf_mappings->all) {
                         my $cf = $cf_preference->find({ value => $mapping->id });
                         $cf->delete if $cf;
                         $ringtimeout_preference->first->delete 
                             if($cf_type eq "cft" && $ringtimeout_preference->first);
                         $mapping->delete;
+                        NGCP::Panel::Utils::Subscriber::check_cf_ivr( # one event per affected mapping
+                            subscriber => $c->stash->{subscriber},
+                            schema => $schema,
+                            old_aa => NGCP::Panel::Utils::Subscriber::check_dset_autoattendant_status($set),
+                            new_aa => 0,
+                        );
                     }
                     $set->delete;
                     NGCP::Panel::Utils::Navigation::back_or($c, $fallback, 1);
@@ -1452,6 +1482,7 @@ sub preferences_callforward_destinationset_edit :Chained('preferences_callforwar
                 if($form->field('name')->value ne $set->name) {
                     $set->update({name => $form->field('name')->value});
                 }
+                my $old_autoattendant = NGCP::Panel::Utils::Subscriber::check_dset_autoattendant_status($set);
                 $set->voip_cf_destinations->delete_all;
 
                 my $number = $c->stash->{subscriber}->primary_number;
@@ -1482,6 +1513,23 @@ sub preferences_callforward_destinationset_edit :Chained('preferences_callforwar
                         timeout => $t,
                         priority => $dest->field('priority')->value,
                     });
+                }
+                $set->discard_changes; # reload (destinations may be cached)
+                my $new_autoattendant = NGCP::Panel::Utils::Subscriber::check_dset_autoattendant_status($set);
+                my $event_type = '';
+                if (!$old_autoattendant && $new_autoattendant) {
+                    $event_type = 'start_ivr';
+                } elsif ($old_autoattendant && !$new_autoattendant) {
+                    $event_type = 'end_ivr';
+                }
+                if ($event_type) {
+                    foreach my $mapping ($set->voip_cf_mappings->all) { # one event per affected mapping
+                        NGCP::Panel::Utils::Events::insert(
+                            schema => $schema,
+                            subscriber => $c->stash->{subscriber},
+                            type => $event_type,
+                        );
+                    }
                 }
             });
         } catch($e) {

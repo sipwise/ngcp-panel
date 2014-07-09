@@ -173,6 +173,7 @@ sub update_item {
                 $number = ''
             }
             my $domain = $prov_subs->domain->domain // '';
+            my $old_autoattendant = NGCP::Panel::Utils::Subscriber::check_dset_autoattendant_status($dset);
             if ($dset) {
                 if ((defined $resource->{$type}{destinations}) && @{ $resource->{$type}{destinations}}) {
                     $dset->voip_cf_destinations->delete; #empty dset
@@ -211,6 +212,16 @@ sub update_item {
                 delete $t->{time_set_id};
                 $tset->voip_cf_periods->update_or_create($t);
             }
+
+            $dset->discard_changes if $dset; # update destinations
+            my $new_autoattendant = NGCP::Panel::Utils::Subscriber::check_dset_autoattendant_status($dset);
+            NGCP::Panel::Utils::Subscriber::check_cf_ivr(
+                subscriber => $item,
+                schema => $c->model('DB'),
+                old_aa => $old_autoattendant,
+                new_aa => $new_autoattendant,
+            );
+
             unless ( $dset && $dset->voip_cf_destinations->count ) {
                 $mapping->delete;
                 $cf_preference->delete;

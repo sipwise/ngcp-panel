@@ -157,6 +157,10 @@ sub update_item {
     }
 
     try {
+        my $autoattendant_count = 0;
+        foreach my $map($mappings_rs->all) {
+            $autoattendant_count += NGCP::Panel::Utils::Subscriber::check_dset_autoattendant_status($map->destination_set);
+        }
         $mappings_rs->delete;
         for my $type ( qw/cfu cfb cft cfna/) {
             $cf_preferences{$type}->delete;
@@ -164,6 +168,27 @@ sub update_item {
         for my $mapping ( @new_mappings ) {
             $mapping->insert;
             $cf_preferences{$mapping->type}->create({ value => $mapping->id });
+            $autoattendant_count -= NGCP::Panel::Utils::Subscriber::check_dset_autoattendant_status($mapping->destination_set);
+        }
+
+        if ($autoattendant_count > 0) {
+            while ($autoattendant_count != 0) {
+                $autoattendant_count--;
+                NGCP::Panel::Utils::Events::insert(
+                    schema => $c->model('DB'),
+                    subscriber => $item,
+                    type => 'end_ivr',
+                );
+            }
+        } elsif ($autoattendant_count < 0) {
+            while ($autoattendant_count != 0) {
+                $autoattendant_count++;
+                NGCP::Panel::Utils::Events::insert(
+                    schema => $c->model('DB'),
+                    subscriber => $item,
+                    type => 'start_ivr',
+                );
+            }
         }
 
         if ($resource->{cft_ringtimeout} && $resource->{cft_ringtimeout} > 0) {

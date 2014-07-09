@@ -139,6 +139,7 @@ sub update_item {
                 name => $resource->{name},
                 subscriber_id => $subscriber->id,
             })->discard_changes;
+        my $old_aa = NGCP::Panel::Utils::Subscriber::check_dset_autoattendant_status($item);
         $item->voip_cf_destinations->delete;
         for my $d ( @{$resource->{destinations}} ) {
             delete $d->{destination_set_id};
@@ -149,6 +150,16 @@ sub update_item {
                     uri => $d->{destination},
                 );
             $item->create_related("voip_cf_destinations", $d);
+        }
+        $item->discard_changes;
+        my $new_aa = NGCP::Panel::Utils::Subscriber::check_dset_autoattendant_status($item);
+        foreach ($item->voip_cf_mappings->all) {
+            NGCP::Panel::Utils::Subscriber::check_cf_ivr( # one event per affected mapping
+                schema => $schema,
+                subscriber => $item->subscriber->voip_subscriber,
+                old_aa => $old_aa,
+                new_aa => $new_aa,
+            );
         }
     } catch($e) {
         $c->log->error("failed to create cfdestinationset: $e");
