@@ -226,22 +226,18 @@ sub get_invoice_data_raw{
 sub generate_invoice_data{
     my($provider_contract,$provider_contact,$client_contract,$client_contact,$billing_profile, $stime, $etime) = @_;
     
-    state ($t,$svg_default);
+    state($t);
     if(!$t){
-        $t = NGCP::Panel::Utils::InvoiceTemplate::get_tt();        
-        $svg_default = $t->context->insert('invoice/default/invoice_template_svg.tt');
-        #NGCP::Panel::Utils::InvoiceTemplate::preprocess_svg(\$svg_default);
+        $t = NGCP::Panel::Utils::InvoiceTemplate::get_tt();
     }
-    my $svg = $dbh->selectrow_array('select data from invoice_templates where is_active = 1 and type = "svg" and reseller_id=?',undef,$provider_contract->{reseller_core_id});#
-    utf8::decode($svg);
-    if($svg){
-        #NGCP::Panel::Utils::InvoiceTemplate::preprocess_svg(\$svg);
-    }else{
-        $svg = $svg_default;
-        $logger->debug( "No saved active template - no invoice;\n");
+    
+    my $svg;
+    if(!(my $svg_ref = get_invoice_template($t, $provider_contract,$client_contract))){
         return;
+    }else{
+        $svg = $$svg_ref;
     }
-
+    
     my ($contract_balance,$invoice)=({},{});
     ($contract_balance,$invoice) = get_contract_balance($client_contract,$billing_profile,$contract_balance,$invoice,$stime,$etime);
     #$logger->debug( Dumper $contract_balance );
@@ -288,6 +284,7 @@ sub generate_invoice_data{
     $dbh->do('update invoices set sent_date=?,data=?,amount_net=?,amount_vat=?,amount_total=? where id=?',undef,undef,@$invoice{qw/data amount_net amount_vat amount_total id/});    
     return $invoice;
 }
+
 sub get_contract_balance{
     my($client_contract,$billing_profile,$contract_balance,$invoice,$stime,$etime) = @_;
     if(!($contract_balance = $dbh->selectrow_hashref('select * from contract_balances where contract_id=? and date(start)=? and date(end)=?',undef,$client_contract->{id},$stime->ymd,$etime->ymd))){
@@ -308,6 +305,7 @@ sub get_contract_balance{
     }
     return ($contract_balance,$invoice);
 }
+
 sub get_invoice{
     my($invoice_id, $contract_id, $stime, $etime) = @_;
     my $invoice;
@@ -340,6 +338,39 @@ sub get_invoice{
         period_end_obj   => $etime,
     };
     return $invoice;
+}
+
+sub get_invoice_template{
+    my($t, $provider_contract, $client_contract ) = @_;
+    
+    my $svg;
+    
+    $svg = $dbh->selectrow_array('select data from invoice_templates where id=?',undef,$client_contract->{invoice_template_id});
+    
+    #if(!$svg){
+    #    $logger->debug( "No saved template for customer - no invoice;\n");
+    #}
+    #utf8::decode($svg);
+    #return \$svg;
+    
+    
+    #old functionality.
+    state ($svg_default);
+    if(!$svg_default){
+        #$t = NGCP::Panel::Utils::InvoiceTemplate::get_tt();
+        $svg_default = $t->context->insert('invoice/default/invoice_template_svg.tt');
+        #NGCP::Panel::Utils::InvoiceTemplate::preprocess_svg(\$svg_default);
+    }
+    if(!$svg){
+        $svg = $dbh->selectrow_array('select data from invoice_templates where is_active = 1 and type = "svg" and reseller_id=?',undef,$provider_contract->{reseller_core_id});
+    }
+    if(!$svg){
+        $svg = $svg_default;
+        $logger->debug( "No saved active template - no invoice;\n");
+        return;
+    }
+    utf8::decode($svg);
+    return \$svg;
 }
 
 sub get_email_template{
