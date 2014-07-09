@@ -13,7 +13,7 @@ use Data::HAL::Link qw();
 use HTTP::Status qw(:constants);
 use NGCP::Panel::Utils::DateTime;
 use NGCP::Panel::Utils::Contract;
-use NGCP::Panel::Form::Contract::PeeringReseller qw();
+use NGCP::Panel::Form::Contract::PeeringResellerAPI qw();
 
 sub item_rs {
     my ($self, $c) = @_;
@@ -34,7 +34,7 @@ sub item_rs {
 
 sub get_form {
     my ($self, $c) = @_;
-    return NGCP::Panel::Form::Contract::PeeringReseller->new;
+    return NGCP::Panel::Form::Contract::PeeringResellerAPI->new;
 }
 
 sub hal_from_contract {
