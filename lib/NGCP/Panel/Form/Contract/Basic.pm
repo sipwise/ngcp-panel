@@ -95,7 +95,7 @@ has_field 'invoice_template' => (
     required => 0,
     element_attr => {
         rel => ['tooltip'],
-        title => ['The invoice template for invoice generation.']
+        title => ['The invoice template for invoice generation. If none is assigned, no invoice will be generated for this customer.']
     },
 );
 

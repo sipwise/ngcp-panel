@@ -79,6 +79,7 @@ sub hal_from_customer {
             Data::HAL::Link->new(relation => 'ngcp:customerpreferences', href => sprintf("/api/customerpreferences/%d", $customer->id)),
             Data::HAL::Link->new(relation => 'ngcp:billingprofiles', href => sprintf("/api/billingprofiles/%d", $billing_profile_id)),
             Data::HAL::Link->new(relation => 'ngcp:contractbalances', href => sprintf("/api/contractbalances/%d", $contract_balance->id)),
+            $customer->invoice_template ? (Data::HAL::Link->new(relation => 'ngcp:invoicetemplates', href => sprintf("/api/invoicetemplates/%d", $customer->invoice_template_id))) : (),
             $customer->subscriber_email_template_id ? (Data::HAL::Link->new(relation => 'ngcp:subscriberemailtemplates', href => sprintf("/api/emailtemplates/%d", $customer->subscriber_email_template_id))) : (),
             $customer->passreset_email_template_id ? (Data::HAL::Link->new(relation => 'ngcp:passresetemailtemplates', href => sprintf("/api/emailtemplates/%d", $customer->passreset_email_template_id))) : (),
             $customer->invoice_email_template_id ? (Data::HAL::Link->new(relation => 'ngcp:invoiceemailtemplates', href => sprintf("/api/emailtemplates/%d", $customer->invoice_email_template_id))) : (),
@@ -170,6 +171,17 @@ sub update_customer {
         $custcontact = $customer->contact;
     }
 
+    my $oldinvoicetmpl = $old_resource->{invoice_template_id} // 0;
+    if($resource->{invoice_template_id} && 
+       $oldinvoicetmpl != $resource->{invoice_template_id}) {
+        my $tmpl = $c->model('DB')->resultset('invoice_templates')
+            ->search({ reseller_id => $custcontact->reseller_id })
+            ->find($resource->{invoice_template_id});
+        unless($tmpl) {
+            $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Invalid 'invoice_template_id', doesn't exist for reseller assigned to customer contact");
+            return;
+        }
+    }
     my $oldsubtmpl = $old_resource->{subscriber_email_template_id} // 0;
     if($resource->{subscriber_email_template_id} && 
        $oldsubtmpl != $resource->{subscriber_email_template_id}) {
