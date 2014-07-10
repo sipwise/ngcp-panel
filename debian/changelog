@@ -1,3 +1,13 @@
+ngcp-panel (1.3.1.8+0~mr3.3.1.8) unstable; urgency=low
+
+  [ Gerhard Jungwirth ]
+  * [d308886] MT#7959 update contracts api doc
+  * [9c108e8] MT#7959 fix contract PUT/PATCH, tests
+
+  [ Sipwise Jenkins Builder ]
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Thu, 10 Jul 2014 15:55:34 +0200
+
 ngcp-panel (1.3.1.7+0~mr3.3.1.7) unstable; urgency=low
 
   [ Alexander Lutay ]
