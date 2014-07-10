@@ -148,6 +148,8 @@ sub recursively_lock_contract {
         if($status eq 'terminated') {
             # remove domains in case of reseller termination
             for my $domain($reseller->domain_resellers->all) {
+                my $prov_domain = $domain->domain->provisioning_voip_domain;
+                $prov_domain->delete if $prov_domain;
                 $domain->domain->delete;
                 $domain->delete;
             }
