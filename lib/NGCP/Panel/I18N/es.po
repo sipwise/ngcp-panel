@@ -2769,9 +2769,13 @@ msgid "Failed to render invoice"
 msgstr ""
 
 #. ($error->type . ', info is ' . $error->info)
-#: lib/NGCP/Panel/Controller/Invoice.pm:333
 #: lib/NGCP/Panel/Controller/InvoiceTemplate.pm:354
 msgid "Failed to render template. Type is "
+msgstr ""
+
+#. ($error->type, $error->info)
+#: lib/NGCP/Panel/Controller/Invoice.pm:333
+msgid "Failed to render template. Type is %1, info is %2."
 msgstr ""
 
 #: lib/NGCP/Panel/Controller/Subscriber.pm:494
@@ -3671,9 +3675,9 @@ msgstr "Preferencia de buzón de voz inválida"
 msgid "Invoice"
 msgstr ""
 
-#. ($invoice->id . ' successfully created')
+#. ($invoice->id)
 #: lib/NGCP/Panel/Controller/Invoice.pm:355
-msgid "Invoice #"
+msgid "Invoice #%1 successfully created"
 msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:590
