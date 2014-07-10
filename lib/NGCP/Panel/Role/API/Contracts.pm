@@ -119,7 +119,7 @@ sub update_contract {
         $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Invalid 'billing_profile_id', not defined");
         return;
     }
-   
+
     $form //= $self->get_form($c);
     # TODO: for some reason, formhandler lets missing contact_id slip thru
     $resource->{contact_id} //= undef; 
@@ -128,6 +128,7 @@ sub update_contract {
         form => $form,
         resource => $resource,
     );
+    delete $resource->{type};
 
     my $now = NGCP::Panel::Utils::DateTime::current_local;
     $resource->{modify_timestamp} = $now;

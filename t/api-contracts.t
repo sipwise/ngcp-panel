@@ -108,7 +108,7 @@ my @allcontracts = ();
     is($res->code, 422, "create contract with invalid type");
     my $err = JSON::from_json($res->decoded_content);
     is($err->{code}, "422", "check error code in body");
-    ok($err->{message} =~ /Invalid 'type'/, "check error message in body");
+    like($err->{message}, qr/Validation failed.*type/, "check error message in body");
 
     # try to create invalid contract with wrong billing profile
     $req->content(JSON::to_json({

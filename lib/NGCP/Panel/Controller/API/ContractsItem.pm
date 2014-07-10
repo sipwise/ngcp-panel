@@ -31,7 +31,7 @@ __PACKAGE__->config(
             Does => [qw(ACL RequireSSL)],
             Method => $_,
             Path => __PACKAGE__->dispatch_path,
-        } } @{ __PACKAGE__->allowed_methods }
+        } } @{ __PACKAGE__->allowed_methods },
     },
     action_roles => [qw(HTTPMethods)],
 );
@@ -41,6 +41,7 @@ sub auto :Private {
 
     $self->set_body($c);
     $self->log_request($c);
+    return 1;
 }
 
 sub GET :Allow {
@@ -54,9 +55,8 @@ sub GET :Allow {
 
         my $response = HTTP::Response->new(HTTP_OK, undef, HTTP::Headers->new(
             (map { # XXX Data::HAL must be able to generate links with multiple relations
-                s|rel="(http://purl.org/sipwise/ngcp-api/#rel-resellers)"|rel="item $1"|;
-                s/rel=self/rel="item self"/;
-                $_
+                s|rel="(http://purl.org/sipwise/ngcp-api/#rel-resellers)"|rel="item $1"|r =~
+                s/rel=self/rel="item self"/r;
             } $hal->http_headers),
         ), $hal->as_json);
         $c->response->headers($response->headers);
@@ -104,6 +104,7 @@ sub PATCH :Allow {
         my $old_resource = { $contract->get_inflated_columns };
         my $billing_mapping = $contract->billing_mappings->find($contract->get_column('bmid'));
         $old_resource->{billing_profile_id} = $billing_mapping->billing_profile_id;
+        $old_resource->{type} = $billing_mapping->product->class;
         my $resource = $self->apply_patch($c, $old_resource, $json);
         last unless $resource;
 
@@ -146,6 +147,8 @@ sub PUT :Allow {
         );
         last unless $resource;
         my $old_resource = { $contract->get_inflated_columns };
+        my $billing_mapping = $contract->billing_mappings->find($contract->get_column('bmid'));
+        $old_resource->{type} = $billing_mapping->product->class;
 
         my $form = $self->get_form($c);
         $contract = $self->update_contract($c, $contract, $old_resource, $resource, $form);
@@ -171,6 +174,7 @@ sub PUT :Allow {
 }
 
 =pod
+
 # we don't allow to delete contracts
 sub DELETE :Allow {
     my ($self, $c, $id) = @_;
@@ -196,12 +200,14 @@ sub DELETE :Allow {
     }
     return;
 }
+
 =cut
 
 sub end : Private {
     my ($self, $c) = @_;
 
     $self->log_response($c);
+    return;
 }
 
 # vim: set tabstop=4 expandtab:
