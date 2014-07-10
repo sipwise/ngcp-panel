@@ -100,7 +100,13 @@ sub DELETE :Allow {
             }
         }
 
-        $domain->provisioning_voip_domain->delete;
+        my $prov_domain = $domain->provisioning_voip_domain;
+        if ($prov_domain) {
+            $prov_domain->voip_dbaliases->delete;
+            $prov_domain->voip_dom_preferences->delete;
+            $prov_domain->provisioning_voip_subscribers->delete;
+            $prov_domain->delete;
+        }
         $domain->delete;
 
         try {

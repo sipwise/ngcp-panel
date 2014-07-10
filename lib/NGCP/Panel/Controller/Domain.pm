@@ -229,10 +229,14 @@ sub delete :Chained('base') :PathPart('delete') :Args(0) {
     my ($self, $c) = @_;
 
     my $domain = $c->stash->{'domain_result'}->domain;
+    my $prov_domain = $c->stash->{'provisioning_domain_result'};
     try {
         $c->model('DB')->schema->txn_do( sub {
             $c->stash->{'domain_result'}->delete;
-            $c->stash->{'provisioning_domain_result'}->delete;
+            $prov_domain->voip_dbaliases->delete;
+            $prov_domain->voip_dom_preferences->delete;
+            $prov_domain->provisioning_voip_subscribers->delete;
+            $prov_domain->delete;
             NGCP::Panel::Utils::Prosody::deactivate_domain($c, $domain)
                 unless($c->config->{features}->{debug});
         });
