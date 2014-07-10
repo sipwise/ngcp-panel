@@ -1,3 +1,261 @@
+ngcp-panel (1.4.1.0+0~mr3.4.1.0) unstable; urgency=low
+
+  [ Irina Peshinskaya ]
+  * [f1fcf84] MT#5879 Fix delete button
+  * [bcab8bf] MT#5879 Fix delete button for invoices
+  * [b01714c] MT#5879 Bug fixes.
+  * [b0f1d9f] MT#7265 Fix "auto" signature.
+  * [603a258] MT#5879 Reformat code and init math values to zero.
+  * [6b720ec] MT#5879 Add svg template variables description.
+  * [a50feeb] MT#5879 Initial state of new template
+  * [44c706d] MT#5879 Save new template before matrix reverted.
+  * [2005908] MT#5879 Save template variant with sizes in pixels.
+  * [044c9ca] MT#5879 Add second page as title. Keep in pixels.
+  * [45b4753] MT#5879 Save state before start geography implementation
+  * [9154510] MT#5879 New template xml error, save before jump into investigation.
+  * [74e535d] MT#5879 Save template before remove old zonepage.
+  * [fef6ea9] MT#5879 New template. Title pages is topic for questions.
+  * [c86a8a0] MT#5879 Add billing profile object to default and data for generation.
+  * [6b0cd3b] MT#5879 Fix broken billing_profile variable scope.
+  * [539a057] MT#7233 Implement basic number block CRUD.
+  * [5c738da] MT#5879 Add invoice email template to reseller contract form.
+  * [96a6fe9] MT#5879 Revert "Add invoice email template to reseller contract form."
+  * [eff6d77] MT#5879 Fix for invoice generation.
+  * [17f678d] MT#5879 Separate invoice generation from sending and some fixes.
+  * [a30237b] MT#5879 Add country to client contact info in invoice gen. script.
+  * [17d98b9] MT#5879 Merge with Andreas changes.
+  * [c60c9af] MT#5879 Error in not inflated date values.
+  * [2af11b6] MT#5879 Invoices generated and emails sent, work with option.
+  * [ee8c27f] MT#5879 Fix rebase merge error.
+  * [006d624] MT#5879 Generate and/or send invoices script. Seems as working.
+  * [a050e67] MT#5879 Fix for invoices.serial unique index
+  * [aa3fd24] MT#5879 Add date values for fix for invoice.serial unique index.
+  * [636ebe2] MT#5879 Fix invoices amount, related to cents.
+  * [91608dc] MT#5879 Fixes for invoice data - format was for old template.
+  * [9965197] MT#5879 Fix invoice date insertion in DB
+  * [a72adae] MT#5879 Invoice generation fixes.
+  * [1ab3500] MT#5879 Us common invoice logic for invoice amouns. Add country name.
+  * [3ee4f3e] MT#5879 Implement countr name in controller.
+  * [3a33437] MT#5879 Don't regenerate invoices. Just create new.
+  * [17d6ed5] MT#5879 Send one email per contract.
+  * [a743cbe] MT#5879 Change test email contact to real.
+  * [fc987d1] MT#5879 Add invoice email template field to Contract Basic form.
+  * [576f5e0] MT#5879 Return invoice_email_template into customer creation form.
+  * [6d6484a] MT#5879 Changes related to invoice email template.
+  * [9f5bf1a] MT#5879 Changes related to invoice email template.
+  * [76b059f] MT#5879 Email templates buttons for contract forms.
+  * [2f67a94] MT#5879 Contract buttons and generate_invoice.
+  * [33d3d45] MT#5879 Add prevmonth option to ease prev month invoices generation.
+  * [ee06143] MT#5879 Make email invoices query simplier.
+  * [29edbf2] MT#5879 Tspan replaced with text
+  * [d8fe511] MT#5879 Use log4perl for logging.
+  * [9ca0ddc] MT#5879 Return utf usage for mysql after merge.
+  * [da71415] MT#5879 Default content on template creation and x- mimetype.
+  * [dd06b7f] MT#7867 Repeat behavior of embedded image on "Change Image" button.
+  * [16ebb90] MT#5879 Hide g elements in comments.
+  * [4505cef] MT#7867 Fix link to customer/edit for customer in resellers details.
+  * [0dbc857] MT#7867 Invoice template per reseller
+  * [2407629] MT#7867 Invoice template per customer.
+
+  [ Andreas Granig ]
+  * [e2e29a3] MT#7199 add iban and bic fields.
+  * [be983fb] MT#7219 API: document http errors of rest api.
+  * [601ada2] MT#7233 Implement basic number block CRUD.
+  * [1dd2622] MT#7265 Fix "auto" signature.
+  * [2d49153] MT#5879 Fix redirect chain and utf8 handling.
+  * [b6533b1] MT#5879 Redesign invoice template meta handling.
+  * [a88724c] MT#5879 Cleanup invoice template editing. WIP.
+  * [fdde823] MT#5879 Store invoice templates on save.
+  * [fa07184] MT#5879 Rework rendering PDF preview.
+  * [807e778] MT#5879 Rework dummy variable handling for invoice
+  * [a49ccbc] MT#5879 Provide full list of contact fields
+  * [cf58b77] MT#5879 Invoice template translation.
+  * [3c13621] MT#5879 Remove obsolete SVG view.
+  * [02e58b0] MT#5879 Completely redo invoice template handling.
+  * [7fa163d] MT#5879 Realign default invoice template elements.
+  * [fef92c2] MT#5879 Handle preview of unsaved invoice tmpl
+  * [5cbb827] MT#5879 Align invoice template to clean db schema
+  * [d51779d] MT#5879 Align dummy data to new contacts schema.
+  * [4e3b373] MT#7119 API: Fix PBX subscriber creation.
+  * [b827f73] MT#5879 PoC of generating invoice out of template
+  * [12fec06] MT#5879 Making invoice creation work w/ real data
+  * [8efa32a] MT#7377 Use is_pbx_pilot instead of admin flag
+  * [98364a8] MT#5879 Rework VAT handling in invoices.
+  * [52cdacc] MT#5879 Add XML::XPath to deps.
+  * [e8853cf] MT#5349 API: Fix domain activation for xmpp
+  * [363249f] MT#7377 API: Fix pilot subscriber editing.
+  * [0baef99] MT#7377 API: better check for JSON::Types::bool.
+  * [ddfdb0d] MT#5879 Cleanup debug messages.
+  * [1147ad5] MT#5879 Remove more debug messages.
+  * [126cf25] MT#7405 API: allow to filter folder in voicemails
+  * [db1f6da] MT#7377 API: check uniqueness of pbx_extension.
+  * [1b08f6e] MT#7395 API: implement NCOS level and pattern
+  * [d3bdce9] MT#7415 Clear usr_prefs when deleting ncos levels.
+  * [e0bb62f] MT#7323 API: fetch sound handles via REST
+  * [5471f91] MT#7271 API: Explicitely set cf pref on update
+  * [9679565] MT#5879 Fetch call list for invoices. WIP.
+  * [c857539] MT#5879 Remove obsolete vat fields from billprof
+  * [69e20a8] MT#7377 API: fix alias_numbers and pbx_extension
+  * [1cd7e18] MT#7449 provide config tmpl for spa1xx/2xx.
+  * [dce655b] MT#5103 Set current day in call dist graph.
+  * [f2ae166] MT#7453 Basic SPA directory service. WIP.
+  * [fa42fa8] MT#7377 Fix setting display name in subscriber.
+  * [8468050] MT#7453 Finish Cisco SPA Directory Service
+  * [5957189] MT#7469 Cleanup url handling for dev provisioning.
+  * [6ec9907] MT#7471 Implement web and api for contract prefs.
+  * [e136be4] MT#7485 API: filter soundsets for name
+  * [151b776] MT#7487 API: filter subscribers using profile_id
+  * [ac736ca] MT#7495 Allow subadmin to configure contract prefs
+  * [8fe6449] MT#7469 Prepare for SPA client certificate auth
+  * [c36a127] MT#7495 Add customerpreferences rel and fix doc.
+  * [7089121] MT#7377 API: Add filter for is_pbx_pilot.
+  * [51640b7] MT#7377 API: check for pilot primary_number.
+  * [5931995] MT#7377 API: check if alias_numbers is array.
+  * [2fece89] MT#7495 Add customer prefs to test.
+  * [ed61363] MT#7037 Explicitely set packet size to 20ms
+  * [2f06618] MT#4019 Implement C2D in api via /api/callcontrols
+  * [1d26af6] MT#7177 Implement callee normalization. WIP.
+  * [7c8e355] MT#7177 API: add /api/applyrewrites/ for rwr.
+  * [462b0bf] MT#7177 API: also evaluate callee_xxx rwr vars.
+  * [4163e84] MT#7543 First version of API tools.
+  * [5b8d597] MT#5879 Fix email template in customer edit.
+  * [86e422b] MT#7493 API: Preserve int. prefs on update
+  * [dd0f61f] MT#7377 Fix pilot subscriber tagging.
+  * [eaa4fea] MT#7555	Properly terminate subs on customer edit.
+  * [7563aee] MT#7625 Check subscriber status is active on login
+  * [13b119f] MT#7449 Fix XML syntax error.
+  * [9511ca7] MT#7449 Add SPA 232D DECT base config.
+  * [3845260] MT#7649 API: Implement create/update for pbx devs
+  * [390a18b] MT#7655 Fix access perms for sub(admin) in prefs
+  * [fb559d5] MT#7679 Implement random hunt policy.
+  * [adffda3] MT#7699 Strip colons from mac/identifier
+  * [f41626e] MT#7545 Allow multiple pbx groups per subscriber
+  * [3a420aa] MT#7731 Fix sound set handling for resellers
+  * [fcf0bfe] MT#7755 Fix invalid reseller field in subprofset
+  * [a47147f] MT#7755 Don't show create button for subprofset
+  * [fae3321] MT#5879 Include Countries.pm before Sipwise::Base.
+  * [2d9be3f] MT#7771 Introduce @{...} for match in rewrite rule
+  * [59c69d2] MT#7771 rename pbx_account_cli_list
+  * [5805d84] MT#7771 Add cloud_pbx_ext preference.
+  * [20578fe] MT#7679 Add circular hunting policy.
+  * [f298079] MT#7649 Return linerange.num_lines as int
+  * [0a83a9a] MT#7775 Fix xmldispatching on domain creation
+  * [90c2eda] MT#7789 API: Clear special preferences on PUT
+  * [213e6bb] MT#7793 Implement event billing for subprofiles.
+  * [4f37028] MT#7793 Only log subprofile event on prof-change.
+  * [9115b48] MT#7797 Filter for terminated customers.
+  * [14a629f] MT#7803 Add invoice links and sections.
+  * [3647bc6] MT#7545 API: Fix removing old groups from subs.
+  * [915cf77] MT#7555 Properly terminate subscribers.
+  * [3f8f488] MT#7555 API: Terminate instead of delete subs
+  * [9c4dc3d] MT#7793 Insert start_huntgroup event on new group
+  * [22fb753] MT#7793 Explicitely set all event fields on insert
+  * [dfd4f66] MT#5879 Make generate_invoices.pl executable.
+  * [c229863] MT#7803 Fix fetching invoice svg data.
+  * [cbce5d0] MT#7803 Fix UTF8 handling in invoice generation
+  * [e219531] MT#7803 Cleanup tmp after invoice generation.
+  * [b34ae4e] MT#7803 Fix customer balance creation on new month
+  * [26ec3aa] MT#7067 API: Don't log sound file on upload.
+  * [9157588] MT#7803 API: fetch invoice details via API
+  * [b049194] MT#6693 Handle pseudo-preferences for subprofs.
+  * [3a9d043] MT#7899 API: clear audio cache on sound file mod.
+  * [34afc01] MT#7661 Configs are migrated to cloudpbx-devices
+  * [f502387] MT#7545 Cleanup multi-group handling.
+  * [d3a21f1] MT#7545 Fix editing non-pbx subscriber.
+  * [0d577b3] MT#7935 Show callid, cost and link to callmap.
+  * [ec6c5c4] MT#7941 Fix handling empty destination set in pref
+  * [75def7b] MT#7943 Don't access undef provisioning subs.
+  * [3b0aa83] MT#7797 API: allow list in customer status filter
+  * [33ace9c] MT#7941 Another fix for empty CF dsets.
+  * [c34f5e1] MT#7747 API: implement fee bulk upload
+  * [6834738] MT#7747 API: Improve fee bulk upload documentation
+  * [d74f265] MT#7747 Make sure to not store purge_existing
+  * [fcdf809] MT#7747 Adapt tests to latest change.
+  * [6d4fb58] MT#8035 Use billing.subscriber_id for events
+  * [63056e4] MT#7867 Also add invoice tmpl per customer in API
+
+  [ Alexander Lutay ]
+  * [3061455] MT#7191 Fix tests (country selection support)
+  * [25c9d9f] MT#7177 Fix REST API test (add callcontrols check)
+  * [8082eec] MT#7177 Fix REST API test (add applyrewrites)
+  * [7a9d280] MT#7177 Reorder REST test links alphabetically, removed duplicates
+  * [4efe1b5] MT#7177 Restore missed contracts check, typo in 8082eec6
+  * [307dbf0] MT#7649 Update test for new RESI API links
+  * [97b9185] MT#6425 Typo: restored space (caused to missed localization)
+  * [b71d4ce] MT#7803 Add invoice details REST API to t/api-root.t
+  * [5409d38] MT#7803 Late typo fix t/api-root.t
+  * [59eddac] MT#8013 Localization typo fix for 'A general purpose field for free use'
+  * [cad32bc] MT#8013 Localization typo fix 's/]created/] created/'
+  * [0fcb9a9] MT#8013 Localization typo fix 's/rofile/profile/
+  * [4f2b75c] MT#8013 Updated Russian localization
+  * [d106703] MT#8013 Russian localization typo fix (missed quote)
+
+  [ Gerhard Jungwirth ]
+  * [7a79ad2] MT#7211 API autoattendants
+  * [f942aed] MT#7211 API add autoattendants to test
+  * [236126f] MT#7191 keep country field optional
+  * [7ee9aa3] MT#7183 show confirmation dialog on all languages
+  * [1b0f0ea] MT#7119 remove redundant collection sort
+  * [6dc39e4] MT#7191 fix unicode warnings of module
+  * [71aa24e] MT#7239 enforce boolean context
+  * [4d2722c] MT#7271 API set user_preference on updating callforwards
+  * [ef2259c] MT#7271 API set user_preference on updating cfmappings
+  * [2e1b913] MT#7307 API fix speeddials validation
+  * [e02841d] MT#7309 API fix updating autoattendants
+  * [2f7d097] MT#3945 API validate_form validate compounds too
+  * [8f5c6d0] MT#7239 API faxserversettings
+  * [75aeaa6] MT#7421 API soundfiles, check empty filename
+  * [9eda12c] MT#7421 api tests
+  * [c4413fb] MT#7447 add new collections to api test
+  * [11f59d4] MT#7557 API: save pbx_extension
+  * [489a86c] MT#7493 API set cloud_pbx preference on subscriber creation
+  * [f56f49a] MT#7841 callforward api: hide ids
+  * [b0235d9] MT#7841 document api callforwards, cfmappings
+  * [6dd1562] MT#7841 API callforwards: improve documentation examples
+  * [49f14f8] MT#7447 fix api customers test
+  * [54810af] MT#7447 fix soundfiles controller
+  * [41416d2] MT#7843 change svg template to new vat variables
+  * [51aa065] MT#7713 hide Auto Attendant menu for non-pbx subscribers
+  * [fc4bdaf] MT#7959 update contracts api doc
+  * [c1c1117] MT#8035 Write start_ivr and end_ivr events
+  * [93c1dae] MT#7717 delete voip_domains on reseller termination
+  * [c5fd012] MT#7981 possibility to delete subscriber admin flag
+  * [b0a7f8f] MT#7717 explicitly delete related tables of voip_domains
+  * [17f0922] MT#7959 fix contract PUT/PATCH, tests
+
+  [ Victor Seva ]
+  * [98894c7] MT#6425 use a proper list for I18 dirs.
+  * [77e62e3] MT#7275 OPTIONS must be set after load defaults file
+  * [8f65855] MT#7543 install API scripts in /usr/bin. Add manpages and some new options.
+
+  [ Andrew Pogrebennyk ]
+  * [b6d000e] MT#7275 switch NPROC for ngcp-panel to config.yml
+  * [258203d] Revert "MT#7275 switch NPROC for ngcp-panel to config.yml"
+  * [6158580] MT#7439 ngcp-panel: Fix typo in the Call Through label
+
+  [ Jenkins Git User ]
+  * [d54f3fd] I18N dump Mon Jul 07 11:48:54 +0200 2014
+  * [c65443b] I18N dump: snapshot Mon Jul  7 14:45:25 CEST 2014 [mika]
+  * [c9dd0c2] I18N dump: snapshot Mon Jul 07 19:01:11 +0200 2014
+  * [4fff450] I18N dump: snapshot Mon Jul 07 19:01:48 +0200 2014
+  * [a994899] I18N dump: snapshot Mon Jul 07 19:02:01 +0200 2014
+  * [1b9d949] I18N dump: snapshot Mon Jul 07 19:02:11 +0200 2014
+  * [e5c1cfe] I18N dump: snapshot Mon Jul 07 19:02:21 +0200 2014
+  * [78978e6] I18N dump: snapshot Tue Jul 08 11:59:50 +0200 2014
+  * [a144c75] I18N dump: snapshot Tue Jul 08 11:59:59 +0200 2014
+  * [abb70b7] I18N dump: snapshot Tue Jul 08 12:00:08 +0200 2014
+  * [f539dae] I18N dump: snapshot Tue Jul 08 12:00:17 +0200 2014
+  * [fecb1a4] I18N dump: snapshot Tue Jul 08 12:00:26 +0200 2014
+  * [ccb53e8] I18N dump: snapshot Wed Jul 09 01:16:26 +0200 2014
+  * [ccfc1ac] I18N dump: snapshot Wed Jul 09 01:16:36 +0200 2014
+  * [071588f] I18N dump: snapshot Wed Jul 09 01:16:45 +0200 2014
+  * [0743c97] I18N dump: snapshot Wed Jul 09 01:16:53 +0200 2014
+  * [b40f4e7] I18N dump: snapshot Wed Jul 09 01:17:06 +0200 2014
+
+  [ Sipwise Jenkins Builder ]
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Thu, 10 Jul 2014 15:31:15 +0200
+
 ngcp-panel (1.4.0.0+0~mr3.4.0.0) unstable; urgency=low
 
   [ Irka ]
