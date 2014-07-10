@@ -2137,9 +2137,7 @@ sub edit_master :Chained('master') :PathPart('edit') :Args(0) :Does(ACL) :ACLDet
                 $prov_params->{password} = $form->params->{password}
                     if($form->params->{password});
                 if($is_admin) {
-                    if(exists $form->params->{administrative}) {
-                        $prov_params->{admin} = $form->params->{administrative} // 0;
-                    }
+                    $prov_params->{admin} = $form->params->{administrative} // 0;
                 }
 
 
