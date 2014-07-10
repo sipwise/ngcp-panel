@@ -2809,10 +2809,14 @@ msgid "Failed to render invoice"
 msgstr "Не удалось сгенерировать счёт-фактуру"
 
 #. ($error->type . ', info is ' . $error->info)
-#: lib/NGCP/Panel/Controller/Invoice.pm:333
 #: lib/NGCP/Panel/Controller/InvoiceTemplate.pm:354
 msgid "Failed to render template. Type is "
 msgstr "Не удалось сгенерировать счёт-фактуру. Тип "
+
+#. ($error->type, $error->info)
+#: lib/NGCP/Panel/Controller/Invoice.pm:333
+msgid "Failed to render template. Type is %1, info is %2."
+msgstr ""
 
 #: lib/NGCP/Panel/Controller/Subscriber.pm:494
 #: lib/NGCP/Panel/Controller/Subscriber.pm:553
@@ -3708,10 +3712,10 @@ msgstr "Неверные настройки голосовой почты."
 msgid "Invoice"
 msgstr "Счёт-фактура"
 
-#. ($invoice->id . ' successfully created')
+#. ($invoice->id)
 #: lib/NGCP/Panel/Controller/Invoice.pm:355
-msgid "Invoice #"
-msgstr "Счёт-фактура #"
+msgid "Invoice #%1 successfully created"
+msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:590
 msgid "Invoice Email Template"
@@ -8204,6 +8208,9 @@ msgstr "белый список"
 #: share/templates/subscriber/preferences.tt:334
 msgid "yes"
 msgstr "да"
+
+#~ msgid "Invoice #"
+#~ msgstr "Счёт-фактура #"
 
 #~ msgid "Maximum number of %1 subscribers %2created"
 #~ msgstr "Создано максимальное количество абонентов %1 %2"
