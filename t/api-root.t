@@ -68,6 +68,7 @@ $ua->ssl_opts(
                  emailtemplates => 1,
                  faxserversettings => 1,
                  invoices => 1,
+                 invoicetemplates => 1,
                  ncoslevels => 1,
                  ncospatterns => 1,
                  pbxdeviceconfigfiles => 1,
