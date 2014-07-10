@@ -7211,7 +7211,7 @@ msgstr "Начальное время в формате чч:мм:сс"
 msgid ""
 "The status of the call, one of ok, busy, noanswer, cancel, offline, timeout, "
 "other."
-msgstr Состояние звонка"
+msgstr "Состояние звонка"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:392
 msgid "The status of the contract."
