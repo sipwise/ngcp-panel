@@ -702,6 +702,13 @@ sub terminate {
                 alias_selected => [], #none, thus moving them back to our subadmin
                 sadmin => $c->stash->{admin_subscriber},
             );
+                my $subscriber_primary_nr = $subscriber->primary_number;
+                if ($subscriber_primary_nr) {
+                    $subscriber_primary_nr->update({
+                        subscriber_id => undef,
+                        reseller_id => undef,
+                    });
+                }
         } else {
             $subscriber->voip_numbers->update_all({
                 subscriber_id => undef,
