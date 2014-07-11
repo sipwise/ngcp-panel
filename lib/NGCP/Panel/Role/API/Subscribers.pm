@@ -469,11 +469,12 @@ sub update_item {
         } elsif($resource->{status} eq 'terminated') {
             try {
                 NGCP::Panel::Utils::Subscriber::terminate(c => $c, subscriber => $subscriber);
+                return $subscriber;
             } catch($e) {
                 $c->log->error("failed to terminate subscriber id ".$subscriber->id);
                 $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "Failed to terminate subscriber");
+                return;
             }
-            return;
         }
     }
     if(defined $resource->{lock}) {
