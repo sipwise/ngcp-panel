@@ -69,6 +69,11 @@ check_for_ongoing_startup() {
 }
 
 _start() {
+  if [ "$RUN_DAEMON" != "yes" ]; then
+    log_failure_msg "$NAME not yet configured. Edit /etc/default/$NAME first."
+    log_end_msg 0
+    exit 0
+  fi
   rm -f $PIDFILE 2>/dev/null
   check_for_ongoing_startup || return 0
   start-stop-daemon --start --quiet \
@@ -116,12 +121,6 @@ if [ -f $DEFAULTS ]; then
 fi
 
 OPTIONS="--listen $USOCKET --daemon --pidfile $PIDFILE --nproc $NPROC"
-
-if [ "$RUN_DAEMON" != "yes" ]; then
-    log_failure_msg "$NAME not yet configured. Edit /etc/default/$NAME first."
-    log_end_msg 0
-    exit 0
-fi
 
 # $HOMERUN perms
 mkdir -p $HOMERUN && chown -R $USER:$GROUP $HOMERUN
