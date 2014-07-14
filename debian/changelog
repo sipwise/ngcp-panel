@@ -1,3 +1,46 @@
+ngcp-panel (1.3.2.1+0~mr3.3.2.1) unstable; urgency=low
+
+  [ Gerhard Jungwirth ]
+  * [7b22c85] MT#7557 API: save pbx_extension
+  * [5e525c9] MT#7493 API set cloud_pbx preference on subscriber creation
+  * [1060e29] MT#7841 callforward api: hide ids
+  * [57376e2] MT#7841 document api callforwards, cfmappings
+  * [d1bc16c] MT#7841 API callforwards: improve documentation examples
+  * [ffbb862] MT#7447 fix api customers test
+  * [c579078] MT#7843 change svg template to new vat variables
+  * [8b2b46f] MT#7713 hide Auto Attendant menu for non-pbx subscribers
+  * [c312b62] MT#7959 update contracts api doc
+  * [a528241] MT#7717 delete voip_domains on reseller termination
+  * [0167e4c] MT#7981 possibility to delete subscriber admin flag
+  * [df16360] MT#7717 explicitly delete related tables of voip_domains
+  * [526a6c1] MT#7959 fix contract PUT/PATCH, tests
+
+  [ Andreas Granig ]
+  * [5326642] MT#7655 Fix access perms for sub(admin) in prefs
+  * [2296e3b] MT#7731 Fix sound set handling for resellers
+  * [16472d2] MT#7797 Filter for terminated customers.
+  * [e5eb515] MT#7803 Add invoice links and sections.
+  * [c445cf0] MT#5879 Make generate_invoices.pl executable.
+  * [f2e8978] MT#7803 Fix fetching invoice svg data.
+  * [415a550] MT#7803 Fix UTF8 handling in invoice generation
+  * [bc6accd] MT#7803 Cleanup tmp after invoice generation.
+  * [4529368] MT#7803 Fix customer balance creation on new month
+  * [76c8f90] MT#7803 API: fetch invoice details via API
+
+  [ Irina Peshinskaya ]
+  * [657c02a] MT#5879 Add prevmonth option to ease prev month invoices generation.
+  * [0e30e83] MT#5879 Add help for generate_invoices options.
+  * [24c6354] MT#5879 Make email invoices query simplier.
+  * [8d8dbdb] MT#7867 Repeat behavior of embedded image on "Change Image" button.
+  * [23392b1] MT#5879 Default content on template creation and x- mimetype.
+
+  [ Alexander Lutay ]
+  * [f7ca8dc] MT#7803 Add invoice details REST API to t/api-root.t
+
+  [ Sipwise Jenkins Builder ]
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Mon, 14 Jul 2014 17:08:56 +0200
+
 ngcp-panel (1.3.2.0+0~mr3.3.2.0) unstable; urgency=low
 
   [ Andreas Granig ]
