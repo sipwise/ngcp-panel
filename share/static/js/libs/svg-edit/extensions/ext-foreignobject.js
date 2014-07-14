@@ -60,8 +60,8 @@ svgEditor.addExtension("foreignObject", function(S) {
 			elt.parentNode.replaceChild(svgdoc.importNode(newDoc.documentElement.firstChild, true), elt);
 			S.call("changed", [elt]);
 			svgCanvas.clearSelection();
-            //$('#layerlist td.layername').first().mouseup();
-            svgEditor.populateLayers();
+			svgEditor.populateLayers();
+			svgEditor.initPopulatedLayers();
 		} catch(e) {
 			console.log(e);
 			return false;

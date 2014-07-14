@@ -937,7 +937,7 @@ TO-DOS
 				var layersNum = svgCanvas.getCurrentDrawing().getNumLayers();
 				var icon = $.getSvgIcon('eye');
 				// we get the layers in the reverse z-order (the layer rendered on top is listed first)
-                var layer = 0;
+				var layer = 0;
 				//while (layer--) {
 				for (layer=0; layer < layersNum; layer++) {
 					var name = drawing.getLayerName(layer);
@@ -958,14 +958,14 @@ TO-DOS
 						$('#layerlist tr.layer').removeClass('layersel');
 						$(this.parentNode).addClass('layersel');
 						svgCanvas.setCurrentLayer(this.textContent);
-                        var applyLayerEyeVisibility = function(){
-                            var row = $(this.parentNode).prevAll().length;
-                            var name = $('#layerlist tr.layer:eq(' + row + ') td.layername').text();
-                            var vis = !$(this).hasClass('layerinvis');
-                            svgCanvas.setLayerVisibility(name, vis);
-                        };
-                        $('#layerlist td.layervis').each(applyLayerEyeVisibility);
-                        svgCanvas.setLayerVisibility(this.textContent, true);
+						var applyLayerEyeVisibility = function(){
+							var row = $(this.parentNode).prevAll().length;
+							var name = $('#layerlist tr.layer:eq(' + row + ') td.layername').text();
+							var vis = !$(this).hasClass('layerinvis');
+							svgCanvas.setLayerVisibility(name, vis);
+						};
+						$('#layerlist td.layervis').each(applyLayerEyeVisibility);
+						svgCanvas.setLayerVisibility(this.textContent, true);
 						evt.preventDefault();
 					})
 					.mouseover(function() {
@@ -974,7 +974,6 @@ TO-DOS
 					.mouseout(function() {
 						toggleHighlightLayer();
 					});
-                $('#layerlist td.layername').first().mouseup();
 				$('#layerlist td.layervis').click(function() {
 					var row = $(this.parentNode).prevAll().length;
 					var name = $('#layerlist tr.layer:eq(' + row + ') td.layername').text();
@@ -989,6 +988,10 @@ TO-DOS
 					// FIXME: there must a better way to do this
 					layerlist.append('<tr><td style="color:white">_</td><td/></tr>');
 				}
+			};
+
+			var initPopulatedLayers = function() {
+				$('#layerlist td.layername').first().mouseup();
 			};
 
 			var showSourceEditor = function(e, forSaving) {
@@ -1930,6 +1933,7 @@ TO-DOS
 					// if the element changed was the svg, then it could be a resolution change
 					if (elem && elem.tagName === 'svg') {
 						populateLayers();
+						initPopulatedLayers();
 						updateCanvas();
 					}
 					// Update selectedElement if element is no longer part of the image.
@@ -3824,6 +3828,7 @@ TO-DOS
 					//zoomImage();
                     zoomChanged('', 'canvas');
 					populateLayers();
+					initPopulatedLayers();
 					updateTitle();
 					prepPaints();
 				};
@@ -4437,6 +4442,9 @@ TO-DOS
 			});
 
 			populateLayers();
+			initPopulatedLayers();
+			//we need select first layer only for 
+			
 
 		//	function changeResolution(x,y) {
 		//		var zoom = svgCanvas.getResolution().zoom;
