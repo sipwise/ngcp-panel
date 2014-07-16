@@ -20,7 +20,8 @@ class_has 'api_description' => (
     is => 'ro',
     isa => 'Str',
     default => 
-        'Specifies basic callforwards of a subscriber, where a number of destinations and times can be specified for each type (cfu, cfb, cft cfna).',
+        'Specifies basic callforwards of a subscriber, where a number of destinations and times can be specified for each type (cfu, cfb, cft cfna). '.
+        'For more complex configurations with multiple combinations of Timesets and Destinationsets see <a href="#cfmappings">CFMappings</a>.',
 );
 
 class_has 'query_params' => (
