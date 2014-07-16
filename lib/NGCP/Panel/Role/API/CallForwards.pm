@@ -189,7 +189,10 @@ sub update_item {
                 if ((defined $resource->{$type}{times}) && @{ $resource->{$type}{times}}) {
                     $tset->voip_cf_periods->delete; #empty tset
                 } else {
-                    $tset->delete; # delete tset
+                    $mapping->update({time_set_id => undef});
+                    if ($tset->name =~ m/^quickset_/) {
+                        $tset->delete; # delete tset
+                    }
                 }
             } else {
                 if ((defined $resource->{$type}{times}) && @{ $resource->{$type}{times}}) {
