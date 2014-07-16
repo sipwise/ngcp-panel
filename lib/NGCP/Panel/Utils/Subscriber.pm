@@ -740,6 +740,8 @@ sub terminate {
                     domain => $prov_subscriber->domain->domain,
                 );
             }
+            NGCP::Panel::Utils::Kamailio::delete_location($c, 
+                $prov_subscriber);
             $prov_subscriber->delete;
         }
         $subscriber->update({ status => 'terminated' });
