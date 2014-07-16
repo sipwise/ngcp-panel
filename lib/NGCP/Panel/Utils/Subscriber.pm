@@ -687,6 +687,8 @@ sub terminate {
                 username => $prov_subscriber->username,
                 domain => $prov_subscriber->domain->domain,
             ) if($prov_subscriber->pbx_group_id);
+            NGCP::Panel::Utils::Kamailio::delete_location($c, 
+                $prov_subscriber);
             $prov_subscriber->delete;
         }
         if(!$prov_subscriber->admin && $c->stash->{admin_subscriber}) {
