@@ -24,7 +24,7 @@
             <ul>
             [% FOR cf IN cfs -%]
                 <li>
-                    [% cf.desc %] [% cf_destinations.${cf.type}.size ? '<strong style="color:green">active' : '<strong color="grey">inactive' %]</strong>
+                    [% cf.desc %] [% cf_destinations.${cf.type}.size ? '<strong style="color:green">' _ c.loc('active') : '<strong color="grey">' _ c.loc('inactive') %]</strong>
                 </li>
 
             [% END -%]

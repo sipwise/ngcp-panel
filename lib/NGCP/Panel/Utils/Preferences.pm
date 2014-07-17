@@ -245,7 +245,7 @@ sub create_preference_form {
                         })->delete_all;
                 } catch($e) {
                     $c->log->error("failed to generate ip group sequence: $e");
-                    $c->flash(messages => [{type => 'error', text => "Failed to generate ip group sequence."}]);
+                    $c->flash(messages => [{type => 'error', text => $c->loc('Failed to generate ip group sequence.')}]);
                     $c->response->redirect($base_uri);
                     return 1;
                 }
@@ -257,7 +257,7 @@ sub create_preference_form {
                 });
             } catch($e) {
                 $c->log->error("failed to create allowed_ip_grp: $e");
-                $c->flash(messages => [{type => 'error', text => "Failed to create allowed_ip_grp."}]);
+                $c->flash(messages => [{type => 'error', text => $c->loc('Failed to create allowed_ip_grp.')}]);
                 $c->response->redirect($base_uri);
                 return 1;
             }
@@ -286,7 +286,7 @@ sub create_preference_form {
 
                 } catch($e) {
                     $c->log->error("failed to create manual ip group sequence: $e");
-                    $c->flash(messages => [{type => 'error', text => "Failed to generate manual ip group sequence."}]);
+                    $c->flash(messages => [{type => 'error', text => $c->loc('Failed to generate manual ip group sequence.')}]);
                     $c->response->redirect($base_uri);
                     return 1;
                 }
@@ -298,7 +298,7 @@ sub create_preference_form {
                 });
             } catch($e) {
                 $c->log->error("failed to create man_allowed_ip_grp: $e");
-                $c->flash(messages => [{type => 'error', text => "Failed to create man_allowed_ip_grp."}]);
+                $c->flash(messages => [{type => 'error', text => $c->loc('Failed to create man_allowed_ip_grp.')}]);
                 $c->response->redirect($base_uri);
                 return 1;
             }
@@ -310,7 +310,7 @@ sub create_preference_form {
                 });
             } catch($e) {
                 $c->log->error("failed to create preference $attribute: $e");
-                $c->flash(messages => [{type => 'error', text => "Failed to delete preference $attribute."}]);
+                $c->flash(messages => [{type => 'error', text => $c->loc('Failed to delete preference [_1].', $attribute)}]);
                 $c->response->redirect($base_uri);
                 return 1;
             }
@@ -323,7 +323,7 @@ sub create_preference_form {
                 rwrs_result   => $selected_rwrs,
                 pref_rs       => $pref_rs,
             );
-            $c->flash(messages => [{type => 'success', text => "Preference $attribute successfully updated."}]);
+            $c->flash(messages => [{type => 'success', text => $c->loc("Preference [_1] successfully updated.", $attribute)}]);
             $c->response->redirect($base_uri);
             return 1;
         } elsif ($attribute eq "ncos" || $attribute eq "adm_ncos") {
@@ -344,12 +344,12 @@ sub create_preference_form {
                 }
             } catch($e) {
                 $c->log->error("failed to update preference $attribute: $e");
-                $c->flash(messages => [{type => 'error', text => "Failed to update preference $attribute."}]);
+                $c->flash(messages => [{type => 'error', text => $c->loc('Failed to update preference [_1].', $attribute)}]);
                 $c->response->redirect($base_uri);
                 return 1;
             }
 
-            $c->flash(messages => [{type => 'success', text => "Preference $attribute successfully updated."}]);
+            $c->flash(messages => [{type => 'success', text => $c->loc("Preference [_1] successfully updated.", $attribute)}]);
             $c->response->redirect($base_uri);
             return 1;
         } elsif ($attribute eq "sound_set") {
@@ -369,12 +369,12 @@ sub create_preference_form {
                 }
             } catch($e) {
                 $c->log->error("failed to update preference $attribute: $e");
-                $c->flash(messages => [{type => 'error', text => "Failed to update preference $attribute."}]);
+                $c->flash(messages => [{type => 'error', text => $c->loc('Failed to update preference [_1].', $attribute)}]);
                 $c->response->redirect($base_uri);
                 return 1;
             }
 
-            $c->flash(messages => [{type => 'success', text => "Preference $attribute successfully updated."}]);
+            $c->flash(messages => [{type => 'success', text => $c->loc("Preference [_1] successfully updated.", $attribute)}]);
             $c->response->redirect($base_uri);
             return 1;
         } elsif ($attribute eq "contract_sound_set") {
@@ -394,12 +394,12 @@ sub create_preference_form {
                 }
             } catch($e) {
                 $c->log->error("failed to update preference $attribute: $e");
-                $c->flash(messages => [{type => 'error', text => "Failed to update preference $attribute."}]);
+                $c->flash(messages => [{type => 'error', text => $c->loc('Failed to update preference [_1].', $attribute)}]);
                 $c->response->redirect($base_uri);
                 return 1;
             }
 
-            $c->flash(messages => [{type => 'success', text => "Preference $attribute successfully updated."}]);
+            $c->flash(messages => [{type => 'success', text => $c->loc("Preference [_1] successfully updated.", $attribute)}]);
             $c->response->redirect($base_uri);
             return 1;
         } else {
@@ -413,7 +413,7 @@ sub create_preference_form {
                     $preference->delete if $preference;
                 } catch($e) {
                     $c->log->error("failed to delete preference $attribute: $e");
-                    $c->flash(messages => [{type => 'error', text => "Failed to delete preference $attribute."}]);
+                    $c->flash(messages => [{type => 'error', text => $c->loc('Failed to delete preference [_1].', $attribute)}]);
                     $c->response->redirect($base_uri);
                     return 1;
                 }
@@ -424,7 +424,7 @@ sub create_preference_form {
                     $preference->delete if $preference;
                 } catch($e) {
                     $c->log->error("failed to delete preference $attribute: $e");
-                    $c->flash(messages => [{type => 'error', text => "Failed to delete preference $attribute."}]);
+                    $c->flash(messages => [{type => 'error', text => $c->loc('Failed to delete preference [_1].', $attribute)}]);
                     $c->response->redirect($base_uri);
                     return 1;
                 }
@@ -437,12 +437,12 @@ sub create_preference_form {
                     });
                 } catch($e) {
                     $c->log->error("failed to update preference $attribute: $e");
-                    $c->flash(messages => [{type => 'error', text => "Failed to update preference $attribute."}]);
+                    $c->flash(messages => [{type => 'error', text => $c->loc('Failed to update preference [_1].', $attribute)}]);
                     $c->response->redirect($base_uri);
                     return 1;
                 }
             }
-            $c->flash(messages => [{type => 'success', text => "Preference $attribute successfully updated."}]);
+            $c->flash(messages => [{type => 'success', text => $c->loc("Preference [_1] successfully updated.", $attribute)}]);
             $c->response->redirect($base_uri);
             return 1;
          }
