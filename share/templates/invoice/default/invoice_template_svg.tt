@@ -12,134 +12,134 @@
         cur = billprof.currency;
         p_start = date_format(thedate=invoice.period_start, format='%Y-%m-%d');
         p_end = date_format(thedate=invoice.period_end, format='%Y-%m-%d');
-        
+        server_process_units = 'none';
     -%]
 }-->
-<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="210mm" height="297mm">
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="210mm" height="297mm" viewBox="0 0 595 842" server-process-units="none">
 
     <!--{ [% MACRO draw_background BLOCK %] }-->
-    <g class="page" font-family="Verdana" font-size="8pt">
+    <g class="page" font-family="Verdana" font-size="8">
         <title>Background</title>
 
 
-        <text x="20mm"  y="270mm">[% rescontact.company %]</text>
-        <text x="20mm"  y="275mm">[% rescontact.street %]</text>
-        <text x="20mm"  y="280mm">[% rescontact.postcode %] [% custcontact.city %]</text>
-        <text x="20mm"  y="285mm">[% rescontact.country %]</text>
+        <text x="56.7"  y="765.45">[% rescontact.company %]</text>
+        <text x="56.7"  y="779.625">[% rescontact.street %]</text>
+        <text x="56.7"  y="793.8">[% rescontact.postcode %] [% custcontact.city %]</text>
+        <text x="56.7"  y="807.975">[% rescontact.country %]</text>
 
-        <text x="190mm" y="270mm" text-anchor="end">Company Reg.Nr.: [% rescontact.comregnum %]</text>
-        <text x="190mm" y="275mm" text-anchor="end">VAT.Nr.: [% rescontact.vatnum %]</text>
-        <text x="190mm" y="280mm" text-anchor="end">IBAN: [% rescontact.iban %]</text>
-        <text x="190mm" y="285mm" text-anchor="end">BIC: [% rescontact.bic %]</text>
-        <text x="105mm" y="288mm" text-anchor="middle">Page [% aux.page %]</text>
+        <text x="538.65" y="765.45" text-anchor="end">Company Reg.Nr.: [% rescontact.comregnum %]</text>
+        <text x="538.65" y="779.625" text-anchor="end">VAT.Nr.: [% rescontact.vatnum %]</text>
+        <text x="538.65" y="793.8" text-anchor="end">IBAN: [% rescontact.iban %]</text>
+        <text x="538.65" y="807.975" text-anchor="end">BIC: [% rescontact.bic %]</text>
+        <text x="297.675" y="816.48" text-anchor="middle">Page [% aux.page %]</text>
 
 
-        <image x="150mm" y="10mm" height="20mm" width="40mm" xlink:href="data:image/png;base64,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"/>
+        <image x="425.25" y="28.35" height="56.7" width="113.4" xlink:href="data:image/png;base64,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"/>
 
     </g>
     <!--{ [% END %] }-->
 
-    <g x="0mm" y="0mm" class="page">
+    <g x="0" y="0" class="page">
         <title>Summary</title>
         <!--{ [% draw_background %] }-->
 
-        <text x="28mm" y="60mm" font-family="Verdana" font-size="8pt">[% custcontact.firstname %] [% custcontact.lastname %]</text>
-        <text x="28mm" y="64mm" font-family="Verdana" font-size="8pt">[% custcontact.street %]</text>
-        <text x="28mm" y="68mm" font-family="Verdana" font-size="8pt">[% custcontact.postcode %] [% custcontact.city %]</text>
-        <text x="28mm" y="72mm" font-family="Verdana" font-size="8pt">[% custcontact.country %]</text>
+        <text x="79.38" y="170.1" font-family="Verdana" font-size="8">[% custcontact.firstname %] [% custcontact.lastname %]</text>
+        <text x="79.38" y="181.44" font-family="Verdana" font-size="8">[% custcontact.street %]</text>
+        <text x="79.38" y="192.78" font-family="Verdana" font-size="8">[% custcontact.postcode %] [% custcontact.city %]</text>
+        <text x="79.38" y="204.12" font-family="Verdana" font-size="8">[% custcontact.country %]</text>
 
-        <text x="190mm" y="50mm"  text-anchor="end" font-family="Verdana" font-size="8pt" font-weight="bold">Invoice Nr.</text>
-        <text x="190mm" y="54mm"  text-anchor="end" font-family="Verdana" font-size="8pt">[% invoice.serial %]</text>
-        <text x="190mm" y="58mm"  text-anchor="end" font-family="Verdana" font-size="8pt" font-weight="bold">Customer Nr.</text>
-        <text x="190mm" y="62mm"  text-anchor="end" font-family="Verdana" font-size="8pt">[% customer.external_id %]</text>
-        <text x="190mm" y="66mm"  text-anchor="end" font-family="Verdana" font-size="8pt" font-weight="bold">Invoice Period</text>
-        <text x="190mm" y="70mm"  text-anchor="end" font-family="Verdana" font-size="8pt">[% p_start %] - [% p_end %]</text>
-        <text x="190mm" y="74mm"  text-anchor="end" font-family="Verdana" font-size="8pt" font-weight="bold">Date</text>
-        <text x="190mm" y="78mm"  text-anchor="end" font-family="Verdana" font-size="8pt">[% date_now(format='%Y-%m-%d') %]</text>
+        <text x="538.65" y="141.75"  text-anchor="end" font-family="Verdana" font-size="8" font-weight="bold">Invoice Nr.</text>
+        <text x="538.65" y="153.09"  text-anchor="end" font-family="Verdana" font-size="8">[% invoice.serial %]</text>
+        <text x="538.65" y="164.43"  text-anchor="end" font-family="Verdana" font-size="8" font-weight="bold">Customer Nr.</text>
+        <text x="538.65" y="175.77"  text-anchor="end" font-family="Verdana" font-size="8">[% customer.external_id %]</text>
+        <text x="538.65" y="187.11"  text-anchor="end" font-family="Verdana" font-size="8" font-weight="bold">Invoice Period</text>
+        <text x="538.65" y="198.45"  text-anchor="end" font-family="Verdana" font-size="8">[% p_start %] - [% p_end %]</text>
+        <text x="538.65" y="209.79"  text-anchor="end" font-family="Verdana" font-size="8" font-weight="bold">Date</text>
+        <text x="538.65" y="221.13"  text-anchor="end" font-family="Verdana" font-size="8">[% date_now(format='%Y-%m-%d') %]</text>
 
-        <text x="20mm" y="100mm" font-family="Verdana" font-size="12pt" font-weight="bold">Your Monthly Statement</text>
+        <text x="56.7" y="283.5" font-family="Verdana" font-size="12" font-weight="bold">Your Monthly Statement</text>
 
-        <text x="20mm" y="110mm" font-family="Verdana" font-size="8pt">Dear Customer,</text>
-        <text x="20mm" y="118mm" font-family="Verdana" font-size="8pt">For our services provided in the period of [% p_start %] to [% p_end %], we invoice the following items:</text>
-
-
-        <text x="20mm" y="130mm" font-family="Verdana" font-size="8pt" font-weight="bold">Recurring Fees</text>
-        <line x1="22mm" y1="132mm" x2="190mm" y2="132mm" style="stroke:#000000;stroke-width:0.2mm;" />
-        <text x="22mm" y="136mm" font-family="Verdana" font-size="8pt" font-weight="bold">Name</text>
-        <text text-anchor="end" x="100mm" y="136mm" font-family="Verdana" font-size="8pt" font-weight="bold">Quantity</text>
-        <text text-anchor="end" x="133mm" y="136mm" font-family="Verdana" font-size="8pt" font-weight="bold">Unit Price</text>
-        <text text-anchor="end" x="190mm" y="136mm" font-family="Verdana" font-size="8pt" font-weight="bold">Total Price in [% cur %]</text>
-        <line x1="22mm" y1="138mm" x2="190mm" y2="138mm" style="stroke:#000000;stroke-width:0.2mm;" />
-        <text x="22mm" y="144mm" font-family="Verdana" font-size="8pt">[% billprof.name %]</text>
-        <text text-anchor="end" x="100mm" y="144mm" font-family="Verdana" font-size="8pt">1</text>
-        <text text-anchor="end" x="133mm" y="144mm" font-family="Verdana" font-size="8pt">[% fixfee %]</text>
-        <text text-anchor="end" x="190mm" y="144mm" font-family="Verdana" font-size="8pt">[% fixfee %]</text>
-        <line x1="22mm" y1="148mm" x2="190mm" y2="148mm" style="stroke:#000000;stroke-width:0.2mm;" />
-        <text x="22mm" y="152mm" font-family="Verdana" font-size="8pt" font-weight="bold">Total</text>
-        <text text-anchor="end" x="190mm" y="152mm" font-family="Verdana" font-size="8pt" font-weight="bold">[% fixfee %]</text>
-        <line x1="22mm" y1="154mm" x2="190mm" y2="154mm" style="stroke:#000000;stroke-width:0.2mm;" />
+        <text x="56.7" y="311.85" font-family="Verdana" font-size="8">Dear Customer,</text>
+        <text x="56.7" y="334.53" font-family="Verdana" font-size="8">For our services provided in the period of [% p_start %] to [% p_end %], we invoice the following items:</text>
 
 
+        <text x="56.7" y="368.55" font-family="Verdana" font-size="8" font-weight="bold">Recurring Fees</text>
+        <line x1="62.37" y1="374.22" x2="538.65" y2="374.22" style="stroke:#000000;stroke-width:1;" />
+        <text x="62.37" y="385.56" font-family="Verdana" font-size="8" font-weight="bold">Name</text>
+        <text text-anchor="end" x="283.5" y="385.56" font-family="Verdana" font-size="8" font-weight="bold">Quantity</text>
+        <text text-anchor="end" x="377.055" y="385.56" font-family="Verdana" font-size="8" font-weight="bold">Unit Price</text>
+        <text text-anchor="end" x="538.65" y="385.56" font-family="Verdana" font-size="8" font-weight="bold">Total Price in [% cur %]</text>
+        <line x1="62.37" y1="391.23" x2="538.65" y2="391.23" style="stroke:#000000;stroke-width:1;" />
+        <text x="62.37" y="408.24" font-family="Verdana" font-size="8">[% billprof.name %]</text>
+        <text text-anchor="end" x="283.5" y="408.24" font-family="Verdana" font-size="8">1</text>
+        <text text-anchor="end" x="377.055" y="408.24" font-family="Verdana" font-size="8">[% fixfee %]</text>
+        <text text-anchor="end" x="538.65" y="408.24" font-family="Verdana" font-size="8">[% fixfee %]</text>
+        <line x1="62.37" y1="419.58" x2="538.65" y2="419.58" style="stroke:#000000;stroke-width:1;" />
+        <text x="62.37" y="430.92" font-family="Verdana" font-size="8" font-weight="bold">Total</text>
+        <text text-anchor="end" x="538.65" y="430.92" font-family="Verdana" font-size="8" font-weight="bold">[% fixfee %]</text>
+        <line x1="62.37" y1="436.59" x2="538.65" y2="436.59" style="stroke:#000000;stroke-width:1;" />
 
-        <text x="20mm" y="165mm" font-family="Verdana" font-size="8pt" font-weight="bold">Call Summary</text>
-        <line x1="22mm" y1="167mm" x2="190mm" y2="167mm" style="stroke:#000000;stroke-width:0.2mm;" />
-        <text x="22mm" y="171mm" font-family="Verdana" font-size="8pt" font-weight="bold">Zone</text>
-        <text text-anchor="end" x="100mm" y="171mm" font-family="Verdana" font-size="8pt" font-weight="bold">Quantity</text>
-        <text text-anchor="end" x="133mm" y="171mm" font-family="Verdana" font-size="8pt" font-weight="bold">Usage</text>
-        <text text-anchor="end" x="190mm" y="171mm" font-family="Verdana" font-size="8pt" font-weight="bold">Total Price in [% cur %]</text>
-        <line x1="22mm" y1="173mm" x2="190mm" y2="173mm" style="stroke:#000000;stroke-width:0.2mm;" />
 
-        <!--{ [% zonelist(fontfamily='Verdana', fontsize=8, startx=22, starty=179, offsety=5, miny=40, maxy=250, zones=zones.data, fields=[{name='zone',dx=0},{name='number',dx=78,anchor='end'},{name='duration',dx=35,timestamp2time=1,anchor='end'},{name='customercost',dx=55,money_cents=1,comma='.',anchor='end'}]) -%] }-->
 
-        <!-- firsty-180 means the first y in the group is at 180mm; mandatory to automatically place the footer after the list -->
-        <!--{<g class="list-footer firsty-180 lasty-[% aux.lasty %]">}-->
-            <line x1="22mm" y1="180mm" x2="190mm" y2="180mm" style="stroke:#000000;stroke-width:0.2mm;" />
-            <text x="22mm" y="184mm" font-family="Verdana" font-size="8pt" font-weight="bold">Total</text>
-            <text text-anchor="end" x="190mm" y="184mm" font-family="Verdana" font-size="8pt" font-weight="bold">[% zonefee %]</text>
-            <line x1="22mm" y1="186mm" x2="190mm" y2="186mm" style="stroke:#000000;stroke-width:0.2mm;" />
+        <text x="56.7" y="467.775" font-family="Verdana" font-size="8" font-weight="bold">Call Summary</text>
+        <line x1="62.37" y1="473.445" x2="538.65" y2="473.445" style="stroke:#000000;stroke-width:1;" />
+        <text x="62.37" y="484.785" font-family="Verdana" font-size="8" font-weight="bold">Zone</text>
+        <text text-anchor="end" x="283.5" y="484.785" font-family="Verdana" font-size="8" font-weight="bold">Quantity</text>
+        <text text-anchor="end" x="377.055" y="484.785" font-family="Verdana" font-size="8" font-weight="bold">Usage</text>
+        <text text-anchor="end" x="538.65" y="484.785" font-family="Verdana" font-size="8" font-weight="bold">Total Price in [% cur %]</text>
+        <line x1="62.37" y1="490.455" x2="538.65" y2="490.455" style="stroke:#000000;stroke-width:1;" />
+
+        <!--{ [% zonelist(fontfamily='Verdana', fontsize=8, startx=62, starty=507, offsety=14, miny=113.4, maxy=709, zones=zones.data, fields=[{name='zone',dx=0},{name='number',dx=221,anchor='end'},{name='duration',dx=99,timestamp2time=1,anchor='end'},{name='customercost',dx=326,money_cents=1,comma='.',anchor='end'}]) -%] }-->
+
+        <!-- firsty-507 means the first y in the group is at 180mm (507px); mandatory to automatically place the footer after the list -->
+        <!--{<g class="list-footer firsty-507 lasty-[% aux.lasty %]">}-->
+            <line x1="62.37" y1="510.3" x2="538.65" y2="510.3" style="stroke:#000000;stroke-width:1;" />
+            <text x="62.37" y="521.64" font-family="Verdana" font-size="8" font-weight="bold">Total</text>
+            <text text-anchor="end" x="538.65" y="521.64" font-family="Verdana" font-size="8" font-weight="bold">[% zonefee %]</text>
+            <line x1="62.37" y1="527.31" x2="538.65" y2="527.31" style="stroke:#000000;stroke-width:1;" />
         <!--{</g>}-->
-        <!--{[% aux.lasty = aux.lasty + 20 %]}-->
+        <!--{[% aux.lasty = aux.lasty + 56.7 %]}-->
 
-        <!--{ [% check_pagebreak(following_height=50, miny=50, maxy=250) %] }-->
+        <!--{ [% check_pagebreak(following_height=141.75, miny=141.75, maxy=708.75) %] }-->
 
-        <!-- firsty-197 means the first y in the group is at 197mm; mandatory to automatically place the footer after the list -->
-        <!--{<g class="list-footer firsty-197 lasty-[% aux.lasty %]">}-->
-            <text x="20mm" y="197mm" font-family="Verdana" font-size="8pt" font-weight="bold">Summary</text>
-            <text text-anchor="end" x="190mm" y="197mm" font-family="Verdana" font-size="8pt" font-weight="bold">in [% cur %]</text>
-            <line x1="22mm" y1="199mm" x2="190mm" y2="199mm" style="stroke:#000000;stroke-width:0.2mm;" />
-            <text x="22mm" y="203mm" font-family="Verdana" font-size="8pt" font-weight="bold">Total Summary</text>
-            <text text-anchor="end" x="190mm" y="203mm" font-family="Verdana" font-size="8pt" font-weight="bold">[% netfee %]</text>
-            <text x="22mm" y="207mm" font-family="Verdana" font-size="8pt" font-weight="bold">VAT ([% customer.vat_rate %]%)</text>
-            <text text-anchor="end" x="190mm" y="207mm" font-family="Verdana" font-size="8pt" font-weight="bold">[% vatfee %]</text>
-            <line x1="22mm" y1="209mm" x2="190mm" y2="209mm" style="stroke:#000000;stroke-width:0.2mm;" />
-            <text x="22mm" y="213mm" font-family="Verdana" font-size="8pt" font-weight="bold">Amount Due</text>
-            <text text-anchor="end" x="190mm" y="213mm" font-family="Verdana" font-size="8pt" font-weight="bold">[% allfee %]</text>
-            <line x1="22mm" y1="215mm" x2="190mm" y2="215mm" style="stroke:#000000;stroke-width:0.2mm;" />
+        <!-- firsty-558 means the first y in the group is at 197mm (558); mandatory to automatically place the footer after the list -->
+        <!--{<g class="list-footer firsty-558 lasty-[% aux.lasty %]">}-->
+            <text x="56.7" y="558" font-family="Verdana" font-size="8" font-weight="bold">Summary</text>
+            <text text-anchor="end" x="538.65" y="558.495" font-family="Verdana" font-size="8" font-weight="bold">in [% cur %]</text>
+            <line x1="62.37" y1="564.165" x2="538.65" y2="564.165" style="stroke:#000000;stroke-width:1;" />
+            <text x="62.37" y="575.505" font-family="Verdana" font-size="8" font-weight="bold">Total Summary</text>
+            <text text-anchor="end" x="538.65" y="575.505" font-family="Verdana" font-size="8" font-weight="bold">[% netfee %]</text>
+            <text x="62.37" y="586.845" font-family="Verdana" font-size="8" font-weight="bold">VAT ([% customer.vat_rate %]%)</text>
+            <text text-anchor="end" x="538.65" y="586.845" font-family="Verdana" font-size="8" font-weight="bold">[% vatfee %]</text>
+            <line x1="62.37" y1="592.515" x2="538.65" y2="592.515" style="stroke:#000000;stroke-width:1;" />
+            <text x="62.37" y="603.855" font-family="Verdana" font-size="8" font-weight="bold">Amount Due</text>
+            <text text-anchor="end" x="538.65" y="603.855" font-family="Verdana" font-size="8" font-weight="bold">[% allfee %]</text>
+            <line x1="62.37" y1="609.525" x2="538.65" y2="609.525" style="stroke:#000000;stroke-width:1;" />
 
-            <text x="20mm" y="225mm" font-family="Verdana" font-size="8pt">The amount is automatically charged via SEPA within 30 days using Mandate ID MID12345 and Creditor ID CID12345</text>
-            <text x="20mm" y="229mm" font-family="Verdana" font-size="8pt">from your account with IBAN [% rescontact.iban %] and BIC [% rescontact.bic %].</text>
-            <text x="20mm" y="237mm" font-family="Verdana" font-size="8pt">With best regards,</text>
-            <text x="20mm" y="241mm" font-family="Verdana" font-size="8pt">Your [% rescontact.company %] Service Team</text>
+            <text x="56.7" y="637.875" font-family="Verdana" font-size="8">The amount is automatically charged via SEPA within 30 days using Mandate ID MID12345 and Creditor ID CID12345</text>
+            <text x="56.7" y="649.215" font-family="Verdana" font-size="8">from your account with IBAN [% rescontact.iban %] and BIC [% rescontact.bic %].</text>
+            <text x="56.7" y="671.895" font-family="Verdana" font-size="8">With best regards,</text>
+            <text x="56.7" y="683.235" font-family="Verdana" font-size="8">Your [% rescontact.company %] Service Team</text>
         <!--{</g>}-->
 
     </g>
 
     <!--{ [% newpage %] }-->
-    <g x="0mm" y="0mm" class="page" display="none">
+    <g x="0" y="0" class="page" display="none">
         <title>CallList</title>
         <!--{ [% draw_background %] }-->
 
-        <text x="20mm" y="50mm" font-family="Verdana" font-size="8pt" font-weight="bold">Call Details</text>
-        <line x1="22mm" y1="53mm" x2="190mm" y2="53mm" style="stroke:#000000;stroke-width:0.2mm;" />
-        <text x="22mm"  y="58mm" font-family="Verdana" font-size="8pt" font-weight="bold">Start Time</text>
-        <text x="58mm"  y="58mm" font-family="Verdana" font-size="8pt" font-weight="bold">Duration</text>
-        <text x="82mm"  y="58mm" font-family="Verdana" font-size="8pt" font-weight="bold">Destination</text>
-        <text x="122mm" y="58mm" font-family="Verdana" font-size="8pt" font-weight="bold">Zone</text>
-        <text x="162mm" y="58mm" font-family="Verdana" font-size="8pt" font-weight="bold">Total Amount in [% cur %]</text>
+        <text x="56.7" y="141.75" font-family="Verdana" font-size="8" font-weight="bold">Call Details</text>
+        <line x1="62.37" y1="150.255" x2="538.65" y2="150.255" style="stroke:#000000;stroke-width:1;" />
+        <text x="62.37"  y="164.43" font-family="Verdana" font-size="8" font-weight="bold">Start Time</text>
+        <text x="164.43"  y="164.43" font-family="Verdana" font-size="8" font-weight="bold">Duration</text>
+        <text x="232.47"  y="164.43" font-family="Verdana" font-size="8" font-weight="bold">Destination</text>
+        <text x="345.87" y="164.43" font-family="Verdana" font-size="8" font-weight="bold">Zone</text>
+        <text x="459.27" y="164.43" font-family="Verdana" font-size="8" font-weight="bold">Total Amount in [% cur %]</text>
 
-        <line x1="22mm" y1="60mm" x2="190mm" y2="60mm" style="stroke:#000000;stroke-width:0.2mm;" />
+        <line x1="62.37" y1="170.1" x2="538.65" y2="170.1" style="stroke:#000000;stroke-width:1;" />
 
-        <!--{ [% calllist(fontfamily='Verdana', fontsize=8, startx=22, starty=65, offsety=5, miny=40, maxy=260, calls=calls, fields=[{name='start_time',dx=0,date_format='%Y-%m-%d %H:%M:%S'},{name='duration',dx=50,timestamp2time=1,anchor='end'},{name='destination_user_in',dx=10,prefix='+',masklen=10,mask='xxx'},{name='zone',dx=40},{name='source_customer_cost',dx=68,money_cents=1,comma='.',anchor='end'}]) -%] }-->
+        <!--{ [% calllist(fontfamily='Verdana', fontsize=8, startx=62.37, starty=184.275, offsety=14, miny=113.4, maxy=737, calls=calls, fields=[{name='start_time',dx=0,date_format='%Y-%m-%d %H:%M:%S'},{name='duration',dx=141.175,timestamp2time=1,anchor='end'},{name='destination_user_in',dx=28.35,prefix='+',masklen=10,mask='xxx'},{name='zone',dx=113.4},{name='source_customer_cost',dx=192.78,money_cents=1,comma='.',anchor='end'}]) -%] }-->
         
     </g>
 
