@@ -2540,6 +2540,10 @@ msgstr "Не удалось создать PBX группы."
 msgid "Failed to create administrator."
 msgstr "Не удалось создать Администратора."
 
+#: lib/NGCP/Panel/Utils/Preferences.pm:260
+msgid "Failed to create allowed_ip_grp."
+msgstr ""
+
 #: lib/NGCP/Panel/Controller/Billing.pm:242
 msgid "Failed to create billing profile."
 msgstr "Не удалось создать тариф."
@@ -2592,6 +2596,10 @@ msgstr "Не удалось создать шаблон счёт-фактуры"
 #: lib/NGCP/Panel/Controller/Invoice.pm:361
 msgid "Failed to create invoice."
 msgstr "Не удалось создать счёт-фактуру."
+
+#: lib/NGCP/Panel/Utils/Preferences.pm:301
+msgid "Failed to create man_allowed_ip_grp."
+msgstr ""
 
 #: lib/NGCP/Panel/Controller/NumberBlock.pm:141
 msgid "Failed to create number block."
@@ -2731,6 +2739,13 @@ msgstr "Не удалось удалить SIP Транк правило."
 msgid "Failed to delete peering server."
 msgstr "Не удалось удалить SIP Транк сервер."
 
+#. ($attribute)
+#: lib/NGCP/Panel/Utils/Preferences.pm:313
+#: lib/NGCP/Panel/Utils/Preferences.pm:416
+#: lib/NGCP/Panel/Utils/Preferences.pm:427
+msgid "Failed to delete preference %1."
+msgstr ""
+
 #: lib/NGCP/Panel/Controller/Subscriber.pm:3014
 msgid "Failed to delete registered device."
 msgstr "Не удалось удалить зарегистрированное устройство."
@@ -2786,6 +2801,14 @@ msgstr "Не удалось найти пользователя голосово
 #: lib/NGCP/Panel/Controller/Administrator.pm:236
 msgid "Failed to generate client certificate."
 msgstr "Не удалось создать сертификат клиента"
+
+#: lib/NGCP/Panel/Utils/Preferences.pm:248
+msgid "Failed to generate ip group sequence."
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/Preferences.pm:289
+msgid "Failed to generate manual ip group sequence."
+msgstr ""
 
 #: lib/NGCP/Panel/Controller/Customer.pm:253
 #: lib/NGCP/Panel/Controller/Invoice.pm:256
@@ -2940,6 +2963,14 @@ msgstr "Не удалось обновить SIP Транк правило."
 #: lib/NGCP/Panel/Controller/Peering.pm:308
 msgid "Failed to update peering server."
 msgstr "Не удалось обновить SIP Транк сервер."
+
+#. ($attribute)
+#: lib/NGCP/Panel/Utils/Preferences.pm:347
+#: lib/NGCP/Panel/Utils/Preferences.pm:372
+#: lib/NGCP/Panel/Utils/Preferences.pm:397
+#: lib/NGCP/Panel/Utils/Preferences.pm:440
+msgid "Failed to update preference %1."
+msgstr ""
 
 #: lib/NGCP/Panel/Controller/Subscriber.pm:2825
 msgid "Failed to update reminder setting."
@@ -4875,6 +4906,15 @@ msgstr "Порт"
 #: lib/NGCP/Panel/Utils/DbStrings.pm:926
 msgid "Postcode"
 msgstr "Почтовый индекс"
+
+#. ($attribute)
+#: lib/NGCP/Panel/Utils/Preferences.pm:326
+#: lib/NGCP/Panel/Utils/Preferences.pm:352
+#: lib/NGCP/Panel/Utils/Preferences.pm:377
+#: lib/NGCP/Panel/Utils/Preferences.pm:402
+#: lib/NGCP/Panel/Utils/Preferences.pm:445
+msgid "Preference %1 successfully updated."
+msgstr ""
 
 #: share/templates/helpers/pref_table.tt:156
 msgid "Preference '"
@@ -7882,6 +7922,7 @@ msgid "Zone Details"
 msgstr "Детали Зоны"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:610
+#: share/templates/widgets/subscriber_cf_overview.tt:27
 msgid "active"
 msgstr "активен"
 
@@ -8066,6 +8107,10 @@ msgstr "прекратил набор текста."
 #: share/templates/subscriber/webphone.tt:321
 msgid "in progress..."
 msgstr "Обработка..."
+
+#: share/templates/widgets/subscriber_cf_overview.tt:27
+msgid "inactive"
+msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:654
 msgid "inbound"
