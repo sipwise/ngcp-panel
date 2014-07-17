@@ -2499,6 +2499,10 @@ msgstr "Fallo al crear grupo de PBX"
 msgid "Failed to create administrator."
 msgstr "Fallo al crear administrador."
 
+#: lib/NGCP/Panel/Utils/Preferences.pm:260
+msgid "Failed to create allowed_ip_grp."
+msgstr ""
+
 #: lib/NGCP/Panel/Controller/Billing.pm:242
 msgid "Failed to create billing profile."
 msgstr "Fallo al crear perfil de facturación."
@@ -2550,6 +2554,10 @@ msgstr ""
 
 #: lib/NGCP/Panel/Controller/Invoice.pm:361
 msgid "Failed to create invoice."
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/Preferences.pm:301
+msgid "Failed to create man_allowed_ip_grp."
 msgstr ""
 
 #: lib/NGCP/Panel/Controller/NumberBlock.pm:141
@@ -2690,6 +2698,13 @@ msgstr "Fallo al borrar regla de peering."
 msgid "Failed to delete peering server."
 msgstr "Fallo al borrar servidor de peering."
 
+#. ($attribute)
+#: lib/NGCP/Panel/Utils/Preferences.pm:313
+#: lib/NGCP/Panel/Utils/Preferences.pm:416
+#: lib/NGCP/Panel/Utils/Preferences.pm:427
+msgid "Failed to delete preference %1."
+msgstr ""
+
 #: lib/NGCP/Panel/Controller/Subscriber.pm:3014
 msgid "Failed to delete registered device."
 msgstr "Fallo al borrar dispositivo registrado."
@@ -2745,6 +2760,14 @@ msgstr "Fallo al encontrar usuario de buzón."
 
 #: lib/NGCP/Panel/Controller/Administrator.pm:236
 msgid "Failed to generate client certificate."
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/Preferences.pm:248
+msgid "Failed to generate ip group sequence."
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/Preferences.pm:289
+msgid "Failed to generate manual ip group sequence."
 msgstr ""
 
 #: lib/NGCP/Panel/Controller/Customer.pm:253
@@ -2900,6 +2923,14 @@ msgstr "Fallo al actualizar regla de peering"
 #: lib/NGCP/Panel/Controller/Peering.pm:308
 msgid "Failed to update peering server."
 msgstr "Fallo al actualizar servidor de peering"
+
+#. ($attribute)
+#: lib/NGCP/Panel/Utils/Preferences.pm:347
+#: lib/NGCP/Panel/Utils/Preferences.pm:372
+#: lib/NGCP/Panel/Utils/Preferences.pm:397
+#: lib/NGCP/Panel/Utils/Preferences.pm:440
+msgid "Failed to update preference %1."
+msgstr ""
 
 #: lib/NGCP/Panel/Controller/Subscriber.pm:2825
 msgid "Failed to update reminder setting."
@@ -4842,6 +4873,15 @@ msgstr "Puerto"
 #: lib/NGCP/Panel/Utils/DbStrings.pm:926
 msgid "Postcode"
 msgstr "Código Postal"
+
+#. ($attribute)
+#: lib/NGCP/Panel/Utils/Preferences.pm:326
+#: lib/NGCP/Panel/Utils/Preferences.pm:352
+#: lib/NGCP/Panel/Utils/Preferences.pm:377
+#: lib/NGCP/Panel/Utils/Preferences.pm:402
+#: lib/NGCP/Panel/Utils/Preferences.pm:445
+msgid "Preference %1 successfully updated."
+msgstr ""
 
 #: share/templates/helpers/pref_table.tt:156
 msgid "Preference '"
@@ -7842,6 +7882,7 @@ msgid "Zone Details"
 msgstr "Detalles de zona"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:610
+#: share/templates/widgets/subscriber_cf_overview.tt:27
 msgid "active"
 msgstr "activo"
 
@@ -8027,6 +8068,10 @@ msgstr "ha parado de escribir."
 #: share/templates/subscriber/webphone.tt:321
 msgid "in progress..."
 msgstr "en progreso..."
+
+#: share/templates/widgets/subscriber_cf_overview.tt:27
+msgid "inactive"
+msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:654
 msgid "inbound"
