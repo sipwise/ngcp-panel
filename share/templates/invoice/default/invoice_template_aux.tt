@@ -16,10 +16,10 @@
 
     MACRO svgopen BLOCK;
         aux.page = aux.page + 1;
-        '<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="' _ pagewidth _ 'mm" height="' _ pageheight _ 'mm">';
+        '<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="' _ pagewidth _ 'mm" height="' _ pageheight _ 'mm" viewBox="0 0 595 842" server-process-units="' _ server_process_units _ '">';
         draw_background;
         IF open_g;
-            '<g x="0mm" y="0mm">';
+            '<g x="0" y="0">';
         END;
     END;
     
@@ -54,7 +54,7 @@
                 x = x + f.dx;
                 format_field(field=f, val=zone.${f.name});
                 val = aux.val;
-                '<text font-family="' _ fontfamily  _ '" font-size="' _ fontsize  _ 'pt" x="' _ x _ 'mm" y="' _ y _ 'mm" text-anchor="'_ anc _'">';
+                '<text font-family="' _ fontfamily  _ '" font-size="' _ fontsize _ apply_units('fontsize') _ '" x="' _ x _ apply_units('position') _ '" y="' _ y _ apply_units('position') _ '" text-anchor="'_ anc _'">';
                     val;
                 '</text>';
             END;
@@ -67,7 +67,15 @@
         END;
         aux.lasty = y;
     END;
-
+    MACRO apply_units(item) BLOCK;
+        IF server_process_units == 'none';
+            '';
+        ELSIF item == 'fontsize' ;
+            'pt';
+        ELSIF item == 'position';
+            'mm';
+        END;
+    END;
     MACRO calllist BLOCK;
         fontfamily = fontfamily || 'Arial';
         fontsize = fontsize || 8;
@@ -87,7 +95,7 @@
                     l = f.masklen > val.length ? val.length : f.masklen;
                     val = val.substr(l - 1, val.length - 1, f.mask);
                 END;
-                '<text font-family="' _ fontfamily  _ '" font-size="' _ fontsize  _ 'pt" x="' _ x _ 'mm" y="' _ y _ 'mm" text-anchor="'_ anc _'">';
+                '<text font-family="' _ fontfamily  _ '" font-size="' _ fontsize  _ apply_units('fontsize') _ '" x="' _ x _ apply_units('position') _ '" y="' _ y _ apply_units('position') _ '" text-anchor="'_ anc _'">';
                     val;
                 '</text>';
             END;
