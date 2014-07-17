@@ -2541,6 +2541,10 @@ msgstr "PBX Gruppe erstellen fehlgeschlagen."
 msgid "Failed to create administrator."
 msgstr "Administrator erstellen fehlgeschlagen."
 
+#: lib/NGCP/Panel/Utils/Preferences.pm:260
+msgid "Failed to create allowed_ip_grp."
+msgstr ""
+
 #: lib/NGCP/Panel/Controller/Billing.pm:242
 msgid "Failed to create billing profile."
 msgstr "Verrechnungs-Profil erstellen fehlgeschlagen."
@@ -2593,6 +2597,10 @@ msgstr "Rechnungsvorlage erstellen fehlgeschlagen"
 #: lib/NGCP/Panel/Controller/Invoice.pm:361
 msgid "Failed to create invoice."
 msgstr "Rechnung erstellen Fehlgeschlagen"
+
+#: lib/NGCP/Panel/Utils/Preferences.pm:301
+msgid "Failed to create man_allowed_ip_grp."
+msgstr ""
 
 #: lib/NGCP/Panel/Controller/NumberBlock.pm:141
 msgid "Failed to create number block."
@@ -2732,6 +2740,13 @@ msgstr "Peering-Regel löschen fehlgeschlagen."
 msgid "Failed to delete peering server."
 msgstr "Peering-Server löschen fehlgeschlagen."
 
+#. ($attribute)
+#: lib/NGCP/Panel/Utils/Preferences.pm:313
+#: lib/NGCP/Panel/Utils/Preferences.pm:416
+#: lib/NGCP/Panel/Utils/Preferences.pm:427
+msgid "Failed to delete preference %1."
+msgstr ""
+
 #: lib/NGCP/Panel/Controller/Subscriber.pm:3014
 msgid "Failed to delete registered device."
 msgstr "Registriertes Gerät löschen fehlgeschlagen."
@@ -2787,6 +2802,14 @@ msgstr "Benutzer für Sprachnachricht nicht gefunden."
 #: lib/NGCP/Panel/Controller/Administrator.pm:236
 msgid "Failed to generate client certificate."
 msgstr "Client-Zertifikat erstellen fehlgeschlagen."
+
+#: lib/NGCP/Panel/Utils/Preferences.pm:248
+msgid "Failed to generate ip group sequence."
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/Preferences.pm:289
+msgid "Failed to generate manual ip group sequence."
+msgstr ""
 
 #: lib/NGCP/Panel/Controller/Customer.pm:253
 #: lib/NGCP/Panel/Controller/Invoice.pm:256
@@ -2941,6 +2964,14 @@ msgstr "Peering-Regel aktualisieren fehlgeschlagen."
 #: lib/NGCP/Panel/Controller/Peering.pm:308
 msgid "Failed to update peering server."
 msgstr "Peering-Server aktualisieren fehlgeschlagen."
+
+#. ($attribute)
+#: lib/NGCP/Panel/Utils/Preferences.pm:347
+#: lib/NGCP/Panel/Utils/Preferences.pm:372
+#: lib/NGCP/Panel/Utils/Preferences.pm:397
+#: lib/NGCP/Panel/Utils/Preferences.pm:440
+msgid "Failed to update preference %1."
+msgstr ""
 
 #: lib/NGCP/Panel/Controller/Subscriber.pm:2825
 msgid "Failed to update reminder setting."
@@ -4877,6 +4908,15 @@ msgstr "Port"
 #: lib/NGCP/Panel/Utils/DbStrings.pm:926
 msgid "Postcode"
 msgstr "Postleitzahl"
+
+#. ($attribute)
+#: lib/NGCP/Panel/Utils/Preferences.pm:326
+#: lib/NGCP/Panel/Utils/Preferences.pm:352
+#: lib/NGCP/Panel/Utils/Preferences.pm:377
+#: lib/NGCP/Panel/Utils/Preferences.pm:402
+#: lib/NGCP/Panel/Utils/Preferences.pm:445
+msgid "Preference %1 successfully updated."
+msgstr ""
 
 #: share/templates/helpers/pref_table.tt:156
 msgid "Preference '"
@@ -7864,6 +7904,7 @@ msgid "Zone Details"
 msgstr "Zonen-Details"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:610
+#: share/templates/widgets/subscriber_cf_overview.tt:27
 msgid "active"
 msgstr "aktiv"
 
@@ -8049,6 +8090,10 @@ msgstr "hat aufgehört zu tippen."
 msgid "in progress..."
 msgstr "es läutet..."
 
+#: share/templates/widgets/subscriber_cf_overview.tt:27
+msgid "inactive"
+msgstr "inaktiv"
+
 #: lib/NGCP/Panel/Utils/DbStrings.pm:654
 msgid "inbound"
 msgstr "eingehend"
@@ -8209,9 +8254,6 @@ msgstr "whitelist"
 #: share/templates/subscriber/preferences.tt:334
 msgid "yes"
 msgstr "ja"
-
-msgid "inactive"
-msgstr "inaktiv"
 
 #~ msgid ""
 #~ "Maximum number of concurrent outgoing sessions (calls) coming from a "
