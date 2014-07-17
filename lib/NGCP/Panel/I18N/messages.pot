@@ -6744,6 +6744,9 @@ msgstr ""
 msgid "in progress..."
 msgstr ""
 
+msgid "inactive"
+msgstr ""
+
 #: lib/NGCP/Panel/Utils/DbStrings.pm:648
 msgid "inbound"
 msgstr ""

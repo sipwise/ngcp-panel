@@ -7911,6 +7911,9 @@ msgstr "ha interrotto la scrittura."
 msgid "in progress..."
 msgstr "in corso..."
 
+msgid "inactive"
+msgstr ""
+
 #: lib/NGCP/Panel/Utils/DbStrings.pm:648
 msgid "inbound"
 msgstr "ingresso"
