@@ -320,8 +320,10 @@ sub set_content_ajax :Chained('base') :PathPart('editcontent/set/ajax') :Args(0)
     $c->detach($c->view('JSON'));
 }
 
-sub preview_content :Chained('base') :PathPart('editcontent/preview') :Args(0) {
+sub preview_content :Chained('base') :PathPart('editcontent/preview') :Args {
     my ($self, $c, @args) = @_;
+    my($out_type) = @args;
+    $out_type //= '';
     my $tmpl = $c->stash->{tmpl};
 
     my $svg = $tmpl->data;
@@ -367,11 +369,16 @@ sub preview_content :Chained('base') :PathPart('editcontent/preview') :Args(0) {
         NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for('/invoicetemplate'));
         return;
     }
-
-    $c->response->content_type('application/pdf');
-    $c->response->body($pdf);
+    if($out_type eq 'svg'){
+        $out = join('', @{NGCP::Panel::Utils::InvoiceTemplate::preprocess_svg_pdf($c, \$out)});
+        $c->response->body($out);
+    }else{
+        $c->response->content_type('application/pdf');
+        $c->response->body($pdf);
+    }
     return;
 }
+
 
 sub embed_image :Chained('/') :PathPart('invoicetemplate/embedimage') :Args(0) {
     my ($self, $c) = @_;
