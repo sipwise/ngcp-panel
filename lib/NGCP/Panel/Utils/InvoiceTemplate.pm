@@ -6,38 +6,21 @@ use XML::XPath;
 use IPC::System::Simple qw/capturex/;
 use Template;
 
+
+
 sub svg_pdf {
     my ($c,$svg_ref,$pdf_ref) = @_;
     my $svg = $$svg_ref;
 
     my $dir = File::Temp->newdir(undef, CLEANUP => 1);
     my $tempdir = $dir->dirname;
-    my $pagenum = 1;
-    my @pagefiles;
+    my ($pagenum,@pagefiles) = (1);
 
-    # file consists of multiple svg tags (invald!), split them up:
-    my(@pages) = $svg=~/(<svg.*?(?:\/svg>))/sig;
-
-    foreach my $page(@pages) {
+    foreach my $page ( @{preprocess_svg_pdf($c,$svg_ref)}){
         my $fh;
 
         my $pagefile = "$tempdir/$pagenum.svg";
         push @pagefiles, $pagefile;
-
-        my $xp = XML::XPath->new($page);
-        my $g = $xp->find('//g[contains(@class,"firsty-") and contains(@class,"lasty")]');
-        foreach my $node($g->get_nodelist) {
-            my $class = $node->getAttribute('class');
-            my $firsty = $class; my $lasty = $class;
-
-            $firsty =~ s/^.+firsty\-(\d+).*$/$1/;
-            $lasty =~ s/^.+lasty\-(\d+).*$/$1/;
-            if(length($firsty) && length($lasty)) {
-                process_child_nodes($node, $firsty, $lasty);
-            }
-        }
-        $page = ($xp->findnodes('/'))[0]->toString();
-
 
         open($fh, ">", $pagefile);
         binmode($fh, ":utf8");
@@ -52,14 +35,46 @@ sub svg_pdf {
     # so we need to scale it down by 0.8 to get a mediabox of 595,842
     # when using 90dpi.
     # (it doesn't happen with inkscape, no idea what rsvg does)
-    my @cmd_args = (qw/-a -f pdf -z 0.8/, @pagefiles);
+    #-z 0.8 , --dpi-x 72 --dpi-y 72
+    my @cmd_args = (qw/-a -f pdf/, @pagefiles);
     my $cmd = 'rsvg-convert';
     my $cmd_full = $cmd.' '.join(' ', @cmd_args);
     $c and $c->log->debug( $cmd_full );
     print  $cmd_full.";\n";
+    #`$cmd_full >./VMHost/data/ngcp-panel/invoice/pdf/pdf1.pdf`;
     $$pdf_ref = capturex([0], $cmd, @cmd_args);
 
     return 1;
+}
+
+sub preprocess_svg_pdf {
+    my ($c,$svg_ref) = @_;
+    my $svg = $$svg_ref;
+    my (@pages_content);
+
+    # file consists of multiple svg tags (invalid!), split them up:
+    my(@pages) = $svg=~/(<svg.*?(?:\/svg>))/sig;
+    foreach my $page(@pages) {
+        my $xp = XML::XPath->new($page);
+        my $server_process_spec = '';
+        if( my $spec_nodes = $xp->find('//@server-process-units') ){
+            $server_process_spec = $spec_nodes->string_value();
+        }
+        my $g = $xp->find('//g[contains(@class,"firsty-") and contains(@class,"lasty")]');
+        foreach my $node($g->get_nodelist) {
+            my $class = $node->getAttribute('class');
+            my $firsty = $class; my $lasty = $class;
+
+            $firsty =~ s/^.+firsty\-(\d+).*$/$1/;
+            $lasty =~ s/^.+lasty\-(\d+).*$/$1/;
+            if(length($firsty) && length($lasty)) {
+                process_child_nodes($node, $firsty, $lasty, $server_process_spec);
+            }
+        }
+        $page = ($xp->findnodes('/'))[0]->toString();
+        push @pages_content, $page;
+    }
+    return \@pages_content;
 }
 
 sub preprocess_svg {
@@ -76,6 +91,7 @@ sub preprocess_svg {
             $node->removeAttribute('display');
         }
     }
+    #we can't process images on server side due to possible access restrictions
     
     $$svg_ref = ($xp->findnodes('/'))[0]->toString();
     $$svg_ref =~s/^<root>|<\/root>$//;
@@ -101,6 +117,7 @@ sub sanitize_svg {
 }
 
 sub get_tt {
+    #using of the common configuration was the reason for View::SVG
     my $tt = Template->new({
         ENCODING => 'UTF-8',
         RELATIVE => 1,
@@ -142,7 +159,7 @@ sub svg_content{
     return $content;
 }
 sub process_child_nodes {
-    my ($node, $firsty, $y) = @_;
+    my ($node, $firsty, $y, $server_process_spec) = @_;
     for my $attr (qw/y y1 y2/) {
         my $a = $node->getAttribute($attr);
         if($a) {
@@ -151,12 +168,14 @@ sub process_child_nodes {
             my $newy = $y + $delta;
 
             $node->removeAttribute($attr);
-            $node->appendAttribute(XML::XPath::Node::Attribute->new($attr, $newy."mm"));
+            $node->appendAttribute(XML::XPath::Node::Attribute->new($attr, 
+                $newy.(($server_process_spec ne 'none')?'mm':'')
+            ));
         }
     }
     my @children = $node->getChildNodes();
     foreach my $node(@children) {
-        process_child_nodes($node, $firsty, $y);
+        process_child_nodes($node, $firsty, $y, $server_process_spec);
     }
 }
 
