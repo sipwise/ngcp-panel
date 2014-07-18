@@ -36,7 +36,7 @@ sub svg_pdf {
     # when using 90dpi.
     # (it doesn't happen with inkscape, no idea what rsvg does)
     #-z 0.8 , --dpi-x 72 --dpi-y 72
-    my @cmd_args = (qw/-a -f pdf/, @pagefiles);
+    my @cmd_args = (qw/-a -f pdf -z 0.8/, @pagefiles);
     my $cmd = 'rsvg-convert';
     my $cmd_full = $cmd.' '.join(' ', @cmd_args);
     $c and $c->log->debug( $cmd_full );
