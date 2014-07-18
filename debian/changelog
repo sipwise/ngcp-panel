@@ -1,3 +1,13 @@
+ngcp-panel (1.3.2.2+0~mr3.3.2.2) unstable; urgency=low
+
+  [ Irka ]
+  * [865e735] MT#7861 Use pixels as main unit to be in accordance with svg-edit.
+  * [e0e76fa] MT#7867 Return scale 0.8 untill other options tested with real printing
+
+  [ Sipwise Jenkins Builder ]
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Fri, 18 Jul 2014 15:47:13 +0200
+
 ngcp-panel (1.3.2.1+0~mr3.3.2.1) unstable; urgency=low
 
   [ Gerhard Jungwirth ]
