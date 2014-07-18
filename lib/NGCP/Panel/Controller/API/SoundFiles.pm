@@ -20,7 +20,8 @@ class_has 'api_description' => (
     is => 'ro',
     isa => 'Str',
     default => 
-        'Defines sound files for system and customer sound sets. To create or update a sound file, do a POST or PUT with Content-Type audio/x-wav and pass the properties via query parameters, e.g. <span>/api/soundfiles/?set_id=1&amp;filename=test.wav&amp;loopplay=true&amp;handle=music_on_hold</span>',
+        'Defines sound files for system and customer sound sets. To create or update a sound file, do a POST or PUT with Content-Type audio/x-wav and pass '.
+        'the properties via query parameters, e.g. <span>/api/soundfiles/?set_id=1&amp;filename=test.wav&amp;loopplay=true&amp;handle=music_on_hold</span>',
 );
 
 class_has 'query_params' => (
@@ -180,7 +181,7 @@ sub POST :Allow {
         my $handle;
         if($set->contract_id) {
             $handle_rs = $handle_rs->search({
-                'group.name' => { 'in' => ['pbx'] },
+                'group.name' => { 'in' => ['pbx', 'music_on_hold'] },
             },{
                 join => 'group',
             });
@@ -218,7 +219,15 @@ sub POST :Allow {
 
         my $item;
         try {
-            $item = $c->model('DB')->resultset('voip_sound_files')->create($resource);
+            $item = $c->model('DB')->resultset('voip_sound_files')->search_rs({
+                    set_id => $resource->{set_id},
+                    handle_id => $resource->{handle_id},
+                })->first;
+            if ($item) {
+                $item->update($resource);
+            } else {
+                $item = $c->model('DB')->resultset('voip_sound_files')->create($resource);
+            }
         } catch($e) {
             $c->log->error("failed to create soundfile: $e"); # TODO: user, message, trace, ...
             $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "Failed to create soundfile.");
