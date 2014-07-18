@@ -39,12 +39,12 @@ sub item_rs {
     my $item_rs = $c->model('DB')->resultset('voip_sound_files')->search(
         {}, 
         {
-            prefetch => ['handle', 'set']
+            prefetch => ['handle', 'set'],
         });
     if($c->user->roles eq "admin") {
     } elsif($c->user->roles eq "reseller") {
         $item_rs = $item_rs->search({
-            'set.reseller_id' => $c->user->reseller_id
+            'set.reseller_id' => $c->user->reseller_id,
         },{
             join => 'set',
         });
@@ -129,7 +129,7 @@ sub update_item {
 
 
     my $set_rs = $c->model('DB')->resultset('voip_sound_sets')->search({ 
-        id => $resource->{set_id} 
+        id => $resource->{set_id},
     });
     if($c->user->roles eq "admin") {
     } elsif($c->user->roles eq "reseller") {
@@ -150,9 +150,9 @@ sub update_item {
     my $handle;
     if($set->contract_id) {
         $handle_rs = $handle_rs->search({
-            'group.name' => { 'in' => ['pbx'] }
+            'group.name' => { 'in' => ['pbx', 'music_on_hold'] },
         },{
-            join => 'group'
+            join => 'group',
         });
         $handle = $handle_rs->first;
         unless($handle) {
@@ -162,9 +162,9 @@ sub update_item {
         }
     } else {
         $handle_rs = $handle_rs->search({
-            'group.name' => { 'not in' => ['pbx'] }
+            'group.name' => { 'not in' => ['pbx'] },
         },{
-            join => 'group'
+            join => 'group',
         });
         $handle = $handle_rs->first;
         unless($handle) {
