@@ -2823,7 +2823,7 @@ msgstr "Ошибка управления настройками"
 msgid "Failed to move rewrite rule."
 msgstr "Не удалось переместить правило перезаписи."
 
-#: lib/NGCP/Panel/Controller/InvoiceTemplate.pm:365
+#: lib/NGCP/Panel/Controller/InvoiceTemplate.pm:367
 msgid "Failed to preview template"
 msgstr "Не удалось создать предварительный просмотр шаблона"
 
@@ -2832,7 +2832,7 @@ msgid "Failed to render invoice"
 msgstr "Не удалось сгенерировать счёт-фактуру"
 
 #. ($error->type . ', info is ' . $error->info)
-#: lib/NGCP/Panel/Controller/InvoiceTemplate.pm:354
+#: lib/NGCP/Panel/Controller/InvoiceTemplate.pm:356
 msgid "Failed to render template. Type is "
 msgstr "Не удалось сгенерировать счёт-фактуру. Тип "
 
@@ -6444,7 +6444,7 @@ msgstr "Шаблон"
 msgid "Template and customer must belong to same reseller"
 msgstr "Шаблон и клиент должны принадлежать одному реселлеру"
 
-#: lib/NGCP/Panel/Controller/InvoiceTemplate.pm:333
+#: lib/NGCP/Panel/Controller/InvoiceTemplate.pm:335
 msgid "Template has not been saved yet, please save before previewing."
 msgstr ""
 "Шаблон не сохранен, пожалуйста сохраните шаблон перед предварительным "
