@@ -2261,7 +2261,7 @@ msgstr ""
 msgid "Failed to move rewrite rule."
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/InvoiceTemplate.pm:365
+#: lib/NGCP/Panel/Controller/InvoiceTemplate.pm:367
 msgid "Failed to preview template"
 msgstr ""
 
@@ -2270,7 +2270,7 @@ msgid "Failed to render invoice"
 msgstr ""
 
 #. ($error->type . ', info is ' . $error->info)
-#: lib/NGCP/Panel/Controller/InvoiceTemplate.pm:354
+#: lib/NGCP/Panel/Controller/InvoiceTemplate.pm:356
 msgid "Failed to render template. Type is "
 msgstr ""
 
@@ -5397,7 +5397,7 @@ msgstr ""
 msgid "Template and customer must belong to same reseller"
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/InvoiceTemplate.pm:333
+#: lib/NGCP/Panel/Controller/InvoiceTemplate.pm:335
 msgid "Template has not been saved yet, please save before previewing."
 msgstr ""
 
