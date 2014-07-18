@@ -122,6 +122,11 @@ sub update_customer {
         $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Invalid 'billing_profile_id', not defined");
         return;
     }
+
+    if ($customer->status eq 'terminated') {
+        $self->error($c, HTTP_UNPROCESSABLE_ENTITY, 'Customer is already terminated and cannot be changed.');
+        return;
+    }
    
     $form //= $self->get_form($c);
     # TODO: for some reason, formhandler lets missing contact_id slip thru
