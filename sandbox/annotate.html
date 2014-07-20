@@ -25,24 +25,26 @@
   position:absolute;
 }
 
-.tooltip a{
+a {
   text-decoration: none;
-  color: #008800;
+  color: inherit;
 }
+
 </style>
 
-<link rel='stylesheet' href='tooltips.css'>
+<link rel='stylesheet' href='annotate.css'>
 
 <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.0/jquery.min.js"></script>
 <!--[if !IE | (gt IE 8)]><!-->
-<script src="tooltips.js"></script>
+<script src="annotate.js"></script>
 <script>
     $(function() {
-        $("figure.annotated figcaption ul li").tooltips();
+        $("figure.annotated figcaption ul li").annotate();
     });
 </script>
 <!--<![endif]-->
 
+<link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.1.0/css/font-awesome.min.css" rel="stylesheet">
 </head>
 <body>
     <figure class="annotated">
@@ -50,10 +52,10 @@
         <figcaption>
 	        <b>Line/Key Selection:</b>
             <ul>
-                <li style="top:71px; left:483px;" data-pos="top"><a href="#">test1xxxx@example.org</a></li>
-                <li style="top:93px; left:493px;" data-pos="right"><a href="#">test2xxxx@example.org</a></li>
-                <li style="top:109px; left:473px;" data-pos="left"><a href="#">test3xxxx@example.org</a></li>
-                <li style="top:130px; left:483px;" data-pos="bottom"><a href="#">testxxxxxxxx4@example.org</a></li>
+                <li class="assigned" style="top:71px; left:483px;" data-pos="top"><a href="#">test1xxxx@example.org</a></li>
+                <li class="unassigned" style="top:93px; left:493px;" data-pos="right"><i class="fa fa-plus-square-o"></i><a href="#"> Unassigned</a></li>
+                <li class="assigned" style="top:109px; left:473px;" data-pos="left"><a href="#">test3xxxx@example.org</a></li>
+                <li class="unassigned" style="top:130px; left:483px;" data-pos="bottom"><a href="#">Assign</a></li>
             </ul>
 	        <i><a href="#">Cisco SPA504G</a></i>
       </figcaption>
