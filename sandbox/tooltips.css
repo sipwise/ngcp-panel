@@ -1,60 +1,105 @@
-.tooltip, .arrow:after {
-  background: black;
-  border: 2px solid white;
+.tooltip, 
+.arrow-top:after, .arrow-bottom:after, .arrow-left:after, .arrow-right:after {
+  background: white;
+  border: 1px solid #008800;
 }
 
 .tooltip {
-  pointer-events: none;
-  opacity: 0;
   display: inline-block;
   position: absolute;
-  padding: 10px 20px;
-  color: white;
-  border-radius: 20px;
-  margin-top: 20px;
+  padding: 2px 10px;
+  color: #008800;
+  border-radius: 1px;
   text-align: center;
-  font: bold 14px "Helvetica Neue", Sans-Serif;
-  font-stretch: condensed;
-  text-decoration: none;
-  text-transform: uppercase;
-  box-shadow: 0 0 7px black;
+  line-height:14px;
+  font: 12px "Open Sans", Sans-Serif;
+  box-shadow: 0 0 3px black;
 }
-.arrow {
-  width: 70px;
-  height: 16px;
+
+.arrow-top {
+  width: 50px;
+  height: 10px;
   overflow: hidden;
   position: absolute;
   left: 50%;
-  margin-left: -35px;
-  bottom: -16px;
+  margin-left: -25px;
+  bottom: -10px;
 }
-.arrow:after {
+.arrow-top:after {
   content: "";
   position: absolute;
-  left: 20px;
-  top: -20px;
+  left: 12px;
+  top: -25px;
   width: 25px;
   height: 25px;
-  -webkit-box-shadow: 6px 5px 9px -9px black,
-                      5px 6px 9px -9px black;
-  -moz-box-shadow: 6px 5px 9px -9px black,
-                   5px 6px 9px -9px black;
-  box-shadow: 6px 5px 9px -9px black,
-              5px 6px 9px -9px black;
   -webkit-transform: rotate(45deg);
   -moz-transform:    rotate(45deg);
   -ms-transform:     rotate(45deg);
   -o-transform:      rotate(45deg);
 }
-.tooltip.active {
-  opacity: 1;
-  margin-top: 5px;
-  -webkit-transition: all 0.2s ease;
-  -moz-transition:    all 0.2s ease;
-  -ms-transition:     all 0.2s ease;
-  -o-transition:      all 0.2s ease;
+
+.arrow-bottom {
+  width: 50px;
+  height: 10px;
+  overflow: hidden;
+  position: absolute;
+  left: 50%;
+  margin-left: -25px;
+  top: -10px;
 }
-.tooltip.out {
-  opacity: 0;
-  margin-top: -20px;
+.arrow-bottom:after {
+  content: "";
+  position: absolute;
+  left: 12px;
+  bottom: -25px;
+  width: 25px;
+  height: 25px;
+  -webkit-transform: rotate(45deg);
+  -moz-transform:    rotate(45deg);
+  -ms-transform:     rotate(45deg);
+  -o-transform:      rotate(45deg);
+}
+
+.arrow-left {
+  width: 10px;
+  height: 50px;
+  overflow: hidden;
+  position: absolute;
+  top: 50%;
+  margin-top: -25px;
+  right: -10px;
+}
+.arrow-left:after {
+  content: "";
+  position: absolute;
+  left: -25px;
+  top: 11px;
+  width: 25px;
+  height: 25px;
+  -webkit-transform: rotate(45deg);
+  -moz-transform:    rotate(45deg);
+  -ms-transform:     rotate(45deg);
+  -o-transform:      rotate(45deg);
+}
+
+.arrow-right {
+  width: 10px;
+  height: 50px;
+  overflow: hidden;
+  position: absolute;
+  top: 50%;
+  margin-top: -25px;
+  left: -10px;
+}
+.arrow-right:after {
+  content: "";
+  position: absolute;
+  right: -25px;
+  top: 11px;
+  width: 25px;
+  height: 25px;
+  -webkit-transform: rotate(45deg);
+  -moz-transform:    rotate(45deg);
+  -ms-transform:     rotate(45deg);
+  -o-transform:      rotate(45deg);
 }
