@@ -1,0 +1,74 @@
+<html>
+<head>
+<style>
+.annotated{
+  position:relative;
+}
+.annotated img{ /* Set this to stop white-space appearing under the image. */
+  display:block;
+}
+.annotated b{ /* Hide the figcaption’s title. */
+  position:absolute;
+  left:-99999px;
+}
+.annotated ul{ /* Set up the canvas for the annotations to sit on. */
+  list-style:none;
+  position:absolute; 
+  top:0;
+  right:0;
+  bottom:0;
+  left:0;
+}
+.annotated li{
+  display:block;
+  padding:0 5px;
+
+  width:auto;
+  line-height: 12px;
+  position:absolute;
+
+  font: 10px 'Open Sans';
+
+
+
+  white-space:nowrap; /* Stop the annotations breaking onto several lines. */
+  cursor:default;
+  background:#fff;
+  background:rgba(255,255,255,0.75);
+
+  -webkit-box-shadow:0 0 5px rgba(0,0,0,0.25);
+     -moz-box-shadow:0 0 5px rgba(0,0,0,0.25);
+          box-shadow:0 0 5px rgba(0,0,0,0.25);
+}
+</style>
+
+<link rel='stylesheet' href='tooltips.css'>
+
+<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.0/jquery.min.js"></script>
+<!--[if !IE | (gt IE 8)]><!-->
+<script src="tooltips.js"></script>
+<script>
+    $(function() {
+        $("figure.annotated figcaption ul li").tooltips();
+    });
+</script>
+<!--<![endif]-->
+
+</head>
+<body>
+    <figure class="annotated">
+        <img src="spa504g-front.jpg" alt="Cisco SPA504g" />
+        <figcaption>
+	        <b>Line/Key Selection:</b>
+            <ul>
+                <li style="top:55px; left:495px;">test1@example.org</li>
+                <li style="top:72px; left:495px;">test2@example.org</li>
+                <li style="top:89px; left:495px;">test3@example.org</li>
+                <li style="top:105px; left:495px;">test4@example.org</li>
+            </ul>
+	        <i><a href="#">Cisco SPA504G</a></i>
+      </figcaption>
+    </figure>
+</body>
+</html>
+<!-- vim: set tabstop=4 syntax=html expandtab: -->
