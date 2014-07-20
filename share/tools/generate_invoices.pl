@@ -106,7 +106,7 @@ sub process_invoices{
             $logger->debug( "reseller_id=".$provider_contract->{reseller_core_id}.";contact_id=".$client_contact->{id}.";\n" );
             
             
-            foreach my $client_contract (@{ get_client_contracts($client_contact) }){
+            foreach my $client_contract (@{ get_client_contracts($client_contact, $stime, $etime) }){
                     
                 $invoices->{$client_contract->{id}} ||= [];
                 if(!$opt->{sendonly}){
@@ -120,13 +120,13 @@ sub process_invoices{
                         $logger->debug( "No billing profile;\n");
                     }
                 }else{
-                    $invoices->{$client_contract->{id}} = $dbh->selectall_arrayref('select invoices.* from invoices 
-                    '.ifp(' where ',
+                    $invoices->{$client_contract->{id}} = $dbh->selectall_arrayref('select invoices.* from invoices where invoices.generator="auto" 
+                    '.ifp(' and ',
                         join(' and ',
                             !$opt->{resend}?' invoices.sent_date is null ':(),
                             (ify(' invoices.contract_id ', (@{$opt->{client_contract_id}}, $client_contract->{id}) )),
-                            (ifk(' date(invoices.period_start) >= ? ', v2a($stime->ymd))),
-                            (ifk(' date(invoices.period_start) <= ? ', v2a($etime->ymd))),
+                            (ifk(' date(invoices.period_start) >= ? ', v2a($stime ? $stime->ymd : undef))),
+                            (ifk(' date(invoices.period_start) <= ? ', v2a($etime ? $etime->ymd : undef))),
                         )
                     ),  { Slice => {} }, @{$opt->{client_contract_id}}, v2a($client_contract->{id}), v2a($stime->ymd),v2a($etime->ymd) );
                 }
@@ -157,13 +157,26 @@ sub get_provider_clients_contacts{
     return $contacts;
 }
 sub get_client_contracts{
-    my($client_contact) = @_;
-    return $dbh->selectall_arrayref('select contracts.* from contracts where contracts.contact_id=? '
-        .( ( !$opt->{allow_terminated} ) ? ' and contracts.status != "terminated" ':'' )
-        .ify(' and contracts.id ', @{$opt->{client_contract_id}}), 
+    my($client_contact,$stime,$etime) = @_;
+    return $dbh->selectall_arrayref('select contracts.* 
+    from contracts 
+    left join invoices on contracts.id=invoices.contract_id and invoices.generator="auto" '
+        .ifp(' and ',
+            join(' and ',
+                (ifk(' date(invoices.period_start) >= ? ', v2a($stime ? $stime->ymd : undef))),
+                (ifk(' date(invoices.period_start) <= ? ', v2a($etime ? $etime->ymd : undef ))),
+            )
+        )
+        .' where contracts.contact_id=? '
+        .( ( !$opt->{allow_terminated} ) ? ' and contracts.status != "terminated" ' : '' )
+        .ify(' and contracts.id ', @{$opt->{client_contract_id}})
+        .(( !$opt->{regenerate} && !$opt->{sendonly} )?' and invoices.contract_id is null ': '' )
+        .' group by contracts.id ', 
         { Slice => {} }, 
-        $client_contact->{id}, @{$opt->{client_contract_id}} );
+        v2a($stime->ymd),v2a($etime->ymd),$client_contact->{id}, @{$opt->{client_contract_id}} 
+    );
 }
+
 sub get_billing_profile{
     my($client_contract, $stime, $etime) = @_;
     #don't allow auto-generation for terminated contracts
@@ -313,12 +326,12 @@ sub get_invoice{
         if($invoice_id){
             $invoice = $dbh->selectrow_hashref('select * from invoices where id=?',undef, $invoice_id); 
         }else{
-            $invoice = $dbh->selectrow_hashref('select * from invoices where contract_id=? and date(period_start)=? and date(period_end)=?',undef, $contract_id, $stime->ymd, $etime->ymd); 
+            $invoice = $dbh->selectrow_hashref('select * from invoices where contract_id=? and date(period_start)=? and date(period_end)=? and invoices.generator="auto" ',undef, $contract_id, $stime->ymd, $etime->ymd); 
         }
     }
     if(!$invoice){
         my $serial_tmp = "tmp".time.int(rand(99999));
-        $dbh->do('insert into invoices(contract_id,period_start,period_end,serial)values(?,?,?,?)', undef, $contract_id,$stime->ymd.' '.$stime->hms, $etime->ymd.' '.$etime->hms, $serial_tmp );
+        $dbh->do('insert into invoices(contract_id,period_start,period_end,serial,generator)values(?,?,?,?,?)', undef, $contract_id, $stime->ymd.' '.$stime->hms, $etime->ymd.' '.$etime->hms, $serial_tmp, 'auto' );
         $invoice->{id} = $dbh->last_insert_id(undef,'billing','invoices','id');
         #are necessary here for serial generation
         @$invoice{qw/period_start period_end/} = ($stime,$etime);
