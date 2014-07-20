@@ -1,14 +1,23 @@
-.tooltip, 
-.arrow-top:after, .arrow-bottom:after, .arrow-left:after, .arrow-right:after {
+.annotate.assigned,
+.annotate.assigned .arrow-top:after, .annotate.assigned .arrow-bottom:after,
+.annotate.assigned .arrow-left:after, .annotate.assigned .arrow-right:after {
   background: white;
+  color: #008800;
   border: 1px solid #008800;
 }
 
-.tooltip {
+.annotate.unassigned,
+.annotate.unassigned .arrow-top:after, .annotate.unassigned .arrow-bottom:after, 
+.annotate.unassigned .arrow-left:after, .annotate.unassigned .arrow-right:after {
+  background: white;
+  color: #909090;
+  border: 1px solid #909090;
+}
+
+.annotate {
   display: inline-block;
   position: absolute;
   padding: 2px 10px;
-  color: #008800;
   border-radius: 1px;
   text-align: center;
   line-height:14px;
