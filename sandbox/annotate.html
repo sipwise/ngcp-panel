@@ -1,31 +1,16 @@
 <html>
 <head>
 <style>
-.annotated{
+.annotated
+{
   position:relative;
 }
-.annotated img{
+.annotated img
+{
   display:block;
 }
-.annotated b{
-  position:absolute;
-  left:-99999px;
-}
-.annotated ul{
-  list-style:none;
-  position:absolute; 
-  top:0;
-  right:0;
-  bottom:0;
-  left:0;
-}
-
-.annotated li{
-  display:block;
-  position:absolute;
-}
-
-a {
+.annotated a
+{
   text-decoration: none;
   color: inherit;
 }
@@ -33,50 +18,67 @@ a {
 </style>
 
 <link rel='stylesheet' href='annotate.css'>
+<link href="http://ajax.googleapis.com/ajax/libs/jqueryui/1.10.3/themes/redmond/jquery-ui.css" rel="stylesheet" type="text/css"/>
 
-<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.0/jquery.min.js"></script>
-<!--[if !IE | (gt IE 8)]><!-->
+<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
+<script src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.10.3/jquery-ui.min.js"></script>
 <script src="annotate.js"></script>
 <script>
     $(function() {
-        $("figure.annotated").each(function(){
-            $(this).find("figcaption ul li").annotate(this);
+        dialog = $("#subselect").dialog({
+            autoOpen: false,
+            height: 400,
+            width: 500,
+            modal: true,
+            buttons: {
+                "Cancel": function() {
+                    dialog.dialog("close");
+                },
+                "Assign": function() {
+                    dialog.dialog("close");
+                }
+            },
+            close: function() {
+            }
+        });
+
+        $("div.annotated").each(function(){
+            $(this).find("div.caption").annotate(this).click(function(event) {
+                event.preventDefault();
+                dialog.dialog("open");
+            });
         });
     });
 </script>
-<!--<![endif]-->
 
 <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.1.0/css/font-awesome.min.css" rel="stylesheet">
 </head>
 <body>
-    <h1>Annotations for Key Selection</h1>
-    <figure class="annotated">
+    <h1>Line Selection</h1>
+    <div class="annotated">
         <img src="spa504g-front.jpg" alt="Cisco SPA504g" />
-        <figcaption>
-	        <b>Line/Key Selection:</b>
-            <ul>
-                <li class="assigned" style="top:71px; left:483px;" data-pos="top"><a href="#"><i class="fa fa-minus-square fa-fw"></i> test1xxxx@example.org</a></li>
-                <li class="unassigned" style="top:93px; left:493px;" data-pos="right"><a href="#"><i class="fa fa-plus-square fa-fw"></i> Assign Subscriber</a></li>
-                <li class="assigned" style="top:109px; left:473px;" data-pos="left"><a href="#"><i class="fa fa-minus-square fa-fw"></i> test3xxxx@example.org</a></li>
-                <li class="unassigned" style="top:130px; left:483px;" data-pos="bottom"><a href="#"><i class="fa fa-plus-square fa-fw"></i> Assign Subscriber</a></li>
-            </ul>
-	        <i><a href="#">All Annotations Test</a></i>
-      </figcaption>
-    </figure>
-    <div style="clear:both"></div>
-    <figure class="annotated">
-        <img src="spa504g-front.jpg" alt="Cisco SPA504g" />
-        <figcaption>
-	        <b>Line/Key Selection:</b>
-            <ul>
-                <li class="assigned" style="top:76px; left:473px;" data-pos="left"><a href="#"><i class="fa fa-minus-square fa-fw"></i> test1xxxx@example.org</a></li>
-                <li class="unassigned" style="top:93px; left:493px;" data-pos="right"><a href="#"><i class="fa fa-plus-square fa-fw"></i> Assign Subscriber</a></li>
-                <li class="assigned" style="top:109px; left:473px;" data-pos="left"><a href="#"><i class="fa fa-minus-square fa-fw"></i> test3xxxx@example.org</a></li>
-                <li class="unassigned" style="top:127px; left:493px;" data-pos="right"><a href="#"><i class="fa fa-plus-square fa-fw"></i> Assign Subscriber</a></li>
-            </ul>
-	        <i><a href="#">Cisco SPA504G</a></i>
-      </figcaption>
-    </figure>
+        <div class="caption assigned" style="top:76px; left:473px;" data-pos="left"><a href="#"><i class="fa fa-user fa-fw"></i> anne.miller@example.org (107)</a></div>
+        <div class="caption assigned" style="top:93px; left:493px;" data-pos="right"><a href="#"><i class="fa fa-rss fa-fw"></i> john.doe@example.org (243)</a></div>
+        <div class="caption assigned" style="top:109px; left:473px;" data-pos="left"><a href="#"><i class="fa fa-users fa-fw"></i> sales@example.org (100)</a></div>
+        <div class="caption unassigned" style="top:127px; left:493px;" data-pos="right"><a href="#"><i class="fa fa-plus-square fa-fw"></i> Assign Subscriber</a></div>
+    </div>
+
+    <div id="subselect" title="Assign Subscriber">
+        <h3>Subscriber</h3>
+        <select>
+            <option value="1">aaa@example.org</option>
+            <option value="2">bbb@example.org</option>
+            <option value="3">ccc@example.org</option>
+            <option value="4">ddd@example.org</option>
+        </select>
+        <h3>Line Type</h3>
+        <select>
+            <option value="private">private</option>
+            <option value="shared">shared</option>
+            <option value="blf">blf</option>
+        </select>
+    </div>
+
 </body>
 </html>
 <!-- vim: set tabstop=4 syntax=html expandtab: -->
