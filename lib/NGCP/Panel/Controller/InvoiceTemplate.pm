@@ -139,6 +139,15 @@ sub create :Chained('template_list') :PathPart('create') :Args() {
                     $form->params->{reseller_id} = $c->user->reseller_id;
                 }
                 delete $form->params->{reseller};
+
+                my $dup_item = $schema->resultset('invoice_templates')->find({
+                    reseller_id => $form->params->{reseller_id},
+                    name => $form->params->{name},
+                });
+                if($dup_item) {
+                    die( ["Template name should be unique", "showdetails"] );
+                }
+
                 my $tmpl_params = $form->params;
                 $tmpl_params->{data} //= NGCP::Panel::Utils::InvoiceTemplate::svg_content($c, $tmpl_params->{data});
                 my $tmpl = $c->stash->{tmpl_rs}->create($tmpl_params);
@@ -208,6 +217,14 @@ sub edit_info :Chained('base') :PathPart('editinfo') {
                 }
                 delete $form->params->{reseller};
 
+                my $dup_item = $schema->resultset('invoice_templates')->find({
+                    reseller_id => $form->params->{reseller_id},
+                    name => $form->params->{name},
+                });
+                if($dup_item && $dup_item->id != $tmpl->id) {
+                    die( ["Template name should be unique", "showdetails"] );
+                }
+                
                 my $old_active = $tmpl->is_active;
                 $tmpl->update($form->params);
 
