@@ -20,7 +20,7 @@ class_has 'api_description' => (
     is => 'ro',
     isa => 'Str',
     default => 
-        'Defines invoice templates to be used to generate invoice.',
+        'Defines invoice templates used to generate customer invoices. Only returns meta data at this point.',
 );
 
 class_has 'query_params' => (
@@ -77,7 +77,7 @@ sub GET :Allow {
         (my $total_count, $items) = $self->paginate_order_collection($c, $items);
         my (@embedded, @links);
         my $form = $self->get_form($c);
-        for my $item ($items->all) {
+        for my $item ($items->search({}, {prefetch => ['reseller']})->all) {
             push @embedded, $self->hal_from_item($c, $item, $form);
             push @links, Data::HAL::Link->new(
                 relation => 'ngcp:'.$self->resource_name,
@@ -132,47 +132,6 @@ sub OPTIONS :Allow {
     ));
     $c->response->content_type('application/json');
     $c->response->body(JSON::to_json({ methods => $allowed_methods })."\n");
-    return;
-}
-
-sub POST :Allow {
-    my ($self, $c) = @_;
-
-    my $guard = $c->model('DB')->txn_scope_guard;
-    {
-        my $resource = $self->get_valid_post_data(
-            c => $c, 
-            media_type => 'application/json',
-        );
-        last unless $resource;
-
-        my $form = $self->get_form($c);
-        last unless $self->validate_form(
-            c => $c,
-            resource => $resource,
-            form => $form,
-        );
-        if($c->user->roles eq "admin") {
-        } elsif($c->user->roles eq "reseller") {
-            $resource->{reseller_id} = $c->user->reseller_id;
-        }
-
-        my $item;
-
-        try {
-            $item = $c->model('DB')->resultset('invoice_templates')->create($resource);
-        } catch($e) {
-            $c->log->error("failed to create invoice template: $e"); # TODO: user, message, trace, ...
-            $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "Failed to create email template.");
-            last;
-        }
-
-        $guard->commit;
-
-        $c->response->status(HTTP_CREATED);
-        $c->response->header(Location => sprintf('/%s%d', $c->request->path, $item->id));
-        $c->response->body(q());
-    }
     return;
 }
 
