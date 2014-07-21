@@ -39,7 +39,9 @@ a {
 <script src="annotate.js"></script>
 <script>
     $(function() {
-        $("figure.annotated figcaption ul li").annotate();
+        $("figure.annotated").each(function(){
+            $(this).find("figcaption ul li").annotate(this);
+        });
     });
 </script>
 <!--<![endif]-->
@@ -47,15 +49,30 @@ a {
 <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.1.0/css/font-awesome.min.css" rel="stylesheet">
 </head>
 <body>
+    <h1>Annotations for Key Selection</h1>
     <figure class="annotated">
         <img src="spa504g-front.jpg" alt="Cisco SPA504g" />
         <figcaption>
 	        <b>Line/Key Selection:</b>
             <ul>
-                <li class="assigned" style="top:71px; left:483px;" data-pos="top"><a href="#">test1xxxx@example.org</a></li>
-                <li class="unassigned" style="top:93px; left:493px;" data-pos="right"><i class="fa fa-plus-square-o"></i><a href="#"> Unassigned</a></li>
-                <li class="assigned" style="top:109px; left:473px;" data-pos="left"><a href="#">test3xxxx@example.org</a></li>
-                <li class="unassigned" style="top:130px; left:483px;" data-pos="bottom"><a href="#">Assign</a></li>
+                <li class="assigned" style="top:71px; left:483px;" data-pos="top"><a href="#"><i class="fa fa-minus-square fa-fw"></i> test1xxxx@example.org</a></li>
+                <li class="unassigned" style="top:93px; left:493px;" data-pos="right"><a href="#"><i class="fa fa-plus-square fa-fw"></i> Assign Subscriber</a></li>
+                <li class="assigned" style="top:109px; left:473px;" data-pos="left"><a href="#"><i class="fa fa-minus-square fa-fw"></i> test3xxxx@example.org</a></li>
+                <li class="unassigned" style="top:130px; left:483px;" data-pos="bottom"><a href="#"><i class="fa fa-plus-square fa-fw"></i> Assign Subscriber</a></li>
+            </ul>
+	        <i><a href="#">All Annotations Test</a></i>
+      </figcaption>
+    </figure>
+    <div style="clear:both"></div>
+    <figure class="annotated">
+        <img src="spa504g-front.jpg" alt="Cisco SPA504g" />
+        <figcaption>
+	        <b>Line/Key Selection:</b>
+            <ul>
+                <li class="assigned" style="top:76px; left:473px;" data-pos="left"><a href="#"><i class="fa fa-minus-square fa-fw"></i> test1xxxx@example.org</a></li>
+                <li class="unassigned" style="top:93px; left:493px;" data-pos="right"><a href="#"><i class="fa fa-plus-square fa-fw"></i> Assign Subscriber</a></li>
+                <li class="assigned" style="top:109px; left:473px;" data-pos="left"><a href="#"><i class="fa fa-minus-square fa-fw"></i> test3xxxx@example.org</a></li>
+                <li class="unassigned" style="top:127px; left:493px;" data-pos="right"><a href="#"><i class="fa fa-plus-square fa-fw"></i> Assign Subscriber</a></li>
             </ul>
 	        <i><a href="#">Cisco SPA504G</a></i>
       </figcaption>
