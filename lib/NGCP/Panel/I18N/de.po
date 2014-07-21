@@ -2590,7 +2590,7 @@ msgstr "Domain erstellen fehlgeschlagen."
 msgid "Failed to create email template"
 msgstr "Email-Vorlage erstellen fehlgeschlagen"
 
-#: lib/NGCP/Panel/Controller/InvoiceTemplate.pm:162
+#: lib/NGCP/Panel/Controller/InvoiceTemplate.pm:171
 msgid "Failed to create invoice template."
 msgstr "Rechnungsvorlage erstellen fehlgeschlagen"
 
@@ -2720,7 +2720,7 @@ msgstr "Löschen der Email-Vorlage fehlgeschlagen"
 msgid "Failed to delete invoice ."
 msgstr "Löschen der Rechnung fehlgschlagen."
 
-#: lib/NGCP/Panel/Controller/InvoiceTemplate.pm:255
+#: lib/NGCP/Panel/Controller/InvoiceTemplate.pm:272
 msgid "Failed to delete invoice template."
 msgstr "Löschen der Rechnungsvorlage fehlgeschlagen."
 
@@ -2824,7 +2824,7 @@ msgstr "Präferenz aktualisieren fehlgeschlagen"
 msgid "Failed to move rewrite rule."
 msgstr "Übersetzungsregel verschieben fehlgeschlagen."
 
-#: lib/NGCP/Panel/Controller/InvoiceTemplate.pm:367
+#: lib/NGCP/Panel/Controller/InvoiceTemplate.pm:384
 msgid "Failed to preview template"
 msgstr "Anzeigen der Vorschau fehlgeschlagen."
 
@@ -2833,7 +2833,7 @@ msgid "Failed to render invoice"
 msgstr "Rechnung erzeugen fehlgeschlagen"
 
 #. ($error->type . ', info is ' . $error->info)
-#: lib/NGCP/Panel/Controller/InvoiceTemplate.pm:356
+#: lib/NGCP/Panel/Controller/InvoiceTemplate.pm:373
 msgid "Failed to render template. Type is "
 msgstr "Vorlage übersetzen fehlgeschlagen. Typ ist "
 
@@ -2856,7 +2856,7 @@ msgstr "Speichern der Ruf-Weiterleitung fehlgeschlagen."
 msgid "Failed to save invoice meta data."
 msgstr "Rechnungs-Metadaten speichern fehlgeschlagen."
 
-#: lib/NGCP/Panel/Controller/InvoiceTemplate.pm:312
+#: lib/NGCP/Panel/Controller/InvoiceTemplate.pm:329
 msgid "Failed to store invoice template"
 msgstr "Rechnungs-Vorlage speichern fehlgeschlagen"
 
@@ -2945,7 +2945,7 @@ msgstr "Email-Vorlage aktualisieren fehlgeschlagen."
 msgid "Failed to update fax setting."
 msgstr "Fax-Einstellungen aktualisieren fehlgeschlagen."
 
-#: lib/NGCP/Panel/Controller/InvoiceTemplate.pm:232
+#: lib/NGCP/Panel/Controller/InvoiceTemplate.pm:249
 msgid "Failed to update invoice template."
 msgstr "Rechnungs-Vorlage aktualisieren fehlgeschlagen."
 
@@ -3799,19 +3799,19 @@ msgstr "Rechnungsvorlage hat kein gespeichertes SVG"
 msgid "Invoice template not found"
 msgstr "Rechnungsvorlage nicht gefunden"
 
-#: lib/NGCP/Panel/Controller/InvoiceTemplate.pm:157
+#: lib/NGCP/Panel/Controller/InvoiceTemplate.pm:166
 msgid "Invoice template successfully created"
 msgstr "Rechnungsvorlage erfolgreich erstellt"
 
-#: lib/NGCP/Panel/Controller/InvoiceTemplate.pm:250
+#: lib/NGCP/Panel/Controller/InvoiceTemplate.pm:267
 msgid "Invoice template successfully deleted"
 msgstr "Rechnungsvorlage erfolgreich gelöscht"
 
-#: lib/NGCP/Panel/Controller/InvoiceTemplate.pm:316
+#: lib/NGCP/Panel/Controller/InvoiceTemplate.pm:333
 msgid "Invoice template successfully saved"
 msgstr "Rechnungsvorlage erfolgreich gespeichert"
 
-#: lib/NGCP/Panel/Controller/InvoiceTemplate.pm:227
+#: lib/NGCP/Panel/Controller/InvoiceTemplate.pm:244
 msgid "Invoice template successfully updated"
 msgstr "Rechnungsvorlage erfolgreich aktualisiert"
 
@@ -6442,7 +6442,7 @@ msgstr "Vorlage"
 msgid "Template and customer must belong to same reseller"
 msgstr "Vorlage und Kunde müssen dem selben Reseller zugewiesen sein."
 
-#: lib/NGCP/Panel/Controller/InvoiceTemplate.pm:335
+#: lib/NGCP/Panel/Controller/InvoiceTemplate.pm:352
 msgid "Template has not been saved yet, please save before previewing."
 msgstr ""
 "Vorlage wurde noch nicht gespeichert. Bitte speichern Sie sie um eine "
