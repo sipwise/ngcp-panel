@@ -2520,7 +2520,7 @@ msgstr "Creazione del dominio fallita."
 msgid "Failed to create email template"
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/InvoiceTemplate.pm:162
+#: lib/NGCP/Panel/Controller/InvoiceTemplate.pm:171
 msgid "Failed to create invoice template."
 msgstr ""
 
@@ -2650,7 +2650,7 @@ msgstr ""
 msgid "Failed to delete invoice ."
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/InvoiceTemplate.pm:255
+#: lib/NGCP/Panel/Controller/InvoiceTemplate.pm:272
 msgid "Failed to delete invoice template."
 msgstr ""
 
@@ -2754,7 +2754,7 @@ msgstr ""
 msgid "Failed to move rewrite rule."
 msgstr "Spostamento rewrite rule fallito."
 
-#: lib/NGCP/Panel/Controller/InvoiceTemplate.pm:367
+#: lib/NGCP/Panel/Controller/InvoiceTemplate.pm:384
 msgid "Failed to preview template"
 msgstr ""
 
@@ -2763,7 +2763,7 @@ msgid "Failed to render invoice"
 msgstr ""
 
 #. ($error->type . ', info is ' . $error->info)
-#: lib/NGCP/Panel/Controller/InvoiceTemplate.pm:356
+#: lib/NGCP/Panel/Controller/InvoiceTemplate.pm:373
 msgid "Failed to render template. Type is "
 msgstr ""
 
@@ -2786,7 +2786,7 @@ msgstr "Salvataggio Deviazione di Chiamata fallito."
 msgid "Failed to save invoice meta data."
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/InvoiceTemplate.pm:312
+#: lib/NGCP/Panel/Controller/InvoiceTemplate.pm:329
 msgid "Failed to store invoice template"
 msgstr ""
 
@@ -2875,7 +2875,7 @@ msgstr ""
 msgid "Failed to update fax setting."
 msgstr "Aggiornamento configuratione fax fallito."
 
-#: lib/NGCP/Panel/Controller/InvoiceTemplate.pm:232
+#: lib/NGCP/Panel/Controller/InvoiceTemplate.pm:249
 msgid "Failed to update invoice template."
 msgstr ""
 
@@ -3727,19 +3727,19 @@ msgstr ""
 msgid "Invoice template not found"
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/InvoiceTemplate.pm:157
+#: lib/NGCP/Panel/Controller/InvoiceTemplate.pm:166
 msgid "Invoice template successfully created"
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/InvoiceTemplate.pm:250
+#: lib/NGCP/Panel/Controller/InvoiceTemplate.pm:267
 msgid "Invoice template successfully deleted"
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/InvoiceTemplate.pm:316
+#: lib/NGCP/Panel/Controller/InvoiceTemplate.pm:333
 msgid "Invoice template successfully saved"
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/InvoiceTemplate.pm:227
+#: lib/NGCP/Panel/Controller/InvoiceTemplate.pm:244
 msgid "Invoice template successfully updated"
 msgstr ""
 
@@ -6358,7 +6358,7 @@ msgstr ""
 msgid "Template and customer must belong to same reseller"
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/InvoiceTemplate.pm:335
+#: lib/NGCP/Panel/Controller/InvoiceTemplate.pm:352
 msgid "Template has not been saved yet, please save before previewing."
 msgstr ""
 
