@@ -15,32 +15,33 @@
       if(pos == undefined) pos = "top";
       console.log("pos at " + i + " is ", pos);
 
-      var $annotate = $('<div class="annotate ' + $el.attr("class") + '" data-annotate="' + i + '">' + $el.html() + '<div class="arrow-' + pos + '"></div></div>');
-      $(ctx).append($annotate);
-
-      $el.html('');
+      //var $annotate = $('<div class="annotate ' + $el.attr("class") + '" data-annotate="' + i + '">' + $el.html() + '<div class="arrow-' + pos + '"></div></div>');
+      //$(ctx).append($annotate);
+      //$el.html('');
+      $el.append('<div class="arrow-' + pos + '"></div>');
+      $el.addClass("annotate");
 
       var linkPosition = $el.position();
       var top, left;
       switch(pos) {
       	case "top":
-          top = linkPosition.top - 5 - $annotate.outerHeight();
-          left = linkPosition.left - 9 - $annotate.outerWidth()/2;
+          top = linkPosition.top - 5 - $el.outerHeight();
+          left = linkPosition.left - 9 - $el.outerWidth()/2;
 	  break;
       	case "bottom":
-          top = linkPosition.top - 11 + $annotate.outerHeight();
-          left = linkPosition.left - 9 - $annotate.outerWidth()/2;
+          top = linkPosition.top - 11 + $el.outerHeight();
+          left = linkPosition.left - 9 - $el.outerWidth()/2;
 	  break;
       	case "left":
-          top = linkPosition.top - ($annotate.outerHeight()/2);
-          left = linkPosition.left - 25 - $annotate.outerWidth();
+          top = linkPosition.top - $el.outerHeight()/2;
+          left = linkPosition.left - 25 - $el.outerWidth();
 	  break;
       	case "right":
-          top = linkPosition.top - ($annotate.outerHeight()/2);
+          top = linkPosition.top - $el.outerHeight()/2;
           left = linkPosition.left + 5;
 	  break;
       }
-      $annotate.css({
+      $el.css({
         top: top,
         left: left
       });
