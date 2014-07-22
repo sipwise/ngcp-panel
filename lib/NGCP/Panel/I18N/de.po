@@ -599,7 +599,7 @@ msgstr "August"
 msgid "Auto Attendant"
 msgstr "Anrufmenü"
 
-#: lib/NGCP/Panel/Controller/Subscriber.pm:3485
+#: lib/NGCP/Panel/Controller/Subscriber.pm:3486
 msgid "Auto Attendant Slot"
 msgstr "Anrufmenü Position"
 
@@ -2499,7 +2499,7 @@ msgstr "Externe ID des angerufenen Subscribers, wenn lokal."
 msgid "Fail Count"
 msgstr "Fehler-Anzahl"
 
-#: lib/NGCP/Panel/Controller/Subscriber.pm:3053
+#: lib/NGCP/Panel/Controller/Subscriber.pm:3054
 msgid "Failed to add registered device."
 msgstr "Hinzufügen des registrierten Gerätes fehlgeschlagen."
 
@@ -2638,7 +2638,7 @@ msgstr "Sound-Set erstellen fehlgeschlagen."
 msgid "Failed to create special offpeak entry."
 msgstr "Spezieller Off-Peak Eintrag erstellen fehlgeschlagen."
 
-#: lib/NGCP/Panel/Controller/Subscriber.pm:3259
+#: lib/NGCP/Panel/Controller/Subscriber.pm:3260
 msgid "Failed to create speed dial slot."
 msgstr "Schnell-Wahl-Eintrag erstellen fehlgeschlagen."
 
@@ -2655,7 +2655,7 @@ msgstr "Subscriber-Profil erstellen fehlgeschlagen."
 msgid "Failed to create subscriber."
 msgstr "Subscriber erstellen fehlgeschlagen."
 
-#: lib/NGCP/Panel/Controller/Subscriber.pm:3099
+#: lib/NGCP/Panel/Controller/Subscriber.pm:3100
 msgid "Failed to create trusted source."
 msgstr "Vertraute Quelle erstellen fehlgeschlagen."
 
@@ -2679,7 +2679,7 @@ msgstr "PBX Gerät löschen fehlgeschlagen."
 msgid "Failed to delete administrator."
 msgstr "Administrator löschen fehlgeschlagen."
 
-#: lib/NGCP/Panel/Controller/Subscriber.pm:3411
+#: lib/NGCP/Panel/Controller/Subscriber.pm:3412
 msgid "Failed to delete auto attendant slot."
 msgstr "Anrufmenü Eintrag löschen fehlgeschlagen."
 
@@ -2747,7 +2747,7 @@ msgstr "Peering-Server löschen fehlgeschlagen."
 msgid "Failed to delete preference %1."
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/Subscriber.pm:3014
+#: lib/NGCP/Panel/Controller/Subscriber.pm:3015
 msgid "Failed to delete registered device."
 msgstr "Registriertes Gerät löschen fehlgeschlagen."
 
@@ -2771,7 +2771,7 @@ msgstr "Sound Set löschen fehlgeschlagen."
 msgid "Failed to delete special offpeak entry."
 msgstr "Spezial-Offpeak-Eintrag löschen fehlgeschlagen."
 
-#: lib/NGCP/Panel/Controller/Subscriber.pm:3305
+#: lib/NGCP/Panel/Controller/Subscriber.pm:3306
 msgid "Failed to delete speed dial slot."
 msgstr "Kurzwahl-Eintrag löschen fehlgeschlagen."
 
@@ -2783,15 +2783,15 @@ msgstr "Subscriber-Profil-Set löschen fehgeschlagen."
 msgid "Failed to delete subscriber profile."
 msgstr "Subscriber-Profil löschen fehlgeschlagen."
 
-#: lib/NGCP/Panel/Controller/Subscriber.pm:3201
+#: lib/NGCP/Panel/Controller/Subscriber.pm:3202
 msgid "Failed to delete trusted source."
 msgstr "Vertraute Quelle löschen fehlgeschlagen."
 
-#: lib/NGCP/Panel/Controller/Subscriber.pm:2966
+#: lib/NGCP/Panel/Controller/Subscriber.pm:2967
 msgid "Failed to delete voicemail message."
 msgstr "Sprachnachricht löschen fehlgeschlagen."
 
-#: lib/NGCP/Panel/Controller/Subscriber.pm:2991
+#: lib/NGCP/Panel/Controller/Subscriber.pm:2992
 msgid "Failed to find registered device."
 msgstr "Registriertes Gerät nicht gefunden."
 
@@ -2901,7 +2901,7 @@ msgstr "PBX Gruppe aktualisieren fehlgeschlagen."
 msgid "Failed to update administrator."
 msgstr "Administrator aktualisieren fehlgeschlagen."
 
-#: lib/NGCP/Panel/Controller/Subscriber.pm:3475
+#: lib/NGCP/Panel/Controller/Subscriber.pm:3476
 msgid "Failed to update autoattendant slots"
 msgstr "Anrufmenü-Eintrag aktualisieren fehlgeschlagen."
 
@@ -3021,7 +3021,7 @@ msgstr "Subscriber-Profil aktualisieren fehlgeschlagen."
 msgid "Failed to update subscriber."
 msgstr "Subscriber aktualisieren fehlgeschlagen."
 
-#: lib/NGCP/Panel/Controller/Subscriber.pm:3173
+#: lib/NGCP/Panel/Controller/Subscriber.pm:3174
 msgid "Failed to update trusted source."
 msgstr "Vertraute Quelle aktualisieren fehlgeschlagen."
 
@@ -4388,15 +4388,15 @@ msgstr "Keine Pakete für diese Anruf-ID gefunden."
 msgid "No product for this customer contract found."
 msgstr "Kein Produkt für diesen Kunden-Vertrag gefunden."
 
-#: lib/NGCP/Panel/Controller/Subscriber.pm:3390
+#: lib/NGCP/Panel/Controller/Subscriber.pm:3391
 msgid "No such auto attendant id."
 msgstr "Anrufmenü ID nicht gefunden."
 
-#: lib/NGCP/Panel/Controller/Subscriber.pm:3284
+#: lib/NGCP/Panel/Controller/Subscriber.pm:3285
 msgid "No such speed dial id."
 msgstr "Kurzwahl ID nicht gefunden."
 
-#: lib/NGCP/Panel/Controller/Subscriber.pm:2920
+#: lib/NGCP/Panel/Controller/Subscriber.pm:2921
 msgid "No such voicemail file."
 msgstr "Sprachnachricht nicht gefunden."
 
@@ -5086,7 +5086,7 @@ msgstr ""
 msgid "Recurrence"
 msgstr "Wiederholung"
 
-#: lib/NGCP/Panel/Controller/Subscriber.pm:3062
+#: lib/NGCP/Panel/Controller/Subscriber.pm:3063
 #: share/templates/widgets/subscriber_reg_overview.tt:8
 msgid "Registered Device"
 msgstr "Registriertes Endgerät"
@@ -6005,8 +6005,8 @@ msgstr "Definiert, ob eine Registrierung am Peer Host erfolgen soll."
 msgid "Speed Dial"
 msgstr "Kurzwahl"
 
-#: lib/NGCP/Panel/Controller/Subscriber.pm:3270
-#: lib/NGCP/Panel/Controller/Subscriber.pm:3366
+#: lib/NGCP/Panel/Controller/Subscriber.pm:3271
+#: lib/NGCP/Panel/Controller/Subscriber.pm:3367
 msgid "Speed Dial Slot"
 msgstr "Kurzwahl-Eintrag"
 
@@ -6246,7 +6246,7 @@ msgstr "Subscriber erfolgreich erstellt."
 msgid "Subscribers"
 msgstr "Subscriber"
 
-#: lib/NGCP/Panel/Controller/Subscriber.pm:3048
+#: lib/NGCP/Panel/Controller/Subscriber.pm:3049
 msgid "Successfully added registered device"
 msgstr "Registriertes Endgerät erfolgreich hinzugefügt"
 
@@ -6274,11 +6274,11 @@ msgstr "Geräte-Modell erfolgreich erstellt"
 msgid "Successfully created device profile"
 msgstr "Geräte-Profil erfolgreich erstellt"
 
-#: lib/NGCP/Panel/Controller/Subscriber.pm:3254
+#: lib/NGCP/Panel/Controller/Subscriber.pm:3255
 msgid "Successfully created speed dial slot"
 msgstr "Kurzwahl-Eintrag erfolgreich erstellt"
 
-#: lib/NGCP/Panel/Controller/Subscriber.pm:3094
+#: lib/NGCP/Panel/Controller/Subscriber.pm:3095
 msgid "Successfully created trusted source"
 msgstr "Vertraute Quelle erfolgreich erstellt"
 
@@ -6286,23 +6286,23 @@ msgstr "Vertraute Quelle erfolgreich erstellt"
 msgid "Successfully deleted Call Forward"
 msgstr "Ruf-Weiterleitung erfolgreich gelöscht"
 
-#: lib/NGCP/Panel/Controller/Subscriber.pm:3406
+#: lib/NGCP/Panel/Controller/Subscriber.pm:3407
 msgid "Successfully deleted auto attendant slot"
 msgstr "Anrufmenü-Eintrag erfolgreich gelöscht"
 
-#: lib/NGCP/Panel/Controller/Subscriber.pm:3018
+#: lib/NGCP/Panel/Controller/Subscriber.pm:3019
 msgid "Successfully deleted registered device"
 msgstr "Registriertes Endgerät erfolgreich gelöscht"
 
-#: lib/NGCP/Panel/Controller/Subscriber.pm:3300
+#: lib/NGCP/Panel/Controller/Subscriber.pm:3301
 msgid "Successfully deleted speed dial slot"
 msgstr "Kurzwahl-Eintrag erfolgreich gelöscht"
 
-#: lib/NGCP/Panel/Controller/Subscriber.pm:3196
+#: lib/NGCP/Panel/Controller/Subscriber.pm:3197
 msgid "Successfully deleted trusted source"
 msgstr "Vertraute Quelle erfolgreich gelöscht"
 
-#: lib/NGCP/Panel/Controller/Subscriber.pm:2961
+#: lib/NGCP/Panel/Controller/Subscriber.pm:2962
 msgid "Successfully deleted voicemail"
 msgstr "Sprachnachricht erfolgreich gelöscht"
 
@@ -6336,7 +6336,7 @@ msgstr "Reseller erfolgreich terminiert"
 msgid "Successfully terminated subscriber"
 msgstr "Subscriber erfolgreich terminiert"
 
-#: lib/NGCP/Panel/Controller/Subscriber.pm:3470
+#: lib/NGCP/Panel/Controller/Subscriber.pm:3471
 msgid "Successfully updated auto attendant slots"
 msgstr "Anrufmenü-Eintrag erfolgreich aktualisiert"
 
@@ -6364,7 +6364,7 @@ msgstr "Passwort erfolgreich aktualisiert"
 msgid "Successfully updated reminder setting"
 msgstr "Weckruf-Einstellungen erfolgreich aktualisiert"
 
-#: lib/NGCP/Panel/Controller/Subscriber.pm:3350
+#: lib/NGCP/Panel/Controller/Subscriber.pm:3351
 msgid "Successfully updated speed dial slot"
 msgstr "Kurzwahl-Eintrag erfolgreich aktualisiert"
 
@@ -6372,7 +6372,7 @@ msgstr "Kurzwahl-Eintrag erfolgreich aktualisiert"
 msgid "Successfully updated subscriber"
 msgstr "Subscriber erfolgreich aktualisiert"
 
-#: lib/NGCP/Panel/Controller/Subscriber.pm:3168
+#: lib/NGCP/Panel/Controller/Subscriber.pm:3169
 msgid "Successfully updated trusted source"
 msgstr "Vertraute Quelle erfolgreich aktualisiert"
 
@@ -7525,7 +7525,7 @@ msgstr "Gesamt-Obergrenze an gleichzeitigen ausgehenden Gesprächen"
 msgid "Total max number of overall concurrent calls"
 msgstr "Gesamt-Obergrenze an gleichzeitigen Gesprächen"
 
-#: lib/NGCP/Panel/Controller/Subscriber.pm:2942
+#: lib/NGCP/Panel/Controller/Subscriber.pm:2943
 msgid "Transcode of audio file failed."
 msgstr "Umwandeln der Audiodatei fehlgeschlagen."
 
@@ -7533,8 +7533,8 @@ msgstr "Umwandeln der Audiodatei fehlgeschlagen."
 msgid "Transcoding audio file failed"
 msgstr "Umwandeln der Audiodatei fehlgeschlagen"
 
-#: lib/NGCP/Panel/Controller/Subscriber.pm:3109
-#: lib/NGCP/Panel/Controller/Subscriber.pm:3183
+#: lib/NGCP/Panel/Controller/Subscriber.pm:3110
+#: lib/NGCP/Panel/Controller/Subscriber.pm:3184
 msgid "Trusted Source"
 msgstr "Vertraute Quelle"
 
@@ -7542,7 +7542,7 @@ msgstr "Vertraute Quelle"
 msgid "Trusted Sources"
 msgstr "Vertraute Quellen"
 
-#: lib/NGCP/Panel/Controller/Subscriber.pm:3124
+#: lib/NGCP/Panel/Controller/Subscriber.pm:3125
 msgid "Trusted source entry not found."
 msgstr "Vertrauter Qellen-Eintrag nicht gefunden."
 
