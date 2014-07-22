@@ -793,6 +793,11 @@ sub preferences_edit :Chained('preferences_base') :PathPart('edit') :Args(0) {
             base_uri => $c->uri_for_action('/subscriber/preferences', [$c->req->captures->[0]]),
             edit_uri => $c->uri_for_action('/subscriber/preferences_edit', $c->req->captures),
         );
+        my $attr = $c->stash->{preference_meta}->attribute;
+        if ($c->req->method eq "POST" && $attr && ($attr eq "voicemail_echo_number" || $attr eq "cli")) {
+            NGCP::Panel::Utils::Subscriber::update_voicemail_number(
+                schema => $c->model('DB'), subscriber => $c->stash->{subscriber});
+        }
     } catch($e) {
         NGCP::Panel::Utils::Message->error(
             c     => $c,
