@@ -569,7 +569,7 @@ msgstr "Agosto"
 msgid "Auto Attendant"
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/Subscriber.pm:3485
+#: lib/NGCP/Panel/Controller/Subscriber.pm:3486
 msgid "Auto Attendant Slot"
 msgstr "Slot IVR"
 
@@ -2429,7 +2429,7 @@ msgstr ""
 msgid "Fail Count"
 msgstr "Conteggio Errori"
 
-#: lib/NGCP/Panel/Controller/Subscriber.pm:3053
+#: lib/NGCP/Panel/Controller/Subscriber.pm:3054
 msgid "Failed to add registered device."
 msgstr "Aggiunta dispositivo registrato fallita."
 
@@ -2568,7 +2568,7 @@ msgstr "Creazione set di suoni fallita."
 msgid "Failed to create special offpeak entry."
 msgstr "Creazione di fuori picco speciale fallita."
 
-#: lib/NGCP/Panel/Controller/Subscriber.pm:3259
+#: lib/NGCP/Panel/Controller/Subscriber.pm:3260
 msgid "Failed to create speed dial slot."
 msgstr "Creazione slot chiamata rapida fallita."
 
@@ -2585,7 +2585,7 @@ msgstr ""
 msgid "Failed to create subscriber."
 msgstr "Creazione subscriber fallita."
 
-#: lib/NGCP/Panel/Controller/Subscriber.pm:3099
+#: lib/NGCP/Panel/Controller/Subscriber.pm:3100
 msgid "Failed to create trusted source."
 msgstr "Creazione sorgente sicura fallita."
 
@@ -2609,7 +2609,7 @@ msgstr "Eliminazione dispositivo PBX fallita."
 msgid "Failed to delete administrator."
 msgstr "Eliminazione amministratore fallita."
 
-#: lib/NGCP/Panel/Controller/Subscriber.pm:3411
+#: lib/NGCP/Panel/Controller/Subscriber.pm:3412
 msgid "Failed to delete auto attendant slot."
 msgstr "Eliminazione slot IVR fallita."
 
@@ -2677,7 +2677,7 @@ msgstr "Eliminazione server peer fallita."
 msgid "Failed to delete preference %1."
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/Subscriber.pm:3014
+#: lib/NGCP/Panel/Controller/Subscriber.pm:3015
 msgid "Failed to delete registered device."
 msgstr "Eliminazione dispositivo registrato fallita."
 
@@ -2701,7 +2701,7 @@ msgstr "Eliminazione set di suoni fallita."
 msgid "Failed to delete special offpeak entry."
 msgstr "Eliminazione fuori picco speciale fallita."
 
-#: lib/NGCP/Panel/Controller/Subscriber.pm:3305
+#: lib/NGCP/Panel/Controller/Subscriber.pm:3306
 msgid "Failed to delete speed dial slot."
 msgstr "Eliminazione slot chiamata rapida fallita."
 
@@ -2713,15 +2713,15 @@ msgstr ""
 msgid "Failed to delete subscriber profile."
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/Subscriber.pm:3201
+#: lib/NGCP/Panel/Controller/Subscriber.pm:3202
 msgid "Failed to delete trusted source."
 msgstr "Eliminazione sorgente sicura fallita."
 
-#: lib/NGCP/Panel/Controller/Subscriber.pm:2966
+#: lib/NGCP/Panel/Controller/Subscriber.pm:2967
 msgid "Failed to delete voicemail message."
 msgstr "Eliminazione messagio casella di posta fallita."
 
-#: lib/NGCP/Panel/Controller/Subscriber.pm:2991
+#: lib/NGCP/Panel/Controller/Subscriber.pm:2992
 msgid "Failed to find registered device."
 msgstr "Ricerca dispositivo registrato fallita."
 
@@ -2831,7 +2831,7 @@ msgstr "Aggiornamento gruppo PBX fallito."
 msgid "Failed to update administrator."
 msgstr "Aggiornamento amministratore fallito."
 
-#: lib/NGCP/Panel/Controller/Subscriber.pm:3475
+#: lib/NGCP/Panel/Controller/Subscriber.pm:3476
 msgid "Failed to update autoattendant slots"
 msgstr "Aggiornamento slot IVR fallito."
 
@@ -2951,7 +2951,7 @@ msgstr ""
 msgid "Failed to update subscriber."
 msgstr "Aggiornamento subscriber fallito."
 
-#: lib/NGCP/Panel/Controller/Subscriber.pm:3173
+#: lib/NGCP/Panel/Controller/Subscriber.pm:3174
 msgid "Failed to update trusted source."
 msgstr "Aggiornamento sorgente fidata fallito."
 
@@ -4310,15 +4310,15 @@ msgstr ""
 msgid "No product for this customer contract found."
 msgstr "Nessun contratto trovato per questo cliente."
 
-#: lib/NGCP/Panel/Controller/Subscriber.pm:3390
+#: lib/NGCP/Panel/Controller/Subscriber.pm:3391
 msgid "No such auto attendant id."
 msgstr "Nessuno id per IVR."
 
-#: lib/NGCP/Panel/Controller/Subscriber.pm:3284
+#: lib/NGCP/Panel/Controller/Subscriber.pm:3285
 msgid "No such speed dial id."
 msgstr "Nessun id chiamata rapida."
 
-#: lib/NGCP/Panel/Controller/Subscriber.pm:2920
+#: lib/NGCP/Panel/Controller/Subscriber.pm:2921
 msgid "No such voicemail file."
 msgstr "Nessun file casella vocale."
 
@@ -5007,7 +5007,7 @@ msgstr ""
 msgid "Recurrence"
 msgstr "Ricorrenza"
 
-#: lib/NGCP/Panel/Controller/Subscriber.pm:3062
+#: lib/NGCP/Panel/Controller/Subscriber.pm:3063
 #: share/templates/widgets/subscriber_reg_overview.tt:8
 msgid "Registered Device"
 msgstr "Dispositivo Registrato"
@@ -5925,8 +5925,8 @@ msgstr ""
 msgid "Speed Dial"
 msgstr "Chiamata Rapida"
 
-#: lib/NGCP/Panel/Controller/Subscriber.pm:3270
-#: lib/NGCP/Panel/Controller/Subscriber.pm:3366
+#: lib/NGCP/Panel/Controller/Subscriber.pm:3271
+#: lib/NGCP/Panel/Controller/Subscriber.pm:3367
 msgid "Speed Dial Slot"
 msgstr "Slot Chiamata Veloce"
 
@@ -6166,7 +6166,7 @@ msgstr "Subscriber creato con successo."
 msgid "Subscribers"
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/Subscriber.pm:3048
+#: lib/NGCP/Panel/Controller/Subscriber.pm:3049
 msgid "Successfully added registered device"
 msgstr "Dispositivo registrato aggiunto con successo"
 
@@ -6194,11 +6194,11 @@ msgstr "Modello dispositivo creato con successo"
 msgid "Successfully created device profile"
 msgstr "Profilo dispositivo creato con successo"
 
-#: lib/NGCP/Panel/Controller/Subscriber.pm:3254
+#: lib/NGCP/Panel/Controller/Subscriber.pm:3255
 msgid "Successfully created speed dial slot"
 msgstr "Slot chiamata rapida creato con successo"
 
-#: lib/NGCP/Panel/Controller/Subscriber.pm:3094
+#: lib/NGCP/Panel/Controller/Subscriber.pm:3095
 msgid "Successfully created trusted source"
 msgstr "Sorgente fidata creata con successo"
 
@@ -6206,23 +6206,23 @@ msgstr "Sorgente fidata creata con successo"
 msgid "Successfully deleted Call Forward"
 msgstr "Deviazione di chiamata eliminata con successo"
 
-#: lib/NGCP/Panel/Controller/Subscriber.pm:3406
+#: lib/NGCP/Panel/Controller/Subscriber.pm:3407
 msgid "Successfully deleted auto attendant slot"
 msgstr "Slot IVR eliminato con successo"
 
-#: lib/NGCP/Panel/Controller/Subscriber.pm:3018
+#: lib/NGCP/Panel/Controller/Subscriber.pm:3019
 msgid "Successfully deleted registered device"
 msgstr "Dispositivo registrato eliminato con successo"
 
-#: lib/NGCP/Panel/Controller/Subscriber.pm:3300
+#: lib/NGCP/Panel/Controller/Subscriber.pm:3301
 msgid "Successfully deleted speed dial slot"
 msgstr "Slot chiamata rapida eliminato con successo"
 
-#: lib/NGCP/Panel/Controller/Subscriber.pm:3196
+#: lib/NGCP/Panel/Controller/Subscriber.pm:3197
 msgid "Successfully deleted trusted source"
 msgstr "Sorgente fidata eliminata con successo"
 
-#: lib/NGCP/Panel/Controller/Subscriber.pm:2961
+#: lib/NGCP/Panel/Controller/Subscriber.pm:2962
 msgid "Successfully deleted voicemail"
 msgstr "Casella Vocale eliminata con successo"
 
@@ -6252,7 +6252,7 @@ msgstr "Rivenditore terminato con successo"
 msgid "Successfully terminated subscriber"
 msgstr "Subscriber terminato con successo"
 
-#: lib/NGCP/Panel/Controller/Subscriber.pm:3470
+#: lib/NGCP/Panel/Controller/Subscriber.pm:3471
 msgid "Successfully updated auto attendant slots"
 msgstr "Slot IVR aggiornati con successo"
 
@@ -6280,7 +6280,7 @@ msgstr "Password aggiornata con successo"
 msgid "Successfully updated reminder setting"
 msgstr "Configurazione promemoria aggiornata con successo"
 
-#: lib/NGCP/Panel/Controller/Subscriber.pm:3350
+#: lib/NGCP/Panel/Controller/Subscriber.pm:3351
 msgid "Successfully updated speed dial slot"
 msgstr "Slot chiamata rapida aggiornato con successo"
 
@@ -6288,7 +6288,7 @@ msgstr "Slot chiamata rapida aggiornato con successo"
 msgid "Successfully updated subscriber"
 msgstr "Subscriber aggiornato con successo"
 
-#: lib/NGCP/Panel/Controller/Subscriber.pm:3168
+#: lib/NGCP/Panel/Controller/Subscriber.pm:3169
 msgid "Successfully updated trusted source"
 msgstr "Sorgente fidata aggiornata con successo"
 
@@ -7422,7 +7422,7 @@ msgstr ""
 msgid "Total max number of overall concurrent calls"
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/Subscriber.pm:2942
+#: lib/NGCP/Panel/Controller/Subscriber.pm:2943
 msgid "Transcode of audio file failed."
 msgstr "Transcodifica file audio fallita."
 
@@ -7430,8 +7430,8 @@ msgstr "Transcodifica file audio fallita."
 msgid "Transcoding audio file failed"
 msgstr "Transcodifica file audio fallita"
 
-#: lib/NGCP/Panel/Controller/Subscriber.pm:3109
-#: lib/NGCP/Panel/Controller/Subscriber.pm:3183
+#: lib/NGCP/Panel/Controller/Subscriber.pm:3110
+#: lib/NGCP/Panel/Controller/Subscriber.pm:3184
 msgid "Trusted Source"
 msgstr "Sorgente Fidata"
 
@@ -7439,7 +7439,7 @@ msgstr "Sorgente Fidata"
 msgid "Trusted Sources"
 msgstr "IP Sorgenti Fidati"
 
-#: lib/NGCP/Panel/Controller/Subscriber.pm:3124
+#: lib/NGCP/Panel/Controller/Subscriber.pm:3125
 msgid "Trusted source entry not found."
 msgstr "IP Sorgente Fidata non trovata."
 
