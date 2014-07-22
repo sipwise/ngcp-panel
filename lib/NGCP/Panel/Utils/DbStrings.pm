@@ -45,7 +45,7 @@ sub localize {
     $c->loc('The country code that will be used for routing of dialed numbers without a country code. Defaults to the country code of the E.164 number if the subscriber has one.');
     $c->loc('Area Code');
     $c->loc('The area code that will be used for routing of dialed numbers without an area code. Defaults to the area code of the E.164 number if the subscriber has one.');
-    $c->loc('Emergency Prefix varible');
+    $c->loc('Emergency Prefix variable');
     $c->loc('A numeric string intended to be used in rewrite rules for emergency numbers.');
     $c->loc('Internal NCOS Level #');
     $c->loc('Internal Administrative NCOS Level #');
@@ -73,8 +73,6 @@ sub localize {
     $c->loc('Maximum number of concurrent outgoing sessions (calls) coming from a subscriber or going to a peer.');
     $c->loc('Allowed CLIs for outbound calls');
     $c->loc('A list of shell patterns specifying which CLIs are allowed to be set by the subscriber. "*", "?" and "~[x-y~]" with "x" and "y" representing numbers from 0 to 9 may be used as wildcards as usual in shell patterns.');
-    $c->loc('Force outbound calls to peer');
-    $c->loc('Force calls from this user/domain/peer to be routed to PSTN even if the callee is local. Use with caution, as this setting may increase your costs! When enabling this option in a peer, make sure you trust it, as the NGCP will become an open relay for it!');
     $c->loc('Internal Contract #');
     $c->loc('External Contract #');
     $c->loc('External Subscriber #');
@@ -173,14 +171,24 @@ sub localize {
     $c->loc('The members (as SIP URIs) of the PBX hunt group.');
     $c->loc('CLI of CloudPBX Pilot Subscriber');
     $c->loc('The base CLI for the PBX extension.');
+    $c->loc('User-Agent header passing mode');
+    $c->loc('User-Agent header passing mode.');
+    $c->loc('User-Agent header replacement (if mode is "replace")');
+    $c->loc('The string to be used as a User-Agent header replacement if ua_header_mode is set to "replace".');
+    $c->loc('Outbound History-Info Field');
+    $c->loc('The content to put into the History-Info  header for outbound calls (use "None" to not set header at all)');
     $c->loc('Export subscriber to shared XMPP Buddylist');
     $c->loc('Export this subscriber into the shared XMPP buddy list for the customer.');
     $c->loc('Network-Provided Display Name');
     $c->loc('The network-provided display name used for XMPP contacts and optionally SIP outbound header manipulation.');
     $c->loc('Customer Sound Set');
     $c->loc('Customer specific Sound Set used for PBX auto-attendant prompts, customer-specific announcements etc.');
-    $c->loc('api test pref');
-    $c->loc('api test pref');
+    $c->loc('Force outbound calls from user or peer to peer');
+    $c->loc('Force calls from this user/domain/peer to be routed to PSTN even if the callee is local. Use with caution, as this setting may increase your costs! When enabling this option in a peer, make sure you trust it, as the NGCP will become an open relay for it!');
+    $c->loc('Perform serial forking based on q-value of registered contacts');
+    $c->loc('Check the box if you want to perform serial forking based on q-value instead of parallel forking for registered contacts');
+    $c->loc('Music on Hold');
+    $c->loc('"Music on Hold" - if set to true and a music on hold file is provided, a calling party gets that file played when put on hold');
     $c->loc('Call Forwards');
     $c->loc('Call Blockings');
     $c->loc('Access Restrictions');
@@ -201,6 +209,10 @@ sub form_strings {
     #NGCP::Panel::Form::BillingPeaktimeSpecial
     #NGCP::Panel::Form::BillingPeaktimeWeekdays
     #NGCP::Panel::Form::BillingZone
+    #NGCP::Panel::Form::CFDestinationSetAPI
+    #NGCP::Panel::Form::CFMappingsAPI
+    #NGCP::Panel::Form::CFSimpleAPI
+    #NGCP::Panel::Form::CFTimeSetAPI
     #NGCP::Panel::Form::CustomerBalance
     #NGCP::Panel::Form::CustomerDailyFraud
     #NGCP::Panel::Form::CustomerMonthlyFraud
@@ -220,29 +232,36 @@ sub form_strings {
     #NGCP::Panel::Form::SubscriberCFTSimple
     #NGCP::Panel::Form::SubscriberEdit
     #NGCP::Panel::Form::TimeSet
+    #NGCP::Panel::Form::ValidatorBase
     #NGCP::Panel::Form::Administrator::Admin
     #NGCP::Panel::Form::Administrator::APIDownDelete
     #NGCP::Panel::Form::Administrator::APIGenerate
     #NGCP::Panel::Form::Administrator::Reseller
     #NGCP::Panel::Form::BillingProfile::Admin
     #NGCP::Panel::Form::BillingProfile::Reseller
+    #NGCP::Panel::Form::Call::Admin
+    #NGCP::Panel::Form::Call::Reseller
     #NGCP::Panel::Form::Contact::Admin
     #NGCP::Panel::Form::Contact::Reseller
     #NGCP::Panel::Form::Contract::Basic
     #NGCP::Panel::Form::Contract::PeeringReseller
+    #NGCP::Panel::Form::Contract::PeeringResellerAPI
+    #NGCP::Panel::Form::Contract::ProductOptional
     #NGCP::Panel::Form::Contract::ProductSelect
     #NGCP::Panel::Form::Customer::PbxAdminSubscriber
     #NGCP::Panel::Form::Customer::PbxExtensionSubscriber
-    #NGCP::Panel::Form::Customer::PbxExtensionSubscriberEdit
-    #NGCP::Panel::Form::Customer::PbxExtensionSubscriberEditAdmin
     #NGCP::Panel::Form::Customer::PbxExtensionSubscriberEditSubadmin
     #NGCP::Panel::Form::Customer::PbxExtensionSubscriberEditSubadminNoGroup
+    #NGCP::Panel::Form::Customer::PbxExtensionSubscriberSubadmin
     #NGCP::Panel::Form::Customer::PbxFieldDevice
+    #NGCP::Panel::Form::Customer::PbxFieldDeviceAPI
     #NGCP::Panel::Form::Customer::PbxFieldDeviceEdit
     #NGCP::Panel::Form::Customer::PbxFieldDeviceSync
     #NGCP::Panel::Form::Customer::PbxGroup
     #NGCP::Panel::Form::Customer::PbxGroupBase
+    #NGCP::Panel::Form::Customer::PbxGroupEdit
     #NGCP::Panel::Form::Customer::PbxSubscriber
+    #NGCP::Panel::Form::Customer::PbxSubscriberEdit
     #NGCP::Panel::Form::Customer::Subscriber
     #NGCP::Panel::Form::Device::Config
     #NGCP::Panel::Form::Device::Firmware
@@ -252,16 +271,30 @@ sub form_strings {
     #NGCP::Panel::Form::Domain::Admin
     #NGCP::Panel::Form::Domain::Reseller
     #NGCP::Panel::Form::Domain::ResellerPbx
+    #NGCP::Panel::Form::EmailTemplate::Admin
+    #NGCP::Panel::Form::EmailTemplate::Reseller
     #NGCP::Panel::Form::Faxserver::Active
+    #NGCP::Panel::Form::Faxserver::API
     #NGCP::Panel::Form::Faxserver::Destination
     #NGCP::Panel::Form::Faxserver::Name
     #NGCP::Panel::Form::Faxserver::Password
     #NGCP::Panel::Form::Faxserver::SendCopy
     #NGCP::Panel::Form::Faxserver::SendStatus
+    #NGCP::Panel::Form::Invoice::Invoice
+    #NGCP::Panel::Form::Invoice::InvoiceAPI
+    #NGCP::Panel::Form::Invoice::TemplateAdmin
+    #NGCP::Panel::Form::Invoice::TemplateReseller
     #NGCP::Panel::Form::NCOS::AdminLevel
+    #NGCP::Panel::Form::NCOS::AdminLevelAPI
     #NGCP::Panel::Form::NCOS::LocalAC
     #NGCP::Panel::Form::NCOS::Pattern
+    #NGCP::Panel::Form::NCOS::PatternAPI
     #NGCP::Panel::Form::NCOS::ResellerLevel
+    #NGCP::Panel::Form::NCOS::ResellerLevelAPI
+    #NGCP::Panel::Form::NumberBlock::BlockAdmin
+    #NGCP::Panel::Form::NumberBlock::BlockReseller
+    #NGCP::Panel::Form::Reminder::API
+    #NGCP::Panel::Form::Reseller::Branding
     #NGCP::Panel::Form::RewriteRule::AdminSet
     #NGCP::Panel::Form::RewriteRule::CloneSet
     #NGCP::Panel::Form::RewriteRule::ResellerSet
@@ -269,416 +302,756 @@ sub form_strings {
     #NGCP::Panel::Form::Sound::AdminSet
     #NGCP::Panel::Form::Sound::CustomerSet
     #NGCP::Panel::Form::Sound::File
+    #NGCP::Panel::Form::Sound::FileAPI
+    #NGCP::Panel::Form::Sound::HandleAPI
     #NGCP::Panel::Form::Sound::ResellerSet
     #NGCP::Panel::Form::Subscriber::AutoAttendant
+    #NGCP::Panel::Form::Subscriber::AutoAttendantAPI
     #NGCP::Panel::Form::Subscriber::EditWebpass
     #NGCP::Panel::Form::Subscriber::Location
+    #NGCP::Panel::Form::Subscriber::RecoverPassword
+    #NGCP::Panel::Form::Subscriber::RegisteredAPI
+    #NGCP::Panel::Form::Subscriber::ResetPassword
     #NGCP::Panel::Form::Subscriber::SpeedDial
+    #NGCP::Panel::Form::Subscriber::SpeedDialAPI
     #NGCP::Panel::Form::Subscriber::SubscriberAPI
     #NGCP::Panel::Form::Subscriber::TrustedSource
+    #NGCP::Panel::Form::Subscriber::TrustedSourceAPI
     #NGCP::Panel::Form::Subscriber::Webfax
+    #NGCP::Panel::Form::SubscriberProfile::ApiProfile
+    #NGCP::Panel::Form::SubscriberProfile::Profile
+    #NGCP::Panel::Form::SubscriberProfile::ProfileClone
+    #NGCP::Panel::Form::SubscriberProfile::SetAdmin
+    #NGCP::Panel::Form::SubscriberProfile::SetCloneAdmin
+    #NGCP::Panel::Form::SubscriberProfile::SetCloneReseller
+    #NGCP::Panel::Form::SubscriberProfile::SetReseller
+    #NGCP::Panel::Form::Voicemail::API
     #NGCP::Panel::Form::Voicemail::Attach
     #NGCP::Panel::Form::Voicemail::Delete
     #NGCP::Panel::Form::Voicemail::Email
+    #NGCP::Panel::Form::Voicemail::Meta
     #NGCP::Panel::Form::Voicemail::Pin
-    $c->loc('Hour');
+    $c->loc('The timestamp of the call connection.');
     $c->loc('Callee');
     $c->loc('New Name');
-    $c->loc('Line/Key');
     $c->loc('Loopplay');
-    $c->loc('October');
-    $c->loc('Field');
-    $c->loc('Password');
-    $c->loc('YYYY-MM-DD HH:mm:ss');
+    $c->loc('cfb');
     $c->loc('Slot add');
     $c->loc('Subscriber');
+    $c->loc('Destination username or number as received by the system from calling party before any internal rewriting.');
     $c->loc('Source');
     $c->loc('Comma-Separated list of Email addresses to send notifications when tresholds are exceeded.');
     $c->loc('Host:');
-    $c->loc('First Name');
-    $c->loc('Is master');
     $c->loc('SIP Username');
-    $c->loc('Caller');
+    $c->loc('private');
+    $c->loc('Subscriber Number Range Length (e.g. 2 for 1-212-12345xx');
     $c->loc('Send');
     $c->loc('Line add');
     $c->loc('Period');
     $c->loc('PDF');
-    $c->loc('Version');
-    $c->loc('Offpeak follow rate');
+    $c->loc('The authentication username used for outbound authentication.');
+    $c->loc('The subscriber the contact belongs to.');
     $c->loc('Create Device Configuration');
     $c->loc('Wednesday');
-    $c->loc('The billing zone id this fee belongs to.');
     $c->loc('Rewrite Rule Set');
     $c->loc('Sn');
-    $c->loc('Upload');
-    $c->loc('PIN');
+    $c->loc('Profile set');
+    $c->loc('Destinationset');
     $c->loc('The contract used for this subscriber.');
-    $c->loc('IVR Slots');
     $c->loc('Soundfile');
-    $c->loc('Outbound');
-    $c->loc('Voicemail');
+    $c->loc('Cfb');
+    $c->loc('Call id');
     $c->loc('whitelist');
     $c->loc('The status of the contract.');
-    $c->loc('The contact id this contract belongs to.');
+    $c->loc('The SIP URI pointing to the current contact of the subscriber.');
     $c->loc('End');
+    $c->loc('blf');
+    $c->loc('Create Email Template');
+    $c->loc('Allow numbers to be allocated from this block.');
+    $c->loc('The destination billing zone id (from billing.billing_zones_history) attached to the customer billing cost.');
+    $c->loc('Invoice Period');
     $c->loc('Numbers');
-    $c->loc('Manage Time Sets');
     $c->loc('Purge existing');
-    $c->loc('Interval free cash');
-    $c->loc('PBX Group');
     $c->loc('The contract used for this reseller.');
-    $c->loc('#');
-    $c->loc('outbound');
-    $c->loc('Send Copies');
-    $c->loc('Create Domain');
-    $c->loc('Create');
+    $c->loc('Cft ringtimeout');
+    $c->loc('Source reseller free time');
+    $c->loc('Destination reseller billing fee id');
     $c->loc('Callforward controls add');
     $c->loc('Rm');
     $c->loc('Fraud daily notify');
-    $c->loc('Name in Fax Header');
-    $c->loc('The fraud detection threshold per month (in cents, e.g. 10000).');
-    $c->loc('Uri');
-    $c->loc('only once');
-    $c->loc('Is PBX Group?');
+    $c->loc('The type of call, one of call, cfu, cfb, cft, cfna.');
+    $c->loc('Source customer billing zone id');
     $c->loc('Start Date/Time');
-    $c->loc('The fraud detection threshold per day (in cents, e.g. 1000).');
+    $c->loc('From Email Address');
     $c->loc('Login');
-    $c->loc('Year');
     $c->loc('Inbound');
+    $c->loc('The description of the level');
+    $c->loc('General Purpose 4');
     $c->loc('Create Zone');
     $c->loc('The type of feature to use on this line/key');
-    $c->loc('Download in PEM Format');
-    $c->loc('Day');
+    $c->loc('The duration of the call.');
+    $c->loc('Cust2');
     $c->loc('Email');
-    $c->loc('Read only');
-    $c->loc('Serial Hunting Timeout');
-    $c->loc('External ID');
     $c->loc('Administrative');
     $c->loc('fraud detection threshold per day, specifying cents');
-    $c->loc('Period add');
     $c->loc('blacklist');
-    $c->loc('incoming and outgoing');
-    $c->loc('Supports Private Line');
     $c->loc('Extension Number, e.g. 101');
-    $c->loc('The length of each following interval in seconds (e.g. 30).');
-    $c->loc('everyday');
     $c->loc('Currency');
     $c->loc('Bootstrap Sync Parameters');
     $c->loc('Whether the subscriber can configure other subscribers within his Customer account.');
-    $c->loc('The fully qualified domain name (e.g. sip.example.org).');
     $c->loc('Is superuser');
+    $c->loc('The destination billing zone id (from billing.billing_zones_history) attached to the carrier billing cost.');
+    $c->loc('Destination reseller free time');
+    $c->loc('The number of free seconds of the customer used for this call.');
+    $c->loc('The group this handle belongs to.');
+    $c->loc('Whether to charge VAT in invoices.');
     $c->loc('The username for SIP and XMPP services.');
-    $c->loc('Create Contact');
     $c->loc('Interval charge');
     $c->loc('Supports Busy Lamp Field');
     $c->loc('Interval free time');
     $c->loc('Create Group');
-    $c->loc('Firmware File');
+    $c->loc('The cost for the carrier towards the operator (e.g. for 800-numbers).');
     $c->loc('Match pattern');
     $c->loc('The surname of the contact.');
-    $c->loc('Company');
+    $c->loc('Expires');
     $c->loc('global (including CSC)');
     $c->loc('The base fee charged per billing interval (a monthly fixed fee, e.g. 10) in Euro/Dollars/etc. This fee can be used on the invoice.');
-    $c->loc('global');
-    $c->loc('Whether free minutes may be used when calling this destination.');
+    $c->loc('The description of the sound set');
+    $c->loc('VAT Amount');
+    $c->loc('The email address where to send notifications and the recordings.');
     $c->loc('Zone Detail');
+    $c->loc('Destination carrier billing fee id');
     $c->loc('Clone');
     $c->loc('The end time in format hh:mm:ss');
-    $c->loc('Close');
-    $c->loc('Line/Key Type');
+    $c->loc('The level name');
+    $c->loc('Call type');
     $c->loc('September');
-    $c->loc('E.164 Number');
-    $c->loc('Onpeak follow interval');
-    $c->loc('Start');
-    $c->loc('foreign calls');
+    $c->loc('The mobile number of the contact.');
+    $c->loc('Destination domain as received by the system from calling party after internal rewriting.');
     $c->loc('Contact URI');
     $c->loc('during Time Set');
     $c->loc('Number');
-    $c->loc('Whether customers using this profile are handled prepaid.');
-    $c->loc('Monthly Fraud Limit');
-    $c->loc('VAT Rate');
+    $c->loc('General Purpose 9');
+    $c->loc('Exported at');
+    $c->loc('Peer auth realm');
     $c->loc('Delete');
     $c->loc('Profile');
-    $c->loc('Manage Destination Sets');
+    $c->loc('Company Reg. Number');
     $c->loc('The name of the reseller.');
-    $c->loc('Mday');
     $c->loc('Alias Number');
     $c->loc('Alias numbers');
-    $c->loc('Alias number');
+    $c->loc('Cft');
     $c->loc('where e-mail notifications are sent, a list of e-mail addreses separated by comma');
-    $c->loc('Level Name');
-    $c->loc('April');
+    $c->loc('The billing fee id used to calculate the source carrier cost.');
     $c->loc('Contact Email');
-    $c->loc('File Type');
-    $c->loc('Device Configuration');
     $c->loc('Hunting Policy');
-    $c->loc('Edit time sets');
+    $c->loc('failed');
+    $c->loc('The billing fee id used to calculate the source customer cost.');
     $c->loc('Detail');
-    $c->loc('URI/Number');
-    $c->loc('Options to lock customer if the daily limit is exceeded.');
+    $c->loc('The billing fee id used to calculate the destination carrier cost.');
     $c->loc('The included free money per billing interval (in Euro, Dollars etc., e.g. 10).');
-    $c->loc('Mode');
-    $c->loc('The reseller id this profile belongs to.');
-    $c->loc('The human-readable display name (e.g. John Doe)');
+    $c->loc('Source customer cost');
+    $c->loc('Destination carrier billing zone id');
     $c->loc('The number to send the fax to');
-    $c->loc('Alias number add');
+    $c->loc('Reseller id of called subscriber, or contract id of peer if to external');
     $c->loc('Billing profile');
     $c->loc('TLS');
-    $c->loc('Destination');
     $c->loc('Zone');
-    $c->loc('Fraud daily limit');
+    $c->loc('The timestamp of the call initiation.');
+    $c->loc('Inbound (in) or Outbound (out).');
     $c->loc('March');
-    $c->loc('Offpeak follow interval');
-    $c->loc('Country Code, e.g. 1 for US or 43 for Austria');
-    $c->loc('The password to log into the CSC Panel');
-    $c->loc('Name');
-    $c->loc('TCP');
-    $c->loc('Whether the fees already incluside VAT.');
     $c->loc('E164 Number');
     $c->loc('The username to log into the CSC Panel');
-    $c->loc('Area Code, e.g. 212 for NYC or 1 for Vienna');
-    $c->loc('Show passwords');
-    $c->loc('VAT Included');
-    $c->loc('string, rule description');
-    $c->loc('terminated');
+    $c->loc('Destination customer cost');
+    $c->loc('The reseller this level belongs to.');
+    $c->loc('The BIC (Business Identifier Code) of the contact bank details.');
+    $c->loc('Default Profile');
+    $c->loc('Logo');
+    $c->loc('Cust1');
+    $c->loc('The reseller id to assign this invoice template to.');
     $c->loc('Fraud Monthly Notify');
     $c->loc('Onpeak follow rate');
-    $c->loc('Download CA Certificate');
+    $c->loc('Replacement pattern.');
+    $c->loc('The billing fee id used to calculate the destination reseller cost.');
     $c->loc('The contact priority for serial forking (float value, higher is stronger) between -1.00 to 1.00');
     $c->loc('Web Password');
-    $c->loc('Generate Certificate');
-    $c->loc('SIP Domain');
-    $c->loc('The number of Lines/Keys in this range, indexed from 0 in the config template array phone.lineranges~[~].lines~[~]');
-    $c->loc('PDF14');
-    $c->loc('A human readable profile name.');
-    $c->loc('foreign');
-    $c->loc('Download PKCS12');
+    $c->loc('Destination Domain');
+    $c->loc('E164range');
+    $c->loc('The cost for the called party customer towards the reseller.');
+    $c->loc('Play file in a loop.');
     $c->loc('New Description');
-    $c->loc('Call data');
-    $c->loc('Max Subscribers');
+    $c->loc('Ringtimeout');
     $c->loc('A POSIX regex matching against \'sip:user@domain\' (e.g. \'^sip:.+@example\.org$\' matching the whole URI, or \'999\' matching if the URI contains \'999\')');
-    $c->loc('Tuesday');
     $c->loc('Onpeak init rate');
     $c->loc('Subscriber Number, e.g. 12345678');
     $c->loc('The Name of this range, e.g. Phone Keys or Attendant Console 1 Keys, accessible in the config template array via phone.lineranges~[~].name');
     $c->loc('Pattern');
-    $c->loc('Postcode');
     $c->loc('If active and a customer is selected, this sound set is used for all existing and new subscribers within this customer if no specific sound set is specified for the subscribers');
-    $c->loc('If active, this sound set is used for all existing and new subscribers if no specific sound set is specified for them');
-    $c->loc('The cost of each following interval in cents per second (e.g. 0.90).');
+    $c->loc('The level mode (one of blacklist, whitelist)');
     $c->loc('July');
     $c->loc('June');
-    $c->loc('Device Profile');
-    $c->loc('The call direction when to apply this fee (either for inbound or outbound calls).');
+    $c->loc('Source domain');
     $c->loc('The email address of the contact.');
     $c->loc('Thursday');
+    $c->loc('INBOX');
+    $c->loc('The company registration number of the contact.');
     $c->loc('Download in PKCS12 Format');
-    $c->loc('The VAT rate in percentage (e.g. 20).');
-    $c->loc('The status of the reseller.');
-    $c->loc('The subscriber to use on this line/key');
-    $c->loc('The two-letter ISO 3166-1 country code of the contact (e.g. US or DE).');
-    $c->loc('Monday');
-    $c->loc('Country');
-    $c->loc('The main E.164 number (containing a cc, ac and sn attribute) used for inbound and outbound calls.');
+    $c->loc('Source reseller billing fee id');
+    $c->loc('Timeset');
+    $c->loc('The timestamp when the rating occured.');
+    $c->loc('The status of the subscriber (one of "active", "locked", "terminated").');
     $c->loc('From Pattern');
-    $c->loc('A unique identifier string (only alphanumeric chars and _).');
     $c->loc('The person\'s name, which is then used in XMPP contact lists or auto-provisioned phones, and which can be used as network-provided display name in SIP calls.');
-    $c->loc('Line/Key Range');
-    $c->loc('A POSIX regex matching against the full Request-URI (e.g. \'^sip:.+@example\.org$\' or \'^sip:431\')');
-    $c->loc('The status of the subscriber.');
+    $c->loc('caller or callee.');
+    $c->loc('Export status');
+    $c->loc('Source user');
+    $c->loc('CSS');
+    $c->loc('Destination customer free time');
     $c->loc('Default for Subscribers');
-    $c->loc('Cf actions');
+    $c->loc('Pbx hunt policy');
+    $c->loc('The billing fee id used to calculate the source reseller cost.');
     $c->loc('Active');
     $c->loc('Key');
-    $c->loc('Is active');
     $c->loc('Receive Reports');
     $c->loc('Minute');
     $c->loc('Lines/Keys in this range can be used as regular phone lines. Value is accessible in the config template via phone.lineranges~[~].lines~[~].can_private');
-    $c->loc('Options to lock customer if the monthly limit is exceeded.');
+    $c->loc('Subscriber ID');
     $c->loc('MAC Address Image');
     $c->loc('Simple');
-    $c->loc('The currency symbol or ISO code, used on invoices and webinterfaces.');
-    $c->loc('Offpeak init interval');
     $c->loc('pending');
     $c->loc('The cost of the first interval in cents per second (e.g. 0.90).');
     $c->loc('The line/key to use');
-    $c->loc('Group');
     $c->loc('Download');
     $c->loc('Whether this subscriber is used as PBX group.');
-    $c->loc('The SIP username for the User-Agents');
-    $c->loc('after ring timeout');
-    $c->loc('all outgoing calls');
+    $c->loc('UUID of calling subscriber, or 0 if from external.');
+    $c->loc('unexported');
+    $c->loc('The line/key to use (starting from 0)');
+    $c->loc('Reseller contract id of calling subscriber, or contract id of peer if from external.');
+    $c->loc('PBX Extension');
+    $c->loc('The profile set defining the possible feature sets for this subscriber.');
     $c->loc('The street name of the contact.');
     $c->loc('Number of Lines/Keys');
     $c->loc('Source IP');
     $c->loc('The company name of the contact.');
+    $c->loc('ok');
     $c->loc('February');
     $c->loc('Include local area code');
     $c->loc('The SIP password for the User-Agents');
+    $c->loc('Cust3');
     $c->loc('POST');
+    $c->loc('Duration');
+    $c->loc('Destination carrier cost');
     $c->loc('locked');
     $c->loc('Last Name');
-    $c->loc('Deliver Incoming Faxes');
     $c->loc('Parallel Ringing');
-    $c->loc('Weight');
-    $c->loc('Friday');
+    $c->loc('The fax number of the contact.');
+    $c->loc('Call status');
     $c->loc('Free-Time Balance');
-    $c->loc('Display Name');
     $c->loc('Linerange add');
+    $c->loc('Call Forward Timeout, Number of Objects, each containing the keys, "destinationset" and "timeset". The values must be the name of a destination/time set which belongs to the same subscriber.');
     $c->loc('Profile Name');
-    $c->loc('The lock level of the subscriber.');
-    $c->loc('An external id, e.g. provided by a 3rd party provisioning');
-    $c->loc('Destination add');
+    $c->loc('Invoice Email Template');
+    $c->loc('Domain of called party.');
+    $c->loc('UUID of called subscriber, or 0 if to external.');
     $c->loc('The detailed name for the zone (e.g. US Mobile Numbers).');
     $c->loc('Status');
     $c->loc('Web Username');
-    $c->loc('Contract #');
-    $c->loc('A short name for the zone (e.g. US).');
+    $c->loc('Delete voicemail recordings from the mailbox after delivering them via email.');
     $c->loc('The password to log into the CSC Panel.');
-    $c->loc('December');
+    $c->loc('Ncos level id');
     $c->loc('Username');
     $c->loc('GET');
     $c->loc('Create Device Model');
-    $c->loc('Destination Number');
-    $c->loc('Bootstrap Sync HTTP Method');
+    $c->loc('Snlength');
     $c->loc('Lock Level');
+    $c->loc('The bank name of the contact bank details.');
     $c->loc('active');
-    $c->loc('trough');
     $c->loc('Via Route');
-    $c->loc('Customer');
-    $c->loc('An external id, e.g. provided by a 3rd party provisioning.');
+    $c->loc('Destination carrier free time');
+    $c->loc('The invoice template to use for the invoice generation.');
     $c->loc('A POSIX regular expression to match the calling number (e.g. ^.+$).');
-    $c->loc('Save');
-    $c->loc('Priority (q-value)');
-    $c->loc('Callee prefix');
-    $c->loc('Lawful intercept');
+    $c->loc('The email template used to notify users about password reset.');
     $c->loc('Device Vendor');
     $c->loc('Reseller');
     $c->loc('City');
     $c->loc('Caller pattern');
-    $c->loc('Subscriber can configure other subscribers within the Customer Account');
-    $c->loc('Repeat');
-    $c->loc('Onpeak init interval');
-    $c->loc('for (seconds)');
-    $c->loc('Offpeak init rate');
-    $c->loc('Sign In');
+    $c->loc('Pbx hunt timeout');
     $c->loc('The domain name or domain id this subscriber belongs to.');
     $c->loc('Push Provisioning URL');
+    $c->loc('BIC/SWIFT');
     $c->loc('Download CA Cert');
     $c->loc('The billing profile id used to charge this contract.');
-    $c->loc('The city name of the contact.');
+    $c->loc('Source reseller cost');
     $c->loc('outgoing');
-    $c->loc('or File');
     $c->loc('The username to log into the CSC Panel.');
-    $c->loc('The PBX group id this subscriber belongs to.');
+    $c->loc('Filename');
+    $c->loc('Destination user in');
     $c->loc('Fraud Monthly Limit');
     $c->loc('Port');
     $c->loc('Lines/Keys in this range can be used as shared lines. Value is accessible in the config template via phone.lineranges~[~].lines~[~].can_shared');
     $c->loc('Content Type');
     $c->loc('through');
-    $c->loc('Callee pattern');
     $c->loc('Additional E.164 numbers (each containing a cc, ac and sn attribute) mapped to this subscriber for inbound calls.');
     $c->loc('PS');
     $c->loc('all calls');
+    $c->loc('Pin');
     $c->loc('Street');
     $c->loc('Cash Balance');
+    $c->loc('Source carrier cost');
     $c->loc('Direction');
     $c->loc('Model');
+    $c->loc('Call Forward Unavailable, Number of Objects, each containing the keys, "destinationset" and "timeset". The values must be the name of a destination/time set which belongs to the same subscriber.');
     $c->loc('Upload fees');
+    $c->loc('The status of the rating process.');
     $c->loc('inbound');
-    $c->loc('Extension');
-    $c->loc('Sunday');
+    $c->loc('Number Block');
     $c->loc('ANY');
     $c->loc('The reseller id to assign this domain to.');
     $c->loc('The length of the first interval in seconds (e.g. 60).');
-    $c->loc('Weekday');
-    $c->loc('Serial Ringing');
-    $c->loc('Destination Set');
-    $c->loc('A POSIX regular expression to match the called number (e.g. ^431.+$).');
-    $c->loc('Domain');
-    $c->loc('Replacement Pattern');
+    $c->loc('Line/Key Number (starting from 0)');
+    $c->loc('Destination user dialed');
+    $c->loc('Reseller contract id of called subscriber, or contract id of peer if to external.');
     $c->loc('Attach WAV');
     $c->loc('Billing Profile');
+    $c->loc('General Purpose 6');
     $c->loc('The destination for this slot; can be a number, username or full SIP URI.');
-    $c->loc('January');
+    $c->loc('Number Range');
     $c->loc('August');
-    $c->loc('none');
+    $c->loc('Whether this subscriber is used as PBX pilot subscriber.');
     $c->loc('Edit destination sets');
     $c->loc('Send Reports');
     $c->loc('Category:');
+    $c->loc('The name of the invoice template.');
     $c->loc('Seconds to wait for pick-up until engaging Call Forward (e.g. &ldquo;10&rdquo;)');
-    $c->loc('fraud detection threshold per month, specifying cents');
-    $c->loc('Use free time');
-    $c->loc('Phone Number');
-    $c->loc('Select');
+    $c->loc('Destinations');
+    $c->loc('The contract this sound set belongs to. If set, the sound set becomes a customer sound set instead of a system sound set.');
     $c->loc('Submitid');
+    $c->loc('Select');
     $c->loc('Station Name');
-    $c->loc('SIP Password');
-    $c->loc('The IVR key to press for this destination');
+    $c->loc('The name of the sound set');
+    $c->loc('Rating status');
     $c->loc('Cc');
-    $c->loc('Front Image');
-    $c->loc('Id');
     $c->loc('Ac');
-    $c->loc('Create Reseller');
+    $c->loc('The email address of the subscriber.');
+    $c->loc('Destination reseller billing zone id');
+    $c->loc('Source customer free time');
     $c->loc('UDP');
     $c->loc('Delete WAV');
     $c->loc('The given name of the contact.');
+    $c->loc('Subscriber Creation Email Template');
     $c->loc('The reseller id this contact belongs to.');
-    $c->loc('Content');
     $c->loc('Device Model');
     $c->loc('Protocol');
     $c->loc('The postal code of the contact.');
-    $c->loc('Contact');
-    $c->loc('Slot');
-    $c->loc('Callee prefix, eg: 43');
+    $c->loc('Source user id');
+    $c->loc('Call Forward Timeout, Contains the keys "destinations" and "times". "destinations" is an Array of Objects having a "destination", "priority" and "timeout" field. "times" is an Array of Objects having the fields "minute", "hour", "wday", "mday", "month", "year". "times" can be empty, then the CF is applied always.');
+    $c->loc('Folder');
+    $c->loc('General Purpose 3');
     $c->loc('TIFF');
-    $c->loc('November');
-    $c->loc('Contract');
+    $c->loc('Source reseller billing zone id');
+    $c->loc('Type');
     $c->loc('Lines/Keys in this range can be used as Busy Lamp Field. Value is accessible in the config template via phone.lineranges~[~].lines~[~].can_blf');
+    $c->loc('The source IP address.');
     $c->loc('Product');
     $c->loc('Create PBX Group');
     $c->loc('Create Billing Profile');
+    $c->loc('Mobile Number');
     $c->loc('Hostname');
-    $c->loc('Download PEM');
-    $c->loc('Add');
-    $c->loc('Advanced');
-    $c->loc('May');
-    $c->loc('Supported File Types are TXT, PDF, PS, TIFF');
+    $c->loc('Source carrier billing fee id');
     $c->loc('Lines/Keys');
+    $c->loc('cancel');
+    $c->loc('Source customer id');
+    $c->loc('busy');
+    $c->loc('Username or number of called party.');
+    $c->loc('Arbitrary text.');
+    $c->loc('Bootstrap Sync URI');
+    $c->loc('The phone number of the contact.');
+    $c->loc('on weekdays');
+    $c->loc('Simple View');
+    $c->loc('Nat');
+    $c->loc('Deliver Outgoing Faxes');
+    $c->loc('Fraud daily lock');
+    $c->loc('offline');
+    $c->loc('External #');
+    $c->loc('MAC Address / Identifier');
+    $c->loc('Prepaid');
+    $c->loc('A full SIP URI like sip:user@ip:port');
+    $c->loc('Saturday');
+    $c->loc('IP Address');
+    $c->loc('Notify Emails');
+    $c->loc('Description');
+    $c->loc('Delete Key');
+    $c->loc('The filename of the sound file (for informational purposes only).');
+    $c->loc('Hour');
+    $c->loc('parallel');
+    $c->loc('Bank Name');
+    $c->loc('Family');
+    $c->loc('Init time');
+    $c->loc('Line/Key');
+    $c->loc('October');
+    $c->loc('Source customer billing fee id');
+    $c->loc('Field');
+    $c->loc('Password');
+    $c->loc('YYYY-MM-DD HH:mm:ss');
+    $c->loc('First Name');
+    $c->loc('The sound set the sound file belongs to.');
+    $c->loc('Is master');
+    $c->loc('Caller');
+    $c->loc('SVG');
+    $c->loc('Version');
+    $c->loc('Offpeak follow rate');
+    $c->loc('The billing zone id this fee belongs to.');
+    $c->loc('Rated at');
+    $c->loc('Upload');
+    $c->loc('The destination billing zone id (from billing.billing_zones_history) attached to the reseller billing cost.');
+    $c->loc('PIN');
+    $c->loc('The reseller this Subscriber Profile Set belongs to.');
+    $c->loc('IVR Slots');
+    $c->loc('Outbound');
+    $c->loc('The E164 number block.');
+    $c->loc('Voicemail');
+    $c->loc('The contact id this contract belongs to.');
+    $c->loc('Q');
+    $c->loc('cfu');
+    $c->loc('Either "sippeering" or "reseller".');
+    $c->loc('General Purpose 0');
+    $c->loc('Subscriber Base, e.g. 12345');
+    $c->loc('Manage Time Sets');
+    $c->loc('The vat amount of the invoice in USD, EUR etc.');
+    $c->loc('Profile Set');
+    $c->loc('Interval free cash');
+    $c->loc('Destination customer billing zone id');
+    $c->loc('PBX Group');
+    $c->loc('outbound');
+    $c->loc('#');
+    $c->loc('The final SIP response code of the call.');
+    $c->loc('Send Copies');
+    $c->loc('Create');
+    $c->loc('Create Domain');
+    $c->loc('Username of calling party.');
+    $c->loc('The billing fee id used to calculate the destination customer cost.');
+    $c->loc('The net amount of the invoice in USD, EUR etc.');
+    $c->loc('Name in Fax Header');
+    $c->loc('The value of the SIP Call-ID header for this call.');
+    $c->loc('Destination reseller cost');
+    $c->loc('Customer id of called subscriber, if local.');
+    $c->loc('Source carrier free time');
+    $c->loc('Uri');
+    $c->loc('The fraud detection threshold per month (in cents, e.g. 10000).');
+    $c->loc('The IBAN (International Bank Account Number) of the contact bank details.');
+    $c->loc('Peering');
+    $c->loc('only once');
+    $c->loc('Is PBX Group?');
+    $c->loc('The fraud detection threshold per day (in cents, e.g. 1000).');
+    $c->loc('Source external subscriber id');
+    $c->loc('The sound handle when to play this sound file.');
+    $c->loc('Year');
+    $c->loc('Attach');
+    $c->loc('Day');
+    $c->loc('The time the reminder call is triggered.');
+    $c->loc('Download in PEM Format');
+    $c->loc('Read only');
+    $c->loc('Serial Hunting Timeout');
+    $c->loc('External ID');
+    $c->loc('Period add');
+    $c->loc('The invoice serial number.');
+    $c->loc('incoming and outgoing');
+    $c->loc('Supports Private Line');
+    $c->loc('The length of each following interval in seconds (e.g. 30).');
+    $c->loc('The PBX extension used for short dialling. If provided, the primary number will automatically be derived from the pilot subscriber\'s primary number suffixed by this extension.');
+    $c->loc('everyday');
+    $c->loc('The fully qualified domain name (e.g. sip.example.org).');
+    $c->loc('Cust6');
+    $c->loc('Body Template');
+    $c->loc('The email template used to notify users about subscriber creation.');
+    $c->loc('The duration of the message.');
+    $c->loc('Create Contact');
+    $c->loc('The subscriber rofile set this profile belongs to.');
+    $c->loc('Old');
+    $c->loc('The cost for the calling party customer towards the reseller.');
+    $c->loc('Firmware File');
+    $c->loc('Company');
+    $c->loc('Work');
+    $c->loc('Call Forward Busy, Contains the keys "destinations" and "times". "destinations" is an Array of Objects having a "destination", "priority" and "timeout" field. "times" is an Array of Objects having the fields "minute", "hour", "wday", "mday", "month", "year". "times" can be empty, then the CF is applied always.');
+    $c->loc('global');
+    $c->loc('Whether free minutes may be used when calling this destination.');
+    $c->loc('IP address of calling party.');
+    $c->loc('Close');
+    $c->loc('Source external contract id');
+    $c->loc('The subscriber this trusted source belongs to.');
+    $c->loc('Line/Key Type');
+    $c->loc('E.164 Number');
+    $c->loc('Call Forward Busy, Number of Objects, each containing the keys, "destinationset" and "timeset". The values must be the name of a destination/time set which belongs to the same subscriber.');
+    $c->loc('foreign calls');
+    $c->loc('Start');
+    $c->loc('Onpeak follow interval');
+    $c->loc('Domain of calling party.');
+    $c->loc('The subscriber id the message belongs to.');
+    $c->loc('The profile defining the actual feature set for this subscriber.');
+    $c->loc('Whether customers using this profile are handled prepaid.');
+    $c->loc('Monthly Fraud Limit');
+    $c->loc('timeout');
+    $c->loc('VAT Rate');
+    $c->loc('General Purpose 5');
+    $c->loc('Manage Destination Sets');
+    $c->loc('Destination user');
+    $c->loc('Destination customer id');
+    $c->loc('Mday');
+    $c->loc('The customer contract this device is belonging to.');
+    $c->loc('Recover');
+    $c->loc('Alias number');
+    $c->loc('The name of the Subscriber Profile Set.');
+    $c->loc('Level Name');
+    $c->loc('Normalized CLI (usually E164) of calling party.');
+    $c->loc('April');
+    $c->loc('Invoice Template');
+    $c->loc('Cust4');
+    $c->loc('File Type');
+    $c->loc('Device Configuration');
+    $c->loc('General Purpose 8');
+    $c->loc('Edit time sets');
+    $c->loc('Customer id of calling subscriber, if local.');
+    $c->loc('Destination user id');
+    $c->loc('URI/Number');
+    $c->loc('Options to lock customer if the daily limit is exceeded.');
+    $c->loc('The name of the Subscriber Profile.');
+    $c->loc('Mode');
+    $c->loc('The reseller id this profile belongs to.');
+    $c->loc('The expire timestamp of the registered contact.');
+    $c->loc('Charge VAT');
+    $c->loc('The human-readable display name (e.g. John Doe)');
+    $c->loc('Alias number add');
+    $c->loc('Destination');
+    $c->loc('The registered contact is detected as behind NAT.');
+    $c->loc('Subscriber Profile');
+    $c->loc('The linerange name to use.');
+    $c->loc('Fraud daily limit');
+    $c->loc('The email template used to notify users about invoice.');
+    $c->loc('Offpeak follow interval');
+    $c->loc('Country Code, e.g. 1 for US or 43 for Austria');
+    $c->loc('The password to log into the CSC Panel');
+    $c->loc('TCP');
+    $c->loc('Name');
+    $c->loc('The PIN used to enter the IVR menu from external numbers.');
+    $c->loc('The invoice template type (only svg for now).');
+    $c->loc('Area Code, e.g. 212 for NYC or 1 for Vienna');
+    $c->loc('User agent');
+    $c->loc('Show passwords');
+    $c->loc('External ID of the calling subscriber\'s customer, if local.');
+    $c->loc('The status of the exporting process.');
+    $c->loc('The authentication realm (domain) used for outbound authentication.');
+    $c->loc('YYYY-MM');
+    $c->loc('string, rule description');
+    $c->loc('Cfna');
+    $c->loc('terminated');
+    $c->loc('Fax Number');
+    $c->loc('Subscriber id');
+    $c->loc('The transport protocol (one of UDP, TCP, TLS, ANY).');
+    $c->loc('external_id of called subscriber');
+    $c->loc('Download CA Certificate');
+    $c->loc('The source billing zone id (from billing.billing_zones_history) attached to the reseller billing cost.');
+    $c->loc('SIP Domain');
+    $c->loc('Generate Certificate');
+    $c->loc('External id of called subscriber\'s customer, if local.');
+    $c->loc('The number of free seconds of the carrier contract for this call.');
+    $c->loc('The timestamp when the exporting occured.');
+    $c->loc('The number of Lines/Keys in this range, indexed from 0 in the config template array phone.lineranges~[~].lines~[~]');
+    $c->loc('PDF14');
+    $c->loc('foreign');
+    $c->loc('A human readable profile name.');
+    $c->loc('Attributes');
+    $c->loc('Download PKCS12');
+    $c->loc('Cust5');
+    $c->loc('Call data');
+    $c->loc('other');
+    $c->loc('The source billing zone id (from billing.billing_zones_history) attached to the carrier billing cost.');
+    $c->loc('Max Subscribers');
+    $c->loc('Invoice Period End');
+    $c->loc('The time the message was recorded.');
+    $c->loc('Tuesday');
+    $c->loc('Postcode');
+    $c->loc('A general purpose field for fee use.');
+    $c->loc('If active, this sound set is used for all existing and new subscribers if no specific sound set is specified for them');
+    $c->loc('The cost of each following interval in cents per second (e.g. 0.90).');
+    $c->loc('The start of the invoice period.');
+    $c->loc('call');
+    $c->loc('Device Profile');
+    $c->loc('The call direction when to apply this fee (either for inbound or outbound calls).');
+    $c->loc('The VAT rate in percentage (e.g. 20).');
+    $c->loc('The status of the reseller.');
+    $c->loc('Linerange');
+    $c->loc('The subscriber to use on this line/key');
+    $c->loc('The two-letter ISO 3166-1 country code of the contact (e.g. US or DE).');
+    $c->loc('Monday');
+    $c->loc('The main E.164 number (containing a cc, ac and sn attribute) used for inbound and outbound calls.');
+    $c->loc('Country');
+    $c->loc('Repeat Password');
+    $c->loc('A unique identifier string (only alphanumeric chars and _).');
+    $c->loc('Line/Key Range');
+    $c->loc('A POSIX regex matching against the full Request-URI (e.g. \'^sip:.+@example\.org$\' or \'^sip:431\')');
+    $c->loc('Total Amount');
+    $c->loc('Cf actions');
+    $c->loc('The subscriber this reminder belongs to.');
+    $c->loc('Call Forward Unconditional, Contains the keys "destinations" and "times". "destinations" is an Array of Objects having a "destination", "priority" and "timeout" field. "times" is an Array of Objects having the fields "minute", "hour", "wday", "mday", "month", "year". "times" can be empty, then the CF is applied always.');
+    $c->loc('Is active');
+    $c->loc('E164range add');
+    $c->loc('Options to lock customer if the monthly limit is exceeded.');
+    $c->loc('unrated');
+    $c->loc('Offpeak init interval');
+    $c->loc('The currency symbol or ISO code, used on invoices and webinterfaces.');
+    $c->loc('Group');
+    $c->loc('The SIP username for the User-Agents');
+    $c->loc('Snbase');
+    $c->loc('Speeddials');
+    $c->loc('Is PBX Pilot?');
+    $c->loc('Source ip');
+    $c->loc('The VAT number of the contact.');
+    $c->loc('after ring timeout');
+    $c->loc('all outgoing calls');
+    $c->loc('The number of free seconds of the reseller used for this call.');
+    $c->loc('General Purpose 1');
+    $c->loc('\'serial\' or \'parallel\'.');
+    $c->loc('The source billing zone id (from billing.billing_zones_history) attached to the customer billing cost.');
+    $c->loc('The contract to create the invoice for.');
+    $c->loc('Peer auth user');
+    $c->loc('Subscriber Profile Set');
+    $c->loc('Deliver Incoming Faxes');
+    $c->loc('Weight');
+    $c->loc('Friday');
+    $c->loc('Call code');
+    $c->loc('The ncos level this pattern belongs to.');
+    $c->loc('Display Name');
+    $c->loc('Timeout');
+    $c->loc('The lock level of the subscriber.');
+    $c->loc('An external id, e.g. provided by a 3rd party provisioning');
+    $c->loc('Destination add');
+    $c->loc('Source carrier billing zone id');
+    $c->loc('The lines for this pbx device. Required keys are \'linerange\' (name of range to use), \'key_num\' (key number in line range, starting from 0), \'type\' (one of \'private\', \'shared\', \'blf\'), \'subscriber_id\' (the subscriber mapped to this key).');
+    $c->loc('Serial');
+    $c->loc('A short name for the zone (e.g. US).');
+    $c->loc('Contract #');
+    $c->loc('shared');
+    $c->loc('December');
+    $c->loc('The cost for the reseller of the called party towards the system operator.');
+    $c->loc('The priority (q-value) of the registration.');
+    $c->loc('Destination Number');
+    $c->loc('Net Amount');
+    $c->loc('Bootstrap Sync HTTP Method');
+    $c->loc('The sound handle.');
+    $c->loc('trough');
+    $c->loc('Source clir');
+    $c->loc('Friends');
+    $c->loc('Customer');
+    $c->loc('An external id, e.g. provided by a 3rd party provisioning.');
+    $c->loc('Save');
+    $c->loc('The status of the call, one of ok, busy, noanswer, cancel, offline, timeout, other.');
+    $c->loc('Priority (q-value)');
+    $c->loc('Callee prefix');
+    $c->loc('Whether calling party number was suppressed (CLIR).');
+    $c->loc('Lawful intercept');
+    $c->loc('Destination customer billing fee id');
+    $c->loc('A regular expression matching the From URI.');
+    $c->loc('noanswer');
+    $c->loc('Subscriber can configure other subscribers within the Customer Account');
+    $c->loc('Call Forward Unavailable, Contains the keys "destinations" and "times". "destinations" is an Array of Objects having a "destination", "priority" and "timeout" field. "times" is an Array of Objects having the fields "minute", "hour", "wday", "mday", "month", "year". "times" can be empty, then the CF is applied always.');
+    $c->loc('Repeat');
+    $c->loc('Onpeak init interval');
+    $c->loc('for (seconds)');
+    $c->loc('Offpeak init rate');
+    $c->loc('Sign In');
+    $c->loc('The city name of the contact.');
+    $c->loc('or File');
+    $c->loc('The PBX group id this subscriber belongs to.');
+    $c->loc('The caller ID who left the message.');
+    $c->loc('Call Forward Unconditional, Number of Objects, each containing the keys, "destinationset" and "timeset". The values must be the name of a destination/time set which belongs to the same subscriber.');
+    $c->loc('Make this profile automatically the default profile for new subscribers having this profile set.');
+    $c->loc('Callee pattern');
+    $c->loc('Start time');
+    $c->loc('Destination username or number as received by the system from calling party after internal rewriting.');
+    $c->loc('IBAN');
+    $c->loc('Attach recordings when delivering them via email. Must be set if delete flag is set');
+    $c->loc('Extension');
+    $c->loc('Sunday');
+    $c->loc('cft');
+    $c->loc('Weekday');
+    $c->loc('The customer this invoice belongs to.');
+    $c->loc('Serial Ringing');
+    $c->loc('Destination Set');
+    $c->loc('serial');
+    $c->loc('A POSIX regular expression to match the called number (e.g. ^431.+$).');
+    $c->loc('Domain');
+    $c->loc('Replacement Pattern');
+    $c->loc('General Purpose 2');
+    $c->loc('The user agent registered at this contact.');
+    $c->loc('January');
+    $c->loc('Source provider id');
+    $c->loc('Match pattern, a regular expression.');
+    $c->loc('none');
+    $c->loc('VAT Number');
+    $c->loc('The reminder recurrence (one of never, weekdays, always).');
+    $c->loc('cfna');
+    $c->loc('Cfu');
+    $c->loc('fraud detection threshold per month, specifying cents');
+    $c->loc('Use free time');
+    $c->loc('Set id');
+    $c->loc('Phone Number');
+    $c->loc('SIP Password');
+    $c->loc('The IVR key to press for this destination');
+    $c->loc('Front Image');
+    $c->loc('Id');
+    $c->loc('Create Reseller');
+    $c->loc('Password Reset Email Template');
+    $c->loc('Source CLI');
+    $c->loc('External id of called subscriber, if local.');
+    $c->loc('The cost for the reseller of the calling party towards the system operator.');
+    $c->loc('Whether to include check for calls to local area code');
+    $c->loc('Content');
+    $c->loc('Contact');
+    $c->loc('The date the invoice has been sent by email or null if not sent.');
+    $c->loc('Slot');
+    $c->loc('Callee prefix, eg: 43');
+    $c->loc('November');
+    $c->loc('Contract');
+    $c->loc('Whether this template is used to generate invoices for this reseller.');
+    $c->loc('The cost for the operator towards the peering carrier.');
+    $c->loc('Subject');
+    $c->loc('Add');
+    $c->loc('Download PEM');
+    $c->loc('The name of the Rewrite Rule Set.');
+    $c->loc('Resellers');
+    $c->loc('Invoice Period Start');
+    $c->loc('Advanced');
+    $c->loc('The reseller this sound set belongs to.');
+    $c->loc('May');
+    $c->loc('The folder the message is currently in (one of INBOX, Old, Work, Friends, Family, Cust1-Cust6)');
+    $c->loc('General Purpose 7');
+    $c->loc('Supported File Types are TXT, PDF, PS, TIFF');
     $c->loc('The start time in format hh:mm:ss');
-    $c->loc('Generate');
+    $c->loc('External ID of calling subscriber, if local.');
     $c->loc('End Date/Time');
+    $c->loc('Generate');
     $c->loc('Priority');
     $c->loc('Wday');
     $c->loc('Optionally set the maximum number of subscribers for this contract. Leave empty for unlimited.');
     $c->loc('Time');
     $c->loc('Incoming Email as CC');
-    $c->loc('Bootstrap Sync URI');
-    $c->loc('The phone number of the contact.');
-    $c->loc('on weekdays');
-    $c->loc('Simple View');
-    $c->loc('Deliver Outgoing Faxes');
     $c->loc('Vendor');
     $c->loc('Create Contract');
-    $c->loc('Fraud daily lock');
     $c->loc('Fraud Monthly Lock');
     $c->loc('Daily Fraud Limit');
-    $c->loc('External #');
+    $c->loc('The end of the invoice period.');
     $c->loc('Month');
-    $c->loc('MAC Address / Identifier');
-    $c->loc('Prepaid');
-    $c->loc('A full SIP URI like sip:user@ip:port');
-    $c->loc('Active callforward');
+    $c->loc('The reseller who can use the Ruleset.');
+    $c->loc('Times');
+    $c->loc('Template');
     $c->loc('Advanced View');
-    $c->loc('Saturday');
+    $c->loc('Active callforward');
+    $c->loc('Allocable');
+    $c->loc('Destination domain in');
     $c->loc('Supports Shared Line');
     $c->loc('The included free minutes per billing interval (in seconds, e.g. 60000 for 1000 free minutes).');
-    $c->loc('IP Address');
-    $c->loc('Notify Emails');
-    $c->loc('Description');
     $c->loc('The password to authenticate for SIP and XMPP services.');
     $c->loc('Handle');
-    $c->loc('Delete Key');
 
     return;
 }
