@@ -2899,7 +2899,8 @@ sub ajax_captured_calls :Chained('master') :PathPart('callflow/ajax') :Args(0) {
             'me.callee_uuid' => $c->stash->{subscriber}->uuid,
         ],
     }, {
-        order_by => { -asc => 'me.timestamp' },
+        order_by => { -desc => 'me.timestamp' },
+        group_by => 'me.call_id',
     });
 
     NGCP::Panel::Utils::Datatables::process($c, $rs, $c->stash->{capture_dt_columns});
