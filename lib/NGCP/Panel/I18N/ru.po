@@ -594,7 +594,7 @@ msgstr "Август"
 msgid "Auto Attendant"
 msgstr "Автосекретарь"
 
-#: lib/NGCP/Panel/Controller/Subscriber.pm:3485
+#: lib/NGCP/Panel/Controller/Subscriber.pm:3486
 msgid "Auto Attendant Slot"
 msgstr "Слот автоответчика"
 
@@ -2498,7 +2498,7 @@ msgstr "Внешний ID вызываемого абонента, при лок
 msgid "Fail Count"
 msgstr "Неудачных попыток"
 
-#: lib/NGCP/Panel/Controller/Subscriber.pm:3053
+#: lib/NGCP/Panel/Controller/Subscriber.pm:3054
 msgid "Failed to add registered device."
 msgstr "Не удалось добавить регистрацию устройства."
 
@@ -2637,7 +2637,7 @@ msgstr "Не удалось создать набор звуков"
 msgid "Failed to create special offpeak entry."
 msgstr "Не удалось создать специальную off-peak запись."
 
-#: lib/NGCP/Panel/Controller/Subscriber.pm:3259
+#: lib/NGCP/Panel/Controller/Subscriber.pm:3260
 msgid "Failed to create speed dial slot."
 msgstr "Не удалось создать слот быстрого набора."
 
@@ -2654,7 +2654,7 @@ msgstr "Не удалось создать профиль абонента."
 msgid "Failed to create subscriber."
 msgstr "Не удалось создать абонента."
 
-#: lib/NGCP/Panel/Controller/Subscriber.pm:3099
+#: lib/NGCP/Panel/Controller/Subscriber.pm:3100
 msgid "Failed to create trusted source."
 msgstr "Ошибка создания IP авторизации."
 
@@ -2678,7 +2678,7 @@ msgstr "Не удалось удалить PBX устройство"
 msgid "Failed to delete administrator."
 msgstr "Не удалось удалить администратора."
 
-#: lib/NGCP/Panel/Controller/Subscriber.pm:3411
+#: lib/NGCP/Panel/Controller/Subscriber.pm:3412
 msgid "Failed to delete auto attendant slot."
 msgstr "Не удалось удалить слот автоответчика."
 
@@ -2746,7 +2746,7 @@ msgstr "Не удалось удалить SIP Транк сервер."
 msgid "Failed to delete preference %1."
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/Subscriber.pm:3014
+#: lib/NGCP/Panel/Controller/Subscriber.pm:3015
 msgid "Failed to delete registered device."
 msgstr "Не удалось удалить зарегистрированное устройство."
 
@@ -2770,7 +2770,7 @@ msgstr "Не удалось удалить набор звуков"
 msgid "Failed to delete special offpeak entry."
 msgstr "Не удалось удалить указанную off-peak запись."
 
-#: lib/NGCP/Panel/Controller/Subscriber.pm:3305
+#: lib/NGCP/Panel/Controller/Subscriber.pm:3306
 msgid "Failed to delete speed dial slot."
 msgstr "Не удалось удалить слок быстрого набора."
 
@@ -2782,15 +2782,15 @@ msgstr "Не удалось удалить набор профилей абон�
 msgid "Failed to delete subscriber profile."
 msgstr "Не удалось удалить профиль абонента."
 
-#: lib/NGCP/Panel/Controller/Subscriber.pm:3201
+#: lib/NGCP/Panel/Controller/Subscriber.pm:3202
 msgid "Failed to delete trusted source."
 msgstr "Ошибка удаления IP авторизации."
 
-#: lib/NGCP/Panel/Controller/Subscriber.pm:2966
+#: lib/NGCP/Panel/Controller/Subscriber.pm:2967
 msgid "Failed to delete voicemail message."
 msgstr "Не удалось удалить голосовое сообщение."
 
-#: lib/NGCP/Panel/Controller/Subscriber.pm:2991
+#: lib/NGCP/Panel/Controller/Subscriber.pm:2992
 msgid "Failed to find registered device."
 msgstr "Не удалось найти зарегистрированное устройство."
 
@@ -2900,7 +2900,7 @@ msgstr "Не удалось обновить PBX группу."
 msgid "Failed to update administrator."
 msgstr "Не удалось обновить администратора."
 
-#: lib/NGCP/Panel/Controller/Subscriber.pm:3475
+#: lib/NGCP/Panel/Controller/Subscriber.pm:3476
 msgid "Failed to update autoattendant slots"
 msgstr "Не удалось обновить слот автоответчика."
 
@@ -3020,7 +3020,7 @@ msgstr "Не удалось обновить профиль абонента."
 msgid "Failed to update subscriber."
 msgstr "Не удалось обновить абонента"
 
-#: lib/NGCP/Panel/Controller/Subscriber.pm:3173
+#: lib/NGCP/Panel/Controller/Subscriber.pm:3174
 msgid "Failed to update trusted source."
 msgstr "Ошибка обновления IP авторизации."
 
@@ -4386,15 +4386,15 @@ msgstr "Пакеты с этим Call-ID не найдены."
 msgid "No product for this customer contract found."
 msgstr "Продукт для данного клиента не найден."
 
-#: lib/NGCP/Panel/Controller/Subscriber.pm:3390
+#: lib/NGCP/Panel/Controller/Subscriber.pm:3391
 msgid "No such auto attendant id."
 msgstr "Данный id автоответчика не найден."
 
-#: lib/NGCP/Panel/Controller/Subscriber.pm:3284
+#: lib/NGCP/Panel/Controller/Subscriber.pm:3285
 msgid "No such speed dial id."
 msgstr "Данный id быстрого набора не найден."
 
-#: lib/NGCP/Panel/Controller/Subscriber.pm:2920
+#: lib/NGCP/Panel/Controller/Subscriber.pm:2921
 msgid "No such voicemail file."
 msgstr "Нету такого файла голосовой почты."
 
@@ -5088,7 +5088,7 @@ msgstr "Восстановить"
 msgid "Recurrence"
 msgstr "Повторение"
 
-#: lib/NGCP/Panel/Controller/Subscriber.pm:3062
+#: lib/NGCP/Panel/Controller/Subscriber.pm:3063
 #: share/templates/widgets/subscriber_reg_overview.tt:8
 msgid "Registered Device"
 msgstr "Зарегистрированное устройство"
@@ -6012,8 +6012,8 @@ msgstr ""
 msgid "Speed Dial"
 msgstr "Быстрый набор"
 
-#: lib/NGCP/Panel/Controller/Subscriber.pm:3270
-#: lib/NGCP/Panel/Controller/Subscriber.pm:3366
+#: lib/NGCP/Panel/Controller/Subscriber.pm:3271
+#: lib/NGCP/Panel/Controller/Subscriber.pm:3367
 msgid "Speed Dial Slot"
 msgstr "Слот быстрого набора"
 
@@ -6252,7 +6252,7 @@ msgstr "Абонент успешно создан."
 msgid "Subscribers"
 msgstr "Абоненты"
 
-#: lib/NGCP/Panel/Controller/Subscriber.pm:3048
+#: lib/NGCP/Panel/Controller/Subscriber.pm:3049
 msgid "Successfully added registered device"
 msgstr "Зарегистрированное устройство успешно добавлено"
 
@@ -6280,11 +6280,11 @@ msgstr "Модель устройства успешно добавлена"
 msgid "Successfully created device profile"
 msgstr "Профиль устройства успешно добавлен"
 
-#: lib/NGCP/Panel/Controller/Subscriber.pm:3254
+#: lib/NGCP/Panel/Controller/Subscriber.pm:3255
 msgid "Successfully created speed dial slot"
 msgstr "Слот быстрого набора успешно добавлен"
 
-#: lib/NGCP/Panel/Controller/Subscriber.pm:3094
+#: lib/NGCP/Panel/Controller/Subscriber.pm:3095
 msgid "Successfully created trusted source"
 msgstr "IP авторизация успешно создана"
 
@@ -6292,23 +6292,23 @@ msgstr "IP авторизация успешно создана"
 msgid "Successfully deleted Call Forward"
 msgstr "Перенаправление звонков успешно удалено"
 
-#: lib/NGCP/Panel/Controller/Subscriber.pm:3406
+#: lib/NGCP/Panel/Controller/Subscriber.pm:3407
 msgid "Successfully deleted auto attendant slot"
 msgstr "Слот автоответчика успешно удален"
 
-#: lib/NGCP/Panel/Controller/Subscriber.pm:3018
+#: lib/NGCP/Panel/Controller/Subscriber.pm:3019
 msgid "Successfully deleted registered device"
 msgstr "Зарегистрированное устройство успешно удалено"
 
-#: lib/NGCP/Panel/Controller/Subscriber.pm:3300
+#: lib/NGCP/Panel/Controller/Subscriber.pm:3301
 msgid "Successfully deleted speed dial slot"
 msgstr "Слот быстрого набора успешно удален"
 
-#: lib/NGCP/Panel/Controller/Subscriber.pm:3196
+#: lib/NGCP/Panel/Controller/Subscriber.pm:3197
 msgid "Successfully deleted trusted source"
 msgstr "IP авторизация успешно удалена"
 
-#: lib/NGCP/Panel/Controller/Subscriber.pm:2961
+#: lib/NGCP/Panel/Controller/Subscriber.pm:2962
 msgid "Successfully deleted voicemail"
 msgstr "Голосовое сообщение успешно удалено"
 
@@ -6338,7 +6338,7 @@ msgstr "Реселлер успешно удален"
 msgid "Successfully terminated subscriber"
 msgstr "Абонент успешно удален"
 
-#: lib/NGCP/Panel/Controller/Subscriber.pm:3470
+#: lib/NGCP/Panel/Controller/Subscriber.pm:3471
 msgid "Successfully updated auto attendant slots"
 msgstr "Слот автоответчика успешно обновлен"
 
@@ -6366,7 +6366,7 @@ msgstr "Пароль успешно обновлен"
 msgid "Successfully updated reminder setting"
 msgstr "Настройки напоминания успешно обновлена"
 
-#: lib/NGCP/Panel/Controller/Subscriber.pm:3350
+#: lib/NGCP/Panel/Controller/Subscriber.pm:3351
 msgid "Successfully updated speed dial slot"
 msgstr "Слот быстрого набора успешно обновлен"
 
@@ -6374,7 +6374,7 @@ msgstr "Слот быстрого набора успешно обновлен"
 msgid "Successfully updated subscriber"
 msgstr "Абонент успешно обновлен"
 
-#: lib/NGCP/Panel/Controller/Subscriber.pm:3168
+#: lib/NGCP/Panel/Controller/Subscriber.pm:3169
 msgid "Successfully updated trusted source"
 msgstr "IP авторизация успешно обновлена"
 
@@ -7541,7 +7541,7 @@ msgstr ""
 msgid "Total max number of overall concurrent calls"
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/Subscriber.pm:2942
+#: lib/NGCP/Panel/Controller/Subscriber.pm:2943
 msgid "Transcode of audio file failed."
 msgstr "Ошибка преобразования аудио файла"
 
@@ -7549,8 +7549,8 @@ msgstr "Ошибка преобразования аудио файла"
 msgid "Transcoding audio file failed"
 msgstr "Ошибка преобразования аудио файла"
 
-#: lib/NGCP/Panel/Controller/Subscriber.pm:3109
-#: lib/NGCP/Panel/Controller/Subscriber.pm:3183
+#: lib/NGCP/Panel/Controller/Subscriber.pm:3110
+#: lib/NGCP/Panel/Controller/Subscriber.pm:3184
 msgid "Trusted Source"
 msgstr "IP авторизация"
 
@@ -7558,7 +7558,7 @@ msgstr "IP авторизация"
 msgid "Trusted Sources"
 msgstr "IP авторизация"
 
-#: lib/NGCP/Panel/Controller/Subscriber.pm:3124
+#: lib/NGCP/Panel/Controller/Subscriber.pm:3125
 msgid "Trusted source entry not found."
 msgstr "IP авторизация не найдена."
 
