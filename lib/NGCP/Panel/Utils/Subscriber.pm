@@ -489,17 +489,11 @@ sub update_subscriber_numbers {
                     });
                 }
                 push @dbnums, $dbalias->id;
-                if(defined $prov_subs->voicemail_user) {
-                    $prov_subs->voicemail_user->update({
-                        mailbox => $cli,
-                    });
-                }
+                update_voicemail_number(schema => $schema, subscriber => $billing_subs);
 
                 for my $cfset($prov_subs->voip_cf_destination_sets->all) {
                     for my $cf($cfset->voip_cf_destinations->all) {
-                        if($cf->destination =~ /\@voicebox\.local$/) {
-                            $cf->update({ destination => 'sip:vmu'.$cli.'@voicebox.local' });
-                        } elsif($cf->destination =~ /\@fax2mail\.local$/) {
+                        if($cf->destination =~ /\@fax2mail\.local$/) {
                             $cf->update({ destination => 'sip:'.$cli.'@fax2mail.local' });
                         } elsif($cf->destination =~ /\@conference\.local$/) {
                             $cf->update({ destination => 'sip:conf='.$cli.'@conference.local' });
@@ -511,9 +505,7 @@ sub update_subscriber_numbers {
             if (defined $billing_subs->primary_number) {
                 $billing_subs->primary_number->delete;
             }
-            if(defined $prov_subs->voicemail_user) {
-                $prov_subs->voicemail_user->update({ mailbox => '0' });
-            }
+            update_voicemail_number(schema => $schema, subscriber => $billing_subs);
         }
 
         if ( (defined $old_cc && defined $old_sn)
@@ -1024,6 +1016,54 @@ sub check_dset_autoattendant_status {
         }
     }
     return $status;
+}
+
+# order: voicemail_echo_number, cli, primary_number, '0'
+sub update_voicemail_number {
+    my (%params) = @_;
+
+    my $schema = $params{schema};
+    my $subscriber = $params{subscriber};
+
+    my $prov_subs = $subscriber->provisioning_voip_subscriber;
+    return unless $prov_subs;
+    my $voicemail_user = $prov_subs->voicemail_user;
+    my $new_cli;
+
+    my $echonumber_pref_rs = NGCP::Panel::Utils::Preferences::get_usr_preference_rs(
+        schema => $schema,
+        prov_subscriber => $prov_subs,
+        attribute => 'voicemail_echo_number'
+    );
+    my $cli_pref_rs = NGCP::Panel::Utils::Preferences::get_usr_preference_rs(
+        schema => $schema,
+        prov_subscriber => $prov_subs,
+        attribute => 'cli'
+    );
+    if (defined $echonumber_pref_rs->first) {
+        $new_cli = $echonumber_pref_rs->first->value;
+    } elsif (defined $cli_pref_rs->first) {
+        $new_cli = $cli_pref_rs->first->value;
+    } elsif (defined $subscriber->primary_number) {
+        my $n = $subscriber->primary_number;
+        $new_cli = $n->cc . ($n->ac // '') . $n->sn;
+    } else {
+        $new_cli = '0';
+    }
+
+    if (defined $voicemail_user) {
+        $voicemail_user->update({ mailbox => $new_cli });
+    }
+
+    for my $cfset ($prov_subs->voip_cf_destination_sets->all) {
+        for my $cf ($cfset->voip_cf_destinations->all) {
+            if($cf->destination =~ /\@voicebox\.local$/) {
+                $cf->update({ destination => 'sip:vmu'.$new_cli.'@voicebox.local' });
+            }
+        }
+    }
+
+    return;
 }
 
 1;

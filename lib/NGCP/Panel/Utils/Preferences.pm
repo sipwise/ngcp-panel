@@ -543,8 +543,9 @@ sub get_usr_preference_rs {
     my $c = $params{c};
     my $attribute = $params{attribute};
     my $prov_subscriber = $params{prov_subscriber};
+    my $schema = $params{schema} // $c->model('DB');
 
-    my $pref_rs = $c->model('DB')->resultset('voip_preferences')->find({
+    my $pref_rs = $schema->resultset('voip_preferences')->find({
             attribute => $attribute, 'usr_pref' => 1,
         });
     return unless($pref_rs);
