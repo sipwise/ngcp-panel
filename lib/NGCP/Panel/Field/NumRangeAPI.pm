@@ -8,7 +8,7 @@ has 'max_end' => (isa => 'Int', default => 999_999, is => 'rw');
 sub validate {
     my ( $self ) = @_;
     my ($start, $end) = $self->value =~ m/(\d+)-(\d+)/;
-    unless ($start && $end && $start >= 0 && $end >= 0) {
+    unless ((defined $start) && (defined $end) && $start >= 0 && $end >= 0) {
         $self->add_error('Invalid format');
         return;
     }
