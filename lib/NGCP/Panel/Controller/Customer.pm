@@ -327,6 +327,17 @@ sub base :Chained('list_customer') :PathPart('') :CaptureArgs(1) {
         ->count;
     }
 
+    $c->stash->{invoice_dt_columns} = NGCP::Panel::Utils::Datatables::set_columns($c, [
+        { name => "id", search => 1, title => $c->loc("#") },
+        { name => "serial", search => 1, title => $c->loc("Serial #") },
+        { name => "period_start", search => 1, title => $c->loc("Start") },
+        { name => "period_end", search => 1, title => $c->loc("End") },
+        { name => "amount_net", search => 1, title => $c->loc("Net Amount") },
+        { name => "amount_vat", search => 1, title => $c->loc("VAT Amount") },
+        { name => "amount_total", search => 1, title => $c->loc("Total Amount") },
+    ]);
+
+
     $c->stash(pbx_devices => $field_devs);
 
     $c->stash(product => $product);
@@ -519,16 +530,6 @@ sub terminate :Chained('base') :PathPart('terminate') :Args(0) {
 
 sub details :Chained('base') :PathPart('details') :Args(0) {
     my ($self, $c) = @_;
-
-    $c->stash->{invoice_dt_columns} = NGCP::Panel::Utils::Datatables::set_columns($c, [
-        { name => "id", search => 1, title => $c->loc("#") },
-        { name => "serial", search => 1, title => $c->loc("Serial #") },
-        { name => "period_start", search => 1, title => $c->loc("Start") },
-        { name => "period_end", search => 1, title => $c->loc("End") },
-        { name => "amount_net", search => 1, title => $c->loc("Net Amount") },
-        { name => "amount_vat", search => 1, title => $c->loc("VAT Amount") },
-        { name => "amount_total", search => 1, title => $c->loc("Total Amount") },
-    ]);
 
     NGCP::Panel::Utils::Sounds::stash_soundset_list(c => $c, contract => $c->stash->{contract});
     $c->stash->{contact_hash} = { $c->stash->{contract}->contact->get_inflated_columns };
