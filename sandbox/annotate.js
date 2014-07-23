@@ -2,22 +2,12 @@
 
   $.fn.annotate = function(ctx) {
 
-    console.log("ctx is ", ctx);
-
-    var $annotate,
-      $body = $('body'),
-      $el;
-
     return this.each(function(i, el) {
     
-      $el = $(el).attr("data-annotate", i);
+      var $el = $(el).attr("data-annotate", i);
       var pos = $el.attr("data-pos");
       if(pos == undefined) pos = "top";
-      console.log("pos at " + i + " is ", pos);
 
-      //var $annotate = $('<div class="annotate ' + $el.attr("class") + '" data-annotate="' + i + '">' + $el.html() + '<div class="arrow-' + pos + '"></div></div>');
-      //$(ctx).append($annotate);
-      //$el.html('');
       $el.append('<div class="arrow-' + pos + '"></div>');
       $el.addClass("annotate");
 
