@@ -24,7 +24,7 @@
 	  break;
       	case "left":
           top = linkPosition.top - $el.outerHeight()/2;
-          left = linkPosition.left - 25 - $el.outerWidth();
+          left = linkPosition.left - 5 - $el.outerWidth();
 	  break;
       	case "right":
           top = linkPosition.top - $el.outerHeight()/2;

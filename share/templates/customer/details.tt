@@ -585,6 +585,32 @@
     </script>
 [% END -%]
 [% IF c.config.features.cloudpbx -%]
+    <style>
+        .annotated
+        {
+            position: relative;
+            left: -150px;
+            margin: 20px;
+        }
+        .annotated img
+        {
+            display: block;
+            width: 600px;
+            max-width: 600px;
+        }
+        .annotated a
+        {
+            text-decoration: none;
+            color: inherit;
+        }
+        .annotated .caption
+        {
+            white-space: nowrap;
+        }
+    </style>
+    <link rel="stylesheet" href="/css/ngcp-annotate.css">
+    <script src="/js/libs/ngcp-annotate.js"></script>
+    <link rel="stylesheet" type="text/css" href="/font/font-awesome/css/font-awesome.min.css"/>
     <script>
         var aaData;
 
@@ -688,13 +714,28 @@
         [% END -%]
 
         $('div.controls #profile_id').change(function() {
+            var prof_id = $('div.controls #profile_id option:selected').first().attr('value');
+            var markup = 
+                '<div class="annotated">' +
+                '    <img src="/device/profile/' + prof_id + '/frontimage" />' +
+                '    <div class="caption assigned" style="top:76px; left:473px;" data-pos="left"><a href="#"><i class="fa fa-user fa-fw"></i> anne.miller@example.org (107)</a></div>' +
+                '    <div class="caption assigned" style="top:93px; left:493px;" data-pos="right"><a href="#"><i class="fa fa-rss fa-fw"></i> john.doe@example.org (243)</a></div>' +
+                '    <div class="caption assigned" style="top:109px; left:473px;" data-pos="left"><a href="#"><i class="fa fa-users fa-fw"></i> sales@example.org (100)</a></div>' +
+                '    <div class="caption unassigned" style="top:127px; left:493px;" data-pos="right"><a href="#"><i class="fa fa-plus-square fa-fw"></i> Assign Subscriber</a></div>' +
+                '</div>';
+            $('#station_name').after(markup);
+            $("div.annotated").each(function(){
+                $(this).find("div.caption").annotate(this).click(function(event) {
+                    event.preventDefault();
+                    //dialog.dialog("open"); TODO: subscriber/type selection here
+                });
+            });
+
+
+
             $('.ngcp-linekey-select option').remove();
             $('.ngcp-linetype-select option').remove();
             console.log("profile_id changed");
-            var prof_id;
-            $('div.controls #profile_id option:selected').each(function() {
-                prof_id = $(this).attr('value');
-            });
             console.log("querying lines for profile id " + prof_id);
             $.ajax({
                 url: "/device/profile/" + prof_id + "/lines/ajax",

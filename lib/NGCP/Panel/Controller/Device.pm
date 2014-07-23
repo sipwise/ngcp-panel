@@ -406,6 +406,20 @@ sub devmod_edit :Chained('devmod_base') :PathPart('edit') :Args(0) :Does(ACL) :A
     );
 }
 
+sub devmod_download_frontimage_by_profile :Chained('devprof_base') :PathPart('frontimage') :Args(0) {
+    my ($self, $c) = @_;
+
+    my $devprof = $c->stash->{devprof};
+    my $devmod = $devprof->config->device;
+    unless($devmod->front_image) {
+        $c->response->body($c->loc('404 - No front image available for the model of this device profile'));
+        $c->response->status(404);
+        return;
+    }
+    $c->response->content_type($devmod->front_image_type);
+    $c->response->body($devmod->front_image);
+}
+
 sub devmod_download_frontimage :Chained('devmod_base') :PathPart('frontimage') :Args(0) {
     my ($self, $c) = @_;
 
