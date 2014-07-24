@@ -868,6 +868,28 @@ sub devprof_get_lines :Chained('devprof_base') :PathPart('lines/ajax') :Args(0) 
     $c->detach( $c->view("JSON") );
 }
 
+sub devprof_get_annotated_lines :Chained('devprof_base') :PathPart('annolines/ajax') :Args(0) :Does(ACL) :ACLDetachTo('/denied_page') :AllowedRole(admin) :AllowedRole(reseller) :AllowedRole(subscriberadmin) {
+    my ($self, $c) = @_;
+
+    my $rs = $c->stash->{devprof}->config->device->autoprov_device_line_ranges;
+    my @ranges = map {{
+        $_->get_inflated_columns,
+        annotations => [
+            map {{
+                $_->get_inflated_columns,
+            }} $_->annotations->all,
+        ],
+    }} $rs->all;
+
+    $c->stash(aaData               => \@ranges,
+              iTotalRecords        => scalar @ranges,
+              iTotalDisplayRecords => scalar @ranges,
+              sEcho                => int($c->request->params->{sEcho} // 1),
+    );
+
+    $c->detach( $c->view("JSON") );
+}
+
 
 sub devprof_delete :Chained('devprof_base') :PathPart('delete') :Args(0) :Does(ACL) :ACLDetachTo('/denied_page') :AllowedRole(admin) :AllowedRole(reseller) {
     my ($self, $c) = @_;
