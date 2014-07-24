@@ -1,3 +1,28 @@
+ngcp-panel (1.4.1.1+0~mr3.4.1.1) unstable; urgency=low
+
+  [ Alexander Lutay ]
+  * [b3c08fb] MT#7867 Add REST API check for 'invoicetemplates'
+
+  [ Gerhard Jungwirth ]
+  * [288c460] MT#8071	fix api subscriber termination
+  * [f3f2ccd] MT#8157 api callforwards fix timeset deletion
+  * [5a3bdc2] MT#8203 subscriber termination registered devices
+  * [ce568a8] MT8165 explain cfmappings on callforwards doc
+  * [0bbd7c1] MT#8063 api fix uploading music_on_hold
+  * [43b396d] MT#7943 prevent changing terminated customer
+  * [745c4a8] MT#8261 allow zero in number ranges
+  * [e480c20] MT#8261 fix evaluation zero to false
+  * [5c5c716] MT#7931 group captured calls
+  * [f331871] MT#7673 update voicemail number in webinterface
+  * [fd49514] MT#8309 change boolean handling in api preferences
+  * [3d5df33] MT#7673 update voicemail number in api
+  * [9320988] MT#8015 backport translations to 3.4
+  * [93f30cb] MT#8015 de translation - fix some bugs
+
+  [ Sipwise Jenkins Builder ]
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Thu, 24 Jul 2014 18:04:48 +0200
+
 ngcp-panel (1.4.1.0+0~mr3.4.1.0) unstable; urgency=low
 
   [ Irina Peshinskaya ]
