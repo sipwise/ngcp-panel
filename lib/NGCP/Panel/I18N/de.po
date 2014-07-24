@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 0.1\n"
 "POT-Creation-Date: YEAR-MO-DA HO:MI+ZONE\n"
-"PO-Revision-Date: 2014-07-24 14:57+0200\n"
+"PO-Revision-Date: 2014-07-24 15:10+0200\n"
 "Last-Translator: Gerhard Jungwirth <gjungwirth@sipwise.com>\n"
 "Language-Team: German <>\n"
 "Language: de\n"
@@ -7585,6 +7585,7 @@ msgid "Zone Details"
 msgstr "Zonen-Details"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:568
+#: share/templates/widgets/subscriber_cf_overview.tt:27
 msgid "active"
 msgstr "aktiv"
 
@@ -7749,6 +7750,10 @@ msgstr "hat aufgehört zu tippen."
 #: share/templates/subscriber/webphone.tt:321
 msgid "in progress..."
 msgstr "es läutet..."
+
+#: share/templates/widgets/subscriber_cf_overview.tt:27
+msgid "inactive"
+msgstr "inaktiv"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:606
 msgid "inbound"

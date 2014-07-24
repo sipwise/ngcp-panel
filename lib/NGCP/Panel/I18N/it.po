@@ -7513,6 +7513,7 @@ msgid "Zone Details"
 msgstr "Dettagli Zone"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:568
+#: share/templates/widgets/subscriber_cf_overview.tt:27
 msgid "active"
 msgstr "attivo"
 
@@ -7677,6 +7678,10 @@ msgstr "ha interrotto la scrittura."
 #: share/templates/subscriber/webphone.tt:321
 msgid "in progress..."
 msgstr "in corso..."
+
+#: share/templates/widgets/subscriber_cf_overview.tt:27
+msgid "inactive"
+msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:606
 msgid "inbound"
