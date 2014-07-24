@@ -147,7 +147,7 @@ sub get_resource {
         
         given($pref->attribute->data_type) {
             when("int")     { $value = int($pref->value) if($pref->value->is_int) }
-            when("boolean") { $value = JSON::Types::bool($pref->value) if(defined $pref->value) }
+            when("boolean") { $value = ($pref->value ? JSON::true : JSON::false) if(defined $pref->value) }
             default         { $value = $pref->value }
         }
         if($pref->attribute->max_occur != 1) {
