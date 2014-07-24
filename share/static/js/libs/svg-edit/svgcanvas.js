@@ -198,7 +198,9 @@ var addSvgElementFromJson = this.addSvgElementFromJson = function(data) {
 	if (!shape) {
 		shape = svgdoc.createElementNS(NS.SVG, data.element);
 		if (current_layer) {
-			(current_group || current_layer).appendChild(shape);
+			//alert(data.attr.id+'='+shape);
+			//(current_group || current_layer).appendChild(shape);
+			insertGeoChild((current_group || current_layer), shape, data.attr);
 		}
 	}
 	if (data.curStyles) {
@@ -2660,7 +2662,7 @@ textActions = canvas.textActions = (function() {
 		};
 		
 		out.x /= current_zoom;
-		out.y /= current_zoom;			
+		out.y /= current_zoom;
 
 		if (matrix) {
 			var pt = svgedit.math.transformPoint(out.x, out.y, matrix.inverse());
@@ -4121,7 +4123,6 @@ this.svgToString = function(elem, indent) {
 		
 		for (i = 0; i < indent; i++) {out.push(' ');}
 		if (elem.id === 'svgcontent') {
-            //alert('QQQQQ');
             //alert(svgroot.outerSvgTagStart);
             if( svgroot.outerSvgTagStart )
             {
@@ -4136,15 +4137,15 @@ this.svgToString = function(elem, indent) {
                 var vb = "";
                 // TODO: Allow this by dividing all values by current baseVal
                 // Note that this also means we should properly deal with this on import
-    //			if (curConfig.baseUnit !== "px") {
-    //				var unit = curConfig.baseUnit;
-    //				var unit_m = svgedit.units.getTypeMap()[unit];
-    //				res.w = svgedit.units.shortFloat(res.w / unit_m)
-    //				res.h = svgedit.units.shortFloat(res.h / unit_m)
-    //				vb = ' viewBox="' + [0, 0, res.w, res.h].join(' ') + '"';
-    //				res.w += unit;
-    //				res.h += unit;
-    //			}
+                //if (curConfig.baseUnit !== "px") {
+                //    var unit = curConfig.baseUnit;
+                //    var unit_m = svgedit.units.getTypeMap()[unit];
+                //    res.w = svgedit.units.shortFloat(res.w / unit_m)
+                //    res.h = svgedit.units.shortFloat(res.h / unit_m)
+                //    vb = ' viewBox="' + [0, 0, res.w, res.h].join(' ') + '"';
+                //    res.w += unit;
+                //    res.h += unit;
+                //}
                 
                 if (unit !== "px") {
                     res.w = svgedit.units.convertUnit(res.w, unit) + unit;
@@ -4293,6 +4294,88 @@ this.svgToString = function(elem, indent) {
 	}
 	return out.join('');
 }; // end svgToString()
+
+//Quite simple logic to insert new element xml string into marked up 
+//(by special comments for Template::Toolkit) xml template
+//position of elemnt xml representation now is accounted based only on y 
+//(vertical) position among other parent childs.
+function insertGeoChild(parent, element, newElemData) {
+	//alert('parent='+parent.textContent+';');
+	//alert('element='+element+';y='+element+';');
+	var collectDebug = function(arr,attr){
+		var str = '';
+		for(i=0; i < arr.length; i++) {
+			var elem = arr[i];
+			var val = getPosition(elem, attr);
+			str = str + 'i='+i+'; val='+val+';\n';
+		}
+		return str;
+	};
+	var getPosition = function(elem,attr){
+		var val_str = "", val = 0, unit;
+		switch(elem.nodeType) {
+		case 1: // element node
+		case 3: // text node
+			val_str = elem.getAttribute(attr) || elem.getAttribute(attr+'1');
+			break;
+		case 4: // cdata node
+		case 8: // comment
+			break;
+		} // switch on node type
+		if(val_str){
+			unit = val_str.match(/^-?[\d\.]+([^\d]*)$/);
+			val = parseFloat(val_str);
+		}else if((elem === element) && newElemData){
+			val = newElemData[attr] || newElemData[attr+'1'];
+		}
+		if(unit && unit !== 'px'){
+			var unit_m = svgedit.units.getTypeMap()[unit];
+			if(unit_m){
+				val = val / unit_m;
+			}
+		}
+		return val;
+	};
+	if (!parent.hasChildNodes()) {
+		parent.appendChild(element);
+		return;
+	}
+	if (!getPosition(element,'y')) {
+		parent.appendChild(element);
+		return;
+	}
+
+	var i, childs_after = [];
+	var str = '', str_sorted = '';
+	for(i=0; i < parent.childNodes.length; i++) {
+		childs_after[i] = parent.childNodes[i];
+	}
+	childs_after.push(element);
+	var str = collectDebug(childs_after,'y');
+	childs_after.sort(function(a,b){
+		var ya=0,yb=0;
+		ya = getPosition(a,'y');
+		yb = getPosition(b,'y');
+		var res = ya - yb;
+		return res;
+	});
+	var str_sorted = collectDebug(childs_after,'y');
+	//alert('str='+str+';\nstr_sorted='+str_sorted+';');
+	for( var i = 0; i < childs_after.length; i++){
+		if(childs_after[i] === element){
+			break;
+		}
+	}
+	//alert('length='+childs_after.length+';i='+i+';');
+	if(i < childs_after.length - 1){
+		parent.insertBefore(element,childs_after[i+1]);
+	}else{
+		//parent.appendChild(element);
+		//-2 because elment was added into childs_after, original childNodes size is -1
+		parent.insertBefore(element,childs_after[childs_after.length - 2]);
+	}
+	return;
+}; // end insertGeoChild()
 
 // Function: embedImage
 // Converts a given image file to a data URL when possible, then runs a given callback
@@ -6980,7 +7063,8 @@ this.pasteElements = function(type, x, y) {
 		if (!svgedit.utilities.getElem(elem.id)) {copy.id = elem.id;}
 		
 		pasted.push(copy);
-		(current_group || getCurrentDrawing().getCurrentLayer()).appendChild(copy);
+		//(current_group || getCurrentDrawing().getCurrentLayer()).appendChild(copy);
+		insertGeoChild((current_group || getCurrentDrawing().getCurrentLayer()), copy);
 		batchCmd.addSubCommand(new svgedit.history.InsertElementCommand(copy));
 	}
 	
@@ -7512,7 +7596,8 @@ this.cloneSelectedElements = function(x, y) {
 	while (i--) {
 		// clone each element and replace it within copiedElements
 		elem = copiedElements[i] = copyElem(copiedElements[i]);
-		(current_group || getCurrentDrawing().getCurrentLayer()).appendChild(elem);
+		//(current_group || getCurrentDrawing().getCurrentLayer()).appendChild(elem);
+		insertGeoChild((current_group || getCurrentDrawing().getCurrentLayer()), elem);
 		batchCmd.addSubCommand(new svgedit.history.InsertElementCommand(elem));
 	}
 	
