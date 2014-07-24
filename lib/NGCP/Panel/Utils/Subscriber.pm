@@ -96,7 +96,7 @@ sub lock_provisoning_voip_subscriber {
     my $rs = NGCP::Panel::Utils::Preferences::get_usr_preference_rs(
         c => $c, 
         prov_subscriber => $prov_subscriber, 
-        attribute => 'lock'
+        attribute => 'lock',
     );
     try {
         if($rs->first) {
@@ -354,6 +354,7 @@ sub update_preferences {
             }) if(defined $preferences->{$k});
         }
     }
+    return;
 }
 
 sub update_pbx_group_prefs {
@@ -419,8 +420,8 @@ sub update_subscriber_numbers {
         $billing_subs->update({
             primary_number_id => undef,
         });
-    }
-    elsif(defined $primary_number) {
+        update_voicemail_number(schema => $schema, subscriber => $billing_subs);
+    } elsif(defined $primary_number) {
 
         my $old_cc;
         my $old_ac;
@@ -504,8 +505,8 @@ sub update_subscriber_numbers {
         } else {
             if (defined $billing_subs->primary_number) {
                 $billing_subs->primary_number->delete;
+                update_voicemail_number(schema => $schema, subscriber => $billing_subs);
             }
-            update_voicemail_number(schema => $schema, subscriber => $billing_subs);
         }
 
         if ( (defined $old_cc && defined $old_sn)
@@ -1033,12 +1034,12 @@ sub update_voicemail_number {
     my $echonumber_pref_rs = NGCP::Panel::Utils::Preferences::get_usr_preference_rs(
         schema => $schema,
         prov_subscriber => $prov_subs,
-        attribute => 'voicemail_echo_number'
+        attribute => 'voicemail_echo_number',
     );
     my $cli_pref_rs = NGCP::Panel::Utils::Preferences::get_usr_preference_rs(
         schema => $schema,
         prov_subscriber => $prov_subs,
-        attribute => 'cli'
+        attribute => 'cli',
     );
     if (defined $echonumber_pref_rs->first) {
         $new_cli = $echonumber_pref_rs->first->value;
