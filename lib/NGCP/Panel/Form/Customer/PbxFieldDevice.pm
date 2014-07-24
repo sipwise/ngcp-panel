@@ -6,8 +6,6 @@ use Moose::Util::TypeConstraints;
 
 use HTML::FormHandler::Widget::Block::Bootstrap;
 
-with 'NGCP::Panel::Render::RepeatableJs';
-
 has '+widget_wrapper' => ( default => 'Bootstrap' );
 has_field 'submitid' => ( type => 'Hidden' );
 sub build_render_list {[qw/submitid fields actions/]}
@@ -47,58 +45,18 @@ has_field 'station_name' => (
 has_field 'line' => (
     type => 'Repeatable',
     label => 'Lines/Keys',
-    setup_for_js => 1,
-    do_wrapper => 1,
-    do_label => 1,
-    required => 1,
-    tags => {
-        controls_div => 1,
-    },
-    wrapper_class => [qw/hfh-rep-block/],
-);
-
-has_field 'line.id' => (
-    type => 'Hidden',
+    do_wrapper => 0,
+    do_label => 0,
 );
 
 has_field 'line.subscriber_id' => (
-    type => 'Select',
+    type => 'Hidden',
     required => 1,
-    label => 'Subscriber',
-    options_method => \&build_subscribers,
-    element_attr => {
-        rel => ['tooltip'],
-        title => ['The subscriber to use on this line/key'],
-    },
 );
-sub build_subscribers {
-    my ($self) = @_;
-    my $c = $self->form->ctx;
-    return unless $c;
-    my $sub_rs = $c->stash->{contract}->voip_subscribers;
-    my @options = ();
-    foreach my $s($sub_rs->all) {
-        next unless($s->status eq 'active');
-        push @options, { 
-            label => $s->username . '@' . $s->domain->domain, 
-            value => $s->provisioning_voip_subscriber->id 
-        };
-    }
-    return \@options;
-}
-
 
 has_field 'line.line' => (
-    type => 'Select',
+    type => 'Hidden',
     required => 1,
-    label => 'Line/Key',
-    options => [],
-    no_option_validation => 1,
-    element_attr => {
-        rel => ['tooltip'],
-        title => ['The line/key to use'],
-    },
-    element_class => [qw/ngcp-linekey-select/],
 );
 sub validate_line_line {
     my ($self, $field) = @_;
@@ -111,16 +69,8 @@ sub validate_line_line {
 }
 
 has_field 'line.type' => (
-    type => 'Select',
+    type => 'Hidden',
     required => 1,
-    label => 'Line/Key Type',
-    options => [],
-    no_option_validation => 1,
-    element_attr => {
-        rel => ['tooltip'],
-        title => ['The type of feature to use on this line/key'],
-    },
-    element_class => [qw/ngcp-linetype-select/],
 );
 sub validate_line_type {
     my ($self, $field) = @_;
@@ -134,21 +84,6 @@ sub validate_line_type {
     return;
 }
 
-has_field 'line.rm' => (
-    type => 'RmElement',
-    value => 'Remove',
-    order => 100,
-    element_class => [qw/btn btn-primary pull-right/],
-);
-
-has_field 'line_add' => (
-    type => 'AddElement',
-    repeatable => 'line',
-    value => 'Add another Line/Key',
-    element_class => [qw/btn btn-primary pull-right/],
-);
-
-
 has_field 'save' => (
     type => 'Submit',
     value => 'Save',
@@ -159,7 +94,7 @@ has_field 'save' => (
 has_block 'fields' => (
     tag => 'div',
     class => [qw/modal-body/],
-    render_list => [qw/profile_id identifier station_name line line_add/],
+    render_list => [qw/profile_id identifier station_name line/],
 );
 
 has_block 'actions' => (

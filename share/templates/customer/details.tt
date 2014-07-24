@@ -584,12 +584,12 @@
         });
     </script>
 [% END -%]
-[% IF c.config.features.cloudpbx -%]
+[% IF c.config.features.cloudpbx && device_flag -%]
     <style>
         .annotated
         {
             position: relative;
-            left: -150px;
+            left: -50px;
             margin: 20px;
         }
         .annotated img
@@ -607,13 +607,28 @@
         {
             white-space: nowrap;
         }
+        .annotated select
+        {
+            height: 15px;
+            line-height: 15px;
+            padding: 0;
+            margin: 0;
+            font-size: 11px;
+        }
+        .annotated select.subselect
+        {
+            width: 180px;
+        }
+        .annotated select.modeselect
+        {
+            width: 60px;
+        }
     </style>
     <link rel="stylesheet" href="/css/ngcp-annotate.css">
     <script src="/js/libs/ngcp-annotate.js"></script>
     <link rel="stylesheet" type="text/css" href="/font/font-awesome/css/font-awesome.min.css"/>
     <script>
         var aaData;
-        alert("TODO: implement sub/mode selection and post result on save");
         function annotate_device() {
             var prof_id = $('div.controls #profile_id option:selected').first().attr('value');
             if(!prof_id) return;
@@ -625,13 +640,32 @@
                 console.log("got data", data);
                 var markup = '<div class="annotated">' +
                     '<img src="/device/profile/' + prof_id + '/frontimage" />';
+                var formcnt = -1;
                 for(var i = 0; i < aaData.length; ++i) {
                     var range = aaData[i];
-                    for(var j = 0; j < aaData[i].annotations.length; ++j) {
-                        var a = aaData[i].annotations[j];
+                    for(var j = 0; j < range.annotations.length; ++j) {
+                        formcnt++;
+                        $('#line\\.' + formcnt).remove();
+
+                        var a = range.annotations[j];
                         [% IF create_flag == 1 -%]
                             var status = "unassigned";
-                            var action = '<i class="fa fa-plus-square fa-fw"></i> [% c.loc("Assign Subscriber") %]';
+                            //var action = '<i class="fa fa-plus-square fa-fw"></i> [% c.loc("Assign Subscriber") %]';
+                            var action = '<i class="fa fa-plus-square fa-fw"></i> ' +
+                                  '<select class="subselect" name="line.' + formcnt + '.subscriber_id" id="line.' + formcnt + '.subscriber_id">' + 
+                                    '<option value="0">[% c.loc("Subscriber") %]</option>' +
+                                    [% subs = [] -%]
+                                    [% FOR sub IN subs.merge(pbx_groups.all, subscribers.all) -%]
+                                    '<option value="[% sub.provisioning_voip_subscriber.id %]">[% sub.username _ "@" _ sub.domain.domain %]</option>' +
+                                    [% END -%]
+                                  '</select>' +
+                                  '<select class="modeselect" name="line.' + formcnt + '.type" id="line.' + formcnt + '.type">' + 
+                                    [% FOR opt IN ["private", "shared", "blf"] -%]
+                                    '<option value="[% opt %]">[% opt %]</option>' +
+                                    [% END -%]
+                                  '</select>' + 
+                                  '<input type="hidden" name="line.' + formcnt + '.line" id="line.' + formcnt + '.line" value="' + a.range_id + '.' + a.line_index + '"/>' + 
+                                  '';
                         [% ELSIF edit_flag == 1 -%]
                             var linekeys = {
                             [% FOR line IN pbx_device.autoprov_field_device_lines.all -%]
@@ -658,20 +692,23 @@
                                 }
                                 action = '<i class="fa ' + mode + ' fa-fw"></i> ' + linekeys[idx].sub + ' (' + linekeys[idx].ext + ')';
                             } else {
-                                status = "unassigned"; // only if really; do check
-                                action = '<i class="fa fa-plus-square fa-fw"></i> [% c.loc("Assign Subscriber") %]';
+                                status = "unassigned";
+                                //action = '<i class="fa fa-plus-square fa-fw"></i> [% c.loc("Assign Subscriber") %]';
+                                action = '<i class="fa fa-plus-square fa-fw"></i> ' +
+                                  '<select>' + 
+                                    '<option>[% c.loc("Assign Subscriber") %]</option>' +
+                                    '<option>test1@example.org</option>' +
+                                    '<option>test2@example.org</option>' +
+                                  '</select>';
                             }
                         [% END -%]
-                        markup += '<div class="caption ' + status + '" style="top:' + a.y + 'px; left:' + a.x + 'px;" data-pos="' + a.position + '"><a href="#">' + action + '</a></div>';
+                        markup += '<div class="caption ' + status + '" style="top:' + a.y + 'px; left:' + a.x + 'px;" data-pos="' + a.position + '">' + action + '</div>';
                     }
                 }
                 markup += '</div>';
-                $('#station_name').after(markup);
+                $('div.control-group').last().after(markup);
                 $("div.annotated").each(function(){
-                    $(this).find("div.caption").annotate(this).click(function(event) {
-                        event.preventDefault();
-                        //dialog.dialog("open"); TODO: subscriber/type selection here
-                    });
+                    $(this).find("div.caption").annotate(this);
                 });
             });
         }
