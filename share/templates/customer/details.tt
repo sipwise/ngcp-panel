@@ -613,147 +613,71 @@
     <link rel="stylesheet" type="text/css" href="/font/font-awesome/css/font-awesome.min.css"/>
     <script>
         var aaData;
-
-        var AddLineHandler = (function() {
-            function AddLineHandler(){};
-            AddLineHandler.prototype.onAdd = function(index) {
-                console.log("new line added, index is", index);
-                handle_add_line(index);
-            };
-            AddLineHandler.prototype.onRm = function(index) {
-                console.log("old line removed, index is", index);
-                //handle_rm_line(index);
-            };
-            return AddLineHandler;
-        })();
-        var repeatadd_handler = new AddLineHandler();
-
-        function handle_add_line(line_id) {
-            console.log("add line_id " + line_id);
-            $('#line\\.' + line_id + '\\.line option').remove();
-            $('#line\\.' + line_id + '\\.line').append('<option value=""></option>');
-            for(var i = 0; i < aaData.length; ++i) {
-                var range = aaData[i];
-
-                $('#line\\.' + line_id + '\\.line').append('<option value=""></option>');
-                for(var j = 0; j < range.num_lines; ++j) {
-                    $('#line\\.' + line_id + '\\.line').append('<option id="line.' + line_id + '.line.' + j + '" value="' + range.id + '.' + j + '">' + range.name + ' - Key/Line ' + j + '</option>');
-                }
-            }
-            $('#line\\.' + line_id + '\\.line').change(function(obj) {
-                handle_change_line(obj, 'invalid');
-            });
-        }
-
-        function handle_change_line(obj, active_type) {
-            var range_id;
-            var key_num;
-
-            var line_id = $(obj.currentTarget).attr("id").replace(/^line\.(\d+)\..+$/, "$1");
-            console.log("handling change of line " + line_id);
-
-            $(obj.currentTarget).find('option:selected').each(function() {
-                console.log("selected line key ", $(this).attr('value'));
-                range_id = $(this).attr('value').replace(/^(\d+)\.(\d+)$/, "$1");
-                key_num = $(this).attr('value').replace(/^(\d+)\.(\d+)$/, "$2");
-                console.log("+++++++ range_id=" + range_id + ", key_num=" + key_num);
-            });
-            var range;
-            console.log("+++++++ checking ranges");
-            for(var i = 0; i < aaData.length; ++i) {
-                range = aaData[i];
-                console.log("+++++++ checking range_id " + range_id + " against aaData id " + range.id);
-                if(range.id == range_id) {
-                    console.log("+++++++ found, range name=" + range.name);
-                    break;
-                }
-            }
-            console.log("setting line_id " + line_id + ", range is ", range);
-
-            $('#line\\.' + line_id + '\\.type option').remove();
-            if(range && +range.can_private) { // cast to int
-                $('#line\\.' + line_id + '\\.type').append('<option value="private"' + (active_type == 'private' ? ' selected="selected"' : '') + '>Private Line</option>');
-            }
-            if(range && +range.can_shared) {
-                $('#line\\.' + line_id + '\\.type').append('<option value="shared"' + (active_type == 'shared' ? ' selected="selected"' : '') + '>Shared Line</option>');
-            }
-            if(range && +range.can_blf) {
-                $('#line\\.' + line_id + '\\.type').append('<option value="blf"' + (active_type == 'blf' ? ' selected="selected"' : '') + '>BLF Key</option>');
-            }
-        }
-
-        [% IF create_flag == 1 -%]
-            $('.ngcp-linekey-select option').remove();
-            $('.ngcp-linetype-select option').remove();
-        [% ELSIF edit_flag == 1 -%]
-            var linekeys = {
-            [% FOR line IN pbx_device.autoprov_field_device_lines.all -%]
-                '[% line.linerange_id %].[% line.key_num %]':'[% line.line_type %]'[% line == pbx_device.autoprov_field_device_lines.all.last ? '' : ',' %]
-            [% END -%]
-            };
-            var prof_id;
-            $('div.controls #profile_id option:selected').each(function() {
-                prof_id = $(this).attr('value');
-            });
-            console.log("querying lines for profile id " + prof_id);
-            $.ajax({
-                url: "/device/profile/" + prof_id + "/lines/ajax",
-            }).done(function(data) {
-                aaData = data.aaData;
-                console.log("got edit data", data);
-                $('.ngcp-linekey-select').each(function() {
-                    var key_val;
-                    $(this).find('option:selected').each(function(){
-                        key_val = $(this).attr("value");
-                    });
-                    console.log("key_val=" + key_val + ", type=" + linekeys[key_val]);
-                    var obj = { currentTarget: $(this)};
-                    handle_change_line(obj, linekeys[key_val]);
-                });
-            });
-        [% END -%]
-
-        $('div.controls #profile_id').change(function() {
+        alert("TODO: implement sub/mode selection and post result on save");
+        function annotate_device() {
             var prof_id = $('div.controls #profile_id option:selected').first().attr('value');
-            var markup = 
-                '<div class="annotated">' +
-                '    <img src="/device/profile/' + prof_id + '/frontimage" />' +
-                '    <div class="caption assigned" style="top:76px; left:473px;" data-pos="left"><a href="#"><i class="fa fa-user fa-fw"></i> anne.miller@example.org (107)</a></div>' +
-                '    <div class="caption assigned" style="top:93px; left:493px;" data-pos="right"><a href="#"><i class="fa fa-rss fa-fw"></i> john.doe@example.org (243)</a></div>' +
-                '    <div class="caption assigned" style="top:109px; left:473px;" data-pos="left"><a href="#"><i class="fa fa-users fa-fw"></i> sales@example.org (100)</a></div>' +
-                '    <div class="caption unassigned" style="top:127px; left:493px;" data-pos="right"><a href="#"><i class="fa fa-plus-square fa-fw"></i> Assign Subscriber</a></div>' +
-                '</div>';
-            $('#station_name').after(markup);
-            $("div.annotated").each(function(){
-                $(this).find("div.caption").annotate(this).click(function(event) {
-                    event.preventDefault();
-                    //dialog.dialog("open"); TODO: subscriber/type selection here
-                });
-            });
+            if(!prof_id) return;
 
-
-
-            $('.ngcp-linekey-select option').remove();
-            $('.ngcp-linetype-select option').remove();
-            console.log("profile_id changed");
-            console.log("querying lines for profile id " + prof_id);
             $.ajax({
-                url: "/device/profile/" + prof_id + "/lines/ajax",
+                url: "/device/profile/" + prof_id + "/annolines/ajax",
             }).done(function(data) {
                 aaData = data.aaData;
                 console.log("got data", data);
+                var markup = '<div class="annotated">' +
+                    '<img src="/device/profile/' + prof_id + '/frontimage" />';
+                for(var i = 0; i < aaData.length; ++i) {
+                    var range = aaData[i];
+                    for(var j = 0; j < aaData[i].annotations.length; ++j) {
+                        var a = aaData[i].annotations[j];
+                        [% IF create_flag == 1 -%]
+                            var status = "unassigned";
+                            var action = '<i class="fa fa-plus-square fa-fw"></i> [% c.loc("Assign Subscriber") %]';
+                        [% ELSIF edit_flag == 1 -%]
+                            var linekeys = {
+                            [% FOR line IN pbx_device.autoprov_field_device_lines.all -%]
+                                '[% line.linerange_id %].[% line.key_num %]': { 
+                                  'mode': '[% line.line_type %]',
+                                  'sub': '[% line.provisioning_voip_subscriber.username %]@[% line.provisioning_voip_subscriber.domain.domain%]',
+                                  'ext': '[% line.provisioning_voip_subscriber.pbx_extension%]'
+                                }  [% line == pbx_device.autoprov_field_device_lines.all.last ? '' : ',' %]
+                            [% END -%]
+                            };
 
-                // foreach line/key repeatable block:
-                $('#line .controls .control-group.hfh-repinst').each(function(line_index, line_value) {
-                   
-                    console.log("handling line block");
-                    console.log("line_index", line_index);
-                    console.log("line_value", line_value);
-                    var line_id = $(line_value).attr("id").replace(/^.+\.(\d+)$/, "$1");
-                    handle_add_line(line_id);
+                            var status, action;
+                            var idx = aaData[i].id + '.' + a.line_index;
+                            if(linekeys[idx]) {
+                                status = "assigned"; // only if really; do check
+                                var mode;
+                                switch(linekeys[idx].mode) {
+                                    case "private":
+                                        mode = "fa-user"; break;
+                                    case "shared":
+                                        mode = "fa-users"; break;
+                                    case "blf":
+                                        mode = "fa-rss"; break;
+                                }
+                                action = '<i class="fa ' + mode + ' fa-fw"></i> ' + linekeys[idx].sub + ' (' + linekeys[idx].ext + ')';
+                            } else {
+                                status = "unassigned"; // only if really; do check
+                                action = '<i class="fa fa-plus-square fa-fw"></i> [% c.loc("Assign Subscriber") %]';
+                            }
+                        [% END -%]
+                        markup += '<div class="caption ' + status + '" style="top:' + a.y + 'px; left:' + a.x + 'px;" data-pos="' + a.position + '"><a href="#">' + action + '</a></div>';
+                    }
+                }
+                markup += '</div>';
+                $('#station_name').after(markup);
+                $("div.annotated").each(function(){
+                    $(this).find("div.caption").annotate(this).click(function(event) {
+                        event.preventDefault();
+                        //dialog.dialog("open"); TODO: subscriber/type selection here
+                    });
                 });
             });
-        });
+        }
+        $('div.controls #profile_id').change(annotate_device);
+        annotate_device();
+
     </script>
 [% END -%]
 
