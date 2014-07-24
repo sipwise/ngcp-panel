@@ -390,6 +390,10 @@ sub update_item {
                             my $rs = $self->get_preference_rs($c, $type, $elem, $k);
                             next unless $rs; # unknown resource, just ignore
                             $rs->delete;
+                            if ($type eq "subscribers" && ($k eq 'voicemail_echo_number' || $k eq 'cli')) {
+                                NGCP::Panel::Utils::Subscriber::update_voicemail_number(
+                                    schema => $c->model('DB'), subscriber => $item);
+                            }
                         }
                     }
                 }
@@ -556,6 +560,10 @@ sub update_item {
                         $rs->create({ value => $resource->{$pref} });
                     }
                 }
+            }
+            if ($type eq "subscribers" && ($pref eq 'voicemail_echo_number' || $pref eq 'cli')) {
+                NGCP::Panel::Utils::Subscriber::update_voicemail_number(
+                    schema => $c->model('DB'), subscriber => $item);
             }
         } catch($e) {
             $c->log->error("failed to update preference for '$accessor': $e");
