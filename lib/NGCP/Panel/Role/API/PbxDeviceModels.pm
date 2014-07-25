@@ -12,6 +12,7 @@ use Data::HAL qw();
 use Data::HAL::Link qw();
 use HTTP::Status qw(:constants);
 use JSON qw();
+use File::Type;
 use NGCP::Panel::Form::Device::ModelAPI;
 
 sub get_form {
