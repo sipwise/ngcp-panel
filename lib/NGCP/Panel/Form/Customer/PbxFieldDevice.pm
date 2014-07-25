@@ -14,8 +14,12 @@ sub build_form_element_class {[qw(form-horizontal)]}
 has_field 'profile_id' => (
     type => 'Select',
     required => 1,
-    label => 'Device Profile',
+    label => 'Device',
     options_method => \&build_profiles,
+    element_attr => {
+        rel => ['tooltip'],
+        title => ['The PBX device.']
+    },
 );
 sub build_profiles {
     my ($self) = @_;
@@ -33,13 +37,21 @@ sub build_profiles {
 has_field 'identifier' => (
     type => 'Text',
     required => 1,
-    label => 'MAC Address / Identifier',
+    label => 'MAC Address',
+    element_attr => {
+        rel => ['tooltip'],
+        title => ['The MAC address of the device.']
+    },
 );
 
 has_field 'station_name' => (
     type => 'Text',
     required => 1,
     label => 'Station Name',
+    element_attr => {
+        rel => ['tooltip'],
+        title => ['The name to display on the device (usually the name of the person this device belongs to).']
+    },
 );
 
 has_field 'line' => (
