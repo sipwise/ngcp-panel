@@ -5395,7 +5395,8 @@ this.moveSelectedToLayer = function(layername) {
 		var oldNextSibling = elem.nextSibling;
 		// TODO: this is pretty brittle!
 		var oldLayer = elem.parentNode;
-		layer.appendChild(elem);
+		//layer.appendChild(elem);
+		insertGeoChild(layer, elem);
 		batchCmd.addSubCommand(new svgedit.history.MoveElementCommand(elem, oldNextSibling, oldLayer));
 	}
 	
