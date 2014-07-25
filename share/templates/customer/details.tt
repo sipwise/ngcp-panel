@@ -590,7 +590,7 @@
         {
             position: relative;
             left: -50px;
-            margin: 20px;
+            margin: 20px 20px 0 20px;
         }
         .annotated img
         {
@@ -630,6 +630,7 @@
     <script>
         var aaData;
         function annotate_device() {
+            $('.annotated').remove();
             var prof_id = $('div.controls #profile_id option:selected').first().attr('value');
             if(!prof_id) return;
 
@@ -650,7 +651,6 @@
                         var a = range.annotations[j];
                         [% IF create_flag == 1 -%]
                             var status = "unassigned";
-                            //var action = '<i class="fa fa-plus-square fa-fw"></i> [% c.loc("Assign Subscriber") %]';
                             var action = '<i class="fa fa-plus-square fa-fw"></i> ' +
                                   '<select class="subselect" name="line.' + formcnt + '.subscriber_id" id="line.' + formcnt + '.subscriber_id">' + 
                                     '<option value="0">[% c.loc("Subscriber") %]</option>' +
@@ -672,6 +672,7 @@
                                 '[% line.linerange_id %].[% line.key_num %]': { 
                                   'mode': '[% line.line_type %]',
                                   'sub': '[% line.provisioning_voip_subscriber.username %]@[% line.provisioning_voip_subscriber.domain.domain%]',
+                                  'subid': [% line.provisioning_voip_subscriber.id %],
                                   'ext': '[% line.provisioning_voip_subscriber.pbx_extension%]'
                                 }  [% line == pbx_device.autoprov_field_device_lines.all.last ? '' : ',' %]
                             [% END -%]
@@ -680,26 +681,40 @@
                             var status, action;
                             var idx = aaData[i].id + '.' + a.line_index;
                             if(linekeys[idx]) {
-                                status = "assigned"; // only if really; do check
-                                var mode;
-                                switch(linekeys[idx].mode) {
-                                    case "private":
-                                        mode = "fa-user"; break;
-                                    case "shared":
-                                        mode = "fa-users"; break;
-                                    case "blf":
-                                        mode = "fa-rss"; break;
-                                }
-                                action = '<i class="fa ' + mode + ' fa-fw"></i> ' + linekeys[idx].sub + ' (' + linekeys[idx].ext + ')';
+                                status = "assigned";
+                                //action = '<i class="fa ' + mode + ' fa-fw"></i> ' + linekeys[idx].sub + ' (' + linekeys[idx].ext + ')';
+                                var action = '<i class="fa fa-user fa-fw"></i> ' +
+                                  '<select class="subselect" name="line.' + formcnt + '.subscriber_id" id="line.' + formcnt + '.subscriber_id">' + 
+                                    '<option value="0">[% c.loc("None") %]</option>' +
+                                    [% subs = [] -%]
+                                    [% FOR sub IN subs.merge(pbx_groups.all, subscribers.all) -%]
+                                    '<option value="[% sub.provisioning_voip_subscriber.id %]"' + (linekeys[idx].subid == [% sub.provisioning_voip_subscriber.id %] ? ' selected="selected"' : '') + '>[% sub.username _ "@" _ sub.domain.domain %]</option>' +
+                                    [% END -%]
+                                  '</select>' +
+                                  '<select class="modeselect" name="line.' + formcnt + '.type" id="line.' + formcnt + '.type">' + 
+                                    [% FOR opt IN ["private", "shared", "blf"] -%]
+                                    '<option value="[% opt %]"' + (linekeys[idx].mode == "[% opt %]" ? ' selected="selected"' : '') + '>[% opt %]</option>' +
+                                    [% END -%]
+                                  '</select>' + 
+                                  '<input type="hidden" name="line.' + formcnt + '.line" id="line.' + formcnt + '.line" value="' + a.range_id + '.' + a.line_index + '"/>' + 
+                                  '';
                             } else {
                                 status = "unassigned";
-                                //action = '<i class="fa fa-plus-square fa-fw"></i> [% c.loc("Assign Subscriber") %]';
-                                action = '<i class="fa fa-plus-square fa-fw"></i> ' +
-                                  '<select>' + 
-                                    '<option>[% c.loc("Assign Subscriber") %]</option>' +
-                                    '<option>test1@example.org</option>' +
-                                    '<option>test2@example.org</option>' +
-                                  '</select>';
+                                var action = '<i class="fa fa-plus-square fa-fw"></i> ' +
+                                      '<select class="subselect" name="line.' + formcnt + '.subscriber_id" id="line.' + formcnt + '.subscriber_id">' + 
+                                        '<option value="0">[% c.loc("Subscriber") %]</option>' +
+                                        [% subs = [] -%]
+                                        [% FOR sub IN subs.merge(pbx_groups.all, subscribers.all) -%]
+                                        '<option value="[% sub.provisioning_voip_subscriber.id %]">[% sub.username _ "@" _ sub.domain.domain %]</option>' +
+                                        [% END -%]
+                                      '</select>' +
+                                      '<select class="modeselect" name="line.' + formcnt + '.type" id="line.' + formcnt + '.type">' + 
+                                        [% FOR opt IN ["private", "shared", "blf"] -%]
+                                        '<option value="[% opt %]">[% opt %]</option>' +
+                                        [% END -%]
+                                      '</select>' + 
+                                      '<input type="hidden" name="line.' + formcnt + '.line" id="line.' + formcnt + '.line" value="' + a.range_id + '.' + a.line_index + '"/>' + 
+                                      '';
                             }
                         [% END -%]
                         markup += '<div class="caption ' + status + '" style="top:' + a.y + 'px; left:' + a.x + 'px;" data-pos="' + a.position + '">' + action + '</div>';

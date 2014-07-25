@@ -13,7 +13,6 @@ use NGCP::Panel::Form::Customer::PbxExtensionSubscriberSubadmin;
 use NGCP::Panel::Form::Customer::PbxGroupEdit;
 use NGCP::Panel::Form::Customer::PbxGroup;
 use NGCP::Panel::Form::Customer::PbxFieldDevice;
-use NGCP::Panel::Form::Customer::PbxFieldDeviceEdit;
 use NGCP::Panel::Form::Customer::PbxFieldDeviceSync;
 use NGCP::Panel::Utils::Message;
 use NGCP::Panel::Utils::Navigation;
@@ -1173,7 +1172,7 @@ sub pbx_device_edit :Chained('pbx_device_base') :PathPart('edit') :Args(0) {
         },{
             join => { 'config' => 'device' }, 
         });
-    my $form = NGCP::Panel::Form::Customer::PbxFieldDeviceEdit->new(ctx => $c);
+    my $form = NGCP::Panel::Form::Customer::PbxFieldDevice->new(ctx => $c);
     my $params = { $c->stash->{pbx_device}->get_inflated_columns };
     my @lines = ();
     foreach my $line($c->stash->{pbx_device}->autoprov_field_device_lines->all) {
@@ -1214,6 +1213,7 @@ sub pbx_device_edit :Chained('pbx_device_base') :PathPart('edit') :Args(0) {
                 $fdev->autoprov_field_device_lines->delete_all;
                 my @lines = $form->field('line')->fields;
                 foreach my $line(@lines) {
+                    next unless($line->field('subscriber_id')->value);
                     my $prov_subscriber = $schema->resultset('provisioning_voip_subscribers')->find({
                         id => $line->field('subscriber_id')->value,
                         account_id => $c->stash->{contract}->id,
@@ -1228,19 +1228,22 @@ sub pbx_device_edit :Chained('pbx_device_base') :PathPart('edit') :Args(0) {
                         # TODO: throw exception here!
                         $err = 1;
                         last;
+                    } else {
+                        my ($range_id, $key_num) = split /\./, $line->field('line')->value;
+                        my $type = $line->field('type')->value;
+                        $fdev->autoprov_field_device_lines->create({
+                            subscriber_id => $prov_subscriber->id,
+                            linerange_id => $range_id,
+                            key_num => $key_num,
+                            line_type => $type,
+                        });
                     }
-                    my ($range_id, $key_num) = split /\./, $line->field('line')->value;
-                    my $type = $line->field('type')->value;
-                    $fdev->autoprov_field_device_lines->create({
-                        subscriber_id => $prov_subscriber->id,
-                        linerange_id => $range_id,
-                        key_num => $key_num,
-                        line_type => $type,
-                    });
                 }
             });
             unless($err) {
                 $c->flash(messages => [{type => 'success', text => $c->loc('PBX device successfully updated') }]);
+            } else {
+                $schema->rollback;
             }
         } catch ($e) {
             NGCP::Panel::Utils::Message->error(
