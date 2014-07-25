@@ -656,7 +656,7 @@
                                     '<option value="0">[% c.loc("Subscriber") %]</option>' +
                                     [% subs = [] -%]
                                     [% FOR sub IN subs.merge(pbx_groups.all, subscribers.all) -%]
-                                    '<option value="[% sub.provisioning_voip_subscriber.id %]">[% sub.username _ "@" _ sub.domain.domain %]</option>' +
+                                    '<option value="[% sub.provisioning_voip_subscriber.id %]">[% sub.provisioning_voip_subscriber.display_name ? sub.provisioning_voip_subscriber.display_name : sub.username %][% sub.provisioning_voip_subscriber.pbx_extension.defined ? " (" _ sub.provisioning_voip_subscriber.pbx_extension _ ")" : "" %]</option>' +
                                     [% END -%]
                                   '</select>' +
                                   '<select class="modeselect" name="line.' + formcnt + '.type" id="line.' + formcnt + '.type">' + 
@@ -688,7 +688,7 @@
                                     '<option value="0">[% c.loc("None") %]</option>' +
                                     [% subs = [] -%]
                                     [% FOR sub IN subs.merge(pbx_groups.all, subscribers.all) -%]
-                                    '<option value="[% sub.provisioning_voip_subscriber.id %]"' + (linekeys[idx].subid == [% sub.provisioning_voip_subscriber.id %] ? ' selected="selected"' : '') + '>[% sub.username _ "@" _ sub.domain.domain %]</option>' +
+                                    '<option value="[% sub.provisioning_voip_subscriber.id %]"' + (linekeys[idx].subid == [% sub.provisioning_voip_subscriber.id %] ? ' selected="selected"' : '') + '>[% sub.provisioning_voip_subscriber.display_name ? sub.provisioning_voip_subscriber.display_name : sub.username %][% sub.provisioning_voip_subscriber.pbx_extension.defined ? " (" _ sub.provisioning_voip_subscriber.pbx_extension _ ")" : "" %]</option>' +
                                     [% END -%]
                                   '</select>' +
                                   '<select class="modeselect" name="line.' + formcnt + '.type" id="line.' + formcnt + '.type">' + 
@@ -705,7 +705,7 @@
                                         '<option value="0">[% c.loc("Subscriber") %]</option>' +
                                         [% subs = [] -%]
                                         [% FOR sub IN subs.merge(pbx_groups.all, subscribers.all) -%]
-                                        '<option value="[% sub.provisioning_voip_subscriber.id %]">[% sub.username _ "@" _ sub.domain.domain %]</option>' +
+                                        '<option value="[% sub.provisioning_voip_subscriber.id %]">[% sub.provisioning_voip_subscriber.display_name ? sub.provisioning_voip_subscriber.display_name : sub.username %][% sub.provisioning_voip_subscriber.pbx_extension.defined ? " (" _ sub.provisioning_voip_subscriber.pbx_extension _ ")" : "" %]</option>' +
                                         [% END -%]
                                       '</select>' +
                                       '<select class="modeselect" name="line.' + formcnt + '.type" id="line.' + formcnt + '.type">' + 

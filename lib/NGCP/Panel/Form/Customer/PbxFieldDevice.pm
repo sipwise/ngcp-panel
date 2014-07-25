@@ -27,7 +27,6 @@ sub build_profiles {
     return unless $c;
     my $profile_rs = $c->stash->{autoprov_profile_rs};
     my @options = ();
-    push @options, { label => '', value => undef };
     foreach my $p($profile_rs->all) {
         push @options, { label => $p->name, value => $p->id };
     }

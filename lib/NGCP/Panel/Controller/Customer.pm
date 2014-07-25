@@ -1074,7 +1074,6 @@ sub pbx_device_create :Chained('base') :PathPart('pbx/device/create') :Args(0) {
                 my $station_name = $form->params->{station_name};
                 my $identifier = lc $form->params->{identifier};
                 if($identifier =~ /^([a-f0-9]{2}:){5}[a-f0-9]{2}$/) {
-                    # TODO: should we really automatically strip : from identifiers?
                     $identifier =~ s/\://g;
                 }
                 my $profile_id = $form->params->{profile_id};
@@ -1203,6 +1202,9 @@ sub pbx_device_edit :Chained('pbx_device_base') :PathPart('edit') :Args(0) {
                 my $fdev = $c->stash->{pbx_device};
                 my $station_name = $form->params->{station_name};
                 my $identifier = lc $form->params->{identifier};
+                if($identifier =~ /^([a-f0-9]{2}:){5}[a-f0-9]{2}$/) {
+                    $identifier =~ s/\://g;
+                }
                 my $profile_id = $form->params->{profile_id};
                 $fdev->update({
                     profile_id => $profile_id,
