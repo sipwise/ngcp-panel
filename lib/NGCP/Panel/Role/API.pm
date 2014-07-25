@@ -198,24 +198,36 @@ sub forbid_link_header {
 sub valid_media_type {
     my ($self, $c, $media_type) = @_;
 
+    my $ctype = $c->request->header('Content-Type');
+    $ctype =~ s/;\s+boundary.+$//;
     my $type;
     if(ref $media_type eq "ARRAY") {
         $type = join ' or ', @{ $media_type };
-        return 1 if $c->request->header('Content-Type') &&
-                $c->request->header('Content-Type') ~~ $media_type;
+        return 1 if $ctype && $ctype ~~ $media_type;
     } else {
         $type = $media_type;
-        return 1 if($c->request->header('Content-Type') && 
-                index($c->request->header('Content-Type'), $media_type) == 0);
+        return 1 if($ctype && index($ctype, $media_type) == 0);
     }
-    $self->error($c, HTTP_UNSUPPORTED_MEDIA_TYPE, "Unsupported media type, accepting $type only.");
+    $self->error($c, HTTP_UNSUPPORTED_MEDIA_TYPE, "Unsupported media type '" . ($ctype // 'undefined') . "', accepting $type only.");
     return;
 }
 
 sub require_body {
     my ($self, $c) = @_;
     return 1 if length $c->stash->{body};
+
+    
+
     $self->error($c, HTTP_BAD_REQUEST, "This request is missing a message body.");
+    return;
+}
+
+# returns Catalyst::Request::Upload
+sub get_upload {
+    my ($self, $c, $field) = @_;
+    my $upload = $c->req->upload($field);
+    return $upload if $upload;
+    $self->error($c, HTTP_BAD_REQUEST, "This request is missing the upload part '$field' in body.");
     return;
 }
 
@@ -252,6 +264,7 @@ sub require_wellformed_json {
         NGCP::Panel::Utils::ValidateJSON->new($patch);
         $ret = 1;
     } catch($e) {
+        chomp $e;
         $self->error($c, HTTP_BAD_REQUEST, "The entity is not a well-formed '$media_type' document. $e");
     }
     return $ret;

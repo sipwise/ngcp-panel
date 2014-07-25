@@ -14,6 +14,8 @@ require Catalyst::ActionRole::CheckTrailingSlash;
 require Catalyst::ActionRole::HTTPMethods;
 require Catalyst::ActionRole::RequireSSL;
 
+# curl -v -X POST --user $USER --insecure -F front_image=@sandbox/spa504g-front.jpg -F mac_image=@sandbox/spa504g-back.jpg -F json='{"reseller_id":1, "vendor":"Cisco", "model":"SPA999", "linerange":[{"name": "Phone Keys", "num_lines":4, "can_private":true, "can_shared":true, "can_blf":true}]}' https://localhost:4443/api/pbxdevicemodels/
+
 class_has 'api_description' => (
     is => 'ro',
     isa => 'Str',
@@ -162,11 +164,14 @@ sub POST :Allow {
 
     my $guard = $c->model('DB')->txn_scope_guard;
     {
-        my $resource = $self->get_valid_post_data(
-            c => $c, 
-            media_type => 'application/json',
-        );
-        last unless $resource;
+        last unless $self->forbid_link_header($c);
+        last unless $self->valid_media_type($c, 'multipart/form-data');
+        last unless $self->require_wellformed_json($c, 'application/json', $c->req->param('json'));
+        my $resource = JSON::from_json($c->req->param('json'));
+        $resource->{front_image} = $self->get_upload($c, 'front_image');
+        last unless $resource->{front_image};
+        # optional, don't set error
+        $resource->{mac_image} = $c->req->upload('mac_image');
 
         my $form = $self->get_form($c);
         last unless $self->validate_form(
@@ -206,6 +211,17 @@ sub POST :Allow {
             last;
         }
 
+        my $ft = File::Type->new();
+        if($resource->{front_image}) {
+            my $front_image = delete $resource->{front_image};
+            $resource->{front_image} = $front_image->slurp;
+            $resource->{front_image_type} = $ft->mime_type($resource->{front_image});
+        }
+        if($resource->{mac_image}) {
+            my $front_image = delete $resource->{mac_image};
+            $resource->{mac_image} = $front_image->slurp;
+            $resource->{mac_image_type} = $ft->mime_type($resource->{mac_image});
+        }
 
         try {
             $item = $c->model('DB')->resultset('autoprov_devices')->create($resource);
