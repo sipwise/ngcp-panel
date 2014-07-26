@@ -34,16 +34,6 @@ has_field 'type' => (
     },
 );
 
-has_field 'is_active' => (
-    type => 'Boolean',
-    label => 'Active',
-    required => 0,
-    element_attr => {
-        rel => ['tooltip'],
-        title => ['Whether this template is used to generate invoices for this reseller.'],
-    },
-);
-
 has_field 'save' => (
     type => 'Submit',
     value => 'Save',
@@ -54,7 +44,7 @@ has_field 'save' => (
 has_block 'fields' => (
     tag => 'div',
     class => [qw/modal-body/],
-    render_list => [qw/name type is_active/],
+    render_list => [qw/name type/],
 );
 
 has_block 'actions' => (

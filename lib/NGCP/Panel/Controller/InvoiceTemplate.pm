@@ -33,7 +33,6 @@ sub template_list :Chained('/') :PathPart('invoicetemplate') :CaptureArgs(0) :Do
         { name => 'reseller.name', search => 1, title => $c->loc('Reseller') },
         { name => 'name', search => 1, title => $c->loc('Name') },
         { name => 'type', search => 1, title => $c->loc('Type') },
-        { name => 'is_active', search => 1, title => $c->loc('Active') },
     ]);
 
     $c->stash(template => 'invoice/template_list.tt');
@@ -152,15 +151,6 @@ sub create :Chained('template_list') :PathPart('create') :Args() {
                 $tmpl_params->{data} //= NGCP::Panel::Utils::InvoiceTemplate::svg_content($c, $tmpl_params->{data});
                 my $tmpl = $c->stash->{tmpl_rs}->create($tmpl_params);
 
-                # deactivate other templates if this one got active
-                if($tmpl->is_active) {
-                    $c->model('DB')->resultset('invoice_templates')->search({
-                        reseller_id => $tmpl->reseller_id,
-                        is_active => 1,
-                        id => { '!=' => $tmpl->id },
-                    })->update({ is_active => 0 });
-                }
-
                 delete $c->session->{created_objects}->{reseller};
             });
             $c->flash(messages => [{type => 'success', text => $c->loc('Invoice template successfully created')}]);
@@ -225,19 +215,7 @@ sub edit_info :Chained('base') :PathPart('editinfo') {
                     die( ["Template name should be unique", "showdetails"] );
                 }
                 
-                my $old_active = $tmpl->is_active;
                 $tmpl->update($form->params);
-
-                # deactivate other templates if this one got active
-                if($tmpl->is_active && !$old_active) {
-                    $c->model('DB')->resultset('invoice_templates')->search({
-                        reseller_id => $tmpl->reseller_id,
-                        is_active => 1,
-                        id => { '!=' => $tmpl->id },
-                    })->update({ is_active => 0 });
-                }
-                # we don't promote another one as active, as we don't know
-                # for sure which one
 
                 delete $c->session->{created_objects}->{reseller};
             });

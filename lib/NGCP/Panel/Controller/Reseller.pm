@@ -158,7 +158,6 @@ sub base :Chained('list_reseller') :PathPart('') :CaptureArgs(1) {
         { name => 'id', search => 1, title => $c->loc('#') },
         { name => 'name', search => 1, title => $c->loc('Name') },
         { name => 'type', search => 1, title => $c->loc('Type') },
-        { name => 'is_active', search => 1, title => $c->loc('Active') },
     ]);
     
 
