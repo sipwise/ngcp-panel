@@ -7,6 +7,7 @@ use Data::HAL::Link qw();
 use HTTP::Headers qw();
 use HTTP::Status qw(:constants);
 use MooseX::ClassAttribute qw(class_has);
+use Data::Dumper;
 use NGCP::Panel::Utils::DateTime;
 BEGIN { extends 'Catalyst::Controller::ActionRole'; }
 require Catalyst::ActionRole::ACL;
@@ -227,12 +228,54 @@ sub POST :Allow {
             $item = $c->model('DB')->resultset('autoprov_devices')->create($resource);
             foreach my $range(@{ $linerange }) {
                 unless(ref $range eq "HASH") {
-                    use Data::Dumper;
                     $c->log->error("all elements in linerange must be hashes, but this is " . ref $range . ": " . Dumper $range);
                     $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Invalid range definition inside linerange parameter, all must be hash");
                     return;
                 }
-                $item->autoprov_device_line_ranges->create($range);
+                foreach my $elem(qw/can_private can_shared can_blf keys/) {
+                    unless(exists $range->{$elem}) {
+                        $c->log->error("missing mandatory attribute '$elem' in a linerange element");
+                        $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Invalid range definition inside linerange parameter, missing attribute '$elem'");
+                        return;
+                    }
+                }
+                unless(ref $range->{keys} eq "ARRAY") {
+                    $c->log->error("linerange.keys must be array");
+                    $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Invalid linerange.keys parameter, must be array");
+                    last;
+                }
+                $range->{num_lines} = @{ $range->{keys} }; # backward compatibility
+                my $keys = delete $range->{keys};
+
+                my $r = $item->autoprov_device_line_ranges->create($range);
+                my $i = 0;
+                foreach my $label(@{ $keys }) {
+                    $label->{line_index} = $i++;
+                    unless(ref $label eq "HASH") {
+                        $c->log->error("all elements in linerange must be hashes, but this is " . ref $range . ": " . Dumper $range);
+                        $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Invalid range definition inside linerange parameter, all must be hash");
+                        return;
+                    }
+                    my $valid = [qw/x y line_index labelpos/];
+                    foreach my $elem(@{ $valid }) {
+                        unless(exists $label->{$elem}) {
+                            $c->log->error("missing mandatory attribute '$elem' in a linerange.keys element");
+                            $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Invalid keys definition inside linerange.keys parameter, missing attribute '$elem'");
+                            return;
+                        }
+                    }
+                    foreach my $k(keys %{ $label }) {
+                        delete $label->{$k} unless $k ~~ $valid;
+                    }
+                    my $pos = [qw/top bottom left right/];
+                    unless($label->{labelpos} ~~ $pos) {
+                        $c->log->error("invalid value '$$label{labelpos}' for attribute 'labelpos', must be one of " . (join ', ', @{ $pos }));
+                        $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Invalid value '$$label{labelpos}' for attribute 'labelpos', must be one of " . (join ', ', @{ $pos }));
+                        return;
+                    }
+                    $label->{position} = delete $label->{labelpos};
+                    $r->annotations->create($label);
+                }
             }
         } catch($e) {
             $c->log->error("failed to create device model: $e");

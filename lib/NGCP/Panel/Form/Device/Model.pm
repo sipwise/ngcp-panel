@@ -36,7 +36,7 @@ has_field 'model' => (
 
 has_field 'front_image' => (
     type => 'Upload',
-    required => 0,
+    required => 1,
     label => 'Front Image',
     max_size => '67108864', # 64MB
 );
@@ -98,7 +98,7 @@ has_field 'linerange' => (
     wrapper_class => [qw/hfh-rep-block/],
     element_attr => {
         rel => ['tooltip'],
-        title => ['An array of line/key definitions for this device. Each element is a hash containing the keys name, num_lines (defining the number of lines/keys for this range), can_private, can_shared, can_blf.'],
+        title => ['An array of line/key definitions for this device. Each element is a hash containing the keys name, can_private, can_shared, can_blf and keys (which in turn is an array of hashes having x, y and labelpos allowing top, bottom, left right).'],
     },
 );
 
@@ -156,9 +156,55 @@ has_field 'linerange.can_blf' => (
     },
 );
 
+has_field 'linerange.keys' => (
+    type => 'Hidden',
+    label => 'Key Definition',
+    required => 1,
+    element_attr => {
+        rel => ['tooltip'],
+        title => ['The position of the keys on the front image. Attributes are x, y, labelpos (how the label for the key is displayed in the web interface, relative to the given coordinates; one of top, bottom, left, right).'],
+    },
+);
+=pod
+has_field 'linerange.keys' => (
+    type => 'Repeatable',
+    label => 'Key Definition',
+    setup_for_js => 1,
+    do_wrapper => 1,
+    do_label => 1,
+    required => 1,
+    tags => {
+        controls_div => 1,
+    },
+    wrapper_class => [qw/hfh-rep-block/],
+    element_attr => {
+        rel => ['tooltip'],
+        title => ['The position of the keys on the front image. Attributes are x, y, labelpos (how the label for the key is displayed in the web interface, relative to the given coordinates; one of top, bottom, left, right).'],
+    },
+);
+
+has_field 'linerange.keys.id' => (
+    type => 'Hidden',
+);
+
+has_field 'linerange.keys.rm' => (
+    type => 'RmElement',
+    value => 'Remove Key',
+    order => 100,
+    element_class => [qw/btn btn-primary pull-right/],
+);
+
+has_field 'linerange.keys_add' => (
+    type => 'AddElement',
+    repeatable => 'linerange.keys',
+    value => 'Add another Key Definition',
+    element_class => [qw/btn btn-primary pull-right/],
+);
+=cut
+
 has_field 'linerange.rm' => (
     type => 'RmElement',
-    value => 'Remove',
+    value => 'Remove Range',
     order => 100,
     element_class => [qw/btn btn-primary pull-right/],
 );
