@@ -256,23 +256,6 @@ sub POST :Allow {
                         $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Invalid range definition inside linerange parameter, all must be hash");
                         return;
                     }
-                    my $valid = [qw/x y line_index labelpos/];
-                    foreach my $elem(@{ $valid }) {
-                        unless(exists $label->{$elem}) {
-                            $c->log->error("missing mandatory attribute '$elem' in a linerange.keys element");
-                            $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Invalid keys definition inside linerange.keys parameter, missing attribute '$elem'");
-                            return;
-                        }
-                    }
-                    foreach my $k(keys %{ $label }) {
-                        delete $label->{$k} unless $k ~~ $valid;
-                    }
-                    my $pos = [qw/top bottom left right/];
-                    unless($label->{labelpos} ~~ $pos) {
-                        $c->log->error("invalid value '$$label{labelpos}' for attribute 'labelpos', must be one of " . (join ', ', @{ $pos }));
-                        $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Invalid value '$$label{labelpos}' for attribute 'labelpos', must be one of " . (join ', ', @{ $pos }));
-                        return;
-                    }
                     $label->{position} = delete $label->{labelpos};
                     $r->annotations->create($label);
                 }

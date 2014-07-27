@@ -157,22 +157,11 @@ has_field 'linerange.can_blf' => (
 );
 
 has_field 'linerange.keys' => (
-    type => 'Hidden',
-    label => 'Key Definition',
-    required => 1,
-    element_attr => {
-        rel => ['tooltip'],
-        title => ['The position of the keys on the front image. Attributes are x, y, labelpos (how the label for the key is displayed in the web interface, relative to the given coordinates; one of top, bottom, left, right).'],
-    },
-);
-=pod
-has_field 'linerange.keys' => (
     type => 'Repeatable',
     label => 'Key Definition',
     setup_for_js => 1,
     do_wrapper => 1,
     do_label => 1,
-    required => 1,
     tags => {
         controls_div => 1,
     },
@@ -187,6 +176,45 @@ has_field 'linerange.keys.id' => (
     type => 'Hidden',
 );
 
+has_field 'linerange.keys.x' => (
+    type => 'PosInteger',
+    label => 'x',
+    default => 0,
+    required => 1,
+    element_attr => {
+        rel => ['tooltip'],
+        title => ['Position of label in frontimage in px from left.'],
+    },
+);
+
+has_field 'linerange.keys.y' => (
+    type => 'PosInteger',
+    label => 'y',
+    default => 0,
+    required => 1,
+    element_attr => {
+        rel => ['tooltip'],
+        title => ['Position of label in frontimage in px from top.'],
+    },
+);
+
+has_field 'linerange.keys.labelpos' => (
+    type => 'Select',
+    label => 'Orientation',
+    default => 'top',
+    required => 1,
+    options => [
+        { label => 'top', value => 'top' },
+        { label => 'bottom', value => 'bottom' },
+        { label => 'left', value => 'left' },
+        { label => 'right', value => 'right' },
+    ],
+    element_attr => {
+        rel => ['tooltip'],
+        title => ['Position of label text relative to label arrow.'],
+    },
+);
+
 has_field 'linerange.keys.rm' => (
     type => 'RmElement',
     value => 'Remove Key',
@@ -196,11 +224,10 @@ has_field 'linerange.keys.rm' => (
 
 has_field 'linerange.keys_add' => (
     type => 'AddElement',
-    repeatable => 'linerange.keys',
+    repeatable => 'keys',
     value => 'Add another Key Definition',
     element_class => [qw/btn btn-primary pull-right/],
 );
-=cut
 
 has_field 'linerange.rm' => (
     type => 'RmElement',
