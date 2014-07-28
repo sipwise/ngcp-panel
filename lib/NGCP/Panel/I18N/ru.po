@@ -194,11 +194,11 @@ msgstr ", но пропущены следующие номера строк: "
 msgid "403 - Permission denied"
 msgstr "403 - Доступ запрещен"
 
-#: lib/NGCP/Panel/Controller/Reseller.pm:562
+#: lib/NGCP/Panel/Controller/Reseller.pm:561
 msgid "404 - No branding css available for this reseller"
 msgstr "404 - Отсутствуют CSS для данного реселлера"
 
-#: lib/NGCP/Panel/Controller/Reseller.pm:526
+#: lib/NGCP/Panel/Controller/Reseller.pm:525
 msgid "404 - No branding logo available for this reseller"
 msgstr "404 - Отсутствует логотип для данного реселлера"
 
@@ -330,19 +330,17 @@ msgid "Account balance successfully changed!"
 msgstr "Баланс счета успешно изменен!"
 
 #: lib/NGCP/Panel/Controller/Administrator.pm:37
-#: lib/NGCP/Panel/Controller/InvoiceTemplate.pm:36
 #: lib/NGCP/Panel/Controller/Reseller.pm:140
-#: lib/NGCP/Panel/Controller/Reseller.pm:161
 #: lib/NGCP/Panel/Utils/DbStrings.pm:553
 #: share/templates/subscriber/preferences.tt:300
 msgid "Active"
 msgstr "Активен"
 
-#: lib/NGCP/Panel/Utils/DbStrings.pm:1109
+#: lib/NGCP/Panel/Utils/DbStrings.pm:1108
 msgid "Active callforward"
 msgstr "Включено перенаправление звонков"
 
-#: lib/NGCP/Panel/Utils/DbStrings.pm:1079
+#: lib/NGCP/Panel/Utils/DbStrings.pm:1078
 msgid "Add"
 msgstr "Добавить"
 
@@ -422,11 +420,11 @@ msgstr "Администратор успешно обновлен"
 msgid "Administrators"
 msgstr "Администраторы"
 
-#: lib/NGCP/Panel/Utils/DbStrings.pm:1084
+#: lib/NGCP/Panel/Utils/DbStrings.pm:1083
 msgid "Advanced"
 msgstr "Дополнительно"
 
-#: lib/NGCP/Panel/Utils/DbStrings.pm:1108
+#: lib/NGCP/Panel/Utils/DbStrings.pm:1107
 msgid "Advanced View"
 msgstr "Расширенный режим"
 
@@ -454,7 +452,7 @@ msgstr "Дополнительные номера"
 msgid "All services running"
 msgstr "Работают все сервисы"
 
-#: lib/NGCP/Panel/Utils/DbStrings.pm:1110
+#: lib/NGCP/Panel/Utils/DbStrings.pm:1109
 msgid "Allocable"
 msgstr "Свободный"
 
@@ -1086,7 +1084,7 @@ msgstr "Не могу удалить себя сам"
 msgid "Cannot terminate contract with the id 1"
 msgstr "Нельзя удалять контракт с id 1"
 
-#: lib/NGCP/Panel/Controller/Reseller.pm:272
+#: lib/NGCP/Panel/Controller/Reseller.pm:271
 msgid "Cannot terminate reseller with the id 1"
 msgstr "Нельзя удалять реселлера с id 1"
 
@@ -1436,7 +1434,7 @@ msgstr "Создать Тариф"
 msgid "Create Contact"
 msgstr "Создать Контакт"
 
-#: lib/NGCP/Panel/Utils/DbStrings.pm:1100
+#: lib/NGCP/Panel/Utils/DbStrings.pm:1099
 msgid "Create Contract"
 msgstr "Создать Контракт"
 
@@ -1709,7 +1707,7 @@ msgstr "Клиент не найден"
 msgid "Customers"
 msgstr "Клиенты"
 
-#: lib/NGCP/Panel/Utils/DbStrings.pm:1102
+#: lib/NGCP/Panel/Utils/DbStrings.pm:1101
 msgid "Daily Fraud Limit"
 msgstr "Дневной Лимит Мошенничества"
 
@@ -1920,7 +1918,7 @@ msgstr ""
 "Домен получателя который был получен от вызывающей стороны после внутренних "
 "преобразований."
 
-#: lib/NGCP/Panel/Utils/DbStrings.pm:1111
+#: lib/NGCP/Panel/Utils/DbStrings.pm:1110
 msgid "Destination domain in"
 msgstr "Домен получателя"
 
@@ -2198,7 +2196,7 @@ msgstr "Скачать CA Сертификат"
 msgid "Download PCAP"
 msgstr "Скачать PCAP"
 
-#: lib/NGCP/Panel/Utils/DbStrings.pm:1080
+#: lib/NGCP/Panel/Utils/DbStrings.pm:1079
 msgid "Download PEM"
 msgstr "Скачать PEM"
 
@@ -2406,7 +2404,7 @@ msgstr "Конец"
 msgid "End Date"
 msgstr "Конечная Дата"
 
-#: lib/NGCP/Panel/Utils/DbStrings.pm:1092
+#: lib/NGCP/Panel/Utils/DbStrings.pm:1091
 msgid "End Date/Time"
 msgstr "Конечная Дата/Время"
 
@@ -2474,7 +2472,7 @@ msgstr "Внешний Контракт #"
 msgid "External ID"
 msgstr "Внешний ID"
 
-#: lib/NGCP/Panel/Utils/DbStrings.pm:1091
+#: lib/NGCP/Panel/Utils/DbStrings.pm:1090
 msgid "External ID of calling subscriber, if local."
 msgstr "Внешний ID звонящего абонента, при локальном звонке"
 
@@ -2589,7 +2587,7 @@ msgstr "Не удалось создать домен."
 msgid "Failed to create email template"
 msgstr "Не удалось создать шаблон письма"
 
-#: lib/NGCP/Panel/Controller/InvoiceTemplate.pm:171
+#: lib/NGCP/Panel/Controller/InvoiceTemplate.pm:161
 msgid "Failed to create invoice template."
 msgstr "Не удалось создать шаблон счёт-фактуры"
 
@@ -2719,7 +2717,7 @@ msgstr "Не удалось удалить шаблон письма"
 msgid "Failed to delete invoice ."
 msgstr "Не удалось удалить счёт-фактуру"
 
-#: lib/NGCP/Panel/Controller/InvoiceTemplate.pm:272
+#: lib/NGCP/Panel/Controller/InvoiceTemplate.pm:250
 msgid "Failed to delete invoice template."
 msgstr "Не удалось удалить шаблон счёт-фактуры"
 
@@ -2823,7 +2821,7 @@ msgstr "Ошибка управления настройками"
 msgid "Failed to move rewrite rule."
 msgstr "Не удалось переместить правило перезаписи."
 
-#: lib/NGCP/Panel/Controller/InvoiceTemplate.pm:384
+#: lib/NGCP/Panel/Controller/InvoiceTemplate.pm:362
 msgid "Failed to preview template"
 msgstr "Не удалось создать предварительный просмотр шаблона"
 
@@ -2832,7 +2830,7 @@ msgid "Failed to render invoice"
 msgstr "Не удалось сгенерировать счёт-фактуру"
 
 #. ($error->type . ', info is ' . $error->info)
-#: lib/NGCP/Panel/Controller/InvoiceTemplate.pm:373
+#: lib/NGCP/Panel/Controller/InvoiceTemplate.pm:351
 msgid "Failed to render template. Type is "
 msgstr "Не удалось сгенерировать счёт-фактуру. Тип "
 
@@ -2855,7 +2853,7 @@ msgstr "Не удалось сохранить перенаправление з
 msgid "Failed to save invoice meta data."
 msgstr "Не удалось сохранить метаданные счёт-фактуры."
 
-#: lib/NGCP/Panel/Controller/InvoiceTemplate.pm:329
+#: lib/NGCP/Panel/Controller/InvoiceTemplate.pm:307
 msgid "Failed to store invoice template"
 msgstr "Не удалось сохранить шаблон счёт-фактуры."
 
@@ -2864,7 +2862,7 @@ msgstr "Не удалось сохранить шаблон счёт-факту�
 msgid "Failed to terminate contract."
 msgstr "Ошибка удаления контракта."
 
-#: lib/NGCP/Panel/Controller/Reseller.pm:291
+#: lib/NGCP/Panel/Controller/Reseller.pm:290
 msgid "Failed to terminate reseller."
 msgstr "Ошибка удаления реселлера."
 
@@ -2944,7 +2942,7 @@ msgstr "Не удалось обновить шаблон электронных
 msgid "Failed to update fax setting."
 msgstr "Не удалось обновить настройки факса."
 
-#: lib/NGCP/Panel/Controller/InvoiceTemplate.pm:249
+#: lib/NGCP/Panel/Controller/InvoiceTemplate.pm:227
 msgid "Failed to update invoice template."
 msgstr "Не удалось обновить шаблон счёт-фактуры."
 
@@ -2976,11 +2974,11 @@ msgstr ""
 msgid "Failed to update reminder setting."
 msgstr "Не удалось обновить настройки напоминания."
 
-#: lib/NGCP/Panel/Controller/Reseller.pm:504
+#: lib/NGCP/Panel/Controller/Reseller.pm:503
 msgid "Failed to update reseller branding"
 msgstr "Не удалось обновить стилизирование реселлера"
 
-#: lib/NGCP/Panel/Controller/Reseller.pm:250
+#: lib/NGCP/Panel/Controller/Reseller.pm:249
 msgid "Failed to update reseller."
 msgstr "Не удалось обновить реселлера."
 
@@ -3166,7 +3164,7 @@ msgstr "Лимит Мошенничества"
 msgid "Fraud Monthly Limit"
 msgstr "Месячный Лимит Мошенничества"
 
-#: lib/NGCP/Panel/Utils/DbStrings.pm:1101
+#: lib/NGCP/Panel/Utils/DbStrings.pm:1100
 msgid "Fraud Monthly Lock"
 msgstr "Блокировать при достижении месячного лимита"
 
@@ -3263,7 +3261,7 @@ msgstr "Общее назначение 5"
 msgid "General Purpose 6"
 msgstr "Общее назначение 6"
 
-#: lib/NGCP/Panel/Utils/DbStrings.pm:1088
+#: lib/NGCP/Panel/Utils/DbStrings.pm:1087
 msgid "General Purpose 7"
 msgstr "Общее назначение 7"
 
@@ -3275,7 +3273,7 @@ msgstr "Общее назначение 8"
 msgid "General Purpose 9"
 msgstr "Общее назначение 9"
 
-#: lib/NGCP/Panel/Utils/DbStrings.pm:1093
+#: lib/NGCP/Panel/Utils/DbStrings.pm:1092
 msgid "Generate"
 msgstr "Сгенерировать"
 
@@ -3300,7 +3298,7 @@ msgstr "Группа IP адресов и/или IP сетей для котор
 msgid "Groups"
 msgstr "Группы"
 
-#: lib/NGCP/Panel/Utils/DbStrings.pm:1115
+#: lib/NGCP/Panel/Utils/DbStrings.pm:1114
 msgid "Handle"
 msgstr "Идентификатор"
 
@@ -3473,7 +3471,7 @@ msgstr "Входящий Пользовательский (User-Provided) пер
 msgid "Include local area code"
 msgstr "Включая код региона"
 
-#: lib/NGCP/Panel/Utils/DbStrings.pm:1098
+#: lib/NGCP/Panel/Utils/DbStrings.pm:1097
 msgid "Incoming Email as CC"
 msgstr "Входящий Email как СС копию"
 
@@ -3656,7 +3654,7 @@ msgstr "Обнаружен некорректный id группы"
 msgid "Invalid invoice id detected"
 msgstr "Обнаружен некорректный id счёт-фактуры"
 
-#: lib/NGCP/Panel/Controller/InvoiceTemplate.pm:69
+#: lib/NGCP/Panel/Controller/InvoiceTemplate.pm:68
 msgid "Invalid invoice template id detected"
 msgstr "Обнаружен некорректный id шаблона счёт-фактуры"
 
@@ -3694,8 +3692,8 @@ msgid "Invalid provisioning subscriber id detected."
 msgstr "Обнаружен некорректный id автоконфигурации абонента."
 
 #: lib/NGCP/Panel/Controller/Customer.pm:84
-#: lib/NGCP/Panel/Controller/InvoiceTemplate.pm:113
-#: lib/NGCP/Panel/Controller/InvoiceTemplate.pm:93
+#: lib/NGCP/Panel/Controller/InvoiceTemplate.pm:112
+#: lib/NGCP/Panel/Controller/InvoiceTemplate.pm:92
 #: lib/NGCP/Panel/Controller/Reseller.pm:116
 msgid "Invalid reseller id detected"
 msgstr "Обнаружен некорректный id реселлера"
@@ -3766,7 +3764,7 @@ msgstr "Расчетный период"
 msgid "Invoice Period End"
 msgstr "Конец расчетного периода"
 
-#: lib/NGCP/Panel/Utils/DbStrings.pm:1083
+#: lib/NGCP/Panel/Utils/DbStrings.pm:1082
 msgid "Invoice Period Start"
 msgstr "Начало расчетного периода"
 
@@ -3796,7 +3794,7 @@ msgstr "Счёт-фактура успешно удалена"
 msgid "Invoice template %1"
 msgstr "Шаблон счёт-фактуры %1"
 
-#: lib/NGCP/Panel/Controller/InvoiceTemplate.pm:79
+#: lib/NGCP/Panel/Controller/InvoiceTemplate.pm:78
 msgid "Invoice template does not exist"
 msgstr "Шаблон счёт-фактуры не существует"
 
@@ -3808,19 +3806,19 @@ msgstr "Шаблон счёт-фактуры не содержит SVG"
 msgid "Invoice template not found"
 msgstr "Шаблон счёт-фактуры не найден"
 
-#: lib/NGCP/Panel/Controller/InvoiceTemplate.pm:166
+#: lib/NGCP/Panel/Controller/InvoiceTemplate.pm:156
 msgid "Invoice template successfully created"
 msgstr "Шаблон счёт-фактуры успешно создан"
 
-#: lib/NGCP/Panel/Controller/InvoiceTemplate.pm:267
+#: lib/NGCP/Panel/Controller/InvoiceTemplate.pm:245
 msgid "Invoice template successfully deleted"
 msgstr "Шаблон счёт-фактуры успешно удален"
 
-#: lib/NGCP/Panel/Controller/InvoiceTemplate.pm:333
+#: lib/NGCP/Panel/Controller/InvoiceTemplate.pm:311
 msgid "Invoice template successfully saved"
 msgstr "Шаблон счёт-фактуры успешно сохранен"
 
-#: lib/NGCP/Panel/Controller/InvoiceTemplate.pm:244
+#: lib/NGCP/Panel/Controller/InvoiceTemplate.pm:222
 msgid "Invoice template successfully updated"
 msgstr "Шаблон счёт-фактуры успешно обновлен"
 
@@ -4144,7 +4142,7 @@ msgid ""
 "subscribers."
 msgstr ""
 
-#: lib/NGCP/Panel/Utils/DbStrings.pm:1086
+#: lib/NGCP/Panel/Utils/DbStrings.pm:1085
 msgid "May"
 msgstr "Май"
 
@@ -4187,7 +4185,7 @@ msgstr "Понедельник"
 msgid "Monitoring & Statistics"
 msgstr "Мониторинг и статистика"
 
-#: lib/NGCP/Panel/Utils/DbStrings.pm:1104
+#: lib/NGCP/Panel/Utils/DbStrings.pm:1103
 msgid "Month"
 msgstr "Месяц"
 
@@ -4544,7 +4542,7 @@ msgstr "Цена первого интервала Onpeak"
 msgid "Oops!"
 msgstr "Бабах!"
 
-#: lib/NGCP/Panel/Utils/DbStrings.pm:1096
+#: lib/NGCP/Panel/Utils/DbStrings.pm:1095
 msgid ""
 "Optionally set the maximum number of subscribers for this contract. Leave "
 "empty for unlimited."
@@ -4958,7 +4956,7 @@ msgid "Primary Number"
 msgstr "Первичный номер"
 
 #: lib/NGCP/Panel/Controller/Peering.pm:29
-#: lib/NGCP/Panel/Utils/DbStrings.pm:1094
+#: lib/NGCP/Panel/Utils/DbStrings.pm:1093
 msgid "Priority"
 msgstr "Приоритет"
 
@@ -5211,7 +5209,7 @@ msgstr "Доход реселлера"
 msgid "Reseller and Peering Contracts"
 msgstr "Контракты реселлера и SIP Транка"
 
-#: lib/NGCP/Panel/Controller/Reseller.pm:499
+#: lib/NGCP/Panel/Controller/Reseller.pm:498
 msgid "Reseller branding successfully updated"
 msgstr "Стилизация реселлера успешно обновлена"
 
@@ -5243,7 +5241,7 @@ msgstr ""
 msgid "Reseller is <b>%1</b>"
 msgstr "Реселлер <b>%1</b>"
 
-#: lib/NGCP/Panel/Controller/Reseller.pm:170
+#: lib/NGCP/Panel/Controller/Reseller.pm:169
 msgid "Reseller not found"
 msgstr "Реселлер не найден"
 
@@ -5256,7 +5254,7 @@ msgid "Reseller successfully created"
 msgstr "Реселлер успешно создан"
 
 #. ($defaults{admins}->{login},$defaults{admins}->{md5pass})
-#: lib/NGCP/Panel/Controller/Reseller.pm:423
+#: lib/NGCP/Panel/Controller/Reseller.pm:422
 msgid ""
 "Reseller successfully created with login <b>%1</b> and password <b>%2</b>, "
 "please review your settings below"
@@ -5264,11 +5262,11 @@ msgstr ""
 "Реселлер успешно создан с логином <b>%1</b> и паролем <b>%2</b>, пожалуйста "
 "просмотрите Ваши настройки ниже"
 
-#: lib/NGCP/Panel/Controller/Reseller.pm:245
+#: lib/NGCP/Panel/Controller/Reseller.pm:244
 msgid "Reseller successfully updated"
 msgstr "Реселлер успешно обновлен"
 
-#: lib/NGCP/Panel/Utils/DbStrings.pm:1082 share/templates/reseller/list.tt:1
+#: lib/NGCP/Panel/Utils/DbStrings.pm:1081 share/templates/reseller/list.tt:1
 #: share/templates/reseller/list.tt:3
 #: share/templates/widgets/admin_reseller_overview.tt:4
 #: share/templates/widgets/admin_reseller_overview.tt:7
@@ -6095,7 +6093,7 @@ msgid "Strict Number Matching"
 msgstr "Строгое соответствие номеру"
 
 #: lib/NGCP/Panel/Controller/EmailTemplate.pm:36
-#: lib/NGCP/Panel/Utils/DbStrings.pm:1078
+#: lib/NGCP/Panel/Utils/DbStrings.pm:1077
 msgid "Subject"
 msgstr "Тема"
 
@@ -6340,7 +6338,7 @@ msgstr "Пароль успешно сброшен, пожалуйста про�
 msgid "Successfully saved Call Forward"
 msgstr "Перенаправление звонков успешно сохранено"
 
-#: lib/NGCP/Panel/Controller/Reseller.pm:286
+#: lib/NGCP/Panel/Controller/Reseller.pm:285
 msgid "Successfully terminated reseller"
 msgstr "Реселлер успешно удален"
 
@@ -6397,7 +6395,7 @@ msgstr "Настройки голосовой почты успешно обно
 msgid "Sunday"
 msgstr "Воскресенье"
 
-#: lib/NGCP/Panel/Utils/DbStrings.pm:1089
+#: lib/NGCP/Panel/Utils/DbStrings.pm:1088
 msgid "Supported File Types are TXT, PDF, PS, TIFF"
 msgstr "Поддерживаемые форматы файлов: TXT, PDF, PS, TIFF"
 
@@ -6409,7 +6407,7 @@ msgstr "Поддержка Индикации Занятой Линии"
 msgid "Supports Private Line"
 msgstr "Поддержка Частных Линий"
 
-#: lib/NGCP/Panel/Utils/DbStrings.pm:1112
+#: lib/NGCP/Panel/Utils/DbStrings.pm:1111
 msgid "Supports Shared Line"
 msgstr "Поддержка Общих Линий"
 
@@ -6446,7 +6444,7 @@ msgstr "TIFF"
 msgid "TLS"
 msgstr "TLS"
 
-#: lib/NGCP/Panel/Utils/DbStrings.pm:1107
+#: lib/NGCP/Panel/Utils/DbStrings.pm:1106
 msgid "Template"
 msgstr "Шаблон"
 
@@ -6454,7 +6452,7 @@ msgstr "Шаблон"
 msgid "Template and customer must belong to same reseller"
 msgstr "Шаблон и клиент должны принадлежать одному реселлеру"
 
-#: lib/NGCP/Panel/Controller/InvoiceTemplate.pm:352
+#: lib/NGCP/Panel/Controller/InvoiceTemplate.pm:330
 msgid "Template has not been saved yet, please save before previewing."
 msgstr ""
 "Шаблон не сохранен, пожалуйста сохраните шаблон перед предварительным "
@@ -6762,7 +6760,7 @@ msgstr ""
 "Стоимость для SIP Транка по отношению к оператору (например, для звонков на "
 "800-номера)."
 
-#: lib/NGCP/Panel/Utils/DbStrings.pm:1077
+#: lib/NGCP/Panel/Utils/DbStrings.pm:1076
 msgid "The cost for the operator towards the peering carrier."
 msgstr "Стоимость для оператора по отношению к SIP Транк серверу."
 
@@ -6901,7 +6899,7 @@ msgstr "Адрес электронной почты для уведомлени
 msgid "The email template used to notify users about subscriber creation."
 msgstr "Адрес электронной почты для уведомления "
 
-#: lib/NGCP/Panel/Utils/DbStrings.pm:1103
+#: lib/NGCP/Panel/Utils/DbStrings.pm:1102
 msgid "The end of the invoice period."
 msgstr "Конец расчетного периода"
 
@@ -6943,7 +6941,7 @@ msgstr "Имя файла этой прошивки."
 msgid "The final SIP response code of the call."
 msgstr "Код окончательного SIP ответа этого звонка."
 
-#: lib/NGCP/Panel/Utils/DbStrings.pm:1087
+#: lib/NGCP/Panel/Utils/DbStrings.pm:1086
 msgid ""
 "The folder the message is currently in (one of INBOX, Old, Work, Friends, "
 "Family, Cust1-Cust6)"
@@ -7010,7 +7008,7 @@ msgstr ""
 "ID указывающий на запись для \"Call Forward Unconditional\" в таблице "
 "voip_cf_mappings"
 
-#: lib/NGCP/Panel/Utils/DbStrings.pm:1113
+#: lib/NGCP/Panel/Utils/DbStrings.pm:1112
 msgid ""
 "The included free minutes per billing interval (in seconds, e.g. 60000 for "
 "1000 free minutes)."
@@ -7107,7 +7105,7 @@ msgstr "Мобильный номер контакта."
 msgid "The model name of this device."
 msgstr "Имя модели устройства."
 
-#: lib/NGCP/Panel/Utils/DbStrings.pm:1081
+#: lib/NGCP/Panel/Utils/DbStrings.pm:1080
 msgid "The name of the Rewrite Rule Set."
 msgstr "Имя набора правила перезаписи"
 
@@ -7181,7 +7179,7 @@ msgstr ""
 "синхронизации, например server.uri/$MA. Значение переменной server.uriбудет "
 "автоматически заменено во время генерации файла автоконфигурации."
 
-#: lib/NGCP/Panel/Utils/DbStrings.pm:1114
+#: lib/NGCP/Panel/Utils/DbStrings.pm:1113
 msgid "The password to authenticate for SIP and XMPP services."
 msgstr "Пароль для аутентификации SIP и XMPP сервисов."
 
@@ -7264,11 +7262,11 @@ msgstr "Реселлер которому принадлежит этот наб
 msgid "The reseller this level belongs to."
 msgstr "Реселлер которому принадлежит этот список."
 
-#: lib/NGCP/Panel/Utils/DbStrings.pm:1085
+#: lib/NGCP/Panel/Utils/DbStrings.pm:1084
 msgid "The reseller this sound set belongs to."
 msgstr "Реселлер которому принадлежит этот набор звуков."
 
-#: lib/NGCP/Panel/Utils/DbStrings.pm:1105
+#: lib/NGCP/Panel/Utils/DbStrings.pm:1104
 msgid "The reseller who can use the Ruleset."
 msgstr "Реселлер который может использовать Ruleset."
 
@@ -7320,7 +7318,7 @@ msgstr ""
 msgid "The start of the invoice period."
 msgstr "Начало расчетного периода."
 
-#: lib/NGCP/Panel/Utils/DbStrings.pm:1090
+#: lib/NGCP/Panel/Utils/DbStrings.pm:1089
 msgid "The start time in format hh:mm:ss"
 msgstr "Начальное время в формате чч:мм:сс"
 
@@ -7496,7 +7494,7 @@ msgid "Thursday"
 msgstr "Четверг"
 
 #: lib/NGCP/Panel/Controller/Subscriber.pm:1935
-#: lib/NGCP/Panel/Utils/DbStrings.pm:1097
+#: lib/NGCP/Panel/Utils/DbStrings.pm:1096
 #: share/templates/subscriber/preferences.tt:456
 msgid "Time"
 msgstr "Время"
@@ -7513,7 +7511,7 @@ msgstr "Периоды"
 msgid "Timeout"
 msgstr "Таймаут"
 
-#: lib/NGCP/Panel/Utils/DbStrings.pm:1106
+#: lib/NGCP/Panel/Utils/DbStrings.pm:1105
 msgid "Times"
 msgstr "Время"
 
@@ -7731,7 +7729,7 @@ msgid "Values"
 msgstr "Значения"
 
 #: lib/NGCP/Panel/Controller/Device.pm:38
-#: lib/NGCP/Panel/Utils/DbStrings.pm:1099
+#: lib/NGCP/Panel/Utils/DbStrings.pm:1098
 msgid "Vendor"
 msgstr "Производитель"
 
@@ -7797,7 +7795,7 @@ msgstr "Голосовая почта"
 msgid "Voicemails"
 msgstr "Голосовые сообщения"
 
-#: lib/NGCP/Panel/Utils/DbStrings.pm:1095
+#: lib/NGCP/Panel/Utils/DbStrings.pm:1094
 msgid "Wday"
 msgstr "День недели"
 
@@ -7876,11 +7874,6 @@ msgstr "Использовать ли этого абонент как PBX гр�
 #: lib/NGCP/Panel/Utils/DbStrings.pm:670
 msgid "Whether this subscriber is used as PBX pilot subscriber."
 msgstr "Использовать ли этого абонент в виде основного абонент PBX."
-
-#: lib/NGCP/Panel/Utils/DbStrings.pm:1076
-msgid "Whether this template is used to generate invoices for this reseller."
-msgstr ""
-"Использовать ли этот шаблон для создания счёт-фактур для этого реселлера."
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:444
 msgid "Whether to charge VAT in invoices."
@@ -8280,6 +8273,11 @@ msgstr "белый список"
 #: share/templates/subscriber/preferences.tt:334
 msgid "yes"
 msgstr "да"
+
+#~ msgid ""
+#~ "Whether this template is used to generate invoices for this reseller."
+#~ msgstr ""
+#~ "Использовать ли этот шаблон для создания счёт-фактур для этого реселлера."
 
 #~ msgid ""
 #~ "Maximum number of concurrent outgoing sessions (calls) coming from a "
