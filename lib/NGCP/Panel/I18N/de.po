@@ -191,11 +191,11 @@ msgstr ", aber folgende Zeilen wurden ignoriert: "
 msgid "403 - Permission denied"
 msgstr "403 - Zugriff verweigert"
 
-#: lib/NGCP/Panel/Controller/Reseller.pm:562
+#: lib/NGCP/Panel/Controller/Reseller.pm:561
 msgid "404 - No branding css available for this reseller"
 msgstr "404 - Kein spezialisiertes CSS für diesen Reseller verfügbar"
 
-#: lib/NGCP/Panel/Controller/Reseller.pm:526
+#: lib/NGCP/Panel/Controller/Reseller.pm:525
 msgid "404 - No branding logo available for this reseller"
 msgstr "404 - Kein spezialisiertes Logo für diesen Reseller verfügbar"
 
@@ -330,19 +330,17 @@ msgid "Account balance successfully changed!"
 msgstr "Konto-Saldo erfolgreich geändert!"
 
 #: lib/NGCP/Panel/Controller/Administrator.pm:37
-#: lib/NGCP/Panel/Controller/InvoiceTemplate.pm:36
 #: lib/NGCP/Panel/Controller/Reseller.pm:140
-#: lib/NGCP/Panel/Controller/Reseller.pm:161
 #: lib/NGCP/Panel/Utils/DbStrings.pm:553
 #: share/templates/subscriber/preferences.tt:300
 msgid "Active"
 msgstr "Aktiv"
 
-#: lib/NGCP/Panel/Utils/DbStrings.pm:1109
+#: lib/NGCP/Panel/Utils/DbStrings.pm:1108
 msgid "Active callforward"
 msgstr "Aktive Ruf-Weiterleitung"
 
-#: lib/NGCP/Panel/Utils/DbStrings.pm:1079
+#: lib/NGCP/Panel/Utils/DbStrings.pm:1078
 msgid "Add"
 msgstr "Hinzufügen"
 
@@ -422,11 +420,11 @@ msgstr "Administrator erfolgreich geändert"
 msgid "Administrators"
 msgstr "Administratoren"
 
-#: lib/NGCP/Panel/Utils/DbStrings.pm:1084
+#: lib/NGCP/Panel/Utils/DbStrings.pm:1083
 msgid "Advanced"
 msgstr "Erweitert"
 
-#: lib/NGCP/Panel/Utils/DbStrings.pm:1108
+#: lib/NGCP/Panel/Utils/DbStrings.pm:1107
 msgid "Advanced View"
 msgstr "Erweiterte Ansicht"
 
@@ -454,7 +452,7 @@ msgstr "Alias-Nummern"
 msgid "All services running"
 msgstr "Alle Dienste gestartet"
 
-#: lib/NGCP/Panel/Utils/DbStrings.pm:1110
+#: lib/NGCP/Panel/Utils/DbStrings.pm:1109
 msgid "Allocable"
 msgstr "Zuweisbar"
 
@@ -1097,7 +1095,7 @@ msgstr "Eigener Zugang kann nicht gelöscht werden"
 msgid "Cannot terminate contract with the id 1"
 msgstr "Vertrag mit ID 1 kann nicht terminiert werden"
 
-#: lib/NGCP/Panel/Controller/Reseller.pm:272
+#: lib/NGCP/Panel/Controller/Reseller.pm:271
 msgid "Cannot terminate reseller with the id 1"
 msgstr "Reseller mit ID 1 kann nicht terminiert werden"
 
@@ -1442,7 +1440,7 @@ msgstr "Neues Verrechnungs-Profil"
 msgid "Create Contact"
 msgstr "Neuer Kontakt"
 
-#: lib/NGCP/Panel/Utils/DbStrings.pm:1100
+#: lib/NGCP/Panel/Utils/DbStrings.pm:1099
 msgid "Create Contract"
 msgstr "Neuer Vertrag"
 
@@ -1714,7 +1712,7 @@ msgstr "Kunde nicht gefunden"
 msgid "Customers"
 msgstr "Kunden"
 
-#: lib/NGCP/Panel/Utils/DbStrings.pm:1102
+#: lib/NGCP/Panel/Utils/DbStrings.pm:1101
 msgid "Daily Fraud Limit"
 msgstr "Tägliches Missbrauchs-Limit"
 
@@ -1924,7 +1922,7 @@ msgid ""
 "internal rewriting."
 msgstr ""
 
-#: lib/NGCP/Panel/Utils/DbStrings.pm:1111
+#: lib/NGCP/Panel/Utils/DbStrings.pm:1110
 msgid "Destination domain in"
 msgstr ""
 
@@ -2198,7 +2196,7 @@ msgstr "CA Zertifikat runterladen"
 msgid "Download PCAP"
 msgstr "PCAP runterladen"
 
-#: lib/NGCP/Panel/Utils/DbStrings.pm:1080
+#: lib/NGCP/Panel/Utils/DbStrings.pm:1079
 msgid "Download PEM"
 msgstr "PEM runterladen"
 
@@ -2406,7 +2404,7 @@ msgstr "Ende"
 msgid "End Date"
 msgstr "End-Datum"
 
-#: lib/NGCP/Panel/Utils/DbStrings.pm:1092
+#: lib/NGCP/Panel/Utils/DbStrings.pm:1091
 msgid "End Date/Time"
 msgstr "End-Zeit/Datum"
 
@@ -2475,7 +2473,7 @@ msgstr "Externe Vertrags #"
 msgid "External ID"
 msgstr "Externe ID"
 
-#: lib/NGCP/Panel/Utils/DbStrings.pm:1091
+#: lib/NGCP/Panel/Utils/DbStrings.pm:1090
 msgid "External ID of calling subscriber, if local."
 msgstr "Externe ID des Anrufers, wenn lokal."
 
@@ -2590,7 +2588,7 @@ msgstr "Domain erstellen fehlgeschlagen."
 msgid "Failed to create email template"
 msgstr "Email-Vorlage erstellen fehlgeschlagen"
 
-#: lib/NGCP/Panel/Controller/InvoiceTemplate.pm:171
+#: lib/NGCP/Panel/Controller/InvoiceTemplate.pm:161
 msgid "Failed to create invoice template."
 msgstr "Rechnungsvorlage erstellen fehlgeschlagen"
 
@@ -2720,7 +2718,7 @@ msgstr "Löschen der Email-Vorlage fehlgeschlagen"
 msgid "Failed to delete invoice ."
 msgstr "Löschen der Rechnung fehlgschlagen."
 
-#: lib/NGCP/Panel/Controller/InvoiceTemplate.pm:272
+#: lib/NGCP/Panel/Controller/InvoiceTemplate.pm:250
 msgid "Failed to delete invoice template."
 msgstr "Löschen der Rechnungsvorlage fehlgeschlagen."
 
@@ -2824,7 +2822,7 @@ msgstr "Präferenz aktualisieren fehlgeschlagen"
 msgid "Failed to move rewrite rule."
 msgstr "Übersetzungsregel verschieben fehlgeschlagen."
 
-#: lib/NGCP/Panel/Controller/InvoiceTemplate.pm:384
+#: lib/NGCP/Panel/Controller/InvoiceTemplate.pm:362
 msgid "Failed to preview template"
 msgstr "Anzeigen der Vorschau fehlgeschlagen."
 
@@ -2833,7 +2831,7 @@ msgid "Failed to render invoice"
 msgstr "Rechnung erzeugen fehlgeschlagen"
 
 #. ($error->type . ', info is ' . $error->info)
-#: lib/NGCP/Panel/Controller/InvoiceTemplate.pm:373
+#: lib/NGCP/Panel/Controller/InvoiceTemplate.pm:351
 msgid "Failed to render template. Type is "
 msgstr "Vorlage übersetzen fehlgeschlagen. Typ ist "
 
@@ -2856,7 +2854,7 @@ msgstr "Speichern der Ruf-Weiterleitung fehlgeschlagen."
 msgid "Failed to save invoice meta data."
 msgstr "Rechnungs-Metadaten speichern fehlgeschlagen."
 
-#: lib/NGCP/Panel/Controller/InvoiceTemplate.pm:329
+#: lib/NGCP/Panel/Controller/InvoiceTemplate.pm:307
 msgid "Failed to store invoice template"
 msgstr "Rechnungs-Vorlage speichern fehlgeschlagen"
 
@@ -2865,7 +2863,7 @@ msgstr "Rechnungs-Vorlage speichern fehlgeschlagen"
 msgid "Failed to terminate contract."
 msgstr "Vertrag terminieren fehlgeschlagen."
 
-#: lib/NGCP/Panel/Controller/Reseller.pm:291
+#: lib/NGCP/Panel/Controller/Reseller.pm:290
 msgid "Failed to terminate reseller."
 msgstr "Reseller terminieren fehlgeschlagen."
 
@@ -2945,7 +2943,7 @@ msgstr "Email-Vorlage aktualisieren fehlgeschlagen."
 msgid "Failed to update fax setting."
 msgstr "Fax-Einstellungen aktualisieren fehlgeschlagen."
 
-#: lib/NGCP/Panel/Controller/InvoiceTemplate.pm:249
+#: lib/NGCP/Panel/Controller/InvoiceTemplate.pm:227
 msgid "Failed to update invoice template."
 msgstr "Rechnungs-Vorlage aktualisieren fehlgeschlagen."
 
@@ -2977,11 +2975,11 @@ msgstr ""
 msgid "Failed to update reminder setting."
 msgstr "Weckruf aktualisieren fehlgeschlagen."
 
-#: lib/NGCP/Panel/Controller/Reseller.pm:504
+#: lib/NGCP/Panel/Controller/Reseller.pm:503
 msgid "Failed to update reseller branding"
 msgstr "Spezialisiertes Reseller-Layout aktualisieren fehlgeschlagen."
 
-#: lib/NGCP/Panel/Controller/Reseller.pm:250
+#: lib/NGCP/Panel/Controller/Reseller.pm:249
 msgid "Failed to update reseller."
 msgstr "Reseller aktualisieren fehlgeschlagen."
 
@@ -3168,7 +3166,7 @@ msgstr "Missbrauchs-Limits"
 msgid "Fraud Monthly Limit"
 msgstr "Monatliches Missbrauchs-Limit"
 
-#: lib/NGCP/Panel/Utils/DbStrings.pm:1101
+#: lib/NGCP/Panel/Utils/DbStrings.pm:1100
 msgid "Fraud Monthly Lock"
 msgstr "Monatliche Missbrauchs-Sperre"
 
@@ -3265,7 +3263,7 @@ msgstr "Benutzerdefiniert 5"
 msgid "General Purpose 6"
 msgstr "Benutzerdefiniert 6"
 
-#: lib/NGCP/Panel/Utils/DbStrings.pm:1088
+#: lib/NGCP/Panel/Utils/DbStrings.pm:1087
 msgid "General Purpose 7"
 msgstr "Benutzerdefiniert 7"
 
@@ -3277,7 +3275,7 @@ msgstr "Benutzerdefiniert 8"
 msgid "General Purpose 9"
 msgstr "Benutzerdefiniert 9"
 
-#: lib/NGCP/Panel/Utils/DbStrings.pm:1093
+#: lib/NGCP/Panel/Utils/DbStrings.pm:1092
 msgid "Generate"
 msgstr "Erzeugen"
 
@@ -3302,7 +3300,7 @@ msgstr "Zugriff von Gruppe von IP-Adressen und/oder -Netzen erlauben."
 msgid "Groups"
 msgstr "Gruppen"
 
-#: lib/NGCP/Panel/Utils/DbStrings.pm:1115
+#: lib/NGCP/Panel/Utils/DbStrings.pm:1114
 msgid "Handle"
 msgstr "Handle"
 
@@ -3476,7 +3474,7 @@ msgstr "Eingehende User-Provided Redirecting Nummer"
 msgid "Include local area code"
 msgstr "Ortsvorwahl inkludieren"
 
-#: lib/NGCP/Panel/Utils/DbStrings.pm:1098
+#: lib/NGCP/Panel/Utils/DbStrings.pm:1097
 msgid "Incoming Email as CC"
 msgstr "Eingehende Email als CC"
 
@@ -3653,7 +3651,7 @@ msgstr "Ungültige Gruppen ID"
 msgid "Invalid invoice id detected"
 msgstr "Ungültige Rechnungs-ID"
 
-#: lib/NGCP/Panel/Controller/InvoiceTemplate.pm:69
+#: lib/NGCP/Panel/Controller/InvoiceTemplate.pm:68
 msgid "Invalid invoice template id detected"
 msgstr "Ungültige Rechnungs-Vorlagen ID"
 
@@ -3691,8 +3689,8 @@ msgid "Invalid provisioning subscriber id detected."
 msgstr "Ungültige Provisionining Subscriber ID"
 
 #: lib/NGCP/Panel/Controller/Customer.pm:84
-#: lib/NGCP/Panel/Controller/InvoiceTemplate.pm:113
-#: lib/NGCP/Panel/Controller/InvoiceTemplate.pm:93
+#: lib/NGCP/Panel/Controller/InvoiceTemplate.pm:112
+#: lib/NGCP/Panel/Controller/InvoiceTemplate.pm:92
 #: lib/NGCP/Panel/Controller/Reseller.pm:116
 msgid "Invalid reseller id detected"
 msgstr "Ungültige Reseller ID"
@@ -3763,7 +3761,7 @@ msgstr "Abrechnungsperiode"
 msgid "Invoice Period End"
 msgstr "Ende der Abrechnungsperiode"
 
-#: lib/NGCP/Panel/Utils/DbStrings.pm:1083
+#: lib/NGCP/Panel/Utils/DbStrings.pm:1082
 msgid "Invoice Period Start"
 msgstr "Start der Abrechnungsperiode"
 
@@ -3793,7 +3791,7 @@ msgstr "Rechnung erfolgreich gelöscht"
 msgid "Invoice template %1"
 msgstr "Rechnungsvorlage %1"
 
-#: lib/NGCP/Panel/Controller/InvoiceTemplate.pm:79
+#: lib/NGCP/Panel/Controller/InvoiceTemplate.pm:78
 msgid "Invoice template does not exist"
 msgstr "Diese Rechnungsvorlage existiert nicht."
 
@@ -3805,19 +3803,19 @@ msgstr "Rechnungsvorlage hat kein gespeichertes SVG"
 msgid "Invoice template not found"
 msgstr "Rechnungsvorlage nicht gefunden"
 
-#: lib/NGCP/Panel/Controller/InvoiceTemplate.pm:166
+#: lib/NGCP/Panel/Controller/InvoiceTemplate.pm:156
 msgid "Invoice template successfully created"
 msgstr "Rechnungsvorlage erfolgreich erstellt"
 
-#: lib/NGCP/Panel/Controller/InvoiceTemplate.pm:267
+#: lib/NGCP/Panel/Controller/InvoiceTemplate.pm:245
 msgid "Invoice template successfully deleted"
 msgstr "Rechnungsvorlage erfolgreich gelöscht"
 
-#: lib/NGCP/Panel/Controller/InvoiceTemplate.pm:333
+#: lib/NGCP/Panel/Controller/InvoiceTemplate.pm:311
 msgid "Invoice template successfully saved"
 msgstr "Rechnungsvorlage erfolgreich gespeichert"
 
-#: lib/NGCP/Panel/Controller/InvoiceTemplate.pm:244
+#: lib/NGCP/Panel/Controller/InvoiceTemplate.pm:222
 msgid "Invoice template successfully updated"
 msgstr "Rechnungsvorlage erfolgreich aktualisiert"
 
@@ -4145,7 +4143,7 @@ msgstr ""
 "Gesamte Maximale Anzahl gleichzeitiger Anrufe (ein- und ausgehend) von/zu "
 "Subscribern."
 
-#: lib/NGCP/Panel/Utils/DbStrings.pm:1086
+#: lib/NGCP/Panel/Utils/DbStrings.pm:1085
 msgid "May"
 msgstr "Mai"
 
@@ -4188,7 +4186,7 @@ msgstr "Montag"
 msgid "Monitoring & Statistics"
 msgstr "Überwachung & Statistiken"
 
-#: lib/NGCP/Panel/Utils/DbStrings.pm:1104
+#: lib/NGCP/Panel/Utils/DbStrings.pm:1103
 msgid "Month"
 msgstr "Monat"
 
@@ -4547,7 +4545,7 @@ msgstr "Onpeal-Init-Gebühr"
 msgid "Oops!"
 msgstr "Ups!"
 
-#: lib/NGCP/Panel/Utils/DbStrings.pm:1096
+#: lib/NGCP/Panel/Utils/DbStrings.pm:1095
 msgid ""
 "Optionally set the maximum number of subscribers for this contract. Leave "
 "empty for unlimited."
@@ -4960,7 +4958,7 @@ msgid "Primary Number"
 msgstr "Hauptnummer"
 
 #: lib/NGCP/Panel/Controller/Peering.pm:29
-#: lib/NGCP/Panel/Utils/DbStrings.pm:1094
+#: lib/NGCP/Panel/Utils/DbStrings.pm:1093
 msgid "Priority"
 msgstr "Priorität"
 
@@ -5209,7 +5207,7 @@ msgstr "Reseller-Umsatz"
 msgid "Reseller and Peering Contracts"
 msgstr "Reseller- und Peering-Verträge"
 
-#: lib/NGCP/Panel/Controller/Reseller.pm:499
+#: lib/NGCP/Panel/Controller/Reseller.pm:498
 msgid "Reseller branding successfully updated"
 msgstr "Spezialisiertes Reseller-Layout erfolgreich aktualisieren."
 
@@ -5241,7 +5239,7 @@ msgstr ""
 msgid "Reseller is <b>%1</b>"
 msgstr "Reseller ist <b>%1</b>"
 
-#: lib/NGCP/Panel/Controller/Reseller.pm:170
+#: lib/NGCP/Panel/Controller/Reseller.pm:169
 msgid "Reseller not found"
 msgstr "Reseller nicht gefunden"
 
@@ -5254,7 +5252,7 @@ msgid "Reseller successfully created"
 msgstr "Reseller erfolgreich erstellt"
 
 #. ($defaults{admins}->{login},$defaults{admins}->{md5pass})
-#: lib/NGCP/Panel/Controller/Reseller.pm:423
+#: lib/NGCP/Panel/Controller/Reseller.pm:422
 msgid ""
 "Reseller successfully created with login <b>%1</b> and password <b>%2</b>, "
 "please review your settings below"
@@ -5262,11 +5260,11 @@ msgstr ""
 "Reseller erfolgreich erstellt, Login ist <b>%1</b> und Passwort ist  <b>%2</"
 "b>, bitte Einstellungen unten überprüfen und anpassen."
 
-#: lib/NGCP/Panel/Controller/Reseller.pm:245
+#: lib/NGCP/Panel/Controller/Reseller.pm:244
 msgid "Reseller successfully updated"
 msgstr "Reseller erfolgreich aktualisiert"
 
-#: lib/NGCP/Panel/Utils/DbStrings.pm:1082 share/templates/reseller/list.tt:1
+#: lib/NGCP/Panel/Utils/DbStrings.pm:1081 share/templates/reseller/list.tt:1
 #: share/templates/reseller/list.tt:3
 #: share/templates/widgets/admin_reseller_overview.tt:4
 #: share/templates/widgets/admin_reseller_overview.tt:7
@@ -6088,7 +6086,7 @@ msgid "Strict Number Matching"
 msgstr "Strikter Nummernvergleich"
 
 #: lib/NGCP/Panel/Controller/EmailTemplate.pm:36
-#: lib/NGCP/Panel/Utils/DbStrings.pm:1078
+#: lib/NGCP/Panel/Utils/DbStrings.pm:1077
 msgid "Subject"
 msgstr "Betreff"
 
@@ -6338,7 +6336,7 @@ msgstr ""
 msgid "Successfully saved Call Forward"
 msgstr "Ruf-Weiterleitung erfolgreich gespeichert"
 
-#: lib/NGCP/Panel/Controller/Reseller.pm:286
+#: lib/NGCP/Panel/Controller/Reseller.pm:285
 msgid "Successfully terminated reseller"
 msgstr "Reseller erfolgreich terminiert"
 
@@ -6395,7 +6393,7 @@ msgstr "Sprachnachrichten-Einstellungen erfolgreich aktualisiert"
 msgid "Sunday"
 msgstr "Sonntag"
 
-#: lib/NGCP/Panel/Utils/DbStrings.pm:1089
+#: lib/NGCP/Panel/Utils/DbStrings.pm:1088
 msgid "Supported File Types are TXT, PDF, PS, TIFF"
 msgstr "Unterstützte Datei-Typen sind TXT, PDF, PS, TIFF"
 
@@ -6407,7 +6405,7 @@ msgstr "Unterstützt Busy Lamp Field"
 msgid "Supports Private Line"
 msgstr "Unterstützt private Leitung"
 
-#: lib/NGCP/Panel/Utils/DbStrings.pm:1112
+#: lib/NGCP/Panel/Utils/DbStrings.pm:1111
 msgid "Supports Shared Line"
 msgstr "Unterstützt geteilte Leitung"
 
@@ -6444,7 +6442,7 @@ msgstr "TIFF"
 msgid "TLS"
 msgstr "TLS"
 
-#: lib/NGCP/Panel/Utils/DbStrings.pm:1107
+#: lib/NGCP/Panel/Utils/DbStrings.pm:1106
 msgid "Template"
 msgstr "Vorlage"
 
@@ -6452,7 +6450,7 @@ msgstr "Vorlage"
 msgid "Template and customer must belong to same reseller"
 msgstr "Vorlage und Kunde müssen dem selben Reseller zugewiesen sein."
 
-#: lib/NGCP/Panel/Controller/InvoiceTemplate.pm:352
+#: lib/NGCP/Panel/Controller/InvoiceTemplate.pm:330
 msgid "Template has not been saved yet, please save before previewing."
 msgstr ""
 "Vorlage wurde noch nicht gespeichert. Bitte speichern Sie sie um eine "
@@ -6756,7 +6754,7 @@ msgstr ""
 msgid "The cost for the carrier towards the operator (e.g. for 800-numbers)."
 msgstr "Die Kosten des Carriers gegenüber dem Plattform-Betreiber."
 
-#: lib/NGCP/Panel/Utils/DbStrings.pm:1077
+#: lib/NGCP/Panel/Utils/DbStrings.pm:1076
 msgid "The cost for the operator towards the peering carrier."
 msgstr ""
 
@@ -6897,7 +6895,7 @@ msgstr ""
 msgid "The email template used to notify users about subscriber creation."
 msgstr ""
 
-#: lib/NGCP/Panel/Utils/DbStrings.pm:1103
+#: lib/NGCP/Panel/Utils/DbStrings.pm:1102
 msgid "The end of the invoice period."
 msgstr "Das Ende der Rechnungs-Periode."
 
@@ -6939,7 +6937,7 @@ msgstr "Der Dateiname dieser Firmware."
 msgid "The final SIP response code of the call."
 msgstr ""
 
-#: lib/NGCP/Panel/Utils/DbStrings.pm:1087
+#: lib/NGCP/Panel/Utils/DbStrings.pm:1086
 msgid ""
 "The folder the message is currently in (one of INBOX, Old, Work, Friends, "
 "Family, Cust1-Cust6)"
@@ -7007,7 +7005,7 @@ msgstr ""
 "Die ID, die auf den \"Call Forward Unconditional\" Eintrag in der "
 "voip_cf_mappings Tabelle zeigt"
 
-#: lib/NGCP/Panel/Utils/DbStrings.pm:1113
+#: lib/NGCP/Panel/Utils/DbStrings.pm:1112
 msgid ""
 "The included free minutes per billing interval (in seconds, e.g. 60000 for "
 "1000 free minutes)."
@@ -7103,7 +7101,7 @@ msgstr "Die Handynummer des Kontakts."
 msgid "The model name of this device."
 msgstr ""
 
-#: lib/NGCP/Panel/Utils/DbStrings.pm:1081
+#: lib/NGCP/Panel/Utils/DbStrings.pm:1080
 msgid "The name of the Rewrite Rule Set."
 msgstr ""
 
@@ -7174,7 +7172,7 @@ msgid ""
 "expanded during provisioning time."
 msgstr ""
 
-#: lib/NGCP/Panel/Utils/DbStrings.pm:1114
+#: lib/NGCP/Panel/Utils/DbStrings.pm:1113
 msgid "The password to authenticate for SIP and XMPP services."
 msgstr "Das Passwort zum Anmelden an SIP- und XMPP-Diensten."
 
@@ -7256,11 +7254,11 @@ msgstr ""
 msgid "The reseller this level belongs to."
 msgstr ""
 
-#: lib/NGCP/Panel/Utils/DbStrings.pm:1085
+#: lib/NGCP/Panel/Utils/DbStrings.pm:1084
 msgid "The reseller this sound set belongs to."
 msgstr ""
 
-#: lib/NGCP/Panel/Utils/DbStrings.pm:1105
+#: lib/NGCP/Panel/Utils/DbStrings.pm:1104
 msgid "The reseller who can use the Ruleset."
 msgstr ""
 
@@ -7306,7 +7304,7 @@ msgstr ""
 msgid "The start of the invoice period."
 msgstr "Der Start der Rechnungsperiode."
 
-#: lib/NGCP/Panel/Utils/DbStrings.pm:1090
+#: lib/NGCP/Panel/Utils/DbStrings.pm:1089
 msgid "The start time in format hh:mm:ss"
 msgstr "Die Start-Zeit im Format hh:mm:ss"
 
@@ -7480,7 +7478,7 @@ msgid "Thursday"
 msgstr "Donnerstag"
 
 #: lib/NGCP/Panel/Controller/Subscriber.pm:1935
-#: lib/NGCP/Panel/Utils/DbStrings.pm:1097
+#: lib/NGCP/Panel/Utils/DbStrings.pm:1096
 #: share/templates/subscriber/preferences.tt:456
 msgid "Time"
 msgstr "Zeit"
@@ -7497,7 +7495,7 @@ msgstr "Zeit-Sets"
 msgid "Timeout"
 msgstr "Zeitüberschreitung"
 
-#: lib/NGCP/Panel/Utils/DbStrings.pm:1106
+#: lib/NGCP/Panel/Utils/DbStrings.pm:1105
 msgid "Times"
 msgstr ""
 
@@ -7715,7 +7713,7 @@ msgid "Values"
 msgstr "Werte"
 
 #: lib/NGCP/Panel/Controller/Device.pm:38
-#: lib/NGCP/Panel/Utils/DbStrings.pm:1099
+#: lib/NGCP/Panel/Utils/DbStrings.pm:1098
 msgid "Vendor"
 msgstr "Hersteller"
 
@@ -7781,7 +7779,7 @@ msgstr "Sprachnachriten und Sprachbox"
 msgid "Voicemails"
 msgstr "Sprachnachrichten"
 
-#: lib/NGCP/Panel/Utils/DbStrings.pm:1095
+#: lib/NGCP/Panel/Utils/DbStrings.pm:1094
 msgid "Wday"
 msgstr "WTag"
 
@@ -7860,10 +7858,6 @@ msgstr "Diesen Subscriber als PBX-Gruppe verwenden."
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:670
 msgid "Whether this subscriber is used as PBX pilot subscriber."
-msgstr ""
-
-#: lib/NGCP/Panel/Utils/DbStrings.pm:1076
-msgid "Whether this template is used to generate invoices for this reseller."
 msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:444
