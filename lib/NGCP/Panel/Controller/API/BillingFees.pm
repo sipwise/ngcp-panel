@@ -154,7 +154,6 @@ sub POST :Allow {
 
         if($c->request->header('Content-Type') eq 'text/csv') {
             $resource = $c->req->query_params; 
-            $resource->{purge_existing} = JSON::Types::bool($resource->{purge_existing});
         } else {
             last unless $self->require_wellformed_json($c, 'application/json', $data);
             $resource = JSON::from_json($data);
@@ -180,63 +179,12 @@ sub POST :Allow {
             last;
         }
 
-        unless($data) {
-            delete $resource->{purge_existing};
-            my $form = $self->get_form($c);
-            my $zone;
-
-            # in case of implicit zone declaration (name/detail instead of id),
-            # find or create the zone
-            if(!defined $resource->{billing_zone_id} &&
-               defined $resource->{billing_zone_zone} &&
-               defined $resource->{billing_zone_detail}) {
-
-                $zone = $profile->billing_zones->find({
-                    zone => $resource->{billing_zone_zone},
-                    detail => $resource->{billing_zone_detail},
-                });
-                $zone = $profile->billing_zones->create({
-                    zone => $resource->{billing_zone_zone},
-                    detail => $resource->{billing_zone_detail},
-                }) unless $zone;
-                $resource->{billing_zone_id} = $zone->id;
-                delete $resource->{billing_zone_zone};
-                delete $resource->{billing_zone_detail};
-            } elsif(defined $resource->{billing_zone_id}) {
-                $zone = $profile->billing_zones->find($resource->{billing_zone_id});
-            }
-            unless($zone) {
-                $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Invalid 'billing_zone_id'.");
-                last;
-            }
-
-            last unless $self->validate_form(
-                c => $c,
-                resource => $resource,
-                form => $form,
-            );
-
-
-            my $fee;
-            try {
-                $fee = $profile->billing_fees->create($resource);
-            } catch($e) {
-                $c->log->error("failed to create billing fee: $e"); # TODO: user, message, trace, ...
-                $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "Failed to create billing fee.");
-                last;
-            }
-            $guard->commit;
-
-            $c->response->status(HTTP_CREATED);
-            $c->response->header(Location => sprintf('%s%d', $self->dispatch_path, $fee->id));
-            $c->response->body(q());
-            last;
-        } else {
+        if ($data) {
             # csv bulk upload
             my $csv = Text::CSV_XS->new({allow_whitespace => 1, binary => 1, keep_meta_info => 1});
             my @cols = @{ $c->config->{fees_csv}->{element_order} };
 
-            if ($self->is_true($resource->{purge_existing})) {
+            if ($resource->{purge_existing}) {
                 $profile->billing_fees->delete;
             }
             my @fails = ();
@@ -294,7 +242,57 @@ sub POST :Allow {
                 $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "Internal Server Error");
                 last;
             };
+        } else {
+            delete $resource->{purge_existing};
+            my $form = $self->get_form($c);
+            my $zone;
 
+            # in case of implicit zone declaration (name/detail instead of id),
+            # find or create the zone
+            if(!defined $resource->{billing_zone_id} &&
+               defined $resource->{billing_zone_zone} &&
+               defined $resource->{billing_zone_detail}) {
+
+                $zone = $profile->billing_zones->find({
+                    zone => $resource->{billing_zone_zone},
+                    detail => $resource->{billing_zone_detail},
+                });
+                $zone = $profile->billing_zones->create({
+                    zone => $resource->{billing_zone_zone},
+                    detail => $resource->{billing_zone_detail},
+                }) unless $zone;
+                $resource->{billing_zone_id} = $zone->id;
+                delete $resource->{billing_zone_zone};
+                delete $resource->{billing_zone_detail};
+            } elsif(defined $resource->{billing_zone_id}) {
+                $zone = $profile->billing_zones->find($resource->{billing_zone_id});
+            }
+            unless($zone) {
+                $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Invalid 'billing_zone_id'.");
+                last;
+            }
+
+            last unless $self->validate_form(
+                c => $c,
+                resource => $resource,
+                form => $form,
+            );
+
+
+            my $fee;
+            try {
+                $fee = $profile->billing_fees->create($resource);
+            } catch($e) {
+                $c->log->error("failed to create billing fee: $e"); # TODO: user, message, trace, ...
+                $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "Failed to create billing fee.");
+                last;
+            }
+            $guard->commit;
+
+            $c->response->status(HTTP_CREATED);
+            $c->response->header(Location => sprintf('%s%d', $self->dispatch_path, $fee->id));
+            $c->response->body(q());
+            last;
         }
 
     }
