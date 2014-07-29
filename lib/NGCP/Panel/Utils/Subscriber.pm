@@ -369,6 +369,10 @@ sub update_pbx_group_prefs {
     my $group_rs = $params{group_rs} // $c->stash->{pbx_groups};
 
     return if(defined $old_group_id && defined $new_group_id && $old_group_id == $new_group_id);
+    unless ($group_rs) {
+        $c->log->warn('update_pbx_group_prefs: need a group_rs');
+        return;
+    }
 
     my $old_grp_subscriber;
     my $new_grp_subscriber;
@@ -731,6 +735,10 @@ sub terminate {
                     new_group_id => undef,
                     username => $prov_subscriber->username,
                     domain => $prov_subscriber->domain->domain,
+                    group_rs => $schema->resultset('voip_subscribers')->search({
+                            contract_id => $subscriber->contract_id,
+                            status => { '!=' => 'terminated' },
+                        }),
                 );
             }
             NGCP::Panel::Utils::Kamailio::delete_location($c, 
