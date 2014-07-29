@@ -2,6 +2,8 @@
     [% 
         pagewidth = 210;
         pageheight = 297;
+        server_process_units = 'none';
+        money_signs = 3;
         PROCESS "invoice/default/invoice_template_aux.tt";
 
         money_format(amount=(billprof.interval_charge * 100), comma='.'); fixfee = aux.val;
@@ -12,7 +14,6 @@
         cur = billprof.currency;
         p_start = date_format(thedate=invoice.period_start, format='%Y-%m-%d');
         p_end = date_format(thedate=invoice.period_end, format='%Y-%m-%d');
-        server_process_units = 'none';
     -%]
 }-->
 <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="210mm" height="297mm" viewBox="0 0 595 842" server-process-units="none">
