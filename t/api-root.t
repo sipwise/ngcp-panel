@@ -53,6 +53,7 @@ $ua->ssl_opts(
                  callcontrols => 1,
                  callforwards => 1,
                  calls => 1,
+                 ccmapentries => 1,
                  cfdestinationsets => 1,
                  cfmappings => 1,
                  cftimesets => 1,
