@@ -486,6 +486,42 @@
     </div>
     [% END -%]
 
+    [% IF c.config.features.callingcard && (
+        c.user.roles == "admin" || c.user.roles == "reseller" 
+    ) -%]
+    <div class="accordion-group">
+        <div class="accordion-heading">
+            <a class="accordion-toggle" data-toggle="collapse" data-parent="#preference_groups" href="#collapse_ccmap">[% c.loc('Callthrough CLIs') %]</a>
+        </div>
+        <div class="accordion-body collapse" id="collapse_ccmap">
+            <div class="accordion-inner">
+
+                [% IF c.user.roles == "subscriber" || c.user.roles == "subscriberadmin" || ((c.user.roles == "admin" || c.user.roles == "reseller") && c.user.read_only != 1) -%]
+                <a class="btn btn-tertiary btn-large" href="[% c.uri_for_action('/subscriber/edit_ccmapping', [c.req.captures.0]) %]">
+                    <i class="icon-star"></i> [% c.loc('Edit Callthrough CLIs') %]
+                </a>
+                [% END -%]
+[%
+    helper.messages = '';
+    helper.name = c.loc('foobar');
+    helper.identifier = 'ccmapentries';
+    helper.column_sort = undef;
+    helper.dt_columns = ccmap_dt_columns;
+    helper.length_change = 1;
+    helper.ajax_uri = c.uri_for_action('/subscriber/ajax_ccmappings', [c.req.captures.0]);
+
+    helper.dt_buttons = [
+        { name = c.loc('Delete'), uri = "/subscriber/"_ c.req.captures.0 _"/preferences/ccmappings/'+full.id+'/delete", class = 'btn-small btn-secondary', icon = 'icon-trash' },
+    ];
+
+    PROCESS 'helpers/datatables.tt';
+%]
+            </div>
+        </div>
+    </div>
+    [% END -%]
+
+
 [% UNLESS c.user.roles == 'subscriber' || c.user.roles == 'subscriberadmin' -%]
     <div class="accordion-group">
         <div class="accordion-heading">
@@ -658,6 +694,21 @@
     </table>
     [% END -%]
     </div>
+
+[%
+    modal_footer();
+    modal_script(m.close_target = close_target ? close_target : c.uri_for_action('/subscriber/preferences', [c.req.captures.0]));
+-%]
+[% ELSIF edit_ccmap_flag -%]
+[%
+    PROCESS "helpers/modal.tt";
+    modal_header(m.name = 'Callthrough CLIs');
+-%]
+
+    [% IF ccmap_form.has_for_js -%]
+    [% ccmap_form.render_repeatable_js %]
+    [% END -%]
+    [% translate_form(ccmap_form).render %]
 
 [%
     modal_footer();

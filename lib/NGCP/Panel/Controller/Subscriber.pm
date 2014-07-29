@@ -19,6 +19,7 @@ use NGCP::Panel::Utils::Kamailio;
 use NGCP::Panel::Utils::Events;
 use NGCP::Panel::Form::Subscriber;
 use NGCP::Panel::Form::SubscriberEdit;
+use NGCP::Panel::Form::CCMapEntries;
 use NGCP::Panel::Form::Customer::PbxSubscriberEdit;
 use NGCP::Panel::Form::Customer::PbxExtensionSubscriberEditSubadmin;
 use NGCP::Panel::Form::Customer::PbxExtensionSubscriberEditSubadminNoGroup;
@@ -269,6 +270,12 @@ sub base :Chained('sub_list') :PathPart('') :CaptureArgs(1) {
         { name => "direction", search => 1, title => $c->loc('Direction') },
         { name => "peer_number", search => 1, title => $c->loc('Peer Number') },
         { name => "pages", search => 1, title => $c->loc('Pages') },
+    ]);
+
+    $c->stash->{ccmap_dt_columns} = NGCP::Panel::Utils::Datatables::set_columns($c, [
+        { name => "id", search => 1, title => $c->loc('#') },
+        { name => "auth_key", search => 1, title => $c->loc('CLI') },
+        { name => "source_uuid", search => 1, title => $c->loc('Source UUID') },
     ]);
 
     if($c->stash->{billing_mapping}->product->class eq "pbxaccount") {
@@ -3491,6 +3498,119 @@ sub edit_autoattendant :Chained('base') :PathPart('preferences/speeddial/edit') 
         cf_description => $c->loc('Auto Attendant Slot'),
         cf_form => $form,
     );
+}
+
+sub ajax_ccmappings :Chained('base') :PathPart('preferences/ccmappings/ajax') :Args(0) {
+    my ($self, $c) = @_;
+
+    my $prov_subscriber = $c->stash->{subscriber}->provisioning_voip_subscriber;
+    my $aa_rs = $prov_subscriber->voip_cc_mappings;
+    NGCP::Panel::Utils::Datatables::process($c, $aa_rs, $c->stash->{ccmap_dt_columns});
+
+    $c->detach( $c->view("JSON") );
+    return;
+}
+
+sub ccmappings :Chained('base') :PathPart('preferences/ccmappings') :CaptureArgs(1) {
+    my ($self, $c, $aa_id) = @_;
+
+    my $ccmapping = $c->stash->{subscriber}->provisioning_voip_subscriber->voip_cc_mappings
+                ->find($aa_id);
+    unless($ccmapping) {
+        NGCP::Panel::Utils::Message->error(
+            c    => $c,
+            log  => "no such ccmapping with id '$aa_id' for uuid ".$c->stash->{subscriber}->uuid,
+            desc => $c->loc('No such auto ccmapping id.'),
+        );
+        NGCP::Panel::Utils::Navigation::back_or($c, 
+            $c->uri_for_action('/subscriber/preferences', [$c->req->captures->[0]]));
+    }
+    $c->stash->{ccmapping} = $ccmapping;
+    return;
+}
+
+sub delete_ccmapping :Chained('ccmappings') :PathPart('delete') :Args(0) {
+    my ($self, $c) = @_;
+
+    $c->detach('/denied_page')
+        if(($c->user->roles eq "admin" || $c->user->roles eq "reseller") && $c->user->read_only);
+
+    try {
+        $c->stash->{ccmapping}->delete;
+        $c->flash(messages => [{type => 'success', text => $c->loc('Successfully deleted ccmapping.') }]);
+    } catch($e) {
+        NGCP::Panel::Utils::Message->error(
+            c     => $c,
+            error => $e,
+            desc  => $c->loc('Failed to delete ccmapping.'),
+        );
+    }
+    NGCP::Panel::Utils::Navigation::back_or($c, 
+        $c->uri_for_action('/subscriber/preferences', [$c->req->captures->[0]]));
+    return;
+}
+
+sub edit_ccmapping :Chained('base') :PathPart('preferences/ccmappings/edit') :Args(0) {
+    my ($self, $c) = @_;
+
+    $c->detach('/denied_page')
+        if(($c->user->roles eq "admin" || $c->user->roles eq "reseller") && $c->user->read_only);
+
+    my $posted = ($c->request->method eq 'POST');
+    my $prov_subscriber = $c->stash->{subscriber}->provisioning_voip_subscriber;
+    my $ccmappings = $prov_subscriber->voip_cc_mappings;
+    my $form = NGCP::Panel::Form::CCMapEntries->new;
+
+    my $params = {};
+    unless($posted) {
+        $params->{mappings} = [];
+        foreach my $mapping ($ccmappings->all) {
+            push @{ $params->{mappings} }, { $mapping->get_inflated_columns };
+        }
+    }
+
+    $form->process(
+        posted => $posted,
+        params => $c->req->params,
+        item => $params,
+    );
+    NGCP::Panel::Utils::Navigation::check_form_buttons(
+        c => $c,
+        form => $form,
+        fields => {},
+        back_uri => $c->req->uri,
+    );
+    if($posted && $form->validated) {
+        try {
+            my $schema = $c->model('DB');
+            $schema->txn_do(sub {
+                $ccmappings->delete_all;
+                my @fields = $form->field('mappings')->fields;
+                foreach my $map (@fields) {
+                    $ccmappings->create({
+                        source_uuid => $map->field('source_uuid')->value || $prov_subscriber->uuid,
+                        auth_key => $map->field('auth_key')->value,
+                    });
+                }
+            });
+            $c->flash(messages => [{type => 'success', text => $c->loc('Successfully updated ccmappings.')}]);
+        } catch($e) {
+            NGCP::Panel::Utils::Message->error(
+                c     => $c,
+                error => $e,
+                desc  => $c->loc('Failed to update ccmappings'),
+            );
+        }
+        NGCP::Panel::Utils::Navigation::back_or($c, 
+            $c->uri_for_action('/subscriber/preferences', [$c->req->captures->[0]]));
+    }
+
+    $c->stash(
+        template => 'subscriber/preferences.tt',
+        edit_ccmap_flag => 1,
+        ccmap_form => $form,
+    );
+    return;
 }
 
 sub callflow_base :Chained('base') :PathPart('callflow') :CaptureArgs(1) :Does(ACL) :ACLDetachTo('/denied_page') :AllowedRole(admin) :AllowedRole(reseller) {

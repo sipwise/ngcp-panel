@@ -14,12 +14,12 @@ use HTTP::Status qw(:constants);
 use JSON::Types;
 use NGCP::Panel::Form::CFSimpleAPI;
 use NGCP::Panel::Utils::Subscriber;
-use NGCP::Panel::Form::CCMapEntriesAPI;
+use NGCP::Panel::Form::CCMapEntries;
 
 sub get_form {
     my ($self, $c) = @_;
 
-    return NGCP::Panel::Form::CCMapEntriesAPI->new;
+    return NGCP::Panel::Form::CCMapEntries->new;
 }
 
 sub hal_from_item {
