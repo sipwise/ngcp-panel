@@ -130,7 +130,10 @@
         amount = amount ? amount : 0 ;
         full = Math.int(amount / 100);
         cent = Math.int(amount % 100);
-        cents = String.new(cent); cents = cents.format("%02d");
+        cents = String.new(cent);
+        money_signs = money_signs || '2';
+        money_format_string = money_format_string || "%0" _ money_signs _ "d";
+        cents = cents.format(money_format_string);
         aux.val = full _ comma _ cents;
     END;
 
