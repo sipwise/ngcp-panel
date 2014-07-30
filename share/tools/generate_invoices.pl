@@ -24,33 +24,56 @@ use NGCP::Panel::Utils::InvoiceTemplate;
 use NGCP::Panel::Utils::Invoice;
 use NGCP::Panel::Utils::Email;
 
-
+my $opt = {};
 Log::Log4perl::init('/etc/ngcp-ossbss/logging.conf');
 my $logger = Log::Log4perl->get_logger('NGCP::Panel');
 
-
-my $dbh;
 {
-    my ($dbuser, $dbpass);
-    my $mfile = '/etc/mysql/sipwise.cnf';
-    if(-f $mfile) {
-        open my $fh, "<", $mfile
-            or die "failed to open '$mfile': $!\n";
-        $_ = <$fh>; chomp;
-        s/^SIPWISE_DB_PASSWORD='(.+)'$/$1/;
-        $dbuser = 'sipwise'; $dbpass = $_;
-    } else {
-        $dbuser = 'root';
-        $dbpass = '';
+    my $config_file = "/etc/ngcp-invoice-gen/invoice-gen.conf";
+    if(-e $config_file){
+        open CONFIG, "$config_file" or die "Program stopping, couldn't open the configuration file '$config_file'.\n";
+
+        #can try CONFIG::Hash, Env::Sourced
+        while (<CONFIG>) {
+            chomp;                  # no newline
+            s/#.*//;                # no comments
+            s/^\s+//;               # no leading white
+            s/\s+$//;               # no trailing white
+            next unless length;     # anything left?
+            my ($var, $value) = split(/\s*=\s*/, $_, 2);
+            $opt->{lc $var} = $value;
+        }
+        close CONFIG;
     }
-    $dbh = DBI->connect('dbi:mysql:billing;host=localhost', $dbuser, $dbpass, {mysql_enable_utf8 => 1})
-    or die "failed to connect to billing DB\n";
 }
 
+    
+my $dbh;
+{
+    my ($dbcfg);
+    foreach(qw/dbuser dbpass dbdb dbhost dbport/){
+        $opt->{$_} and $dbcfg->{$_} = $opt->{$_};
+    }
+    if((!$dbcfg->{dbuser}) || (!$dbcfg->{dbpass})){
+        my $mfile = '/etc/mysql/sipwise.cnf';
+        if(-f $mfile) {
+            open my $fh, "<", $mfile
+                or die "failed to open '$mfile': $!\n";
+            $_ = <$fh>; chomp;
+            s/^SIPWISE_DB_PASSWORD='(.+)'$/$1/;
+            $dbcfg->{dbuser} = 'sipwise'; 
+            $dbcfg->{dbpass} = $_;
+        } else {
+            $dbcfg->{dbuser} = 'root';
+            $dbcfg->{dbpass} = '';
+        }
+    }
+    $dbcfg->{dbdb} //= 'billing';
+    $dbcfg->{dbhost} //= 'localhost';
+    $dbh = DBI->connect('dbi:mysql:'.$dbcfg->{dbdb}.';host='.$dbcfg->{dbhost}, $dbcfg->{dbuser}, $dbcfg->{dbpass}, {mysql_enable_utf8 => 1})
+        or die "failed to connect to billing DB\n";
+}
 
-
-
-my $opt = {};
 Getopt::Long::GetOptions($opt, 
     'reseller_id:i@', 
     'client_contact_id:i@', 
@@ -69,6 +92,8 @@ Getopt::Long::GetOptions($opt,
 $logger->debug( Dumper $opt );
 pod2usage(1) if $opt->{help};
 pod2usage(-exitval => 0, -verbose => 2) if $opt->{man};
+
+
     
 my ($stime,$etime);
 if($opt->{prevmonth}){
@@ -82,6 +107,7 @@ if($opt->{prevmonth}){
         ? NGCP::Panel::Utils::DateTime::from_string($opt->{etime}) 
         : $stime->clone->add( months => 1 )->subtract( seconds => 1 );
 }
+
 if( $opt->{client_contract_id} ){
     $opt->{reseller_id} = [$dbh->selectrow_array('select distinct contacts.reseller_id from contracts inner join contacts on contracts.contact_id=contacts.id '.ify(' where contracts.id', @{$opt->{client_contract_id}}),  undef, @{$opt->{client_contract_id}} )];
     $opt->{client_contact_id} = [$dbh->selectrow_array('select distinct contracts.contact_id from contracts '.ify(' where contracts.id', @{$opt->{client_contract_id}}),  undef, @{$opt->{client_contract_id}} )];
@@ -360,27 +386,8 @@ sub get_invoice_template{
     
     $svg = $dbh->selectrow_array('select data from invoice_templates where id=?',undef,$client_contract->{invoice_template_id});
     
-    #if(!$svg){
-    #    $logger->debug( "No saved template for customer - no invoice;\n");
-    #}
-    #utf8::decode($svg);
-    #return \$svg;
-    
-    
-    #old functionality.
-    state ($svg_default);
-    if(!$svg_default){
-        #$t = NGCP::Panel::Utils::InvoiceTemplate::get_tt();
-        $svg_default = $t->context->insert('invoice/default/invoice_template_svg.tt');
-        #NGCP::Panel::Utils::InvoiceTemplate::preprocess_svg(\$svg_default);
-    }
     if(!$svg){
-        $svg = $dbh->selectrow_array('select data from invoice_templates where is_active = 1 and type = "svg" and reseller_id=?',undef,$provider_contract->{reseller_core_id});
-    }
-    if(!$svg){
-        $svg = $svg_default;
-        $logger->debug( "No saved active template - no invoice;\n");
-        return;
+        $logger->debug( "No saved template for customer - no invoice;\n");
     }
     utf8::decode($svg);
     return \$svg;
