@@ -31,10 +31,12 @@ sub field_list {
     my $c = $self->ctx;
     return unless $c;
 
-    my $group = $self->field('group');
-    $group->field('id')->ajax_src(
-        $c->uri_for_action('/customer/pbx_group_ajax', [$c->stash->{customer_id}])->as_string
-    );
+    my $group = $self->field('group_select');
+    if ($group) {
+        $group->ajax_src(
+            $c->uri_for_action('/customer/pbx_group_ajax', [$c->stash->{customer_id}])->as_string
+        );
+    }
 
     my $profile_set = $c->stash->{pilot}->provisioning_voip_subscriber->voip_subscriber_profile_set;
     if($profile_set) {
