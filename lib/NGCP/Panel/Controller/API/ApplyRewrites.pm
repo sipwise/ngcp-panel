@@ -88,8 +88,8 @@ sub POST :Allow {
         );
 
         my $subscriber_rs = $c->model('DB')->resultset('voip_subscribers')->search({
-            id => $resource->{subscriber_id},
-            status => { '!=' => 'terminated' },
+            'me.id' => $resource->{subscriber_id},
+            'me.status' => { '!=' => 'terminated' },
         });
         if($c->user->roles eq "admin") {
         } elsif($c->user->roles eq "reseller") {
