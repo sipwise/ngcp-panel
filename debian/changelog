@@ -1,3 +1,14 @@
+ngcp-panel (1.3.2.5+0~mr3.3.2.5) unstable; urgency=low
+
+  [ Gerhard Jungwirth ]
+  * [d56328c] MT#8287 only create aliases if available on subscriber creation
+  * [4865720] MT#8287 fix subscriber termination by subadmin
+  * [ba16fa0] MT#8287 fix commit: subscriber termination by subadmin
+
+  [ Sipwise Jenkins Builder ]
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Wed, 30 Jul 2014 15:56:18 +0200
+
 ngcp-panel (1.3.2.4+0~mr3.3.2.4) unstable; urgency=low
 
   [ Irka ]
