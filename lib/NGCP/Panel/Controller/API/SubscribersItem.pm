@@ -192,7 +192,8 @@ sub DELETE :Allow {
 
         if($c->user->roles eq "admin") {
         } elsif($c->user->roles eq "reseller") {
-            unless($subscriber->subscriber_resellers->reseller_id == $c->user->reseller_id) {
+            my $contact = $subscriber->contract->contact;
+            unless($contact && $contact->reseller_id == $c->user->reseller_id) {
                 $self->error($c, HTTP_FORBIDDEN, "subscriber does not belong to reseller");
                 last;
             }
