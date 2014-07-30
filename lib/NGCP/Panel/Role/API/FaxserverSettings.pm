@@ -88,7 +88,7 @@ sub item_rs {
 
     $item_rs = $c->model('DB')->resultset('voip_subscribers')
         ->search(
-            { status => { '!=' => 'terminated' } },
+            { 'me.status' => { '!=' => 'terminated' } },
             { prefetch => 'provisioning_voip_subscriber',},
         );
     if($c->user->roles eq "reseller") {
