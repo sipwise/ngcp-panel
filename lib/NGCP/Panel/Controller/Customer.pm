@@ -679,7 +679,7 @@ sub subscriber_create :Chained('base') :PathPart('subscriber/create') :Args(0) {
                     domain => $billing_subscriber->domain->domain,
                 ) if($pbx && !$pbxadmin && $form->params->{pbx_group_id});
 
-                if($pbx && !$pbxadmin) {
+                if($pbx && !$pbxadmin && $form->value->{alias_select}) {
                     NGCP::Panel::Utils::Subscriber::update_subadmin_sub_aliases(
                         schema => $schema,
                         subscriber => $billing_subscriber,
