@@ -326,7 +326,7 @@ msgstr "Принять"
 msgid "Access Restrictions"
 msgstr "Ограничения доступа"
 
-#: lib/NGCP/Panel/Controller/Customer.pm:822
+#: lib/NGCP/Panel/Controller/Customer.pm:824
 msgid "Account balance successfully changed!"
 msgstr "Баланс счета успешно изменен!"
 
@@ -1085,7 +1085,7 @@ msgstr "Звоню"
 msgid "Callthrough CLIs"
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/Customer.pm:882
+#: lib/NGCP/Panel/Controller/Customer.pm:884
 msgid "Can't create a PBX group without having a pilot subscriber."
 msgstr "Не могу создать PBX группу без основного абонента."
 
@@ -2528,7 +2528,7 @@ msgstr "Не удалось добавить регистрацию устрой
 msgid "Failed to clear audio cache."
 msgstr "Не удалось очистить аудио кэш."
 
-#: lib/NGCP/Panel/Controller/Customer.pm:798
+#: lib/NGCP/Panel/Controller/Customer.pm:800
 msgid "Failed to clear fraud interval."
 msgstr "Не удалось очистить интервал мошенничества."
 
@@ -2549,11 +2549,11 @@ msgstr "Не удалось создать NCOS список."
 msgid "Failed to create NCOS pattern."
 msgstr "Не удалось создать NCOS шаблон."
 
-#: lib/NGCP/Panel/Controller/Customer.pm:1119
+#: lib/NGCP/Panel/Controller/Customer.pm:1121
 msgid "Failed to create PBX device"
 msgstr "Не удалось создать PBX устройства"
 
-#: lib/NGCP/Panel/Controller/Customer.pm:947
+#: lib/NGCP/Panel/Controller/Customer.pm:949
 msgid "Failed to create PBX group."
 msgstr "Не удалось создать PBX группы."
 
@@ -2670,7 +2670,7 @@ msgstr "Не удалось создать набор профиля абоне�
 msgid "Failed to create subscriber profile."
 msgstr "Не удалось создать профиль абонента."
 
-#: lib/NGCP/Panel/Controller/Customer.pm:718
+#: lib/NGCP/Panel/Controller/Customer.pm:720
 #: lib/NGCP/Panel/Controller/Subscriber.pm:193
 msgid "Failed to create subscriber."
 msgstr "Не удалось создать абонента."
@@ -2691,7 +2691,7 @@ msgstr "Не удалось удалить NCOS список."
 msgid "Failed to delete NCOS pattern."
 msgstr "Не удалось удалить NCOS шаблон."
 
-#: lib/NGCP/Panel/Controller/Customer.pm:1266
+#: lib/NGCP/Panel/Controller/Customer.pm:1268
 msgid "Failed to delete PBX device"
 msgstr "Не удалось удалить PBX устройство"
 
@@ -2913,11 +2913,11 @@ msgstr "Не удалось обновить NCOS список."
 msgid "Failed to update NCOS pattern."
 msgstr "Не удалось обновить шаблон NCOS."
 
-#: lib/NGCP/Panel/Controller/Customer.pm:1242
+#: lib/NGCP/Panel/Controller/Customer.pm:1244
 msgid "Failed to update PBX device"
 msgstr "Не удалось обновить PBX устройство"
 
-#: lib/NGCP/Panel/Controller/Customer.pm:1030
+#: lib/NGCP/Panel/Controller/Customer.pm:1032
 msgid "Failed to update PBX group."
 msgstr "Не удалось обновить PBX группу."
 
@@ -3215,7 +3215,7 @@ msgstr "Блокировать при достижении дневного ли
 msgid "Fraud daily notify"
 msgstr "Информировать при достижении дневного лимита"
 
-#: lib/NGCP/Panel/Controller/Customer.pm:759
+#: lib/NGCP/Panel/Controller/Customer.pm:761
 msgid "Fraud settings successfully changed!"
 msgstr "Настройки информирования о мошенничестве успешно изменены!"
 
@@ -3672,8 +3672,8 @@ msgid "Invalid file type detected, only WAV supported"
 msgstr "Обнаружен некорректный тип файла, поддерживается только WAV"
 
 #. ($type)
-#: lib/NGCP/Panel/Controller/Customer.pm:743
-#: lib/NGCP/Panel/Controller/Customer.pm:780
+#: lib/NGCP/Panel/Controller/Customer.pm:745
+#: lib/NGCP/Panel/Controller/Customer.pm:782
 msgid "Invalid fraud interval '%1'!"
 msgstr "Некорректный интервал мошенничества '%1'!"
 
@@ -3717,8 +3717,8 @@ msgstr "Обнаружен некорректный id для контракта
 msgid "Invalid profile id detected!"
 msgstr "Обнаружен некорректный id профиля!"
 
-#: lib/NGCP/Panel/Controller/Customer.pm:1096
-#: lib/NGCP/Panel/Controller/Customer.pm:1219
+#: lib/NGCP/Panel/Controller/Customer.pm:1098
+#: lib/NGCP/Panel/Controller/Customer.pm:1221
 msgid "Invalid provisioning subscriber id detected."
 msgstr "Обнаружен некорректный id автоконфигурации абонента."
 
@@ -4166,7 +4166,7 @@ msgid ""
 msgstr ""
 
 #: lib/NGCP/Panel/Controller/Customer.pm:553
-#: lib/NGCP/Panel/Controller/Customer.pm:867
+#: lib/NGCP/Panel/Controller/Customer.pm:869
 msgid "Maximum number of subscribers for this customer reached"
 msgstr "Достигнуто максимальное количество абонентов для этого клиента"
 
@@ -4641,12 +4641,12 @@ msgstr "Правила перезаписи вызывающего (Caller) пр
 msgid "Outbound socket to be used for SIP communication to this entity"
 msgstr "Сокет используемый для исходящего SIP трафика для этой записи"
 
-#: lib/NGCP/Panel/Controller/Customer.pm:1129
-#: lib/NGCP/Panel/Controller/Customer.pm:1252
+#: lib/NGCP/Panel/Controller/Customer.pm:1131
+#: lib/NGCP/Panel/Controller/Customer.pm:1254
 msgid "PBX Device"
 msgstr "Устройство PBX"
 
-#: lib/NGCP/Panel/Controller/Customer.pm:1261
+#: lib/NGCP/Panel/Controller/Customer.pm:1263
 msgid "PBX Device successfully deleted"
 msgstr "Устройство PBX успешно удалено"
 
@@ -4658,7 +4658,7 @@ msgstr "Устройства PBX"
 msgid "PBX Extension"
 msgstr "PBX добавочный номер"
 
-#: lib/NGCP/Panel/Controller/Customer.pm:957
+#: lib/NGCP/Panel/Controller/Customer.pm:959
 msgid "PBX Group"
 msgstr "Группа PBX"
 
@@ -4678,34 +4678,34 @@ msgstr "Настройки PBX Группы %1@%2"
 msgid "PBX Groups"
 msgstr "Группы PBX"
 
-#: lib/NGCP/Panel/Controller/Customer.pm:1113
+#: lib/NGCP/Panel/Controller/Customer.pm:1115
 msgid "PBX device successfully created"
 msgstr "Устройство PBX успешно создано"
 
-#: lib/NGCP/Panel/Controller/Customer.pm:1236
+#: lib/NGCP/Panel/Controller/Customer.pm:1238
 msgid "PBX device successfully updated"
 msgstr "Устройство PBX успешно обновлено"
 
 #. ($dev_id)
-#: lib/NGCP/Panel/Controller/Customer.pm:1149
+#: lib/NGCP/Panel/Controller/Customer.pm:1151
 msgid "PBX device with id %1 does not exist for this customer."
 msgstr "Не существует устройства PBX с id %1 для данного клиента."
 
 #. ($dev_id)
-#: lib/NGCP/Panel/Controller/Customer.pm:1141
+#: lib/NGCP/Panel/Controller/Customer.pm:1143
 msgid "PBX device with id %1 does not exist."
 msgstr "Не существует устройства PBX с id %1."
 
-#: lib/NGCP/Panel/Controller/Customer.pm:942
+#: lib/NGCP/Panel/Controller/Customer.pm:944
 msgid "PBX group successfully created."
 msgstr "Группа PBX успешно создана."
 
-#: lib/NGCP/Panel/Controller/Customer.pm:1025
+#: lib/NGCP/Panel/Controller/Customer.pm:1027
 msgid "PBX group successfully updated."
 msgstr "Группа PBX успешно обновлена."
 
 #. ($group_id)
-#: lib/NGCP/Panel/Controller/Customer.pm:969
+#: lib/NGCP/Panel/Controller/Customer.pm:971
 msgid "PBX group with id %1 does not exist."
 msgstr "Не существует группа PBX с id %1"
 
@@ -6297,7 +6297,7 @@ msgstr "Состояние абонента <b>%1</b>"
 msgid "Subscriber successfully created!"
 msgstr "Абонент успешно создан!"
 
-#: lib/NGCP/Panel/Controller/Customer.pm:713
+#: lib/NGCP/Panel/Controller/Customer.pm:715
 msgid "Subscriber successfully created."
 msgstr "Абонент успешно создан."
 
@@ -6319,7 +6319,7 @@ msgstr "Зарегистрированное устройство успешно
 msgid "Successfully cleared Call Forward"
 msgstr "Перенаправление звонков успешно очищено"
 
-#: lib/NGCP/Panel/Controller/Customer.pm:804
+#: lib/NGCP/Panel/Controller/Customer.pm:806
 msgid "Successfully cleared fraud interval!"
 msgstr "Интервал мошенничества успешно очищен!"
 
@@ -6375,7 +6375,7 @@ msgstr "IP авторизация успешно удалена"
 msgid "Successfully deleted voicemail"
 msgstr "Голосовое сообщение успешно удалено"
 
-#: lib/NGCP/Panel/Controller/Customer.pm:1289
+#: lib/NGCP/Panel/Controller/Customer.pm:1291
 msgid "Successfully redirected request to device"
 msgstr "Запрос к устройству успешно перенаправлен"
 
