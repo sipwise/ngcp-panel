@@ -129,8 +129,15 @@ sub get_tt {
             if('HASH' eq ref $item){
                 return $item->{$col};
             }
-        }
+        },
     );
+    $tt->context->define_vmethod(
+        'scalar' => power => sub {
+            my($value,$power) = @_;
+            $c->log->debug('power: value='.$value.'; power='.$power.';');
+            return $value ** $power;
+        },
+   );
     return $tt;
 }
 
@@ -281,7 +288,7 @@ sub get_dummy_data {
             data => [
                 map {{ 
                     number => int(rand(200)),
-                    cost => int(rand(100000)),
+                    customercost => int(rand(100000)),
                     duration => int(rand(10000)),
                     free_time => 0,
                     zone => "Zone $_",
