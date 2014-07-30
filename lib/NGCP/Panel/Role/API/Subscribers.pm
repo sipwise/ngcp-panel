@@ -244,7 +244,7 @@ sub prepare_resource {
     );
 
     unless($domain) {
-        $domain = $c->model('DB')->resultset('domains')->search($resource->{domain_id});
+        $domain = $c->model('DB')->resultset('domains')->search({'me.id' => $resource->{domain_id}});
         if($c->user->roles eq "admin") {
         } elsif($c->user->roles eq "reseller") {
             $domain = $domain->search({ 
