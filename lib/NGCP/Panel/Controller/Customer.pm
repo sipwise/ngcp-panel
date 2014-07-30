@@ -623,11 +623,13 @@ sub subscriber_create :Chained('base') :PathPart('subscriber/create') :Args(0) {
             my $schema = $c->model('DB');
             $schema->txn_do(sub {
                 my $preferences = {};
-                my $pbxgroups;
+                my $pbxgroups = [];
                 if($pbx && !$pbxadmin) {
                     my $pilot = $c->stash->{pilot};
                     $form->params->{domain}{id} = $pilot->domain_id;
-                    $pbxgroups = decode_json($form->value->{group_select});
+                    if ($form->value->{group_select}) {
+                        $pbxgroups = decode_json($form->value->{group_select});
+                    }
                     my $base_number = $pilot->primary_number;
                     if($base_number) {
                         $preferences->{cloud_pbx_base_cli} = $base_number->cc . $base_number->ac . $base_number->sn;
@@ -680,7 +682,7 @@ sub subscriber_create :Chained('base') :PathPart('subscriber/create') :Args(0) {
                     preferences => $preferences,
                 );
 
-                if($pbx && !$pbxadmin) {
+                if($pbx && !$pbxadmin && $form->value->{alias_select}) {
                     NGCP::Panel::Utils::Subscriber::update_subadmin_sub_aliases(
                         schema => $schema,
                         subscriber => $billing_subscriber,
