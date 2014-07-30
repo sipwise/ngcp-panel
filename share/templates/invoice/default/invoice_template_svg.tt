@@ -3,7 +3,7 @@
         pagewidth = 210;
         pageheight = 297;
         server_process_units = 'none';
-        money_signs = 3;
+#        money_signs = 3;
         PROCESS "invoice/default/invoice_template_aux.tt";
 
         money_format(amount=(billprof.interval_charge * 100), comma='.'); fixfee = aux.val;
@@ -90,7 +90,7 @@
         <text text-anchor="end" x="538.65" y="484.785" font-family="Verdana" font-size="8" font-weight="bold">Total Price in [% cur %]</text>
         <line x1="62.37" y1="490.455" x2="538.65" y2="490.455" style="stroke:#000000;stroke-width:1;" />
 
-        <!--{ [% zonelist(fontfamily='Verdana', fontsize=8, startx=62, starty=507, offsety=14, miny=113.4, maxy=709, zones=zones.data, fields=[{name='zone',dx=0},{name='number',dx=221,anchor='end'},{name='duration',dx=99,timestamp2time=1,anchor='end'},{name='customercost',dx=326,money_cents=1,comma='.',anchor='end'}]) -%] }-->
+        <!--{ [% zonelist(fontfamily='Verdana', fontsize=8, startx=62, starty=507, offsety=14, miny=113.4, maxy=709, zones=zones.data, fields=[{name='zone',dx=0},{name='number',dx=221,anchor='end'},{name='duration',dx=99,timestamp2time=1,anchor='end'},{name='customercost',dx=156,money_cents=1,comma='.',money_signs='3',anchor='end'}]) -%] }-->
 
         <!-- firsty-507 means the first y in the group is at 180mm (507px); mandatory to automatically place the footer after the list -->
         <!--{<g class="list-footer firsty-507 lasty-[% aux.lasty %]">}-->
@@ -140,7 +140,7 @@
 
         <line x1="62.37" y1="170.1" x2="538.65" y2="170.1" style="stroke:#000000;stroke-width:1;" />
 
-        <!--{ [% calllist(fontfamily='Verdana', fontsize=8, startx=62.37, starty=184.275, offsety=14, miny=113.4, maxy=737, calls=calls, fields=[{name='start_time',dx=0,date_format='%Y-%m-%d %H:%M:%S'},{name='duration',dx=141.175,timestamp2time=1,anchor='end'},{name='destination_user_in',dx=28.35,prefix='+',masklen=10,mask='xxx'},{name='zone',dx=113.4},{name='source_customer_cost',dx=192.78,money_cents=1,comma='.',anchor='end'}]) -%] }-->
+        <!--{ [% calllist(fontfamily='Verdana', fontsize=8, startx=62.37, starty=184.275, offsety=14, miny=113.4, maxy=737, calls=calls, fields=[{name='start_time',dx=0,date_format='%Y-%m-%d %H:%M:%S'},{name='duration',dx=141.175,timestamp2time=1,anchor='end'},{name='destination_user_in',dx=28.35,prefix='+',masklen=10,mask='xxx'},{name='zone',dx=113.4},{name='source_customer_cost',dx=192.78,money_cents=1,comma='.',anchor='end',money_signs=5}]) -%] }-->
         
     </g>
 

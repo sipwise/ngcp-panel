@@ -128,12 +128,14 @@
     #Attention! usage supposes amount in CENTS!
         comma = comma || '.';
         amount = amount ? amount : 0 ;
-        full = Math.int(amount / 100);
-        cent = Math.int(amount % 100);
-        cents = String.new(cent);
         money_signs = money_signs || '2';
-        money_format_string = money_format_string || "%0" _ money_signs _ "d";
-        cents = cents.format(money_format_string);
+        base = 10;
+        full = Math.int(amount / 100);
+#        cent = Math.int( amount % 100) ;
+        cent = Math.int( amount % 100) * ( base.power( money_signs - 2) ) ;
+        cents = String.new(cent);
+        cents_format_string = "%0" _ money_signs _ "d";
+        cents = cents.format(cents_format_string);
         aux.val = full _ comma _ cents;
     END;
 
@@ -145,7 +147,7 @@
             timestamp2time(timestamp=in);
             out = aux.val;
         ELSIF field.money_cents;
-            money_format(amount=in, comma=field.comma);
+            money_format(amount=in, comma=field.comma, money_signs=field.money_signs);
             out = aux.val;
         ELSE;
             out = in;
