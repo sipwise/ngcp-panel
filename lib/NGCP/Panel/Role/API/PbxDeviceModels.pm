@@ -11,7 +11,7 @@ use TryCatch;
 use Data::HAL qw();
 use Data::HAL::Link qw();
 use HTTP::Status qw(:constants);
-use JSON::Types;
+use JSON qw();
 use NGCP::Panel::Form::Device::ModelAPI;
 
 sub get_form {
@@ -71,7 +71,7 @@ sub resource_from_item {
         $r->{id} = int($r->{id});
         $r->{num_lines} = int($r->{num_lines});
         foreach my $f(qw/can_private can_shared can_blf/) {
-            $r->{$f} = JSON::Types::bool($r->{$f});
+            $r->{$f} = $r->{$f} ? JSON::true : JSON::false;
         }
 
         push @{ $resource{linerange} }, $r;

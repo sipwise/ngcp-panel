@@ -2,11 +2,9 @@ package NGCP::Panel::Role::API;
 use Moose::Role;
 use Sipwise::Base;
 
-use boolean;
 use Storable qw();
 use JSON qw();
 use JSON::Pointer;
-use JSON::Types qw(bool);
 use HTTP::Status qw(:constants);
 use Safe::Isa qw($_isa);
 use TryCatch;
@@ -170,8 +168,7 @@ sub validate_fields {
         # only do this for converting back from obj to hal
         # otherwise it breaks db fields with the \0 and \1 notation
         unless($run) {
-            #$resource->{$k} = $resource->{$k} ? true : false
-            $resource->{$k} = JSON::Types::bool($resource->{$k})
+            $resource->{$k} = $resource->{$k} ? JSON::true : JSON::false
                 if(defined $resource->{$k} &&
                    $fields->{$k}->$_isa('HTML::FormHandler::Field::Boolean'));
         }
