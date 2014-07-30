@@ -354,8 +354,9 @@ sub update_pbx_group_prefs {
     my $domain = $params{domain};
 
     return if(defined $old_group_id && defined $new_group_id && $old_group_id == $new_group_id);
-    unless ($group_rs) {
-        $c->log->warn('update_pbx_group_prefs: need a group_rs');
+
+    unless ($c->stash->{pbx_groups}) {
+        $c->log->warn('update_pbx_group_prefs: need pbx_groups rs');
         return;
     }
 
