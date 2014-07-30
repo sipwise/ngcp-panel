@@ -122,8 +122,8 @@ sub subscriber_from_id {
     my ($self, $c, $id) = @_;
 
     my $sub_rs = $c->model('DB')->resultset('voip_subscribers')->search({
-        id => $id,
-        status => { '!=' => 'terminated' },
+        'me.id' => $id,
+        'me.status' => { '!=' => 'terminated' },
     });
     if($c->user->roles eq "admin") {
     } elsif($c->user->roles eq "reseller") {

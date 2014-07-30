@@ -64,7 +64,7 @@ sub item_rs {
 
     my $item_rs;
     $item_rs = $c->model('DB')->resultset('voip_subscribers')
-        ->search({ status => { '!=' => 'terminated' } });
+        ->search({ 'me.status' => { '!=' => 'terminated' } });
     if($c->user->roles eq "admin") {
     } elsif($c->user->roles eq "reseller") {
         $item_rs = $item_rs->search({
