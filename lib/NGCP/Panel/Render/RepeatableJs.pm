@@ -27,30 +27,52 @@ sub render_repeatable_js {
   var rep_index = $index_str;
   var rep_html = $html_str;
   var rep_level = $level_str;
-  \$('.add_element').click(function() {
+  \$('.add_element').click(on_add_element);
+  function on_add_element() {
+    console.log("on_add_element this=", \$(this));
     // get the repeatable id
     var data_rep_id = \$(this).attr('data-rep-id');
+    console.log("data_rep_id=", data_rep_id);
+
+    var id_re = new RegExp('\.[0-9]+\.');
+    var data_rep_id_0 = data_rep_id.replace(id_re, '.0.');
+    console.log("data_rep_id_0=", data_rep_id_0);
+    
+
     // create a regex out of index placeholder
-    var level = rep_level[data_rep_id]
+    var level = rep_level[data_rep_id_0]
+    console.log("level=", level);
     var re = new RegExp('\{index-' + level + '\}',"g");
     // replace the placeholder in the html with the index
     var index = rep_index[data_rep_id];
-    var html = rep_html[data_rep_id];
+    if(index == undefined) index = 1;
+    console.log("index for " + data_rep_id + " is " + index);
+    var html = rep_html[data_rep_id_0];
+    console.log("html=", html);
+
+    var esc_rep_id = data_rep_id.replace(/[.]/g, '\\\\.');
+    var esc_rep_id_0 = data_rep_id_0.replace(/[.]/g, '\\\\.');
+
+    id_re = new RegExp(esc_rep_id_0, "g");
+    html = html.replace(id_re, data_rep_id);
+    console.log("html replaced=", html);
+
     html = html.replace(re, index);
     // escape dots in element id
-    var esc_rep_id = data_rep_id.replace(/[.]/g, '\\\\.');
     // append new element in the 'controls' div of the repeatable
     var rep_controls = \$('#' + esc_rep_id + ' > .controls');
     rep_controls.append(html);
     // increment index of repeatable fields
     index++;
     rep_index[data_rep_id] = index;
+    console.log("rep index " + data_rep_id + "=", rep_index);
+    \$('.add_element').click(on_add_element);
 
     // initiate callback if there is a handler for that
     if(repeatadd_handler) {
     	repeatadd_handler.onAdd(index-1);
     }
-  });
+  }
 
   \$(document).on('click', '.rm_element', function() {
     var id = \$(this).attr('data-rep-elem-id');

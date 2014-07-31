@@ -98,6 +98,28 @@ div.ngcp-modal div.modal-body div.control-group.hfh-rep div.controls div.hfh-rep
     margin-left: 180px;
 }
 
+div.hfh-nested-rep-block {
+    margin-bottom: 0px !important;
+}
+div.hfh-nested-rep-block div.controls div.hfh-repinst div.controls {
+    margin-left: 0px !important;
+}
+div.hfh-nested-rep-block div.controls div.hfh-repinst div.controls div.control-group {
+    display: inline-block !important;
+    margin-bottom: 0px !important;
+}
+div.hfh-nested-rep-block div.controls div.hfh-repinst div.controls div.control-group label {
+    text-align: left;
+    width: auto;
+    margin-right: 10px;
+}
+div.hfh-nested-rep-block div.controls div.hfh-repinst div.controls div.control-group div.controls {
+    float: left;
+}
+div.hfh-nested-rep-block div.controls div.hfh-repinst div.controls div.control-group div.controls input {
+    width: 30px;
+    margin-right: 10px;
+}
 
 div.ngcp-modal div.modal-body div.control-group.hfh-rep-block div.control-group.hfh-repinst div.controls {
     margin-left: 0;

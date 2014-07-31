@@ -214,7 +214,15 @@ sub devmod_create :Chained('base') :PathPart('model/create') :Args(0) :Does(ACL)
 
                 foreach my $range(@{ $linerange }) {
                     delete $range->{id};
-                    $devmod->autoprov_device_line_ranges->create($range);
+                    $range->{num_lines} = @{ $range->{keys} }; # backward compatibility
+                    my $keys = delete $range->{keys};
+                    my $r = $devmod->autoprov_device_line_ranges->create($range);
+                    my $i = 0;
+                    foreach my $label(@{ $keys }) {
+                        $label->{line_index} = $i++;
+                        $label->{position} = delete $label->{labelpos};
+                        $r->annotations->create($label);
+                    }
                 }
 
                 delete $c->session->{created_objects}->{reseller};
@@ -285,7 +293,13 @@ sub devmod_edit :Chained('devmod_base') :PathPart('edit') :Args(0) :Does(ACL) :A
     my $params = { $c->stash->{devmod}->get_inflated_columns };
     $params->{linerange} = [];
     foreach my $range($c->stash->{devmod}->autoprov_device_line_ranges->all) {
-        push @{ $params->{linerange} }, { $range->get_inflated_columns };
+        my $keys = [];
+        foreach my $key($range->annotations->all) {
+            push @{ $keys }, { x => $key->x, y => $key->y, labelpos => $key->position };
+        }
+        my $r = { $range->get_inflated_columns };
+        $r->{keys} = $keys;
+        push @{ $params->{linerange} }, $r;
     }
     $params->{reseller}{id} = delete $params->{reseller_id};
     $params = $params->merge($c->session->{created_objects});
@@ -349,6 +363,8 @@ sub devmod_edit :Chained('devmod_base') :PathPart('edit') :Args(0) :Does(ACL) :A
                 my $range_rs = $c->stash->{devmod}->autoprov_device_line_ranges;
                 foreach my $range(@{ $linerange }) {
                     next unless(defined $range);
+                    my $keys = delete $range->{keys};
+                    $range->{num_lines} = @{ $keys }; # backward compatibility
                     my $old_range;
                     if(defined $range->{id}) {
                         # should be an existing range, do update
@@ -367,6 +383,15 @@ sub devmod_edit :Chained('devmod_base') :PathPart('edit') :Args(0) :Does(ACL) :A
                         # new range
                         $old_range = $range_rs->create($range);
                     }
+                    $old_range->annotations->delete;
+                    my $i = 0;
+                    foreach my $label(@{ $keys }) {
+                        next unless(defined $label);
+                        $label->{line_index} = $i++;
+                        $label->{position} = delete $label->{labelpos};
+                        $old_range->annotations->create($label);
+                    }
+
                     push @existing_range, $old_range->id; # mark as valid (delete others later)
 
                     # delete field device line assignments with are out-of-range or use a
