@@ -116,16 +116,6 @@ has_field 'linerange.name' => (
     },
 );
 
-has_field 'linerange.num_lines' => (
-    type => 'PosInteger',
-    label => 'Number of Lines/Keys',
-    default => 4,
-    element_attr => {
-        rel => ['tooltip'],
-        title => ['The number of Lines/Keys in this range, indexed from 0 in the config template array phone.lineranges[].lines[]'],
-    },
-);
-
 has_field 'linerange.can_private' => (
     type => 'Boolean',
     label => 'Supports Private Line',
@@ -165,7 +155,7 @@ has_field 'linerange.keys' => (
     tags => {
         controls_div => 1,
     },
-    wrapper_class => [qw/hfh-rep-block/],
+    wrapper_class => [qw/hfh-nested-rep-block/],
     element_attr => {
         rel => ['tooltip'],
         title => ['The position of the keys on the front image. Attributes are x, y, labelpos (how the label for the key is displayed in the web interface, relative to the given coordinates; one of top, bottom, left, right).'],
@@ -225,7 +215,7 @@ has_field 'linerange.keys.rm' => (
 has_field 'linerange.keys_add' => (
     type => 'AddElement',
     repeatable => 'keys',
-    value => 'Add another Key Definition',
+    value => 'Add Key',
     element_class => [qw/btn btn-primary pull-right/],
 );
 
