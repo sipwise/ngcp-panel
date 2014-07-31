@@ -15,13 +15,13 @@ require Catalyst::ActionRole::CheckTrailingSlash;
 require Catalyst::ActionRole::HTTPMethods;
 require Catalyst::ActionRole::RequireSSL;
 
-# curl -v -X POST --user $USER --insecure -F front_image=@sandbox/spa504g-front.jpg -F mac_image=@sandbox/spa504g-back.jpg -F json='{"reseller_id":1, "vendor":"Cisco", "model":"SPA999", "linerange":[{"name": "Phone Keys", "num_lines":4, "can_private":true, "can_shared":true, "can_blf":true}]}' https://localhost:4443/api/pbxdevicemodels/
+# curl -v -X POST --user $USER --insecure -F front_image=@sandbox/spa504g-front.jpg -F mac_image=@sandbox/spa504g-back.jpg -F json='{"reseller_id":1, "vendor":"Cisco", "model":"SPA999", "linerange":[{"name": "Phone Keys", "can_private":true, "can_shared":true, "can_blf":true, "keys":[{"labelpos":"top", "x":5110, "y":5120},{"labelpos":"top", "x":5310, "y":5320}]}]}' https://localhost:4443/api/pbxdevicemodels/
 
 class_has 'api_description' => (
     is => 'ro',
     isa => 'Str',
     default => 
-        'Specifies a model to be set in <a href="#pbxdeviceconfigs">PbxDeviceConfigs</a>.',
+        'Specifies a model to be set in <a href="#pbxdeviceconfigs">PbxDeviceConfigs</a>. Use a Content-Type "multipart/form-data", provide front_image and mac_image parts with the actual images, and an additional json part with the properties specified below, e.g.: <code>curl -X POST --user $USER -F front_image=@/path/to/front.png -F mac_image=@/path/to/mac.png -F json=\'{"reseller_id":...}\' https://example.org:1443/api/pbxdevicemodels/</code>',
 );
 
 class_has 'query_params' => (
@@ -62,6 +62,38 @@ class_has 'query_params' => (
             },
         },
     ]},
+);
+
+class_has 'documentation_sample' => (
+    is => 'ro',
+    default => sub { {
+        vendor => "testvendor",
+        model => "testmodel",
+        reseller_id => 1,
+        sync_method => "GET",
+        sync_params => '[% server.uri %]/$MA',
+        sync_uri => 'http://[% client.ip %]/admin/resync',
+        linerange => [
+            {
+                name => "Phone Keys",
+                can_private => 1,
+                can_shared => 1,
+                can_blf => 1,
+                keys => [
+                    {
+                        x => 100,
+                        y => 200,
+                        labelpos => "left",
+                    },
+                    {
+                        x => 100,
+                        y => 300,
+                        labelpos => "right",
+                    },
+                ],
+            },
+        ],
+    } },
 );
 
 

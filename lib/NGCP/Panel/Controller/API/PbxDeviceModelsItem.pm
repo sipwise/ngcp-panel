@@ -101,7 +101,7 @@ sub PATCH :Allow {
 
         my $item = $self->item_by_id($c, $id);
         last unless $self->resource_exists($c, pbxdevicemodel => $item);
-        my $old_resource = { $item->get_inflated_columns };
+        my $old_resource = $self->resource_from_item($c, $item);
         my $resource = $self->apply_patch($c, $old_resource, $json);
         last unless $resource;
 
@@ -137,13 +137,18 @@ sub PUT :Allow {
 
         my $item = $self->item_by_id($c, $id);
         last unless $self->resource_exists($c, pbxdevicemodel => $item);
-        my $resource = $self->get_valid_put_data(
-            c => $c,
-            id => $id,
-            media_type => 'application/json',
-        );
-        last unless $resource;
-        my $old_resource = { $item->get_inflated_columns };
+
+        last unless $self->forbid_link_header($c);
+        last unless $self->valid_media_type($c, 'multipart/form-data');
+        last unless $self->require_wellformed_json($c, 'application/json', $c->req->param('json'));
+        my $resource = JSON::from_json($c->req->param('json'));
+        $resource->{front_image} = $self->get_upload($c, 'front_image');
+        last unless $resource->{front_image};
+        # optional, don't set error
+        $resource->{mac_image} = $c->req->upload('mac_image');
+
+
+        my $old_resource = $self->resource_from_item($c, $item);
 
         my $form = $self->get_form($c);
         $item = $self->update_item($c, $item, $old_resource, $resource, $form);
