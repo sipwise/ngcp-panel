@@ -134,7 +134,6 @@ sub get_tt {
     $tt->context->define_vmethod(
         'scalar' => power => sub {
             my($value,$power) = @_;
-            $c->log->debug('power: value='.$value.'; power='.$power.';');
             return $value ** $power;
         },
    );
