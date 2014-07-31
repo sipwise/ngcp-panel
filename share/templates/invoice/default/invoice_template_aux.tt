@@ -134,6 +134,7 @@
 #        cent = Math.int( amount % 100) ;
         cent = Math.int( amount % 100) * ( base.power( money_signs - 2) ) ;
         cents = String.new(cent);
+        cents = cents.format("%.0f",cents);
         cents_format_string = "%0" _ money_signs _ "d";
         cents = cents.format(cents_format_string);
         aux.val = full _ comma _ cents;
