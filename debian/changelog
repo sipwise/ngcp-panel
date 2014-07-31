@@ -1,3 +1,15 @@
+ngcp-panel (1.3.2.7+0~mr3.3.2.7) unstable; urgency=low
+
+  [ Irka ]
+  * [56cb1bc] MT#8353 Give possibility to manage money signs after comma in template.
+  * [db04037] MT#8353 More freedom in money signs configuration. And fix fractional.
+  * [0ec233d] MT#8353 Fix broken build
+  * [5dabcbc] MT#8387 Introduce round for cents.
+
+  [ Sipwise Jenkins Builder ]
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Thu, 31 Jul 2014 11:41:35 +0200
+
 ngcp-panel (1.3.2.6+0~mr3.3.2.6) unstable; urgency=low
 
   [ Irka ]
