@@ -303,10 +303,11 @@ sub devmod_edit :Chained('devmod_base') :PathPart('edit') :Args(0) :Does(ACL) :A
     }
     $params->{reseller}{id} = delete $params->{reseller_id};
     $params = $params->merge($c->session->{created_objects});
+    $c->stash(edit_model => 1); # to make front_image optional
     if($c->user->is_superuser) {
-        $form = NGCP::Panel::Form::Device::ModelAdmin->new;
+        $form = NGCP::Panel::Form::Device::ModelAdmin->new(ctx => $c);
     } else {
-        $form = NGCP::Panel::Form::Device::Model->new;
+        $form = NGCP::Panel::Form::Device::Model->new(ctx => $c);
     }
     if($posted) {
         $c->req->params->{front_image} = $c->req->upload('front_image');

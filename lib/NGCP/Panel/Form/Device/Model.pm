@@ -252,5 +252,16 @@ has_block 'actions' => (
     render_list => [qw/save/],
 );
 
+sub field_list {
+    my ($self) = @_;
+
+    my $c = $self->ctx;
+    return unless($c);
+
+    if($c->stash->{edit_model}) {
+        $self->field('front_image')->required(0);
+    }
+}
+
 1;
 # vim: set tabstop=4 expandtab:

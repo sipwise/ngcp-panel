@@ -13,11 +13,12 @@ use Data::HAL::Link qw();
 use HTTP::Status qw(:constants);
 use JSON qw();
 use File::Type;
+use Data::Dumper;
 use NGCP::Panel::Form::Device::ModelAPI;
 
 sub get_form {
     my ($self, $c) = @_;
-    return NGCP::Panel::Form::Device::ModelAPI->new($c);
+    return NGCP::Panel::Form::Device::ModelAPI->new(ctx => $c);
 }
 
 sub hal_from_item {
@@ -66,13 +67,20 @@ sub resource_from_item {
     $resource{linerange} = [];
     foreach my $range($item->autoprov_device_line_ranges->all) {
         my $r = { $range->get_inflated_columns };
-        foreach my $f(qw/device_id/) {
+        foreach my $f(qw/device_id num_lines/) {
             delete $r->{$f};
         }
         $r->{id} = int($r->{id});
-        $r->{num_lines} = int($r->{num_lines});
         foreach my $f(qw/can_private can_shared can_blf/) {
             $r->{$f} = $r->{$f} ? JSON::true : JSON::false;
+        }
+        $r->{keys} = [];
+        foreach my $key($range->annotations->all) {
+            push @{ $r->{keys} }, {
+                x => int($key->x),
+                y => int($key->y),
+                labelpos => $key->position,
+            };
         }
 
         push @{ $resource{linerange} }, $r;
@@ -134,12 +142,45 @@ sub update_item {
         return;
     }
 
+
+    my $ft = File::Type->new();
+    if($resource->{front_image}) {
+        my $front_image = delete $resource->{front_image};
+        $resource->{front_image} = $front_image->slurp;
+        $resource->{front_image_type} = $ft->mime_type($resource->{front_image});
+    }
+    if($resource->{mac_image}) {
+        my $front_image = delete $resource->{mac_image};
+        $resource->{mac_image} = $front_image->slurp;
+        $resource->{mac_image_type} = $ft->mime_type($resource->{mac_image});
+    }
+
     $item->update($resource);
 
     my @existing_range = ();
     my $range_rs = $item->autoprov_device_line_ranges;
     foreach my $range(@{ $linerange }) {
-        next unless(defined $range);
+
+        unless(ref $range eq "HASH") {
+            $c->log->error("all elements in linerange must be hashes, but this is " . ref $range . ": " . Dumper $range);
+            $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Invalid range definition inside linerange parameter, all must be hash");
+            return;
+        }
+        foreach my $elem(qw/can_private can_shared can_blf keys/) {
+            unless(exists $range->{$elem}) {
+                $c->log->error("missing mandatory attribute '$elem' in a linerange element");
+                $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Invalid range definition inside linerange parameter, missing attribute '$elem'");
+                return;
+            }
+        }
+        unless(ref $range->{keys} eq "ARRAY") {
+            $c->log->error("linerange.keys must be array");
+            $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Invalid linerange.keys parameter, must be array");
+            last;
+        }
+        $range->{num_lines} = @{ $range->{keys} }; # backward compatibility
+        my $keys = delete $range->{keys};
+
         my $old_range;
         if(defined $range->{id}) {
             # should be an existing range, do update
@@ -158,6 +199,21 @@ sub update_item {
             # new range
             $old_range = $range_rs->create($range);
         }
+
+        $old_range->annotations->delete;
+        my $i = 0;
+        foreach my $label(@{ $keys }) {
+            unless(ref $label eq "HASH") {
+                $c->log->error("all elements in linerange must be hashes, but this is " . ref $range . ": " . Dumper $range);
+                $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Invalid range definition inside linerange parameter, all must be hash");
+                return;
+            }
+
+            $label->{line_index} = $i++;
+            $label->{position} = delete $label->{labelpos};
+            $old_range->annotations->create($label);
+        }
+
         push @existing_range, $old_range->id; # mark as valid (delete others later)
 
         # delete field device line assignments with are out-of-range or use a
