@@ -1,5 +1,5 @@
 #!/usr/bin/perl -w
-use lib '/media/sf_/usr/share/VMHost/ngcp-panel/lib';
+use lib '/root/VMHost/ngcp-panel/lib';
 use strict;
 
 use Getopt::Long;
@@ -13,6 +13,7 @@ use Email::Sender::Transport::SMTP;
 use Template;
 use Geography::Countries qw/country/;
 use Pod::Usage;
+use HTML::Entities;
 use Sipwise::Base;
 
 use NGCP::Panel;
@@ -223,7 +224,13 @@ sub generate_invoice_data{
     #print Dumper $contract_balance;
     
     $client_contact->{country} = country($client_contact->{country} || '');
+    foreach(keys %$client_contact){
+        $client_contact->{$_} = encode_entities($client_contact->{$_});
+    }
     $provider_contact->{country} = country($provider_contact->{country} || '');
+    foreach(keys %$provider_contact){
+        $provider_contact->{$_} = encode_entities($provider_contact->{$_});
+    }
     # TODO: if not a full month, calculate fraction?
     #TODO: to utils::contract and share with catalyst version
     my $invoice_amounts = NGCP::Panel::Utils::Invoice::get_invoice_amounts(
