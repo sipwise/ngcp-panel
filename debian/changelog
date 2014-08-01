@@ -1,3 +1,12 @@
+ngcp-panel (1.3.2.9+0~mr3.3.2.9) unstable; urgency=low
+
+  [ Irka ]
+  * [1a1362d] MT#5879 Not all characters should be quoted
+
+  [ Sipwise Jenkins Builder ]
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Fri, 01 Aug 2014 10:31:43 +0200
+
 ngcp-panel (1.3.2.8+0~mr3.3.2.8) unstable; urgency=low
 
   [ Irka ]
