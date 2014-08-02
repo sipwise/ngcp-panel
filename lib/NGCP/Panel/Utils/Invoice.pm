@@ -1,7 +1,7 @@
 package NGCP::Panel::Utils::Invoice;
 
-use Geography::Countries qw/country/;
 use Sipwise::Base;
+use Geography::Countries qw/country/;
 use HTML::Entities;
 
 sub get_invoice_amounts{
@@ -29,7 +29,7 @@ sub get_invoice_serial{
 }
 sub prepare_contact_data{
     my($contact) = @_;
-    $contact->{country} = country($contact->{country} || 0);
+    $contact->{country} = country($contact->{country} || '');
     foreach(keys %$contact){
         $contact->{$_} = encode_entities($contact->{$_}, '<>&"');
     }
