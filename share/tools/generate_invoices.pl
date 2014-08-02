@@ -11,10 +11,9 @@ use Email::MIME;
 use Email::Sender::Simple qw(sendmail);
 use Email::Sender::Transport::SMTP;
 use Template;
-use Geography::Countries qw/country/;
 use Pod::Usage;
 use Log::Log4perl;
-use HTML::Entities;
+
 use Sipwise::Base;
 
 use NGCP::Panel;
@@ -250,15 +249,8 @@ sub generate_invoice_data{
     my ($contract_balance,$invoice)=({},{});
     ($contract_balance,$invoice) = get_contract_balance($client_contract,$billing_profile,$contract_balance,$invoice,$stime,$etime);
     #$logger->debug( Dumper $contract_balance );
-    
-    $client_contact->{country} = country($client_contact->{country} || '');
-    foreach(keys %$client_contact){
-        $client_contact->{$_} = encode_entities($client_contact->{$_}, '<>&"');
-    }
-    $provider_contact->{country} = country($provider_contact->{country} || '');
-    foreach(keys %$provider_contact){
-        $provider_contact->{$_} = encode_entities($provider_contact->{$_}, '<>&"');
-    }
+    NGCP::Panel::Utils::Invoice::prepare_contact_data($client_contact);
+    NGCP::Panel::Utils::Invoice::prepare_contact_data($provider_contact);
     # TODO: if not a full month, calculate fraction?
     #TODO: to utils::contract and share with catalyst version
     my $invoice_amounts = NGCP::Panel::Utils::Invoice::get_invoice_amounts(
