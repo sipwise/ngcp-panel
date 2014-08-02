@@ -1,6 +1,8 @@
 package NGCP::Panel::Utils::Invoice;
 
 use Sipwise::Base;
+use Geography::Countries qw/country/;
+use HTML::Entities;
 
 sub get_invoice_amounts{
     my(%params) = @_;
@@ -24,6 +26,15 @@ sub get_invoice_serial{
     my($c,$params) = @_;
     my($invoice) = @$params{qw/invoice/};
     return sprintf("INV%04d%02d%07d", $invoice->{period_start}->year,  $invoice->{period_start}->month, $invoice->{id});
+}
+sub prepare_contact_data{
+    my($contact) = @_;
+    $contact->{country} = country($contact->{country} || '');
+    foreach(keys %$contact){
+        $contact->{$_} = encode_entities($contact->{$_}, '<>&"');
+    }
+    #passed by reference
+    #return $contact;
 }
 1;
 # vim: set tabstop=4 expandtab:
