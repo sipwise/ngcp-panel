@@ -293,6 +293,7 @@ sub create :Chained('inv_list') :PathPart('create') :Args() :Does(ACL) :ACLDetac
                 }});
 
                 my $svg = $tmpl->data;
+                utf8::decode($svg);
                 my $t = NGCP::Panel::Utils::InvoiceTemplate::get_tt();
                 my $out = '';
                 my $pdf = '';
@@ -304,8 +305,8 @@ sub create :Chained('inv_list') :PathPart('create') :Args() :Does(ACL) :ACLDetac
                 $vars->{customer} = { $customer->get_inflated_columns };
                 $vars->{custcontact} = { $customer->contact->get_inflated_columns };
                 
-                $vars->{custcontact}->{country} = country($vars->{custcontact}->{country} || '');
-                $vars->{rescontact}->{country}  = country($vars->{rescontact}->{country} || '');
+                NGCP::Panel::Utils::Invoice::prepare_contact_data($vars->{custcontact});
+                NGCP::Panel::Utils::Invoice::prepare_contact_data($vars->{rescontact});
                 
                 $vars->{billprof} = { $billing_profile->get_inflated_columns };
                 $vars->{invoice} = {
