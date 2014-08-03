@@ -1,5 +1,5 @@
 #!/usr/bin/perl -w
-use lib '/media/sf_/usr/share/VMHost/ngcp-panel/lib';
+use lib '/root/VMHost/ngcp-panel/lib';
 use strict;
 
 use Getopt::Long;
@@ -85,6 +85,8 @@ Getopt::Long::GetOptions($opt,
     'resend',
     'regenerate',
     'allow_terminated',
+    'update_contract_balance',
+    'update_contract_balance_nonzero',
     'help|?',
     'man'
 ) or pod2usage(2);
@@ -219,8 +221,11 @@ sub get_billing_profile{
     );
 }
 sub get_invoice_data_raw{
-    my($client_contract, $stime, $etime) = @_;
-    my $invoice_details_calls = $dbh->selectall_arrayref('select cdr.*,from_unixtime(cdr.start_time) as start_time,bzh.zone, bzh.detail as zone_detail 
+    my($client_contract, $stime, $etime, $opt_local) = @_;
+    $opt_local //= {};
+    my ($invoice_details_calls,$invoice_details_zones);
+    if(!$opt_local->{count_contract_balance}){
+        $invoice_details_calls = $dbh->selectall_arrayref('select cdr.*,from_unixtime(cdr.start_time) as start_time,bzh.zone, bzh.detail as zone_detail 
     from accounting.cdr 
     LEFT JOIN billing.billing_zones_history bzh ON bzh.bz_id = cdr.source_customer_billing_zone_id
     where
@@ -231,20 +236,23 @@ sub get_invoice_data_raw{
     and cdr.start_time <= ?
     order by cdr.start_time
     --          limit 25'
-    , { Slice => {} }
-    , $client_contract->{id},$stime->epoch,$etime->epoch
-    );
-    my $invoice_details_zones = $dbh->selectall_arrayref('select SUM(cdr.source_customer_cost) AS customercost, COUNT(*) AS number, SUM(cdr.duration) AS duration,sum(cdr.source_customer_free_time) as free_time, bzh.zone
-    from accounting.cdr 
-    LEFT JOIN billing.billing_zones_history bzh ON bzh.bz_id = cdr.source_customer_billing_zone_id
-    where
+        , { Slice => {} }
+        , $client_contract->{id},$stime->epoch,$etime->epoch
+        );
+    }
+    $invoice_details_zones = $dbh->selectall_arrayref('select SUM(cdr.source_customer_cost) AS customercost, COUNT(*) AS number, SUM(cdr.duration) AS duration,sum(cdr.source_customer_free_time) as free_time '
+    .(!$opt_local->{count_contract_balance}?', bzh.zone':'')
+    .'
+    from accounting.cdr '
+    .(!$opt_local->{count_contract_balance}?'LEFT JOIN billing.billing_zones_history bzh ON bzh.bz_id = cdr.source_customer_billing_zone_id ':'')
+    .' where
     cdr.source_user_id != "0"
     and cdr.call_status="ok" 
     and cdr.source_account_id=?
     and cdr.start_time >= ?
-    and cdr.start_time <= ?
-    group by bzh.zone
-    order by bzh.zone'
+    and cdr.start_time <= ?'
+    .(!$opt_local->{count_contract_balance}?'group by bzh.zone
+    order by bzh.zone':'')
     , {Slice => {} }
     , $client_contract->{id},$stime->epoch,$etime->epoch
     );
@@ -254,11 +262,15 @@ sub get_invoice_data_raw{
     #$invoice_details_calls = [map{[$i++,$_]} (@$invoice_details_calls) x 1];
     #$i = 1;
     #$invoice_details_zones = [map{[$i++,$_]} (@$invoice_details_zones) x 1];
-    
-    my $stash = {
-        invoice_details_zones => $invoice_details_zones,
-        invoice_details_calls => $invoice_details_calls,
-    };
+    my $stash;
+    if($opt_local->{count_contract_balance}){
+        $stash = $invoice_details_zones->[0];
+    }else{
+        $stash = {
+            invoice_details_zones => $invoice_details_zones,
+            invoice_details_calls => $invoice_details_calls,
+        };
+    }
     return $stash;
 }
 sub generate_invoice_data{
@@ -277,11 +289,12 @@ sub generate_invoice_data{
     }
     
     my ($contract_balance,$invoice)=({},{});
-    ($contract_balance,$invoice) = get_contract_balance($client_contract,$billing_profile,$contract_balance,$invoice,$stime,$etime);
+    my($contract_balance_data) = get_invoice_data_raw($client_contract, $stime, $etime,{count_contract_balance => 1});
+    ($contract_balance,$invoice) = get_contract_balance($client_contract,$billing_profile,$contract_balance,$contract_balance_data,$invoice,$stime,$etime);
     #$logger->debug( Dumper $contract_balance );
     NGCP::Panel::Utils::Invoice::prepare_contact_data($client_contact);
     NGCP::Panel::Utils::Invoice::prepare_contact_data($provider_contact);
-    # TODO: if not a full month, calculate fraction?
+    #TODO: if not a full month, calculate fraction?
     #TODO: to utils::contract and share with catalyst version
     my $invoice_amounts = NGCP::Panel::Utils::Invoice::get_invoice_amounts(
         customer_contract  => $client_contract,
@@ -323,13 +336,15 @@ sub generate_invoice_data{
 }
 
 sub get_contract_balance{
-    my($client_contract,$billing_profile,$contract_balance,$invoice,$stime,$etime) = @_;
+    my($client_contract,$billing_profile,$contract_balance,$contract_balance_data,$invoice,$stime,$etime) = @_;
     if(!($contract_balance = $dbh->selectrow_hashref('select * from contract_balances where contract_id=? and date(start)=? and date(end)=?',undef,$client_contract->{id},$stime->ymd,$etime->ymd))){
         @$contract_balance{qw/cash_balance cash_balance_interval free_time_balance free_time_balance_interval/} = NGCP::Panel::Utils::Contract::get_contract_balance_values(
             %$billing_profile,
             stime => $stime,
             etime => $etime,
         );
+        $contract_balance->{cash_balance_interval} ||= $contract_balance_data->{customercost};
+        $contract_balance->{free_time_balance_interval} ||= $contract_balance_data->{free_time};
         $dbh->do('insert into contract_balances(contract_id,cash_balance,cash_balance_interval,free_time_balance,free_time_balance_interval,start,end,invoice_id)values(?,?,?,?,?,?,?,?)',undef,$client_contract->{id},@$contract_balance{qw/cash_balance cash_balance_interval free_time_balance free_time_balance_interval/},$stime->datetime, $etime->datetime,undef );
         $invoice = get_invoice(undef, $client_contract->{id},$stime, $etime);
         #my $contract_balance_id = $dbh->last_insert_id(undef,'billing','contract_balances','id');
@@ -338,6 +353,40 @@ sub get_contract_balance{
         $contract_balance = $dbh->selectrow_hashref('select * from contract_balances where contract_id=? and date(start)=? and date(end)=?',undef,$client_contract->{id},$stime->ymd,$etime->ymd);
         #$logger->debug( Dumper $contract_balance );
     }else{
+        if($opt->{update_contract_balance} && $contract_balance_data){
+            my @sql_update = ();
+            my @sql_update_params = ();
+            $contract_balance->{cash_balance_interval} //= 0;
+            $contract_balance_data->{customercost} //= 0;
+#            print Dumper $contract_balance_data;
+            if(($contract_balance->{cash_balance_interval} != $contract_balance_data->{customercost})
+                && ($opt->{update_contract_balance_nonzero} 
+                    || 
+                    ( $contract_balance_data->{customercost} > 0 
+                    && !$contract_balance->{cash_balance_interval}
+                    )
+                )
+            ){
+                push @sql_update,'cash_balance_interval=?';
+                push @sql_update_params,$contract_balance_data->{customercost};
+            }
+            $contract_balance->{free_time_balance_interval} //= 0;
+            $contract_balance_data->{free_time} //= 0;
+            if($contract_balance->{free_time_balance_interval} != $contract_balance_data->{free_time}
+                && ($opt->{update_contract_balance_nonzero} 
+                    || 
+                    ( $contract_balance_data->{free_time} > 0 
+                    && !$contract_balance->{free_time_balance_interval}
+                    )
+                )
+            ){
+                push @sql_update,'free_time_balance_interval=?';
+                push @sql_update_params,$contract_balance_data->{free_time};
+            }
+            if(my $sql_update = join(',',@sql_update)){
+                $dbh->do('update contract_balances set '.$sql_update.' where contract_id=? and date(start)=? and date(end)=?',undef,@sql_update_params,$client_contract->{id},$stime->ymd,$etime->ymd);
+            }
+        }
         $invoice = get_invoice($contract_balance->{invoice_id},$client_contract->{id},$stime, $etime);
     }
     return ($contract_balance,$invoice);
@@ -386,6 +435,7 @@ sub get_invoice_template{
     
     if(!$svg){
         $logger->debug( "No saved template for customer - no invoice;\n");
+        return ;
     }
     utf8::decode($svg);
     return \$svg;
