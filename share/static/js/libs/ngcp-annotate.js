@@ -16,11 +16,11 @@
       switch(pos) {
       	case "top":
           top = linkPosition.top - 5 - $el.outerHeight();
-          left = linkPosition.left - 9 - $el.outerWidth()/2;
+          left = linkPosition.left - $el.outerWidth()/2;
 	  break;
       	case "bottom":
-          top = linkPosition.top - 11 + $el.outerHeight();
-          left = linkPosition.left - 9 - $el.outerWidth()/2;
+          top = linkPosition.top - 15 + $el.outerHeight();
+          left = linkPosition.left - $el.outerWidth()/2;
 	  break;
       	case "left":
           top = linkPosition.top - $el.outerHeight()/2;

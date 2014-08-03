@@ -589,14 +589,11 @@
         .annotated
         {
             position: relative;
-            left: -50px;
             margin: 20px 20px 0 20px;
         }
         .annotated img
         {
             display: block;
-            width: 600px;
-            max-width: 600px;
         }
         .annotated a
         {

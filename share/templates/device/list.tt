@@ -42,11 +42,15 @@
     helper.form_object = form;
     helper.ajax_uri = c.uri_for('/device/model/ajax');
 
+    helper.dt_buttons = [
+            { name = c.loc('Front Image'), uri = "/device/model/'+full.id+'/frontimage", class = 'btn-small btn-tertiary', icon = 'icon-picture' },
+            { name = c.loc('MAC Image'), uri = "/device/model/'+full.id+'/macimage", class = 'btn-small btn-tertiary', icon = 'icon-picture' },
+    ];
     UNLESS c.user.read_only;
-        helper.dt_buttons = [
+        helper.dt_buttons = helper.dt_buttons.merge([
             { name = c.loc('Delete'), uri = "/device/model/'+full.id+'/delete", class = 'btn-small btn-secondary', icon = 'icon-trash' },
             { name = c.loc('Edit'), uri = "/device/model/'+full.id+'/edit", class = 'btn-small btn-primary', icon = 'icon-edit' },
-        ];
+        ]);
     END;
 
     PROCESS 'helpers/datatables.tt';
