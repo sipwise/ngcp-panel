@@ -677,7 +677,7 @@ sub preferences :Chained('base') :PathPart('preferences') :Args(0) {
                 @dset = map { { $_->get_columns } } $map->destination_set->voip_cf_destinations->search({},
                     { order_by => { -asc => 'priority' }})->all;
                 foreach my $d(@dset) {
-                    $d->{as_string} = NGCP::Panel::Utils::Subscriber::destination_as_string($d);
+                    $d->{as_string} = NGCP::Panel::Utils::Subscriber::destination_as_string($c, $d);
                 }
                 $dset_name = $map->destination_set->name;
             }
@@ -1276,7 +1276,7 @@ sub preferences_callforward_destinationset :Chained('base') :PathPart('preferenc
                 my @dests = map { { $_->get_columns } } $set->voip_cf_destinations->search({},
                     { order_by => { -asc => 'priority' }})->all;
                 foreach my $d(@dests) {
-                    $d->{as_string} = NGCP::Panel::Utils::Subscriber::destination_as_string($d);
+                    $d->{as_string} = NGCP::Panel::Utils::Subscriber::destination_as_string($c, $d);
                 }
                 push @sets, { name => $set->name, id => $set->id, destinations => \@dests };
             }

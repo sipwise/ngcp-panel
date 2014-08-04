@@ -34,7 +34,7 @@ around handle => sub {
             my @dset = map { { $_->get_columns } } $map->destination_set->voip_cf_destinations->search({},
                 { order_by => { -asc => 'priority' }})->all;
             foreach my $d(@dset) {
-                $d->{as_string} = NGCP::Panel::Utils::Subscriber::destination_as_string($d);
+                $d->{as_string} = NGCP::Panel::Utils::Subscriber::destination_as_string($c, $d);
             }
             my @tset = ();
             if($map->time_set) {

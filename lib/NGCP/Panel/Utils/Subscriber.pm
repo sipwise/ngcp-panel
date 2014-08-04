@@ -54,7 +54,7 @@ sub period_as_string {
 }
 
 sub destination_as_string {
-    my $destination = shift;
+    my ($c, $destination) = @_;
     my $dest = $destination->{destination};
 
     if($dest =~ /\@voicebox\.local$/) {
@@ -75,12 +75,20 @@ sub destination_as_string {
         return "Office Hours Announcement";
     } else {
         my $d = $dest;
-        $d =~ s/sip:(.+)\@.+$/$1/;
-        if($d->is_int) {
-            return $d;
-        } else {
-            return $dest;
+        $d =~ s/^sips?://;
+        my $sub = $c->stash->{subscriber};
+        if($sub && ($c->user->roles eq "subscriberadmin" || $c->user->roles eq "subscriber")) {
+            my ($user, $domain) = split(/\@/, $d);
+            $user = NGCP::Panel::Utils::Subscriber::apply_rewrite(
+                c => $c, subscriber => $sub, number => $user, direction => 'caller_out'
+            );
+            if($domain eq $sub->domain->domain) {
+                $d = $user;
+            } else {
+                $d = $user . '@' . $domain;
+            }
         }
+        return $d;
     }
 }
 
