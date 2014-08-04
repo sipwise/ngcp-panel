@@ -3,6 +3,7 @@ package NGCP::Panel::Form::Subscriber::SpeedDial;
 use HTML::FormHandler::Moose;
 extends 'HTML::FormHandler';
 use Moose::Util::TypeConstraints;
+use NGCP::Panel::Field::URI;
 
 use HTML::FormHandler::Widget::Block::Bootstrap;
 
@@ -47,7 +48,7 @@ sub set_slots {
 }
 
 has_field 'destination' => (
-    type => 'Text',
+    type => '+NGCP::Panel::Field::URI',
     label => 'Destination',
     required => 1,
     wrapper_class => [qw/hfh-rep-field/],

@@ -3335,12 +3335,14 @@ sub edit_speeddial :Chained('speeddial') :PathPart('edit') :Args(0) {
     my $form = NGCP::Panel::Form::Subscriber::SpeedDial->new(ctx => $c);
 
     my $params;
-    unless($posted) {
-        $params->{slot} = $c->stash->{speeddial}->slot;
-        $params->{destination} = $c->stash->{speeddial}->destination;
-    }
+    $params->{slot} = $c->stash->{speeddial}->slot;
+    $params->{destination} = $c->stash->{speeddial}->destination;
 
-    $form->process(params => $posted ? $c->req->params : $params);
+    $form->process(
+        posted => $posted,
+        params => $c->req->params,
+        item => $params,
+    );
     NGCP::Panel::Utils::Navigation::check_form_buttons(
         c => $c,
         form => $form,
