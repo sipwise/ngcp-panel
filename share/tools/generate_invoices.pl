@@ -209,7 +209,7 @@ sub generate_invoice_data{
         $svg_default = $t->context->insert('invoice/default/invoice_template_svg.tt');
         #NGCP::Panel::Utils::InvoiceTemplate::preprocess_svg(\$svg_default);
     }
-    my $svg = $dbh->selectrow_array('select data from invoice_templates where  type = "svg" and reseller_id=?',undef,$provider_contract->{reseller_core_id});#is_active = 1 and
+    my $svg = $dbh->selectrow_array('select data from invoice_templates where is_active = 1 and type = "svg" and reseller_id=?',undef,$provider_contract->{reseller_core_id});#
     utf8::decode($svg);
     if($svg){
         #NGCP::Panel::Utils::InvoiceTemplate::preprocess_svg(\$svg);
