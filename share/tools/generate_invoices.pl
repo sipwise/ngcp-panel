@@ -85,6 +85,7 @@ Getopt::Long::GetOptions($opt,
     'resend',
     'regenerate',
     'allow_terminated',
+    'backward_is_active',
     'update_contract_balance',
     'update_contract_balance_nonzero',
     'help|?',
@@ -430,8 +431,11 @@ sub get_invoice_template{
     my($t, $provider_contract, $client_contract ) = @_;
     
     my $svg;
-    
-    $svg = $dbh->selectrow_array('select data from invoice_templates where id=?',undef,$client_contract->{invoice_template_id});
+    if($opt->{backward_is_active}){
+        $svg = $dbh->selectrow_array('select data from invoice_templates where type="svg" and is_active=1 and reseller_id=?',undef,$provider_contract->{reseller_core_id});
+    }else{
+        $svg = $dbh->selectrow_array('select data from invoice_templates where id=?',undef,$client_contract->{invoice_template_id});
+    }
     
     if(!$svg){
         $logger->debug( "No saved template for customer - no invoice;\n");
@@ -599,7 +603,19 @@ Makes to send invoices, which weren't sent yet, to customers. Other options: res
 =item --allow_terminated                     
 
 Generates invoices for terminated contracts too. 
-         
+
+=item --backward_is_active
+
+Use old is_active logic of invoice_template selection. For internal use.
+
+=item --update_contract_balance
+
+For internal use. Update contract_balances *_balance_interval fields with values according to invoice lists.
+
+=item --update_contract_balance_nonzero
+
+For internal use. Configuration for option --update_contract_balance. Allows update contract_balances.[cash|free_time]_balance_interval fields
+
 =head1 SAMPLES
 
 =item To generate invoices for current month:
