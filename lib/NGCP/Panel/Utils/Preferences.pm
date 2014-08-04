@@ -65,6 +65,13 @@ sub load_preference_list {
         my @group_prefs = $group->voip_preferences->all;
         
         foreach my $pref(@group_prefs) {
+            my @values = @{
+                exists $pref_values->{$pref->attribute}
+                    ? $pref_values->{$pref->attribute}
+                    : []
+            };
+            next unless(scalar @values);
+
             if($pref->attribute eq "rewrite_rule_set") {
                 my $tmp;
                 $pref->{rwrs_id} = $pref_values->{rewrite_caller_in_dpid} &&
@@ -98,17 +105,28 @@ sub load_preference_list {
                 $pref->{man_allowed_ips_rs} = $c->model('DB')->resultset('voip_allowed_ip_groups')
                     ->search_rs({ group_id => $pref_values->{man_allowed_ips_grp} });
             }
+            elsif($c->stash->{subscriber} && 
+                  ($pref->attribute eq "block_in_list" || $pref->attribute eq "block_out_list")) {
+                foreach my $v(@values) {
+                    my $prefix = "";
+                    if($v =~ /^\#/) {
+                        $v =~ s/^\#//;
+                        $prefix = "#";
+                    }
+
+                    if($c->user->roles eq "subscriberadmin" || $c->user->roles eq "subscriber") {
+                        $v = NGCP::Panel::Utils::Subscriber::apply_rewrite(
+                            c => $c, subscriber => $c->stash->{subscriber}, number => $v, direction => 'caller_out'
+                        );
+                    }
+                    $v = $prefix . $v;
+                }
+            }
             if($pref->data_type eq "enum") {
                 $pref->{enums} = [];
                 push @{ $pref->{enums} },
                     $pref->voip_preferences_enums->all;
             }
-            my @values = @{
-                exists $pref_values->{$pref->attribute}
-                    ? $pref_values->{$pref->attribute}
-                    : []
-            };
-            next unless(scalar @values);
             if($pref->max_occur != 1) {
                 $pref->{value} = \@values;
             } else {
@@ -133,6 +151,64 @@ sub create_preference_form {
     my $aip_group_id;
     my $man_aip_grp_rs;
     my $man_aip_group_id;
+
+    my $delete_param = $c->request->params->{delete};
+    my $deactivate_param = $c->request->params->{deactivate};
+    my $activate_param = $c->request->params->{activate};
+    my $param_id = $delete_param || $deactivate_param || $activate_param;
+    # only one parameter is processed at a time (?)
+    if($param_id) {
+        my $rs = $pref_rs->find($param_id);
+        if($rs) {
+            if($rs->attribute_id != $c->stash->{preference_meta}->id) {
+                # Invalid param (dom_pref does not belong to current pref)
+            } elsif($delete_param) {
+                $rs->delete();
+            } elsif ($deactivate_param) {
+                $rs->update({value => "#".$rs->value});
+            } elsif ($activate_param) {
+                my $new_value = $rs->value;
+                $new_value =~ s/^#//;
+                $rs->update({value => $new_value});
+            }
+        }
+    }
+    my $delete_aig_param = $c->request->params->{delete_aig};
+    if($delete_aig_param) {
+        my $result = $aip_grp_rs->find($delete_aig_param);
+        if($result) {
+            $result->delete;
+            unless ($aip_grp_rs->first) { #its empty
+                my $allowed_ips_grp_preference = $pref_rs->search({
+                    'attribute.attribute' => 'allowed_ips_grp'
+                },{
+                    join => 'attribute'
+                })->first;
+                $allowed_ips_grp_preference->delete
+                    if (defined $allowed_ips_grp_preference);
+            }
+        }
+    }
+    my $delete_man_aig_param = $c->request->params->{delete_man_aig};
+    if($delete_man_aig_param) {
+        my $result = $man_aip_grp_rs->find($delete_man_aig_param);
+        if($result) {
+            $result->delete;
+            unless ($man_aip_grp_rs->first) { #its empty
+                my $man_allowed_ips_grp_preference = $pref_rs->search({
+                    'attribute.attribute' => 'man_allowed_ips_grp'
+                },{
+                    join => 'attribute'
+                })->first;
+                $man_allowed_ips_grp_preference->delete
+                    if (defined $man_allowed_ips_grp_preference);
+            }
+        }
+    }
+
+    $c->stash->{preference_values} = [
+        $c->stash->{preference}->get_column("value")->all
+    ];
 
     my $preselected_value = undef;
     if ($c->stash->{preference_meta}->attribute eq "rewrite_rule_set") {
@@ -187,6 +263,16 @@ sub create_preference_form {
             $man_aip_group_id = $man_allowed_ips_grp->value;
             $man_aip_grp_rs = $c->model('DB')->resultset('voip_allowed_ip_groups')
                 ->search({ group_id => $man_aip_group_id });
+        }
+    } elsif($c->stash->{subscriber} && 
+          ($c->stash->{preference_meta}->attribute eq "block_in_list" || $c->stash->{preference_meta}->attribute eq "block_out_list")) {
+        foreach my $v(@{ $c->stash->{preference_values} }) {
+            $v =~ s/^\#//;
+            if($c->user->roles eq "subscriberadmin" || $c->user->roles eq "subscriber") {
+                $v = NGCP::Panel::Utils::Subscriber::apply_rewrite(
+                    c => $c, subscriber => $c->stash->{subscriber}, number => $v, direction => 'caller_out'
+                );
+            }
         }
     } elsif ($c->stash->{preference_meta}->max_occur == 1) {
         $preselected_value = $c->stash->{preference_values}->[0];
@@ -303,14 +389,38 @@ sub create_preference_form {
                 return 1;
             }
         } elsif ($c->stash->{preference_meta}->max_occur != 1) {
+            if($c->stash->{subscriber} && 
+               ($c->stash->{preference_meta}->attribute eq "block_in_list" || $c->stash->{preference_meta}->attribute eq "block_out_list")) {
+                my $v = $form->params->{$c->stash->{preference_meta}->attribute};
+
+                if($c->user->roles eq "subscriberadmin" || $c->user->roles eq "subscriber") {
+                    $v =~ s/^(.+?)([*\[].*$)/$1/; # strip any trailing shell pattern stuff
+                    my $suffix = $2 // "";
+                    $form->params->{$c->stash->{preference_meta}->attribute} = NGCP::Panel::Utils::Subscriber::apply_rewrite(
+                        c => $c, subscriber => $c->stash->{subscriber}, number => $v, direction => 'callee_in'
+                    );
+
+                    # rewrite it back for immediate display
+                    $v = $form->params->{$c->stash->{preference_meta}->attribute};
+                    $v = NGCP::Panel::Utils::Subscriber::apply_rewrite(
+                        c => $c, subscriber => $c->stash->{subscriber}, number => $v, direction => 'caller_out'
+                    );
+
+                    # restore stripped shell pattern stuff
+                    $form->params->{$c->stash->{preference_meta}->attribute} .= $suffix;
+                    $v .= $suffix;
+
+                }
+                push @{ $c->stash->{preference_values} }, $v;
+            }
             try {
                 $pref_rs->create({
                     attribute_id => $c->stash->{preference_meta}->id,
-                    value => $form->field($c->stash->{preference_meta}->attribute)->value,
+                    value => $form->params->{$c->stash->{preference_meta}->attribute},
                 });
             } catch($e) {
                 $c->log->error("failed to create preference $attribute: $e");
-                $c->flash(messages => [{type => 'error', text => $c->loc('Failed to delete preference [_1].', $attribute)}]);
+                $c->flash(messages => [{type => 'error', text => $c->loc('Failed to create preference [_1].', $attribute)}]);
                 $c->response->redirect($base_uri);
                 return 1;
             }
@@ -450,58 +560,6 @@ sub create_preference_form {
 
     OUT:
     
-    my $delete_param = $c->request->params->{delete};
-    my $deactivate_param = $c->request->params->{deactivate};
-    my $activate_param = $c->request->params->{activate};
-    my $param_id = $delete_param || $deactivate_param || $activate_param;
-    # only one parameter is processed at a time (?)
-    if($param_id) {
-        my $rs = $pref_rs->find($param_id);
-        if($rs->attribute_id != $c->stash->{preference_meta}->id) {
-            # Invalid param (dom_pref does not belong to current pref)
-        } elsif($delete_param) {
-            $rs->delete();
-        } elsif ($deactivate_param) {
-            $rs->update({value => "#".$rs->value});
-        } elsif ($activate_param) {
-            my $new_value = $rs->value;
-            $new_value =~ s/^#//;
-            $rs->update({value => $new_value});
-        }
-    }
-    my $delete_aig_param = $c->request->params->{delete_aig};
-    if($delete_aig_param) {
-        my $result = $aip_grp_rs->find($delete_aig_param);
-        if($result) {
-            $result->delete;
-            unless ($aip_grp_rs->first) { #its empty
-                my $allowed_ips_grp_preference = $pref_rs->search({
-                    'attribute.attribute' => 'allowed_ips_grp'
-                },{
-                    join => 'attribute'
-                })->first;
-                $allowed_ips_grp_preference->delete
-                    if (defined $allowed_ips_grp_preference);
-            }
-        }
-    }
-    my $delete_man_aig_param = $c->request->params->{delete_man_aig};
-    if($delete_man_aig_param) {
-        my $result = $man_aip_grp_rs->find($delete_man_aig_param);
-        if($result) {
-            $result->delete;
-            unless ($man_aip_grp_rs->first) { #its empty
-                my $man_allowed_ips_grp_preference = $pref_rs->search({
-                    'attribute.attribute' => 'man_allowed_ips_grp'
-                },{
-                    join => 'attribute'
-                })->first;
-                $man_allowed_ips_grp_preference->delete
-                    if (defined $man_allowed_ips_grp_preference);
-            }
-        }
-    }
-
     $form->process if ($posted && $form->validated);
     $c->stash(form       => $form,
               aip_grp_rs => $aip_grp_rs,

@@ -6,6 +6,7 @@
     helper.edit_preference = edit_preference;
     helper.preference = preference;
     helper.preference_meta = preference_meta;
+    helper.preference_values = preference_values;
     helper.pref_groups = pref_groups;
     helper.form = form;
     helper.base_uri = c.uri_for_action("/peering/servers_preferences_root",
