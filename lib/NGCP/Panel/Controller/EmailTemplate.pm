@@ -5,6 +5,7 @@ BEGIN { extends 'Catalyst::Controller'; }
 
 use NGCP::Panel::Form::EmailTemplate::Reseller;
 use NGCP::Panel::Form::EmailTemplate::Admin;
+use NGCP::Panel::Utils::Email;
 use NGCP::Panel::Utils::Message;
 
 sub auto :Does(ACL) :ACLDetachTo('/denied_page') :AllowedRole(admin) :AllowedRole(reseller) {
@@ -244,12 +245,10 @@ sub send_test :Chained('tmpl_list') :PathPart('test') :Args(0) {
     $c->forward($c->view('TT'));
     my $body = $c->res->body;
     $c->res->body(undef);
-    $c->email(
-        header => [
-            From => 'noreply@yoursipserver.com',
-            To => 'agranig@sipwise.com',
-            Subject => 'test from catalyst ' . time,
-        ],
+    NGCP::Panel::Utils::Email::send_email(
+        from => 'noreply@yoursipserver.com',
+        to => 'agranig@sipwise.com',
+        subject => 'test from catalyst ' . time,
         body => $body,
     );
 

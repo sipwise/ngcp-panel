@@ -172,8 +172,6 @@ __PACKAGE__->config(
 );
 __PACKAGE__->config( default_view => 'HTML' );
 
-__PACKAGE__->config( email => ['Sendmail'] );
-
 __PACKAGE__->log(Log::Log4perl::Catalyst->new($logger_config));
 
 # Start the application
