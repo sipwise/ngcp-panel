@@ -2,6 +2,29 @@ package NGCP::Panel::Utils::Email;
 
 use Sipwise::Base;
 use Template;
+use Email::Sender::Simple qw();
+use Email::Simple;
+use Email::Simple::Creator;
+use Email::Sender::Transport::Sendmail qw();
+
+sub send_email {
+    my %args = @_;
+    my $subject = $args{subject};
+    my $body = $args{body};
+    my $from = $args{from};
+    my $to = $args{to};
+
+    my $transport = Email::Sender::Transport::Sendmail->new;
+    my $email = Email::Simple->create(
+        header => [
+            To      => $to,
+            From    => $from,
+            Subject => $subject,
+        ],
+        body => $body,
+    );
+    return Email::Sender::Simple->send($email, { transport => $transport } );
+}
 
 sub send_template {
     my ($c, $vars, $subject, $body, $from, $to) = @_;
@@ -15,13 +38,11 @@ sub send_template {
     $t->process(\$subject, $vars, \$processed_subject) || 
         die "error processing email template, type=".$t->error->type.", info='".$t->error->info."'";
 
-    $c->email(
-        header => [
-            From => $from,
-            To => $to,
-            Subject => $processed_subject,
-        ],
+    send_email(
+        subject => $processed_subject,
         body => $processed_body,
+        from => $from,
+        to => $to,
     );
     #my $template_processed = process_template({
     #    subject => $subject,
@@ -30,13 +51,11 @@ sub send_template {
     #    to => $to,
     #},$vars);
     #
-    #$c->email(
-    #    header => [
-    #        From => $template_processed->{from_email},
-    #        To => $template_processed->{to},
-    #        Subject => $template_processed->{subject},
-    #    ],
+    #send_email(
+    #    subject => $template_processed->{subject},
     #    body => $template_processed->{body},
+    #    from => $template_processed->{from_email},
+    #    to => $template_processed->{to},
     #);
 
     return 1;

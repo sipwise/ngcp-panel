@@ -24,7 +24,6 @@ use Catalyst qw/
     Session::Store::FastMmap
     Session::State::Cookie
     I18N
-    Email
 /;
 #    EnableMiddleware
 use Log::Log4perl::Catalyst qw();
@@ -172,8 +171,6 @@ __PACKAGE__->config(
 #    ],
 );
 __PACKAGE__->config( default_view => 'HTML' );
-
-__PACKAGE__->config( email => ['Sendmail'] );
 
 __PACKAGE__->log(Log::Log4perl::Catalyst->new($logger_config));
 
