@@ -2861,10 +2861,21 @@ sub ajax_calls :Chained('master') :PathPart('calls/ajax') :Args(0) {
         $c, $rs, $c->stash->{calls_dt_columns},
         sub {
             my ($result) = @_;
-            my %data = (source_user => uri_unescape($result->source_user),
-                destination_user => uri_unescape($result->destination_user));
-            return %data
-        },
+            my %data = ();
+            if($c->user->roles eq "subscriberadmin" || $c->user->roles eq "subscriber") {
+                $data{duration} = POSIX::ceil($result->duration);
+                $data{source_user} = uri_unescape(NGCP::Panel::Utils::Subscriber::apply_rewrite(
+                    c => $c, subscriber => $c->stash->{subscriber}, number => $result->source_user, direction => 'caller_out'
+                ));
+                $data{destination_user} = uri_unescape(NGCP::Panel::Utils::Subscriber::apply_rewrite(
+                    c => $c, subscriber => $c->stash->{subscriber}, number => $result->destination_user, direction => 'caller_out'
+                ));
+            } else {
+                $data{source_user} = uri_unescape($result->source_user);
+                $data{destination_user} = uri_unescape($result->destination_user);
+            }
+            return %data;
+        }
     );
 
     $c->detach( $c->view("JSON") );
@@ -3223,9 +3234,24 @@ sub ajax_speeddial :Chained('base') :PathPart('preferences/speeddial/ajax') :Arg
 
     my $prov_subscriber = $c->stash->{subscriber}->provisioning_voip_subscriber;
     my $sd_rs = $prov_subscriber->voip_speed_dials;
-    NGCP::Panel::Utils::Datatables::process($c, $sd_rs, $c->stash->{sd_dt_columns}, undef, 
-        { 
-            denormalize_uri => ($c->user->roles eq "subscriberadmin" || $c->user->roles eq "subscriber") ? "destination" : undef, 
+    NGCP::Panel::Utils::Datatables::process($c, $sd_rs, $c->stash->{sd_dt_columns},
+        sub {
+            my ($result) = @_;
+            my %data = ();
+            my $sub = $c->stash->{subscriber};
+            if($c->user->roles eq "subscriberadmin" || $c->user->roles eq "subscriber") {
+                my ($user, $domain) = split(/\@/, $result->destination);
+                $user =~ s/^sips?://;
+                $user = uri_unescape(NGCP::Panel::Utils::Subscriber::apply_rewrite(
+                    c => $c, subscriber => $sub, number => $user, direction => 'caller_out'
+                ));
+                if($domain eq $sub->domain->domain) {
+                    $data{destination} = $user;
+                } else {
+                    $data{destination} = $user . '@' . $domain;
+                }
+            }
+            return %data;
         }
     );
 

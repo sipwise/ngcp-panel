@@ -10,10 +10,10 @@
         </div>
         <div class="plan-features large">
             <ul>
-                [% IF calls.count == 0 -%]
+                [% IF calls.size == 0 -%]
                 <li>[% c.loc('No calls yet') %]</li>
                 [% ELSE -%]
-                    [% FOR call IN calls.all -%]
+                    [% FOR call IN calls -%]
                     <li>
                         <div class="row-fluid">
                         [% IF call.source_user_id == c.user.uuid -%]
