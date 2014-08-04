@@ -3,6 +3,7 @@ use HTML::FormHandler::Moose;
 use HTML::FormHandler::Widget::Block::Bootstrap;
 use Moose::Util::TypeConstraints;
 use NGCP::Panel::Field::PosInteger;
+use NGCP::Panel::Field::URI;
 extends 'HTML::FormHandler';
 
 has '+widget_wrapper' => (default => 'Bootstrap');
@@ -64,7 +65,7 @@ has_field 'destination.uri' => (
     do_label => 0,
 );
 has_field 'destination.uri.destination' => (
-    type => 'Text',
+    type => '+NGCP::Panel::Field::URI',
     label => 'URI/Number',
 );
 has_field 'destination.uri.timeout' => (

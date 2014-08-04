@@ -776,13 +776,6 @@ sub field_to_destination {
     } elsif($d eq "uri") {
         $d = $uri;
     }
-    # TODO: check for valid dest here
-    if($d !~ /\@/) {
-        $d .= '@'.$domain;
-    }
-    if($d !~ /^sip:/) {
-        $d = 'sip:' . $d;
-    }
     return $d;
 }
 
@@ -975,18 +968,18 @@ sub apply_rewrite {
         $replace = qq{"$replace"};
 
         my $found;
+        #print ">>>>>>>>>>> apply matches\n";
         foreach my $m(@{ $match }) {
+            #print ">>>>>>>>>>>     m=$m, r=$replace\n";
             if($callee =~ s/$m/$replace/eeg) {
                 # we only process one match
+                #print ">>>>>>>>>>> match found, callee=$callee\n";
                 $found = 1;
                 last;
             }
         }
         last if $found;
-
-
         #print ">>>>>>>>>>> done, match=$match, replace=$replace, callee is $callee\n";
-
     }
 
     return $callee;
