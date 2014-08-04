@@ -8,7 +8,8 @@ use Scalar::Util qw/blessed/;
 use DateTime::Format::Strptime;
 
 sub process {
-    my ($c, $rs, $cols, $row_func) = @_;
+    my ($c, $rs, $cols, $row_func, $opts) = @_;
+    $opts->{c} = $c;
 
     my $use_rs_cb = ('CODE' eq (ref $rs));
     my $aaData = [];
@@ -93,7 +94,7 @@ sub process {
     my $topId = $c->request->params->{iIdOnTop};
     if(defined $topId) {
         if(defined(my $row = $rs->find($topId))) {
-            push @{ $aaData }, _prune_row($cols, $row->get_inflated_columns);
+            push @{ $aaData }, _prune_row($opts, $cols, $row->get_inflated_columns);
             if (defined $row_func) {
                 $aaData->[-1]->put($row_func->($row));
             }
@@ -147,7 +148,7 @@ sub process {
     }
 
     for my $row ($rs->all) {
-        push @{ $aaData }, _prune_row($cols, $row->get_inflated_columns);
+        push @{ $aaData }, _prune_row($opts, $cols, $row->get_inflated_columns);
         if (defined $row_func) {
             $aaData->[-1]->put($row_func->($row));
         }
@@ -174,11 +175,25 @@ sub set_columns {
 }
 
 sub _prune_row {
-    my ($columns, %row) = @_;
+    my ($opts, $columns, %row) = @_;
+    my $c = $opts->{c};
     while (my ($k,$v) = each %row) {
         unless (first { $_->{accessor} eq $k && $_->{title} } @{ $columns }) {
             delete $row{$k};
             next;
+        }
+        if(defined $opts->{denormalize_uri} && $k eq $opts->{denormalize_uri} && defined $c->stash->{subscriber}) {
+            my $sub = $c->stash->{subscriber};
+            $row{$k} =~ s/^sips?://;
+            my ($user, $domain) = split(/\@/, $row{$k});
+            $user = NGCP::Panel::Utils::Subscriber::apply_rewrite(
+                c => $c, subscriber => $sub, number => $user, direction => 'caller_out'
+            );
+            if($domain eq $sub->domain->domain) {
+                $row{$k} = $user; 
+            } else {
+                $row{$k} = $user . '@' . $domain;
+            }
         }
         if(blessed($v) && $v->isa('DateTime')) {
             $row{$k} = $v->ymd('-') . ' ' . $v->hms(':');

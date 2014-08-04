@@ -3223,7 +3223,11 @@ sub ajax_speeddial :Chained('base') :PathPart('preferences/speeddial/ajax') :Arg
 
     my $prov_subscriber = $c->stash->{subscriber}->provisioning_voip_subscriber;
     my $sd_rs = $prov_subscriber->voip_speed_dials;
-    NGCP::Panel::Utils::Datatables::process($c, $sd_rs, $c->stash->{sd_dt_columns});
+    NGCP::Panel::Utils::Datatables::process($c, $sd_rs, $c->stash->{sd_dt_columns}, undef, 
+        { 
+            denormalize_uri => ($c->user->roles eq "subscriberadmin" || $c->user->roles eq "subscriber") ? "destination" : undef, 
+        }
+    );
 
     $c->detach( $c->view("JSON") );
 }
