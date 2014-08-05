@@ -1,3 +1,17 @@
+ngcp-panel (1.3.2.10+0~mr3.3.2.10) unstable; urgency=low
+
+  [ Irka ]
+  * [325e913] MT#8401 Invoce data preprocessing.
+  * [51e0884] MT#5879 Fix error in old invoice_templates is_active functionality.
+  * [ea74ea3] MT#8433 Process unrated calls.
+  * [e60d869] MT#8433 No logger was in this version;
+  * [229e84e] MT#8433 Force unrated small fixes.
+  * [8709146] MT#8433 Remove debug
+
+  [ Sipwise Jenkins Builder ]
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Tue, 05 Aug 2014 07:03:43 +0200
+
 ngcp-panel (1.3.2.9+0~mr3.3.2.9) unstable; urgency=low
 
   [ Irka ]
