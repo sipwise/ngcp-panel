@@ -88,6 +88,7 @@ Getopt::Long::GetOptions($opt,
     'backward_is_active',
     'update_contract_balance',
     'update_contract_balance_nonzero',
+    'force_unrated',
     'help|?',
     'man'
 ) or pod2usage(2);
@@ -116,11 +117,14 @@ if( $opt->{client_contract_id} ){
 }
 $logger->debug( Dumper $opt );
 $logger->debug( "stime=$stime; etime=$etime;\n" );
+
 process_invoices();
 
 
 sub process_invoices{
-
+    if(!check_unrated_calls()){
+        return;
+    }
     my $invoices = {};
 
     foreach my $provider_contract( @{ get_providers_contracts() } ){
@@ -232,11 +236,11 @@ sub get_invoice_data_raw{
     where
     cdr.source_user_id != "0"
     and cdr.call_status="ok" 
+    and cdr.rating_status="ok"
     and cdr.source_account_id=?
     and cdr.start_time >= ?
     and cdr.start_time <= ?
-    order by cdr.start_time
-    --          limit 25'
+    order by cdr.start_time '
         , { Slice => {} }
         , $client_contract->{id},$stime->epoch,$etime->epoch
         );
@@ -249,6 +253,7 @@ sub get_invoice_data_raw{
     .' where
     cdr.source_user_id != "0"
     and cdr.call_status="ok" 
+    and cdr.rating_status="ok"
     and cdr.source_account_id=?
     and cdr.start_time >= ?
     and cdr.start_time <= ?'
@@ -273,6 +278,53 @@ sub get_invoice_data_raw{
         };
     }
     return $stash;
+}
+sub check_unrated_calls{
+    if($opt->{force_unrated}){
+        return;
+    }
+    my $unrated_calls_info = $dbh->selectall_arrayref('select cdr.source_account_id, from_unixtime(min(cdr.start_time)) as start_time_min, from_unixtime(max(cdr.start_time)) as start_time_max, count(*) as calls_number
+    from accounting.cdr 
+    where
+    cdr.source_user_id != "0"
+    and cdr.call_status="ok" 
+    and cdr.rating_status != "ok"
+    and cdr.start_time >= ?
+    and cdr.start_time <= ?
+    group by cdr.source_account_id 
+    order by cdr.source_account_id '
+        , { Slice => {} }
+        , $stime->epoch,$etime->epoch
+    );
+    if(@$unrated_calls_info){
+        my $msg = "\n\n\n\n".'There are '.@$unrated_calls_info.' customers which have unrated calls in the '.$stime->ymd.' - '.$etime->ymd.' period. Run '.__FILE__.' script with option --force_unrated to generate invoices anyway.'."\n\n\n\n";
+        my $info = join("\n",map {"Customer: ".sprintf("%5d",$_->{source_account_id})."; Unrated calls: ".sprintf("%5d",$_->{calls_number})."; Period: $_->{start_time_min} - $_->{start_time_max};"} @$unrated_calls_info);
+        $logger->debug($msg);
+        print $msg;
+        print $info;
+        my $email = Email::MIME->create(
+            header => [
+                From    => 'invoice_generator@sipwise.com',
+                To      => $opt->{warning_email} || 'root@localhost',
+                #To      => 'ipeshinskaya@sipwise.com',
+                Subject => 'Invoice generator warning',
+            ],
+            parts => [
+                Email::MIME->create(
+                    attributes => {
+                        encoding     => "quoted-printable",
+                        content_type => "text/plain",
+                        charset      => "US-ASCII",
+                    },
+                    body_str => $msg.$info,
+                ),            
+            ]
+        );
+        #sendmail($email, { transport => $transport });
+        sendmail($email);
+        return 0;
+    }
+    return 1;
 }
 sub generate_invoice_data{
     my($provider_contract,$provider_contact,$client_contract,$client_contact,$billing_profile, $stime, $etime) = @_;
@@ -307,6 +359,7 @@ sub generate_invoice_data{
         %$invoice_amounts,
     };
     my($invoice_data) = get_invoice_data_raw($client_contract, $stime, $etime);
+    print Dumper $invoice_data;
     my $out = '';
     my $pdf = '';
     $invoice->{data} = '';
@@ -603,6 +656,10 @@ Makes to send invoices, which weren't sent yet, to customers. Other options: res
 =item --allow_terminated                     
 
 Generates invoices for terminated contracts too. 
+
+=item --force_unrated
+
+Generate invoices despite unrated calls existance in the period.
 
 =item --backward_is_active
 
