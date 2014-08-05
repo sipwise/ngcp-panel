@@ -230,7 +230,7 @@ sub get_invoice_data_raw{
 }
 sub check_unrated_calls{
     if($opt->{force_unrated}){
-        return;
+        return 1;
     }
     my $unrated_calls_info = $dbh->selectall_arrayref('select cdr.source_account_id, from_unixtime(min(cdr.start_time)) as start_time_min, from_unixtime(max(cdr.start_time)) as start_time_max, count(*) as calls_number
     from accounting.cdr 
