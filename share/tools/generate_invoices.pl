@@ -42,11 +42,10 @@ print "using user '$dbuser' with pass '$dbpass'\n"
 my $dbh = DBI->connect('dbi:mysql:billing;host=localhost', $dbuser, $dbpass, {mysql_enable_utf8 => 1})
     or die "failed to connect to billing DB\n";
 
-    'force_unrated',
 
 
 my $opt = {};
-Getopt::Long::GetOptions($opt, 'reseller_id:i@', 'client_contact_id:i@', 'client_contract_id:i@', 'stime:s', 'etime:s', 'send!','sendonly!','resend','regenerate!','prevmonth','help|?','man')
+Getopt::Long::GetOptions($opt, 'reseller_id:i@', 'client_contact_id:i@', 'client_contract_id:i@', 'stime:s', 'etime:s', 'send!','sendonly!','resend','regenerate!','prevmonth','force_unrated','help|?','man')
     or pod2usage(2);
 print Dumper $opt;
 pod2usage(1) if $opt->{help};
@@ -207,7 +206,7 @@ sub get_invoice_data_raw{
 }
 sub check_unrated_calls{
     if($opt->{force_unrated}){
-        return;
+        return 1;
     }
     my $unrated_calls_info = $dbh->selectall_arrayref('select cdr.source_account_id, from_unixtime(min(cdr.start_time)) as start_time_min, from_unixtime(max(cdr.start_time)) as start_time_max, count(*) as calls_number
     from accounting.cdr 
