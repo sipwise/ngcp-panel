@@ -359,7 +359,6 @@ sub generate_invoice_data{
         %$invoice_amounts,
     };
     my($invoice_data) = get_invoice_data_raw($client_contract, $stime, $etime);
-    print Dumper $invoice_data;
     my $out = '';
     my $pdf = '';
     $invoice->{data} = '';
