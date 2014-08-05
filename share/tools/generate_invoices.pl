@@ -225,7 +225,6 @@ sub check_unrated_calls{
     if(@$unrated_calls_info){
         my $msg = "\n\n\n\n".'There are '.@$unrated_calls_info.' customers which have unrated calls in the '.$stime->ymd.' - '.$etime->ymd.' period. Run '.__FILE__.' script with option --force_unrated to generate invoices anyway.'."\n\n\n\n";
         my $info = join("\n",map {"Customer: ".sprintf("%5d",$_->{source_account_id})."; Unrated calls: ".sprintf("%5d",$_->{calls_number})."; Period: $_->{start_time_min} - $_->{start_time_max};"} @$unrated_calls_info);
-        $logger->debug($msg);
         print $msg;
         print $info;
         my $email = Email::MIME->create(
