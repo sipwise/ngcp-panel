@@ -314,7 +314,6 @@ sub generate_invoice_data{
         %$invoice,
         %$invoice_amounts,
     };
-    print Dumper $invoice_data;
     my $out = '';
     my $pdf = '';
     $invoice->{data} = '';
