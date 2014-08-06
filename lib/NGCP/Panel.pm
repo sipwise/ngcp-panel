@@ -44,7 +44,7 @@ for my $path(qw#/etc/ngcp-panel/ngcp_panel.conf etc/ngcp_panel.conf ngcp_panel.c
 }
 $panel_config //= 'ngcp_panel.conf';
 
-my $logger_config = '/etc/ngcp-ossbss/logging.conf';
+my $logger_config = '/etc/ngcp-panel/logging.conf';
 $logger_config = $panel_config unless(-f $logger_config);
 
 __PACKAGE__->config(
