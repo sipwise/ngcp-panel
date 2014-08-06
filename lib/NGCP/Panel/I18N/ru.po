@@ -3416,7 +3416,7 @@ msgstr "Поле SIP заголовка несущее IP источника п�
 msgid "IP address of calling party."
 msgstr "IP адрес звонящей стороны"
 
-#: lib/NGCP/Panel/Controller/Security.pm:145
+#: lib/NGCP/Panel/Controller/Security.pm:151
 msgid "IP successfully unbanned"
 msgstr "IP успешно разбанен"
 
@@ -7773,7 +7773,7 @@ msgstr "Устройство пользователя"
 msgid "User or number to rewrite"
 msgstr "Пользователь или номер для перезаписи"
 
-#: lib/NGCP/Panel/Controller/Security.pm:176
+#: lib/NGCP/Panel/Controller/Security.pm:182
 msgid "User successfully unbanned"
 msgstr "Пользователь успешно разблокирован"
 
