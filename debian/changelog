@@ -1,3 +1,25 @@
+ngcp-panel (1.4.1.2+0~mr3.4.1.2) unstable; urgency=low
+
+  [ Gerhard Jungwirth ]
+  * [544f953] MT#8287 only create aliases if available on subscriber creation
+  * [981429a] MT#8287 fix subscriber termination by subadmin
+  * [e0e8486] MT#8367 api fix subscriber delete as reseller
+  * [d4dd49b] MT#8367 api fix subscriber post/put domain query
+
+  [ Irka ]
+  * [14fd241] MT#8367 Specify exact table for status to avoid ambiguity
+  * [93e0b9c] MT#8367 Remove potentially ambiguous voip_subscribers.status reference
+  * [7d71378] MT#7861 Use pixels as main unit to be in accordance with svg-edit.
+  * [2603a51] MT#7867 Return scale 0.8 untill other options tested with real printing
+  * [f3a0383] MT#8353 Give possibility to manage money signs after comma in template.
+  * [be1d969] MT#8353 More freedom in money signs configuration. And fix fractional.
+  * [52246d8] MT#8387 Introduce round for cents.
+  * [07efc72] MT#8353 Fix broken build
+
+  [ Sipwise Jenkins Builder ]
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Wed, 06 Aug 2014 18:57:47 +0200
+
 ngcp-panel (1.4.1.1+0~mr3.4.1.1) unstable; urgency=low
 
   [ Alexander Lutay ]
