@@ -3386,7 +3386,7 @@ msgstr "Campo IP Header"
 msgid "IP address of calling party."
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/Security.pm:145
+#: lib/NGCP/Panel/Controller/Security.pm:151
 msgid "IP successfully unbanned"
 msgstr "IP desbaneada con éxito"
 
@@ -7736,7 +7736,7 @@ msgstr ""
 msgid "User or number to rewrite"
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/Security.pm:176
+#: lib/NGCP/Panel/Controller/Security.pm:182
 msgid "User successfully unbanned"
 msgstr "Usuario desbaneado con éxito"
 
