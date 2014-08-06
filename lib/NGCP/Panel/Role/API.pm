@@ -270,46 +270,6 @@ sub require_wellformed_json {
     return $ret;
 }
 
-=pod
-# don't use caching for now, keep it as simple as possible
-sub cached {
-    my ($self, $c) = @_;
-    my $response = $c->cache->get($c->request->uri->canonical->as_string);
-    unless ($response) {
-        $c->log->info('not cached');
-        return;
-    }
-    my $matched_tag = $c->request->header('If-None-Match') && ('*' eq $c->request->header('If-None-Match'))
-      || (grep {$response->header('ETag') eq $_} Data::Record->new({
-        split => qr/\s*,\s*/, unless => $RE{delimited}{-delim => q(")},
-      })->records($c->request->header('If-None-Match')));
-    my $not_modified = $c->request->header('If-Modified-Since')
-        && !($self->last_modified < DateTime::Format::HTTP->parse_datetime($c->request->header('If-Modified-Since')));
-    if (
-        $matched_tag && $not_modified
-        || $matched_tag
-        || $not_modified
-    ) {
-        $c->response->status(HTTP_NOT_MODIFIED);
-        $c->response->headers($response->headers);
-        $c->log->info('cached');
-        return 1;
-    }
-    $c->log->info('stale');
-    return;
-}
-
-sub etag {
-    my ($self, $octets) = @_;
-    return sprintf '"ni:/sha3-256;%s"', sha3_256_base64($octets);
-}
-
-sub expires {
-    my ($self) = @_;
-    return DateTime->now->clone->add(years => 1); # XXX insert product end-of-life
-}
-=cut
-
 sub allowed_methods {
     my ($self) = @_;
     my $meta = $self->meta;
