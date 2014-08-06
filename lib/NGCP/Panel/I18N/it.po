@@ -3348,7 +3348,7 @@ msgstr ""
 msgid "IP address of calling party."
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/Security.pm:145
+#: lib/NGCP/Panel/Controller/Security.pm:151
 msgid "IP successfully unbanned"
 msgstr "IP bannato con successo"
 
@@ -7657,7 +7657,7 @@ msgstr ""
 msgid "User or number to rewrite"
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/Security.pm:176
+#: lib/NGCP/Panel/Controller/Security.pm:182
 msgid "User successfully unbanned"
 msgstr "Utente sbloccato con successo"
 
