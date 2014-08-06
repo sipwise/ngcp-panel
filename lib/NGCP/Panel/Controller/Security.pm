@@ -53,7 +53,13 @@ EOF
             # multiple IPs
             else {
                 for my $struct ( @{ $xmlHash->{methodResponse}->{params}->{param}->{value}->{struct} } ) {
-                    push @ips, { ip => $struct->{member}->[2]->{value}->{struct}->{member}->{value}->{struct}->{member}->[0]->{value}->{string} };
+                    if(ref $struct->{member}->[2]->{value}->{struct}->{member} eq 'HASH') {
+                        push @ips, { ip => $struct->{member}->[2]->{value}->{struct}->{member}->{value}->{struct}->{member}->[0]->{value}->{string} };
+                    } else {
+                        foreach my $member(@{  $struct->{member}->[2]->{value}->{struct}->{member} }) {
+                            push @ips, { ip => $member->{value}->{struct}->{member}->[0]->{value}->{string} };
+                        }
+                    }
                 }
             }
         }
