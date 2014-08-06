@@ -4,7 +4,6 @@ Priority: extra
 Maintainer: Sipwise Development Team <support@sipwise.com>
 Build-Depends: debhelper (>= 8),
                libautodie-perl (>= 2.21~),
-               libcarp-fix-1-25-perl,
                libcatalyst-actionrole-acl-perl,
                libcatalyst-actionrole-checktrailingslash-perl,
                libcatalyst-actionrole-requiressl-perl,
