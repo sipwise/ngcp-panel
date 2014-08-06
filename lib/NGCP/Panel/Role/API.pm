@@ -231,23 +231,6 @@ sub get_upload {
     return;
 }
 
-sub require_precondition {
-    my ($self, $c, $header_name) = @_;
-    return 1 if $c->request->header($header_name);
-    $self->error($c, HTTP_PRECONDITION_REQUIRED, "This request is required to be conditional, use the '$header_name' header.");
-    return;
-}
-
-sub valid_precondition {
-    my ($self, $c, $etag, $entity_name) = @_;
-    my $if_match = $c->request->header('If-Match');
-    return 1 if '*' eq $if_match || grep {$etag eq $_} Data::Record->new({
-        split  => qr/\s*,\s*/, unless => $RE{delimited}{-delim => q(")},
-    })->records($if_match);
-    $self->error($c, HTTP_PRECONDITION_FAILED, "This '$entity_name' entity cannot be found, it is either expired or does not exist. Fetch a fresh one.");
-    return;
-}
-
 sub require_preference {
     my ($self, $c) = @_;
     return 'minimal' unless $c->request->header('Prefer');
