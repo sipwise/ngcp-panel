@@ -3416,7 +3416,7 @@ msgstr "IP Header Feld"
 msgid "IP address of calling party."
 msgstr "IP Adresse des Anrufers."
 
-#: lib/NGCP/Panel/Controller/Security.pm:145
+#: lib/NGCP/Panel/Controller/Security.pm:151
 msgid "IP successfully unbanned"
 msgstr "IP erfolgreich entsperrt"
 
@@ -7757,7 +7757,7 @@ msgstr "User Agent"
 msgid "User or number to rewrite"
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/Security.pm:176
+#: lib/NGCP/Panel/Controller/Security.pm:182
 msgid "User successfully unbanned"
 msgstr "Benutzer erfolgreich entsperrt"
 
