@@ -1,3 +1,10 @@
+ngcp-panel (1.1.17) unstable; urgency=low
+
+  * [42ff210] MT#8495 Handle another level of nesting in banlist
+  * [cbe335a] MT#8495 Add some test data for banlist handling.
+
+ -- Andreas Granig <agranig@sipwise.com>  Wed, 06 Aug 2014 15:35:23 +0200
+
 ngcp-panel (1.1.16) unstable; urgency=low
 
   * [3ad7906] MT#5751 prevent staleelement exception when searching datatables
