@@ -10,9 +10,11 @@ use Time::HiRes qw();
 method get_log_params ($self: Catalyst :$c) {
     # get log_tx_id, caller method, remote user, formatted passed parameters
 
+    # tx_id
     my $log_tx = DateTime->from_epoch(epoch => Time::HiRes::time);
     my $log_tx_id = sprintf '%X', $log_tx->strftime('%s%N');
 
+    # package and method
     my $caller = (caller 2)[3];
     $caller !~ /::/ and $caller = (caller 3)[3];
     my $called = ''; 
@@ -21,12 +23,19 @@ method get_log_params ($self: Catalyst :$c) {
         $#caller >= 3 and $called = join('::', @caller[-3...-1]);
     }
 
+    # remote user
     my $r_user = '';
     if ($c->user->roles eq 'admin' || $c->user->roles eq 'reseller') {
         $r_user = $c->user->login;
     } else {
         $r_user = $c->user->webusername . '@' . $c->user->domain->domain;
     }
+
+    # remote ip
+    my $r_ip = $c->request->address;
+    $r_ip =~ s/^::ffff://; # ipv4 in ipv6 form -> ipv4
+
+    # parameters
     my $data = Data::Dumper->new([$c->request->parameters])
                            ->Terse(1)
                            ->Dump;
@@ -34,13 +43,13 @@ method get_log_params ($self: Catalyst :$c) {
     $data =~ s/\s+/ /g;
 
     unless ($c->config->{logging}->{clear_passwords}) {
-        
     }
 
     return {
                 tx_id  => $log_tx_id,
                 called => $called,
                 r_user => $r_user,
+                r_ip   => $r_ip,
                 data   => $data,
            };
 }
@@ -94,8 +103,8 @@ method error ($self: Catalyst :$c, Str :$desc, Str :$log?, :$error?) {
     }
     
     $c->log->error(
-        sprintf <<EOF, @{$log_params}{qw(called tx_id r_user data)});
-CALLED=%s TX=%s USER=%s DATA=%s MSG=$log_msg
+        sprintf <<EOF, @{$log_params}{qw(r_ip called tx_id r_user data)});
+IP=%s CALLED=%s TX=%s USER=%s DATA=%s MSG=$log_msg
 EOF
     $c->flash(messages => [{ type => $usr_type, 
                              text => sprintf '%s [%s]', 
@@ -127,8 +136,8 @@ method info ($self: Catalyst :$c, Str :$desc, Str :$log?) {
     }
 
     $c->log->info(
-        sprintf <<EOF, @{$log_params}{qw(called tx_id r_user data)});
-CALLED=%s TX=%s USER=%s DATA=%s MSG=$log_msg
+        sprintf <<EOF, @{$log_params}{qw(r_ip called tx_id r_user data)});
+IP=%s CALLED=%s TX=%s USER=%s DATA=%s MSG=$log_msg
 EOF
     $c->flash(messages => [{ type => $usr_type, text => $usr_text }]);
     return;
