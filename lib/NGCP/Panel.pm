@@ -24,7 +24,6 @@ use Catalyst qw/
     Session::Store::FastMmap
     Session::State::Cookie
     I18N
-    Email
 /;
 #    EnableMiddleware
 use Log::Log4perl::Catalyst qw();
