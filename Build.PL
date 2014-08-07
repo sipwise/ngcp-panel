@@ -79,7 +79,6 @@ my $builder = Local::Module::Build->new(
         'Net::Telnet' => 0,
         'NGCP::Schema' => '2.003',
         'Plack::Middleware::Deflater' => 0,
-        'Regexp::Parser' => 0,
         'Scalar::Util' => 0,
         'Sereal::Decoder' => 0,
         'Sereal::Encoder' => 0,

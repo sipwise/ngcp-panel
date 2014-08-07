@@ -1,15 +1,13 @@
 package NGCP::Panel::Field::Regexp;
 use HTML::FormHandler::Moose;
-use Regexp::Parser;
 extends 'HTML::FormHandler::Field::Text';
-
-my $parser = Regexp::Parser->new();
 
 sub validate {
     my ( $self ) = @_;
     my $pattern = $self->value;
-    return $self->add_error($self->label . " is no valid regexp")
-        unless $parser->regex($pattern);
+    my $valid_regexp = eval {
+        qr/$pattern/;
+    } or return $self->add_error($self->label . " is no valid regexp");
     return 1;
 }
 
