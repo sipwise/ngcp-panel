@@ -80,6 +80,16 @@ sub auto :Private {
                 } else {
                     $c->log->debug("++++++ admin '".$c->user->login."' authenticated via api_admin_cert");
                 }
+                if($c->user->read_only && !($c->req->method ~~ [qw/GET HEAD OPTIONS/])) {
+                    $c->log->error("invalid method '".$c->req->method."' for read-only user '".$c->user->login."', rejecting");
+                    $c->user->logout;
+                    $c->response->status(403);
+                    $c->res->body(JSON::to_json({
+                        message => "Invalid HTTP method for read-only user",
+                        code => 403,
+                    }));
+                    return;
+                }
                 return 1;
 
 
@@ -98,7 +108,16 @@ sub auto :Private {
                 } else {
                     $c->log->debug("++++++ admin '".$c->user->login."' authenticated via api_admin_http");
                 }
-
+                if($c->user->read_only && !($c->req->method ~~ [qw/GET HEAD OPTIONS/])) {
+                    $c->log->error("invalid method '".$c->req->method."' for read-only user '".$c->user->login."', rejecting");
+                    $c->user->logout;
+                    $c->response->status(403);
+                    $c->res->body(JSON::to_json({
+                        message => "Invalid HTTP method for read-only user",
+                        code => 403,
+                    }));
+                    return;
+                }
                 return 1;
             }
         }
@@ -134,6 +153,7 @@ sub auto :Private {
         $c->req->uri->path =~ /create/
         || $c->req->uri->path =~ /edit/
         || $c->req->uri->path =~ /delete/
+        || !($c->req->method ~~ [qw/GET HEAD OPTIONS/])
     )) {
         $c->detach('/denied_page');
     }

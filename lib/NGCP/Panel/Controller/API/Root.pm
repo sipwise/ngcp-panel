@@ -69,8 +69,26 @@ sub GET : Allow {
         if($full_mod->can('query_params')) {
             $query_params = $full_mod->query_params;
         }
-        my $actions = [ keys %{ $full_mod->config->{action} } ];
-        my $item_actions = $full_item_mod->can('config') ? [ keys %{ $full_item_mod->config->{action} } ] : [];
+        my $actions = [];
+        if($c->user->read_only) {
+            foreach my $m(keys %{ $full_mod->config->{action} }) {
+                next unless $m ~~ [qw/GET HEAD OPTIONS/];
+                push @{ $actions }, $m;
+            }
+        } else {
+            $actions = [ keys %{ $full_mod->config->{action} } ];
+        }
+        my $item_actions = [];
+        if($full_item_mod->can('config')) {
+            if($c->user->read_only) {
+                foreach my $m(keys %{ $full_item_mod->config->{action} }) {
+                    next unless $m ~~ [qw/GET HEAD OPTIONS/];
+                    push @{ $item_actions }, $m;
+                }
+            } else {
+                $item_actions = [ keys %{ $full_item_mod->config->{action} } ];
+            }
+        }
 
         my $form = $full_mod->get_form($c);
 
@@ -118,7 +136,7 @@ sub HEAD : Allow {
 
 sub OPTIONS : Allow {
     my ($self, $c) = @_;
-    my $allowed_methods = $self->allowed_methods;
+    my $allowed_methods = $self->allowed_methods_filtered($c);
     $c->response->headers(HTTP::Headers->new(
         Allow => $allowed_methods->join(', '),
         $self->collections_link_headers,

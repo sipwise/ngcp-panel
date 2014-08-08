@@ -253,13 +253,28 @@ sub require_wellformed_json {
     return $ret;
 }
 
+sub allowed_methods_filtered {
+    my ($self, $c) = @_;
+    if($c->user->read_only) {
+        my @methods = ();
+        foreach my $m(@{ $self->allowed_methods }) {
+            next unless $m ~~ [qw/GET HEAD OPTIONS/];
+            push @methods, $m;
+        }
+        return \@methods;
+    } else {
+        return $self->allowed_methods; 
+    }
+}
+
 sub allowed_methods {
     my ($self) = @_;
     my $meta = $self->meta;
     my @allow;
     for my $method ($meta->get_method_list) {
         push @allow, $meta->get_method($method)->name
-            if $meta->get_method($method)->can('attributes') && 'Allow' ~~ $meta->get_method($method)->attributes;
+            if $meta->get_method($method)->can('attributes') &&
+               'Allow' ~~ $meta->get_method($method)->attributes;
     }
     return [sort @allow];
 }

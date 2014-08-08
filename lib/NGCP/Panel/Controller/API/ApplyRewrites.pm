@@ -59,7 +59,7 @@ sub auto :Private {
 
 sub OPTIONS :Allow {
     my ($self, $c) = @_;
-    my $allowed_methods = $self->allowed_methods;
+    my $allowed_methods = $self->allowed_methods_filtered($c);
     $c->response->headers(HTTP::Headers->new(
         Allow => $allowed_methods->join(', '),
         Accept_Post => 'application/hal+json; profile=http://purl.org/sipwise/ngcp-api/#rel-'.$self->resource_name,

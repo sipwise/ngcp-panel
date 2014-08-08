@@ -64,7 +64,7 @@ sub HEAD :Allow {
 
 sub OPTIONS :Allow {
     my ($self, $c, $id) = @_;
-    my $allowed_methods = $self->allowed_methods;
+    my $allowed_methods = $self->allowed_methods_filtered($c);
     $c->response->headers(HTTP::Headers->new(
         Allow => $allowed_methods->join(', '),
         Accept_Patch => 'application/json-patch+json',
