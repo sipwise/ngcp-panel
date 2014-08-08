@@ -191,7 +191,7 @@ msgstr "%1<span class=\"pull-right\">для %2s</span>"
 msgid ", but skipped the following line numbers: "
 msgstr ", но пропущены следующие номера строк: "
 
-#: lib/NGCP/Panel/Controller/Root.pm:108
+#: lib/NGCP/Panel/Controller/Root.pm:127
 msgid "403 - Permission denied"
 msgstr "403 - Доступ запрещен"
 
