@@ -188,7 +188,7 @@ msgstr "%1<span class=\"pull-right\">für %2s</span>"
 msgid ", but skipped the following line numbers: "
 msgstr ", aber folgende Zeilen wurden ignoriert: "
 
-#: lib/NGCP/Panel/Controller/Root.pm:108
+#: lib/NGCP/Panel/Controller/Root.pm:127
 msgid "403 - Permission denied"
 msgstr "403 - Zugriff verweigert"
 
