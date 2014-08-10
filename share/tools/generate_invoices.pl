@@ -89,6 +89,7 @@ Getopt::Long::GetOptions($opt,
     'update_contract_balance',
     'update_contract_balance_nonzero',
     'force_unrated',
+    'no_empty',
     'help|?',
     'man'
 ) or pod2usage(2);
@@ -329,6 +330,14 @@ sub check_unrated_calls{
 sub generate_invoice_data{
     my($provider_contract,$provider_contact,$client_contract,$client_contact,$billing_profile, $stime, $etime) = @_;
     
+    my($invoice_data) = get_invoice_data_raw($client_contract, $stime, $etime);
+    if((@{$invoice_data->{invoice_details_calls}} < 1) && $billing_profile->{interval_charge} == 0 ){
+        if($opt->{no_empty}){
+            $logger->debug("Contract_id=$client_contract->{id}. No_empty invoice generation requested - skiped.");
+            return;
+        }
+    }
+    
     state($t);
     if(!$t){
         $t = NGCP::Panel::Utils::InvoiceTemplate::get_tt();
@@ -358,7 +367,6 @@ sub generate_invoice_data{
         %$invoice,
         %$invoice_amounts,
     };
-    my($invoice_data) = get_invoice_data_raw($client_contract, $stime, $etime);
     my $out = '';
     my $pdf = '';
     $invoice->{data} = '';
