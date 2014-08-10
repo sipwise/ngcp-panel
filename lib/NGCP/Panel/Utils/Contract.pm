@@ -206,25 +206,9 @@ sub get_contract_rs {
     my $rs = $schema->resultset('contracts')
         ->search({
             $params{include_terminated} ? () : ('me.status' => { '!=' => 'terminated' }),
-            'billing_mappings.id' => {
-                '=' => $mapping_rs->search({
-                    contract_id => { -ident => 'me.id' },
-                    start_date => [ -or =>
-                        { '<=' => $dtf->format_datetime(NGCP::Panel::Utils::DateTime::current_local) },
-                        { -is  => undef },
-                    ],
-                    end_date => [ -or =>
-                        { '>=' => $dtf->format_datetime(NGCP::Panel::Utils::DateTime::current_local) },
-                        { -is  => undef },
-                    ],
-                },{
-                    alias => 'bilmap',
-                    rows => 1,
-                    order_by => {-desc => ['bilmap.start_date', 'bilmap.id']},
-                })->get_column('id')->as_query,
-            },
         },{
-            'join' => 'billing_mappings',
+            bind => [ ( $dtf->format_datetime(NGCP::Panel::Utils::DateTime::current_local) ) x 2],
+            'join' => { 'billing_mappings_actual' => 'billing_mappings'},
             '+select' => [
                 'billing_mappings.id',
                 'billing_mappings.start_date',
