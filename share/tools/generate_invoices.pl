@@ -14,6 +14,9 @@ use Template;
 use Geography::Countries qw/country/;
 use Pod::Usage;
 use HTML::Entities;
+
+use NGCP::Panel::Utils::Invoice;
+
 use Sipwise::Base;
 
 use NGCP::Panel;
@@ -146,19 +149,27 @@ sub get_client_contracts{
 }
 sub get_billing_profile{
     my($client_contract, $stime, $etime) = @_;
-    #don't allow auto-generation for terminated contracts
-    $dbh->selectrow_hashref('select distinct billing_profiles.* 
+    my $billing_profile;
+    if(my $actual_billing_mapping = $dbh->selectrow_hashref('select * FROM billing_mappings 
+        where contract_id = ? 
+            and (billing_mappings.start_date <= ? OR billing_mappings.start_date is null)
+            and (billing_mappings.end_date >= ? OR billing_mappings.end_date is null)
+        order by billing_mappings.start_date desc, billing_mappings.id desc limit 1'
+        , undef,  $client_contract->{id}, $etime->epoch, $stime->epoch)){
+
+        #don't allow auto-generation for terminated contracts
+        $billing_profile = $dbh->selectrow_hashref('select distinct billing_profiles.* 
         from billing_mappings
         inner join billing_profiles on billing_mappings.billing_profile_id=billing_profiles.id
         inner join contracts on contracts.id=billing_mappings.contract_id
         inner join products on billing_mappings.product_id=products.id and products.class in("sipaccount","pbxaccount")
-        where 
-            contracts.status != "terminated"
-            and contracts.id = ?
-            and (billing_mappings.start_date <= ? OR billing_mappings.start_date IS NULL)
-            and (billing_mappings.end_date >= ? OR billing_mappings.end_date IS NULL)'
-    , undef, $client_contract->{id}, $etime->epoch, $stime->epoch 
-    );
+        where billing_mappings.id=? 
+            and contracts.status != "terminated"'
+
+        , undef, $actual_billing_mapping->{id} 
+        );
+    }
+    return $billing_profile;
 }
 sub get_invoice_data_raw{
     my($client_contract, $stime, $etime) = @_;
