@@ -42,7 +42,7 @@ sub list_reseller :Chained('/') :PathPart('reseller') :CaptureArgs(0) {
         { name => "id", search => 1, title => $c->loc("#") },
         { name => "external_id", search => 1, title => $c->loc("External #") },
         { name => "contact.email", search => 1, title => $c->loc("Contact Email") },
-        { name => "billing_mappings.billing_profile.name", search => 1, title => $c->loc("Billing Profile") },
+        { name => "billing_mappings_actual.billing_mappings.billing_profile.name", search => 1, title => $c->loc("Billing Profile") },
         { name => "status", search => 1, title => $c->loc("Status") },
     ]);
 }
@@ -145,7 +145,7 @@ sub base :Chained('list_reseller') :PathPart('') :CaptureArgs(1) {
     $c->stash->{customer_dt_columns} = NGCP::Panel::Utils::Datatables::set_columns($c, [
         { name => "id", search => 1, title => $c->loc('#') },
         { name => "external_id", search => 1, title => $c->loc('External #') },
-        { name => "billing_mappings.product.name", search => 1, title => $c->loc('Product') },
+        { name => "billing_mappings_actual.billing_mappings.product.name", search => 1, title => $c->loc('Product') },
         { name => "contact.email", search => 1, title => $c->loc('Contact Email') },
         { name => "status", search => 1, title => $c->loc('Status') },
     ]);
