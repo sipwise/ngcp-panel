@@ -14,14 +14,17 @@ use Template;
 use Pod::Usage;
 use Log::Log4perl;
 
+
+use NGCP::Panel::Utils::Invoice;
+
 use Sipwise::Base;
 
 use NGCP::Panel;
 use NGCP::Panel::Utils::DateTime;
 use NGCP::Panel::Utils::Contract;
 use NGCP::Panel::Utils::InvoiceTemplate;
-use NGCP::Panel::Utils::Invoice;
 use NGCP::Panel::Utils::Email;
+
 
 my $opt = {};
 Log::Log4perl::init('/etc/ngcp-ossbss/logging.conf');
@@ -44,6 +47,7 @@ my $logger = Log::Log4perl->get_logger('NGCP::Panel');
         }
         close CONFIG;
     }
+    
 }
 
     
@@ -212,19 +216,26 @@ sub get_client_contracts{
 
 sub get_billing_profile{
     my($client_contract, $stime, $etime) = @_;
-    #don't allow auto-generation for terminated contracts
-    $dbh->selectrow_hashref('select distinct billing_profiles.* 
+    my $billing_profile;
+    if(my $actual_billing_mapping = $dbh->selectrow_hashref('select * FROM billing_mappings 
+        where contract_id = ? 
+            and (billing_mappings.start_date <= ? OR billing_mappings.start_date is null)
+            and (billing_mappings.end_date >= ? OR billing_mappings.end_date is null)
+        order by billing_mappings.start_date desc, billing_mappings.id desc limit 1'
+        , undef,  $client_contract->{id}, $etime->epoch, $stime->epoch)){
+
+        #don't allow auto-generation for terminated contracts
+        $billing_profile = $dbh->selectrow_hashref('select distinct billing_profiles.* 
         from billing_mappings
         inner join billing_profiles on billing_mappings.billing_profile_id=billing_profiles.id
         inner join contracts on contracts.id=billing_mappings.contract_id
         inner join products on billing_mappings.product_id=products.id and products.class in("sipaccount","pbxaccount")
-        where 
-            contracts.id = ? '
+        where billing_mappings.id=? '
             .( ( !$opt->{allow_terminated} ) ? ' and contracts.status != "terminated" ':'' )
-            .' and (billing_mappings.start_date <= ? OR billing_mappings.start_date IS NULL)
-               and (billing_mappings.end_date >= ? OR billing_mappings.end_date IS NULL)'
-    , undef, $client_contract->{id}, $etime->epoch, $stime->epoch 
-    );
+        , undef, $actual_billing_mapping->{id} 
+        );
+    }
+    return $billing_profile;
 }
 sub get_invoice_data_raw{
     my($client_contract, $stime, $etime, $opt_local) = @_;
@@ -404,8 +415,8 @@ sub get_contract_balance{
             stime => $stime,
             etime => $etime,
         );
-        $contract_balance->{cash_balance_interval} ||= $contract_balance_data->{customercost};
-        $contract_balance->{free_time_balance_interval} ||= $contract_balance_data->{free_time};
+        $contract_balance->{cash_balance_interval} ||= ( $contract_balance_data->{customercost} || 0);
+        $contract_balance->{free_time_balance_interval} ||= ( $contract_balance_data->{free_time} || 0);
         $dbh->do('insert into contract_balances(contract_id,cash_balance,cash_balance_interval,free_time_balance,free_time_balance_interval,start,end,invoice_id)values(?,?,?,?,?,?,?,?)',undef,$client_contract->{id},@$contract_balance{qw/cash_balance cash_balance_interval free_time_balance free_time_balance_interval/},$stime->datetime, $etime->datetime,undef );
         $invoice = get_invoice(undef, $client_contract->{id},$stime, $etime);
         #my $contract_balance_id = $dbh->last_insert_id(undef,'billing','contract_balances','id');
@@ -678,7 +689,11 @@ For internal use. Update contract_balances *_balance_interval fields with values
 
 =item --update_contract_balance_nonzero
 
-For internal use. Configuration for option --update_contract_balance. Allows update contract_balances.[cash|free_time]_balance_interval fields
+For internal use. Configuration for option --update_contract_balance. Allows update contract_balances.[cash|free_time]_balance_interval fields even if old values aren't empty.
+
+=item --no_empty
+
+Deny generate invoices for invoices without calls and null permanent fee.
 
 =head1 SAMPLES
 
