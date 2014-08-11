@@ -1,5 +1,5 @@
 #!/usr/bin/perl -w
-use lib '/media/sf_/usr/share/VMHost/ngcp-panel/lib';
+use lib '/root/VMHost/ngcp-panel/lib';
 use strict;
 
 use Getopt::Long;
@@ -14,19 +14,22 @@ use Template;
 use Pod::Usage;
 use Log::Log4perl;
 
+
+use NGCP::Panel::Utils::Invoice;
+
 use Sipwise::Base;
 
 use NGCP::Panel;
 use NGCP::Panel::Utils::DateTime;
 use NGCP::Panel::Utils::Contract;
 use NGCP::Panel::Utils::InvoiceTemplate;
-use NGCP::Panel::Utils::Invoice;
 use NGCP::Panel::Utils::Email;
 
 
 Log::Log4perl::init('/etc/ngcp-ossbss/logging.conf');
 my $logger = Log::Log4perl->get_logger('NGCP::Panel');
 
+    
 
 my $dbh;
 {
@@ -170,19 +173,26 @@ sub get_client_contracts{
 }
 sub get_billing_profile{
     my($client_contract, $stime, $etime) = @_;
-    #don't allow auto-generation for terminated contracts
-    $dbh->selectrow_hashref('select distinct billing_profiles.* 
+    my $billing_profile;
+    if(my $actual_billing_mapping = $dbh->selectrow_hashref('select * FROM billing_mappings 
+        where contract_id = ? 
+            and (billing_mappings.start_date <= ? OR billing_mappings.start_date is null)
+            and (billing_mappings.end_date >= ? OR billing_mappings.end_date is null)
+        order by billing_mappings.start_date desc, billing_mappings.id desc limit 1'
+        , undef,  $client_contract->{id}, $etime->epoch, $stime->epoch)){
+
+        #don't allow auto-generation for terminated contracts
+        $billing_profile = $dbh->selectrow_hashref('select distinct billing_profiles.* 
         from billing_mappings
         inner join billing_profiles on billing_mappings.billing_profile_id=billing_profiles.id
         inner join contracts on contracts.id=billing_mappings.contract_id
         inner join products on billing_mappings.product_id=products.id and products.class in("sipaccount","pbxaccount")
-        where 
-            contracts.id = ? '
+        where billing_mappings.id=? '
             .( ( !$opt->{allow_terminated} ) ? ' and contracts.status != "terminated" ':'' )
-            .' and (billing_mappings.start_date <= ? OR billing_mappings.start_date IS NULL)
-               and (billing_mappings.end_date >= ? OR billing_mappings.end_date IS NULL)'
-    , undef, $client_contract->{id}, $etime->epoch, $stime->epoch 
-    );
+        , undef, $actual_billing_mapping->{id} 
+        );
+    }
+    return $billing_profile;
 }
 sub get_invoice_data_raw{
     my($client_contract, $stime, $etime) = @_;
