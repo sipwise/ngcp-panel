@@ -45,8 +45,6 @@ sub contract_list :Chained('/') :PathPart('contract') :CaptureArgs(0) {
                 'product.class' => 'sippeering',
                 'product.class' => 'reseller',
             ],
-        }, {
-            'join' => {'billing_mappings' => 'product'},
         });
     $c->stash(contract_select_rs => $rs);
 
@@ -252,8 +250,6 @@ sub peering_list :Chained('contract_list') :PathPart('peering') :CaptureArgs(0) 
     my $base_rs = $c->stash->{contract_select_rs};
     $c->stash->{peering_rs} = $base_rs->search({
             'product.class' => 'sippeering',
-        }, {
-            'join' => {'billing_mappings' => 'product'},
         });
    
     $c->stash(ajax_uri => $c->uri_for_action("/contract/peering_ajax"));
@@ -351,8 +347,6 @@ sub reseller_list :Chained('contract_list') :PathPart('reseller') :CaptureArgs(0
     my $base_rs = $c->stash->{contract_select_rs};
     $c->stash->{reseller_rs} = $base_rs->search({
             'product.class' => 'reseller',
-        }, {
-            'join' => {'billing_mappings' => 'product'},
         });
    
     $c->stash(ajax_uri => $c->uri_for_action("/contract/reseller_ajax"));

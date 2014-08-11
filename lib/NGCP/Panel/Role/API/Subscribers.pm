@@ -177,7 +177,6 @@ sub get_customer {
                 'product.class' => 'pbxaccount',
             ],
         },{
-            join => {'billing_mappings' => 'product' },
             '+select' => [ 'billing_mappings.id', 'product.class' ],
             '+as' => [ 'bmid', 'product_class' ],
         });

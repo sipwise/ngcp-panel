@@ -339,10 +339,7 @@ sub ajax_contract :Chained('list_reseller') :PathPart('ajax_contract') :Args(0) 
             'me.status' => { '!=' => 'terminated' },
             'me.id' => { 'not in' => \@used_contracts },
             'product.class' => 'reseller',
-        },{
-            join => { 'billing_mappings' => 'product'},
-        }
-        );
+        });
     NGCP::Panel::Utils::Datatables::process($c, $free_contracts, $c->stash->{contract_dt_columns});
     $c->detach( $c->view("JSON") );
 }
