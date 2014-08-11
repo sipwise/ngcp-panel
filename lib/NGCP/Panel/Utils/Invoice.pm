@@ -29,7 +29,7 @@ sub get_invoice_serial{
 }
 sub prepare_contact_data{
     my($contact) = @_;
-    $contact->{country} = country($contact->{country} || '');
+    $contact->{country} = country($contact->{country} || 0);
     foreach(keys %$contact){
         $contact->{$_} = encode_entities($contact->{$_}, '<>&"');
     }
