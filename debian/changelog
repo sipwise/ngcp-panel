@@ -1,3 +1,17 @@
+ngcp-panel (1.3.2.12+0~mr3.3.2.12) unstable; urgency=low
+
+  [ Irka ]
+  * [4fc985d] MT#5879 Remove Country processing warning.
+  * [434fc9f] MT#5879 Fix billing_mapping logic, use the latest b.m. as actual.
+  * [39c32e2] MT#5879 Fix memory issue
+  * [53541a6] MT#5879 Fix UTF-8 email send. Further fix of memory usage issue.
+  * [9cc11bf] MT#5879 Additional fixes for automerge of the memory fix.
+  * [04072ac] MT#8387 Fix incorrect rounding for cents.
+
+  [ Sipwise Jenkins Builder ]
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Tue, 12 Aug 2014 16:35:01 +0200
+
 ngcp-panel (1.3.2.11+0~mr3.3.2.11) unstable; urgency=low
 
   [ Irka ]
