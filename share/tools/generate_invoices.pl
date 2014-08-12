@@ -96,7 +96,7 @@ sub process_invoices{
             
             
             foreach my $client_contract (@{ get_client_contracts($client_contact) }){
-                $logger->debug( "reseller_id=".$provider_contract->{reseller_core_id}.";contact_id=".$client_contact->{id}.";client_contract_id=".$client_contract->{id}.";\n" );
+                print "reseller_id=".$provider_contract->{reseller_core_id}.";contact_id=".$client_contact->{id}.";client_contract_id=".$client_contract->{id}.";\n";
                 
                 $invoices->{$client_contract->{id}} ||= [];
                 if(!$opt->{sendonly}){
@@ -293,11 +293,11 @@ sub generate_invoice_data{
     ($contract_balance,$invoice) = get_contract_balance($client_contract,$billing_profile,$contract_balance,$invoice,$stime,$etime);
     #print Dumper $contract_balance;
     
-    $client_contact->{country} = country($client_contact->{country} || '');
+    $client_contact->{country} = country($client_contact->{country} || 0);
     foreach(keys %$client_contact){
         $client_contact->{$_} = encode_entities($client_contact->{$_}, '<>&"');
     }
-    $provider_contact->{country} = country($provider_contact->{country} || '');
+    $provider_contact->{country} = country($provider_contact->{country} || 0);
     foreach(keys %$provider_contact){
         $provider_contact->{$_} = encode_entities($provider_contact->{$_}, '<>&"');
     }
