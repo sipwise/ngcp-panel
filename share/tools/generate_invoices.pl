@@ -97,6 +97,8 @@ process_invoices();
 
 
 sub process_invoices{
+    #if(!$opt->{sendonly} && !check_unrated_calls()){
+    #don't allow to send invoices too until admin directly request send for unrated
     if(!check_unrated_calls()){
         return;
     }
@@ -114,7 +116,8 @@ sub process_invoices{
             
             
             foreach my $client_contract (@{ get_client_contracts($client_contact) }){
-                    
+                $logger->debug( "reseller_id=".$provider_contract->{reseller_core_id}.";contact_id=".$client_contact->{id}.";client_contract_id=".$client_contract->{id}.";\n" );
+                
                 $invoices->{$client_contract->{id}} ||= [];
                 if(!$opt->{sendonly}){
                     $logger->debug( "reseller_id=".$provider_contract->{reseller_core_id}.";contact_id=".$client_contact->{id}.";contract_id=".$client_contract->{id}.";\n");
@@ -140,7 +143,12 @@ sub process_invoices{
                 }
                 if($opt->{send} || $opt->{sendonly}){
                     my $email_template = get_email_template($provider_contract,$client_contract);
-                    email($email_template, $provider_contact, $client_contact, $invoices->{$client_contract->{id}} );
+                    my $client_invoices = [ map {
+                        my $invoice_full = get_invoice_by_id($_->{id});
+                        preprocess_invoice_date($invoice_full,$stime,$etime);
+                        $invoice_full;
+                    } @{$invoices->{$client_contract->{id}}} ];
+                    email($email_template, $provider_contact, $client_contact, $client_invoices );
                 }
             }#foreach client contract
         }#foreach client contact
@@ -398,15 +406,17 @@ sub get_invoice{
     if($invoice->{id} && !$invoice_id){
         $dbh->do('update contract_balances set invoice_id = ? where contract_id=? and start=? and end=?', undef, $invoice->{id},$contract_id, $stime->datetime, $etime->datetime );    
     }
-    #obj value will be used in email
-    $invoice = {
-        %$invoice,
-        period_start     => $stime,
-        period_start_obj => $stime,
-        period_end       => $etime,
-        period_end_obj   => $etime,
-    };
+    preprocess_invoice_date($invoice, $stime, $etime);
     return $invoice;
+}
+sub preprocess_invoice_date{
+    my ($invoice_ref, $stime, $etime) =@_;
+    #obj value will be used in email
+    @$invoice_ref{qw/period_start period_start_obj period_end period_end_obj/} = ( $stime, $stime, $etime,$etime);
+}
+sub get_invoice_by_id{
+    my ($invoice_id) =@_;
+    $dbh->selectrow_hashref('select * from invoices where id=?',undef,$invoice_id);
 }
 
 sub get_invoice_template{
@@ -458,11 +468,10 @@ sub get_email_template{
     }else{
         $res = ( $templates->{$provider_contract->{reseller_core_id}} or $template_default );
     }
+    foreach(qw/body subject from_email/){
+        utf8::decode($res->{$_});
+    }
     return $res;
-}
-sub get_invoice_data{
-    my ($invoice,$data_ref) =@_;
-    $$data_ref = $dbh->selectrow_array('select data from invoices where id=?',undef,$invoice->{id});
 }
 sub email{
 #todo: repeat my old function based on templates and store into utils
@@ -489,8 +498,6 @@ sub email{
     if($client_contact->{email}){
         my @attachments = map {
             my $invoice = $_;
-            my $data = '';
-            get_invoice_data($invoice,\$data);
             Email::MIME->create(
                 attributes => {
                     filename     => "invoice_".$invoice->{serial}.".pdf",
@@ -498,10 +505,9 @@ sub email{
                     encoding     => "base64",
                     disposition  => "attachment",
                 },
-                body => $data,
+                body => $invoice->{data},
             );
         } @$client_invoices;
-        
         my $invoice = $client_invoices->[0];
         foreach (qw/period_start period_end/){
             $invoice->{$_.'_obj'} = NGCP::Panel::Utils::DateTime::from_string($invoice->{$_}) unless $invoice->{$_.'_obj'};
@@ -530,7 +536,7 @@ sub email{
                     attributes => {
                         encoding     => "quoted-printable",
                         content_type => "text/plain",
-                        charset      => "US-ASCII",
+                        charset      => "UTF-8",
                     },
                     body_str => $tmpl_processed->{body},
                 ),            
