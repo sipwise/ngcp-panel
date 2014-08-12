@@ -121,13 +121,14 @@ sub process_invoices{
 
                     if( my $billing_profile = get_billing_profile($client_contract, $stime, $etime) ){
                         if(my $invoice = generate_invoice_data($provider_contract,$provider_contact,$client_contract,$client_contact,$billing_profile, $stime, $etime)){
+                            $invoice->{data} = '';
                             push @{$invoices->{$client_contract->{id}}}, $invoice;
                         }
                     }else{#if billing profile
                         $logger->debug( "No billing profile;\n");
                     }
                 }else{
-                    $invoices->{$client_contract->{id}} = $dbh->selectall_arrayref('select invoices.* from invoices 
+                    $invoices->{$client_contract->{id}} = $dbh->selectall_arrayref('select invoices.id from invoices 
                     '.ifp(' where ',
                         join(' and ',
                             !$opt->{resend}?' invoices.sent_date is null ':(),
@@ -349,7 +350,7 @@ sub generate_invoice_data{
     $logger->debug( "generated data for invoice.id=".$invoice->{id}."; invoice.serial=".$invoice->{serial}.";\n" );
     $invoice->{data} = $pdf;
     #set sent_date to null after each data regeneration
-    $dbh->do('update invoices set sent_date=?,data=?,amount_net=?,amount_vat=?,amount_total=? where id=?',undef,undef,@$invoice{qw/data amount_net amount_vat amount_total id/});    
+    $dbh->do('update invoices set sent_date=?,data=?,amount_net=?,amount_vat=?,amount_total=? where id=?',undef,undef,@$invoice{qw/data amount_net amount_vat amount_total id/}); 
     return $invoice;
 }
 
@@ -459,7 +460,10 @@ sub get_email_template{
     }
     return $res;
 }
-
+sub get_invoice_data{
+    my ($invoice,$data_ref) =@_;
+    $$data_ref = $dbh->selectrow_array('select data from invoices where id=?',undef,$invoice->{id});
+}
 sub email{
 #todo: repeat my old function based on templates and store into utils
     my($email_template,$provider_contact,$client_contact,$client_invoices,$transport_in) = @_;
@@ -485,6 +489,8 @@ sub email{
     if($client_contact->{email}){
         my @attachments = map {
             my $invoice = $_;
+            my $data = '';
+            get_invoice_data($invoice,\$data);
             Email::MIME->create(
                 attributes => {
                     filename     => "invoice_".$invoice->{serial}.".pdf",
@@ -492,7 +498,7 @@ sub email{
                     encoding     => "base64",
                     disposition  => "attachment",
                 },
-                body => $invoice->{data},
+                body => $data,
             );
         } @$client_invoices;
         
