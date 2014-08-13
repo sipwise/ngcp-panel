@@ -29,8 +29,7 @@ method wait_socket($host, $port, $timeout=90) {
 sub shutdown_servers {
     for my $proc ($webdriver, $plackup) {
         if ($proc) {
-            require Sys::Sig;
-            $proc->kill(Sys::Sig->TERM);
+            $proc->kill('TERM');
         }
     }
 }

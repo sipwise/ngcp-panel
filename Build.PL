@@ -113,7 +113,6 @@ my $builder = Local::Module::Build->new(
         'Test::mysqld' => 0,
         'Test::WebDriver' => 0,
         'strict' => 0,
-        'Sys::Sig' => 0,
         'Test::WWW::Mechanize::Catalyst' => 0,
         'URI' => 0,
         'warnings' => 0,
