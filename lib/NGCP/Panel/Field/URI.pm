@@ -68,7 +68,7 @@ has '+deflate_method'  => ( default => sub { \&uri_deflate } );
 
 sub uri_deflate {
     my ( $field, $v ) = @_;
-
+    return unless($v);
     my $c = $field->form->ctx;
     return $v unless($c);
 
