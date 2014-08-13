@@ -595,7 +595,10 @@ sub update_item {
     my $old_profile = $prov_subscriber->profile_id;
 
     $subscriber->update($billing_res);
-    $subscriber->provisioning_voip_subscriber->update($provisioning_res);
+    #Can be deleted during termination, maybe others
+    if($subscriber->provisioning_voip_subscriber->in_storage){
+        $subscriber->provisioning_voip_subscriber->update($provisioning_res);
+    }
     $subscriber->discard_changes;
 
     if(($prov_subscriber->profile_id // 0) != ($old_profile // 0)) {

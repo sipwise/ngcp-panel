@@ -348,7 +348,7 @@ sub update_preferences {
     foreach my $k(keys %{ $preferences } ) {
         my $pref = NGCP::Panel::Utils::Preferences::get_usr_preference_rs(
             c => $c, attribute => $k, prov_subscriber => $prov_subscriber);
-        if($pref->first && $pref->first->attribute->max_occur == 1) {
+        if($pref && $pref->first && $pref->first->attribute->max_occur == 1) {
             unless(defined $preferences->{$k}) {
                 $pref->first->delete;
             } else {
