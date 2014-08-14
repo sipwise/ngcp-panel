@@ -1,3 +1,12 @@
+ngcp-panel (1.4.1.7+0~mr3.4.1.7) unstable; urgency=low
+
+  [ Irka ]
+  * [8526c11] MT#8649 Add callforwards link into subscribers info
+
+  [ Sipwise Jenkins Builder ]
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Thu, 14 Aug 2014 23:12:40 +0200
+
 ngcp-panel (1.4.1.6+0~mr3.4.1.6) unstable; urgency=low
 
   [ Irka ]
