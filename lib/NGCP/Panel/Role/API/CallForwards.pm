@@ -30,9 +30,6 @@ sub hal_from_item {
 
     die "no provisioning_voip_subscriber" unless $prov_subs;
 
-    my $ringtimeout_preference = NGCP::Panel::Utils::Preferences::get_usr_preference_rs(
-            c => $c, attribute => 'ringtimeout', prov_subscriber => $prov_subs)->first;
-    $ringtimeout_preference = $ringtimeout_preference ? $ringtimeout_preference->value : undef;
 
     my %resource = (subscriber_id => $prov_subs->id);
 
@@ -52,7 +49,6 @@ sub hal_from_item {
         ],
         relation => 'ngcp:'.$self->resource_name,
     );
-    
     for my $cf_type (qw/cfu cfb cft cfna/) {
         my $mapping = $c->model('DB')->resultset('voip_cf_mappings')->search({
                 subscriber_id => $prov_subs->id,
@@ -64,8 +60,12 @@ sub hal_from_item {
             $resource{$cf_type} = {};
         }
     }
-
-    $resource{cft}{ringtimeout} = $ringtimeout_preference;
+    if(keys %{$resource{cft}}){
+        my $ringtimeout_preference = NGCP::Panel::Utils::Preferences::get_usr_preference_rs(
+                c => $c, attribute => 'ringtimeout', prov_subscriber => $prov_subs)->first;
+        $ringtimeout_preference = $ringtimeout_preference ? $ringtimeout_preference->value : undef;
+        $resource{cft}{ringtimeout} = $ringtimeout_preference;
+    }
 
     $form //= $self->get_form($c);
     return unless $self->validate_form(
