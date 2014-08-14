@@ -1139,7 +1139,7 @@ sub preferences_callforward_advanced :Chained('base') :PathPart('preferences/cal
     my @maps = ();
     foreach my $map($cf_mapping->all) {
         push @maps, {
-            destination_set => $map->destination_set->id,
+            destination_set => $map->destination_set ? $map->destination_set->id : undef,
             time_set => $map->time_set ? $map->time_set->id : undef,
         };
     }
@@ -1150,6 +1150,7 @@ sub preferences_callforward_advanced :Chained('base') :PathPart('preferences/cal
 
     $cf_form->process(
         params => $posted ? $c->request->params : $params,
+        posted => $posted,
     );
 
 
