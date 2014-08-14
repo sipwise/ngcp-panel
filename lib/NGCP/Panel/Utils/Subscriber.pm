@@ -280,6 +280,7 @@ sub create_subscriber {
                 username => $cli,
                 domain_id => $prov_subscriber->domain->id,
                 subscriber_id => $prov_subscriber->id,
+                is_primary => 1,
             });
         }
 
