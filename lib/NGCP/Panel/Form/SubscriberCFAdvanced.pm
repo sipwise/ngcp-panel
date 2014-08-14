@@ -103,7 +103,25 @@ has_block 'actions' => (
     class => [qw(modal-footer)],
     render_list => [qw(cf_actions)],
 );
-
+sub validate_active_callforward{
+    my ( $self, $field ) = @_;
+    my $value = $field->value || [];
+    my $result = 1;
+    if( $#$value < 0 ){
+        $result = 0;
+    }else{
+        foreach my $map (@$value){
+            if(! defined $map->{destination_set}){
+                $result = 0;
+                last;
+            }
+        }
+    }
+    if(!$result){
+        $field->add_error($field->label . " is invalid");
+    }
+    return $result;
+}
 1;
 
 # vim: set tabstop=4 expandtab:
