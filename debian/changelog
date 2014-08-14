@@ -1,3 +1,12 @@
+ngcp-panel (1.3.2.15+0~mr3.3.2.15) unstable; urgency=low
+
+  [ Irka ]
+  * [54564ef] MT#8609 API: Don't add ringtimeout into empty callforwardTimeout.
+
+  [ Sipwise Jenkins Builder ]
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Thu, 14 Aug 2014 19:05:23 +0200
+
 ngcp-panel (1.3.2.14+0~mr3.3.2.14) unstable; urgency=low
 
   [ Irka ]
