@@ -405,7 +405,7 @@ sub update_subscriber_numbers {
             id => $subscriber_id,
         });
     my $prov_subs = $billing_subs->provisioning_voip_subscriber;
-    my @nums = (); my @dbnums = ();
+    my @nums = ();
 
     if(exists $params{primary_number} && !defined $primary_number) {
         $billing_subs->update({
@@ -480,7 +480,6 @@ sub update_subscriber_numbers {
                         is_primary => 1,
                     });
                 }
-                push @dbnums, $dbalias->id;
                 if(defined $prov_subs->voicemail_user) {
                     $prov_subs->voicemail_user->update({
                         mailbox => $cli,
@@ -594,13 +593,9 @@ sub update_subscriber_numbers {
                     is_primary => 0,
                 });
             }
-            push @dbnums, $dbalias->id;
         }
     } else {
         push @nums, $billing_subs->voip_numbers->get_column('id')->all;
-        if($prov_subs) {
-            push @dbnums, $prov_subs->voip_dbaliases->get_column('id')->all;
-        }
     }
 
     push @nums, $billing_subs->primary_number_id
@@ -612,8 +607,9 @@ sub update_subscriber_numbers {
         reseller_id => undef,
     });
     if($prov_subs) {
+        my @dbnums = map { $_->cc . ($_->ac // '') . $_->sn } $billing_subs->voip_numbers->all;
         $prov_subs->voip_dbaliases->search({
-            id => { 'not in' => \@dbnums },
+            username => { 'not in' => \@dbnums },
         })->delete;
     }
 
