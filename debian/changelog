@@ -1,3 +1,12 @@
+ngcp-panel (1.4.1.8+0~mr3.4.1.8) unstable; urgency=low
+
+  [ Irka ]
+  * [60ceb91] MT#8609 Add "ringtimeout" into CallForward Timeout "cft" description.
+
+  [ Sipwise Jenkins Builder ]
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Mon, 18 Aug 2014 19:50:37 +0200
+
 ngcp-panel (1.4.1.7+0~mr3.4.1.7) unstable; urgency=low
 
   [ Irka ]
