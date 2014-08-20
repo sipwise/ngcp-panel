@@ -199,7 +199,7 @@ sub valid_media_type {
     my ($self, $c, $media_type) = @_;
 
     my $ctype = $c->request->header('Content-Type');
-    $ctype =~ s/;\s+boundary.+$//;
+    $ctype =~ s/;\s+boundary.+$// if $ctype;
     my $type;
     if(ref $media_type eq "ARRAY") {
         $type = join ' or ', @{ $media_type };
