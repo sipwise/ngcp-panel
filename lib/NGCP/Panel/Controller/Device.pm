@@ -768,6 +768,7 @@ sub devconf_edit :Chained('devconf_base') :PathPart('edit') :Args(0) {
                 $form->params->{device_id} = $form->params->{device}{id};
                 delete $form->params->{device};
 
+                use Data::Printer; p $form->params;
                 $c->stash->{devconf}->update($form->params);
                 delete $c->session->{created_objects}->{device};
                 $c->flash(messages => [{type => 'success', text => $c->loc('Successfully updated device configuration')}]);
@@ -1294,6 +1295,27 @@ sub dev_field_firmware_base :Chained('/') :PathPart('device/autoprov/firmware') 
     }
 
     $c->stash->{dev} = $dev;
+}
+
+sub dev_field_firmware_download :Chained('dev_field_firmware_base') :PathPart('version') :Args(1) {
+    my ($self, $c, $ver) = @_;
+
+    my $rs = $c->stash->{dev}->profile->config->device->autoprov_firmwares->search({
+        device_id => $c->stash->{dev}->profile->config->device->id,
+        version => { '=' => $ver },
+    });
+
+    my $fw = $rs->first;
+    unless($fw) {
+        $c->response->content_type('text/plain');
+        $c->response->body("404 - firmware version '$ver' not found latest");
+        $c->response->status(404);
+        return;
+    }
+
+    $c->response->header ('Content-Disposition' => 'attachment; filename="' . $fw->filename . '"');
+    $c->response->content_type('application/octet-stream');
+    $c->response->body($fw->data);
 }
 
 sub dev_field_firmware_version_base :Chained('dev_field_firmware_base') :PathPart('from') :CaptureArgs(1) {
