@@ -478,19 +478,17 @@ sub update_item {
             }
         }
     }
-    if(defined $resource->{lock}) {
-        try {
-            NGCP::Panel::Utils::Subscriber::lock_provisoning_voip_subscriber(
-                c => $c,
-                prov_subscriber => $subscriber->provisioning_voip_subscriber,
-                level => $resource->{lock},
-            );
-        } catch($e) {
-            $c->log->error("failed to lock subscriber id ".$subscriber->id." with level ".$resource->{lock});
-            $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "Failed to update subscriber lock");
-            return;
-        };
-    }
+    try {
+        NGCP::Panel::Utils::Subscriber::lock_provisoning_voip_subscriber(
+            c => $c,
+            prov_subscriber => $subscriber->provisioning_voip_subscriber,
+            level => $resource->{lock} || 0,
+        );
+    } catch($e) {
+        $c->log->error("failed to lock subscriber id ".$subscriber->id." with level ".$resource->{lock});
+        $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "Failed to update subscriber lock");
+        return;
+    };
 
     my ($profile_set, $profile);
     if($resource->{profile_set}{id}) {
