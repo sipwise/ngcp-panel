@@ -1,3 +1,13 @@
+ngcp-panel (1.3.2.18+0~mr3.3.2.18) unstable; urgency=low
+
+  [ Andreas Granig ]
+  * [34227fb] MT#8633 Properly set is_primary on sub creation
+  * [765d7d9] MT#8449 Fix clearing unused alias numbers
+
+  [ Sipwise Jenkins Builder ]
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Wed, 20 Aug 2014 11:38:26 +0200
+
 ngcp-panel (1.3.2.17+0~mr3.3.2.17) unstable; urgency=low
 
   [ Irka ]
