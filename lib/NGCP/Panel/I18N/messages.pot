@@ -467,7 +467,7 @@ msgstr ""
 msgid "BIC/SWIFT"
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/Device.pm:891
+#: lib/NGCP/Panel/Controller/Device.pm:892
 msgid "BLF Key"
 msgstr ""
 
@@ -1638,11 +1638,11 @@ msgstr ""
 msgid "Device model not found"
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/Device.pm:875
+#: lib/NGCP/Panel/Controller/Device.pm:876
 msgid "Device profile not found"
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/Device.pm:925
+#: lib/NGCP/Panel/Controller/Device.pm:926
 msgid "Device profile successfully deleted"
 msgstr ""
 
@@ -2040,7 +2040,7 @@ msgstr ""
 msgid "Failed to create device model"
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/Device.pm:846
+#: lib/NGCP/Panel/Controller/Device.pm:847
 msgid "Failed to create device profile"
 msgstr ""
 
@@ -2173,7 +2173,7 @@ msgstr ""
 msgid "Failed to delete device model"
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/Device.pm:930
+#: lib/NGCP/Panel/Controller/Device.pm:931
 msgid "Failed to delete device profile"
 msgstr ""
 
@@ -2396,7 +2396,7 @@ msgstr ""
 msgid "Failed to update device model"
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/Device.pm:977
+#: lib/NGCP/Panel/Controller/Device.pm:978
 msgid "Failed to update device profile"
 msgstr ""
 
@@ -2795,7 +2795,7 @@ msgstr ""
 msgid "IBAN"
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/Device.pm:886
+#: lib/NGCP/Panel/Controller/Device.pm:887
 msgid "ID"
 msgstr ""
 
@@ -3031,7 +3031,7 @@ msgstr ""
 msgid "Invalid device model id"
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/Device.pm:865
+#: lib/NGCP/Panel/Controller/Device.pm:866
 msgid "Invalid device profile id"
 msgstr ""
 
@@ -3647,7 +3647,7 @@ msgstr ""
 msgid "NEW MESSAGE"
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/Billing.pm:37 lib/NGCP/Panel/Controller/Customer.pm:278 lib/NGCP/Panel/Controller/Customer.pm:284 lib/NGCP/Panel/Controller/Customer.pm:293 lib/NGCP/Panel/Controller/Device.pm:106 lib/NGCP/Panel/Controller/Device.pm:887 lib/NGCP/Panel/Controller/EmailTemplate.pm:35 lib/NGCP/Panel/Controller/InvoiceTemplate.pm:34 lib/NGCP/Panel/Controller/Peering.pm:28 lib/NGCP/Panel/Controller/Peering.pm:77 lib/NGCP/Panel/Controller/Product.pm:23 lib/NGCP/Panel/Controller/Reseller.pm:133 lib/NGCP/Panel/Controller/Reseller.pm:138 lib/NGCP/Panel/Controller/Reseller.pm:159 lib/NGCP/Panel/Controller/Reseller.pm:36 lib/NGCP/Panel/Controller/Rewrite.pm:33 lib/NGCP/Panel/Controller/SubscriberProfile.pm:319 lib/NGCP/Panel/Controller/SubscriberProfile.pm:40 lib/NGCP/Panel/Utils/DbStrings.pm:912 lib/NGCP/Panel/Utils/Sounds.pm:63 share/templates/customer/details.tt:101 share/templates/customer/details.tt:53 share/templates/customer/details.tt:63 share/templates/customer/details.tt:91 share/templates/helpers/pref_table.tt:39 share/templates/sound/handles_list.tt:29 share/templates/subscriber/preferences.tt:171 share/templates/subscriber/preferences.tt:257 share/templates/subscriber/preferences.tt:618 share/templates/subscriber/preferences.tt:668
+#: lib/NGCP/Panel/Controller/Billing.pm:37 lib/NGCP/Panel/Controller/Customer.pm:278 lib/NGCP/Panel/Controller/Customer.pm:284 lib/NGCP/Panel/Controller/Customer.pm:293 lib/NGCP/Panel/Controller/Device.pm:106 lib/NGCP/Panel/Controller/Device.pm:888 lib/NGCP/Panel/Controller/EmailTemplate.pm:35 lib/NGCP/Panel/Controller/InvoiceTemplate.pm:34 lib/NGCP/Panel/Controller/Peering.pm:28 lib/NGCP/Panel/Controller/Peering.pm:77 lib/NGCP/Panel/Controller/Product.pm:23 lib/NGCP/Panel/Controller/Reseller.pm:133 lib/NGCP/Panel/Controller/Reseller.pm:138 lib/NGCP/Panel/Controller/Reseller.pm:159 lib/NGCP/Panel/Controller/Reseller.pm:36 lib/NGCP/Panel/Controller/Rewrite.pm:33 lib/NGCP/Panel/Controller/SubscriberProfile.pm:319 lib/NGCP/Panel/Controller/SubscriberProfile.pm:40 lib/NGCP/Panel/Utils/DbStrings.pm:912 lib/NGCP/Panel/Utils/Sounds.pm:63 share/templates/customer/details.tt:101 share/templates/customer/details.tt:53 share/templates/customer/details.tt:63 share/templates/customer/details.tt:91 share/templates/helpers/pref_table.tt:39 share/templates/sound/handles_list.tt:29 share/templates/subscriber/preferences.tt:171 share/templates/subscriber/preferences.tt:257 share/templates/subscriber/preferences.tt:618 share/templates/subscriber/preferences.tt:668
 msgid "Name"
 msgstr ""
 
@@ -3804,7 +3804,7 @@ msgstr ""
 msgid "Number block successfully updated"
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/Device.pm:888
+#: lib/NGCP/Panel/Controller/Device.pm:889
 msgid "Number of Lines/Keys"
 msgstr ""
 
@@ -4276,7 +4276,7 @@ msgstr ""
 msgid "Priority (q-value)"
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/Device.pm:889
+#: lib/NGCP/Panel/Controller/Device.pm:890
 msgid "Private Line"
 msgstr ""
 
@@ -4823,7 +4823,7 @@ msgstr ""
 msgid "Settings"
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/Device.pm:890
+#: lib/NGCP/Panel/Controller/Device.pm:891
 msgid "Shared Line"
 msgstr ""
 
@@ -5329,7 +5329,7 @@ msgstr ""
 msgid "Successfully created device model"
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/Device.pm:840
+#: lib/NGCP/Panel/Controller/Device.pm:841
 msgid "Successfully created device profile"
 msgstr ""
 
@@ -5402,7 +5402,7 @@ msgstr ""
 msgid "Successfully updated ccmappings."
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/Device.pm:773
+#: lib/NGCP/Panel/Controller/Device.pm:774
 msgid "Successfully updated device configuration"
 msgstr ""
 
@@ -5410,7 +5410,7 @@ msgstr ""
 msgid "Successfully updated device firmware"
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/Device.pm:971
+#: lib/NGCP/Panel/Controller/Device.pm:972
 msgid "Successfully updated device profile"
 msgstr ""
 
