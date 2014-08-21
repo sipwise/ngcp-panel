@@ -620,7 +620,7 @@ msgstr "Отошел"
 msgid "BIC/SWIFT"
 msgstr "BIC/SWIFT"
 
-#: lib/NGCP/Panel/Controller/Device.pm:891
+#: lib/NGCP/Panel/Controller/Device.pm:892
 msgid "BLF Key"
 msgstr "BLF ключ"
 
@@ -2089,11 +2089,11 @@ msgstr "Прошивка устройства успешно удалена"
 msgid "Device model not found"
 msgstr "Модель устройства не найдена"
 
-#: lib/NGCP/Panel/Controller/Device.pm:875
+#: lib/NGCP/Panel/Controller/Device.pm:876
 msgid "Device profile not found"
 msgstr "Профиль устройства не найден"
 
-#: lib/NGCP/Panel/Controller/Device.pm:925
+#: lib/NGCP/Panel/Controller/Device.pm:926
 msgid "Device profile successfully deleted"
 msgstr "Профиль устройства успешно удален"
 
@@ -2593,7 +2593,7 @@ msgstr "Не удалось создать прошивку устройства
 msgid "Failed to create device model"
 msgstr "Не удалось создать модель устройства"
 
-#: lib/NGCP/Panel/Controller/Device.pm:846
+#: lib/NGCP/Panel/Controller/Device.pm:847
 msgid "Failed to create device profile"
 msgstr "Не удалось создать профиль устройства"
 
@@ -2727,7 +2727,7 @@ msgstr "Не удалось удалить прошивку устройства
 msgid "Failed to delete device model"
 msgstr "Не удалось удалить модель устройства"
 
-#: lib/NGCP/Panel/Controller/Device.pm:930
+#: lib/NGCP/Panel/Controller/Device.pm:931
 msgid "Failed to delete device profile"
 msgstr "Не удалось удалить профиль устройства"
 
@@ -2956,7 +2956,7 @@ msgstr "Не удалось обновить прошивку устройств
 msgid "Failed to update device model"
 msgstr "Не удалось обновить модель устройства"
 
-#: lib/NGCP/Panel/Controller/Device.pm:977
+#: lib/NGCP/Panel/Controller/Device.pm:978
 msgid "Failed to update device profile"
 msgstr "Не удалось обновить профиль устройства"
 
@@ -3388,7 +3388,7 @@ msgstr ""
 msgid "IBAN"
 msgstr "IBAN"
 
-#: lib/NGCP/Panel/Controller/Device.pm:886
+#: lib/NGCP/Panel/Controller/Device.pm:887
 msgid "ID"
 msgstr "ID"
 
@@ -3654,7 +3654,7 @@ msgstr "Обнаружен некорректный id прошивки устр
 msgid "Invalid device model id"
 msgstr "Обнаружен некорректный id модели устройства"
 
-#: lib/NGCP/Panel/Controller/Device.pm:865
+#: lib/NGCP/Panel/Controller/Device.pm:866
 msgid "Invalid device profile id"
 msgstr "Обнаружен некорректный id профиля устройства"
 
@@ -4346,7 +4346,7 @@ msgstr "НОВОЕ СООБЩЕНИЕ"
 #: lib/NGCP/Panel/Controller/Customer.pm:284
 #: lib/NGCP/Panel/Controller/Customer.pm:293
 #: lib/NGCP/Panel/Controller/Device.pm:106
-#: lib/NGCP/Panel/Controller/Device.pm:887
+#: lib/NGCP/Panel/Controller/Device.pm:888
 #: lib/NGCP/Panel/Controller/EmailTemplate.pm:35
 #: lib/NGCP/Panel/Controller/InvoiceTemplate.pm:34
 #: lib/NGCP/Panel/Controller/Peering.pm:28
@@ -4533,7 +4533,7 @@ msgstr "Диапазон номеров успешно создан удален
 msgid "Number block successfully updated"
 msgstr "Диапазон номеров успешно обновлен"
 
-#: lib/NGCP/Panel/Controller/Device.pm:888
+#: lib/NGCP/Panel/Controller/Device.pm:889
 msgid "Number of Lines/Keys"
 msgstr "Количество Линий/Кнопок"
 
@@ -5041,7 +5041,7 @@ msgstr "Приоритет"
 msgid "Priority (q-value)"
 msgstr "Приоритет (q-value)"
 
-#: lib/NGCP/Panel/Controller/Device.pm:889
+#: lib/NGCP/Panel/Controller/Device.pm:890
 msgid "Private Line"
 msgstr "Приватная линия"
 
@@ -5777,7 +5777,7 @@ msgstr "Настройки успешно обновлены"
 msgid "Settings"
 msgstr "Настройки"
 
-#: lib/NGCP/Panel/Controller/Device.pm:890
+#: lib/NGCP/Panel/Controller/Device.pm:891
 msgid "Shared Line"
 msgstr "Общая линия"
 
@@ -6371,7 +6371,7 @@ msgstr "Прошивка устройства успешно добавлена"
 msgid "Successfully created device model"
 msgstr "Модель устройства успешно добавлена"
 
-#: lib/NGCP/Panel/Controller/Device.pm:840
+#: lib/NGCP/Panel/Controller/Device.pm:841
 msgid "Successfully created device profile"
 msgstr "Профиль устройства успешно добавлен"
 
@@ -6445,7 +6445,7 @@ msgstr "Слот автоответчика успешно обновлен"
 msgid "Successfully updated ccmappings."
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/Device.pm:773
+#: lib/NGCP/Panel/Controller/Device.pm:774
 msgid "Successfully updated device configuration"
 msgstr "Конфигурация устройства успешно обновлена"
 
@@ -6453,7 +6453,7 @@ msgstr "Конфигурация устройства успешно обнов�
 msgid "Successfully updated device firmware"
 msgstr "Прошивка устройства успешно обновлена"
 
-#: lib/NGCP/Panel/Controller/Device.pm:971
+#: lib/NGCP/Panel/Controller/Device.pm:972
 msgid "Successfully updated device profile"
 msgstr "Профиль устройства успешно обновлен"
 
