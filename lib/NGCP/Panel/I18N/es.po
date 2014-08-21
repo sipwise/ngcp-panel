@@ -610,7 +610,7 @@ msgstr "Ausente"
 msgid "BIC/SWIFT"
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/Device.pm:891
+#: lib/NGCP/Panel/Controller/Device.pm:892
 msgid "BLF Key"
 msgstr "Botón BLF"
 
@@ -2052,11 +2052,11 @@ msgstr "Firmware de Dispositivo eliminado con éxito"
 msgid "Device model not found"
 msgstr "Modelo de Dispositivo no encontrado"
 
-#: lib/NGCP/Panel/Controller/Device.pm:875
+#: lib/NGCP/Panel/Controller/Device.pm:876
 msgid "Device profile not found"
 msgstr "Perfil de Dispositivo no encontrado"
 
-#: lib/NGCP/Panel/Controller/Device.pm:925
+#: lib/NGCP/Panel/Controller/Device.pm:926
 msgid "Device profile successfully deleted"
 msgstr "Perfil de Dispositivo eliminado con éxito"
 
@@ -2560,7 +2560,7 @@ msgstr "Fallo al crear firmware de dispositivo"
 msgid "Failed to create device model"
 msgstr "Fallo al crear modelo de dispositivo"
 
-#: lib/NGCP/Panel/Controller/Device.pm:846
+#: lib/NGCP/Panel/Controller/Device.pm:847
 msgid "Failed to create device profile"
 msgstr "Fallo al crear perfil de dispositivo"
 
@@ -2694,7 +2694,7 @@ msgstr "Fallo al borrar firmware de dispositivo"
 msgid "Failed to delete device model"
 msgstr "Fallo al borrar modelo de dispositivo"
 
-#: lib/NGCP/Panel/Controller/Device.pm:930
+#: lib/NGCP/Panel/Controller/Device.pm:931
 msgid "Failed to delete device profile"
 msgstr "Fallo al borrar perfil de dispositivo"
 
@@ -2924,7 +2924,7 @@ msgstr "Fallo al actualizar firmware de dispositivo"
 msgid "Failed to update device model"
 msgstr "Fallo al actualizar modelo de dispositivo"
 
-#: lib/NGCP/Panel/Controller/Device.pm:977
+#: lib/NGCP/Panel/Controller/Device.pm:978
 msgid "Failed to update device profile"
 msgstr "Fallo al actualizar perfil de dispositivo"
 
@@ -3363,7 +3363,7 @@ msgstr ""
 msgid "IBAN"
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/Device.pm:886
+#: lib/NGCP/Panel/Controller/Device.pm:887
 msgid "ID"
 msgstr "ID"
 
@@ -3625,7 +3625,7 @@ msgstr "Id de firmware de dispositivo inválido"
 msgid "Invalid device model id"
 msgstr "Id de modelo de dispositivo inválido"
 
-#: lib/NGCP/Panel/Controller/Device.pm:865
+#: lib/NGCP/Panel/Controller/Device.pm:866
 msgid "Invalid device profile id"
 msgstr "Id de perfil de dispositivo inválido"
 
@@ -4314,7 +4314,7 @@ msgstr "NUEVO MENSAJE"
 #: lib/NGCP/Panel/Controller/Customer.pm:284
 #: lib/NGCP/Panel/Controller/Customer.pm:293
 #: lib/NGCP/Panel/Controller/Device.pm:106
-#: lib/NGCP/Panel/Controller/Device.pm:887
+#: lib/NGCP/Panel/Controller/Device.pm:888
 #: lib/NGCP/Panel/Controller/EmailTemplate.pm:35
 #: lib/NGCP/Panel/Controller/InvoiceTemplate.pm:34
 #: lib/NGCP/Panel/Controller/Peering.pm:28
@@ -4501,7 +4501,7 @@ msgstr ""
 msgid "Number block successfully updated"
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/Device.pm:888
+#: lib/NGCP/Panel/Controller/Device.pm:889
 msgid "Number of Lines/Keys"
 msgstr "Número de Líneas/Botones"
 
@@ -5016,7 +5016,7 @@ msgstr "Prioridad"
 msgid "Priority (q-value)"
 msgstr "Prioridad (valor q)"
 
-#: lib/NGCP/Panel/Controller/Device.pm:889
+#: lib/NGCP/Panel/Controller/Device.pm:890
 msgid "Private Line"
 msgstr "Línea privada"
 
@@ -5756,7 +5756,7 @@ msgstr "Preferencia modificada con éxito"
 msgid "Settings"
 msgstr "Preferencias"
 
-#: lib/NGCP/Panel/Controller/Device.pm:890
+#: lib/NGCP/Panel/Controller/Device.pm:891
 #, fuzzy
 msgid "Shared Line"
 msgstr "Shared Line"
@@ -6349,7 +6349,7 @@ msgstr "Firmware de dispositivo creado con éxito"
 msgid "Successfully created device model"
 msgstr "Modelo de dispositivo creado con éxito"
 
-#: lib/NGCP/Panel/Controller/Device.pm:840
+#: lib/NGCP/Panel/Controller/Device.pm:841
 msgid "Successfully created device profile"
 msgstr "Perfil de dispositivo creado con éxito"
 
@@ -6423,7 +6423,7 @@ msgstr "Operador automático modificado con éxito"
 msgid "Successfully updated ccmappings."
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/Device.pm:773
+#: lib/NGCP/Panel/Controller/Device.pm:774
 msgid "Successfully updated device configuration"
 msgstr "Configuración de dispositivo modificado con éxito"
 
@@ -6431,7 +6431,7 @@ msgstr "Configuración de dispositivo modificado con éxito"
 msgid "Successfully updated device firmware"
 msgstr "Firmware de dispositivo modificado con éxito"
 
-#: lib/NGCP/Panel/Controller/Device.pm:971
+#: lib/NGCP/Panel/Controller/Device.pm:972
 msgid "Successfully updated device profile"
 msgstr "Perfil de dispositivo modificado con éxito"
 
