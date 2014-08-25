@@ -204,7 +204,7 @@ sub get_provider_clients_contacts{
 }
 sub get_client_contracts{
     my($client_contact,$stime,$etime) = @_;
-    return $dbh->selectall_arrayref('select contracts.* 
+    my $contacts = $dbh->selectall_arrayref('select contracts.* 
     from contracts 
     left join invoices on contracts.id=invoices.contract_id and invoices.generator="auto" '
         .ifp(' and ',
@@ -221,6 +221,8 @@ sub get_client_contracts{
         { Slice => {} }, 
         v2a($stime->ymd),v2a($etime->ymd),$client_contact->{id}, @{$opt->{client_contract_id}} 
     );
+    $contacts //= [];
+    return $contacts;
 }
 
 sub get_billing_profile{
