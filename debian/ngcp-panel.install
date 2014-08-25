@@ -4,4 +4,6 @@ logging.conf		etc/ngcp-panel/
 ngcp_panel.psgi usr/share/ngcp-panel/
 script/*		usr/share/ngcp-panel/script
 script/ngcp_panel_fastcgi.pl usr/share/ngcp-panel/
+etc/invoice-gen.conf		etc/ngcp-invoice-gen/
+etc/invoice-gen.cron		etc/cron.d/ngcp-invoice-gen
 share/*			usr/share/ngcp-panel/
