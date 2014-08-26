@@ -10,6 +10,9 @@ use Time::HiRes qw();
 method get_log_params ($self: Catalyst :$c, :$type?, :$data?) {
     # get log_tx_id, caller method, remote user, formatted passed parameters
 
+    # call type
+    $type ||= 'panel';
+
     # tx_id
     my $log_tx = DateTime->from_epoch(epoch => Time::HiRes::time);
     my $log_tx_id = sprintf '%X', $log_tx->strftime('%s%N');
