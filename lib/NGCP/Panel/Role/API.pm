@@ -431,26 +431,11 @@ sub set_body {
 sub log_request {
     my ($self, $c) = @_;
 
-    my $params = join(', ', map { "'".$_."'='".($c->request->query_params->{$_} // '')."'" } 
-        keys %{ $c->request->query_params }
+    NGCP::Panel::Utils::Message->info(
+        c    => $c,
+        type => 'api_request',
+        log  => $c->stash->{'body'},
     );
-    my ($user, $roles);
-    if($c->user_exists) {
-        if($c->user->roles eq "admin" || $c->user->roles eq "reseller") {
-            $user = $c->user->login;
-        } else {
-            $user = $c->user->username . '@' . $c->user->domain;
-        }
-        $roles = $c->user->roles;
-    } else {
-        $user = "<unknown>";
-        $roles = "<unknown>";
-    }
-
-    $c->log->info("API function '".$c->request->path."' called by '" . $user . 
-        "' ('" . $roles . "') from host '".$c->request->address."' with method '" . $c->request->method . "' and params " .
-        (length $params ? $params : "''") .
-        " and body '" . $c->stash->{body} . "'");
 }
 
 sub log_response {
@@ -461,15 +446,22 @@ sub log_response {
     $c->forward(qw(Controller::Root render));
     $c->response->content_type('')
         if $c->response->content_type =~ qr'text/html'; # stupid RenderView getting in the way
+    my $rc = '';
     if (@{ $c->error }) {
         my $msg = join ', ', @{ $c->error };
-        $c->log->error($msg);
+        $rc = NGCP::Panel::Utils::Message->error(
+            c    => $c,
+            type => 'api_response',
+            log  => $msg,
+        );
         $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "Internal Server Error");
         $c->clear_errors;
     }
-    $c->log->info("API function '".$c->request->path."' generated response with code '" . 
-        $c->response->code . "' and body '" .
-        ($c->response->body // '') . "'");
+    NGCP::Panel::Utils::Message->info(
+        c    => $c,
+        type => 'api_response',
+        log  => $c->response->body,
+    );
 }
 
 
