@@ -10,9 +10,6 @@ use Time::HiRes qw();
 method get_log_params ($self: Catalyst :$c, :$type?, :$data?) {
     # get log_tx_id, caller method, remote user, formatted passed parameters
 
-    # call type
-    $type ||= 'panel';
-
     # tx_id
     my $log_tx = DateTime->from_epoch(epoch => Time::HiRes::time);
     my $log_tx_id = sprintf '%X', $log_tx->strftime('%s%N');
@@ -57,14 +54,24 @@ method get_log_params ($self: Catalyst :$c, :$type?, :$data?) {
     $r_ip =~ s/^::ffff://; # ipv4 in ipv6 form -> ipv4
 
     # parameters
-    my $data_str = Data::Dumper->new([ $data ? $data :
-                                        $type eq 'api_request'
-                                            ? $c->request->query_params
-                                            : $c->request->parameters ])
-                               ->Terse(1)
-                               ->Dump;
-    $data_str =~ s/\n//g;
-    $data_str =~ s/\s+/ /g;
+    my $data_str;
+    my $data_ref = ref($data) ? $data :
+                    $type eq 'api_request'
+                      ? $c->request->query_params
+                      : $c->request->parameters;
+    if ($data_ref) {
+        $data_str = Data::Dumper->new([ $data_ref ])
+                                ->Terse(1)
+                                ->Dump;
+    } elsif ($data) {
+        $data_str = $data;
+    }
+    if ($data_str) {
+        $data_str =~ s/\n//g;
+        $data_str =~ s/\s+/ /g;
+    } else {
+        $data_str = '';
+    }
 
     unless ($c->config->{logging}->{clear_passwords}) {
     }
@@ -78,7 +85,7 @@ method get_log_params ($self: Catalyst :$c, :$type?, :$data?) {
            };
 }
 
-method error ($self: Catalyst :$c, Str :$desc, Str :$log?, :$error?, :$type?, :$data?) {
+method error ($self: Catalyst :$c, Str :$desc, Str :$log?, :$error?, :$type = 'panel', :$data?) {
 # we explicitly declare the invocant to skip the validation for Object
 # because we want a class method instead of an object method
 
@@ -140,15 +147,17 @@ method error ($self: Catalyst :$c, Str :$desc, Str :$log?, :$error?, :$type?, :$
         sprintf <<EOF, @{$log_params}{qw(r_ip called tx_id r_user data)});
 IP=%s CALLED=%s TX=%s USER=%s DATA=%s MSG=$log_msg
 EOF
-    $c->flash(messages => [{ type => $usr_type,
-                             text => sprintf '%s [%s]',
-                                        $usr_text,
-                                        $log_params->{tx_id},
-                            }]);
+    if ($type eq 'panel') {
+        $c->flash(messages => [{ type => $usr_type,
+                                 text => sprintf '%s [%s]',
+                                            $usr_text,
+                                            $log_params->{tx_id},
+                                }]);
+    }
     return $rc;
 }
 
-method info ($self: Catalyst :$c, Str :$desc, Str :$log?, :$type?, :$data?) {
+method info ($self: Catalyst :$c, Str :$desc, Str :$log?, :$type = 'panel', :$data?) {
 # we explicitly declare the invocant to skip the validation for Object
 # because we want a class method instead of an object method
 
@@ -183,7 +192,9 @@ method info ($self: Catalyst :$c, Str :$desc, Str :$log?, :$type?, :$data?) {
         sprintf <<EOF, @{$log_params}{qw(r_ip called tx_id r_user data)});
 IP=%s CALLED=%s TX=%s USER=%s DATA=%s MSG=$log_msg
 EOF
-    $c->flash(messages => [{ type => $usr_type, text => $usr_text }]);
+    if ($type eq 'panel') {
+        $c->flash(messages => [{ type => $usr_type, text => $usr_text }]);
+    }
     return $rc;
 }
 
