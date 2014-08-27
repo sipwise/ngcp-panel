@@ -93,13 +93,13 @@ msgstr ""
 "Präferenz um diese Subscriber Profilen zuzuweisen. Nicht direkt verwendbar."
 
 #: lib/NGCP/Panel/Controller/Administrator.pm:29
-#: lib/NGCP/Panel/Controller/Billing.pm:262
+#: lib/NGCP/Panel/Controller/Billing.pm:275
 #: lib/NGCP/Panel/Controller/Billing.pm:36
-#: lib/NGCP/Panel/Controller/Billing.pm:571
-#: lib/NGCP/Panel/Controller/Billing.pm:80
+#: lib/NGCP/Panel/Controller/Billing.pm:636
+#: lib/NGCP/Panel/Controller/Billing.pm:84
 #: lib/NGCP/Panel/Controller/Contact.pm:32
 #: lib/NGCP/Panel/Controller/Contract.pm:25
-#: lib/NGCP/Panel/Controller/Contract.pm:379
+#: lib/NGCP/Panel/Controller/Contract.pm:393
 #: lib/NGCP/Panel/Controller/Customer.pm:277
 #: lib/NGCP/Panel/Controller/Customer.pm:283
 #: lib/NGCP/Panel/Controller/Customer.pm:292
@@ -184,7 +184,7 @@ msgid "%1<span class=\"pull-right\">for %2s</span>"
 msgstr "%1<span class=\"pull-right\">für %2s</span>"
 
 #: lib/NGCP/Panel/Controller/API/BillingFees.pm:232
-#: lib/NGCP/Panel/Controller/Billing.pm:407
+#: lib/NGCP/Panel/Controller/Billing.pm:436
 msgid ", but skipped the following line numbers: "
 msgstr ", aber folgende Zeilen wurden ignoriert: "
 
@@ -403,19 +403,19 @@ msgstr "Administrator"
 msgid "Administrator Logins"
 msgstr "Administrator Konten"
 
-#: lib/NGCP/Panel/Controller/Administrator.pm:140
+#: lib/NGCP/Panel/Controller/Administrator.pm:149
 msgid "Administrator not found"
 msgstr "Administrator nicht gefunden"
 
-#: lib/NGCP/Panel/Controller/Administrator.pm:111
+#: lib/NGCP/Panel/Controller/Administrator.pm:113
 msgid "Administrator successfully created"
 msgstr "Administrator erfolgreich erstellt"
 
-#: lib/NGCP/Panel/Controller/Administrator.pm:213
+#: lib/NGCP/Panel/Controller/Administrator.pm:235
 msgid "Administrator successfully deleted"
 msgstr "Administrator erfolgreich gelöscht"
 
-#: lib/NGCP/Panel/Controller/Administrator.pm:187
+#: lib/NGCP/Panel/Controller/Administrator.pm:200
 msgid "Administrator successfully updated"
 msgstr "Administrator erfolgreich geändert"
 
@@ -680,16 +680,16 @@ msgstr "Verrechnung"
 msgid "Billing Fee"
 msgstr "Verrechnungskosten-Eintrag"
 
-#: lib/NGCP/Panel/Controller/Billing.pm:289
+#: lib/NGCP/Panel/Controller/Billing.pm:312
 msgid "Billing Fee does not exist!"
 msgstr "Verrechnungskosten-Eintrag existiert nicht!"
 
-#: lib/NGCP/Panel/Controller/Billing.pm:331
+#: lib/NGCP/Panel/Controller/Billing.pm:356
 msgid "Billing Fee successfully created!"
 msgstr "Verrechnungskosten-Eintrag erfolgreich erstellt!"
 
 #: lib/NGCP/Panel/Controller/API/BillingFees.pm:230
-#: lib/NGCP/Panel/Controller/Billing.pm:405
+#: lib/NGCP/Panel/Controller/Billing.pm:434
 msgid "Billing Fee successfully uploaded"
 msgstr "Verrechnungskosten-Eintrag erfolgreich hochgeladen"
 
@@ -698,7 +698,7 @@ msgid "Billing Fees"
 msgstr "Verrechnungskosten-Einträge"
 
 #: lib/NGCP/Panel/Controller/Contract.pm:29
-#: lib/NGCP/Panel/Controller/Contract.pm:382
+#: lib/NGCP/Panel/Controller/Contract.pm:396
 #: lib/NGCP/Panel/Controller/Customer.pm:53
 #: lib/NGCP/Panel/Controller/Reseller.pm:45
 #: lib/NGCP/Panel/Utils/DbStrings.pm:678 share/templates/billing/list.tt:3
@@ -711,13 +711,9 @@ msgstr "Verrechungs-Profil"
 msgid "Billing Profile Name"
 msgstr "Verrechungs-Profil Name"
 
-#: lib/NGCP/Panel/Controller/Billing.pm:87
+#: lib/NGCP/Panel/Controller/Billing.pm:94
 msgid "Billing Profile does not exist!"
 msgstr "Verrechungs-Profil existiert nicht!"
-
-#: lib/NGCP/Panel/Controller/Billing.pm:451
-msgid "Billing Profile successfully changed!"
-msgstr "Verrechungs-Profil erfolgreich geändert!"
 
 #: share/templates/billing/list.tt:1 share/templates/customer/details.tt:132
 #: share/templates/widgets/admin_billing_overview.tt:7
@@ -725,11 +721,11 @@ msgstr "Verrechungs-Profil erfolgreich geändert!"
 msgid "Billing Profiles"
 msgstr "Verrechungs-Profile"
 
-#: lib/NGCP/Panel/Controller/Billing.pm:266 share/templates/billing/zones.tt:3
+#: lib/NGCP/Panel/Controller/Billing.pm:279 share/templates/billing/zones.tt:3
 msgid "Billing Zone"
 msgstr "Verrechungs-Zone"
 
-#: lib/NGCP/Panel/Controller/Billing.pm:510
+#: lib/NGCP/Panel/Controller/Billing.pm:557
 msgid "Billing Zone successfully created"
 msgstr "Verrechungs-Zone erfolgreich erstellt"
 
@@ -737,31 +733,35 @@ msgstr "Verrechungs-Zone erfolgreich erstellt"
 msgid "Billing Zones"
 msgstr "Verrechungs-Zonen"
 
-#: lib/NGCP/Panel/Controller/Billing.pm:464
+#: lib/NGCP/Panel/Controller/Billing.pm:504
 msgid "Billing fee not found!"
 msgstr "Verrechnungs-Eintrag nicht gefunden!"
+
+#: lib/NGCP/Panel/Controller/Billing.pm:487
+msgid "Billing fee successfully changed!"
+msgstr ""
+
+#: lib/NGCP/Panel/Controller/Billing.pm:513
+msgid "Billing fee successfully deleted!"
+msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:500
 msgid "Billing profile"
 msgstr "Verrechungs-Profil"
 
-#: lib/NGCP/Panel/Controller/Billing.pm:237
+#: lib/NGCP/Panel/Controller/Billing.pm:249
 msgid "Billing profile successfully created"
 msgstr "Verrechungs-Profil erfolgreich erstellt"
 
-#: lib/NGCP/Panel/Controller/Billing.pm:469
-msgid "Billing profile successfully deleted!"
-msgstr "Verrechungs-Profil erfolgreich gelöscht!"
-
-#: lib/NGCP/Panel/Controller/Billing.pm:181
+#: lib/NGCP/Panel/Controller/Billing.pm:191
 msgid "Billing profile successfully updated"
 msgstr "Verrechungs-Profil erfolgreich aktualisiert"
 
-#: lib/NGCP/Panel/Controller/Billing.pm:539
+#: lib/NGCP/Panel/Controller/Billing.pm:597
 msgid "Billing zone does not exist!"
 msgstr "Verrechungs-Zone existiert nicht!"
 
-#: lib/NGCP/Panel/Controller/Billing.pm:550
+#: lib/NGCP/Panel/Controller/Billing.pm:613
 msgid "Billing zone successfully deleted"
 msgstr "Verrechungs-Zone erfolgreich gelöscht"
 
@@ -1094,11 +1094,11 @@ msgstr ""
 msgid "Cancel"
 msgstr "Abbrechen"
 
-#: lib/NGCP/Panel/Controller/Administrator.pm:208
+#: lib/NGCP/Panel/Controller/Administrator.pm:226
 msgid "Cannot delete myself"
 msgstr "Eigener Zugang kann nicht gelöscht werden"
 
-#: lib/NGCP/Panel/Controller/Contract.pm:200
+#: lib/NGCP/Panel/Controller/Contract.pm:205
 #: lib/NGCP/Panel/Controller/Customer.pm:500
 msgid "Cannot terminate contract with the id 1"
 msgstr "Vertrag mit ID 1 kann nicht terminiert werden"
@@ -1291,7 +1291,7 @@ msgid "Contact Details"
 msgstr "Kontakt-Details"
 
 #: lib/NGCP/Panel/Controller/Contract.pm:27
-#: lib/NGCP/Panel/Controller/Contract.pm:381
+#: lib/NGCP/Panel/Controller/Contract.pm:395
 #: lib/NGCP/Panel/Controller/Customer.pm:51
 #: lib/NGCP/Panel/Controller/Customer.pm:98
 #: lib/NGCP/Panel/Controller/Peering.pm:27
@@ -1311,19 +1311,19 @@ msgstr "Support kontaktieren"
 msgid "Contact URI"
 msgstr "Contact URI"
 
-#: lib/NGCP/Panel/Controller/Contact.pm:115
+#: lib/NGCP/Panel/Controller/Contact.pm:126
 msgid "Contact not found"
 msgstr "Kontakt nicht gefunden"
 
-#: lib/NGCP/Panel/Controller/Contact.pm:161
+#: lib/NGCP/Panel/Controller/Contact.pm:175
 msgid "Contact successfully changed"
 msgstr "Kontakt erfolgreich geändert"
 
-#: lib/NGCP/Panel/Controller/Contact.pm:84
+#: lib/NGCP/Panel/Controller/Contact.pm:86
 msgid "Contact successfully created"
 msgstr "Kontakt erfolgreich erstellt"
 
-#: lib/NGCP/Panel/Controller/Contact.pm:190
+#: lib/NGCP/Panel/Controller/Contact.pm:208
 msgid "Contact successfully deleted"
 msgstr "Kontakt erfolgreich gelöscht"
 
@@ -1384,8 +1384,9 @@ msgid "Contract #%1"
 msgstr "Vertrag #%1"
 
 #. ($contract_id)
-#: lib/NGCP/Panel/Controller/Contract.pm:318
-#: lib/NGCP/Panel/Controller/Contract.pm:445
+#. ($contract->id)
+#: lib/NGCP/Panel/Controller/Contract.pm:331
+#: lib/NGCP/Panel/Controller/Contract.pm:460
 msgid "Contract #%1 successfully created"
 msgstr "Vertrag #%1 erfolgreich erstellt"
 
@@ -1401,11 +1402,11 @@ msgstr "Vertrag existiert nicht"
 msgid "Contract does not exist for subscriber"
 msgstr "Vertrag zu diesem Subscriber existiert nicht"
 
-#: lib/NGCP/Panel/Controller/Contract.pm:180
+#: lib/NGCP/Panel/Controller/Contract.pm:182
 msgid "Contract successfully changed!"
 msgstr "Vertrag erfolgreich geändert!"
 
-#: lib/NGCP/Panel/Controller/Contract.pm:219
+#: lib/NGCP/Panel/Controller/Contract.pm:228
 msgid "Contract successfully terminated"
 msgstr "Vertrag erfolgreich beendet"
 
@@ -1863,7 +1864,7 @@ msgstr "Ziel-Domain"
 msgid "Destination Number"
 msgstr "Ziel-Nummer"
 
-#: lib/NGCP/Panel/Controller/Billing.pm:264
+#: lib/NGCP/Panel/Controller/Billing.pm:277
 msgid "Destination Pattern"
 msgstr "Ziel-Pattern"
 
@@ -2417,7 +2418,7 @@ msgstr "Aktiviere Session-Timers"
 msgid "End"
 msgstr "Ende"
 
-#: lib/NGCP/Panel/Controller/Billing.pm:573
+#: lib/NGCP/Panel/Controller/Billing.pm:638
 msgid "End Date"
 msgstr "End-Datum"
 
@@ -2472,7 +2473,7 @@ msgid "Extension of CloudPBX Subscriber"
 msgstr "Durchwahl des CloudPBX Subscribers"
 
 #: lib/NGCP/Panel/Controller/Contract.pm:26
-#: lib/NGCP/Panel/Controller/Contract.pm:380
+#: lib/NGCP/Panel/Controller/Contract.pm:394
 #: lib/NGCP/Panel/Controller/Customer.pm:49
 #: lib/NGCP/Panel/Controller/Customer.pm:96
 #: lib/NGCP/Panel/Controller/Reseller.pm:147
@@ -2552,30 +2553,30 @@ msgstr "PBX Gerät erstellen fehlgeschlagen"
 msgid "Failed to create PBX group."
 msgstr "PBX Gruppe erstellen fehlgeschlagen."
 
-#: lib/NGCP/Panel/Controller/Administrator.pm:116
-msgid "Failed to create administrator."
-msgstr "Administrator erstellen fehlgeschlagen."
+#: lib/NGCP/Panel/Controller/Administrator.pm:119
+msgid "Failed to create administrator"
+msgstr ""
 
 #: lib/NGCP/Panel/Utils/Preferences.pm:346
 msgid "Failed to create allowed_ip_grp."
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/Billing.pm:242
-msgid "Failed to create billing profile."
-msgstr "Verrechnungs-Profil erstellen fehlgeschlagen."
+#: lib/NGCP/Panel/Controller/Billing.pm:255
+msgid "Failed to create billing profile"
+msgstr ""
 
-#: lib/NGCP/Panel/Controller/Billing.pm:515
-msgid "Failed to create billing zone."
-msgstr "Verrechnungs-Zone erstellen fehlgeschlagen."
+#: lib/NGCP/Panel/Controller/Billing.pm:563
+msgid "Failed to create billing zone"
+msgstr ""
 
-#: lib/NGCP/Panel/Controller/Contact.pm:89
-msgid "Failed to create contact."
-msgstr "Kontakt erstellen fehlgeschlagen."
+#: lib/NGCP/Panel/Controller/Contact.pm:92
+msgid "Failed to create contact"
+msgstr ""
 
-#: lib/NGCP/Panel/Controller/Contract.pm:324
-#: lib/NGCP/Panel/Controller/Contract.pm:451
-msgid "Failed to create contract."
-msgstr "Vertrag erstellen fehlgeschlagen."
+#: lib/NGCP/Panel/Controller/Contract.pm:338
+#: lib/NGCP/Panel/Controller/Contract.pm:467
+msgid "Failed to create contract"
+msgstr ""
 
 #: lib/NGCP/Panel/Controller/Customer.pm:180
 msgid "Failed to create customer contract."
@@ -2654,9 +2655,9 @@ msgstr "Übersetzungsregel erstellen fehlgeschlagen."
 msgid "Failed to create sound set"
 msgstr "Sound-Set erstellen fehlgeschlagen."
 
-#: lib/NGCP/Panel/Controller/Billing.pm:781
-msgid "Failed to create special offpeak entry."
-msgstr "Spezieller Off-Peak Eintrag erstellen fehlgeschlagen."
+#: lib/NGCP/Panel/Controller/Billing.pm:889
+msgid "Failed to create special offpeak entry"
+msgstr ""
 
 #: lib/NGCP/Panel/Controller/Subscriber.pm:3301
 msgid "Failed to create speed dial slot."
@@ -2695,25 +2696,25 @@ msgstr "NCOS-Pattern löschen fehlgeschlagen."
 msgid "Failed to delete PBX device"
 msgstr "PBX Gerät löschen fehlgeschlagen."
 
-#: lib/NGCP/Panel/Controller/Administrator.pm:218
-msgid "Failed to delete administrator."
-msgstr "Administrator löschen fehlgeschlagen."
+#: lib/NGCP/Panel/Controller/Administrator.pm:242
+msgid "Failed to delete administrator"
+msgstr ""
 
 #: lib/NGCP/Panel/Controller/Subscriber.pm:3455
 msgid "Failed to delete auto attendant slot."
 msgstr "Anrufmenü Eintrag löschen fehlgeschlagen."
 
-#: lib/NGCP/Panel/Controller/Billing.pm:555
-msgid "Failed to delete billing zone."
-msgstr "Verrechnungs-Zone löschen fehlgeschlagen."
+#: lib/NGCP/Panel/Controller/Billing.pm:620
+msgid "Failed to delete billing zone"
+msgstr ""
 
 #: lib/NGCP/Panel/Controller/Subscriber.pm:3576
 msgid "Failed to delete ccmapping."
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/Contact.pm:195
-msgid "Failed to delete contact."
-msgstr "Kontakt löschen fehlgeschlagen."
+#: lib/NGCP/Panel/Controller/Contact.pm:215
+msgid "Failed to delete contact"
+msgstr ""
 
 #: lib/NGCP/Panel/Controller/Device.pm:733
 msgid "Failed to delete device configuration"
@@ -2790,9 +2791,9 @@ msgstr "Sound Handle löschen fehlgeschlagen."
 msgid "Failed to delete sound set"
 msgstr "Sound Set löschen fehlgeschlagen."
 
-#: lib/NGCP/Panel/Controller/Billing.pm:748
-msgid "Failed to delete special offpeak entry."
-msgstr "Spezial-Offpeak-Eintrag löschen fehlgeschlagen."
+#: lib/NGCP/Panel/Controller/Billing.pm:849
+msgid "Failed to delete special offpeak entry"
+msgstr ""
 
 #: lib/NGCP/Panel/Controller/Subscriber.pm:3347
 msgid "Failed to delete speed dial slot."
@@ -2822,7 +2823,7 @@ msgstr "Registriertes Gerät nicht gefunden."
 msgid "Failed to find voicemail user."
 msgstr "Benutzer für Sprachnachricht nicht gefunden."
 
-#: lib/NGCP/Panel/Controller/Administrator.pm:236
+#: lib/NGCP/Panel/Controller/Administrator.pm:261
 msgid "Failed to generate client certificate."
 msgstr "Client-Zertifikat erstellen fehlgeschlagen."
 
@@ -2883,7 +2884,10 @@ msgstr "Rechnungs-Metadaten speichern fehlgeschlagen."
 msgid "Failed to store invoice template"
 msgstr "Rechnungs-Vorlage speichern fehlgeschlagen"
 
-#: lib/NGCP/Panel/Controller/Contract.pm:224
+#: lib/NGCP/Panel/Controller/Contract.pm:235
+msgid "Failed to terminate contract"
+msgstr ""
+
 #: lib/NGCP/Panel/Controller/Customer.pm:524
 msgid "Failed to terminate contract."
 msgstr "Vertrag terminieren fehlgeschlagen."
@@ -2920,29 +2924,29 @@ msgstr "PBX Gerät aktualisieren fehlgeschlagen."
 msgid "Failed to update PBX group."
 msgstr "PBX Gruppe aktualisieren fehlgeschlagen."
 
-#: lib/NGCP/Panel/Controller/Administrator.pm:192
-msgid "Failed to update administrator."
-msgstr "Administrator aktualisieren fehlgeschlagen."
+#: lib/NGCP/Panel/Controller/Administrator.pm:207
+msgid "Failed to update administrator"
+msgstr ""
 
 #: lib/NGCP/Panel/Controller/Subscriber.pm:3519
 msgid "Failed to update autoattendant slots"
 msgstr "Anrufmenü-Eintrag aktualisieren fehlgeschlagen."
 
-#: lib/NGCP/Panel/Controller/Billing.pm:186
-msgid "Failed to update billing profile."
-msgstr "Verrechnungs-Profil aktualisieren fehlgeschlagen."
+#: lib/NGCP/Panel/Controller/Billing.pm:197
+msgid "Failed to update billing profile"
+msgstr ""
 
 #: lib/NGCP/Panel/Controller/Subscriber.pm:3632
 msgid "Failed to update ccmappings"
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/Contact.pm:167
-msgid "Failed to update contact."
-msgstr "Kontakt aktualisieren fehlgeschlagen."
+#: lib/NGCP/Panel/Controller/Contact.pm:182
+msgid "Failed to update contact"
+msgstr ""
 
-#: lib/NGCP/Panel/Controller/Contract.pm:185
-msgid "Failed to update contract."
-msgstr "Vertrag aktualisieren fehlgeschlagen."
+#: lib/NGCP/Panel/Controller/Contract.pm:188
+msgid "Failed to update contract"
+msgstr ""
 
 #: lib/NGCP/Panel/Controller/Customer.pm:484
 msgid "Failed to update customer contract."
@@ -3028,9 +3032,9 @@ msgstr "Sound Handle aktualisieren fehlgeschlagen."
 msgid "Failed to update sound set"
 msgstr "Sound Set aktualisieren fehlgeschlagen."
 
-#: lib/NGCP/Panel/Controller/Billing.pm:729
-msgid "Failed to update special offpeak entry."
-msgstr "Speziel-Offpeak-Eintrag aktualisieren fehlgeschlagen."
+#: lib/NGCP/Panel/Controller/Billing.pm:824
+msgid "Failed to update special offpeak entry"
+msgstr ""
 
 #: lib/NGCP/Panel/Controller/Subscriber.pm:2518
 msgid "Failed to update subscriber (webpassword)."
@@ -3060,7 +3064,7 @@ msgstr "Hochgeladenes Sound Handle aktualisieren fehlgeschlagen."
 msgid "Failed to update voicemail setting."
 msgstr "Sprachnachrichten-Einstellungen aktualisieren fehlgeschlagen."
 
-#: lib/NGCP/Panel/Controller/Billing.pm:413
+#: lib/NGCP/Panel/Controller/Billing.pm:446
 msgid "Failed to upload Billing Fees"
 msgstr "Verrechungs-Gebühren hochladen fehlgeschlagen."
 
@@ -3227,7 +3231,7 @@ msgstr "Freiminuten"
 msgid "Free-Time Balance"
 msgstr "Freiminuten-Saldo"
 
-#: lib/NGCP/Panel/Controller/Billing.pm:649
+#: lib/NGCP/Panel/Controller/Billing.pm:728
 #: lib/NGCP/Panel/Utils/DbStrings.pm:1007
 msgid "Friday"
 msgstr "Freitag"
@@ -3602,23 +3606,23 @@ msgstr "Ungültige NCOS-Stufen ID"
 msgid "Invalid NCOS pattern id detected"
 msgstr "Ungültige NCOS-Pattern ID"
 
-#: lib/NGCP/Panel/Controller/Administrator.pm:135
+#: lib/NGCP/Panel/Controller/Administrator.pm:141
 msgid "Invalid administrator id detected"
 msgstr "Ungültige Administrator ID"
 
-#: lib/NGCP/Panel/Controller/Billing.pm:280
+#: lib/NGCP/Panel/Controller/Billing.pm:298
 msgid "Invalid billing fee id detected!"
 msgstr "Ungültige Verrechungs-Gebühr ID"
 
-#: lib/NGCP/Panel/Controller/Billing.pm:532
+#: lib/NGCP/Panel/Controller/Billing.pm:585
 msgid "Invalid billing zone id detected"
 msgstr "Ungültige Verrechungs-Zonen ID"
 
-#: lib/NGCP/Panel/Controller/Contact.pm:109
+#: lib/NGCP/Panel/Controller/Contact.pm:116
 msgid "Invalid contact id detected"
 msgstr "Ungültige Kontakt ID"
 
-#: lib/NGCP/Panel/Controller/Contract.pm:367
+#: lib/NGCP/Panel/Controller/Contract.pm:381
 #: lib/NGCP/Panel/Controller/Invoice.pm:81
 #: lib/NGCP/Panel/Controller/Sound.pm:101
 msgid "Invalid contract id detected"
@@ -3692,7 +3696,7 @@ msgstr "Ungültige Nummernblock ID"
 msgid "Invalid password reset attempt."
 msgstr "Ungültiger Passwortrücksetzungs-Versuch"
 
-#: lib/NGCP/Panel/Controller/Billing.pm:687
+#: lib/NGCP/Panel/Controller/Billing.pm:769
 msgid "Invalid peaktime date id detected!"
 msgstr "Ungültige Onpeak Datum ID"
 
@@ -3708,7 +3712,7 @@ msgstr "Ungültige Peering-Server ID"
 msgid "Invalid product id for this customer contract."
 msgstr "Ungültige Produkt ID für diesen Kunden-Vertrag."
 
-#: lib/NGCP/Panel/Controller/Billing.pm:74
+#: lib/NGCP/Panel/Controller/Billing.pm:77
 msgid "Invalid profile id detected!"
 msgstr "Ungültiges Profil ID"
 
@@ -4102,7 +4106,7 @@ msgstr "Master"
 msgid "Master Data"
 msgstr "Stamm-Daten"
 
-#: lib/NGCP/Panel/Controller/Billing.pm:265
+#: lib/NGCP/Panel/Controller/Billing.pm:278
 msgid "Match Direction"
 msgstr "Vergleichts-Richtung"
 
@@ -4230,7 +4234,7 @@ msgstr "Modus"
 msgid "Model"
 msgstr "Modell"
 
-#: lib/NGCP/Panel/Controller/Billing.pm:645
+#: lib/NGCP/Panel/Controller/Billing.pm:724
 #: lib/NGCP/Panel/Utils/DbStrings.pm:966
 msgid "Monday"
 msgstr "Montag"
@@ -4420,7 +4424,7 @@ msgstr "Neue Nachrichten"
 msgid "New Name"
 msgstr "Neuer Name"
 
-#: lib/NGCP/Panel/Controller/Billing.pm:358
+#: lib/NGCP/Panel/Controller/Billing.pm:386
 msgid "No Billing Fee file specified!"
 msgstr "Keine Verrechnungs-Gebühren-Datei angegeben"
 
@@ -4803,7 +4807,7 @@ msgstr ""
 msgid "Pbx hunt timeout"
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/Billing.pm:695
+#: lib/NGCP/Panel/Controller/Billing.pm:782
 msgid "Peaktime date does not exist!"
 msgstr "Onpeak-Datum existiert nicht!"
 
@@ -5590,7 +5594,7 @@ msgstr ""
 "Wie \"ncos\", aber nur setzbar durch Administratoren. Wird vor Benutzer-NCOS-"
 "Stufe überprüft."
 
-#: lib/NGCP/Panel/Controller/Billing.pm:650
+#: lib/NGCP/Panel/Controller/Billing.pm:729
 #: lib/NGCP/Panel/Utils/DbStrings.pm:745
 msgid "Saturday"
 msgstr "Samstag"
@@ -5925,7 +5929,7 @@ msgstr ""
 msgid "Source IP"
 msgstr "Quell-IP"
 
-#: lib/NGCP/Panel/Controller/Billing.pm:263
+#: lib/NGCP/Panel/Controller/Billing.pm:276
 msgid "Source Pattern"
 msgstr "Quell-Pattern"
 
@@ -6021,11 +6025,15 @@ msgstr ""
 msgid "Source uuid"
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/Billing.pm:776
+#: lib/NGCP/Panel/Controller/Billing.pm:881
 msgid "Special offpeak entry successfully created"
 msgstr "Spezial-Offpeak-Eintrag erfolgreich erstellt"
 
-#: lib/NGCP/Panel/Controller/Billing.pm:724
+#: lib/NGCP/Panel/Controller/Billing.pm:842
+msgid "Special offpeak entry successfully deleted"
+msgstr ""
+
+#: lib/NGCP/Panel/Controller/Billing.pm:816
 msgid "Special offpeak entry successfully updated"
 msgstr "Spezial-Offpeak-Eintrag erfolgreich aktualisiert"
 
@@ -6124,7 +6132,7 @@ msgstr "Start"
 msgid "Start - End"
 msgstr "Start - Ende"
 
-#: lib/NGCP/Panel/Controller/Billing.pm:572
+#: lib/NGCP/Panel/Controller/Billing.pm:637
 msgid "Start Date"
 msgstr "Start Datum"
 
@@ -6146,7 +6154,7 @@ msgid "Station Name"
 msgstr "Stations-Name"
 
 #: lib/NGCP/Panel/Controller/Contract.pm:30
-#: lib/NGCP/Panel/Controller/Contract.pm:383
+#: lib/NGCP/Panel/Controller/Contract.pm:397
 #: lib/NGCP/Panel/Controller/Customer.pm:54
 #: lib/NGCP/Panel/Controller/Customer.pm:99
 #: lib/NGCP/Panel/Controller/Reseller.pm:134
@@ -6482,7 +6490,7 @@ msgstr "Vertraute Quelle erfolgreich aktualisiert"
 msgid "Successfully updated voicemail setting"
 msgstr "Sprachnachrichten-Einstellungen erfolgreich aktualisiert"
 
-#: lib/NGCP/Panel/Controller/Billing.pm:651
+#: lib/NGCP/Panel/Controller/Billing.pm:730
 #: lib/NGCP/Panel/Utils/DbStrings.pm:1068
 msgid "Sunday"
 msgstr "Sonntag"
@@ -7531,9 +7539,9 @@ msgstr ""
 msgid "The time the reminder call is triggered."
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/Billing.pm:622
-msgid "The timerange you wanted to delete does not exist."
-msgstr "Der zu löschende Zeitbereich existiert nicht."
+#: lib/NGCP/Panel/Controller/Billing.pm:696
+msgid "The timerange you wanted to delete does not exist"
+msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:369
 msgid "The timestamp of the call connection."
@@ -7611,11 +7619,11 @@ msgstr "Die Versionsnummer der Konfiguration."
 msgid "The version number of this firmware."
 msgstr "Die Versionsnummer der Firmware."
 
-#: lib/NGCP/Panel/Controller/Billing.pm:590
-msgid "This weekday does not exist."
-msgstr "Dieser Wochentag existiert nicht."
+#: lib/NGCP/Panel/Controller/Billing.pm:658
+msgid "This weekday does not exist"
+msgstr ""
 
-#: lib/NGCP/Panel/Controller/Billing.pm:648
+#: lib/NGCP/Panel/Controller/Billing.pm:727
 #: lib/NGCP/Panel/Utils/DbStrings.pm:544
 msgid "Thursday"
 msgstr "Donnerstag"
@@ -7637,6 +7645,14 @@ msgstr "Zeit-Sets"
 #: lib/NGCP/Panel/Utils/DbStrings.pm:1012
 msgid "Timeout"
 msgstr "Zeitüberschreitung"
+
+#: lib/NGCP/Panel/Controller/Billing.pm:685
+msgid "Timerange has been successfully created"
+msgstr ""
+
+#: lib/NGCP/Panel/Controller/Billing.pm:707
+msgid "Timerange has been successfully deleted"
+msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:1143
 msgid "Times"
@@ -7697,7 +7713,7 @@ msgstr "Vertraute Quellen"
 msgid "Trusted source entry not found."
 msgstr "Vertrauter Qellen-Eintrag nicht gefunden."
 
-#: lib/NGCP/Panel/Controller/Billing.pm:646
+#: lib/NGCP/Panel/Controller/Billing.pm:725
 #: lib/NGCP/Panel/Utils/DbStrings.pm:950
 msgid "Tuesday"
 msgstr "Dienstag"
@@ -7963,7 +7979,7 @@ msgstr "Web Benutzername"
 msgid "Web password successfully recovered, please re-login."
 msgstr "Web-Passwort erfolgreich wiederhergestellt, bitte neu einloggen."
 
-#: lib/NGCP/Panel/Controller/Billing.pm:647
+#: lib/NGCP/Panel/Controller/Billing.pm:726
 #: lib/NGCP/Panel/Utils/DbStrings.pm:392
 msgid "Wednesday"
 msgstr "Mittwoch"
@@ -8077,7 +8093,7 @@ msgid ""
 "You can use the logo by adding the following CSS to the Custom CSS below:"
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/Billing.pm:81
+#: lib/NGCP/Panel/Controller/Billing.pm:85
 #: lib/NGCP/Panel/Utils/DbStrings.pm:503
 msgid "Zone"
 msgstr "Zone"
@@ -8086,7 +8102,7 @@ msgstr "Zone"
 msgid "Zone Detail"
 msgstr "Zonen-Detail"
 
-#: lib/NGCP/Panel/Controller/Billing.pm:82
+#: lib/NGCP/Panel/Controller/Billing.pm:86
 msgid "Zone Details"
 msgstr "Zonen-Details"
 
@@ -8469,6 +8485,63 @@ msgstr ""
 #: share/templates/subscriber/preferences.tt:335
 msgid "yes"
 msgstr "ja"
+
+#~ msgid "Billing Profile successfully changed!"
+#~ msgstr "Verrechungs-Profil erfolgreich geändert!"
+
+#~ msgid "Billing profile successfully deleted!"
+#~ msgstr "Verrechungs-Profil erfolgreich gelöscht!"
+
+#~ msgid "Failed to create administrator."
+#~ msgstr "Administrator erstellen fehlgeschlagen."
+
+#~ msgid "Failed to create billing profile."
+#~ msgstr "Verrechnungs-Profil erstellen fehlgeschlagen."
+
+#~ msgid "Failed to create billing zone."
+#~ msgstr "Verrechnungs-Zone erstellen fehlgeschlagen."
+
+#~ msgid "Failed to create contact."
+#~ msgstr "Kontakt erstellen fehlgeschlagen."
+
+#~ msgid "Failed to create contract."
+#~ msgstr "Vertrag erstellen fehlgeschlagen."
+
+#~ msgid "Failed to create special offpeak entry."
+#~ msgstr "Spezieller Off-Peak Eintrag erstellen fehlgeschlagen."
+
+#~ msgid "Failed to delete administrator."
+#~ msgstr "Administrator löschen fehlgeschlagen."
+
+#~ msgid "Failed to delete billing zone."
+#~ msgstr "Verrechnungs-Zone löschen fehlgeschlagen."
+
+#~ msgid "Failed to delete contact."
+#~ msgstr "Kontakt löschen fehlgeschlagen."
+
+#~ msgid "Failed to delete special offpeak entry."
+#~ msgstr "Spezial-Offpeak-Eintrag löschen fehlgeschlagen."
+
+#~ msgid "Failed to update administrator."
+#~ msgstr "Administrator aktualisieren fehlgeschlagen."
+
+#~ msgid "Failed to update billing profile."
+#~ msgstr "Verrechnungs-Profil aktualisieren fehlgeschlagen."
+
+#~ msgid "Failed to update contact."
+#~ msgstr "Kontakt aktualisieren fehlgeschlagen."
+
+#~ msgid "Failed to update contract."
+#~ msgstr "Vertrag aktualisieren fehlgeschlagen."
+
+#~ msgid "Failed to update special offpeak entry."
+#~ msgstr "Speziel-Offpeak-Eintrag aktualisieren fehlgeschlagen."
+
+#~ msgid "The timerange you wanted to delete does not exist."
+#~ msgstr "Der zu löschende Zeitbereich existiert nicht."
+
+#~ msgid "This weekday does not exist."
+#~ msgstr "Dieser Wochentag existiert nicht."
 
 #~ msgid ""
 #~ "Call Forward Timeout, Contains the keys \"destinations\" and \"times\". "
