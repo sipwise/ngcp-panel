@@ -177,12 +177,15 @@ sub edit :Chained('base') :PathPart('edit') :Args(0) {
                 delete $c->session->{created_objects}->{contact};
                 delete $c->session->{created_objects}->{billing_profile};
             });
-            $c->flash(messages => [{type => 'success', text => $c->loc("Contract successfully changed!")}]);
+            NGCP::Panel::Utils::Message->info(
+                c => $c,
+                desc  => $c->loc('Contract successfully changed!'),
+            );
         } catch($e) {
             NGCP::Panel::Utils::Message->error(
                 c => $c,
                 error => $e,
-                desc  => $c->loc("Failed to update contract."),
+                desc  => $c->loc('Failed to update contract'),
             );
         }
         NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for('/contract'));
@@ -197,7 +200,10 @@ sub terminate :Chained('base') :PathPart('terminate') :Args(0) {
     my $contract = $c->stash->{contract_result};
 
     if ($contract->id == 1) {
-        $c->flash(messages => [{type => 'error', text => $c->loc('Cannot terminate contract with the id 1')}]);
+        NGCP::Panel::Utils::Message->error(
+            c => $c,
+            desc => $c->loc('Cannot terminate contract with the id 1'),
+        );
         NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for('/contract'));
     }
 
@@ -216,12 +222,17 @@ sub terminate :Chained('base') :PathPart('terminate') :Args(0) {
                 );
             }
         });
-        $c->flash(messages => [{type => 'success', text => $c->loc('Contract successfully terminated')}]);
+        NGCP::Panel::Utils::Message->info(
+            c => $c,
+            data => $c->stash->{contract},
+            desc => $c->loc('Contract successfully terminated'),
+        );
     } catch ($e) {
         NGCP::Panel::Utils::Message->error(
             c => $c,
             error => $e,
-            desc  => $c->loc("Failed to terminate contract."),
+            data  => $c->stash->{contract},
+            desc  => $c->loc('Failed to terminate contract'),
         );
     };
     NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for('/contract'));
@@ -315,13 +326,16 @@ sub peering_create :Chained('peering_list') :PathPart('create') :Args(0) {
                 delete $c->session->{created_objects}->{contact};
                 delete $c->session->{created_objects}->{billing_profile};
                 my $contract_id = $contract->id;
-                $c->flash(messages => [{type => 'success', text => $c->loc("Contract #[_1] successfully created",$contract_id)}]);
+                NGCP::Panel::Utils::Message->info(
+                    c => $c,
+                    desc  => $c->loc('Contract #[_1] successfully created', $contract_id),
+                );
             });
         } catch($e) {
             NGCP::Panel::Utils::Message->error(
                 c => $c,
                 error => $e,
-                desc  => $c->loc("Failed to create contract."),
+                desc  => $c->loc('Failed to create contract'),
             );
         }
         NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for('/contract'));
@@ -360,10 +374,10 @@ sub reseller_ajax_contract_filter :Chained('reseller_list') :PathPart('ajax/cont
     my ($self, $c, $contract_id) = @_;
 
     unless($contract_id && $contract_id->is_int) {
-        $c->flash(messages => [{type => 'error', text => }]);
+        $contract_id ||= '';
         NGCP::Panel::Utils::Message->error(
             c     => $c,
-            log   => 'Invalid contract id detected',
+            data  => { id => $contract_id },
             desc  => $c->loc('Invalid contract id detected'),
         );
         $c->response->redirect($c->uri_for());
@@ -441,18 +455,20 @@ sub reseller_create :Chained('reseller_list') :PathPart('create') :Args(0) {
                 $c->session->{created_objects}->{contract} = { id => $contract->id };
                 delete $c->session->{created_objects}->{contact};
                 delete $c->session->{created_objects}->{billing_profile};
-                my $contract_id = $contract->id;
-                $c->flash(messages => [{type => 'success', text => $c->loc('Contract #[_1] successfully created',$contract_id)}]);
+                NGCP::Panel::Utils::Message->info(
+                    c => $c,
+                    desc  => $c->loc('Contract #[_1] successfully created', $contract->id),
+                );
             });
         } catch($e) {
             NGCP::Panel::Utils::Message->error(
                 c => $c,
                 error => $e,
-                desc  => $c->loc("Failed to create contract."),
+                desc  => $c->loc('Failed to create contract'),
             );
         }
         NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for('/contract'));
-    } 
+    }
 
     $c->stash(create_flag => 1);
     $c->stash(form => $form);
