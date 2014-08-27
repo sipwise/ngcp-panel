@@ -155,8 +155,8 @@ method error ($self: Catalyst :$c, Str :$desc, :$log?, :$error?, :$type = 'panel
     }
 
     my $rc = $c->log->error(
-        sprintf <<EOF, @{$log_params}{qw(r_ip called tx_id r_user data)});
-IP=%s CALLED=%s TX=%s USER=%s DATA=%s MSG="$msg" $log_msg
+        sprintf <<"EOF", @{$log_params}{qw(r_ip called tx_id r_user data)}, $msg, $log_msg);
+IP=%s CALLED=%s TX=%s USER=%s DATA=%s MSG="%s" %s
 EOF
     if ($type eq 'panel') {
         $c->flash(messages => [{ type => $usr_type,
@@ -198,8 +198,8 @@ method info ($self: Catalyst :$c, Str :$desc, :$log?, :$type = 'panel', :$data?)
     }
 
     my $rc = $c->log->info(
-        sprintf <<EOF, @{$log_params}{qw(r_ip called tx_id r_user data)});
-IP=%s CALLED=%s TX=%s USER=%s DATA=%s MSG="$msg" $log_msg
+        sprintf <<"EOF", @{$log_params}{qw(r_ip called tx_id r_user data)}, $msg, $log_msg);
+IP=%s CALLED=%s TX=%s USER=%s DATA=%s MSG="%s" %s
 EOF
     if ($type eq 'panel') {
         $c->flash(messages => [{ type => $usr_type, text => $usr_text }]);
