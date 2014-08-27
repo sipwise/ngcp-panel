@@ -62,6 +62,7 @@ method get_log_params ($self: Catalyst :$c, :$type?, :$data?) {
     if ($data_ref) {
         $data_str = Data::Dumper->new([ $data_ref ])
                                 ->Terse(1)
+                                ->Maxdepth(1)
                                 ->Dump;
     } elsif ($data) {
         $data_str = $data;
@@ -93,10 +94,12 @@ method error ($self: Catalyst :$c, Str :$desc, :$log?, :$error?, :$type = 'panel
 # we explicitly declare the invocant to skip the validation for Object
 # because we want a class method instead of an object method
 
+    # undef checks
+    $desc ||= '';
+
     my $log_params = $self->get_log_params(c => $c,
                                            type => $type,
                                            data => $data, );
-
     my $msg      = ''; # sent to the log file
     my $log_msg  = ''; # optional log info
     my $usr_type = 'error';
@@ -107,6 +110,7 @@ method error ($self: Catalyst :$c, Str :$desc, :$log?, :$error?, :$type = 'panel
         if (ref($log)) {
             $log_msg = Data::Dumper->new([ $log ])
                                    ->Terse(1)
+                                   ->Maxdepth(1)
                                    ->Dump;
         } else {
             $log_msg = $log
@@ -168,10 +172,12 @@ method info ($self: Catalyst :$c, Str :$desc, :$log?, :$type = 'panel', :$data?)
 # we explicitly declare the invocant to skip the validation for Object
 # because we want a class method instead of an object method
 
+    # undef checks
+    $desc ||= '';
+
     my $log_params = $self->get_log_params(c => $c,
                                            type => $type,
                                            data => $data, );
-
     my $msg      = $desc; # sent to the log file
     my $log_msg  = ''; # optional log info
     my $usr_type = 'info';
@@ -181,6 +187,7 @@ method info ($self: Catalyst :$c, Str :$desc, :$log?, :$type = 'panel', :$data?)
         if (ref($log)) {
             $log_msg = Data::Dumper->new([ $log ])
                                    ->Terse(1)
+                                   ->Maxdepth(1)
                                    ->Dump;
         } else {
             $log_msg = $log
