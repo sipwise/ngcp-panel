@@ -72,6 +72,10 @@ method get_log_params ($self: Catalyst :$c, :$type?, :$data?) {
     } else {
         $data_str = '';
     }
+    if (length($data_str) > 100000) {
+        # trim long messages
+        $data_str = "{ data => 'Msg size is too big' }";
+    }
 
     unless ($c->config->{logging}->{clear_passwords}) {
     }
@@ -85,7 +89,7 @@ method get_log_params ($self: Catalyst :$c, :$type?, :$data?) {
            };
 }
 
-method error ($self: Catalyst :$c, Str :$desc, Str :$log?, :$error?, :$type = 'panel', :$data?) {
+method error ($self: Catalyst :$c, Str :$desc, :$log?, :$error?, :$type = 'panel', :$data?) {
 # we explicitly declare the invocant to skip the validation for Object
 # because we want a class method instead of an object method
 
@@ -93,26 +97,29 @@ method error ($self: Catalyst :$c, Str :$desc, Str :$log?, :$error?, :$type = 'p
                                            type => $type,
                                            data => $data, );
 
-    my $log_msg = '';
+    my $msg      = ''; # sent to the log file
+    my $log_msg  = ''; # optional log info
     my $usr_type = 'error';
     my $usr_text = $desc;
 
-    given (1) {
-        when (defined $log)
-        {
-            if (ref($log)) {
-                $log_msg = Data::Dumper->new([ $log ])
-                                       ->Terse(1)
-                                       ->Dump;
-            } else {
-                $log_msg = $log
-            }
-            $log_msg =~ s/\n//g;
-            $log_msg =~ s/\s+/ /g;
+    if (defined $log)
+    {
+        if (ref($log)) {
+            $log_msg = Data::Dumper->new([ $log ])
+                                   ->Terse(1)
+                                   ->Dump;
+        } else {
+            $log_msg = $log
         }
+        $log_msg =~ s/\n//g;
+        $log_msg =~ s/\s+/ /g;
+        $log_msg and $log_msg = "LOG=$log_msg";
+    }
+
+    given (1) {
         when (not defined $error)
         {
-            $log_msg = $desc;
+            $msg = $desc;
         }
         when (my ($host) = $error =~ /problem connecting to (\S+, port [0-9]+)/ )
         {
@@ -121,31 +128,31 @@ method error ($self: Catalyst :$c, Str :$desc, Str :$log?, :$error?, :$type = 'p
         }
         when (ref($error) eq "ARRAY" && @$error >= 2 && $error->[1] eq "showdetails" )
         {
-            $log_msg  = "$desc (@$error[0])";
+            $msg      = "$desc (@$error[0])";
             $usr_text = "$desc (@$error[0])";
         }
         when (not $error->isa('DBIx::Class::Exception') )
         {
-            $log_msg  = "$desc ($error)";
+            $msg      = "$desc ($error)";
             $usr_text = $desc;
         }
         when (my ($dup) = $error =~ /(Duplicate entry \S*)/ )
         {
-            $log_msg  = "$desc ($error)";
+            $msg      = "$desc ($error)";
             $usr_text = "$desc ($dup)";
         }
         when (my ($excerpt) = $error =~ /(Column \S+ cannot be null)/ ) {
-            $log_msg  = "$desc ($error)";
+            $msg      = "$desc ($error)";
             $usr_text = "$desc ($excerpt)";
         }
         default {
-            $log_msg = "$desc ($error)";
+            $msg = "$desc ($error)";
         }
     }
 
     my $rc = $c->log->error(
         sprintf <<EOF, @{$log_params}{qw(r_ip called tx_id r_user data)});
-IP=%s CALLED=%s TX=%s USER=%s DATA=%s MSG=$log_msg
+IP=%s CALLED=%s TX=%s USER=%s DATA=%s MSG="$msg" $log_msg
 EOF
     if ($type eq 'panel') {
         $c->flash(messages => [{ type => $usr_type,
@@ -157,7 +164,7 @@ EOF
     return $rc;
 }
 
-method info ($self: Catalyst :$c, Str :$desc, Str :$log?, :$type = 'panel', :$data?) {
+method info ($self: Catalyst :$c, Str :$desc, :$log?, :$type = 'panel', :$data?) {
 # we explicitly declare the invocant to skip the validation for Object
 # because we want a class method instead of an object method
 
@@ -165,32 +172,27 @@ method info ($self: Catalyst :$c, Str :$desc, Str :$log?, :$type = 'panel', :$da
                                            type => $type,
                                            data => $data, );
 
-    my $log_msg = '';
+    my $msg      = $desc; # sent to the log file
+    my $log_msg  = ''; # optional log info
     my $usr_type = 'info';
     my $usr_text = $desc;
 
-    given (1) {
-        when (defined $log)
-        {
-            if (ref($log)) {
-                $log_msg = Data::Dumper->new([ $log ])
-                                       ->Terse(1)
-                                       ->Dump;
-            } else {
-                $log_msg = $log
-            }
-            $log_msg =~ s/\n//g;
-            $log_msg =~ s/\s+/ /g;
+    if (defined $log) {
+        if (ref($log)) {
+            $log_msg = Data::Dumper->new([ $log ])
+                                   ->Terse(1)
+                                   ->Dump;
+        } else {
+            $log_msg = $log
         }
-        default
-        {
-            $log_msg = $desc;
-        }
+        $log_msg =~ s/\n//g;
+        $log_msg =~ s/\s+/ /g;
+        $log_msg and $log_msg = "LOG=$log_msg";
     }
 
     my $rc = $c->log->info(
         sprintf <<EOF, @{$log_params}{qw(r_ip called tx_id r_user data)});
-IP=%s CALLED=%s TX=%s USER=%s DATA=%s MSG=$log_msg
+IP=%s CALLED=%s TX=%s USER=%s DATA=%s MSG="$msg" $log_msg
 EOF
     if ($type eq 'panel') {
         $c->flash(messages => [{ type => $usr_type, text => $usr_text }]);
