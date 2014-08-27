@@ -62,13 +62,18 @@ sub validate {
     );
 
     my $sdate = $parser->parse_datetime($start->value);
+    my ($sdt_err, $edt_err) = (0,0);
     unless($sdate) {
         $start->add_error("Invalid date format, must be YYYY-MM-DD hh:mm:ss");
+        $sdt_err = 1;
     }
     my $edate = $parser->parse_datetime($end->value);
     unless($edate) {
         $end->add_error("Invalid date format, must be YYYY-MM-DD hh:mm:ss");
+        $edt_err = 1;
     }
+
+    return if $sdt_err || $edt_err;
 
     unless(DateTime->compare($sdate, $edate) == -1) {
         my $err_msg = 'End time must be later than start time';
