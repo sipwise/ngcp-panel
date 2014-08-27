@@ -81,12 +81,15 @@ sub create :Chained('list_contact') :PathPart('create') :Args(0) {
             my $contact = $c->stash->{contacts}->create($form->values);
             delete $c->session->{created_objects}->{reseller};
             $c->session->{created_objects}->{contact} = { id => $contact->id };
-            $c->flash(messages => [{type => 'success', text => $c->loc('Contact successfully created')}]);
+            NGCP::Panel::Utils::Message->info(
+                c => $c,
+                desc  => $c->loc('Contact successfully created'),
+            );
         } catch($e) {
             NGCP::Panel::Utils::Message->error(
                 c => $c,
                 error => $e,
-                desc  => $c->loc("Failed to create contact."),
+                desc  => $c->loc('Failed to create contact'),
             );
         }
         NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for('/contact'));
@@ -106,13 +109,22 @@ sub base :Chained('list_contact') :PathPart('') :CaptureArgs(1) {
     my ($self, $c, $contact_id) = @_;
 
     unless($contact_id && $contact_id->is_int) {
-        $c->flash(messages => [{type => 'error', text => $c->loc('Invalid contact id detected')}]);
+        $contact_id ||= '';
+        NGCP::Panel::Utils::Message->error(
+            c => $c,
+            data => { id => $contact_id },
+            desc => $c->loc('Invalid contact id detected'),
+        );
         NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for('/contact'));
     }
     my $res = $c->stash->{contacts};
     $c->stash(contact => $res->find($contact_id));
     unless($c->stash->{contact}) {
-        $c->flash(messages => [{type => 'error', text => $c->loc('Contact not found')}]);
+        NGCP::Panel::Utils::Message->error(
+            c => $c,
+            data => { $c->stash->{contact}->get_inflated_columns },
+            desc => $c->loc('Contact not found'),
+        );
         NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for('/contact'));
     }
 }
@@ -158,13 +170,16 @@ sub edit :Chained('base') :PathPart('edit') :Args(0) {
             delete $form->values->{reseller};
             $form->values->{country} = $form->values->{country}{id};
             $c->stash->{contact}->update($form->values);
-            $c->flash(messages => [{type => 'success', text => $c->loc('Contact successfully changed')}]);
+            NGCP::Panel::Utils::Message->info(
+                c => $c,
+                desc  => $c->loc('Contact successfully changed'),
+            );
             delete $c->session->{created_objects}->{reseller};
         } catch($e) {
             NGCP::Panel::Utils::Message->error(
                 c => $c,
                 error => $e,
-                desc  => $c->loc('Failed to update contact.'),
+                desc  => $c->loc('Failed to update contact'),
             );
         }
         NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for('/contact'));
@@ -187,12 +202,17 @@ sub delete :Chained('base') :PathPart('delete') :Args(0) {
 
     try {
         $c->stash->{contact}->delete;
-        $c->flash(messages => [{type => 'success', text => $c->loc('Contact successfully deleted')}]);
+        NGCP::Panel::Utils::Message->info(
+            c => $c,
+            data => { $c->stash->{contact}->get_inflated_columns },
+            desc  => $c->loc('Contact successfully deleted'),
+        );
     } catch($e) {
         NGCP::Panel::Utils::Message->error(
             c => $c,
             error => $e,
-            desc  => $c->loc('Failed to delete contact.'),
+            data => { $c->stash->{contact}->get_inflated_columns },
+            desc  => $c->loc('Failed to delete contact'),
         );
     }
     NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for('/contact'));
