@@ -172,8 +172,7 @@ method info ($self: Catalyst :$c, Str :$desc, :$log?, :$type = 'panel', :$data?)
 # we explicitly declare the invocant to skip the validation for Object
 # because we want a class method instead of an object method
 
-    # undef checks
-    $desc ||= '';
+    $desc //= '';
 
     my $log_params = $self->get_log_params(c => $c,
                                            type => $type,
