@@ -2,7 +2,7 @@
 use lib '/root/VMHost/ngcp-panel/lib';
 use strict;
 
-use Getopt::Long;
+use Getopt::Long qw/GetOptionsFromString/;
 use DBI;
 use Data::Dumper;
 use DateTime::TimeZone;
@@ -27,15 +27,59 @@ use NGCP::Panel::Utils::Email;
 
 
 my $opt = {};
+my $opt_cfg = {};
+my @opt_spec = (
+    'reseller_id=i@', 
+    'client_contact_id=i@', 
+    'client_contract_id=i@', 
+    'stime=s', 
+    'etime=s', 
+    'prevmonth',
+    'sendonly',
+    'send',
+    'resend',
+    'regenerate',
+    'allow_terminated',
+    'backward_is_active',
+    'update_contract_balance',
+    'update_contract_balance_nonzero',
+    'force_unrated',
+    'no_empty',
+    'help|?',
+    'man'
+);
 Log::Log4perl::init('/etc/ngcp-ossbss/logging.conf');
 my $logger = Log::Log4perl->get_logger('NGCP::Panel');
 
 {
     my $config_file = "/etc/ngcp-invoice-gen/invoice-gen.conf";
     if(-e $config_file){
+        my $cfg2opt = sub{
+            my($key, $val) = @_;
+            state $opt_spec = { map{my $k = $_; $k=~s/[^\w_]//; $k => $_;} @opt_spec };
+            if(!$opt_spec->{$key}){
+                return '';
+            }
+            my $res = "--$key";
+            if($opt_spec->{$key} =~ /[=:]i/){
+                given($val) {
+                    when(/^(?:t|true|yes|y)$/i) {
+                        $val = 1;
+                    }
+                    when(/^(?:f|false|no|n)$/i) {
+                        $val = 0;
+                    }
+                }
+            }
+            if($opt_spec->{$key} =~ /[=:]/){
+                $res .= "=$val";
+            }
+            return $res." ";
+        };
         open CONFIG, "$config_file" or die "Program stopping, couldn't open the configuration file '$config_file'.\n";
 
         #can try CONFIG::Hash, Env::Sourced
+        my $opt_str = '';
         while (<CONFIG>) {
             chomp;                  # no newline
             s/#.*//;                # no comments
@@ -43,11 +87,15 @@ my $logger = Log::Log4perl->get_logger('NGCP::Panel');
             s/\s+$//;               # no trailing white
             next unless length;     # anything left?
             my ($var, $value) = split(/\s*=\s*/, $_, 2);
-            $opt->{lc $var} = $value;
+            #$opt->{lc $var} = $value;
+            my $opt_key = lc $var;
+            $opt_str .= $cfg2opt->($opt_key,$value);
+            #$opt->{lc $var} = $value;
         }
         close CONFIG;
+        GetOptionsFromString($opt_str, $opt_cfg, @opt_spec);
+        print Dumper $opt_cfg;
     }
-    
 }
 
     
@@ -77,25 +125,7 @@ my $dbh;
         or die "failed to connect to billing DB\n";
 }
 
-Getopt::Long::GetOptions($opt, 
-    'reseller_id:i@', 
-    'client_contact_id:i@', 
-    'client_contract_id:i@', 
-    'stime:s', 
-    'etime:s', 
-    'prevmonth',
-    'sendonly',
-    'send',
-    'resend',
-    'regenerate',
-    'allow_terminated',
-    'backward_is_active',
-    'update_contract_balance',
-    'update_contract_balance_nonzero',
-    'force_unrated',
-    'no_empty',
-    'help|?',
-    'man'
+Getopt::Long::GetOptions($opt, @opt_spec
 ) or pod2usage(2);
 $logger->debug( Dumper $opt );
 pod2usage(1) if $opt->{help};
@@ -120,6 +150,7 @@ if( $opt->{client_contract_id} ){
     $opt->{reseller_id} = [$dbh->selectrow_array('select distinct contacts.reseller_id from contracts inner join contacts on contracts.contact_id=contacts.id '.ify(' where contracts.id', @{$opt->{client_contract_id}}),  undef, @{$opt->{client_contract_id}} )];
     $opt->{client_contact_id} = [$dbh->selectrow_array('select distinct contracts.contact_id from contracts '.ify(' where contracts.id', @{$opt->{client_contract_id}}),  undef, @{$opt->{client_contract_id}} )];
 }
+print Dumper $opt;
 $logger->debug( Dumper $opt );
 $logger->debug( "stime=$stime; etime=$etime;\n" );
 
