@@ -1,3 +1,49 @@
+ngcp-panel (1.4.3.0+0~mr3.4.3.0) unstable; urgency=low
+
+  [ Gerhard Jungwirth ]
+  * [b8b762d] MT#8287 only create aliases if available on subscriber creation
+  * [443a84d] MT#8287 fix subscriber termination by subadmin
+  * [2390dce] MT#8367 api fix subscriber delete as reseller
+  * [2b741c2] MT#8367 api fix subscriber post/put domain query
+  * [0e26fa6] MT#8309 remove usage of JSON::Types::bool
+  * [0071108] MT#8709 API: Always update lock-level
+
+  [ Irka ]
+  * [5d8bf14] MT#8367 Specify exact table for status to avoid ambiguity
+  * [242d1e2] MT#8367 Remove potentially ambiguous voip_subscribers.status reference
+  * [4120a0b] MT#7861 Use pixels as main unit to be in accordance with svg-edit.
+  * [f3cc7e8] MT#7867 Return scale 0.8 untill other options tested with real printing
+  * [6d81ad1] MT#8353 Give possibility to manage money signs after comma in template.
+  * [d50192a] MT#8353 More freedom in money signs configuration. And fix fractional.
+  * [159cd47] MT#8387 Introduce round for cents.
+  * [8a3e13d] MT#8353 Fix broken build
+  * [9de9412] MT#5879 Allow to skip empty invoices generation with option no_empty.
+  * [fd8a48c] MT#5879 Remove Country processing warning.
+  * [f5651ca] MT#5879 Fix generation for ampersands;
+  * [28dc037] MT#5879 Not all characters should be quoted
+  * [d5f6122] MT#8401 Add missed library for invoice data sanitize as XML.
+  * [eb96bc0] MT#8401 Use common invoice data preprocessing for generation script.
+  * [a4aaee9] MT#8433 Process unrated calls.
+  * [1471793] MT#8433 Remove debug
+  * [a2a16d6] MT#8433 Fix of option ttreatment in newest version.
+  * [e29b836] MT#5879 Fix billing_mapping logic, use the latest one as actual.
+  * [6eac00e] MT#5879 Fix memory issue
+  * [0b8b85f] MT#5879 Fix UTF-8 email send. Further fix of memory usage issue.
+  * [935caa8] MT#8387 Fix incorrect rounding for cents.
+  * [a297969] MT#8621 Check callforward spec against empty desctinations
+  * [1f99d44] MT#8609 API: Don't add ringtimeout into empty callforwardTimeout.
+  * [439724b] MT#8649 Add callforwards link into subscribers info
+  * [a75be49] MT#8609 Add "ringtimeout" into CallForward Timeout "cft" description.
+
+  [ Andreas Granig ]
+  * [7fdeda8] MT#8633 Properly set is_primary on sub creation
+  * [036475c] MT#8449 Fix clearing unused alias numbers
+  * [ba0f3a9] MT#8873 Fix showing number of recent calls.
+
+  [ Sipwise Jenkins Builder ]
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Fri, 29 Aug 2014 16:01:39 +0200
+
 ngcp-panel (1.4.2.0+0~mr3.4.2.0) unstable; urgency=low
 
   [ Alexander Lutay ]
