@@ -4,8 +4,8 @@
         <div class="plan-header">
             <div class="plan-title">[% c.loc('Call List') %]</div>
             <div class="plan-price">
-                <span>[% calls.count %]</span>
-                <span class="term">[% calls.count != 1 ? c.loc('Recent Calls') : c.loc('Recent Call') %]</span>
+                <span>[% calls.size %]</span>
+                <span class="term">[% calls.size != 1 ? c.loc('Recent Calls') : c.loc('Recent Call') %]</span>
             </div>
         </div>
         <div class="plan-features large">
