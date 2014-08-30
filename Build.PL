@@ -121,9 +121,8 @@ my $builder = Local::Module::Build->new(
         # for the testcover target
         'Devel::Cover' => 0,
         'sigtrap' => 0,
-        # for development
-        'Convert::Ascii85' => 0,
-        'IO::Uncompress::UnXz' => 0,
+        # for perlcritic test
+        'Test::Perl::Critic::Progressive' => 0,
     },
     add_to_cleanup => [ 'NGCP-Panel-*' ],
 );
