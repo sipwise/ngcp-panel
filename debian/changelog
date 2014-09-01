@@ -1,3 +1,13 @@
+ngcp-panel (1.4.2.2+0~mr3.4.2.2) unstable; urgency=low
+
+  [ Irka ]
+  * [e0d2493] MT#8401 Invoce data preprocessing.
+  * [8bd0f9b] MT#8401 Fix packages load sequence.
+
+  [ Sipwise Jenkins Builder ]
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Mon, 01 Sep 2014 18:10:33 +0200
+
 ngcp-panel (1.4.2.1+0~mr3.4.2.1) unstable; urgency=low
 
   [ Gerhard Jungwirth ]
