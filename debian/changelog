@@ -1,3 +1,12 @@
+ngcp-panel (1.4.1.9+0~mr3.4.1.9) unstable; urgency=low
+
+  [ Gerhard Jungwirth ]
+  * [2c2eacd] MT#8709 API: Always update lock-level
+
+  [ Sipwise Jenkins Builder ]
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Mon, 01 Sep 2014 15:23:59 +0200
+
 ngcp-panel (1.4.1.8+0~mr3.4.1.8) unstable; urgency=low
 
   [ Irka ]
