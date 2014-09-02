@@ -12,7 +12,7 @@ use Email::Sender::Simple qw(sendmail);
 use Email::Sender::Transport::SMTP;
 use Template;
 use Pod::Usage;
-use Log::Log4perl;
+use Log::Log4perl qw/get_logger :levels/;
 
 
 use NGCP::Panel::Utils::Invoice;
@@ -28,6 +28,7 @@ use NGCP::Panel::Utils::Email;
 
 my $opt = {};
 my $opt_cfg = {};
+my $cfg_raw = {};
 my @opt_spec = (
     'reseller_id=i@', 
     'client_contact_id=i@', 
@@ -56,23 +57,33 @@ my $logger = Log::Log4perl->get_logger('NGCP::Panel');
     if(-e $config_file){
         my $cfg2opt = sub{
             my($key, $val) = @_;
-            state $opt_spec = { map{my $k = $_; $k=~s/[^\w_]//; $k => $_;} @opt_spec };
+            state $opt_spec = { map{my $k = $_; $k=~s/[^[:alnum:]_].*?$//; $k => $_;} @opt_spec };
             if(!$opt_spec->{$key}){
                 return '';
             }
-            my $res = "--$key";
-            if($opt_spec->{$key} =~ /[=:]i/){
+            my $res = '';
+            #boolean values
+            if($opt_spec->{$key} !~ /[=:]/){
                 given($val) {
-                    when(/^(?:t|true|yes|y)$/i) {
-                        $val = 1;
+                    when(/^(?:t|true|yes|y+1)$/i) {
+                        $res = "--$key";
                     }
                     when(/^(?:f|false|no|n)$/i) {
-                        $val = 0;
                     }
                 }
-            }
-            if($opt_spec->{$key} =~ /[=:]/){
-                $res .= "=$val";
+            }else{#takes value
+                if($opt_spec->{$key} =~/i\@$/){
+#                    $val ="1,5,10..13,4";
+                    $val=~s/-/../g;
+                    my @vals;
+                    eval "\@vals = ($val);";
+                    $res = " --$key=".join(" --$key=", @vals);
+                }else{
+                    $res = " --$key=$val ";                    
+                }
+                if($opt_spec->{$key} =~/=/ && !$val){
+                    $res = '';
+                }
             }
             return $res." ";
         };
@@ -89,12 +100,12 @@ my $logger = Log::Log4perl->get_logger('NGCP::Panel');
             my ($var, $value) = split(/\s*=\s*/, $_, 2);
             #$opt->{lc $var} = $value;
             my $opt_key = lc $var;
+            $cfg_raw->{$opt_key} = $value;
             $opt_str .= $cfg2opt->($opt_key,$value);
             #$opt->{lc $var} = $value;
         }
         close CONFIG;
         GetOptionsFromString($opt_str, $opt_cfg, @opt_spec);
-        print Dumper $opt_cfg;
     }
 }
 
@@ -127,9 +138,14 @@ my $dbh;
 
 Getopt::Long::GetOptions($opt, @opt_spec
 ) or pod2usage(2);
+#Do we need a hash::merge logic here?
+$logger->debug( Dumper $cfg_raw );
+$logger->debug( Dumper $opt_cfg );
+$logger->debug( Dumper $opt );
+$opt = {%$opt_cfg,%$opt};
 $logger->debug( Dumper $opt );
 pod2usage(1) if $opt->{help};
-pod2usage(-exitval => 0, -verbose => 2) if $opt->{man};
+pod2usage(-exitval => 0, -verbose => 2, -noperldoc => 1 ) if $opt->{man};
 
 
     
@@ -150,7 +166,6 @@ if( $opt->{client_contract_id} ){
     $opt->{reseller_id} = [$dbh->selectrow_array('select distinct contacts.reseller_id from contracts inner join contacts on contracts.contact_id=contacts.id '.ify(' where contracts.id', @{$opt->{client_contract_id}}),  undef, @{$opt->{client_contract_id}} )];
     $opt->{client_contact_id} = [$dbh->selectrow_array('select distinct contracts.contact_id from contracts '.ify(' where contracts.id', @{$opt->{client_contract_id}}),  undef, @{$opt->{client_contract_id}} )];
 }
-print Dumper $opt;
 $logger->debug( Dumper $opt );
 $logger->debug( "stime=$stime; etime=$etime;\n" );
 
@@ -673,9 +688,9 @@ sub v2a{
     my($value) = @_;
     return $value ? ($value): ();
 }
+exit;
+__END__
 
-
- __END__
 
 =head1 generate_invoices.pl
 
@@ -684,63 +699,77 @@ location: /usr/share/ngcp-panel/tools/generate_invoices.pl
 
 =head1 OPTIONS
 
-=item --reseller_id=ID1[,IDn]        
+=over 4
+
+=item B<--reseller_id=ID1[,IDn]>
 
 Generate invoices only for specified resellers customers
 
-=item --client_contact_id=ID1[,IDn]  
+=item B<--client_contact_id=ID1[,IDn]>
 
 Generate invoices only for customers, defined by their contact IDs           
 
-=item --client_contract_id=ID1[,IDn] 
+=item B<--client_contract_id=ID1[,IDn]>
 
 Generate invoices only for customers, defined by their contract IDs          
 
-=item --prevmonth             
-       
+=item B<--prevmonth>
+
 Generate invoices for calls within period of previous month.         
 
-=item --stime="YYYY-mm-DD HH:MM:SS"  
+=item B<--stime="YYYY-mm-DD HH:MM:SS">
 
 Generate invoices for calls within period, started from option value. Call start_time will be bigger then option value. Default is start second of current month.         
 
-=item --etime="YYYY-mm-DD HH:MM:SS"  
+=item B<--etime="YYYY-mm-DD HH:MM:SS">
 
 Generate invoices for calls within period, ended by option value. Call start_time will be less then option value. Default is last second of current month, or last second of month period, started from stime value.         
 
-=item --send                         
+=item B<--send>
 
 Invoices will be sent to customers emails just after generation. Default is false.         
 
-=item --sendonly                     
+=item B<--sendonly>
 
 Makes to send invoices, which weren't sent yet, to customers. Other options: resellers, customers, period specification will be considered. Should be used to send invoices to customers monthly, after generation. Default is false.      
 
-=item --allow_terminated                     
+=item B<--allow_terminated>
 
 Generates invoices for terminated contracts too. 
 
-=item --force_unrated
+=item B<--force_unrated>
 
 Generate invoices despite unrated calls existance in the period.
 
-=item --backward_is_active
+=item B<--backward_is_active>
 
 Use old is_active logic of invoice_template selection. For internal use.
 
-=item --update_contract_balance
+=item B<--update_contract_balance>
 
 For internal use. Update contract_balances *_balance_interval fields with values according to invoice lists.
 
-=item --update_contract_balance_nonzero
+=item B<--update_contract_balance_nonzero>
 
 For internal use. Configuration for option --update_contract_balance. Allows update contract_balances.[cash|free_time]_balance_interval fields even if old values aren't empty.
 
-=item --no_empty
+=item B<--no_empty>
 
 Deny generate invoices for invoices without calls and null permanent fee.
 
+=item B<--help>
+
+Prints a brief help message and exits.
+
+=item B<--man>
+
+Prints the manual page and exits.
+
+=back
+
 =head1 SAMPLES
+
+=over 4
 
 =item To generate invoices for current month:
 
@@ -750,9 +779,9 @@ perl /usr/share/ngcp-panel/tools/generate_invoice.pl
 
 perl /usr/share/ngcp-panel/tools/generate_invoice.pl --prevmonth
 
-Crontab example:
-#m h d M dw
-5 5 1 * * perl /usr/share/ngcp-panel-tools/generate_invoice.pl --prevmonth 2>&1 >/dev/null
+    Crontab example
+        #m h d M dw
+        5 5 1 * * perl /usr/share/ngcp-panel-tools/generate_invoice.pl --prevmonth 2>&1 >/dev/null
 
 =item To send invoices which weren't sent yet
 
@@ -760,19 +789,9 @@ To get invoices, which weren't sent yet, period value will be considered too. It
 
 perl /usr/share/ngcp-panel/tools/generate_invoice.pl --sendonly --prevmonth
 
-Crontab example:
-#m h d M dw
-5 */2 * * * perl /usr/share/ngcp-panel-tools/generate_invoice.pl --sendonly --prevmonth 2>&1 >/dev/null
-
-=over 8
-
-=item B<-help>
-
-Prints a brief help message and exits.
-
-=item B<-man>
-
-Prints the manual page and exits.
+    Crontab example
+        #m h d M dw
+        5 */2 * * * perl /usr/share/ngcp-panel-tools/generate_invoice.pl --sendonly --prevmonth  2>&1 >/dev/null
 
 =back
 
@@ -781,6 +800,3 @@ Prints the manual page and exits.
 B<generate_invoices.pl> Script to generate invoices and/or send them via email to customers..
 
 =cut
-
-
-
