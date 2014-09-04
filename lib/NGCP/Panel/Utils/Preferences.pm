@@ -65,6 +65,14 @@ sub load_preference_list {
         my @group_prefs = $group->voip_preferences->all;
         
         foreach my $pref(@group_prefs) {
+
+            if($pref->data_type eq "enum") {
+                $pref->{enums} = [];
+                my @enums = $pref->voip_preferences_enums->all;
+                use Data::Printer; print "++++++++++++++++++++++++ enums\n"; p @enums;
+                push @{ $pref->{enums} }, @enums;
+            }
+
             my @values = @{
                 exists $pref_values->{$pref->attribute}
                     ? $pref_values->{$pref->attribute}
@@ -121,11 +129,6 @@ sub load_preference_list {
                     }
                     $v = $prefix . $v;
                 }
-            }
-            if($pref->data_type eq "enum") {
-                $pref->{enums} = [];
-                push @{ $pref->{enums} },
-                    $pref->voip_preferences_enums->all;
             }
             if($pref->max_occur != 1) {
                 $pref->{value} = \@values;
