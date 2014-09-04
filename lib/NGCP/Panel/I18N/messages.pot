@@ -51,7 +51,7 @@ msgstr ""
 msgid "\"Voice Mail\" - An internal flag for the voice_mail pseudo-preference feature to be able to map it do subscriber profiles. Not directly used."
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/Administrator.pm:29 lib/NGCP/Panel/Controller/Billing.pm:275 lib/NGCP/Panel/Controller/Billing.pm:36 lib/NGCP/Panel/Controller/Billing.pm:636 lib/NGCP/Panel/Controller/Billing.pm:84 lib/NGCP/Panel/Controller/Contact.pm:32 lib/NGCP/Panel/Controller/Contract.pm:25 lib/NGCP/Panel/Controller/Contract.pm:393 lib/NGCP/Panel/Controller/Customer.pm:277 lib/NGCP/Panel/Controller/Customer.pm:283 lib/NGCP/Panel/Controller/Customer.pm:292 lib/NGCP/Panel/Controller/Customer.pm:330 lib/NGCP/Panel/Controller/Customer.pm:48 lib/NGCP/Panel/Controller/Customer.pm:95 lib/NGCP/Panel/Controller/Device.pm:104 lib/NGCP/Panel/Controller/Device.pm:128 lib/NGCP/Panel/Controller/Device.pm:36 lib/NGCP/Panel/Controller/Device.pm:58 lib/NGCP/Panel/Controller/Device.pm:82 lib/NGCP/Panel/Controller/Domain.pm:29 lib/NGCP/Panel/Controller/EmailTemplate.pm:33 lib/NGCP/Panel/Controller/Invoice.pm:38 lib/NGCP/Panel/Controller/Invoice.pm:51 lib/NGCP/Panel/Controller/InvoiceTemplate.pm:32 lib/NGCP/Panel/Controller/NCOS.pm:228 lib/NGCP/Panel/Controller/NCOS.pm:29 lib/NGCP/Panel/Controller/NumberBlock.pm:39 lib/NGCP/Panel/Controller/Peering.pm:26 lib/NGCP/Panel/Controller/Peering.pm:76 lib/NGCP/Panel/Controller/Peering.pm:86 lib/NGCP/Panel/Controller/Product.pm:22 lib/NGCP/Panel/Controller/Reseller.pm:125 lib/NGCP/Panel/Controller/Reseller.pm:132 lib/NGCP/Panel/Controller/Reseller.pm:137 lib/NGCP/Panel/Controller/Reseller.pm:146 lib/NGCP/Panel/Controller/Reseller.pm:153 lib/NGCP/Panel/Controller/Reseller.pm:158 lib/NGCP/Panel/Controller/Reseller.pm:34 lib/NGCP/Panel/Controller/Reseller.pm:42 lib/NGCP/Panel/Controller/Rewrite.pm:31 lib/NGCP/Panel/Controller/Subscriber.pm:113 lib/NGCP/Panel/Controller/Subscriber.pm:1939 lib/NGCP/Panel/Controller/Subscriber.pm:1945 lib/NGCP/Panel/Controller/Subscriber.pm:2464 lib/NGCP/Panel/Controller/Subscriber.pm:256 lib/NGCP/Panel/Controller/Subscriber.pm:261 lib/NGCP/Panel/Controller/Subscriber.pm:266 lib/NGCP/Panel/Controller/Subscriber.pm:276 lib/NGCP/Panel/Controller/SubscriberProfile.pm:317 lib/NGCP/Panel/Controller/SubscriberProfile.pm:38 lib/NGCP/Panel/Utils/DbStrings.pm:794 lib/NGCP/Panel/Utils/Sounds.pm:62 share/templates/customer/details.tt:59
+#: lib/NGCP/Panel/Controller/Administrator.pm:29 lib/NGCP/Panel/Controller/Billing.pm:275 lib/NGCP/Panel/Controller/Billing.pm:36 lib/NGCP/Panel/Controller/Billing.pm:636 lib/NGCP/Panel/Controller/Billing.pm:84 lib/NGCP/Panel/Controller/Contact.pm:32 lib/NGCP/Panel/Controller/Contract.pm:25 lib/NGCP/Panel/Controller/Contract.pm:387 lib/NGCP/Panel/Controller/Customer.pm:277 lib/NGCP/Panel/Controller/Customer.pm:283 lib/NGCP/Panel/Controller/Customer.pm:292 lib/NGCP/Panel/Controller/Customer.pm:330 lib/NGCP/Panel/Controller/Customer.pm:48 lib/NGCP/Panel/Controller/Customer.pm:95 lib/NGCP/Panel/Controller/Device.pm:104 lib/NGCP/Panel/Controller/Device.pm:128 lib/NGCP/Panel/Controller/Device.pm:36 lib/NGCP/Panel/Controller/Device.pm:58 lib/NGCP/Panel/Controller/Device.pm:82 lib/NGCP/Panel/Controller/Domain.pm:29 lib/NGCP/Panel/Controller/EmailTemplate.pm:33 lib/NGCP/Panel/Controller/Invoice.pm:38 lib/NGCP/Panel/Controller/Invoice.pm:51 lib/NGCP/Panel/Controller/InvoiceTemplate.pm:32 lib/NGCP/Panel/Controller/NCOS.pm:228 lib/NGCP/Panel/Controller/NCOS.pm:29 lib/NGCP/Panel/Controller/NumberBlock.pm:39 lib/NGCP/Panel/Controller/Peering.pm:26 lib/NGCP/Panel/Controller/Peering.pm:76 lib/NGCP/Panel/Controller/Peering.pm:86 lib/NGCP/Panel/Controller/Product.pm:22 lib/NGCP/Panel/Controller/Reseller.pm:125 lib/NGCP/Panel/Controller/Reseller.pm:132 lib/NGCP/Panel/Controller/Reseller.pm:137 lib/NGCP/Panel/Controller/Reseller.pm:146 lib/NGCP/Panel/Controller/Reseller.pm:153 lib/NGCP/Panel/Controller/Reseller.pm:158 lib/NGCP/Panel/Controller/Reseller.pm:34 lib/NGCP/Panel/Controller/Reseller.pm:42 lib/NGCP/Panel/Controller/Rewrite.pm:31 lib/NGCP/Panel/Controller/Subscriber.pm:113 lib/NGCP/Panel/Controller/Subscriber.pm:1939 lib/NGCP/Panel/Controller/Subscriber.pm:1945 lib/NGCP/Panel/Controller/Subscriber.pm:2464 lib/NGCP/Panel/Controller/Subscriber.pm:256 lib/NGCP/Panel/Controller/Subscriber.pm:261 lib/NGCP/Panel/Controller/Subscriber.pm:266 lib/NGCP/Panel/Controller/Subscriber.pm:276 lib/NGCP/Panel/Controller/SubscriberProfile.pm:317 lib/NGCP/Panel/Controller/SubscriberProfile.pm:38 lib/NGCP/Panel/Utils/DbStrings.pm:794 lib/NGCP/Panel/Utils/Sounds.pm:62 share/templates/customer/details.tt:59
 msgid "#"
 msgstr ""
 
@@ -99,11 +99,11 @@ msgstr ""
 msgid "403 - Permission denied"
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/Reseller.pm:561
+#: lib/NGCP/Panel/Controller/Reseller.pm:558
 msgid "404 - No branding css available for this reseller"
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/Reseller.pm:525
+#: lib/NGCP/Panel/Controller/Reseller.pm:522
 msgid "404 - No branding logo available for this reseller"
 msgstr ""
 
@@ -515,7 +515,7 @@ msgstr ""
 msgid "Billing Fees"
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/Contract.pm:29 lib/NGCP/Panel/Controller/Contract.pm:396 lib/NGCP/Panel/Controller/Customer.pm:53 lib/NGCP/Panel/Controller/Reseller.pm:45 lib/NGCP/Panel/Utils/DbStrings.pm:678 share/templates/billing/list.tt:3 share/templates/widgets/admin_billing_overview.tt:7 share/templates/widgets/reseller_billing_overview.tt:7
+#: lib/NGCP/Panel/Controller/Contract.pm:29 lib/NGCP/Panel/Controller/Contract.pm:390 lib/NGCP/Panel/Controller/Customer.pm:53 lib/NGCP/Panel/Controller/Reseller.pm:45 lib/NGCP/Panel/Utils/DbStrings.pm:678 share/templates/billing/list.tt:3 share/templates/widgets/admin_billing_overview.tt:7 share/templates/widgets/reseller_billing_overview.tt:7
 msgid "Billing Profile"
 msgstr ""
 
@@ -817,7 +817,7 @@ msgstr ""
 msgid "Cannot delete myself"
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/Contract.pm:205 lib/NGCP/Panel/Controller/Customer.pm:500
+#: lib/NGCP/Panel/Controller/Contract.pm:203 lib/NGCP/Panel/Controller/Customer.pm:500
 msgid "Cannot terminate contract with the id 1"
 msgstr ""
 
@@ -981,7 +981,7 @@ msgstr ""
 msgid "Contact Details"
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/Contract.pm:27 lib/NGCP/Panel/Controller/Contract.pm:395 lib/NGCP/Panel/Controller/Customer.pm:51 lib/NGCP/Panel/Controller/Customer.pm:98 lib/NGCP/Panel/Controller/Peering.pm:27 lib/NGCP/Panel/Controller/Reseller.pm:149 lib/NGCP/Panel/Controller/Reseller.pm:44 lib/NGCP/Panel/Controller/Subscriber.pm:115 lib/NGCP/Panel/Utils/DbStrings.pm:489
+#: lib/NGCP/Panel/Controller/Contract.pm:27 lib/NGCP/Panel/Controller/Contract.pm:389 lib/NGCP/Panel/Controller/Customer.pm:51 lib/NGCP/Panel/Controller/Customer.pm:98 lib/NGCP/Panel/Controller/Peering.pm:27 lib/NGCP/Panel/Controller/Reseller.pm:149 lib/NGCP/Panel/Controller/Reseller.pm:44 lib/NGCP/Panel/Controller/Subscriber.pm:115 lib/NGCP/Panel/Utils/DbStrings.pm:489
 msgid "Contact Email"
 msgstr ""
 
@@ -1044,7 +1044,7 @@ msgstr ""
 
 #. ($contract_id)
 #. ($contract->id)
-#: lib/NGCP/Panel/Controller/Contract.pm:331 lib/NGCP/Panel/Controller/Contract.pm:460
+#: lib/NGCP/Panel/Controller/Contract.pm:327 lib/NGCP/Panel/Controller/Contract.pm:454
 msgid "Contract #%1 successfully created"
 msgstr ""
 
@@ -1052,7 +1052,7 @@ msgstr ""
 msgid "Contract Balance"
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/Contract.pm:84
+#: lib/NGCP/Panel/Controller/Contract.pm:82
 msgid "Contract does not exist"
 msgstr ""
 
@@ -1060,11 +1060,11 @@ msgstr ""
 msgid "Contract does not exist for subscriber"
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/Contract.pm:182
+#: lib/NGCP/Panel/Controller/Contract.pm:180
 msgid "Contract successfully changed!"
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/Contract.pm:228
+#: lib/NGCP/Panel/Controller/Contract.pm:226
 msgid "Contract successfully terminated"
 msgstr ""
 
@@ -1929,7 +1929,7 @@ msgstr ""
 msgid "Extension of CloudPBX Subscriber"
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/Contract.pm:26 lib/NGCP/Panel/Controller/Contract.pm:394 lib/NGCP/Panel/Controller/Customer.pm:49 lib/NGCP/Panel/Controller/Customer.pm:96 lib/NGCP/Panel/Controller/Reseller.pm:147 lib/NGCP/Panel/Controller/Reseller.pm:43 lib/NGCP/Panel/Utils/DbStrings.pm:741 share/templates/subscriber/master.tt:101
+#: lib/NGCP/Panel/Controller/Contract.pm:26 lib/NGCP/Panel/Controller/Contract.pm:388 lib/NGCP/Panel/Controller/Customer.pm:49 lib/NGCP/Panel/Controller/Customer.pm:96 lib/NGCP/Panel/Controller/Reseller.pm:147 lib/NGCP/Panel/Controller/Reseller.pm:43 lib/NGCP/Panel/Utils/DbStrings.pm:741 share/templates/subscriber/master.tt:101
 msgid "External #"
 msgstr ""
 
@@ -2005,7 +2005,7 @@ msgstr ""
 msgid "Failed to create administrator"
 msgstr ""
 
-#: lib/NGCP/Panel/Utils/Preferences.pm:346
+#: lib/NGCP/Panel/Utils/Preferences.pm:347
 msgid "Failed to create allowed_ip_grp."
 msgstr ""
 
@@ -2021,7 +2021,7 @@ msgstr ""
 msgid "Failed to create contact"
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/Contract.pm:338 lib/NGCP/Panel/Controller/Contract.pm:467
+#: lib/NGCP/Panel/Controller/Contract.pm:334 lib/NGCP/Panel/Controller/Contract.pm:461
 msgid "Failed to create contract"
 msgstr ""
 
@@ -2061,7 +2061,7 @@ msgstr ""
 msgid "Failed to create invoice."
 msgstr ""
 
-#: lib/NGCP/Panel/Utils/Preferences.pm:387
+#: lib/NGCP/Panel/Utils/Preferences.pm:388
 msgid "Failed to create man_allowed_ip_grp."
 msgstr ""
 
@@ -2082,7 +2082,7 @@ msgid "Failed to create peering server."
 msgstr ""
 
 #. ($attribute)
-#: lib/NGCP/Panel/Utils/Preferences.pm:423
+#: lib/NGCP/Panel/Utils/Preferences.pm:424
 msgid "Failed to create preference %1."
 msgstr ""
 
@@ -2211,7 +2211,7 @@ msgid "Failed to delete peering server."
 msgstr ""
 
 #. ($attribute)
-#: lib/NGCP/Panel/Utils/Preferences.pm:526 lib/NGCP/Panel/Utils/Preferences.pm:537
+#: lib/NGCP/Panel/Utils/Preferences.pm:527 lib/NGCP/Panel/Utils/Preferences.pm:538
 msgid "Failed to delete preference %1."
 msgstr ""
 
@@ -2271,11 +2271,11 @@ msgstr ""
 msgid "Failed to generate client certificate."
 msgstr ""
 
-#: lib/NGCP/Panel/Utils/Preferences.pm:334
+#: lib/NGCP/Panel/Utils/Preferences.pm:335
 msgid "Failed to generate ip group sequence."
 msgstr ""
 
-#: lib/NGCP/Panel/Utils/Preferences.pm:375
+#: lib/NGCP/Panel/Utils/Preferences.pm:376
 msgid "Failed to generate manual ip group sequence."
 msgstr ""
 
@@ -2325,7 +2325,7 @@ msgstr ""
 msgid "Failed to store invoice template"
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/Contract.pm:235
+#: lib/NGCP/Panel/Controller/Contract.pm:233
 msgid "Failed to terminate contract"
 msgstr ""
 
@@ -2385,7 +2385,7 @@ msgstr ""
 msgid "Failed to update contact"
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/Contract.pm:188
+#: lib/NGCP/Panel/Controller/Contract.pm:186
 msgid "Failed to update contract"
 msgstr ""
 
@@ -2438,7 +2438,7 @@ msgid "Failed to update peering server."
 msgstr ""
 
 #. ($attribute)
-#: lib/NGCP/Panel/Utils/Preferences.pm:457 lib/NGCP/Panel/Utils/Preferences.pm:482 lib/NGCP/Panel/Utils/Preferences.pm:507 lib/NGCP/Panel/Utils/Preferences.pm:550
+#: lib/NGCP/Panel/Utils/Preferences.pm:458 lib/NGCP/Panel/Utils/Preferences.pm:483 lib/NGCP/Panel/Utils/Preferences.pm:508 lib/NGCP/Panel/Utils/Preferences.pm:551
 msgid "Failed to update preference %1."
 msgstr ""
 
@@ -2446,7 +2446,7 @@ msgstr ""
 msgid "Failed to update reminder setting."
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/Reseller.pm:503
+#: lib/NGCP/Panel/Controller/Reseller.pm:500
 msgid "Failed to update reseller branding"
 msgstr ""
 
@@ -3008,11 +3008,11 @@ msgstr ""
 msgid "Invalid contact id detected"
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/Contract.pm:381 lib/NGCP/Panel/Controller/Invoice.pm:81 lib/NGCP/Panel/Controller/Sound.pm:101
+#: lib/NGCP/Panel/Controller/Contract.pm:375 lib/NGCP/Panel/Controller/Invoice.pm:81 lib/NGCP/Panel/Controller/Sound.pm:101
 msgid "Invalid contract id detected"
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/Contract.pm:68
+#: lib/NGCP/Panel/Controller/Contract.pm:66
 msgid "Invalid contract id detected!"
 msgstr ""
 
@@ -4249,7 +4249,7 @@ msgid "Postcode"
 msgstr ""
 
 #. ($attribute)
-#: lib/NGCP/Panel/Utils/Preferences.pm:436 lib/NGCP/Panel/Utils/Preferences.pm:462 lib/NGCP/Panel/Utils/Preferences.pm:487 lib/NGCP/Panel/Utils/Preferences.pm:512 lib/NGCP/Panel/Utils/Preferences.pm:555
+#: lib/NGCP/Panel/Utils/Preferences.pm:437 lib/NGCP/Panel/Utils/Preferences.pm:463 lib/NGCP/Panel/Utils/Preferences.pm:488 lib/NGCP/Panel/Utils/Preferences.pm:513 lib/NGCP/Panel/Utils/Preferences.pm:556
 msgid "Preference %1 successfully updated."
 msgstr ""
 
@@ -4476,7 +4476,7 @@ msgstr ""
 msgid "Reseller and Peering Contracts"
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/Reseller.pm:498
+#: lib/NGCP/Panel/Controller/Reseller.pm:495
 msgid "Reseller branding successfully updated"
 msgstr ""
 
@@ -4510,7 +4510,7 @@ msgid "Reseller successfully created"
 msgstr ""
 
 #. ($defaults{admins}->{login},$defaults{admins}->{md5pass})
-#: lib/NGCP/Panel/Controller/Reseller.pm:422
+#: lib/NGCP/Panel/Controller/Reseller.pm:419
 msgid "Reseller successfully created with login <b>%1</b> and password <b>%2</b>, please review your settings below"
 msgstr ""
 
@@ -5157,7 +5157,7 @@ msgstr ""
 msgid "Station Name"
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/Contract.pm:30 lib/NGCP/Panel/Controller/Contract.pm:397 lib/NGCP/Panel/Controller/Customer.pm:54 lib/NGCP/Panel/Controller/Customer.pm:99 lib/NGCP/Panel/Controller/Reseller.pm:134 lib/NGCP/Panel/Controller/Reseller.pm:150 lib/NGCP/Panel/Controller/Reseller.pm:37 lib/NGCP/Panel/Controller/Reseller.pm:46 lib/NGCP/Panel/Controller/Subscriber.pm:119 lib/NGCP/Panel/Controller/Subscriber.pm:1928 lib/NGCP/Panel/Controller/Subscriber.pm:268 lib/NGCP/Panel/Utils/DbStrings.pm:610 share/templates/subscriber/master.tt:76
+#: lib/NGCP/Panel/Controller/Contract.pm:30 lib/NGCP/Panel/Controller/Contract.pm:391 lib/NGCP/Panel/Controller/Customer.pm:54 lib/NGCP/Panel/Controller/Customer.pm:99 lib/NGCP/Panel/Controller/Reseller.pm:134 lib/NGCP/Panel/Controller/Reseller.pm:150 lib/NGCP/Panel/Controller/Reseller.pm:37 lib/NGCP/Panel/Controller/Reseller.pm:46 lib/NGCP/Panel/Controller/Subscriber.pm:119 lib/NGCP/Panel/Controller/Subscriber.pm:1928 lib/NGCP/Panel/Controller/Subscriber.pm:268 lib/NGCP/Panel/Utils/DbStrings.pm:610 share/templates/subscriber/master.tt:76
 msgid "Status"
 msgstr ""
 
