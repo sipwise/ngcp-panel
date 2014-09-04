@@ -85,7 +85,7 @@ msgstr ""
 #: lib/NGCP/Panel/Controller/Billing.pm:84
 #: lib/NGCP/Panel/Controller/Contact.pm:32
 #: lib/NGCP/Panel/Controller/Contract.pm:25
-#: lib/NGCP/Panel/Controller/Contract.pm:393
+#: lib/NGCP/Panel/Controller/Contract.pm:387
 #: lib/NGCP/Panel/Controller/Customer.pm:277
 #: lib/NGCP/Panel/Controller/Customer.pm:283
 #: lib/NGCP/Panel/Controller/Customer.pm:292
@@ -178,11 +178,11 @@ msgstr ", pero omitir los siguientes números: "
 msgid "403 - Permission denied"
 msgstr "403 - Permiso denegado"
 
-#: lib/NGCP/Panel/Controller/Reseller.pm:561
+#: lib/NGCP/Panel/Controller/Reseller.pm:558
 msgid "404 - No branding css available for this reseller"
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/Reseller.pm:525
+#: lib/NGCP/Panel/Controller/Reseller.pm:522
 msgid "404 - No branding logo available for this reseller"
 msgstr ""
 
@@ -683,7 +683,7 @@ msgid "Billing Fees"
 msgstr "Tarifas"
 
 #: lib/NGCP/Panel/Controller/Contract.pm:29
-#: lib/NGCP/Panel/Controller/Contract.pm:396
+#: lib/NGCP/Panel/Controller/Contract.pm:390
 #: lib/NGCP/Panel/Controller/Customer.pm:53
 #: lib/NGCP/Panel/Controller/Reseller.pm:45
 #: lib/NGCP/Panel/Utils/DbStrings.pm:678 share/templates/billing/list.tt:3
@@ -1055,7 +1055,7 @@ msgstr ""
 msgid "Cannot delete myself"
 msgstr "No me puedo borrar a mi mismo"
 
-#: lib/NGCP/Panel/Controller/Contract.pm:205
+#: lib/NGCP/Panel/Controller/Contract.pm:203
 #: lib/NGCP/Panel/Controller/Customer.pm:500
 msgid "Cannot terminate contract with the id 1"
 msgstr "No se puede terminar el contrato con ID 1"
@@ -1250,7 +1250,7 @@ msgid "Contact Details"
 msgstr "Detalles de Contacto"
 
 #: lib/NGCP/Panel/Controller/Contract.pm:27
-#: lib/NGCP/Panel/Controller/Contract.pm:395
+#: lib/NGCP/Panel/Controller/Contract.pm:389
 #: lib/NGCP/Panel/Controller/Customer.pm:51
 #: lib/NGCP/Panel/Controller/Customer.pm:98
 #: lib/NGCP/Panel/Controller/Peering.pm:27
@@ -1345,8 +1345,8 @@ msgstr "Contrato #%1"
 
 #. ($contract_id)
 #. ($contract->id)
-#: lib/NGCP/Panel/Controller/Contract.pm:331
-#: lib/NGCP/Panel/Controller/Contract.pm:460
+#: lib/NGCP/Panel/Controller/Contract.pm:327
+#: lib/NGCP/Panel/Controller/Contract.pm:454
 msgid "Contract #%1 successfully created"
 msgstr "Contrato #%1 creado con éxito"
 
@@ -1354,7 +1354,7 @@ msgstr "Contrato #%1 creado con éxito"
 msgid "Contract Balance"
 msgstr "Balance del Contrato"
 
-#: lib/NGCP/Panel/Controller/Contract.pm:84
+#: lib/NGCP/Panel/Controller/Contract.pm:82
 msgid "Contract does not exist"
 msgstr "El contrato no existe"
 
@@ -1362,11 +1362,11 @@ msgstr "El contrato no existe"
 msgid "Contract does not exist for subscriber"
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/Contract.pm:182
+#: lib/NGCP/Panel/Controller/Contract.pm:180
 msgid "Contract successfully changed!"
 msgstr "Contrato modificado con éxito"
 
-#: lib/NGCP/Panel/Controller/Contract.pm:228
+#: lib/NGCP/Panel/Controller/Contract.pm:226
 msgid "Contract successfully terminated"
 msgstr "Contrato eliminado con éxito"
 
@@ -2440,7 +2440,7 @@ msgid "Extension of CloudPBX Subscriber"
 msgstr ""
 
 #: lib/NGCP/Panel/Controller/Contract.pm:26
-#: lib/NGCP/Panel/Controller/Contract.pm:394
+#: lib/NGCP/Panel/Controller/Contract.pm:388
 #: lib/NGCP/Panel/Controller/Customer.pm:49
 #: lib/NGCP/Panel/Controller/Customer.pm:96
 #: lib/NGCP/Panel/Controller/Reseller.pm:147
@@ -2524,7 +2524,7 @@ msgstr "Fallo al crear grupo de PBX"
 msgid "Failed to create administrator"
 msgstr ""
 
-#: lib/NGCP/Panel/Utils/Preferences.pm:346
+#: lib/NGCP/Panel/Utils/Preferences.pm:347
 msgid "Failed to create allowed_ip_grp."
 msgstr ""
 
@@ -2540,8 +2540,8 @@ msgstr ""
 msgid "Failed to create contact"
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/Contract.pm:338
-#: lib/NGCP/Panel/Controller/Contract.pm:467
+#: lib/NGCP/Panel/Controller/Contract.pm:334
+#: lib/NGCP/Panel/Controller/Contract.pm:461
 msgid "Failed to create contract"
 msgstr ""
 
@@ -2581,7 +2581,7 @@ msgstr ""
 msgid "Failed to create invoice."
 msgstr ""
 
-#: lib/NGCP/Panel/Utils/Preferences.pm:387
+#: lib/NGCP/Panel/Utils/Preferences.pm:388
 msgid "Failed to create man_allowed_ip_grp."
 msgstr ""
 
@@ -2602,7 +2602,7 @@ msgid "Failed to create peering server."
 msgstr "Fallo al crear peering server"
 
 #. ($attribute)
-#: lib/NGCP/Panel/Utils/Preferences.pm:423
+#: lib/NGCP/Panel/Utils/Preferences.pm:424
 msgid "Failed to create preference %1."
 msgstr ""
 
@@ -2733,8 +2733,8 @@ msgid "Failed to delete peering server."
 msgstr "Fallo al borrar servidor de peering."
 
 #. ($attribute)
-#: lib/NGCP/Panel/Utils/Preferences.pm:526
-#: lib/NGCP/Panel/Utils/Preferences.pm:537
+#: lib/NGCP/Panel/Utils/Preferences.pm:527
+#: lib/NGCP/Panel/Utils/Preferences.pm:538
 msgid "Failed to delete preference %1."
 msgstr ""
 
@@ -2794,11 +2794,11 @@ msgstr "Fallo al encontrar usuario de buzón."
 msgid "Failed to generate client certificate."
 msgstr ""
 
-#: lib/NGCP/Panel/Utils/Preferences.pm:334
+#: lib/NGCP/Panel/Utils/Preferences.pm:335
 msgid "Failed to generate ip group sequence."
 msgstr ""
 
-#: lib/NGCP/Panel/Utils/Preferences.pm:375
+#: lib/NGCP/Panel/Utils/Preferences.pm:376
 msgid "Failed to generate manual ip group sequence."
 msgstr ""
 
@@ -2851,7 +2851,7 @@ msgstr ""
 msgid "Failed to store invoice template"
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/Contract.pm:235
+#: lib/NGCP/Panel/Controller/Contract.pm:233
 msgid "Failed to terminate contract"
 msgstr ""
 
@@ -2911,7 +2911,7 @@ msgstr ""
 msgid "Failed to update contact"
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/Contract.pm:188
+#: lib/NGCP/Panel/Controller/Contract.pm:186
 msgid "Failed to update contract"
 msgstr ""
 
@@ -2964,10 +2964,10 @@ msgid "Failed to update peering server."
 msgstr "Fallo al actualizar servidor de peering"
 
 #. ($attribute)
-#: lib/NGCP/Panel/Utils/Preferences.pm:457
-#: lib/NGCP/Panel/Utils/Preferences.pm:482
-#: lib/NGCP/Panel/Utils/Preferences.pm:507
-#: lib/NGCP/Panel/Utils/Preferences.pm:550
+#: lib/NGCP/Panel/Utils/Preferences.pm:458
+#: lib/NGCP/Panel/Utils/Preferences.pm:483
+#: lib/NGCP/Panel/Utils/Preferences.pm:508
+#: lib/NGCP/Panel/Utils/Preferences.pm:551
 msgid "Failed to update preference %1."
 msgstr ""
 
@@ -2975,7 +2975,7 @@ msgstr ""
 msgid "Failed to update reminder setting."
 msgstr "Fallo al actualizar preferencia de alarma"
 
-#: lib/NGCP/Panel/Controller/Reseller.pm:503
+#: lib/NGCP/Panel/Controller/Reseller.pm:500
 msgid "Failed to update reseller branding"
 msgstr ""
 
@@ -3595,13 +3595,13 @@ msgstr "Id de zona de facturación inválida detectada"
 msgid "Invalid contact id detected"
 msgstr "Id de contacto inválido detectado"
 
-#: lib/NGCP/Panel/Controller/Contract.pm:381
+#: lib/NGCP/Panel/Controller/Contract.pm:375
 #: lib/NGCP/Panel/Controller/Invoice.pm:81
 #: lib/NGCP/Panel/Controller/Sound.pm:101
 msgid "Invalid contract id detected"
 msgstr "Id de contrato inválido detectado"
 
-#: lib/NGCP/Panel/Controller/Contract.pm:68
+#: lib/NGCP/Panel/Controller/Contract.pm:66
 msgid "Invalid contract id detected!"
 msgstr "Id de contrato inválido detectado"
 
@@ -4970,11 +4970,11 @@ msgid "Postcode"
 msgstr "Código Postal"
 
 #. ($attribute)
-#: lib/NGCP/Panel/Utils/Preferences.pm:436
-#: lib/NGCP/Panel/Utils/Preferences.pm:462
-#: lib/NGCP/Panel/Utils/Preferences.pm:487
-#: lib/NGCP/Panel/Utils/Preferences.pm:512
-#: lib/NGCP/Panel/Utils/Preferences.pm:555
+#: lib/NGCP/Panel/Utils/Preferences.pm:437
+#: lib/NGCP/Panel/Utils/Preferences.pm:463
+#: lib/NGCP/Panel/Utils/Preferences.pm:488
+#: lib/NGCP/Panel/Utils/Preferences.pm:513
+#: lib/NGCP/Panel/Utils/Preferences.pm:556
 msgid "Preference %1 successfully updated."
 msgstr ""
 
@@ -5263,7 +5263,7 @@ msgstr "Beneficio de reseller"
 msgid "Reseller and Peering Contracts"
 msgstr "Contratos de Reseller y Peering"
 
-#: lib/NGCP/Panel/Controller/Reseller.pm:498
+#: lib/NGCP/Panel/Controller/Reseller.pm:495
 msgid "Reseller branding successfully updated"
 msgstr ""
 
@@ -5302,7 +5302,7 @@ msgid "Reseller successfully created"
 msgstr "Reseller creado con éxito"
 
 #. ($defaults{admins}->{login},$defaults{admins}->{md5pass})
-#: lib/NGCP/Panel/Controller/Reseller.pm:422
+#: lib/NGCP/Panel/Controller/Reseller.pm:419
 msgid ""
 "Reseller successfully created with login <b>%1</b> and password <b>%2</b>, "
 "please review your settings below"
@@ -6138,7 +6138,7 @@ msgid "Station Name"
 msgstr "Nombre de la estación"
 
 #: lib/NGCP/Panel/Controller/Contract.pm:30
-#: lib/NGCP/Panel/Controller/Contract.pm:397
+#: lib/NGCP/Panel/Controller/Contract.pm:391
 #: lib/NGCP/Panel/Controller/Customer.pm:54
 #: lib/NGCP/Panel/Controller/Customer.pm:99
 #: lib/NGCP/Panel/Controller/Reseller.pm:134
