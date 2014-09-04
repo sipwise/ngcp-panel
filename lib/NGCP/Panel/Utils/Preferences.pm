@@ -66,20 +66,11 @@ sub load_preference_list {
         
         foreach my $pref(@group_prefs) {
 
-            if($pref->data_type eq "enum") {
-                $pref->{enums} = [];
-                my @enums = $pref->voip_preferences_enums->all;
-                use Data::Printer; print "++++++++++++++++++++++++ enums\n"; p @enums;
-                push @{ $pref->{enums} }, @enums;
-            }
-
             my @values = @{
                 exists $pref_values->{$pref->attribute}
                     ? $pref_values->{$pref->attribute}
                     : []
             };
-            next unless(scalar @values);
-
             if($pref->attribute eq "rewrite_rule_set") {
                 my $tmp;
                 $pref->{rwrs_id} = $pref_values->{rewrite_caller_in_dpid} &&
@@ -130,6 +121,13 @@ sub load_preference_list {
                     $v = $prefix . $v;
                 }
             }
+
+            if($pref->data_type eq "enum") {
+                $pref->{enums} = [];
+                my @enums = $pref->voip_preferences_enums->all;
+                push @{ $pref->{enums} }, @enums;
+            }
+
             if($pref->max_occur != 1) {
                 $pref->{value} = \@values;
             } else {
