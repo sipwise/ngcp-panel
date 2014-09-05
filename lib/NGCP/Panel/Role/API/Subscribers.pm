@@ -406,7 +406,7 @@ sub prepare_resource {
     });
     if($item) { # update
         unless($subscriber) {
-            $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Subscriber does not exist.");
+            $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Subscriber with this username does not exist in the domain.");
             return;
         }
     } else {
