@@ -79,6 +79,7 @@ sub destination_as_string {
         my $sub = $c->stash->{subscriber};
         if($sub && ($c->user->roles eq "subscriberadmin" || $c->user->roles eq "subscriber")) {
             my ($user, $domain) = split(/\@/, $d);
+            $domain //= $sub->domain->domain;
             $user = NGCP::Panel::Utils::Subscriber::apply_rewrite(
                 c => $c, subscriber => $sub, number => $user, direction => 'caller_out'
             );
