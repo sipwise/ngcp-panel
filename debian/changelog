@@ -1,3 +1,12 @@
+ngcp-panel (1.4.1.11+0~mr3.4.1.11) unstable; urgency=low
+
+  [ Irina Peshinskaya ]
+  * [2d25a1c] MT#8981 API: Fix messages for mismatched username and domain of subscriber.
+
+  [ Sipwise Jenkins Builder ]
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Fri, 05 Sep 2014 16:03:59 +0200
+
 ngcp-panel (1.4.1.10+0~mr3.4.1.10) unstable; urgency=low
 
   [ Irka ]
