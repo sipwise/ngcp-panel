@@ -6395,7 +6395,7 @@ msgstr "Origen de confianza eliminado con éxito"
 msgid "Successfully deleted voicemail"
 msgstr "Buzón eliminado con éxito"
 
-#: lib/NGCP/Panel/Controller/Customer.pm:1302
+#: lib/NGCP/Panel/Controller/Customer.pm:1331
 msgid "Successfully redirected request to device"
 msgstr "Petición redireccionada al dispositivo"
 
@@ -6420,6 +6420,10 @@ msgstr "Reseller eliminado con éxito"
 #: lib/NGCP/Panel/Controller/Subscriber.pm:450
 msgid "Successfully terminated subscriber"
 msgstr "Suscriptor eliminado con éxito"
+
+#: lib/NGCP/Panel/Controller/Customer.pm:1316
+msgid "Successfully triggered config reload via SIP"
+msgstr ""
 
 #: lib/NGCP/Panel/Controller/Subscriber.pm:3514
 msgid "Successfully updated auto attendant slots"
