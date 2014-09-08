@@ -1289,7 +1289,36 @@ sub pbx_device_sync :Chained('pbx_device_base') :PathPart('sync') :Args(0) {
     my $form = NGCP::Panel::Form::Customer::PbxFieldDeviceSync->new;
     my $posted = ($c->req->method eq 'POST');
 
-    # TODO: if registered, we could try taking the ip from location?
+    my $dev = $c->stash->{pbx_device};
+    foreach my $line($dev->autoprov_field_device_lines->search({
+        line_type => 'private',
+        })->all) {
+
+        my $sub = $line->provisioning_voip_subscriber;
+        next unless($sub);
+        my $reg_rs = $c->model('DB')->resultset('location')->search({
+            username => $sub->username,
+        });
+        if($c->config->{features}->{multidomain}) {
+            $reg_rs = $reg_rs->search({
+                domain => $sub->domain->domain,
+            });
+        }
+        my $uri = $sub->username . '@' . $sub->domain->domain;
+        if($reg_rs->count) {
+            $c->log->debug("trigger device resync for $uri as it is registered");
+            my @cmd_args = ($c->config->{cloudpbx}->{sync}, 
+                $sub->username, $sub->domain->domain, 
+                $sub->password);
+            my $out = capturex([0], "sh", @cmd_args);
+            $c->log->debug(">>>>>>>>>>>> got output:\n$out");
+        }
+        $c->flash(messages => [{type => 'success', text => $c->loc('Successfully triggered config reload via SIP') }]);
+        NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for_action('/customer/details', [ $c->req->captures->[0] ]));
+        return;
+    }
+
+
     my $params = {};
 
     $form->process(
@@ -1302,7 +1331,6 @@ sub pbx_device_sync :Chained('pbx_device_base') :PathPart('sync') :Args(0) {
         $c->flash(messages => [{type => 'success', text => $c->loc('Successfully redirected request to device') }]);
         NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for_action('/customer/details', [ $c->req->captures->[0] ]));
     }
-    my $dev = $c->stash->{pbx_device};
 
     my $schema = $c->config->{deviceprovisioning}->{secure} ? 'https' : 'http';
     my $host = $c->config->{deviceprovisioning}->{host} // $c->req->uri->host;
