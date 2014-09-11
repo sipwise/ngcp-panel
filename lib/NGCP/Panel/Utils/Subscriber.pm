@@ -749,6 +749,17 @@ sub terminate {
             }
             NGCP::Panel::Utils::Kamailio::delete_location($c, 
                 $prov_subscriber);
+            foreach my $pref(qw/allowed_ips_grp man_allowed_ips_grp/) {
+                my $aig_rs = NGCP::Panel::Utils::Preferences::get_usr_preference_rs(
+                    c => $c, prov_subscriber => $prov_subscriber, attribute => $pref,
+                );
+                if($aig_rs && $aig_rs->first) {
+                    $c->model('DB')->resultset('voip_allowed_ip_groups')->delete({
+                        group_id => $aig_rs->first->value,
+                    });
+                }
+            }
+
             $prov_subscriber->delete;
         }
         $subscriber->update({ status => 'terminated' });
