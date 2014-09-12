@@ -3,6 +3,7 @@ use HTML::FormHandler::Moose;
 use HTML::FormHandler::Widget::Block::Bootstrap;
 use Moose::Util::TypeConstraints;
 use NGCP::Panel::Field::PosInteger;
+use NGCP::Panel::Field::URI;
 extends 'HTML::FormHandler';
 
 with 'NGCP::Panel::Render::RepeatableJs';
@@ -79,10 +80,11 @@ has_field 'destination.uri' => (
     do_label => 0,
 );
 has_field 'destination.uri.destination' => (
-    type => 'Text',
+    type => '+NGCP::Panel::Field::URI',
     label => 'URI/Number',
     wrapper_class => [qw/hfh-rep-field/],
 );
+
 has_field 'destination.uri.timeout' => (
     type => '+NGCP::Panel::Field::PosInteger',
     label => 'for (seconds)',
@@ -133,16 +135,6 @@ has_block 'actions' => (
     class => [qw(modal-footer)],
     render_list => [qw(save)],
 );
-
-#sub validate_destination {
-#    my ($self, $field) = @_;
-#
-#    # TODO: proper SIP URI check!
-#    if($field->value !~ /^sip:.+\@.+$/) {
-#        my $err_msg = 'Destination must be a valid SIP URI in format "sip:user@domain"';
-#        $field->add_error($err_msg);
-#    }
-#}
 
 1;
 
