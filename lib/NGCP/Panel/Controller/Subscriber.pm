@@ -1456,7 +1456,9 @@ sub preferences_callforward_destinationset_edit :Chained('preferences_callforwar
     $c->stash->{cf_tmp_params} = $params;
     my $form = NGCP::Panel::Form::DestinationSet->new(ctx => $c);
     $form->process(
-        params => $posted ? $c->req->params : $params
+        posted => $posted,
+        params => $c->req->params,
+        item => $params,
     );
     NGCP::Panel::Utils::Navigation::check_form_buttons(
         c => $c,
