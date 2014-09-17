@@ -290,7 +290,7 @@ sub fees_base :Chained('fees_list') :PathPart('') :CaptureArgs(1) {
     my ($self, $c, $fee_id) = @_;
 
     unless($fee_id && $fee_id->is_integer) {
-        $fee_id ||= '';
+        $fee_id //= '';
         NGCP::Panel::Utils::Message->error(
             c => $c,
             data => $c->stash->{profile},
@@ -577,7 +577,7 @@ sub zones_base :Chained('zones_list') :PathPart('') :CaptureArgs(1) {
     my ($self, $c, $zone_id) = @_;
     
     unless($zone_id && $zone_id->is_integer) {
-        $zone_id ||= '';
+        $zone_id //= '';
         NGCP::Panel::Utils::Message->error(
             c => $c,
             data => $c->stash->{profile},
@@ -650,7 +650,7 @@ sub peaktimes :Chained('peaktimes_list') :PathPart('') :Args(0) {
 sub peaktime_weekdays_base :Chained('peaktimes_list') :PathPart('weekday') :CaptureArgs(1) {
     my ($self, $c, $weekday_id) = @_;
     unless (defined $weekday_id && $weekday_id >= 0 && $weekday_id <= 6) {
-        $weekday_id ||= '';
+        $weekday_id //= '';
         NGCP::Panel::Utils::Message->error(
             c => $c,
             data => $c->stash->{profile},
@@ -763,7 +763,7 @@ sub peaktime_specials_base :Chained('peaktimes_list') :PathPart('date') :Capture
     my ($self, $c, $special_id) = @_;
     
     unless($special_id && $special_id->is_integer) {
-        $special_id ||= '';
+        $special_id //= '';
         NGCP::Panel::Utils::Message->error(
             c => $c,
             desc => $c->loc('Invalid peaktime date id detected!'),

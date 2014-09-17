@@ -177,12 +177,14 @@ sub edit :Chained('base') :PathPart('edit') :Args(0) {
             });
             NGCP::Panel::Utils::Message->info(
                 c => $c,
+                data => $c->stash->{contract},
                 desc  => $c->loc('Contract successfully changed!'),
             );
         } catch($e) {
             NGCP::Panel::Utils::Message->error(
                 c => $c,
                 error => $e,
+                data => $c->stash->{contract},
                 desc  => $c->loc('Failed to update contract'),
             );
         }
@@ -321,10 +323,10 @@ sub peering_create :Chained('peering_list') :PathPart('create') :Args(0) {
                 $c->session->{created_objects}->{contract} = { id => $contract->id };
                 delete $c->session->{created_objects}->{contact};
                 delete $c->session->{created_objects}->{billing_profile};
-                my $contract_id = $contract->id;
                 NGCP::Panel::Utils::Message->info(
                     c => $c,
-                    desc  => $c->loc('Contract #[_1] successfully created', $contract_id),
+                    cname => 'peering_create',
+                    desc  => $c->loc('Contract #[_1] successfully created', $contract->id),
                 );
             });
         } catch($e) {
@@ -368,7 +370,7 @@ sub reseller_ajax_contract_filter :Chained('reseller_list') :PathPart('ajax/cont
     my ($self, $c, $contract_id) = @_;
 
     unless($contract_id && $contract_id->is_int) {
-        $contract_id ||= '';
+        $contract_id //= '';
         NGCP::Panel::Utils::Message->error(
             c     => $c,
             data  => { id => $contract_id },
@@ -451,6 +453,7 @@ sub reseller_create :Chained('reseller_list') :PathPart('create') :Args(0) {
                 delete $c->session->{created_objects}->{billing_profile};
                 NGCP::Panel::Utils::Message->info(
                     c => $c,
+                    cname => 'reseller_create',
                     desc  => $c->loc('Contract #[_1] successfully created', $contract->id),
                 );
             });
