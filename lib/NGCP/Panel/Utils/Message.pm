@@ -90,16 +90,19 @@ method get_log_params ($self: Catalyst :$c, :$type?, :$data?) {
            };
 }
 
-method error ($self: Catalyst :$c, Str :$desc, :$log?, :$error?, :$type = 'panel', :$data?) {
+method error ($self: Catalyst :$c, Str :$desc, :$log?, :$error?, :$type = 'panel', :$data?, :$cname?) {
 # we explicitly declare the invocant to skip the validation for Object
 # because we want a class method instead of an object method
 
     # undef checks
-    $desc ||= '';
+    $desc //= '';
 
     my $log_params = $self->get_log_params(c => $c,
                                            type => $type,
                                            data => $data, );
+
+    defined $cname and $log_params->{called} =~ s/__ANON__/$cname/;
+
     my $msg      = ''; # sent to the log file
     my $log_msg  = ''; # optional log info
     my $usr_type = 'error';
@@ -168,15 +171,19 @@ EOF
     return $rc;
 }
 
-method info ($self: Catalyst :$c, Str :$desc, :$log?, :$type = 'panel', :$data?) {
+method info ($self: Catalyst :$c, Str :$desc, :$log?, :$type = 'panel', :$data?, :$cname?) {
 # we explicitly declare the invocant to skip the validation for Object
 # because we want a class method instead of an object method
 
+    # undef checks
     $desc //= '';
 
     my $log_params = $self->get_log_params(c => $c,
                                            type => $type,
                                            data => $data, );
+
+    defined $cname and $log_params->{called} =~ s/__ANON__/$cname/;
+
     my $msg      = $desc; # sent to the log file
     my $log_msg  = ''; # optional log info
     my $usr_type = 'info';
