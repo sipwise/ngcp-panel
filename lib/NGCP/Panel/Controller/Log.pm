@@ -30,9 +30,11 @@ sub static :Chained('root') :PathPart('') :Args() {
     $c->forward($c->view('TT'));
 
     if($path eq "kibana/config.js") {
+        my $defp = '/dashboard/file/NGCP-Summary.json';
         my $eurl = $c->uri_for_action('/log/elastic')->as_string;
         my $body = $c->res->body;
         $body =~ s/(\s*elasticsearch:\s*)"[^,]+"/$1"$eurl"/g;
+        $body =~ s/(\s*default_route\s*:\s*)'[^,]+'/$1'$defp'/g;
         $c->res->body($body);
     }
 }
