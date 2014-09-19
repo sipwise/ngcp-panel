@@ -36,6 +36,13 @@ $dbh->do('create table control(id integer(11) unsigned not null auto_increment p
 $dbh->do('create table url_control(url_id integer(11) unsigned, control_id integer(11) unsigned)');
 $dbh->do('create table url_template(url_id integer(11) unsigned, urltemplate_id integer(11) unsigned)');
 
+# Xvfb :99 &
+# DISPLAY=:99 firefox --display=:99 &
+## DISPLAY=:99 xdotool search --onlyvisible --title firefox
+## DISPLAY=:99 xdotool windowfocus 4194416
+# DISPLAY=:99 ~/fillform.pl 
+
+
 our $host = 'https://192.168.56.7:1444';
 
 
@@ -43,8 +50,6 @@ get_data($host.'/');
 while (my $url = $dbh->selectrow_array('select url from url where unix_timestamp(lastvisit) < ? limit 1', undef, $datetime->epoch)){
     get_data($url);
 }
-
-
 
 sub get_data{
     my ($url_in,$container_url,$loaded) = {}; 
@@ -74,11 +79,14 @@ sub get_data{
         if(!$loaded){
             print pre_get_url($url->{url}).";\n";
             $mech->get(pre_get_url($url->{url}));
+        }else{
+            #here add to db urls from clicks, if necessary
         }
         #$mech->eval("alert('QQ');");
         #follow_link starts here. Specially for follow_link we don't need recursion, but for click we do.
         $url->{content} = \$mech->content();
-         #foreach my $clickable_in ( $mech->clickables()  ) {
+        set_url_visited($url);
+        #foreach my $clickable_in ( $mech->clickables()  ) {
         #    my $control = get_control_db({ 
         ##        goto_url_id => $goto_url->{id}, 
         #        label   => process_control_label($clickable_in->{innerHTML}) 
@@ -93,8 +101,8 @@ sub get_data{
             if(!check_url_toadd($link->{href})){
                 next;
             }
-            my $control_url = { url => process_url($link->{href}) };
             
+            my $control_url = { url => process_url($link->{href}) };
             my $goto_url = get_url_db( $control_url );
             if(! ($goto_url)){
                 next;
@@ -105,17 +113,18 @@ sub get_data{
                 #label   => process_control_label($link->text) 
             });
             register_control($url,$control);
+            
             #print Dumper $link;
             print Dumper $control;
             print Dumper $link->{tagName};
             if('A' eq $link->{tagName}){
-                my $mechTmp = $mech;
-                $mechTmp->follow_link($link);
-                get_data($goto_url->{url},$url,1);
+                #my $mechTmp = $mech;
+                #$mechTmp->follow_link($link);
+                #get_data($goto_url->{url},$url,1);
+                get_data($goto_url->{url},$url,0);
             }
         }
     }
-    set_url_visited($url);
 }
 
 sub get_url_db{
@@ -177,10 +186,17 @@ sub get_urltemplate_db{
 sub check_url_toadd{
     my ($url) = @_;
     my $res = 1;
+    $url=~s/\s+//g;
     if(!$url){
         $res = 0;
     }
     if($url =~/javascript:;?$/i){
+        $res = 0;
+    }
+    if($url =~/#$/i){
+        $res = 0;
+    }
+    if($url =~/lang=[a-z]{2}/i){
         $res = 0;
     }
     return $res;
@@ -199,6 +215,8 @@ sub pre_get_url{
     if($url !~/^https?:/){
         $url=$host.'/'.$url;
     }
+    $url =~ s!/+!/!g;
+    $url =~ s!(https?:(?:\d+)?)/+!$1//!g;
     return $url;
 }
 sub process_control_label{
