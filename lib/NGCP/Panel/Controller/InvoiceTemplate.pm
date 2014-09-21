@@ -153,12 +153,15 @@ sub create :Chained('template_list') :PathPart('create') :Args() {
 
                 delete $c->session->{created_objects}->{reseller};
             });
-            $c->flash(messages => [{type => 'success', text => $c->loc('Invoice template successfully created')}]);
+            NGCP::Panel::Utils::Message->info(
+                c    => $c,
+                desc => $c->loc('Invoice template successfully created'),
+            );
         } catch($e) {
             NGCP::Panel::Utils::Message->error(
                 c => $c,
                 error => $e,
-                desc  => $c->loc('Failed to create invoice template.'),
+                desc  => $c->loc('Failed to create invoice template'),
             );
         }
         NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for('/invoicetemplate'));
@@ -219,12 +222,15 @@ sub edit_info :Chained('base') :PathPart('editinfo') {
 
                 delete $c->session->{created_objects}->{reseller};
             });
-            $c->flash(messages => [{type => 'success', text => $c->loc('Invoice template successfully updated')}]);
+            NGCP::Panel::Utils::Message->info(
+                c    => $c,
+                desc => $c->loc('Invoice template successfully updated'),
+            );
         } catch($e) {
             NGCP::Panel::Utils::Message->error(
                 c => $c,
                 error => $e,
-                desc  => $c->loc('Failed to update invoice template.'),
+                desc  => $c->loc('Failed to update invoice template'),
             );
         }
         NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for('/invoicetemplate'));
@@ -242,7 +248,11 @@ sub delete :Chained('base') :PathPart('delete') {
         $schema->txn_do(sub{
             $c->stash->{tmpl}->delete;
         });
-        $c->flash(messages => [{type => 'success', text => $c->loc('Invoice template successfully deleted')}]);
+        NGCP::Panel::Utils::Message->info(
+            c => $c,
+            data => { $c->stash->{tmpl}->get_inflated_columns },
+            desc => $c->loc('Invoice template successfully deleted'),
+        );
     } catch($e) {
         NGCP::Panel::Utils::Message->error(
             c => $c,

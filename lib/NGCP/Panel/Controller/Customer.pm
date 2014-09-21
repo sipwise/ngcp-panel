@@ -1358,7 +1358,10 @@ sub pbx_device_sync :Chained('pbx_device_base') :PathPart('sync') :Args(0) {
             my $out = capturex([0], "sh", @cmd_args);
             $c->log->debug(">>>>>>>>>>>> got output:\n$out");
         }
-        $c->flash(messages => [{type => 'success', text => $c->loc('Successfully triggered config reload via SIP') }]);
+        NGCP::Panel::Utils::Message->info(
+            c => $c,
+            desc => $c->loc('Successfully triggered config reload via SIP'),
+        );
         NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for_action('/customer/details', [ $c->req->captures->[0] ]));
         return;
     }

@@ -90,12 +90,15 @@ sub create :Chained('list_reseller') :PathPart('create') :Args(0) :Does(ACL) :AC
             delete $c->session->{created_objects}->{contract};
             $c->session->{created_objects}->{reseller} = { id => $reseller->id };
 
-            $c->flash(messages => [{type => 'success', text => $c->loc('Reseller successfully created') }]);
+            NGCP::Panel::Utils::Message->info(
+                c    => $c,
+                desc => $c->loc('Reseller successfully created'),
+            );
         } catch($e) {
             NGCP::Panel::Utils::Message->error(
                 c => $c,
                 error => $e,
-                desc  => $c->loc("Failed to create reseller."),
+                desc  => $c->loc('Failed to create reseller'),
             );
         }
         NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for('/reseller'));
@@ -241,12 +244,15 @@ sub edit :Chained('base') :PathPart('edit') :Args(0) :Does(ACL) :ACLDetachTo('/d
 
             delete $c->session->{created_objects}->{contract};
             delete $c->session->{edit_contract_id};
-            $c->flash(messages => [{type => 'success', text => $c->loc('Reseller successfully updated')}]);
+            NGCP::Panel::Utils::Message->info(
+                c    => $c,
+                desc => $c->loc('Reseller successfully updated'),
+            );
         } catch($e) {
             NGCP::Panel::Utils::Message->error(
                 c => $c,
                 error => $e,
-                desc  => $c->loc('Failed to update reseller.'),
+                desc  => $c->loc('Failed to update reseller'),
             );
         }
         NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for('/reseller'));
@@ -282,12 +288,16 @@ sub terminate :Chained('base') :PathPart('terminate') :Args(0) :Does(ACL) :ACLDe
                 $self->_handle_reseller_status_change($c,$reseller);
             }
         });
-        $c->flash(messages => [{type => 'success', text => $c->loc('Successfully terminated reseller')}]);
+        NGCP::Panel::Utils::Message->info(
+            c    => $c,
+            data => { $reseller->get_inflated_columns },
+            desc => $c->loc('Successfully terminated reseller'),
+        );
     } catch($e) {
         NGCP::Panel::Utils::Message->error(
             c => $c,
             error => $e,
-            desc  => $c->loc('Failed to terminate reseller.'),
+            desc  => $c->loc('Failed to terminate reseller'),
         );
     }
     NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for('/reseller'));
@@ -411,12 +421,13 @@ sub create_defaults :Path('create_defaults') :Args(0) :Does(ACL) :ACLDetachTo('/
         NGCP::Panel::Utils::Message->error(
             c => $c,
             error => $e,
-            desc  => "Failed to create reseller.",
+            desc  => $c->loc('Failed to create reseller'),
         );
     };
-    $c->flash(messages => [{type => 'success', text => 
-            $c->loc("Reseller successfully created with login <b>[_1]</b> and password <b>[_2]</b>, please review your settings below",
-                $defaults{admins}->{login},$defaults{admins}->{md5pass}) }]);
+    NGCP::Panel::Utils::Message->info(
+        c    => $c,
+        desc => $c->loc('Reseller successfully created with login <b>[_1]</b> and password <b>[_2]</b>, please review your settings below', $defaults{admins}->{login}, $defaults{admins}->{md5pass}),
+    );
     $c->res->redirect($c->uri_for_action('/reseller/details', [$r{resellers}->id]));
     $c->detach;
     return;
@@ -491,8 +502,10 @@ sub edit_branding_css :Chained('base') :PathPart('css/edit') :Args(0) :Does(ACL)
                     $branding->update($form->params);
                 }
             });
-
-            $c->flash(messages => [{type => 'success', text => $c->loc('Reseller branding successfully updated')}]);
+            NGCP::Panel::Utils::Message->info(
+                c    => $c,
+                desc => $c->loc('Reseller branding successfully updated'),
+            );
         } catch($e) {
             NGCP::Panel::Utils::Message->error(
                 c => $c,

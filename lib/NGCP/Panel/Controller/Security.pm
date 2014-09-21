@@ -147,8 +147,11 @@ sub ip_unban :Chained('ip_base') :PathPart('unban') :Args(0) {
 EOF
 
     $dispatcher->dispatch($c, "loadbalancer", 1, 1, $xml);
-
-    $c->flash(messages => [{type => 'success', text => $c->loc('IP successfully unbanned')}]);
+    NGCP::Panel::Utils::Message->info(
+        c    => $c,
+        data => { ip => $ip },
+        desc => $c->loc('IP successfully unbanned'),
+    );
     NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for('/security'));
 }
 
@@ -178,8 +181,11 @@ EOF
 
         $dispatcher->dispatch($c, "loadbalancer", 1, 1, $xml);
     }
-
-    $c->flash(messages => [{type => 'success', text => $c->loc('User successfully unbanned')}]);
+    NGCP::Panel::Utils::Message->info(
+        c    => $c,
+        data => { user => $user },
+        desc => $c->loc('User successfully unbanned'),
+    );
     NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for('/security'));
 }
 

@@ -227,8 +227,11 @@ sub devmod_create :Chained('base') :PathPart('model/create') :Args(0) :Does(ACL)
 
                 delete $c->session->{created_objects}->{reseller};
                 $c->session->{created_objects}->{device} = { id => $devmod->id };
-                $c->flash(messages => [{type => 'success', text => $c->loc('Successfully created device model')}]);
             });
+            NGCP::Panel::Utils::Message->info(
+                c    => $c,
+                desc => $c->loc('Successfully created device model'),
+            );
         } catch($e) {
             NGCP::Panel::Utils::Message->error(
                 c => $c,
@@ -273,7 +276,13 @@ sub devmod_delete :Chained('devmod_base') :PathPart('delete') :Args(0) :Does(ACL
 
     try {
         $c->stash->{devmod}->delete;
-        $c->flash(messages => [{type => 'success', text => 'Device model successfully deleted' }]);
+        NGCP::Panel::Utils::Message->info(
+            c    => $c,
+            data => { id => $c->stash->{devmod}->id,
+                      model => $c->stash->{devmod}->model,
+                      vendor => $c->stash->{devmod}->vendor },
+            desc => $c->loc('Device model successfully deleted'),
+        );
     } catch($e) {
         NGCP::Panel::Utils::Message->error(
             c => $c,
@@ -414,8 +423,14 @@ sub devmod_edit :Chained('devmod_base') :PathPart('edit') :Args(0) :Does(ACL) :A
                 })->delete_all;
 
                 delete $c->session->{created_objects}->{reseller};
-                $c->flash(messages => [{type => 'success', text => 'Successfully updated device model'}]);
             });
+            NGCP::Panel::Utils::Message->info(
+                c    => $c,
+                data => { id => $c->stash->{devmod}->id,
+                          model => $c->stash->{devmod}->model,
+                          vendor => $c->stash->{devmod}->vendor },
+                desc => $c->loc('Successfully updated device model'),
+            );
         } catch($e) {
             NGCP::Panel::Utils::Message->error(
                 c => $c,
@@ -516,8 +531,11 @@ sub devfw_create :Chained('base') :PathPart('firmware/create') :Args(0) :Does(AC
                 my $devfw = $devmod->create_related('autoprov_firmwares', $form->params);
                 delete $c->session->{created_objects}->{device};
                 $c->session->{created_objects}->{firmware} = { id => $devfw->id };
-                $c->flash(messages => [{type => 'success', text => $c->loc('Successfully created device firmware')}]);
             });
+            NGCP::Panel::Utils::Message->info(
+                c    => $c,
+                desc => $c->loc('Successfully created device firmware'),
+            );
         } catch($e) {
             NGCP::Panel::Utils::Message->error(
                 c => $c,
@@ -562,7 +580,11 @@ sub devfw_delete :Chained('devfw_base') :PathPart('delete') :Args(0) {
 
     try {
         $c->stash->{devfw}->delete;
-        $c->flash(messages => [{type => 'success', text => $c->loc('Device firmware successfully deleted') }]);
+        NGCP::Panel::Utils::Message->info(
+            c    => $c,
+            data => { $c->stash->{devfw}->get_inflated_columns },
+            desc => $c->loc('Device firmware successfully deleted'),
+        );
     } catch($e) {
         NGCP::Panel::Utils::Message->error(
             c => $c,
@@ -613,8 +635,11 @@ sub devfw_edit :Chained('devfw_base') :PathPart('edit') :Args(0) {
 
                 $c->stash->{devfw}->update($form->params);
                 delete $c->session->{created_objects}->{device};
-                $c->flash(messages => [{type => 'success', text => $c->loc('Successfully updated device firmware')}]);
             });
+            NGCP::Panel::Utils::Message->info(
+                c    => $c,
+                desc => $c->loc('Successfully updated device firmware'),
+            );
         } catch($e) {
             NGCP::Panel::Utils::Message->error(
                 c => $c,
@@ -679,8 +704,11 @@ sub devconf_create :Chained('base') :PathPart('config/create') :Args(0) :Does(AC
                 my $devconf = $devmod->create_related('autoprov_configs', $form->params);
                 delete $c->session->{created_objects}->{device};
                 $c->session->{created_objects}->{config} = { id => $devconf->id };
-                $c->flash(messages => [{type => 'success', text => $c->loc('Successfully created device configuration')}]);
             });
+            NGCP::Panel::Utils::Message->info(
+                c    => $c,
+                desc => $c->loc('Successfully created device configuration'),
+            );
         } catch($e) {
             NGCP::Panel::Utils::Message->error(
                 c => $c,
@@ -725,7 +753,11 @@ sub devconf_delete :Chained('devconf_base') :PathPart('delete') :Args(0) {
 
     try {
         $c->stash->{devconf}->delete;
-        $c->flash(messages => [{type => 'success', text => $c->loc('Device configuration successfully deleted') }]);
+        NGCP::Panel::Utils::Message->info(
+            c    => $c,
+            data => { $c->stash->{devconf}->get_inflated_columns },
+            desc => $c->loc('Device configuration successfully deleted'),
+        );
     } catch($e) {
         NGCP::Panel::Utils::Message->error(
             c => $c,
@@ -771,13 +803,16 @@ sub devconf_edit :Chained('devconf_base') :PathPart('edit') :Args(0) {
                 use Data::Printer; p $form->params;
                 $c->stash->{devconf}->update($form->params);
                 delete $c->session->{created_objects}->{device};
-                $c->flash(messages => [{type => 'success', text => $c->loc('Successfully updated device configuration')}]);
             });
+            NGCP::Panel::Utils::Message->info(
+                c    => $c,
+                desc => $c->loc('Successfully updated device configuration'),
+            );
         } catch($e) {
             NGCP::Panel::Utils::Message->error(
                 c => $c,
                 error => $e,
-                desc => "Failed to update device configuration",
+                desc => $c->loc('Failed to update device configuration'),
             );
         }
         NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for('/device'));
@@ -838,8 +873,11 @@ sub devprof_create :Chained('base') :PathPart('profile/create') :Args(0) :Does(A
                 $c->model('DB')->resultset('autoprov_profiles')->create($form->params);
 
                 delete $c->session->{created_objects}->{config};
-                $c->flash(messages => [{type => 'success', text => $c->loc('Successfully created device profile')}]);
             });
+            NGCP::Panel::Utils::Message->info(
+                c    => $c,
+                desc => $c->loc('Successfully created device profile'),
+            );
         } catch($e) {
             NGCP::Panel::Utils::Message->error(
                 c => $c,
@@ -923,7 +961,11 @@ sub devprof_delete :Chained('devprof_base') :PathPart('delete') :Args(0) :Does(A
 
     try {
         $c->stash->{devprof}->delete;
-        $c->flash(messages => [{type => 'success', text => $c->loc('Device profile successfully deleted') }]);
+        NGCP::Panel::Utils::Message->info(
+            c    => $c,
+            data => { $c->stash->{devprof}->get_inflated_columns },
+            desc => $c->loc('Device profile successfully deleted'),
+        );
     } catch($e) {
         NGCP::Panel::Utils::Message->error(
             c => $c,
@@ -969,8 +1011,12 @@ sub devprof_edit :Chained('devprof_base') :PathPart('edit') :Args(0) :Does(ACL) 
                 $c->stash->{devprof}->update($form->params);
 
                 delete $c->session->{created_objects}->{config};
-                $c->flash(messages => [{type => 'success', text => $c->loc('Successfully updated device profile')}]);
             });
+            NGCP::Panel::Utils::Message->info(
+                c    => $c,
+                data => { $c->stash->{devprof}->get_inflated_columns },
+                desc => $c->loc('Successfully updated device profile'),
+            );
         } catch($e) {
             NGCP::Panel::Utils::Message->error(
                 c => $c,

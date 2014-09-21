@@ -119,12 +119,15 @@ sub edit :Chained('base') :PathPart('edit') {
             $c->stash->{group_result}->update($form->custom_get_values);
             $self->_sip_lcr_reload($c);
             delete $c->session->{created_objects}->{contract};
-            $c->flash(messages => [{type => 'success', text => $c->loc('Peering group successfully updated')}]);
+            NGCP::Panel::Utils::Message->info(
+                c    => $c,
+                desc => $c->loc('Peering group successfully updated'),
+            );
         } catch ($e) {
             NGCP::Panel::Utils::Message->error(
                 c => $c,
                 error => $e,
-                desc  => $c->loc('Failed to update peering group.'),
+                desc  => $c->loc('Failed to update peering group'),
             );
         };
         NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for)
@@ -145,12 +148,16 @@ sub delete :Chained('base') :PathPart('delete') {
         }
         $c->stash->{group_result}->delete;
         $self->_sip_lcr_reload($c);
-        $c->flash(messages => [{type => 'success', text => $c->loc('Peering Group successfully deleted') }]);
+        NGCP::Panel::Utils::Message->info(
+            c    => $c,
+            data => { $c->stash->{group_result}->get_inflated_columns },
+            desc => $c->loc('Peering Group successfully deleted'),
+        );
     } catch ($e) {
         NGCP::Panel::Utils::Message->error(
             c => $c,
             error => $e,
-            desc  => $c->loc('Failed to delete peering group.'),
+            desc  => $c->loc('Failed to delete peering group'),
         );
     };
     $c->response->redirect($c->uri_for());
@@ -180,12 +187,15 @@ sub create :Chained('group_list') :PathPart('create') :Args(0) {
                 $formdata );
             $self->_sip_lcr_reload($c);
             delete $c->session->{created_objects}->{contract};
-            $c->flash(messages => [{type => 'success', text => $c->loc('Peering group successfully created') }]);
+            NGCP::Panel::Utils::Message->info(
+                c    => $c,
+                desc => $c->loc('Peering group successfully created'),
+            );
         } catch ($e) {
             NGCP::Panel::Utils::Message->error(
                 c => $c,
                 error => $e,
-                desc  => $c->loc('Failed to create peering group.'),
+                desc  => $c->loc('Failed to create peering group'),
             );
         };
         $c->response->redirect($c->uri_for_action('/peering/root'));
@@ -233,12 +243,15 @@ sub servers_create :Chained('servers_list') :PathPart('create') :Args(0) {
         try {
             $c->stash->{group_result}->voip_peer_hosts->create($form->values);
             $self->_sip_lcr_reload($c);
-            $c->flash(messages => [{type => 'success', text => $c->loc('Peering server successfully created') }]);
+            NGCP::Panel::Utils::Message->info(
+                c    => $c,
+                desc => $c->loc('Peering server successfully created'),
+            );
         } catch($e) {
             NGCP::Panel::Utils::Message->error(
                 c => $c,
                 error => $e,
-                desc  => $c->loc('Failed to create peering server.'),
+                desc  => $c->loc('Failed to create peering server'),
             );
         };
         NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for_action('/peering/servers_root', [$c->req->captures->[0]]));
@@ -300,12 +313,15 @@ sub servers_edit :Chained('servers_base') :PathPart('edit') :Args(0) {
         try {
             $c->stash->{server_result}->update($form->values);
             $self->_sip_lcr_reload($c);
-            $c->flash(messages => [{type => 'success', text => $c->loc('Peering server successfully updated') }]);
+            NGCP::Panel::Utils::Message->info(
+                c    => $c,
+                desc => $c->loc('Peering server successfully updated'),
+            );
         } catch ($e) {
             NGCP::Panel::Utils::Message->error(
                 c => $c,
                 error => $e,
-                desc  => $c->loc('Failed to update peering server.'),
+                desc  => $c->loc('Failed to update peering server'),
             );
         };
         NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for_action('/peering/servers_root', [$c->req->captures->[0]]));
@@ -324,12 +340,16 @@ sub servers_delete :Chained('servers_base') :PathPart('delete') :Args(0) {
     try {
         $c->stash->{server_result}->delete;
         $self->_sip_lcr_reload($c);
-        $c->flash(messages => [{type => 'success', text => $c->loc('Peering server successfully deleted') }]);
+        NGCP::Panel::Utils::Message->info(
+            c    => $c,
+            data => { $c->stash->{server_result}->get_inflated_columns },
+            desc => $c->loc('Peering server successfully deleted'),
+        );
     } catch ($e) {
         NGCP::Panel::Utils::Message->error(
             c => $c,
             error => $e,
-            desc  => $c->loc("Failed to delete peering server."),
+            desc  => $c->loc('Failed to delete peering server'),
         );
     };
     NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for_action('/peering/servers_root', [$c->req->captures->[0]]));
@@ -452,12 +472,15 @@ sub rules_create :Chained('rules_list') :PathPart('create') :Args(0) {
             $form->values->{callee_prefix} //= '';
             $c->stash->{group_result}->voip_peer_rules->create($form->values);
             $self->_sip_lcr_reload($c);
-            $c->flash(rules_messages => [{type => 'success', text => $c->loc('Peering rule successfully created') }]);
+            NGCP::Panel::Utils::Message->info(
+                c => $c,
+                desc  => $c->loc('Peering rule successfully created'),
+            );
         } catch ($e) {
             NGCP::Panel::Utils::Message->error(
                 c => $c,
                 error => $e,
-                desc  => $c->loc('Failed to create peering rule.'),
+                desc  => $c->loc('Failed to create peering rule'),
             );
         };
         NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for_action('/peering/servers_root', [$c->req->captures->[0]]));
@@ -520,12 +543,15 @@ sub rules_edit :Chained('rules_base') :PathPart('edit') :Args(0) {
             $form->values->{callee_prefix} //= '';
             $c->stash->{rule_result}->update($form->values);
             $self->_sip_lcr_reload($c);
-            $c->flash(rules_messages => [{type => 'success', text => $c->loc('Peering rule successfully changed') }]);
+            NGCP::Panel::Utils::Message->info(
+                c    => $c,
+                desc => $c->loc('Peering rule successfully changed'),
+            );
         } catch ($e) {
             NGCP::Panel::Utils::Message->error(
                 c => $c,
                 error => $e,
-                desc  => $c->loc("Failed to update peering rule."),
+                desc  => $c->loc('Failed to update peering rule'),
             );
         };
         NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for_action('/peering/servers_root', [$c->req->captures->[0]]));
@@ -544,12 +570,16 @@ sub rules_delete :Chained('rules_base') :PathPart('delete') :Args(0) {
     try {
         $c->stash->{rule_result}->delete;
         $self->_sip_lcr_reload($c);
-        $c->flash(rules_messages => [{type => 'success', text => $c->loc('Peering rule successfully deleted') }]);
+        NGCP::Panel::Utils::Message->info(
+            c    => $c,
+            data => { $c->stash->{rule_result}->get_inflated_columns },
+            desc => $c->loc('Peering rule successfully deleted'),
+        );
     } catch ($e) {
         NGCP::Panel::Utils::Message->error(
             c => $c,
             error => $e,
-            desc  => $c->loc("Failed to delete peering rule."),
+            desc  => $c->loc('Failed to delete peering rule'),
         );
     };
     NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for_action('/peering/servers_root', [$c->req->captures->[0]]));

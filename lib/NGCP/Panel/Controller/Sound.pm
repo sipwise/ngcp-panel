@@ -246,7 +246,10 @@ sub edit :Chained('base') :PathPart('edit') {
             });
             delete $c->session->{created_objects}->{reseller};
             delete $c->session->{created_objects}->{contract};
-            $c->flash(messages => [{type => 'success', text => $c->loc('Sound set successfully updated')}]);
+            NGCP::Panel::Utils::Message->info(
+                c    => $c,
+                desc => $c->loc('Sound set successfully updated'),
+            );
         } catch($e) {
             NGCP::Panel::Utils::Message->error(
                 c     => $c,
@@ -290,7 +293,11 @@ sub delete :Chained('base') :PathPart('delete') {
 
             $c->stash->{set_result}->delete;
         });
-        $c->flash(messages => [{type => 'success', text => $c->loc('Sound set successfully deleted')}]);
+        NGCP::Panel::Utils::Message->info(
+            c    => $c,
+            data => { $c->stash->{set_result}->get_inflated_columns },
+            desc => $c->loc('Sound set successfully deleted'),
+        );
     } catch($e) {
         NGCP::Panel::Utils::Message->error(
             c     => $c,
@@ -404,7 +411,10 @@ sub create :Chained('sets_list') :PathPart('create') :Args() {
             });
 
             delete $c->session->{created_objects}->{reseller};
-            $c->flash(messages => [{type => 'success', text => $c->loc('Sound set successfully created')}]);
+            NGCP::Panel::Utils::Message->info(
+                c    => $c,
+                desc => $c->loc('Sound set successfully created'),
+            );
         } catch($e) {
             NGCP::Panel::Utils::Message->error(
                 c     => $c,
@@ -624,7 +634,10 @@ sub handles_edit :Chained('handles_base') :PathPart('edit') {
                     data => $soundfile,
                     codec => $target_codec,
                 });
-                $c->flash(messages => [{type => 'success', text => $c->loc('Sound handle successfully uploaded') }]);
+                NGCP::Panel::Utils::Message->info(
+                    c    => $c,
+                    desc => $c->loc('Sound handle successfully uploaded'),
+                );
             } catch($e) {
                 NGCP::Panel::Utils::Message->error(
                     c     => $c,
@@ -637,7 +650,10 @@ sub handles_edit :Chained('handles_base') :PathPart('edit') {
                 $file_result->update({
                     loopplay => $form->values->{loopplay},
                 });
-                $c->flash(messages => [{type => 'success', text => $c->loc('Sound handle successfully updated') }]);
+                NGCP::Panel::Utils::Message->info(
+                    c    => $c,
+                    desc => $c->loc('Sound handle successfully updated'),
+                );
             } catch($e) {
                 NGCP::Panel::Utils::Message->error(
                     c     => $c,
@@ -659,7 +675,11 @@ sub handles_delete :Chained('handles_base') :PathPart('delete') {
     
     try {
         $c->stash->{file_result}->delete;
-        $c->flash(messages => [{type => 'success', text => $c->loc('Sound handle successfully deleted')}]);
+        NGCP::Panel::Utils::Message->info(
+            c    => $c,
+            data => { $c->stash->{file_result}->get_inflated_columns },
+            desc => $c->loc('Sound handle successfully deleted'),
+        );
     } catch($e) {
         NGCP::Panel::Utils::Message->error(
             c     => $c,

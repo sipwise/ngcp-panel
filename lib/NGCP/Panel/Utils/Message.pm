@@ -60,7 +60,13 @@ method get_log_params ($self: Catalyst :$c, :$type?, :$data?) {
                       ? $c->request->query_params
                       : $c->request->parameters;
     if ($data_ref) {
-        $data_str = Data::Dumper->new([ $data_ref ])
+        my %parsed_data_ref = map { $_ => defined $data_ref->{$_}
+                                            ? length($data_ref->{$_}) > 500
+                                                ? '*too big*'
+                                                : $data_ref->{$_}
+                                            : 'undef'
+                                  } keys %$data_ref;
+        $data_str = Data::Dumper->new([ \%parsed_data_ref ])
                                 ->Terse(1)
                                 ->Maxdepth(1)
                                 ->Dump;

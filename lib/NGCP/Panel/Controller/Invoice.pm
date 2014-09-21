@@ -352,7 +352,12 @@ sub create :Chained('inv_list') :PathPart('create') :Args() :Does(ACL) :ACLDetac
                     serial => $serial,
                     data => $pdf,
                 });
-                $c->flash(messages => [{type => 'success', text => $c->loc('Invoice #[_1] successfully created', $invoice->id)}]);
+                NGCP::Panel::Utils::Message->info(
+                    c     => $c,
+                    cname => 'create',
+                    log   => $vars->{invoice},
+                    desc  => $c->loc('Invoice #[_1] successfully created', $invoice->id),
+                );
             });
         } catch($e) {
             NGCP::Panel::Utils::Message->error(
@@ -376,7 +381,11 @@ sub delete :Chained('base') :PathPart('delete') {
         $schema->txn_do(sub{
             $c->stash->{inv}->delete;
         });
-        $c->flash(messages => [{type => 'success', text => $c->loc('Invoice successfully deleted')}]);
+        NGCP::Panel::Utils::Message->info(
+            c    => $c,
+            data => { $c->stash->{inv}->get_inflated_columns },
+            desc => $c->loc('Invoice successfully deleted'),
+        );
     } catch($e) {
         NGCP::Panel::Utils::Message->error(
             c => $c,

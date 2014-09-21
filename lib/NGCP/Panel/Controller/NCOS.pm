@@ -118,12 +118,15 @@ sub edit :Chained('base') :PathPart('edit') {
             delete $form->values->{reseller};
             $level->update($form->values);
             delete $c->session->{created_objects}->{reseller};
-            $c->flash(messages => [{type => 'success', text => $c->loc('NCOS level successfully updated') }]);
+            NGCP::Panel::Utils::Message->info(
+                c    => $c,
+                desc => $c->loc('NCOS level successfully updated'),
+            );
         } catch($e) {
             NGCP::Panel::Utils::Message->error(
                 c => $c,
                 error => $e,
-                desc  => $c->loc('Failed to update NCOS level.'),
+                desc  => $c->loc('Failed to update NCOS level'),
             );
         }
         NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for('/ncos'));
@@ -154,12 +157,15 @@ sub delete :Chained('base') :PathPart('delete') {
             }
             $c->stash->{level_result}->delete;
         });
-        $c->flash(messages => [{type => 'success', text => $c->loc('NCOS level successfully deleted') }]);
+        NGCP::Panel::Utils::Message->info(
+            c    => $c,
+            desc => $c->loc('NCOS level successfully deleted'),
+        );
     } catch ($e) {
         NGCP::Panel::Utils::Message->error(
             c => $c,
             error => $e,
-            desc  => $c->loc('Failed to delete NCOS level.'),
+            desc  => $c->loc('Failed to delete NCOS level'),
         );
     };
     NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for);
@@ -198,12 +204,15 @@ sub create :Chained('levels_list') :PathPart('create') :Args(0) {
             }
             $level->create($form->values);
             delete $c->session->{created_objects}->{reseller};
-            $c->flash(messages => [{type => 'success', text => $c->loc('NCOS level successfully created') }]);
+            NGCP::Panel::Utils::Message->info(
+                c    => $c,
+                desc => $c->loc('NCOS level successfully created'),
+            );
         } catch($e) {
             NGCP::Panel::Utils::Message->error(
                 c => $c,
                 error => $e,
-                desc  => $c->loc('Failed to create NCOS level.'),
+                desc  => $c->loc('Failed to create NCOS level'),
             );
         }
         NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for('/ncos'));
@@ -289,12 +298,16 @@ sub pattern_edit :Chained('pattern_base') :PathPart('edit') {
     if($posted && $form->validated) {
         try {
             $c->stash->{pattern_result}->update($form->values);
-            $c->flash(messages => [{type => 'success', text => $c->loc('NCOS pattern successfully updated')}]);
+            NGCP::Panel::Utils::Message->info(
+                c    => $c,
+                data => { $c->stash->{pattern_result}->get_inflated_columns },
+                desc => $c->loc('NCOS pattern successfully updated'),
+            );
         } catch($e) {
             NGCP::Panel::Utils::Message->error(
                 c => $c,
                 error => $e,
-                desc  => $c->loc('Failed to update NCOS pattern.'),
+                desc  => $c->loc('Failed to update NCOS pattern'),
             );
         }
         NGCP::Panel::Utils::Navigation::back_or($c, $c->stash->{pattern_base_uri});
@@ -312,12 +325,16 @@ sub pattern_delete :Chained('pattern_base') :PathPart('delete') {
 
     try {
         $c->stash->{pattern_result}->delete;
-        $c->flash(messages => [{type => 'success', text => $c->loc('NCOS pattern successfully deleted') }]);
+        NGCP::Panel::Utils::Message->info(
+            c    => $c,
+            data => { $c->stash->{pattern_result}->get_inflated_columns },
+            desc => $c->loc('NCOS pattern successfully deleted'),
+        );
     } catch ($e) {
         NGCP::Panel::Utils::Message->error(
             c => $c,
             error => $e,
-            desc  => $c->loc('Failed to delete NCOS pattern.'),
+            desc  => $c->loc('Failed to delete NCOS pattern'),
         );
     };
     NGCP::Panel::Utils::Navigation::back_or($c, $c->stash->{pattern_base_uri});
@@ -341,12 +358,15 @@ sub pattern_create :Chained('pattern_list') :PathPart('create') :Args(0) {
     if($posted && $form->validated) {
         try {
             $c->stash->{pattern_rs}->create($form->values);
-            $c->flash(messages => [{type => 'success', text => $c->loc('NCOS pattern successfully created') }]);
+            NGCP::Panel::Utils::Message->info(
+                c    => $c,
+                desc => $c->loc('NCOS pattern successfully created'),
+            );
         } catch($e) {
             NGCP::Panel::Utils::Message->error(
                 c => $c,
                 error => $e,
-                desc  => $c->loc('Failed to create NCOS pattern.'),
+                desc  => $c->loc('Failed to create NCOS pattern'),
             );
         }
         NGCP::Panel::Utils::Navigation::back_or($c, $c->stash->{pattern_base_uri});
@@ -378,12 +398,15 @@ sub pattern_edit_local_ac :Chained('pattern_list') :PathPart('edit_local_ac') :A
     if($posted && $form->validated) {
         try {
             $c->stash->{level_result}->update($form->values);
-            $c->flash(messages => [{type => 'success', text => $c->loc('Setting successfully updated') }]);
+            NGCP::Panel::Utils::Message->info(
+                c    => $c,
+                desc => $c->loc('NCOS level setting successfully updated'),
+            );
         } catch($e) {
             NGCP::Panel::Utils::Message->error(
                 c => $c,
                 error => $e,
-                desc  => $c->loc('Failed to update NCOS level setting.'),
+                desc  => $c->loc('Failed to update NCOS level setting'),
             );
         }
         NGCP::Panel::Utils::Navigation::back_or($c, $c->stash->{pattern_base_uri});

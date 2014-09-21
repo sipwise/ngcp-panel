@@ -104,7 +104,10 @@ sub tmpl_create :Chained('tmpl_list') :PathPart('create') :Args(0) {
             });
 
             delete $c->session->{created_objects}->{reseller};
-            $c->flash(messages => [{type => 'success', text => $c->loc('Email template successfully created')}]);
+            NGCP::Panel::Utils::Message->info(
+                c    => $c,
+                desc => $c->loc('Email template successfully created'),
+            );
         } catch($e) {
             NGCP::Panel::Utils::Message->error(
                 c     => $c,
@@ -165,7 +168,11 @@ sub tmpl_delete :Chained('tmpl_base') :PathPart('delete') {
             });        
         }
         $c->stash->{tmpl}->delete;
-        $c->flash(messages => [{type => 'success', text => $c->loc('Email template successfully deleted') }]);
+        NGCP::Panel::Utils::Message->info(
+            c => $c,
+            data => { $c->stash->{tmpl}->get_inflated_columns },
+            desc => $c->loc('Email template successfully deleted'),
+        );
     } catch ($e) {
         NGCP::Panel::Utils::Message->error(
             c => $c,
@@ -215,7 +222,10 @@ sub tmpl_edit :Chained('tmpl_base') :PathPart('edit') {
 
             });
             delete $c->session->{created_objects}->{reseller};
-            $c->flash(messages => [{type => 'success', text => $c->loc('Email template successfully updated')}]);
+            NGCP::Panel::Utils::Message->info(
+                c    => $c,
+                desc => $c->loc('Email template successfully updated'),
+            );
         } catch($e) {
             NGCP::Panel::Utils::Message->error(
                 c     => $c,

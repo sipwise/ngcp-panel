@@ -145,7 +145,10 @@ sub create :Chained('dom_list') :PathPart('create') :Args() {
         }
 
         $self->_sip_domain_reload($c);
-        $c->flash(messages => [{type => 'success', text => $c->loc('Domain successfully created') }]);
+        NGCP::Panel::Utils::Message->info(
+            c => $c,
+            desc => $c->loc('Domain successfully created'),
+        );
         NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for('/domain'));
     }
 
@@ -160,7 +163,12 @@ sub base :Chained('/domain/dom_list') :PathPart('') :CaptureArgs(1) {
     my ($self, $c, $domain_id) = @_;
 
     unless($domain_id && $domain_id->is_integer) {
-        $c->flash(messages => [{type => 'error', text => $c->loc('Invalid domain id detected') }]);
+        $domain_id //= '';
+        NGCP::Panel::Utils::Message->error(
+            c => $c,
+            data => { domain_id => $domain_id },
+            desc => $c->loc('Invalid domain id detected'),
+        );
         $c->response->redirect($c->uri_for());
         $c->detach;
         return;
@@ -168,7 +176,10 @@ sub base :Chained('/domain/dom_list') :PathPart('') :CaptureArgs(1) {
 
     my $res = $c->stash->{dom_rs}->find($domain_id);
     unless(defined($res)) {
-        $c->flash(messages => [{type => 'error', text => $c->loc('Domain does not exist') }]);
+        NGCP::Panel::Utils::Message->error(
+            c => $c,
+            desc => $c->loc('Domain does not exist'),
+        );
         $c->response->redirect($c->uri_for());
         $c->detach;
         return;
@@ -214,8 +225,10 @@ sub edit :Chained('base') :PathPart('edit') :Args(0) {
         }
 
         $self->_sip_domain_reload($c);
-
-        $c->flash(messages => [{type => 'success', text => $c->loc('Domain successfully updated') }]);
+        NGCP::Panel::Utils::Message->info(
+            c => $c,
+            desc => $c->loc('Domain successfully updated'),
+        );
         $c->response->redirect($c->uri_for());
         return;
     }
@@ -251,8 +264,11 @@ sub delete :Chained('base') :PathPart('delete') :Args(0) {
     }
 
     $self->_sip_domain_reload($c);
-
-    $c->flash(messages => [{type => 'success', text => $c->loc('Domain successfully deleted!') }]);
+    NGCP::Panel::Utils::Message->info(
+        c => $c,
+        data => { $c->stash->{domain_result}->get_inflated_columns },
+        desc => $c->loc('Domain successfully deleted!'),
+    );
     $c->response->redirect($c->uri_for());
 }
 

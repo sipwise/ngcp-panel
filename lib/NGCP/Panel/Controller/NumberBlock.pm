@@ -133,12 +133,15 @@ sub block_create :Chained('block_list') :PathPart('create') :Args(0) :Does(ACL) 
               
                 delete $c->session->{created_objects}->{reseller};
             });
-            $c->flash(messages => [{type => 'success', text => $c->loc('Number block successfully created')}]);
+            NGCP::Panel::Utils::Message->info(
+                c    => $c,
+                desc => $c->loc('Number block successfully created'),
+            );
         } catch($e) {
             NGCP::Panel::Utils::Message->error(
                 c => $c,
                 error => $e,
-                desc  => $c->loc('Failed to create number block.'),
+                desc  => $c->loc('Failed to create number block'),
             );
         }
         NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for('/numberblock'));
@@ -204,12 +207,15 @@ sub block_edit :Chained('block_base') :PathPart('edit') :Does(ACL) :ACLDetachTo(
               
                 delete $c->session->{created_objects}->{reseller};
             });
-            $c->flash(messages => [{type => 'success', text => $c->loc('Number block successfully updated')}]);
+            NGCP::Panel::Utils::Message->info(
+                c    => $c,
+                desc => $c->loc('Number block successfully updated'),
+            );
         } catch($e) {
             NGCP::Panel::Utils::Message->error(
                 c => $c,
                 error => $e,
-                desc  => $c->loc('Failed to update number block.'),
+                desc  => $c->loc('Failed to update number block'),
             );
         }
         NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for('/numberblock'));
@@ -229,12 +235,16 @@ sub block_delete :Chained('block_base') :PathPart('delete') :Does(ACL) :ACLDetac
             $c->stash->{block}->search_related('voip_number_block_resellers')->delete;
             $c->stash->{block}->delete;
         });
-        $c->flash(messages => [{type => 'success', text => $c->loc('Number block successfully deleted')}]);
+        NGCP::Panel::Utils::Message->info(
+            c => $c,
+            data => { $c->stash->{block}->get_inflated_columns },
+            desc  => $c->loc('Number block successfully deleted'),
+        );
     } catch($e) {
         NGCP::Panel::Utils::Message->error(
             c => $c,
             error => $e,
-            desc  => $c->loc('Failed to delete number block.'),
+            desc  => $c->loc('Failed to delete number block'),
         );
     }
     NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for('/numberblock'));
