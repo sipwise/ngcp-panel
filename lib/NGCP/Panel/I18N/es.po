@@ -102,30 +102,30 @@ msgstr ""
 #: lib/NGCP/Panel/Controller/Invoice.pm:38
 #: lib/NGCP/Panel/Controller/Invoice.pm:51
 #: lib/NGCP/Panel/Controller/InvoiceTemplate.pm:32
-#: lib/NGCP/Panel/Controller/NCOS.pm:228 lib/NGCP/Panel/Controller/NCOS.pm:29
+#: lib/NGCP/Panel/Controller/NCOS.pm:237 lib/NGCP/Panel/Controller/NCOS.pm:29
 #: lib/NGCP/Panel/Controller/NumberBlock.pm:39
 #: lib/NGCP/Panel/Controller/Peering.pm:26
 #: lib/NGCP/Panel/Controller/Peering.pm:76
 #: lib/NGCP/Panel/Controller/Peering.pm:86
 #: lib/NGCP/Panel/Controller/Product.pm:22
-#: lib/NGCP/Panel/Controller/Reseller.pm:125
-#: lib/NGCP/Panel/Controller/Reseller.pm:132
-#: lib/NGCP/Panel/Controller/Reseller.pm:137
-#: lib/NGCP/Panel/Controller/Reseller.pm:146
-#: lib/NGCP/Panel/Controller/Reseller.pm:153
-#: lib/NGCP/Panel/Controller/Reseller.pm:158
+#: lib/NGCP/Panel/Controller/Reseller.pm:128
+#: lib/NGCP/Panel/Controller/Reseller.pm:135
+#: lib/NGCP/Panel/Controller/Reseller.pm:140
+#: lib/NGCP/Panel/Controller/Reseller.pm:149
+#: lib/NGCP/Panel/Controller/Reseller.pm:156
+#: lib/NGCP/Panel/Controller/Reseller.pm:161
 #: lib/NGCP/Panel/Controller/Reseller.pm:34
 #: lib/NGCP/Panel/Controller/Reseller.pm:42
 #: lib/NGCP/Panel/Controller/Rewrite.pm:31
 #: lib/NGCP/Panel/Controller/Subscriber.pm:113
-#: lib/NGCP/Panel/Controller/Subscriber.pm:1941
-#: lib/NGCP/Panel/Controller/Subscriber.pm:1947
-#: lib/NGCP/Panel/Controller/Subscriber.pm:2466
-#: lib/NGCP/Panel/Controller/Subscriber.pm:256
-#: lib/NGCP/Panel/Controller/Subscriber.pm:261
-#: lib/NGCP/Panel/Controller/Subscriber.pm:266
-#: lib/NGCP/Panel/Controller/Subscriber.pm:276
-#: lib/NGCP/Panel/Controller/SubscriberProfile.pm:317
+#: lib/NGCP/Panel/Controller/Subscriber.pm:1969
+#: lib/NGCP/Panel/Controller/Subscriber.pm:1975
+#: lib/NGCP/Panel/Controller/Subscriber.pm:2496
+#: lib/NGCP/Panel/Controller/Subscriber.pm:259
+#: lib/NGCP/Panel/Controller/Subscriber.pm:264
+#: lib/NGCP/Panel/Controller/Subscriber.pm:269
+#: lib/NGCP/Panel/Controller/Subscriber.pm:279
+#: lib/NGCP/Panel/Controller/SubscriberProfile.pm:329
 #: lib/NGCP/Panel/Controller/SubscriberProfile.pm:38
 #: lib/NGCP/Panel/Utils/DbStrings.pm:794 lib/NGCP/Panel/Utils/Sounds.pm:62
 #: share/templates/customer/details.tt:59
@@ -178,23 +178,23 @@ msgstr ", pero omitir los siguientes números: "
 msgid "403 - Permission denied"
 msgstr "403 - Permiso denegado"
 
-#: lib/NGCP/Panel/Controller/Reseller.pm:558
+#: lib/NGCP/Panel/Controller/Reseller.pm:571
 msgid "404 - No branding css available for this reseller"
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/Reseller.pm:522
+#: lib/NGCP/Panel/Controller/Reseller.pm:535
 msgid "404 - No branding logo available for this reseller"
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/Device.pm:441
+#: lib/NGCP/Panel/Controller/Device.pm:456
 msgid "404 - No front image available for the model of this device profile"
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/Device.pm:454
+#: lib/NGCP/Panel/Controller/Device.pm:469
 msgid "404 - No front image available for this device model"
 msgstr "404 - No hay imagen frontal disponible para este modelo"
 
-#: lib/NGCP/Panel/Controller/Device.pm:467
+#: lib/NGCP/Panel/Controller/Device.pm:482
 msgid "404 - No mac image available for this device model"
 msgstr "404 - No hay imagen mac disponible para este modelo"
 
@@ -317,7 +317,7 @@ msgid "Account balance successfully changed!"
 msgstr "¡Saldo modificado con éxito!"
 
 #: lib/NGCP/Panel/Controller/Administrator.pm:37
-#: lib/NGCP/Panel/Controller/Reseller.pm:140
+#: lib/NGCP/Panel/Controller/Reseller.pm:143
 #: lib/NGCP/Panel/Utils/DbStrings.pm:563
 #: share/templates/subscriber/preferences.tt:301
 msgid "Active"
@@ -592,7 +592,7 @@ msgstr ""
 msgid "Auto Attendant"
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/Subscriber.pm:3531
+#: lib/NGCP/Panel/Controller/Subscriber.pm:3608
 #, fuzzy
 msgid "Auto Attendant Slot"
 msgstr " Slot de Operador Automático "
@@ -618,7 +618,7 @@ msgstr "Ausente"
 msgid "BIC/SWIFT"
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/Device.pm:892
+#: lib/NGCP/Panel/Controller/Device.pm:930
 msgid "BLF Key"
 msgstr "Botón BLF"
 
@@ -805,7 +805,7 @@ msgstr ""
 msgid "Buddy List"
 msgstr "Lista de contactos"
 
-#: lib/NGCP/Panel/Controller/Subscriber.pm:277
+#: lib/NGCP/Panel/Controller/Subscriber.pm:280
 msgid "CLI"
 msgstr ""
 
@@ -839,8 +839,8 @@ msgstr "Flujo de llamada"
 msgid "Call Flow for Call-ID %1"
 msgstr "Flujo de llamada para el Call-ID %1"
 
-#: lib/NGCP/Panel/Controller/Subscriber.pm:1104
-#: lib/NGCP/Panel/Controller/Subscriber.pm:862
+#: lib/NGCP/Panel/Controller/Subscriber.pm:1124
+#: lib/NGCP/Panel/Controller/Subscriber.pm:879
 #: share/templates/subscriber/preferences.tt:76
 #: share/templates/widgets/subscriber_cf_overview.tt:3
 msgid "Call Forward Busy"
@@ -866,8 +866,8 @@ msgstr ""
 msgid "Call Forward Configured"
 msgstr "Desvío configurado"
 
-#: lib/NGCP/Panel/Controller/Subscriber.pm:1105
-#: lib/NGCP/Panel/Controller/Subscriber.pm:863
+#: lib/NGCP/Panel/Controller/Subscriber.pm:1125
+#: lib/NGCP/Panel/Controller/Subscriber.pm:880
 #: share/templates/subscriber/preferences.tt:77
 #: share/templates/widgets/subscriber_cf_overview.tt:4
 msgid "Call Forward Timeout"
@@ -891,8 +891,8 @@ msgid ""
 "destination/time set which belongs to the same subscriber."
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/Subscriber.pm:1106
-#: lib/NGCP/Panel/Controller/Subscriber.pm:864
+#: lib/NGCP/Panel/Controller/Subscriber.pm:1126
+#: lib/NGCP/Panel/Controller/Subscriber.pm:881
 #: share/templates/subscriber/preferences.tt:78
 #: share/templates/widgets/subscriber_cf_overview.tt:5
 msgid "Call Forward Unavailable"
@@ -914,8 +914,8 @@ msgid ""
 "destination/time set which belongs to the same subscriber."
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/Subscriber.pm:1103
-#: lib/NGCP/Panel/Controller/Subscriber.pm:861
+#: lib/NGCP/Panel/Controller/Subscriber.pm:1123
+#: lib/NGCP/Panel/Controller/Subscriber.pm:878
 #: share/templates/subscriber/preferences.tt:75
 #: share/templates/widgets/subscriber_cf_overview.tt:2
 msgid "Call Forward Unconditional"
@@ -987,12 +987,12 @@ msgid "Call type"
 msgstr ""
 
 #: lib/NGCP/Panel/Controller/Callflow.pm:26
-#: lib/NGCP/Panel/Controller/Subscriber.pm:1935
-#: lib/NGCP/Panel/Controller/Subscriber.pm:1954
+#: lib/NGCP/Panel/Controller/Subscriber.pm:1963
+#: lib/NGCP/Panel/Controller/Subscriber.pm:1982
 msgid "Call-ID"
 msgstr "Call-ID"
 
-#: lib/NGCP/Panel/Controller/Subscriber.pm:1929
+#: lib/NGCP/Panel/Controller/Subscriber.pm:1957
 #: lib/NGCP/Panel/Utils/DbStrings.pm:370
 msgid "Callee"
 msgstr "Destino"
@@ -1021,8 +1021,8 @@ msgstr "Prefijo de destino"
 msgid "Callee prefix, eg: 43"
 msgstr "Prefijo de destino, p.e: 34"
 
-#: lib/NGCP/Panel/Controller/Subscriber.pm:1928
-#: lib/NGCP/Panel/Controller/Subscriber.pm:1942
+#: lib/NGCP/Panel/Controller/Subscriber.pm:1956
+#: lib/NGCP/Panel/Controller/Subscriber.pm:1970
 #: lib/NGCP/Panel/Utils/DbStrings.pm:764
 msgid "Caller"
 msgstr "Originador"
@@ -1068,7 +1068,7 @@ msgstr "No me puedo borrar a mi mismo"
 msgid "Cannot terminate contract with the id 1"
 msgstr "No se puede terminar el contrato con ID 1"
 
-#: lib/NGCP/Panel/Controller/Reseller.pm:271
+#: lib/NGCP/Panel/Controller/Reseller.pm:277
 msgid "Cannot terminate reseller with the id 1"
 msgstr "No se puede eliminar el revendedor con ID 1"
 
@@ -1219,7 +1219,7 @@ msgstr ""
 "mandar notificaciones cuando el umbral se rebasa."
 
 #: lib/NGCP/Panel/Controller/Contact.pm:36
-#: lib/NGCP/Panel/Controller/Reseller.pm:128
+#: lib/NGCP/Panel/Controller/Reseller.pm:131
 #: lib/NGCP/Panel/Utils/DbStrings.pm:841
 #: share/templates/customer/details.tt:105
 msgid "Company"
@@ -1246,7 +1246,7 @@ msgstr "Configurar"
 msgid "Configure Preferences"
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/Subscriber.pm:1949
+#: lib/NGCP/Panel/Controller/Subscriber.pm:1977
 #: lib/NGCP/Panel/Utils/DbStrings.pm:1106 share/templates/contact/list.tt:3
 #: share/templates/reseller/details.tt:95
 #: share/templates/widgets/reseller_customer_overview.tt:12
@@ -1262,7 +1262,7 @@ msgstr "Detalles de Contacto"
 #: lib/NGCP/Panel/Controller/Customer.pm:51
 #: lib/NGCP/Panel/Controller/Customer.pm:98
 #: lib/NGCP/Panel/Controller/Peering.pm:27
-#: lib/NGCP/Panel/Controller/Reseller.pm:149
+#: lib/NGCP/Panel/Controller/Reseller.pm:152
 #: lib/NGCP/Panel/Controller/Reseller.pm:44
 #: lib/NGCP/Panel/Controller/Subscriber.pm:115
 #: lib/NGCP/Panel/Utils/DbStrings.pm:489
@@ -1365,7 +1365,7 @@ msgstr "Balance del Contrato"
 msgid "Contract does not exist"
 msgstr "El contrato no existe"
 
-#: lib/NGCP/Panel/Controller/Subscriber.pm:236
+#: lib/NGCP/Panel/Controller/Subscriber.pm:239
 msgid "Contract does not exist for subscriber"
 msgstr ""
 
@@ -1724,7 +1724,7 @@ msgstr "Día"
 msgid "December"
 msgstr "Diciembre"
 
-#: lib/NGCP/Panel/Controller/SubscriberProfile.pm:321
+#: lib/NGCP/Panel/Controller/SubscriberProfile.pm:333
 msgid "Default"
 msgstr ""
 
@@ -1809,19 +1809,19 @@ msgstr "Dispositivo desplegado"
 msgid "Deployed Devices"
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/NCOS.pm:230 lib/NGCP/Panel/Controller/NCOS.pm:33
+#: lib/NGCP/Panel/Controller/NCOS.pm:239 lib/NGCP/Panel/Controller/NCOS.pm:33
 #: lib/NGCP/Panel/Controller/Peering.pm:30
 #: lib/NGCP/Panel/Controller/Peering.pm:90
 #: lib/NGCP/Panel/Controller/Rewrite.pm:34
-#: lib/NGCP/Panel/Controller/SubscriberProfile.pm:320
+#: lib/NGCP/Panel/Controller/SubscriberProfile.pm:332
 #: lib/NGCP/Panel/Controller/SubscriberProfile.pm:41
 #: lib/NGCP/Panel/Utils/DbStrings.pm:748 lib/NGCP/Panel/Utils/Sounds.pm:64
 #: share/templates/rewrite/rules_list.tt:32
 msgid "Description"
 msgstr "Descripción"
 
-#: lib/NGCP/Panel/Controller/Subscriber.pm:258
-#: lib/NGCP/Panel/Controller/Subscriber.pm:263
+#: lib/NGCP/Panel/Controller/Subscriber.pm:261
+#: lib/NGCP/Panel/Controller/Subscriber.pm:266
 #: lib/NGCP/Panel/Utils/DbStrings.pm:901
 msgid "Destination"
 msgstr "Destino"
@@ -1839,7 +1839,7 @@ msgstr "Grupo de destinos"
 msgid "Destination Pattern"
 msgstr "Patrón de destino"
 
-#: lib/NGCP/Panel/Controller/Subscriber.pm:1387
+#: lib/NGCP/Panel/Controller/Subscriber.pm:1412
 #: lib/NGCP/Panel/Utils/DbStrings.pm:1073
 msgid "Destination Set"
 msgstr "Grupo de destinos"
@@ -1849,7 +1849,7 @@ msgstr "Grupo de destinos"
 msgid "Destination Set \"%1\" Details"
 msgstr "Detalles de Grupo de Destinos \"%1\""
 
-#: lib/NGCP/Panel/Controller/Subscriber.pm:1294
+#: lib/NGCP/Panel/Controller/Subscriber.pm:1319
 msgid "Destination Sets"
 msgstr "Grupos de Destinos"
 
@@ -2040,35 +2040,39 @@ msgstr "Perfiles de Dispositivo"
 msgid "Device Vendor"
 msgstr "Fabricante de Dispositivo"
 
-#: lib/NGCP/Panel/Controller/Device.pm:717
+#: lib/NGCP/Panel/Controller/Device.pm:745
 msgid "Device configuration not found"
 msgstr "Configuración de Dispositivo no encontrada"
 
-#: lib/NGCP/Panel/Controller/Device.pm:728
+#: lib/NGCP/Panel/Controller/Device.pm:759
 msgid "Device configuration successfully deleted"
 msgstr "Configuración de Dispositivo eliminada con éxito"
 
-#: lib/NGCP/Panel/Controller/Device.pm:554
+#: lib/NGCP/Panel/Controller/Device.pm:572
 msgid "Device firmware not found"
 msgstr "Firmware de Dispositivo no encontrado"
 
-#: lib/NGCP/Panel/Controller/Device.pm:565
+#: lib/NGCP/Panel/Controller/Device.pm:586
 msgid "Device firmware successfully deleted"
 msgstr "Firmware de Dispositivo eliminado con éxito"
 
-#: lib/NGCP/Panel/Controller/Device.pm:265
+#: lib/NGCP/Panel/Controller/Device.pm:268
 msgid "Device model not found"
 msgstr "Modelo de Dispositivo no encontrado"
 
-#: lib/NGCP/Panel/Controller/Device.pm:876
+#: lib/NGCP/Panel/Controller/Device.pm:284
+msgid "Device model successfully deleted"
+msgstr ""
+
+#: lib/NGCP/Panel/Controller/Device.pm:914
 msgid "Device profile not found"
 msgstr "Perfil de Dispositivo no encontrado"
 
-#: lib/NGCP/Panel/Controller/Device.pm:926
+#: lib/NGCP/Panel/Controller/Device.pm:967
 msgid "Device profile successfully deleted"
 msgstr "Perfil de Dispositivo eliminado con éxito"
 
-#: lib/NGCP/Panel/Controller/Subscriber.pm:270
+#: lib/NGCP/Panel/Controller/Subscriber.pm:273
 #: lib/NGCP/Panel/Utils/DbStrings.pm:664
 msgid "Direction"
 msgstr "Dirección"
@@ -2100,7 +2104,7 @@ msgstr "No molestar"
 
 #: lib/NGCP/Panel/Controller/Customer.pm:288
 #: lib/NGCP/Panel/Controller/Domain.pm:31
-#: lib/NGCP/Panel/Controller/Reseller.pm:154
+#: lib/NGCP/Panel/Controller/Reseller.pm:157
 #: lib/NGCP/Panel/Controller/Subscriber.pm:117
 #: lib/NGCP/Panel/Utils/DbStrings.pm:1076 share/templates/domain/list.tt:3
 #: share/templates/domain/preferences.tt:4
@@ -2116,7 +2120,7 @@ msgstr "Dominio"
 msgid "Domain \"%1\" - Preferences"
 msgstr "Preferencias de Dominio \"%1\""
 
-#: lib/NGCP/Panel/Controller/Domain.pm:171
+#: lib/NGCP/Panel/Controller/Domain.pm:181
 msgid "Domain does not exist"
 msgstr "El Dominio no existe"
 
@@ -2128,15 +2132,15 @@ msgstr ""
 msgid "Domain of calling party."
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/Domain.pm:148
+#: lib/NGCP/Panel/Controller/Domain.pm:150
 msgid "Domain successfully created"
 msgstr "Dominio creado con éxito"
 
-#: lib/NGCP/Panel/Controller/Domain.pm:255
+#: lib/NGCP/Panel/Controller/Domain.pm:270
 msgid "Domain successfully deleted!"
 msgstr "Dominio eliminado con éxito"
 
-#: lib/NGCP/Panel/Controller/Domain.pm:218
+#: lib/NGCP/Panel/Controller/Domain.pm:230
 msgid "Domain successfully updated"
 msgstr "Dominio modificado con éxito"
 
@@ -2198,9 +2202,9 @@ msgstr "Descargar en formato PEM"
 msgid "Download in PKCS12 Format"
 msgstr "Descargar en formato PKCS12"
 
-#: lib/NGCP/Panel/Controller/Subscriber.pm:1932
-#: lib/NGCP/Panel/Controller/Subscriber.pm:1944
-#: lib/NGCP/Panel/Controller/Subscriber.pm:269
+#: lib/NGCP/Panel/Controller/Subscriber.pm:1960
+#: lib/NGCP/Panel/Controller/Subscriber.pm:1972
+#: lib/NGCP/Panel/Controller/Subscriber.pm:272
 #: lib/NGCP/Panel/Utils/DbStrings.pm:593
 msgid "Duration"
 msgstr "Duración"
@@ -2319,7 +2323,7 @@ msgid "Either \"sippeering\" or \"reseller\"."
 msgstr ""
 
 #: lib/NGCP/Panel/Controller/Contact.pm:37
-#: lib/NGCP/Panel/Controller/Reseller.pm:129
+#: lib/NGCP/Panel/Controller/Reseller.pm:132
 #: lib/NGCP/Panel/Utils/DbStrings.pm:435
 #: share/templates/customer/details.tt:97
 #: share/templates/subscriber/preferences.tt:193
@@ -2341,15 +2345,15 @@ msgstr ""
 msgid "Email Templates"
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/EmailTemplate.pm:107
+#: lib/NGCP/Panel/Controller/EmailTemplate.pm:109
 msgid "Email template successfully created"
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/EmailTemplate.pm:168
+#: lib/NGCP/Panel/Controller/EmailTemplate.pm:174
 msgid "Email template successfully deleted"
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/EmailTemplate.pm:218
+#: lib/NGCP/Panel/Controller/EmailTemplate.pm:227
 msgid "Email template successfully updated"
 msgstr ""
 
@@ -2403,7 +2407,7 @@ msgstr "Fecha/Hora de finalización"
 msgid "Expand Groups"
 msgstr "Expandir Grupos"
 
-#: lib/NGCP/Panel/Controller/Subscriber.pm:1950
+#: lib/NGCP/Panel/Controller/Subscriber.pm:1978
 #: lib/NGCP/Panel/Utils/DbStrings.pm:458
 msgid "Expires"
 msgstr "Expira"
@@ -2450,7 +2454,7 @@ msgstr ""
 #: lib/NGCP/Panel/Controller/Contract.pm:390
 #: lib/NGCP/Panel/Controller/Customer.pm:49
 #: lib/NGCP/Panel/Controller/Customer.pm:96
-#: lib/NGCP/Panel/Controller/Reseller.pm:147
+#: lib/NGCP/Panel/Controller/Reseller.pm:150
 #: lib/NGCP/Panel/Controller/Reseller.pm:43
 #: lib/NGCP/Panel/Utils/DbStrings.pm:741
 #: share/templates/subscriber/master.tt:101
@@ -2489,12 +2493,12 @@ msgstr ""
 msgid "Fail Count"
 msgstr "Cuenta de fallos"
 
-#: lib/NGCP/Panel/Controller/Subscriber.pm:3078
-msgid "Failed to add registered device."
-msgstr "Fallo al añadir dispositivo registrado."
+#: lib/NGCP/Panel/Controller/Subscriber.pm:3130
+msgid "Failed to add registered device"
+msgstr ""
 
-#: lib/NGCP/Panel/Controller/Sound.pm:577
-#: lib/NGCP/Panel/Controller/Sound.pm:596
+#: lib/NGCP/Panel/Controller/Sound.pm:587
+#: lib/NGCP/Panel/Controller/Sound.pm:606
 msgid "Failed to clear audio cache."
 msgstr "Fallo al limpiar el cache de audio."
 
@@ -2502,22 +2506,22 @@ msgstr "Fallo al limpiar el cache de audio."
 msgid "Failed to clear fraud interval"
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/Rewrite.pm:184
+#: lib/NGCP/Panel/Controller/Rewrite.pm:193
 msgid "Failed to clone rewrite rule set."
 msgstr "Fallo al clonar el grupo de reglas de reescritura."
 
-#: lib/NGCP/Panel/Controller/SubscriberProfile.pm:301
-#: lib/NGCP/Panel/Controller/SubscriberProfile.pm:612
-msgid "Failed to clone subscriber profile."
+#: lib/NGCP/Panel/Controller/SubscriberProfile.pm:313
+#: lib/NGCP/Panel/Controller/SubscriberProfile.pm:636
+msgid "Failed to clone subscriber profile"
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/NCOS.pm:206
-msgid "Failed to create NCOS level."
-msgstr "Fallo al crear grupo de NCOS."
+#: lib/NGCP/Panel/Controller/NCOS.pm:215
+msgid "Failed to create NCOS level"
+msgstr ""
 
-#: lib/NGCP/Panel/Controller/NCOS.pm:349
-msgid "Failed to create NCOS pattern."
-msgstr "Fallo al crear patrón de NCOS."
+#: lib/NGCP/Panel/Controller/NCOS.pm:369
+msgid "Failed to create NCOS pattern"
+msgstr ""
 
 #: lib/NGCP/Panel/Controller/Customer.pm:1160
 msgid "Failed to create PBX device"
@@ -2556,19 +2560,19 @@ msgstr ""
 msgid "Failed to create customer contract"
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/Device.pm:688
+#: lib/NGCP/Panel/Controller/Device.pm:716
 msgid "Failed to create device configuration"
 msgstr "Fallo al crear configuración de dispositivo."
 
-#: lib/NGCP/Panel/Controller/Device.pm:525
+#: lib/NGCP/Panel/Controller/Device.pm:543
 msgid "Failed to create device firmware"
 msgstr "Fallo al crear firmware de dispositivo"
 
-#: lib/NGCP/Panel/Controller/Device.pm:236
+#: lib/NGCP/Panel/Controller/Device.pm:239
 msgid "Failed to create device model"
 msgstr "Fallo al crear modelo de dispositivo"
 
-#: lib/NGCP/Panel/Controller/Device.pm:847
+#: lib/NGCP/Panel/Controller/Device.pm:885
 msgid "Failed to create device profile"
 msgstr "Fallo al crear perfil de dispositivo"
 
@@ -2576,15 +2580,15 @@ msgstr "Fallo al crear perfil de dispositivo"
 msgid "Failed to create domain."
 msgstr "Fallo al crear dominio"
 
-#: lib/NGCP/Panel/Controller/EmailTemplate.pm:112
+#: lib/NGCP/Panel/Controller/EmailTemplate.pm:115
 msgid "Failed to create email template"
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/InvoiceTemplate.pm:161
-msgid "Failed to create invoice template."
+#: lib/NGCP/Panel/Controller/InvoiceTemplate.pm:164
+msgid "Failed to create invoice template"
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/Invoice.pm:361
+#: lib/NGCP/Panel/Controller/Invoice.pm:366
 msgid "Failed to create invoice."
 msgstr ""
 
@@ -2592,40 +2596,41 @@ msgstr ""
 msgid "Failed to create man_allowed_ip_grp."
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/NumberBlock.pm:141
-msgid "Failed to create number block."
+#: lib/NGCP/Panel/Controller/NumberBlock.pm:144
+msgid "Failed to create number block"
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/Peering.pm:188
-msgid "Failed to create peering group."
-msgstr "Fallo al crear grupo de peering."
+#: lib/NGCP/Panel/Controller/Peering.pm:198
+msgid "Failed to create peering group"
+msgstr ""
 
-#: lib/NGCP/Panel/Controller/Peering.pm:460
-msgid "Failed to create peering rule."
-msgstr "Fallo al crear regla de peering"
+#: lib/NGCP/Panel/Controller/Peering.pm:483
+msgid "Failed to create peering rule"
+msgstr ""
 
-#: lib/NGCP/Panel/Controller/Peering.pm:241
-msgid "Failed to create peering server."
-msgstr "Fallo al crear peering server"
+#: lib/NGCP/Panel/Controller/Peering.pm:254
+msgid "Failed to create peering server"
+msgstr ""
 
 #. ($attribute)
 #: lib/NGCP/Panel/Utils/Preferences.pm:424
 msgid "Failed to create preference %1."
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/Reseller.pm:98
-msgid "Failed to create reseller."
-msgstr "Fallo al crear reseller."
+#: lib/NGCP/Panel/Controller/Reseller.pm:101
+#: lib/NGCP/Panel/Controller/Reseller.pm:424
+msgid "Failed to create reseller"
+msgstr ""
 
-#: lib/NGCP/Panel/Controller/Rewrite.pm:235
-msgid "Failed to create rewrite rule set."
-msgstr "Fallo al crear grupo de reglas de reescritura"
+#: lib/NGCP/Panel/Controller/Rewrite.pm:469
+msgid "Failed to create rewrite rule"
+msgstr ""
 
-#: lib/NGCP/Panel/Controller/Rewrite.pm:447
-msgid "Failed to create rewrite rule."
-msgstr "Fallo al crear regla de reescritura"
+#: lib/NGCP/Panel/Controller/Rewrite.pm:247
+msgid "Failed to create rewrite rule set"
+msgstr ""
 
-#: lib/NGCP/Panel/Controller/Sound.pm:412
+#: lib/NGCP/Panel/Controller/Sound.pm:422
 msgid "Failed to create sound set"
 msgstr "Fallo al crear grupo de locuciones"
 
@@ -2633,41 +2638,38 @@ msgstr "Fallo al crear grupo de locuciones"
 msgid "Failed to create special offpeak entry"
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/Subscriber.pm:3303
-msgid "Failed to create speed dial slot."
-msgstr "Fallo al crear entrada de marcado rápido."
+#: lib/NGCP/Panel/Controller/Subscriber.pm:3367
+msgid "Failed to create speed dial slot"
+msgstr ""
 
 #: lib/NGCP/Panel/Controller/Customer.pm:738
+#: lib/NGCP/Panel/Controller/Subscriber.pm:196
 msgid "Failed to create subscriber"
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/SubscriberProfile.pm:140
-msgid "Failed to create subscriber profile set."
+#: lib/NGCP/Panel/Controller/SubscriberProfile.pm:435
+msgid "Failed to create subscriber profile"
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/SubscriberProfile.pm:420
-msgid "Failed to create subscriber profile."
+#: lib/NGCP/Panel/Controller/SubscriberProfile.pm:143
+msgid "Failed to create subscriber profile set"
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/Subscriber.pm:193
-msgid "Failed to create subscriber."
-msgstr "Fallo al crear suscriptor."
+#: lib/NGCP/Panel/Controller/Subscriber.pm:3179
+msgid "Failed to create trusted source"
+msgstr ""
 
-#: lib/NGCP/Panel/Controller/Subscriber.pm:3124
-msgid "Failed to create trusted source."
-msgstr "Fallo al crear origen de confianza"
-
-#: lib/NGCP/Panel/Controller/Subscriber.pm:1865
+#: lib/NGCP/Panel/Controller/Subscriber.pm:1893
 msgid "Failed to delete Call Forward."
 msgstr "Fallo al borrar desvío de llamada"
 
-#: lib/NGCP/Panel/Controller/NCOS.pm:162
-msgid "Failed to delete NCOS level."
-msgstr "Fallo al borrar nivel NCOS"
+#: lib/NGCP/Panel/Controller/NCOS.pm:168
+msgid "Failed to delete NCOS level"
+msgstr ""
 
-#: lib/NGCP/Panel/Controller/NCOS.pm:320
-msgid "Failed to delete NCOS pattern."
-msgstr "Fallo al borrar patrón NCOS"
+#: lib/NGCP/Panel/Controller/NCOS.pm:337
+msgid "Failed to delete NCOS pattern"
+msgstr ""
 
 #: lib/NGCP/Panel/Controller/Customer.pm:1324
 msgid "Failed to delete PBX device"
@@ -2677,70 +2679,70 @@ msgstr "Fallo al borrar dispositivo PBX"
 msgid "Failed to delete administrator"
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/Subscriber.pm:3457
-msgid "Failed to delete auto attendant slot."
-msgstr "Fallo al borrar entrada de operador automático"
+#: lib/NGCP/Panel/Controller/Subscriber.pm:3532
+msgid "Failed to delete auto attendant slot"
+msgstr ""
 
 #: lib/NGCP/Panel/Controller/Billing.pm:620
 msgid "Failed to delete billing zone"
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/Subscriber.pm:3578
-msgid "Failed to delete ccmapping."
+#: lib/NGCP/Panel/Controller/Subscriber.pm:3659
+msgid "Failed to delete ccmapping"
 msgstr ""
 
 #: lib/NGCP/Panel/Controller/Contact.pm:215
 msgid "Failed to delete contact"
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/Device.pm:733
+#: lib/NGCP/Panel/Controller/Device.pm:765
 msgid "Failed to delete device configuration"
 msgstr "Fallo al borrar configuración de dispositivo "
 
-#: lib/NGCP/Panel/Controller/Device.pm:570
+#: lib/NGCP/Panel/Controller/Device.pm:592
 msgid "Failed to delete device firmware"
 msgstr "Fallo al borrar firmware de dispositivo"
 
-#: lib/NGCP/Panel/Controller/Device.pm:281
+#: lib/NGCP/Panel/Controller/Device.pm:290
 msgid "Failed to delete device model"
 msgstr "Fallo al borrar modelo de dispositivo"
 
-#: lib/NGCP/Panel/Controller/Device.pm:931
+#: lib/NGCP/Panel/Controller/Device.pm:973
 msgid "Failed to delete device profile"
 msgstr "Fallo al borrar perfil de dispositivo"
 
-#: lib/NGCP/Panel/Controller/Domain.pm:247
+#: lib/NGCP/Panel/Controller/Domain.pm:260
 msgid "Failed to delete domain."
 msgstr "Fallo al borrar dominio."
 
-#: lib/NGCP/Panel/Controller/EmailTemplate.pm:173
+#: lib/NGCP/Panel/Controller/EmailTemplate.pm:180
 msgid "Failed to delete email template"
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/Invoice.pm:384
-#: lib/NGCP/Panel/Controller/Invoice.pm:401
+#: lib/NGCP/Panel/Controller/Invoice.pm:393
+#: lib/NGCP/Panel/Controller/Invoice.pm:410
 msgid "Failed to delete invoice ."
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/InvoiceTemplate.pm:250
+#: lib/NGCP/Panel/Controller/InvoiceTemplate.pm:260
 msgid "Failed to delete invoice template."
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/NumberBlock.pm:237
-msgid "Failed to delete number block."
+#: lib/NGCP/Panel/Controller/NumberBlock.pm:247
+msgid "Failed to delete number block"
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/Peering.pm:153
-msgid "Failed to delete peering group."
-msgstr "Fallo al borrar grupo de peering."
+#: lib/NGCP/Panel/Controller/Peering.pm:160
+msgid "Failed to delete peering group"
+msgstr ""
 
-#: lib/NGCP/Panel/Controller/Peering.pm:552
-msgid "Failed to delete peering rule."
-msgstr "Fallo al borrar regla de peering."
+#: lib/NGCP/Panel/Controller/Peering.pm:582
+msgid "Failed to delete peering rule"
+msgstr ""
 
-#: lib/NGCP/Panel/Controller/Peering.pm:332
-msgid "Failed to delete peering server."
-msgstr "Fallo al borrar servidor de peering."
+#: lib/NGCP/Panel/Controller/Peering.pm:352
+msgid "Failed to delete peering server"
+msgstr ""
 
 #. ($attribute)
 #: lib/NGCP/Panel/Utils/Preferences.pm:527
@@ -2748,23 +2750,23 @@ msgstr "Fallo al borrar servidor de peering."
 msgid "Failed to delete preference %1."
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/Subscriber.pm:3039
-msgid "Failed to delete registered device."
-msgstr "Fallo al borrar dispositivo registrado."
+#: lib/NGCP/Panel/Controller/Subscriber.pm:3084
+msgid "Failed to delete registered device"
+msgstr ""
 
-#: lib/NGCP/Panel/Controller/Rewrite.pm:134
-msgid "Failed to delete rewrite rule set."
-msgstr "Fallo al borrar grupo de reglas de reescritura."
+#: lib/NGCP/Panel/Controller/Rewrite.pm:434
+msgid "Failed to delete rewrite rule"
+msgstr ""
 
-#: lib/NGCP/Panel/Controller/Rewrite.pm:415
-msgid "Failed to delete rewrite rule."
-msgstr "Fallo al borrar regla de reescritura."
+#: lib/NGCP/Panel/Controller/Rewrite.pm:141
+msgid "Failed to delete rewrite rule set"
+msgstr ""
 
-#: lib/NGCP/Panel/Controller/Sound.pm:667
+#: lib/NGCP/Panel/Controller/Sound.pm:687
 msgid "Failed to delete sound handle"
 msgstr "Fallo al borrar el manejador de sonido"
 
-#: lib/NGCP/Panel/Controller/Sound.pm:298
+#: lib/NGCP/Panel/Controller/Sound.pm:305
 msgid "Failed to delete sound set"
 msgstr "Fallo al borrar grupo de locuciones"
 
@@ -2772,31 +2774,31 @@ msgstr "Fallo al borrar grupo de locuciones"
 msgid "Failed to delete special offpeak entry"
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/Subscriber.pm:3349
-msgid "Failed to delete speed dial slot."
-msgstr "Fallo al borrar entrada de marcado rápido."
-
-#: lib/NGCP/Panel/Controller/SubscriberProfile.pm:233
-msgid "Failed to delete subscriber profile set."
+#: lib/NGCP/Panel/Controller/Subscriber.pm:3417
+msgid "Failed to delete speed dial slot"
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/SubscriberProfile.pm:565
-msgid "Failed to delete subscriber profile."
+#: lib/NGCP/Panel/Controller/SubscriberProfile.pm:587
+msgid "Failed to delete subscriber profile"
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/Subscriber.pm:3226
+#: lib/NGCP/Panel/Controller/SubscriberProfile.pm:243
+msgid "Failed to delete subscriber profile set"
+msgstr ""
+
+#: lib/NGCP/Panel/Controller/Subscriber.pm:3287
 msgid "Failed to delete trusted source."
 msgstr "Fallo al borrar origen de confianza."
 
-#: lib/NGCP/Panel/Controller/Subscriber.pm:2991
-msgid "Failed to delete voicemail message."
-msgstr "Fallo al borrar mensaje de buzón de voz."
+#: lib/NGCP/Panel/Controller/Subscriber.pm:3036
+msgid "Failed to delete voicemail message"
+msgstr ""
 
-#: lib/NGCP/Panel/Controller/Subscriber.pm:3016
+#: lib/NGCP/Panel/Controller/Subscriber.pm:3061
 msgid "Failed to find registered device."
 msgstr "Fallo al encontrar dispositivo registrado."
 
-#: lib/NGCP/Panel/Controller/Subscriber.pm:2548
+#: lib/NGCP/Panel/Controller/Subscriber.pm:2581
 msgid "Failed to find voicemail user."
 msgstr "Fallo al encontrar usuario de buzón."
 
@@ -2817,15 +2819,15 @@ msgstr ""
 msgid "Failed to get contract balance."
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/Subscriber.pm:810
+#: lib/NGCP/Panel/Controller/Subscriber.pm:827
 msgid "Failed to handle preference"
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/Rewrite.pm:293
+#: lib/NGCP/Panel/Controller/Rewrite.pm:305
 msgid "Failed to move rewrite rule."
 msgstr "Fallo al mover regla de reescritura."
 
-#: lib/NGCP/Panel/Controller/InvoiceTemplate.pm:362
+#: lib/NGCP/Panel/Controller/InvoiceTemplate.pm:372
 msgid "Failed to preview template"
 msgstr ""
 
@@ -2834,7 +2836,7 @@ msgid "Failed to render invoice"
 msgstr ""
 
 #. ($error->type . ', info is ' . $error->info)
-#: lib/NGCP/Panel/Controller/InvoiceTemplate.pm:351
+#: lib/NGCP/Panel/Controller/InvoiceTemplate.pm:361
 msgid "Failed to render template. Type is "
 msgstr ""
 
@@ -2843,21 +2845,21 @@ msgstr ""
 msgid "Failed to render template. Type is %1, info is %2."
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/Subscriber.pm:501
-#: lib/NGCP/Panel/Controller/Subscriber.pm:560
-msgid "Failed to reset web password."
+#: lib/NGCP/Panel/Controller/Subscriber.pm:511
+#: lib/NGCP/Panel/Controller/Subscriber.pm:573
+msgid "Failed to reset web password"
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/Subscriber.pm:1071
-#: lib/NGCP/Panel/Controller/Subscriber.pm:1247
-msgid "Failed to save Call Forward."
-msgstr "Fallo al guardar desvío de llamada."
+#: lib/NGCP/Panel/Controller/Subscriber.pm:1091
+#: lib/NGCP/Panel/Controller/Subscriber.pm:1272
+msgid "Failed to save Call Forward"
+msgstr ""
 
 #: lib/NGCP/Panel/Controller/Invoice.pm:281
 msgid "Failed to save invoice meta data."
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/InvoiceTemplate.pm:307
+#: lib/NGCP/Panel/Controller/InvoiceTemplate.pm:317
 msgid "Failed to store invoice template"
 msgstr ""
 
@@ -2866,29 +2868,29 @@ msgstr ""
 msgid "Failed to terminate contract"
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/Reseller.pm:290
-msgid "Failed to terminate reseller."
-msgstr "Fallo al eliminar reseller."
+#: lib/NGCP/Panel/Controller/Reseller.pm:300
+msgid "Failed to terminate reseller"
+msgstr ""
 
-#: lib/NGCP/Panel/Controller/Subscriber.pm:455
-msgid "Failed to terminate subscriber."
-msgstr "Fallo al eliminar suscriptor."
+#: lib/NGCP/Panel/Controller/Subscriber.pm:462
+msgid "Failed to terminate subscriber"
+msgstr ""
 
-#: lib/NGCP/Panel/Controller/Sound.pm:690
+#: lib/NGCP/Panel/Controller/Sound.pm:710
 msgid "Failed to transcode audio file"
 msgstr "Fallo al convertir fichero de audio"
 
-#: lib/NGCP/Panel/Controller/NCOS.pm:386
-msgid "Failed to update NCOS level setting."
-msgstr "Fallo al actualizar nivel de NCOS."
+#: lib/NGCP/Panel/Controller/NCOS.pm:129
+msgid "Failed to update NCOS level"
+msgstr ""
 
-#: lib/NGCP/Panel/Controller/NCOS.pm:126
-msgid "Failed to update NCOS level."
-msgstr "Fallo al actualizar nivel de NCOS."
+#: lib/NGCP/Panel/Controller/NCOS.pm:409
+msgid "Failed to update NCOS level setting"
+msgstr ""
 
-#: lib/NGCP/Panel/Controller/NCOS.pm:297
-msgid "Failed to update NCOS pattern."
-msgstr "Fallo al actualizar patrón de NCOS."
+#: lib/NGCP/Panel/Controller/NCOS.pm:310
+msgid "Failed to update NCOS pattern"
+msgstr ""
 
 #: lib/NGCP/Panel/Controller/Customer.pm:1294
 msgid "Failed to update PBX device"
@@ -2902,7 +2904,7 @@ msgstr ""
 msgid "Failed to update administrator"
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/Subscriber.pm:3521
+#: lib/NGCP/Panel/Controller/Subscriber.pm:3598
 msgid "Failed to update autoattendant slots"
 msgstr "Fallo al actualizar entradas de operador automático"
 
@@ -2910,7 +2912,7 @@ msgstr "Fallo al actualizar entradas de operador automático"
 msgid "Failed to update billing profile"
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/Subscriber.pm:3634
+#: lib/NGCP/Panel/Controller/Subscriber.pm:3718
 msgid "Failed to update ccmappings"
 msgstr ""
 
@@ -2926,49 +2928,53 @@ msgstr ""
 msgid "Failed to update customer contract"
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/Device.pm:622
+#: lib/NGCP/Panel/Controller/Device.pm:815
+msgid "Failed to update device configuration"
+msgstr ""
+
+#: lib/NGCP/Panel/Controller/Device.pm:647
 msgid "Failed to update device firmware"
 msgstr "Fallo al actualizar firmware de dispositivo"
 
-#: lib/NGCP/Panel/Controller/Device.pm:423
+#: lib/NGCP/Panel/Controller/Device.pm:438
 msgid "Failed to update device model"
 msgstr "Fallo al actualizar modelo de dispositivo"
 
-#: lib/NGCP/Panel/Controller/Device.pm:978
+#: lib/NGCP/Panel/Controller/Device.pm:1024
 msgid "Failed to update device profile"
 msgstr "Fallo al actualizar perfil de dispositivo"
 
-#: lib/NGCP/Panel/Controller/Domain.pm:210
+#: lib/NGCP/Panel/Controller/Domain.pm:221
 msgid "Failed to update domain."
 msgstr "Fallo al actualizar dominio"
 
-#: lib/NGCP/Panel/Controller/EmailTemplate.pm:223
+#: lib/NGCP/Panel/Controller/EmailTemplate.pm:233
 msgid "Failed to update email template"
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/Subscriber.pm:2772
-msgid "Failed to update fax setting."
-msgstr "Fallo al actualizar preferencia de fax"
-
-#: lib/NGCP/Panel/Controller/InvoiceTemplate.pm:227
-msgid "Failed to update invoice template."
+#: lib/NGCP/Panel/Controller/Subscriber.pm:2811
+msgid "Failed to update fax setting"
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/NumberBlock.pm:212
-msgid "Failed to update number block."
+#: lib/NGCP/Panel/Controller/InvoiceTemplate.pm:233
+msgid "Failed to update invoice template"
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/Peering.pm:127
-msgid "Failed to update peering group."
+#: lib/NGCP/Panel/Controller/NumberBlock.pm:218
+msgid "Failed to update number block"
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/Peering.pm:528
-msgid "Failed to update peering rule."
-msgstr "Fallo al actualizar regla de peering"
+#: lib/NGCP/Panel/Controller/Peering.pm:130
+msgid "Failed to update peering group"
+msgstr ""
 
-#: lib/NGCP/Panel/Controller/Peering.pm:308
-msgid "Failed to update peering server."
-msgstr "Fallo al actualizar servidor de peering"
+#: lib/NGCP/Panel/Controller/Peering.pm:554
+msgid "Failed to update peering rule"
+msgstr ""
+
+#: lib/NGCP/Panel/Controller/Peering.pm:324
+msgid "Failed to update peering server"
+msgstr ""
 
 #. ($attribute)
 #: lib/NGCP/Panel/Utils/Preferences.pm:458
@@ -2978,32 +2984,32 @@ msgstr "Fallo al actualizar servidor de peering"
 msgid "Failed to update preference %1."
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/Subscriber.pm:2838
+#: lib/NGCP/Panel/Controller/Subscriber.pm:2879
 msgid "Failed to update reminder setting."
 msgstr "Fallo al actualizar preferencia de alarma"
 
-#: lib/NGCP/Panel/Controller/Reseller.pm:500
+#: lib/NGCP/Panel/Controller/Reseller.pm:255
+msgid "Failed to update reseller"
+msgstr ""
+
+#: lib/NGCP/Panel/Controller/Reseller.pm:513
 msgid "Failed to update reseller branding"
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/Reseller.pm:249
-msgid "Failed to update reseller."
-msgstr "Fallo al actualizar reseller"
+#: lib/NGCP/Panel/Controller/Rewrite.pm:409
+msgid "Failed to update rewrite rule"
+msgstr ""
 
-#: lib/NGCP/Panel/Controller/Rewrite.pm:114
-msgid "Failed to update rewrite rule set."
-msgstr "Fallo al actualizar grupo de reglas de reescritura"
+#: lib/NGCP/Panel/Controller/Rewrite.pm:117
+msgid "Failed to update rewrite rule set"
+msgstr ""
 
-#: lib/NGCP/Panel/Controller/Rewrite.pm:394
-msgid "Failed to update rewrite rule."
-msgstr "Fallo al actualizar regla de reescritura"
-
-#: lib/NGCP/Panel/Controller/Sound.pm:645
+#: lib/NGCP/Panel/Controller/Sound.pm:661
 #, fuzzy
 msgid "Failed to update sound handle"
 msgstr "Failed to update sound handle"
 
-#: lib/NGCP/Panel/Controller/Sound.pm:254
+#: lib/NGCP/Panel/Controller/Sound.pm:257
 msgid "Failed to update sound set"
 msgstr "Fallo al actualizar grupo de locuciones"
 
@@ -3011,35 +3017,38 @@ msgstr "Fallo al actualizar grupo de locuciones"
 msgid "Failed to update special offpeak entry"
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/Subscriber.pm:2520
-#, fuzzy
-msgid "Failed to update subscriber (webpassword)."
-msgstr "Fallo al actualizar suscriptor."
-
-#: lib/NGCP/Panel/Controller/SubscriberProfile.pm:200
-msgid "Failed to update subscriber profile set."
+#: lib/NGCP/Panel/Controller/Subscriber.pm:3472
+msgid "Failed to update speed dial slot"
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/SubscriberProfile.pm:525
-msgid "Failed to update subscriber profile."
+#: lib/NGCP/Panel/Controller/Subscriber.pm:2466
+msgid "Failed to update subscriber"
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/Subscriber.pm:2436
-msgid "Failed to update subscriber."
-msgstr "Fallo al actualizar suscriptor."
+#: lib/NGCP/Panel/Controller/Subscriber.pm:2553
+msgid "Failed to update subscriber (webpassword)"
+msgstr ""
 
-#: lib/NGCP/Panel/Controller/Subscriber.pm:3198
-msgid "Failed to update trusted source."
-msgstr "Fallo al actualizar origen de confianza."
+#: lib/NGCP/Panel/Controller/SubscriberProfile.pm:543
+msgid "Failed to update subscriber profile"
+msgstr ""
 
-#: lib/NGCP/Panel/Controller/Sound.pm:632
+#: lib/NGCP/Panel/Controller/SubscriberProfile.pm:206
+msgid "Failed to update subscriber profile set"
+msgstr ""
+
+#: lib/NGCP/Panel/Controller/Subscriber.pm:3255
+msgid "Failed to update trusted source"
+msgstr ""
+
+#: lib/NGCP/Panel/Controller/Sound.pm:645
 #, fuzzy
 msgid "Failed to update uploaded sound handle"
 msgstr "Failed to update uploaded sound handle"
 
-#: lib/NGCP/Panel/Controller/Subscriber.pm:2626
-msgid "Failed to update voicemail setting."
-msgstr "Fallo al actualizar preferencia de buzón de voz."
+#: lib/NGCP/Panel/Controller/Subscriber.pm:2662
+msgid "Failed to update voicemail setting"
+msgstr ""
 
 #: lib/NGCP/Panel/Controller/Billing.pm:446
 msgid "Failed to upload Billing Fees"
@@ -3108,7 +3117,7 @@ msgid "Firmware File"
 msgstr "Archivo de Firmware"
 
 #: lib/NGCP/Panel/Controller/Contact.pm:34
-#: lib/NGCP/Panel/Controller/Reseller.pm:126
+#: lib/NGCP/Panel/Controller/Reseller.pm:129
 #: lib/NGCP/Panel/Utils/DbStrings.pm:761
 msgid "First Name"
 msgstr "Nombre"
@@ -3372,7 +3381,7 @@ msgstr ""
 msgid "IBAN"
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/Device.pm:887
+#: lib/NGCP/Panel/Controller/Device.pm:925
 msgid "ID"
 msgstr "ID"
 
@@ -3397,7 +3406,7 @@ msgstr "Campo IP Header"
 msgid "IP address of calling party."
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/Security.pm:151
+#: lib/NGCP/Panel/Controller/Security.pm:153
 msgid "IP successfully unbanned"
 msgstr "IP desbaneada con éxito"
 
@@ -3549,7 +3558,7 @@ msgstr "Nivel interno de NCOS"
 msgid "Internal allowed source IP group #"
 msgstr "Grupo interno de IPs permitidas"
 
-#: lib/NGCP/Panel/Controller/Subscriber.pm:350
+#: lib/NGCP/Panel/Controller/Subscriber.pm:353
 msgid "Internal error while sending fax"
 msgstr "Error interno mientras se mandaba el fax"
 
@@ -3573,8 +3582,8 @@ msgstr "Saldo gratis de intervalo"
 msgid "Interval free time"
 msgstr "Minutos gratis de intervalo"
 
-#: lib/NGCP/Panel/Controller/Subscriber.pm:1111
-#: lib/NGCP/Panel/Controller/Subscriber.pm:869
+#: lib/NGCP/Panel/Controller/Subscriber.pm:1131
+#: lib/NGCP/Panel/Controller/Subscriber.pm:886
 msgid "Invalid Call Forward type."
 msgstr "Tipo de desvío inválido"
 
@@ -3582,7 +3591,7 @@ msgstr "Tipo de desvío inválido"
 msgid "Invalid NCOS level id detected"
 msgstr "id de nivel de NCOS inválido detectado"
 
-#: lib/NGCP/Panel/Controller/NCOS.pm:256
+#: lib/NGCP/Panel/Controller/NCOS.pm:265
 msgid "Invalid NCOS pattern id detected"
 msgstr "Id de patrón de NCOS inválido detectado"
 
@@ -3622,31 +3631,31 @@ msgstr "Id de contrato inválido encontrado"
 msgid "Invalid customer contract id"
 msgstr "Id de contrato de cliente inválido"
 
-#: lib/NGCP/Panel/Controller/Device.pm:707
+#: lib/NGCP/Panel/Controller/Device.pm:735
 msgid "Invalid device configuration id"
 msgstr "Id de configuración de dispositivo inválido"
 
-#: lib/NGCP/Panel/Controller/Device.pm:544
+#: lib/NGCP/Panel/Controller/Device.pm:562
 msgid "Invalid device firmware id"
 msgstr "Id de firmware de dispositivo inválido"
 
-#: lib/NGCP/Panel/Controller/Device.pm:255
+#: lib/NGCP/Panel/Controller/Device.pm:258
 msgid "Invalid device model id"
 msgstr "Id de modelo de dispositivo inválido"
 
-#: lib/NGCP/Panel/Controller/Device.pm:866
+#: lib/NGCP/Panel/Controller/Device.pm:904
 msgid "Invalid device profile id"
 msgstr "Id de perfil de dispositivo inválido"
 
-#: lib/NGCP/Panel/Controller/Domain.pm:163
+#: lib/NGCP/Panel/Controller/Domain.pm:170
 msgid "Invalid domain id detected"
 msgstr "Id de dominio inválido detectado"
 
-#: lib/NGCP/Panel/Controller/Subscriber.pm:2755
+#: lib/NGCP/Panel/Controller/Subscriber.pm:2791
 msgid "Invalid fax setting."
 msgstr "Preferencia de fax inválida."
 
-#: lib/NGCP/Panel/Controller/Sound.pm:561
+#: lib/NGCP/Panel/Controller/Sound.pm:571
 msgid "Invalid file type detected, only WAV supported"
 msgstr "Tipo de fichero inválido detectado. Sólo WAV está soportado."
 
@@ -3672,7 +3681,7 @@ msgstr ""
 msgid "Invalid number block id detected"
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/Subscriber.pm:469
+#: lib/NGCP/Panel/Controller/Subscriber.pm:476
 msgid "Invalid password reset attempt."
 msgstr ""
 
@@ -3680,11 +3689,11 @@ msgstr ""
 msgid "Invalid peaktime date id detected!"
 msgstr "Fecha de hora punta inválida detectada"
 
-#: lib/NGCP/Panel/Controller/Peering.pm:480
+#: lib/NGCP/Panel/Controller/Peering.pm:503
 msgid "Invalid peering rule id detected"
 msgstr "Id de regla de peering inválida detectada"
 
-#: lib/NGCP/Panel/Controller/Peering.pm:261
+#: lib/NGCP/Panel/Controller/Peering.pm:274
 msgid "Invalid peering server id"
 msgstr "Id de servidor de peering inválido"
 
@@ -3704,7 +3713,7 @@ msgstr "Detectado id provisioning subscriber inválido."
 #: lib/NGCP/Panel/Controller/Customer.pm:83
 #: lib/NGCP/Panel/Controller/InvoiceTemplate.pm:112
 #: lib/NGCP/Panel/Controller/InvoiceTemplate.pm:92
-#: lib/NGCP/Panel/Controller/Reseller.pm:116
+#: lib/NGCP/Panel/Controller/Reseller.pm:119
 msgid "Invalid reseller id detected"
 msgstr "Id de reseller inválido detectado"
 
@@ -3712,7 +3721,7 @@ msgstr "Id de reseller inválido detectado"
 msgid "Invalid reseller id detected."
 msgstr "Id de reseller inválido detectado"
 
-#: lib/NGCP/Panel/Controller/Rewrite.pm:352
+#: lib/NGCP/Panel/Controller/Rewrite.pm:364
 msgid "Invalid rewrite rule id detected"
 msgstr "Id de regla de reescritura inválido detectado"
 
@@ -3720,7 +3729,7 @@ msgstr "Id de regla de reescritura inválido detectado"
 msgid "Invalid rewrite rule set id detected"
 msgstr "Id de grupo de reglas de reescritura inválido detectado"
 
-#: lib/NGCP/Panel/Controller/Sound.pm:501
+#: lib/NGCP/Panel/Controller/Sound.pm:511
 msgid "Invalid sound handle id detected"
 msgstr "Detectado id de sound handle inválido"
 
@@ -3728,15 +3737,15 @@ msgstr "Detectado id de sound handle inválido"
 msgid "Invalid sound set id detected"
 msgstr "Id de grupo de locuciones inválido detectado"
 
-#: lib/NGCP/Panel/Controller/Subscriber.pm:210
+#: lib/NGCP/Panel/Controller/Subscriber.pm:213
 msgid "Invalid subscriber id detected"
 msgstr "Id de suscriptor inválido detectado"
 
-#: lib/NGCP/Panel/Controller/SubscriberProfile.pm:345
+#: lib/NGCP/Panel/Controller/SubscriberProfile.pm:357
 msgid "Invalid subscriber profile id detected"
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/Subscriber.pm:2194
+#: lib/NGCP/Panel/Controller/Subscriber.pm:2222
 msgid "Invalid subscriber profile set id"
 msgstr ""
 
@@ -3748,9 +3757,9 @@ msgstr ""
 msgid "Invalid username/password"
 msgstr "Nombre o contraseña inválidos"
 
-#: lib/NGCP/Panel/Controller/Subscriber.pm:2609
-msgid "Invalid voicemail setting."
-msgstr "Preferencia de buzón de voz inválida"
+#: lib/NGCP/Panel/Controller/Subscriber.pm:2642
+msgid "Invalid voicemail setting"
+msgstr ""
 
 #: share/templates/customer/details.tt:495
 #: share/templates/invoice/invoice_list.tt:3
@@ -3758,7 +3767,7 @@ msgid "Invoice"
 msgstr ""
 
 #. ($invoice->id)
-#: lib/NGCP/Panel/Controller/Invoice.pm:355
+#: lib/NGCP/Panel/Controller/Invoice.pm:359
 msgid "Invoice #%1 successfully created"
 msgstr ""
 
@@ -3795,7 +3804,7 @@ msgstr ""
 msgid "Invoice does not exist"
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/Invoice.pm:379
+#: lib/NGCP/Panel/Controller/Invoice.pm:387
 msgid "Invoice successfully deleted"
 msgstr ""
 
@@ -3816,19 +3825,19 @@ msgstr ""
 msgid "Invoice template not found"
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/InvoiceTemplate.pm:156
+#: lib/NGCP/Panel/Controller/InvoiceTemplate.pm:158
 msgid "Invoice template successfully created"
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/InvoiceTemplate.pm:245
+#: lib/NGCP/Panel/Controller/InvoiceTemplate.pm:254
 msgid "Invoice template successfully deleted"
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/InvoiceTemplate.pm:311
+#: lib/NGCP/Panel/Controller/InvoiceTemplate.pm:321
 msgid "Invoice template successfully saved"
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/InvoiceTemplate.pm:222
+#: lib/NGCP/Panel/Controller/InvoiceTemplate.pm:227
 msgid "Invoice template successfully updated"
 msgstr ""
 
@@ -3895,7 +3904,7 @@ msgid "Last Attempt"
 msgstr "Último intento"
 
 #: lib/NGCP/Panel/Controller/Contact.pm:35
-#: lib/NGCP/Panel/Controller/Reseller.pm:127
+#: lib/NGCP/Panel/Controller/Reseller.pm:130
 #: lib/NGCP/Panel/Utils/DbStrings.pm:597
 msgid "Last Name"
 msgstr "Apellido"
@@ -4075,7 +4084,7 @@ msgid "March"
 msgstr "Marzo"
 
 #: lib/NGCP/Panel/Controller/Administrator.pm:36
-#: lib/NGCP/Panel/Controller/Reseller.pm:139
+#: lib/NGCP/Panel/Controller/Reseller.pm:142
 msgid "Master"
 msgstr "Principal"
 
@@ -4182,7 +4191,7 @@ msgid "Mday"
 msgstr "Día"
 
 #: lib/NGCP/Panel/Controller/Callflow.pm:29
-#: lib/NGCP/Panel/Controller/Subscriber.pm:1955
+#: lib/NGCP/Panel/Controller/Subscriber.pm:1983
 msgid "Method"
 msgstr "Método"
 
@@ -4286,31 +4295,35 @@ msgstr "Niveles NCOS"
 msgid "NCOS level does not exist"
 msgstr "Nivel de NCOS no existe"
 
-#: lib/NGCP/Panel/Controller/NCOS.pm:201
+#: lib/NGCP/Panel/Controller/NCOS.pm:403
+msgid "NCOS level setting successfully updated"
+msgstr ""
+
+#: lib/NGCP/Panel/Controller/NCOS.pm:209
 msgid "NCOS level successfully created"
 msgstr "Nivel de NCOS creado con éxito"
 
-#: lib/NGCP/Panel/Controller/NCOS.pm:157
+#: lib/NGCP/Panel/Controller/NCOS.pm:162
 msgid "NCOS level successfully deleted"
 msgstr "Nivel NCOS eliminado con éxito"
 
-#: lib/NGCP/Panel/Controller/NCOS.pm:121
+#: lib/NGCP/Panel/Controller/NCOS.pm:123
 msgid "NCOS level successfully updated"
 msgstr "Nivel NCOS modificado con éxito"
 
-#: lib/NGCP/Panel/Controller/NCOS.pm:266
+#: lib/NGCP/Panel/Controller/NCOS.pm:275
 msgid "NCOS pattern does not exist"
 msgstr "Patrón NCOS no existe"
 
-#: lib/NGCP/Panel/Controller/NCOS.pm:344
+#: lib/NGCP/Panel/Controller/NCOS.pm:363
 msgid "NCOS pattern successfully created"
 msgstr "Patrón NCOS creado con éxito"
 
-#: lib/NGCP/Panel/Controller/NCOS.pm:315
+#: lib/NGCP/Panel/Controller/NCOS.pm:331
 msgid "NCOS pattern successfully deleted"
 msgstr "Patrón NCOS eliminado con éxito"
 
-#: lib/NGCP/Panel/Controller/NCOS.pm:292
+#: lib/NGCP/Panel/Controller/NCOS.pm:304
 msgid "NCOS pattern successfully updated"
 msgstr "Patrón NCOS modificado con éxito"
 
@@ -4323,18 +4336,18 @@ msgstr "NUEVO MENSAJE"
 #: lib/NGCP/Panel/Controller/Customer.pm:287
 #: lib/NGCP/Panel/Controller/Customer.pm:296
 #: lib/NGCP/Panel/Controller/Device.pm:106
-#: lib/NGCP/Panel/Controller/Device.pm:888
+#: lib/NGCP/Panel/Controller/Device.pm:926
 #: lib/NGCP/Panel/Controller/EmailTemplate.pm:35
 #: lib/NGCP/Panel/Controller/InvoiceTemplate.pm:34
 #: lib/NGCP/Panel/Controller/Peering.pm:28
 #: lib/NGCP/Panel/Controller/Peering.pm:77
 #: lib/NGCP/Panel/Controller/Product.pm:23
-#: lib/NGCP/Panel/Controller/Reseller.pm:133
-#: lib/NGCP/Panel/Controller/Reseller.pm:138
-#: lib/NGCP/Panel/Controller/Reseller.pm:159
+#: lib/NGCP/Panel/Controller/Reseller.pm:136
+#: lib/NGCP/Panel/Controller/Reseller.pm:141
+#: lib/NGCP/Panel/Controller/Reseller.pm:162
 #: lib/NGCP/Panel/Controller/Reseller.pm:36
 #: lib/NGCP/Panel/Controller/Rewrite.pm:33
-#: lib/NGCP/Panel/Controller/SubscriberProfile.pm:319
+#: lib/NGCP/Panel/Controller/SubscriberProfile.pm:331
 #: lib/NGCP/Panel/Controller/SubscriberProfile.pm:40
 #: lib/NGCP/Panel/Utils/DbStrings.pm:912 lib/NGCP/Panel/Utils/Sounds.pm:63
 #: share/templates/customer/details.tt:101
@@ -4421,19 +4434,19 @@ msgstr ""
 msgid "No product for this customer contract found."
 msgstr "No hay producto para este contrato"
 
-#: lib/NGCP/Panel/Controller/Subscriber.pm:3436
+#: lib/NGCP/Panel/Controller/Subscriber.pm:3507
 msgid "No such auto attendant id."
 msgstr "No existe el Id de operador automático"
 
-#: lib/NGCP/Panel/Controller/Subscriber.pm:3556
+#: lib/NGCP/Panel/Controller/Subscriber.pm:3633
 msgid "No such auto ccmapping id."
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/Subscriber.pm:3328
+#: lib/NGCP/Panel/Controller/Subscriber.pm:3392
 msgid "No such speed dial id."
 msgstr "No existe el id de marcado rápido"
 
-#: lib/NGCP/Panel/Controller/Subscriber.pm:2945
+#: lib/NGCP/Panel/Controller/Subscriber.pm:2986
 msgid "No such voicemail file."
 msgstr "No existe el fichero de mensaje de buzón"
 
@@ -4463,7 +4476,7 @@ msgstr "Noviembre"
 
 #: lib/NGCP/Panel/Controller/Customer.pm:289
 #: lib/NGCP/Panel/Controller/Subscriber.pm:120
-#: lib/NGCP/Panel/Controller/Subscriber.pm:2467
+#: lib/NGCP/Panel/Controller/Subscriber.pm:2497
 #: lib/NGCP/Panel/Utils/DbStrings.pm:478
 msgid "Number"
 msgstr "Número"
@@ -4498,19 +4511,19 @@ msgstr ""
 msgid "Number block does not exist"
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/NumberBlock.pm:136
+#: lib/NGCP/Panel/Controller/NumberBlock.pm:138
 msgid "Number block successfully created"
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/NumberBlock.pm:232
+#: lib/NGCP/Panel/Controller/NumberBlock.pm:241
 msgid "Number block successfully deleted"
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/NumberBlock.pm:207
+#: lib/NGCP/Panel/Controller/NumberBlock.pm:212
 msgid "Number block successfully updated"
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/Device.pm:889
+#: lib/NGCP/Panel/Controller/Device.pm:927
 msgid "Number of Lines/Keys"
 msgstr "Número de Líneas/Botones"
 
@@ -4741,7 +4754,7 @@ msgstr "POST"
 msgid "PS"
 msgstr "PS"
 
-#: lib/NGCP/Panel/Controller/Subscriber.pm:272
+#: lib/NGCP/Panel/Controller/Subscriber.pm:275
 msgid "Pages"
 msgstr "Páginas"
 
@@ -4766,7 +4779,7 @@ msgstr ""
 msgid "Password for Sendfax"
 msgstr "Contraseña para Sendfax"
 
-#: lib/NGCP/Panel/Controller/NCOS.pm:229 lib/NGCP/Panel/Utils/DbStrings.pm:536
+#: lib/NGCP/Panel/Controller/NCOS.pm:238 lib/NGCP/Panel/Utils/DbStrings.pm:536
 msgid "Pattern"
 msgstr "Patrón"
 
@@ -4811,7 +4824,7 @@ msgstr "Usuario de la autenticación al peer"
 msgid "Peer Host \"%1\" - Preferences"
 msgstr "Preferencias del servidor de peer %1"
 
-#: lib/NGCP/Panel/Controller/Subscriber.pm:271
+#: lib/NGCP/Panel/Controller/Subscriber.pm:274
 msgid "Peer Number"
 msgstr "Número de teléfono"
 
@@ -4823,7 +4836,7 @@ msgstr ""
 msgid "Peer auth user"
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/Subscriber.pm:846
+#: lib/NGCP/Panel/Controller/Subscriber.pm:863
 msgid "Peer registration error"
 msgstr "Error en el registro al peer"
 
@@ -4839,7 +4852,7 @@ msgstr "Costes de peering"
 msgid "Peering Group"
 msgstr "Grupo de peering"
 
-#: lib/NGCP/Panel/Controller/Peering.pm:148
+#: lib/NGCP/Panel/Controller/Peering.pm:154
 msgid "Peering Group successfully deleted"
 msgstr "Grupo de peering eliminado con éxito"
 
@@ -4852,7 +4865,7 @@ msgstr "Grupos de peering"
 msgid "Peering Rule"
 msgstr "Regla de peering"
 
-#: lib/NGCP/Panel/Controller/Peering.pm:492
+#: lib/NGCP/Panel/Controller/Peering.pm:515
 msgid "Peering Rule does not exist"
 msgstr "La regla de peering no existe"
 
@@ -4875,39 +4888,39 @@ msgstr "Servidores de peering"
 msgid "Peering group does not exist"
 msgstr "El grupo de peering no existe"
 
-#: lib/NGCP/Panel/Controller/Peering.pm:183
+#: lib/NGCP/Panel/Controller/Peering.pm:192
 msgid "Peering group successfully created"
 msgstr "Grupo de peering creado con éxito"
 
-#: lib/NGCP/Panel/Controller/Peering.pm:122
+#: lib/NGCP/Panel/Controller/Peering.pm:124
 msgid "Peering group successfully updated"
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/Peering.pm:523
+#: lib/NGCP/Panel/Controller/Peering.pm:548
 msgid "Peering rule successfully changed"
 msgstr "Regla de peering modificada con éxito"
 
-#: lib/NGCP/Panel/Controller/Peering.pm:455
+#: lib/NGCP/Panel/Controller/Peering.pm:477
 msgid "Peering rule successfully created"
 msgstr "Regla de peering creada con éxito"
 
-#: lib/NGCP/Panel/Controller/Peering.pm:547
+#: lib/NGCP/Panel/Controller/Peering.pm:576
 msgid "Peering rule successfully deleted"
 msgstr "Regla de peering eliminada con éxito"
 
-#: lib/NGCP/Panel/Controller/Peering.pm:273
+#: lib/NGCP/Panel/Controller/Peering.pm:286
 msgid "Peering server does not exist"
 msgstr "El servidor de peering no existe"
 
-#: lib/NGCP/Panel/Controller/Peering.pm:236
+#: lib/NGCP/Panel/Controller/Peering.pm:248
 msgid "Peering server successfully created"
 msgstr "Servidor de peering creado con éxito"
 
-#: lib/NGCP/Panel/Controller/Peering.pm:327
+#: lib/NGCP/Panel/Controller/Peering.pm:346
 msgid "Peering server successfully deleted"
 msgstr "Servidor de peering eliminado con éxito"
 
-#: lib/NGCP/Panel/Controller/Peering.pm:303
+#: lib/NGCP/Panel/Controller/Peering.pm:318
 msgid "Peering server successfully updated"
 msgstr "Servidor de peering modificado con éxito"
 
@@ -5025,14 +5038,14 @@ msgstr "Prioridad"
 msgid "Priority (q-value)"
 msgstr "Prioridad (valor q)"
 
-#: lib/NGCP/Panel/Controller/Device.pm:890
+#: lib/NGCP/Panel/Controller/Device.pm:928
 msgid "Private Line"
 msgstr "Línea privada"
 
 #: lib/NGCP/Panel/Controller/Contract.pm:28
 #: lib/NGCP/Panel/Controller/Customer.pm:52
 #: lib/NGCP/Panel/Controller/Customer.pm:97
-#: lib/NGCP/Panel/Controller/Reseller.pm:148
+#: lib/NGCP/Panel/Controller/Reseller.pm:151
 #: lib/NGCP/Panel/Utils/DbStrings.pm:720
 msgid "Product"
 msgstr "Producto"
@@ -5047,7 +5060,7 @@ msgstr "Perfil"
 msgid "Profile Name"
 msgstr "Nombre de perfil"
 
-#: lib/NGCP/Panel/Controller/SubscriberProfile.pm:318
+#: lib/NGCP/Panel/Controller/SubscriberProfile.pm:330
 #: lib/NGCP/Panel/Utils/DbStrings.pm:790
 msgid "Profile Set"
 msgstr ""
@@ -5127,7 +5140,7 @@ msgstr "Sólo lectura"
 msgid "Read only"
 msgstr "Sólo lectura"
 
-#: lib/NGCP/Panel/Controller/Reseller.pm:141
+#: lib/NGCP/Panel/Controller/Reseller.pm:144
 msgid "Read-Only"
 msgstr "Sólo lectura"
 
@@ -5156,7 +5169,7 @@ msgstr ""
 msgid "Recurrence"
 msgstr "Recurrencia"
 
-#: lib/NGCP/Panel/Controller/Subscriber.pm:3087
+#: lib/NGCP/Panel/Controller/Subscriber.pm:3139
 #: share/templates/widgets/subscriber_reg_overview.tt:8
 msgid "Registered Device"
 msgstr "Dispositivo registrado"
@@ -5230,7 +5243,7 @@ msgstr ""
 #: lib/NGCP/Panel/Controller/EmailTemplate.pm:34
 #: lib/NGCP/Panel/Controller/InvoiceTemplate.pm:33
 #: lib/NGCP/Panel/Controller/NCOS.pm:30
-#: lib/NGCP/Panel/Controller/Reseller.pm:155
+#: lib/NGCP/Panel/Controller/Reseller.pm:158
 #: lib/NGCP/Panel/Controller/Rewrite.pm:32
 #: lib/NGCP/Panel/Controller/SubscriberProfile.pm:39
 #: lib/NGCP/Panel/Utils/DbStrings.pm:632 lib/NGCP/Panel/Utils/Sounds.pm:69
@@ -5270,7 +5283,7 @@ msgstr "Beneficio de reseller"
 msgid "Reseller and Peering Contracts"
 msgstr "Contratos de Reseller y Peering"
 
-#: lib/NGCP/Panel/Controller/Reseller.pm:495
+#: lib/NGCP/Panel/Controller/Reseller.pm:507
 msgid "Reseller branding successfully updated"
 msgstr ""
 
@@ -5296,7 +5309,7 @@ msgstr ""
 msgid "Reseller is <b>%1</b>"
 msgstr "Reseller es <b>%1</b>"
 
-#: lib/NGCP/Panel/Controller/Reseller.pm:169
+#: lib/NGCP/Panel/Controller/Reseller.pm:172
 msgid "Reseller not found"
 msgstr "Reseller no encontrado"
 
@@ -5304,12 +5317,12 @@ msgstr "Reseller no encontrado"
 msgid "Reseller not found."
 msgstr "Reseller no encontrado."
 
-#: lib/NGCP/Panel/Controller/Reseller.pm:93
+#: lib/NGCP/Panel/Controller/Reseller.pm:95
 msgid "Reseller successfully created"
 msgstr "Reseller creado con éxito"
 
-#. ($defaults{admins}->{login},$defaults{admins}->{md5pass})
-#: lib/NGCP/Panel/Controller/Reseller.pm:419
+#. ($defaults{admins}->{login}, $defaults{admins}->{md5pass})
+#: lib/NGCP/Panel/Controller/Reseller.pm:429
 msgid ""
 "Reseller successfully created with login <b>%1</b> and password <b>%2</b>, "
 "please review your settings below"
@@ -5317,7 +5330,7 @@ msgstr ""
 "Reseller creado con éxito con acceso <b>%1</b> y contraseña <b>%2</b>, Por "
 "favor revise sus preferencias"
 
-#: lib/NGCP/Panel/Controller/Reseller.pm:244
+#: lib/NGCP/Panel/Controller/Reseller.pm:249
 msgid "Reseller successfully updated"
 msgstr "Reseller modificado con éxito"
 
@@ -5357,7 +5370,7 @@ msgstr "Grupos de reglas de reescritura"
 msgid "Rewrite Rules for %1"
 msgstr "reglas de reescritura para %1"
 
-#: lib/NGCP/Panel/Controller/Rewrite.pm:362
+#: lib/NGCP/Panel/Controller/Rewrite.pm:374
 msgid "Rewrite rule does not exist"
 msgstr "Regla de reescritura no existe"
 
@@ -5365,31 +5378,31 @@ msgstr "Regla de reescritura no existe"
 msgid "Rewrite rule set does not exist"
 msgstr "Grupo de Reglas de reescritura no existe"
 
-#: lib/NGCP/Panel/Controller/Rewrite.pm:179
+#: lib/NGCP/Panel/Controller/Rewrite.pm:187
 msgid "Rewrite rule set successfully cloned"
 msgstr "Grupo de Reglas de reescritura clonada con éxito"
 
-#: lib/NGCP/Panel/Controller/Rewrite.pm:230
+#: lib/NGCP/Panel/Controller/Rewrite.pm:241
 msgid "Rewrite rule set successfully created"
 msgstr "Grupo de Reglas de reescritura creado con éxito"
 
-#: lib/NGCP/Panel/Controller/Rewrite.pm:129
+#: lib/NGCP/Panel/Controller/Rewrite.pm:135
 msgid "Rewrite rule set successfully deleted"
 msgstr "Grupo de Reglas de reescritura eliminado con éxito"
 
-#: lib/NGCP/Panel/Controller/Rewrite.pm:109
+#: lib/NGCP/Panel/Controller/Rewrite.pm:111
 msgid "Rewrite rule set successfully updated"
 msgstr "Grupo de Reglas de reescritura modificado con éxito"
 
-#: lib/NGCP/Panel/Controller/Rewrite.pm:442
+#: lib/NGCP/Panel/Controller/Rewrite.pm:463
 msgid "Rewrite rule successfully created"
 msgstr "Regla de reescritura creada con éxito"
 
-#: lib/NGCP/Panel/Controller/Rewrite.pm:410
+#: lib/NGCP/Panel/Controller/Rewrite.pm:428
 msgid "Rewrite rule successfully deleted"
 msgstr "Regla de reescritura eliminada con éxito"
 
-#: lib/NGCP/Panel/Controller/Rewrite.pm:389
+#: lib/NGCP/Panel/Controller/Rewrite.pm:403
 msgid "Rewrite rule successfully updated"
 msgstr "Regla de reescritura modificada con éxito"
 
@@ -5753,10 +5766,6 @@ msgstr "Valor máximo aceptado del MIN_SE del SBC."
 msgid "Setting"
 msgstr "Preferencia"
 
-#: lib/NGCP/Panel/Controller/NCOS.pm:381
-msgid "Setting successfully updated"
-msgstr "Preferencia modificada con éxito"
-
 #: share/templates/customer/details.tt:532
 #: share/templates/widgets/admin_topmenu_settings.tt:18
 #: share/templates/widgets/reseller_topmenu_settings.tt:4
@@ -5765,13 +5774,13 @@ msgstr "Preferencia modificada con éxito"
 msgid "Settings"
 msgstr "Preferencias"
 
-#: lib/NGCP/Panel/Controller/Device.pm:891
+#: lib/NGCP/Panel/Controller/Device.pm:929
 #, fuzzy
 msgid "Shared Line"
 msgstr "Shared Line"
 
 #: lib/NGCP/Panel/Controller/Administrator.pm:40
-#: lib/NGCP/Panel/Controller/Reseller.pm:143
+#: lib/NGCP/Panel/Controller/Reseller.pm:146
 msgid "Show CDRs"
 msgstr "Mostrar CDRs"
 
@@ -5780,7 +5789,7 @@ msgid "Show Offline"
 msgstr "Mostrar desconectados"
 
 #: lib/NGCP/Panel/Controller/Administrator.pm:39
-#: lib/NGCP/Panel/Controller/Reseller.pm:142
+#: lib/NGCP/Panel/Controller/Reseller.pm:145
 msgid "Show Passwords"
 msgstr "Mostrar contraseñas"
 
@@ -5813,8 +5822,8 @@ msgstr "Simple"
 msgid "Simple View"
 msgstr "Vista simple"
 
-#: lib/NGCP/Panel/Controller/Subscriber.pm:257
-#: lib/NGCP/Panel/Controller/Subscriber.pm:262
+#: lib/NGCP/Panel/Controller/Subscriber.pm:260
+#: lib/NGCP/Panel/Controller/Subscriber.pm:265
 #: lib/NGCP/Panel/Utils/DbStrings.pm:1108
 msgid "Slot"
 msgstr "Entrada"
@@ -5864,23 +5873,23 @@ msgstr ""
 msgid "Sound Sets"
 msgstr "Grupos de locuciones"
 
-#: lib/NGCP/Panel/Controller/Sound.pm:510
+#: lib/NGCP/Panel/Controller/Sound.pm:520
 msgid "Sound handle id does not exist"
 msgstr "La locución no existe"
 
-#: lib/NGCP/Panel/Controller/Sound.pm:520
+#: lib/NGCP/Panel/Controller/Sound.pm:530
 msgid "Sound handle not found"
 msgstr "Locución no encontrada"
 
-#: lib/NGCP/Panel/Controller/Sound.pm:662
+#: lib/NGCP/Panel/Controller/Sound.pm:681
 msgid "Sound handle successfully deleted"
 msgstr "Locución eliminada con éxito"
 
-#: lib/NGCP/Panel/Controller/Sound.pm:640
+#: lib/NGCP/Panel/Controller/Sound.pm:655
 msgid "Sound handle successfully updated"
 msgstr "Locución modificada con éxito"
 
-#: lib/NGCP/Panel/Controller/Sound.pm:627
+#: lib/NGCP/Panel/Controller/Sound.pm:639
 msgid "Sound handle successfully uploaded"
 msgstr "Locución subida con éxito"
 
@@ -5888,15 +5897,15 @@ msgstr "Locución subida con éxito"
 msgid "Sound set does not exist"
 msgstr "El grupo de locuciones no existe"
 
-#: lib/NGCP/Panel/Controller/Sound.pm:407
+#: lib/NGCP/Panel/Controller/Sound.pm:416
 msgid "Sound set successfully created"
 msgstr "Grupo de locuciones creada con éxito"
 
-#: lib/NGCP/Panel/Controller/Sound.pm:293
+#: lib/NGCP/Panel/Controller/Sound.pm:299
 msgid "Sound set successfully deleted"
 msgstr "Grupo de locuciones eliminada con éxito"
 
-#: lib/NGCP/Panel/Controller/Sound.pm:249
+#: lib/NGCP/Panel/Controller/Sound.pm:251
 msgid "Sound set successfully updated"
 msgstr "Grupo de locuciones modificada con éxito"
 
@@ -5912,7 +5921,7 @@ msgstr "Origen"
 msgid "Source CLI"
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/Subscriber.pm:1936
+#: lib/NGCP/Panel/Controller/Subscriber.pm:1964
 msgid "Source Cust Cost (cents)"
 msgstr ""
 
@@ -5925,7 +5934,7 @@ msgstr "IP de origen"
 msgid "Source Pattern"
 msgstr "Patrón de origen"
 
-#: lib/NGCP/Panel/Controller/Subscriber.pm:278
+#: lib/NGCP/Panel/Controller/Subscriber.pm:281
 msgid "Source UUID"
 msgstr ""
 
@@ -6096,8 +6105,8 @@ msgstr "Especifica si se desea registrarse contra el peer."
 msgid "Speed Dial"
 msgstr "Marcado rápido"
 
-#: lib/NGCP/Panel/Controller/Subscriber.pm:3314
-#: lib/NGCP/Panel/Controller/Subscriber.pm:3412
+#: lib/NGCP/Panel/Controller/Subscriber.pm:3378
+#: lib/NGCP/Panel/Controller/Subscriber.pm:3483
 msgid "Speed Dial Slot"
 msgstr "Espacio de marcado rápido"
 
@@ -6131,7 +6140,7 @@ msgstr "Fecha de inicio"
 msgid "Start Date/Time"
 msgstr "Fecha de inicio / Hora"
 
-#: lib/NGCP/Panel/Controller/Subscriber.pm:1931
+#: lib/NGCP/Panel/Controller/Subscriber.pm:1959
 msgid "Start Time"
 msgstr "Hora de inicio"
 
@@ -6148,13 +6157,13 @@ msgstr "Nombre de la estación"
 #: lib/NGCP/Panel/Controller/Contract.pm:393
 #: lib/NGCP/Panel/Controller/Customer.pm:54
 #: lib/NGCP/Panel/Controller/Customer.pm:99
-#: lib/NGCP/Panel/Controller/Reseller.pm:134
-#: lib/NGCP/Panel/Controller/Reseller.pm:150
+#: lib/NGCP/Panel/Controller/Reseller.pm:137
+#: lib/NGCP/Panel/Controller/Reseller.pm:153
 #: lib/NGCP/Panel/Controller/Reseller.pm:37
 #: lib/NGCP/Panel/Controller/Reseller.pm:46
 #: lib/NGCP/Panel/Controller/Subscriber.pm:119
-#: lib/NGCP/Panel/Controller/Subscriber.pm:1930
-#: lib/NGCP/Panel/Controller/Subscriber.pm:268
+#: lib/NGCP/Panel/Controller/Subscriber.pm:1958
+#: lib/NGCP/Panel/Controller/Subscriber.pm:271
 #: lib/NGCP/Panel/Utils/DbStrings.pm:610
 #: share/templates/subscriber/master.tt:76
 msgid "Status"
@@ -6177,7 +6186,7 @@ msgstr ""
 msgid "Submitid"
 msgstr "Enviado"
 
-#: lib/NGCP/Panel/Controller/Subscriber.pm:2468
+#: lib/NGCP/Panel/Controller/Subscriber.pm:2498
 #: lib/NGCP/Panel/Utils/DbStrings.pm:377
 #: share/templates/customer/details.tt:276
 #: share/templates/customer/details.tt:520
@@ -6211,7 +6220,7 @@ msgstr ""
 msgid "Subscriber ID"
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/Subscriber.pm:2446
+#: lib/NGCP/Panel/Controller/Subscriber.pm:2476
 msgid "Subscriber Master Data"
 msgstr "Datos Principales del Suscriptor"
 
@@ -6265,7 +6274,7 @@ msgstr "Configuraciones de Suscriptor"
 msgid "Subscriber can configure other subscribers within the Customer Account"
 msgstr "El suscriptor puede configurar otros de la misma cuenta"
 
-#: lib/NGCP/Panel/Controller/Subscriber.pm:220
+#: lib/NGCP/Panel/Controller/Subscriber.pm:223
 msgid "Subscriber does not exist"
 msgstr "El suscriptor no existe"
 
@@ -6278,7 +6287,7 @@ msgstr ""
 msgid "Subscriber is locked for <b>%1</b>"
 msgstr "El suscriptor está bloqueado para <b>%1</b>"
 
-#: lib/NGCP/Panel/Controller/SubscriberProfile.pm:355
+#: lib/NGCP/Panel/Controller/SubscriberProfile.pm:367
 msgid "Subscriber profile does not exist"
 msgstr ""
 
@@ -6286,32 +6295,32 @@ msgstr ""
 msgid "Subscriber profile set does not exist"
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/SubscriberProfile.pm:135
+#: lib/NGCP/Panel/Controller/SubscriberProfile.pm:137
 msgid "Subscriber profile set successfully created"
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/SubscriberProfile.pm:228
+#: lib/NGCP/Panel/Controller/SubscriberProfile.pm:237
 msgid "Subscriber profile set successfully deleted"
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/SubscriberProfile.pm:195
+#: lib/NGCP/Panel/Controller/SubscriberProfile.pm:200
 msgid "Subscriber profile set successfully updated"
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/SubscriberProfile.pm:296
-#: lib/NGCP/Panel/Controller/SubscriberProfile.pm:607
+#: lib/NGCP/Panel/Controller/SubscriberProfile.pm:307
+#: lib/NGCP/Panel/Controller/SubscriberProfile.pm:630
 msgid "Subscriber profile successfully cloned"
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/SubscriberProfile.pm:415
+#: lib/NGCP/Panel/Controller/SubscriberProfile.pm:429
 msgid "Subscriber profile successfully created"
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/SubscriberProfile.pm:560
+#: lib/NGCP/Panel/Controller/SubscriberProfile.pm:581
 msgid "Subscriber profile successfully deleted"
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/SubscriberProfile.pm:520
+#: lib/NGCP/Panel/Controller/SubscriberProfile.pm:537
 msgid "Subscriber profile successfully updated"
 msgstr ""
 
@@ -6324,7 +6333,7 @@ msgstr "El estado del suscriptor es <b>%1</b>"
 msgid "Subscriber successfully created"
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/Subscriber.pm:188
+#: lib/NGCP/Panel/Controller/Subscriber.pm:190
 msgid "Subscriber successfully created!"
 msgstr "Suscriptor creado con éxito"
 
@@ -6338,11 +6347,11 @@ msgstr "Suscriptor creado con éxito"
 msgid "Subscribers"
 msgstr "Suscriptores"
 
-#: lib/NGCP/Panel/Controller/Subscriber.pm:3073
+#: lib/NGCP/Panel/Controller/Subscriber.pm:3124
 msgid "Successfully added registered device"
 msgstr "Dispositivo registrado añadido con éxito"
 
-#: lib/NGCP/Panel/Controller/Subscriber.pm:1196
+#: lib/NGCP/Panel/Controller/Subscriber.pm:1218
 msgid "Successfully cleared Call Forward"
 msgstr "Desvío de llamada eliminado con éxito"
 
@@ -6350,134 +6359,138 @@ msgstr "Desvío de llamada eliminado con éxito"
 msgid "Successfully cleared fraud interval!"
 msgstr "Intervalo antifraude eliminado con éxito"
 
-#: lib/NGCP/Panel/Controller/Device.pm:682
+#: lib/NGCP/Panel/Controller/Device.pm:710
 msgid "Successfully created device configuration"
 msgstr "Configuración de dispositivo creada con éxito"
 
-#: lib/NGCP/Panel/Controller/Device.pm:519
+#: lib/NGCP/Panel/Controller/Device.pm:537
 msgid "Successfully created device firmware"
 msgstr "Firmware de dispositivo creado con éxito"
 
-#: lib/NGCP/Panel/Controller/Device.pm:230
+#: lib/NGCP/Panel/Controller/Device.pm:233
 msgid "Successfully created device model"
 msgstr "Modelo de dispositivo creado con éxito"
 
-#: lib/NGCP/Panel/Controller/Device.pm:841
+#: lib/NGCP/Panel/Controller/Device.pm:879
 msgid "Successfully created device profile"
 msgstr "Perfil de dispositivo creado con éxito"
 
-#: lib/NGCP/Panel/Controller/Subscriber.pm:3298
+#: lib/NGCP/Panel/Controller/Subscriber.pm:3361
 msgid "Successfully created speed dial slot"
 msgstr "Espacio de marcado rápido creado con éxito"
 
-#: lib/NGCP/Panel/Controller/Subscriber.pm:3119
+#: lib/NGCP/Panel/Controller/Subscriber.pm:3173
 msgid "Successfully created trusted source"
 msgstr "Origen de confianza creado con éxito"
 
-#: lib/NGCP/Panel/Controller/Subscriber.pm:1860
+#: lib/NGCP/Panel/Controller/Subscriber.pm:1887
 msgid "Successfully deleted Call Forward"
 msgstr "Desvío eliminado con éxito"
 
-#: lib/NGCP/Panel/Controller/Subscriber.pm:3452
+#: lib/NGCP/Panel/Controller/Subscriber.pm:3526
 msgid "Successfully deleted auto attendant slot"
 msgstr "Operador automático eliminado con éxito"
 
-#: lib/NGCP/Panel/Controller/Subscriber.pm:3573
-msgid "Successfully deleted ccmapping."
+#: lib/NGCP/Panel/Controller/Subscriber.pm:3653
+msgid "Successfully deleted ccmapping"
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/Subscriber.pm:3043
+#: lib/NGCP/Panel/Controller/Subscriber.pm:3091
 msgid "Successfully deleted registered device"
 msgstr "Dispositivo registrado eliminado con éxito"
 
-#: lib/NGCP/Panel/Controller/Subscriber.pm:3344
+#: lib/NGCP/Panel/Controller/Subscriber.pm:3411
 msgid "Successfully deleted speed dial slot"
 msgstr "Espacio de marcado rápido eliminado con éxito"
 
-#: lib/NGCP/Panel/Controller/Subscriber.pm:3221
+#: lib/NGCP/Panel/Controller/Subscriber.pm:3281
 msgid "Successfully deleted trusted source"
 msgstr "Origen de confianza eliminado con éxito"
 
-#: lib/NGCP/Panel/Controller/Subscriber.pm:2986
+#: lib/NGCP/Panel/Controller/Subscriber.pm:3030
 msgid "Successfully deleted voicemail"
 msgstr "Buzón eliminado con éxito"
 
-#: lib/NGCP/Panel/Controller/Customer.pm:1378
+#: lib/NGCP/Panel/Controller/Customer.pm:1381
 msgid "Successfully redirected request to device"
 msgstr "Petición redireccionada al dispositivo"
 
-#: lib/NGCP/Panel/Controller/Subscriber.pm:555
+#: lib/NGCP/Panel/Controller/Subscriber.pm:567
 msgid "Successfully reset web password, please check your email"
 msgstr ""
 
 #. ($subscriber->contact ? $subscriber->contact->email : $subscriber->contract->contact->email)
-#: lib/NGCP/Panel/Controller/Subscriber.pm:496
+#: lib/NGCP/Panel/Controller/Subscriber.pm:505
 msgid "Successfully reset web password, please check your email at %1"
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/Subscriber.pm:1066
-#: lib/NGCP/Panel/Controller/Subscriber.pm:1241
+#: lib/NGCP/Panel/Controller/Subscriber.pm:1085
+#: lib/NGCP/Panel/Controller/Subscriber.pm:1266
 msgid "Successfully saved Call Forward"
 msgstr "Desvío guardado con éxito"
 
-#: lib/NGCP/Panel/Controller/Reseller.pm:285
+#: lib/NGCP/Panel/Controller/Reseller.pm:294
 msgid "Successfully terminated reseller"
 msgstr "Reseller eliminado con éxito"
 
-#: lib/NGCP/Panel/Controller/Subscriber.pm:450
+#: lib/NGCP/Panel/Controller/Subscriber.pm:456
 msgid "Successfully terminated subscriber"
 msgstr "Suscriptor eliminado con éxito"
 
-#: lib/NGCP/Panel/Controller/Customer.pm:1361
+#: lib/NGCP/Panel/Controller/Customer.pm:1363
 msgid "Successfully triggered config reload via SIP"
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/Subscriber.pm:3516
+#: lib/NGCP/Panel/Controller/Subscriber.pm:3592
 msgid "Successfully updated auto attendant slots"
 msgstr "Operador automático modificado con éxito"
 
-#: lib/NGCP/Panel/Controller/Subscriber.pm:3629
-msgid "Successfully updated ccmappings."
+#: lib/NGCP/Panel/Controller/Subscriber.pm:3712
+msgid "Successfully updated ccmappings"
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/Device.pm:774
+#: lib/NGCP/Panel/Controller/Device.pm:809
 msgid "Successfully updated device configuration"
 msgstr "Configuración de dispositivo modificado con éxito"
 
-#: lib/NGCP/Panel/Controller/Device.pm:616
+#: lib/NGCP/Panel/Controller/Device.pm:641
 msgid "Successfully updated device firmware"
 msgstr "Firmware de dispositivo modificado con éxito"
 
-#: lib/NGCP/Panel/Controller/Device.pm:972
+#: lib/NGCP/Panel/Controller/Device.pm:432
+msgid "Successfully updated device model"
+msgstr ""
+
+#: lib/NGCP/Panel/Controller/Device.pm:1018
 msgid "Successfully updated device profile"
 msgstr "Perfil de dispositivo modificado con éxito"
 
-#: lib/NGCP/Panel/Controller/Subscriber.pm:2763
+#: lib/NGCP/Panel/Controller/Subscriber.pm:2801
 msgid "Successfully updated fax setting"
 msgstr "Preferencia de Fax modificado con éxito"
 
-#: lib/NGCP/Panel/Controller/Subscriber.pm:2514
+#: lib/NGCP/Panel/Controller/Subscriber.pm:2547
 #, fuzzy
 msgid "Successfully updated password"
 msgstr "Suscriptor modificado con éxito"
 
-#: lib/NGCP/Panel/Controller/Subscriber.pm:2833
+#: lib/NGCP/Panel/Controller/Subscriber.pm:2873
 msgid "Successfully updated reminder setting"
 msgstr "Alarma modificada con éxito"
 
-#: lib/NGCP/Panel/Controller/Subscriber.pm:3396
+#: lib/NGCP/Panel/Controller/Subscriber.pm:3466
 msgid "Successfully updated speed dial slot"
 msgstr "Espacio de marcado rápido modificado con éxito"
 
-#: lib/NGCP/Panel/Controller/Subscriber.pm:2430
+#: lib/NGCP/Panel/Controller/Subscriber.pm:2460
 msgid "Successfully updated subscriber"
 msgstr "Suscriptor modificado con éxito"
 
-#: lib/NGCP/Panel/Controller/Subscriber.pm:3193
+#: lib/NGCP/Panel/Controller/Subscriber.pm:3249
 msgid "Successfully updated trusted source"
 msgstr "Origen de confianza modificado con éxito"
 
-#: lib/NGCP/Panel/Controller/Subscriber.pm:2617
+#: lib/NGCP/Panel/Controller/Subscriber.pm:2652
 msgid "Successfully updated voicemail setting"
 msgstr "Buzón modificado con éxito"
 
@@ -6543,7 +6556,7 @@ msgstr ""
 msgid "Template and customer must belong to same reseller"
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/InvoiceTemplate.pm:330
+#: lib/NGCP/Panel/Controller/InvoiceTemplate.pm:340
 msgid "Template has not been saved yet, please save before previewing."
 msgstr ""
 
@@ -6563,7 +6576,7 @@ msgstr "Eliminar"
 msgid "Terminate Call"
 msgstr "Terminar llamada"
 
-#: lib/NGCP/Panel/Controller/Subscriber.pm:443
+#: lib/NGCP/Panel/Controller/Subscriber.pm:446
 msgid "Terminating own subscriber is prohibited."
 msgstr "Eliminar su propio suscriptor no está permitido"
 
@@ -7619,17 +7632,17 @@ msgstr ""
 msgid "Thursday"
 msgstr "Jueves"
 
-#: lib/NGCP/Panel/Controller/Subscriber.pm:1943
+#: lib/NGCP/Panel/Controller/Subscriber.pm:1971
 #: lib/NGCP/Panel/Utils/DbStrings.pm:1135
 #: share/templates/subscriber/preferences.tt:457
 msgid "Time"
 msgstr "Tiempo"
 
-#: lib/NGCP/Panel/Controller/Subscriber.pm:1815
+#: lib/NGCP/Panel/Controller/Subscriber.pm:1840
 msgid "Time Set"
 msgstr "Grupo de Tiempos"
 
-#: lib/NGCP/Panel/Controller/Subscriber.pm:1628
+#: lib/NGCP/Panel/Controller/Subscriber.pm:1653
 msgid "Time Sets"
 msgstr "Grupos de Tiempos"
 
@@ -7660,8 +7673,8 @@ msgid "Timeset \"%1\" Details"
 msgstr "Detalles del Grupo de Tiempos \"%1\""
 
 #: lib/NGCP/Panel/Controller/Callflow.pm:25
-#: lib/NGCP/Panel/Controller/Subscriber.pm:1953
-#: lib/NGCP/Panel/Controller/Subscriber.pm:267
+#: lib/NGCP/Panel/Controller/Subscriber.pm:1981
+#: lib/NGCP/Panel/Controller/Subscriber.pm:270
 msgid "Timestamp"
 msgstr "Marca de tiempo"
 
@@ -7683,16 +7696,16 @@ msgstr ""
 msgid "Total max number of overall concurrent calls"
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/Subscriber.pm:2967
-msgid "Transcode of audio file failed."
-msgstr "La transcodificación del fichero ha fallado"
+#: lib/NGCP/Panel/Controller/Subscriber.pm:3008
+msgid "Transcode of audio file failed"
+msgstr ""
 
-#: lib/NGCP/Panel/Controller/Sound.pm:615
+#: lib/NGCP/Panel/Controller/Sound.pm:625
 msgid "Transcoding audio file failed"
 msgstr "La transcodificación del fichero ha fallado"
 
-#: lib/NGCP/Panel/Controller/Subscriber.pm:3134
-#: lib/NGCP/Panel/Controller/Subscriber.pm:3208
+#: lib/NGCP/Panel/Controller/Subscriber.pm:3189
+#: lib/NGCP/Panel/Controller/Subscriber.pm:3265
 msgid "Trusted Source"
 msgstr "Origen de confianza"
 
@@ -7700,9 +7713,9 @@ msgstr "Origen de confianza"
 msgid "Trusted Sources"
 msgstr "Orígenes de confianza"
 
-#: lib/NGCP/Panel/Controller/Subscriber.pm:3149
-msgid "Trusted source entry not found."
-msgstr "Origen de confianza no encontrado"
+#: lib/NGCP/Panel/Controller/Subscriber.pm:3204
+msgid "Trusted source entry not found"
+msgstr ""
 
 #: lib/NGCP/Panel/Controller/Billing.pm:725
 #: lib/NGCP/Panel/Utils/DbStrings.pm:950
@@ -7710,7 +7723,7 @@ msgid "Tuesday"
 msgstr "Martes"
 
 #: lib/NGCP/Panel/Controller/InvoiceTemplate.pm:35
-#: lib/NGCP/Panel/Controller/Reseller.pm:160
+#: lib/NGCP/Panel/Controller/Reseller.pm:163
 #: lib/NGCP/Panel/Utils/DbStrings.pm:717
 #: share/templates/subscriber/preferences.tt:66
 msgid "Type"
@@ -7786,7 +7799,7 @@ msgstr "Usar CLI alias válido como NPN"
 msgid "User"
 msgstr "Usuario"
 
-#: lib/NGCP/Panel/Controller/Subscriber.pm:1948
+#: lib/NGCP/Panel/Controller/Subscriber.pm:1976
 msgid "User Agent"
 msgstr "Agente de usuario"
 
@@ -7810,7 +7823,7 @@ msgstr ""
 msgid "User or number to rewrite"
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/Security.pm:182
+#: lib/NGCP/Panel/Controller/Security.pm:187
 msgid "User successfully unbanned"
 msgstr "Usuario desbaneado con éxito"
 
@@ -7971,7 +7984,7 @@ msgstr "Teléfono Web para "
 msgid "Web Username"
 msgstr "Usuario web"
 
-#: lib/NGCP/Panel/Controller/Subscriber.pm:645
+#: lib/NGCP/Panel/Controller/Subscriber.pm:661
 msgid "Web password successfully recovered, please re-login."
 msgstr ""
 
@@ -8484,6 +8497,136 @@ msgstr ""
 #: share/templates/subscriber/preferences.tt:335
 msgid "yes"
 msgstr "sí"
+
+#~ msgid "Failed to add registered device."
+#~ msgstr "Fallo al añadir dispositivo registrado."
+
+#~ msgid "Failed to create NCOS level."
+#~ msgstr "Fallo al crear grupo de NCOS."
+
+#~ msgid "Failed to create NCOS pattern."
+#~ msgstr "Fallo al crear patrón de NCOS."
+
+#~ msgid "Failed to create peering group."
+#~ msgstr "Fallo al crear grupo de peering."
+
+#~ msgid "Failed to create peering rule."
+#~ msgstr "Fallo al crear regla de peering"
+
+#~ msgid "Failed to create peering server."
+#~ msgstr "Fallo al crear peering server"
+
+#~ msgid "Failed to create reseller."
+#~ msgstr "Fallo al crear reseller."
+
+#~ msgid "Failed to create rewrite rule set."
+#~ msgstr "Fallo al crear grupo de reglas de reescritura"
+
+#~ msgid "Failed to create rewrite rule."
+#~ msgstr "Fallo al crear regla de reescritura"
+
+#~ msgid "Failed to create speed dial slot."
+#~ msgstr "Fallo al crear entrada de marcado rápido."
+
+#~ msgid "Failed to create subscriber."
+#~ msgstr "Fallo al crear suscriptor."
+
+#~ msgid "Failed to create trusted source."
+#~ msgstr "Fallo al crear origen de confianza"
+
+#~ msgid "Failed to delete NCOS level."
+#~ msgstr "Fallo al borrar nivel NCOS"
+
+#~ msgid "Failed to delete NCOS pattern."
+#~ msgstr "Fallo al borrar patrón NCOS"
+
+#~ msgid "Failed to delete auto attendant slot."
+#~ msgstr "Fallo al borrar entrada de operador automático"
+
+#~ msgid "Failed to delete peering group."
+#~ msgstr "Fallo al borrar grupo de peering."
+
+#~ msgid "Failed to delete peering rule."
+#~ msgstr "Fallo al borrar regla de peering."
+
+#~ msgid "Failed to delete peering server."
+#~ msgstr "Fallo al borrar servidor de peering."
+
+#~ msgid "Failed to delete registered device."
+#~ msgstr "Fallo al borrar dispositivo registrado."
+
+#~ msgid "Failed to delete rewrite rule set."
+#~ msgstr "Fallo al borrar grupo de reglas de reescritura."
+
+#~ msgid "Failed to delete rewrite rule."
+#~ msgstr "Fallo al borrar regla de reescritura."
+
+#~ msgid "Failed to delete speed dial slot."
+#~ msgstr "Fallo al borrar entrada de marcado rápido."
+
+#~ msgid "Failed to delete voicemail message."
+#~ msgstr "Fallo al borrar mensaje de buzón de voz."
+
+#~ msgid "Failed to save Call Forward."
+#~ msgstr "Fallo al guardar desvío de llamada."
+
+#~ msgid "Failed to terminate reseller."
+#~ msgstr "Fallo al eliminar reseller."
+
+#~ msgid "Failed to terminate subscriber."
+#~ msgstr "Fallo al eliminar suscriptor."
+
+#~ msgid "Failed to update NCOS level setting."
+#~ msgstr "Fallo al actualizar nivel de NCOS."
+
+#~ msgid "Failed to update NCOS level."
+#~ msgstr "Fallo al actualizar nivel de NCOS."
+
+#~ msgid "Failed to update NCOS pattern."
+#~ msgstr "Fallo al actualizar patrón de NCOS."
+
+#~ msgid "Failed to update fax setting."
+#~ msgstr "Fallo al actualizar preferencia de fax"
+
+#~ msgid "Failed to update peering rule."
+#~ msgstr "Fallo al actualizar regla de peering"
+
+#~ msgid "Failed to update peering server."
+#~ msgstr "Fallo al actualizar servidor de peering"
+
+#~ msgid "Failed to update reseller."
+#~ msgstr "Fallo al actualizar reseller"
+
+#~ msgid "Failed to update rewrite rule set."
+#~ msgstr "Fallo al actualizar grupo de reglas de reescritura"
+
+#~ msgid "Failed to update rewrite rule."
+#~ msgstr "Fallo al actualizar regla de reescritura"
+
+#, fuzzy
+#~ msgid "Failed to update subscriber (webpassword)."
+#~ msgstr "Fallo al actualizar suscriptor."
+
+#~ msgid "Failed to update subscriber."
+#~ msgstr "Fallo al actualizar suscriptor."
+
+#~ msgid "Failed to update trusted source."
+#~ msgstr "Fallo al actualizar origen de confianza."
+
+#~ msgid "Failed to update voicemail setting."
+#~ msgstr "Fallo al actualizar preferencia de buzón de voz."
+
+#~ msgid "Invalid voicemail setting."
+#~ msgstr "Preferencia de buzón de voz inválida"
+
+#~ msgid "Setting successfully updated"
+#~ msgstr "Preferencia modificada con éxito"
+
+#~ msgid "Transcode of audio file failed."
+#~ msgstr "La transcodificación del fichero ha fallado"
+
+#~ msgid "Trusted source entry not found."
+#~ msgstr "Origen de confianza no encontrado"
 
 #~ msgid "Failed to clear fraud interval."
 #~ msgstr "Fallo al limpiar el intervalo de fraude"
