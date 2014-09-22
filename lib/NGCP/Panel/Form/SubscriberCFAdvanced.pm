@@ -105,20 +105,19 @@ has_block 'actions' => (
 );
 sub validate_active_callforward{
     my ( $self, $field ) = @_;
-    my $value = $field->value || [];
     my $result = 1;
+    my $value = $field->value || [];
     if( $#$value < 0 ){
+        $field->add_error($field->label . ' is empty.');
         $result = 0;
     }else{
-        foreach my $map (@$value){
-            if(! defined $map->{destination_set}){
+        foreach my $callforward_spec($field->fields()){
+            my $destination_set_field = $callforward_spec->field('destination_set');
+            if(!$destination_set_field->value){
+                $destination_set_field->add_error($destination_set_field->label . ' is empty.');
                 $result = 0;
-                last;
             }
         }
-    }
-    if(!$result){
-        $field->add_error($field->label . " is invalid");
     }
     return $result;
 }

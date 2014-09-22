@@ -103,7 +103,17 @@ has_block 'fields' => (
     render_list => [qw(destination)],
 );
 has_block 'actions' => (tag => 'div', class => [qw(modal-footer)], render_list => [qw(cf_actions)],);
-
+sub validate_destination{
+    my ( $self, $field ) = @_;
+    my $result = 0;
+    (my($uri_field)) = grep {'destination' eq $_->name} ($field->field('uri')->fields);
+    if( 'uri' eq $field->field('destination')->value 
+        && !$uri_field->value ){
+        $uri_field->add_error($uri_field->label . " is empty");
+        $result = 0;
+    }
+    return $result;
+}
 1;
 
 # vim: set tabstop=4 expandtab:

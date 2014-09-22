@@ -109,7 +109,6 @@ has_field 'destination.rm' => (
 #    },
 );
 
-
 has_field 'destination_add' => (
     type => 'AddElement',
     repeatable => 'destination',
@@ -136,6 +135,24 @@ has_block 'actions' => (
     render_list => [qw(save)],
 );
 
+sub validate_destination{
+    my ( $self, $field ) = @_;
+    my $value = $field->value || [];
+    my $result = 1;
+    if( $#$value < 0 ){
+        $field->add_error($field->label . " is empty");
+        $result = 0;
+    }else{
+        foreach my $destination($field->fields()){
+            (my($uri_field)) = grep {'destination' eq $_->name} $destination->field('uri')->fields;
+            if('uri' eq $destination->field('destination')->value && !$uri_field->value){
+                $uri_field->add_error($uri_field->label . " is empty");
+                $result = 0;
+            }
+        }
+    }
+    return $result;
+}
 1;
 
 # vim: set tabstop=4 expandtab:
