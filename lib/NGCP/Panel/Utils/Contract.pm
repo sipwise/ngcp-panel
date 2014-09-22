@@ -171,8 +171,11 @@ sub recursively_lock_contract {
             }, {
                 join => 'contact',
             });
+        my $data = { status => $status };
+        $data->{terminate_timestamp} = NGCP::Panel::Utils::DateTime::current_local
+            if($status eq 'terminated');
         for my $customer($customers->all) {
-            $customer->update({ status => $status });
+            $customer->update($data);
             for my $subscriber($customer->voip_subscribers->all) {
                 $subscriber->update({ status => $status });
                 if($status eq 'terminated') {

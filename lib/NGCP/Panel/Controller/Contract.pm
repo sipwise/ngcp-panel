@@ -209,7 +209,10 @@ sub terminate :Chained('base') :PathPart('terminate') :Args(0) {
 
     try {
         my $old_status = $contract->status;
-        $contract->update({ status => 'terminated' });
+        $contract->update({ 
+            status => 'terminated',
+            terminate_timestamp => NGCP::Panel::Utils::DateTime::current_local,
+        });
         my $schema = $c->model('DB');
         $schema->txn_do(sub {
             $contract->voip_contract_preferences->delete;
@@ -300,7 +303,7 @@ sub peering_create :Chained('peering_list') :PathPart('create') :Args(0) {
                 my $bprof_id = $form->params->{billing_profile}{id};
                 delete $form->params->{billing_profile};
                 $form->params->{external_id} = $form->field('external_id')->value;
-                $form->{create_timestamp} = $form->{modify_timestamp} = NGCP::Panel::Utils::DateTime::current_local;
+                $form->params->{create_timestamp} = $form->params->{modify_timestamp} = NGCP::Panel::Utils::DateTime::current_local;
                 my $contract = $schema->resultset('contracts')->create($form->params);
                 my $billing_profile = $schema->resultset('billing_profiles')->find($bprof_id);
                 my $product = $schema->resultset('products')->find({ class => 'sippeering' }); 
@@ -428,7 +431,7 @@ sub reseller_create :Chained('reseller_list') :PathPart('create') :Args(0) {
                 my $bprof_id = $form->params->{billing_profile}{id};
                 delete $form->params->{billing_profile};
                 $form->params->{external_id} = $form->field('external_id')->value;
-                $form->{create_timestamp} = $form->{modify_timestamp} = NGCP::Panel::Utils::DateTime::current_local;
+                $form->params->{create_timestamp} = $form->params->{modify_timestamp} = NGCP::Panel::Utils::DateTime::current_local;
                 my $contract = $schema->resultset('contracts')->create($form->params);
                 my $billing_profile = $schema->resultset('billing_profiles')->find($bprof_id);
                 my $product = $schema->resultset('products')->find({ class => 'reseller' }); 

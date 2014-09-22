@@ -157,6 +157,9 @@ sub update_contract {
             return;
         }
     }
+    if($resource->{status} eq "terminated") {
+        $resource->{terminate_timestamp} = NGCP::Panel::Utils::DateTime::current_local;
+    }
 
     $contract->update($resource);
 

@@ -223,6 +223,9 @@ sub update_customer {
     }
 
     my $old_ext_id = $customer->external_id // '';
+    if($resource->{status} eq "terminated") {
+        $resource->{terminate_timestamp} = NGCP::Panel::Utils::DateTime::current_local;
+    }
 
     $customer->update($resource);
 

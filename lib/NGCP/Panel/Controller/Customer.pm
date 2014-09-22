@@ -140,7 +140,7 @@ sub create :Chained('list_customer') :PathPart('create') :Args(0) {
                 }
                 my $bprof_id = $form->params->{billing_profile}{id};
                 delete $form->params->{billing_profile};
-                $form->{create_timestamp} = $form->{modify_timestamp} = NGCP::Panel::Utils::DateTime::current_local;
+                $form->params->{create_timestamp} = $form->params->{modify_timestamp} = NGCP::Panel::Utils::DateTime::current_local;
                 $form->params->{external_id} = $form->field('external_id')->value;
                 my $product_id = $form->params->{product}{id};
                 delete $form->params->{product};
@@ -516,7 +516,10 @@ sub terminate :Chained('base') :PathPart('terminate') :Args(0) {
         my $schema = $c->model('DB');
         $schema->txn_do(sub {
             $contract->voip_contract_preferences->delete;
-            $contract->update({ status => 'terminated' });
+            $contract->update({ 
+                status => 'terminated',
+                terminate_timestamp => NGCP::Panel::Utils::DateTime::current_local,
+            });
             # if status changed, populate it down the chain
             if($contract->status ne $old_status) {
                 NGCP::Panel::Utils::Contract::recursively_lock_contract(
