@@ -399,6 +399,7 @@ sub devmod_edit :Chained('devmod_base') :PathPart('edit') :Args(0) :Does(ACL) :A
                         next unless(defined $label);
                         $label->{line_index} = $i++;
                         $label->{position} = delete $label->{labelpos};
+                        delete $label->{id};
                         $old_range->annotations->create($label);
                     }
 
