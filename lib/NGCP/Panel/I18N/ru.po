@@ -203,15 +203,15 @@ msgstr "404 - Отсутствуют CSS для данного реселлер�
 msgid "404 - No branding logo available for this reseller"
 msgstr "404 - Отсутствует логотип для данного реселлера"
 
-#: lib/NGCP/Panel/Controller/Device.pm:456
+#: lib/NGCP/Panel/Controller/Device.pm:457
 msgid "404 - No front image available for the model of this device profile"
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/Device.pm:469
+#: lib/NGCP/Panel/Controller/Device.pm:470
 msgid "404 - No front image available for this device model"
 msgstr "404 - Изображение данного устройства отсутствует"
 
-#: lib/NGCP/Panel/Controller/Device.pm:482
+#: lib/NGCP/Panel/Controller/Device.pm:483
 msgid "404 - No mac image available for this device model"
 msgstr "404 - Изображение MAC номера устройства отсутствует"
 
@@ -628,7 +628,7 @@ msgstr "Отошел"
 msgid "BIC/SWIFT"
 msgstr "BIC/SWIFT"
 
-#: lib/NGCP/Panel/Controller/Device.pm:930
+#: lib/NGCP/Panel/Controller/Device.pm:931
 msgid "BLF Key"
 msgstr "BLF ключ"
 
@@ -2077,19 +2077,19 @@ msgstr "Профили Устройств"
 msgid "Device Vendor"
 msgstr "Производитель Устройства"
 
-#: lib/NGCP/Panel/Controller/Device.pm:745
+#: lib/NGCP/Panel/Controller/Device.pm:746
 msgid "Device configuration not found"
 msgstr "Конфигурация устройства не найдена"
 
-#: lib/NGCP/Panel/Controller/Device.pm:759
+#: lib/NGCP/Panel/Controller/Device.pm:760
 msgid "Device configuration successfully deleted"
 msgstr "Конфигурация устройства успешно удалена"
 
-#: lib/NGCP/Panel/Controller/Device.pm:572
+#: lib/NGCP/Panel/Controller/Device.pm:573
 msgid "Device firmware not found"
 msgstr "Прошивка устройства не найдена"
 
-#: lib/NGCP/Panel/Controller/Device.pm:586
+#: lib/NGCP/Panel/Controller/Device.pm:587
 msgid "Device firmware successfully deleted"
 msgstr "Прошивка устройства успешно удалена"
 
@@ -2101,11 +2101,11 @@ msgstr "Модель устройства не найдена"
 msgid "Device model successfully deleted"
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/Device.pm:914
+#: lib/NGCP/Panel/Controller/Device.pm:915
 msgid "Device profile not found"
 msgstr "Профиль устройства не найден"
 
-#: lib/NGCP/Panel/Controller/Device.pm:967
+#: lib/NGCP/Panel/Controller/Device.pm:968
 msgid "Device profile successfully deleted"
 msgstr "Профиль устройства успешно удален"
 
@@ -2568,7 +2568,7 @@ msgstr ""
 msgid "Failed to create administrator"
 msgstr ""
 
-#: lib/NGCP/Panel/Utils/Preferences.pm:370
+#: lib/NGCP/Panel/Utils/Preferences.pm:401
 msgid "Failed to create allowed_ip_grp"
 msgstr ""
 
@@ -2593,11 +2593,11 @@ msgstr ""
 msgid "Failed to create customer contract"
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/Device.pm:716
+#: lib/NGCP/Panel/Controller/Device.pm:717
 msgid "Failed to create device configuration"
 msgstr "Не удалось создать конфигурацию устройства"
 
-#: lib/NGCP/Panel/Controller/Device.pm:543
+#: lib/NGCP/Panel/Controller/Device.pm:544
 msgid "Failed to create device firmware"
 msgstr "Не удалось создать прошивку устройства"
 
@@ -2605,7 +2605,7 @@ msgstr "Не удалось создать прошивку устройства
 msgid "Failed to create device model"
 msgstr "Не удалось создать модель устройства"
 
-#: lib/NGCP/Panel/Controller/Device.pm:885
+#: lib/NGCP/Panel/Controller/Device.pm:886
 msgid "Failed to create device profile"
 msgstr "Не удалось создать профиль устройства"
 
@@ -2625,7 +2625,7 @@ msgstr ""
 msgid "Failed to create invoice."
 msgstr "Не удалось создать счёт-фактуру."
 
-#: lib/NGCP/Panel/Utils/Preferences.pm:430
+#: lib/NGCP/Panel/Utils/Preferences.pm:461
 msgid "Failed to create man_allowed_ip_grp"
 msgstr ""
 
@@ -2646,7 +2646,7 @@ msgid "Failed to create peering server"
 msgstr ""
 
 #. ($attribute)
-#: lib/NGCP/Panel/Utils/Preferences.pm:475
+#: lib/NGCP/Panel/Utils/Preferences.pm:506
 msgid "Failed to create preference %1"
 msgstr ""
 
@@ -2728,11 +2728,11 @@ msgstr ""
 msgid "Failed to delete contact"
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/Device.pm:765
+#: lib/NGCP/Panel/Controller/Device.pm:766
 msgid "Failed to delete device configuration"
 msgstr "Не удалось удалить конфигурацию устройства"
 
-#: lib/NGCP/Panel/Controller/Device.pm:592
+#: lib/NGCP/Panel/Controller/Device.pm:593
 msgid "Failed to delete device firmware"
 msgstr "Не удалось удалить прошивку устройства"
 
@@ -2740,7 +2740,7 @@ msgstr "Не удалось удалить прошивку устройства
 msgid "Failed to delete device model"
 msgstr "Не удалось удалить модель устройства"
 
-#: lib/NGCP/Panel/Controller/Device.pm:973
+#: lib/NGCP/Panel/Controller/Device.pm:974
 msgid "Failed to delete device profile"
 msgstr "Не удалось удалить профиль устройства"
 
@@ -2778,8 +2778,8 @@ msgid "Failed to delete peering server"
 msgstr ""
 
 #. ($attribute)
-#: lib/NGCP/Panel/Utils/Preferences.pm:612
-#: lib/NGCP/Panel/Utils/Preferences.pm:632
+#: lib/NGCP/Panel/Utils/Preferences.pm:643
+#: lib/NGCP/Panel/Utils/Preferences.pm:663
 msgid "Failed to delete preference %1"
 msgstr ""
 
@@ -2839,11 +2839,11 @@ msgstr "Не удалось найти пользователя голосово
 msgid "Failed to generate client certificate."
 msgstr "Не удалось создать сертификат клиента"
 
-#: lib/NGCP/Panel/Utils/Preferences.pm:348
+#: lib/NGCP/Panel/Utils/Preferences.pm:379
 msgid "Failed to generate ip group sequence"
 msgstr ""
 
-#: lib/NGCP/Panel/Utils/Preferences.pm:408
+#: lib/NGCP/Panel/Utils/Preferences.pm:439
 msgid "Failed to generate manual ip group sequence"
 msgstr ""
 
@@ -2961,19 +2961,19 @@ msgstr ""
 msgid "Failed to update customer contract"
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/Device.pm:815
+#: lib/NGCP/Panel/Controller/Device.pm:816
 msgid "Failed to update device configuration"
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/Device.pm:647
+#: lib/NGCP/Panel/Controller/Device.pm:648
 msgid "Failed to update device firmware"
 msgstr "Не удалось обновить прошивку устройства"
 
-#: lib/NGCP/Panel/Controller/Device.pm:438
+#: lib/NGCP/Panel/Controller/Device.pm:439
 msgid "Failed to update device model"
 msgstr "Не удалось обновить модель устройства"
 
-#: lib/NGCP/Panel/Controller/Device.pm:1024
+#: lib/NGCP/Panel/Controller/Device.pm:1025
 msgid "Failed to update device profile"
 msgstr "Не удалось обновить профиль устройства"
 
@@ -3010,10 +3010,10 @@ msgid "Failed to update peering server"
 msgstr ""
 
 #. ($attribute)
-#: lib/NGCP/Panel/Utils/Preferences.pm:522
-#: lib/NGCP/Panel/Utils/Preferences.pm:554
-#: lib/NGCP/Panel/Utils/Preferences.pm:586
-#: lib/NGCP/Panel/Utils/Preferences.pm:654
+#: lib/NGCP/Panel/Utils/Preferences.pm:553
+#: lib/NGCP/Panel/Utils/Preferences.pm:585
+#: lib/NGCP/Panel/Utils/Preferences.pm:617
+#: lib/NGCP/Panel/Utils/Preferences.pm:685
 msgid "Failed to update preference %1"
 msgstr ""
 
@@ -3409,7 +3409,7 @@ msgstr ""
 msgid "IBAN"
 msgstr "IBAN"
 
-#: lib/NGCP/Panel/Controller/Device.pm:925
+#: lib/NGCP/Panel/Controller/Device.pm:926
 msgid "ID"
 msgstr "ID"
 
@@ -3663,11 +3663,11 @@ msgstr "Обнаружен некорректный id контракта"
 msgid "Invalid customer contract id"
 msgstr "Обнаружен некорректный id контракта клиента"
 
-#: lib/NGCP/Panel/Controller/Device.pm:735
+#: lib/NGCP/Panel/Controller/Device.pm:736
 msgid "Invalid device configuration id"
 msgstr "Обнаружен некорректный id конфигурации устройства"
 
-#: lib/NGCP/Panel/Controller/Device.pm:562
+#: lib/NGCP/Panel/Controller/Device.pm:563
 msgid "Invalid device firmware id"
 msgstr "Обнаружен некорректный id прошивки устройства"
 
@@ -3675,7 +3675,7 @@ msgstr "Обнаружен некорректный id прошивки устр
 msgid "Invalid device model id"
 msgstr "Обнаружен некорректный id модели устройства"
 
-#: lib/NGCP/Panel/Controller/Device.pm:904
+#: lib/NGCP/Panel/Controller/Device.pm:905
 msgid "Invalid device profile id"
 msgstr "Обнаружен некорректный id профиля устройства"
 
@@ -4102,7 +4102,7 @@ msgstr "Редактировать набор звуков %1"
 msgid "Manage Time Sets"
 msgstr "Редактировать наборы периодов"
 
-#: lib/NGCP/Panel/Utils/Preferences.pm:401
+#: lib/NGCP/Panel/Utils/Preferences.pm:432
 msgid "Manual ip group sequence successfully generated"
 msgstr ""
 
@@ -4375,7 +4375,7 @@ msgstr "НОВОЕ СООБЩЕНИЕ"
 #: lib/NGCP/Panel/Controller/Customer.pm:287
 #: lib/NGCP/Panel/Controller/Customer.pm:296
 #: lib/NGCP/Panel/Controller/Device.pm:106
-#: lib/NGCP/Panel/Controller/Device.pm:926
+#: lib/NGCP/Panel/Controller/Device.pm:927
 #: lib/NGCP/Panel/Controller/EmailTemplate.pm:35
 #: lib/NGCP/Panel/Controller/InvoiceTemplate.pm:34
 #: lib/NGCP/Panel/Controller/Peering.pm:28
@@ -4562,7 +4562,7 @@ msgstr "Диапазон номеров успешно создан удален
 msgid "Number block successfully updated"
 msgstr "Диапазон номеров успешно обновлен"
 
-#: lib/NGCP/Panel/Controller/Device.pm:927
+#: lib/NGCP/Panel/Controller/Device.pm:928
 msgid "Number of Lines/Keys"
 msgstr "Количество Линий/Кнопок"
 
@@ -5022,22 +5022,22 @@ msgid "Postcode"
 msgstr "Почтовый индекс"
 
 #. ($attribute)
-#: lib/NGCP/Panel/Utils/Preferences.pm:468
+#: lib/NGCP/Panel/Utils/Preferences.pm:499
 msgid "Preference %1 successfully created"
 msgstr ""
 
 #. ($attribute)
-#: lib/NGCP/Panel/Utils/Preferences.pm:605
-#: lib/NGCP/Panel/Utils/Preferences.pm:625
+#: lib/NGCP/Panel/Utils/Preferences.pm:636
+#: lib/NGCP/Panel/Utils/Preferences.pm:656
 msgid "Preference %1 successfully deleted"
 msgstr ""
 
 #. ($attribute)
-#: lib/NGCP/Panel/Utils/Preferences.pm:492
-#: lib/NGCP/Panel/Utils/Preferences.pm:515
-#: lib/NGCP/Panel/Utils/Preferences.pm:547
-#: lib/NGCP/Panel/Utils/Preferences.pm:579
-#: lib/NGCP/Panel/Utils/Preferences.pm:647
+#: lib/NGCP/Panel/Utils/Preferences.pm:523
+#: lib/NGCP/Panel/Utils/Preferences.pm:546
+#: lib/NGCP/Panel/Utils/Preferences.pm:578
+#: lib/NGCP/Panel/Utils/Preferences.pm:610
+#: lib/NGCP/Panel/Utils/Preferences.pm:678
 msgid "Preference %1 successfully updated"
 msgstr ""
 
@@ -5081,7 +5081,7 @@ msgstr "Приоритет"
 msgid "Priority (q-value)"
 msgstr "Приоритет (q-value)"
 
-#: lib/NGCP/Panel/Controller/Device.pm:928
+#: lib/NGCP/Panel/Controller/Device.pm:929
 msgid "Private Line"
 msgstr "Приватная линия"
 
@@ -5813,7 +5813,7 @@ msgstr "Настройка"
 msgid "Settings"
 msgstr "Настройки"
 
-#: lib/NGCP/Panel/Controller/Device.pm:929
+#: lib/NGCP/Panel/Controller/Device.pm:930
 msgid "Shared Line"
 msgstr "Общая линия"
 
@@ -6399,11 +6399,11 @@ msgstr "Перенаправление звонков успешно очище�
 msgid "Successfully cleared fraud interval!"
 msgstr "Интервал мошенничества успешно очищен!"
 
-#: lib/NGCP/Panel/Controller/Device.pm:710
+#: lib/NGCP/Panel/Controller/Device.pm:711
 msgid "Successfully created device configuration"
 msgstr "Конфигурация устройства успешно добавлена"
 
-#: lib/NGCP/Panel/Controller/Device.pm:537
+#: lib/NGCP/Panel/Controller/Device.pm:538
 msgid "Successfully created device firmware"
 msgstr "Прошивка устройства успешно добавлена"
 
@@ -6411,7 +6411,7 @@ msgstr "Прошивка устройства успешно добавлена"
 msgid "Successfully created device model"
 msgstr "Модель устройства успешно добавлена"
 
-#: lib/NGCP/Panel/Controller/Device.pm:879
+#: lib/NGCP/Panel/Controller/Device.pm:880
 msgid "Successfully created device profile"
 msgstr "Профиль устройства успешно добавлен"
 
@@ -6477,7 +6477,7 @@ msgstr "Реселлер успешно удален"
 msgid "Successfully terminated subscriber"
 msgstr "Абонент успешно удален"
 
-#: lib/NGCP/Panel/Controller/Customer.pm:1366
+#: lib/NGCP/Panel/Controller/Customer.pm:1365
 msgid "Successfully triggered config reload via SIP"
 msgstr ""
 
@@ -6489,19 +6489,19 @@ msgstr "Слот автоответчика успешно обновлен"
 msgid "Successfully updated ccmappings"
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/Device.pm:809
+#: lib/NGCP/Panel/Controller/Device.pm:810
 msgid "Successfully updated device configuration"
 msgstr "Конфигурация устройства успешно обновлена"
 
-#: lib/NGCP/Panel/Controller/Device.pm:641
+#: lib/NGCP/Panel/Controller/Device.pm:642
 msgid "Successfully updated device firmware"
 msgstr "Прошивка устройства успешно обновлена"
 
-#: lib/NGCP/Panel/Controller/Device.pm:432
+#: lib/NGCP/Panel/Controller/Device.pm:433
 msgid "Successfully updated device model"
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/Device.pm:1018
+#: lib/NGCP/Panel/Controller/Device.pm:1019
 msgid "Successfully updated device profile"
 msgstr "Профиль устройства успешно обновлен"
 
@@ -8186,7 +8186,7 @@ msgstr "все исходящие звонки"
 msgid "all rights reserved"
 msgstr "Все права защищены"
 
-#: lib/NGCP/Panel/Utils/Preferences.pm:363
+#: lib/NGCP/Panel/Utils/Preferences.pm:394
 msgid "allowed_ip_grp successfully created"
 msgstr ""
 
@@ -8380,7 +8380,7 @@ msgstr "номер инцидента:"
 msgid "incoming and outgoing"
 msgstr "входящие и исходящие"
 
-#: lib/NGCP/Panel/Utils/Preferences.pm:341
+#: lib/NGCP/Panel/Utils/Preferences.pm:372
 msgid "ip group sequence successfully generated"
 msgstr ""
 
@@ -8400,7 +8400,7 @@ msgstr "загрузка..."
 msgid "locked"
 msgstr "заблокирован"
 
-#: lib/NGCP/Panel/Utils/Preferences.pm:423
+#: lib/NGCP/Panel/Utils/Preferences.pm:454
 msgid "man_allowed_ip_grp successfully created"
 msgstr ""
 
