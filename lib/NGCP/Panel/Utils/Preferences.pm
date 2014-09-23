@@ -304,10 +304,41 @@ sub create_preference_form {
         fields => {},
         back_uri => $c->req->uri,
     );
-    my %log_data = ( %{$c->request->params},
-                     subscriber_id => $c->stash->{subscriber}->id,
-                     uuid          => $c->stash->{subscriber}->uuid,
-                   );
+
+    # logging
+    my %log_data = %{$c->request->params};
+    # subscriber prefs
+    if ($c->stash->{subscriber}) {
+        %log_data = ( %log_data,
+                      type          => 'subscriber',
+                      subscriber_id => $c->stash->{subscriber}->id,
+                      uuid          => $c->stash->{subscriber}->uuid,
+                    );
+    # domain prefs
+    } elsif ($c->stash->{domain}) {
+        %log_data = ( %log_data,
+                      type      => 'domain',
+                      domain_id => $c->stash->{domain}{id},
+                      domain    => $c->stash->{domain}{domain},
+                    );
+    # customer prefs
+    } elsif ($c->stash->{contract}) {
+        %log_data = ( %log_data,
+                      type        => 'customer',
+                      customer_id => $c->stash->{contract}->id,
+                      reseller_id => $c->stash->{contract}->contact->reseller_id,
+                    );
+    # peering prefs
+    } elsif ($c->stash->{group} && $c->stash->{server}) {
+        %log_data = ( %log_data,
+                      type            => 'peer',
+                      peer_group_id   => $c->stash->{group}{id},
+                      peer_group_name => $c->stash->{group}{name},
+                      peer_host_id    => $c->stash->{server}{id},
+                      peer_host_name  => $c->stash->{server}{name},
+                    );
+    }
+
     if($posted && $form->validated) {
        my $preference_id = $c->stash->{preference}->first ? $c->stash->{preference}->first->id : undef;
        my $attribute = $c->stash->{preference_meta}->attribute;
