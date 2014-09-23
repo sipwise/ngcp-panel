@@ -107,15 +107,15 @@ msgstr ""
 msgid "404 - No branding logo available for this reseller"
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/Device.pm:456
+#: lib/NGCP/Panel/Controller/Device.pm:457
 msgid "404 - No front image available for the model of this device profile"
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/Device.pm:469
+#: lib/NGCP/Panel/Controller/Device.pm:470
 msgid "404 - No front image available for this device model"
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/Device.pm:482
+#: lib/NGCP/Panel/Controller/Device.pm:483
 msgid "404 - No mac image available for this device model"
 msgstr ""
 
@@ -475,7 +475,7 @@ msgstr ""
 msgid "BIC/SWIFT"
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/Device.pm:930
+#: lib/NGCP/Panel/Controller/Device.pm:931
 msgid "BLF Key"
 msgstr ""
 
@@ -1626,19 +1626,19 @@ msgstr ""
 msgid "Device Vendor"
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/Device.pm:745
+#: lib/NGCP/Panel/Controller/Device.pm:746
 msgid "Device configuration not found"
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/Device.pm:759
+#: lib/NGCP/Panel/Controller/Device.pm:760
 msgid "Device configuration successfully deleted"
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/Device.pm:572
+#: lib/NGCP/Panel/Controller/Device.pm:573
 msgid "Device firmware not found"
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/Device.pm:586
+#: lib/NGCP/Panel/Controller/Device.pm:587
 msgid "Device firmware successfully deleted"
 msgstr ""
 
@@ -1650,11 +1650,11 @@ msgstr ""
 msgid "Device model successfully deleted"
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/Device.pm:914
+#: lib/NGCP/Panel/Controller/Device.pm:915
 msgid "Device profile not found"
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/Device.pm:967
+#: lib/NGCP/Panel/Controller/Device.pm:968
 msgid "Device profile successfully deleted"
 msgstr ""
 
@@ -2016,7 +2016,7 @@ msgstr ""
 msgid "Failed to create administrator"
 msgstr ""
 
-#: lib/NGCP/Panel/Utils/Preferences.pm:370
+#: lib/NGCP/Panel/Utils/Preferences.pm:401
 msgid "Failed to create allowed_ip_grp"
 msgstr ""
 
@@ -2040,11 +2040,11 @@ msgstr ""
 msgid "Failed to create customer contract"
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/Device.pm:716
+#: lib/NGCP/Panel/Controller/Device.pm:717
 msgid "Failed to create device configuration"
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/Device.pm:543
+#: lib/NGCP/Panel/Controller/Device.pm:544
 msgid "Failed to create device firmware"
 msgstr ""
 
@@ -2052,7 +2052,7 @@ msgstr ""
 msgid "Failed to create device model"
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/Device.pm:885
+#: lib/NGCP/Panel/Controller/Device.pm:886
 msgid "Failed to create device profile"
 msgstr ""
 
@@ -2072,7 +2072,7 @@ msgstr ""
 msgid "Failed to create invoice."
 msgstr ""
 
-#: lib/NGCP/Panel/Utils/Preferences.pm:430
+#: lib/NGCP/Panel/Utils/Preferences.pm:461
 msgid "Failed to create man_allowed_ip_grp"
 msgstr ""
 
@@ -2093,7 +2093,7 @@ msgid "Failed to create peering server"
 msgstr ""
 
 #. ($attribute)
-#: lib/NGCP/Panel/Utils/Preferences.pm:475
+#: lib/NGCP/Panel/Utils/Preferences.pm:506
 msgid "Failed to create preference %1"
 msgstr ""
 
@@ -2173,11 +2173,11 @@ msgstr ""
 msgid "Failed to delete contact"
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/Device.pm:765
+#: lib/NGCP/Panel/Controller/Device.pm:766
 msgid "Failed to delete device configuration"
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/Device.pm:592
+#: lib/NGCP/Panel/Controller/Device.pm:593
 msgid "Failed to delete device firmware"
 msgstr ""
 
@@ -2185,7 +2185,7 @@ msgstr ""
 msgid "Failed to delete device model"
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/Device.pm:973
+#: lib/NGCP/Panel/Controller/Device.pm:974
 msgid "Failed to delete device profile"
 msgstr ""
 
@@ -2222,7 +2222,7 @@ msgid "Failed to delete peering server"
 msgstr ""
 
 #. ($attribute)
-#: lib/NGCP/Panel/Utils/Preferences.pm:612 lib/NGCP/Panel/Utils/Preferences.pm:632
+#: lib/NGCP/Panel/Utils/Preferences.pm:643 lib/NGCP/Panel/Utils/Preferences.pm:663
 msgid "Failed to delete preference %1"
 msgstr ""
 
@@ -2282,11 +2282,11 @@ msgstr ""
 msgid "Failed to generate client certificate."
 msgstr ""
 
-#: lib/NGCP/Panel/Utils/Preferences.pm:348
+#: lib/NGCP/Panel/Utils/Preferences.pm:379
 msgid "Failed to generate ip group sequence"
 msgstr ""
 
-#: lib/NGCP/Panel/Utils/Preferences.pm:408
+#: lib/NGCP/Panel/Utils/Preferences.pm:439
 msgid "Failed to generate manual ip group sequence"
 msgstr ""
 
@@ -2400,19 +2400,19 @@ msgstr ""
 msgid "Failed to update customer contract"
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/Device.pm:815
+#: lib/NGCP/Panel/Controller/Device.pm:816
 msgid "Failed to update device configuration"
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/Device.pm:647
+#: lib/NGCP/Panel/Controller/Device.pm:648
 msgid "Failed to update device firmware"
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/Device.pm:438
+#: lib/NGCP/Panel/Controller/Device.pm:439
 msgid "Failed to update device model"
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/Device.pm:1024
+#: lib/NGCP/Panel/Controller/Device.pm:1025
 msgid "Failed to update device profile"
 msgstr ""
 
@@ -2449,7 +2449,7 @@ msgid "Failed to update peering server"
 msgstr ""
 
 #. ($attribute)
-#: lib/NGCP/Panel/Utils/Preferences.pm:522 lib/NGCP/Panel/Utils/Preferences.pm:554 lib/NGCP/Panel/Utils/Preferences.pm:586 lib/NGCP/Panel/Utils/Preferences.pm:654
+#: lib/NGCP/Panel/Utils/Preferences.pm:553 lib/NGCP/Panel/Utils/Preferences.pm:585 lib/NGCP/Panel/Utils/Preferences.pm:617 lib/NGCP/Panel/Utils/Preferences.pm:685
 msgid "Failed to update preference %1"
 msgstr ""
 
@@ -2815,7 +2815,7 @@ msgstr ""
 msgid "IBAN"
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/Device.pm:925
+#: lib/NGCP/Panel/Controller/Device.pm:926
 msgid "ID"
 msgstr ""
 
@@ -3039,11 +3039,11 @@ msgstr ""
 msgid "Invalid customer contract id"
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/Device.pm:735
+#: lib/NGCP/Panel/Controller/Device.pm:736
 msgid "Invalid device configuration id"
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/Device.pm:562
+#: lib/NGCP/Panel/Controller/Device.pm:563
 msgid "Invalid device firmware id"
 msgstr ""
 
@@ -3051,7 +3051,7 @@ msgstr ""
 msgid "Invalid device model id"
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/Device.pm:904
+#: lib/NGCP/Panel/Controller/Device.pm:905
 msgid "Invalid device profile id"
 msgstr ""
 
@@ -3436,7 +3436,7 @@ msgstr ""
 msgid "Manage Time Sets"
 msgstr ""
 
-#: lib/NGCP/Panel/Utils/Preferences.pm:401
+#: lib/NGCP/Panel/Utils/Preferences.pm:432
 msgid "Manual ip group sequence successfully generated"
 msgstr ""
 
@@ -3675,7 +3675,7 @@ msgstr ""
 msgid "NEW MESSAGE"
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/Billing.pm:37 lib/NGCP/Panel/Controller/Customer.pm:281 lib/NGCP/Panel/Controller/Customer.pm:287 lib/NGCP/Panel/Controller/Customer.pm:296 lib/NGCP/Panel/Controller/Device.pm:106 lib/NGCP/Panel/Controller/Device.pm:926 lib/NGCP/Panel/Controller/EmailTemplate.pm:35 lib/NGCP/Panel/Controller/InvoiceTemplate.pm:34 lib/NGCP/Panel/Controller/Peering.pm:28 lib/NGCP/Panel/Controller/Peering.pm:77 lib/NGCP/Panel/Controller/Product.pm:23 lib/NGCP/Panel/Controller/Reseller.pm:136 lib/NGCP/Panel/Controller/Reseller.pm:141 lib/NGCP/Panel/Controller/Reseller.pm:162 lib/NGCP/Panel/Controller/Reseller.pm:36 lib/NGCP/Panel/Controller/Rewrite.pm:33 lib/NGCP/Panel/Controller/SubscriberProfile.pm:331 lib/NGCP/Panel/Controller/SubscriberProfile.pm:40 lib/NGCP/Panel/Utils/DbStrings.pm:912 lib/NGCP/Panel/Utils/Sounds.pm:63 share/templates/customer/details.tt:101 share/templates/customer/details.tt:53 share/templates/customer/details.tt:63 share/templates/customer/details.tt:91 share/templates/helpers/pref_table.tt:39 share/templates/sound/handles_list.tt:29 share/templates/subscriber/preferences.tt:171 share/templates/subscriber/preferences.tt:257 share/templates/subscriber/preferences.tt:618 share/templates/subscriber/preferences.tt:668
+#: lib/NGCP/Panel/Controller/Billing.pm:37 lib/NGCP/Panel/Controller/Customer.pm:281 lib/NGCP/Panel/Controller/Customer.pm:287 lib/NGCP/Panel/Controller/Customer.pm:296 lib/NGCP/Panel/Controller/Device.pm:106 lib/NGCP/Panel/Controller/Device.pm:927 lib/NGCP/Panel/Controller/EmailTemplate.pm:35 lib/NGCP/Panel/Controller/InvoiceTemplate.pm:34 lib/NGCP/Panel/Controller/Peering.pm:28 lib/NGCP/Panel/Controller/Peering.pm:77 lib/NGCP/Panel/Controller/Product.pm:23 lib/NGCP/Panel/Controller/Reseller.pm:136 lib/NGCP/Panel/Controller/Reseller.pm:141 lib/NGCP/Panel/Controller/Reseller.pm:162 lib/NGCP/Panel/Controller/Reseller.pm:36 lib/NGCP/Panel/Controller/Rewrite.pm:33 lib/NGCP/Panel/Controller/SubscriberProfile.pm:331 lib/NGCP/Panel/Controller/SubscriberProfile.pm:40 lib/NGCP/Panel/Utils/DbStrings.pm:912 lib/NGCP/Panel/Utils/Sounds.pm:63 share/templates/customer/details.tt:101 share/templates/customer/details.tt:53 share/templates/customer/details.tt:63 share/templates/customer/details.tt:91 share/templates/helpers/pref_table.tt:39 share/templates/sound/handles_list.tt:29 share/templates/subscriber/preferences.tt:171 share/templates/subscriber/preferences.tt:257 share/templates/subscriber/preferences.tt:618 share/templates/subscriber/preferences.tt:668
 msgid "Name"
 msgstr ""
 
@@ -3832,7 +3832,7 @@ msgstr ""
 msgid "Number block successfully updated"
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/Device.pm:927
+#: lib/NGCP/Panel/Controller/Device.pm:928
 msgid "Number of Lines/Keys"
 msgstr ""
 
@@ -4272,17 +4272,17 @@ msgid "Postcode"
 msgstr ""
 
 #. ($attribute)
-#: lib/NGCP/Panel/Utils/Preferences.pm:468
+#: lib/NGCP/Panel/Utils/Preferences.pm:499
 msgid "Preference %1 successfully created"
 msgstr ""
 
 #. ($attribute)
-#: lib/NGCP/Panel/Utils/Preferences.pm:605 lib/NGCP/Panel/Utils/Preferences.pm:625
+#: lib/NGCP/Panel/Utils/Preferences.pm:636 lib/NGCP/Panel/Utils/Preferences.pm:656
 msgid "Preference %1 successfully deleted"
 msgstr ""
 
 #. ($attribute)
-#: lib/NGCP/Panel/Utils/Preferences.pm:492 lib/NGCP/Panel/Utils/Preferences.pm:515 lib/NGCP/Panel/Utils/Preferences.pm:547 lib/NGCP/Panel/Utils/Preferences.pm:579 lib/NGCP/Panel/Utils/Preferences.pm:647
+#: lib/NGCP/Panel/Utils/Preferences.pm:523 lib/NGCP/Panel/Utils/Preferences.pm:546 lib/NGCP/Panel/Utils/Preferences.pm:578 lib/NGCP/Panel/Utils/Preferences.pm:610 lib/NGCP/Panel/Utils/Preferences.pm:678
 msgid "Preference %1 successfully updated"
 msgstr ""
 
@@ -4314,7 +4314,7 @@ msgstr ""
 msgid "Priority (q-value)"
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/Device.pm:928
+#: lib/NGCP/Panel/Controller/Device.pm:929
 msgid "Private Line"
 msgstr ""
 
@@ -4857,7 +4857,7 @@ msgstr ""
 msgid "Settings"
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/Device.pm:929
+#: lib/NGCP/Panel/Controller/Device.pm:930
 msgid "Shared Line"
 msgstr ""
 
@@ -5355,11 +5355,11 @@ msgstr ""
 msgid "Successfully cleared fraud interval!"
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/Device.pm:710
+#: lib/NGCP/Panel/Controller/Device.pm:711
 msgid "Successfully created device configuration"
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/Device.pm:537
+#: lib/NGCP/Panel/Controller/Device.pm:538
 msgid "Successfully created device firmware"
 msgstr ""
 
@@ -5367,7 +5367,7 @@ msgstr ""
 msgid "Successfully created device model"
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/Device.pm:879
+#: lib/NGCP/Panel/Controller/Device.pm:880
 msgid "Successfully created device profile"
 msgstr ""
 
@@ -5432,7 +5432,7 @@ msgstr ""
 msgid "Successfully terminated subscriber"
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/Customer.pm:1366
+#: lib/NGCP/Panel/Controller/Customer.pm:1365
 msgid "Successfully triggered config reload via SIP"
 msgstr ""
 
@@ -5444,19 +5444,19 @@ msgstr ""
 msgid "Successfully updated ccmappings"
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/Device.pm:809
+#: lib/NGCP/Panel/Controller/Device.pm:810
 msgid "Successfully updated device configuration"
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/Device.pm:641
+#: lib/NGCP/Panel/Controller/Device.pm:642
 msgid "Successfully updated device firmware"
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/Device.pm:432
+#: lib/NGCP/Panel/Controller/Device.pm:433
 msgid "Successfully updated device model"
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/Device.pm:1018
+#: lib/NGCP/Panel/Controller/Device.pm:1019
 msgid "Successfully updated device profile"
 msgstr ""
 
@@ -6887,7 +6887,7 @@ msgstr ""
 msgid "all rights reserved"
 msgstr ""
 
-#: lib/NGCP/Panel/Utils/Preferences.pm:363
+#: lib/NGCP/Panel/Utils/Preferences.pm:394
 msgid "allowed_ip_grp successfully created"
 msgstr ""
 
@@ -7075,7 +7075,7 @@ msgstr ""
 msgid "incoming and outgoing"
 msgstr ""
 
-#: lib/NGCP/Panel/Utils/Preferences.pm:341
+#: lib/NGCP/Panel/Utils/Preferences.pm:372
 msgid "ip group sequence successfully generated"
 msgstr ""
 
@@ -7095,7 +7095,7 @@ msgstr ""
 msgid "locked"
 msgstr ""
 
-#: lib/NGCP/Panel/Utils/Preferences.pm:423
+#: lib/NGCP/Panel/Utils/Preferences.pm:454
 msgid "man_allowed_ip_grp successfully created"
 msgstr ""
 
