@@ -7,6 +7,8 @@ use WWW::Mechanize::Firefox;
 use DBI;
 use DateTime;
 use DateTime::Format::ISO8601;
+#use Storable qw/dclone/;
+use Clone 'clone';
 
 my $datetime = DateTime->from_epoch(
     time_zone => DateTime::TimeZone->new(name => 'local'),
@@ -21,20 +23,20 @@ my $cfg = {
     }
 };
 
-$dbh->do('drop table urltemplate');
-$dbh->do('drop table url');
-$dbh->do('drop table urlcontent');
-$dbh->do('drop table urlvariant');
-$dbh->do('drop table control');
-$dbh->do('drop table url_control');
-$dbh->do('drop table url_template');
-$dbh->do('create table urltemplate(id integer(11) auto_increment primary key, template varchar(512))');
-$dbh->do('create table url(id integer(11) unsigned not null auto_increment primary key, url varchar(512), urltemplate_id integer(11), lastvisit timestamp default 0)');
-$dbh->do('create table urlvariant(id integer(11) unsigned not null, url varchar(512), container_url_id integer(11))');
-$dbh->do('create table urlcontent(id integer(11) unsigned not null, content text)');
-$dbh->do('create table control(id integer(11) unsigned not null auto_increment primary key, label text, goto_url_id integer(11) unsigned)');
-$dbh->do('create table url_control(url_id integer(11) unsigned, control_id integer(11) unsigned)');
-$dbh->do('create table url_template(url_id integer(11) unsigned, urltemplate_id integer(11) unsigned)');
+#$dbh->do('drop table urltemplate');
+#$dbh->do('drop table url');
+#$dbh->do('drop table urlcontent');
+#$dbh->do('drop table urlvariant');
+#$dbh->do('drop table control');
+#$dbh->do('drop table url_control');
+#$dbh->do('drop table url_template');
+#$dbh->do('create table urltemplate(id integer(11) auto_increment primary key, template varchar(512))');
+#$dbh->do('create table url(id integer(11) unsigned not null auto_increment primary key, url varchar(512), urltemplate_id integer(11), lastvisit timestamp default 0)');
+#$dbh->do('create table urlvariant(id integer(11) unsigned not null, url varchar(512), container_url_id integer(11))');
+#$dbh->do('create table urlcontent(id integer(11) unsigned not null, content text)');
+#$dbh->do('create table control(id integer(11) unsigned not null auto_increment primary key, label text, goto_url_id integer(11) unsigned)');
+#$dbh->do('create table url_control(url_id integer(11) unsigned, control_id integer(11) unsigned)');
+#$dbh->do('create table url_template(url_id integer(11) unsigned, urltemplate_id integer(11) unsigned)');
 
 # Xvfb :99 &
 # DISPLAY=:99 firefox --display=:99 &
@@ -46,14 +48,14 @@ $dbh->do('create table url_template(url_id integer(11) unsigned, urltemplate_id 
 our $host = 'https://192.168.56.7:1444';
 
 
-get_data($host.'/');
-while (my $url = $dbh->selectrow_array('select url from url where unix_timestamp(lastvisit) < ? limit 1', undef, $datetime->epoch)){
-    get_data($url);
-}
+get_data($mech,$host.'/dashboard');
+#while (my $url = $dbh->selectrow_array('select url from url where unix_timestamp(lastvisit) < ? limit 1', undef, $datetime->epoch)){
+#    get_data($mech,$url);
+#}
 
 sub get_data{
-    my ($url_in,$container_url,$loaded) = {}; 
-    @{$url_in}{qw/url/} = @_;
+    my ($url_in,$mech,$container_url,$loaded) = {}; 
+    ($mech,@{$url_in}{qw/url/},$container_url,$loaded) = @_;
     print $url_in->{url}.";\n";
     if(!check_url_toadd($url_in->{url})){
         return;
@@ -97,7 +99,14 @@ sub get_data{
         #    #$mech->click($control);
         #}
         #foreach my $link ( $mech->links()  ) {
-        foreach my $link ( $mech->find_all_links_dom()  ) {
+        #foreach my $link ( $mech->find_all_links_dom()  ) {
+        #my $repl = $mech->repl();
+        my $contentDiv = $mech->xpath('//div[@id="content"]', single => 1);
+        my @links = $mech->find_all_links_dom( node => $contentDiv );
+        #my @links = $mech->find_all_links_dom( );
+        print $#links;
+        die();
+        foreach my $link ( @links ) {
             if(!check_url_toadd($link->{href})){
                 next;
             }
@@ -115,18 +124,45 @@ sub get_data{
             register_control($url,$control);
             
             #print Dumper $link;
+            print "================================\n";
+            print Dumper { map { $_ => $url->{$_}; } qw/id url urltemplate_id/};
+            print Dumper $control_url;
             print Dumper $control;
             print Dumper $link->{tagName};
-            if('A' eq $link->{tagName}){
-                #my $mechTmp = $mech;
-                #$mechTmp->follow_link($link);
+            if(( 'A' eq $link->{tagName}) && check_url_toadd($goto_url->{url})){
                 #get_data($goto_url->{url},$url,1);
-                get_data($goto_url->{url},$url,0);
+                #get_data($goto_url->{url},$url,0);
+                #my $mechRecursion = clone($mech);
+                $SIG{ALRM} = \&request_timed_out;
+                eval {
+                    alarm (10);
+                    #$mechRecursion->follow_link($link);
+                    print "follow_link\n";
+                    $mech->follow_link($link);
+                    alarm(0);           # Cancel the pending alarm if user responds.
+                };
+                if('link_timed_out' eq $@){
+                    print "link hanged\n";
+                }else{
+                    #get_data($mechRecursion,$goto_url->{url},$url,1);
+                    print "get_data\n";
+                    get_data($mech,$goto_url->{url},$url,0);
+                    eval {
+                        alarm (10);
+                        $mech->back();
+                        alarm(0);           # Cancel the pending alarm if user responds.
+                    };
+                }
+                #if ($@ =~ /LOCAL_LINK/) {
+                #    print "Timed out. Proceeding with default\n";
+                #}
             }
         }
     }
 }
-
+sub request_timed_out{
+    die("link_timed_out");
+}
 sub get_url_db{
     my($url) = @_;
     my $url_db;
@@ -240,7 +276,7 @@ sub rule_url_template{
 }
 sub register_url_template{
     my($container_url,$urltemplate) = @_;
-    $dbh->do('insert into url_template(url_id,urltemplate_id)values()',undef,$container_url->{id},$urltemplate->{id});
+    $dbh->do('insert into url_template(url_id,urltemplate_id)values(?,?)',undef,$container_url->{id},$urltemplate->{id});
 }
 sub get_registered_url_template{
     my($container_url,$urltemplate) = @_;
