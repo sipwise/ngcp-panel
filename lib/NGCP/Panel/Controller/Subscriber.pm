@@ -650,7 +650,12 @@ sub recover_webpassword :Chained('/') :PathPart('recoverwebpassword') :Args(0) {
                 $rs->delete;
             });
         } catch($e) {
-            $c->log->error("failed to recover web password: $e");
+            NGCP::Panel::Utils::Message->error(
+                c     => $c,
+                error => $e,
+                type  => 'internal',
+                desc  => $c->loc('Failed to recover web password'),
+            );
             $c->detach('/denied_page');
         }
 
@@ -767,8 +772,11 @@ sub preferences_base :Chained('base') :PathPart('preferences') :CaptureArgs(1) {
         ->single({id => $pref_id});
      if(($c->user->roles eq 'subscriber' || $c->user->roles eq 'subscriberadmin') &&
         !$c->stash->{preference_meta}->expose_to_customer) {
-
-        $c->log->error("invalid access to pref_id '$pref_id' by provisioning subscriber id '".$c->user->id."'");
+        NGCP::Panel::Utils::Message->error(
+            c    => $c,
+            type => 'internal',
+            desc => $c->loc("Invalid access to pref_id '[_1]' by provisioning subscriber id '[_2]'", $pref_id, $c->user->id),
+        );
         $c->detach('/denied_page');
     }
 
@@ -1396,8 +1404,18 @@ sub preferences_callforward_destinationset_create :Chained('base') :PathPart('pr
                     }
                 }
             });
+            NGCP::Panel::Utils::Message->info(
+                c    => $c,
+                type => 'internal',
+                desc => $c->loc('Successfully created new destination set'),
+            );
         } catch($e) {
-            $c->log->error("failed to create new destination set: $e");
+            NGCP::Panel::Utils::Message->error(
+                c     => $c,
+                error => $e,
+                type  => 'internal',
+                desc  => $c->loc('Failed to create new destination set'),
+            );
         }
         NGCP::Panel::Utils::Navigation::back_or($c, 
             $c->uri_for_action('/subscriber/preferences_callforward_destinationset', 
@@ -1570,8 +1588,18 @@ sub preferences_callforward_destinationset_edit :Chained('preferences_callforwar
                     }
                 }
             });
+            NGCP::Panel::Utils::Message->info(
+                c    => $c,
+                type => 'internal',
+                desc => $c->loc('Successfully updated destination set'),
+            );
         } catch($e) {
-            $c->log->error("failed to update destination set: $e");
+            NGCP::Panel::Utils::Message->error(
+                c     => $c,
+                error => $e,
+                type  => 'internal',
+                desc  => $c->loc('Failed to update destination set'),
+            );
         }
         NGCP::Panel::Utils::Navigation::back_or($c, $fallback);
     }
@@ -1612,8 +1640,20 @@ sub preferences_callforward_destinationset_delete :Chained('preferences_callforw
             }
             $set->delete;
         });
+        NGCP::Panel::Utils::Message->info(
+            c    => $c,
+            data => { $set->get_inflated_columns },
+            type => 'internal',
+            desc => $c->loc('Successfully deleted destination set'),
+        );
     } catch($e) {
-        $c->log->error("failed to delete destination set: $e");
+        NGCP::Panel::Utils::Message->error(
+            c     => $c,
+            error => $e,
+            data  => { $set->get_inflated_columns },
+            type  => 'internal',
+            desc  => $c->loc('Failed to delete destination set'),
+        );
     }
 
     NGCP::Panel::Utils::Navigation::back_or($c,
@@ -1709,8 +1749,18 @@ sub preferences_callforward_timeset_create :Chained('base') :PathPart('preferenc
                     }
                 }
             });
+            NGCP::Panel::Utils::Message->info(
+                c    => $c,
+                type => 'internal',
+                desc => $c->loc('Successfully created new time set'),
+            );
         } catch($e) {
-            $c->log->error("failed to create new time set: $e");
+            NGCP::Panel::Utils::Message->error(
+                c     => $c,
+                error => $e,
+                type  => 'internal',
+                desc  => $c->loc('Failed to create new time set'),
+            );
         }
         NGCP::Panel::Utils::Navigation::back_or($c,
             $c->uri_for_action('/subscriber/preferences_callforward_timeset', 
@@ -1826,8 +1876,18 @@ sub preferences_callforward_timeset_edit :Chained('preferences_callforward_times
                     $set->voip_cf_periods->create($fields);
                 }
             });
+            NGCP::Panel::Utils::Message->info(
+                c    => $c,
+                type => 'internal',
+                desc => $c->loc('Successfully updated time set'),
+            );
         } catch($e) {
-            $c->log->error("failed to update time set: $e");
+            NGCP::Panel::Utils::Message->error(
+                c     => $c,
+                error => $e,
+                type  => 'internal',
+                desc  => $c->loc('Failed to update time set'),
+            );
         }
         NGCP::Panel::Utils::Navigation::back_or($c,
                 $c->uri_for_action('/subscriber/preferences_callforward_timeset', 
@@ -1856,8 +1916,20 @@ sub preferences_callforward_timeset_delete :Chained('preferences_callforward_tim
             }
             $set->delete;
         });
+        NGCP::Panel::Utils::Message->info(
+            c    => $c,
+            data => { $set->get_inflated_columns },
+            type => 'internal',
+            desc => $c->loc('Successfully deleted time set'),
+        );
     } catch($e) {
-        $c->log->error("failed to delete time set: $e");
+        NGCP::Panel::Utils::Message->error(
+            c     => $c,
+            error => $e,
+            data  => { $set->get_inflated_columns },
+            type  => 'internal',
+            desc  => $c->loc('Failed to delete time set'),
+        );
     }
 
     NGCP::Panel::Utils::Navigation::back_or($c,
