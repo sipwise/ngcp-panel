@@ -7,56 +7,24 @@ use WWW::Mechanize::Firefox;
 use DBI;
 use DateTime;
 use DateTime::Format::ISO8601;
-#use Storable qw/dclone/;
-use Clone 'clone';
 
 my $datetime = DateTime->from_epoch(
     time_zone => DateTime::TimeZone->new(name => 'local'),
     epoch => time(),
 );
 my $mech = WWW::Mechanize::Firefox->new();
-my $dbh = DBI->connect('dbi:mysql:spider;host=localhost', 'root', '');
-my $cfg = {
+
+our $dbh = DBI->connect('dbi:mysql:spider;host=localhost', 'root', '');
+our $cfg = {
     url_duplicate_template =>{
         rule => 'deny',
         rule_allow => '',
     }
 };
 
-$dbh->do('drop table urltemplate');
-$dbh->do('drop table url');
-$dbh->do('drop table urlcontent');
-$dbh->do('drop table urlvariant');
-$dbh->do('drop table control');
-$dbh->do('drop table url_control');
-$dbh->do('drop table url_template');
-$dbh->do('create table urltemplate(id integer(11) auto_increment primary key, template varchar(512))');
-$dbh->do('create table url(id integer(11) unsigned not null auto_increment primary key, url varchar(512), urltemplate_id integer(11), lastvisit timestamp default 0)');
-$dbh->do('create table urlvariant(id integer(11) unsigned not null, url varchar(512), container_url_id integer(11))');
-$dbh->do('create table urlcontent(id integer(11) unsigned not null, content text)');
-$dbh->do('create table control(id integer(11) unsigned not null auto_increment primary key, label text, goto_url_id integer(11) unsigned)');
-$dbh->do('create table url_control(url_id integer(11) unsigned, control_id integer(11) unsigned)');
-$dbh->do('create table url_template(url_id integer(11) unsigned, urltemplate_id integer(11) unsigned)');
+require 'mech_db_create.pm';
 
-# Xvfb :99 &
-# DISPLAY=:99 firefox --display=:99 &
-## DISPLAY=:99 xdotool search --onlyvisible --title firefox
-## DISPLAY=:99 xdotool windowfocus 4194416
-# DISPLAY=:99 ~/fillform.pl 
-
-
-our $host = 'http://192.168.56.7:1444';
-
-
-#        $mech->get_local("./test.html");
-#        #my $contentDiv = $mech->xpath('//div[@id="content"]', single => 1);
-#        my $contentDiv = $mech->xpath('//div[@id="testrow"]', single => 1);
-#        #my @links = $mech->find_link_dom( node => $contentDiv, n => 'all' );
-#        my @links = $mech->find_all_links_dom( node => $contentDiv );
-#        print $#links;
-#        die();
- 
-
+our $host = 'https://192.168.56.7:1444';
 get_data($mech,$host.'/dashboard');
 #while (my $url = $dbh->selectrow_array('select url from url where unix_timestamp(lastvisit) < ? limit 1', undef, $datetime->epoch)){
 #    get_data($mech,$url);
@@ -65,7 +33,9 @@ get_data($mech,$host.'/dashboard');
 sub get_data{
     my ($url_in,$mech,$container_url,$loaded) = {}; 
     ($mech,@{$url_in}{qw/url/},$container_url,$loaded) = @_;
-    print $url_in->{url}.";\n";
+    print "get_data: url=".$url_in->{url}.";\n";
+    print "get_data: url=".$url_in->{url}."; container_url=".$container_url->{url}."; loaded=$loaded;\n";
+
     if(!check_url_toadd($url_in->{url})){
         return;
     }
@@ -88,7 +58,7 @@ sub get_data{
     
     if($url_toadd){
         if(!$loaded){
-            print pre_get_url($url->{url}).";\n";
+            print "get_data: pre_get_url=".pre_get_url($url->{url}).";\n";
             $mech->get(pre_get_url($url->{url}));
         }else{
             #here add to db urls from clicks, if necessary
@@ -107,22 +77,21 @@ sub get_data{
         #    #print Dumper $control;
         #    #$mech->click($control);
         #}
-        #foreach my $link ( $mech->links()  ) {
-        #foreach my $link ( $mech->find_all_links_dom()  ) {
+        
+        
         #my $repl = $mech->repl();
         my $contentDiv;
         eval{
             $contentDiv = $mech->xpath('//div[@id="content"]', single => 1);
         };
         my @links = $mech->find_all_links_dom( $contentDiv ? ( node => $contentDiv )  : () );
-        ##my @links = $mech->find_all_links_dom( );
-        #print $#links;
-        #die();
+        my $link_number = 1;
         foreach my $link ( @links ) {
+            print "=============LINKS: $link_number/".($#links + 1)."===============\n";
+            print "link href=".$link->{href}.";\n";
             if(!check_url_toadd($link->{href})){
                 next;
             }
-            
             my $control_url = { url => process_url($link->{href}) };
             my $goto_url = get_url_db( $control_url );
             if(! ($goto_url)){
@@ -134,14 +103,14 @@ sub get_data{
                 #label   => process_control_label($link->text) 
             });
             register_control($url,$control);
-            
+
             #print Dumper $link;
-            print "================================\n";
-            print Dumper { map { $_ => $url->{$_}; } qw/id url urltemplate_id/};
-            print Dumper $control_url;
-            print Dumper $control;
-            print Dumper $link->{tagName};
-            if(( 'A' eq $link->{tagName}) && check_url_toadd($goto_url->{url})){
+            #print Dumper { map { $_ => $url->{$_}; } qw/id url urltemplate_id/};
+            #print Dumper $control_url;
+            #print Dumper $control;
+            #print Dumper $link->{tagName};
+
+            if('A' eq $link->{tagName}){#to config
                 #get_data($goto_url->{url},$url,1);
                 #get_data($goto_url->{url},$url,0);
                 #my $mechRecursion = clone($mech);
@@ -149,30 +118,34 @@ sub get_data{
                 eval {
                     alarm (10);
                     #$mechRecursion->follow_link($link);
-                    print "follow_link\n";
+                    print "follow_link: \n";
+                    print "link href=".$link->{href}."; on the page of url: ".$url->{url}.";\n";
                     $mech->follow_link($link);
-                    alarm(0);           # Cancel the pending alarm if user responds.
+                    alarm(0);
                 };
                 if('link_timed_out' eq $@){
                     print "link hanged\n";
+                    print "link href=".$link->{href}."; on the page of url: ".$url->{url}.";\n";
                 }else{
-                    print "get_data\n";
+                    print "process followed link\n";
+                    print "link href=".$link->{href}."; on the page of url: ".$url->{url}.";\n";
                     get_data($mech,$goto_url->{url},$url,1);
                     #get_data($mechRecursion,$goto_url->{url},$url,1);
                     #get_data($mech,$goto_url->{url},$url,0);
                     eval {
+                        print "back after link followed\n";
+                        print "link href=".$link->{href}."; on the page of url: ".$url->{url}.";\n";
                         alarm (10);
                         $mech->back();
-                        alarm(0);           # Cancel the pending alarm if user responds.
+                        alarm(0);
                     };
-                }
-                #if ($@ =~ /LOCAL_LINK/) {
-                #    print "Timed out. Proceeding with default\n";
-                #}
-            }
-        }
-    }
+                }#link pressed successfuly/not successfully
+            }#link tag = A, to config later
+            $link_number++;
+        }#foreach links
+    }#container url was to_add successfull
 }
+
 sub request_timed_out{
     die("link_timed_out");
 }
@@ -248,6 +221,10 @@ sub check_url_toadd{
     if($url =~/lang=[a-z]{2}/i){
         $res = 0;
     }
+    if($url =~/\/back\?/i){
+        $res = 0;
+    }
+    print "check_url_toadd: url=$url; res=$res;\n";
     return $res;
 }
 sub process_url{
@@ -296,4 +273,22 @@ sub get_registered_url_template{
     return $dbh->selectrow_array('select urltemplate_id from url_template where url_id=? and urltemplate_id=?',undef,$container_url->{id},$urltemplate->{id});
 }
 1;
+
 __END__
+
+#use Storable qw/dclone/;
+#use Clone 'clone';
+
+# Xvfb :99 &
+# DISPLAY=:99 firefox --display=:99 &
+## DISPLAY=:99 xdotool search --onlyvisible --title firefox
+## DISPLAY=:99 xdotool windowfocus 4194416
+# DISPLAY=:99 ~/fillform.pl 
+
+#        $mech->get_local("./test.html");
+#        #my $contentDiv = $mech->xpath('//div[@id="content"]', single => 1);
+#        my $contentDiv = $mech->xpath('//div[@id="testrow"]', single => 1);
+#        #my @links = $mech->find_link_dom( node => $contentDiv, n => 'all' );
+#        my @links = $mech->find_all_links_dom( node => $contentDiv );
+#        print $#links;
+#        die();
