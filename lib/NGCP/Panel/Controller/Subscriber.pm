@@ -1150,13 +1150,6 @@ sub preferences_callforward_advanced :Chained('base') :PathPart('preferences/cal
     my $ringtimeout_preference = NGCP::Panel::Utils::Preferences::get_usr_preference_rs(
             c => $c, prov_subscriber => $prov_subscriber, attribute => 'ringtimeout');
 
-    # TODO: we can have more than one active, no?
-    if($cf_mapping->count) {
-        $c->stash->{cf_active_destination_set} = $cf_mapping->first->destination_set
-            if($cf_mapping->first->destination_set);
-        $c->stash->{cf_active_time_set} = $cf_mapping->first->time_set
-            if($cf_mapping->first->time_set);
-    }
     $c->stash->{cf_destination_sets} = $prov_subscriber->voip_cf_destination_sets;
     $c->stash->{cf_time_sets} = $prov_subscriber->voip_cf_time_sets;
 
@@ -1182,8 +1175,9 @@ sub preferences_callforward_advanced :Chained('base') :PathPart('preferences/cal
     };
 
     $cf_form->process(
-        params => $posted ? $c->request->params : $params,
         posted => $posted,
+        params => $c->request->params,
+        item => $params,
     );
 
 
