@@ -562,6 +562,7 @@ sub update_item {
     delete $resource->{email};
 
     NGCP::Panel::Utils::Subscriber::update_subscriber_numbers(
+        c => $c,
         schema => $schema,
         primary_number => $resource->{e164},
         alias_numbers => $alias_numbers,

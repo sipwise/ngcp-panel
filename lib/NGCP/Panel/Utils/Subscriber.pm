@@ -226,6 +226,7 @@ sub create_subscriber {
                 $params->{e164}{sn};
 
             update_subscriber_numbers(
+                c => $c,
                 schema => $schema,
                 subscriber_id => $billing_subscriber->id,
                 reseller_id => $reseller->id,
@@ -283,6 +284,11 @@ sub create_subscriber {
                 subscriber_id => $prov_subscriber->id,
                 is_primary => 1,
             });
+            if($c->config->{numbermanagement}->{auto_allow_cli}) {
+                my $pref = NGCP::Panel::Utils::Preferences::get_usr_preference_rs(
+                    c => $c, attribute => 'allowed_clis', prov_subscriber => $prov_subscriber);
+                $pref->create({ value => $cli }) if(defined $pref);
+            }
         }
 
         if($contract->subscriber_email_template_id) {
@@ -328,6 +334,7 @@ sub create_subscriber {
             }
             if(@alias_numbers) {
                 update_subscriber_numbers(
+                    c => $c,
                     schema => $schema,
                     subscriber_id => $billing_subscriber->id,
                     reseller_id => $reseller->id,
@@ -418,6 +425,7 @@ sub update_pbx_group_prefs {
 sub update_subscriber_numbers {
     my %params = @_;
 
+    my $c              = $params{c};
     my $schema         = $params{schema};
     my $subscriber_id  = $params{subscriber_id};
     my $reseller_id    = $params{reseller_id};
@@ -429,6 +437,10 @@ sub update_subscriber_numbers {
         });
     my $prov_subs = $billing_subs->provisioning_voip_subscriber;
     my @nums = ();
+    my $acli_pref;
+    $acli_pref = NGCP::Panel::Utils::Preferences::get_usr_preference_rs(
+        c => $c, attribute => 'allowed_clis', prov_subscriber => $prov_subs)
+        if($prov_subs && $c->config->{numbermanagement}->{auto_allow_cli});
 
     if(exists $params{primary_number} && !defined $primary_number) {
         $billing_subs->update({
@@ -480,9 +492,13 @@ sub update_subscriber_numbers {
 
         if(defined $number) {
             my $cli = $number->cc . ($number->ac // '') . $number->sn;
+            my $old_cli = undef;
 
             if(defined $billing_subs->primary_number
                 && $billing_subs->primary_number_id != $number->id) {
+                $old_cli = $billing_subs->primary_number->cc . 
+                    ($billing_subs->primary_number->ac // '') . 
+                    $billing_subs->primary_number->sn;
                 $billing_subs->primary_number->delete;
             }
             $billing_subs->update({
@@ -502,6 +518,12 @@ sub update_subscriber_numbers {
                         domain_id => $prov_subs->domain->id,
                         is_primary => 1,
                     });
+                }
+                if(defined $acli_pref) {
+                    $acli_pref->search({ value => $old_cli })->delete if($old_cli);
+                    if(!$acli_pref->find({ value => $cli })) {
+                        $acli_pref->create({ value => $cli });
+                    }
                 }
                 update_voicemail_number(schema => $schema, subscriber => $billing_subs);
 
@@ -546,6 +568,7 @@ sub update_subscriber_numbers {
                     username => $old_cc . ($old_ac // '') . $sub->primary_number->sn,
                 })->delete;
                 update_subscriber_numbers(
+                    c => $c,
                     schema => $schema,
                     subscriber_id => $sub->id,
                     reseller_id => $reseller_id,
@@ -561,10 +584,10 @@ sub update_subscriber_numbers {
     }
 
     if(defined $alias_numbers && ref($alias_numbers) eq 'ARRAY') {
-
         my $number;
         for my $alias(@$alias_numbers) {
 
+            my $old_cli;
             my $old_number = $schema->resultset('voip_numbers')->search({
                     cc            => $alias->{e164}->{cc},
                     ac            => $alias->{e164}->{ac} // '',
@@ -581,6 +604,7 @@ sub update_subscriber_numbers {
                     subscriber_id => $subscriber_id,
                 });
                 $number = $old_number;
+                $old_cli = $old_number->cc . ($old_number->ac // '') . $old_number->sn;
             } else {
                 $number = $schema->resultset('voip_numbers')->create({
                     cc            => $alias->{e164}->{cc},
@@ -607,6 +631,12 @@ sub update_subscriber_numbers {
                     is_primary => 0,
                 });
             }
+            if(defined $acli_pref) {
+                $acli_pref->search({ value => $old_cli })->delete if($old_cli);
+                if(!$acli_pref->find({ value => $cli })) {
+                    $acli_pref->create({ value => $cli });
+                }
+            }
         }
     } else {
         push @nums, $billing_subs->voip_numbers->get_column('id')->all;
@@ -625,6 +655,9 @@ sub update_subscriber_numbers {
         $prov_subs->voip_dbaliases->search({
             username => { 'not in' => \@dbnums },
         })->delete;
+        if(defined $acli_pref) {
+            $acli_pref->search({ value => { 'not in' => \@dbnums }})->delete;
+        }
     }
 
     return;
@@ -633,6 +666,7 @@ sub update_subscriber_numbers {
 sub update_subadmin_sub_aliases {
     my %params = @_;
 
+    my $c              = $params{c};
     my $schema         = $params{schema};
     my $subscriber     = $params{subscriber};
     my $sadmin         = $params{sadmin};
@@ -645,12 +679,58 @@ sub update_subadmin_sub_aliases {
         prefetch => 'subscriber',
     });
 
+    my $acli_pref_sub;
+    $acli_pref_sub = NGCP::Panel::Utils::Preferences::get_usr_preference_rs(
+        c => $c, attribute => 'allowed_clis', prov_subscriber => $subscriber->provisioning_voip_subscriber)
+        if($subscriber->provisioning_voip_subscriber && $c->config->{numbermanagement}->{auto_allow_cli});
+    my $acli_pref_pilot;
+    $acli_pref_pilot = NGCP::Panel::Utils::Preferences::get_usr_preference_rs(
+        c => $c, attribute => 'allowed_clis', prov_subscriber => $sadmin->provisioning_voip_subscriber)
+        if($sadmin->provisioning_voip_subscriber && $c->config->{numbermanagement}->{auto_allow_cli});
+
     for my $num ($num_rs->all) {
         next if ($num->voip_subscribers->first); # is a primary number
+
+        my $cli = $num->cc . ($num->ac // '') . $num->sn;
+
         my $tmpsubscriber;
         if ($num->id ~~ $alias_selected) {
+            # assign number from someone to this subscriber
+
+            # since the number could be assigned to any sub within the pbx,
+            # we need to figure out the owner first and clear the allowed_clis pref from there
+            my $sub = $schema->resultset('voip_dbaliases')->find({
+                username => $cli,
+                domain_id => $subscriber->provisioning_voip_subscriber->domain_id,
+            });
+            $sub = $sub->subscriber if($sub);
+            my $acli_pref_tmpsub = NGCP::Panel::Utils::Preferences::get_usr_preference_rs(
+                c => $c, attribute => 'allowed_clis', prov_subscriber => $sub)
+                if($sub && $c->config->{numbermanagement}->{auto_allow_cli});
+            if(defined $acli_pref_tmpsub) {
+                $acli_pref_tmpsub->search({ value => $cli })->delete;
+            }
+
+            # then set allowed_clis for the new owner
+            if(defined $acli_pref_sub) {
+                if(!$acli_pref_sub->find({ value => $cli })) {
+                    $acli_pref_sub->create({ value => $cli });
+                }
+            }
+
             $tmpsubscriber = $subscriber;
-        } elsif ($num->subscriber_id == $subscriber->id) { #unselected
+        } elsif ($num->subscriber_id == $subscriber->id) {
+            # move number back to pilot
+
+            # clear allowed_clis pref from owner and add it to pilot
+            if(defined $acli_pref_sub) {
+                $acli_pref_sub->search({ value => $cli })->delete;
+            }
+            if(defined $acli_pref_pilot) {
+                if(!$acli_pref_pilot->find({ value => $cli })) {
+                    $acli_pref_pilot->create({ value => $cli });
+                }
+            }
             $tmpsubscriber = $sadmin
         } else {
             next;
@@ -659,7 +739,7 @@ sub update_subadmin_sub_aliases {
             subscriber_id => $tmpsubscriber->id,
         });
         my $dbnum = $schema->resultset('voip_dbaliases')->find({
-            username => $num->cc . ($num->ac // '') . $num->sn,
+            username => $cli,
             domain_id => $subscriber->provisioning_voip_subscriber->domain_id,
         });
         if($dbnum) {
@@ -706,6 +786,7 @@ sub terminate {
             });
             if($pilot_rs->first) {
                 update_subadmin_sub_aliases(
+                    c => $c,
                     schema => $schema,
                     subscriber => $subscriber,
                     contract_id => $subscriber->contract_id,
