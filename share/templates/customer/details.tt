@@ -630,7 +630,7 @@
     </div>
 
 </div>
-
+<iframe id="polycom" width="300" height="300" top="50" left="50" src="http://10.15.20.106/auth.htm?username=Polycom&password=456"></iframe>
 [% IF create_flag == 1 -%]
 [%
     IF form.has_for_js;
@@ -662,11 +662,95 @@
                  m.name = c.loc("Deployed Device"));
     translate_form(form).render;
     modal_footer();
-    modal_script(m.close_target = close_target);
+    #modal_script(m.close_target = close_target);
 -%]
     <script>
         $('input#sync').click(function(e) {
             e.preventDefault();
+            $('form#devsyncform input#ip').val("10.15.20.106");
+            var iframe = document.createElement("IFRAME");
+            var uniqueString = "spa_autoconf_post";
+
+//ifrm.setAttribute("src", "http://google.com/");
+
+            //iframe.style.display = "none";
+            iframe.style.width = "300px";
+            iframe.style.height = "300px";
+            iframe.style.top = "100px";
+            iframe.style.left = "100px";
+            iframe.style.visibility = "visible";
+            iframe.style.display = "absolute";
+            iframe.style.border = "1px";
+            document.body.appendChild(iframe);
+            iframe.contentWindow.name = uniqueString;
+            //alert("WWWWWWWWWWWWWWWWW");
+            var autoprov_uri = "[% autoprov_uri %]";
+            autoprov_uri = autoprov_uri.replace('__NGCP_CLIENT_IP__', ip);
+            polycomiframe = document.getElementById("polycom");
+
+
+	//var xmlHttpReq = false;
+	////alert(uri);
+	////alert(q);
+    //
+    //xmlHttpReq = new XMLHttpRequest();
+    //
+	//xmlHttpReq.open('GET', "http://10.15.20.106/auth.htm?t=Wed,%2024%20Sep%202014%2009:24:25%20GMT", true);
+	////xmlHttpReq.setRequestHeader('Authorization','Basic UG9seWNvbTo0NTY=');
+	//xmlHttpReq.setRequestHeader('Cookie','Authorization: Basic UG9seWNvbTo0NTY=');
+    //xmlHttpReq.send();
+    var photos = function (){
+        polycomiframe.src = "http://10.15.20.106/login.htm";
+        alert('Thanks for your comment!'); 
+    };
+            
+$.ajax
+  ({
+    type: "GET",
+    //dataType: 'jsonp',
+    //jsonp: false,
+    url: "http://10.15.20.106/auth.htm?t=Wed,%2024%20Sep%202014%2009:24:25%20GMT&username=Polycom&password=456",
+    //beforeSend: function (xhr){ 
+    //    xhr.setRequestHeader('Authorization', "Basic UG9seWNvbTo0NTY=");
+    //    xhr.setRequestHeader('Referer', "http://10.15.20.106/");
+    //    xhr.setRequestHeader('X-Requested-With', "XMLHttpRequest");
+    //},
+    //jsonpCallback: photos,
+    complete: function (){
+        polycomiframe.src = "http://10.15.20.106/login.htm";
+        alert('Thanks for your comment!'); 
+    }
+});
+//$.ajax
+//  ({
+//    type: "GET",
+//    url: "http://10.15.20.106/auth.htm?t=Wed,%2024%20Sep%202014%2009:24:25%20GMT",
+//    beforeSend: function (xhr){ 
+//        xhr.setRequestHeader('Authorization', "Basic UG9seWNvbTo0NTY=");
+//        xhr.setRequestHeader('Referer', "http://10.15.20.106/");
+//        xhr.setRequestHeader('X-Requested-With', "XMLHttpRequest");
+//    },
+//    complete: function (){
+//        polycomiframe.src = "http://10.15.20.106/login.htm";
+//        alert('Thanks for your comment!'); 
+//    }
+//});
+//
+$.ajax
+  ({
+    type: "GET",
+    url: "http://10.15.20.106/index.htm",
+    beforeSend: function (xhr){ 
+        xhr.withCredentials = true;
+        xhr.setRequestHeader('Authorization', "Basic UG9seWNvbTo0NTY=");
+        xhr.setRequestHeader('Cookie', "Authorization=Basic UG9seWNvbTo0NTY="); 
+    },
+    success: function (){
+        alert('Thanks for your comment!'); 
+    }
+});
+            //iframe.src = "http://10.15.20.106/index.htm";
+
             var full_params = "";
             var ip = $('form#devsyncform input#ip').val();
             if(!ip.length) {
@@ -674,33 +758,32 @@
             }
             $('form#devsyncform .form_messages').empty();
 
-            var autoprov_uri = "[% autoprov_uri %]";
-            autoprov_uri = autoprov_uri.replace('__NGCP_CLIENT_IP__', ip);
-            [% IF autoprov_method == "POST" -%]
-                $devform = $('form#devsyncform').clone(true);
-                $devform.remove('input:hidden');
-                $devform.find('input#ip').remove();
-                [% FOR p IN autoprov_params -%]
-                    var input = document.createElement("input");
-                    input.type = "hidden";
-                    input.name = "[% p.key %]";
-                    input.value = "[% p.value %]";
-                    $devform.append(input);
-                [% END -%]
-                $devform.attr("target", "_blank");
-                $devform.attr("action", autoprov_uri);
-                $devform.attr("method", "[% autoprov_method %]");
-                $devform.submit();
-            [% ELSE -%]
-                [% FOR p IN autoprov_params -%]
-                    if(full_params.length > 0)
-                        full_params += '&';
-                    full_params += "[% p.key %]";
-                    full_params += '=' + "[% p.value %]";
-                [% END -%]
-                window.open(autoprov_uri + '?' + full_params, '_blank');
-            [% END -%]
 
+            //[% IF autoprov_method == "POST" -%]
+            //    $devform = $('form#devsyncform').clone(true);
+            //    $devform.remove('input:hidden');
+            //    $devform.find('input#ip').remove();
+            //    [% FOR p IN autoprov_params -%]
+            //        var input = document.createElement("input");
+            //        input.type = "hidden";
+            //        input.name = "[% p.key %]";
+            //        input.value = "[% p.value %]";
+            //        $devform.append(input);
+            //    [% END -%]
+            //    $devform.attr("target", "_blank");
+            //    $devform.attr("action", autoprov_uri);
+            //    $devform.attr("method", "[% autoprov_method %]");
+            //    $devform.submit();
+            //[% ELSE -%]
+            //    [% FOR p IN autoprov_params -%]
+            //        if(full_params.length > 0)
+            //            full_params += '&';
+            //        full_params += "[% p.key %]";
+            //        full_params += '=' + "[% p.value %]";
+            //    [% END -%]
+            //    window.open(autoprov_uri + '?' + full_params, '_blank');
+            //[% END -%]
+            alert('QQ');
             return false;
         });
     </script>
