@@ -21,7 +21,6 @@
 [% END -%]
 
 <div class="ngcp-separator"></div>
-
 [% MACRO show_rules BLOCK -%]
 <table class="table table-bordered table-striped table-highlight table-hover">
     <thead>
@@ -50,7 +49,7 @@
             <td class="ngcp-actions-column">
             [% UNLESS c.user.read_only -%]
                 <div class="sw_actions pull-right">
-                    <a class="btn btn-small btn-primary" href="[% c.uri_for_action('/rewrite/rules_edit',[set_result.id, r.id]) %]">
+                    <a class="btn btn-small btn-primary" data-backuri="[%-backuritmp=c.req.uri;backuri.query_param_delete('move');backuritmp.query_param_delete('where');backuritmp-%]" href="[% c.uri_for_action('/rewrite/rules_edit',[set_result.id, r.id]) %]">
                         <i class="icon-edit"></i> [% c.loc('Edit') %]
                     </a>
                     <a data-confirm="Delete" class="btn btn-small btn-secondary" href="[% c.uri_for_action('/rewrite/rules_delete',[set_result.id, r.id]) %]">
