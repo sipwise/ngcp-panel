@@ -13,8 +13,14 @@ my $datetime = DateTime->from_epoch(
     epoch => time(),
 );
 my $mech = WWW::Mechanize::Firefox->new();
+$mech->autoclose_tab(0);
+my $alert_location = $mech->repl->declare(<<'JS');#$alert_location
+    function(str) {
+        alert('location='+location.href+'; '+str);
+    }
+JS
+  
 
-our $dbh = DBI->connect('dbi:mysql:spider;host=localhost', 'root', '');
 our $cfg = {
     url_duplicate_template =>{
         rule => 'deny',
@@ -26,6 +32,8 @@ our $cfg = {
     ],
 };
 
+
+our $dbh = DBI->connect('dbi:mysql:spider;host=localhost', 'root', '');
 require 'mech_db_create.pm';
 
 our $host = 'https://192.168.56.7:1444';
@@ -35,18 +43,24 @@ get_data($mech,$host.'/dashboard');
 #}
 
 sub get_data{
-    my ($url_in,$mech,$container_url,$loaded) = {}; 
-    ($mech,@{$url_in}{qw/url/},$container_url,$loaded) = @_;
+    my ($url_in,$mech,$container_urls,$loaded) = {}; 
+    ($mech,@{$url_in}{qw/url/},$container_urls,$loaded) = @_;
+    $container_urls ||= [];
+    my $container_url = $container_urls->[$#$container_urls];
     print "get_data: url=".$url_in->{url}.";\n";
-    print "get_data: container_url=".$container_url->{url}."; loaded=$loaded;\n";
 
     if(!check_url_toadd($url_in->{url})){
         return;
     }
+
     my($url) = get_url_db($url_in);
     my($urltemplate) = get_urltemplate_db({
         template => get_urltemplate($url->{url}),
     });
+
+    my $history_perl_pov = join(' --> ', map {$_->{url}} (@$container_urls, $url ) );
+    print "get_data: you are here:".$history_perl_pov.";\n";
+    $alert_location->("history_perl_pov=".$history_perl_pov.";");
 
     my $url_toadd = 0;
     if( $url && (!$url->{epoch}) || ( $url->{epoch} < $datetime->epoch) ){
@@ -67,26 +81,17 @@ sub get_data{
         }else{
             #here add to db urls from clicks, if necessary
         }
-        #$mech->eval("alert('QQ');");
         #follow_link starts here. Specially for follow_link we don't need recursion, but for click we do.
         $url->{content} = \$mech->content();
         set_url_visited($url);
-        #foreach my $clickable_in ( $mech->clickables()  ) {
-        #    my $control = get_control_db({ 
-        ##        goto_url_id => $goto_url->{id}, 
-        #        label   => process_control_label($clickable_in->{innerHTML}) 
-        #    }
-        #    );
-        #    register_control($url,$control);
-        #    #print Dumper $control;
-        #    #$mech->click($control);
-        #}
         
         my $links = get_url_links($url);
-        my $link_number = 1;
+        my $link_number = 0;
         foreach my $link ( @$links ) {
+            $link_number++;
             print "=============LINKS: $link_number/".($#$links + 1)."===============\n";
             print "link href=".$link->{href}.";\n";
+            print "on url=".$url->{url}.";\n";
             if(!check_url_toadd($link->{href})){
                 next;
             }
@@ -102,44 +107,40 @@ sub get_data{
             });
             register_control($url,$control);
 
-            #print Dumper $link;
-            #print Dumper { map { $_ => $url->{$_}; } qw/id url urltemplate_id/};
-            #print Dumper $control_url;
-            #print Dumper $control;
-            #print Dumper $link->{tagName};
-
-            if('A' eq $link->{tagName}){#to config
-                #get_data($goto_url->{url},$url,1);
-                #get_data($goto_url->{url},$url,0);
-                #my $mechRecursion = clone($mech);
+            if('A' eq $link->{tagName}){ # to config
                 $SIG{ALRM} = \&request_timed_out;
                 eval {
                     alarm (10);
-                    #$mechRecursion->follow_link($link);
                     print "follow_link: \n";
-                    print "link href=".$link->{href}."; on the page of url: ".$url->{url}.";\n";
+                    print "follow_link: link href=".$link->{href}."; on the page of url: ".$url->{url}.";\n";
                     $mech->follow_link($link);
                     alarm(0);
                 };
                 if('link_timed_out' eq $@){
-                    print "link hanged\n";
-                    print "link href=".$link->{href}."; on the page of url: ".$url->{url}.";\n";
+                    print "link_hanged\n";
+                    print "link_hanged: link href=".$link->{href}."; on the page of url: ".$url->{url}.";\n";
                 }else{
-                    print "process followed link\n";
-                    print "link href=".$link->{href}."; on the page of url: ".$url->{url}.";\n";
-                    get_data($mech,$goto_url->{url},$url,1);
-                    #get_data($mechRecursion,$goto_url->{url},$url,1);
-                    #get_data($mech,$goto_url->{url},$url,0);
+                    print "process_followed_link\n";
+                    print "process_followed_link: link href=".$goto_url->{url}."; on the page of url: ".$url->{url}.";\n";
+                    $link->{href};
+                    print "process_followed_link: enter: you are here:".$history_perl_pov.";\n";
+                    get_data($mech,$goto_url->{url},[@$container_urls,$url],1);
+                    print "process_followed_link: exit: you are here:".$history_perl_pov.";\n";
+                    #$mech->eval("alert('".$history_perl_pov."');");
+
+                    print "back\n";
+                    print "back: link href=".$goto_url->{url}."; on the page of url: ".$url->{url}.";\n";
+                    print "back: you are here:".$history_perl_pov.";\n";
+                    $mech->eval("alert('".$history_perl_pov."');");
+                    $link->{href};
                     eval {
-                        print "back after link followed\n";
-                        print "link href=".$link->{href}."; on the page of url: ".$url->{url}.";\n";
                         alarm (10);
                         $mech->back();
                         alarm(0);
                     };
+
                 }#link pressed successfuly/not successfully
             }#link tag = A, to config later
-            $link_number++;
         }#foreach links
     }#container url was to_add successfull
 }
@@ -231,6 +232,14 @@ sub check_url_toadd{
         $res = 0;
     }
     #usually some special handling
+    if($url =~/\.css$/i){
+        $res = 0;
+    }
+    #usually some special handling
+    if($url =~/\.js$/i){
+        $res = 0;
+    }
+    #usually some special handling
     if($url =~/#$/i){
         $res = 0;
     }
@@ -310,3 +319,24 @@ __END__
 #        my @links = $mech->find_all_links_dom( node => $contentDiv );
 #        print $#links;
 #        die();
+
+
+        #foreach my $clickable_in ( $mech->clickables()  ) {
+        #    my $control = get_control_db({ 
+        ##        goto_url_id => $goto_url->{id}, 
+        #        label   => process_control_label($clickable_in->{innerHTML}) 
+        #    }
+        #    );
+        #    register_control($url,$control);
+        #    #print Dumper $control;
+        #    #$mech->click($control);
+        #}
+
+        #$mech->eval("alert('QQ');");
+
+            #print Dumper $link;
+            #print Dumper { map { $_ => $url->{$_}; } qw/id url urltemplate_id/};
+            #print Dumper $control_url;
+            #print Dumper $control;
+            #print Dumper $link->{tagName};
+
