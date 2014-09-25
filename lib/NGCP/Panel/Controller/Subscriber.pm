@@ -2320,6 +2320,7 @@ sub edit_master :Chained('master') :PathPart('edit') :Args(0) :Does(ACL) :ACLDet
 
                 if(exists $form->params->{alias_select} && $c->stash->{pilot}) {
                     NGCP::Panel::Utils::Subscriber::update_subadmin_sub_aliases(
+                        c => $c,
                         schema => $schema,
                         subscriber => $subscriber,
                         contract_id => $subscriber->contract_id,
@@ -2341,6 +2342,7 @@ sub edit_master :Chained('master') :PathPart('edit') :Args(0) :Does(ACL) :ACLDet
                     }
 
                     NGCP::Panel::Utils::Subscriber::update_subscriber_numbers(
+                        c => $c,
                         schema => $schema,
                         subscriber_id =>$subscriber->id,
                         reseller_id => $subscriber->contract->contact->reseller_id,
@@ -2383,6 +2385,7 @@ sub edit_master :Chained('master') :PathPart('edit') :Args(0) :Does(ACL) :ACLDet
                                 sn => $form->params->{e164}{sn} . $sub->provisioning_voip_subscriber->pbx_extension,
                             };
                             NGCP::Panel::Utils::Subscriber::update_subscriber_numbers(
+                                c => $c,
                                 schema => $schema,
                                 subscriber_id => $sub->id,
                                 reseller_id => $sub->contract->contact->reseller_id,
@@ -2392,6 +2395,7 @@ sub edit_master :Chained('master') :PathPart('edit') :Args(0) :Does(ACL) :ACLDet
                     }
                 } else {
                     NGCP::Panel::Utils::Subscriber::update_subscriber_numbers(
+                        c => $c,
                         schema => $schema,
                         subscriber_id =>$subscriber->id,
                         reseller_id => $subscriber->contract->contact->reseller_id,
