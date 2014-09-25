@@ -269,7 +269,8 @@ sub POST :Allow {
             );
 
             NGCP::Panel::Utils::Subscriber::update_subscriber_numbers(
-                schema         => $c->model('DB'),
+                c              => $c,
+                schema         => $schema,
                 alias_numbers  => $alias_numbers,
                 reseller_id    => $customer->contact->reseller_id,
                 subscriber_id  => $subscriber->id,
