@@ -19,7 +19,11 @@ our $cfg = {
     url_duplicate_template =>{
         rule => 'deny',
         rule_allow => '',
-    }
+    },
+    url_poi=> [
+        [ qr/.*/, [ '//div[@id="content"]' ] ],
+        [ qr/dashboard/, [ 'ALL' ], { 'priority' => 20 } ],
+    ],
 };
 
 require 'mech_db_create.pm';
@@ -34,7 +38,7 @@ sub get_data{
     my ($url_in,$mech,$container_url,$loaded) = {}; 
     ($mech,@{$url_in}{qw/url/},$container_url,$loaded) = @_;
     print "get_data: url=".$url_in->{url}.";\n";
-    print "get_data: url=".$url_in->{url}."; container_url=".$container_url->{url}."; loaded=$loaded;\n";
+    print "get_data: container_url=".$container_url->{url}."; loaded=$loaded;\n";
 
     if(!check_url_toadd($url_in->{url})){
         return;
@@ -78,16 +82,10 @@ sub get_data{
         #    #$mech->click($control);
         #}
         
-        
-        #my $repl = $mech->repl();
-        my $contentDiv;
-        eval{
-            $contentDiv = $mech->xpath('//div[@id="content"]', single => 1);
-        };
-        my @links = $mech->find_all_links_dom( $contentDiv ? ( node => $contentDiv )  : () );
+        my $links = get_url_links($url);
         my $link_number = 1;
-        foreach my $link ( @links ) {
-            print "=============LINKS: $link_number/".($#links + 1)."===============\n";
+        foreach my $link ( @$links ) {
+            print "=============LINKS: $link_number/".($#$links + 1)."===============\n";
             print "link href=".$link->{href}.";\n";
             if(!check_url_toadd($link->{href})){
                 next;
@@ -145,9 +143,25 @@ sub get_data{
         }#foreach links
     }#container url was to_add successfull
 }
-
 sub request_timed_out{
     die("link_timed_out");
+}
+sub get_cfg_one_by_regex{
+    my($tocheck,$cfg_section) = @_;
+    my $get_priority = sub { my $v = $_[0]->[2]; ($v && 'HASH' eq ref $v) ? $v->{priority} : 0 ; };
+    my $rule = ( sort { $get_priority->($b) <=> $get_priority->($a) } grep { $tocheck =~ $_->[0] } @$cfg_section )[0];
+    $rule = $rule ? $rule->[1] : undef;
+    return $rule;
+}
+sub get_url_links{#for follow links
+    my($url) = @_;
+    my $rule = get_cfg_one_by_regex($url->{url},$cfg->{url_poi});
+    my($contentDiv,@links);
+    eval { $contentDiv =  $mech->xpath($rule->[0], single => 1); }
+        unless (!defined $rule || 'ALL' eq $rule->[0]);
+    print "get_url_links: url=".$url->{url}."; rule=".$rule->[0]."; contentDiv=$contentDiv;\n";
+    @links = $mech->find_all_links_dom( $contentDiv ? ( node => $contentDiv ) : () );
+    return \@links;
 }
 sub get_url_db{
     my($url) = @_;
@@ -212,15 +226,19 @@ sub check_url_toadd{
     if(!$url){
         $res = 0;
     }
+    #onclick?
     if($url =~/javascript:;?$/i){
         $res = 0;
     }
+    #usually some special handling
     if($url =~/#$/i){
         $res = 0;
     }
+    #cookie type of url - special handling (check every page against language)
     if($url =~/lang=[a-z]{2}/i){
         $res = 0;
     }
+    #back type of url - special handling - don't back?
     if($url =~/\/back\?/i){
         $res = 0;
     }
