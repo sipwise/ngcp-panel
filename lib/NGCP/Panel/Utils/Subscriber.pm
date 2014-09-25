@@ -35,18 +35,21 @@ sub period_as_string {
     foreach my $type(qw/year month mday wday hour minute/) {
         my $s = $set->{$type};
         if(defined $s) {
-            given($type) {
-                when(/^month$/) { 
+            SWITCH: for ($type) {
+                /^month$/ && do {
                     my ($from, $to) = split /\-/, $s;
                     $s = $months[$from];
                     $s .= '-'.$months[$to] if defined($to);
-                }
-                when(/^wday$/) { 
+                    last SWITCH;
+                };
+                /^wday$/ && do {
                     my ($from, $to) = split /\-/, $s;
                     $s = $wdays[$from];
                     $s .= '-'.$wdays[$to] if defined($to);
-                }
-            }
+                    last SWITCH;
+                };
+                # default
+            } # SWITCH
         }
         $string .= "$type { $s } " if defined($s);
     }

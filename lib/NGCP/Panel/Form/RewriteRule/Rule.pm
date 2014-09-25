@@ -110,7 +110,6 @@ sub validate {
     my $self = shift;
     my $s = $self->field('match_pattern')->value // "";
     my $r = $self->field('replace_pattern')->value // "";
-    my $_ = "";
     my $re = "s/$s/$r/";
 
     eval { use warnings FATAL => qw(all); m/$re/; };

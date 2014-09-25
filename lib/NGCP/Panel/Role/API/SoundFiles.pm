@@ -175,15 +175,18 @@ sub update_item {
     }
     $resource->{handle_id} = $handle->id;
 
-    given($handle->group->name) {
-        when([qw/calling_card/]) {
+    SWITCH: for ($handle->group->name) {
+        /^calling_card$/ && do {
             NGCP::Panel::Utils::Sems::clear_audio_cache($c, "appserver", $set->id, $handle->name);
-        }
-        when([qw/pbx music_on_hold/]) {
+            last SWITCH;
+        };
+        /^(pbx|music_on_hold)$/ && do {
             my $service = $set->contract_id ? "pbx" : "appserver";
             NGCP::Panel::Utils::Sems::clear_audio_cache($c, $service, $set->id, $handle->name);
-        }
-    }
+            last SWITCH;
+        };
+        # default
+    } # SWITCH
 
     if($resource->{handle} eq 'music_on_hold' && !$set->contract_id) {
         $resource->{codec} = 'PCMA';

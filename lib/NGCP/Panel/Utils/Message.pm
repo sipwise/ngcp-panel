@@ -129,38 +129,37 @@ method error ($self: Catalyst :$c, Str :$desc, :$log?, :$error?, :$type = 'panel
         $log_msg and $log_msg = "LOG=$log_msg";
     }
 
-    given (1) {
-        when (not defined $error)
-        {
-            $msg = $desc;
-        }
-        when (my ($host) = $error =~ /problem connecting to (\S+, port [0-9]+)/ )
-        {
-            $log_msg  = "$desc ($error)";
-            $usr_text = "$desc (A service could not be reached, $host)";
-        }
-        when (ref($error) eq "ARRAY" && @$error >= 2 && $error->[1] eq "showdetails" )
-        {
-            $msg      = "$desc (@$error[0])";
-            $usr_text = "$desc (@$error[0])";
-        }
-        when (not $error->isa('DBIx::Class::Exception') )
-        {
-            $msg      = "$desc ($error)";
-            $usr_text = $desc;
-        }
-        when (my ($dup) = $error =~ /(Duplicate entry \S*)/ )
-        {
-            $msg      = "$desc ($error)";
-            $usr_text = "$desc ($dup)";
-        }
-        when (my ($excerpt) = $error =~ /(Column \S+ cannot be null)/ ) {
-            $msg      = "$desc ($error)";
-            $usr_text = "$desc ($excerpt)";
-        }
-        default {
-            $msg = "$desc ($error)";
-        }
+    if (not defined $error) {
+        $msg = $desc;
+    }
+    elsif (my ($host) = $error =~ /problem connecting to (\S+, port [0-9]+)/)
+    {
+        $log_msg  = "$desc ($error)";
+        $usr_text = "$desc (A service could not be reached, $host)";
+    }
+    elsif (ref($error) eq "ARRAY" && @$error >= 2 && $error->[1] eq "showdetails")
+    {
+        $msg      = "$desc (@$error[0])";
+        $usr_text = "$desc (@$error[0])";
+    }
+    elsif (not $error->isa('DBIx::Class::Exception'))
+    {
+        $msg      = "$desc ($error)";
+        $usr_text = $desc;
+    }
+    elsif (my ($dup) = $error =~ /(Duplicate entry \S*)/)
+    {
+        $msg      = "$desc ($error)";
+        $usr_text = "$desc ($dup)";
+    }
+    elsif (my ($excerpt) = $error =~ /(Column \S+ cannot be null)/) 
+    {
+        $msg      = "$desc ($error)";
+        $usr_text = "$desc ($excerpt)";
+    }
+    else
+    {
+        $msg = "$desc ($error)";
     }
 
     my $rc = $c->log->error(

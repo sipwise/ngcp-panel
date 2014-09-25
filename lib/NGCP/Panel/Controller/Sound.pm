@@ -576,8 +576,8 @@ sub handles_edit :Chained('handles_base') :PathPart('edit') {
             my $target_codec = 'WAV';
 
             # clear audio caches
-            given($file_result->handle->group->name) {
-                when([qw/calling_card/]) {
+            SWITCH: for ($file_result->handle->group->name) {
+                /^calling_card$/ && do {
                     try {
                         NGCP::Panel::Utils::Sems::clear_audio_cache($c, "appserver", $file_result->set_id, $file_result->handle->name);
                     } catch ($e) {
@@ -588,8 +588,9 @@ sub handles_edit :Chained('handles_base') :PathPart('edit') {
                         );
                         NGCP::Panel::Utils::Navigation::back_or($c, $c->stash->{handles_base_uri});
                     }
-                }
-                when([qw/pbx music_on_hold/]) {
+                    last SWITCH;
+                };
+                /^(pbx|music_on_hold)$/ && do {
                     my $service;
                     try {
                         if(!$file_result->set->contract_id) {
@@ -607,8 +608,10 @@ sub handles_edit :Chained('handles_base') :PathPart('edit') {
                         );
                         NGCP::Panel::Utils::Navigation::back_or($c, $c->stash->{handles_base_uri});
                     }
-                }
-            }
+                    last SWITCH;
+                };
+                # default
+            } # SWITCH
 
             if ($file_result->handle->name eq 'music_on_hold' && !$file_result->set->contract_id) {
                 $target_codec = 'PCMA';

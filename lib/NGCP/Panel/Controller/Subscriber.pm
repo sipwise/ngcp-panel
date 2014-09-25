@@ -882,21 +882,32 @@ sub preferences_callforward :Chained('base') :PathPart('preferences/callforward'
         if(($c->user->roles eq "admin" || $c->user->roles eq "reseller") && $c->user->read_only);
 
     my $cf_desc;
-    given($cf_type) {
-        when("cfu") { $cf_desc = $c->loc('Call Forward Unconditional') }
-        when("cfb") { $cf_desc = $c->loc('Call Forward Busy') }
-        when("cft") { $cf_desc = $c->loc('Call Forward Timeout') }
-        when("cfna") { $cf_desc = $c->loc('Call Forward Unavailable') }
-        default {
-            NGCP::Panel::Utils::Message->error(
-                c     => $c,
-                log   => "Invalid call-forward type '$cf_type'",
-                desc  => $c->loc('Invalid Call Forward type.'),
-            );
-            NGCP::Panel::Utils::Navigation::back_or($c, 
-                $c->uri_for_action('/subscriber/preferences', [$c->req->captures->[0]]));
-        }
-    }
+    SWITCH: for ($cf_type) {
+        /^cfu$/ && do {
+            $cf_desc = $c->loc('Call Forward Unconditional');
+            last SWITCH;
+        };
+        /^cfb$/ && do {
+            $cf_desc = $c->loc('Call Forward Busy');
+            last SWITCH;
+        };
+        /^cft$/ && do {
+            $cf_desc = $c->loc('Call Forward Timeout');
+            last SWITCH;
+        };
+        /^cfna$/ && do {
+            $cf_desc = $c->loc('Call Forward Unavailable');
+            last SWITCH;
+        };
+        # default
+        NGCP::Panel::Utils::Message->error(
+            c     => $c,
+            log   => "Invalid call-forward type '$cf_type'",
+            desc  => $c->loc('Invalid Call Forward type.'),
+        );
+        NGCP::Panel::Utils::Navigation::back_or($c, 
+            $c->uri_for_action('/subscriber/preferences', [$c->req->captures->[0]]));
+    } # SWITCH
 
     my $posted = ($c->request->method eq 'POST');
 
@@ -1127,21 +1138,32 @@ sub preferences_callforward_advanced :Chained('base') :PathPart('preferences/cal
     }
 
     my $cf_desc;
-    given($cf_type) {
-        when("cfu") { $cf_desc = $c->loc('Call Forward Unconditional') }
-        when("cfb") { $cf_desc = $c->loc('Call Forward Busy') }
-        when("cft") { $cf_desc = $c->loc('Call Forward Timeout') }
-        when("cfna") { $cf_desc = $c->loc('Call Forward Unavailable') }
-        default {
-            NGCP::Panel::Utils::Message->error(
-                c     => $c,
-                log   => "Invalid call-forward type '$cf_type'",
-                desc  => $c->loc('Invalid Call Forward type.'),
-            );
-            NGCP::Panel::Utils::Navigation::back_or($c, 
-                $c->uri_for_action('/subscriber/preferences', [$c->req->captures->[0]]));
-        }
-    }
+    SWITCH: for ($cf_type) {
+        /^cfu$/ && do {
+            $cf_desc = $c->loc('Call Forward Unconditional');
+            last SWITCH;
+        };
+        /^cfb$/ && do {
+            $cf_desc = $c->loc('Call Forward Busy');
+            last SWITCH;
+        };
+        /^cft$/ && do {
+            $cf_desc = $c->loc('Call Forward Timeout');
+            last SWITCH;
+        };
+        /^cfna$/ && do {
+            $cf_desc = $c->loc('Call Forward Unavailable');
+            last SWITCH;
+        };
+        # default
+        NGCP::Panel::Utils::Message->error(
+            c     => $c,
+            log   => "Invalid call-forward type '$cf_type'",
+            desc  => $c->loc('Invalid Call Forward type.'),
+        );
+        NGCP::Panel::Utils::Navigation::back_or($c, 
+            $c->uri_for_action('/subscriber/preferences', [$c->req->captures->[0]]));
+    } # SWITCH
 
     my $prov_subscriber = $c->stash->{subscriber}->provisioning_voip_subscriber;
     my $cf_mapping = $prov_subscriber->voip_cf_mappings->search_rs({ type => $cf_type });
@@ -2656,8 +2678,8 @@ sub edit_voicebox :Chained('base') :PathPart('preferences/voicebox/edit') :Args(
     my $params;
 
     try {
-        given($attribute) {
-            when('pin') { 
+        SWITCH: for ($attribute) {
+            /^pin$/ && do {
                 $form = NGCP::Panel::Form::Voicemail::Pin->new;
                 $params = { 'pin' => $vm_user->password };
                 $form->process(params => $posted ? $c->req->params : $params);
@@ -2667,8 +2689,9 @@ sub edit_voicebox :Chained('base') :PathPart('preferences/voicebox/edit') :Args(
                 if($posted && $form->validated) {
                     $vm_user->update({ password => $form->field('pin')->value });
                 }
-            }
-            when('email') { 
+                last SWITCH;
+            };
+            /^email$/ && do {
                 $form = NGCP::Panel::Form::Voicemail::Email->new; 
                 $params = { 'email' => $vm_user->email };
                 $form->process(params => $posted ? $c->req->params : $params);
@@ -2678,8 +2701,9 @@ sub edit_voicebox :Chained('base') :PathPart('preferences/voicebox/edit') :Args(
                 if($posted && $form->validated) {
                     $vm_user->update({ email => $form->field('email')->value });
                 }
-            }
-            when('attach') { 
+                last SWITCH;
+            };
+            /^attach$/ && do {
                 $form = NGCP::Panel::Form::Voicemail::Attach->new; 
                 $params = { 'attach' => $vm_user->attach eq 'yes' ? 1 : 0 };
                 $form->process(params => $posted ? $c->req->params : $params);
@@ -2689,8 +2713,9 @@ sub edit_voicebox :Chained('base') :PathPart('preferences/voicebox/edit') :Args(
                 if($posted && $form->validated) {
                     $vm_user->update({ attach => $form->field('attach')->value ? 'yes' : 'no' });
                 }
-            }
-            when('delete') { 
+                last SWITCH;
+            };
+            /^delete$/ && do {
                 $form = NGCP::Panel::Form::Voicemail::Delete->new; 
                 $params = { 'delete' => $vm_user->get_column('delete') eq 'yes' ? 1 : 0 };
                 $form->process(params => $posted ? $c->req->params : $params);
@@ -2704,18 +2729,18 @@ sub edit_voicebox :Chained('base') :PathPart('preferences/voicebox/edit') :Args(
                         'attach' => $form->field('delete')->value ? 'yes' : $vm_user->attach,
                     });
                 }
-            }
-            default {
-                NGCP::Panel::Utils::Message->error(
-                    c     => $c,
-                    log   => "trying to set invalid voicemail param '$attribute' for subscriber uuid ".$c->stash->{subscriber}->uuid,
-                    desc  => $c->loc('Invalid voicemail setting'),
-                );
-                NGCP::Panel::Utils::Navigation::back_or($c, 
-                    $c->uri_for_action('/subscriber/preferences', [$c->req->captures->[0]]), 1);
-                return;
-            }
-        }
+                last SWITCH;
+            };
+            # default
+            NGCP::Panel::Utils::Message->error(
+                c     => $c,
+                log   => "trying to set invalid voicemail param '$attribute' for subscriber uuid ".$c->stash->{subscriber}->uuid,
+                desc  => $c->loc('Invalid voicemail setting'),
+            );
+            NGCP::Panel::Utils::Navigation::back_or($c, 
+                $c->uri_for_action('/subscriber/preferences', [$c->req->captures->[0]]), 1);
+            return;
+        } # SWITCH
         if($posted && $form->validated) {
             NGCP::Panel::Utils::Message->info(
                 c    => $c,
@@ -2762,8 +2787,8 @@ sub edit_fax :Chained('base') :PathPart('preferences/fax/edit') :Args(1) {
     }
 
     try {
-        given($attribute) {
-            when('name') { 
+        SWITCH: for ($attribute) {
+            /^name$/ && do {
                 $form = NGCP::Panel::Form::Faxserver::Name->new;
                 $params = { 'name' => $faxpref->name };
                 $form->process(params => $posted ? $c->req->params : $params);
@@ -2773,8 +2798,9 @@ sub edit_fax :Chained('base') :PathPart('preferences/fax/edit') :Args(1) {
                 if($posted && $form->validated) {
                     $faxpref->update({ name => $form->field('name')->value });
                 }
-            }
-            when('password') { 
+                last SWITCH;
+            };
+            /^password$/ && do {
                 $form = NGCP::Panel::Form::Faxserver::Password->new(ctx => $c);
                 $params = { 'password' => $faxpref->password };
                 $form->process(params => $posted ? $c->req->params : $params);
@@ -2784,8 +2810,9 @@ sub edit_fax :Chained('base') :PathPart('preferences/fax/edit') :Args(1) {
                 if($posted && $form->validated) {
                     $faxpref->update({ password => $form->field('password')->value });
                 }
-            }
-            when('active') { 
+                last SWITCH;
+            };
+            /^active$/ && do {
                 $form = NGCP::Panel::Form::Faxserver::Active->new;
                 $params = { 'active' => $faxpref->active };
                 $form->process(params => $posted ? $c->req->params : $params);
@@ -2795,8 +2822,9 @@ sub edit_fax :Chained('base') :PathPart('preferences/fax/edit') :Args(1) {
                 if($posted && $form->validated) {
                     $faxpref->update({ active => $form->field('active')->value });
                 }
-            }
-            when('send_status') { 
+                last SWITCH;
+            };
+            /^send_status$/ && do {
                 $form = NGCP::Panel::Form::Faxserver::SendStatus->new;
                 $params = { 'send_status' => $faxpref->send_status };
                 $form->process(params => $posted ? $c->req->params : $params);
@@ -2806,8 +2834,9 @@ sub edit_fax :Chained('base') :PathPart('preferences/fax/edit') :Args(1) {
                 if($posted && $form->validated) {
                     $faxpref->update({ send_status => $form->field('send_status')->value });
                 }
-            }
-            when('send_copy') { 
+                last SWITCH;
+            };
+            /^send_copy$/ && do {
                 $form = NGCP::Panel::Form::Faxserver::SendCopy->new;
                 $params = { 'send_copy' => $faxpref->send_copy };
                 $form->process(params => $posted ? $c->req->params : $params);
@@ -2817,8 +2846,9 @@ sub edit_fax :Chained('base') :PathPart('preferences/fax/edit') :Args(1) {
                 if($posted && $form->validated) {
                     $faxpref->update({ send_copy => $form->field('send_copy')->value });
                 }
-            }
-            when('destinations') { 
+                last SWITCH;
+            };
+            /^destinations$/ && do {
                 $form = NGCP::Panel::Form::Faxserver::Destination->new;
                 unless($posted) {
                     my @dests = ();
@@ -2853,18 +2883,18 @@ sub edit_fax :Chained('base') :PathPart('preferences/fax/edit') :Args(1) {
                         });
                     }
                 }
-            }
-            default {
-                NGCP::Panel::Utils::Message->error(
-                    c     => $c,
-                    log   => "trying to set invalid fax param '$attribute' for subscriber uuid ".$c->stash->{subscriber}->uuid,
-                    desc  => $c->loc('Invalid fax setting.'),
-                );
-                NGCP::Panel::Utils::Navigation::back_or($c, 
-                    $c->uri_for_action('/subscriber/preferences', [$c->req->captures->[0]]), 1);
-                return;
-            }
-        }
+                last SWITCH;
+            };
+            # default
+            NGCP::Panel::Utils::Message->error(
+                c     => $c,
+                log   => "trying to set invalid fax param '$attribute' for subscriber uuid ".$c->stash->{subscriber}->uuid,
+                desc  => $c->loc('Invalid fax setting.'),
+            );
+            NGCP::Panel::Utils::Navigation::back_or($c,
+                $c->uri_for_action('/subscriber/preferences', [$c->req->captures->[0]]), 1);
+            return;
+        } # SWITCH
         if($posted && $form->validated) {
             NGCP::Panel::Utils::Message->info(
                 c    => $c,

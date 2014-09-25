@@ -15,11 +15,12 @@ sub transcode_file {
     ## quite snappy, but breaks SOAP (sigpipe's) and the catalyst devel server
     ## need instead to redirect like below
 
-    given ($target_codec) {
-        when ('PCMA') {
+    SWITCH: for ($target_codec) {
+        /^PCMA$/ && do {
             @conv_args = ($tmpfile, qw/--type raw --bits 8 --channels 1 -e a-law - rate 8k/);
-        }
-        when ('WAV') {
+            last SWITCH;
+        };
+        /^WAV$/ && do {
             if ($source_codec eq 'PCMA') {
                 # this can actually only come from inside
                 # certain files will be stored as PCMA (for handles with name "music_on_hold")
@@ -28,8 +29,10 @@ sub transcode_file {
             else {
                 @conv_args = ($tmpfile, qw/--type wav --bits 16 - rate 8k/);
             }
-        }
-    }
+            last SWITCH;
+        };
+        # default
+    } # SWITCH
     
     $out = capturex([0], "/usr/bin/sox", @conv_args);
     

@@ -71,8 +71,8 @@ sub get_resource {
     foreach my $pref($prefs->all) {
         my $value;
 
-        given($pref->attribute->attribute) {
-            when(/^rewrite_calle[re]_(in|out)_dpid$/) {
+        SWITCH: for ($pref->attribute->attribute) {
+            /^rewrite_calle[re]_(in|out)_dpid$/ && do {
                 next if(exists $resource->{rewrite_rule_set});
                 my $col = $pref->attribute->attribute;
                 $col =~ s/^rewrite_//;
@@ -87,9 +87,9 @@ sub get_resource {
                 }
                 next;
                 # TODO: HAL link to rewrite rule set? Also/instead set id?
-            }
-
-            when(/^(adm_)?ncos_id$/) {
+                last SWITCH;
+            };
+            /^(adm_)?ncos_id$/ && do {
                 my $pref_name = $pref->attribute->attribute;
                 $pref_name =~ s/_id$//;
                 my $ncos = $c->model('DB')->resultset('ncos_levels')->find({
@@ -103,9 +103,9 @@ sub get_resource {
                 }
                 next;
                 # TODO: HAL link to rewrite rule set? Also/instead set id?
-            }
-
-            when(/^(contract_)?sound_set$/) {
+                last SWITCH;
+            };
+            /^(contract_)?sound_set$/ && do {
                 # TODO: not applicable for domains, but for subs, check for contract_id!
                 my $set = $c->model('DB')->resultset('voip_sound_sets')->find({
                     id => $pref->value,
@@ -118,9 +118,9 @@ sub get_resource {
                 }
                 next;
                 # TODO: HAL link to rewrite rule set? Also/instead set id?
-            }
-
-            when(/^(man_)?allowed_ips_grp$/) {
+                last SWITCH;
+            };
+            /^(man_)?allowed_ips_grp$/ && do {
                 my $pref_name = $pref->attribute->attribute;
                 $pref_name =~ s/_grp$//;
                 my $sets = $c->model('DB')->resultset('voip_allowed_ip_groups')->search({
@@ -134,22 +134,28 @@ sub get_resource {
                     push @{ $resource->{$pref_name} }, $set->ipnet;
                 }
                 next;
+                last SWITCH;
+            };
+            # default
+            if($pref->attribute->internal != 0) {
+                next;
             }
+        } # SWITCH
 
-            default { 
-                if($pref->attribute->internal != 0) {
-                    next;
+        SWITCH: for ($pref->attribute->data_type) {
+            /^int$/ && do {
+                $value = int($pref->value) if($pref->value->is_int);
+                last SWITCH;
+            };
+            /^boolean$/ && do {
+                if (defined $pref->value) {
+                    $value = ($pref->value ? JSON::true : JSON::false);
                 }
-            }
-
-        }
-
-        
-        given($pref->attribute->data_type) {
-            when("int")     { $value = int($pref->value) if($pref->value->is_int) }
-            when("boolean") { $value = ($pref->value ? JSON::true : JSON::false) if(defined $pref->value) }
-            default         { $value = $pref->value }
-        }
+                last SWITCH;
+            };
+            # default
+            $value = $pref->value;
+        } # SWITCH
         if($pref->attribute->max_occur != 1) {
             $resource->{$pref->attribute->attribute} = []
                 unless(exists $resource->{$pref->attribute->attribute});
@@ -354,10 +360,9 @@ sub update_item {
         # in case of PATCH, we remove only those entries marked for removal in the patch
         try {
             foreach my $k(keys %{ $old_resource }) {
-                given($k) {
-
+                SWITCH: for ($k) {
                     # no special treatment for *_sound_set deletion, as id is stored in right name
-                    when(/^rewrite_rule_set$/) {
+                    /^rewrite_rule_set$/ && do {
                         unless(exists $resource->{$k}) {
                             foreach my $p(qw/caller_in_dpid callee_in_dpid caller_out_dpid callee_out_dpid/) {
                                 my $rs = $self->get_preference_rs($c, $type, $elem, 'rewrite_' . $p);
@@ -365,15 +370,17 @@ sub update_item {
                                 $rs->delete;
                             }
                         }
-                    }
-                    when(/^(adm_)?ncos$/) {
+                        last SWITCH;
+                    };
+                    /^(adm_)?ncos$/ && do {
                         unless(exists $resource->{$k}) {
                             my $rs = $self->get_preference_rs($c, $type, $elem, $k . '_id');
                             next unless $rs; # unknown resource, just ignore
                             $rs->delete;
                         }
-                    }
-                    when(/^(man_)?allowed_ips$/) {
+                        last SWITCH;
+                    };
+                    /^(man_)?allowed_ips$/ && do {
                         unless(exists $resource->{$k}) {
                             my $rs = $self->get_preference_rs($c, $type, $elem, $k . '_grp');
                             next unless $rs; # unknown resource, just ignore
@@ -384,16 +391,16 @@ sub update_item {
                             }
                             $rs->delete;
                         }
-                    }
-                    default {
-                        unless(exists $resource->{$k}) {
-                            my $rs = $self->get_preference_rs($c, $type, $elem, $k);
-                            next unless $rs; # unknown resource, just ignore
-                            $rs->delete;
-                            if ($type eq "subscribers" && ($k eq 'voicemail_echo_number' || $k eq 'cli')) {
-                                NGCP::Panel::Utils::Subscriber::update_voicemail_number(
-                                    schema => $c->model('DB'), subscriber => $item);
-                            }
+                        last SWITCH;
+                    };
+                    # default
+                    unless(exists $resource->{$k}) {
+                        my $rs = $self->get_preference_rs($c, $type, $elem, $k);
+                        next unless $rs; # unknown resource, just ignore
+                        $rs->delete;
+                        if ($type eq "subscribers" && ($k eq 'voicemail_echo_number' || $k eq 'cli')) {
+                            NGCP::Panel::Utils::Subscriber::update_voicemail_number(
+                                schema => $c->model('DB'), subscriber => $item);
                         }
                     }
                 }
@@ -441,20 +448,17 @@ sub update_item {
                 return;
             }
 
-            given($pref) {
-                when(/^rewrite_rule_set$/) {
-
+            SWITCH: for ($pref) {
+                /^rewrite_rule_set$/ && do {
                     my $rwr_set = $c->model('DB')->resultset('voip_rewrite_rule_sets')->find({
                         name => $resource->{$pref},
                         reseller_id => $reseller_id,
                     });
-                    
                     unless($rwr_set) {
                         $c->log->error("no rewrite rule set '".$resource->{$pref}."' for reseller id $reseller_id found");
                         $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Unknown rewrite_rule_set '".$resource->{$pref}."'");
                         return;
                     }
-
                     foreach my $k(qw/caller_in_dpid callee_in_dpid caller_out_dpid callee_out_dpid/) {
                         my $rs = $self->get_preference_rs($c, $type, $elem, 'rewrite_'.$k);
                         if($rs->first) {
@@ -463,9 +467,9 @@ sub update_item {
                             $rs->create({ value => $rwr_set->$k });
                         }
                     }
-                }
-
-                when(/^(adm_)?ncos$/) {
+                    last SWITCH;
+                };
+                /^(adm_)?ncos$/ && do {
                     my $pref_name = $pref . "_id";
                     my $ncos = $c->model('DB')->resultset('ncos_levels')->find({
                         level => $resource->{$pref},
@@ -482,9 +486,9 @@ sub update_item {
                     } else {
                         $rs->create({ value => $ncos->id });
                     }
-                }
-
-                when(/^(contract_)?sound_set$/) {
+                    last SWITCH;
+                };
+                /^(contract_)?sound_set$/ && do {
                     # TODO: not applicable for domains, but for subs, check for contract_id!
                     my $set = $c->model('DB')->resultset('voip_sound_sets')->find({
                         name => $resource->{$pref},
@@ -501,9 +505,9 @@ sub update_item {
                     } else {
                         $rs->create({ value => $set->id });
                     }
-                }
-
-                when(/^(man_)?allowed_ips$/) {
+                    last SWITCH;
+                };
+                /^(man_)?allowed_ips$/ && do {
                     my $pref_name = $pref . "_grp";
                     my $aig_rs;
                     my $seq;
@@ -528,7 +532,6 @@ sub update_item {
                             group_id => $seq
                         });
                     }
-
                     foreach my $ip(@{ $resource->{$pref} }) {
                         unless($self->validate_ipnet($c, $pref, $ip)) {
                             $c->log->error("invalid $pref entry '$ip'");
@@ -536,31 +539,28 @@ sub update_item {
                         }
                         $aig_rs->create({ ipnet => $ip });
                     }
-
                     unless($rs->first) {
                         $rs->create({ value => $seq });
                     }
-                }
-
-                default {
-
-                    if($meta->max_occur != 1) {
-                        $rs->delete;
-                        foreach my $v(@{ $resource->{$pref} }) {
-                            return unless $self->check_pref_value($c, $meta, $v, $pref_type);
-                            $rs->create({ value => $v });
-                        }
-                    } elsif($rs->first) {
-                        return unless $self->check_pref_value($c, $meta, $resource->{$pref}, $pref_type);
-                        $resource->{$pref} = (!! $resource->{$pref}) if JSON::is_bool($resource->{$pref});
-                        $rs->first->update({ value => $resource->{$pref} });
-                    } else {
-                        return unless $self->check_pref_value($c, $meta, $resource->{$pref}, $pref_type);
-                        $resource->{$pref} = (!! $resource->{$pref}) if JSON::is_bool($resource->{$pref});
-                        $rs->create({ value => $resource->{$pref} });
+                    last SWITCH;
+                };
+                # default
+                if($meta->max_occur != 1) {
+                    $rs->delete;
+                    foreach my $v(@{ $resource->{$pref} }) {
+                        return unless $self->check_pref_value($c, $meta, $v, $pref_type);
+                        $rs->create({ value => $v });
                     }
+                } elsif($rs->first) {
+                    return unless $self->check_pref_value($c, $meta, $resource->{$pref}, $pref_type);
+                    $resource->{$pref} = (!! $resource->{$pref}) if JSON::is_bool($resource->{$pref});
+                    $rs->first->update({ value => $resource->{$pref} });
+                } else {
+                    return unless $self->check_pref_value($c, $meta, $resource->{$pref}, $pref_type);
+                    $resource->{$pref} = (!! $resource->{$pref}) if JSON::is_bool($resource->{$pref});
+                    $rs->create({ value => $resource->{$pref} });
                 }
-            }
+            } # SWITCH
             if ($type eq "subscribers" && ($pref eq 'voicemail_echo_number' || $pref eq 'cli')) {
                 NGCP::Panel::Utils::Subscriber::update_voicemail_number(
                     schema => $c->model('DB'), subscriber => $item);
@@ -589,10 +589,17 @@ sub check_pref_value {
         return;
     }
 
-    given($meta->data_type) {
-        when("int") { $err = 1 unless $value->is_int }
-        when("boolean") { $err = 1 unless JSON::is_bool($value) }
-    }
+    SWITCH: for ($meta->data_type) {
+        /^int$/ && do {
+            $err = 1 unless $value->is_int;
+            last SWITCH;
+        };
+        /^boolean$/ && do {
+            $err = 1 unless JSON::is_bool($value);
+            last SWITCH;
+        };
+        # default
+    } # SWITCH
     if($err) {
         $c->log->error("preference '".$meta->attribute."' has invalid value data type, expected '".$meta->data_type."'");
         $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Invalid data type for element in preference '".$meta->attribute."', expected '".$meta->data_type."'");

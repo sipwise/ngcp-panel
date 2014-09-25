@@ -75,11 +75,18 @@ sub hal_from_item {
         if(exists $plain->{$pref->attribute->data_type}) {
             # plain key/value pairs
             my $value;
-            given($pref->attribute->data_type) {
-                when("int")     { $value = int($pref->value) }
-                when("boolean") { $value = JSON::Types::bool($pref->value) }
-                default         { $value = $pref->value }
-            }
+            SWITCH: for ($pref->attribute->data_type) {
+                /^int$/ && do {
+                    $value = int($pref->value);
+                    last SWITCH;
+                };
+                /^boolean$/ && do {
+                    $value = JSON::Types::bool($pref->value);
+                    last SWITCH;
+                };
+                # default
+                $value = $pref->value;
+            } # SWITCH
             if($pref->attribute->max_occur != 1) {
                 $resource{preferences}{$pref->attribute->attribute} = $value;
             } else {
@@ -90,11 +97,18 @@ sub hal_from_item {
         } else {
             # enum mappings
             my $value;
-            given($pref->attribute->data_type) {
-                when("int")     { $value = int($pref->value) }
-                when("boolean") { $value = JSON::Types::bool($pref->value) }
-                default         { $value = $pref->value }
-            }
+            SWITCH: for ($pref->attribute->data_type) {
+                /^int$/ && do {
+                    $value = int($pref->value);
+                    last SWITCH;
+                };
+                /^boolean$/ && do {
+                    $value = JSON::Types::bool($pref->value);
+                    last SWITCH;
+                };
+                # default
+                $value = $pref->value;
+            } # SWITCH
             $resource{preferences}{$pref->attribute->attribute} = $value;
         }
     }

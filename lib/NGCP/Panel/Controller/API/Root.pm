@@ -196,54 +196,39 @@ sub invalid_user : Private {
 sub field_to_json : Private {
     my ($self, $name) = @_;
 
-    given($name) {
-        when(/Float|Integer|Money|PosInteger|Minute|Hour|MonthDay|Year/) {
+    SWITCH: for ($name) {
+        /Float|Integer|Money|PosInteger|Minute|Hour|MonthDay|Year/ &&
             return "Number";
-        }
-        when(/Boolean/) {
+        /Boolean/ &&
             return "Boolean";
-        }
-        when(/Repeatable/) {
+        /Repeatable/ &&
             return "Array";
-        }
-        when(/\+NGCP::Panel::Field::Regex/) {
+        /\+NGCP::Panel::Field::Regex/ &&
+             return "String";
+        /\+NGCP::Panel::Field::Country/ &&
+             return "String";
+        /\+NGCP::Panel::Field::EmailList/ &&
+             return "String";
+        /\+NGCP::Panel::Field::Identifier/ &&
             return "String";
-        }
-        when(/\+NGCP::Panel::Field::Country/) {
+        /\+NGCP::Panel::Field::SubscriberStatusSelect/ &&
             return "String";
-        }
-        when(/\+NGCP::Panel::Field::EmailList/) {
-            return "String";
-        }
-        when(/\+NGCP::Panel::Field::Identifier/) {
-            return "String";
-        }
-        when(/\+NGCP::Panel::Field::SubscriberStatusSelect/) {
-            return "String";
-        }
-        when(/\+NGCP::Panel::Field::SubscriberLockSelect/) {
+        /\+NGCP::Panel::Field::SubscriberLockSelect/ &&
             return "Number";
-        }
-        when(/\+NGCP::Panel::Field::E164/) {
+        /\+NGCP::Panel::Field::E164/ &&
             return "Object";
-        }
-        when(/Compound/) {
+        /Compound/ &&
             return "Object";
-        }
-        when(/\+NGCP::Panel::Field::AliasNumber/) {
+        /\+NGCP::Panel::Field::AliasNumber/ &&
             return "Array";
-        }
-        when(/\+NGCP::Panel::Field::PbxGroupAPI/) {
+        /\+NGCP::Panel::Field::PbxGroupAPI/ &&
             return "Array";
-        }
         # usually {xxx}{id}
-        when(/\+NGCP::Panel::Field::/) {
+        /\+NGCP::Panel::Field::/ &&
             return "Number";
-        }
-        default {
-            return "String";
-        }
-    } 
+        # default
+        return "String";
+    } # SWITCH
 }
 
 sub get_collection_properties {
