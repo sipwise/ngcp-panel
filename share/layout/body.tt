@@ -159,8 +159,8 @@ var mainWrapperInit = function () {
             return true;
         }
         var _href = $(this).attr('href');
-        var backuri = $(this).data('backuri') ? $(this).data('backuri') : '[%-backuri-%]';
-        var _back = 'back=[% backuri | uri %]';
+        var backuri = $(this).data('backuri') ? $(this).data('backuri') : '[%- backuri | uri -%]';
+        var _back = 'back='+backuri;
         if(_href == null || _href.match(/[&\?]back=/)) {
             // ignore 
         } else if(_href.match(/\?/)) {
