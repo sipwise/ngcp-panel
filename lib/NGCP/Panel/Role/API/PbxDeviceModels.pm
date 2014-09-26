@@ -82,6 +82,7 @@ sub resource_from_item {
                 labelpos => $key->position,
             };
         }
+        $r->{num_lines} = @{ $r->{keys} };
 
         push @{ $resource{linerange} }, $r;
     }
