@@ -63,6 +63,7 @@ sub hal_from_item {
         form => $form,
         resource => \%resource,
         run => 0,
+        exceptions => [ "subscriber_id" ],
     );
     $hal->resource(\%resource);
     return $hal;
@@ -97,6 +98,7 @@ sub update_item {
         c => $c,
         form => $form,
         resource => $resource,
+        exceptions => [ "subscriber_id" ],
     );
 
     if (! exists $resource->{destinations} ) {
