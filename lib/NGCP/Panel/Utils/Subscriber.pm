@@ -851,8 +851,12 @@ sub field_to_destination {
         $d = "sip:auto-attendant\@app.local";
     } elsif($d eq "officehours") {
         $d = "sip:office-hours\@app.local";
-    } elsif($d eq "uri") {
-        $d = $uri;
+    } else {
+        my $v = $uri;
+        $v =~ s/^sips?://;
+        my ($vuser, $vdomain) = split(/\@/, $v);
+        $vdomain = $domain unless($vdomain);
+        $d = 'sip:' . $vuser . '@' . $vdomain;
     }
     # TODO: check for valid dest here
     if($d !~ /\@/) {

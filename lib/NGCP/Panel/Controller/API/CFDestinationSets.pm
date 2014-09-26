@@ -166,12 +166,13 @@ sub POST :Allow {
             c => $c,
             resource => $resource,
             form => $form,
+            exceptions => [ "subscriber_id" ],
         );
 
         my $dset;
 
         unless(defined $resource->{subscriber_id}) {
-            $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Required: 'subscriber_id'");
+            $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Missing mandatory field 'subscriber_id'");
             last;
         }
 
