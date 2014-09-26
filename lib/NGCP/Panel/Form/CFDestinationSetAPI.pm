@@ -8,12 +8,13 @@ has_field 'id' => (
     type => 'Hidden',
 );
 
-has_field 'subscriber' => ( # Workaround for validate_form
-    type => 'Compound',
-);
-
-has_field 'subscriber.id' => (
+has_field 'subscriber_id' => (
     type => 'PosInteger',
+    required => 1,
+    element_attr => {
+        rel => ['tooltip'],
+        title => ['The subscriber id this destination set belongs to.']
+    },
 );
 
 has_field 'name' => (
@@ -21,10 +22,18 @@ has_field 'name' => (
     label => 'Name',
     wrapper_class => [qw/hfh-rep-field/],
     required => 1,
+    element_attr => {
+        rel => ['tooltip'],
+        title => ['The name of the destination set.']
+    },
 );
 
 has_field 'destinations' => (
     type => 'Repeatable',
+    element_attr => {
+        rel => ['tooltip'],
+        title => ['An array of destinations, each containing the keys "destination", "timeout" and "priority".']
+    },
 );
 
 has_field 'destinations.id' => (
