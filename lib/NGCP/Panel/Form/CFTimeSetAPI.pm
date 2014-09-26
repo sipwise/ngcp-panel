@@ -10,18 +10,23 @@ has_field 'name' => (
     required => 1,
 );
 
-has_field 'subscriber' => ( # Workaround for validate_form
-    type => 'Compound',
-);
-
-has_field 'subscriber.id' => (
+has_field 'subscriber_id' => (
     type => 'PosInteger',
+    required => 1,
+    element_attr => {
+        rel => ['tooltip'],
+        title => ['The subscriber id this time set belongs to.']
+    },
 );
 
 has_field 'times' => (
     type => 'Repeatable',
     do_wrapper => 1,
     do_label => 0,
+    element_attr => {
+        rel => ['tooltip'],
+        title => ['An array of time definitions with keys "year", "month", "mday", "wday", "hour", "minute", where each key can be a number like "10" or a range like "10-20".']
+    },
 );
 
 has_field 'times.id' => (
