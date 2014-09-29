@@ -1,3 +1,12 @@
+ngcp-panel (1.4.2.5+0~mr3.4.2.5) unstable; urgency=low
+
+  [ Andreas Granig ]
+  * [cb0df62] MT#9239 Allow '*' as first rewrite char.
+
+  [ Sipwise Jenkins Builder ]
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Mon, 29 Sep 2014 17:11:15 +0200
+
 ngcp-panel (1.4.2.4+0~mr3.4.2.4) unstable; urgency=low
 
   [ Andreas Granig ]
