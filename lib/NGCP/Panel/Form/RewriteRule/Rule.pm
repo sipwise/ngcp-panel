@@ -124,7 +124,7 @@ sub validate {
         $self->field('replace_pattern')->add_error('Cannot end with "$"');
     }
 
-    if ( my ($found) = $r =~ m/^([*?])/ ) {
+    if ( my ($found) = $r =~ m/^([?])/ ) {
         $self->field('replace_pattern')->add_error("Cannot start with \"$found\"");
     }
     if ( $r =~ m/\s/ ) {
