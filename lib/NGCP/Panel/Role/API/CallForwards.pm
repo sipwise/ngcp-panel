@@ -16,7 +16,7 @@ use NGCP::Panel::Form::CFSimpleAPI;
 use NGCP::Panel::Utils::Subscriber;
 
 sub get_form {
-    my ($self, $c, $type) = @_;
+    my ($self, $c) = @_;
 
     return NGCP::Panel::Form::CFSimpleAPI->new(ctx => $c);
 }
@@ -55,7 +55,7 @@ sub hal_from_item {
                 type => $cf_type,
             })->first;
         if ($mapping) {
-            $resource{$cf_type} = $self->_contents_from_cfm($c, $mapping);
+            $resource{$cf_type} = $self->_contents_from_cfm($c, $mapping, $item);
         } else {
             $resource{$cf_type} = {};
         }
@@ -255,7 +255,7 @@ sub update_item {
 }
 
 sub _contents_from_cfm {
-    my ($self, $c, $cfm_item) = @_;
+    my ($self, $c, $cfm_item, $sub) = @_;
     my (@times, @destinations);
     my $timeset_item = $cfm_item->time_set;
     my $dset_item = $cfm_item->destination_set;
@@ -265,13 +265,26 @@ sub _contents_from_cfm {
     }
     for my $dest ($dset_item ? $dset_item->voip_cf_destinations->all : () ) {
         my ($d, $duri) = NGCP::Panel::Utils::Subscriber::destination_to_field($dest->destination);
-        $d = $duri if $d eq "uri";
+        $d = _uri_deflate($duri,$sub) if $d eq "uri";
         push @destinations, {$dest->get_inflated_columns,
                 destination => $d,
             };
         delete @{$destinations[-1]}{'destination_set_id', 'id'};
     }
     return {times => \@times, destinations => \@destinations};
+}
+
+sub _uri_deflate {
+    my ($v, $sub) = @_;
+    $v =~ s/^sips?://;
+    my $t;
+    my ($user, $domain) = split(/\@/, $v);
+    if($domain eq $sub->domain->domain) {
+        $v = $user;
+    } else {
+        $v = $user . '@' . $domain;
+    }
+    return $v;
 }
 
 1;
