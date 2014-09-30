@@ -1,8 +1,0 @@
-[% TAGS [- -] %]
-[- IF PRO -]
-5  3 1 * *   root    if ! /usr/sbin/ngcp-check_active -q; then perl /usr/share/ngcp-panel-tools/generate_invoice.pl --prevmonth 2>&1 >/dev/null; fi
-5  3 2 * *   root    if ! /usr/sbin/ngcp-check_active -q; then perl /usr/share/ngcp-panel-tools/generate_invoice.pl --prevmonth --sendonly 2>&1 >/dev/null; fi
-[- ELSE -]
-5  3 1 * *   root    perl /usr/share/ngcp-panel-tools/generate_invoice.pl --prevmonth 2>&1 >/dev/null
-5  3 2 * *   root    perl /usr/share/ngcp-panel-tools/generate_invoice.pl --prevmonth --sendonly 2>&1 >/dev/null
-[- END -]
