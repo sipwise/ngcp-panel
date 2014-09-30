@@ -51,7 +51,7 @@ sub hal_from_item {
 
     $resource{mappings} = [];
     for my $mapping ($item->provisioning_voip_subscriber->voip_cc_mappings->all) {
-        push $resource{mappings}, {
+        push @{ $resource{mappings} }, {
                 auth_key => $mapping->auth_key,
             };
     }

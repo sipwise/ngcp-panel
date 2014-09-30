@@ -36,7 +36,7 @@ sub hal_from_item {
     for my $mapping ($item->provisioning_voip_subscriber->voip_cf_mappings->all) {
         my $dset = $mapping->destination_set ? $mapping->destination_set->name : undef;
         my $tset = $mapping->time_set ? $mapping->time_set->name : undef;
-        push $resource->{$mapping->type}, {
+        push @{ $resource->{$mapping->type} }, {
                 destinationset => $dset,
                 timeset => $tset,
             };

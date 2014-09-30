@@ -486,7 +486,7 @@ sub handles_list :Chained('base') :PathPart('handles') :CaptureArgs(0) {
     for my $handle (@rows) {
         $groups{ $handle->get_column('groupname') } = []
             unless exists $groups{ $handle->get_column('groupname') };
-        push $groups{ $handle->get_column('groupname') }, $handle;
+        push @{ $groups{ $handle->get_column('groupname') } }, $handle;
     }
     $c->stash(sound_groups => \%groups);
     $c->stash(handles_rs => $handles_rs);
