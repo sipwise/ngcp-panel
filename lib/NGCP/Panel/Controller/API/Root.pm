@@ -72,7 +72,7 @@ sub GET : Allow {
         my $actions = [];
         if($c->user->read_only) {
             foreach my $m(keys %{ $full_mod->config->{action} }) {
-                next unless $m ~~ [qw/GET HEAD OPTIONS/];
+                next unless $m =~ /^(GET|HEAD|OPTIONS)$/;
                 push @{ $actions }, $m;
             }
         } else {
@@ -82,7 +82,7 @@ sub GET : Allow {
         if($full_item_mod->can('config')) {
             if($c->user->read_only) {
                 foreach my $m(keys %{ $full_item_mod->config->{action} }) {
-                    next unless $m ~~ [qw/GET HEAD OPTIONS/];
+                    next unless $m =~ /^(GET|HEAD|OPTIONS)$/;
                     push @{ $item_actions }, $m;
                 }
             } else {

@@ -39,7 +39,7 @@ sub set_slots {
     }
     foreach my $s(@{ $self->form->ctx->config->{speed_dial_vsc_presets}->{vsc} })
     {
-        if($s ~~ @used) {
+        if(grep { $s eq $_ } @used) {
             next unless(defined $current && $s eq $current);
         }
         push @options, { label => $s, value => $s };

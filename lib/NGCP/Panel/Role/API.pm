@@ -203,7 +203,7 @@ sub valid_media_type {
     my $type;
     if(ref $media_type eq "ARRAY") {
         $type = join ' or ', @{ $media_type };
-        return 1 if $ctype && $ctype ~~ $media_type;
+        return 1 if $ctype && grep { $ctype eq $_ } @$media_type;
     } else {
         $type = $media_type;
         return 1 if($ctype && index($ctype, $media_type) == 0);
@@ -258,7 +258,7 @@ sub allowed_methods_filtered {
     if($c->user->read_only) {
         my @methods = ();
         foreach my $m(@{ $self->allowed_methods }) {
-            next unless $m ~~ [qw/GET HEAD OPTIONS/];
+            next unless $m =~ /^(GET|HEAD|OPTIONS)$/;
             push @methods, $m;
         }
         return \@methods;
@@ -274,7 +274,7 @@ sub allowed_methods {
     for my $method ($meta->get_method_list) {
         push @allow, $meta->get_method($method)->name
             if $meta->get_method($method)->can('attributes') &&
-               'Allow' ~~ $meta->get_method($method)->attributes;
+               grep { 'Allow' eq $_ } @{ $meta->get_method($method)->attributes };
     }
     return [sort @allow];
 }

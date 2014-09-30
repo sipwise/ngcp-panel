@@ -30,7 +30,7 @@ sub index :Chained('/') :PathPart('statistics') :Args(0) {
     my $hosts = NGCP::Panel::Utils::Statistics::get_host_list();
     unless($posted) {
         my $ownhost = hostname;
-        if($ownhost ~~ @{ $hosts }) {
+        if(grep { $ownhost eq $_ } @$hosts) {
             $selected_host = $ownhost;
         } else {
             $selected_host = $hosts->[0];

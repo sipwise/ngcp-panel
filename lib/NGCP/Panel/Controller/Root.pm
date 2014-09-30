@@ -80,7 +80,7 @@ sub auto :Private {
                 } else {
                     $c->log->debug("++++++ admin '".$c->user->login."' authenticated via api_admin_cert");
                 }
-                if($c->user->read_only && !($c->req->method ~~ [qw/GET HEAD OPTIONS/])) {
+                if($c->user->read_only && !($c->req->method =~ /^(GET|HEAD|OPTIONS)$/)) {
                     $c->log->error("invalid method '".$c->req->method."' for read-only user '".$c->user->login."', rejecting");
                     $c->user->logout;
                     $c->response->status(403);
@@ -108,7 +108,7 @@ sub auto :Private {
                 } else {
                     $c->log->debug("++++++ admin '".$c->user->login."' authenticated via api_admin_http");
                 }
-                if($c->user->read_only && !($c->req->method ~~ [qw/GET HEAD OPTIONS/])) {
+                if($c->user->read_only && !($c->req->method =~ /^(GET|HEAD|OPTIONS)$/)) {
                     $c->log->error("invalid method '".$c->req->method."' for read-only user '".$c->user->login."', rejecting");
                     $c->user->logout;
                     $c->response->status(403);
@@ -153,7 +153,7 @@ sub auto :Private {
         $c->req->uri->path =~ /create/
         || $c->req->uri->path =~ /edit/
         || $c->req->uri->path =~ /delete/
-        || !($c->req->method ~~ [qw/GET HEAD OPTIONS/])
+        || !($c->req->method =~ /^(GET|HEAD|OPTIONS)$/)
     )) {
         $c->detach('/denied_page');
     }
@@ -227,7 +227,7 @@ sub end :Private {
 sub _prune_row {
     my ($columns, %row) = @_;
     while (my ($k,$v) = each %row) {
-        unless ($k ~~ $columns) {
+        unless (grep { $k eq $_ } @$columns) {
             delete $row{$k};
             next;
         }

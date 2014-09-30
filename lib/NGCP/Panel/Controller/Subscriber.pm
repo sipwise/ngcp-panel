@@ -748,10 +748,11 @@ sub preferences :Chained('base') :PathPart('preferences') :Args(0) {
             });
             next unless $preference;
             my $pref_id = $preference->id;
-            if($pref =~ /^cf/ && $pref_id ~~ [@attribute_ids]) {
+            my $pref_id_exists = grep { $pref_id eq $_ } @attribute_ids;
+            if($pref =~ /^cf/ && $pref_id_exists) {
                 $special_prefs->{callforward}->{active} = 1;
                 $special_prefs->{callforward}->{$pref} = 1;
-            } elsif($pref_id ~~ [@attribute_ids]) {
+            } elsif($pref_id_exists) {
                 $special_prefs->{$pref}->{active} = 1;
             }
         }
@@ -2389,7 +2390,7 @@ sub edit_master :Chained('master') :PathPart('edit') :Args(0) :Does(ACL) :ACLDet
                     my $group = $schema->resultset('voip_subscribers')->find($group_id);
                     next unless($group && $group->provisioning_voip_subscriber && $group->provisioning_voip_subscriber->is_pbx_group);
                     push @new_groups, $group->provisioning_voip_subscriber->id;
-                    unless($group->provisioning_voip_subscriber->id ~~ [ @old_groups ]) {
+                    unless(grep { $group->provisioning_voip_subscriber->id eq $_ } @old_groups) {
                         $prov_subscriber->voip_pbx_groups->create({
                             group_id => $group->provisioning_voip_subscriber->id,
                         });
@@ -2405,7 +2406,7 @@ sub edit_master :Chained('master') :PathPart('edit') :Args(0) :Does(ACL) :ACLDet
                 }
                 foreach my $group_id(@old_groups) {
                     # remove subscriber from group if not there anymore
-                    unless($group_id ~~ [ @new_groups ]) {
+                    unless(grep { $group_id eq $_ } @new_groups) {
                         my $group = $schema->resultset('provisioning_voip_subscribers')->find($group_id);
                         NGCP::Panel::Utils::Subscriber::update_pbx_group_prefs(
                             c => $c,

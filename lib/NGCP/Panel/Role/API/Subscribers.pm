@@ -623,7 +623,7 @@ sub update_item {
     my @new_groups = ();
     foreach my $group(@{ $groups }) {
         push @new_groups, $group->provisioning_voip_subscriber->id;
-        unless($group->provisioning_voip_subscriber->id ~~ [ @old_groups ]) {
+        unless(grep { $group->provisioning_voip_subscriber->id eq $_ } @old_groups) {
             $subscriber->provisioning_voip_subscriber->voip_pbx_groups->create({
                 group_id => $group->provisioning_voip_subscriber->id,
             });
@@ -643,7 +643,7 @@ sub update_item {
     }
     foreach my $group_id(@old_groups) {
         # remove subscriber from group if not there anymore
-        unless($group_id ~~ [ @new_groups ]) {
+        unless(grep { $group_id eq $_ } @new_groups) {
             my $group = $schema->resultset('provisioning_voip_subscribers')->find($group_id);
             NGCP::Panel::Utils::Subscriber::update_pbx_group_prefs(
                 c => $c,

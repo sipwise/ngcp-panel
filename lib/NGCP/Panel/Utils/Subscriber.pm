@@ -697,7 +697,7 @@ sub update_subadmin_sub_aliases {
         my $cli = $num->cc . ($num->ac // '') . $num->sn;
 
         my $tmpsubscriber;
-        if ($num->id ~~ $alias_selected) {
+        if (grep { $num->id eq $_ } @$alias_selected) {
             # assign number from someone to this subscriber
 
             # since the number could be assigned to any sub within the pbx,
@@ -973,7 +973,7 @@ sub apply_rewrite {
     my $subscriber = $params{subscriber};
     my $callee = $params{number};
     my $dir = $params{direction};
-    return $callee unless $dir ~~ [qw/caller_in callee_in caller_out callee_out/];
+    return $callee unless $dir =~ /^(caller_in|callee_in|caller_out|callee_out)$/;
 
     my ($field, $direction) = split /_/, $dir;
     $dir = "rewrite_".$dir."_dpid";
@@ -1019,7 +1019,7 @@ sub apply_rewrite {
                         foreach my $sub($subscriber->contract->voip_subscribers->all) {
                             foreach my $num($sub->voip_numbers->search({ status => 'active' })->all) {
                                 my $v = $num->cc . ($num->ac // '') . $num->sn;
-                                unless($v ~~ $cache->{$avp}) {
+                                unless(grep { $v eq $_ } @{ $cache->{$avp} }) {
                                     push @{ $cache->{$avp} }, $v;
                                 }
                             }
