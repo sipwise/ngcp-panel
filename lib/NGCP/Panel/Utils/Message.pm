@@ -247,7 +247,7 @@ Info:
 
 Check "Params" section for the "error" and the "info" methods for extended usage
 
-=item Notes:
+Notes:
 
 - If you use the code inside an anonymous function (sub { })
   it will appear in the log as CALLED=....::__ANON__
@@ -258,8 +258,6 @@ Check "Params" section for the "error" and the "info" methods for extended usage
   use "$type => 'internal' (basically anything but 'panel',
   there may be more logic around different types but currently
   there is only a check if ($type eq 'panel') { show on GUI ... })
-
-=cut
 
 =head1 INTERFACE
 
@@ -274,7 +272,7 @@ Used by "info" and "error" methods and returns parsed data for logging
 
 Shows the error message on the panel. Also logs everything to the logger.
 
-=item Params:
+Params:
 
     $c (required)
     $desc (required) - main log message (will apear on the GUI).
@@ -289,14 +287,12 @@ Shows the error message on the panel. Also logs everything to the logger.
              as the caller and if you need to something else
              $cname=custom_create leads to
              CALLED=Controller:Domain::custom_create in the log
-
-=cut
 
 =head3 C<info>
 
 Shows the info message on the panel. Also logs everything to the logger.
 
-=item Params:
+Params:
 
     $c (required)
     $desc (required) - main log message (will apear on the GUI).
@@ -311,8 +307,6 @@ Shows the info message on the panel. Also logs everything to the logger.
              as the caller and if you need to something else
              $cname=custom_create leads to
              CALLED=Controller:Domain::custom_create in the log
-
-=cut
 
 =head1 AUTHOR
 
