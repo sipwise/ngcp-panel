@@ -230,28 +230,89 @@ NGCP::Panel::Utils::Message
 
 Parse messages for log and Web display.
 
+Usage in the code:
+
+Error:
+        NGCP::Panel::Utils::Message->error(
+            c => $c,
+            error => $e,
+            desc  => $c->loc('Failed to create domain.'),
+        );
+
+Info:
+        NGCP::Panel::Utils::Message->info(
+            c => $c,
+            desc => $c->loc('Domain successfully created'),
+        );
+
+Check "Params" section for the "error" and the "info" methods for extended usage
+
+=item Notes:
+
+- If you use the code inside an anonymous function (sub { })
+  it will appear in the log as CALLED=....::__ANON__
+  you might want to use "$cname" then to specify the caller name
+  manually (there is an example in "Params" below).
+
+- If you do not want a message to appear on the GUI
+  use "$type => 'internal' (basically anything but 'panel',
+  there may be more logic around different types but currently
+  there is only a check if ($type eq 'panel') { show on GUI ... })
+
+=cut
+
 =head1 INTERFACE
 
 =head2 Functions
 
 =head3 C<get_log_params>
 
-Params: c (required)
-
-Returns a hash ref with basic logging parameters that are used in "error", "info".
+Used by "info" and "error" methods and returns parsed data for logging
+- Do not this the method directly -
 
 =head3 C<error>
 
-Params: c (required), desc (required), error, log
+Shows the error message on the panel. Also logs everything to the logger.
 
-Parse Exceptions (mainly DBIx::Class::Exceptions) and show the relevant
-bits on the panel. Also log everything to the logger.
+=item Params:
+
+    $c (required)
+    $desc (required) - main log message (will apear on the GUI).
+    $log   - additional information that will be added to LOG= only (no GUI).
+    $error - error log message, will be parsed and may also appear on the GUI
+    $type  - 'panel' by default, means the message will go to both the log and the GUI,
+             anything else but 'panel' is written only to the log.
+             Expandable with new types if neccessary.
+    $data  - hash containing what will be written into the DATA= part of the log message
+             (by default $c->request->params is used for the data source)
+    $cname - Custom function name for CALLED= e.g. Controller::Domain::create
+             as the caller and if you need to something else
+             $cname=custom_create leads to
+             CALLED=Controller:Domain::custom_create in the log
+
+=cut
 
 =head3 C<info>
 
-Params: c (required), desc (required), log
-
 Shows the info message on the panel. Also logs everything to the logger.
+
+=item Params:
+
+    $c (required)
+    $desc (required) - main log message (will apear on the GUI).
+    $log   - additional information that will be added to LOG= only (no GUI).
+    $error - error log message, will be parsed and may also appear on the GUI
+    $type  - 'panel' by default, means the message will go to both the log and the GUI,
+             anything else but 'panel' is written only to the log.
+             Expandable with new types if neccessary.
+    $data  - hash containing what will be written into the DATA= part of the log message
+             (by default $c->request->params is used for the data source)
+    $cname - Custom function name for CALLED= e.g. Controller::Domain::create
+             as the caller and if you need to something else
+             $cname=custom_create leads to
+             CALLED=Controller:Domain::custom_create in the log
+
+=cut
 
 =head1 AUTHOR
 
