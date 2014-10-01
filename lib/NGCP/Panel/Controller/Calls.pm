@@ -25,43 +25,43 @@ sub index :Chained('/') :PathPart('calls') :Args(0) {
 }
 
 sub calls_matrix_ajax :Chained('/') :PathPart('calls/ajax') :Args(0) {
-     my ( $self, $c ) = @_;
+    my ( $self, $c ) = @_;
 
-     my $matrix = [];
-     my $countries = [];
+    my $matrix = [];
+    my $countries = [];
+    my $from = $c->req->params->{from};
+    my $to = $c->req->params->{to};
+    my $parse_time = DateTime::Format::Strptime->new(pattern => '%F');
 
-     my $from = $c->req->params->{from};
-     my $to = $c->req->params->{to};
-     my $parse_time = DateTime::Format::Strptime->new(pattern => '%F');
-
-     my $from_epoch;
-     if($from) {
+    my $from_epoch;
+    if($from) {
         $from_epoch = $parse_time->parse_datetime($from)->epoch();
-     } else {
+    } else {
         $from_epoch = NGCP::Panel::Utils::DateTime::current_local->truncate(to => 'day')->epoch();
-     }
-     my $to_epoch; 
-     if($to) {
+    }
+    my $to_epoch; 
+    if($to) {
         $to_epoch = $parse_time->parse_datetime($to)->add(days => 1)->epoch();
-     } else {
+    } else {
         $to_epoch = NGCP::Panel::Utils::DateTime::current_local->truncate(to => 'day')->add(days => 1)->epoch();
-     }
+    }
 
-     my $rs = $c->model('DB')->resultset('cdr')->search({
+    my $rs = $c->model('DB')->resultset('cdr')->search({
         -and => [
             start_time => { '>=' => $from_epoch },
             start_time => { '<=' => $to_epoch },
         ],
-     }, {
-        select => [qw/source_cli destination_user_in/],
-     });
+    }, {
+        select => [qw/source_cli destination_user_in/,
+            { count       => '*', -as => 'cnt' },        
+        ],
+        group_by => [qw/source_cli destination_user_in/],
+    });
 
-     my $n = $rs->count;
-
-     my $id_counter = 0;
-     my $id_table = {};
-
-     while(my $ref = $rs->next) {
+    my $id_counter = 0;
+    my $id_table = {};
+    my $i = 0;
+    while(my $ref = $rs->next) {
         next unless($ref->source_cli && $ref->source_cli =~ /^\d{5,}$/ && 
             $ref->destination_user_in && $ref->destination_user_in =~ /^\d{5,}$/);
         my $s = Number::Phone->new($ref->source_cli);
@@ -87,22 +87,20 @@ sub calls_matrix_ajax :Chained('/') :PathPart('calls/ajax') :Args(0) {
             $matrix->[$sid] = [];
         }
         unless(defined $matrix->[$sid]->[$did]) {
-            $matrix->[$sid]->[$did] = 1;
+            $matrix->[$sid]->[$did] = 0 + $ref->get_column('cnt');
         } else {
-            $matrix->[$sid]->[$did]++;
+            $matrix->[$sid]->[$did] += $ref->get_column('cnt');
         }
-     }
-
-     my $count = @{ $countries };
-     for(my $i = 0; $i < $count; ++$i) {
+    }
+    my $count = @{ $countries };
+    for(my $i = 0; $i < $count; ++$i) {
         unless(defined $matrix->[$i]) {
             $matrix->[$i] = [];
             $matrix->[$i]->[$count-1] = undef;
         } elsif(@{ $matrix->[$i] } != $count) {
             $matrix->[$i]->[$count-1] = undef;
         }
-     }
-
+    }
     my $data = {
         countries => $countries,
         calls => $matrix,
