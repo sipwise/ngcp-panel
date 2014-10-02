@@ -556,7 +556,7 @@ msgstr "Апрель"
 msgid "Arbitrary text."
 msgstr "Произвольный текст."
 
-#: share/layout/body.tt:113
+#: share/layout/body.tt:128
 msgid "Are you sure?"
 msgstr "Вы уверены?"
 
@@ -1101,7 +1101,7 @@ msgstr ""
 msgid "Can't create a PBX group without having a pilot subscriber."
 msgstr "Не могу создать PBX группу без основного абонента."
 
-#: share/layout/body.tt:116
+#: share/layout/body.tt:131
 msgid "Cancel"
 msgstr "Отмена"
 
@@ -1255,7 +1255,7 @@ msgstr "CloudPBX Таймаут последовательного перебо�
 msgid "CloudPBX Subscriber"
 msgstr "Абонент CloudPBX"
 
-#: share/layout/body.tt:181
+#: share/layout/body.tt:196
 msgid "Collapse Groups"
 msgstr "Свернуть"
 
@@ -2457,7 +2457,7 @@ msgstr "Конечная Дата"
 msgid "End Date/Time"
 msgstr "Конечная Дата/Время"
 
-#: share/layout/body.tt:176 share/layout/body.tt:195
+#: share/layout/body.tt:191 share/layout/body.tt:210
 msgid "Expand Groups"
 msgstr "Развернуть"
 
@@ -4627,7 +4627,7 @@ msgstr ""
 msgid "Numbers"
 msgstr "Числа"
 
-#: share/layout/body.tt:117
+#: share/layout/body.tt:132
 msgid "OK"
 msgstr "Принять"
 
