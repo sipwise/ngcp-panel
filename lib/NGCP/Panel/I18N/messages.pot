@@ -403,7 +403,7 @@ msgstr ""
 msgid "Arbitrary text."
 msgstr ""
 
-#: share/layout/body.tt:113
+#: share/layout/body.tt:128
 msgid "Are you sure?"
 msgstr ""
 
@@ -825,7 +825,7 @@ msgstr ""
 msgid "Can't create a PBX group without having a pilot subscriber."
 msgstr ""
 
-#: share/layout/body.tt:116
+#: share/layout/body.tt:131
 msgid "Cancel"
 msgstr ""
 
@@ -961,7 +961,7 @@ msgstr ""
 msgid "CloudPBX Subscriber"
 msgstr ""
 
-#: share/layout/body.tt:181
+#: share/layout/body.tt:196
 msgid "Collapse Groups"
 msgstr ""
 
@@ -1912,7 +1912,7 @@ msgstr ""
 msgid "End Date/Time"
 msgstr ""
 
-#: share/layout/body.tt:176 share/layout/body.tt:195
+#: share/layout/body.tt:191 share/layout/body.tt:210
 msgid "Expand Groups"
 msgstr ""
 
@@ -3889,7 +3889,7 @@ msgstr ""
 msgid "Numbers"
 msgstr ""
 
-#: share/layout/body.tt:117
+#: share/layout/body.tt:132
 msgid "OK"
 msgstr ""
 
