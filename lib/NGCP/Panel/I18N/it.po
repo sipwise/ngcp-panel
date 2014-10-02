@@ -559,7 +559,7 @@ msgstr "Aprile"
 msgid "Arbitrary text."
 msgstr "Testo a piacere."
 
-#: share/layout/body.tt:113
+#: share/layout/body.tt:128
 msgid "Are you sure?"
 msgstr "Si è sicuri?"
 
@@ -1117,7 +1117,7 @@ msgstr ""
 msgid "Can't create a PBX group without having a pilot subscriber."
 msgstr "Impossibile creare un gruppo PBX senza un abbonato pilota."
 
-#: share/layout/body.tt:116
+#: share/layout/body.tt:131
 msgid "Cancel"
 msgstr "Cancel"
 
@@ -1269,7 +1269,7 @@ msgstr "CloudPBX Timeout Chiamata in Serie"
 msgid "CloudPBX Subscriber"
 msgstr "Subscriber CloudPBX"
 
-#: share/layout/body.tt:181
+#: share/layout/body.tt:196
 msgid "Collapse Groups"
 msgstr "Riduci Gruppi"
 
@@ -2469,7 +2469,7 @@ msgstr "Data di Fine"
 msgid "End Date/Time"
 msgstr "Data/Ora di Fine"
 
-#: share/layout/body.tt:176 share/layout/body.tt:195
+#: share/layout/body.tt:191 share/layout/body.tt:210
 msgid "Expand Groups"
 msgstr "Espandi Gruppi"
 
@@ -4632,7 +4632,7 @@ msgstr ""
 msgid "Numbers"
 msgstr "Numeri"
 
-#: share/layout/body.tt:117
+#: share/layout/body.tt:132
 msgid "OK"
 msgstr ""
 
