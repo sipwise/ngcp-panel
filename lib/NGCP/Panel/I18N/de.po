@@ -561,7 +561,7 @@ msgstr "April"
 msgid "Arbitrary text."
 msgstr "Beliebiger Text."
 
-#: share/layout/body.tt:113
+#: share/layout/body.tt:128
 msgid "Are you sure?"
 msgstr "Sind Sie sicher?"
 
@@ -1111,7 +1111,7 @@ msgstr ""
 "PBX-Gruppe kann nicht erstellt werden, wenn kein Pilot-Subscriber vorhanden "
 "ist."
 
-#: share/layout/body.tt:116
+#: share/layout/body.tt:131
 msgid "Cancel"
 msgstr "Abbrechen"
 
@@ -1260,7 +1260,7 @@ msgstr "CloudPBX Zeitüberschreitung für serielles Hunting"
 msgid "CloudPBX Subscriber"
 msgstr "CloudPBX Subscriber"
 
-#: share/layout/body.tt:181
+#: share/layout/body.tt:196
 msgid "Collapse Groups"
 msgstr "Alle einklappen"
 
@@ -2456,7 +2456,7 @@ msgstr "End-Datum"
 msgid "End Date/Time"
 msgstr "End-Zeit/Datum"
 
-#: share/layout/body.tt:176 share/layout/body.tt:195
+#: share/layout/body.tt:191 share/layout/body.tt:210
 msgid "Expand Groups"
 msgstr "Alle ausklappen"
 
@@ -4629,7 +4629,7 @@ msgstr ""
 msgid "Numbers"
 msgstr "Nummern"
 
-#: share/layout/body.tt:117
+#: share/layout/body.tt:132
 msgid "OK"
 msgstr "OK"
 
