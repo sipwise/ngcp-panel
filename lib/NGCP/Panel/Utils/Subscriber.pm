@@ -769,6 +769,13 @@ sub terminate {
     my $schema = $c->model('DB');
     $schema->txn_do(sub {
         my $prov_subscriber = $subscriber->provisioning_voip_subscriber;
+        if($prov_subscriber && $prov_subscriber->profile_id) {
+            NGCP::Panel::Utils::Events::insert(
+                c => $c, schema => $schema, 
+                subscriber => $subscriber, type => 'stop_profile', 
+                old => $prov_subscriber->profile_id, new => undef,
+            );
+        }
         if($prov_subscriber && $prov_subscriber->is_pbx_group) {
             $schema->resultset('voip_pbx_groups')->search({
                 group_id => $subscriber->provisioning_voip_subscriber->id,
@@ -776,7 +783,7 @@ sub terminate {
             NGCP::Panel::Utils::Events::insert(
                 c => $c, schema => $schema, type => 'end_huntgroup',
                 subscriber => $subscriber,
-                old_status => $prov_subscriber->profile_id, new_status => undef,
+                old => $prov_subscriber->profile_id, new => undef,
             );
         }
         if($prov_subscriber && !$prov_subscriber->is_pbx_pilot) {
