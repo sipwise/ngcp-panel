@@ -238,7 +238,7 @@ msgstr ""
 "Ein POSIX Regulärer Ausdruck (regex), der gegen die komplette Request-URI "
 "vergleicht (z.B. '^sip:.+@example\\.org$' oder '^sip:431')"
 
-#: lib/NGCP/Panel/Utils/DbStrings.pm:1081
+#: lib/NGCP/Panel/Utils/DbStrings.pm:1082
 msgid "A POSIX regular expression to match the called number (e.g. ^431.+$)."
 msgstr ""
 "Ein POSIX Regulärer Ausdruck (regex) zum Prüfen der Angerufenen Nummer (z."
@@ -292,13 +292,19 @@ msgstr ""
 "Ein Host-Name zur Identifizierung eines Peer Hosts und Authentifizierung an "
 "einem Peer Host."
 
-#: lib/NGCP/Panel/Utils/DbStrings.pm:1051
+#: lib/NGCP/Panel/Utils/DbStrings.pm:1052
 msgid "A regular expression matching the From URI."
 msgstr "Ein regulärer Ausdruck anwendbar auf die From URI."
 
-#: lib/NGCP/Panel/Utils/DbStrings.pm:1025
+#: lib/NGCP/Panel/Utils/DbStrings.pm:1026
 msgid "A short name for the zone (e.g. US)."
 msgstr "Der Kurz-Name für die Zone (z.B. US)."
+
+#: lib/NGCP/Panel/Utils/DbStrings.pm:1009
+msgid ""
+"A simple destination format, e.g. \"4312345\" if it is a number, or "
+"\"user@domain\" if it is a URI."
+msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:974
 msgid "A unique identifier string (only alphanumeric chars and _)."
@@ -341,11 +347,11 @@ msgstr "Konto-Saldo erfolgreich geändert!"
 msgid "Active"
 msgstr "Aktiv"
 
-#: lib/NGCP/Panel/Utils/DbStrings.pm:1154
+#: lib/NGCP/Panel/Utils/DbStrings.pm:1155
 msgid "Active callforward"
 msgstr "Aktive Ruf-Weiterleitung"
 
-#: lib/NGCP/Panel/Utils/DbStrings.pm:1124
+#: lib/NGCP/Panel/Utils/DbStrings.pm:1125
 msgid "Add"
 msgstr "Hinzufügen"
 
@@ -425,11 +431,11 @@ msgstr "Administrator erfolgreich geändert"
 msgid "Administrators"
 msgstr "Administratoren"
 
-#: lib/NGCP/Panel/Utils/DbStrings.pm:1129
+#: lib/NGCP/Panel/Utils/DbStrings.pm:1130
 msgid "Advanced"
 msgstr "Erweitert"
 
-#: lib/NGCP/Panel/Utils/DbStrings.pm:1153
+#: lib/NGCP/Panel/Utils/DbStrings.pm:1154
 msgid "Advanced View"
 msgstr "Erweiterte Ansicht"
 
@@ -457,7 +463,7 @@ msgstr "Alias-Nummern"
 msgid "All services running"
 msgstr "Alle Dienste gestartet"
 
-#: lib/NGCP/Panel/Utils/DbStrings.pm:1155
+#: lib/NGCP/Panel/Utils/DbStrings.pm:1156
 msgid "Allocable"
 msgstr "Zuweisbar"
 
@@ -518,7 +524,7 @@ msgid ""
 "\" and \"priority\"."
 msgstr ""
 
-#: lib/NGCP/Panel/Utils/DbStrings.pm:1116
+#: lib/NGCP/Panel/Utils/DbStrings.pm:1117
 msgid ""
 "An array of line/key definitions for this device. Each element is a hash "
 "containing the keys name, can_private, can_shared, can_blf and keys (which "
@@ -526,20 +532,20 @@ msgid ""
 "left right)."
 msgstr ""
 
-#: lib/NGCP/Panel/Utils/DbStrings.pm:1117
+#: lib/NGCP/Panel/Utils/DbStrings.pm:1118
 msgid ""
 "An array of time definitions with keys \"year\", \"month\", \"mday\", \"wday"
 "\", \"hour\", \"minute\", where each key can be a number like \"10\" or a "
 "range like \"10-20\"."
 msgstr ""
 
-#: lib/NGCP/Panel/Utils/DbStrings.pm:1018
+#: lib/NGCP/Panel/Utils/DbStrings.pm:1019
 msgid "An external id, e.g. provided by a 3rd party provisioning"
 msgstr ""
 "Eine externe ID, z.B. von einem externen Provisionierungs-System "
 "bereitgestellt"
 
-#: lib/NGCP/Panel/Utils/DbStrings.pm:1041
+#: lib/NGCP/Panel/Utils/DbStrings.pm:1042
 msgid "An external id, e.g. provided by a 3rd party provisioning."
 msgstr ""
 "Eine externe ID, z.B. von einem externen Provisionierungs-System "
@@ -586,7 +592,7 @@ msgstr "WAV anhängen"
 msgid "Attach WAV in Email"
 msgstr "WAV in Email anhängen"
 
-#: lib/NGCP/Panel/Utils/DbStrings.pm:1071
+#: lib/NGCP/Panel/Utils/DbStrings.pm:1072
 msgid ""
 "Attach recordings when delivering them via email. Must be set if delete flag "
 "is set"
@@ -810,7 +816,7 @@ msgstr "Blockiere eingehende Anrufe mit unterdrückter Rufnummer"
 msgid "Body Template"
 msgstr "Body Vorlage"
 
-#: lib/NGCP/Panel/Utils/DbStrings.pm:1035
+#: lib/NGCP/Panel/Utils/DbStrings.pm:1036
 msgid "Bootstrap Sync HTTP Method"
 msgstr "Bootstrap Sync HTTP Methode"
 
@@ -934,7 +940,7 @@ msgstr ""
 msgid "Call Forward Unavailable"
 msgstr "Ruf-Weiterleitung bei nicht erreichbar"
 
-#: lib/NGCP/Panel/Utils/DbStrings.pm:1054
+#: lib/NGCP/Panel/Utils/DbStrings.pm:1055
 msgid ""
 "Call Forward Unavailable, Contains the keys \"destinations\" and \"times\". "
 "\"destinations\" is an Array of Objects having a \"destination\", \"priority"
@@ -981,7 +987,7 @@ msgstr ""
 "\"times\" leer oder null ist, wird die Anrufweiterleitung zu jeder Zeit "
 "angewendet."
 
-#: lib/NGCP/Panel/Utils/DbStrings.pm:1064
+#: lib/NGCP/Panel/Utils/DbStrings.pm:1065
 msgid ""
 "Call Forward Unconditional, Number of Objects, each containing the keys, "
 "\"destinationset\" and \"timeset\". The values must be the name of a "
@@ -1016,7 +1022,7 @@ msgstr "Anruf-Liste"
 msgid "Call List for %1@%2"
 msgstr "Anruf-Liste für %1@%2"
 
-#: lib/NGCP/Panel/Utils/DbStrings.pm:1012
+#: lib/NGCP/Panel/Utils/DbStrings.pm:1013
 msgid "Call code"
 msgstr "Anrufcode"
 
@@ -1063,15 +1069,15 @@ msgstr "Prefix für Angerufenen"
 msgid "Callee UUID"
 msgstr "Angerufener UUID"
 
-#: lib/NGCP/Panel/Utils/DbStrings.pm:1066
+#: lib/NGCP/Panel/Utils/DbStrings.pm:1067
 msgid "Callee pattern"
 msgstr "Pattern für Angerufenen"
 
-#: lib/NGCP/Panel/Utils/DbStrings.pm:1046
+#: lib/NGCP/Panel/Utils/DbStrings.pm:1047
 msgid "Callee prefix"
 msgstr "Prefix für Angerufenen"
 
-#: lib/NGCP/Panel/Utils/DbStrings.pm:1118
+#: lib/NGCP/Panel/Utils/DbStrings.pm:1119
 msgid "Callee prefix, eg: 43"
 msgstr "Prefix für Angerufenen, z.b. 43"
 
@@ -1179,7 +1185,7 @@ msgstr "Cft"
 msgid "Cft ringtimeout"
 msgstr "Cft Läut-Timeout"
 
-#: lib/NGCP/Panel/Utils/DbStrings.pm:1096
+#: lib/NGCP/Panel/Utils/DbStrings.pm:1097
 msgid "Cfu"
 msgstr "Cfu"
 
@@ -1301,7 +1307,7 @@ msgid "Configure Preferences"
 msgstr "Präferenzen konfigurieren"
 
 #: lib/NGCP/Panel/Controller/Subscriber.pm:2066
-#: lib/NGCP/Panel/Utils/DbStrings.pm:1112 share/templates/contact/list.tt:3
+#: lib/NGCP/Panel/Utils/DbStrings.pm:1113 share/templates/contact/list.tt:3
 #: share/templates/reseller/details.tt:95
 #: share/templates/widgets/reseller_customer_overview.tt:12
 msgid "Contact"
@@ -1380,7 +1386,7 @@ msgstr ""
 "dürfen. \"*\", \"?\" und \"[x-y]\" (wobei \"x\" und \"y\" Ziffern von 0 bis "
 "9 repräsentieren) können als Platzhalter verwendet werden."
 
-#: lib/NGCP/Panel/Utils/DbStrings.pm:1111
+#: lib/NGCP/Panel/Utils/DbStrings.pm:1112
 msgid "Content"
 msgstr "Inhalt"
 
@@ -1388,14 +1394,14 @@ msgstr "Inhalt"
 msgid "Content Type"
 msgstr "Inhalts-Typ"
 
-#: lib/NGCP/Panel/Utils/DbStrings.pm:1120 share/templates/contract/list.tt:3
+#: lib/NGCP/Panel/Utils/DbStrings.pm:1121 share/templates/contract/list.tt:3
 #: share/templates/reseller/details.tt:63
 msgid "Contract"
 msgstr "Vertrag"
 
 #: lib/NGCP/Panel/Controller/Reseller.pm:35
 #: lib/NGCP/Panel/Controller/Subscriber.pm:114
-#: lib/NGCP/Panel/Utils/DbStrings.pm:1026
+#: lib/NGCP/Panel/Utils/DbStrings.pm:1027
 msgid "Contract #"
 msgstr "Vertrags #"
 
@@ -1469,7 +1475,7 @@ msgstr "Neues Verrechnungs-Profil"
 msgid "Create Contact"
 msgstr "Neuer Kontakt"
 
-#: lib/NGCP/Panel/Utils/DbStrings.pm:1145
+#: lib/NGCP/Panel/Utils/DbStrings.pm:1146
 msgid "Create Contract"
 msgstr "Neuer Vertrag"
 
@@ -1557,7 +1563,7 @@ msgstr "Neuer Peering-Server"
 msgid "Create Permanent Registration"
 msgstr "Neue permanente Registrierung"
 
-#: lib/NGCP/Panel/Utils/DbStrings.pm:1105 share/templates/reseller/list.tt:23
+#: lib/NGCP/Panel/Utils/DbStrings.pm:1106 share/templates/reseller/list.tt:23
 msgid "Create Reseller"
 msgstr "Neuer Reseller"
 
@@ -1640,7 +1646,7 @@ msgstr "Benutzerdefiniert5"
 msgid "Cust6"
 msgstr "Benutzerdefiniert6"
 
-#: lib/NGCP/Panel/Utils/DbStrings.pm:1040 lib/NGCP/Panel/Utils/Sounds.pm:74
+#: lib/NGCP/Panel/Utils/DbStrings.pm:1041 lib/NGCP/Panel/Utils/Sounds.pm:74
 #: lib/NGCP/Panel/Utils/Sounds.pm:77 share/templates/customer/list.tt:3
 #: share/templates/customer/preferences.tt:4
 #: share/templates/device/list.tt:198 share/templates/device/list.tt:202
@@ -1741,7 +1747,7 @@ msgstr "Kunde nicht gefunden"
 msgid "Customers"
 msgstr "Kunden"
 
-#: lib/NGCP/Panel/Utils/DbStrings.pm:1147
+#: lib/NGCP/Panel/Utils/DbStrings.pm:1148
 msgid "Daily Fraud Limit"
 msgstr "Tägliches Missbrauchs-Limit"
 
@@ -1769,7 +1775,7 @@ msgstr "Daten"
 msgid "Day"
 msgstr "Tag"
 
-#: lib/NGCP/Panel/Utils/DbStrings.pm:1029
+#: lib/NGCP/Panel/Utils/DbStrings.pm:1030
 msgid "December"
 msgstr "Dezember"
 
@@ -1849,7 +1855,7 @@ msgid ""
 msgstr ""
 "Aufnahmen aus der Mailbox löschen, nachdem sie per Email versandt wurden."
 
-#: lib/NGCP/Panel/Utils/DbStrings.pm:1009
+#: lib/NGCP/Panel/Utils/DbStrings.pm:1010
 msgid "Deliver Incoming Faxes"
 msgstr "Eingehende Faxe zustellen"
 
@@ -1886,7 +1892,7 @@ msgstr "Ziel"
 msgid "Destination Domain"
 msgstr "Ziel-Domain"
 
-#: lib/NGCP/Panel/Utils/DbStrings.pm:1033
+#: lib/NGCP/Panel/Utils/DbStrings.pm:1034
 msgid "Destination Number"
 msgstr "Ziel-Nummer"
 
@@ -1895,7 +1901,7 @@ msgid "Destination Pattern"
 msgstr "Ziel-Pattern"
 
 #: lib/NGCP/Panel/Controller/Subscriber.pm:1447
-#: lib/NGCP/Panel/Utils/DbStrings.pm:1078
+#: lib/NGCP/Panel/Utils/DbStrings.pm:1079
 msgid "Destination Set"
 msgstr "Ziel-Set"
 
@@ -1912,7 +1918,7 @@ msgstr "Ziel-Sets"
 msgid "Destination URI, user or number"
 msgstr "Ziel-URI, -Benutzer oder -Nummer"
 
-#: lib/NGCP/Panel/Utils/DbStrings.pm:1021
+#: lib/NGCP/Panel/Utils/DbStrings.pm:1022
 msgid "Destination add"
 msgstr "Ziel hinzufügen"
 
@@ -1932,7 +1938,7 @@ msgstr ""
 msgid "Destination carrier free time"
 msgstr ""
 
-#: lib/NGCP/Panel/Utils/DbStrings.pm:1050
+#: lib/NGCP/Panel/Utils/DbStrings.pm:1051
 msgid "Destination customer billing fee id"
 msgstr ""
 
@@ -1958,7 +1964,7 @@ msgid ""
 "internal rewriting."
 msgstr ""
 
-#: lib/NGCP/Panel/Utils/DbStrings.pm:1157
+#: lib/NGCP/Panel/Utils/DbStrings.pm:1158
 msgid "Destination domain in"
 msgstr ""
 
@@ -1994,7 +2000,7 @@ msgstr "Ziel-Benutzer ID"
 msgid "Destination user in"
 msgstr ""
 
-#: lib/NGCP/Panel/Utils/DbStrings.pm:1070
+#: lib/NGCP/Panel/Utils/DbStrings.pm:1071
 msgid ""
 "Destination username or number as received by the system from calling party "
 "after internal rewriting."
@@ -2149,7 +2155,7 @@ msgstr "Verwerfen"
 msgid "Discard Changes"
 msgstr "Änderungen verwerfen"
 
-#: lib/NGCP/Panel/Utils/DbStrings.pm:1015
+#: lib/NGCP/Panel/Utils/DbStrings.pm:1016
 msgid "Display Name"
 msgstr "Anzeigename"
 
@@ -2161,7 +2167,7 @@ msgstr "Nicht Stören"
 #: lib/NGCP/Panel/Controller/Domain.pm:31
 #: lib/NGCP/Panel/Controller/Reseller.pm:157
 #: lib/NGCP/Panel/Controller/Subscriber.pm:117
-#: lib/NGCP/Panel/Utils/DbStrings.pm:1082 share/templates/domain/list.tt:3
+#: lib/NGCP/Panel/Utils/DbStrings.pm:1083 share/templates/domain/list.tt:3
 #: share/templates/domain/preferences.tt:4
 #: share/templates/reseller/details.tt:156
 #: share/templates/widgets/admin_reseller_overview.tt:12
@@ -2186,7 +2192,7 @@ msgstr "Domain des Anrufempfängers."
 msgid "Domain of calling party."
 msgstr "Domain des Anrufers."
 
-#: lib/NGCP/Panel/Controller/Domain.pm:150 lib/NGCP/Panel/Utils/Message.pm:245
+#: lib/NGCP/Panel/Controller/Domain.pm:150 lib/NGCP/Panel/Utils/Message.pm:242
 msgid "Domain successfully created"
 msgstr "Domain erfolgreich erstellt"
 
@@ -2240,7 +2246,7 @@ msgstr "CA Zertifikat runterladen"
 msgid "Download PCAP"
 msgstr "PCAP runterladen"
 
-#: lib/NGCP/Panel/Utils/DbStrings.pm:1125
+#: lib/NGCP/Panel/Utils/DbStrings.pm:1126
 msgid "Download PEM"
 msgstr "PEM runterladen"
 
@@ -2452,7 +2458,7 @@ msgstr "Ende"
 msgid "End Date"
 msgstr "End-Datum"
 
-#: lib/NGCP/Panel/Utils/DbStrings.pm:1137
+#: lib/NGCP/Panel/Utils/DbStrings.pm:1138
 msgid "End Date/Time"
 msgstr "End-Zeit/Datum"
 
@@ -2489,7 +2495,7 @@ msgstr "Länger Abwesend"
 
 #: lib/NGCP/Panel/Controller/Customer.pm:282
 #: lib/NGCP/Panel/Controller/Customer.pm:297
-#: lib/NGCP/Panel/Utils/DbStrings.pm:1072
+#: lib/NGCP/Panel/Utils/DbStrings.pm:1073
 #: share/templates/subscriber/master.tt:124
 msgid "Extension"
 msgstr "Durchwahl"
@@ -2521,7 +2527,7 @@ msgstr "Externe Vertrags #"
 msgid "External ID"
 msgstr "Externe ID"
 
-#: lib/NGCP/Panel/Utils/DbStrings.pm:1136
+#: lib/NGCP/Panel/Utils/DbStrings.pm:1137
 msgid "External ID of calling subscriber, if local."
 msgstr "Externe ID des Anrufers, wenn lokal."
 
@@ -2537,7 +2543,7 @@ msgstr "Externe Subscriber #"
 msgid "External id of called subscriber's customer, if local."
 msgstr "Externe ID des Kunden des angerufenen Subscribers, wenn lokal."
 
-#: lib/NGCP/Panel/Utils/DbStrings.pm:1108
+#: lib/NGCP/Panel/Utils/DbStrings.pm:1109
 msgid "External id of called subscriber, if local."
 msgstr "Externe ID des angerufenen Subscribers, wenn lokal."
 
@@ -2628,7 +2634,7 @@ msgstr "Geräte-Modell erstellen fehlgeschlagen."
 msgid "Failed to create device profile"
 msgstr "Geräte-Profil erstellen fehlgeschlagen."
 
-#: lib/NGCP/Panel/Controller/Domain.pm:142 lib/NGCP/Panel/Utils/Message.pm:239
+#: lib/NGCP/Panel/Controller/Domain.pm:142 lib/NGCP/Panel/Utils/Message.pm:236
 msgid "Failed to create domain."
 msgstr "Domain erstellen fehlgeschlagen."
 
@@ -3263,7 +3269,7 @@ msgstr "Missbrauchs-Limits"
 msgid "Fraud Monthly Limit"
 msgstr "Monatliches Missbrauchs-Limit"
 
-#: lib/NGCP/Panel/Utils/DbStrings.pm:1146
+#: lib/NGCP/Panel/Utils/DbStrings.pm:1147
 msgid "Fraud Monthly Lock"
 msgstr "Monatliche Missbrauchs-Sperre"
 
@@ -3296,11 +3302,11 @@ msgid "Free-Time Balance"
 msgstr "Freiminuten-Saldo"
 
 #: lib/NGCP/Panel/Controller/Billing.pm:728
-#: lib/NGCP/Panel/Utils/DbStrings.pm:1011
+#: lib/NGCP/Panel/Utils/DbStrings.pm:1012
 msgid "Friday"
 msgstr "Freitag"
 
-#: lib/NGCP/Panel/Utils/DbStrings.pm:1039
+#: lib/NGCP/Panel/Utils/DbStrings.pm:1040
 msgid "Friends"
 msgstr "Freunde"
 
@@ -3324,7 +3330,7 @@ msgstr "Anrufer-Pattern"
 msgid "From-Pattern"
 msgstr "Anrufer-Pattern"
 
-#: lib/NGCP/Panel/Utils/DbStrings.pm:1103 share/templates/device/list.tt:46
+#: lib/NGCP/Panel/Utils/DbStrings.pm:1104 share/templates/device/list.tt:46
 msgid "Front Image"
 msgstr "Bild Vorderansicht"
 
@@ -3340,7 +3346,7 @@ msgstr "Benutzerdefiniert 0"
 msgid "General Purpose 1"
 msgstr "Benutzerdefiniert 1"
 
-#: lib/NGCP/Panel/Utils/DbStrings.pm:1084
+#: lib/NGCP/Panel/Utils/DbStrings.pm:1085
 msgid "General Purpose 2"
 msgstr "Benutzerdefiniert 2"
 
@@ -3360,7 +3366,7 @@ msgstr "Benutzerdefiniert 5"
 msgid "General Purpose 6"
 msgstr "Benutzerdefiniert 6"
 
-#: lib/NGCP/Panel/Utils/DbStrings.pm:1133
+#: lib/NGCP/Panel/Utils/DbStrings.pm:1134
 msgid "General Purpose 7"
 msgstr "Benutzerdefiniert 7"
 
@@ -3372,7 +3378,7 @@ msgstr "Benutzerdefiniert 8"
 msgid "General Purpose 9"
 msgstr "Benutzerdefiniert 9"
 
-#: lib/NGCP/Panel/Utils/DbStrings.pm:1138
+#: lib/NGCP/Panel/Utils/DbStrings.pm:1139
 msgid "Generate"
 msgstr "Erzeugen"
 
@@ -3397,7 +3403,7 @@ msgstr "Zugriff von Gruppe von IP-Adressen und/oder -Netzen erlauben."
 msgid "Groups"
 msgstr "Gruppen"
 
-#: lib/NGCP/Panel/Utils/DbStrings.pm:1161
+#: lib/NGCP/Panel/Utils/DbStrings.pm:1162
 msgid "Handle"
 msgstr "Handle"
 
@@ -3451,7 +3457,7 @@ msgstr "Hunting Zeitüberschreitung"
 msgid "Hunting policy, one of serial, parallel, random, circular."
 msgstr "Hunting-Regel, eine aus serial, parallel, random oder circular."
 
-#: lib/NGCP/Panel/Utils/DbStrings.pm:1069
+#: lib/NGCP/Panel/Utils/DbStrings.pm:1070
 msgid "IBAN"
 msgstr "IBAN"
 
@@ -3492,7 +3498,7 @@ msgstr "IPv4/IPv6 Bridge Modus"
 msgid "IVR Slots"
 msgstr "IVR Einträge"
 
-#: lib/NGCP/Panel/Utils/DbStrings.pm:1104
+#: lib/NGCP/Panel/Utils/DbStrings.pm:1105
 msgid "Id"
 msgstr "Id"
 
@@ -3571,7 +3577,7 @@ msgstr "Eingehende User-Provided Redirecting Nummer"
 msgid "Include local area code"
 msgstr "Ortsvorwahl inkludieren"
 
-#: lib/NGCP/Panel/Utils/DbStrings.pm:1143
+#: lib/NGCP/Panel/Utils/DbStrings.pm:1144
 msgid "Incoming Email as CC"
 msgstr "Eingehende Email als CC"
 
@@ -3863,7 +3869,7 @@ msgstr "Abrechnungsperiode"
 msgid "Invoice Period End"
 msgstr "Ende der Abrechnungsperiode"
 
-#: lib/NGCP/Panel/Utils/DbStrings.pm:1128
+#: lib/NGCP/Panel/Utils/DbStrings.pm:1129
 msgid "Invoice Period Start"
 msgstr "Start der Abrechnungsperiode"
 
@@ -3951,7 +3957,7 @@ msgstr "Ist Master"
 msgid "Is superuser"
 msgstr "Ist Superuser"
 
-#: lib/NGCP/Panel/Utils/DbStrings.pm:1088
+#: lib/NGCP/Panel/Utils/DbStrings.pm:1089
 msgid "January"
 msgstr "Januar"
 
@@ -3971,7 +3977,7 @@ msgstr "Taste"
 msgid "Key Definition"
 msgstr ""
 
-#: lib/NGCP/Panel/Utils/DbStrings.pm:1068
+#: lib/NGCP/Panel/Utils/DbStrings.pm:1069
 msgid "Keys add"
 msgstr ""
 
@@ -3993,7 +3999,7 @@ msgstr "Nachname"
 msgid "Lawful Intercept"
 msgstr "Gesetzliches Abhören"
 
-#: lib/NGCP/Panel/Utils/DbStrings.pm:1049
+#: lib/NGCP/Panel/Utils/DbStrings.pm:1050
 msgid "Lawful intercept"
 msgstr "Gesetzliches Abhören"
 
@@ -4009,7 +4015,7 @@ msgstr ""
 msgid "Limit"
 msgstr "Limit"
 
-#: lib/NGCP/Panel/Utils/DbStrings.pm:1087
+#: lib/NGCP/Panel/Utils/DbStrings.pm:1088
 msgid "Line"
 msgstr ""
 
@@ -4129,7 +4135,7 @@ msgstr ""
 msgid "MIME encapsulated Location Information in the INVITE"
 msgstr ""
 
-#: lib/NGCP/Panel/Utils/DbStrings.pm:1065
+#: lib/NGCP/Panel/Utils/DbStrings.pm:1066
 msgid ""
 "Make this profile automatically the default profile for new subscribers "
 "having this profile set."
@@ -4162,7 +4168,7 @@ msgstr "Manuelle definition von erlaubten Quell-IPs"
 msgid "Mappings"
 msgstr ""
 
-#: lib/NGCP/Panel/Utils/DbStrings.pm:1042
+#: lib/NGCP/Panel/Utils/DbStrings.pm:1043
 msgid "Mappings add"
 msgstr ""
 
@@ -4191,7 +4197,7 @@ msgstr "Vergleichs-Pattern"
 msgid "Match pattern"
 msgstr "Vergleichs-Pattern"
 
-#: lib/NGCP/Panel/Utils/DbStrings.pm:1091
+#: lib/NGCP/Panel/Utils/DbStrings.pm:1092
 msgid "Match pattern, a regular expression."
 msgstr "Vergleichs-Pattern, ein regulärer Ausdruck"
 
@@ -4273,7 +4279,7 @@ msgstr ""
 "Gesamte Maximale Anzahl gleichzeitiger Anrufe (ein- und ausgehend) von/zu "
 "Subscribern."
 
-#: lib/NGCP/Panel/Utils/DbStrings.pm:1131
+#: lib/NGCP/Panel/Utils/DbStrings.pm:1132
 msgid "May"
 msgstr "Mai"
 
@@ -4316,7 +4322,7 @@ msgstr "Montag"
 msgid "Monitoring & Statistics"
 msgstr "Überwachung & Statistiken"
 
-#: lib/NGCP/Panel/Utils/DbStrings.pm:1149
+#: lib/NGCP/Panel/Utils/DbStrings.pm:1150
 msgid "Month"
 msgstr "Monat"
 
@@ -4473,7 +4479,7 @@ msgstr "NCOS-Stufen ID"
 
 #: lib/NGCP/Panel/Controller/Customer.pm:337
 #: lib/NGCP/Panel/Controller/Invoice.pm:55
-#: lib/NGCP/Panel/Utils/DbStrings.pm:1034
+#: lib/NGCP/Panel/Utils/DbStrings.pm:1035
 msgid "Net Amount"
 msgstr ""
 
@@ -4563,7 +4569,7 @@ msgstr "Benachrichtigung"
 msgid "Notify Emails"
 msgstr "Benachrichtigungs-Emails"
 
-#: lib/NGCP/Panel/Utils/DbStrings.pm:1119
+#: lib/NGCP/Panel/Utils/DbStrings.pm:1120
 msgid "November"
 msgstr "November"
 
@@ -4658,7 +4664,7 @@ msgstr "Offpeak-Folge-Gebühr"
 msgid "Offpeak init interval"
 msgstr "Offpeak-Init-Intervall"
 
-#: lib/NGCP/Panel/Utils/DbStrings.pm:1058
+#: lib/NGCP/Panel/Utils/DbStrings.pm:1059
 msgid "Offpeak init rate"
 msgstr "Offpeak-Init-Gebühr"
 
@@ -4674,7 +4680,7 @@ msgstr "Onpeak-Folge-Intervall"
 msgid "Onpeak follow rate"
 msgstr "Onpeak-Folge-Gebühr"
 
-#: lib/NGCP/Panel/Utils/DbStrings.pm:1056
+#: lib/NGCP/Panel/Utils/DbStrings.pm:1057
 msgid "Onpeak init interval"
 msgstr "Onpeak-Init-Intervall"
 
@@ -4686,7 +4692,7 @@ msgstr "Onpeal-Init-Gebühr"
 msgid "Oops!"
 msgstr "Ups!"
 
-#: lib/NGCP/Panel/Utils/DbStrings.pm:1141
+#: lib/NGCP/Panel/Utils/DbStrings.pm:1142
 msgid ""
 "Optionally set the maximum number of subscribers for this contract. Leave "
 "empty for unlimited."
@@ -4856,7 +4862,7 @@ msgstr "Paralleles Läuten"
 msgid "Password"
 msgstr "Passwort"
 
-#: lib/NGCP/Panel/Utils/DbStrings.pm:1106
+#: lib/NGCP/Panel/Utils/DbStrings.pm:1107
 msgid "Password Reset Email Template"
 msgstr "Emailvorlage Passwortrücksetzung"
 
@@ -5026,7 +5032,7 @@ msgstr "Periode"
 msgid "Period add"
 msgstr "Periode hinzufügen"
 
-#: lib/NGCP/Panel/Utils/DbStrings.pm:1100
+#: lib/NGCP/Panel/Utils/DbStrings.pm:1101
 msgid "Phone Number"
 msgstr "Telefon-Nummer"
 
@@ -5126,11 +5132,11 @@ msgid "Primary Number"
 msgstr "Hauptnummer"
 
 #: lib/NGCP/Panel/Controller/Peering.pm:29
-#: lib/NGCP/Panel/Utils/DbStrings.pm:1139
+#: lib/NGCP/Panel/Utils/DbStrings.pm:1140
 msgid "Priority"
 msgstr "Priorität"
 
-#: lib/NGCP/Panel/Utils/DbStrings.pm:1045
+#: lib/NGCP/Panel/Utils/DbStrings.pm:1046
 msgid "Priority (q-value)"
 msgstr "Priorität (q-value)"
 
@@ -5307,7 +5313,7 @@ msgstr "Weckruf"
 msgid "Remote Authentication"
 msgstr "Fern-Authentifizierung"
 
-#: lib/NGCP/Panel/Utils/DbStrings.pm:1055
+#: lib/NGCP/Panel/Utils/DbStrings.pm:1056
 msgid "Repeat"
 msgstr "Wiederholen"
 
@@ -5315,7 +5321,7 @@ msgstr "Wiederholen"
 msgid "Repeat Password"
 msgstr "Passwort wiederholen"
 
-#: lib/NGCP/Panel/Utils/DbStrings.pm:1083
+#: lib/NGCP/Panel/Utils/DbStrings.pm:1084
 #: share/templates/rewrite/rules_list.tt:30
 msgid "Replacement Pattern"
 msgstr "Ersatz-Pattern"
@@ -5432,7 +5438,7 @@ msgstr ""
 msgid "Reseller successfully updated"
 msgstr "Reseller erfolgreich aktualisiert"
 
-#: lib/NGCP/Panel/Utils/DbStrings.pm:1127 share/templates/reseller/list.tt:1
+#: lib/NGCP/Panel/Utils/DbStrings.pm:1128 share/templates/reseller/list.tt:1
 #: share/templates/reseller/list.tt:3
 #: share/templates/widgets/admin_reseller_overview.tt:4
 #: share/templates/widgets/admin_reseller_overview.tt:7
@@ -5534,7 +5540,7 @@ msgstr "SIP Anruf-Abläufe"
 msgid "SIP Domain"
 msgstr "SIP Domain"
 
-#: lib/NGCP/Panel/Utils/DbStrings.pm:1101
+#: lib/NGCP/Panel/Utils/DbStrings.pm:1102
 #: share/templates/subscriber/master.tt:86
 msgid "SIP Password"
 msgstr "SIP Passwort"
@@ -5687,7 +5693,7 @@ msgstr ""
 msgid "Saturday"
 msgstr "Samstag"
 
-#: lib/NGCP/Panel/Utils/DbStrings.pm:1043
+#: lib/NGCP/Panel/Utils/DbStrings.pm:1044
 msgid "Save"
 msgstr "Speichern"
 
@@ -5778,7 +5784,7 @@ msgid "September"
 msgstr "September"
 
 #: lib/NGCP/Panel/Controller/Invoice.pm:41
-#: lib/NGCP/Panel/Utils/DbStrings.pm:1024
+#: lib/NGCP/Panel/Utils/DbStrings.pm:1025
 msgid "Serial"
 msgstr "Rechnungsnummer"
 
@@ -5792,7 +5798,7 @@ msgstr "Rechnungsnummer"
 msgid "Serial Hunt Timeout"
 msgstr "Timeout für Serielles Läuten"
 
-#: lib/NGCP/Panel/Utils/DbStrings.pm:1077
+#: lib/NGCP/Panel/Utils/DbStrings.pm:1078
 msgid "Serial Ringing"
 msgstr "Serielles Läuten"
 
@@ -5828,7 +5834,7 @@ msgstr ""
 msgid "Set RTP relay mode for this peer/domain/user"
 msgstr "RTP Relay-Modus für diesen Peer/Subscriber/Domain"
 
-#: lib/NGCP/Panel/Utils/DbStrings.pm:1099
+#: lib/NGCP/Panel/Utils/DbStrings.pm:1100
 msgid "Set id"
 msgstr "Set ID"
 
@@ -5882,7 +5888,7 @@ msgstr "Variablen anzeigen"
 msgid "Show passwords"
 msgstr "Passwörter anzeigen"
 
-#: lib/NGCP/Panel/Utils/DbStrings.pm:1059
+#: lib/NGCP/Panel/Utils/DbStrings.pm:1060
 msgid "Sign In"
 msgstr "Anmelden"
 
@@ -5905,7 +5911,7 @@ msgstr "Einfache Ansicht"
 
 #: lib/NGCP/Panel/Controller/Subscriber.pm:260
 #: lib/NGCP/Panel/Controller/Subscriber.pm:265
-#: lib/NGCP/Panel/Utils/DbStrings.pm:1114
+#: lib/NGCP/Panel/Utils/DbStrings.pm:1115
 msgid "Slot"
 msgstr "Eintrag"
 
@@ -6000,7 +6006,7 @@ msgstr "Sound-Datei"
 msgid "Source"
 msgstr "Quelle"
 
-#: lib/NGCP/Panel/Utils/DbStrings.pm:1107
+#: lib/NGCP/Panel/Utils/DbStrings.pm:1108
 msgid "Source CLI"
 msgstr "Quell-CLI"
 
@@ -6025,7 +6031,7 @@ msgstr ""
 msgid "Source carrier billing fee id"
 msgstr ""
 
-#: lib/NGCP/Panel/Utils/DbStrings.pm:1022
+#: lib/NGCP/Panel/Utils/DbStrings.pm:1023
 msgid "Source carrier billing zone id"
 msgstr ""
 
@@ -6037,7 +6043,7 @@ msgstr ""
 msgid "Source carrier free time"
 msgstr ""
 
-#: lib/NGCP/Panel/Utils/DbStrings.pm:1038
+#: lib/NGCP/Panel/Utils/DbStrings.pm:1039
 msgid "Source clir"
 msgstr ""
 
@@ -6077,7 +6083,7 @@ msgstr ""
 msgid "Source ip"
 msgstr ""
 
-#: lib/NGCP/Panel/Utils/DbStrings.pm:1089
+#: lib/NGCP/Panel/Utils/DbStrings.pm:1090
 msgid "Source provider id"
 msgstr ""
 
@@ -6105,7 +6111,7 @@ msgstr ""
 msgid "Source user id"
 msgstr ""
 
-#: lib/NGCP/Panel/Utils/DbStrings.pm:1028
+#: lib/NGCP/Panel/Utils/DbStrings.pm:1029
 msgid "Source uuid"
 msgstr ""
 
@@ -6228,7 +6234,7 @@ msgstr "Start Zeit/Datum"
 msgid "Start Time"
 msgstr "Startzeit"
 
-#: lib/NGCP/Panel/Utils/DbStrings.pm:1067
+#: lib/NGCP/Panel/Utils/DbStrings.pm:1068
 msgid "Start time"
 msgstr "Startzeit"
 
@@ -6262,7 +6268,7 @@ msgid "Strict Number Matching"
 msgstr "Strikter Nummernvergleich"
 
 #: lib/NGCP/Panel/Controller/EmailTemplate.pm:37
-#: lib/NGCP/Panel/Utils/DbStrings.pm:1123
+#: lib/NGCP/Panel/Utils/DbStrings.pm:1124
 msgid "Subject"
 msgstr "Betreff"
 
@@ -6354,7 +6360,7 @@ msgstr "Subscriber-Profile für Profil-Set %1"
 msgid "Subscriber Settings"
 msgstr "Subscriber-Einstellungen"
 
-#: lib/NGCP/Panel/Utils/DbStrings.pm:1053
+#: lib/NGCP/Panel/Utils/DbStrings.pm:1054
 msgid "Subscriber can configure other subscribers within the Customer Account"
 msgstr ""
 "Subscriber kann andere Subscriber innerhalb des Kunden-Vertrags konfigurieren"
@@ -6607,11 +6613,11 @@ msgid "Successfully updated voicemail setting"
 msgstr "Sprachnachrichten-Einstellungen erfolgreich aktualisiert"
 
 #: lib/NGCP/Panel/Controller/Billing.pm:730
-#: lib/NGCP/Panel/Utils/DbStrings.pm:1073
+#: lib/NGCP/Panel/Utils/DbStrings.pm:1074
 msgid "Sunday"
 msgstr "Sonntag"
 
-#: lib/NGCP/Panel/Utils/DbStrings.pm:1134
+#: lib/NGCP/Panel/Utils/DbStrings.pm:1135
 msgid "Supported File Types are TXT, PDF, PS, TIFF"
 msgstr "Unterstützte Datei-Typen sind TXT, PDF, PS, TIFF"
 
@@ -6623,7 +6629,7 @@ msgstr "Unterstützt Busy Lamp Field"
 msgid "Supports Private Line"
 msgstr "Unterstützt private Leitung"
 
-#: lib/NGCP/Panel/Utils/DbStrings.pm:1158
+#: lib/NGCP/Panel/Utils/DbStrings.pm:1159
 msgid "Supports Shared Line"
 msgstr "Unterstützt geteilte Leitung"
 
@@ -6660,7 +6666,7 @@ msgstr "TIFF"
 msgid "TLS"
 msgstr "TLS"
 
-#: lib/NGCP/Panel/Utils/DbStrings.pm:1152
+#: lib/NGCP/Panel/Utils/DbStrings.pm:1153
 msgid "Template"
 msgstr "Vorlage"
 
@@ -6702,7 +6708,7 @@ msgstr "Der BIC (Business Identifier Code) der Kontakt-Bankdaten."
 msgid "The E164 number block."
 msgstr "Der E164 Nummernblock."
 
-#: lib/NGCP/Panel/Utils/DbStrings.pm:1020
+#: lib/NGCP/Panel/Utils/DbStrings.pm:1021
 msgid "The HTTP method to set the provisioning server (one of GET, POST)."
 msgstr ""
 
@@ -6711,7 +6717,7 @@ msgid ""
 "The IBAN (International Bank Account Number) of the contact bank details."
 msgstr "Die IBAN (International Bank Account Number) der Kontakt-Bankdaten."
 
-#: lib/NGCP/Panel/Utils/DbStrings.pm:1121
+#: lib/NGCP/Panel/Utils/DbStrings.pm:1122
 msgid "The ID of the calling subscriber"
 msgstr "Die ID des anrufenden Subscribers"
 
@@ -6719,7 +6725,7 @@ msgstr "Die ID des anrufenden Subscribers"
 msgid "The ID of the subscriber to apply rules for"
 msgstr ""
 
-#: lib/NGCP/Panel/Utils/DbStrings.pm:1156
+#: lib/NGCP/Panel/Utils/DbStrings.pm:1157
 msgid "The IP address of the X-2 interface."
 msgstr ""
 
@@ -6727,7 +6733,7 @@ msgstr ""
 msgid "The IP address of the X-3 interface."
 msgstr ""
 
-#: lib/NGCP/Panel/Utils/DbStrings.pm:1102
+#: lib/NGCP/Panel/Utils/DbStrings.pm:1103
 msgid "The IVR key to press for this destination"
 msgstr "Die zu drückende IVR-Taste für dieses Ziel"
 
@@ -6735,7 +6741,7 @@ msgstr "Die zu drückende IVR-Taste für dieses Ziel"
 msgid "The LI ID for this interception."
 msgstr ""
 
-#: lib/NGCP/Panel/Utils/DbStrings.pm:1115
+#: lib/NGCP/Panel/Utils/DbStrings.pm:1116
 msgid "The MAC address of the device."
 msgstr ""
 
@@ -6878,11 +6884,11 @@ msgstr ""
 "Die Anruf-Richtung zur Anwendung dieser Gebühr (entweder für ausgehende oder "
 "für eingehende - z.B. 0800-Nummern - Anrufe)."
 
-#: lib/NGCP/Panel/Utils/DbStrings.pm:1063
+#: lib/NGCP/Panel/Utils/DbStrings.pm:1064
 msgid "The caller ID who left the message."
 msgstr ""
 
-#: lib/NGCP/Panel/Utils/DbStrings.pm:1060
+#: lib/NGCP/Panel/Utils/DbStrings.pm:1061
 msgid "The city name of the contact."
 msgstr "Die Stadt dieses Kontakts."
 
@@ -6996,18 +7002,18 @@ msgstr ""
 msgid "The cost for the carrier towards the operator (e.g. for 800-numbers)."
 msgstr "Die Kosten des Carriers gegenüber dem Plattform-Betreiber."
 
-#: lib/NGCP/Panel/Utils/DbStrings.pm:1122
+#: lib/NGCP/Panel/Utils/DbStrings.pm:1123
 msgid "The cost for the operator towards the peering carrier."
 msgstr ""
 
-#: lib/NGCP/Panel/Utils/DbStrings.pm:1031
+#: lib/NGCP/Panel/Utils/DbStrings.pm:1032
 msgid ""
 "The cost for the reseller of the called party towards the system operator."
 msgstr ""
 "Die Kosten des Resellers des angerufenen Teilnehmers gegenüber dem Plattform-"
 "Betreiber."
 
-#: lib/NGCP/Panel/Utils/DbStrings.pm:1109
+#: lib/NGCP/Panel/Utils/DbStrings.pm:1110
 msgid ""
 "The cost for the reseller of the calling party towards the system operator."
 msgstr ""
@@ -7043,11 +7049,11 @@ msgstr ""
 msgid "The customer contract this device is belonging to."
 msgstr "Der Kunden-Vertrag, dem dieses Gerät zugewiesen ist."
 
-#: lib/NGCP/Panel/Utils/DbStrings.pm:1076
+#: lib/NGCP/Panel/Utils/DbStrings.pm:1077
 msgid "The customer this invoice belongs to."
 msgstr "Der Kunde zu dem diese Rechnung gehört."
 
-#: lib/NGCP/Panel/Utils/DbStrings.pm:1113
+#: lib/NGCP/Panel/Utils/DbStrings.pm:1114
 msgid "The date the invoice has been sent by email or null if not sent."
 msgstr ""
 "Das Datum an dem die Rechnung per Email versandt wurde oder null wenn sie "
@@ -7137,7 +7143,7 @@ msgstr ""
 msgid "The email template used to notify users about subscriber creation."
 msgstr ""
 
-#: lib/NGCP/Panel/Utils/DbStrings.pm:1148
+#: lib/NGCP/Panel/Utils/DbStrings.pm:1149
 msgid "The end of the invoice period."
 msgstr "Das Ende der Rechnungs-Periode."
 
@@ -7179,7 +7185,7 @@ msgstr "Der Dateiname dieser Firmware."
 msgid "The final SIP response code of the call."
 msgstr ""
 
-#: lib/NGCP/Panel/Utils/DbStrings.pm:1132
+#: lib/NGCP/Panel/Utils/DbStrings.pm:1133
 msgid ""
 "The folder the message is currently in (one of INBOX, Old, Work, Friends, "
 "Family, Cust1-Cust6)"
@@ -7247,7 +7253,7 @@ msgstr ""
 "Die ID, die auf den \"Call Forward Unconditional\" Eintrag in der "
 "voip_cf_mappings Tabelle zeigt"
 
-#: lib/NGCP/Panel/Utils/DbStrings.pm:1159
+#: lib/NGCP/Panel/Utils/DbStrings.pm:1160
 msgid ""
 "The included free minutes per billing interval (in seconds, e.g. 60000 for "
 "1000 free minutes)."
@@ -7306,7 +7312,7 @@ msgstr ""
 msgid "The linerange name to use."
 msgstr ""
 
-#: lib/NGCP/Panel/Utils/DbStrings.pm:1023
+#: lib/NGCP/Panel/Utils/DbStrings.pm:1024
 msgid ""
 "The lines for this pbx device. Required keys are 'linerange' (name of range "
 "to use), 'key_num' (key number in line range, starting from 0), 'type' (one "
@@ -7314,7 +7320,7 @@ msgid ""
 "this key)."
 msgstr ""
 
-#: lib/NGCP/Panel/Utils/DbStrings.pm:1017
+#: lib/NGCP/Panel/Utils/DbStrings.pm:1018
 msgid "The lock level of the subscriber."
 msgstr "Die Sperr-Stufe des Subscribers."
 
@@ -7339,7 +7345,7 @@ msgstr "Die Handynummer des Kontakts."
 msgid "The model name of this device."
 msgstr ""
 
-#: lib/NGCP/Panel/Utils/DbStrings.pm:1126
+#: lib/NGCP/Panel/Utils/DbStrings.pm:1127
 msgid "The name of the Rewrite Rule Set."
 msgstr ""
 
@@ -7351,7 +7357,7 @@ msgstr ""
 msgid "The name of the Subscriber Profile."
 msgstr ""
 
-#: lib/NGCP/Panel/Utils/DbStrings.pm:1079
+#: lib/NGCP/Panel/Utils/DbStrings.pm:1080
 msgid "The name of the destination set."
 msgstr ""
 
@@ -7373,7 +7379,7 @@ msgid ""
 "device belongs to)."
 msgstr ""
 
-#: lib/NGCP/Panel/Utils/DbStrings.pm:1014
+#: lib/NGCP/Panel/Utils/DbStrings.pm:1015
 msgid "The ncos level this pattern belongs to."
 msgstr ""
 
@@ -7420,7 +7426,7 @@ msgstr ""
 msgid "The password for authenticating on the X-2 interface."
 msgstr ""
 
-#: lib/NGCP/Panel/Utils/DbStrings.pm:1160
+#: lib/NGCP/Panel/Utils/DbStrings.pm:1161
 msgid "The password to authenticate for SIP and XMPP services."
 msgstr "Das Passwort zum Anmelden an SIP- und XMPP-Diensten."
 
@@ -7462,7 +7468,7 @@ msgstr ""
 msgid "The port of the X-3 interface."
 msgstr ""
 
-#: lib/NGCP/Panel/Utils/DbStrings.pm:1048
+#: lib/NGCP/Panel/Utils/DbStrings.pm:1049
 msgid ""
 "The position of the keys on the front image. Attributes are x, y, labelpos "
 "(how the label for the key is displayed in the web interface, relative to "
@@ -7473,7 +7479,7 @@ msgstr ""
 msgid "The postal code of the contact."
 msgstr "Die Postleitzahl des Kontakts."
 
-#: lib/NGCP/Panel/Utils/DbStrings.pm:1032
+#: lib/NGCP/Panel/Utils/DbStrings.pm:1033
 msgid "The priority (q-value) of the registration."
 msgstr ""
 
@@ -7489,7 +7495,7 @@ msgstr ""
 msgid "The registered contact is detected as behind NAT."
 msgstr ""
 
-#: lib/NGCP/Panel/Utils/DbStrings.pm:1094
+#: lib/NGCP/Panel/Utils/DbStrings.pm:1095
 msgid "The reminder recurrence (one of never, weekdays, always)."
 msgstr ""
 
@@ -7517,11 +7523,11 @@ msgstr ""
 msgid "The reseller this level belongs to."
 msgstr ""
 
-#: lib/NGCP/Panel/Utils/DbStrings.pm:1130
+#: lib/NGCP/Panel/Utils/DbStrings.pm:1131
 msgid "The reseller this sound set belongs to."
 msgstr ""
 
-#: lib/NGCP/Panel/Utils/DbStrings.pm:1150
+#: lib/NGCP/Panel/Utils/DbStrings.pm:1151
 msgid "The reseller who can use the Ruleset."
 msgstr ""
 
@@ -7533,7 +7539,7 @@ msgstr "Die Zeitüberschreitung für serielles Hunting in PBX Hunt-Gruppen."
 msgid "The sound handle when to play this sound file."
 msgstr ""
 
-#: lib/NGCP/Panel/Utils/DbStrings.pm:1036
+#: lib/NGCP/Panel/Utils/DbStrings.pm:1037
 msgid "The sound handle."
 msgstr ""
 
@@ -7567,11 +7573,11 @@ msgstr ""
 msgid "The start of the invoice period."
 msgstr "Der Start der Rechnungsperiode."
 
-#: lib/NGCP/Panel/Utils/DbStrings.pm:1135
+#: lib/NGCP/Panel/Utils/DbStrings.pm:1136
 msgid "The start time in format hh:mm:ss"
 msgstr "Die Start-Zeit im Format hh:mm:ss"
 
-#: lib/NGCP/Panel/Utils/DbStrings.pm:1044
+#: lib/NGCP/Panel/Utils/DbStrings.pm:1045
 msgid ""
 "The status of the call, one of ok, busy, noanswer, cancel, offline, timeout, "
 "other."
@@ -7624,7 +7630,7 @@ msgstr ""
 msgid "The subscriber id this destination set belongs to."
 msgstr ""
 
-#: lib/NGCP/Panel/Utils/DbStrings.pm:1062
+#: lib/NGCP/Panel/Utils/DbStrings.pm:1063
 msgid "The subscriber id this time set belongs to."
 msgstr ""
 
@@ -7703,7 +7709,7 @@ msgstr "Der Typ des Anrufs, eines von call, cfu, cfb, cft, cfna."
 msgid "The type of feature to use on this line/key"
 msgstr "Die zu verwendene Betriebs-Art für diese Leitung/Taste"
 
-#: lib/NGCP/Panel/Utils/DbStrings.pm:1086
+#: lib/NGCP/Panel/Utils/DbStrings.pm:1087
 msgid "The user agent registered at this contact."
 msgstr ""
 
@@ -7711,7 +7717,7 @@ msgstr ""
 msgid "The username for SIP and XMPP services."
 msgstr "Der Benutzername für SIP- und XMPP-Dienste."
 
-#: lib/NGCP/Panel/Utils/DbStrings.pm:1019
+#: lib/NGCP/Panel/Utils/DbStrings.pm:1020
 msgid "The username for authenticating on the X-2 interface."
 msgstr ""
 
@@ -7735,7 +7741,7 @@ msgstr "Der Wert des SIP Call-ID Headers für dieses Gespräch."
 msgid "The vat amount of the invoice in USD, EUR etc."
 msgstr ""
 
-#: lib/NGCP/Panel/Utils/DbStrings.pm:1085
+#: lib/NGCP/Panel/Utils/DbStrings.pm:1086
 msgid "The vendor name of this device."
 msgstr "Der Herstellername des Geräts."
 
@@ -7757,7 +7763,7 @@ msgid "Thursday"
 msgstr "Donnerstag"
 
 #: lib/NGCP/Panel/Controller/Subscriber.pm:2060
-#: lib/NGCP/Panel/Utils/DbStrings.pm:1142
+#: lib/NGCP/Panel/Utils/DbStrings.pm:1143
 #: share/templates/subscriber/preferences.tt:457
 msgid "Time"
 msgstr "Zeit"
@@ -7770,7 +7776,7 @@ msgstr "Zeit-Set"
 msgid "Time Sets"
 msgstr "Zeit-Sets"
 
-#: lib/NGCP/Panel/Utils/DbStrings.pm:1016
+#: lib/NGCP/Panel/Utils/DbStrings.pm:1017
 msgid "Timeout"
 msgstr "Zeitüberschreitung"
 
@@ -7782,7 +7788,7 @@ msgstr ""
 msgid "Timerange has been successfully deleted"
 msgstr ""
 
-#: lib/NGCP/Panel/Utils/DbStrings.pm:1151
+#: lib/NGCP/Panel/Utils/DbStrings.pm:1152
 msgid "Times"
 msgstr ""
 
@@ -7910,7 +7916,7 @@ msgid ""
 "registration) and of RTP relays (both peers and subscribers)."
 msgstr ""
 
-#: lib/NGCP/Panel/Utils/DbStrings.pm:1098
+#: lib/NGCP/Panel/Utils/DbStrings.pm:1099
 msgid "Use free time"
 msgstr "Verwende Freiminuten"
 
@@ -7987,7 +7993,7 @@ msgstr "Benutzername oder Nummer des angerufenen Teilnehmers"
 msgid "VAT Amount"
 msgstr ""
 
-#: lib/NGCP/Panel/Utils/DbStrings.pm:1092
+#: lib/NGCP/Panel/Utils/DbStrings.pm:1093
 msgid "VAT Number"
 msgstr "UID Nummer"
 
@@ -8011,7 +8017,7 @@ msgid "Values"
 msgstr "Werte"
 
 #: lib/NGCP/Panel/Controller/Device.pm:38
-#: lib/NGCP/Panel/Utils/DbStrings.pm:1144
+#: lib/NGCP/Panel/Utils/DbStrings.pm:1145
 msgid "Vendor"
 msgstr "Hersteller"
 
@@ -8077,7 +8083,7 @@ msgstr "Sprachnachriten und Sprachbox"
 msgid "Voicemails"
 msgstr "Sprachnachrichten"
 
-#: lib/NGCP/Panel/Utils/DbStrings.pm:1140
+#: lib/NGCP/Panel/Utils/DbStrings.pm:1141
 msgid "Wday"
 msgstr "WTag"
 
@@ -8116,7 +8122,7 @@ msgstr "Web-Passwort erfolgreich wiederhergestellt, bitte neu einloggen."
 msgid "Wednesday"
 msgstr "Mittwoch"
 
-#: lib/NGCP/Panel/Utils/DbStrings.pm:1075
+#: lib/NGCP/Panel/Utils/DbStrings.pm:1076
 #: share/templates/billing/peaktimes.tt:25
 msgid "Weekday"
 msgstr "Wochentag"
@@ -8126,11 +8132,11 @@ msgid "Weekdays"
 msgstr "Wochentage"
 
 #: lib/NGCP/Panel/Controller/Peering.pm:82
-#: lib/NGCP/Panel/Utils/DbStrings.pm:1010
+#: lib/NGCP/Panel/Utils/DbStrings.pm:1011
 msgid "Weight"
 msgstr "Gewicht"
 
-#: lib/NGCP/Panel/Utils/DbStrings.pm:1047
+#: lib/NGCP/Panel/Utils/DbStrings.pm:1048
 msgid "Whether calling party number was suppressed (CLIR)."
 msgstr ""
 
@@ -8167,7 +8173,7 @@ msgstr ""
 msgid "Whether to charge VAT in invoices."
 msgstr ""
 
-#: lib/NGCP/Panel/Utils/DbStrings.pm:1110
+#: lib/NGCP/Panel/Utils/DbStrings.pm:1111
 msgid "Whether to include check for calls to local area code"
 msgstr ""
 
@@ -8195,7 +8201,7 @@ msgstr ""
 msgid "X3 host"
 msgstr ""
 
-#: lib/NGCP/Panel/Utils/DbStrings.pm:1030
+#: lib/NGCP/Panel/Utils/DbStrings.pm:1031
 msgid "X3 port"
 msgstr ""
 
@@ -8329,11 +8335,11 @@ msgstr ""
 msgid "cfb"
 msgstr ""
 
-#: lib/NGCP/Panel/Utils/DbStrings.pm:1095
+#: lib/NGCP/Panel/Utils/DbStrings.pm:1096
 msgid "cfna"
 msgstr ""
 
-#: lib/NGCP/Panel/Utils/DbStrings.pm:1074
+#: lib/NGCP/Panel/Utils/DbStrings.pm:1075
 msgid "cft"
 msgstr ""
 
@@ -8341,7 +8347,7 @@ msgstr ""
 msgid "cfu"
 msgstr ""
 
-#: lib/NGCP/Panel/Utils/DbStrings.pm:1090
+#: lib/NGCP/Panel/Utils/DbStrings.pm:1091
 msgid "circular"
 msgstr ""
 
@@ -8396,7 +8402,7 @@ msgstr ""
 msgid "foobar"
 msgstr ""
 
-#: lib/NGCP/Panel/Utils/DbStrings.pm:1057
+#: lib/NGCP/Panel/Utils/DbStrings.pm:1058
 msgid "for (seconds)"
 msgstr "für (Sekunden)"
 
@@ -8413,7 +8419,7 @@ msgstr "fremde Anrufe"
 msgid "fraud detection threshold per day, specifying cents"
 msgstr "Missbrauchserkennungs-Schwellwert pro Tag, in Cents"
 
-#: lib/NGCP/Panel/Utils/DbStrings.pm:1097
+#: lib/NGCP/Panel/Utils/DbStrings.pm:1098
 msgid "fraud detection threshold per month, specifying cents"
 msgstr "Missbrauchserkennungs-Schwellwert pro Monat, in Cents"
 
@@ -8483,11 +8489,11 @@ msgstr ""
 msgid "no"
 msgstr "nein"
 
-#: lib/NGCP/Panel/Utils/DbStrings.pm:1052
+#: lib/NGCP/Panel/Utils/DbStrings.pm:1053
 msgid "noanswer"
 msgstr ""
 
-#: lib/NGCP/Panel/Utils/DbStrings.pm:1093
+#: lib/NGCP/Panel/Utils/DbStrings.pm:1094
 #: share/templates/customer/details.tt:9
 msgid "none"
 msgstr "nicht"
@@ -8512,7 +8518,7 @@ msgstr "angemeldet."
 msgid "only once"
 msgstr "nur einmal"
 
-#: lib/NGCP/Panel/Utils/DbStrings.pm:1061
+#: lib/NGCP/Panel/Utils/DbStrings.pm:1062
 msgid "or File"
 msgstr "oder Datei"
 
@@ -8552,15 +8558,15 @@ msgstr "angemeldet."
 msgid "registration failed:"
 msgstr "Anmeldung fehlgeschlagen:"
 
-#: lib/NGCP/Panel/Utils/DbStrings.pm:1013
+#: lib/NGCP/Panel/Utils/DbStrings.pm:1014
 msgid "right"
 msgstr ""
 
-#: lib/NGCP/Panel/Utils/DbStrings.pm:1080
+#: lib/NGCP/Panel/Utils/DbStrings.pm:1081
 msgid "serial"
 msgstr ""
 
-#: lib/NGCP/Panel/Utils/DbStrings.pm:1027
+#: lib/NGCP/Panel/Utils/DbStrings.pm:1028
 msgid "shared"
 msgstr ""
 
@@ -8588,7 +8594,7 @@ msgstr ""
 msgid "top"
 msgstr ""
 
-#: lib/NGCP/Panel/Utils/DbStrings.pm:1037
+#: lib/NGCP/Panel/Utils/DbStrings.pm:1038
 msgid "trough"
 msgstr "bis inkl."
 
