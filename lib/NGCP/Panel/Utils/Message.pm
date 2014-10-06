@@ -126,7 +126,6 @@ method error ($self: Catalyst :$c, Str :$desc, :$log?, :$error?, :$type = 'panel
         }
         $log_msg =~ s/\n//g;
         $log_msg =~ s/\s+/ /g;
-        $log_msg and $log_msg = "LOG=$log_msg";
     }
 
     if (not defined $error) {
@@ -164,7 +163,7 @@ method error ($self: Catalyst :$c, Str :$desc, :$log?, :$error?, :$type = 'panel
 
     my $rc = $c->log->error(
         sprintf <<"EOF", @{$log_params}{qw(r_ip called tx_id r_user data)}, $msg, $log_msg);
-IP=%s CALLED=%s TX=%s USER=%s DATA=%s MSG="%s" %s
+IP=%s CALLED=%s TX=%s USER=%s DATA=%s MSG="%s" LOG="%s"
 EOF
     if ($type eq 'panel') {
         $c->flash(messages => [{ type => $usr_type,
@@ -205,12 +204,11 @@ method info ($self: Catalyst :$c, Str :$desc, :$log?, :$type = 'panel', :$data?,
         }
         $log_msg =~ s/\n//g;
         $log_msg =~ s/\s+/ /g;
-        $log_msg and $log_msg = "LOG=$log_msg";
     }
 
     my $rc = $c->log->info(
         sprintf <<"EOF", @{$log_params}{qw(r_ip called tx_id r_user data)}, $msg, $log_msg);
-IP=%s CALLED=%s TX=%s USER=%s DATA=%s MSG="%s" %s
+IP=%s CALLED=%s TX=%s USER=%s DATA=%s MSG="%s" LOG="%s"
 EOF
     if ($type eq 'panel') {
         $c->flash(messages => [{ type => $usr_type, text => $usr_text }]);
@@ -281,6 +279,7 @@ Params:
     $type  - 'panel' by default, means the message will go to both the log and the GUI,
              anything else but 'panel' is written only to the log.
              Expandable with new types if neccessary.
+             Current types 'panel','internal','api_request','api_response'
     $data  - hash containing what will be written into the DATA= part of the log message
              (by default $c->request->params is used for the data source)
     $cname - Custom function name for CALLED= e.g. Controller::Domain::create
@@ -300,6 +299,7 @@ Params:
     $type  - 'panel' by default, means the message will go to both the log and the GUI,
              anything else but 'panel' is written only to the log.
              Expandable with new types if neccessary.
+             Current types 'panel','internal','api_request','api_response'
     $data  - hash containing what will be written into the DATA= part of the log message
              (by default $c->request->params is used for the data source)
     $cname - Custom function name for CALLED= e.g. Controller::Domain::create
