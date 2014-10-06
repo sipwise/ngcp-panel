@@ -45,6 +45,11 @@ has_field 'destinations.destination' => (
     label => 'Destination',
 );
 
+has_field 'destinations.simple_destination' => (
+    type => 'Text',
+    label => 'A simple destination format, e.g. "4312345" if it is a number, or "user@domain" if it is a URI.',
+);
+
 has_field 'destinations.timeout' => (
     type => '+NGCP::Panel::Field::PosInteger',
     label => 'for (seconds)',

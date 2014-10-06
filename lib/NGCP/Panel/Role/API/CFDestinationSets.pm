@@ -28,9 +28,14 @@ sub hal_from_item {
     my @destinations;
     for my $dest ($item->voip_cf_destinations->all) {
         my ($d, $duri) = NGCP::Panel::Utils::Subscriber::destination_to_field($dest->destination);
-        $d = $duri if $d eq "uri";
+        my $deflated;
+        if($d eq "uri") {
+            $deflated = NGCP::Panel::Utils::Subscriber::uri_deflate($duri, $item->subscriber->voip_subscriber);
+            $d = $dest->destination;
+        }
         my $destelem = {$dest->get_inflated_columns,
-                destination => $d,
+                destination => $dest->destination,
+                $deflated ? (simple_destination => $deflated) : (),
             };
         delete @{$destelem}{'id', 'destination_set_id'};
         push @destinations, $destelem;

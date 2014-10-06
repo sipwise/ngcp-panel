@@ -265,26 +265,18 @@ sub _contents_from_cfm {
     }
     for my $dest ($dset_item ? $dset_item->voip_cf_destinations->all : () ) {
         my ($d, $duri) = NGCP::Panel::Utils::Subscriber::destination_to_field($dest->destination);
-        $d = _uri_deflate($duri,$sub) if $d eq "uri";
+        my $deflated;
+        if($d eq "uri") {
+            $deflated = NGCP::Panel::Utils::Subscriber::uri_deflate($duri,$sub) if $d eq "uri";
+            $d = $dest->destination;
+        }
         push @destinations, {$dest->get_inflated_columns,
                 destination => $d,
+                $deflated ? (simple_destination => $deflated) : (),
             };
         delete @{$destinations[-1]}{'destination_set_id', 'id'};
     }
     return {times => \@times, destinations => \@destinations};
-}
-
-sub _uri_deflate {
-    my ($v, $sub) = @_;
-    $v =~ s/^sips?://;
-    my $t;
-    my ($user, $domain) = split(/\@/, $v);
-    if($domain eq $sub->domain->domain) {
-        $v = $user;
-    } else {
-        $v = $user . '@' . $domain;
-    }
-    return $v;
 }
 
 1;

@@ -919,6 +919,20 @@ sub destination_to_field {
     return ($d, $duri);
 }
 
+sub uri_deflate {
+    my ($v, $sub) = @_;
+    $v =~ s/^sips?://;
+    my $t;
+    my ($user, $domain) = split(/\@/, $v);
+    if($domain eq $sub->domain->domain) {
+        $v = $user;
+    } else {
+        $v = $user . '@' . $domain;
+    }
+    return $v;
+}
+
+
 sub callforward_create_or_update_quickset_destinations {
     my %params = @_;
 
