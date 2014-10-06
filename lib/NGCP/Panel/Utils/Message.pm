@@ -161,10 +161,9 @@ method error ($self: Catalyst :$c, Str :$desc, :$log?, :$error?, :$type = 'panel
         $msg = "$desc ($error)";
     }
 
+    my $logstr = 'IP=%s CALLED=%s TX=%s USER=%s DATA=%s MSG="%s" LOG="%s"';
     my $rc = $c->log->error(
-        sprintf <<"EOF", @{$log_params}{qw(r_ip called tx_id r_user data)}, $msg, $log_msg);
-IP=%s CALLED=%s TX=%s USER=%s DATA=%s MSG="%s" LOG="%s"
-EOF
+        sprintf $logstr, @{$log_params}{qw(r_ip called tx_id r_user data)}, $msg, $log_msg);
     if ($type eq 'panel') {
         $c->flash(messages => [{ type => $usr_type,
                                  text => sprintf '%s [%s]',
@@ -206,10 +205,10 @@ method info ($self: Catalyst :$c, Str :$desc, :$log?, :$type = 'panel', :$data?,
         $log_msg =~ s/\s+/ /g;
     }
 
+    my $logstr = 'IP=%s CALLED=%s TX=%s USER=%s DATA=%s MSG="%s" LOG="%s"';
     my $rc = $c->log->info(
-        sprintf <<"EOF", @{$log_params}{qw(r_ip called tx_id r_user data)}, $msg, $log_msg);
-IP=%s CALLED=%s TX=%s USER=%s DATA=%s MSG="%s" LOG="%s"
-EOF
+        sprintf $logstr,
+                @{$log_params}{qw(r_ip called tx_id r_user data)}, $msg, $log_msg);
     if ($type eq 'panel') {
         $c->flash(messages => [{ type => $usr_type, text => $usr_text }]);
     }
