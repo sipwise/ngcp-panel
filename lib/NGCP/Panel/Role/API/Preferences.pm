@@ -74,7 +74,10 @@ sub get_resource {
 
         SWITCH: for ($pref->attribute->attribute) {
             /^rewrite_calle[re]_(in|out)_dpid$/ && do {
-                next if(exists $resource->{rewrite_rule_set});
+                if(exists $resource->{rewrite_rule_set}) {
+                    $processed = 1;
+                    last SWITCH;
+                }
                 my $col = $pref->attribute->attribute;
                 $col =~ s/^rewrite_//;
                 my $rwr_set = $c->model('DB')->resultset('voip_rewrite_rule_sets')->find({
@@ -374,7 +377,7 @@ sub update_item {
                     /^(adm_)?ncos$/ && do {
                         unless(exists $resource->{$k}) {
                             my $rs = $self->get_preference_rs($c, $type, $elem, $k . '_id');
-                            next unless $rs; # unknown resource, just ignore
+                            last SWITCH unless $rs; # unknown resource, just ignore
                             $rs->delete;
                         }
                         last SWITCH;
@@ -382,7 +385,7 @@ sub update_item {
                     /^(man_)?allowed_ips$/ && do {
                         unless(exists $resource->{$k}) {
                             my $rs = $self->get_preference_rs($c, $type, $elem, $k . '_grp');
-                            next unless $rs; # unknown resource, just ignore
+                            last SWITCH unless $rs; # unknown resource, just ignore
                             if($rs->first) {
                                 $c->model('DB')->resultset('voip_allowed_ip_groups')->search({
                                     group_id => $rs->first->value,
@@ -395,14 +398,14 @@ sub update_item {
                     # default
                     unless(exists $resource->{$k}) {
                         my $rs = $self->get_preference_rs($c, $type, $elem, $k);
-                        next unless $rs; # unknown resource, just ignore
+                        last SWITCH unless $rs; # unknown resource, just ignore
                         $rs->delete;
                         if ($type eq "subscribers" && ($k eq 'voicemail_echo_number' || $k eq 'cli')) {
                             NGCP::Panel::Utils::Subscriber::update_voicemail_number(
                                 schema => $c->model('DB'), subscriber => $item);
                         }
                     }
-                }
+                } # SWITCH
             }
         } catch($e) {
             $c->log->error("failed to clear preference for '$accessor': $e");
