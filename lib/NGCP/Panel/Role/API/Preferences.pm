@@ -70,6 +70,7 @@ sub get_resource {
     my $resource;
     foreach my $pref($prefs->all) {
         my $value;
+        my $processed = 0;
 
         SWITCH: for ($pref->attribute->attribute) {
             /^rewrite_calle[re]_(in|out)_dpid$/ && do {
@@ -85,8 +86,7 @@ sub get_resource {
                     $c->log->error("no rewrite rule set for '".$pref->attribute->attribute."' with value '".$pref->value."' found, altough it's stored in preference id ".$pref->id);
                     # let it slip through
                 }
-                next;
-                # TODO: HAL link to rewrite rule set? Also/instead set id?
+                $processed = 1;
                 last SWITCH;
             };
             /^(adm_)?ncos_id$/ && do {
@@ -101,8 +101,7 @@ sub get_resource {
                     $c->log->error("no ncos level for '".$pref->attribute->attribute."' with value '".$pref->value."' found, altough it's stored in preference id ".$pref->id);
                     # let it slip through
                 }
-                next;
-                # TODO: HAL link to rewrite rule set? Also/instead set id?
+                $processed = 1;
                 last SWITCH;
             };
             /^(contract_)?sound_set$/ && do {
@@ -116,8 +115,7 @@ sub get_resource {
                     $c->log->error("no sound set for '".$pref->attribute->attribute."' with value '".$pref->value."' found, altough it's stored in preference id ".$pref->id);
                     # let it slip through
                 }
-                next;
-                # TODO: HAL link to rewrite rule set? Also/instead set id?
+                $processed = 1;
                 last SWITCH;
             };
             /^(man_)?allowed_ips_grp$/ && do {
@@ -133,14 +131,15 @@ sub get_resource {
                         unless exists($resource->{$pref_name});
                     push @{ $resource->{$pref_name} }, $set->ipnet;
                 }
-                next;
+                $processed = 1;
                 last SWITCH;
             };
             # default
             if($pref->attribute->internal != 0) {
-                next;
+                last SWITCH;
             }
         } # SWITCH
+        next if $processed;
 
         SWITCH: for ($pref->attribute->data_type) {
             /^int$/ && do {
