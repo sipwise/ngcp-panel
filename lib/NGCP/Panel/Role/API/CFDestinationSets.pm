@@ -150,6 +150,7 @@ sub update_item {
         $item->voip_cf_destinations->delete;
         for my $d ( @{$resource->{destinations}} ) {
             delete $d->{destination_set_id};
+            delete $d->{simple_destination};
             $d->{destination} = NGCP::Panel::Utils::Subscriber::field_to_destination(
                     destination => $d->{destination},
                     number => $number,

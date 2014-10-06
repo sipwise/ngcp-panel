@@ -203,6 +203,7 @@ sub update_item {
             }
             for my $d (@{ $resource->{$type}{destinations} }) {
                 delete $d->{destination_set_id};
+                delete $d->{simple_destination};
                 $d->{destination} = NGCP::Panel::Utils::Subscriber::field_to_destination(
                         destination => $d->{destination},
                         number => $number,
