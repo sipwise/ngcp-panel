@@ -20,6 +20,7 @@ case "$1" in
     if [ -d /tmp/ngcp ]; then
         echo "fixing /tmp/ngcp dir perms"
         chown -R www-data:www-data /tmp/ngcp
+        chmod 0755 /tmp/ngcp
     fi
     ;;
 
