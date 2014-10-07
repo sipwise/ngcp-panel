@@ -10,6 +10,8 @@
 # Description:       Start the ngcp-panel webapp
 ### END INIT INFO
 
+umask 0022
+
 . /lib/lsb/init-functions
 
 DAEMON=/usr/share/ngcp-panel/ngcp_panel_fastcgi.pl
@@ -123,7 +125,7 @@ fi
 OPTIONS="--listen $USOCKET --daemon --pidfile $PIDFILE --nproc $NPROC"
 
 # $HOMERUN perms
-mkdir -p $HOMERUN && chown -R $USER:$GROUP $HOMERUN
+mkdir -p $HOMERUN && chown -R $USER:$GROUP $HOMERUN && chmod 0755 $HOMERUN
 
 case "$1" in
   start)
