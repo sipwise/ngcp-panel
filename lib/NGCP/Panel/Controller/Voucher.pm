@@ -114,6 +114,7 @@ sub edit :Chained('base') :PathPart('edit') {
     my $posted = ($c->request->method eq 'POST');
     my $form;
     my $params = $c->stash->{voucher};
+    $params->{valid_until} =~ s/^(\d{4}\-\d{2}\-\d{2}).*$/$1/;
     $params->{reseller}{id} = delete $params->{reseller_id};
     $params = $params->merge($c->session->{created_objects});
     if($c->user->is_superuser) {
