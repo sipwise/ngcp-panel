@@ -267,6 +267,7 @@ sub create_subscriber {
             mailbox => $cli // 0,
             password => sprintf("%04d", int(rand 10000)),
             email => '',
+            tz => 'vienna',
         });
         if($cli) {
             $schema->resultset('voip_dbaliases')->create({
