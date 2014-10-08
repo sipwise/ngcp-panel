@@ -22,6 +22,7 @@ sub from_string {
 
     # if date is passed like xxxx-xx (as from monthpicker field), add a day
     $s = $s . "-01" if($s =~ /^\d{4}\-\d{2}$/);
+    $s = $s . "T00:00:00" if($s =~ /^\d{4}\-\d{2}-\d{2}$/);
 
     # just for convenience, if date is passed like xxxx-xx-xx xx:xx:xx,
     # convert it to xxxx-xx-xxTxx:xx:xx

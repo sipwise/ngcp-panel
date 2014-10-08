@@ -1,0 +1,28 @@
+[% site_config.title = c.loc('Billing Vouchers') -%]
+[%
+    helper.name = c.loc('Billing Vouchers');
+    helper.identifier = 'billing_vouchers';
+    helper.messages = messages;
+    helper.dt_columns = voucher_dt_columns;
+    helper.length_change = 1;
+
+    helper.close_target = close_target;
+    helper.create_flag = create_flag;
+    helper.edit_flag = edit_flag;
+    helper.form_object = form;
+    helper.ajax_uri = c.uri_for( c.controller.action_for('ajax') );
+
+    UNLESS c.user.read_only;
+        helper.dt_buttons = [
+            { name = c.loc('Edit'), uri = "/voucher/'+full[\"id\"]+'/edit", class = 'btn-small btn-primary', icon = 'icon-edit' },
+            { name = c.loc('Delete'), uri = "/voucher/'+full[\"id\"]+'/delete", class = 'btn-small btn-secondary', icon = 'icon-trash' },
+        ];
+        helper.top_buttons = [
+            { name = c.loc('Create Billing Voucher'), uri = c.uri_for('/voucher/create'), icon = 'icon-star' },
+            { name = c.loc('Upload Vouchers as CSV'), uri = c.uri_for('/voucher/upload'), icon = 'icon-star' },
+        ];
+    END;
+
+    PROCESS 'helpers/datatables.tt';
+-%]
+[% # vim: set tabstop=4 syntax=html expandtab: -%]
