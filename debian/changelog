@@ -1,3 +1,12 @@
+ngcp-panel (1.4.1.14+0~mr3.4.1.14) unstable; urgency=low
+
+  [ Andreas Granig ]
+  * [f34e212] MT#9445 Set voicemail_users tz to 'vienna'
+
+  [ Sipwise Jenkins Builder ]
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Wed, 08 Oct 2014 11:28:30 +0200
+
 ngcp-panel (1.4.1.13+0~mr3.4.1.13) unstable; urgency=low
 
   [ Irina Peshinskaya ]
