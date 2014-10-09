@@ -28,7 +28,7 @@ sub render_element {
     my $t = new Template({ 
         ABSOLUTE => 1, 
         INCLUDE_PATH => [
-            '/usr/share/ngcp-panel1444/templates',
+            '/usr/share/ngcp-panel/templates',
             'share/templates',
         ],
     });
