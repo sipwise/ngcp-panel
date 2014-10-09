@@ -351,7 +351,29 @@ sub create_subscriber {
         return $billing_subscriber;
     });
 }
-
+sub update_subscriber_pbx_policy {
+    my (%params) = @_;
+    my $c = $params{c};
+    my $prov_subscriber = $params{prov_subscriber};
+    my $values = $params{values};
+    
+   #todo: use update_preferences instead?
+    
+    foreach(qw/cloud_pbx_hunt_policy cloud_pbx_hunt_timeout/){
+        my $preference = NGCP::Panel::Utils::Preferences::get_usr_preference_rs(
+            c => $c, 
+            prov_subscriber => $prov_subscriber,
+            attribute => $_
+        );
+        if($preference) {
+            if($preference && $preference->first) {
+                $preference->first->update({ value => $values->{$_} });
+            } else {
+                $preference->create({ value => $values->{$_} });
+            }
+        }
+    }
+}
 sub update_preferences {
     my (%params) = @_;
     my $c = $params{c};
