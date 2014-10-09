@@ -1,3 +1,425 @@
+ngcp-panel (1.5.1.0+0~mr3.5.1.0) unstable; urgency=low
+
+  [ Jenkins Git User ]
+  * [88f7fc1] I18N dump: snapshot Thu Jul 10 16:02:38 +0200 2014
+  * [7758806] I18N dump: snapshot Thu Jul 10 16:02:47 +0200 2014
+  * [b1ef4cb] I18N dump: snapshot Thu Jul 10 16:02:56 +0200 2014
+  * [868be17] I18N dump: snapshot Thu Jul 10 16:03:04 +0200 2014
+  * [9f668c6] I18N dump: snapshot Thu Jul 10 16:03:13 +0200 2014
+  * [57dc75b] I18N dump: snapshot Fri Jul 11 01:16:39 +0200 2014
+  * [56a1462] I18N dump: snapshot Fri Jul 11 01:16:48 +0200 2014
+  * [3fb38c8] I18N dump: snapshot Fri Jul 11 01:16:58 +0200 2014
+  * [10baffb] I18N dump: snapshot Fri Jul 11 01:17:09 +0200 2014
+  * [d67179a] I18N dump: snapshot Fri Jul 11 01:17:19 +0200 2014
+  * [d8207a9] I18N dump: snapshot Sat Jul 12 01:19:37 +0200 2014
+  * [350348e] I18N dump: snapshot Sat Jul 12 01:19:46 +0200 2014
+  * [3f89cbd] I18N dump: snapshot Sat Jul 12 01:19:56 +0200 2014
+  * [0d4211c] I18N dump: snapshot Sat Jul 12 01:20:05 +0200 2014
+  * [8a21199] I18N dump: snapshot Sat Jul 12 01:20:14 +0200 2014
+  * [4ab7a20] I18N dump: snapshot Fri Jul 18 01:16:36 +0200 2014
+  * [57608f0] I18N dump: snapshot Fri Jul 18 01:16:46 +0200 2014
+  * [e77034e] I18N dump: snapshot Fri Jul 18 01:16:55 +0200 2014
+  * [cbc4881] I18N dump: snapshot Fri Jul 18 01:17:04 +0200 2014
+  * [0dcbd8f] I18N dump: snapshot Fri Jul 18 01:17:14 +0200 2014
+  * [c607fff] I18N dump: snapshot Sat Jul 19 01:16:46 +0200 2014
+  * [be659e9] I18N dump: snapshot Sat Jul 19 01:16:56 +0200 2014
+  * [eff5411] I18N dump: snapshot Sat Jul 19 01:17:05 +0200 2014
+  * [73e48ad] I18N dump: snapshot Sat Jul 19 01:17:14 +0200 2014
+  * [d371890] I18N dump: snapshot Sat Jul 19 01:17:23 +0200 2014
+  * [73ad6da] I18N dump: snapshot Tue Jul 22 01:17:01 +0200 2014
+  * [3501b25] I18N dump: snapshot Tue Jul 22 01:17:10 +0200 2014
+  * [8ae452a] I18N dump: snapshot Tue Jul 22 01:17:19 +0200 2014
+  * [043dcf0] I18N dump: snapshot Tue Jul 22 01:17:28 +0200 2014
+  * [91a434b] I18N dump: snapshot Tue Jul 22 01:17:37 +0200 2014
+  * [c120286] I18N dump: snapshot Wed Jul 23 01:16:49 +0200 2014
+  * [dd6e895] I18N dump: snapshot Wed Jul 23 01:16:59 +0200 2014
+  * [995d755] I18N dump: snapshot Wed Jul 23 01:17:12 +0200 2014
+  * [869e0ac] I18N dump: snapshot Wed Jul 23 01:17:23 +0200 2014
+  * [1ecbd11] I18N dump: snapshot Wed Jul 23 01:17:32 +0200 2014
+  * [66ec4fa] I18N dump: snapshot Fri Jul 25 01:16:51 +0200 2014
+  * [735d085] I18N dump: snapshot Fri Jul 25 01:17:00 +0200 2014
+  * [063bcbe] I18N dump: snapshot Fri Jul 25 01:17:11 +0200 2014
+  * [dbfc756] I18N dump: snapshot Fri Jul 25 01:17:20 +0200 2014
+  * [e27ae74] I18N dump: snapshot Fri Jul 25 01:17:29 +0200 2014
+  * [d75cd6f] I18N dump: snapshot Tue Jul 29 01:16:10 +0200 2014
+  * [12a3a1e] I18N dump: snapshot Tue Jul 29 01:16:20 +0200 2014
+  * [f3a695d] I18N dump: snapshot Tue Jul 29 01:17:00 +0200 2014
+  * [59701a4] I18N dump: snapshot Tue Jul 29 01:17:11 +0200 2014
+  * [361fb23] I18N dump: snapshot Tue Jul 29 01:17:20 +0200 2014
+  * [23b667a] I18N dump: snapshot Wed Jul 30 01:16:58 +0200 2014
+  * [7c2444f] I18N dump: snapshot Wed Jul 30 01:17:11 +0200 2014
+  * [d9218e2] I18N dump: snapshot Wed Jul 30 01:17:22 +0200 2014
+  * [3d57259] I18N dump: snapshot Wed Jul 30 01:17:34 +0200 2014
+  * [d55a9be] I18N dump: snapshot Wed Jul 30 01:17:45 +0200 2014
+  * [884a32e] I18N dump: snapshot Thu Jul 31 01:21:19 +0200 2014
+  * [6d0795a] I18N dump: snapshot Thu Jul 31 01:21:30 +0200 2014
+  * [ecccbb2] I18N dump: snapshot Thu Jul 31 01:21:39 +0200 2014
+  * [32401ef] I18N dump: snapshot Thu Jul 31 01:21:48 +0200 2014
+  * [71c5873] I18N dump: snapshot Thu Jul 31 01:21:57 +0200 2014
+  * [32b633d] I18N dump: snapshot Mon Aug 04 01:16:07 +0200 2014
+  * [cca5120] I18N dump: snapshot Mon Aug 04 01:16:18 +0200 2014
+  * [3605e55] I18N dump: snapshot Mon Aug 04 01:16:27 +0200 2014
+  * [9a8440b] I18N dump: snapshot Mon Aug 04 01:16:38 +0200 2014
+  * [70989cb] I18N dump: snapshot Mon Aug 04 01:16:48 +0200 2014
+  * [92c66d8] I18N dump: snapshot Wed Aug 06 01:17:46 +0200 2014
+  * [7511401] I18N dump: snapshot Wed Aug 06 01:17:56 +0200 2014
+  * [fff0e37] I18N dump: snapshot Wed Aug 06 01:18:06 +0200 2014
+  * [d3398a2] I18N dump: snapshot Wed Aug 06 01:18:16 +0200 2014
+  * [6db34d0] I18N dump: snapshot Wed Aug 06 01:18:25 +0200 2014
+  * [d2d45b3] I18N dump: snapshot Thu Aug 07 01:21:43 +0200 2014
+  * [514499c] I18N dump: snapshot Thu Aug 07 01:21:54 +0200 2014
+  * [d28bb92] I18N dump: snapshot Thu Aug 07 01:22:04 +0200 2014
+  * [99f6718] I18N dump: snapshot Thu Aug 07 01:22:13 +0200 2014
+  * [6379210] I18N dump: snapshot Thu Aug 07 01:22:24 +0200 2014
+  * [b24f4b2] I18N dump: snapshot Fri Aug 08 01:16:25 +0200 2014
+  * [89eafa5] I18N dump: snapshot Fri Aug 08 01:16:36 +0200 2014
+  * [ace47d2] I18N dump: snapshot Fri Aug 08 01:16:47 +0200 2014
+  * [31fbfde] I18N dump: snapshot Fri Aug 08 01:16:56 +0200 2014
+  * [3403c36] I18N dump: snapshot Fri Aug 08 01:17:09 +0200 2014
+  * [0eaf5b4] I18N dump: snapshot Sat Aug 09 01:16:54 +0200 2014
+  * [2753817] I18N dump: snapshot Sat Aug 09 01:17:04 +0200 2014
+  * [958a4c8] I18N dump: snapshot Sat Aug 09 01:17:15 +0200 2014
+  * [3545be9] I18N dump: snapshot Sat Aug 09 01:17:25 +0200 2014
+  * [3b65a6a] I18N dump: snapshot Sat Aug 09 01:17:34 +0200 2014
+  * [907982c] I18N dump: snapshot Thu Aug 14 01:15:34 +0200 2014
+  * [db92f72] I18N dump: snapshot Thu Aug 14 01:15:46 +0200 2014
+  * [60ba0c6] I18N dump: snapshot Thu Aug 14 01:15:57 +0200 2014
+  * [d7c1211] I18N dump: snapshot Thu Aug 14 01:16:07 +0200 2014
+  * [9e95ee3] I18N dump: snapshot Thu Aug 14 01:16:22 +0200 2014
+  * [c0281b7] I18N dump: snapshot Fri Aug 15 01:14:20 +0200 2014
+  * [6587608] I18N dump: snapshot Fri Aug 15 01:14:31 +0200 2014
+  * [d1e59d9] I18N dump: snapshot Fri Aug 15 01:14:41 +0200 2014
+  * [946c650] I18N dump: snapshot Fri Aug 15 01:14:51 +0200 2014
+  * [d05f963] I18N dump: snapshot Fri Aug 15 01:15:01 +0200 2014
+  * [3768b5a] I18N dump: snapshot Tue Aug 19 01:15:13 +0200 2014
+  * [36189f8] I18N dump: snapshot Tue Aug 19 01:15:23 +0200 2014
+  * [0da9a4e] I18N dump: snapshot Tue Aug 19 01:15:33 +0200 2014
+  * [a9e0ec3] I18N dump: snapshot Tue Aug 19 01:15:43 +0200 2014
+  * [832e7e5] I18N dump: snapshot Tue Aug 19 01:15:53 +0200 2014
+  * [ee8deb3] I18N dump: snapshot Thu Aug 21 23:02:47 +0200 2014
+  * [155f6e9] I18N dump: snapshot Thu Aug 21 23:02:58 +0200 2014
+  * [1239a3e] I18N dump: snapshot Thu Aug 21 23:03:14 +0200 2014
+  * [ffc1e05] I18N dump: snapshot Thu Aug 21 23:03:33 +0200 2014
+  * [a016298] I18N dump: snapshot Thu Aug 21 23:03:47 +0200 2014
+  * [0876049] I18N dump: snapshot Thu Aug 28 01:14:18 +0200 2014
+  * [d94e9e9] I18N dump: snapshot Thu Aug 28 01:14:31 +0200 2014
+  * [00168d0] I18N dump: snapshot Thu Aug 28 01:14:46 +0200 2014
+  * [9ac34b9] I18N dump: snapshot Thu Aug 28 01:14:57 +0200 2014
+  * [b8d779b] I18N dump: snapshot Thu Aug 28 01:15:13 +0200 2014
+  * [a715f83] I18N dump: snapshot Fri Sep 05 01:15:26 +0200 2014
+  * [803c6c4] I18N dump: snapshot Fri Sep 05 01:15:38 +0200 2014
+  * [7441241] I18N dump: snapshot Fri Sep 05 01:15:49 +0200 2014
+  * [e65df19] I18N dump: snapshot Fri Sep 05 01:16:01 +0200 2014
+  * [5fcc796] I18N dump: snapshot Fri Sep 05 01:16:12 +0200 2014
+  * [9175fd6] I18N dump: snapshot Tue Sep 09 01:20:05 +0200 2014
+  * [d7452e4] I18N dump: snapshot Tue Sep 09 01:20:17 +0200 2014
+  * [63962be] I18N dump: snapshot Tue Sep 09 01:20:28 +0200 2014
+  * [0d1c467] I18N dump: snapshot Tue Sep 09 01:20:42 +0200 2014
+  * [26ae9d4] I18N dump: snapshot Tue Sep 09 01:20:56 +0200 2014
+  * [50e576e] I18N dump: snapshot Mon Sep 15 01:15:36 +0200 2014
+  * [e9cf9cc] I18N dump: snapshot Mon Sep 15 01:15:46 +0200 2014
+  * [fe0127f] I18N dump: snapshot Mon Sep 15 01:15:57 +0200 2014
+  * [cd58cbd] I18N dump: snapshot Mon Sep 15 01:16:07 +0200 2014
+  * [f7238a6] I18N dump: snapshot Mon Sep 15 01:16:17 +0200 2014
+  * [9ab2534] I18N dump: snapshot Tue Sep 16 01:15:05 +0200 2014
+  * [930efaa] I18N dump: snapshot Tue Sep 16 01:15:17 +0200 2014
+  * [341b2df] I18N dump: snapshot Tue Sep 16 01:15:32 +0200 2014
+  * [054773d] I18N dump: snapshot Tue Sep 16 01:15:42 +0200 2014
+  * [1254d9a] I18N dump: snapshot Tue Sep 16 01:15:54 +0200 2014
+  * [d534dc3] I18N dump: snapshot Thu Sep 18 01:15:29 +0200 2014
+  * [01ed872] I18N dump: snapshot Thu Sep 18 01:15:41 +0200 2014
+  * [eeabca4] I18N dump: snapshot Thu Sep 18 01:15:51 +0200 2014
+  * [7031f63] I18N dump: snapshot Thu Sep 18 01:16:02 +0200 2014
+  * [b8c612c] I18N dump: snapshot Thu Sep 18 01:16:18 +0200 2014
+  * [ef14543] I18N dump: snapshot Mon Sep 22 01:14:58 +0200 2014
+  * [b7c204c] I18N dump: snapshot Mon Sep 22 01:15:11 +0200 2014
+  * [6a9a074] I18N dump: snapshot Mon Sep 22 01:15:28 +0200 2014
+  * [9a05c0b] I18N dump: snapshot Mon Sep 22 01:15:44 +0200 2014
+  * [ee06b92] I18N dump: snapshot Mon Sep 22 01:15:59 +0200 2014
+  * [aef9825] I18N dump: snapshot Tue Sep 23 01:15:52 +0200 2014
+  * [4d14bd5] I18N dump: snapshot Tue Sep 23 01:16:06 +0200 2014
+  * [86ed12e] I18N dump: snapshot Tue Sep 23 01:16:19 +0200 2014
+  * [01ace0b] I18N dump: snapshot Tue Sep 23 01:16:32 +0200 2014
+  * [fe39c60] I18N dump: snapshot Tue Sep 23 01:16:48 +0200 2014
+  * [456be7c] I18N dump: snapshot Wed Sep 24 01:15:31 +0200 2014
+  * [4c4cb18] I18N dump: snapshot Wed Sep 24 01:15:42 +0200 2014
+  * [cd5575c] I18N dump: snapshot Wed Sep 24 01:15:53 +0200 2014
+  * [1f360a1] I18N dump: snapshot Wed Sep 24 01:16:04 +0200 2014
+  * [d9df7ea] I18N dump: snapshot Wed Sep 24 01:16:15 +0200 2014
+  * [1eb5bdd] I18N dump: snapshot Thu Sep 25 01:14:55 +0200 2014
+  * [b193da0] I18N dump: snapshot Thu Sep 25 01:15:06 +0200 2014
+  * [89effba] I18N dump: snapshot Thu Sep 25 01:15:17 +0200 2014
+  * [2361291] I18N dump: snapshot Thu Sep 25 01:15:27 +0200 2014
+  * [57ad8c6] I18N dump: snapshot Thu Sep 25 01:15:38 +0200 2014
+  * [6404c84] I18N dump: snapshot Fri Sep 26 01:19:29 +0200 2014
+  * [c4bab6b] I18N dump: snapshot Fri Sep 26 01:19:40 +0200 2014
+  * [08fb107] I18N dump: snapshot Fri Sep 26 01:19:50 +0200 2014
+  * [cdce6f9] I18N dump: snapshot Fri Sep 26 01:20:02 +0200 2014
+  * [0036018] I18N dump: snapshot Fri Sep 26 01:20:13 +0200 2014
+  * [9ded4bd] I18N dump: snapshot Sat Sep 27 01:19:05 +0200 2014
+  * [e3f8ee9] I18N dump: snapshot Sat Sep 27 01:19:15 +0200 2014
+  * [d3b7937] I18N dump: snapshot Sat Sep 27 01:19:25 +0200 2014
+  * [6d335e9] I18N dump: snapshot Sat Sep 27 01:19:36 +0200 2014
+  * [737e44d] I18N dump: snapshot Sat Sep 27 01:19:46 +0200 2014
+  * [c056498] I18N dump: snapshot Wed Oct 01 01:14:41 +0200 2014
+  * [117daa0] I18N dump: snapshot Wed Oct 01 01:14:54 +0200 2014
+  * [2fd0d37] I18N dump: snapshot Wed Oct 01 01:15:07 +0200 2014
+  * [571143c] I18N dump: snapshot Wed Oct 01 01:15:20 +0200 2014
+  * [7612938] I18N dump: snapshot Wed Oct 01 01:15:33 +0200 2014
+  * [086b172] I18N dump: snapshot Fri Oct 03 01:15:05 +0200 2014
+  * [a1e20b3] I18N dump: snapshot Fri Oct 03 01:15:19 +0200 2014
+  * [ab55124] I18N dump: snapshot Fri Oct 03 01:15:30 +0200 2014
+  * [c859826] I18N dump: snapshot Fri Oct 03 01:15:43 +0200 2014
+  * [3be9092] I18N dump: snapshot Fri Oct 03 01:15:53 +0200 2014
+  * [85ef211] I18N dump: snapshot Tue Oct 07 01:15:39 +0200 2014
+  * [c66f386] I18N dump: snapshot Tue Oct 07 01:16:13 +0200 2014
+  * [bc679d9] I18N dump: snapshot Tue Oct 07 01:16:48 +0200 2014
+  * [efc8b20] I18N dump: snapshot Tue Oct 07 01:17:01 +0200 2014
+  * [3fad5a3] I18N dump: snapshot Tue Oct 07 01:17:14 +0200 2014
+
+  [ Gerhard Jungwirth ]
+  * [309b5ab] MT#8015 update de translation
+  * [7b3080f] MT#8071	fix api subscriber termination
+  * [3ab0177] MT#8157 api callforwards fix timeset deletion
+  * [923e2e9] MT#8203 subscriber termination registered devices
+  * [6c5f35d] MT8165 explain cfmappings on callforwards doc
+  * [135d48e] MT#8015 de translation, some more strings
+  * [9f7f55d] MT#8063 api fix uploading music_on_hold
+  * [2c18f32] MT#7943 prevent changing terminated customer
+  * [bdd40e8] MT#8261 allow zero in number ranges
+  * [3d964e6] MT#8261 fix evaluation zero to false
+  * [9a8cd44] MT#7931 group captured calls
+  * [d57aa0e] MT#7673 update voicemail number in webinterface
+  * [ee9ad45] MT#8309 change boolean handling in api preferences
+  * [36e44a6] MT#7673 update voicemail number in api
+  * [edff2c4] MT#7791 API ccmappingentries (callthrough CLIs)
+  * [b7eb095] MT#7791 Manage Callthrough CLIs in Panel
+  * [2b4e5d0] MT#8309 API billingfees logic
+  * [ef713a8] MT#8287 fix subscriber termination by subadmin
+  * [c15acb9] MT#8287 only create aliases if available on subscriber creation
+  * [789d162] MT#8367 api fix subscriber delete as reseller
+  * [3c0dd86] MT#8367 api fix subscriber post/put domain query
+  * [752b972] MT#8309 remove usage of JSON::Types::bool
+  * [12ee43f] MT#8395 replace email plugin
+  * [06e5872] MT#8397 Remove usage of Regexp::Parser
+  * [5e9abc5] MT#8397 Remove usage of Sys::Sig
+  * [69a4614] MT#8709 API: Always update lock-level
+  * [535a44f] MT#8613 add /api/interceptions to test
+  * [49431fc] MT#8729 Fix valid_media_type regex
+  * [cc77897] MT#8729 api-test callforward deflation
+  * [cf404f1] MT#2655 setup Test::Perl::Critic::Progressive
+  * [a57d85d] MT#8959 fix peering server weight 1-127
+  * [c87db57] MT#7177 fix form initializatoin for DestinationSets
+  * [0ea1958] MT#9291 CallForwards URI deflation
+
+  [ Alexander Lutay ]
+  * [99fd32c] MT#7867 Add REST API check for 'invoicetemplates'
+  * [4a897f0] MT#7791 Add ccmapentries to REST API test
+  * [643cf6d] MT#8215 Set NGCP-Summary.json as default Kibana page
+  * [621fd79] MT#7505 Add .gitreview file for ngcp-panel
+
+  [ Victor Seva ]
+  * [150dff5] MT#8125 allow stop the process if default RUN_DAEMON is no
+  * [f2c4a03] MT#9425 init: set umask and perms for HOMERUN. Set perms on /tmp/ngcp
+
+  [ Irka ]
+  * [b2f21dd] MT#7861 Use pixels as main unit to be in accordance with svg-edit.
+  * [bcc0101] MT#7867 Return scale 0.8 untill other options tested with real printing
+  * [93bee5b] MT#5879 Fix multi-undo functionality.
+  * [47696b5] MT#5879 Make possible to restart generate_invoices.
+  * [4d7f2ff] MT#5879 Deny to create  invoice templates with duplicated names
+  * [f95f158] MT#5879 Merge with Andreas version of Invoice Template APIs.
+  * [146a7ef] MT#7867 Add xml element among others by position.
+  * [e544dc4] MT#7867 Use geo to place xml string for inter-layer elem movements
+  * [18b86b3] MT#5879 Remove template active as logic changed to invoice per customer.
+  * [c66c0a0] MT#8353 Give possibility to manage money signs after comma in template.
+  * [f5fbb63] MT#8367 Specify exact table for status to avoid ambiguity
+  * [b59e7bb] MT#8367 Remove potentially ambiguous voip_subscribers.status reference
+  * [22ab88e] MT#5879 generate_invoices changes according to is_active flag removal.
+  * [45a99ff] MT#8353 More freedom in money signs configuration. And fix fractional.
+  * [3c63ab5] MT#8387 Introduce round for cents.
+  * [4d1a826] MT#8353 Fix broken build
+  * [d9d85a5] MT#5879 Fix generation for ampersands;
+  * [f7e65e2] MT#5879 Not all characters should be quoted
+  * [068e71a] MT#8401 Add missed library for invoice data sanitize as XML.
+  * [c43ccd7] MT#8401 Invoce data preprocessing.
+  * [f2e983d] MT#8401 Use common invoice data preprocessing for generation script.
+  * [d525e4c] MT#8433 Update contract_balances data during invoices mass generation.
+  * [5b487ea] MT#5879 Changes allows run invoice generation script on the 3.3 DB versions.
+  * [8174c1f] MT#8433 Process unrated calls.
+  * [fda891a] MT#8433 Remove debug
+  * [ee3e73d] MT#8433 Fix of option ttreatment in newest version.
+  * [9991870] MT#5879 Fix broken packages load sequence.
+  * [a36a835] MT#5879 Allow to skip empty invoices generation with option no_empty.
+  * [78a6d8d] MT#5879 Remove Country processing warning.
+  * [54b7f0c] MT#5879 Fix billing_mapping logic, use the latest one as actual.
+  * [a393853] MT#5879 Fix memory issue
+  * [6bcca23] MT#5879 Fix UTF-8 email send. Further fix of memory usage issue.
+  * [e00f018] MT#8387 Fix incorrect rounding for cents.
+  * [d0181b9] MT#8559 Adapt URI field helpers to empty value (on creation).
+  * [1b654d5] MT#8491 Fix subscriber termination via API.
+  * [2a7e76b] Revert "MT#8491 Fix subscriber termination via API."
+  * [c7a2dae] MT#8621 Check callforward spec against empty desctinations
+  * [3e80b5f] MT#8609 API: Don't add ringtimeout into empty callforwardTimeout.
+  * [4c35f9b] MT#8649 Add callforwards link into subscribers info
+  * [24569e8] MT#8609 Add "ringtimeout" into CallForward Timeout "cft" description.
+  * [d0a6a81] MT#8371 Make customer queries up to 10 times faster.
+  * [65d38e2] MT#8371 Fix for optimized query build
+  * [6299743] MT#8371 Additional changes for actual billing_mapping optimisation.
+  * [e313eb7] MT#8371 Remove duplicate joins contracts_rs with billing_mapping.
+  * [52cc853] MT#5879 Fix for contacts without contract.
+  * [8128089] MT#5879 Inital config and cron files for invoice generation script
+  * [a96fbdb] MT#5879 Save own parsing of config.
+  * [b0247da] MT#5879 Fix manual page and fix using centralised config in generator
+
+  [ Irina Peshinskaya ]
+  * [7f14a3e] MT#5879 Make email invoices query simplier.
+  * [95bfec3] MT#5879 Default content on template creation and x- mimetype.
+  * [8066f9f] MT#7867 Api changes for invoice template per customer. For review.
+  * [3b281f6] MT#7867 InvoiceTemplate API draft.
+  * [97519cd] MT#8981 API: Fix messages for mismatched username and domain of subscriber.
+  * [51e7c5f] MT#8627 Add empty destination check into callforward forms
+  * [f6a23d0] MT#9177 Fix device annotations sql error in devmod_edit.
+  * [4bb916a] Revert "MT#9177 Fix device annotations sql error in devmod_edit."
+  * [6f2b8d3] MT#9213 Remove list actions from form backuri, to don't repeate
+  * [6d74b4e] MT#9213 Fix incomplete commit for controlled backuri
+  * [f1ac498] MT#5879 Remove unnecessary imagelib ext. due to external jquery usaing.
+  * [0b558c2] MT#9295 Remove last (commented) googleapis reference.
+  * [bf9ed81] MT#9329 Use DB to count statistic for calls.
+  * [93c7aa5] MT#9319 Create mock console object if absent. For IE9-.
+
+  [ Andreas Granig ]
+  * [710b009] Play with image annotation.
+  * [cbac066] Make top, bottom, left, right work.
+  * [b5a70a8] Rename and test font icons.
+  * [1c0a2bf] Fix positioning inside figure container.
+  * [1b14909] Set proper icons.
+  * [a8b01ae] Cleanup of legacy code.
+  * [04d47a4] Move lib to final destination.
+  * [5077732] MT#7803 Fix invoice list preparation.
+  * [b146fb4] MT#8299 PoC to render phone image with annotations
+  * [cc68e49] MT#8299 Show annotated pbx device.
+  * [7efc1c4] MT#8299 Successfully create new pbx device.
+  * [c44d28e] MT#8299 Also properly edit pbx device.
+  * [c5067b4] MT#8299 Show disp name and ext in pbx dev config
+  * [853ab09] MT#8299 API: Use multipart upload for device model
+  * [4596002] MT#8299 API: create full device model with labels
+  * [a5b0aae] MT#8299 Use extended form for device model
+  * [6f50a2d] MT#8299 Create/Edit models via web interface.
+  * [996fd60] MT#8299 API: align PUT for pbxdevicemodels.
+  * [cecc2d3] MT#8299 Cosmetical fixes for dev models.
+  * [faecaf9] MT#8279 inflate/deflate subscriber user input
+  * [c2e116a] MT#8279 inflate/deflate subscriber speed-dial
+  * [cf519fb] MT#8279 Inflate/deflate block list input in CSC
+  * [a5cd159] MT#8279 Deflate speed dial in CSC list
+  * [145291a] MT#8279 Deflate CF destination in CSC
+  * [953142d] MT#8279 Deflate numbers in call list.
+  * [a30e471] MT#8495 Handle another level of nesting in banlist
+  * [2133559] MT#8495 Add some test data for banlist handling.
+  * [24c30fa] MT#8507 Remove libdigest-sha3-perl dependency.
+  * [22019e3] MT#8507 Remove more unused functions.
+  * [e3da688] MT#8395 Remove loading of old module.
+  * [1306ba5] MT#8561 API: filter write ops for r/o users
+  * [8e0157b] MT#8613 Add basic CRUD for LI X-1 provisioning
+  * [4f76fda] MT#8633 Properly set is_primary on sub creation
+  * [b860218] MT#8449 Fix clearing unused alias numbers
+  * [30384f3] MT#8723 Provid direct pbx fw link for version
+  * [71acba7] MT#7705 Fix undef check in logger
+  * [cf93f0b] MT#8873 Fix showing number of recent calls.
+  * [fbdd04a] MT#8279 Properly fill enums.
+  * [dcbf168] MT#6969 Add sipsak helper to trigger resync
+  * [417e89b] MT#8279 Don't skip preference logic on empty vals.
+  * [f0250a1] MT#6969 Add check-sync config
+  * [f3984d4] MT#8279 Fix domain normalization for subs.
+  * [854061b] MT#6969 Add sipsak dependency for check-sync
+  * [60cbfe4] MT#6969 Move templates to template repo
+  * [b892c72] MT#6969 Remove check-sync from debian
+  * [1846740] MT#6969 Trigger device resync via SIP if online
+  * [cb4e24c] MT#6969 Remove "sh" in resync tool path.
+  * [bd3bd98] MT#9047 Remove allowed ips before subs termination
+  * [c33ae6d] MT#8215 Implement proxy for kibana/elasticsearch
+  * [15a5890] MT#8215 Add default config for elasticsearch
+  * [b31c349] MT#7177 Add Field::URI for inflation/deflation.
+  * [d156577] MT#9167 Fix setting contract timestamps
+  * [cdba3fd] MT#6969 Fix sync logic on registration.
+  * [0204022] MT#9225 Modify allowed_clis on add/remove number
+  * [f2a00ba] MT#9237 Fix editing advanced CF map with n>1 recs
+  * [86fffe0] MT#9263 Fix CF API handling of numbers.
+  * [3d22196] MT#9263 Fix CF API handling of timesets.
+  * [899c89c] MT#9269 Add compat num_lines to API pxbdevicemodels
+  * [86a2b4d] MT#9239 Allow '*' as first rewrite char.
+  * [7389205] MT#9369 Export numbers in device config
+  * [be8cad1] MT#8035 Trigger stop_profile on subscriber term
+  * [a99f707] MT#8547 Fix handling of special prefs.
+  * [17a3260] MT#9263 Introduce simple_destination in CF API
+  * [6a611ea] MT#9263 Remove simple_destination on update
+  * [d5ee051] MT#9445 Set voicemail_users tz to 'vienna'
+  * [64d65a1] MT#9277 Implement basic voucher management.
+  * [eec03aa] MT#9277 Fix date deflation for voucher.
+  * [177d854] MT#9277 Fix datepicker field.
+
+  [ Kirill Solomko ]
+  * [18e07b2] MT#7705 change Panel.pm to use ngcp-panel/logging.conf, reworked Utils/Message.pm logging
+  * [a100ad5] MT#7705 add IP into logged messages
+  * [0ed2008] MT#7705 add default logging.conf
+  * [a90de68] MT#7705 - add "$data" argument into log methods to manually pass data if required. remove trailing whitespaces
+  * [8bc694d] MT#7705 - Rework logging for API calls. Improve log messages in Message.pm
+  * [e24bea1] MT#7705 - get_log_params() set default $type to "panel"
+  * [ddc1649] MT#7705 - Message.pm - add str data types possibility. no $c->flash for API calls
+  * [f759cbe] MT#7705 - Logging for Controller/Administrator module
+  * [68a1aa3] MT#7705 - Rework logging for Controller/Billing module. Improve Message.pm $log parsing and shown as LOG= (optional)
+  * [65aa7e8] MT#8823 - fix date validation error for speical offpeak datetime
+  * [4a346d6] MT#7705 - Rework logging for Controller/Contact module
+  * [aca1155] MT#7705 - Rework logging for Controller/Contract module
+  * [db5c05f] MT#7705 - Maxdepth for data structures is limited to 1 for the log messages. Check for undefined $desc in Message.pm when no $desc is passed for logging
+  * [cc3d7c3] MT#7705 - Fix parametrized sprintf for logging
+  * [8c09ffa] MT#7705 - fix undef ids detection in error messages. add logging for Contract, Customer
+  * [66e8536] MT#7705 - add cname parameter passed to Message for anon subs name definition
+  * [2bebc00] MT#7705 - Add logging for the rest of Controller/* modules. Message.pm: add data size check and trim the value if > 500 length
+  * [f05f921] MT#7705 - Add logging for Subsriber preferences set/get
+  * [0fdf9f8] MT#7705 - Preference set/get add logging messages for different types 'customer/domain/susbcrber/peer'
+  * [799d95b] MT#7705 - Subscriber.pm: add logging for destination sets/time sets, password recovery and internal errrors
+  * [c1c72dd] MT#8547 - replaced experimental "smartmatch" code with the sane if/else custom SWITCH blocks
+  * [e4ecca7] MT#8547 - Fix smartmatch ~~ usage
+  * [c2fb0c6] MT#7705 - added doc for Utils/Message.pm
+  * [503cdfc] MT#7705 - remove =item from pod formatting
+  * [71eadae] MT#7705 - Message.pm further edited the pod doc
+  * [85978fb] MT#8547 - Remove "push on reference" syntax
+  * [37651c1] MT#8547 - Remove "keys on reference"
+  * [1c8b6e4] MT#8547 - fix SWITCH inside "foreach" handling
+  * [22225a3] MT#7705 - LOG= is now persistent in the log messages.
+  * [79d39d7] MT#7705 - Remove newline from log strings passed to the logger
+
+  [ Michael Prokop ]
+  * [578a307] MT#7335 Get rid of duplicated dependency on libmoose-perl
+  * [1642aa9] MT#7335 Drop unnecessary Build-Dependency on libcarp-fix-1-25-perl
+  * [8bd2786] MT#7335 Drop unnecessary Build-Dependency on libhash-storediterator-perl
+  * [e98cbda] MT#7335 Add libmoosex-method-signatures-perl to Depends
+  * [491e742] MT#7335 Add libperl5i-perl to Depends
+  * [7c93557] MT#7335 Drop unnecessary Build-Depends on libstrictures-perl
+  * [537642d] MT#7335 Add Dependency on libtrycatch-perl
+  * [8fb1f0e] MT#7335 Drop unneeded dependency on libchi-perl
+  * [c38da00] MT#8395 Drop (Build-)Dependency on libcatalyst-plugin-email-perl
+  * [0e1b9ef] MT#5599 Get rid of (Build-)Dependency on libcatalyst-plugin-enablemiddleware-perl
+  * [f01d21a] MT#7335 Drop unnecessay dependency on libjson-multivalueordered-perl
+  * [2ae2536] MT#8397 Get rid of (Build-)Dependency on libmoosex-fileattribute-perl
+  * [3b56933] Revert "MT#7335 Drop unnecessay dependency on libjson-multivalueordered-perl"
+  * [43c85f6] MT#8395 Drop unused dependency on libemail-send-perl
+  * [59819ab] Debian packaging: depend on libfile-spec-perl or recent perl-base version
+  * [8b5e80c] MT#7327 Debian packaging: depend on libfile-spec-perl or recent perl-base version
+  * [b2b0e90] MT#9307 Drop broken invoice-gen files
+  * [bfcf2f3] Drop from ngcp-panel.install
+
+  [ Dario D Busso ]
+  * [9019bfc] Initial translation form dbusso
+
+  [ Irina Peshynskaya ]
+  * [deb95cc] MT#8371 Fix reference to billing_mappings in peering form
+
+  [ Sipwise Jenkins Builder ]
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Thu, 09 Oct 2014 16:42:09 +0200
+
 ngcp-panel (1.5.0.0+0~mr3.5.0.0) unstable; urgency=low
 
   [ Irina Peshinskaya ]
