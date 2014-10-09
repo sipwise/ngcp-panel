@@ -163,7 +163,8 @@ cmp_ok ($cf1_id, '>', 0, "should be positive integer");
     my $cf1put = JSON::from_json($res->decoded_content);
     is (ref $cf1put, "HASH", "should be hashref");
     is ($cf1put->{cfu}{destinations}->[0]->{timeout}, 200, "Check timeout of cft");
-    is ($cf1put->{cft}{destinations}->[0]->{destination}, "5678", "Check first destination of cft");
+    is ($cf1put->{cft}{destinations}->[0]->{simple_destination}, "5678", "Check first destination of cft");
+    like ($cf1put->{cft}{destinations}->[0]->{destination}, qr/^sip:5678@/, "Check first destination of cft (regex, full uri)");
     is ($cf1put->{cft}{destinations}->[1]->{destination}, "voicebox", "Check second destination of cft");
 
     #write invalid 'timeout'
