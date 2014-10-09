@@ -842,20 +842,40 @@ sub delete_fraud :Chained('base') :PathPart('fraud/delete') :Args(1) {
 sub edit_balance :Chained('base') :PathPart('balance/edit') :Args(0) {
     my ($self, $c) = @_;
 
+    my $balance = $c->stash->{balance};
     my $posted = ($c->request->method eq 'POST');
     my $form = NGCP::Panel::Form::CustomerBalance->new;
+    my $params = { $balance->get_inflated_columns };
+#        cash_balance => $balance->cash_balance,
+#        free_time_balance => $balance->free_time_balance,
+#    };
 
     $form->process(
         posted => $posted,
         params => $c->request->params,
-        action => $c->uri_for_action("/customer/edit_balance", [$c->stash->{contract}->id]),
-        item => $c->stash->{balance},
+        item => $params,
+    );
+    NGCP::Panel::Utils::Navigation::check_form_buttons(
+        c => $c,
+        form => $form,
+        fields => {},
+        back_uri => $c->req->uri,
     );
     if($posted && $form->validated) {
-        NGCP::Panel::Utils::Message->info(
-            c => $c,
-            desc => $c->loc('Account balance successfully changed!'),
-        );
+        try {
+            $balance->update($form->values); 
+            NGCP::Panel::Utils::Message->info(
+                c => $c,
+                desc => $c->loc('Account balance successfully changed!'),
+            );
+        }
+        catch($e) {
+            NGCP::Panel::Utils::Message->error(
+                c => $c,
+                error => $e,
+                desc => $c->loc('Failed to change account balance!'),
+            );
+        }
         $c->response->redirect($c->uri_for_action("/customer/details", [$c->stash->{contract}->id]));
         return;
     }

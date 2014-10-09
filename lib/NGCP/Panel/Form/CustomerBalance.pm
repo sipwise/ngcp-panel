@@ -1,7 +1,7 @@
 package NGCP::Panel::Form::CustomerBalance;
 
 use HTML::FormHandler::Moose;
-extends 'HTML::FormHandler::Model::DBIC';
+extends 'HTML::FormHandler';
 use Moose::Util::TypeConstraints;
 
 use HTML::FormHandler::Widget::Block::Bootstrap;
@@ -17,12 +17,20 @@ has_field 'cash_balance' => (
     required => 1,
     inflate_method => sub { return $_[1] * 100 },
     deflate_method => sub { return $_[1] / 100 },
+    element_attr => {
+        rel => ['tooltip'],
+        title => ['The current cash balance of the customer in EUR/USD/etc.']
+    },
 );
 
 has_field 'free_time_balance' => (
     type => 'Integer',
     label => 'Free-Time Balance',
     required => 1,
+    element_attr => {
+        rel => ['tooltip'],
+        title => ['The current free-time balance of the customer in seconds.']
+    },
 );
 
 has_field 'save' => (
