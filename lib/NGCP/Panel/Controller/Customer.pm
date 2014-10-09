@@ -1058,26 +1058,14 @@ sub pbx_group_edit :Chained('pbx_group_base') :PathPart('edit') :Args(0) {
             my $schema = $c->model('DB');
             $schema->txn_do(sub {
                 $c->stash->{pbx_group}->provisioning_voip_subscriber->update($form->params);
-                my $hunt_policy = NGCP::Panel::Utils::Preferences::get_usr_preference_rs(
+                NGCP::Panel::Utils::Subscriber::update_subscriber_pbx_policy(
                     c => $c, 
                     prov_subscriber => $c->stash->{pbx_group}->provisioning_voip_subscriber,
-                    attribute => 'cloud_pbx_hunt_policy'
+                    'values'   => {
+                        cloud_pbx_hunt_policy  => $form->params->{pbx_hunt_policy},
+                        cloud_pbx_hunt_timeout => $form->params->{pbx_hunt_timeout},
+                    }
                 );
-                if($hunt_policy->first) {
-                    $hunt_policy->first->update({ value => $form->params->{pbx_hunt_policy} });
-                } else {
-                    $hunt_policy->create({ value => $form->params->{pbx_hunt_policy} });
-                }
-                my $hunt_timeout = NGCP::Panel::Utils::Preferences::get_usr_preference_rs(
-                    c => $c, 
-                    prov_subscriber => $c->stash->{pbx_group}->provisioning_voip_subscriber,
-                    attribute => 'cloud_pbx_hunt_timeout'
-                );
-                if($hunt_timeout->first) {
-                    $hunt_timeout->first->update({ value => $form->params->{pbx_hunt_timeout} });
-                } else {
-                    $hunt_timeout->create({ value => $form->params->{pbx_hunt_timeout} });
-                }
             });
             NGCP::Panel::Utils::Message->info(
                 c => $c,
