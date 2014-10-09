@@ -590,6 +590,14 @@ sub update_item {
     if($self->is_true($resource->{is_pbx_group})) {
         $provisioning_res->{pbx_hunt_policy} = $resource->{pbx_hunt_policy};
         $provisioning_res->{pbx_hunt_timeout} = $resource->{pbx_hunt_timeout};
+        NGCP::Panel::Utils::Subscriber::update_subscriber_pbx_policy(
+            c => $c, 
+            prov_subscriber => $subscriber->provisioning_voip_subscriber,
+            'values'   => {
+                cloud_pbx_hunt_policy  => $resource->{pbx_hunt_policy},
+                cloud_pbx_hunt_timeout => $resource->{pbx_hunt_timeout},
+            }
+        );
     }
     my $old_profile = $prov_subscriber->profile_id;
 
