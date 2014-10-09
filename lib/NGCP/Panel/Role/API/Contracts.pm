@@ -84,7 +84,6 @@ sub hal_from_contract {
             $billing_profile_id
                 ? Data::HAL::Link->new(relation => 'ngcp:billingprofiles', href => sprintf("/api/billingprofiles/%d", $billing_profile_id))
                 : (),
-            Data::HAL::Link->new(relation => 'ngcp:contractbalances', href => sprintf("/api/contractbalances/%d", $contract_balance->id)),
         ],
         relation => 'ngcp:'.$self->resource_name,
     );
