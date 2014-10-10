@@ -1,3 +1,14 @@
+ngcp-panel (1.4.1.15+0~mr3.4.1.15) unstable; urgency=low
+
+  [ Irina Peshinskaya ]
+  * [661e389] MT#9213 Remove list actions from form backuri, to don't repeate
+  * [c48b07a] MT#9213 Fix incomplete commit for controlled backuri
+  * [78e9699] MT#9329 Use DB to count statistic for calls.
+
+  [ Sipwise Jenkins Builder ]
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Fri, 10 Oct 2014 03:05:45 +0200
+
 ngcp-panel (1.4.1.14+0~mr3.4.1.14) unstable; urgency=low
 
   [ Andreas Granig ]
