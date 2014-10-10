@@ -234,7 +234,7 @@ my @allcustomers = ();
             ok($collection->{_embedded}->{'ngcp:customers'}->{status} ne "terminated", "check if we don't have terminated customers in response");
             ok(exists $collection->{_embedded}->{'ngcp:customers'}->{_links}->{'ngcp:customercontacts'}, "check presence of ngcp:customercontacts relation");
             ok(exists $collection->{_embedded}->{'ngcp:customers'}->{_links}->{'ngcp:billingprofiles'}, "check presence of ngcp:billingprofiles relation");
-            ok(exists $collection->{_embedded}->{'ngcp:customers'}->{_links}->{'ngcp:contractbalances'}, "check presence of ngcp:contractbalances relation");
+            ok(exists $collection->{_embedded}->{'ngcp:customers'}->{_links}->{'ngcp:customerbalances'}, "check presence of ngcp:customerbalances relation");
             delete $customers{$collection->{_links}->{'ngcp:customers'}->{href}};
         } else {
             foreach my $c(@{ $collection->{_links}->{'ngcp:customers'} }) {
