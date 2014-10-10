@@ -58,6 +58,7 @@ $ua->ssl_opts(
                  cfmappings => 1,
                  cftimesets => 1,
                  contracts => 1,
+                 customerbalances => 1,
                  customercontacts => 1,
                  customerpreferencedefs => 1,
                  customerpreferences => 1,
