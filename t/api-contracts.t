@@ -213,7 +213,6 @@ my @allcontracts = ();
                 ok($c->{status} ne "terminated", "check if we don't have terminated contracts in response");
                 ok(exists $c->{_links}->{'ngcp:systemcontacts'}, "check presence of ngcp:systemcontacts relation");
                 ok(exists $c->{_links}->{'ngcp:billingprofiles'}, "check presence of ngcp:billingprofiles relation");
-                ok(exists $c->{_links}->{'ngcp:contractbalances'}, "check presence of ngcp:contractbalances relation");
 
                 delete $contracts{$c->{_links}->{self}->{href}};
             }
@@ -294,7 +293,6 @@ my @allcontracts = ();
     # check if we have the proper links
     ok(exists $new_contract->{_links}->{'ngcp:systemcontacts'}, "check put presence of ngcp:systemcontacts relation");
     ok(exists $new_contract->{_links}->{'ngcp:billingprofiles'}, "check put presence of ngcp:billingprofiles relation");
-    ok(exists $new_contract->{_links}->{'ngcp:contractbalances'}, "check put presence of ngcp:contractbalances relation");
 
     $req = HTTP::Request->new('PATCH', $uri.'/'.$firstcontract);
     $req->header('Prefer' => 'return=representation');
