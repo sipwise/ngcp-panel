@@ -1,3 +1,12 @@
+ngcp-panel (1.4.2.9+0~mr3.4.2.9) unstable; urgency=low
+
+  [ Gerhard Jungwirth ]
+  * [f3692a0] MT#8959 fix peering server weight 1-127
+
+  [ Sipwise Jenkins Builder ]
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Fri, 10 Oct 2014 09:56:34 +0200
+
 ngcp-panel (1.4.2.8+0~mr3.4.2.8) unstable; urgency=low
 
   [ Irina Peshinskaya ]
