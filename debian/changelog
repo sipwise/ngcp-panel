@@ -1,3 +1,15 @@
+ngcp-panel (1.4.2.8+0~mr3.4.2.8) unstable; urgency=low
+
+  [ Irina Peshinskaya ]
+  * [8c95b0c] MT#9431 Update usr_preference cloud_pbx_hunt_policy in Subscriber API.
+  * [aab8477] MT#9213 Remove list actions from form backuri, to don't repeate
+  * [3bf886c] MT#9213 Fix incomplete commit for controlled backuri
+  * [51a77f8] MT#9329 Use DB to count statistic for calls.
+
+  [ Sipwise Jenkins Builder ]
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Fri, 10 Oct 2014 03:06:29 +0200
+
 ngcp-panel (1.4.2.7+0~mr3.4.2.7) unstable; urgency=low
 
   [ Andreas Granig ]
