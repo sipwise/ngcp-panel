@@ -202,7 +202,6 @@ my @allcontracts = ();
             ok($collection->{_embedded}->{'ngcp:contracts'}->{type} eq "sippeering" || $collection->{_embedded}->{'ngcp:contracts'}->{type} eq "reseller", "check for correct system contract type");
             ok(exists $collection->{_embedded}->{'ngcp:contracts'}->{_links}->{'ngcp:systemcontacts'}, "check presence of ngcp:systemcontacts relation");
             ok(exists $collection->{_embedded}->{'ngcp:contracts'}->{_links}->{'ngcp:billingprofiles'}, "check presence of ngcp:billingprofiles relation");
-            ok(exists $collection->{_embedded}->{'ngcp:contracts'}->{_links}->{'ngcp:contractbalances'}, "check presence of ngcp:contractbalances relation");
             delete $contracts{$collection->{_links}->{'ngcp:contracts'}->{href}};
         } else {
             foreach my $c(@{ $collection->{_links}->{'ngcp:contracts'} }) {
