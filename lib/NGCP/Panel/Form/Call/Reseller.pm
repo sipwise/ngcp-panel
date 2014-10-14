@@ -100,6 +100,96 @@ has_field 'source_ip' => (
     },
 );
 
+has_field 'source_gpp0' => (
+    type => 'Text',
+    required => 0,
+    element_attr => {
+        rel => ['tooltip'],
+        title => ['General Purpose Parameter 0.']
+    },
+);
+
+has_field 'source_gpp1' => (
+    type => 'Text',
+    required => 0,
+    element_attr => {
+        rel => ['tooltip'],
+        title => ['General Purpose Parameter 1.']
+    },
+);
+
+has_field 'source_gpp2' => (
+    type => 'Text',
+    required => 0,
+    element_attr => {
+        rel => ['tooltip'],
+        title => ['General Purpose Parameter 2.']
+    },
+);
+
+has_field 'source_gpp3' => (
+    type => 'Text',
+    required => 0,
+    element_attr => {
+        rel => ['tooltip'],
+        title => ['General Purpose Parameter 3.']
+    },
+);
+
+has_field 'source_gpp4' => (
+    type => 'Text',
+    required => 0,
+    element_attr => {
+        rel => ['tooltip'],
+        title => ['General Purpose Parameter 4.']
+    },
+);
+
+has_field 'source_gpp5' => (
+    type => 'Text',
+    required => 0,
+    element_attr => {
+        rel => ['tooltip'],
+        title => ['General Purpose Parameter 5.']
+    },
+);
+
+has_field 'source_gpp6' => (
+    type => 'Text',
+    required => 0,
+    element_attr => {
+        rel => ['tooltip'],
+        title => ['General Purpose Parameter 6.']
+    },
+);
+
+has_field 'source_gpp7' => (
+    type => 'Text',
+    required => 0,
+    element_attr => {
+        rel => ['tooltip'],
+        title => ['General Purpose Parameter 7.']
+    },
+);
+
+has_field 'source_gpp8' => (
+    type => 'Text',
+    required => 0,
+    element_attr => {
+        rel => ['tooltip'],
+        title => ['General Purpose Parameter 8.']
+    },
+);
+
+has_field 'source_gpp9' => (
+    type => 'Text',
+    required => 0,
+    element_attr => {
+        rel => ['tooltip'],
+        title => ['General Purpose Parameter 9.']
+    },
+);
+
 has_field 'destination_user_id' => (
     type => 'Text',
     required => 0,
@@ -191,6 +281,96 @@ has_field 'destination_domain_in' => (
     element_attr => {
         rel => ['tooltip'],
         title => ['Destination domain as received by the system from calling party after internal rewriting.']
+    },
+);
+
+has_field 'destination_gpp0' => (
+    type => 'Text',
+    required => 0,
+    element_attr => {
+        rel => ['tooltip'],
+        title => ['General Purpose Parameter 0.']
+    },
+);
+
+has_field 'destination_gpp1' => (
+    type => 'Text',
+    required => 0,
+    element_attr => {
+        rel => ['tooltip'],
+        title => ['General Purpose Parameter 1.']
+    },
+);
+
+has_field 'destination_gpp2' => (
+    type => 'Text',
+    required => 0,
+    element_attr => {
+        rel => ['tooltip'],
+        title => ['General Purpose Parameter 2.']
+    },
+);
+
+has_field 'destination_gpp3' => (
+    type => 'Text',
+    required => 0,
+    element_attr => {
+        rel => ['tooltip'],
+        title => ['General Purpose Parameter 3.']
+    },
+);
+
+has_field 'destination_gpp4' => (
+    type => 'Text',
+    required => 0,
+    element_attr => {
+        rel => ['tooltip'],
+        title => ['General Purpose Parameter 4.']
+    },
+);
+
+has_field 'destination_gpp5' => (
+    type => 'Text',
+    required => 0,
+    element_attr => {
+        rel => ['tooltip'],
+        title => ['General Purpose Parameter 5.']
+    },
+);
+
+has_field 'destination_gpp6' => (
+    type => 'Text',
+    required => 0,
+    element_attr => {
+        rel => ['tooltip'],
+        title => ['General Purpose Parameter 6.']
+    },
+);
+
+has_field 'destination_gpp7' => (
+    type => 'Text',
+    required => 0,
+    element_attr => {
+        rel => ['tooltip'],
+        title => ['General Purpose Parameter 7.']
+    },
+);
+
+has_field 'destination_gpp8' => (
+    type => 'Text',
+    required => 0,
+    element_attr => {
+        rel => ['tooltip'],
+        title => ['General Purpose Parameter 8.']
+    },
+);
+
+has_field 'destination_gpp9' => (
+    type => 'Text',
+    required => 0,
+    element_attr => {
+        rel => ['tooltip'],
+        title => ['General Purpose Parameter 9.']
     },
 );
 
