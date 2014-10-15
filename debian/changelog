@@ -1,3 +1,27 @@
+ngcp-panel (1.5.1.1+0~mr3.5.1.1) unstable; urgency=low
+
+  [ Irina Peshinskaya ]
+  * [5cef4bc] MT#9431 Update usr_preference cloud_pbx_hunt_policy in Subscriber API.
+
+  [ Alexander Lutay ]
+  * [65a1127] MT#9481 REST API test fix: link contractbalances was deleted in 83bd0f9
+  * [7e6e3f2] MT#9481 REST API test fix: add new item customerbalances, see a58ac04
+  * [d4f1a9b] MT#9481 Fix REST API test for changes introduced in 8122482
+
+  [ Gerhard Jungwirth ]
+  * [4ba2c26] MT#9291 fix Api test cf once more
+
+  [ Andreas Granig ]
+  * [2a81128] MT#9481 API: Implement customer balance handling
+  * [cbad39b] MT#9481 API: set link from customer to balance
+  * [b662999] MT#9481 API: fix customerbalance link to self
+  * [bf04644] MT#9481 API: contract doesn't have link to balance
+  * [8122482] MT#9481 API: use correct balance link
+
+  [ Sipwise Jenkins Builder ]
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Wed, 15 Oct 2014 10:47:26 +0200
+
 ngcp-panel (1.5.1.0+0~mr3.5.1.0) unstable; urgency=low
 
   [ Jenkins Git User ]
