@@ -868,9 +868,9 @@ sub terminate {
                     c => $c, prov_subscriber => $prov_subscriber, attribute => $pref,
                 );
                 if($aig_rs && $aig_rs->first) {
-                    $c->model('DB')->resultset('voip_allowed_ip_groups')->delete({
-                        group_id => $aig_rs->first->value,
-                    });
+                    $c->model('DB')->resultset('voip_allowed_ip_groups')
+				   ->search_rs({ group_id => $aig_rs->first->value })
+				   ->delete;
                 }
             }
 
