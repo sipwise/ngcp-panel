@@ -1433,12 +1433,34 @@ sub pbx_device_sync :Chained('pbx_device_base') :PathPart('sync') :Args(0) {
             uri => "$schema://$host:$port/device/autoprov/config",
         },
     };
+    my $sync_params_rs = $dev->profile->config->device->autoprov_sync->search_rs({
+        'autoprov_sync_parameters.sync_type'  => 'cisco',
+    },{
+        join   => 'autoprov_sync_parameters',
+        select => ['me.parameter_value'],
+    });
     my ($sync_uri, $real_sync_uri) = ("", "");
-    $sync_uri = $dev->profile->config->device->sync_uri;
+    $sync_uri = $sync_params_rs->search({
+        'autoprov_sync_parameters.parameter_name' => 'sync_uri',
+    });
+    if($sync_uri && $sync_uri->first){
+        $sync_uri = $sync_uri->first->parameter_value;
+    }
     $t->process(\$sync_uri, $conf, \$real_sync_uri);
 
     my ($sync_params_field, $real_sync_params) = ("", "");
-    $sync_params_field = $dev->profile->config->device->sync_params;
+    $sync_params_field = $sync_params_rs->search({
+        'autoprov_sync_parameters.parameter_name' => 'sync_params',
+    });
+    #$sync_params_field = $dev->profile->config->device->autoprov_sync->search_rs({
+    #    'autoprov_sync_parameters.parameter_name' => 'sync_params',
+    #    'autoprov_sync_parameters.sync_type'      => 'cisco',
+    #},{
+    #    join => 'autoprov_sync_parameters',
+    #});
+    if($sync_params_field && $sync_params_field->first){
+        $sync_params_field = $sync_params_field->first->parameter_value;
+    }
     my @sync_params = ();
     if($sync_params_field) {
         $t->process(\$sync_params_field, $conf, \$real_sync_params);
