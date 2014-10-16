@@ -1,3 +1,12 @@
+ngcp-panel (1.5.1.2+0~mr3.5.1.2) unstable; urgency=low
+
+  [ Kirill Solomko ]
+  * [88eeb2b] MT#9599 - Fix delete allowed_ips/man_allowed_ips
+
+  [ Sipwise Jenkins Builder ]
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Thu, 16 Oct 2014 11:07:22 +0200
+
 ngcp-panel (1.5.1.1+0~mr3.5.1.1) unstable; urgency=low
 
   [ Irina Peshinskaya ]
