@@ -174,38 +174,6 @@ sub create_preference_form {
             }
         }
     }
-    my $delete_aig_param = $c->request->params->{delete_aig};
-    if($delete_aig_param) {
-        my $result = $aip_grp_rs->find($delete_aig_param);
-        if($result) {
-            $result->delete;
-            unless ($aip_grp_rs->first) { #its empty
-                my $allowed_ips_grp_preference = $pref_rs->search({
-                    'attribute.attribute' => 'allowed_ips_grp'
-                },{
-                    join => 'attribute'
-                })->first;
-                $allowed_ips_grp_preference->delete
-                    if (defined $allowed_ips_grp_preference);
-            }
-        }
-    }
-    my $delete_man_aig_param = $c->request->params->{delete_man_aig};
-    if($delete_man_aig_param) {
-        my $result = $man_aip_grp_rs->find($delete_man_aig_param);
-        if($result) {
-            $result->delete;
-            unless ($man_aip_grp_rs->first) { #its empty
-                my $man_allowed_ips_grp_preference = $pref_rs->search({
-                    'attribute.attribute' => 'man_allowed_ips_grp'
-                },{
-                    join => 'attribute'
-                })->first;
-                $man_allowed_ips_grp_preference->delete
-                    if (defined $man_allowed_ips_grp_preference);
-            }
-        }
-    }
 
     $c->stash->{preference_values} = [
         $c->stash->{preference}->get_column("value")->all
@@ -254,6 +222,22 @@ sub create_preference_form {
             $aip_grp_rs = $c->model('DB')->resultset('voip_allowed_ip_groups')
                 ->search({ group_id => $aip_group_id });
         }
+        my $delete_aig_param = $c->request->params->{delete_aig};
+        if($delete_aig_param) {
+            my $result = $aip_grp_rs->find($delete_aig_param);
+            if($result) {
+                $result->delete;
+                unless ($aip_grp_rs->first) { #its empty
+                    my $allowed_ips_grp_preference = $pref_rs->search({
+                        'attribute.attribute' => 'allowed_ips_grp'
+                    },{
+                        join => 'attribute'
+                    })->first;
+                    $allowed_ips_grp_preference->delete
+                        if (defined $allowed_ips_grp_preference);
+                }
+            }
+        }
     } elsif ($c->stash->{preference_meta}->attribute eq "man_allowed_ips") {
         my $man_allowed_ips_grp = $pref_rs->search({
                 'attribute.attribute' => 'man_allowed_ips_grp'
@@ -264,6 +248,22 @@ sub create_preference_form {
             $man_aip_group_id = $man_allowed_ips_grp->value;
             $man_aip_grp_rs = $c->model('DB')->resultset('voip_allowed_ip_groups')
                 ->search({ group_id => $man_aip_group_id });
+        }
+        my $delete_man_aig_param = $c->request->params->{delete_man_aig};
+        if($delete_man_aig_param) {
+            my $result = $man_aip_grp_rs->find($delete_man_aig_param);
+            if($result) {
+                $result->delete;
+                unless ($man_aip_grp_rs->first) { #its empty
+                    my $man_allowed_ips_grp_preference = $pref_rs->search({
+                        'attribute.attribute' => 'man_allowed_ips_grp'
+                    },{
+                        join => 'attribute'
+                    })->first;
+                    $man_allowed_ips_grp_preference->delete
+                        if (defined $man_allowed_ips_grp_preference);
+                }
+            }
         }
     } elsif($c->stash->{subscriber} && 
           ($c->stash->{preference_meta}->attribute eq "block_in_list" || $c->stash->{preference_meta}->attribute eq "block_out_list")) {
