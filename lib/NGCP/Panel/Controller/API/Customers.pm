@@ -65,6 +65,17 @@ class_has 'query_params' => (
             },
         },
         {
+            param => 'external_id',
+            description => 'Filter for customer with specific external_id',
+            query => {
+                first => sub {
+                    my $q = shift;
+                    { 'me.external_id' => $q };
+                },
+                second => sub { },
+            },
+        },
+        {
             param => 'contact_id',
             description => 'Filter for customers belonging to a specific contact',
             query => {
