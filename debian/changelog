@@ -1,3 +1,12 @@
+ngcp-panel (1.5.1.5+0~mr3.5.1.5) unstable; urgency=low
+
+  [ Andreas Granig ]
+  * [9506540] MT#9653 Allow reseller api access to cf and fax
+
+  [ Sipwise Jenkins Builder ]
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Fri, 17 Oct 2014 15:57:26 +0200
+
 ngcp-panel (1.5.1.4+0~mr3.5.1.4) unstable; urgency=low
 
   [ Irina Peshinskaya ]
