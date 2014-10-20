@@ -366,12 +366,15 @@ sub devmod_edit :Chained('devmod_base') :PathPart('edit') :Args(0) :Does(ACL) :A
                     delete $form->params->{mac_image_type};
                 }
 
-                my $linerange = delete $form->params->{linerange};
+                my $params = {};
+                foreach(qw/linerange sync_uri sync_method sync_params/){
+                    $params->{$_} = delete $form->params->{$_};
+                }
                 $c->stash->{devmod}->update($form->params);
 
                 my @existing_range = ();
                 my $range_rs = $c->stash->{devmod}->autoprov_device_line_ranges;
-                foreach my $range(@{ $linerange }) {
+                foreach my $range(@{ $params->{linerange} }) {
                     next unless(defined $range);
                     my $keys = delete $range->{keys};
                     $range->{num_lines} = @{ $keys }; # backward compatibility

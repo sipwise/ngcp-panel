@@ -21,6 +21,7 @@ use NGCP::Panel::Utils::DateTime;
 use NGCP::Panel::Utils::Subscriber;
 use NGCP::Panel::Utils::Sounds;
 use NGCP::Panel::Utils::Contract;
+use NGCP::Panel::Utils::DeviceBootstrap;
 use Template;
 
 =head1 NAME
@@ -1130,33 +1131,11 @@ sub pbx_device_create :Chained('base') :PathPart('pbx/device/create') :Args(0) {
                     station_name => $station_name,
                 });
 
-                my @lines = $form->field('line')->fields;
-                foreach my $line(@lines) {
-                    next unless($line->field('subscriber_id')->value);
-                    my $prov_subscriber = $schema->resultset('provisioning_voip_subscribers')->find({
-                        id => $line->field('subscriber_id')->value,
-                        account_id => $c->stash->{contract}->id,
-                    });
-                    unless($prov_subscriber) {
-                        NGCP::Panel::Utils::Message->error(
-                            c => $c,
-                            error => "invalid provisioning subscriber_id '".$line->field('subscriber_id')->value.
-                                "' for contract id '".$c->stash->{contract}->id."'",
-                            desc  => $c->loc('Invalid provisioning subscriber id detected.'),
-                        );
-                        $err = 1;
-                        last;
-                    } else {
-                        my ($range_id, $key_num) = split /\./, $line->field('line')->value;
-                        my $type = $line->field('type')->value;
-                        $fdev->autoprov_field_device_lines->create({
-                            subscriber_id => $prov_subscriber->id,
-                            linerange_id => $range_id,
-                            key_num => $key_num,
-                            line_type => $type,
-                        });
-                    }
-                }
+                NGCP::Panel::Utils::DeviceBootstrap::bootstrap_config($c, $fdev, $c->stash->{contract});
+
+                my $err_lines = $c->forward('pbx_device_lines_update', [$schema, $fdev, [$form->field('line')->fields]]);
+                !$err and ( $err = $err_lines );
+
             });
             unless($err) {
                 NGCP::Panel::Utils::Message->info(
@@ -1262,35 +1241,12 @@ sub pbx_device_edit :Chained('pbx_device_base') :PathPart('edit') :Args(0) {
                     station_name => $station_name,
                 });
 
+                NGCP::Panel::Utils::DeviceBootstrap::bootstrap_config($c, $fdev, $c->stash->{contract});
+
                 $fdev->autoprov_field_device_lines->delete_all;
-                my @lines = $form->field('line')->fields;
-                foreach my $line(@lines) {
-                    next unless($line->field('subscriber_id')->value);
-                    my $prov_subscriber = $schema->resultset('provisioning_voip_subscribers')->find({
-                        id => $line->field('subscriber_id')->value,
-                        account_id => $c->stash->{contract}->id,
-                    });
-                    unless($prov_subscriber) {
-                        NGCP::Panel::Utils::Message->error(
-                            c => $c,
-                            error => "invalid provisioning subscriber_id '".$line->field('subscriber_id')->value.
-                                "' for contract id '".$c->stash->{contract}->id."'",
-                            desc  => $c->loc('Invalid provisioning subscriber id detected.'),
-                        );
-                        # TODO: throw exception here!
-                        $err = 1;
-                        last;
-                    } else {
-                        my ($range_id, $key_num) = split /\./, $line->field('line')->value;
-                        my $type = $line->field('type')->value;
-                        $fdev->autoprov_field_device_lines->create({
-                            subscriber_id => $prov_subscriber->id,
-                            linerange_id => $range_id,
-                            key_num => $key_num,
-                            line_type => $type,
-                        });
-                    }
-                }
+                my $err_lines = $c->forward('pbx_device_lines_update', [$schema, $fdev, [$form->field('line')->fields]]);
+                !$err and ( $err = $err_lines );
+
             });
             unless($err) {
                 NGCP::Panel::Utils::Message->info(
@@ -1318,7 +1274,38 @@ sub pbx_device_edit :Chained('pbx_device_base') :PathPart('edit') :Args(0) {
         description => $c->loc('PBX Device'),
     );
 }
-
+sub pbx_device_lines_update :Private{
+    my($self, $c, $schema, $fdev, $lines) = @_;
+    my $err = 0;
+    foreach my $line(@$lines) {
+        next unless($line->field('subscriber_id')->value);
+        my $prov_subscriber = $schema->resultset('provisioning_voip_subscribers')->find({
+            id => $line->field('subscriber_id')->value,
+            account_id => $c->stash->{contract}->id,
+        });
+        unless($prov_subscriber) {
+            NGCP::Panel::Utils::Message->error(
+                c => $c,
+                error => "invalid provisioning subscriber_id '".$line->field('subscriber_id')->value.
+                    "' for contract id '".$c->stash->{contract}->id."'",
+                desc  => $c->loc('Invalid provisioning subscriber id detected.'),
+            );
+            # TODO: throw exception here!
+            $err = 1;
+            last;
+        } else {
+            my ($range_id, $key_num) = split /\./, $line->field('line')->value;
+            my $type = $line->field('type')->value;
+            $fdev->autoprov_field_device_lines->create({
+                subscriber_id => $prov_subscriber->id,
+                linerange_id => $range_id,
+                key_num => $key_num,
+                line_type => $type,
+            });
+        }
+    }
+    return $err;
+}
 sub pbx_device_delete :Chained('pbx_device_base') :PathPart('delete') :Args(0) {
     my ($self, $c) = @_;
 
@@ -1434,7 +1421,7 @@ sub pbx_device_sync :Chained('pbx_device_base') :PathPart('sync') :Args(0) {
         },
     };
     my $sync_params_rs = $dev->profile->config->device->autoprov_sync->search_rs({
-        'autoprov_sync_parameters.sync_type'  => 'cisco',
+        'autoprov_sync_parameters.bootstrap_method'  => 'http',
     },{
         join   => 'autoprov_sync_parameters',
         select => ['me.parameter_value'],
@@ -1452,14 +1439,15 @@ sub pbx_device_sync :Chained('pbx_device_base') :PathPart('sync') :Args(0) {
     $sync_params_field = $sync_params_rs->search({
         'autoprov_sync_parameters.parameter_name' => 'sync_params',
     });
-    #$sync_params_field = $dev->profile->config->device->autoprov_sync->search_rs({
-    #    'autoprov_sync_parameters.parameter_name' => 'sync_params',
-    #    'autoprov_sync_parameters.sync_type'      => 'cisco',
-    #},{
-    #    join => 'autoprov_sync_parameters',
-    #});
     if($sync_params_field && $sync_params_field->first){
         $sync_params_field = $sync_params_field->first->parameter_value;
+    }
+    my ($sync_method) = "";
+    $sync_method = $sync_params_rs->search({
+        'autoprov_sync_parameters.parameter_name' => 'sync_method',
+    });
+    if($sync_method && $sync_method->first){
+        $sync_method = $sync_method->first->parameter_value;
     }
     my @sync_params = ();
     if($sync_params_field) {
@@ -1478,7 +1466,7 @@ sub pbx_device_sync :Chained('pbx_device_base') :PathPart('sync') :Args(0) {
         form => $form,
         devsync_flag => 1,
         autoprov_uri => $real_sync_uri,
-        autoprov_method => $dev->profile->config->device->sync_method,
+        autoprov_method => $sync_method,
         autoprov_params => \@sync_params,
     );
 }
