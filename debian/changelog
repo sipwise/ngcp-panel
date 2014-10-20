@@ -1,3 +1,13 @@
+ngcp-panel (1.4.2.10+0~mr3.4.2.10) unstable; urgency=low
+
+  [ Irina Peshinskaya ]
+  * [2c4c83b] MT#9447 Add external_id query parametere for customers.
+  * [6cdf152] MT#9671 Add search of subscribers by customer external_id too.
+
+  [ Sipwise Jenkins Builder ]
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Mon, 20 Oct 2014 16:16:04 +0200
+
 ngcp-panel (1.4.2.9+0~mr3.4.2.9) unstable; urgency=low
 
   [ Gerhard Jungwirth ]
