@@ -84,19 +84,6 @@ class_has 'query_params' => (
             },
         },
         {
-            param => 'customer_external_id',
-            description => 'Filter for subscribers of a specific customer external_id.',
-            query => {
-                first => sub {
-                    my $q = shift;
-                    return { 'contract.external_id' => { like => $q } };
-                },
-                second => sub {
-                    return { join => 'contract' };
-                },
-            },
-        },
-        {
             param => 'is_pbx_group',
             description => 'Filter for subscribers who are (not) pbx_groups.',
             query => {
