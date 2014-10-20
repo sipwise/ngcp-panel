@@ -1,3 +1,12 @@
+ngcp-panel (1.4.1.16+0~mr3.4.1.16) unstable; urgency=low
+
+  [ Irina Peshinskaya ]
+  * [8bbc705] MT#9447 Add external_id query parametere for customers.
+
+  [ Sipwise Jenkins Builder ]
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Mon, 20 Oct 2014 15:23:15 +0200
+
 ngcp-panel (1.4.1.15+0~mr3.4.1.15) unstable; urgency=low
 
   [ Irina Peshinskaya ]
