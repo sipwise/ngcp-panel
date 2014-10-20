@@ -1,3 +1,12 @@
+ngcp-panel (1.5.1.6+0~mr3.5.1.6) unstable; urgency=low
+
+  [ Irina Peshinskaya ]
+  * [8818ff4] MT#9671 Add search of subscribers by customer external_id too.
+
+  [ Sipwise Jenkins Builder ]
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Mon, 20 Oct 2014 16:15:18 +0200
+
 ngcp-panel (1.5.1.5+0~mr3.5.1.5) unstable; urgency=low
 
   [ Andreas Granig ]
