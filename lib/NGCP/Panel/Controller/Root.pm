@@ -142,7 +142,7 @@ sub auto :Private {
         }
         $c->log->debug("*** Root::auto do login, target='$target'");
         $c->session(target => $target);
-        $c->response->redirect($c->uri_for('/login/subscriber'));
+        $c->response->redirect($c->uri_for('/login'));
         return;
     }
 
