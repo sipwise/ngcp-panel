@@ -17,18 +17,6 @@
         </div>
     </div>
     <div class="login-extra">
-        [% 
-            realms = ['subscriber', 'admin'];
-            links = [];
-            FOREACH r IN realms;
-                UNLESS realm == r;
-                    link = '<a href="' _ c.uri_for('/login/' _ r ) _ '">' _ r.ucfirst _ '</a>'; 
-                    links.push(link);
-                END;
-            END;
-        -%]
-        [% c.loc('Go to [_1] login.', links.join(c.loc(' or '))) %]
-        <br/>
         [% IF realm == 'subscriber' && c.config.security.password_allow_recovery -%]
         [% c.loc('Forgot your password?') %] <a href="[% c.uri_for_action('/subscriber/reset_webpassword_nosubscriber') %]">[% c.loc('Reset Password') %]</a>.
         <br/>
