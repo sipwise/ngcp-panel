@@ -13,7 +13,6 @@ $d->get_ok("$uri/login");
 $d->set_implicit_wait_timeout(10000);
 
 diag("Do Admin Login");
-$d->find(link_text => 'Admin')->click;
 $d->findtext_ok('Admin Sign In');
 $d->find(name => 'username')->send_keys('administrator');
 $d->find(name => 'password')->send_keys('administrator');
@@ -36,7 +35,22 @@ $d->findclick_ok(xpath => '//select[@id="fraud_interval_lock"]/option[contains(t
 $d->findclick_ok(xpath => '//div[contains(@class,modal-body)]//table[@id="reselleridtable"]/tbody/tr[1]/td//input[@type="checkbox"]');
 
 $d->findclick_ok(xpath => '//div[contains(@class,"modal")]//input[@type="submit"]');
-$d->findtext_ok('mytestprofile');
+
+diag("Search nonexisting billing profile");
+my $searchfield = $d->find(css => '#billing_profile_table_filter label input');
+ok($searchfield);
+$searchfield->send_keys('donotfindme');
+
+diag("Verify that nothing is shown");
+my $elem = $d->find(css => '#billing_profile_table td.dataTables_empty');
+ok($elem);
+is($elem->get_text,'No matching records found');
+
+diag('Search for "mytestprofile" in billing profile');
+$searchfield->clear();
+$searchfield->send_keys('mytestprofile');
+$d->find_ok(css => '#billing_profile_table tr.sw_action_row');
+is($d->find(xpath => '//table[@id="billing_profile_table"]//tr[1]/td[2]')->get_text,'mytestprofile');
 
 diag("Open edit dialog for mytestprofile");
 my $row = $d->find(xpath => '//table/tbody/tr/td[contains(text(), "mytestprofile")]/..');
@@ -47,7 +61,7 @@ $d->move_to(element => $row);
 $edit_link->click;
 
 diag("Edit mytestprofile");
-my $elem = $d->find(id => 'name');
+$elem = $d->find(id => 'name');
 ok($elem);
 is($elem->get_value, "mytestprofile");
 $d->fill_element_ok(['id', 'interval_charge', '3.2']);
