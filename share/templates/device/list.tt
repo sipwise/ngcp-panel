@@ -6,7 +6,43 @@
     </span>
 </div>
 [% back_created = 1 -%]
-
+<script>
+function bootstrapDynamicFields(selectedValue){
+    $('.bootstrap_config').css("display","none");
+    $('.bootstrap_config_'+selectedValue).css("display","inline");
+}
+function vendor2bootstrapMethod(vendorField){
+    var bootstrapMethod='';
+    switch(vendorField.value.toLowerCase()){
+        case "cisco":
+            bootstrapMethod = 'http';
+            break;
+        ;
+        case "panasonic":
+            bootstrapMethod = 'redirect_panasonic';
+            break;
+        ;
+        case "linksys":
+            bootstrapMethod = 'redirect_linksys';
+            break;
+        ;
+        case "yealink":
+            bootstrapMethod = 'redirect_yealink';
+            break;
+        ;
+    }
+    var bootstrapMethodField = vendorField.form['bootstrap_method'];
+    var length = bootstrapMethodField.options.length;
+    for(var i=0; i < length; i++){        
+        if(bootstrapMethodField.options[i].value == bootstrapMethod){
+            bootstrapMethodField.options[i].selected = true;
+        }
+    }
+}
+</script>
+<style>
+.bootstrap_config {display:none;}
+</style>
 <div class="row">
     [% FOREACH m IN messages -%]
         <div class="alert alert-[% m.type %]">[% m.text %]</div>

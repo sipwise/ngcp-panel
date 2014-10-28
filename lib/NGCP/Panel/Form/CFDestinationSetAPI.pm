@@ -32,7 +32,7 @@ has_field 'destinations' => (
     type => 'Repeatable',
     element_attr => {
         rel => ['tooltip'],
-        title => ['An array of destinations, each containing the keys "destination", "timeout" and "priority".']
+        title => ['An array of destinations, each containing the keys "destination", "timeout", "priority" and "simple_destination".']
     },
 );
 

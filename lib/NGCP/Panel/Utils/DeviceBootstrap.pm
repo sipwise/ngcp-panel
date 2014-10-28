@@ -81,7 +81,8 @@ sub panasonic_bootstrap_register{
     $authorization .= '=';
     
     #params => c,redirect_uri,redirect_uri_params, mac
-    $params->{redirect_uri_params} ||= $params->{mac};
+    #$params->{redirect_uri_params} ||= $params->{mac};
+    $params->{redirect_uri_params} ||= '{MAC}';
     my $uri = get_bootstrap_uri($params);
     $uri = URI::Escape::uri_escape($uri);
     

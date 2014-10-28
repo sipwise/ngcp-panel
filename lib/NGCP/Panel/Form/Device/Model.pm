@@ -21,6 +21,7 @@ has_field 'vendor' => (
     element_attr => {
         rel => ['tooltip'],
         title => ['The vendor name of this device.'],
+        javascript => ' onchange="vendor2bootstrapMethod(this);" ',
     },
 );
 
@@ -46,43 +47,6 @@ has_field 'mac_image' => (
     required => 0,
     label => 'MAC Address Image',
     max_size => '67108864', # 64MB
-);
-
-has_field 'sync_uri' => (
-    type => 'Text',
-    required => 0,
-    label => 'Bootstrap Sync URI',
-    default => 'http://[% client.ip %]/admin/resync',
-    element_attr => {
-        rel => ['tooltip'],
-        title => ['The sync URI to set the provisioning server of the device (e.g. http://client.ip/admin/resync. The client.ip variable is automatically expanded during provisioning time.'],
-    },
-);
-
-has_field 'sync_method' => (
-    type => 'Select',
-    required => 0,
-    label => 'Bootstrap Sync HTTP Method',
-    options => [
-        { label => 'GET', value => 'GET' },
-        { label => 'POST', value => 'POST' },
-    ],
-    default => 'GET',
-    element_attr => {
-        rel => ['tooltip'],
-        title => ['The HTTP method to set the provisioning server (one of GET, POST).'],
-    },
-);
-
-has_field 'sync_params' => (
-    type => 'Text',
-    required => 0,
-    label => 'Bootstrap Sync Parameters',
-    default => '[% server.uri %]/$MA',
-    element_attr => {
-        rel => ['tooltip'],
-        title => ['The parameters appended to the sync URI when setting the provisioning server, e.g. server.uri/$MA. The server.uri variable is automatically expanded during provisioning time.'],
-    },
 );
 
 has_field 'linerange' => (
@@ -233,6 +197,68 @@ has_field 'linerange_add' => (
     element_class => [qw/btn btn-primary pull-right/],
 );
 
+has_field 'bootstrap_method' => (
+    type => 'Select',
+    required => 1,
+    label => 'Bootstrap Method',
+    options => [
+        { label => 'HTTP (Cisco)', value => 'http' },
+        { label => 'Panasonic redirect', value => 'redirect_panasonic' },
+        { label => 'Linksys redirect', value => 'redirect_linksys' },
+        { label => 'Panasonic redirect', value => 'redirect_' },
+    ],
+    default => 'http',
+    element_attr => {
+        rel => ['tooltip'],
+        title => ['Selected method will be used to configure device provisioning server.'],
+        javascript => ' onchange="bootstrapDynamicFields(this.options[this.selectedIndex].value);" ',
+    },
+);
+
+
+has_field 'bootstrap_config_http_sync_uri' => (
+    type => 'Text',
+    required => 0,
+    label => 'Bootstrap Sync URI',
+    default => 'http://[% client.ip %]/admin/resync',
+    wrapper_class => [qw/bootstrap_config bootstrap_config_http/],
+    element_attr => {
+        rel => ['tooltip'],
+        title => ['The sync URI to set the provisioning server of the device (e.g. http://client.ip/admin/resync. The client.ip variable is automatically expanded during provisioning time.'],
+    },
+);
+
+has_field 'bootstrap_config_http_sync_method' => (
+    type => 'Select',
+    required => 0,
+    label => 'Bootstrap Sync HTTP Method',
+    options => [
+        { label => 'GET', value => 'GET' },
+        { label => 'POST', value => 'POST' },
+    ],
+    default => 'GET',
+    wrapper_class => [qw/bootstrap_config bootstrap_config_http/],
+    element_attr => {
+        rel => ['tooltip'],
+        title => ['The HTTP method to set the provisioning server (one of GET, POST).'],
+    },
+);
+
+
+has_field 'bootstrap_config_http_sync_params' => (
+    type => 'Text',
+    required => 0,
+    label => 'Bootstrap Sync Parameters',
+    default => '[% server.uri %]/$MA',
+    wrapper_class => [qw/bootstrap_config bootstrap_config_http/],
+    element_attr => { 
+        rel => ['tooltip'],
+        title => ['The parameters appended to the sync URI when setting the provisioning server, e.g. server.uri/$MA. The server.uri variable is automatically expanded during provisioning time.'],
+    },
+);
+
+
+
 has_field 'save' => (
     type => 'Submit',
     value => 'Save',
@@ -243,7 +269,7 @@ has_field 'save' => (
 has_block 'fields' => (
     tag => 'div',
     class => [qw/modal-body/],
-    render_list => [qw/vendor model linerange linerange_add front_image mac_image sync_uri sync_method sync_params/],
+    render_list => [qw/vendor model linerange linerange_add bootstrap_method bootstrap_config_http_sync_uri bootstrap_config_http_sync_method bootstrap_config_http_sync_params front_image mac_image/],
 );
 
 has_block 'actions' => (

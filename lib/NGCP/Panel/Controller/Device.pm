@@ -25,13 +25,14 @@ sub base :Chained('/') :PathPart('device') :CaptureArgs(0) {
 
     # TODO: move out fw/profile/config fetching to separate func to not 
     # load it for subscriber access?
-
-    my $devmod_rs = $c->model('DB')->resultset('autoprov_devices');
+    my $reseller_id;
     if($c->user->roles eq 'reseller') {
-        $devmod_rs = $devmod_rs->search({ reseller_id => $c->user->reseller_id });
+        $reseller_id = $c->user->reseller_id;
     } elsif($c->user->roles eq 'subscriber' || $c->user->roles eq 'subscriberadmin') {
-        $devmod_rs = $devmod_rs->search({ reseller_id => $c->user->voip_subscriber->contract->contact->reseller_id });
+        $reseller_id = $c->user->voip_subscriber->contract->contact->reseller_id;
     }
+
+    my $devmod_rs = $c->model('DB')->resultset('autoprov_devices')->search({ reseller_id => $reseller_id });
     $c->stash->{devmod_dt_columns} = NGCP::Panel::Utils::Datatables::set_columns($c, [
         { name => 'id', search => 1, title => $c->loc('#') },
         { name => 'reseller.name', search => 1, title => $c->loc('Reseller') },
@@ -39,21 +40,11 @@ sub base :Chained('/') :PathPart('device') :CaptureArgs(0) {
         { name => 'model', search => 1, title => $c->loc('Model') },
     ]);
 
-    my $devfw_rs = $c->model('DB')->resultset('autoprov_firmwares');
-    if($c->user->roles eq "subscriberadmin" || $c->user->roles eq "subscriber") {
-        $devfw_rs = $devfw_rs->search({
-        	'device.reseller_id' => $c->user->voip_subscriber->contract->contact->reseller_id,
-            }, { 
-                join => 'device',
-        });
-    } elsif($c->user->roles eq "reseller") {
-        $devfw_rs = $devfw_rs->search({
-                'device.reseller_id' => $c->user->reseller_id
-            }, { 
-                join => 'device',
-        });
-    }
-
+    my $devfw_rs = $c->model('DB')->resultset('autoprov_firmwares')->search({
+        'device.reseller_id' => $reseller_id,
+    },{ 
+        join => 'device',
+    });
     $c->stash->{devfw_dt_columns} = NGCP::Panel::Utils::Datatables::set_columns($c, [
         { name => 'id', search => 1, title => $c->loc('#') },
         { name => 'device.reseller.name', search => 1, title => $c->loc('Reseller') },
@@ -63,21 +54,11 @@ sub base :Chained('/') :PathPart('device') :CaptureArgs(0) {
         { name => 'version', search => 1, title => $c->loc('Version') },
     ]);
 
-    my $devconf_rs = $c->model('DB')->resultset('autoprov_configs');
-    if($c->user->roles eq "subscriberadmin" || $c->user->roles eq "subscriber") {
-        $devconf_rs = $devconf_rs->search({
-        	'device.reseller_id' => $c->user->voip_subscriber->contract->contact->reseller_id,
-            }, { 
-                join => 'device',
-        });
-    } elsif($c->user->roles eq "reseller") {
-        $devconf_rs = $devconf_rs->search({
-                'device.reseller_id' => $c->user->reseller_id
-            }, { 
-                join => 'device',
-        });
-    }
-
+    my $devconf_rs = $c->model('DB')->resultset('autoprov_configs')->search({
+        'device.reseller_id' => $reseller_id,
+    }, { 
+        join => 'device',
+    });
     $c->stash->{devconf_dt_columns} = NGCP::Panel::Utils::Datatables::set_columns($c, [
         { name => 'id', search => 1, title => $c->loc('#') },
         { name => 'device.reseller.name', search => 1, title => $c->loc('Reseller') },
@@ -86,20 +67,11 @@ sub base :Chained('/') :PathPart('device') :CaptureArgs(0) {
         { name => 'version', search => 1, title => $c->loc('Version') },
     ]);
 
-    my $devprof_rs = $c->model('DB')->resultset('autoprov_profiles');
-    if($c->user->roles eq "subscriberadmin" || $c->user->roles eq "subscriber") {
-        $devprof_rs = $devprof_rs->search({
-        	'device.reseller_id' => $c->user->voip_subscriber->contract->contact->reseller_id,
-            }, { 
-                join => { 'config' => 'device' },
-        });
-    } elsif($c->user->roles eq "reseller") {
-        $devprof_rs = $devprof_rs->search({
-                'device.reseller_id' => $c->user->reseller_id
-            }, { 
-                join => { 'config' => 'device' },
-        });
-    }
+    my $devprof_rs = $c->model('DB')->resultset('autoprov_profiles')->search({
+        'device.reseller_id' => $reseller_id,
+    }, { 
+        join => { 'config' => 'device' },
+    });
     $c->stash->{devprof_dt_columns} = NGCP::Panel::Utils::Datatables::set_columns($c, [
         { name => 'id', search => 1, title => $c->loc('#') },
         { name => 'config.device.reseller.name', search => 1, title => $c->loc('Reseller') },
@@ -110,20 +82,11 @@ sub base :Chained('/') :PathPart('device') :CaptureArgs(0) {
         { name => 'config.version', search => 1, title => $c->loc('Configuration Version') },
     ]);
 
-    my $fielddev_rs = $c->model('DB')->resultset('autoprov_field_devices');
-    if($c->user->roles eq "subscriberadmin" || $c->user->roles eq "subscriber") {
-        $fielddev_rs = $fielddev_rs->search({
-        	'device.reseller_id' => $c->user->voip_subscriber->contract->contact->reseller_id,
-            }, { 
-                join => { 'profile' => { 'config' => 'device' } },
-        });
-    } elsif($c->user->roles eq "reseller") {
-        $fielddev_rs = $fielddev_rs->search({
-                'device.reseller_id' => $c->user->reseller_id
-            }, { 
-                join => { 'profile' => { 'config' => 'device' } },
-        });
-    }
+    my $fielddev_rs = $c->model('DB')->resultset('autoprov_field_devices')->search({
+        'device.reseller_id' => $reseller_id,
+    },{ 
+        join => { 'profile' => { 'config' => 'device' } },
+    });
     $c->stash->{fielddev_dt_columns} = NGCP::Panel::Utils::Datatables::set_columns($c, [
         { name => 'id', search => 1, title => $c->loc('#') },
         { name => 'identifier', search => 1, title => $c->loc('MAC Address / Identifier') },
@@ -132,14 +95,14 @@ sub base :Chained('/') :PathPart('device') :CaptureArgs(0) {
         { name => 'contract.contact.email', search => 1, title => $c->loc('Customer Email') },
     ]);
 
-
     $c->stash(
         devmod_rs   => $devmod_rs,
-        devfw_rs   => $devfw_rs,
-        devconf_rs   => $devconf_rs,
-        devprof_rs   => $devprof_rs,
+        devfw_rs    => $devfw_rs,
+        devconf_rs  => $devconf_rs,
+        devprof_rs  => $devprof_rs,
         fielddev_rs => $fielddev_rs,
-        template => 'device/list.tt',
+        reseller_id => $reseller_id,
+        template    => 'device/list.tt',
     );
 }
 
@@ -211,6 +174,7 @@ sub devmod_create :Chained('base') :PathPart('model/create') :Args(0) :Does(ACL)
                 my $linerange = delete $form->params->{linerange};
 
                 my $devmod = $schema->resultset('autoprov_devices')->create($form->params);
+                $c->forward('devmod_sync_parameters',[$schema,$devmod,$form->params] );
 
                 foreach my $range(@{ $linerange }) {
                     delete $range->{id};
@@ -309,7 +273,14 @@ sub devmod_edit :Chained('devmod_base') :PathPart('edit') :Args(0) :Does(ACL) :A
         my $r = { $range->get_inflated_columns };
         $r->{keys} = $keys;
         push @{ $params->{linerange} }, $r;
+    }    
+
+    foreach ( @{ $c->model('DB')->resultset('autoprov_sync_parameters')->search_rs({
+        'me.bootstrap_method' => $c->stash->{devmod}->bootstrap_method,
+    })->all} ){
+        $params->{'bootstrap_config_'.$c->stash->{devmod}->bootstrap_method.'_'.$_->parameter_name} = $_->parameter_value;
     }
+
     $params->{reseller}{id} = delete $params->{reseller_id};
     $params = $params->merge($c->session->{created_objects});
     $c->stash(edit_model => 1); # to make front_image optional
@@ -365,16 +336,17 @@ sub devmod_edit :Chained('devmod_base') :PathPart('edit') :Args(0) :Does(ACL) :A
                     delete $form->params->{mac_image};
                     delete $form->params->{mac_image_type};
                 }
-
-                my $params = {};
-                foreach(qw/linerange sync_uri sync_method sync_params/){
-                    $params->{$_} = delete $form->params->{$_};
-                }
                 $c->stash->{devmod}->update($form->params);
-
+                
+                $schema->resultset('autoprov_sync')->search_rs({
+                    device_id => $c->stash->{devmod}->id,
+                })->delete;
+                #$c->forward('devmod_sync_parameters',[$schema, $c->stash->{devmod}, $form->params]);
+                
+                my $linerange = delete $form->params->{'linerange'};
                 my @existing_range = ();
                 my $range_rs = $c->stash->{devmod}->autoprov_device_line_ranges;
-                foreach my $range(@{ $params->{linerange} }) {
+                foreach my $range(@{ $linerange }) {
                     next unless(defined $range);
                     my $keys = delete $range->{keys};
                     $range->{num_lines} = @{ $keys }; # backward compatibility
@@ -451,6 +423,22 @@ sub devmod_edit :Chained('devmod_base') :PathPart('edit') :Args(0) :Does(ACL) :A
     );
 }
 
+sub devmod_sync_parameters :Private {
+    my($self,$c,$schema,$devmod,$params) = @_;
+    #$schema ||= $c->model('DB');
+    my $bootstrap_method = $params->{'bootstrap_method'};
+    my $bootstrap_params_rs = $schema->resultset('autoprov_sync_parameters')->search_rs({
+        'me.bootstrap_method' => $bootstrap_method,
+    });
+    foreach (@$bootstrap_params_rs->all){
+        my $sync_parameter = {
+            device_id       => $devmod->id,
+            parameter_id    => $_->id,
+            parameter_value => $params->{'bootstrap_config_'.$bootstrap_method.'_'.$_->parameter_name},
+        };
+        $schema->resultset('autoprov_sync')->create($sync_parameter);
+    }
+}
 sub devmod_download_frontimage_by_profile :Chained('devprof_base') :PathPart('frontimage') :Args(0) {
     my ($self, $c) = @_;
 
