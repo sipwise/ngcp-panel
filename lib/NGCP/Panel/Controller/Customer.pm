@@ -1365,9 +1365,24 @@ sub pbx_device_sync :Chained('pbx_device_base') :PathPart('sync') :Args(0) {
         my $uri = $sub->username . '@' . $sub->domain->domain;
         if($reg_rs->count) {
             $c->log->debug("trigger device resync for $uri as it is registered");
+
+            my $proxy_rs = $c->model('DB')->resultset('xmlgroups')
+                ->search_rs({name => 'proxy'})
+                ->search_related('xmlhostgroups')->search_related('host');
+            my $proxy = $proxy_rs->first;
+            unless($proxy) {
+                    NGCP::Panel::Utils::Message->error(
+                        c => $c,
+                        desc => $c->loc('Failed to triggered config reload via SIP'),
+                        log => 'Failed to load proxy from xmlhosts',
+                    );
+                    NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for_action('/customer/details', [ $c->req->captures->[0] ]));
+                    return;
+            }
+
             my @cmd_args = ($c->config->{cloudpbx}->{sync}, 
                 $sub->username, $sub->domain->domain, 
-                $sub->password);
+                $sub->password, $proxy->ip . ":" . $proxy->sip_port);
             my @out = capturex(EXIT_ANY, "/bin/sh", @cmd_args);
             if($EXITVAL != 0) {
                 use Data::Dumper;
