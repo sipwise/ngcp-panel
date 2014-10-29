@@ -3,7 +3,7 @@ use Sipwise::Base;
 use namespace::sweep;
 BEGIN { extends 'Catalyst::Controller'; }
 use JSON qw(decode_json encode_json);
-use IPC::System::Simple qw/capturex EXIT_ANY/;
+use IPC::System::Simple qw/capturex EXIT_ANY $EXITVAL/;
 use NGCP::Panel::Form::CustomerMonthlyFraud;
 use NGCP::Panel::Form::CustomerDailyFraud;
 use NGCP::Panel::Form::CustomerBalance;
@@ -1368,12 +1368,20 @@ sub pbx_device_sync :Chained('pbx_device_base') :PathPart('sync') :Args(0) {
             my @cmd_args = ($c->config->{cloudpbx}->{sync}, 
                 $sub->username, $sub->domain->domain, 
                 $sub->password);
-            my $out = capturex(EXIT_ANY, "sh", @cmd_args);
-            $c->log->debug(">>>>>>>>>>>> got output:\n$out");
-            NGCP::Panel::Utils::Message->info(
-                c => $c,
-                desc => $c->loc('Successfully triggered config reload via SIP'),
-            );
+            my @out = capturex(EXIT_ANY, "/bin/sh", @cmd_args);
+            if($EXITVAL != 0) {
+                use Data::Dumper;
+                NGCP::Panel::Utils::Message->error(
+                    c => $c,
+                    desc => $c->loc('Failed to triggered config reload via SIP'),
+                    log => Dumper @out,
+                );
+            } else {
+                NGCP::Panel::Utils::Message->info(
+                    c => $c,
+                    desc => $c->loc('Successfully triggered config reload via SIP'),
+                );
+            }
             NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for_action('/customer/details', [ $c->req->captures->[0] ]));
             return;
         }
