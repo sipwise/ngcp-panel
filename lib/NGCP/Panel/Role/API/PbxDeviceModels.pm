@@ -15,6 +15,7 @@ use JSON qw();
 use File::Type;
 use Data::Dumper;
 use NGCP::Panel::Form::Device::ModelAPI;
+use NGCP::Panel::Utils::DeviceBootstrap;
 
 sub get_form {
     my ($self, $c) = @_;
@@ -156,7 +157,9 @@ sub update_item {
         $resource->{mac_image_type} = $ft->mime_type($resource->{mac_image});
     }
 
+    my $sync_parameters = NGCP::Panel::Utils::DeviceBootstrap::devmod_sync_parameters_prefetch($c, $item, $resource);
     $item->update($resource);
+    NGCP::Panel::Utils::DeviceBootstrap::devmod_sync_parameters_store($c, $item, $sync_parameters);
 
     my @existing_range = ();
     my $range_rs = $item->autoprov_device_line_ranges;

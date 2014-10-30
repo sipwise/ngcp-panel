@@ -8,6 +8,7 @@ use NGCP::Panel::Form::Device::Firmware;
 use NGCP::Panel::Form::Device::Config;
 use NGCP::Panel::Form::Device::Profile;
 use NGCP::Panel::Utils::Navigation;
+use NGCP::Panel::Utils::DeviceBootstrap;
 
 
 BEGIN { extends 'Catalyst::Controller'; }
@@ -178,9 +179,9 @@ sub devmod_create :Chained('base') :PathPart('model/create') :Args(0) :Does(ACL)
                 }
                 my $linerange = delete $form->params->{linerange};
                 
-                my $sync_parameters = $c->forward('devmod_sync_parameters_prefetch',[$schema,undef,$form->params] );
+                my $sync_parameters = NGCP::Panel::Utils::DeviceBootstrap::devmod_sync_parameters_prefetch($c, undef, $form->params);
                 my $devmod = $schema->resultset('autoprov_devices')->create($form->params);
-                $c->forward('devmod_sync_parameters_store',[$schema,$devmod,$sync_parameters] );
+                NGCP::Panel::Utils::DeviceBootstrap::devmod_sync_parameters_store($c, $devmod, $sync_parameters);
 
                 foreach my $range(@{ $linerange }) {
                     delete $range->{id};
@@ -344,15 +345,15 @@ sub devmod_edit :Chained('devmod_base') :PathPart('edit') :Args(0) :Does(ACL) :A
                     delete $form->params->{mac_image_type};
                 }
                 
-                my $linerange = delete $form->params->{'linerange'};
-                my $sync_parameters = $c->forward('devmod_sync_parameters_prefetch',[$schema,$c->stash->{devmod},$form->params] );
+                my $linerange = delete $form->params->{linerange};
+                my $sync_parameters = NGCP::Panel::Utils::DeviceBootstrap::devmod_sync_parameters_prefetch($c, $c->stash->{devmod}, $form->params);
                 
                 $c->stash->{devmod}->update($form->params);
                 
                 $schema->resultset('autoprov_sync')->search_rs({
                     device_id => $c->stash->{devmod}->id,
                 })->delete;
-                $c->forward('devmod_sync_parameters_store',[$schema,$c->stash->{devmod},$sync_parameters] );
+                NGCP::Panel::Utils::DeviceBootstrap::devmod_sync_parameters_store($c, $c->stash->{devmod}, $sync_parameters);
                 
                 my @existing_range = ();
                 my $range_rs = $c->stash->{devmod}->autoprov_device_line_ranges;
@@ -432,37 +433,6 @@ sub devmod_edit :Chained('devmod_base') :PathPart('edit') :Args(0) :Does(ACL) :A
         form => $form,
     );
 }
-sub devmod_sync_parameters_prefetch :Private {
-    my($self,$c,$schema,$devmod,$params) = @_;
-    #$schema ||= $c->model('DB');
-    my $bootstrap_method = $params->{'bootstrap_method'};
-    my $bootstrap_params_rs = $schema->resultset('autoprov_sync_parameters')->search_rs({
-        'me.bootstrap_method' => $bootstrap_method,
-    });
-    my @parameters = ();
-    foreach ($bootstrap_params_rs->all){
-        my $sync_parameter = {
-            device_id       => $devmod ? $devmod->id : undef,
-            parameter_id    => $_->id,
-            parameter_value => delete $params->{'bootstrap_config_'.$bootstrap_method.'_'.$_->parameter_name},
-        };
-        push @parameters,$sync_parameter;
-    }
-    foreach (keys %$params){
-        if($_ =~/^bootstrap_config_/i){
-            delete $params->{$_};
-        }
-    }
-    return \@parameters;
-}
-sub devmod_sync_parameters_store :Private {
-    my($self,$c,$schema,$devmod,$sync_parameters) = @_;
-    foreach my $sync_parameter (@$sync_parameters){
-        $sync_parameter->{device_id} ||= $devmod ? $devmod->id : undef
-        $schema->resultset('autoprov_sync')->create($sync_parameter);
-    }
-}
-
 sub devmod_download_frontimage_by_profile :Chained('devprof_base') :PathPart('frontimage') :Args(0) {
     my ($self, $c) = @_;
 

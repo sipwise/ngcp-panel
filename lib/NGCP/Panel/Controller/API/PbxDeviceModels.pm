@@ -9,6 +9,7 @@ use HTTP::Status qw(:constants);
 use MooseX::ClassAttribute qw(class_has);
 use Data::Dumper;
 use NGCP::Panel::Utils::DateTime;
+use NGCP::Panel::Utils::DeviceBootstrap;
 BEGIN { extends 'Catalyst::Controller::ActionRole'; }
 require Catalyst::ActionRole::ACL;
 require Catalyst::ActionRole::CheckTrailingSlash;
@@ -257,7 +258,10 @@ sub POST :Allow {
         }
 
         try {
+            my $sync_parameters = NGCP::Panel::Utils::DeviceBootstrap::devmod_sync_parameters_prefetch($c, undef, $resource);
             $item = $c->model('DB')->resultset('autoprov_devices')->create($resource);
+            NGCP::Panel::Utils::DeviceBootstrap::devmod_sync_parameters_store($c, $item, $sync_parameters);
+
             foreach my $range(@{ $linerange }) {
                 unless(ref $range eq "HASH") {
                     $c->log->error("all elements in linerange must be hashes, but this is " . ref $range . ": " . Dumper $range);

@@ -7,41 +7,6 @@ use Net::HTTPS::Any qw/https_post/;
 use RPC::XML::Parser::LibXML;
 use Data::Dumper;
 
-sub bootstrap_config{
-    my($c, $fdev, $contract) = @_;
-
-    my $err = 0;
-    my $device = $fdev->profile->config->device;
-
-    if(!$contract){
-        $contract = $c->stash->{contract};
-    }
-    my $credentials = $contract->vendor_credentials->search_rs({
-        'me.vendor' => lc($device->vendor),
-    })->first;
-    if($credentials){
-        my $vendor_credentials = { map { $_ => $credentials->$_ } qw/user password/};
-
-        my $sync_params_rs = $device->autoprov_sync->search_rs({
-            'autoprov_sync_parameters.parameter_name' => 'sync_params',
-        },{
-            join   => 'autoprov_sync_parameters',
-            select => ['me.parameter_value'],
-        });
-        my $sync_params = $sync_params_rs->first ? $sync_params_rs->first->parameter_value : '';
-        NGCP::Panel::Utils::DeviceBootstrap::bootstrap({
-            c => $c,
-            mac => $fdev->identifier,
-            bootstrap_method => $device->bootstrap_method,
-            redirect_uri_params => $sync_params,
-            credentials => $vendor_credentials,
-        });
-    }else{
-        $err = 1;
-    }
-    return $err;
-}
-
 sub bootstrap{
     my ($params) = @_;
     my $c = $params->{c};
@@ -150,7 +115,71 @@ sub get_bootstrap_uri{
     $uri .= $uri_params;
     return $uri;
 }
+sub bootstrap_config{
+    my($c, $fdev, $contract) = @_;
 
+    my $err = 0;
+    my $device = $fdev->profile->config->device;
+
+    if(!$contract){
+        $contract = $c->stash->{contract};
+    }
+    my $credentials = $contract->vendor_credentials->search_rs({
+        'me.vendor' => lc($device->vendor),
+    })->first;
+    if($credentials){
+        my $vendor_credentials = { map { $_ => $credentials->$_ } qw/user password/};
+
+        my $sync_params_rs = $device->autoprov_sync->search_rs({
+            'autoprov_sync_parameters.parameter_name' => 'sync_params',
+        },{
+            join   => 'autoprov_sync_parameters',
+            select => ['me.parameter_value'],
+        });
+        my $sync_params = $sync_params_rs->first ? $sync_params_rs->first->parameter_value : '';
+        NGCP::Panel::Utils::DeviceBootstrap::bootstrap({
+            c => $c,
+            mac => $fdev->identifier,
+            bootstrap_method => $device->bootstrap_method,
+            redirect_uri_params => $sync_params,
+            credentials => $vendor_credentials,
+        });
+    }else{
+        $err = 1;
+    }
+    return $err;
+}
+sub devmod_sync_parameters_prefetch{
+    my($c,$devmod,$params) = @_;
+    my $schema = $c->model('DB');
+    my $bootstrap_method = $params->{'bootstrap_method'};
+    my $bootstrap_params_rs = $schema->resultset('autoprov_sync_parameters')->search_rs({
+        'me.bootstrap_method' => $bootstrap_method,
+    });
+    my @parameters = ();
+    foreach ($bootstrap_params_rs->all){
+        my $sync_parameter = {
+            device_id       => $devmod ? $devmod->id : undef,
+            parameter_id    => $_->id,
+            parameter_value => delete $params->{'bootstrap_config_'.$bootstrap_method.'_'.$_->parameter_name},
+        };
+        push @parameters,$sync_parameter;
+    }
+    foreach (keys %$params){
+        if($_ =~/^bootstrap_config_/i){
+            delete $params->{$_};
+        }
+    }
+    return \@parameters;
+}
+sub devmod_sync_parameters_store {
+    my($c,$devmod,$sync_parameters) = @_;
+    my $schema = $c->model('DB');
+    foreach my $sync_parameter (@$sync_parameters){
+        $sync_parameter->{device_id} ||= $devmod ? $devmod->id : undef
+        $schema->resultset('autoprov_sync')->create($sync_parameter);
+    }
+}
 1;
 
 =head1 NAME
