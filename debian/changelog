@@ -1,3 +1,67 @@
+ngcp-panel (1.6.1.0+0~mr3.6.1.0) unstable; urgency=low
+
+  [ Gerhard Jungwirth ]
+  * [ff21cd6] MT#9291 fix Api test cf once more
+
+  [ Andreas Granig ]
+  * [a58ac04] MT#9481 API: Implement customer balance handling
+  * [83bd0f9] MT#9481 API: set link from customer to balance
+  * [b9aa3be] MT#9481 API: fix customerbalance link to self
+  * [eced8fc] MT#9481 API: contract doesn't have link to balance
+  * [9dc97d1] MT#9481 API: use correct balance link
+  * [5a7c924] MT#9653 Allow reseller api access to cf and fax
+  * [9220988] MT#9565 API: Expose src/dst gpp in calls/
+  * [2651a83] MT#9881 Implement panasonic phone book
+  * [f89efc9] MT#6969 Fix sip sync error.
+  * [30bc5d3] MT#6969 Ignore capturex return value
+  * [10624d7] MT#6969 Catch and log sip sync errors.
+  * [e1a7f1a] MT#6969 Pass proxy:port to check-sync script
+
+  [ Irina Peshinskaya ]
+  * [29b9884] MT#9431 Update usr_preference cloud_pbx_hunt_policy in Subscriber API.
+  * [806820e] MT#9447 Add external_id query parametere for customers.
+  * [a2b4c62] MT#9671 Add search of subscribers by customer external_id too.
+  * [c520403] Revert "MT#9671 Add search of subscribers by customer external_id too."
+  * [64e0428] MT#9671 Add search of subscribers by customer external_id too. Again.
+
+  [ Alexander Lutay ]
+  * [a668352] MT#9481 REST API test fix: link contractbalances was deleted in 83bd0f9
+  * [eb2e344] MT#9481 REST API test fix: add new item customerbalances, see a58ac04
+  * [7ec63b0] MT#9481 Fix REST API test for changes introduced in 8122482
+  * [521597a] MT#8245 Removed link between Admin and Subscriber interfaces
+  * [16c9418] MT#9677 Updated test accordingly to trunk changes
+
+  [ Jenkins Git User ]
+  * [b9b6a3c] I18N dump: snapshot Sat Oct 11 01:16:19 +0200 2014
+  * [916af5e] I18N dump: snapshot Sat Oct 11 01:16:32 +0200 2014
+  * [10d13c5] I18N dump: snapshot Sat Oct 11 01:16:43 +0200 2014
+  * [14aaa9b] I18N dump: snapshot Sat Oct 11 01:16:55 +0200 2014
+  * [57375cd] I18N dump: snapshot Sat Oct 11 01:17:06 +0200 2014
+  * [5f61fef] I18N dump: snapshot Fri Oct 24 01:13:34 +0200 2014
+  * [60d36de] I18N dump: snapshot Fri Oct 24 01:13:42 +0200 2014
+  * [08e1a9f] I18N dump: snapshot Fri Oct 24 01:13:49 +0200 2014
+  * [6f3382b] I18N dump: snapshot Fri Oct 24 01:13:56 +0200 2014
+  * [be73126] I18N dump: snapshot Fri Oct 24 01:14:04 +0200 2014
+  * [a00b72b] I18N dump: snapshot Thu Oct 30 14:08:40 +0100 2014
+  * [eef8a41] I18N dump: snapshot Thu Oct 30 14:08:49 +0100 2014
+  * [f97869f] I18N dump: snapshot Thu Oct 30 14:08:56 +0100 2014
+  * [5039b6f] I18N dump: snapshot Thu Oct 30 14:09:03 +0100 2014
+  * [88b17bb] I18N dump: snapshot Thu Oct 30 14:09:11 +0100 2014
+
+  [ Kirill Solomko ]
+  * [5aaebcf] MT#9599 - Fix delete allowed_ips/man_allowed_ips
+  * [01fe7f5] MT#9607 - Fix delete allowed_ip_groups
+
+  [ Victor Seva ]
+  * [83a33d4] MT#8245 Change initial point of login to /login
+  * [264a099] MT#9547 generate_ssl_keys.sh: add third option to select the name of the certs produced
+  * [d5c6975] MT#9869 fix bashism at init script
+  * [74c2589] MT#9869 fix bashism at ngcp-panel init script
+
+  [ Sipwise Jenkins Builder ]
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Thu, 30 Oct 2014 17:25:54 +0100
+
 ngcp-panel (1.6.0.0+0~mr3.6.0.0) unstable; urgency=low
 
   [ Jenkins Git User ]
