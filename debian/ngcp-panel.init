@@ -52,7 +52,6 @@ check_for_ongoing_startup() {
   fi
 
   # another init script started up but didn't log a PID?
-  local startup_pid
   startup_pid="$(cat ${PIDFILE}.startup)"
   if [ -z "$startup_pid" ] ; then
     log_progress_msg "starting up with invalid PID, forcing start"
