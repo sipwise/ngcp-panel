@@ -52,7 +52,6 @@ check_for_ongoing_startup() {
   fi
 
   # another init script started up but didn't log a PID?
-  local startup_pid
   startup_pid="$(cat ${PIDFILE}.startup)"
   if [ -z "$startup_pid" ] ; then
     log_progress_msg "starting up with invalid PID, forcing start"
@@ -99,11 +98,11 @@ _stop() {
      return 0
   fi
   if [ -e $PIDFILE ]; then
-      kill `cat $PIDFILE`;
+      /bin/kill `cat $PIDFILE`;
   else
       PID=`pidofproc $DAEMON`
       if [ -n "$PID" ]; then
-          kill $PID
+          /bin/kill $PID
       fi
   fi
   for i in 1 2 3 4 5 6 7; do
