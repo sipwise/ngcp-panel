@@ -55,8 +55,8 @@ sub panasonic_bootstrap_register{
     $mac =~s/[^A-F0-9]//gi;
     $mac = uc($mac);
     
-    $mac = '0080f0d4dbf1';
-    $mac = 'AAAAAAAAAAAA';
+    #$mac = '0080f0d4dbf1';
+    #$mac = 'AAAAAAAAAAAA';
     
     my $content = "<?xml version=\"1.0\"?> 
 <methodCall> 
