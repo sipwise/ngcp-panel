@@ -4,7 +4,10 @@ use strict;
 use URI::Escape;
 use MIME::Base64 qw/encode_base64/;
 use Net::HTTPS::Any qw/https_post/;
-use RPC::XML::Parser::LibXML;
+#use RPC::XML::Parser::LibXML;
+#use RPC::XML::Parser::XMLLibXML;
+use RPC::XML::ParserFactory 'XML::LibXML';
+
 use Data::Dumper;
 
 sub bootstrap{
@@ -19,7 +22,7 @@ sub bootstrap{
     }elsif('redirect_linksys' == $bootstrap_method){
         linksys_bootstrap_register($params);
     }elsif('http' == $bootstrap_method){
-        panasonic_bootstrap_register($params);
+        #panasonic_bootstrap_register($params);
     }
 }
 
@@ -75,16 +78,23 @@ sub panasonic_bootstrap_register{
         'Content-Type' => 'text/xml',
         'content' => $content,
     },);
+    my $response_value;
     $c->log->info( "response=$response_code; page=$page;" );
-    my $rpc_response = parse_rpc_xml($page);
-    my $response_value = $rpc_response->value->value;
-    $c->log->info( "response_value=".Dumper($response_value).";" );
+    if($page){
+        #my $parser = RPC::XML::ParserFactory->new();
+        my $parser = RPC::XML::ParserFactory->new();
+        my $rpc_response = $parser->parse($page);
+        my $response_value = $rpc_response->value->value;
+        $c->log->info( "response_value=".Dumper($response_value).";" );
+    }
     my $response;
     if('1' eq $response_value){
         $response = { 'response' => 1 };
     }elsif(('HASH' eq ref $response_value) && $response_value->{faultCode}){
         $response = $response_value;
         $response->{response} = 0;
+    }else{
+        $response = { 'response' => 0 };
     }
     $c->log->debug( "response=".Dumper($response).";" );
     return $response;
@@ -127,6 +137,7 @@ sub bootstrap_config{
     my $credentials = $contract->vendor_credentials->search_rs({
         'me.vendor' => lc($device->vendor),
     })->first;
+    $c->log->debug("credentials=$credentials; vendor=".$device->vendor.";");
     if($credentials){
         my $vendor_credentials = { map { $_ => $credentials->$_ } qw/user password/};
 
