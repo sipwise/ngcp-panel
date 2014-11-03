@@ -1116,7 +1116,7 @@ sub pbx_device_create :Chained('base') :PathPart('pbx/device/create') :Args(0) {
     );
     if($posted && $form->validated) {
         try {
-            my $err = 0;
+            my $err;
             my $schema = $c->model('DB');
             $schema->txn_do( sub {
                 my $station_name = $form->params->{station_name};
@@ -1131,10 +1131,12 @@ sub pbx_device_create :Chained('base') :PathPart('pbx/device/create') :Args(0) {
                     station_name => $station_name,
                 });
 
-                NGCP::Panel::Utils::DeviceBootstrap::bootstrap_config($c, $fdev, $c->stash->{contract});
-
-                my $err_lines = $c->forward('pbx_device_lines_update', [$schema, $fdev, [$form->field('line')->fields]]);
-                !$err and ( $err = $err_lines );
+                $err = NGCP::Panel::Utils::DeviceBootstrap::bootstrap_config(
+                    $c, $fdev, undef);
+                unless($err) {
+                    my $err_lines = $c->forward('pbx_device_lines_update', [$schema, $fdev, [$form->field('line')->fields]]);
+                    !$err and ( $err = $err_lines );
+                }
 
             });
             unless($err) {
@@ -1143,7 +1145,7 @@ sub pbx_device_create :Chained('base') :PathPart('pbx/device/create') :Args(0) {
                     desc => $c->loc('PBX device successfully created'),
                 );
             } else {
-                $schema->rollback;
+                die $err;
             }
         } catch ($e) {
             NGCP::Panel::Utils::Message->error(
@@ -1234,6 +1236,7 @@ sub pbx_device_edit :Chained('pbx_device_base') :PathPart('edit') :Args(0) {
                 if($identifier =~ /^([a-f0-9]{2}:){5}[a-f0-9]{2}$/) {
                     $identifier =~ s/\://g;
                 }
+                my $old_identifier = $fdev->identifier;
                 my $profile_id = $form->params->{profile_id};
                 $fdev->update({
                     profile_id => $profile_id,
@@ -1241,11 +1244,14 @@ sub pbx_device_edit :Chained('pbx_device_base') :PathPart('edit') :Args(0) {
                     station_name => $station_name,
                 });
 
-                NGCP::Panel::Utils::DeviceBootstrap::bootstrap_config($c, $fdev, $c->stash->{contract});
+                $err = NGCP::Panel::Utils::DeviceBootstrap::bootstrap_config(
+                    $c, $fdev, $old_identifier);
 
-                $fdev->autoprov_field_device_lines->delete_all;
-                my $err_lines = $c->forward('pbx_device_lines_update', [$schema, $fdev, [$form->field('line')->fields]]);
-                !$err and ( $err = $err_lines );
+                unless($err) {
+                    $fdev->autoprov_field_device_lines->delete_all;
+                    my $err_lines = $c->forward('pbx_device_lines_update', [$schema, $fdev, [$form->field('line')->fields]]);
+                    !$err and ( $err = $err_lines );
+                }
 
             });
             unless($err) {
@@ -1254,7 +1260,7 @@ sub pbx_device_edit :Chained('pbx_device_base') :PathPart('edit') :Args(0) {
                     desc  => $c->loc('PBX device successfully updated'),
                 );
             } else {
-                $schema->rollback;
+                die $err;
             }
         } catch ($e) {
             NGCP::Panel::Utils::Message->error(
@@ -1264,7 +1270,8 @@ sub pbx_device_edit :Chained('pbx_device_base') :PathPart('edit') :Args(0) {
             );
         }
 
-        NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for_action('/customer/details', $c->req->captures));
+        NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for_action('/customer/details', [$c->stash->{contract}->id]));
+        return;
     }
 
     $c->stash(

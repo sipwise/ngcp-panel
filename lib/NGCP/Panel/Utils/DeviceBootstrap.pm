@@ -7,6 +7,7 @@ use Net::HTTPS::Any qw/https_post/;
 #use RPC::XML::Parser::LibXML;
 #use RPC::XML::Parser::XMLLibXML;
 use RPC::XML::ParserFactory 'XML::LibXML';
+use RPC::XML;
 
 use Data::Dumper;
 
@@ -16,14 +17,17 @@ sub bootstrap{
     my $bootstrap_method = $params->{bootstrap_method};
 
     $c->log->debug( "bootstrap_method=$bootstrap_method;" );
+    my $ret;
     
-    if('redirect_panasonic' == $bootstrap_method){
-        panasonic_bootstrap_register($params);
-    }elsif('redirect_linksys' == $bootstrap_method){
-        linksys_bootstrap_register($params);
-    }elsif('http' == $bootstrap_method){
-        #panasonic_bootstrap_register($params);
+    if('redirect_panasonic' eq $bootstrap_method){
+        $ret = panasonic_bootstrap_register($params);
+    }elsif('redirect_linksys' eq $bootstrap_method){
+        $ret = linksys_bootstrap_register($params);
+    }elsif('http' eq $bootstrap_method){
+        #$ret = panasonic_bootstrap_register($params);
     }
+
+    return $ret;
 }
 
 sub panasonic_bootstrap_register{
@@ -33,6 +37,7 @@ sub panasonic_bootstrap_register{
     #    redirect_uri
     #    redirect_uri_params
     #    mac
+    #    old_mac (optional)
     #    c for log, config sync uri from config
     #    credentials => {user=>, password=>}
     #};
@@ -48,8 +53,6 @@ sub panasonic_bootstrap_register{
     $authorization =~s/[ \s]//gis;
     $authorization .= '=';
     
-    #params => c,redirect_uri,redirect_uri_params, mac
-    #$params->{redirect_uri_params} ||= $params->{mac};
     $params->{redirect_uri_params} ||= '{MAC}';
     my $uri = get_bootstrap_uri($params);
     $uri = URI::Escape::uri_escape($uri);
@@ -57,9 +60,38 @@ sub panasonic_bootstrap_register{
     my $mac = $params->{mac};
     $mac =~s/[^A-F0-9]//gi;
     $mac = uc($mac);
+    my $old_mac = $params->{old_mac};
+    if(defined $old_mac) {
+        $old_mac =~s/[^A-F0-9]//gi;
+        $old_mac = uc($old_mac);
+    }
     
-    #$mac = '0080f0d4dbf1';
-    #$mac = 'AAAAAAAAAAAA';
+    if(defined $old_mac && $mac ne $old_mac) {
+        my $content = "<?xml version=\"1.0\"?> 
+<methodCall> 
+<methodName>ipredirect.unregisterPhone</methodName> 
+<params> 
+<param><value><string>".$old_mac."</string></value></param> 
+</params> 
+</methodCall>";
+        $c->log->info( "host=$cfg->{host}; port=$cfg->{port}; path=$cfg->{path}; content=$content;" );
+        my( $page, $response_code, %reply_headers ) = https_post({
+            'host'    => $cfg->{host},
+            'port'    => $cfg->{port},
+            'path'    => $cfg->{path},
+            'headers' => { 'Authorization' => 'Basic '.$authorization },
+            'Content-Type' => 'text/xml',
+            'content' => $content,
+        },);
+        my $response_value = '';
+        $c->log->info( "response=$response_code; page=$page;" );
+        if($page){
+            my $parser = RPC::XML::ParserFactory->new();
+            my $rpc_response = $parser->parse($page);
+            $response_value = $rpc_response->value->value;
+            $c->log->info("unregister response_value=".Dumper($response_value));
+        }
+    }
     
     my $content = "<?xml version=\"1.0\"?> 
 <methodCall> 
@@ -78,27 +110,23 @@ sub panasonic_bootstrap_register{
         'Content-Type' => 'text/xml',
         'content' => $content,
     },);
-    my $response_value;
+    my $response_value = '';
     $c->log->info( "response=$response_code; page=$page;" );
     if($page){
-        #my $parser = RPC::XML::ParserFactory->new();
         my $parser = RPC::XML::ParserFactory->new();
         my $rpc_response = $parser->parse($page);
-        my $response_value = $rpc_response->value->value;
+        $response_value = $rpc_response->value->value;
         $c->log->info( "response_value=".Dumper($response_value).";" );
     }
+
     my $response;
-    if('1' eq $response_value){
-        $response = { 'response' => 1 };
-    }elsif(('HASH' eq ref $response_value) && $response_value->{faultCode}){
-        $response = $response_value;
-        $response->{response} = 0;
-    }else{
-        $response = { 'response' => 0 };
+    if(('HASH' eq ref $response_value) && $response_value->{faultString}){
+        return $response_value->{faultString};
+    } else {
+        return;
     }
-    $c->log->debug( "response=".Dumper($response).";" );
-    return $response;
 }
+
 sub get_bootstrap_conf{
     my ($params) = @_;
     my $c = $params->{c};
@@ -126,39 +154,32 @@ sub get_bootstrap_uri{
     return $uri;
 }
 sub bootstrap_config{
-    my($c, $fdev, $contract) = @_;
-
-    my $err = 0;
+    my($c, $fdev, $old_identifier) = @_;
+    
     my $device = $fdev->profile->config->device;
 
-    if(!$contract){
-        $contract = $c->stash->{contract};
-    }
-    my $credentials = $contract->vendor_credentials->search_rs({
-        'me.vendor' => lc($device->vendor),
-    })->first;
-    $c->log->debug("credentials=$credentials; vendor=".$device->vendor.";");
+    my $credentials = $fdev->profile->config->device->autoprov_redirect_credentials;
+    my $vcredentials;
     if($credentials){
-        my $vendor_credentials = { map { $_ => $credentials->$_ } qw/user password/};
-
-        my $sync_params_rs = $device->autoprov_sync->search_rs({
-            'autoprov_sync_parameters.parameter_name' => 'sync_params',
-        },{
-            join   => 'autoprov_sync_parameters',
-            select => ['me.parameter_value'],
-        });
-        my $sync_params = $sync_params_rs->first ? $sync_params_rs->first->parameter_value : '';
-        NGCP::Panel::Utils::DeviceBootstrap::bootstrap({
-            c => $c,
-            mac => $fdev->identifier,
-            bootstrap_method => $device->bootstrap_method,
-            redirect_uri_params => $sync_params,
-            credentials => $vendor_credentials,
-        });
-    }else{
-        $err = 1;
+        $vcredentials = { map { $_ => $credentials->$_ } qw/user password/};
     }
-    return $err;
+
+    my $sync_params_rs = $device->autoprov_sync->search_rs({
+        'autoprov_sync_parameters.parameter_name' => 'sync_params',
+    },{
+        join   => 'autoprov_sync_parameters',
+        select => ['me.parameter_value'],
+    });
+    my $sync_params = $sync_params_rs->first ? $sync_params_rs->first->parameter_value : '';
+    my $ret = NGCP::Panel::Utils::DeviceBootstrap::bootstrap({
+        c => $c,
+        mac => $fdev->identifier,
+        old_mac => $old_identifier,
+        bootstrap_method => $device->bootstrap_method,
+        redirect_uri_params => $sync_params,
+        credentials => $vcredentials,
+    });
+    return $ret;
 }
 sub devmod_sync_parameters_prefetch{
     my($c,$devmod,$params) = @_;
