@@ -939,7 +939,9 @@ sub pbx_group_create :Chained('base') :PathPart('pbx/group/create') :Args(0) {
             error => 'cannot create pbx group without having a pilot subscriber',
             desc  => $c->loc("Can't create a PBX group without having a pilot subscriber."),
         );
-        NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for_action('/customer/details', $c->req->captures));
+        NGCP::Panel::Utils::Navigation::back_or($c,
+            $c->uri_for_action('/customer/details', [$c->stash->{contract}->id])
+        );
     }
     my $form;
     $form = NGCP::Panel::Form::Customer::PbxGroup->new(ctx => $c);
@@ -1008,7 +1010,9 @@ sub pbx_group_create :Chained('base') :PathPart('pbx/group/create') :Args(0) {
             );
         }
 
-        NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for_action('/customer/details', $c->req->captures));
+        NGCP::Panel::Utils::Navigation::back_or($c, 
+            $c->uri_for_action('/customer/details', [$c->stash->{contract}->id])
+        );
     }
 
     $c->stash(
@@ -1028,7 +1032,9 @@ sub pbx_group_base :Chained('base') :PathPart('pbx/group') :CaptureArgs(1) {
             error => "invalid voip pbx group id $group_id",
             desc  => $c->loc('PBX group with id [_1] does not exist.',$group_id),
         );
-        NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for_action('/customer/details', [$c->req->captures->[0]]));
+        NGCP::Panel::Utils::Navigation::back_or($c, 
+            $c->uri_for_action('/customer/details', [$c->stash->{contract}->id])
+        );
     }
 
     $c->stash(
@@ -1081,7 +1087,9 @@ sub pbx_group_edit :Chained('pbx_group_base') :PathPart('edit') :Args(0) {
             );
         }
 
-        NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for_action('/customer/details', [$c->req->captures->[0]]));
+        NGCP::Panel::Utils::Navigation::back_or($c, 
+            $c->uri_for_action('/customer/details', [$c->stash->{contract}->id])
+        );
     }
 
     $c->stash(
@@ -1131,8 +1139,8 @@ sub pbx_device_create :Chained('base') :PathPart('pbx/device/create') :Args(0) {
                     station_name => $station_name,
                 });
 
-                $err = NGCP::Panel::Utils::DeviceBootstrap::bootstrap_config(
-                    $c, $fdev, undef);
+                $err = NGCP::Panel::Utils::DeviceBootstrap::dispatch(
+                    $c, 'register', $fdev);
                 unless($err) {
                     my $err_lines = $c->forward('pbx_device_lines_update', [$schema, $fdev, [$form->field('line')->fields]]);
                     !$err and ( $err = $err_lines );
@@ -1155,7 +1163,9 @@ sub pbx_device_create :Chained('base') :PathPart('pbx/device/create') :Args(0) {
             );
         }
 
-        NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for_action('/customer/details', $c->req->captures));
+        NGCP::Panel::Utils::Navigation::back_or($c, 
+            $c->uri_for_action('/customer/details', [$c->stash->{contract}->id])
+        );
     }
 
     $c->stash(
@@ -1176,7 +1186,9 @@ sub pbx_device_base :Chained('base') :PathPart('pbx/device') :CaptureArgs(1) {
             error => "invalid voip pbx device id $dev_id",
             desc  => $c->loc('PBX device with id [_1] does not exist.',$dev_id),
         );
-        NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for_action('/customer/details', [$c->req->captures->[0]]));
+        NGCP::Panel::Utils::Navigation::back_or($c, 
+            $c->uri_for_action('/customer/details', [$c->stash->{contract}->id])
+        );
     }
     if($dev->contract->id != $c->stash->{contract}->id) {
         NGCP::Panel::Utils::Message->error(
@@ -1184,7 +1196,9 @@ sub pbx_device_base :Chained('base') :PathPart('pbx/device') :CaptureArgs(1) {
             error => "invalid voip pbx device id $dev_id for customer id '".$c->stash->{contract}->id."'",
             desc  => $c->loc('PBX device with id [_1] does not exist for this customer.',$dev_id),
         );
-        NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for_action('/customer/details', [$c->req->captures->[0]]));
+        NGCP::Panel::Utils::Navigation::back_or($c, 
+            $c->uri_for_action('/customer/details', [$c->stash->{contract}->id])
+        );
     }
 
     $c->stash(
@@ -1244,8 +1258,10 @@ sub pbx_device_edit :Chained('pbx_device_base') :PathPart('edit') :Args(0) {
                     station_name => $station_name,
                 });
 
-                $err = NGCP::Panel::Utils::DeviceBootstrap::bootstrap_config(
-                    $c, $fdev, $old_identifier);
+                unless($fdev->identifier eq $old_identifier) {
+                    $err = NGCP::Panel::Utils::DeviceBootstrap::dispatch(
+                        $c, 'register', $fdev, $old_identifier);
+                }
 
                 unless($err) {
                     $fdev->autoprov_field_device_lines->delete_all;
@@ -1270,7 +1286,9 @@ sub pbx_device_edit :Chained('pbx_device_base') :PathPart('edit') :Args(0) {
             );
         }
 
-        NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for_action('/customer/details', [$c->stash->{contract}->id]));
+        NGCP::Panel::Utils::Navigation::back_or($c, 
+            $c->uri_for_action('/customer/details', [$c->stash->{contract}->id])
+        );
         return;
     }
 
@@ -1317,7 +1335,11 @@ sub pbx_device_delete :Chained('pbx_device_base') :PathPart('delete') :Args(0) {
     my ($self, $c) = @_;
 
     try {
-        $c->stash->{pbx_device}->delete;
+        my $fdev = $c->stash->{pbx_device};
+        NGCP::Panel::Utils::DeviceBootstrap::dispatch(
+            $c, 'unregister', $fdev, $fdev->identifier
+        );
+        $fdev->delete;
         NGCP::Panel::Utils::Message->info(
             c => $c,
             data => { $c->stash->{pbx_device}->get_inflated_columns },
@@ -1332,7 +1354,9 @@ sub pbx_device_delete :Chained('pbx_device_base') :PathPart('delete') :Args(0) {
         );
     }
 
-    NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for_action('/customer/details', $c->req->captures));
+    NGCP::Panel::Utils::Navigation::back_or($c, 
+        $c->uri_for_action('/customer/details', [$c->stash->{contract}->id])
+    );
 }
 
 sub pbx_device_sync :Chained('pbx_device_base') :PathPart('sync') :Args(0) {
@@ -1367,10 +1391,12 @@ sub pbx_device_sync :Chained('pbx_device_base') :PathPart('sync') :Args(0) {
             unless($proxy) {
                     NGCP::Panel::Utils::Message->error(
                         c => $c,
-                        desc => $c->loc('Failed to triggered config reload via SIP'),
-                        log => 'Failed to load proxy from xmlhosts',
+                        desc => $c->loc('Failed to trigger config reload via SIP'),
+                        error => 'Failed to load proxy from xmlhosts',
                     );
-                    NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for_action('/customer/details', [ $c->req->captures->[0] ]));
+                    NGCP::Panel::Utils::Navigation::back_or($c, 
+                        $c->uri_for_action('/customer/details', [$c->stash->{contract}->id])
+                    );
                     return;
             }
 
@@ -1382,8 +1408,8 @@ sub pbx_device_sync :Chained('pbx_device_base') :PathPart('sync') :Args(0) {
                 use Data::Dumper;
                 NGCP::Panel::Utils::Message->error(
                     c => $c,
-                    desc => $c->loc('Failed to triggered config reload via SIP'),
-                    log => Dumper @out,
+                    desc => $c->loc('Failed to trigger config reload via SIP'),
+                    error => 'Result: ' . Dumper \@out,
                 );
             } else {
                 NGCP::Panel::Utils::Message->info(
@@ -1391,7 +1417,9 @@ sub pbx_device_sync :Chained('pbx_device_base') :PathPart('sync') :Args(0) {
                     desc => $c->loc('Successfully triggered config reload via SIP'),
                 );
             }
-            NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for_action('/customer/details', [ $c->req->captures->[0] ]));
+            NGCP::Panel::Utils::Navigation::back_or($c, 
+                $c->uri_for_action('/customer/details', [$c->stash->{contract}->id])
+            );
             return;
         }
     }
@@ -1410,7 +1438,9 @@ sub pbx_device_sync :Chained('pbx_device_base') :PathPart('sync') :Args(0) {
             c => $c,
             desc => $c->loc('Successfully redirected request to device'),
         );
-        NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for_action('/customer/details', [ $c->req->captures->[0] ]));
+        NGCP::Panel::Utils::Navigation::back_or($c, 
+            $c->uri_for_action('/customer/details', [$c->stash->{contract}->id])
+        );
     }
 
     my $schema = $c->config->{deviceprovisioning}->{secure} ? 'https' : 'http';
@@ -1525,8 +1555,8 @@ sub preferences_edit :Chained('preferences_base') :PathPart('edit') :Args(0) {
     NGCP::Panel::Utils::Preferences::create_preference_form( c => $c,
         pref_rs => $pref_rs,
         enums   => \@enums,
-        base_uri => $c->uri_for_action('/customer/preferences', [$c->req->captures->[0]]),
-        edit_uri => $c->uri_for_action('/customer/preferences_edit', $c->req->captures),
+        base_uri => $c->uri_for_action('/customer/preferences', [$c->stash->{contract}->id]),
+        edit_uri => $c->uri_for_action('/customer/preferences_edit', [$c->stash->{contract}->id]),
     );
 }
 

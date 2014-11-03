@@ -202,15 +202,14 @@ has_field 'bootstrap_method' => (
     required => 1,
     label => 'Bootstrap Method',
     options => [
-        { label => 'HTTP (Cisco)', value => 'http' },
-        { label => 'Panasonic redirect', value => 'redirect_panasonic' },
-        { label => 'Linksys redirect', value => 'redirect_linksys' },
-        { label => 'Panasonic redirect', value => 'redirect_' },
+        { label => 'Cisco', value => 'http' },
+        { label => 'Panasonic', value => 'redirect_panasonic' },
     ],
     default => 'http',
     element_attr => {
         rel => ['tooltip'],
-        title => ['Selected method will be used to configure device provisioning server.'],
+        title => ['Method to configure the provisioning server on the phone. One of http, redirect_panasonic.'],
+        # TODO: ????
         javascript => ' onchange="bootstrapDynamicFields(this.options[this.selectedIndex].value);" ',
     },
 );

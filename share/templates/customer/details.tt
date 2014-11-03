@@ -17,7 +17,7 @@
 <div class="row">
     <span>
         <a class="btn btn-primary btn-large" href="[% c.uri_for('/back') %]"><i class="icon-arrow-left"></i> [% c.loc('Back') %]</a>
-        <a class="btn btn-primary btn-large" href="[% c.uri_for_action('/customer/preferences', c.req.captures) %]"><i class="icon-list"></i> [% c.loc('Preferences') %]</a>
+        <a class="btn btn-primary btn-large" href="[% c.uri_for_action('/customer/preferences', [c.req.captures.0]) %]"><i class="icon-list"></i> [% c.loc('Preferences') %]</a>
     </span>
     [% IF !c.user.read_only && (c.user.roles == 'admin' || c.user.roles == 'reseller') -%]
     <span>
