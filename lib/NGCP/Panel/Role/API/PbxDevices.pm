@@ -191,6 +191,13 @@ sub update_item {
     }
 
     my $lines = delete $resource->{lines};
+    my $old_identifier = $item->identifier;
+    unless($old_identifier eq $resource->{identifier}) {
+        my $err = NGCP::Panel::Utils::DeviceBootstrap::dispatch(
+            $c, 'register', $item, $old_identifier
+        );
+        die $err if $err;
+    }
     $item->update($resource);
     
     return $item;

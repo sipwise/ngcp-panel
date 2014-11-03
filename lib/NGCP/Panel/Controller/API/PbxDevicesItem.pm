@@ -176,6 +176,7 @@ sub DELETE :Allow {
         my $device = $self->item_by_id($c, $id);
         last unless $self->resource_exists($c, pbxdevice => $device);
         try {
+            NGCP::Panel::Utils::DeviceBootstrap::dispatch($c, 'unregister', $device, $device->identifier);
             $device->delete;
         } catch($e) {
             $c->log->error("Failed to delete pbx field device with id '$id': $e");

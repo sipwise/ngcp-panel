@@ -250,7 +250,8 @@ sub POST :Allow {
                     identifier => $resource->{identifier},
                     station_name => $resource->{station_name},
                 });
-            NGCP::Panel::Utils::DeviceBootstrap::bootstrap_config($c, $device, $customer);
+            my $err = NGCP::Panel::Utils::DeviceBootstrap::dispatch($c, 'register', $device);
+            die $err if($err);
             for my $line ( @{$resource->{lines}} ) {
                 $device->autoprov_field_device_lines->create($line);
             }
