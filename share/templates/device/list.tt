@@ -6,10 +6,11 @@
     </span>
 </div>
 [% back_created = 1 -%]
+
 <script>
 function bootstrapDynamicFields(selectedValue){
-    $('.bootstrap_config').css("display","none");
-    $('.bootstrap_config_'+selectedValue).css("display","inline");
+    $('.ngcp-bootstrap-config').css("display","none");
+    $('.ngcp-bootstrap-config-'+selectedValue).css("display","block");
 }
 function vendor2bootstrapMethod(vendorField){
     var bootstrapMethod='';
@@ -38,11 +39,10 @@ function vendor2bootstrapMethod(vendorField){
             bootstrapMethodField.options[i].selected = true;
         }
     }
+    bootstrapDynamicFields(bootstrapMethod);
 }
 </script>
-<style>
-.bootstrap_config {display:none;}
-</style>
+
 <div class="row">
     [% FOREACH m IN messages -%]
         <div class="alert alert-[% m.type %]">[% m.text %]</div>

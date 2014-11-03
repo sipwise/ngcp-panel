@@ -220,7 +220,7 @@ has_field 'bootstrap_config_http_sync_uri' => (
     required => 0,
     label => 'Bootstrap Sync URI',
     default => 'http://[% client.ip %]/admin/resync',
-    wrapper_class => [qw/bootstrap_config bootstrap_config_http/],
+    wrapper_class => [qw/ngcp-bootstrap-config ngcp-bootstrap-config-http/],
     element_attr => {
         rel => ['tooltip'],
         title => ['The sync URI to set the provisioning server of the device (e.g. http://client.ip/admin/resync. The client.ip variable is automatically expanded during provisioning time.'],
@@ -236,27 +236,24 @@ has_field 'bootstrap_config_http_sync_method' => (
         { label => 'POST', value => 'POST' },
     ],
     default => 'GET',
-    wrapper_class => [qw/bootstrap_config bootstrap_config_http/],
+    wrapper_class => [qw/ngcp-bootstrap-config ngcp-bootstrap-config-http/],
     element_attr => {
         rel => ['tooltip'],
         title => ['The HTTP method to set the provisioning server (one of GET, POST).'],
     },
 );
 
-
 has_field 'bootstrap_config_http_sync_params' => (
     type => 'Text',
     required => 0,
     label => 'Bootstrap Sync Parameters',
     default => '[% server.uri %]/$MA',
-    wrapper_class => [qw/bootstrap_config bootstrap_config_http/],
+    wrapper_class => [qw/ngcp-bootstrap-config ngcp-bootstrap-config-http/],
     element_attr => { 
         rel => ['tooltip'],
         title => ['The parameters appended to the sync URI when setting the provisioning server, e.g. server.uri/$MA. The server.uri variable is automatically expanded during provisioning time.'],
     },
 );
-
-
 
 has_field 'save' => (
     type => 'Submit',
