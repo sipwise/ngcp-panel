@@ -163,7 +163,7 @@ sub spa_directory_list :Chained('base') :PathPart('pbx/directory/spa') :Args(1) 
     $c->response->body($data);
 }
 
-sub panasonic_directory_list :Chained('base') :PathPart('pbx/directory/panasonic') :Args(0) {
+sub panasonic_directory_list :Chained('base') :PathPart('pbx/directory/panasonic') :Args() {
     my ($self, $c) = @_;
 
     my $id = $c->req->params->{userid};
