@@ -660,7 +660,7 @@
                                   '</select>' +
                                   '<select class="modeselect" name="line.' + formcnt + '.type" id="line.' + formcnt + '.type">' + 
                                     [% FOR opt IN ["private", "shared", "blf"] -%]
-                                    '<option value="[% opt %]">[% opt %]</option>' +
+                                    (range.can_[% opt %] == "1" ? '<option value="[% opt %]">[% opt %]</option>' : '') +
                                     [% END -%]
                                   '</select>' + 
                                   '<input type="hidden" name="line.' + formcnt + '.line" id="line.' + formcnt + '.line" value="' + a.range_id + '.' + a.line_index + '"/>' + 
@@ -692,7 +692,8 @@
                                   '</select>' +
                                   '<select class="modeselect" name="line.' + formcnt + '.type" id="line.' + formcnt + '.type">' + 
                                     [% FOR opt IN ["private", "shared", "blf"] -%]
-                                    '<option value="[% opt %]"' + (linekeys[idx].mode == "[% opt %]" ? ' selected="selected"' : '') + '>[% opt %]</option>' +
+                                    (range.can_[% opt %] == "1" ? 
+                                       '<option value="[% opt %]"' + (linekeys[idx].mode == "[% opt %]" ? ' selected="selected"' : '') + '>[% opt %]</option>' : '') +
                                     [% END -%]
                                   '</select>' + 
                                   '<input type="hidden" name="line.' + formcnt + '.line" id="line.' + formcnt + '.line" value="' + a.range_id + '.' + a.line_index + '"/>' + 
@@ -709,7 +710,7 @@
                                       '</select>' +
                                       '<select class="modeselect" name="line.' + formcnt + '.type" id="line.' + formcnt + '.type">' + 
                                         [% FOR opt IN ["private", "shared", "blf"] -%]
-                                        '<option value="[% opt %]">[% opt %]</option>' +
+                                        (range.can_[% opt %] == "1" ? '<option value="[% opt %]">[% opt %]</option>' : '') +
                                         [% END -%]
                                       '</select>' + 
                                       '<input type="hidden" name="line.' + formcnt + '.line" id="line.' + formcnt + '.line" value="' + a.range_id + '.' + a.line_index + '"/>' + 
