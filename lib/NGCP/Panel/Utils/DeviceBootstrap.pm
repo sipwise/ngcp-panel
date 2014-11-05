@@ -53,12 +53,41 @@ sub devmod_sync_parameters_prefetch{
         };
         push @parameters,$sync_parameter;
     }
+    return \@parameters;
+}
+sub devmod_sync_credentials_prefetch{
+    my($c,$devmod,$params) = @_;
+    my $schema = $c->model('DB');
+    my $bootstrap_method = $params->{'bootstrap_method'};
+    my $credentials = {
+        device_id       => $devmod ? $devmod->id : undef,
+    };
+    foreach (qw/user password/){
+        $credentials->{$_} = delete $params->{'bootstrap_config_'.$bootstrap_method.'_'.$_};
+    }
+    return $credentials;
+}
+sub devmod_sync_credentials_store{
+    my($c,$devmod,$credentials) = @_;
+    my $schema = $c->model('DB');
+    my $credentials_rs = $schema->resultset('autoprov_redirect_credentials')->search_rs({
+        'device_id' => $devmod->id
+    });
+    if(!$credentials_rs->first){
+        $credentials->{device_id} = $devmod->id;
+        $schema->resultset('autoprov_redirect_credentials')->create($credentials);    
+    }else{
+       $credentials_rs->update($credentials);
+    }
+}
+
+sub devmod_sync_clear {
+    my($c,$params) = @_;
     foreach (keys %$params){
         if($_ =~/^bootstrap_config_/i){
             delete $params->{$_};
         }
     }
-    return \@parameters;
 }
 sub devmod_sync_parameters_store {
     my($c,$devmod,$sync_parameters) = @_;

@@ -13,13 +13,17 @@ function bootstrapDynamicFields(selectedValue){
     $('.ngcp-bootstrap-config-'+selectedValue).css("display","block");
 }
 function vendor2bootstrapMethod(vendorField){
-    if(!vendorField){
-        var bootstrapMethodFields = document.getElementsByName('bootstrap_method');
+    var bootstrapMethodField;
+    if(!vendorField){//initial load - no vendor field passed at all
+        bootstrapMethodFields = document.getElementsByName('bootstrap_method');
         if(bootstrapMethodFields && bootstrapMethodFields.length){
-            vendorField = bootstrapMethodFields[0].form['vendor'];
+            bootstrapMethodField = bootstrapMethodFields[0];//we will use default defined in Perl module to show linked fields
+            vendorField = bootstrapMethodField.form['vendor'];//for load after error - we will check if it's value isn't empty
         }
+    }else{
+       bootstrapMethodField = vendorField.form['bootstrap_method'];
     }
-    if(vendorField){
+    if(vendorField && vendorField.value){//onchange and on load after error
         var bootstrapMethod='';
         switch(vendorField.value.toLowerCase()){
             case "cisco":
@@ -39,15 +43,18 @@ function vendor2bootstrapMethod(vendorField){
                 break;
             ;
         }
-        var bootstrapMethodField = vendorField.form['bootstrap_method'];
-        var length = bootstrapMethodField.options.length;
-        for(var i=0; i < length; i++){        
-            if(bootstrapMethodField.options[i].value == bootstrapMethod){
-                bootstrapMethodField.options[i].selected = true;
+        if(bootstrapMethod){
+            var length = bootstrapMethodField.options.length;
+            for(var i=0; i < length; i++){        
+                if(bootstrapMethodField.options[i].value == bootstrapMethod){
+                    bootstrapMethodField.options[i].selected = true;
+                }
             }
         }
-        bootstrapDynamicFields(bootstrapMethod);
+    }else if(bootstrapMethodField){//as said above - for initial load, to use Perl defined select default to show linked fields
+        bootstrapMethod = bootstrapMethodField.options[bootstrapMethodField.selectedIndex].value;
     }
+    bootstrapDynamicFields(bootstrapMethod);
 }
 $( document ).ready(function() {
     vendor2bootstrapMethod();

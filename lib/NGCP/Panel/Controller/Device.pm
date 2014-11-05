@@ -180,7 +180,10 @@ sub devmod_create :Chained('base') :PathPart('model/create') :Args(0) :Does(ACL)
                 my $linerange = delete $form->params->{linerange};
                 
                 my $sync_parameters = NGCP::Panel::Utils::DeviceBootstrap::devmod_sync_parameters_prefetch($c, undef, $form->params);
+                my $credentials = NGCP::Panel::Utils::DeviceBootstrap::devmod_sync_credentials_prefetch($c, undef, $form->params);
+                NGCP::Panel::Utils::DeviceBootstrap::devmod_sync_clear($c, $form->params);
                 my $devmod = $schema->resultset('autoprov_devices')->create($form->params);
+                NGCP::Panel::Utils::DeviceBootstrap::devmod_sync_credentials_store($c, $devmod, $credentials);
                 NGCP::Panel::Utils::DeviceBootstrap::devmod_sync_parameters_store($c, $devmod, $sync_parameters);
 
                 foreach my $range(@{ $linerange }) {
@@ -347,9 +350,12 @@ sub devmod_edit :Chained('devmod_base') :PathPart('edit') :Args(0) :Does(ACL) :A
                 
                 my $linerange = delete $form->params->{linerange};
                 my $sync_parameters = NGCP::Panel::Utils::DeviceBootstrap::devmod_sync_parameters_prefetch($c, $c->stash->{devmod}, $form->params);
+                my $credentials = NGCP::Panel::Utils::DeviceBootstrap::devmod_sync_credentials_prefetch($c, $c->stash->{devmod}, $form->params);
+                NGCP::Panel::Utils::DeviceBootstrap::devmod_sync_clear($c, $form->params);
                 
                 $c->stash->{devmod}->update($form->params);
                 
+                NGCP::Panel::Utils::DeviceBootstrap::devmod_sync_credentials_store($c, $c->stash->{devmod}, $credentials);
                 $schema->resultset('autoprov_sync')->search_rs({
                     device_id => $c->stash->{devmod}->id,
                 })->delete;

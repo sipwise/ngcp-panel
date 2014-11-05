@@ -158,7 +158,13 @@ sub update_item {
     }
 
     my $sync_parameters = NGCP::Panel::Utils::DeviceBootstrap::devmod_sync_parameters_prefetch($c, $item, $resource);
+    my $credentials = NGCP::Panel::Utils::DeviceBootstrap::devmod_sync_credentials_prefetch($c, $item, $resource);
+    NGCP::Panel::Utils::DeviceBootstrap::devmod_sync_clear($c, $resource);
     $item->update($resource);
+    $c->model('DB')->resultset('autoprov_sync')->search_rs({
+        device_id => $item->id,
+    })->delete;
+    NGCP::Panel::Utils::DeviceBootstrap::devmod_sync_credentials_store($c, $item, $credentials);
     NGCP::Panel::Utils::DeviceBootstrap::devmod_sync_parameters_store($c, $item, $sync_parameters);
 
     my @existing_range = ();

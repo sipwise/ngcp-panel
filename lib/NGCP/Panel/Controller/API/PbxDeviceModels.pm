@@ -259,7 +259,10 @@ sub POST :Allow {
 
         try {
             my $sync_parameters = NGCP::Panel::Utils::DeviceBootstrap::devmod_sync_parameters_prefetch($c, undef, $resource);
+            my $credentials = NGCP::Panel::Utils::DeviceBootstrap::devmod_sync_credentials_prefetch($c, undef, $resource);
+            NGCP::Panel::Utils::DeviceBootstrap::devmod_sync_clear($c, $resource);
             $item = $c->model('DB')->resultset('autoprov_devices')->create($resource);
+            NGCP::Panel::Utils::DeviceBootstrap::devmod_sync_credentials_store($c, $item, $credentials);
             NGCP::Panel::Utils::DeviceBootstrap::devmod_sync_parameters_store($c, $item, $sync_parameters);
 
             foreach my $range(@{ $linerange }) {
