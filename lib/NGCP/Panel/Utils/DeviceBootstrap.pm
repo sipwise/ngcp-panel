@@ -1,42 +1,85 @@
 package NGCP::Panel::Utils::DeviceBootstrap;
 
-use Sipwise::Base;
+
+use strict;
+use Data::Dumper;
+use NGCP::Panel::Utils::DeviceBootstrap::RPC;
 use NGCP::Panel::Utils::DeviceBootstrap::Panasonic;
 
-sub get_baseuri {
-    my ($c) = @_;
+#NGCP::Panel::Utils::DeviceBootstrap::RPC params =>
+    #$params = {
+    #    redirect_uri
+    #    redirect_uri_params
+    #    mac
+    #    mac_old (optional)
+    #    c for log, config sync uri from config
+    #    credentials => {user=>, password=>}
+    #};
 
-    my $uri = 
-        ($c->config->{deviceprovisioning}->{secure} ? 'https' : 'http').
-        '://'.
-        ($c->config->{deviceprovisioning}->{host} // $c->req->uri->host).
-        ':'.
-        ($c->config->{deviceprovisioning}->{port} // 1444).
-        '/device/autoprov/config/';
 
-    return $uri;
+sub redirect_register{
+    my ($params) = @_;
+    my $ret;
+    my $redirect_processor = get_redirect_processor($params);
+    if($redirect_processor){
+        $ret = $redirect_processor->redirect_register;
+    }
+    return $ret;
+}
+sub redirect_unregister{
+    my ($params) = @_;
+    my $ret;
+    my $redirect_processor = get_redirect_processor($params);
+    if($redirect_processor){
+        $ret = $redirect_processor->redirect_unregister;
+    }
+    return $ret;
 }
 
-sub dispatch {
-    my ($c, $action, $dev, $old_mac) = @_;
+sub get_redirect_processor{
+    my ($params) = @_;
+    my $c = $params->{c};
+    my $bootstrap_method = $params->{bootstrap_method};
 
-    my $btype = $dev->profile->config->device->bootstrap_method;
-    my $mod = 'NGCP::Panel::Utils::DeviceBootstrap';
+    $c->log->debug( "bootstrap_method=$bootstrap_method;" );
+    my $redirect_processor;
+    if('redirect_panasonic' eq $bootstrap_method){
+        $redirect_processor = NGCP::Panel::Utils::DeviceBootstrap::Panasonic->new( params => $params );
+    }elsif('redirect_linksys' eq $bootstrap_method){
+    }elsif('http' eq $bootstrap_method){
+        #$ret = panasonic_bootstrap_register($params);
+    }
+    return $redirect_processor;
+}
 
-    if($btype eq 'redirect_panasonic') {
-        $mod .= '::Panasonic';
-    } elsif($btype eq 'http') {
-        return;
-    } else {
-        return;
+sub bootstrap_config{
+    my($c, $fdev, $old_identifier) = @_;
+    
+    my $device = $fdev->profile->config->device;
+
+    my $credentials = $fdev->profile->config->device->autoprov_redirect_credentials;
+    my $vcredentials;
+    if($credentials){
+        $vcredentials = { map { $_ => $credentials->$_ } qw/user password/};
     }
 
-    $mod .= '::'.$action;
-    $c->log->debug("dispatching bootstrap call to '$mod'");
-    no strict "refs";
-    return $mod->($c, $dev, $dev->identifier, $old_mac);
+    my $sync_params_rs = $device->autoprov_sync->search_rs({
+        'autoprov_sync_parameters.parameter_name' => 'sync_params',
+    },{
+        join   => 'autoprov_sync_parameters',
+        select => ['me.parameter_value'],
+    });
+    my $sync_params = $sync_params_rs->first ? $sync_params_rs->first->parameter_value : '';
+    my $ret = redirect_register({
+        c => $c,
+        mac => $fdev->identifier,
+        mac_old => $old_identifier,
+        bootstrap_method => $device->bootstrap_method,
+        redirect_uri_params => $sync_params,
+        credentials => $vcredentials,
+    });
+    return $ret;
 }
-
 sub devmod_sync_parameters_prefetch{
     my($c,$devmod,$params) = @_;
     my $schema = $c->model('DB');
@@ -53,41 +96,12 @@ sub devmod_sync_parameters_prefetch{
         };
         push @parameters,$sync_parameter;
     }
-    return \@parameters;
-}
-sub devmod_sync_credentials_prefetch{
-    my($c,$devmod,$params) = @_;
-    my $schema = $c->model('DB');
-    my $bootstrap_method = $params->{'bootstrap_method'};
-    my $credentials = {
-        device_id       => $devmod ? $devmod->id : undef,
-    };
-    foreach (qw/user password/){
-        $credentials->{$_} = delete $params->{'bootstrap_config_'.$bootstrap_method.'_'.$_};
-    }
-    return $credentials;
-}
-sub devmod_sync_credentials_store{
-    my($c,$devmod,$credentials) = @_;
-    my $schema = $c->model('DB');
-    my $credentials_rs = $schema->resultset('autoprov_redirect_credentials')->search_rs({
-        'device_id' => $devmod->id
-    });
-    if(!$credentials_rs->first){
-        $credentials->{device_id} = $devmod->id;
-        $schema->resultset('autoprov_redirect_credentials')->create($credentials);    
-    }else{
-       $credentials_rs->update($credentials);
-    }
-}
-
-sub devmod_sync_clear {
-    my($c,$params) = @_;
     foreach (keys %$params){
         if($_ =~/^bootstrap_config_/i){
             delete $params->{$_};
         }
     }
+    return \@parameters;
 }
 sub devmod_sync_parameters_store {
     my($c,$devmod,$sync_parameters) = @_;
@@ -97,3 +111,30 @@ sub devmod_sync_parameters_store {
         $schema->resultset('autoprov_sync')->create($sync_parameter);
     }
 }
+1;
+
+=head1 NAME
+
+NGCP::Panel::Utils::DeviceBootstrap
+
+=head1 DESCRIPTION
+
+Make API requests to configure remote redirect servers for requested MAC with autorpov uri.
+
+=head1 METHODS
+
+=head2 bootstrap
+
+Dispatch to proper vendor API call.
+
+=head1 AUTHOR
+
+Irina Peshinskaya C<< <ipeshinskaya@sipwise.com> >>
+
+=head1 LICENSE
+
+This library is free software. You can redistribute it and/or modify
+it under the same terms as Perl itself.
+
+=cut
+# vim: set tabstop=4 expandtab:
