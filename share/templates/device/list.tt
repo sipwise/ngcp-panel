@@ -13,34 +13,45 @@ function bootstrapDynamicFields(selectedValue){
     $('.ngcp-bootstrap-config-'+selectedValue).css("display","block");
 }
 function vendor2bootstrapMethod(vendorField){
-    var bootstrapMethod='';
-    switch(vendorField.value.toLowerCase()){
-        case "cisco":
-            bootstrapMethod = 'http';
-            break;
-        ;
-        case "panasonic":
-            bootstrapMethod = 'redirect_panasonic';
-            break;
-        ;
-        case "linksys":
-            bootstrapMethod = 'redirect_linksys';
-            break;
-        ;
-        case "yealink":
-            bootstrapMethod = 'redirect_yealink';
-            break;
-        ;
-    }
-    var bootstrapMethodField = vendorField.form['bootstrap_method'];
-    var length = bootstrapMethodField.options.length;
-    for(var i=0; i < length; i++){        
-        if(bootstrapMethodField.options[i].value == bootstrapMethod){
-            bootstrapMethodField.options[i].selected = true;
+    if(!vendorField){
+        var bootstrapMethodFields = document.getElementsByName('bootstrap_method');
+        if(bootstrapMethodFields && bootstrapMethodFields.length){
+            vendorField = bootstrapMethodFields[0].form['vendor'];
         }
     }
-    bootstrapDynamicFields(bootstrapMethod);
+    if(vendorField){
+        var bootstrapMethod='';
+        switch(vendorField.value.toLowerCase()){
+            case "cisco":
+                bootstrapMethod = 'http';
+                break;
+            ;
+            case "panasonic":
+                bootstrapMethod = 'redirect_panasonic';
+                break;
+            ;
+            case "linksys":
+                bootstrapMethod = 'redirect_linksys';
+                break;
+            ;
+            case "yealink":
+                bootstrapMethod = 'redirect_yealink';
+                break;
+            ;
+        }
+        var bootstrapMethodField = vendorField.form['bootstrap_method'];
+        var length = bootstrapMethodField.options.length;
+        for(var i=0; i < length; i++){        
+            if(bootstrapMethodField.options[i].value == bootstrapMethod){
+                bootstrapMethodField.options[i].selected = true;
+            }
+        }
+        bootstrapDynamicFields(bootstrapMethod);
+    }
 }
+$( document ).ready(function() {
+    vendor2bootstrapMethod();
+});
 </script>
 
 <div class="row">
