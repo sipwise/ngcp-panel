@@ -25,8 +25,13 @@ sub prepare {
         $p->{auth} = encode_base64($creds->user.':'.$creds->password);
     }
 
-    $p->{uri} = NGCP::Panel::Utils::DeviceBootstrap::get_baseuri($c);
-    $p->{uri} .= '{MAC}';
+    $p->{uri} = ($devmod->bootstrap_uri) 
+        ? $devmod->bootstrap_uri 
+        : NGCP::Panel::Utils::DeviceBootstrap::get_baseuri($c);
+        
+    if ($p->{uri} !~/\{MAC\}$/){
+        $p->{uri} .= '{MAC}' ;
+    }
     $p->{uri} = URI::Escape::uri_escape($p->{uri});
     
     return $p;

@@ -213,6 +213,16 @@ has_field 'bootstrap_method' => (
         javascript => ' onchange="bootstrapDynamicFields(this.options[this.selectedIndex].value);" ',
     },
 );
+has_field 'bootstrap_uri' => (
+    type => 'Text',
+    required => 0,
+    label => 'Bootstrap URI',
+    default => '',
+    element_attr => {
+        rel => ['tooltip'],
+        title => ['Custom provisioning server URI.'],
+    },
+);
 
 
 has_field 'bootstrap_config_http_sync_uri' => (
@@ -288,7 +298,7 @@ has_field 'save' => (
 has_block 'fields' => (
     tag => 'div',
     class => [qw/modal-body/],
-    render_list => [qw/vendor model linerange linerange_add bootstrap_method bootstrap_config_http_sync_uri bootstrap_config_http_sync_method bootstrap_config_http_sync_params bootstrap_config_redirect_panasonic_user bootstrap_config_redirect_panasonic_password front_image mac_image/],
+    render_list => [qw/vendor model linerange linerange_add bootstrap_uri bootstrap_method bootstrap_config_http_sync_uri bootstrap_config_http_sync_method bootstrap_config_http_sync_params bootstrap_config_redirect_panasonic_user bootstrap_config_redirect_panasonic_password front_image mac_image/],
 );
 
 has_block 'actions' => (

@@ -286,10 +286,10 @@ sub devmod_edit :Chained('devmod_base') :PathPart('edit') :Args(0) :Does(ACL) :A
         push @{ $params->{linerange} }, $r;
     }    
     #TODO: TO inflate/deflate, I think
-    foreach ( $c->model('DB')->resultset('autoprov_sync_parameters')->search_rs({
-        'me.bootstrap_method' => $c->stash->{devmod}->bootstrap_method,
+    foreach ( $c->model('DB')->resultset('autoprov_sync')->search_rs({
+        device_id =>$c->stash->{devmod}->id,
     })->all ){
-        $params->{'bootstrap_config_'.$c->stash->{devmod}->bootstrap_method.'_'.$_->parameter_name} = $_->parameter_value;
+        $params->{'bootstrap_config_'.$c->stash->{devmod}->bootstrap_method.'_'.$_->autoprov_sync_parameters->parameter_name} = $_->parameter_value;
     }
     my $credentials_rs = $c->model('DB')->resultset('autoprov_redirect_credentials')->search_rs({
         'me.device_id' => $c->stash->{devmod}->id,
