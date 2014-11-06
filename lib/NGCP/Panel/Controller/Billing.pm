@@ -28,7 +28,7 @@ sub auto :Does(ACL) :ACLDetachTo('/denied_page') :AllowedRole(admin) :AllowedRol
 
 sub profile_list :Chained('/') :PathPart('billing') :CaptureArgs(0) {
     my ( $self, $c ) = @_;
-    
+
     my $dispatch_to = '_profile_resultset_' . $c->user->roles;
     my $profiles_rs = $self->$dispatch_to($c);
     $c->stash(profiles_rs => $profiles_rs);
@@ -36,6 +36,7 @@ sub profile_list :Chained('/') :PathPart('billing') :CaptureArgs(0) {
         { name => "id", "search" => 1, "title" => $c->loc("#") },
         { name => "name", "search" => 1, "title" => $c->loc("Name") },
         { name => "reseller.name", "search" => 1, "title" => $c->loc("Reseller") },
+        { name => "used", "search" => 1, "title" => $c->loc("Used") },
     ]);
 
     $c->stash(template => 'billing/list.tt');
@@ -43,14 +44,27 @@ sub profile_list :Chained('/') :PathPart('billing') :CaptureArgs(0) {
 
 sub _profile_resultset_admin {
     my ($self, $c) = @_;
-    my $rs = $c->model('DB')->resultset('billing_profiles');
+    my $rs = $c->model('DB')->resultset('billing_profiles')->search({
+            'me.status' => { '!=' => 'terminated' },
+            }, {
+            join => { 'billing_mappings' => 'contract_active' },
+            '+select' => { count => 'contract_active.status', -as => 'used' },
+            'group_by' => [ qw(me.id) ]
+        });
     return $rs;
 }
 
 sub _profile_resultset_reseller {
     my ($self, $c) = @_;
     my $rs = $c->model('DB')->resultset('admins')
-        ->find($c->user->id)->reseller->billing_profiles;
+        ->find($c->user->id)->reseller->billing_profiles
+        ->search_rs({
+            'me.status' => { '!=' => 'terminated' },
+            }, {
+            join => { 'billing_mappings' => 'contract_active' },
+            '+select' => { count => 'contract_active.status', -as => 'used' },
+            'group_by' => [ qw(me.id) ]
+        });
     return $rs;
 }
 
@@ -133,6 +147,7 @@ sub edit :Chained('base') :PathPart('edit') {
             } else {
                 $form->values->{reseller_id} = $c->user->reseller_id;
             }
+            $form->values->{modify_timestamp} = NGCP::Panel::Utils::DateTime::current_local;
             delete $form->values->{reseller};
             my $old_prepaid = $c->stash->{profile_result}->prepaid;
 
@@ -240,6 +255,7 @@ sub create :Chained('profile_list') :PathPart('create') :Args(0) {
             } else {
                 $form->values->{reseller_id} = $c->user->reseller_id;
             }
+            $form->values->{create_timestamp} = $form->values->{modify_timestamp} = NGCP::Panel::Utils::DateTime::current_local;
             delete $form->values->{reseller};
             my $profile = $c->model('DB')->resultset('billing_profiles')->create($form->values);
             $c->session->{created_objects}->{billing_profile} = { id => $profile->id };
@@ -268,6 +284,38 @@ sub create_without_reseller :Chained('profile_list') :PathPart('create/noreselle
     $self->create($c, 1); 
 }
 
+sub terminate :Chained('base') :PathPart('terminate') :Args(0) {
+    my ($self, $c) = @_;
+    my $profile = $c->stash->{profile_result};
+
+    if ($profile->id == 1) {
+        NGCP::Panel::Utils::Message->error(
+            c => $c,
+            desc => $c->loc('Cannot terminate default billing profile with the id 1'),
+        );
+        NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for('/billing'));
+    }
+
+    try {
+        $profile->update({
+            status => 'terminated',
+            terminate_timestamp => NGCP::Panel::Utils::DateTime::current_local,
+        });
+        NGCP::Panel::Utils::Message->info(
+            c => $c,
+            data => $c->stash->{profile},
+            desc => $c->loc('Billing profile successfully terminated'),
+        );
+    } catch ($e) {
+        NGCP::Panel::Utils::Message->error(
+            c => $c,
+            error => $e,
+            data  => $c->stash->{profile},
+            desc  => $c->loc('Failed to terminate billing profile'),
+        );
+    };
+    NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for('/billing'));
+}
 
 sub fees_list :Chained('base') :PathPart('fees') :CaptureArgs(0) {
     my ($self, $c) = @_;
