@@ -20,11 +20,21 @@ sub item_rs {
     my ($self, $c) = @_;
 
     my $item_rs = $c->model('DB')->resultset('billing_profiles');
+    my $search_xtra = {
+            join => { 'billing_mappings' => 'contract_active' },
+            '+select' => { count => 'contract_active.status', -as => 'used' },
+            'group_by' => [ qw(me.id) ] };
     if($c->user->roles eq "admin") {
+        $item_rs = $item_rs->search({ 'me.status' => { '!=' => 'terminated' } },
+                                    $search_xtra);
     } elsif($c->user->roles eq "reseller") {
-        $item_rs = $item_rs->search({ reseller_id => $c->user->reseller_id });
+        $item_rs = $item_rs->search({ reseller_id => $c->user->reseller_id,
+                                      'me.status' => { '!=' => 'terminated' } },
+                                      $search_xtra);
     } else {
-        $item_rs = $item_rs->search({ reseller_id => $c->user->contract->contact->reseller_id});
+        $item_rs = $item_rs->search({ reseller_id => $c->user->contract->contact->reseller_id,
+                                      'me.status' => { '!=' => 'terminated' } },
+                                      $search_xtra);
     }
     return $item_rs;
 }
@@ -98,6 +108,17 @@ sub update_profile {
         unless($reseller) {
             $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Invalid 'reseller_id'");
             return;
+        }
+    }
+
+    if(exists $resource->{status} && $resource->{status} eq 'terminated') {
+        my $profile_used = {$profile->get_inflated_columns}->{used};
+        if ($profile_used) {
+            $self->error($c, HTTP_UNPROCESSABLE_ENTITY,
+                         "Cannnot terminate billing_profile that is used (count: $profile_used)");
+            return;
+        } else {
+            $resource->{terminate_timestamp} = NGCP::Panel::Utils::DateTime::current_local;
         }
     }
 

@@ -148,6 +148,14 @@ has_field 'currency' => (
     },
 );
 
+has_field 'status' => (
+    type => 'Hidden',
+    options => [
+        { label => 'active', value => 'active' },
+        { label => 'terminated', value => 'terminated' },
+    ],
+);
+
 has_field 'save' => (
     type => 'Submit',
     value => 'Save',
@@ -161,7 +169,8 @@ has_block 'fields' => (
     render_list => [qw/handle name prepaid interval_charge interval_free_time interval_free_cash 
         fraud_interval_limit fraud_interval_lock fraud_interval_notify
         fraud_daily_limit fraud_daily_lock fraud_daily_notify
-        currency id/],
+        currency id
+        status/],
 );
 
 has_block 'actions' => (
