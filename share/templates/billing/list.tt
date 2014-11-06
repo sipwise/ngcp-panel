@@ -14,6 +14,7 @@
 
     UNLESS c.user.read_only;
         helper.dt_buttons = [
+            { name = c.loc('Terminate'), uri = "/billing/'+full[\"id\"]+'/terminate", class = 'btn-small btn-secondary', icon = 'icon-remove', condition => 'full.used == "0"' },
             { name = c.loc('Edit'), uri = "/billing/'+full[\"id\"]+'/edit", class = 'btn-small btn-primary', icon = 'icon-edit' },
             { name = c.loc('Fees'), uri = "/billing/'+full[\"id\"]+'/fees", class = 'btn-small btn-tertiary', icon = 'icon-shopping-cart' },
             { name = c.loc('Peaktimes'), uri = "/billing/'+full[\"id\"]+'/peaktimes", class = 'btn-small btn-tertiary', icon = 'icon-time' },
