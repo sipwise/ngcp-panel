@@ -285,11 +285,19 @@ sub devmod_edit :Chained('devmod_base') :PathPart('edit') :Args(0) :Does(ACL) :A
         $r->{keys} = $keys;
         push @{ $params->{linerange} }, $r;
     }    
-
+    #TODO: TO inflate/deflate, I think
     foreach ( $c->model('DB')->resultset('autoprov_sync_parameters')->search_rs({
         'me.bootstrap_method' => $c->stash->{devmod}->bootstrap_method,
     })->all ){
         $params->{'bootstrap_config_'.$c->stash->{devmod}->bootstrap_method.'_'.$_->parameter_name} = $_->parameter_value;
+    }
+    my $credentials_rs = $c->model('DB')->resultset('autoprov_redirect_credentials')->search_rs({
+        'me.device_id' => $c->stash->{devmod}->id,
+    });
+    if($credentials_rs->first){
+        foreach ( qw/user password/ ){
+            $params->{'bootstrap_config_'.$c->stash->{devmod}->bootstrap_method.'_'.$_} = $credentials_rs->first->get_column($_);
+        }
     }
 
     $params->{reseller}{id} = delete $params->{reseller_id};

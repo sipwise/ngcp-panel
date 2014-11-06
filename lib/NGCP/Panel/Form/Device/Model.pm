@@ -254,7 +254,7 @@ has_field 'bootstrap_config_http_sync_params' => (
         title => ['The parameters appended to the sync URI when setting the provisioning server, e.g. server.uri/$MA. The server.uri variable is automatically expanded during provisioning time.'],
     },
 );
-has_field 'bootstrap_config_panasonic_user' => (
+has_field 'bootstrap_config_redirect_panasonic_user' => (
     type => 'Text',
     required => 0,
     label => 'Panasonic username',
@@ -265,7 +265,7 @@ has_field 'bootstrap_config_panasonic_user' => (
         title => ['Username used to configure bootstrap url on Panasonic redirect server. Obtained from Panasonic.'],
     },
 );
-has_field 'bootstrap_config_panasonic_password' => (
+has_field 'bootstrap_config_redirect_panasonic_password' => (
     type => 'Text',
     required => 0,
     label => 'Panasonic password',
@@ -288,7 +288,7 @@ has_field 'save' => (
 has_block 'fields' => (
     tag => 'div',
     class => [qw/modal-body/],
-    render_list => [qw/vendor model linerange linerange_add bootstrap_method bootstrap_config_http_sync_uri bootstrap_config_http_sync_method bootstrap_config_http_sync_params bootstrap_config_panasonic_user bootstrap_config_panasonic_password front_image mac_image/],
+    render_list => [qw/vendor model linerange linerange_add bootstrap_method bootstrap_config_http_sync_uri bootstrap_config_http_sync_method bootstrap_config_http_sync_params bootstrap_config_redirect_panasonic_user bootstrap_config_redirect_panasonic_password front_image mac_image/],
 );
 
 has_block 'actions' => (
