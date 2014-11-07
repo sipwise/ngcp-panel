@@ -150,6 +150,7 @@ has_field 'currency' => (
 
 has_field 'status' => (
     type => 'Hidden',
+    default => 'active',
     options => [
         { label => 'active', value => 'active' },
         { label => 'terminated', value => 'terminated' },
