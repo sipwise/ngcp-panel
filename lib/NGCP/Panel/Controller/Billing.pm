@@ -36,7 +36,7 @@ sub profile_list :Chained('/') :PathPart('billing') :CaptureArgs(0) {
         { name => "id", "search" => 1, "title" => $c->loc("#") },
         { name => "name", "search" => 1, "title" => $c->loc("Name") },
         { name => "reseller.name", "search" => 1, "title" => $c->loc("Reseller") },
-        { name => "used", "search" => 1, "title" => $c->loc("Used") },
+        { name => "v_count_used", "search" => 0, "title" => $c->loc("Used") },
     ]);
 
     $c->stash(template => 'billing/list.tt');
@@ -48,7 +48,7 @@ sub _profile_resultset_admin {
             'me.status' => { '!=' => 'terminated' },
             }, {
             join => { 'billing_mappings' => 'contract_active' },
-            '+select' => { count => 'contract_active.status', -as => 'used' },
+            '+select' => { count => 'contract_active.status', -as => 'v_count_used' },
             'group_by' => [ qw(me.id) ]
         });
     return $rs;
@@ -62,7 +62,7 @@ sub _profile_resultset_reseller {
             'me.status' => { '!=' => 'terminated' },
             }, {
             join => { 'billing_mappings' => 'contract_active' },
-            '+select' => { count => 'contract_active.status', -as => 'used' },
+            '+select' => { count => 'contract_active.status', -as => 'v_count_used' },
             'group_by' => [ qw(me.id) ]
         });
     return $rs;

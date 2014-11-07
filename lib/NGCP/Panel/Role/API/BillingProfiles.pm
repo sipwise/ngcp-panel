@@ -22,7 +22,7 @@ sub item_rs {
     my $item_rs = $c->model('DB')->resultset('billing_profiles');
     my $search_xtra = {
             join => { 'billing_mappings' => 'contract_active' },
-            '+select' => { count => 'contract_active.status', -as => 'used' },
+            '+select' => { count => 'contract_active.status', -as => 'v_count_used' },
             'group_by' => [ qw(me.id) ] };
     if($c->user->roles eq "admin") {
         $item_rs = $item_rs->search({ 'me.status' => { '!=' => 'terminated' } },
@@ -112,7 +112,7 @@ sub update_profile {
     }
 
     if(exists $resource->{status} && $resource->{status} eq 'terminated') {
-        my $profile_used = {$profile->get_inflated_columns}->{used};
+        my $profile_used = {$profile->get_inflated_columns}->{v_count_used};
         if ($profile_used) {
             $self->error($c, HTTP_UNPROCESSABLE_ENTITY,
                          "Cannnot terminate billing_profile that is used (count: $profile_used)");
