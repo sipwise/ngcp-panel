@@ -30,6 +30,9 @@ sub prepare {
         : NGCP::Panel::Utils::DeviceBootstrap::get_baseuri($c);
         
     if ($p->{uri} !~/\{MAC\}$/){
+        if ($p->{uri} !~/\/$/){
+            $p->{uri} .= '/' ;
+        }
         $p->{uri} .= '{MAC}' ;
     }
     $p->{uri} = URI::Escape::uri_escape($p->{uri});
@@ -77,6 +80,7 @@ sub unregister {
 <param><value><string>".$old_mac."</string></value></param> 
 </params> 
 </methodCall>";
+    $c->log->debug("panasonic redirect call $data"); 
 
     my($res, $code) = https_post({
         'host'    => $cfg->{host},
@@ -108,6 +112,7 @@ sub register {
 <param><value><string>".$p->{uri}."</string></value></param> 
 </params> 
 </methodCall>";
+    $c->log->debug("panasonic redirect call $data"); 
 
     my($res, $code) = https_post({
         'host'    => $cfg->{host},
@@ -117,8 +122,12 @@ sub register {
         'Content-Type' => 'text/xml',
         'content' => $data,
     });
-    $c->log->debug("register returned with code $code and data $res"); 
-    return check_result($c, $res);
+    if($res){
+        $c->log->debug("register returned with code $code and data $res"); 
+        return check_result($c, $res);
+    }else{
+        return 'Empty response';
+    }
 }
 
 1;
