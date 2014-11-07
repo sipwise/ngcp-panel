@@ -192,7 +192,11 @@ sub _get_joined_column_name {
     my $cname = shift;
     my $name;
     if($cname !~ /\./) {
-        $name = 'me.'.$cname;
+        if ($cname !~ /^v_(max|min|count)_/) {
+            $name = 'me.'.$cname;
+        } else { # virtual agrregated columns (count, min, max)
+            $name = $cname;
+        }
     } else {
         my @parts = split /\./, $cname;
         if(@parts == 2) {
@@ -214,7 +218,11 @@ sub _get_joined_column_name_{
     my $cname = shift;
     my $name;
     if($cname !~ /\./) {
-        $name = 'me.'.$cname;
+        if ($cname !~ /^v_(max|min|count)_/) {
+            $name = 'me.'.$cname;
+        } else { # virtual agrregated columns (count, min, max)
+            $name = $cname;
+        }
     } else {
         my @parts = split /\./, $cname;
         if(@parts == 2){
