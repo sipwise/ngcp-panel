@@ -17,21 +17,22 @@ use NGCP::Panel::Utils::Kamailio;
 sub item_rs {
     my ($self, $c) = @_;
 
-    my @joins = ('subscriber');
+    my @joins = ();;
     if($c->config->{features}->{multidomain}) {
         push @joins, 'domain';
     }
-    my $item_rs = $c->model('DB')->resultset('location')->search({
-        
-    },{
-        join => \@joins,
-    });
+    my $item_rs = $c->model('DB')->resultset('location');
     if($c->user->roles eq "admin") {
+        $item_rs = $item_rs->search({
+            
+        },{
+            join => [@joins,'subscriber'],
+        });
     } elsif($c->user->roles eq "reseller") {
         $item_rs = $item_rs->search({ 
             'contact.reseller_id' => $c->user->reseller_id 
         },{
-            join => { }
+            join => [@joins, { 'subscriber' => { 'voip_subscriber' => { 'contract' => 'contact' }}} ],
         });
     }
     return $item_rs;
@@ -93,6 +94,7 @@ sub resource_from_item {
 
 sub item_by_id {
     my ($self, $c, $id) = @_;
+    
     my $item_rs = $self->item_rs($c);
     return $item_rs->find($id);
 }
