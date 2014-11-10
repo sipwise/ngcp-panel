@@ -1,3 +1,12 @@
+ngcp-panel (1.4.2.11+0~mr3.4.2.11) unstable; urgency=low
+
+  [ Irina Peshinskaya ]
+  * [0eff714] MT#10061 Fix rounding for invoices.
+
+  [ Sipwise Jenkins Builder ]
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Mon, 10 Nov 2014 11:03:25 +0100
+
 ngcp-panel (1.4.2.10+0~mr3.4.2.10) unstable; urgency=low
 
   [ Irina Peshinskaya ]
