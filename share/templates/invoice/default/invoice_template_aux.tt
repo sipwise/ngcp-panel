@@ -132,7 +132,7 @@
         base = 10;
         full = Math.int(amount / 100);
 #        -2 because now amount is in cents, so we need to shift to signs amount, additional to current 2.
-        cent = ( ( amount - full ) * ( base.power( money_signs - 2) ) );
+        cent = ( ( amount - full*100 ) * ( base.power( money_signs - 2) ) );
         cents = String.new(cent);
         cents = cents.format("%.0f",cents);
         cents_format_string = "%0" _ money_signs _ "d";
