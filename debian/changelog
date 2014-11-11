@@ -1,3 +1,13 @@
+ngcp-panel (1.5.1.9+0~mr3.5.1.9) unstable; urgency=low
+
+  [ Irina Peshinskaya ]
+  * [f5e7cb4] MT#9941 Consider PBX hunt parameters on subscriber creation via API
+  * [f688dda] MT#9941 Add cloud_pbx_hunt_* fields to api.
+
+  [ Sipwise Jenkins Builder ]
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Tue, 11 Nov 2014 22:45:50 +0100
+
 ngcp-panel (1.5.1.8+0~mr3.5.1.8) unstable; urgency=low
 
   [ Irina Peshinskaya ]
