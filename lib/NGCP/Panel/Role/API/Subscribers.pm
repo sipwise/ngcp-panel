@@ -368,6 +368,12 @@ sub prepare_resource {
             }
         }
 
+        if($self->is_true($resource->{is_pbx_group})) {
+            $preferences->{cloud_pbx_hunt_policy}  = $resource->{cloud_pbx_hunt_policy};
+            $preferences->{cloud_pbx_hunt_timeout} = $resource->{cloud_pbx_hunt_timeout};
+            $preferences->{cloud_pbx_hunt_policy}  //= $resource->{pbx_hunt_policy};
+            $preferences->{cloud_pbx_hunt_timeout} //= $resource->{pbx_hunt_timeout};
+        }
         $preferences->{cloud_pbx_ext} = $resource->{pbx_extension};
         $preferences->{shared_buddylist_visibility} = 1;
         $preferences->{display_name} = $resource->{display_name}
@@ -594,8 +600,8 @@ sub update_item {
             c => $c, 
             prov_subscriber => $subscriber->provisioning_voip_subscriber,
             'values'   => {
-                cloud_pbx_hunt_policy  => $resource->{pbx_hunt_policy},
-                cloud_pbx_hunt_timeout => $resource->{pbx_hunt_timeout},
+                cloud_pbx_hunt_policy  => $resource->{cloud_pbx_hunt_policy} // $resource->{pbx_hunt_policy},
+                cloud_pbx_hunt_timeout => $resource->{cloud_pbx_hunt_policy} // $resource->{pbx_hunt_timeout},
             }
         );
     }
