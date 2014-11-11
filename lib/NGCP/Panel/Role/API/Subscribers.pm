@@ -43,7 +43,9 @@ sub resource_from_item {
     }
     unless($self->is_true($resource{is_pbx_group})) {
         delete $resource{pbx_hunt_policy};
+        delete $resource{cloud_pbx_hunt_policy};
         delete $resource{pbx_hunt_timeout};
+        delete $resource{cloud_pbx_hunt_timeout};
     }
     delete $resource{contact_id};
     if($item->contact) {
