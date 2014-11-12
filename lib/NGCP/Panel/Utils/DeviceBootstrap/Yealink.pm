@@ -61,14 +61,6 @@ sub unregister_content {
 <value><string>".$self->content_params->{mac_old}."</string></value>
 </param>
 </params>
-</methodCall>
-    
-    <?xml version=\"1.0\"?> 
-<methodCall> 
-<methodName>ipredirect.unregisterPhone</methodName> 
-<params> 
-<param><value><string>".$self->content_params->{mac_old}."</string></value></param> 
-</params> 
 </methodCall>";
     return $self->{unregister_content};
 }

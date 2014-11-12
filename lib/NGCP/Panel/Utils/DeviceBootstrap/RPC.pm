@@ -22,17 +22,17 @@ has 'rpc_server_params' => (
     isa => 'HashRef',
 );
 
-sub redirect_register{
-    my ($self) = @_;
+sub redirect_server_call{
+    my ($self, $action) = @_;
     my $c = $self->params->{c};
     $self->init_content_params();
     $c->log->debug(Dumper ($self->content_params));
     my($content,$response_value);
-    if(defined $self->content_params->{mac_old} && $self->content_params->{mac} ne $self->content_params->{mac_old}) {
+    if('unregister' eq $action){
         $content = $self->unregister_content();
-        $response_value = $self->rpc_https_call($content);
+    }elsif('register' eq $action){
+        $content = $self->register_content();
     }
-    $content = $self->register_content();
     $response_value = $self->rpc_https_call($content);
     return $self->extract_response_description($response_value);
 }
@@ -60,12 +60,13 @@ sub rpc_https_call{
     }
     return $response_value;
 }
+
 sub init_content_params{
     my($self) = @_;
     $self->params->{redirect_uri_params} ||= '{MAC}';
-    my $uri = $self->get_bootstrap_uri();
+    $self->content_params->{uri} = $self->get_bootstrap_uri();
     $self->{content_params} ||= {};
-    $self->content_params->{uri} = URI::Escape::uri_escape($uri);
+
     $self->content_params->{mac} = normalize_mac($self->params->{mac});
     if(defined $self->params->{mac_old}) {
         $self->content_params->{mac_old} = normalize_mac($self->params->{mac_old});
@@ -78,6 +79,8 @@ sub normalize_mac {
     $mac = uc($mac);
     return $mac;
 }
+
+
 sub get_basic_authorization{
     my($self) = @_;
     my $authorization = encode_base64(join(':',@{$self->params->{credentials}}{qw/user password/}));
@@ -97,9 +100,19 @@ sub get_bootstrap_uri{
         my $cfg = $self->get_bootstrap_uri_conf();
         $uri = "$cfg->{schema}://$cfg->{host}:$cfg->{port}/device/autoprov/config/";
     }
+    if ($uri !~/\{MAC\}$/){
+        if ($uri !~/\/$/){
+            $uri .= '/' ;
+        }
+        $uri .= '{MAC}' ;
+    }
     $uri .= $uri_params;
+    $uri = URI::Escape::uri_escape($uri);
     return $uri;
 }
+
+
+#separated as this logic also used in other places, so can be moved to other utils module
 sub get_bootstrap_uri_conf{
     my ($self) = @_;
     my $c = $self->params->{c};

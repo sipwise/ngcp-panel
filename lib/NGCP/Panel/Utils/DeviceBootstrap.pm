@@ -44,12 +44,7 @@ sub dispatch{
     my $redirect_processor = get_redirect_processor($params);
     my $ret;
     if($redirect_processor){
-        if('unregister' eq $action){
-            $ret = $redirect_processor->redirect_unregister;
-        }
-        if('register' eq $action){
-            $ret = $redirect_processor->redirect_register;
-        }
+        $ret = $redirect_processor->redirect_server_call($action);
     }
     return $ret;
 }
@@ -61,7 +56,8 @@ sub get_redirect_processor{
     my $redirect_processor;
     if('redirect_panasonic' eq $bootstrap_method){
         $redirect_processor = NGCP::Panel::Utils::DeviceBootstrap::Panasonic->new( params => $params );
-    }elsif('redirect_linksys' eq $bootstrap_method){
+    }elsif('redirect_yealink' eq $bootstrap_method){
+        $redirect_processor = NGCP::Panel::Utils::DeviceBootstrap::yealink->new( params => $params );
     }elsif('http' eq $bootstrap_method){
         #$ret = panasonic_bootstrap_register($params);
     }
