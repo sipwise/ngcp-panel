@@ -33,11 +33,13 @@ sub dispatch{
         select => ['me.parameter_value'],
     });
     my $sync_params = $sync_params_rs->first ? $sync_params_rs->first->parameter_value : '';
+    
     my $params = {
         c => $c,
         mac => $fdev->identifier,
         mac_old => $old_identifier,
         bootstrap_method => $device->bootstrap_method,
+        redirect_uri => $device->bootstrap_uri,
         redirect_uri_params => $sync_params,
         credentials => $vcredentials,
     };
