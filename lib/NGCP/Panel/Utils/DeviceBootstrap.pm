@@ -16,47 +16,10 @@ use NGCP::Panel::Utils::DeviceBootstrap::Panasonic;
     #    credentials => {user=>, password=>}
     #};
 
-
-sub redirect_register{
-    my ($params) = @_;
-    my $ret;
-    my $redirect_processor = get_redirect_processor($params);
-    if($redirect_processor){
-        $ret = $redirect_processor->redirect_register;
-    }
-    return $ret;
-}
-sub redirect_unregister{
-    my ($params) = @_;
-    my $ret;
-    my $redirect_processor = get_redirect_processor($params);
-    if($redirect_processor){
-        $ret = $redirect_processor->redirect_unregister;
-    }
-    return $ret;
-}
-
-sub get_redirect_processor{
-    my ($params) = @_;
-    my $c = $params->{c};
-    my $bootstrap_method = $params->{bootstrap_method};
-
-    $c->log->debug( "bootstrap_method=$bootstrap_method;" );
-    my $redirect_processor;
-    if('redirect_panasonic' eq $bootstrap_method){
-        $redirect_processor = NGCP::Panel::Utils::DeviceBootstrap::Panasonic->new( params => $params );
-    }elsif('redirect_linksys' eq $bootstrap_method){
-    }elsif('http' eq $bootstrap_method){
-        #$ret = panasonic_bootstrap_register($params);
-    }
-    return $redirect_processor;
-}
-
-sub bootstrap_config{
-    my($c, $fdev, $old_identifier) = @_;
+sub dispatch{
+    my($c, $action, $fdev, $old_identifier) = @_;
     
     my $device = $fdev->profile->config->device;
-
     my $credentials = $fdev->profile->config->device->autoprov_redirect_credentials;
     my $vcredentials;
     if($credentials){
@@ -70,16 +33,41 @@ sub bootstrap_config{
         select => ['me.parameter_value'],
     });
     my $sync_params = $sync_params_rs->first ? $sync_params_rs->first->parameter_value : '';
-    my $ret = redirect_register({
+    my $params = {
         c => $c,
         mac => $fdev->identifier,
         mac_old => $old_identifier,
         bootstrap_method => $device->bootstrap_method,
         redirect_uri_params => $sync_params,
         credentials => $vcredentials,
-    });
+    };
+    my $redirect_processor = get_redirect_processor($params);
+    my $ret;
+    if($redirect_processor){
+        if('unregister' eq $action){
+            $ret = $redirect_processor->redirect_unregister;
+        }
+        if('register' eq $action){
+            $ret = $redirect_processor->redirect_register;
+        }
+    }
     return $ret;
 }
+sub get_redirect_processor{
+    my ($params) = @_;
+    my $c = $params->{c};
+    my $bootstrap_method = $params->{bootstrap_method};
+    $c->log->debug( "bootstrap_method=$bootstrap_method;" );
+    my $redirect_processor;
+    if('redirect_panasonic' eq $bootstrap_method){
+        $redirect_processor = NGCP::Panel::Utils::DeviceBootstrap::Panasonic->new( params => $params );
+    }elsif('redirect_linksys' eq $bootstrap_method){
+    }elsif('http' eq $bootstrap_method){
+        #$ret = panasonic_bootstrap_register($params);
+    }
+    return $redirect_processor;
+}
+
 sub devmod_sync_parameters_prefetch{
     my($c,$devmod,$params) = @_;
     my $schema = $c->model('DB');
@@ -96,12 +84,41 @@ sub devmod_sync_parameters_prefetch{
         };
         push @parameters,$sync_parameter;
     }
+    return \@parameters;
+}
+sub devmod_sync_credentials_prefetch{
+    my($c,$devmod,$params) = @_;
+    my $schema = $c->model('DB');
+    my $bootstrap_method = $params->{'bootstrap_method'};
+    my $credentials = {
+        device_id       => $devmod ? $devmod->id : undef,
+    };
+    foreach (qw/user password/){
+        $credentials->{$_} = delete $params->{'bootstrap_config_'.$bootstrap_method.'_'.$_};
+    }
+    return $credentials;
+}
+sub devmod_sync_credentials_store{
+    my($c,$devmod,$credentials) = @_;
+    my $schema = $c->model('DB');
+    my $credentials_rs = $schema->resultset('autoprov_redirect_credentials')->search_rs({
+        'device_id' => $devmod->id
+    });
+    if(!$credentials_rs->first){
+        $credentials->{device_id} = $devmod->id;
+        $schema->resultset('autoprov_redirect_credentials')->create($credentials);    
+    }else{
+       $credentials_rs->update($credentials);
+    }
+}
+
+sub devmod_sync_clear {
+    my($c,$params) = @_;
     foreach (keys %$params){
         if($_ =~/^bootstrap_config_/i){
             delete $params->{$_};
         }
     }
-    return \@parameters;
 }
 sub devmod_sync_parameters_store {
     my($c,$devmod,$sync_parameters) = @_;

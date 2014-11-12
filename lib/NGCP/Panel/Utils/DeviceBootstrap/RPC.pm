@@ -66,15 +66,17 @@ sub init_content_params{
     my $uri = $self->get_bootstrap_uri();
     $self->{content_params} ||= {};
     $self->content_params->{uri} = URI::Escape::uri_escape($uri);
-    my $mac = $self->params->{mac};
-    $mac =~s/[^A-F0-9]//gi;
-    $self->content_params->{mac} = uc($mac);
-    my $mac_old = $self->params->{mac_old};
-    if(defined $mac_old) {
-        $mac_old =~s/[^A-F0-9]//gi;
-        $mac_old = uc($mac_old);
-        $self->content_params->{mac_old} = $mac_old;
+    $self->content_params->{mac} = normalize_mac($self->params->{mac});
+    if(defined $self->params->{mac_old}) {
+        $self->content_params->{mac_old} = normalize_mac($self->params->{mac_old});
     }
+}
+sub normalize_mac {
+    my ($mac) = @_;
+    return unless($mac);
+    $mac =~s/[^A-F0-9]//gi;
+    $mac = uc($mac);
+    return $mac;
 }
 sub get_basic_authorization{
     my($self) = @_;
