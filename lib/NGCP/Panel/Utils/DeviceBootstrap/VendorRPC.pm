@@ -85,7 +85,7 @@ sub get_basic_authorization{
     my($self) = @_;
     my $authorization = encode_base64(join(':',@{$self->params->{credentials}}{qw/user password/}));
     $authorization =~s/[ \s]//gis;
-    $authorization .= '=';
+    #$authorization .= '=';
     return { 'Authorization' => 'Basic '.$authorization };
 }
 sub get_bootstrap_uri{
