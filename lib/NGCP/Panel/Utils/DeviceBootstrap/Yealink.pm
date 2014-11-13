@@ -2,7 +2,7 @@ package NGCP::Panel::Utils::DeviceBootstrap::Yealink;
 
 use strict;
 use Moose;
-extends 'NGCP::Panel::Utils::DeviceBootstrap::RPC';
+extends 'NGCP::Panel::Utils::DeviceBootstrap::VendorRPC';
 
 has 'rpc_server_params' => (
     is => 'rw',
@@ -27,7 +27,7 @@ sub rpc_server_params{
         port     => '443',
         path     => '/xmlrpc',
     };
-    $cfg->{headers} = { $self->get_basic_authorization($self->params->{credentials}) };
+    $cfg->{headers} = { %{$self->get_basic_authorization($self->params->{credentials})} };
     $self->{rpc_server_params} = $cfg;
     return $self->{rpc_server_params};
 }

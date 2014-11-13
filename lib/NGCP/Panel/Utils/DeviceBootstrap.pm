@@ -3,8 +3,9 @@ package NGCP::Panel::Utils::DeviceBootstrap;
 
 use strict;
 use Data::Dumper;
-use NGCP::Panel::Utils::DeviceBootstrap::RPC;
+use NGCP::Panel::Utils::DeviceBootstrap::VendorRPC;
 use NGCP::Panel::Utils::DeviceBootstrap::Panasonic;
+use NGCP::Panel::Utils::DeviceBootstrap::Yealink;
 
 #NGCP::Panel::Utils::DeviceBootstrap::RPC params =>
     #$params = {
@@ -59,7 +60,7 @@ sub get_redirect_processor{
     if('redirect_panasonic' eq $bootstrap_method){
         $redirect_processor = NGCP::Panel::Utils::DeviceBootstrap::Panasonic->new( params => $params );
     }elsif('redirect_yealink' eq $bootstrap_method){
-        $redirect_processor = NGCP::Panel::Utils::DeviceBootstrap::yealink->new( params => $params );
+        $redirect_processor = NGCP::Panel::Utils::DeviceBootstrap::Yealink->new( params => $params );
     }elsif('http' eq $bootstrap_method){
         #$ret = panasonic_bootstrap_register($params);
     }

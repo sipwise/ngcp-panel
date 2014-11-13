@@ -1,4 +1,4 @@
-package NGCP::Panel::Utils::DeviceBootstrap::RPC;
+package NGCP::Panel::Utils::DeviceBootstrap::VendorRPC;
 
 use strict;
 use URI::Escape;
@@ -42,6 +42,7 @@ sub rpc_https_call{
     $cfg //= $self->rpc_server_params;
     my $c = $self->params->{c};
     $c->log->debug( "host=$cfg->{host}; port=$cfg->{port}; path=$cfg->{path}; content=$content;" );
+    $c->log->debug( Dumper($cfg->{headers}) );
     my( $page, $response_code, %reply_headers ) = https_post({
         'host'    => $cfg->{host},
         'port'    => $cfg->{port},

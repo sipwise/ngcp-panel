@@ -3,7 +3,7 @@ package NGCP::Panel::Utils::DeviceBootstrap::Panasonic;
 use strict;
 use Moose;
 use Data::Dumper;
-extends 'NGCP::Panel::Utils::DeviceBootstrap::RPC';
+extends 'NGCP::Panel::Utils::DeviceBootstrap::VendorRPC';
 
 has 'rpc_server_params' => (
     is => 'rw',
