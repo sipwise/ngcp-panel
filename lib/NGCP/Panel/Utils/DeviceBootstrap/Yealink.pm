@@ -42,7 +42,7 @@ sub register_content {
 <value><string>".$self->content_params->{mac}."</string></value>
 </param>
 <param>
-<value><string>".$self->content_params->{uri}."</string></value>
+<value><string><![CDATA[".$self->content_params->{uri}."]]></string></value>
 </param>
 <param>
 <value><string>1</string></value>
@@ -78,6 +78,11 @@ sub extract_response_description{
     } else {
         return;
     }
+}
+
+sub process_uri{
+    my($self,$uri) = @_;
+    return $uri;
 }
 1;
 

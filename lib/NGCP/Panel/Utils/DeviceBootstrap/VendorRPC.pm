@@ -92,13 +92,18 @@ sub get_bootstrap_uri{
     my ($self) = @_;
     my $uri = $self->params->{redirect_uri};
     my $uri_params = $self->params->{redirect_uri_params} || '';
-    if($uri){
-        if($uri !~/^https?:\/\//i ){
-            $uri = 'http://'.$uri;
-        }
-    }else{
+    if(!$uri){
         my $cfg = $self->get_bootstrap_uri_conf();
         $uri = "$cfg->{schema}://$cfg->{host}:$cfg->{port}/device/autoprov/config/";
+    }
+    $uri .= $uri_params;
+    return $self->process_uri($uri);
+}
+
+sub process_uri{
+    my($self,$uri) = @_;
+    if($uri !~/^https?:\/\//i ){
+        $uri = 'http://'.$uri;
     }
     if ($uri !~/\{MAC\}$/){
         if ($uri !~/\/$/){
@@ -106,12 +111,9 @@ sub get_bootstrap_uri{
         }
         $uri .= '{MAC}' ;
     }
-    $uri .= $uri_params;
     $uri = URI::Escape::uri_escape($uri);
     return $uri;
 }
-
-
 #separated as this logic also used in other places, so can be moved to other utils module
 sub get_bootstrap_uri_conf{
     my ($self) = @_;
