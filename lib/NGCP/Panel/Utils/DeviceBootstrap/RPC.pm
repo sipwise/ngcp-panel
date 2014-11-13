@@ -63,7 +63,6 @@ sub rpc_https_call{
 
 sub init_content_params{
     my($self) = @_;
-    $self->params->{redirect_uri_params} ||= '{MAC}';
     $self->{content_params} ||= {};
     $self->content_params->{uri} = $self->get_bootstrap_uri();
 
@@ -93,7 +92,7 @@ sub get_bootstrap_uri{
     my $uri = $self->params->{redirect_uri};
     my $uri_params = $self->params->{redirect_uri_params} || '';
     if($uri){
-        if(!$uri =~/^https?:\/\//i ){
+        if($uri !~/^https?:\/\//i ){
             $uri = 'http://'.$uri;
         }
     }else{

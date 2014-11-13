@@ -204,6 +204,7 @@ has_field 'bootstrap_method' => (
     options => [
         { label => 'Cisco', value => 'http' },
         { label => 'Panasonic', value => 'redirect_panasonic' },
+        { label => 'Yealink', value => 'redirect_yealink' },
     ],
     default => 'http',
     element_attr => {
