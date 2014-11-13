@@ -2,6 +2,7 @@ package NGCP::Panel::Utils::DeviceBootstrap::Panasonic;
 
 use strict;
 use Moose;
+use Data::Dumper;
 extends 'NGCP::Panel::Utils::DeviceBootstrap::RPC';
 
 has 'rpc_server_params' => (
@@ -27,7 +28,7 @@ sub rpc_server_params{
         port     => '443',
         path     => '/redirect/xmlrpc',
     };
-    $cfg->{headers} = { $self->get_basic_authorization($self->params->{credentials}) };
+    $cfg->{headers} = { %{$self->get_basic_authorization($self->params->{credentials})} };
     $self->{rpc_server_params} = $cfg;
     return $self->{rpc_server_params};
 }

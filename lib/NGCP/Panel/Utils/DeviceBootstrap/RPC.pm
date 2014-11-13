@@ -64,8 +64,8 @@ sub rpc_https_call{
 sub init_content_params{
     my($self) = @_;
     $self->params->{redirect_uri_params} ||= '{MAC}';
-    $self->content_params->{uri} = $self->get_bootstrap_uri();
     $self->{content_params} ||= {};
+    $self->content_params->{uri} = $self->get_bootstrap_uri();
 
     $self->content_params->{mac} = normalize_mac($self->params->{mac});
     if(defined $self->params->{mac_old}) {
