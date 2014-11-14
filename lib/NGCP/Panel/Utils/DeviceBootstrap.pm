@@ -7,16 +7,6 @@ use NGCP::Panel::Utils::DeviceBootstrap::VendorRPC;
 use NGCP::Panel::Utils::DeviceBootstrap::Panasonic;
 use NGCP::Panel::Utils::DeviceBootstrap::Yealink;
 
-#NGCP::Panel::Utils::DeviceBootstrap::RPC params =>
-    #$params = {
-    #    redirect_uri
-    #    redirect_uri_params
-    #    mac
-    #    mac_old (optional)
-    #    c for log, config sync uri from config
-    #    credentials => {user=>, password=>}
-    #};
-
 sub dispatch{
     my($c, $action, $fdev, $old_identifier) = @_;
     

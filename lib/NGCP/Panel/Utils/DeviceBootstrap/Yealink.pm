@@ -2,6 +2,7 @@ package NGCP::Panel::Utils::DeviceBootstrap::Yealink;
 
 use strict;
 use Moose;
+use Digest::MD5 qw/md5_hex/;
 extends 'NGCP::Panel::Utils::DeviceBootstrap::VendorRPC';
 
 has 'rpc_server_params' => (
@@ -19,6 +20,11 @@ has 'unregister_content' => (
     isa => 'Str',
     accessor => '_unregister_content',
 );
+has 'add_server_content' => (
+    is => 'rw',
+    isa => 'Str',
+    accessor => '_add_server_content',
+);
 sub rpc_server_params{
     my $self = shift;
     my $cfg  = {
@@ -34,7 +40,7 @@ sub rpc_server_params{
 
 sub register_content {
     my $self = shift;
-    $self->{register_content} = "<?xml version='1.0' encoding='UTF-8'?>
+    $self->{register_content} ||= "<?xml version='1.0' encoding='UTF-8'?>
 <methodCall>
 <methodName>redirect.registerDevice</methodName>
 <params>
@@ -42,7 +48,7 @@ sub register_content {
 <value><string>".$self->content_params->{mac}."</string></value>
 </param>
 <param>
-<value><string><![CDATA[".$self->content_params->{uri}."]]></string></value>
+<value><string><![CDATA[".$self->content_params->{server_name}."]]></string></value>
 </param>
 <param>
 <value><string>1</string></value>
@@ -53,7 +59,7 @@ sub register_content {
 
 sub unregister_content {
     my $self = shift;
-    $self->{unregister_content} =  "<?xml version='1.0' encoding='UTF-8'?>
+    $self->{unregister_content} ||=  "<?xml version='1.0' encoding='UTF-8'?>
 <methodCall>
 <methodName>redirect.deRegisterDevice</methodName>
 <params>
@@ -63,6 +69,26 @@ sub unregister_content {
 </params>
 </methodCall>";
     return $self->{unregister_content};
+}
+sub add_server_content {
+    my $self = shift;
+    $self->{add_server_content} ||=  "<?xml version='1.0' encoding='UTF-8'?>
+<methodCall>
+<methodName>redirect.addServer</methodName>
+<params>
+<param>
+<value>
+<string><![CDATA[".$self->content_params->{uri_server_name}."]]></string>
+</value>
+</param>
+<param>
+<value>
+<string><![CDATA[".$self->content_params->{uri}."]]></string>
+</value>
+</param>
+</params>
+</methodCall>";
+    return $self->{add_server_content};
 }
 
 sub parse_rpc_response{
@@ -80,8 +106,11 @@ sub extract_response_description{
     }
 }
 
-sub process_uri{
+sub uri2server_name{
     my($self,$uri) = @_;
+    #http://stackoverflow.com/questions/4826403/hash-algorithm-with-alphanumeric-output-of-20-characters-max
+    
+    
     return $uri;
 }
 1;

@@ -27,14 +27,18 @@ sub redirect_server_call{
     my $c = $self->params->{c};
     $self->init_content_params();
     $c->log->debug(Dumper ($self->content_params));
-    my($content,$response_value);
-    if('unregister' eq $action){
-        $content = $self->unregister_content();
-    }elsif('register' eq $action){
-        $content = $self->register_content();
+    my($content,$response_value,$ret);
+    my $method = $action.'_content';
+    if($self->can($method)){
+        $content = $self->$method();
+    }else{
+        $ret = "Unknown method: $action";
     }
-    $response_value = $self->rpc_https_call($content);
-    return $self->extract_response_description($response_value);
+    if($content){
+        $response_value = $self->rpc_https_call($content);
+        $ret = $self->extract_response_description($response_value);
+    }
+    return $ret;
 }
 
 sub rpc_https_call{
