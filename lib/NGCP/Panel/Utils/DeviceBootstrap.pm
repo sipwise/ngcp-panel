@@ -10,14 +10,39 @@ use NGCP::Panel::Utils::DeviceBootstrap::Yealink;
 sub dispatch{
     my($c, $action, $fdev, $old_identifier) = @_;
     
-    my $device = $fdev->profile->config->device;
-    my $credentials = $fdev->profile->config->device->autoprov_redirect_credentials;
+    my $params = {
+        %{$self->get_devmod_params($c, $fdev->profile->config->device)},
+        mac => $fdev->identifier,
+        mac_old => $old_identifier,
+    };
+    my $redirect_processor = get_redirect_processor($params);
+    my $ret;
+    if($redirect_processor){
+        $ret = $redirect_processor->redirect_server_call($action);
+    }
+    return $ret;
+}
+sub dispatch_devmod{
+    my($c, $action, $devmod) = @_;
+    
+    my $params = $self->get_devmod_params($c,$devmod);
+    my $redirect_processor = get_redirect_processor($c,$params);
+    my $ret;
+    if($redirect_processor){
+        $ret = $redirect_processor->redirect_server_call($action);
+    }
+    return $ret;
+}
+sub get_devmod_params{
+    my($self, $devmod) = @_;
+    
+    my $credentials = $devmod->autoprov_redirect_credentials;
     my $vcredentials;
     if($credentials){
         $vcredentials = { map { $_ => $credentials->$_ } qw/user password/};
     }
 
-    my $sync_params_rs = $device->autoprov_sync->search_rs({
+    my $sync_params_rs = $devmod->autoprov_sync->search_rs({
         'autoprov_sync_parameters.parameter_name' => 'sync_params',
     },{
         join   => 'autoprov_sync_parameters',
@@ -27,19 +52,12 @@ sub dispatch{
     
     my $params = {
         c => $c,
-        mac => $fdev->identifier,
-        mac_old => $old_identifier,
-        bootstrap_method => $device->bootstrap_method,
-        redirect_uri => $device->bootstrap_uri,
+        bootstrap_method => $devmod->bootstrap_method,
+        redirect_uri => $devmod->bootstrap_uri,
         redirect_uri_params => $sync_params,
         credentials => $vcredentials,
     };
-    my $redirect_processor = get_redirect_processor($params);
-    my $ret;
-    if($redirect_processor){
-        $ret = $redirect_processor->redirect_server_call($action);
-    }
-    return $ret;
+    return $params;
 }
 sub get_redirect_processor{
     my ($params) = @_;

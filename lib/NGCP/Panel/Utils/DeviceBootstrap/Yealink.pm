@@ -72,13 +72,14 @@ sub unregister_content {
 }
 sub add_server_content {
     my $self = shift;
+    $self->uri2server_name();
     $self->{add_server_content} ||=  "<?xml version='1.0' encoding='UTF-8'?>
 <methodCall>
 <methodName>redirect.addServer</methodName>
 <params>
 <param>
 <value>
-<string><![CDATA[".$self->content_params->{uri_server_name}."]]></string>
+<string><![CDATA[".$self->content_params->{server_name}."]]></string>
 </value>
 </param>
 <param>
@@ -107,11 +108,10 @@ sub extract_response_description{
 }
 
 sub uri2server_name{
-    my($self,$uri) = @_;
+    my($self) = @_;
     #http://stackoverflow.com/questions/4826403/hash-algorithm-with-alphanumeric-output-of-20-characters-max
-    
-    
-    return $uri;
+    $self->content_params->{server_name} ||= substr(md5_hex($self->content_params->{uri}),0,20);
+    return $self->content_params->{server_name};
 }
 1;
 
