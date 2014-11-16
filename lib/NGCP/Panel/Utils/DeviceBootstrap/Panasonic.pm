@@ -35,12 +35,13 @@ sub rpc_server_params{
 
 sub register_content {
     my $self = shift;
+#<param><value><string>".URI::Escape::uri_escape($self->content_params->{uri})."</string></value></param> 
     $self->{register_content} = "<?xml version=\"1.0\"?> 
 <methodCall> 
 <methodName>ipredirect.registerPhone</methodName> 
 <params> 
 <param><value><string>".$self->content_params->{mac}."</string></value></param> 
-<param><value><string>".$self->content_params->{uri}."</string></value></param> 
+<param><value><string><![CDATA[".$self->content_params->{uri}."]]></string></value></param> 
 </params> 
 </methodCall>";
     return $self->{register_content};

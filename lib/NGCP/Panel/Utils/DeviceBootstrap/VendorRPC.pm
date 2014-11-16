@@ -106,7 +106,7 @@ sub get_bootstrap_uri{
 
 sub process_uri{
     my($self,$uri) = @_;
-    if($uri !~/^https?:\/\//i ){
+    if($uri !~/^(?:https?|t?ftp):\/\//i ){
         $uri = 'http://'.$uri;
     }
     if ($uri !~/\{MAC\}$/){
@@ -115,7 +115,6 @@ sub process_uri{
         }
         $uri .= '{MAC}' ;
     }
-    $uri = URI::Escape::uri_escape($uri);
     return $uri;
 }
 #separated as this logic also used in other places, so can be moved to other utils module

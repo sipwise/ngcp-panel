@@ -11,7 +11,7 @@ sub dispatch{
     my($c, $action, $fdev, $old_identifier) = @_;
     
     my $params = {
-        %{$self->get_devmod_params($c, $fdev->profile->config->device)},
+        %{get_devmod_params($c, $fdev->profile->config->device)},
         mac => $fdev->identifier,
         mac_old => $old_identifier,
     };
@@ -25,8 +25,8 @@ sub dispatch{
 sub dispatch_devmod{
     my($c, $action, $devmod) = @_;
     
-    my $params = $self->get_devmod_params($c,$devmod);
-    my $redirect_processor = get_redirect_processor($c,$params);
+    my $params = get_devmod_params($c,$devmod);
+    my $redirect_processor = get_redirect_processor($params);
     my $ret;
     if($redirect_processor){
         $ret = $redirect_processor->redirect_server_call($action);
@@ -34,7 +34,7 @@ sub dispatch_devmod{
     return $ret;
 }
 sub get_devmod_params{
-    my($self, $devmod) = @_;
+    my($c, $devmod) = @_;
     
     my $credentials = $devmod->autoprov_redirect_credentials;
     my $vcredentials;

@@ -50,9 +50,7 @@ sub register_content {
 <param>
 <value><string><![CDATA[".$self->content_params->{server_name}."]]></string></value>
 </param>
-<param>
-<value><string>1</string></value>
-</param></params>
+</params>
 </methodCall>";
     return $self->{register_content};
 }
@@ -72,7 +70,6 @@ sub unregister_content {
 }
 sub add_server_content {
     my $self = shift;
-    $self->uri2server_name();
     $self->{add_server_content} ||=  "<?xml version='1.0' encoding='UTF-8'?>
 <methodCall>
 <methodName>redirect.addServer</methodName>
@@ -106,6 +103,12 @@ sub extract_response_description{
         return;
     }
 }
+override 'process_uri' => sub {
+    my($self,$uri) = @_;
+    $self->content_params->{uri} = super();
+    $self->uri2server_name();
+    return $self->content_params->{uri};
+};
 
 sub uri2server_name{
     my($self) = @_;
