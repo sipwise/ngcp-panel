@@ -28,7 +28,6 @@ method get_log_params ($self: Catalyst :$c, :$type?, :$data?) {
                           $c->request->path;
         if ($c->session->{api_request_tx_id}) {
             $log_tx_id = $c->session->{api_request_tx_id};
-            delete $c->session->{api_request_tx_id}
         }
     } else {
         my $caller = (caller 2)[3];
