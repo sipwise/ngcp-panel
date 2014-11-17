@@ -39,6 +39,9 @@ organizationName_default = Sipwise GmbH
 commonName = Common Name (e.g. server FQDN or YOUR name)
 commonName_default = Sipwise GmbH
 
+organizationalUnitName = Organizational Unit Name (eg, section)
+organizationalUnitName_default = Sipwise GmbH
+
 emailAddress = Email Address
 emailAddress_default = service@sipwise.com
 
@@ -48,4 +51,4 @@ emailAddress_default = service@sipwise.com
 subjectKeyIdentifier=hash
 authorityKeyIdentifier=keyid:always, issuer
 basicConstraints = critical, CA:true
-keyUsage = keyCertSign, cRLSign
+keyUsage = keyCertSign, cRLSign, keyEncipherment
