@@ -16,6 +16,8 @@ use HTTP::Headers::Util qw(split_header_words);
 use NGCP::Panel::Utils::ValidateJSON qw();
 
 has('last_modified', is => 'rw', isa => InstanceOf['DateTime']);
+has('ctx', is => 'rw', isa => InstanceOf['NGCP::Panel']);
+
 
 sub get_valid_post_data {
     my ($self, %params) = @_;
@@ -425,6 +427,8 @@ sub apply_patch {
 
 sub set_body {
     my ($self, $c) = @_;
+    #Ctx could be initialized in Root::get_collections - wouldn't it be better?
+    $self->ctx($c);
     $c->stash->{body} = $c->request->body ? (do { local $/; $c->request->body->getline }) : '';
 }
 
@@ -483,7 +487,8 @@ around 'item_rs' => sub {
         my $q = $c->req->query_params->{$param}; # TODO: arrayref?
         $q =~ s/\*/\%/g;
         if(@p) {
-            $item_rs = $item_rs->search($p[0]->{query}->{first}($q), $p[0]->{query}->{second}($q));
+            #ctx config may be necessary
+            $item_rs = $item_rs->search($p[0]->{query}->{first}($q,$self->ctx), $p[0]->{query}->{second}($q,$self->ctx));
         }
     }
     return $item_rs;
