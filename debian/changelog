@@ -1,3 +1,12 @@
+ngcp-panel (1.5.1.11+0~mr3.5.1.11) unstable; urgency=low
+
+  [ Irina Peshinskaya ]
+  * [898bb9c] MT#10045 Use form->values instead of form->params for contract forms
+
+  [ Sipwise Jenkins Builder ]
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Tue, 18 Nov 2014 13:52:49 +0100
+
 ngcp-panel (1.5.1.10+0~mr3.5.1.10) unstable; urgency=low
 
   [ Irina Peshinskaya ]
