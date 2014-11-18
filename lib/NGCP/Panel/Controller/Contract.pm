@@ -286,13 +286,13 @@ sub peering_create :Chained('peering_list') :PathPart('create') :Args(0) {
         try {
             my $schema = $c->model('DB');
             $schema->txn_do(sub {
-                $form->params->{contact_id} = $form->params->{contact}{id};
-                delete $form->params->{contract};
-                my $bprof_id = $form->params->{billing_profile}{id};
-                delete $form->params->{billing_profile};
-                $form->params->{external_id} = $form->field('external_id')->value;
-                $form->{create_timestamp} = $form->{modify_timestamp} = NGCP::Panel::Utils::DateTime::current_local;
-                my $contract = $schema->resultset('contracts')->create($form->params);
+                $form->values->{contact_id} = $form->values->{contact}{id};
+                delete $form->values->{contract};
+                my $bprof_id = $form->values->{billing_profile}{id};
+                delete $form->values->{billing_profile};
+                $form->values->{external_id} = $form->field('external_id')->value;
+                $form->values->{create_timestamp} = $form->values->{modify_timestamp} = NGCP::Panel::Utils::DateTime::current_local;
+                my $contract = $schema->resultset('contracts')->create($form->values);
                 my $billing_profile = $schema->resultset('billing_profiles')->find($bprof_id);
                 my $product = $schema->resultset('products')->find({ class => 'sippeering' }); 
                 $contract->billing_mappings->create({
@@ -413,13 +413,13 @@ sub reseller_create :Chained('reseller_list') :PathPart('create') :Args(0) {
         try {
             my $schema = $c->model('DB');
             $schema->txn_do(sub {
-                $form->params->{contact_id} = $form->params->{contact}{id};
-                delete $form->params->{contract};
-                my $bprof_id = $form->params->{billing_profile}{id};
-                delete $form->params->{billing_profile};
-                $form->params->{external_id} = $form->field('external_id')->value;
-                $form->{create_timestamp} = $form->{modify_timestamp} = NGCP::Panel::Utils::DateTime::current_local;
-                my $contract = $schema->resultset('contracts')->create($form->params);
+                $form->values->{contact_id} = $form->values->{contact}{id};
+                delete $form->values->{contract};
+                my $bprof_id = $form->values->{billing_profile}{id};
+                delete $form->values->{billing_profile};
+                $form->values->{external_id} = $form->field('external_id')->value;
+                $form->values->{create_timestamp} = $form->values->{modify_timestamp} = NGCP::Panel::Utils::DateTime::current_local;
+                my $contract = $schema->resultset('contracts')->create($form->values);
                 my $billing_profile = $schema->resultset('billing_profiles')->find($bprof_id);
                 my $product = $schema->resultset('products')->find({ class => 'reseller' }); 
                 $contract->billing_mappings->create({
