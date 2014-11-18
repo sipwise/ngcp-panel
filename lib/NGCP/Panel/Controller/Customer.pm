@@ -137,22 +137,22 @@ sub create :Chained('list_customer') :PathPart('create') :Args(0) {
             my $schema = $c->model('DB');
             $schema->txn_do(sub {
                 foreach(qw/contact subscriber_email_template passreset_email_template invoice_email_template invoice_template/){
-                    $form->params->{$_.'_id'} = $form->params->{$_}{id} || undef;
-                    delete $form->params->{$_};
+                    $form->values->{$_.'_id'} = $form->values->{$_}{id} || undef;
+                    delete $form->values->{$_};
                 }
-                my $bprof_id = $form->params->{billing_profile}{id};
-                delete $form->params->{billing_profile};
-                $form->params->{create_timestamp} = $form->params->{modify_timestamp} = NGCP::Panel::Utils::DateTime::current_local;
-                $form->params->{external_id} = $form->field('external_id')->value;
-                my $product_id = $form->params->{product}{id};
-                delete $form->params->{product};
+                my $bprof_id = $form->values->{billing_profile}{id};
+                delete $form->values->{billing_profile};
+                $form->values->{create_timestamp} = $form->values->{modify_timestamp} = NGCP::Panel::Utils::DateTime::current_local;
+                $form->values->{external_id} = $form->field('external_id')->value;
+                my $product_id = $form->values->{product}{id};
+                delete $form->values->{product};
                 unless($product_id) {
                     $product_id = $c->model('DB')->resultset('products')->find({ class => 'sipaccount' })->id;
                 }
-                unless($form->params->{max_subscribers} && length($form->params->{max_subscribers})) {
-                    delete $form->params->{max_subscribers};
+                unless($form->values->{max_subscribers} && length($form->values->{max_subscribers})) {
+                    delete $form->values->{max_subscribers};
                 }
-                my $contract = $schema->resultset('contracts')->create($form->params);
+                my $contract = $schema->resultset('contracts')->create($form->values);
                 my $billing_profile = $schema->resultset('billing_profiles')->find($bprof_id);
                 $contract->billing_mappings->create({
                     billing_profile_id => $bprof_id,
@@ -397,23 +397,23 @@ sub edit :Chained('base') :PathPart('edit') :Args(0) {
             my $schema = $c->model('DB');
             $schema->txn_do(sub {
                 foreach(qw/contact subscriber_email_template passreset_email_template invoice_email_template invoice_template/){
-                    $form->params->{$_.'_id'} = $form->params->{$_}{id} || undef;
-                    delete $form->params->{$_};
+                    $form->values->{$_.'_id'} = $form->values->{$_}{id} || undef;
+                    delete $form->values->{$_};
                 }
-                my $bprof_id = $form->params->{billing_profile}{id};
-                delete $form->params->{billing_profile};
+                my $bprof_id = $form->values->{billing_profile}{id};
+                delete $form->values->{billing_profile};
                 $form->{modify_timestamp} = NGCP::Panel::Utils::DateTime::current_local;
-                my $product_id = $form->params->{product}{id} || $billing_mapping->product_id;
-                delete $form->params->{product};
-                $form->params->{external_id} = $form->field('external_id')->value;
-                unless($form->params->{max_subscribers} && length($form->params->{max_subscribers})) {
-                    $form->params->{max_subscribers} = undef;
+                my $product_id = $form->values->{product}{id} || $billing_mapping->product_id;
+                delete $form->values->{product};
+                $form->values->{external_id} = $form->field('external_id')->value;
+                unless($form->values->{max_subscribers} && length($form->values->{max_subscribers})) {
+                    $form->values->{max_subscribers} = undef;
                 }
                 my $old_bprof_id = $billing_mapping->billing_profile_id;
                 my $old_prepaid = $billing_mapping->billing_profile->prepaid;
                 my $old_ext_id = $contract->external_id // '';
                 my $old_status = $contract->status;
-                $contract->update($form->params);
+                $contract->update($form->values);
                 my $new_ext_id = $contract->external_id // '';
 
                 # if status changed, populate it down the chain
