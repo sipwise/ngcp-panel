@@ -22,6 +22,7 @@
                 { name = c.loc('Edit'), uri = "/subscriberprofile/" _ set.id _ "/profile/'+full.id+'/edit", class = 'btn-small btn-primary', icon = 'icon-edit' },
                 { name = c.loc('Delete'), uri = "/subscriberprofile/" _ set.id _ "/profile/'+full.id+'/delete", class = 'btn-small btn-secondary', icon = 'icon-trash' },
                 { name = c.loc('Clone'), uri = "/subscriberprofile/" _ set.id _ "/profile/'+full.id+'/clone", class = 'btn-small btn-tertiary', icon = 'icon-retweet' },
+                { name = c.loc('Preferences'), uri = "/subscriberprofile/" _ set.id _ "/profile/'+full.id+'/preferences", class = 'btn-small btn-tertiary', icon = 'icon-list' },
             ];
             helper.top_buttons = [
                 { name = c.loc('Profile Sets'), uri = c.uri_for('/subscriberprofile'), icon = 'icon-list' },
@@ -30,6 +31,7 @@
         ELSE;
             helper.dt_buttons = [
                 { name = c.loc('Edit'), uri = "/subscriberprofile/" _ set.id _ "/profile/'+full.id+'/edit", class = 'btn-small btn-primary', icon = 'icon-edit' },
+                { name = c.loc('Preferences'), uri = "/subscriberprofile/" _ set.id _ "/profile/'+full.id+'/preferences", class = 'btn-small btn-tertiary', icon = 'icon-list' },
             ];
             helper.top_buttons = [
                 { name = c.loc('Profile Sets'), uri = c.uri_for('/subscriberprofile'), icon = 'icon-list' },

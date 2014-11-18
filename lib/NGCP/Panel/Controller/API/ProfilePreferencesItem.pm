@@ -1,11 +1,14 @@
-package NGCP::Panel::Controller::API::SubscriberProfilesItem;
+package NGCP::Panel::Controller::API::ProfilePreferencesItem;
 use Sipwise::Base;
 use namespace::sweep;
+use boolean qw(true);
+use Data::HAL qw();
+use Data::HAL::Link qw();
 use HTTP::Headers qw();
 use HTTP::Status qw(:constants);
 use MooseX::ClassAttribute qw(class_has);
-use NGCP::Panel::Utils::DateTime;
 use NGCP::Panel::Utils::ValidateJSON qw();
+use NGCP::Panel::Utils::DateTime;
 use Path::Tiny qw(path);
 use Safe::Isa qw($_isa);
 BEGIN { extends 'Catalyst::Controller::ActionRole'; }
@@ -13,11 +16,11 @@ require Catalyst::ActionRole::ACL;
 require Catalyst::ActionRole::HTTPMethods;
 require Catalyst::ActionRole::RequireSSL;
 
-with 'NGCP::Panel::Role::API::SubscriberProfiles';
+with 'NGCP::Panel::Role::API::Preferences';
 
-class_has('resource_name', is => 'ro', default => 'subscriberprofiles');
-class_has('dispatch_path', is => 'ro', default => '/api/subscriberprofiles/');
-class_has('relation', is => 'ro', default => 'http://purl.org/sipwise/ngcp-api/#rel-subscriberprofiles');
+class_has('resource_name', is => 'ro', default => 'profilepreferences');
+class_has('dispatch_path', is => 'ro', default => '/api/profilepreferences/');
+class_has('relation', is => 'ro', default => 'http://purl.org/sipwise/ngcp-api/#rel-profilepreferences');
 
 __PACKAGE__->config(
     action => {
@@ -44,10 +47,10 @@ sub GET :Allow {
     my ($self, $c, $id) = @_;
     {
         last unless $self->valid_id($c, $id);
-        my $item = $self->item_by_id($c, $id);
-        last unless $self->resource_exists($c, subscriberprofile => $item);
+        my $profile = $self->item_by_id($c, $id, "profiles");
+        last unless $self->resource_exists($c, profilepreference => $profile);
 
-        my $hal = $self->hal_from_item($c, $item);
+        my $hal = $self->hal_from_item($c, $profile, "profiles");
 
         my $response = HTTP::Response->new(HTTP_OK, undef, HTTP::Headers->new(
             (map { # XXX Data::HAL must be able to generate links with multiple relations
@@ -90,32 +93,32 @@ sub PATCH :Allow {
         last unless $preference;
 
         my $json = $self->get_valid_patch_data(
-            c => $c, 
+            c => $c,
             id => $id,
             media_type => 'application/json-patch+json',
             ops => [qw/add replace remove copy/],
         );
         last unless $json;
 
-        my $form = $self->get_form($c);
-
-        my $item = $self->item_by_id($c, $id);
-        last unless $self->resource_exists($c, subscriberprofile => $item);
-        my $old_resource = $self->resource_from_item($c, $item, $form);
+        my $profile = $self->item_by_id($c, $id, "profiles");
+        last unless $self->resource_exists($c, profilepreferences => $profile);
+        my $old_resource = $self->get_resource($c, $profile, "profiles");
         my $resource = $self->apply_patch($c, $old_resource, $json);
         last unless $resource;
 
-        $item = $self->update_item($c, $item, $old_resource, $resource, $form);
-        last unless $item;
-        
-        $guard->commit;
+        # last param is "no replace" to NOT delete existing prefs
+        # for proper PATCH behavior
+        $profile = $self->update_item($c, $profile, $old_resource, $resource, 0, "profiles");
+        last unless $profile;
+
+        $guard->commit; 
 
         if ('minimal' eq $preference) {
             $c->response->status(HTTP_NO_CONTENT);
             $c->response->header(Preference_Applied => 'return=minimal');
             $c->response->body(q());
         } else {
-            my $hal = $self->hal_from_item($c, $item, $form);
+            my $hal = $self->hal_from_item($c, $profile, "profiles");
             my $response = HTTP::Response->new(HTTP_OK, undef, HTTP::Headers->new(
                 $hal->http_headers,
             ), $hal->as_json);
@@ -134,18 +137,21 @@ sub PUT :Allow {
         my $preference = $self->require_preference($c);
         last unless $preference;
 
-        my $item = $self->item_by_id($c, $id);
-        last unless $self->resource_exists($c, subscriberprofile => $item);
+        my $profile = $self->item_by_id($c, $id, "profiles");
+        # TODO: systemcontact?
+        last unless $self->resource_exists($c, systemcontact => $profile);
         my $resource = $self->get_valid_put_data(
             c => $c,
             id => $id,
             media_type => 'application/json',
         );
         last unless $resource;
-        my $form = $self->get_form($c);
-        my $old_resource = $self->resource_from_item($c, $item, $form);
-        $item = $self->update_item($c, $item, $old_resource, $resource, $form);
-        last unless $item;
+        my $old_resource = $self->get_resource($c, $profile, "profiles");
+
+        # last param is "replace" to delete all existing prefs
+        # for proper PUT behavior
+        $profile = $self->update_item($c, $profile, $old_resource, $resource, 1, "profiles");
+        last unless $profile;
 
         $guard->commit; 
 
@@ -154,7 +160,7 @@ sub PUT :Allow {
             $c->response->header(Preference_Applied => 'return=minimal');
             $c->response->body(q());
         } else {
-            my $hal = $self->hal_from_item($c, $item, $form);
+            my $hal = $self->hal_from_item($c, $profile, "profiles");
             my $response = HTTP::Response->new(HTTP_OK, undef, HTTP::Headers->new(
                 $hal->http_headers,
             ), $hal->as_json);
@@ -162,45 +168,6 @@ sub PUT :Allow {
             $c->response->header(Preference_Applied => 'return=representation');
             $c->response->body($response->content);
         }
-    }
-    return;
-}
-
-sub DELETE :Allow {
-    my ($self, $c, $id) = @_;
-
-    if($c->user->roles eq "reseller" && !$c->config->{profile_sets}->{reseller_edit}) {
-        $c->log->error("profile deletion by reseller forbidden via config");
-        $self->error($c, HTTP_FORBIDDEN, "Subscriber profile deletion forbidden for resellers.");
-        return;
-    }
-
-    my $guard = $c->model('DB')->txn_scope_guard;
-    {
-        my $item = $self->item_by_id($c, $id);
-        last unless $self->resource_exists($c, subscriberprofile => $item);
-
-        $c->model('DB')->resultset('provisioning_voip_subscribers')->search({
-            profile_id => $item->id,
-        })->update({
-            profile_id => undef,
-        });
-
-        if($item->set_default && $item->profile_set->voip_subscriber_profiles->count > 1) { 
-            $item->profile_set->voip_subscriber_profiles->search({
-                id => { '!=' => $item->id },
-            })->first->update({
-                set_default => 1,
-            });
-        }
-
-        $item->voip_prof_preferences->delete;
-        $item->delete;
-
-        $guard->commit;
-
-        $c->response->status(HTTP_NO_CONTENT);
-        $c->response->body(q());
     }
     return;
 }

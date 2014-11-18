@@ -11,6 +11,7 @@ use NGCP::Panel::Form::SubscriberProfile::SetCloneAdmin;
 use NGCP::Panel::Form::SubscriberProfile::ProfileClone;
 use NGCP::Panel::Utils::Message;
 use NGCP::Panel::Utils::Navigation;
+use NGCP::Panel::Utils::Preferences;
 
 sub auto :Private{
     my ($self, $c) = @_;
@@ -491,8 +492,8 @@ sub profile_edit :Chained('profile_base') :PathPart('edit') :Does(ACL) :ACLDetac
                 $profile->update($form->values);
 
 
-                my %old_attributes = map { $_ => 1 } 
-                    $profile->profile_attributes->get_column('attribute_id')->all;
+                my %old_attributes = map { $_->id => $_->attribute->attribute } 
+                    $profile->profile_attributes->all;
 
                 # TODO: reuse attributes for efficiency reasons?
                 $profile->profile_attributes->delete;
@@ -528,6 +529,31 @@ sub profile_edit :Chained('profile_base') :PathPart('edit') :Does(ACL) :ACLDetac
                         $sub->voip_cf_mappings->search({
                             type => { -in => [ map { $_->attribute } $cfs->all ] },
                         })->delete;
+                    }
+
+                    # clear profile preferences too (use delete_all to avoid dbixc error)
+                    while(my ($k,$v) = each %old_attributes) {
+                        if($v eq "rewrite_rule_set") {
+                            $profile->voip_prof_preferences->search({
+                                'attribute.attribute' => { -in => [qw/rewrite_rule_set rewrite_caller_in_dpid rewrite_caller_out_dpid rewrite_callee_in_dpid rewrite_callee_out_dpid/] },
+                            },{
+                                join => 'attribute'
+                            })->delete_all;
+                        } elsif($v =~ "^(adm_)?ncos") {
+                            $profile->voip_prof_preferences->search({
+                                'attribute.attribute' => { -in => [$v, $v."_id"] },
+                            },{
+                                join => 'attribute'
+                            })->delete_all;
+                        } elsif($v =~ "^(man_)?allowed_ips") {
+                            $profile->voip_prof_preferences->search({
+                                'attribute.attribute' => { -in => [$v, $v."_grp"] },
+                            },{
+                                join => 'attribute'
+                            })->delete_all;
+                        } else {
+                            $profile->voip_prof_preferences->search({ attribute_id => $k})->delete_all;
+                        }
                     }
                 }
 
@@ -573,6 +599,7 @@ sub profile_delete :Chained('profile_base') :PathPart('delete') :Does(ACL) :ACLD
                       set_default => 1,
                 });
             }
+            $profile->voip_prof_preferences->delete;
             $profile->delete;
         });
         NGCP::Panel::Utils::Message->info(
@@ -643,6 +670,94 @@ sub profile_clone :Chained('profile_base') :PathPart('clone') :Does(ACL) :ACLDet
     $c->stash(create_flag => 1);
     $c->stash(clone_flag => 1);
 }
+
+sub preferences :Chained('profile_base') :PathPart('preferences') :Args(0) {
+    my ($self, $c) = @_;
+
+    $self->load_preference_list($c);
+    $c->stash(template => 'subprofile/preferences.tt');
+}
+
+sub preferences_base :Chained('profile_base') :PathPart('preferences') :CaptureArgs(1) {
+    my ($self, $c, $pref_id) = @_;
+
+    $self->load_preference_list($c);
+
+    $c->stash->{preference_meta} = $c->model('DB')
+        ->resultset('voip_preferences')
+        ->single({id => $pref_id});
+    my $profile = $c->stash->{profile};
+
+    $c->stash->{preference} = $c->model('DB')
+        ->resultset('voip_prof_preferences')
+        ->search({
+            attribute_id => $pref_id,
+            profile_id => $profile->id,
+        });
+    my @values = $c->stash->{preference}->get_column("value")->all;
+    $c->stash->{preference_values} = \@values;
+    $c->stash(template => 'subprofile/preferences.tt');
+}
+
+sub preferences_edit :Chained('preferences_base') :PathPart('edit') :Args(0) {
+    my ($self, $c) = @_;
+
+    $c->stash(edit_preference => 1);
+    my $profile = $c->stash->{profile};
+
+    my @enums = $c->stash->{preference_meta}
+        ->voip_preferences_enums
+        ->search({prof_pref => 1})
+        ->all;
+
+    my $pref_rs = $c->model('DB')
+        ->resultset('voip_prof_preferences')
+        ->search({
+            profile_id => $profile->id,
+        });
+
+    NGCP::Panel::Utils::Preferences::create_preference_form( c => $c,
+        pref_rs => $pref_rs,
+        enums   => \@enums,
+        base_uri => $c->uri_for_action('/subscriberprofile/preferences', [$profile->profile_set->id,$profile->id]),
+        edit_uri => $c->uri_for_action('/subscriberprofile/preferences_edit', $c->req->captures),
+    );
+}
+
+sub load_preference_list :Private {
+    my ($self, $c) = @_;
+
+    my $prof_pref_values = $c->model('DB')
+        ->resultset('voip_preferences')
+        ->search({
+                profile_id => $c->stash->{profile}->id,
+            },{
+                prefetch => 'voip_prof_preferences',
+            });
+
+    my %pref_values;
+    foreach my $value($prof_pref_values->all) {
+
+        $pref_values{$value->attribute} = [
+            map {$_->value} $value->voip_prof_preferences->all
+        ];
+    }
+
+    my $reseller_id = $c->stash->{profile}->profile_set->reseller_id;
+
+    my $ncos_levels_rs = $c->model('DB')
+        ->resultset('ncos_levels')
+        ->search_rs({ reseller_id => $reseller_id, });
+    $c->stash(ncos_levels_rs => $ncos_levels_rs,
+              ncos_levels    => [$ncos_levels_rs->all]);
+
+    NGCP::Panel::Utils::Preferences::load_preference_list( c => $c,
+        pref_values => \%pref_values,
+        prof_pref => 1,
+        sub_profile => $c->stash->{profile},
+    );
+}
+
 
 
 __PACKAGE__->meta->make_immutable;

@@ -35,12 +35,14 @@ sub load_preference_list {
     my $pref_values = $params{pref_values};
     my $peer_pref = $params{peer_pref};
     my $dom_pref = $params{dom_pref};
+    my $prof_pref = $params{prof_pref};
     my $usr_pref = $params{usr_pref};
     my $contract_pref = $params{contract_pref};
+    my $profile = $params{sub_profile};
 
     my $customer_view = $params{customer_view} // 0;
     
-    my @pref_groups = $c->model('DB')
+    my $pref_rs = $c->model('DB')
         ->resultset('voip_preference_groups')
         ->search({ 'voip_preferences.internal' => { '<=' => 0 },
             $contract_pref ? ('voip_preferences.contract_pref' => 1,
@@ -52,14 +54,23 @@ sub load_preference_list {
             $dom_pref ? ('voip_preferences.dom_pref' => 1,
                 -or => ['voip_preferences_enums.dom_pref' => 1,
                     'voip_preferences_enums.dom_pref' => undef]) : (),
+            $prof_pref ? ('voip_preferences.prof_pref' => 1,
+                -or => ['voip_preferences_enums.prof_pref' => 1,
+                    'voip_preferences_enums.prof_pref' => undef]) : (),
             $usr_pref ? ('voip_preferences.usr_pref' => 1,
                 -or => ['voip_preferences_enums.usr_pref' => 1,
                     'voip_preferences_enums.usr_pref' => undef]) : (),
             $customer_view ? ('voip_preferences.expose_to_customer' => 1) : (),
             }, {
                 prefetch => {'voip_preferences' => 'voip_preferences_enums'},
-            })
-        ->all;
+            });
+    if($prof_pref) {
+        my @prof_attributes = $profile->profile_attributes->get_column('attribute_id')->all;
+        $pref_rs = $pref_rs->search({
+            'voip_preferences.id' => { in => \@prof_attributes }
+        });
+    }
+    my @pref_groups = $pref_rs->all;
 
     foreach my $group(@pref_groups) {
         my @group_prefs = $group->voip_preferences->all;
@@ -746,6 +757,28 @@ sub get_usr_preference_rs {
     if($prov_subscriber) {
         $pref_rs = $pref_rs->search({
                 subscriber_id => $prov_subscriber->id,
+            });
+    }
+    return $pref_rs;
+}
+
+sub get_prof_preference_rs {
+    my %params = @_;
+
+    my $c = $params{c};
+    my $attribute = $params{attribute};
+    my $profile = $params{profile};
+    my $schema = $params{schema} // $c->model('DB');
+
+    my $pref_rs = $schema->resultset('voip_preferences')->find({
+            attribute => $attribute, 'prof_pref' => 1,
+        });
+    return unless($pref_rs);
+    $pref_rs = $pref_rs->voip_prof_preferences;
+    if($profile) {
+        # TODO: if profile is not set, it should return an rs with no entries?
+        $pref_rs = $pref_rs->search({
+                profile_id => $profile->id,
             });
     }
     return $pref_rs;

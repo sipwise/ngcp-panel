@@ -48,12 +48,27 @@ sub hal_from_item {
     return $hal;
 }
 
+sub _check_profile {
+    my ($self, $c, $pref_name, $attr) = @_;
+    my $shown = $c->model('DB')->resultset('voip_preferences')->find({
+        'attribute' => $pref_name
+    });
+    return unless($shown && $attr->{$shown->id});
+    return 1;
+}
+
 sub get_resource {
     my ($self, $c, $item, $type) = @_;
 
     my $prefs;
+    my %profile_attrs = (); # for filtering profiles based list
+    my $attr = 0;
     if($type eq "subscribers") {
         $prefs = $item->provisioning_voip_subscriber->voip_usr_preferences;
+    } elsif($type eq "profiles") {
+        $attr = 1;
+        %profile_attrs = map { $_ => 1 } $item->profile_attributes->get_column('attribute_id')->all;
+        $prefs = $item->voip_prof_preferences;
     } elsif($type eq "domains") {
         $prefs = $item->provisioning_voip_domain->voip_dom_preferences;
     } elsif($type eq "peerings") {
@@ -67,6 +82,8 @@ sub get_resource {
         order_by => { '-asc' => 'id' },
     });
 
+    use Data::Printer; p %profile_attrs;
+
     my $resource;
     foreach my $pref($prefs->all) {
         my $value;
@@ -78,6 +95,8 @@ sub get_resource {
                     $processed = 1;
                     last SWITCH;
                 }
+                do { $processed = 1; last SWITCH; } 
+                    if($attr && !$self->_check_profile($c, 'rewrite_rule_set', \%profile_attrs));
                 my $col = $pref->attribute->attribute;
                 $col =~ s/^rewrite_//;
                 my $rwr_set = $c->model('DB')->resultset('voip_rewrite_rule_sets')->find({
@@ -95,6 +114,10 @@ sub get_resource {
             /^(adm_)?ncos_id$/ && do {
                 my $pref_name = $pref->attribute->attribute;
                 $pref_name =~ s/_id$//;
+
+                do { $processed = 1; last SWITCH; } 
+                    if($attr && !$self->_check_profile($c, $pref_name, \%profile_attrs));
+
                 my $ncos = $c->model('DB')->resultset('ncos_levels')->find({
                     id => $pref->value,
                 });
@@ -109,6 +132,9 @@ sub get_resource {
             };
             /^(contract_)?sound_set$/ && do {
                 # TODO: not applicable for domains, but for subs, check for contract_id!
+                do { $processed = 1; last SWITCH; } 
+                    if($attr && !$self->_check_profile($c, $_, \%profile_attrs));
+
                 my $set = $c->model('DB')->resultset('voip_sound_sets')->find({
                     id => $pref->value,
                 });
@@ -124,6 +150,8 @@ sub get_resource {
             /^(man_)?allowed_ips_grp$/ && do {
                 my $pref_name = $pref->attribute->attribute;
                 $pref_name =~ s/_grp$//;
+                do { $processed = 1; last SWITCH; } 
+                    if($attr && !$self->_check_profile($c, $pref_name, \%profile_attrs));
                 my $sets = $c->model('DB')->resultset('voip_allowed_ip_groups')->search({
                     group_id => $pref->value,
                 }, {
@@ -138,9 +166,10 @@ sub get_resource {
                 last SWITCH;
             };
             # default
-            if($pref->attribute->internal != 0) {
-                last SWITCH;
+            if($attr && !$profile_attrs{$pref->attribute->id}) {
+                $processed = 1; last SWITCH;
             }
+            last SWITCH if($pref->attribute->internal != 0);
         } # SWITCH
         next if $processed;
 
@@ -174,6 +203,9 @@ sub get_resource {
     } elsif($type eq "subscribers") {
         $resource->{subscriber_id} = int($item->id);
         $resource->{id} = int($item->id);
+    } elsif($type eq "profiles") {
+        $resource->{profile_id} = int($item->id);
+        $resource->{id} = int($item->id);
     } elsif($type eq "peerings") {
         $resource->{peering_id} = int($item->id);
         $resource->{id} = int($item->id);
@@ -200,6 +232,17 @@ sub item_rs {
                 ->reseller
                 ->domain_resellers
                 ->search_related('domain');
+        }
+    } elsif($type eq "profiles") {
+        # we actually return the profile rs here, as we can easily
+        # go to prof_preferences from there
+        $item_rs = $c->model('DB')->resultset('voip_subscriber_profiles');
+        if($c->user->roles eq "reseller") {
+            $item_rs = $item_rs->search({
+                'profile_set.reseller_id' => $c->user->reseller_id,
+            },{
+                join => 'profile_set',
+            });
         }
     } elsif($type eq "subscribers") {
         if($c->user->roles eq "admin") {
@@ -257,6 +300,12 @@ sub get_preference_rs {
             attribute => $attr,
             prov_domain => $elem,
         );
+    } elsif($type eq "profiles") {
+        $rs = NGCP::Panel::Utils::Preferences::get_prof_preference_rs(
+            c => $c,
+            attribute => $attr,
+            profile => $elem,
+        );
     } elsif($type eq "subscribers") {
         $rs = NGCP::Panel::Utils::Preferences::get_usr_preference_rs(
             c => $c,
@@ -299,6 +348,16 @@ sub update_item {
         $full_rs = $elem->voip_dom_preferences;
         $pref_type = 'dom_pref';
         $reseller_id = $item->domain_resellers->first->reseller_id;
+    } elsif($type eq "profiles") {
+        delete $resource->{profile_id};
+        delete $resource->{profilepreferences_id};
+        delete $old_resource->{profile_id};
+        delete $old_resource->{profilepreferences_id};
+        $accessor = $item->id;
+        $elem = $item;
+        $full_rs = $elem->voip_prof_preferences;
+        $pref_type = 'profile_pref';
+        $reseller_id = $item->profile_set->reseller_id;
     } elsif($type eq "subscribers") {
         delete $resource->{subscriber_id};
         delete $resource->{subscriberpreferences_id};
