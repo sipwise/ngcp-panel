@@ -33,15 +33,27 @@ class_has 'query_params' => (
             query => {
                 first => sub {
                     my $q = shift;
+                    my $c = shift;
+                    my %wheres = ();
+                    if( $c->config->{features}->{multidomain}) {
+                        $wheres{'domain.id'} = { -ident => 'subscriber.domain_id' };
+                    }
+
                     my $h = 
                     return { 
                         'voip_subscriber.id' => $q,
-                        'domain.id' => { -ident => 'subscriber.domain_id' },
+                        %wheres,
                     };
                 },
                 second => sub {
+                    my $q = shift;
+                    my $c = shift;
+                    my @joins = ();
+                    if( $c->config->{features}->{multidomain}) {
+                        push @joins, 'domain' ;
+                    }
                     return {
-                        join => [{ subscriber => 'voip_subscriber' }, 'domain']
+                        join => [{ subscriber => 'voip_subscriber' },@joins]
                     };
                 },
             },
