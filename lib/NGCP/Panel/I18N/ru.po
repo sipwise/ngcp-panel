@@ -2369,7 +2369,7 @@ msgstr "Домен вызываемой стороны."
 msgid "Domain of calling party."
 msgstr "Домен вызывающей стороны."
 
-#: lib/NGCP/Panel/Controller/Domain.pm:150 lib/NGCP/Panel/Utils/Message.pm:242
+#: lib/NGCP/Panel/Controller/Domain.pm:150 lib/NGCP/Panel/Utils/Message.pm:241
 msgid "Domain successfully created"
 msgstr "Домен успешно создан"
 
@@ -2820,7 +2820,7 @@ msgstr "Не удалось создать модель устройства"
 msgid "Failed to create device profile"
 msgstr "Не удалось создать профиль устройства"
 
-#: lib/NGCP/Panel/Controller/Domain.pm:142 lib/NGCP/Panel/Utils/Message.pm:236
+#: lib/NGCP/Panel/Controller/Domain.pm:142 lib/NGCP/Panel/Utils/Message.pm:235
 msgid "Failed to create domain."
 msgstr "Не удалось создать домен."
 

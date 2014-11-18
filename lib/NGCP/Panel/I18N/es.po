@@ -2337,7 +2337,7 @@ msgstr ""
 msgid "Domain of calling party."
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/Domain.pm:150 lib/NGCP/Panel/Utils/Message.pm:242
+#: lib/NGCP/Panel/Controller/Domain.pm:150 lib/NGCP/Panel/Utils/Message.pm:241
 msgid "Domain successfully created"
 msgstr "Dominio creado con éxito"
 
@@ -2790,7 +2790,7 @@ msgstr "Fallo al crear modelo de dispositivo"
 msgid "Failed to create device profile"
 msgstr "Fallo al crear perfil de dispositivo"
 
-#: lib/NGCP/Panel/Controller/Domain.pm:142 lib/NGCP/Panel/Utils/Message.pm:236
+#: lib/NGCP/Panel/Controller/Domain.pm:142 lib/NGCP/Panel/Utils/Message.pm:235
 msgid "Failed to create domain."
 msgstr "Fallo al crear dominio"
 

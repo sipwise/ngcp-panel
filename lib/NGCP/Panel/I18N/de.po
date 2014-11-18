@@ -2369,7 +2369,7 @@ msgstr "Domain des Anrufempfängers."
 msgid "Domain of calling party."
 msgstr "Domain des Anrufers."
 
-#: lib/NGCP/Panel/Controller/Domain.pm:150 lib/NGCP/Panel/Utils/Message.pm:242
+#: lib/NGCP/Panel/Controller/Domain.pm:150 lib/NGCP/Panel/Utils/Message.pm:241
 msgid "Domain successfully created"
 msgstr "Domain erfolgreich erstellt"
 
@@ -2820,7 +2820,7 @@ msgstr "Geräte-Modell erstellen fehlgeschlagen."
 msgid "Failed to create device profile"
 msgstr "Geräte-Profil erstellen fehlgeschlagen."
 
-#: lib/NGCP/Panel/Controller/Domain.pm:142 lib/NGCP/Panel/Utils/Message.pm:236
+#: lib/NGCP/Panel/Controller/Domain.pm:142 lib/NGCP/Panel/Utils/Message.pm:235
 msgid "Failed to create domain."
 msgstr "Domain erstellen fehlgeschlagen."
 
