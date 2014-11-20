@@ -47,6 +47,7 @@ sub GET : Allow {
         "DomainPreferenceDefs" => 1,
         "SubscriberPreferenceDefs" => 1,
         "CustomerPreferenceDefs" => 1,
+        "ProfilePreferenceDefs" => 1,
     };
 
     my @colls = $self->get_collections;
