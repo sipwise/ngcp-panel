@@ -81,6 +81,8 @@ $ua->ssl_opts(
                  pbxdevicemodels => 1,
                  pbxdeviceprofiles => 1,
                  pbxdevices => 1,
+                 profilepreferences => 1,
+                 profilepreferencedefs => 1,
                  reminders => 1,
                  resellers => 1,
                  rewriterules => 1,
