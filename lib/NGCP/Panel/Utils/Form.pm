@@ -9,11 +9,14 @@ sub validate_password {
     my $r = $c->config->{security};
     my $pass = $field->value;
 
-    if($r->{password_min_length} && length($pass) < $r->{password_min_length}) {
-        $field->add_error($c->loc('Must be at minimum ' . $r->{password_min_length} . ' characters long'));
+    my $minlen = $r->{password_min_length} // 6;
+    my $maxlen = $r->{password_max_length} // 40;
+
+    if(length($pass) < $minlen) {
+        $field->add_error($c->loc('Must be at minimum [_1] characters long', $minlen));
     }
-    if($r->{password_max_length} && length($pass) > $r->{password_max_length}) {
-        $field->add_error($c->loc('Must be at maximum ' . $r->{password_max_length} . ' characters long'));
+    if(length($pass) > $maxlen) {
+        $field->add_error($c->loc('Must be at maximum [_1] characters long', $maxlen));
     }
     if($r->{password_musthave_lowercase} && $pass !~ /[a-z]/) {
         $field->add_error($c->loc('Must contain lower-case characters'));
