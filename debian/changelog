@@ -1,3 +1,12 @@
+ngcp-panel (1.5.1.12+0~mr3.5.1.12) unstable; urgency=low
+
+  [ Andreas Granig ]
+  * [8aaa166] MT#10309 Allow passwords with less than chars.
+
+  [ Sipwise Jenkins Builder ]
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Fri, 21 Nov 2014 14:24:51 +0100
+
 ngcp-panel (1.5.1.11+0~mr3.5.1.11) unstable; urgency=low
 
   [ Irina Peshinskaya ]
