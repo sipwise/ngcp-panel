@@ -3913,29 +3913,29 @@ msgstr ""
 msgid "Music on Hold"
 msgstr ""
 
-#. ($r->{password_max_length} . ' characters long')
-#: lib/NGCP/Panel/Utils/Form.pm:16
-msgid "Must be at maximum "
-msgstr ""
-
-#. ($r->{password_min_length} . ' characters long')
-#: lib/NGCP/Panel/Utils/Form.pm:13
-msgid "Must be at minimum "
-msgstr ""
-
-#: lib/NGCP/Panel/Utils/Form.pm:25
-msgid "Must contain digits"
-msgstr ""
-
+#. ($maxlen)
 #: lib/NGCP/Panel/Utils/Form.pm:19
-msgid "Must contain lower-case characters"
+msgid "Must be at maximum %1 characters long"
+msgstr ""
+
+#. ($minlen)
+#: lib/NGCP/Panel/Utils/Form.pm:16
+msgid "Must be at minimum %1 characters long"
 msgstr ""
 
 #: lib/NGCP/Panel/Utils/Form.pm:28
-msgid "Must contain special characters"
+msgid "Must contain digits"
 msgstr ""
 
 #: lib/NGCP/Panel/Utils/Form.pm:22
+msgid "Must contain lower-case characters"
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/Form.pm:31
+msgid "Must contain special characters"
+msgstr ""
+
+#: lib/NGCP/Panel/Utils/Form.pm:25
 msgid "Must contain upper-case characters"
 msgstr ""
 

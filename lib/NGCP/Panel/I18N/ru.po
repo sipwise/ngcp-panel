@@ -4644,29 +4644,29 @@ msgstr ""
 msgid "Music on Hold"
 msgstr "Музыка при удержании"
 
-#. ($r->{password_max_length} . ' characters long')
+#. ($maxlen)
+#: lib/NGCP/Panel/Utils/Form.pm:19
+msgid "Must be at maximum %1 characters long"
+msgstr ""
+
+#. ($minlen)
 #: lib/NGCP/Panel/Utils/Form.pm:16
-msgid "Must be at maximum "
-msgstr "Не более "
+msgid "Must be at minimum %1 characters long"
+msgstr ""
 
-#. ($r->{password_min_length} . ' characters long')
-#: lib/NGCP/Panel/Utils/Form.pm:13
-msgid "Must be at minimum "
-msgstr "Не менее "
-
-#: lib/NGCP/Panel/Utils/Form.pm:25
+#: lib/NGCP/Panel/Utils/Form.pm:28
 msgid "Must contain digits"
 msgstr "Обязан содержать цифры"
 
-#: lib/NGCP/Panel/Utils/Form.pm:19
+#: lib/NGCP/Panel/Utils/Form.pm:22
 msgid "Must contain lower-case characters"
 msgstr "Обязан содержать символы в нижнем регистре"
 
-#: lib/NGCP/Panel/Utils/Form.pm:28
+#: lib/NGCP/Panel/Utils/Form.pm:31
 msgid "Must contain special characters"
 msgstr "Обязан содержать символы специального назначения"
 
-#: lib/NGCP/Panel/Utils/Form.pm:22
+#: lib/NGCP/Panel/Utils/Form.pm:25
 msgid "Must contain upper-case characters"
 msgstr "Обязан содержать символы в верхнем регистре"
 
@@ -9087,6 +9087,12 @@ msgstr ""
 #: share/templates/subscriber/preferences.tt:335
 msgid "yes"
 msgstr "да"
+
+#~ msgid "Must be at maximum "
+#~ msgstr "Не более "
+
+#~ msgid "Must be at minimum "
+#~ msgstr "Не менее "
 
 #~ msgid ""
 #~ "\"Strict Number Matching\" - if set to true the dialed number must match "
