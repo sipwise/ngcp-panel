@@ -18,6 +18,9 @@ sub dispatch{
     my $redirect_processor = get_redirect_processor($params);
     my $ret;
     if($redirect_processor){
+		if( ('register' eq $action) && $old_identifier && ( $old_identifier ne $fdev->identifier ) ){
+			$redirect_processor->redirect_server_call('unregister');
+		}
         $ret = $redirect_processor->redirect_server_call($action);
     }
     return $ret;
