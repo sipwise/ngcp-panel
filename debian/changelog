@@ -1,3 +1,12 @@
+ngcp-panel (1.6.1.6+0~mr3.6.1.6) unstable; urgency=low
+
+  [ Irina Peshinskaya ]
+  * [88a0f15] MT#10355 Fix forcing boolean context for JSON::bool
+
+  [ Sipwise Jenkins Builder ]
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Thu, 27 Nov 2014 19:29:02 +0100
+
 ngcp-panel (1.6.1.5+0~mr3.6.1.5) unstable; urgency=low
 
   [ Andreas Granig ]
