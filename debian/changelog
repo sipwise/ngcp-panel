@@ -1,3 +1,19 @@
+ngcp-panel (1.6.2.1+0~mr3.6.2.1) unstable; urgency=low
+
+  [ Irina Peshinskaya ]
+  * [0f450e3] MT#9941 Consider PBX hunt parameters on subscriber creation via API
+  * [cc266b7] MT#9941 Add cloud_pbx_hunt_* fields to api.
+  * [47b7ba9] MT#10041 Query_params raised multidomain request in not multidomain env.
+  * [66b27ac] MT#10045 Use form->values instead of form->params for contract forms
+  * [9802e78] MT#10355 Fix forcing boolean context for JSON::bool
+
+  [ Andreas Granig ]
+  * [115e578] MT#10309 Allow passwords with less than chars.
+
+  [ Sipwise Jenkins Builder ]
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Fri, 28 Nov 2014 16:27:29 +0100
+
 ngcp-panel (1.6.2.0+0~mr3.6.2.0) unstable; urgency=low
 
   [ Irina Peshinskaya ]
