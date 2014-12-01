@@ -38,6 +38,28 @@ class_has 'query_params' => (
                 second => sub { },
             },
         },
+		{
+            param => 'version',
+            description => 'Filter for firmwares by a specific version',
+            query => {
+                first => sub {
+                    my $q = shift;
+                    return { 'version' => $q };
+                },
+                second => sub { },
+            },
+		},
+		{
+            param => 'filename',
+            description => 'Filter for firmwares by a specific file name',
+            query => {
+                first => sub {
+                    my $q = shift;
+                    return { 'filename' => $q };
+                },
+                second => sub { },
+            },
+        },
     ]},
 );
 

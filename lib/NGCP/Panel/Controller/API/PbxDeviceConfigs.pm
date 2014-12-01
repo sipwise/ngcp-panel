@@ -37,6 +37,28 @@ class_has 'query_params' => (
                 },
                 second => sub { },
             },
+		},
+		{
+            param => 'version',
+            description => 'Filter for configs by a specific version',
+            query => {
+                first => sub {
+                    my $q = shift;
+                    return { 'version' => $q };
+                },
+                second => sub { },
+            },
+		},
+		{
+            param => 'content_type',
+            description => 'Filter for configs by a specific content type',
+            query => {
+                first => sub {
+                    my $q = shift;
+                    return { 'content_type' => $q };
+                },
+                second => sub { },
+            },
         },
     ]},
 );
