@@ -118,7 +118,8 @@ sub devmod_sync_credentials_store{
         $credentials->{device_id} = $devmod->id;
         $schema->resultset('autoprov_redirect_credentials')->create($credentials);    
     }else{
-       $credentials_rs->update($credentials);
+	    delete $credentials->{device_id};
+		$credentials_rs->update($credentials);
     }
 }
 
