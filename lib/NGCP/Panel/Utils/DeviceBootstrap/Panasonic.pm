@@ -1,134 +1,102 @@
 package NGCP::Panel::Utils::DeviceBootstrap::Panasonic;
 
-use Sipwise::Base;
-use URI::Escape;
-use MIME::Base64 qw/encode_base64/;
-use Net::HTTPS::Any qw/https_post/;
-use RPC::XML::ParserFactory 'XML::LibXML';
-use RPC::XML;
+use strict;
+use Moose;
 use Data::Dumper;
+extends 'NGCP::Panel::Utils::DeviceBootstrap::VendorRPC';
 
-my $cfg  = {
-    proto    => 'https',
-    host     => 'provisioning.e-connecting.net',
-    port     => '443',
-    path     => '/redirect/xmlrpc',
-};
-
-sub prepare {
-    my ($c, $fdev) = @_;
-    my $p = {};
-
-    my $devmod = $fdev->profile->config->device;
-    my $creds = $devmod->autoprov_redirect_credentials;
-    if($creds) {
-        $p->{auth} = encode_base64($creds->user.':'.$creds->password);
-    }
-
-    $p->{uri} = ($devmod->bootstrap_uri) 
-        ? $devmod->bootstrap_uri 
-        : NGCP::Panel::Utils::DeviceBootstrap::get_baseuri($c);
-        
-    if ($p->{uri} !~/\{MAC\}$/){
-        if ($p->{uri} !~/\/$/){
-            $p->{uri} .= '/' ;
-        }
-        $p->{uri} .= '{MAC}' ;
-    }
-    $p->{uri} = URI::Escape::uri_escape($p->{uri});
-    
-    return $p;
+has 'rpc_server_params' => (
+    is => 'rw',
+    isa => 'HashRef',
+    accessor => '_rpc_server_params',
+);
+has 'register_content' => (
+    is => 'rw',
+    isa => 'Str',
+    accessor => '_register_content',
+);
+has 'unregister_content' => (
+    is => 'rw',
+    isa => 'Str',
+    accessor => '_unregister_content',
+);
+sub rpc_server_params{
+    my $self = shift;
+    my $cfg  = {
+        proto    => 'https',
+        host     => 'provisioning.e-connecting.net',
+        port     => '443',
+        path     => '/redirect/xmlrpc',
+    };
+    $cfg->{headers} = { %{$self->get_basic_authorization($self->params->{credentials})} };
+    $self->{rpc_server_params} = $cfg;
+    return $self->{rpc_server_params};
 }
 
-# return faultString or undef if ok
-sub check_result {
-    my ($c, $data) = @_;
-    my $val = '';
-    if($data){
-        my $parser = RPC::XML::ParserFactory->new();
-        my $rpc = $parser->parse($data);
-        $val = $rpc->value->value;
-    }
+sub register_content {
+    my $self = shift;
+#<param><value><string>".URI::Escape::uri_escape($self->content_params->{uri})."</string></value></param> 
+    $self->{register_content} = "<?xml version=\"1.0\"?> 
+<methodCall> 
+<methodName>ipredirect.registerPhone</methodName> 
+<params> 
+<param><value><string>".$self->content_params->{mac}."</string></value></param> 
+<param><value><string><![CDATA[".$self->content_params->{uri}."]]></string></value></param> 
+</params> 
+</methodCall>";
+    return $self->{register_content};
+}
 
-    $c->log->debug("panasonic redirect call returned: " . Dumper $val);
+sub unregister_content {
+    my $self = shift;
+    $self->{unregister_content} =  "<?xml version=\"1.0\"?> 
+<methodCall> 
+<methodName>ipredirect.unregisterPhone</methodName> 
+<params> 
+<param><value><string>".$self->content_params->{mac_old}."</string></value></param> 
+</params> 
+</methodCall>";
+    return $self->{unregister_content};
+}
 
-    if(ref $val eq 'HASH' && $val->{faultString}) {
-        return $val->{faultString};
+sub parse_rpc_response{
+    my($self,$rpc_response) = @_;
+    return $rpc_response->value->value;
+}
+
+sub extract_response_description{
+    my($self,$response_value) = @_;
+
+    if(('HASH' eq ref $response_value) && $response_value->{faultString}){
+        return $response_value->{faultString};
     } else {
         return;
     }
 }
-
-sub normalize_mac {
-    my ($mac) = @_;
-    return unless($mac);
-    $mac =~s/[^A-F0-9]//gi;
-    $mac = uc($mac);
-    return $mac;
-}
-
-sub unregister {
-    my ($c, $fdev, $mac, $old_mac) = @_;
-
-    my $p = prepare($c, $fdev);
-    $old_mac = normalize_mac($old_mac);
-
-    my $data = "<?xml version=\"1.0\"?> 
-<methodCall> 
-<methodName>ipredirect.unregisterPhone</methodName> 
-<params> 
-<param><value><string>".$old_mac."</string></value></param> 
-</params> 
-</methodCall>";
-    $c->log->debug("panasonic redirect call $data"); 
-
-    my($res, $code) = https_post({
-        'host'    => $cfg->{host},
-        'port'    => $cfg->{port},
-        'path'    => $cfg->{path},
-        'headers' => { 'Authorization' => 'Basic '.$p->{auth} },
-        'Content-Type' => 'text/xml',
-        'content' => $data,
-    });
-    return check_result($c, $res);
-}
-
-sub register {
-    my ($c, $fdev, $mac, $old_mac) = @_;
-
-    my $p = prepare($c, $fdev);
-    $mac = normalize_mac($mac);
-    $old_mac = normalize_mac($old_mac);
-
-    # we don't check for the result here, in the worst case
-    # we leave an orphaned entry behind
-    unregister($c, $fdev, $mac, $old_mac) if($old_mac && $old_mac ne $mac);
-    
-    my $data = "<?xml version=\"1.0\"?> 
-<methodCall> 
-<methodName>ipredirect.registerPhone</methodName> 
-<params> 
-<param><value><string>".$mac."</string></value></param> 
-<param><value><string>".$p->{uri}."</string></value></param> 
-</params> 
-</methodCall>";
-    $c->log->debug("panasonic redirect call $data"); 
-
-    my($res, $code) = https_post({
-        'host'    => $cfg->{host},
-        'port'    => $cfg->{port},
-        'path'    => $cfg->{path},
-        'headers' => { 'Authorization' => 'Basic '.$p->{auth} },
-        'Content-Type' => 'text/xml',
-        'content' => $data,
-    });
-    if($res){
-        $c->log->debug("register returned with code $code and data $res"); 
-        return check_result($c, $res);
-    }else{
-        return 'Empty response';
-    }
-}
-
 1;
+
+=head1 NAME
+
+NGCP::Panel::Utils::DeviceBootstrap
+
+=head1 DESCRIPTION
+
+Make API requests to configure remote redirect servers for requested MAC with autorpov uri.
+
+=head1 METHODS
+
+=head2 bootstrap
+
+Dispatch to proper vendor API call.
+
+=head1 AUTHOR
+
+Irina Peshinskaya C<< <ipeshinskaya@sipwise.com> >>
+
+=head1 LICENSE
+
+This library is free software. You can redistribute it and/or modify
+it under the same terms as Perl itself.
+
+=cut
 # vim: set tabstop=4 expandtab:

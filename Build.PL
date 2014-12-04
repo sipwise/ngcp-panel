@@ -47,6 +47,7 @@ my $builder = Local::Module::Build->new(
         'DateTime::Format::ISO8601' => 0,
         'DateTime::Format::RFC3339' => 0,
         'DBIx::Class::ResultSet::RecursiveUpdate' => '0.30',
+        'Digest::MD5' => 0,
         'Email::Sender::Simple' => 0,
         'Email::Sender::Transport::SMTP' => 0,
         'Email::Valid' => 0,

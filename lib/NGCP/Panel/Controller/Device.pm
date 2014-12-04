@@ -185,7 +185,8 @@ sub devmod_create :Chained('base') :PathPart('model/create') :Args(0) :Does(ACL)
                 my $devmod = $schema->resultset('autoprov_devices')->create($form->params);
                 NGCP::Panel::Utils::DeviceBootstrap::devmod_sync_credentials_store($c, $devmod, $credentials);
                 NGCP::Panel::Utils::DeviceBootstrap::devmod_sync_parameters_store($c, $devmod, $sync_parameters);
-
+                NGCP::Panel::Utils::DeviceBootstrap::dispatch_devmod($c, 'add_server', $devmod);
+                
                 foreach my $range(@{ $linerange }) {
                     delete $range->{id};
                     $range->{num_lines} = @{ $range->{keys} }; # backward compatibility
@@ -368,6 +369,7 @@ sub devmod_edit :Chained('devmod_base') :PathPart('edit') :Args(0) :Does(ACL) :A
                     device_id => $c->stash->{devmod}->id,
                 })->delete;
                 NGCP::Panel::Utils::DeviceBootstrap::devmod_sync_parameters_store($c, $c->stash->{devmod}, $sync_parameters);
+                NGCP::Panel::Utils::DeviceBootstrap::dispatch_devmod($c, 'add_server', $c->stash->{devmod} );
                 
                 my @existing_range = ();
                 my $range_rs = $c->stash->{devmod}->autoprov_device_line_ranges;

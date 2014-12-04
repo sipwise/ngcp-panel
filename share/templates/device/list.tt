@@ -34,10 +34,6 @@ function vendor2bootstrapMethod(vendorField){
                 bootstrapMethod = 'redirect_panasonic';
                 break;
             ;
-            case "linksys":
-                bootstrapMethod = 'redirect_linksys';
-                break;
-            ;
             case "yealink":
                 bootstrapMethod = 'redirect_yealink';
                 break;
