@@ -33,7 +33,9 @@ sub base :Chained('/') :PathPart('device') :CaptureArgs(0) {
         $reseller_id = $c->user->voip_subscriber->contract->contact->reseller_id;
     }
 
-    my $devmod_rs = $c->model('DB')->resultset('autoprov_devices');
+    my $devmod_rs = $c->model('DB')->resultset('autoprov_devices')->search_rs(undef,{
+            'columns' => [qw/id reseller_id vendor model front_image_type mac_image_type num_lines bootstrap_method bootstrap_uri/],
+	});
     $reseller_id and $devmod_rs = $devmod_rs->search({ reseller_id => $reseller_id });
     $c->stash->{devmod_dt_columns} = NGCP::Panel::Utils::Datatables::set_columns($c, [
         { name => 'id', search => 1, title => $c->loc('#') },
@@ -42,7 +44,8 @@ sub base :Chained('/') :PathPart('device') :CaptureArgs(0) {
         { name => 'model', search => 1, title => $c->loc('Model') },
     ]);
 
-    my $devfw_rs = $c->model('DB')->resultset('autoprov_firmwares');
+    my $devfw_rs = $c->model('DB')->resultset('autoprov_firmwares')->search_rs(undef,{'columns' => [qw/id device_id version filename/],
+	});
     $reseller_id and $devfw_rs = $devfw_rs->search({
         'device.reseller_id' => $reseller_id,
     },{ 
@@ -57,7 +60,8 @@ sub base :Chained('/') :PathPart('device') :CaptureArgs(0) {
         { name => 'version', search => 1, title => $c->loc('Version') },
     ]);
 
-    my $devconf_rs = $c->model('DB')->resultset('autoprov_configs');
+    my $devconf_rs = $c->model('DB')->resultset('autoprov_configs')->search_rs(undef,{'columns' => [qw/id device_id version content_type/],
+	});
     $reseller_id and $devconf_rs = $devconf_rs->search({
         'device.reseller_id' => $reseller_id,
     }, { 
@@ -236,7 +240,7 @@ sub devmod_base :Chained('base') :PathPart('model') :CaptureArgs(1) {
         NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for('/device'));
     }
 
-    $c->stash->{devmod} = $c->stash->{devmod_rs}->find($devmod_id);
+    $c->stash->{devmod} = $c->stash->{devmod_rs}->find($devmod_id,{'+columns' => [qw/mac_image front_image/]});
     unless($c->stash->{devmod}) {
         NGCP::Panel::Utils::Message->error(
             c => $c,
@@ -529,7 +533,7 @@ sub devfw_create :Chained('base') :PathPart('firmware/create') :Args(0) :Does(AC
                 my $file = delete $form->params->{data};
                 $form->params->{filename} = $file->filename;
                 $form->params->{data} = $file->slurp;
-                my $devmod = $c->stash->{devmod_rs}->find($form->params->{device}{id});
+                my $devmod = $c->stash->{devmod_rs}->find($form->params->{device}{id},{'+columns' => [qw/mac_image front_image/]});
                 my $devfw = $devmod->create_related('autoprov_firmwares', $form->params);
                 delete $c->session->{created_objects}->{device};
                 $c->session->{created_objects}->{firmware} = { id => $devfw->id };
@@ -566,7 +570,7 @@ sub devfw_base :Chained('base') :PathPart('firmware') :CaptureArgs(1) :Does(ACL)
         NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for('/device'));
     }
 
-    $c->stash->{devfw} = $c->stash->{devfw_rs}->find($devfw_id);
+    $c->stash->{devfw} = $c->stash->{devfw_rs}->find($devfw_id,{'+columns' => 'data'});
     unless($c->stash->{devfw}) {
         NGCP::Panel::Utils::Message->error(
             c => $c,
@@ -702,7 +706,7 @@ sub devconf_create :Chained('base') :PathPart('config/create') :Args(0) :Does(AC
         try {
             my $schema = $c->model('DB');
             $schema->txn_do(sub {
-                my $devmod = $c->stash->{devmod_rs}->find($form->params->{device}{id});
+                my $devmod = $c->stash->{devmod_rs}->find($form->params->{device}{id},{'+columns' => [qw/mac_image front_image/]});
                 my $devconf = $devmod->create_related('autoprov_configs', $form->params);
                 delete $c->session->{created_objects}->{device};
                 $c->session->{created_objects}->{config} = { id => $devconf->id };
@@ -739,7 +743,7 @@ sub devconf_base :Chained('base') :PathPart('config') :CaptureArgs(1) :Does(ACL)
         NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for('/device'));
     }
 
-    $c->stash->{devconf} = $c->stash->{devconf_rs}->find($devconf_id);
+    $c->stash->{devconf} = $c->stash->{devconf_rs}->find($devconf_id,{'+columns' => 'data'});
     unless($c->stash->{devconf}) {
         NGCP::Panel::Utils::Message->error(
             c => $c,
