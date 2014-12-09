@@ -83,6 +83,32 @@ class_has 'query_params' => (
             },
         },
         {
+            param => 'type',
+            description => 'Filter for calls with a specific type. One of "call", "cfu", "cfb", "cft", "cfna".',
+            query => {
+                first => sub {
+                    my $q = shift;
+                    {
+                       call_type => $q,
+                    };
+                },
+                second => sub {},
+            },
+        },
+        {
+            param => 'type_ne',
+            description => 'Filter for calls not having a specific type. One of "call", "cfu", "cfb", "cft", "cfna".',
+            query => {
+                first => sub {
+                    my $q = shift;
+                    {
+                       call_type => { '!=' => $q },
+                    };
+                },
+                second => sub {},
+            },
+        },
+        {
             param => 'direction',
             description => 'Filter for calls with a specific direction. One of "in", "out".',
             query => {
