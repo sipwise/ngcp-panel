@@ -52,6 +52,7 @@ $ua->ssl_opts(
                  billingzones => 1,
                  callcontrols => 1,
                  callforwards => 1,
+                 calllists => 1,
                  calls => 1,
                  ccmapentries => 1,
                  cfdestinationsets => 1,
