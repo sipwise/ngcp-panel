@@ -1153,6 +1153,16 @@ sub dev_field_config :Chained('/') :PathPart('device/autoprov/config') :Args() {
             } else {
                 $display_name = $sub->username;
             };
+            my $t38 = NGCP::Panel::Utils::Preferences::get_usr_preference_rs(
+                c => $c,
+                prov_subscriber => $sub,
+                attribute => 'enable_t38',
+            );
+            if($t38->first) {
+                $t38 = $t38->first->value;
+            } else {
+                $t38 = 0;
+            };
             # TODO: only push password for private/shared line?
             my $aliases = [ $sub->voip_dbaliases->search({ is_primary => 0 })->get_column("username")->all ];
             my $primary = $sub->voip_dbaliases->search({ is_primary => 1 })->get_column("username")->first;
@@ -1167,6 +1177,7 @@ sub dev_field_config :Chained('/') :PathPart('device/autoprov/config') :Args() {
                 displayname => $display_name,
                 keynum => $line->key_num,
                 type => $line->line_type,
+                t38 => $t38,
             };
         }
         push @{ $vars->{phone}->{lineranges} }, $range;
