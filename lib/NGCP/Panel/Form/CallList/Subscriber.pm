@@ -22,6 +22,15 @@ has_field 'direction' => (
     },
 );
 
+has_field 'own_cli' => (
+    type => 'Text',
+    required => 1,
+    element_attr => {
+        rel => ['tooltip'],
+        title => ['The CLI of the own party.']
+    },
+);
+
 has_field 'other_cli' => (
     type => 'Text',
     required => 1,
@@ -98,6 +107,15 @@ has_field 'customer_free_time' => (
     element_attr => {
         rel => ['tooltip'],
         title => ['The number of free seconds of the customer used for this call.']
+    },
+);
+
+has_field 'intra_customer' => (
+    type => 'Boolean',
+    required => 1,
+    element_attr => {
+        rel => ['tooltip'],
+        title => ['Whether it is a call between subscribers of one single customer.']
     },
 );
 

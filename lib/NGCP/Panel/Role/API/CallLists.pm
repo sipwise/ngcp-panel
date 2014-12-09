@@ -74,7 +74,7 @@ sub hal_from_item {
             ),
             Data::HAL::Link->new(relation => 'collection', href => sprintf("/api/%s/", $self->resource_name)),
             Data::HAL::Link->new(relation => 'profile', href => 'http://purl.org/sipwise/ngcp-api/'),
-            Data::HAL::Link->new(relation => 'self', href => sprintf("%s%d", $self->dispatch_path, $item->id)),
+            Data::HAL::Link->new(relation => 'self', href => sprintf("%s%d?subscriber_id=%d", $self->dispatch_path, $item->id, $sub->id)),
             # todo: customer can be in source_account_id or destination_account_id
 #            Data::HAL::Link->new(relation => 'ngcp:customers', href => sprintf("/api/customers/%d", $item->source_customer_id)),
         ],
@@ -103,15 +103,86 @@ sub resource_from_item {
         pattern => '%F %T', 
     );
 
+    my $intra = 0;
+    if($item->source_user_id && $item->source_account_id == $item->destination_account_id) {
+        $resource->{intra_customer} = JSON::true;
+        $intra = 1;
+    } else {
+        $resource->{intra_customer} = JSON::false;
+        $intra = 0;
+    }
     $resource->{direction} = $sub->uuid eq $item->source_user_id ?
         "out" : "in";
-    $resource->{other_cli} = $resource->{direction} eq "out" ?
-        $item->destination_user_in : $item->source_cli;
+
+    my ($src_sub, $dst_sub);
+    if($item->source_subscriber && $item->source_subscriber->provisioning_voip_subscriber) {
+        $src_sub = $item->source_subscriber->provisioning_voip_subscriber;
+    }
+    if($item->destination_subscriber && $item->destination_subscriber->provisioning_voip_subscriber) {
+        $dst_sub = $item->destination_subscriber->provisioning_voip_subscriber;
+    }
+    my ($own_normalize, $other_normalize);
+
+    if($resource->{direction} eq "out") {
+        # for pbx out calls, use extension as own cli
+        if($src_sub && $src_sub->pbx_extension) {
+            $resource->{own_cli} = $src_sub->pbx_extension;
+        } else {
+            $resource->{own_cli} = $item->source_cli;
+            $own_normalize = 1;
+        }
+
+        # for intra pbx out calls, use extension as other cli
+        if($intra && $dst_sub && $dst_sub->pbx_extension) {
+            $resource->{other_cli} = $dst_sub->pbx_extension;
+        # if there is an alias field (e.g. gpp0), use this
+        } elsif($item->destination_account_id && $c->req->param('alias_field')) {
+            my $alias = $item->get_column('destination_'.$c->req->param('alias_field'));
+            $c->log->error("+++++++++++++++++ alias_field=".$c->req->param('alias_field'));
+            $c->log->error("+++++++++++++++++ destination_alias_field=".($alias // '<null>'));
+            $resource->{other_cli} = $alias // $item->destination_user_in;
+            $other_normalize = 1;
+        } else {
+            $resource->{other_cli} = $item->destination_user_in;
+            $other_normalize = 1;
+        }
+    } else {
+        # for pbx in calls, use extension as own cli
+        if($dst_sub && $dst_sub->pbx_extension) {
+            $resource->{own_cli} = $dst_sub->pbx_extension;
+        } else {
+            $resource->{own_cli} = $item->destination_user_in;
+            $own_normalize = 1;
+        }
+
+        # for intra pbx in calls, use extension as other cli
+        if($intra && $src_sub && $src_sub->pbx_extension) {
+            $resource->{other_cli} = $src_sub->pbx_extension;
+        # if there is an alias field (e.g. gpp0), use this
+        } elsif($item->source_account_id && $c->req->param('alias_field')) {
+            my $alias = $item->get_column('source_'.$c->req->param('alias_field'));
+            $resource->{other_cli} = $alias // $item->source_cli;
+            $other_normalize = 1;
+        } else {
+            $resource->{other_cli} = $item->source_cli;
+            $other_normalize = 1;
+        }
+    }
+
+    if($resource->{own_cli} !~ /^\d+$/) {
+        $resource->{own_cli} .= '@'.$sub->domain->domain;
+    } elsif($own_normalize) {
+        $resource->{own_cli} = NGCP::Panel::Utils::Subscriber::apply_rewrite(
+            c => $c, subscriber => $sub,
+            number => $resource->{own_cli}, direction => "caller_out"
+        );
+    }
+
     if($resource->{direction} eq "in" && $item->source_clir) {
         $resource->{other_cli} = undef;
     } elsif($resource->{other_cli} !~ /^\d+$/) {
-        $resource->{other_cli} .= '@'.$item->destination_domain_in;
-    } else {
+        $resource->{other_cli} .= '@'. ($resource->{direction} eq "in" ? $item->destination_domain_in : $sub->domain->domain);
+    } elsif($other_normalize) {
         $resource->{other_cli} = NGCP::Panel::Utils::Subscriber::apply_rewrite(
             c => $c, subscriber => $sub,
             number => $resource->{other_cli}, direction => "caller_out"
@@ -134,6 +205,31 @@ sub item_by_id {
     my ($self, $c, $id) = @_;
     my $item_rs = $self->item_rs($c);
     return $item_rs->find($id);
+}
+
+sub get_subscriber {
+    my ($self, $c, $schema) = @_;
+
+    my $sub;
+    if($c->user->roles ne "subscriber") {
+        unless($c->req->param('subscriber_id')) {
+            $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Mandatory parameter 'subscriber_id' missing in request");
+            return;
+        }
+        $sub = $schema->resultset('voip_subscribers')->find($c->req->param('subscriber_id'));
+        unless($sub) {
+            $self->error($c, HTTP_NOT_FOUND, "Invalid 'subscriber_id'.");
+            return;
+        }
+        if(($c->user->roles eq "subscriberadmin" && $sub->contract_id != $c->user->account_id) ||
+           ($c->user->roles eq "reseller" && $sub->contract->contact->reseller_id != $c->user->reseller_id)) {
+            $self->error($c, HTTP_NOT_FOUND, "Invalid 'subscriber_id'.");
+            return;
+           }
+    } else {
+        $sub = $c->user->voip_subscriber;
+    }
+    return $sub;
 }
 
 1;

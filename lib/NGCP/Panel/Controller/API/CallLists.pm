@@ -48,6 +48,15 @@ class_has 'query_params' => (
             },
         },
         {
+            param => 'alias_field',
+            description => 'Set this parameter for example to "gpp0" if you store alias numbers in the gpp0 preference and want to have that value shown as other CLI for calls from or to such a local subscriber.',
+            query => {
+                # handled directly in role
+                first => sub {},
+                second => sub {},
+            },
+        },
+        {
             param => 'status',
             description => 'Filter for calls with a specific status. One of "ok", "busy", "noanswer", "cancel", "offline", "timeout", "other".',
             query => {
@@ -153,26 +162,8 @@ sub GET :Allow {
     my $rows = $c->request->params->{rows} // 10;
     my $schema = $c->model('DB');
     {
-        my $sub;
-        if($c->user->roles ne "subscriber") {
-            unless($c->req->param('subscriber_id')) {
-                $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Mandatory parameter 'subscriber_id' missing in request");
-                last;
-            }
-            $sub = $schema->resultset('voip_subscribers')->find($c->req->param('subscriber_id'));
-            unless($sub) {
-                $self->error($c, HTTP_NOT_FOUND, "Invalid 'subscriber_id'.");
-                last;
-            }
-            if(($c->user->roles eq "subscriberadmin" && $sub->contract_id != $c->user->account_id) ||
-               ($c->user->roles eq "reseller" && $sub->contract->contact->reseller_id != $c->user->reseller_id)) {
-                $self->error($c, HTTP_NOT_FOUND, "Invalid 'subscriber_id'.");
-                last;
-               }
-        } else {
-            $sub = $c->user->voip_subscriber;
-        }
-
+        my $sub = $self->get_subscriber($c, $schema);
+        last unless $sub;
         my $items = $self->item_rs($c);
         (my $total_count, $items) = $self->paginate_order_collection($c, $items);
         my (@embedded, @links);
@@ -181,7 +172,7 @@ sub GET :Allow {
             push @embedded, $self->hal_from_item($c, $item, $sub, $form);
             push @links, Data::HAL::Link->new(
                 relation => 'ngcp:'.$self->resource_name,
-                href     => sprintf('/%s%d', $c->request->path, $item->id),
+                href     => sprintf('/%s%d?subscriber_id=%d', $c->request->path, $item->id, $sub->id),
             );
         }
         push @links,
@@ -192,7 +183,7 @@ sub GET :Allow {
                 templated => true,
             ),
             Data::HAL::Link->new(relation => 'profile', href => 'http://purl.org/sipwise/ngcp-api/'),
-            Data::HAL::Link->new(relation => 'self', href => sprintf('/%s?page=%s&rows=%s', $c->request->path, $page, $rows));
+            Data::HAL::Link->new(relation => 'self', href => sprintf('/%s?page=%s&rows=%s&subscriber_id=%d', $c->request->path, $page, $rows, $sub->id));
         if(($total_count / $rows) > $page ) {
             push @links, Data::HAL::Link->new(relation => 'next', href => sprintf('/%s?page=%d&rows=%d', $c->request->path, $page + 1, $rows));
         }

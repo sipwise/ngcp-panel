@@ -44,6 +44,19 @@ sub new_local {
     );
 }
 
+# convert seconds to 'HH:MM:SS' format
+sub sec_to_hms
+{
+    use integer;
+    local $_ = shift;
+    my ($h, $m, $s);
+    $s = sprintf("%02d", $_ % 60); $_ /= 60;
+    $m = sprintf("%02d", $_ % 60); $_ /= 60;
+    $h = $_;
+    return "$h:$m:$s";
+}
+
+
 1;
 
 # vim: set tabstop=4 expandtab:
