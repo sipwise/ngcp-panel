@@ -27,16 +27,16 @@ has_field 'own_cli' => (
     required => 1,
     element_attr => {
         rel => ['tooltip'],
-        title => ['The CLI of the own party.']
+        title => ['The CLI of the own party. For PBX subscribers it is always the PBX extension, otherwise the source_cli or destination_user_in. CLI format is denormalized by caller-out rewrite rule of subscriber.']
     },
 );
 
 has_field 'other_cli' => (
     type => 'Text',
-    required => 1,
+    required => 0,
     element_attr => {
         rel => ['tooltip'],
-        title => ['The CLI of the other party.']
+        title => ['The CLI of the other party, or null if CLIR was active. For intra-PBX calls it is the PBX extension, for inter-PBX calls it is the value of the field specified by the alias_field parameter if available, otherwise the souce_cli or destination_user_in. CLI format is denormalized by caller-out rewrite rule of subscriber.']
     },
 );
 
