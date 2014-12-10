@@ -48,6 +48,8 @@ $ua->ssl_opts(
         ok(exists $opts->{methods}, "OPTIONS should return methods");
         is(ref $opts->{methods}, "ARRAY", "OPTIONS methods should be array");
         if ("GET" ~~ $opts->{methods}) {
+            # skip calllists collection, as it needs a subscriber_id parameter also in the collection
+            next if $relname eq "calllists";
             $req = HTTP::Request->new('GET', "$uri/api/$relname/");
             $res = $ua->request($req);
             is($res->code, 200, "check GET request to $relname collection")
