@@ -184,6 +184,7 @@
 [%
     helper.name = c.loc('Subscribers');
     helper.identifier = 'subscribers';
+    helper.length_change = 1;
     helper.dt_columns = subscriber_dt_columns;
     helper.ajax_uri = c.uri_for_action('/customer/subscriber_ajax', [ c.req.captures.0 ]);
 
@@ -236,6 +237,7 @@
 [%
     helper.name = c.loc('PBX Groups');
     helper.identifier = 'pbx_groups';
+    helper.length_change = 1;
     helper.dt_columns = pbxgroup_dt_columns;
     helper.ajax_uri = c.uri_for_action('/customer/pbx_group_ajax', [ c.req.captures.0 ]);
 
