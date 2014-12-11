@@ -255,6 +255,91 @@ sub panasonic_directory_list :Chained('base') :PathPart('pbx/directory/panasonic
     $c->response->body($data);
 }
 
+sub yealink_directory_list :Chained('base') :PathPart('pbx/directory/yealink') :Args() {
+    my ($self, $c) = @_;
+
+    my $id = $c->req->params->{userid};
+    my $q = $c->req->params->{name};
+
+    unless($id) {
+        $c->response->content_type('text/plain');
+        if($c->config->{features}->{debug}) {
+            $c->response->body("404 - device id not given");
+        } else {
+            $c->response->body("404 - device not found");
+        }
+        $c->response->status(404);
+        return;
+    }
+
+    $id =~ s/^([^\=]+)\=0$/$1/;
+    $id = lc $id;
+
+    my $dev = $c->model('DB')->resultset('autoprov_field_devices')->find({
+        identifier => $id
+    });
+    unless($dev) {
+        $c->response->content_type('text/plain');
+        if($c->config->{features}->{debug}) {
+            $c->response->body("404 - device id '" . $id . "' not found");
+        } else {
+            $c->response->body("404 - device not found");
+        }
+        $c->response->status(404);
+        return;
+    }
+
+    my $schema = $c->stash->{schema};
+    my $host = $c->stash->{host};
+    my $port = $c->stash->{port};
+
+    my $customer = $dev->contract;
+
+    my $rs = $customer->voip_subscribers->search({
+        'status' => 'active',
+        'provisioning_voip_subscriber.pbx_extension' => { '!=' => undef },
+        'voip_usr_preferences.value' => { '!=' => undef },
+        'attribute.attribute' => 'display_name',
+        defined $q ? ('voip_usr_preferences.value' => { like => "%$q%" }) : (),
+    },{
+        join => { provisioning_voip_subscriber => { voip_usr_preferences => 'attribute'  } },
+        '+select' => [qw/voip_usr_preferences.value/],
+        '+as' => [qw/display_name/],
+        order_by => { '-asc' => 'voip_usr_preferences.value' },
+    });
+
+    my @entries = ();
+    foreach my $sub($rs->all) {
+        my $prov_sub = $sub->provisioning_voip_subscriber;
+        next unless($prov_sub && $prov_sub->pbx_extension);
+        my $display_name = $sub->get_column('display_name');
+        push @entries, { name => $display_name, ext => $prov_sub->pbx_extension };
+    }
+
+    my $data = 
+'<?xml version="1.0" encoding="utf-8"?>
+<SipwiseIPPhoneDirectory>
+  <SoftKeyItem>
+    <Name>0</Name>
+    <URL>'.$c->req->uri.'</URL>
+  </SoftKeyItem>
+';
+    $data .= join '', map {
+        "<DirectoryEntry>
+             <Name>$$_{name}</Name>
+             <Telephone>$$_{ext}</Telephone>
+         </DirectoryEntry>
+    "} @entries;
+    $data .= '</SipwiseIPPhoneDirectory>';
+
+
+    $c->log->debug("providing config to $id");
+    $c->log->debug($data);
+
+    $c->response->content_type('text/xml');
+    $c->response->body($data);
+}
+
 __PACKAGE__->meta->make_immutable;
 1;
 # vim: set tabstop=4 expandtab:
