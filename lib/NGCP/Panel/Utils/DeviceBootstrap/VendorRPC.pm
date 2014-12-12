@@ -109,12 +109,6 @@ sub process_uri{
     if($uri !~/^(?:https?|t?ftp):\/\//i ){
         $uri = 'http://'.$uri;
     }
-    if ($uri !~/\{MAC\}$/){
-        if ($uri !~/\/$/){
-            $uri .= '/' ;
-        }
-        $uri .= '{MAC}' ;
-    }
     return $uri;
 }
 #separated as this logic also used in other places, so can be moved to other utils module

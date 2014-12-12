@@ -73,6 +73,19 @@ sub extract_response_description{
         return;
     }
 }
+override 'process_uri' => sub {
+    my($self,$uri) = @_;
+
+    $self->content_params->{uri} = super($uri);
+    if ($self->content_params->{uri} !~/\{MAC\}$/){
+        if ($self->content_params->{uri} !~/\/$/){
+            $self->content_params->{uri} .= '/' ;
+        }
+        $self->content_params->{uri} .= '{MAC}' ;
+    }
+    return $self->content_params->{uri};
+};
+
 1;
 
 =head1 NAME
