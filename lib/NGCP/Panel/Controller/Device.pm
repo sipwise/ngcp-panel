@@ -1095,10 +1095,20 @@ sub dev_field_config :Chained('/') :PathPart('device/autoprov/config') :Args() {
         $yealink_key = $c->config->{autoprovisioning}->{yealink_key};
     }
 
+    # print access details for external rate limiting (e.g. fail2ban)
+    my $ip;
+    if(defined $c->req->headers->header('X-Forwarded-For')) {
+        $ip = (split(/\s*,\s*/, $c->req->headers->header('X-Forwarded-For')))[0];
+    } else {
+        $ip = $c->req->address;
+    }
+    $c->log->notice("Serving autoprov config for '$id' to '$ip'");
+
     my $dev = $c->model('DB')->resultset('autoprov_field_devices')->find({
         identifier => $id
     });
     unless($dev) {
+        $c->log->notice("Unknown autoprov config '$id' for '$ip'");
         $c->response->content_type('text/plain');
         if($c->config->{features}->{debug}) {
             $c->response->body("404 - device id '" . $id . "' not found");
