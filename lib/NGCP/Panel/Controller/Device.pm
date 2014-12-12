@@ -1108,6 +1108,7 @@ sub dev_field_config :Chained('/') :PathPart('device/autoprov/config') :Args() {
     my $vars = {
         config => {
             url => "$schema://$host:$port/device/autoprov/config/$id",
+            baseurl => "$schema://$host:$port/device/autoprov/config/",
             mac => $id,
         },
         firmware => {
