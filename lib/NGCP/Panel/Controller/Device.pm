@@ -1124,6 +1124,7 @@ sub dev_field_config :Chained('/') :PathPart('device/autoprov/config') :Args() {
         directory => {
             spaurl => "$schema://$host:$port/pbx/directory/spa/$id",
             panaurl => "$schema://$host:$port/pbx/directory/panasonic",
+            yeaurl => "$schema://$host:$port/pbx/directory/yealink?userid=$id",
             name => 'PBX Address Book',
         }
     };
