@@ -1069,9 +1069,8 @@ sub dev_field_config :Chained('/') :PathPart('device/autoprov/config') :Args() {
     my $host = $c->config->{deviceprovisioning}->{host} // $c->req->uri->host;
     my $port = $c->config->{deviceprovisioning}->{port} // 1444;
 
-    if($id =~ /^[a-fA-F0-9]{12}\.cfg$/
-       && $c->req->user_agent =~ /PolycomVVX/
-    ) {
+    $id =~ s/\.cfg$//;
+    if($c->req->user_agent =~ /PolycomVVX/) {
         $id =~ s/\.cfg$//;
         $c->response->content_type('text/xml');
         $c->response->body(
