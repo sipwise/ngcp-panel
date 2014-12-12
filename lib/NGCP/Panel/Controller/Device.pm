@@ -1385,7 +1385,7 @@ sub dev_field_firmware_download :Chained('dev_field_firmware_base') :PathPart('v
 sub dev_field_firmware_version_base :Chained('dev_field_firmware_base') :PathPart('from') :CaptureArgs(1) {
     my ($self, $c, $fwver) = @_;
 
-    unless($fwver) {
+    unless(defined $fwver) {
         $c->response->content_type('text/plain');
         if($c->config->{features}->{debug}) {
             $c->response->body("404 - firmware name not given");
