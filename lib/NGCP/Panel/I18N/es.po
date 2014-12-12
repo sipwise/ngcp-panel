@@ -168,7 +168,7 @@ msgstr "%1 como %2"
 #. (subscriber_count,contract.max_subscribers,                                c.config.features.cloudpbx ? c.loc('(including PBX groups)
 #. (subscriber_count, contract.max_subscribers,                            c.config.features.cloudpbx ? c.loc('(including PBX groups)
 #: share/templates/customer/details.tt:168
-#: share/templates/customer/details.tt:220
+#: share/templates/customer/details.tt:221
 msgid "%1 of maximum %2 subscribers %3 created"
 msgstr ""
 
@@ -1223,7 +1223,7 @@ msgstr "Llamadas capturadas"
 msgid "Captured Dialogs"
 msgstr "Diálogos capturados"
 
-#: share/templates/customer/details.tt:372
+#: share/templates/customer/details.tt:374
 #, fuzzy
 msgid "Cash"
 msgstr "Cash"
@@ -1512,7 +1512,7 @@ msgstr "Contrato #%1"
 msgid "Contract #%1 successfully created"
 msgstr "Contrato #%1 creado con éxito"
 
-#: share/templates/customer/details.tt:364
+#: share/templates/customer/details.tt:366
 msgid "Contract Balance"
 msgstr "Balance del Contrato"
 
@@ -1630,12 +1630,12 @@ msgstr "Crear Nuevo"
 msgid "Create Number Block"
 msgstr ""
 
-#: share/templates/customer/details.tt:269
+#: share/templates/customer/details.tt:271
 msgid "Create PBX Device"
 msgstr "Crear Dispositivo PBX"
 
-#: share/templates/customer/details.tt:223
-#: share/templates/customer/details.tt:232
+#: share/templates/customer/details.tt:224
+#: share/templates/customer/details.tt:233
 msgid "Create PBX Group"
 msgstr "Crear grupo PBX"
 
@@ -1688,7 +1688,7 @@ msgstr "Crear Grupo de Reglas de Reescritura"
 msgid "Create Slot"
 msgstr "Crear Slot"
 
-#: share/templates/customer/details.tt:347 share/templates/sound/list.tt:22
+#: share/templates/customer/details.tt:349 share/templates/sound/list.tt:22
 msgid "Create Sound Set"
 msgstr "Crear Grupo de Locuciones"
 
@@ -1720,7 +1720,7 @@ msgstr "Crear Zona"
 msgid "Currency"
 msgstr "Divisa"
 
-#: share/templates/customer/details.tt:381
+#: share/templates/customer/details.tt:383
 msgid "Current totals"
 msgstr "Total actual"
 
@@ -1867,7 +1867,7 @@ msgstr "Clientes"
 msgid "Daily Fraud Limit"
 msgstr "Límite de gasto diario"
 
-#: share/templates/customer/details.tt:454
+#: share/templates/customer/details.tt:456
 msgid "Daily Settings"
 msgstr "Preferencias diarias"
 
@@ -1916,10 +1916,10 @@ msgstr ""
 #: lib/NGCP/Panel/Utils/DbStrings.pm:519
 #: share/templates/administrator/list.tt:20 share/templates/billing/fees.tt:20
 #: share/templates/billing/peaktimes.tt:71 share/templates/billing/zones.tt:18
-#: share/templates/contact/list.tt:19 share/templates/customer/details.tt:301
-#: share/templates/customer/details.tt:343
-#: share/templates/customer/details.tt:448
-#: share/templates/customer/details.tt:477 share/templates/device/list.tt:101
+#: share/templates/contact/list.tt:19 share/templates/customer/details.tt:303
+#: share/templates/customer/details.tt:345
+#: share/templates/customer/details.tt:450
+#: share/templates/customer/details.tt:479 share/templates/device/list.tt:101
 #: share/templates/device/list.tt:139 share/templates/device/list.tt:178
 #: share/templates/device/list.tt:217 share/templates/device/list.tt:247
 #: share/templates/domain/list.tt:18 share/templates/emailtemplate/list.tt:18
@@ -1979,7 +1979,7 @@ msgstr "Enviar Faxes entrantes"
 msgid "Deliver Outgoing Faxes"
 msgstr "Enviar Faxes salientes"
 
-#: share/templates/customer/details.tt:543 share/templates/device/list.tt:235
+#: share/templates/customer/details.tt:545 share/templates/device/list.tt:235
 msgid "Deployed Device"
 msgstr "Dispositivo desplegado"
 
@@ -2183,10 +2183,10 @@ msgstr ""
 msgid "Detail"
 msgstr "Detalle"
 
-#: share/templates/customer/details.tt:193
-#: share/templates/customer/details.tt:198
-#: share/templates/customer/details.tt:245
-#: share/templates/customer/details.tt:250 share/templates/customer/list.tt:20
+#: share/templates/customer/details.tt:194
+#: share/templates/customer/details.tt:199
+#: share/templates/customer/details.tt:247
+#: share/templates/customer/details.tt:252 share/templates/customer/list.tt:20
 #: share/templates/customer/list.tt:27
 #: share/templates/numberblock/block_list.tt:19
 #: share/templates/peering/list.tt:19 share/templates/peering/list.tt:26
@@ -2243,7 +2243,7 @@ msgid "Device Models"
 msgstr "Modelos de Dispositivo"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:1041
-#: share/templates/customer/details.tt:278 share/templates/device/list.tt:203
+#: share/templates/customer/details.tt:280 share/templates/device/list.tt:203
 msgid "Device Profile"
 msgstr "Perfil de Dispositivo"
 
@@ -2384,7 +2384,7 @@ msgid "Don't have an account?"
 msgstr "¿No tiene cuenta?"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:627
-#: share/templates/customer/details.tt:504 share/templates/device/list.tt:141
+#: share/templates/customer/details.tt:506 share/templates/device/list.tt:141
 #: share/templates/device/list.tt:180
 #: share/templates/invoice/invoice_list.tt:18
 #: share/templates/invoice/invoice_list.tt:26
@@ -2447,11 +2447,11 @@ msgstr ""
 #: share/templates/billing/list.tt:18 share/templates/billing/peaktimes.tt:43
 #: share/templates/billing/peaktimes.tt:70 share/templates/contact/list.tt:18
 #: share/templates/contract/list.tt:21 share/templates/customer/details.tt:24
-#: share/templates/customer/details.tt:304
-#: share/templates/customer/details.tt:342
-#: share/templates/customer/details.tt:388
-#: share/templates/customer/details.tt:444
-#: share/templates/customer/details.tt:473 share/templates/customer/list.tt:18
+#: share/templates/customer/details.tt:306
+#: share/templates/customer/details.tt:344
+#: share/templates/customer/details.tt:390
+#: share/templates/customer/details.tt:446
+#: share/templates/customer/details.tt:475 share/templates/customer/list.tt:18
 #: share/templates/device/list.tt:102 share/templates/device/list.tt:140
 #: share/templates/device/list.tt:179 share/templates/device/list.tt:218
 #: share/templates/emailtemplate/list.tt:17
@@ -3385,8 +3385,8 @@ msgstr "Tipo de Fichero"
 msgid "Filename"
 msgstr "Nombre de Fichero"
 
-#: share/templates/customer/details.tt:344
-#: share/templates/customer/details.tt:351 share/templates/sound/list.tt:19
+#: share/templates/customer/details.tt:346
+#: share/templates/customer/details.tt:353 share/templates/sound/list.tt:19
 #: share/templates/sound/list.tt:26
 msgid "Files"
 msgstr "Archivos"
@@ -3461,7 +3461,7 @@ msgstr ""
 msgid "Forgot your password?"
 msgstr ""
 
-#: share/templates/customer/details.tt:409
+#: share/templates/customer/details.tt:411
 msgid "Fraud Limits"
 msgstr "Límites antifraude"
 
@@ -3493,7 +3493,7 @@ msgstr "Antifraude diario: Notificación"
 msgid "Fraud settings successfully changed!"
 msgstr "¡Preferencias antifraude modificadas con éxito!"
 
-#: share/templates/customer/details.tt:373
+#: share/templates/customer/details.tt:375
 msgid "Free time"
 msgstr "Tiempo gratis"
 
@@ -4137,7 +4137,7 @@ msgstr ""
 msgid "Invalid voucher id detected!"
 msgstr ""
 
-#: share/templates/customer/details.tt:497
+#: share/templates/customer/details.tt:499
 #: share/templates/invoice/invoice_list.tt:3
 msgid "Invoice"
 msgstr ""
@@ -4217,7 +4217,7 @@ msgstr ""
 msgid "Invoice template successfully updated"
 msgstr ""
 
-#: share/templates/customer/details.tt:491
+#: share/templates/customer/details.tt:493
 #: share/templates/widgets/admin_topmenu_settings.tt:32
 #: share/templates/widgets/reseller_topmenu_settings.tt:17
 msgid "Invoices"
@@ -4301,7 +4301,7 @@ msgstr "Nombre de etiqueta"
 msgid "Liid"
 msgstr ""
 
-#: share/templates/customer/details.tt:417
+#: share/templates/customer/details.tt:419
 msgid "Limit"
 msgstr "Limitar"
 
@@ -4372,7 +4372,7 @@ msgid "Loading..."
 msgstr "Cargando..."
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:674 lib/NGCP/Panel/Utils/DbStrings.pm:8
-#: share/templates/customer/details.tt:418
+#: share/templates/customer/details.tt:420
 msgid "Lock Level"
 msgstr "Nivel de bloqueo"
 
@@ -4408,7 +4408,7 @@ msgstr ""
 
 #: lib/NGCP/Panel/Controller/Device.pm:98
 #: lib/NGCP/Panel/Utils/DbStrings.pm:811
-#: share/templates/customer/details.tt:277
+#: share/templates/customer/details.tt:279
 msgid "MAC Address / Identifier"
 msgstr "Dirección MAC / Identificador"
 
@@ -4498,7 +4498,7 @@ msgstr "Máx suscriptores"
 
 #. (contract.max_subscribers,                            c.config.features.cloudpbx ? c.loc('(including PBX groups)
 #: share/templates/customer/details.tt:176
-#: share/templates/customer/details.tt:228
+#: share/templates/customer/details.tt:229
 msgid "Maximum number of %1 subscribers %2 created"
 msgstr ""
 
@@ -4619,7 +4619,7 @@ msgstr "Mes"
 msgid "Monthly Fraud Limit"
 msgstr "Límite antifraude mensual"
 
-#: share/templates/customer/details.tt:425
+#: share/templates/customer/details.tt:427
 msgid "Monthly Settings"
 msgstr "Preferencias mensuales"
 
@@ -4840,7 +4840,7 @@ msgstr "No existe el id de marcado rápido"
 msgid "No such voicemail file."
 msgstr "No existe el fichero de mensaje de buzón"
 
-#: share/templates/customer/details.tt:687
+#: share/templates/customer/details.tt:689
 msgid "None"
 msgstr ""
 
@@ -4852,7 +4852,7 @@ msgstr ""
 msgid "Not logged in"
 msgstr ""
 
-#: share/templates/customer/details.tt:419
+#: share/templates/customer/details.tt:421
 msgid "Notify"
 msgstr "Notificar"
 
@@ -5068,7 +5068,7 @@ msgstr "Dispositivo PBX"
 msgid "PBX Device successfully deleted"
 msgstr "Dispositivo PBX eliminado con éxito"
 
-#: share/templates/customer/details.tt:265
+#: share/templates/customer/details.tt:267
 msgid "PBX Devices"
 msgstr "Dispositivos PBX"
 
@@ -5090,8 +5090,8 @@ msgstr ""
 msgid "PBX Group Preferences for %1@%2"
 msgstr ""
 
-#: share/templates/customer/details.tt:213
-#: share/templates/customer/details.tt:237
+#: share/templates/customer/details.tt:214
+#: share/templates/customer/details.tt:238
 #: share/templates/subscriber/master.tt:97
 msgid "PBX Groups"
 msgstr "Grupos PBX"
@@ -5435,11 +5435,11 @@ msgstr ""
 msgid "Preference '"
 msgstr "Preferencia '"
 
-#: share/templates/customer/details.tt:194
-#: share/templates/customer/details.tt:199
+#: share/templates/customer/details.tt:195
 #: share/templates/customer/details.tt:20
-#: share/templates/customer/details.tt:246
-#: share/templates/customer/details.tt:251 share/templates/domain/list.tt:19
+#: share/templates/customer/details.tt:200
+#: share/templates/customer/details.tt:248
+#: share/templates/customer/details.tt:253 share/templates/domain/list.tt:19
 #: share/templates/domain/list.tt:26
 #: share/templates/peering/servers_rules.tt:20
 #: share/templates/peering/servers_rules.tt:27
@@ -6203,7 +6203,7 @@ msgstr "Valor máximo aceptado del MIN_SE del SBC."
 msgid "Setting"
 msgstr "Preferencia"
 
-#: share/templates/customer/details.tt:534
+#: share/templates/customer/details.tt:536
 #: share/templates/widgets/admin_topmenu_settings.tt:18
 #: share/templates/widgets/reseller_topmenu_settings.tt:4
 #: share/templates/widgets/subscriber_topmenu_settings.tt:4
@@ -6294,7 +6294,7 @@ msgstr ""
 msgid "Sorry, an error has occured, requested operation denied!"
 msgstr "Lo sentimos, se ha producido un error, operación solicitada denegada!"
 
-#: share/templates/customer/details.tt:335 share/templates/sound/list.tt:3
+#: share/templates/customer/details.tt:337 share/templates/sound/list.tt:3
 #: share/templates/widgets/reseller_domain_overview.tt:13
 msgid "Sound Set"
 msgstr "Grupo de locuciones"
@@ -6304,7 +6304,7 @@ msgid "Sound Set used for system prompts like error announcements etc."
 msgstr ""
 "Grupo de locuciones para el sistema tales como mensajes de error... etc."
 
-#: share/templates/customer/details.tt:329 share/templates/sound/list.tt:1
+#: share/templates/customer/details.tt:331 share/templates/sound/list.tt:1
 #: share/templates/widgets/admin_topmenu_settings.tt:39
 #: share/templates/widgets/reseller_topmenu_settings.tt:23
 msgid "Sound Sets"
@@ -6595,7 +6595,7 @@ msgstr "Marcado rápido"
 msgid "Speeddials"
 msgstr ""
 
-#: share/templates/customer/details.tt:394
+#: share/templates/customer/details.tt:396
 msgid "Spent this interval"
 msgstr "Gastado este intervalo"
 
@@ -6626,7 +6626,7 @@ msgid "Start time"
 msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:755
-#: share/templates/customer/details.tt:275
+#: share/templates/customer/details.tt:277
 msgid "Station Name"
 msgstr "Nombre de la estación"
 
@@ -6661,10 +6661,10 @@ msgstr "Enviado"
 
 #: lib/NGCP/Panel/Controller/Subscriber.pm:2591
 #: lib/NGCP/Panel/Utils/DbStrings.pm:407
-#: share/templates/customer/details.tt:276
-#: share/templates/customer/details.tt:522
-#: share/templates/customer/details.tt:655
-#: share/templates/customer/details.tt:705
+#: share/templates/customer/details.tt:278
+#: share/templates/customer/details.tt:524
+#: share/templates/customer/details.tt:657
+#: share/templates/customer/details.tt:707
 #: share/templates/subscriber/list.tt:3
 #: share/templates/subscriber/preferences.tt:10
 #: share/templates/widgets/admin_reseller_overview.tt:14
@@ -7017,7 +7017,7 @@ msgstr "Soporta Private Line"
 msgid "Supports Shared Line"
 msgstr "Soporta Shared Line"
 
-#: share/templates/customer/details.tt:308
+#: share/templates/customer/details.tt:310
 msgid "Sync Device"
 msgstr "Sincronizar dispositivo"
 
@@ -7066,8 +7066,8 @@ msgstr ""
 msgid "Template variables"
 msgstr ""
 
-#: share/templates/billing/list.tt:17 share/templates/customer/details.tt:192
-#: share/templates/customer/details.tt:244 share/templates/customer/list.tt:19
+#: share/templates/billing/list.tt:17 share/templates/customer/details.tt:193
+#: share/templates/customer/details.tt:246 share/templates/customer/list.tt:19
 #: share/templates/helpers/datatables.tt:106
 #: share/templates/reseller/details.tt:207 share/templates/reseller/list.tt:19
 #: share/templates/subscriber/list.tt:19
@@ -8775,8 +8775,8 @@ msgstr "todos los derechos reservados"
 msgid "allowed_ip_grp successfully created"
 msgstr ""
 
-#: share/templates/customer/details.tt:426
-#: share/templates/customer/details.tt:455
+#: share/templates/customer/details.tt:428
+#: share/templates/customer/details.tt:457
 msgid "billing profile default"
 msgstr "perfil de facturación por defecto"
 

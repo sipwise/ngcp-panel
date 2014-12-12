@@ -86,7 +86,7 @@ msgstr ""
 
 #. (subscriber_count,contract.max_subscribers,                                c.config.features.cloudpbx ? c.loc('(including PBX groups)
 #. (subscriber_count, contract.max_subscribers,                            c.config.features.cloudpbx ? c.loc('(including PBX groups)
-#: share/templates/customer/details.tt:168 share/templates/customer/details.tt:220
+#: share/templates/customer/details.tt:168 share/templates/customer/details.tt:221
 msgid "%1 of maximum %2 subscribers %3 created"
 msgstr ""
 
@@ -949,7 +949,7 @@ msgstr ""
 msgid "Captured Dialogs"
 msgstr ""
 
-#: share/templates/customer/details.tt:372
+#: share/templates/customer/details.tt:374
 msgid "Cash"
 msgstr ""
 
@@ -1175,7 +1175,7 @@ msgstr ""
 msgid "Contract #%1 successfully created"
 msgstr ""
 
-#: share/templates/customer/details.tt:364
+#: share/templates/customer/details.tt:366
 msgid "Contract Balance"
 msgstr ""
 
@@ -1288,11 +1288,11 @@ msgstr ""
 msgid "Create Number Block"
 msgstr ""
 
-#: share/templates/customer/details.tt:269
+#: share/templates/customer/details.tt:271
 msgid "Create PBX Device"
 msgstr ""
 
-#: share/templates/customer/details.tt:223 share/templates/customer/details.tt:232
+#: share/templates/customer/details.tt:224 share/templates/customer/details.tt:233
 msgid "Create PBX Group"
 msgstr ""
 
@@ -1344,7 +1344,7 @@ msgstr ""
 msgid "Create Slot"
 msgstr ""
 
-#: share/templates/customer/details.tt:347 share/templates/sound/list.tt:22
+#: share/templates/customer/details.tt:349 share/templates/sound/list.tt:22
 msgid "Create Sound Set"
 msgstr ""
 
@@ -1372,7 +1372,7 @@ msgstr ""
 msgid "Currency"
 msgstr ""
 
-#: share/templates/customer/details.tt:381
+#: share/templates/customer/details.tt:383
 msgid "Current totals"
 msgstr ""
 
@@ -1497,7 +1497,7 @@ msgstr ""
 msgid "Daily Fraud Limit"
 msgstr ""
 
-#: share/templates/customer/details.tt:454
+#: share/templates/customer/details.tt:456
 msgid "Daily Settings"
 msgstr ""
 
@@ -1541,7 +1541,7 @@ msgstr ""
 msgid "Define an action to be executed if User-Provided Number doesn't match the 'allowed_clis' list"
 msgstr ""
 
-#: lib/NGCP/Panel/Utils/DbStrings.pm:519 share/templates/administrator/list.tt:20 share/templates/billing/fees.tt:20 share/templates/billing/peaktimes.tt:71 share/templates/billing/zones.tt:18 share/templates/contact/list.tt:19 share/templates/customer/details.tt:301 share/templates/customer/details.tt:343 share/templates/customer/details.tt:448 share/templates/customer/details.tt:477 share/templates/device/list.tt:101 share/templates/device/list.tt:139 share/templates/device/list.tt:178 share/templates/device/list.tt:217 share/templates/device/list.tt:247 share/templates/domain/list.tt:18 share/templates/emailtemplate/list.tt:18 share/templates/helpers/datatables.tt:105 share/templates/invoice/invoice_list.tt:19 share/templates/invoice/template_list.tt:19 share/templates/ncos/list.tt:18 share/templates/ncos/pattern_list.tt:21 share/templates/numberblock/block_list.tt:18 share/templates/numberblock/profile_list.tt:23 share/templates/peering/list.tt:18 share/templates/peering/servers_rules.tt:19 share/templates/peering/servers_rules.tt:51 share/templates/reseller/details.tt:139 share/templates/reseller/details.tt:170 share/templates/reseller/details.tt:292 share/templates/rewrite/rules_list.tt:56 share/templates/rewrite/set_list.tt:22 share/templates/sound/handles_list.tt:53 share/templates/sound/list.tt:18 share/templates/subprofile/profile_list.tt:23 share/templates/subprofile/set_list.tt:23 share/templates/subscriber/master.tt:218 share/templates/subscriber/master.tt:254 share/templates/subscriber/preferences.tt:141 share/templates/subscriber/preferences.tt:399 share/templates/subscriber/preferences.tt:433 share/templates/subscriber/preferences.tt:515 share/templates/subscriber/preferences.tt:567 share/templates/subscriber/preferences.tt:638 share/templates/subscriber/preferences.tt:688 share/templates/subscriber/voicemail.tt:22 share/templates/voucher/list.tt:18
+#: lib/NGCP/Panel/Utils/DbStrings.pm:519 share/templates/administrator/list.tt:20 share/templates/billing/fees.tt:20 share/templates/billing/peaktimes.tt:71 share/templates/billing/zones.tt:18 share/templates/contact/list.tt:19 share/templates/customer/details.tt:303 share/templates/customer/details.tt:345 share/templates/customer/details.tt:450 share/templates/customer/details.tt:479 share/templates/device/list.tt:101 share/templates/device/list.tt:139 share/templates/device/list.tt:178 share/templates/device/list.tt:217 share/templates/device/list.tt:247 share/templates/domain/list.tt:18 share/templates/emailtemplate/list.tt:18 share/templates/helpers/datatables.tt:105 share/templates/invoice/invoice_list.tt:19 share/templates/invoice/template_list.tt:19 share/templates/ncos/list.tt:18 share/templates/ncos/pattern_list.tt:21 share/templates/numberblock/block_list.tt:18 share/templates/numberblock/profile_list.tt:23 share/templates/peering/list.tt:18 share/templates/peering/servers_rules.tt:19 share/templates/peering/servers_rules.tt:51 share/templates/reseller/details.tt:139 share/templates/reseller/details.tt:170 share/templates/reseller/details.tt:292 share/templates/rewrite/rules_list.tt:56 share/templates/rewrite/set_list.tt:22 share/templates/sound/handles_list.tt:53 share/templates/sound/list.tt:18 share/templates/subprofile/profile_list.tt:23 share/templates/subprofile/set_list.tt:23 share/templates/subscriber/master.tt:218 share/templates/subscriber/master.tt:254 share/templates/subscriber/preferences.tt:141 share/templates/subscriber/preferences.tt:399 share/templates/subscriber/preferences.tt:433 share/templates/subscriber/preferences.tt:515 share/templates/subscriber/preferences.tt:567 share/templates/subscriber/preferences.tt:638 share/templates/subscriber/preferences.tt:688 share/templates/subscriber/voicemail.tt:22 share/templates/voucher/list.tt:18
 msgid "Delete"
 msgstr ""
 
@@ -1569,7 +1569,7 @@ msgstr ""
 msgid "Deliver Outgoing Faxes"
 msgstr ""
 
-#: share/templates/customer/details.tt:543 share/templates/device/list.tt:235
+#: share/templates/customer/details.tt:545 share/templates/device/list.tt:235
 msgid "Deployed Device"
 msgstr ""
 
@@ -1754,7 +1754,7 @@ msgstr ""
 msgid "Detail"
 msgstr ""
 
-#: share/templates/customer/details.tt:193 share/templates/customer/details.tt:198 share/templates/customer/details.tt:245 share/templates/customer/details.tt:250 share/templates/customer/list.tt:20 share/templates/customer/list.tt:27 share/templates/numberblock/block_list.tt:19 share/templates/peering/list.tt:19 share/templates/peering/list.tt:26 share/templates/reseller/details.tt:208 share/templates/reseller/details.tt:212 share/templates/reseller/list.tt:20 share/templates/reseller/list.tt:28 share/templates/subscriber/list.tt:20 share/templates/subscriber/list.tt:28
+#: share/templates/customer/details.tt:194 share/templates/customer/details.tt:199 share/templates/customer/details.tt:247 share/templates/customer/details.tt:252 share/templates/customer/list.tt:20 share/templates/customer/list.tt:27 share/templates/numberblock/block_list.tt:19 share/templates/peering/list.tt:19 share/templates/peering/list.tt:26 share/templates/reseller/details.tt:208 share/templates/reseller/details.tt:212 share/templates/reseller/list.tt:20 share/templates/reseller/list.tt:28 share/templates/subscriber/list.tt:20 share/templates/subscriber/list.tt:28
 msgid "Details"
 msgstr ""
 
@@ -1794,7 +1794,7 @@ msgstr ""
 msgid "Device Models"
 msgstr ""
 
-#: lib/NGCP/Panel/Utils/DbStrings.pm:1041 share/templates/customer/details.tt:278 share/templates/device/list.tt:203
+#: lib/NGCP/Panel/Utils/DbStrings.pm:1041 share/templates/customer/details.tt:280 share/templates/device/list.tt:203
 msgid "Device Profile"
 msgstr ""
 
@@ -1911,7 +1911,7 @@ msgstr ""
 msgid "Don't have an account?"
 msgstr ""
 
-#: lib/NGCP/Panel/Utils/DbStrings.pm:627 share/templates/customer/details.tt:504 share/templates/device/list.tt:141 share/templates/device/list.tt:180 share/templates/invoice/invoice_list.tt:18 share/templates/invoice/invoice_list.tt:26
+#: lib/NGCP/Panel/Utils/DbStrings.pm:627 share/templates/customer/details.tt:506 share/templates/device/list.tt:141 share/templates/device/list.tt:180 share/templates/invoice/invoice_list.tt:18 share/templates/invoice/invoice_list.tt:26
 msgid "Download"
 msgstr ""
 
@@ -1963,7 +1963,7 @@ msgstr ""
 msgid "E164range add"
 msgstr ""
 
-#: share/templates/administrator/list.tt:19 share/templates/billing/fees.tt:19 share/templates/billing/list.tt:18 share/templates/billing/peaktimes.tt:43 share/templates/billing/peaktimes.tt:70 share/templates/contact/list.tt:18 share/templates/contract/list.tt:21 share/templates/customer/details.tt:24 share/templates/customer/details.tt:304 share/templates/customer/details.tt:342 share/templates/customer/details.tt:388 share/templates/customer/details.tt:444 share/templates/customer/details.tt:473 share/templates/customer/list.tt:18 share/templates/device/list.tt:102 share/templates/device/list.tt:140 share/templates/device/list.tt:179 share/templates/device/list.tt:218 share/templates/emailtemplate/list.tt:17 share/templates/helpers/pref_table.tt:137 share/templates/ncos/list.tt:17 share/templates/ncos/pattern_list.tt:20 share/templates/ncos/pattern_list.tt:39 share/templates/numberblock/block_list.tt:17 share/templates/numberblock/profile_list.tt:22 share/templates/numberblock/profile_list.tt:32 share/templates/peering/list.tt:17 share/templates/peering/preferences.tt:18 share/templates/peering/servers_rules.tt:18 share/templates/peering/servers_rules.tt:50 share/templates/reseller/details.tt:109 share/templates/reseller/details.tt:138 share/templates/reseller/details.tt:206 share/templates/reseller/details.tt:46 share/templates/reseller/details.tt:78 share/templates/reseller/list.tt:18 share/templates/rewrite/rules_list.tt:53 share/templates/rewrite/set_list.tt:21 share/templates/sound/handles_list.tt:52 share/templates/sound/list.tt:17 share/templates/subprofile/profile_list.tt:22 share/templates/subprofile/profile_list.tt:33 share/templates/subprofile/set_list.tt:22 share/templates/subscriber/master.tt:51 share/templates/subscriber/preferences.tt:139 share/templates/subscriber/preferences.tt:186 share/templates/subscriber/preferences.tt:200 share/templates/subscriber/preferences.tt:214 share/templates/subscriber/preferences.tt:228 share/templates/subscriber/preferences.tt:277 share/templates/subscriber/preferences.tt:293 share/templates/subscriber/preferences.tt:309 share/templates/subscriber/preferences.tt:325 share/templates/subscriber/preferences.tt:341 share/templates/subscriber/preferences.tt:358 share/templates/subscriber/preferences.tt:432 share/templates/subscriber/preferences.tt:475 share/templates/subscriber/preferences.tt:566 share/templates/subscriber/preferences.tt:635 share/templates/subscriber/preferences.tt:685 share/templates/voucher/list.tt:17
+#: share/templates/administrator/list.tt:19 share/templates/billing/fees.tt:19 share/templates/billing/list.tt:18 share/templates/billing/peaktimes.tt:43 share/templates/billing/peaktimes.tt:70 share/templates/contact/list.tt:18 share/templates/contract/list.tt:21 share/templates/customer/details.tt:24 share/templates/customer/details.tt:306 share/templates/customer/details.tt:344 share/templates/customer/details.tt:390 share/templates/customer/details.tt:446 share/templates/customer/details.tt:475 share/templates/customer/list.tt:18 share/templates/device/list.tt:102 share/templates/device/list.tt:140 share/templates/device/list.tt:179 share/templates/device/list.tt:218 share/templates/emailtemplate/list.tt:17 share/templates/helpers/pref_table.tt:137 share/templates/ncos/list.tt:17 share/templates/ncos/pattern_list.tt:20 share/templates/ncos/pattern_list.tt:39 share/templates/numberblock/block_list.tt:17 share/templates/numberblock/profile_list.tt:22 share/templates/numberblock/profile_list.tt:32 share/templates/peering/list.tt:17 share/templates/peering/preferences.tt:18 share/templates/peering/servers_rules.tt:18 share/templates/peering/servers_rules.tt:50 share/templates/reseller/details.tt:109 share/templates/reseller/details.tt:138 share/templates/reseller/details.tt:206 share/templates/reseller/details.tt:46 share/templates/reseller/details.tt:78 share/templates/reseller/list.tt:18 share/templates/rewrite/rules_list.tt:53 share/templates/rewrite/set_list.tt:21 share/templates/sound/handles_list.tt:52 share/templates/sound/list.tt:17 share/templates/subprofile/profile_list.tt:22 share/templates/subprofile/profile_list.tt:33 share/templates/subprofile/set_list.tt:22 share/templates/subscriber/master.tt:51 share/templates/subscriber/preferences.tt:139 share/templates/subscriber/preferences.tt:186 share/templates/subscriber/preferences.tt:200 share/templates/subscriber/preferences.tt:214 share/templates/subscriber/preferences.tt:228 share/templates/subscriber/preferences.tt:277 share/templates/subscriber/preferences.tt:293 share/templates/subscriber/preferences.tt:309 share/templates/subscriber/preferences.tt:325 share/templates/subscriber/preferences.tt:341 share/templates/subscriber/preferences.tt:358 share/templates/subscriber/preferences.tt:432 share/templates/subscriber/preferences.tt:475 share/templates/subscriber/preferences.tt:566 share/templates/subscriber/preferences.tt:635 share/templates/subscriber/preferences.tt:685 share/templates/voucher/list.tt:17
 msgid "Edit"
 msgstr ""
 
@@ -2810,7 +2810,7 @@ msgstr ""
 msgid "Filename"
 msgstr ""
 
-#: share/templates/customer/details.tt:344 share/templates/customer/details.tt:351 share/templates/sound/list.tt:19 share/templates/sound/list.tt:26
+#: share/templates/customer/details.tt:346 share/templates/customer/details.tt:353 share/templates/sound/list.tt:19 share/templates/sound/list.tt:26
 msgid "Files"
 msgstr ""
 
@@ -2862,7 +2862,7 @@ msgstr ""
 msgid "Forgot your password?"
 msgstr ""
 
-#: share/templates/customer/details.tt:409
+#: share/templates/customer/details.tt:411
 msgid "Fraud Limits"
 msgstr ""
 
@@ -2894,7 +2894,7 @@ msgstr ""
 msgid "Fraud settings successfully changed!"
 msgstr ""
 
-#: share/templates/customer/details.tt:373
+#: share/templates/customer/details.tt:375
 msgid "Free time"
 msgstr ""
 
@@ -3500,7 +3500,7 @@ msgstr ""
 msgid "Invalid voucher id detected!"
 msgstr ""
 
-#: share/templates/customer/details.tt:497 share/templates/invoice/invoice_list.tt:3
+#: share/templates/customer/details.tt:499 share/templates/invoice/invoice_list.tt:3
 msgid "Invoice"
 msgstr ""
 
@@ -3574,7 +3574,7 @@ msgstr ""
 msgid "Invoice template successfully updated"
 msgstr ""
 
-#: share/templates/customer/details.tt:491 share/templates/widgets/admin_topmenu_settings.tt:32 share/templates/widgets/reseller_topmenu_settings.tt:17
+#: share/templates/customer/details.tt:493 share/templates/widgets/admin_topmenu_settings.tt:32 share/templates/widgets/reseller_topmenu_settings.tt:17
 msgid "Invoices"
 msgstr ""
 
@@ -3654,7 +3654,7 @@ msgstr ""
 msgid "Liid"
 msgstr ""
 
-#: share/templates/customer/details.tt:417
+#: share/templates/customer/details.tt:419
 msgid "Limit"
 msgstr ""
 
@@ -3706,7 +3706,7 @@ msgstr ""
 msgid "Loading..."
 msgstr ""
 
-#: lib/NGCP/Panel/Utils/DbStrings.pm:674 lib/NGCP/Panel/Utils/DbStrings.pm:8 share/templates/customer/details.tt:418
+#: lib/NGCP/Panel/Utils/DbStrings.pm:674 lib/NGCP/Panel/Utils/DbStrings.pm:8 share/templates/customer/details.tt:420
 msgid "Lock Level"
 msgstr ""
 
@@ -3739,7 +3739,7 @@ msgstr ""
 msgid "MAC Address"
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/Device.pm:98 lib/NGCP/Panel/Utils/DbStrings.pm:811 share/templates/customer/details.tt:277
+#: lib/NGCP/Panel/Controller/Device.pm:98 lib/NGCP/Panel/Utils/DbStrings.pm:811 share/templates/customer/details.tt:279
 msgid "MAC Address / Identifier"
 msgstr ""
 
@@ -3825,7 +3825,7 @@ msgid "Max Subscribers"
 msgstr ""
 
 #. (contract.max_subscribers,                            c.config.features.cloudpbx ? c.loc('(including PBX groups)
-#: share/templates/customer/details.tt:176 share/templates/customer/details.tt:228
+#: share/templates/customer/details.tt:176 share/templates/customer/details.tt:229
 msgid "Maximum number of %1 subscribers %2 created"
 msgstr ""
 
@@ -3925,7 +3925,7 @@ msgstr ""
 msgid "Monthly Fraud Limit"
 msgstr ""
 
-#: share/templates/customer/details.tt:425
+#: share/templates/customer/details.tt:427
 msgid "Monthly Settings"
 msgstr ""
 
@@ -4107,7 +4107,7 @@ msgstr ""
 msgid "No such voicemail file."
 msgstr ""
 
-#: share/templates/customer/details.tt:687
+#: share/templates/customer/details.tt:689
 msgid "None"
 msgstr ""
 
@@ -4119,7 +4119,7 @@ msgstr ""
 msgid "Not logged in"
 msgstr ""
 
-#: share/templates/customer/details.tt:419
+#: share/templates/customer/details.tt:421
 msgid "Notify"
 msgstr ""
 
@@ -4317,7 +4317,7 @@ msgstr ""
 msgid "PBX Device successfully deleted"
 msgstr ""
 
-#: share/templates/customer/details.tt:265
+#: share/templates/customer/details.tt:267
 msgid "PBX Devices"
 msgstr ""
 
@@ -4339,7 +4339,7 @@ msgstr ""
 msgid "PBX Group Preferences for %1@%2"
 msgstr ""
 
-#: share/templates/customer/details.tt:213 share/templates/customer/details.tt:237 share/templates/subscriber/master.tt:97
+#: share/templates/customer/details.tt:214 share/templates/customer/details.tt:238 share/templates/subscriber/master.tt:97
 msgid "PBX Groups"
 msgstr ""
 
@@ -4662,7 +4662,7 @@ msgstr ""
 msgid "Preference '"
 msgstr ""
 
-#: share/templates/customer/details.tt:194 share/templates/customer/details.tt:199 share/templates/customer/details.tt:20 share/templates/customer/details.tt:246 share/templates/customer/details.tt:251 share/templates/domain/list.tt:19 share/templates/domain/list.tt:26 share/templates/peering/servers_rules.tt:20 share/templates/peering/servers_rules.tt:27 share/templates/reseller/details.tt:171 share/templates/reseller/details.tt:175 share/templates/subprofile/profile_list.tt:25 share/templates/subprofile/profile_list.tt:34 share/templates/subscriber/master.tt:13
+#: share/templates/customer/details.tt:195 share/templates/customer/details.tt:20 share/templates/customer/details.tt:200 share/templates/customer/details.tt:248 share/templates/customer/details.tt:253 share/templates/domain/list.tt:19 share/templates/domain/list.tt:26 share/templates/peering/servers_rules.tt:20 share/templates/peering/servers_rules.tt:27 share/templates/reseller/details.tt:171 share/templates/reseller/details.tt:175 share/templates/subprofile/profile_list.tt:25 share/templates/subprofile/profile_list.tt:34 share/templates/subscriber/master.tt:13
 msgid "Preferences"
 msgstr ""
 
@@ -5225,7 +5225,7 @@ msgstr ""
 msgid "Setting"
 msgstr ""
 
-#: share/templates/customer/details.tt:534 share/templates/widgets/admin_topmenu_settings.tt:18 share/templates/widgets/reseller_topmenu_settings.tt:4 share/templates/widgets/subscriber_topmenu_settings.tt:4 share/templates/widgets/subscriberadmin_topmenu_settings.tt:4
+#: share/templates/customer/details.tt:536 share/templates/widgets/admin_topmenu_settings.tt:18 share/templates/widgets/reseller_topmenu_settings.tt:4 share/templates/widgets/subscriber_topmenu_settings.tt:4 share/templates/widgets/subscriberadmin_topmenu_settings.tt:4
 msgid "Settings"
 msgstr ""
 
@@ -5306,7 +5306,7 @@ msgstr ""
 msgid "Sorry, an error has occured, requested operation denied!"
 msgstr ""
 
-#: share/templates/customer/details.tt:335 share/templates/sound/list.tt:3 share/templates/widgets/reseller_domain_overview.tt:13
+#: share/templates/customer/details.tt:337 share/templates/sound/list.tt:3 share/templates/widgets/reseller_domain_overview.tt:13
 msgid "Sound Set"
 msgstr ""
 
@@ -5314,7 +5314,7 @@ msgstr ""
 msgid "Sound Set used for system prompts like error announcements etc."
 msgstr ""
 
-#: share/templates/customer/details.tt:329 share/templates/sound/list.tt:1 share/templates/widgets/admin_topmenu_settings.tt:39 share/templates/widgets/reseller_topmenu_settings.tt:23
+#: share/templates/customer/details.tt:331 share/templates/sound/list.tt:1 share/templates/widgets/admin_topmenu_settings.tt:39 share/templates/widgets/reseller_topmenu_settings.tt:23
 msgid "Sound Sets"
 msgstr ""
 
@@ -5566,7 +5566,7 @@ msgstr ""
 msgid "Speeddials"
 msgstr ""
 
-#: share/templates/customer/details.tt:394
+#: share/templates/customer/details.tt:396
 msgid "Spent this interval"
 msgstr ""
 
@@ -5594,7 +5594,7 @@ msgstr ""
 msgid "Start time"
 msgstr ""
 
-#: lib/NGCP/Panel/Utils/DbStrings.pm:755 share/templates/customer/details.tt:275
+#: lib/NGCP/Panel/Utils/DbStrings.pm:755 share/templates/customer/details.tt:277
 msgid "Station Name"
 msgstr ""
 
@@ -5614,7 +5614,7 @@ msgstr ""
 msgid "Submitid"
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/Subscriber.pm:2591 lib/NGCP/Panel/Utils/DbStrings.pm:407 share/templates/customer/details.tt:276 share/templates/customer/details.tt:522 share/templates/customer/details.tt:655 share/templates/customer/details.tt:705 share/templates/subscriber/list.tt:3 share/templates/subscriber/preferences.tt:10 share/templates/widgets/admin_reseller_overview.tt:14 share/templates/widgets/reseller_customer_overview.tt:13
+#: lib/NGCP/Panel/Controller/Subscriber.pm:2591 lib/NGCP/Panel/Utils/DbStrings.pm:407 share/templates/customer/details.tt:278 share/templates/customer/details.tt:524 share/templates/customer/details.tt:657 share/templates/customer/details.tt:707 share/templates/subscriber/list.tt:3 share/templates/subscriber/preferences.tt:10 share/templates/widgets/admin_reseller_overview.tt:14 share/templates/widgets/reseller_customer_overview.tt:13
 msgid "Subscriber"
 msgstr ""
 
@@ -5945,7 +5945,7 @@ msgstr ""
 msgid "Supports Shared Line"
 msgstr ""
 
-#: share/templates/customer/details.tt:308
+#: share/templates/customer/details.tt:310
 msgid "Sync Device"
 msgstr ""
 
@@ -5993,7 +5993,7 @@ msgstr ""
 msgid "Template variables"
 msgstr ""
 
-#: share/templates/billing/list.tt:17 share/templates/customer/details.tt:192 share/templates/customer/details.tt:244 share/templates/customer/list.tt:19 share/templates/helpers/datatables.tt:106 share/templates/reseller/details.tt:207 share/templates/reseller/list.tt:19 share/templates/subscriber/list.tt:19
+#: share/templates/billing/list.tt:17 share/templates/customer/details.tt:193 share/templates/customer/details.tt:246 share/templates/customer/list.tt:19 share/templates/helpers/datatables.tt:106 share/templates/reseller/details.tt:207 share/templates/reseller/list.tt:19 share/templates/subscriber/list.tt:19
 msgid "Terminate"
 msgstr ""
 
@@ -7444,7 +7444,7 @@ msgstr ""
 msgid "allowed_ip_grp successfully created"
 msgstr ""
 
-#: share/templates/customer/details.tt:426 share/templates/customer/details.tt:455
+#: share/templates/customer/details.tt:428 share/templates/customer/details.tt:457
 msgid "billing profile default"
 msgstr ""
 
