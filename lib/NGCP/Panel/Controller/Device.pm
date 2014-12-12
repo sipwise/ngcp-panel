@@ -2,6 +2,7 @@ package NGCP::Panel::Controller::Device;
 use Sipwise::Base;
 
 use Template;
+use Crypt::Rijndael;
 use NGCP::Panel::Form::Device::Model;
 use NGCP::Panel::Form::Device::ModelAdmin;
 use NGCP::Panel::Form::Device::Firmware;
@@ -1069,13 +1070,8 @@ sub dev_field_config :Chained('/') :PathPart('device/autoprov/config') :Args() {
         return;
     }
 
-    my $schema = $c->config->{deviceprovisioning}->{secure} ? 'https' : 'http';
-    my $host = $c->config->{deviceprovisioning}->{host} // $c->req->uri->host;
-    my $port = $c->config->{deviceprovisioning}->{port} // 1444;
-
     $id =~ s/\.cfg$//;
     if($c->req->user_agent =~ /PolycomVVX/) {
-        $id =~ s/\.cfg$//;
         $c->response->content_type('text/xml');
         $c->response->body(
             '<?xml version="1.0" standalone="yes"?>'.
@@ -1093,6 +1089,12 @@ sub dev_field_config :Chained('/') :PathPart('device/autoprov/config') :Args() {
     $id = lc $id;
     $id =~ s/\-phone\.cfg$//; # polycoms send a -phone.cfg suffix
 
+    my $yealink_key;
+    if($id =~ s/_secure\.enc$//) {
+        # mark to serve master-encrypted device key instead of config
+        $yealink_key = $c->config->{autoprovisioning}->{yealink_key};
+    }
+
     my $dev = $c->model('DB')->resultset('autoprov_field_devices')->find({
         identifier => $id
     });
@@ -1107,7 +1109,22 @@ sub dev_field_config :Chained('/') :PathPart('device/autoprov/config') :Args() {
         return;
     }
 
+    if($yealink_key && defined $dev->encryption_key) {
+        my $cipher = Crypt::Rijndael->new(
+            $yealink_key, Crypt::Rijndael::MODE_ECB()
+        );
+        $c->response->content_type('text/plain');
+        $c->response->body($cipher->encrypt($dev->encryption_key));
+        $c->response->status(200);
+        return;
+    }
+
     my $model = $dev->profile->config->device;
+
+    # TODO: only if not set in model config!
+    my $schema = $c->config->{deviceprovisioning}->{secure} ? 'https' : 'http';
+    my $host = $c->config->{deviceprovisioning}->{host} // $c->req->uri->host;
+    my $port = $c->config->{deviceprovisioning}->{port} // 1444;
 
     my $vars = {
         config => {
@@ -1203,8 +1220,17 @@ sub dev_field_config :Chained('/') :PathPart('device/autoprov/config') :Args() {
     $c->log->debug("providing config to $id");
     $c->log->debug($processed_data);
 
-    $c->response->content_type($dev->profile->config->content_type);
-    $c->response->body($processed_data);
+    if(defined $dev->encryption_key) {
+        # yealink uses weak ECB mode, but well...
+        my $cipher = Crypt::Rijndael->new(
+            $dev->encryption_key, Crypt::Rijndael::MODE_ECB()
+        );
+        $c->response->content_type("application/octet-stream");
+        $c->response->body($cipher->encrypt($processed_data));
+    } else {
+        $c->response->content_type($dev->profile->config->content_type);
+        $c->response->body($processed_data);
+    }
 }
 
 sub dev_static_jitsi_config :Chained('/') :PathPart('device/autoprov/static/jitsi') :Args(0) {

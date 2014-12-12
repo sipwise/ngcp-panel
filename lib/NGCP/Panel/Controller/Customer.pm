@@ -1138,6 +1138,12 @@ sub pbx_device_create :Chained('base') :PathPart('pbx/device/create') :Args(0) {
                     identifier => $identifier,
                     station_name => $station_name,
                 });
+                if($fdev->profile->config->device->bootstrap_method eq "redirect_yealink") {
+                    my @chars = ("A".."Z", "a".."z", "0".."9");
+                    my $device_key = "";
+                    $device_key .= $chars[rand @chars] for 0 .. 15;
+                    $fdev->update({ encryption_key => $device_key });
+                }
 
                 $err = NGCP::Panel::Utils::DeviceBootstrap::dispatch(
                     $c, 'register', $fdev);

@@ -250,6 +250,12 @@ sub POST :Allow {
                     identifier => $resource->{identifier},
                     station_name => $resource->{station_name},
                 });
+            if($dev_model->bootstrap_method eq "redirect_yealink") {
+                my @chars = ("A".."Z", "a".."z", "0".."9");
+                my $device_key = "";
+                $device_key .= $chars[rand @chars] for 0 .. 15;
+                $device->update({ encryption_key => $device_key });
+            }
             my $err = NGCP::Panel::Utils::DeviceBootstrap::dispatch($c, 'register', $device);
             die $err if($err);
             for my $line ( @{$resource->{lines}} ) {
