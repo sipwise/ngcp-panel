@@ -1102,13 +1102,13 @@ sub dev_field_config :Chained('/') :PathPart('device/autoprov/config') :Args() {
     } else {
         $ip = $c->req->address;
     }
-    $c->log->notice("Serving autoprov config for '$id' to '$ip'");
+    $c->log->info("Serving autoprov config for '$id' to '$ip'");
 
     my $dev = $c->model('DB')->resultset('autoprov_field_devices')->find({
         identifier => $id
     });
     unless($dev) {
-        $c->log->notice("Unknown autoprov config '$id' for '$ip'");
+        $c->log->warn("Unknown autoprov config '$id' for '$ip'");
         $c->response->content_type('text/plain');
         if($c->config->{features}->{debug}) {
             $c->response->body("404 - device id '" . $id . "' not found");
