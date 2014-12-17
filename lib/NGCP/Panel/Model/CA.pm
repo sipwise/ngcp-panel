@@ -96,4 +96,18 @@ sub get_server_cert {
     return $cert_file->slurp;
 }
 
+sub get_provisioning_server_cert {
+    my ($self, $c) = @_;
+
+    my $cert_file = Path::Tiny->new($c->config->{deviceprovisioning}->{server_certfile});
+    return $cert_file->slurp;
+}
+
+sub get_provisioning_ca_cert {
+    my ($self, $c) = @_;
+
+    my $cert_file = Path::Tiny->new($c->config->{deviceprovisioning}->{ca_certfile});
+    return $cert_file->slurp;
+}
+
 # vim: set tabstop=4 expandtab

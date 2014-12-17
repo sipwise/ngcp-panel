@@ -1102,7 +1102,6 @@ sub dev_field_config :Chained('/') :PathPart('device/autoprov/config') :Args() {
     } else {
         $ip = $c->req->address;
     }
-    $c->log->info("Serving autoprov config for '$id' to '$ip'");
 
     my $dev = $c->model('DB')->resultset('autoprov_field_devices')->find({
         identifier => $id
@@ -1118,6 +1117,7 @@ sub dev_field_config :Chained('/') :PathPart('device/autoprov/config') :Args() {
         $c->response->status(404);
         return;
     }
+    $c->log->info("Serving autoprov config for '$id' to '$ip'");
 
     if($yealink_key && defined $dev->encryption_key) {
         my $cipher = Crypt::Rijndael->new(
@@ -1241,6 +1241,118 @@ sub dev_field_config :Chained('/') :PathPart('device/autoprov/config') :Args() {
         $c->response->content_type($dev->profile->config->content_type);
         $c->response->body($processed_data);
     }
+}
+
+sub dev_field_bootstrap :Chained('/') :PathPart('device/autoprov/bootstrap') :Args() {
+    my ($self, $c, $id) = @_;
+
+    unless($id) {
+        $c->response->content_type('text/plain');
+        if($c->config->{features}->{debug}) {
+            $c->response->body("404 - device id not given");
+        } else {
+            $c->response->body("404 - device not found");
+        }
+        $c->response->status(404);
+        return;
+    }
+
+    $id =~ s/\.cfg$//;
+    $id =~ s/^([^\=]+)\=0$/$1/;
+    $id = lc $id;
+
+    my $ip;
+    if(defined $c->req->headers->header('X-Forwarded-For')) {
+        $ip = (split(/\s*,\s*/, $c->req->headers->header('X-Forwarded-For')))[0];
+    } else {
+        $ip = $c->req->address;
+    }
+
+    my $dev = $c->model('DB')->resultset('autoprov_field_devices')->find({
+        identifier => $id
+    });
+    unless($dev) {
+        $c->log->warn("Unknown autoprov bootstrap config '$id' for '$ip'");
+        $c->response->content_type('text/plain');
+        if($c->config->{features}->{debug}) {
+            $c->response->body("404 - device id '" . $id . "' not found");
+        } else {
+            $c->response->body("404 - device not found");
+        }
+        $c->response->status(404);
+        return;
+    }
+    $c->log->info("Serving autoprov bootstrap config for '$id' to '$ip'");
+
+    my $model = $dev->profile->config->device;
+
+    # TODO: only if not set in model config!
+    my $schema = $c->config->{deviceprovisioning}->{secure} ? 'https' : 'http';
+    my $host = $c->config->{deviceprovisioning}->{host} // $c->req->uri->host;
+    my $port = $c->config->{deviceprovisioning}->{port} // 1444;
+
+    my $vars = {
+        config => {
+            url => "$schema://$host:$port/device/autoprov/config/$id",
+            baseurl => "$schema://$host:$port/device/autoprov/config/",
+            mac => $id,
+        },
+        firmware => {
+            # we return the current (bootstrap) host here to allow the
+            # device to upgrade the firmware
+            baseurl => "http://" . $c->req->uri->host . ":" .
+                         $c->req->uri->port . "/device/autoprov/firmware",
+        },
+    };
+
+    my $latest_fw = $c->model('DB')->resultset('autoprov_firmwares')->search({
+        device_id => $model->id,
+    }, {
+        order_by => { -desc => 'version' },
+    })->first;
+    if($latest_fw) {
+        $vars->{firmware}->{maxversion} = $latest_fw->version;
+    }
+
+    my $data = $dev->profile->config->data;
+    my $processed_data = "";
+    my $t = Template->new;
+    $t->process(\$data, $vars, \$processed_data) || do {
+        my $error = $t->error();
+        my $msg = "error processing template, type=".$error->type.", info='".$error->info."'";
+        $c->log->error($msg);
+        $c->response->body("500 - error creating template:\n$msg");
+        $c->response->status(500);
+        return;
+    };
+
+    $c->log->debug("providing config to $id");
+    $c->log->debug($processed_data);
+
+    $c->response->content_type($dev->profile->config->content_type);
+    $c->response->body($processed_data);
+}
+
+sub dev_servercert :Chained('/') :PathPart('device/autoprov/servercert') :Args(0) {
+    my ($self, $c) = @_;
+    my $cert = $c->model('CA')->get_provisioning_server_cert($c);
+    $c->res->headers(HTTP::Headers->new(
+        'Content-Type' => 'application/octet-stream',
+        #'Content-Disposition' => sprintf('attachment; filename=%s', "provisioning-certificate.pem")
+    ));
+    $c->res->body($cert);
+    return;
+}
+
+sub dev_cacert :Chained('/') :PathPart('device/autoprov/cacert') :Args(0) {
+    my ($self, $c) = @_;
+    my $cert = $c->model('CA')->get_provisioning_ca_cert($c);
+    $c->res->headers(HTTP::Headers->new(
+        'Content-Type' => 'application/octet-stream',
+        #'Content-Disposition' => sprintf('attachment; filename=%s', "provisioning-certificate.pem")
+    ));
+    $c->res->body($cert);
+    return;
 }
 
 sub dev_static_jitsi_config :Chained('/') :PathPart('device/autoprov/static/jitsi') :Args(0) {
