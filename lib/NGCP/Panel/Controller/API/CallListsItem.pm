@@ -45,12 +45,17 @@ sub GET :Allow {
     {
         my $schema = $c->model('DB');
         last unless $self->valid_id($c, $id);
-        my $sub = $self->get_subscriber($c, $schema);
-        last unless $sub;
+
+        my $owner = $self->get_owner_data($c, $schema);
+        last unless $owner;
+        my $href_data = $owner->{subscriber} ? 
+            "subscriber_id=".$owner->{subscriber}->id :
+            "customer_id=".$owner->{customer}->id;
+
         my $item = $self->item_by_id($c, $id);
         last unless $self->resource_exists($c, calllist => $item);
 
-        my $hal = $self->hal_from_item($c, $item, $sub);
+        my $hal = $self->hal_from_item($c, $item, $owner, undef, $href_data);
 
         my $response = HTTP::Response->new(HTTP_OK, undef, HTTP::Headers->new(
             (map { # XXX Data::HAL must be able to generate links with multiple relations

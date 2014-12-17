@@ -61,8 +61,8 @@ sub get_form {
 }
 
 sub hal_from_item {
-    my ($self, $c, $item, $sub, $form) = @_;
-    my $resource = $self->resource_from_item($c, $item, $sub, $form);
+    my ($self, $c, $item, $owner, $form, $href_data) = @_;
+    my $resource = $self->resource_from_item($c, $item, $owner, $form);
 
     my $hal = Data::HAL->new(
         links => [
@@ -74,7 +74,7 @@ sub hal_from_item {
             ),
             Data::HAL::Link->new(relation => 'collection', href => sprintf("/api/%s/", $self->resource_name)),
             Data::HAL::Link->new(relation => 'profile', href => 'http://purl.org/sipwise/ngcp-api/'),
-            Data::HAL::Link->new(relation => 'self', href => sprintf("%s%d?subscriber_id=%d", $self->dispatch_path, $item->id, $sub->id)),
+            Data::HAL::Link->new(relation => 'self', href => sprintf("%s%d?%s", $self->dispatch_path, $item->id, $href_data)),
             # todo: customer can be in source_account_id or destination_account_id
 #            Data::HAL::Link->new(relation => 'ngcp:customers', href => sprintf("/api/customers/%d", $item->source_customer_id)),
         ],
@@ -97,11 +97,15 @@ sub hal_from_item {
 }
 
 sub resource_from_item {
-    my ($self, $c, $item, $sub, $form) = @_;
+    my ($self, $c, $item, $owner, $form) = @_;
+    my $sub = $owner->{subscriber};
+    my $cust = $owner->{customer};
     my $resource = {};
     my $datetime_fmt = DateTime::Format::Strptime->new(
         pattern => '%F %T', 
     );
+
+    $resource->{call_id} = $item->call_id;
 
     my $intra = 0;
     if($item->source_user_id && $item->source_account_id == $item->destination_account_id) {
@@ -111,8 +115,9 @@ sub resource_from_item {
         $resource->{intra_customer} = JSON::false;
         $intra = 0;
     }
-    $resource->{direction} = $sub->uuid eq $item->source_user_id ?
-        "out" : "in";
+    # out by default
+    $resource->{direction} = (defined $sub && $sub->uuid eq $item->destination_user_id) ?
+        "in" : "out";
 
     my ($src_sub, $dst_sub);
     if($item->source_subscriber && $item->source_subscriber->provisioning_voip_subscriber) {
@@ -121,7 +126,7 @@ sub resource_from_item {
     if($item->destination_subscriber && $item->destination_subscriber->provisioning_voip_subscriber) {
         $dst_sub = $item->destination_subscriber->provisioning_voip_subscriber;
     }
-    my ($own_normalize, $other_normalize);
+    my ($own_normalize, $other_normalize, $own_domain, $other_domain);
 
     if($resource->{direction} eq "out") {
         # for pbx out calls, use extension as own cli
@@ -131,6 +136,7 @@ sub resource_from_item {
             $resource->{own_cli} = $item->source_cli;
             $own_normalize = 1;
         }
+        $own_domain = $item->source_domain;
 
         # for intra pbx out calls, use extension as other cli
         if($intra && $dst_sub && $dst_sub->pbx_extension) {
@@ -138,14 +144,13 @@ sub resource_from_item {
         # if there is an alias field (e.g. gpp0), use this
         } elsif($item->destination_account_id && $c->req->param('alias_field')) {
             my $alias = $item->get_column('destination_'.$c->req->param('alias_field'));
-            $c->log->error("+++++++++++++++++ alias_field=".$c->req->param('alias_field'));
-            $c->log->error("+++++++++++++++++ destination_alias_field=".($alias // '<null>'));
             $resource->{other_cli} = $alias // $item->destination_user_in;
             $other_normalize = 1;
         } else {
             $resource->{other_cli} = $item->destination_user_in;
             $other_normalize = 1;
         }
+        $other_domain = $item->destination_domain;
     } else {
         # for pbx in calls, use extension as own cli
         if($dst_sub && $dst_sub->pbx_extension) {
@@ -154,6 +159,7 @@ sub resource_from_item {
             $resource->{own_cli} = $item->destination_user_in;
             $own_normalize = 1;
         }
+        $own_domain = $item->destination_domain;
 
         # for intra pbx in calls, use extension as other cli
         if($intra && $src_sub && $src_sub->pbx_extension) {
@@ -167,13 +173,14 @@ sub resource_from_item {
             $resource->{other_cli} = $item->source_cli;
             $other_normalize = 1;
         }
+        $other_domain = $item->source_domain;
     }
 
     if($resource->{own_cli} !~ /^\d+$/) {
-        $resource->{own_cli} .= '@'.$sub->domain->domain;
+        $resource->{own_cli} .= '@'.$own_domain;
     } elsif($own_normalize) {
         $resource->{own_cli} = NGCP::Panel::Utils::Subscriber::apply_rewrite(
-            c => $c, subscriber => $sub,
+            c => $c, subscriber => $sub // $src_sub->voip_subscriber,
             number => $resource->{own_cli}, direction => "caller_out"
         );
     }
@@ -181,10 +188,10 @@ sub resource_from_item {
     if($resource->{direction} eq "in" && $item->source_clir) {
         $resource->{other_cli} = undef;
     } elsif($resource->{other_cli} !~ /^\d+$/) {
-        $resource->{other_cli} .= '@'. ($resource->{direction} eq "in" ? $item->destination_domain_in : $sub->domain->domain);
+        $resource->{other_cli} .= '@'.$other_domain;
     } elsif($other_normalize) {
         $resource->{other_cli} = NGCP::Panel::Utils::Subscriber::apply_rewrite(
-            c => $c, subscriber => $sub,
+            c => $c, subscriber => $sub // $src_sub->voip_subscriber,
             number => $resource->{other_cli}, direction => "caller_out"
         );
     }
@@ -207,29 +214,75 @@ sub item_by_id {
     return $item_rs->find($id);
 }
 
-sub get_subscriber {
+sub get_owner_data {
     my ($self, $c, $schema) = @_;
 
-    my $sub;
-    if($c->user->roles ne "subscriber") {
-        unless($c->req->param('subscriber_id')) {
-            $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Mandatory parameter 'subscriber_id' missing in request");
+    my $ret;
+    if($c->user->roles eq "admin" || $c->user->roles eq "reseller") {
+        if($c->req->param('subscriber_id')) {
+            my $sub = $schema->resultset('voip_subscribers')->find($c->req->param('subscriber_id'));
+            unless($sub) {
+                $self->error($c, HTTP_NOT_FOUND, "Invalid 'subscriber_id'.");
+                return;
+            }
+            if($c->user->roles eq "reseller" && $sub->contract->contact->reseller_id != $c->user->reseller_id) {
+                $self->error($c, HTTP_NOT_FOUND, "Invalid 'subscriber_id'.");
+                return;
+            }
+            return {
+                subscriber => $sub,
+                customer => $sub->contract,
+            };
+        } elsif($c->req->param('customer_id')) {
+            my $cust = $schema->resultset('contracts')->find($c->req->param('customer_id'));
+            unless($cust && $cust->contact->reseller_id) {
+                $self->error($c, HTTP_NOT_FOUND, "Invalid 'customer_id'.");
+                return;
+            }
+            if($c->user->roles eq "reseller" && $cust->contact->reseller_id != $c->user->reseller_id) {
+                $self->error($c, HTTP_NOT_FOUND, "Invalid 'customer_id'.");
+                return;
+            }
+            return {
+                subscriber => undef,
+                customer => $cust,
+            };
+        } else {
+            $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Mandatory parameter 'subscriber_id' or 'customer_id' missing in request");
             return;
         }
-        $sub = $schema->resultset('voip_subscribers')->find($c->req->param('subscriber_id'));
-        unless($sub) {
-            $self->error($c, HTTP_NOT_FOUND, "Invalid 'subscriber_id'.");
-            return;
-        }
-        if(($c->user->roles eq "subscriberadmin" && $sub->contract_id != $c->user->account_id) ||
-           ($c->user->roles eq "reseller" && $sub->contract->contact->reseller_id != $c->user->reseller_id)) {
-            $self->error($c, HTTP_NOT_FOUND, "Invalid 'subscriber_id'.");
-            return;
-           }
+    } elsif($c->user->roles eq "subscriberadmin") {
+        if($c->req->param('subscriber_id')) {
+            my $sub = $schema->resultset('voip_subscribers')->find($c->req->param('subscriber_id'));
+            unless($sub) {
+                $self->error($c, HTTP_NOT_FOUND, "Invalid 'subscriber_id'.");
+                return;
+            }
+            if($sub->contract_id != $c->user->account_id) {
+                $self->error($c, HTTP_NOT_FOUND, "Invalid 'subscriber_id'.");
+                return;
+            }
+            return {
+                subscriber => $sub,
+                customer => $sub->contract,
+            };
+        } else {
+            my $cust = $schema->resultset('contracts')->find($c->user->account_id);
+            unless($cust && $cust->contact->reseller_id) {
+                $self->error($c, HTTP_NOT_FOUND, "Invalid 'customer_id'.");
+                return;
+            }
+            return {
+                subscriber => undef,
+                customer => $cust,
+            };
+        } 
     } else {
-        $sub = $c->user->voip_subscriber;
+        return {
+            subscriber => $c->user->voip_subscriber,
+            customer => $c->user->voip_subscriber->contract,
+        };
     }
-    return $sub;
 }
 
 1;

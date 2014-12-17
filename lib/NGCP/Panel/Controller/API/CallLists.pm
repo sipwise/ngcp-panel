@@ -29,7 +29,7 @@ class_has 'query_params' => (
     default => sub {[
         {
             param => 'subscriber_id',
-            description => 'Filter for calls for a specific subscriber. Mandatory if called by admin, reseller or subscriberadmin to filter list down to a specific subscriber in order to properly determine the direction of calls.',
+            description => 'Filter for calls for a specific subscriber. Either this or customer_id is mandatory if called by admin, reseller or subscriberadmin to filter list down to a specific subscriber in order to properly determine the direction of calls.',
             query => {
                 first => sub {
                     my $q = shift;
@@ -45,6 +45,22 @@ class_has 'query_params' => (
                         join => ['source_subscriber', 'destination_subscriber'],
                     };
                 },
+            },
+        },
+        {
+            param => 'customer_id',
+            description => 'Filter for calls for a specific customer. Either this or subscriber_id is mandatory if called by admin, reseller or subscriberadmin to filter list down to a specific customer. For calls within the same customer_id, the direction will always be "out".',
+            query => {
+                first => sub {
+                    my $q = shift;
+                    return {
+                        -or => [
+                            'source_account_id' => $q,
+                            'destination_account_id' => $q, 
+                        ],
+                    };
+                },
+                second => sub {},
             },
         },
         {
@@ -188,17 +204,20 @@ sub GET :Allow {
     my $rows = $c->request->params->{rows} // 10;
     my $schema = $c->model('DB');
     {
-        my $sub = $self->get_subscriber($c, $schema);
-        last unless $sub;
+        my $owner = $self->get_owner_data($c, $schema);
+        last unless $owner;
         my $items = $self->item_rs($c);
         (my $total_count, $items) = $self->paginate_order_collection($c, $items);
         my (@embedded, @links);
         my $form = $self->get_form($c);
+        my $href_data = $owner->{subscriber} ? 
+            "subscriber_id=".$owner->{subscriber}->id :
+            "customer_id=".$owner->{customer}->id;
         for my $item ($items->all) {
-            push @embedded, $self->hal_from_item($c, $item, $sub, $form);
+            push @embedded, $self->hal_from_item($c, $item, $owner, $form, $href_data);
             push @links, Data::HAL::Link->new(
                 relation => 'ngcp:'.$self->resource_name,
-                href     => sprintf('/%s%d?subscriber_id=%d', $c->request->path, $item->id, $sub->id),
+                href     => sprintf('/%s%d?%s', $c->request->path, $item->id, $href_data),
             );
         }
         push @links,
@@ -209,7 +228,7 @@ sub GET :Allow {
                 templated => true,
             ),
             Data::HAL::Link->new(relation => 'profile', href => 'http://purl.org/sipwise/ngcp-api/'),
-            Data::HAL::Link->new(relation => 'self', href => sprintf('/%s?page=%s&rows=%s&subscriber_id=%d', $c->request->path, $page, $rows, $sub->id));
+            Data::HAL::Link->new(relation => 'self', href => sprintf('/%s?page=%s&rows=%s&%s', $c->request->path, $page, $rows, $href_data));
         if(($total_count / $rows) > $page ) {
             push @links, Data::HAL::Link->new(relation => 'next', href => sprintf('/%s?page=%d&rows=%d', $c->request->path, $page + 1, $rows));
         }

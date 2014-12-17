@@ -119,6 +119,15 @@ has_field 'intra_customer' => (
     },
 );
 
+has_field 'call_id' => (
+    type => 'Text',
+    required => 1,
+    element_attr => {
+        rel => ['tooltip'],
+        title => ['The internal SIP Call-ID of the call.']
+    },
+);
+
 1;
 
 # vim: set tabstop=4 expandtab:
