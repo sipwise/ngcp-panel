@@ -1244,8 +1244,19 @@ sub dev_field_config :Chained('/') :PathPart('device/autoprov/config') :Args() {
 }
 
 sub dev_field_bootstrap :Chained('/') :PathPart('device/autoprov/bootstrap') :Args() {
-    my ($self, $c, $id) = @_;
-
+    my ($self, $c, @id) = @_;
+    my $id;
+    foreach my $did (@id) {
+        $c->log->debug("checking bootstrap path part '$did'");
+        $did =~ s/\.cfg$//;
+        $did =~ s/^([^\=]+)\=0$/$1/;
+        $did = lc $did;
+        if($did =~ /^[0-9a-f]{12}$/) {
+            $c->log->debug("identified bootstrap path part '$did' as valid device id");
+            $id = $did;
+            last;
+        }
+    }
     unless($id) {
         $c->response->content_type('text/plain');
         if($c->config->{features}->{debug}) {
@@ -1256,10 +1267,6 @@ sub dev_field_bootstrap :Chained('/') :PathPart('device/autoprov/bootstrap') :Ar
         $c->response->status(404);
         return;
     }
-
-    $id =~ s/\.cfg$//;
-    $id =~ s/^([^\=]+)\=0$/$1/;
-    $id = lc $id;
 
     my $ip;
     if(defined $c->req->headers->header('X-Forwarded-For')) {
@@ -1296,6 +1303,7 @@ sub dev_field_bootstrap :Chained('/') :PathPart('device/autoprov/bootstrap') :Ar
             url => "$schema://$host:$port/device/autoprov/config/$id",
             baseurl => "$schema://$host:$port/device/autoprov/config/",
             mac => $id,
+            bootstrap => 1,
         },
         firmware => {
             # we return the current (bootstrap) host here to allow the
