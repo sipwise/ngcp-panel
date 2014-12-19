@@ -93,7 +93,7 @@ sub make_pkcs12 {
 sub get_server_cert {
     my ($self, $c) = @_;
 
-    my $cert_file = Path::Tiny->new($c->config->{ssl}->{server_certfile} || $c->config->{ssl}->{certfile});
+    my $cert_file = Path::Tiny->new($c->config->{ssl}->{server_certfile});
     return $cert_file->slurp;
 }
 
