@@ -29,7 +29,7 @@ sub COMPONENT {
 sub make_client {
     my ($self, $c, $serial) = @_;
     my $client_key = Path::Tiny->tempfile;
-    my $command = 'openssl x509 -noout -purpose -in ' . ($c->config->{ssl}->{rest_api_certfile} || $c->config->{ssl}->{certfile});
+    my $command = 'openssl x509 -noout -purpose -in ' . $c->config->{ssl}->{rest_api_certfile};
     $c->log->debug($command);
     my ($stdout, $stderr) = capture {
         try {
@@ -37,6 +37,7 @@ sub make_client {
         };
     };
     unless ($stdout =~ m/SSL (client|server) CA : Yes/) {
+        $c->log->error("Failed to check CA certificate: $stderr");
         die [$c->loc('Cannot use the configured certificate for signing client certificates'), "showdetails"];
     }
     $command = sprintf 'certtool -p --bits 3248 --outfile %s 1>&- 2>&-', $client_key->stringify;
