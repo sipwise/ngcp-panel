@@ -82,8 +82,6 @@ sub get_resource {
         order_by => { '-asc' => 'id' },
     });
 
-    use Data::Printer; p %profile_attrs;
-
     my $resource;
     foreach my $pref($prefs->all) {
         my $value;
