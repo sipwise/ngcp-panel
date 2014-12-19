@@ -461,7 +461,9 @@ sub handles_list :Chained('base') :PathPart('handles') :CaptureArgs(0) {
         });
 
     if($c->stash->{set_result}->contract_id) {
-        $handles_rs = $handles_rs->search({ 'groups.name' => { '-in' => ['pbx', 'music_on_hold'] } });
+        $handles_rs = $handles_rs->search({ 
+            'groups.name' => { '-in' => [qw/pbx music_on_hold digits/] } 
+        });
     } else {
         $handles_rs = $handles_rs->search({ 'groups.name' => { '!=' => 'pbx' } });
     }

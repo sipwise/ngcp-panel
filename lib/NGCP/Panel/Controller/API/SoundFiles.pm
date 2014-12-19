@@ -181,7 +181,7 @@ sub POST :Allow {
         my $handle;
         if($set->contract_id) {
             $handle_rs = $handle_rs->search({
-                'group.name' => { 'in' => ['pbx', 'music_on_hold'] },
+                'group.name' => { 'in' => [qw/pbx music_on_hold digits/] },
             },{
                 join => 'group',
             });
