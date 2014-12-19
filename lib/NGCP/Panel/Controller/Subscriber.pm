@@ -2281,7 +2281,7 @@ sub edit_master :Chained('master') :PathPart('edit') :Args(0) :Does(ACL) :ACLDet
                         $display_pref->create({ value => $form->params->{display_name} });
                     }
                 }
-                if($form->params->{pbx_extension}) {
+                if(defined $form->params->{pbx_extension}) {
                     my $pref = NGCP::Panel::Utils::Preferences::get_usr_preference_rs(
                             c => $c, attribute => 'cloud_pbx_ext', 
                             prov_subscriber => $prov_subscriber);

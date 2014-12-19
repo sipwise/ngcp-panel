@@ -326,7 +326,7 @@ sub prepare_resource {
         });
 
         if($pilot && $pilot->id != $subscriber_id) {
-            unless($resource->{pbx_extension}) {
+            unless(defined $resource->{pbx_extension}) {
                 $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "A pbx_extension is required if customer is PBX and pilot subscriber exists.");
                 return;
             }

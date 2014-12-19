@@ -653,7 +653,7 @@ sub subscriber_create :Chained('base') :PathPart('subscriber/create') :Args(0) {
                     my $base_number = $pilot->primary_number;
                     if($base_number) {
                         $preferences->{cloud_pbx_base_cli} = $base_number->cc . $base_number->ac . $base_number->sn;
-                        if($form->params->{pbx_extension}) {
+                        if(defined $form->params->{pbx_extension}) {
                             $form->params->{e164}{cc} = $base_number->cc;
                             $form->params->{e164}{ac} = $base_number->ac;
                             $form->params->{e164}{sn} = $base_number->sn . $form->params->{pbx_extension};
@@ -968,7 +968,7 @@ sub pbx_group_create :Chained('base') :PathPart('pbx/group/create') :Args(0) {
                 my $base_number = $pilot->primary_number;
                 if($base_number) {
                     $preferences->{cloud_pbx_base_cli} = $base_number->cc . $base_number->ac . $base_number->sn;
-                    if($form->params->{pbx_extension}) {
+                    if(defined $form->params->{pbx_extension}) {
                         $form->params->{e164}{cc} = $base_number->cc;
                         $form->params->{e164}{ac} = $base_number->ac;
                         $form->params->{e164}{sn} = $base_number->sn . $form->params->{pbx_extension};
