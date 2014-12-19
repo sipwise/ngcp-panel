@@ -94,6 +94,21 @@ has_field 'pbx_group_ids' => (
     },
 );
 
+has_field 'pbx_groupmember_ids' => (
+    type => '+NGCP::Panel::Field::PbxGroupMemberAPI',
+    setup_for_js => 1,
+    do_wrapper => 1,
+    do_label => 0,
+    tags => { 
+        controls_div => 1,
+    },
+    wrapper_class => [qw/hfh-rep/],
+    element_attr => {
+        rel => ['tooltip'],
+        title => ['An array of PBX subscriber ids belonging to this group.'],
+    },
+);
+
 has_field 'pbx_hunt_policy' => (
     type => 'Select',
     options => [

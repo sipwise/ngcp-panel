@@ -68,6 +68,12 @@ sub resource_from_item {
         foreach my $group($item->provisioning_voip_subscriber->voip_pbx_groups->all) {
             push @{ $resource{pbx_group_ids} }, int($group->group->voip_subscriber->id);
         }
+        if($item->provisioning_voip_subscriber->is_pbx_group) {
+            $resource{pbx_groupmember_ids} = [];
+            foreach my $member($item->provisioning_voip_subscriber->voip_pbx_group_members->all) {
+                push @{ $resource{pbx_groupmember_ids} }, int($member->subscriber->voip_subscriber->id);
+            }
+        }
     }
 
     if($item->primary_number) {
@@ -212,6 +218,7 @@ sub prepare_resource {
     my ($self, $c, $schema, $resource, $item) = @_;
     
     my @groups = ();
+    my @groupmembers = ();
     my $domain;
     if($resource->{domain}) {
         $domain = $c->model('DB')->resultset('domains')
@@ -367,6 +374,30 @@ sub prepare_resource {
                         push @groups, $group_subscriber;
                     }
                 }
+            } else {
+                if(exists $resource->{pbx_groupmember_ids}) {
+                    if(ref $resource->{pbx_groupmember_ids} eq "") {
+                        $resource->{pbx_groupmember_ids} = [ $resource->{pbx_groupmember_ids} ];
+                    }
+                    unless(ref $resource->{pbx_groupmember_ids} eq "ARRAY") {
+                        $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Invalid pbx_groupmember_ids parameter, must be an array.");
+                        return;
+                    }
+                    foreach my $sub_id(@{ $resource->{pbx_groupmember_ids} }) {
+                        my $group_subscriber = $c->model('DB')->resultset('voip_subscribers')->find({
+                            id => $sub_id,
+                            contract_id => $resource->{customer_id},
+                            'provisioning_voip_subscriber.is_pbx_group' => 0,
+                        },{
+                            join => 'provisioning_voip_subscriber',
+                        });
+                        unless($group_subscriber) {
+                            $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Invalid id '$sub_id' in pbx_groupmember_ids, does not exist for this customer.");
+                            return;
+                        }
+                        push @groupmembers, $group_subscriber;
+                    }
+                }
             }
         }
 
@@ -448,6 +479,7 @@ sub prepare_resource {
         alias_numbers => $alias_numbers,
         preferences => $preferences,
         groups => \@groups,
+        groupmembers => \@groupmembers,
     };
 
     return $r;
@@ -461,6 +493,7 @@ sub update_item {
     my $alias_numbers = $full_resource->{alias_numbers};
     my $preferences = $full_resource->{preferences};
     my $groups = $full_resource->{groups};
+    my $groupmembers = $full_resource->{groupmembers};
     my $prov_subscriber = $subscriber->provisioning_voip_subscriber;
 
     if($subscriber->provisioning_voip_subscriber->is_pbx_pilot && !$self->is_true($resource->{is_pbx_pilot})) {
@@ -527,9 +560,9 @@ sub update_item {
     }
 
     # if the profile changed, clear any preferences which are not in the new profile
-    if($subscriber->provisioning_voip_subscriber->voip_subscriber_profile) {
+    if($prov_subscriber->voip_subscriber_profile) {
         my %old_profile_attributes = map { $_ => 1 }
-            $subscriber->provisioning_voip_subscriber->voip_subscriber_profile
+            $prov_subscriber->voip_subscriber_profile
             ->profile_attributes->get_column('attribute_id')->all;
         if($profile) {
             foreach my $attr_id($profile->profile_attributes->get_column('attribute_id')->all) {
@@ -541,10 +574,10 @@ sub update_item {
                 id => { -in => [ keys %old_profile_attributes ] },
                 attribute => { -in => [qw/cfu cfb cft cfna/] },
             });
-            $subscriber->provisioning_voip_subscriber->voip_usr_preferences->search({
+            $prov_subscriber->voip_usr_preferences->search({
                 attribute_id => { -in => [ keys %old_profile_attributes ] },
             })->delete;
-            $subscriber->provisioning_voip_subscriber->voip_cf_mappings->search({
+            $prov_subscriber->voip_cf_mappings->search({
                 type => { -in => [ map { $_->attribute } $cfs->all ] },
             })->delete;
         }
@@ -600,7 +633,7 @@ sub update_item {
         $provisioning_res->{pbx_hunt_timeout} = $resource->{pbx_hunt_timeout};
         NGCP::Panel::Utils::Subscriber::update_subscriber_pbx_policy(
             c => $c, 
-            prov_subscriber => $subscriber->provisioning_voip_subscriber,
+            prov_subscriber => $prov_subscriber,
             'values'   => {
                 cloud_pbx_hunt_policy  => $resource->{cloud_pbx_hunt_policy} // $resource->{pbx_hunt_policy},
                 cloud_pbx_hunt_timeout => $resource->{cloud_pbx_hunt_policy} // $resource->{pbx_hunt_timeout},
@@ -610,8 +643,9 @@ sub update_item {
     my $old_profile = $prov_subscriber->profile_id;
 
     $subscriber->update($billing_res);
-    $subscriber->provisioning_voip_subscriber->update($provisioning_res);
     $subscriber->discard_changes;
+    $prov_subscriber->update($provisioning_res);
+    $prov_subscriber->discard_changes;
 
     if(($prov_subscriber->profile_id // 0) != ($old_profile // 0)) {
         my $type;
@@ -630,17 +664,16 @@ sub update_item {
 
     NGCP::Panel::Utils::Subscriber::update_preferences(
         c => $c, 
-        prov_subscriber => $subscriber->provisioning_voip_subscriber,
+        prov_subscriber => $prov_subscriber,
         preferences => $preferences,
     );
 
-    my @old_groups = $subscriber->provisioning_voip_subscriber
-        ->voip_pbx_groups->get_column('group_id')->all;
+    my @old_groups = $prov_subscriber->voip_pbx_groups->get_column('group_id')->all;
     my @new_groups = ();
     foreach my $group(@{ $groups }) {
         push @new_groups, $group->provisioning_voip_subscriber->id;
         unless(grep { $group->provisioning_voip_subscriber->id eq $_ } @old_groups) {
-            $subscriber->provisioning_voip_subscriber->voip_pbx_groups->create({
+            $prov_subscriber->voip_pbx_groups->create({
                 group_id => $group->provisioning_voip_subscriber->id,
             });
             NGCP::Panel::Utils::Subscriber::update_pbx_group_prefs(
@@ -673,14 +706,42 @@ sub update_item {
                     status => { '!=' => 'terminated' },
                 }),
             );
-            $subscriber->provisioning_voip_subscriber->voip_pbx_groups->search({
+            $prov_subscriber->voip_pbx_groups->search({
                 group_id => $group_id,
-                subscriber_id => $subscriber->provisioning_voip_subscriber->id,
+                subscriber_id => $prov_subscriber->id,
             })->delete;
         }
     }
 
-    # TODO: status handling (termination, ...)
+    my @old_members = $prov_subscriber->voip_pbx_group_members->get_column('subscriber_id')->all;
+    my @new_members = ();
+    my $grp_pref_rs = NGCP::Panel::Utils::Preferences::get_usr_preference_rs(
+        c => $c, attribute => 'cloud_pbx_hunt_group', 
+        prov_subscriber => $prov_subscriber,
+    );
+    foreach my $member(@{ $groupmembers }) {
+        my $uri = 'sip:' . $member->username . '@' . $member->domain->domain;
+        push @new_members, $member->provisioning_voip_subscriber->id;
+        unless($prov_subscriber->voip_pbx_group_members->find({
+            subscriber_id => $member->provisioning_voip_subscriber->id,
+        })) {
+            $prov_subscriber->voip_pbx_group_members->create({
+                subscriber_id => $member->provisioning_voip_subscriber->id,
+            });
+            $grp_pref_rs->create({ value => $uri });
+        }
+    }
+    foreach my $old_member_id(@old_members) {
+        unless(grep { $old_member_id eq $_ } @new_members) {
+            my $grp = $prov_subscriber->voip_pbx_group_members
+                ->find({ subscriber_id => $old_member_id });
+            my $oldsub = $grp->subscriber;
+            $grp->delete;
+            $grp_pref_rs->find(
+                { value => 'sip:' . $oldsub->username . '@' . $oldsub->domain->domain }
+            )->delete;
+        }
+    }
 
     return $subscriber;
 }
