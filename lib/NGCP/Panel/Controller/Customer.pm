@@ -1036,6 +1036,9 @@ sub pbx_group_base :Chained('base') :PathPart('pbx/group') :CaptureArgs(1) {
             $c->uri_for_action('/customer/details', [$c->stash->{contract}->id])
         );
     }
+    $c->stash->{pilot} = $c->stash->{subscribers}->search({
+        'provisioning_voip_subscriber.is_pbx_pilot' => 1,
+    })->first;
 
     $c->stash(
         pbx_group => $group,
@@ -1065,6 +1068,7 @@ sub pbx_group_edit :Chained('pbx_group_base') :PathPart('edit') :Args(0) {
         try {
             my $schema = $c->model('DB');
             $schema->txn_do(sub {
+                my $old_extension = $c->stash->{pbx_group}->provisioning_voip_subscriber->pbx_extension;
                 $c->stash->{pbx_group}->provisioning_voip_subscriber->update($form->params);
                 NGCP::Panel::Utils::Subscriber::update_subscriber_pbx_policy(
                     c => $c, 
@@ -1074,6 +1078,23 @@ sub pbx_group_edit :Chained('pbx_group_base') :PathPart('edit') :Args(0) {
                         cloud_pbx_hunt_timeout => $form->params->{pbx_hunt_timeout},
                     }
                 );
+                if(defined $form->params->{pbx_extension} &&
+                        $form->params->{pbx_extension} ne $old_extension) {
+                    my $sub = $c->stash->{pbx_group};
+                    my $base_number = $c->stash->{pilot}->primary_number;
+                    my $e164 = {
+                        cc => $sub->primary_number->cc,
+                        ac => $sub->primary_number->ac,
+                        sn => $base_number->sn . $form->params->{pbx_extension},
+                    };
+                    NGCP::Panel::Utils::Subscriber::update_subscriber_numbers(
+                        c => $c,
+                        schema => $schema,
+                        subscriber_id => $sub->id,
+                        reseller_id => $sub->contract->contact->reseller_id,
+                        primary_number => $e164,
+                    );
+                }
             });
             NGCP::Panel::Utils::Message->info(
                 c => $c,
