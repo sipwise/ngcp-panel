@@ -81,6 +81,7 @@ sub base :Chained('group_list') :PathPart('') :CaptureArgs(1) {
         { name => 'transport', search => 1, title => $c->loc('Protocol') },
         { name => 'weight', search => 1, title => $c->loc('Weight') },
         { name => 'via_route', search => 1, title => $c->loc('Via Route Set') },
+        { name => 'enabled', search => 1, title => $c->loc('Enabled') },
     ]);
     $c->stash->{rules_dt_columns} = NGCP::Panel::Utils::Datatables::set_columns($c, [
         { name => 'id', search => 1, title => $c->loc('#') },
@@ -88,6 +89,7 @@ sub base :Chained('group_list') :PathPart('') :CaptureArgs(1) {
         { name => 'callee_pattern', search => 1, title => $c->loc('Callee Pattern') },
         { name => 'caller_pattern', search => 1, title => $c->loc('Caller Pattern') },
         { name => 'description', search => 1, title => $c->loc('Description') },
+        { name => 'enabled', search => 1, title => $c->loc('Enabled') },
     ]);
 
 

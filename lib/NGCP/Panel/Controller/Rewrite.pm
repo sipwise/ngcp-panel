@@ -179,6 +179,7 @@ sub set_clone :Chained('set_base') :PathPart('clone') {
                         direction => $rule->direction,
                         field => $rule->field,
                         priority => $rule->priority,
+                        enabled => $rule->enabled,
                     });
                 }
             });
