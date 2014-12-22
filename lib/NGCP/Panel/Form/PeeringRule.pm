@@ -45,6 +45,16 @@ has_field 'description' => (
     },
 );
 
+has_field 'enabled' => (
+    type => 'Boolean',
+    label => 'Enabled',
+    default => 1,
+    element_attr => {
+        rel => ['tooltip'],
+        title => ['Rule enabled state.'],
+    },
+);
+
 has_field 'save' => (
     type => 'Submit',
     value => 'Save',
@@ -55,7 +65,7 @@ has_field 'save' => (
 has_block 'fields' => (
     tag => 'div',
     class => [qw/modal-body/],
-    render_list => [qw/ callee_prefix callee_pattern caller_pattern description /],
+    render_list => [qw/ callee_prefix callee_pattern caller_pattern description enabled /],
 );
 
 has_block 'actions' => (

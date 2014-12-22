@@ -53,6 +53,16 @@ has_field 'direction' => (
     },
 );
 
+has_field 'enabled' => (
+    type => 'Boolean',
+    label => 'Enabled',
+    default => 1,
+    element_attr => {
+        rel => ['tooltip'],
+        title => ['Rule enabled state.'],
+    },
+);
+
 has_field 'field' => (
     type => 'Select',
     options => [
@@ -75,7 +85,7 @@ has_field 'save' => (
 has_block 'fields' => (
     tag => 'div',
     class => [qw/modal-body/],
-    render_list => [qw/match_pattern replace_pattern description direction field/],
+    render_list => [qw/match_pattern replace_pattern description direction enabled field/],
 );
 
 has_block 'actions' => (
