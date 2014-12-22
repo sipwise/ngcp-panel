@@ -29,6 +29,7 @@
             <th>[% c.loc('Match Pattern') %]</th>
             <th>[% c.loc('Replacement Pattern') %]</th>
             <th>[% c.loc('Description') %]</th>
+            <th>[% c.loc('Enabled') %]</th>
             <th class="ngcp-actions-column"></th>
         </tr>
     </thead>
@@ -46,6 +47,7 @@
             <td>[% r.match_pattern %]</td>
             <td>[% r.replace_pattern %]</td>
             <td>[% r.description %]</td>
+            <td>[% r.enabled ? c.loc('yes') : c.loc('no') %]</td>
             <td class="ngcp-actions-column">
             [% UNLESS c.user.read_only -%]
                 <div class="sw_actions pull-right">
