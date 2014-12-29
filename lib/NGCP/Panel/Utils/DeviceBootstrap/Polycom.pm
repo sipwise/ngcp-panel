@@ -1,8 +1,7 @@
-package NGCP::Panel::Utils::DeviceBootstrap::Yealink;
+package NGCP::Panel::Utils::DeviceBootstrap::Polycom;
 
 use strict;
 use Moose;
-use Digest::MD5 qw/md5_hex/;
 extends 'NGCP::Panel::Utils::DeviceBootstrap::VendorRPC';
 
 has 'rpc_server_params' => (
@@ -29,9 +28,13 @@ sub rpc_server_params{
     my $self = shift;
     my $cfg  = {
         proto    => 'https',
-        host     => 'rps.yealink.com',
+        host     => 'ztpconsole.polycom.com',
         port     => '443',
-        path     => '/xmlrpc',
+        path     => '/inboundservlet/GenericServlet',
+        login    => '',
+        password => '',
+        profile  => 'sipwise',
+        #https://ztpconsole.polycom.com/inboundservlet/GenericServlet
     };
     $cfg->{headers} = { %{$self->get_basic_authorization($self->params->{credentials})} };
     $self->{rpc_server_params} = $cfg;
@@ -41,17 +44,10 @@ sub rpc_server_params{
 sub register_content {
     my $self = shift;
     $self->{register_content} ||= "<?xml version='1.0' encoding='UTF-8'?>
-<methodCall>
-<methodName>redirect.registerDevice</methodName>
-<params>
-<param>
-<value><string>".$self->content_params->{mac}."</string></value>
-</param>
-<param>
-<value><string><![CDATA[".$self->content_params->{server_name}."]]></string></value>
-</param>
-</params>
-</methodCall>";
+<request userid='".$self->{rpc_server_params}->{login}."' password='".$self->{rpc_server_params}->{password}."' message-id='1001' >
+<create-subscriber account-id = '".$self->content_params->{mac}."' isp-name= '".$self->{rpc_server_params}->{profile}."'>
+</create-subscriber>
+</request>";
     return $self->{register_content};
 }
 
@@ -68,42 +64,23 @@ sub unregister_content {
 </methodCall>";
     return $self->{unregister_content};
 }
-sub add_server_content {
+sub add_subscriber_content
+ {
     my $self = shift;
-    $self->{add_server_content} ||=  "<?xml version='1.0' encoding='UTF-8'?>
-<methodCall>
-<methodName>redirect.addServer</methodName>
-<params>
-<param>
-<value>
-<string><![CDATA[".$self->content_params->{server_name}."]]></string>
-</value>
-</param>
-<param>
-<value>
-<string><![CDATA[".$self->content_params->{uri}."]]></string>
-</value>
-</param>
-</params>
-</methodCall>";
-    return $self->{add_server_content};
+    $self->{add_subscriber_content} ||=  "<?xml version='1.0' encoding='UTF-8'?>
+<request userid='".$self->{rpc_server_params}->{login}."' password='".$self->{rpc_server_params}->{password}."' message-id='1001' >
+<create-subscriber account-id = '".$self->content_params->{mac}."' isp-name= '".$self->{rpc_server_params}->{profile}."'>
+</create-subscriber>
+</request>";
+    return $self->{add_subscriber_content};
+}
+sub register{
+    my($self) = @_;
+    $self->rpc_server_params;
+    #$self->redirect_server_call('add_subscriber');
+    #return $self->redirect_server_call('register');
 }
 
-override 'process_bootstrap_uri' => sub {
-    my($self,$uri) = @_;
-    $uri = super($uri);
-    $self->content_params->{uri} = $uri;
-    $self->bootstrap_uri_server_name($uri);
-    return $self->content_params->{uri};
-};
-
-sub bootstrap_uri_server_name{
-    my($self,$uri) = @_;
-    $uri ||= $self->content_params->{uri};
-    #http://stackoverflow.com/questions/4826403/hash-algorithm-with-alphanumeric-output-of-20-characters-max
-    $self->content_params->{server_name} ||= substr(md5_hex($uri),0,20);
-    return $self->content_params->{server_name};
-}
 1;
 
 =head1 NAME

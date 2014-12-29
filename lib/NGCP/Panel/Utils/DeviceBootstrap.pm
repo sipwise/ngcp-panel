@@ -6,6 +6,7 @@ use Data::Dumper;
 use NGCP::Panel::Utils::DeviceBootstrap::VendorRPC;
 use NGCP::Panel::Utils::DeviceBootstrap::Panasonic;
 use NGCP::Panel::Utils::DeviceBootstrap::Yealink;
+use NGCP::Panel::Utils::DeviceBootstrap::Polycom;
 
 sub dispatch{
     my($c, $action, $fdev, $old_identifier) = @_;
@@ -15,24 +16,27 @@ sub dispatch{
         mac => $fdev->identifier,
         mac_old => $old_identifier,
     };
-    my $redirect_processor = get_redirect_processor($params);
-    my $ret;
-    if($redirect_processor){
-		if( ('register' eq $action) && $old_identifier && ( $old_identifier ne $fdev->identifier ) ){
-			$redirect_processor->redirect_server_call('unregister');
-		}
-        $ret = $redirect_processor->redirect_server_call($action);
-    }
-    return $ret;
+    return _dispatch($action, $params);
 }
 sub dispatch_devmod{
     my($c, $action, $devmod) = @_;
     
     my $params = get_devmod_params($c,$devmod);
+    return _dispatch($action, $params);
+}
+sub _dispatch{
+    my($action,$params) = @_;
     my $redirect_processor = get_redirect_processor($params);
     my $ret;
     if($redirect_processor){
-        $ret = $redirect_processor->redirect_server_call($action);
+        if($redirect_processor->can($action)){
+            $ret = $redirect_processor->$action();
+        }else{
+            if( ('register' eq $action) && $params->{mac_old} && ( $params->{mac_old} ne $params->{mac} ) ){
+                $redirect_processor->redirect_server_call('unregister');
+            }
+            $ret = $redirect_processor->redirect_server_call($action);
+        }
     }
     return $ret;
 }
@@ -72,6 +76,8 @@ sub get_redirect_processor{
         $redirect_processor = NGCP::Panel::Utils::DeviceBootstrap::Panasonic->new( params => $params );
     }elsif('redirect_yealink' eq $bootstrap_method){
         $redirect_processor = NGCP::Panel::Utils::DeviceBootstrap::Yealink->new( params => $params );
+    }elsif('redirect_polycom' eq $bootstrap_method){
+        $redirect_processor = NGCP::Panel::Utils::DeviceBootstrap::Polycom->new( params => $params );
     }elsif('http' eq $bootstrap_method){
         #$ret = panasonic_bootstrap_register($params);
     }
