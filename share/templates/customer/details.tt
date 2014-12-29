@@ -650,9 +650,9 @@
                         $('#line\\.' + formcnt).remove();
 
                         var a = range.annotations[j];
-                        [% IF create_flag == 1 -%]
-                            var status = "unassigned";
-                            var action = '<i class="fa fa-plus-square fa-fw"></i> ' +
+						[%MACRO unassigned_form BLOCK%]
+                            status = "unassigned";
+                            action = '<i class="fa fa-plus-square fa-fw"></i> ' +
                                   '<select class="subselect" name="line.' + formcnt + '.subscriber_id" id="line.' + formcnt + '.subscriber_id">' + 
                                     '<option value="0">[% c.loc("Subscriber") %]</option>' +
                                     [% subs = [] -%]
@@ -667,6 +667,10 @@
                                   '</select>' + 
                                   '<input type="hidden" name="line.' + formcnt + '.line" id="line.' + formcnt + '.line" value="' + a.range_id + '.' + a.line_index + '"/>' + 
                                   '';
+						[%END%]
+                        [% IF create_flag == 1 -%]
+							var status, action;
+							[% unassigned_form() %]
                         [% ELSIF edit_flag == 1 -%]
                             var linekeys = {
                             [% FOR line IN pbx_device.autoprov_field_device_lines.all -%]
@@ -701,22 +705,7 @@
                                   '<input type="hidden" name="line.' + formcnt + '.line" id="line.' + formcnt + '.line" value="' + a.range_id + '.' + a.line_index + '"/>' + 
                                   '';
                             } else {
-                                status = "unassigned";
-                                var action = '<i class="fa fa-plus-square fa-fw"></i> ' +
-                                      '<select class="subselect" name="line.' + formcnt + '.subscriber_id" id="line.' + formcnt + '.subscriber_id">' + 
-                                        '<option value="0">[% c.loc("Subscriber") %]</option>' +
-                                        [% subs = [] -%]
-                                        [% FOR sub IN subs.merge(pbx_groups.all, subscribers.all) -%]
-                                        '<option value="[% sub.provisioning_voip_subscriber.id %]">[% sub.provisioning_voip_subscriber.display_name ? sub.provisioning_voip_subscriber.display_name : sub.username %][% sub.provisioning_voip_subscriber.pbx_extension.defined ? " (" _ sub.provisioning_voip_subscriber.pbx_extension _ ")" : "" %]</option>' +
-                                        [% END -%]
-                                      '</select>' +
-                                      '<select class="modeselect" name="line.' + formcnt + '.type" id="line.' + formcnt + '.type">' + 
-                                        [% FOR opt IN ["private", "shared", "blf"] -%]
-                                        (range.can_[% opt %] == "1" ? '<option value="[% opt %]">[% opt %]</option>' : '') +
-                                        [% END -%]
-                                      '</select>' + 
-                                      '<input type="hidden" name="line.' + formcnt + '.line" id="line.' + formcnt + '.line" value="' + a.range_id + '.' + a.line_index + '"/>' + 
-                                      '';
+								[% unassigned_form() %]
                             }
                         [% END -%]
                         markup += '<div class="caption ' + status + '" style="top:' + a.y + 'px; left:' + a.x + 'px;" data-pos="' + a.position + '">' + action + '</div>';

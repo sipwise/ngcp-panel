@@ -62,17 +62,6 @@ class_has 'query_params' => (
                 second => sub {},
             },
         },
-        {
-            param => 'vendor',
-            description => 'Filter for models matching a vendor name pattern',
-            query => {
-                first => sub {
-                    my $q = shift;
-                    { vendor => { like => $q } };
-                },
-                second => sub {},
-            },
-        },
     ]},
 );
 
