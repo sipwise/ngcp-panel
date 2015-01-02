@@ -84,6 +84,13 @@
                             <option [% (r.adm_ncos_id.defined && r.adm_ncos_id == level.id) ? 'selected="selected"' : '' %]>[% level.level %]</option>
                         [% END -%]
                         </select>
+                    [% ELSIF r.attribute == "adm_cf_ncos" -%]
+                        <select disabled="disabled">
+                            <option>&nbsp;</option>
+                        [% FOR level IN helper.ncos_levels -%]
+                            <option [% (r.adm_cf_ncos_id.defined && r.adm_cf_ncos_id == level.id) ? 'selected="selected"' : '' %]>[% level.level %]</option>
+                        [% END -%]
+                        </select>
                     [% ELSIF r.attribute == "sound_set" -%]
                         <select disabled="disabled">
                             <option>&nbsp;</option>

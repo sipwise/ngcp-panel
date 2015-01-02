@@ -393,7 +393,7 @@ sub update_item {
     my $extra = [qw/
         rewrite_caller_in_dpid rewrite_caller_out_dpid 
         rewrite_callee_in_dpid rewrite_callee_out_dpid 
-        ncos_id adm_ncos_id 
+        ncos_id adm_ncos_id adm_cf_ncos_id
         sound_set contract_sound_set 
         allowed_ips_grp man_allowed_ips_grp
     /];
