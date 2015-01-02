@@ -192,8 +192,8 @@ sub POST :Allow {
         last unless $resource;
 
         my $product_class = delete $resource->{type};
-        unless($product_class eq "sipaccount" || $product_class eq "pbxaccount") {
-            $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Invalid 'type', must be 'sipaccount' or 'pbxaccount'.");
+        unless( (defined $product_class ) && ($product_class eq "sipaccount" || $product_class eq "pbxaccount") ) {
+            $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Mandatory 'type' parameter is empty or invalid, must be 'sipaccount' or 'pbxaccount'.");
             last;
         }
         my $product = $schema->resultset('products')->find({ class => $product_class });
