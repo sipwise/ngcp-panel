@@ -145,7 +145,7 @@ sub delete :Chained('base') :PathPart('delete') {
     try {
         my $schema = $c->model('DB');
         $schema->txn_do(sub {
-            for my $pref(qw/adm_ncos_id subadm_ncos_id ncos_id/) {
+            for my $pref(qw/adm_ncos_id subadm_ncos_id ncos_id adm_cf_ncos_id/) {
                 my $rs = NGCP::Panel::Utils::Preferences::get_usr_preference_rs(
                     c => $c, attribute => $pref,
                 );

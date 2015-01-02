@@ -49,7 +49,9 @@ sub field_list {
                 type => 'Select',
                 options => \@options,
             };
-        } elsif ($meta->attribute eq "ncos" || $meta->attribute eq "adm_ncos") {
+        } elsif ($meta->attribute eq "ncos" ||
+                 $meta->attribute eq "adm_ncos" ||
+                 $meta->attribute eq "adm_cf_ncos") {
             my @options = map {{label => $_->level, value => $_->id}}
                 defined $ncos_rs ? $ncos_rs->all : ();
             unshift @options, {label => '', value => ''};
