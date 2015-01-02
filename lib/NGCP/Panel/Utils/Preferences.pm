@@ -105,6 +105,13 @@ sub load_preference_list {
                     $pref->{adm_ncos_id} = $tmp->id;
                 }
             }
+            elsif($pref->attribute eq "adm_cf_ncos") {
+                if ($pref_values->{adm_cf_ncos_id} &&
+                    (my $tmp = $c->stash->{ncos_levels_rs}
+                        ->find($pref_values->{adm_cf_ncos_id}) )) {
+                    $pref->{adm_cf_ncos_id} = $tmp->id;
+                }
+            }
             elsif($pref->attribute eq "allowed_ips") {
                 $pref->{allowed_ips_group_id} = $pref_values->{allowed_ips_grp};
                 $pref->{allowed_ips_rs} = $c->model('DB')->resultset('voip_allowed_ip_groups')
@@ -216,6 +223,15 @@ sub create_preference_form {
     } elsif ($c->stash->{preference_meta}->attribute eq "adm_ncos") {
         my $ncos_id_preference = $pref_rs->search({
                 'attribute.attribute' => 'adm_ncos_id'
+            },{
+                join => 'attribute'
+            })->first;
+        if (defined $ncos_id_preference) {
+            $preselected_value = $ncos_id_preference->value;
+        }
+    } elsif ($c->stash->{preference_meta}->attribute eq "adm_cf_ncos") {
+        my $ncos_id_preference = $pref_rs->search({
+                'attribute.attribute' => 'adm_cf_ncos_id'
             },{
                 join => 'attribute'
             })->first;
@@ -535,7 +551,7 @@ sub create_preference_form {
             );
             $c->response->redirect($base_uri);
             return 1;
-        } elsif ($attribute eq "ncos" || $attribute eq "adm_ncos") {
+        } elsif ($attribute eq "ncos" || $attribute eq "adm_ncos" || $attribute eq "adm_cf_ncos") {
             my $selected_level = $c->stash->{ncos_levels_rs}->find(
                 $form->field($attribute)->value
             );
