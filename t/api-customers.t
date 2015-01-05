@@ -118,7 +118,7 @@ my @allcustomers = ();
     is($res->code, 422, "create customer with invalid type");
     my $err = JSON::from_json($res->decoded_content);
     is($err->{code}, "422", "check error code in body");
-    ok($err->{message} =~ /Invalid 'type'/, "check error message in body");
+    ok($err->{message} =~ /Mandatory 'type' parameter is empty or invalid/, "check error message in body");
 
     # try to create invalid customer with wrong billing profile
     $req->content(JSON::to_json({
