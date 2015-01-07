@@ -1,3 +1,134 @@
+ngcp-panel (1.7.1.0+0~mr3.7.1.0) unstable; urgency=low
+
+  [ Irina Peshinskaya ]
+  * [abf4cb9] MT#9177 Changes for centrlised sync parameters table. Draft.
+  * [5902c07] MT#9177 Add panasonic bootstrap.
+  * [bddadea] MT#9177 Untested Device forms.
+  * [c518e74] MT#9177 Device model web form tested can be created and changed
+  * [a6527bb] MT#9177 API for autoprov. Not tested yet.
+  * [492258f] MT#9177 Remove hardcoded values
+  * [8efe98f] MT#9177 Adapt to using of standard debian package and fix control
+  * [4b832d2] MT#9177 Add bootstrap dependencies to Build.PL
+  * [8d134d1] MT#9177 Fix model form look.
+  * [ea3d731] MT#9177 Add fields for edit Panasonic credentials
+  * [bcd8c30] MT#9177 Add credentials as device fields logic
+  * [715a39f] MT#9177 inflate sync credentials values in Controller from DB.
+  * [64dd9c0] MT#9177 Bootstrap_uri logic and fixes.
+  * [b62da59] MT#9177 Small fixes after web testing
+  * [9a06328] MT#10041 Fix join for reseller account.
+  * [4ffac12] MT#10061 Fix rounding for invoices.
+  * [8b09bd0] MT#9941 Consider PBX hunt parameters on subscriber creation via API
+  * [59bfbeb] MT#9941 Add cloud_pbx_hunt_* fields to api.
+  * [0c26c90] MT#10041 Query_params raised multidomain request in not multidomain env.
+  * [331f1b3] MT#10045 Use form->values instead of form->params for contract forms
+  * [0386b22] MT#10355 Fix forcing boolean context for JSON::bool
+  * [8792913] MT#10337 Panel changes get model by get the same way as the dup_item
+  * [0dc5e7b] MT#10337 More filters to get uniq records for cloudpbx
+  * [e45b214] MT#9177 Add yealink, change architecture and fix credentials store issue
+  * [618208a] MT#10501 Add blob data columns only to particular records
+  * [4db73f7] MT#9177 Make {MAC} adding optional for different vendors
+  * [649ccfb] MT#10797 Check manadatory customer "type" presence.
+  * [13b2465] MT#10797 Fix package to view API doc.
+  * [6fbbc11] MT#10797 Fix message in the tests.
+
+  [ Jenkins Git User ]
+  * [c07083a] I18N dump: snapshot Sat Nov 01 01:18:51 +0100 2014
+  * [c4bf8e0] I18N dump: snapshot Sat Nov 01 01:18:59 +0100 2014
+  * [6c63e88] I18N dump: snapshot Sat Nov 01 01:19:06 +0100 2014
+  * [1e498ee] I18N dump: snapshot Sat Nov 01 01:19:14 +0100 2014
+  * [e41bc71] I18N dump: snapshot Sat Nov 01 01:19:22 +0100 2014
+  * [453c6fe] I18N dump: snapshot Wed Nov 05 01:15:31 +0100 2014
+  * [dc0ab43] I18N dump: snapshot Wed Nov 05 01:15:38 +0100 2014
+  * [7ebd7e7] I18N dump: snapshot Wed Nov 05 01:15:46 +0100 2014
+  * [fc0cf32] I18N dump: snapshot Wed Nov 05 01:15:53 +0100 2014
+  * [0de3a2a] I18N dump: snapshot Wed Nov 05 01:16:01 +0100 2014
+  * [1f56bca] I18N dump: snapshot Thu Nov 06 16:18:00 +0100 2014
+  * [4e00714] I18N dump: snapshot Thu Nov 06 16:18:08 +0100 2014
+  * [28dd561] I18N dump: snapshot Thu Nov 06 16:18:15 +0100 2014
+  * [c49640e] I18N dump: snapshot Thu Nov 06 16:18:22 +0100 2014
+  * [22e8f13] I18N dump: snapshot Thu Nov 06 16:18:29 +0100 2014
+  * [bc18441] I18N dump: snapshot Fri Nov 07 01:53:15 +0100 2014
+  * [1bbeb73] I18N dump: snapshot Fri Nov 07 01:53:23 +0100 2014
+  * [66c7455] I18N dump: snapshot Fri Nov 07 01:53:31 +0100 2014
+  * [234f6d4] I18N dump: snapshot Fri Nov 07 01:53:38 +0100 2014
+  * [9b7eee6] I18N dump: snapshot Fri Nov 07 01:53:45 +0100 2014
+  * [061e3a5] I18N dump: snapshot Wed Nov 12 01:15:24 +0100 2014
+  * [53069bd] I18N dump: snapshot Wed Nov 12 01:15:31 +0100 2014
+  * [0459424] I18N dump: snapshot Wed Nov 12 01:15:38 +0100 2014
+  * [117d853] I18N dump: snapshot Wed Nov 12 01:15:46 +0100 2014
+  * [0fbcf75] I18N dump: snapshot Wed Nov 12 01:15:53 +0100 2014
+  * [86ccaea] I18N dump: snapshot Tue Nov 18 10:31:49 +0100 2014
+  * [9db3963] I18N dump: snapshot Wed Nov 19 01:13:54 +0100 2014
+  * [1c82f86] I18N dump: snapshot Sat Nov 22 01:14:04 +0100 2014
+  * [5ae1aed] I18N dump: snapshot Sat Dec 06 01:14:14 +0100 2014
+  * [8edc144] I18N dump: snapshot Wed Dec 10 01:15:10 +0100 2014
+  * [5207ffa] I18N dump: snapshot Thu Dec 11 01:15:18 +0100 2014
+  * [3bd2b62] I18N dump: snapshot Fri Dec 12 01:16:35 +0100 2014
+  * [0bc63ce] I18N dump: snapshot Sun Dec 14 01:15:45 +0100 2014
+  * [5c4ec09] I18N dump: snapshot Thu Dec 18 01:14:28 +0100 2014
+  * [48384c4] I18N dump: snapshot Sat Dec 20 01:14:53 +0100 2014
+  * [34f9dcc] I18N dump: snapshot Sat Jan 03 01:13:23 +0100 2015
+
+  [ Andreas Granig ]
+  * [6b24459] MT#9177 Fix panasonic bootstrapping.
+  * [e1d58e9] MT#9177 Cleanup bootstrap code.
+  * [efa2acb] MT#9177 Adapt API to new device bootstrap.
+  * [1966ae7] MT#9881 Slight panasonic fixes.
+  * [5bb95ac] MT#9881 Add panasonic address book url to config
+  * [097c8ec] MT#9177 Re-add sync param logic.
+  * [f311ea6] MT#8299 Only show supported options in dev config
+  * [a16c98a] MT#10199 Add subscriber profile preferences.
+  * [f9d954a] MT#10199 Add prof prefs to test.
+  * [7ae4eb5] MT#10199 Exlude profile prefs def.
+  * [a431f6b] MT#10309 Allow passwords with less than chars.
+  * [1505d81] MT#10301 Keep admin flag as is on pilot edit.
+  * [e28726c] MT#10537 API: Add calllists call.
+  * [266e8e7] MT#10537 API: own/other logic for calllist item
+  * [8b5a820] MT#10537 Add calllists to test list
+  * [f9cabf2] MT#10543 Set t38 param for use in dev config.
+  * [ad6dbc2] MT#10537 API: filter for call type in calllist
+  * [299fa89] MT#10537 Skip GET test on calllists.
+  * [3c28c91] MT#10537 Enhance CLI field documentation.
+  * [e0e2ac3] MT#9177 Add redirect_yealink to bootstrap opts
+  * [060e265] MT#7153 Add length dropdown in customer.
+  * [8a70ef1] MT#10587 Implement Yealink remote address book
+  * [143486d] MT#10587 Always strip .cfg in device provisioning
+  * [f37d3df] MT#10587 Add baseurl to autoprov config vars
+  * [9296582] MT#10587 Properly check for fwver value.
+  * [19b6e10] MT#10587 Add yealink directory url.
+  * [71620f6] MT#10587 Encrypt Yealink configs.
+  * [a1e98c6] MT#10603 Print autprov config access/failure
+  * [f40c5e6] MT#10603 Fix log severity.
+  * [3624c48] MT#10587 Use insecure bootstrap URL
+  * [c6b3360] MT#10537 Support customer_id for calllists.
+  * [3cf80bf] MT#10587 Parse autoprov bootstrap id and mark conf
+  * [30d2075] MT#5241 Update primary number on group ext change
+  * [64093a0] MT#10691 Add digits group for contract sound set
+  * [03a6f4a] MT#10705 Set group members from within group.
+  * [af40fb7] MT#6773 Remove more Data::Printer stuff.
+  * [8b83559] MT#6785 Fix creating subscriber with ext 0.
+
+  [ Kirill Solomko ]
+  * [443c9bb] MT#8645 - add "terminate" method
+  * [0894322] MT#8645 - billing/list.tt add "terminate" button
+  * [fd8d597] MT#8645 - add billing_profile terminate functionality for API
+  * [ee5da92] MT#8645 - Form/BillingProfiles status is set to default: active
+  * [55a5b1d] MT#8645 - do not add 'me' to virtual aggregated columns (min,max,count) where aliased as '^v_(min|max|count)'
+  * [f5830cd] MT#8645 - billing profiles, disable seaerch by "Used", "used" internal renamed into "v_count_used" to be taken as a virtual column by the Datatables module
+  * [74d3eb7] MT#8645 - teamplates billing profiles list, renamed "used" into "v_count_used"
+  * [86f78f3] MT#7705 - update last request tx_id only for a new request to work with scenarios where there are more than one reply for a request
+
+  [ Michael Prokop ]
+  * [a3bb9f5] MT#10181 Rework SSL generation script to also generate CSR file
+  * [2b563f1] MT#10181 generate_ssl_keys.sh: support skipping csr file generation
+
+  [ Alexander Lutay ]
+  * [45dc041] MT10181 Add debug for CA certificate check & use rest_api_certfile always
+
+  [ Sipwise Jenkins Builder ]
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Wed, 07 Jan 2015 21:32:12 +0100
+
 ngcp-panel (1.7.0.0+0~mr3.7.0.0) unstable; urgency=low
 
   [ Gerhard Jungwirth ]
