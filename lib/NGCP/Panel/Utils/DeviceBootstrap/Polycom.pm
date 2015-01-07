@@ -27,13 +27,10 @@ has 'add_server_content' => (
 sub rpc_server_params{
     my $self = shift;
     my $cfg  = {
-        proto    => 'https',
-        host     => 'ztpconsole.polycom.com',
-        port     => '443',
-        path     => '/inboundservlet/GenericServlet',
-        login    => '',
-        password => '',
-        profile  => 'sipwise',
+        proto       => 'https',
+        host        => 'ztpconsole.polycom.com',
+        port        => '443',
+        path        => '/inboundservlet/GenericServlet',
         #https://ztpconsole.polycom.com/inboundservlet/GenericServlet
     };
     $cfg->{headers} = { %{$self->get_basic_authorization($self->params->{credentials})} };
@@ -44,7 +41,7 @@ sub rpc_server_params{
 sub register_content {
     my $self = shift;
     $self->{register_content} ||= "<?xml version='1.0' encoding='UTF-8'?>
-<request userid='".$self->{rpc_server_params}->{login}."' password='".$self->{rpc_server_params}->{password}."' message-id='1001' >
+<request userid='".$self->params->{credentials}->{user}."' password='".$self->params->{credentials}->{password}."' message-id='1001' >
 <create-subscriber account-id = '".$self->content_params->{mac}."' isp-name= '".$self->{rpc_server_params}->{profile}."'>
 </create-subscriber>
 </request>";
@@ -54,21 +51,17 @@ sub register_content {
 sub unregister_content {
     my $self = shift;
     $self->{unregister_content} ||=  "<?xml version='1.0' encoding='UTF-8'?>
-<methodCall>
-<methodName>redirect.deRegisterDevice</methodName>
-<params>
-<param>
-<value><string>".$self->content_params->{mac_old}."</string></value>
-</param>
-</params>
-</methodCall>";
+<request userid='".$self->params->{credentials}->{user}."' password='".$self->params->{credentials}->{password}."' message-id='1001' >
+<create-subscriber account-id = '".$self->content_params->{mac_old_reference}."' isp-name= '".$self->{rpc_server_params}->{profile}."'>
+</create-subscriber>
+</request>";
     return $self->{unregister_content};
 }
 sub add_subscriber_content
  {
     my $self = shift;
     $self->{add_subscriber_content} ||=  "<?xml version='1.0' encoding='UTF-8'?>
-<request userid='".$self->{rpc_server_params}->{login}."' password='".$self->{rpc_server_params}->{password}."' message-id='1001' >
+<request userid='".$self->params->{credentials}->{user}."' password='".$self->params->{credentials}->{password}."' message-id='1001' >
 <create-subscriber account-id = '".$self->content_params->{mac}."' isp-name= '".$self->{rpc_server_params}->{profile}."'>
 </create-subscriber>
 </request>";
