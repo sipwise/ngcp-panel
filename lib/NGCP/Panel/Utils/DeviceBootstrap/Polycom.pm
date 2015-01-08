@@ -35,32 +35,32 @@ sub rpc_server_params{
         path        => '/inboundservlet/GenericServlet',
         #https://ztpconsole.polycom.com/inboundservlet/GenericServlet
     };
-    $cfg->{headers} = { %{$self->get_basic_authorization($self->params->{credentials})} };
+    #$cfg->{headers} = { %{$self->get_basic_authorization($self->params->{credentials})} };
     $self->{rpc_server_params} = $cfg;
     return $self->{rpc_server_params};
 }
 
 sub register_subscriber_content {
     my $self = shift;
+    $self->params->{redirect_params}->{profile} = 'sipwise';
     $self->{register_subscriber_content} ||= "<?xml version='1.0' encoding='UTF-8'?>
-<request userid='".$self->params->{credentials}->{user}."' password='".$self->params->{credentials}->{password}."' message-id='1001' >
-<create-subscriber account-id = '".uri_escape($self->params->{redirect_params}->{profile}.'_'.$self->content_params->{mac})."' isp-name= '".uri_escape($self->params->{redirect_params}->{profile})."'>
-<PersonalInformation></PersonalInformation></create-subscriber>
+<request userid='".$self->params->{credentials}->{user}."' password='".$self->params->{credentials}->{password}."' message-id='1001'>
+<create-subscriber account-id='".uri_escape($self->params->{redirect_params}->{profile}.'_'.$self->content_params->{mac})."' isp-name='".uri_escape($self->params->{redirect_params}->{profile})."'>
+<PersonalInformation><FirstName></FirstName>
+<LastName></LastName>
+<password></password>
+<address>
+<StreetAddress1></StreetAddress1>
+<StreetAddress2></StreetAddress2>
+<City></City>
+<Zipcode></Zipcode>
+<Country></Country>
+</address>
+<select-location></select-location>
+<cmmac></cmmac></PersonalInformation></create-subscriber>
 </request>";
-#<FirstName>Sharada</FirstName>
-#<LastName>Pappu</LastName>
-#<password>user1223</password>
-#<address>
-#<StreetAddress1>vani</StreetAddress1>
-#<StreetAddress2>vilas</StreetAddress2>
-#<City>Santa Clara</City>
-#<State>KA</State>
-#<Zipcode>560004</Zipcode>
-#<Country>India</Country>
-#</address>
-#<phone>6618004</phone>
-#<select-location></select-location>
-#<cmmac></cmmac>
+#<State></State>
+#<phone></phone>
     return $self->{register_subscriber_content};
 }
 sub register_content {
