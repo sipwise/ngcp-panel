@@ -1,7 +1,9 @@
 package NGCP::Panel::Utils::DeviceBootstrap::Polycom;
 
 use strict;
+use URI::Escape;
 use Moose;
+
 extends 'NGCP::Panel::Utils::DeviceBootstrap::VendorRPC';
 
 has 'rpc_server_params' => (
@@ -19,10 +21,10 @@ has 'unregister_content' => (
     isa => 'Str',
     accessor => '_unregister_content',
 );
-has 'add_server_content' => (
+has 'register_subscriber_content' => (
     is => 'rw',
     isa => 'Str',
-    accessor => '_add_server_content',
+    accessor => '_register_subscriber_content',
 );
 sub rpc_server_params{
     my $self = shift;
@@ -38,22 +40,65 @@ sub rpc_server_params{
     return $self->{rpc_server_params};
 }
 
+sub register_subscriber_content {
+    my $self = shift;
+    $self->{register_subscriber_content} ||= "<?xml version='1.0' encoding='UTF-8'?>
+<request userid='".$self->params->{credentials}->{user}."' password='".$self->params->{credentials}->{password}."' message-id='1001' >
+<create-subscriber account-id = '".uri_escape($self->params->{redirect_params}->{profile}.'_'.$self->content_params->{mac})."' isp-name= '".uri_escape($self->params->{redirect_params}->{profile})."'>
+<PersonalInformation></PersonalInformation></create-subscriber>
+</request>";
+#<FirstName>Sharada</FirstName>
+#<LastName>Pappu</LastName>
+#<password>user1223</password>
+#<address>
+#<StreetAddress1>vani</StreetAddress1>
+#<StreetAddress2>vilas</StreetAddress2>
+#<City>Santa Clara</City>
+#<State>KA</State>
+#<Zipcode>560004</Zipcode>
+#<Country>India</Country>
+#</address>
+#<phone>6618004</phone>
+#<select-location></select-location>
+#<cmmac></cmmac>
+    return $self->{register_subscriber_content};
+}
 sub register_content {
     my $self = shift;
     $self->{register_content} ||= "<?xml version='1.0' encoding='UTF-8'?>
-<request userid='".$self->params->{credentials}->{user}."' password='".$self->params->{credentials}->{password}."' message-id='1001' >
-<create-subscriber account-id = '".$self->content_params->{mac}."' isp-name= '".$self->{rpc_server_params}->{profile}."'>
-</create-subscriber>
+<request userid='".$self->params->{credentials}->{user}."' password='".$self->params->{credentials}->{password}."' message-id='1001'>
+<add-sip-device account-id='".uri_escape($self->params->{redirect_params}->{profile}.'_'.$self->content_params->{mac})."'>
+<device-params><deviceId>".$self->content_params->{mac}."</deviceId>
+<serialNo>".$self->content_params->{mac}."</serialNo>
+<vendor>Polycom</vendor>
+<vendorModel>Polycom_UCS_Device</vendorModel>
+</device-params>
+<sip-device-common-params>
+<templateCriteria>".uri_escape($self->params->{redirect_params}->{profile})."</templateCriteria>
+</sip-device-common-params>
+<package-data><base-package-name>default</base-package-name>
+</package-data></add-sip-device>
 </request>";
     return $self->{register_content};
 }
 
 sub unregister_content {
     my $self = shift;
+    $self->{unregister_content};
+    $self->params->{credentials}->{user};
+    $self->params->{credentials}->{password};
+    $self->params->{redirect_params}->{profile};
+    $self->content_params->{mac};
     $self->{unregister_content} ||=  "<?xml version='1.0' encoding='UTF-8'?>
 <request userid='".$self->params->{credentials}->{user}."' password='".$self->params->{credentials}->{password}."' message-id='1001' >
-<create-subscriber account-id = '".$self->content_params->{mac_old_reference}."' isp-name= '".$self->{rpc_server_params}->{profile}."'>
-</create-subscriber>
+<delete-sip-device account-id='".uri_escape($self->params->{redirect_params}->{profile}.'_'.$self->content_params->{mac})."'>
+<device-params>
+<deviceId>".$self->content_params->{mac}."</deviceId>
+<serialNo>".$self->content_params->{mac}."</serialNo>
+<vendor>Polycom</vendor>
+<vendorModel>Polycom_UCS_Device</vendorModel>
+</device-params>
+</delete-sip-device>
 </request>";
     return $self->{unregister_content};
 }
@@ -70,8 +115,8 @@ sub add_subscriber_content
 sub register{
     my($self) = @_;
     $self->rpc_server_params;
-    #$self->redirect_server_call('add_subscriber');
-    #return $self->redirect_server_call('register');
+    $self->redirect_server_call('register_subscriber');
+    return $self->redirect_server_call('register');
 }
 
 1;

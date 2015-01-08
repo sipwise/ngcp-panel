@@ -29,10 +29,14 @@ sub redirect_server_call{
     $c->log->debug(Dumper ($self->content_params));
     my($content,$response_value,$ret);
     my $method = $action.'_content';
-    if($self->can($method)){
-        $content = $self->$method();
+    if($self->can($action)){
+        $content = $self->$action();
     }else{
-        $ret = "Unknown method: $action";
+        if($self->can($method)){
+            $content = $self->$method();
+        }else{
+            $ret = "Unknown method: $action";
+        }
     }
     if($content){
         $response_value = $self->rpc_https_call($content);
@@ -108,7 +112,7 @@ sub get_basic_authorization{
 sub get_bootstrap_uri{
     my ($self) = @_;
     my $uri = $self->params->{redirect_uri};
-    my $uri_params = $self->params->{redirect_uri_params} || '';
+    my $uri_params = $self->params->{redirect_params}->{sync_params} || '';
     if(!$uri){
         my $cfg = $self->bootstrap_uri_conf();
         $uri = "$cfg->{schema}://$cfg->{host}:$cfg->{port}/device/autoprov/config/";

@@ -50,20 +50,26 @@ sub get_devmod_params{
     }
 
     my $sync_params_rs = $devmod->autoprov_sync->search_rs({
-        'autoprov_sync_parameters.parameter_name' => 'sync_params',
-    },{
-        join   => 'autoprov_sync_parameters',
-        select => ['me.parameter_value'],
-    });
-    my $sync_params = $sync_params_rs->first ? $sync_params_rs->first->parameter_value : '';
-    
+        'autoprov_sync_parameters.bootstrap_method' => $devmod->bootstrap_method,
+    }
+    ,{
+        join      => 'autoprov_sync_parameters',
+    #    '+select' => ['autoprov_sync_parameters.parameter_name'],
+    }
+    );
+    #my $sync_params = $sync_params_rs->first ? $sync_params_rs->first->parameter_value : '';
+    my $sync_params={};
+    foreach($sync_params_rs->all){
+        $sync_params->{$_->autoprov_sync_parameters->parameter_name()} = $_->parameter_value;
+    }
     my $params = {
         c => $c,
         bootstrap_method => $devmod->bootstrap_method,
         redirect_uri => $devmod->bootstrap_uri,
-        redirect_uri_params => $sync_params,
+        redirect_params => $sync_params,
         credentials => $vcredentials,
     };
+    $c->log->debug(Dumper($sync_params));
     return $params;
 }
 sub get_redirect_processor{
