@@ -36,6 +36,17 @@ class_has 'query_params' => (
                 second => sub {},
             },
         },
+        {
+            param => 'config_id',
+            description => 'Filter for profiles matching a config_id',
+            query => {
+                first => sub {
+                    my $q = shift;
+                    { 'config_id' => { like => $q } };
+                },
+                second => sub {},
+            },
+        },
     ]},
 );
 
