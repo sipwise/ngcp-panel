@@ -1,3 +1,12 @@
+ngcp-panel (1.6.2.2+0~mr3.6.2.2) unstable; urgency=low
+
+  [ Irina Peshinskaya ]
+  * [826f5c4] MT#10337 Backport 10337 changes to fix 10819
+
+  [ Sipwise Jenkins Builder ]
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Mon, 12 Jan 2015 14:53:30 +0100
+
 ngcp-panel (1.6.2.1+0~mr3.6.2.1) unstable; urgency=low
 
   [ Irina Peshinskaya ]
