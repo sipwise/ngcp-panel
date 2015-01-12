@@ -20,7 +20,18 @@ class_has 'api_description' => (
     is => 'ro',
     isa => 'Str',
     default => 
-        'Defines a billing container for end customers. Customers usually have one or more <a href="#subscribers">Subscribers</a>. A <a href="#billingprofiles">Billing Profile</a> is assigned to a customer, and it has <a href="#contractbalances">Contract Balances</a> indicating the saldo of the customer for current and past billing intervals.',
+        'Defines a billing container for end customers. Customers usually have one or more <a href="#subscribers">Subscribers</a>. A <a href="#billingprofiles">Billing Profile</a> is assigned to a customer, and it has <a href="#contractbalances">Contract Balances</a> indicating the saldo of the customer for current and past billing intervals. Customer can be one of the "sipaccount" or "pbxaccount" type. Type should be specified as "type" parameter.',
+);
+class_has 'documentation_sample' => (
+    is => 'ro',
+    default => sub { 
+        {
+           "billing_profile_id" => 4,
+           "type" => "sipaccount",
+           "contact_id" => 4,
+           "status" => "test",
+        }
+    },
 );
 
 class_has 'query_params' => (
