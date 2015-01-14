@@ -1379,7 +1379,11 @@ sub dev_static_jitsi_config :Chained('/') :PathPart('device/autoprov/static/jits
     my $uri = $c->req->params->{user};
     my $pass = $c->req->params->{pass};
     my $uuid = $c->req->params->{uuid};
-    my ($user, $domain) = split /\@/, $uri;
+    my ($user, $domain, $tmp) = split /\@/, $uri;
+    if(defined $tmp) {
+        $user = $user . '@' . $domain;
+        $domain = $tmp;
+    }
     unless($user && $domain) {
         $c->response->content_type('text/plain');
         if($c->config->{features}->{debug}) {
@@ -1389,6 +1393,27 @@ sub dev_static_jitsi_config :Chained('/') :PathPart('device/autoprov/static/jits
         }
         $c->response->status(404);
         return;
+    }
+
+    if($c->config->{deviceprovisioning}->{softphone_webauth}) {
+        my $sub = $c->model('DB')->resultset('provisioning_voip_subscribers')->find({
+           webusername => $user,
+           'domain.domain' => $domain,
+           webpassword => $pass,
+        },{
+            join => 'domain',
+        });
+        unless($sub) {
+            if($c->config->{features}->{debug}) {
+                $c->response->body("404 - webuser authentication failed");
+            } else {
+                $c->response->body("404 - invalid user config parameters");
+            }
+            $c->response->status(404);
+            return;
+        }
+        $user = $sub->username;
+        $pass = $sub->password;
     }
 
     my $sipacc = 'accsipngcp'.$user.$domain;
