@@ -16,21 +16,23 @@ sub dispatch{
         mac => $fdev->identifier,
         mac_old => $old_identifier,
     };
-    return _dispatch($action, $params);
+    return _dispatch($c, $action, $params);
 }
 sub dispatch_devmod{
     my($c, $action, $devmod) = @_;
     
     my $params = get_devmod_params($c,$devmod);
-    return _dispatch($action, $params);
+    return _dispatch($c, $action, $params);
 }
 sub _dispatch{
-    my($action,$params) = @_;
+    my($c, $action, $params) = @_;
     my $redirect_processor = get_redirect_processor($params);
     my $ret;
     if($redirect_processor){
+        $c->log->debug( "action=$action;" );        
         if($redirect_processor->can($action)){
             $ret = $redirect_processor->$action();
+            $c->log->debug( "ret=$ret;" );        
         }else{
             if( ('register' eq $action) && $params->{mac_old} && ( $params->{mac_old} ne $params->{mac} ) ){
                 $redirect_processor->redirect_server_call('unregister');
@@ -76,7 +78,7 @@ sub get_redirect_processor{
     my ($params) = @_;
     my $c = $params->{c};
     my $bootstrap_method = $params->{bootstrap_method};
-    $c->log->debug( "bootstrap_method=$bootstrap_method;" );
+    $c->log->debug( "bootstrap_method AAAAAAAAA =$bootstrap_method;" );
     my $redirect_processor;
     if('redirect_panasonic' eq $bootstrap_method){
         $redirect_processor = NGCP::Panel::Utils::DeviceBootstrap::Panasonic->new( params => $params );
@@ -87,6 +89,7 @@ sub get_redirect_processor{
     }elsif('http' eq $bootstrap_method){
         #$ret = panasonic_bootstrap_register($params);
     }
+    $c->log->debug( "redirect_processor=$redirect_processor;" );
     return $redirect_processor;
 }
 

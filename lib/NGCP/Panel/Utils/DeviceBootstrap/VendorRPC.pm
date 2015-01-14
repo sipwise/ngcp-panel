@@ -40,6 +40,7 @@ sub redirect_server_call{
     }
     if($content){
         $response_value = $self->rpc_https_call($content);
+        $c->log->debug(Dumper $response_value);
         $ret = $self->extract_response_description($response_value);
     }
     return $ret;
@@ -59,11 +60,10 @@ sub rpc_https_call{
         'Content-Type' => 'text/xml',
         'content' => $content,
     },);
-    $c->log->info( "response=$response_code; page=$page;" );
+    $c->log->info( "rpc_https_call: response=$response_code; page=$page;" );
     my $response_value = '';
     if($page){
-        my $parser = RPC::XML::ParserFactory->new();
-        my $rpc_response = $parser->parse($page);
+        my $rpc_response = $self->parse_rpc_response_page($page);
         $response_value = $self->parse_rpc_response($rpc_response);
         $c->log->info("response_value=".Dumper($response_value));
     }
@@ -73,6 +73,13 @@ sub rpc_https_call{
 sub parse_rpc_response{
     my($self,$rpc_response) = @_;
     return $rpc_response->value->value;
+}
+sub parse_rpc_response_page{
+    my($self, $page) = @_;
+    my $c = $self->params->{c};
+    my $parser = RPC::XML::ParserFactory->new();
+    $c->log->info("super::parse_rpc_response_page");
+    return  $parser->parse($page);
 }
 
 sub extract_response_description{
