@@ -60,8 +60,13 @@ sub index :Path Form {
                 }, 
                 $realm);
         } elsif($realm eq 'subscriber') {
-            my ($u, $d) = split /\@/, $user;
-            unless($d) {
+            my ($u, $d, $t) = split /\@/, $user;
+            if(defined $t) {
+                # in case username is an email address
+                $u = $u . '@' . $d;
+                $d = $t;
+            }
+            unless(defined $d) {
                 $d = $c->req->uri->host;
             }
             my $authrs = $c->model('DB')->resultset('provisioning_voip_subscribers')->search({
