@@ -1485,6 +1485,25 @@ net.java.sip.communicator.impl.protocol.jabber.$xmppacc.USER_ID=$user\@$domain
 net.java.sip.communicator.impl.protocol.jabber.$xmppacc.USE_DEFAULT_STUN_SERVER=true
 EOF
 
+    if($c->config->{deviceprovisioning}->{softphone_lockdown}) {
+        $config .= <<"EOF";
+net.java.sip.communicator.impl.gui.main.configforms.SHOW_ACCOUNT_CONFIG=false
+net.java.sip.communicator.plugin.generalconfig.DISABLED=true
+net.java.sip.communicator.impl.neomedia.AUDIO_CONFIG_DISABLED=true
+net.java.sip.communicator.impl.neomedia.VIDEO_CONFIG_DISABLED=true
+net.java.sip.communicator.impl.neomedia.devicesconfig.DISABLED=true
+net.java.sip.communicator.impl.neomedia.encodingsconfig.DISABLED=true
+net.java.sip.communicator.impl.neomedia.videomoresettingsconfig.DISABLED=true
+net.java.sip.communicator.plugin.securityconfig.DISABLED=true
+net.java.sip.communicator.impl.neomedia.zrtpconfig.DISABLED=true
+net.java.sip.communicator.plugin.securityconfig.masterpasswordconfig.DISABLED=true
+net.java.sip.communicator.plugin.advancedconfig.DISABLED=true
+net.java.sip.communicator.plugin.generalconfig.sipconfig.DISABLED=true
+net.java.sip.communicator.impl.neomedia.callrecordingconfig.DISABLED=true
+net.java.sip.communicator.impl.neomedia.h264config.DISABLED=true
+EOF
+    }
+
     $c->response->content_type('text/plain');
     $c->response->body($config);
 }
