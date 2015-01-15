@@ -20,10 +20,10 @@ has 'unregister_content' => (
     isa => 'Str',
     accessor => '_unregister_content',
 );
-has 'add_server_content' => (
+has 'register_model_content' => (
     is => 'rw',
     isa => 'Str',
-    accessor => '_add_server_content',
+    accessor => '_register_model_content',
 );
 sub rpc_server_params{
     my $self = shift;
@@ -68,9 +68,9 @@ sub unregister_content {
 </methodCall>";
     return $self->{unregister_content};
 }
-sub add_server_content {
+sub register_model_content {
     my $self = shift;
-    $self->{add_server_content} ||=  "<?xml version='1.0' encoding='UTF-8'?>
+    $self->{register_model_content} ||=  "<?xml version='1.0' encoding='UTF-8'?>
 <methodCall>
 <methodName>redirect.addServer</methodName>
 <params>
@@ -86,34 +86,22 @@ sub add_server_content {
 </param>
 </params>
 </methodCall>";
-    return $self->{add_server_content};
+    return $self->{register_model_content};
 }
 
-sub parse_rpc_response{
-    my($self,$rpc_response) = @_;
-    return $rpc_response->value->value;
-}
-
-sub extract_response_description{
-    my($self,$response_value) = @_;
-
-    if(('HASH' eq ref $response_value) && $response_value->{faultString}){
-        return $response_value->{faultString};
-    } else {
-        return;
-    }
-}
-override 'process_uri' => sub {
+override 'process_bootstrap_uri' => sub {
     my($self,$uri) = @_;
-    $self->content_params->{uri} = super();
-    $self->uri2server_name();
+    $uri = super($uri);
+    $self->content_params->{uri} = $uri;
+    $self->bootstrap_uri_server_name($uri);
     return $self->content_params->{uri};
 };
 
-sub uri2server_name{
-    my($self) = @_;
+sub bootstrap_uri_server_name{
+    my($self,$uri) = @_;
+    $uri ||= $self->content_params->{uri};
     #http://stackoverflow.com/questions/4826403/hash-algorithm-with-alphanumeric-output-of-20-characters-max
-    $self->content_params->{server_name} ||= substr(md5_hex($self->content_params->{uri}),0,20);
+    $self->content_params->{server_name} ||= substr(md5_hex($uri),0,20);
     return $self->content_params->{server_name};
 }
 1;

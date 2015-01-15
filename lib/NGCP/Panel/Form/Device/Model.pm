@@ -205,6 +205,7 @@ has_field 'bootstrap_method' => (
         { label => 'Cisco', value => 'http' },
         { label => 'Panasonic', value => 'redirect_panasonic' },
         { label => 'Yealink', value => 'redirect_yealink' },
+        { label => 'Polycom', value => 'redirect_polycom' },
     ],
     default => 'http',
     element_attr => {
@@ -309,6 +310,39 @@ has_field 'bootstrap_config_redirect_yealink_password' => (
         title => ['Password used to configure bootstrap url on Yealink redirect server. Obtained from Yealink.'],
     },
 );
+has_field 'bootstrap_config_redirect_polycom_user' => (
+    type => 'Text',
+    required => 0,
+    label => 'Polycom username',
+    default => '',
+    wrapper_class => [qw/ngcp-bootstrap-config ngcp-bootstrap-config-redirect_polycom/],
+    element_attr => {
+        rel => ['tooltip'],
+        title => ['Username used to configure bootstrap url on Polycom redirect server.'],
+    },
+);
+has_field 'bootstrap_config_redirect_polycom_password' => (
+    type => 'Text',
+    required => 0,
+    label => 'Polycom password',
+    default => '',
+    wrapper_class => [qw/ngcp-bootstrap-config ngcp-bootstrap-config-redirect_polycom/],
+    element_attr => {
+        rel => ['tooltip'],
+        title => ['Password used to configure bootstrap url on Polycom redirect server.'],
+    },
+);
+has_field 'bootstrap_config_redirect_polycom_profile' => (
+    type => 'Text',
+    required => 0,
+    label => 'Polycom profile',
+    default => '',
+    wrapper_class => [qw/ngcp-bootstrap-config ngcp-bootstrap-config-redirect_polycom/],
+    element_attr => { 
+        rel => ['tooltip'],
+        title => ['Preliminary created in ZeroTouch Provisioning console Polycom ZTP profile. Refer to documentation.'],
+    },
+);
 
 has_field 'save' => (
     type => 'Submit',
@@ -320,7 +354,7 @@ has_field 'save' => (
 has_block 'fields' => (
     tag => 'div',
     class => [qw/modal-body/],
-    render_list => [qw/vendor model linerange linerange_add bootstrap_uri bootstrap_method bootstrap_config_http_sync_uri bootstrap_config_http_sync_method bootstrap_config_http_sync_params bootstrap_config_redirect_panasonic_user bootstrap_config_redirect_panasonic_password bootstrap_config_redirect_yealink_user bootstrap_config_redirect_yealink_password front_image mac_image/],
+    render_list => [qw/vendor model linerange linerange_add bootstrap_uri bootstrap_method bootstrap_config_http_sync_uri bootstrap_config_http_sync_method bootstrap_config_http_sync_params bootstrap_config_redirect_panasonic_user bootstrap_config_redirect_panasonic_password bootstrap_config_redirect_yealink_user bootstrap_config_redirect_yealink_password bootstrap_config_redirect_polycom_user bootstrap_config_redirect_polycom_password bootstrap_config_redirect_polycom_profile front_image mac_image/],
 );
 
 has_block 'actions' => (

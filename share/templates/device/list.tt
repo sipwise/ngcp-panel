@@ -38,6 +38,10 @@ function vendor2bootstrapMethod(vendorField){
                 bootstrapMethod = 'redirect_yealink';
                 break;
             ;
+            case "polycom":
+                bootstrapMethod = 'redirect_polycom';
+                break;
+            ;
         }
         if(bootstrapMethod){
             var length = bootstrapMethodField.options.length;

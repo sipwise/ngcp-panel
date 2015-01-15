@@ -4632,7 +4632,7 @@ msgstr "Метод"
 #: lib/NGCP/Panel/Utils/DbStrings.pm:1203
 msgid ""
 "Method to configure the provisioning server on the phone. One of http, "
-"redirect_panasonic, redirect_yealink."
+"redirect_panasonic, redirect_yealink, redirect_polycom."
 msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:629
