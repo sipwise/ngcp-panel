@@ -36,6 +36,7 @@ sub redirect_server_call{
     }
     if($content){
         $response_value = $self->rpc_https_call($content);
+        $c->log->debug(Dumper $response_value);
         $ret = $self->extract_response_description($response_value);
     }
     return $ret;
@@ -55,17 +56,34 @@ sub rpc_https_call{
         'Content-Type' => 'text/xml',
         'content' => $content,
     },);
-    $c->log->info( "response=$response_code; page=$page;" );
+    $c->log->info( "rpc_https_call: response=$response_code; page=$page;" );
     my $response_value = '';
     if($page){
-        my $parser = RPC::XML::ParserFactory->new();
-        my $rpc_response = $parser->parse($page);
+        my $rpc_response = $self->parse_rpc_response_page($page);
         $response_value = $self->parse_rpc_response($rpc_response);
-        $c->log->info("response_value=".Dumper($response_value));
     }
     return $response_value;
 }
 
+sub parse_rpc_response_page{
+    my($self, $page) = @_;
+    my $parser = RPC::XML::ParserFactory->new();
+    return $parser->parse($page);
+}
+sub parse_rpc_response{
+    my($self,$rpc_response) = @_;
+    return $rpc_response->value->value;
+}
+
+sub extract_response_description{
+    my($self,$response_value) = @_;
+
+    if(('HASH' eq ref $response_value) && $response_value->{faultString}){
+        return $response_value->{faultString};
+    } else {
+        return;
+    }
+}
 sub init_content_params{
     my($self) = @_;
     $self->{content_params} ||= {};
@@ -84,7 +102,6 @@ sub normalize_mac {
     return $mac;
 }
 
-
 sub get_basic_authorization{
     my($self) = @_;
     my $authorization = encode_base64(join(':',@{$self->params->{credentials}}{qw/user password/}));
@@ -95,24 +112,40 @@ sub get_basic_authorization{
 sub get_bootstrap_uri{
     my ($self) = @_;
     my $uri = $self->params->{redirect_uri};
-    my $uri_params = $self->params->{redirect_uri_params} || '';
+    my $uri_params = $self->params->{redirect_params}->{sync_params} || '';
     if(!$uri){
-        my $cfg = $self->get_bootstrap_uri_conf();
+        my $cfg = $self->bootstrap_uri_conf();
         $uri = "$cfg->{schema}://$cfg->{host}:$cfg->{port}/device/autoprov/config/";
     }
     $uri .= $uri_params;
-    return $self->process_uri($uri);
+    return $self->process_bootstrap_uri($uri);
 }
 
-sub process_uri{
+sub process_bootstrap_uri{
+    my($self,$uri) = @_;
+    $uri = $self->bootstrap_uri_protocol($uri);
+    return $uri;
+}
+
+sub bootstrap_uri_protocol{
     my($self,$uri) = @_;
     if($uri !~/^(?:https?|t?ftp):\/\//i ){
         $uri = 'http://'.$uri;
     }
     return $uri;
 }
+sub bootstrap_uri_mac{
+    my($self, $uri) = @_;
+    if ($uri !~/\{MAC\}$/){
+        if ($uri !~/\/$/){
+            $uri .= '/' ;
+        }
+        $uri .= '{MAC}' ;
+    }
+    return $uri;
+}
 #separated as this logic also used in other places, so can be moved to other utils module
-sub get_bootstrap_uri_conf{
+sub bootstrap_uri_conf{
     my ($self) = @_;
     my $c = $self->params->{c};
     my $cfg = {

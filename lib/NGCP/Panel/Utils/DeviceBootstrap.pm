@@ -6,6 +6,7 @@ use Data::Dumper;
 use NGCP::Panel::Utils::DeviceBootstrap::VendorRPC;
 use NGCP::Panel::Utils::DeviceBootstrap::Panasonic;
 use NGCP::Panel::Utils::DeviceBootstrap::Yealink;
+use NGCP::Panel::Utils::DeviceBootstrap::Polycom;
 
 sub dispatch{
     my($c, $action, $fdev, $old_identifier) = @_;
@@ -15,24 +16,29 @@ sub dispatch{
         mac => $fdev->identifier,
         mac_old => $old_identifier,
     };
-    my $redirect_processor = get_redirect_processor($params);
-    my $ret;
-    if($redirect_processor){
-		if( ('register' eq $action) && $old_identifier && ( $old_identifier ne $fdev->identifier ) ){
-			$redirect_processor->redirect_server_call('unregister');
-		}
-        $ret = $redirect_processor->redirect_server_call($action);
-    }
-    return $ret;
+    return _dispatch($c, $action, $params);
 }
 sub dispatch_devmod{
     my($c, $action, $devmod) = @_;
     
     my $params = get_devmod_params($c,$devmod);
+    return _dispatch($c, $action, $params);
+}
+sub _dispatch{
+    my($c, $action, $params) = @_;
     my $redirect_processor = get_redirect_processor($params);
     my $ret;
     if($redirect_processor){
-        $ret = $redirect_processor->redirect_server_call($action);
+        $c->log->debug( "action=$action;" );        
+        if($redirect_processor->can($action)){
+            $ret = $redirect_processor->$action();
+            $c->log->debug( "ret=$ret;" );        
+        }else{
+            if( ('register' eq $action) && $params->{mac_old} && ( $params->{mac_old} ne $params->{mac} ) ){
+                $redirect_processor->redirect_server_call('unregister');
+            }
+            $ret = $redirect_processor->redirect_server_call($action);
+        }
     }
     return $ret;
 }
@@ -46,35 +52,41 @@ sub get_devmod_params{
     }
 
     my $sync_params_rs = $devmod->autoprov_sync->search_rs({
-        'autoprov_sync_parameters.parameter_name' => 'sync_params',
-    },{
-        join   => 'autoprov_sync_parameters',
-        select => ['me.parameter_value'],
-    });
-    my $sync_params = $sync_params_rs->first ? $sync_params_rs->first->parameter_value : '';
-    
+            'autoprov_sync_parameters.bootstrap_method' => $devmod->bootstrap_method,
+        },{
+            join      => 'autoprov_sync_parameters',
+        }
+    );
+    my $sync_params={};
+    foreach($sync_params_rs->all){
+        $sync_params->{$_->autoprov_sync_parameters->parameter_name()} = $_->parameter_value;
+    }
     my $params = {
         c => $c,
         bootstrap_method => $devmod->bootstrap_method,
         redirect_uri => $devmod->bootstrap_uri,
-        redirect_uri_params => $sync_params,
+        redirect_params => $sync_params,
         credentials => $vcredentials,
     };
+    $c->log->debug(Dumper($sync_params));
     return $params;
 }
 sub get_redirect_processor{
     my ($params) = @_;
     my $c = $params->{c};
     my $bootstrap_method = $params->{bootstrap_method};
-    $c->log->debug( "bootstrap_method=$bootstrap_method;" );
+    $c->log->debug( "bootstrap_method AAAAAAAAA =$bootstrap_method;" );
     my $redirect_processor;
     if('redirect_panasonic' eq $bootstrap_method){
         $redirect_processor = NGCP::Panel::Utils::DeviceBootstrap::Panasonic->new( params => $params );
     }elsif('redirect_yealink' eq $bootstrap_method){
         $redirect_processor = NGCP::Panel::Utils::DeviceBootstrap::Yealink->new( params => $params );
+    }elsif('redirect_polycom' eq $bootstrap_method){
+        $redirect_processor = NGCP::Panel::Utils::DeviceBootstrap::Polycom->new( params => $params );
     }elsif('http' eq $bootstrap_method){
         #$ret = panasonic_bootstrap_register($params);
     }
+    $c->log->debug( "redirect_processor=$redirect_processor;" );
     return $redirect_processor;
 }
 

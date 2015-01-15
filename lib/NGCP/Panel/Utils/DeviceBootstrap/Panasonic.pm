@@ -59,30 +59,11 @@ sub unregister_content {
     return $self->{unregister_content};
 }
 
-sub parse_rpc_response{
-    my($self,$rpc_response) = @_;
-    return $rpc_response->value->value;
-}
-
-sub extract_response_description{
-    my($self,$response_value) = @_;
-
-    if(('HASH' eq ref $response_value) && $response_value->{faultString}){
-        return $response_value->{faultString};
-    } else {
-        return;
-    }
-}
-override 'process_uri' => sub {
+override 'process_bootstrap_uri' => sub {
     my($self,$uri) = @_;
-
-    $self->content_params->{uri} = super($uri);
-    if ($self->content_params->{uri} !~/\{MAC\}$/){
-        if ($self->content_params->{uri} !~/\/$/){
-            $self->content_params->{uri} .= '/' ;
-        }
-        $self->content_params->{uri} .= '{MAC}' ;
-    }
+    $uri = super($uri);
+    $uri = $self->bootstrap_uri_mac($uri);
+    $self->content_params->{uri} = $uri;
     return $self->content_params->{uri};
 };
 
