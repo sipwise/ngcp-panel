@@ -52,14 +52,11 @@ sub get_devmod_params{
     }
 
     my $sync_params_rs = $devmod->autoprov_sync->search_rs({
-        'autoprov_sync_parameters.bootstrap_method' => $devmod->bootstrap_method,
-    }
-    ,{
-        join      => 'autoprov_sync_parameters',
-    #    '+select' => ['autoprov_sync_parameters.parameter_name'],
-    }
+            'autoprov_sync_parameters.bootstrap_method' => $devmod->bootstrap_method,
+        },{
+            join      => 'autoprov_sync_parameters',
+        }
     );
-    #my $sync_params = $sync_params_rs->first ? $sync_params_rs->first->parameter_value : '';
     my $sync_params={};
     foreach($sync_params_rs->all){
         $sync_params->{$_->autoprov_sync_parameters->parameter_name()} = $_->parameter_value;

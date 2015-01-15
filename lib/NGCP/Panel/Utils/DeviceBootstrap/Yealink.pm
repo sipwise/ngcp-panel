@@ -20,10 +20,10 @@ has 'unregister_content' => (
     isa => 'Str',
     accessor => '_unregister_content',
 );
-has 'add_server_content' => (
+has 'register_model_content' => (
     is => 'rw',
     isa => 'Str',
-    accessor => '_add_server_content',
+    accessor => '_register_model_content',
 );
 sub rpc_server_params{
     my $self = shift;
@@ -68,9 +68,9 @@ sub unregister_content {
 </methodCall>";
     return $self->{unregister_content};
 }
-sub add_server_content {
+sub register_model_content {
     my $self = shift;
-    $self->{add_server_content} ||=  "<?xml version='1.0' encoding='UTF-8'?>
+    $self->{register_model_content} ||=  "<?xml version='1.0' encoding='UTF-8'?>
 <methodCall>
 <methodName>redirect.addServer</methodName>
 <params>
@@ -86,7 +86,7 @@ sub add_server_content {
 </param>
 </params>
 </methodCall>";
-    return $self->{add_server_content};
+    return $self->{register_model_content};
 }
 
 override 'process_bootstrap_uri' => sub {

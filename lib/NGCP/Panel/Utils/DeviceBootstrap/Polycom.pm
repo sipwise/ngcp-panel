@@ -2,7 +2,7 @@ package NGCP::Panel::Utils::DeviceBootstrap::Polycom;
 
 use strict;
 use URI::Escape;
-use XML::Simple;
+use XML::Mini::Document;;
 use Data::Dumper;
 use Moose;
 
@@ -37,16 +37,16 @@ sub rpc_server_params{
         path        => '/inboundservlet/GenericServlet',
         #https://ztpconsole.polycom.com/inboundservlet/GenericServlet
     };
-    $cfg->{headers} = { %{$self->get_basic_authorization($self->params->{credentials})} };
+    #$cfg->{headers} = { %{$self->get_basic_authorization($self->params->{credentials})} };
     $self->{rpc_server_params} = $cfg;
     return $self->{rpc_server_params};
 }
-sub register_subscriber_content {
+sub register_model_content {
     my $self = shift;
-    $self->params->{redirect_params}->{profile} = 'sipwise';
-    $self->{register_subscriber_content} ||= "<?xml version='1.0' encoding='UTF-8'?>
+    #.'_'.$self->content_params->{mac}
+    $self->{register_model_content} ||= "<?xml version='1.0' encoding='UTF-8'?>
 <request userid='".$self->params->{credentials}->{user}."' password='".$self->params->{credentials}->{password}."' message-id='1001'>
-<create-subscriber account-id='".uri_escape($self->params->{redirect_params}->{profile}.'_'.$self->content_params->{mac})."' isp-name='".uri_escape($self->params->{redirect_params}->{profile})."'>
+<create-subscriber account-id='".uri_escape($self->params->{redirect_params}->{profile})."' isp-name='".uri_escape($self->params->{redirect_params}->{profile})."'>
 <PersonalInformation><FirstName></FirstName>
 <LastName></LastName>
 <password></password>
@@ -62,7 +62,7 @@ sub register_subscriber_content {
 </request>";
 #<State></State>
 #<phone></phone>
-    return $self->{register_subscriber_content};
+    return $self->{register_model_content};
 }
 sub register_content {
     my $self = shift;
@@ -98,23 +98,24 @@ sub unregister_content {
 </request>";
     return $self->{unregister_content};
 }
-sub register{
-    my($self) = @_;
-    $self->rpc_server_params;
-    $self->redirect_server_call('register_subscriber');
-    return $self->redirect_server_call('register');
-}
+#sub register{
+#    my($self) = @_;
+#    $self->rpc_server_params;
+#    $self->redirect_server_call('register_model');
+#    return $self->redirect_server_call('register');
+#}
 override 'parse_rpc_response_page' => sub {
     my($self, $page) = @_;
-    #my $xs = XML::Simple->new();
-    #my $ref = $xs->XMLin($page);
-    my $ref = {};
+    my $xmlDoc = XML::Mini::Document->new();
+    $xmlDoc->parse($page);
+    my $ref = $xmlDoc->toHash();
     return $ref;
 };
 override 'parse_rpc_response' => sub {
     my($self, $rpc_response) = @_;
     my $c = $self->params->{c};
-    my ($code,$message) = @{$rpc_response->{status}}{qw/ErrorCode ErrorMessage/};
+
+    my ($code,$message) = @{$rpc_response->{response}->{status}}{qw/ErrorCode ErrorMessage/};
     if(0 != $code){
         return $message;
     }

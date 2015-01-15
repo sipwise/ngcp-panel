@@ -264,7 +264,7 @@ sub POST :Allow {
             $item = $c->model('DB')->resultset('autoprov_devices')->create($resource);
             NGCP::Panel::Utils::DeviceBootstrap::devmod_sync_credentials_store($c, $item, $credentials);
             NGCP::Panel::Utils::DeviceBootstrap::devmod_sync_parameters_store($c, $item, $sync_parameters);
-            NGCP::Panel::Utils::DeviceBootstrap::dispatch_devmod($c, 'add_server', $item);
+            NGCP::Panel::Utils::DeviceBootstrap::dispatch_devmod($c, 'register_model', $item);
 
             foreach my $range(@{ $linerange }) {
                 unless(ref $range eq "HASH") {

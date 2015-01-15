@@ -29,14 +29,10 @@ sub redirect_server_call{
     $c->log->debug(Dumper ($self->content_params));
     my($content,$response_value,$ret);
     my $method = $action.'_content';
-    if($self->can($action)){
-        $content = $self->$action();
+    if($self->can($method)){
+        $content = $self->$method();
     }else{
-        if($self->can($method)){
-            $content = $self->$method();
-        }else{
-            $ret = "Unknown method: $action";
-        }
+        $ret = "Unknown method: $action";
     }
     if($content){
         $response_value = $self->rpc_https_call($content);
@@ -65,21 +61,18 @@ sub rpc_https_call{
     if($page){
         my $rpc_response = $self->parse_rpc_response_page($page);
         $response_value = $self->parse_rpc_response($rpc_response);
-        $c->log->info("response_value=".Dumper($response_value));
     }
     return $response_value;
 }
 
+sub parse_rpc_response_page{
+    my($self, $page) = @_;
+    my $parser = RPC::XML::ParserFactory->new();
+    return $parser->parse($page);
+}
 sub parse_rpc_response{
     my($self,$rpc_response) = @_;
     return $rpc_response->value->value;
-}
-sub parse_rpc_response_page{
-    my($self, $page) = @_;
-    my $c = $self->params->{c};
-    my $parser = RPC::XML::ParserFactory->new();
-    $c->log->info("super::parse_rpc_response_page");
-    return  $parser->parse($page);
 }
 
 sub extract_response_description{
