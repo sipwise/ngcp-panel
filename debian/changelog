@@ -1,3 +1,20 @@
+ngcp-panel (1.7.1.1+0~mr3.7.1.1) unstable; urgency=low
+
+  [ Andrew Pogrebennyk ]
+  * [c36daf1] MT#9453 introduce handling for adm_cf_ncos[_id] preference
+
+  [ Andreas Granig ]
+  * [d0c51aa] MT#10869 Implement jitsi config lock-down
+  * [d55644a] MT#10869 Add option to jitsi-auth via web creds
+  * [5776adb] MT#10869 Allow webusername to be an email address
+
+  [ Irina Peshinskaya ]
+  * [1851338] MT#9177 Fix invisible syntax error
+
+  [ Sipwise Jenkins Builder ]
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Thu, 15 Jan 2015 15:08:56 +0100
+
 ngcp-panel (1.7.1.0+0~mr3.7.1.0) unstable; urgency=low
 
   [ Irina Peshinskaya ]
