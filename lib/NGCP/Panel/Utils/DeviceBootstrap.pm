@@ -135,7 +135,7 @@ sub devmod_sync_parameters_store {
     my($c,$devmod,$sync_parameters) = @_;
     my $schema = $c->model('DB');
     foreach my $sync_parameter (@$sync_parameters){
-        $sync_parameter->{device_id} ||= $devmod ? $devmod->id : undef
+        $sync_parameter->{device_id} ||= $devmod ? $devmod->id : undef;
         $schema->resultset('autoprov_sync')->create($sync_parameter);
     }
 }
