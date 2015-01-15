@@ -4173,7 +4173,7 @@ msgstr "Обнаружен некорректный id набора профил
 msgid "Invalid subscriber profile set id detected"
 msgstr "Обнаружен некорректный id набора профиля абонента"
 
-#: lib/NGCP/Panel/Controller/Login.pm:97
+#: lib/NGCP/Panel/Controller/Login.pm:102
 msgid "Invalid username/password"
 msgstr "Неверное имя пользователя/пароль"
 
