@@ -340,6 +340,109 @@ sub yealink_directory_list :Chained('base') :PathPart('pbx/directory/yealink') :
     $c->response->body($data);
 }
 
+sub polycom_directory_list :Chained('base') :PathPart('pbx/directory/polycom') :Args(1) {
+    my ($self, $c, $id) = @_;
+
+    $id =~ s/\-directory\.xml$//;
+    my $q;
+
+    unless($id) {
+        $c->response->content_type('text/plain');
+        if($c->config->{features}->{debug}) {
+            $c->response->body("404 - device id not given");
+        } else {
+            $c->response->body("404 - device not found");
+        }
+        $c->response->status(404);
+        return;
+    }
+
+    $id = lc $id;
+    my $dev = $c->model('DB')->resultset('autoprov_field_devices')->find({
+        identifier => $id
+    });
+    unless($dev) {
+        $c->response->content_type('text/plain');
+        if($c->config->{features}->{debug}) {
+            $c->response->body("404 - device id '" . $id . "' not found");
+        } else {
+            $c->response->body("404 - device not found");
+        }
+        $c->response->status(404);
+        return;
+    }
+
+    my $schema = $c->stash->{schema};
+    my $host = $c->stash->{host};
+    my $port = $c->stash->{port};
+
+    my $customer = $dev->contract;
+
+    my $rs = $customer->voip_subscribers->search({
+        'status' => 'active',
+        'provisioning_voip_subscriber.pbx_extension' => { '!=' => undef },
+        'voip_usr_preferences.value' => { '!=' => undef },
+        'attribute.attribute' => 'display_name',
+        defined $q ? ('voip_usr_preferences.value' => { like => "%$q%" }) : (),
+    },{
+        join => { provisioning_voip_subscriber => { voip_usr_preferences => 'attribute'  } },
+        '+select' => [qw/voip_usr_preferences.value/],
+        '+as' => [qw/display_name/],
+        order_by => { '-asc' => 'voip_usr_preferences.value' },
+    });
+
+    my @entries = ();
+    foreach my $sub($rs->all) {
+        my $prov_sub = $sub->provisioning_voip_subscriber;
+        next unless($prov_sub && $prov_sub->pbx_extension);
+        my $display_name = $sub->get_column('display_name');
+        my ($fname, @rest) = split / +/, $display_name;
+        my $lname = join ' ', @rest;
+        push @entries, { fname => $fname, lname => $lname, ext => $prov_sub->pbx_extension };
+    }
+
+    my $data =
+'<?xml version="1.0" encoding="utf-8"?>
+<directory>
+  <item-list>
+';
+
+=pod
+ln  last name
+fn  first name
+ct  contact
+sd  speed-dial index
+rt  ring type
+dc  divert contact for auto divert
+ad  auto divert
+ar  auto reject
+bw  buddy watching
+bb  buddy block
+=cut
+
+    $data .= join '', map {
+        "<item>
+             <ln>$$_{lname}</ln>
+             <fn>$$_{fname}</fn>
+             <ct>$$_{ext}</ct>
+             <sd/>
+             <rt/>
+             <dc/>
+             <ad>0</ad>
+             <ar>0</ar>
+             <bw>0</bw>
+             <bb>0</bb>
+         </item>
+    "} @entries;
+    $data .= '</item-list></directory>';
+
+    $c->log->debug("providing config to $id");
+    $c->log->debug($data);
+
+    $c->response->content_type('text/xml');
+    $c->response->body($data);
+}
+
 __PACKAGE__->meta->make_immutable;
 1;
 # vim: set tabstop=4 expandtab:

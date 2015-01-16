@@ -1057,7 +1057,6 @@ sub dev_field_config :Chained('/') :PathPart('device/autoprov/config') :Args() {
     # however, we should do it on nginx, but we need a proper CA cert
     # from cisco for checking the client cert?
     $c->log->debug("SSL_CLIENT_M_DN: " . ($c->request->env->{SSL_CLIENT_M_DN} // ""));
-    $c->log->debug("SSL_CLIENT_CERT: " . ($c->request->env->{SSL_CLIENT_CERT} // ""));
 
     unless($id) {
         $c->response->content_type('text/plain');
@@ -1067,6 +1066,11 @@ sub dev_field_config :Chained('/') :PathPart('device/autoprov/config') :Args() {
             $c->response->body("404 - device not found");
         }
         $c->response->status(404);
+        return;
+    }
+    if($id =~ /^([0-9a-f]{12})\-directory\.xml$/) {
+        $c->log->debug("identified bootstrap path part '$id' as polycom directory request");
+        $c->res->redirect($c->uri_for_action("/pbx/polycom_directory_list", $id));
         return;
     }
 
@@ -1297,11 +1301,13 @@ sub dev_field_bootstrap :Chained('/') :PathPart('device/autoprov/bootstrap') :Ar
     my $schema = $c->config->{deviceprovisioning}->{secure} ? 'https' : 'http';
     my $host = $c->config->{deviceprovisioning}->{host} // $c->req->uri->host;
     my $port = $c->config->{deviceprovisioning}->{port} // 1444;
+    my $boot_port = $c->config->{deviceprovisioning}->{bootstrap_port} // 1445;
 
     my $vars = {
         config => {
             url => "$schema://$host:$port/device/autoprov/config/$id",
             baseurl => "$schema://$host:$port/device/autoprov/config/",
+            caurl => "http://$host:$boot_port/device/autoprov/cacert",
             mac => $id,
             bootstrap => 1,
         },
