@@ -5,21 +5,6 @@ use Moose;
 use Digest::MD5 qw/md5_hex/;
 extends 'NGCP::Panel::Utils::DeviceBootstrap::VendorRPC';
 
-has 'rpc_server_params' => (
-    is => 'rw',
-    isa => 'HashRef',
-    accessor => '_rpc_server_params',
-);
-has 'register_content' => (
-    is => 'rw',
-    isa => 'Str',
-    accessor => '_register_content',
-);
-has 'unregister_content' => (
-    is => 'rw',
-    isa => 'Str',
-    accessor => '_unregister_content',
-);
 has 'register_model_content' => (
     is => 'rw',
     isa => 'Str',
