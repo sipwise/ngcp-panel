@@ -25,21 +25,14 @@ function vendor2bootstrapMethod(vendorField){
     }
     if(vendorField && vendorField.value){//onchange and on load after error
         var bootstrapMethod='';
-        switch(vendorField.value.toLowerCase()){
+        var vendor = vendorField.value.toLowerCase();
+        switch(vendor){
             case "cisco":
                 bootstrapMethod = 'http';
                 break;
             ;
-            case "panasonic":
-                bootstrapMethod = 'redirect_panasonic';
-                break;
-            ;
-            case "yealink":
-                bootstrapMethod = 'redirect_yealink';
-                break;
-            ;
-            case "polycom":
-                bootstrapMethod = 'redirect_polycom';
+            default:
+                bootstrapMethod = 'redirect_'+vendor;
                 break;
             ;
         }

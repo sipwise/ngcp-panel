@@ -32,13 +32,13 @@ sub _dispatch{
         $c->log->debug( "action=$action;" );        
         if($redirect_processor->can($action)){
             $ret = $redirect_processor->$action();
-            $c->log->debug( "ret=$ret;" );        
         }else{
             if( ('register' eq $action) && $params->{mac_old} && ( $params->{mac_old} ne $params->{mac} ) ){
                 $redirect_processor->redirect_server_call('unregister');
             }
             $ret = $redirect_processor->redirect_server_call($action);
         }
+        $c->log->debug( "ret=$ret;" );        
     }
     return $ret;
 }
@@ -68,14 +68,12 @@ sub get_devmod_params{
         redirect_params => $sync_params,
         credentials => $vcredentials,
     };
-    $c->log->debug(Dumper($sync_params));
     return $params;
 }
 sub get_redirect_processor{
     my ($params) = @_;
     my $c = $params->{c};
     my $bootstrap_method = $params->{bootstrap_method};
-    $c->log->debug( "bootstrap_method AAAAAAAAA =$bootstrap_method;" );
     my $redirect_processor;
     if('redirect_panasonic' eq $bootstrap_method){
         $redirect_processor = NGCP::Panel::Utils::DeviceBootstrap::Panasonic->new( params => $params );
@@ -86,7 +84,6 @@ sub get_redirect_processor{
     }elsif('http' eq $bootstrap_method){
         #$ret = panasonic_bootstrap_register($params);
     }
-    $c->log->debug( "redirect_processor=$redirect_processor;" );
     return $redirect_processor;
 }
 

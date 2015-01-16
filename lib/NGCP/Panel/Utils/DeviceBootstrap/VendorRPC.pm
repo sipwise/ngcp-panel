@@ -20,13 +20,23 @@ has 'content_params' => (
 has 'rpc_server_params' => (
     is => 'rw',
     isa => 'HashRef',
+    accessor => '_rpc_server_params',
+);
+has 'register_content' => (
+    is => 'rw',
+    isa => 'Str',
+    accessor => '_register_content',
+);
+has 'unregister_content' => (
+    is => 'rw',
+    isa => 'Str',
+    accessor => '_unregister_content',
 );
 
 sub redirect_server_call{
     my ($self, $action) = @_;
     my $c = $self->params->{c};
     $self->init_content_params();
-    $c->log->debug(Dumper ($self->content_params));
     my($content,$response_value,$ret);
     my $method = $action.'_content';
     if($self->can($method)){
@@ -36,7 +46,6 @@ sub redirect_server_call{
     }
     if($content){
         $response_value = $self->rpc_https_call($content);
-        $c->log->debug(Dumper $response_value);
         $ret = $self->extract_response_description($response_value);
     }
     return $ret;
@@ -46,8 +55,8 @@ sub rpc_https_call{
     my($self, $content, $cfg) = @_;
     $cfg //= $self->rpc_server_params;
     my $c = $self->params->{c};
-    $c->log->debug( "host=$cfg->{host}; port=$cfg->{port}; path=$cfg->{path}; content=$content;" );
-    $c->log->debug( Dumper($cfg->{headers}) );
+    $c->log->debug( "rpc_https_call: host=$cfg->{host}; port=$cfg->{port}; path=$cfg->{path}; content=$content;" );
+    #$c->log->debug( Dumper($cfg->{headers}) );
     my( $page, $response_code, %reply_headers ) = https_post({
         'host'    => $cfg->{host},
         'port'    => $cfg->{port},
@@ -106,7 +115,6 @@ sub get_basic_authorization{
     my($self) = @_;
     my $authorization = encode_base64(join(':',@{$self->params->{credentials}}{qw/user password/}));
     $authorization =~s/[ \s]//gis;
-    #$authorization .= '=';
     return { 'Authorization' => 'Basic '.$authorization };
 }
 sub get_bootstrap_uri{
