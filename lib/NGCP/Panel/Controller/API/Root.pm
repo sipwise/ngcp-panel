@@ -224,6 +224,8 @@ sub field_to_json : Private {
             return "Array";
         /\+NGCP::Panel::Field::PbxGroupAPI/ &&
             return "Array";
+        /\+NGCP::Panel::Field::PbxGroupMemberAPI/ &&
+            return "Array";
         # usually {xxx}{id}
         /\+NGCP::Panel::Field::/ &&
             return "Number";
