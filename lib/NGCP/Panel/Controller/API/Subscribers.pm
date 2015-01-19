@@ -280,7 +280,13 @@ sub POST :Allow {
                 preferences => $preferences,
                 admin_default => 0,
             );
-
+            if($resource->{status} eq 'locked') {
+                NGCP::Panel::Utils::Subscriber::lock_provisoning_voip_subscriber(
+                    c => $c,
+                    prov_subscriber => $subscriber->provisioning_voip_subscriber,
+                    level => $resource->{lock} || 4,
+                );
+            }
             NGCP::Panel::Utils::Subscriber::update_subscriber_numbers(
                 c              => $c,
                 schema         => $schema,
