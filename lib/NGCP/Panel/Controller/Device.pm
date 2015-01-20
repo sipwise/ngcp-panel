@@ -1057,6 +1057,19 @@ sub dev_field_config :Chained('/') :PathPart('device/autoprov/config') :Args() {
     # however, we should do it on nginx, but we need a proper CA cert
     # from cisco for checking the client cert?
     $c->log->debug("SSL_CLIENT_M_DN: " . ($c->request->env->{SSL_CLIENT_M_DN} // ""));
+    unless(
+        ($c->user_exists && ($c->user->roles eq "admin" || $c->user->roles eq "reseller")) ||
+        defined $c->request->env->{SSL_CLIENT_M_DN}
+    ) {
+        $c->response->content_type('text/plain');
+        if($c->config->{features}->{debug}) {
+            $c->response->body("403 - unauthenticated config access");
+        } else {
+            $c->response->body("403 - forbidden");
+        }
+        $c->response->status(403);
+        return;
+    }
 
     unless($id) {
         $c->response->content_type('text/plain');
@@ -1075,23 +1088,10 @@ sub dev_field_config :Chained('/') :PathPart('device/autoprov/config') :Args() {
     }
 
     $id =~ s/\.cfg$//;
-    if($c->req->user_agent =~ /PolycomVVX/) {
-        $c->response->content_type('text/xml');
-        $c->response->body(
-            '<?xml version="1.0" standalone="yes"?>'.
-            '<APPLICATION '.
-#           '  APP_FILE_PATH="sip.ld" '.
-            '  CONFIG_FILES="'.$id.'-phone.cfg" '.
-#           '  MISC_FILES="huji-polycom-501.bmp" '.
-            '  LOG_FILE_DIRECTORY="" '.
-            '/>'
-        );
-        return;
-    }
 
     $id =~ s/^([^\=]+)\=0$/$1/;
     $id = lc $id;
-    $id =~ s/\-phone\.cfg$//; # polycoms send a -phone.cfg suffix
+    $id =~ s/\-[a-z]+$//;
 
     my $yealink_key;
     if($id =~ s/_secure\.enc$//) {
@@ -1255,6 +1255,7 @@ sub dev_field_bootstrap :Chained('/') :PathPart('device/autoprov/bootstrap') :Ar
         $did =~ s/\.cfg$//;
         $did =~ s/^([^\=]+)\=0$/$1/;
         $did = lc $did;
+        $did =~ s/\-[a-z]+$//;
         if($did =~ /^[0-9a-f]{12}$/) {
             $c->log->debug("identified bootstrap path part '$did' as valid device id");
             $id = $did;
@@ -1308,6 +1309,7 @@ sub dev_field_bootstrap :Chained('/') :PathPart('device/autoprov/bootstrap') :Ar
             url => "$schema://$host:$port/device/autoprov/config/$id",
             baseurl => "$schema://$host:$port/device/autoprov/config/",
             caurl => "http://$host:$boot_port/device/autoprov/cacert",
+            ca => $c->model('CA')->get_provisioning_root_ca_cert($c),
             mac => $id,
             bootstrap => 1,
         },

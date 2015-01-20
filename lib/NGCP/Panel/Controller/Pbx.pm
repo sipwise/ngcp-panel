@@ -22,6 +22,21 @@ sub base :Chained('/') :PathPart('') :CaptureArgs(0) {
     $c->stash->{schema} = $c->config->{deviceprovisioning}->{secure} ? 'https' : 'http';
     $c->stash->{host} = $c->config->{deviceprovisioning}->{host} // $c->req->uri->host;
     $c->stash->{port} = $c->config->{deviceprovisioning}->{port} // 1444;
+
+    $c->log->debug("SSL_CLIENT_M_DN: " . ($c->request->env->{SSL_CLIENT_M_DN} // ""));
+    unless(
+        ($c->user_exists && ($c->user->roles eq "admin" || $c->user->roles eq "reseller")) ||
+        defined $c->request->env->{SSL_CLIENT_M_DN}
+    ) {
+        $c->response->content_type('text/plain');
+        if($c->config->{features}->{debug}) {
+            $c->response->body("403 - unauthenticated pbx access");
+        } else {
+            $c->response->body("403 - forbidden");
+        }
+        $c->response->status(403);
+        return;
+    }
 }
 
 sub spa_directory_getsearch :Chained('base') :PathPart('pbx/directory/spasearch') :Args(1) {

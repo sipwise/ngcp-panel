@@ -111,4 +111,14 @@ sub get_provisioning_ca_cert {
     return $cert_file->slurp;
 }
 
+sub get_provisioning_root_ca_cert {
+    my ($self, $c) = @_;
+
+    my $content = $self->get_provisioning_ca_cert($c);
+    $content =~ s/\r?\n//gm;
+    $content =~ s/^.*?BEGIN CERTIFICATE\-+(.*?)\-+END CERTIFICATE.*$/$1/;
+    return $content;
+}
+
+
 # vim: set tabstop=4 expandtab
