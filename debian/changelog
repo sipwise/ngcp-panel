@@ -1,3 +1,15 @@
+ngcp-panel (1.7.1.2+0~mr3.7.1.2) unstable; urgency=low
+
+  [ Andreas Granig ]
+  * [61848ab] MT#10705 Show pbx_groupmember_ids in API doc.
+
+  [ Irina Peshinskaya ]
+  * [5d356ee] MT#10315 Add lock processing into POST method of Subscribers API.
+
+  [ Sipwise Jenkins Builder ]
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Wed, 21 Jan 2015 15:15:25 +0100
+
 ngcp-panel (1.7.1.1+0~mr3.7.1.1) unstable; urgency=low
 
   [ Andrew Pogrebennyk ]
