@@ -173,13 +173,20 @@ sub DELETE :Allow {
     my ($self, $c, $id) = @_;
     my $guard = $c->model('DB')->txn_scope_guard;
     {
-        my $ruleset = $self->item_by_id($c, $id, "callforwards");
-        last unless $self->resource_exists($c, ruleset => $ruleset);
+        my $callforward = $self->item_by_id($c, $id, "callforwards");
+        last unless $self->resource_exists($c, callforward => $callforward);
+        my $form = $self->get_form($c);
+        my $old_resource = undef;
+        my $resource = $self->get_valid_put_data(
+            c => $c,
+            id => $id,
+            media_type => 'application/json',
+        );
+        $resource //= {};
         try {
-            $ruleset->voip_rewrite_rules->delete;
-            $ruleset->delete;
+            $callforward = $self->update_item($c, $callforward, $old_resource, $resource, $form);
         } catch($e) {
-            $c->log->error("Failed to delete rewriteruleset with id '$id': $e");
+            $c->log->error("Failed to delete callforward with id '$id': $e");
             $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "Internal Server Error");
             last;
         }
