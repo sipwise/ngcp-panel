@@ -179,6 +179,7 @@ sub update_item {
                     $dset->voip_cf_destinations->delete; #empty dset
                 } else {
                     $dset->delete; # delete dset
+                    $mapping_count = 0; # auto deleted by mysql
                 }
             } else {
                 if ((defined $resource->{$type}{destinations}) && @{ $resource->{$type}{destinations}}) {
@@ -190,7 +191,7 @@ sub update_item {
                 if ((defined $resource->{$type}{times}) && @{ $resource->{$type}{times}}) {
                     $tset->voip_cf_periods->delete; #empty tset
                 } else {
-                    $mapping->update({time_set_id => undef});
+                    $mapping_count && $mapping->update({time_set_id => undef});
                     if ($tset->name =~ m/^quickset_/) {
                         $tset->delete; # delete tset
                     }
