@@ -99,7 +99,8 @@ sub resource_from_item {
         c => $c, attribute => 'lock', 
         prov_subscriber => $item->provisioning_voip_subscriber);
     if($pref->first) {
-        $resource{lock} = $pref->first->value;
+        #cast to Numeric accordingly to the form field type and customer note in the ticket #10313
+        $resource{lock} = 0 + $pref->first->value;
     }
 
     $resource{customer_id} = int(delete $resource{contract_id});
