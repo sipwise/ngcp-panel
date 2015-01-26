@@ -1,3 +1,12 @@
+ngcp-panel (1.7.1.3+0~mr3.7.1.3) unstable; urgency=low
+
+  [ Irina Peshinskaya ]
+  * [ee51321] MT#10315 Cast lock to the numeric value as stated by API doc.
+
+  [ Sipwise Jenkins Builder ]
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Mon, 26 Jan 2015 11:47:40 +0100
+
 ngcp-panel (1.7.1.2+0~mr3.7.1.2) unstable; urgency=low
 
   [ Andreas Granig ]
