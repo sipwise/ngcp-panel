@@ -23,7 +23,7 @@ sub process {
             my @parts = split /\./, $col->{name};
             if($col->{literal_sql}) {
                $rs = $rs->search_rs(undef, {
-                    '+select' => [ \[$col->{literal_sql}] ],
+                    '+select' => { '' => \[$col->{literal_sql}], -as => $col->{accessor} },
                     '+as' => [ $col->{accessor} ],
                 });
             } elsif( @parts > 1 ) {
@@ -48,9 +48,13 @@ sub process {
     foreach my $col(@{ $cols }) {
         # avoid amigious column names if we have the same column in different joined tables
         my $name = _get_joined_column_name_($col->{name});
-        my $stmt = { $name => { like => '%'.$searchString.'%' } };
-        $stmt = \[$col->{literal_sql} . " LIKE ?", [ {} => '%'.$searchString.'%'] ]
-            if $col->{literal_sql};
+        my $stmt; 
+        if($col->{literal_sql}){
+            #we can't use just accessor because of the count query
+            $stmt = \[$col->{literal_sql} . " LIKE ?", [ {} => '%'.$searchString.'%'] ];
+        }else{
+            $stmt = { $name => { like => '%'.$searchString.'%' } };
+        }
         push @searchColumns, $stmt if $col->{search};
     }
     if($searchString && ! $use_rs_cb) {
@@ -115,7 +119,7 @@ sub process {
         my @displayedFields = ();
         for my $col(@{ $cols }) {
             next unless $col->{title};
-            my $name = _get_joined_column_name_($col->{name});
+            my $name = get_column_order_name($col);
             push @displayedFields, $name;
         }
         # ... and pick the name defined by the dt index
@@ -188,6 +192,17 @@ sub _prune_row {
     return { %row };
 }
 
+
+sub get_column_order_name{
+    my $col = shift;
+    my $name;
+    if($col->{literal_sql}){
+        $name = $col->{accessor};
+    }else{
+        $name = _get_joined_column_name_($col->{name});
+    }
+    return $name;
+}
 sub _get_joined_column_name {
     my $cname = shift;
     my $name;
