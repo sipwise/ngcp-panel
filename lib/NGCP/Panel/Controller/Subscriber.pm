@@ -4,7 +4,9 @@ BEGIN { extends 'Catalyst::Controller'; }
 use HTML::Entities;
 use JSON qw(decode_json encode_json);
 use URI::Escape qw(uri_unescape);
+use IPC::System::Simple qw/capturex/;
 use Test::More;
+use Data::Dumper;
 use NGCP::Panel::Utils::Navigation;
 use NGCP::Panel::Utils::Contract;
 use NGCP::Panel::Utils::Subscriber;
@@ -2056,6 +2058,7 @@ sub master :Chained('base') :PathPart('details') :CaptureArgs(0) {
 
     $c->stash->{vm_dt_columns} = NGCP::Panel::Utils::Datatables::set_columns($c, [
         { name => "id", search => 1, title => $c->loc('#') },
+        { name => "read", search => 1, title => $c->loc('Read'), literal_sql => 'if(dir like "%/INBOX", "new", "read")' },
         { name => "callerid", search => 1, title => $c->loc('Caller') },
         { name => "origtime", search_from_epoch => 1, search_to_epoch => 1, title => $c->loc('Time') },
         { name => "duration", search => 1, title => $c->loc('Duration') },
@@ -3128,7 +3131,13 @@ sub play_voicemail :Chained('voicemail') :PathPart('play') :Args(0) {
         NGCP::Panel::Utils::Navigation::back_or($c, 
             $c->uri_for_action('/subscriber/details', [$c->req->captures->[0]]));
     }
-
+    
+    my $dir = $file->dir;
+    $dir =~s/INBOX$/Old/;
+    $file->update({ dir => $dir });
+    
+    $self->vmnotify($c, $c->stash->{voicemail});
+    
     $c->response->header('Content-Disposition' => 'attachment; filename="'.$file->msgnum.'.wav"');
     $c->response->content_type('audio/x-wav');
     $c->response->body($data);
@@ -3154,10 +3163,32 @@ sub delete_voicemail :Chained('voicemail') :PathPart('delete') :Args(0) {
             desc  => $c->loc('Failed to delete voicemail message'),
         );
     }
+    $self->vmnotify($c, $c->stash->{voicemail});
     NGCP::Panel::Utils::Navigation::back_or($c, 
         $c->uri_for_action('/subscriber/details', [$c->req->captures->[0]]));
 }
 
+sub vmnotify :Private(){
+    my ($self, $c, $voicemail) = @_;
+    #1.although method is called after delete - DBIC still can access data in deleted row
+    #2.amount of the new messages should be selected after played update or delete, of course
+    
+    my $data = { $voicemail->get_inflated_columns };
+    $data->{cli} = $voicemail->mailboxuser->provisioning_voip_subscriber->username;
+    $data->{context} = 'default';
+    
+    $data->{messages_amount} = $c->model('DB')->resultset('voicemail_spool')->find({
+        'mailboxuser' => $data->{mailboxuser},
+        'msgnum'      => { '>=' => 0 },
+        'dir'         => { 'like' => '%/INBOX' },
+    },{
+        'select'      => [{'count' => '*', -as => 'messages_number'}]
+    })->get_column('messages_number');
+    
+    my @cmd = ('vmnotify',@$data{qw/context cli messages_amount/});
+    my $output = capturex([0..3],@cmd);
+    $c->log->debug("cmd=".join(" ", @cmd)."; output=$output;");
+}
 sub registered :Chained('master') :PathPart('registered') :CaptureArgs(1) {
     my ($self, $c, $reg_id) = @_;
 
