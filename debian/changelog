@@ -1,3 +1,12 @@
+ngcp-panel (1.7.1.4+0~mr3.7.1.4) unstable; urgency=low
+
+  [ Kirill Solomko ]
+  * [def0956] MT#10965 - Callforwards api DELETE fix to use callforwards instead of rewriterules, check for non-existing mapping auto removed by mysql
+
+  [ Sipwise Jenkins Builder ]
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Wed, 28 Jan 2015 14:35:26 +0100
+
 ngcp-panel (1.7.1.3+0~mr3.7.1.3) unstable; urgency=low
 
   [ Irina Peshinskaya ]
