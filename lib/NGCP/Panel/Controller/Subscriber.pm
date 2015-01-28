@@ -2483,45 +2483,62 @@ sub edit_master :Chained('master') :PathPart('edit') :Args(0) :Does(ACL) :ACLDet
                     # update the primary number and the cloud_pbx_base_cli pref for all other subscribers
                     # if the primary number of the admin changed
                     $subscriber->discard_changes; # reload row because of potential new number
-                    my $new_number = { 
-                        cc => $subscriber->primary_number->cc,
-                        ac => $subscriber->primary_number->ac,
-                        sn => $subscriber->primary_number->sn,
-                    };
-                    if($subscriber->provisioning_voip_subscriber->admin && 
-                       !is_deeply($old_number, $new_number)) {
-                        foreach my $sub($c->stash->{subscribers}->all, $c->stash->{pbx_groups}->all) {
-                            my $base_pref = NGCP::Panel::Utils::Preferences::get_usr_preference_rs(
-                                    c => $c, attribute => 'cloud_pbx_base_cli', 
-                                    prov_subscriber => $sub->provisioning_voip_subscriber);
-                            my $val = $form->params->{e164}{cc} . 
-                                      ($form->params->{e164}{ac} // '') .
-                                      $form->params->{e164}{sn};
-                            if($base_pref->first) {
-                                $base_pref->first->update({ value => $val });
-                            } else {
-                                $base_pref->create({ value => $val });
-                            }
 
-                            if($sub->id == $subscriber->id) {
-                                next;
+                    if(defined $subscriber->primary_number) {
+                        my $new_number = { 
+                            cc => $subscriber->primary_number->cc,
+                            ac => $subscriber->primary_number->ac,
+                            sn => $subscriber->primary_number->sn,
+                        };
+                        if($subscriber->provisioning_voip_subscriber->admin && 
+                           !is_deeply($old_number, $new_number)) {
+                            foreach my $sub($c->stash->{subscribers}->all, $c->stash->{pbx_groups}->all) {
+                                my $base_pref = NGCP::Panel::Utils::Preferences::get_usr_preference_rs(
+                                        c => $c, attribute => 'cloud_pbx_base_cli', 
+                                        prov_subscriber => $sub->provisioning_voip_subscriber);
+                                my $val = $form->params->{e164}{cc} . 
+                                          ($form->params->{e164}{ac} // '') .
+                                          $form->params->{e164}{sn};
+                                if($base_pref->first) {
+                                    $base_pref->first->update({ value => $val });
+                                } else {
+                                    $base_pref->create({ value => $val });
+                                }
+
+                                if($sub->id == $subscriber->id) {
+                                    next;
+                                }
+                                unless(defined $sub->provisioning_voip_subscriber->pbx_extension) {
+                                    next;
+                                }
+                                my $num = {
+                                    cc => $form->params->{e164}{cc},
+                                    ac => $form->params->{e164}{ac},
+                                    sn => $form->params->{e164}{sn} . $sub->provisioning_voip_subscriber->pbx_extension,
+                                };
+                                NGCP::Panel::Utils::Subscriber::update_subscriber_numbers(
+                                    c => $c,
+                                    schema => $schema,
+                                    subscriber_id => $sub->id,
+                                    reseller_id => $sub->contract->contact->reseller_id,
+                                    primary_number => $num,
+                                );
                             }
-                            unless(defined $sub->provisioning_voip_subscriber->pbx_extension) {
-                                next;
-                            }
-                            my $num = {
-                                cc => $form->params->{e164}{cc},
-                                ac => $form->params->{e164}{ac},
-                                sn => $form->params->{e164}{sn} . $sub->provisioning_voip_subscriber->pbx_extension,
-                            };
-                            NGCP::Panel::Utils::Subscriber::update_subscriber_numbers(
-                                c => $c,
-                                schema => $schema,
-                                subscriber_id => $sub->id,
-                                reseller_id => $sub->contract->contact->reseller_id,
-                                primary_number => $num,
-                            );
                         }
+                    } elsif(defined $subscriber->provisioning_voip_subscriber->pbx_extension) {
+                        NGCP::Panel::Utils::Message->error(
+                            c     => $c,
+                            error => $c->loc('CloudPBX subscriber must have a primary number'),
+                            desc  => $c->loc('Failed to update subscriber, CloudPBX must have a primary number'),
+                        );
+                    } else {
+                        NGCP::Panel::Utils::Subscriber::update_subscriber_numbers(
+                            c => $c,
+                            schema => $schema,
+                            subscriber_id => $subscriber->id,
+                            reseller_id => $subscriber->contract->contact->reseller_id,
+                            primary_number => undef,
+                        );
                     }
                 } else {
                     NGCP::Panel::Utils::Subscriber::update_subscriber_numbers(

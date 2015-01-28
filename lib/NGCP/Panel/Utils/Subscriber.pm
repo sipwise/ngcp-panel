@@ -473,6 +473,29 @@ sub update_subscriber_numbers {
             primary_number_id => undef,
         });
         update_voicemail_number(schema => $schema, subscriber => $billing_subs);
+
+        if(defined $acli_pref) {
+            $acli_pref->delete;
+        }
+        my $cli_pref = NGCP::Panel::Utils::Preferences::get_usr_preference_rs(
+            c => $c, attribute => 'cli', prov_subscriber => $prov_subs);
+        if(defined $cli_pref) {
+            $cli_pref->delete;
+        }
+        for my $cfset($prov_subs->voip_cf_destination_sets->all) {
+            for my $cf($cfset->voip_cf_destinations->all) {
+                if($cf->destination =~ /\@fax2mail\.local$/) {
+                    $cf->delete;
+                } elsif($cf->destination =~ /\@conference\.local$/) {
+                    $cf->delete;
+                }
+            }
+            unless($cfset->voip_cf_destinations->count) {
+                $cfset->voip_cf_mappings->delete;
+                $cfset->delete;
+            }
+        }
+
     } elsif(defined $primary_number) {
 
         my $old_cc;
@@ -513,6 +536,13 @@ sub update_subscriber_numbers {
                     reseller_id   => $reseller_id,
                     subscriber_id => $subscriber_id,
                 });
+            }
+            my $cli_pref = NGCP::Panel::Utils::Preferences::get_usr_preference_rs(
+                c => $c, attribute => 'cli', prov_subscriber => $prov_subs);
+            if($cli_pref->first) {
+                $cli_pref->first->update({ value => $primary_number->{cc} . ($primary_number->{ac} // '') . $primary_number->{sn} });
+            } else {
+                $cli_pref->create({ value => $primary_number->{cc} . ($primary_number->{ac} // '') . $primary_number->{sn} });
             }
         }
 
