@@ -472,7 +472,6 @@ sub update_subscriber_numbers {
         $billing_subs->update({
             primary_number_id => undef,
         });
-        update_voicemail_number(schema => $schema, subscriber => $billing_subs);
 
         if(defined $acli_pref) {
             $acli_pref->delete;
@@ -495,6 +494,7 @@ sub update_subscriber_numbers {
                 $cfset->delete;
             }
         }
+        update_voicemail_number(schema => $schema, subscriber => $billing_subs);
 
     } elsif(defined $primary_number) {
 
@@ -1229,7 +1229,7 @@ sub update_voicemail_number {
         my $n = $subscriber->primary_number;
         $new_cli = $n->cc . ($n->ac // '') . $n->sn;
     } else {
-        $new_cli = '0';
+        $new_cli = $subscriber->uuid;
     }
 
     if (defined $voicemail_user) {
