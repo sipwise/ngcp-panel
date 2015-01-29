@@ -1,6 +1,11 @@
 [% site_config.title = c.loc('Manage Sound Set [_1]', set_result.name) -%]
 
-<a class="btn btn-large btn-primary" href="[% c.uri_for('/back') %]"><i class="icon-arrow-left"></i> [% c.loc('Back') %]</a>
+<div class="row">
+    <span>
+    <a class="btn btn-primary btn-large" href="[% c.uri_for('/back') %]"><i class="icon-arrow-left"></i> [% c.loc('Back') %]</a>
+    </span>
+    <a class="btn btn-primary btn-large" href="[% c.uri_for_action('/sound/handles_load_default', [c.req.captures.0]) %]"><i class="icon-star"></i> [% c.loc('Load Default Files') %]</a>
+</div>
 [% back_created = 1 -%]
 
 [% IF messages -%]
@@ -68,15 +73,15 @@
 [% END %]
 </div>
 
-[% IF edit_flag -%]
-
-[%
+[% IF edit_flag || edit_default_flag;
     PROCESS "helpers/modal.tt";
     modal_header(m.create_flag=0,
-                 m.name = file_result.handle.name );
+                 m.name = edit_default_flag ? c.loc('Default Files') : file_result.handle.name );
     translate_form(form).render;
     modal_footer();
+    END;
 -%]
+[% IF edit_flag || edit_default_flag -%]
 <script>
     $(function () {
         $('#mod_edit').modal({keyboard: false, backdrop: 'static'});
