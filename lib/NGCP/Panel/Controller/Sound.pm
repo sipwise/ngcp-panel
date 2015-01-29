@@ -8,7 +8,10 @@ use NGCP::Panel::Form::Sound::AdminSet;
 use NGCP::Panel::Form::Sound::ResellerSet;
 use NGCP::Panel::Form::Sound::CustomerSet;
 use NGCP::Panel::Form::Sound::File;
+use NGCP::Panel::Form::Sound::LoadDefault;
 use File::Type;
+use File::Slurp;
+use File::Basename;
 use NGCP::Panel::Utils::XMLDispatcher;
 use NGCP::Panel::Utils::Sounds;
 use NGCP::Panel::Utils::Navigation;
@@ -88,7 +91,7 @@ sub contract_sets_list :Chained('/') :PathPart('sound/contract') :CaptureArgs(1)
     if($c->user->roles eq "subscriberadmin" && $c->user->account_id != $contract_id) {
         NGCP::Panel::Utils::Message->error(
             c => $c,
-            error => "access violatio, subscriberadmin ".$c->user->uuid." with contract id ".$c->user->account_id." tries to access foreign contract id $contract_id",
+            error => "access violation, subscriberadmin ".$c->user->uuid." with contract id ".$c->user->account_id." tries to access foreign contract id $contract_id",
             desc  => $c->loc('Invalid contract id found'),
         );
         NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for('/sound'));
@@ -444,8 +447,8 @@ sub handles_list :Chained('base') :PathPart('handles') :CaptureArgs(0) {
     my $handles_rs = $c->model('DB')->resultset('voip_sound_groups')
         ->search({
         },{
-            select => ['groups.name', \'handles.name', \'handles.id', 'files.filename', 'files.loopplay', 'files.codec'],
-            as => [ 'groupname', 'handlename', 'handleid', 'filename', 'loopplay', 'codec'],
+            select => ['groups.name', \'handles.name', \'handles.id', 'files.filename', 'files.loopplay', 'files.codec', 'files.id'],
+            as => [ 'groupname', 'handlename', 'handleid', 'filename', 'loopplay', 'codec', 'fileid'],
             alias => 'groups',
             from => [
                 { groups => 'provisioning.voip_sound_groups' },
@@ -465,7 +468,7 @@ sub handles_list :Chained('base') :PathPart('handles') :CaptureArgs(0) {
             'groups.name' => { '-in' => [qw/pbx music_on_hold digits/] } 
         });
     } else {
-        $handles_rs = $handles_rs->search({ 'groups.name' => { '!=' => 'pbx' } });
+        #$handles_rs = $handles_rs->search({ 'groups.name' => { '!=' => 'pbx' } });
     }
 
     unless($c->config->{features}->{cloudpbx}) {
@@ -592,7 +595,7 @@ sub handles_edit :Chained('handles_base') :PathPart('edit') {
                     }
                     last SWITCH;
                 };
-                /^(pbx|music_on_hold)$/ && do {
+                /^(pbx|music_on_hold|voucher_recharge|play_balance|conference|digits)$/ && do {
                     my $service;
                     try {
                         if(!$file_result->set->contract_id) {
@@ -726,102 +729,142 @@ sub handles_download :Chained('handles_base') :PathPart('download') :Args(0) {
     return;
 }
 
+sub handles_load_default :Chained('handles_list') :PathPart('loaddefault') :Args(0) {
+    my ($self, $c) = @_;
+    my $posted = ($c->request->method eq 'POST');
+    my $form = NGCP::Panel::Form::Sound::LoadDefault->new;
+    $form->process(
+        posted => $posted,
+        params => $c->request->params,
+        item => {},
+    );
+    NGCP::Panel::Utils::Navigation::check_form_buttons(
+        c => $c,
+        form => $form,
+        fields => {},
+        back_uri => $c->req->uri,
+    );
+    
+    if($posted && $form->validated) {
+        my $lang = $form->params->{language};
+        my $base = "/var/lib/ngcp-soundsets";
+        my $set_id = $c->stash->{set_result}->id;
+        try {
+            my $schema = $c->model('DB');
+            $schema->txn_do(sub {
+                foreach my $h($c->stash->{handles_rs}->all) {
+                    my $hname = $h->get_column("handlename");
+                    my @paths = (
+                        "$base/system/$lang/$hname.wav",
+                        "$base/customer/$lang/$hname.wav",
+                        "/var/lib/asterisk/sounds/$lang/digits/$hname.wav",
+                    );
+                    my $path;
+                    foreach my $p(@paths) {
+                        if(-f $p) {
+                            $path = $p;
+                            last;
+                        }
+                    }
+                    next unless(defined $path);
+
+                    my $handle_id = $h->get_column("handleid");
+                    my $file_id = $h->get_column("fileid");
+                    my $fres;
+                    my $fname = basename($path);
+                    if(defined $file_id) {
+                        if($form->params->{override}) {
+                            $c->log->debug("override $path as $hname for existing id $file_id");
+                            my $data;
+                            if(!$c->stash->{set_result}->contract_id && 
+                               grep {/^$hname$/} (qw/music_on_hold/)) {
+
+                                $fname =~ s/\.wav$/.pcma/;
+                                $data = NGCP::Panel::Utils::Sounds::transcode_file(
+                                    $path, 'WAV', 'PCMA');
+                            } else {
+                                $data = read_file($path);
+                            }
+
+                            $fres = $schema->resultset('voip_sound_files')->find($file_id);
+                            $fres->update({
+                                    filename => $fname,
+                                    data => $data,
+                                    loopplay => $form->params->{loopplay} ? 1 : 0,
+                                });
+                        } else {
+                            $c->log->debug("skip $path as $hname exists via id $file_id and override is not set");
+                        }
+                    } else {
+                        $c->log->debug("inserting $path as $hname with new id");
+
+                        my $codec = 'WAV';
+                        my $data;
+                        if(!$c->stash->{set_result}->contract_id && 
+                           grep {/^$hname$/} (qw/music_on_hold/)) {
+
+                            $fname =~ s/\.wav$/.pcma/;
+                            $codec = 'PCMA';
+                            $data = NGCP::Panel::Utils::Sounds::transcode_file(
+                                $path, 'WAV', $codec);
+                        } else {
+                            $data = read_file($path);
+                        }
+
+                        $fres = $schema->resultset('voip_sound_files')
+                            ->create({
+                                filename => $fname,
+                                data => $data,
+                                handle_id => $handle_id,
+                                set_id => $set_id,
+                                loopplay => $form->params->{loopplay} ? 1 : 0,
+                                codec => $codec,
+                            });
+                    }
+
+                    SWITCH: for ($fres->handle->group->name) {
+                        /^calling_card$/ && do {
+                            NGCP::Panel::Utils::Sems::clear_audio_cache($c, "appserver", $fres->set_id, $fres->handle->name);
+                            last SWITCH;
+                        };
+                        /^(pbx|music_on_hold|voucher_recharge|play_balance|conference|digits)$/ && do {
+                            my $service;
+                            if(!$fres->set->contract_id && $_ ne "pbx") {
+                                # app server doesn't know about pbx sets, skip them
+                                $service = "appserver";
+                                NGCP::Panel::Utils::Sems::clear_audio_cache($c, $service, $fres->set_id, $fres->handle->name);
+                            } else {
+                                $service = "pbx";
+                                NGCP::Panel::Utils::Sems::clear_audio_cache($c, $service, $fres->set_id, $fres->handle->name);
+                            }
+                            last SWITCH;
+                        };
+                    }
+                }
+            });
+            NGCP::Panel::Utils::Message->info(
+                c    => $c,
+                desc => $c->loc('Sound set successfully loaded with default files.'),
+            );
+        } catch($e) {
+            NGCP::Panel::Utils::Message->error(
+                c => $c,
+                error => $e,
+                desc  => $c->loc('Failed to load default sound files.'),
+            );
+        }
+        NGCP::Panel::Utils::Navigation::back_or($c, $c->stash->{handles_base_uri});
+        return;
+    }
+
+    $c->stash(form => $form);
+    $c->stash(edit_default_flag => 1);
+    return;
+}
+
 
 __PACKAGE__->meta->make_immutable;
 
 1;
-
-__END__
-
-=head1 NAME
-
-NGCP::Panel::Controller::Sound - Manage Sounds
-
-=head1 DESCRIPTION
-
-Show/Edit/Create/Delete Sound Sets.
-
-Show/Upload Sound Files in Sound Sets.
-
-=head1 METHODS
-
-=head2 auto
-
-Grants access to admin and reseller role.
-
-=head2 sets_list
-
-Basis for provisioning.voip_sound_sets.
-Provides sets_rs in stash.
-
-=head2 root
-
-Display Sound Sets through F<sound/list.tt> template.
-
-=head2 ajax
-
-Get provisioning.voip_sound_sets from db and output them as JSON.
-The format is meant for parsing with datatables.
-
-=head2 base
-
-Fetch a provisioning.voip_sound_sets row from the database by its id.
-The resultset is exported to stash as "set_result".
-
-=head2 edit
-
-Show a modal to edit the Sound Set determined by L</base> using the form
-L<NGCP::Panel::Form::SoundSet>.
-
-=head2 delete
-
-Delete the Sound Set determined by L</base>.
-
-=head2 create
-
-Show modal to create a new Sound Set using the form
-L<NGCP::Panel::Form::SoundSet>.
-
-=head2 handles_list
-
-Basis for provisioning.voip_sound_handles grouped by voip_sound_groups with
-the actual data in voip_sound_files.
-Stashes:
-    * handles_base_uri: To show L</pattern_root>
-    * files_rs: Resultset of voip_sound_files in the current voip_sound_group
-    * sound_groups: Hashref of sound_goups with handles JOIN files inside
-        (used in the template F<sound/handles_list.tt>)
-
-=head2 handles_root
-
-Display Sound Files through F<sound/handles_list.tt> template accordion
-grouped by sound_groups.
-
-=head2 handles_base
-
-Fetch a provisioning.voip_sound_files row from the database by the id
-of the according voip_sound_handle. Create a new one if it doesn't exist but
-do not immediately update the db.
-The ResultClass is exported to stash as "file_result".
-
-=head2 handles_edit
-
-Show a modal to upload a file or set/unset loopplay using the form
-L<NGCP::Panel::Form::SoundFile>.
-
-=head2 handles_delete
-
-Delete the Sound File determined by L</base>.
-
-=head1 AUTHOR
-
-Gerhard Jungwirth C<< <gjungwirth@sipwise.com> >>
-
-=head1 LICENSE
-
-This library is free software. You can redistribute it and/or modify
-it under the same terms as Perl itself.
-
-=cut
 
 # vim: set tabstop=4 expandtab:
