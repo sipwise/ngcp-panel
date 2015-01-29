@@ -233,10 +233,10 @@ sub prepare_connectable {
     my $values = [];
 
     my $connected_rs = $c->model('DB')->resultset('autoprov_device_extensions')->search_rs({
-        ( $model->type eq 'basic' ? 'device_id' : 'extension_id' ) => $model->id,
+        ( $model->type eq 'phone' ? 'device_id' : 'extension_id' ) => $model->id,
     });
     for my $connected($connected_rs->all) {
-        push @$values, $connected->get_column ( $model->type eq 'basic' ? 'extension_id' : 'device_id' ) ;
+        push @$values, $connected->get_column ( $model->type eq 'phone' ? 'extension_id' : 'device_id' ) ;
     }
     return (encode_json($values), $values);
 }
