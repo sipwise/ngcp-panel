@@ -822,6 +822,8 @@ sub handles_load_default :Chained('handles_list') :PathPart('loaddefault') :Args
                             });
                     }
 
+                    next unless defined($fres);
+
                     SWITCH: for ($fres->handle->group->name) {
                         /^calling_card$/ && do {
                             NGCP::Panel::Utils::Sems::clear_audio_cache($c, "appserver", $fres->set_id, $fres->handle->name);
