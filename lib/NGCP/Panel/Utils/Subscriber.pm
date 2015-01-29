@@ -542,7 +542,10 @@ sub update_subscriber_numbers {
             if($cli_pref->first) {
                 $cli_pref->first->update({ value => $primary_number->{cc} . ($primary_number->{ac} // '') . $primary_number->{sn} });
             } else {
-                $cli_pref->create({ value => $primary_number->{cc} . ($primary_number->{ac} // '') . $primary_number->{sn} });
+                $cli_pref->create({ 
+                    subscriber_id => $prov_subs->id,
+                    value => $primary_number->{cc} . ($primary_number->{ac} // '') . $primary_number->{sn} 
+                });
             }
         }
 
