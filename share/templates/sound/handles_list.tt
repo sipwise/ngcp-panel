@@ -4,7 +4,7 @@
     <span>
     <a class="btn btn-primary btn-large" href="[% c.uri_for('/back') %]"><i class="icon-arrow-left"></i> [% c.loc('Back') %]</a>
     [% IF c.user.roles == "subscriberadmin" ||
-          ((c.user.roles == "admin" || c.user.roles eq "reseller") && !c.user.read_only)
+          ((c.user.roles == "admin" || c.user.roles == "reseller") && !c.user.read_only)
     -%]
     <a class="btn btn-primary btn-large" href="[% c.uri_for_action('/sound/handles_load_default', [c.req.captures.0]) %]"><i class="icon-star"></i> [% c.loc('Load Default Files') %]</a>
     [% END -%]
