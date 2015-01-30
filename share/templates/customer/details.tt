@@ -589,140 +589,161 @@
     </script>
 [% END -%]
 [% IF c.config.features.cloudpbx && device_flag -%]
-    <style>
-        .annotated
-        {
-            position: relative;
-            margin: 20px 20px 0 20px;
-        }
-        .annotated img
-        {
-            display: block;
+<style>
+    .annotated
+    {
+        position: relative;
+        margin: 20px 20px 0 20px;
+    }
+    .annotated img
+    {
+        display: block;
             max-width: none;
+    }
+    .annotated a
+    {
+        text-decoration: none;
+        color: inherit;
+    }
+    .annotated .caption
+    {
+        white-space: nowrap;
+    }
+    .annotated select
+    {
+        height: 15px;
+        line-height: 15px;
+        padding: 0;
+        margin: 0;
+        font-size: 11px;
+    }
+    .annotated select.subselect
+    {
+        width: 180px;
+    }
+    .annotated select.modeselect
+    {
+        width: 60px;
+    }
+</style>
+<link rel="stylesheet" href="/css/ngcp-annotate.css">
+<script src="/js/libs/ngcp-annotate.js"></script>
+<link rel="stylesheet" type="text/css" href="/font/font-awesome/css/font-awesome.min.css"/>
+<script>
+var aaData;
+function get_urls(id,type,url_lines,url_image){
+    var data = {};
+    if(!type || type == 'profile'){
+        type = 'profile';
+        if(!id){
+            id = $('div.controls #profile_id option:selected').first().attr('value');
         }
-        .annotated a
-        {
-            text-decoration: none;
-            color: inherit;
+        if(!id) return;
+        data{uri_lines} = '/device/profile/' + id + '/annolines/ajax';
+        data{uri_image} = '/device/profile/' + id + '/frontimage';
+        data{uri_extension} = '/device/profile/' + id + '/extensions';
+    }else if(type == 'extension'){
+        if(!id) return;
+        data{uri_lines} = '/device/extension/' + id + '/annolines/ajax';
+        data{uri_image} = '/device/extension/' + id + '/frontimage';
+    }
+}
+function annotate_device(type, id) {
+    $('.annotated').remove();
+    var uri_data;
+    get_urls(id,type,uri_data);
+    var linekeys;
+    if(!linekeys){
+        linekeys = {
+    [% IF edit_flag == 1 -%]
+        [% FOR line IN pbx_device.autoprov_field_device_lines.all -%]
+            '[% line.linerange_id %].[% line.key_num %]': { 
+              'mode': '[% line.line_type %]',
+              'sub': '[% line.provisioning_voip_subscriber.username %]@[% line.provisioning_voip_subscriber.domain.domain%]',
+              'subid': [% line.provisioning_voip_subscriber.id %],
+              'ext': '[% line.provisioning_voip_subscriber.pbx_extension%]'
+            }  [% loop.last() ? '' : ',' %]
+        [% END -%]
+    [% END -%]
         }
-        .annotated .caption
-        {
-            white-space: nowrap;
-        }
-        .annotated select
-        {
-            height: 15px;
-            line-height: 15px;
-            padding: 0;
-            margin: 0;
-            font-size: 11px;
-        }
-        .annotated select.subselect
-        {
-            width: 180px;
-        }
-        .annotated select.modeselect
-        {
-            width: 60px;
-        }
-    </style>
-    <link rel="stylesheet" href="/css/ngcp-annotate.css">
-    <script src="/js/libs/ngcp-annotate.js"></script>
-    <link rel="stylesheet" type="text/css" href="/font/font-awesome/css/font-awesome.min.css"/>
-    <script>
-        var aaData;
-        function annotate_device() {
-            $('.annotated').remove();
-            var prof_id = $('div.controls #profile_id option:selected').first().attr('value');
-            if(!prof_id) return;
+    }
 
-            $.ajax({
-                url: "/device/profile/" + prof_id + "/annolines/ajax",
-            }).done(function(data) {
-                aaData = data.aaData;
-                console.log("got data", data);
-                var markup = '<div class="annotated">' +
-                    '<img src="/device/profile/' + prof_id + '/frontimage" />';
-                var formcnt = -1;
-                for(var i = 0; i < aaData.length; ++i) {
-                    var range = aaData[i];
-                    for(var j = 0; j < range.annotations.length; ++j) {
-                        formcnt++;
-                        $('#line\\.' + formcnt).remove();
+    $.ajax({
+        url: uri_data.uri_lines,
+    }).done(function(data) {
+        aaData = data.aaData;
+        console.log("got data", data);
+        var markup = '<div class="annotated">' +
+            '<img src="' + uri_data.uri_image + '" />';
+        var formcnt = -1;
+        for(var i = 0; i < aaData.length; ++i) {
+            var range = aaData[i];
+            for(var j = 0; j < range.annotations.length; ++j) {
+                formcnt++;
+                $('#line\\.' + formcnt).remove();
 
-                        var a = range.annotations[j];
-						[%MACRO unassigned_form BLOCK%]
-                            status = "unassigned";
-                            action = '<i class="fa fa-plus-square fa-fw"></i> ' +
-                                  '<select class="subselect" name="line.' + formcnt + '.subscriber_id" id="line.' + formcnt + '.subscriber_id">' + 
-                                    '<option value="0">[% c.loc("Subscriber") %]</option>' +
-                                    [% subs = [] -%]
-                                    [% FOR sub IN subs.merge(pbx_groups.all, subscribers.all) -%]
-                                    '<option value="[% sub.provisioning_voip_subscriber.id %]">[% sub.provisioning_voip_subscriber.display_name ? sub.provisioning_voip_subscriber.display_name : sub.username %][% sub.provisioning_voip_subscriber.pbx_extension.defined ? " (" _ sub.provisioning_voip_subscriber.pbx_extension _ ")" : "" %]</option>' +
-                                    [% END -%]
-                                  '</select>' +
-                                  '<select class="modeselect" name="line.' + formcnt + '.type" id="line.' + formcnt + '.type">' + 
-                                    [% FOR opt IN ["private", "shared", "blf"] -%]
-                                    (range.can_[% opt %] == "1" ? '<option value="[% opt %]">[% opt %]</option>' : '') +
-                                    [% END -%]
-                                  '</select>' + 
-                                  '<input type="hidden" name="line.' + formcnt + '.line" id="line.' + formcnt + '.line" value="' + a.range_id + '.' + a.line_index + '"/>' + 
-                                  '';
-						[%END%]
-                        [% IF create_flag == 1 -%]
-							var status, action;
-							[% unassigned_form() %]
-                        [% ELSIF edit_flag == 1 -%]
-                            var linekeys = {
-                            [% FOR line IN pbx_device.autoprov_field_device_lines.all -%]
-                                '[% line.linerange_id %].[% line.key_num %]': { 
-                                  'mode': '[% line.line_type %]',
-                                  'sub': '[% line.provisioning_voip_subscriber.username %]@[% line.provisioning_voip_subscriber.domain.domain%]',
-                                  'subid': [% line.provisioning_voip_subscriber.id %],
-                                  'ext': '[% line.provisioning_voip_subscriber.pbx_extension%]'
-                                }  [% line == pbx_device.autoprov_field_device_lines.all.last ? '' : ',' %]
-                            [% END -%]
-                            };
+                var a = range.annotations[j];
+                var status = "unassigned";
+                var linekeysCurrent = 0;
 
-                            var status, action;
-                            var idx = aaData[i].id + '.' + a.line_index;
-                            if(linekeys[idx]) {
-                                status = "assigned";
-                                //action = '<i class="fa ' + mode + ' fa-fw"></i> ' + linekeys[idx].sub + ' (' + linekeys[idx].ext + ')';
-                                var action = '<i class="fa fa-user fa-fw"></i> ' +
-                                  '<select class="subselect" name="line.' + formcnt + '.subscriber_id" id="line.' + formcnt + '.subscriber_id">' + 
-                                    '<option value="0">[% c.loc("None") %]</option>' +
-                                    [% subs = [] -%]
-                                    [% FOR sub IN subs.merge(pbx_groups.all, subscribers.all) -%]
-                                    '<option value="[% sub.provisioning_voip_subscriber.id %]"' + (linekeys[idx].subid == [% sub.provisioning_voip_subscriber.id %] ? ' selected="selected"' : '') + '>[% sub.provisioning_voip_subscriber.display_name ? sub.provisioning_voip_subscriber.display_name : sub.username %][% sub.provisioning_voip_subscriber.pbx_extension.defined ? " (" _ sub.provisioning_voip_subscriber.pbx_extension _ ")" : "" %]</option>' +
-                                    [% END -%]
-                                  '</select>' +
-                                  '<select class="modeselect" name="line.' + formcnt + '.type" id="line.' + formcnt + '.type">' + 
-                                    [% FOR opt IN ["private", "shared", "blf"] -%]
-                                    (range.can_[% opt %] == "1" ? 
-                                       '<option value="[% opt %]"' + (linekeys[idx].mode == "[% opt %]" ? ' selected="selected"' : '') + '>[% opt %]</option>' : '') +
-                                    [% END -%]
-                                  '</select>' + 
-                                  '<input type="hidden" name="line.' + formcnt + '.line" id="line.' + formcnt + '.line" value="' + a.range_id + '.' + a.line_index + '"/>' + 
-                                  '';
-                            } else {
-								[% unassigned_form() %]
-                            }
-                        [% END -%]
-                        markup += '<div class="caption ' + status + '" style="top:' + a.y + 'px; left:' + a.x + 'px;" data-pos="' + a.position + '">' + action + '</div>';
-                    }
+    [% IF edit_flag == 1 -%]
+                var idx = aaData[i].id+'.'+ a.line_index;
+                if( linekeys[idx]){
+                    linekeysCurrent = linekeys[idx];
+                    status = "assigned";
                 }
-                markup += '</div>';
-                $('div.control-group').last().after(markup);
-                $("div.annotated").each(function(){
-                    $(this).find("div.caption").annotate(this);
-                });
-            });
+    [% END -%]
+                var action = '<i class="fa '+(linekeysCurrent ? 'fa-plus-square' : 'fa-user')+' fa-fw"></i> ' +
+                    '<select class="subselect" name="line.' + formcnt + '.subscriber_id" id="line.' + formcnt + '.subscriber_id">' + 
+                    '<option value="0">'+(linekeysCurrent ? '[% c.loc("Subscriber") %]' : '[% c.loc("None") %]' )+'</option>' +
+    [% subs = [] -%]
+    [% FOR sub IN subs.merge(pbx_groups.all, subscribers.all) -%]
+                    '<option value="[% sub.provisioning_voip_subscriber.id %]"'+((linekeysCurrent && linekeysCurrent.subid == '[% sub.provisioning_voip_subscriber.id %]')? ' selected="selected"' : '')+'>[% sub.provisioning_voip_subscriber.display_name ? sub.provisioning_voip_subscriber.display_name : sub.username %][% sub.provisioning_voip_subscriber.pbx_extension.defined ? " (" _ sub.provisioning_voip_subscriber.pbx_extension _ ")" : "" %]</option>' +
+    [% END -%]
+                    '</select>' +
+                    '<select class="modeselect" name="line.' + formcnt + '.type" id="line.' + formcnt + '.type">' + 
+    [% FOR opt IN ["private", "shared", "blf"] -%]
+                    (range.can_[% opt %] == "1" ? 
+                        '<option value="[% opt %]"'+((linekeysCurrent && linekeysCurrent.mode == '[% opt %]' ) ? '  selected="selected"' : '')+'>[% opt %]</option>' : '') +
+    [% END -%]
+                    '</select>' + 
+                    '<input type="hidden" name="line.' + formcnt + '.line" id="line.' + formcnt + '.line" value="' + a.range_id + '.' + a.line_index + '"/>' + 
+                    '';
+                markup += '<div class="caption ' + status + '" style="top:' + a.y + 'px; left:' + a.x + 'px;" data-pos="' + a.position + '">' + action + '</div>';
+            }
         }
-        $('div.controls #profile_id').change(annotate_device);
-        annotate_device();
+        markup += '</div>';
+        $('div.control-group').last().after(markup);
+        $("div.annotated").each(function(){
+            $(this).find("div.caption").annotate(this);
+        });
+    });
+}
 
-    </script>
+function get_linked_extensions(profileId){
+    var uri_data;
+    get_urls(profileId,'profile',uri_data);
+    $.ajax({
+        url: uri_data.uri_extensions,
+    }).done(function(data) {
+        deviceLinkedExtensions = data.aaData;
+        console.log("got data", data);
+        for(var i = 0; i < deviceLinkedExtensions.length; ++i) {
+            annotate_device('extension', deviceLinkedExtensions[i].id);
+        }
+    };
+}
+
+
+    [% IF pbx_device.extensions_num && pbx_device.autoprov_extensions_link.count %]
+        [% extension_index = 0 %]
+        [% WHILE extension_index < pbx_device.extensions_num  %]
+        
+        [% END -%]
+    [% END -%]
 [% END -%]
 
+
+$('div.controls #profile_id').change(annotate_device);
+annotate_device();</script>
 [% # vim: set tabstop=4 syntax=html expandtab: -%]

@@ -108,6 +108,19 @@ sub base :Chained('/') :PathPart('device') :CaptureArgs(0) {
         { name => 'contract.contact.email', search => 1, title => $c->loc('Customer Email') },
     ]);
 
+    my $extensions_rs = $c->model('DB')->resultset('autoprov_devices')->search_rs({
+        'type' => 'extension',
+    });
+    $reseller_id and $extensions_rs = $extensions_rs->search({ reseller_id => $reseller_id });
+    
+    $c->stash->{fielddev_dt_columns} = NGCP::Panel::Utils::Datatables::set_columns($c, [
+        { name => 'id', search => 1, title => $c->loc('#') },
+        { name => 'identifier', search => 1, title => $c->loc('MAC Address / Identifier') },
+        { name => 'profile.name', search => 1, title => $c->loc('Profile Name') },
+        { name => 'contract.id', search => 1, title => $c->loc('Customer #') },
+        { name => 'contract.contact.email', search => 1, title => $c->loc('Customer Email') },
+    ]);
+
     $c->stash(
         devmod_rs   => $devmod_rs,
         devfw_rs    => $devfw_rs,
@@ -955,6 +968,30 @@ sub devprof_base :Chained('base') :PathPart('profile') :CaptureArgs(1) :Does(ACL
     }
 }
 
+sub extension_base :Chained('base') :PathPart('extension') :CaptureArgs(1) :Does(ACL) :ACLDetachTo('/denied_page') :AllowedRole(admin) :AllowedRole(reseller) :AllowedRole(subscriberadmin) {
+    my ($self, $c, $extension_device_id) = @_;
+
+    unless($extension_device_id->is_int) {
+        NGCP::Panel::Utils::Message->error(
+            c => $c,
+            error => "invalid device extensions id '$extension_device_id'",
+            desc => $c->loc('Invalid device extension id'),
+        );
+        NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for('/device'));
+    }
+
+    $c->stash->{devextension} = $c->stash->{devprof_rs}->find($devprof_id);
+    unless($c->stash->{devprof}) {
+        NGCP::Panel::Utils::Message->error(
+            c => $c,
+            error => "device profile with id '$devprof_id' not found",
+            desc => $c->loc('Device profile not found'),
+        );
+        NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for('/device'));
+    }
+}
+
+
 sub devprof_get_lines :Chained('devprof_base') :PathPart('lines/ajax') :Args(0) :Does(ACL) :ACLDetachTo('/denied_page') :AllowedRole(admin) :AllowedRole(reseller) :AllowedRole(subscriberadmin) {
     my ($self, $c) = @_;
 
@@ -973,6 +1010,20 @@ sub devprof_get_lines :Chained('devprof_base') :PathPart('lines/ajax') :Args(0) 
 
 sub devprof_get_annotated_lines :Chained('devprof_base') :PathPart('annolines/ajax') :Args(0) :Does(ACL) :ACLDetachTo('/denied_page') :AllowedRole(admin) :AllowedRole(reseller) :AllowedRole(subscriberadmin) {
     my ($self, $c) = @_;
+    $self->get_annotated_lines($c, $c->stash->{devprof}->config->device->autoprov_device_line_ranges );
+}
+sub devprof_get_annotated_lines :Chained('devprof_base') :PathPart('annolines/ajax') :Args(0) :Does(ACL) :ACLDetachTo('/denied_page') :AllowedRole(admin) :AllowedRole(reseller) :AllowedRole(subscriberadmin) {
+    my ($self, $c) = @_;
+    $self->get_annotated_lines($c, $c->stash->{devprof}->config->device->autoprov_device_line_ranges );
+}
+
+sub extension_get_annotated_lines :Chained('extension_base') :PathPart('annolines/ajax') :Args(0) :Does(ACL) :ACLDetachTo('/denied_page') :AllowedRole(admin) :AllowedRole(reseller) :AllowedRole(subscriberadmin) {
+    my ($self, $c) = @_;
+    $self->get_annotated_lines($c, $c->stash->{devprof}->config->device->autoprov_device_line_ranges );
+}
+
+sub get_annotated_lines :Privat {
+    my ($self, $c, $rs) = @_;
 
     my $rs = $c->stash->{devprof}->config->device->autoprov_device_line_ranges;
     my @ranges = map {{
@@ -992,8 +1043,6 @@ sub devprof_get_annotated_lines :Chained('devprof_base') :PathPart('annolines/aj
 
     $c->detach( $c->view("JSON") );
 }
-
-
 sub devprof_delete :Chained('devprof_base') :PathPart('delete') :Args(0) :Does(ACL) :ACLDetachTo('/denied_page') :AllowedRole(admin) :AllowedRole(reseller) {
     my ($self, $c) = @_;
 
