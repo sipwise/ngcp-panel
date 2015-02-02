@@ -10,6 +10,11 @@ use NGCP::Panel::Utils::DeviceBootstrap::Polycom;
 
 sub dispatch{
     my($c, $action, $fdev, $old_identifier) = @_;
+
+    if($c->config->{deviceprovisioning}->{skip_vendor_redirect}) {
+        $c->log->info("skipping '$action', disabled by configuration");
+        return;
+    }
     
     my $params = {
         %{get_devmod_params($c, $fdev->profile->config->device)},
@@ -20,6 +25,11 @@ sub dispatch{
 }
 sub dispatch_devmod{
     my($c, $action, $devmod) = @_;
+
+    if($c->config->{deviceprovisioning}->{skip_vendor_redirect}) {
+        $c->log->info("skipping '$action', disabled by configuration");
+        return;
+    }
     
     my $params = get_devmod_params($c,$devmod);
     return _dispatch($c, $action, $params);
