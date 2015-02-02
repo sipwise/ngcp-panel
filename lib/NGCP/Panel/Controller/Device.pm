@@ -1071,7 +1071,8 @@ sub dev_field_config :Chained('/') :PathPart('device/autoprov/config') :Args() {
     }
 
     $id =~ s/\.cfg$//;
-    if($c->req->user_agent =~ /PolycomVVX/) {
+    $c->log->debug("Device::dev_field_config: user_agent: ".((defined $c->req->user_agent) ? $c->req->user_agent : "undefined").";");
+    if((defined $c->req->user_agent) && $c->req->user_agent =~ /PolycomVVX/) {
         $c->response->content_type('text/xml');
         $c->response->body(
             '<?xml version="1.0" standalone="yes"?>'.
