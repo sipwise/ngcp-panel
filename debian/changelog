@@ -1,3 +1,12 @@
+ngcp-panel (1.7.1.5+0~mr3.7.1.5) unstable; urgency=low
+
+  [ Irina Peshinskaya ]
+  * [ad43e4e] MT#11285 replace 500 error with debug info about empty user_agent
+
+  [ Sipwise Jenkins Builder ]
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Mon, 02 Feb 2015 13:32:34 +0100
+
 ngcp-panel (1.7.1.4+0~mr3.7.1.4) unstable; urgency=low
 
   [ Kirill Solomko ]
