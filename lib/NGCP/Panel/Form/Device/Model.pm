@@ -40,7 +40,7 @@ has_field 'type' => (
     },
 );
 has_field 'extensions_num' => (
-    type => 'Numeric',
+    type => 'Integer',
     label => 'Max extensions number',
     default => '0',
     wrapper_class => [qw/ngcp-devicetype ngcp-devicetype-phone/],

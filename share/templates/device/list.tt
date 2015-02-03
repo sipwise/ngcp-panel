@@ -11,7 +11,7 @@
 function typeDynamicFields(selectedValue){
     $('.ngcp-devicetype').css("display","none");
     $('.ngcp-devicetype-'+selectedValue).css("display","block");
-    if(selectedValue == 'basic'){
+    if(selectedValue == 'phone'){
         vendor2bootstrapMethod();
     }
 }
