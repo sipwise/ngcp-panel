@@ -18,6 +18,7 @@ has_field 'callee_prefix' => (
         rel => ['tooltip'],
         title => ['Callee prefix, eg: 43']
     },
+    maxlength => 16,
 );
 
 has_field 'callee_pattern' => (
