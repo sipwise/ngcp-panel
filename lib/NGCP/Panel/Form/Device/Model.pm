@@ -29,15 +29,21 @@ has_field 'type' => (
     required => 1,
     label => 'Model type',
     options => [
-        { label => 'Phone device', value => 'basic' },
+        { label => 'Phone device', value => 'phone' },
         { label => 'Extension device', value => 'extension' },
     ],
-    default => 'basic',
+    default => 'phone',
     element_attr => {
         rel => ['tooltip'],
         title => ['Phone or the phone extension'],
         javascript => ' onchange="typeDynamicFields(this.options[this.selectedIndex].value);" ',
     },
+);
+has_field 'extensions_num' => (
+    type => 'Numeric',
+    label => 'Max extensions number',
+    default => '0',
+    wrapper_class => [qw/ngcp-devicetype ngcp-devicetype-phone/],
 );
 
 has_field 'model' => (
@@ -230,7 +236,7 @@ has_field 'bootstrap_method' => (
     type => 'Select',
     required => 1,
     label => 'Bootstrap Method',
-    wrapper_class => [qw/ngcp-type-basic ngcp-devicetype ngcp-devicetype-phone/],
+    wrapper_class => [qw/ngcp-type-phone ngcp-devicetype ngcp-devicetype-phone/],
     options => [
         { label => 'Cisco', value => 'http' },
         { label => 'Panasonic', value => 'redirect_panasonic' },
@@ -385,7 +391,7 @@ has_field 'save' => (
 has_block 'fields' => (
     tag => 'div',
     class => [qw/modal-body/],
-    render_list => [qw/vendor model type linerange linerange_add bootstrap_method bootstrap_uri bootstrap_config_http_sync_method bootstrap_config_http_sync_uri bootstrap_config_http_sync_params bootstrap_config_redirect_panasonic_user bootstrap_config_redirect_panasonic_password bootstrap_config_redirect_yealink_user bootstrap_config_redirect_yealink_password bootstrap_config_redirect_polycom_user bootstrap_config_redirect_polycom_password bootstrap_config_redirect_polycom_profile connectable_models front_image mac_image/],
+    render_list => [qw/vendor model type extensions_num linerange linerange_add bootstrap_method bootstrap_uri bootstrap_config_http_sync_method bootstrap_config_http_sync_uri bootstrap_config_http_sync_params bootstrap_config_redirect_panasonic_user bootstrap_config_redirect_panasonic_password bootstrap_config_redirect_yealink_user bootstrap_config_redirect_yealink_password bootstrap_config_redirect_polycom_user bootstrap_config_redirect_polycom_password bootstrap_config_redirect_polycom_profile connectable_models front_image mac_image/],
 );
 
 has_block 'actions' => (

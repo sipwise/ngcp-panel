@@ -1227,12 +1227,26 @@ sub pbx_device_base :Chained('base') :PathPart('pbx/device') :CaptureArgs(1) {
             $c->uri_for_action('/customer/details', [$c->stash->{contract}->id])
         );
     }
+    $c->stash->{field_extensions} = $dev->autoprov_field_device_lines->search_rs(undef,
+        {
+            'columns' => [qw/device_id/],
+            'group_by' => [qw/device_id/],
+        }
+    );
 
     $c->stash(
         pbx_device => $dev,
     );
 }
-
+sub pbx_field_extensions :Chained('pbx_device_base') :PathPart('extensions/ajax') :Args(0) {
+    my ($self, $c) = @_;
+    my $field_extensions = $c->stash->{pbx_device}->id;
+    $c->stash->{pbx_fieldext_dt_columns} = NGCP::Panel::Utils::Datatables::set_columns($c, [
+        { name => "device_id", search => 1, title => $c->loc("#") },
+    ]);
+    NGCP::Panel::Utils::Datatables::process($c, $field_extensions, $c->stash->{pbx_fieldext_dt_columns});
+    $c->detach( $c->view("JSON") );
+}
 sub pbx_device_edit :Chained('pbx_device_base') :PathPart('edit') :Args(0) {
     my ($self, $c) = @_;
 

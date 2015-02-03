@@ -13,6 +13,7 @@
         { level = 4, text = c.loc("global (including web login)") },
     ];
 -%]
+<script src="/js/jquery.dump.js"></script>
 
 <div class="row">
     <span>
@@ -631,31 +632,34 @@
 <link rel="stylesheet" type="text/css" href="/font/font-awesome/css/font-awesome.min.css"/>
 <script>
 var aaData;
-function get_urls(id,type,url_lines,url_image){
+function get_urls(id,type){
     var data = {};
-    if(!type || type == 'profile'){
+//    alert('id='+id+';type='+type);
+    if((!type) || (type == undefined) || type == 'profile'){
         type = 'profile';
         if(!id){
             id = $('div.controls #profile_id option:selected').first().attr('value');
         }
+//        alert('id='+id);
         if(!id) return;
-        data{uri_lines} = '/device/profile/' + id + '/annolines/ajax';
-        data{uri_image} = '/device/profile/' + id + '/frontimage';
-        data{uri_extension} = '/device/profile/' + id + '/extensions';
+        data.uri_lines = '/device/profile/' + id + '/annolines/ajax';
+        data.uri_image = '/device/profile/' + id + '/frontimage';
+        data.uri_extensions = '/device/profile/' + id + '/extensions';
+        data.uri_field_extensions = '/customer/[% contract.id %]/pbx/device/' + id + '/extensions';
     }else if(type == 'extension'){
         if(!id) return;
-        data{uri_lines} = '/device/extension/' + id + '/annolines/ajax';
-        data{uri_image} = '/device/extension/' + id + '/frontimage';
+        data.uri_lines = '/device/' + id + '/annolines/ajax';
+        data.uri_image = '/device/' + id + '/frontimage';
     }
+    return data;
 }
-function annotate_device(type, id) {
+function annotate_device(profileOption, type, id) {
     $('.annotated').remove();
-    var uri_data;
-    get_urls(id,type,uri_data);
+    var uri_data = get_urls(id,type);
     var linekeys;
+    [% IF edit_flag == 1 -%]
     if(!linekeys){
         linekeys = {
-    [% IF edit_flag == 1 -%]
         [% FOR line IN pbx_device.autoprov_field_device_lines.all -%]
             '[% line.linerange_id %].[% line.key_num %]': { 
               'mode': '[% line.line_type %]',
@@ -664,10 +668,10 @@ function annotate_device(type, id) {
               'ext': '[% line.provisioning_voip_subscriber.pbx_extension%]'
             }  [% loop.last() ? '' : ',' %]
         [% END -%]
-    [% END -%]
-        }
+        };
     }
-
+    [% END -%]
+//    alert(uri_data.uri_lines);
     $.ajax({
         url: uri_data.uri_lines,
     }).done(function(data) {
@@ -688,7 +692,7 @@ function annotate_device(type, id) {
 
     [% IF edit_flag == 1 -%]
                 var idx = aaData[i].id+'.'+ a.line_index;
-                if( linekeys[idx]){
+                if( linekeys && linekeys[idx]){
                     linekeysCurrent = linekeys[idx];
                     status = "assigned";
                 }
@@ -713,25 +717,34 @@ function annotate_device(type, id) {
             }
         }
         markup += '</div>';
-        $('div.control-group').last().after(markup);
+        var last = $('div.caption').last();
+        if(!last || last.length < 1 ){
+            last =$('div.caption');
+        }
+        if(!last || last.length < 1 ){
+            last = $('div.control-group').last();
+        }
+        if(!last || last.length < 1 ){
+            last = $('div.control-group');
+        }
+        last.after(markup);
         $("div.annotated").each(function(){
             $(this).find("div.caption").annotate(this);
         });
     });
 }
 
-function get_linked_extensions(profileId){
-    var uri_data;
-    get_urls(profileId,'profile',uri_data);
+function process_linked_extensions(profileId){
+    var uri_data = get_urls(profileId,'profile');
     $.ajax({
-        url: uri_data.uri_extensions,
+        url: uri_data.uri_field_extensions,
     }).done(function(data) {
         deviceLinkedExtensions = data.aaData;
         console.log("got data", data);
         for(var i = 0; i < deviceLinkedExtensions.length; ++i) {
             annotate_device('extension', deviceLinkedExtensions[i].id);
         }
-    };
+    });
 }
 
 

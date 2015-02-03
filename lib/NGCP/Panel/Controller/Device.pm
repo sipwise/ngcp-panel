@@ -46,7 +46,7 @@ sub base :Chained('/') :PathPart('device') :CaptureArgs(0) {
         { name => 'vendor', search => 1, title => $c->loc('Vendor') },
         { name => 'model', search => 1, title => $c->loc('Model') },
     ]);
-
+ 
     my $devfw_rs = $c->model('DB')->resultset('autoprov_firmwares')->search_rs(undef,{'columns' => [qw/id device_id version filename/],
 	});
     $reseller_id and $devfw_rs = $devfw_rs->search({
@@ -122,13 +122,14 @@ sub base :Chained('/') :PathPart('device') :CaptureArgs(0) {
     ]);
 
     $c->stash(
-        devmod_rs   => $devmod_rs,
-        devfw_rs    => $devfw_rs,
-        devconf_rs  => $devconf_rs,
-        devprof_rs  => $devprof_rs,
-        fielddev_rs => $fielddev_rs,
-        reseller_id => $reseller_id,
-        template    => 'device/list.tt',
+        devmod_rs     => $devmod_rs,
+        devfw_rs      => $devfw_rs,
+        devconf_rs    => $devconf_rs,
+        devprof_rs    => $devprof_rs,
+        fielddev_rs   => $fielddev_rs,
+        extensions_rs => $extensions_rs,
+        reseller_id   => $reseller_id,
+        template      => 'device/list.tt',
     );
 }
 
@@ -287,9 +288,8 @@ sub devmod_base :Chained('base') :PathPart('model') :CaptureArgs(1) {
         );
         NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for('/device'));
     }
-
-    $c->stash->{devmod} = $c->stash->{devmod_rs}->find($devmod_id,{'+columns' => [qw/mac_image front_image/]});
-    unless($c->stash->{devmod}) {
+    my $devmod = $c->stash->{devmod_rs}->find($devmod_id,{'+columns' => [qw/mac_image front_image/]});
+    unless($devmod) {
         NGCP::Panel::Utils::Message->error(
             c => $c,
             error => "device model with id '$devmod_id' not found",
@@ -297,6 +297,10 @@ sub devmod_base :Chained('base') :PathPart('model') :CaptureArgs(1) {
         );
         NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for('/device'));
     }
+    $c->stash(
+        devmod => $devmod,
+        extensions_rs => $devmod->autoprov_extensions_link ? $devmod->autoprov_extensions_link->extension : undef,
+    );
 }
 
 sub devmod_delete :Chained('devmod_base') :PathPart('delete') :Args(0) :Does(ACL) :ACLDetachTo('/denied_page') :AllowedRole(admin) :AllowedRole(reseller) {
@@ -980,12 +984,12 @@ sub extension_base :Chained('base') :PathPart('extension') :CaptureArgs(1) :Does
         NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for('/device'));
     }
 
-    $c->stash->{devextension} = $c->stash->{devprof_rs}->find($devprof_id);
+    $c->stash->{devextension} = $c->stash->{extensions_rs}->find($extension_device_id);
     unless($c->stash->{devprof}) {
         NGCP::Panel::Utils::Message->error(
             c => $c,
-            error => "device profile with id '$devprof_id' not found",
-            desc => $c->loc('Device profile not found'),
+            error => "device extension device with id '$extension_device_id' not found",
+            desc => $c->loc('Device extension not found'),
         );
         NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for('/device'));
     }
@@ -1012,20 +1016,16 @@ sub devprof_get_annotated_lines :Chained('devprof_base') :PathPart('annolines/aj
     my ($self, $c) = @_;
     $self->get_annotated_lines($c, $c->stash->{devprof}->config->device->autoprov_device_line_ranges );
 }
-sub devprof_get_annotated_lines :Chained('devprof_base') :PathPart('annolines/ajax') :Args(0) :Does(ACL) :ACLDetachTo('/denied_page') :AllowedRole(admin) :AllowedRole(reseller) :AllowedRole(subscriberadmin) {
-    my ($self, $c) = @_;
-    $self->get_annotated_lines($c, $c->stash->{devprof}->config->device->autoprov_device_line_ranges );
-}
 
-sub extension_get_annotated_lines :Chained('extension_base') :PathPart('annolines/ajax') :Args(0) :Does(ACL) :ACLDetachTo('/denied_page') :AllowedRole(admin) :AllowedRole(reseller) :AllowedRole(subscriberadmin) {
+sub devmod_get_annotated_lines :Chained('devmod_base') :PathPart('annolines/ajax') :Args(0) :Does(ACL) :ACLDetachTo('/denied_page') :AllowedRole(admin) :AllowedRole(reseller) :AllowedRole(subscriberadmin) {
     my ($self, $c) = @_;
-    $self->get_annotated_lines($c, $c->stash->{devprof}->config->device->autoprov_device_line_ranges );
+    $self->get_annotated_lines($c, $c->stash->{devmod}->autoprov_device_line_ranges );
 }
 
 sub get_annotated_lines :Privat {
     my ($self, $c, $rs) = @_;
 
-    my $rs = $c->stash->{devprof}->config->device->autoprov_device_line_ranges;
+    $rs = $c->stash->{devprof}->config->device->autoprov_device_line_ranges;
     my @ranges = map {{
         $_->get_inflated_columns,
         annotations => [
