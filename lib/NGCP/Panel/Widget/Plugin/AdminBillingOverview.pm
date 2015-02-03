@@ -26,7 +26,9 @@ around handle => sub {
     my $etime = $stime->clone->add(months => 1);
 
     $c->stash(
-        profiles => $c->model('DB')->resultset('billing_profiles')->search_rs({}),
+        profiles => $c->model('DB')->resultset('billing_profiles')->search_rs({
+            status => { '!=' => 'terminated'},
+            }),
         peering_sum => $c->model('DB')->resultset('contract_balances')->search_rs({
             'start' => { '>=' => $stime },
             'end' => { '<' => $etime},
