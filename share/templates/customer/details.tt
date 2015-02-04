@@ -589,6 +589,8 @@
         });
     </script>
 [% END -%]
+
+
 [% IF c.config.features.cloudpbx && device_flag -%]
 <style>
     .annotated
@@ -656,6 +658,7 @@ function get_urls(id,type){
 function annotate_device(profileOption, type, id) {
     $('.annotated').remove();
     var uri_data = get_urls(id,type);
+    if(!id) return;
     var linekeys;
     [% IF edit_flag == 1 -%]
     if(!linekeys){
@@ -731,11 +734,13 @@ function annotate_device(profileOption, type, id) {
         $("div.annotated").each(function(){
             $(this).find("div.caption").annotate(this);
         });
+        process_linked_extensions(id);
     });
 }
 
 function process_linked_extensions(profileId){
     var uri_data = get_urls(profileId,'profile');
+    
     $.ajax({
         url: uri_data.uri_field_extensions,
     }).done(function(data) {
@@ -747,6 +752,10 @@ function process_linked_extensions(profileId){
     });
 }
 
+$('div.controls #profile_id').change(annotate_device);
+annotate_device();
+
+
 
     [% IF pbx_device.extensions_num && pbx_device.autoprov_extensions_link.count %]
         [% extension_index = 0 %]
@@ -754,9 +763,8 @@ function process_linked_extensions(profileId){
         
         [% END -%]
     [% END -%]
-[% END -%]
 
+</script>
+[% END -%]<!--/IF c.config.features.cloudpbx && device_flag-->
 
-$('div.controls #profile_id').change(annotate_device);
-annotate_device();</script>
 [% # vim: set tabstop=4 syntax=html expandtab: -%]
