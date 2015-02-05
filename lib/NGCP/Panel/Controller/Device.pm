@@ -1520,6 +1520,9 @@ EOF
 
     if($c->config->{deviceprovisioning}->{softphone_lockdown}) {
         $config .= <<"EOF";
+net.java.sip.communicator.impl.protocol.sip.$sipacc.IS_STATUS_MENU_HIDDEN=true
+net.java.sip.communicator.impl.protocol.jabber.$xmppacc.IS_STATUS_MENU_HIDDEN=true
+net.java.sip.communicator.impl.gui.main.menus.AUTO_ANSWER_MENU_DISABLED=true
 net.java.sip.communicator.impl.gui.main.configforms.SHOW_ACCOUNT_CONFIG=false
 net.java.sip.communicator.plugin.generalconfig.DISABLED=true
 net.java.sip.communicator.impl.neomedia.AUDIO_CONFIG_DISABLED=true
