@@ -222,20 +222,6 @@ sub create_subscriber {
             primary_number_id => undef, # will be filled in next step
             contact_id => $contact ? $contact->id : undef,
         });
-        my ($cli);
-        if(defined $params->{e164}{cc} && $params->{e164}{cc} ne '') {
-            $cli = $params->{e164}{cc} .
-                ($params->{e164}{ac} || '') .
-                $params->{e164}{sn};
-
-            update_subscriber_numbers(
-                c => $c,
-                schema => $schema,
-                subscriber_id => $billing_subscriber->id,
-                reseller_id => $reseller->id,
-                primary_number => $params->{e164},
-            );
-        }
         unless(exists $params->{password}) {
             my ($pass_bin, $pass_str);
             UUID::generate($pass_bin);
@@ -260,40 +246,38 @@ sub create_subscriber {
             profile_id => $profile ? $profile->id : undef,
             create_timestamp => NGCP::Panel::Utils::DateTime::current_local,
         });
+        my ($cli);
+        if(defined $params->{e164}{cc} && $params->{e164}{cc} ne '') {
+            $cli = $params->{e164}{cc} .
+                ($params->{e164}{ac} || '') .
+                $params->{e164}{sn};
 
+            update_subscriber_numbers(
+                c => $c,
+                schema => $schema,
+                subscriber_id => $billing_subscriber->id,
+                reseller_id => $reseller->id,
+                primary_number => $params->{e164},
+            );
+        }
+
+        $schema->resultset('voicemail_users')->create({
+            customer_id => $uuid_string,
+            mailbox => $cli // $uuid_string,
+            password => sprintf("%04d", int(rand 10000)),
+            email => '',
+            tz => 'vienna',
+        });
         $preferences->{account_id} = $contract->id;
         $preferences->{ac} = $params->{e164}{ac}
             if(defined $params->{e164}{ac} && length($params->{e164}{ac}) > 0);
         $preferences->{cc} = $params->{e164}{cc}
             if(defined $params->{e164}{cc} && length($params->{e164}{cc}) > 0);
-        $preferences->{cli} = $cli
-            if(defined $cli);
 
         update_preferences(c => $c, 
             prov_subscriber => $prov_subscriber, 
             preferences => $preferences
         );
-
-        $schema->resultset('voicemail_users')->create({
-            customer_id => $uuid_string,
-            mailbox => $cli // 0,
-            password => sprintf("%04d", int(rand 10000)),
-            email => '',
-            tz => 'vienna',
-        });
-        if($cli) {
-            $schema->resultset('voip_dbaliases')->create({
-                username => $cli,
-                domain_id => $prov_subscriber->domain->id,
-                subscriber_id => $prov_subscriber->id,
-                is_primary => 1,
-            });
-            if($c->config->{numbermanagement}->{auto_allow_cli}) {
-                my $pref = NGCP::Panel::Utils::Preferences::get_usr_preference_rs(
-                    c => $c, attribute => 'allowed_clis', prov_subscriber => $prov_subscriber);
-                $pref->create({ value => $cli }) if(defined $pref);
-            }
-        }
 
         if($contract->subscriber_email_template_id) {
             my ($uuid_bin, $uuid_string);
