@@ -84,7 +84,7 @@ sub resource_from_item {
             };
         }
         $r->{num_lines} = @{ $r->{keys} };
-
+        $r->{in_use} = $range->autoprov_field_device_lines->first ? 1 : 0;
         push @{ $resource{linerange} }, $r;
     }
     return \%resource;
