@@ -1,3 +1,19 @@
+ngcp-panel (1.7.1.6+0~mr3.7.1.6) unstable; urgency=low
+
+  [ Andreas Granig ]
+  * [4af7a80] MT#11279 Allow disabling vendor RPC calls.
+  * [a404cdb] MT#11219 Load default files for sound set.
+  * [a9ae685] MT#11219 Check permissions for sound set loading.
+  * [de9a760] MT#11219 Fix syntax error in template.
+  * [07ce41e] MT#11219 Skip cache cleaning on skipped files.
+
+  [ Irina Peshinskaya ]
+  * [9fe7b73] MT#10159 Mark messages as read and send MWI notification about messages amount
+
+  [ Sipwise Jenkins Builder ]
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Thu, 05 Feb 2015 17:23:14 +0100
+
 ngcp-panel (1.7.1.5+0~mr3.7.1.5) unstable; urgency=low
 
   [ Irina Peshinskaya ]
