@@ -1,3 +1,12 @@
+ngcp-panel (1.6.1.7+0~mr3.6.1.7) unstable; urgency=low
+
+  [ Irina Peshinskaya ]
+  * [be27d72] MT#5585 Add calls cost to subscriber calls list.
+
+  [ Sipwise Jenkins Builder ]
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Mon, 09 Feb 2015 15:31:35 +0100
+
 ngcp-panel (1.6.1.6+0~mr3.6.1.6) unstable; urgency=low
 
   [ Irina Peshinskaya ]
