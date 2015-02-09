@@ -221,6 +221,7 @@ sub devmod_create :Chained('base') :PathPart('model/create') :Args(0) :Does(ACL)
                     foreach my $label(@{ $keys }) {
                         $label->{line_index} = $i++;
                         $label->{position} = delete $label->{labelpos};
+                        delete $label->{id};
                         $r->annotations->create($label);
                     }
                 }
