@@ -241,15 +241,8 @@ sub update_item {
         }
     }
     # delete invalid range ids (e.g. removed ones)
-    #model update should never impact on subscribers lines
     $range_rs->search({
-        -and => [
-            id => { 'not in' => \@existing_range },
-            id => { 'not in' => $c->model('DB')->resultset('autoprov_field_device_lines')->search(undef,{
-                    columns => [ qw/linerange_id/ ], 
-                    group_by => [ qw/linerange_id/ ],
-                })->get_column('linerange_id')->as_query },
-        ]
+        id => { 'not in' => \@existing_range },
     })->delete_all;
 
     return $item;
