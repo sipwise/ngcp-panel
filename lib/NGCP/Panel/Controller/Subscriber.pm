@@ -2050,8 +2050,11 @@ sub master :Chained('base') :PathPart('details') :CaptureArgs(0) {
     ];
     push @{ $call_cols }, (
         { name => "call_id", search => 1, title => $c->loc('Call-ID') },
-        { name => "source_customer_cost", search => 1, title => $c->loc('Source Cust Cost (cents)') },
     ) if($c->user->roles eq "admin" || $c->user->roles eq "reseller");
+
+    push @{ $call_cols }, (
+        { name => "source_customer_cost", search => 1, title => $c->loc('Source Cust Cost (cents)') },
+    ) ;
     $c->stash->{calls_dt_columns} = NGCP::Panel::Utils::Datatables::set_columns($c, $call_cols);
 
     $c->stash->{vm_dt_columns} = NGCP::Panel::Utils::Datatables::set_columns($c, [
