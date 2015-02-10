@@ -1,3 +1,12 @@
+ngcp-panel (1.7.1.8+0~mr3.7.1.8) unstable; urgency=low
+
+  [ Gerhard Jungwirth ]
+  * [ecc1970] MT#11321 filter terminated resellers from dashboard
+
+  [ Sipwise Jenkins Builder ]
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Tue, 10 Feb 2015 16:40:08 +0100
+
 ngcp-panel (1.7.1.7+0~mr3.7.1.7) unstable; urgency=low
 
   [ Irina Peshinskaya ]
