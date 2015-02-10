@@ -1,3 +1,12 @@
+ngcp-panel (1.6.1.8+0~mr3.6.1.8) unstable; urgency=low
+
+  [ Irina Peshinskaya ]
+  * [399a66f] MT#11421 Fix annotations creation
+
+  [ Sipwise Jenkins Builder ]
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Tue, 10 Feb 2015 12:35:20 +0100
+
 ngcp-panel (1.6.1.7+0~mr3.6.1.7) unstable; urgency=low
 
   [ Irina Peshinskaya ]
