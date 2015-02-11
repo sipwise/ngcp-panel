@@ -8,11 +8,12 @@ use Scalar::Util qw/blessed/;
 use DateTime::Format::Strptime;
 
 sub process {
-    my ($c, $rs, $cols, $row_func) = @_;
+    my ($c, $rs, $cols, $row_func, $msg_func) = @_;
 
     my $use_rs_cb = ('CODE' eq (ref $rs));
     my $aaData = [];
     my $displayRecords = 0;
+    my $custom_msg;
 
 
     # check if we need to join more tables
@@ -92,6 +93,9 @@ sub process {
         }
     }
     $displayRecords = $use_rs_cb ? 0 : $rs->count;
+    if (defined $msg_func) {
+        $custom_msg = $msg_func->($rs);
+    }
 
     # show specific row on top (e.g. if we come back from a newly created entry)
     my $topId = $c->request->params->{iIdOnTop};
@@ -157,6 +161,9 @@ sub process {
         }
     }
 
+    if ($custom_msg) {
+        $c->stash(dt_custom_message => $custom_msg);
+    }
     $c->stash(
         aaData               => $aaData,
         iTotalRecords        => $totalRecords,

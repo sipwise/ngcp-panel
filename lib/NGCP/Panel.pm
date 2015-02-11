@@ -70,7 +70,7 @@ __PACKAGE__->config(
     'View::JSON' => {
         #Set the stash keys to be exposed to a JSON response
         #(sEcho iTotalRecords iTotalDisplayRecords aaData) for datatables
-        expose_stash    => [ qw(sEcho iTotalRecords iTotalDisplayRecords aaData) ],
+        expose_stash    => [ qw(sEcho iTotalRecords iTotalDisplayRecords aaData dt_custom_message) ],
     },
     'View::TT' => {
         INCLUDE_PATH => [

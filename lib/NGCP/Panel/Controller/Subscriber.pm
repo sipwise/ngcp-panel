@@ -3043,7 +3043,11 @@ sub ajax_calls :Chained('master') :PathPart('calls/ajax') :Args(0) {
                 $data{destination_user} = uri_unescape($result->destination_user);
             }
             return %data;
-        }
+        },
+        sub {
+            my ($filtered_rs) = @_;
+            return $c->loc('Total Duration: [_1]', $filtered_rs->get_column('duration')->sum || 0);
+        },
     );
 
     $c->detach( $c->view("JSON") );
