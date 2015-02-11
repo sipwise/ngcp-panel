@@ -32,6 +32,7 @@ $.extend( $.fn.dataTableExt.oStdClasses, {
 
 $(document).ready(function() {
     var date_search_rendered = 0;
+    var [% helper.id_from_name %]_tmp_footer;
     var [% helper.id_from_name %]_table = $('#[% helper.id_from_name %]_table')
         .dataTable( {
         "sDom": "<'row-fluid ngcp_dt_top_elements'lf<r>>t<'row-fluid'<'pull-left'i><'pull-right'p>>",
@@ -128,6 +129,31 @@ $(document).ready(function() {
                 "sClass": "ngcp-actions-column"
             }
         ],
+       "fnServerData": function ( sSource, aoData, fnCallback, oSettings ) {
+            oSettings.jqXHR = $.ajax( {
+                "dataType": 'json',
+                "url": sSource,
+                "data": aoData,
+                "success": function(data, textStatus, jqXHR) {
+                   if (data.dt_custom_footer) {
+                       [% helper.id_from_name %]_tmp_footer = data.dt_custom_footer;
+                   }
+                   fnCallback(data, textStatus, jqXHR);
+               }
+            } );
+        },
+        [% IF helper.show_sums -%]
+        "fnFooterCallback": function( nFoot, aData, iStart, iEnd, aiDisplay ) {
+            if ([% helper.id_from_name %]_tmp_footer) {
+                nFoot.getElementsByTagName('td')[0].innerHTML = '[% c.loc("Total") %]';
+                for (var col in [% helper.id_from_name %]_tmp_footer) {
+                    if ([% helper.id_from_name %]_tmp_footer.hasOwnProperty(col)) {
+                        nFoot.getElementsByClassName('footer-'+col)[0].innerHTML = [% helper.id_from_name %]_tmp_footer[col];
+                    }
+                }
+            }
+        },
+        [% END -%]
         "fnDrawCallback": function( oSettings ) {
                 $('.sw_actions').css('visibility','hidden');
                 $('.sw_action_row').hover(
@@ -231,6 +257,16 @@ $(document).ready(function() {
             <th class="ngcp-actions-column"></th>
         </tr>
     </thead>
+    [% IF helper.show_sums -%]
+    <tfoot>
+        <tr>
+            [% FOREACH f IN helper.column_fields -%]
+            <td class="footer-[% f %]"></td>
+            [% END -%]
+            <td></td>
+        </tr>
+    </tfoot>
+    [% END -%]
     <tbody>
         <tr class="sw_action_row">
             <td colspan="[% helper.column_titles.size + 1 %]">[% c.loc('Loading...') %]</td>
