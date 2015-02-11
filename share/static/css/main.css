@@ -206,6 +206,21 @@ table.ngcp-datatable .header {
     cursor: pointer;
 }
 
+/* tfoot styles from application header styles */
+table.ngcp-datatable tfoot td {
+    color: #FFF;
+    border-right: 1px solid #3E662C;
+    border-left: 1px solid #77B75A;
+    box-shadow: 0px 1px 0px #95C77D inset;
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+}
+
+table.ngcp-datatable tfoot tr {
+    background-color: #568D3D;
+    background-image: linear-gradient(to bottom, #5F9B43, #497734);
+    background-repeat: repeat-x;
+}
+
 table.ngcp-datatable .header:after {
   content: "";
   float: right;
