@@ -13,6 +13,8 @@ sub process {
     my $use_rs_cb = ('CODE' eq (ref $rs));
     my $aaData = [];
     my $displayRecords = 0;
+    my $aggregate_cols = {};
+    my $aggregations = {};
 
 
     # check if we need to join more tables
@@ -20,6 +22,9 @@ sub process {
     set_columns($c, $cols);
     unless ($use_rs_cb) {
         for my $col(@{ $cols }) {
+            if ($col->{show_total}) {
+                $aggregate_cols->{$col->{accessor}} = $col->{show_total};
+            }
             my @parts = split /\./, $col->{name};
             if($col->{literal_sql}) {
                $rs = $rs->search_rs(undef, {
@@ -92,6 +97,10 @@ sub process {
         }
     }
     $displayRecords = $use_rs_cb ? 0 : $rs->count;
+    for my $sum_col (keys %{ $aggregate_cols }) {
+        my $aggregation_method = $aggregate_cols->{$sum_col};
+        $aggregations->{$sum_col} = $rs->get_column($sum_col)->$aggregation_method;
+    }
 
     # show specific row on top (e.g. if we come back from a newly created entry)
     my $topId = $c->request->params->{iIdOnTop};
@@ -157,6 +166,9 @@ sub process {
         }
     }
 
+    if (keys %{ $aggregations }) {
+        $c->stash(dt_custom_footer => $aggregations);
+    }
     $c->stash(
         aaData               => $aaData,
         iTotalRecords        => $totalRecords,
@@ -261,6 +273,17 @@ __END__
 NGCP::Panel::Utils::Datatables
 
 =head1 DESCRIPTION
+
+=head2 Format of Columns
+
+Array with the following fields (preprocessed by set_columns):
+    name: String
+    search: Boolean
+    search_from_epoch: Boolean
+    search_to_epoch: Boolean
+    title: String (Should be localized)
+    show_total: String (if set, something like sum,max,...)
+
 
 =head1 METHODS
 

@@ -177,6 +177,7 @@
     helper.column_sort = 'start_time';
     helper.form_object = form;
     helper.ajax_uri = c.uri_for_action('/subscriber/ajax_calls', [c.req.captures.0]);
+    helper.show_footer = 1;
 
     IF (c.user.roles == "admin" || c.user.roles == "reseller") && c.config.features.callflow;
     helper.dt_buttons = [
