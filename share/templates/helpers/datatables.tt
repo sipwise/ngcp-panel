@@ -32,6 +32,7 @@ $.extend( $.fn.dataTableExt.oStdClasses, {
 
 $(document).ready(function() {
     var date_search_rendered = 0;
+    var [% helper.id_from_name %]_tmp_message = '';
 	var [% helper.id_from_name %]_table = $('#[% helper.id_from_name %]_table')
 	    .dataTable( {
         "sDom": "<'row-fluid ngcp_dt_top_elements'lf<r>>t<'row-fluid'<'pull-left'i><'pull-right'p>>",
@@ -128,6 +129,24 @@ $(document).ready(function() {
                 "sClass": "ngcp-actions-column"
             }
 		],
+
+
+       "fnServerData": function ( sSource, aoData, fnCallback ) {
+            $.ajax( {
+                "dataType": 'json',
+                "url": sSource,
+                "data": aoData,
+                "success": function(data, textStatus, jqXHR) {
+                   if (data.dt_custom_message) {
+                       $('#[% helper.id_from_name %]_custom_message').text(data.dt_custom_message);
+                       [% helper.id_from_name %]_tmp_message = data.dt_custom_message;
+                   }
+                   fnCallback(data, textStatus, jqXHR);
+               }
+            } );
+        },
+
+
 		"fnDrawCallback": function( oSettings ) {
                 $('.sw_actions').css('visibility','hidden');
                 $('.sw_action_row').hover(
@@ -174,6 +193,7 @@ $(document).ready(function() {
                     [% has_to = 1-%]
                   [% END -%]
                 [% END %]
+                $('#[% helper.id_from_name %]_table_wrapper .ngcp_dt_top_elements').append('<span id="[% helper.id_from_name %]_custom_message" class="pull-right ngcp-custom-message">'+[% helper.id_from_name %]_tmp_message+'</span> ');
         },
         "fnRowCallback": function(nRow, aData, iDisplayIndex) {
             nRow.className = "sw_action_row";
