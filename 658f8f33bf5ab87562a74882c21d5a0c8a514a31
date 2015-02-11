@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "9a437d4f_e39f5a4f",
+        "filename": "share/templates/helpers/datatables.tt",
+        "patchSetId": 2
+      },
+      "lineNbr": 132,
+      "author": {
+        "id": 1000009
+      },
+      "writtenOn": "2015-02-11T19:02:43Z",
+      "side": 1,
+      "message": "I see in examples through internet that internal datatables settings object (oSettings in example below) usually also is involved, like:\n\n\n\"fnServerData\": function ( sSource, aoData, fnCallback, oSettings ) {\n      oSettings.jqXHR \u003d $.ajax( {\n        \"dataType\": \u0027json\u0027, \n        \"type\": \"POST\", \n        \"url\": sSource, \n        \"data\": aoData, \n        \"success\": function(data, textStatus, jqXHR) {\n                   if (data.dt_custom_message) {\n                       $(\u0027#[% helper.id_from_name %]_custom_message\u0027).text(data.dt_custom_message);\n                       [% helper.id_from_name %]_tmp_message \u003d data.dt_custom_message;\n                   }\n                   fnCallback(data, textStatus, jqXHR);\n               }\n      } );\n\nMaybe keeping oSettings.jqXHR actual is good somehow for datatables. Not sure.r",
+      "range": {
+        "startLine": 132,
+        "startChar": 51,
+        "endLine": 132,
+        "endChar": 61
+      },
+      "revId": "658f8f33bf5ab87562a74882c21d5a0c8a514a31",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    }
+  ]
+}
