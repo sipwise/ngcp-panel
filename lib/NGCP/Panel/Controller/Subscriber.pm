@@ -2048,7 +2048,7 @@ sub master :Chained('base') :PathPart('details') :CaptureArgs(0) {
         { name => "destination_user", search => 1, title => $c->loc('Callee') },
         { name => "call_status", search => 1, title => $c->loc('Status') },
         { name => "start_time", search_from_epoch => 1, search_to_epoch => 1, title => $c->loc('Start Time') },
-        { name => "duration", search => 1, title => $c->loc('Duration') },
+        { name => "duration", search => 1, title => $c->loc('Duration'), sum => 1 },
     ];
     push @{ $call_cols }, (
         { name => "call_id", search => 1, title => $c->loc('Call-ID') },
@@ -3043,7 +3043,7 @@ sub ajax_calls :Chained('master') :PathPart('calls/ajax') :Args(0) {
                 $data{destination_user} = uri_unescape($result->destination_user);
             }
             return %data;
-        }
+        },
     );
 
     $c->detach( $c->view("JSON") );
