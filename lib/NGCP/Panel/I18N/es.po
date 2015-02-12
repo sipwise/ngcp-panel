@@ -729,7 +729,7 @@ msgstr "Botón BLF"
 #: share/templates/customer/preferences.tt:18
 #: share/templates/denied_page.tt:20 share/templates/device/list.tt:5
 #: share/templates/domain/preferences.tt:21
-#: share/templates/helpers/datatables.tt:189
+#: share/templates/helpers/datatables.tt:191
 #: share/templates/invoice/template.tt:20
 #: share/templates/peering/preferences.tt:21
 #: share/templates/reseller/branding.tt:5
@@ -1947,7 +1947,7 @@ msgstr ""
 #: share/templates/device/list.tt:175 share/templates/device/list.tt:214
 #: share/templates/device/list.tt:244 share/templates/device/list.tt:98
 #: share/templates/domain/list.tt:18 share/templates/emailtemplate/list.tt:18
-#: share/templates/helpers/datatables.tt:105
+#: share/templates/helpers/datatables.tt:106
 #: share/templates/invoice/invoice_list.tt:19
 #: share/templates/invoice/template_list.tt:19 share/templates/ncos/list.tt:18
 #: share/templates/ncos/pattern_list.tt:21
@@ -4424,7 +4424,7 @@ msgstr ""
 msgid "Load Default Files"
 msgstr ""
 
-#: share/templates/helpers/datatables.tt:233
+#: share/templates/helpers/datatables.tt:236
 msgid "Loading..."
 msgstr "Cargando..."
 
@@ -7218,7 +7218,7 @@ msgstr ""
 
 #: share/templates/billing/list.tt:17 share/templates/customer/details.tt:193
 #: share/templates/customer/details.tt:246 share/templates/customer/list.tt:19
-#: share/templates/helpers/datatables.tt:106
+#: share/templates/helpers/datatables.tt:107
 #: share/templates/reseller/details.tt:207 share/templates/reseller/list.tt:19
 #: share/templates/subscriber/list.tt:19
 msgid "Terminate"
@@ -9049,7 +9049,7 @@ msgstr "conectado -  regitrando..."
 msgid "connecting..."
 msgstr "conectando..."
 
-#: share/templates/helpers/datatables.tt:87
+#: share/templates/helpers/datatables.tt:88
 msgid "dataTables.default.js"
 msgstr "dataTables.es.js"
 
