@@ -26,14 +26,13 @@
 $.extend( $.fn.dataTableExt.oStdClasses, {
                 "sSortAsc": "header headerSortDown",
                 "sSortDesc": "header headerSortUp",
-                "sSortable": "header",
-                "sWrapper": "dataTables_wrapper form-inline",
+                "sSortable": "header"
             } );
 
 $(document).ready(function() {
     var date_search_rendered = 0;
-    var [% helper.id_from_name %]_table = $('#[% helper.id_from_name %]_table')
-        .dataTable( {
+	var [% helper.id_from_name %]_table = $('#[% helper.id_from_name %]_table')
+	    .dataTable( {
         "sDom": "<'row-fluid ngcp_dt_top_elements'lf<r>>t<'row-fluid'<'pull-left'i><'pull-right'p>>",
         "bProcessing": true,
         "bServerSide": true,
@@ -61,7 +60,7 @@ $(document).ready(function() {
         "bInfo": true,
         "iDisplayLength": 5,
         'iShowPages': 5,
-        "sAjaxSource": "[% helper.ajax_uri %]",
+		"sAjaxSource": "[% helper.ajax_uri %]",
         "fnServerParams": function ( aoData ) {
             var params = localStorage.getItem("ngcp_dt.[%helper.id_from_name%]_table.paramsJSON");
             if(params){
@@ -87,9 +86,9 @@ $(document).ready(function() {
         "oLanguage": {
             "sUrl": "/js/i18n/[% c.loc('dataTables.default.js') %]"
         },
-        "aoColumns": [
-            [% FOREACH f IN helper.column_fields -%]
-            { 
+		"aoColumns": [
+		    [% FOREACH f IN helper.column_fields -%]
+		    { 
                 "mData": "[% f %]",
                 "mRender": function ( data, type, full ) {
                     if(data == null)
@@ -97,8 +96,8 @@ $(document).ready(function() {
                     return String(data).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');//"
                 }
             },
-            [% END -%]
-            {   "mRender": function ( data, type, full ) {
+		    [% END -%]
+		    {   "mRender": function ( data, type, full ) {
                     var html = '' +
                     '<div class="sw_actions pull-right">';
                     [% backuri = backuri | uri%]
@@ -127,8 +126,8 @@ $(document).ready(function() {
                 "bSortable": false,
                 "sClass": "ngcp-actions-column"
             }
-        ],
-        "fnDrawCallback": function( oSettings ) {
+		],
+		"fnDrawCallback": function( oSettings ) {
                 $('.sw_actions').css('visibility','hidden');
                 $('.sw_action_row').hover(
                     function() { $(this).find('.sw_actions').css('visibility','visible'); },
@@ -179,37 +178,35 @@ $(document).ready(function() {
             nRow.className = "sw_action_row";
             return nRow;
         },
-    } );
+	} );
 
 } );
 </script>
 
-[% IF (!back_created) || helper.top_buttons.length -%]
-    <div class="row">
-        [% UNLESS back_created -%]
-        <span class="pull-left" style="margin:0 5px 0 5px;">
-            <a class="btn btn-primary btn-large" href="[% c.uri_for('/back') %]"><i class="icon-arrow-left"></i> [% c.loc("Back") %]</a>
-        </span>
-        [% back_created = 1 -%]
+<div class="row">
+    [% UNLESS back_created -%]
+    <span class="pull-left" style="margin:0 5px 0 5px;">
+        <a class="btn btn-primary btn-large" href="[% c.uri_for('/back') %]"><i class="icon-arrow-left"></i> [% c.loc("Back") %]</a>
+    </span>
+    [% back_created = 1 -%]
+    [% END -%]
+    [% FOR button IN helper.top_buttons -%]
+        [% IF button.method == "post" -%]
+            <form method="post" action="[% button.uri %]" style="float:left; margin:0 5px 0 5px;">
+                <button class="btn btn-primary btn-large" style="height:47px;"><i class="[% button.icon %]"></i> [% button.name %]</button>
+                <input type="hidden" name="back" value="[% c.req.uri %]"/>
+            </form>
+        [% ELSE -%]
+            <span class="pull-left" style="margin:0 5px 0 5px;">
+                [% IF button.accordion_button == 1 && loop.count == 1 -%]
+                <a class="btn btn-primary btn-large" href="[% button.uri %]" style="margin-left:25px;"><i class="[% button.icon %]"></i> [% button.name %]</a>
+                [% ELSE -%]
+                <a class="btn btn-primary btn-large" href="[% button.uri %]"><i class="[% button.icon %]"></i> [% button.name %]</a>
+                [% END -%]
+            </span>
         [% END -%]
-        [% FOR button IN helper.top_buttons -%]
-            [% IF button.method == "post" -%]
-                <form method="post" action="[% button.uri %]" style="float:left; margin:0 5px 0 5px;">
-                    <button class="btn btn-primary btn-large" style="height:47px;"><i class="[% button.icon %]"></i> [% button.name %]</button>
-                    <input type="hidden" name="back" value="[% c.req.uri %]"/>
-                </form>
-            [% ELSE -%]
-                <span class="pull-left" style="margin:0 5px 0 5px;">
-                    [% IF button.accordion_button == 1 && loop.count == 1 -%]
-                    <a class="btn btn-primary btn-large" href="[% button.uri %]" style="margin-left:25px;"><i class="[% button.icon %]"></i> [% button.name %]</a>
-                    [% ELSE -%]
-                    <a class="btn btn-primary btn-large" href="[% button.uri %]"><i class="[% button.icon %]"></i> [% button.name %]</a>
-                    [% END -%]
-                </span>
-            [% END -%]
-        [% END -%]
-    </div>
-[% END -%]
+    [% END -%]
+</div>
 
 [% IF helper.messages -%]
 <div class="row">
