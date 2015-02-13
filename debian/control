@@ -68,7 +68,6 @@ Homepage: http://sipwise.com/
 
 Package: ngcp-panel
 Architecture: all
-Pre-Depends: nginx-common
 Depends: gettext,
          gnutls-bin,
          libautodie-perl (>= 2.21~),
@@ -143,6 +142,7 @@ Depends: gettext,
          ngcp-schema,
          ngcp-sipsak,
          ngcp-templates-ce-ngcp-panel (>= 3.0.19) | ngcp-templates-pro-ngcp-panel (>= 3.0.19),
+         nginx-common,
          openssl,
          ${misc:Depends},
          ${perl:Depends}
