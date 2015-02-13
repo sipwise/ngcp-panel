@@ -198,7 +198,7 @@ div.modal-footer div.control-group div.controls div.form-actions.pull-right {
 ------------*/
 
 table.ngcp-datatable {
-    margin: 5px 0;
+    margin: 1em 0;
     clear: both;
 }
 
@@ -272,7 +272,7 @@ div.ngcp-plot {
 
 div.ngcp_dt_top_elements {
     position: relative;
-    margin-top: 5px;
+    margin-top: 10px;
 }
 
 div.ngcp_dt_top_elements > div:first-child {
@@ -296,18 +296,6 @@ div.ngcp_dt_top_elements > div:first-child + div + div {
 div.ngcp_dt_top_elements > div:first-child + div + div > div {
     margin:0 auto;
     text-align: center;
-}
-
-div.ngcp_dt_top_elements label,
-div.ngcp_dt_top_elements input,
-div.ngcp_dt_top_elements button,
-div.ngcp_dt_top_elements select,
-div.ngcp_dt_top_elements textarea {
-    font-size: 12px;  /* boostrap standard size */
-}
-
-div.ngcp_dt_top_elements input {
-    height: 18px;
 }
 
 .ngcp_current_edit td  {
