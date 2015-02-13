@@ -598,6 +598,7 @@
         .annotated img
         {
             display: block;
+            max-width: none;
         }
         .annotated a
         {
