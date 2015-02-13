@@ -184,7 +184,7 @@ $(document).ready(function() {
 } );
 </script>
 
-[% IF (!back_created) || helper.top_buttons.length -%]
+[% IF (!back_created) || helper.top_buttons.size -%]
     <div class="row">
         [% UNLESS back_created -%]
         <span class="pull-left" style="margin:0 5px 0 5px;">
