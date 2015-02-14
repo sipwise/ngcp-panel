@@ -3829,7 +3829,7 @@ msgstr "IP Header Feld"
 msgid "IP address of calling party."
 msgstr "IP Adresse des Anrufers."
 
-#: lib/NGCP/Panel/Controller/Security.pm:153
+#: lib/NGCP/Panel/Controller/Security.pm:122
 msgid "IP successfully unbanned"
 msgstr "IP erfolgreich entsperrt"
 
@@ -4944,7 +4944,7 @@ msgstr "Kurzwahl ID nicht gefunden."
 msgid "No such voicemail file."
 msgstr "Sprachnachricht nicht gefunden."
 
-#: share/templates/customer/details.tt:693
+#: share/templates/customer/details.tt:694
 msgid "None"
 msgstr ""
 
@@ -6828,7 +6828,7 @@ msgstr "Submitid"
 #: lib/NGCP/Panel/Utils/DbStrings.pm:423
 #: share/templates/customer/details.tt:278
 #: share/templates/customer/details.tt:524
-#: share/templates/customer/details.tt:657
+#: share/templates/customer/details.tt:658
 #: share/templates/subscriber/list.tt:3
 #: share/templates/subscriber/preferences.tt:10
 #: share/templates/widgets/admin_reseller_overview.tt:14
@@ -8584,7 +8584,7 @@ msgstr "User Agent"
 msgid "User or number to rewrite"
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/Security.pm:187
+#: lib/NGCP/Panel/Controller/Security.pm:156
 msgid "User successfully unbanned"
 msgstr "Benutzer erfolgreich entsperrt"
 

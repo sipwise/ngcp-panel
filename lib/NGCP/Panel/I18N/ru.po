@@ -3830,7 +3830,7 @@ msgstr "Поле SIP заголовка несущее IP источника п�
 msgid "IP address of calling party."
 msgstr "IP адрес звонящей стороны"
 
-#: lib/NGCP/Panel/Controller/Security.pm:153
+#: lib/NGCP/Panel/Controller/Security.pm:122
 msgid "IP successfully unbanned"
 msgstr "IP успешно разбанен"
 
@@ -4943,7 +4943,7 @@ msgstr "Данный id быстрого набора не найден."
 msgid "No such voicemail file."
 msgstr "Нету такого файла голосовой почты."
 
-#: share/templates/customer/details.tt:693
+#: share/templates/customer/details.tt:694
 msgid "None"
 msgstr ""
 
@@ -6836,7 +6836,7 @@ msgstr "Идентификатор"
 #: lib/NGCP/Panel/Utils/DbStrings.pm:423
 #: share/templates/customer/details.tt:278
 #: share/templates/customer/details.tt:524
-#: share/templates/customer/details.tt:657
+#: share/templates/customer/details.tt:658
 #: share/templates/subscriber/list.tt:3
 #: share/templates/subscriber/preferences.tt:10
 #: share/templates/widgets/admin_reseller_overview.tt:14
@@ -8601,7 +8601,7 @@ msgstr "Устройство пользователя"
 msgid "User or number to rewrite"
 msgstr "Пользователь или номер для перезаписи"
 
-#: lib/NGCP/Panel/Controller/Security.pm:187
+#: lib/NGCP/Panel/Controller/Security.pm:156
 msgid "User successfully unbanned"
 msgstr "Пользователь успешно разблокирован"
 
