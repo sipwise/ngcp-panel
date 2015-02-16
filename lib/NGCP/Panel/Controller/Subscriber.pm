@@ -3051,8 +3051,6 @@ sub ajax_calls :Chained('master') :PathPart('calls/ajax') :Args(0) {
 }
 sub ajax_call_details :Chained('master') :PathPart('calls/ajax') :Args(1) {
     my ($self, $c, $call_id) = @_;
-    #my $decoder = URI::Encode->new;
-    #$call_id = $decoder->decode($call_id);# =~ s/_b2b-1$//r;
     my $call = $c->model('DB')->resultset('cdr')->search_rs({
         id => $call_id,
     });

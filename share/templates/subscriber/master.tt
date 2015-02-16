@@ -201,11 +201,14 @@ function showCallDetails(callId){
     helper.form_object = form;
     helper.ajax_uri = c.uri_for_action('/subscriber/ajax_calls', [c.req.captures.0]);
 
-    IF (c.user.roles == "admin" || c.user.roles == "reseller") && c.config.features.callflow;
+    IF (c.user.roles == "admin" || c.user.roles == "reseller");
+        IF c.config.features.callflow;
     helper.dt_buttons = [
         { name = c.loc('Call Flow'), uri = "/callflow/'+encodeURIComponent(full.call_id)+'/callmap", class = 'btn-small btn-primary', icon = 'icon-random' },
-        { name = c.loc('Call Details'), uri = "javascript:showCallDetails(\\''+encodeURIComponent(full.id)+'\\');void(0);" , class = 'btn-small btn-primary', icon = 'icon-edit' },
     ];
+        END;
+    details_button = { name = c.loc('Call Details'), uri = "javascript:showCallDetails(\\''+encodeURIComponent(full.id)+'\\');void(0);" , class = 'btn-small btn-primary', icon = 'icon-edit' };
+    helper.dt_buttons.push( details_button );
     END;
 
     PROCESS 'helpers/datatables.tt';
