@@ -39,6 +39,30 @@
       "revId": "f1e3602b3eb54c622ef49872f62758f375b9187c",
       "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9a437d4f_24b9e8e9",
+        "filename": "share/templates/subscriber/master.tt",
+        "patchSetId": 1
+      },
+      "lineNbr": 204,
+      "author": {
+        "id": 1000009
+      },
+      "writtenOn": "2015-02-16T12:59:38Z",
+      "side": 1,
+      "message": "No, thank you a lot!",
+      "parentUuid": "9a437d4f_241448f4",
+      "range": {
+        "startLine": 204,
+        "startChar": 37,
+        "endLine": 204,
+        "endChar": 41
+      },
+      "revId": "f1e3602b3eb54c622ef49872f62758f375b9187c",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
     }
   ]
 }
