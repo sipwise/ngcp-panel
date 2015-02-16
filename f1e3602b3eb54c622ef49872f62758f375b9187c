@@ -1,0 +1,44 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "9a437d4f_04f944c8",
+        "filename": "lib/NGCP/Panel/Controller/Subscriber.pm",
+        "patchSetId": 1
+      },
+      "lineNbr": 3055,
+      "author": {
+        "id": 1000005
+      },
+      "writtenOn": "2015-02-16T12:27:18Z",
+      "side": 1,
+      "message": "I guess its obsolete on the id?",
+      "revId": "f1e3602b3eb54c622ef49872f62758f375b9187c",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9a437d4f_241448f4",
+        "filename": "share/templates/subscriber/master.tt",
+        "patchSetId": 1
+      },
+      "lineNbr": 204,
+      "author": {
+        "id": 1000005
+      },
+      "writtenOn": "2015-02-16T12:27:18Z",
+      "side": 1,
+      "message": "Is it intended to make this depend on the callflow feature?",
+      "range": {
+        "startLine": 204,
+        "startChar": 37,
+        "endLine": 204,
+        "endChar": 41
+      },
+      "revId": "f1e3602b3eb54c622ef49872f62758f375b9187c",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    }
+  ]
+}
