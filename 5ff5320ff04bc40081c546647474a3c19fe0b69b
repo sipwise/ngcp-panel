@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "9a437d4f_e4f40089",
+        "filename": "lib/NGCP/Panel/Utils/Datatables.pm",
+        "patchSetId": 4
+      },
+      "lineNbr": 102,
+      "author": {
+        "id": 1000009
+      },
+      "writtenOn": "2015-02-16T16:05:48Z",
+      "side": 1,
+      "message": "Just as idea for future - it will be more universal to name this parameter something like \"aggregation\" and pass aggregation type as value, so column definition will look like:\n\n{ name \u003d\u003e \"duration\", search \u003d\u003e 1, title \u003d\u003e $c-\u003eloc(\u0027Duration\u0027), aggregation \u003d\u003e sum },\n\n\nas other possible aggregation can be count, max, min, you know - any which DBIx allow",
+      "range": {
+        "startLine": 100,
+        "startChar": 0,
+        "endLine": 102,
+        "endChar": 5
+      },
+      "revId": "5ff5320ff04bc40081c546647474a3c19fe0b69b",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9a437d4f_046dc432",
+        "filename": "share/templates/subscriber/master.tt",
+        "patchSetId": 4
+      },
+      "lineNbr": 189,
+      "author": {
+        "id": 1000009
+      },
+      "writtenOn": "2015-02-16T16:05:48Z",
+      "side": 1,
+      "message": "Maybe we can add this to the end of the helpers/datatables.tt?To don\u0027t clean up values everytime",
+      "range": {
+        "startLine": 189,
+        "startChar": 4,
+        "endLine": 189,
+        "endChar": 25
+      },
+      "revId": "5ff5320ff04bc40081c546647474a3c19fe0b69b",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    }
+  ]
+}
