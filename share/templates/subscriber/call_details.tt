@@ -1,0 +1,5 @@
+<ul> 
+[% FOREACH key IN call.keys().sort(); %]
+    <li class="calldetails"><span class="calldetails_title">[% key %]</span> <span class="calldetails_value">[%call.${key}%]</span></li>
+[% END -%]
+</ul>

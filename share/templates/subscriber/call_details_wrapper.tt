@@ -1,0 +1,37 @@
+<style>
+#call_details{
+    display:none;
+    position:absolute;
+    top:150px;
+    left:700px;
+    width: 450px;
+    height: 700px;   
+}   
+.calldetails_title{
+    font-weight:bold;
+    font-style:italic;
+}
+.calldetails_value{
+    font-weight:bold;
+    margin-right:12px;
+    float: right;
+}
+li.calldetails{
+    border-bottom: 1px solid #444444;
+}
+</style>
+<div id="call_details" class="modal ngcp-modal">
+    <div class="modal-header">
+        <h3>[%c.loc('Call details')%]
+        <button type="button" class="close mod_close">×</button>
+        </h3>
+    </div>
+    <div style="overflow:auto;height:85%;" id="call_details_container">
+
+[%PROCESS 'subscriber/call_details.tt' %]
+
+    </div>
+    <div class="modal-footer">
+        <a class="mod_close btn btn-primary btn-small">[%c.loc('Close')%]</a>
+    </div>
+</div>
