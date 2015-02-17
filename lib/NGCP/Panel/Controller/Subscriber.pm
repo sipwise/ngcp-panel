@@ -2044,6 +2044,7 @@ sub master :Chained('base') :PathPart('details') :CaptureArgs(0) {
     my ($self, $c) = @_;
 
     my $call_cols = [
+        { name => "id", title => $c->loc('#')  },
         { name => "source_user", search => 1, title => $c->loc('Caller') },
         { name => "destination_user", search => 1, title => $c->loc('Callee') },
         { name => "call_status", search => 1, title => $c->loc('Status') },
@@ -3030,6 +3031,16 @@ sub ajax_calls :Chained('master') :PathPart('calls/ajax') :Args(0) {
     );
 
     $c->detach( $c->view("JSON") );
+}
+sub ajax_call_details :Chained('master') :PathPart('calls/ajax') :Args(1) {
+    my ($self, $c, $call_id) = @_;
+    my $call = $c->model('DB')->resultset('cdr')->search_rs({
+        id => $call_id,
+    });
+    $c->stash( 
+        template => 'subscriber/call_details.tt',
+        call     => { $call->first->get_inflated_columns } );
+    $c->detach( $c->view('TT') );
 }
 
 sub ajax_registered :Chained('master') :PathPart('registered/ajax') :Args(0) {
