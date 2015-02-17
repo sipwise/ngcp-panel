@@ -164,13 +164,36 @@
         ((c.user.roles == 'admin' || c.user.roles == 'reseller') && c.user.call_data) ||
         c.user.roles == 'subscriberadmin'
     -%]
+
+    <script type="text/javascript" src="/js/background.js"></script>
+<script>
+function showCallDetails(callId){
+    var divId = 'call_details';
+    var uri = '[%c.uri_for_action('/subscriber/ajax_call_details', [c.req.captures.0, 'call_id'])%]';
+    uri=uri.replace('call_id', callId);
+    fetch_into(
+        'call_details_container',
+        uri,
+        '',
+        function(){ 
+            $('#'+divId).draggable({
+                handle: '.modal-header',
+                cursor: 'crosshair',
+            }).css('display','block').find($('.mod_close')).click(function(event) {
+                $('#'+divId).css('display','none');
+            });
+        }
+    );
+}
+</script>
     <div class="accordion-group">
         <div class="accordion-heading">
             <a class="accordion-toggle" data-toggle="collapse" data-parent="#subscriber_data" href="#collapse_calls">[% c.loc('Call History') %]</a>
         </div>
         <div class="accordion-body collapse" id="collapse_calls">
             <div class="accordion-inner">
-            
+
+[%PROCESS 'subscriber/call_details_wrapper.tt' %]  
 [%
     helper.name = 'Calls';
     helper.dt_columns = calls_dt_columns;
@@ -179,10 +202,14 @@
     helper.ajax_uri = c.uri_for_action('/subscriber/ajax_calls', [c.req.captures.0]);
     helper.show_footer = 1;
 
-    IF (c.user.roles == "admin" || c.user.roles == "reseller") && c.config.features.callflow;
+    IF (c.user.roles == "admin" || c.user.roles == "reseller");
+        IF c.config.features.callflow;
     helper.dt_buttons = [
         { name = c.loc('Call Flow'), uri = "/callflow/'+encodeURIComponent(full.call_id)+'/callmap", class = 'btn-small btn-primary', icon = 'icon-random' },
     ];
+        END;
+    details_button = { name = c.loc('Call Details'), uri = "javascript:showCallDetails(\\''+encodeURIComponent(full.id)+'\\');void(0);" , class = 'btn-small btn-primary', icon = 'icon-edit' };
+    helper.dt_buttons.push( details_button );
     END;
 
     PROCESS 'helpers/datatables.tt';
