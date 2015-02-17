@@ -11,7 +11,6 @@
     <span class="pull-left" style="margin:0 5px 0 5px;">
         <a class="btn btn-primary btn-large" href="[% c.uri_for('/back') %]"><i class="icon-arrow-left"></i> [% c.loc('Back') %]</a>
         <a class="btn btn-primary btn-large" href="[% c.uri_for_action('/subscriber/preferences', [ subscriber.id ]) %]"><i class="icon-list"></i> [% c.loc('Preferences') %]</a>
-        <a class="btn btn-primary btn-large" href="[% c.uri_for_action('/subscriber/calllist', [subscriber.id]) %]"><i class="icon-list"></i> [% c.loc('Calls history') %]</a>
         <a class="btn btn-primary btn-large" href="[% c.uri_for_action('/customer/details', [ subscriber.contract_id ]) %]"><i class="icon-user"></i> [% c.loc('Customer') %]</a>
     </span>
 </div>
@@ -86,6 +85,17 @@
                             IF (c.user.roles == "admin" || c.user.roles == "reseller") && c.user.show_passwords;
                                 elements.push({ value = subscriber.provisioning_voip_subscriber.password, desc = c.loc('SIP Password') });
                             END;
+                            IF subscriber.provisioning_voip_subscriber.voip_pbx_groups.count;
+                                group_subs = subscriber.provisioning_voip_subscriber.voip_pbx_groups.all;
+                                group_str = '';
+                                FOR group IN group_subs;
+                                    group_str = group_str _ group.group.username;
+                                    IF !loop.last;
+                                        group_str = group_str _ '<br/>';
+                                    END;
+                                END;
+                                elements.push({ value = group_str, desc = c.loc('PBX Groups') });
+                            END;
                             IF c.user.roles == "admin" || c.user.roles == "reseller";
                                 elements.push({ value = subscriber.provisioning_voip_subscriber.admin ? 'yes' : 'no', desc = c.loc('Administrative') });
                                 elements.push({ value = subscriber.external_id, desc = c.loc('External #')});
@@ -97,7 +107,7 @@
                         [% FOR elem IN elements -%]
                             <tr>
                                 <td>[% elem.desc %]</td>
-                                <td>[% elem.value | html %]</td>
+                                <td>[% elem.value %]</td>
                             </tr>
                         [% END -%]
                         <tr>
@@ -155,34 +165,57 @@
         c.user.roles == 'subscriberadmin'
     -%]
 
-
-
+    <script type="text/javascript" src="/js/background.js"></script>
 <script>
-function process_pbx_items(moveId,direction){
-    var uri = '[%c.uri_for_action('/subscriber/order_pbx_items', [subscriber.id], 'move'=> 'moveId', 'where' => 'direction')%]';
-    uri=uri.replace('moveId', moveId);
-    uri=uri.replace('direction', direction);
+function showCallDetails(callId){
+    var divId = 'call_details';
+    var uri = '[%c.uri_for_action('/subscriber/ajax_call_details', [c.req.captures.0, 'call_id'])%]';
+    uri=uri.replace('call_id', callId);
     fetch_into(
-        'pbx_group_items',
+        'call_details_container',
         uri,
         '',
         function(){ 
-            mainWrapperInit();
+            $('#'+divId).draggable({
+                handle: '.modal-header',
+                cursor: 'crosshair',
+            }).css('display','block').find($('.mod_close')).click(function(event) {
+                $('#'+divId).css('display','none');
+            });
         }
     );
 }
 </script>
     <div class="accordion-group">
         <div class="accordion-heading">
-            <a class="accordion-toggle" data-toggle="collapse" data-parent="#subscriber_data" href="#collapse_pbx_group_items">[%IF subscriber.provisioning_voip_subscriber.is_pbx_group; c.loc('Group members'); ELSE; c.loc('Groups'); END%]</a>
+            <a class="accordion-toggle" data-toggle="collapse" data-parent="#subscriber_data" href="#collapse_calls">[% c.loc('Call History') %]</a>
         </div>
-        <div class="accordion-body collapse" id="collapse_pbx_group_items">
-            <div class="accordion-inner" id="pbx_group_items">
-[%PROCESS 'subscriber/pbx_group_items.tt' %]  
+        <div class="accordion-body collapse" id="collapse_calls">
+            <div class="accordion-inner">
+
+[%PROCESS 'subscriber/call_details_wrapper.tt' %]  
+[%
+    helper.name = 'Calls';
+    helper.dt_columns = calls_dt_columns;
+    helper.column_sort = 'start_time';
+    helper.form_object = form;
+    helper.ajax_uri = c.uri_for_action('/subscriber/ajax_calls', [c.req.captures.0]);
+
+    IF (c.user.roles == "admin" || c.user.roles == "reseller");
+        IF c.config.features.callflow;
+    helper.dt_buttons = [
+        { name = c.loc('Call Flow'), uri = "/callflow/'+encodeURIComponent(full.call_id)+'/callmap", class = 'btn-small btn-primary', icon = 'icon-random' },
+    ];
+        END;
+    details_button = { name = c.loc('Call Details'), uri = "javascript:showCallDetails(\\''+encodeURIComponent(full.id)+'\\');void(0);" , class = 'btn-small btn-primary', icon = 'icon-edit' };
+    helper.dt_buttons.push( details_button );
+    END;
+
+    PROCESS 'helpers/datatables.tt';
+%]
             </div>
         </div>
     </div>
-    
     [% END -%]
 
 

@@ -2083,6 +2083,7 @@ sub load_preference_list :Private {
 sub master :Chained('base') :PathPart('details') :CaptureArgs(0) {
     my ($self, $c) = @_;
 
+        { name => "id", title => $c->loc('#')  },
     $c->stash->{vm_dt_columns} = NGCP::Panel::Utils::Datatables::set_columns($c, [
         { name => "id", search => 1, title => $c->loc('#') },
         { name => "read", search => 1, title => $c->loc('Read'), literal_sql => 'if(dir like "%/INBOX", "new", "read")' },
@@ -3119,6 +3120,16 @@ sub ajax_calls :Chained('calllist_master') :PathPart('ajax') :Args(0) {
     );
 
     $c->detach( $c->view("JSON") );
+}
+sub ajax_call_details :Chained('master') :PathPart('calls/ajax') :Args(1) {
+    my ($self, $c, $call_id) = @_;
+    my $call = $c->model('DB')->resultset('cdr')->search_rs({
+        id => $call_id,
+    });
+    $c->stash( 
+        template => 'subscriber/call_details.tt',
+        call     => { $call->first->get_inflated_columns } );
+    $c->detach( $c->view('TT') );
 }
 sub ajax_call_details :Chained('master') :PathPart('calls/ajax') :Args(1) {
     my ($self, $c, $call_id) = @_;
