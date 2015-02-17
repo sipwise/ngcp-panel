@@ -11,9 +11,9 @@ my $test = NGCP::Panel::Utils::DialogicImg->new(
     server      => 'https://10.15.20.150',
     clientattrs => { 
     	timeout => 5,
-    	SSL_options => {
-    		SSL_version => 'SSLv23:!SSLv2:!SSLv3:!TLSv1_1:!TLSv1_2',
-    		},
+    	# SSL_options => {
+    	# 	SSL_version => 'SSLv23:!SSLv2:!SSLv3:!TLSv1_1:!TLSv1_2',
+    	# },
 	},
 );
 
@@ -46,15 +46,43 @@ print "LOGGED IN, LOCK OBTAINED ############################\n";
 # #p $resp->data;
 
 $resp = $test->create_bn2020;
-p $resp;
+p $resp->code;
 #p $resp->data;
 
 
 print "CREATE NETWORK ###################################\n";
 
 $resp = $test->create_network;
-p $resp;
-p $resp->data;
+p $resp->code;
+#p $resp->data;
+
+print "CREATE INTERFACE COLLECTION ###################################\n";
+
+$resp = $test->create_interface_collection;
+p $resp->code;
+#p $resp->data;
+
+print "CREATE INTERFACE ###################################\n";
+
+$resp = $test->create_interface;  # Control by default
+p $resp->code;
+#p $resp->data;
+
+$resp = $test->create_ip_address({
+		NIIPAddress => '10.2.3.4',
+		NIIPPhy => 'Services',
+	});
+p $resp->code;
+#p $resp->data;
+
+$resp = $test->create_interface;  # DataA
+p $resp->code;
+#p $resp->data;
+
+$resp = $test->create_ip_address({NIIPAddress => '10.6.7.8',
+	NIIPPhy => 'Media 0'});
+p $resp->code;
+#p $resp->data;
 
 
 sub try_parse_file {

@@ -32,13 +32,19 @@ package NGCP::Panel::Utils::DialogicImg;
 use strict;
 use warnings;
 use Moo;
-use Types::Standard qw(Int);
+use Types::Standard qw(Int HashRef);
 use HTTP::Tiny;
 with 'Role::REST::Client';    # TODO: dependency
 
 has '+type' => ( default => 'application/xml', is => 'rw' );
 has '+serializer_class' => ( is => 'rw', default => sub {'My::Serializer::Plain'} );
 has 'appid' => ( is => 'rw', isa => Int, default => 0 );
+has 'pids' => (is => 'rw', isa => HashRef, default => sub {return {
+        bn2020 => 10001, # defaults (should be overwritten)
+        network => 10002,
+        interface_collection => 10003,
+        interface => 10004,
+    };});
 
 sub login {
     my ( $self, $username, $password ) = @_;
@@ -71,35 +77,130 @@ sub create_bn2020 {
             . $self->appid,
         $data
     );
+    if ($resp->code == 200) {
+        $self->pids->{bn2020} = $resp->data->{oid};
+    }
     return $resp;
 }
 
 sub create_network {
     my ($self) = @_;
     my $data = $self->objects->{bn2020};
+    my $pid = $self->pids->{bn2020};
+    my $appid = $self->appid;
     my $resp = $self->get(
-        '/oamp/configuration/objects/NetworkInterfaces/NULL?pid=10001&appid='
-            . $self->appid,
+        "/oamp/configuration/objects/NetworkInterfaces/NULL?pid=$pid&appid=$appid",
     );
     return $resp if ($resp->code != 200);
-    my $new_resp = $self->_build_response_data($resp->data);
+    my $new_resp = $self->_build_response_data($resp->data, $pid);
     $resp = $self->post(
-        '/oamp/configuration/objects/NetworkInterfaces/NULL?pid=10001&appid='
-            . $self->appid,
+        "/oamp/configuration/objects/NetworkInterfaces/NULL?pid=$pid&appid=$appid",
         $new_resp,
     );
-    
+    if ($resp->code == 200) {
+        $self->pids->{network} = $resp->data->{oid};
+    }
     return $resp;
 }
 
+sub create_interface_collection {
+    my ($self) = @_;
+
+    my $data = $self->objects->{bn2020};
+    my $pid = $self->pids->{network};
+    my $appid = $self->appid;
+    my $resp = $self->get(
+        "/oamp/configuration/objects/NetworkLogicalInterfaces/NULL?detaillevel=4&pid=$pid&appid=$appid",
+    );
+    if ($resp->code != 200) {
+        warn "Failed to fetch resource\n";
+        return $resp;
+    }
+    my $new_resp = $self->_build_response_data($resp->data, $pid);
+    $resp = $self->post(
+        "/oamp/configuration/objects/NetworkLogicalInterfaces/NULL?pid=$pid&appid=$appid",
+        $new_resp,
+    );
+    if ($resp->code == 200) {
+        $self->pids->{interface_collection} = $resp->data->{oid};
+    }
+    return $resp;
+}
+
+sub create_interface {
+    my ($self) = @_;
+
+    my $data = $self->objects->{bn2020};
+    my $pid = $self->pids->{interface_collection};
+    my $appid = $self->appid;
+    my $resp = $self->get(
+        "/oamp/configuration/objects/NetworkLogicalInterface/NULL?detaillevel=4&pid=$pid&appid=$appid",
+    );
+    if ($resp->code != 200) {
+        warn "Failed to fetch resource\n";
+        return $resp;
+    }
+    my $new_resp = $self->_build_response_data($resp->data, $pid);
+    $resp = $self->post(
+        "/oamp/configuration/objects/NetworkLogicalInterface/NULL?pid=$pid&appid=$appid",
+        $new_resp,
+    );
+    if ($resp->code == 200) {
+        if ($resp->data->{property}{Interface}{value} eq "Control") {
+            $self->pids->{interface_control} = $resp->data->{oid};
+        } elsif ($resp->data->{property}{Interface}{value} eq "Data A") {
+            $self->pids->{interface_dataa} = $resp->data->{oid};
+        }
+        $self->pids->{interface} = $resp->data->{oid};
+
+    }
+    return $resp;
+}
+
+#TODO: only supports ipv4 now
+sub create_ip_address {
+    my ($self, $options) = @_;
+
+    if (defined $options->{NIIPAddress} && ! defined $options->{NIIPGateway} ) {
+        $options->{NIIPGateway} = $options->{NIIPAddress} =~ s/\.[0-9]+$/.1/r;
+    }
+    my $data = $self->objects->{bn2020};
+    my $pid = $self->pids->{interface};
+    my $appid = $self->appid;
+    my $resp = $self->get(
+        "/oamp/configuration/objects/NetworkInterface/NULL?detaillevel=4&pid=$pid&appid=$appid",
+    );
+    if ($resp->code != 200) {
+        warn "Failed to fetch resource\n";
+        return $resp;
+    }
+    my $new_resp = $self->_build_response_data($resp->data, $pid, $options);
+    $resp = $self->post(
+        "/oamp/configuration/objects/NetworkInterface/NULL?pid=$pid&appid=$appid",
+        $new_resp,
+    );
+    if ($resp->code == 200) {
+        $self->pids->{interface} = $resp->data->{oid};
+    }
+    return $resp;
+}
+
+
 sub _build_response_data {
-    my ($self, $req) = @_;
+    my ($self, $req, $pid, $options) = @_;
     my $resp = {
-        pid => 10001,
+        pid => $pid,
         property => {},
     };
     for my $p(keys %{ $req->{property} }) {
+        next if "_state_" eq $p;
+        next if $req->{property}{$p}{visible} eq "__NULL__"; # TODO: that's SwitchOver
+        next if ($req->{property}{$p}{readonly} eq "True") &&
+                ($req->{property}{$p}{visible} eq "true");
         $resp->{property}{$p} = {configuredvalue => $req->{property}{$p}{value}};
+        if (defined $options->{$p}) {
+            $resp->{property}{$p}{configuredvalue} = $options->{$p};
+        }
     }
     return $resp;
 }
