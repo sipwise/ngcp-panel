@@ -2,7 +2,6 @@ use strict;
 use warnings;
 
 {
-
     package My::Serializer::Plain;
     use Moo;
     extends 'Role::REST::Client::Serializer';
@@ -35,8 +34,12 @@ use HTTP::Tiny;
 with 'Role::REST::Client';    # TODO: dependency
 
 has '+type' => ( default => 'application/xml', is => 'rw' );
-has '+serializer_class' =>
-    ( is => 'rw', default => sub {'My::Serializer::Plain'} );
+has '+serializer_options' => (default => sub {
+        my $s = Data::Serializer::Raw->new(
+            serializer => 'XML::Simple',
+            options    => { RootName => 'object' } );
+        return { serializer  => $s };
+    });
 has 'appid' => ( is => 'rw', isa => Int, default => 0 );
 has 'pids' => (
     is      => 'rw',
@@ -329,7 +332,232 @@ sub create_sip_ip {
     return $resp;
 }
 
+sub create_profile_collection {
+    my ( $self, $options ) = @_;
+
+    my $pid   = 10000;
+    my $appid = $self->appid;
+    my $resp  = $self->get(
+        "/oamp/configuration/objects/Profiles/NULL?detaillevel=4&pid=$pid&appid=$appid",
+    );
+    if ( $resp->code != 200 ) {
+        warn "Failed to fetch resource\n";
+        return $resp;
+    }
+    my $new_resp = $self->_build_response_data( $resp->data, $pid, $options );
+    $resp = $self->post(
+        "/oamp/configuration/objects/Profiles/NULL?pid=$pid&appid=$appid",
+        $new_resp,
+    );
+    if ( $resp->code == 200 ) {
+        $self->pids->{profile_collection} = $resp->data->{oid};
+    }
+    return $resp;
+}
+
+sub create_ip_profile_collection {
+    my ( $self, $options ) = @_;
+
+    my $pid   = $self->pids->{profile_collection};
+    my $appid = $self->appid;
+    my $resp  = $self->get(
+        "/oamp/configuration/objects/IPProfiles/NULL?detaillevel=4&pid=$pid&appid=$appid",
+    );
+    if ( $resp->code != 200 ) {
+        warn "Failed to fetch resource\n";
+        return $resp;
+    }
+    my $new_resp = $self->_build_response_data( $resp->data, $pid, $options );
+    $resp = $self->post(
+        "/oamp/configuration/objects/IPProfiles/NULL?pid=$pid&appid=$appid",
+        $new_resp,
+    );
+    if ( $resp->code == 200 ) {
+        $self->pids->{ip_profile_collection} = $resp->data->{oid};
+    }
+    return $resp;
+}
+
+sub create_ip_profile {
+    my ( $self, $options ) = @_;
+
+    my $pid   = $self->pids->{ip_profile_collection};
+    my $appid = $self->appid;
+    my $resp  = $self->get(
+        "/oamp/configuration/objects/IPProfile/NULL?detaillevel=4&pid=$pid&appid=$appid",
+    );
+    if ( $resp->code != 200 ) {
+        warn "Failed to fetch resource\n";
+        return $resp;
+    }
+    my $new_resp = $self->_build_response_data( $resp->data, $pid, $options );
+    $resp = $self->post(
+        "/oamp/configuration/objects/IPProfile/NULL?pid=$pid&appid=$appid",
+        $new_resp,
+    );
+    if ( $resp->code == 200 ) {
+        $self->pids->{ip_profile} = $resp->data->{oid};
+    }
+    return $resp;
+}
+
+sub create_vocoder_profile {
+    my ( $self, $options ) = @_;
+
+    my $pid   = $self->pids->{ip_profile};
+    my $appid = $self->appid;
+    my $enc_data =  $self->_urlencode_data($options);
+    my $resp  = $self->get(
+        "/oamp/configuration/objects/VocoderProfile/NULL?detaillevel=4&pid=$pid&appid=$appid&$enc_data",
+    );
+    if ( $resp->code != 200 ) {
+        warn "Failed to fetch resource second time (revalidate)\n";
+        return $resp;
+    }
+    my $validation_data = $self->_build_validation_data( $resp->data, $pid, $options );
+    $resp = $self->get(
+        "/oamp/configuration/objects/VocoderProfile/NULL",
+        $validation_data,
+    );
+    my $new_data = $self->_build_response_data( $resp->data, $pid, $options );
+    $resp = $self->post(
+        "/oamp/configuration/objects/VocoderProfile/NULL?pid=$pid&appid=$appid",
+        $new_data,
+    );
+    if ( $resp->code == 200 ) {
+        $self->pids->{vocoder_profile} = $resp->data->{oid};
+    }
+    return $resp;
+}
+
+sub create_sip_profile_collection {
+    my ( $self, $options ) = @_;
+
+    my $pid   = $self->pids->{profile_collection};
+    my $appid = $self->appid;
+    my $resp  = $self->get(
+        "/oamp/configuration/objects/SIPProfiles/NULL?detaillevel=4&pid=$pid&appid=$appid",
+    );
+    if ( $resp->code != 200 ) {
+        warn "Failed to fetch resource\n";
+        return $resp;
+    }
+    my $new_resp = $self->_build_response_data( $resp->data, $pid, $options );
+    $resp = $self->post(
+        "/oamp/configuration/objects/SIPProfiles/NULL?pid=$pid&appid=$appid",
+        $new_resp,
+    );
+    if ( $resp->code == 200 ) {
+        $self->pids->{sip_profile_collection} = $resp->data->{oid};
+    }
+    return $resp;
+}
+
+sub create_sip_profile {
+    my ( $self, $options ) = @_;
+
+    my $pid   = $self->pids->{sip_profile_collection};
+    my $appid = $self->appid;
+    my $resp  = $self->get(
+        "/oamp/configuration/objects/SIPSGP/NULL?detaillevel=4&pid=$pid&appid=$appid",
+    );
+    if ( $resp->code != 200 ) {
+        warn "Failed to fetch resource\n";
+        return $resp;
+    }
+    my $new_data = $self->_build_response_data( $resp->data, $pid, $options );
+    $resp = $self->post(
+        "/oamp/configuration/objects/SIPSGP/NULL?pid=$pid&appid=$appid",
+        $new_data,
+    );
+    if ( $resp->code == 200 ) {
+        $self->pids->{sip_profile} = $resp->data->{oid};
+    }
+    return $resp;
+}
+
+sub create_routing_configuration {
+    my ($self) = @_;
+
+    my $pid   = 10_000;
+    my $appid = $self->appid;
+    my $resp  = $self->get(
+        "/oamp/configuration/objects/RoutingConfiguration/NULL?detaillevel=4&pid=$pid&appid=$appid",
+    );
+    if ( $resp->code != 200 ) {
+        warn "Failed to fetch resource\n";
+        return $resp;
+    }
+    my $new_data = $self->_build_response_data( $resp->data, $pid );
+    $resp = $self->post(
+        "/oamp/configuration/objects/RoutingConfiguration/NULL?pid=$pid&appid=$appid",
+        $new_data,
+    );
+    if ( $resp->code == 200 ) {
+        $self->pids->{routing_configuration} = $resp->data->{oid};
+    }
+    return $resp;
+}
+
+sub create_channel_group_collection {
+    my ($self) = @_;
+
+    my $pid   = $self->pids->{routing_configuration};
+    my $appid = $self->appid;
+    my $resp  = $self->get(
+        "/oamp/configuration/objects/ChannelGroups/NULL?detaillevel=4&pid=$pid&appid=$appid",
+    );
+    if ( $resp->code != 200 ) {
+        warn "Failed to fetch resource\n";
+        return $resp;
+    }
+    my $new_data = $self->_build_response_data( $resp->data, $pid );
+    $resp = $self->post(
+        "/oamp/configuration/objects/ChannelGroups/NULL?pid=$pid&appid=$appid",
+        $new_data,
+    );
+    if ( $resp->code == 200 ) {
+        $self->pids->{channel_group_collection} = $resp->data->{oid};
+    }
+    return $resp;
+}
+
+sub create_channel_group {
+    my ($self, $options) = @_;
+
+    my $pid   = $self->pids->{channel_group_collection};
+    my $appid = $self->appid;
+    my $resp  = $self->get(
+        "/oamp/configuration/objects/ChannelGroup/NULL?detaillevel=4&pid=$pid&appid=$appid",
+    );
+    if ( $resp->code != 200 ) {
+        warn "Failed to fetch resource\n";
+        return $resp;
+    }
+    my $new_data = $self->_build_response_data( $resp->data, $pid, $options);
+    $resp = $self->post(
+        "/oamp/configuration/objects/ChannelGroup/NULL?pid=$pid&appid=$appid",
+        $new_data,
+    );
+    if ( $resp->code == 200 ) {
+        $self->pids->{channel_group} = $resp->data->{oid};
+    }
+    return $resp;
+}
+
 ### OTHER STUFF ###
+
+sub download_profiles {
+    my ($self) = @_;
+
+    my $appid = $self->appid;
+    my $pid = $self->pids->{profile_collection};
+    $self->set_header( 'Content-Length' => '0', );
+    my $resp = $self->put(
+        "/oamp/configuration/objects/Profiles/$pid/provisions/Cached?appid=$appid&sync_key=0",
+    );
+    return $resp;
+}
 
 #delete all children of bn2020 but not the node itself
 sub delete_all_bn2020 {
@@ -344,7 +572,7 @@ sub delete_all_bn2020 {
         warn "failed to get objects\n";
         return $resp;
     }
-    my $root = $resp->data->{object}[0]{object}; #bn2020
+    my $root = $resp->data->{object}[0]; #bn2020
     for my $ch (_get_all_children($root)) {
         $self->_recursive_delete($ch);
     }
@@ -373,6 +601,7 @@ sub _recursive_delete {
     for my $ch (_get_all_children($node)) {
         $self->_recursive_delete($ch);
     }
+    return if $classname eq "Node"; # don't delete the bn2020 object (causes reboot)
     my $path = "/oamp/configuration/objects/$classname/$oid?appid=$appid&sync_key=0";
     $self->set_header( 'Content-Length' => '0', );
     my $resp = $self->delete($path);
@@ -410,18 +639,44 @@ sub _build_response_data {
         property => {},
     };
     for my $p ( keys %{ $req->{property} } ) {
-        next if "_state_" eq $p;
+        # next if "_state_" eq $p;
+        # next
+        #     if $req->{property}{$p}{visible} eq
+        #     "__NULL__";    # TODO: that's SwitchOver
+        # next
+        #     if ( lc($req->{property}{$p}{readonly}) eq "true" )
+        #     && ( lc($req->{property}{$p}{visible}) eq "true" )
+        #     && ( lc($req->{property}{$p}{mandatory}) eq "false");
         next
-            if $req->{property}{$p}{visible} eq
-            "__NULL__";    # TODO: that's SwitchOver
-        next
-            if ( $req->{property}{$p}{readonly} eq "True" )
-            && ( $req->{property}{$p}{visible} eq "true" );
+            if lc($req->{property}{$p}{type}) ne "configure";
         $resp->{property}{$p}
             = { configuredvalue => $req->{property}{$p}{value} };
         if ( defined $options->{$p} ) {
             $resp->{property}{$p}{configuredvalue} = $options->{$p};
         }
+    }
+    return $resp;
+}
+
+sub _build_validation_data {
+    my ( $self, $req, $pid, $options ) = @_;
+
+    my $response_data = $self->_build_response_data($req, $pid, $options);
+    my @changedopt = ();
+
+    if ("HASH" eq ref $options && keys %{ $options }) {
+        @changedopt = (
+            changedproperty => (keys %{ $options })[0],
+            );
+    }
+
+    my $resp = {
+        pid => $pid,
+        appid => $self->appid,
+        @changedopt,
+    };
+    for my $prop (keys %{ $response_data->{property} }) {
+        $resp->{$prop} = $response_data->{property}{$prop}{configuredvalue};
     }
     return $resp;
 }

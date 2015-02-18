@@ -29,7 +29,9 @@ p $resp->code;
 
 print "LOGGED IN, LOCK OBTAINED ############################\n";
 
-
+# $resp = $test->delete_all_bn2020;
+# p $resp;
+# exit 0;
 
 # $resp = $test->reboot_and_wait;
 # p $resp;
@@ -109,6 +111,92 @@ p $resp->code;
 print "CREATE SIP IP ###################################\n";
 
 $resp = $test->create_sip_ip;
+p $resp->code;
+#p $resp->data;
+
+print "CREATE PROFILE COLLECTION ###################################\n";
+
+$resp = $test->create_profile_collection;
+p $resp->code;
+#p $resp->data;
+
+print "CREATE IP PROFILE COLLECTION ###################################\n";
+
+$resp = $test->create_ip_profile_collection;
+p $resp->code;
+#p $resp->data;
+
+print "CREATE IP PROFILE ###################################\n";
+
+$resp = $test->create_ip_profile({
+	DigitRelay => 'DTMF Packetized',
+	});
+p $resp->code;
+#p $resp->data;
+
+print "CREATE VOCODER PROFILE ###################################\n";
+
+$resp = $test->create_vocoder_profile({
+	PayloadType => 'G711 ulaw',
+	});
+p $resp->code;
+#p $resp->data;
+
+$resp = $test->create_vocoder_profile({
+	PayloadType => 'G711 alaw',#G711 (u/a)law, G729, G722, AMR, ...
+	});
+p $resp->code;
+#p $resp->data;
+
+$resp = $test->create_vocoder_profile({
+	PayloadType => 'G729',
+	});
+p $resp->code;
+#p $resp->data;
+
+print "CREATE SIP PROFILE COLLECTION ###################################\n";
+
+$resp = $test->create_sip_profile_collection;
+p $resp->code;
+#p $resp->data;
+
+print "CREATE SIP PROFILE ###################################\n";
+
+$resp = $test->create_sip_profile({
+	});
+p $resp->code;
+#p $resp->data;
+
+$resp = $test->create_sip_profile({
+	});
+p $resp->code;
+#p $resp->data;
+
+print "DOWNLOAD PROFILE COLLECTION ###################################\n";
+
+$resp = $test->download_profiles;
+p $resp->code;
+#p $resp->data;
+
+print "CREATE ROUTING CONFIGURATION ###################################\n";
+
+$resp = $test->create_routing_configuration({
+	});
+p $resp->code;
+#p $resp->data;
+
+print "CREATE CHANNEL GROUP COLLECTION ###################################\n";
+
+$resp = $test->create_channel_group_collection({
+	});
+p $resp->code;
+#p $resp->data;
+
+print "CREATE CHANNEL GROUP ###################################\n";
+
+$resp = $test->create_channel_group({
+	SignalingType => 'SIP',
+	});
 p $resp->code;
 #p $resp->data;
 
