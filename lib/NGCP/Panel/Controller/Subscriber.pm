@@ -119,8 +119,8 @@ sub sub_list :Chained('/') :PathPart('subscriber') :CaptureArgs(0) {
         { name => "domain.domain", search => 1, title => $c->loc('Domain') },
         { name => "uuid", search => 1, title => $c->loc('UUID') },
         { name => "status", search => 1, title => $c->loc('Status') },
-        { name => "number", search => 1, title => $c->loc('Number'), literal_sql => "concat(primary_number.cc, primary_number.ac, primary_number.sn)"},
-        { name => "primary_number.cc", search => 1, title => "" }, #need this to get the relationship
+        { name => "number", search => 1, title => $c->loc('Number'), literal_sql => "concat(primary_number.cc, primary_number.ac, primary_number.sn)",'join' => 'primary_number'},
+        { name => "voip_subscriber_aliases_csv.aliases", search => 1, },
         { name => "provisioning_voip_subscriber.voip_subscriber_profile.name", search => 1, title => $c->loc('Profile') },
     ]);
 }

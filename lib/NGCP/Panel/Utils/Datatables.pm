@@ -27,8 +27,11 @@ sub process {
             }
             my @parts = split /\./, $col->{name};
             if($col->{literal_sql}) {
-               $rs = $rs->search_rs(undef, {
-                    '+select' => { '' => \[$col->{literal_sql}], -as => $col->{accessor} },
+                $rs = $rs->search_rs(undef, {
+                    $col->{join} ? ( join => $col->{join} ) : (),
+                    '+select' => { '' => \[$col->{literal_sql}], -as => $col->{accessor} 
+                    },
+
                     '+as' => [ $col->{accessor} ],
                 });
             } elsif( @parts > 1 ) {
@@ -52,15 +55,17 @@ sub process {
     my $searchString = $c->request->params->{sSearch} // "";
     foreach my $col(@{ $cols }) {
         # avoid amigious column names if we have the same column in different joined tables
-        my $name = _get_joined_column_name_($col->{name});
-        my $stmt; 
-        if($col->{literal_sql}){
-            #we can't use just accessor because of the count query
-            $stmt = \[$col->{literal_sql} . " LIKE ?", [ {} => '%'.$searchString.'%'] ];
-        }else{
-            $stmt = { $name => { like => '%'.$searchString.'%' } };
-        }
-        push @searchColumns, $stmt if $col->{search};
+        if($col->{search}){
+            my $name = _get_joined_column_name_($col->{name});
+            my $stmt; 
+            if($col->{literal_sql}){
+                #we can't use just accessor because of the count query
+                $stmt = \[$col->{literal_sql} . " LIKE ?", [ {} => '%'.$searchString.'%'] ];
+            }else{
+                $stmt = { $name => { like => '%'.$searchString.'%' } };
+            }
+            push @searchColumns, $stmt;
+         }
     }
     if($searchString && ! $use_rs_cb) {
         $rs = $rs->search([@searchColumns]);
