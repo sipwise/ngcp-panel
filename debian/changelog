@@ -1,3 +1,12 @@
+ngcp-panel (1.6.2.5+0~mr3.6.2.5) unstable; urgency=low
+
+  [ Irina Peshinskaya ]
+  * [2fc07c3] MT#5585 Add details about cdr record
+
+  [ Sipwise Jenkins Builder ]
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Mon, 23 Feb 2015 14:32:51 +0100
+
 ngcp-panel (1.6.2.4+0~mr3.6.2.4) unstable; urgency=low
 
   [ Irina Peshinskaya ]
