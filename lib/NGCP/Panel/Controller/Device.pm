@@ -219,7 +219,7 @@ sub devmod_create :Chained('base') :PathPart('model/create') :Args(0) :Does(ACL)
                         $r->annotations->create($label);
                     }
                 }
-                $self->process_connectable_models($self, $c, 1, $devmod, $connectable_models);
+                $self->process_connectable_models($c, 1, $devmod, $connectable_models);
                 delete $c->session->{created_objects}->{reseller};
                 $c->session->{created_objects}->{device} = { id => $devmod->id };
             });
@@ -268,10 +268,10 @@ sub process_connectable_models :Privat(){
                 $columns[0] => $devmod->id,
             })->delete;
         }
-        foreach my $connectd_id(@{decode_json($connectable_models)}){
+        foreach my $connected_id(@{decode_json($connectable_models)}){
             $schema->resultset('autoprov_device_extensions')->create({
                 $columns[0] => $devmod->id,
-                $columns[1] => $connectd_id,
+                $columns[1] => $connected_id,
             });                        
         }
     }
@@ -299,7 +299,6 @@ sub devmod_base :Chained('base') :PathPart('model') :CaptureArgs(1) {
     }
     $c->stash(
         devmod => $devmod,
-        extensions_rs => $devmod->autoprov_extensions_link ? $devmod->autoprov_extensions_link->extension : undef,
     );
 }
 
@@ -984,7 +983,7 @@ sub extension_base :Chained('base') :PathPart('extension') :CaptureArgs(1) :Does
         NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for('/device'));
     }
 
-    $c->stash->{devextension} = $c->stash->{extensions_rs}->find($extension_device_id);
+    $c->stash->{devextension} = $c->model('DB')->resultset('autoprov_devices')->find($extension_device_id);
     unless($c->stash->{devprof}) {
         NGCP::Panel::Utils::Message->error(
             c => $c,
