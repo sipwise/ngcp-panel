@@ -167,7 +167,10 @@ sub get_resource {
             if($attr && !$profile_attrs{$pref->attribute->id}) {
                 $processed = 1; last SWITCH;
             }
-            last SWITCH if($pref->attribute->internal != 0);
+            if($pref->attribute->internal != 0) {
+                $processed = 1;
+                last SWITCH;
+            }
         } # SWITCH
         next if $processed;
 
