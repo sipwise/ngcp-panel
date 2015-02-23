@@ -1093,11 +1093,13 @@ sub dev_field_config :Chained('/') :PathPart('device/autoprov/config') :Args() {
     $id = lc $id;
     $id =~ s/\-[a-z]+$//;
 
+=pod
     my $yealink_key;
     if($id =~ s/_secure\.enc$//) {
         # mark to serve master-encrypted device key instead of config
         $yealink_key = $c->config->{autoprovisioning}->{yealink_key};
     }
+=cut    
 
     # print access details for external rate limiting (e.g. fail2ban)
     my $ip;
@@ -1123,6 +1125,7 @@ sub dev_field_config :Chained('/') :PathPart('device/autoprov/config') :Args() {
     }
     $c->log->info("Serving autoprov config for '$id' to '$ip'");
 
+=pod
     if(defined $yealink_key && defined $dev->encryption_key) {
         my $cipher = Crypt::Rijndael->new(
             $yealink_key, Crypt::Rijndael::MODE_ECB()
@@ -1132,6 +1135,7 @@ sub dev_field_config :Chained('/') :PathPart('device/autoprov/config') :Args() {
         $c->response->status(200);
         return;
     }
+=cut
 
     my $model = $dev->profile->config->device;
 
@@ -1234,6 +1238,7 @@ sub dev_field_config :Chained('/') :PathPart('device/autoprov/config') :Args() {
     $c->log->debug("providing config to $id");
     $c->log->debug($processed_data);
 
+=pod
     if(defined $dev->encryption_key) {
         # yealink uses weak ECB mode, but well...
         my $cipher = Crypt::Rijndael->new(
@@ -1242,9 +1247,12 @@ sub dev_field_config :Chained('/') :PathPart('device/autoprov/config') :Args() {
         $c->response->content_type("application/octet-stream");
         $c->response->body($cipher->encrypt($processed_data));
     } else {
+=cut    
         $c->response->content_type($dev->profile->config->content_type);
         $c->response->body($processed_data);
+=pod
     }
+=cut
 }
 
 sub dev_field_bootstrap :Chained('/') :PathPart('device/autoprov/bootstrap') :Args() {
