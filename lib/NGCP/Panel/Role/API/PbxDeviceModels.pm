@@ -63,10 +63,14 @@ sub resource_from_item {
         run => 0,
     );
 
-    $resource{reseller_id} = int($item->reseller_id);
-    $resource{id} = int($item->id);
-    $resource{linerange} = [];
-    foreach my $range($item->autoprov_device_line_ranges->all) {
+    foreach my $field (qw/reseller_id id extensions_num/){
+        $resource{$field} = int($item->$field // 0);
+    }
+    foreach my $field (qw/linerange extensions devices/){
+        $resource{$field} = [];
+    }
+    my $process_range = sub {
+        my($range,$process_range_cb ) = @_;
         my $r = { $range->get_inflated_columns };
         foreach my $f(qw/device_id num_lines/) {
             delete $r->{$f};
@@ -84,8 +88,24 @@ sub resource_from_item {
             };
         }
         $r->{num_lines} = @{ $r->{keys} };
-
-        push @{ $resource{linerange} }, $r;
+        ( ( defined $process_range_cb ) && ( 'CODE' eq ref $process_range_cb ) ) and $process_range_cb->($r);
+        push @{ $resource{linerange} }, $r;    
+    };
+    foreach my $range($item->autoprov_device_line_ranges->all) {
+        $process_range->( $range );
+    }
+    if('extension' eq $item->type){
+        # show possible devices for extension
+        $resource{devices} = [ map {$_->id} $item->autoprov_extensions_link->device->all ];
+    }else{
+        # we don't need show possible extensions - we will show their ranges
+        # add ranges of the possible extensions
+        foreach my $extension_link ($item->autoprov_extensions_link->all){
+            my $extension = $extension_link->extension;
+            foreach my $range($extension->autoprov_device_line_ranges->all) {
+                $process_range->( $range, sub { my $r = shift; $r->{extension_range} = $extension->id;} );# 
+            }
+        }
     }
     return \%resource;
 }
