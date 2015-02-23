@@ -1120,7 +1120,7 @@ sub dev_field_config :Chained('/') :PathPart('device/autoprov/config') :Args() {
     }
     $c->log->info("Serving autoprov config for '$id' to '$ip'");
 
-    if($yealink_key && defined $dev->encryption_key) {
+    if(defined $yealink_key && defined $dev->encryption_key) {
         my $cipher = Crypt::Rijndael->new(
             $yealink_key, Crypt::Rijndael::MODE_ECB()
         );
