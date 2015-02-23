@@ -147,6 +147,19 @@ class_has 'query_params' => (
                 },
             },
         },
+        {
+            param => 'alias',
+            description => 'Filter for subscribers who has specified alias.',
+            query => {
+                first => sub {
+                    my $q = shift;
+                    return { 'voip_subscriber_aliases_csv.aliases' => { like => '%'.$q.'%' } };
+                },
+                second => sub {
+                    return { join => 'voip_subscriber_aliases_csv' };
+                },
+            },
+        },
     ]},
 );
 
