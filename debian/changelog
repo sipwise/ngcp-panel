@@ -1,3 +1,14 @@
+ngcp-panel (1.7.1.11+0~mr3.7.1.11) unstable; urgency=low
+
+  [ Andreas Granig ]
+  * [80986f0] MT#10587 Fix empty enc master key for yealink
+  * [2511584] MT#10587 Disable yealink encryption.
+  * [92ae9f0] MT#11517 Don't expose internal prefs via API.
+
+  [ Sipwise Jenkins Builder ]
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Tue, 24 Feb 2015 12:22:13 +0100
+
 ngcp-panel (1.7.1.10+0~mr3.7.1.10) unstable; urgency=low
 
   [ Irina Peshinskaya ]
