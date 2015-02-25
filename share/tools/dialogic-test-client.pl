@@ -9,15 +9,7 @@ exit if try_parse_file(@ARGV);
 
 my $test = NGCP::Panel::Utils::DialogicImg->new(
     server      => 'https://10.15.20.150',
-    clientattrs => { 
-    	timeout => 5,
-    	# SSL_options => {
-    	# 	SSL_version => 'SSLv23:!SSLv2:!SSLv3:!TLSv1_1:!TLSv1_2',
-    	# },
-	},
 );
-
-#p $test;
 
 p $test->login( 'dialogic', 'Dial0gic' );
 
@@ -30,11 +22,27 @@ p $resp->code;
 print "LOGGED IN, LOCK OBTAINED ############################\n";
 
 # $resp = $test->delete_all_bn2020;
-# p $resp;
+# $resp = $test->delete_all_bn2020;
+# p $resp->code;
 # exit 0;
 
 # $resp = $test->reboot_and_wait;
 # p $resp;
+# exit 0;
+
+# $test->pids->{route_table} = 10033;
+# $test->download_route_table;
+# $test->pids->{channel_group_collection} = 10030;
+# $test->download_channel_groups;
+# exit 0;
+# $resp = $test->create_route_element({
+# 	StringType => 'Channel Group',
+# 	InChannelGroup => 'ChannelGroup0',
+# 	RouteActionType => 'Channel Group',
+# 	RouteActionList => 'ChannelGroup0',
+# 	});
+# p $resp->code;
+# #p $resp->data;
 # exit 0;
 
 $resp = $test->create_bn2020;
@@ -61,7 +69,7 @@ p $resp->code;
 #p $resp->data;
 
 $resp = $test->create_ip_address({
-		NIIPAddress => '11.2.3.4',
+		NIIPAddress => '10.15.20.92',
 		NIIPPhy => 'Services',
 	});
 p $resp->code;
@@ -71,8 +79,9 @@ $resp = $test->create_interface;  # DataA by default
 p $resp->code;
 #p $resp->data;
 
-$resp = $test->create_ip_address({NIIPAddress => '11.6.7.8',
-	NIIPPhy => 'Media 0'});
+$resp = $test->create_ip_address({
+		NIIPAddress => '10.15.21.10',
+		NIIPPhy => 'Media 0'});
 p $resp->code;
 #p $resp->data;
 
@@ -91,14 +100,16 @@ p $resp->code;
 print "CREATE PACKET FACILITY ###################################\n";
 
 $resp = $test->create_packet_facility({
-	ChannelCount => 5, # our licence has 128 or so
+	ChannelCount => 50, # our licence has 128 or so
 	});
 p $resp->code;
 #p $resp->data;
 
+lsign:
+
 print "CREATE SIGNALING ###################################\n";
 
-$resp = $test->create_signaling({});
+$resp = $test->create_signaling;
 p $resp->code;
 #p $resp->data;
 
@@ -110,7 +121,9 @@ p $resp->code;
 
 print "CREATE SIP IP ###################################\n";
 
-$resp = $test->create_sip_ip;
+$resp = $test->create_sip_ip({
+	IPAddress => '10.15.20.92',
+	});
 p $resp->code;
 #p $resp->data;
 
@@ -154,6 +167,12 @@ $resp = $test->create_vocoder_profile({
 p $resp->code;
 #p $resp->data;
 
+$resp = $test->create_vocoder_profile({
+	PayloadType => 'AMR',
+	});
+p $resp->code;
+#p $resp->data;
+
 print "CREATE SIP PROFILE COLLECTION ###################################\n";
 
 $resp = $test->create_sip_profile_collection;
@@ -167,14 +186,36 @@ $resp = $test->create_sip_profile({
 p $resp->code;
 #p $resp->data;
 
-$resp = $test->create_sip_profile({
-	});
-p $resp->code;
-#p $resp->data;
+# $resp = $test->create_sip_profile({
+# 	});
+# p $resp->code;
+# #p $resp->data;
 
 print "DOWNLOAD PROFILE COLLECTION ###################################\n";
 
 $resp = $test->download_profiles;
+p $resp->code;
+#p $resp->data;
+
+print "CREATE EXTERNAL NETWORK ELEMENTS ###################################\n";
+
+$resp = $test->create_external_network_elements;
+p $resp->code;
+#p $resp->data;
+
+print "CREATE EXTERNAL GATEWAY COLLECTION ###################################\n";
+
+$resp = $test->create_external_gateway_collection;
+p $resp->code;
+#p $resp->data;
+
+print "CREATE EXTERNAL GATEWAY ###################################\n";
+
+$resp = $test->create_external_gateway({
+	Name => 'Phone1',
+	IPAddress => '10.15.20.199',
+	IPAddress4 => '10.15.20.199',
+	});
 p $resp->code;
 #p $resp->data;
 
@@ -192,13 +233,64 @@ $resp = $test->create_channel_group_collection({
 p $resp->code;
 #p $resp->data;
 
+print "CREATE ROUTE TABLE COLLECTION ###################################\n";
+
+$resp = $test->create_route_table_collection;
+p $resp->code;
+#p $resp->data;
+
+print "CREATE ROUTE TABLE ###################################\n";
+
+$resp = $test->create_route_table({
+	#Name => 'ngcp_route_table',
+	});
+p $resp->code;
+#p $resp->data;
+
 print "CREATE CHANNEL GROUP ###################################\n";
 
 $resp = $test->create_channel_group({
 	SignalingType => 'SIP',
+	#RouteTable => ???,
+	InRouteTable => 'Table - ID: 5',
+	InIPProfile => 'IP_Profile_1',
+	InIPProfileId => '1',
+	OutIPProfile => 'IP_Profile_1',
+	#incoming ip profile, set?
+	#outgoing ip profile, set?
+	SupportA2F => 'True',
 	});
 p $resp->code;
 #p $resp->data;
+
+print "CREATE NETWORK ELEMENT (CG) ###################################\n";
+
+$resp = $test->create_cg_network_element;
+p $resp->code;
+#p $resp->data;
+
+print "CREATE NODE ASSOCIATION ###################################\n";
+
+$resp = $test->create_node_association;
+p $resp->code;
+#p $resp->data;
+
+print "CREATE ROUTE ELEMENT ###################################\n";
+
+$resp = $test->create_route_element({
+	StringType => 'Channel Group',
+	InChannelGroup => 'ChannelGroup0',
+	RouteActionType => 'Channel Group',
+	RouteActionList => 'ChannelGroup0',
+	});
+p $resp->code;
+#p $resp->data;
+
+$resp = $test->download_route_table;
+p $resp->code;
+
+$resp = $test->download_channel_groups;
+p $resp->code;
 
 
 sub try_parse_file {
