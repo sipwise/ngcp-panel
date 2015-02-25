@@ -1,3 +1,13 @@
+ngcp-panel (1.7.1.12+0~mr3.7.1.12) unstable; urgency=low
+
+  [ Andreas Granig ]
+  * [1bab622] MT#11741 API: Add pbxdevicemodelimages resource.
+  * [dda51ef] MT#11741 API: fix pbxdevicemodelimages props doc
+
+  [ Sipwise Jenkins Builder ]
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Wed, 25 Feb 2015 11:45:28 +0100
+
 ngcp-panel (1.7.1.11+0~mr3.7.1.11) unstable; urgency=low
 
   [ Andreas Granig ]
