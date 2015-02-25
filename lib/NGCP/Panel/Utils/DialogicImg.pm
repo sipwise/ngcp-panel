@@ -40,6 +40,9 @@ has '+serializer_options' => (default => sub {
             options    => { RootName => 'object' } );
         return { serializer  => $s };
     });
+has '+clientattrs' => ( default => sub {
+        return {timeout => 5};
+    });
 has 'appid' => ( is => 'rw', isa => Int, default => 0 );
 has 'pids' => (
     is      => 'rw',
@@ -53,6 +56,7 @@ has 'pids' => (
         };
     } );
 
+# returns appid or 0
 sub login {
     my ( $self, $username, $password ) = @_;
     my $resp = $self->post(
@@ -64,6 +68,7 @@ sub login {
         $self->appid( $data->{appid} );
         return $self->appid;
     }
+    return 0;
 }
 
 sub obtain_lock {
@@ -163,7 +168,6 @@ sub create_interface {
     return $resp;
 }
 
-#TODO: only supports ipv4 now
 sub create_ip_address {
     my ( $self, $options ) = @_;
 
@@ -179,6 +183,15 @@ sub create_ip_address {
     );
     if ( $resp->code != 200 ) {
         warn "Failed to fetch resource\n";
+        return $resp;
+    }
+    my $validation_data = $self->_build_validation_data( $resp->data, $pid, $options );
+    $resp = $self->get(
+        "/oamp/configuration/objects/NetworkInterface/NULL",
+        $validation_data,
+    );
+    if ( $resp->code != 200 ) {
+        warn "Failed to fetch resource second time (revalidate)\n";
         return $resp;
     }
     my $new_resp = $self->_build_response_data( $resp->data, $pid, $options );
@@ -390,10 +403,19 @@ sub create_ip_profile {
         warn "Failed to fetch resource\n";
         return $resp;
     }
-    my $new_resp = $self->_build_response_data( $resp->data, $pid, $options );
+    my $validation_data = $self->_build_validation_data( $resp->data, $pid, $options );
+    $resp = $self->get(
+        "/oamp/configuration/objects/IPProfile/NULL",
+        $validation_data,
+    );
+    if ( $resp->code != 200 ) {
+        warn "Failed to fetch resource second time (revalidate)\n";
+        return $resp;
+    }
+    my $new_data = $self->_build_response_data( $resp->data, $pid, $options );
     $resp = $self->post(
         "/oamp/configuration/objects/IPProfile/NULL?pid=$pid&appid=$appid",
-        $new_resp,
+        $new_data,
     );
     if ( $resp->code == 200 ) {
         $self->pids->{ip_profile} = $resp->data->{oid};
@@ -411,7 +433,7 @@ sub create_vocoder_profile {
         "/oamp/configuration/objects/VocoderProfile/NULL?detaillevel=4&pid=$pid&appid=$appid&$enc_data",
     );
     if ( $resp->code != 200 ) {
-        warn "Failed to fetch resource second time (revalidate)\n";
+        warn "Failed to fetch resource\n";
         return $resp;
     }
     my $validation_data = $self->_build_validation_data( $resp->data, $pid, $options );
@@ -419,6 +441,10 @@ sub create_vocoder_profile {
         "/oamp/configuration/objects/VocoderProfile/NULL",
         $validation_data,
     );
+    if ( $resp->code != 200 ) {
+        warn "Failed to fetch resource second time (revalidate)\n";
+        return $resp;
+    }
     my $new_data = $self->_build_response_data( $resp->data, $pid, $options );
     $resp = $self->post(
         "/oamp/configuration/objects/VocoderProfile/NULL?pid=$pid&appid=$appid",
@@ -472,6 +498,84 @@ sub create_sip_profile {
     );
     if ( $resp->code == 200 ) {
         $self->pids->{sip_profile} = $resp->data->{oid};
+    }
+    return $resp;
+}
+
+sub create_external_network_elements {
+    my ( $self ) = @_;
+
+    my $pid   = 10_000;
+    my $appid = $self->appid;
+    my $resp  = $self->get(
+        "/oamp/configuration/objects/ExternalNetworkElements/NULL?detaillevel=4&pid=$pid&appid=$appid",
+    );
+    if ( $resp->code != 200 ) {
+        warn "Failed to fetch resource\n";
+        return $resp;
+    }
+    my $new_data = $self->_build_response_data( $resp->data, $pid );
+    $resp = $self->post(
+        "/oamp/configuration/objects/ExternalNetworkElements/NULL?pid=$pid&appid=$appid",
+        $new_data,
+    );
+    if ( $resp->code == 200 ) {
+        $self->pids->{external_network_elements} = $resp->data->{oid};
+    }
+    return $resp;
+}
+
+sub create_external_gateway_collection {
+    my ( $self, $options ) = @_;
+
+    my $pid   = $self->pids->{external_network_elements};
+    my $appid = $self->appid;
+    my $resp  = $self->get(
+        "/oamp/configuration/objects/ExternalGateways/NULL?detaillevel=4&pid=$pid&appid=$appid",
+    );
+    if ( $resp->code != 200 ) {
+        warn "Failed to fetch resource\n";
+        return $resp;
+    }
+    my $new_data = $self->_build_response_data( $resp->data, $pid, $options );
+    $resp = $self->post(
+        "/oamp/configuration/objects/ExternalGateways/NULL?pid=$pid&appid=$appid",
+        $new_data,
+    );
+    if ( $resp->code == 200 ) {
+        $self->pids->{external_gateway_collection} = $resp->data->{oid};
+    }
+    return $resp;
+}
+
+sub create_external_gateway {
+    my ( $self, $options ) = @_;
+
+    my $pid   = $self->pids->{external_gateway_collection};
+    my $appid = $self->appid;
+    my $resp  = $self->get(
+        "/oamp/configuration/objects/ExternalGateway/NULL?detaillevel=4&pid=$pid&appid=$appid",
+    );
+    if ( $resp->code != 200 ) {
+        warn "Failed to fetch resource\n";
+        return $resp;
+    }
+    my $validation_data = $self->_build_validation_data( $resp->data, $pid, $options );
+    $resp = $self->get(
+        "/oamp/configuration/objects/ExternalGateway/NULL",
+        $validation_data,
+    );
+    if ( $resp->code != 200 ) {
+        warn "Failed to fetch resource second time (revalidate)\n";
+        return $resp;
+    }
+    my $new_data = $self->_build_response_data( $resp->data, $pid, $options );
+    $resp = $self->post(
+        "/oamp/configuration/objects/ExternalGateway/NULL?pid=$pid&appid=$appid",
+        $new_data,
+    );
+    if ( $resp->code == 200 ) {
+        $self->pids->{external_gateway} = $resp->data->{oid};
     }
     return $resp;
 }
@@ -545,6 +649,130 @@ sub create_channel_group {
     return $resp;
 }
 
+sub create_route_table_collection {
+    my ($self, $options) = @_;
+
+    my $pid   = $self->pids->{routing_configuration};
+    my $appid = $self->appid;
+    my $resp  = $self->get(
+        "/oamp/configuration/objects/RoutingTables/NULL?detaillevel=4&pid=$pid&appid=$appid",
+    );
+    if ( $resp->code != 200 ) {
+        warn "Failed to fetch resource\n";
+        return $resp;
+    }
+    my $new_data = $self->_build_response_data( $resp->data, $pid, $options);
+    $resp = $self->post(
+        "/oamp/configuration/objects/RoutingTables/NULL?pid=$pid&appid=$appid",
+        $new_data,
+    );
+    if ( $resp->code == 200 ) {
+        $self->pids->{route_table_collection} = $resp->data->{oid};
+    }
+    return $resp;
+}
+
+sub create_route_table {
+    my ($self, $options) = @_;
+
+    my $pid   = $self->pids->{route_table_collection};
+    my $appid = $self->appid;
+    my $resp  = $self->get(
+        "/oamp/configuration/objects/RouteTable/NULL?detaillevel=4&pid=$pid&appid=$appid",
+    );
+    if ( $resp->code != 200 ) {
+        warn "Failed to fetch resource\n";
+        return $resp;
+    }
+    my $new_data = $self->_build_response_data( $resp->data, $pid, $options);
+    $resp = $self->post(
+        "/oamp/configuration/objects/RouteTable/NULL?pid=$pid&appid=$appid",
+        $new_data,
+    );
+    if ( $resp->code == 200 ) {
+        $self->pids->{route_table} = $resp->data->{oid};
+    }
+    return $resp;
+}
+
+sub create_route_element {
+    my ($self, $options) = @_;
+
+    my $pid   = $self->pids->{route_table};
+    my $appid = $self->appid;
+    my $resp  = $self->get(
+        "/oamp/configuration/objects/RouteElement/NULL?detaillevel=4&pid=$pid&appid=$appid",
+    );
+    if ( $resp->code != 200 ) {
+        warn "Failed to fetch resource\n";
+        return $resp;
+    }
+    my $validation_data = $self->_build_validation_data( $resp->data, $pid, $options );
+    $resp = $self->get(
+        "/oamp/configuration/objects/RouteElement/NULL",
+        $validation_data,
+    );
+    if ( $resp->code != 200 ) {
+        warn "Failed to fetch resource second time (revalidate)\n";
+        return $resp;
+    }
+    my $new_data = $self->_build_response_data( $resp->data, $pid, $options);
+    $resp = $self->post(
+        "/oamp/configuration/objects/RouteElement/NULL?pid=$pid&appid=$appid",
+        $new_data,
+    );
+    if ( $resp->code == 200 ) {
+        $self->pids->{route_element} = $resp->data->{oid};
+    }
+    return $resp;
+}
+
+sub create_cg_network_element {
+    my ($self, $options) = @_;
+
+    my $pid   = $self->pids->{channel_group};
+    my $appid = $self->appid;
+    my $resp  = $self->get(
+        "/oamp/configuration/objects/NetworkElement/NULL?detaillevel=4&pid=$pid&appid=$appid",
+    );
+    if ( $resp->code != 200 ) {
+        warn "Failed to fetch resource\n";
+        return $resp;
+    }
+    my $new_data = $self->_build_response_data( $resp->data, $pid, $options);
+    $resp = $self->post(
+        "/oamp/configuration/objects/NetworkElement/NULL?pid=$pid&appid=$appid",
+        $new_data,
+    );
+    if ( $resp->code == 200 ) {
+        $self->pids->{cg_network_element} = $resp->data->{oid};
+    }
+    return $resp;
+}
+
+sub create_node_association {
+    my ($self, $options) = @_;
+
+    my $pid   = $self->pids->{cg_network_element};
+    my $appid = $self->appid;
+    my $resp  = $self->get(
+        "/oamp/configuration/objects/NodeAssociation/NULL?detaillevel=4&pid=$pid&appid=$appid",
+    );
+    if ( $resp->code != 200 ) {
+        warn "Failed to fetch resource\n";
+        return $resp;
+    }
+    my $new_data = $self->_build_response_data( $resp->data, $pid, $options);
+    $resp = $self->post(
+        "/oamp/configuration/objects/NodeAssociation/NULL?pid=$pid&appid=$appid",
+        $new_data,
+    );
+    if ( $resp->code == 200 ) {
+        $self->pids->{node_association} = $resp->data->{oid};
+    }
+    return $resp;
+}
+
 ### OTHER STUFF ###
 
 sub download_profiles {
@@ -555,6 +783,30 @@ sub download_profiles {
     $self->set_header( 'Content-Length' => '0', );
     my $resp = $self->put(
         "/oamp/configuration/objects/Profiles/$pid/provisions/Cached?appid=$appid&sync_key=0",
+    );
+    return $resp;
+}
+
+sub download_route_table {
+    my ($self) = @_;
+
+    my $appid = $self->appid;
+    my $pid = $self->pids->{route_table};
+    $self->set_header( 'Content-Length' => '0', );
+    my $resp = $self->put(
+        "/oamp/configuration/objects/RouteTable/$pid/provisions/Cached?appid=$appid&sync_key=0",
+    );
+    return $resp;
+}
+
+sub download_channel_groups {
+    my ($self) = @_;
+
+    my $appid = $self->appid;
+    my $pid = $self->pids->{channel_group_collection};
+    $self->set_header( 'Content-Length' => '0', );
+    my $resp = $self->put(
+        "/oamp/configuration/objects/ChannelGroups/$pid/provisions/Cached?appid=$appid&sync_key=0",
     );
     return $resp;
 }
