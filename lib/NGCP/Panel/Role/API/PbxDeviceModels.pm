@@ -16,6 +16,7 @@ use File::Type;
 use Data::Dumper;
 use NGCP::Panel::Form::Device::ModelAPI;
 use NGCP::Panel::Utils::DeviceBootstrap;
+use NGCP::Panel::Utils::Device;
 
 sub get_form {
     my ($self, $c) = @_;
@@ -96,7 +97,7 @@ sub resource_from_item {
     }
     if('extension' eq $item->type){
         # show possible devices for extension
-        $resource{devices} = [ map {$_->id} $item->autoprov_extensions_link->device->all ];
+        $resource{devices} = [map {$_->device->id} $item->autoprov_extension_device_link->all ];
     }else{
         # we don't need show possible extensions - we will show their ranges
         # add ranges of the possible extensions
@@ -176,7 +177,7 @@ sub update_item {
         $resource->{mac_image} = $front_image->slurp;
         $resource->{mac_image_type} = $ft->mime_type($resource->{mac_image});
     }
-
+    my $connectable_models = delete $resource->{connectable_models};
     my $sync_parameters = NGCP::Panel::Utils::DeviceBootstrap::devmod_sync_parameters_prefetch($c, $item, $resource);
     my $credentials = NGCP::Panel::Utils::DeviceBootstrap::devmod_sync_credentials_prefetch($c, $item, $resource);
     NGCP::Panel::Utils::DeviceBootstrap::devmod_sync_clear($c, $resource);
@@ -187,7 +188,7 @@ sub update_item {
     NGCP::Panel::Utils::DeviceBootstrap::devmod_sync_credentials_store($c, $item, $credentials);
     NGCP::Panel::Utils::DeviceBootstrap::devmod_sync_parameters_store($c, $item, $sync_parameters);
     NGCP::Panel::Utils::DeviceBootstrap::dispatch_devmod($c, 'register_model', $item);
-
+    NGCP::Panel::Utils::Device::process_connectable_models($c, 1, $item, $connectable_models );
     my @existing_range = ();
     my $range_rs = $item->autoprov_device_line_ranges;
     foreach my $range(@{ $linerange }) {
@@ -211,7 +212,6 @@ sub update_item {
         }
         $range->{num_lines} = @{ $range->{keys} }; # backward compatibility
         my $keys = delete $range->{keys};
-
         my $old_range;
         if(defined $range->{id}) {
             # should be an existing range, do update
@@ -264,7 +264,7 @@ sub update_item {
     $range_rs->search({
         id => { 'not in' => \@existing_range },
     })->delete_all;
-
+    
     return $item;
 }
 

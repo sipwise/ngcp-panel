@@ -11,6 +11,7 @@ use NGCP::Panel::Form::Device::Config;
 use NGCP::Panel::Form::Device::Profile;
 use NGCP::Panel::Utils::Navigation;
 use NGCP::Panel::Utils::DeviceBootstrap;
+use NGCP::Panel::Utils::Device;
 
 
 BEGIN { extends 'Catalyst::Controller'; }
@@ -205,6 +206,7 @@ sub devmod_create :Chained('base') :PathPart('model/create') :Args(0) :Does(ACL)
                 NGCP::Panel::Utils::DeviceBootstrap::devmod_sync_credentials_store($c, $devmod, $credentials);
                 NGCP::Panel::Utils::DeviceBootstrap::devmod_sync_parameters_store($c, $devmod, $sync_parameters);
                 NGCP::Panel::Utils::DeviceBootstrap::dispatch_devmod($c, 'register_model', $devmod);
+                NGCP::Panel::Utils::Device::process_connectable_models($c, 1, $devmod, decode_json($connectable_models) );
                 
                 foreach my $range(@{ $linerange }) {
                     delete $range->{id};
@@ -219,7 +221,6 @@ sub devmod_create :Chained('base') :PathPart('model/create') :Args(0) :Does(ACL)
                         $r->annotations->create($label);
                     }
                 }
-                $self->process_connectable_models($c, 1, $devmod, $connectable_models);
                 delete $c->session->{created_objects}->{reseller};
                 $c->session->{created_objects}->{device} = { id => $devmod->id };
             });
@@ -421,6 +422,7 @@ sub devmod_edit :Chained('devmod_base') :PathPart('edit') :Args(0) :Does(ACL) :A
                 })->delete;
                 NGCP::Panel::Utils::DeviceBootstrap::devmod_sync_parameters_store($c, $c->stash->{devmod}, $sync_parameters);
                 NGCP::Panel::Utils::DeviceBootstrap::dispatch_devmod($c, 'register_model', $c->stash->{devmod} );
+                NGCP::Panel::Utils::Device::process_connectable_models($c, 0, $c->stash->{devmod}, decode_json($connectable_models) );
                 
                 my @existing_range = ();
                 my $range_rs = $c->stash->{devmod}->autoprov_device_line_ranges;
