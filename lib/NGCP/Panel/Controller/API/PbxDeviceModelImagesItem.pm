@@ -13,6 +13,7 @@ require Catalyst::ActionRole::ACL;
 require Catalyst::ActionRole::HTTPMethods;
 require Catalyst::ActionRole::RequireSSL;
 
+with 'NGCP::Panel::Role::API::PbxDeviceModelImages';
 with 'NGCP::Panel::Role::API::PbxDeviceModels';
 
 class_has('resource_name', is => 'ro', default => 'pbxdevicemodelimages');
