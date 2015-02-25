@@ -20,7 +20,7 @@ class_has 'api_description' => (
     is => 'ro',
     isa => 'Str',
     default => 
-        'Used to download the front and mac image of a <a href="#pbxdevicemodels">PbxDeviceModel</a>.',
+        'Used to download the front and mac image of a <a href="#pbxdevicemodels">PbxDeviceModel</a>. Returns a binary attachment with the correct content type (e.g. image/jpeg) of the image.',
 );
 
 class_has 'query_params' => (
@@ -39,6 +39,7 @@ class_has 'query_params' => (
     ]},
 );
 
+with 'NGCP::Panel::Role::API::PbxDeviceModelImages';
 with 'NGCP::Panel::Role::API::PbxDeviceModels';
 
 class_has('resource_name', is => 'ro', default => 'pbxdevicemodelimages');
