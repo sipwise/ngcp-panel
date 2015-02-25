@@ -80,6 +80,7 @@ $ua->ssl_opts(
                  pbxdevicefirmwarebinaries => 1,
                  pbxdevicefirmwares => 1,
                  pbxdevicemodels => 1,
+                 pbxdevicemodelimages => 1,
                  pbxdeviceprofiles => 1,
                  pbxdevices => 1,
                  profilepreferences => 1,
