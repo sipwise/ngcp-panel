@@ -1,0 +1,604 @@
+<!DOCTYPE html>
+<html>
+<title>Hello Strapdown</title>
+
+<xmp theme="united" style="display:none;">
+
+#sip_profile_collection
+
+This is a child of `profile_collection`
+
+## Options
+
+Name|Description|Default|Alternatives
+----|-----------|-------|------------
+`_localDbSyncKey_` | _localDbSyncKey_ | `0` |  
+`_objectName_` | _objectName_ | `SIP Profiles` |  
+`_position_` | _position_ |  |  
+
+#cg_network_element
+
+This is a child of `channel_group`
+
+## Options
+
+Name|Description|Default|Alternatives
+----|-----------|-------|------------
+`CGId` | CGId |  |  
+`IPType` | IPType |  |  
+`MinDigits` | Minimum # of Digits | `Not Used` | `Not Used`, `int_range(1,24)` 
+`_cachedNotify_` | Cached Notify | `ChannelGroups` |  
+`ElementType` | ElementType |  |  
+`TotalSamTimeout` | Total Overlap Timeout |  |  
+`InterSamTimeout` | Inter SAM Timeout |  |  
+`GWId` | GWId |  |  
+`_position_` | _position_ |  |  
+`Name` | IP Network Element |  |  
+`ElementTypeInt` | ElementTypeInt | `2` |  
+`ResourceGroupIdCounter` | ResourceGroupIdCounter | `0x01` |  
+`_objectName_` | _objectName_ |  |  
+`AddressType` | AddressType |  |  
+`OverlapEnable` | Overlap Enable | `Not Used` | `Not Used`, `Disabled`, `Enabled` 
+`_localDbSyncKey_` | _localDbSyncKey_ | `0` |  
+`SGPId` | SGPId |  |  
+
+#external_gateway_collection
+
+This is a child of `external_network_elements`
+
+## Options
+
+Name|Description|Default|Alternatives
+----|-----------|-------|------------
+`_localDbSyncKey_` | _localDbSyncKey_ | `0` |  
+`_position_` | _position_ |  |  
+`_objectName_` | _objectName_ | `External Gateways` |  
+
+#packet_facility_collection
+
+This is a child of `facility`
+
+## Options
+
+Name|Description|Default|Alternatives
+----|-----------|-------|------------
+`NodeNetworkMultimedia` | Network Multimedia Total |  |  
+`PacketMultimedia` | Packet Multimedia Available | `0` |  
+`NextRTPPortMedia0` | Next RTP Port Media 0 | `0` |  
+`NetworkMultimedia` | Network Multimedia Available | `0` |  
+`NextRTPPortMedia1` | Next RTP Port Media 1 | `0` |  
+`PacketAudio` | Packet Audio Available | `0` |  
+`NextSpanID` | Next Span ID | `8192` |  
+`_position_` | _position_ |  |  
+`NodePacketAudio` | Packet Audio Total |  |  
+`_objectName_` | _objectName_ | `Packet Facilities` |  
+`_localDbSyncKey_` | _localDbSyncKey_ | `0` |  
+`NodePacketMultimedia` | Packet Multimedia Total |  |  
+
+#sip_profile
+
+This is a child of `sip_profile_collection`
+
+## Options
+
+Name|Description|Default|Alternatives
+----|-----------|-------|------------
+`Precondition` | Precondition Support | `Disabled` | `Disabled`, `Required`, `Required and Relay`, `Relay` 
+`CodecPriority` | Codec Priority | `Local` | `Local`, `Remote` 
+`RetryCount` | INVITE Retransmission Attempts | `Retransmit All` | `Retransmit All`, `int_range(1,5)` 
+`Privacy` | Privacy | `Disabled` | `Disabled`, `P-Asserted only`, `Remote-Party only`, `Both` 
+`SRTPMode` | SRTP Mode | `Disabled` | `Disabled`, `Mandatory`, `RTP fallback` 
+`_position_` | _position_ |  |  
+`LoopDetectionURI` | Loop Detection Method | `To Header` | `To Header`, `R-URI` 
+`Trusted` | Trusted | `Enabled` | `Disabled`, `Enabled` 
+`RingingBehavior` | 180 Ringing Behavior | `Send 183 Progress w/SDP` | `Send 183 Progress w/SDP`, `Send 180 Ringing` 
+`OutboundDelayedMedia` | Outbound Delayed Media | `Disabled` | `Disabled`, `Enabled` 
+`LoopDetection` | Loop Detection | `Enabled` | `Enabled`, `Disabled`, `Disabled with No Header Check` 
+`AllowSameIPRedirection` | Redirection To Same IP/Port | `Disallow` | `Disallow`, `Allow` 
+`RedirectSupport` | 3XX Redirect Support | `Enabled` | `Disabled`, `Enabled` 
+`ProfileId` | ID | `0` |  
+`IDName` | IDName | `ID: 0 - SIP Default` |  
+`PrackSupport` | PRACK Support | `Disabled` | `Disabled`, `Supported`, `Required` 
+`ProfileName` | Name | `SIP Default` |  
+`PAID_RPID_DisplayNameBehavior` | PAID RPID Display Name | `When none received send user part of URI` | `When none received send user part of URI`, `When none received send none` 
+`InfoKeepAliveSupport` | INFO Keep-Alive Support | `Disabled` | `Disabled`, `Enabled` 
+`_localDbSyncKey_` | _localDbSyncKey_ | `0` |  
+`_objectName_` | _objectName_ | `SIP Profile: SIP Default` |  
+`PrackTimer` | PRACK Timer (s) | `150` | `60`, `150` 
+`TLV_SIPSGP` | SIP TAG |  |  
+
+#ip_profile
+
+This is a child of `ip_profile_collection`
+
+## Options
+
+Name|Description|Default|Alternatives
+----|-----------|-------|------------
+`_localDbSyncKey_` | _localDbSyncKey_ | `0` |  
+`TunnelingEnable` | H245 Outbound Tunneling | `Enable` | `Enable`, `Disable` 
+`MediaPayloadSize` | Descendant Media Payload Size |  |  
+`MediaStreamInfo` | Media Stream Info |  |  
+`VoipParamSet` | VoIP Parameter Settings |  |  
+`Name` | Name | `IP_Profile_1` |  
+`RelayPayloadType16000` | Digit Relay Packet Type (16000) | `102` | `int_range(96,100)`, `int_range(102,127)` 
+`TosSettings` | Descendant TOS Settings |  |  
+`SilenceSupression` | Silence Supression | `Disable` | `Disable`, `Enable` 
+`MediaPayloadDesc` | Descendant Media Payload Description |  |  
+`MediaPayloadMinSize` | Descendant Media Payload Size |  |  
+`RTPPayloadType` | RTP Payload Type for Redundancy | `Not Used` |  
+`SourcePortValidate` | Source Port Validate | `Enable` | `Disable`, `Enable` 
+`_objectName_` | _objectName_ | `IP Profile: IP_Profile_1` |  
+`MediaCodecInfo` | Media Codec Info |  |  
+`HighJitter` | High Jitter | `Disable` | `Disable`, `Enable` 
+`FaxBypassCodec` | Fax Bypass Codec | `G711 ulaw` | `G711 ulaw`, `G711 alaw` 
+`MediaInactivityMode` | Media Inactivity Timer | `Disable` | `Disable`, `Enable` 
+`FaxMode` | Fax Mode | `Enable Bypass` | `Disable`, `Enable Relay (T.38)`, `Enable Bypass`, `Relay Fallback to Bypass` 
+`InitialInactivity` | Initial Media Inactivity Timer Value | `181` |  
+`MediaPayloadMaxSize` | Descendant Media Payload Max Size |  |  
+`ModemMode` | Modem Behavior | `Bypass` | `Bypass`, `Disabled` 
+`RelayPayloadType` | Digit Relay Packet Type | `101` | `int_range(96,101)`, `int_range(103,127)` 
+`_position_` | _position_ |  |  
+`DigitRelay` | Digit Relay | `DTMF In-band` | `DTMF In-band`, `DTMF Packetized`, `DTMF via Signaling` 
+`MediaType` | Media Type | `Disable` | `Disable`, `Enable` 
+`MediaPayloadType` | Descendant Media Payload Type |  |  
+`_cachedNotify_` | Cached Notify | `Profiles` |  
+`FaxPacketRedundancy` | Fax Packet Redundancy | `No Redundancy` | `No Redundancy`, `Redundancy Level 1`, `Redundancy Level 2`, `Redundancy Level 3` 
+`ID` | ID | `1` |  
+`RTPRedundancy` | RTP Redundancy | `No Redundancy` | `No Redundancy`, `Redundancy Level 1` 
+`InitialInactivityMode` | Initial Media Inactivity Timer | `Disable` | `Disable`, `Enable` 
+`MediaInactivity` | Media Inactivity Timer Value | `30` |  
+`EchoCancel` | Echo Cancellation | `Enabled (NLP Enabled)` | `Enabled (NLP Enabled)`, `Enabled (NLP Disabled)`, `Disabled` 
+
+#route_element
+
+This is a child of `route_table`
+
+## Options
+
+Name|Description|Default|Alternatives
+----|-----------|-------|------------
+
+#network
+
+This is a child of `bn2020`
+
+## Options
+
+Name|Description|Default|Alternatives
+----|-----------|-------|------------
+`_objectName_` | _objectName_ | `IP Network` |  
+`_position_` | _position_ |  |  
+`IPFirewall` | IP Firewall | `Enable` | `Disable`, `Enable` 
+`ConfigTableID` | Cfg Table Id | `0x0022` |  
+`_localDbSyncKey_` | _localDbSyncKey_ | `0` |  
+
+#profile_collection
+
+This is a child of `root`
+
+## Options
+
+Name|Description|Default|Alternatives
+----|-----------|-------|------------
+`_cached_` | Cached |  |  
+`_objectName_` | _objectName_ | `Profiles` |  
+`_position_` | _position_ |  |  
+`IPProfileTableName` | IPProfile Tables | `IPProfile Tables` |  
+`_localDbSyncKey_` | _localDbSyncKey_ | `0` |  
+
+#ip_profile_collection
+
+This is a child of `profile_collection`
+
+## Options
+
+Name|Description|Default|Alternatives
+----|-----------|-------|------------
+`_position_` | _position_ |  |  
+`_objectName_` | _objectName_ | `IP Profiles` |  
+`_localDbSyncKey_` | _localDbSyncKey_ | `0` |  
+
+#routing_configuration
+
+This is a child of `root`
+
+## Options
+
+Name|Description|Default|Alternatives
+----|-----------|-------|------------
+`_localDbSyncKey_` | _localDbSyncKey_ | `0` |  
+`_objectName_` | _objectName_ | `Routing Configuration` |  
+`_position_` | _position_ |  |  
+`Profile0` | Profile 0 | `Default Profile PSTN` |  
+`Profile1` | Profile 1 | `Default Profile Subscriber` |  
+
+#route_table
+
+This is a child of `route_table_collection`
+
+## Options
+
+Name|Description|Default|Alternatives
+----|-----------|-------|------------
+
+#vocoder_profile
+
+This is a child of `ip_profile`
+
+## Options
+
+Name|Description|Default|Alternatives
+----|-----------|-------|------------
+`MinPayloadSize` | Minimum Payload Size (ms) | `10` | `10`, `20`, `30` 
+`AnnexBIngress` | Annex B Ingress | `Disabled` | `Disabled`, `Reject Call, if Different`, `Echo Recieved`, `Send Configured` 
+`OctetAlign` | Octet Align | `1` |  
+`PayloadType` | Payload Type | `G711 ulaw` | `AMR`, `AMR Bandwidth Efficient`, `AMR-WB`, `AMR-WB Bandwidth Efficient`, `Clear Channel`, `G711 alaw`, `G711 ulaw`, `G723 5.3 Kbps`, `G723 6.3 Kbps`, `G729`, `G722`, `iLBC 20ms`, `iLBC 30ms`, `GSM-FR Static Payload Type`, `GSM-FR Dynamic Payload Type`, `G726-32/G721 Static Payload Type`, `G726-32/G721 Dynamic Payload Type`, `GSM-EFR` 
+`_objectName_` | _objectName_ | `Vocoder Profile: G711 ulaw` |  
+`_localDbSyncKey_` | _localDbSyncKey_ | `0` |  
+`PayloadSize` | Preferred Payload Size (ms) | `20` | `10`, `20`, `30` 
+`AnnexBSupport` | Annex B Support | `Not Used` |  
+`ID` | ID | `0` |  
+`IsDynamicCodec` | True or False | `0` |  
+`_cachedNotify_` | Cached Notify | `Profiles` |  
+`MaxPayloadSize` | Maximum Payload Size (ms) | `30` | `10`, `20`, `30` 
+`PayloadDesc` | Payload Description |  |  
+`_position_` | _position_ |  |  
+`DefaultPayloadType` | Default Payload Type | `Not Used` |  
+`SecondaryCodec` | 1 or 0 | `0` |  
+
+#channel_group
+
+This is a child of `channel_group_collection`
+
+## Options
+
+Name|Description|Default|Alternatives
+----|-----------|-------|------------
+`_objectName_` | _objectName_ | `ChannelGroup0 - ID: 0` |  
+`OverlapEnable` | Overlap Enable | `Disabled` | `Disabled`, `Enabled` 
+`SignalingType` | Signaling Type | `SS7_ISUP` | `SS7_ISUP`, `ISDN`, `SIP`, `H323` 
+`CPNCPCRetrievalViaINRINF` | CPN/CPC retrieval via INR/INF | `Disabled` |  
+`TBCT` | Channel Transfer | `Disabled` | `Disabled`, `Enabled` 
+`MLPP_Support` | Multi-Level Precedence and Preemption (MLPP) Support | `Not Used` |  
+`OutTreatment` | Outgoing Treatment | `Release w/Cause` | `None`, `Release w/Cause` 
+`InIPProfileId` | Incoming IP Profile ID |  |  
+`TermDigit` | Termination Digit | `Not Used` |  
+`InterSamTimeout` | Inter SAM Timeout (Seconds) | `15` |  
+`_position_` | _position_ |  |  
+`InRouteTable` | Route Table | `None` |  
+`UnknownTLV2` | UnknownTLV2 | `11` |  
+`ID` | ID | `0` |  
+`_cached_` | Cached |  |  
+`TxmtGain` | Transmit Gain | `0 dB` | `-21 dB`, `-18 dB`, `-15 dB`, `-12 dB`, `-9 dB`, `-6 dB`, `-3 dB`, `0 dB`, `3 dB`, `6 dB`, `9 dB`, `12 dB`, `15 dB`, `18 dB` 
+`OutIPProfile` | Outgoing IP Profile | `Not Used` |  
+`_cachedNotify_` | Cached Notify | `ChannelGroups` |  
+`UnknownTLV1` | UnknownTLV1 | `21` |  
+`RcvGain` | Receive Gain | `0 dB` | `-21 dB`, `-18 dB`, `-15 dB`, `-12 dB`, `-9 dB`, `-6 dB`, `-3 dB`, `0 dB`, `3 dB`, `6 dB`, `9 dB`, `12 dB`, `15 dB`, `18 dB` 
+`InTreatment` | Incoming Treatment | `Release w/Cause` |  
+`OutHunting` | Hunting Options | `Round Robin Clockwise` | `Alternate Even`, `Alternate Odd`, `LRU`, `Most Idle`, `Round Robin Clockwise`, `Round Robin Counter Clockwise`, `Sequential Bottom Up`, `Sequential Top Down` 
+`_localDbSyncKey_` | _localDbSyncKey_ | `0` |  
+`Name` | Name | `ChannelGroup0` |  
+`OutTransTable` | Outgoing Translation Table | `None` |  
+`ReCauseCode` | Re-Attempt Cause Code | `Not Used` | `Not Used`, `000 - Reserved`, `001 - Unallocated`, `002 - No Route to Specified Transit Network`, `003 - No Route to Destination`, `004 - Send Special Information Tone`, `005 - Misdialled Trunk Prefix`, `006 - Channel Unacceptable`, `007 - Call Awarded`, `008 - Preemption`, `009 - Preemption - Circuit Reserved for Reuse`, `010 - Unknown Cause Code`, `011 - Unknown Cause Code`, `012 - Unknown Cause Code`, `013 - Unknown Cause Code`, `014 - Unknown Cause Code`, `015 - Unknown Cause Code`, `016 - Normal Call Clearing`, `017 - User Busy`, `018 - No User Responding`, `019 - No Answer from User`, `020 - Subscriber absent`, `021 - Call Rejected`, `022 - Number Changed`, `023 - Unknown Cause Code`, `024 - Unknown Cause Code`, `025 - Exchange routing error`, `026 - Non-Selected User Clearing`, `027 - Destination Out of Order`, `028 - Invalid Number Format`, `029 - Facility Rejected`, `030 - Response to STATUS ENQUIRY`, `031 - Normal Unspecified`, `032 - Unknown Cause Code`, `033 - Unknown Cause Code`, `034 - No Circuit/Channel Available`, `035 - Unknown Cause Code`, `036 - Unknown Cause Code`, `037 - Unknown Cause Code`, `038 - Network Out of Order`, `039 - Frame Mode Connection Out of Service`, `040 - Frame Mode Connection Operational`, `041 - Temporary Failure`, `042 - Switching Equipment Congestion`, `043 - Access Information Discarded`, `044 - Requested Circuit/Channel Unavailable`, `045 - Unknown Cause Code`, `046 - Precedence Call Blocked`, `047 - Resource Unavailable unspecified`, `048 - Unknown Cause Code`, `049 - Quality of Service Unavailable`, `050 - Requested Facility Not Subscribed`, `051 - Unknown Cause Code`, `052 - Unknown Cause Code`, `053 - Outgoing Calls Barred Within CUG`, `054 - Unknown Cause Code`, `055 - Incoming Calls Barred Within CUG`, `056 - Unknown Cause Code`, `057 - Bearer Capability Not Authorized`, `058 - Bearer Capability Not Available`, `059 - Unknown Cause Code`, `060 - Unknown Cause Code`, `061 - Unknown Cause Code`, `062 - Inconsistency b/w access info and sub class`, `063 - Service of Option Not Available unspecified`, `064 - Unknown Cause Code`, `065 - Bearer Capability Not Implemented`, `066 - Channel Type Not Implemented`, `067 - Unknown Cause Code`, `068 - Unknown Cause Code`, `069 - Requested Facility Not Implemented`, `070 - Restricted Digital Info Bearer Only`, `071 - Unknown Cause Code`, `072 - Unknown Cause Code`, `073 - Unknown Cause Code`, `074 - Unknown Cause Code`, `075 - Unknown Cause Code`, `076 - Unknown Cause Code`, `077 - Unknown Cause Code`, `078 - Unknown Cause Code`, `079 - Service or Option Not Implemented unspecified`, `080 - Unknown Cause Code`, `081 - Invalid Call Reference Value`, `082 - Identified Channel Does Not Exist`, `083 - Call Identity Does Not Exist`, `084 - Call Identity In Use`, `085 - No Call Suspended`, `086 - Call Identity Has Been Cleared`, `087 - User Not Memeber of CUG`, `088 - Incompatible Destination`, `089 - Unknown Cause Code`, `090 - Non-existent CUG`, `091 - Invalid Transit network Selection`, `092 - Unknown Cause Code`, `093 - Unknown Cause Code`, `094 - Unknown Cause Code`, `095 - Invalid Message unspecified`, `096 - Mandatory Information Element Missing`, `097 - Message Type Non-existent or Not Implemented`, `098 - Message Not Compatible with Call State`, `099 - Information Element/Parameter Non-existent`, `100 - Invalid Information Element Contents`, `101 - Message Not Compatible with Call State`, `102 - Recovery on Timer Expired`, `103 - Parameter Non-existent or Not Implemented`, `104 - Unknown Cause Code`, `105 - Unknown Cause Code`, `106 - Unknown Cause Code`, `107 - Unknown Cause Code`, `108 - Unknown Cause Code`, `109 - Unknown Cause Code`, `110 - Message with Unrecognized Parameter`, `111 - Protocol Error unspecified`, `112 - Unknown Cause Code`, `113 - Unknown Cause Code`, `114 - Unknown Cause Code`, `115 - Unknown Cause Code`, `116 - Unknown Cause Code`, `117 - Unknown Cause Code`, `118 - Unknown Cause Code`, `119 - Unknown Cause Code`, `120 - Unknown Cause Code`, `121 - Unknown Cause Code`, `122 - Unknown Cause Code`, `123 - Unknown Cause Code`, `124 - Unknown Cause Code`, `125 - Unknown Cause Code`, `126 - Unknown Cause Code`, `127 - Unknown Cause Code`, `128 - Unknown Cause Code`, `129 - Unknown Cause Code`, `130 - Unknown Cause Code`, `131 - Unknown Cause Code`, `132 - Unknown Cause Code`, `133 - Unknown Cause Code`, `134 - Unknown Cause Code`, `135 - Unknown Cause Code`, `136 - Unknown Cause Code`, `137 - Unknown Cause Code`, `138 - Unknown Cause Code`, `139 - Unknown Cause Code`, `140 - Unknown Cause Code`, `141 - Unknown Cause Code`, `142 - Unknown Cause Code`, `143 - Unknown Cause Code`, `144 - Unknown Cause Code`, `145 - Unknown Cause Code`, `146 - Unknown Cause Code`, `147 - Unknown Cause Code`, `148 - Unknown Cause Code`, `149 - Unknown Cause Code`, `150 - Unknown Cause Code`, `151 - Unknown Cause Code`, `152 - Unknown Cause Code`, `153 - Unknown Cause Code`, `154 - Unknown Cause Code`, `155 - Unknown Cause Code`, `156 - Unknown Cause Code`, `157 - Unknown Cause Code`, `158 - Unknown Cause Code`, `159 - Unknown Cause Code`, `160 - Unknown Cause Code`, `161 - Unknown Cause Code`, `162 - Unknown Cause Code`, `163 - Unknown Cause Code`, `164 - Unknown Cause Code`, `165 - Unknown Cause Code`, `166 - Unknown Cause Code`, `167 - Unknown Cause Code`, `168 - Unknown Cause Code`, `169 - Unknown Cause Code`, `170 - Unknown Cause Code`, `171 - Unknown Cause Code`, `172 - Unknown Cause Code`, `173 - Unknown Cause Code`, `174 - Unknown Cause Code`, `175 - Unknown Cause Code`, `176 - Unknown Cause Code`, `177 - Unknown Cause Code`, `178 - Unknown Cause Code`, `179 - Unknown Cause Code`, `180 - Unknown Cause Code`, `181 - Unknown Cause Code`, `182 - Unknown Cause Code`, `183 - Unknown Cause Code`, `184 - Unknown Cause Code`, `185 - Unknown Cause Code`, `186 - Unknown Cause Code`, `187 - Unknown Cause Code`, `188 - Unknown Cause Code`, `189 - Unknown Cause Code`, `190 - Unknown Cause Code`, `191 - Unknown Cause Code`, `192 - Unknown Cause Code`, `193 - Unknown Cause Code`, `194 - Unknown Cause Code`, `195 - Unknown Cause Code`, `196 - Unknown Cause Code`, `197 - Unknown Cause Code`, `198 - Unknown Cause Code`, `199 - Unknown Cause Code`, `200 - Unknown Cause Code`, `201 - Unknown Cause Code`, `202 - Unknown Cause Code`, `203 - Unknown Cause Code`, `204 - Unknown Cause Code`, `205 - Unknown Cause Code`, `206 - Unknown Cause Code`, `207 - Unknown Cause Code`, `208 - Unknown Cause Code`, `209 - Unknown Cause Code`, `210 - Unknown Cause Code`, `211 - Unknown Cause Code`, `212 - Unknown Cause Code`, `213 - Unknown Cause Code`, `214 - Unknown Cause Code`, `215 - Unknown Cause Code`, `216 - Unknown Cause Code`, `217 - Unknown Cause Code`, `218 - Unknown Cause Code`, `219 - Unknown Cause Code`, `220 - Unknown Cause Code`, `221 - Unknown Cause Code`, `222 - Unknown Cause Code`, `223 - Unknown Cause Code`, `224 - Unknown Cause Code`, `225 - Unknown Cause Code`, `226 - Unknown Cause Code`, `227 - Unknown Cause Code`, `228 - Unknown Cause Code`, `229 - Unknown Cause Code`, `230 - Unknown Cause Code`, `231 - Unknown Cause Code`, `232 - Unknown Cause Code`, `233 - Unknown Cause Code`, `234 - Unknown Cause Code`, `235 - Unknown Cause Code`, `236 - Unknown Cause Code`, `237 - Unknown Cause Code`, `238 - Unknown Cause Code`, `239 - Unknown Cause Code`, `240 - Unknown Cause Code`, `241 - Unknown Cause Code`, `242 - Unknown Cause Code`, `243 - Unknown Cause Code`, `244 - Unknown Cause Code`, `245 - Unknown Cause Code`, `246 - Unknown Cause Code`, `247 - Unknown Cause Code`, `248 - Unknown Cause Code`, `249 - Unknown Cause Code`, `250 - Unknown Cause Code`, `251 - Unknown Cause Code`, `252 - Unknown Cause Code`, `253 - Unknown Cause Code`, `254 - Unknown Cause Code` 
+`TotalSamTimeout` | Total Overlap Timeout (Seconds) | `18` |  
+`ResourceGroupId` | ResourceGroupId | `0` |  
+`GroupFunction` | Trunk Direction | `Incoming/Outgoing` | `Incoming/Outgoing`, `Incoming`, `Outgoing` 
+`InIPProfile` | Incoming IP Profile | `Not Used` |  
+`OutCallProgressTones` | Ingress Side will Play Call Progress Tones | `False` | `True`, `False` 
+`MinDigits` | Minimum # of Digits | `Not Used` |  
+`NetworkElementId` | NetworkElementId |  |  
+`SupportA2F` | Support Digit A to F | `False` | `True`, `False` 
+`InTransTable` | Incoming Translation Table | `None` |  
+`INCCTable` | Cause Code Table | `None` |  
+
+#signaling
+
+This is a child of `bn2020`
+
+## Options
+
+Name|Description|Default|Alternatives
+----|-----------|-------|------------
+`_localDbSyncKey_` | _localDbSyncKey_ | `0` |  
+`_position_` | _position_ |  |  
+`_objectName_` | _objectName_ | `Signaling` |  
+
+#ip_address
+
+This is a child of `interface`
+
+## Options
+
+Name|Description|Default|Alternatives
+----|-----------|-------|------------
+`NIIPIcmpSupport` | ICMP | `Enable` | `Disable`, `Enable` 
+`ConfigTableID` | Table Id | `0x0020` |  
+`NodeName` | NodeName |  |  
+`NIIPAddress` | IP Address |  |  
+`NIIPSubnet` |  / Network Prefix Len | `24` |  
+`VLanID` | VLAN ID (2-4094) | `2` |  
+`SiblingIPType` | SiblingIPType |  |  
+`VLanPriority` | VLAN Priority (0-7) | `0` |  
+`NIIPArpSupport` | ARP/ND | `Enable` | `Disable`, `Enable` 
+`NIIPPhy` | Source Endpoint | `Services` | `Services`, `Media 0`, `Media 1` 
+`ConfigAction` | Activate | `Enable` |  
+`_localDbSyncKey_` | _localDbSyncKey_ | `0` |  
+`FQDN` | FQDN (SIP Only) |  |  
+`_objectName_` | _objectName_ | `Services -  / 24 ` |  
+`MaxPrefixLength` | Max Prefix Length | `32` |  
+`NIIPLogical` | Logical Interface |  |  
+`NIIPGateway` | Default Gateway |  |  
+`NIIPType` | Address Type | `IPv4` | `IPv4`, `IPv6` 
+`VLan` | VLAN | `Disable` | `Disable`, `Enable` 
+`ACLName` | ACL | `Unrestricted` |  
+`MinPrefixLength` | Min Prefix Length | `1` |  
+`_position_` | _position_ |  |  
+
+#facility
+
+This is a child of `bn2020`
+
+## Options
+
+Name|Description|Default|Alternatives
+----|-----------|-------|------------
+`_localDbSyncKey_` | _localDbSyncKey_ | `0` |  
+`QryFrq_SyncMode` | Monitor Refresh Rate (Seconds) | `10` |  
+`_objectName_` | _objectName_ | `Facility` |  
+`_position_` | _position_ |  |  
+
+#channel_group_collection
+
+This is a child of `routing_configuration`
+
+## Options
+
+Name|Description|Default|Alternatives
+----|-----------|-------|------------
+`_localDbSyncKey_` | _localDbSyncKey_ | `0` |  
+`_position_` | _position_ |  |  
+`_objectName_` | _objectName_ | `Channel Groups` |  
+`ResourceGroup` | ResourceGroup | `Resource Group` |  
+`IpRouterTable` | IpRouterTable | `IP Router Table` |  
+`_cached_` | Cached | `__NULL__` |  
+
+#sip_ip
+
+This is a child of `sip`
+
+## Options
+
+Name|Description|Default|Alternatives
+----|-----------|-------|------------
+`TransportType` | Transport Type | `UDP` | `UDP`, `TCP`, `TLS` 
+`IPType` | IP Type | `IPv4` | `IPv4`, `IPv6` 
+`ID` | ID | `0` |  
+`DefaultSecureProfile` | Default Secure Profile | `Not Used` |  
+`_position_` | _position_ |  |  
+`SecureProfileID` | Secure Profile ID | `Not Used` |  
+`DNSClient` | DNS Client | `Not Used` |  
+`NodeName` | NodeName |  |  
+`TLSPort` | TLS Port | `5061` |  
+`SecureProfile` | Secure Profile | `Not Used` |  
+`FQDN` | Fully Qualified Domain Name |  |  
+`_localDbSyncKey_` | _localDbSyncKey_ | `0` |  
+`DNSQueryMode` | DNS Query Mode | `MIX` | `MIX`, `A ONLY`, `SRV ONLY` 
+`IPAddress` | IP Address |  |  
+`Port` | Port | `5060` |  
+`DefaultSecureProfileID` | Default Secure Profile ID | `Not Used` |  
+`_objectName_` | _objectName_ | `SIP IP Address: ` |  
+`DNSClientID` | DNSClient ID | `Not Used` |  
+
+#packet_facility
+
+This is a child of `packet_facility_collection`
+
+## Options
+
+Name|Description|Default|Alternatives
+----|-----------|-------|------------
+`NetworkAddress` | Network Address |  |  
+`EndSpanID` | End Span | `0` |  
+`_position_` | _position_ |  |  
+`GroupID` | ID | `1` |  
+`EndChannelID` | End Channel | `31` |  
+`_cachedNotify_` | Cached Notify | `ChannelGroups` |  
+`StartSpanID` | Start Span | `0` |  
+`RTPOffset` | Starting RTP Port |  |  
+`_localDbSyncKey_` | _localDbSyncKey_ | `0` |  
+`FQDN` | FQDN (Media) |  |  
+`_objectName_` | _objectName_ | `PacketFacility - Packet_Facility1` |  
+`AddressType` | Address type | `0` |  
+`MediaTLV` | MediaTLV |  |  
+`ChannelType` | Packet Facility Channel Type |  |  
+`GroupName` | Name | `Packet_Facility1` |  
+`StartChannelID` | Start Channel | `0` |  
+`ChannelCount` | Number of Channels |  |  
+`MediaEndpoint` | Media Endpoint |  |  
+`NodeName` | NodeName |  |  
+
+#external_network_elements
+
+This is a child of `root`
+
+## Options
+
+Name|Description|Default|Alternatives
+----|-----------|-------|------------
+`_position_` | _position_ |  |  
+`_objectName_` | _objectName_ | `External Network Elements` |  
+`_localDbSyncKey_` | _localDbSyncKey_ | `0` |  
+
+#sip
+
+This is a child of `signaling`
+
+## Options
+
+Name|Description|Default|Alternatives
+----|-----------|-------|------------
+`SIPTEnabled` | SIP-T Enabled | `No` | `No`, `Yes` 
+`Variant` | Variant |  |  
+`RoutingMethod` | Routing Method | `0x08` |  
+`_objectName_` | _objectName_ | `SIP` |  
+`SIPTBehaviour` | SIP-T Behavior | `Not Used` |  
+`_localDbSyncKey_` | _localDbSyncKey_ | `0` |  
+`RetryAfter` | Retry-After (# of Seconds) | `5` |  
+`VirtualAddress` | Virtual Address |  |  
+`RouterProtocolId` | Router Protocol Id | `0x0B` |  
+`IPOperationMode` | IP Operation Mode | `Single IP` | `Single IP`, `Multiple IP` 
+`AddrOfRecord` | UserName (AOR) | `DIALOGIC-BDN__NOTFOUND__` |  
+`AuthPassword` | Authentication Password |  |  
+`TotalSamTimeout` | Total Overlap Timeout |  |  
+`VariantId` | VariantId |  |  
+`InterSamTimeout` | Inter SAM Timeout |  |  
+`_position_` | _position_ |  |  
+`_cached_` | Cached |  |  
+`SIPMsgRestriction` | Message Restriction Setting | `Default` | `Default`, `Option 1` 
+`Node` | Node |  |  
+`CompactHeader` | Compact Header | `Disable` | `Disable`, `Enable` 
+`AuthUserName` | Authentication User Name |  |  
+`RoutingCriteriaType` | RoutingCriteriaType | `0x2792` |  
+
+#interface
+
+This is a child of `interface_collection`
+
+## Options
+
+Name|Description|Default|Alternatives
+----|-----------|-------|------------
+`Interface` | Interface | `Control` | `Control`, `Data A`, `Data B` 
+`ConfigTableId` | Config Table Id | `0x1303` |  
+`QryFrq_NetLogIntfc` | Monitor Refresh Rate (Seconds) | `10` |  
+`_localDbSyncKey_` | _localDbSyncKey_ | `0` |  
+`OpTableId` | Operation Table Id | `0x1306` |  
+`_position_` | _position_ |  |  
+`_objectName_` | _objectName_ | `Control` |  
+`MonitorTableId` | Monitor Table Id | `0x1305` |  
+
+#node_association
+
+This is a child of `cg_network_element`
+
+## Options
+
+Name|Description|Default|Alternatives
+----|-----------|-------|------------
+`IPAddress` | Service IP Address |  |  
+`Port` | Port |  |  
+`_objectName_` | _objectName_ | `Node Assoc: ` |  
+`PacketFacilityId` | PacketFacilityId |  |  
+`_localDbSyncKey_` | _localDbSyncKey_ | `0` |  
+`UnknownTLV1` | UnknownTLV1 | `21` |  
+`DNSClientID` | DNSClient ID |  |  
+`DNSClient` | ENUM Client |  |  
+`IPAddress4` | Service IP Address |  |  
+`_position_` | _position_ |  |  
+`HostName` | HostName | `Not Used` |  
+`UnknownTLV2` | UnknownTLV2 | `11` |  
+`SetID` | SetID |  |  
+`_cachedNotify_` | Cached Notify | `ChannelGroups` |  
+`NetworkElement` | NetworkElement |  |  
+`TransportType` | TransportType |  |  
+`PacketFacility` | Media Packet Facility |  |  
+`Node` | Node |  |  
+
+#external_gateway
+
+This is a child of `external_gateway_collection`
+
+## Options
+
+Name|Description|Default|Alternatives
+----|-----------|-------|------------
+`SecureProfile` | Secure Profile | `Not Used` |  
+`TransportTypeId` | TransportTypeId | `0x00` |  
+`Name` | Name |  |  
+`MaxGWPrefix` | MaxGWPrefix | `32` |  
+`IPAddress4` | IP Address |  |  
+`Registration` | Registration Required | `No` | `No`, `Yes` 
+`AllowedGWPrefix` | Allowed Gateway Subnet Prefix | `32` |  
+`ProtocolId` | ProtocolId | `0x02` |  
+`PPLComponentId` | PPLComponentId | `213` |  
+`_localDbSyncKey_` | _localDbSyncKey_ | `0` |  
+`SGPId` | SIP Profile Id |  |  
+`RegistrationExpire` | Registration Interval | `3600` |  
+`_objectName_` | _objectName_ |  |  
+`AddressType` | Address Type | `IP Address` | `IP Address`, `Host Name` 
+`Port` | Transport Port | `5060` |  
+`IPAddress` | IP Address |  |  
+`KeepAlive` | OPTIONS Keep Alive | `Disable` | `Disable`, `Enable` 
+`Protocol` | Protocol | `SIP` | `SIP`, `H323` 
+`NetworkName` | NetworkName | `GW: ` |  
+`ID` | ID | `1024` |  
+`IPType` | IP Type | `IPv4` | `IPv4`, `IPv6` 
+`TransportType` | Transport Type | `UDP` | `UDP`, `TCP`, `TLS` 
+`_cachedNotify_` | Cached Notify | `ChannelGroups` |  
+`SecureProfileID` | Secure Profile ID | `Not Used` |  
+`SGP` | Profile |  |  
+`KeepHostName` | Keep HostName in outgoing SIP request | `Disabled` | `Disabled`, `Enabled` 
+`ElementType` | ElementType |  |  
+`HostName` | HostName |  |  
+`_position_` | _position_ |  |  
+
+#bn2020
+
+This is a child of `root`
+
+## Options
+
+Name|Description|Default|Alternatives
+----|-----------|-------|------------
+`SwVersion` | Software Version | `Unknown` |  
+`LicIPChannels` | Total Licensed IP Channels | `0` |  
+`ResendLogic` | Resend Logic | `Disable` | `Disable`, `Resend Once`, `Once With Alarm`, `Until Acked` 
+`Name` | Name | `Node0` |  
+`CFCMode` | Trunk Type | `Unknown` | `T1`, `E1`, `Unknown` 
+`PacketAudioChannels` | Packet Audio Channels | `Unknown` |  
+`IPAddress` | IP Address (nn.nn.nn.nn) |  |  
+`_objectName_` | _objectName_ | `BN2020: Node0 - ID: 0` |  
+`_localDbSyncKey_` | _localDbSyncKey_ | `0` |  
+`IPChannels` | Total IP Channels | `Unknown` |  
+`NetworkMultimediaChannels` | Network Multimedia Channels | `Unknown` |  
+`srtpEnable` | Audio SRTP Support | `Disabled` | `Disabled`, `Enabled` 
+`MediaMode` | Media Mode | `Audio LBR` | `Audio LBR`, `Audio 3G`, `Audio HD`, `Audio Dynamic Density Management`, `Multimedia - [Video:  0 percent TransCode]`, `Multimedia - [Video: 25 percent TransCode]`, `Multimedia - [Video:100 percent TransCode]` 
+`InterfaceType` | Interface Type | `Unknown` | `DS-3/OC3`, `DS-1`, `Unknown` 
+`NodeType` | Type | `Unknown` | `2020`, `Unknown` 
+`IPType` | IP Type | `IPv4` |  
+`ID` | ID | `0` |  
+`ACL_ID` | ACL ID | `0` |  
+`_position_` | _position_ |  |  
+`PacketMultimediaChannels` | Packet Multimedia Channels | `Unknown` |  
+`ACLName` | ACL | `Unrestricted` |  
+`SubNetMask` | SubNet Mask |  |  
+
+#route_table_collection
+
+This is a child of `routing_configuration`
+
+## Options
+
+Name|Description|Default|Alternatives
+----|-----------|-------|------------
+`_localDbSyncKey_` | _localDbSyncKey_ | `0` |  
+`_objectName_` | _objectName_ | `Routing Tables` |  
+`_position_` | _position_ |  |  
+
+#interface_collection
+
+This is a child of `network`
+
+## Options
+
+Name|Description|Default|Alternatives
+----|-----------|-------|------------
+`_localDbSyncKey_` | _localDbSyncKey_ | `0` |  
+`_objectName_` | _objectName_ | `Logical Interfaces` |  
+`_position_` | _position_ |  | 
+
+</xmp>
+
+<script src="http://strapdownjs.com/v/0.2/strapdown.js"></script>
+</html>
