@@ -2,18 +2,9 @@ use strict;
 use warnings;
 
 {
-    package My::Serializer::Plain;
+    package My::Serializer::Custom;
     use Moo;
     extends 'Role::REST::Client::Serializer';
-
-    # sub serialize {
-    #     return {"foo" => "bar"};
-    # }
-
-    # sub deserialize {
-    #     my ($self, $content) = @_;
-    #     return "new content!!";
-    # }
 
     sub _set_serializer {
         my $s = Data::Serializer::Raw->new(
@@ -31,15 +22,17 @@ package NGCP::Panel::Utils::DialogicImg;
 use Moo;
 use Types::Standard qw(Int HashRef);
 use HTTP::Tiny;
-with 'Role::REST::Client';    # TODO: dependency
+with 'Role::REST::Client';
 
 has '+type' => ( default => 'application/xml', is => 'rw' );
-has '+serializer_options' => (default => sub {
-        my $s = Data::Serializer::Raw->new(
-            serializer => 'XML::Simple',
-            options    => { RootName => 'object' } );
-        return { serializer  => $s };
-    });
+# has '+serializer_options' => (default => sub {
+#         my $s = Data::Serializer::Raw->new(
+#             serializer => 'XML::Simple',
+#             options    => { RootName => 'object' } );
+#         return { serializer  => $s };
+#     });
+has '+serializer_class' =>
+    ( is => 'rw', default => sub {'My::Serializer::Custom'} );
 has '+clientattrs' => ( default => sub {
         return {timeout => 5};
     });
@@ -49,12 +42,156 @@ has 'pids' => (
     isa     => HashRef,
     default => sub {
         return {
-            bn2020               => 10_001, # defaults (should be overwritten)
-            network              => 10_002,
-            interface_collection => 10_003,
-            interface            => 10_004,
+            root                 => 10_000,
+            bn2020               => 10_001,
         };
     } );
+
+has 'classinfo' => ( is => 'ro', isa => HashRef, default => sub{
+    return {
+        bn2020 => {  # dummy, not used by _create_generic
+            name => 'Node',
+            parent => 'root',
+            revalidate => 0,
+        },
+        network => {
+            name => 'NetworkInterfaces',
+            parent => 'bn2020',
+            revalidate => 0,
+        },
+        interface_collection => {
+            name => 'NetworkLogicalInterfaces',
+            parent => 'network',
+            revalidate => 0,
+        },
+        interface => {
+            name => 'NetworkLogicalInterface',
+            parent => 'interface_collection',
+            revalidate => 0,
+        },
+        ip_address => {
+            name => 'NetworkInterface',
+            parent => 'interface',
+            revalidate => 1,
+        },
+        facility => {
+            name => 'Facility',
+            parent => 'bn2020',
+            revalidate => 0,
+        },
+        packet_facility_collection => {
+            name => 'PacketFacilities',
+            parent => 'facility',
+            revalidate => 0,
+        },
+        packet_facility => {
+            name => 'PacketFacility',
+            parent => 'packet_facility_collection',
+            revalidate => 0,
+        },
+        signaling => {
+            name => 'Signaling',
+            parent => 'bn2020',
+            revalidate => 0,
+        },
+        sip => {
+            name => 'SIP',
+            parent => 'signaling',
+            revalidate => 0,
+        },
+        sip_ip => {
+            name => 'SIPIP',
+            parent => 'sip',
+            revalidate => 0,
+        },
+        profile_collection => {
+            name => 'Profiles',
+            parent => 'root',
+            revalidate => 0,
+        },
+        ip_profile_collection => {
+            name => 'IPProfiles',
+            parent => 'profile_collection',
+            revalidate => 0,
+        },
+        ip_profile => {
+            name => 'IPProfile',
+            parent => 'ip_profile_collection',
+            revalidate => 1,
+        },
+        # ...
+        vocoder_profile => {
+            name => 'VocoderProfile',
+            parent => 'ip_profile',
+            revalidate => 1,
+        },
+        sip_profile_collection => {
+            name => 'SIPProfiles',
+            parent => 'profile_collection',
+            revalidate => 0,
+        },
+        sip_profile => {
+            name => 'SIPSGP',
+            parent => 'sip_profile_collection',
+            revalidate => 0,
+        },
+        external_network_elements => {
+            name => 'ExternalNetworkElements',
+            parent => 'root',
+            revalidate => 0,
+        },
+        external_gateway_collection => {
+            name => 'ExternalGateways',
+            parent => 'external_network_elements',
+            revalidate => 0,
+        },
+        external_gateway => {
+            name => 'ExternalGateway',
+            parent => 'external_gateway_collection',
+            revalidate => 1,
+        },
+        routing_configuration => {
+            name => 'RoutingConfiguration',
+            parent => 'root',
+            revalidate => 0,
+        },
+        channel_group_collection => {
+            name => 'ChannelGroups',
+            parent => 'routing_configuration',
+            revalidate => 0,
+        },
+        channel_group => {
+            name => 'ChannelGroup',
+            parent => 'channel_group_collection',
+            revalidate => 0,
+        },
+        route_table_collection => {
+            name => 'RoutingTables',
+            parent => 'routing_configuration',
+            revalidate => 0,
+        },
+        route_table => {
+            name => 'RouteTable',
+            parent => 'route_table_collection',
+            revalidate => 1,
+        },
+        route_element => {
+            name => 'RouteElement',
+            parent => 'route_table',
+            revalidate => 1,
+        },
+        cg_network_element => {
+            name => 'NetworkElement',
+            parent => 'channel_group',
+            revalidate => 0,
+        },
+        node_association => {
+            name => 'NodeAssociation',
+            parent => 'cg_network_element',
+            revalidate => 0,
+        },
+    };
+    });
 
 # returns appid or 0
 sub login {
@@ -81,6 +218,8 @@ sub obtain_lock {
     return $resp;
 }
 
+###### CREATE methods ######
+
 sub create_bn2020 {
     my ($self) = @_;
 
@@ -99,71 +238,25 @@ sub create_bn2020 {
 sub create_network {
     my ($self) = @_;
 
-    my $pid   = $self->pids->{bn2020};
-    my $appid = $self->appid;
-    my $resp  = $self->get(
-        "/oamp/configuration/objects/NetworkInterfaces/NULL?pid=$pid&appid=$appid",
-    );
-    return $resp if ( $resp->code != 200 );
-    my $new_resp = $self->_build_response_data( $resp->data, $pid );
-    $resp = $self->post(
-        "/oamp/configuration/objects/NetworkInterfaces/NULL?pid=$pid&appid=$appid",
-        $new_resp,
-    );
-    if ( $resp->code == 200 ) {
-        $self->pids->{network} = $resp->data->{oid};
-    }
-    return $resp;
+    return $self->_create_generic(undef, 'network');
 }
 
 sub create_interface_collection {
     my ($self) = @_;
 
-    my $pid   = $self->pids->{network};
-    my $appid = $self->appid;
-    my $resp  = $self->get(
-        "/oamp/configuration/objects/NetworkLogicalInterfaces/NULL?detaillevel=4&pid=$pid&appid=$appid",
-    );
-    if ( $resp->code != 200 ) {
-        warn "Failed to fetch resource\n";
-        return $resp;
-    }
-    my $new_resp = $self->_build_response_data( $resp->data, $pid );
-    $resp = $self->post(
-        "/oamp/configuration/objects/NetworkLogicalInterfaces/NULL?pid=$pid&appid=$appid",
-        $new_resp,
-    );
-    if ( $resp->code == 200 ) {
-        $self->pids->{interface_collection} = $resp->data->{oid};
-    }
-    return $resp;
+    return $self->_create_generic(undef, 'interface_collection');
 }
 
 sub create_interface {
     my ($self) = @_;
 
-    my $pid   = $self->pids->{interface_collection};
-    my $appid = $self->appid;
-    my $resp  = $self->get(
-        "/oamp/configuration/objects/NetworkLogicalInterface/NULL?detaillevel=4&pid=$pid&appid=$appid",
-    );
-    if ( $resp->code != 200 ) {
-        warn "Failed to fetch resource\n";
-        return $resp;
-    }
-    my $new_resp = $self->_build_response_data( $resp->data, $pid );
-    $resp = $self->post(
-        "/oamp/configuration/objects/NetworkLogicalInterface/NULL?pid=$pid&appid=$appid",
-        $new_resp,
-    );
+    my $resp = $self->_create_generic(undef, 'interface');
     if ( $resp->code == 200 ) {
         if ( $resp->data->{property}{Interface}{value} eq "Control" ) {
             $self->pids->{interface_control} = $resp->data->{oid};
         } elsif ( $resp->data->{property}{Interface}{value} eq "Data A" ) {
             $self->pids->{interface_dataa} = $resp->data->{oid};
         }
-        $self->pids->{interface} = $resp->data->{oid};
-
     }
     return $resp;
 }
@@ -175,605 +268,305 @@ sub create_ip_address {
     {
         $options->{NIIPGateway} = $options->{NIIPAddress} =~ s/\.[0-9]+$/.1/r;
     }
-    my $data  = $self->objects->{bn2020};
-    my $pid   = $self->pids->{interface};
-    my $appid = $self->appid;
-    my $resp  = $self->get(
-        "/oamp/configuration/objects/NetworkInterface/NULL?detaillevel=4&pid=$pid&appid=$appid",
-    );
-    if ( $resp->code != 200 ) {
-        warn "Failed to fetch resource\n";
-        return $resp;
-    }
-    my $validation_data = $self->_build_validation_data( $resp->data, $pid, $options );
-    $resp = $self->get(
-        "/oamp/configuration/objects/NetworkInterface/NULL",
-        $validation_data,
-    );
-    if ( $resp->code != 200 ) {
-        warn "Failed to fetch resource second time (revalidate)\n";
-        return $resp;
-    }
-    my $new_resp = $self->_build_response_data( $resp->data, $pid, $options );
-    $resp = $self->post(
-        "/oamp/configuration/objects/NetworkInterface/NULL?pid=$pid&appid=$appid",
-        $new_resp,
-    );
-    if ( $resp->code == 200 ) {
-        $self->pids->{interface} = $resp->data->{oid};
-    }
-    return $resp;
+    return $self->_create_generic($options, 'ip_address');
 }
 
 sub create_facility {
     my ($self) = @_;
 
-    my $pid   = $self->pids->{bn2020};
-    my $appid = $self->appid;
-    my $resp  = $self->get(
-        "/oamp/configuration/objects/Facility/NULL?detaillevel=4&pid=$pid&appid=$appid",
-    );
-    if ( $resp->code != 200 ) {
-        warn "Failed to fetch resource\n";
-        return $resp;
-    }
-    my $new_resp = $self->_build_response_data( $resp->data, $pid );
-    $resp
-        = $self->post(
-        "/oamp/configuration/objects/Facility/NULL?pid=$pid&appid=$appid",
-        $new_resp, );
-    if ( $resp->code == 200 ) {
-        $self->pids->{facility} = $resp->data->{oid};
-
-    }
-    return $resp;
+    return $self->_create_generic(undef, 'facility');
 }
 
 sub create_packet_facility_collection {
     my ($self) = @_;
 
-    my $pid   = $self->pids->{facility};
-    my $appid = $self->appid;
-    my $resp  = $self->get(
-        "/oamp/configuration/objects/PacketFacilities/NULL?detaillevel=4&pid=$pid&appid=$appid",
-    );
-    if ( $resp->code != 200 ) {
-        warn "Failed to fetch resource\n";
-        return $resp;
-    }
-    my $new_resp = $self->_build_response_data( $resp->data, $pid );
-    $resp
-        = $self->post(
-        "/oamp/configuration/objects/PacketFacilities/NULL?pid=$pid&appid=$appid",
-        $new_resp, );
-    if ( $resp->code == 200 ) {
-        $self->pids->{packet_facility_collection} = $resp->data->{oid};
-
-    }
-    return $resp;
+    return $self->_create_generic(undef, 'packet_facility_collection');
 }
 
 sub create_packet_facility {
     my ( $self, $options ) = @_;
 
-    my $pid   = $self->pids->{packet_facility_collection};
-    my $appid = $self->appid;
-    my $resp  = $self->get(
-        "/oamp/configuration/objects/PacketFacility/NULL?detaillevel=4&pid=$pid&appid=$appid",
-    );
-    if ( $resp->code != 200 ) {
-        warn "Failed to fetch resource\n";
-        return $resp;
-    }
-    my $new_resp = $self->_build_response_data( $resp->data, $pid, $options );
-    $resp = $self->post(
-        "/oamp/configuration/objects/PacketFacility/NULL?pid=$pid&appid=$appid",
-        $new_resp,
-    );
-    if ( $resp->code == 200 ) {
-        $self->pids->{packet_facility} = $resp->data->{oid};
-    }
-    return $resp;
+    return $self->_create_generic($options, 'packet_facility');
 }
 
 sub create_signaling {
     my ( $self, $options ) = @_;
 
-    my $pid   = $self->pids->{bn2020};
-    my $appid = $self->appid;
-    my $resp  = $self->get(
-        "/oamp/configuration/objects/Signaling/NULL?detaillevel=4&pid=$pid&appid=$appid",
-    );
-    if ( $resp->code != 200 ) {
-        warn "Failed to fetch resource\n";
-        return $resp;
-    }
-    my $new_resp = $self->_build_response_data( $resp->data, $pid, $options );
-    $resp = $self->post(
-        "/oamp/configuration/objects/Signaling/NULL?pid=$pid&appid=$appid",
-        $new_resp,
-    );
-    if ( $resp->code == 200 ) {
-        $self->pids->{signaling} = $resp->data->{oid};
-    }
-    return $resp;
+    return $self->_create_generic($options, 'signaling');
 }
 
 sub create_sip {
     my ( $self, $options ) = @_;
 
-    my $pid   = $self->pids->{signaling};
-    my $appid = $self->appid;
-    my $resp  = $self->get(
-        "/oamp/configuration/objects/SIP/NULL?detaillevel=4&pid=$pid&appid=$appid",
-    );
-    if ( $resp->code != 200 ) {
-        warn "Failed to fetch resource\n";
-        return $resp;
-    }
-    my $new_resp = $self->_build_response_data( $resp->data, $pid, $options );
-    $resp = $self->post(
-        "/oamp/configuration/objects/SIP/NULL?pid=$pid&appid=$appid",
-        $new_resp,
-    );
-    if ( $resp->code == 200 ) {
-        $self->pids->{sip} = $resp->data->{oid};
-    }
-    return $resp;
+    return $self->_create_generic($options, 'sip');
 }
 
 sub create_sip_ip {
     my ( $self, $options ) = @_;
 
-    my $pid   = $self->pids->{sip};
-    my $appid = $self->appid;
-    my $resp  = $self->get(
-        "/oamp/configuration/objects/SIPIP/NULL?detaillevel=4&pid=$pid&appid=$appid",
-    );
-    if ( $resp->code != 200 ) {
-        warn "Failed to fetch resource\n";
-        return $resp;
-    }
-    my $new_resp = $self->_build_response_data( $resp->data, $pid, $options );
-    $resp = $self->post(
-        "/oamp/configuration/objects/SIPIP/NULL?pid=$pid&appid=$appid",
-        $new_resp,
-    );
-    if ( $resp->code == 200 ) {
-        $self->pids->{sip_ip} = $resp->data->{oid};
-    }
-    return $resp;
+    return $self->_create_generic($options, 'sip_ip');
 }
 
 sub create_profile_collection {
     my ( $self, $options ) = @_;
 
-    my $pid   = 10000;
-    my $appid = $self->appid;
-    my $resp  = $self->get(
-        "/oamp/configuration/objects/Profiles/NULL?detaillevel=4&pid=$pid&appid=$appid",
-    );
-    if ( $resp->code != 200 ) {
-        warn "Failed to fetch resource\n";
-        return $resp;
-    }
-    my $new_resp = $self->_build_response_data( $resp->data, $pid, $options );
-    $resp = $self->post(
-        "/oamp/configuration/objects/Profiles/NULL?pid=$pid&appid=$appid",
-        $new_resp,
-    );
-    if ( $resp->code == 200 ) {
-        $self->pids->{profile_collection} = $resp->data->{oid};
-    }
-    return $resp;
+    return $self->_create_generic($options, 'profile_collection');
 }
 
 sub create_ip_profile_collection {
     my ( $self, $options ) = @_;
 
-    my $pid   = $self->pids->{profile_collection};
-    my $appid = $self->appid;
-    my $resp  = $self->get(
-        "/oamp/configuration/objects/IPProfiles/NULL?detaillevel=4&pid=$pid&appid=$appid",
-    );
-    if ( $resp->code != 200 ) {
-        warn "Failed to fetch resource\n";
-        return $resp;
-    }
-    my $new_resp = $self->_build_response_data( $resp->data, $pid, $options );
-    $resp = $self->post(
-        "/oamp/configuration/objects/IPProfiles/NULL?pid=$pid&appid=$appid",
-        $new_resp,
-    );
-    if ( $resp->code == 200 ) {
-        $self->pids->{ip_profile_collection} = $resp->data->{oid};
-    }
-    return $resp;
+    return $self->_create_generic($options, 'ip_profile_collection');
 }
 
 sub create_ip_profile {
     my ( $self, $options ) = @_;
 
-    my $pid   = $self->pids->{ip_profile_collection};
-    my $appid = $self->appid;
-    my $resp  = $self->get(
-        "/oamp/configuration/objects/IPProfile/NULL?detaillevel=4&pid=$pid&appid=$appid",
-    );
-    if ( $resp->code != 200 ) {
-        warn "Failed to fetch resource\n";
-        return $resp;
-    }
-    my $validation_data = $self->_build_validation_data( $resp->data, $pid, $options );
-    $resp = $self->get(
-        "/oamp/configuration/objects/IPProfile/NULL",
-        $validation_data,
-    );
-    if ( $resp->code != 200 ) {
-        warn "Failed to fetch resource second time (revalidate)\n";
-        return $resp;
-    }
-    my $new_data = $self->_build_response_data( $resp->data, $pid, $options );
-    $resp = $self->post(
-        "/oamp/configuration/objects/IPProfile/NULL?pid=$pid&appid=$appid",
-        $new_data,
-    );
-    if ( $resp->code == 200 ) {
-        $self->pids->{ip_profile} = $resp->data->{oid};
-    }
-    return $resp;
+    return $self->_create_generic($options, 'ip_profile');
 }
 
 sub create_vocoder_profile {
     my ( $self, $options ) = @_;
 
-    my $pid   = $self->pids->{ip_profile};
-    my $appid = $self->appid;
-    my $enc_data =  $self->_urlencode_data($options);
-    my $resp  = $self->get(
-        "/oamp/configuration/objects/VocoderProfile/NULL?detaillevel=4&pid=$pid&appid=$appid&$enc_data",
-    );
-    if ( $resp->code != 200 ) {
-        warn "Failed to fetch resource\n";
-        return $resp;
-    }
-    my $validation_data = $self->_build_validation_data( $resp->data, $pid, $options );
-    $resp = $self->get(
-        "/oamp/configuration/objects/VocoderProfile/NULL",
-        $validation_data,
-    );
-    if ( $resp->code != 200 ) {
-        warn "Failed to fetch resource second time (revalidate)\n";
-        return $resp;
-    }
-    my $new_data = $self->_build_response_data( $resp->data, $pid, $options );
-    $resp = $self->post(
-        "/oamp/configuration/objects/VocoderProfile/NULL?pid=$pid&appid=$appid",
-        $new_data,
-    );
-    if ( $resp->code == 200 ) {
-        $self->pids->{vocoder_profile} = $resp->data->{oid};
-    }
-    return $resp;
+    return $self->_create_generic($options, 'vocoder_profile');
 }
 
 sub create_sip_profile_collection {
     my ( $self, $options ) = @_;
 
-    my $pid   = $self->pids->{profile_collection};
-    my $appid = $self->appid;
-    my $resp  = $self->get(
-        "/oamp/configuration/objects/SIPProfiles/NULL?detaillevel=4&pid=$pid&appid=$appid",
-    );
-    if ( $resp->code != 200 ) {
-        warn "Failed to fetch resource\n";
-        return $resp;
-    }
-    my $new_resp = $self->_build_response_data( $resp->data, $pid, $options );
-    $resp = $self->post(
-        "/oamp/configuration/objects/SIPProfiles/NULL?pid=$pid&appid=$appid",
-        $new_resp,
-    );
-    if ( $resp->code == 200 ) {
-        $self->pids->{sip_profile_collection} = $resp->data->{oid};
-    }
-    return $resp;
+    return $self->_create_generic($options, 'sip_profile_collection');
 }
 
 sub create_sip_profile {
     my ( $self, $options ) = @_;
 
-    my $pid   = $self->pids->{sip_profile_collection};
-    my $appid = $self->appid;
-    my $resp  = $self->get(
-        "/oamp/configuration/objects/SIPSGP/NULL?detaillevel=4&pid=$pid&appid=$appid",
-    );
-    if ( $resp->code != 200 ) {
-        warn "Failed to fetch resource\n";
-        return $resp;
-    }
-    my $new_data = $self->_build_response_data( $resp->data, $pid, $options );
-    $resp = $self->post(
-        "/oamp/configuration/objects/SIPSGP/NULL?pid=$pid&appid=$appid",
-        $new_data,
-    );
-    if ( $resp->code == 200 ) {
-        $self->pids->{sip_profile} = $resp->data->{oid};
-    }
-    return $resp;
+    return $self->_create_generic($options, 'sip_profile');
 }
 
 sub create_external_network_elements {
     my ( $self ) = @_;
 
-    my $pid   = 10_000;
-    my $appid = $self->appid;
-    my $resp  = $self->get(
-        "/oamp/configuration/objects/ExternalNetworkElements/NULL?detaillevel=4&pid=$pid&appid=$appid",
-    );
-    if ( $resp->code != 200 ) {
-        warn "Failed to fetch resource\n";
-        return $resp;
-    }
-    my $new_data = $self->_build_response_data( $resp->data, $pid );
-    $resp = $self->post(
-        "/oamp/configuration/objects/ExternalNetworkElements/NULL?pid=$pid&appid=$appid",
-        $new_data,
-    );
-    if ( $resp->code == 200 ) {
-        $self->pids->{external_network_elements} = $resp->data->{oid};
-    }
-    return $resp;
+    return $self->_create_generic(undef, 'external_network_elements');
 }
 
 sub create_external_gateway_collection {
     my ( $self, $options ) = @_;
 
-    my $pid   = $self->pids->{external_network_elements};
-    my $appid = $self->appid;
-    my $resp  = $self->get(
-        "/oamp/configuration/objects/ExternalGateways/NULL?detaillevel=4&pid=$pid&appid=$appid",
-    );
-    if ( $resp->code != 200 ) {
-        warn "Failed to fetch resource\n";
-        return $resp;
-    }
-    my $new_data = $self->_build_response_data( $resp->data, $pid, $options );
-    $resp = $self->post(
-        "/oamp/configuration/objects/ExternalGateways/NULL?pid=$pid&appid=$appid",
-        $new_data,
-    );
-    if ( $resp->code == 200 ) {
-        $self->pids->{external_gateway_collection} = $resp->data->{oid};
-    }
-    return $resp;
+    return $self->_create_generic($options, 'external_gateway_collection');
 }
 
 sub create_external_gateway {
     my ( $self, $options ) = @_;
 
-    my $pid   = $self->pids->{external_gateway_collection};
-    my $appid = $self->appid;
-    my $resp  = $self->get(
-        "/oamp/configuration/objects/ExternalGateway/NULL?detaillevel=4&pid=$pid&appid=$appid",
-    );
-    if ( $resp->code != 200 ) {
-        warn "Failed to fetch resource\n";
-        return $resp;
-    }
-    my $validation_data = $self->_build_validation_data( $resp->data, $pid, $options );
-    $resp = $self->get(
-        "/oamp/configuration/objects/ExternalGateway/NULL",
-        $validation_data,
-    );
-    if ( $resp->code != 200 ) {
-        warn "Failed to fetch resource second time (revalidate)\n";
-        return $resp;
-    }
-    my $new_data = $self->_build_response_data( $resp->data, $pid, $options );
-    $resp = $self->post(
-        "/oamp/configuration/objects/ExternalGateway/NULL?pid=$pid&appid=$appid",
-        $new_data,
-    );
-    if ( $resp->code == 200 ) {
-        $self->pids->{external_gateway} = $resp->data->{oid};
-    }
-    return $resp;
+    return $self->_create_generic($options, 'external_gateway');
 }
 
 sub create_routing_configuration {
     my ($self) = @_;
 
-    my $pid   = 10_000;
-    my $appid = $self->appid;
-    my $resp  = $self->get(
-        "/oamp/configuration/objects/RoutingConfiguration/NULL?detaillevel=4&pid=$pid&appid=$appid",
-    );
-    if ( $resp->code != 200 ) {
-        warn "Failed to fetch resource\n";
-        return $resp;
-    }
-    my $new_data = $self->_build_response_data( $resp->data, $pid );
-    $resp = $self->post(
-        "/oamp/configuration/objects/RoutingConfiguration/NULL?pid=$pid&appid=$appid",
-        $new_data,
-    );
-    if ( $resp->code == 200 ) {
-        $self->pids->{routing_configuration} = $resp->data->{oid};
-    }
-    return $resp;
+    return $self->_create_generic(undef, 'routing_configuration');
 }
 
 sub create_channel_group_collection {
     my ($self) = @_;
 
-    my $pid   = $self->pids->{routing_configuration};
-    my $appid = $self->appid;
-    my $resp  = $self->get(
-        "/oamp/configuration/objects/ChannelGroups/NULL?detaillevel=4&pid=$pid&appid=$appid",
-    );
-    if ( $resp->code != 200 ) {
-        warn "Failed to fetch resource\n";
-        return $resp;
-    }
-    my $new_data = $self->_build_response_data( $resp->data, $pid );
-    $resp = $self->post(
-        "/oamp/configuration/objects/ChannelGroups/NULL?pid=$pid&appid=$appid",
-        $new_data,
-    );
-    if ( $resp->code == 200 ) {
-        $self->pids->{channel_group_collection} = $resp->data->{oid};
-    }
-    return $resp;
+    return $self->_create_generic(undef, 'channel_group_collection');
 }
 
 sub create_channel_group {
     my ($self, $options) = @_;
 
-    my $pid   = $self->pids->{channel_group_collection};
-    my $appid = $self->appid;
-    my $resp  = $self->get(
-        "/oamp/configuration/objects/ChannelGroup/NULL?detaillevel=4&pid=$pid&appid=$appid",
-    );
-    if ( $resp->code != 200 ) {
-        warn "Failed to fetch resource\n";
-        return $resp;
-    }
-    my $new_data = $self->_build_response_data( $resp->data, $pid, $options);
-    $resp = $self->post(
-        "/oamp/configuration/objects/ChannelGroup/NULL?pid=$pid&appid=$appid",
-        $new_data,
-    );
-    if ( $resp->code == 200 ) {
-        $self->pids->{channel_group} = $resp->data->{oid};
-    }
-    return $resp;
+    return $self->_create_generic($options, 'channel_group');
 }
 
 sub create_route_table_collection {
     my ($self, $options) = @_;
 
-    my $pid   = $self->pids->{routing_configuration};
-    my $appid = $self->appid;
-    my $resp  = $self->get(
-        "/oamp/configuration/objects/RoutingTables/NULL?detaillevel=4&pid=$pid&appid=$appid",
-    );
-    if ( $resp->code != 200 ) {
-        warn "Failed to fetch resource\n";
-        return $resp;
-    }
-    my $new_data = $self->_build_response_data( $resp->data, $pid, $options);
-    $resp = $self->post(
-        "/oamp/configuration/objects/RoutingTables/NULL?pid=$pid&appid=$appid",
-        $new_data,
-    );
-    if ( $resp->code == 200 ) {
-        $self->pids->{route_table_collection} = $resp->data->{oid};
-    }
-    return $resp;
+    return $self->_create_generic($options, 'route_table_collection');
 }
 
 sub create_route_table {
     my ($self, $options) = @_;
 
-    my $pid   = $self->pids->{route_table_collection};
-    my $appid = $self->appid;
-    my $resp  = $self->get(
-        "/oamp/configuration/objects/RouteTable/NULL?detaillevel=4&pid=$pid&appid=$appid",
-    );
-    if ( $resp->code != 200 ) {
-        warn "Failed to fetch resource\n";
-        return $resp;
-    }
-    my $new_data = $self->_build_response_data( $resp->data, $pid, $options);
-    $resp = $self->post(
-        "/oamp/configuration/objects/RouteTable/NULL?pid=$pid&appid=$appid",
-        $new_data,
-    );
-    if ( $resp->code == 200 ) {
-        $self->pids->{route_table} = $resp->data->{oid};
-    }
-    return $resp;
+    return $self->_create_generic($options, 'route_table');
 }
 
 sub create_route_element {
     my ($self, $options) = @_;
 
-    my $pid   = $self->pids->{route_table};
-    my $appid = $self->appid;
-    my $resp  = $self->get(
-        "/oamp/configuration/objects/RouteElement/NULL?detaillevel=4&pid=$pid&appid=$appid",
-    );
-    if ( $resp->code != 200 ) {
-        warn "Failed to fetch resource\n";
-        return $resp;
-    }
-    my $validation_data = $self->_build_validation_data( $resp->data, $pid, $options );
-    $resp = $self->get(
-        "/oamp/configuration/objects/RouteElement/NULL",
-        $validation_data,
-    );
-    if ( $resp->code != 200 ) {
-        warn "Failed to fetch resource second time (revalidate)\n";
-        return $resp;
-    }
-    my $new_data = $self->_build_response_data( $resp->data, $pid, $options);
-    $resp = $self->post(
-        "/oamp/configuration/objects/RouteElement/NULL?pid=$pid&appid=$appid",
-        $new_data,
-    );
-    if ( $resp->code == 200 ) {
-        $self->pids->{route_element} = $resp->data->{oid};
-    }
-    return $resp;
+    return $self->_create_generic($options, 'route_element');
 }
 
 sub create_cg_network_element {
     my ($self, $options) = @_;
 
-    my $pid   = $self->pids->{channel_group};
-    my $appid = $self->appid;
-    my $resp  = $self->get(
-        "/oamp/configuration/objects/NetworkElement/NULL?detaillevel=4&pid=$pid&appid=$appid",
-    );
-    if ( $resp->code != 200 ) {
-        warn "Failed to fetch resource\n";
-        return $resp;
-    }
-    my $new_data = $self->_build_response_data( $resp->data, $pid, $options);
-    $resp = $self->post(
-        "/oamp/configuration/objects/NetworkElement/NULL?pid=$pid&appid=$appid",
-        $new_data,
-    );
-    if ( $resp->code == 200 ) {
-        $self->pids->{cg_network_element} = $resp->data->{oid};
-    }
-    return $resp;
+    return $self->_create_generic($options, 'cg_network_element');
 }
 
 sub create_node_association {
     my ($self, $options) = @_;
 
-    my $pid   = $self->pids->{cg_network_element};
+    return $self->_create_generic($options, 'node_association');
+}
+
+sub _create_generic {
+    my ($self, $options, $class) = @_;
+
+    my $classinfo = $self->classinfo->{$class};
+    my $pid   = $self->pids->{$classinfo->{parent}};
+    unless ($pid) {
+        warn "$class: no valid pid available\n";
+        return; # TODO wrong format
+    }
+    my $classname = $classinfo->{name};
     my $appid = $self->appid;
     my $resp  = $self->get(
-        "/oamp/configuration/objects/NodeAssociation/NULL?detaillevel=4&pid=$pid&appid=$appid",
+        "/oamp/configuration/objects/$classname/NULL?detaillevel=4&pid=$pid&appid=$appid",
     );
     if ( $resp->code != 200 ) {
-        warn "Failed to fetch resource\n";
+        warn "$class: Failed to fetch resource\n";
         return $resp;
     }
-    my $new_data = $self->_build_response_data( $resp->data, $pid, $options);
+    if ($classinfo->{revalidate}) {
+        my $validation_data = $self->_build_validation_data( $resp->data, $pid, $options );
+        $resp = $self->get(
+            "/oamp/configuration/objects/$classname/NULL",
+            $validation_data,
+        );
+        if ( $resp->code != 200 ) {
+            warn "$class: Failed to fetch resource second time (revalidate)\n";
+            return $resp;
+        }
+    }
+    my $new_data = $self->_build_response_data( $resp->data, $pid, $options );
     $resp = $self->post(
-        "/oamp/configuration/objects/NodeAssociation/NULL?pid=$pid&appid=$appid",
+        "/oamp/configuration/objects/$classname/NULL?pid=$pid&appid=$appid",
         $new_data,
     );
     if ( $resp->code == 200 ) {
-        $self->pids->{node_association} = $resp->data->{oid};
+        $self->pids->{$class} = $resp->data->{oid};
     }
     return $resp;
 }
 
-### OTHER STUFF ###
+# log: 0: none, 1: short, 2: everything
+sub create_all_sipsip {
+    my ($self, $settings, $log) = @_;
+
+    $self->_create_indent;
+
+    my $resp = $self->create_bn2020;
+
+    my $schedule = [
+        {name => 'network', options => undef},
+        {name => 'interface_collection', options => undef},
+        {name => 'interface', options => undef},
+        {name => 'ip_address', options => {
+            NIIPAddress => $settings->{ip1},
+            NIIPPhy => 'Services',
+            }},
+        {name => 'interface', options => undef},
+        {name => 'ip_address', options => {
+            NIIPAddress => $settings->{ip2},
+            NIIPPhy => 'Media 0',
+            }},
+        {name => 'facility', options => undef},
+        {name => 'packet_facility_collection', options => undef},
+        {name => 'packet_facility', options => {
+            ChannelCount => 50,
+            }},
+        {name => 'signaling', options => undef},
+        {name => 'sip', options => undef},
+        {name => 'sip_ip', options => {
+            IPAddress => $settings->{ip1},
+            }},
+        {name => 'profile_collection', options => undef},
+        {name => 'ip_profile_collection', options => undef},
+        {name => 'ip_profile', options => {
+            DigitRelay => 'DTMF Packetized',
+            Name => 'ngcp_in_profile',
+            }},
+        {name => 'vocoder_profile', options => {
+            PayloadType => 'G711 ulaw',
+            }},
+        {name => 'vocoder_profile', options => {
+            PayloadType => 'G711 alaw',
+            }},
+        {name => 'sip_profile_collection', options => undef},
+        {name => 'sip_profile', options => undef},
+        #{run => 'download_profiles'},
+        {name => 'external_network_elements', options => undef},
+        {name => 'external_gateway_collection', options => undef},
+        {name => 'external_gateway', options => {
+            Name => 'Phone1',
+            IPAddress => $settings->{ip_client},
+            IPAddress4 => $settings->{ip_client},
+            }},
+        {name => 'routing_configuration', options => undef},
+        {name => 'channel_group_collection', options => undef},
+        {name => 'route_table_collection', options => undef},
+        {name => 'route_table', options => {
+            Name => 'ngcp_route_table',
+            }},
+        {name => 'channel_group', options => {
+            SignalingType => 'SIP',
+            InRouteTable => 'ngcp_route_table - ID: 5',
+            InIPProfile => 'ngcp_in_profile',
+            InIPProfileId => '1',
+            OutIPProfile => 'ngcp_in_profile', # separate one for out?
+            SupportA2F => 'True',
+            }},
+        {name => 'cg_network_element', options => undef},
+        {name => 'node_association', options => undef},
+        {name => 'route_element', options => {
+            StringType => 'Channel Group',
+            InChannelGroup => 'ChannelGroup0',
+            RouteActionType => 'Channel Group',
+            RouteActionList => 'ChannelGroup0',
+            }},
+        #{run => 'download_route_table'},
+        #{run => 'download_channel_groups'},
+    ];
+
+    for my $elem (@{ $schedule }) {
+        my ($name, $options) = @{ $elem }{('name', 'options')};
+        my $fun = "create_$name";
+        $resp = $self->$fun($options);
+        # $resp = $self->_create_generic($options, $name);
+        if ($log >= 1) {
+            my $ind = " " x ($self->classinfo->{$name}{indent}*4);
+            printf "%-37s: %d\n", "$ind$name", $resp->code;
+            if ($resp->code != 200) {
+                use DDP; p $resp->data;
+            }
+        }
+    }
+
+    $self->download_profiles;
+    $self->download_route_table;
+    $self->download_channel_groups;
+
+    return 0;
+}
+
+###### OTHER STUFF ######
+
+sub _create_indent {
+    my ($self, @class) = @_;
+    my $classinfo = $self->classinfo;
+    @class = keys %{ $classinfo } unless @class;
+    for my $class (@class) {
+        next if ($classinfo->{$class}{indent});
+        my $parent = $classinfo->{$class}{parent};
+        if ($parent eq 'root') {
+            $classinfo->{$class}{indent} = 0;
+        } else {
+            $self->_create_indent($parent);
+            $classinfo->{$class}{indent} = $classinfo->{$parent}{indent} + 1;
+        }
+    }
+    return;
+}
 
 sub download_profiles {
     my ($self) = @_;
@@ -877,11 +670,50 @@ sub reboot_and_wait {
         return $resp;
     }
     sleep 2; # not to catch the old server
-    for (my $i = 0; $i < 40; $i++) { # 200 seconds on 5 seconds timeout
+    for (my $i = 0; $i < 100; $i++) { # 500 seconds on 5 seconds timeout
         $resp = $self->get("/");
         last if $resp->code < 500;
     }
     return $resp;
+}
+
+# warning: does create a lot of open transactions without deleting them.
+# see the scriptfile for an example how to generate documentation of this
+sub build_documentation {
+    my ($self) = @_;
+    my $classinfo = $self->classinfo;
+    for my $class (keys %{ $classinfo }) {    
+        my $classname = $classinfo->{$class}{name};
+        my $appid = $self->appid;
+        my $pid = 10_000;
+        my $resp  = $self->get(
+            "/oamp/configuration/objects/$classname/NULL?detaillevel=4&pid=$pid&appid=$appid",
+        );
+        if ($resp->code != 200) {
+            warn "$class: couldn't fetch info\n";
+            next;
+        }
+        my $data = $resp->data;
+        my $options = [];
+        for my $p ( keys %{ $data->{property} } ) {
+            next if lc($data->{property}{$p}{type}) ne "configure";
+            my @choices;
+            if ($data->{property}{$p}{choiceset}{choice} &&
+                ref $data->{property}{$p}{choiceset}{choice} eq "ARRAY") {
+                for my $v (@{ $data->{property}{$p}{choiceset}{choice} }) {
+                    push @choices, $v->{value} =~ s/^value\((.*)\)$/$1/r;
+                }
+            }
+            push @{ $options }, {
+                name => $p,
+                default => $data->{property}{$p}{value},
+                displayname => $data->{property}{$p}{displayname},
+                @choices ? (choices => [@choices]) : (),
+            };
+        }
+        $classinfo->{$class}{options} = $options;
+    }
+    return $classinfo;
 }
 
 sub _build_response_data {
@@ -891,14 +723,6 @@ sub _build_response_data {
         property => {},
     };
     for my $p ( keys %{ $req->{property} } ) {
-        # next if "_state_" eq $p;
-        # next
-        #     if $req->{property}{$p}{visible} eq
-        #     "__NULL__";    # TODO: that's SwitchOver
-        # next
-        #     if ( lc($req->{property}{$p}{readonly}) eq "true" )
-        #     && ( lc($req->{property}{$p}{visible}) eq "true" )
-        #     && ( lc($req->{property}{$p}{mandatory}) eq "false");
         next
             if lc($req->{property}{$p}{type}) ne "configure";
         $resp->{property}{$p}
@@ -946,7 +770,7 @@ sub objects {
                 'CFCMode'             => { 'configuredvalue' => 'Unknown' },
                 'srtpEnable'          => { 'configuredvalue' => 'Disabled' },
                 'InterfaceType'       => { 'configuredvalue' => 'Unknown' },
-                'MediaMode'           => { 'configuredvalue' => 'Audio LBR' },
+                'MediaMode'           => { 'configuredvalue' => 'Audio Dynamic Density Management' },
                 'SwVersion'           => { 'configuredvalue' => 'Unknown' },
                 'SubNetMask'          => { 'configuredvalue' => '' },
                 'Name'                => { 'configuredvalue' => 'Node0' },
