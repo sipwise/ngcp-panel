@@ -1,3 +1,12 @@
+ngcp-panel (1.7.1.14+0~mr3.7.1.14) unstable; urgency=low
+
+  [ Andreas Granig ]
+  * [0e1becd] MT#11741 Add pbxdevicemodelimages to tests
+
+  [ Sipwise Jenkins Builder ]
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Thu, 26 Feb 2015 09:45:26 +0100
+
 ngcp-panel (1.7.1.13+0~mr3.7.1.13) unstable; urgency=low
 
   [ Irina Peshinskaya ]
