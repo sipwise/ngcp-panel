@@ -1,6 +1,5 @@
 use strict;
 use warnings;
-
 {
     package My::Serializer::Custom;
     use Moo;
@@ -9,7 +8,11 @@ use warnings;
     sub _set_serializer {
         my $s = Data::Serializer::Raw->new(
             serializer => 'XML::Simple',
-            options    => { RootName => 'object' } );
+            options    => {
+                RootName => 'object',
+                # KeyAttr => { 'object' => '+classname' },
+                # ForceArray => ['IPProfile'],
+            } );
         return $s;
     }
 
@@ -20,8 +23,10 @@ use warnings;
 package NGCP::Panel::Utils::DialogicImg;
 
 use Moo;
-use Types::Standard qw(Int HashRef);
+use Digest::MD5 qw/md5_hex/;
 use HTTP::Tiny;
+use Storable qw/freeze/;
+use Types::Standard qw(Int HashRef);
 with 'Role::REST::Client';
 
 has '+type' => ( default => 'application/xml', is => 'rw' );
@@ -456,7 +461,12 @@ sub create_all_sipsip {
     $self->_create_indent;
 
     my $resp = $self->create_bn2020;
-
+    my @in_schedule = map {
+            {
+                name => 'vocoder_profile', options => 
+                    { PayloadType => $_ },
+            };
+        } @{ $settings->{in_codecs} };
     my $schedule = [
         {name => 'network', options => undef},
         {name => 'interface_collection', options => undef},
@@ -486,12 +496,7 @@ sub create_all_sipsip {
             DigitRelay => 'DTMF Packetized',
             Name => 'ngcp_in_profile',
             }},
-        {name => 'vocoder_profile', options => {
-            PayloadType => 'G711 ulaw',
-            }},
-        {name => 'vocoder_profile', options => {
-            PayloadType => 'G711 alaw',
-            }},
+        @in_schedule,
         {name => 'sip_profile_collection', options => undef},
         {name => 'sip_profile', options => undef},
         #{run => 'download_profiles'},
@@ -551,12 +556,90 @@ sub create_all_sipsip {
 
 ###### OTHER STUFF ######
 
+sub hash_config_sipsip {
+    my ($self, $config) = @_;
+    $Storable::canonical = 1;
+    return md5_hex(freeze $config);
+}
+
+sub get_config {
+    my ($self) = @_;
+
+    my $appid = $self->appid;
+    my $resp = $self->get("/oamp/configuration/objects?appid=$appid");
+    my $config = {};
+    if ($resp->code != 200) {
+        warn "failed to get objects\n";
+        return $resp;
+    }
+    my $classinfo = $self->classinfo;
+    my $rev_lookup = {};
+    @{$rev_lookup}{map {$_->{name}} values %{$classinfo}} = keys %{$classinfo};
+    my $root = $resp->data->{object}[0];
+    for my $ch (_get_all_children($root)) {
+        $self->_recursive_get($ch, $rev_lookup);
+    }
+    if ($classinfo->{ip_address}{configuredids}[0]) {
+        ($config->{ip1}) = $self->_get_specifics(
+            'ip_address', $classinfo->{ip_address}{configuredids}[0], ['NIIPAddress']);
+    }
+    if ($classinfo->{ip_address}{configuredids}[1]) {
+        ($config->{ip2}) = $self->_get_specifics(
+            'ip_address', $classinfo->{ip_address}{configuredids}[1], ['NIIPAddress']);
+    }
+    if ($classinfo->{external_gateway}{configuredids}[0]) {
+        ($config->{ip_client}) = $self->_get_specifics(
+            'external_gateway', $classinfo->{external_gateway}{configuredids}[0], ['IPAddress']);
+    }
+    if (exists $classinfo->{vocoder_profile}{configuredids}) {
+        for my $id (@{ $classinfo->{vocoder_profile}{configuredids} }) {
+            push @{ $config->{in_codecs} }, $self->_get_specifics(
+            'vocoder_profile', $id, ['PayloadType']);
+        }
+    }
+    return $config;
+}
+
+sub _recursive_get {
+    my ($self, $node, $rev_lookup) = @_;
+    my $classname = $node->{classname};
+    my $oname = $rev_lookup->{$classname};
+    my $oid = $node->{oid};
+    my $appid = $self->appid;
+    for my $ch (_get_all_children($node)) {
+        $self->_recursive_get($ch, $rev_lookup);
+    }
+    if ($oname) {
+        $self->pids->{$oname} = $oid;
+        push @{ $self->classinfo->{$oname}{configuredids} }, $oid;
+    }
+    return;
+}
+
+sub _get_specifics {
+    my ($self, $class, $id, $keys) = @_;
+
+    my $appid = $self->appid;
+    my $classinfo = $self->classinfo->{$class};
+    my $classname = $classinfo->{name};
+    my @res;
+    my $resp = $self->get("/oamp/configuration/objects/$classname/$id?appid=$appid&detaillevel=4");
+    if ($resp->code != 200) {
+        warn "failed to get objects\n";
+        return ();
+    }
+    for my $key (@{ $keys }) {
+        push @res, $resp->data->{property}{$key}{value};
+    }
+    return @res;
+}
+
 sub _create_indent {
     my ($self, @class) = @_;
     my $classinfo = $self->classinfo;
     @class = keys %{ $classinfo } unless @class;
     for my $class (@class) {
-        next if ($classinfo->{$class}{indent});
+        next if (exists $classinfo->{$class}{indent});
         my $parent = $classinfo->{$class}{parent};
         if ($parent eq 'root') {
             $classinfo->{$class}{indent} = 0;
@@ -608,7 +691,6 @@ sub download_channel_groups {
 sub delete_all_bn2020 {
     my ($self) = @_;
 
-    my $pid   = $self->pids->{bn2020};
     my $appid = $self->appid;
     my $resp  = $self->get(
         "/oamp/configuration/objects?appid=$appid",
