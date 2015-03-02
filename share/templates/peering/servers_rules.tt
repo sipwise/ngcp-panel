@@ -1,4 +1,16 @@
 [% site_config.title = c.loc('SIP Peering Group [_1]', group.name) -%]
+
+<script>
+function ngcpUpdateDynamicFields(selectedValue){
+    $('.ngcp-dynamic-field').css("display","none");
+    $('.ngcp-dynamic-field-'+selectedValue).css("display","block");
+}
+$(function() {
+    var preset = $('#dialogic_mode').val();
+    ngcpUpdateDynamicFields(preset);
+});
+</script>
+
 <h3>[% c.loc('Peering Servers') %]</h3>
 [%
     helper.name = c.loc('Peering Server');

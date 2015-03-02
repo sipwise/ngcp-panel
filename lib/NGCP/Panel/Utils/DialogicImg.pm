@@ -455,29 +455,43 @@ sub _create_generic {
 }
 
 # log: 0: none, 1: short, 2: everything
+# necessary keys: ip_sip, ip_rtp, ip_client, out_codecs, optional: in_codecs
 sub create_all_sipsip {
     my ($self, $settings, $log) = @_;
 
     $self->_create_indent;
 
+    my $in_codecs = ['G711 ulaw', 'G711 alaw', 'G729', 'AMR',
+        'AMR Bandwidth Efficient', 'AMR-WB', 'AMR-WB Bandwidth Efficient',
+        'Clear Channel', 'G723 5.3 Kbps', 'G723 6.3 Kbps', 'G722', 'iLBC 30ms',
+        'GSM-FR Static Payload Type', 'GSM-FR Dynamic Payload Type',
+        'G726-32/G721 Static Payload Type', 'G726-32/G721 Dynamic Payload Type',
+        'GSM-EFR'];
+
     my $resp = $self->create_bn2020;
     my @in_schedule = map {
+            {
+                name => 'vocoder_profile', options =>
+                    { PayloadType => $_ },
+            };
+        } @{ $settings->{in_codecs} // $in_codecs };
+    my @out_schedule = map {
             {
                 name => 'vocoder_profile', options => 
                     { PayloadType => $_ },
             };
-        } @{ $settings->{in_codecs} };
+        } @{ $settings->{out_codecs} };
     my $schedule = [
         {name => 'network', options => undef},
         {name => 'interface_collection', options => undef},
         {name => 'interface', options => undef},
         {name => 'ip_address', options => {
-            NIIPAddress => $settings->{ip1},
+            NIIPAddress => $settings->{ip_sip},
             NIIPPhy => 'Services',
             }},
         {name => 'interface', options => undef},
         {name => 'ip_address', options => {
-            NIIPAddress => $settings->{ip2},
+            NIIPAddress => $settings->{ip_rtp},
             NIIPPhy => 'Media 0',
             }},
         {name => 'facility', options => undef},
@@ -488,7 +502,7 @@ sub create_all_sipsip {
         {name => 'signaling', options => undef},
         {name => 'sip', options => undef},
         {name => 'sip_ip', options => {
-            IPAddress => $settings->{ip1},
+            IPAddress => $settings->{ip_sip},
             }},
         {name => 'profile_collection', options => undef},
         {name => 'ip_profile_collection', options => undef},
@@ -497,6 +511,11 @@ sub create_all_sipsip {
             Name => 'ngcp_in_profile',
             }},
         @in_schedule,
+        {name => 'ip_profile', options => {
+            DigitRelay => 'DTMF Packetized',
+            Name => 'ngcp_out_profile',
+            }},
+        @out_schedule,
         {name => 'sip_profile_collection', options => undef},
         {name => 'sip_profile', options => undef},
         #{run => 'download_profiles'},
@@ -518,7 +537,7 @@ sub create_all_sipsip {
             InRouteTable => 'ngcp_route_table - ID: 5',
             InIPProfile => 'ngcp_in_profile',
             InIPProfileId => '1',
-            OutIPProfile => 'ngcp_in_profile', # separate one for out?
+            OutIPProfile => 'ngcp_out_profile',
             SupportA2F => 'True',
             }},
         {name => 'cg_network_element', options => undef},
@@ -556,7 +575,7 @@ sub create_all_sipsip {
 
 ###### OTHER STUFF ######
 
-sub hash_config_sipsip {
+sub hash_config {
     my ($self, $config) = @_;
     $Storable::canonical = 1;
     return md5_hex(freeze $config);

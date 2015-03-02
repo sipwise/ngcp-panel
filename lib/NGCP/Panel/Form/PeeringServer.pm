@@ -90,6 +90,59 @@ has_field 'enabled' => (
     },
 );
 
+has_field 'dialogic_mode' => (
+    type => 'Select',
+    label => 'Dialogic Mode',
+    options => [
+        {value => 'none', label => 'None'},
+        {value => 'sipsip', label => 'SIP 2 SIP'},
+    ],
+    default => 'none',
+    element_attr => {
+        rel => ['tooltip'],
+        title => ['Whether to configure this server as a Dialogic IMG with autmatically provisioning the configuration.'],
+        javascript => ' onchange="ngcpUpdateDynamicFields(this.options[this.selectedIndex].value);" ',
+    },
+);
+
+has_field 'dialogic_config_ip' => (
+    type => '+NGCP::Panel::Field::IPAddress',
+    wrapper_class => [qw/ngcp-dynamic-field ngcp-dynamic-field-sipsip/],
+    ĺabel => 'Dialogic Configuration IP',
+);
+
+
+has_field 'dialogic_rtp_ip' => (
+    type => '+NGCP::Panel::Field::IPAddress',
+    wrapper_class => [qw/ngcp-dynamic-field ngcp-dynamic-field-sipsip/],
+    ĺabel => 'Dialogic RTP IP',
+);
+
+has_field 'dialogic_out_codecs' => (
+    type => 'Select',
+    wrapper_class => [qw/ngcp-dynamic-field ngcp-dynamic-field-sipsip/],
+    ĺabel => 'Dialogic Out Codecs',
+    options_method => \&build_dialogic_out_codecs,
+);
+
+sub build_dialogic_out_codecs {
+    my ($self) = @_;
+    my @options;
+
+    return @options unless $self->form->ctx;
+    my $config = $self->form->ctx->config->{dialogic}{codec_option};
+    if(defined $config) {
+        if(ref $config eq "ARRAY") {
+            foreach my $o (@{ $config }) {
+                push @options, { label => $o, value => $o };
+            }
+        } else {
+            push @options, { label => $config, value => $config };
+        }
+    }
+    return \@options;
+}
+
 has_field 'save' => (
     type => 'Submit',
     value => 'Save',
@@ -100,7 +153,8 @@ has_field 'save' => (
 has_block 'fields' => (
     tag => 'div',
     class => [qw/modal-body/],
-    render_list => [qw/ name ip host port transport weight via_route enabled /],
+    render_list => [qw/ name ip host port transport weight via_route enabled
+        dialogic_mode dialogic_config_ip dialogic_rtp_ip dialogic_out_codecs/],
 );
 
 has_block 'actions' => (

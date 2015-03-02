@@ -210,7 +210,7 @@ has_field 'bootstrap_method' => (
     default => 'http',
     element_attr => {
         rel => ['tooltip'],
-        title => ['Method to configure the provisioning server on the phone. One of http, redirect_panasonic, redirect_yealink.'],
+        title => ['Method to configure the provisioning server on the phone. One of http, redirect_panasonic, redirect_yealink, redirect_polycom.'],
         # TODO: ????
         javascript => ' onchange="bootstrapDynamicFields(this.options[this.selectedIndex].value);" ',
     },
