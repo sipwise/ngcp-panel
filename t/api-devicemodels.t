@@ -1,49 +1,17 @@
-use Sipwise::Base;
+#use Sipwise::Base;
+use strict;
+
+use Moose;
+use lib "/root/VMHost/ngcp-panel/t/lib/";
+extends 'Test::Collection';
 use Net::Domain qw(hostfqdn);
 use LWP::UserAgent;
 use HTTP::Request::Common;
-use JSON qw();
+use JSON;
 use Test::More;
 use Data::Dumper;
 use File::Basename;
 use Clone qw/clone/;
-
-#my $uri = $ENV{CATALYST_SERVER} || ('https://'.hostfqdn.':4443');
-my $uri = 'https://192.168.56.7:1444';
-
-my $valid_ssl_client_cert = $ENV{API_SSL_CLIENT_CERT} || 
-    "/etc/ngcp-panel/api_ssl/NGCP-API-client-certificate.pem";
-my $valid_ssl_client_key = $ENV{API_SSL_CLIENT_KEY} ||
-    $valid_ssl_client_cert;
-my $ssl_ca_cert = $ENV{ API_SSL_CA_CERT} || "/etc/ngcp-panel/api_ssl/api_ca.crt";
-
-my ($ua, $req, $res);
-$ua = LWP::UserAgent->new;
-$ua->credentials( 'https://192.168.56.7:1444/', '', 'administrator', 'administrator' );
-#$ua->ssl_opts(
-#    SSL_cert_file   => $valid_ssl_client_cert,
-#    SSL_key_file    => $valid_ssl_client_key,
-#    SSL_ca_file     => $ssl_ca_cert,
-#);
-$ua->ssl_opts(
-    verify_hostname => 0,
-    SSL_verify_mode => 0x00,
-);
-
-# OPTIONS tests
-{
-    $req = HTTP::Request->new('OPTIONS', $uri.'/api/pbxdevicemodels/');
-    $res = $ua->request($req);
-    is($res->code, 200, "check options request");
-    is($res->header('Accept-Post'), "application/hal+json; profile=http://purl.org/sipwise/ngcp-api/#rel-pbxdevicemodels", "check Accept-Post header in options response");
-    my $opts = JSON::from_json($res->decoded_content);
-    my @hopts = split /\s*,\s*/, $res->header('Allow');
-    ok(exists $opts->{methods} && ref $opts->{methods} eq "ARRAY", "check for valid 'methods' in body");
-    foreach my $opt(qw( GET HEAD OPTIONS POST )) {
-        ok(grep(/^$opt$/, @hopts), "check for existence of '$opt' in Allow header");
-        ok(grep(/^$opt$/, @{ $opts->{methods} }), "check for existence of '$opt' in body");
-    }
-}
 
 my $MODEL = {
     json => {
@@ -74,20 +42,12 @@ my $MODEL = {
     #'front_image' => [ dirname($0).'/resources/api_devicemodels_front_image.jpg' ],
     'front_image' => [ dirname($0).'/resources/empty.txt' ],
 };
-my $request_sub={
-    pbxdevicemodels => sub {
-        my($model_cb,$model_in) = @_;
-        my $model = $model_in || clone($MODEL);
-        $model_cb and $model_cb->($model);
-        my $content = {
-            json => JSON::to_json($model->{json}),
-            'front_image' => $model->{front_image},
-        };
-        my $req = POST $uri.'/api/pbxdevicemodels/', Content_Type => 'form-data', Content => $content;
-        my $res = $ua->request($req);
-        return $res;
-    } 
-};
+
+my $test_machine = Test::Collection->new( name => 'pbxdevicemodels', embedded => [qw/pbxdevicefirmwares/]);
+$test_machine->DATA($MODEL);
+$test_machine->CONTENT_TYPE('form-data');
+
+
 # collection test
 my $firstmodel = undef;
 my @allmodels = ();
@@ -95,8 +55,8 @@ my @allmodels = ();
     # create 6 new billing models
     my %models = ();
     for(my $i = 1; $i <= 6; ++$i) {
-        my $res = $request_sub->{pbxdevicemodels}->( sub{ $_[0]->{json}->{model} .= "_$i"; } );
-        is($res->code, 201, "create test billing model $i");
+        my $res = $test_machine->request_post( sub{ $_[0]->{json}->{model} .= "_$i"; } );
+        is($res->code, 201, "create test model $i");
         $models{$res->header('Location')} = 1;
         push @allmodels, $res->header('Location');
         $firstmodel = $res->header('Location') unless $firstmodel;
@@ -104,8 +64,7 @@ my @allmodels = ();
 
     # try to create model without reseller_id
     {
-        my $res = $request_sub->{pbxdevicemodels}->(sub{delete $_[0]->{json}->{reseller_id};});
-        print Dumper $res;
+        my $res = $test_machine->request_post(sub{delete $_[0]->{json}->{reseller_id};});
         is($res->code, 422, "create model without reseller_id");
         my $err = JSON::from_json($res->decoded_content);
         is($err->{code}, "422", "check error code in body");
@@ -113,7 +72,7 @@ my @allmodels = ();
     }
     # try to create model with empty reseller_id
     {
-        my $res = $request_sub->{pbxdevicemodels}->(sub{$_[0]->{json}->{reseller_id} = undef;});
+        my $res = $test_machine->request_post(sub{$_[0]->{json}->{reseller_id} = undef;});
         is($res->code, 422, "create model with empty reseller_id");
         my $err = JSON::from_json($res->decoded_content);
         is($err->{code}, "422", "check error code in body");
@@ -122,7 +81,7 @@ my @allmodels = ();
 
     # try to create model with invalid reseller_id
     {
-        my $res = $request_sub->{pbxdevicemodels}->(sub{$_[0]->{json}->{reseller_id} = 99999;});
+        my $res = $test_machine->request_post(sub{$_[0]->{json}->{reseller_id} = 99999;});
         is($res->code, 422, "create model with invalid reseller_id");
         my $err = JSON::from_json($res->decoded_content);
         is($err->{code}, "422", "check error code in body");
@@ -131,7 +90,7 @@ my @allmodels = ();
 
     # iterate over collection to check next/prev links and status
 
-    is(scalar(keys %models), 0, "check if all test models have been found");
+    is(scalar(keys %allmodels), 0, "check if all test models have been found");
 }
 
 # test model item

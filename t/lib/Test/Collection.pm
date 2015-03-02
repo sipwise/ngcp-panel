@@ -13,7 +13,7 @@ use Moose;
 has 'ua' => (
     is => 'rw',
     isa => 'LWP::UserAgent',
-    builder => ,
+    builder => '_init_ua',
 );
 has 'uri' =>{
     is => 'ro',
@@ -28,7 +28,16 @@ has 'embedded' => (
     is => 'rw',
     isa => 'ArrayRef',
 );
-sub init_ua {
+has 'CONTENT_TYPE' => (
+    is => 'rw',
+    isa => 'Str',
+);
+has 'DATA' => (
+    is => 'rw',
+    isa => 'Ref',
+);
+
+sub _init_ua {
     my $self = shift;
     my $valid_ssl_client_cert = $ENV{API_SSL_CLIENT_CERT} || 
         "/etc/ngcp-panel/api_ssl/NGCP-API-client-certificate.pem";
@@ -48,7 +57,18 @@ sub init_ua {
     );
     return $ua;
 };
-
+sub request_post{
+    my($self,$data_cb,$data_in) = @_;
+    my $data = $data_in || clone($self->DATA);
+    $data_cb and $data_cb->($data);
+    my $content = {
+        $data->{json} ? ( json => JSON::to_json(delete $data->{json}) ) : (),
+        %$data,
+    };
+    my $req = POST $self>uri.'/api/'.$self->name.'/', Content_Type => $self->CONTENT_TYPE, Content => $content;
+    my $res = $ua->request($req);
+    return $res;
+};
 sub check_options
 {
     my $self = shift;
