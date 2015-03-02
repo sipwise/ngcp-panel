@@ -38,12 +38,17 @@ print "LOGGED IN, LOCK OBTAINED ############################\n";
 
 # print_documentation_md($test);
 
+# $resp = $test->get_config;
+# p $resp;
+# #p $test->classinfo;
+# exit;
+
 my $result = $test->create_all_sipsip({
     ip1 => '10.15.20.92',
     ip2 => '10.15.21.10',
     ip_client => '10.15.20.199',
     in_codecs => ['G711 ulaw', 'G711 alaw', 'G729', 'AMR'],
-    out_codecs => ['G711 ulaw', 'G711 alaw', 'G729', 'AMR'],  # not yet used
+    #out_codecs => ['G711 ulaw', 'G711 alaw', 'G729', 'AMR'],  # not yet used
     },
     2,
     );
@@ -65,7 +70,8 @@ sub print_documentation_md {
         for my $o (@{ $options }) {
             my ( $name, $displayname, $default, $choices )
                 = @{$o}{ 'name', 'displayname', 'default', 'choices' };
-            my $choices_str = $choices && @$choices ? join(", ",  map { "`$_`" } @{$choices}) : '';
+            my $choices_str = $choices && @{$choices}
+                            ? join( ", ", map {"`$_`"} @{$choices} ) : '';
             if ($default) {
                 $default = "`$default`";
             }

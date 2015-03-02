@@ -89,6 +89,7 @@ my $builder = Local::Module::Build->new(
         'Sereal::Encoder' => 0,
         'String::MkPasswd' => 0,
         'Sipwise::Base' => 0,
+        'Storable' => 0,
         'strict' => 0,
         'Template' => 0,
         'Template::Plugin::JSON::Escape' => 0,
