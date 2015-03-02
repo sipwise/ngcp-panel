@@ -129,66 +129,9 @@ my @allmodels = ();
         ok($err->{message} =~ /Invalid 'reseller_id'/, "check error message in body");
     } 
 
-    # iterate over contracts collection to check next/prev links and status
-    my $nexturi = $uri.'/api/pbxdevicemodels/?page=1&rows=5';
-    do {
-        $res = $ua->get($nexturi);
-        is($res->code, 200, "fetch model page");
-        my $collection = JSON::from_json($res->decoded_content);
-        my $selfuri = $uri . $collection->{_links}->{self}->{href};
-        is($selfuri, $nexturi, "check _links.self.href of collection");
-        my $colluri = URI->new($selfuri);
+    # iterate over collection to check next/prev links and status
 
-        ok($collection->{total_count} > 0, "check 'total_count' of collection");
-
-        my %q = $colluri->query_form;
-        ok(exists $q{page} && exists $q{rows}, "check existence of 'page' and 'row' in 'self'");
-        my $page = int($q{page});
-        my $rows = int($q{rows});
-        if($page == 1) {
-            ok(!exists $collection->{_links}->{prev}->{href}, "check absence of 'prev' on first page");
-        } else {
-            ok(exists $collection->{_links}->{prev}->{href}, "check existence of 'prev'");
-        }
-        if(($collection->{total_count} / $rows) <= $page) {
-            ok(!exists $collection->{_links}->{next}->{href}, "check absence of 'next' on last page");
-        } else {
-            ok(exists $collection->{_links}->{next}->{href}, "check existence of 'next'");
-        }
-
-        if($collection->{_links}->{next}->{href}) {
-            $nexturi = $uri . $collection->{_links}->{next}->{href};
-        } else {
-            $nexturi = undef;
-        }
-
-        # TODO: I'd expect that to be an array ref in any case!
-        ok((ref $collection->{_links}->{'ngcp:pbxdevicemodels'} eq "ARRAY" ||
-            ref $collection->{_links}->{'ngcp:pbxdevicemodels'} eq "HASH"), "check if 'ngcp:pbxdevicemodels' is array/hash-ref");
-
-        # remove any entry we find in the collection for later check
-        if(ref $collection->{_links}->{'ngcp:pbxdevicemodels'} eq "HASH") {
-            # these relations are only there if we have zones/fees, which is not the case with an empty model
-            #ok(exists $collection->{_embedded}->{'ngcp:pbxdevicemodels'}->{_links}->{'ngcp:billingfees'}, "check presence of ngcp:billingfees relation");
-            #ok(exists $collection->{_embedded}->{'ngcp:pbxdevicemodels'}->{_links}->{'ngcp:billingzones'}, "check presence of ngcp:billingzones relation");
-            delete $models{$collection->{_links}->{'ngcp:pbxdevicemodels'}->{href}};
-        } else {
-            foreach my $c(@{ $collection->{_links}->{'ngcp:pbxdevicemodels'} }) {
-                delete $models{$c->{href}};
-            }
-            foreach my $c(@{ $collection->{_embedded}->{'ngcp:pbxdevicemodels'} }) {
-            # these relations are only there if we have zones/fees, which is not the case with an empty model
-            #ok(exists $collection->{_embedded}->{'ngcp:pbxdevicemodels'}->{_links}->{'ngcp:billingfees'}, "check presence of ngcp:billingfees relation");
-                #ok(exists $c->{_links}->{'ngcp:billingfees'}, "check presence of ngcp:billingfees relation");
-                #ok(exists $c->{_links}->{'ngcp:billingzones'}, "check presence of ngcp:billingzones relation");
-
-                delete $models{$c->{_links}->{self}->{href}};
-            }
-        }
-             
-    } while($nexturi);
-
-    is(scalar(keys %models), 0, "check if all test billing models have been found");
+    is(scalar(keys %models), 0, "check if all test models have been found");
 }
 
 # test model item
