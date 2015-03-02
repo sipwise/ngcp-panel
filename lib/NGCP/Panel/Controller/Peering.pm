@@ -7,10 +7,11 @@ BEGIN { extends 'Catalyst::Controller'; }
 use NGCP::Panel::Form::PeeringGroup;
 use NGCP::Panel::Form::PeeringRule;
 use NGCP::Panel::Form::PeeringServer;
-use NGCP::Panel::Utils::XMLDispatcher;
+use NGCP::Panel::Utils::DialogicImg;
 use NGCP::Panel::Utils::Message;
 use NGCP::Panel::Utils::Navigation;
 use NGCP::Panel::Utils::Preferences;
+use NGCP::Panel::Utils::XMLDispatcher;
 
 sub auto :Does(ACL) :ACLDetachTo('/denied_page') :AllowedRole(admin) {
     my ($self, $c) = @_;
@@ -243,7 +244,17 @@ sub servers_create :Chained('servers_list') :PathPart('create') :Args(0) {
     );
     if($posted && $form->validated) {
         try {
-            $c->stash->{group_result}->voip_peer_hosts->create($form->values);
+            my $dbvalues = {
+                name => $form->values->{name},
+                ip => $form->values->{ip},
+                host => $form->values->{host},
+                port => $form->values->{port},
+                transport => $form->values->{transport},
+                weight => $form->values->{weight},
+                via_route => $form->values->{via_route},
+                enabled => $form->values->{enabled},
+            };
+            my $server = $c->stash->{group_result}->voip_peer_hosts->create($dbvalues);
             $self->_sip_lcr_reload($c);
             NGCP::Panel::Utils::Message->info(
                 c    => $c,
@@ -262,7 +273,7 @@ sub servers_create :Chained('servers_list') :PathPart('create') :Args(0) {
     $c->stash(
         close_target => $c->uri_for_action('/peering/servers_root', [$c->req->captures->[0]]),
         servers_create_flag => 1,
-        servers_form => $form
+        servers_form => $form,
     );
 }
 
@@ -352,6 +363,69 @@ sub servers_delete :Chained('servers_base') :PathPart('delete') :Args(0) {
             c => $c,
             error => $e,
             desc  => $c->loc('Failed to delete peering server'),
+        );
+    };
+    NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for_action('/peering/servers_root', [$c->req->captures->[0]]));
+}
+
+sub servers_flash_dialogic :Chained('servers_base') :PathPart('edit/dialogic') :Args(0) {
+    my ($self, $c) = @_;
+
+    my $pref_mode = NGCP::Panel::Utils::Preferences::get_peer_preference_rs(
+        c => $c,
+        attribute => 'dialogic_mode',
+        peer_host => $c->stash->{server_result},
+    )->first;
+    my $pref_ip_rtp = NGCP::Panel::Utils::Preferences::get_peer_preference_rs(
+        c => $c,
+        attribute => 'dialogic_ip_rtp',
+        peer_host => $c->stash->{server_result},
+    )->first;
+    my $pref_ip_config = NGCP::Panel::Utils::Preferences::get_peer_preference_rs(
+        c => $c,
+        attribute => 'dialogic_ip_config',
+        peer_host => $c->stash->{server_result},
+    )->first;
+my $pref_out_codecs = NGCP::Panel::Utils::Preferences::get_peer_preference_rs(
+        c => $c,
+        attribute => 'dialogic_out_codecs',
+        peer_host => $c->stash->{server_result},
+    )->first;
+
+    try {
+        if ($pref_mode->value ne 'none') {
+            my $api = NGCP::Panel::Utils::DialogicImg->new(
+                server      => 'https://' . $pref_ip_config->value,
+            );
+            my @configured_out_codecs =  map { s/^\s+|\s+$//gr } split(',', $pref_out_codecs->value);
+            $api->login( $c->config->{dialogic}{username}, $c->config->{dialogic}{password} );
+            my $resp = $api->obtain_lock();
+            die "Couldn't connect to dialogic"
+                unless $resp->code == 200;
+            if ($pref_mode->value eq 'sipsip') {
+                my $config = {
+                    ip_sip => $c->stash->{server_result}->ip,
+                    ip_rtp => $pref_ip_rtp->value,
+                    ip_client => $c->config->{dialogic}{own_ip},
+                    out_codecs => \@configured_out_codecs,
+                    ip_config => $pref_ip_config->value, # just for the config hash
+                    dialogic_mode => $pref_mode->value,
+                    };
+
+                $resp = $api->create_all_sipsip($config, 1);
+                my $config_hash = $api->hash_config($config);
+            }
+        }
+        NGCP::Panel::Utils::Message->info(
+            c    => $c,
+            data => { $c->stash->{server_result}->get_inflated_columns },
+            desc => $c->loc('Dialogic successfully flashed.'),
+        );
+    } catch ($e) {
+        NGCP::Panel::Utils::Message->error(
+            c => $c,
+            error => $e,
+            desc  => $c->loc('Failed to flash dialogic'),
         );
     };
     NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for_action('/peering/servers_root', [$c->req->captures->[0]]));
