@@ -556,7 +556,7 @@ sub create_all_sipsip {
 
 ###### OTHER STUFF ######
 
-sub hash_config_sipsip {
+sub hash_config {
     my ($self, $config) = @_;
     $Storable::canonical = 1;
     return md5_hex(freeze $config);

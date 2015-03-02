@@ -7,10 +7,11 @@ BEGIN { extends 'Catalyst::Controller'; }
 use NGCP::Panel::Form::PeeringGroup;
 use NGCP::Panel::Form::PeeringRule;
 use NGCP::Panel::Form::PeeringServer;
-use NGCP::Panel::Utils::XMLDispatcher;
+use NGCP::Panel::Utils::DialogicImg;
 use NGCP::Panel::Utils::Message;
 use NGCP::Panel::Utils::Navigation;
 use NGCP::Panel::Utils::Preferences;
+use NGCP::Panel::Utils::XMLDispatcher;
 
 sub auto :Does(ACL) :ACLDetachTo('/denied_page') :AllowedRole(admin) {
     my ($self, $c) = @_;
@@ -243,7 +244,47 @@ sub servers_create :Chained('servers_list') :PathPart('create') :Args(0) {
     );
     if($posted && $form->validated) {
         try {
-            $c->stash->{group_result}->voip_peer_hosts->create($form->values);
+            my $dbvalues = {
+                name => $form->values->{name},
+                ip => $form->values->{ip},
+                host => $form->values->{host},
+                port => $form->values->{port},
+                transport => $form->values->{transport},
+                weight => $form->values->{weight},
+                via_route => $form->values->{via_route},
+                enabled => $form->values->{enabled},
+            };
+            $c->stash->{group_result}->voip_peer_hosts->create($dbvalues);
+            if ($form->values->{dialogic_mode} ne 'none') {
+                my $api = NGCP::Panel::Utils::DialogicImg->new(
+                    server      => 'https://' . $form->values->{dialogic_config_ip},
+                );
+                my $configured_out_codecs =  map { s/^\s+|\s+$//gr } split(',', $form->values->{dialogic_out_codecs});
+                $api->login( 'dialogic', 'Dial0gic' );
+                my $resp = $api->obtain_lock();
+                die "Couldn't connect to dialogic"
+                    unless $resp->code == 200;
+                if ($form->values->{dialogic_mode} eq 'sipsip') {
+                    my $config = {
+                        ip1 => $form->values->{ip},
+                        ip2 => $form->values->{dialogic_rtp_ip},
+                        ip_client => $c->config->{dialogic}{own_ip},
+                        in_codecs => ['G711 ulaw', 'G711 alaw', 'G729', 'AMR', 'AMR Bandwidth Efficient', 'AMR-WB', 'AMR-WB Bandwidth Efficient',
+                            'Clear Channel', 'G723 5.3 Kbps', 'G723 6.3 Kbps', 'G722', 'iLBC 30ms', 'GSM-FR Static Payload Type', 'GSM-FR Dynamic Payload Type',
+                            'G726-32/G721 Static Payload Type', 'G726-32/G721 Dynamic Payload Type', 'GSM-EFR'],
+                        out_codecs => $configured_out_codecs,
+                        ip_dialogic => $form->values->{ip}, # just for the config hash
+                        dialogic_mode => $form->values->{dialogic_mode},
+                        };
+
+                    $resp = $api->create_all_sipsip($config, 1);
+                    my $config_hash = $api->hash_config($config);
+                    $c->stash->{group_result}->update({
+                        is_dialogic => 1,
+                        configuration_hash => $config_hash,
+                        });
+                }
+            }
             $self->_sip_lcr_reload($c);
             NGCP::Panel::Utils::Message->info(
                 c    => $c,
