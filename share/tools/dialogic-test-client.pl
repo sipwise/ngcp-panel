@@ -48,7 +48,7 @@ my $result = $test->create_all_sipsip({
     ip2 => '10.15.21.10',
     ip_client => '10.15.20.199',
     in_codecs => ['G711 ulaw', 'G711 alaw', 'G729', 'AMR'],
-    #out_codecs => ['G711 ulaw', 'G711 alaw', 'G729', 'AMR'],  # not yet used
+    out_codecs => ['G711 ulaw', 'G711 alaw', 'G729', 'AMR'],
     },
     2,
     );

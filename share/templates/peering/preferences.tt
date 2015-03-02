@@ -14,11 +14,9 @@
     helper.rewrite_rule_sets = rwr_sets;
     helper.man_aip_grp_rs = man_aip_grp_rs;
 
-    helper.dt_buttons = [
-        { name = c.loc('Edit'), uri = c.uri_for_action("/peering/servers_preferences_root", [c.req.captures.0, c.req.captures.1]), class = 'btn-small btn-primary', icon = 'icon-edit' },
-    ];
     helper.top_buttons = [
         { name = c.loc('Back'), uri = c.uri_for(group.id, "servers"), icon = 'icon-arrow-left' },
+        { name = c.loc('Flash Dialogic'), uri = c.uri_for_action("/peering/servers_flash_dialogic", [c.req.captures.0, c.req.captures.1]), icon = 'icon-star' },
     ];
 
     PROCESS 'helpers/pref_table.tt';
