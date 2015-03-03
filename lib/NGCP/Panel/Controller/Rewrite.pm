@@ -298,6 +298,7 @@ sub rules_root :Chained('rules_list') :PathPart('') :Args(0) {
                 $elem->priority(int($last_priority) - 1);
                 $elem->update;
             }
+            $self->_sip_dialplan_reload($c);
         } catch($e) {
             NGCP::Panel::Utils::Message->error(
                 c => $c,
