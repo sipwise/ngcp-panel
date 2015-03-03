@@ -43,8 +43,14 @@ for my $path(qw#/etc/ngcp-panel/ngcp_panel.conf etc/ngcp_panel.conf ngcp_panel.c
 }
 $panel_config //= 'ngcp_panel.conf';
 
-my $logger_config = '/etc/ngcp-panel/logging.conf';
-$logger_config = $panel_config unless(-f $logger_config);
+my $logger_config;
+for my $path(qw#./logging.conf /etc/ngcp-panel/logging.conf#) {
+    if(-f $path) {
+        $logger_config = $path;
+        last;
+    }
+}
+$logger_config = $panel_config unless(defined $logger_config);
 
 __PACKAGE__->config(
     name => 'NGCP::Panel',
