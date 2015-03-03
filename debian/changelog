@@ -1,3 +1,43 @@
+ngcp-panel (1.7.3.0+0~mr3.7.3.0) unstable; urgency=low
+
+  [ Andreas Granig ]
+  * [beef0eb] MT#10705 Show pbx_groupmember_ids in API doc.
+  * [f50881c] MT#11279 Allow disabling vendor RPC calls.
+  * [bc398d7] MT#11219 Load default files for sound set.
+  * [86c1e92] MT#11219 Check permissions for sound set loading.
+  * [434f076] MT#11219 Fix syntax error in template.
+  * [04b6223] MT#11219 Skip cache cleaning on skipped files.
+  * [47c5e37] MT#11523 Make bigger phone pics show correctly.
+  * [7d36e82] MT#10587 Fix empty enc master key for yealink
+  * [5d9a2b1] MT#10587 Disable yealink encryption.
+  * [a55b188] MT#11517 Don't expose internal prefs via API.
+  * [0e756c1] MT#11741 API: Add pbxdevicemodelimages resource.
+  * [485832a] MT#11741 API: fix pbxdevicemodelimages props doc
+  * [c9d5e4b] MT#11741 Add pbxdevicemodelimages to tests
+
+  [ Irina Peshinskaya ]
+  * [f105123] MT#10315 Add lock processing into POST method of Subscribers API.
+  * [3c95062] MT#10315 Cast lock to the numeric value as stated by API doc.
+  * [9c9eb41] MT#11285 replace 500 error with debug info about empty user_agent
+  * [cf762f4] MT#10159 Mark messages as read and send MWI notification about messages amount
+  * [52df831] MT#5585 Add calls cost to subscriber calls list.
+  * [47dfb0c] MT#5585 Add details about cdr record
+  * [9f41243] MT#11549 Add alias filter for subscribers.
+
+  [ Kirill Solomko ]
+  * [a5f0c2c] MT#10965 - Callforwards api DELETE fix to use callforwards instead of rewriterules, check for non-existing mapping auto removed by mysql
+
+  [ Gerhard Jungwirth ]
+  * [e4e8852] MT#11321 filter terminated resellers from dashboard
+  * [97aae3e] MT#11891 trigger xmlrpc when moving rewrite rules
+
+  [ Michael Prokop ]
+  * [08904b3] MT#11387 Switch from Pre-Depends on nginx-common to Depends
+
+  [ Sipwise Jenkins Builder ]
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Tue, 03 Mar 2015 16:44:35 +0100
+
 ngcp-panel (1.7.2.0+0~mr3.7.2.0) unstable; urgency=low
 
   [ Andrew Pogrebennyk ]
