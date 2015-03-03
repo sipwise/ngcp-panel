@@ -243,6 +243,13 @@ sub POST :Allow {
         }
         try {
             $customer = $schema->resultset('contracts')->create($resource);
+            $schema->resultset('journals')->create({
+                type => "create",
+                resource => "customers",
+                resource_id => $customer->id,
+                timestamp => $now->hires_epoch,
+                content => undef,
+            });
         } catch($e) {
             $c->log->error("failed to create customer contract: $e"); # TODO: user, message, trace, ...
             $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "Failed to create customer.");

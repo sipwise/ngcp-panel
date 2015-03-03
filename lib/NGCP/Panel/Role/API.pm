@@ -518,5 +518,10 @@ sub is_false {
     return;
 }
 
+sub to_json {
+    my ($self, $data) = @_;
+    return JSON::to_json($data, { canonical => 1, pretty => 1, utf8 => 1 });
+}
+
 1;
 # vim: set tabstop=4 expandtab:
