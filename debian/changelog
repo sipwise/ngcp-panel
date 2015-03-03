@@ -1,3 +1,15 @@
+ngcp-panel (1.7.1.15+0~mr3.7.1.15) unstable; urgency=low
+
+  [ Michael Prokop ]
+  * [44d3a8a] MT#11387 Switch from Pre-Depends on nginx-common to Depends
+
+  [ Gerhard Jungwirth ]
+  * [acf46bf] MT#11891 trigger xmlrpc when moving rewrite rules
+
+  [ Sipwise Jenkins Builder ]
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Tue, 03 Mar 2015 13:12:59 +0100
+
 ngcp-panel (1.7.1.14+0~mr3.7.1.14) unstable; urgency=low
 
   [ Andreas Granig ]
