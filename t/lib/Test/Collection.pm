@@ -32,7 +32,12 @@ has 'embedded' => (
 #state variables - smth like predefined stash
 has 'CONTENT_TYPE' => (
     is => 'rw',
-    isa => 'Str',
+    isa => 'HashRef',
+    default => sub {{
+        POST  => 'application/json',
+        PUT   => 'application/json',
+        PATCH => 'application/json-patch+json',
+    }},
 );
 has 'DATA_ITEM' => (
     is => 'rw',
@@ -40,7 +45,8 @@ has 'DATA_ITEM' => (
 );
 has 'DATA_CREATED' => (
     is => 'rw',
-    isa => 'ArrayRef',
+    isa => 'HashRef',
+    builder => 'clear_created_data',
 );
 
 sub _init_ua {
@@ -63,19 +69,56 @@ sub _init_ua {
     );
     return $ua;
 };
+sub clear_created_data{
+    my($self) = @_;
+    $self->DATA_CREATED={
+        ALL   => {},
+        FIRST => {},
+    };
+    return $self->DATA_CREATED;
+}
+sub get_firstitem_uri{
+    my($self) = @_;
+    return $self->base_uri.'/'.$self->DATA_CREATED->{FIRST};
+}
+
+sub get_request_put{
+    my($self,$uri) = @_;
+    $uri ||= $self->get_firstitem_uri;
+    my $req = HTTP::Request->new('PUT', $uri);
+    return $req;
+}
+sub get_request_patch{
+    my($self,$uri) = @_;
+    $uri ||= $self->get_firstitem_uri;
+    my $req = HTTP::Request->new('PATCH', $uri);
+    return $req;
+}
+sub check_item_get{
+    my($self,$uri) = @_;
+    $uri ||= $self->get_firstitem_uri;
+    my $req = HTTP::Request->new('GET', $uri);
+    my $res = $self->ua->request($req);
+    is($res->code, 200, "fetch one item");
+    return (JSON::from_json($res->decoded_content), $req, $res);
+}
+
 sub request_post{
-    my($self,$data_cb,$data_in) = @_;
+    my($self, $data_cb, $data_in) = @_;
     my $data = $data_in || clone($self->DATA_ITEM);
     $data_cb and $data_cb->($data);
     my $content = {
         $data->{json} ? ( json => JSON::to_json(delete $data->{json}) ) : (),
         %$data,
     };
-    my $req = POST $self->base_uri.'/api/'.$self->name.'/', Content_Type => $self->CONTENT_TYPE, Content => $content;
+    my $req = POST $self->base_uri.'/api/'.$self->name.'/', 
+        Content_Type => $test_machine->CONTENT_TYPE->{POST}, 
+        Content => $content;
     my $res = $self->ua->request($req);
     my $err = $res->decoded_content ? JSON::from_json($res->decoded_content) : '';
-    return ($res,$err);
+    return ($res,$err,$req);
 };
+
 sub check_options_collection{
     my $self = shift;
     # OPTIONS tests
@@ -91,13 +134,31 @@ sub check_options_collection{
         ok(grep(/^$opt$/, @{ $opts->{methods} }), "check for existence of '$opt' in body");
     }
 }
+sub check_options_item{
+    my ($self,$uri) = shift;
+    $uri ||= $self->get_firstitem_uri;
+    my $req = HTTP::Request->new('OPTIONS', $uri);
+    my $res = $self->ua->request($req);
+    is($res->code, 200, "check options on item");
+    my @hopts = split /\s*,\s*/, $res->header('Allow');
+    my $opts = JSON::from_json($res->decoded_content);
+    ok(exists $opts->{methods} && ref $opts->{methods} eq "ARRAY", "check for valid 'methods' in body");
+    foreach my $opt(qw( GET HEAD OPTIONS PUT PATCH )) {
+        ok(grep(/^$opt$/, @hopts), "check for existence of '$opt' in Allow header");
+        ok(grep(/^$opt$/, @{ $opts->{methods} }), "check for existence of '$opt' in body");
+    }
+    foreach my $opt(qw( POST DELETE )) {
+        ok(!grep(/^$opt$/, @hopts), "check for absence of '$opt' in Allow header");
+        ok(!grep(/^$opt$/, @{ $opts->{methods} }), "check for absence of '$opt' in body");
+    }
+}
 sub check_list_collection{
     my($self, $check_embedded_cb) = @_;
     my $nexturi = $self->base_uri."/api/".$self->name."/?page=1&rows=5";
     my @href = ();
     do {
         my $res = $self->ua->get($nexturi);
-        is($res->code, 200, "fetch model page");
+        is($res->code, 200, "fetch collection page");
         my $list_collection = JSON::from_json($res->decoded_content);
         my $selfuri = $self->base_uri . $list_collection->{_links}->{self}->{href};
         is($selfuri, $nexturi, "check _links.self.href of collection");
@@ -156,7 +217,95 @@ sub check_list_collection{
     } while($nexturi);
     return \@href;
 }
-sub check_created_existance{
-    my($self) = shift;
+sub check_created_listed{
+    my($self,$listed) = @_;
+    foreach (@$listed){
+        delete $self->DATA_CREATED->{ALL}->{$_};
+    }
+    is(scalar(keys %{$self->DATA_CREATED->{ALL}}), 0, "check if all created test items have been foundin the list");
+}
+
+sub check_put_content_type_empty{
+    my($self,$req) = @_;
+    # check if it fails without content type
+    $req ||= $self->get_request_put;
+    $req->remove_header('Content-Type');
+    $req->header('Prefer' => "return=minimal");
+    my $res = $self->ua->request($req);
+    is($res->code, 415, "check put missing content type");
+}
+sub check_put_content_type_wrong{
+    my($self,$req) = @_;
+    # check if it fails with unsupported content type
+    $req ||= $self->get_request_put;
+    $req->header('Content-Type' => 'application/xxx');
+    my $res = $self->ua->request($req);
+    is($res->code, 415, "check put invalid content type");
+}
+sub check_put_prefer_wrong{
+    my($self,$req) = @_;
+    #my($self,$req,$content_type) = @_;
+    # check if it fails with invalid Prefer
+    $req ||= $self->get_request_put;
+    #$content_type ||= $self->CONTENT_TYPE;
+    ##$req->remove_header('Content-Type');
+    #$req->header('Content-Type' => $content_type);
+    $req->header('Prefer' => "return=invalid");
+    my $res = $self->ua->request($req);
+    is($res->code, 400, "check put invalid prefer");
+}
+
+sub check_put_body_empty{
+    my($self,$req) = @_;
+    # check if it fails with missing body
+    $req ||= $self->get_request_put;
+
+    #$req->remove_header('Prefer');
+    #$req->header('Prefer' => "return=representation");
+    my $res = $self->ua->request($req);
+    is($res->code, 400, "check put no body");
+}
+sub check_get2put{
+    my($self) = @_;
+    #$req->remove_header('Prefer');
+    #$req->header('Prefer' => "return=representation");
+    # PUT same result again
+    my ($item_first_get) = $self->check_item_get;
+    my $item_first_put = clone($item_first_get);
+    delete $item_first_put->{_links};
+    delete $item_first_put->{_embedded};
+    # check if put is ok
+    my $req = $self->get_request_put;
+    $req->content(JSON::to_json($item_first_put));
+    my $res = $self->ua->request($req);
+    is($res->code, 200, "check put successful");
+    my $item_put_result = JSON::from_json($res->decoded_content);
+    is_deeply($item_first_get, $item_put_result, "check put if unmodified put returns the same");
+}
+sub check_put_bundle{
+    my($self,$req) = @_;
+    $self->check_put_content_type_empty($req);
+    $self->check_put_content_type_wrong($req);
+    $self->check_put_prefer_wrong($req);
+    $self->check_put_body_empty($req);
+    $self->check_get2put($req);
+}
+sub check_patch{
+    my($self,$req) = @_;
+
+    $req = HTTP::Request->new('PATCH', $test_machine->base_uri.'/'.$firstmodel);
+    $req->header('Prefer' => 'return=representation');
+    $req->header('Content-Type' => 'application/json-patch+json');
+    my $t = time;
+    $req->content(JSON::to_json(
+        [ { op => 'replace', path => '/name', value => 'patched name '.$t } ]
+    ));
+    $res = $test_machine->ua->request($req);
+    is($res->code, 200, "check patched model item");
+    my $mod_model = JSON::from_json($res->decoded_content);
+    is($mod_model->{name}, "patched name $t", "check patched replace op");
+    is($mod_model->{_links}->{self}->{href}, $firstmodel, "check patched self link");
+    is($mod_model->{_links}->{collection}->{href}, '/api/pbxdevicemodels/', "check patched collection link");
+
 }
 1;
