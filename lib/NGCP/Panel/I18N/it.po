@@ -2949,7 +2949,7 @@ msgstr ""
 msgid "Failed to create reseller"
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/Rewrite.pm:470
+#: lib/NGCP/Panel/Controller/Rewrite.pm:471
 msgid "Failed to create rewrite rule"
 msgstr ""
 
@@ -3089,7 +3089,7 @@ msgstr ""
 msgid "Failed to delete registered device"
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/Rewrite.pm:435
+#: lib/NGCP/Panel/Controller/Rewrite.pm:436
 msgid "Failed to delete rewrite rule"
 msgstr ""
 
@@ -3166,7 +3166,7 @@ msgstr ""
 msgid "Failed to load default sound files."
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/Rewrite.pm:306
+#: lib/NGCP/Panel/Controller/Rewrite.pm:307
 msgid "Failed to move rewrite rule."
 msgstr "Spostamento rewrite rule fallito."
 
@@ -3360,7 +3360,7 @@ msgstr ""
 msgid "Failed to update reseller branding"
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/Rewrite.pm:410
+#: lib/NGCP/Panel/Controller/Rewrite.pm:411
 msgid "Failed to update rewrite rule"
 msgstr ""
 
@@ -4197,7 +4197,7 @@ msgstr "Reseller id non valido"
 msgid "Invalid reseller id detected."
 msgstr "Reseller id non valido"
 
-#: lib/NGCP/Panel/Controller/Rewrite.pm:365
+#: lib/NGCP/Panel/Controller/Rewrite.pm:366
 msgid "Invalid rewrite rule id detected"
 msgstr "Rewrite rule non valida"
 
@@ -5985,7 +5985,7 @@ msgstr "Rewrite Rule"
 msgid "Rewrite Rules for %1"
 msgstr "Rewrite Rules per %1"
 
-#: lib/NGCP/Panel/Controller/Rewrite.pm:375
+#: lib/NGCP/Panel/Controller/Rewrite.pm:376
 msgid "Rewrite rule does not exist"
 msgstr "Rewrite rule non esistente"
 
@@ -6009,15 +6009,15 @@ msgstr "Set di Rewrite rule eliminato con successo"
 msgid "Rewrite rule set successfully updated"
 msgstr "Set di Rewrite rule caricato con successo"
 
-#: lib/NGCP/Panel/Controller/Rewrite.pm:464
+#: lib/NGCP/Panel/Controller/Rewrite.pm:465
 msgid "Rewrite rule successfully created"
 msgstr "Rewrite rule creata con successo"
 
-#: lib/NGCP/Panel/Controller/Rewrite.pm:429
+#: lib/NGCP/Panel/Controller/Rewrite.pm:430
 msgid "Rewrite rule successfully deleted"
 msgstr "Rewrite rule eliminata con successo"
 
-#: lib/NGCP/Panel/Controller/Rewrite.pm:404
+#: lib/NGCP/Panel/Controller/Rewrite.pm:405
 msgid "Rewrite rule successfully updated"
 msgstr "Rewrite rule caricata con successo"
 
