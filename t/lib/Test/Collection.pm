@@ -92,8 +92,22 @@ sub get_request_patch{
     my($self,$uri) = @_;
     $uri ||= $self->get_firstitem_uri;
     my $req = HTTP::Request->new('PATCH', $uri);
+    $req->header('Prefer' => 'return=representation');
+    $req->header('Content-Type' => 'application/json-patch+json');
     return $req;
 }
+sub request_patch{
+    my($self,$uri,$content) = @_;
+    $uri ||= $self->get_firstitem_uri;
+    my $req = $self->get_request_patch($uri);
+    $req->content(JSON::to_json(
+        $content
+    ));
+    my $res = $self->ua->request($req);
+    my $err = $res->decoded_content ? JSON::from_json($res->decoded_content) : '';
+    return ($res,$err,$req);
+}
+    
 sub check_item_get{
     my($self,$uri) = @_;
     $uri ||= $self->get_firstitem_uri;

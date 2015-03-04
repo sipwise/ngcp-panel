@@ -17,9 +17,8 @@ my $test_machine = Test::Collection->new(
     embedded => [qw/pbxdevicefirmwares/]
 );
 $test_machine->CONTENT_TYPE->{POST} = 'form-data';
-
-
-my $MODEL = {
+#for item creation test purposes
+$test_machine->DATA_ITEM({
     json => {
         "model"=>"ATA24",
         #3.7relative tests
@@ -47,11 +46,13 @@ my $MODEL = {
     },
     #'front_image' => [ dirname($0).'/resources/api_devicemodels_front_image.jpg' ],
     'front_image' => [ dirname($0).'/resources/empty.txt' ],
-};
+});
 
-$test_machine->DATA_ITEM($MODEL);#for item creation test purposes
 
+
+#tests
 $test_machine->check_options_collection;
+
 # create 6 new billing models
 $test_machine->check_create_correct( 6, sub{ $_[0]->{json}->{model} .= "_$i"; } );
 
@@ -76,47 +77,36 @@ $test_machine->check_create_correct( 6, sub{ $_[0]->{json}->{model} .= "_$i"; } 
     is($err->{code}, "422", "check error code in body");
     ok($err->{message} =~ /Invalid reseller_id/, "check error message in body");
 } 
+
 # iterate over collection to check next/prev links and status
 my $listed = $test_machine->check_list_collection();
 $test_machine->check_created_listed($listed);
 
 # test model item
+$test_machine->check_options_item;
+$test_machine->check_put_bundle;
+
 {
-    $test_machine->check_options_item;
-    $test_machine->check_put_bundle;
-
     my $item_first_get = $test_machine->check_item_get;
-
     ok(exists $item_first_get->{reseller_id} && $item_first_get->{reseller_id}->is_int, "check existence of reseller_id");
     foreach(qw/vendor model/){
         ok(exists $item_first_get->{$_}, "check existence of $_");
     }
-
     # check if we have the proper links
     # TODO: fees, reseller links
     #ok(exists $new_contract->{_links}->{'ngcp:resellers'}, "check put presence of ngcp:resellers relation");
+}
 
-    $req = HTTP::Request->new('PATCH', $test_machine->base_uri.'/'.$firstmodel);
-    $req->header('Prefer' => 'return=representation');
-    $req->header('Content-Type' => 'application/json-patch+json');
-    my $t = time;
-    $req->content(JSON::to_json(
-        [ { op => 'replace', path => '/name', value => 'patched name '.$t } ]
-    ));
-    $res = $test_machine->ua->request($req);
-    is($res->code, 200, "check patched model item");
-    my $mod_model = JSON::from_json($res->decoded_content);
-    is($mod_model->{name}, "patched name $t", "check patched replace op");
-    is($mod_model->{_links}->{self}->{href}, $firstmodel, "check patched self link");
-    is($mod_model->{_links}->{collection}->{href}, '/api/pbxdevicemodels/', "check patched collection link");
-    
-
+{
+    my $req = $test_machine->get_patch_request;
     $req->content(JSON::to_json(
         [ { op => 'replace', path => '/reseller_id', value => undef } ]
     ));
     $res = $test_machine->ua->request($req);
     is($res->code, 422, "check patched undef reseller");
-
+}
+{
+    my $req = $test_machine->get_patch_request;
     $req->content(JSON::to_json(
         [ { op => 'replace', path => '/reseller_id', value => 99999 } ]
     ));
