@@ -12,6 +12,7 @@ use Test::More;
 use Data::Dumper;
 use File::Basename;
 
+#init test_machine
 my $test_machine = Test::Collection->new( 
     name => 'pbxdevicemodels', 
     embedded => [qw/pbxdevicefirmwares/]
@@ -49,8 +50,7 @@ $test_machine->DATA_ITEM({
 });
 
 
-
-#tests
+#collection tests, specific and common
 $test_machine->check_options_collection;
 
 # create 6 new billing models
@@ -96,21 +96,17 @@ $test_machine->check_put_bundle;
     # TODO: fees, reseller links
     #ok(exists $new_contract->{_links}->{'ngcp:resellers'}, "check put presence of ngcp:resellers relation");
 }
-
 {
-    my $req = $test_machine->get_patch_request;
-    $req->content(JSON::to_json(
-        [ { op => 'replace', path => '/reseller_id', value => undef } ]
-    ));
-    $res = $test_machine->ua->request($req);
+    my $t = time;
+    my($res,$mod_model) = $test_machine->request_patch( [ { op => 'replace', path => '/name', value => 'patched name '.$t } ] );
+    is($mod_model->{name}, "patched name $t", "check patched replace op");
+}
+{
+    my($res) = $test_machine->request_patch( [ { op => 'replace', path => '/reseller_id', value => undef } ] );
     is($res->code, 422, "check patched undef reseller");
 }
 {
-    my $req = $test_machine->get_patch_request;
-    $req->content(JSON::to_json(
-        [ { op => 'replace', path => '/reseller_id', value => 99999 } ]
-    ));
-    $res = $test_machine->ua->request($req);
+    my($res) = $test_machine->request_patch( [ { op => 'replace', path => '/reseller_id', value => 99999 } ] );
     is($res->code, 422, "check patched invalid reseller");
 }
 
