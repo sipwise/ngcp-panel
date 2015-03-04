@@ -87,7 +87,7 @@ sub clear_created_data{
 }
 sub get_firstitem_uri{
     my($self) = @_;
-    print Dumper $self->DATA_CREATED->{FIRST};
+    #print Dumper $self->DATA_CREATED->{FIRST};
     return $self->base_uri.'/'.$self->DATA_CREATED->{FIRST};
 }
 
@@ -135,7 +135,7 @@ sub request_patch{
 sub request_post{
     my($self, $data_cb, $data_in, $data_cb_data) = @_;
     my $data = $data_in || clone($self->DATA_ITEM);
-    $data_cb and $data_cb->($data, $data_cb_data);
+    defined $data_cb and $data_cb->($data, $data_cb_data);
     my $content = {
         $data->{json} ? ( json => JSON::to_json(delete $data->{json}) ) : (),
         %$data,
@@ -236,7 +236,7 @@ sub check_list_collection{
 
         my $check_embedded = sub {
             my($embedded) = @_;
-            $check_embedded_cb and $check_embedded_cb->($embedded);
+            defined $check_embedded_cb and $check_embedded_cb->($embedded);
             foreach my $embedded_name(@{$self->embedded_resources}){
                 ok(exists $embedded->{_links}->{'ngcp:'.$embedded_name}, "check presence of ngcp:$embedded_name relation");
             }
@@ -327,7 +327,7 @@ sub check_get2put{
     delete $item_first_put->{_links};
     delete $item_first_put->{_embedded};
     # check if put is ok
-    $put_data_cb and $put_data_cb->($item_first_put);
+    (defined $put_data_cb) and $put_data_cb->($item_first_put);
     my ($res,$item_put_result) = $self->request_put( $item_first_put );
     is($res->code, 200, "check put successful");
     is_deeply($item_first_get, $item_put_result, "check put if unmodified put returns the same");
@@ -338,7 +338,6 @@ sub check_put_bundle{
     $self->check_put_content_type_wrong;
     $self->check_put_prefer_wrong;
     $self->check_put_body_empty;
-    $self->check_get2put;
 }
 sub check_patch{
     my($self,$content) = @_;

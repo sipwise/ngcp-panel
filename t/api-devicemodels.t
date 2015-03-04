@@ -86,7 +86,7 @@ $test_machine->check_created_listed($listed);
 # test model item
 $test_machine->check_options_item;
 $test_machine->check_put_bundle;
-$test_machine->check_get2put({ json => JSON::to_json($_[0]), 'front_image' =>  $test_machine->DATA_ITEM->{front_image} });
+$test_machine->check_get2put( sub { $_[0] = { json => JSON::to_json($_[0]), 'front_image' =>  $test_machine->DATA_ITEM->{front_image} }; } );
 
 {
     my $item_first_get = $test_machine->check_item_get;
@@ -100,7 +100,7 @@ $test_machine->check_get2put({ json => JSON::to_json($_[0]), 'front_image' =>  $
 }
 {
     my $t = time;
-    my($res,$mod_model) = $test_machine->request_patch( [ { op => 'replace', path => '/name', value => 'patched name '.$t } ] );
+    my($res,$mod_model) = $test_machine->request_patch( [ { op => 'replace', path => '/model', value => 'patched model '.$t } ] );
     is($mod_model->{name}, "patched name $t", "check patched replace op");
 }
 {
