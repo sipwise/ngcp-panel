@@ -67,44 +67,24 @@ sub resource_from_item {
     foreach my $field (qw/reseller_id id extensions_num/){
         $resource{$field} = int($item->$field // 0);
     }
-    foreach my $field (qw/linerange extensions devices/){
+    foreach my $field (qw/linerange connectable_models/){
         $resource{$field} = [];
     }
-    my $process_range = sub {
-        my($range,$process_range_cb ) = @_;
-        my $r = { $range->get_inflated_columns };
-        foreach my $f(qw/device_id num_lines/) {
-            delete $r->{$f};
-        }
-        $r->{id} = int($r->{id});
-        foreach my $f(qw/can_private can_shared can_blf/) {
-            $r->{$f} = $r->{$f} ? JSON::true : JSON::false;
-        }
-        $r->{keys} = [];
-        foreach my $key($range->annotations->all) {
-            push @{ $r->{keys} }, {
-                x => int($key->x),
-                y => int($key->y),
-                labelpos => $key->position,
-            };
-        }
-        $r->{num_lines} = @{ $r->{keys} };
-        ( ( defined $process_range_cb ) && ( 'CODE' eq ref $process_range_cb ) ) and $process_range_cb->($r);
-        push @{ $resource{linerange} }, $r;    
-    };
     foreach my $range($item->autoprov_device_line_ranges->all) {
-        $process_range->( $range );
+        $self->process_range( \%resource, $range );
     }
     if('extension' eq $item->type){
         # show possible devices for extension
-        $resource{devices} = [map {$_->device->id} $item->autoprov_extension_device_link->all ];
+        use Data::Dumper;
+        $c->log->debug(Dumper($item->autoprov_extension_device_link->all));
+        $resource{connectable_models} = [map {$_->device->id} ($item->autoprov_extension_device_link->all) ];
     }else{
         # we don't need show possible extensions - we will show their ranges
         # add ranges of the possible extensions
         foreach my $extension_link ($item->autoprov_extensions_link->all){
             my $extension = $extension_link->extension;
             foreach my $range($extension->autoprov_device_line_ranges->all) {
-                $process_range->( $range, sub { my $r = shift; $r->{extension_range} = $extension->id;} );# 
+                $self->process_range( \%resource, $range, sub { my $r = shift; $r->{extension_range} = $extension->id;} );# 
             }
         }
     }
@@ -266,6 +246,28 @@ sub update_item {
     })->delete_all;
     
     return $item;
+}
+sub process_range {
+    my($self, $resource, $range, $process_range_cb ) = @_;
+    my $r = { $range->get_inflated_columns };
+    foreach my $f(qw/device_id num_lines/) {
+        delete $r->{$f};
+    }
+    $r->{id} = int($r->{id});
+    foreach my $f(qw/can_private can_shared can_blf/) {
+        $r->{$f} = $r->{$f} ? JSON::true : JSON::false;
+    }
+    $r->{keys} = [];
+    foreach my $key($range->annotations->all) {
+        push @{ $r->{keys} }, {
+            x => int($key->x),
+            y => int($key->y),
+            labelpos => $key->position,
+        };
+    }
+    $r->{num_lines} = @{ $r->{keys} };
+    ( ( defined $process_range_cb ) && ( 'CODE' eq ref $process_range_cb ) ) and $process_range_cb->($r);
+    push @{ $resource->{linerange} }, $r;    
 }
 
 1;

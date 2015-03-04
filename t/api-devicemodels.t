@@ -17,11 +17,12 @@ my $test_machine = Test::Collection->new(
     name => 'pbxdevicemodels', 
     embedded => [qw/pbxdevicefirmwares/]
 );
-$test_machine->CONTENT_TYPE->{POST} = 'form-data';
+$test_machine->CONTENT_TYPE->{POST} = 'multipart/form-data';
+$test_machine->CONTENT_TYPE->{PUT}  = 'multipart/form-data';
 #for item creation test purposes
 $test_machine->DATA_ITEM({
     json => {
-        "model"=>"ATA24",
+        "model"=>"ATA11",
         #3.7relative tests
         "type"=>"phone",
         "bootstrap_method"=>"http",
@@ -54,7 +55,7 @@ $test_machine->DATA_ITEM({
 $test_machine->check_options_collection;
 
 # create 6 new billing models
-$test_machine->check_create_correct( 6, sub{ $_[0]->{json}->{model} .= "_$i"; } );
+$test_machine->check_create_correct( 6, sub{ $_[0]->{json}->{model} .= "_".$_[1]->{i}; } );
 
 # try to create model without reseller_id
 {
@@ -85,6 +86,7 @@ $test_machine->check_created_listed($listed);
 # test model item
 $test_machine->check_options_item;
 $test_machine->check_put_bundle;
+$test_machine->check_get2put({ json => JSON::to_json($_[0]), 'front_image' =>  $test_machine->DATA_ITEM->{front_image} });
 
 {
     my $item_first_get = $test_machine->check_item_get;
@@ -109,7 +111,7 @@ $test_machine->check_put_bundle;
     my($res) = $test_machine->request_patch( [ { op => 'replace', path => '/reseller_id', value => 99999 } ] );
     is($res->code, 422, "check patched invalid reseller");
 }
-
+`echo 'delete from autoprov_devices where model like "%\_%";'|mysql provisioning`;
 done_testing;
 
 # vim: set tabstop=4 expandtab:

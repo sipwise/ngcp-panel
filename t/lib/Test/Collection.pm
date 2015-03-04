@@ -1,14 +1,17 @@
 package Test::Collection;
 
 use strict;
-use Net::Domain qw(hostfqdn);
+use Test::More;
+use Moose;
+use JSON;
 use LWP::UserAgent;
 use HTTP::Request::Common;
-use JSON;
-use Test::More;
-use Data::Dumper;
-use Moose;
+use Net::Domain qw(hostfqdn);
+use URI;
 use Clone qw/clone/;
+
+use Data::Dumper;
+
 
 has 'ua' => (
     is => 'rw',
@@ -24,9 +27,10 @@ has 'name' => (
     is => 'rw',
     isa => 'Str',
 );
-has 'embedded' => (
+has 'embedded_resources' => (
     is => 'rw',
     isa => 'ArrayRef',
+    default => sub { [] },
 );
 
 #state variables - smth like predefined stash
@@ -48,6 +52,10 @@ has 'DATA_CREATED' => (
     isa => 'HashRef',
     builder => 'clear_created_data',
 );
+has 'REQUEST' => (
+    is => 'rw',
+    isa => 'HTTP::Request::Common',
+);
 
 sub _init_ua {
     my $self = shift;
@@ -57,12 +65,12 @@ sub _init_ua {
         $valid_ssl_client_cert;
     my $ssl_ca_cert = $ENV{ API_SSL_CA_CERT} || "/etc/ngcp-panel/api_ssl/api_ca.crt";
     my $ua = LWP::UserAgent->new;
-    $ua->credentials( $self->base_uri, '', 'administrator', 'administrator' );
     #$ua->ssl_opts(
     #    SSL_cert_file   => $valid_ssl_client_cert,
     #    SSL_key_file    => $valid_ssl_client_key,
     #    SSL_ca_file     => $ssl_ca_cert,
     #);
+    $ua->credentials( $self->base_uri, '', 'administrator', 'administrator' );
     $ua->ssl_opts(
         verify_hostname => 0,
         SSL_verify_mode => 0x00,
@@ -71,24 +79,27 @@ sub _init_ua {
 };
 sub clear_created_data{
     my($self) = @_;
-    $self->DATA_CREATED={
+    $self->DATA_CREATED({
         ALL   => {},
-        FIRST => {},
-    };
+        FIRST => undef,
+    });
     return $self->DATA_CREATED;
 }
 sub get_firstitem_uri{
     my($self) = @_;
+    print Dumper $self->DATA_CREATED->{FIRST};
     return $self->base_uri.'/'.$self->DATA_CREATED->{FIRST};
 }
 
 sub get_request_put{
-    my($self,$uri) = @_;
+    my($self,$content,$uri) = @_;
     $uri ||= $self->get_firstitem_uri;
-    my $req = HTTP::Request->new('PUT', $uri);
-    #$req->header('Prefer' => "return=representation");
+    #This is for multipart/form-data cases
+    my $req = POST $uri, 
+        Content_Type => $self->CONTENT_TYPE->{POST}, 
+        $content ? ( Content => $content ) : ();
+    $req->method('PUT');
     $req->header('Prefer' => 'return=representation');
-    $req->header('Content-Type' => $self->CONTENT_TYPE->{PUT});
     return $req;
 }
 sub get_request_patch{
@@ -96,17 +107,16 @@ sub get_request_patch{
     $uri ||= $self->get_firstitem_uri;
     my $req = HTTP::Request->new('PATCH', $uri);
     $req->header('Prefer' => 'return=representation');
-    $req->header('Content-Type' => $self->CONTENT_TYPE->{PATCH});
+    $req->header('Content-Type' => $self->CONTENT_TYPE->{PATCH} );
     return $req;
 }
 sub request_put{
     my($self,$content,$uri) = @_;
     $uri ||= $self->get_firstitem_uri;
-    my $req = $self->get_request_put($uri);
-    $req->content(JSON::to_json(
-        $content
-    ));
+    my $req = $self->get_request_put( $content, $uri );
     my $res = $self->ua->request($req);
+    #print Dumper $res;
+    
     my $err = $res->decoded_content ? JSON::from_json($res->decoded_content) : '';
     return ($res,$err,$req);
 }
@@ -121,16 +131,16 @@ sub request_patch{
     my $err = $res->decoded_content ? JSON::from_json($res->decoded_content) : '';
     return ($res,$err,$req);
 }
-    
 
 sub request_post{
-    my($self, $data_cb, $data_in) = @_;
+    my($self, $data_cb, $data_in, $data_cb_data) = @_;
     my $data = $data_in || clone($self->DATA_ITEM);
-    $data_cb and $data_cb->($data);
+    $data_cb and $data_cb->($data, $data_cb_data);
     my $content = {
         $data->{json} ? ( json => JSON::to_json(delete $data->{json}) ) : (),
         %$data,
     };
+    #form-data is set automatically, despite on $self->CONTENT_TYPE->{POST}
     my $req = POST $self->base_uri.'/api/'.$self->name.'/', 
         Content_Type => $self->CONTENT_TYPE->{POST}, 
         Content => $content;
@@ -178,7 +188,7 @@ sub check_create_correct{
         $self->clear_created_data;
     }
     for(my $i = 1; $i <= $number; ++$i) {
-        my ($res, $err) = $test_machine->request_post( $uniquizer_cb );
+        my ($res, $err) = $self->request_post( $uniquizer_cb , undef, { i => $i} );
         is($res->code, 201, "create test item $i");
         $self->DATA_CREATED->{ALL}->{$res->header('Location')} = $i;
         $self->DATA_CREATED->{FIRST} = $res->header('Location') unless $self->DATA_CREATED->{FIRST};
@@ -189,6 +199,7 @@ sub check_list_collection{
     my $nexturi = $self->base_uri."/api/".$self->name."/?page=1&rows=5";
     my @href = ();
     do {
+        print "nexturi=$nexturi;\n";
         my $res = $self->ua->get($nexturi);
         is($res->code, 200, "fetch collection page");
         my $list_collection = JSON::from_json($res->decoded_content);
@@ -226,7 +237,7 @@ sub check_list_collection{
         my $check_embedded = sub {
             my($embedded) = @_;
             $check_embedded_cb and $check_embedded_cb->($embedded);
-            foreach my $embedded_name(@$self->embedded){
+            foreach my $embedded_name(@{$self->embedded_resources}){
                 ok(exists $embedded->{_links}->{'ngcp:'.$embedded_name}, "check presence of ngcp:$embedded_name relation");
             }
         };
@@ -269,9 +280,9 @@ sub check_item_get{
 }
 
 sub check_put_content_type_empty{
-    my($self,$req) = @_;
+    my($self) = @_;
     # check if it fails without content type
-    $req ||= $self->get_request_put;
+    my $req = $self->get_request_put;
     $req->remove_header('Content-Type');
     $req->remove_header('Prefer');
     $req->header('Prefer' => "return=minimal");
@@ -279,18 +290,18 @@ sub check_put_content_type_empty{
     is($res->code, 415, "check put missing content type");
 }
 sub check_put_content_type_wrong{
-    my($self,$req) = @_;
+    my($self) = @_;
     # check if it fails with unsupported content type
-    $req ||= $self->get_request_put;
+    my $req = $self->get_request_put;
     $req->remove_header('Content-Type');
     $req->header('Content-Type' => 'application/xxx');
     my $res = $self->ua->request($req);
     is($res->code, 415, "check put invalid content type");
 }
 sub check_put_prefer_wrong{
-    my($self,$req) = @_;
+    my($self) = @_;
     # check if it fails with invalid Prefer
-    $req ||= $self->get_request_put;
+    my $req = $self->get_request_put;
     $req->remove_header('Prefer');
     $req->header('Prefer' => "return=invalid");
     my $res = $self->ua->request($req);
@@ -298,16 +309,16 @@ sub check_put_prefer_wrong{
 }
 
 sub check_put_body_empty{
-    my($self,$req) = @_;
+    my($self) = @_;
     # check if it fails with missing body
-    $req ||= $self->get_request_put;
+    my $req = $self->get_request_put;
     #$req->remove_header('Prefer');
     #$req->header('Prefer' => "return=representation");
     my $res = $self->ua->request($req);
     is($res->code, 400, "check put no body");
 }
 sub check_get2put{
-    my($self) = @_;
+    my($self,$put_data_cb) = @_;
     #$req->remove_header('Prefer');
     #$req->header('Prefer' => "return=representation");
     # PUT same result again
@@ -316,23 +327,24 @@ sub check_get2put{
     delete $item_first_put->{_links};
     delete $item_first_put->{_embedded};
     # check if put is ok
-    my ($res,$item_put_result) = $self->request_put($item_first_put);
+    $put_data_cb and $put_data_cb->($item_first_put);
+    my ($res,$item_put_result) = $self->request_put( $item_first_put );
     is($res->code, 200, "check put successful");
     is_deeply($item_first_get, $item_put_result, "check put if unmodified put returns the same");
 }
 sub check_put_bundle{
-    my($self,$req) = @_;
-    $self->check_put_content_type_empty($req);
-    $self->check_put_content_type_wrong($req);
-    $self->check_put_prefer_wrong($req);
-    $self->check_put_body_empty($req);
-    $self->check_get2put($req);
+    my($self) = @_;
+    $self->check_put_content_type_empty;
+    $self->check_put_content_type_wrong;
+    $self->check_put_prefer_wrong;
+    $self->check_put_body_empty;
+    $self->check_get2put;
 }
 sub check_patch{
     my($self,$content) = @_;
     my ($res,$mod_model,$req) = $self->request_patch( $content );
     is($res->code, 200, "check patched model item");
-    is($mod_model->{_links}->{self}->{href}, $firstmodel, "check patched self link");
+    is($mod_model->{_links}->{self}->{href}, $self->DATA_CREATED->{FIRST}, "check patched self link");
     is($mod_model->{_links}->{collection}->{href}, '/api/'.$self->name.'/', "check patched collection link");
     return ($res,$mod_model,$req);
 }

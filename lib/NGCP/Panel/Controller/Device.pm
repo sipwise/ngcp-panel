@@ -255,29 +255,7 @@ sub prepare_connectable {
     }
     return (encode_json($values), $values);
 }
-sub process_connectable_models :Privat(){
-    my ($self, $c, $just_created, $devmod, $connectable_models) = @_;
-    my $schema = $c->model('DB');
-    if($connectable_models){
-        my @columns = ('device_id' , 'extension_id');
-        if('extension' eq $devmod->type){
-            @columns = reverse @columns;
-        }
-        if(!$just_created){
-            #we don't need to clear old relations, because we just created this device
-            $schema->resultset('autoprov_device_extensions')->search_rs({
-                $columns[0] => $devmod->id,
-            })->delete;
-        }
-        foreach my $connected_id(@{decode_json($connectable_models)}){
-            $schema->resultset('autoprov_device_extensions')->create({
-                $columns[0] => $devmod->id,
-                $columns[1] => $connected_id,
-            });                        
-        }
-    }
 
-}
 sub devmod_base :Chained('base') :PathPart('model') :CaptureArgs(1) {
     my ($self, $c, $devmod_id) = @_;
 
@@ -477,8 +455,6 @@ sub devmod_edit :Chained('devmod_base') :PathPart('edit') :Args(0) :Does(ACL) :A
                 $range_rs->search({
                     id => { 'not in' => \@existing_range },
                 })->delete_all;
-
-                $self->process_connectable_models($c, 0, $c->stash->{devmod}, $connectable_models);
                 delete $c->session->{created_objects}->{reseller};
             });
             NGCP::Panel::Utils::Message->info(
