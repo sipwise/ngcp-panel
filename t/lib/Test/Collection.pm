@@ -32,9 +32,21 @@ has 'embedded_resources' => (
     isa => 'ArrayRef',
     default => sub { [] },
 );
-
-#state variables - smth like predefined stash
-has 'CONTENT_TYPE' => (
+has 'methods' => (
+    is => 'rw',
+    isa => 'HashRef',
+    default => sub { {
+        'collection' =>{
+            'all'     => {map {$_ => 1} qw(GET HEAD OPTIONS POST)}, 
+            'allowed' => {map {$_ => 1} qw(GET HEAD OPTIONS POST)}, 
+        },
+        'item' =>{
+            'all'     => {map {$_ => 1} qw(GET HEAD OPTIONS PUT PATCH POST DELETE)}, 
+            'allowed' => {map {$_ => 1} qw(GET HEAD OPTIONS PUT PATCH)}, 
+        },
+    } },
+);
+has 'content_type' => (
     is => 'rw',
     isa => 'HashRef',
     default => sub {{
@@ -43,19 +55,28 @@ has 'CONTENT_TYPE' => (
         PATCH => 'application/json-patch+json',
     }},
 );
+#state variables - smth like predefined stash
 has 'DATA_ITEM' => (
     is => 'rw',
     isa => 'Ref',
 );
+has 'DATA_ITEM_STORE' => (
+    is => 'rw',
+    isa => 'Ref',
+);
+after 'DATA_ITEM_STORE' => sub {
+    my $self = shift;
+    if(@_){
+        #$self->DATA_ITEM($self->DATA_ITEM_STORE);
+        $self->form_data_item;
+    }
+};
 has 'DATA_CREATED' => (
     is => 'rw',
     isa => 'HashRef',
     builder => 'clear_created_data',
 );
-has 'REQUEST' => (
-    is => 'rw',
-    isa => 'HTTP::Request::Common',
-);
+
 
 sub _init_ua {
     my $self = shift;
@@ -85,9 +106,31 @@ sub clear_created_data{
     });
     return $self->DATA_CREATED;
 }
+sub get_collection_uri{
+    my($self) = @_;
+    return $self->base_uri."/api/".$self->name."/";
+}
+sub get_hal_name{
+    my($self) = @_;
+    return "ngcp:".$self->name;
+}
+sub form_data_item{
+    my($self, $data_cb, $data_cb_data) = @_;
+    $self->{DATA_ITEM} ||= clone($self->DATA_ITEM_STORE);
+    (defined $data_cb) and $data_cb->($self->DATA_ITEM,$data_cb_data);
+    return $self->DATA_ITEM;
+}
 sub get_firstitem_uri{
     my($self) = @_;
-    #print Dumper $self->DATA_CREATED->{FIRST};
+    if(!$self->DATA_CREATED->{FIRST}){
+        my($res,$list_collection,$req) = $self->check_item_get($self->get_collection_uri."?page=1&rows=1");
+        my $hal_name = $self->get_hal_name;
+        if(ref $list_collection->{_links}->{$hal_name} eq "HASH") {
+            $self->DATA_CREATED->{FIRST} = $list_collection->{_links}->{$hal_name}->{href};
+        } else {
+            $self->DATA_CREATED->{FIRST} = $list_collection->{_embedded}->{$hal_name}->[0]->{_links}->{self}->{href};
+        }
+    }
     return $self->base_uri.'/'.$self->DATA_CREATED->{FIRST};
 }
 
@@ -96,7 +139,7 @@ sub get_request_put{
     $uri ||= $self->get_firstitem_uri;
     #This is for multipart/form-data cases
     my $req = POST $uri, 
-        Content_Type => $self->CONTENT_TYPE->{POST}, 
+        Content_Type => $self->content_type->{POST}, 
         $content ? ( Content => $content ) : ();
     $req->method('PUT');
     $req->header('Prefer' => 'return=representation');
@@ -107,7 +150,7 @@ sub get_request_patch{
     $uri ||= $self->get_firstitem_uri;
     my $req = HTTP::Request->new('PATCH', $uri);
     $req->header('Prefer' => 'return=representation');
-    $req->header('Content-Type' => $self->CONTENT_TYPE->{PATCH} );
+    $req->header('Content-Type' => $self->content_type->{PATCH} );
     return $req;
 }
 sub request_put{
@@ -141,9 +184,9 @@ sub request_post{
         $data->{json} ? ( json => JSON::to_json(delete $data->{json}) ) : (),
         %$data,
     };
-    #form-data is set automatically, despite on $self->CONTENT_TYPE->{POST}
-    my $req = POST $self->base_uri.'/api/'.$self->name.'/', 
-        Content_Type => $self->CONTENT_TYPE->{POST}, 
+    #form-data is set automatically, despite on $self->content_type->{POST}
+    my $req = POST $self->get_collection_uri, 
+        Content_Type => $self->content_type->{POST}, 
         Content => $content;
     my $res = $self->ua->request($req);
     my $err = $res->decoded_content ? JSON::from_json($res->decoded_content) : '';
@@ -151,36 +194,35 @@ sub request_post{
 };
 
 sub check_options_collection{
-    my $self = shift;
+    my ($self) = @_;
     # OPTIONS tests
-    my $req = HTTP::Request->new('OPTIONS', $self->base_uri."/api/".$self->name."/");
+    my $req = HTTP::Request->new('OPTIONS', $self->get_collection_uri );
     my $res = $self->ua->request($req);
-    is($res->code, 200, "check options request");
     is($res->header('Accept-Post'), "application/hal+json; profile=http://purl.org/sipwise/ngcp-api/#rel-".$self->name, "check Accept-Post header in options response");
-    my $opts = JSON::from_json($res->decoded_content);
-    my @hopts = split /\s*,\s*/, $res->header('Allow');
-    ok(exists $opts->{methods} && ref $opts->{methods} eq "ARRAY", "check for valid 'methods' in body");
-    foreach my $opt(qw( GET HEAD OPTIONS POST )) {
-        ok(grep(/^$opt$/, @hopts), "check for existence of '$opt' in Allow header");
-        ok(grep(/^$opt$/, @{ $opts->{methods} }), "check for existence of '$opt' in body");
-    }
+    $self->check_methods($res,'collection');
 }
 sub check_options_item{
     my ($self,$uri) = shift;
+    # OPTIONS tests
     $uri ||= $self->get_firstitem_uri;
     my $req = HTTP::Request->new('OPTIONS', $uri);
     my $res = $self->ua->request($req);
-    is($res->code, 200, "check options on item");
-    my @hopts = split /\s*,\s*/, $res->header('Allow');
+    $self->check_methods($res,'item');
+}
+sub check_methods{
+    my($self, $res, $area) = @_;
+    is($res->code, 200, "check $area options request");
     my $opts = JSON::from_json($res->decoded_content);
+    my @hopts = split /\s*,\s*/, $res->header('Allow');
     ok(exists $opts->{methods} && ref $opts->{methods} eq "ARRAY", "check for valid 'methods' in body");
-    foreach my $opt(qw( GET HEAD OPTIONS PUT PATCH )) {
-        ok(grep(/^$opt$/, @hopts), "check for existence of '$opt' in Allow header");
-        ok(grep(/^$opt$/, @{ $opts->{methods} }), "check for existence of '$opt' in body");
-    }
-    foreach my $opt(qw( POST DELETE )) {
-        ok(!grep(/^$opt$/, @hopts), "check for absence of '$opt' in Allow header");
-        ok(!grep(/^$opt$/, @{ $opts->{methods} }), "check for absence of '$opt' in body");
+    foreach my $opt(keys %{$self->methods->{$area}->{all}} ) {
+        if(exists $self->methods->{$area}->{allowed}->{$opt}){
+            ok(grep(/^$opt$/, @hopts), "check for existence of '$opt' in Allow header");
+            ok(grep(/^$opt$/, @{ $opts->{methods} }), "check for existence of '$opt' in body");
+        }else{
+            ok(!grep(/^$opt$/, @hopts), "check for absence of '$opt' in Allow header");
+            ok(!grep(/^$opt$/, @{ $opts->{methods} }), "check for absence of '$opt' in body");       
+        }
     }
 }
 sub check_create_correct{
@@ -197,7 +239,7 @@ sub check_create_correct{
 }
 sub check_list_collection{
     my($self, $check_embedded_cb) = @_;
-    my $nexturi = $self->base_uri."/api/".$self->name."/?page=1&rows=5";
+    my $nexturi = $self->get_collection_uri."?page=1&rows=5";
     my @href = ();
     do {
         #print "nexturi=$nexturi;\n";
@@ -231,7 +273,7 @@ sub check_list_collection{
             $nexturi = undef;
         }
 
-        my $hal_name = "ngcp:".$self->name;
+        my $hal_name = $self->get_hal_name;
         ok(((ref $list_collection->{_links}->{$hal_name} eq "ARRAY" ) || 
              (ref $list_collection->{_links}->{$hal_name} eq "HASH" ) ), "check if 'ngcp:".$self->name."' is array/hash-ref");
 

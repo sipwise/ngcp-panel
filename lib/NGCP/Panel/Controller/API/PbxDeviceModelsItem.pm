@@ -103,6 +103,7 @@ sub PATCH :Allow {
         my $item = $self->item_by_id($c, $id);
         last unless $self->resource_exists($c, pbxdevicemodel => $item);
         my $old_resource = $self->resource_from_item($c, $item);
+        #without it error: The entity could not be processed: Modification of a read-only value attempted at /usr/share/perl5/JSON/Pointer.pm line 200, <$fh> line 1.\n
         $old_resource = clone($old_resource);
         my $resource = $self->apply_patch($c, $old_resource, $json);
         last unless $resource;
