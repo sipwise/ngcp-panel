@@ -11,6 +11,7 @@ use NGCP::Panel::Utils::ValidateJSON qw();
 use NGCP::Panel::Utils::DateTime;
 use Path::Tiny qw(path);
 use Safe::Isa qw($_isa);
+use Clone qw/clone/;
 BEGIN { extends 'Catalyst::Controller::ActionRole'; }
 require Catalyst::ActionRole::ACL;
 require Catalyst::ActionRole::HTTPMethods;
@@ -102,6 +103,7 @@ sub PATCH :Allow {
         my $item = $self->item_by_id($c, $id);
         last unless $self->resource_exists($c, pbxdevicemodel => $item);
         my $old_resource = $self->resource_from_item($c, $item);
+        $old_resource = clone($old_resource);
         my $resource = $self->apply_patch($c, $old_resource, $json);
         last unless $resource;
 

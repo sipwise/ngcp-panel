@@ -1,7 +1,8 @@
 #use Sipwise::Base;
 use strict;
 
-use Moose;
+#use Moose;
+use Sipwise::Base;
 use lib "/root/VMHost/ngcp-panel/t/lib/";
 extends 'Test::Collection';
 use Net::Domain qw(hostfqdn);
@@ -55,7 +56,7 @@ $test_machine->DATA_ITEM({
 $test_machine->check_options_collection;
 
 # create 6 new billing models
-$test_machine->check_create_correct( 6, sub{ $_[0]->{json}->{model} .= "_".$_[1]->{i}; } );
+$test_machine->check_create_correct( 6, sub{ $_[0]->{json}->{model} .= "TEST_".$_[1]->{i}; } );
 
 # try to create model without reseller_id
 {
@@ -89,7 +90,7 @@ $test_machine->check_put_bundle;
 $test_machine->check_get2put( sub { $_[0] = { json => JSON::to_json($_[0]), 'front_image' =>  $test_machine->DATA_ITEM->{front_image} }; } );
 
 {
-    my $item_first_get = $test_machine->check_item_get;
+    my (undef, $item_first_get) = $test_machine->check_item_get;
     ok(exists $item_first_get->{reseller_id} && $item_first_get->{reseller_id}->is_int, "check existence of reseller_id");
     foreach(qw/vendor model/){
         ok(exists $item_first_get->{$_}, "check existence of $_");
@@ -101,7 +102,7 @@ $test_machine->check_get2put( sub { $_[0] = { json => JSON::to_json($_[0]), 'fro
 {
     my $t = time;
     my($res,$mod_model) = $test_machine->request_patch( [ { op => 'replace', path => '/model', value => 'patched model '.$t } ] );
-    is($mod_model->{name}, "patched name $t", "check patched replace op");
+    is($mod_model->{model}, "patched model $t", "check patched replace op");
 }
 {
     my($res) = $test_machine->request_patch( [ { op => 'replace', path => '/reseller_id', value => undef } ] );
@@ -111,7 +112,7 @@ $test_machine->check_get2put( sub { $_[0] = { json => JSON::to_json($_[0]), 'fro
     my($res) = $test_machine->request_patch( [ { op => 'replace', path => '/reseller_id', value => 99999 } ] );
     is($res->code, 422, "check patched invalid reseller");
 }
-`echo 'delete from autoprov_devices where model like "%\_%";'|mysql provisioning`;
+`echo 'delete from autoprov_devices where model like "%TEST\\_%";'|mysql provisioning`;
 done_testing;
 
 # vim: set tabstop=4 expandtab:

@@ -20,7 +20,8 @@ use NGCP::Panel::Utils::Device;
 
 sub get_form {
     my ($self, $c) = @_;
-    return NGCP::Panel::Form::Device::ModelAPI->new(ctx => $c);
+    my $form = NGCP::Panel::Form::Device::ModelAPI->new(ctx => $c);
+    return $form;
 }
 
 sub hal_from_item {
@@ -121,7 +122,7 @@ sub update_item {
 
     my $reseller = $c->model('DB')->resultset('resellers')->find($resource->{reseller_id});
     unless($reseller) {
-        $c->log->error("invalid reseller_id '$$resource{reseller_id}', does not exist");
+        $c->log->error("invalid reseller_id '".((defined $resource->{reseller_id})?$resource->{reseller_id} : "undefined")."', does not exist");
         $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Invalid reseller_id, does not exist");
         return;
     }

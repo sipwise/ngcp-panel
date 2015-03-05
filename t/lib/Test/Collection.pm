@@ -118,7 +118,7 @@ sub request_put{
     #print Dumper $res;
     
     my $err = $res->decoded_content ? JSON::from_json($res->decoded_content) : '';
-    return ($res,$err,$req);
+    return wantarray ? ($res,$err,$req) : $res;
 }
 sub request_patch{
     my($self,$content,$uri) = @_;
@@ -129,6 +129,7 @@ sub request_patch{
     ));
     my $res = $self->ua->request($req);
     my $err = $res->decoded_content ? JSON::from_json($res->decoded_content) : '';
+    #print Dumper [$res,$err,$req];
     return ($res,$err,$req);
 }
 
@@ -199,7 +200,7 @@ sub check_list_collection{
     my $nexturi = $self->base_uri."/api/".$self->name."/?page=1&rows=5";
     my @href = ();
     do {
-        print "nexturi=$nexturi;\n";
+        #print "nexturi=$nexturi;\n";
         my $res = $self->ua->get($nexturi);
         is($res->code, 200, "fetch collection page");
         my $list_collection = JSON::from_json($res->decoded_content);
@@ -276,7 +277,8 @@ sub check_item_get{
     my $req = HTTP::Request->new('GET', $uri);
     my $res = $self->ua->request($req);
     is($res->code, 200, "fetch one item");
-    return (JSON::from_json($res->decoded_content), $req, $res);
+    my $err = $res->decoded_content ? JSON::from_json($res->decoded_content) : '';
+    return wantarray ? ($res, $err, $req) : $res;
 }
 
 sub check_put_content_type_empty{
@@ -322,7 +324,7 @@ sub check_get2put{
     #$req->remove_header('Prefer');
     #$req->header('Prefer' => "return=representation");
     # PUT same result again
-    my ($item_first_get) = $self->check_item_get;
+    my (undef, $item_first_get) = $self->check_item_get;
     my $item_first_put = clone($item_first_get);
     delete $item_first_put->{_links};
     delete $item_first_put->{_embedded};
