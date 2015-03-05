@@ -21,6 +21,8 @@ use NGCP::Panel::Utils::Device;
 sub get_form {
     my ($self, $c) = @_;
     my $form = NGCP::Panel::Form::Device::ModelAPI->new(ctx => $c);
+    #field "type" required is 0 in the form for backward compatibility 
+    $form->params->{type} //= 'phone';
     return $form;
 }
 
