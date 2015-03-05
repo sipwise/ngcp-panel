@@ -18,8 +18,10 @@ my $test_machine = Test::Collection->new(
     name => 'pbxdevicemodels', 
     embedded => [qw/pbxdevicefirmwares/]
 );
-@{$test_machine->content_type}{qw/POST PUT/} = (('multipart/form-data') x 2);
-#for item creation test purposes
+@{$test_machine->content_type}{qw/POST PUT/}    = (('multipart/form-data') x 2);
+$test_machine->methods->{collection}->{allowed} = {map {$_ => 1} qw(GET HEAD OPTIONS POST)};
+$test_machine->methods->{item}->{allowed}       = {map {$_ => 1} qw(GET HEAD OPTIONS PUT PATCH)};
+#for item creation test purposes /post request data/
 $test_machine->DATA_ITEM_STORE({
     json => {
         "model"=>"ATA11",
@@ -39,9 +41,9 @@ $test_machine->DATA_ITEM_STORE({
         "bootstrap_config_redirect_yealink_password"=>"",
         "bootstrap_config_redirect_yealink_user"=>"",
         "type"=>"phone",
-        "connectable_models"=>[49,50,65],
+        "connectable_models"=>[445,446,447],
         "extensions_num"=>"2",
-    #/3.7relative tests
+        #/3.7relative tests
         "linerange"=>[
             {
                 "keys"=>[
@@ -66,7 +68,7 @@ foreach my $type(qw/phone extension/){
     
     $test_machine->form_data_item(sub {$_[0]->{type} = $type;} );
 
-    #collection tests, specific and common
+    #common
     $test_machine->check_options_collection;
 
     # create 6 new billing models from DATA_ITEM
@@ -80,7 +82,7 @@ foreach my $type(qw/phone extension/){
     $test_machine->check_options_item;
     $test_machine->check_put_bundle;
 
-    $test_machine->check_get2put( sub { $_[0] = { json => JSON::to_json($_[0]), 'front_image' =>  $test_machine->DATA_ITEM->{front_image} }; } );
+    $test_machine->check_get2put( sub { $_[0] = { json => JSON::to_json($_[0]), 'front_image' =>  $test_machine->DATA_ITEM_STORE->{front_image} }; } );
 
     # try to create model without reseller_id
     {
@@ -128,7 +130,7 @@ foreach my $type(qw/phone extension/){
         is($res->code, 422, "check patched invalid reseller");
     }
 }
-`echo 'delete from autoprov_devices where model like "%TEST\\_%";'|mysql provisioning`;
+`echo 'delete from autoprov_devices where model like "%TEST\\_%" or model like "patched model%";'|mysql provisioning`;
 done_testing;
 
 # vim: set tabstop=4 expandtab:

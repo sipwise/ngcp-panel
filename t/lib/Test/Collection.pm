@@ -38,11 +38,11 @@ has 'methods' => (
     default => sub { {
         'collection' =>{
             'all'     => {map {$_ => 1} qw(GET HEAD OPTIONS POST)}, 
-            'allowed' => {map {$_ => 1} qw(GET HEAD OPTIONS POST)}, 
+            'allowed' => {}, 
         },
         'item' =>{
             'all'     => {map {$_ => 1} qw(GET HEAD OPTIONS PUT PATCH POST DELETE)}, 
-            'allowed' => {map {$_ => 1} qw(GET HEAD OPTIONS PUT PATCH)}, 
+            'allowed' => {}, 
         },
     } },
 );
@@ -74,7 +74,7 @@ after 'DATA_ITEM_STORE' => sub {
 has 'DATA_CREATED' => (
     is => 'rw',
     isa => 'HashRef',
-    builder => 'clear_created_data',
+    builder => 'clear_data_created',
 );
 
 
@@ -98,7 +98,7 @@ sub _init_ua {
     );
     return $ua;
 };
-sub clear_created_data{
+sub clear_data_created{
     my($self) = @_;
     $self->DATA_CREATED({
         ALL   => {},
@@ -106,19 +106,19 @@ sub clear_created_data{
     });
     return $self->DATA_CREATED;
 }
-sub get_collection_uri{
-    my($self) = @_;
-    return $self->base_uri."/api/".$self->name."/";
-}
-sub get_hal_name{
-    my($self) = @_;
-    return "ngcp:".$self->name;
-}
 sub form_data_item{
     my($self, $data_cb, $data_cb_data) = @_;
     $self->{DATA_ITEM} ||= clone($self->DATA_ITEM_STORE);
     (defined $data_cb) and $data_cb->($self->DATA_ITEM,$data_cb_data);
     return $self->DATA_ITEM;
+}
+sub get_hal_name{
+    my($self) = @_;
+    return "ngcp:".$self->name;
+}
+sub get_collection_uri{
+    my($self) = @_;
+    return $self->base_uri."/api/".$self->name.($self->name ? "/" : "");
 }
 sub get_firstitem_uri{
     my($self) = @_;
@@ -228,7 +228,7 @@ sub check_methods{
 sub check_create_correct{
     my($self, $number, $uniquizer_cb, $keep_data) = @_;
     if(!$keep_data){
-        $self->clear_created_data;
+        $self->clear_data_created;
     }
     for(my $i = 1; $i <= $number; ++$i) {
         my ($res, $err) = $self->request_post( $uniquizer_cb , undef, { i => $i} );
@@ -366,14 +366,14 @@ sub check_get2put{
     #$req->remove_header('Prefer');
     #$req->header('Prefer' => "return=representation");
     # PUT same result again
-    my (undef, $item_first_get) = $self->check_item_get;
+    my ($get_res, $item_first_get, $get_req) = $self->check_item_get;
     my $item_first_put = clone($item_first_get);
     delete $item_first_put->{_links};
     delete $item_first_put->{_embedded};
     # check if put is ok
     (defined $put_data_cb) and $put_data_cb->($item_first_put);
-    my ($res,$item_put_result) = $self->request_put( $item_first_put );
-    is($res->code, 200, "check put successful");
+    my ($put_res,$item_put_result) = $self->request_put( $item_first_put );
+    is($put_res->code, 200, "check put successful");
     is_deeply($item_first_get, $item_put_result, "check put if unmodified put returns the same");
 }
 sub check_put_bundle{
