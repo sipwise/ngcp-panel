@@ -167,7 +167,7 @@ sub request_patch{
     my($self,$content,$uri) = @_;
     $uri ||= $self->get_firstitem_uri;
     my $req = $self->get_request_patch($uri);
-    $req->content(JSON::to_json(
+    $content and $req->content(JSON::to_json(
         $content
     ));
     my $res = $self->ua->request($req);
@@ -383,12 +383,93 @@ sub check_put_bundle{
     $self->check_put_prefer_wrong;
     $self->check_put_body_empty;
 }
-sub check_patch{
+sub check_patch_correct{
     my($self,$content) = @_;
     my ($res,$mod_model,$req) = $self->request_patch( $content );
-    is($res->code, 200, "check patched model item");
+    is($res->code, 200, "check patched  item");
     is($mod_model->{_links}->{self}->{href}, $self->DATA_CREATED->{FIRST}, "check patched self link");
     is($mod_model->{_links}->{collection}->{href}, '/api/'.$self->name.'/', "check patched collection link");
     return ($res,$mod_model,$req);
 }
+
+sub check_patch_wrong_prefer{
+    my($self) = @_;
+    my ($res,$content,$req) = $self->get_request_patch;
+    $req->remove_header('Prefer');
+    $req->header('Prefer' => 'return=minimal');
+    is($res->code, 415, "check patch missing media type");
+}
+
+sub check_patch_wrong_content_type{
+    my($self) = @_;
+    my ($res,$content,$req) = $self->get_request_patch;
+    $req->remove_header('Content-Type');
+    $req->header('Content-Type' => 'application/xxx');
+    is($res->code, 415, "check patch invalid media type");
+}
+
+sub check_patch_body_empty{
+    my($self) = @_;
+    my ($res,$content,$req) = $self->get_request_patch;
+    is($res->code, 400, "check patch missing body");
+    like($content->{message}, qr/is missing a message body/, "check patch missing body response");
+}
+
+sub check_patch_body_notarray{
+    my($self) = @_;
+    my ($res,$content,$req) = $self->request_patch(
+        { foo => 'bar' },
+    );
+    is($res->code, 400, "check patch no array body");
+    like($content->{message}, qr/must be an array/, "check patch missing body response");
+}
+
+sub check_patch_op_missed{
+    my($self) = @_;
+    my ($res,$content,$req) = $self->request_patch(
+        [{ foo => 'bar' }],
+    );
+    is($res->code, 400, "check patch no op in body");
+    like($content->{message}, qr/must have an 'op' field/, "check patch no op in body response");
+}
+
+sub check_patch_op_wrong{
+    my($self) = @_;
+    my ($res,$content,$req) = $self->request_patch(
+        [{ op => 'bar' }],
+    );
+    is($res->code, 400, "check patch invalid op in body");
+    like($content->{message}, qr/Invalid PATCH op /, "check patch no op in body response");
+}
+
+sub check_patch_opreplace_paramsmiss{
+    my($self) = @_;
+    my ($res,$content,$req) = $self->request_patch(
+        [{ op => 'replace' }],
+    );
+    is($res->code, 400, "check patch missing fields for op");
+    like($content->{message}, qr/Missing PATCH keys /, "check patch missing fields for op response");
+}
+
+sub check_patch_opreplace_paramsextra{
+    my($self) = @_;
+    my ($res,$content,$req) = $self->request_patch(
+        [{ op => 'replace', path => '/foo', value => 'bar', invalid => 'sna' }],
+    );
+    is($res->code, 400, "check patch extra fields for op");
+    like($content->{message}, qr/Invalid PATCH key /, "check patch extra fields for op response");
+}
+
+sub check_patch_bundle{
+    my($self) = @_;
+    $self->check_patch_wrong_prefer;
+    $self->check_patch_wrong_content_type;
+    $self->check_patch_body_empty;
+    $self->check_patch_body_notarray;
+    $self->check_patch_op_missed;
+    $self->check_patch_op_wrong;
+    $self->check_patch_opreplace_paramsmiss;
+    $self->check_patch_opreplace_paramsextra;
+}
+
 1;

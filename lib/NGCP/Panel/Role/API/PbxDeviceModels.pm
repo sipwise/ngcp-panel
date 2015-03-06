@@ -78,14 +78,13 @@ sub resource_from_item {
     }
     if('extension' eq $item->type){
         # show possible devices for extension
-        use Data::Dumper;
-        $c->log->debug(Dumper($item->autoprov_extension_device_link->all));
         $resource{connectable_models} = [map {$_->device->id} ($item->autoprov_extension_device_link->all) ];
     }else{
         # we don't need show possible extensions - we will show their ranges
         # add ranges of the possible extensions
         foreach my $extension_link ($item->autoprov_extensions_link->all){
             my $extension = $extension_link->extension;
+            push @{$resource{connectable_models}}, $extension->id;
             foreach my $range($extension->autoprov_device_line_ranges->all) {
                 $self->process_range( \%resource, $range, sub { my $r = shift; $r->{extension_range} = $extension->id;} );# 
             }
@@ -171,7 +170,7 @@ sub update_item {
     NGCP::Panel::Utils::DeviceBootstrap::devmod_sync_credentials_store($c, $item, $credentials);
     NGCP::Panel::Utils::DeviceBootstrap::devmod_sync_parameters_store($c, $item, $sync_parameters);
     NGCP::Panel::Utils::DeviceBootstrap::dispatch_devmod($c, 'register_model', $item);
-    NGCP::Panel::Utils::Device::process_connectable_models($c, 1, $item, $connectable_models );
+    NGCP::Panel::Utils::Device::process_connectable_models($c, 0, $item, $connectable_models );
     my @existing_range = ();
     my $range_rs = $item->autoprov_device_line_ranges;
     foreach my $range(@{ $linerange }) {
@@ -191,8 +190,19 @@ sub update_item {
         unless(ref $range->{keys} eq "ARRAY") {
             $c->log->error("linerange.keys must be array");
             $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Invalid linerange.keys parameter, must be array");
+            #last? not next?
             last;
         }
+        if(defined $range->{id}) {
+            my $range_by_id = $c->model('DB')->resultset('autoprov_device_line_ranges')->find($range->{id});
+            if( $range_by_id && ( $range_by_id->device_id != $item->id ) ){
+            #this is extension linerange, stop processing this linerange completely
+            #we should care about it here due to backward compatibility, so API user still can make GET => PUT without excluding extension ranges
+                next;
+            }
+        }
+        #/check input section end
+
         $range->{num_lines} = @{ $range->{keys} }; # backward compatibility
         my $keys = delete $range->{keys};
         my $old_range;
@@ -200,7 +210,8 @@ sub update_item {
             # should be an existing range, do update
             $old_range = $range_rs->find($range->{id});
             delete $range->{id};
-            unless($old_range) {
+            unless($old_range) {#really this is strange situation
+                delete $range->{id};
                 $old_range = $range_rs->create($range);
             } else {
                 # formhandler only passes set check-boxes, so explicitely unset here

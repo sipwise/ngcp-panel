@@ -41,7 +41,7 @@ $test_machine->DATA_ITEM_STORE({
         "bootstrap_config_redirect_yealink_password"=>"",
         "bootstrap_config_redirect_yealink_user"=>"",
         "type"=>"phone",
-        "connectable_models"=>[445,446,447],
+        "connectable_models"=>[446,447, 448],
         "extensions_num"=>"2",
         #/3.7relative tests
         "linerange"=>[
@@ -62,11 +62,14 @@ $test_machine->DATA_ITEM_STORE({
     #'front_image' => [ dirname($0).'/resources/api_devicemodels_front_image.jpg' ],
     'front_image' => [ dirname($0).'/resources/empty.txt' ],
 });
+$test_machine->form_data_item( sub {$_[0]->{type} = "extension";} );
+$test_machine->check_create_correct( 1, sub{ $_[0]->{json}->{model} .= "Extension ".$_[1]->{i}; } );
+$test_machine->check_get2put( sub { $_[0] = { json => JSON::to_json($_[0]), 'front_image' =>  $test_machine->DATA_ITEM_STORE->{front_image} }; } );
 
 
 foreach my $type(qw/phone extension/){
-    
-    $test_machine->form_data_item(sub {$_[0]->{type} = $type;} );
+    last;#skip classic tests
+    $test_machine->form_data_item( sub {$_[0]->{type} = $type;} );
 
     #common
     $test_machine->check_options_collection;
@@ -83,6 +86,8 @@ foreach my $type(qw/phone extension/){
     $test_machine->check_put_bundle;
 
     $test_machine->check_get2put( sub { $_[0] = { json => JSON::to_json($_[0]), 'front_image' =>  $test_machine->DATA_ITEM_STORE->{front_image} }; } );
+
+    $test_machine->check_patch_bundle;
 
     # try to create model without reseller_id
     {
@@ -118,7 +123,7 @@ foreach my $type(qw/phone extension/){
     }
     {
         my $t = time;
-        my($res,$mod_model) = $test_machine->request_patch( [ { op => 'replace', path => '/model', value => 'patched model '.$t } ] );
+        my($res,$mod_model) = $test_machine->check_patch_correct( [ { op => 'replace', path => '/model', value => 'patched model '.$t } ] );
         is($mod_model->{model}, "patched model $t", "check patched replace op");
     }
     {
