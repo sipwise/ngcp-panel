@@ -26,8 +26,7 @@ has_field 'vendor' => (
 );
 has_field 'type' => (
     type => 'Select',
-    #not required for backward compatibility 
-    required => 0,
+    required => 1,
     label => 'Model type',
     options => [
         { label => 'Phone device', value => 'phone' },

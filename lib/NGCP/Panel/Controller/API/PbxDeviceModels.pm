@@ -203,6 +203,7 @@ sub POST :Allow {
         last unless $self->valid_media_type($c, 'multipart/form-data');
         last unless $self->require_wellformed_json($c, 'application/json', $c->req->param('json'));
         my $resource = JSON::from_json($c->req->param('json'));
+        $resource->{type} //= 'phone';
         $resource->{front_image} = $self->get_upload($c, 'front_image');
         last unless $resource->{front_image};
         # optional, don't set error

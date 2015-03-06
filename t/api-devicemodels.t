@@ -62,14 +62,16 @@ $test_machine->DATA_ITEM_STORE({
     #'front_image' => [ dirname($0).'/resources/api_devicemodels_front_image.jpg' ],
     'front_image' => [ dirname($0).'/resources/empty.txt' ],
 });
-$test_machine->form_data_item( sub {$_[0]->{type} = "extension";} );
-$test_machine->check_create_correct( 1, sub{ $_[0]->{json}->{model} .= "Extension ".$_[1]->{i}; } );
-$test_machine->check_get2put( sub { $_[0] = { json => JSON::to_json($_[0]), 'front_image' =>  $test_machine->DATA_ITEM_STORE->{front_image} }; } );
+$test_machine->form_data_item( sub {$_[0]->{json}->{type} = "extension";} );
+$test_machine->check_create_correct( 1, sub{ $_[0]->{json}->{model} .= "Extension 2".$_[1]->{i}; } );
+#$test_machine->check_get2put( sub { $_[0] = { json => JSON::to_json($_[0]), 'front_image' =>  $test_machine->DATA_ITEM_STORE->{front_image} }; } );
+    #$test_machine->name('billingprofiles');
+    #$test_machine->check_patch_prefer_wrong;
 
 
 foreach my $type(qw/phone extension/){
     last;#skip classic tests
-    $test_machine->form_data_item( sub {$_[0]->{type} = $type;} );
+    $test_machine->form_data_item( sub {$_[0]->{json}->{type} = $type;} );
 
     #common
     $test_machine->check_options_collection;
@@ -135,7 +137,7 @@ foreach my $type(qw/phone extension/){
         is($res->code, 422, "check patched invalid reseller");
     }
 }
-`echo 'delete from autoprov_devices where model like "%TEST\\_%" or model like "patched model%";'|mysql provisioning`;
+#`echo 'delete from autoprov_devices where model like "%TEST\\_%" or model like "patched model%";'|mysql provisioning`;
 done_testing;
 
 # vim: set tabstop=4 expandtab:
