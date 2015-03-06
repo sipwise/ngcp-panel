@@ -63,8 +63,8 @@ $test_machine->DATA_ITEM_STORE({
     'front_image' => [ dirname($0).'/resources/empty.txt' ],
 });
 $test_machine->form_data_item( sub {$_[0]->{json}->{type} = "extension";} );
-$test_machine->check_create_correct( 1, sub{ $_[0]->{json}->{model} .= "Extension 2".$_[1]->{i}; } );
-#$test_machine->check_get2put( sub { $_[0] = { json => JSON::to_json($_[0]), 'front_image' =>  $test_machine->DATA_ITEM_STORE->{front_image} }; } );
+#$test_machine->check_create_correct( 1, sub{ $_[0]->{json}->{model} .= "Extension 2".$_[1]->{i}; } );
+$test_machine->check_get2put( sub { $_[0] = { json => JSON::to_json($_[0]), 'front_image' =>  $test_machine->DATA_ITEM_STORE->{front_image} }; } );
     #$test_machine->name('billingprofiles');
     #$test_machine->check_patch_prefer_wrong;
 

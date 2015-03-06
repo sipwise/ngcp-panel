@@ -9,7 +9,17 @@ sub process_connectable_models{
     if($connectable_models){
         my @columns = ('device_id' , 'extension_id');
         if('extension' eq $devmod->type){
+        #extension can be connected to other extensions? If I remember right - yes.
             @columns = reverse @columns;
+        }else{
+            #we defenitely can't connect phone to phone
+            my $phone2phone = $schema->resultset('autoprov_devices')->search_rs({
+                'type' => 'phone',
+                'id' => { 'in' => $connectable_models },
+            });
+            if($phone2phone->first){
+                die("Phone can't be connected to the phone as extension.");
+            }
         }
         if(!$just_created){
             #we don't need to clear old relations, because we just created this device
@@ -18,6 +28,9 @@ sub process_connectable_models{
             })->delete;
         }
         foreach my $connected_id(@$connectable_models){
+            if($devmod->id == $connected_id){
+                die("Device can't be connected to itself as extension.");
+            }
             $schema->resultset('autoprov_device_extensions')->create({
                 $columns[0] => $devmod->id,
                 $columns[1] => $connected_id,

@@ -164,9 +164,9 @@ sub request_put{
     return wantarray ? ($res,$err,$req) : $res;
 }
 sub request_patch{
-    my($self,$content,$uri) = @_;
+    my($self,$content,$uri, $req) = @_;
     $uri ||= $self->get_firstitem_uri;
-    my $req = $self->get_request_patch($uri);
+    $req ||= $self->get_request_patch($uri);
     $content and $req->content(JSON::to_json(
         $content
     ));
@@ -362,11 +362,11 @@ sub check_put_body_empty{
     is($res->code, 400, "check put no body");
 }
 sub check_get2put{
-    my($self,$put_data_cb) = @_;
+    my($self,$put_data_cb,$uri) = @_;
     #$req->remove_header('Prefer');
     #$req->header('Prefer' => "return=representation");
     # PUT same result again
-    my ($get_res, $item_first_get, $get_req) = $self->check_item_get;
+    my ($get_res, $item_first_get, $get_req) = $self->check_item_get($uri);
     my $item_first_put = clone($item_first_get);
     delete $item_first_put->{_links};
     delete $item_first_put->{_embedded};
@@ -392,25 +392,34 @@ sub check_patch_correct{
     return ($res,$mod_model,$req);
 }
 
-sub check_patch_wrong_prefer{
+sub check_patch_prefer_wrong{
     my($self) = @_;
-    my ($res,$content,$req) = $self->get_request_patch;
+    my $req = $self->get_request_patch;
     $req->remove_header('Prefer');
     $req->header('Prefer' => 'return=minimal');
+    my $res = $self->ua->request($req);
+    is($res->code, 415, "check patch invalid prefer");
+}
+sub check_patch_content_type_empty{
+    my($self) = @_;
+    my $req = $self->get_request_patch;
+    $req->remove_header('Content-Type');
+    my $res = $self->ua->request($req);
     is($res->code, 415, "check patch missing media type");
 }
 
-sub check_patch_wrong_content_type{
+sub check_patch_content_type_wrong{
     my($self) = @_;
-    my ($res,$content,$req) = $self->get_request_patch;
+    my $req = $self->get_request_patch;
     $req->remove_header('Content-Type');
     $req->header('Content-Type' => 'application/xxx');
+    my $res = $self->ua->request($req);
     is($res->code, 415, "check patch invalid media type");
 }
 
 sub check_patch_body_empty{
     my($self) = @_;
-    my ($res,$content,$req) = $self->get_request_patch;
+    my ($res,$content,$req) = $self->request_patch;
     is($res->code, 400, "check patch missing body");
     like($content->{message}, qr/is missing a message body/, "check patch missing body response");
 }
@@ -462,8 +471,9 @@ sub check_patch_opreplace_paramsextra{
 
 sub check_patch_bundle{
     my($self) = @_;
-    $self->check_patch_wrong_prefer;
-    $self->check_patch_wrong_content_type;
+    #$self->check_patch_prefer_wrong;
+    $self->check_patch_content_type_wrong;
+    $self->check_patch_content_type_empty;
     $self->check_patch_body_empty;
     $self->check_patch_body_notarray;
     $self->check_patch_op_missed;
