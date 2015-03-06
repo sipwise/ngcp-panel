@@ -62,11 +62,18 @@ $test_machine->DATA_ITEM_STORE({
     #'front_image' => [ dirname($0).'/resources/api_devicemodels_front_image.jpg' ],
     'front_image' => [ dirname($0).'/resources/empty.txt' ],
 });
-$test_machine->form_data_item( sub {$_[0]->{json}->{type} = "extension";} );
+#$test_machine->form_data_item( sub {$_[0]->{json}->{type} = "extension";} );
 #$test_machine->check_create_correct( 1, sub{ $_[0]->{json}->{model} .= "Extension 2".$_[1]->{i}; } );
-$test_machine->check_get2put( sub { $_[0] = { json => JSON::to_json($_[0]), 'front_image' =>  $test_machine->DATA_ITEM_STORE->{front_image} }; } );
-    #$test_machine->name('billingprofiles');
-    #$test_machine->check_patch_prefer_wrong;
+$test_machine->check_get2put( sub { 
+    $_[0]->{connectable_models} = [670],
+    $_[0] = { 
+        json => JSON::to_json($_[0]), 
+        'front_image' =>  $test_machine->DATA_ITEM_STORE->{front_image} 
+    }; },
+    $test_machine->get_collection_uri.'449'
+);
+#$test_machine->name('billingprofiles');
+#$test_machine->check_patch_prefer_wrong;
 
 
 foreach my $type(qw/phone extension/){

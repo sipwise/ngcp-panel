@@ -315,6 +315,7 @@ sub check_created_listed{
 
 sub check_item_get{
     my($self,$uri) = @_;
+    print "uri=$uri;\n\n";
     $uri ||= $self->get_firstitem_uri;
     my $req = HTTP::Request->new('GET', $uri);
     my $res = $self->ua->request($req);
@@ -362,7 +363,7 @@ sub check_put_body_empty{
     is($res->code, 400, "check put no body");
 }
 sub check_get2put{
-    my($self,$put_data_cb,$uri) = @_;
+    my($self,$put_data_cb, $uri) = @_;
     #$req->remove_header('Prefer');
     #$req->header('Prefer' => "return=representation");
     # PUT same result again
@@ -372,7 +373,7 @@ sub check_get2put{
     delete $item_first_put->{_embedded};
     # check if put is ok
     (defined $put_data_cb) and $put_data_cb->($item_first_put);
-    my ($put_res,$item_put_result) = $self->request_put( $item_first_put );
+    my ($put_res,$item_put_result) = $self->request_put( $item_first_put, $uri );
     is($put_res->code, 200, "check put successful");
     is_deeply($item_first_get, $item_put_result, "check put if unmodified put returns the same");
 }
@@ -386,7 +387,7 @@ sub check_put_bundle{
 sub check_patch_correct{
     my($self,$content) = @_;
     my ($res,$mod_model,$req) = $self->request_patch( $content );
-    is($res->code, 200, "check patched  item");
+    is($res->code, 200, "check patched item");
     is($mod_model->{_links}->{self}->{href}, $self->DATA_CREATED->{FIRST}, "check patched self link");
     is($mod_model->{_links}->{collection}->{href}, '/api/'.$self->name.'/', "check patched collection link");
     return ($res,$mod_model,$req);
