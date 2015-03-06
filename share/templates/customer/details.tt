@@ -634,30 +634,36 @@
 <link rel="stylesheet" type="text/css" href="/font/font-awesome/css/font-awesome.min.css"/>
 <script>
 var aaData;
-function get_urls(id,type){
+function get_urls(in_data){
     var data = {};
-//    alert('id='+id+';type='+type);
-    if((!type) || (type == undefined) || type == 'profile'){
-        type = 'profile';
-        if(!id){
-            id = $('div.controls #profile_id option:selected').first().attr('value');
+//    alert('id='+in_data.id+';type='+in_data.type);
+    if((!in_data.type) || (in_data.type == undefined) || in_data.type == 'profile'){
+        in_data.type = 'profile';
+        if(!in_data.id){
+            in_data.id = $('div.controls #profile_id option:selected').first().attr('value');
         }
-//        alert('id='+id);
-        if(!id) return;
-        data.uri_lines = '/device/profile/' + id + '/annolines/ajax';
-        data.uri_image = '/device/profile/' + id + '/frontimage';
-        data.uri_extensions = '/device/profile/' + id + '/extensions';
-        data.uri_field_extensions = '/customer/[% contract.id %]/pbx/device/' + id + '/extensions';
-    }else if(type == 'extension'){
-        if(!id) return;
-        data.uri_lines = '/device/' + id + '/annolines/ajax';
-        data.uri_image = '/device/' + id + '/frontimage';
+//        alert('id='+in_data.id);
+        if(!in_data.id) return;
+        data.uri_lines = '/device/profile/' + in_data.id + '/annolines/ajax';
+        data.uri_image = '/device/profile/' + in_data.id + '/frontimage';
+        data.uri_extensions = '/device/profile/' + in_data.id + '/extensions';
+        data.uri_field_extensions = '/customer/[% contract.id %]/pbx/device/' + in_data.id + '/extensions';
+    }else if(in_data.type == 'extension'){
+        if(!in_data.id) return;
+        data.uri_lines = '/device/' + in_data.id + '/annolines/ajax';
+        data.uri_image = '/device/' + in_data.id + '/frontimage';
     }
+    //alert('id='+in_data.id+';type='+in_data.type);
     return data;
 }
 function annotate_device(profileOption, type, id) {
     $('.annotated').remove();
-    var uri_data = get_urls(id,type);
+    var in_data = {'id':id, 'type': type};
+    var uri_data = get_urls(in_data);
+//    alert(in_data.id);
+//    alert(in_data.type);
+    id = in_data.id;
+    type = in_data.type;
     if(!id) return;
     var linekeys;
     [% IF edit_flag == 1 -%]
@@ -674,7 +680,6 @@ function annotate_device(profileOption, type, id) {
         };
     }
     [% END -%]
-//    alert(uri_data.uri_lines);
     $.ajax({
         url: uri_data.uri_lines,
     }).done(function(data) {
