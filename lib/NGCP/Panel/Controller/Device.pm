@@ -949,29 +949,41 @@ sub devprof_base :Chained('base') :PathPart('profile') :CaptureArgs(1) :Does(ACL
     }
 }
 
-sub extension_base :Chained('base') :PathPart('extension') :CaptureArgs(1) :Does(ACL) :ACLDetachTo('/denied_page') :AllowedRole(admin) :AllowedRole(reseller) :AllowedRole(subscriberadmin) {
-    my ($self, $c, $extension_device_id) = @_;
+sub devprof_extensions :Chained('devprof_base') :PathPart('extensions') :CaptureArgs(0) :Does(ACL) :ACLDetachTo('/denied_page') :AllowedRole(admin) :AllowedRole(reseller) :AllowedRole(subscriberadmin) {
+    my ($self, $c) = @_;
 
-    unless($extension_device_id->is_int) {
-        NGCP::Panel::Utils::Message->error(
-            c => $c,
-            error => "invalid device extensions id '$extension_device_id'",
-            desc => $c->loc('Invalid device extension id'),
-        );
-        NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for('/device'));
-    }
 
-    $c->stash->{devextension} = $c->model('DB')->resultset('autoprov_devices')->find($extension_device_id);
-    unless($c->stash->{devprof}) {
-        NGCP::Panel::Utils::Message->error(
-            c => $c,
-            error => "device extension device with id '$extension_device_id' not found",
-            desc => $c->loc('Device extension not found'),
-        );
-        NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for('/device'));
-    }
+    my $rs = $c->stash->{devprof}->config->device->autoprov_extensions_link->extension;
+    my $data = [{
+        'device'  => { $c->stash->{devprof}->config->device->get_inflated_columns},
+        'profile' => { $c->stash->{devprof}->get_inflated_columns},
+        'extensions' => { 
+            { map { 
+                $_->id => { 
+                    $_->get_inflated_columns,
+                    'ranges' => [ 
+                        map {
+                            $_->get_inflated_columns,
+                            'annotations' => [
+                                map {{
+                                    $_->get_inflated_columns,
+                                }} $_->annotations->all,
+                            ],
+                        } $_->autoprov_device_line_ranges->all 
+                    ],
+                }
+            } $rs->all }
+        },
+    }];
+    $c->stash(
+        aaData               => $data,
+        iTotalRecords        => 1,
+        iTotalDisplayRecords => 1,
+        sEcho                => int($c->request->params->{sEcho} // 1),
+    );
+
+    $c->detach( $c->view("JSON") );
 }
-
 
 sub devprof_get_lines :Chained('devprof_base') :PathPart('lines/ajax') :Args(0) :Does(ACL) :ACLDetachTo('/denied_page') :AllowedRole(admin) :AllowedRole(reseller) :AllowedRole(subscriberadmin) {
     my ($self, $c) = @_;

@@ -76,8 +76,24 @@ has 'DATA_CREATED' => (
     isa => 'HashRef',
     builder => 'clear_data_created',
 );
-
-
+has 'URI_CUSTOM' =>{
+    is => 'rw',
+    isa => 'Str',
+};
+has 'URI_CUSTOM_STORE' =>{
+    is => 'rw',
+    isa => 'Str',
+};
+before 'URI_CUSTOM' => sub {
+    my $self = shift;
+    if(@_){
+        if($self->URI_CUSTOM_STORE){
+            die('Attempt to set custom uri second time without restore. Custom uri is not a stack. Clear or restore it first, please.');
+        }else{
+            $self->URI_CUSTOM_STORE(@_);
+        }
+    }
+};
 sub _init_ua {
     my $self = shift;
     my $valid_ssl_client_cert = $ENV{API_SSL_CLIENT_CERT} || 
@@ -134,9 +150,15 @@ sub get_firstitem_uri{
     return $self->base_uri.'/'.$self->DATA_CREATED->{FIRST};
 }
 
+sub get_uri{
+    my($self) = @_;
+    $self->URI_CUSTOM and return $self->URI_CUSTOM;
+    return $self->get_firstitem_uri;
+}
+
 sub get_request_put{
     my($self,$content,$uri) = @_;
-    $uri ||= $self->get_firstitem_uri;
+    $uri ||= $self->get_current_uri;
     #This is for multipart/form-data cases
     my $req = POST $uri, 
         Content_Type => $self->content_type->{POST}, 
