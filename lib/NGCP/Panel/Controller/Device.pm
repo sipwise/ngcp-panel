@@ -949,32 +949,35 @@ sub devprof_base :Chained('base') :PathPart('profile') :CaptureArgs(1) :Does(ACL
     }
 }
 
-sub devprof_extensions :Chained('devprof_base') :PathPart('extensions') :CaptureArgs(0) :Does(ACL) :ACLDetachTo('/denied_page') :AllowedRole(admin) :AllowedRole(reseller) :AllowedRole(subscriberadmin) {
+sub devprof_extensions :Chained('devprof_base') :PathPart('extensions') :Args(0):Does(ACL) :ACLDetachTo('/denied_page') :AllowedRole(admin) :AllowedRole(reseller) :AllowedRole(subscriberadmin) {
     my ($self, $c) = @_;
 
 
-    my $rs = $c->stash->{devprof}->config->device->autoprov_extensions_link->extension;
-    my $data = [{
-        'device'  => { $c->stash->{devprof}->config->device->get_inflated_columns},
+    my $rs = $c->stash->{devprof}->config->device->autoprov_extensions_link;
+    my $device_info = { $c->stash->{devprof}->config->device->get_inflated_columns }; 
+    foreach(qw/front_image mac_image/){
+        delete $device_info->{$_};
+    }
+
+    my $data = {
+        'device'  => $device_info,
         'profile' => { $c->stash->{devprof}->get_inflated_columns},
-        'extensions' => { 
-            { map { 
-                $_->id => { 
-                    $_->get_inflated_columns,
-                    'ranges' => [ 
-                        map {
-                            $_->get_inflated_columns,
-                            'annotations' => [
-                                map {{
-                                    $_->get_inflated_columns,
-                                }} $_->annotations->all,
-                            ],
-                        } $_->autoprov_device_line_ranges->all 
-                    ],
-                }
-            } $rs->all }
-        },
-    }];
+        'extensions' => { map {
+            $_->extension->id => { 
+                $_->extension->get_inflated_columns,
+                'ranges' => [ 
+                    map {
+                        $_->get_inflated_columns,
+                        'annotations' => [
+                            map {{
+                                $_->get_inflated_columns,
+                            }} $_->annotations->all,
+                        ],
+                    } $_->extension->autoprov_device_line_ranges->all 
+                ],
+            }
+        } $rs->all },
+    };
     $c->stash(
         aaData               => $data,
         iTotalRecords        => 1,
@@ -983,6 +986,18 @@ sub devprof_extensions :Chained('devprof_base') :PathPart('extensions') :Capture
     );
 
     $c->detach( $c->view("JSON") );
+}
+
+
+sub devprof_extensions_form :Chained('devprof_base') :PathPart('extensions_field') :Args(0):Does(ACL) :ACLDetachTo('/denied_page') :AllowedRole(admin) :AllowedRole(reseller) :AllowedRole(subscriberadmin) {
+    my ($self, $c) = @_;
+    $c->stash->{form} = NGCP::Panel::Form::Customer::PbxFieldDeviceExtension->new;
+    $c->stash->{model_extensions_rs} = $c->model('DB')->resultset('autoprov_device_extensions')->search_rs({
+            'device_id' => $c->stash->{devprof}->config->device_id,
+        }
+    );
+    $c->stash->{template} = 'device/extensions_field.tt';
+    $c->detach($c->view('TT'));
 }
 
 sub devprof_get_lines :Chained('devprof_base') :PathPart('lines/ajax') :Args(0) :Does(ACL) :ACLDetachTo('/denied_page') :AllowedRole(admin) :AllowedRole(reseller) :AllowedRole(subscriberadmin) {

@@ -636,23 +636,24 @@
 var aaData;
 function get_urls(in_data){
     var data = {};
-//    alert('id='+in_data.id+';type='+in_data.type);
+    //alert('1.id='+in_data.id+';type='+in_data.type);
     if((!in_data.type) || (in_data.type == undefined) || in_data.type == 'profile'){
         in_data.type = 'profile';
         if(!in_data.id){
             in_data.id = $('div.controls #profile_id option:selected').first().attr('value');
         }
-//        alert('id='+in_data.id);
+        //alert('2.id='+in_data.id);
         if(!in_data.id) return;
         data.uri_lines = '/device/profile/' + in_data.id + '/annolines/ajax';
         data.uri_image = '/device/profile/' + in_data.id + '/frontimage';
         data.uri_extensions = '/device/profile/' + in_data.id + '/extensions';
+        data.uri_extensions_field = '/device/profile/' + in_data.id + '/extensions_field';
     }else if(in_data.type == 'extension'){
         if(!in_data.id) return;
         data.uri_lines = '/device/' + in_data.id + '/annolines/ajax';
         data.uri_image = '/device/' + in_data.id + '/frontimage';
     }
-    //alert('id='+in_data.id+';type='+in_data.type);
+    //alert('3.id='+in_data.id+';type='+in_data.type);
     return data;
 }
 function create_ranges_annotations (id,type,uri_data,ranges,linekeys){
@@ -699,10 +700,13 @@ function create_ranges_annotations (id,type,uri_data,ranges,linekeys){
     if(type == 'extension'){
         //<a >
     }
-    apply_ranges_annptations(markup);
+    apply_markup(markup);
+    $("div.annotated").each(function(){
+        $(this).find("div.caption").annotate(this);
+    });
     //return markup;
 }
-sub apply_ranges_annptations(markup){
+function apply_markup(markup){
     var last = $('div.caption').last();
     if(!last || last.length < 1 ){
         last =$('div.caption');
@@ -713,21 +717,21 @@ sub apply_ranges_annptations(markup){
     if(!last || last.length < 1 ){
         last = $('div.control-group');
     }
+    alert('last.length:'+last.length);
     last.after(markup);
-    $("div.annotated").each(function(){
-        $(this).find("div.caption").annotate(this);
-    });
 }
-function annotate_device(type, id) {
+function annotate_device() {
     $('.annotated').remove();
-    var in_data = {'id':id, 'type': type};
+    //alert("caller is " + arguments.callee.caller.toString());
+    var in_data = {'id':'', 'type': ''};
     var uri_data = get_urls(in_data);
-//    alert(in_data.id);
-//    alert(in_data.type);
+    //alert('in_data.id '+in_data.id);
+    //alert('in_data.type '+in_data.type);
     id = in_data.id;
     type = in_data.type;
     if(!id) return;
     var linekeys;
+    var field_extensions;
     [% IF edit_flag == 1 -%]
     if(!linekeys){
         linekeys = {};
@@ -759,11 +763,16 @@ function annotate_device(type, id) {
             url: uri_data.uri_extensions,
         }).done(function(extensionsJson) {
             var profileExtensionsData = extensionsJson.aaData;
+            $.dump(profileExtensionsData, 1, "profileExtensionsData");
+            //$.dump(profileExtensionsData.extensions.keys(), 1, "profileExtensionsData");
+            $.dump(field_extensions, 1, "field_extensions");
             var field_extensions_current = {};
             for( extension_device_id in field_extensions ){
+                alert('extension_device_id '+extension_device_id);
                 if(field_extension[extension_device_id][profileExtensionsData.device.id]){
                     field_extensions_current[extension_device_id] = 1;
-                    var extension_uri_data = get_urls({'type': 'extension','id':extension_device_id}); 
+                    var extension_uri_data_in = {'type': 'extension','id':extension_device_id};
+                    var extension_uri_data = get_urls(extension_uri_data_in); 
                     var markup = create_ranges_annotations(extension_device_id,'extension',extension_uri_data,profileExtensionsData.extensions[extension_device_id],linekeys);
                     //process_linked_extensions(id);
                     //annotate_device('extension', extension_device_id);
@@ -772,37 +781,33 @@ function annotate_device(type, id) {
             //for( extension_device_id in field_extensions ){
             //     annotate_device('extension', extension_device_id);
             //}
-            var fieldExtensionsNum = field_extensions_current.keys.length;
+            var fieldExtensionsNum = Object.keys(field_extensions_current).length ;
             var allowedExtensionsNum = profileExtensionsData.device.extensions_num;
             var addExtensionMarkup = '';
-            if(allowedExtensionsNum && profileExtensionsData.extensions.keys.length && (fieldExtensionsNum < allowedExtensionsNum)){
-                addExtensionMarkup += '<select>';
-                for( extension_device_id in field_extensions_current ){
-                    //annotate_device('extension', extension_device_id);
+            var availableExtensionsNum = Object.keys(profileExtensionsData.extensions).length;
+            alert('fieldExtensionsNum:'+fieldExtensionsNum+';allowedExtensionsNum:'+allowedExtensionsNum+';availableExtensionsNum:'+availableExtensionsNum+';');
+            if(allowedExtensionsNum && availableExtensionsNum && (fieldExtensionsNum < allowedExtensionsNum)){
+                alert('got here');
+                //addExtensionMarkup += '<select>';
+                //for( extension_device_id in field_extensions_current ){
+                //    //annotate_device('extension', extension_device_id);
+                //}
+                //addExtensionMarkup += '</select><button value="ADD">';
+                $.ajax({
+                    url: uri_data.uri_extensions_field,
+                }).done(function(extensionsFieldResponse) {
+                    var addExtensionMarkup = extensionsFieldResponse;
+                    apply_markup(addExtensionMarkup);
                 }
-                addExtensionMarkup += '</select><button value="ADD">';
             }
         });
     });
-}
-
-function process_linked_extensions(profileId){
-    [%FOR extension_device_id in field_extensions.keys%]
-        annotate_device('extension', '[%extension_device_id%]');
-    [%END%]
 }
 
 $('div.controls #profile_id').change(annotate_device);
 annotate_device();
 
 
-
-[% IF .extensions_num && pbx_device.autoprov_extensions_link.count && field_devices.count < pbx_device.extensions_num %]
-    [% extension_index = 0 %]
-    [%FOR extension_link in model_extensions.all%]
-        [%#annotate_device('extension', '[%extension_link.extension.id%]');%]
-    [% END -%]
-[% END -%]
 
 </script>
 <div id="extensions">

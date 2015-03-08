@@ -1,4 +1,4 @@
-package NGCP::Panel::Form::Customer::PbxFieldDeviceAPI;
+package NGCP::Panel::Form::Customer::PbxFieldDeviceExtension;
 
 use HTML::FormHandler::Moose;
 extends 'HTML::FormHandler';
@@ -6,98 +6,77 @@ use Moose::Util::TypeConstraints;
 
 use HTML::FormHandler::Widget::Block::Bootstrap;
 
-has_field 'customer' => (
-    type => '+NGCP::Panel::Field::CustomerContract',
-    label => 'Customer',
-    validate_when_empty => 1,
-    element_attr => {
-        rel => ['tooltip'],
-        title => ['The customer contract this device is belonging to.']
-    },
-);
+with 'NGCP::Panel::Render::RepeatableJs';
 
-has_field 'profile' => (
-    type => 'Compound',
-);
-has_field 'profile.id' => (
-    type => '+NGCP::Panel::Field::PosInteger',
-    required => 1,
-    label => 'Device Profile',
-);
+has '+widget_wrapper' => ( default => 'Bootstrap' );
+has '+enctype' => ( default => 'multipart/form-data');
+has_field 'submitid' => ( type => 'Hidden' );
+sub build_render_list {[qw/submitid fields actions/]}
+sub build_form_element_class {[qw(form-horizontal)]}
 
-has_field 'identifier' => (
-    type => 'Text',
-    required => 1,
-    label => 'MAC Address / Identifier',
-);
-
-has_field 'station_name' => (
-    type => 'Text',
-    required => 1,
-    label => 'Station Name',
-);
-
-has_field 'lines' => (
+has_field 'extension' => (
     type => 'Repeatable',
-    label => 'Lines/Keys',
+    required => 0,
+    label => 'Device Extension',
     setup_for_js => 1,
     do_wrapper => 1,
     do_label => 1,
-    required => 1,
     tags => {
         controls_div => 1,
     },
     wrapper_class => [qw/hfh-rep-block/],
     element_attr => {
         rel => ['tooltip'],
-        title => ["The lines for this pbx device. Required keys are 'linerange' (name of range to use), 'key_num' (key number in line range, starting from 0), 'type' (one of 'private', 'shared', 'blf'), 'subscriber_id' (the subscriber mapped to this key)."],
+        title => ['Extensions available for the device model.'],
     },
 );
 
-has_field 'lines.linerange' => (
-    type => 'Text',
-    required => 1,
-    label => 'Linerange',
-    element_attr => {
-        rel => ['tooltip'],
-        title => ['The linerange name to use.'],
-    },
+has_field 'extension.id' => (
+    type => 'Hidden',
 );
 
-has_field 'lines.subscriber_id' => (
-    type => '+NGCP::Panel::Field::PosInteger',
-    required => 1,
-    label => 'Subscriber',
-    element_attr => {
-        rel => ['tooltip'],
-        title => ['The subscriber to use on this line/key'],
-    },
-);
-
-has_field 'lines.key_num' => (
-    type => '+NGCP::Panel::Field::PosInteger',
-    required => 1,
-    label => 'Line/Key Number (starting from 0)',
-    element_attr => {
-        rel => ['tooltip'],
-        title => ['The line/key to use (starting from 0)'],
-    },
-);
-
-has_field 'lines.type' => (
+has_field 'extension.extension_id' => (
     type => 'Select',
-    required => 1,
-    label => 'Line/Key Type',
-    options => [
-        { label => "private", value => "private" },
-        { label => "shared", value => "shared" },
-        { label => "blf", value => "blf" },
-    ],
+    label => 'Extension',
+    default => '',
+    required => 0,
+    #options_method => \&build_extensions,
     element_attr => {
         rel => ['tooltip'],
-        title => ['The type of feature to use on this line/key'],
+        title => ['Extension devices.'],
     },
-    element_class => [qw/ngcp-linetype-select/],
+);
+
+has_field 'extension.rm' => (
+    type => 'RmElement',
+    value => 'Remove Extension',
+    order => 100,
+    element_class => [qw/btn btn-primary pull-right/],
+);
+
+has_field 'extension_add' => (
+    type => 'AddElement',
+    repeatable => 'keys',
+    value => 'Add Extension',
+    element_class => [qw/btn btn-primary pull-right/],
+);
+
+sub build_extensions {
+    my ($self) = @_;
+    my $c = $self->form->ctx;
+    return unless $c;
+    my $model_extensions_rs = $c->stash->{model_extensions_rs};
+    my @options = ();
+    foreach my $e($model_extensions_rs->all) {
+        push @options, { label => $e->device->vendor.' '.$e->device->model, value => $e->device->id };
+    }
+    return \@options;
+}
+
+has_block 'fields' => (
+    tag => 'div',
+    class => [qw/modal-body/],
+    render_list => [qw/extension/],
 );
 
 1;

@@ -1,0 +1,7 @@
+[%
+    IF form.has_for_js;
+        form.render_repeatable_js;
+    END;
+    form=translate_form(form);
+    form.field('extension').render;
+-%]
