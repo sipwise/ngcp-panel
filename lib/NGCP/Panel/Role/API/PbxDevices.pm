@@ -55,7 +55,11 @@ sub resource_from_item {
     for my $line ($item->autoprov_field_device_lines->all) {
         my $p_subs = $line->provisioning_voip_subscriber;
         my $b_subs = $p_subs ? $p_subs->voip_subscriber : undef;
-        my $line_attr = { $line->get_inflated_columns };
+        my $model = $line->autoprov_device_line_range->device;
+        my $line_attr = { 
+            $line->get_inflated_columns,
+            ($model->type eq 'extension') ? ('model_id' => $model->id ) : (),
+        };
         foreach my $f(qw/id device_id linerange_id/) {
             delete $line_attr->{$f};
         }
@@ -148,6 +152,7 @@ sub update_item {
     my @oldlines = $item->autoprov_field_device_lines->all;
     my $i = 0;
     for my $line ( @{$resource->{lines}} ) {
+        delete $line->{model_id};
         my $oldline = delete $oldlines[$i++];
         unless ($line->{subscriber_id} && $line->{subscriber_id} > 0) {
             $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Invalid line. Invalid 'subscriber_id'.");

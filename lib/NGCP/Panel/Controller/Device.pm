@@ -3,6 +3,7 @@ use Sipwise::Base;
 
 use Template;
 use Crypt::Rijndael;
+use JSON qw(decode_json encode_json);
 use NGCP::Panel::Form::Device::Model;
 use NGCP::Panel::Form::Device::ModelAdmin;
 use NGCP::Panel::Form::Device::Firmware;
@@ -10,7 +11,8 @@ use NGCP::Panel::Form::Device::Config;
 use NGCP::Panel::Form::Device::Profile;
 use NGCP::Panel::Utils::Navigation;
 use NGCP::Panel::Utils::DeviceBootstrap;
-
+use NGCP::Panel::Utils::Device;
+use NGCP::Panel::Form::Customer::PbxFieldDeviceExtensions;
 
 BEGIN { extends 'Catalyst::Controller'; }
 
@@ -35,16 +37,17 @@ sub base :Chained('/') :PathPart('device') :CaptureArgs(0) {
     }
 
     my $devmod_rs = $c->model('DB')->resultset('autoprov_devices')->search_rs(undef,{
-            'columns' => [qw/id reseller_id vendor model front_image_type mac_image_type num_lines bootstrap_method bootstrap_uri/],
+            'columns' => [qw/id reseller_id type vendor model front_image_type mac_image_type num_lines bootstrap_method bootstrap_uri/],
 	});
     $reseller_id and $devmod_rs = $devmod_rs->search({ reseller_id => $reseller_id });
     $c->stash->{devmod_dt_columns} = NGCP::Panel::Utils::Datatables::set_columns($c, [
         { name => 'id', search => 1, title => $c->loc('#') },
+        { name => 'type', search => 1, title => $c->loc('Type') },
         { name => 'reseller.name', search => 1, title => $c->loc('Reseller') },
         { name => 'vendor', search => 1, title => $c->loc('Vendor') },
         { name => 'model', search => 1, title => $c->loc('Model') },
     ]);
-
+ 
     my $devfw_rs = $c->model('DB')->resultset('autoprov_firmwares')->search_rs(undef,{'columns' => [qw/id device_id version filename/],
 	});
     $reseller_id and $devfw_rs = $devfw_rs->search({
@@ -106,14 +109,28 @@ sub base :Chained('/') :PathPart('device') :CaptureArgs(0) {
         { name => 'contract.contact.email', search => 1, title => $c->loc('Customer Email') },
     ]);
 
+    my $extensions_rs = $c->model('DB')->resultset('autoprov_devices')->search_rs({
+        'type' => 'extension',
+    });
+    $reseller_id and $extensions_rs = $extensions_rs->search({ reseller_id => $reseller_id });
+    
+    $c->stash->{fielddev_dt_columns} = NGCP::Panel::Utils::Datatables::set_columns($c, [
+        { name => 'id', search => 1, title => $c->loc('#') },
+        { name => 'identifier', search => 1, title => $c->loc('MAC Address / Identifier') },
+        { name => 'profile.name', search => 1, title => $c->loc('Profile Name') },
+        { name => 'contract.id', search => 1, title => $c->loc('Customer #') },
+        { name => 'contract.contact.email', search => 1, title => $c->loc('Customer Email') },
+    ]);
+
     $c->stash(
-        devmod_rs   => $devmod_rs,
-        devfw_rs    => $devfw_rs,
-        devconf_rs  => $devconf_rs,
-        devprof_rs  => $devprof_rs,
-        fielddev_rs => $fielddev_rs,
-        reseller_id => $reseller_id,
-        template    => 'device/list.tt',
+        devmod_rs     => $devmod_rs,
+        devfw_rs      => $devfw_rs,
+        devconf_rs    => $devconf_rs,
+        devprof_rs    => $devprof_rs,
+        fielddev_rs   => $fielddev_rs,
+        extensions_rs => $extensions_rs,
+        reseller_id   => $reseller_id,
+        template      => 'device/list.tt',
     );
 }
 
@@ -165,32 +182,31 @@ sub devmod_create :Chained('base') :PathPart('model/create') :Args(0) :Does(ACL)
             my $schema = $c->model('DB');
             $schema->txn_do(sub {
                 if($c->user->is_superuser) {
-                    $form->params->{reseller_id} = $form->params->{reseller}{id};
+                    $form->values->{reseller_id} = $form->values->{reseller}{id};
                 } else {
-                    $form->params->{reseller_id} = $c->user->reseller_id;
+                    $form->values->{reseller_id} = $c->user->reseller_id;
                 }
-                delete $form->params->{reseller};
+                delete $form->values->{reseller};
 
                 my $ft = File::Type->new();
-                if($form->params->{front_image}) {
-                    my $front_image = delete $form->params->{front_image};
-                    $form->params->{front_image} = $front_image->slurp;
-                    $form->params->{front_image_type} = $ft->mime_type($form->params->{front_image});
+                foreach(qw/front_image mac_image/){
+                    if($form->values->{$_}) {
+                        my $image = delete $form->values->{$_};
+                        $form->values->{$_} = $image->slurp;
+                        $form->values->{$_.'_type'} = $ft->mime_type($form->values->{$_});
+                    }
                 }
-                if($form->params->{mac_image}) {
-                    my $mac_image = delete $form->params->{mac_image};
-                    $form->params->{mac_image} = $mac_image->slurp;
-                    $form->params->{mac_image_type} = $ft->mime_type($form->params->{mac_image});
-                }
-                my $linerange = delete $form->params->{linerange};
+                my $connectable_models = delete $form->values->{connectable_models};
+                my $linerange = delete $form->values->{linerange};
                 
-                my $sync_parameters = NGCP::Panel::Utils::DeviceBootstrap::devmod_sync_parameters_prefetch($c, undef, $form->params);
-                my $credentials = NGCP::Panel::Utils::DeviceBootstrap::devmod_sync_credentials_prefetch($c, undef, $form->params);
-                NGCP::Panel::Utils::DeviceBootstrap::devmod_sync_clear($c, $form->params);
-                my $devmod = $schema->resultset('autoprov_devices')->create($form->params);
+                my $sync_parameters = NGCP::Panel::Utils::DeviceBootstrap::devmod_sync_parameters_prefetch($c, undef, $form->values);
+                my $credentials = NGCP::Panel::Utils::DeviceBootstrap::devmod_sync_credentials_prefetch($c, undef, $form->values);
+                NGCP::Panel::Utils::DeviceBootstrap::devmod_sync_clear($c, $form->values);
+                my $devmod = $schema->resultset('autoprov_devices')->create($form->values);
                 NGCP::Panel::Utils::DeviceBootstrap::devmod_sync_credentials_store($c, $devmod, $credentials);
                 NGCP::Panel::Utils::DeviceBootstrap::devmod_sync_parameters_store($c, $devmod, $sync_parameters);
                 NGCP::Panel::Utils::DeviceBootstrap::dispatch_devmod($c, 'register_model', $devmod);
+                NGCP::Panel::Utils::Device::process_connectable_models($c, 1, $devmod, decode_json($connectable_models) );
                 
                 foreach my $range(@{ $linerange }) {
                     delete $range->{id};
@@ -205,7 +221,6 @@ sub devmod_create :Chained('base') :PathPart('model/create') :Args(0) :Does(ACL)
                         $r->annotations->create($label);
                     }
                 }
-
                 delete $c->session->{created_objects}->{reseller};
                 $c->session->{created_objects}->{device} = { id => $devmod->id };
             });
@@ -228,6 +243,18 @@ sub devmod_create :Chained('base') :PathPart('model/create') :Args(0) :Does(ACL)
         form => $form,
     );
 }
+sub prepare_connectable {
+    my ($self, $c, $model) = @_;
+    my $values = [];
+
+    my $connected_rs = $c->model('DB')->resultset('autoprov_device_extensions')->search_rs({
+        ( $model->type eq 'phone' ? 'device_id' : 'extension_id' ) => $model->id,
+    });
+    for my $connected($connected_rs->all) {
+        push @$values, $connected->get_column ( $model->type eq 'phone' ? 'extension_id' : 'device_id' ) ;
+    }
+    return (encode_json($values), $values);
+}
 
 sub devmod_base :Chained('base') :PathPart('model') :CaptureArgs(1) {
     my ($self, $c, $devmod_id) = @_;
@@ -240,9 +267,8 @@ sub devmod_base :Chained('base') :PathPart('model') :CaptureArgs(1) {
         );
         NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for('/device'));
     }
-
-    $c->stash->{devmod} = $c->stash->{devmod_rs}->find($devmod_id,{'+columns' => [qw/mac_image front_image/]});
-    unless($c->stash->{devmod}) {
+    my $devmod = $c->stash->{devmod_rs}->find($devmod_id,{'+columns' => [qw/mac_image front_image/]});
+    unless($devmod) {
         NGCP::Panel::Utils::Message->error(
             c => $c,
             error => "device model with id '$devmod_id' not found",
@@ -250,6 +276,9 @@ sub devmod_base :Chained('base') :PathPart('model') :CaptureArgs(1) {
         );
         NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for('/device'));
     }
+    $c->stash(
+        devmod => $devmod,
+    );
 }
 
 sub devmod_delete :Chained('devmod_base') :PathPart('delete') :Args(0) :Does(ACL) :ACLDetachTo('/denied_page') :AllowedRole(admin) :AllowedRole(reseller) {
@@ -305,6 +334,8 @@ sub devmod_edit :Chained('devmod_base') :PathPart('edit') :Args(0) :Does(ACL) :A
             $params->{'bootstrap_config_'.$c->stash->{devmod}->bootstrap_method.'_'.$_} = $credentials_rs->first->get_column($_);
         }
     }
+    #edit specific
+    ($params->{connectable_models}) = $self->prepare_connectable($c, $c->stash->{devmod});
 
     $params->{reseller}{id} = delete $params->{reseller_id};
     $params = $params->merge($c->session->{created_objects});
@@ -338,36 +369,30 @@ sub devmod_edit :Chained('devmod_base') :PathPart('edit') :Args(0) :Does(ACL) :A
             my $schema = $c->model('DB');
             $schema->txn_do(sub {
                 if($c->user->is_superuser) {
-                    $form->params->{reseller_id} = $form->params->{reseller}{id};
+                    $form->values->{reseller_id} = $form->values->{reseller}{id};
                 } else {
-                    $form->params->{reseller_id} = $c->user->reseller_id;
+                    $form->values->{reseller_id} = $c->user->reseller_id;
                 }
-                delete $form->params->{reseller};
+                delete $form->values->{reseller};
 
-                if($form->params->{front_image}) {
-                    my $front_image = delete $form->params->{front_image};
-                    $form->params->{front_image} = $front_image->slurp;
-                    $form->params->{front_image_type} = $front_image->type;
-                } else {
-                    delete $form->params->{front_image};
-                    delete $form->params->{front_image_type};
-                }
-
-                if($form->params->{mac_image}) {
-                    my $mac_image = delete $form->params->{mac_image};
-                    $form->params->{mac_image} = $mac_image->slurp;
-                    $form->params->{mac_image_type} = $mac_image->type;
-                } else {
-                    delete $form->params->{mac_image};
-                    delete $form->params->{mac_image_type};
+                foreach (qw/front_image mac_image/){
+                    if($form->values->{$_}) {
+                        my $image = delete $form->values->{$_};
+                        $form->values->{$_} = $image->slurp;
+                        $form->values->{$_.'_type'} = $image->type;
+                    } else {
+                        delete $form->values->{$_};
+                        delete $form->values->{$_.'_type'};
+                    }
                 }
                 
-                my $linerange = delete $form->params->{linerange};
-                my $sync_parameters = NGCP::Panel::Utils::DeviceBootstrap::devmod_sync_parameters_prefetch($c, $c->stash->{devmod}, $form->params);
-                my $credentials = NGCP::Panel::Utils::DeviceBootstrap::devmod_sync_credentials_prefetch($c, $c->stash->{devmod}, $form->params);
-                NGCP::Panel::Utils::DeviceBootstrap::devmod_sync_clear($c, $form->params);
+                my $linerange = delete $form->values->{linerange};
+                my $connectable_models = delete $form->values->{connectable_models};
+                my $sync_parameters = NGCP::Panel::Utils::DeviceBootstrap::devmod_sync_parameters_prefetch($c, $c->stash->{devmod}, $form->values);
+                my $credentials = NGCP::Panel::Utils::DeviceBootstrap::devmod_sync_credentials_prefetch($c, $c->stash->{devmod}, $form->values);
+                NGCP::Panel::Utils::DeviceBootstrap::devmod_sync_clear($c, $form->values);
                 
-                $c->stash->{devmod}->update($form->params);
+                $c->stash->{devmod}->update($form->values);
                 
                 NGCP::Panel::Utils::DeviceBootstrap::devmod_sync_credentials_store($c, $c->stash->{devmod}, $credentials);
                 $schema->resultset('autoprov_sync')->search_rs({
@@ -375,6 +400,7 @@ sub devmod_edit :Chained('devmod_base') :PathPart('edit') :Args(0) :Does(ACL) :A
                 })->delete;
                 NGCP::Panel::Utils::DeviceBootstrap::devmod_sync_parameters_store($c, $c->stash->{devmod}, $sync_parameters);
                 NGCP::Panel::Utils::DeviceBootstrap::dispatch_devmod($c, 'register_model', $c->stash->{devmod} );
+                NGCP::Panel::Utils::Device::process_connectable_models($c, 0, $c->stash->{devmod}, decode_json($connectable_models) );
                 
                 my @existing_range = ();
                 my $range_rs = $c->stash->{devmod}->autoprov_device_line_ranges;
@@ -429,7 +455,6 @@ sub devmod_edit :Chained('devmod_base') :PathPart('edit') :Args(0) :Does(ACL) :A
                 $range_rs->search({
                     id => { 'not in' => \@existing_range },
                 })->delete_all;
-
                 delete $c->session->{created_objects}->{reseller};
             });
             NGCP::Panel::Utils::Message->info(
@@ -531,11 +556,11 @@ sub devfw_create :Chained('base') :PathPart('firmware/create') :Args(0) :Does(AC
         try {
             my $schema = $c->model('DB');
             $schema->txn_do(sub {
-                my $file = delete $form->params->{data};
-                $form->params->{filename} = $file->filename;
-                $form->params->{data} = $file->slurp;
-                my $devmod = $c->stash->{devmod_rs}->find($form->params->{device}{id},{'+columns' => [qw/mac_image front_image/]});
-                my $devfw = $devmod->create_related('autoprov_firmwares', $form->params);
+                my $file = delete $form->values->{data};
+                $form->values->{filename} = $file->filename;
+                $form->values->{data} = $file->slurp;
+                my $devmod = $c->stash->{devmod_rs}->find($form->values->{device}{id},{'+columns' => [qw/mac_image front_image/]});
+                my $devfw = $devmod->create_related('autoprov_firmwares', $form->values);
                 delete $c->session->{created_objects}->{device};
                 $c->session->{created_objects}->{firmware} = { id => $devfw->id };
             });
@@ -634,13 +659,13 @@ sub devfw_edit :Chained('devfw_base') :PathPart('edit') :Args(0) {
         try {
             my $schema = $c->model('DB');
             $schema->txn_do(sub {
-                $form->params->{device_id} = $form->params->{device}{id};
-                delete $form->params->{device};
-                my $file = delete $form->params->{data};
-                $form->params->{filename} = $file->filename;
-                $form->params->{data} = $file->slurp;
+                $form->values->{device_id} = $form->values->{device}{id};
+                delete $form->values->{device};
+                my $file = delete $form->values->{data};
+                $form->values->{filename} = $file->filename;
+                $form->values->{data} = $file->slurp;
 
-                $c->stash->{devfw}->update($form->params);
+                $c->stash->{devfw}->update($form->values);
                 delete $c->session->{created_objects}->{device};
             });
             NGCP::Panel::Utils::Message->info(
@@ -707,8 +732,8 @@ sub devconf_create :Chained('base') :PathPart('config/create') :Args(0) :Does(AC
         try {
             my $schema = $c->model('DB');
             $schema->txn_do(sub {
-                my $devmod = $c->stash->{devmod_rs}->find($form->params->{device}{id},{'+columns' => [qw/mac_image front_image/]});
-                my $devconf = $devmod->create_related('autoprov_configs', $form->params);
+                my $devmod = $c->stash->{devmod_rs}->find($form->values->{device}{id},{'+columns' => [qw/mac_image front_image/]});
+                my $devconf = $devmod->create_related('autoprov_configs', $form->values);
                 delete $c->session->{created_objects}->{device};
                 $c->session->{created_objects}->{config} = { id => $devconf->id };
             });
@@ -804,11 +829,11 @@ sub devconf_edit :Chained('devconf_base') :PathPart('edit') :Args(0) {
         try {
             my $schema = $c->model('DB');
             $schema->txn_do(sub {
-                $form->params->{device_id} = $form->params->{device}{id};
-                delete $form->params->{device};
+                $form->values->{device_id} = $form->values->{device}{id};
+                delete $form->values->{device};
 
-                use Data::Printer; p $form->params;
-                $c->stash->{devconf}->update($form->params);
+                use Data::Printer; p $form->values;
+                $c->stash->{devconf}->update($form->values);
                 delete $c->session->{created_objects}->{device};
             });
             NGCP::Panel::Utils::Message->info(
@@ -874,10 +899,10 @@ sub devprof_create :Chained('base') :PathPart('profile/create') :Args(0) :Does(A
         try {
             my $schema = $c->model('DB');
             $schema->txn_do(sub {
-                $form->params->{config_id} = $form->params->{config}{id};
-                delete $form->params->{config};
+                $form->values->{config_id} = $form->values->{config}{id};
+                delete $form->values->{config};
 
-                $c->model('DB')->resultset('autoprov_profiles')->create($form->params);
+                $c->model('DB')->resultset('autoprov_profiles')->create($form->values);
 
                 delete $c->session->{created_objects}->{config};
             });
@@ -924,6 +949,63 @@ sub devprof_base :Chained('base') :PathPart('profile') :CaptureArgs(1) :Does(ACL
     }
 }
 
+sub devprof_extensions :Chained('devprof_base') :PathPart('extensions') :Args(0):Does(ACL) :ACLDetachTo('/denied_page') :AllowedRole(admin) :AllowedRole(reseller) :AllowedRole(subscriberadmin) {
+    my ($self, $c) = @_;
+
+
+    my $rs = $c->stash->{devprof}->config->device->autoprov_extensions_link;
+    my $device_info = { $c->stash->{devprof}->config->device->get_inflated_columns }; 
+    foreach(qw/front_image mac_image/){
+        delete $device_info->{$_};
+    }
+
+    my $data = {
+        'device'  => $device_info,
+        'profile' => { $c->stash->{devprof}->get_inflated_columns},
+        'extensions' => { map {
+            $_->extension->id => { 
+                $_->extension->get_inflated_columns,
+                'ranges' => [ 
+                    map {
+                        $_->get_inflated_columns,
+                        'annotations' => [
+                            map {{
+                                $_->get_inflated_columns,
+                            }} $_->annotations->all,
+                        ],
+                    } $_->extension->autoprov_device_line_ranges->all 
+                ],
+            }
+        } $rs->all },
+    };
+    $c->stash(
+        aaData               => $data,
+        iTotalRecords        => 1,
+        iTotalDisplayRecords => 1,
+        sEcho                => int($c->request->params->{sEcho} // 1),
+    );
+
+    $c->detach( $c->view("JSON") );
+}
+
+
+sub devprof_extensions_form :Chained('devprof_base') :PathPart('extensions_field') :Args(0):Does(ACL) :ACLDetachTo('/denied_page') :AllowedRole(admin) :AllowedRole(reseller) :AllowedRole(subscriberadmin) {
+    my ($self, $c) = @_;
+    my $form = NGCP::Panel::Form::Customer::PbxFieldDeviceExtensions->new;
+    $form->process(
+        #posted => 0,
+        params => $c->request->params,
+        #item => $params
+    );
+    $c->stash->{form} = $form;
+    $c->stash->{model_extensions_rs} = $c->model('DB')->resultset('autoprov_device_extensions')->search_rs({
+            'device_id' => $c->stash->{devprof}->config->device_id,
+        }
+    );
+    $c->stash->{template} = 'device/extensions_field.tt';
+    $c->detach($c->view('TT'));
+}
+
 sub devprof_get_lines :Chained('devprof_base') :PathPart('lines/ajax') :Args(0) :Does(ACL) :ACLDetachTo('/denied_page') :AllowedRole(admin) :AllowedRole(reseller) :AllowedRole(subscriberadmin) {
     my ($self, $c) = @_;
 
@@ -942,8 +1024,17 @@ sub devprof_get_lines :Chained('devprof_base') :PathPart('lines/ajax') :Args(0) 
 
 sub devprof_get_annotated_lines :Chained('devprof_base') :PathPart('annolines/ajax') :Args(0) :Does(ACL) :ACLDetachTo('/denied_page') :AllowedRole(admin) :AllowedRole(reseller) :AllowedRole(subscriberadmin) {
     my ($self, $c) = @_;
+    $self->get_annotated_lines($c, $c->stash->{devprof}->config->device->autoprov_device_line_ranges );
+}
 
-    my $rs = $c->stash->{devprof}->config->device->autoprov_device_line_ranges;
+sub devmod_get_annotated_lines :Chained('devmod_base') :PathPart('annolines/ajax') :Args(0) :Does(ACL) :ACLDetachTo('/denied_page') :AllowedRole(admin) :AllowedRole(reseller) :AllowedRole(subscriberadmin) {
+    my ($self, $c) = @_;
+    $self->get_annotated_lines($c, $c->stash->{devmod}->autoprov_device_line_ranges );
+}
+
+sub get_annotated_lines :Privat {
+    my ($self, $c, $rs) = @_;
+
     my @ranges = map {{
         $_->get_inflated_columns,
         annotations => [
@@ -961,8 +1052,6 @@ sub devprof_get_annotated_lines :Chained('devprof_base') :PathPart('annolines/aj
 
     $c->detach( $c->view("JSON") );
 }
-
-
 sub devprof_delete :Chained('devprof_base') :PathPart('delete') :Args(0) :Does(ACL) :ACLDetachTo('/denied_page') :AllowedRole(admin) :AllowedRole(reseller) {
     my ($self, $c) = @_;
 
@@ -1012,10 +1101,10 @@ sub devprof_edit :Chained('devprof_base') :PathPart('edit') :Args(0) :Does(ACL) 
         try {
             my $schema = $c->model('DB');
             $schema->txn_do(sub {
-                $form->params->{config_id} = $form->params->{config}{id};
-                delete $form->params->{config};
+                $form->values->{config_id} = $form->values->{config}{id};
+                delete $form->values->{config};
 
-                $c->stash->{devprof}->update($form->params);
+                $c->stash->{devprof}->update($form->values);
 
                 delete $c->session->{created_objects}->{config};
             });

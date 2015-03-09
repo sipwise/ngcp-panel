@@ -4,9 +4,11 @@
 var checked_fields = {};
 $(document).ready(function() {
 
+    [%IF value%]
     JSON.parse('[% value %]').map( function (val) {
         checked_fields[val] = 1;
     });
+    [%END%]
     $('#[% table_id %] tr td input[type="checkbox"]').live( "click", function() {
     
         var my_id = $(this).parents("tr").find("td:first").text();
@@ -70,7 +72,7 @@ $(document).ready(function() {
 } );
 </script>
 
-<div class="control-group [% IF errors.size %]error[% END %]">
+<div class="control-group [% IF errors.size %]error[% END %] [%wrapper_class%]">
      <label class="control-label" for="[% table_id %]">[% label %]</label>
      <div class="controls">
          <input type="hidden" name="[% field_name %]" value="[% value | html %]" id="[% hidden_id %]"/>
