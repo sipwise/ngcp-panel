@@ -83,9 +83,9 @@ sub resource_from_item {
         foreach my $extension_link ($item->autoprov_extensions_link->all){
             my $extension = $extension_link->extension;
             push @{$resource{connectable_models}}, $extension->id;
-            #foreach my $range($extension->autoprov_device_line_ranges->all) {
-            #    $self->process_range( \%resource, $range, sub { my $r = shift; $r->{extension_range} = $extension->id;} );# 
-            #}
+            foreach my $range($extension->autoprov_device_line_ranges->all) {
+                $self->process_range( \%resource, $range, sub { my $r = shift; $r->{extension_range} = $extension->id;} );# 
+            }
         }
     }
     return \%resource;
