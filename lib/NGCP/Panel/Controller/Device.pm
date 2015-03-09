@@ -12,7 +12,7 @@ use NGCP::Panel::Form::Device::Profile;
 use NGCP::Panel::Utils::Navigation;
 use NGCP::Panel::Utils::DeviceBootstrap;
 use NGCP::Panel::Utils::Device;
-
+use NGCP::Panel::Form::Customer::PbxFieldDeviceExtensions;
 
 BEGIN { extends 'Catalyst::Controller'; }
 
@@ -991,7 +991,13 @@ sub devprof_extensions :Chained('devprof_base') :PathPart('extensions') :Args(0)
 
 sub devprof_extensions_form :Chained('devprof_base') :PathPart('extensions_field') :Args(0):Does(ACL) :ACLDetachTo('/denied_page') :AllowedRole(admin) :AllowedRole(reseller) :AllowedRole(subscriberadmin) {
     my ($self, $c) = @_;
-    $c->stash->{form} = NGCP::Panel::Form::Customer::PbxFieldDeviceExtension->new;
+    my $form = NGCP::Panel::Form::Customer::PbxFieldDeviceExtensions->new;
+    $form->process(
+        #posted => 0,
+        params => $c->request->params,
+        #item => $params
+    );
+    $c->stash->{form} = $form;
     $c->stash->{model_extensions_rs} = $c->model('DB')->resultset('autoprov_device_extensions')->search_rs({
             'device_id' => $c->stash->{devprof}->config->device_id,
         }
@@ -1029,7 +1035,6 @@ sub devmod_get_annotated_lines :Chained('devmod_base') :PathPart('annolines/ajax
 sub get_annotated_lines :Privat {
     my ($self, $c, $rs) = @_;
 
-    $rs = $c->stash->{devprof}->config->device->autoprov_device_line_ranges;
     my @ranges = map {{
         $_->get_inflated_columns,
         annotations => [
