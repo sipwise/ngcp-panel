@@ -55,7 +55,7 @@ sub resource_from_item {
     for my $line ($item->autoprov_field_device_lines->all) {
         my $p_subs = $line->provisioning_voip_subscriber;
         my $b_subs = $p_subs ? $p_subs->voip_subscriber : undef;
-        my $model = $line->autoprov_device_line_range->profile->config->device;
+        my $model = $line->autoprov_device_line_range->device;
         my $line_attr = { 
             $line->get_inflated_columns,
             ($model->type eq 'extension') ? ('model_id' => $model->id ) : (),

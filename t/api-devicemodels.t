@@ -24,7 +24,7 @@ $test_machine->methods->{item}->{allowed}       = {map {$_ => 1} qw(GET HEAD OPT
 #for item creation test purposes /post request data/
 $test_machine->DATA_ITEM_STORE({
     json => {
-        "model"=>"ATA11",
+        "model"=>"ATA111",
         "reseller_id"=>"1",
         "vendor"=>"Cisco",
         #3.7relative tests
@@ -65,24 +65,24 @@ $test_machine->DATA_ITEM_STORE({
 
 
 
-#$test_machine->form_data_item( sub {$_[0]->{json}->{type} = "extension";} );
-#$test_machine->check_create_correct( 1, sub{ $_[0]->{json}->{model} .= "Extension 2".$_[1]->{i}; } );
-$test_machine->check_get2put( sub { 
-    $_[0]->{connectable_models} = [670],
-    $_[0] = { 
-        json => JSON::to_json($_[0]), 
-        'front_image' =>  $test_machine->DATA_ITEM_STORE->{front_image} 
-    }; },
-    $test_machine->get_uri_collection.'449'
-);
-
-#test check_patch_prefer_wrong is broken
-#$test_machine->name('billingprofiles');
-#$test_machine->check_patch_prefer_wrong;
+##$test_machine->form_data_item( sub {$_[0]->{json}->{type} = "extension";} );
+##$test_machine->check_create_correct( 1, sub{ $_[0]->{json}->{model} .= "Extension 2".$_[1]->{i}; } );
+#$test_machine->check_get2put( sub { 
+#    $_[0]->{connectable_models} = [670],
+#    $_[0] = { 
+#        json => JSON::to_json($_[0]), 
+#        'front_image' =>  $test_machine->DATA_ITEM_STORE->{front_image} 
+#    }; },
+#    $test_machine->get_uri_collection.'449'
+#);
+#
+##test check_patch_prefer_wrong is broken
+##$test_machine->name('billingprofiles');
+##$test_machine->check_patch_prefer_wrong;
 
 
 foreach my $type(qw/phone extension/){
-    last;#skip classic tests
+    #last;#skip classic tests
     $test_machine->form_data_item( sub {$_[0]->{json}->{type} = $type;} );
     # create 6 new billing models from DATA_ITEM
     $test_machine->check_create_correct( 6, sub{ $_[0]->{json}->{model} .= $type."TEST_".$_[1]->{i}; } );

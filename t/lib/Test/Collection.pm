@@ -76,14 +76,14 @@ has 'DATA_CREATED' => (
     isa => 'HashRef',
     builder => 'clear_data_created',
 );
-has 'URI_CUSTOM' =>{
+has 'URI_CUSTOM' =>(
     is => 'rw',
     isa => 'Str',
-};
-has 'URI_CUSTOM_STORE' =>{
+);
+has 'URI_CUSTOM_STORE' =>(
     is => 'rw',
     isa => 'Str',
-};
+);
 before 'URI_CUSTOM' => sub {
     my $self = shift;
     if(@_){
@@ -94,6 +94,11 @@ before 'URI_CUSTOM' => sub {
         }
     }
 };
+has 'ENCODE_CONTENT' => (
+    is => 'rw',
+    isa => 'Str',
+    default => 'json',
+);
 sub _init_ua {
     my $self = shift;
     my $valid_ssl_client_cert = $ENV{API_SSL_CLIENT_CERT} || 
@@ -152,19 +157,42 @@ sub get_uri_firstitem{
             $self->DATA_CREATED->{FIRST} = $list_collection->{_embedded}->{$hal_name}->[0]->{_links}->{self}->{href};
         }
     }
+    $self->DATA_CREATED->{FIRST} //= '';
     return $self->base_uri.'/'.$self->DATA_CREATED->{FIRST};
 }
 
 sub get_uri_current{
     my($self) = @_;
     $self->URI_CUSTOM and return $self->URI_CUSTOM;
-    return $self->get_firstitem_uri;
+    return $self->get_uri_firstitem;
+}
+sub encode_content{
+    my($self,$content, $type) = @_;
+    $type //= $self->ENCODE_CONTENT;
+    my %json_types = (
+        'application/json' => 1,
+        'application/json-patch+json' => 1,
+        'json' => 1,
+    );
+    print "content=$content;\n\n";
+    if($content){
+        if( $json_types{$type} && (('HASH' eq ref $content) ||('ARRAY' eq ref $content))  ){
+            return JSON::to_json($content);
+        }
+    }
+    return $content;
+}
+sub request{
+    my($self,$req) = @_;
+    print $req->as_string; 
+    $self->ua->request($req);
 }
 
 sub get_request_put{
     my($self,$content,$uri) = @_;
     $uri ||= $self->get_uri_current;
     #This is for multipart/form-data cases
+    $content = $self->encode_content($content, $self->content_type->{PUT});
     my $req = POST $uri, 
         Content_Type => $self->content_type->{POST}, 
         $content ? ( Content => $content ) : ();
@@ -184,7 +212,7 @@ sub request_put{
     my($self,$content,$uri) = @_;
     $uri ||= $self->get_uri_current;
     my $req = $self->get_request_put( $content, $uri );
-    my $res = $self->ua->request($req);
+    my $res = $self->request($req);
     #print Dumper $res;
     
     my $err = $res->decoded_content ? JSON::from_json($res->decoded_content) : '';
@@ -194,10 +222,10 @@ sub request_patch{
     my($self,$content,$uri, $req) = @_;
     $uri ||= $self->get_uri_current;
     $req ||= $self->get_request_patch($uri);
-    $content and $req->content(JSON::to_json(
-        $content
-    ));
-    my $res = $self->ua->request($req);
+    #patch is always a json
+    $content = $self->encode_content($content, $self->content_type->{PATCH});
+    $content and $req->content($content);
+    my $res = $self->request($req);
     my $err = $res->decoded_content ? JSON::from_json($res->decoded_content) : '';
     #print Dumper [$res,$err,$req];
     return ($res,$err,$req);
@@ -211,29 +239,50 @@ sub request_post{
         $data->{json} ? ( json => JSON::to_json(delete $data->{json}) ) : (),
         %$data,
     };
+    $content = $self->encode_content($content, $self->content_type->{POST} );
     #form-data is set automatically, despite on $self->content_type->{POST}
     my $req = POST $self->get_uri_collection, 
         Content_Type => $self->content_type->{POST}, 
         Content => $content;
-    my $res = $self->ua->request($req);
+    my $res = $self->request($req);
     my $err = $res->decoded_content ? JSON::from_json($res->decoded_content) : '';
     return ($res,$err,$req);
 };
 
+
+
+sub request_options{
+    my ($self,$uri) = @_;
+    # OPTIONS tests
+    $uri ||= $self->get_uri_current;
+    my $req = HTTP::Request->new('OPTIONS', $uri);
+    my $res = $self->request($req);
+    my $content = $res->decoded_content ? JSON::from_json($res->decoded_content) : '';
+    return($req,$res,$content);
+}
+sub request_delete{
+    my ($self,$uri) = @_;
+    # DELETE tests
+    #no auto rows for deletion
+    my $req = HTTP::Request->new('DELETE', $uri);
+    my $res = $self->request($req);
+    my $content = $res->decoded_content ? JSON::from_json($res->decoded_content) : '';
+    return($req,$res,$content);
+}
 sub check_options_collection{
     my ($self) = @_;
     # OPTIONS tests
     my $req = HTTP::Request->new('OPTIONS', $self->get_uri_collection );
-    my $res = $self->ua->request($req);
+    my $res = $self->request($req);
     is($res->header('Accept-Post'), "application/hal+json; profile=http://purl.org/sipwise/ngcp-api/#rel-".$self->name, "check Accept-Post header in options response");
     $self->check_methods($res,'collection');
 }
 sub check_options_item{
-    my ($self,$uri) = shift;
+    my ($self,$uri) = @_;
     # OPTIONS tests
     $uri ||= $self->get_uri_current;
     my $req = HTTP::Request->new('OPTIONS', $uri);
-    my $res = $self->ua->request($req);
+    my $res = $self->request($req);
     $self->check_methods($res,'item');
 }
 sub check_methods{
@@ -257,11 +306,20 @@ sub check_create_correct{
     if(!$keep_data){
         $self->clear_data_created;
     }
+    $self->DATA_CREATED->{ALL} //= {};
     for(my $i = 1; $i <= $number; ++$i) {
         my ($res, $err) = $self->request_post( $uniquizer_cb , undef, { i => $i} );
         is($res->code, 201, "create test item $i");
         $self->DATA_CREATED->{ALL}->{$res->header('Location')} = $i;
         $self->DATA_CREATED->{FIRST} = $res->header('Location') unless $self->DATA_CREATED->{FIRST};
+    }
+}
+sub check_delete_created{
+    my($self,$uri) = @_;
+    my @uris = $uri ? ($uri) : keys $self->DATA_CREATED->{ALL};
+    foreach my $del_uri(@uris){
+        my($req,$res,$content) = $self->request_delete($del_uri);
+        is($res->code, 200, "create delete item $_");
     }
 }
 sub check_list_collection{
@@ -283,12 +341,13 @@ sub check_list_collection{
         ok(exists $q{page} && exists $q{rows}, "check existence of 'page' and 'row' in 'self'");
         my $page = int($q{page});
         my $rows = int($q{rows});
+        ok($rows != 0, "check existance of the 'rows'");
         if($page == 1) {
             ok(!exists $list_collection->{_links}->{prev}->{href}, "check absence of 'prev' on first page");
         } else {
             ok(exists $list_collection->{_links}->{prev}->{href}, "check existence of 'prev'");
         }
-        if(($list_collection->{total_count} / $rows) <= $page) {
+        if(($rows != 0) && ($list_collection->{total_count} / $rows) <= $page) {
             ok(!exists $list_collection->{_links}->{next}->{href}, "check absence of 'next' on last page");
         } else {
             ok(exists $list_collection->{_links}->{next}->{href}, "check existence of 'next'");
@@ -344,10 +403,9 @@ sub check_created_listed{
 
 sub check_item_get{
     my($self,$uri) = @_;
-    print "uri=$uri;\n\n";
     $uri ||= $self->get_uri_current;
     my $req = HTTP::Request->new('GET', $uri);
-    my $res = $self->ua->request($req);
+    my $res = $self->request($req);
     is($res->code, 200, "fetch one item");
     my $err = $res->decoded_content ? JSON::from_json($res->decoded_content) : '';
     return wantarray ? ($res, $err, $req) : $res;
@@ -360,7 +418,7 @@ sub check_put_content_type_empty{
     $req->remove_header('Content-Type');
     $req->remove_header('Prefer');
     $req->header('Prefer' => "return=minimal");
-    my $res = $self->ua->request($req);
+    my $res = $self->request($req);
     is($res->code, 415, "check put missing content type");
 }
 sub check_put_content_type_wrong{
@@ -369,7 +427,7 @@ sub check_put_content_type_wrong{
     my $req = $self->get_request_put;
     $req->remove_header('Content-Type');
     $req->header('Content-Type' => 'application/xxx');
-    my $res = $self->ua->request($req);
+    my $res = $self->request($req);
     is($res->code, 415, "check put invalid content type");
 }
 sub check_put_prefer_wrong{
@@ -378,7 +436,7 @@ sub check_put_prefer_wrong{
     my $req = $self->get_request_put;
     $req->remove_header('Prefer');
     $req->header('Prefer' => "return=invalid");
-    my $res = $self->ua->request($req);
+    my $res = $self->request($req);
     is($res->code, 400, "check put invalid prefer");
 }
 
@@ -388,7 +446,7 @@ sub check_put_body_empty{
     my $req = $self->get_request_put;
     #$req->remove_header('Prefer');
     #$req->header('Prefer' => "return=representation");
-    my $res = $self->ua->request($req);
+    my $res = $self->request($req);
     is($res->code, 400, "check put no body");
 }
 sub check_get2put{
@@ -427,14 +485,14 @@ sub check_patch_prefer_wrong{
     my $req = $self->get_request_patch;
     $req->remove_header('Prefer');
     $req->header('Prefer' => 'return=minimal');
-    my $res = $self->ua->request($req);
+    my $res = $self->request($req);
     is($res->code, 415, "check patch invalid prefer");
 }
 sub check_patch_content_type_empty{
     my($self) = @_;
     my $req = $self->get_request_patch;
     $req->remove_header('Content-Type');
-    my $res = $self->ua->request($req);
+    my $res = $self->request($req);
     is($res->code, 415, "check patch missing media type");
 }
 
@@ -443,7 +501,7 @@ sub check_patch_content_type_wrong{
     my $req = $self->get_request_patch;
     $req->remove_header('Content-Type');
     $req->header('Content-Type' => 'application/xxx');
-    my $res = $self->ua->request($req);
+    my $res = $self->request($req);
     is($res->code, 415, "check patch invalid media type");
 }
 
