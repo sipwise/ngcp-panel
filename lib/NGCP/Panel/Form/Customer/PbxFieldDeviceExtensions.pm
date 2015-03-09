@@ -1,4 +1,4 @@
-package NGCP::Panel::Form::Customer::PbxFieldDeviceExtension;
+package NGCP::Panel::Form::Customer::PbxFieldDeviceExtensions;
 
 use HTML::FormHandler::Moose;
 extends 'HTML::FormHandler';
@@ -37,10 +37,10 @@ has_field 'extension.id' => (
 
 has_field 'extension.extension_id' => (
     type => 'Select',
-    label => 'Extension',
+    label => '',
     default => '',
     required => 0,
-    #options_method => \&build_extensions,
+    options_method => \&build_extensions,
     element_attr => {
         rel => ['tooltip'],
         title => ['Extension devices.'],
