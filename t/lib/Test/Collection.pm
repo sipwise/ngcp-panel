@@ -174,7 +174,7 @@ sub encode_content{
         'application/json-patch+json' => 1,
         'json' => 1,
     );
-    print "content=$content;\n\n";
+    #print "content=$content;\n\n";
     if($content){
         if( $json_types{$type} && (('HASH' eq ref $content) ||('ARRAY' eq ref $content))  ){
             return JSON::to_json($content);
@@ -184,7 +184,7 @@ sub encode_content{
 }
 sub request{
     my($self,$req) = @_;
-    print $req->as_string; 
+    #print $req->as_string; 
     $self->ua->request($req);
 }
 
@@ -310,16 +310,19 @@ sub check_create_correct{
     for(my $i = 1; $i <= $number; ++$i) {
         my ($res, $err) = $self->request_post( $uniquizer_cb , undef, { i => $i} );
         is($res->code, 201, "create test item $i");
-        $self->DATA_CREATED->{ALL}->{$res->header('Location')} = $i;
-        $self->DATA_CREATED->{FIRST} = $res->header('Location') unless $self->DATA_CREATED->{FIRST};
+        my $location = $res->header('Location');
+        if($location){
+            $self->DATA_CREATED->{ALL}->{$location} = $i;
+            $self->DATA_CREATED->{FIRST} = $location unless $self->DATA_CREATED->{FIRST};
+        }
     }
 }
-sub check_delete_created{
+sub check_delete_use_created{
     my($self,$uri) = @_;
     my @uris = $uri ? ($uri) : keys $self->DATA_CREATED->{ALL};
     foreach my $del_uri(@uris){
-        my($req,$res,$content) = $self->request_delete($del_uri);
-        is($res->code, 200, "create delete item $_");
+        my($req,$res,$content) = $self->request_delete($self->base_uri.$del_uri);
+        is($res->code, 204, "check delete item $del_uri");
     }
 }
 sub check_list_collection{

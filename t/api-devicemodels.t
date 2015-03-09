@@ -41,7 +41,7 @@ $test_machine->DATA_ITEM_STORE({
         "bootstrap_config_redirect_yealink_password"=>"",
         "bootstrap_config_redirect_yealink_user"=>"",
         "type"=>"phone",
-        "connectable_models"=>[446,447, 448],
+        "connectable_models"=>[702,703,704],
         "extensions_num"=>"2",
         #/3.7relative tests
         "linerange"=>[
@@ -137,7 +137,7 @@ foreach my $type(qw/phone extension/){
         is($res->code, 422, "check patched invalid reseller");
     }
 }
-#`echo 'delete from autoprov_devices where model like "%TEST\\_%" or model like "patched model%";'|mysql provisioning`;
+`echo 'delete from autoprov_devices where model like "%TEST\\_%" or model like "patched model%";'|mysql provisioning`;
 done_testing;
 
 # vim: set tabstop=4 expandtab:
