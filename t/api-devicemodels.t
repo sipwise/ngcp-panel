@@ -62,6 +62,9 @@ $test_machine->DATA_ITEM_STORE({
     #'front_image' => [ dirname($0).'/resources/api_devicemodels_front_image.jpg' ],
     'front_image' => [ dirname($0).'/resources/empty.txt' ],
 });
+
+
+
 #$test_machine->form_data_item( sub {$_[0]->{json}->{type} = "extension";} );
 #$test_machine->check_create_correct( 1, sub{ $_[0]->{json}->{model} .= "Extension 2".$_[1]->{i}; } );
 $test_machine->check_get2put( sub { 
@@ -70,8 +73,10 @@ $test_machine->check_get2put( sub {
         json => JSON::to_json($_[0]), 
         'front_image' =>  $test_machine->DATA_ITEM_STORE->{front_image} 
     }; },
-    $test_machine->get_collection_uri.'449'
+    $test_machine->get_uri_collection.'449'
 );
+
+#test check_patch_prefer_wrong is broken
 #$test_machine->name('billingprofiles');
 #$test_machine->check_patch_prefer_wrong;
 
@@ -79,24 +84,12 @@ $test_machine->check_get2put( sub {
 foreach my $type(qw/phone extension/){
     last;#skip classic tests
     $test_machine->form_data_item( sub {$_[0]->{json}->{type} = $type;} );
-
-    #common
-    $test_machine->check_options_collection;
-
     # create 6 new billing models from DATA_ITEM
     $test_machine->check_create_correct( 6, sub{ $_[0]->{json}->{model} .= $type."TEST_".$_[1]->{i}; } );
-
-    # iterate over collection to check next/prev links and status
-    my $listed = $test_machine->check_list_collection();
-    $test_machine->check_created_listed($listed);
-
-    # test model item
-    $test_machine->check_options_item;
-    $test_machine->check_put_bundle;
-
     $test_machine->check_get2put( sub { $_[0] = { json => JSON::to_json($_[0]), 'front_image' =>  $test_machine->DATA_ITEM_STORE->{front_image} }; } );
-
-    $test_machine->check_patch_bundle;
+    
+    
+    $test_machine->check_bundle();
 
     # try to create model without reseller_id
     {

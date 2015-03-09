@@ -37,12 +37,12 @@ has 'methods' => (
     isa => 'HashRef',
     default => sub { {
         'collection' =>{
-            'all'     => {map {$_ => 1} qw(GET HEAD OPTIONS POST)}, 
-            'allowed' => {}, 
+            'all'     => {map {$_ => 1} qw/GET HEAD OPTIONS POST/}, 
+            'allowed' => {map {$_ => 1} qw/GET HEAD OPTIONS POST/}, #some default
         },
         'item' =>{
-            'all'     => {map {$_ => 1} qw(GET HEAD OPTIONS PUT PATCH POST DELETE)}, 
-            'allowed' => {}, 
+            'all'     => {map {$_ => 1} qw/GET HEAD OPTIONS PUT PATCH POST DELETE/}, 
+            'allowed' => {map {$_ => 1} qw/GET HEAD OPTIONS PUT PATCH DELETE/}, #some default
         },
     } },
 );
@@ -90,7 +90,7 @@ before 'URI_CUSTOM' => sub {
         if($self->URI_CUSTOM_STORE){
             die('Attempt to set custom uri second time without restore. Custom uri is not a stack. Clear or restore it first, please.');
         }else{
-            $self->URI_CUSTOM_STORE(@_);
+            $self->URI_CUSTOM_STORE($self->URI_CUSTOM);
         }
     }
 };
@@ -132,14 +132,19 @@ sub get_hal_name{
     my($self) = @_;
     return "ngcp:".$self->name;
 }
-sub get_collection_uri{
+sub restore_uri_custom{
+    my($self) = @_;
+    $self->URI_CUSTOM($self->URI_CUSTOM_STORE);
+    $self->URI_CUSTOM_STORE(undef);
+}
+sub get_uri_collection{
     my($self) = @_;
     return $self->base_uri."/api/".$self->name.($self->name ? "/" : "");
 }
-sub get_firstitem_uri{
+sub get_uri_firstitem{
     my($self) = @_;
     if(!$self->DATA_CREATED->{FIRST}){
-        my($res,$list_collection,$req) = $self->check_item_get($self->get_collection_uri."?page=1&rows=1");
+        my($res,$list_collection,$req) = $self->check_item_get($self->get_uri_collection."?page=1&rows=1");
         my $hal_name = $self->get_hal_name;
         if(ref $list_collection->{_links}->{$hal_name} eq "HASH") {
             $self->DATA_CREATED->{FIRST} = $list_collection->{_links}->{$hal_name}->{href};
@@ -150,7 +155,7 @@ sub get_firstitem_uri{
     return $self->base_uri.'/'.$self->DATA_CREATED->{FIRST};
 }
 
-sub get_uri{
+sub get_uri_current{
     my($self) = @_;
     $self->URI_CUSTOM and return $self->URI_CUSTOM;
     return $self->get_firstitem_uri;
@@ -158,7 +163,7 @@ sub get_uri{
 
 sub get_request_put{
     my($self,$content,$uri) = @_;
-    $uri ||= $self->get_current_uri;
+    $uri ||= $self->get_uri_current;
     #This is for multipart/form-data cases
     my $req = POST $uri, 
         Content_Type => $self->content_type->{POST}, 
@@ -169,7 +174,7 @@ sub get_request_put{
 }
 sub get_request_patch{
     my($self,$uri) = @_;
-    $uri ||= $self->get_firstitem_uri;
+    $uri ||= $self->get_uri_current;
     my $req = HTTP::Request->new('PATCH', $uri);
     $req->header('Prefer' => 'return=representation');
     $req->header('Content-Type' => $self->content_type->{PATCH} );
@@ -177,7 +182,7 @@ sub get_request_patch{
 }
 sub request_put{
     my($self,$content,$uri) = @_;
-    $uri ||= $self->get_firstitem_uri;
+    $uri ||= $self->get_uri_current;
     my $req = $self->get_request_put( $content, $uri );
     my $res = $self->ua->request($req);
     #print Dumper $res;
@@ -187,7 +192,7 @@ sub request_put{
 }
 sub request_patch{
     my($self,$content,$uri, $req) = @_;
-    $uri ||= $self->get_firstitem_uri;
+    $uri ||= $self->get_uri_current;
     $req ||= $self->get_request_patch($uri);
     $content and $req->content(JSON::to_json(
         $content
@@ -207,7 +212,7 @@ sub request_post{
         %$data,
     };
     #form-data is set automatically, despite on $self->content_type->{POST}
-    my $req = POST $self->get_collection_uri, 
+    my $req = POST $self->get_uri_collection, 
         Content_Type => $self->content_type->{POST}, 
         Content => $content;
     my $res = $self->ua->request($req);
@@ -218,7 +223,7 @@ sub request_post{
 sub check_options_collection{
     my ($self) = @_;
     # OPTIONS tests
-    my $req = HTTP::Request->new('OPTIONS', $self->get_collection_uri );
+    my $req = HTTP::Request->new('OPTIONS', $self->get_uri_collection );
     my $res = $self->ua->request($req);
     is($res->header('Accept-Post'), "application/hal+json; profile=http://purl.org/sipwise/ngcp-api/#rel-".$self->name, "check Accept-Post header in options response");
     $self->check_methods($res,'collection');
@@ -226,7 +231,7 @@ sub check_options_collection{
 sub check_options_item{
     my ($self,$uri) = shift;
     # OPTIONS tests
-    $uri ||= $self->get_firstitem_uri;
+    $uri ||= $self->get_uri_current;
     my $req = HTTP::Request->new('OPTIONS', $uri);
     my $res = $self->ua->request($req);
     $self->check_methods($res,'item');
@@ -261,7 +266,7 @@ sub check_create_correct{
 }
 sub check_list_collection{
     my($self, $check_embedded_cb) = @_;
-    my $nexturi = $self->get_collection_uri."?page=1&rows=5";
+    my $nexturi = $self->get_uri_collection."?page=1&rows=5";
     my @href = ();
     do {
         #print "nexturi=$nexturi;\n";
@@ -329,6 +334,8 @@ sub check_list_collection{
 sub check_created_listed{
     my($self,$listed) = @_;
     my $created_items = clone($self->DATA_CREATED->{ALL});
+    $listed //= [];#to avoid error about not array reference
+    $created_items //= [];
     foreach (@$listed){
         delete $created_items->{$_};
     }
@@ -338,7 +345,7 @@ sub check_created_listed{
 sub check_item_get{
     my($self,$uri) = @_;
     print "uri=$uri;\n\n";
-    $uri ||= $self->get_firstitem_uri;
+    $uri ||= $self->get_uri_current;
     my $req = HTTP::Request->new('GET', $uri);
     my $res = $self->ua->request($req);
     is($res->code, 200, "fetch one item");
@@ -504,5 +511,15 @@ sub check_patch_bundle{
     $self->check_patch_opreplace_paramsmiss;
     $self->check_patch_opreplace_paramsextra;
 }
-
+sub check_bundle{
+    my($self) = @_;
+    $self->check_options_collection;
+    # iterate over collection to check next/prev links and status
+    my $listed = $self->check_list_collection();
+    $self->check_created_listed($listed);
+    # test model item
+    $self->check_options_item;
+    $self->check_put_bundle;
+    $self->check_patch_bundle;
+}
 1;
