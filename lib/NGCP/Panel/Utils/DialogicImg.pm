@@ -94,10 +94,35 @@ has 'classinfo' => ( is => 'ro', isa => HashRef, default => sub{
             parent => 'packet_facility_collection',
             revalidate => 0,
         },
+        ds1_spans => {
+            name => 'SpanGroup',
+            parent => 'facility',
+            revalidate => 0,
+        },
         signaling => {
             name => 'Signaling',
             parent => 'bn2020',
             revalidate => 0,
+        },
+        isdn => {
+            name => 'ISDN',
+            parent => 'signaling',
+            revalidate => 0,
+        },
+        isdn_d_chan => {
+            name => 'ISDNDChan',
+            parent => 'isdn',
+            revalidate => 0, # TODO: maybe
+        },
+        isdn_group => {
+            name => 'ISDNGroup',
+            parent => 'isdn_d_chan',
+            revalidate => 0, # TODO: maybe
+        },
+        isdn_circuit_group => {
+            name => 'ISDNCircuitGroup',
+            parent => 'isdn_group',
+            revalidate => 0, # TODO: maybe
         },
         sip => {
             name => 'SIP',
@@ -124,7 +149,6 @@ has 'classinfo' => ( is => 'ro', isa => HashRef, default => sub{
             parent => 'ip_profile_collection',
             revalidate => 1,
         },
-        # ...
         vocoder_profile => {
             name => 'VocoderProfile',
             parent => 'ip_profile',
@@ -138,6 +162,16 @@ has 'classinfo' => ( is => 'ro', isa => HashRef, default => sub{
         sip_profile => {
             name => 'SIPSGP',
             parent => 'sip_profile_collection',
+            revalidate => 0,
+        },
+        tdm_profile_collection => {
+            name => 'TDMProfiles',
+            parent => 'profile_collection',
+            revalidate => 0,
+        },
+        e1_profile => {
+            name => 'E1Profile',
+            parent => 'tdm_profile_collection',
             revalidate => 0,
         },
         external_network_elements => {
@@ -168,7 +202,7 @@ has 'classinfo' => ( is => 'ro', isa => HashRef, default => sub{
         channel_group => {
             name => 'ChannelGroup',
             parent => 'channel_group_collection',
-            revalidate => 0,
+            revalidate => 1,
         },
         route_table_collection => {
             name => 'RoutingTables',
@@ -195,6 +229,11 @@ has 'classinfo' => ( is => 'ro', isa => HashRef, default => sub{
             parent => 'cg_network_element',
             revalidate => 0,
         },
+        cg_isdn_circuit_group => {
+            name => 'SSLCircuitGroup',
+            parent => 'channel_group',
+            revalidate => 0,
+            },
     };
     });
 
@@ -294,10 +333,40 @@ sub create_packet_facility {
     return $self->_create_generic($options, 'packet_facility');
 }
 
+sub create_ds1_spans {
+    my ( $self, $options ) = @_;
+
+    return $self->_create_generic($options, 'ds1_spans');
+}
+
 sub create_signaling {
     my ( $self, $options ) = @_;
 
     return $self->_create_generic($options, 'signaling');
+}
+
+sub create_isdn {
+    my ( $self, $options ) = @_;
+
+    return $self->_create_generic($options, 'isdn');
+}
+
+sub create_isdn_d_chan {
+    my ( $self, $options ) = @_;
+
+    return $self->_create_generic($options, 'isdn_d_chan');
+}
+
+sub create_isdn_group {
+    my ( $self, $options ) = @_;
+
+    return $self->_create_generic($options, 'isdn_group');
+}
+
+sub create_isdn_circuit_group {
+    my ( $self, $options ) = @_;
+
+    return $self->_create_generic($options, 'isdn_circuit_group');
 }
 
 sub create_sip {
@@ -346,6 +415,18 @@ sub create_sip_profile {
     my ( $self, $options ) = @_;
 
     return $self->_create_generic($options, 'sip_profile');
+}
+
+sub create_tdm_profile_collection {
+    my ( $self, $options ) = @_;
+
+    return $self->_create_generic($options, 'tdm_profile_collection');
+}
+
+sub create_e1_profile {
+    my ( $self, $options ) = @_;
+
+    return $self->_create_generic($options, 'e1_profile');
 }
 
 sub create_external_network_elements {
@@ -412,6 +493,12 @@ sub create_node_association {
     my ($self, $options) = @_;
 
     return $self->_create_generic($options, 'node_association');
+}
+
+sub create_cg_isdn_circuit_group {
+    my ( $self, $options ) = @_;
+
+    return $self->_create_generic($options, 'cg_isdn_circuit_group');
 }
 
 sub _create_generic {
@@ -547,6 +634,174 @@ sub create_all_sipsip {
             InChannelGroup => 'ChannelGroup0',
             RouteActionType => 'Channel Group',
             RouteActionList => 'ChannelGroup0',
+            }},
+        #{run => 'download_route_table'},
+        #{run => 'download_channel_groups'},
+    ];
+
+    for my $elem (@{ $schedule }) {
+        my ($name, $options) = @{ $elem }{('name', 'options')};
+        my $fun = "create_$name";
+        $resp = $self->$fun($options);
+        # $resp = $self->_create_generic($options, $name);
+        if ($log >= 1) {
+            my $ind = " " x ($self->classinfo->{$name}{indent}*4);
+            printf "%-37s: %d\n", "$ind$name", $resp->code;
+            if ($resp->code != 200) {
+                use DDP; p $resp->data;
+            }
+        }
+    }
+
+    $self->download_profiles;
+    $self->download_route_table;
+    $self->download_channel_groups;
+
+    return 0;
+}
+
+# log: 0: none, 1: short, 2: everything
+# necessary keys: ip_sip, ip_rtp, ip_client, out_codecs, optional: in_codecs
+sub create_all_sipisdn {
+    my ($self, $settings, $log) = @_;
+
+    $self->_create_indent;
+
+    my $in_codecs = ['G711 ulaw', 'G711 alaw', 'G729', 'AMR',
+        'AMR Bandwidth Efficient', 'AMR-WB', 'AMR-WB Bandwidth Efficient',
+        'Clear Channel', 'G723 5.3 Kbps', 'G723 6.3 Kbps', 'G722', 'iLBC 30ms',
+        'GSM-FR Static Payload Type', 'GSM-FR Dynamic Payload Type',
+        'G726-32/G721 Static Payload Type', 'G726-32/G721 Dynamic Payload Type',
+        'GSM-EFR'];
+
+    my $resp = $self->create_bn2020;
+    my @in_schedule = map {
+            {
+                name => 'vocoder_profile', options =>
+                    { PayloadType => $_ },
+            };
+        } @{ $settings->{in_codecs} // $in_codecs };
+    my @out_schedule = map {
+            {
+                name => 'vocoder_profile', options => 
+                    { PayloadType => $_ },
+            };
+        } @{ $settings->{out_codecs} };
+    my $schedule = [
+        {name => 'network', options => undef},
+        {name => 'interface_collection', options => undef},
+        {name => 'interface', options => undef},
+        {name => 'ip_address', options => {
+            NIIPAddress => $settings->{ip_sip},
+            NIIPPhy => 'Services',
+            }},
+        {name => 'interface', options => undef},
+        {name => 'ip_address', options => {
+            NIIPAddress => $settings->{ip_rtp},
+            NIIPPhy => 'Media 0',
+            }},
+        {name => 'facility', options => undef},
+        {name => 'packet_facility_collection', options => undef},
+        {name => 'packet_facility', options => {
+            ChannelCount => 50,
+            }},
+        {name => 'signaling', options => undef},
+        {name => 'sip', options => undef},
+        {name => 'sip_ip', options => {
+            IPAddress => $settings->{ip_sip},
+            }},
+        {name => 'isdn', options => undef},
+
+        {name => 'profile_collection', options => undef},
+        {name => 'ip_profile_collection', options => undef},
+        {name => 'ip_profile', options => {
+            DigitRelay => 'DTMF Packetized',
+            Name => 'ngcp_in_profile',
+            }},
+        @in_schedule,
+        {name => 'ip_profile', options => {
+            DigitRelay => 'DTMF Packetized',
+            Name => 'ngcp_out_profile',
+            }},
+        @out_schedule,
+        {name => 'sip_profile_collection', options => undef},
+        {name => 'sip_profile', options => undef},
+        {name => 'tdm_profile_collection', options => undef},
+        {name => 'e1_profile', options => undef},
+
+
+        {name => 'ds1_spans', options => {
+            EndingOffset => '3',
+        }}, # Settings: ??
+
+
+
+
+
+        {name => 'isdn_d_chan', options => undef},
+        {name => 'isdn_group', options => undef},
+        {name => 'isdn_circuit_group', options => {
+            # TODO: EndChannel: Span ID: 0 CID: 30
+            }},
+        {name => 'isdn_d_chan', options => undef},
+        {name => 'isdn_group', options => undef},
+        {name => 'isdn_circuit_group', options => {
+            # TODO: EndChannel: Span ID: 1 CID: 30
+            }},
+
+
+
+
+        #{run => 'download_profiles'},
+        {name => 'external_network_elements', options => undef},
+        {name => 'external_gateway_collection', options => undef},
+        {name => 'external_gateway', options => {
+            Name => 'Phone1',
+            IPAddress => $settings->{ip_client},
+            IPAddress4 => $settings->{ip_client},
+            }},
+        {name => 'routing_configuration', options => undef},
+        {name => 'channel_group_collection', options => undef},
+        {name => 'route_table_collection', options => undef},
+        {name => 'route_table', options => {
+            Name => 'ngcp_route_table',
+            }},
+        {name => 'channel_group', options => {
+            SignalingType => 'SIP',
+            InRouteTable => 'ngcp_route_table - ID: 5',
+            InIPProfile => 'ngcp_in_profile',
+            InIPProfileId => '1',
+            OutIPProfile => 'ngcp_out_profile',
+            SupportA2F => 'True',
+            Name => 'CGPhone1',
+            }},
+        {name => 'cg_network_element', options => undef},
+        {name => 'node_association', options => undef},
+        {name => 'channel_group', options => {
+            SignalingType => 'ISDN',
+            InRouteTable => 'ngcp_route_table - ID: 5',
+            SupportA2F => 'True',
+            Name => 'CGisdn1',
+            }},
+        {name => 'cg_isdn_circuit_group', options => undef},
+        {name => 'channel_group', options => {
+            SignalingType => 'ISDN',
+            InRouteTable => 'ngcp_route_table - ID: 5',
+            SupportA2F => 'True',
+            Name => 'CGisdn2',
+            }},
+        {name => 'cg_isdn_circuit_group', options => undef},
+        {name => 'route_element', options => {
+            StringType => 'Channel Group',
+            InChannelGroup => 'CGPhone1',
+            RouteActionType => 'Channel Group',
+            RouteActionList => 'CGisdn1',
+            }},
+        {name => 'route_element', options => {
+            StringType => 'Channel Group',
+            InChannelGroup => 'CGisdn2',
+            RouteActionType => 'Channel Group',
+            RouteActionList => 'CGPhone1',
             }},
         #{run => 'download_route_table'},
         #{run => 'download_channel_groups'},
@@ -773,7 +1028,7 @@ sub reboot_and_wait {
     sleep 2; # not to catch the old server
     for (my $i = 0; $i < 100; $i++) { # 500 seconds on 5 seconds timeout
         $resp = $self->get("/");
-        last if $resp->code < 500;
+        last if $resp->code < 400;
     }
     return $resp;
 }
