@@ -7,14 +7,13 @@ use Data::Dumper;
 
 exit if try_parse_file(@ARGV);
 
+my $resp;
+
 my $test = NGCP::Panel::Utils::DialogicImg->new(
     server      => 'https://10.15.20.150',
 );
 
 p $test->login( 'dialogic', 'Dial0gic' );
-
-my $resp
-    = $test->get( '/oamp/configuration/objects', { appid => $test->appid } );
 
 $resp = $test->obtain_lock();
 p $resp->code;
@@ -43,9 +42,15 @@ print "LOGGED IN, LOCK OBTAINED ############################\n";
 # #p $test->classinfo;
 # exit;
 
-my $result = $test->create_all_sipsip({
-    ip1 => '10.15.20.92',
-    ip2 => '10.15.21.10',
+# $test->pids->{facility} = 10008;
+# $resp = $test->create_ds1_spans;
+# p $resp;
+# p $resp->data;
+# exit;
+
+my $result = $test->create_all_sipisdn({
+    ip_sip => '10.15.20.92',
+    ip_rtp => '10.15.21.10',
     ip_client => '10.15.20.199',
     in_codecs => ['G711 ulaw', 'G711 alaw', 'G729', 'AMR'],
     out_codecs => ['G711 ulaw', 'G711 alaw', 'G729', 'AMR'],
