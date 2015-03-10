@@ -671,7 +671,7 @@ function get_urls(in_data){
         data.uri_lines = '/device/profile/' + in_data.id + '/annolines/ajax';
         data.uri_image = '/device/profile/' + in_data.id + '/frontimage';
         data.uri_extensions = '/device/profile/' + in_data.id + '/extensions';
-        data.uri_extensions_field = '/device/profile/' + in_data.id + '/extensions_field';
+        //data.uri_extensions_field = '/device/profile/' + in_data.id + '/extensions_field';
     }else if(in_data.type == 'extension'){
         if(!in_data.id) return;
         data.uri_lines = '/device/model/' + in_data.id + '/annolines/ajax';
@@ -681,11 +681,14 @@ function get_urls(in_data){
     return data;
 }
 function create_ranges_annotations(id,type,uri_data,ranges,linecmt){
-    var markup = '<div class="annotated" id="annotated_'+type+(type === 'extension'?id:'')+'">' +
+    var divCnt = get_extension_divcnt(id);
+    var divId = 'annotated_'+type+(type === 'extension'?'_'+id+'_'+divCnt:'');
+    var markup = '<div class="annotated" id="'+divId+'">' +
         '<img src="' + uri_data.uri_image + '" />';
     if(undefined === linecmt){
         linecmt = -1;
     }
+    alert('linecmt:'+linecmt);
     for(var i = 0; i < ranges.length; ++i) {
         var range = ranges[i];
         for(var j = 0; j < range.annotations.length; ++j) {
@@ -695,7 +698,7 @@ function create_ranges_annotations(id,type,uri_data,ranges,linecmt){
             var a = range.annotations[j];
             var status = "unassigned";
             var linekeysCurrent = 0;
-
+            alert('linecmt:'+linecmt+'; idx:'+ranges[i].id+'.'+ a.line_index+';');
 [% IF edit_flag == 1 -%]
             var idx = ranges[i].id+'.'+ a.line_index;
             if( linekeys && linekeys[idx]){
@@ -718,13 +721,18 @@ function create_ranges_annotations(id,type,uri_data,ranges,linecmt){
 [% END -%]
                 '</select>' + 
                 '<input type="hidden" name="line.' + linecmt + '.line" id="line.' + linecmt + '.line" value="' + a.range_id + '.' + a.line_index + '"/>' + 
+                '<input type="hidden" name="line.' + linecmt + '.extension_group" id="line.' + linecmt + '.extension_group" value="' + divCnt + '"/>' + 
                 '';
-            markup += '<div class="caption ' + status + '" style="top:' + a.y + 'px; left:' + a.x + 'px;" data-pos="' + a.position + '">' + action + '</div>';
+            markup += '<div class="caption ' + status + '" style="top:' + a.y + 'px; left:' + a.x + 'px;" data-pos="' + a.position + '" data-pos-top="' + a.y + '" data-pos-left="' + a.x + '">' + action + '</div>';
         }
     }
     markup += '</div>';
     if(type == 'extension'){
-        //remove button
+        markup += '<div class="control-group">'
++'<div class="controls">'
++'<div class="btn btn-primary pull-right rm_element btn" onclick="$(\'#'+divCnt+'\').remove();">Remove Extension</div>'
++'</div>'
++'</div>';
     }
     apply_markup(markup);
     $("div.annotated").each(function(){
@@ -746,6 +754,10 @@ function apply_markup(markup){
     alert('last.length:'+last.length);
     last.after(markup);
 }
+function reannotate_device(object, type, id, linecmt) {
+    $('.annotated').remove();
+    annotate_device(object, type, id, linecmt);
+}
 function annotate_device(object, type, id, linecmt) {
     //$('.annotated').remove();
     //alert("caller is " + arguments.callee.caller.toString());
@@ -766,6 +778,7 @@ function annotate_device(object, type, id, linecmt) {
 }
 function process_extensions(type,id,uri_data){
     $.ajax({
+    //should be taken together with nnolines (and linekeys and current linked extensions)
         url: uri_data.uri_extensions,
     }).done(function(extensionsJson) {
         var profileExtensionsData = extensionsJson.aaData;
@@ -835,15 +848,32 @@ function get_linecmt(){
         //$.dump(found, 1, "found");
     });
     var linecmt_max = Math.max.apply(Math, linecmt);
-    if(undefined !== linecmt_max){
-        linecmt_max--;
-    }else{
+    if(undefined === linecmt_max){
+    //we shouldn't make -1 for the NEXT number, although in the code the first operation is ++ in the loop;
         linecmt_max = -1;
     }
     return linecmt_max;
 }
-$('div.controls #profile_id').change(annotate_device);
-annotate_device();
+function get_extension_divcnt(id_in){
+    var divcnt = {}; 
+    $("select[id^='annotated_extension_']").each(function (i, element) {
+        var found = element.id.match(/annotated_extension_(\d+)_(\d+)/);
+        if(found && found[1] && found[2]){
+            if(!divcnt[found[1]]){
+                divcnt[found[1]] = [found[2]];
+            }else{
+                divcnt[found[1]].push(found[2]);
+            }
+        }
+    });
+    for(id in divcnt){
+        divcnt[id] = Math.max.apply(Math, divcnt[id]);
+    }
+    var res = 1 + divcnt[id_in];
+    return res;
+}
+$('div.controls #profile_id').change(reannotate_device);
+reannotate_device();
 
 
 

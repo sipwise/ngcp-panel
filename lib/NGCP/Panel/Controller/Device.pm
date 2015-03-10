@@ -37,7 +37,7 @@ sub base :Chained('/') :PathPart('device') :CaptureArgs(0) {
     }
 
     my $devmod_rs = $c->model('DB')->resultset('autoprov_devices')->search_rs(undef,{
-            'columns' => [qw/id reseller_id type vendor model front_image_type mac_image_type num_lines bootstrap_method bootstrap_uri/],
+            'columns' => [qw/id reseller_id type vendor model front_image_type mac_image_type num_lines bootstrap_method bootstrap_uri extensions_num/],
 	});
     $reseller_id and $devmod_rs = $devmod_rs->search({ reseller_id => $reseller_id });
     $c->stash->{devmod_dt_columns} = NGCP::Panel::Utils::Datatables::set_columns($c, [
