@@ -413,7 +413,17 @@ my $pref_out_codecs = NGCP::Panel::Utils::Preferences::get_peer_preference_rs(
                     };
 
                 $resp = $api->create_all_sipsip($config, 1);
-                my $config_hash = $api->hash_config($config);
+            } elsif ($pref_mode->value eq 'sipisdn') {
+                my $config = {
+                    ip_sip => $c->stash->{server_result}->ip,
+                    ip_rtp => $pref_ip_rtp->value,
+                    ip_client => $c->config->{dialogic}{own_ip},
+                    out_codecs => \@configured_out_codecs,
+                    ip_config => $pref_ip_config->value, # just for the config hash
+                    dialogic_mode => $pref_mode->value,
+                    };
+
+                $resp = $api->create_all_sipisdn($config, 1);
             }
         }
         NGCP::Panel::Utils::Message->info(
