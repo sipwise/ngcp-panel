@@ -5,14 +5,14 @@
         <b class="caret"></b>
     </a>
     <ul class="dropdown-menu">
-        <li><a href="[% c.uri_for_action('/subscriber/calllist', [subscriber.id]) %]">[% c.loc('Call List') %]</a></li>
-        <li><a href="[% c.uri_for_action('/subscriber/voicemails', [subscriber.id]) %]">[% c.loc('Voicebox Messages') %]</a></li>
-        <li><a href="[% c.uri_for_action('/subscriber/reglist', [subscriber.id]) %]">[% c.loc('Registered Devices') %]</a></li>
-        <li><a href="[% c.uri_for_action('/subscriber/preferences', [subscriber.id]) %]">[% c.loc('Subscriber Settings') %]</a></li>
+        <li><a href="[% c.uri_for_action('/subscriber/calllist', [c.user.voip_subscriber.id]) %]">[% c.loc('Call List') %]</a></li>
+        <li><a href="[% c.uri_for_action('/subscriber/voicemails', [c.user.voip_subscriber.id]) %]">[% c.loc('Voicebox Messages') %]</a></li>
+        <li><a href="[% c.uri_for_action('/subscriber/reglist', [c.user.voip_subscriber.id]) %]">[% c.loc('Registered Devices') %]</a></li>
+        <li><a href="[% c.uri_for_action('/subscriber/preferences', [c.user.voip_subscriber.id]) %]">[% c.loc('Subscriber Settings') %]</a></li>
         <li><a href="[% c.uri_for_action('/customer/details', [c.user.account_id]) %]">[% c.loc('Customer Settings') %]</a></li>
-        <li><a href="[% c.uri_for_action('/subscriber/webpass', [subscriber.id]) %]">[% c.loc('User Details') %]</a></li>
+        <li><a href="[% c.uri_for_action('/subscriber/webpass', [c.user.voip_subscriber.id]) %]">[% c.loc('User Details') %]</a></li>
         [% IF c.config.features.faxserver -%]
-        <li><a href="[% c.uri_for_action('/subscriber/webfax', [subscriber.id]) %]">[% c.loc('Web Fax') %]</a></li>
+        <li><a href="[% c.uri_for_action('/subscriber/webfax', [c.user.voip_subscriber.id]) %]">[% c.loc('Web Fax') %]</a></li>
         [% END -%]
     </ul>
 </li>
