@@ -32,10 +32,12 @@ sub group_list :Chained('/') :PathPart('peering') :CaptureArgs(0) {
     ]);
     
     $c->stash(template => 'peering/list.tt');
+    return;
 }
 
 sub root :Chained('group_list') :PathPart('') :Args(0) {
     my ($self, $c) = @_;
+    return;
 }
 
 sub ajax :Chained('group_list') :PathPart('ajax') :Args(0) {
@@ -45,6 +47,7 @@ sub ajax :Chained('group_list') :PathPart('ajax') :Args(0) {
     NGCP::Panel::Utils::Datatables::process($c, $resultset, $c->stash->{peering_group_dt_columns});
     
     $c->detach( $c->view("JSON") );
+    return;
 }
 
 sub base :Chained('group_list') :PathPart('') :CaptureArgs(1) {
@@ -97,6 +100,7 @@ sub base :Chained('group_list') :PathPart('') :CaptureArgs(1) {
     $c->stash(group => {$res->get_columns});
     $c->stash->{group}->{'contract.id'} = $res->peering_contract_id;
     $c->stash(group_result => $res);
+    return;
 }
 
 sub edit :Chained('base') :PathPart('edit') {
@@ -133,11 +137,12 @@ sub edit :Chained('base') :PathPart('edit') {
                 desc  => $c->loc('Failed to update peering group'),
             );
         };
-        NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for)
+        NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for);
     }
 
     $c->stash(form => $form);
     $c->stash(edit_flag => 1);
+    return;
 }
 
 sub delete :Chained('base') :PathPart('delete') {
@@ -164,6 +169,7 @@ sub delete :Chained('base') :PathPart('delete') {
         );
     };
     $c->response->redirect($c->uri_for());
+    return;
 }
 
 sub create :Chained('group_list') :PathPart('create') :Args(0) {
@@ -208,15 +214,18 @@ sub create :Chained('group_list') :PathPart('create') :Args(0) {
     $c->stash(close_target => $c->uri_for_action('/peering/root'));
     $c->stash(create_flag => 1);
     $c->stash(form => $form);
+    return;
 }
 
 sub servers_list :Chained('base') :PathPart('servers') :CaptureArgs(0) {
     my ($self, $c) = @_;
     $c->stash(template => 'peering/servers_rules.tt');
+    return;
 }
 
 sub servers_root :Chained('servers_list') :PathPart('') :Args(0) {
     my ($self, $c) = @_;
+    return;
 }
 
 sub servers_ajax :Chained('servers_list') :PathPart('s_ajax') :Args(0) {
@@ -225,6 +234,7 @@ sub servers_ajax :Chained('servers_list') :PathPart('s_ajax') :Args(0) {
     my $resultset = $c->stash->{group_result}->voip_peer_hosts;
     NGCP::Panel::Utils::Datatables::process($c, $resultset, $c->stash->{server_dt_columns});
     $c->detach( $c->view("JSON") );
+    return;
 }
 
 sub servers_create :Chained('servers_list') :PathPart('create') :Args(0) {
@@ -240,7 +250,7 @@ sub servers_create :Chained('servers_list') :PathPart('create') :Args(0) {
         c => $c,
         form => $form,
         fields => {},
-        back_uri => $c->req->uri
+        back_uri => $c->req->uri,
     );
     if($posted && $form->validated) {
         try {
@@ -275,6 +285,7 @@ sub servers_create :Chained('servers_list') :PathPart('create') :Args(0) {
         servers_create_flag => 1,
         servers_form => $form,
     );
+    return;
 }
 
 sub servers_base :Chained('servers_list') :PathPart('') :CaptureArgs(1) {
@@ -304,6 +315,7 @@ sub servers_base :Chained('servers_list') :PathPart('') :CaptureArgs(1) {
     }
     $c->stash(server => {$res->get_columns});
     $c->stash(server_result => $res);
+    return;
 }
 
 sub servers_edit :Chained('servers_base') :PathPart('edit') :Args(0) {
@@ -320,7 +332,7 @@ sub servers_edit :Chained('servers_base') :PathPart('edit') :Args(0) {
         c => $c,
         form => $form,
         fields => {},
-        back_uri => $c->req->uri
+        back_uri => $c->req->uri,
     );
     if($posted && $form->validated) {
         try {
@@ -343,8 +355,9 @@ sub servers_edit :Chained('servers_base') :PathPart('edit') :Args(0) {
     $c->stash(
         close_target => $c->uri_for_action('/peering/servers_root', [$c->req->captures->[0]]),
         servers_form => $form,
-        servers_edit_flag => 1
+        servers_edit_flag => 1,
     );
+    return;
 }
 
 sub servers_delete :Chained('servers_base') :PathPart('delete') :Args(0) {
@@ -366,6 +379,7 @@ sub servers_delete :Chained('servers_base') :PathPart('delete') :Args(0) {
         );
     };
     NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for_action('/peering/servers_root', [$c->req->captures->[0]]));
+    return;
 }
 
 sub servers_flash_dialogic :Chained('servers_base') :PathPart('edit/dialogic') :Args(0) {
@@ -397,7 +411,7 @@ my $pref_out_codecs = NGCP::Panel::Utils::Preferences::get_peer_preference_rs(
             my $api = NGCP::Panel::Utils::DialogicImg->new(
                 server      => 'https://' . $pref_ip_config->value,
             );
-            my @configured_out_codecs =  map { s/^\s+|\s+$//gr } split(',', $pref_out_codecs->value);
+            my @configured_out_codecs =  map { s/^\s+|\s+$//gr } split(m/,/, $pref_out_codecs->value);
             $api->login( $c->config->{dialogic}{username}, $c->config->{dialogic}{password} );
             my $resp = $api->obtain_lock();
             die "Couldn't connect to dialogic"
@@ -413,7 +427,17 @@ my $pref_out_codecs = NGCP::Panel::Utils::Preferences::get_peer_preference_rs(
                     };
 
                 $resp = $api->create_all_sipsip($config, 1);
-                my $config_hash = $api->hash_config($config);
+            } elsif ($pref_mode->value eq 'sipisdn') {
+                my $config = {
+                    ip_sip => $c->stash->{server_result}->ip,
+                    ip_rtp => $pref_ip_rtp->value,
+                    ip_client => $c->config->{dialogic}{own_ip},
+                    out_codecs => \@configured_out_codecs,
+                    ip_config => $pref_ip_config->value, # just for the config hash
+                    dialogic_mode => $pref_mode->value,
+                    };
+
+                $resp = $api->create_all_sipisdn($config, 1);
             }
         }
         NGCP::Panel::Utils::Message->info(
@@ -429,6 +453,7 @@ my $pref_out_codecs = NGCP::Panel::Utils::Preferences::get_peer_preference_rs(
         );
     };
     NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for_action('/peering/servers_root', [$c->req->captures->[0]]));
+    return;
 }
 
 sub servers_preferences_list :Chained('servers_base') :PathPart('preferences') :CaptureArgs(0) {
@@ -437,7 +462,7 @@ sub servers_preferences_list :Chained('servers_base') :PathPart('preferences') :
     my $x_pref_values = $c->model('DB')
         ->resultset('voip_preferences')
         ->search({
-                'peer_host.id' => $c->stash->{server}->{id}
+                'peer_host.id' => $c->stash->{server}->{id},
             },{
                 prefetch => {'voip_peer_preferences' => 'peer_host'},
             });
@@ -445,9 +470,8 @@ sub servers_preferences_list :Chained('servers_base') :PathPart('preferences') :
     my %pref_values;
     foreach my $value($x_pref_values->all) {
     
-        $pref_values{$value->attribute} = [
-            map {$_->value} $value->voip_peer_preferences->all
-        ];
+        $pref_values{$value->attribute} = 
+            [ map {$_->value} $value->voip_peer_preferences->all ];
     }
 
     my $rewrite_rule_sets_rs = $c->model('DB')
@@ -461,10 +485,11 @@ sub servers_preferences_list :Chained('servers_base') :PathPart('preferences') :
     );
     
     $c->stash(template => 'peering/preferences.tt');
+    return;
 }
 
 sub servers_preferences_root :Chained('servers_preferences_list') :PathPart('') :Args(0) {
-
+    return;
 }
 
 sub servers_preferences_base :Chained('servers_preferences_list') :PathPart('') :CaptureArgs(1) {
@@ -474,7 +499,7 @@ sub servers_preferences_base :Chained('servers_preferences_list') :PathPart('') 
         ->resultset('voip_preferences')
         ->search({
             -or => ['voip_preferences_enums.peer_pref' => 1,
-                'voip_preferences_enums.peer_pref' => undef]
+                'voip_preferences_enums.peer_pref' => undef],
         },{
             prefetch => 'voip_preferences_enums',
         })
@@ -490,6 +515,7 @@ sub servers_preferences_base :Chained('servers_preferences_list') :PathPart('') 
         });
     my @values = $c->stash->{preference}->get_column("value")->all;
     $c->stash->{preference_values} = \@values;
+    return;
 }
 
 sub servers_preferences_edit :Chained('servers_preferences_base') :PathPart('edit') :Args(0) {
@@ -509,6 +535,7 @@ sub servers_preferences_edit :Chained('servers_preferences_base') :PathPart('edi
         base_uri => $c->uri_for_action('/peering/servers_preferences_root', [@{ $c->req->captures }[0,1]]),
         edit_uri => $c->uri_for_action('/peering/servers_preferences_edit', $c->req->captures),
     );
+    return;
 }
 
 sub rules_list :Chained('base') :PathPart('rules') :CaptureArgs(0) {
@@ -518,6 +545,7 @@ sub rules_list :Chained('base') :PathPart('rules') :CaptureArgs(0) {
         '/peering/servers_root', [$c->req->captures->[0]]);
     $c->stash(sr_list_uri => $sr_list_uri);
     $c->stash(template => 'peering/servers_rules.tt');
+    return;
 }
 
 sub rules_ajax :Chained('rules_list') :PathPart('r_ajax') :Args(0) {
@@ -526,6 +554,7 @@ sub rules_ajax :Chained('rules_list') :PathPart('r_ajax') :Args(0) {
     my $resultset = $c->stash->{group_result}->voip_peer_rules;
     NGCP::Panel::Utils::Datatables::process($c, $resultset, $c->stash->{rules_dt_columns});
     $c->detach( $c->view("JSON") );
+    return;
 }
 
 sub rules_create :Chained('rules_list') :PathPart('create') :Args(0) {
@@ -541,7 +570,7 @@ sub rules_create :Chained('rules_list') :PathPart('create') :Args(0) {
         c => $c,
         form => $form,
         fields => {},
-        back_uri => $c->req->uri
+        back_uri => $c->req->uri,
     );
     if($posted && $form->validated) {
         try {
@@ -567,6 +596,7 @@ sub rules_create :Chained('rules_list') :PathPart('create') :Args(0) {
         rules_create_flag => 1,
         rules_form => $form,
     );
+    return;
 }
 
 sub rules_base :Chained('rules_list') :PathPart('') :CaptureArgs(1) {
@@ -596,6 +626,7 @@ sub rules_base :Chained('rules_list') :PathPart('') :CaptureArgs(1) {
     }
     $c->stash(rule => {$res->get_columns});
     $c->stash(rule_result => $res);
+    return;
 }
 
 sub rules_edit :Chained('rules_base') :PathPart('edit') :Args(0) {
@@ -612,7 +643,7 @@ sub rules_edit :Chained('rules_base') :PathPart('edit') :Args(0) {
         c => $c,
         form => $form,
         fields => {},
-        back_uri => $c->req->uri
+        back_uri => $c->req->uri,
     );
     if($posted && $form->validated) {
         try {
@@ -638,6 +669,7 @@ sub rules_edit :Chained('rules_base') :PathPart('edit') :Args(0) {
         rules_form => $form,
         rules_edit_flag => 1,
     );
+    return;
 }
 
 sub rules_delete :Chained('rules_base') :PathPart('delete') :Args(0) {
@@ -659,6 +691,7 @@ sub rules_delete :Chained('rules_base') :PathPart('delete') :Args(0) {
         );
     };
     NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for_action('/peering/servers_root', [$c->req->captures->[0]]));
+    return;
 }
 
 sub _sip_lcr_reload {
