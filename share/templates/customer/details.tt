@@ -633,16 +633,18 @@
 <script src="/js/libs/ngcp-annotate.js"></script>
 <link rel="stylesheet" type="text/css" href="/font/font-awesome/css/font-awesome.min.css"/>
 <script>
-var aaData;
 var linekeys;
-var field_extensions;
+var fieldExtensions;
+var profileExtensionsData;
 [% IF edit_flag == 1 -%]
 if(!linekeys){
     linekeys = {};
-    field_extensions = {};
+    //keeps as keys modelDeviceId's for all extensions, mentioned in the field lineranges
+    //keys of the value keep all phone models linked to this extension
+    fieldExtensions = {};
     [% FOR line IN pbx_device.autoprov_field_device_lines.all -%]
         [%IF line.autoprov_device_line_range.device.type == 'extension'%]
-            field_extensions['[%line.autoprov_device_line_range.device.id%]'] = {
+            fieldExtensions['[%line.autoprov_device_line_range.device.id%]'] = {
             [% FOR link IN line.autoprov_device_line_range.device.autoprov_extension_device_link.all -%]
                 '[%link.device_id%]':1[%IF !loop.last %], [%END%]
             [%END%]
@@ -669,26 +671,18 @@ function get_urls(in_data){
         //alert('2.id='+in_data.id);
         if(!in_data.id) return;
         data.uri_lines = '/device/profile/' + in_data.id + '/annolines/ajax';
-        data.uri_image = '/device/profile/' + in_data.id + '/frontimage';
         data.uri_extensions = '/device/profile/' + in_data.id + '/extensions';
-        //data.uri_extensions_field = '/device/profile/' + in_data.id + '/extensions_field';
-    }else if(in_data.type == 'extension'){
-        if(!in_data.id) return;
-        data.uri_lines = '/device/model/' + in_data.id + '/annolines/ajax';
-        data.uri_image = '/device/model/' + in_data.id + '/frontimage';
     }
     //alert('3.id='+in_data.id+';type='+in_data.type);
     return data;
 }
-function create_ranges_annotations(id,type,uri_data,ranges,linecmt){
+function create_ranges_annotations(id,type,ranges){
     var divCnt = get_extension_divcnt(id);
     var divId = 'annotated_'+type+(type === 'extension'?'_'+id+'_'+divCnt:'');
+    var uri_image = ( type == 'extension' ) ?'/device/model/' + id + '/frontimage' : '/device/profile/' + id + '/frontimage';
     var markup = '<div class="annotated" id="'+divId+'">' +
-        '<img src="' + uri_data.uri_image + '" />';
-    if(undefined === linecmt){
-        linecmt = -1;
-    }
-    alert('linecmt:'+linecmt);
+        '<img src="' +uri_image + '" />';
+    var linecmt = get_linecmt();
     for(var i = 0; i < ranges.length; ++i) {
         var range = ranges[i];
         for(var j = 0; j < range.annotations.length; ++j) {
@@ -754,89 +748,72 @@ function apply_markup(markup){
     alert('last.length:'+last.length);
     last.after(markup);
 }
-function reannotate_device(object, type, id, linecmt) {
+
+function annotate_profile() {
     $('.annotated').remove();
-    annotate_device(object, type, id, linecmt);
-}
-function annotate_device(object, type, id, linecmt) {
-    //$('.annotated').remove();
     //alert("caller is " + arguments.callee.caller.toString());
-    var in_data = {'id':id, 'type': type};
+    var in_data = {'id':'', 'type': 'profile'};
     var uri_data = get_urls(in_data);
-    alert('in_data.id:'+in_data.id+';in_data.type:'+in_data.type+';linecmt:'+linecmt);
+    alert('in_data.id:'+in_data.id+';in_data.type:'+in_data.type+';');
     id = in_data.id;
     type = in_data.type;
     if(!id) return;
     $.ajax({
         url: uri_data.uri_lines,
     }).done(function(data) {
-        var ranges = data.aaData;
-        var markup = create_ranges_annotations(id,type,uri_data, ranges, linecmt);
-        process_extensions(type,id,uri_data);
-        //process_linked_extensions(id);
+        profileExtensionsData = data.aaData;
+        var ranges = profileExtensionsData.ranges;
+        create_ranges_annotations(id,'profile',profileExtensionsData.ranges);
+        process_extensions();
+        add_extension_button();
     });
 }
-function process_extensions(type,id,uri_data){
-    $.ajax({
-    //should be taken together with nnolines (and linekeys and current linked extensions)
-        url: uri_data.uri_extensions,
-    }).done(function(extensionsJson) {
-        var profileExtensionsData = extensionsJson.aaData;
-        //$.dump(profileExtensionsData, 1, "profileExtensionsData");
-        //$.dump(profileExtensionsData.extensions.keys(), 1, "profileExtensionsData");
-        //$.dump(field_extensions, 1, "field_extensions");
-        var field_extensions_current = {};
-        for( extension_device_id in field_extensions ){
-            alert('extension_device_id '+extension_device_id);
-            if(field_extension[extension_device_id][profileExtensionsData.device.id]){
-                field_extensions_current[extension_device_id] = 1;
-                var extension_uri_data_in = {'type': 'extension','id':extension_device_id};
-                var extension_uri_data = get_urls(extension_uri_data_in);
-                
-                var markup = create_ranges_annotations(extension_device_id,'extension',extension_uri_data,profileExtensionsData.extensions[extension_device_id],linekeys);
-                //process_linked_extensions(id);
-                annotate_device('extension', extension_device_id,get_linecmt());
-            }
+function process_extensions(){
+    var fieldExtensionsCurrent = get_extensions_current();
+    for( extensionModelDeviceId in fieldExtensionsCurrent ){
+        create_ranges_annotations(extensionModelDeviceId,'extension',profileExtensionsData.extensions[extensionModelDeviceId].ranges);
+    }
+}
+function get_extensions_current(){
+    var fieldExtensionsCurrent = {};
+    var profileModelDeviceId = profileExtensionsData.device.id;
+    for(extensionModelDeviceId in fieldExtensions){
+        if(fieldExtensions[extensionModelDeviceId][profileModelDeviceId]){
+            fieldExtensionsCurrent[extensionModelDeviceId] = 1;
         }
-        //for( extension_device_id in field_extensions ){
-        //     annotate_device('extension', extension_device_id);
-        //}
-        var fieldExtensionsNum = Object.keys(field_extensions_current).length ;
-        var allowedExtensionsNum = profileExtensionsData.device.extensions_num;
-        var addExtensionMarkup = '';
-        var availableExtensionsNum = Object.keys(profileExtensionsData.extensions).length;
-        alert('fieldExtensionsNum:'+fieldExtensionsNum+';allowedExtensionsNum:'+allowedExtensionsNum+';availableExtensionsNum:'+availableExtensionsNum+';');
-        if(allowedExtensionsNum && availableExtensionsNum && (fieldExtensionsNum < allowedExtensionsNum)){
-            alert('got here');
-            addExtensionMarkup += '<div class="control-group" id="extension">'
+    }
+    return fieldExtensionsCurrent;
+}
+function add_extension_button(){
+    var fieldExtensionsCurrent = get_extensions_current();
+    var fieldExtensionsNum = Object.keys(fieldExtensionsCurrent).length ;
+    var allowedExtensionsNum = profileExtensionsData.device.extensions_num;
+    var addExtensionMarkup = '';
+    var availableExtensionsNum = Object.keys(profileExtensionsData.extensions).length;
+    alert('fieldExtensionsNum:'+fieldExtensionsNum+';allowedExtensionsNum:'+allowedExtensionsNum+';availableExtensionsNum:'+availableExtensionsNum+';');
+    if(allowedExtensionsNum && availableExtensionsNum && (fieldExtensionsNum < allowedExtensionsNum)){
+        alert('button should be added');
+        addExtensionMarkup += '<div class="control-group" id="add_extension_button">'
 +'<label class="control-label" for="extension">Device Extension</label>'
 +'<div class="controls">'
 +'<div class="control-group">'
 +'<label class="control-label" for="extension.'+fieldExtensionsNum+'"></label>'
-+'<div class="controls"><select name="extension.'+fieldExtensionsNum+'.extension_id">';
-            for( extension_device_id in profileExtensionsData.extensions ){
-                addExtensionMarkup += '<option value='+extension_device_id+'>'+profileExtensionsData.extensions[extension_device_id].vendor+' '+ profileExtensionsData.extensions[extension_device_id].model;
-                //annotate_device('extension', extension_device_id);
-            }
-            addExtensionMarkup += '</select></div>'
++'<div class="controls"><select name="extension_id" id="extension_id">';
+        for( extensionModelDeviceId in profileExtensionsData.extensions ){
+            addExtensionMarkup += '<option value='+extensionModelDeviceId+'>'+profileExtensionsData.extensions[extensionModelDeviceId].vendor+' '+ profileExtensionsData.extensions[extensionModelDeviceId].model;
+        }
+        addExtensionMarkup += '</select></div>'
 +'</div>'
 +'<div class="control-group">'
 +'<div class="controls">'
-+'<div class="btn btn-primary pull-right add_element btn" data-rep-elem-id="'+fieldExtensionsNum+'" id="extension.'+fieldExtensionsNum+'.add" onclick="annotate_device({},\'extension\', \''+extension_device_id+'\',get_linecmt());">Add Extension</div>'
++'<div class="btn btn-primary pull-right add_element btn" data-rep-elem-id="'+fieldExtensionsNum+'" id="extension.'+fieldExtensionsNum+'.add" onclick="var selectObj = document.getElementById(\'extension_id\');var extensionModelDeviceId=selectObj.options[selectObj.selectedIndex].value; create_ranges_annotations(extensionModelDeviceId,\'extension\',profileExtensionsData.extensions[extensionModelDeviceId].ranges);">Add Extension</div>'
 +'</div>'
 +'</div></div>'
 +'</div>';
-apply_markup(addExtensionMarkup);
-            //$.ajax({
-            //    url: uri_data.uri_extensions_field,
-            //}).done(function(extensionsFieldResponse) {
-            //alert(extensionsFieldResponse);
-            //    var addExtensionMarkup = extensionsFieldResponse;
-            //    apply_markup(addExtensionMarkup);
-            //});
-        }
-    });
-
+        apply_markup(addExtensionMarkup);
+    }else{
+        $('#add_extension_button').remove();
+    }
 }
 function get_linecmt(){
     var linecmt = []; 
@@ -872,8 +849,8 @@ function get_extension_divcnt(id_in){
     var res = 1 + divcnt[id_in];
     return res;
 }
-$('div.controls #profile_id').change(reannotate_device);
-reannotate_device();
+$('div.controls #profile_id').change(annotate_profile);
+annotate_profile();
 
 
 
