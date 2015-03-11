@@ -1346,9 +1346,11 @@ sub pbx_device_lines_update :Private{
             $err = 1;
             last;
         } else {
-            my ($range_id, $key_num) = split /\./, $line->field('line')->value;
+            my ($range_id, $key_num, $unit) = split /\./, $line->field('line')->value;
             my $type = $line->field('type')->value;
-            my $unit = $line->field('extension_unit')->value;
+            if(!$unit){
+                $unit = $line->field('extension_unit')->value;
+            }
             $fdev->autoprov_field_device_lines->create({
                 subscriber_id  => $prov_subscriber->id,
                 linerange_id   => $range_id,
