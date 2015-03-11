@@ -141,7 +141,7 @@ sub devmod_create :Chained('base') :PathPart('model/create') :Args(0) :Does(ACL)
     }
 
     my $params = {};
-    $params = $params->merge($c->session->{created_objects});
+    $params = merge($params, $c->session->{created_objects});
     if($posted) {
         $c->req->params->{front_image} = $c->req->upload('front_image');
         $c->req->params->{mac_image} = $c->req->upload('mac_image');
@@ -209,12 +209,12 @@ sub devmod_create :Chained('base') :PathPart('model/create') :Args(0) :Does(ACL)
                 delete $c->session->{created_objects}->{reseller};
                 $c->session->{created_objects}->{device} = { id => $devmod->id };
             });
-            NGCP::Panel::Utils::Message->info(
+            NGCP::Panel::Utils::Message::info(
                 c    => $c,
                 desc => $c->loc('Successfully created device model'),
             );
         } catch($e) {
-            NGCP::Panel::Utils::Message->error(
+            NGCP::Panel::Utils::Message::error(
                 c => $c,
                 error => $e,
                 desc => $c->loc('Failed to create device model'),
@@ -232,8 +232,8 @@ sub devmod_create :Chained('base') :PathPart('model/create') :Args(0) :Does(ACL)
 sub devmod_base :Chained('base') :PathPart('model') :CaptureArgs(1) {
     my ($self, $c, $devmod_id) = @_;
 
-    unless($devmod_id->is_int) {
-        NGCP::Panel::Utils::Message->error(
+    unless(is_int($devmod_id)) {
+        NGCP::Panel::Utils::Message::error(
             c => $c,
             error => "invalid device model id '$devmod_id'",
             desc => $c->loc('Invalid device model id'),
@@ -243,7 +243,7 @@ sub devmod_base :Chained('base') :PathPart('model') :CaptureArgs(1) {
 
     $c->stash->{devmod} = $c->stash->{devmod_rs}->find($devmod_id,{'+columns' => [qw/mac_image front_image/]});
     unless($c->stash->{devmod}) {
-        NGCP::Panel::Utils::Message->error(
+        NGCP::Panel::Utils::Message::error(
             c => $c,
             error => "device model with id '$devmod_id' not found",
             desc => $c->loc('Device model not found'),
@@ -257,7 +257,7 @@ sub devmod_delete :Chained('devmod_base') :PathPart('delete') :Args(0) :Does(ACL
 
     try {
         $c->stash->{devmod}->delete;
-        NGCP::Panel::Utils::Message->info(
+        NGCP::Panel::Utils::Message::info(
             c    => $c,
             data => { id => $c->stash->{devmod}->id,
                       model => $c->stash->{devmod}->model,
@@ -265,7 +265,7 @@ sub devmod_delete :Chained('devmod_base') :PathPart('delete') :Args(0) :Does(ACL
             desc => $c->loc('Device model successfully deleted'),
         );
     } catch($e) {
-        NGCP::Panel::Utils::Message->error(
+        NGCP::Panel::Utils::Message::error(
             c => $c,
             error => "failed to delete device model with id '".$c->stash->{devmod}->id."': $e",
             desc => $c->loc('Failed to delete device model'),
@@ -307,7 +307,7 @@ sub devmod_edit :Chained('devmod_base') :PathPart('edit') :Args(0) :Does(ACL) :A
     }
 
     $params->{reseller}{id} = delete $params->{reseller_id};
-    $params = $params->merge($c->session->{created_objects});
+    $params = merge($params, $c->session->{created_objects});
     $c->stash(edit_model => 1); # to make front_image optional
     if($c->user->is_superuser) {
         $form = NGCP::Panel::Form::Device::ModelAdmin->new(ctx => $c);
@@ -432,7 +432,7 @@ sub devmod_edit :Chained('devmod_base') :PathPart('edit') :Args(0) :Does(ACL) :A
 
                 delete $c->session->{created_objects}->{reseller};
             });
-            NGCP::Panel::Utils::Message->info(
+            NGCP::Panel::Utils::Message::info(
                 c    => $c,
                 data => { id => $c->stash->{devmod}->id,
                           model => $c->stash->{devmod}->model,
@@ -440,7 +440,7 @@ sub devmod_edit :Chained('devmod_base') :PathPart('edit') :Args(0) :Does(ACL) :A
                 desc => $c->loc('Successfully updated device model'),
             );
         } catch($e) {
-            NGCP::Panel::Utils::Message->error(
+            NGCP::Panel::Utils::Message::error(
                 c => $c,
                 error => $e,
                 desc => $c->loc('Failed to update device model'),
@@ -509,7 +509,7 @@ sub devfw_create :Chained('base') :PathPart('firmware/create') :Args(0) :Does(AC
     my $form = NGCP::Panel::Form::Device::Firmware->new;
 
     my $params = {};
-    $params = $params->merge($c->session->{created_objects});
+    $params = merge($params, $c->session->{created_objects});
     if($posted) {
         $c->req->params->{data} = $c->req->upload('data');
     }
@@ -539,12 +539,12 @@ sub devfw_create :Chained('base') :PathPart('firmware/create') :Args(0) :Does(AC
                 delete $c->session->{created_objects}->{device};
                 $c->session->{created_objects}->{firmware} = { id => $devfw->id };
             });
-            NGCP::Panel::Utils::Message->info(
+            NGCP::Panel::Utils::Message::info(
                 c    => $c,
                 desc => $c->loc('Successfully created device firmware'),
             );
         } catch($e) {
-            NGCP::Panel::Utils::Message->error(
+            NGCP::Panel::Utils::Message::error(
                 c => $c,
                 error => $e,
                 desc => $c->loc('Failed to create device firmware'),
@@ -562,8 +562,8 @@ sub devfw_create :Chained('base') :PathPart('firmware/create') :Args(0) :Does(AC
 sub devfw_base :Chained('base') :PathPart('firmware') :CaptureArgs(1) :Does(ACL) :ACLDetachTo('/denied_page') :AllowedRole(admin) :AllowedRole(reseller) {
     my ($self, $c, $devfw_id) = @_;
 
-    unless($devfw_id->is_int) {
-        NGCP::Panel::Utils::Message->error(
+    unless(is_int($devfw_id)) {
+        NGCP::Panel::Utils::Message::error(
             c => $c,
             error => "invalid device firmware id '$devfw_id'",
             desc => $c->loc('Invalid device firmware id'),
@@ -573,7 +573,7 @@ sub devfw_base :Chained('base') :PathPart('firmware') :CaptureArgs(1) :Does(ACL)
 
     $c->stash->{devfw} = $c->stash->{devfw_rs}->find($devfw_id,{'+columns' => 'data'});
     unless($c->stash->{devfw}) {
-        NGCP::Panel::Utils::Message->error(
+        NGCP::Panel::Utils::Message::error(
             c => $c,
             error => "device firmware with id '$devfw_id' not found",
             desc => $c->loc('Device firmware not found'),
@@ -587,13 +587,13 @@ sub devfw_delete :Chained('devfw_base') :PathPart('delete') :Args(0) {
 
     try {
         $c->stash->{devfw}->delete;
-        NGCP::Panel::Utils::Message->info(
+        NGCP::Panel::Utils::Message::info(
             c    => $c,
             data => { $c->stash->{devfw}->get_inflated_columns },
             desc => $c->loc('Device firmware successfully deleted'),
         );
     } catch($e) {
-        NGCP::Panel::Utils::Message->error(
+        NGCP::Panel::Utils::Message::error(
             c => $c,
             error => "failed to delete device firmware with id '".$c->stash->{devfw}->id."': $e",
             desc => $c->loc('Failed to delete device firmware'),
@@ -610,7 +610,7 @@ sub devfw_edit :Chained('devfw_base') :PathPart('edit') :Args(0) {
     my $form;
     my $params = { $c->stash->{devfw}->get_inflated_columns };
     $params->{device}{id} = delete $params->{device_id};
-    $params = $params->merge($c->session->{created_objects});
+    $params = merge($params, $c->session->{created_objects});
     if($posted) {
         $c->req->params->{data} = $c->req->upload('data');
     }
@@ -643,12 +643,12 @@ sub devfw_edit :Chained('devfw_base') :PathPart('edit') :Args(0) {
                 $c->stash->{devfw}->update($form->params);
                 delete $c->session->{created_objects}->{device};
             });
-            NGCP::Panel::Utils::Message->info(
+            NGCP::Panel::Utils::Message::info(
                 c    => $c,
                 desc => $c->loc('Successfully updated device firmware'),
             );
         } catch($e) {
-            NGCP::Panel::Utils::Message->error(
+            NGCP::Panel::Utils::Message::error(
                 c => $c,
                 error => $e,
                 desc => $c->loc('Failed to update device firmware'),
@@ -688,7 +688,7 @@ sub devconf_create :Chained('base') :PathPart('config/create') :Args(0) :Does(AC
     my $form = NGCP::Panel::Form::Device::Config->new;
 
     my $params = {};
-    $params = $params->merge($c->session->{created_objects});
+    $params = merge($params, $c->session->{created_objects});
     $form->process(
         posted => $posted,
         params => $c->request->params,
@@ -712,12 +712,12 @@ sub devconf_create :Chained('base') :PathPart('config/create') :Args(0) :Does(AC
                 delete $c->session->{created_objects}->{device};
                 $c->session->{created_objects}->{config} = { id => $devconf->id };
             });
-            NGCP::Panel::Utils::Message->info(
+            NGCP::Panel::Utils::Message::info(
                 c    => $c,
                 desc => $c->loc('Successfully created device configuration'),
             );
         } catch($e) {
-            NGCP::Panel::Utils::Message->error(
+            NGCP::Panel::Utils::Message::error(
                 c => $c,
                 error => $e,
                 desc => $c->loc('Failed to create device configuration'),
@@ -735,8 +735,8 @@ sub devconf_create :Chained('base') :PathPart('config/create') :Args(0) :Does(AC
 sub devconf_base :Chained('base') :PathPart('config') :CaptureArgs(1) :Does(ACL) :ACLDetachTo('/denied_page') :AllowedRole(admin) :AllowedRole(reseller) {
     my ($self, $c, $devconf_id) = @_;
 
-    unless($devconf_id->is_int) {
-        NGCP::Panel::Utils::Message->error(
+    unless(is_int($devconf_id)) {
+        NGCP::Panel::Utils::Message::error(
             c => $c,
             error => "invalid device config id '$devconf_id'",
             desc => $c->loc('Invalid device configuration id'),
@@ -746,7 +746,7 @@ sub devconf_base :Chained('base') :PathPart('config') :CaptureArgs(1) :Does(ACL)
 
     $c->stash->{devconf} = $c->stash->{devconf_rs}->find($devconf_id,{'+columns' => 'data'});
     unless($c->stash->{devconf}) {
-        NGCP::Panel::Utils::Message->error(
+        NGCP::Panel::Utils::Message::error(
             c => $c,
             error => "device configuration with id '$devconf_id' not found",
             desc => $c->loc('Device configuration not found'),
@@ -760,13 +760,13 @@ sub devconf_delete :Chained('devconf_base') :PathPart('delete') :Args(0) {
 
     try {
         $c->stash->{devconf}->delete;
-        NGCP::Panel::Utils::Message->info(
+        NGCP::Panel::Utils::Message::info(
             c    => $c,
             data => { $c->stash->{devconf}->get_inflated_columns },
             desc => $c->loc('Device configuration successfully deleted'),
         );
     } catch($e) {
-        NGCP::Panel::Utils::Message->error(
+        NGCP::Panel::Utils::Message::error(
             c => $c,
             error => "failed to delete device configuration with id '".$c->stash->{devconf}->id."': $e",
             desc => $c->loc('Failed to delete device configuration'),
@@ -783,7 +783,7 @@ sub devconf_edit :Chained('devconf_base') :PathPart('edit') :Args(0) {
     my $form;
     my $params = { $c->stash->{devconf}->get_inflated_columns };
     $params->{device}{id} = delete $params->{device_id};
-    $params = $params->merge($c->session->{created_objects});
+    $params = merge($params, $c->session->{created_objects});
     $form = NGCP::Panel::Form::Device::Config->new;
 
     $form->process(
@@ -811,12 +811,12 @@ sub devconf_edit :Chained('devconf_base') :PathPart('edit') :Args(0) {
                 $c->stash->{devconf}->update($form->params);
                 delete $c->session->{created_objects}->{device};
             });
-            NGCP::Panel::Utils::Message->info(
+            NGCP::Panel::Utils::Message::info(
                 c    => $c,
                 desc => $c->loc('Successfully updated device configuration'),
             );
         } catch($e) {
-            NGCP::Panel::Utils::Message->error(
+            NGCP::Panel::Utils::Message::error(
                 c => $c,
                 error => $e,
                 desc => $c->loc('Failed to update device configuration'),
@@ -855,7 +855,7 @@ sub devprof_create :Chained('base') :PathPart('profile/create') :Args(0) :Does(A
     my $form = NGCP::Panel::Form::Device::Profile->new;
 
     my $params = {};
-    $params = $params->merge($c->session->{created_objects});
+    $params = merge($params, $c->session->{created_objects});
     $form->process(
         posted => $posted,
         params => $c->request->params,
@@ -881,12 +881,12 @@ sub devprof_create :Chained('base') :PathPart('profile/create') :Args(0) :Does(A
 
                 delete $c->session->{created_objects}->{config};
             });
-            NGCP::Panel::Utils::Message->info(
+            NGCP::Panel::Utils::Message::info(
                 c    => $c,
                 desc => $c->loc('Successfully created device profile'),
             );
         } catch($e) {
-            NGCP::Panel::Utils::Message->error(
+            NGCP::Panel::Utils::Message::error(
                 c => $c,
                 error => $e,
                 desc => $c->loc('Failed to create device profile'),
@@ -904,8 +904,8 @@ sub devprof_create :Chained('base') :PathPart('profile/create') :Args(0) :Does(A
 sub devprof_base :Chained('base') :PathPart('profile') :CaptureArgs(1) :Does(ACL) :ACLDetachTo('/denied_page') :AllowedRole(admin) :AllowedRole(reseller) :AllowedRole(subscriberadmin) {
     my ($self, $c, $devprof_id) = @_;
 
-    unless($devprof_id->is_int) {
-        NGCP::Panel::Utils::Message->error(
+    unless(is_int($devprof_id)) {
+        NGCP::Panel::Utils::Message::error(
             c => $c,
             error => "invalid device profile id '$devprof_id'",
             desc => $c->loc('Invalid device profile id'),
@@ -915,7 +915,7 @@ sub devprof_base :Chained('base') :PathPart('profile') :CaptureArgs(1) :Does(ACL
 
     $c->stash->{devprof} = $c->stash->{devprof_rs}->find($devprof_id);
     unless($c->stash->{devprof}) {
-        NGCP::Panel::Utils::Message->error(
+        NGCP::Panel::Utils::Message::error(
             c => $c,
             error => "device profile with id '$devprof_id' not found",
             desc => $c->loc('Device profile not found'),
@@ -968,13 +968,13 @@ sub devprof_delete :Chained('devprof_base') :PathPart('delete') :Args(0) :Does(A
 
     try {
         $c->stash->{devprof}->delete;
-        NGCP::Panel::Utils::Message->info(
+        NGCP::Panel::Utils::Message::info(
             c    => $c,
             data => { $c->stash->{devprof}->get_inflated_columns },
             desc => $c->loc('Device profile successfully deleted'),
         );
     } catch($e) {
-        NGCP::Panel::Utils::Message->error(
+        NGCP::Panel::Utils::Message::error(
             c => $c,
             error => "failed to delete device profile with id '".$c->stash->{devprof}->id."': $e",
             desc => $c->loc('Failed to delete device profile'),
@@ -991,7 +991,7 @@ sub devprof_edit :Chained('devprof_base') :PathPart('edit') :Args(0) :Does(ACL) 
     my $form;
     my $params = { $c->stash->{devprof}->get_inflated_columns };
     $params->{config}{id} = delete $params->{config_id};
-    $params = $params->merge($c->session->{created_objects});
+    $params = merge($params, $c->session->{created_objects});
     $form = NGCP::Panel::Form::Device::Profile->new;
 
     $form->process(
@@ -1019,13 +1019,13 @@ sub devprof_edit :Chained('devprof_base') :PathPart('edit') :Args(0) :Does(ACL) 
 
                 delete $c->session->{created_objects}->{config};
             });
-            NGCP::Panel::Utils::Message->info(
+            NGCP::Panel::Utils::Message::info(
                 c    => $c,
                 data => { $c->stash->{devprof}->get_inflated_columns },
                 desc => $c->loc('Successfully updated device profile'),
             );
         } catch($e) {
-            NGCP::Panel::Utils::Message->error(
+            NGCP::Panel::Utils::Message::error(
                 c => $c,
                 error => $e,
                 desc => $c->loc('Failed to update device profile'),

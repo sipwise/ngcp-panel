@@ -1,7 +1,7 @@
 package NGCP::Panel::Controller::Contact;
 use Geography::Countries qw/countries country CNT_I_FLAG CNT_I_CODE2/;
 use Sipwise::Base;
-use namespace::sweep;
+
 BEGIN { extends 'Catalyst::Controller'; }
 
 use NGCP::Panel::Form::Contact::Reseller;
@@ -48,7 +48,7 @@ sub create :Chained('list_contact') :PathPart('create') :Args(0) {
     my $posted = ($c->request->method eq 'POST');
     my $form;
     my $params = {};
-    $params = $params->merge($c->session->{created_objects});
+    $params = merge($params, $c->session->{created_objects});
     if($c->user->is_superuser && $no_reseller) {
         $form = NGCP::Panel::Form::Contact::Reseller->new;
         $params->{reseller}{id} = $c->user->reseller_id;
@@ -81,12 +81,12 @@ sub create :Chained('list_contact') :PathPart('create') :Args(0) {
             my $contact = $c->stash->{contacts}->create($form->values);
             delete $c->session->{created_objects}->{reseller};
             $c->session->{created_objects}->{contact} = { id => $contact->id };
-            NGCP::Panel::Utils::Message->info(
+            NGCP::Panel::Utils::Message::info(
                 c => $c,
                 desc  => $c->loc('Contact successfully created'),
             );
         } catch($e) {
-            NGCP::Panel::Utils::Message->error(
+            NGCP::Panel::Utils::Message::error(
                 c => $c,
                 error => $e,
                 desc  => $c->loc('Failed to create contact'),
@@ -108,9 +108,9 @@ sub create_without_reseller :Chained('list_contact') :PathPart('create/noreselle
 sub base :Chained('list_contact') :PathPart('') :CaptureArgs(1) {
     my ($self, $c, $contact_id) = @_;
 
-    unless($contact_id && $contact_id->is_int) {
+    unless($contact_id && is_int($contact_id)) {
         $contact_id ||= '';
-        NGCP::Panel::Utils::Message->error(
+        NGCP::Panel::Utils::Message::error(
             c => $c,
             data => { id => $contact_id },
             desc => $c->loc('Invalid contact id detected'),
@@ -120,7 +120,7 @@ sub base :Chained('list_contact') :PathPart('') :CaptureArgs(1) {
     my $res = $c->stash->{contacts};
     $c->stash(contact => $res->find($contact_id));
     unless($c->stash->{contact}) {
-        NGCP::Panel::Utils::Message->error(
+        NGCP::Panel::Utils::Message::error(
             c => $c,
             data => { $c->stash->{contact}->get_inflated_columns },
             desc => $c->loc('Contact not found'),
@@ -135,7 +135,7 @@ sub edit :Chained('base') :PathPart('edit') :Args(0) {
     my $posted = ($c->request->method eq 'POST');
     my $form;
     my $params = { $c->stash->{contact}->get_inflated_columns };
-    $params = $params->merge($c->session->{created_objects});
+    $params = merge($params, $c->session->{created_objects});
     $params->{country}{id} = delete $params->{country};
     if($c->user->is_superuser && $no_reseller) {
         $form = NGCP::Panel::Form::Contact::Reseller->new;
@@ -170,13 +170,13 @@ sub edit :Chained('base') :PathPart('edit') :Args(0) {
             delete $form->values->{reseller};
             $form->values->{country} = $form->values->{country}{id};
             $c->stash->{contact}->update($form->values);
-            NGCP::Panel::Utils::Message->info(
+            NGCP::Panel::Utils::Message::info(
                 c => $c,
                 desc  => $c->loc('Contact successfully changed'),
             );
             delete $c->session->{created_objects}->{reseller};
         } catch($e) {
-            NGCP::Panel::Utils::Message->error(
+            NGCP::Panel::Utils::Message::error(
                 c => $c,
                 error => $e,
                 desc  => $c->loc('Failed to update contact'),
@@ -202,13 +202,13 @@ sub delete :Chained('base') :PathPart('delete') :Args(0) {
 
     try {
         $c->stash->{contact}->delete;
-        NGCP::Panel::Utils::Message->info(
+        NGCP::Panel::Utils::Message::info(
             c => $c,
             data => { $c->stash->{contact}->get_inflated_columns },
             desc  => $c->loc('Contact successfully deleted'),
         );
     } catch($e) {
-        NGCP::Panel::Utils::Message->error(
+        NGCP::Panel::Utils::Message::error(
             c => $c,
             error => $e,
             data => { $c->stash->{contact}->get_inflated_columns },

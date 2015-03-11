@@ -63,8 +63,8 @@ sub ajax :Chained('voucher_list') :PathPart('ajax') :Args(0) {
 sub base :Chained('voucher_list') :PathPart('') :CaptureArgs(1) {
     my ($self, $c, $voucher_id) = @_;
 
-    unless($voucher_id && $voucher_id->is_integer) {
-        NGCP::Panel::Utils::Message->error(
+    unless($voucher_id && is_int($voucher_id)) {
+        NGCP::Panel::Utils::Message::error(
             c => $c,
             data => { id => $voucher_id },
             desc  => $c->loc('Invalid voucher id detected!'),
@@ -75,7 +75,7 @@ sub base :Chained('voucher_list') :PathPart('') :CaptureArgs(1) {
 
     my $res = $c->stash->{voucher_rs}->find($voucher_id);
     unless(defined($res)) {
-        NGCP::Panel::Utils::Message->error(
+        NGCP::Panel::Utils::Message::error(
             c => $c,
             data => { id => $voucher_id },
             desc  => $c->loc('Billing Voucher does not exist!'),
@@ -92,12 +92,12 @@ sub delete :Chained('base') :PathPart('delete') {
 
     try {
         $c->stash->{voucher_result}->delete;
-        NGCP::Panel::Utils::Message->info(
+        NGCP::Panel::Utils::Message::info(
             c => $c,
             desc  => $c->loc('Billing Voucher successfully deleted'),
         );
     } catch($e) {
-        NGCP::Panel::Utils::Message->error(
+        NGCP::Panel::Utils::Message::error(
             c => $c,
             data => { id => $$c->stash->{voucher_result}->id },
             desc  => $c->loc('Failed to delete Billing Voucher'),
@@ -116,7 +116,7 @@ sub edit :Chained('base') :PathPart('edit') {
     my $params = $c->stash->{voucher};
     $params->{valid_until} =~ s/^(\d{4}\-\d{2}\-\d{2}).*$/$1/;
     $params->{reseller}{id} = delete $params->{reseller_id};
-    $params = $params->merge($c->session->{created_objects});
+    $params = merge($params, $c->session->{created_objects});
     if($c->user->is_superuser) {
         $form = NGCP::Panel::Form::Voucher::Admin->new;
     } else {
@@ -157,12 +157,12 @@ sub edit :Chained('base') :PathPart('edit') {
             });
 
             delete $c->session->{created_objects}->{reseller};
-            NGCP::Panel::Utils::Message->info(
+            NGCP::Panel::Utils::Message::info(
                 c => $c,
                 desc  => $c->loc('Billing voucher successfully updated'),
             );
         } catch($e) {
-            NGCP::Panel::Utils::Message->error(
+            NGCP::Panel::Utils::Message::error(
                 c => $c,
                 error => $e,
                 desc  => $c->loc('Failed to update billing voucher'),
@@ -182,7 +182,7 @@ sub create :Chained('voucher_list') :PathPart('create') :Args(0) {
     my $form;
     my $params = {};
     $params->{reseller}{id} = delete $params->{reseller_id};
-    $params = $params->merge($c->session->{created_objects});
+    $params = merge($params, $c->session->{created_objects});
     if($c->user->is_superuser) {
         $form = NGCP::Panel::Form::Voucher::Admin->new;
     } else {
@@ -220,12 +220,12 @@ sub create :Chained('voucher_list') :PathPart('create') :Args(0) {
             my $voucher = $c->model('DB')->resultset('vouchers')->create($form->values);
             $c->session->{created_objects}->{voucher} = { id => $voucher->id };
             delete $c->session->{created_objects}->{reseller};
-            NGCP::Panel::Utils::Message->info(
+            NGCP::Panel::Utils::Message::info(
                 c => $c,
                 desc  => $c->loc('Billing voucher successfully created'),
             );
         } catch($e) {
-            NGCP::Panel::Utils::Message->error(
+            NGCP::Panel::Utils::Message::error(
                 c => $c,
                 error => $e,
                 desc  => $c->loc('Failed to create billing voucher'),
@@ -255,7 +255,7 @@ sub voucher_upload :Chained('voucher_list') :PathPart('upload') :Args(0) {
     if($posted && $form->validated) {
 
         unless($upload) {
-            NGCP::Panel::Utils::Message->error(
+            NGCP::Panel::Utils::Message::error(
                 c => $c,
                 desc => $c->loc('No Billing Voucher file specified!'),
             );
@@ -302,12 +302,12 @@ sub voucher_upload :Chained('voucher_list') :PathPart('upload') :Args(0) {
             if(@fails) {
                 $text .= $c->loc(", but skipped the following line numbers: ") . (join ", ", @fails);
             }
-            NGCP::Panel::Utils::Message->info(
+            NGCP::Panel::Utils::Message::info(
                 c => $c,
                 desc => $text,
             );
         } catch($e) {
-            NGCP::Panel::Utils::Message->error(
+            NGCP::Panel::Utils::Message::error(
                 c => $c,
                 error => $e,
                 desc => $c->loc('Failed to upload Billing Vouchers'),

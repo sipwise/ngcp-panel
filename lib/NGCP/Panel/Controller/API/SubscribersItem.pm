@@ -1,6 +1,6 @@
 package NGCP::Panel::Controller::API::SubscribersItem;
 use Sipwise::Base;
-use namespace::sweep;
+
 use boolean qw(true);
 use Data::HAL qw();
 use Data::HAL::Link qw();

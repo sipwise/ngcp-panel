@@ -243,14 +243,14 @@ Parse messages for log and Web display.
 Usage in the code:
 
 Error:
-        NGCP::Panel::Utils::Message->error(
+        NGCP::Panel::Utils::Message::error(
             c => $c,
             error => $e,
             desc  => $c->loc('Failed to create domain.'),
         );
 
 Info:
-        NGCP::Panel::Utils::Message->info(
+        NGCP::Panel::Utils::Message::info(
             c => $c,
             desc => $c->loc('Domain successfully created'),
         );

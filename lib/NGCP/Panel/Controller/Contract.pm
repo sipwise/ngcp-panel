@@ -59,8 +59,8 @@ sub root :Chained('contract_list') :PathPart('') :Args(0) {
 sub base :Chained('contract_list') :PathPart('') :CaptureArgs(1) {
     my ($self, $c, $contract_id) = @_;
 
-    unless($contract_id && $contract_id->is_integer) {
-        NGCP::Panel::Utils::Message->error(
+    unless($contract_id && is_int($contract_id)) {
+        NGCP::Panel::Utils::Message::error(
             c     => $c,
             log   => 'Invalid contract id detected!',
             desc  => $c->loc('Invalid contract id detected!'),
@@ -76,7 +76,7 @@ sub base :Chained('contract_list') :PathPart('') :CaptureArgs(1) {
         ->find($contract_id);
 
     unless(defined($res)) {
-        NGCP::Panel::Utils::Message->error(
+        NGCP::Panel::Utils::Message::error(
             c     => $c,
             log   => 'Contract does not exist',
             desc  => $c->loc('Contract does not exist'),
@@ -112,7 +112,7 @@ sub edit :Chained('base') :PathPart('edit') :Args(0) {
         $params->{external_id} = $contract->external_id;
         $params->{status} = $contract->status;
     }
-    $params = $params->merge($c->session->{created_objects});
+    $params = merge($params, $c->session->{created_objects});
     my ($form, $is_peering_reseller);
     if (defined $billing_mapping->product &&
         grep {$billing_mapping->product->handle eq $_}
@@ -175,13 +175,13 @@ sub edit :Chained('base') :PathPart('edit') :Args(0) {
                 delete $c->session->{created_objects}->{contact};
                 delete $c->session->{created_objects}->{billing_profile};
             });
-            NGCP::Panel::Utils::Message->info(
+            NGCP::Panel::Utils::Message::info(
                 c => $c,
                 data => $c->stash->{contract},
                 desc  => $c->loc('Contract successfully changed!'),
             );
         } catch($e) {
-            NGCP::Panel::Utils::Message->error(
+            NGCP::Panel::Utils::Message::error(
                 c => $c,
                 error => $e,
                 data => $c->stash->{contract},
@@ -200,7 +200,7 @@ sub terminate :Chained('base') :PathPart('terminate') :Args(0) {
     my $contract = $c->stash->{contract_result};
 
     if ($contract->id == 1) {
-        NGCP::Panel::Utils::Message->error(
+        NGCP::Panel::Utils::Message::error(
             c => $c,
             desc => $c->loc('Cannot terminate contract with the id 1'),
         );
@@ -225,13 +225,13 @@ sub terminate :Chained('base') :PathPart('terminate') :Args(0) {
                 );
             }
         });
-        NGCP::Panel::Utils::Message->info(
+        NGCP::Panel::Utils::Message::info(
             c => $c,
             data => $c->stash->{contract},
             desc => $c->loc('Contract successfully terminated'),
         );
     } catch ($e) {
-        NGCP::Panel::Utils::Message->error(
+        NGCP::Panel::Utils::Message::error(
             c => $c,
             error => $e,
             data  => $c->stash->{contract},
@@ -277,7 +277,7 @@ sub peering_create :Chained('peering_list') :PathPart('create') :Args(0) {
 
     my $posted = ($c->request->method eq 'POST');
     my $params = {};
-    $params = $params->merge($c->session->{created_objects});
+    $params = merge($params, $c->session->{created_objects});
     unless ($self->is_valid_noreseller_contact($c, $params->{contact}{id})) {
         delete $params->{contact};
     }
@@ -326,14 +326,14 @@ sub peering_create :Chained('peering_list') :PathPart('create') :Args(0) {
                 $c->session->{created_objects}->{contract} = { id => $contract->id };
                 delete $c->session->{created_objects}->{contact};
                 delete $c->session->{created_objects}->{billing_profile};
-                NGCP::Panel::Utils::Message->info(
+                NGCP::Panel::Utils::Message::info(
                     c => $c,
                     cname => 'peering_create',
                     desc  => $c->loc('Contract #[_1] successfully created', $contract->id),
                 );
             });
         } catch($e) {
-            NGCP::Panel::Utils::Message->error(
+            NGCP::Panel::Utils::Message::error(
                 c => $c,
                 error => $e,
                 desc  => $c->loc('Failed to create contract'),
@@ -372,9 +372,9 @@ sub reseller_ajax :Chained('reseller_list') :PathPart('ajax') :Args(0) {
 sub reseller_ajax_contract_filter :Chained('reseller_list') :PathPart('ajax/contract') :Args(1) {
     my ($self, $c, $contract_id) = @_;
 
-    unless($contract_id && $contract_id->is_int) {
+    unless($contract_id && is_int($contract_id)) {
         $contract_id //= '';
-        NGCP::Panel::Utils::Message->error(
+        NGCP::Panel::Utils::Message::error(
             c     => $c,
             data  => { id => $contract_id },
             desc  => $c->loc('Invalid contract id detected'),
@@ -404,7 +404,7 @@ sub reseller_create :Chained('reseller_list') :PathPart('create') :Args(0) {
 
     my $posted = ($c->request->method eq 'POST');
     my $params = {};
-    $params = $params->merge($c->session->{created_objects});
+    $params = merge($params, $c->session->{created_objects});
     unless ($self->is_valid_noreseller_contact($c, $params->{contact}{id})) {
         delete $params->{contact};
     }
@@ -454,14 +454,14 @@ sub reseller_create :Chained('reseller_list') :PathPart('create') :Args(0) {
                 $c->session->{created_objects}->{contract} = { id => $contract->id };
                 delete $c->session->{created_objects}->{contact};
                 delete $c->session->{created_objects}->{billing_profile};
-                NGCP::Panel::Utils::Message->info(
+                NGCP::Panel::Utils::Message::info(
                     c => $c,
                     cname => 'reseller_create',
                     desc  => $c->loc('Contract #[_1] successfully created', $contract->id),
                 );
             });
         } catch($e) {
-            NGCP::Panel::Utils::Message->error(
+            NGCP::Panel::Utils::Message::error(
                 c => $c,
                 error => $e,
                 desc  => $c->loc('Failed to create contract'),

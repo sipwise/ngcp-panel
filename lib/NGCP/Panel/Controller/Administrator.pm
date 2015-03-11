@@ -1,5 +1,5 @@
 package NGCP::Panel::Controller::Administrator;
-#use namespace::sweep;
+
 use Sipwise::Base;
 BEGIN { extends 'Catalyst::Controller'; }
 use HTTP::Headers qw();

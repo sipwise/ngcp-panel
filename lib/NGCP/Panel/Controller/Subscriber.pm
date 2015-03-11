@@ -135,7 +135,7 @@ sub create_list :Chained('sub_list') :PathPart('create') :Args(0) :Does(ACL) :AC
 
     my $posted = ($c->request->method eq 'POST');
     my $params = {};
-    $params = $params->merge($c->session->{created_objects});
+    $params = merge($params, $c->session->{created_objects});
     my $form = NGCP::Panel::Form::Subscriber->new(ctx => $c);
     $form->process(
         posted => $posted,
@@ -187,12 +187,12 @@ sub create_list :Chained('sub_list') :PathPart('create') :Args(0) :Does(ACL) :AC
                 delete $c->session->{created_objects}->{contract};
                 delete $c->session->{created_objects}->{domain};
             });
-            NGCP::Panel::Utils::Message->info(
+            NGCP::Panel::Utils::Message::info(
                 c    => $c,
                 desc => $c->loc('Subscriber successfully created!'),
             );
         } catch($e) {
-            NGCP::Panel::Utils::Message->error(
+            NGCP::Panel::Utils::Message::error(
                 c => $c,
                 error => $e,
                 desc  => $c->loc('Failed to create subscriber'),
@@ -208,8 +208,8 @@ sub create_list :Chained('sub_list') :PathPart('create') :Args(0) :Does(ACL) :AC
 sub base :Chained('sub_list') :PathPart('') :CaptureArgs(1) {
     my ($self, $c, $subscriber_id) = @_;
 
-    unless($subscriber_id && $subscriber_id->is_integer) {
-        NGCP::Panel::Utils::Message->error(
+    unless($subscriber_id && is_int($subscriber_id)) {
+        NGCP::Panel::Utils::Message::error(
             c     => $c,
             error => "subscriber id '$subscriber_id' is not an integer",
             desc  => $c->loc('Invalid subscriber id detected'),
@@ -219,7 +219,7 @@ sub base :Chained('sub_list') :PathPart('') :CaptureArgs(1) {
 
     my $res = $c->stash->{subscribers_rs}->find({ id => $subscriber_id });
     unless(defined $res) {
-        NGCP::Panel::Utils::Message->error(
+        NGCP::Panel::Utils::Message::error(
             c     => $c,
             error => "subscriber id '$subscriber_id' does not exist",
             desc  => $c->loc('Subscriber does not exist'),
@@ -235,7 +235,7 @@ sub base :Chained('sub_list') :PathPart('') :CaptureArgs(1) {
         'me.id' => $c->stash->{contract}->id,
     });
     unless(defined $contract) {
-        NGCP::Panel::Utils::Message->error(
+        NGCP::Panel::Utils::Message::error(
             c     => $c,
             error => "subscriber id '$subscriber_id' points to non-existing contract id",
             desc  => $c->loc('Contract does not exist for subscriber'),
@@ -349,7 +349,7 @@ sub webfax_send :Chained('base') :PathPart('webfax/send') :Args(0) {
                 );
             }
         } catch($e) {
-            NGCP::Panel::Utils::Message->error(
+            NGCP::Panel::Utils::Message::error(
                 c     => $c,
                 error => "failed to send fax: $e",
                 desc  => $c->loc('Internal error while sending fax'),
@@ -442,7 +442,7 @@ sub terminate :Chained('base') :PathPart('terminate') :Args(0) :Does(ACL) :ACLDe
     my $subscriber = $c->stash->{subscriber};
 
     if($c->user->roles eq 'subscriberadmin' && $c->user->uuid eq $subscriber->uuid) {
-        NGCP::Panel::Utils::Message->error(
+        NGCP::Panel::Utils::Message::error(
             c     => $c,
             error => 'unauthorized termination of own subscriber for uuid '.$c->user->uuid,
             desc  => $c->loc('Terminating own subscriber is prohibited.'),
@@ -452,13 +452,13 @@ sub terminate :Chained('base') :PathPart('terminate') :Args(0) :Does(ACL) :ACLDe
 
     try {
         NGCP::Panel::Utils::Subscriber::terminate(c => $c, subscriber => $subscriber);
-        NGCP::Panel::Utils::Message->info(
+        NGCP::Panel::Utils::Message::info(
             c    => $c,
             data => { $subscriber->get_inflated_columns },
             desc => $c->loc('Successfully terminated subscriber'),
         );
     } catch($e) {
-        NGCP::Panel::Utils::Message->error(
+        NGCP::Panel::Utils::Message::error(
             c     => $c,
             error => $e,
             desc  => $c->loc('Failed to terminate subscriber'),
@@ -472,7 +472,7 @@ sub reset_webpassword :Chained('base') :PathPart('resetwebpassword') :Args(0) {
     my $subscriber = $c->stash->{subscriber};
 
     if($c->user->roles eq 'subscriberadmin' && $c->user->voip_subscriber->contract_id != $subscriber->contract_id) {
-        NGCP::Panel::Utils::Message->error(
+        NGCP::Panel::Utils::Message::error(
             c     => $c,
             error => 'unauthorized password reset for subscriber uuid '.$c->user->uuid,
             desc  => $c->loc('Invalid password reset attempt.'),
@@ -502,12 +502,12 @@ sub reset_webpassword :Chained('base') :PathPart('resetwebpassword') :Args(0) {
 
 
         });
-        NGCP::Panel::Utils::Message->info(
+        NGCP::Panel::Utils::Message::info(
             c    => $c,
             desc => $c->loc('Successfully reset web password, please check your email at [_1]', $subscriber->contact ? $subscriber->contact->email : $subscriber->contract->contact->email),
         );
     } catch($e) {
-        NGCP::Panel::Utils::Message->error(
+        NGCP::Panel::Utils::Message::error(
             c     => $c,
             error => $e,
             desc  => $c->loc('Failed to reset web password'),
@@ -564,12 +564,12 @@ sub reset_webpassword_nosubscriber :Chained('/') :PathPart('resetwebpassword') :
                     NGCP::Panel::Utils::Email::password_reset($c, $subscriber, $url);
                 }
             });
-            NGCP::Panel::Utils::Message->info(
+            NGCP::Panel::Utils::Message::info(
                 c    => $c,
                 desc => $c->loc('Successfully reset web password, please check your email'),
             );
         } catch($e) {
-            NGCP::Panel::Utils::Message->error(
+            NGCP::Panel::Utils::Message::error(
                 c     => $c,
                 error => $e,
                 desc  => $c->loc('Failed to reset web password'),
@@ -652,7 +652,7 @@ sub recover_webpassword :Chained('/') :PathPart('recoverwebpassword') :Args(0) {
                 $rs->delete;
             });
         } catch($e) {
-            NGCP::Panel::Utils::Message->error(
+            NGCP::Panel::Utils::Message::error(
                 c     => $c,
                 error => $e,
                 type  => 'internal',
@@ -662,7 +662,7 @@ sub recover_webpassword :Chained('/') :PathPart('recoverwebpassword') :Args(0) {
         }
 
         $c->log->debug("+++++++++++++++++++++++ successfully recovered subscriber " . $subscriber->username . '@' . $subscriber->domain->domain);
-        NGCP::Panel::Utils::Message->info(
+        NGCP::Panel::Utils::Message::info(
             c    => $c,
             data => { username => $subscriber->username . '@' . $subscriber->domain->domain },
             desc => $c->loc('Web password successfully recovered, please re-login.'),
@@ -775,7 +775,7 @@ sub preferences_base :Chained('base') :PathPart('preferences') :CaptureArgs(1) {
         ->single({id => $pref_id});
      if(($c->user->roles eq 'subscriber' || $c->user->roles eq 'subscriberadmin') &&
         !$c->stash->{preference_meta}->expose_to_customer) {
-        NGCP::Panel::Utils::Message->error(
+        NGCP::Panel::Utils::Message::error(
             c    => $c,
             type => 'internal',
             desc => $c->loc("Invalid access to pref_id '[_1]' by provisioning subscriber id '[_2]'", $pref_id, $c->user->id),
@@ -832,7 +832,7 @@ sub preferences_edit :Chained('preferences_base') :PathPart('edit') :Args(0) {
                 schema => $c->model('DB'), subscriber => $c->stash->{subscriber});
         }
     } catch($e) {
-        NGCP::Panel::Utils::Message->error(
+        NGCP::Panel::Utils::Message::error(
             c     => $c,
             log   => "Failed to handle preference: $e",
             desc  => $c->loc('Failed to handle preference'),
@@ -868,7 +868,7 @@ sub preferences_edit :Chained('preferences_base') :PathPart('edit') :Args(0) {
                 }
 
             } catch($e) {
-                NGCP::Panel::Utils::Message->error(
+                NGCP::Panel::Utils::Message::error(
                     c     => $c,
                     log   => "Failed to set peer registration: $e",
                     desc  => $c->loc('Peer registration error'),
@@ -903,7 +903,7 @@ sub preferences_callforward :Chained('base') :PathPart('preferences/callforward'
             last SWITCH;
         };
         # default
-        NGCP::Panel::Utils::Message->error(
+        NGCP::Panel::Utils::Message::error(
             c     => $c,
             log   => "Invalid call-forward type '$cf_type'",
             desc  => $c->loc('Invalid Call Forward type.'),
@@ -1102,12 +1102,12 @@ sub preferences_callforward :Chained('base') :PathPart('preferences/callforward'
                     }
                 }
             });
-            NGCP::Panel::Utils::Message->info(
+            NGCP::Panel::Utils::Message::info(
                 c    => $c,
                 desc => $c->loc('Successfully saved Call Forward'),
             );
         } catch($e) {
-            NGCP::Panel::Utils::Message->error(
+            NGCP::Panel::Utils::Message::error(
                 c     => $c,
                 error => $e,
                 desc  => $c->loc('Failed to save Call Forward'),
@@ -1159,7 +1159,7 @@ sub preferences_callforward_advanced :Chained('base') :PathPart('preferences/cal
             last SWITCH;
         };
         # default
-        NGCP::Panel::Utils::Message->error(
+        NGCP::Panel::Utils::Message::error(
             c     => $c,
             log   => "Invalid call-forward type '$cf_type'",
             desc  => $c->loc('Invalid Call Forward type.'),
@@ -1240,7 +1240,7 @@ sub preferences_callforward_advanced :Chained('base') :PathPart('preferences/cal
                     unless(@active) {
                         $ringtimeout_preference->first->delete 
                             if($cf_type eq "cft" &&  $ringtimeout_preference->first);
-                        NGCP::Panel::Utils::Message->info(
+                        NGCP::Panel::Utils::Message::info(
                             c    => $c,
                             desc => $c->loc('Successfully cleared Call Forward'),
                         );
@@ -1288,12 +1288,12 @@ sub preferences_callforward_advanced :Chained('base') :PathPart('preferences/cal
                     }
                 }
             });
-            NGCP::Panel::Utils::Message->info(
+            NGCP::Panel::Utils::Message::info(
                 c    => $c,
                 desc => $c->loc('Successfully saved Call Forward'),
             );
         } catch($e) {
-            NGCP::Panel::Utils::Message->error(
+            NGCP::Panel::Utils::Message::error(
                 c     => $c,
                 error => $e,
                 desc  => $c->loc('Failed to save Call Forward'),
@@ -1423,13 +1423,13 @@ sub preferences_callforward_destinationset_create :Chained('base') :PathPart('pr
                     }
                 }
             });
-            NGCP::Panel::Utils::Message->info(
+            NGCP::Panel::Utils::Message::info(
                 c    => $c,
                 type => 'internal',
                 desc => $c->loc('Successfully created new destination set'),
             );
         } catch($e) {
-            NGCP::Panel::Utils::Message->error(
+            NGCP::Panel::Utils::Message::error(
                 c     => $c,
                 error => $e,
                 type  => 'internal',
@@ -1607,13 +1607,13 @@ sub preferences_callforward_destinationset_edit :Chained('preferences_callforwar
                     }
                 }
             });
-            NGCP::Panel::Utils::Message->info(
+            NGCP::Panel::Utils::Message::info(
                 c    => $c,
                 type => 'internal',
                 desc => $c->loc('Successfully updated destination set'),
             );
         } catch($e) {
-            NGCP::Panel::Utils::Message->error(
+            NGCP::Panel::Utils::Message::error(
                 c     => $c,
                 error => $e,
                 type  => 'internal',
@@ -1659,14 +1659,14 @@ sub preferences_callforward_destinationset_delete :Chained('preferences_callforw
             }
             $set->delete;
         });
-        NGCP::Panel::Utils::Message->info(
+        NGCP::Panel::Utils::Message::info(
             c    => $c,
             data => { $set->get_inflated_columns },
             type => 'internal',
             desc => $c->loc('Successfully deleted destination set'),
         );
     } catch($e) {
-        NGCP::Panel::Utils::Message->error(
+        NGCP::Panel::Utils::Message::error(
             c     => $c,
             error => $e,
             data  => { $set->get_inflated_columns },
@@ -1768,13 +1768,13 @@ sub preferences_callforward_timeset_create :Chained('base') :PathPart('preferenc
                     }
                 }
             });
-            NGCP::Panel::Utils::Message->info(
+            NGCP::Panel::Utils::Message::info(
                 c    => $c,
                 type => 'internal',
                 desc => $c->loc('Successfully created new time set'),
             );
         } catch($e) {
-            NGCP::Panel::Utils::Message->error(
+            NGCP::Panel::Utils::Message::error(
                 c     => $c,
                 error => $e,
                 type  => 'internal',
@@ -1895,13 +1895,13 @@ sub preferences_callforward_timeset_edit :Chained('preferences_callforward_times
                     $set->voip_cf_periods->create($fields);
                 }
             });
-            NGCP::Panel::Utils::Message->info(
+            NGCP::Panel::Utils::Message::info(
                 c    => $c,
                 type => 'internal',
                 desc => $c->loc('Successfully updated time set'),
             );
         } catch($e) {
-            NGCP::Panel::Utils::Message->error(
+            NGCP::Panel::Utils::Message::error(
                 c     => $c,
                 error => $e,
                 type  => 'internal',
@@ -1935,14 +1935,14 @@ sub preferences_callforward_timeset_delete :Chained('preferences_callforward_tim
             }
             $set->delete;
         });
-        NGCP::Panel::Utils::Message->info(
+        NGCP::Panel::Utils::Message::info(
             c    => $c,
             data => { $set->get_inflated_columns },
             type => 'internal',
             desc => $c->loc('Successfully deleted time set'),
         );
     } catch($e) {
-        NGCP::Panel::Utils::Message->error(
+        NGCP::Panel::Utils::Message::error(
             c     => $c,
             error => $e,
             data  => { $set->get_inflated_columns },
@@ -1973,12 +1973,12 @@ sub preferences_callforward_delete :Chained('base') :PathPart('preferences/callf
             prov_subscriber => $prov_subscriber,
         );
         $cf_pref->delete_all;
-        NGCP::Panel::Utils::Message->info(
+        NGCP::Panel::Utils::Message::info(
             c    => $c,
             desc => $c->loc('Successfully deleted Call Forward'),
         );
     } catch($e) {
-        NGCP::Panel::Utils::Message->error(
+        NGCP::Panel::Utils::Message::error(
             c     => $c,
             error => $e,
             desc  => $c->loc('Failed to delete Call Forward.'),
@@ -2312,7 +2312,7 @@ sub edit_master :Chained('master') :PathPart('edit') :Args(0) :Does(ACL) :ACLDet
                          
                     $profile_set = $profile_set_rs->find($form->values->{profile_set}{id});
                     unless($profile_set) {
-                        NGCP::Panel::Utils::Message->error(
+                        NGCP::Panel::Utils::Message::error(
                             c => $c,
                             error => 'invalid subscriber profile set id ' . $form->values->{profile_set}{id},
                             desc  => $c->loc('Invalid subscriber profile set id'),
@@ -2533,7 +2533,7 @@ sub edit_master :Chained('master') :PathPart('edit') :Args(0) :Does(ACL) :ACLDet
                             }
                         }
                     } elsif(defined $subscriber->provisioning_voip_subscriber->pbx_extension) {
-                        NGCP::Panel::Utils::Message->error(
+                        NGCP::Panel::Utils::Message::error(
                             c     => $c,
                             error => $c->loc('CloudPBX subscriber must have a primary number'),
                             desc  => $c->loc('Failed to update subscriber, CloudPBX must have a primary number'),
@@ -2572,12 +2572,12 @@ sub edit_master :Chained('master') :PathPart('edit') :Args(0) :Does(ACL) :ACLDet
                 }
             });
             delete $c->session->{created_objects}->{group};
-            NGCP::Panel::Utils::Message->info(
+            NGCP::Panel::Utils::Message::info(
                 c    => $c,
                 desc => $c->loc('Successfully updated subscriber'),
             );
         } catch($e) {
-            NGCP::Panel::Utils::Message->error(
+            NGCP::Panel::Utils::Message::error(
                 c     => $c,
                 error => $e,
                 desc  => $c->loc('Failed to update subscriber'),
@@ -2659,12 +2659,12 @@ sub webpass_edit :Chained('base') :PathPart('webpass/edit') :Args(0) {
                 $prov_subscriber->update({
                     webpassword => $form->values->{webpassword} });
             });
-            NGCP::Panel::Utils::Message->info(
+            NGCP::Panel::Utils::Message::info(
                 c    => $c,
                 desc => $c->loc('Successfully updated password'),
             );
         } catch($e) {
-            NGCP::Panel::Utils::Message->error(
+            NGCP::Panel::Utils::Message::error(
                 c     => $c,
                 error => $e,
                 desc  => $c->loc('Failed to update subscriber (webpassword)'),
@@ -2692,7 +2692,7 @@ sub edit_voicebox :Chained('base') :PathPart('preferences/voicebox/edit') :Args(
     my $posted = ($c->request->method eq 'POST');
     my $vm_user = $c->stash->{subscriber}->provisioning_voip_subscriber->voicemail_user;
     unless($vm_user) {
-        NGCP::Panel::Utils::Message->error(
+        NGCP::Panel::Utils::Message::error(
             c     => $c,
             log   => "no voicemail user found for subscriber uuid ".$c->stash->{subscriber}->uuid,
             desc  => $c->loc('Failed to find voicemail user.'),
@@ -2757,7 +2757,7 @@ sub edit_voicebox :Chained('base') :PathPart('preferences/voicebox/edit') :Args(
                 last SWITCH;
             };
             # default
-            NGCP::Panel::Utils::Message->error(
+            NGCP::Panel::Utils::Message::error(
                 c     => $c,
                 log   => "trying to set invalid voicemail param '$attribute' for subscriber uuid ".$c->stash->{subscriber}->uuid,
                 desc  => $c->loc('Invalid voicemail setting'),
@@ -2767,7 +2767,7 @@ sub edit_voicebox :Chained('base') :PathPart('preferences/voicebox/edit') :Args(
             return;
         } # SWITCH
         if($posted && $form->validated) {
-            NGCP::Panel::Utils::Message->info(
+            NGCP::Panel::Utils::Message::info(
                 c    => $c,
                 desc => $c->loc('Successfully updated voicemail setting'),
             );
@@ -2776,7 +2776,7 @@ sub edit_voicebox :Chained('base') :PathPart('preferences/voicebox/edit') :Args(
             return;
         }
     } catch($e) {
-        NGCP::Panel::Utils::Message->error(
+        NGCP::Panel::Utils::Message::error(
             c     => $c,
             error => $e,
             desc  => $c->loc('Failed to update voicemail setting'),
@@ -2911,7 +2911,7 @@ sub edit_fax :Chained('base') :PathPart('preferences/fax/edit') :Args(1) {
                 last SWITCH;
             };
             # default
-            NGCP::Panel::Utils::Message->error(
+            NGCP::Panel::Utils::Message::error(
                 c     => $c,
                 log   => "trying to set invalid fax param '$attribute' for subscriber uuid ".$c->stash->{subscriber}->uuid,
                 desc  => $c->loc('Invalid fax setting.'),
@@ -2921,7 +2921,7 @@ sub edit_fax :Chained('base') :PathPart('preferences/fax/edit') :Args(1) {
             return;
         } # SWITCH
         if($posted && $form->validated) {
-            NGCP::Panel::Utils::Message->info(
+            NGCP::Panel::Utils::Message::info(
                 c    => $c,
                 desc => $c->loc('Successfully updated fax setting'),
             );
@@ -2930,7 +2930,7 @@ sub edit_fax :Chained('base') :PathPart('preferences/fax/edit') :Args(1) {
             return;
         }
     } catch($e) {
-        NGCP::Panel::Utils::Message->error(
+        NGCP::Panel::Utils::Message::error(
             c     => $c,
             error => $e,
             desc  => $c->loc('Failed to update fax setting'),
@@ -2993,12 +2993,12 @@ sub edit_reminder :Chained('base') :PathPart('preferences/reminder/edit') {
             } elsif($reminder) {
                 $reminder->delete;
             }
-            NGCP::Panel::Utils::Message->info(
+            NGCP::Panel::Utils::Message::info(
                 c    => $c,
                 desc => $c->loc('Successfully updated reminder setting'),
             );
         } catch($e) {
-            NGCP::Panel::Utils::Message->error(
+            NGCP::Panel::Utils::Message::error(
                 c     => $c,
                 error => $e,
                 desc  => $c->loc('Failed to update reminder setting.'),
@@ -3115,7 +3115,7 @@ sub voicemail :Chained('master') :PathPart('voicemail') :CaptureArgs(1) {
          id => $vm_id,
     });
     unless($rs->first) {
-        NGCP::Panel::Utils::Message->error(
+        NGCP::Panel::Utils::Message::error(
             c    => $c,
             log  => "no such voicemail file with id '$vm_id' for uuid ".$c->stash->{subscriber}->uuid,
             desc => $c->loc('No such voicemail file.'),
@@ -3137,7 +3137,7 @@ sub play_voicemail :Chained('voicemail') :PathPart('play') :Args(0) {
         $data= NGCP::Panel::Utils::Sounds::transcode_data(
             $recording, 'WAV', 'WAV');
     } catch ($e) {
-        NGCP::Panel::Utils::Message->error(
+        NGCP::Panel::Utils::Message::error(
             c     => $c,
             error => $e,
             desc  => $c->loc('Transcode of audio file failed'),
@@ -3165,13 +3165,13 @@ sub delete_voicemail :Chained('voicemail') :PathPart('delete') :Args(0) {
 
     try {
         $c->stash->{voicemail}->delete;
-        NGCP::Panel::Utils::Message->info(
+        NGCP::Panel::Utils::Message::info(
             c    => $c,
             data => { $c->stash->{voicemail}->get_inflated_columns },
             desc => $c->loc('Successfully deleted voicemail'),
         );
     } catch($e) {
-        NGCP::Panel::Utils::Message->error(
+        NGCP::Panel::Utils::Message::error(
             c     => $c,
             error => $e,
             desc  => $c->loc('Failed to delete voicemail message'),
@@ -3218,7 +3218,7 @@ sub registered :Chained('master') :PathPart('registered') :CaptureArgs(1) {
     }
     $c->stash->{registered} = $reg_rs->first;
     unless($c->stash->{registered}) {
-        NGCP::Panel::Utils::Message->error(
+        NGCP::Panel::Utils::Message::error(
             c    => $c,
             log  => "failed to find location id '$reg_id' for subscriber uuid " . $s->uuid,
             desc => $c->loc('Failed to find registered device.'),
@@ -3241,14 +3241,14 @@ sub delete_registered :Chained('registered') :PathPart('delete') :Args(0) {
             $c->stash->{subscriber}->provisioning_voip_subscriber, 
             $c->stash->{registered}->contact);
     } catch($e) {
-        NGCP::Panel::Utils::Message->error(
+        NGCP::Panel::Utils::Message::error(
             c     => $c,
             error => $e,
             desc  => $c->loc('Failed to delete registered device'),
         );
     }
 
-    NGCP::Panel::Utils::Message->info(
+    NGCP::Panel::Utils::Message::info(
         c    => $c,
         data => { $c->stash->{registered}->get_inflated_columns },
         desc => $c->loc('Successfully deleted registered device'),
@@ -3282,12 +3282,12 @@ sub create_registered :Chained('master') :PathPart('registered/create') :Args(0)
                 $form->field('contact')->value,
                 $form->field('q')->value
             );
-            NGCP::Panel::Utils::Message->info(
+            NGCP::Panel::Utils::Message::info(
                 c    => $c,
                 desc => $c->loc('Successfully added registered device'),
             );
         } catch($e) {
-            NGCP::Panel::Utils::Message->error(
+            NGCP::Panel::Utils::Message::error(
                 c     => $c,
                 error => $e,
                 desc  => $c->loc('Failed to add registered device'),
@@ -3331,12 +3331,12 @@ sub create_trusted :Chained('base') :PathPart('preferences/trusted/create') :Arg
                 protocol => $form->field('protocol')->value,
                 from_pattern => $form->field('from_pattern') ? $form->field('from_pattern')->value : undef,
             });
-            NGCP::Panel::Utils::Message->info(
+            NGCP::Panel::Utils::Message::info(
                 c    => $c,
                 desc => $c->loc('Successfully created trusted source'),
             );
         } catch($e) {
-            NGCP::Panel::Utils::Message->error(
+            NGCP::Panel::Utils::Message::error(
                 c     => $c,
                 error => $e,
                 desc  => $c->loc('Failed to create trusted source'),
@@ -3361,7 +3361,7 @@ sub trusted_base :Chained('base') :PathPart('preferences/trusted') :CaptureArgs(
                             ->voip_trusted_sources->find($trusted_id);
 
     unless($c->stash->{trusted}) {
-        NGCP::Panel::Utils::Message->error(
+        NGCP::Panel::Utils::Message::error(
             c    => $c,
             log  => "trusted source id '$trusted_id' not found for subscriber uuid ".$c->stash->{subscriber}->uuid,
             desc => $c->loc('Trusted source entry not found'),
@@ -3407,12 +3407,12 @@ sub edit_trusted :Chained('trusted_base') :PathPart('edit') {
                 protocol => $form->field('protocol')->value,
                 from_pattern => $form->field('from_pattern') ? $form->field('from_pattern')->value : undef,
             });
-            NGCP::Panel::Utils::Message->info(
+            NGCP::Panel::Utils::Message::info(
                 c    => $c,
                 desc => $c->loc('Successfully updated trusted source'),
             );
         } catch($e) {
-            NGCP::Panel::Utils::Message->error(
+            NGCP::Panel::Utils::Message::error(
                 c     => $c,
                 error => $e,
                 desc  => $c->loc('Failed to update trusted source'),
@@ -3438,13 +3438,13 @@ sub delete_trusted :Chained('trusted_base') :PathPart('delete') :Args(0) {
 
     try {
         $c->stash->{trusted}->delete;
-        NGCP::Panel::Utils::Message->info(
+        NGCP::Panel::Utils::Message::info(
             c    => $c,
             data => { $c->stash->{trusted}->get_inflated_columns },
             desc => $c->loc('Successfully deleted trusted source'),
         );
     } catch($e) {
-        NGCP::Panel::Utils::Message->error(
+        NGCP::Panel::Utils::Message::error(
             c     => $c,
             error => $e,
             desc  => $c->loc('Failed to delete trusted source.'),
@@ -3519,12 +3519,12 @@ sub create_speeddial :Chained('base') :PathPart('preferences/speeddial/create') 
                 slot => $form->field('slot')->value,
                 destination => $d,
             });
-            NGCP::Panel::Utils::Message->info(
+            NGCP::Panel::Utils::Message::info(
                 c    => $c,
                 desc => $c->loc('Successfully created speed dial slot'),
             );
         } catch($e) {
-            NGCP::Panel::Utils::Message->error(
+            NGCP::Panel::Utils::Message::error(
                 c     => $c,
                 error => $e,
                 desc  => $c->loc('Failed to create speed dial slot'),
@@ -3549,7 +3549,7 @@ sub speeddial :Chained('base') :PathPart('preferences/speeddial') :CaptureArgs(1
     my $sd = $c->stash->{subscriber}->provisioning_voip_subscriber->voip_speed_dials
                 ->find($sd_id);
     unless($sd) {
-        NGCP::Panel::Utils::Message->error(
+        NGCP::Panel::Utils::Message::error(
             c    => $c,
             log  => "no such speed dial slot with id '$sd_id' for uuid ".$c->stash->{subscriber}->uuid,
             desc => $c->loc('No such speed dial id.'),
@@ -3568,13 +3568,13 @@ sub delete_speeddial :Chained('speeddial') :PathPart('delete') :Args(0) {
 
     try {
         $c->stash->{speeddial}->delete;
-        NGCP::Panel::Utils::Message->info(
+        NGCP::Panel::Utils::Message::info(
             c    => $c,
             data => { $c->stash->{speeddial}->get_inflated_columns },
             desc => $c->loc('Successfully deleted speed dial slot'),
         );
     } catch($e) {
-        NGCP::Panel::Utils::Message->error(
+        NGCP::Panel::Utils::Message::error(
             c     => $c,
             error => $e,
             desc  => $c->loc('Failed to delete speed dial slot'),
@@ -3624,12 +3624,12 @@ sub edit_speeddial :Chained('speeddial') :PathPart('edit') :Args(0) {
                 slot => $form->field('slot')->value,
                 destination => $d,
             });
-            NGCP::Panel::Utils::Message->info(
+            NGCP::Panel::Utils::Message::info(
                 c    => $c,
                 desc => $c->loc('Successfully updated speed dial slot'),
             );
         } catch($e) {
-            NGCP::Panel::Utils::Message->error(
+            NGCP::Panel::Utils::Message::error(
                 c     => $c,
                 error => $e,
                 desc  => $c->loc('Failed to update speed dial slot'),
@@ -3664,7 +3664,7 @@ sub autoattendant :Chained('base') :PathPart('preferences/autoattendant') :Captu
     my $aa = $c->stash->{subscriber}->provisioning_voip_subscriber->voip_pbx_autoattendants
                 ->find($aa_id);
     unless($aa) {
-        NGCP::Panel::Utils::Message->error(
+        NGCP::Panel::Utils::Message::error(
             c    => $c,
             log  => "no such auto attendant slot with id '$aa_id' for uuid ".$c->stash->{subscriber}->uuid,
             desc => $c->loc('No such auto attendant id.'),
@@ -3683,13 +3683,13 @@ sub delete_autoattendant :Chained('autoattendant') :PathPart('delete') :Args(0) 
 
     try {
         $c->stash->{autoattendant}->delete;
-        NGCP::Panel::Utils::Message->info(
+        NGCP::Panel::Utils::Message::info(
             c    => $c,
             data => { $c->stash->{autoattendant}->get_inflated_columns },
             desc => $c->loc('Successfully deleted auto attendant slot'),
         );
     } catch($e) {
-        NGCP::Panel::Utils::Message->error(
+        NGCP::Panel::Utils::Message::error(
             c     => $c,
             error => $e,
             desc  => $c->loc('Failed to delete auto attendant slot'),
@@ -3750,12 +3750,12 @@ sub edit_autoattendant :Chained('base') :PathPart('preferences/speeddial/edit') 
                     });
                 }
             });
-            NGCP::Panel::Utils::Message->info(
+            NGCP::Panel::Utils::Message::info(
                 c    => $c,
                 desc => $c->loc('Successfully updated auto attendant slots'),
             );
         } catch($e) {
-            NGCP::Panel::Utils::Message->error(
+            NGCP::Panel::Utils::Message::error(
                 c     => $c,
                 error => $e,
                 desc  => $c->loc('Failed to update autoattendant slots'),
@@ -3790,7 +3790,7 @@ sub ccmappings :Chained('base') :PathPart('preferences/ccmappings') :CaptureArgs
     my $ccmapping = $c->stash->{subscriber}->provisioning_voip_subscriber->voip_cc_mappings
                 ->find($aa_id);
     unless($ccmapping) {
-        NGCP::Panel::Utils::Message->error(
+        NGCP::Panel::Utils::Message::error(
             c    => $c,
             log  => "no such ccmapping with id '$aa_id' for uuid ".$c->stash->{subscriber}->uuid,
             desc => $c->loc('No such auto ccmapping id.'),
@@ -3810,13 +3810,13 @@ sub delete_ccmapping :Chained('ccmappings') :PathPart('delete') :Args(0) {
 
     try {
         $c->stash->{ccmapping}->delete;
-        NGCP::Panel::Utils::Message->info(
+        NGCP::Panel::Utils::Message::info(
             c    => $c,
             data => { $c->stash->{ccmapping}->get_inflated_columns },
             desc => $c->loc('Successfully deleted ccmapping'),
         );
     } catch($e) {
-        NGCP::Panel::Utils::Message->error(
+        NGCP::Panel::Utils::Message::error(
             c     => $c,
             error => $e,
             desc  => $c->loc('Failed to delete ccmapping'),
@@ -3870,12 +3870,12 @@ sub edit_ccmapping :Chained('base') :PathPart('preferences/ccmappings/edit') :Ar
                     });
                 }
             });
-            NGCP::Panel::Utils::Message->info(
+            NGCP::Panel::Utils::Message::info(
                 c    => $c,
                 desc => $c->loc('Successfully updated ccmappings'),
             );
         } catch($e) {
-            NGCP::Panel::Utils::Message->error(
+            NGCP::Panel::Utils::Message::error(
                 c     => $c,
                 error => $e,
                 desc  => $c->loc('Failed to update ccmappings'),

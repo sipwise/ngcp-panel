@@ -1,6 +1,6 @@
 package NGCP::Panel::Controller::InvoiceTemplate;
 use Sipwise::Base;
-use namespace::sweep;
+
 BEGIN { extends 'Catalyst::Controller'; }
 
 use File::Type;
@@ -61,8 +61,8 @@ sub reseller_ajax :Chained('template_list') :PathPart('ajax/reseller') :Args(1) 
 sub base :Chained('template_list') :PathPart('') :CaptureArgs(1) {
     my ($self, $c, $tmpl_id) = @_;
 
-    unless($tmpl_id && $tmpl_id->is_integer) {
-        NGCP::Panel::Utils::Message->error(
+    unless($tmpl_id && is_int($tmpl_id)) {
+        NGCP::Panel::Utils::Message::error(
             c     => $c,
             log   => 'Invalid invoice template id detected',
             desc  => $c->loc('Invalid invoice template id detected'),
@@ -72,7 +72,7 @@ sub base :Chained('template_list') :PathPart('') :CaptureArgs(1) {
 
     my $res = $c->stash->{tmpl_rs}->find($tmpl_id);
     unless(defined($res)) {
-        NGCP::Panel::Utils::Message->error(
+        NGCP::Panel::Utils::Message::error(
             c     => $c,
             log   => 'Invoice template does not exist',
             desc  => $c->loc('Invoice template does not exist'),
@@ -85,8 +85,8 @@ sub base :Chained('template_list') :PathPart('') :CaptureArgs(1) {
 sub create :Chained('template_list') :PathPart('create') :Args() {
     my ($self, $c, $reseller_id) = @_;
 
-    if(defined $reseller_id && !$reseller_id->is_integer) {
-        NGCP::Panel::Utils::Message->error(
+    if(defined $reseller_id && !is_int($reseller_id)) {
+        NGCP::Panel::Utils::Message::error(
             c     => $c,
             log   => 'Invalid reseller id detected',
             desc  => $c->loc('Invalid reseller id detected'),
@@ -96,7 +96,7 @@ sub create :Chained('template_list') :PathPart('create') :Args() {
 
     my $posted = ($c->request->method eq 'POST');
     my $params = {};
-    $params = $params->merge($c->session->{created_objects});
+    $params = merge($params, $c->session->{created_objects});
 
     my $form;
     if($c->user->roles eq "admin" && !$reseller_id) {
@@ -106,7 +106,7 @@ sub create :Chained('template_list') :PathPart('create') :Args() {
         if($c->user->roles eq "admin") {
             my $reseller = $c->model('DB')->resultset('resellers')->find($reseller_id);
             unless($reseller) {
-                NGCP::Panel::Utils::Message->error(
+                NGCP::Panel::Utils::Message::error(
                     c     => $c,
                     log   => 'Invalid reseller id detected',
                     desc  => $c->loc('Invalid reseller id detected'),
@@ -153,12 +153,12 @@ sub create :Chained('template_list') :PathPart('create') :Args() {
 
                 delete $c->session->{created_objects}->{reseller};
             });
-            NGCP::Panel::Utils::Message->info(
+            NGCP::Panel::Utils::Message::info(
                 c    => $c,
                 desc => $c->loc('Invoice template successfully created'),
             );
         } catch($e) {
-            NGCP::Panel::Utils::Message->error(
+            NGCP::Panel::Utils::Message::error(
                 c => $c,
                 error => $e,
                 desc  => $c->loc('Failed to create invoice template'),
@@ -178,7 +178,7 @@ sub edit_info :Chained('base') :PathPart('editinfo') {
     my $posted = ($c->request->method eq 'POST');
     my $params = { $tmpl->get_inflated_columns };
     $params->{reseller}{id} = delete $params->{reseller_id};
-    $params = $params->merge($c->session->{created_objects});
+    $params = merge($params, $c->session->{created_objects});
 
     my $form;
     if($c->user->roles eq "admin") {
@@ -222,12 +222,12 @@ sub edit_info :Chained('base') :PathPart('editinfo') {
 
                 delete $c->session->{created_objects}->{reseller};
             });
-            NGCP::Panel::Utils::Message->info(
+            NGCP::Panel::Utils::Message::info(
                 c    => $c,
                 desc => $c->loc('Invoice template successfully updated'),
             );
         } catch($e) {
-            NGCP::Panel::Utils::Message->error(
+            NGCP::Panel::Utils::Message::error(
                 c => $c,
                 error => $e,
                 desc  => $c->loc('Failed to update invoice template'),
@@ -248,13 +248,13 @@ sub delete :Chained('base') :PathPart('delete') {
         $schema->txn_do(sub{
             $c->stash->{tmpl}->delete;
         });
-        NGCP::Panel::Utils::Message->info(
+        NGCP::Panel::Utils::Message::info(
             c => $c,
             data => { $c->stash->{tmpl}->get_inflated_columns },
             desc => $c->loc('Invoice template successfully deleted'),
         );
     } catch($e) {
-        NGCP::Panel::Utils::Message->error(
+        NGCP::Panel::Utils::Message::error(
             c => $c,
             error => $e,
             desc  => $c->loc('Failed to delete invoice template.'),
@@ -295,7 +295,7 @@ sub set_content_ajax :Chained('base') :PathPart('editcontent/set/ajax') :Args(0)
 
     my $content = $c->request->body_parameters->{template};
     unless($content) {
-        NGCP::Panel::Utils::Message->error(
+        NGCP::Panel::Utils::Message::error(
             c => $c,
             error => 'empty svg file not allowed',
             desc => $c->log('Attempted to save an empty invoice template'),
@@ -311,7 +311,7 @@ sub set_content_ajax :Chained('base') :PathPart('editcontent/set/ajax') :Args(0)
         });
 
     } catch($e) {
-        NGCP::Panel::Utils::Message->error(
+        NGCP::Panel::Utils::Message::error(
             c => $c,
             error => $e,
             desc => $c->loc('Failed to store invoice template'),
@@ -334,7 +334,7 @@ sub preview_content :Chained('base') :PathPart('editcontent/preview') :Args {
     my $svg = $tmpl->data;
 
     unless(defined $svg) {
-        NGCP::Panel::Utils::Message->error(
+        NGCP::Panel::Utils::Message::error(
             c     => $c,
             log   => 'Trying to preview a non-saved svg template',
             desc  => $c->loc('Template has not been saved yet, please save before previewing.'),
@@ -355,7 +355,7 @@ sub preview_content :Chained('base') :PathPart('editcontent/preview') :Args {
         $t->process(\$svg, $dummy, \$out) || do {
             my $error = $t->error();
             my $msg = "error processing template, type=".$error->type.", info='".$error->info."'";
-            NGCP::Panel::Utils::Message->error(
+            NGCP::Panel::Utils::Message::error(
                 c     => $c,
                 log   => $msg,
                 desc  => $c->loc('Failed to render template. Type is ' . $error->type . ', info is ' . $error->info),
@@ -366,7 +366,7 @@ sub preview_content :Chained('base') :PathPart('editcontent/preview') :Args {
 
         NGCP::Panel::Utils::InvoiceTemplate::svg_pdf($c, \$out, \$pdf);
     } catch($e) {
-        NGCP::Panel::Utils::Message->error(
+        NGCP::Panel::Utils::Message::error(
             c     => $c,
             log   => $e,
             desc  => $c->loc('Failed to preview template'),

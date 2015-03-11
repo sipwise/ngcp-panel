@@ -70,7 +70,7 @@ sub tmpl_create :Chained('tmpl_list') :PathPart('create') :Args(0) {
     my $posted = ($c->request->method eq 'POST');
     my $form;
     my $params = {};
-    $params = $params->merge($c->session->{created_objects});
+    $params = merge($params, $c->session->{created_objects});
     if($c->user->roles eq "admin") {
         $form = NGCP::Panel::Form::EmailTemplate::Admin->new;
     } elsif($c->user->roles eq "reseller") {
@@ -104,12 +104,12 @@ sub tmpl_create :Chained('tmpl_list') :PathPart('create') :Args(0) {
             });
 
             delete $c->session->{created_objects}->{reseller};
-            NGCP::Panel::Utils::Message->info(
+            NGCP::Panel::Utils::Message::info(
                 c    => $c,
                 desc => $c->loc('Email template successfully created'),
             );
         } catch($e) {
-            NGCP::Panel::Utils::Message->error(
+            NGCP::Panel::Utils::Message::error(
                 c     => $c,
                 error => $e,
                 desc  => $c->loc('Failed to create email template'),
@@ -130,8 +130,8 @@ sub tmpl_base :Chained('tmpl_list') :PathPart('') :CaptureArgs(1) {
     $c->detach('/denied_page')
         if($c->user->read_only);
 
-    unless($tmpl_id && $tmpl_id->is_integer) {
-        NGCP::Panel::Utils::Message->error(
+    unless($tmpl_id && is_int($tmpl_id)) {
+        NGCP::Panel::Utils::Message::error(
             c => $c,
             log => 'Invalid email template id detected',
             desc => $c->log('Invalid email template id detected'),
@@ -143,7 +143,7 @@ sub tmpl_base :Chained('tmpl_list') :PathPart('') :CaptureArgs(1) {
 
     my $res = $c->stash->{tmpl_rs}->find($tmpl_id); 
     unless(defined($res)) {
-        NGCP::Panel::Utils::Message->error(
+        NGCP::Panel::Utils::Message::error(
             c => $c,
             log => 'Email template does not exist',
             desc => $c->log('Email template does not exist'),
@@ -168,13 +168,13 @@ sub tmpl_delete :Chained('tmpl_base') :PathPart('delete') {
             });        
         }
         $c->stash->{tmpl}->delete;
-        NGCP::Panel::Utils::Message->info(
+        NGCP::Panel::Utils::Message::info(
             c => $c,
             data => { $c->stash->{tmpl}->get_inflated_columns },
             desc => $c->loc('Email template successfully deleted'),
         );
     } catch ($e) {
-        NGCP::Panel::Utils::Message->error(
+        NGCP::Panel::Utils::Message::error(
             c => $c,
             error => $e,
             desc  => $c->loc('Failed to delete email template'),
@@ -190,7 +190,7 @@ sub tmpl_edit :Chained('tmpl_base') :PathPart('edit') {
     my $form;
     my $params = { $c->stash->{tmpl}->get_inflated_columns };
     $params->{reseller}{id} = delete $params->{reseller_id};
-    $params = $params->merge($c->session->{created_objects});
+    $params = merge($params, $c->session->{created_objects});
     if($c->user->roles eq "admin") {
         $form = NGCP::Panel::Form::EmailTemplate::Admin->new;
     } elsif($c->user->roles eq "reseller") {
@@ -222,12 +222,12 @@ sub tmpl_edit :Chained('tmpl_base') :PathPart('edit') {
 
             });
             delete $c->session->{created_objects}->{reseller};
-            NGCP::Panel::Utils::Message->info(
+            NGCP::Panel::Utils::Message::info(
                 c    => $c,
                 desc => $c->loc('Email template successfully updated'),
             );
         } catch($e) {
-            NGCP::Panel::Utils::Message->error(
+            NGCP::Panel::Utils::Message::error(
                 c     => $c,
                 error => $e,
                 desc  => $c->loc('Failed to update email template'),
