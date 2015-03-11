@@ -716,7 +716,7 @@ function create_ranges_annotations(id,type,ranges){
 [% END -%]
                 '</select>' + 
                 '<input type="hidden" name="line.' + linecmt + '.line" id="line.' + linecmt + '.line" value="' + a.range_id + '.' + a.line_index + '"/>' + 
-                '<input type="hidden" name="line.' + linecmt + '.extension_group" id="line.' + linecmt + '.extension_group" value="' + divCnt + '"/>' + 
+                '<input type="hidden" name="line.' + linecmt + '.extension_unit" id="line.' + linecmt + '.extension_unit" value="' + divCnt + '"/>' + 
                 '';
             markup += '<div class="caption ' + status + '" style="top:' + a.y + 'px; left:' + a.x + 'px;" data-pos="' + a.position + '" data-pos-top="' + a.y + '" data-pos-left="' + a.x + '">' + action + '</div>';
         }
@@ -730,6 +730,7 @@ function create_ranges_annotations(id,type,ranges){
     }
     markup += '</div>';
     apply_markup(markup);
+    add_extension_button();
     $("div.annotated").each(function(){
         $(this).find("div.caption").annotate(this);
     });
@@ -779,7 +780,6 @@ function annotate_profile() {
         var ranges = profileExtensionsData.ranges;
         create_ranges_annotations(id,'profile',profileExtensionsData.ranges);
         process_extensions();
-        add_extension_button();
     });
 }
 function process_extensions(){
@@ -801,23 +801,25 @@ function get_extensions_current(){
 }
 function add_extension_button(){
     var fieldExtensionsCurrent = get_extensions_current();
-    var fieldExtensionsNum = Object.keys(fieldExtensionsCurrent).length + get_extension_divcnt();
+    var fieldExtensionsNum = get_extensions_num();
     var allowedExtensionsNum = profileExtensionsData.device.extensions_num;
     var addExtensionMarkup = '';
     var availableExtensionsNum = Object.keys(profileExtensionsData.extensions).length;
     alert('fieldExtensionsNum:'+fieldExtensionsNum+';allowedExtensionsNum:'+allowedExtensionsNum+';availableExtensionsNum:'+availableExtensionsNum+';');
     if(allowedExtensionsNum && availableExtensionsNum && (fieldExtensionsNum < allowedExtensionsNum)){
-        alert('button should be added');
-        addExtensionMarkup += '<div class="control-group" id="add_extension_button">'
+        var exists = $('div#add_extension_button').length;
+        alert('button should be added, exists:'+exists);
+        if(!exists){
+            addExtensionMarkup += '<div class="control-group" id="add_extension_button">'
 +'<label class="control-label" for="extension">Device Extension</label>'
 +'<div class="controls">'
 +'<div class="control-group">'
 +'<label class="control-label" for="extension.'+fieldExtensionsNum+'"></label>'
 +'<div class="controls"><select name="extension_id" id="extension_id">';
-        for( extensionModelDeviceId in profileExtensionsData.extensions ){
-            addExtensionMarkup += '<option value='+extensionModelDeviceId+'>'+profileExtensionsData.extensions[extensionModelDeviceId].vendor+' '+ profileExtensionsData.extensions[extensionModelDeviceId].model;
-        }
-        addExtensionMarkup += '</select></div>'
+            for( extensionModelDeviceId in profileExtensionsData.extensions ){
+                addExtensionMarkup += '<option value='+extensionModelDeviceId+'>'+profileExtensionsData.extensions[extensionModelDeviceId].vendor+' '+ profileExtensionsData.extensions[extensionModelDeviceId].model;
+            }
+            addExtensionMarkup += '</select></div>'
 +'</div>'
 +'<div class="control-group">'
 +'<div class="controls">'
@@ -825,9 +827,10 @@ function add_extension_button(){
 +'</div>'
 +'</div></div>'
 +'</div>';
-        apply_markup(addExtensionMarkup);
+            apply_markup(addExtensionMarkup);
+        }
     }else{
-        $('#add_extension_button').remove();
+        $('div#add_extension_button').remove();
     }
 }
 function get_linecmt(){
@@ -867,7 +870,9 @@ function get_extension_divcnt(id_in){
     var res = 0 + ( divcnt[id_in] ? divcnt[id_in] : 0 );
     return res;
 }
-
+function get_extensions_num(){
+    return $("div[id^='annotated_extension_']").length;
+}
 $('div.controls #profile_id').change(annotate_profile);
 annotate_profile();
 
