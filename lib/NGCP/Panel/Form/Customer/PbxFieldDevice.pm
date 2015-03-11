@@ -71,7 +71,8 @@ has_field 'line.line' => (
 );
 has_field 'line.extension_unit' => (
     type => 'Hidden',
-    required => 1,
+    #we allow also other for of the unit specification, or even no unit - then db value will be 0
+    required => 0,
 );
 sub validate_line_line {
     my ($self, $field) = @_;
