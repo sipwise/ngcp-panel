@@ -24,6 +24,27 @@ has_field 'vendor' => (
         javascript => ' onchange="vendor2bootstrapMethod(this);" ',
     },
 );
+has_field 'type' => (
+    type => 'Select',
+    required => 1,
+    label => 'Model type',
+    options => [
+        { label => 'Phone device', value => 'phone' },
+        { label => 'Extension device', value => 'extension' },
+    ],
+    default => 'phone',
+    element_attr => {
+        rel => ['tooltip'],
+        title => ['Phone or the phone extension'],
+        javascript => ' onchange="typeDynamicFields(this.options[this.selectedIndex].value);" ',
+    },
+);
+has_field 'extensions_num' => (
+    type => 'Integer',
+    label => 'Max extensions number',
+    default => '0',
+    wrapper_class => [qw/ngcp-devicetype ngcp-devicetype-phone/],
+);
 
 has_field 'model' => (
     type => 'Text',
@@ -48,6 +69,20 @@ has_field 'mac_image' => (
     label => 'MAC Address Image',
     max_size => '67108864', # 64MB
 );
+
+has_field 'connectable_models' => (
+    type => '+NGCP::Panel::Field::DataTable',
+    label => 'Connectable Models',
+    do_label => 0,
+    do_wrapper => 1,
+    required => 0,
+    #wrapper_class => [qw/ngcp-devicetype ngcp-devicetype-extension/],
+    template => 'helpers/datatables_multifield.tt',
+    ajax_src => '/device/model/ajax',
+    table_titles => ['#',  'Type', 'Vendor', 'Model'],
+    table_fields => ['id', 'type', 'vendor', 'model'],
+);
+
 
 has_field 'linerange' => (
     type => 'Repeatable',
@@ -201,6 +236,7 @@ has_field 'bootstrap_method' => (
     type => 'Select',
     required => 1,
     label => 'Bootstrap Method',
+    wrapper_class => [qw/ngcp-type-phone ngcp-devicetype ngcp-devicetype-phone/],
     options => [
         { label => 'Cisco', value => 'http' },
         { label => 'Panasonic', value => 'redirect_panasonic' },
@@ -211,7 +247,6 @@ has_field 'bootstrap_method' => (
     element_attr => {
         rel => ['tooltip'],
         title => ['Method to configure the provisioning server on the phone. One of http, redirect_panasonic, redirect_yealink, redirect_polycom.'],
-        # TODO: ????
         javascript => ' onchange="bootstrapDynamicFields(this.options[this.selectedIndex].value);" ',
     },
 );
@@ -220,6 +255,8 @@ has_field 'bootstrap_uri' => (
     required => 0,
     label => 'Bootstrap URI',
     default => '',
+    #we don't show this field for polycom, because polycom doesn't support now any possibility to configure provisioning url via API
+    wrapper_class => [qw/ngcp-devicetype ngcp-devicetype-phone ngcp-bootstrap-config ngcp-bootstrap-config-http ngcp-bootstrap-config-redirect_panasonic ngcp-bootstrap-config-redirect_yealink/],
     element_attr => {
         rel => ['tooltip'],
         title => ['Custom provisioning server URI.'],
@@ -232,7 +269,7 @@ has_field 'bootstrap_config_http_sync_uri' => (
     required => 0,
     label => 'Bootstrap Sync URI',
     default => 'http://[% client.ip %]/admin/resync',
-    wrapper_class => [qw/ngcp-bootstrap-config ngcp-bootstrap-config-http/],
+    wrapper_class => [qw/ngcp-devicetype ngcp-devicetype-phone ngcp-bootstrap-config ngcp-bootstrap-config-http/],
     element_attr => {
         rel => ['tooltip'],
         title => ['The sync URI to set the provisioning server of the device (e.g. http://client.ip/admin/resync. The client.ip variable is automatically expanded during provisioning time.'],
@@ -248,7 +285,7 @@ has_field 'bootstrap_config_http_sync_method' => (
         { label => 'POST', value => 'POST' },
     ],
     default => 'GET',
-    wrapper_class => [qw/ngcp-bootstrap-config ngcp-bootstrap-config-http/],
+    wrapper_class => [qw/ngcp-devicetype ngcp-devicetype-phone ngcp-bootstrap-config ngcp-bootstrap-config-http/],
     element_attr => {
         rel => ['tooltip'],
         title => ['The HTTP method to set the provisioning server (one of GET, POST).'],
@@ -260,7 +297,7 @@ has_field 'bootstrap_config_http_sync_params' => (
     required => 0,
     label => 'Bootstrap Sync Parameters',
     default => '[% server.uri %]/$MA',
-    wrapper_class => [qw/ngcp-bootstrap-config ngcp-bootstrap-config-http/],
+    wrapper_class => [qw/ngcp-devicetype ngcp-devicetype-phone ngcp-bootstrap-config ngcp-bootstrap-config-http/],
     element_attr => { 
         rel => ['tooltip'],
         title => ['The parameters appended to the sync URI when setting the provisioning server, e.g. server.uri/$MA. The server.uri variable is automatically expanded during provisioning time.'],
@@ -271,7 +308,7 @@ has_field 'bootstrap_config_redirect_panasonic_user' => (
     required => 0,
     label => 'Panasonic username',
     default => '',
-    wrapper_class => [qw/ngcp-bootstrap-config ngcp-bootstrap-config-redirect_panasonic/],
+    wrapper_class => [qw/ngcp-devicetype ngcp-devicetype-phone ngcp-bootstrap-config ngcp-bootstrap-config-redirect_panasonic/],
     element_attr => {
         rel => ['tooltip'],
         title => ['Username used to configure bootstrap url on Panasonic redirect server. Obtained from Panasonic.'],
@@ -282,7 +319,7 @@ has_field 'bootstrap_config_redirect_panasonic_password' => (
     required => 0,
     label => 'Panasonic password',
     default => '',
-    wrapper_class => [qw/ngcp-bootstrap-config ngcp-bootstrap-config-redirect_panasonic/],
+    wrapper_class => [qw/ngcp-devicetype ngcp-devicetype-phone ngcp-bootstrap-config ngcp-bootstrap-config-redirect_panasonic/],
     element_attr => {
         rel => ['tooltip'],
         title => ['Password used to configure bootstrap url on Panasonic redirect server. Obtained from Panasonic.'],
@@ -293,7 +330,7 @@ has_field 'bootstrap_config_redirect_yealink_user' => (
     required => 0,
     label => 'Yealink username',
     default => '',
-    wrapper_class => [qw/ngcp-bootstrap-config ngcp-bootstrap-config-redirect_yealink/],
+    wrapper_class => [qw/ngcp-devicetype ngcp-devicetype-phone ngcp-bootstrap-config ngcp-bootstrap-config-redirect_yealink/],
     element_attr => {
         rel => ['tooltip'],
         title => ['Username used to configure bootstrap url on Yealink redirect server. Obtained from Yealink.'],
@@ -304,7 +341,7 @@ has_field 'bootstrap_config_redirect_yealink_password' => (
     required => 0,
     label => 'Yealink password',
     default => '',
-    wrapper_class => [qw/ngcp-bootstrap-config ngcp-bootstrap-config-redirect_yealink/],
+    wrapper_class => [qw/ngcp-devicetype ngcp-devicetype-phone ngcp-bootstrap-config ngcp-bootstrap-config-redirect_yealink/],
     element_attr => {
         rel => ['tooltip'],
         title => ['Password used to configure bootstrap url on Yealink redirect server. Obtained from Yealink.'],
@@ -315,7 +352,7 @@ has_field 'bootstrap_config_redirect_polycom_user' => (
     required => 0,
     label => 'Polycom username',
     default => '',
-    wrapper_class => [qw/ngcp-bootstrap-config ngcp-bootstrap-config-redirect_polycom/],
+    wrapper_class => [qw/ngcp-devicetype ngcp-devicetype-phone ngcp-bootstrap-config ngcp-bootstrap-config-redirect_polycom/],
     element_attr => {
         rel => ['tooltip'],
         title => ['Username used to configure bootstrap url on Polycom redirect server.'],
@@ -326,7 +363,7 @@ has_field 'bootstrap_config_redirect_polycom_password' => (
     required => 0,
     label => 'Polycom password',
     default => '',
-    wrapper_class => [qw/ngcp-bootstrap-config ngcp-bootstrap-config-redirect_polycom/],
+    wrapper_class => [qw/ngcp-devicetype ngcp-devicetype-phone ngcp-bootstrap-config ngcp-bootstrap-config-redirect_polycom/],
     element_attr => {
         rel => ['tooltip'],
         title => ['Password used to configure bootstrap url on Polycom redirect server.'],
@@ -337,7 +374,7 @@ has_field 'bootstrap_config_redirect_polycom_profile' => (
     required => 0,
     label => 'Polycom profile',
     default => '',
-    wrapper_class => [qw/ngcp-bootstrap-config ngcp-bootstrap-config-redirect_polycom/],
+    wrapper_class => [qw/ngcp-devicetype ngcp-devicetype-phone ngcp-bootstrap-config ngcp-bootstrap-config-redirect_polycom/],
     element_attr => { 
         rel => ['tooltip'],
         title => ['Preliminary created in ZeroTouch Provisioning console Polycom ZTP profile. Refer to documentation.'],
@@ -354,7 +391,7 @@ has_field 'save' => (
 has_block 'fields' => (
     tag => 'div',
     class => [qw/modal-body/],
-    render_list => [qw/vendor model linerange linerange_add bootstrap_uri bootstrap_method bootstrap_config_http_sync_uri bootstrap_config_http_sync_method bootstrap_config_http_sync_params bootstrap_config_redirect_panasonic_user bootstrap_config_redirect_panasonic_password bootstrap_config_redirect_yealink_user bootstrap_config_redirect_yealink_password bootstrap_config_redirect_polycom_user bootstrap_config_redirect_polycom_password bootstrap_config_redirect_polycom_profile front_image mac_image/],
+    render_list => [qw/vendor model type extensions_num linerange linerange_add bootstrap_method bootstrap_uri bootstrap_config_http_sync_method bootstrap_config_http_sync_uri bootstrap_config_http_sync_params bootstrap_config_redirect_panasonic_user bootstrap_config_redirect_panasonic_password bootstrap_config_redirect_yealink_user bootstrap_config_redirect_yealink_password bootstrap_config_redirect_polycom_user bootstrap_config_redirect_polycom_password bootstrap_config_redirect_polycom_profile connectable_models front_image mac_image/],
 );
 
 has_block 'actions' => (
