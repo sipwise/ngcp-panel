@@ -69,10 +69,15 @@ has_field 'line.line' => (
     type => 'Hidden',
     required => 1,
 );
+has_field 'line.extension_unit' => (
+    type => 'Hidden',
+    #we allow also other for of the unit specification, or even no unit - then db value will be 0
+    required => 0,
+);
 sub validate_line_line {
     my ($self, $field) = @_;
     $field->clear_errors;
-    unless($field->value =~ /^\d+\.\d+$/) {
+    unless($field->value =~ /^\d+\.\d+(?:\.\d+)?$/) {
         my $err_msg = 'Invalid line value';
         $field->add_error($err_msg);
     }

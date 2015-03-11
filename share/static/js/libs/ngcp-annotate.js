@@ -11,7 +11,11 @@
       $el.append('<div class="arrow-' + pos + '"></div>');
       $el.addClass("annotate");
 
-      var linkPosition = $el.position();
+      //var linkPosition = $el.position();
+      var linkPosition = {
+        'top': $el.attr("data-pos-top"),
+        'left': $el.attr("data-pos-left")
+      };
       var top, left;
       switch(pos) {
       	case "top":

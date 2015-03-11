@@ -10,6 +10,7 @@ use MooseX::ClassAttribute qw(class_has);
 use Data::Dumper;
 use NGCP::Panel::Utils::DateTime;
 use NGCP::Panel::Utils::DeviceBootstrap;
+use NGCP::Panel::Utils::Device;
 BEGIN { extends 'Catalyst::Controller::ActionRole'; }
 require Catalyst::ActionRole::ACL;
 require Catalyst::ActionRole::CheckTrailingSlash;
@@ -202,6 +203,7 @@ sub POST :Allow {
         last unless $self->valid_media_type($c, 'multipart/form-data');
         last unless $self->require_wellformed_json($c, 'application/json', $c->req->param('json'));
         my $resource = JSON::from_json($c->req->param('json'));
+        $resource->{type} //= 'phone';
         $resource->{front_image} = $self->get_upload($c, 'front_image');
         last unless $resource->{front_image};
         # optional, don't set error
@@ -258,6 +260,7 @@ sub POST :Allow {
         }
 
         try {
+            my $connectable_models = delete $resource->{connectable_models};
             my $sync_parameters = NGCP::Panel::Utils::DeviceBootstrap::devmod_sync_parameters_prefetch($c, undef, $resource);
             my $credentials = NGCP::Panel::Utils::DeviceBootstrap::devmod_sync_credentials_prefetch($c, undef, $resource);
             NGCP::Panel::Utils::DeviceBootstrap::devmod_sync_clear($c, $resource);
@@ -265,6 +268,7 @@ sub POST :Allow {
             NGCP::Panel::Utils::DeviceBootstrap::devmod_sync_credentials_store($c, $item, $credentials);
             NGCP::Panel::Utils::DeviceBootstrap::devmod_sync_parameters_store($c, $item, $sync_parameters);
             NGCP::Panel::Utils::DeviceBootstrap::dispatch_devmod($c, 'register_model', $item);
+            NGCP::Panel::Utils::Device::process_connectable_models($c, 1, $item, $connectable_models );
 
             foreach my $range(@{ $linerange }) {
                 unless(ref $range eq "HASH") {
