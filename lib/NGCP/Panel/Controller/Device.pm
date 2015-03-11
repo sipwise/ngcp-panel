@@ -37,7 +37,7 @@ sub base :Chained('/') :PathPart('device') :CaptureArgs(0) {
     }
 
     my $devmod_rs = $c->model('DB')->resultset('autoprov_devices')->search_rs(undef,{
-            'columns' => [qw/id reseller_id type vendor model front_image_type mac_image_type num_lines bootstrap_method bootstrap_uri/],
+            'columns' => [qw/id reseller_id type vendor model front_image_type mac_image_type num_lines bootstrap_method bootstrap_uri extensions_num/],
 	});
     $reseller_id and $devmod_rs = $devmod_rs->search({ reseller_id => $reseller_id });
     $c->stash->{devmod_dt_columns} = NGCP::Panel::Utils::Datatables::set_columns($c, [
@@ -1022,32 +1022,52 @@ sub devprof_get_lines :Chained('devprof_base') :PathPart('lines/ajax') :Args(0) 
     $c->detach( $c->view("JSON") );
 }
 
-sub devprof_get_annotated_lines :Chained('devprof_base') :PathPart('annolines/ajax') :Args(0) :Does(ACL) :ACLDetachTo('/denied_page') :AllowedRole(admin) :AllowedRole(reseller) :AllowedRole(subscriberadmin) {
+sub devprof_get_annotated_info :Chained('devprof_base') :PathPart('annolines/ajax') :Args(0) :Does(ACL) :ACLDetachTo('/denied_page') :AllowedRole(admin) :AllowedRole(reseller) :AllowedRole(subscriberadmin) {
     my ($self, $c) = @_;
-    $self->get_annotated_lines($c, $c->stash->{devprof}->config->device->autoprov_device_line_ranges );
+    $self->get_annotated_info($c, $c->stash->{devprof}->config->device );
 }
 
-sub devmod_get_annotated_lines :Chained('devmod_base') :PathPart('annolines/ajax') :Args(0) :Does(ACL) :ACLDetachTo('/denied_page') :AllowedRole(admin) :AllowedRole(reseller) :AllowedRole(subscriberadmin) {
+sub devmod_get_annotated_info :Chained('devmod_base') :PathPart('annolines/ajax') :Args(0) :Does(ACL) :ACLDetachTo('/denied_page') :AllowedRole(admin) :AllowedRole(reseller) :AllowedRole(subscriberadmin) {
     my ($self, $c) = @_;
-    $self->get_annotated_lines($c, $c->stash->{devmod}->autoprov_device_line_ranges );
+    $self->get_annotated_info($c, $c->stash->{devmod} );
 }
 
-sub get_annotated_lines :Privat {
-    my ($self, $c, $rs) = @_;
+sub get_annotated_info :Privat {
+    my ($self, $c, $devmod) = @_;
 
-    my @ranges = map {{
-        $_->get_inflated_columns,
-        annotations => [
-            map {{
+    my $device_info = { $devmod->get_inflated_columns }; 
+    foreach(qw/front_image mac_image/){
+        delete $device_info->{$_};
+    }
+    my $gather_ranges_info = sub {
+        my $rs = shift;
+        return [
+            { map {
                 $_->get_inflated_columns,
-            }} $_->annotations->all,
-        ],
-    }} $rs->all;
+                'annotations' => [
+                    map {{
+                        $_->get_inflated_columns,
+                    }} $_->annotations->all,
+                ],
+            } $rs->all }
+        ];
+    };
+    my $data = {
+        'device'  => $device_info,
+        'ranges' => $gather_ranges_info->( $devmod->autoprov_device_line_ranges ),
+        'extensions' => { map {
+            $_->extension->id => { 
+                $_->extension->get_inflated_columns,
+                'ranges' => $gather_ranges_info->( $_->extension->autoprov_device_line_ranges ),
+            }
+        } $devmod->autoprov_extensions_link->all },
+    };
 
-    $c->stash(aaData               => \@ranges,
-              iTotalRecords        => scalar @ranges,
-              iTotalDisplayRecords => scalar @ranges,
-              sEcho                => int($c->request->params->{sEcho} // 1),
+    $c->stash(
+        aaData               => $data,
+        iTotalRecords        => 1,
+        iTotalDisplayRecords => 1,
+        sEcho                => int($c->request->params->{sEcho} // 1),
     );
 
     $c->detach( $c->view("JSON") );

@@ -633,22 +633,33 @@
 <script src="/js/libs/ngcp-annotate.js"></script>
 <link rel="stylesheet" type="text/css" href="/font/font-awesome/css/font-awesome.min.css"/>
 <script>
-var aaData;
 var linekeys;
-var field_extensions;
+var fieldExtensions;
+//can't be passed from events => global variable
+var profileExtensionsData;
 [% IF edit_flag == 1 -%]
 if(!linekeys){
     linekeys = {};
-    field_extensions = {};
+    //keeps as keys modelDeviceId's for all extensions, mentioned in the field lineranges
+    //keys of the value keep all phone models linked to this extension
+    fieldExtensions = {};
     [% FOR line IN pbx_device.autoprov_field_device_lines.all -%]
         [%IF line.autoprov_device_line_range.device.type == 'extension'%]
-            field_extensions['[%line.autoprov_device_line_range.device.id%]'] = {
+            [%extension_model_device_id = line.autoprov_device_line_range.device.id%]
+            if(!fieldExtensions['[%extension_model_device_id%]']){
+                    fieldExtensions['[%extension_model_device_id%]']= {
+                    'units': {},
+                    'availablePhones': {}
+                };
+            }
+            fieldExtensions['[%extension_model_device_id%]']['units']['[%line.extension_unit%]'] = 1;
+            fieldExtensions['[%extension_model_device_id%]']['availablePhones'] = {
             [% FOR link IN line.autoprov_device_line_range.device.autoprov_extension_device_link.all -%]
                 '[%link.device_id%]':1[%IF !loop.last %], [%END%]
             [%END%]
             };
         [%END%]
-        linekeys['[% line.linerange_id %].[% line.key_num %]'] = { 
+        linekeys['[% line.linerange_id %].[% line.key_num %].[% line.extension_unit %]'] = { 
           'mode': '[% line.line_type %]',
           'sub': '[% line.provisioning_voip_subscriber.username %]@[% line.provisioning_voip_subscriber.domain.domain%]',
           'subid': [% line.provisioning_voip_subscriber.id %],
@@ -660,31 +671,28 @@ if(!linekeys){
 
 function get_urls(in_data){
     var data = {};
-    //alert('1.id='+in_data.id+';type='+in_data.type);
     if((!in_data.type) || (in_data.type == undefined) || in_data.type == 'profile'){
         in_data.type = 'profile';
         if(!in_data.id){
             in_data.id = $('div.controls #profile_id option:selected').first().attr('value');
         }
-        //alert('2.id='+in_data.id);
         if(!in_data.id) return;
         data.uri_lines = '/device/profile/' + in_data.id + '/annolines/ajax';
-        data.uri_image = '/device/profile/' + in_data.id + '/frontimage';
         data.uri_extensions = '/device/profile/' + in_data.id + '/extensions';
-        data.uri_extensions_field = '/device/profile/' + in_data.id + '/extensions_field';
-    }else if(in_data.type == 'extension'){
-        if(!in_data.id) return;
-        data.uri_lines = '/device/model/' + in_data.id + '/annolines/ajax';
-        data.uri_image = '/device/model/' + in_data.id + '/frontimage';
     }
-    //alert('3.id='+in_data.id+';type='+in_data.type);
     return data;
 }
-function create_ranges_annotations(id,type,uri_data,ranges,linecmt){
-    var markup = '<div class="annotated" id="annotated_'+type+(type === 'extension'?id:'')+'">' +
-        '<img src="' + uri_data.uri_image + '" />';
-    if(undefined === linecmt){
-        linecmt = -1;
+function create_ranges_annotations(id,type,ranges){
+    var divCnt = 1 + get_extension_divcnt(id);
+    var divId = 'annotated_'+type+(type === 'extension'?'_'+id+'_'+divCnt:'');
+    var uri_image = ( type == 'extension' ) ?'/device/model/' + id + '/frontimage' : '/device/profile/' + id + '/frontimage';
+    var markup = '<div class="annotated" id="'+divId+'">' +
+        '<img src="' +uri_image + '" />';
+    var linecmt = get_linecmt();
+    var unit = 0;
+    if(type === 'extension'){
+        //if we draw by button - it will fit without parameter
+        unit = get_extensions_num();
     }
     for(var i = 0; i < ranges.length; ++i) {
         var range = ranges[i];
@@ -694,48 +702,59 @@ function create_ranges_annotations(id,type,uri_data,ranges,linecmt){
 
             var a = range.annotations[j];
             var status = "unassigned";
-            var linekeysCurrent = 0;
-
+            var linekeyCurrent = 0;
 [% IF edit_flag == 1 -%]
-            var idx = ranges[i].id+'.'+ a.line_index;
+            var idx = ranges[i].id+'.'+ a.line_index+'.'+ unit;
             if( linekeys && linekeys[idx]){
-                linekeysCurrent = linekeys[idx];
+                linekeyCurrent = linekeys[idx];
                 status = "assigned";
             }
 [% END -%]
-            var action = '<i class="fa '+(linekeysCurrent ? 'fa-plus-square' : 'fa-user')+' fa-fw"></i> ' +
+            var action = '<i class="fa '+(linekeyCurrent ? 'fa-plus-square' : 'fa-user')+' fa-fw"></i> ' +
                 '<select class="subselect" name="line.' + linecmt + '.subscriber_id" id="line.' + linecmt + '.subscriber_id">' + 
-                '<option value="0">'+(linekeysCurrent ? '[% c.loc("Subscriber") %]' : '[% c.loc("None") %]' )+'</option>' +
+                '<option value="0">'+(linekeyCurrent ? '[% c.loc("Subscriber") %]' : '[% c.loc("None") %]' )+'</option>' +
 [% subs = [] -%]
 [% FOR sub IN subs.merge(pbx_groups.all, subscribers.all) -%]
-                '<option value="[% sub.provisioning_voip_subscriber.id %]"'+((linekeysCurrent && linekeysCurrent.subid == '[% sub.provisioning_voip_subscriber.id %]')? ' selected="selected"' : '')+'>[% sub.provisioning_voip_subscriber.display_name ? sub.provisioning_voip_subscriber.display_name : sub.username %][% sub.provisioning_voip_subscriber.pbx_extension.defined ? " (" _ sub.provisioning_voip_subscriber.pbx_extension _ ")" : "" %]</option>' +
+                '<option value="[% sub.provisioning_voip_subscriber.id %]"'+((linekeyCurrent && linekeyCurrent.subid == '[% sub.provisioning_voip_subscriber.id %]')? ' selected="selected"' : '')+'>[% sub.provisioning_voip_subscriber.display_name ? sub.provisioning_voip_subscriber.display_name : sub.username %][% sub.provisioning_voip_subscriber.pbx_extension.defined ? " (" _ sub.provisioning_voip_subscriber.pbx_extension _ ")" : "" %]</option>' +
 [% END -%]
                 '</select>' +
                 '<select class="modeselect" name="line.' + linecmt + '.type" id="line.' + linecmt + '.type">' + 
 [% FOR opt IN ["private", "shared", "blf"] -%]
                 (range.can_[% opt %] == "1" ? 
-                    '<option value="[% opt %]"'+((linekeysCurrent && linekeysCurrent.mode == '[% opt %]' ) ? '  selected="selected"' : '')+'>[% opt %]</option>' : '') +
+                    '<option value="[% opt %]"'+((linekeyCurrent && linekeyCurrent.mode == '[% opt %]' ) ? '  selected="selected"' : '')+'>[% opt %]</option>' : '') +
 [% END -%]
                 '</select>' + 
-                '<input type="hidden" name="line.' + linecmt + '.line" id="line.' + linecmt + '.line" value="' + a.range_id + '.' + a.line_index + '"/>' + 
+                '<input type="hidden" name="line.' + linecmt + '.line" id="line.' + linecmt + '.line" value="' + a.range_id + '.' + a.line_index + '.' + unit + '"/>' + 
+                '<input type="hidden" name="line.' + linecmt + '.extension_unit" id="line.' + linecmt + '.extension_unit" value="' + unit + '"/>' + 
                 '';
-            markup += '<div class="caption ' + status + '" style="top:' + a.y + 'px; left:' + a.x + 'px;" data-pos="' + a.position + '">' + action + '</div>';
+            markup += '<div class="caption ' + status + '" style="top:' + a.y + 'px; left:' + a.x + 'px;" data-pos="' + a.position + '" data-pos-top="' + a.y + '" data-pos-left="' + a.x + '">' + action + '</div>';
         }
     }
-    markup += '</div>';
     if(type == 'extension'){
-        //remove button
+        markup += '<div class="control-group delete_extension_button">'
++'<div class="controls">'
++'<div class="btn btn-primary pull-right rm_element btn" onclick="$(\'div#'+divId+'\').remove();">Remove Extension</div>'
++'</div>'
++'</div>';
     }
+    markup += '</div>';
     apply_markup(markup);
+    add_extension_button();
     $("div.annotated").each(function(){
         $(this).find("div.caption").annotate(this);
     });
     //return markup;
 }
 function apply_markup(markup){
-    var last = $('div.caption').last();
+    var last = $('div.annotated').last();
     if(!last || last.length < 1 ){
-        last =$('div.caption');
+        last =$('div.annotated');
+    }
+    if(!last || last.length < 1 ){
+        last = $('div.caption').last();
+        if(!last || last.length < 1 ){
+            last =$('div.caption');
+        }
     }
     if(!last || last.length < 1 ){
         last = $('div.control-group').last();
@@ -743,87 +762,75 @@ function apply_markup(markup){
     if(!last || last.length < 1 ){
         last = $('div.control-group');
     }
-    alert('last.length:'+last.length);
     last.after(markup);
 }
-function annotate_device(object, type, id, linecmt) {
-    //$('.annotated').remove();
-    //alert("caller is " + arguments.callee.caller.toString());
-    var in_data = {'id':id, 'type': type};
+
+function annotate_profile() {
+    $('.annotated').remove();
+    var in_data = {'id':'', 'type': 'profile'};
     var uri_data = get_urls(in_data);
-    alert('in_data.id:'+in_data.id+';in_data.type:'+in_data.type+';linecmt:'+linecmt);
     id = in_data.id;
     type = in_data.type;
     if(!id) return;
     $.ajax({
         url: uri_data.uri_lines,
     }).done(function(data) {
-        var ranges = data.aaData;
-        var markup = create_ranges_annotations(id,type,uri_data, ranges, linecmt);
-        process_extensions(type,id,uri_data);
-        //process_linked_extensions(id);
+        profileExtensionsData = data.aaData;
+        var ranges = profileExtensionsData.ranges;
+        create_ranges_annotations(id,'profile',profileExtensionsData.ranges);
+        process_extensions();
     });
 }
-function process_extensions(type,id,uri_data){
-    $.ajax({
-        url: uri_data.uri_extensions,
-    }).done(function(extensionsJson) {
-        var profileExtensionsData = extensionsJson.aaData;
-        //$.dump(profileExtensionsData, 1, "profileExtensionsData");
-        //$.dump(profileExtensionsData.extensions.keys(), 1, "profileExtensionsData");
-        //$.dump(field_extensions, 1, "field_extensions");
-        var field_extensions_current = {};
-        for( extension_device_id in field_extensions ){
-            alert('extension_device_id '+extension_device_id);
-            if(field_extension[extension_device_id][profileExtensionsData.device.id]){
-                field_extensions_current[extension_device_id] = 1;
-                var extension_uri_data_in = {'type': 'extension','id':extension_device_id};
-                var extension_uri_data = get_urls(extension_uri_data_in);
-                
-                var markup = create_ranges_annotations(extension_device_id,'extension',extension_uri_data,profileExtensionsData.extensions[extension_device_id],linekeys);
-                //process_linked_extensions(id);
-                annotate_device('extension', extension_device_id,get_linecmt());
+function process_extensions(){
+    var fieldExtensionsCurrent = get_extensions_current();
+    for( extension_unit in fieldExtensionsCurrent ){
+        extensionModelDeviceId = fieldExtensionsCurrent[extension_unit];
+        create_ranges_annotations(extensionModelDeviceId,'extension',profileExtensionsData.extensions[extensionModelDeviceId].ranges);
+    }
+}
+function get_extensions_current(){
+    //a little bit not optimal
+    var fieldExtensionsCurrent = {};
+    var profileModelDeviceId = profileExtensionsData.device.id;
+    for(extensionModelDeviceId in fieldExtensions){
+        if(fieldExtensions[extensionModelDeviceId]['availablePhones'][profileModelDeviceId]){
+            for(extension_unit in fieldExtensions[extensionModelDeviceId]['units']){
+                fieldExtensionsCurrent[extension_unit] = extensionModelDeviceId;
             }
         }
-        //for( extension_device_id in field_extensions ){
-        //     annotate_device('extension', extension_device_id);
-        //}
-        var fieldExtensionsNum = Object.keys(field_extensions_current).length ;
-        var allowedExtensionsNum = profileExtensionsData.device.extensions_num;
-        var addExtensionMarkup = '';
-        var availableExtensionsNum = Object.keys(profileExtensionsData.extensions).length;
-        alert('fieldExtensionsNum:'+fieldExtensionsNum+';allowedExtensionsNum:'+allowedExtensionsNum+';availableExtensionsNum:'+availableExtensionsNum+';');
-        if(allowedExtensionsNum && availableExtensionsNum && (fieldExtensionsNum < allowedExtensionsNum)){
-            alert('got here');
-            addExtensionMarkup += '<div class="control-group" id="extension">'
+    }
+    return fieldExtensionsCurrent;
+}
+function add_extension_button(){
+    var fieldExtensionsNum = get_extensions_num();
+    var allowedExtensionsNum = profileExtensionsData.device.extensions_num;
+    var addExtensionMarkup = '';
+    var availableExtensionsNum = Object.keys(profileExtensionsData.extensions).length;
+    if(allowedExtensionsNum && availableExtensionsNum && (fieldExtensionsNum < allowedExtensionsNum)){
+        var exists = $('div#add_extension_button').length;
+        if(!exists){
+            addExtensionMarkup += '<div class="control-group" id="add_extension_button">'
 +'<label class="control-label" for="extension">Device Extension</label>'
 +'<div class="controls">'
 +'<div class="control-group">'
 +'<label class="control-label" for="extension.'+fieldExtensionsNum+'"></label>'
-+'<div class="controls"><select name="extension.'+fieldExtensionsNum+'.extension_id">';
-            for( extension_device_id in profileExtensionsData.extensions ){
-                addExtensionMarkup += '<option value='+extension_device_id+'>'+profileExtensionsData.extensions[extension_device_id].vendor+' '+ profileExtensionsData.extensions[extension_device_id].model;
-                //annotate_device('extension', extension_device_id);
++'<div class="controls"><select name="extension_id" id="extension_id">';
+            for( extensionModelDeviceId in profileExtensionsData.extensions ){
+                addExtensionMarkup += '<option value='+extensionModelDeviceId+'>'+profileExtensionsData.extensions[extensionModelDeviceId].vendor+' '+ profileExtensionsData.extensions[extensionModelDeviceId].model;
             }
             addExtensionMarkup += '</select></div>'
 +'</div>'
 +'<div class="control-group">'
 +'<div class="controls">'
-+'<div class="btn btn-primary pull-right add_element btn" data-rep-elem-id="'+fieldExtensionsNum+'" id="extension.'+fieldExtensionsNum+'.add" onclick="annotate_device({},\'extension\', \''+extension_device_id+'\',get_linecmt());">Add Extension</div>'
++'<div class="btn btn-primary pull-right add_element btn" data-rep-elem-id="'+fieldExtensionsNum+'" id="extension.'+fieldExtensionsNum+'.add" onclick="var selectObj = document.getElementById(\'extension_id\');var extensionModelDeviceId=selectObj.options[selectObj.selectedIndex].value; create_ranges_annotations(extensionModelDeviceId,\'extension\',profileExtensionsData.extensions[extensionModelDeviceId].ranges);">Add Extension</div>'
 +'</div>'
 +'</div></div>'
 +'</div>';
-apply_markup(addExtensionMarkup);
-            //$.ajax({
-            //    url: uri_data.uri_extensions_field,
-            //}).done(function(extensionsFieldResponse) {
-            //alert(extensionsFieldResponse);
-            //    var addExtensionMarkup = extensionsFieldResponse;
-            //    apply_markup(addExtensionMarkup);
-            //});
+            apply_markup(addExtensionMarkup);
         }
-    });
-
+    }else{
+        $('div#add_extension_button').remove();
+    }
 }
 function get_linecmt(){
     var linecmt = []; 
@@ -832,18 +839,37 @@ function get_linecmt(){
         if(found && found[1]){
             linecmt.push(found[1]);
         }
-        //$.dump(found, 1, "found");
     });
     var linecmt_max = Math.max.apply(Math, linecmt);
-    if(undefined !== linecmt_max){
-        linecmt_max--;
-    }else{
+    if(isNaN(linecmt_max) || linecmt_max == Number.POSITIVE_INFINITY || linecmt_max == Number.NEGATIVE_INFINITY){
+    //we shouldn't make -1 for the NEXT number, although in the code the first operation is ++ in the loop;
         linecmt_max = -1;
     }
     return linecmt_max;
 }
-$('div.controls #profile_id').change(annotate_device);
-annotate_device();
+function get_extension_divcnt(id_in){
+    var divcnt = {}; 
+    $("div[id^='annotated_extension_']").each(function (i, element) {
+        var found = element.id.match(/annotated_extension_(\d+)_(\d+)/);
+        if(found && found[1] && found[2]){
+            if(!divcnt[found[1]]){
+                divcnt[found[1]] = [found[2]];
+            }else{
+                divcnt[found[1]].push(found[2]);
+            }
+        }
+    });
+    for(id in divcnt){
+        divcnt[id] = Math.max.apply(Math, divcnt[id]);
+    }
+    var res = 0 + ( divcnt[id_in] ? divcnt[id_in] : 0 );
+    return res;
+}
+function get_extensions_num(){
+    return $("div[id^='annotated_extension_']").length;
+}
+$('div.controls #profile_id').change(annotate_profile);
+annotate_profile();
 
 
 
