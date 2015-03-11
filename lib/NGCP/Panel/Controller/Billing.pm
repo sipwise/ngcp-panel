@@ -84,8 +84,8 @@ sub ajax :Chained('profile_list') :PathPart('ajax') :Args(0) {
 sub base :Chained('profile_list') :PathPart('') :CaptureArgs(1) {
     my ($self, $c, $profile_id) = @_;
 
-    unless($profile_id && $profile_id->is_integer) {
-        NGCP::Panel::Utils::Message->error(
+    unless($profile_id && is_int($profile_id)) {
+        NGCP::Panel::Utils::Message::error(
             c => $c,
             data => { id => $profile_id },
             desc  => $c->loc('Invalid profile id detected!'),
@@ -102,7 +102,7 @@ sub base :Chained('profile_list') :PathPart('') :CaptureArgs(1) {
     
     my $res = $c->stash->{profiles_rs}->find($profile_id);
     unless(defined($res)) {
-        NGCP::Panel::Utils::Message->error(
+        NGCP::Panel::Utils::Message::error(
             c => $c,
             data => { id => $profile_id },
             desc  => $c->loc('Billing Profile does not exist!'),
@@ -121,7 +121,7 @@ sub edit :Chained('base') :PathPart('edit') {
     my $form;
     my $params = $c->stash->{profile};
     $params->{reseller}{id} = delete $params->{reseller_id};
-    $params = $params->merge($c->session->{created_objects});
+    $params = merge($params, $c->session->{created_objects});
     if($c->user->is_superuser) {
         $form = NGCP::Panel::Form::BillingProfile::Admin->new;
     } else {
@@ -201,12 +201,12 @@ sub edit :Chained('base') :PathPart('edit') {
             });
 
             delete $c->session->{created_objects}->{reseller};
-            NGCP::Panel::Utils::Message->info(
+            NGCP::Panel::Utils::Message::info(
                 c => $c,
                 desc  => $c->loc('Billing profile successfully updated'),
             );
         } catch($e) {
-            NGCP::Panel::Utils::Message->error(
+            NGCP::Panel::Utils::Message::error(
                 c => $c,
                 error => $e,
                 desc  => $c->loc('Failed to update billing profile'),
@@ -226,7 +226,7 @@ sub create :Chained('profile_list') :PathPart('create') :Args(0) {
     my $form;
     my $params = {};
     $params->{reseller}{id} = delete $params->{reseller_id};
-    $params = $params->merge($c->session->{created_objects});
+    $params = merge($params, $c->session->{created_objects});
     # no_reseller - sounds as "!reseller", and thus !$no_reseller => !(!reseller) => reseller, but old code meant axacly admin view for this case, so, we can suppose that no_reseller could be number of reseller
     if($c->user->is_superuser && !$no_reseller) {
         $form = NGCP::Panel::Form::BillingProfile::Admin->new;
@@ -260,12 +260,12 @@ sub create :Chained('profile_list') :PathPart('create') :Args(0) {
             my $profile = $c->model('DB')->resultset('billing_profiles')->create($form->values);
             $c->session->{created_objects}->{billing_profile} = { id => $profile->id };
             delete $c->session->{created_objects}->{reseller};
-            NGCP::Panel::Utils::Message->info(
+            NGCP::Panel::Utils::Message::info(
                 c => $c,
                 desc  => $c->loc('Billing profile successfully created'),
             );
         } catch($e) {
-            NGCP::Panel::Utils::Message->error(
+            NGCP::Panel::Utils::Message::error(
                 c => $c,
                 error => $e,
                 desc  => $c->loc('Failed to create billing profile'),
@@ -289,7 +289,7 @@ sub terminate :Chained('base') :PathPart('terminate') :Args(0) {
     my $profile = $c->stash->{profile_result};
 
     if ($profile->id == 1) {
-        NGCP::Panel::Utils::Message->error(
+        NGCP::Panel::Utils::Message::error(
             c => $c,
             desc => $c->loc('Cannot terminate default billing profile with the id 1'),
         );
@@ -301,13 +301,13 @@ sub terminate :Chained('base') :PathPart('terminate') :Args(0) {
             status => 'terminated',
             terminate_timestamp => NGCP::Panel::Utils::DateTime::current_local,
         });
-        NGCP::Panel::Utils::Message->info(
+        NGCP::Panel::Utils::Message::info(
             c => $c,
             data => $c->stash->{profile},
             desc => $c->loc('Billing profile successfully terminated'),
         );
     } catch ($e) {
-        NGCP::Panel::Utils::Message->error(
+        NGCP::Panel::Utils::Message::error(
             c => $c,
             error => $e,
             data  => $c->stash->{profile},
@@ -337,9 +337,9 @@ sub fees :Chained('fees_list') :PathPart('') :Args(0) {
 sub fees_base :Chained('fees_list') :PathPart('') :CaptureArgs(1) {
     my ($self, $c, $fee_id) = @_;
 
-    unless($fee_id && $fee_id->is_integer) {
+    unless($fee_id && is_int($fee_id)) {
         $fee_id //= '';
-        NGCP::Panel::Utils::Message->error(
+        NGCP::Panel::Utils::Message::error(
             c => $c,
             data => $c->stash->{profile},
             log  => $fee_id,
@@ -353,7 +353,7 @@ sub fees_base :Chained('fees_list') :PathPart('') :CaptureArgs(1) {
         ->search(undef, {join => 'billing_zone',})
         ->find($fee_id);
     unless(defined($res)) {
-        NGCP::Panel::Utils::Message->error(
+        NGCP::Panel::Utils::Message::error(
             c => $c,
             data => $c->stash->{profile},
             log  => $fee_id,
@@ -381,7 +381,7 @@ sub fees_create :Chained('fees_list') :PathPart('create') :Args(0) {
 
     my $posted = ($c->request->method eq 'POST');
     my $params = {};
-    $params = $params->merge($c->session->{created_objects});
+    $params = merge($params, $c->session->{created_objects});
     my $profile_id = $c->stash->{profile}->{id};
     my $form = NGCP::Panel::Form::BillingFee->new;
     $form->process(
@@ -399,7 +399,7 @@ sub fees_create :Chained('fees_list') :PathPart('create') :Args(0) {
         $c->stash->{'profile_result'}
           ->billing_fees->create($form->values);
         delete $c->session->{created_objects}->{billing_zone};
-        NGCP::Panel::Utils::Message->info(
+        NGCP::Panel::Utils::Message::info(
             c => $c,
             desc => $c->loc('Billing Fee successfully created!'),
         );
@@ -429,7 +429,7 @@ sub fees_upload :Chained('fees_list') :PathPart('upload') :Args(0) {
 
         # TODO: check by formhandler?
         unless($upload) {
-            NGCP::Panel::Utils::Message->error(
+            NGCP::Panel::Utils::Message::error(
                 c => $c,
                 desc => $c->loc('No Billing Fee file specified!'),
             );
@@ -483,12 +483,12 @@ sub fees_upload :Chained('fees_list') :PathPart('upload') :Args(0) {
             if(@fails) {
                 $text .= $c->loc(", but skipped the following line numbers: ") . (join ", ", @fails);
             }
-            NGCP::Panel::Utils::Message->info(
+            NGCP::Panel::Utils::Message::info(
                 c => $c,
                 desc => $text,
             );
         } catch($e) {
-            NGCP::Panel::Utils::Message->error(
+            NGCP::Panel::Utils::Message::error(
                 c => $c,
                 error => $e,
                 desc => $c->loc('Failed to upload Billing Fees'),
@@ -510,7 +510,7 @@ sub fees_edit :Chained('fees_base') :PathPart('edit') :Args(0) {
     my $posted = ($c->request->method eq 'POST');
     my $params = $c->stash->{fee};
     $params->{billing_zone}{id} = delete $params->{billing_zone_id};
-    $params = $params->merge($c->session->{created_objects});
+    $params = merge($params, $c->session->{created_objects});
     my $form = NGCP::Panel::Form::BillingFee->new;
     $form->field('billing_zone')->field('id')->ajax_src('../../zones/ajax');
     $form->process(
@@ -530,7 +530,7 @@ sub fees_edit :Chained('fees_base') :PathPart('edit') :Args(0) {
         $c->stash->{'fee_result'}
             ->update($form->values);
         delete $c->session->{created_objects}->{billing_zone};
-        NGCP::Panel::Utils::Message->info(
+        NGCP::Panel::Utils::Message::info(
             c => $c,
             desc => $c->loc('Billing fee successfully changed!'),
         );
@@ -546,7 +546,7 @@ sub fees_delete :Chained('fees_base') :PathPart('delete') :Args(0) {
     my ($self, $c) = @_;
 
     unless ( defined($c->stash->{'fee_result'}) ) {
-        NGCP::Panel::Utils::Message->error(
+        NGCP::Panel::Utils::Message::error(
             c => $c,
             data => $c->stash->{profile},
             desc => $c->loc('Billing fee not found!'),
@@ -555,7 +555,7 @@ sub fees_delete :Chained('fees_base') :PathPart('delete') :Args(0) {
     }
     $c->stash->{'fee_result'}->delete;
 
-    NGCP::Panel::Utils::Message->info(
+    NGCP::Panel::Utils::Message::info(
         c => $c,
         data => $c->stash->{profile},
         desc => $c->loc('Billing fee successfully deleted!'),
@@ -600,12 +600,12 @@ sub zones_create :Chained('zones_list') :PathPart('create') :Args(0) {
         try {
             my $zone = $c->stash->{'profile_result'}->billing_zones->create($form->values);
             $c->session->{created_objects}->{billing_zone} = { id => $zone->id };
-            NGCP::Panel::Utils::Message->info(
+            NGCP::Panel::Utils::Message::info(
                 c => $c,
                 desc => $c->loc('Billing Zone successfully created'),
             );
         } catch($e) {
-            NGCP::Panel::Utils::Message->error(
+            NGCP::Panel::Utils::Message::error(
                 c => $c,
                 error => $e,
                 desc  => $c->loc('Failed to create billing zone'),
@@ -624,9 +624,9 @@ sub zones :Chained('zones_list') :PathPart('') :Args(0) {
 sub zones_base :Chained('zones_list') :PathPart('') :CaptureArgs(1) {
     my ($self, $c, $zone_id) = @_;
     
-    unless($zone_id && $zone_id->is_integer) {
+    unless($zone_id && is_int($zone_id)) {
         $zone_id //= '';
-        NGCP::Panel::Utils::Message->error(
+        NGCP::Panel::Utils::Message::error(
             c => $c,
             data => $c->stash->{profile},
             log  => $zone_id,
@@ -638,7 +638,7 @@ sub zones_base :Chained('zones_list') :PathPart('') :CaptureArgs(1) {
     my $res = $c->stash->{'profile_result'}->billing_zones
         ->find($zone_id);
     unless(defined($res)) {
-        NGCP::Panel::Utils::Message->error(
+        NGCP::Panel::Utils::Message::error(
             c => $c,
             data => $c->stash->{profile},
             log  => $zone_id,
@@ -655,13 +655,13 @@ sub zones_delete :Chained('zones_base') :PathPart('delete') :Args(0) {
     my $zone_info = { $c->stash->{zone_result}->get_inflated_columns };
     try {
         $c->stash->{zone_result}->delete;
-        NGCP::Panel::Utils::Message->info(
+        NGCP::Panel::Utils::Message::info(
             c => $c,
             data => $zone_info,
             desc => $c->loc('Billing zone successfully deleted'),
         );
     } catch($e) {
-        NGCP::Panel::Utils::Message->error(
+        NGCP::Panel::Utils::Message::error(
             c => $c,
             error => $e,
             data  => $zone_info,
@@ -699,7 +699,7 @@ sub peaktime_weekdays_base :Chained('peaktimes_list') :PathPart('weekday') :Capt
     my ($self, $c, $weekday_id) = @_;
     unless (defined $weekday_id && $weekday_id >= 0 && $weekday_id <= 6) {
         $weekday_id //= '';
-        NGCP::Panel::Utils::Message->error(
+        NGCP::Panel::Utils::Message::error(
             c => $c,
             data => $c->stash->{profile},
             log  => $weekday_id,
@@ -726,7 +726,7 @@ sub peaktime_weekdays_edit :Chained('peaktime_weekdays_base') :PathPart('edit') 
         $form->values->{end} = '23:59:59' unless($form->values->{end});
         $c->stash->{'weekdays_result'}
             ->create($form->values);
-        NGCP::Panel::Utils::Message->info(
+        NGCP::Panel::Utils::Message::info(
             c => $c,
             data => { %{$c->request->params},
                       billing_profile_id => $c->stash->{profile}{id}, },
@@ -739,7 +739,7 @@ sub peaktime_weekdays_edit :Chained('peaktime_weekdays_base') :PathPart('edit') 
         my $rs = $c->stash->{weekdays_result}
             ->find($delete_param);
         unless ($rs) {
-            NGCP::Panel::Utils::Message->error(
+            NGCP::Panel::Utils::Message::error(
                 c => $c,
                 desc => $c->loc('The timerange you wanted to delete does not exist'),
             );
@@ -749,7 +749,7 @@ sub peaktime_weekdays_edit :Chained('peaktime_weekdays_base') :PathPart('edit') 
             return;
         }
         $rs->delete();
-        NGCP::Panel::Utils::Message->info(
+        NGCP::Panel::Utils::Message::info(
             c => $c,
             data => { $rs->get_inflated_columns },
             desc => $c->loc('Timerange has been successfully deleted'),
@@ -810,9 +810,9 @@ sub peaktime_specials_ajax :Chained('peaktimes_list') :PathPart('ajax') :Args(0)
 sub peaktime_specials_base :Chained('peaktimes_list') :PathPart('date') :CaptureArgs(1) {
     my ($self, $c, $special_id) = @_;
     
-    unless($special_id && $special_id->is_integer) {
+    unless($special_id && is_int($special_id)) {
         $special_id //= '';
-        NGCP::Panel::Utils::Message->error(
+        NGCP::Panel::Utils::Message::error(
             c => $c,
             desc => $c->loc('Invalid peaktime date id detected!'),
         );
@@ -823,7 +823,7 @@ sub peaktime_specials_base :Chained('peaktimes_list') :PathPart('date') :Capture
     my $res = $c->stash->{'profile_result'}->billing_peaktime_specials
         ->find($special_id);
     unless(defined($res)) {
-        NGCP::Panel::Utils::Message->error(
+        NGCP::Panel::Utils::Message::error(
             c => $c,
             data => $c->stash->{profile},
             log  => $special_id,
@@ -857,14 +857,14 @@ sub peaktime_specials_edit :Chained('peaktime_specials_base') :PathPart('edit') 
     if($posted && $form->validated) {
         try {
             $c->stash->{special_result}->update($form->values);
-            NGCP::Panel::Utils::Message->info(
+            NGCP::Panel::Utils::Message::info(
                 c => $c,
                 data => { %{$c->request->params},
                           billing_profile_id => $c->stash->{profile}{id}, },
                 desc => $c->loc('Special offpeak entry successfully updated'),
             );
         } catch($e) {
-            NGCP::Panel::Utils::Message->error(
+            NGCP::Panel::Utils::Message::error(
                 c => $c,
                 error => $e,
                 data => { %{$c->request->params},
@@ -884,13 +884,13 @@ sub peaktime_specials_delete :Chained('peaktime_specials_base') :PathPart('delet
     my $special_result_info = { $c->stash->{special_result}->get_inflated_columns };
     try {
         $c->stash->{special_result}->delete;
-        NGCP::Panel::Utils::Message->info(
+        NGCP::Panel::Utils::Message::info(
             c => $c,
             data => $special_result_info,
             desc => $c->loc('Special offpeak entry successfully deleted'),
         );
     } catch($e) {
-        NGCP::Panel::Utils::Message->error(
+        NGCP::Panel::Utils::Message::error(
             c => $c,
             error => $e,
             data => $special_result_info,
@@ -922,14 +922,14 @@ sub peaktime_specials_create :Chained('peaktimes_list') :PathPart('date/create')
         try {
             $c->stash->{'profile_result'}->billing_peaktime_specials
                 ->create($form->values);
-            NGCP::Panel::Utils::Message->info(
+            NGCP::Panel::Utils::Message::info(
                 c => $c,
                 data => { %{$c->request->params},
                           billing_profile_id => $c->stash->{profile}{id}, },
                 desc => $c->loc('Special offpeak entry successfully created'),
             );
         } catch($e) {
-            NGCP::Panel::Utils::Message->error(
+            NGCP::Panel::Utils::Message::error(
                 c => $c,
                 error => $e,
                 data => { %{$c->request->params},

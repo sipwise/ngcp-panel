@@ -60,8 +60,8 @@ sub create :Chained('dom_list') :PathPart('create') :Args() {
     my $posted = ($c->request->method eq 'POST');
     my $form; my $pbx;
     if($type && $type eq 'pbx') {
-        unless($reseller_id && $reseller_id->is_int) {
-            NGCP::Panel::Utils::Message->error(
+        unless($reseller_id && is_int($reseller_id)) {
+            NGCP::Panel::Utils::Message::error(
                 c => $c,
                 error => 'invalid reseller id for creating pbx domain',
                 desc => $c->loc('Invalid reseller id detected.'),
@@ -73,7 +73,7 @@ sub create :Chained('dom_list') :PathPart('create') :Args() {
         }
         $c->stash->{reseller} = $c->model('DB')->resultset('resellers')->find($reseller_id);
         unless($c->stash->{reseller}) {
-            NGCP::Panel::Utils::Message->error(
+            NGCP::Panel::Utils::Message::error(
                 c => $c,
                 error => "reseller with id $reseller_id not found when creating pbx domain",
                 desc => $c->loc('Reseller not found.'),
@@ -88,7 +88,7 @@ sub create :Chained('dom_list') :PathPart('create') :Args() {
         $form = NGCP::Panel::Form::Domain::Reseller->new;
     }
     my $params = {};
-    $params = $params->merge($c->session->{created_objects});
+    $params = merge($params, $c->session->{created_objects});
     delete $params->{domain} if exists($params->{domain}{id});
     $form->process(
         posted => $posted,
@@ -136,7 +136,7 @@ sub create :Chained('dom_list') :PathPart('create') :Args() {
                 $c->session->{created_objects}->{domain} = { id => $new_dom->id };
             });
         } catch ($e) {
-            NGCP::Panel::Utils::Message->error(
+            NGCP::Panel::Utils::Message::error(
                 c => $c,
                 error => $e,
                 desc  => $c->loc('Failed to create domain.'),
@@ -145,7 +145,7 @@ sub create :Chained('dom_list') :PathPart('create') :Args() {
         }
 
         $self->_sip_domain_reload($c);
-        NGCP::Panel::Utils::Message->info(
+        NGCP::Panel::Utils::Message::info(
             c => $c,
             desc => $c->loc('Domain successfully created'),
         );
@@ -162,9 +162,9 @@ sub create :Chained('dom_list') :PathPart('create') :Args() {
 sub base :Chained('/domain/dom_list') :PathPart('') :CaptureArgs(1) {
     my ($self, $c, $domain_id) = @_;
 
-    unless($domain_id && $domain_id->is_integer) {
+    unless($domain_id && is_int($domain_id)) {
         $domain_id //= '';
-        NGCP::Panel::Utils::Message->error(
+        NGCP::Panel::Utils::Message::error(
             c => $c,
             data => { domain_id => $domain_id },
             desc => $c->loc('Invalid domain id detected'),
@@ -176,7 +176,7 @@ sub base :Chained('/domain/dom_list') :PathPart('') :CaptureArgs(1) {
 
     my $res = $c->stash->{dom_rs}->find($domain_id);
     unless(defined($res)) {
-        NGCP::Panel::Utils::Message->error(
+        NGCP::Panel::Utils::Message::error(
             c => $c,
             desc => $c->loc('Domain does not exist'),
         );
@@ -215,7 +215,7 @@ sub edit :Chained('base') :PathPart('edit') :Args(0) {
                 });
             });
         } catch ($e) {
-            NGCP::Panel::Utils::Message->error(
+            NGCP::Panel::Utils::Message::error(
                 c => $c,
                 error => $e,
                 desc  => $c->loc('Failed to update domain.'),
@@ -225,7 +225,7 @@ sub edit :Chained('base') :PathPart('edit') :Args(0) {
         }
 
         $self->_sip_domain_reload($c);
-        NGCP::Panel::Utils::Message->info(
+        NGCP::Panel::Utils::Message::info(
             c => $c,
             desc => $c->loc('Domain successfully updated'),
         );
@@ -254,7 +254,7 @@ sub delete :Chained('base') :PathPart('delete') :Args(0) {
                 unless($c->config->{features}->{debug});
         });
     } catch ($e) {
-        NGCP::Panel::Utils::Message->error(
+        NGCP::Panel::Utils::Message::error(
             c => $c,
             error => $e,
             desc  => $c->loc('Failed to delete domain.'),
@@ -264,7 +264,7 @@ sub delete :Chained('base') :PathPart('delete') :Args(0) {
     }
 
     $self->_sip_domain_reload($c);
-    NGCP::Panel::Utils::Message->info(
+    NGCP::Panel::Utils::Message::info(
         c => $c,
         data => { $c->stash->{domain_result}->get_inflated_columns },
         desc => $c->loc('Domain successfully deleted!'),

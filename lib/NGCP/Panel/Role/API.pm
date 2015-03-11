@@ -283,7 +283,7 @@ sub allowed_methods {
 
 sub valid_id {
     my ($self, $c, $id) = @_;
-    return 1 if $id->is_integer;
+    return 1 if is_int($id);
     $self->error($c, HTTP_BAD_REQUEST, "Invalid id in request URI");
     return;
 }
@@ -435,7 +435,7 @@ sub set_body {
 sub log_request {
     my ($self, $c) = @_;
 
-    NGCP::Panel::Utils::Message->info(
+    NGCP::Panel::Utils::Message::info(
         c    => $c,
         type => 'api_request',
         log  => $c->stash->{'body'},
@@ -453,7 +453,7 @@ sub log_response {
     my $rc = '';
     if (@{ $c->error }) {
         my $msg = join ', ', @{ $c->error };
-        $rc = NGCP::Panel::Utils::Message->error(
+        $rc = NGCP::Panel::Utils::Message::error(
             c    => $c,
             type => 'api_response',
             log  => $msg,
@@ -461,7 +461,7 @@ sub log_response {
         $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "Internal Server Error");
         $c->clear_errors;
     }
-    NGCP::Panel::Utils::Message->info(
+    NGCP::Panel::Utils::Message::info(
         c    => $c,
         type => 'api_response',
         log  => $c->response->body,

@@ -1,6 +1,6 @@
 package NGCP::Panel::Controller::Invoice;
 use Sipwise::Base;
-use namespace::sweep;
+
 BEGIN { extends 'Catalyst::Controller'; }
 
 use NGCP::Panel::Utils::Message;
@@ -57,8 +57,8 @@ sub customer_inv_list :Chained('/') :PathPart('invoice/customer') :CaptureArgs(1
         { name => "amount_total", search => 1, title => $c->loc("Total Amount") },
     ]);
 
-    unless($contract_id && $contract_id->is_int) {
-        NGCP::Panel::Utils::Message->error(
+    unless($contract_id && is_int($contract_id)) {
+        NGCP::Panel::Utils::Message::error(
             c => $c,
             error => "Invalid contract id $contract_id found",
             desc  => $c->loc('Invalid contract id found'),
@@ -66,7 +66,7 @@ sub customer_inv_list :Chained('/') :PathPart('invoice/customer') :CaptureArgs(1
         NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for('/sound'));
     }
     if($c->user->roles eq "subscriberadmin" && $c->user->account_id != $contract_id) {
-        NGCP::Panel::Utils::Message->error(
+        NGCP::Panel::Utils::Message::error(
             c => $c,
             error => "access violation, subscriberadmin ".$c->user->uuid." with contract id ".$c->user->account_id." tries to access foreign contract id $contract_id",
             desc  => $c->loc('Invalid contract id found'),
@@ -75,7 +75,7 @@ sub customer_inv_list :Chained('/') :PathPart('invoice/customer') :CaptureArgs(1
     }
     my $contract = $c->model('DB')->resultset('contracts')->find($contract_id);
     unless($contract) {
-        NGCP::Panel::Utils::Message->error(
+        NGCP::Panel::Utils::Message::error(
             c => $c,
             error => "Contract id $contract_id not found",
             desc  => $c->loc('Invalid contract id detected'),
@@ -111,8 +111,8 @@ sub customer_ajax :Chained('customer_inv_list') :PathPart('ajax') :Args(0) {
 sub base :Chained('inv_list') :PathPart('') :CaptureArgs(1) {
     my ($self, $c, $inv_id) = @_;
 
-    unless($inv_id && $inv_id->is_integer) {
-        NGCP::Panel::Utils::Message->error(
+    unless($inv_id && is_int($inv_id)) {
+        NGCP::Panel::Utils::Message::error(
             c     => $c,
             log   => 'Invalid invoice id detected',
             desc  => $c->loc('Invalid invoice id detected'),
@@ -122,7 +122,7 @@ sub base :Chained('inv_list') :PathPart('') :CaptureArgs(1) {
 
     my $res = $c->stash->{inv_rs}->find($inv_id);
     unless(defined($res)) {
-        NGCP::Panel::Utils::Message->error(
+        NGCP::Panel::Utils::Message::error(
             c     => $c,
             log   => 'Invoice does not exist',
             desc  => $c->loc('Invoice does not exist'),
@@ -137,7 +137,7 @@ sub create :Chained('inv_list') :PathPart('create') :Args() :Does(ACL) :ACLDetac
 
     my $posted = ($c->request->method eq 'POST');
     my $params = {};
-    $params = $params->merge($c->session->{created_objects});
+    $params = merge($params, $c->session->{created_objects});
 
     my $form;
     $form = NGCP::Panel::Form::Invoice::Invoice->new(ctx => $c);
@@ -160,7 +160,7 @@ sub create :Chained('inv_list') :PathPart('create') :Args() :Does(ACL) :ACLDetac
                 my $customer_rs = NGCP::Panel::Utils::Contract::get_customer_rs(c => $c);
                 my $customer = $customer_rs->find({ 'me.id' => $contract_id });
                 unless($customer) {
-                    NGCP::Panel::Utils::Message->error(
+                    NGCP::Panel::Utils::Message::error(
                         c => $c,
                         error => "invalid contract_id $contract_id",
                         desc  => $c->loc('Customer not found'),
@@ -184,7 +184,7 @@ sub create :Chained('inv_list') :PathPart('create') :Args() :Does(ACL) :ACLDetac
                 }
                 $tmpl = $tmpl->first;
                 unless($tmpl) {
-                    NGCP::Panel::Utils::Message->error(
+                    NGCP::Panel::Utils::Message::error(
                         c => $c,
                         error => "invalid template id $tmpl_id",
                         desc  => $c->loc('Invoice template not found'),
@@ -192,7 +192,7 @@ sub create :Chained('inv_list') :PathPart('create') :Args() :Does(ACL) :ACLDetac
                     die;
                 }
                 unless($tmpl->data) {
-                    NGCP::Panel::Utils::Message->error(
+                    NGCP::Panel::Utils::Message::error(
                         c => $c,
                         error => "invalid template id $tmpl_id, data is empty",
                         desc  => $c->loc('Invoice template does not have an SVG stored yet'),
@@ -201,7 +201,7 @@ sub create :Chained('inv_list') :PathPart('create') :Args() :Does(ACL) :ACLDetac
                 }
 
                 unless($customer->contact->reseller_id == $tmpl->reseller_id) {
-                    NGCP::Panel::Utils::Message->error(
+                    NGCP::Panel::Utils::Message::error(
                         c => $c,
                         error => "template id ".$tmpl->id." has different reseller than contract id $contract_id",
                         desc  => $c->loc('Template and customer must belong to same reseller'),
@@ -249,7 +249,7 @@ sub create :Chained('inv_list') :PathPart('create') :Args() :Does(ACL) :ACLDetac
                                 etime => $etime
                     );
                 } catch($e) {
-                    NGCP::Panel::Utils::Message->error(
+                    NGCP::Panel::Utils::Message::error(
                         c => $c,
                         error => $e,
                         desc  => $c->loc('Failed to get contract balance.'),
@@ -275,7 +275,7 @@ sub create :Chained('inv_list') :PathPart('create') :Args() :Does(ACL) :ACLDetac
                 try {
                     $invoice = $schema->resultset('invoices')->create($form->params);
                 } catch($e) {
-                    NGCP::Panel::Utils::Message->error(
+                    NGCP::Panel::Utils::Message::error(
                         c => $c,
                         error => $e,
                         desc  => $c->loc('Failed to save invoice meta data.'),
@@ -327,7 +327,7 @@ sub create :Chained('inv_list') :PathPart('create') :Args() :Does(ACL) :ACLDetac
                     $t->process(\$svg, $vars, \$out) || do {
                         my $error = $t->error();
                         my $msg = "error processing template, type=".$error->type.", info='".$error->info."'";
-                        NGCP::Panel::Utils::Message->error(
+                        NGCP::Panel::Utils::Message::error(
                             c     => $c,
                             log   => $msg,
                             desc  => $c->loc('Failed to render template. Type is [_1], info is [_2].', $error->type, $error->info),
@@ -339,7 +339,7 @@ sub create :Chained('inv_list') :PathPart('create') :Args() :Does(ACL) :ACLDetac
 
                     NGCP::Panel::Utils::InvoiceTemplate::svg_pdf($c, \$out, \$pdf);
                 } catch($e) {
-                    NGCP::Panel::Utils::Message->error(
+                    NGCP::Panel::Utils::Message::error(
                         c     => $c,
                         log   => $e,
                         desc  => $c->loc('Failed to render invoice'),
@@ -352,7 +352,7 @@ sub create :Chained('inv_list') :PathPart('create') :Args() :Does(ACL) :ACLDetac
                     serial => $serial,
                     data => $pdf,
                 });
-                NGCP::Panel::Utils::Message->info(
+                NGCP::Panel::Utils::Message::info(
                     c     => $c,
                     cname => 'create',
                     log   => $vars->{invoice},
@@ -360,7 +360,7 @@ sub create :Chained('inv_list') :PathPart('create') :Args() :Does(ACL) :ACLDetac
                 );
             });
         } catch($e) {
-            NGCP::Panel::Utils::Message->error(
+            NGCP::Panel::Utils::Message::error(
                 c => $c,
                 error => $e,
                 desc  => $c->loc('Failed to create invoice.'),
@@ -381,13 +381,13 @@ sub delete :Chained('base') :PathPart('delete') {
         $schema->txn_do(sub{
             $c->stash->{inv}->delete;
         });
-        NGCP::Panel::Utils::Message->info(
+        NGCP::Panel::Utils::Message::info(
             c    => $c,
             data => { $c->stash->{inv}->get_inflated_columns },
             desc => $c->loc('Invoice successfully deleted'),
         );
     } catch($e) {
-        NGCP::Panel::Utils::Message->error(
+        NGCP::Panel::Utils::Message::error(
             c => $c,
             error => $e,
             desc  => $c->loc('Failed to delete invoice .'),
@@ -404,7 +404,7 @@ sub download :Chained('base') :PathPart('download') {
         $c->response->body($c->stash->{inv}->data);
         return;
     } catch($e) {
-        NGCP::Panel::Utils::Message->error(
+        NGCP::Panel::Utils::Message::error(
             c => $c,
             error => $e,
             desc  => $c->loc('Failed to delete invoice .'),

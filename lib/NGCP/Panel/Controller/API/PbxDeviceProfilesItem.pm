@@ -1,6 +1,6 @@
 package NGCP::Panel::Controller::API::PbxDeviceProfilesItem;
 use Sipwise::Base;
-use namespace::sweep;
+
 use boolean qw(true);
 use Data::HAL qw();
 use Data::HAL::Link qw();

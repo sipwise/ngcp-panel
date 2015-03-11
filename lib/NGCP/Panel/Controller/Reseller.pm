@@ -1,6 +1,6 @@
 package NGCP::Panel::Controller::Reseller;
 use Sipwise::Base;
-use namespace::sweep;
+
 BEGIN { extends 'Catalyst::Controller'; }
 use DateTime qw();
 use HTTP::Status qw(HTTP_SEE_OTHER);
@@ -66,7 +66,7 @@ sub create :Chained('list_reseller') :PathPart('create') :Args(0) :Does(ACL) :AC
         if($c->user->read_only);
 
     my $params = {};
-    $params = $params->merge($c->session->{created_objects});
+    $params = merge($params, $c->session->{created_objects});
 
     my $posted = $c->request->method eq 'POST';
     my $form = NGCP::Panel::Form::Reseller->new;
@@ -90,12 +90,12 @@ sub create :Chained('list_reseller') :PathPart('create') :Args(0) :Does(ACL) :AC
             delete $c->session->{created_objects}->{contract};
             $c->session->{created_objects}->{reseller} = { id => $reseller->id };
 
-            NGCP::Panel::Utils::Message->info(
+            NGCP::Panel::Utils::Message::info(
                 c    => $c,
                 desc => $c->loc('Reseller successfully created'),
             );
         } catch($e) {
-            NGCP::Panel::Utils::Message->error(
+            NGCP::Panel::Utils::Message::error(
                 c => $c,
                 error => $e,
                 desc  => $c->loc('Failed to create reseller'),
@@ -112,8 +112,8 @@ sub create :Chained('list_reseller') :PathPart('create') :Args(0) :Does(ACL) :AC
 sub base :Chained('list_reseller') :PathPart('') :CaptureArgs(1) {
     my ($self, $c, $reseller_id) = @_;
 
-    unless($reseller_id && $reseller_id->is_int) {
-        NGCP::Panel::Utils::Message->error(
+    unless($reseller_id && is_int($reseller_id)) {
+        NGCP::Panel::Utils::Message::error(
             c     => $c,
             log   => 'Invalid reseller id detected',
             desc  => $c->loc('Invalid reseller id detected'),
@@ -166,7 +166,7 @@ sub base :Chained('list_reseller') :PathPart('') :CaptureArgs(1) {
 
     $c->stash(reseller => $c->stash->{resellers}->search_rs({ id => $reseller_id }));
     unless($c->stash->{reseller}->first) {
-        NGCP::Panel::Utils::Message->error(
+        NGCP::Panel::Utils::Message::error(
             c     => $c,
             log   => 'Reseller not found',
             desc  => $c->loc('Reseller not found'),
@@ -216,7 +216,7 @@ sub edit :Chained('base') :PathPart('edit') :Args(0) :Does(ACL) :ACLDetachTo('/d
 
     my $params = { $reseller->get_inflated_columns };
     $params->{contract}{id} = delete $params->{contract_id};
-    $params = $params->merge($c->session->{created_objects});
+    $params = merge($params, $c->session->{created_objects});
     $form->process(
         posted => $posted,
         params => $c->request->params,
@@ -244,12 +244,12 @@ sub edit :Chained('base') :PathPart('edit') :Args(0) :Does(ACL) :ACLDetachTo('/d
 
             delete $c->session->{created_objects}->{contract};
             delete $c->session->{edit_contract_id};
-            NGCP::Panel::Utils::Message->info(
+            NGCP::Panel::Utils::Message::info(
                 c    => $c,
                 desc => $c->loc('Reseller successfully updated'),
             );
         } catch($e) {
-            NGCP::Panel::Utils::Message->error(
+            NGCP::Panel::Utils::Message::error(
                 c => $c,
                 error => $e,
                 desc  => $c->loc('Failed to update reseller'),
@@ -271,7 +271,7 @@ sub terminate :Chained('base') :PathPart('terminate') :Args(0) :Does(ACL) :ACLDe
     my $reseller = $c->stash->{reseller}->first;
 
     if ($reseller->id == 1) {
-        NGCP::Panel::Utils::Message->error(
+        NGCP::Panel::Utils::Message::error(
             c     => $c,
             log   => 'Cannot terminate reseller with the id 1',
             desc  => $c->loc('Cannot terminate reseller with the id 1'),
@@ -288,13 +288,13 @@ sub terminate :Chained('base') :PathPart('terminate') :Args(0) :Does(ACL) :ACLDe
                 $self->_handle_reseller_status_change($c,$reseller);
             }
         });
-        NGCP::Panel::Utils::Message->info(
+        NGCP::Panel::Utils::Message::info(
             c    => $c,
             data => { $reseller->get_inflated_columns },
             desc => $c->loc('Successfully terminated reseller'),
         );
     } catch($e) {
-        NGCP::Panel::Utils::Message->error(
+        NGCP::Panel::Utils::Message::error(
             c => $c,
             error => $e,
             desc  => $c->loc('Failed to terminate reseller'),
@@ -418,13 +418,13 @@ sub create_defaults :Path('create_defaults') :Args(0) :Does(ACL) :ACLDetachTo('/
             );
         });
     } catch($e) {
-        NGCP::Panel::Utils::Message->error(
+        NGCP::Panel::Utils::Message::error(
             c => $c,
             error => $e,
             desc  => $c->loc('Failed to create reseller'),
         );
     };
-    NGCP::Panel::Utils::Message->info(
+    NGCP::Panel::Utils::Message::info(
         c    => $c,
         desc => $c->loc('Reseller successfully created with login <b>[_1]</b> and password <b>[_2]</b>, please review your settings below', $defaults{admins}->{login}, $defaults{admins}->{md5pass}),
     );
@@ -502,12 +502,12 @@ sub edit_branding_css :Chained('base') :PathPart('css/edit') :Args(0) :Does(ACL)
                     $branding->update($form->params);
                 }
             });
-            NGCP::Panel::Utils::Message->info(
+            NGCP::Panel::Utils::Message::info(
                 c    => $c,
                 desc => $c->loc('Reseller branding successfully updated'),
             );
         } catch($e) {
-            NGCP::Panel::Utils::Message->error(
+            NGCP::Panel::Utils::Message::error(
                 c => $c,
                 error => $e,
                 desc  => $c->loc('Failed to update reseller branding'),
