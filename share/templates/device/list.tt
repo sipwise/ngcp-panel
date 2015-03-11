@@ -8,9 +8,27 @@
 [% back_created = 1 -%]
 
 <script>
+function typeDynamicFields(selectedValue){
+    $('.ngcp-devicetype').css("display","none");
+    $('.ngcp-devicetype-'+selectedValue).css("display","block");
+    if(selectedValue == 'phone'){
+        vendor2bootstrapMethod();
+    }
+}
 function bootstrapDynamicFields(selectedValue){
     $('.ngcp-bootstrap-config').css("display","none");
     $('.ngcp-bootstrap-config-'+selectedValue).css("display","block");
+}
+function type2formFields(){
+    var typeFields = document.getElementsByName('type');
+    var typeField;
+    if(typeFields && typeFields.length){
+        typeField = typeFields[0];//we will use default defined in Perl module to show linked fields
+        if(typeField){
+            var type = typeField.options[typeField.selectedIndex].value;
+            typeDynamicFields(type);
+        }
+    }
 }
 function vendor2bootstrapMethod(vendorField){
     var bootstrapMethodField;
@@ -38,7 +56,7 @@ function vendor2bootstrapMethod(vendorField){
         }
         if(bootstrapMethod){
             var length = bootstrapMethodField.options.length;
-            for(var i=0; i < length; i++){        
+            for(var i=0; i < length; i++){
                 if(bootstrapMethodField.options[i].value == bootstrapMethod){
                     bootstrapMethodField.options[i].selected = true;
                 }
@@ -50,7 +68,7 @@ function vendor2bootstrapMethod(vendorField){
     bootstrapDynamicFields(bootstrapMethod);
 }
 $( document ).ready(function() {
-    vendor2bootstrapMethod();
+    type2formFields();
 });
 </script>
 
