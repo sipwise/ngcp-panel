@@ -38,6 +38,7 @@ sub render_element {
         table_titles => $self->table_titles,
         errors => $self->errors,
         language_file => $self->language_file,
+        wrapper_class => ref $self->wrapper_class eq 'ARRAY' ? join (' ', @{$self->wrapper_class}) : $self->wrapper_class,
     };
     
     my $t = new Template({ 
