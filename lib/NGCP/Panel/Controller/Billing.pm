@@ -92,7 +92,7 @@ sub ajax_filter_reseller :Chained('profile_list') :PathPart('ajax/filter_reselle
 sub base :Chained('profile_list') :PathPart('') :CaptureArgs(1) {
     my ($self, $c, $profile_id) = @_;
 
-    unless($profile_id && $profile_id->is_integer) {
+    unless($profile_id && is_int($profile_id)) {
         NGCP::Panel::Utils::Message->error(
             c => $c,
             data => { id => $profile_id },
@@ -133,7 +133,7 @@ sub process_edit :Private {
     my $form;
     my $params = $c->stash->{profile};
     $params->{reseller}{id} = delete $params->{reseller_id};
-    $params = $params->merge($c->session->{created_objects});
+    $params = merge($params, $c->session->{created_objects});
     if( $duplicate ) {
         NGCP::Panel::Utils::Billing::get_billing_profile_uniq_params( params => $params );
         if($c->user->is_superuser) {
@@ -224,7 +224,7 @@ sub process_create :Private {
     my $form;
     my $params = {};
     $params->{reseller}{id} = delete $params->{reseller_id};
-    $params = $params->merge($c->session->{created_objects});
+    $params = merge($params, $c->session->{created_objects});
     if($c->user->is_superuser && !$no_reseller) {
         $form = NGCP::Panel::Form::BillingProfile::Admin->new;
     } else {
@@ -356,7 +356,7 @@ sub fees :Chained('fees_list') :PathPart('') :Args(0) {
 sub fees_base :Chained('fees_list') :PathPart('') :CaptureArgs(1) {
     my ($self, $c, $fee_id) = @_;
 
-    unless($fee_id && $fee_id->is_integer) {
+    unless($fee_id && is_int($fee_id)) {
         $fee_id //= '';
         NGCP::Panel::Utils::Message->error(
             c => $c,
@@ -400,7 +400,7 @@ sub fees_create :Chained('fees_list') :PathPart('create') :Args(0) {
 
     my $posted = ($c->request->method eq 'POST');
     my $params = {};
-    $params = $params->merge($c->session->{created_objects});
+    $params = merge($params, $c->session->{created_objects});
     my $profile_id = $c->stash->{profile}->{id};
     my $form = NGCP::Panel::Form::BillingFee->new;
     $form->process(
@@ -511,7 +511,7 @@ sub fees_edit :Chained('fees_base') :PathPart('edit') :Args(0) {
     my $posted = ($c->request->method eq 'POST');
     my $params = $c->stash->{fee};
     $params->{billing_zone}{id} = delete $params->{billing_zone_id};
-    $params = $params->merge($c->session->{created_objects});
+    $params = merge($params, $c->session->{created_objects});
     my $form = NGCP::Panel::Form::BillingFee->new;
     $form->field('billing_zone')->field('id')->ajax_src('../../zones/ajax');
     $form->process(
@@ -625,7 +625,7 @@ sub zones :Chained('zones_list') :PathPart('') :Args(0) {
 sub zones_base :Chained('zones_list') :PathPart('') :CaptureArgs(1) {
     my ($self, $c, $zone_id) = @_;
 
-    unless($zone_id && $zone_id->is_integer) {
+    unless($zone_id && is_int($zone_id)) {
         $zone_id //= '';
         NGCP::Panel::Utils::Message->error(
             c => $c,
@@ -811,7 +811,7 @@ sub peaktime_specials_ajax :Chained('peaktimes_list') :PathPart('ajax') :Args(0)
 sub peaktime_specials_base :Chained('peaktimes_list') :PathPart('date') :CaptureArgs(1) {
     my ($self, $c, $special_id) = @_;
 
-    unless($special_id && $special_id->is_integer) {
+    unless($special_id && is_int($special_id)) {
         $special_id //= '';
         NGCP::Panel::Utils::Message->error(
             c => $c,

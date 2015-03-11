@@ -319,7 +319,7 @@ sub attributed_methods {
 
 sub valid_id {
     my ($self, $c, $id) = @_;
-    return 1 if $id->is_integer;
+    return 1 if is_int($id);
     $self->error($c, HTTP_BAD_REQUEST, "Invalid id in request URI");
     return;
 }

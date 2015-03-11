@@ -70,7 +70,7 @@ sub tmpl_create :Chained('tmpl_list') :PathPart('create') :Args(0) {
     my $posted = ($c->request->method eq 'POST');
     my $form;
     my $params = {};
-    $params = $params->merge($c->session->{created_objects});
+    $params = merge($params, $c->session->{created_objects});
     if($c->user->roles eq "admin") {
         $form = NGCP::Panel::Form::EmailTemplate::Admin->new;
     } elsif($c->user->roles eq "reseller") {
@@ -130,7 +130,7 @@ sub tmpl_base :Chained('tmpl_list') :PathPart('') :CaptureArgs(1) {
     $c->detach('/denied_page')
         if($c->user->read_only);
 
-    unless($tmpl_id && $tmpl_id->is_integer) {
+    unless($tmpl_id && is_int($tmpl_id)) {
         NGCP::Panel::Utils::Message->error(
             c => $c,
             log => 'Invalid email template id detected',
@@ -190,7 +190,7 @@ sub tmpl_edit :Chained('tmpl_base') :PathPart('edit') {
     my $form;
     my $params = { $c->stash->{tmpl}->get_inflated_columns };
     $params->{reseller}{id} = delete $params->{reseller_id};
-    $params = $params->merge($c->session->{created_objects});
+    $params = merge($params, $c->session->{created_objects});
     if($c->user->roles eq "admin") {
         $form = NGCP::Panel::Form::EmailTemplate::Admin->new;
     } elsif($c->user->roles eq "reseller") {

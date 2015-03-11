@@ -168,7 +168,7 @@ sub devmod_create :Chained('base') :PathPart('model/create') :Args(0) :Does(ACL)
     }
 
     my $params = {};
-    $params = $params->merge($c->session->{created_objects});
+    $params = merge($params, $c->session->{created_objects});
     if($posted) {
         $c->req->params->{front_image} = $c->req->upload('front_image');
         $c->req->params->{mac_image} = $c->req->upload('mac_image');
@@ -350,7 +350,7 @@ sub devmod_edit :Chained('devmod_base') :PathPart('edit') :Args(0) :Does(ACL) :A
     ($params->{connectable_models}) = $self->prepare_connectable($c, $c->stash->{devmod});
 
     $params->{reseller}{id} = delete $params->{reseller_id};
-    $params = $params->merge($c->session->{created_objects});
+    $params = merge($params, $c->session->{created_objects});
     $c->stash(edit_model => 1); # to make front_image optional
     if($c->user->is_superuser) {
         $form = NGCP::Panel::Form::Device::ModelAdmin->new(ctx => $c);
@@ -547,7 +547,7 @@ sub devfw_create :Chained('base') :PathPart('firmware/create') :Args(0) :Does(AC
     my $form = NGCP::Panel::Form::Device::Firmware->new;
 
     my $params = {};
-    $params = $params->merge($c->session->{created_objects});
+    $params = merge($params, $c->session->{created_objects});
     if($posted) {
         $c->req->params->{data} = $c->req->upload('data');
     }
@@ -648,7 +648,7 @@ sub devfw_edit :Chained('devfw_base') :PathPart('edit') :Args(0) {
     my $form;
     my $params = { $c->stash->{devfw}->get_inflated_columns };
     $params->{device}{id} = delete $params->{device_id};
-    $params = $params->merge($c->session->{created_objects});
+    $params = merge($params, $c->session->{created_objects});
     if($posted) {
         $c->req->params->{data} = $c->req->upload('data');
     }
@@ -726,7 +726,7 @@ sub devconf_create :Chained('base') :PathPart('config/create') :Args(0) :Does(AC
     my $form = NGCP::Panel::Form::Device::Config->new;
 
     my $params = {};
-    $params = $params->merge($c->session->{created_objects});
+    $params = merge($params, $c->session->{created_objects});
     $form->process(
         posted => $posted,
         params => $c->request->params,
@@ -821,7 +821,7 @@ sub devconf_edit :Chained('devconf_base') :PathPart('edit') :Args(0) {
     my $form;
     my $params = { $c->stash->{devconf}->get_inflated_columns };
     $params->{device}{id} = delete $params->{device_id};
-    $params = $params->merge($c->session->{created_objects});
+    $params = merge($params, $c->session->{created_objects});
     $form = NGCP::Panel::Form::Device::Config->new;
 
     $form->process(
@@ -893,7 +893,7 @@ sub devprof_create :Chained('base') :PathPart('profile/create') :Args(0) :Does(A
     my $form = NGCP::Panel::Form::Device::Profile->new;
 
     my $params = {};
-    $params = $params->merge($c->session->{created_objects});
+    $params = merge($params, $c->session->{created_objects});
     $form->process(
         posted => $posted,
         params => $c->request->params,
@@ -1097,7 +1097,7 @@ sub devprof_edit :Chained('devprof_base') :PathPart('edit') :Args(0) :Does(ACL) 
     my $form;
     my $params = { $c->stash->{devprof}->get_inflated_columns };
     $params->{config}{id} = delete $params->{config_id};
-    $params = $params->merge($c->session->{created_objects});
+    $params = merge($params, $c->session->{created_objects});
     $form = NGCP::Panel::Form::Device::Profile->new;
 
     $form->process(

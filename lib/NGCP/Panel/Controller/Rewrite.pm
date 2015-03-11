@@ -51,7 +51,7 @@ sub set_ajax :Chained('set_list') :PathPart('ajax') :Args(0) {
 sub set_base :Chained('set_list') :PathPart('') :CaptureArgs(1) {
     my ($self, $c, $set_id) = @_;
 
-    unless($set_id && $set_id->is_integer) {
+    unless($set_id && is_int($set_id)) {
         NGCP::Panel::Utils::Message->error(
             c     => $c,
             log   => 'Invalid rewrite rule set id detected',
@@ -78,7 +78,7 @@ sub set_edit :Chained('set_base') :PathPart('edit') {
     my $posted = ($c->request->method eq 'POST');
     my $params = { $c->stash->{set_result}->get_inflated_columns };
     $params->{reseller}{id} = delete $params->{reseller_id};
-    $params = $params->merge($c->session->{created_objects});
+    $params = merge($params, $c->session->{created_objects});
     my $form;
     if($c->user->roles eq "admin") {
         $form = NGCP::Panel::Form::RewriteRule::AdminSet->new;
@@ -149,7 +149,7 @@ sub set_clone :Chained('set_base') :PathPart('clone') {
 
     my $posted = ($c->request->method eq 'POST');
     my $params = { $c->stash->{set_result}->get_inflated_columns };
-    $params = $params->merge($c->session->{created_objects});
+    $params = merge($params, $c->session->{created_objects});
     my $form = NGCP::Panel::Form::RewriteRule::CloneSet->new;
     $form->process(
         posted => $posted,
@@ -207,7 +207,7 @@ sub set_create :Chained('set_list') :PathPart('create') :Args(0) {
 
     my $posted = ($c->request->method eq 'POST');
     my $params = {};
-    $params = $params->merge($c->session->{created_objects});
+    $params = merge($params, $c->session->{created_objects});
     my $form;
     if($c->user->roles eq "admin") {
         $form = NGCP::Panel::Form::RewriteRule::AdminSet->new;
@@ -274,7 +274,7 @@ sub rules_root :Chained('rules_list') :PathPart('') :Args(0) {
     my $param_where = $c->req->params->{where};
     
     my $elem = $rules_rs->find($param_move)
-        if ($param_move && $param_move->is_integer && $param_where);
+        if ($param_move && is_int($param_move) && $param_where);
     if($elem) {
         my $use_next = ($param_where eq "down") ? 1 : 0;
         my $swap_elem = $rules_rs->search({
@@ -360,7 +360,7 @@ sub rules_root :Chained('rules_list') :PathPart('') :Args(0) {
 sub rules_base :Chained('rules_list') :PathPart('') :CaptureArgs(1) {
     my ($self, $c, $rule_id) = @_;
 
-    unless($rule_id && $rule_id->is_integer) {
+    unless($rule_id && is_int($rule_id)) {
         NGCP::Panel::Utils::Message->error(
             c     => $c,
             log   => 'Invalid rewrite rule id detected',

@@ -126,7 +126,7 @@ sub update_item {
     for my $type (qw/cfu cfb cft cfna/) {
         next unless "ARRAY" eq ref $resource->{$type}{destinations};
         for my $d (@{ $resource->{$type}{destinations} }) {
-            if (exists $d->{timeout} && ! $d->{timeout}->is_integer) {
+            if (exists $d->{timeout} && ! is_int($d->{timeout})) {
                 $c->log->error("Invalid timeout in '$type'");
                 $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Invalid timeout in '$type'");
                 return;

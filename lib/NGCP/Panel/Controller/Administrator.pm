@@ -1,6 +1,6 @@
 package NGCP::Panel::Controller::Administrator;
+#use namespace::sweep;
 use Sipwise::Base;
-use namespace::sweep;
 BEGIN { extends 'Catalyst::Controller'; }
 use HTTP::Headers qw();
 use NGCP::Panel::Form::Administrator::Reseller;
@@ -80,7 +80,7 @@ sub create :Chained('list_admin') :PathPart('create') :Args(0) {
 
     my $form;
     my $params = {};
-    $params = $params->merge($c->session->{created_objects});
+    $params = merge($params, $c->session->{created_objects});
     if($c->user->is_superuser) {
         $form = NGCP::Panel::Form::Administrator::Admin->new(ctx => $c);
     } else {
@@ -135,7 +135,7 @@ sub base :Chained('list_admin') :PathPart('') :CaptureArgs(1) {
     $c->detach('/denied_page')
     	unless($c->user->is_master);
 
-    unless ($administrator_id && $administrator_id->is_integer) {
+    unless ($administrator_id && is_int($administrator_id)) {
         NGCP::Panel::Utils::Message->error(
             c => $c,
             data => { id => $administrator_id },
@@ -159,7 +159,7 @@ sub edit :Chained('base') :PathPart('edit') :Args(0) {
     my $form;
     my $params = { $c->stash->{administrator}->get_inflated_columns };
     $params->{reseller}{id} = delete $params->{reseller_id};
-    $params = $params->merge($c->session->{created_objects});
+    $params = merge($params, $c->session->{created_objects});
     if($c->user->is_superuser) {
         $form = NGCP::Panel::Form::Administrator::Admin->new(ctx => $c);
     } else {

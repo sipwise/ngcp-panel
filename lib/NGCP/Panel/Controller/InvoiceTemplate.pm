@@ -61,7 +61,7 @@ sub reseller_ajax :Chained('template_list') :PathPart('ajax/reseller') :Args(1) 
 sub base :Chained('template_list') :PathPart('') :CaptureArgs(1) {
     my ($self, $c, $tmpl_id) = @_;
 
-    unless($tmpl_id && $tmpl_id->is_integer) {
+    unless($tmpl_id && is_int($tmpl_id)) {
         NGCP::Panel::Utils::Message->error(
             c     => $c,
             log   => 'Invalid invoice template id detected',
@@ -85,7 +85,7 @@ sub base :Chained('template_list') :PathPart('') :CaptureArgs(1) {
 sub create :Chained('template_list') :PathPart('create') :Args() {
     my ($self, $c, $reseller_id) = @_;
 
-    if(defined $reseller_id && !$reseller_id->is_integer) {
+    if(defined $reseller_id && !is_int($reseller_id)) {
         NGCP::Panel::Utils::Message->error(
             c     => $c,
             log   => 'Invalid reseller id detected',
@@ -96,7 +96,7 @@ sub create :Chained('template_list') :PathPart('create') :Args() {
 
     my $posted = ($c->request->method eq 'POST');
     my $params = {};
-    $params = $params->merge($c->session->{created_objects});
+    $params = merge($params, $c->session->{created_objects});
 
     my $form;
     if($c->user->roles eq "admin" && !$reseller_id) {
@@ -178,7 +178,7 @@ sub edit_info :Chained('base') :PathPart('editinfo') {
     my $posted = ($c->request->method eq 'POST');
     my $params = { $tmpl->get_inflated_columns };
     $params->{reseller}{id} = delete $params->{reseller_id};
-    $params = $params->merge($c->session->{created_objects});
+    $params = merge($params, $c->session->{created_objects});
 
     my $form;
     if($c->user->roles eq "admin") {

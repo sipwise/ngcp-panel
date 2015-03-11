@@ -53,7 +53,7 @@ sub ajax :Chained('group_list') :PathPart('ajax') :Args(0) {
 sub base :Chained('group_list') :PathPart('') :CaptureArgs(1) {
     my ($self, $c, $group_id) = @_;
 
-    unless($group_id && $group_id->is_integer) {
+    unless($group_id && is_int($group_id)) {
         NGCP::Panel::Utils::Message->error(
             c     => $c,
             log   => 'Invalid group id detected',
@@ -110,7 +110,7 @@ sub edit :Chained('base') :PathPart('edit') {
     my $form = NGCP::Panel::Form::PeeringGroup->new;
     my $params = { $c->stash->{group_result}->get_inflated_columns };
     $params->{contract}{id} = delete $params->{peering_contract_id};
-    $params = $params->merge($c->session->{created_objects});
+    $params = merge($params, $c->session->{created_objects});
     $form->process(
         posted => $posted,
         params => $c->request->params,
@@ -178,7 +178,7 @@ sub create :Chained('group_list') :PathPart('create') :Args(0) {
     my $posted = ($c->request->method eq 'POST');
     my $form = NGCP::Panel::Form::PeeringGroup->new;
     my $params = {};
-    $params = $params->merge($c->session->{created_objects});
+    $params = merge($params, $c->session->{created_objects});
     $form->process(
         posted => $posted,
         params => $c->request->params,
@@ -291,7 +291,7 @@ sub servers_create :Chained('servers_list') :PathPart('create') :Args(0) {
 sub servers_base :Chained('servers_list') :PathPart('') :CaptureArgs(1) {
     my ($self, $c, $server_id) = @_;
 
-    unless($server_id && $server_id->is_integer) {
+    unless($server_id && is_int($server_id)) {
         NGCP::Panel::Utils::Message->error(
             c     => $c,
             log   => 'Invalid peering server id',
@@ -607,7 +607,7 @@ sub rules_create :Chained('rules_list') :PathPart('create') :Args(0) {
 sub rules_base :Chained('rules_list') :PathPart('') :CaptureArgs(1) {
     my ($self, $c, $rule_id) = @_;
 
-    unless($rule_id && $rule_id->is_integer) {
+    unless($rule_id && is_int($rule_id)) {
         NGCP::Panel::Utils::Message->error(
             c     => $c,
             log   => 'Invalid peering rule id detected',

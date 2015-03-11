@@ -72,7 +72,7 @@ sub ajax :Chained('mcid_list') :PathPart('ajax') :Args(0) {
 sub base :Chained('mcid_list') :PathPart('') :CaptureArgs(1) {
     my ($self, $c, $mcid_id) = @_;
 
-    unless($mcid_id && $mcid_id->is_integer) {
+    unless($mcid_id && is_int($mcid_id)) {
         NGCP::Panel::Utils::Message->error(
             c => $c,
             log => 'Invalid malicious call id detected',

@@ -116,7 +116,7 @@ sub customer_ajax :Chained('customer_inv_list') :PathPart('ajax') :Args(0) {
 sub base :Chained('inv_list') :PathPart('') :CaptureArgs(1) {
     my ($self, $c, $inv_id) = @_;
 
-    unless($inv_id && $inv_id->is_integer) {
+    unless($inv_id && is_int($inv_id)) {
         NGCP::Panel::Utils::Message->error(
             c     => $c,
             log   => 'Invalid invoice id detected',
@@ -142,7 +142,7 @@ sub create :Chained('inv_list') :PathPart('create') :Args() :Does(ACL) :ACLDetac
 
     my $posted = ($c->request->method eq 'POST');
     my $params = {};
-    $params = $params->merge($c->session->{created_objects});
+    $params = merge($params, $c->session->{created_objects});
 
     my $form;
     $form = NGCP::Panel::Form::Invoice::Invoice->new(ctx => $c);

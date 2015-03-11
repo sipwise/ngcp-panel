@@ -48,7 +48,7 @@ sub create :Chained('list_contact') :PathPart('create') :Args(0) {
     my $posted = ($c->request->method eq 'POST');
     my $form;
     my $params = {};
-    $params = $params->merge($c->session->{created_objects});
+    $params = merge($params, $c->session->{created_objects});
     if($c->user->is_superuser && $no_reseller) {
         $form = NGCP::Panel::Form::Contact::Reseller->new;
         $params->{reseller}{id} = $c->user->reseller_id;
@@ -135,7 +135,7 @@ sub edit :Chained('base') :PathPart('edit') :Args(0) {
     my $posted = ($c->request->method eq 'POST');
     my $form;
     my $params = { $c->stash->{contact}->get_inflated_columns };
-    $params = $params->merge($c->session->{created_objects});
+    $params = merge($params, $c->session->{created_objects});
     $params->{country}{id} = delete $params->{country};
     if($c->user->is_superuser && $no_reseller) {
         $form = NGCP::Panel::Form::Contact::Reseller->new;

@@ -61,7 +61,7 @@ sub block_ajax :Chained('block_list') :PathPart('ajax') :Args(0) :Does(ACL) :ACL
 sub block_base :Chained('block_list') :PathPart('') :CaptureArgs(1) {
     my ($self, $c, $block_id) = @_;
 
-    unless($block_id && $block_id->is_integer) {
+    unless($block_id && is_int($block_id)) {
         NGCP::Panel::Utils::Message->error(
             c     => $c,
             log   => 'Invalid number block id detected',
@@ -87,7 +87,7 @@ sub block_create :Chained('block_list') :PathPart('create') :Args(0) :Does(ACL) 
 
     my $posted = ($c->request->method eq 'POST');
     my $params = {};
-    $params = $params->merge($c->session->{created_objects});
+    $params = merge($params, $c->session->{created_objects});
     $params->{reseller_list} = encode_json([]);;
 
     my $form;
@@ -161,7 +161,7 @@ sub block_edit :Chained('block_base') :PathPart('edit') :Does(ACL) :ACLDetachTo(
     $params->{e164}{ac} = delete $params->{cc};
     $params->{e164}{snbase} = delete $params->{sn_prefix};
     $params->{e164}{snlength} = delete $params->{sn_length};
-    $params = $params->merge($c->session->{created_objects});
+    $params = merge($params, $c->session->{created_objects});
     my @resellers = $block->search_related('voip_number_block_resellers')->get_column('reseller_id')->all;
     $params->{reseller_list} = encode_json(\@resellers);
 

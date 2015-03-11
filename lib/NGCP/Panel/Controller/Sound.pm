@@ -140,7 +140,7 @@ sub contract_ajax :Chained('contract_sets_list') :PathPart('ajax') :Args(0) {
 sub base :Chained('sets_list') :PathPart('') :CaptureArgs(1) {
     my ($self, $c, $set_id) = @_;
 
-    unless($set_id && $set_id->is_integer) {
+    unless($set_id && is_int($set_id)) {
         NGCP::Panel::Utils::Message->error(
             c     => $c,
             log   => 'Invalid sound set id detected',
@@ -170,7 +170,7 @@ sub edit :Chained('base') :PathPart('edit') {
     my $params = { $c->stash->{set_result}->get_inflated_columns };
     $params->{reseller}{id} = delete $params->{reseller_id};
     $params->{contract}{id} = delete $params->{contract_id};
-    $params = $params->merge($c->session->{created_objects});
+    $params = merge($params, $c->session->{created_objects});
     if($c->user->roles eq "admin") {
         $form = NGCP::Panel::Form::Sound::AdminSet->new;
     } elsif($c->user->roles eq "reseller") {
@@ -318,7 +318,7 @@ sub create :Chained('sets_list') :PathPart('create') :Args() {
     my $posted = ($c->request->method eq 'POST');
     my $form;
     my $params = {};
-    $params = $params->merge($c->session->{created_objects});
+    $params = merge($params, $c->session->{created_objects});
     if($c->user->roles eq "admin") {
         $form = NGCP::Panel::Form::Sound::AdminSet->new;
         if($contract_id) {
@@ -509,7 +509,7 @@ sub handles_root :Chained('handles_list') :PathPart('') :Args(0) {
 sub handles_base :Chained('handles_list') :PathPart('') :CaptureArgs(1) {
     my ($self, $c, $handle_id) = @_;
 
-    unless($handle_id && $handle_id->is_integer) {
+    unless($handle_id && is_int($handle_id)) {
         NGCP::Panel::Utils::Message->error(
             c     => $c,
             log   => 'Invalid sound handle id detected',

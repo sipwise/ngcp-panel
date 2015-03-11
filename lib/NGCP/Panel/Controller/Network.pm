@@ -78,7 +78,7 @@ sub create :Chained('network_list') :PathPart('create') :Args(0) {
         $form = NGCP::Panel::Form::BillingNetwork::Reseller->new;
     }
     my $params = {};
-    $params = $params->merge($c->session->{created_objects});
+    $params = merge($params, $c->session->{created_objects});
     $form->process(
         posted => $posted,
         params => $c->request->params,
@@ -132,7 +132,7 @@ sub create :Chained('network_list') :PathPart('create') :Args(0) {
 sub base :Chained('/network/network_list') :PathPart('') :CaptureArgs(1) {
     my ($self, $c, $network_id) = @_;
 
-    unless($network_id && $network_id->is_integer) {
+    unless($network_id && is_int($network_id)) {
         $network_id //= '';
         NGCP::Panel::Utils::Message->error(
             c => $c,
@@ -168,7 +168,7 @@ sub edit :Chained('base') :PathPart('edit') :Args(0) {
     my $params = $c->stash->{network};
     $params->{blocks} = $c->stash->{network_blocks};
     $params->{reseller}{id} = delete $params->{reseller_id};
-    $params = $params->merge($c->session->{created_objects});
+    $params = merge($params, $c->session->{created_objects});
     $form->process(
         posted => $posted,
         params => $c->request->params,

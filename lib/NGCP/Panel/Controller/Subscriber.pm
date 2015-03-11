@@ -136,7 +136,7 @@ sub create_list :Chained('sub_list') :PathPart('create') :Args(0) :Does(ACL) :AC
 
     my $posted = ($c->request->method eq 'POST');
     my $params = {};
-    $params = $params->merge($c->session->{created_objects});
+    $params = merge($params, $c->session->{created_objects});
     my $form = NGCP::Panel::Form::Subscriber->new(ctx => $c);
     $form->process(
         posted => $posted,
@@ -211,7 +211,7 @@ sub create_list :Chained('sub_list') :PathPart('create') :Args(0) :Does(ACL) :AC
 sub base :Chained('sub_list') :PathPart('') :CaptureArgs(1) {
     my ($self, $c, $subscriber_id) = @_;
 
-    unless($subscriber_id && $subscriber_id->is_integer) {
+    unless($subscriber_id && is_int($subscriber_id)) {
         NGCP::Panel::Utils::Message->error(
             c     => $c,
             error => "subscriber id '$subscriber_id' is not an integer",

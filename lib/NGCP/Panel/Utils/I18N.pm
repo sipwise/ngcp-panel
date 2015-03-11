@@ -55,24 +55,4 @@ sub _translate_fields_recursive {
 }
 1;
 
-=head1 NAME
-
-NGCP::Panel::Utils::I18N
-
-=head1 DESCRIPTION
-
-Translation tools
-
-=head1 METHODS
-
-=head1 AUTHOR
-
-Gerhard Jungwirth C<< <gjungwirth@sipwise.com> >>
-
-=head1 LICENSE
-
-This library is free software. You can redistribute it and/or modify
-it under the same terms as Perl itself.
-
-=cut
-# vim: set tabstop=4 expandtab:
+1;

@@ -64,7 +64,7 @@ sub ajax :Chained('levels_list') :PathPart('ajax') :Args(0) {
 sub base :Chained('levels_list') :PathPart('') :CaptureArgs(1) {
     my ($self, $c, $level_id) = @_;
 
-    unless($level_id && $level_id->is_integer) {
+    unless($level_id && is_int($level_id)) {
         NGCP::Panel::Utils::Message->error(
             c     => $c,
             log   => 'Invalid NCOS level id detected',
@@ -93,7 +93,7 @@ sub edit :Chained('base') :PathPart('edit') {
     my $level = $c->stash->{level_result};
     my $params = { $level->get_inflated_columns };
     $params->{reseller}{id} = delete $params->{reseller_id};
-    $params = $params->merge($c->session->{created_objects});
+    $params = merge($params, $c->session->{created_objects});
     if($c->user->is_superuser) {
         $form = NGCP::Panel::Form::NCOS::AdminLevel->new;
     } else {
@@ -177,7 +177,7 @@ sub create :Chained('levels_list') :PathPart('create') :Args(0) {
     my $posted = ($c->request->method eq 'POST');
     my $form;
     my $params = {};
-    $params = $params->merge($c->session->{created_objects});
+    $params = merge($params, $c->session->{created_objects});
     if($c->user->is_superuser) {
         $form = NGCP::Panel::Form::NCOS::AdminLevel->new;
     } else {
@@ -258,7 +258,7 @@ sub pattern_ajax :Chained('pattern_list') :PathPart('ajax') :Args(0) {
 sub pattern_base :Chained('pattern_list') :PathPart('') :CaptureArgs(1) {
     my ($self, $c, $pattern_id) = @_;
 
-    unless($pattern_id && $pattern_id->is_integer) {
+    unless($pattern_id && is_int($pattern_id)) {
         NGCP::Panel::Utils::Message->error(
             c     => $c,
             log   => 'Invalid NCOS pattern id detected',

@@ -60,7 +60,7 @@ sub root :Chained('contract_list') :PathPart('') :Args(0) {
 sub base :Chained('contract_list') :PathPart('') :CaptureArgs(1) {
     my ($self, $c, $contract_id) = @_;
 
-    unless($contract_id && $contract_id->is_integer) {
+    unless($contract_id && is_int($contract_id)) {
         NGCP::Panel::Utils::Message->error(
             c     => $c,
             log   => 'Invalid contract id detected!',
@@ -124,7 +124,7 @@ sub edit :Chained('base') :PathPart('edit') :Args(0) {
         $params->{external_id} = $contract->external_id;
         $params->{status} = $contract->status;
     }
-    $params = $params->merge($c->session->{created_objects});
+    $params = merge($params, $c->session->{created_objects});
     my ($form, $is_peering_reseller);
     if (defined $billing_mapping->product &&
         grep {$billing_mapping->product->handle eq $_}
@@ -321,7 +321,7 @@ sub peering_create :Chained('peering_list') :PathPart('create') :Args(0) {
 
     my $posted = ($c->request->method eq 'POST');
     my $params = {};
-    $params = $params->merge($c->session->{created_objects});
+    $params = merge($params, $c->session->{created_objects});
     unless ($self->is_valid_noreseller_contact($c, $params->{contact}{id})) {
         delete $params->{contact};
     }
@@ -469,7 +469,7 @@ sub reseller_create :Chained('reseller_list') :PathPart('create') :Args(0) {
 
     my $posted = ($c->request->method eq 'POST');
     my $params = {};
-    $params = $params->merge($c->session->{created_objects});
+    $params = merge($params, $c->session->{created_objects});
     unless ($self->is_valid_noreseller_contact($c, $params->{contact}{id})) {
         delete $params->{contact};
     }

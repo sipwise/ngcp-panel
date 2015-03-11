@@ -145,7 +145,7 @@ sub create :Chained('list_customer') :PathPart('create') :Args(0) {
     my $posted = ($c->request->method eq 'POST');
     my $form;
     my $params = {};
-    $params = $params->merge($c->session->{created_objects});
+    $params = merge($params, $c->session->{created_objects});
     if($c->config->{features}->{cloudpbx}) {
         $form = NGCP::Panel::Form::Contract::ProductSelect->new(ctx => $c);
     } else {
@@ -245,7 +245,7 @@ sub create :Chained('list_customer') :PathPart('create') :Args(0) {
 
 sub base :Chained('list_customer') :PathPart('') :CaptureArgs(1) {
     my ($self, $c, $contract_id) = @_;
-    unless($contract_id && $contract_id->is_integer) {
+    unless($contract_id && is_int($contract_id)) {
         NGCP::Panel::Utils::Message->error(
             c => $c,
             error => "customer contract id '$contract_id' is not valid",
@@ -446,7 +446,7 @@ sub edit :Chained('base_restricted') :PathPart('edit') :Args(0) {
     }
     $params->{billing_profiles} = [ map { { $_->get_inflated_columns }; } $c->stash->{future_billing_mappings}->all ];
     $params->{billing_profile}->{id} = $billing_profile->id;
-    $params = $params->merge($c->session->{created_objects}); # TODO: created billing profiles/networks will not be pre-selected
+    $params = merge($params, $c->session->{created_objects}); # TODO: created billing profiles/networks will not be pre-selected
     #$c->log->debug('customer/edit');
     if($c->config->{features}->{cloudpbx}) {
         #$c->log->debug('ProductSelect');
@@ -704,7 +704,7 @@ sub subscriber_create :Chained('base') :PathPart('subscriber/create') :Args(0) {
         $form = NGCP::Panel::Form::Customer::Subscriber->new(ctx => $c);
     }
 
-    $params = $params->merge($c->session->{created_objects});
+    $params = merge($params, $c->session->{created_objects});
     $form->process(
         posted => $posted,
         params => $c->request->params,
@@ -1205,7 +1205,7 @@ sub pbx_group_ajax :Chained('base') :PathPart('pbx/group/ajax') :Args(0) {
     my $subscriber_id = $c->req->params->{subscriber_id} // 0;
     
     my $subscriber;
-    if($subscriber_id && $subscriber_id->is_integer) {
+    if($subscriber_id && is_int($subscriber_id)) {
         $subscriber = $c->model('DB')->resultset('voip_subscribers')->search({
             'me.status' => { '!=' => 'terminated' },
         })->find( { id => $subscriber_id } );
@@ -1263,7 +1263,7 @@ sub pbx_group_create :Chained('base') :PathPart('pbx/group/create') :Args(0) {
     my $form;
     $form = NGCP::Panel::Form::Customer::PbxGroup->new(ctx => $c);
     my $params = {};
-    $params = $params->merge($c->session->{created_objects});
+    $params = merge($params, $c->session->{created_objects});
     $form->process(
         posted => $posted,
         params => $c->request->params,
@@ -1371,7 +1371,7 @@ sub pbx_group_edit :Chained('pbx_group_base') :PathPart('edit') :Args(0) {
     my $form;
     $form = NGCP::Panel::Form::Customer::PbxGroupEdit->new;
     my $params = { $c->stash->{pbx_group}->provisioning_voip_subscriber->get_inflated_columns };
-    $params = $params->merge($c->session->{created_objects});
+    $params = merge($params, $c->session->{created_objects});
 
     unless ($posted) {
         NGCP::Panel::Utils::Subscriber::prepare_alias_select(
@@ -1477,7 +1477,7 @@ sub pbx_device_create :Chained('base') :PathPart('pbx/device/create') :Args(0) {
         });
     my $form = NGCP::Panel::Form::Customer::PbxFieldDevice->new(ctx => $c);
     my $params = {};
-    $params = $params->merge($c->session->{created_objects});
+    $params = merge($params, $c->session->{created_objects});
     $form->process(
         posted => $posted,
         params => $c->request->params,
@@ -1600,7 +1600,7 @@ sub pbx_device_edit :Chained('pbx_device_base') :PathPart('edit') :Args(0) {
         };
     }
     $params->{line} = \@lines;
-    $params = $params->merge($c->session->{created_objects});
+    $params = merge($params, $c->session->{created_objects});
     $form->process(
         posted => $posted,
         params => $c->request->params,

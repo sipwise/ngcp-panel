@@ -98,7 +98,7 @@ sub ajax_package_filter :Chained('voucher_list') :PathPart('ajax/package') :Args
 sub base :Chained('voucher_list') :PathPart('') :CaptureArgs(1) {
     my ($self, $c, $voucher_id) = @_;
 
-    unless($voucher_id && $voucher_id->is_integer) {
+    unless($voucher_id && is_int($voucher_id)) {
         NGCP::Panel::Utils::Message->error(
             c => $c,
             data => { id => $voucher_id },
@@ -164,7 +164,7 @@ sub edit :Chained('base') :PathPart('edit') {
     } else {
         delete $params->{code};
     }
-    $params = $params->merge($c->session->{created_objects});
+    $params = merge($params, $c->session->{created_objects});
     if($c->user->is_superuser) {
         $form = NGCP::Panel::Form::Voucher::Admin->new(ctx => $c);
     } else {
@@ -243,7 +243,7 @@ sub create :Chained('voucher_list') :PathPart('create') :Args(0) {
     my $form;
     my $params = {};
     $params->{reseller}{id} = delete $params->{reseller_id};
-    $params = $params->merge($c->session->{created_objects});
+    $params = merge($params, $c->session->{created_objects});
     if($c->user->is_superuser) {
         $form = NGCP::Panel::Form::Voucher::Admin->new(ctx => $c);
     } else {
