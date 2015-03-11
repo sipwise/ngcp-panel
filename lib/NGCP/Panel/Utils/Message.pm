@@ -7,7 +7,9 @@ use DateTime qw();
 use DateTime::Format::RFC3339 qw();
 use Time::HiRes qw();
 
-method get_log_params ($self: Catalyst :$c, :$type?, :$data?) {
+sub get_log_params {
+    my %args = @_;
+    my ($c, $type, $data) = ($args{c}, $args{type}, $args{data});
     # get log_tx_id, caller method, remote user, formatted passed parameters
 
     # tx_id
@@ -95,16 +97,21 @@ method get_log_params ($self: Catalyst :$c, :$type?, :$data?) {
            };
 }
 
-method error ($self: Catalyst :$c, Str :$desc, :$log?, :$error?, :$type = 'panel', :$data?, :$cname?) {
+sub error {
+    my %args = @_;
+    my ($c, $desc, $log, $error, $type, $data, $cname) = 
+        ($args{c}, $args{desc}, $args{log}, $args{error}, $args{type},
+         $args{data}, $args{cname});
 # we explicitly declare the invocant to skip the validation for Object
 # because we want a class method instead of an object method
 
     # undef checks
     $desc //= '';
+    $type //= 'panel';
 
-    my $log_params = $self->get_log_params(c => $c,
-                                           type => $type,
-                                           data => $data, );
+    my $log_params = get_log_params(c => $c,
+                                    type => $type,
+                                    data => $data, );
 
     defined $cname and $log_params->{called} =~ s/__ANON__/$cname/;
 
@@ -173,16 +180,21 @@ method error ($self: Catalyst :$c, Str :$desc, :$log?, :$error?, :$type = 'panel
     return $rc;
 }
 
-method info ($self: Catalyst :$c, Str :$desc, :$log?, :$type = 'panel', :$data?, :$cname?) {
+sub info {
+    my %args = @_;
+    my ($c, $desc, $log, $type, $data, $cname) = 
+        ($args{c}, $args{desc}, $args{log}, $args{type},
+         $args{data}, $args{cname});
 # we explicitly declare the invocant to skip the validation for Object
 # because we want a class method instead of an object method
 
     # undef checks
     $desc //= '';
+    $type //= 'panel';
 
-    my $log_params = $self->get_log_params(c => $c,
-                                           type => $type,
-                                           data => $data, );
+    my $log_params = get_log_params(c => $c,
+                                    type => $type,
+                                    data => $data, );
 
     defined $cname and $log_params->{called} =~ s/__ANON__/$cname/;
 
@@ -213,6 +225,8 @@ method info ($self: Catalyst :$c, Str :$desc, :$log?, :$type = 'panel', :$data?,
     }
     return $rc;
 }
+
+1;
 
 __END__
 
