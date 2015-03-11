@@ -2,7 +2,7 @@ package NGCP::Panel::Controller::Contact;
 use Geography::Countries qw/countries country CNT_I_FLAG CNT_I_CODE2/;
 use Sipwise::Base;
 
-BEGIN { extends 'Catalyst::Controller'; }
+BEGIN { use parent 'Catalyst::Controller'; }
 
 use NGCP::Panel::Form::Contact::Reseller;
 use NGCP::Panel::Form::Contact::Admin;

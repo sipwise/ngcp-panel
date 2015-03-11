@@ -1,7 +1,7 @@
 package NGCP::Panel::Field::MonthPicker;
 use HTML::FormHandler::Moose;
 use Template;
-extends 'HTML::FormHandler::Field';
+use parent 'HTML::FormHandler::Field';
 
 has '+widget' => (default => ''); # leave this empty, as there is no widget ...
 has 'template' => ( isa => 'Str',

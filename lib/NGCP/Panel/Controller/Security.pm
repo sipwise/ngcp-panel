@@ -1,7 +1,7 @@
 package NGCP::Panel::Controller::Security;
 use Sipwise::Base;
 
-BEGIN { extends 'Catalyst::Controller'; }
+BEGIN { use parent 'Catalyst::Controller'; }
 
 use XML::LibXML;
 use URI::Encode;

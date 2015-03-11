@@ -1,11 +1,13 @@
 package NGCP::Panel::Controller::API::ApplyRewrites;
 use Sipwise::Base;
+use Moose qw(after augment before extends has inner override super with);
 
 use boolean qw(true);
 use Data::HAL qw();
 use Data::HAL::Link qw();
 use HTTP::Headers qw();
 use HTTP::Status qw(:constants);
+use Moose qw(after augment before extends has inner override super with);
 use MooseX::ClassAttribute qw(class_has);
 use NGCP::Panel::Utils::DateTime;
 use Path::Tiny qw(path);

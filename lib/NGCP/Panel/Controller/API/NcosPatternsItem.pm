@@ -1,5 +1,6 @@
 package NGCP::Panel::Controller::API::NcosPatternsItem;
 use Sipwise::Base;
+use Moose qw(after augment before extends has inner override super with);
 
 use HTTP::Headers qw();
 use HTTP::Status qw(:constants);

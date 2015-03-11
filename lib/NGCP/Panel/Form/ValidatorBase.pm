@@ -1,7 +1,7 @@
 package NGCP::Panel::Form::ValidatorBase;
 
 use HTML::FormHandler::Moose;
-extends 'HTML::FormHandler';
+use parent 'HTML::FormHandler';
 
 has '+use_fields_for_input_without_param' => ( default => 1 );
 has 'in'           => (is=>'rw',isa => 'HashRef');

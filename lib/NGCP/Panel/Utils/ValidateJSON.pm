@@ -1,6 +1,6 @@
 package NGCP::Panel::Utils::ValidateJSON;
 use Sipwise::Base;
-extends 'JSON::Tiny::Subclassable';
+use parent 'JSON::Tiny::Subclassable';
 
 my $WHITESPACE_RE = qr/[\x20\x09\x0a\x0d]*/;
 

@@ -3,7 +3,7 @@ use Sipwise::Base;
 use Text::CSV_XS;
 use DateTime::Format::ISO8601;
 
-BEGIN { extends 'Catalyst::Controller'; }
+BEGIN { use parent 'Catalyst::Controller'; }
 
 use NGCP::Panel::Form::Voucher::Admin;
 use NGCP::Panel::Form::Voucher::Reseller;

@@ -1,7 +1,7 @@
 package NGCP::Panel::Controller::Pbx;
 use Sipwise::Base;
 
-BEGIN { extends 'Catalyst::Controller'; }
+BEGIN { use parent 'Catalyst::Controller'; }
 
 use NGCP::Panel::Utils::Message;
 use NGCP::Panel::Utils::DateTime;

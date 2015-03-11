@@ -1,6 +1,6 @@
 package NGCP::Panel::Controller::Dashboard;
 use Sipwise::Base;
-BEGIN { extends 'Catalyst::Controller'; }
+BEGIN { use parent 'Catalyst::Controller'; }
 use NGCP::Panel::Widget;
 
 =head1 NAME

@@ -3,7 +3,7 @@ package NGCP::Panel::Utils::DeviceBootstrap::Panasonic;
 use strict;
 use Moose;
 use Data::Dumper;
-extends 'NGCP::Panel::Utils::DeviceBootstrap::VendorRPC';
+use parent 'NGCP::Panel::Utils::DeviceBootstrap::VendorRPC';
 
 sub rpc_server_params{
     my $self = shift;

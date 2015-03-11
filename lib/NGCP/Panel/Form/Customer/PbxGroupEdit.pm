@@ -1,7 +1,7 @@
 package NGCP::Panel::Form::Customer::PbxGroupEdit;
 
 use HTML::FormHandler::Moose;
-extends 'NGCP::Panel::Form::Customer::PbxGroupBase';
+use parent 'NGCP::Panel::Form::Customer::PbxGroupBase';
 
 has_field 'pbx_extension' => (
     type => 'Text',

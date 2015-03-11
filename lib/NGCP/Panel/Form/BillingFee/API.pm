@@ -1,7 +1,7 @@
 package NGCP::Panel::Form::BillingFee::API;
 
 use HTML::FormHandler::Moose;
-extends 'NGCP::Panel::Form::BillingFee';
+use parent 'NGCP::Panel::Form::BillingFee';
 use Moose::Util::TypeConstraints;
 
 has_field 'purge_existing' => (

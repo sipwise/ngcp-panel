@@ -1,7 +1,7 @@
 package NGCP::Panel::Form::Contract::PeeringReseller;
 
 use HTML::FormHandler::Moose;
-extends 'NGCP::Panel::Form::Contract::Basic';
+use parent 'NGCP::Panel::Form::Contract::Basic';
 
 has_field 'contact.id' => (
     type => '+NGCP::Panel::Field::DataTable',

@@ -1,7 +1,7 @@
 package NGCP::Panel::Controller::Log;
 use Sipwise::Base;
 
-BEGIN { extends 'Catalyst::Controller'; }
+BEGIN { use parent 'Catalyst::Controller'; }
 
 use LWP::UserAgent;
 my $ua = LWP::UserAgent->new;

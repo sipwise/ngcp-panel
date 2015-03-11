@@ -2,7 +2,7 @@ package NGCP::Panel::Form::Administrator::APIGenerate;
 use HTML::FormHandler::Moose;
 use HTML::FormHandler::Widget::Block::Bootstrap;
 use Moose::Util::TypeConstraints;
-extends 'HTML::FormHandler';
+use parent 'HTML::FormHandler';
 
 has '+widget_wrapper' => (default => 'Bootstrap');
 has_field 'submitid' => ( type => 'Hidden' );

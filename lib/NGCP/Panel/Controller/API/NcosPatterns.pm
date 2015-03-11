@@ -1,5 +1,6 @@
 package NGCP::Panel::Controller::API::NcosPatterns;
 use Sipwise::Base;
+use Moose qw(after augment before extends has inner override super with);
 
 use boolean qw(true);
 use Data::HAL qw();

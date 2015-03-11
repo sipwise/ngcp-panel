@@ -1,6 +1,6 @@
 package NGCP::Panel::Controller::Root;
 use Sipwise::Base;
-BEGIN { extends 'Catalyst::Controller' }
+BEGIN { use parent 'Catalyst::Controller' }
 use DateTime qw();
 use DateTime::Format::RFC3339 qw();
 use NGCP::Panel::Widget;

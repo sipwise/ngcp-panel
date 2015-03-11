@@ -1,7 +1,7 @@
 package NGCP::Panel::Controller::Administrator;
 
 use Sipwise::Base;
-BEGIN { extends 'Catalyst::Controller'; }
+BEGIN { use parent 'Catalyst::Controller'; }
 use HTTP::Headers qw();
 use NGCP::Panel::Form::Administrator::Reseller;
 use NGCP::Panel::Form::Administrator::Admin;

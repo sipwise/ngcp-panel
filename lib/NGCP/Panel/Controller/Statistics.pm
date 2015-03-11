@@ -1,7 +1,7 @@
 package NGCP::Panel::Controller::Statistics;
 use Sipwise::Base;
 
-BEGIN { extends 'Catalyst::Controller'; }
+BEGIN { use parent 'Catalyst::Controller'; }
 
 use NGCP::Panel::Utils::Statistics;
 use NGCP::Panel::Form::Statistics;

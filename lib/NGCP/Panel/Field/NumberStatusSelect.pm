@@ -1,6 +1,6 @@
 package NGCP::Panel::Field::NumberStatusSelect;
 use Sipwise::Base;
-extends 'HTML::FormHandler::Field::Select';
+use parent 'HTML::FormHandler::Field::Select';
 
 sub build_options {
     my ($self) = @_;

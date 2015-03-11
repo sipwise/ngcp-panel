@@ -1,6 +1,6 @@
 package NGCP::Panel::Field::NumRangeAPI;
 use Sipwise::Base;
-extends 'HTML::FormHandler::Field::Text';
+use parent 'HTML::FormHandler::Field::Text';
 
 has 'min_start' => (isa => 'Int', default => 0, is => 'rw');
 has 'max_end' => (isa => 'Int', default => 999_999, is => 'rw');

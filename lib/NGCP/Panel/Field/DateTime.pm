@@ -1,7 +1,7 @@
 package NGCP::Panel::Field::DateTime;
 use HTML::FormHandler::Moose;
 use Sipwise::Base;
-extends 'HTML::FormHandler::Field::Text';
+use parent 'HTML::FormHandler::Field::Text';
 
 has '+deflate_method' => ( default => sub { \&datetime_deflate } );
 

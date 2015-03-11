@@ -2,7 +2,7 @@ package NGCP::Panel::Controller::Login;
 
 use Sipwise::Base;
 
-BEGIN { extends 'Catalyst::Controller'; }
+BEGIN { use parent 'Catalyst::Controller'; }
 
 use NGCP::Panel::Form::Login;
 

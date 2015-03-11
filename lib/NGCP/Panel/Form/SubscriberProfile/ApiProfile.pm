@@ -1,7 +1,7 @@
 package NGCP::Panel::Form::SubscriberProfile::ApiProfile;
 
 use HTML::FormHandler::Moose;
-extends 'NGCP::Panel::Form::SubscriberProfile::Profile';
+use parent 'NGCP::Panel::Form::SubscriberProfile::Profile';
 use Moose::Util::TypeConstraints;
 
 has_field 'profile_set' => (

@@ -1,7 +1,7 @@
 package NGCP::Panel::Controller::Rewrite;
 use Sipwise::Base;
 
-BEGIN { extends 'Catalyst::Controller'; }
+BEGIN { use parent 'Catalyst::Controller'; }
 
 use NGCP::Panel::Form::RewriteRule::AdminSet;
 use NGCP::Panel::Form::RewriteRule::ResellerSet;

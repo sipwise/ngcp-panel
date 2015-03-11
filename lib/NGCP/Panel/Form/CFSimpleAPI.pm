@@ -2,7 +2,7 @@ package NGCP::Panel::Form::CFSimpleAPI;
 use HTML::FormHandler::Moose;
 use HTML::FormHandler::Widget::Block::Bootstrap;
 use Moose::Util::TypeConstraints;
-extends 'HTML::FormHandler';
+use parent 'HTML::FormHandler';
 
 has '+widget_wrapper' => (default => 'Bootstrap');
 sub build_render_list {[qw/fields actions/]}

@@ -1,7 +1,7 @@
 package NGCP::Panel::Controller::Callflow;
 use Sipwise::Base;
 
-BEGIN { extends 'Catalyst::Controller'; }
+BEGIN { use parent 'Catalyst::Controller'; }
 
 use NGCP::Panel::Utils::Callflow;
 use NGCP::Panel::Utils::Navigation;

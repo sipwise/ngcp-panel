@@ -1,6 +1,6 @@
 package NGCP::Panel::Field::E164Range;
 use HTML::FormHandler::Moose;
-extends 'HTML::FormHandler::Field::Compound';
+use parent 'HTML::FormHandler::Field::Compound';
 
 
 #has 'label' => ( default => 'E164 Number');

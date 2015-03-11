@@ -1,7 +1,7 @@
 package NGCP::Panel::Form::Sound::LoadDefault;
 
 use HTML::FormHandler::Moose;
-extends 'HTML::FormHandler';
+use parent 'HTML::FormHandler';
 use Moose::Util::TypeConstraints;
 use File::Find::Rule;
 

@@ -1,6 +1,6 @@
 package NGCP::Panel::Controller::Subscriber;
 use Sipwise::Base;
-BEGIN { extends 'Catalyst::Controller'; }
+BEGIN { use parent 'Catalyst::Controller'; }
 use HTML::Entities;
 use JSON qw(decode_json encode_json);
 use URI::Escape qw(uri_unescape);

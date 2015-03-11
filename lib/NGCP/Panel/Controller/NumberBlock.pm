@@ -1,7 +1,7 @@
 package NGCP::Panel::Controller::NumberBlock;
 use Sipwise::Base;
 
-BEGIN { extends 'Catalyst::Controller'; }
+BEGIN { use parent 'Catalyst::Controller'; }
 
 use JSON qw(decode_json encode_json);
 use NGCP::Panel::Form::NumberBlock::BlockAdmin;

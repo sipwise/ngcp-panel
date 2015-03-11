@@ -1,7 +1,7 @@
 package NGCP::Panel::Form::Subscriber::SubscriberAPI;
 
 use HTML::FormHandler::Moose;
-extends 'NGCP::Panel::Form::Subscriber';
+use parent 'NGCP::Panel::Form::Subscriber';
 
 sub build_render_list {[qw/submitid fields actions/]}
 sub build_form_element_class {[qw(form-horizontal)]}

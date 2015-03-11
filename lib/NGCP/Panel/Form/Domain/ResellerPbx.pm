@@ -1,7 +1,7 @@
 package NGCP::Panel::Form::Domain::ResellerPbx;
 
 use HTML::FormHandler::Moose;
-extends 'NGCP::Panel::Form::Domain::Reseller';
+use parent 'NGCP::Panel::Form::Domain::Reseller';
 
 has_field 'rwr_set' => (
     type => 'Select',

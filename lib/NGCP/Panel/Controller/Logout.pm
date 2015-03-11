@@ -2,7 +2,7 @@ package NGCP::Panel::Controller::Logout;
 use Sipwise::Base;
 
 
-BEGIN { extends 'Catalyst::Controller'; }
+BEGIN { use parent 'Catalyst::Controller'; }
 
 =head1 NAME
 

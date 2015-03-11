@@ -1,7 +1,7 @@
 package NGCP::Panel::Form::Contract::PeeringResellerAPI;
 
 use HTML::FormHandler::Moose;
-extends 'NGCP::Panel::Form::Contract::PeeringReseller';
+use parent 'NGCP::Panel::Form::Contract::PeeringReseller';
 
 has_field 'type' => (
     type => 'Select',
