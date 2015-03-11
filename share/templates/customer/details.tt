@@ -677,8 +677,9 @@ function get_urls(in_data){
     return data;
 }
 function create_ranges_annotations(id,type,ranges){
-    var divCnt = get_extension_divcnt(id);
+    var divCnt = 1 + get_extension_divcnt(id);
     var divId = 'annotated_'+type+(type === 'extension'?'_'+id+'_'+divCnt:'');
+    alert('divId:'+divId+';');
     var uri_image = ( type == 'extension' ) ?'/device/model/' + id + '/frontimage' : '/device/profile/' + id + '/frontimage';
     var markup = '<div class="annotated" id="'+divId+'">' +
         '<img src="' +uri_image + '" />';
@@ -720,14 +721,14 @@ function create_ranges_annotations(id,type,ranges){
             markup += '<div class="caption ' + status + '" style="top:' + a.y + 'px; left:' + a.x + 'px;" data-pos="' + a.position + '" data-pos-top="' + a.y + '" data-pos-left="' + a.x + '">' + action + '</div>';
         }
     }
-    markup += '</div>';
     if(type == 'extension'){
-        markup += '<div class="control-group">'
+        markup += '<div class="control-group delete_extension_button">'
 +'<div class="controls">'
-+'<div class="btn btn-primary pull-right rm_element btn" onclick="$(\'#'+divCnt+'\').remove();">Remove Extension</div>'
++'<div class="btn btn-primary pull-right rm_element btn" onclick="alert(\'div#'+divId+'\');$(\'div#'+divId+'\').remove();">Remove Extension</div>'
 +'</div>'
 +'</div>';
     }
+    markup += '</div>';
     apply_markup(markup);
     $("div.annotated").each(function(){
         $(this).find("div.caption").annotate(this);
@@ -735,18 +736,31 @@ function create_ranges_annotations(id,type,ranges){
     //return markup;
 }
 function apply_markup(markup){
-    var last = $('div.caption').last();
+    var last = $('div.annotated').last();
+    //alert('0.5.last.length:'+last.length);
     if(!last || last.length < 1 ){
-        last =$('div.caption');
+        last =$('div.annotated');
     }
+    //alert('1.last.length:'+last.length);
+    if(!last || last.length < 1 ){
+        last = $('div.caption').last();
+        //alert('1.5.last.length:'+last.length);
+        if(!last || last.length < 1 ){
+            last =$('div.caption');
+        }
+    }
+    //alert('2.last.length:'+last.length);
     if(!last || last.length < 1 ){
         last = $('div.control-group').last();
     }
+    //alert('3.last.length:'+last.length);
     if(!last || last.length < 1 ){
         last = $('div.control-group');
     }
-    alert('last.length:'+last.length);
+    //alert('4.last.length:'+last.length);
+    //alert(last.html());
     last.after(markup);
+    //alert(last.parent().html());
 }
 
 function annotate_profile() {
@@ -754,7 +768,7 @@ function annotate_profile() {
     //alert("caller is " + arguments.callee.caller.toString());
     var in_data = {'id':'', 'type': 'profile'};
     var uri_data = get_urls(in_data);
-    alert('in_data.id:'+in_data.id+';in_data.type:'+in_data.type+';');
+    //alert('in_data.id:'+in_data.id+';in_data.type:'+in_data.type+';');
     id = in_data.id;
     type = in_data.type;
     if(!id) return;
@@ -775,6 +789,7 @@ function process_extensions(){
     }
 }
 function get_extensions_current(){
+    //a little bit not optimal
     var fieldExtensionsCurrent = {};
     var profileModelDeviceId = profileExtensionsData.device.id;
     for(extensionModelDeviceId in fieldExtensions){
@@ -786,7 +801,7 @@ function get_extensions_current(){
 }
 function add_extension_button(){
     var fieldExtensionsCurrent = get_extensions_current();
-    var fieldExtensionsNum = Object.keys(fieldExtensionsCurrent).length ;
+    var fieldExtensionsNum = Object.keys(fieldExtensionsCurrent).length + get_extension_divcnt();
     var allowedExtensionsNum = profileExtensionsData.device.extensions_num;
     var addExtensionMarkup = '';
     var availableExtensionsNum = Object.keys(profileExtensionsData.extensions).length;
@@ -825,16 +840,19 @@ function get_linecmt(){
         //$.dump(found, 1, "found");
     });
     var linecmt_max = Math.max.apply(Math, linecmt);
-    if(undefined === linecmt_max){
+    //alert('1.linecmt_max:'+linecmt_max+';');
+    if(isNaN(linecmt_max) || linecmt_max == Number.POSITIVE_INFINITY || linecmt_max == Number.NEGATIVE_INFINITY){
     //we shouldn't make -1 for the NEXT number, although in the code the first operation is ++ in the loop;
+        //alert('2.linecmt_max:'+linecmt_max+';');
         linecmt_max = -1;
     }
     return linecmt_max;
 }
 function get_extension_divcnt(id_in){
     var divcnt = {}; 
-    $("select[id^='annotated_extension_']").each(function (i, element) {
+    $("div[id^='annotated_extension_']").each(function (i, element) {
         var found = element.id.match(/annotated_extension_(\d+)_(\d+)/);
+        //$.dump(found, 1, "found");
         if(found && found[1] && found[2]){
             if(!divcnt[found[1]]){
                 divcnt[found[1]] = [found[2]];
@@ -846,9 +864,10 @@ function get_extension_divcnt(id_in){
     for(id in divcnt){
         divcnt[id] = Math.max.apply(Math, divcnt[id]);
     }
-    var res = 1 + divcnt[id_in];
+    var res = 0 + ( divcnt[id_in] ? divcnt[id_in] : 0 );
     return res;
 }
+
 $('div.controls #profile_id').change(annotate_profile);
 annotate_profile();
 
