@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "5a2585a7_44caa250",
+        "filename": "debian/ngcp-panel.init",
+        "patchSetId": 1
+      },
+      "lineNbr": 19,
+      "author": {
+        "id": 1000001
+      },
+      "writtenOn": "2015-03-13T10:34:49Z",
+      "side": 1,
+      "message": "Victor do you know \"proper way\" here to bypass HOME to fcgi?",
+      "revId": "8d5e49c764a5d57a83c7e3bebf0abf9cee9a31d8",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    }
+  ]
+}
