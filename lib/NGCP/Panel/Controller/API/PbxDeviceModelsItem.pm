@@ -141,7 +141,7 @@ sub PUT :Allow {
         last unless $self->forbid_link_header($c);
         last unless $self->valid_media_type($c, 'multipart/form-data');
         last unless $self->require_wellformed_json($c, 'application/json', $c->req->param('json'));
-        my $resource = JSON::from_json($c->req->param('json'));
+        my $resource = JSON::from_json($c->req->param('json'), { utf8 => 1 });
         $resource->{front_image} = $self->get_upload($c, 'front_image');
         last unless $resource->{front_image};
         # optional, don't set error

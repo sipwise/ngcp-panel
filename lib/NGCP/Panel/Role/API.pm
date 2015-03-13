@@ -26,7 +26,7 @@ sub get_valid_post_data {
     my $media_type = $params{media_type};
     my $json =  $self->get_valid_raw_post_data(%params);
     return unless $self->require_wellformed_json($c, $media_type, $json);
-    return JSON::from_json($json);
+    return JSON::from_json($json, { utf8 => 1 });
 }
 
 sub get_valid_raw_post_data {
@@ -49,7 +49,7 @@ sub get_valid_put_data {
     my $json =  $self->get_valid_raw_put_data(%params);
     return unless $json;
     return unless $self->require_wellformed_json($c, $media_type, $json);
-    return JSON::from_json($json);
+    return JSON::from_json($json, { utf8 => 1 });
 }
 
 sub get_valid_raw_put_data {
@@ -305,7 +305,7 @@ sub require_valid_patch {
         }
     }
 
-    my $patch = JSON::from_json($json);
+    my $patch = JSON::from_json($json, { utf8 => 1 });
     unless(ref $patch eq "ARRAY") {
         $self->error($c, HTTP_BAD_REQUEST, "Body for PATCH must be an array.");
         return;

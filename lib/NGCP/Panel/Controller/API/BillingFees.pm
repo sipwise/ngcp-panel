@@ -156,7 +156,7 @@ sub POST :Allow {
             $resource = $c->req->query_params; 
         } else {
             last unless $self->require_wellformed_json($c, 'application/json', $data);
-            $resource = JSON::from_json($data);
+            $resource = JSON::from_json($data, { utf8 => 1 });
             $data = undef;
         }
 
