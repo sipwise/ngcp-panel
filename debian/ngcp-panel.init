@@ -16,6 +16,7 @@ umask 0022
 
 DAEMON=/usr/share/ngcp-panel/ngcp_panel_fastcgi.pl
 HOMEDIR=/usr/share/ngcp-panel
+export HOME=$HOMEDIR
 HOMERUN=/var/run/fastcgi
 PIDFILE=$HOMERUN/ngcp-panel.pid
 USER=www-data
