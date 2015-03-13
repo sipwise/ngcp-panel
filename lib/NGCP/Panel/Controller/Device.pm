@@ -831,7 +831,7 @@ sub devconf_edit :Chained('devconf_base') :PathPart('edit') :Args(0) {
                 $form->values->{device_id} = $form->values->{device}{id};
                 delete $form->values->{device};
 
-                use Data::Printer; p $form->values;
+                #use Data::Printer; p $form->values;
                 $c->stash->{devconf}->update($form->values);
                 delete $c->session->{created_objects}->{device};
             });
