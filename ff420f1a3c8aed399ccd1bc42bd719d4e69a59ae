@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "5a2585a7_a4c146e6",
+        "filename": "lib/NGCP/Panel/Controller/Device.pm",
+        "patchSetId": 3
+      },
+      "lineNbr": 245,
+      "author": {
+        "id": 1000005
+      },
+      "writtenOn": "2015-03-13T14:19:13Z",
+      "side": 1,
+      "message": "you might make this private (_*) or Catalyst has something like :Local to not expose it as an action",
+      "range": {
+        "startLine": 245,
+        "startChar": 24,
+        "endLine": 245,
+        "endChar": 25
+      },
+      "revId": "ff420f1a3c8aed399ccd1bc42bd719d4e69a59ae",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a2585a7_e48f4ecb",
+        "filename": "t/api-pbxdevices.t",
+        "patchSetId": 3
+      },
+      "lineNbr": 6,
+      "author": {
+        "id": 1000005
+      },
+      "writtenOn": "2015-03-13T14:19:13Z",
+      "side": 1,
+      "message": "is that supposed to be here?",
+      "range": {
+        "startLine": 6,
+        "startChar": 0,
+        "endLine": 6,
+        "endChar": 41
+      },
+      "revId": "ff420f1a3c8aed399ccd1bc42bd719d4e69a59ae",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    }
+  ]
+}
