@@ -243,13 +243,6 @@ sub POST :Allow {
         }
         try {
             $customer = $schema->resultset('contracts')->create($resource);
-            $schema->resultset('journals')->create({
-                type => "create",
-                resource => "customers",
-                resource_id => $customer->id,
-                timestamp => $now->hires_epoch,
-                content => undef,
-            });
         } catch($e) {
             $c->log->error("failed to create customer contract: $e"); # TODO: user, message, trace, ...
             $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "Failed to create customer.");
@@ -300,6 +293,7 @@ sub POST :Allow {
             $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "Failed to create customer.");
             last;
         }
+        last unless $self->add_create_journal_record_hal($c,sub { my $self = shift; return $self->hal_from_customer(@_); }, $self->customer_by_id($c, $customer->id), $form);
 
         $guard->commit;
 
