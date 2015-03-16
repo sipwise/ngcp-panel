@@ -22,16 +22,23 @@ class_has('resource_name', is => 'ro', default => 'customers');
 class_has('dispatch_path', is => 'ro', default => '/api/customers/');
 class_has('relation', is => 'ro', default => 'http://purl.org/sipwise/ngcp-api/#rel-customers');
 
+class_has(@{ __PACKAGE__->get_journal_query_params() });
+
 __PACKAGE__->config(
     action => {
-        map { $_ => {
+        (map { $_ => {
             ACLDetachTo => '/api/root/invalid_user',
             AllowedRole => [qw/admin reseller/],
             Args => 1,
             Does => [qw(ACL RequireSSL)],
             Method => $_,
             Path => __PACKAGE__->dispatch_path,
-        } } @{ __PACKAGE__->allowed_methods }
+        } } @{ __PACKAGE__->allowed_methods }),
+        @{ __PACKAGE__->get_journal_action_config('api/' . __PACKAGE__->resource_name,{
+            ACLDetachTo => '/api/root/invalid_user',
+            AllowedRole => [qw/admin reseller/],
+            Does => [qw(ACL RequireSSL)],
+        }) }
     },
     action_roles => [qw(HTTPMethods)],
 );
@@ -112,6 +119,9 @@ sub PATCH :Allow {
         my $form = $self->get_form($c);
         $customer = $self->update_customer($c, $customer, $old_resource, $resource, $form);
         last unless $customer;
+        
+        my $hal = $self->hal_from_customer($c, $customer, $form);
+        last unless $self->add_update_journal_record_hal($c,$hal);
 
         $guard->commit;
 
@@ -120,7 +130,7 @@ sub PATCH :Allow {
             $c->response->header(Preference_Applied => 'return=minimal');
             $c->response->body(q());
         } else {
-            my $hal = $self->hal_from_customer($c, $customer, $form);
+            #my $hal = $self->hal_from_customer($c, $customer, $form);
             my $response = HTTP::Response->new(HTTP_OK, undef, HTTP::Headers->new(
                 $hal->http_headers,
             ), $hal->as_json);
@@ -152,6 +162,9 @@ sub PUT :Allow {
         my $form = $self->get_form($c);
         $customer = $self->update_customer($c, $customer, $old_resource, $resource, $form);
         last unless $customer;
+        
+        my $hal = $self->hal_from_customer($c, $customer, $form);
+        last unless $self->add_update_journal_record_hal($c,$hal);
 
         $guard->commit;
 
@@ -160,7 +173,7 @@ sub PUT :Allow {
             $c->response->header(Preference_Applied => 'return=minimal');
             $c->response->body(q());
         } else {
-            my $hal = $self->hal_from_customer($c, $customer, $form);
+            #my $hal = $self->hal_from_customer($c, $customer, $form);
             my $response = HTTP::Response->new(HTTP_OK, undef, HTTP::Headers->new(
                 $hal->http_headers,
             ), $hal->as_json);
@@ -199,6 +212,21 @@ sub DELETE :Allow {
     return;
 }
 =cut
+
+sub item_base_journal :Journal {
+    my $self = shift @_;
+    return $self->handle_item_base_journal(@_);
+}
+    
+sub journals_get :Journal {
+    my $self = shift @_;
+    return $self->handle_journals_get(@_);
+}
+
+sub journalsitem_get :Journal {
+    my $self = shift @_;
+    return $self->handle_journalsitem_get(@_);
+}    
 
 sub end : Private {
     my ($self, $c) = @_;

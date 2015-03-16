@@ -15,6 +15,11 @@ use Regexp::Common qw(delimited); # $RE{delimited}
 use HTTP::Headers::Util qw(split_header_words);
 use NGCP::Panel::Utils::ValidateJSON qw();
 
+use NGCP::Panel::Utils::Journal qw();
+#use boolean qw(true);
+#use Data::HAL qw();
+#use Data::HAL::Link qw();
+
 has('last_modified', is => 'rw', isa => InstanceOf['DateTime']);
 has('ctx', is => 'rw', isa => InstanceOf['NGCP::Panel']);
 
@@ -271,14 +276,27 @@ sub allowed_methods_filtered {
 
 sub allowed_methods {
     my ($self) = @_;
+    #my $meta = $self->meta;
+    #my @allow;
+    #for my $method ($meta->get_method_list) {
+    #    push @allow, $meta->get_method($method)->name
+    #        if $meta->get_method($method)->can('attributes') &&
+    #           grep { 'Allow' eq $_ } @{ $meta->get_method($method)->attributes };
+    #}
+    #return [sort @allow];
+    return $self->attributed_methods('Allow');
+}
+
+sub attributed_methods {
+    my ($self,$attribute) = @_;
     my $meta = $self->meta;
-    my @allow;
+    my @attributed;
     for my $method ($meta->get_method_list) {
-        push @allow, $meta->get_method($method)->name
+        push @attributed, $meta->get_method($method)->name
             if $meta->get_method($method)->can('attributes') &&
-               grep { 'Allow' eq $_ } @{ $meta->get_method($method)->attributes };
+               grep { $attribute eq $_ } @{ $meta->get_method($method)->attributes };
     }
-    return [sort @allow];
+    return [sort @attributed];
 }
 
 sub valid_id {
@@ -474,15 +492,42 @@ around 'item_rs' => sub {
     my ($orig, $self, @orig_params) = @_;
     my $item_rs = $self->$orig(@orig_params);
     return unless($item_rs);
+    
+    if ($self->can('query_params')) {
+        return $self->apply_query_params($orig_params[0],$self->query_params,$item_rs);
+    }
+    
+    return $item_rs;
 
+    ## no query params defined in collection controller
+    #unless($self->can('query_params') && @{ $self->query_params }) {
+    #    return $item_rs;
+    #}
+    #
+    #my $c = $orig_params[0];
+    #foreach my $param(keys %{ $c->req->query_params }) {
+    #    my @p = grep { $_->{param} eq $param } @{ $self->query_params };
+    #    next unless($p[0]->{query}); # skip "dummy" query parameters
+    #    my $q = $c->req->query_params->{$param}; # TODO: arrayref?
+    #    $q =~ s/\*/\%/g;
+    #    if(@p) {
+    #        #ctx config may be necessary
+    #        $item_rs = $item_rs->search($p[0]->{query}->{first}($q,$self->ctx), $p[0]->{query}->{second}($q,$self->ctx));
+    #    }
+    #}
+    #return $item_rs;
+};
+
+sub apply_query_params {
+    
+    my ($self,$c,$query_params,$item_rs) = @_;
     # no query params defined in collection controller
-    unless($self->can('query_params') && @{ $self->query_params }) {
+    unless(@{ $query_params }) {
         return $item_rs;
     }
 
-    my $c = $orig_params[0];
     foreach my $param(keys %{ $c->req->query_params }) {
-        my @p = grep { $_->{param} eq $param } @{ $self->query_params };
+        my @p = grep { $_->{param} eq $param } @{ $query_params };
         next unless($p[0]->{query}); # skip "dummy" query parameters
         my $q = $c->req->query_params->{$param}; # TODO: arrayref?
         $q =~ s/\*/\%/g;
@@ -492,7 +537,8 @@ around 'item_rs' => sub {
         }
     }
     return $item_rs;
-};
+    
+}; 
 
 sub is_true {
     my ($self, $v) = @_;
@@ -518,9 +564,41 @@ sub is_false {
     return;
 }
 
-sub to_json {
-    my ($self, $data) = @_;
-    return JSON::to_json($data, { canonical => 1, pretty => 1, utf8 => 1 });
+sub add_create_journal_record_hal {
+    my ($self,$c,@args) = @_;
+    return NGCP::Panel::Utils::Journal::add_journal_record_hal($self,$c,NGCP::Panel::Utils::Journal::CREATE_JOURNAL_OP,@args);
+}
+
+sub add_update_journal_record_hal {
+    my ($self,$c,@args) = @_;
+    return NGCP::Panel::Utils::Journal::add_journal_record_hal($self,$c,NGCP::Panel::Utils::Journal::UPDATE_JOURNAL_OP,@args);
+}
+
+sub add_delete_journal_record_hal {
+    my ($self,$c,@args) = @_;
+    return NGCP::Panel::Utils::Journal::add_journal_record_hal($self,$c,NGCP::Panel::Utils::Journal::DELETE_JOURNAL_OP,@args);
+}
+
+sub get_journal_action_config {
+    my ($class,$path_part,$action_template) = @_;
+    return NGCP::Panel::Utils::Journal::get_api_journal_action_config($path_part,$action_template,$class->attributed_methods('Journal'));
+}
+
+sub get_journal_query_params {
+    my ($class,$query_params) = @_;
+    return NGCP::Panel::Utils::Journal::get_api_journal_query_params($query_params);
+}
+
+sub handle_item_base_journal {
+    return NGCP::Panel::Utils::Journal::handle_api_item_base_journal(@_);
+}
+
+sub handle_journals_get {
+    return NGCP::Panel::Utils::Journal::handle_api_journals_get(@_);
+}
+
+sub handle_journalsitem_get {
+    return NGCP::Panel::Utils::Journal::handle_api_journalsitem_get(@_);
 }
 
 1;
