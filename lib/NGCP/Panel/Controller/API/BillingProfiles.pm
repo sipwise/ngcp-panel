@@ -186,6 +186,12 @@ sub POST :Allow {
             $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "Failed to create billing profile.");
             last;
         }
+        
+        last unless $self->add_create_journal_item_hal($c,sub {
+            my $self = shift;
+            my ($c) = @_;
+            my $_billing_profile = $self->profile_by_id($c, $billing_profile->id);
+            return $self->hal_from_profile($c, $_billing_profile,$form); });
 
         $guard->commit;
 

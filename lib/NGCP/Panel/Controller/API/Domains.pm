@@ -216,6 +216,12 @@ sub POST :Allow {
             $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "Failed to activate domain.");
             last;
         }
+        
+        last unless $self->add_create_journal_item_hal($c,sub {
+            my $self = shift;
+            my ($c) = @_;
+            my $_domain = $self->item_by_id($c, $billing_domain->id);
+            return $self->hal_from_item($c,$_domain); });
 
         $guard->commit;
 

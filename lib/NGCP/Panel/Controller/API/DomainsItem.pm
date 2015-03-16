@@ -24,14 +24,19 @@ class_has('relation', is => 'ro', default => 'http://purl.org/sipwise/ngcp-api/#
 
 __PACKAGE__->config(
     action => {
-        map { $_ => {
+        (map { $_ => {
             ACLDetachTo => '/api/root/invalid_user',
             AllowedRole => [qw/admin reseller/],
             Args => 1,
             Does => [qw(ACL RequireSSL)],
             Method => $_,
             Path => __PACKAGE__->dispatch_path,
-        } } @{ __PACKAGE__->allowed_methods }
+        } } @{ __PACKAGE__->allowed_methods }),
+        @{ __PACKAGE__->get_journal_action_config(__PACKAGE__->resource_name,{
+            ACLDetachTo => '/api/root/invalid_user',
+            AllowedRole => [qw/admin reseller/],
+            Does => [qw(ACL RequireSSL)],
+        }) }         
     },
     action_roles => [qw(HTTPMethods)],
 );
@@ -107,6 +112,13 @@ sub DELETE :Allow {
             $prov_domain->provisioning_voip_subscribers->delete;
             $prov_domain->delete;
         }
+
+        last unless $self->add_delete_journal_item_hal($c,sub {
+            my $self = shift;
+            my ($c) = @_;
+            #my $_domain = $self->item_by_id($c, $id);
+            return $self->hal_from_item($c,$domain); });
+        
         $domain->delete;
 
         try {
@@ -119,7 +131,7 @@ sub DELETE :Allow {
             $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "Failed to deactivate domain.");
             last;
         }
-
+        
         $guard->commit;
 
         $c->response->status(HTTP_NO_CONTENT);
@@ -127,6 +139,41 @@ sub DELETE :Allow {
     }
     return;
 }
+
+sub item_base_journal :Journal {
+    my $self = shift @_;
+    return $self->handle_item_base_journal(@_);
+}
+    
+sub journals_get :Journal {
+    my $self = shift @_;
+    return $self->handle_journals_get(@_);
+}
+
+sub journalsitem_get :Journal {
+    my $self = shift @_;
+    return $self->handle_journalsitem_get(@_);
+}
+
+sub journals_options :Journal {
+    my $self = shift @_;
+    return $self->handle_journals_options(@_);
+}
+
+sub journalsitem_options :Journal {
+    my $self = shift @_;
+    return $self->handle_journalsitem_options(@_);
+}
+
+sub journals_head :Journal {
+    my $self = shift @_;
+    return $self->handle_journals_head(@_);
+}
+
+sub journalsitem_head :Journal {
+    my $self = shift @_;
+    return $self->handle_journalsitem_head(@_);
+}   
 
 sub end : Private {
     my ($self, $c) = @_;

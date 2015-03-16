@@ -230,6 +230,12 @@ sub POST :Allow {
             $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "Failed to create contract.");
             last;
         }
+        
+        last unless $self->add_create_journal_item_hal($c,sub {
+            my $self = shift;
+            my ($c) = @_;
+            my $_contract = $self->contract_by_id($c, $contract->id);
+            return $self->hal_from_contract($c,$_contract,$form); });        
 
         $guard->commit;
 

@@ -66,6 +66,7 @@ sub hal_from_profile {
             Data::HAL::Link->new(relation => 'self', href => sprintf("%s%d", $self->dispatch_path, $profile->id)),
             ( map { Data::HAL::Link->new(relation => 'ngcp:billingfees', href => sprintf("/api/billingfees/%d", $_->id)) } $profile->billing_fees->all ),
             ( map { Data::HAL::Link->new(relation => 'ngcp:billingzones', href => sprintf("/api/billingzones/%d", $_->id)) } $profile->billing_zones->all ),
+            $self->get_journal_relation_link($profile->id),
         ],
         relation => 'ngcp:'.$self->resource_name,
     );

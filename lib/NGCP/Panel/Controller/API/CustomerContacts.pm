@@ -149,7 +149,7 @@ sub OPTIONS :Allow {
 
 sub POST :Allow {
     my ($self, $c) = @_;
-
+    my $guard = $c->model('DB')->txn_scope_guard;
     {
         my $resource = $self->get_valid_post_data(
             c => $c, 
@@ -193,6 +193,14 @@ sub POST :Allow {
             $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "Failed to create contact.");
             last;
         }
+        
+        last unless $self->add_delete_journal_item_hal($c,sub {
+                my $self = shift;
+                my ($c) = @_;
+                my $_contact = $self->contact_by_id($c, $contact->id);
+                return $self->hal_from_contact($c, $_contact, $form); });
+        
+        $guard->commit;
 
         $c->response->status(HTTP_CREATED);
         $c->response->header(Location => sprintf('/%s%d', $c->request->path, $contact->id));

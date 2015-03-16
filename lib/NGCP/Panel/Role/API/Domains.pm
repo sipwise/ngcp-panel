@@ -44,6 +44,7 @@ sub hal_from_item {
             Data::HAL::Link->new(relation => 'self', href => sprintf("%s%d", $self->dispatch_path, $item->id)),
             #( map { $_->attribute->internal ? () : Data::HAL::Link->new(relation => 'ngcp:domainpreferences', href => sprintf("/api/domainpreferences/%d", $_->id), name => $_->attribute->attribute) } $item->provisioning_voip_domain->voip_dom_preferences->all ),
             Data::HAL::Link->new(relation => 'ngcp:domainpreferences', href => sprintf("/api/domainpreferences/%d", $item->id)),
+            $self->get_journal_relation_link($item->id),
         ],
         relation => 'ngcp:'.$self->resource_name,
     );

@@ -85,6 +85,7 @@ sub hal_from_customer {
             $customer->invoice_email_template_id ? (Data::HAL::Link->new(relation => 'ngcp:invoiceemailtemplates', href => sprintf("/api/emailtemplates/%d", $customer->invoice_email_template_id))) : (),
             $customer->invoice_template_id ? (Data::HAL::Link->new(relation => 'ngcp:invoicetemplates', href => sprintf("/api/invoicetemplates/%d", $customer->invoice_template_id))) : (),
             Data::HAL::Link->new(relation => 'ngcp:calls', href => sprintf("/api/calls/?customer_id=%d", $customer->id)),
+            $self->get_journal_relation_link($customer->id),
         ],
         relation => 'ngcp:'.$self->resource_name,
     );
@@ -115,15 +116,6 @@ sub customer_by_id {
 
 sub update_customer {
     my ($self, $c, $customer, $old_resource, $resource, $form) = @_;
-
-    my $old_hal = $self->hal_from_customer($c, $customer, $form);
-    $c->model('DB')->resultset('journals')->create({
-        type => "update",
-        resource => "customers",
-        resource_id => $customer->id,
-        timestamp => NGCP::Panel::Utils::DateTime::current_local->hires_epoch,
-        content => $self->to_json($old_hal->resource),
-    });
 
     my $billing_mapping = $customer->billing_mappings->find($customer->get_column('bmid'));
     $old_resource->{billing_profile_id} = $billing_mapping->billing_profile_id;
@@ -237,7 +229,7 @@ sub update_customer {
     }
 
     $customer->update($resource);
-
+    
     if(($customer->external_id // '') ne $old_ext_id) {
         foreach my $sub($customer->voip_subscribers->all) {
             my $prov_sub = $sub->provisioning_voip_subscriber;

@@ -53,6 +53,7 @@ sub hal_from_reseller {
             Data::HAL::Link->new(relation => 'ngcp:soundsets', href => sprintf("/api/soundsets/?reseller_id=%d", $reseller->id)),
             Data::HAL::Link->new(relation => 'ngcp:rewriterulesets', href => sprintf("/api/rewriterulesets/?reseller_id=%d", $reseller->id)),
             Data::HAL::Link->new(relation => 'ngcp:pbxdevices', href => sprintf("/api/pbxdevices/?reseller_id=%d", $reseller->id)),
+            $self->get_journal_relation_link($reseller->id),
         ],
         relation => 'ngcp:'.$self->resource_name,
     );
