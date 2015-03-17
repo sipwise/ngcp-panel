@@ -41,6 +41,7 @@ sub load_preference_list {
     my $profile = $params{sub_profile};
 
     my $customer_view = $params{customer_view} // 0;
+    my $cloudpbx_enabled = $c->config->{features}{cloudpbx};
     
     my $pref_rs = $c->model('DB')
         ->resultset('voip_preference_groups')
@@ -61,6 +62,7 @@ sub load_preference_list {
                 -or => ['voip_preferences_enums.usr_pref' => 1,
                     'voip_preferences_enums.usr_pref' => undef]) : (),
             $customer_view ? ('voip_preferences.expose_to_customer' => 1) : (),
+            $cloudpbx_enabled ? () : ('me.name' => { '!=' => 'Cloud PBX'}),
             }, {
                 prefetch => {'voip_preferences' => 'voip_preferences_enums'},
             });
