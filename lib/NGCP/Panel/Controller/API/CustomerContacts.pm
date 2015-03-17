@@ -1,4 +1,4 @@
-package NGCP::Panel::Controller::API::CustomerContacts;
+ package NGCP::Panel::Controller::API::CustomerContacts;
 use Sipwise::Base;
 use namespace::sweep;
 use boolean qw(true);
@@ -165,9 +165,17 @@ sub POST :Allow {
             form => $form,
         );
         $resource->{country} = $resource->{country}{id};
+        my $reseller_id;
+        if($c->user->roles eq "admin") {
+            $reseller_id = $resource->{reseller_id};
+        } elsif($c->user->roles eq "reseller") {
+            $reseller_id = $c->user->reseller_id;
+        } else {
+            $reseller_id = $c->user->contract->contact->reseller_id;
+        }
 
         my $reseller = $c->model('DB')->resultset('resellers')
-            ->find($resource->{reseller_id});
+            ->find($reseller_id);
         unless($reseller) {
             $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Invalid 'reseller_id'");
             last;
