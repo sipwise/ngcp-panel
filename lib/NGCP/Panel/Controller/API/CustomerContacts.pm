@@ -1,4 +1,4 @@
-package NGCP::Panel::Controller::API::CustomerContacts;
+ package NGCP::Panel::Controller::API::CustomerContacts;
 use Sipwise::Base;
 use namespace::sweep;
 use boolean qw(true);
@@ -20,7 +20,7 @@ class_has 'api_description' => (
     is => 'ro',
     isa => 'Str',
     default => 
-        'Defines a physical or legal person\'s address (postal and/or email) to be used to identify <a href="#customers">Customers</a>.'
+        'Defines a physical or legal person\'s address (postal and/or email) to be used to identify <a href="#customers">Customers</a>.',
 );
 
 class_has 'query_params' => (
@@ -67,7 +67,7 @@ __PACKAGE__->config(
             Does => [qw(ACL CheckTrailingSlash RequireSSL)],
             Method => $_,
             Path => __PACKAGE__->dispatch_path,
-        } } @{ __PACKAGE__->allowed_methods }
+        } } @{ __PACKAGE__->allowed_methods },
     },
     action_roles => [qw(HTTPMethods)],
 );
@@ -77,6 +77,7 @@ sub auto :Private {
 
     $self->set_body($c);
     $self->log_request($c);
+    return 1;
 }
 
 sub GET :Allow {
@@ -165,9 +166,17 @@ sub POST :Allow {
             form => $form,
         );
         $resource->{country} = $resource->{country}{id};
+        my $reseller_id;
+        if($c->user->roles eq "admin") {
+            $reseller_id = $resource->{reseller_id};
+        } elsif($c->user->roles eq "reseller") {
+            $reseller_id = $c->user->reseller_id;
+        } else {
+            $reseller_id = $c->user->contract->contact->reseller_id;
+        }
 
         my $reseller = $c->model('DB')->resultset('resellers')
-            ->find($resource->{reseller_id});
+            ->find($reseller_id);
         unless($reseller) {
             $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Invalid 'reseller_id'");
             last;
@@ -196,6 +205,7 @@ sub end : Private {
     my ($self, $c) = @_;
 
     $self->log_response($c);
+    return;
 }
 
 # vim: set tabstop=4 expandtab:
