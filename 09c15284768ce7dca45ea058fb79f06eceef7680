@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "5a2585a7_5a7cb620",
+        "filename": "lib/NGCP/Panel/Controller/API/CustomerContacts.pm",
+        "patchSetId": 3
+      },
+      "lineNbr": 171,
+      "author": {
+        "id": 1000009
+      },
+      "writtenOn": "2015-03-17T15:26:21Z",
+      "side": 1,
+      "message": "I rather often have met situation, that when parameter is not set - we will fall out with 500 and no error description later in the code find($reseller_id) where $reseller_id will be undefined in this case.\n\nso maybe lets $reseller_id \u003d $resource{reseller_id} // 0;\n\n?",
+      "range": {
+        "startLine": 171,
+        "startChar": 27,
+        "endLine": 171,
+        "endChar": 52
+      },
+      "revId": "09c15284768ce7dca45ea058fb79f06eceef7680",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    }
+  ]
+}
