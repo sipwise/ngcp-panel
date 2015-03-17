@@ -28,7 +28,7 @@ __PACKAGE__->config(
             Does => [qw(ACL RequireSSL)],
             Method => $_,
             Path => __PACKAGE__->dispatch_path,
-        } } @{ __PACKAGE__->allowed_methods }
+        } } @{ __PACKAGE__->allowed_methods },
     },
     action_roles => [qw(HTTPMethods)],
 );
@@ -38,6 +38,7 @@ sub auto :Private {
 
     $self->set_body($c);
     $self->log_request($c);
+    return 1;
 }
 
 sub GET :Allow {
@@ -52,9 +53,8 @@ sub GET :Allow {
         # TODO: we don't need reseller stuff here!
         my $response = HTTP::Response->new(HTTP_OK, undef, HTTP::Headers->new(
             (map { # XXX Data::HAL must be able to generate links with multiple relations
-                s|rel="(http://purl.org/sipwise/ngcp-api/#rel-resellers)"|rel="item $1"|;
-                s/rel=self/rel="item self"/;
-                $_
+                s|rel="(http://purl.org/sipwise/ngcp-api/#rel-resellers)"|rel="item $1"|r =~
+                s/rel=self/rel="item self"/r;
             } $hal->http_headers),
         ), $hal->as_json);
         $c->response->headers($response->headers);
@@ -194,6 +194,7 @@ sub end : Private {
     my ($self, $c) = @_;
 
     $self->log_response($c);
+    return;
 }
 
 # vim: set tabstop=4 expandtab:
