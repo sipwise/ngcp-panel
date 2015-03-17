@@ -48,7 +48,7 @@ has_field 'active_callforward.rm' => (
 has_field 'callforward_controls_add' => (
     type => 'AddElement',
     repeatable => 'active_callforward',
-    value => 'Add more',
+    value => 'Add destination/time sets',
     element_class => [qw/btn btn-primary pull-right/],
 );
 
