@@ -24,10 +24,10 @@ sub process {
             if($col->{literal_sql}) {
                 $rs = $rs->search_rs(undef, {
                     $col->{join} ? ( join => $col->{join} ) : (),
-                    '+select' => { '' => \[$col->{literal_sql}], -as => $col->{accessor} 
-                    },
-
-                    '+as' => [ $col->{accessor} ],
+                    $col->{no_column} ? () : ( 
+                        '+select' => { '' => \[$col->{literal_sql}], -as => $col->{accessor}  },
+                        '+as' => [ $col->{accessor} ],
+                    )
                 });
             } elsif( @parts > 1 ) {
                 my $join = $parts[$#parts-1];
@@ -54,13 +54,21 @@ sub process {
             my $name = _get_joined_column_name_($col->{name});
             my $stmt; 
             if($col->{literal_sql}){
-                #we can't use just accessor because of the count query
-                $stmt = \[$col->{literal_sql} . " LIKE ?", [ {} => '%'.$searchString.'%'] ];
+                if(!ref $col->{literal_sql}){
+                    #we can't use just accessor because of the count query
+                    $stmt = \[$col->{literal_sql} . " LIKE ?", [ {} => '%'.$searchString.'%'] ];
+                }else{
+                    if($col->{literal_sql}->{format}){
+                        $stmt = \[sprintf($col->{literal_sql}->{format}, " LIKE ?"), [ {} => '%'.$searchString.'%'] ];
+                    }
+                }
             }else{
                 $stmt = { $name => { like => '%'.$searchString.'%' } };
             }
-            push @searchColumns, $stmt;
-         }
+            if($stmt){
+                push @searchColumns, $stmt;
+            }
+        }
     }
     if($searchString && ! $use_rs_cb) {
         $rs = $rs->search([@searchColumns]);
