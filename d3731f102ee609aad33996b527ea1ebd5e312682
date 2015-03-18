@@ -22,6 +22,30 @@
       "revId": "d3731f102ee609aad33996b527ea1ebd5e312682",
       "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a2585a7_78253aaa",
+        "filename": "lib/NGCP/Panel/Utils/Preferences.pm",
+        "patchSetId": 2
+      },
+      "lineNbr": 65,
+      "author": {
+        "id": 1000009
+      },
+      "writtenOn": "2015-03-18T12:53:46Z",
+      "side": 1,
+      "message": "In more wider sense: config-dependent.",
+      "parentUuid": "5a2585a7_b82ba281",
+      "range": {
+        "startLine": 65,
+        "startChar": 12,
+        "endLine": 65,
+        "endChar": 75
+      },
+      "revId": "d3731f102ee609aad33996b527ea1ebd5e312682",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
     }
   ]
 }
