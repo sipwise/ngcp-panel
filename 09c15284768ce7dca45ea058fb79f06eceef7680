@@ -46,6 +46,53 @@
       "revId": "09c15284768ce7dca45ea058fb79f06eceef7680",
       "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a2585a7_f8192a7a",
+        "filename": "lib/NGCP/Panel/Controller/API/CustomerContacts.pm",
+        "patchSetId": 3
+      },
+      "lineNbr": 171,
+      "author": {
+        "id": 1000009
+      },
+      "writtenOn": "2015-03-18T12:46:50Z",
+      "side": 1,
+      "message": "Yes, you are right: here we call form-\u003evalidate_form, and it checks the empty field, I tried:\n\nroot@spce:~# curl -i -X POST -H \u0027Connection: close\u0027 -H \u0027Content-Type: application/json\u0027 --user administrator:administrator --insecure \u0027https://localhost:1443/api/customercontacts/\u0027 --data-binary \u0027{ \"email\" : \"test@test.com\"}\u0027\n\n{\"message\":\"Validation failed. field\u003d\u0027reseller_id\u0027, input\u003d\u0027\u0027, errors\u003d\u0027Reseller field is required\u0027\",\"code\":\"422\"}",
+      "parentUuid": "5a2585a7_5a7cb620",
+      "range": {
+        "startLine": 171,
+        "startChar": 27,
+        "endLine": 171,
+        "endChar": 52
+      },
+      "revId": "09c15284768ce7dca45ea058fb79f06eceef7680",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a2585a7_58139e5c",
+        "filename": "lib/NGCP/Panel/Controller/API/CustomerContactsItem.pm",
+        "patchSetId": 3
+      },
+      "lineNbr": 57,
+      "author": {
+        "id": 1000009
+      },
+      "writtenOn": "2015-03-18T12:46:50Z",
+      "side": 1,
+      "message": "Seems as rather generic - maybe later add proper method into Hal::Data?",
+      "range": {
+        "startLine": 56,
+        "startChar": 0,
+        "endLine": 57,
+        "endChar": 45
+      },
+      "revId": "09c15284768ce7dca45ea058fb79f06eceef7680",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
     }
   ]
 }
