@@ -93,6 +93,30 @@
       "revId": "09c15284768ce7dca45ea058fb79f06eceef7680",
       "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a2585a7_336fd594",
+        "filename": "lib/NGCP/Panel/Controller/API/CustomerContactsItem.pm",
+        "patchSetId": 3
+      },
+      "lineNbr": 57,
+      "author": {
+        "id": 1000005
+      },
+      "writtenOn": "2015-03-18T16:59:18Z",
+      "side": 1,
+      "message": "yes, I\u0027ll make a ticket about it.",
+      "parentUuid": "5a2585a7_58139e5c",
+      "range": {
+        "startLine": 56,
+        "startChar": 0,
+        "endLine": 57,
+        "endChar": 45
+      },
+      "revId": "09c15284768ce7dca45ea058fb79f06eceef7680",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
     }
   ]
 }
