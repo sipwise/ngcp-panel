@@ -1724,6 +1724,11 @@ sub dev_field_firmware_next :Chained('dev_field_firmware_version_base') :PathPar
     }, {
         order_by => { -asc => 'version' },
     });
+    if($c->req->params->{q}) {
+        $rs = $rs->search({
+            version => { 'like' => $c->req->params->{q} . '%' },
+        });
+    }
 
     my $fw = $rs->first;
     unless($fw) {
