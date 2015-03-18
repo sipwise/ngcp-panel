@@ -1,3 +1,111 @@
+ngcp-panel (1.9.0.0+0~mr4.0.0.0) unstable; urgency=low
+
+  [ Kirill Solomko ]
+  * [06c058c] MT#10169 - add "enabled" feature for rewrite rules, peering hosts/rules
+  * [8717f99] MT#10965 - Callforwards api DELETE fix to use callforwards instead of rewriterules, check for non-existing mapping auto removed by mysql
+  * [391d10a] MT#9719 - Reworked the ip/auth banlist parsing for the GUI representation
+  * [b622c5e] MT#12165 - utf8 support for JSON data
+
+  [ Andrew Pogrebennyk ]
+  * [21833bf] MT#9453 introduce handling for adm_cf_ncos[_id] preference
+
+  [ Jenkins Git User ]
+  * [24d9f31] I18N dump: snapshot Thu Jan 08 17:59:55 +0100 2015
+  * [68e1b86] I18N dump: snapshot Thu Jan 15 01:14:10 +0100 2015
+  * [9bbe433] I18N dump: snapshot Sat Jan 17 01:13:48 +0100 2015
+  * [70d9c4c] I18N dump: snapshot Tue Jan 20 01:14:14 +0100 2015
+  * [1974d2f] I18N dump: snapshot Sat Jan 24 01:14:07 +0100 2015
+  * [af08218] I18N dump: snapshot Thu Jan 29 10:06:24 +0100 2015
+  * [d1dc988] I18N dump: snapshot Fri Jan 30 01:15:20 +0100 2015
+  * [1eb89f7] I18N dump: snapshot Tue Feb 10 01:14:36 +0100 2015
+  * [402d65f] I18N dump: snapshot Thu Feb 12 15:58:39 +0100 2015
+  * [4ecfee2] I18N dump: snapshot Sat Feb 14 01:11:52 +0100 2015
+  * [21acf4f] I18N dump: snapshot Wed Feb 18 01:34:11 +0100 2015
+  * [648b4a1] I18N dump: snapshot Fri Feb 27 01:14:49 +0100 2015
+  * [8c89606] I18N dump: snapshot Wed Mar 04 01:16:29 +0100 2015
+  * [5097ffc] I18N dump: snapshot Wed Mar 11 01:12:49 +0100 2015
+  * [c52e8da] I18N dump: snapshot Thu Mar 12 01:10:21 +0100 2015
+  * [db75b82] I18N dump: snapshot Tue Mar 17 01:10:26 +0100 2015
+
+  [ Irina Peshinskaya ]
+  * [9977fa3] MT#10797 Add documentation note and sample with required "type" parameter.
+  * [d3b4f50] MT#9177 Fix invisible syntax error
+  * [ce29d22] MT#10715 Add Polycom Zero Touch Provisioning (ZTP) client.
+  * [861f000] MT#10715 Remove exrescent debug and code
+  * [3081b7a] MT#10315 Add lock processing into POST method of Subscribers API.
+  * [e388e6f] MT#10315 Cast lock to the numeric value as stated by API doc.
+  * [ee018bb] MT#10159 Mark messages as read and send MWI notification about messages amount
+  * [9c2681c] MT#11343 Add sign that range_id is used by subscriber
+  * [7eb50fe] Revert "MT#11343 Add sign that range_id is used by subscriber"
+  * [0de1fb9] MT#11343 Prevent PbxDevicemodels API from subscribers lineranges
+  * [ca6594e] MT#5585 Add calls cost to subscriber calls list.
+  * [01126bf] Revert "MT#11343 Prevent PbxDevicemodels API from subscribers lineranges"
+  * [8fe9c0b] MT#5585 Add details about cdr record
+  * [ac9b5ff] MT#11549 Search by alias too, but aliases aren't shown
+  * [18b105a] MT#11549 Search by alias too, but aliases aren't shown
+  * [80ee2a1] MT#11549 Add alias filter for subscribers in API too.
+  * [ec9c71d] MT#11147 Phone extensions
+  * [5758c71] MT#12037 Set HOME for the www-data, owner of the ngcp-panel process
+  * [81bd024] MT#12083 Use exists optimization for subscriber search by alias
+
+  [ Andreas Granig ]
+  * [8ebb4cf] MT#10869 Implement jitsi config lock-down
+  * [dad59b3] MT#10869 Add option to jitsi-auth via web creds
+  * [cb9c14a] MT#10869 Allow webusername to be an email address
+  * [bc76944] MT#5173 Add polycom bootstrap and directory.
+  * [8e844ec] MT#10705 Show pbx_groupmember_ids in API doc.
+  * [81c23a3] MT#5173 Fix polycom bootstrapping.
+  * [e37dc3d] MT#10879 Handle deletion of primary number.
+  * [b2cfc9c] MT#10879 Set uuid as mailbox user if no number.
+  * [8381be7] MT#11219 Load default files for sound set.
+  * [330048f] MT#11219 Check permissions for sound set loading.
+  * [c38cb24] MT#11219 Fix syntax error in template.
+  * [d2e6d40] MT#11219 Skip cache cleaning on skipped files.
+  * [b2c4fca] MT#10879 Fix setting cli preference.
+  * [057f346] MT#11279 Allow disabling vendor RPC calls.
+  * [65ceb1a] MT#10879 Fix fix of CLI handling on sub creation
+  * [9507735] MT#10869 Unify jitsi status option in lockdown
+  * [a0bf5e4] MT#11523 Make bigger phone pics show correctly.
+  * [db99c34] MT#10587 Fix empty enc master key for yealink
+  * [6e53505] MT#10587 Disable yealink encryption.
+  * [82529da] MT#11517 Don't expose internal prefs via API.
+  * [d40f997] MT#11741 API: Add pbxdevicemodelimages resource.
+  * [bc32830] MT#11741 API: fix pbxdevicemodelimages props doc
+  * [07016f6] MT#11741 Add pbxdevicemodelimages to tests
+  * [9f25a4d] MT#12219 Add q param to firmware/latest
+  * [32344a3] MT#12219 Add q param also to firmware/next
+
+  [ Gerhard Jungwirth ]
+  * [a0ccaec] MT#5913 limit peering rule prefix length
+  * [cbcd42a] MT#11321 filter terminated resellers from dashboard
+  * [6939629] MT#5435 improve datatables top styling
+  * [1c7fb3a] MT#5435 option to show table summaries
+  * [db2408c] MT#11891 trigger xmlrpc when moving rewrite rules
+  * [37a9021] MT#11501 dialogic API login, locks
+  * [188d519] MT#11501 dialogic API network configuration
+  * [711501b] MT#11501 dialogic API formatting, more config
+  * [0182781] MT#11501 dialogic API profiles and start routing config
+  * [b926d46] MT#11501 dialogic api finalize sipsip
+  * [cd3111d] MT#11501 dialogic api cleanup
+  * [9bc45cf] MT#11501 dialogic api read and hash config
+  * [3bb5df8] MT#11501 configure dialogic from webinterface
+
+  [ Alexander Lutay ]
+  * [6b58077] MT#5435 Fixed missed button 'Create Special Off-Peak Date'
+
+  [ Michael Prokop ]
+  * [21941e3] MT#11387 Switch from Pre-Depends on nginx-common to Depends
+  * [7934ade] MT#9127 Bump Standards-Version to 3.9.6
+
+  [ Rene Krenn ]
+  * [2914f7c] MT#11919 Use local logger.conf
+  * [eed4163] MT#11917 Write journal for customer create/update.
+  * [6838fea] MT#11997 Add dev start script for komodo debugger
+
+  [ Sipwise Jenkins Builder ]
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Wed, 18 Mar 2015 14:08:30 +0100
+
 ngcp-panel (1.8.0.0+0~mr3.8.0.0) unstable; urgency=low
 
   [ Irina Peshinskaya ]
