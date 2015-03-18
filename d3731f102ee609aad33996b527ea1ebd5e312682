@@ -46,6 +46,30 @@
       "revId": "d3731f102ee609aad33996b527ea1ebd5e312682",
       "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a2585a7_1376193f",
+        "filename": "lib/NGCP/Panel/Utils/Preferences.pm",
+        "patchSetId": 2
+      },
+      "lineNbr": 65,
+      "author": {
+        "id": 1000005
+      },
+      "writtenOn": "2015-03-18T17:07:45Z",
+      "side": 1,
+      "message": "Sounds nice, but on the other hand, wouldn\u0027t that invert control somehow? I mean shouldn\u0027t the feature specify what is part of the feature instead of the db?",
+      "parentUuid": "5a2585a7_78253aaa",
+      "range": {
+        "startLine": 65,
+        "startChar": 12,
+        "endLine": 65,
+        "endChar": 75
+      },
+      "revId": "d3731f102ee609aad33996b527ea1ebd5e312682",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
     }
   ]
 }
