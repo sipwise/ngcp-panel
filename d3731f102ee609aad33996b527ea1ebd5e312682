@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "5a2585a7_b82ba281",
+        "filename": "lib/NGCP/Panel/Utils/Preferences.pm",
+        "patchSetId": 2
+      },
+      "lineNbr": 65,
+      "author": {
+        "id": 1000009
+      },
+      "writtenOn": "2015-03-18T12:52:01Z",
+      "side": 1,
+      "message": "Just as idea: Later we may want other feature dependent filter. So Maybe add field like feature_depended in the voip_preferences_group and specify there which features should be on/off etc?",
+      "range": {
+        "startLine": 65,
+        "startChar": 12,
+        "endLine": 65,
+        "endChar": 75
+      },
+      "revId": "d3731f102ee609aad33996b527ea1ebd5e312682",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    }
+  ]
+}
