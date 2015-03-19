@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "5a2585a7_5325c1c0",
+        "filename": "lib/NGCP/Panel/Controller/API/CustomerContactsItem.pm",
+        "patchSetId": 5
+      },
+      "lineNbr": 41,
+      "author": {
+        "id": 1000013
+      },
+      "writtenOn": "2015-03-19T06:11:44Z",
+      "side": 1,
+      "message": "since controller inheritance is not used (fortunately), this makes no difference. anyway, it should be identical in all controllers.",
+      "revId": "9dda2240bfcce9cf6f312a051c142d319ebcddf2",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a2585a7_7340bd56",
+        "filename": "lib/NGCP/Panel/Controller/API/CustomerContactsItem.pm",
+        "patchSetId": 5
+      },
+      "lineNbr": 58,
+      "author": {
+        "id": 1000013
+      },
+      "writtenOn": "2015-03-19T06:11:44Z",
+      "side": 1,
+      "message": "this is still the same, however this is now different in controllers.\nso, this should be either moved into an utility sub, or even better modified in Data::HAL directly.",
+      "revId": "9dda2240bfcce9cf6f312a051c142d319ebcddf2",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    }
+  ]
+}
