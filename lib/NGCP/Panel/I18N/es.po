@@ -113,8 +113,8 @@ msgstr ""
 #: lib/NGCP/Panel/Controller/NCOS.pm:237 lib/NGCP/Panel/Controller/NCOS.pm:29
 #: lib/NGCP/Panel/Controller/NumberBlock.pm:39
 #: lib/NGCP/Panel/Controller/Peering.pm:27
-#: lib/NGCP/Panel/Controller/Peering.pm:77
-#: lib/NGCP/Panel/Controller/Peering.pm:88
+#: lib/NGCP/Panel/Controller/Peering.pm:80
+#: lib/NGCP/Panel/Controller/Peering.pm:91
 #: lib/NGCP/Panel/Controller/Product.pm:22
 #: lib/NGCP/Panel/Controller/Reseller.pm:128
 #: lib/NGCP/Panel/Controller/Reseller.pm:135
@@ -1157,11 +1157,11 @@ msgstr "Call-ID"
 msgid "Callee"
 msgstr "Destino"
 
-#: lib/NGCP/Panel/Controller/Peering.pm:90
+#: lib/NGCP/Panel/Controller/Peering.pm:93
 msgid "Callee Pattern"
 msgstr "Patrón de destino"
 
-#: lib/NGCP/Panel/Controller/Peering.pm:89
+#: lib/NGCP/Panel/Controller/Peering.pm:92
 msgid "Callee Prefix"
 msgstr "Prefijo destino"
 
@@ -1187,7 +1187,7 @@ msgstr "Prefijo de destino, p.e: 34"
 msgid "Caller"
 msgstr "Originador"
 
-#: lib/NGCP/Panel/Controller/Peering.pm:91
+#: lib/NGCP/Panel/Controller/Peering.pm:94
 msgid "Caller Pattern"
 msgstr "Patrón de originador"
 
@@ -2030,7 +2030,7 @@ msgstr ""
 
 #: lib/NGCP/Panel/Controller/NCOS.pm:239 lib/NGCP/Panel/Controller/NCOS.pm:33
 #: lib/NGCP/Panel/Controller/Peering.pm:31
-#: lib/NGCP/Panel/Controller/Peering.pm:92
+#: lib/NGCP/Panel/Controller/Peering.pm:95
 #: lib/NGCP/Panel/Controller/Rewrite.pm:34
 #: lib/NGCP/Panel/Controller/SubscriberProfile.pm:333
 #: lib/NGCP/Panel/Controller/SubscriberProfile.pm:42
@@ -2351,7 +2351,7 @@ msgstr ""
 msgid "Dialogic Settings"
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/Peering.pm:422
+#: lib/NGCP/Panel/Controller/Peering.pm:446
 msgid "Dialogic successfully flashed."
 msgstr ""
 
@@ -2681,8 +2681,8 @@ msgid ""
 "Enable T38 Fax-over-IP via auto-provisioning if the end device supports it."
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/Peering.pm:85
-#: lib/NGCP/Panel/Controller/Peering.pm:93
+#: lib/NGCP/Panel/Controller/Peering.pm:88
+#: lib/NGCP/Panel/Controller/Peering.pm:96
 #: lib/NGCP/Panel/Utils/DbStrings.pm:608
 #: share/templates/rewrite/rules_list.tt:32
 msgid "Enabled"
@@ -2923,15 +2923,15 @@ msgstr ""
 msgid "Failed to create number block"
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/Peering.pm:201
+#: lib/NGCP/Panel/Controller/Peering.pm:207
 msgid "Failed to create peering group"
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/Peering.pm:559
+#: lib/NGCP/Panel/Controller/Peering.pm:588
 msgid "Failed to create peering rule"
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/Peering.pm:267
+#: lib/NGCP/Panel/Controller/Peering.pm:277
 msgid "Failed to create peering server"
 msgstr ""
 
@@ -3063,15 +3063,15 @@ msgstr ""
 msgid "Failed to delete number block"
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/Peering.pm:163
+#: lib/NGCP/Panel/Controller/Peering.pm:168
 msgid "Failed to delete peering group"
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/Peering.pm:658
+#: lib/NGCP/Panel/Controller/Peering.pm:690
 msgid "Failed to delete peering rule"
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/Peering.pm:365
+#: lib/NGCP/Panel/Controller/Peering.pm:378
 msgid "Failed to delete peering server"
 msgstr ""
 
@@ -3137,7 +3137,7 @@ msgstr "Fallo al encontrar dispositivo registrado."
 msgid "Failed to find voicemail user."
 msgstr "Fallo al encontrar usuario de buzón."
 
-#: lib/NGCP/Panel/Controller/Peering.pm:428
+#: lib/NGCP/Panel/Controller/Peering.pm:452
 msgid "Failed to flash dialogic"
 msgstr ""
 
@@ -3328,15 +3328,15 @@ msgstr ""
 msgid "Failed to update number block"
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/Peering.pm:133
+#: lib/NGCP/Panel/Controller/Peering.pm:137
 msgid "Failed to update peering group"
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/Peering.pm:630
+#: lib/NGCP/Panel/Controller/Peering.pm:661
 msgid "Failed to update peering rule"
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/Peering.pm:337
+#: lib/NGCP/Panel/Controller/Peering.pm:349
 msgid "Failed to update peering server"
 msgstr ""
 
@@ -3806,7 +3806,7 @@ msgstr "Home"
 msgid "Host:"
 msgstr "Host:"
 
-#: lib/NGCP/Panel/Controller/Peering.pm:80
+#: lib/NGCP/Panel/Controller/Peering.pm:83
 #: lib/NGCP/Panel/Utils/DbStrings.pm:836
 msgid "Hostname"
 msgstr "Hostname"
@@ -3848,7 +3848,7 @@ msgstr ""
 msgid "IP"
 msgstr "IP"
 
-#: lib/NGCP/Panel/Controller/Peering.pm:79
+#: lib/NGCP/Panel/Controller/Peering.pm:82
 #: lib/NGCP/Panel/Utils/DbStrings.pm:862
 msgid "IP Address"
 msgstr "Dirección IP"
@@ -4165,7 +4165,7 @@ msgstr "Tipo de fichero inválido detectado. Sólo WAV está soportado."
 msgid "Invalid fraud interval '%1'!"
 msgstr "Intervalo antifraude '%1' inválido"
 
-#: lib/NGCP/Panel/Controller/Peering.pm:57
+#: lib/NGCP/Panel/Controller/Peering.pm:60
 msgid "Invalid group id detected"
 msgstr "Id de grupo inválido detectado"
 
@@ -4189,11 +4189,11 @@ msgstr ""
 msgid "Invalid peaktime date id detected!"
 msgstr "Fecha de hora punta inválida detectada"
 
-#: lib/NGCP/Panel/Controller/Peering.pm:579
+#: lib/NGCP/Panel/Controller/Peering.pm:609
 msgid "Invalid peering rule id detected"
 msgstr "Id de regla de peering inválida detectada"
 
-#: lib/NGCP/Panel/Controller/Peering.pm:287
+#: lib/NGCP/Panel/Controller/Peering.pm:298
 msgid "Invalid peering server id"
 msgstr "Id de servidor de peering inválido"
 
@@ -4892,7 +4892,7 @@ msgstr "NUEVO MENSAJE"
 #: lib/NGCP/Panel/Controller/EmailTemplate.pm:35
 #: lib/NGCP/Panel/Controller/InvoiceTemplate.pm:34
 #: lib/NGCP/Panel/Controller/Peering.pm:29
-#: lib/NGCP/Panel/Controller/Peering.pm:78
+#: lib/NGCP/Panel/Controller/Peering.pm:81
 #: lib/NGCP/Panel/Controller/Product.pm:23
 #: lib/NGCP/Panel/Controller/Reseller.pm:136
 #: lib/NGCP/Panel/Controller/Reseller.pm:141
@@ -5460,7 +5460,7 @@ msgstr "Costes de peering"
 msgid "Peering Group"
 msgstr "Grupo de peering"
 
-#: lib/NGCP/Panel/Controller/Peering.pm:157
+#: lib/NGCP/Panel/Controller/Peering.pm:162
 msgid "Peering Group successfully deleted"
 msgstr "Grupo de peering eliminado con éxito"
 
@@ -5473,7 +5473,7 @@ msgstr "Grupos de peering"
 msgid "Peering Rule"
 msgstr "Regla de peering"
 
-#: lib/NGCP/Panel/Controller/Peering.pm:591
+#: lib/NGCP/Panel/Controller/Peering.pm:621
 msgid "Peering Rule does not exist"
 msgstr "La regla de peering no existe"
 
@@ -5492,43 +5492,43 @@ msgstr "Servidor de peering"
 msgid "Peering Servers"
 msgstr "Servidores de peering"
 
-#: lib/NGCP/Panel/Controller/Peering.pm:69
+#: lib/NGCP/Panel/Controller/Peering.pm:72
 msgid "Peering group does not exist"
 msgstr "El grupo de peering no existe"
 
-#: lib/NGCP/Panel/Controller/Peering.pm:195
+#: lib/NGCP/Panel/Controller/Peering.pm:201
 msgid "Peering group successfully created"
 msgstr "Grupo de peering creado con éxito"
 
-#: lib/NGCP/Panel/Controller/Peering.pm:127
+#: lib/NGCP/Panel/Controller/Peering.pm:131
 msgid "Peering group successfully updated"
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/Peering.pm:624
+#: lib/NGCP/Panel/Controller/Peering.pm:655
 msgid "Peering rule successfully changed"
 msgstr "Regla de peering modificada con éxito"
 
-#: lib/NGCP/Panel/Controller/Peering.pm:553
+#: lib/NGCP/Panel/Controller/Peering.pm:582
 msgid "Peering rule successfully created"
 msgstr "Regla de peering creada con éxito"
 
-#: lib/NGCP/Panel/Controller/Peering.pm:652
+#: lib/NGCP/Panel/Controller/Peering.pm:684
 msgid "Peering rule successfully deleted"
 msgstr "Regla de peering eliminada con éxito"
 
-#: lib/NGCP/Panel/Controller/Peering.pm:299
+#: lib/NGCP/Panel/Controller/Peering.pm:310
 msgid "Peering server does not exist"
 msgstr "El servidor de peering no existe"
 
-#: lib/NGCP/Panel/Controller/Peering.pm:261
+#: lib/NGCP/Panel/Controller/Peering.pm:271
 msgid "Peering server successfully created"
 msgstr "Servidor de peering creado con éxito"
 
-#: lib/NGCP/Panel/Controller/Peering.pm:359
+#: lib/NGCP/Panel/Controller/Peering.pm:372
 msgid "Peering server successfully deleted"
 msgstr "Servidor de peering eliminado con éxito"
 
-#: lib/NGCP/Panel/Controller/Peering.pm:331
+#: lib/NGCP/Panel/Controller/Peering.pm:343
 msgid "Peering server successfully updated"
 msgstr "Servidor de peering modificado con éxito"
 
@@ -5604,7 +5604,7 @@ msgstr ""
 msgid "Polycom username"
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/Peering.pm:81
+#: lib/NGCP/Panel/Controller/Peering.pm:84
 #: lib/NGCP/Panel/Utils/DbStrings.pm:754
 msgid "Port"
 msgstr "Puerto"
@@ -5740,7 +5740,7 @@ msgstr ""
 msgid "Profiles"
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/Peering.pm:82
+#: lib/NGCP/Panel/Controller/Peering.pm:85
 #: lib/NGCP/Panel/Utils/DbStrings.pm:817
 #: share/templates/subscriber/preferences.tt:545
 msgid "Protocol"
@@ -8797,7 +8797,7 @@ msgstr "Versión"
 msgid "Via Route"
 msgstr "Via Route"
 
-#: lib/NGCP/Panel/Controller/Peering.pm:84
+#: lib/NGCP/Panel/Controller/Peering.pm:87
 msgid "Via Route Set"
 msgstr "Conjunto Via Route"
 
@@ -8907,7 +8907,7 @@ msgstr "Día de la semana"
 msgid "Weekdays"
 msgstr "Días de la semana"
 
-#: lib/NGCP/Panel/Controller/Peering.pm:83
+#: lib/NGCP/Panel/Controller/Peering.pm:86
 #: lib/NGCP/Panel/Utils/DbStrings.pm:1144
 msgid "Weight"
 msgstr "Peso"
