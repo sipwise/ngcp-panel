@@ -21,7 +21,7 @@ has 'ua' => (
 has 'base_uri' => (
     is => 'ro',
     isa => 'Str',
-    default => 'https://192.168.56.7:1444' || $ENV{CATALYST_SERVER} || ('https://'.hostfqdn.':4443'),
+    default => $ENV{CATALYST_SERVER} || ('https://'.hostfqdn.':4443'),
 ); 
 has 'name' => (
     is => 'rw',
