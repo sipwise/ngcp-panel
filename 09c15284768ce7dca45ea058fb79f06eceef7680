@@ -2,6 +2,23 @@
   "comments": [
     {
       "key": {
+        "uuid": "5a2585a7_da630619",
+        "filename": "lib/NGCP/Panel/Controller/API/CustomerContacts.pm",
+        "patchSetId": 3
+      },
+      "lineNbr": 80,
+      "author": {
+        "id": 1000013
+      },
+      "writtenOn": "2015-03-19T06:12:06Z",
+      "side": 1,
+      "message": "should only be relevant if controller inheritance is used. quick search showed this is not the case for this controller at least.",
+      "revId": "09c15284768ce7dca45ea058fb79f06eceef7680",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "5a2585a7_5a7cb620",
         "filename": "lib/NGCP/Panel/Controller/API/CustomerContacts.pm",
         "patchSetId": 3
