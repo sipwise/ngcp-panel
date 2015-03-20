@@ -1618,6 +1618,8 @@ EOF
 
     if($c->config->{deviceprovisioning}->{softphone_lockdown}) {
         $config .= <<"EOF";
+net.java.sip.communicator.impl.protocol.sip.$sipacc.IS_CALL_PARK_ENABLED=true
+net.java.sip.communicator.impl.protocol.sip.$sipacc.CALL_PARK_PREFIX_PROPERTY=*97*
 net.java.sip.communicator.impl.protocol.sip.$sipacc.IS_STATUS_MENU_HIDDEN=true
 net.java.sip.communicator.impl.protocol.jabber.$xmppacc.IS_STATUS_MENU_HIDDEN=true
 net.java.sip.communicator.impl.gui.main.menus.AUTO_ANSWER_MENU_DISABLED=true
