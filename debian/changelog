@@ -1,3 +1,12 @@
+ngcp-panel (1.7.2.3+0~mr3.7.2.3) unstable; urgency=low
+
+  [ Gerhard Jungwirth ]
+  * [8dc4fe9] MT#11773 csc fix subscriber-url in topmenu
+
+  [ Sipwise Jenkins Builder ]
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Fri, 20 Mar 2015 17:05:39 +0100
+
 ngcp-panel (1.7.2.2+0~mr3.7.2.2) unstable; urgency=low
 
   [ Irina Peshinskaya ]
