@@ -13,8 +13,8 @@ sub get_class_messages  {
     my $self = shift;
     return {
         %{ $self->next::method },
-        %$class_messages,
-    }
+        %{ $class_messages },
+    };
 }
 
 apply(
@@ -22,7 +22,7 @@ apply(
         {
             transform => sub { 
 	    	    lc($_[0]);
-		    }
+		    },
         },
         {
             transform => sub {
@@ -40,19 +40,25 @@ apply(
 
                 if($c->user->roles eq "subscriberadmin" || $c->user->roles eq "subscriber") {
                     $user = NGCP::Panel::Utils::Subscriber::apply_rewrite(
-                        c => $c, subscriber => $sub, number => $user, direction => 'callee_in'
+                        c => $c, subscriber => $sub, number => $user, direction => 'callee_in',
                     );
                 }
                 $uri = 'sip:' . $user . '@' . $domain;
 
                 return $uri;
-		    }
+            },
         },
         {
             check => sub {
                 my ( $value, $field ) = @_;
                 my ($user, $domain) = split(/\@/, $value);
-                my $checked = $value if $user && $domain; # TODO: proper check
+                my $checked;
+                if ($user && $domain) {
+                    if ( $user =~ m/^(sip:)?[a-zA-Z0-9\+\-\.]*$/ &&
+                         $domain =~ m/^[^;\?:]*$/ ) {
+                        $checked = $value;
+                    }
+                }
                 $field->value($checked)
                     if $checked;
             },
@@ -60,8 +66,8 @@ apply(
                 my ( $value, $field ) = @_;
                 return $field->get_message('uri_format');
             },
-        }
-    ]
+        },
+    ],
 );
 
 has '+deflate_method'  => ( default => sub { \&uri_deflate } );
@@ -80,7 +86,7 @@ sub uri_deflate {
     my ($user, $domain) = split(/\@/, $v);
     if($c->user->roles eq "subscriberadmin" || $c->user->roles eq "subscriber") {
         $user = NGCP::Panel::Utils::Subscriber::apply_rewrite(
-            c => $c, subscriber => $sub, number => $user, direction => 'caller_out'
+            c => $c, subscriber => $sub, number => $user, direction => 'caller_out',
         );
     }
     if($domain eq $sub->domain->domain) {
