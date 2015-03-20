@@ -14,7 +14,7 @@ sub get_class_messages  {
     return {
         %{ $self->next::method },
         %$class_messages,
-    }
+    };
 }
 
 apply(
@@ -22,7 +22,7 @@ apply(
         {
             transform => sub { 
 	    	    lc($_[0]);
-		    }
+		    },
         },
         {
             transform => sub {
@@ -46,13 +46,19 @@ apply(
                 $uri = 'sip:' . $user . '@' . $domain;
 
                 return $uri;
-		    }
+		    },
         },
         {
             check => sub {
                 my ( $value, $field ) = @_;
                 my ($user, $domain) = split(/\@/, $value);
-                my $checked = $value if $user && $domain; # TODO: proper check
+                my $checked;
+                if ($user && $domain) {
+                    if ($domain =~ m/^[^;\?:]*$/ &&
+                        $user =~ m/^[a-zA-Z0-9\+\-\.]*$/) {
+                            $checked = $value;
+                    }
+                }
                 $field->value($checked)
                     if $checked;
             },
