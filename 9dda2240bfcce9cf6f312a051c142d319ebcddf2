@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "5a2585a7_69a44a57",
+        "filename": "lib/NGCP/Panel/Controller/API/CustomerContactsItem.pm",
+        "patchSetId": 5
+      },
+      "lineNbr": 41,
+      "author": {
+        "id": 1000005
+      },
+      "writtenOn": "2015-03-20T12:18:00Z",
+      "side": 1,
+      "message": "IMO it does. We get an error if auto returns 0. Fortunately for us, it doesn\u0027t most of the time, because log_request seems to return something positive. I agree to make it consistent in all controllers, but that exceeds the limits of this ticket. Let\u0027s create a new ticket about that.\n\nBasically it was also to make perlcritic happy, which wants to see a return statement on every sub.",
+      "parentUuid": "5a2585a7_5325c1c0",
+      "revId": "9dda2240bfcce9cf6f312a051c142d319ebcddf2",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "5a2585a7_7340bd56",
         "filename": "lib/NGCP/Panel/Controller/API/CustomerContactsItem.pm",
         "patchSetId": 5
@@ -30,6 +48,24 @@
       "writtenOn": "2015-03-19T06:11:44Z",
       "side": 1,
       "message": "this is still the same, however this is now different in controllers.\nso, this should be either moved into an utility sub, or even better modified in Data::HAL directly.",
+      "revId": "9dda2240bfcce9cf6f312a051c142d319ebcddf2",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a2585a7_49898ec9",
+        "filename": "lib/NGCP/Panel/Controller/API/CustomerContactsItem.pm",
+        "patchSetId": 5
+      },
+      "lineNbr": 58,
+      "author": {
+        "id": 1000005
+      },
+      "writtenOn": "2015-03-20T12:18:00Z",
+      "side": 1,
+      "message": "yes it behaves exactly the same. I just fixed perlcritic reports here, as I often do on a file, when I am already working on it. see https://metacpan.org/pod/Perl::Critic::Policy::ControlStructures::ProhibitMutatingListFunctions",
+      "parentUuid": "5a2585a7_7340bd56",
       "revId": "9dda2240bfcce9cf6f312a051c142d319ebcddf2",
       "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
       "unresolved": false
