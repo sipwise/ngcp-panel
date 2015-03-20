@@ -352,7 +352,7 @@ sub webfax_send :Chained('base') :PathPart('webfax/send') :Args(0) {
             NGCP::Panel::Utils::Message->error(
                 c     => $c,
                 error => "failed to send fax: $e",
-                desc  => $c->loc('Internal error while sending fax'),
+                desc  => $c->loc('Error while sending fax (have the fax settings been configured properly?)'),
             );
         }
         NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for_action('/subscriber/webfax', $c->req->captures));
