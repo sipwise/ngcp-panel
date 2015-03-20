@@ -1637,6 +1637,8 @@ net.java.sip.communicator.plugin.advancedconfig.DISABLED=true
 net.java.sip.communicator.plugin.generalconfig.sipconfig.DISABLED=true
 net.java.sip.communicator.impl.neomedia.callrecordingconfig.DISABLED=true
 net.java.sip.communicator.impl.neomedia.h264config.DISABLED=true
+net.java.sip.communicator.plugin.accountinfo.ACCOUNT_INFO_TOOLS_MENU_DISABLED_PROP=true
+net.java.sip.communicator.plugin.connectioninfo.CONNECT_INFO_TOOLS_MENU_DISABLED_PROP=true
 EOF
     }
 
