@@ -1,5 +1,8 @@
 package Test::WebDriver::Sipwise;
-use Sipwise::Base;
+use warnings;
+use strict;
+use Moo;
+use MooseX::Method::Signatures;
 extends 'Test::WebDriver';
 
 method find(Str $scheme, Str $query) {
@@ -30,12 +33,11 @@ method findtext(Str $text, Any $ignore) {
 
 method save_screenshot() {
     use MIME::Base64;
-    local *FH;
-    open(FH,'>','screenshot.png');
-    binmode FH;
+    open(my $FH,'>','screenshot.png');
+    binmode $FH;
     my $png_base64 = $self->screenshot();
-    print FH decode_base64($png_base64);
-    close FH;
+    print $FH decode_base64($png_base64);
+    close $FH;
 }
 
 method fill_element(ArrayRef $options, Any $ignore) {
@@ -51,5 +53,7 @@ method fill_element(ArrayRef $options, Any $ignore) {
 sub browser_name_in {
     my ($self, @names) = @_;
     my $browser_name = $self->get_capabilities->{browserName};
-    return $browser_name ~~ @names;
+    return scalar grep {/^$browser_name$/} @names;
 }
+
+1;
