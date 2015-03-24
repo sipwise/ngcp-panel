@@ -1020,17 +1020,19 @@ sub get_annotated_info :Privat {
     foreach(qw/front_image mac_image/){
         delete $device_info->{$_};
     }
+    use Data::Dumper;
     my $gather_ranges_info = sub {
         my $rs = shift;
-        return [
-            { map {
-                $_->get_inflated_columns,
-                'annotations' => [
-                    map {{
-                        $_->get_inflated_columns,
-                    }} $_->annotations->all,
-                ],
-            } $rs->all }
+        return [ map {
+                {
+                    $_->get_inflated_columns,
+                    'annotations' => [
+                        map {{
+                            $_->get_inflated_columns,
+                        }} $_->annotations->all,
+                    ],
+                } 
+            }$rs->all
         ];
     };
     my $data = {
