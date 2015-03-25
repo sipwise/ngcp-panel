@@ -400,9 +400,24 @@ sub servers_flash_dialogic :Chained('servers_base') :PathPart('edit/dialogic') :
         attribute => 'dialogic_ip_config',
         peer_host => $c->stash->{server_result},
     )->first;
-my $pref_out_codecs = NGCP::Panel::Utils::Preferences::get_peer_preference_rs(
+    my $pref_out_codecs = NGCP::Panel::Utils::Preferences::get_peer_preference_rs(
         c => $c,
         attribute => 'dialogic_out_codecs',
+        peer_host => $c->stash->{server_result},
+    )->first;
+    my $pref_ss7_opc = NGCP::Panel::Utils::Preferences::get_peer_preference_rs(
+        c => $c,
+        attribute => 'dialogic_ss7_opc',
+        peer_host => $c->stash->{server_result},
+    )->first;
+    my $pref_ss7_apc = NGCP::Panel::Utils::Preferences::get_peer_preference_rs(
+        c => $c,
+        attribute => 'dialogic_ss7_apc',
+        peer_host => $c->stash->{server_result},
+    )->first;
+    my $pref_ss7_dpc = NGCP::Panel::Utils::Preferences::get_peer_preference_rs(
+        c => $c,
+        attribute => 'dialogic_ss7_dpc',
         peer_host => $c->stash->{server_result},
     )->first;
 
@@ -438,6 +453,20 @@ my $pref_out_codecs = NGCP::Panel::Utils::Preferences::get_peer_preference_rs(
                     };
 
                 $resp = $api->create_all_sipisdn($config, 1);
+            } elsif ($pref_mode->value eq 'sipss7') {
+                my $config = {
+                    ip_sip => $c->stash->{server_result}->ip,
+                    ip_rtp => $pref_ip_rtp->value,
+                    ip_client => $c->config->{dialogic}{own_ip},
+                    out_codecs => \@configured_out_codecs,
+                    ss7_opc => $pref_ss7_opc ? $pref_ss7_opc->value : '1-1-1',
+                    ss7_apc => $pref_ss7_apc ? $pref_ss7_apc->value : '2-2-2',
+                    ss7_dpc => $pref_ss7_dpc ? $pref_ss7_dpc->value : '2-2-2',
+                    ip_config => $pref_ip_config->value, # just for the config hash
+                    dialogic_mode => $pref_mode->value,
+                    };
+
+                $resp = $api->create_all_sipss7($config, 1);
             }
         }
         NGCP::Panel::Utils::Message->info(
