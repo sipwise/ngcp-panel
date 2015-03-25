@@ -48,12 +48,15 @@ print "LOGGED IN, LOCK OBTAINED ############################\n";
 # p $resp->data;
 # exit;
 
-my $result = $test->create_all_sipisdn({
+my $result = $test->create_all_sipss7({
     ip_sip => '10.15.20.92',
     ip_rtp => '10.15.21.10',
-    ip_client => '10.15.20.199',
+    ip_client => '10.15.20.146',
     in_codecs => ['G711 ulaw', 'G711 alaw', 'G729', 'AMR'],
     out_codecs => ['G711 ulaw', 'G711 alaw', 'G729', 'AMR'],
+    ss7_opc => '1-1-1',
+    ss7_apc => '2-2-2',  # adjacent point code
+    ss7_dpc => '2-2-2',
     },
     2,
     );

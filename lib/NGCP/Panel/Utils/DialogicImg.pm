@@ -99,6 +99,33 @@ has 'classinfo' => ( is => 'ro', isa => HashRef, default => sub{
             parent => 'facility',
             revalidate => 0,
         },
+        ############################# OPTICAL WIP #############################
+        ds3_optical => {
+            name => 'DS3_Optical',
+            parent => 'facility',
+            revalidate => 0,   # TODO
+        },
+        optical_interface => {
+            name => 'Optical_Interface',
+            parent => 'ds3_optical',
+            revalidate => 0,
+        },
+        optical_link => {
+            name => 'Optical_Link',
+            parent => 'optical_interface',
+            revalidate => 0,
+        },
+        ds3_interface => {
+            name => 'TDM_DS3',
+            parent => 'optical_interface',
+            revalidate => 0,
+        },
+        ds1_spans_optical => {
+            name => 'SpanGroup', # TODO: double occurence, is that acceptable?
+            parent => 'ds3_interface',
+            revalidate => 0,
+        },
+        #######################################################################
         signaling => {
             name => 'Signaling',
             parent => 'bn2020',
@@ -133,6 +160,61 @@ has 'classinfo' => ( is => 'ro', isa => HashRef, default => sub{
             name => 'SIPIP',
             parent => 'sip',
             revalidate => 0,
+        },
+        ss7 => {
+            name => 'SS7',
+            parent => 'root',
+            revalidate => 0,
+        },
+        ss7_network => {
+            name => 'SS7Network',
+            parent => 'ss7',
+            revalidate => 0,
+        },
+        ss7_node_collection => {
+            name => 'SS7Nodes',
+            parent => 'ss7_network',
+            revalidate => 0,
+        },
+        ss7_node_primary => {
+            name => 'SS7PrimaryNode',
+            parent => 'ss7_node_collection',
+            revalidate => 0,
+        },
+        ss7_stack => {
+            name => 'SS7Stack',
+            parent => 'ss7_network',
+            revalidate => 1,
+        },
+        ss7_link_set => {
+            name => 'SS7LinkSet',
+            parent => 'ss7_stack',
+            revalidate => 1,
+        },
+        ss7_link => {
+            name => 'SS7Link',
+            parent => 'ss7_link_set',
+            revalidate => 1,
+        },
+        ss7_destination => {
+            name => 'SS7Destination',
+            parent => 'ss7_stack',
+            revalidate => 1,
+        },
+        ss7_route => {
+            name => 'SS7Route',
+            parent => 'ss7_destination',
+            revalidate => 1,
+        },
+        ss7_isup_group => {  # note: needs isup profile
+            name => 'ISUPGroup',
+            parent => 'ss7_destination',
+            revalidate => 1,
+        },
+        ss7_circuit_group => {
+            name => 'SS7CircuitGroup',
+            parent => 'ss7_isup_group',
+            revalidate => 1,
         },
         profile_collection => {
             name => 'Profiles',
@@ -172,6 +254,21 @@ has 'classinfo' => ( is => 'ro', isa => HashRef, default => sub{
         e1_profile => {
             name => 'E1Profile',
             parent => 'tdm_profile_collection',
+            revalidate => 0,
+        },
+        isup_profile_collection => {
+            name => 'ISUPProfiles',
+            parent => 'profile_collection',
+            revalidate => 0,
+        },
+        isup_itu_profile => {
+            name => 'ISUP_ITUProfile',
+            parent => 'isup_profile_collection',
+            revalidate => 0,
+        },
+        isup_ansi_profile => {
+            name => 'ISUP_ANSIProfile',
+            parent => 'isup_profile_collection',
             revalidate => 0,
         },
         external_network_elements => {
@@ -233,7 +330,7 @@ has 'classinfo' => ( is => 'ro', isa => HashRef, default => sub{
             name => 'SSLCircuitGroup',
             parent => 'channel_group',
             revalidate => 0,
-            },
+        },
     };
     });
 
@@ -338,7 +435,37 @@ sub create_ds1_spans {
 
     return $self->_create_generic($options, 'ds1_spans');
 }
+######################### OPTICAL WIP ################################
+sub create_ds3_optical {
+    my ( $self, $options ) = @_;
 
+    return $self->_create_generic($options, 'ds3_optical');
+}
+
+sub create_optical_interface {
+    my ( $self, $options ) = @_;
+
+    return $self->_create_generic($options, 'optical_interface');
+}
+
+sub create_optical_link {
+    my ( $self, $options ) = @_;
+
+    return $self->_create_generic($options, 'optical_link');
+}
+
+sub create_ds3_interface {
+    my ( $self, $options ) = @_;
+
+    return $self->_create_generic($options, 'ds3_interface');
+}
+
+sub create_ds1_spans_optical {
+    my ( $self, $options ) = @_;
+
+    return $self->_create_generic($options, 'ds1_spans_optical');
+}
+######################################################################
 sub create_signaling {
     my ( $self, $options ) = @_;
 
@@ -379,6 +506,72 @@ sub create_sip_ip {
     my ( $self, $options ) = @_;
 
     return $self->_create_generic($options, 'sip_ip');
+}
+
+sub create_ss7 {
+    my ( $self, $options ) = @_;
+
+    return $self->_create_generic($options, 'ss7');
+}
+
+sub create_ss7_network {
+    my ( $self, $options ) = @_;
+
+    return $self->_create_generic($options, 'ss7_network');
+}
+
+sub create_ss7_node_collection {
+    my ( $self, $options ) = @_;
+
+    return $self->_create_generic($options, 'ss7_node_collection');
+}
+
+sub create_ss7_node_primary {
+    my ( $self, $options ) = @_;
+
+    return $self->_create_generic($options, 'ss7_node_primary');
+}
+
+sub create_ss7_stack {
+    my ( $self, $options ) = @_;
+
+    return $self->_create_generic($options, 'ss7_stack');
+}
+
+sub create_ss7_link_set {
+    my ( $self, $options ) = @_;
+
+    return $self->_create_generic($options, 'ss7_link_set');
+}
+
+sub create_ss7_link {
+    my ( $self, $options ) = @_;
+
+    return $self->_create_generic($options, 'ss7_link');
+}
+
+sub create_ss7_destination {
+    my ( $self, $options ) = @_;
+
+    return $self->_create_generic($options, 'ss7_destination');
+}
+
+sub create_ss7_route {
+    my ( $self, $options ) = @_;
+
+    return $self->_create_generic($options, 'ss7_route');
+}
+
+sub create_ss7_isup_group {
+    my ( $self, $options ) = @_;
+
+    return $self->_create_generic($options, 'ss7_isup_group');
+}
+
+sub create_ss7_circuit_group {
+    my ( $self, $options ) = @_;
+
+    return $self->_create_generic($options, 'ss7_circuit_group');
 }
 
 sub create_profile_collection {
@@ -427,6 +620,24 @@ sub create_e1_profile {
     my ( $self, $options ) = @_;
 
     return $self->_create_generic($options, 'e1_profile');
+}
+
+sub create_isup_profile_collection {
+    my ( $self, $options ) = @_;
+
+    return $self->_create_generic($options, 'isup_profile_collection');
+}
+
+sub create_isup_itu_profile {
+    my ( $self, $options ) = @_;
+
+    return $self->_create_generic($options, 'isup_itu_profile');
+}
+
+sub create_isup_ansi_profile {
+    my ( $self, $options ) = @_;
+
+    return $self->_create_generic($options, 'isup_ansi_profile');
 }
 
 sub create_external_network_elements {
@@ -792,6 +1003,197 @@ sub create_all_sipisdn {
         {name => 'route_element', options => {
             StringType => 'Channel Group',
             InChannelGroup => 'CGisdn2',
+            RouteActionType => 'Channel Group',
+            RouteActionList => 'CGPhone1',
+            }},
+        #{run => 'download_route_table'},
+        #{run => 'download_channel_groups'},
+    ];
+
+    for my $elem (@{ $schedule }) {
+        my ($name, $options) = @{ $elem }{('name', 'options')};
+        my $fun = "create_$name";
+        $resp = $self->$fun($options);
+        # $resp = $self->_create_generic($options, $name);
+        if ($log >= 1) {
+            my $ind = " " x ($self->classinfo->{$name}{indent}*4);
+            printf "%-37s: %d\n", "$ind$name", $resp->code;
+            if ($resp->code != 200) {
+                use DDP; p $resp->data;
+            }
+        }
+    }
+
+    $self->download_profiles;
+    $self->download_route_table;
+    $self->download_channel_groups;
+
+    return 0;
+}
+
+# log: 0: none, 1: short
+# necessary keys: ip_sip, ip_rtp, ip_client, out_codecs, ss7_opc, ss7_apc, ss7_dpc
+# optionalkeys: in_codecs
+sub create_all_sipss7 {
+    my ($self, $settings, $log) = @_;
+
+    $self->_create_indent;
+
+    my $in_codecs = ['G711 ulaw', 'G711 alaw', 'G729', 'AMR',
+        'AMR Bandwidth Efficient', 'AMR-WB', 'AMR-WB Bandwidth Efficient',
+        'Clear Channel', 'G723 5.3 Kbps', 'G723 6.3 Kbps', 'G722', 'iLBC 30ms',
+        'GSM-FR Static Payload Type', 'GSM-FR Dynamic Payload Type',
+        'G726-32/G721 Static Payload Type', 'G726-32/G721 Dynamic Payload Type',
+        'GSM-EFR'];
+
+    my $resp = $self->create_bn2020;
+    my @in_schedule = map {
+            {
+                name => 'vocoder_profile', options =>
+                    { PayloadType => $_ },
+            };
+        } @{ $settings->{in_codecs} // $in_codecs };
+    my @out_schedule = map {
+            {
+                name => 'vocoder_profile', options =>
+                    { PayloadType => $_ },
+            };
+        } @{ $settings->{out_codecs} };
+    my $schedule = [
+        {name => 'network', options => undef},
+        {name => 'interface_collection', options => undef},
+        {name => 'interface', options => undef},
+        {name => 'ip_address', options => {
+            NIIPAddress => $settings->{ip_sip},
+            NIIPPhy => 'Services',
+            }},
+        {name => 'interface', options => undef},
+        {name => 'ip_address', options => {
+            NIIPAddress => $settings->{ip_rtp},
+            NIIPPhy => 'Media 0',
+            }},
+        {name => 'facility', options => undef},
+        {name => 'packet_facility_collection', options => undef},
+        {name => 'packet_facility', options => {
+            ChannelCount => 50,
+            }},
+        {name => 'signaling', options => undef},
+        {name => 'sip', options => undef},
+        {name => 'sip_ip', options => {
+            IPAddress => $settings->{ip_sip},
+            }},
+
+        {name => 'profile_collection', options => undef},
+        {name => 'ip_profile_collection', options => undef},
+        {name => 'ip_profile', options => {
+            DigitRelay => 'DTMF Packetized',
+            Name => 'ngcp_in_profile',
+            }},
+        @in_schedule,
+        {name => 'ip_profile', options => {
+            DigitRelay => 'DTMF Packetized',
+            Name => 'ngcp_out_profile',
+            }},
+        @out_schedule,
+        {name => 'sip_profile_collection', options => undef},
+        {name => 'sip_profile', options => undef},
+        {name => 'tdm_profile_collection', options => undef},
+        {name => 'e1_profile', options => undef},
+        {name => 'ds1_spans', options => {
+            EndingOffset => '3',
+        }},
+        {name => 'isup_profile_collection', options => undef},
+        {name => 'isup_itu_profile', options => undef},
+        #{run => 'download_profiles'},
+        {name => 'ss7', options => undef},
+        {name => 'ss7_network', options => undef},
+        {name => 'ss7_node_collection', options => undef},
+        {name => 'ss7_node_primary', options => undef},
+        {name => 'ss7_stack', options => {
+            OPC => $settings->{ss7_opc},
+        }},
+        {name => 'ss7_link_set', options => {
+            APC => $settings->{ss7_apc},
+        }},
+        {name => 'ss7_link', options => undef},
+        {name => 'ss7_destination', options => {
+            DPC => $settings->{ss7_dpc},
+        }},
+        {name => 'ss7_route', options => {
+            Linkset => 'SS7 Link Set APC: ' . $settings->{ss7_apc},
+        }},
+        {name => 'ss7_isup_group', options => undef},
+        {name => 'ss7_circuit_group', options => {
+            StartCIC => '1',
+        }},
+
+        {name => 'ss7_stack', options => {  # for loopback purposes
+            OPC => $settings->{ss7_dpc},
+        }},
+        {name => 'ss7_link_set', options => {
+            APC => $settings->{ss7_opc},
+        }},
+        {name => 'ss7_link', options => undef},
+        {name => 'ss7_destination', options => {
+            DPC => $settings->{ss7_opc},
+        }},
+        {name => 'ss7_route', options => {
+            Linkset => 'SS7 Link Set APC: ' . $settings->{ss7_opc},
+        }},
+        {name => 'ss7_isup_group', options => undef},
+        {name => 'ss7_circuit_group', options => {
+            StartCIC => '1',
+        }},
+
+        {name => 'external_network_elements', options => undef},
+        {name => 'external_gateway_collection', options => undef},
+        {name => 'external_gateway', options => {
+            Name => 'Phone1',
+            IPAddress => $settings->{ip_client},
+            IPAddress4 => $settings->{ip_client},
+            }},
+        {name => 'routing_configuration', options => undef},
+        {name => 'channel_group_collection', options => undef},
+        {name => 'route_table_collection', options => undef},
+        {name => 'route_table', options => {
+            Name => 'ngcp_route_table',
+            }},
+        {name => 'channel_group', options => {
+            SignalingType => 'SIP',
+            InRouteTable => 'ngcp_route_table - ID: 5',
+            InIPProfile => 'ngcp_in_profile',
+            InIPProfileId => '1',
+            OutIPProfile => 'ngcp_out_profile',
+            SupportA2F => 'True',
+            Name => 'CGPhone1',
+            }},
+        {name => 'cg_network_element', options => undef},
+        {name => 'node_association', options => undef},
+
+        {name => 'channel_group', options => {
+            SignalingType => 'SS7_ISUP',
+            InRouteTable => 'ngcp_route_table - ID: 5',
+            SupportA2F => 'True',
+            Name => 'CG_ss7_1',
+            }},
+        {name => 'cg_isdn_circuit_group', options => undef},
+        {name => 'channel_group', options => {
+            SignalingType => 'SS7_ISUP',
+            InRouteTable => 'ngcp_route_table - ID: 5',
+            SupportA2F => 'True',
+            Name => 'CG_ss7_2',
+            }},
+        {name => 'cg_isdn_circuit_group', options => undef},
+
+        {name => 'route_element', options => {
+            StringType => 'Channel Group',
+            InChannelGroup => 'CGPhone1',
+            RouteActionType => 'Channel Group',
+            RouteActionList => 'CG_ss7_1',
+            }},
+        {name => 'route_element', options => {
+            StringType => 'Channel Group',
+            InChannelGroup => 'CG_ss7_2',
             RouteActionType => 'Channel Group',
             RouteActionList => 'CGPhone1',
             }},
