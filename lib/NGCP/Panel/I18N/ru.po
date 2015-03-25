@@ -2361,7 +2361,7 @@ msgstr ""
 msgid "Device profile not found"
 msgstr "Профиль устройства не найден"
 
-#: lib/NGCP/Panel/Controller/Device.pm:1064
+#: lib/NGCP/Panel/Controller/Device.pm:1066
 msgid "Device profile successfully deleted"
 msgstr "Профиль устройства успешно удален"
 
@@ -3068,7 +3068,7 @@ msgstr "Не удалось удалить прошивку устройства
 msgid "Failed to delete device model"
 msgstr "Не удалось удалить модель устройства"
 
-#: lib/NGCP/Panel/Controller/Device.pm:1070
+#: lib/NGCP/Panel/Controller/Device.pm:1072
 msgid "Failed to delete device profile"
 msgstr "Не удалось удалить профиль устройства"
 
@@ -3334,7 +3334,7 @@ msgstr "Не удалось обновить прошивку устройств
 msgid "Failed to update device model"
 msgstr "Не удалось обновить модель устройства"
 
-#: lib/NGCP/Panel/Controller/Device.pm:1121
+#: lib/NGCP/Panel/Controller/Device.pm:1123
 msgid "Failed to update device profile"
 msgstr "Не удалось обновить профиль устройства"
 
@@ -7241,7 +7241,7 @@ msgstr "Прошивка устройства успешно обновлена"
 msgid "Successfully updated device model"
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/Device.pm:1115
+#: lib/NGCP/Panel/Controller/Device.pm:1117
 msgid "Successfully updated device profile"
 msgstr "Профиль устройства успешно обновлен"
 

@@ -2327,7 +2327,7 @@ msgstr ""
 msgid "Device profile not found"
 msgstr "Perfil de Dispositivo no encontrado"
 
-#: lib/NGCP/Panel/Controller/Device.pm:1064
+#: lib/NGCP/Panel/Controller/Device.pm:1066
 msgid "Device profile successfully deleted"
 msgstr "Perfil de Dispositivo eliminado con éxito"
 
@@ -3038,7 +3038,7 @@ msgstr "Fallo al borrar firmware de dispositivo"
 msgid "Failed to delete device model"
 msgstr "Fallo al borrar modelo de dispositivo"
 
-#: lib/NGCP/Panel/Controller/Device.pm:1070
+#: lib/NGCP/Panel/Controller/Device.pm:1072
 msgid "Failed to delete device profile"
 msgstr "Fallo al borrar perfil de dispositivo"
 
@@ -3304,7 +3304,7 @@ msgstr "Fallo al actualizar firmware de dispositivo"
 msgid "Failed to update device model"
 msgstr "Fallo al actualizar modelo de dispositivo"
 
-#: lib/NGCP/Panel/Controller/Device.pm:1121
+#: lib/NGCP/Panel/Controller/Device.pm:1123
 msgid "Failed to update device profile"
 msgstr "Fallo al actualizar perfil de dispositivo"
 
@@ -7219,7 +7219,7 @@ msgstr "Firmware de dispositivo modificado con éxito"
 msgid "Successfully updated device model"
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/Device.pm:1115
+#: lib/NGCP/Panel/Controller/Device.pm:1117
 msgid "Successfully updated device profile"
 msgstr "Perfil de dispositivo modificado con éxito"
 
