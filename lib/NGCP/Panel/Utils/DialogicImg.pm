@@ -99,6 +99,33 @@ has 'classinfo' => ( is => 'ro', isa => HashRef, default => sub{
             parent => 'facility',
             revalidate => 0,
         },
+        ############################# OPTICAL WIP #############################
+        ds3_optical => {
+            name => 'DS3_Optical',
+            parent => 'facility',
+            revalidate => 0,   # TODO
+        },
+        optical_interface => {
+            name => 'Optical_Interface',
+            parent => 'ds3_optical',
+            revalidate => 0,
+        },
+        optical_link => {
+            name => 'Optical_Link',
+            parent => 'optical_interface',
+            revalidate => 0,
+        },
+        ds3_interface => {
+            name => 'TDM_DS3',
+            parent => 'optical_interface',
+            revalidate => 0,
+        },
+        ds1_spans_optical => {
+            name => 'SpanGroup', # TODO: double occurence, is that acceptable?
+            parent => 'ds3_interface',
+            revalidate => 0,
+        },
+        #######################################################################
         signaling => {
             name => 'Signaling',
             parent => 'bn2020',
@@ -134,6 +161,38 @@ has 'classinfo' => ( is => 'ro', isa => HashRef, default => sub{
             parent => 'sip',
             revalidate => 0,
         },
+        ####### PUT SS7 HERE #######
+        ss7 => {
+            name => 'SS7',
+            parent => 'root',
+            revalidate => 0,
+        },
+        ss7_network => {
+            name => 'SS7Network',
+            parent => 'ss7',
+            revalidate => 0,
+        },
+        ss7_stack => {
+            name => 'SS7Stack',
+            parent => 'ss7_network',
+            revalidate => 1,
+        },
+        ss7_link_set => {
+            name => 'SS7LinkSet',
+            parent => 'ss7_stack',
+            revalidate => 1,
+        },
+        ss7_destination => {
+            name => 'SS7Destination',
+            parent => 'ss7_stack',
+            revalidate => 1,
+        },
+        ss7_route => {
+            name => 'SS7Route',
+            parent => 'ss7_destination',
+            revalidate => 1,
+        },
+        ############################
         profile_collection => {
             name => 'Profiles',
             parent => 'root',
@@ -338,7 +397,37 @@ sub create_ds1_spans {
 
     return $self->_create_generic($options, 'ds1_spans');
 }
+######################### OPTICAL WIP ################################
+sub create_ds3_optical {
+    my ( $self, $options ) = @_;
 
+    return $self->_create_generic($options, 'ds3_optical');
+}
+
+sub create_optical_interface {
+    my ( $self, $options ) = @_;
+
+    return $self->_create_generic($options, 'optical_interface');
+}
+
+sub create_optical_link {
+    my ( $self, $options ) = @_;
+
+    return $self->_create_generic($options, 'optical_link');
+}
+
+sub create_ds3_interface {
+    my ( $self, $options ) = @_;
+
+    return $self->_create_generic($options, 'ds3_interface');
+}
+
+sub create_ds1_spans_optical {
+    my ( $self, $options ) = @_;
+
+    return $self->_create_generic($options, 'ds1_spans_optical');
+}
+######################################################################
 sub create_signaling {
     my ( $self, $options ) = @_;
 
@@ -380,6 +469,44 @@ sub create_sip_ip {
 
     return $self->_create_generic($options, 'sip_ip');
 }
+
+#################### PUT SS7 HERE ####################
+sub create_ss7 {
+    my ( $self, $options ) = @_;
+
+    return $self->_create_generic($options, 'ss7');
+}
+
+sub create_ss7_network {
+    my ( $self, $options ) = @_;
+
+    return $self->_create_generic($options, 'ss7_network');
+}
+
+sub create_ss7_stack {
+    my ( $self, $options ) = @_;
+
+    return $self->_create_generic($options, 'ss7_stack');
+}
+
+sub create_ss7_link_set {
+    my ( $self, $options ) = @_;
+
+    return $self->_create_generic($options, 'ss7_link_set');
+}
+
+sub create_ss7_destination {
+    my ( $self, $options ) = @_;
+
+    return $self->_create_generic($options, 'ss7_destination');
+}
+
+sub create_ss7_route {
+    my ( $self, $options ) = @_;
+
+    return $self->_create_generic($options, 'ss7_route');
+}
+######################################################
 
 sub create_profile_collection {
     my ( $self, $options ) = @_;
