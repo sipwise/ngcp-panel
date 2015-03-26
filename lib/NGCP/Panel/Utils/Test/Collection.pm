@@ -1,4 +1,6 @@
 package NGCP::Panel::Utils::Test::Collection;
+#later package should be split into 2: apiclient and testcollection
+#testcollection will keep object of the apiclient
 
 use strict;
 use Test::More;
@@ -8,6 +10,7 @@ use LWP::UserAgent;
 use HTTP::Request::Common;
 use Net::Domain qw(hostfqdn);
 use URI;
+use URI::Escape;
 use Clone qw/clone/;
 
 use Data::Dumper;
@@ -76,9 +79,18 @@ has 'DATA_CREATED' => (
     isa => 'HashRef',
     builder => 'clear_data_created',
 );
+has 'KEEP_CREATED' =>(
+    is => 'rw',
+    isa => 'Bool',
+);
 has 'URI_CUSTOM' =>(
     is => 'rw',
     isa => 'Str',
+);
+has 'QUERY_PARAMS' =>(
+    is => 'rw',
+    isa => 'Str',
+    default => '',
 );
 has 'URI_CUSTOM_STORE' =>(
     is => 'rw',
@@ -99,6 +111,25 @@ has 'ENCODE_CONTENT' => (
     isa => 'Str',
     default => 'json',
 );
+sub set{
+    my $self = shift;
+    my %params = @_;
+    my $prev_state = {};
+    while (my ($variable, $value) = each %params){
+        $prev_state->{$variable} = $self->$variable;
+        $self->$variable($value);
+    }
+    return $prev_state;
+}
+sub get_cloned{
+    my $self = shift;
+    my @params = @_;
+    my $state = {};
+    foreach my $variable (@params){
+        $state->{$variable} = clone( $self->$variable );
+    }
+    return $state;
+}
 sub _init_ua {
     my $self = shift;
     my $valid_ssl_client_cert = $ENV{API_SSL_CLIENT_CERT} || 
@@ -118,7 +149,7 @@ sub _init_ua {
     #    SSL_verify_mode => 0x00,
     #);
     return $ua;
-};
+}
 sub clear_data_created{
     my($self) = @_;
     $self->DATA_CREATED({
@@ -133,6 +164,12 @@ sub form_data_item{
     (defined $data_cb) and $data_cb->($self->DATA_ITEM,$data_cb_data);
     return $self->DATA_ITEM;
 }
+sub get_id_from_created{
+    my($self, $created_info) = @_;
+    my $id = $created_info->{location} || '';
+    $id=~s/.*?\D(\d+)$/$1/gis;
+    return $id;
+}
 sub get_hal_name{
     my($self) = @_;
     return "ngcp:".$self->name;
@@ -143,8 +180,13 @@ sub restore_uri_custom{
     $self->URI_CUSTOM_STORE(undef);
 }
 sub get_uri_collection{
-    my($self) = @_;
-    return $self->base_uri."/api/".$self->name.($self->name ? "/" : "");
+    my($self,$name) = @_;
+    $name //= $self->name;
+    return $self->base_uri."/api/".$name.($name ? "/" : "").($self->QUERY_PARAMS ? "?".$self->QUERY_PARAMS : "");
+}
+sub get_uri_get{
+    my($self,$query_string) = @_;
+    return $self->base_uri."/api/".$self->name.'/?'.$query_string;
 }
 sub get_uri_firstitem{
     my($self) = @_;
@@ -174,12 +216,13 @@ sub encode_content{
         'application/json-patch+json' => 1,
         'json' => 1,
     );
-    #print "content=$content;\n\n";
+    #print "1. content=$content;\n\n";
     if($content){
         if( $json_types{$type} && (('HASH' eq ref $content) ||('ARRAY' eq ref $content))  ){
             return JSON::to_json($content);
         }
     }
+    #print "2. content=$content;\n\n";
     return $content;
 }
 sub request{
@@ -215,20 +258,20 @@ sub request_put{
     my $res = $self->request($req);
     #print Dumper $res;
     
-    my $err = $res->decoded_content ? JSON::from_json($res->decoded_content) : '';
-    return wantarray ? ($res,$err,$req) : $res;
+    my $rescontent = $res->decoded_content ? JSON::from_json($res->decoded_content) : '';
+    return wantarray ? ($res,$rescontent,$req) : $res;
 }
 sub request_patch{
-    my($self,$content,$uri, $req) = @_;
+    my($self,$content, $uri, $req) = @_;
     $uri ||= $self->get_uri_current;
     $req ||= $self->get_request_patch($uri);
     #patch is always a json
     $content = $self->encode_content($content, $self->content_type->{PATCH});
     $content and $req->content($content);
     my $res = $self->request($req);
-    my $err = $res->decoded_content ? JSON::from_json($res->decoded_content) : '';
-    #print Dumper [$res,$err,$req];
-    return ($res,$err,$req);
+    my $rescontent = $res->decoded_content ? JSON::from_json($res->decoded_content) : '';
+    #print Dumper [$res,$rescontent,$req];
+    return wantarray ? ($res,$rescontent,$req) : $res;
 }
 
 sub request_post{
@@ -245,11 +288,9 @@ sub request_post{
         Content_Type => $self->content_type->{POST}, 
         Content => $content;
     my $res = $self->request($req);
-    my $err = $res->decoded_content ? JSON::from_json($res->decoded_content) : '';
-    return ($res,$err,$req);
+    my $rescontent = $res->decoded_content ? JSON::from_json($res->decoded_content) : '';
+    return wantarray ? ($res,$rescontent,$req) : $res;
 };
-
-
 
 sub request_options{
     my ($self,$uri) = @_;
@@ -260,6 +301,7 @@ sub request_options{
     my $content = $res->decoded_content ? JSON::from_json($res->decoded_content) : '';
     return($req,$res,$content);
 }
+
 sub request_delete{
     my ($self,$uri) = @_;
     # DELETE tests
@@ -269,6 +311,10 @@ sub request_delete{
     my $content = $res->decoded_content ? JSON::from_json($res->decoded_content) : '';
     return($req,$res,$content);
 }
+
+############## end of test machine
+############## start of test collection
+
 sub check_options_collection{
     my ($self) = @_;
     # OPTIONS tests
@@ -302,28 +348,33 @@ sub check_methods{
     }
 }
 sub check_create_correct{
-    my($self, $number, $uniquizer_cb, $keep_data) = @_;
-    if(!$keep_data){
+    my($self, $number, $uniquizer_cb, $keep_created) = @_;
+    if(!$keep_created && !$self->KEEP_CREATED){
         $self->clear_data_created;
     }
     $self->DATA_CREATED->{ALL} //= {};
     for(my $i = 1; $i <= $number; ++$i) {
-        my ($res, $err) = $self->request_post( $uniquizer_cb , undef, { i => $i} );
-        is($res->code, 201, "create test item $i");
+        my ($res, $content, $req) = $self->request_post( $uniquizer_cb , undef, { i => $i} );
+        is($res->code, 201, "create test item '".$self->name."' $i");
         my $location = $res->header('Location');
         if($location){
-            $self->DATA_CREATED->{ALL}->{$location} = $i;
+            $self->DATA_CREATED->{ALL}->{$location} = { num => $i, content => $content, res => $res, req => $req, location => $location};
             $self->DATA_CREATED->{FIRST} = $location unless $self->DATA_CREATED->{FIRST};
         }
     }
 }
-sub check_delete_use_created{
+sub clear_test_data_all{
     my($self,$uri) = @_;
-    my @uris = $uri ? ($uri) : keys $self->DATA_CREATED->{ALL};
+    my @uris = $uri ? (('ARRAY' eq ref $uri) ? @$uri : ($uri)) : keys $self->DATA_CREATED->{ALL};
     foreach my $del_uri(@uris){
         my($req,$res,$content) = $self->request_delete($self->base_uri.$del_uri);
         is($res->code, 204, "check delete item $del_uri");
     }
+}
+sub clear_test_data_dependent{
+    my($self,$uri) = @_;
+    my($req,$res,$content) = $self->request_delete($self->base_uri.$uri);
+    return ('204' eq $res->code);
 }
 sub check_list_collection{
     my($self, $check_embedded_cb) = @_;
@@ -410,8 +461,8 @@ sub check_item_get{
     my $req = HTTP::Request->new('GET', $uri);
     my $res = $self->request($req);
     is($res->code, 200, "fetch one item");
-    my $err = $res->decoded_content ? JSON::from_json($res->decoded_content) : '';
-    return wantarray ? ($res, $err, $req) : $res;
+    my $content = $res->decoded_content ? JSON::from_json($res->decoded_content) : '';
+    return wantarray ? ($res, $content, $req) : $res;
 }
 
 sub check_put_content_type_empty{
@@ -476,11 +527,11 @@ sub check_put_bundle{
 }
 sub check_patch_correct{
     my($self,$content) = @_;
-    my ($res,$mod_model,$req) = $self->request_patch( $content );
+    my ($res,$rescontent,$req) = $self->request_patch( $content );
     is($res->code, 200, "check patched item");
-    is($mod_model->{_links}->{self}->{href}, $self->DATA_CREATED->{FIRST}, "check patched self link");
-    is($mod_model->{_links}->{collection}->{href}, '/api/'.$self->name.'/', "check patched collection link");
-    return ($res,$mod_model,$req);
+    is($rescontent->{_links}->{self}->{href}, $self->DATA_CREATED->{FIRST}, "check patched self link");
+    is($rescontent->{_links}->{collection}->{href}, '/api/'.$self->name.'/', "check patched collection link");
+    return ($res,$rescontent,$req);
 }
 
 sub check_patch_prefer_wrong{
@@ -582,5 +633,10 @@ sub check_bundle{
     $self->check_options_item;
     $self->check_put_bundle;
     $self->check_patch_bundle;
+}
+#utils
+sub hash2params{
+    my($self,$hash) = @_;
+    return join '&', map {$_.'='.uri_escape($hash->{$_})} keys %{ $hash };
 }
 1;
