@@ -37,6 +37,17 @@ class_has 'query_params' => (
                 second => sub {},
             },
         },
+        {
+            param => 'handle',
+            description => 'Filter for billing profiles with a specific handle',
+            query => {
+                first => sub {
+                    my $q = shift;
+                    { handle => { like => $q } };
+                },
+                second => sub {},
+            },
+        },
     ]},
 );
 
