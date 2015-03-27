@@ -2,6 +2,184 @@
   "comments": [
     {
       "key": {
+        "uuid": "5a2585a7_9aed708e",
+        "filename": "lib/NGCP/Panel/Utils/Test/Collection.pm",
+        "patchSetId": 1
+      },
+      "lineNbr": 3,
+      "author": {
+        "id": 1000005
+      },
+      "writtenOn": "2015-03-27T14:59:55Z",
+      "side": 1,
+      "message": "IMO, all those test-related packages should go under t/lib. They are not going to be installed in production and help separating the concerns of testing and application level.",
+      "range": {
+        "startLine": 3,
+        "startChar": 40,
+        "endLine": 3,
+        "endChar": 49
+      },
+      "revId": "03293372110a854de0aa325d4af0690ca1236902",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a2585a7_fabc746e",
+        "filename": "lib/NGCP/Panel/Utils/Test/DeepHashUtils.pm",
+        "patchSetId": 1
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 1000005
+      },
+      "writtenOn": "2015-03-27T14:59:55Z",
+      "side": 1,
+      "message": "I guess it\u0027s ok to takeover a small module, especially, when it is not very actively maintained. Just probably convert the tabs to spaces to fit the general convention. Also are we able to maintain it, even the unused parts? (slurp)\n\nAlso, maybe you could try to explain, what you changed.",
+      "range": {
+        "startLine": 1,
+        "startChar": 47,
+        "endLine": 1,
+        "endChar": 48
+      },
+      "revId": "03293372110a854de0aa325d4af0690ca1236902",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a2585a7_dac1b8e5",
+        "filename": "lib/NGCP/Panel/Utils/Test/DeepHashUtils.pm",
+        "patchSetId": 1
+      },
+      "lineNbr": 139,
+      "author": {
+        "id": 1000005
+      },
+      "writtenOn": "2015-03-27T14:59:55Z",
+      "side": 1,
+      "message": "name should be changed here",
+      "range": {
+        "startLine": 139,
+        "startChar": 0,
+        "endLine": 139,
+        "endChar": 79
+      },
+      "revId": "03293372110a854de0aa325d4af0690ca1236902",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a2585a7_bab6ec88",
+        "filename": "lib/NGCP/Panel/Utils/Test/DeepHashUtils.pm",
+        "patchSetId": 1
+      },
+      "lineNbr": 327,
+      "author": {
+        "id": 1000005
+      },
+      "writtenOn": "2015-03-27T14:59:55Z",
+      "side": 1,
+      "message": "I think this chunks of code could use a little explaination",
+      "range": {
+        "startLine": 327,
+        "startChar": 19,
+        "endLine": 327,
+        "endChar": 21
+      },
+      "revId": "03293372110a854de0aa325d4af0690ca1236902",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a2585a7_7ab0848b",
+        "filename": "lib/NGCP/Panel/Utils/Test/FakeData.pm",
+        "patchSetId": 1
+      },
+      "lineNbr": 5,
+      "author": {
+        "id": 1000005
+      },
+      "writtenOn": "2015-03-27T14:59:55Z",
+      "side": 1,
+      "message": "maybe Moo/Moose would be sufficient?",
+      "range": {
+        "startLine": 5,
+        "startChar": 13,
+        "endLine": 5,
+        "endChar": 17
+      },
+      "revId": "03293372110a854de0aa325d4af0690ca1236902",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a2585a7_5aadc830",
+        "filename": "lib/NGCP/Panel/Utils/Test/FakeData.pm",
+        "patchSetId": 1
+      },
+      "lineNbr": 8,
+      "author": {
+        "id": 1000005
+      },
+      "writtenOn": "2015-03-27T14:59:55Z",
+      "side": 1,
+      "message": "for what? maybe diag output?",
+      "range": {
+        "startLine": 8,
+        "startChar": 14,
+        "endLine": 8,
+        "endChar": 15
+      },
+      "revId": "03293372110a854de0aa325d4af0690ca1236902",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a2585a7_9abb3072",
+        "filename": "lib/NGCP/Panel/Utils/Test/FakeData.pm",
+        "patchSetId": 1
+      },
+      "lineNbr": 11,
+      "author": {
+        "id": 1000005
+      },
+      "writtenOn": "2015-03-27T14:59:55Z",
+      "side": 1,
+      "message": "slurp is not used",
+      "range": {
+        "startLine": 11,
+        "startChar": 73,
+        "endLine": 11,
+        "endChar": 75
+      },
+      "revId": "03293372110a854de0aa325d4af0690ca1236902",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a2585a7_3aaafc19",
+        "filename": "lib/NGCP/Panel/Utils/Test/FakeData.pm",
+        "patchSetId": 1
+      },
+      "lineNbr": 521,
+      "author": {
+        "id": 1000005
+      },
+      "writtenOn": "2015-03-27T14:59:55Z",
+      "side": 1,
+      "message": "yes, probably we should keep the data closer to the actual tests. otherwise we risk them not being maintained and get out of date.",
+      "revId": "03293372110a854de0aa325d4af0690ca1236902",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "5a2585a7_da8d3833",
         "filename": "t/api-pbxdevices.t",
         "patchSetId": 1
