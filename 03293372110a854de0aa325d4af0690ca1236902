@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "5a2585a7_da8d3833",
+        "filename": "t/api-pbxdevices.t",
+        "patchSetId": 1
+      },
+      "lineNbr": 3,
+      "author": {
+        "id": 1000001
+      },
+      "writtenOn": "2015-03-27T09:56:15Z",
+      "side": 1,
+      "message": "IMHO this should NOT be here. Isn\u0027t it?",
+      "revId": "03293372110a854de0aa325d4af0690ca1236902",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    }
+  ]
+}
