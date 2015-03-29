@@ -25,6 +25,53 @@
     },
     {
       "key": {
+        "uuid": "5a2585a7_dd52d212",
+        "filename": "lib/NGCP/Panel/Utils/Test/Collection.pm",
+        "patchSetId": 1
+      },
+      "lineNbr": 3,
+      "author": {
+        "id": 1000013
+      },
+      "writtenOn": "2015-03-29T10:51:02Z",
+      "side": 1,
+      "message": "full ack",
+      "parentUuid": "5a2585a7_9aed708e",
+      "range": {
+        "startLine": 3,
+        "startChar": 40,
+        "endLine": 3,
+        "endChar": 49
+      },
+      "revId": "03293372110a854de0aa325d4af0690ca1236902",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a2585a7_bd570602",
+        "filename": "lib/NGCP/Panel/Utils/Test/Collection.pm",
+        "patchSetId": 1
+      },
+      "lineNbr": 49,
+      "author": {
+        "id": 1000013
+      },
+      "writtenOn": "2015-03-29T10:51:02Z",
+      "side": 1,
+      "message": "looks good, could place the journal sub-collection and journalitem here (e.g. /api/customers/x/journal/, /api/customers/x/journal/4711)",
+      "range": {
+        "startLine": 49,
+        "startChar": 8,
+        "endLine": 49,
+        "endChar": 10
+      },
+      "revId": "03293372110a854de0aa325d4af0690ca1236902",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "5a2585a7_fabc746e",
         "filename": "lib/NGCP/Panel/Utils/Test/DeepHashUtils.pm",
         "patchSetId": 1
@@ -36,6 +83,30 @@
       "writtenOn": "2015-03-27T14:59:55Z",
       "side": 1,
       "message": "I guess it\u0027s ok to takeover a small module, especially, when it is not very actively maintained. Just probably convert the tabs to spaces to fit the general convention. Also are we able to maintain it, even the unused parts? (slurp)\n\nAlso, maybe you could try to explain, what you changed.",
+      "range": {
+        "startLine": 1,
+        "startChar": 47,
+        "endLine": 1,
+        "endChar": 48
+      },
+      "revId": "03293372110a854de0aa325d4af0690ca1236902",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a2585a7_3d3436dd",
+        "filename": "lib/NGCP/Panel/Utils/Test/DeepHashUtils.pm",
+        "patchSetId": 1
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 1000013
+      },
+      "writtenOn": "2015-03-29T10:51:02Z",
+      "side": 1,
+      "message": "i wrote (took from one of my former projects) a similary one, capable of handling arrays, scalarrefs as well as circular references, and blessed (-\u003eboolean, JSONboolean etc.) types as well - something like this couldn\u0027t be found on cpan yet and it is supposed to be used to generate a difftree in the course of the audit trail feature to output changes to previous PUT, PATCH, etc. ops. maybe we should combine it with this one somehow?\n\nby the way, Test::Moore has a built-in \"is_deeply\" which works reliable, just to mention if this one will be rarely used then..?",
+      "parentUuid": "5a2585a7_fabc746e",
       "range": {
         "startLine": 1,
         "startChar": 47,
@@ -140,6 +211,30 @@
     },
     {
       "key": {
+        "uuid": "5a2585a7_1d317aec",
+        "filename": "lib/NGCP/Panel/Utils/Test/FakeData.pm",
+        "patchSetId": 1
+      },
+      "lineNbr": 8,
+      "author": {
+        "id": 1000013
+      },
+      "writtenOn": "2015-03-29T10:51:02Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "5a2585a7_5aadc830",
+      "range": {
+        "startLine": 8,
+        "startChar": 14,
+        "endLine": 8,
+        "endChar": 15
+      },
+      "revId": "03293372110a854de0aa325d4af0690ca1236902",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "5a2585a7_9abb3072",
         "filename": "lib/NGCP/Panel/Utils/Test/FakeData.pm",
         "patchSetId": 1
@@ -163,6 +258,53 @@
     },
     {
       "key": {
+        "uuid": "5a2585a7_9d5c4a27",
+        "filename": "lib/NGCP/Panel/Utils/Test/FakeData.pm",
+        "patchSetId": 1
+      },
+      "lineNbr": 11,
+      "author": {
+        "id": 1000013
+      },
+      "writtenOn": "2015-03-29T10:51:02Z",
+      "side": 1,
+      "message": "well maybe for the future img file comaprison..?",
+      "parentUuid": "5a2585a7_9abb3072",
+      "range": {
+        "startLine": 11,
+        "startChar": 73,
+        "endLine": 11,
+        "endChar": 75
+      },
+      "revId": "03293372110a854de0aa325d4af0690ca1236902",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a2585a7_7d419e38",
+        "filename": "lib/NGCP/Panel/Utils/Test/FakeData.pm",
+        "patchSetId": 1
+      },
+      "lineNbr": 388,
+      "author": {
+        "id": 1000013
+      },
+      "writtenOn": "2015-03-29T10:51:02Z",
+      "side": 1,
+      "message": "if i understand it correct, this one and only fakedata class should contain test data for any future tests (and rewritten existing ones). which is good! im concerned about the order of create and remove here, which has to be passed here separately. what if a perl hash with determined key ordering ist used (defined at instantiation), e.g.:\n\nmy %data \u003d ();\ntie(%data , \u0027Tie::IxHash\u0027, \u0027customers\u0027 \u003d\u003e ...);\n...\nreturn \\%data;\n\nbuilding and removing could then rely on this order, and there is no need of this order_array)?",
+      "range": {
+        "startLine": 388,
+        "startChar": 26,
+        "endLine": 388,
+        "endChar": 73
+      },
+      "revId": "03293372110a854de0aa325d4af0690ca1236902",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "5a2585a7_3aaafc19",
         "filename": "lib/NGCP/Panel/Utils/Test/FakeData.pm",
         "patchSetId": 1
@@ -174,6 +316,24 @@
       "writtenOn": "2015-03-27T14:59:55Z",
       "side": 1,
       "message": "yes, probably we should keep the data closer to the actual tests. otherwise we risk them not being maintained and get out of date.",
+      "revId": "03293372110a854de0aa325d4af0690ca1236902",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a2585a7_fd4d8e73",
+        "filename": "lib/NGCP/Panel/Utils/Test/FakeData.pm",
+        "patchSetId": 1
+      },
+      "lineNbr": 521,
+      "author": {
+        "id": 1000013
+      },
+      "writtenOn": "2015-03-29T10:51:02Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "5a2585a7_3aaafc19",
       "revId": "03293372110a854de0aa325d4af0690ca1236902",
       "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
       "unresolved": false
