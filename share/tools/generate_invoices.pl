@@ -1,5 +1,4 @@
 #!/usr/bin/perl -w
-use lib '/root/VMHost/ngcp-panel/lib';
 use strict;
 
 use Getopt::Long qw/GetOptionsFromString/;
@@ -773,25 +772,25 @@ Prints the manual page and exits.
 
 =item To generate invoices for current month:
 
-perl /usr/share/ngcp-panel/tools/generate_invoice.pl
+perl /usr/share/ngcp-panel/tools/generate_invoices.pl
 
 =item To generate invoices for previous month:
 
-perl /usr/share/ngcp-panel/tools/generate_invoice.pl --prevmonth
+perl /usr/share/ngcp-panel/tools/generate_invoices.pl --prevmonth
 
     Crontab example
         #m h d M dw
-        5 5 1 * * perl /usr/share/ngcp-panel-tools/generate_invoice.pl --prevmonth 2>&1 >/dev/null
+        5 5 1 * * perl /usr/share/ngcp-panel/tools/generate_invoices.pl --prevmonth 2>&1 >/dev/null
 
 =item To send invoices which weren't sent yet
 
 To get invoices, which weren't sent yet, period value will be considered too. It means that started from cron to send invoices generated for previous month, script should get "--prevmonth" option.
 
-perl /usr/share/ngcp-panel/tools/generate_invoice.pl --sendonly --prevmonth
+perl /usr/share/ngcp-panel/tools/generate_invoices.pl --sendonly --prevmonth
 
     Crontab example
         #m h d M dw
-        5 */2 * * * perl /usr/share/ngcp-panel-tools/generate_invoice.pl --sendonly --prevmonth  2>&1 >/dev/null
+        5 */2 * * * perl /usr/share/ngcp-panel/tools/generate_invoices.pl --sendonly --prevmonth  2>&1 >/dev/null
 
 =back
 
