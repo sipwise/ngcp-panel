@@ -44,6 +44,10 @@ has_field 'extensions_num' => (
     label => 'Max extensions number',
     default => '0',
     wrapper_class => [qw/ngcp-devicetype ngcp-devicetype-phone/],
+    element_attr => {
+        rel => ['tooltip'],
+        title => ['Max number of the extensions for the field phone device.'],
+    },
 );
 
 has_field 'model' => (
@@ -81,6 +85,10 @@ has_field 'connectable_models' => (
     ajax_src => '/device/model/ajax',
     table_titles => ['#',  'Type', 'Vendor', 'Model'],
     table_fields => ['id', 'type', 'vendor', 'model'],
+    element_attr => {
+        rel => ['tooltip'],
+        title => ['For the phone devices specified models will be available as extensions. For the extensions devices link to the selected phone models will be available.'],
+    },
 );
 
 
