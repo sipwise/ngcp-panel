@@ -41,9 +41,13 @@ has_field 'type' => (
 );
 has_field 'extensions_num' => (
     type => 'Integer',
-    label => 'Max extensions number',
+    label => 'Number of extension modules',
     default => '0',
     wrapper_class => [qw/ngcp-devicetype ngcp-devicetype-phone/],
+    element_attr => {
+        rel => ['tooltip'],
+        title => ['The max number of extension modules which can be attached to this device model.'],
+    },
 );
 
 has_field 'model' => (
@@ -81,6 +85,10 @@ has_field 'connectable_models' => (
     ajax_src => '/device/model/ajax',
     table_titles => ['#',  'Type', 'Vendor', 'Model'],
     table_fields => ['id', 'type', 'vendor', 'model'],
+    element_attr => {
+        rel => ['tooltip'],
+        title => ['The extension modules which can be attached to this device model.'],
+    },
 );
 
 
@@ -298,7 +306,7 @@ has_field 'bootstrap_config_http_sync_params' => (
     label => 'Bootstrap Sync Parameters',
     default => '[% server.uri %]/$MA',
     wrapper_class => [qw/ngcp-devicetype ngcp-devicetype-phone ngcp-bootstrap-config ngcp-bootstrap-config-http/],
-    element_attr => { 
+    element_attr => {
         rel => ['tooltip'],
         title => ['The parameters appended to the sync URI when setting the provisioning server, e.g. server.uri/$MA. The server.uri variable is automatically expanded during provisioning time.'],
     },
@@ -375,7 +383,7 @@ has_field 'bootstrap_config_redirect_polycom_profile' => (
     label => 'Polycom profile',
     default => '',
     wrapper_class => [qw/ngcp-devicetype ngcp-devicetype-phone ngcp-bootstrap-config ngcp-bootstrap-config-redirect_polycom/],
-    element_attr => { 
+    element_attr => {
         rel => ['tooltip'],
         title => ['Preliminary created in ZeroTouch Provisioning console Polycom ZTP profile. Refer to documentation.'],
     },
