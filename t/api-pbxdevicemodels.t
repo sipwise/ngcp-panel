@@ -98,7 +98,7 @@ foreach my $type(qw/extension phone/){
     }
 }
 #pbxdevicemodels doesn't have DELETE method
-#`echo 'delete from autoprov_devices where model like "%api_test %" or model like "patched model%";'|mysql provisioning`;
+`echo 'delete from autoprov_devices where model like "%api_test %" or model like "patched model%";'|mysql provisioning`;
 done_testing;
 
 # vim: set tabstop=4 expandtab:
