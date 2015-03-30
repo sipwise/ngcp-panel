@@ -14,6 +14,10 @@ sub build_form_element_class {[qw(form-horizontal)]}
 has_field 'reseller' => (
     type => '+NGCP::Panel::Field::Reseller',
     validate_when_empty => 1,
+    element_attr => {
+        rel => ['tooltip'],
+        title => ['Reseller which customers will be able to use this model for the field devices.'],
+    },
 );
 
 has_field 'save' => (
