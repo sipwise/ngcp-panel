@@ -49,6 +49,30 @@
     },
     {
       "key": {
+        "uuid": "5a2585a7_9d468a22",
+        "filename": "lib/NGCP/Panel/Utils/Test/Collection.pm",
+        "patchSetId": 1
+      },
+      "lineNbr": 3,
+      "author": {
+        "id": 1000009
+      },
+      "writtenOn": "2015-03-30T02:40:47Z",
+      "side": 1,
+      "message": "Done, libraries moved",
+      "parentUuid": "5a2585a7_9aed708e",
+      "range": {
+        "startLine": 3,
+        "startChar": 40,
+        "endLine": 3,
+        "endChar": 49
+      },
+      "revId": "03293372110a854de0aa325d4af0690ca1236902",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "5a2585a7_bd570602",
         "filename": "lib/NGCP/Panel/Utils/Test/Collection.pm",
         "patchSetId": 1
@@ -119,6 +143,30 @@
     },
     {
       "key": {
+        "uuid": "5a2585a7_5d6f0293",
+        "filename": "lib/NGCP/Panel/Utils/Test/DeepHashUtils.pm",
+        "patchSetId": 1
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 1000009
+      },
+      "writtenOn": "2015-03-30T02:40:47Z",
+      "side": 1,
+      "message": "I adapted this package to the arrays, which it didn\u0027t support. I was the first package from the Cpan which looked as what I need, and I don\u0027t like that it uses global variable for its logic, so I would take any other with no doubt. Thank you for your suggestions.\n\"\nWhat I need - takes all path-keys as array for each \"leaf\".",
+      "parentUuid": "5a2585a7_fabc746e",
+      "range": {
+        "startLine": 1,
+        "startChar": 47,
+        "endLine": 1,
+        "endChar": 48
+      },
+      "revId": "03293372110a854de0aa325d4af0690ca1236902",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "5a2585a7_dac1b8e5",
         "filename": "lib/NGCP/Panel/Utils/Test/DeepHashUtils.pm",
         "patchSetId": 1
@@ -153,6 +201,30 @@
       "writtenOn": "2015-03-27T14:59:55Z",
       "side": 1,
       "message": "I think this chunks of code could use a little explaination",
+      "range": {
+        "startLine": 327,
+        "startChar": 19,
+        "endLine": 327,
+        "endChar": 21
+      },
+      "revId": "03293372110a854de0aa325d4af0690ca1236902",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a2585a7_3d6c369c",
+        "filename": "lib/NGCP/Panel/Utils/Test/DeepHashUtils.pm",
+        "patchSetId": 1
+      },
+      "lineNbr": 327,
+      "author": {
+        "id": 1000009
+      },
+      "writtenOn": "2015-03-30T02:40:47Z",
+      "side": 1,
+      "message": "Just saved test data for the arrays. Moved to the proper method desciprion",
+      "parentUuid": "5a2585a7_bab6ec88",
       "range": {
         "startLine": 327,
         "startChar": 19,
@@ -305,6 +377,30 @@
     },
     {
       "key": {
+        "uuid": "5a2585a7_9daa0ad3",
+        "filename": "lib/NGCP/Panel/Utils/Test/FakeData.pm",
+        "patchSetId": 1
+      },
+      "lineNbr": 388,
+      "author": {
+        "id": 1000009
+      },
+      "writtenOn": "2015-03-30T02:40:47Z",
+      "side": 1,
+      "message": "Yes, you are absolutely right. I did here direct order only to don\u0027t make run through tree to obtain order, just for more fast implementation. I plan to rewrite it as you said.",
+      "parentUuid": "5a2585a7_7d419e38",
+      "range": {
+        "startLine": 388,
+        "startChar": 26,
+        "endLine": 388,
+        "endChar": 73
+      },
+      "revId": "03293372110a854de0aa325d4af0690ca1236902",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "5a2585a7_3aaafc19",
         "filename": "lib/NGCP/Panel/Utils/Test/FakeData.pm",
         "patchSetId": 1
@@ -340,6 +436,24 @@
     },
     {
       "key": {
+        "uuid": "5a2585a7_1db61a3e",
+        "filename": "lib/NGCP/Panel/Utils/Test/FakeData.pm",
+        "patchSetId": 1
+      },
+      "lineNbr": 521,
+      "author": {
+        "id": 1000009
+      },
+      "writtenOn": "2015-03-30T02:40:47Z",
+      "side": 1,
+      "message": "I see it as a small package with the data in the test script, the question is: how FakeData will access other collections data: require \"api-$dependency.t\"; doesn\u0027t look as good variant. It create a lot of limitations for the test script itself. And I really would prefer to keep test data new the tests scenarios. So I would be grateful for your suggestions.",
+      "parentUuid": "5a2585a7_3aaafc19",
+      "revId": "03293372110a854de0aa325d4af0690ca1236902",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "5a2585a7_da8d3833",
         "filename": "t/api-pbxdevices.t",
         "patchSetId": 1
@@ -351,6 +465,24 @@
       "writtenOn": "2015-03-27T09:56:15Z",
       "side": 1,
       "message": "IMHO this should NOT be here. Isn\u0027t it?",
+      "revId": "03293372110a854de0aa325d4af0690ca1236902",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a2585a7_bd41460d",
+        "filename": "t/api-pbxdevices.t",
+        "patchSetId": 1
+      },
+      "lineNbr": 3,
+      "author": {
+        "id": 1000009
+      },
+      "writtenOn": "2015-03-30T02:40:47Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "5a2585a7_da8d3833",
       "revId": "03293372110a854de0aa325d4af0690ca1236902",
       "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
       "unresolved": false
