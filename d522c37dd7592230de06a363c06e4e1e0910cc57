@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "5a2585a7_d0651946",
+        "filename": "lib/NGCP/Panel/Form/Device/Model.pm",
+        "patchSetId": 5
+      },
+      "lineNbr": 44,
+      "author": {
+        "id": 1000009
+      },
+      "writtenOn": "2015-03-30T13:07:28Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "5a2585a7_9088b1e8",
+      "revId": "d522c37dd7592230de06a363c06e4e1e0910cc57",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "5a2585a7_b083adcb",
         "filename": "lib/NGCP/Panel/Form/Device/Model.pm",
         "patchSetId": 5
@@ -30,6 +48,24 @@
       "writtenOn": "2015-03-30T12:59:38Z",
       "side": 1,
       "message": "The max number of extension modules which can be attached to this device model.",
+      "revId": "d522c37dd7592230de06a363c06e4e1e0910cc57",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a2585a7_b05a8d81",
+        "filename": "lib/NGCP/Panel/Form/Device/Model.pm",
+        "patchSetId": 5
+      },
+      "lineNbr": 49,
+      "author": {
+        "id": 1000009
+      },
+      "writtenOn": "2015-03-30T13:07:28Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "5a2585a7_b083adcb",
       "revId": "d522c37dd7592230de06a363c06e4e1e0910cc57",
       "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
       "unresolved": false
@@ -53,6 +89,24 @@
     },
     {
       "key": {
+        "uuid": "5a2585a7_905f9172",
+        "filename": "lib/NGCP/Panel/Form/Device/Model.pm",
+        "patchSetId": 5
+      },
+      "lineNbr": 90,
+      "author": {
+        "id": 1000009
+      },
+      "writtenOn": "2015-03-30T13:07:28Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "5a2585a7_706d4532",
+      "revId": "d522c37dd7592230de06a363c06e4e1e0910cc57",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "5a2585a7_50236905",
         "filename": "lib/NGCP/Panel/Form/Device/ModelAdmin.pm",
         "patchSetId": 5
@@ -64,6 +118,24 @@
       "writtenOn": "2015-03-30T12:59:38Z",
       "side": 1,
       "message": "\"The reseller id this device model belongs to\"",
+      "revId": "d522c37dd7592230de06a363c06e4e1e0910cc57",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a2585a7_50512961",
+        "filename": "lib/NGCP/Panel/Form/Device/ModelAdmin.pm",
+        "patchSetId": 5
+      },
+      "lineNbr": 17,
+      "author": {
+        "id": 1000009
+      },
+      "writtenOn": "2015-03-30T13:07:28Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "5a2585a7_50236905",
       "revId": "d522c37dd7592230de06a363c06e4e1e0910cc57",
       "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
       "unresolved": false
