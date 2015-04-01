@@ -11,6 +11,7 @@ use NGCP::Panel::Utils::Email;
 use NGCP::Panel::Utils::Events;
 use UUID qw/generate unparse/;
 use JSON qw/decode_json encode_json/;
+use IPC::System::Simple qw/capturex/;
 
 my %LOCK = (
     0, 'none',
@@ -195,7 +196,7 @@ sub create_subscriber {
             -distribute => 1, -fatal => 1,
         );
     }
-    
+
     $schema->txn_do(sub {
         my ($uuid_bin, $uuid_string);
         UUID::generate($uuid_bin);
@@ -340,9 +341,9 @@ sub update_subscriber_pbx_policy {
     my $c = $params{c};
     my $prov_subscriber = $params{prov_subscriber};
     my $values = $params{values};
-    
+
    #todo: use update_preferences instead?
-    
+
     foreach(qw/cloud_pbx_hunt_policy cloud_pbx_hunt_timeout/){
         my $preference = NGCP::Panel::Utils::Preferences::get_usr_preference_rs(
             c => $c, 
@@ -980,7 +981,7 @@ sub callforward_create_or_update_quickset_destinations {
     my $type = $params{type};
     my $destinations = $params{destinations};
     my $schema = $params{schema};
-    
+
     return;
 }
 
@@ -1233,7 +1234,41 @@ sub update_voicemail_number {
 
     return;
 }
+sub vmnotify{
+    my (%params) = @_;
 
+    my $c = $params{c};
+    my $voicemail = $params{voicemail};
+    #1.although method is called after delete - DBIC still can access data in deleted row
+    #2.amount of the new messages should be selected after played update or delete, of course
+
+    my $data = { $voicemail->get_inflated_columns };
+    $data->{cli} = $voicemail->mailboxuser->provisioning_voip_subscriber->username;
+    $data->{context} = 'default';
+
+    $data->{messages_amount} = $c->model('DB')->resultset('voicemail_spool')->find({
+        'mailboxuser' => $data->{mailboxuser},
+        'msgnum'      => { '>=' => 0 },
+        'dir'         => { 'like' => '%/INBOX' },
+    },{
+        'select'      => [{'count' => '*', -as => 'messages_number'}]
+    })->get_column('messages_number');
+
+    my @cmd = ('vmnotify',@$data{qw/context cli messages_amount/});
+    my $output = capturex([0..3],@cmd);
+    $c->log->debug("cmd=".join(" ", @cmd)."; output=$output;");
+    return;
+}
+sub mark_voicemail_read{
+    my (%params) = @_;
+
+    my $c = $params{c};
+    my $voicemail = $params{voicemail};
+    my $dir = $voicemail->dir;
+    $dir =~s/INBOX$/Old/;
+    $voicemail->update({ dir => $dir });
+    return;
+}
 1;
 
 =head1 NAME
