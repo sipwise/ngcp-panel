@@ -6,6 +6,7 @@ use HTTP::Status qw(:constants);
 use MooseX::ClassAttribute qw(class_has);
 use NGCP::Panel::Utils::DateTime;
 use NGCP::Panel::Utils::ValidateJSON qw();
+use NGCP::Panel::Utils::Subscriber;
 use Path::Tiny qw(path);
 use Safe::Isa qw($_isa);
 BEGIN { extends 'Catalyst::Controller::ActionRole'; }
@@ -174,7 +175,7 @@ sub DELETE :Allow {
         last unless $self->resource_exists($c, voicemail => $item);
 
         $item->delete;
-
+        NGCP::Panel::Utils::Subscriber::vmnotify( 'c' => $c, 'voicemail' => $item );
         $guard->commit;
 
         $c->response->status(HTTP_NO_CONTENT);
