@@ -13,7 +13,17 @@ BEGIN {
 use NGCP::Panel::Utils::Journal qw();
 
 use Config::General;
-my $catalyst_config = Config::General->new("./ngcp_panel.conf"); #take paths from configloader..
+#taken 1:1 from /lib/NGCP/Panel.pm
+my $panel_config;
+for my $path(qw#/etc/ngcp-panel/ngcp_panel.conf etc/ngcp_panel.conf ngcp_panel.conf#) {
+    if(-f $path) {
+        $panel_config = $path;
+        last;
+    }
+}
+$panel_config //= 'ngcp_panel.conf';
+#my $catalyst_config = Config::General->new("../ngcp_panel.conf");
+my $catalyst_config = Config::General->new($panel_config);
 my %config = $catalyst_config->getall();
 my $enable_journal_tests = 1;
 
@@ -28,17 +38,17 @@ my $ssl_ca_cert = $ENV{API_SSL_CA_CERT} || "/etc/ngcp-panel/api_ssl/api_ca.crt";
 my ($ua, $req, $res);
 $ua = LWP::UserAgent->new;
 
-#$ua->ssl_opts(
-#    SSL_cert_file => $valid_ssl_client_cert,
-#    SSL_key_file  => $valid_ssl_client_key,
-#    SSL_ca_file   => $ssl_ca_cert,
-#);
-
 $ua->ssl_opts(
-    verify_hostname => 0,
+    SSL_cert_file => $valid_ssl_client_cert,
+    SSL_key_file  => $valid_ssl_client_key,
+    SSL_ca_file   => $ssl_ca_cert,
 );
-$ua->credentials("127.0.0.1:4443", "api_admin_http", 'administrator', 'administrator');
-#$ua->timeout(500); #useless, need to change the nginx timeout
+
+#$ua->ssl_opts(
+#    verify_hostname => 0,
+#);
+#$ua->credentials("127.0.0.1:4443", "api_admin_http", 'administrator', 'administrator');
+##$ua->timeout(500); #useless, need to change the nginx timeout
 
 my $t = time;
 my $default_reseller_id = 1;
@@ -52,7 +62,32 @@ my $customercontact = test_customercontact($t,$reseller);
 my $customer = test_customer($customercontact,$billingprofile);
 my $subscriber = test_subscriber($t,$customer,$domain);
 
+#test_customerpreferences();
+
 done_testing;
+
+#sub test_customerpreferences {
+#    
+#    $req = HTTP::Request->new('PUT', $uri.'/api/customerpreferences/'.$customer->{id});
+#    $req->header('Content-Type' => 'application/json');
+#    $req->header('Prefer' => 'return=representation');
+#    $req->content(JSON::to_json({
+#        name => "test profile $t PUT",
+#        handle  => "testprofile$t",
+#        reseller_id => $reseller_id,
+#    }));
+#    $res = $ua->request($req);
+#    is($res->code, 200, "PUT test billingprofile");
+#    $req = HTTP::Request->new('GET', $billingprofile_uri);
+#    $res = $ua->request($req);
+#    is($res->code, 200, "fetch PUT test billingprofile");
+#    $billingprofile = JSON::from_json($res->decoded_content);
+#    
+#    $req = HTTP::Request->new('GET', $uri.'/api/customerpreferences/136');
+#    $res = $ua->request($req);
+#    is($res->code, 200, "fetch blah");
+#    
+#}
 
 sub test_billingprofile {
     my ($t,$reseller_id) = @_;
