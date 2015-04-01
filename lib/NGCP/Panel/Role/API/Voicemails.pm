@@ -12,6 +12,7 @@ use Data::HAL qw();
 use Data::HAL::Link qw();
 use HTTP::Status qw(:constants);
 use NGCP::Panel::Form::Voicemail::Meta;
+use NGCP::Panel::Utils::Subscriber;
 
 sub item_rs {
     my ($self, $c) = @_;
@@ -24,8 +25,8 @@ sub item_rs {
     });
     if($c->user->roles eq "admin") {
     } elsif($c->user->roles eq "reseller") {
-        $item_rs = $item_rs->search({ 
-            'contact.reseller_id' => $c->user->reseller_id 
+        $item_rs = $item_rs->search({
+            'contact.reseller_id' => $c->user->reseller_id
         },{
             join => { mailboxuser => { provisioning_voip_subscriber => { voip_subscriber => { contract => 'contact' } } } }
         });
@@ -101,9 +102,14 @@ sub update_item {
     my $f = $resource->{folder};
     my $upresource = {};
     $upresource->{dir} = $item->dir;
+    my $dir_old = $item->dir;
     $upresource->{dir} =~ s/\/[^\/]+$/\/$f/;
 
     $item->update($upresource);
+
+    if($dir_old =~/INBOX/ && $upresource->{dir} !~/INBOX/){
+        NGCP::Panel::Utils::Subscriber::vmnotify( 'c' => $c, 'voicemail' => $item );
+    }
 
     return $item;
 }
