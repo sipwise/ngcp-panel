@@ -15,6 +15,7 @@ sub insert {
     $schema->resultset('events')->create({
         type => $type,
         subscriber_id => $subscriber->id,
+        reseller_id => $subscriber->contract->contact->reseller_id,
         old_status => $old // '',
         new_status => $new // '',
         timestamp => NGCP::Panel::Utils::DateTime::current_local->hires_epoch,
