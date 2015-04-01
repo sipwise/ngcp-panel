@@ -4,7 +4,6 @@ BEGIN { extends 'Catalyst::Controller'; }
 use HTML::Entities;
 use JSON qw(decode_json encode_json);
 use URI::Escape qw(uri_unescape);
-use IPC::System::Simple qw/capturex/;
 use Test::More;
 use Data::Dumper;
 use NGCP::Panel::Utils::Navigation;
@@ -3129,11 +3128,8 @@ sub play_voicemail :Chained('voicemail') :PathPart('play') :Args(0) {
             $c->uri_for_action('/subscriber/details', [$c->req->captures->[0]]));
     }
     
-    my $dir = $file->dir;
-    $dir =~s/INBOX$/Old/;
-    $file->update({ dir => $dir });
-    
-    $self->vmnotify($c, $c->stash->{voicemail});
+    NGCP::Panel::Utils::Subscriber::mark_voicemail_read( 'c' => $c, 'voicemail' => $c->stash->{voicemail} );
+    NGCP::Panel::Utils::Subscriber::vmnotify( 'c' => $c, 'voicemail' => $c->stash->{voicemail} );
     
     $c->response->header('Content-Disposition' => 'attachment; filename="'.$file->msgnum.'.wav"');
     $c->response->content_type('audio/x-wav');
@@ -3160,32 +3156,11 @@ sub delete_voicemail :Chained('voicemail') :PathPart('delete') :Args(0) {
             desc  => $c->loc('Failed to delete voicemail message'),
         );
     }
-    $self->vmnotify($c, $c->stash->{voicemail});
+    NGCP::Panel::Utils::Subscriber::vmnotify( c => $c, voicemail => $c->stash->{voicemail} );
     NGCP::Panel::Utils::Navigation::back_or($c, 
         $c->uri_for_action('/subscriber/details', [$c->req->captures->[0]]));
 }
 
-sub vmnotify :Private(){
-    my ($self, $c, $voicemail) = @_;
-    #1.although method is called after delete - DBIC still can access data in deleted row
-    #2.amount of the new messages should be selected after played update or delete, of course
-    
-    my $data = { $voicemail->get_inflated_columns };
-    $data->{cli} = $voicemail->mailboxuser->provisioning_voip_subscriber->username;
-    $data->{context} = 'default';
-    
-    $data->{messages_amount} = $c->model('DB')->resultset('voicemail_spool')->find({
-        'mailboxuser' => $data->{mailboxuser},
-        'msgnum'      => { '>=' => 0 },
-        'dir'         => { 'like' => '%/INBOX' },
-    },{
-        'select'      => [{'count' => '*', -as => 'messages_number'}]
-    })->get_column('messages_number');
-    
-    my @cmd = ('vmnotify',@$data{qw/context cli messages_amount/});
-    my $output = capturex([0..3],@cmd);
-    $c->log->debug("cmd=".join(" ", @cmd)."; output=$output;");
-}
 sub registered :Chained('master') :PathPart('registered') :CaptureArgs(1) {
     my ($self, $c, $reg_id) = @_;
 
