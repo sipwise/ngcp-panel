@@ -8,6 +8,7 @@ use NGCP::Panel::Utils::DateTime;
 use NGCP::Panel::Utils::ValidateJSON qw();
 use Path::Tiny qw(path);
 use Safe::Isa qw($_isa);
+use NGCP::Panel::Utils::Subscriber;
 BEGIN { extends 'Catalyst::Controller::ActionRole'; }
 require Catalyst::ActionRole::ACL;
 require Catalyst::ActionRole::HTTPMethods;
@@ -46,7 +47,10 @@ sub GET :Allow {
         last unless $self->valid_id($c, $id);
         my $item = $self->item_by_id($c, $id);
         last unless $self->resource_exists($c, voicemailrecording => $item);
-
+        
+        #NGCP::Panel::Utils::Subscriber::mark_voicemail_read( 'c' => $c, 'voicemail' => $c->stash->{voicemail} );
+        #NGCP::Panel::Utils::Subscriber::vmnotify( 'c' => $c, 'voicemail' => $item );
+        
         $c->response->header ('Content-Disposition' => 'attachment; filename="' . $self->resource_name . '-' . $item->id . '.wav"');
         $c->response->content_type('audio/x-wav');
         $c->response->body($item->recording);
