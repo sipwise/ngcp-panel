@@ -27,12 +27,12 @@ $test_machine->DATA_ITEM_STORE($fake_data->process('pbxdevicemodels'));
 
 
 my $connactable_devices={};
-
+my $time = time();
 foreach my $type(qw/extension phone/){
     #last;#skip classic tests
     $test_machine->form_data_item( sub {$_[0]->{json}->{type} = $type;} );
     # create 3 & 3 new billing models from DATA_ITEM
-    $test_machine->check_create_correct( 3, sub{ $_[0]->{json}->{model} .= $type."TEST_".$_[1]->{i}; } );
+    $test_machine->check_create_correct( 1, sub{ $_[0]->{json}->{model} .= $type."TEST_".$_[1]->{i}.'_'.$time; } );
     #print Dumper $test_machine->DATA_CREATED->{ALL};
     $connactable_devices->{$type}->{data} = [ values %{$test_machine->DATA_CREATED->{ALL}}];
     $connactable_devices->{$type}->{ids} = [ map {$test_machine->get_id_from_created($_)} @{$connactable_devices->{$type}->{data}}];
@@ -45,8 +45,8 @@ foreach my $type(qw/extension phone/){
     #last;#skip classic tests
     $test_machine->form_data_item( sub {$_[0]->{json}->{type} = $type;} );
     # create 3 next new models from DATA_ITEM
-    $test_machine->check_create_correct( 3, sub{
-        $_[0]->{json}->{model} .= $type."TEST_".($_[1]->{i} + 3);
+    $test_machine->check_create_correct( 1, sub{
+        $_[0]->{json}->{model} .= $type."TEST_".($_[1]->{i} + 3).'_'.$time;
         $_[0]->{json}->{connactable_devices} = $connactable_devices->{ get_connectable_type( $type) }->{ids};
     } );
     $test_machine->check_get2put( sub { $_[0] = { json => JSON::to_json($_[0]), 'front_image' =>  $test_machine->DATA_ITEM_STORE->{front_image} }; } );
@@ -98,7 +98,7 @@ foreach my $type(qw/extension phone/){
     }
 }
 #pbxdevicemodels doesn't have DELETE method
-`echo 'delete from autoprov_devices where model like "%api_test %" or model like "patched model%";'|mysql -u root provisioning`;
+#`echo 'delete from autoprov_devices where model like "%api_test %" or model like "patched model%";'|mysql -u root provisioning`;
 done_testing;
 
 # vim: set tabstop=4 expandtab:
