@@ -13,7 +13,7 @@ BEGIN {
 use NGCP::Panel::Utils::Journal qw();
 
 use Config::General;
-my $catalyst_config = Config::General->new("../ngcp_panel.conf"); #take paths from configloader..
+my $catalyst_config = Config::General->new("./ngcp_panel.conf"); #take paths from configloader..
 my %config = $catalyst_config->getall();
 my $enable_journal_tests = 1;
 
