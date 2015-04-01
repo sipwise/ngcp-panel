@@ -6,6 +6,7 @@ use HTTP::Status qw(:constants);
 use MooseX::ClassAttribute qw(class_has);
 use NGCP::Panel::Utils::DateTime;
 use NGCP::Panel::Utils::ValidateJSON qw();
+use NGCP::Panel::Utils::Subscriber;
 use Path::Tiny qw(path);
 use Safe::Isa qw($_isa);
 BEGIN { extends 'Catalyst::Controller::ActionRole'; }
@@ -90,7 +91,7 @@ sub PATCH :Allow {
         last unless $preference;
 
         my $json = $self->get_valid_patch_data(
-            c => $c, 
+            c => $c,
             id => $id,
             media_type => 'application/json-patch+json',
         );
@@ -105,7 +106,7 @@ sub PATCH :Allow {
 
         $item = $self->update_item($c, $item, $old_resource, $resource, $form);
         last unless $item;
-        
+
         $guard->commit;
 
         if ('minimal' eq $preference) {
@@ -146,7 +147,7 @@ sub PUT :Allow {
         $item = $self->update_item($c, $item, $old_resource, $resource, $form);
         last unless $item;
 
-        $guard->commit; 
+        $guard->commit;
 
         if ('minimal' eq $preference) {
             $c->response->status(HTTP_NO_CONTENT);
@@ -174,7 +175,7 @@ sub DELETE :Allow {
         last unless $self->resource_exists($c, voicemail => $item);
 
         $item->delete;
-
+        NGCP::Panel::Utils::Subscriber::vmnotify( 'c' => $c, 'voicemail' => $item );
         $guard->commit;
 
         $c->response->status(HTTP_NO_CONTENT);
