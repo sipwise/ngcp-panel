@@ -1,3 +1,15 @@
+ngcp-panel (1.7.2.5+0~mr3.7.2.5) unstable; urgency=low
+
+  [ Gerhard Jungwirth ]
+  * [b42f6c0] MT#11637 properly define reseller_id on roles of customercontacts
+
+  [ Irina Peshinskaya ]
+  * [e77f540] MT#10159 Add API call towards MWI on voicemail dir change
+
+  [ Sipwise Jenkins Builder ]
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Thu, 02 Apr 2015 10:44:33 +0200
+
 ngcp-panel (1.7.2.4+0~mr3.7.2.4) unstable; urgency=low
 
   [ Gerhard Jungwirth ]
