@@ -53,6 +53,7 @@ sub _translate_fields_recursive {
     return \@strings if $extract_strings;
     return;
 }
+1;
 
 =head1 NAME
 
