@@ -26,7 +26,7 @@ sub base :Chained('/') :PathPart('device') :CaptureArgs(0) {
 
     NGCP::Panel::Utils::Navigation::check_redirect_chain(c => $c);
 
-    # TODO: move out fw/profile/config fetching to separate func to not 
+    # TODO: move out fw/profile/config fetching to separate func to not
     # load it for subscriber access?
     my $reseller_id;
     if($c->user->roles eq 'reseller') {
@@ -46,12 +46,12 @@ sub base :Chained('/') :PathPart('device') :CaptureArgs(0) {
         { name => 'vendor', search => 1, title => $c->loc('Vendor') },
         { name => 'model', search => 1, title => $c->loc('Model') },
     ]);
- 
+
     my $devfw_rs = $c->model('DB')->resultset('autoprov_firmwares')->search_rs(undef,{'columns' => [qw/id device_id version filename/],
 	});
     $reseller_id and $devfw_rs = $devfw_rs->search({
         'device.reseller_id' => $reseller_id,
-    },{ 
+    },{
         join => 'device',
     });
     $c->stash->{devfw_dt_columns} = NGCP::Panel::Utils::Datatables::set_columns($c, [
@@ -67,7 +67,7 @@ sub base :Chained('/') :PathPart('device') :CaptureArgs(0) {
 	});
     $reseller_id and $devconf_rs = $devconf_rs->search({
         'device.reseller_id' => $reseller_id,
-    }, { 
+    }, {
         join => 'device',
     });
     $c->stash->{devconf_dt_columns} = NGCP::Panel::Utils::Datatables::set_columns($c, [
@@ -81,7 +81,7 @@ sub base :Chained('/') :PathPart('device') :CaptureArgs(0) {
     my $devprof_rs = $c->model('DB')->resultset('autoprov_profiles');
     $reseller_id and $devprof_rs = $devprof_rs->search({
         'device.reseller_id' => $reseller_id,
-    }, { 
+    }, {
         join => { 'config' => 'device' },
     });
     $c->stash->{devprof_dt_columns} = NGCP::Panel::Utils::Datatables::set_columns($c, [
@@ -97,7 +97,7 @@ sub base :Chained('/') :PathPart('device') :CaptureArgs(0) {
     my $fielddev_rs = $c->model('DB')->resultset('autoprov_field_devices');
     $reseller_id and $fielddev_rs = $fielddev_rs->search({
         'device.reseller_id' => $reseller_id,
-    },{ 
+    },{
         join => { 'profile' => { 'config' => 'device' } },
     });
     $c->stash->{fielddev_dt_columns} = NGCP::Panel::Utils::Datatables::set_columns($c, [
@@ -112,7 +112,7 @@ sub base :Chained('/') :PathPart('device') :CaptureArgs(0) {
         'type' => 'extension',
     });
     $reseller_id and $extensions_rs = $extensions_rs->search({ reseller_id => $reseller_id });
-    
+
     $c->stash->{fielddev_dt_columns} = NGCP::Panel::Utils::Datatables::set_columns($c, [
         { name => 'id', search => 1, title => $c->loc('#') },
         { name => 'identifier', search => 1, title => $c->loc('MAC Address / Identifier') },
@@ -144,7 +144,15 @@ sub devmod_ajax :Chained('base') :PathPart('model/ajax') :Args(0) :Does(ACL) :AC
     NGCP::Panel::Utils::Datatables::process($c, $resultset, $c->stash->{devmod_dt_columns});
     $c->detach( $c->view("JSON") );
 }
+sub extensionmodel_ajax :Chained('base') :PathPart('extensionmodel/ajax') :Args(0) :Does(ACL) :ACLDetachTo('/denied_page') :AllowedRole(admin) :AllowedRole(reseller) {
+    my ($self, $c) = @_;
 
+    my $resultset = $c->stash->{devmod_rs}->search_rs({
+        'me.type' => 'extension',
+    });
+    NGCP::Panel::Utils::Datatables::process($c, $resultset, $c->stash->{devmod_dt_columns});
+    $c->detach( $c->view("JSON") );
+}
 sub devmod_create :Chained('base') :PathPart('model/create') :Args(0) :Does(ACL) :ACLDetachTo('/denied_page') :AllowedRole(admin) :AllowedRole(reseller) {
     my ($self, $c) = @_;
 
@@ -197,7 +205,7 @@ sub devmod_create :Chained('base') :PathPart('model/create') :Args(0) :Does(ACL)
                 }
                 my $connectable_models = delete $form->values->{connectable_models};
                 my $linerange = delete $form->values->{linerange};
-                
+
                 my $sync_parameters = NGCP::Panel::Utils::DeviceBootstrap::devmod_sync_parameters_prefetch($c, undef, $form->values);
                 my $credentials = NGCP::Panel::Utils::DeviceBootstrap::devmod_sync_credentials_prefetch($c, undef, $form->values);
                 NGCP::Panel::Utils::DeviceBootstrap::devmod_sync_clear($c, $form->values);
@@ -205,8 +213,10 @@ sub devmod_create :Chained('base') :PathPart('model/create') :Args(0) :Does(ACL)
                 NGCP::Panel::Utils::DeviceBootstrap::devmod_sync_credentials_store($c, $devmod, $credentials);
                 NGCP::Panel::Utils::DeviceBootstrap::devmod_sync_parameters_store($c, $devmod, $sync_parameters);
                 NGCP::Panel::Utils::DeviceBootstrap::dispatch_devmod($c, 'register_model', $devmod);
-                NGCP::Panel::Utils::Device::process_connectable_models($c, 1, $devmod, decode_json($connectable_models) );
-                
+                if(defined $connectable_models) {
+                    NGCP::Panel::Utils::Device::process_connectable_models($c, 1, $devmod, decode_json($connectable_models) );
+                }
+
                 foreach my $range(@{ $linerange }) {
                     delete $range->{id};
                     $range->{num_lines} = @{ $range->{keys} }; # backward compatibility
@@ -318,7 +328,7 @@ sub devmod_edit :Chained('devmod_base') :PathPart('edit') :Args(0) :Does(ACL) :A
         my $r = { $range->get_inflated_columns };
         $r->{keys} = $keys;
         push @{ $params->{linerange} }, $r;
-    }    
+    }
     #TODO: TO inflate/deflate, I think
     foreach ( $c->model('DB')->resultset('autoprov_sync')->search_rs({
         device_id =>$c->stash->{devmod}->id,
@@ -384,23 +394,24 @@ sub devmod_edit :Chained('devmod_base') :PathPart('edit') :Args(0) :Does(ACL) :A
                         delete $form->values->{$_.'_type'};
                     }
                 }
-                
+
                 my $linerange = delete $form->values->{linerange};
                 my $connectable_models = delete $form->values->{connectable_models};
                 my $sync_parameters = NGCP::Panel::Utils::DeviceBootstrap::devmod_sync_parameters_prefetch($c, $c->stash->{devmod}, $form->values);
                 my $credentials = NGCP::Panel::Utils::DeviceBootstrap::devmod_sync_credentials_prefetch($c, $c->stash->{devmod}, $form->values);
                 NGCP::Panel::Utils::DeviceBootstrap::devmod_sync_clear($c, $form->values);
-                
+
                 $c->stash->{devmod}->update($form->values);
-                
+
                 NGCP::Panel::Utils::DeviceBootstrap::devmod_sync_credentials_store($c, $c->stash->{devmod}, $credentials);
                 $schema->resultset('autoprov_sync')->search_rs({
                     device_id => $c->stash->{devmod}->id,
                 })->delete;
                 NGCP::Panel::Utils::DeviceBootstrap::devmod_sync_parameters_store($c, $c->stash->{devmod}, $sync_parameters);
                 NGCP::Panel::Utils::DeviceBootstrap::dispatch_devmod($c, 'register_model', $c->stash->{devmod} );
-                NGCP::Panel::Utils::Device::process_connectable_models($c, 0, $c->stash->{devmod}, decode_json($connectable_models) );
-                
+                if(defined $connectable_models) {
+                    NGCP::Panel::Utils::Device::process_connectable_models($c, 0, $c->stash->{devmod}, decode_json($connectable_models) );
+                }
                 my @existing_range = ();
                 my $range_rs = $c->stash->{devmod}->autoprov_device_line_ranges;
                 foreach my $range(@{ $linerange }) {
@@ -953,7 +964,7 @@ sub devprof_extensions :Chained('devprof_base') :PathPart('extensions') :Args(0)
 
 
     my $rs = $c->stash->{devprof}->config->device->autoprov_extensions_link;
-    my $device_info = { $c->stash->{devprof}->config->device->get_inflated_columns }; 
+    my $device_info = { $c->stash->{devprof}->config->device->get_inflated_columns };
     foreach(qw/front_image mac_image/){
         delete $device_info->{$_};
     }
@@ -962,9 +973,9 @@ sub devprof_extensions :Chained('devprof_base') :PathPart('extensions') :Args(0)
         'device'  => $device_info,
         'profile' => { $c->stash->{devprof}->get_inflated_columns},
         'extensions' => { map {
-            $_->extension->id => { 
+            $_->extension->id => {
                 $_->extension->get_inflated_columns,
-                'ranges' => [ 
+                'ranges' => [
                     map {
                         $_->get_inflated_columns,
                         'annotations' => [
@@ -972,7 +983,7 @@ sub devprof_extensions :Chained('devprof_base') :PathPart('extensions') :Args(0)
                                 $_->get_inflated_columns,
                             }} $_->annotations->all,
                         ],
-                    } $_->extension->autoprov_device_line_ranges->all 
+                    } $_->extension->autoprov_device_line_ranges->all
                 ],
             }
         } $rs->all },
@@ -1016,7 +1027,7 @@ sub devmod_get_annotated_info :Chained('devmod_base') :PathPart('annolines/ajax'
 sub get_annotated_info :Privat {
     my ($self, $c, $devmod) = @_;
 
-    my $device_info = { $devmod->get_inflated_columns }; 
+    my $device_info = { $devmod->get_inflated_columns };
     foreach(qw/front_image mac_image/){
         delete $device_info->{$_};
     }
@@ -1031,7 +1042,7 @@ sub get_annotated_info :Privat {
                             $_->get_inflated_columns,
                         }} $_->annotations->all,
                     ],
-                } 
+                }
             }$rs->all
         ];
     };
@@ -1039,7 +1050,7 @@ sub get_annotated_info :Privat {
         'device'  => $device_info,
         'ranges' => $gather_ranges_info->( $devmod->autoprov_device_line_ranges ),
         'extensions' => { map {
-            $_->extension->id => { 
+            $_->extension->id => {
                 $_->extension->get_inflated_columns,
                 'ranges' => $gather_ranges_info->( $_->extension->autoprov_device_line_ranges ),
             }
@@ -1191,7 +1202,7 @@ sub dev_field_config :Chained('/') :PathPart('device/autoprov/config') :Args() {
         # mark to serve master-encrypted device key instead of config
         $yealink_key = $c->config->{autoprovisioning}->{yealink_key};
     }
-=cut    
+=cut
 
     # print access details for external rate limiting (e.g. fail2ban)
     my $ip;
@@ -1339,7 +1350,7 @@ sub dev_field_config :Chained('/') :PathPart('device/autoprov/config') :Args() {
         $c->response->content_type("application/octet-stream");
         $c->response->body($cipher->encrypt($processed_data));
     } else {
-=cut    
+=cut
         $c->response->content_type($dev->profile->config->content_type);
         $c->response->body($processed_data);
 =pod
