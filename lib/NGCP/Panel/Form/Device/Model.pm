@@ -80,9 +80,9 @@ has_field 'connectable_models' => (
     do_label => 0,
     do_wrapper => 1,
     required => 0,
-    #wrapper_class => [qw/ngcp-devicetype ngcp-devicetype-extension/],
+    wrapper_class => [qw/ngcp-devicetype  ngcp-devicetype-phone/],
     template => 'helpers/datatables_multifield.tt',
-    ajax_src => '/device/model/ajax',
+    ajax_src => '/device/extensionmodel/ajax',
     table_titles => ['#',  'Type', 'Vendor', 'Model'],
     table_fields => ['id', 'type', 'vendor', 'model'],
     element_attr => {
@@ -399,7 +399,7 @@ has_field 'save' => (
 has_block 'fields' => (
     tag => 'div',
     class => [qw/modal-body/],
-    render_list => [qw/vendor model type extensions_num linerange linerange_add bootstrap_method bootstrap_uri bootstrap_config_http_sync_method bootstrap_config_http_sync_uri bootstrap_config_http_sync_params bootstrap_config_redirect_panasonic_user bootstrap_config_redirect_panasonic_password bootstrap_config_redirect_yealink_user bootstrap_config_redirect_yealink_password bootstrap_config_redirect_polycom_user bootstrap_config_redirect_polycom_password bootstrap_config_redirect_polycom_profile connectable_models front_image mac_image/],
+    render_list => [qw/vendor model type extensions_num connectable_models linerange linerange_add bootstrap_method bootstrap_uri bootstrap_config_http_sync_method bootstrap_config_http_sync_uri bootstrap_config_http_sync_params bootstrap_config_redirect_panasonic_user bootstrap_config_redirect_panasonic_password bootstrap_config_redirect_yealink_user bootstrap_config_redirect_yealink_password bootstrap_config_redirect_polycom_user bootstrap_config_redirect_polycom_password bootstrap_config_redirect_polycom_profile front_image mac_image/],
 );
 
 has_block 'actions' => (
