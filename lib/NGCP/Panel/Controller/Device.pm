@@ -144,6 +144,15 @@ sub devmod_ajax :Chained('base') :PathPart('model/ajax') :Args(0) :Does(ACL) :AC
     NGCP::Panel::Utils::Datatables::process($c, $resultset, $c->stash->{devmod_dt_columns});
     $c->detach( $c->view("JSON") );
 }
+sub phonemodel_ajax :Chained('base') :PathPart('phonemodel/ajax') :Args(0) :Does(ACL) :ACLDetachTo('/denied_page') :AllowedRole(admin) :AllowedRole(reseller) {
+    my ($self, $c) = @_;
+
+    my $resultset = $c->stash->{devmod_rs}->search_rs({
+        'me.type' => 'phone',
+    });
+    NGCP::Panel::Utils::Datatables::process($c, $resultset, $c->stash->{devmod_dt_columns});
+    $c->detach( $c->view("JSON") );
+}
 
 sub devmod_create :Chained('base') :PathPart('model/create') :Args(0) :Does(ACL) :ACLDetachTo('/denied_page') :AllowedRole(admin) :AllowedRole(reseller) {
     my ($self, $c) = @_;
