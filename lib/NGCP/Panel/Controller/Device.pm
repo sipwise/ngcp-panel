@@ -205,7 +205,9 @@ sub devmod_create :Chained('base') :PathPart('model/create') :Args(0) :Does(ACL)
                 NGCP::Panel::Utils::DeviceBootstrap::devmod_sync_credentials_store($c, $devmod, $credentials);
                 NGCP::Panel::Utils::DeviceBootstrap::devmod_sync_parameters_store($c, $devmod, $sync_parameters);
                 NGCP::Panel::Utils::DeviceBootstrap::dispatch_devmod($c, 'register_model', $devmod);
-                NGCP::Panel::Utils::Device::process_connectable_models($c, 1, $devmod, decode_json($connectable_models) );
+                if(defined $connectable_models) {
+                    NGCP::Panel::Utils::Device::process_connectable_models($c, 1, $devmod, decode_json($connectable_models) );
+                }
                 
                 foreach my $range(@{ $linerange }) {
                     delete $range->{id};
