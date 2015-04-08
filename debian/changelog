@@ -1,3 +1,25 @@
+ngcp-panel (1.8.1.1+0~mr3.8.1.1) unstable; urgency=low
+
+  [ Gerhard Jungwirth ]
+  * [aaf05e9] MT#11773 csc fix subscriber-url in topmenu
+  * [bff11f7] MT#11827 validate sip uri
+  * [98c5de1] MT#11775 adapt fax error message
+  * [0165383] MT#11709 name button Peaktimes Off-Peaktimes
+  * [9db683c] MT#11637 properly define reseller_id on roles of customercontacts
+
+  [ Irina Peshinskaya ]
+  * [87d655a] MT#11147 Fix multi ranged field devices creation
+  * [f616859] MT#11147 Add fields documentation
+  * [73e348c] MT#10159 Add API call towards MWI on voicemail dir change
+
+  [ Andreas Granig ]
+  * [a9ba290] MT#12453 Add reseller name to device model table
+  * [d99c3ce] MT12347 Terminate module with true value.
+
+  [ Sipwise Jenkins Builder ]
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Wed, 08 Apr 2015 12:56:40 +0200
+
 ngcp-panel (1.8.1.0+0~mr3.8.1.0) unstable; urgency=low
 
   [ Kirill Solomko ]
