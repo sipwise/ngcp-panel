@@ -698,6 +698,8 @@ location: /usr/share/ngcp-panel/tools/generate_invoices.pl
 
 =head1 OPTIONS
 
+All options like resellers, customers, period specification are considered together. So if reseller and client options were defined together, invoices will be generated only to the clients if they are clients of the specified resllers. 
+
 =over 4
 
 =item B<--reseller_id=ID1[,IDn]>
@@ -724,13 +726,21 @@ Generate invoices for calls within period, started from option value. Call start
 
 Generate invoices for calls within period, ended by option value. Call start_time will be less then option value. Default is last second of current month, or last second of month period, started from stime value.         
 
+=item B<--regenerate>
+
+Makes to generate invoices, which have been generated already. Default is false.
+
 =item B<--send>
 
 Invoices will be sent to customers emails just after generation. Default is false.         
 
 =item B<--sendonly>
 
-Makes to send invoices, which weren't sent yet, to customers. Other options: resellers, customers, period specification will be considered. Should be used to send invoices to customers monthly, after generation. Default is false.      
+Makes to send invoices, which haven't been sent yet, to customers. Other options: resellers, customers, period specification will be considered. Should be used to send invoices to customers monthly, after generation. Default is false.      
+
+=item B<--resend>
+
+Makes to send invoices, which have been sent already, to customers. Other options: resellers, customers, period specification will be considered. Default is false.
 
 =item B<--allow_terminated>
 
@@ -738,7 +748,7 @@ Generates invoices for terminated contracts too.
 
 =item B<--force_unrated>
 
-Generate invoices despite unrated calls existance in the period.
+Generate invoices despite unrated calls existence in the period.
 
 =item B<--backward_is_active>
 
