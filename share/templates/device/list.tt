@@ -41,8 +41,8 @@ function vendor2bootstrapMethod(vendorField){
     }else{
        bootstrapMethodField = vendorField.form['bootstrap_method'];
     }
+    var bootstrapMethod='';
     if(vendorField && vendorField.value){//onchange and on load after error
-        var bootstrapMethod='';
         var vendor = vendorField.value.toLowerCase();
         switch(vendor){
             case "cisco":
@@ -56,13 +56,20 @@ function vendor2bootstrapMethod(vendorField){
         }
         if(bootstrapMethod){
             var length = bootstrapMethodField.options.length;
+            var found = false;
             for(var i=0; i < length; i++){
                 if(bootstrapMethodField.options[i].value == bootstrapMethod){
                     bootstrapMethodField.options[i].selected = true;
+                    found = true;
+                    break;
                 }
             }
+            if(!found){
+                bootstrapMethod = '';
+            }
         }
-    }else if(bootstrapMethodField){//as said above - for initial load, to use Perl defined select default to show linked fields
+    }
+    if((!bootstrapMethod) && bootstrapMethodField){ //as said above - for initial load, to use Perl defined select default to show linked fields
         bootstrapMethod = bootstrapMethodField.options[bootstrapMethodField.selectedIndex].value;
     }
     bootstrapDynamicFields(bootstrapMethod);
