@@ -212,16 +212,16 @@ msgstr "404 - Nessun css personalizzato per questo rivenditore"
 msgid "404 - No branding logo available for this reseller"
 msgstr "404 - Nessun logo personalizzato per questo rivenditore"
 
-#: lib/NGCP/Panel/Controller/Device.pm:487
+#: lib/NGCP/Panel/Controller/Device.pm:498
 msgid "404 - No front image available for the model of this device profile"
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/Device.pm:500
+#: lib/NGCP/Panel/Controller/Device.pm:511
 msgid "404 - No front image available for this device model"
 msgstr ""
 "404 - Nessuna immagine frontale disponibile per questo modello di dispositivo"
 
-#: lib/NGCP/Panel/Controller/Device.pm:513
+#: lib/NGCP/Panel/Controller/Device.pm:524
 msgid "404 - No mac image available for this device model"
 msgstr ""
 "404 - Nessun immagine mac disponibile per questo modello di dispositivo"
@@ -731,7 +731,7 @@ msgstr "Assente"
 msgid "BIC/SWIFT"
 msgstr "BIC/SWIFT"
 
-#: lib/NGCP/Panel/Controller/Device.pm:1000
+#: lib/NGCP/Panel/Controller/Device.pm:1011
 msgid "BLF Key"
 msgstr "Tasto BLF"
 
@@ -2335,35 +2335,35 @@ msgstr "Profilo Dispositivi"
 msgid "Device Vendor"
 msgstr "Vendor Dispositivo"
 
-#: lib/NGCP/Panel/Controller/Device.pm:776
+#: lib/NGCP/Panel/Controller/Device.pm:787
 msgid "Device configuration not found"
 msgstr "Configurazione dispositivo non trovata"
 
-#: lib/NGCP/Panel/Controller/Device.pm:790
+#: lib/NGCP/Panel/Controller/Device.pm:801
 msgid "Device configuration successfully deleted"
 msgstr "Configurazione dispositivo eliminata con successo"
 
-#: lib/NGCP/Panel/Controller/Device.pm:603
+#: lib/NGCP/Panel/Controller/Device.pm:614
 msgid "Device firmware not found"
 msgstr "Firmware dispositivo non trovato"
 
-#: lib/NGCP/Panel/Controller/Device.pm:617
+#: lib/NGCP/Panel/Controller/Device.pm:628
 msgid "Device firmware successfully deleted"
 msgstr "Firmware dispositivo eliminato con successo"
 
-#: lib/NGCP/Panel/Controller/Device.pm:274
+#: lib/NGCP/Panel/Controller/Device.pm:284
 msgid "Device model not found"
 msgstr "Modello dispositivo non trovato"
 
-#: lib/NGCP/Panel/Controller/Device.pm:293
+#: lib/NGCP/Panel/Controller/Device.pm:303
 msgid "Device model successfully deleted"
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/Device.pm:945
+#: lib/NGCP/Panel/Controller/Device.pm:956
 msgid "Device profile not found"
 msgstr "Profilo dispositivo non trovato"
 
-#: lib/NGCP/Panel/Controller/Device.pm:1066
+#: lib/NGCP/Panel/Controller/Device.pm:1077
 msgid "Device profile successfully deleted"
 msgstr "Profilo dispositivo eliminato con successo"
 
@@ -2911,19 +2911,19 @@ msgstr ""
 msgid "Failed to create customer contract"
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/Device.pm:747
+#: lib/NGCP/Panel/Controller/Device.pm:758
 msgid "Failed to create device configuration"
 msgstr "Creazione della configurazione dispositivo fallita."
 
-#: lib/NGCP/Panel/Controller/Device.pm:574
+#: lib/NGCP/Panel/Controller/Device.pm:585
 msgid "Failed to create device firmware"
 msgstr "Creazione del firmware dispositivo fallita."
 
-#: lib/NGCP/Panel/Controller/Device.pm:234
+#: lib/NGCP/Panel/Controller/Device.pm:244
 msgid "Failed to create device model"
 msgstr "Creazione del modello dispositivo fallita."
 
-#: lib/NGCP/Panel/Controller/Device.pm:916
+#: lib/NGCP/Panel/Controller/Device.pm:927
 msgid "Failed to create device profile"
 msgstr "Creazione del profilo dispositivo fallita."
 
@@ -3062,19 +3062,19 @@ msgstr ""
 msgid "Failed to delete destination set"
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/Device.pm:796
+#: lib/NGCP/Panel/Controller/Device.pm:807
 msgid "Failed to delete device configuration"
 msgstr "Eliminazione configurazione dispositivo fallita."
 
-#: lib/NGCP/Panel/Controller/Device.pm:623
+#: lib/NGCP/Panel/Controller/Device.pm:634
 msgid "Failed to delete device firmware"
 msgstr "Eliminazione firmware dispositivo fallita."
 
-#: lib/NGCP/Panel/Controller/Device.pm:299
+#: lib/NGCP/Panel/Controller/Device.pm:309
 msgid "Failed to delete device model"
 msgstr "Eliminazione modello dispositivo fallita."
 
-#: lib/NGCP/Panel/Controller/Device.pm:1072
+#: lib/NGCP/Panel/Controller/Device.pm:1083
 msgid "Failed to delete device profile"
 msgstr "Eliminazione profilo dispositivo fallita."
 
@@ -3328,19 +3328,19 @@ msgstr ""
 msgid "Failed to update destination set"
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/Device.pm:846
+#: lib/NGCP/Panel/Controller/Device.pm:857
 msgid "Failed to update device configuration"
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/Device.pm:678
+#: lib/NGCP/Panel/Controller/Device.pm:689
 msgid "Failed to update device firmware"
 msgstr "Aggiornamento firmware dispositivo fallito."
 
-#: lib/NGCP/Panel/Controller/Device.pm:470
+#: lib/NGCP/Panel/Controller/Device.pm:481
 msgid "Failed to update device model"
 msgstr "Aggiornamento modello dispositivo fallito."
 
-#: lib/NGCP/Panel/Controller/Device.pm:1123
+#: lib/NGCP/Panel/Controller/Device.pm:1134
 msgid "Failed to update device profile"
 msgstr "Aggiornamento profilo dispositivo fallito."
 
@@ -3865,7 +3865,7 @@ msgstr ""
 msgid "IBAN"
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/Device.pm:995
+#: lib/NGCP/Panel/Controller/Device.pm:1006
 msgid "ID"
 msgstr ""
 
@@ -4156,19 +4156,19 @@ msgstr "Trovao id contratto non valido"
 msgid "Invalid customer contract id"
 msgstr "Id contratto cliente non valido"
 
-#: lib/NGCP/Panel/Controller/Device.pm:766
+#: lib/NGCP/Panel/Controller/Device.pm:777
 msgid "Invalid device configuration id"
 msgstr "Id configurazione dispositivo non valido"
 
-#: lib/NGCP/Panel/Controller/Device.pm:593
+#: lib/NGCP/Panel/Controller/Device.pm:604
 msgid "Invalid device firmware id"
 msgstr "Id firmware dispositivo non valido"
 
-#: lib/NGCP/Panel/Controller/Device.pm:265
+#: lib/NGCP/Panel/Controller/Device.pm:275
 msgid "Invalid device model id"
 msgstr "Id modello dispositivo non valido"
 
-#: lib/NGCP/Panel/Controller/Device.pm:935
+#: lib/NGCP/Panel/Controller/Device.pm:946
 msgid "Invalid device profile id"
 msgstr "Id profilo dispositivo non valido"
 
@@ -4914,8 +4914,8 @@ msgstr "NUOVO MESSAGGIO"
 #: lib/NGCP/Panel/Controller/Customer.pm:283
 #: lib/NGCP/Panel/Controller/Customer.pm:289
 #: lib/NGCP/Panel/Controller/Customer.pm:298
+#: lib/NGCP/Panel/Controller/Device.pm:1007
 #: lib/NGCP/Panel/Controller/Device.pm:90
-#: lib/NGCP/Panel/Controller/Device.pm:996
 #: lib/NGCP/Panel/Controller/EmailTemplate.pm:35
 #: lib/NGCP/Panel/Controller/InvoiceTemplate.pm:34
 #: lib/NGCP/Panel/Controller/Peering.pm:29
@@ -5106,7 +5106,7 @@ msgstr ""
 msgid "Number block successfully updated"
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/Device.pm:997
+#: lib/NGCP/Panel/Controller/Device.pm:1008
 msgid "Number of Lines/Keys"
 msgstr "Numero per Linee/Tasti"
 
@@ -5716,7 +5716,7 @@ msgstr "Priorità"
 msgid "Priority (q-value)"
 msgstr "Priorità (q-value)"
 
-#: lib/NGCP/Panel/Controller/Device.pm:998
+#: lib/NGCP/Panel/Controller/Device.pm:1009
 msgid "Private Line"
 msgstr "Linea Privata"
 
@@ -6486,7 +6486,7 @@ msgstr "Settaggio"
 msgid "Settings"
 msgstr "Settaggi"
 
-#: lib/NGCP/Panel/Controller/Device.pm:999
+#: lib/NGCP/Panel/Controller/Device.pm:1010
 msgid "Shared Line"
 msgstr "Linea Condivisa"
 
@@ -7124,19 +7124,19 @@ msgstr "Deviazione eliminate con successo"
 msgid "Successfully cleared fraud interval!"
 msgstr "Intervallo frode eliminato con successo!"
 
-#: lib/NGCP/Panel/Controller/Device.pm:741
+#: lib/NGCP/Panel/Controller/Device.pm:752
 msgid "Successfully created device configuration"
 msgstr "Configurazione dispositivo creata con successo"
 
-#: lib/NGCP/Panel/Controller/Device.pm:568
+#: lib/NGCP/Panel/Controller/Device.pm:579
 msgid "Successfully created device firmware"
 msgstr "Firmware dispositivo creato con successo"
 
-#: lib/NGCP/Panel/Controller/Device.pm:228
+#: lib/NGCP/Panel/Controller/Device.pm:238
 msgid "Successfully created device model"
 msgstr "Modello dispositivo creato con successo"
 
-#: lib/NGCP/Panel/Controller/Device.pm:910
+#: lib/NGCP/Panel/Controller/Device.pm:921
 msgid "Successfully created device profile"
 msgstr "Profilo dispositivo creato con successo"
 
@@ -7234,19 +7234,19 @@ msgstr ""
 msgid "Successfully updated destination set"
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/Device.pm:840
+#: lib/NGCP/Panel/Controller/Device.pm:851
 msgid "Successfully updated device configuration"
 msgstr "Configurazione dispositivo aggiornata con successo"
 
-#: lib/NGCP/Panel/Controller/Device.pm:672
+#: lib/NGCP/Panel/Controller/Device.pm:683
 msgid "Successfully updated device firmware"
 msgstr "Firmware dispositivo aggiornato con successo"
 
-#: lib/NGCP/Panel/Controller/Device.pm:464
+#: lib/NGCP/Panel/Controller/Device.pm:475
 msgid "Successfully updated device model"
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/Device.pm:1117
+#: lib/NGCP/Panel/Controller/Device.pm:1128
 msgid "Successfully updated device profile"
 msgstr "Profilo dispositivo aggiornato con successo"
 
