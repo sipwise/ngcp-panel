@@ -385,88 +385,50 @@ sub servers_delete :Chained('servers_base') :PathPart('delete') :Args(0) {
 sub servers_flash_dialogic :Chained('servers_base') :PathPart('edit/dialogic') :Args(0) {
     my ($self, $c) = @_;
 
-    my $pref_mode = NGCP::Panel::Utils::Preferences::get_peer_preference_rs(
-        c => $c,
-        attribute => 'dialogic_mode',
-        peer_host => $c->stash->{server_result},
-    )->first;
-    my $pref_ip_rtp = NGCP::Panel::Utils::Preferences::get_peer_preference_rs(
-        c => $c,
-        attribute => 'dialogic_ip_rtp',
-        peer_host => $c->stash->{server_result},
-    )->first;
-    my $pref_ip_config = NGCP::Panel::Utils::Preferences::get_peer_preference_rs(
-        c => $c,
-        attribute => 'dialogic_ip_config',
-        peer_host => $c->stash->{server_result},
-    )->first;
-    my $pref_out_codecs = NGCP::Panel::Utils::Preferences::get_peer_preference_rs(
-        c => $c,
-        attribute => 'dialogic_out_codecs',
-        peer_host => $c->stash->{server_result},
-    )->first;
-    my $pref_ss7_opc = NGCP::Panel::Utils::Preferences::get_peer_preference_rs(
-        c => $c,
-        attribute => 'dialogic_ss7_opc',
-        peer_host => $c->stash->{server_result},
-    )->first;
-    my $pref_ss7_apc = NGCP::Panel::Utils::Preferences::get_peer_preference_rs(
-        c => $c,
-        attribute => 'dialogic_ss7_apc',
-        peer_host => $c->stash->{server_result},
-    )->first;
-    my $pref_ss7_dpc = NGCP::Panel::Utils::Preferences::get_peer_preference_rs(
-        c => $c,
-        attribute => 'dialogic_ss7_dpc',
-        peer_host => $c->stash->{server_result},
-    )->first;
+    my $config = {
+        ip_sip => $c->stash->{server_result}->ip,
+        ip_client => $c->config->{dialogic}{own_ip},
+    };
+    my $dialogic_group = $c->model('DB')->resultset('voip_preference_groups')->find({
+        name => 'Dialogic Settings',
+        });
+    for my $tmp_pref ($dialogic_group->voip_preferences->all) {
+        my $pref_name = $tmp_pref->attribute;
+        my $cfg_name = $pref_name =~ s/^dialogic_//r;
+        my $peer_pref = NGCP::Panel::Utils::Preferences::get_peer_preference_rs(
+            c => $c,
+            attribute => $pref_name,
+            peer_host => $c->stash->{server_result},
+        )->first;
+        next unless $peer_pref;
+        $config->{$cfg_name} = $peer_pref->value;
+    }
+
+    if (exists $config->{out_codecs}) {
+        my @new_out_codecs =  map { s/^\s+|\s+$//gr } split(m/,/, $config->{out_codecs});
+        $config->{out_codecs} = \@new_out_codecs;
+    }
 
     try {
-        if ($pref_mode->value ne 'none') {
+        if ($config->{mode} ne 'none') {
             my $api = NGCP::Panel::Utils::DialogicImg->new(
-                server      => 'https://' . $pref_ip_config->value,
+                server => 'https://' . $config->{ip_config},
             );
-            my @configured_out_codecs =  map { s/^\s+|\s+$//gr } split(m/,/, $pref_out_codecs->value);
+
             $api->login( $c->config->{dialogic}{username}, $c->config->{dialogic}{password} );
             my $resp = $api->obtain_lock();
             die "Couldn't connect to dialogic"
-                unless $resp->code == 200;
-            if ($pref_mode->value eq 'sipsip') {
-                my $config = {
-                    ip_sip => $c->stash->{server_result}->ip,
-                    ip_rtp => $pref_ip_rtp->value,
-                    ip_client => $c->config->{dialogic}{own_ip},
-                    out_codecs => \@configured_out_codecs,
-                    ip_config => $pref_ip_config->value, # just for the config hash
-                    dialogic_mode => $pref_mode->value,
-                    };
+                unless ($resp->code == 200);
 
+            if ($config->{mode} eq 'sipsip') {
                 $resp = $api->create_all_sipsip($config, 1);
-            } elsif ($pref_mode->value eq 'sipisdn') {
-                my $config = {
-                    ip_sip => $c->stash->{server_result}->ip,
-                    ip_rtp => $pref_ip_rtp->value,
-                    ip_client => $c->config->{dialogic}{own_ip},
-                    out_codecs => \@configured_out_codecs,
-                    ip_config => $pref_ip_config->value, # just for the config hash
-                    dialogic_mode => $pref_mode->value,
-                    };
 
+            } elsif ($config->{mode} eq 'sipisdn') {
                 $resp = $api->create_all_sipisdn($config, 1);
-            } elsif ($pref_mode->value eq 'sipss7') {
-                my $config = {
-                    ip_sip => $c->stash->{server_result}->ip,
-                    ip_rtp => $pref_ip_rtp->value,
-                    ip_client => $c->config->{dialogic}{own_ip},
-                    out_codecs => \@configured_out_codecs,
-                    ss7_opc => $pref_ss7_opc ? $pref_ss7_opc->value : '1-1-1',
-                    ss7_apc => $pref_ss7_apc ? $pref_ss7_apc->value : '2-2-2',
-                    ss7_dpc => $pref_ss7_dpc ? $pref_ss7_dpc->value : '2-2-2',
-                    ip_config => $pref_ip_config->value, # just for the config hash
-                    dialogic_mode => $pref_mode->value,
-                    };
 
+            } elsif ($config->{mode} eq 'sipss7') {
                 $resp = $api->create_all_sipss7($config, 1);
+
             }
         }
         NGCP::Panel::Utils::Message->info(

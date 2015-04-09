@@ -10,7 +10,7 @@ exit if try_parse_file(@ARGV);
 my $resp;
 
 my $test = NGCP::Panel::Utils::DialogicImg->new(
-    server      => 'https://10.15.20.150',
+    server      => 'https://10.15.20.133',
 );
 
 p $test->login( 'dialogic', 'Dial0gic' );
@@ -19,6 +19,28 @@ $resp = $test->obtain_lock();
 p $resp->code;
 
 print "LOGGED IN, LOCK OBTAINED ############################\n";
+
+my $result = $test->create_all_sipss7({
+    ip_sip => '10.15.20.92',
+    ip_rtp => '10.15.21.10',
+    ip_client => '10.15.20.144',
+    in_codecs => ['G711 ulaw', 'G711 alaw', 'G729', 'AMR'],
+    out_codecs => ['G711 ulaw', 'G711 alaw', 'G729', 'AMR'],
+    ss7_opc => '1-1-1',
+    ss7_apc => '2-2-2',  # adjacent point code
+    ss7_dpc => '2-2-2',
+    ip_nfs_server => '192.168.51.45',
+    nfs_path => '//export/users/dialogic2',
+    snmp_system_name => 'Dialogic2',
+    snmp_system_location => 'foobar',
+    snmp_system_contact => 'foobar',
+    snmp_community_name => 'bar',
+    },
+    2,
+    );
+
+exit;
+
 
 # $resp = $test->delete_all_bn2020;
 # $resp = $test->delete_all_bn2020;
@@ -47,21 +69,6 @@ print "LOGGED IN, LOCK OBTAINED ############################\n";
 # p $resp;
 # p $resp->data;
 # exit;
-
-my $result = $test->create_all_sipss7({
-    ip_sip => '10.15.20.92',
-    ip_rtp => '10.15.21.10',
-    ip_client => '10.15.20.146',
-    in_codecs => ['G711 ulaw', 'G711 alaw', 'G729', 'AMR'],
-    out_codecs => ['G711 ulaw', 'G711 alaw', 'G729', 'AMR'],
-    ss7_opc => '1-1-1',
-    ss7_apc => '2-2-2',  # adjacent point code
-    ss7_dpc => '2-2-2',
-    },
-    2,
-    );
-
-exit;
 
 
 sub print_documentation_md {
