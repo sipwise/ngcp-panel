@@ -161,6 +161,16 @@ has 'classinfo' => ( is => 'ro', isa => HashRef, default => sub{
             parent => 'sip',
             revalidate => 0,
         },
+        call_tracing => {
+            name => 'CallTracing',
+            parent => 'bn2020',
+            revalidate => 0,
+        },
+        snmp_agent => {
+            name => 'SNMPClient',
+            parent => 'bn2020',
+            revalidate => 0,
+        },
         ss7 => {
             name => 'SS7',
             parent => 'root',
@@ -284,6 +294,26 @@ has 'classinfo' => ( is => 'ro', isa => HashRef, default => sub{
         external_gateway => {
             name => 'ExternalGateway',
             parent => 'external_gateway_collection',
+            revalidate => 1,
+        },
+        external_nfsserver_collection => {
+            name => 'NFSServers',
+            parent => 'external_network_elements',
+            revalidate => 0,
+        },
+        external_nfsserver => {
+            name => 'NFSServer',
+            parent => 'external_nfsserver_collection',
+            revalidate => 1,
+        },
+        external_snmpmanager_collection => {
+            name => 'SNMPServers',
+            parent => 'external_network_elements',
+            revalidate => 0,
+        },
+        external_snmpmanager => {
+            name => 'SNMPServer',
+            parent => 'external_snmpmanager_collection',
             revalidate => 1,
         },
         routing_configuration => {
@@ -508,6 +538,18 @@ sub create_sip_ip {
     return $self->_create_generic($options, 'sip_ip');
 }
 
+sub create_call_tracing {
+    my ( $self, $options ) = @_;
+
+    return $self->_create_generic($options, 'call_tracing');
+}
+
+sub create_snmp_agent {
+    my ( $self, $options ) = @_;
+
+    return $self->_create_generic($options, 'snmp_agent');
+}
+
 sub create_ss7 {
     my ( $self, $options ) = @_;
 
@@ -658,6 +700,30 @@ sub create_external_gateway {
     return $self->_create_generic($options, 'external_gateway');
 }
 
+sub create_external_nfsserver_collection {
+    my ( $self, $options ) = @_;
+
+    return $self->_create_generic($options, 'external_nfsserver_collection');
+}
+
+sub create_external_nfsserver {
+    my ( $self, $options ) = @_;
+
+    return $self->_create_generic($options, 'external_nfsserver');
+}
+
+sub create_external_snmpmanager_collection {
+    my ( $self, $options ) = @_;
+
+    return $self->_create_generic($options, 'external_snmpmanager_collection');
+}
+
+sub create_external_snmpmanager {
+    my ( $self, $options ) = @_;
+
+    return $self->_create_generic($options, 'external_snmpmanager');
+}
+
 sub create_routing_configuration {
     my ($self) = @_;
 
@@ -752,9 +818,14 @@ sub _create_generic {
     return $resp;
 }
 
+
 # log: 0: none, 1: short, 2: everything
-# necessary keys: ip_sip, ip_rtp, ip_client, out_codecs, optional: in_codecs
-sub create_all_sipsip {
+# necessary keys: ip_sip, ip_rtp, ip_client, out_codecs
+# optional: in_codecs
+# for nfs: ip_nfs_server, nfs_path
+# for snmp: snmp_system_name, snmp_system_location, snmp_system_contact, snmp_community_name
+# for snmp optional: ip_snmp_manager, snmp_version
+sub create_general_part {
     my ($self, $settings, $log) = @_;
 
     $self->_create_indent;
@@ -779,6 +850,41 @@ sub create_all_sipsip {
                     { PayloadType => $_ },
             };
         } @{ $settings->{out_codecs} };
+    my @nfs_schedule;
+    if (defined $settings->{ip_nfs_server} &&
+        defined $settings->{nfs_path}) {
+        @nfs_schedule = (
+            {name => 'external_nfsserver_collection', options => undef}, # needs external_network_elements
+            {name => 'external_nfsserver', options => {
+                Name => 'ngcp_nfs_server',
+                IPAddress => $settings->{ip_nfs_server},
+                }},
+            {name => 'call_tracing', options => {
+                TraceTime => '600',
+                MountDirectory => $settings->{nfs_path},
+                }},
+        );
+    }
+    my @snmp_schedule;
+    if (defined $settings->{snmp_system_name} &&
+        defined $settings->{snmp_system_location} &&
+        defined $settings->{snmp_system_contact} &&
+        defined $settings->{snmp_community_name}) {
+        @snmp_schedule = (
+            {name => 'external_snmpmanager_collection', options => undef},
+            {name => 'external_snmpmanager', options => {
+                UserName => 'ngcp',
+                CommunityName => $settings->{snmp_community_name},
+                ServerIPAddress => $settings->{ip_snmp_manager} // $settings->{ip_client},
+                defined $settings->{snmp_version} ? (ServerVersion => $settings->{snmp_version} ) : (),
+                }},
+            {name => 'snmp_agent', options => {
+                SystemName => $settings->{snmp_system_name},
+                SystemLoc => $settings->{snmp_system_location},
+                SystemContact => $settings->{snmp_system_contact},
+                }},
+        );
+    }
     my $schedule = [
         {name => 'network', options => undef},
         {name => 'interface_collection', options => undef},
@@ -824,6 +930,24 @@ sub create_all_sipsip {
             IPAddress => $settings->{ip_client},
             IPAddress4 => $settings->{ip_client},
             }},
+        @nfs_schedule,
+        @snmp_schedule,
+    ];
+
+    $self->_run_schedule($schedule, $log);
+
+    return 0;
+}
+
+# log: 0: none, 1: short, 2: everything
+# necessary keys: ip_sip, ip_rtp, ip_client, out_codecs, optional: in_codecs
+sub create_all_sipsip {
+    my ($self, $settings, $log) = @_;
+
+    $self->create_general_part($settings, $log);
+    my $resp;
+
+    my $schedule = [
         {name => 'routing_configuration', options => undef},
         {name => 'channel_group_collection', options => undef},
         {name => 'route_table_collection', options => undef},
@@ -850,19 +974,7 @@ sub create_all_sipsip {
         #{run => 'download_channel_groups'},
     ];
 
-    for my $elem (@{ $schedule }) {
-        my ($name, $options) = @{ $elem }{('name', 'options')};
-        my $fun = "create_$name";
-        $resp = $self->$fun($options);
-        # $resp = $self->_create_generic($options, $name);
-        if ($log >= 1) {
-            my $ind = " " x ($self->classinfo->{$name}{indent}*4);
-            printf "%-37s: %d\n", "$ind$name", $resp->code;
-            if ($resp->code != 200) {
-                #use DDP; p $resp->data;
-            }
-        }
-    }
+    $self->_run_schedule($schedule, $log);
 
     $self->download_profiles;
     $self->download_route_table;
@@ -876,67 +988,13 @@ sub create_all_sipsip {
 sub create_all_sipisdn {
     my ($self, $settings, $log) = @_;
 
-    $self->_create_indent;
+    $self->create_general_part($settings, $log);
 
-    my $in_codecs = ['G711 ulaw', 'G711 alaw', 'G729', 'AMR',
-        'AMR Bandwidth Efficient', 'AMR-WB', 'AMR-WB Bandwidth Efficient',
-        'Clear Channel', 'G723 5.3 Kbps', 'G723 6.3 Kbps', 'G722', 'iLBC 30ms',
-        'GSM-FR Static Payload Type', 'GSM-FR Dynamic Payload Type',
-        'G726-32/G721 Static Payload Type', 'G726-32/G721 Dynamic Payload Type',
-        'GSM-EFR'];
+    my $resp;
 
-    my $resp = $self->create_bn2020;
-    my @in_schedule = map {
-            {
-                name => 'vocoder_profile', options =>
-                    { PayloadType => $_ },
-            };
-        } @{ $settings->{in_codecs} // $in_codecs };
-    my @out_schedule = map {
-            {
-                name => 'vocoder_profile', options => 
-                    { PayloadType => $_ },
-            };
-        } @{ $settings->{out_codecs} };
     my $schedule = [
-        {name => 'network', options => undef},
-        {name => 'interface_collection', options => undef},
-        {name => 'interface', options => undef},
-        {name => 'ip_address', options => {
-            NIIPAddress => $settings->{ip_sip},
-            NIIPPhy => 'Services',
-            }},
-        {name => 'interface', options => undef},
-        {name => 'ip_address', options => {
-            NIIPAddress => $settings->{ip_rtp},
-            NIIPPhy => 'Media 0',
-            }},
-        {name => 'facility', options => undef},
-        {name => 'packet_facility_collection', options => undef},
-        {name => 'packet_facility', options => {
-            ChannelCount => 50,
-            }},
-        {name => 'signaling', options => undef},
-        {name => 'sip', options => undef},
-        {name => 'sip_ip', options => {
-            IPAddress => $settings->{ip_sip},
-            }},
         {name => 'isdn', options => undef},
 
-        {name => 'profile_collection', options => undef},
-        {name => 'ip_profile_collection', options => undef},
-        {name => 'ip_profile', options => {
-            DigitRelay => 'DTMF Packetized',
-            Name => 'ngcp_in_profile',
-            }},
-        @in_schedule,
-        {name => 'ip_profile', options => {
-            DigitRelay => 'DTMF Packetized',
-            Name => 'ngcp_out_profile',
-            }},
-        @out_schedule,
-        {name => 'sip_profile_collection', options => undef},
-        {name => 'sip_profile', options => undef},
         {name => 'tdm_profile_collection', options => undef},
         {name => 'e1_profile', options => undef},
         {name => 'ds1_spans', options => {
@@ -956,13 +1014,6 @@ sub create_all_sipisdn {
             EndChannel => 'Span ID: 1 CID: 30',
             }},
         #{run => 'download_profiles'},
-        {name => 'external_network_elements', options => undef},
-        {name => 'external_gateway_collection', options => undef},
-        {name => 'external_gateway', options => {
-            Name => 'Phone1',
-            IPAddress => $settings->{ip_client},
-            IPAddress4 => $settings->{ip_client},
-            }},
         {name => 'routing_configuration', options => undef},
         {name => 'channel_group_collection', options => undef},
         {name => 'route_table_collection', options => undef},
@@ -1010,19 +1061,7 @@ sub create_all_sipisdn {
         #{run => 'download_channel_groups'},
     ];
 
-    for my $elem (@{ $schedule }) {
-        my ($name, $options) = @{ $elem }{('name', 'options')};
-        my $fun = "create_$name";
-        $resp = $self->$fun($options);
-        # $resp = $self->_create_generic($options, $name);
-        if ($log >= 1) {
-            my $ind = " " x ($self->classinfo->{$name}{indent}*4);
-            printf "%-37s: %d\n", "$ind$name", $resp->code;
-            if ($resp->code != 200) {
-                use DDP; p $resp->data;
-            }
-        }
-    }
+    $self->_run_schedule($schedule, $log);
 
     $self->download_profiles;
     $self->download_route_table;
@@ -1037,66 +1076,11 @@ sub create_all_sipisdn {
 sub create_all_sipss7 {
     my ($self, $settings, $log) = @_;
 
-    $self->_create_indent;
+    $self->create_general_part($settings, $log);
 
-    my $in_codecs = ['G711 ulaw', 'G711 alaw', 'G729', 'AMR',
-        'AMR Bandwidth Efficient', 'AMR-WB', 'AMR-WB Bandwidth Efficient',
-        'Clear Channel', 'G723 5.3 Kbps', 'G723 6.3 Kbps', 'G722', 'iLBC 30ms',
-        'GSM-FR Static Payload Type', 'GSM-FR Dynamic Payload Type',
-        'G726-32/G721 Static Payload Type', 'G726-32/G721 Dynamic Payload Type',
-        'GSM-EFR'];
+    my $resp;
 
-    my $resp = $self->create_bn2020;
-    my @in_schedule = map {
-            {
-                name => 'vocoder_profile', options =>
-                    { PayloadType => $_ },
-            };
-        } @{ $settings->{in_codecs} // $in_codecs };
-    my @out_schedule = map {
-            {
-                name => 'vocoder_profile', options =>
-                    { PayloadType => $_ },
-            };
-        } @{ $settings->{out_codecs} };
     my $schedule = [
-        {name => 'network', options => undef},
-        {name => 'interface_collection', options => undef},
-        {name => 'interface', options => undef},
-        {name => 'ip_address', options => {
-            NIIPAddress => $settings->{ip_sip},
-            NIIPPhy => 'Services',
-            }},
-        {name => 'interface', options => undef},
-        {name => 'ip_address', options => {
-            NIIPAddress => $settings->{ip_rtp},
-            NIIPPhy => 'Media 0',
-            }},
-        {name => 'facility', options => undef},
-        {name => 'packet_facility_collection', options => undef},
-        {name => 'packet_facility', options => {
-            ChannelCount => 50,
-            }},
-        {name => 'signaling', options => undef},
-        {name => 'sip', options => undef},
-        {name => 'sip_ip', options => {
-            IPAddress => $settings->{ip_sip},
-            }},
-
-        {name => 'profile_collection', options => undef},
-        {name => 'ip_profile_collection', options => undef},
-        {name => 'ip_profile', options => {
-            DigitRelay => 'DTMF Packetized',
-            Name => 'ngcp_in_profile',
-            }},
-        @in_schedule,
-        {name => 'ip_profile', options => {
-            DigitRelay => 'DTMF Packetized',
-            Name => 'ngcp_out_profile',
-            }},
-        @out_schedule,
-        {name => 'sip_profile_collection', options => undef},
-        {name => 'sip_profile', options => undef},
         {name => 'tdm_profile_collection', options => undef},
         {name => 'e1_profile', options => undef},
         {name => 'ds1_spans', options => {
@@ -1145,13 +1129,6 @@ sub create_all_sipss7 {
             StartCIC => '1',
         }},
 
-        {name => 'external_network_elements', options => undef},
-        {name => 'external_gateway_collection', options => undef},
-        {name => 'external_gateway', options => {
-            Name => 'Phone1',
-            IPAddress => $settings->{ip_client},
-            IPAddress4 => $settings->{ip_client},
-            }},
         {name => 'routing_configuration', options => undef},
         {name => 'channel_group_collection', options => undef},
         {name => 'route_table_collection', options => undef},
@@ -1201,7 +1178,28 @@ sub create_all_sipss7 {
         #{run => 'download_channel_groups'},
     ];
 
+    $self->_run_schedule($schedule, $log);
+
+    $self->download_profiles;
+    $self->download_route_table;
+    $self->download_channel_groups;
+
+    return 0;
+}
+
+###### OTHER STUFF ######
+
+sub _run_schedule {
+    my ($self, $schedule, $log) = @_;
+
+    my $resp;
+
     for my $elem (@{ $schedule }) {
+        if (exists $elem->{run}) {
+            my $command = $elem->{run};
+            $self->$command;
+            next;
+        }
         my ($name, $options) = @{ $elem }{('name', 'options')};
         my $fun = "create_$name";
         $resp = $self->$fun($options);
@@ -1215,14 +1213,8 @@ sub create_all_sipss7 {
         }
     }
 
-    $self->download_profiles;
-    $self->download_route_table;
-    $self->download_channel_groups;
-
     return 0;
 }
-
-###### OTHER STUFF ######
 
 sub hash_config {
     my ($self, $config) = @_;
