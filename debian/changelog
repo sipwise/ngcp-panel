@@ -1,3 +1,18 @@
+ngcp-panel (1.8.1.2+0~mr3.8.1.2) unstable; urgency=low
+
+  [ Irina Peshinskaya ]
+  * [c313d9a] MT#11147 Create fake data for the devicemodels and pbxdevices tests
+  * [5caa791] MT#5879 Fix invoice generation script location in the embedded doc
+  * [2be0496] MT#11147 Move test libraries to the correct location
+  * [895d64c] MT#11147 Return test data clearing directly in the db
+  * [78af950] MT#11147 use default DB account to clear test data from DB
+  * [593413e] MT#11147 Don't use brute-forced test data clearing
+  * [7cf99ac] MT#11147 Left linking extensions and phones only for phones type
+
+  [ Sipwise Jenkins Builder ]
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Thu, 09 Apr 2015 07:58:23 +0200
+
 ngcp-panel (1.8.1.1+0~mr3.8.1.1) unstable; urgency=low
 
   [ Gerhard Jungwirth ]
