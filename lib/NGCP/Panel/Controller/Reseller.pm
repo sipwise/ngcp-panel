@@ -11,6 +11,7 @@ use NGCP::Panel::Utils::Contract;
 use NGCP::Panel::Utils::DateTime;
 use NGCP::Panel::Utils::Message;
 use NGCP::Panel::Utils::Navigation;
+use NGCP::Panel::Utils::Reseller;
 
 sub auto :Private {
     my ($self, $c) = @_;
@@ -87,6 +88,7 @@ sub create :Chained('list_reseller') :PathPart('create') :Args(0) :Does(ACL) :AC
             $form->params->{contract_id} = delete $form->params->{contract}->{id};
             delete $form->params->{contract};
             my $reseller = $c->model('DB')->resultset('resellers')->create($form->params);
+            NGCP::Panel::Utils::Reseller::create_email_templates( c => $c, reseller => $reseller );
             delete $c->session->{created_objects}->{contract};
             $c->session->{created_objects}->{reseller} = { id => $reseller->id };
 
@@ -324,6 +326,7 @@ sub _handle_reseller_status_change {
         $reseller->voip_rewrite_rule_sets->delete_all;
         #delete autoprov_devices
         $reseller->autoprov_devices->delete_all;
+        $reseller->email_templates->delete_all;
     }
 }
 
