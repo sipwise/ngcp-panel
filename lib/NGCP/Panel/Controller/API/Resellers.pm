@@ -8,6 +8,7 @@ use HTTP::Headers qw();
 use HTTP::Status qw(:constants);
 use MooseX::ClassAttribute qw(class_has);
 use NGCP::Panel::Utils::DateTime;
+use NGCP::Panel::Utils::Reseller;
 use Path::Tiny qw(path);
 BEGIN { extends 'Catalyst::Controller::ActionRole'; }
 require Catalyst::ActionRole::ACL;
@@ -180,6 +181,7 @@ sub POST :Allow {
         my $reseller;
         try {
             $reseller = $schema->resultset('resellers')->create($resource);
+            NGCP::Panel::Utils::Reseller::create_email_templates( c => $c, reseller => $reseller );
         } catch($e) {
             $c->log->error("failed to create reseller: $e"); # TODO: user, message, trace, ...
             $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "Failed to create reseller.");
