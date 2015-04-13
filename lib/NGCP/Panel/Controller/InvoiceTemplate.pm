@@ -133,21 +133,21 @@ sub create :Chained('template_list') :PathPart('create') :Args() {
             my $schema = $c->model('DB');
             $schema->txn_do(sub {
                 if($c->user->roles eq "admin") {
-                    $form->params->{reseller_id} = $reseller_id ? $reseller_id : $form->params->{reseller}{id};
+                    $form->values->{reseller_id} = $reseller_id ? $reseller_id : $form->values->{reseller}{id};
                 } elsif($c->user->roles eq "reseller") {
-                    $form->params->{reseller_id} = $c->user->reseller_id;
+                    $form->values->{reseller_id} = $c->user->reseller_id;
                 }
-                delete $form->params->{reseller};
+                delete $form->values->{reseller};
 
                 my $dup_item = $schema->resultset('invoice_templates')->find({
-                    reseller_id => $form->params->{reseller_id},
-                    name => $form->params->{name},
+                    reseller_id => $form->values->{reseller_id},
+                    name => $form->values->{name},
                 });
                 if($dup_item) {
                     die( ["Template name should be unique", "showdetails"] );
                 }
 
-                my $tmpl_params = $form->params;
+                my $tmpl_params = $form->values;
                 $tmpl_params->{data} //= NGCP::Panel::Utils::InvoiceTemplate::svg_content($c, $tmpl_params->{data});
                 my $tmpl = $c->stash->{tmpl_rs}->create($tmpl_params);
 
@@ -204,21 +204,21 @@ sub edit_info :Chained('base') :PathPart('editinfo') {
             my $schema = $c->model('DB');
             $schema->txn_do(sub {
                 if($c->user->roles eq "admin") {
-                    $form->params->{reseller_id} = $form->params->{reseller}{id};
+                    $form->values->{reseller_id} = $form->values->{reseller}{id};
                 } elsif($c->user->roles eq "reseller") {
-                    $form->params->{reseller_id} = $c->user->reseller_id;
+                    $form->values->{reseller_id} = $c->user->reseller_id;
                 }
-                delete $form->params->{reseller};
+                delete $form->values->{reseller};
 
                 my $dup_item = $schema->resultset('invoice_templates')->find({
-                    reseller_id => $form->params->{reseller_id},
-                    name => $form->params->{name},
+                    reseller_id => $form->values->{reseller_id},
+                    name => $form->values->{name},
                 });
                 if($dup_item && $dup_item->id != $tmpl->id) {
                     die( ["Template name should be unique", "showdetails"] );
                 }
                 
-                $tmpl->update($form->params);
+                $tmpl->update($form->values);
 
                 delete $c->session->{created_objects}->{reseller};
             });

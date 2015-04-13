@@ -280,11 +280,11 @@ sub set_clone :Chained('set_base') :PathPart('clone') :Does(ACL) :ACLDetachTo('/
             $schema->txn_do(sub {
                 my $reseller_id;
                 if($c->user->roles eq "admin") {
-                    $reseller_id = $form->params->{reseller}{id};
+                    $reseller_id = $form->values->{reseller}{id};
                 } else {
                     $reseller_id = $c->stash->{set}->reseller_id,
                 }
-                delete $form->params->{reseller};
+                delete $form->values->{reseller};
                 my $new_set = $schema->resultset('voip_subscriber_profile_sets')->create({
                     %{ $form->values },
                     reseller_id => $c->stash->{set}->reseller_id,
