@@ -39,6 +39,7 @@ sub hal_from_item {
             Data::HAL::Link->new(relation => 'profile', href => 'http://purl.org/sipwise/ngcp-api/'),
             Data::HAL::Link->new(relation => 'self', href => sprintf("%s%d", $self->dispatch_path, $item->id)),
             Data::HAL::Link->new(relation => "ngcp:$print_type", href => sprintf("/api/%s/%d", $print_type, $item->id)),
+            $self->get_journal_relation_link($item->id),
         ],
         relation => 'ngcp:'.$self->resource_name,
     );
@@ -558,7 +559,7 @@ sub update_item {
                     });
                     unless($set) {
                         $c->log->error("no $pref '".$resource->{$pref}."' for reseller id $reseller_id found");
-                        $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Unknown $pref'".$resource->{$pref}."'");
+                        $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Unknown $pref '".$resource->{$pref}."'");
                         return;
                     }
                     my $rs = $self->get_preference_rs($c, $type, $elem, $pref);

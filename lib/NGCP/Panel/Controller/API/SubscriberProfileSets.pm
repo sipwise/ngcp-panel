@@ -155,6 +155,7 @@ sub POST :Allow {
         return;
     }
 
+    my $guard = $c->model('DB')->txn_scope_guard;
     {
         my $resource = $self->get_valid_post_data(
             c => $c, 
@@ -192,6 +193,14 @@ sub POST :Allow {
             $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "Failed to create subscriber profile set.");
             last;
         }
+        
+        last unless $self->add_create_journal_item_hal($c,sub {
+            my $self = shift;
+            my ($c) = @_;
+            my $_item = $self->item_by_id($c, $item->id);
+            return $self->hal_from_item($c, $_item); });
+        
+        $guard->commit;
 
         $c->response->status(HTTP_CREATED);
         $c->response->header(Location => sprintf('/%s%d', $c->request->path, $item->id));

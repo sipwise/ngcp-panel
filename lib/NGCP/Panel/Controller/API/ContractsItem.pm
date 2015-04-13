@@ -22,6 +22,8 @@ class_has('resource_name', is => 'ro', default => 'contracts');
 class_has('dispatch_path', is => 'ro', default => '/api/contracts/');
 class_has('relation', is => 'ro', default => 'http://purl.org/sipwise/ngcp-api/#rel-contracts');
 
+class_has(@{ __PACKAGE__->get_journal_query_params() });
+
 __PACKAGE__->config(
     action => {
         (map { $_ => {

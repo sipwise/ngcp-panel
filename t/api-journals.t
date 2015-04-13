@@ -60,34 +60,590 @@ my $contract = test_contract($billingprofile,$systemcontact);
 my $domain = test_domain($t,$reseller);
 my $customercontact = test_customercontact($t,$reseller);
 my $customer = test_customer($customercontact,$billingprofile);
-my $subscriber = test_subscriber($t,$customer,$domain);
+my $customerpreferences = test_customerpreferences($customer);
 
-#test_customerpreferences();
+my $subscriberprofileset = test_subscriberprofileset($t,$reseller);
+my $subscriberprofile = test_subscriberprofile($t,$subscriberprofileset);
+my $profilepreferences = test_profilepreferences($subscriberprofile);
+
+my $subscriber = test_subscriber($t,$customer,$domain);
+my $cfdestinationset = test_cfdestinationset($t,$subscriber);
+
+my $systemsoundset = test_soundset($t,$reseller);
+my $customersoundset = test_soundset($t,$reseller,$customer);
+my $subscriberpreferences = test_subscriberpreferences($subscriber,$customersoundset,$systemsoundset);
+
+
+
 
 done_testing;
 
-#sub test_customerpreferences {
-#    
-#    $req = HTTP::Request->new('PUT', $uri.'/api/customerpreferences/'.$customer->{id});
-#    $req->header('Content-Type' => 'application/json');
-#    $req->header('Prefer' => 'return=representation');
-#    $req->content(JSON::to_json({
-#        name => "test profile $t PUT",
-#        handle  => "testprofile$t",
-#        reseller_id => $reseller_id,
-#    }));
-#    $res = $ua->request($req);
-#    is($res->code, 200, "PUT test billingprofile");
-#    $req = HTTP::Request->new('GET', $billingprofile_uri);
-#    $res = $ua->request($req);
-#    is($res->code, 200, "fetch PUT test billingprofile");
-#    $billingprofile = JSON::from_json($res->decoded_content);
-#    
-#    $req = HTTP::Request->new('GET', $uri.'/api/customerpreferences/136');
-#    $res = $ua->request($req);
-#    is($res->code, 200, "fetch blah");
-#    
-#}
+
+sub test_cfdestinationset {
+    my ($t,$subscriber) = @_;
+    
+    my @destinations = map { { destination => $_,
+                           timeout => '10',
+                           priority => '1',
+                           simple_destination => undef }; } (
+                                'voicebox',
+                                'fax2mail',
+                                'conference',
+                                'callingcard',
+                                'callthrough',
+                                'localuser',
+                                'autoattendant',
+                                'officehours',
+                                'test_destination@example.com');
+    
+    $req = HTTP::Request->new('POST', $uri.'/api/cfdestinationsets/');
+    $req->header('Content-Type' => 'application/json');
+    $req->content(JSON::to_json({
+        name => "cf_destination_set_".($t-1),
+        subscriber_id => $subscriber->{id},
+        destinations => \@destinations,
+    }));
+    $res = $ua->request($req);
+    is($res->code, 201, "POST test cfdestinationset");
+    my $cfdestinationset_uri = $uri.'/'.$res->header('Location');
+    $req = HTTP::Request->new('GET', $cfdestinationset_uri);
+    $res = $ua->request($req);
+    is($res->code, 200, "fetch POSTed test cfdestinationset");
+    my $cfdestinationset = JSON::from_json($res->decoded_content);
+    
+    _test_item_journal_link('cfdestinationsets',$cfdestinationset);
+    _test_journal_options_head('cfdestinationsets',$cfdestinationset->{id});
+    my $journals = {};
+    my $journal = _test_journal_top_journalitem('cfdestinationsets',$cfdestinationset->{id},$cfdestinationset,'create',$journals);
+    _test_journal_options_head('cfdestinationsets',$cfdestinationset->{id},$journal->{id});
+    
+    $req = HTTP::Request->new('PUT', $cfdestinationset_uri);
+    $req->header('Content-Type' => 'application/json');
+    $req->header('Prefer' => 'return=representation');
+    $req->content(JSON::to_json({
+        name => "cf_destination_set_".($t-1).'_put',
+        subscriber_id => $subscriber->{id},
+        destinations => \@destinations,
+    }));
+    $res = $ua->request($req);
+    is($res->code, 200, "PUT test cfdestinationset");
+    $req = HTTP::Request->new('GET', $cfdestinationset_uri);
+    $res = $ua->request($req);
+    is($res->code, 200, "fetch PUT test cfdestinationset");
+    $cfdestinationset = JSON::from_json($res->decoded_content);
+    
+    _test_item_journal_link('cfdestinationsets',$cfdestinationset);    
+    $journal = _test_journal_top_journalitem('cfdestinationsets',$cfdestinationset->{id},$cfdestinationset,'update',$journals,$journal);
+    
+    $req = HTTP::Request->new('PATCH', $cfdestinationset_uri);
+    $req->header('Content-Type' => 'application/json-patch+json');
+    $req->header('Prefer' => 'return=representation');
+    $req->content(JSON::to_json(
+        [ { op => 'replace', path => '/name', value => "cf_destination_set_".($t-1).'_patch' } ]
+    ));
+    $res = $ua->request($req);
+    is($res->code, 200, "PATCH test cfdestinationset");
+    $req = HTTP::Request->new('GET', $cfdestinationset_uri);
+    $res = $ua->request($req);
+    is($res->code, 200, "fetch PATCHed test cfdestinationset");
+    $cfdestinationset = JSON::from_json($res->decoded_content);
+
+    _test_item_journal_link('cfdestinationsets',$cfdestinationset);    
+    $journal = _test_journal_top_journalitem('cfdestinationsets',$cfdestinationset->{id},$cfdestinationset,'update',$journals,$journal);
+    
+    $req = HTTP::Request->new('DELETE', $cfdestinationset_uri);
+    $res = $ua->request($req);
+    is($res->code, 204, "delete POSTed test cfdestinationset");
+    #$domain = JSON::from_json($res->decoded_content);
+    
+    $journal = _test_journal_top_journalitem('cfdestinationsets',$cfdestinationset->{id},$cfdestinationset,'delete',$journals,$journal);
+    
+    _test_journal_collection('cfdestinationsets',$cfdestinationset->{id},$journals);
+    
+    $req = HTTP::Request->new('POST', $uri.'/api/cfdestinationsets/');
+    $req->header('Content-Type' => 'application/json');
+    $req->content(JSON::to_json({
+        name => "cf_destination_set_".$t,
+        subscriber_id => $subscriber->{id},
+        destinations => \@destinations,
+    }));
+    $res = $ua->request($req);
+    is($res->code, 201, "POST another test cfdestinationset");
+    $cfdestinationset_uri = $uri.'/'.$res->header('Location');
+    $req = HTTP::Request->new('GET', $cfdestinationset_uri);
+    $res = $ua->request($req);
+    is($res->code, 200, "fetch POSTed test cfdestinationset");
+    $cfdestinationset = JSON::from_json($res->decoded_content);
+    
+    return $cfdestinationset;
+    
+}
+
+
+sub test_profilepreferences {
+    
+    my ($subscriberprofile) = @_;
+    $req = HTTP::Request->new('GET', $uri.'/api/profilepreferencedefs/');
+    $res = $ua->request($req);
+    is($res->code, 200, "fetch profilepreferencedefs");
+    my $profilepreferencedefs = JSON::from_json($res->decoded_content);
+
+    my $profilepreferences_uri = $uri.'/api/profilepreferences/'.$subscriberprofile->{id};
+    $req = HTTP::Request->new('PUT', $profilepreferences_uri); #$customer->{id});
+    $req->header('Content-Type' => 'application/json');
+    $req->header('Prefer' => 'return=representation');    
+    my $put_data = {};
+    foreach my $attr (keys %$profilepreferencedefs) {
+        my $def = $profilepreferencedefs->{$attr};
+        my $val = _get_preference_value($attr,$def);
+        if (defined $val) {
+            $put_data->{$attr} = $val;
+        }
+    }
+    $req->content(JSON::to_json($put_data));
+    $res = $ua->request($req);
+    is($res->code, 200, "PUT test profilepreferences");
+    $req = HTTP::Request->new('GET', $profilepreferences_uri); # . '?page=1&rows=' . (scalar keys %$put_data));
+    $res = $ua->request($req);
+    is($res->code, 200, "fetch PUT test profilepreferences");
+    my $profilepreferences = JSON::from_json($res->decoded_content);
+    
+    _test_item_journal_link('profilepreferences',$profilepreferences);
+    _test_journal_options_head('profilepreferences',$profilepreferences->{id});
+    my $journals = {};
+    my $journal = _test_journal_top_journalitem('profilepreferences',$profilepreferences->{id},$profilepreferences,'update',$journals);
+    _test_journal_options_head('profilepreferences',$profilepreferences->{id},$journal->{id});
+    
+    $req = HTTP::Request->new('PATCH', $profilepreferences_uri);
+    $req->header('Content-Type' => 'application/json-patch+json');
+    $req->header('Prefer' => 'return=representation');
+    my @patch_data = ();
+    foreach my $attr (keys %$profilepreferencedefs) {
+        my $def = $profilepreferencedefs->{$attr};
+        my $val = _get_preference_value($attr,$def);
+        if (defined $val) {
+            push(@patch_data,{ op => 'replace', path => '/'.$attr, value => $val });
+        }
+    }
+    $req->content(JSON::to_json(\@patch_data));
+    $res = $ua->request($req);
+    is($res->code, 200, "PATCH test profilepreferences");
+    $req = HTTP::Request->new('GET', $profilepreferences_uri);
+    $res = $ua->request($req);
+    is($res->code, 200, "fetch PATCHED test profilepreferences");
+    $profilepreferences = JSON::from_json($res->decoded_content);
+    
+    _test_item_journal_link('profilepreferences',$profilepreferences);    
+    $journal = _test_journal_top_journalitem('profilepreferences',$profilepreferences->{id},$profilepreferences,'update',$journals,$journal);
+    
+    _test_journal_collection('profilepreferences',$profilepreferences->{id},$journals);
+    
+    return $profilepreferences;
+    
+}
+
+
+sub test_subscriberprofile {
+    my ($t,$profileset) = @_;
+    
+    $req = HTTP::Request->new('GET', $uri.'/api/subscriberpreferencedefs/');
+    $res = $ua->request($req);
+    is($res->code, 200, "fetch profilepreferencedefs");
+    my $subscriberpreferencedefs = JSON::from_json($res->decoded_content);
+    
+    my @attributes = ();
+    foreach my $attr (keys %$subscriberpreferencedefs) {
+        push(@attributes,$attr);
+        #my $def = $profilepreferencedefs->{$attr};
+        #my $val = _get_preference_value($attr,$def);
+        #if (defined $val) {
+        #    push(@attributes,$attr);
+        #}
+    }
+    
+    $req = HTTP::Request->new('POST', $uri.'/api/subscriberprofiles/');
+    $req->header('Content-Type' => 'application/json');
+    $req->content(JSON::to_json({
+        name => "subscriber_profile_".($t-1),
+        profile_set_id => $profileset->{id},
+        attributes => \@attributes,
+    }));
+    $res = $ua->request($req);
+    is($res->code, 201, "POST test subscriberprofile");
+    my $subscriberprofile_uri = $uri.'/'.$res->header('Location');
+    $req = HTTP::Request->new('GET', $subscriberprofile_uri);
+    $res = $ua->request($req);
+    is($res->code, 200, "fetch POSTed test subscriberprofile");
+    my $subscriberprofile = JSON::from_json($res->decoded_content);
+    
+    _test_item_journal_link('subscriberprofiles',$subscriberprofile);
+    _test_journal_options_head('subscriberprofiles',$subscriberprofile->{id});
+    my $journals = {};
+    my $journal = _test_journal_top_journalitem('subscriberprofiles',$subscriberprofile->{id},$subscriberprofile,'create',$journals);
+    _test_journal_options_head('subscriberprofiles',$subscriberprofile->{id},$journal->{id});
+    
+    $req = HTTP::Request->new('PUT', $subscriberprofile_uri);
+    $req->header('Content-Type' => 'application/json');
+    $req->header('Prefer' => 'return=representation');
+    $req->content(JSON::to_json({
+        name => "subscriber_profile_".($t-1).'_put',
+        profile_set_id => $profileset->{id},
+        attributes => \@attributes,
+    }));
+    $res = $ua->request($req);
+    is($res->code, 200, "PUT test subscriberprofile");
+    $req = HTTP::Request->new('GET', $subscriberprofile_uri);
+    $res = $ua->request($req);
+    is($res->code, 200, "fetch PUT test subscriberprofile");
+    $subscriberprofile = JSON::from_json($res->decoded_content);
+    
+    _test_item_journal_link('subscriberprofiles',$subscriberprofile);    
+    $journal = _test_journal_top_journalitem('subscriberprofiles',$subscriberprofile->{id},$subscriberprofile,'update',$journals,$journal);
+    
+    $req = HTTP::Request->new('PATCH', $subscriberprofile_uri);
+    $req->header('Content-Type' => 'application/json-patch+json');
+    $req->header('Prefer' => 'return=representation');
+    $req->content(JSON::to_json(
+        [ { op => 'replace', path => '/name', value => "subscriber_profile_".($t-1).'_patch' } ]
+    ));
+    $res = $ua->request($req);
+    is($res->code, 200, "PATCH test subscriberprofile");
+    $req = HTTP::Request->new('GET', $subscriberprofile_uri);
+    $res = $ua->request($req);
+    is($res->code, 200, "fetch PATCHed test subscriberprofile");
+    $subscriberprofile = JSON::from_json($res->decoded_content);
+
+    _test_item_journal_link('subscriberprofiles',$subscriberprofile);    
+    $journal = _test_journal_top_journalitem('subscriberprofiles',$subscriberprofile->{id},$subscriberprofile,'update',$journals,$journal);
+    
+    $req = HTTP::Request->new('DELETE', $subscriberprofile_uri);
+    $res = $ua->request($req);
+    is($res->code, 204, "delete POSTed test subscriberprofile");
+    #$domain = JSON::from_json($res->decoded_content);
+    
+    $journal = _test_journal_top_journalitem('subscriberprofiles',$subscriberprofile->{id},$subscriberprofile,'delete',$journals,$journal);
+    
+    _test_journal_collection('subscriberprofiles',$subscriberprofile->{id},$journals);
+    
+    $req = HTTP::Request->new('POST', $uri.'/api/subscriberprofiles/');
+    $req->header('Content-Type' => 'application/json');
+    $req->content(JSON::to_json({
+        name => "subscriber_profile_".$t,
+        profile_set_id => $profileset->{id},
+        attributes => \@attributes,
+    }));
+    $res = $ua->request($req);
+    is($res->code, 201, "POST another test subscriberprofile");
+    $subscriberprofile_uri = $uri.'/'.$res->header('Location');
+    $req = HTTP::Request->new('GET', $subscriberprofile_uri);
+    $res = $ua->request($req);
+    is($res->code, 200, "fetch POSTed test subscriberprofile");
+    $subscriberprofile = JSON::from_json($res->decoded_content);
+    
+    return $subscriberprofile;
+    
+}
+
+
+
+sub test_subscriberprofileset {
+    my ($t,$reseller) = @_;
+    $req = HTTP::Request->new('POST', $uri.'/api/subscriberprofilesets/');
+    $req->header('Content-Type' => 'application/json');
+    $req->content(JSON::to_json({
+        name => "subscriber_profile_set_".($t-1),
+        reseller_id => $reseller->{id},
+    }));
+    $res = $ua->request($req);
+    is($res->code, 201, "POST test subscriberprofileset");
+    my $subscriberprofileset_uri = $uri.'/'.$res->header('Location');
+    $req = HTTP::Request->new('GET', $subscriberprofileset_uri);
+    $res = $ua->request($req);
+    is($res->code, 200, "fetch POSTed test subscriberprofileset");
+    my $subscriberprofileset = JSON::from_json($res->decoded_content);
+    
+    _test_item_journal_link('subscriberprofilesets',$subscriberprofileset);
+    _test_journal_options_head('subscriberprofilesets',$subscriberprofileset->{id});
+    my $journals = {};
+    my $journal = _test_journal_top_journalitem('subscriberprofilesets',$subscriberprofileset->{id},$subscriberprofileset,'create',$journals);
+    _test_journal_options_head('subscriberprofilesets',$subscriberprofileset->{id},$journal->{id});
+    
+    $req = HTTP::Request->new('PUT', $subscriberprofileset_uri);
+    $req->header('Content-Type' => 'application/json');
+    $req->header('Prefer' => 'return=representation');
+    $req->content(JSON::to_json({
+        name => "subscriber_profile_set_".($t-1).'_put',
+        reseller_id => $reseller->{id},
+    }));
+    $res = $ua->request($req);
+    is($res->code, 200, "PUT test subscriberprofileset");
+    $req = HTTP::Request->new('GET', $subscriberprofileset_uri);
+    $res = $ua->request($req);
+    is($res->code, 200, "fetch PUT test subscriberprofileset");
+    $subscriberprofileset = JSON::from_json($res->decoded_content);
+    
+    _test_item_journal_link('subscriberprofilesets',$subscriberprofileset);    
+    $journal = _test_journal_top_journalitem('subscriberprofilesets',$subscriberprofileset->{id},$subscriberprofileset,'update',$journals,$journal);
+    
+    $req = HTTP::Request->new('PATCH', $subscriberprofileset_uri);
+    $req->header('Content-Type' => 'application/json-patch+json');
+    $req->header('Prefer' => 'return=representation');
+    $req->content(JSON::to_json(
+        [ { op => 'replace', path => '/name', value => "subscriber_profile_set_".($t-1).'_patch' } ]
+    ));
+    $res = $ua->request($req);
+    is($res->code, 200, "PATCH test subscriberprofileset");
+    $req = HTTP::Request->new('GET', $subscriberprofileset_uri);
+    $res = $ua->request($req);
+    is($res->code, 200, "fetch PATCHed test subscriberprofileset");
+    $subscriberprofileset = JSON::from_json($res->decoded_content);
+
+    _test_item_journal_link('subscriberprofilesets',$subscriberprofileset);    
+    $journal = _test_journal_top_journalitem('subscriberprofilesets',$subscriberprofileset->{id},$subscriberprofileset,'update',$journals,$journal);
+    
+    $req = HTTP::Request->new('DELETE', $subscriberprofileset_uri);
+    $res = $ua->request($req);
+    is($res->code, 204, "delete POSTed test subscriberprofileset");
+    #$domain = JSON::from_json($res->decoded_content);
+    
+    $journal = _test_journal_top_journalitem('subscriberprofilesets',$subscriberprofileset->{id},$subscriberprofileset,'delete',$journals,$journal);
+    
+    _test_journal_collection('subscriberprofilesets',$subscriberprofileset->{id},$journals);
+    
+    $req = HTTP::Request->new('POST', $uri.'/api/subscriberprofilesets/');
+    $req->header('Content-Type' => 'application/json');
+    $req->content(JSON::to_json({
+        name => "subscriber_profile_set_".$t,
+        reseller_id => $reseller->{id},
+    }));
+    $res = $ua->request($req);
+    is($res->code, 201, "POST another test subscriberprofileset");
+    $subscriberprofileset_uri = $uri.'/'.$res->header('Location');
+    $req = HTTP::Request->new('GET', $subscriberprofileset_uri);
+    $res = $ua->request($req);
+    is($res->code, 200, "fetch POSTed test subscriberprofileset");
+    $subscriberprofileset = JSON::from_json($res->decoded_content);
+    
+    return $subscriberprofileset;
+    
+}
+
+
+
+
+
+
+
+sub test_soundset {
+    my ($t,$reseller,$customer) = @_;
+    my $test_label = (defined $customer ? '' : 'system ') . "soundset";
+    $req = HTTP::Request->new('POST', $uri.'/api/soundsets/');
+    $req->header('Content-Type' => 'application/json');
+    $req->content(JSON::to_json({
+        name => $test_label."_".($t-1),
+        reseller_id => $reseller->{id},
+        (defined $customer ? (customer_id => $customer->{id}) : ()), #contract_id is overwritten
+    }));
+    $res = $ua->request($req);
+    is($res->code, 201, "POST test " . $test_label);
+    my $soundset_uri = $uri.'/'.$res->header('Location');
+    $req = HTTP::Request->new('GET', $soundset_uri);
+    $res = $ua->request($req);
+    is($res->code, 200, "fetch POSTed test " . $test_label);
+    my $soundset = JSON::from_json($res->decoded_content);
+    
+    _test_item_journal_link('soundsets',$soundset);
+    _test_journal_options_head('soundsets',$soundset->{id});
+    my $journals = {};
+    my $journal = _test_journal_top_journalitem('soundsets',$soundset->{id},$soundset,'create',$journals);
+    _test_journal_options_head('soundsets',$soundset->{id},$journal->{id});
+    
+    $req = HTTP::Request->new('PUT', $soundset_uri);
+    $req->header('Content-Type' => 'application/json');
+    $req->header('Prefer' => 'return=representation');
+    $req->content(JSON::to_json({
+        name => $test_label."_".($t-1).'_put',
+        reseller_id => $reseller->{id},
+        #description => 'put'
+        (defined $customer ? (customer_id => $customer->{id}) : ()),
+    }));
+    $res = $ua->request($req);
+    is($res->code, 200, "PUT test " . $test_label);
+    $req = HTTP::Request->new('GET', $soundset_uri);
+    $res = $ua->request($req);
+    is($res->code, 200, "fetch PUT test " . $test_label);
+    $soundset = JSON::from_json($res->decoded_content);
+    
+    _test_item_journal_link('soundsets',$soundset);    
+    $journal = _test_journal_top_journalitem('soundsets',$soundset->{id},$soundset,'update',$journals,$journal);
+    
+    $req = HTTP::Request->new('PATCH', $soundset_uri);
+    $req->header('Content-Type' => 'application/json-patch+json');
+    $req->header('Prefer' => 'return=representation');
+    $req->content(JSON::to_json(
+        [ { op => 'replace', path => '/name', value => $test_label."_".($t-1)."_patch" } ]
+    ));
+    $res = $ua->request($req);
+    is($res->code, 200, "PATCH test " . $test_label);
+    $req = HTTP::Request->new('GET', $soundset_uri);
+    $res = $ua->request($req);
+    is($res->code, 200, "fetch PATCHed test " . $test_label);
+    $soundset = JSON::from_json($res->decoded_content);
+
+    _test_item_journal_link('soundsets',$soundset);    
+    $journal = _test_journal_top_journalitem('soundsets',$soundset->{id},$soundset,'update',$journals,$journal);
+    
+    $req = HTTP::Request->new('DELETE', $soundset_uri);
+    $res = $ua->request($req);
+    is($res->code, 204, "delete POSTed test " . $test_label);
+    #$domain = JSON::from_json($res->decoded_content);
+    
+    $journal = _test_journal_top_journalitem('soundsets',$soundset->{id},$soundset,'delete',$journals,$journal);
+    
+    _test_journal_collection('soundsets',$soundset->{id},$journals);
+    
+    $req = HTTP::Request->new('POST', $uri.'/api/soundsets/');
+    $req->header('Content-Type' => 'application/json');
+    $req->content(JSON::to_json({
+        name => $test_label."_".$t,
+        reseller_id => $reseller->{id},
+        (defined $customer ? (customer_id => $customer->{id}) : ()),
+    }));
+    $res = $ua->request($req);
+    is($res->code, 201, "POST another test " . $test_label);
+    $soundset_uri = $uri.'/'.$res->header('Location');
+    $req = HTTP::Request->new('GET', $soundset_uri);
+    $res = $ua->request($req);
+    is($res->code, 200, "fetch POSTed test " . $test_label);
+    $soundset = JSON::from_json($res->decoded_content);
+    
+    return $soundset;
+    
+}
+
+sub test_subscriberpreferences {
+    
+    my ($subscriber,$soundset,$contract_soundset) = @_;
+    $req = HTTP::Request->new('GET', $uri.'/api/subscriberpreferencedefs/');
+    $res = $ua->request($req);
+    is($res->code, 200, "fetch subscriberpreferencedefs");
+    my $subscriberpreferencedefs = JSON::from_json($res->decoded_content);
+
+    my $subscriberpreferences_uri = $uri.'/api/subscriberpreferences/'.$subscriber->{id};
+    $req = HTTP::Request->new('PUT', $subscriberpreferences_uri); #$customer->{id});
+    $req->header('Content-Type' => 'application/json');
+    $req->header('Prefer' => 'return=representation');    
+    my $put_data = {};
+    foreach my $attr (keys %$subscriberpreferencedefs) {
+        my $def = $subscriberpreferencedefs->{$attr};
+        my $val = _get_preference_value($attr,$def,$soundset,$contract_soundset);
+        if (defined $val) {
+            $put_data->{$attr} = $val;
+        }
+    }
+    $req->content(JSON::to_json($put_data));
+    $res = $ua->request($req);
+    is($res->code, 200, "PUT test subscriberpreferences");
+    $req = HTTP::Request->new('GET', $subscriberpreferences_uri); # . '?page=1&rows=' . (scalar keys %$put_data));
+    $res = $ua->request($req);
+    is($res->code, 200, "fetch PUT test subscriberpreferences");
+    my $subscriberpreferences = JSON::from_json($res->decoded_content);
+    
+    _test_item_journal_link('subscriberpreferences',$subscriberpreferences);
+    _test_journal_options_head('subscriberpreferences',$subscriberpreferences->{id});
+    my $journals = {};
+    my $journal = _test_journal_top_journalitem('subscriberpreferences',$subscriberpreferences->{id},$subscriberpreferences,'update',$journals);
+    _test_journal_options_head('subscriberpreferences',$subscriberpreferences->{id},$journal->{id});
+    
+    $req = HTTP::Request->new('PATCH', $subscriberpreferences_uri);
+    $req->header('Content-Type' => 'application/json-patch+json');
+    $req->header('Prefer' => 'return=representation');
+    my @patch_data = ();
+    foreach my $attr (keys %$subscriberpreferencedefs) {
+        my $def = $subscriberpreferencedefs->{$attr};
+        my $val = _get_preference_value($attr,$def,$soundset,$contract_soundset);
+        if (defined $val) {
+            push(@patch_data,{ op => 'replace', path => '/'.$attr, value => $val });
+        }
+    }
+    $req->content(JSON::to_json(\@patch_data));
+    $res = $ua->request($req);
+    is($res->code, 200, "PATCH test subscriberpreferences");
+    $req = HTTP::Request->new('GET', $subscriberpreferences_uri);
+    $res = $ua->request($req);
+    is($res->code, 200, "fetch PATCHED test subscriberpreferences");
+    $subscriberpreferences = JSON::from_json($res->decoded_content);
+    
+    _test_item_journal_link('subscriberpreferences',$subscriberpreferences);    
+    $journal = _test_journal_top_journalitem('subscriberpreferences',$subscriberpreferences->{id},$subscriberpreferences,'update',$journals,$journal);
+    
+    _test_journal_collection('subscriberpreferences',$subscriberpreferences->{id},$journals);
+    
+    return $subscriberpreferences;
+    
+}
+
+sub test_customerpreferences {
+    
+    my ($customer) = @_;
+    $req = HTTP::Request->new('GET', $uri.'/api/customerpreferencedefs/');
+    $res = $ua->request($req);
+    is($res->code, 200, "fetch customerpreferencedefs");
+    my $customerpreferencedefs = JSON::from_json($res->decoded_content);
+
+    my $customerpreferences_uri = $uri.'/api/customerpreferences/'.$customer->{id};
+    $req = HTTP::Request->new('PUT', $customerpreferences_uri); #$customer->{id});
+    $req->header('Content-Type' => 'application/json');
+    $req->header('Prefer' => 'return=representation');    
+    my $put_data = {};
+    foreach my $attr (keys %$customerpreferencedefs) {
+        my $def = $customerpreferencedefs->{$attr};
+        my $val = _get_preference_value($attr,$def);
+        if (defined $val) {
+            $put_data->{$attr} = $val;
+        }
+    }
+    $req->content(JSON::to_json($put_data));
+    $res = $ua->request($req);
+    is($res->code, 200, "PUT test customerpreferences");
+    $req = HTTP::Request->new('GET', $customerpreferences_uri); # . '?page=1&rows=' . (scalar keys %$put_data));
+    $res = $ua->request($req);
+    is($res->code, 200, "fetch PUT test customerpreferences");
+    my $customerpreferences = JSON::from_json($res->decoded_content);
+    
+    _test_item_journal_link('customerpreferences',$customerpreferences);
+    _test_journal_options_head('customerpreferences',$customerpreferences->{id});
+    my $journals = {};
+    my $journal = _test_journal_top_journalitem('customerpreferences',$customerpreferences->{id},$customerpreferences,'update',$journals);
+    _test_journal_options_head('customerpreferences',$customerpreferences->{id},$journal->{id});
+    
+    $req = HTTP::Request->new('PATCH', $customerpreferences_uri);
+    $req->header('Content-Type' => 'application/json-patch+json');
+    $req->header('Prefer' => 'return=representation');
+    my @patch_data = ();
+    foreach my $attr (keys %$customerpreferencedefs) {
+        my $def = $customerpreferencedefs->{$attr};
+        my $val = _get_preference_value($attr,$def);
+        if (defined $val) {
+            push(@patch_data,{ op => 'replace', path => '/'.$attr, value => $val });
+        }
+    }
+    $req->content(JSON::to_json(\@patch_data));
+    $res = $ua->request($req);
+    is($res->code, 200, "PATCH test customerpreferences");
+    $req = HTTP::Request->new('GET', $customerpreferences_uri);
+    $res = $ua->request($req);
+    is($res->code, 200, "fetch PATCHED test customerpreferences");
+    $customerpreferences = JSON::from_json($res->decoded_content);
+    
+    _test_item_journal_link('customerpreferences',$customerpreferences);    
+    $journal = _test_journal_top_journalitem('customerpreferences',$customerpreferences->{id},$customerpreferences,'update',$journals,$journal);
+    
+    _test_journal_collection('customerpreferences',$customerpreferences->{id},$journals);
+    
+    return $customerpreferences;
+    
+}
 
 sub test_billingprofile {
     my ($t,$reseller_id) = @_;
@@ -743,34 +1299,37 @@ sub _test_journal_top_journalitem {
         }
         $req = HTTP::Request->new('GET',$url);
         $res = $ua->request($req);
-        is($res->code, 200, "check recent '$op' journalitem request");
-        my $journal = JSON::from_json($res->decoded_content);
-        ok(exists $journal->{id}, "check existence of id");
-        ok(exists $journal->{operation}, "check existence of operation");
-        ok(exists $journal->{username}, "check existence of username");
-        ok(exists $journal->{timestamp}, "check existence of timestamp");
-        ok(exists $journal->{content}, "check existence of content");
+        if (is($res->code, 200, "check recent '$op' journalitem request")) {
+            my $journal = JSON::from_json($res->decoded_content);
+            ok(exists $journal->{id}, "check existence of id");
+            ok(exists $journal->{operation}, "check existence of operation");
+            ok($journal->{operation} eq $op, "check expected journal operation");
+            ok(exists $journal->{username}, "check existence of username");
+            ok(exists $journal->{timestamp}, "check existence of timestamp");
+            ok(exists $journal->{content}, "check existence of content");
+            
+            ok(exists $journal->{_links}, "check existence of _links");
+            #ok(exists $journal->{_embedded}, "check existence of _embedded");
+            ok($journal->{_links}->{self}, "check existence of self link");
+            ok($journal->{_links}->{collection}, "check existence of collection link");
+            ok($journal->{_links}->{'ngcp:'.$resource}, "check existence of ngcp:$resource link");
+            ok($journal->{_links}->{'ngcp:'.$resource}->{href} eq '/api/'.$resource . '/' . $item_id, "check if ngcp:$resource link equals '/api/$resource/$item_id'");
         
-        ok(exists $journal->{_links}, "check existence of _links");
-        #ok(exists $journal->{_embedded}, "check existence of _embedded");
-        ok($journal->{_links}->{self}, "check existence of self link");
-        ok($journal->{_links}->{collection}, "check existence of collection link");
-        ok($journal->{_links}->{'ngcp:'.$resource}, "check existence of ngcp:$resource link");
-        ok($journal->{_links}->{'ngcp:'.$resource}->{href} eq '/api/'.$resource . '/' . $item_id, "check if ngcp:$resource link equals '/api/$resource/$item_id'");
-    
-        if (defined $old_journal) {
-            ok($journal->{timestamp} ge $old_journal->{timestamp},"check incremented timestamp");
-        }        
-        if (defined $content) {
-            my $original = Storable::dclone($content);
-            delete $original->{_links};
-            #delete $original->{_embedded};
-            is_deeply($journal->{content}, $original, "check resource '/api/$resource/$item_id' content deeply");
+            if (defined $old_journal) {
+                ok($journal->{timestamp} ge $old_journal->{timestamp},"check incremented timestamp");
+                ok($journal->{id} > $old_journal->{id},"check incremented journal item id");
+            }        
+            if (defined $content) {
+                my $original = Storable::dclone($content);
+                delete $original->{_links};
+                #delete $original->{_embedded};
+                is_deeply($journal->{content}, $original, "check resource '/api/$resource/$item_id' content deeply");
+            }
+            if (defined $journals) {
+                $journals->{$journal->{_links}->{self}->{href}} = $journal;
+            }
+            return $journal;
         }
-        if (defined $journals) {
-            $journals->{$journal->{_links}->{self}->{href}} = $journal;
-        }
-        return $journal;
     }
     return undef;
 }
@@ -870,9 +1429,36 @@ sub _is_journal_resource_enabled {
     my ($resource) = @_;   
     my $cfg = NGCP::Panel::Utils::Journal::get_journal_resource_config(\%config,$resource);
     if (not $cfg->{journal_resource_enabled}) {
-        diag("'api/$resource' journal disabled, skipping tests");
+        diag("'api/$resource' journal resource disabled, skipping tests");
     }
     return ($enable_journal_tests && $cfg->{journal_resource_enabled});
+}
+
+sub _get_preference_value {
+    my ($attr,$def,$soundset,$contract_soundset) = @_;
+     if (exists $def->{data_type} and not $def->{read_only} and $def->{max_occur} > 0) {
+        my $val_code = undef;
+        if ($attr eq 'sound_set') {
+            $val_code = sub { return $soundset->{name}; };
+        } elsif ($attr eq 'contract_sound_set') {
+            $val_code = sub { return $contract_soundset->{name}; };            
+        } else {
+            if ($def->{data_type} eq 'int') {
+                $val_code = sub { return 1; };
+            } elsif ($def->{data_type} eq 'string') {
+                $val_code = sub { return 'test'; };
+            }
+        }
+        if (defined $val_code) {
+            if ($def->{max_occur} > 1) {
+                my @ary = map { &$_(); } (($val_code) x $def->{max_occur});
+                return \@ary;
+            } else {
+                return &$val_code;   
+            }
+        }
+    }
+    return undef;
 }
 
 # vim: set tabstop=4 expandtab:

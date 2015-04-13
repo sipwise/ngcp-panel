@@ -56,6 +56,7 @@ sub hal_from_item {
             Data::HAL::Link->new(relation => 'ngcp:resellers', href => sprintf("/api/resellers/%d", $item->reseller_id)),
             $item->contract_id ? Data::HAL::Link->new(relation => 'ngcp:customers', href => sprintf("/api/customers/%d", $item->contract_id)) : (),
             Data::HAL::Link->new(relation => 'ngcp:soundfiles', href => sprintf("/api/soundfiles/?set_id=%d", $item->id)),
+            $self->get_journal_relation_link($item->id),
         ],
         relation => 'ngcp:'.$self->resource_name,
     );

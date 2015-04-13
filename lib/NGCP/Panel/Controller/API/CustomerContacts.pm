@@ -194,7 +194,7 @@ sub POST :Allow {
             last;
         }
         
-        last unless $self->add_delete_journal_item_hal($c,sub {
+        last unless $self->add_create_journal_item_hal($c,sub {
                 my $self = shift;
                 my ($c) = @_;
                 my $_contact = $self->contact_by_id($c, $contact->id);

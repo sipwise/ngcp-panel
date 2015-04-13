@@ -211,6 +211,7 @@ sub POST :Allow {
                 });
             for my $d ( @{$resource->{destinations}} ) {
                 delete $d->{destination_set_id};
+                delete $d->{simple_destination};
                 $d->{destination} = NGCP::Panel::Utils::Subscriber::field_to_destination(
                         destination => $d->{destination},
                         number => $number,
@@ -225,6 +226,12 @@ sub POST :Allow {
             last;
         }
 
+        last unless $self->add_create_journal_item_hal($c,sub {
+            my $self = shift;
+            my ($c) = @_;
+            my $_dset = $self->item_by_id($c, $dset->id);
+            return $self->hal_from_item($c, $_dset, "cfdestinationsets"); });
+        
         $guard->commit;
 
         $c->response->status(HTTP_CREATED);
