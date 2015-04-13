@@ -495,23 +495,23 @@ sub create_preference_form {
         } elsif ($c->stash->{preference_meta}->max_occur != 1) {
             if($c->stash->{subscriber} && 
                ($c->stash->{preference_meta}->attribute eq "block_in_list" || $c->stash->{preference_meta}->attribute eq "block_out_list")) {
-                my $v = $form->params->{$c->stash->{preference_meta}->attribute};
+                my $v = $form->values->{$c->stash->{preference_meta}->attribute};
 
                 if($c->user->roles eq "subscriberadmin" || $c->user->roles eq "subscriber") {
                     $v =~ s/^(.+?)([*\[].*$)/$1/; # strip any trailing shell pattern stuff
                     my $suffix = $2 // "";
-                    $form->params->{$c->stash->{preference_meta}->attribute} = NGCP::Panel::Utils::Subscriber::apply_rewrite(
+                    $form->values->{$c->stash->{preference_meta}->attribute} = NGCP::Panel::Utils::Subscriber::apply_rewrite(
                         c => $c, subscriber => $c->stash->{subscriber}, number => $v, direction => 'callee_in'
                     );
 
                     # rewrite it back for immediate display
-                    $v = $form->params->{$c->stash->{preference_meta}->attribute};
+                    $v = $form->values->{$c->stash->{preference_meta}->attribute};
                     $v = NGCP::Panel::Utils::Subscriber::apply_rewrite(
                         c => $c, subscriber => $c->stash->{subscriber}, number => $v, direction => 'caller_out'
                     );
 
                     # restore stripped shell pattern stuff
-                    $form->params->{$c->stash->{preference_meta}->attribute} .= $suffix;
+                    $form->values->{$c->stash->{preference_meta}->attribute} .= $suffix;
                     $v .= $suffix;
 
                 }
@@ -520,7 +520,7 @@ sub create_preference_form {
             try {
                 $pref_rs->create({
                     attribute_id => $c->stash->{preference_meta}->id,
-                    value => $form->params->{$c->stash->{preference_meta}->attribute},
+                    value => $form->values->{$c->stash->{preference_meta}->attribute},
                 });
                 NGCP::Panel::Utils::Message->info(
                     c => $c,

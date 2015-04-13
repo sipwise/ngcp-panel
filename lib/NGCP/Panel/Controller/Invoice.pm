@@ -156,7 +156,7 @@ sub create :Chained('inv_list') :PathPart('create') :Args() :Does(ACL) :ACLDetac
         try {
             my $schema = $c->model('DB');
             $schema->txn_do(sub {
-                my $contract_id = $form->params->{contract}{id};
+                my $contract_id = $form->values->{contract}{id};
                 my $customer_rs = NGCP::Panel::Utils::Contract::get_customer_rs(c => $c);
                 my $customer = $customer_rs->find({ 'me.id' => $contract_id });
                 unless($customer) {
@@ -167,11 +167,11 @@ sub create :Chained('inv_list') :PathPart('create') :Args() :Does(ACL) :ACLDetac
                     );
                     die;
                 }
-                delete $form->params->{contract};
-                $form->params->{contract_id} = $contract_id;
+                delete $form->values->{contract};
+                $form->values->{contract_id} = $contract_id;
 
-                my $tmpl_id = $form->params->{template}{id};
-                delete $form->params->{template};
+                my $tmpl_id = $form->values->{template}{id};
+                delete $form->values->{template};
 
                 my $tmpl = $schema->resultset('invoice_templates')->search({
                     id => $tmpl_id,
@@ -210,7 +210,7 @@ sub create :Chained('inv_list') :PathPart('create') :Args() :Does(ACL) :ACLDetac
                 }
 
                 my $stime = NGCP::Panel::Utils::DateTime::from_string(
-                    delete $form->params->{period}
+                    delete $form->values->{period}
                 )->truncate(to => 'month');
                 my $etime = $stime->clone->add(months => 1)->subtract(seconds => 1);
 
@@ -262,18 +262,18 @@ sub create :Chained('inv_list') :PathPart('create') :Args() :Does(ACL) :ACLDetac
                     billing_profile   => {$billing_profile->get_inflated_columns},
                     contract_balance  => {$balance->get_inflated_columns},
                 );
-                @{$form->params}{qw/amount_net amount_vat amount_total/} = @$invoice_amounts{qw/amount_net amount_vat amount_total/};
+                @{$form->values}{qw/amount_net amount_vat amount_total/} = @$invoice_amounts{qw/amount_net amount_vat amount_total/};
 
                 # generate tmp serial here, derive one from after insert
-                $form->params->{serial} = "tmp".time.int(rand(99999));
-                $form->params->{data} = undef;
+                $form->values->{serial} = "tmp".time.int(rand(99999));
+                $form->values->{data} = undef;
                 
                 #maybe inflation should be applied? Generation failed here, although the latest schema applied.
-                $form->params->{period_start} = $stime->ymd.' '. $stime->hms;
-                $form->params->{period_end} = $etime->ymd.' '. $etime->hms;
+                $form->values->{period_start} = $stime->ymd.' '. $stime->hms;
+                $form->values->{period_end} = $etime->ymd.' '. $etime->hms;
                 my $invoice;
                 try {
-                    $invoice = $schema->resultset('invoices')->create($form->params);
+                    $invoice = $schema->resultset('invoices')->create($form->values);
                 } catch($e) {
                     NGCP::Panel::Utils::Message->error(
                         c => $c,
@@ -312,9 +312,9 @@ sub create :Chained('inv_list') :PathPart('create') :Args() :Does(ACL) :ACLDetac
                     period_start => $stime,
                     period_end => $etime,
                     serial => $serial,
-                    amount_net => $form->params->{amount_net},
-                    amount_vat => $form->params->{amount_vat},
-                    amount_total => $form->params->{amount_total},
+                    amount_net => $form->values->{amount_net},
+                    amount_vat => $form->values->{amount_vat},
+                    amount_total => $form->values->{amount_total},
                 };
                 $vars->{calls} = $calllist,
                 $vars->{zones} = {
