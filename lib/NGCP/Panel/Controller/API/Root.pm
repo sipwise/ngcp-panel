@@ -14,6 +14,8 @@ require Catalyst::ActionRole::CheckTrailingSlash;
 require Catalyst::ActionRole::HTTPMethods;
 require Catalyst::ActionRole::RequireSSL;
 
+use NGCP::Panel::Utils::Journal qw();
+
 with 'NGCP::Panel::Role::API';
 
 class_has('dispatch_path', is => 'ro', default => '/api/');
@@ -79,7 +81,9 @@ sub GET : Allow {
         } else {
             $actions = [ keys %{ $full_mod->config->{action} } ];
         }
+        my $uri = "/api/$rel/";
         my $item_actions = [];
+        my $journal_resource_config = {};
         if($full_item_mod->can('config')) {
             if($c->user->read_only) {
                 foreach my $m(keys %{ $full_item_mod->config->{action} }) {
@@ -87,7 +91,50 @@ sub GET : Allow {
                     push @{ $item_actions }, $m;
                 }
             } else {
-                $item_actions = [ keys %{ $full_item_mod->config->{action} } ];
+                foreach my $m(keys %{ $full_item_mod->config->{action} }) {
+                    next unless $m =~ /^(GET|HEAD|OPTIONS|PUT|PATCH|DELETE)$/;
+                    push @{ $item_actions }, $m;
+                }
+            }
+            if($full_item_mod->can('resource_name')) {
+                my @operations = ();
+                my $op_config = {};
+                my $resource_name = $full_item_mod->resource_name;
+                $journal_resource_config = NGCP::Panel::Utils::Journal::get_journal_resource_config($c->config,$resource_name);
+                if (exists $full_mod->config->{action}->{POST}) {
+                    $op_config = NGCP::Panel::Utils::Journal::get_api_journal_op_config($c->config,$resource_name,NGCP::Panel::Utils::Journal::CREATE_JOURNAL_OP);
+                    if ($op_config->{operation_enabled}) {
+                        push(@operations,"create (<span>POST $uri</span>)");
+                    }
+                }
+                my $item_action_config = $full_item_mod->config->{action};
+                if (exists $item_action_config->{PUT} || exists $item_action_config->{PATCH}) {
+                    $op_config = NGCP::Panel::Utils::Journal::get_api_journal_op_config($c->config,$resource_name,NGCP::Panel::Utils::Journal::UPDATE_JOURNAL_OP);
+                    if ($op_config->{operation_enabled}) {
+                        if (exists $item_action_config->{PUT} && exists $item_action_config->{PATCH}) {
+                            push(@operations,"update (<span>PUT/PATCH $uri"."id</span>)");
+                        } elsif (exists $item_action_config->{PUT}) {
+                            push(@operations,"update (<span>PUT $uri"."id</span>)");
+                        } elsif (exists $item_action_config->{PATCH}) {
+                            push(@operations,"update (<span>PATCH $uri"."id</span>)");
+                        }
+                    }
+                }
+                if (exists $item_action_config->{DELETE}) {
+                    $op_config = NGCP::Panel::Utils::Journal::get_api_journal_op_config($c->config,$resource_name,NGCP::Panel::Utils::Journal::CREATE_JOURNAL_OP);
+                    if ($op_config->{operation_enabled}) {
+                        push(@operations,"delete (<span>DELETE $uri"."id</span>)");
+                    }
+                }
+                $journal_resource_config->{operations} = \@operations;
+                $journal_resource_config->{format} = $op_config->{format};
+                $journal_resource_config->{uri} = 'api/' . $resource_name . '/id/' . NGCP::Panel::Utils::Journal::API_JOURNAL_RESOURCE_NAME . '/';
+                $journal_resource_config->{query_params} = ($full_item_mod->can('journal_query_params') ? $full_item_mod->journal_query_params : []);
+                $journal_resource_config->{sorting_cols} = NGCP::Panel::Utils::Journal::JOURNAL_FIELDS;
+                $journal_resource_config->{item_uri} = $journal_resource_config->{uri} . 'journalitemid';
+                if (length(NGCP::Panel::Utils::Journal::API_JOURNALITEMTOP_RESOURCE_NAME) > 0) {
+                    $journal_resource_config->{recent_uri} = $journal_resource_config->{uri} . NGCP::Panel::Utils::Journal::API_JOURNALITEMTOP_RESOURCE_NAME;
+                }
             }
         }
 
@@ -110,12 +157,13 @@ sub GET : Allow {
             actions => $actions,
             item_actions => $item_actions,
             sorting_cols => $sorting_cols,
-            uri => "/api/$rel/",
+            uri => $uri,
             sample => $full_mod->can('documentation_sample') # generate pretty json, but without outer brackets (this is tricky though)
                 ? to_json($full_mod->documentation_sample, {pretty => 1}) =~ s/(^\s*{\s*)|(\s*}\s*$)//rg =~ s/\n   /\n/rg
                 : undef,
+            journal_resource_config => $journal_resource_config,
         };
-
+        
     }
 
     $c->stash(template => 'api/root.tt');

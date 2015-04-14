@@ -418,4 +418,31 @@ Preference-Applied: return=minimal';
 [% END -%]
 
 </div>
+
+[% IF col.journal_resource_config.journal_resource_enabled -%]
+<h[% level + 1 %]>Journal</h[% level + 1%]>
+A collection showing the history of modifications to a particular [% title %] collection item can be accessed using <span>OPTIONS/GET/HEAD [% col.journal_resource_config.uri %]</span>. By configuration, CRUD operations below will be recorded:
+[% UNLESS col.journal_resource_config.operations.size -%]
+<br/>None.
+[% ELSE -%]
+<ul id="[% id %]-journal_operations">
+    [% FOR o IN col.journal_resource_config.operations -%]
+    <li>[% o %]</li>
+    [% END -%]
+</ul>
+[% END -%]
+Query parameters:
+<ul id="[% id %]-journal_qparams">
+[% FOREACH f IN col.journal_resource_config.query_params -%]
+    <li><b>[% f.param %]</b>: [% f.description %]</li>
+[% END -%]
+    <li><b>order_by</b>: Order collection by a specific attribute. Possible values are: <i>[% col.journal_resource_config.sorting_cols.join(', ') %]</i></li>
+    <li><b>order_by_direction</b>: Direction which the collection should be ordered by. Possible values are: <i>asc (default), desc</i></li>
+</ul>
+The item's state after a completed operation is serialized and stored in [% col.journal_resource_config.format -%] format. It can be retrieved by requesting the corresponding journal record with <span>OPTIONS/GET/HEAD [% col.journal_resource_config.item_uri %]</span>.
+[% IF col.journal_resource_config.recent_uri -%]
+The most recent journal record is directly accessible using <span>OPTIONS/GET/HEAD [% col.journal_resource_config.recent_uri %]</span>.
+[% END -%]
+[% END -%]
+
 [% # vim: set tabstop=4 syntax=html expandtab: -%]

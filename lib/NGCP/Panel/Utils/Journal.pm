@@ -40,6 +40,8 @@ use constant CONTENT_DEFAULT_FORMAT => CONTENT_JSON_FORMAT;
 use constant API_JOURNAL_RELATION => 'ngcp:'.API_JOURNAL_RESOURCE_NAME;
 #use constant API_JOURNALITEM_RELATION => 'ngcp:journalitem';
 
+use constant JOURNAL_FIELDS => ['id', 'operation', 'resource_name', 'resource_id', 'timestamp', 'username'];
+
 sub add_journal_item_hal {
     my ($controller,$c,$operation,@args) = @_;
     my $cfg = _get_api_journal_op_config($c,$controller->resource_name,$operation);
@@ -357,7 +359,7 @@ sub get_journal_rs {
             'resource_name' => $controller->resource_name,
             'resource_id' => $resource_id,
         },($all_columns ? undef : {
-            columns => [qw(id operation resource_name resource_id timestamp username)],
+            columns => JOURNAL_FIELDS,
             #alias => 'me',
         }));
         

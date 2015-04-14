@@ -22,8 +22,8 @@ for my $path(qw#/etc/ngcp-panel/ngcp_panel.conf etc/ngcp_panel.conf ngcp_panel.c
     }
 }
 $panel_config //= 'ngcp_panel.conf';
-#my $catalyst_config = Config::General->new("../ngcp_panel.conf");
-my $catalyst_config = Config::General->new($panel_config);
+my $catalyst_config = Config::General->new("../ngcp_panel.conf");
+#my $catalyst_config = Config::General->new($panel_config);
 my %config = $catalyst_config->getall();
 my $enable_journal_tests = 1;
 
@@ -38,17 +38,17 @@ my $ssl_ca_cert = $ENV{API_SSL_CA_CERT} || "/etc/ngcp-panel/api_ssl/api_ca.crt";
 my ($ua, $req, $res);
 $ua = LWP::UserAgent->new;
 
-$ua->ssl_opts(
-    SSL_cert_file => $valid_ssl_client_cert,
-    SSL_key_file  => $valid_ssl_client_key,
-    SSL_ca_file   => $ssl_ca_cert,
-);
-
 #$ua->ssl_opts(
-#    verify_hostname => 0,
+#    SSL_cert_file => $valid_ssl_client_cert,
+#    SSL_key_file  => $valid_ssl_client_key,
+#    SSL_ca_file   => $ssl_ca_cert,
 #);
-#$ua->credentials("127.0.0.1:4443", "api_admin_http", 'administrator', 'administrator');
-##$ua->timeout(500); #useless, need to change the nginx timeout
+
+$ua->ssl_opts(
+    verify_hostname => 0,
+);
+$ua->credentials("127.0.0.1:4443", "api_admin_http", 'administrator', 'administrator');
+#$ua->timeout(500); #useless, need to change the nginx timeout
 
 my $t = time;
 my $default_reseller_id = 1;
@@ -62,16 +62,16 @@ my $customercontact = test_customercontact($t,$reseller);
 my $customer = test_customer($customercontact,$billingprofile);
 my $customerpreferences = test_customerpreferences($customer);
 
-my $subscriberprofileset = test_subscriberprofileset($t,$reseller);
-my $subscriberprofile = test_subscriberprofile($t,$subscriberprofileset);
-my $profilepreferences = test_profilepreferences($subscriberprofile);
+#my $subscriberprofileset = test_subscriberprofileset($t,$reseller);
+#my $subscriberprofile = test_subscriberprofile($t,$subscriberprofileset);
+#my $profilepreferences = test_profilepreferences($subscriberprofile);
 
 my $subscriber = test_subscriber($t,$customer,$domain);
 my $cfdestinationset = test_cfdestinationset($t,$subscriber);
 
-my $systemsoundset = test_soundset($t,$reseller);
-my $customersoundset = test_soundset($t,$reseller,$customer);
-my $subscriberpreferences = test_subscriberpreferences($subscriber,$customersoundset,$systemsoundset);
+#my $systemsoundset = test_soundset($t,$reseller);
+#my $customersoundset = test_soundset($t,$reseller,$customer);
+#my $subscriberpreferences = test_subscriberpreferences($subscriber,$customersoundset,$systemsoundset);
 
 
 
