@@ -1,3 +1,12 @@
+ngcp-panel (1.8.1.3+0~mr3.8.1.3) unstable; urgency=low
+
+  [ Gerhard Jungwirth ]
+  * [1634d1f] MT#11779 fix subscriber form setting admin flag
+
+  [ Sipwise Jenkins Builder ]
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Tue, 14 Apr 2015 14:24:21 +0200
+
 ngcp-panel (1.8.1.2+0~mr3.8.1.2) unstable; urgency=low
 
   [ Irina Peshinskaya ]
