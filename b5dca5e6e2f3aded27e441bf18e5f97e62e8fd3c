@@ -49,6 +49,30 @@
     },
     {
       "key": {
+        "uuid": "5a2585a7_7c4e2ec3",
+        "filename": "lib/NGCP/Panel/Controller/API/CFDestinationSets.pm",
+        "patchSetId": 1
+      },
+      "lineNbr": 229,
+      "author": {
+        "id": 1000005
+      },
+      "writtenOn": "2015-04-14T12:47:51Z",
+      "side": 1,
+      "message": "i thought POST does that already. well yes, defering is a good reason to use a sub like this!",
+      "parentUuid": "5a2585a7_dc5f6271",
+      "range": {
+        "startLine": 229,
+        "startChar": 62,
+        "endLine": 229,
+        "endChar": 63
+      },
+      "revId": "b5dca5e6e2f3aded27e441bf18e5f97e62e8fd3c",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "5a2585a7_5c9c9269",
         "filename": "lib/NGCP/Panel/Controller/API/SoundSets.pm",
         "patchSetId": 1
@@ -84,6 +108,30 @@
       "side": 1,
       "message": "yes, confirmed with andy, this is supposed to be a copy paste error",
       "parentUuid": "5a2585a7_5c9c9269",
+      "range": {
+        "startLine": 179,
+        "startChar": 37,
+        "endLine": 179,
+        "endChar": 39
+      },
+      "revId": "b5dca5e6e2f3aded27e441bf18e5f97e62e8fd3c",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a2585a7_9c51da64",
+        "filename": "lib/NGCP/Panel/Controller/API/SoundSets.pm",
+        "patchSetId": 1
+      },
+      "lineNbr": 179,
+      "author": {
+        "id": 1000005
+      },
+      "writtenOn": "2015-04-14T12:47:51Z",
+      "side": 1,
+      "message": "i see, you could remove it completely then",
+      "parentUuid": "5a2585a7_fc5a1e82",
       "range": {
         "startLine": 179,
         "startChar": 37,
