@@ -25,7 +25,7 @@ has_field 'times' => (
     do_label => 0,
     element_attr => {
         rel => ['tooltip'],
-        title => ['An array of time definitions with keys "year", "month", "mday", "wday", "hour", "minute", where each key can be a number like "10" or a range like "10-20".']
+        title => ['An array of time definitions with keys "year", "month", "mday", "wday", "hour", "minute", where each value can be a number like "10" or a range like "10-20".']
     },
 );
 

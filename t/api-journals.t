@@ -22,8 +22,8 @@ for my $path(qw#/etc/ngcp-panel/ngcp_panel.conf etc/ngcp_panel.conf ngcp_panel.c
     }
 }
 $panel_config //= 'ngcp_panel.conf';
-#my $catalyst_config = Config::General->new("../ngcp_panel.conf");
-my $catalyst_config = Config::General->new($panel_config);
+my $catalyst_config = Config::General->new("../ngcp_panel.conf");
+#my $catalyst_config = Config::General->new($panel_config);
 my %config = $catalyst_config->getall();
 my $enable_journal_tests = 1;
 
@@ -38,17 +38,17 @@ my $ssl_ca_cert = $ENV{API_SSL_CA_CERT} || "/etc/ngcp-panel/api_ssl/api_ca.crt";
 my ($ua, $req, $res);
 $ua = LWP::UserAgent->new;
 
-$ua->ssl_opts(
-    SSL_cert_file => $valid_ssl_client_cert,
-    SSL_key_file  => $valid_ssl_client_key,
-    SSL_ca_file   => $ssl_ca_cert,
-);
-
 #$ua->ssl_opts(
-#    verify_hostname => 0,
+#    SSL_cert_file => $valid_ssl_client_cert,
+#    SSL_key_file  => $valid_ssl_client_key,
+#    SSL_ca_file   => $ssl_ca_cert,
 #);
-#$ua->credentials("127.0.0.1:4443", "api_admin_http", 'administrator', 'administrator');
-##$ua->timeout(500); #useless, need to change the nginx timeout
+
+$ua->ssl_opts(
+    verify_hostname => 0,
+);
+$ua->credentials("127.0.0.1:4443", "api_admin_http", 'administrator', 'administrator');
+#$ua->timeout(500); #useless, need to change the nginx timeout
 
 my $t = time;
 my $default_reseller_id = 1;
@@ -78,6 +78,105 @@ my $subscriberpreferences = test_subscriberpreferences($subscriber,$customersoun
 
 done_testing;
 
+sub test_cftimeset {
+    my ($t,$subscriber) = @_;
+    
+    my @destinations = map { { destination => $_,
+                           timeout => '10',
+                           priority => '1',
+                           simple_destination => undef }; } (
+                                'voicebox',
+                                'fax2mail',
+                                'conference',
+                                'callingcard',
+                                'callthrough',
+                                'localuser',
+                                'autoattendant',
+                                'officehours',
+                                'test_destination@example.com');
+    
+    $req = HTTP::Request->new('POST', $uri.'/api/cfdestinationsets/');
+    $req->header('Content-Type' => 'application/json');
+    $req->content(JSON::to_json({
+        name => "cf_destination_set_".($t-1),
+        subscriber_id => $subscriber->{id},
+        destinations => \@destinations,
+    }));
+    $res = $ua->request($req);
+    is($res->code, 201, "POST test cfdestinationset");
+    my $cfdestinationset_uri = $uri.'/'.$res->header('Location');
+    $req = HTTP::Request->new('GET', $cfdestinationset_uri);
+    $res = $ua->request($req);
+    is($res->code, 200, "fetch POSTed test cfdestinationset");
+    my $cfdestinationset = JSON::from_json($res->decoded_content);
+    
+    _test_item_journal_link('cfdestinationsets',$cfdestinationset);
+    _test_journal_options_head('cfdestinationsets',$cfdestinationset->{id});
+    my $journals = {};
+    my $journal = _test_journal_top_journalitem('cfdestinationsets',$cfdestinationset->{id},$cfdestinationset,'create',$journals);
+    _test_journal_options_head('cfdestinationsets',$cfdestinationset->{id},$journal->{id});
+    
+    $req = HTTP::Request->new('PUT', $cfdestinationset_uri);
+    $req->header('Content-Type' => 'application/json');
+    $req->header('Prefer' => 'return=representation');
+    $req->content(JSON::to_json({
+        name => "cf_destination_set_".($t-1).'_put',
+        subscriber_id => $subscriber->{id},
+        destinations => \@destinations,
+    }));
+    $res = $ua->request($req);
+    is($res->code, 200, "PUT test cfdestinationset");
+    $req = HTTP::Request->new('GET', $cfdestinationset_uri);
+    $res = $ua->request($req);
+    is($res->code, 200, "fetch PUT test cfdestinationset");
+    $cfdestinationset = JSON::from_json($res->decoded_content);
+    
+    _test_item_journal_link('cfdestinationsets',$cfdestinationset);    
+    $journal = _test_journal_top_journalitem('cfdestinationsets',$cfdestinationset->{id},$cfdestinationset,'update',$journals,$journal);
+    
+    $req = HTTP::Request->new('PATCH', $cfdestinationset_uri);
+    $req->header('Content-Type' => 'application/json-patch+json');
+    $req->header('Prefer' => 'return=representation');
+    $req->content(JSON::to_json(
+        [ { op => 'replace', path => '/name', value => "cf_destination_set_".($t-1).'_patch' } ]
+    ));
+    $res = $ua->request($req);
+    is($res->code, 200, "PATCH test cfdestinationset");
+    $req = HTTP::Request->new('GET', $cfdestinationset_uri);
+    $res = $ua->request($req);
+    is($res->code, 200, "fetch PATCHed test cfdestinationset");
+    $cfdestinationset = JSON::from_json($res->decoded_content);
+
+    _test_item_journal_link('cfdestinationsets',$cfdestinationset);    
+    $journal = _test_journal_top_journalitem('cfdestinationsets',$cfdestinationset->{id},$cfdestinationset,'update',$journals,$journal);
+    
+    $req = HTTP::Request->new('DELETE', $cfdestinationset_uri);
+    $res = $ua->request($req);
+    is($res->code, 204, "delete POSTed test cfdestinationset");
+    #$domain = JSON::from_json($res->decoded_content);
+    
+    $journal = _test_journal_top_journalitem('cfdestinationsets',$cfdestinationset->{id},$cfdestinationset,'delete',$journals,$journal);
+    
+    _test_journal_collection('cfdestinationsets',$cfdestinationset->{id},$journals);
+    
+    $req = HTTP::Request->new('POST', $uri.'/api/cfdestinationsets/');
+    $req->header('Content-Type' => 'application/json');
+    $req->content(JSON::to_json({
+        name => "cf_destination_set_".$t,
+        subscriber_id => $subscriber->{id},
+        destinations => \@destinations,
+    }));
+    $res = $ua->request($req);
+    is($res->code, 201, "POST another test cfdestinationset");
+    $cfdestinationset_uri = $uri.'/'.$res->header('Location');
+    $req = HTTP::Request->new('GET', $cfdestinationset_uri);
+    $res = $ua->request($req);
+    is($res->code, 200, "fetch POSTed test cfdestinationset");
+    $cfdestinationset = JSON::from_json($res->decoded_content);
+    
+    return $cfdestinationset;
+    
+}
 
 sub test_cfdestinationset {
     my ($t,$subscriber) = @_;

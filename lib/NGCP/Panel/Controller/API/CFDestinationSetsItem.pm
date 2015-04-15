@@ -109,7 +109,7 @@ sub PATCH :Allow {
 
         my $dset = $self->item_by_id($c, $id);
         last unless $self->resource_exists($c, destinationset => $dset);
-        my $old_resource = $self->hal_from_item($c, $dset, "destinationsets")->resource;
+        my $old_resource = $self->hal_from_item($c, $dset, "cfdestinationsets")->resource;
         my $resource = $self->apply_patch($c, $old_resource, $json);
         last unless $resource;
 
@@ -117,7 +117,7 @@ sub PATCH :Allow {
         $dset = $self->update_item($c, $dset, $old_resource, $resource, $form);
         last unless $dset;
 
-        my $hal = $self->hal_from_item($c, $dset, "destinationsets");
+        my $hal = $self->hal_from_item($c, $dset, "cfdestinationsets");
         last unless $self->add_update_journal_item_hal($c,$hal);
         
         $guard->commit; 
@@ -147,7 +147,7 @@ sub PUT :Allow {
         last unless $preference;
 
         my $dset = $self->item_by_id($c, $id);
-        last unless $self->resource_exists($c, destinationset => $dset);
+        last unless $self->resource_exists($c, cfdestinationset => $dset);
         my $resource = $self->get_valid_put_data(
             c => $c,
             id => $id,
@@ -160,7 +160,7 @@ sub PUT :Allow {
         $dset = $self->update_item($c, $dset, $old_resource, $resource, $form);
         last unless $dset;
         
-        my $hal = $self->hal_from_item($c, $dset, "destinationsets");
+        my $hal = $self->hal_from_item($c, $dset, "cfdestinationsets");
         last unless $self->add_update_journal_item_hal($c,$hal);
 
         $guard->commit;
