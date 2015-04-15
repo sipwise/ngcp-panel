@@ -34,7 +34,7 @@ has_field 'replace_pattern' => (
 
 has_field 'description' => (
     type => 'Text',
-    required => 1,
+    required => 0,
     element_attr => {
         rel => ['tooltip'],
         title => ['Arbitrary text.'],

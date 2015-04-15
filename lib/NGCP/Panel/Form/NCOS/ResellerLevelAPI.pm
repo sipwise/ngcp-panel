@@ -36,6 +36,7 @@ has_field 'mode' => (
 
 has_field 'description' => (
     type => 'Text',
+    required => 1,
     element_attr => {
         rel => ['tooltip'],
         title => ['The description of the level']

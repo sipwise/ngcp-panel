@@ -19,6 +19,7 @@ has_field 'name' => (
 
 has_field 'description' => (
     type => 'Text',
+    #not mandatory at the moment
 );
 
 has_field 'contract_default' => (

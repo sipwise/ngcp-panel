@@ -36,6 +36,7 @@ has_field 'priority' => (
 
 has_field 'description' => (
     type => 'Text',
+    #not mandatory at the moment
 );
 
 has_field 'save' => (

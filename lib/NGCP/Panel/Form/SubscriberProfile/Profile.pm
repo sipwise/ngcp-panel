@@ -22,7 +22,8 @@ has_field 'name' => (
 
 has_field 'description' => (
     type => 'Text',
-    required => 0,
+    required => 1,
+    #not_nullable => 1, in the future?
     element_attr => {
         rel => ['tooltip'],
         title => ['Arbitrary text.'],
