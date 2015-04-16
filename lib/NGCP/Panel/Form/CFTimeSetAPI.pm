@@ -4,6 +4,10 @@ use HTML::FormHandler::Widget::Block::Bootstrap;
 use Moose::Util::TypeConstraints;
 extends 'HTML::FormHandler';
 
+has_field 'id' => (
+    type => 'Hidden',
+);
+
 has_field 'name' => (
     type => 'Text',
     label => 'Name',
