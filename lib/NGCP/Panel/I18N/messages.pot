@@ -55,7 +55,7 @@ msgstr ""
 msgid "\"Voice Mail\" - An internal flag for the voice_mail pseudo-preference feature to be able to map it do subscriber profiles. Not directly used."
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/Administrator.pm:29 lib/NGCP/Panel/Controller/Billing.pm:323 lib/NGCP/Panel/Controller/Billing.pm:36 lib/NGCP/Panel/Controller/Billing.pm:684 lib/NGCP/Panel/Controller/Billing.pm:98 lib/NGCP/Panel/Controller/Contact.pm:32 lib/NGCP/Panel/Controller/Contract.pm:25 lib/NGCP/Panel/Controller/Contract.pm:392 lib/NGCP/Panel/Controller/Customer.pm:282 lib/NGCP/Panel/Controller/Customer.pm:288 lib/NGCP/Panel/Controller/Customer.pm:297 lib/NGCP/Panel/Controller/Customer.pm:335 lib/NGCP/Panel/Controller/Customer.pm:50 lib/NGCP/Panel/Controller/Customer.pm:97 lib/NGCP/Panel/Controller/Device.pm:104 lib/NGCP/Panel/Controller/Device.pm:117 lib/NGCP/Panel/Controller/Device.pm:43 lib/NGCP/Panel/Controller/Device.pm:58 lib/NGCP/Panel/Controller/Device.pm:74 lib/NGCP/Panel/Controller/Device.pm:88 lib/NGCP/Panel/Controller/Domain.pm:29 lib/NGCP/Panel/Controller/EmailTemplate.pm:33 lib/NGCP/Panel/Controller/Invoice.pm:38 lib/NGCP/Panel/Controller/Invoice.pm:51 lib/NGCP/Panel/Controller/InvoiceTemplate.pm:32 lib/NGCP/Panel/Controller/NCOS.pm:237 lib/NGCP/Panel/Controller/NCOS.pm:29 lib/NGCP/Panel/Controller/NumberBlock.pm:39 lib/NGCP/Panel/Controller/Peering.pm:27 lib/NGCP/Panel/Controller/Peering.pm:80 lib/NGCP/Panel/Controller/Peering.pm:91 lib/NGCP/Panel/Controller/Product.pm:22 lib/NGCP/Panel/Controller/Reseller.pm:128 lib/NGCP/Panel/Controller/Reseller.pm:135 lib/NGCP/Panel/Controller/Reseller.pm:140 lib/NGCP/Panel/Controller/Reseller.pm:149 lib/NGCP/Panel/Controller/Reseller.pm:156 lib/NGCP/Panel/Controller/Reseller.pm:161 lib/NGCP/Panel/Controller/Reseller.pm:34 lib/NGCP/Panel/Controller/Reseller.pm:42 lib/NGCP/Panel/Controller/Rewrite.pm:31 lib/NGCP/Panel/Controller/Subscriber.pm:114 lib/NGCP/Panel/Controller/Subscriber.pm:2046 lib/NGCP/Panel/Controller/Subscriber.pm:2063 lib/NGCP/Panel/Controller/Subscriber.pm:2070 lib/NGCP/Panel/Controller/Subscriber.pm:260 lib/NGCP/Panel/Controller/Subscriber.pm:2612 lib/NGCP/Panel/Controller/Subscriber.pm:265 lib/NGCP/Panel/Controller/Subscriber.pm:270 lib/NGCP/Panel/Controller/Subscriber.pm:280 lib/NGCP/Panel/Controller/SubscriberProfile.pm:330 lib/NGCP/Panel/Controller/SubscriberProfile.pm:39 lib/NGCP/Panel/Controller/Voucher.pm:38 lib/NGCP/Panel/Utils/DbStrings.pm:919 lib/NGCP/Panel/Utils/Sounds.pm:65 share/templates/customer/details.tt:60
+#: lib/NGCP/Panel/Controller/Administrator.pm:29 lib/NGCP/Panel/Controller/Billing.pm:323 lib/NGCP/Panel/Controller/Billing.pm:36 lib/NGCP/Panel/Controller/Billing.pm:684 lib/NGCP/Panel/Controller/Billing.pm:98 lib/NGCP/Panel/Controller/Contact.pm:32 lib/NGCP/Panel/Controller/Contract.pm:25 lib/NGCP/Panel/Controller/Contract.pm:392 lib/NGCP/Panel/Controller/Customer.pm:282 lib/NGCP/Panel/Controller/Customer.pm:288 lib/NGCP/Panel/Controller/Customer.pm:297 lib/NGCP/Panel/Controller/Customer.pm:335 lib/NGCP/Panel/Controller/Customer.pm:50 lib/NGCP/Panel/Controller/Customer.pm:97 lib/NGCP/Panel/Controller/Device.pm:104 lib/NGCP/Panel/Controller/Device.pm:117 lib/NGCP/Panel/Controller/Device.pm:43 lib/NGCP/Panel/Controller/Device.pm:58 lib/NGCP/Panel/Controller/Device.pm:74 lib/NGCP/Panel/Controller/Device.pm:88 lib/NGCP/Panel/Controller/Domain.pm:29 lib/NGCP/Panel/Controller/EmailTemplate.pm:33 lib/NGCP/Panel/Controller/Invoice.pm:38 lib/NGCP/Panel/Controller/Invoice.pm:51 lib/NGCP/Panel/Controller/InvoiceTemplate.pm:32 lib/NGCP/Panel/Controller/NCOS.pm:237 lib/NGCP/Panel/Controller/NCOS.pm:29 lib/NGCP/Panel/Controller/NumberBlock.pm:39 lib/NGCP/Panel/Controller/Peering.pm:27 lib/NGCP/Panel/Controller/Peering.pm:80 lib/NGCP/Panel/Controller/Peering.pm:91 lib/NGCP/Panel/Controller/Product.pm:22 lib/NGCP/Panel/Controller/Reseller.pm:130 lib/NGCP/Panel/Controller/Reseller.pm:137 lib/NGCP/Panel/Controller/Reseller.pm:142 lib/NGCP/Panel/Controller/Reseller.pm:151 lib/NGCP/Panel/Controller/Reseller.pm:158 lib/NGCP/Panel/Controller/Reseller.pm:163 lib/NGCP/Panel/Controller/Reseller.pm:35 lib/NGCP/Panel/Controller/Reseller.pm:43 lib/NGCP/Panel/Controller/Rewrite.pm:31 lib/NGCP/Panel/Controller/Subscriber.pm:114 lib/NGCP/Panel/Controller/Subscriber.pm:2046 lib/NGCP/Panel/Controller/Subscriber.pm:2063 lib/NGCP/Panel/Controller/Subscriber.pm:2070 lib/NGCP/Panel/Controller/Subscriber.pm:260 lib/NGCP/Panel/Controller/Subscriber.pm:2612 lib/NGCP/Panel/Controller/Subscriber.pm:265 lib/NGCP/Panel/Controller/Subscriber.pm:270 lib/NGCP/Panel/Controller/Subscriber.pm:280 lib/NGCP/Panel/Controller/SubscriberProfile.pm:330 lib/NGCP/Panel/Controller/SubscriberProfile.pm:39 lib/NGCP/Panel/Controller/Voucher.pm:38 lib/NGCP/Panel/Utils/DbStrings.pm:919 lib/NGCP/Panel/Utils/Sounds.pm:65 share/templates/customer/details.tt:60
 msgid "#"
 msgstr ""
 
@@ -103,11 +103,11 @@ msgstr ""
 msgid "403 - Permission denied"
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/Reseller.pm:571
+#: lib/NGCP/Panel/Controller/Reseller.pm:574
 msgid "404 - No branding css available for this reseller"
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/Reseller.pm:535
+#: lib/NGCP/Panel/Controller/Reseller.pm:538
 msgid "404 - No branding logo available for this reseller"
 msgstr ""
 
@@ -255,7 +255,7 @@ msgstr ""
 msgid "Account balance successfully changed!"
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/Administrator.pm:37 lib/NGCP/Panel/Controller/Reseller.pm:143 lib/NGCP/Panel/Utils/DbStrings.pm:661 share/templates/subscriber/preferences.tt:301
+#: lib/NGCP/Panel/Controller/Administrator.pm:37 lib/NGCP/Panel/Controller/Reseller.pm:145 lib/NGCP/Panel/Utils/DbStrings.pm:661 share/templates/subscriber/preferences.tt:301
 msgid "Active"
 msgstr ""
 
@@ -591,7 +591,7 @@ msgstr ""
 msgid "Billing Fees"
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/Contract.pm:29 lib/NGCP/Panel/Controller/Contract.pm:395 lib/NGCP/Panel/Controller/Customer.pm:55 lib/NGCP/Panel/Controller/Reseller.pm:45 lib/NGCP/Panel/Utils/DbStrings.pm:792 share/templates/billing/list.tt:3 share/templates/widgets/admin_billing_overview.tt:7 share/templates/widgets/reseller_billing_overview.tt:7
+#: lib/NGCP/Panel/Controller/Contract.pm:29 lib/NGCP/Panel/Controller/Contract.pm:395 lib/NGCP/Panel/Controller/Customer.pm:55 lib/NGCP/Panel/Controller/Reseller.pm:46 lib/NGCP/Panel/Utils/DbStrings.pm:792 share/templates/billing/list.tt:3 share/templates/widgets/admin_billing_overview.tt:7 share/templates/widgets/reseller_billing_overview.tt:7
 msgid "Billing Profile"
 msgstr ""
 
@@ -957,7 +957,7 @@ msgstr ""
 msgid "Cannot terminate default billing profile with the id 1"
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/Reseller.pm:277
+#: lib/NGCP/Panel/Controller/Reseller.pm:279
 msgid "Cannot terminate reseller with the id 1"
 msgstr ""
 
@@ -1101,7 +1101,7 @@ msgstr ""
 msgid "Comma-Separated list of Email addresses to send notifications when tresholds are exceeded."
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/Contact.pm:36 lib/NGCP/Panel/Controller/Reseller.pm:131 lib/NGCP/Panel/Utils/DbStrings.pm:969 share/templates/customer/details.tt:106
+#: lib/NGCP/Panel/Controller/Contact.pm:36 lib/NGCP/Panel/Controller/Reseller.pm:133 lib/NGCP/Panel/Utils/DbStrings.pm:969 share/templates/customer/details.tt:106
 msgid "Company"
 msgstr ""
 
@@ -1133,7 +1133,7 @@ msgstr ""
 msgid "Contact Details"
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/Contract.pm:27 lib/NGCP/Panel/Controller/Contract.pm:394 lib/NGCP/Panel/Controller/Customer.pm:100 lib/NGCP/Panel/Controller/Customer.pm:53 lib/NGCP/Panel/Controller/Peering.pm:28 lib/NGCP/Panel/Controller/Reseller.pm:152 lib/NGCP/Panel/Controller/Reseller.pm:44 lib/NGCP/Panel/Controller/Subscriber.pm:116 lib/NGCP/Panel/Utils/DbStrings.pm:572
+#: lib/NGCP/Panel/Controller/Contract.pm:27 lib/NGCP/Panel/Controller/Contract.pm:394 lib/NGCP/Panel/Controller/Customer.pm:100 lib/NGCP/Panel/Controller/Customer.pm:53 lib/NGCP/Panel/Controller/Peering.pm:28 lib/NGCP/Panel/Controller/Reseller.pm:154 lib/NGCP/Panel/Controller/Reseller.pm:45 lib/NGCP/Panel/Controller/Subscriber.pm:116 lib/NGCP/Panel/Utils/DbStrings.pm:572
 msgid "Contact Email"
 msgstr ""
 
@@ -1185,7 +1185,7 @@ msgstr ""
 msgid "Contract"
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/Reseller.pm:35 lib/NGCP/Panel/Controller/Subscriber.pm:115 lib/NGCP/Panel/Utils/DbStrings.pm:1169
+#: lib/NGCP/Panel/Controller/Reseller.pm:36 lib/NGCP/Panel/Controller/Subscriber.pm:115 lib/NGCP/Panel/Utils/DbStrings.pm:1169
 msgid "Contract #"
 msgstr ""
 
@@ -1268,15 +1268,15 @@ msgstr ""
 msgid "Create Customer"
 msgstr ""
 
-#: lib/NGCP/Panel/Utils/DbStrings.pm:454 share/templates/device/list.tt:174
+#: lib/NGCP/Panel/Utils/DbStrings.pm:454 share/templates/device/list.tt:181
 msgid "Create Device Configuration"
 msgstr ""
 
-#: lib/NGCP/Panel/Utils/DbStrings.pm:722 share/templates/device/list.tt:93
+#: lib/NGCP/Panel/Utils/DbStrings.pm:722 share/templates/device/list.tt:100
 msgid "Create Device Model"
 msgstr ""
 
-#: share/templates/device/list.tt:213
+#: share/templates/device/list.tt:220
 msgid "Create Device Profile"
 msgstr ""
 
@@ -1428,7 +1428,7 @@ msgstr ""
 msgid "Custom provisioning server URI."
 msgstr ""
 
-#: lib/NGCP/Panel/Utils/DbStrings.pm:1184 lib/NGCP/Panel/Utils/Sounds.pm:74 lib/NGCP/Panel/Utils/Sounds.pm:77 share/templates/customer/list.tt:3 share/templates/customer/preferences.tt:4 share/templates/device/list.tt:263 share/templates/device/list.tt:267 share/templates/reseller/details.tt:192 share/templates/subscriber/list.tt:21 share/templates/subscriber/list.tt:29 share/templates/subscriber/master.tt:14 share/templates/widgets/admin_reseller_overview.tt:13 share/templates/widgets/reseller_customer_overview.tt:7
+#: lib/NGCP/Panel/Utils/DbStrings.pm:1184 lib/NGCP/Panel/Utils/Sounds.pm:74 lib/NGCP/Panel/Utils/Sounds.pm:77 share/templates/customer/list.tt:3 share/templates/customer/preferences.tt:4 share/templates/device/list.tt:270 share/templates/device/list.tt:274 share/templates/reseller/details.tt:192 share/templates/subscriber/list.tt:21 share/templates/subscriber/list.tt:29 share/templates/subscriber/master.tt:14 share/templates/widgets/admin_reseller_overview.tt:13 share/templates/widgets/reseller_customer_overview.tt:7
 msgid "Customer"
 msgstr ""
 
@@ -1569,7 +1569,7 @@ msgstr ""
 msgid "Define an action to be executed if User-Provided Number doesn't match the 'allowed_clis' list"
 msgstr ""
 
-#: lib/NGCP/Panel/Utils/DbStrings.pm:559 share/templates/administrator/list.tt:20 share/templates/billing/fees.tt:20 share/templates/billing/peaktimes.tt:71 share/templates/billing/zones.tt:18 share/templates/contact/list.tt:19 share/templates/customer/details.tt:304 share/templates/customer/details.tt:346 share/templates/customer/details.tt:451 share/templates/customer/details.tt:480 share/templates/device/list.tt:116 share/templates/device/list.tt:154 share/templates/device/list.tt:193 share/templates/device/list.tt:232 share/templates/device/list.tt:262 share/templates/domain/list.tt:18 share/templates/emailtemplate/list.tt:18 share/templates/helpers/datatables.tt:107 share/templates/invoice/invoice_list.tt:19 share/templates/invoice/template_list.tt:19 share/templates/ncos/list.tt:18 share/templates/ncos/pattern_list.tt:21 share/templates/numberblock/block_list.tt:18 share/templates/numberblock/profile_list.tt:23 share/templates/peering/list.tt:18 share/templates/peering/servers_rules.tt:19 share/templates/peering/servers_rules.tt:51 share/templates/reseller/details.tt:139 share/templates/reseller/details.tt:170 share/templates/reseller/details.tt:292 share/templates/rewrite/rules_list.tt:58 share/templates/rewrite/set_list.tt:22 share/templates/sound/handles_list.tt:62 share/templates/sound/list.tt:18 share/templates/subprofile/profile_list.tt:23 share/templates/subprofile/set_list.tt:23 share/templates/subscriber/master.tt:246 share/templates/subscriber/master.tt:282 share/templates/subscriber/preferences.tt:141 share/templates/subscriber/preferences.tt:399 share/templates/subscriber/preferences.tt:433 share/templates/subscriber/preferences.tt:515 share/templates/subscriber/preferences.tt:567 share/templates/subscriber/preferences.tt:638 share/templates/subscriber/preferences.tt:688 share/templates/subscriber/voicemail.tt:22 share/templates/voucher/list.tt:18
+#: lib/NGCP/Panel/Utils/DbStrings.pm:559 share/templates/administrator/list.tt:20 share/templates/billing/fees.tt:20 share/templates/billing/peaktimes.tt:71 share/templates/billing/zones.tt:18 share/templates/contact/list.tt:19 share/templates/customer/details.tt:304 share/templates/customer/details.tt:346 share/templates/customer/details.tt:451 share/templates/customer/details.tt:480 share/templates/device/list.tt:123 share/templates/device/list.tt:161 share/templates/device/list.tt:200 share/templates/device/list.tt:239 share/templates/device/list.tt:269 share/templates/domain/list.tt:18 share/templates/emailtemplate/list.tt:18 share/templates/helpers/datatables.tt:107 share/templates/invoice/invoice_list.tt:19 share/templates/invoice/template_list.tt:19 share/templates/ncos/list.tt:18 share/templates/ncos/pattern_list.tt:21 share/templates/numberblock/block_list.tt:18 share/templates/numberblock/profile_list.tt:23 share/templates/peering/list.tt:18 share/templates/peering/servers_rules.tt:19 share/templates/peering/servers_rules.tt:51 share/templates/reseller/details.tt:139 share/templates/reseller/details.tt:170 share/templates/reseller/details.tt:292 share/templates/rewrite/rules_list.tt:58 share/templates/rewrite/set_list.tt:22 share/templates/sound/handles_list.tt:62 share/templates/sound/list.tt:18 share/templates/subprofile/profile_list.tt:23 share/templates/subprofile/set_list.tt:23 share/templates/subscriber/master.tt:246 share/templates/subscriber/master.tt:282 share/templates/subscriber/preferences.tt:141 share/templates/subscriber/preferences.tt:399 share/templates/subscriber/preferences.tt:433 share/templates/subscriber/preferences.tt:515 share/templates/subscriber/preferences.tt:567 share/templates/subscriber/preferences.tt:638 share/templates/subscriber/preferences.tt:688 share/templates/subscriber/voicemail.tt:22 share/templates/voucher/list.tt:18
 msgid "Delete"
 msgstr ""
 
@@ -1597,11 +1597,11 @@ msgstr ""
 msgid "Deliver Outgoing Faxes"
 msgstr ""
 
-#: share/templates/customer/details.tt:546 share/templates/device/list.tt:250
+#: share/templates/customer/details.tt:546 share/templates/device/list.tt:257
 msgid "Deployed Device"
 msgstr ""
 
-#: share/templates/device/list.tt:245
+#: share/templates/device/list.tt:252
 msgid "Deployed Devices"
 msgstr ""
 
@@ -1794,19 +1794,19 @@ msgstr ""
 msgid "Device"
 msgstr ""
 
-#: lib/NGCP/Panel/Utils/DbStrings.pm:1013 share/templates/device/list.tt:179
+#: lib/NGCP/Panel/Utils/DbStrings.pm:1013 share/templates/device/list.tt:186
 msgid "Device Configuration"
 msgstr ""
 
-#: share/templates/device/list.tt:168
+#: share/templates/device/list.tt:175
 msgid "Device Configurations"
 msgstr ""
 
-#: share/templates/device/list.tt:140
+#: share/templates/device/list.tt:147
 msgid "Device Firmware"
 msgstr ""
 
-#: share/templates/device/list.tt:129
+#: share/templates/device/list.tt:136
 msgid "Device Firmwares"
 msgstr ""
 
@@ -1814,19 +1814,19 @@ msgstr ""
 msgid "Device Management"
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/Device.pm:61 lib/NGCP/Panel/Controller/Device.pm:77 lib/NGCP/Panel/Controller/Device.pm:92 lib/NGCP/Panel/Utils/DbStrings.pm:823 share/templates/device/list.tt:98
+#: lib/NGCP/Panel/Controller/Device.pm:61 lib/NGCP/Panel/Controller/Device.pm:77 lib/NGCP/Panel/Controller/Device.pm:92 lib/NGCP/Panel/Utils/DbStrings.pm:823 share/templates/device/list.tt:105
 msgid "Device Model"
 msgstr ""
 
-#: share/templates/device/list.tt:87
+#: share/templates/device/list.tt:94
 msgid "Device Models"
 msgstr ""
 
-#: lib/NGCP/Panel/Utils/DbStrings.pm:1098 share/templates/customer/details.tt:281 share/templates/device/list.tt:218
+#: lib/NGCP/Panel/Utils/DbStrings.pm:1098 share/templates/customer/details.tt:281 share/templates/device/list.tt:225
 msgid "Device Profile"
 msgstr ""
 
-#: share/templates/device/list.tt:207
+#: share/templates/device/list.tt:214
 msgid "Device Profiles"
 msgstr ""
 
@@ -1918,7 +1918,7 @@ msgstr ""
 msgid "Do Not Disturb"
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/Customer.pm:290 lib/NGCP/Panel/Controller/Domain.pm:31 lib/NGCP/Panel/Controller/Reseller.pm:157 lib/NGCP/Panel/Controller/Subscriber.pm:118 lib/NGCP/Panel/Utils/DbStrings.pm:1229 share/templates/domain/list.tt:3 share/templates/domain/preferences.tt:4 share/templates/reseller/details.tt:156 share/templates/widgets/admin_reseller_overview.tt:12 share/templates/widgets/reseller_domain_overview.tt:7
+#: lib/NGCP/Panel/Controller/Customer.pm:290 lib/NGCP/Panel/Controller/Domain.pm:31 lib/NGCP/Panel/Controller/Reseller.pm:159 lib/NGCP/Panel/Controller/Subscriber.pm:118 lib/NGCP/Panel/Utils/DbStrings.pm:1229 share/templates/domain/list.tt:3 share/templates/domain/preferences.tt:4 share/templates/reseller/details.tt:156 share/templates/widgets/admin_reseller_overview.tt:12 share/templates/widgets/reseller_domain_overview.tt:7
 msgid "Domain"
 msgstr ""
 
@@ -1963,7 +1963,7 @@ msgstr ""
 msgid "Don't have an account?"
 msgstr ""
 
-#: lib/NGCP/Panel/Utils/DbStrings.pm:675 share/templates/customer/details.tt:507 share/templates/device/list.tt:156 share/templates/device/list.tt:195 share/templates/invoice/invoice_list.tt:18 share/templates/invoice/invoice_list.tt:26
+#: lib/NGCP/Panel/Utils/DbStrings.pm:675 share/templates/customer/details.tt:507 share/templates/device/list.tt:163 share/templates/device/list.tt:202 share/templates/invoice/invoice_list.tt:18 share/templates/invoice/invoice_list.tt:26
 msgid "Download"
 msgstr ""
 
@@ -2015,7 +2015,7 @@ msgstr ""
 msgid "E164range add"
 msgstr ""
 
-#: share/templates/administrator/list.tt:19 share/templates/billing/fees.tt:19 share/templates/billing/list.tt:18 share/templates/billing/peaktimes.tt:43 share/templates/billing/peaktimes.tt:70 share/templates/contact/list.tt:18 share/templates/contract/list.tt:21 share/templates/customer/details.tt:25 share/templates/customer/details.tt:307 share/templates/customer/details.tt:345 share/templates/customer/details.tt:391 share/templates/customer/details.tt:447 share/templates/customer/details.tt:476 share/templates/customer/list.tt:18 share/templates/device/list.tt:117 share/templates/device/list.tt:155 share/templates/device/list.tt:194 share/templates/device/list.tt:233 share/templates/emailtemplate/list.tt:17 share/templates/helpers/pref_table.tt:144 share/templates/ncos/list.tt:17 share/templates/ncos/pattern_list.tt:20 share/templates/ncos/pattern_list.tt:39 share/templates/numberblock/block_list.tt:17 share/templates/numberblock/profile_list.tt:22 share/templates/numberblock/profile_list.tt:32 share/templates/peering/list.tt:17 share/templates/peering/servers_rules.tt:18 share/templates/peering/servers_rules.tt:50 share/templates/reseller/details.tt:109 share/templates/reseller/details.tt:138 share/templates/reseller/details.tt:206 share/templates/reseller/details.tt:46 share/templates/reseller/details.tt:78 share/templates/reseller/list.tt:18 share/templates/rewrite/rules_list.tt:55 share/templates/rewrite/set_list.tt:21 share/templates/sound/handles_list.tt:61 share/templates/sound/list.tt:17 share/templates/subprofile/profile_list.tt:22 share/templates/subprofile/profile_list.tt:33 share/templates/subprofile/set_list.tt:22 share/templates/subscriber/master.tt:51 share/templates/subscriber/preferences.tt:139 share/templates/subscriber/preferences.tt:186 share/templates/subscriber/preferences.tt:200 share/templates/subscriber/preferences.tt:214 share/templates/subscriber/preferences.tt:228 share/templates/subscriber/preferences.tt:277 share/templates/subscriber/preferences.tt:293 share/templates/subscriber/preferences.tt:309 share/templates/subscriber/preferences.tt:325 share/templates/subscriber/preferences.tt:341 share/templates/subscriber/preferences.tt:358 share/templates/subscriber/preferences.tt:432 share/templates/subscriber/preferences.tt:475 share/templates/subscriber/preferences.tt:566 share/templates/subscriber/preferences.tt:635 share/templates/subscriber/preferences.tt:685 share/templates/voucher/list.tt:17
+#: share/templates/administrator/list.tt:19 share/templates/billing/fees.tt:19 share/templates/billing/list.tt:18 share/templates/billing/peaktimes.tt:43 share/templates/billing/peaktimes.tt:70 share/templates/contact/list.tt:18 share/templates/contract/list.tt:21 share/templates/customer/details.tt:25 share/templates/customer/details.tt:307 share/templates/customer/details.tt:345 share/templates/customer/details.tt:391 share/templates/customer/details.tt:447 share/templates/customer/details.tt:476 share/templates/customer/list.tt:18 share/templates/device/list.tt:124 share/templates/device/list.tt:162 share/templates/device/list.tt:201 share/templates/device/list.tt:240 share/templates/emailtemplate/list.tt:17 share/templates/helpers/pref_table.tt:144 share/templates/ncos/list.tt:17 share/templates/ncos/pattern_list.tt:20 share/templates/ncos/pattern_list.tt:39 share/templates/numberblock/block_list.tt:17 share/templates/numberblock/profile_list.tt:22 share/templates/numberblock/profile_list.tt:32 share/templates/peering/list.tt:17 share/templates/peering/servers_rules.tt:18 share/templates/peering/servers_rules.tt:50 share/templates/reseller/details.tt:109 share/templates/reseller/details.tt:138 share/templates/reseller/details.tt:206 share/templates/reseller/details.tt:46 share/templates/reseller/details.tt:78 share/templates/reseller/list.tt:18 share/templates/rewrite/rules_list.tt:55 share/templates/rewrite/set_list.tt:21 share/templates/sound/handles_list.tt:61 share/templates/sound/list.tt:17 share/templates/subprofile/profile_list.tt:22 share/templates/subprofile/profile_list.tt:33 share/templates/subprofile/set_list.tt:22 share/templates/subscriber/master.tt:51 share/templates/subscriber/preferences.tt:139 share/templates/subscriber/preferences.tt:186 share/templates/subscriber/preferences.tt:200 share/templates/subscriber/preferences.tt:214 share/templates/subscriber/preferences.tt:228 share/templates/subscriber/preferences.tt:277 share/templates/subscriber/preferences.tt:293 share/templates/subscriber/preferences.tt:309 share/templates/subscriber/preferences.tt:325 share/templates/subscriber/preferences.tt:341 share/templates/subscriber/preferences.tt:358 share/templates/subscriber/preferences.tt:432 share/templates/subscriber/preferences.tt:475 share/templates/subscriber/preferences.tt:566 share/templates/subscriber/preferences.tt:635 share/templates/subscriber/preferences.tt:685 share/templates/voucher/list.tt:17
 msgid "Edit"
 msgstr ""
 
@@ -2060,7 +2060,7 @@ msgstr ""
 msgid "Either \"sippeering\" or \"reseller\"."
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/Contact.pm:37 lib/NGCP/Panel/Controller/Reseller.pm:132 lib/NGCP/Panel/Utils/DbStrings.pm:508 share/templates/customer/details.tt:98 share/templates/subscriber/preferences.tt:193
+#: lib/NGCP/Panel/Controller/Contact.pm:37 lib/NGCP/Panel/Controller/Reseller.pm:134 lib/NGCP/Panel/Utils/DbStrings.pm:508 share/templates/customer/details.tt:98 share/templates/subscriber/preferences.tt:193
 msgid "Email"
 msgstr ""
 
@@ -2196,7 +2196,7 @@ msgstr ""
 msgid "Extension unit"
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/Contract.pm:26 lib/NGCP/Panel/Controller/Contract.pm:393 lib/NGCP/Panel/Controller/Customer.pm:51 lib/NGCP/Panel/Controller/Customer.pm:98 lib/NGCP/Panel/Controller/Reseller.pm:150 lib/NGCP/Panel/Controller/Reseller.pm:43 lib/NGCP/Panel/Utils/DbStrings.pm:863 share/templates/subscriber/master.tt:101
+#: lib/NGCP/Panel/Controller/Contract.pm:26 lib/NGCP/Panel/Controller/Contract.pm:393 lib/NGCP/Panel/Controller/Customer.pm:51 lib/NGCP/Panel/Controller/Customer.pm:98 lib/NGCP/Panel/Controller/Reseller.pm:152 lib/NGCP/Panel/Controller/Reseller.pm:44 lib/NGCP/Panel/Utils/DbStrings.pm:863 share/templates/subscriber/master.tt:101
 msgid "External #"
 msgstr ""
 
@@ -2369,7 +2369,7 @@ msgstr ""
 msgid "Failed to create preference %1"
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/Reseller.pm:101 lib/NGCP/Panel/Controller/Reseller.pm:424
+#: lib/NGCP/Panel/Controller/Reseller.pm:103 lib/NGCP/Panel/Controller/Reseller.pm:427
 msgid "Failed to create reseller"
 msgstr ""
 
@@ -2640,7 +2640,7 @@ msgstr ""
 msgid "Failed to terminate contract"
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/Reseller.pm:300
+#: lib/NGCP/Panel/Controller/Reseller.pm:302
 msgid "Failed to terminate reseller"
 msgstr ""
 
@@ -2769,11 +2769,11 @@ msgstr ""
 msgid "Failed to update reminder setting."
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/Reseller.pm:255
+#: lib/NGCP/Panel/Controller/Reseller.pm:257
 msgid "Failed to update reseller"
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/Reseller.pm:513
+#: lib/NGCP/Panel/Controller/Reseller.pm:516
 msgid "Failed to update reseller branding"
 msgstr ""
 
@@ -2902,7 +2902,7 @@ msgstr ""
 msgid "Firmware File"
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/Contact.pm:34 lib/NGCP/Panel/Controller/Reseller.pm:129 lib/NGCP/Panel/Utils/DbStrings.pm:885
+#: lib/NGCP/Panel/Controller/Contact.pm:34 lib/NGCP/Panel/Controller/Reseller.pm:131 lib/NGCP/Panel/Utils/DbStrings.pm:885
 msgid "First Name"
 msgstr ""
 
@@ -3014,7 +3014,7 @@ msgstr ""
 msgid "From-Pattern"
 msgstr ""
 
-#: lib/NGCP/Panel/Utils/DbStrings.pm:1256 share/templates/device/list.tt:111
+#: lib/NGCP/Panel/Utils/DbStrings.pm:1256 share/templates/device/list.tt:118
 msgid "Front Image"
 msgstr ""
 
@@ -3552,7 +3552,7 @@ msgstr ""
 msgid "Invalid provisioning subscriber id detected."
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/Customer.pm:85 lib/NGCP/Panel/Controller/InvoiceTemplate.pm:112 lib/NGCP/Panel/Controller/InvoiceTemplate.pm:92 lib/NGCP/Panel/Controller/Reseller.pm:119
+#: lib/NGCP/Panel/Controller/Customer.pm:85 lib/NGCP/Panel/Controller/InvoiceTemplate.pm:112 lib/NGCP/Panel/Controller/InvoiceTemplate.pm:92 lib/NGCP/Panel/Controller/Reseller.pm:121
 msgid "Invalid reseller id detected"
 msgstr ""
 
@@ -3742,7 +3742,7 @@ msgstr ""
 msgid "Last Attempt"
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/Contact.pm:35 lib/NGCP/Panel/Controller/Reseller.pm:130 lib/NGCP/Panel/Utils/DbStrings.pm:702
+#: lib/NGCP/Panel/Controller/Contact.pm:35 lib/NGCP/Panel/Controller/Reseller.pm:132 lib/NGCP/Panel/Utils/DbStrings.pm:702
 msgid "Last Name"
 msgstr ""
 
@@ -3863,7 +3863,7 @@ msgstr ""
 msgid "MAC Address Image"
 msgstr ""
 
-#: share/templates/device/list.tt:112
+#: share/templates/device/list.tt:119
 msgid "MAC Image"
 msgstr ""
 
@@ -3912,7 +3912,7 @@ msgstr ""
 msgid "Marks subscriber for CloudPBX Call Queue that queues incoming calls if it is busy and serves them to this subscriber when it becomes available"
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/Administrator.pm:36 lib/NGCP/Panel/Controller/Reseller.pm:142
+#: lib/NGCP/Panel/Controller/Administrator.pm:36 lib/NGCP/Panel/Controller/Reseller.pm:144
 msgid "Master"
 msgstr ""
 
@@ -4155,7 +4155,7 @@ msgstr ""
 msgid "NEW MESSAGE"
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/Billing.pm:37 lib/NGCP/Panel/Controller/Customer.pm:283 lib/NGCP/Panel/Controller/Customer.pm:289 lib/NGCP/Panel/Controller/Customer.pm:298 lib/NGCP/Panel/Controller/Device.pm:1007 lib/NGCP/Panel/Controller/Device.pm:90 lib/NGCP/Panel/Controller/EmailTemplate.pm:35 lib/NGCP/Panel/Controller/InvoiceTemplate.pm:34 lib/NGCP/Panel/Controller/Peering.pm:29 lib/NGCP/Panel/Controller/Peering.pm:81 lib/NGCP/Panel/Controller/Product.pm:23 lib/NGCP/Panel/Controller/Reseller.pm:136 lib/NGCP/Panel/Controller/Reseller.pm:141 lib/NGCP/Panel/Controller/Reseller.pm:162 lib/NGCP/Panel/Controller/Reseller.pm:36 lib/NGCP/Panel/Controller/Rewrite.pm:33 lib/NGCP/Panel/Controller/SubscriberProfile.pm:332 lib/NGCP/Panel/Controller/SubscriberProfile.pm:41 lib/NGCP/Panel/Utils/DbStrings.pm:1048 lib/NGCP/Panel/Utils/Sounds.pm:66 share/templates/customer/details.tt:102 share/templates/customer/details.tt:54 share/templates/customer/details.tt:64 share/templates/customer/details.tt:92 share/templates/helpers/pref_table.tt:39 share/templates/sound/handles_list.tt:38 share/templates/subscriber/preferences.tt:171 share/templates/subscriber/preferences.tt:257 share/templates/subscriber/preferences.tt:618 share/templates/subscriber/preferences.tt:668
+#: lib/NGCP/Panel/Controller/Billing.pm:37 lib/NGCP/Panel/Controller/Customer.pm:283 lib/NGCP/Panel/Controller/Customer.pm:289 lib/NGCP/Panel/Controller/Customer.pm:298 lib/NGCP/Panel/Controller/Device.pm:1007 lib/NGCP/Panel/Controller/Device.pm:90 lib/NGCP/Panel/Controller/EmailTemplate.pm:35 lib/NGCP/Panel/Controller/InvoiceTemplate.pm:34 lib/NGCP/Panel/Controller/Peering.pm:29 lib/NGCP/Panel/Controller/Peering.pm:81 lib/NGCP/Panel/Controller/Product.pm:23 lib/NGCP/Panel/Controller/Reseller.pm:138 lib/NGCP/Panel/Controller/Reseller.pm:143 lib/NGCP/Panel/Controller/Reseller.pm:164 lib/NGCP/Panel/Controller/Reseller.pm:37 lib/NGCP/Panel/Controller/Rewrite.pm:33 lib/NGCP/Panel/Controller/SubscriberProfile.pm:332 lib/NGCP/Panel/Controller/SubscriberProfile.pm:41 lib/NGCP/Panel/Utils/DbStrings.pm:1048 lib/NGCP/Panel/Utils/Sounds.pm:66 share/templates/customer/details.tt:102 share/templates/customer/details.tt:54 share/templates/customer/details.tt:64 share/templates/customer/details.tt:92 share/templates/helpers/pref_table.tt:39 share/templates/sound/handles_list.tt:38 share/templates/subscriber/preferences.tt:171 share/templates/subscriber/preferences.tt:257 share/templates/subscriber/preferences.tt:618 share/templates/subscriber/preferences.tt:668
 msgid "Name"
 msgstr ""
 
@@ -4886,7 +4886,7 @@ msgstr ""
 msgid "Private Line"
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/Contract.pm:28 lib/NGCP/Panel/Controller/Customer.pm:54 lib/NGCP/Panel/Controller/Customer.pm:99 lib/NGCP/Panel/Controller/Reseller.pm:151 lib/NGCP/Panel/Utils/DbStrings.pm:838
+#: lib/NGCP/Panel/Controller/Contract.pm:28 lib/NGCP/Panel/Controller/Customer.pm:54 lib/NGCP/Panel/Controller/Customer.pm:99 lib/NGCP/Panel/Controller/Reseller.pm:153 lib/NGCP/Panel/Utils/DbStrings.pm:838
 msgid "Product"
 msgstr ""
 
@@ -4966,7 +4966,7 @@ msgstr ""
 msgid "Read only"
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/Reseller.pm:144
+#: lib/NGCP/Panel/Controller/Reseller.pm:146
 msgid "Read-Only"
 msgstr ""
 
@@ -5056,7 +5056,7 @@ msgstr ""
 msgid "Replacement pattern."
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/Administrator.pm:32 lib/NGCP/Panel/Controller/Billing.pm:38 lib/NGCP/Panel/Controller/Contact.pm:33 lib/NGCP/Panel/Controller/Customer.pm:52 lib/NGCP/Panel/Controller/Device.pm:45 lib/NGCP/Panel/Controller/Device.pm:59 lib/NGCP/Panel/Controller/Device.pm:75 lib/NGCP/Panel/Controller/Device.pm:89 lib/NGCP/Panel/Controller/Domain.pm:30 lib/NGCP/Panel/Controller/EmailTemplate.pm:34 lib/NGCP/Panel/Controller/InvoiceTemplate.pm:33 lib/NGCP/Panel/Controller/NCOS.pm:30 lib/NGCP/Panel/Controller/Reseller.pm:158 lib/NGCP/Panel/Controller/Rewrite.pm:32 lib/NGCP/Panel/Controller/SubscriberProfile.pm:40 lib/NGCP/Panel/Controller/Voucher.pm:41 lib/NGCP/Panel/Utils/DbStrings.pm:741 lib/NGCP/Panel/Utils/Sounds.pm:72 share/templates/customer/details.tt:47 share/templates/reseller/details.tt:31 share/templates/widgets/admin_reseller_overview.tt:7
+#: lib/NGCP/Panel/Controller/Administrator.pm:32 lib/NGCP/Panel/Controller/Billing.pm:38 lib/NGCP/Panel/Controller/Contact.pm:33 lib/NGCP/Panel/Controller/Customer.pm:52 lib/NGCP/Panel/Controller/Device.pm:45 lib/NGCP/Panel/Controller/Device.pm:59 lib/NGCP/Panel/Controller/Device.pm:75 lib/NGCP/Panel/Controller/Device.pm:89 lib/NGCP/Panel/Controller/Domain.pm:30 lib/NGCP/Panel/Controller/EmailTemplate.pm:34 lib/NGCP/Panel/Controller/InvoiceTemplate.pm:33 lib/NGCP/Panel/Controller/NCOS.pm:30 lib/NGCP/Panel/Controller/Reseller.pm:160 lib/NGCP/Panel/Controller/Rewrite.pm:32 lib/NGCP/Panel/Controller/SubscriberProfile.pm:40 lib/NGCP/Panel/Controller/Voucher.pm:41 lib/NGCP/Panel/Utils/DbStrings.pm:741 lib/NGCP/Panel/Utils/Sounds.pm:72 share/templates/customer/details.tt:47 share/templates/reseller/details.tt:31 share/templates/widgets/admin_reseller_overview.tt:7
 msgid "Reseller"
 msgstr ""
 
@@ -5089,7 +5089,7 @@ msgstr ""
 msgid "Reseller and Peering Contracts"
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/Reseller.pm:507
+#: lib/NGCP/Panel/Controller/Reseller.pm:510
 msgid "Reseller branding successfully updated"
 msgstr ""
 
@@ -5110,7 +5110,7 @@ msgstr ""
 msgid "Reseller is <b>%1</b>"
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/Reseller.pm:172
+#: lib/NGCP/Panel/Controller/Reseller.pm:174
 msgid "Reseller not found"
 msgstr ""
 
@@ -5118,16 +5118,16 @@ msgstr ""
 msgid "Reseller not found."
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/Reseller.pm:95
+#: lib/NGCP/Panel/Controller/Reseller.pm:97
 msgid "Reseller successfully created"
 msgstr ""
 
 #. ($defaults{admins}->{login}, $defaults{admins}->{md5pass})
-#: lib/NGCP/Panel/Controller/Reseller.pm:429
+#: lib/NGCP/Panel/Controller/Reseller.pm:432
 msgid "Reseller successfully created with login <b>%1</b> and password <b>%2</b>, please review your settings below"
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/Reseller.pm:249
+#: lib/NGCP/Panel/Controller/Reseller.pm:251
 msgid "Reseller successfully updated"
 msgstr ""
 
@@ -5473,7 +5473,7 @@ msgstr ""
 msgid "Shared Line"
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/Administrator.pm:40 lib/NGCP/Panel/Controller/Reseller.pm:146
+#: lib/NGCP/Panel/Controller/Administrator.pm:40 lib/NGCP/Panel/Controller/Reseller.pm:148
 msgid "Show CDRs"
 msgstr ""
 
@@ -5481,7 +5481,7 @@ msgstr ""
 msgid "Show Offline"
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/Administrator.pm:39 lib/NGCP/Panel/Controller/Reseller.pm:145
+#: lib/NGCP/Panel/Controller/Administrator.pm:39 lib/NGCP/Panel/Controller/Reseller.pm:147
 msgid "Show Passwords"
 msgstr ""
 
@@ -5846,7 +5846,7 @@ msgstr ""
 msgid "Station Name"
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/Contract.pm:30 lib/NGCP/Panel/Controller/Contract.pm:396 lib/NGCP/Panel/Controller/Customer.pm:101 lib/NGCP/Panel/Controller/Customer.pm:56 lib/NGCP/Panel/Controller/Reseller.pm:137 lib/NGCP/Panel/Controller/Reseller.pm:153 lib/NGCP/Panel/Controller/Reseller.pm:37 lib/NGCP/Panel/Controller/Reseller.pm:46 lib/NGCP/Panel/Controller/Subscriber.pm:120 lib/NGCP/Panel/Controller/Subscriber.pm:2049 lib/NGCP/Panel/Controller/Subscriber.pm:272 lib/NGCP/Panel/Utils/DbStrings.pm:715 share/templates/subscriber/master.tt:76
+#: lib/NGCP/Panel/Controller/Contract.pm:30 lib/NGCP/Panel/Controller/Contract.pm:396 lib/NGCP/Panel/Controller/Customer.pm:101 lib/NGCP/Panel/Controller/Customer.pm:56 lib/NGCP/Panel/Controller/Reseller.pm:139 lib/NGCP/Panel/Controller/Reseller.pm:155 lib/NGCP/Panel/Controller/Reseller.pm:38 lib/NGCP/Panel/Controller/Reseller.pm:47 lib/NGCP/Panel/Controller/Subscriber.pm:120 lib/NGCP/Panel/Controller/Subscriber.pm:2049 lib/NGCP/Panel/Controller/Subscriber.pm:272 lib/NGCP/Panel/Utils/DbStrings.pm:715 share/templates/subscriber/master.tt:76
 msgid "Status"
 msgstr ""
 
@@ -6101,7 +6101,7 @@ msgstr ""
 msgid "Successfully saved Call Forward"
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/Reseller.pm:294
+#: lib/NGCP/Panel/Controller/Reseller.pm:296
 msgid "Successfully terminated reseller"
 msgstr ""
 
@@ -7290,7 +7290,7 @@ msgstr ""
 msgid "Tuesday"
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/Device.pm:44 lib/NGCP/Panel/Controller/InvoiceTemplate.pm:35 lib/NGCP/Panel/Controller/Reseller.pm:163 lib/NGCP/Panel/Utils/DbStrings.pm:834 share/templates/subscriber/preferences.tt:66
+#: lib/NGCP/Panel/Controller/Device.pm:44 lib/NGCP/Panel/Controller/InvoiceTemplate.pm:35 lib/NGCP/Panel/Controller/Reseller.pm:165 lib/NGCP/Panel/Utils/DbStrings.pm:834 share/templates/subscriber/preferences.tt:66
 msgid "Type"
 msgstr ""
 
@@ -7322,7 +7322,7 @@ msgstr ""
 msgid "Upload"
 msgstr ""
 
-#: share/templates/device/list.tt:135
+#: share/templates/device/list.tt:142
 msgid "Upload Device Firmware"
 msgstr ""
 
