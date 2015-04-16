@@ -206,6 +206,8 @@ sub POST :Allow {
             last;
         }
 
+        $guard->commit;
+
         try {
             unless($c->config->{features}->{debug}) {
                 $self->xmpp_domain_reload($c, $resource->{domain});
@@ -222,8 +224,6 @@ sub POST :Allow {
             my ($c) = @_;
             my $_domain = $self->item_by_id($c, $billing_domain->id);
             return $self->hal_from_item($c,$_domain); });
-
-        $guard->commit;
 
         $c->response->status(HTTP_CREATED);
         $c->response->header(Location => sprintf('/%s%d', $c->request->path, $billing_domain->id));
