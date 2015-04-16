@@ -27,6 +27,7 @@ has_field 'mode' => (
 
 has_field 'description' => (
     type => 'Text',
+    required => 0,
 );
 
 has_field 'save' => (
