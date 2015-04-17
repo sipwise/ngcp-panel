@@ -99,11 +99,10 @@ has 'classinfo' => ( is => 'ro', isa => HashRef, default => sub{
             parent => 'facility',
             revalidate => 0,
         },
-        ############################# OPTICAL WIP #############################
         ds3_optical => {
             name => 'DS3_Optical',
             parent => 'facility',
-            revalidate => 0,   # TODO
+            revalidate => 1,
         },
         optical_interface => {
             name => 'Optical_Interface',
@@ -125,7 +124,6 @@ has 'classinfo' => ( is => 'ro', isa => HashRef, default => sub{
             parent => 'ds3_interface',
             revalidate => 0,
         },
-        #######################################################################
         signaling => {
             name => 'Signaling',
             parent => 'bn2020',
@@ -465,7 +463,7 @@ sub create_ds1_spans {
 
     return $self->_create_generic($options, 'ds1_spans');
 }
-######################### OPTICAL WIP ################################
+
 sub create_ds3_optical {
     my ( $self, $options ) = @_;
 
@@ -495,7 +493,7 @@ sub create_ds1_spans_optical {
 
     return $self->_create_generic($options, 'ds1_spans_optical');
 }
-######################################################################
+
 sub create_signaling {
     my ( $self, $options ) = @_;
 
@@ -961,14 +959,15 @@ sub create_all_sipsip {
             InIPProfileId => '1',
             OutIPProfile => 'ngcp_out_profile',
             SupportA2F => 'True',
+            Name => 'cg_ngcp_sipclient',
             }},
         {name => 'cg_network_element', options => undef},
         {name => 'node_association', options => undef},
         {name => 'route_element', options => {
             StringType => 'Channel Group',
-            InChannelGroup => 'ChannelGroup0',
+            InChannelGroup => 'cg_ngcp_sipclient',
             RouteActionType => 'Channel Group',
-            RouteActionList => 'ChannelGroup0',
+            RouteActionList => 'cg_ngcp_sipclient',
             }},
         #{run => 'download_route_table'},
         #{run => 'download_channel_groups'},
@@ -985,10 +984,30 @@ sub create_all_sipsip {
 
 # log: 0: none, 1: short
 # necessary keys: ip_sip, ip_rtp, ip_client, out_codecs, optional: in_codecs
+# optional: use_optical_spans (bool), is_isdn_userside (bool)
 sub create_all_sipisdn {
     my ($self, $settings, $log) = @_;
 
     $self->create_general_part($settings, $log);
+
+    my @ds1_spans;
+    if ($settings->{use_optical_spans}) {
+        @ds1_spans = (
+            {name => 'ds3_optical', options => {
+                FacilityType => 'Optical',
+            }},
+            {name => 'optical_interface', options => undef},
+            {name => 'optical_link', options => undef},
+            {name => 'ds3_interface', options => undef},
+            {name => 'ds1_spans_optical', options => undef},
+        );
+    } else {
+        @ds1_spans = (
+            {name => 'ds1_spans', options => {
+                EndingOffset => '3',
+            }},
+        );
+    }
 
     my $resp;
 
@@ -997,18 +1016,23 @@ sub create_all_sipisdn {
 
         {name => 'tdm_profile_collection', options => undef},
         {name => 'e1_profile', options => undef},
-        {name => 'ds1_spans', options => {
-            EndingOffset => '3',
-        }},
-        {name => 'isdn_d_chan', options => undef},
+        @ds1_spans,
+        {name => 'isdn_d_chan', options => $settings->{is_isdn_userside} ? 
+            {
+                BaseVariant => 'Euro-ISDN User Side',
+                BChanSelection => 'Linear Counter Clockwise',
+            } : undef,
+        },
         {name => 'isdn_group', options => undef},
         {name => 'isdn_circuit_group', options => {
             EndChannel => 'Span ID: 0 CID: 30',
             }},
-        {name => 'isdn_d_chan', options => {
-            BaseVariant => 'Euro-ISDN User Side',
-            BChanSelection => 'Linear Counter Clockwise',
-            }},
+        {name => 'isdn_d_chan', options => $settings->{is_isdn_userside} ? 
+            undef : {
+                BaseVariant => 'Euro-ISDN User Side',
+                BChanSelection => 'Linear Counter Clockwise',
+            }
+        },
         {name => 'isdn_group', options => undef},
         {name => 'isdn_circuit_group', options => {
             EndChannel => 'Span ID: 1 CID: 30',
@@ -1027,7 +1051,7 @@ sub create_all_sipisdn {
             InIPProfileId => '1',
             OutIPProfile => 'ngcp_out_profile',
             SupportA2F => 'True',
-            Name => 'CGPhone1',
+            Name => 'cg_ngcp_sipclient',
             }},
         {name => 'cg_network_element', options => undef},
         {name => 'node_association', options => undef},
@@ -1035,27 +1059,33 @@ sub create_all_sipisdn {
             SignalingType => 'ISDN',
             InRouteTable => 'ngcp_route_table - ID: 5',
             SupportA2F => 'True',
-            Name => 'CGisdn1',
+            Name => 'cg_ngcp_isdn_1',
             }},
         {name => 'cg_isdn_circuit_group', options => undef},
         {name => 'channel_group', options => {
             SignalingType => 'ISDN',
             InRouteTable => 'ngcp_route_table - ID: 5',
             SupportA2F => 'True',
-            Name => 'CGisdn2',
+            Name => 'cg_ngcp_isdn_2',
             }},
         {name => 'cg_isdn_circuit_group', options => undef},
         {name => 'route_element', options => {
             StringType => 'Channel Group',
-            InChannelGroup => 'CGPhone1',
+            InChannelGroup => 'cg_ngcp_sipclient',
             RouteActionType => 'Channel Group',
-            RouteActionList => 'CGisdn1',
+            RouteActionList => 'cg_ngcp_isdn_1',
             }},
         {name => 'route_element', options => {
             StringType => 'Channel Group',
-            InChannelGroup => 'CGisdn2',
+            InChannelGroup => 'cg_ngcp_isdn_1',
             RouteActionType => 'Channel Group',
-            RouteActionList => 'CGPhone1',
+            RouteActionList => 'cg_ngcp_sipclient',
+            }},
+        {name => 'route_element', options => {
+            StringType => 'Channel Group',
+            InChannelGroup => 'cg_ngcp_isdn_2',
+            RouteActionType => 'Channel Group',
+            RouteActionList => 'cg_ngcp_sipclient',
             }},
         #{run => 'download_route_table'},
         #{run => 'download_channel_groups'},
@@ -1073,21 +1103,39 @@ sub create_all_sipisdn {
 # log: 0: none, 1: short
 # necessary keys: ip_sip, ip_rtp, ip_client, out_codecs, ss7_opc, ss7_apc, ss7_dpc
 # optionalkeys: in_codecs
+# optional: use_optical_spans (bool)
 sub create_all_sipss7 {
     my ($self, $settings, $log) = @_;
 
     $self->create_general_part($settings, $log);
+
+    my @ds1_spans;
+    if ($settings->{use_optical_spans}) {
+        @ds1_spans = (
+            {name => 'ds3_optical', options => {
+                FacilityType => 'Optical',
+            }},
+            {name => 'optical_interface', options => undef},
+            {name => 'optical_link', options => undef},
+            {name => 'ds3_interface', options => undef},
+            {name => 'ds1_spans_optical', options => undef},
+        );
+    } else {
+        @ds1_spans = (
+            {name => 'ds1_spans', options => {
+                EndingOffset => '3',
+            }},
+        );
+    }
 
     my $resp;
 
     my $schedule = [
         {name => 'tdm_profile_collection', options => undef},
         {name => 'e1_profile', options => undef},
-        {name => 'ds1_spans', options => {
-            EndingOffset => '3',
-        }},
         {name => 'isup_profile_collection', options => undef},
         {name => 'isup_itu_profile', options => undef},
+        @ds1_spans,
         #{run => 'download_profiles'},
         {name => 'ss7', options => undef},
         {name => 'ss7_network', options => undef},
@@ -1142,7 +1190,7 @@ sub create_all_sipss7 {
             InIPProfileId => '1',
             OutIPProfile => 'ngcp_out_profile',
             SupportA2F => 'True',
-            Name => 'CGPhone1',
+            Name => 'cg_ngcp_sipclient',
             }},
         {name => 'cg_network_element', options => undef},
         {name => 'node_association', options => undef},
@@ -1151,28 +1199,34 @@ sub create_all_sipss7 {
             SignalingType => 'SS7_ISUP',
             InRouteTable => 'ngcp_route_table - ID: 5',
             SupportA2F => 'True',
-            Name => 'CG_ss7_1',
+            Name => 'cg_ngcp_ss7_1',
             }},
         {name => 'cg_isdn_circuit_group', options => undef},
         {name => 'channel_group', options => {
             SignalingType => 'SS7_ISUP',
             InRouteTable => 'ngcp_route_table - ID: 5',
             SupportA2F => 'True',
-            Name => 'CG_ss7_2',
+            Name => 'cg_ngcp_ss7_2',
             }},
         {name => 'cg_isdn_circuit_group', options => undef},
 
         {name => 'route_element', options => {
             StringType => 'Channel Group',
-            InChannelGroup => 'CGPhone1',
+            InChannelGroup => 'cg_ngcp_sipclient',
             RouteActionType => 'Channel Group',
-            RouteActionList => 'CG_ss7_1',
+            RouteActionList => 'cg_ngcp_ss7_1',
             }},
         {name => 'route_element', options => {
             StringType => 'Channel Group',
-            InChannelGroup => 'CG_ss7_2',
+            InChannelGroup => 'cg_ngcp_ss7_1',
             RouteActionType => 'Channel Group',
-            RouteActionList => 'CGPhone1',
+            RouteActionList => 'cg_ngcp_sipclient',
+            }},
+        {name => 'route_element', options => {
+            StringType => 'Channel Group',
+            InChannelGroup => 'cg_ngcp_ss7_2',
+            RouteActionType => 'Channel Group',
+            RouteActionList => 'cg_ngcp_sipclient',
             }},
         #{run => 'download_route_table'},
         #{run => 'download_channel_groups'},
