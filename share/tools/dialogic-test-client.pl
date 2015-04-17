@@ -35,6 +35,8 @@ my $result = $test->create_all_sipss7({
     snmp_system_location => 'foobar',
     snmp_system_contact => 'foobar',
     snmp_community_name => 'bar',
+    use_optical_spans => 1,
+    is_isdn_userside => 1,
     },
     2,
     );
