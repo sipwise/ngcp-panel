@@ -66,8 +66,7 @@ sub new_subscriber {
 
     my $template = $subscriber->contract->subscriber_email_template;
     return unless($template);
-    my $email = $subscriber->contact ? 
-        $subscriber->contact->email : $subscriber->contract->contact->email;
+    my $email = $subscriber->contract->contact->email;
 
     my $vars = {
         url => $url,
