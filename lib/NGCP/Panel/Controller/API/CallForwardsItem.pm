@@ -55,10 +55,10 @@ sub GET :Allow {
     my ($self, $c, $id) = @_;
     {
         last unless $self->valid_id($c, $id);
-        my $cfm = $self->item_by_id($c, $id, "callforwards");
-        last unless $self->resource_exists($c, cfm => $cfm);
+        my $item = $self->item_by_id($c, $id);
+        last unless $self->resource_exists($c, subscriber => $item);
 
-        my $hal = $self->hal_from_item($c, $cfm, "callforwards");
+        my $hal = $self->hal_from_item($c, $item, "callforwards");
 
         my $response = HTTP::Response->new(HTTP_OK, undef, HTTP::Headers->new(
             (map { # XXX Data::HAL must be able to generate links with multiple relations
@@ -107,18 +107,18 @@ sub PATCH :Allow {
         );
         last unless $json;
 
-        my $callforward = $self->item_by_id($c, $id, "callforwards");
-        last unless $self->resource_exists($c, callforward => $callforward);
-        my $old_resource = $self->hal_from_item($c, $callforward, "callforwards")->resource;
+        my $item = $self->item_by_id($c, $id);
+        last unless $self->resource_exists($c, subs_for_callforwards => $item);
+        my $old_resource = $self->hal_from_item($c, $item, "callforwards")->resource;
         my $resource = $self->apply_patch($c, $old_resource, $json);
         last unless $resource;
 
         my $form = $self->get_form($c);
-        $callforward = $self->update_item($c, $callforward, $old_resource, $resource, $form);
-        last unless $callforward;
+        $item = $self->update_item($c, $item, $old_resource, $resource, $form);
+        last unless $item;
         
-        my $hal = $self->hal_from_item($c, $callforward, "callforwards");
-        last unless $self->add_update_journal_item_hal($c,$hal);
+        my $hal = $self->hal_from_item($c, $item, "callforwards");
+        last unless $self->add_update_journal_item_hal($c,{ hal => $hal, id => $id });
 
         $guard->commit; 
 
@@ -146,8 +146,8 @@ sub PUT :Allow {
         my $preference = $self->require_preference($c);
         last unless $preference;
 
-        my $callforward = $self->item_by_id($c, $id, "callforwards");
-        last unless $self->resource_exists($c, callforward => $callforward);
+        my $item = $self->item_by_id($c, $id);
+        last unless $self->resource_exists($c, subs_for_callforward => $item);
         my $resource = $self->get_valid_put_data(
             c => $c,
             id => $id,
@@ -157,11 +157,11 @@ sub PUT :Allow {
         my $old_resource = undef;
 
         my $form = $self->get_form($c);
-        $callforward = $self->update_item($c, $callforward, $old_resource, $resource, $form);
-        last unless $callforward;
+        $item = $self->update_item($c, $item, $old_resource, $resource, $form);
+        last unless $item;
 
-        my $hal = $self->hal_from_item($c, $callforward, "callforwards");
-        last unless $self->add_update_journal_item_hal($c,$hal);
+        my $hal = $self->hal_from_item($c, $item, "callforwards");
+        last unless $self->add_update_journal_item_hal($c,{ hal => $hal, id => $id });
         
         $guard->commit; 
 
@@ -186,8 +186,8 @@ sub DELETE :Allow {
     my ($self, $c, $id) = @_;
     my $guard = $c->model('DB')->txn_scope_guard;
     {
-        my $callforward = $self->item_by_id($c, $id, "callforwards");
-        last unless $self->resource_exists($c, callforward => $callforward);
+        my $item = $self->item_by_id($c, $id);
+        last unless $self->resource_exists($c, subs_for_callforward => $item);
         my $form = $self->get_form($c);
         my $old_resource = undef;
         my $resource = $self->get_valid_put_data(
@@ -196,26 +196,63 @@ sub DELETE :Allow {
             media_type => 'application/json',
         );
         $resource //= {};
+
+        last unless $self->add_delete_journal_item_hal($c,{ hal_from_item => sub {
+            my $self = shift;
+            my ($c) = @_;
+            #my $_callforward = $self->item_by_id($c, $id, "callforwards");
+            return $self->hal_from_item($c,$item,"callforwards"); },
+            id => $id});
+
         try {
-            $callforward = $self->update_item($c, $callforward, $old_resource, $resource, $form);
+            $item = $self->update_item($c, $item, $old_resource, $resource, $form);
         } catch($e) {
             $c->log->error("Failed to delete callforward with id '$id': $e");
             $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "Internal Server Error");
             last;
         }
 
-        last unless $self->add_delete_journal_item_hal($c,sub {
-            my $self = shift;
-            my ($c) = @_;
-            #my $_callforward = $self->item_by_id($c, $id, "callforwards");
-            return $self->hal_from_item($c,$callforward); });
-        
         $guard->commit;
 
         $c->response->status(HTTP_NO_CONTENT);
         $c->response->body(q());
     }
     return;
+}
+
+sub item_base_journal :Journal {
+    my $self = shift @_;
+    return $self->handle_item_base_journal(@_);
+}
+    
+sub journals_get :Journal {
+    my $self = shift @_;
+    return $self->handle_journals_get(@_);
+}
+
+sub journalsitem_get :Journal {
+    my $self = shift @_;
+    return $self->handle_journalsitem_get(@_);
+}
+
+sub journals_options :Journal {
+    my $self = shift @_;
+    return $self->handle_journals_options(@_);
+}
+
+sub journalsitem_options :Journal {
+    my $self = shift @_;
+    return $self->handle_journalsitem_options(@_);
+}
+
+sub journals_head :Journal {
+    my $self = shift @_;
+    return $self->handle_journals_head(@_);
+}
+
+sub journalsitem_head :Journal {
+    my $self = shift @_;
+    return $self->handle_journalsitem_head(@_);
 }
 
 sub end : Private {

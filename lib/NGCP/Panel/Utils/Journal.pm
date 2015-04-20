@@ -49,6 +49,8 @@ sub add_journal_item_hal {
         my $arg = $args[0];
         my @hal_from_item = ();
         my $params;
+        my $id;
+        my $id_name = 'id';
         if (ref $arg eq 'HASH') {
             $params = $arg;
             my $h = (defined $params->{hal} ? $params->{hal} : $params->{hal_from_item});
@@ -60,6 +62,8 @@ sub add_journal_item_hal {
                     @hal_from_item = ( $h );
                 }
             }
+            $id_name = $params->{id_name} if defined $params->{id_name}; 
+            $id = $params->{id} if defined $params->{id};             
         } elsif (ref $arg eq 'ARRAY') {
             $params = {};
             @hal_from_item = @$arg;
@@ -86,11 +90,12 @@ sub add_journal_item_hal {
         if (ref $hal eq Data::HAL::) {
             $resource = $hal->resource;
         }
-        my $id;
-        if (ref $resource eq 'HASH') {
-            $id = $resource->{id};
-        } elsif ((defined blessed($resource)) && $resource->can('id')) {
-            $id = $resource->id;
+        if (!defined $id) {
+            if (ref $resource eq 'HASH') {
+                $id = $resource->{$id_name};
+            } elsif ((defined blessed($resource)) && $resource->can($id_name)) {
+                $id = $resource->$id_name;
+            }
         }
         return _create_journal($controller,$c,$id,$resource,$params);
     }

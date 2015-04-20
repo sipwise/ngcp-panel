@@ -24,7 +24,7 @@ sub get_form {
 sub hal_from_item {
     my ($self, $c, $item, $type) = @_;
     my $form;
-    my $rwr_form = $self->get_form($c, "rules");
+    #my $rwr_form = $self->get_form($c, "rules"); #rules?
     
     my $prov_subs = $item->provisioning_voip_subscriber;
 

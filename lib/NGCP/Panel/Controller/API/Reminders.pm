@@ -197,6 +197,12 @@ sub POST :Allow {
             $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "Failed to create reminder.");
             last;
         }
+        
+        last unless $self->add_create_journal_item_hal($c,sub {
+            my $self = shift;
+            my ($c) = @_;
+            my $_item = $self->item_by_id($c, $item->id);
+            return $self->hal_from_item($c, $_item, $form); });
 
         $guard->commit;
 

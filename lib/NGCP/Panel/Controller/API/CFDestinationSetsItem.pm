@@ -56,7 +56,7 @@ sub GET :Allow {
     {
         last unless $self->valid_id($c, $id);
         my $dset = $self->item_by_id($c, $id);
-        last unless $self->resource_exists($c, dset => $dset);
+        last unless $self->resource_exists($c, destinationset => $dset);
 
         my $hal = $self->hal_from_item($c, $dset, "cfdestinationsets");
 
@@ -147,7 +147,7 @@ sub PUT :Allow {
         last unless $preference;
 
         my $dset = $self->item_by_id($c, $id);
-        last unless $self->resource_exists($c, cfdestinationset => $dset);
+        last unless $self->resource_exists($c, destinationset => $dset);
         my $resource = $self->get_valid_put_data(
             c => $c,
             id => $id,

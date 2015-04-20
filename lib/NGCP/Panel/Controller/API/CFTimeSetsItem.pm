@@ -108,7 +108,7 @@ sub PATCH :Allow {
         last unless $json;
 
         my $tset = $self->item_by_id($c, $id);
-        last unless $self->resource_exists($c, cftimeset => $tset);
+        last unless $self->resource_exists($c, timeset => $tset);
         my $old_resource = $self->hal_from_item($c, $tset, "cftimesets")->resource;
         my $resource = $self->apply_patch($c, $old_resource, $json);
         last unless $resource;
@@ -147,7 +147,7 @@ sub PUT :Allow {
         last unless $preference;
 
         my $tset = $self->item_by_id($c, $id);
-        last unless $self->resource_exists($c, cftimeset => $tset);
+        last unless $self->resource_exists($c, timeset => $tset);
         my $resource = $self->get_valid_put_data(
             c => $c,
             id => $id,

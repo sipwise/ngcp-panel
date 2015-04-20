@@ -22,16 +22,23 @@ class_has('resource_name', is => 'ro', default => 'speeddials');
 class_has('dispatch_path', is => 'ro', default => '/api/speeddials/');
 class_has('relation', is => 'ro', default => 'http://purl.org/sipwise/ngcp-api/#rel-speeddials');
 
+class_has(@{ __PACKAGE__->get_journal_query_params() });
+
 __PACKAGE__->config(
     action => {
-        map { $_ => {
+        (map { $_ => {
             ACLDetachTo => '/api/root/invalid_user',
             AllowedRole => [qw/admin reseller/],
             Args => 1,
             Does => [qw(ACL RequireSSL)],
             Method => $_,
             Path => __PACKAGE__->dispatch_path,
-        } } @{ __PACKAGE__->allowed_methods },
+        } } @{ __PACKAGE__->allowed_methods }),
+        @{ __PACKAGE__->get_journal_action_config(__PACKAGE__->resource_name,{
+            ACLDetachTo => '/api/root/invalid_user',
+            AllowedRole => [qw/admin reseller/],
+            Does => [qw(ACL RequireSSL)],
+        }) }
     },
     action_roles => [qw(HTTPMethods)],
 );
@@ -106,6 +113,9 @@ sub PUT :Allow {
         $subscriber = $self->update_item($c, $subscriber, undef, $resource, $form);
         last unless $subscriber;
 
+        my $hal = $self->hal_from_item($c, $subscriber);
+        last unless $self->add_update_journal_item_hal($c,{ hal => $hal, id => $subscriber->id });
+        
         $guard->commit;
 
         if ('minimal' eq $preference) {
@@ -113,7 +123,7 @@ sub PUT :Allow {
             $c->response->header(Preference_Applied => 'return=minimal');
             $c->response->body(q());
         } else {
-            my $hal = $self->hal_from_item($c, $subscriber);
+            #my $hal = $self->hal_from_item($c, $subscriber);
             my $response = HTTP::Response->new(HTTP_OK, undef, HTTP::Headers->new(
                 $hal->http_headers,
             ), $hal->as_json);
@@ -151,6 +161,9 @@ sub PATCH :Allow {
         $subscriber = $self->update_item($c, $subscriber, undef, $resource, $form);
         last unless $subscriber;
 
+        my $hal = $self->hal_from_item($c, $subscriber);
+        last unless $self->add_update_journal_item_hal($c,{ hal => $hal, id => $subscriber->id });
+        
         $guard->commit;
 
         if ('minimal' eq $preference) {
@@ -158,7 +171,7 @@ sub PATCH :Allow {
             $c->response->header(Preference_Applied => 'return=minimal');
             $c->response->body(q());
         } else {
-            my $hal = $self->hal_from_item($c, $subscriber);
+            #my $hal = $self->hal_from_item($c, $subscriber);
             my $response = HTTP::Response->new(HTTP_OK, undef, HTTP::Headers->new(
                 $hal->http_headers,
             ), $hal->as_json);
@@ -168,6 +181,41 @@ sub PATCH :Allow {
         }
     }
     return;
+}
+
+sub item_base_journal :Journal {
+    my $self = shift @_;
+    return $self->handle_item_base_journal(@_);
+}
+    
+sub journals_get :Journal {
+    my $self = shift @_;
+    return $self->handle_journals_get(@_);
+}
+
+sub journalsitem_get :Journal {
+    my $self = shift @_;
+    return $self->handle_journalsitem_get(@_);
+}
+
+sub journals_options :Journal {
+    my $self = shift @_;
+    return $self->handle_journals_options(@_);
+}
+
+sub journalsitem_options :Journal {
+    my $self = shift @_;
+    return $self->handle_journalsitem_options(@_);
+}
+
+sub journals_head :Journal {
+    my $self = shift @_;
+    return $self->handle_journals_head(@_);
+}
+
+sub journalsitem_head :Journal {
+    my $self = shift @_;
+    return $self->handle_journalsitem_head(@_);
 }
 
 sub end : Private {

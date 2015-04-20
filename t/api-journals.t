@@ -5,6 +5,7 @@ use JSON qw();
 use Test::More;
 use Storable qw();
 
+use JSON::PP;
 use LWP::Debug;
 
 BEGIN {
@@ -12,7 +13,7 @@ BEGIN {
 }
 use NGCP::Panel::Utils::Journal qw();
 
-my $is_local_env = 1;
+my $is_local_env = 0;
 my $mysql_sqlstrict = not $is_local_env;
 my $enable_journal_tests = 1;
 
@@ -69,15 +70,32 @@ my $contract = test_contract($billingprofile,$systemcontact);
 my $domain = test_domain($t,$reseller);
 my $customercontact = test_customercontact($t,$reseller);
 my $customer = test_customer($customercontact,$billingprofile);
-#my $customerpreferences = test_customerpreferences($customer);
+my $customerpreferences = test_customerpreferences($customer);
 
-#my $subscriberprofileset = test_subscriberprofileset($t,$reseller);
-#my $subscriberprofile = test_subscriberprofile($t,$subscriberprofileset);
-#my $profilepreferences = test_profilepreferences($subscriberprofile);
+my $subscriberprofileset = test_subscriberprofileset($t,$reseller);
+my $subscriberprofile = test_subscriberprofile($t,$subscriberprofileset);
+my $profilepreferences = test_profilepreferences($subscriberprofile);
 
 my $subscriber = test_subscriber($t,$customer,$domain);
+
+my $voicemailsettings = test_voicemailsettings($t,$subscriber);
+
+my $trustedsource = test_trustedsource($subscriber);
+
+my $speeddials = test_speeddials($t,$subscriber);
+
+my $reminder = test_reminder($subscriber);
+
+my $faxserversettings = test_faxserversettings($t,$subscriber);
+
+
+my $ccmapentries = test_ccmapentries($subscriber);
+
 my $cfdestinationset = test_cfdestinationset($t,$subscriber);
 my $cftimeset = test_cftimeset($t,$subscriber);
+test_callforwards($subscriber,$cfdestinationset,$cftimeset);
+my $cfmappings = test_cfmapping($subscriber,$cfdestinationset,$cftimeset);
+
 
 my $systemsoundset = test_soundset($t,$reseller);
 my $customersoundset = test_soundset($t,$reseller,$customer);
@@ -87,6 +105,516 @@ my $subscriberpreferences = test_subscriberpreferences($subscriber,$customersoun
 
 
 done_testing;
+
+sub test_voicemailsettings {
+    my ($t,$subscriber) = @_;
+
+    my $voicemailsettings_uri = $uri.'/api/voicemailsettings/'.$subscriber->{id};
+    $req = HTTP::Request->new('PUT', $voicemailsettings_uri); #$customer->{id});
+    $req->header('Content-Type' => 'application/json');
+    $req->header('Prefer' => 'return=representation');    
+    $req->content(JSON::to_json({
+        attach => JSON::PP::true,
+        delete => JSON::PP::true,
+        email =>  'voicemail_email_'.$t.'@example.com',
+        pin => '1234',
+        }));
+    $res = $ua->request($req);
+    is($res->code, 200, "PUT test voicemailsettings");
+    $req = HTTP::Request->new('GET', $voicemailsettings_uri); # . '?page=1&rows=' . (scalar keys %$put_data));
+    $res = $ua->request($req);
+    is($res->code, 200, "fetch PUT test voicemailsettings");
+    my $voicemailsettings = JSON::from_json($res->decoded_content);
+    
+    _test_item_journal_link('voicemailsettings',$voicemailsettings,$subscriber->{id});
+    _test_journal_options_head('voicemailsettings',$subscriber->{id});
+    my $journals = {};
+    my $journal = _test_journal_top_journalitem('voicemailsettings',$subscriber->{id},$voicemailsettings,'update',$journals);
+    _test_journal_options_head('voicemailsettings',$subscriber->{id},$journal->{id});
+    
+    $req = HTTP::Request->new('PATCH', $voicemailsettings_uri);
+    $req->header('Content-Type' => 'application/json-patch+json');
+    $req->header('Prefer' => 'return=representation');
+    $req->content(JSON::to_json(
+        [ { op => 'replace', path => '/pin', value => '4567' } ]
+    ));
+    $res = $ua->request($req);
+    is($res->code, 200, "PATCH test voicemailsettings");
+    $req = HTTP::Request->new('GET', $voicemailsettings_uri);
+    $res = $ua->request($req);
+    is($res->code, 200, "fetch PATCHED test voicemailsettings");
+    $voicemailsettings = JSON::from_json($res->decoded_content);
+    
+    _test_item_journal_link('voicemailsettings',$voicemailsettings,$subscriber->{id});    
+    $journal = _test_journal_top_journalitem('voicemailsettings',$subscriber->{id},$voicemailsettings,'update',$journals,$journal);
+    
+    _test_journal_collection('voicemailsettings',$subscriber->{id},$journals);
+    
+    return $voicemailsettings;
+    
+}
+
+sub test_trustedsource {
+    my ($subscriber) = @_;
+    $req = HTTP::Request->new('POST', $uri.'/api/trustedsources/');
+    $req->header('Content-Type' => 'application/json');
+    $req->content(JSON::to_json({
+        #from_pattern => 
+        protocol => 'TCP', #UDP, TCP, TLS, ANY
+        src_ip => '192.168.0.1',
+        subscriber_id => $subscriber->{id},
+    }));
+    $res = $ua->request($req);
+    is($res->code, 201, "POST test trustedsource");
+    my $trustedsource_uri = $uri.'/'.$res->header('Location');
+    $req = HTTP::Request->new('GET', $trustedsource_uri);
+    $res = $ua->request($req);
+    is($res->code, 200, "fetch POSTed test trustedsource");
+    my $trustedsource = JSON::from_json($res->decoded_content);
+    
+    _test_item_journal_link('trustedsources',$trustedsource,$trustedsource->{id});
+    _test_journal_options_head('trustedsources',$trustedsource->{id});
+    my $journals = {};
+    my $journal = _test_journal_top_journalitem('trustedsources',$trustedsource->{id},$trustedsource,'create',$journals);
+    _test_journal_options_head('trustedsources',$trustedsource->{id},$journal->{id});
+    
+    $req = HTTP::Request->new('PUT', $trustedsource_uri);
+    $req->header('Content-Type' => 'application/json');
+    $req->header('Prefer' => 'return=representation');
+    $req->content(JSON::to_json({
+        #from_pattern => 
+        protocol => 'TCP', #UDP, TCP, TLS, ANY
+        src_ip => '192.168.0.2',
+        subscriber_id => $subscriber->{id},
+    }));
+    $res = $ua->request($req);
+    is($res->code, 200, "PUT test trustedsource");
+    $req = HTTP::Request->new('GET', $trustedsource_uri);
+    $res = $ua->request($req);
+    is($res->code, 200, "fetch PUT test trustedsource");
+    $trustedsource = JSON::from_json($res->decoded_content);
+    
+    _test_item_journal_link('trustedsources',$trustedsource,$trustedsource->{id});    
+    $journal = _test_journal_top_journalitem('trustedsources',$trustedsource->{id},$trustedsource,'update',$journals,$journal);
+    
+    $req = HTTP::Request->new('PATCH', $trustedsource_uri);
+    $req->header('Content-Type' => 'application/json-patch+json');
+    $req->header('Prefer' => 'return=representation');
+    $req->content(JSON::to_json(
+        [ { op => 'replace', path => '/src_ip', value => '192.168.0.3' } ]
+    ));
+    $res = $ua->request($req);
+    is($res->code, 200, "PATCH test trustedsource");
+    $req = HTTP::Request->new('GET', $trustedsource_uri);
+    $res = $ua->request($req);
+    is($res->code, 200, "fetch PATCHed test trustedsource");
+    $trustedsource = JSON::from_json($res->decoded_content);
+
+    _test_item_journal_link('trustedsources',$trustedsource,$trustedsource->{id});    
+    $journal = _test_journal_top_journalitem('trustedsources',$trustedsource->{id},$trustedsource,'update',$journals,$journal);
+    
+    $req = HTTP::Request->new('DELETE', $trustedsource_uri);
+    $res = $ua->request($req);
+    is($res->code, 204, "delete POSTed test trustedsource");
+    #$domain = JSON::from_json($res->decoded_content);
+    
+    $journal = _test_journal_top_journalitem('trustedsources',$trustedsource->{id},$trustedsource,'delete',$journals,$journal);
+    
+    _test_journal_collection('trustedsources',$trustedsource->{id},$journals);
+    
+    $req = HTTP::Request->new('POST', $uri.'/api/trustedsources/');
+    $req->header('Content-Type' => 'application/json');
+    $req->content(JSON::to_json({
+        #from_pattern => 
+        protocol => 'TCP', #UDP, TCP, TLS, ANY
+        src_ip => '192.168.0.1',
+        subscriber_id => $subscriber->{id},
+    }));
+    $res = $ua->request($req);
+    is($res->code, 201, "POST another test trustedsource");
+    $trustedsource_uri = $uri.'/'.$res->header('Location');
+    $req = HTTP::Request->new('GET', $trustedsource_uri);
+    $res = $ua->request($req);
+    is($res->code, 200, "fetch POSTed test trustedsource");
+    $trustedsource = JSON::from_json($res->decoded_content);
+    
+    return $trustedsource;
+    
+}
+
+
+
+sub test_speeddials {
+    my ($t,$subscriber) = @_;
+
+    my $speeddials_uri = $uri.'/api/speeddials/'.$subscriber->{id};
+    $req = HTTP::Request->new('PUT', $speeddials_uri); #$customer->{id});
+    $req->header('Content-Type' => 'application/json');
+    $req->header('Prefer' => 'return=representation');    
+    $req->content(JSON::to_json({
+        speeddials => [ {slot => '*1',
+                         destination => 'speed_dial_dest_'.$t.'@example.com' },
+                       {slot => '*2',
+                         destination => 'speed_dial_dest_'.$t.'@example.com' },
+                       {slot => '*3',
+                         destination => 'speed_dial_dest_'.$t.'@example.com' },],
+        }));
+    $res = $ua->request($req);
+    is($res->code, 200, "PUT test speeddials");
+    $req = HTTP::Request->new('GET', $speeddials_uri); # . '?page=1&rows=' . (scalar keys %$put_data));
+    $res = $ua->request($req);
+    is($res->code, 200, "fetch PUT test speeddials");
+    my $speeddials = JSON::from_json($res->decoded_content);
+    
+    _test_item_journal_link('speeddials',$speeddials,$subscriber->{id});
+    _test_journal_options_head('speeddials',$subscriber->{id});
+    my $journals = {};
+    my $journal = _test_journal_top_journalitem('speeddials',$subscriber->{id},$speeddials,'update',$journals);
+    _test_journal_options_head('speeddials',$subscriber->{id},$journal->{id});
+    
+    $req = HTTP::Request->new('PATCH', $speeddials_uri);
+    $req->header('Content-Type' => 'application/json-patch+json');
+    $req->header('Prefer' => 'return=representation');
+    $req->content(JSON::to_json(
+        [ { op => 'replace', path => '/speeddials', value => [ {slot => '*4',
+                         destination => 'speed_dia_dest_'.$t.'@example.com' },
+                       {slot => '*5',
+                         destination => 'speed_dia_dest_'.$t.'@example.com' },
+                       {slot => '*6',
+                         destination => 'speed_dia_dest_'.$t.'@example.com' },] } ]
+    ));
+    $res = $ua->request($req);
+    is($res->code, 200, "PATCH test speeddials");
+    $req = HTTP::Request->new('GET', $speeddials_uri);
+    $res = $ua->request($req);
+    is($res->code, 200, "fetch PATCHED test speeddials");
+    $speeddials = JSON::from_json($res->decoded_content);
+    
+    _test_item_journal_link('speeddials',$speeddials,$subscriber->{id});    
+    $journal = _test_journal_top_journalitem('speeddials',$subscriber->{id},$speeddials,'update',$journals,$journal);
+    
+    _test_journal_collection('speeddials',$subscriber->{id},$journals);
+    
+    return $speeddials;
+    
+}
+
+
+sub test_reminder {
+    my ($subscriber) = @_;
+    $req = HTTP::Request->new('POST', $uri.'/api/reminders/');
+    $req->header('Content-Type' => 'application/json');
+    $req->content(JSON::to_json({
+        recur => 'never', #, 'weekdays', 'always',
+        subscriber_id => $subscriber->{id},
+        'time' => '10:00:00',
+    }));
+    $res = $ua->request($req);
+    is($res->code, 201, "POST test reminder");
+    my $reminder_uri = $uri.'/'.$res->header('Location');
+    $req = HTTP::Request->new('GET', $reminder_uri);
+    $res = $ua->request($req);
+    is($res->code, 200, "fetch POSTed test reminder");
+    my $reminder = JSON::from_json($res->decoded_content);
+    
+    _test_item_journal_link('reminders',$reminder,$reminder->{id});
+    _test_journal_options_head('reminders',$reminder->{id});
+    my $journals = {};
+    my $journal = _test_journal_top_journalitem('reminders',$reminder->{id},$reminder,'create',$journals);
+    _test_journal_options_head('reminders',$reminder->{id},$journal->{id});
+    
+    $req = HTTP::Request->new('PUT', $reminder_uri);
+    $req->header('Content-Type' => 'application/json');
+    $req->header('Prefer' => 'return=representation');
+    $req->content(JSON::to_json({
+        recur => 'never', #, 'weekdays', 'always',
+        subscriber_id => $subscriber->{id},
+        'time' => '11:00:00',
+    }));
+    $res = $ua->request($req);
+    is($res->code, 200, "PUT test reminder");
+    $req = HTTP::Request->new('GET', $reminder_uri);
+    $res = $ua->request($req);
+    is($res->code, 200, "fetch PUT test reminder");
+    $reminder = JSON::from_json($res->decoded_content);
+    
+    _test_item_journal_link('reminders',$reminder,$reminder->{id});    
+    $journal = _test_journal_top_journalitem('reminders',$reminder->{id},$reminder,'update',$journals,$journal);
+    
+    $req = HTTP::Request->new('PATCH', $reminder_uri);
+    $req->header('Content-Type' => 'application/json-patch+json');
+    $req->header('Prefer' => 'return=representation');
+    $req->content(JSON::to_json(
+        [ { op => 'replace', path => '/recur', value => 'weekdays' } ]
+    ));
+    $res = $ua->request($req);
+    is($res->code, 200, "PATCH test reminder");
+    $req = HTTP::Request->new('GET', $reminder_uri);
+    $res = $ua->request($req);
+    is($res->code, 200, "fetch PATCHed test reminder");
+    $reminder = JSON::from_json($res->decoded_content);
+
+    _test_item_journal_link('reminders',$reminder,$reminder->{id});    
+    $journal = _test_journal_top_journalitem('reminders',$reminder->{id},$reminder,'update',$journals,$journal);
+    
+    $req = HTTP::Request->new('DELETE', $reminder_uri);
+    $res = $ua->request($req);
+    is($res->code, 204, "delete POSTed test reminder");
+    #$domain = JSON::from_json($res->decoded_content);
+    
+    $journal = _test_journal_top_journalitem('reminders',$reminder->{id},$reminder,'delete',$journals,$journal);
+    
+    _test_journal_collection('reminders',$reminder->{id},$journals);
+    
+    $req = HTTP::Request->new('POST', $uri.'/api/reminders/');
+    $req->header('Content-Type' => 'application/json');
+    $req->content(JSON::to_json({
+        recur => 'never', #, 'weekdays', 'always',
+        subscriber_id => $subscriber->{id},
+        'time' => '10:00:00',
+    }));
+    $res = $ua->request($req);
+    is($res->code, 201, "POST another test reminder");
+    $reminder_uri = $uri.'/'.$res->header('Location');
+    $req = HTTP::Request->new('GET', $reminder_uri);
+    $res = $ua->request($req);
+    is($res->code, 200, "fetch POSTed test reminder");
+    $reminder = JSON::from_json($res->decoded_content);
+    
+    return $reminder;
+    
+}
+
+
+sub test_faxserversettings {
+    my ($t,$subscriber) = @_;
+
+    my $faxserversettings_uri = $uri.'/api/faxserversettings/'.$subscriber->{id};
+    $req = HTTP::Request->new('PUT', $faxserversettings_uri); #$customer->{id});
+    $req->header('Content-Type' => 'application/json');
+    $req->header('Prefer' => 'return=representation');    
+    $req->content(JSON::to_json({
+        active => JSON::PP::true,
+        destinations => [ {destination => 'test_fax_destination_'.$t.'@example.com', #??
+                           filetype => 'TIFF',
+                           cc => JSON::PP::true,
+                           incoming => JSON::PP::true,
+                           outgoing => JSON::PP::false,
+                           status => JSON::PP::true,} ],
+        name => 'fax_server_settings_'.$t,
+        password => 'fax_server_settings_password_'.$t,
+        send_copy => JSON::PP::false,
+        send_status => JSON::PP::false,
+        }));
+    $res = $ua->request($req);
+    is($res->code, 200, "PUT test faxserversettings");
+    $req = HTTP::Request->new('GET', $faxserversettings_uri); # . '?page=1&rows=' . (scalar keys %$put_data));
+    $res = $ua->request($req);
+    is($res->code, 200, "fetch PUT test faxserversettings");
+    my $faxserversettings = JSON::from_json($res->decoded_content);
+    
+    _test_item_journal_link('faxserversettings',$faxserversettings,$subscriber->{id});
+    _test_journal_options_head('faxserversettings',$subscriber->{id});
+    my $journals = {};
+    my $journal = _test_journal_top_journalitem('faxserversettings',$subscriber->{id},$faxserversettings,'update',$journals);
+    _test_journal_options_head('faxserversettings',$subscriber->{id},$journal->{id});
+    
+    $req = HTTP::Request->new('PATCH', $faxserversettings_uri);
+    $req->header('Content-Type' => 'application/json-patch+json');
+    $req->header('Prefer' => 'return=representation');
+    $req->content(JSON::to_json(
+        [ { op => 'replace', path => '/active', value => JSON::PP::false } ]
+    ));
+    $res = $ua->request($req);
+    is($res->code, 200, "PATCH test faxserversettings");
+    $req = HTTP::Request->new('GET', $faxserversettings_uri);
+    $res = $ua->request($req);
+    is($res->code, 200, "fetch PATCHED test faxserversettings");
+    $faxserversettings = JSON::from_json($res->decoded_content);
+    
+    _test_item_journal_link('faxserversettings',$faxserversettings,$subscriber->{id});    
+    $journal = _test_journal_top_journalitem('faxserversettings',$subscriber->{id},$faxserversettings,'update',$journals,$journal);
+    
+    _test_journal_collection('faxserversettings',$subscriber->{id},$journals);
+    
+    return $faxserversettings;
+    
+}
+
+
+sub test_ccmapentries {
+    my ($subscriber) = @_;
+
+    my $ccmapentries_uri = $uri.'/api/ccmapentries/'.$subscriber->{id};
+    $req = HTTP::Request->new('PUT', $ccmapentries_uri); #$customer->{id});
+    $req->header('Content-Type' => 'application/json');
+    $req->header('Prefer' => 'return=representation');    
+    $req->content(JSON::to_json({
+        mappings => [ { auth_key => 'abc' },
+                      { auth_key => 'def' },
+                      { auth_key => 'ghi' } ]
+        }));
+    $res = $ua->request($req);
+    is($res->code, 200, "PUT test ccmapentries");
+    $req = HTTP::Request->new('GET', $ccmapentries_uri); # . '?page=1&rows=' . (scalar keys %$put_data));
+    $res = $ua->request($req);
+    is($res->code, 200, "fetch PUT test ccmapentries");
+    my $ccmapentries = JSON::from_json($res->decoded_content);
+    
+    _test_item_journal_link('ccmapentries',$ccmapentries,$subscriber->{id});
+    _test_journal_options_head('ccmapentries',$subscriber->{id});
+    my $journals = {};
+    my $journal = _test_journal_top_journalitem('ccmapentries',$subscriber->{id},$ccmapentries,'update',$journals);
+    _test_journal_options_head('ccmapentries',$subscriber->{id},$journal->{id});
+    
+    $req = HTTP::Request->new('PATCH', $ccmapentries_uri);
+    $req->header('Content-Type' => 'application/json-patch+json');
+    $req->header('Prefer' => 'return=representation');
+    $req->content(JSON::to_json(
+        [ { op => 'replace', path => '/mappings', value => [ { auth_key => 'jkl' },
+                      { auth_key => 'mno' },
+                      { auth_key => 'pqr' } ] } ] 
+    ));
+    $res = $ua->request($req);
+    is($res->code, 200, "PATCH test ccmapentries");
+    $req = HTTP::Request->new('GET', $ccmapentries_uri);
+    $res = $ua->request($req);
+    is($res->code, 200, "fetch PATCHED test ccmapentries");
+    $ccmapentries = JSON::from_json($res->decoded_content);
+    
+    _test_item_journal_link('ccmapentries',$ccmapentries,$subscriber->{id});    
+    $journal = _test_journal_top_journalitem('ccmapentries',$subscriber->{id},$ccmapentries,'update',$journals,$journal);
+
+    $req = HTTP::Request->new('DELETE', $ccmapentries_uri);
+    $res = $ua->request($req);
+    is($res->code, 204, "delete PATCHed test ccmapentries");
+    #$domain = JSON::from_json($res->decoded_content);
+    
+    $journal = _test_journal_top_journalitem('ccmapentries',$subscriber->{id},$ccmapentries,'delete',$journals,$journal);
+
+    _test_journal_collection('ccmapentries',$subscriber->{id},$journals);
+    
+    return undef;
+    
+}
+
+
+
+
+sub test_callforwards {
+    my ($subscriber,$cfdestinationset,$cftimeset) = @_;
+
+    my $callforward_uri = $uri.'/api/callforwards/'.$subscriber->{id};
+    $req = HTTP::Request->new('PUT', $callforward_uri); #$customer->{id});
+    $req->header('Content-Type' => 'application/json');
+    $req->header('Prefer' => 'return=representation');    
+    $req->content(JSON::to_json({
+        cfb => { destinations => $cfdestinationset->{destinations},
+                 times => $cftimeset->{times}},
+        cfna => { destinations => $cfdestinationset->{destinations},
+                 times => $cftimeset->{times}},
+        cft => { destinations => $cfdestinationset->{destinations},
+                 times => $cftimeset->{times}},
+        cfu => { destinations => $cfdestinationset->{destinations},
+                 times => $cftimeset->{times}},        
+        }));
+    $res = $ua->request($req);
+    is($res->code, 200, "PUT test callforwards");
+    $req = HTTP::Request->new('GET', $callforward_uri); # . '?page=1&rows=' . (scalar keys %$put_data));
+    $res = $ua->request($req);
+    is($res->code, 200, "fetch PUT test callforwards");
+    my $callforwards = JSON::from_json($res->decoded_content);
+    
+    _test_item_journal_link('callforwards',$callforwards,$subscriber->{id});
+    _test_journal_options_head('callforwards',$subscriber->{id});
+    my $journals = {};
+    my $journal = _test_journal_top_journalitem('callforwards',$subscriber->{id},$callforwards,'update',$journals);
+    _test_journal_options_head('callforwards',$subscriber->{id},$journal->{id});
+    
+    $req = HTTP::Request->new('PATCH', $callforward_uri);
+    $req->header('Content-Type' => 'application/json-patch+json');
+    $req->header('Prefer' => 'return=representation');
+    $req->content(JSON::to_json(
+        [ { op => 'replace', path => '/cfb', value => {destinations => $cfdestinationset->{destinations},
+                 times => $cftimeset->{times}} } ] 
+    ));
+    $res = $ua->request($req);
+    is($res->code, 200, "PATCH test callforwards");
+    $req = HTTP::Request->new('GET', $callforward_uri);
+    $res = $ua->request($req);
+    is($res->code, 200, "fetch PATCHED test callforwards");
+    $callforwards = JSON::from_json($res->decoded_content);
+    
+    _test_item_journal_link('callforwards',$callforwards,$subscriber->{id});    
+    $journal = _test_journal_top_journalitem('callforwards',$subscriber->{id},$callforwards,'update',$journals,$journal);
+
+    $req = HTTP::Request->new('DELETE', $callforward_uri);
+    $res = $ua->request($req);
+    is($res->code, 204, "delete PATCHed test callforwards");
+    #$domain = JSON::from_json($res->decoded_content);
+    
+    $journal = _test_journal_top_journalitem('callforwards',$subscriber->{id},$callforwards,'delete',$journals,$journal);
+
+    _test_journal_collection('callforwards',$subscriber->{id},$journals);
+    
+    return undef;
+    
+}
+
+
+sub test_cfmapping {
+    my ($subscriber,$cfdestinationset,$cftimeset) = @_;
+
+    my $cfmapping_uri = $uri.'/api/cfmappings/'.$subscriber->{id};
+    $req = HTTP::Request->new('PUT', $cfmapping_uri); #$customer->{id});
+    $req->header('Content-Type' => 'application/json');
+    $req->header('Prefer' => 'return=representation');    
+    $req->content(JSON::to_json({
+        cfb => [{ destinationset => $cfdestinationset->{name},
+                 timeset => $cftimeset->{name}}],
+        cfna => [{ destinationset => $cfdestinationset->{name},
+                 timeset => $cftimeset->{name}}],
+        cft => [{ destinationset => $cfdestinationset->{name},
+                 timeset => $cftimeset->{name}}],
+        cfu => [{ destinationset => $cfdestinationset->{name},
+                 timeset => $cftimeset->{name}}],        
+        }));
+    $res = $ua->request($req);
+    is($res->code, 200, "PUT test cfmappings");
+    $req = HTTP::Request->new('GET', $cfmapping_uri); # . '?page=1&rows=' . (scalar keys %$put_data));
+    $res = $ua->request($req);
+    is($res->code, 200, "fetch PUT test cfmappings");
+    my $cfmappings = JSON::from_json($res->decoded_content);
+    
+    _test_item_journal_link('cfmappings',$cfmappings,$subscriber->{id});
+    _test_journal_options_head('cfmappings',$subscriber->{id});
+    my $journals = {};
+    my $journal = _test_journal_top_journalitem('cfmappings',$subscriber->{id},$cfmappings,'update',$journals);
+    _test_journal_options_head('cfmappings',$subscriber->{id},$journal->{id});
+    
+    $req = HTTP::Request->new('PATCH', $cfmapping_uri);
+    $req->header('Content-Type' => 'application/json-patch+json');
+    $req->header('Prefer' => 'return=representation');
+    $req->content(JSON::to_json(
+        [ { op => 'replace', path => '/cfb', value => [{ destinationset => $cfdestinationset->{name},
+                 timeset => $cftimeset->{name}}] } ]
+    ));
+    $res = $ua->request($req);
+    is($res->code, 200, "PATCH test cfmappings");
+    $req = HTTP::Request->new('GET', $cfmapping_uri);
+    $res = $ua->request($req);
+    is($res->code, 200, "fetch PATCHED test cfmappings");
+    $cfmappings = JSON::from_json($res->decoded_content);
+    
+    _test_item_journal_link('cfmappings',$cfmappings,$subscriber->{id});    
+    $journal = _test_journal_top_journalitem('cfmappings',$subscriber->{id},$cfmappings,'update',$journals,$journal);
+    
+    _test_journal_collection('cfmappings',$subscriber->{id},$journals);
+    
+    return $cfmappings;
+    
+}
+
 
 sub test_cftimeset {
     my ($t,$subscriber) = @_;
@@ -114,7 +642,7 @@ sub test_cftimeset {
     is($res->code, 200, "fetch POSTed test cftimeset");
     my $cftimeset = JSON::from_json($res->decoded_content);
     
-    _test_item_journal_link('cftimesets',$cftimeset);
+    _test_item_journal_link('cftimesets',$cftimeset,$cftimeset->{id});
     _test_journal_options_head('cftimesets',$cftimeset->{id});
     my $journals = {};
     my $journal = _test_journal_top_journalitem('cftimesets',$cftimeset->{id},$cftimeset,'create',$journals);
@@ -135,7 +663,7 @@ sub test_cftimeset {
     is($res->code, 200, "fetch PUT test cftimeset");
     $cftimeset = JSON::from_json($res->decoded_content);
     
-    _test_item_journal_link('cftimesets',$cftimeset);    
+    _test_item_journal_link('cftimesets',$cftimeset,$cftimeset->{id});    
     $journal = _test_journal_top_journalitem('cftimesets',$cftimeset->{id},$cftimeset,'update',$journals,$journal);
     
     $req = HTTP::Request->new('PATCH', $cftimeset_uri);
@@ -151,7 +679,7 @@ sub test_cftimeset {
     is($res->code, 200, "fetch PATCHed test cftimeset");
     $cftimeset = JSON::from_json($res->decoded_content);
 
-    _test_item_journal_link('cftimesets',$cftimeset);    
+    _test_item_journal_link('cftimesets',$cftimeset,$cftimeset->{id});    
     $journal = _test_journal_top_journalitem('cftimesets',$cftimeset->{id},$cftimeset,'update',$journals,$journal);
     
     $req = HTTP::Request->new('DELETE', $cftimeset_uri);
@@ -214,7 +742,7 @@ sub test_cfdestinationset {
     is($res->code, 200, "fetch POSTed test cfdestinationset");
     my $cfdestinationset = JSON::from_json($res->decoded_content);
     
-    _test_item_journal_link('cfdestinationsets',$cfdestinationset);
+    _test_item_journal_link('cfdestinationsets',$cfdestinationset,$cfdestinationset->{id});
     _test_journal_options_head('cfdestinationsets',$cfdestinationset->{id});
     my $journals = {};
     my $journal = _test_journal_top_journalitem('cfdestinationsets',$cfdestinationset->{id},$cfdestinationset,'create',$journals);
@@ -235,7 +763,7 @@ sub test_cfdestinationset {
     is($res->code, 200, "fetch PUT test cfdestinationset");
     $cfdestinationset = JSON::from_json($res->decoded_content);
     
-    _test_item_journal_link('cfdestinationsets',$cfdestinationset);    
+    _test_item_journal_link('cfdestinationsets',$cfdestinationset,$cfdestinationset->{id});    
     $journal = _test_journal_top_journalitem('cfdestinationsets',$cfdestinationset->{id},$cfdestinationset,'update',$journals,$journal);
     
     $req = HTTP::Request->new('PATCH', $cfdestinationset_uri);
@@ -251,7 +779,7 @@ sub test_cfdestinationset {
     is($res->code, 200, "fetch PATCHed test cfdestinationset");
     $cfdestinationset = JSON::from_json($res->decoded_content);
 
-    _test_item_journal_link('cfdestinationsets',$cfdestinationset);    
+    _test_item_journal_link('cfdestinationsets',$cfdestinationset,$cfdestinationset->{id});    
     $journal = _test_journal_top_journalitem('cfdestinationsets',$cfdestinationset->{id},$cfdestinationset,'update',$journals,$journal);
     
     $req = HTTP::Request->new('DELETE', $cfdestinationset_uri);
@@ -311,7 +839,7 @@ sub test_profilepreferences {
     is($res->code, 200, "fetch PUT test profilepreferences");
     my $profilepreferences = JSON::from_json($res->decoded_content);
     
-    _test_item_journal_link('profilepreferences',$profilepreferences);
+    _test_item_journal_link('profilepreferences',$profilepreferences,$profilepreferences->{id});
     _test_journal_options_head('profilepreferences',$profilepreferences->{id});
     my $journals = {};
     my $journal = _test_journal_top_journalitem('profilepreferences',$profilepreferences->{id},$profilepreferences,'update',$journals);
@@ -336,7 +864,7 @@ sub test_profilepreferences {
     is($res->code, 200, "fetch PATCHED test profilepreferences");
     $profilepreferences = JSON::from_json($res->decoded_content);
     
-    _test_item_journal_link('profilepreferences',$profilepreferences);    
+    _test_item_journal_link('profilepreferences',$profilepreferences,$profilepreferences->{id});    
     $journal = _test_journal_top_journalitem('profilepreferences',$profilepreferences->{id},$profilepreferences,'update',$journals,$journal);
     
     _test_journal_collection('profilepreferences',$profilepreferences->{id},$journals);
@@ -380,7 +908,7 @@ sub test_subscriberprofile {
     is($res->code, 200, "fetch POSTed test subscriberprofile");
     my $subscriberprofile = JSON::from_json($res->decoded_content);
     
-    _test_item_journal_link('subscriberprofiles',$subscriberprofile);
+    _test_item_journal_link('subscriberprofiles',$subscriberprofile,$subscriberprofile->{id});
     _test_journal_options_head('subscriberprofiles',$subscriberprofile->{id});
     my $journals = {};
     my $journal = _test_journal_top_journalitem('subscriberprofiles',$subscriberprofile->{id},$subscriberprofile,'create',$journals);
@@ -402,7 +930,7 @@ sub test_subscriberprofile {
     is($res->code, 200, "fetch PUT test subscriberprofile");
     $subscriberprofile = JSON::from_json($res->decoded_content);
     
-    _test_item_journal_link('subscriberprofiles',$subscriberprofile);    
+    _test_item_journal_link('subscriberprofiles',$subscriberprofile,$subscriberprofile->{id});    
     $journal = _test_journal_top_journalitem('subscriberprofiles',$subscriberprofile->{id},$subscriberprofile,'update',$journals,$journal);
     
     $req = HTTP::Request->new('PATCH', $subscriberprofile_uri);
@@ -418,7 +946,7 @@ sub test_subscriberprofile {
     is($res->code, 200, "fetch PATCHed test subscriberprofile");
     $subscriberprofile = JSON::from_json($res->decoded_content);
 
-    _test_item_journal_link('subscriberprofiles',$subscriberprofile);    
+    _test_item_journal_link('subscriberprofiles',$subscriberprofile,$subscriberprofile->{id});    
     $journal = _test_journal_top_journalitem('subscriberprofiles',$subscriberprofile->{id},$subscriberprofile,'update',$journals,$journal);
     
     $req = HTTP::Request->new('DELETE', $subscriberprofile_uri);
@@ -469,7 +997,7 @@ sub test_subscriberprofileset {
     is($res->code, 200, "fetch POSTed test subscriberprofileset");
     my $subscriberprofileset = JSON::from_json($res->decoded_content);
     
-    _test_item_journal_link('subscriberprofilesets',$subscriberprofileset);
+    _test_item_journal_link('subscriberprofilesets',$subscriberprofileset,$subscriberprofileset->{id});
     _test_journal_options_head('subscriberprofilesets',$subscriberprofileset->{id});
     my $journals = {};
     my $journal = _test_journal_top_journalitem('subscriberprofilesets',$subscriberprofileset->{id},$subscriberprofileset,'create',$journals);
@@ -490,7 +1018,7 @@ sub test_subscriberprofileset {
     is($res->code, 200, "fetch PUT test subscriberprofileset");
     $subscriberprofileset = JSON::from_json($res->decoded_content);
     
-    _test_item_journal_link('subscriberprofilesets',$subscriberprofileset);    
+    _test_item_journal_link('subscriberprofilesets',$subscriberprofileset,$subscriberprofileset->{id});    
     $journal = _test_journal_top_journalitem('subscriberprofilesets',$subscriberprofileset->{id},$subscriberprofileset,'update',$journals,$journal);
     
     $req = HTTP::Request->new('PATCH', $subscriberprofileset_uri);
@@ -506,7 +1034,7 @@ sub test_subscriberprofileset {
     is($res->code, 200, "fetch PATCHed test subscriberprofileset");
     $subscriberprofileset = JSON::from_json($res->decoded_content);
 
-    _test_item_journal_link('subscriberprofilesets',$subscriberprofileset);    
+    _test_item_journal_link('subscriberprofilesets',$subscriberprofileset,$subscriberprofileset->{id});    
     $journal = _test_journal_top_journalitem('subscriberprofilesets',$subscriberprofileset->{id},$subscriberprofileset,'update',$journals,$journal);
     
     $req = HTTP::Request->new('DELETE', $subscriberprofileset_uri);
@@ -561,7 +1089,7 @@ sub test_soundset {
     is($res->code, 200, "fetch POSTed test " . $test_label);
     my $soundset = JSON::from_json($res->decoded_content);
     
-    _test_item_journal_link('soundsets',$soundset);
+    _test_item_journal_link('soundsets',$soundset,$soundset->{id});
     _test_journal_options_head('soundsets',$soundset->{id});
     my $journals = {};
     my $journal = _test_journal_top_journalitem('soundsets',$soundset->{id},$soundset,'create',$journals);
@@ -583,7 +1111,7 @@ sub test_soundset {
     is($res->code, 200, "fetch PUT test " . $test_label);
     $soundset = JSON::from_json($res->decoded_content);
     
-    _test_item_journal_link('soundsets',$soundset);    
+    _test_item_journal_link('soundsets',$soundset,$soundset->{id});    
     $journal = _test_journal_top_journalitem('soundsets',$soundset->{id},$soundset,'update',$journals,$journal);
     
     $req = HTTP::Request->new('PATCH', $soundset_uri);
@@ -599,7 +1127,7 @@ sub test_soundset {
     is($res->code, 200, "fetch PATCHed test " . $test_label);
     $soundset = JSON::from_json($res->decoded_content);
 
-    _test_item_journal_link('soundsets',$soundset);    
+    _test_item_journal_link('soundsets',$soundset,$soundset->{id});    
     $journal = _test_journal_top_journalitem('soundsets',$soundset->{id},$soundset,'update',$journals,$journal);
     
     $req = HTTP::Request->new('DELETE', $soundset_uri);
@@ -658,7 +1186,7 @@ sub test_subscriberpreferences {
     is($res->code, 200, "fetch PUT test subscriberpreferences");
     my $subscriberpreferences = JSON::from_json($res->decoded_content);
     
-    _test_item_journal_link('subscriberpreferences',$subscriberpreferences);
+    _test_item_journal_link('subscriberpreferences',$subscriberpreferences,$subscriberpreferences->{id});
     _test_journal_options_head('subscriberpreferences',$subscriberpreferences->{id});
     my $journals = {};
     my $journal = _test_journal_top_journalitem('subscriberpreferences',$subscriberpreferences->{id},$subscriberpreferences,'update',$journals);
@@ -683,7 +1211,7 @@ sub test_subscriberpreferences {
     is($res->code, 200, "fetch PATCHED test subscriberpreferences");
     $subscriberpreferences = JSON::from_json($res->decoded_content);
     
-    _test_item_journal_link('subscriberpreferences',$subscriberpreferences);    
+    _test_item_journal_link('subscriberpreferences',$subscriberpreferences,$subscriberpreferences->{id});    
     $journal = _test_journal_top_journalitem('subscriberpreferences',$subscriberpreferences->{id},$subscriberpreferences,'update',$journals,$journal);
     
     _test_journal_collection('subscriberpreferences',$subscriberpreferences->{id},$journals);
@@ -720,7 +1248,7 @@ sub test_customerpreferences {
     is($res->code, 200, "fetch PUT test customerpreferences");
     my $customerpreferences = JSON::from_json($res->decoded_content);
     
-    _test_item_journal_link('customerpreferences',$customerpreferences);
+    _test_item_journal_link('customerpreferences',$customerpreferences,$customerpreferences->{id});
     _test_journal_options_head('customerpreferences',$customerpreferences->{id});
     my $journals = {};
     my $journal = _test_journal_top_journalitem('customerpreferences',$customerpreferences->{id},$customerpreferences,'update',$journals);
@@ -745,7 +1273,7 @@ sub test_customerpreferences {
     is($res->code, 200, "fetch PATCHED test customerpreferences");
     $customerpreferences = JSON::from_json($res->decoded_content);
     
-    _test_item_journal_link('customerpreferences',$customerpreferences);    
+    _test_item_journal_link('customerpreferences',$customerpreferences,$customerpreferences->{id});    
     $journal = _test_journal_top_journalitem('customerpreferences',$customerpreferences->{id},$customerpreferences,'update',$journals,$journal);
     
     _test_journal_collection('customerpreferences',$customerpreferences->{id},$journals);
@@ -772,7 +1300,7 @@ sub test_billingprofile {
     is($res->code, 200, "fetch POSTed billing profile");
     my $billingprofile = JSON::from_json($res->decoded_content);
     
-    _test_item_journal_link('billingprofiles',$billingprofile);
+    _test_item_journal_link('billingprofiles',$billingprofile,$billingprofile->{id});
     _test_journal_options_head('billingprofiles',$billingprofile->{id});
     my $journals = {};
     my $journal = _test_journal_top_journalitem('billingprofiles',$billingprofile->{id},$billingprofile,'create',$journals);
@@ -793,7 +1321,7 @@ sub test_billingprofile {
     is($res->code, 200, "fetch PUT test billingprofile");
     $billingprofile = JSON::from_json($res->decoded_content);
     
-    _test_item_journal_link('billingprofiles',$billingprofile);    
+    _test_item_journal_link('billingprofiles',$billingprofile,$billingprofile->{id});    
     $journal = _test_journal_top_journalitem('billingprofiles',$billingprofile->{id},$billingprofile,'update',$journals,$journal);
     
     $req = HTTP::Request->new('PATCH', $billingprofile_uri);
@@ -809,7 +1337,7 @@ sub test_billingprofile {
     is($res->code, 200, "fetch PATCHed test billingprofile");
     $billingprofile = JSON::from_json($res->decoded_content);
 
-    _test_item_journal_link('billingprofiles',$billingprofile);    
+    _test_item_journal_link('billingprofiles',$billingprofile,$billingprofile->{id});    
     $journal = _test_journal_top_journalitem('billingprofiles',$billingprofile->{id},$billingprofile,'update',$journals,$journal);
     
     _test_journal_collection('billingprofiles',$billingprofile->{id},$journals);
@@ -837,7 +1365,7 @@ sub test_contract {
     is($res->code, 200, "fetch POSTed test reseller contract");
     my $contract = JSON::from_json($res->decoded_content);
     
-    _test_item_journal_link('contracts',$contract);
+    _test_item_journal_link('contracts',$contract,$contract->{id});
     _test_journal_options_head('contracts',$contract->{id});
     my $journals = {};
     my $journal = _test_journal_top_journalitem('contracts',$contract->{id},$contract,'create',$journals);
@@ -860,7 +1388,7 @@ sub test_contract {
     is($res->code, 200, "fetch PUT test reseller contract");
     $contract = JSON::from_json($res->decoded_content);
     
-    _test_item_journal_link('contracts',$contract);    
+    _test_item_journal_link('contracts',$contract,$contract->{id});    
     $journal = _test_journal_top_journalitem('contracts',$contract->{id},$contract,'update',$journals,$journal);
     
     $req = HTTP::Request->new('PATCH', $contract_uri);
@@ -876,7 +1404,7 @@ sub test_contract {
     is($res->code, 200, "fetch PATCHed test reseller contract");
     $contract = JSON::from_json($res->decoded_content);
 
-    _test_item_journal_link('contracts',$contract);    
+    _test_item_journal_link('contracts',$contract,$contract->{id});    
     $journal = _test_journal_top_journalitem('contracts',$contract->{id},$contract,'update',$journals,$journal);
     
     _test_journal_collection('contracts',$contract->{id},$journals);
@@ -903,7 +1431,7 @@ sub test_customercontact {
     is($res->code, 200, "fetch POSTed test customercontact");
     my $customercontact = JSON::from_json($res->decoded_content);
     
-    _test_item_journal_link('customercontacts',$customercontact);
+    _test_item_journal_link('customercontacts',$customercontact,$customercontact->{id});
     _test_journal_options_head('customercontacts',$customercontact->{id});
     my $journals = {};
     my $journal = _test_journal_top_journalitem('customercontacts',$customercontact->{id},$customercontact,'create',$journals);
@@ -926,7 +1454,7 @@ sub test_customercontact {
     is($res->code, 200, "fetch PUT test customercontact");
     $customercontact = JSON::from_json($res->decoded_content);
     
-    _test_item_journal_link('customercontacts',$customercontact);    
+    _test_item_journal_link('customercontacts',$customercontact,$customercontact->{id});    
     $journal = _test_journal_top_journalitem('customercontacts',$customercontact->{id},$customercontact,'update',$journals,$journal);
     
     $req = HTTP::Request->new('PATCH', $customercontact_uri);
@@ -942,7 +1470,7 @@ sub test_customercontact {
     is($res->code, 200, "fetch PATCHed test customercontact");
     $customercontact = JSON::from_json($res->decoded_content);
 
-    _test_item_journal_link('customercontacts',$customercontact);    
+    _test_item_journal_link('customercontacts',$customercontact,$customercontact->{id});    
     $journal = _test_journal_top_journalitem('customercontacts',$customercontact->{id},$customercontact,'update',$journals,$journal);
     
     $req = HTTP::Request->new('DELETE', $customercontact_uri);
@@ -992,7 +1520,7 @@ sub test_reseller {
     is($res->code, 200, "fetch POSTed test reseller");
     my $reseller = JSON::from_json($res->decoded_content);
 
-    _test_item_journal_link('resellers',$reseller);
+    _test_item_journal_link('resellers',$reseller,$reseller->{id});
     _test_journal_options_head('resellers',$reseller->{id});
     my $journals = {};
     my $journal = _test_journal_top_journalitem('resellers',$reseller->{id},$reseller,'create',$journals);
@@ -1013,7 +1541,7 @@ sub test_reseller {
     is($res->code, 200, "fetch PUT test reseller");
     $reseller = JSON::from_json($res->decoded_content);
     
-    _test_item_journal_link('resellers',$reseller);    
+    _test_item_journal_link('resellers',$reseller,$reseller->{id});    
     $journal = _test_journal_top_journalitem('resellers',$reseller->{id},$reseller,'update',$journals,$journal);
     
     $req = HTTP::Request->new('PATCH', $reseller_uri);
@@ -1029,7 +1557,7 @@ sub test_reseller {
     is($res->code, 200, "fetch PATCHed test reseller");
     $reseller = JSON::from_json($res->decoded_content);
 
-    _test_item_journal_link('resellers',$reseller);    
+    _test_item_journal_link('resellers',$reseller,$reseller->{id});    
     $journal = _test_journal_top_journalitem('resellers',$reseller->{id},$reseller,'update',$journals,$journal);
     
     #$req = HTTP::Request->new('DELETE', $reseller_uri);
@@ -1090,7 +1618,7 @@ sub test_systemcontact {
     is($res->code, 200, "fetch POSTed test systemcontact");
     my $systemcontact = JSON::from_json($res->decoded_content);
     
-    _test_item_journal_link('systemcontacts',$systemcontact);
+    _test_item_journal_link('systemcontacts',$systemcontact,$systemcontact->{id});
     _test_journal_options_head('systemcontacts',$systemcontact->{id});
     my $journals = {};
     my $journal = _test_journal_top_journalitem('systemcontacts',$systemcontact->{id},$systemcontact,'create',$journals);
@@ -1112,7 +1640,7 @@ sub test_systemcontact {
     is($res->code, 200, "fetch PUT test systemcontact");
     $systemcontact = JSON::from_json($res->decoded_content);
     
-    _test_item_journal_link('systemcontacts',$systemcontact);    
+    _test_item_journal_link('systemcontacts',$systemcontact,$systemcontact->{id});    
     $journal = _test_journal_top_journalitem('systemcontacts',$systemcontact->{id},$systemcontact,'update',$journals,$journal);
     
     $req = HTTP::Request->new('PATCH', $systemcontact_uri);
@@ -1128,7 +1656,7 @@ sub test_systemcontact {
     is($res->code, 200, "fetch PATCHed test systemcontact");
     $systemcontact = JSON::from_json($res->decoded_content);
 
-    _test_item_journal_link('systemcontacts',$systemcontact);    
+    _test_item_journal_link('systemcontacts',$systemcontact,$systemcontact->{id});    
     $journal = _test_journal_top_journalitem('systemcontacts',$systemcontact->{id},$systemcontact,'update',$journals,$journal);
     
     $req = HTTP::Request->new('DELETE', $systemcontact_uri);
@@ -1175,7 +1703,7 @@ sub test_domain {
     is($res->code, 200, "fetch POSTed test domain");
     my $domain = JSON::from_json($res->decoded_content);
     
-    _test_item_journal_link('domains',$domain);
+    _test_item_journal_link('domains',$domain,$domain->{id});
     _test_journal_options_head('domains',$domain->{id});
     my $journals = {};
     my $journal = _test_journal_top_journalitem('domains',$domain->{id},$domain,'create',$journals);
@@ -1228,7 +1756,7 @@ sub test_customer {
     is($res->code, 200, "fetch POSTed test customer");
     my $customer = JSON::from_json($res->decoded_content);
 
-    _test_item_journal_link('customers',$customer);
+    _test_item_journal_link('customers',$customer,$customer->{id});
     _test_journal_options_head('customers',$customer->{id});
     my $journals = {};
     my $journal = _test_journal_top_journalitem('customers',$customer->{id},$customer,'create',$journals);
@@ -1252,7 +1780,7 @@ sub test_customer {
     is($res->code, 200, "fetch PUT test customer");
     $customer = JSON::from_json($res->decoded_content);
     
-    _test_item_journal_link('customers',$customer);    
+    _test_item_journal_link('customers',$customer,$customer->{id});    
     $journal = _test_journal_top_journalitem('customers',$customer->{id},$customer,'update',$journals,$journal);
     
     $req = HTTP::Request->new('PATCH', $customer_uri);
@@ -1268,7 +1796,7 @@ sub test_customer {
     is($res->code, 200, "fetch PATCHed test customer");
     $customer = JSON::from_json($res->decoded_content);
 
-    _test_item_journal_link('customers',$customer);    
+    _test_item_journal_link('customers',$customer,$customer->{id});    
     $journal = _test_journal_top_journalitem('customers',$customer->{id},$customer,'update',$journals,$journal);
     
     _test_journal_collection('customers',$customer->{id},$journals);
@@ -1319,7 +1847,7 @@ sub test_subscriber {
     is($res->code, 200, "fetch POSTed test subscriber");
     my $subscriber = JSON::from_json($res->decoded_content);
     
-    _test_item_journal_link('subscribers',$subscriber);
+    _test_item_journal_link('subscribers',$subscriber,$subscriber->{id});
     _test_journal_options_head('subscribers',$subscriber->{id});
     my $journals = {};
     my $journal = _test_journal_top_journalitem('subscribers',$subscriber->{id},$subscriber,'create',$journals);
@@ -1341,7 +1869,7 @@ sub test_subscriber {
     is($res->code, 200, "fetch PUT test subscriber");
     $subscriber = JSON::from_json($res->decoded_content);
     
-    _test_item_journal_link('subscribers',$subscriber);    
+    _test_item_journal_link('subscribers',$subscriber,$subscriber->{id});    
     $journal = _test_journal_top_journalitem('subscribers',$subscriber->{id},$subscriber,'update',$journals,$journal);
     
     $req = HTTP::Request->new('PATCH', $subscriber_uri);
@@ -1357,7 +1885,7 @@ sub test_subscriber {
     is($res->code, 200, "fetch PATCHed test subscriber");
     $subscriber = JSON::from_json($res->decoded_content);
     
-    _test_item_journal_link('subscribers',$subscriber);    
+    _test_item_journal_link('subscribers',$subscriber,$subscriber->{id});    
     $journal = _test_journal_top_journalitem('subscribers',$subscriber->{id},$subscriber,'update',$journals,$journal);
     
     $req = HTTP::Request->new('DELETE', $subscriber_uri);
@@ -1390,11 +1918,11 @@ sub test_subscriber {
 }    
 
 sub _test_item_journal_link {
-    my ($resource,$item) = @_;
+    my ($resource,$item,$item_id) = @_;
     if (_is_journal_resource_enabled($resource)) {
         ok(exists $item->{_links}, "check existence of _links");
         ok($item->{_links}->{'ngcp:journal'}, "check existence of ngcp:journal link");
-        ok($item->{_links}->{'ngcp:journal'}->{href} eq '/api/'.$resource . '/' . $item->{id} . '/journal/', "check if ngcp:journal link equals '/api/$resource/$item->{id}/journal/'");
+        ok($item->{_links}->{'ngcp:journal'}->{href} eq '/api/'.$resource . '/' . $item_id . '/journal/', "check if ngcp:journal link equals '/api/$item_id/journal/'");
     }
 }  
 
