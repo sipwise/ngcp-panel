@@ -898,7 +898,7 @@ sub test_subscriberprofile {
         name => "subscriber_profile_".($t-1),
         profile_set_id => $profileset->{id},
         attributes => \@attributes,
-        ($mysql_sqlstrict ? (description => '') : ()),
+        ($mysql_sqlstrict ? (description => "subscriber_profile_description_".($t-1)) : ()),
     }));
     $res = $ua->request($req);
     is($res->code, 201, "POST test subscriberprofile");
@@ -921,7 +921,7 @@ sub test_subscriberprofile {
         name => "subscriber_profile_".($t-1).'_put',
         profile_set_id => $profileset->{id},
         attributes => \@attributes,
-        ($mysql_sqlstrict ? (description => '') : ()),
+        ($mysql_sqlstrict ? (description => "subscriber_profile_description_".($t-1).'_put') : ()),
     }));
     $res = $ua->request($req);
     is($res->code, 200, "PUT test subscriberprofile");
@@ -964,7 +964,7 @@ sub test_subscriberprofile {
         name => "subscriber_profile_".$t,
         profile_set_id => $profileset->{id},
         attributes => \@attributes,
-        ($mysql_sqlstrict ? (description => '') : ()),
+        ($mysql_sqlstrict ? (description => "subscriber_profile_description_".$t) : ()),
     }));
     $res = $ua->request($req);
     is($res->code, 201, "POST another test subscriberprofile");
@@ -987,7 +987,7 @@ sub test_subscriberprofileset {
     $req->content(JSON::to_json({
         name => "subscriber_profile_set_".($t-1),
         reseller_id => $reseller->{id},
-        ($mysql_sqlstrict ? (description => '') : ()),
+        ($mysql_sqlstrict ? (description => "subscriber_profile_set_description_".($t-1)) : ()),
     }));
     $res = $ua->request($req);
     is($res->code, 201, "POST test subscriberprofileset");
@@ -1009,7 +1009,7 @@ sub test_subscriberprofileset {
     $req->content(JSON::to_json({
         name => "subscriber_profile_set_".($t-1).'_put',
         reseller_id => $reseller->{id},
-        ($mysql_sqlstrict ? (description => '') : ()),
+        ($mysql_sqlstrict ? (description => "subscriber_profile_set_description_".($t-1).'_put') : ()),
     }));
     $res = $ua->request($req);
     is($res->code, 200, "PUT test subscriberprofileset");
@@ -1051,7 +1051,7 @@ sub test_subscriberprofileset {
     $req->content(JSON::to_json({
         name => "subscriber_profile_set_".$t,
         reseller_id => $reseller->{id},
-        ($mysql_sqlstrict ? (description => '') : ()),
+        ($mysql_sqlstrict ? (description => "subscriber_profile_set_description_".$t) : ()),
     }));
     $res = $ua->request($req);
     is($res->code, 201, "POST another test subscriberprofileset");
