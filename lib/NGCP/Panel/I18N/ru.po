@@ -2372,7 +2372,7 @@ msgstr ""
 msgid "Dialogic Settings"
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/Peering.pm:475
+#: lib/NGCP/Panel/Controller/Peering.pm:437
 msgid "Dialogic successfully flashed."
 msgstr ""
 
@@ -2949,7 +2949,7 @@ msgstr ""
 msgid "Failed to create peering group"
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/Peering.pm:617
+#: lib/NGCP/Panel/Controller/Peering.pm:579
 msgid "Failed to create peering rule"
 msgstr ""
 
@@ -3089,7 +3089,7 @@ msgstr ""
 msgid "Failed to delete peering group"
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/Peering.pm:719
+#: lib/NGCP/Panel/Controller/Peering.pm:681
 msgid "Failed to delete peering rule"
 msgstr ""
 
@@ -3159,7 +3159,7 @@ msgstr "Не удалось найти зарегистрированное ус
 msgid "Failed to find voicemail user."
 msgstr "Не удалось найти пользователя голосовой почты."
 
-#: lib/NGCP/Panel/Controller/Peering.pm:481
+#: lib/NGCP/Panel/Controller/Peering.pm:443
 msgid "Failed to flash dialogic"
 msgstr ""
 
@@ -3354,7 +3354,7 @@ msgstr ""
 msgid "Failed to update peering group"
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/Peering.pm:690
+#: lib/NGCP/Panel/Controller/Peering.pm:652
 msgid "Failed to update peering rule"
 msgstr ""
 
@@ -4206,7 +4206,7 @@ msgstr "Не удачная попытка сброса пароля."
 msgid "Invalid peaktime date id detected!"
 msgstr "Обнаружен некорректный id бизнес-времени (peaktime)"
 
-#: lib/NGCP/Panel/Controller/Peering.pm:638
+#: lib/NGCP/Panel/Controller/Peering.pm:600
 msgid "Invalid peering rule id detected"
 msgstr "Обнаружен некорректный id SIP Транк правила"
 
@@ -5489,7 +5489,7 @@ msgstr "SIP Транк группы"
 msgid "Peering Rule"
 msgstr "SIP Транк правил"
 
-#: lib/NGCP/Panel/Controller/Peering.pm:650
+#: lib/NGCP/Panel/Controller/Peering.pm:612
 msgid "Peering Rule does not exist"
 msgstr "SIP Транк правило не существует"
 
@@ -5520,15 +5520,15 @@ msgstr "SIP Транк группа успешно создана"
 msgid "Peering group successfully updated"
 msgstr "SIP Транк группа успешно обновлена"
 
-#: lib/NGCP/Panel/Controller/Peering.pm:684
+#: lib/NGCP/Panel/Controller/Peering.pm:646
 msgid "Peering rule successfully changed"
 msgstr "SIP Транк группа успешно изменена"
 
-#: lib/NGCP/Panel/Controller/Peering.pm:611
+#: lib/NGCP/Panel/Controller/Peering.pm:573
 msgid "Peering rule successfully created"
 msgstr "SIP Транк правило успешно создано"
 
-#: lib/NGCP/Panel/Controller/Peering.pm:713
+#: lib/NGCP/Panel/Controller/Peering.pm:675
 msgid "Peering rule successfully deleted"
 msgstr "SIP Транк правило успешно удалено"
 
