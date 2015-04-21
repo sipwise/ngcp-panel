@@ -69,6 +69,24 @@ my $configs = [
             },
         },
     },
+    {
+        works => 1,
+        config => {
+            destination => {
+                destination => 'uri',
+                uri => { destination => 'alice@10.0.0.1:1234' },
+            },
+        },
+    },
+    {
+        works => 1,
+        config => {
+            destination => {
+                destination => 'uri',
+                uri => { destination => 'foo@bar.com:1234' },
+            },
+        },
+    },
 ];
 
 for my $conf (@{$configs}) {
