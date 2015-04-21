@@ -55,7 +55,7 @@ apply(
                 my $checked;
                 if ($user && $domain) {
                     if ( $user =~ m/^(sip:)?[a-zA-Z0-9\+\-\.]*$/ &&
-                         $domain =~ m/^[^;\?:]*$/ ) {
+                         $domain =~ m/^[^;\?:][^;\?]*$/ ) {
                         $checked = $value;
                     }
                 }
