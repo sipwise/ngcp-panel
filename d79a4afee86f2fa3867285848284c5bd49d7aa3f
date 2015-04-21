@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "5a2585a7_ab90c543",
+        "filename": "lib/NGCP/Panel/Utils/Reseller.pm",
+        "patchSetId": 1
+      },
+      "lineNbr": 5,
+      "author": {
+        "id": 1000005
+      },
+      "writtenOn": "2015-04-21T07:57:21Z",
+      "side": 1,
+      "message": "we should try to avoid this in new code I think",
+      "revId": "d79a4afee86f2fa3867285848284c5bd49d7aa3f",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    }
+  ]
+}
