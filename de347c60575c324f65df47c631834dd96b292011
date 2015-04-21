@@ -16,6 +16,24 @@
       "revId": "de347c60575c324f65df47c631834dd96b292011",
       "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a2585a7_2eb06342",
+        "filename": "lib/NGCP/Panel/Field/URI.pm",
+        "patchSetId": 1
+      },
+      "lineNbr": 58,
+      "author": {
+        "id": 1000005
+      },
+      "writtenOn": "2015-04-21T14:09:42Z",
+      "side": 0,
+      "message": "I thought colon in the beginning does not make much sense ... so invalid: foo@:1234",
+      "parentUuid": "5a2585a7_abbd656a",
+      "revId": "de347c60575c324f65df47c631834dd96b292011",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
     }
   ]
 }
