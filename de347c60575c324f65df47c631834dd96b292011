@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "5a2585a7_abbd656a",
+        "filename": "lib/NGCP/Panel/Field/URI.pm",
+        "patchSetId": 1
+      },
+      "lineNbr": 58,
+      "author": {
+        "id": 1000001
+      },
+      "writtenOn": "2015-04-21T11:33:23Z",
+      "side": 0,
+      "message": "shouldn\u0027t you just remove : here?",
+      "revId": "de347c60575c324f65df47c631834dd96b292011",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    }
+  ]
+}
