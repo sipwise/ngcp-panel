@@ -6,6 +6,8 @@ use Moose::Util::TypeConstraints;
 
 use HTML::FormHandler::Widget::Block::Bootstrap;
 
+with 'NGCP::Panel::Render::RepeatableJs';
+
 has '+widget_wrapper' => ( default => 'Bootstrap' );
 has_field 'submitid' => ( type => 'Hidden' );
 sub build_render_list {[qw/submitid fields actions/]}
@@ -22,6 +24,27 @@ has_field 'contact' => (
 );
 
 has_field 'billing_profile' => (
+    type => 'Repeatable',
+    label => 'Billing Profile',
+    setup_for_js => 1,
+    do_wrapper => 1,
+    do_label => 1,
+    required => 1,
+    tags => {
+        controls_div => 1,
+    },
+    wrapper_class => [qw/hfh-rep-block/],
+    element_attr => {
+        rel => ['tooltip'],
+        title => ['The billing profile id used to charge this contract.']
+    },
+);
+
+has_field 'billing_profile.id' => (
+    type => 'Hidden',
+);
+
+has_field 'billing_profile.profile' => (
     type => '+NGCP::Panel::Field::BillingProfile',
     validate_when_empty => 1,
     element_attr => {
@@ -29,6 +52,38 @@ has_field 'billing_profile' => (
         title => ['The billing profile id used to charge this contract.']
     },
 );
+
+has_field 'billing_profile.start' => (
+    type => 'Date',
+    element_attr => {
+        rel => ['tooltip'],
+        title => ['The date when the billing profile gets active.']
+    },
+);
+
+has_field 'billing_profile.end' => (
+    type => 'Date',
+    element_attr => {
+        rel => ['tooltip'],
+        title => ['The date when the billing profile is no longer used.']
+    },
+);
+
+has_field 'billing_profile.rm' => (
+    type => 'RmElement',
+    value => 'Remove Profile',
+    order => 100,
+    element_class => [qw/btn btn-primary pull-right/],
+);
+
+has_field 'profile_add' => (
+    type => 'AddElement',
+    repeatable => 'billing_profile',
+    value => 'Add Profile',
+    element_class => [qw/btn btn-primary pull-right/],
+);
+
+
 
 has_field 'status' => (
     type => 'Select',
@@ -132,7 +187,7 @@ has_field 'save' => (
 has_block 'fields' => (
     tag => 'div',
     class => [qw/modal-body/],
-    render_list => [qw/contact billing_profile status external_id subscriber_email_template passreset_email_template invoice_email_template invoice_template vat_rate add_vat/],
+    render_list => [qw/contact billing_profile profile_add status external_id subscriber_email_template passreset_email_template invoice_email_template invoice_template vat_rate add_vat/],
 );
 
 has_block 'actions' => (
