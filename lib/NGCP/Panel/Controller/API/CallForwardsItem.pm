@@ -200,7 +200,6 @@ sub DELETE :Allow {
         last unless $self->add_delete_journal_item_hal($c,{ hal_from_item => sub {
             my $self = shift;
             my ($c) = @_;
-            #my $_callforward = $self->item_by_id($c, $id, "callforwards");
             return $self->hal_from_item($c,$item,"callforwards"); },
             id => $id});
 

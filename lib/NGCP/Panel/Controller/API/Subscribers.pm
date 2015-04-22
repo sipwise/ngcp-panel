@@ -281,7 +281,7 @@ sub POST :Allow {
         $resource = $r->{resource};
 
         try {
-            my ($uuid_bin, $uuid_string);
+            my ($uuid_bin, $uuid_string); #what for?
             UUID::generate($uuid_bin);
             UUID::unparse($uuid_bin, $uuid_string);
 

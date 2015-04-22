@@ -13,8 +13,12 @@ BEGIN {
 }
 use NGCP::Panel::Utils::Journal qw();
 
+my $json = JSON->new();
+$json->allow_blessed(1);
+$json->convert_blessed(1);
+
 my $is_local_env = 0;
-my $mysql_sqlstrict = not $is_local_env;
+my $mysql_sqlstrict = 1; #not $is_local_env;
 my $enable_journal_tests = 1;
 
 use Config::General;
@@ -64,6 +68,7 @@ my $t = time;
 my $default_reseller_id = 1;
 
 my $billingprofile = test_billingprofile($t,$default_reseller_id);
+my $billingzone = test_billingzone($billingprofile);
 my $systemcontact = test_systemcontact($t);
 my $contract = test_contract($billingprofile,$systemcontact);
 (my $reseller,$billingprofile) = test_reseller($t,$contract);
@@ -72,11 +77,13 @@ my $customercontact = test_customercontact($t,$reseller);
 my $customer = test_customer($customercontact,$billingprofile);
 my $customerpreferences = test_customerpreferences($customer);
 
-my $subscriberprofileset = test_subscriberprofileset($t,$reseller);
-my $subscriberprofile = test_subscriberprofile($t,$subscriberprofileset);
-my $profilepreferences = test_profilepreferences($subscriberprofile);
+#my $subscriberprofileset = test_subscriberprofileset($t,$reseller);
+#my $subscriberprofile = test_subscriberprofile($t,$subscriberprofileset);
+#my $profilepreferences = test_profilepreferences($subscriberprofile);
 
 my $subscriber = test_subscriber($t,$customer,$domain);
+
+#my $autoattendants = test_autoattendants($t,$subscriber);
 
 my $voicemailsettings = test_voicemailsettings($t,$subscriber);
 
@@ -105,6 +112,198 @@ my $subscriberpreferences = test_subscriberpreferences($subscriber,$customersoun
 
 
 done_testing;
+
+
+#sub test_customerbalances {
+#    my ($t,$subscriber) = @_;
+#
+#    my $customerbalances_uri = $uri.'/api/customerbalances/'.$subscriber->{id};
+#    $req = HTTP::Request->new('PUT', $customerbalances_uri); #$customer->{id});
+#    $req->header('Content-Type' => 'application/json');
+#    $req->header('Prefer' => 'return=representation');    
+#    $req->content(JSON::to_json({
+#        cash_balance => 10,
+#        free_time_balance => 10,
+#        }));
+#    $res = $ua->request($req);
+#    is($res->code, 200, "PUT test customerbalances");
+#    $req = HTTP::Request->new('GET', $customerbalances_uri); # . '?page=1&rows=' . (scalar keys %$put_data));
+#    $res = $ua->request($req);
+#    is($res->code, 200, "fetch PUT test customerbalances");
+#    my $customerbalances = JSON::from_json($res->decoded_content);
+#    
+#    _test_item_journal_link('customerbalances',$customerbalances,$subscriber->{id});
+#    _test_journal_options_head('customerbalances',$subscriber->{id});
+#    my $journals = {};
+#    my $journal = _test_journal_top_journalitem('customerbalances',$subscriber->{id},$customerbalances,'update',$journals);
+#    _test_journal_options_head('customerbalances',$subscriber->{id},$journal->{id});
+#    
+#    $req = HTTP::Request->new('PATCH', $customerbalances_uri);
+#    $req->header('Content-Type' => 'application/json-patch+json');
+#    $req->header('Prefer' => 'return=representation');
+#    $req->content(JSON::to_json({
+#        cash_balance => 10,
+#        free_time_balance => 10,
+#    }));
+#    $res = $ua->request($req);
+#    is($res->code, 200, "PATCH test customerbalances");
+#    $req = HTTP::Request->new('GET', $customerbalances_uri);
+#    $res = $ua->request($req);
+#    is($res->code, 200, "fetch PATCHED test customerbalances");
+#    $customerbalances = JSON::from_json($res->decoded_content);
+#    
+#    _test_item_journal_link('customerbalances',$customerbalances,$subscriber->{id});    
+#    $journal = _test_journal_top_journalitem('customerbalances',$subscriber->{id},$customerbalances,'update',$journals,$journal);
+#    
+#    _test_journal_collection('customerbalances',$subscriber->{id},$journals);
+#    
+#    return $customerbalances;
+#    
+#}
+
+
+sub test_billingzone {
+    my ($billingprofile) = @_;
+    $req = HTTP::Request->new('POST', $uri.'/api/billingzones/');
+    $req->header('Content-Type' => 'application/json');
+    $req->content(JSON::to_json({
+        zone => 'CH',
+        billing_profile_id => $billingprofile->{id},
+    }));
+    $res = $ua->request($req);
+    is($res->code, 201, "POST test billingzone");
+    my $billingzone_uri = $uri.'/'.$res->header('Location');
+    $req = HTTP::Request->new('GET', $billingzone_uri);
+    $res = $ua->request($req);
+    is($res->code, 200, "fetch POSTed test billingzone");
+    my $billingzone = JSON::from_json($res->decoded_content);
+    
+    _test_item_journal_link('billingzones',$billingzone,$billingzone->{id});
+    _test_journal_options_head('billingzones',$billingzone->{id});
+    my $journals = {};
+    my $journal = _test_journal_top_journalitem('billingzones',$billingzone->{id},$billingzone,'create',$journals);
+    _test_journal_options_head('billingzones',$billingzone->{id},$journal->{id});
+    
+    $req = HTTP::Request->new('PUT', $billingzone_uri);
+    $req->header('Content-Type' => 'application/json');
+    $req->header('Prefer' => 'return=representation');
+    $req->content(JSON::to_json({
+        zone => 'DE',
+        billing_profile_id => $billingprofile->{id},
+    }));
+    $res = $ua->request($req);
+    is($res->code, 200, "PUT test billingzone");
+    $req = HTTP::Request->new('GET', $billingzone_uri);
+    $res = $ua->request($req);
+    is($res->code, 200, "fetch PUT test billingzone");
+    $billingzone = JSON::from_json($res->decoded_content);
+    
+    _test_item_journal_link('billingzones',$billingzone,$billingzone->{id});    
+    $journal = _test_journal_top_journalitem('billingzones',$billingzone->{id},$billingzone,'update',$journals,$journal);
+    
+    $req = HTTP::Request->new('PATCH', $billingzone_uri);
+    $req->header('Content-Type' => 'application/json-patch+json');
+    $req->header('Prefer' => 'return=representation');
+    $req->content(JSON::to_json(
+        [ { op => 'replace', path => '/zone', value => 'AT' } ]
+    ));
+    $res = $ua->request($req);
+    is($res->code, 200, "PATCH test billingzone");
+    $req = HTTP::Request->new('GET', $billingzone_uri);
+    $res = $ua->request($req);
+    is($res->code, 200, "fetch PATCHed test billingzone");
+    $billingzone = JSON::from_json($res->decoded_content);
+
+    _test_item_journal_link('billingzones',$billingzone,$billingzone->{id});    
+    $journal = _test_journal_top_journalitem('billingzones',$billingzone->{id},$billingzone,'update',$journals,$journal);
+    
+    $req = HTTP::Request->new('DELETE', $billingzone_uri);
+    $res = $ua->request($req);
+    is($res->code, 204, "delete POSTed test billingzone");
+    #$domain = JSON::from_json($res->decoded_content);
+    
+    $journal = _test_journal_top_journalitem('billingzones',$billingzone->{id},$billingzone,'delete',$journals,$journal);
+    
+    _test_journal_collection('billingzones',$billingzone->{id},$journals);
+    
+    $req = HTTP::Request->new('POST', $uri.'/api/billingzones/');
+    $req->header('Content-Type' => 'application/json');
+    $req->content(JSON::to_json({
+        zone => 'AT',
+        billing_profile_id => $billingprofile->{id},
+    }));
+    $res = $ua->request($req);
+    is($res->code, 201, "POST another test billingzone");
+    $billingzone_uri = $uri.'/'.$res->header('Location');
+    $req = HTTP::Request->new('GET', $billingzone_uri);
+    $res = $ua->request($req);
+    is($res->code, 200, "fetch POSTed test billingzone");
+    $billingzone = JSON::from_json($res->decoded_content);
+    
+    return $billingzone;
+    
+}
+
+sub test_autoattendants {
+    my ($t,$subscriber) = @_;
+
+    my $autoattendants_uri = $uri.'/api/autoattendants/'.$subscriber->{id};
+    $req = HTTP::Request->new('PUT', $autoattendants_uri); #$customer->{id});
+    $req->header('Content-Type' => 'application/json');
+    $req->header('Prefer' => 'return=representation');    
+    $req->content(JSON::to_json({
+        slots => [ {slot => '0',
+                         destination => 'autoattendant_dest_'.$t.'@example.com' },
+                       {slot => '1',
+                         destination => 'autoattendant_dest_'.$t.'@example.com' },
+                       {slot => '2',
+                         destination => 'autoattendant_dest_'.$t.'@example.com' },],
+        }));
+    $res = $ua->request($req);
+    is($res->code, 200, "PUT test autoattendants");
+    $req = HTTP::Request->new('GET', $autoattendants_uri); # . '?page=1&rows=' . (scalar keys %$put_data));
+    $res = $ua->request($req);
+    is($res->code, 200, "fetch PUT test autoattendants");
+    my $autoattendants = JSON::from_json($res->decoded_content);
+    
+    _test_item_journal_link('autoattendants',$autoattendants,$subscriber->{id});
+    _test_journal_options_head('autoattendants',$subscriber->{id});
+    my $journals = {};
+    my $journal = _test_journal_top_journalitem('autoattendants',$subscriber->{id},$autoattendants,'update',$journals);
+    _test_journal_options_head('autoattendants',$subscriber->{id},$journal->{id});
+    
+    $req = HTTP::Request->new('PATCH', $autoattendants_uri);
+    $req->header('Content-Type' => 'application/json-patch+json');
+    $req->header('Prefer' => 'return=representation');
+    $req->content(JSON::to_json(
+        [ { op => 'replace', path => '/slots', value => [ {slot => '3',
+                         destination => 'autoattendant_dest_'.$t.'@example.com' },
+                       {slot => '4',
+                         destination => 'autoattendant_dest_'.$t.'@example.com' },
+                       {slot => '5',
+                         destination => 'autoattendant_dest_'.$t.'@example.com' },] } ]
+    ));
+    $res = $ua->request($req);
+    is($res->code, 200, "PATCH test autoattendants");
+    $req = HTTP::Request->new('GET', $autoattendants_uri);
+    $res = $ua->request($req);
+    is($res->code, 200, "fetch PATCHED test autoattendants");
+    $autoattendants = JSON::from_json($res->decoded_content);
+    
+    _test_item_journal_link('autoattendants',$autoattendants,$subscriber->{id});    
+    $journal = _test_journal_top_journalitem('autoattendants',$subscriber->{id},$autoattendants,'update',$journals,$journal);
+    
+    _test_journal_collection('autoattendants',$subscriber->{id},$journals);
+    
+    return $autoattendants;
+    
+}
+
+
+
+
+
+
 
 sub test_voicemailsettings {
     my ($t,$subscriber) = @_;
@@ -2096,6 +2295,14 @@ sub _get_preference_value {
         }
     }
     return undef;
+}
+
+sub _to_json {
+    return $json->encode(shift);
+}
+
+sub _from_json {
+    return $json->decode(shift);
 }
 
 # vim: set tabstop=4 expandtab:
