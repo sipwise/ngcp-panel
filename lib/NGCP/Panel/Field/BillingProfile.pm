@@ -4,7 +4,7 @@ extends 'HTML::FormHandler::Field::Compound';
 
 has_field 'id' => (
     type => '+NGCP::Panel::Field::DataTable',
-    label => 'Billing Profile',
+    label => 'Profile',
     do_label => 0,
     do_wrapper => 0,
     required => 1,
