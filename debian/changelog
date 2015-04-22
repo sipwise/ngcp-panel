@@ -1,3 +1,12 @@
+ngcp-panel (1.7.2.7+0~mr3.7.2.7) unstable; urgency=low
+
+  [ Andreas Granig ]
+  * [566e4fb] MT#12615 Don't filter call_id in calllists API
+
+  [ Sipwise Jenkins Builder ]
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Wed, 22 Apr 2015 12:04:22 +0200
+
 ngcp-panel (1.7.2.6+0~mr3.7.2.6) unstable; urgency=low
 
   [ Gerhard Jungwirth ]
