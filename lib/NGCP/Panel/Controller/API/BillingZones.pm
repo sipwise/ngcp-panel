@@ -182,7 +182,13 @@ sub POST :Allow {
             $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "Failed to create billing zone.");
             last;
         }
-
+        
+        last unless $self->add_create_journal_item_hal($c,sub {
+            my $self = shift;
+            my ($c) = @_;
+            my $_zone = $self->zone_by_id($c, $zone->id);
+            return $self->hal_from_zone($c, $_zone, $form); });
+        
         $guard->commit;
 
         $c->response->status(HTTP_CREATED);

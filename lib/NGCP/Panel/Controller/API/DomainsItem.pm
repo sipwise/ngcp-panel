@@ -118,7 +118,6 @@ sub DELETE :Allow {
         last unless $self->add_delete_journal_item_hal($c,sub {
             my $self = shift;
             my ($c) = @_;
-            #my $_domain = $self->item_by_id($c, $id);
             return $self->hal_from_item($c,$domain); });
         
         $domain->delete;

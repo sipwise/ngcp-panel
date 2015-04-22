@@ -40,6 +40,7 @@ sub hal_from_item {
             Data::HAL::Link->new(relation => 'self', href => sprintf("%s%d", $self->dispatch_path, $item->id)),
             Data::HAL::Link->new(relation => 'ngcp:autoattendants', href => sprintf("/api/autoattendants/%d", $item->id)),
             Data::HAL::Link->new(relation => 'ngcp:subscribers', href => sprintf("/api/subscribers/%d", $item->id)),
+            $self->get_journal_relation_link($item->id),
         ],
         relation => 'ngcp:'.$self->resource_name,
     );
