@@ -7,7 +7,7 @@ BEGIN { extends 'Catalyst::Controller'; }
 use NGCP::Panel::Form::PeeringGroup;
 use NGCP::Panel::Form::PeeringRule;
 use NGCP::Panel::Form::PeeringServer;
-#use NGCP::Panel::Utils::DialogicImg;
+use NGCP::Panel::Utils::DialogicImg;
 use NGCP::Panel::Utils::Message;
 use NGCP::Panel::Utils::Navigation;
 use NGCP::Panel::Utils::Preferences;
