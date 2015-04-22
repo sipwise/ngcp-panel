@@ -13,7 +13,7 @@ BEGIN {
 }
 use NGCP::Panel::Utils::Journal qw();
 
-my $json = JSON->new();
+my $json = JSON::PP->new();
 $json->allow_blessed(1);
 $json->convert_blessed(1);
 
