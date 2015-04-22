@@ -68,7 +68,7 @@ my $t = time;
 my $default_reseller_id = 1;
 
 my $billingprofile = test_billingprofile($t,$default_reseller_id);
-my $billingzone = test_billingzone($billingprofile);
+#my $billingzone = test_billingzone($billingprofile);
 my $systemcontact = test_systemcontact($t);
 my $contract = test_contract($billingprofile,$systemcontact);
 (my $reseller,$billingprofile) = test_reseller($t,$contract);
