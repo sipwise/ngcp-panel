@@ -63,7 +63,7 @@ sub GET :Allow {
         );
 
         my $preferences = $c->model('DB')->resultset('voip_preferences')->search({
-            internal => 0,
+            internal => { '!=' => 1 }, # also fetch -1 for ncos, rwr
             contract_pref => 1,
         });
         my $resource = {};
