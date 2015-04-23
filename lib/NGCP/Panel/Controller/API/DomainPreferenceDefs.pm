@@ -63,14 +63,14 @@ sub GET :Allow {
         );
 
         my $preferences = $c->model('DB')->resultset('voip_preferences')->search({
-            internal => 0,
+            internal => { '!=' => 1 }, # also fetch -1 for ncos, rwr
             dom_pref => 1,
         });
         my $resource = {};
         for my $pref($preferences->all) {
             my $fields = { $pref->get_inflated_columns };
             # remove internal fields
-            for my $del(qw/type attribute expose_to_customer internal peer_pref usr_pref dom_pref contract_pref voip_preference_groups_id id modify_timestamp/) {
+            for my $del(qw/type attribute expose_to_customer internal peer_pref usr_pref dom_pref contract_pref prof_pref voip_preference_groups_id id modify_timestamp/) {
                 delete $fields->{$del};
             }
             $fields->{max_occur} = int($fields->{max_occur});
