@@ -139,6 +139,15 @@ has_field 'fraud_daily_notify' => (
     },
 );
 
+has_field 'fraud_use_reseller_rates' => (
+    type => 'Boolean',
+    default => 0,
+    element_attr => {
+        rel => ['tooltip'],
+        title => ["Use rates of the reseller's billing profile for fraud control."]
+    },
+);
+
 has_field 'currency' => (
     type => 'Text',
     maxlength => 31,
@@ -169,7 +178,7 @@ has_block 'fields' => (
     class => [qw/modal-body/],
     render_list => [qw/handle name prepaid interval_charge interval_free_time interval_free_cash 
         fraud_interval_limit fraud_interval_lock fraud_interval_notify
-        fraud_daily_limit fraud_daily_lock fraud_daily_notify
+        fraud_daily_limit fraud_daily_lock fraud_daily_notify fraud_use_reseller_rates
         currency id
         status/],
 );
