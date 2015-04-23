@@ -16,6 +16,29 @@
       "revId": "d79a4afee86f2fa3867285848284c5bd49d7aa3f",
       "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a2585a7_dff74b58",
+        "filename": "lib/NGCP/Panel/Utils/Reseller.pm",
+        "patchSetId": 1
+      },
+      "lineNbr": 7,
+      "author": {
+        "id": 1000013
+      },
+      "writtenOn": "2015-04-23T16:38:11Z",
+      "side": 1,
+      "message": "maybe call it \"clone_email_templates\"",
+      "range": {
+        "startLine": 7,
+        "startChar": 4,
+        "endLine": 7,
+        "endChar": 26
+      },
+      "revId": "d79a4afee86f2fa3867285848284c5bd49d7aa3f",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
     }
   ]
 }
