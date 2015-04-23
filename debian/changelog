@@ -1,3 +1,12 @@
+ngcp-panel (1.7.2.8+0~mr3.7.2.8) unstable; urgency=low
+
+  [ Andreas Granig ]
+  * [faba764] MT#12673 Show ncos and rwr prefs desc in API
+
+  [ Sipwise Jenkins Builder ]
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Thu, 23 Apr 2015 15:43:49 +0200
+
 ngcp-panel (1.7.2.7+0~mr3.7.2.7) unstable; urgency=low
 
   [ Andreas Granig ]
