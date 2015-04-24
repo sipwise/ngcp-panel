@@ -1,3 +1,12 @@
+ngcp-panel (1.7.2.10+0~mr3.7.2.10) unstable; urgency=low
+
+  [ Andreas Granig ]
+  * [3ece7db] MT#12701 Show cf ncos in API
+
+  [ Sipwise Jenkins Builder ]
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Fri, 24 Apr 2015 16:07:09 +0200
+
 ngcp-panel (1.7.2.9+0~mr3.7.2.9) unstable; urgency=low
 
   [ Gerhard Jungwirth ]
