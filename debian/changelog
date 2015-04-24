@@ -1,3 +1,12 @@
+ngcp-panel (1.8.1.6+0~mr3.8.1.6) unstable; urgency=low
+
+  [ Gerhard Jungwirth ]
+  * [b021f54] MT#12555 allow port in callforward URIs
+
+  [ Sipwise Jenkins Builder ]
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Fri, 24 Apr 2015 16:04:34 +0200
+
 ngcp-panel (1.8.1.5+0~mr3.8.1.5) unstable; urgency=low
 
   [ Andreas Granig ]
