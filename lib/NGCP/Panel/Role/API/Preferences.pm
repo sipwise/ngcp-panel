@@ -110,7 +110,7 @@ sub get_resource {
                 $processed = 1;
                 last SWITCH;
             };
-            /^(adm_)?ncos_id$/ && do {
+            /^(adm_)?(cf_)?ncos_id$/ && do {
                 my $pref_name = $pref->attribute->attribute;
                 $pref_name =~ s/_id$//;
 
