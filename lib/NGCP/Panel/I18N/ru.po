@@ -738,7 +738,7 @@ msgstr "BLF ключ"
 #: share/templates/customer/preferences.tt:18
 #: share/templates/denied_page.tt:20 share/templates/device/list.tt:5
 #: share/templates/domain/preferences.tt:21
-#: share/templates/helpers/datatables.tt:217
+#: share/templates/helpers/datatables.tt:209
 #: share/templates/invoice/template.tt:20
 #: share/templates/peering/preferences.tt:18
 #: share/templates/reseller/branding.tt:5
@@ -1980,7 +1980,7 @@ msgstr ""
 #: share/templates/device/list.tt:161 share/templates/device/list.tt:200
 #: share/templates/device/list.tt:239 share/templates/device/list.tt:269
 #: share/templates/domain/list.tt:18 share/templates/emailtemplate/list.tt:18
-#: share/templates/helpers/datatables.tt:107
+#: share/templates/helpers/datatables.tt:99
 #: share/templates/invoice/invoice_list.tt:19
 #: share/templates/invoice/template_list.tt:19 share/templates/ncos/list.tt:18
 #: share/templates/ncos/pattern_list.tt:21
@@ -4520,7 +4520,7 @@ msgstr ""
 msgid "Load Default Files"
 msgstr ""
 
-#: share/templates/helpers/datatables.tt:272
+#: share/templates/helpers/datatables.tt:264
 msgid "Loading..."
 msgstr "Загрузка..."
 
@@ -7359,7 +7359,7 @@ msgstr "Переменные шаблона"
 
 #: share/templates/billing/list.tt:17 share/templates/customer/details.tt:194
 #: share/templates/customer/details.tt:247 share/templates/customer/list.tt:19
-#: share/templates/helpers/datatables.tt:108
+#: share/templates/helpers/datatables.tt:100
 #: share/templates/reseller/details.tt:207 share/templates/reseller/list.tt:19
 #: share/templates/subscriber/list.tt:19
 msgid "Terminate"
@@ -8581,7 +8581,7 @@ msgstr "Отметка времени"
 msgid "To Date:"
 msgstr "Заканчивая:"
 
-#: share/templates/helpers/datatables.tt:148
+#: share/templates/helpers/datatables.tt:140
 msgid "Total"
 msgstr ""
 
@@ -9226,7 +9226,7 @@ msgstr "подключено - регистрация..."
 msgid "connecting..."
 msgstr "подключение..."
 
-#: share/templates/helpers/datatables.tt:89
+#: share/templates/helpers/datatables.tt:81
 msgid "dataTables.default.js"
 msgstr "dataTables.ru.js"
 
