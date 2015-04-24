@@ -547,7 +547,7 @@ msgstr ""
 msgid "BLF Key"
 msgstr ""
 
-#: share/templates/billing/peaktimes.tt:5 share/templates/callflow/callmap.tt:15 share/templates/calls/chord.tt:43 share/templates/customer/details.tt:20 share/templates/customer/preferences.tt:18 share/templates/denied_page.tt:20 share/templates/device/list.tt:5 share/templates/domain/preferences.tt:21 share/templates/helpers/datatables.tt:217 share/templates/invoice/template.tt:20 share/templates/peering/preferences.tt:18 share/templates/reseller/branding.tt:5 share/templates/reseller/details.tt:5 share/templates/rewrite/rules_list.tt:5 share/templates/security/list.tt:5 share/templates/sound/handles_list.tt:5 share/templates/statistics/list.tt:23 share/templates/subprofile/preferences.tt:21 share/templates/subscriber/calllist.tt:5 share/templates/subscriber/callmap.tt:15 share/templates/subscriber/edit_webpass.tt:5 share/templates/subscriber/master.tt:12 share/templates/subscriber/preferences.tt:33 share/templates/subscriber/reglist.tt:5 share/templates/subscriber/voicemail.tt:5 share/templates/subscriber/webphone.tt:82
+#: share/templates/billing/peaktimes.tt:5 share/templates/callflow/callmap.tt:15 share/templates/calls/chord.tt:43 share/templates/customer/details.tt:20 share/templates/customer/preferences.tt:18 share/templates/denied_page.tt:20 share/templates/device/list.tt:5 share/templates/domain/preferences.tt:21 share/templates/helpers/datatables.tt:209 share/templates/invoice/template.tt:20 share/templates/peering/preferences.tt:18 share/templates/reseller/branding.tt:5 share/templates/reseller/details.tt:5 share/templates/rewrite/rules_list.tt:5 share/templates/security/list.tt:5 share/templates/sound/handles_list.tt:5 share/templates/statistics/list.tt:23 share/templates/subprofile/preferences.tt:21 share/templates/subscriber/calllist.tt:5 share/templates/subscriber/callmap.tt:15 share/templates/subscriber/edit_webpass.tt:5 share/templates/subscriber/master.tt:12 share/templates/subscriber/preferences.tt:33 share/templates/subscriber/reglist.tt:5 share/templates/subscriber/voicemail.tt:5 share/templates/subscriber/webphone.tt:82
 msgid "Back"
 msgstr ""
 
@@ -1569,7 +1569,7 @@ msgstr ""
 msgid "Define an action to be executed if User-Provided Number doesn't match the 'allowed_clis' list"
 msgstr ""
 
-#: lib/NGCP/Panel/Utils/DbStrings.pm:559 share/templates/administrator/list.tt:20 share/templates/billing/fees.tt:20 share/templates/billing/peaktimes.tt:71 share/templates/billing/zones.tt:18 share/templates/contact/list.tt:19 share/templates/customer/details.tt:304 share/templates/customer/details.tt:346 share/templates/customer/details.tt:451 share/templates/customer/details.tt:480 share/templates/device/list.tt:123 share/templates/device/list.tt:161 share/templates/device/list.tt:200 share/templates/device/list.tt:239 share/templates/device/list.tt:269 share/templates/domain/list.tt:18 share/templates/emailtemplate/list.tt:18 share/templates/helpers/datatables.tt:107 share/templates/invoice/invoice_list.tt:19 share/templates/invoice/template_list.tt:19 share/templates/ncos/list.tt:18 share/templates/ncos/pattern_list.tt:21 share/templates/numberblock/block_list.tt:18 share/templates/numberblock/profile_list.tt:23 share/templates/peering/list.tt:18 share/templates/peering/servers_rules.tt:19 share/templates/peering/servers_rules.tt:51 share/templates/reseller/details.tt:139 share/templates/reseller/details.tt:170 share/templates/reseller/details.tt:292 share/templates/rewrite/rules_list.tt:58 share/templates/rewrite/set_list.tt:22 share/templates/sound/handles_list.tt:62 share/templates/sound/list.tt:18 share/templates/subprofile/profile_list.tt:23 share/templates/subprofile/set_list.tt:23 share/templates/subscriber/master.tt:246 share/templates/subscriber/master.tt:282 share/templates/subscriber/preferences.tt:141 share/templates/subscriber/preferences.tt:399 share/templates/subscriber/preferences.tt:433 share/templates/subscriber/preferences.tt:515 share/templates/subscriber/preferences.tt:567 share/templates/subscriber/preferences.tt:638 share/templates/subscriber/preferences.tt:688 share/templates/subscriber/voicemail.tt:22 share/templates/voucher/list.tt:18
+#: lib/NGCP/Panel/Utils/DbStrings.pm:559 share/templates/administrator/list.tt:20 share/templates/billing/fees.tt:20 share/templates/billing/peaktimes.tt:71 share/templates/billing/zones.tt:18 share/templates/contact/list.tt:19 share/templates/customer/details.tt:304 share/templates/customer/details.tt:346 share/templates/customer/details.tt:451 share/templates/customer/details.tt:480 share/templates/device/list.tt:123 share/templates/device/list.tt:161 share/templates/device/list.tt:200 share/templates/device/list.tt:239 share/templates/device/list.tt:269 share/templates/domain/list.tt:18 share/templates/emailtemplate/list.tt:18 share/templates/helpers/datatables.tt:99 share/templates/invoice/invoice_list.tt:19 share/templates/invoice/template_list.tt:19 share/templates/ncos/list.tt:18 share/templates/ncos/pattern_list.tt:21 share/templates/numberblock/block_list.tt:18 share/templates/numberblock/profile_list.tt:23 share/templates/peering/list.tt:18 share/templates/peering/servers_rules.tt:19 share/templates/peering/servers_rules.tt:51 share/templates/reseller/details.tt:139 share/templates/reseller/details.tt:170 share/templates/reseller/details.tt:292 share/templates/rewrite/rules_list.tt:58 share/templates/rewrite/set_list.tt:22 share/templates/sound/handles_list.tt:62 share/templates/sound/list.tt:18 share/templates/subprofile/profile_list.tt:23 share/templates/subprofile/set_list.tt:23 share/templates/subscriber/master.tt:246 share/templates/subscriber/master.tt:282 share/templates/subscriber/preferences.tt:141 share/templates/subscriber/preferences.tt:399 share/templates/subscriber/preferences.tt:433 share/templates/subscriber/preferences.tt:515 share/templates/subscriber/preferences.tt:567 share/templates/subscriber/preferences.tt:638 share/templates/subscriber/preferences.tt:688 share/templates/subscriber/voicemail.tt:22 share/templates/voucher/list.tt:18
 msgid "Delete"
 msgstr ""
 
@@ -3814,7 +3814,7 @@ msgstr ""
 msgid "Load Default Files"
 msgstr ""
 
-#: share/templates/helpers/datatables.tt:272
+#: share/templates/helpers/datatables.tt:264
 msgid "Loading..."
 msgstr ""
 
@@ -6241,7 +6241,7 @@ msgstr ""
 msgid "Template variables"
 msgstr ""
 
-#: share/templates/billing/list.tt:17 share/templates/customer/details.tt:194 share/templates/customer/details.tt:247 share/templates/customer/list.tt:19 share/templates/helpers/datatables.tt:108 share/templates/reseller/details.tt:207 share/templates/reseller/list.tt:19 share/templates/subscriber/list.tt:19
+#: share/templates/billing/list.tt:17 share/templates/customer/details.tt:194 share/templates/customer/details.tt:247 share/templates/customer/list.tt:19 share/templates/helpers/datatables.tt:100 share/templates/reseller/details.tt:207 share/templates/reseller/list.tt:19 share/templates/subscriber/list.tt:19
 msgid "Terminate"
 msgstr ""
 
@@ -7250,7 +7250,7 @@ msgstr ""
 msgid "To Date:"
 msgstr ""
 
-#: share/templates/helpers/datatables.tt:148
+#: share/templates/helpers/datatables.tt:140
 msgid "Total"
 msgstr ""
 
@@ -7836,7 +7836,7 @@ msgstr ""
 msgid "connecting..."
 msgstr ""
 
-#: share/templates/helpers/datatables.tt:89
+#: share/templates/helpers/datatables.tt:81
 msgid "dataTables.default.js"
 msgstr ""
 
