@@ -50,6 +50,7 @@ else
 fi
 
 chmod 640 "${KEY_FILE}" "${CRT_FILE}"
+chown root:www-data "${CRT_FILE}"
 [ -r "${CSR_FILE}" ] && chmod 600 "${CSR_FILE}"
 
 if [ "$SKIP_CSR" = "true" ] ; then
