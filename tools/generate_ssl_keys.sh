@@ -49,7 +49,8 @@ else
   /usr/bin/openssl x509 -req -in "${CSR_FILE}" -signkey "${KEY_FILE}" -out "${CRT_FILE}" -extfile "${OPENSSL_CONFIG}"
 fi
 
-chmod 640 "${KEY_FILE}" "${CRT_FILE}"
+chmod 640 "${KEY_FILE}"
+chmod 644 "${CRT_FILE}"
 [ -r "${CSR_FILE}" ] && chmod 600 "${CSR_FILE}"
 
 if [ "$SKIP_CSR" = "true" ] ; then
