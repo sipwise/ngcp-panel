@@ -186,6 +186,12 @@ sub DELETE :Allow {
         my $item = $self->item_by_id($c, $id);
         last unless $self->resource_exists($c, soundset => $item);
 
+        last unless $self->add_delete_journal_item_hal($c,sub {
+            my $self = shift;
+            my ($c) = @_;
+            my $_form = $self->get_form($c);
+            return $self->hal_from_item($c, $item, $_form); });        
+        
         if($item->contract_id) {
             my $pref_rs = NGCP::Panel::Utils::Preferences::get_usr_preference_rs(
                 c => $c, attribute => 'contract_sound_set',
@@ -201,12 +207,6 @@ sub DELETE :Allow {
                 join => 'attribute',
             })->delete_all; # explicit delete_all, otherwise query fails
         }
-        
-        last unless $self->add_delete_journal_item_hal($c,sub {
-            my $self = shift;
-            my ($c) = @_;
-            my $_form = $self->get_form($c);
-            return $self->hal_from_item($c, $item, $_form); });
         
         $item->delete;
 

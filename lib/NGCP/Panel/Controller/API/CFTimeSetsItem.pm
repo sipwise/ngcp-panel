@@ -186,12 +186,18 @@ sub DELETE :Allow {
     my ($self, $c, $id) = @_;
     my $guard = $c->model('DB')->txn_scope_guard;
     {
-        my $rule = $self->item_by_id($c, $id, "rules");
-        last unless $self->resource_exists($c, rule => $rule);
+        my $tset = $self->item_by_id($c, $id);
+        last unless $self->resource_exists($c, timeset => $tset);
+        
+        last unless $self->add_delete_journal_item_hal($c,sub {
+            my $self = shift;
+            my ($c) = @_;
+            return $self->hal_from_item($c, $tset, "cftimesets"); });
+        
         try {
-            $rule->delete;
+            $tset->delete;
         } catch($e) {
-            $c->log->error("Failed to delete rewriterule with id '$id': $e");
+            $c->log->error("Failed to delete cftimeset with id '$id': $e");
             $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "Internal Server Error");
             last;
         }

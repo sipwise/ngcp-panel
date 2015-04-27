@@ -107,6 +107,11 @@ sub DELETE :Allow {
             }
         }
 
+        last unless $self->add_delete_journal_item_hal($c,sub {
+            my $self = shift;
+            my ($c) = @_;
+            return $self->hal_from_item($c,$domain); });
+        
         my $prov_domain = $domain->provisioning_voip_domain;
         if ($prov_domain) {
             $prov_domain->voip_dbaliases->delete;
@@ -115,11 +120,6 @@ sub DELETE :Allow {
             $prov_domain->delete;
         }
 
-        last unless $self->add_delete_journal_item_hal($c,sub {
-            my $self = shift;
-            my ($c) = @_;
-            return $self->hal_from_item($c,$domain); });
-        
         $domain->delete;
 
         try {
