@@ -206,6 +206,12 @@ sub DELETE :Allow {
         my $item = $self->item_by_id($c, $id);
         last unless $self->resource_exists($c, subscriberprofileset => $item);
 
+        last unless $self->add_delete_journal_item_hal($c,sub {
+            my $self = shift;
+            my ($c) = @_;
+            my $_form = $self->get_form($c);
+            return $self->hal_from_item($c, $item, $_form); });
+        
         $c->model('DB')->resultset('provisioning_voip_subscribers')->search({
             profile_set_id => $item->id,
         })->update({
@@ -214,12 +220,6 @@ sub DELETE :Allow {
         });
 
         $item->voip_subscriber_profiles->delete;
-        
-        last unless $self->add_delete_journal_item_hal($c,sub {
-            my $self = shift;
-            my ($c) = @_;
-            my $_form = $self->get_form($c);
-            return $self->hal_from_item($c, $item, $_form); });
         
         $item->delete;
 
