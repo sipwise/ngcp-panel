@@ -1,3 +1,12 @@
+ngcp-panel (1.7.1.22+0~mr3.7.1.22) unstable; urgency=low
+
+  [ Irina Peshinskaya ]
+  * [b1aeab3] MT#11549 Fix API search by aliases, broken after optimization
+
+  [ Sipwise Jenkins Builder ]
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Tue, 28 Apr 2015 12:25:33 +0200
+
 ngcp-panel (1.7.1.21+0~mr3.7.1.21) unstable; urgency=low
 
   [ Andreas Granig ]
