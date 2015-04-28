@@ -1,3 +1,12 @@
+ngcp-panel (1.7.1.23+0~mr3.7.1.23) unstable; urgency=low
+
+  [ Irina Peshinskaya ]
+  * [ead5955] MT#11667 Some features to calllist
+
+  [ Sipwise Jenkins Builder ]
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Tue, 28 Apr 2015 16:29:31 +0200
+
 ngcp-panel (1.7.1.22+0~mr3.7.1.22) unstable; urgency=low
 
   [ Irina Peshinskaya ]
