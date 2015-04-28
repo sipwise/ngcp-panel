@@ -2044,8 +2044,10 @@ sub master :Chained('base') :PathPart('details') :CaptureArgs(0) {
 
     my $call_cols = [
         { name => "id", title => $c->loc('#')  },
+        { name => "direction", search => 1, literal_sql => 'if(source_user_id = "'.$c->stash->{subscriber}->uuid.'", "outcoming", "incoming")' },
         { name => "source_user", search => 1, title => $c->loc('Caller') },
         { name => "destination_user", search => 1, title => $c->loc('Callee') },
+        { name => "source_customer_billing_zones_history.detail", search => 1, title => $c->loc('Billing zone') },
         { name => "call_status", search => 1, title => $c->loc('Status') },
         { name => "start_time", search_from_epoch => 1, search_to_epoch => 1, title => $c->loc('Start Time') },
         { name => "duration", search => 1, title => $c->loc('Duration'), show_total => 'sum' },
