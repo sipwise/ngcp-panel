@@ -153,10 +153,10 @@ class_has 'query_params' => (
             query => {
                 first => sub {
                     my $q = shift;
-                    return { 'voip_subscriber_aliases_csv.aliases' => { like => '%'.$q.'%' } };
+                    return \['exists ( select subscriber_id, group_concat(concat(cc,ac,sn)) as aliases from billing.voip_numbers voip_subscriber_aliases_csv where voip_subscriber_aliases_csv.`subscriber_id` = `me`.`id` group by subscriber_id having aliases like ?)', [ {} => '%'.$q.'%'] ];
                 },
                 second => sub {
-                    return { join => 'voip_subscriber_aliases_csv' };
+                    return { };
                 },
             },
         },
