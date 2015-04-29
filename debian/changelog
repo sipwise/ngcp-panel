@@ -1,3 +1,12 @@
+ngcp-panel (1.7.1.24+0~mr3.7.1.24) unstable; urgency=low
+
+  [ Alexander Lutay ]
+  * [47e3a60] MT#12591 Use root:www-data for default certificate file /etc/ngcp-config/ssl/myserver.crt
+
+  [ Sipwise Jenkins Builder ]
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Wed, 29 Apr 2015 13:32:16 +0200
+
 ngcp-panel (1.7.1.23+0~mr3.7.1.23) unstable; urgency=low
 
   [ Irina Peshinskaya ]
