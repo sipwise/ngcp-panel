@@ -20,6 +20,28 @@ use warnings;
     1;
 }
 
+{
+    package LWP_Wrapper;
+    use Moo;
+    use HTTP::Request;
+    use HTTP::Headers;
+    extends 'LWP::UserAgent';
+
+    around request => sub {
+            my ($next, $self, $method, $uri, $opts) = @_;
+            my @headers;
+            if ($opts->{headers}) {
+                @headers = HTTP::Headers->new(%{ $opts->{headers} });
+            }
+            my $req = HTTP::Request->new($method, $uri, @headers);
+            if ($opts->{content}) {
+                $req->content($opts->{content});
+            }
+            my $res = $self->$next($req);
+            return $res;
+    };
+}
+
 package NGCP::Panel::Utils::DialogicImg;
 
 use Moo;
@@ -27,6 +49,8 @@ use Digest::MD5 qw/md5_hex/;
 use HTTP::Tiny;
 use Storable qw/freeze/;
 use Types::Standard qw(Int HashRef);
+# use LWP::UserAgent;
+# use HTTP::Request::Common qw();
 with 'Role::REST::Client';
 
 has '+type' => ( default => 'application/xml', is => 'rw' );
@@ -51,6 +75,10 @@ has 'pids' => (
             bn2020               => 10_001,
         };
     } );
+
+has 'ua' => (is => 'rw', default => sub {
+    return LWP::UserAgent->new( ssl_opts => { verify_hostname => 0 } );
+    });
 
 has 'classinfo' => ( is => 'ro', isa => HashRef, default => sub{
     return {
@@ -1553,7 +1581,12 @@ sub _build_validation_data {
     return $resp;
 }
 
-sub _build_user_agent { return HTTP::Tiny->new; }
+sub _build_user_agent {
+    my $ua = LWP_Wrapper->new(
+            ssl_opts => { verify_hostname => 0 },
+        );
+    return $ua;
+}
 
 sub objects {
     return {
