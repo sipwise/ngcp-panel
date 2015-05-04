@@ -382,7 +382,7 @@ sub servers_delete :Chained('servers_base') :PathPart('delete') :Args(0) {
     return;
 }
 
-sub servers_flash_dialogic :Chained('servers_base') :PathPart('edit/dialogic') :Args(0) {
+sub servers_flash_dialogic :Chained('servers_base') :PathPart('flash/dialogic') :Args(0) {
     my ($self, $c) = @_;
 
     my $config = {
