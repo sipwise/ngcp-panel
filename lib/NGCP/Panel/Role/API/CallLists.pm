@@ -176,11 +176,14 @@ sub resource_from_item {
         $other_domain = $item->source_domain;
     }
 
+    my $own_sub = ($resource->{direction} eq "out")
+        ? $src_sub
+        : $dst_sub;
     if($resource->{own_cli} !~ /^\d+$/) {
         $resource->{own_cli} .= '@'.$own_domain;
     } elsif($own_normalize) {
         $resource->{own_cli} = NGCP::Panel::Utils::Subscriber::apply_rewrite(
-            c => $c, subscriber => $sub // $src_sub->voip_subscriber,
+            c => $c, subscriber => $sub // $own_sub->voip_subscriber,
             number => $resource->{own_cli}, direction => "caller_out"
         );
     }
@@ -191,7 +194,7 @@ sub resource_from_item {
         $resource->{other_cli} .= '@'.$other_domain;
     } elsif($other_normalize) {
         $resource->{other_cli} = NGCP::Panel::Utils::Subscriber::apply_rewrite(
-            c => $c, subscriber => $sub // $src_sub->voip_subscriber,
+            c => $c, subscriber => $sub // $own_sub->voip_subscriber,
             number => $resource->{other_cli}, direction => "caller_out"
         );
     }
