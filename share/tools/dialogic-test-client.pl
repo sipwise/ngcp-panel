@@ -20,7 +20,7 @@ p $resp->code;
 
 print "LOGGED IN, LOCK OBTAINED ############################\n";
 
-my $result = $test->create_all_sipss7({
+my $result = $test->create_all_sipsip({
     ip_sip => '10.15.20.92',
     ip_rtp => '10.15.21.10',
     ip_client => '10.15.20.144',
