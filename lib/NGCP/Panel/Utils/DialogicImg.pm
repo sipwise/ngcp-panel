@@ -20,6 +20,28 @@ use warnings;
     1;
 }
 
+{
+    package LWP_Wrapper;
+    use Moo;
+    use HTTP::Request;
+    use HTTP::Headers;
+    extends 'LWP::UserAgent';
+
+    around request => sub {
+            my ($next, $self, $method, $uri, $opts) = @_;
+            my @headers;
+            if ($opts->{headers}) {
+                @headers = HTTP::Headers->new(%{ $opts->{headers} });
+            }
+            my $req = HTTP::Request->new($method, $uri, @headers);
+            if ($opts->{content}) {
+                $req->content($opts->{content});
+            }
+            my $res = $self->$next($req);
+            return $res;
+    };
+}
+
 package NGCP::Panel::Utils::DialogicImg;
 
 use Moo;
@@ -252,6 +274,11 @@ has 'classinfo' => ( is => 'ro', isa => HashRef, default => sub{
         sip_profile => {
             name => 'SIPSGP',
             parent => 'sip_profile_collection',
+            revalidate => 1,
+        },
+        sip_headers => {
+            name => 'SIPHeaders',
+            parent => 'sip_profile',
             revalidate => 0,
         },
         tdm_profile_collection => {
@@ -650,6 +677,12 @@ sub create_sip_profile {
     return $self->_create_generic($options, 'sip_profile');
 }
 
+sub create_sip_headers {
+    my ( $self, $options ) = @_;
+
+    return $self->_create_generic($options, 'sip_headers');
+}
+
 sub create_tdm_profile_collection {
     my ( $self, $options ) = @_;
 
@@ -920,6 +953,12 @@ sub create_general_part {
         @out_schedule,
         {name => 'sip_profile_collection', options => undef},
         {name => 'sip_profile', options => undef},
+        {name => 'sip_profile', options => {
+            ProfileName => 'SIP-profile-ngcp',
+            }},
+        {name => 'sip_headers', options => {
+            UnsupportedHeader => 'Enabled',
+            }},
         #{run => 'download_profiles'},
         {name => 'external_network_elements', options => undef},
         {name => 'external_gateway_collection', options => undef},
@@ -927,6 +966,8 @@ sub create_general_part {
             Name => 'Phone1',
             IPAddress => $settings->{ip_client},
             IPAddress4 => $settings->{ip_client},
+            SGP => 'ID: 1 - SIP-profile-ngcp',
+            SGPId => '1',
             }},
         @nfs_schedule,
         @snmp_schedule,
@@ -1466,7 +1507,7 @@ sub reboot_and_wait {
         return $resp;
     }
     sleep 2; # not to catch the old server
-    for (my $i = 0; $i < 100; $i++) { # 500 seconds on 5 seconds timeout
+    for (my $i = 0; $i < 30; $i++) { # 600 seconds on 20 seconds timeout
         $resp = $self->get("/");
         last if $resp->code < 400;
     }
@@ -1553,7 +1594,13 @@ sub _build_validation_data {
     return $resp;
 }
 
-sub _build_user_agent { return HTTP::Tiny->new; }
+sub _build_user_agent {
+    my $ua = LWP_Wrapper->new(
+            ssl_opts => { verify_hostname => 0 },
+            timeout => 20,
+        );
+    return $ua;
+}
 
 sub objects {
     return {
