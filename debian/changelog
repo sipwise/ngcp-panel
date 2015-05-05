@@ -1,3 +1,15 @@
+ngcp-panel (1.8.1.11+0~mr3.8.1.11) unstable; urgency=low
+
+  [ Gerhard Jungwirth ]
+  * [185aea5] MT#12813 calllist api: use correct subscriber
+
+  [ Irina Peshinskaya ]
+  * [548d08c] MT#12499 Apply default email templates to the created reseller
+
+  [ Sipwise Jenkins Builder ]
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Tue, 05 May 2015 21:58:20 +0200
+
 ngcp-panel (1.8.1.10+0~mr3.8.1.10) unstable; urgency=low
 
   [ Alexander Lutay ]
