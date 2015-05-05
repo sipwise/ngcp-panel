@@ -214,6 +214,8 @@ sub create_subscriber {
 
         # TODO: check if we find a reseller and contract and domains
 
+        use Data::Printer; p $params;
+
         my $billing_subscriber = $contract->voip_subscribers->create({
             uuid => $uuid_string,
             username => $params->{username},
@@ -247,6 +249,39 @@ sub create_subscriber {
             profile_id => $profile ? $profile->id : undef,
             create_timestamp => NGCP::Panel::Utils::DateTime::current_local,
         });
+
+        if(defined $params->{e164range} && ref $params->{e164range} eq "ARRAY") {
+            my @alias_numbers = ();
+            foreach my $range(@{ $params->{e164range} }) {
+                if(defined $range->{e164range}{cc} && $range->{e164range}{cc} ne '') {
+                    my $len = $range->{e164range}{snlength};
+                    foreach my $ext(0 .. int("9" x $len)) {
+                        $range->{e164range}{sn} = sprintf("%s%0".$len."d", $range->{e164range}{snbase}, $ext);
+                        push @alias_numbers, { e164 => {
+                            cc => $range->{e164range}{cc},   
+                            ac => $range->{e164range}{ac},   
+                            sn => $range->{e164range}{sn},   
+                        }};
+                    }
+                }
+            }
+            if(@alias_numbers) {
+
+                # if no primary number was given, use the first from the range
+                unless(defined $params->{e164}{cc} && $params->{e164}{cc} ne '') {
+                    my $first_alias = shift @alias_numbers;
+                    $params->{e164} = $first_alias->{e164};
+                }
+                update_subscriber_numbers(
+                    c => $c,
+                    schema => $schema,
+                    subscriber_id => $billing_subscriber->id,
+                    reseller_id => $reseller->id,
+                    alias_numbers => \@alias_numbers,
+                );
+            }
+        }
+
         my ($cli);
         if(defined $params->{e164}{cc} && $params->{e164}{cc} ne '') {
             $cli = $params->{e164}{cc} .
@@ -304,32 +339,6 @@ sub create_subscriber {
                 c => $c, schema => $schema, subscriber => $billing_subscriber,
                 type => 'start_huntgroup', old => undef, new => $prov_subscriber->profile_id
             );
-        }
-
-        if(defined $params->{e164range} && ref $params->{e164range} eq "ARRAY") {
-            my @alias_numbers = ();
-            foreach my $range(@{ $params->{e164range} }) {
-                if(defined $range->{e164range}{cc} && $range->{e164range}{cc} ne '') {
-                    my $len = $range->{e164range}{snlength};
-                    foreach my $ext(0 .. int("9" x $len)) {
-                        $range->{e164range}{sn} = sprintf("%s%0".$len."d", $range->{e164range}{snbase}, $ext);
-                        push @alias_numbers, { e164 => {
-                            cc => $range->{e164range}{cc},   
-                            ac => $range->{e164range}{ac},   
-                            sn => $range->{e164range}{sn},   
-                        }};
-                    }
-                }
-            }
-            if(@alias_numbers) {
-                update_subscriber_numbers(
-                    c => $c,
-                    schema => $schema,
-                    subscriber_id => $billing_subscriber->id,
-                    reseller_id => $reseller->id,
-                    alias_numbers => \@alias_numbers,
-                );
-            }
         }
 
 
