@@ -858,7 +858,7 @@ sub _create_generic {
 # for nfs: ip_nfs_server, nfs_path
 # for snmp: snmp_system_name, snmp_system_location, snmp_system_contact, snmp_community_name
 # for snmp optional: ip_snmp_manager, snmp_version
-sub create_general_part {
+sub create_general_part_schedule {
     my ($self, $settings, $log) = @_;
 
     $self->_create_indent;
@@ -975,9 +975,7 @@ sub create_general_part {
         @snmp_schedule,
     ];
 
-    $self->_run_schedule($schedule, $log);
-
-    return 0;
+    return $schedule;
 }
 
 # log: 0: none, 1: short, 2: everything
@@ -985,10 +983,10 @@ sub create_general_part {
 sub create_all_sipsip {
     my ($self, $settings, $log) = @_;
 
-    $self->create_general_part($settings, $log);
-    my $resp;
+    my $general_schedule = $self->create_general_part_schedule($settings, $log);
 
     my $schedule = [
+        @{ $general_schedule },
         {name => 'routing_configuration', options => undef},
         {name => 'channel_group_collection', options => undef},
         {name => 'route_table_collection', options => undef},
@@ -1031,7 +1029,7 @@ sub create_all_sipsip {
 sub create_all_sipisdn {
     my ($self, $settings, $log) = @_;
 
-    $self->create_general_part($settings, $log);
+    my $general_schedule = $self->create_general_part_schedule($settings, $log);
 
     my @ds1_spans;
     if ($settings->{use_optical_spans}) {
@@ -1055,6 +1053,7 @@ sub create_all_sipisdn {
     my $resp;
 
     my $schedule = [
+        @{ $general_schedule },
         {name => 'isdn', options => undef},
 
         {name => 'tdm_profile_collection', options => undef},
@@ -1150,7 +1149,7 @@ sub create_all_sipisdn {
 sub create_all_sipss7 {
     my ($self, $settings, $log) = @_;
 
-    $self->create_general_part($settings, $log);
+    my $general_schedule = $self->create_general_part_schedule($settings, $log);
 
     my @ds1_spans;
     if ($settings->{use_optical_spans}) {
@@ -1171,9 +1170,8 @@ sub create_all_sipss7 {
         );
     }
 
-    my $resp;
-
     my $schedule = [
+        @{ $general_schedule },
         {name => 'tdm_profile_collection', options => undef},
         {name => 'e1_profile', options => undef},
         {name => 'isup_profile_collection', options => undef},
@@ -1290,6 +1288,8 @@ sub _run_schedule {
     my ($self, $schedule, $log) = @_;
 
     my $resp;
+    my $ntotal = $#{$schedule};
+    my $i = 0;
 
     for my $elem (@{ $schedule }) {
         if (exists $elem->{run}) {
@@ -1301,11 +1301,17 @@ sub _run_schedule {
         my $fun = "create_$name";
         $resp = $self->$fun($options);
         # $resp = $self->_create_generic($options, $name);
-        if ($log >= 1) {
+        if ($log) {
             my $ind = " " x ($self->classinfo->{$name}{indent}*4);
-            printf "%-37s: %d\n", "$ind$name", $resp->code;
-            if ($resp->code != 200) {
-                use DDP; p $resp->data;
+            my $percent = (100 * $i++) / $ntotal;
+            my $shortline = sprintf "%3d%% - %-37s: %d\n", $percent, "$ind$name", $resp->code;
+            if ('CODE' eq ref $log) {
+                &{ $log }($shortline, $resp);
+            } elsif ($log >= 1) {
+                    print $shortline;
+                if ($resp->code != 200) {
+                    use DDP; p $resp->data;
+                }
             }
         }
     }
