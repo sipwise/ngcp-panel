@@ -627,6 +627,7 @@ sub subscriber_create :Chained('base') :PathPart('subscriber/create') :Args(0) {
             'domain.create' => $c->uri_for('/domain/create'),
             'group.create' => $c->uri_for_action('/customer/pbx_group_create', $c->req->captures),
     };
+
     if($pbxadmin) {
         $fields->{'domain.create'} = $c->uri_for_action('/domain/create', 
             $c->stash->{contract}->contact->reseller_id, 'pbx');
@@ -697,7 +698,7 @@ sub subscriber_create :Chained('base') :PathPart('subscriber/create') :Args(0) {
                     c => $c,
                     schema => $schema,
                     contract => $c->stash->{contract},
-                    params => $form->values,
+                    params => $form->params,
                     admin_default => 0,
                     preferences => $preferences,
                 );
