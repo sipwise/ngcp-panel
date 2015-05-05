@@ -10,7 +10,7 @@ exit if try_parse_file(@ARGV);
 my $resp;
 
 my $test = NGCP::Panel::Utils::DialogicImg->new(
-    server      => 'https://10.15.20.133',
+    server      => 'https://10.15.20.149',
 );
 
 p $test->login( 'dialogic', 'Dial0gic' );
