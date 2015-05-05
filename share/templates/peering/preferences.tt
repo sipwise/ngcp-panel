@@ -16,10 +16,66 @@
 
     helper.top_buttons = [
         { name = c.loc('Back'), uri = c.uri_for(group.id, "servers"), icon = 'icon-arrow-left' },
-        { name = c.loc('Flash Dialogic'), uri = c.uri_for_action("/peering/servers_flash_dialogic", [c.req.captures.0, c.req.captures.1]), icon = 'icon-star' },
+        { name = c.loc('Flash Dialogic'), uri = "javascript:call_flash_dialogic('" _ c.uri_for_action("/peering/servers_flash_dialogic", [c.req.captures.0, c.req.captures.1]) _ "');", icon = 'icon-star' },
     ];
 
     PROCESS 'helpers/pref_table.tt';
 %]
+
+<script type="text/javascript">
+	function call_flash_dialogic (url) {
+		console.log("calling", url);
+
+
+
+        var last_response_len = false;
+        $.ajax(url, {
+            xhrFields: {
+                onprogress: function(e)
+                {
+                    var this_response, response = e.currentTarget.response;
+                    if(last_response_len === false)
+                    {
+                        this_response = response;
+                        last_response_len = response.length;
+                    }
+                    else
+                    {
+                        this_response = response.substring(last_response_len);
+                        last_response_len = response.length;
+                    }
+                    $("#ngcp-livelog").append(this_response);
+                    //console.log(this_response);
+                }
+            }
+        })
+        .done(function(data)
+        {
+            console.log('Done');
+            $("#ngcp-livelog").append("\nDone.")
+        })
+        .fail(function(data)
+        {
+            console.log('Error: ', data);
+        });
+        console.log('Request Sent');
+        $("#ngcp-test-modal").modal('show');
+
+	}
+</script>
+
+<div id="ngcp-test-modal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+  <div class="modal-header">
+    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+    <h3 id="myModalLabel">Flashing Dialogic ...</h3>
+  </div>
+  <div class="modal-body">
+    <p>Please Wait ...</p>
+    <pre id="ngcp-livelog"></pre>
+  </div>
+  <div class="modal-footer">
+    <button class="btn" data-dismiss="modal" aria-hidden="true">Close</button>
+  </div>
+</div>
 
 [% # vim: set tabstop=4 syntax=html expandtab: -%]

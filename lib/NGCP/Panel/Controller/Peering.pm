@@ -415,13 +415,22 @@ sub servers_flash_dialogic :Chained('servers_base') :PathPart('flash/dialogic') 
                 server => 'https://' . $config->{ip_config},
             );
 
+            $c->response->body('');
+            $c->response->header('X-Accel-Buffering' => 'no');
+            $c->response->headers->content_type('text/plain');
+
+            $c->write("Logging in ...\n");
+
             $api->login( $c->config->{dialogic}{username}, $c->config->{dialogic}{password} );
             my $resp = $api->obtain_lock();
             die "Couldn't connect to dialogic"
                 unless ($resp->code == 200);
 
             if ($config->{mode} eq 'sipsip') {
-                $resp = $api->create_all_sipsip($config, 1);
+                $resp = $api->create_all_sipsip($config, sub {
+                    my ($shortlog, $resp) = @_;
+                    $c->write($shortlog);
+                    });
 
             } elsif ($config->{mode} eq 'sipisdn') {
                 $resp = $api->create_all_sipisdn($config, 1);
@@ -443,7 +452,7 @@ sub servers_flash_dialogic :Chained('servers_base') :PathPart('flash/dialogic') 
             desc  => $c->loc('Failed to flash dialogic'),
         );
     };
-    NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for_action('/peering/servers_root', [$c->req->captures->[0]]));
+    #NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for_action('/peering/servers_root', [$c->req->captures->[0]]));
     return;
 }
 
