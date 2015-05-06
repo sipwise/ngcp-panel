@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "3a3291f1_80188685",
+        "filename": "lib/NGCP/Panel/Utils/DialogicImg.pm",
+        "patchSetId": 8
+      },
+      "lineNbr": 42,
+      "author": {
+        "id": 1000013
+      },
+      "writtenOn": "2015-05-06T17:34:18Z",
+      "side": 1,
+      "message": "elegant, overriding \"request\" to have that custom parameters in get, post etc. calls. but does it works as desired?\n\nfrom what i see in LWP::Useragent below, it might not dispatch those params as you would therefore need it? \n\nsub post {\n    require HTTP::Request::Common;\n    my($self, @parameters) \u003d @_;\n    my @suff \u003d $self-\u003e_process_colonic_headers(\\@parameters, (ref($parameters[1]) ? 2 : 1));\n    return $self-\u003erequest( HTTP::Request::Common::POST( @parameters ), @suff );\n}\n\nin that case, i would just simplify it and make your request interceptor a regular method (\"_request\") and add overrides for the post, get, .. methods you effectively use, e.g.\n\n\nsub post {\n    my($self, @parameters) \u003d @_;\n    return $self-\u003e_request(\u0027POST\u0027,@params);\n}",
+      "range": {
+        "startLine": 30,
+        "startChar": 4,
+        "endLine": 42,
+        "endChar": 6
+      },
+      "revId": "398b8f8bdcb9d9c5a115b2cdeaedb1b8b54390fa",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "3a3291f1_a02b8293",
+        "filename": "lib/NGCP/Panel/Utils/DialogicImg.pm",
+        "patchSetId": 8
+      },
+      "lineNbr": 1515,
+      "author": {
+        "id": 1000013
+      },
+      "writtenOn": "2015-05-06T17:34:18Z",
+      "side": 1,
+      "message": "hm, brute force request while that device restarts?\nmaybe better reduce the loop count (e.g. $i \u003c 50) and put a sleep 5 into the loop. or something. if the boot time really takes up to 500 secs.",
+      "range": {
+        "startLine": 1512,
+        "startChar": 4,
+        "endLine": 1515,
+        "endChar": 5
+      },
+      "revId": "398b8f8bdcb9d9c5a115b2cdeaedb1b8b54390fa",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    }
+  ]
+}
