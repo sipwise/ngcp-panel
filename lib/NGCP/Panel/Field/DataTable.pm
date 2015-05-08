@@ -52,7 +52,7 @@ sub render_element {
     $t->process($self->template, $vars, \$output) or
         die "Failed to process Datatables field template: ".$t->error();
 
-    print $output;
+    #print $output;
 
     return $output;
 }
