@@ -12,18 +12,24 @@ use Data::HAL qw();
 use Data::HAL::Link qw();
 use HTTP::Status qw(:constants);
 use NGCP::Panel::Utils::DateTime;
+use NGCP::Panel::Utils::Reseller qw();
 use NGCP::Panel::Utils::Contract;
 use NGCP::Panel::Utils::Preferences;
 use NGCP::Panel::Form::BillingProfile::Admin qw();
+use NGCP::Panel::Utils::Billing qw();
 
 sub item_rs {
     my ($self, $c) = @_;
 
     my $item_rs = $c->model('DB')->resultset('billing_profiles');
+    #my $search_xtra = {
+    #        join => { 'billing_mappings' => 'contract_active' },
+    #        '+select' => { count => 'contract_active.status', -as => 'v_count_used' },
+    #        'group_by' => [ qw(me.id) ] };
     my $search_xtra = {
-            join => { 'billing_mappings' => 'contract_active' },
-            '+select' => { count => 'contract_active.status', -as => 'v_count_used' },
-            'group_by' => [ qw(me.id) ] };
+            '+select' => [ { '' => \[ NGCP::Panel::Utils::Billing::get_contract_count_stmt() ] , -as => 'contract_cnt' },
+                           { '' => \[ NGCP::Panel::Utils::Billing::get_package_count_stmt() ] , -as => 'package_cnt' }, ],
+            };
     if($c->user->roles eq "admin") {
         $item_rs = $item_rs->search({ 'me.status' => { '!=' => 'terminated' } },
                                     $search_xtra);
@@ -94,6 +100,11 @@ sub profile_by_id {
 sub update_profile {
     my ($self, $c, $profile, $old_resource, $resource, $form) = @_;
 
+    if ($profile->status eq 'terminated') {
+        $self->error($c, HTTP_UNPROCESSABLE_ENTITY, 'Billing profile is already terminated and cannot be changed.');
+        return;
+    }
+    
     $form //= $self->get_form($c);
     # TODO: for some reason, formhandler lets missing reseller slip thru
     $resource->{reseller_id} //= undef;
@@ -103,24 +114,38 @@ sub update_profile {
         resource => $resource,
     );
 
-    if($old_resource->{reseller_id} != $resource->{reseller_id}) {
-        my $reseller = $c->model('DB')->resultset('resellers')
-            ->find($resource->{reseller_id});
-        unless($reseller) {
-            $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Invalid 'reseller_id'");
-            return;
-        }
-    }
+    #if($old_resource->{reseller_id} != $resource->{reseller_id}) {
+    #    my $reseller = $c->model('DB')->resultset('resellers')
+    #        ->find($resource->{reseller_id});
+    #    unless($reseller) {
+    #        $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Invalid 'reseller_id'");
+    #        return;
+    #    }
+    #}
+    return unless NGCP::Panel::Utils::Reseller::check_reseller_update_item($c,$resource->{reseller_id},$old_resource->{reseller_id},sub {
+        my ($err) = @_;
+        $self->error($c, HTTP_UNPROCESSABLE_ENTITY, $err);
+    });    
 
     if(exists $resource->{status} && $resource->{status} eq 'terminated') {
-        my $profile_used = {$profile->get_inflated_columns}->{v_count_used};
-        if ($profile_used) {
+        unless($profile->get_column('contract_cnt') == 0) {
             $self->error($c, HTTP_UNPROCESSABLE_ENTITY,
-                         "Cannnot terminate billing_profile that is used (count: $profile_used)");
+                         "Cannnot terminate billing_profile that is still used in profile mappings of contracts");
             return;
-        } else {
-            $resource->{terminate_timestamp} = NGCP::Panel::Utils::DateTime::current_local;
         }
+        unless($profile->get_column('package_cnt') == 0) {
+            $self->error($c, HTTP_UNPROCESSABLE_ENTITY,
+                         "Cannnot terminate billing_profile that is still used in profile sets of profile packages");
+            return;
+        }        
+        #my $profile_used = {$profile->get_inflated_columns}->{v_count_used}; 
+        #if ($profile_used) {
+        #    $self->error($c, HTTP_UNPROCESSABLE_ENTITY,
+        #                 "Cannnot terminate billing_profile that is used (count: $profile_used)");
+        #    return;
+        #} else {
+        #    $resource->{terminate_timestamp} = NGCP::Panel::Utils::DateTime::current_local;
+        #}
     }
 
     my $old_prepaid = $profile->prepaid;

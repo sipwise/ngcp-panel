@@ -170,6 +170,47 @@ div.ngcp-timeset-field div.controls {
     margin: 0 !important;
 }
 
+/* align billing network block elements in one row */
+
+div.ngcp-network-block-row {
+    margin-left: 180px;
+}
+
+/* align duration/interval elements in one row */
+
+div.ngcp-interval-row {
+    margin-left: 180px;
+}
+
+/* align profile+network elements in one row */
+
+div.billingmappingsblock_wrapper {
+    margin-left: 180px;
+}
+
+div.ngcp-profile-network-row-margin {
+    margin-left: 180px;
+}
+
+div.ngcp-profile-network-row {
+    /*margin-left: 180px;*/
+}
+
+div.ngcp-profile-network-row div.controls {
+margin-left: 0px !important;
+}
+
+div.ngcp-profile-network-row > div:first-of-type {
+    float: left;
+    width:49%;
+    margin-right:1%;
+}
+div.ngcp-profile-network-row > div:last-of-type {
+    float: left;
+    width:49%;
+    margin-left:1%;
+}
+
 /* align cf destination radio group */
 div.ngcp-destination-row {
     margin-left: 180px !important;

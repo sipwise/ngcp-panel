@@ -12,6 +12,9 @@ use NGCP::Panel::Utils::DateTime;
 use NGCP::Panel::Utils::Message;
 use NGCP::Panel::Utils::Navigation;
 use NGCP::Panel::Utils::Reseller;
+use NGCP::Panel::Utils::BillingNetworks qw();
+use NGCP::Panel::Utils::ProfilePackages qw();
+use NGCP::Panel::Utils::Billing qw();
 
 sub auto :Private {
     my ($self, $c) = @_;
@@ -166,7 +169,28 @@ sub base :Chained('list_reseller') :PathPart('') :CaptureArgs(1) {
         { name => 'type', search => 1, title => $c->loc('Type') },
     ]);
     
-
+    $c->stash->{profile_dt_columns} = NGCP::Panel::Utils::Datatables::set_columns($c, [
+        { name => "id", "search" => 1, "title" => $c->loc("#") },
+        { name => "name", "search" => 1, "title" => $c->loc("Name") },
+        #{ name => "reseller.name", "search" => 1, "title" => $c->loc("Reseller") },
+        #{ name => "v_count_used", "search" => 0, "title" => $c->loc("Used") },
+	NGCP::Panel::Utils::Billing::get_datatable_cols($c),
+    ]);    
+    
+    $c->stash->{network_dt_columns} = NGCP::Panel::Utils::Datatables::set_columns($c, [
+        { name => 'id', search => 1, title => $c->loc('#') },
+        #{ name => 'reseller.name', search => 1, title => $c->loc('Reseller') },
+        { name => 'name', search => 1, title => $c->loc('Name') },
+        NGCP::Panel::Utils::BillingNetworks::get_datatable_cols($c),
+    ]);    
+    
+    $c->stash->{package_dt_columns} = NGCP::Panel::Utils::Datatables::set_columns($c, [
+        { name => 'id', search => 1, title => $c->loc('#') },
+        #{ name => 'reseller.name', search => 1, title => $c->loc('Reseller') },
+        { name => 'name', search => 1, title => $c->loc('Name') },
+        NGCP::Panel::Utils::ProfilePackages::get_datatable_cols($c),
+    ]);
+    
     $c->stash(reseller => $c->stash->{resellers}->search_rs({ id => $reseller_id }));
     unless($c->stash->{reseller}->first) {
         NGCP::Panel::Utils::Message->error(
@@ -380,9 +404,9 @@ sub create_defaults :Path('create_defaults') :Args(0) :Does(ACL) :ACLDetachTo('/
             name => 'Default reseller' . sprintf('%04d', rand 10000),
             status => 'active',
         },
-        billing_mappings => {
-            start_date => $now,
-        },
+        #billing_mappings => {
+        #    start_date => $now,
+        #},
         admins => {
             md5pass => 'defaultresellerpassword',
             is_active => 1,
@@ -405,19 +429,43 @@ sub create_defaults :Path('create_defaults') :Args(0) :Does(ACL) :ACLDetachTo('/
                 %{ $defaults{resellers} },
                 contract_id => $r{contracts}->id,
             });
-            $r{billing_mappings} = $billing->resultset('billing_mappings')->create({
-                %{ $defaults{billing_mappings} },
-                billing_profile_id => 1,
-                contract_id => $r{contracts}->id,
-                product_id => $billing->resultset('products')->search({ class => 'reseller' })->first->id,
-            });
+            #$r{billing_mappings} = $billing->resultset('billing_mappings')->create({
+            #    %{ $defaults{billing_mappings} },
+            #    billing_profile_id => 1,
+            #    contract_id => $r{contracts}->id,
+            #    product_id => $billing->resultset('products')->search({ class => 'reseller' })->first->id,
+            #});
+            my $mappings_to_create = [];
+	    my $resource = { $r{contracts}->get_inflated_columns };
+	    $resource->{billing_profile_id} = 1;
+	    $resource->{type} = 'reseller';
+            NGCP::Panel::Utils::Contract::prepare_billing_mappings(
+                c => $c,
+                resource => $resource,
+                old_resource => undef,
+                mappings_to_create => $mappings_to_create,
+                err_code => sub {
+                    my ($err) = @_;
+                    die( [$err, "showdetails"] );
+                });
+	    foreach my $mapping (@$mappings_to_create) {
+                $r{contracts}->billing_mappings->create($mapping); 
+            }
+	    $r{contracts} = NGCP::Panel::Utils::Contract::get_contract_rs(
+		schema => $c->model('DB'))->search(undef, {
+		    '+select' => 'billing_mappings.id',
+		    '+as' => 'bmid',
+		})
+		->find($r{contracts}->id);
+	    $r{billing_mappings} = $r{contracts}->billing_mappings;
+	    
             $r{admins} = $billing->resultset('admins')->create({
                 %{ $defaults{admins} },
                 reseller_id => $r{resellers}->id,
             });
             NGCP::Panel::Utils::Contract::create_contract_balance(
                 c => $c,
-                profile => $r{billing_mappings}->billing_profile,
+                profile => $r{billing_mappings}->find($r{contracts}->get_column('bmid'))->billing_profile, #$r{billing_mappings}->billing_profile,
                 contract => $r{contracts},
             );
         });

@@ -15,6 +15,8 @@ use NGCP::Panel::Form::Customer::PbxGroupEdit;
 use NGCP::Panel::Form::Customer::PbxGroup;
 use NGCP::Panel::Form::Customer::PbxFieldDevice;
 use NGCP::Panel::Form::Customer::PbxFieldDeviceSync;
+use NGCP::Panel::Form::Contract::Customer;
+use NGCP::Panel::Form::Contract::ProductSelect;
 use NGCP::Panel::Utils::Message;
 use NGCP::Panel::Utils::Navigation;
 use NGCP::Panel::Utils::DateTime;
@@ -107,6 +109,9 @@ sub ajax_reseller_filter :Chained('list_customer') :PathPart('ajax/reseller') :A
 sub create :Chained('list_customer') :PathPart('create') :Args(0) {
     my ($self, $c) = @_;
 
+    if($c->user->roles eq "subscriberadmin") {
+        $c->detach('/denied_page');
+    }
     my $posted = ($c->request->method eq 'POST');
     my $form;
     my $params = {};
@@ -114,7 +119,8 @@ sub create :Chained('list_customer') :PathPart('create') :Args(0) {
     if($c->config->{features}->{cloudpbx}) {
         $form = NGCP::Panel::Form::Contract::ProductSelect->new(ctx => $c);
     } else {
-        $form = NGCP::Panel::Form::Contract::Basic->new(ctx => $c);
+        $form = NGCP::Panel::Form::Contract::Customer->new(ctx => $c);
+        $c->stash->{type} = 'sipaccount';        
     }
     $form->process(
         posted => $posted,
@@ -126,6 +132,9 @@ sub create :Chained('list_customer') :PathPart('create') :Args(0) {
         form => $form,
         fields => {'contact.create' => $c->uri_for('/contact/create'),
                    'billing_profile.create'  => $c->uri_for('/billing/create'),
+                   'billing_profiles.profile.create'  => $c->uri_for('/billing/create'),
+                   'billing_profiles.network.create'  => $c->uri_for('/network/create'),
+                   'profile_package.create'  => $c->uri_for('/package/create'),
                    'subscriber_email_template.create'  => $c->uri_for('/emailtemplate/create'),
                    'passreset_email_template.create'  => $c->uri_for('/emailtemplate/create'),
                    'invoice_template.create'  => $c->uri_for('/invoicetemplate/create'),
@@ -136,42 +145,57 @@ sub create :Chained('list_customer') :PathPart('create') :Args(0) {
         try {
             my $schema = $c->model('DB');
             $schema->txn_do(sub {
-                foreach(qw/contact subscriber_email_template passreset_email_template invoice_email_template invoice_template/){
+                foreach(qw/contact billing_profile profile_package product subscriber_email_template passreset_email_template invoice_email_template invoice_template/){
                     $form->values->{$_.'_id'} = $form->values->{$_}{id} || undef;
                     delete $form->values->{$_};
                 }
-                my $bprof_id = $form->values->{billing_profile}{id};
-                delete $form->values->{billing_profile};
                 $form->values->{create_timestamp} = $form->values->{modify_timestamp} = NGCP::Panel::Utils::DateTime::current_local;
                 $form->values->{external_id} = $form->field('external_id')->value;
-                my $product_id = $form->values->{product}{id};
-                delete $form->values->{product};
-                unless($product_id) {
-                    $product_id = $c->model('DB')->resultset('products')->find({ class => 'sipaccount' })->id;
-                }
                 unless($form->values->{max_subscribers} && length($form->values->{max_subscribers})) {
                     delete $form->values->{max_subscribers};
                 }
-                my $contract = $schema->resultset('contracts')->create($form->values);
-                my $billing_profile = $schema->resultset('billing_profiles')->find($bprof_id);
-                $contract->billing_mappings->create({
-                    billing_profile_id => $bprof_id,
-                    product_id => $product_id,
-                });
+                
+                #if (defined $c->stash->{type}) {
+                #    $form->values->{type} = $c->stash->{type};
+                #} else {
+                #    $form->values->{product_id} = $form->values->{product}->{id};
+                #}
+                #delete $form->values->{product};
+                my $mappings_to_create = [];
+                NGCP::Panel::Utils::Contract::prepare_billing_mappings(
+                    c => $c,
+                    resource => $form->values,
+                    mappings_to_create => $mappings_to_create,
+                    err_code => sub {
+                        my ($err,@fields) = @_;
+                        die( [$err, "showdetails"] );
+                    }); 
+                delete $form->values->{product_id};
+                #delete $form->values->{type};
 
-                if(($contract->contact->reseller_id // -1) !=
-                    ($billing_profile->reseller_id // -1)) {
-                    die( ["Contact and Billing profile should have the same reseller", "showdetails"] );
+                my $contract = $schema->resultset('contracts')->create($form->values);
+                foreach my $mapping (@$mappings_to_create) {
+                    $contract->billing_mappings->create($mapping); 
                 }
+                #$c->stash->{contract_select_rs}->clear_cache;
+                $contract = $c->stash->{contract_select_rs}
+                    ->search({
+                        'me.id' => $contract->id,
+                    },{
+                        '+select' => 'billing_mappings.id',
+                        '+as' => 'bmid',
+                    })->first;
 
                 NGCP::Panel::Utils::Contract::create_contract_balance(
                     c => $c,
-                    profile => $billing_profile,
+                    profile => $contract->billing_mappings->find($contract->get_column('bmid'))->billing_profile, #$billing_profile,
                     contract => $contract,
                 );
                 $c->session->{created_objects}->{contract} = { id => $contract->id };
                 delete $c->session->{created_objects}->{contact};
                 delete $c->session->{created_objects}->{billing_profile};
+                delete $c->session->{created_objects}->{network};
+                delete $c->session->{created_objects}->{profile_package};
                 NGCP::Panel::Utils::Message->info(
                     c => $c,
                     cname => 'create',
@@ -185,7 +209,7 @@ sub create :Chained('list_customer') :PathPart('create') :Args(0) {
                 desc  => $c->loc('Failed to create customer contract'),
             );
         }
-        NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for('/contract'));
+        NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for('/customer')); #/contract?
     }
 
     $c->stash(create_flag => 1);
@@ -236,9 +260,12 @@ sub base :Chained('list_customer') :PathPart('') :CaptureArgs(1) {
         NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for('/customer'));
     }
 
+    my $now = NGCP::Panel::Utils::DateTime::current_local;
+    my $billing_mappings_ordered = NGCP::Panel::Utils::Contract::billing_mappings_ordered($contract_rs->first->billing_mappings,$now);
+    my $future_billing_mappings = NGCP::Panel::Utils::Contract::billing_mappings_ordered(NGCP::Panel::Utils::Contract::future_billing_mappings($contract_rs->first->billing_mappings,$now));
     my $billing_mapping = $contract_rs->first->billing_mappings->find($contract_rs->first->get_column('bmid'));
 
-    my $stime = NGCP::Panel::Utils::DateTime::current_local()->truncate(to => 'month');
+    my $stime = $now->clone->truncate(to => 'month');
     my $etime = $stime->clone->add(months => 1)->subtract(seconds => 1);
    
     my $balance;
@@ -350,29 +377,41 @@ sub base :Chained('list_customer') :PathPart('') :CaptureArgs(1) {
     $c->stash(contract => $contract_first);
     $c->stash(contract_rs => $contract_rs);
     $c->stash(billing_mapping => $billing_mapping );
+    $c->stash(now => $now );
+    $c->stash(billing_mappings_ordered_result => $billing_mappings_ordered ); # all billings mappings are displayed in the details page
+    $c->stash(future_billing_mappings => $future_billing_mappings ); # only editable billing mappings are displayed in the edit dialog
 }
 
-sub edit :Chained('base') :PathPart('edit') :Args(0) {
+sub base_restricted :Chained('base') :PathPart('') :CaptureArgs(0) {
+    my ($self, $c) = @_;
+    if($c->user->roles eq "subscriberadmin") {
+        $c->detach('/denied_page');
+    }
+}
+
+sub edit :Chained('base_restricted') :PathPart('edit') :Args(0) {
     my ($self, $c) = @_;
 
     my $contract = $c->stash->{contract};
     my $billing_mapping = $c->stash->{billing_mapping};
+    my $now = $c->stash->{now};
+    my $billing_profile = $billing_mapping->billing_profile;
     my $posted = ($c->request->method eq 'POST');
     my $form;
     my $params = { $contract->get_inflated_columns };
-    foreach(qw/contact subscriber_email_template passreset_email_template invoice_email_template invoice_template/){
+    foreach(qw/contact profile_package product subscriber_email_template passreset_email_template invoice_email_template invoice_template/){
         $params->{$_}{id} = delete $params->{$_.'_id'};
     }
-    $params->{product}{id} = $billing_mapping->product_id;
-    $params->{billing_profile}{id} = $billing_mapping->billing_profile_id;
-    $params = $params->merge($c->session->{created_objects});
-    $c->log->debug('customer/edit');
+    $params->{billing_profiles} = [ map { { $_->get_inflated_columns }; } $c->stash->{future_billing_mappings}->all ];
+    $params->{billing_profile}->{id} = $billing_profile->id;
+    $params = $params->merge($c->session->{created_objects}); # TODO: created billing profiles/networks will not be pre-selected
+    #$c->log->debug('customer/edit');
     if($c->config->{features}->{cloudpbx}) {
-        $c->log->debug('ProductSelect');
+        #$c->log->debug('ProductSelect');
         $form = NGCP::Panel::Form::Contract::ProductSelect->new(ctx => $c);
     } else {
-        $c->log->debug('Basic');
-        $form = NGCP::Panel::Form::Contract::Basic->new(ctx => $c);
+        #$c->log->debug('Basic');
+        $form = NGCP::Panel::Form::Contract::Customer->new(ctx => $c);
     }
     $form->process(
         posted => $posted,
@@ -384,6 +423,9 @@ sub edit :Chained('base') :PathPart('edit') :Args(0) {
         form => $form,
         fields => {'contact.create' => $c->uri_for('/contact/create'),
                    'billing_profile.create'  => $c->uri_for('/billing/create'),
+                   'billing_profiles.profile.create'  => $c->uri_for('/billing/create'),
+                   'billing_profiles.network.create'  => $c->uri_for('/network/create'),
+                   'profile_package.create'  => $c->uri_for('/package/create'),
                    'subscriber_email_template.create'  => $c->uri_for('/emailtemplate/create'),
                    'passreset_email_template.create'  => $c->uri_for('/emailtemplate/create'),
                    'invoice_email_template.create'  => $c->uri_for('/emailtemplate/create'),
@@ -395,24 +437,44 @@ sub edit :Chained('base') :PathPart('edit') :Args(0) {
         try {
             my $schema = $c->model('DB');
             $schema->txn_do(sub {
-                foreach(qw/contact subscriber_email_template passreset_email_template invoice_email_template invoice_template/){
+                foreach(qw/contact billing_profile profile_package product subscriber_email_template passreset_email_template invoice_email_template invoice_template/){
                     $form->values->{$_.'_id'} = $form->values->{$_}{id} || undef;
                     delete $form->values->{$_};
                 }
-                my $bprof_id = $form->values->{billing_profile}{id};
-                delete $form->values->{billing_profile};
-                $form->{modify_timestamp} = NGCP::Panel::Utils::DateTime::current_local;
-                my $product_id = $form->values->{product}{id} || $billing_mapping->product_id;
-                delete $form->values->{product};
+                #my $now = NGCP::Panel::Utils::DateTime::current_local;
+                $form->values->{modify_timestamp} = $now;
                 $form->values->{external_id} = $form->field('external_id')->value;
                 unless($form->values->{max_subscribers} && length($form->values->{max_subscribers})) {
                     $form->values->{max_subscribers} = undef;
                 }
-                my $old_bprof_id = $billing_mapping->billing_profile_id;
+                my $mappings_to_create = [];
+                my $delete_mappings = 0;
+                NGCP::Panel::Utils::Contract::prepare_billing_mappings(
+                    c => $c,
+                    resource => $form->values,
+                    old_resource => { $contract->get_inflated_columns },
+                    mappings_to_create => $mappings_to_create,
+                    now => $now,
+                    delete_mappings => \$delete_mappings,
+                    err_code => sub {
+                        my ($err,@fields) = @_;
+                        die( [$err, "showdetails"] );
+                    }); 
+                delete $form->values->{product_id};
+
                 my $old_prepaid = $billing_mapping->billing_profile->prepaid;
                 my $old_ext_id = $contract->external_id // '';
                 my $old_status = $contract->status;
+                
                 $contract->update($form->values);
+                NGCP::Panel::Utils::Contract::remove_future_billing_mappings($contract,$now) if $delete_mappings;
+                foreach my $mapping (@$mappings_to_create) {
+                    $contract->billing_mappings->create($mapping); 
+                }
+                $contract = $c->stash->{contract_rs}->first;
+                $billing_mapping = $contract->billing_mappings->find($contract->get_column('bmid'));
+                $billing_profile = $billing_mapping->billing_profile;
+                
                 my $new_ext_id = $contract->external_id // '';
 
                 # if status changed, populate it down the chain
@@ -435,14 +497,9 @@ sub edit :Chained('base') :PathPart('edit') :Args(0) {
                     }
                 }
 
-                if($bprof_id != $old_bprof_id) {
-                    $contract->billing_mappings->create({
-                        billing_profile_id => $bprof_id,
-                        product_id => $product_id,
-                        start_date => NGCP::Panel::Utils::DateTime::current_local,
-                    });
-                    my $new_billing_profile = $c->model('DB')->resultset('billing_profiles')->find($bprof_id);
-                    if($old_prepaid && !$new_billing_profile->prepaid) {
+                # TODO: remove this once the libswrate and rate-o-mat fetch the actual prepaid falg themselves
+                if($billing_profile) { # check prepaid change if billing profile changed
+                    if($old_prepaid && !$billing_profile->prepaid) {
                         foreach my $sub($contract->voip_subscribers->all) {
                             my $prov_sub = $sub->provisioning_voip_subscriber;
                             next unless($prov_sub);
@@ -452,7 +509,7 @@ sub edit :Chained('base') :PathPart('edit') :Args(0) {
                                 $pref->first->delete;
                             }
                         }
-                    } elsif(!$old_prepaid && $new_billing_profile->prepaid) {
+                    } elsif(!$old_prepaid && $billing_profile->prepaid) {
                         foreach my $sub($contract->voip_subscribers->all) {
                             my $prov_sub = $sub->provisioning_voip_subscriber;
                             next unless($prov_sub);
@@ -466,18 +523,52 @@ sub edit :Chained('base') :PathPart('edit') :Args(0) {
                         }
                     }
                 }
+                
+                #if($bprof_id != $old_bprof_id) {
+                #    $contract->billing_mappings->create({
+                #        billing_profile_id => $bprof_id,
+                #        product_id => $product_id,
+                #        start_date => NGCP::Panel::Utils::DateTime::current_local,
+                #    });
+                #    my $new_billing_profile = $c->model('DB')->resultset('billing_profiles')->find($bprof_id);
+                #    if($old_prepaid && !$new_billing_profile->prepaid) {
+                #        foreach my $sub($contract->voip_subscribers->all) {
+                #            my $prov_sub = $sub->provisioning_voip_subscriber;
+                #            next unless($prov_sub);
+                #            my $pref = NGCP::Panel::Utils::Preferences::get_usr_preference_rs(
+                #                c => $c, attribute => 'prepaid', prov_subscriber => $prov_sub);
+                #            if($pref->first) {
+                #                $pref->first->delete;
+                #            }
+                #        }
+                #    } elsif(!$old_prepaid && $new_billing_profile->prepaid) {
+                #        foreach my $sub($contract->voip_subscribers->all) {
+                #            my $prov_sub = $sub->provisioning_voip_subscriber;
+                #            next unless($prov_sub);
+                #            my $pref = NGCP::Panel::Utils::Preferences::get_usr_preference_rs(
+                #                c => $c, attribute => 'prepaid', prov_subscriber => $prov_sub);
+                #            if($pref->first) {
+                #                $pref->first->update({ value => 1 });
+                #            } else {
+                #                $pref->create({ value => 1 });
+                #            }
+                #        }
+                #    }
+                #}
 
-                unless ( defined $schema->resultset('billing_profiles')
-                        ->search_rs({
-                                id => $bprof_id,
-                                reseller_id => $contract->contact->reseller_id,
-                            })
-                        ->first ) {
-                    die( ["Contact and Billing profile should have the same reseller", "showdetails"] );
-                }
+                #unless ( defined $schema->resultset('billing_profiles')
+                #        ->search_rs({
+                #                id => $bprof_id,
+                #                reseller_id => $contract->contact->reseller_id,
+                #            })
+                #        ->first ) {
+                #    die( ["Contact and Billing profile should have the same reseller", "showdetails"] );
+                #}
 
                 delete $c->session->{created_objects}->{contact};
+                delete $c->session->{created_objects}->{network};
                 delete $c->session->{created_objects}->{billing_profile};
+                delete $c->session->{created_objects}->{profile_package};
             });
             NGCP::Panel::Utils::Message->info(
                 c => $c,
@@ -500,7 +591,7 @@ sub edit :Chained('base') :PathPart('edit') :Args(0) {
     $c->stash(form => $form);
 }
 
-sub terminate :Chained('base') :PathPart('terminate') :Args(0) {
+sub terminate :Chained('base_restricted') :PathPart('terminate') :Args(0) {
     my ($self, $c) = @_;
     my $contract = $c->stash->{contract};
 
@@ -509,7 +600,7 @@ sub terminate :Chained('base') :PathPart('terminate') :Args(0) {
             c => $c,
             desc  => $c->loc('Cannot terminate contract with the id 1'),
         );
-        NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for('/contract'));
+        NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for('/customer')); #/contract?
     }
 
     try {
@@ -543,10 +634,10 @@ sub terminate :Chained('base') :PathPart('terminate') :Args(0) {
             desc  => $c->loc('Failed to terminate contract'),
         );
     };
-    NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for('/contract'));
+    NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for('/customer')); #/contract?
 }
 
-sub details :Chained('base') :PathPart('details') :Args(0) {
+sub details :Chained('base_restricted') :PathPart('details') :Args(0) {
     my ($self, $c) = @_;
 
     NGCP::Panel::Utils::Sounds::stash_soundset_list(c => $c, contract => $c->stash->{contract});
@@ -558,7 +649,7 @@ sub details :Chained('base') :PathPart('details') :Args(0) {
     }
 }
 
-sub subscriber_create :Chained('base') :PathPart('subscriber/create') :Args(0) {
+sub subscriber_create :Chained('base_restricted') :PathPart('subscriber/create') :Args(0) {
     my ($self, $c) = @_;
 
     if(defined $c->stash->{contract}->max_subscribers &&
@@ -743,7 +834,7 @@ sub subscriber_create :Chained('base') :PathPart('subscriber/create') :Args(0) {
     $c->stash(form => $form)
 }
 
-sub edit_fraud :Chained('base') :PathPart('fraud/edit') :Args(1) {
+sub edit_fraud :Chained('base_restricted') :PathPart('fraud/edit') :Args(1) {
     my ($self, $c, $type) = @_;
 
     my $posted = ($c->request->method eq 'POST');
@@ -786,7 +877,7 @@ sub edit_fraud :Chained('base') :PathPart('fraud/edit') :Args(1) {
     $c->stash(edit_flag => 1);
 }
 
-sub delete_fraud :Chained('base') :PathPart('fraud/delete') :Args(1) {
+sub delete_fraud :Chained('base_restricted') :PathPart('fraud/delete') :Args(1) {
     my ($self, $c, $type) = @_;
 
     if($type eq "month") {
@@ -831,7 +922,7 @@ sub delete_fraud :Chained('base') :PathPart('fraud/delete') :Args(1) {
     return;
 }
 
-sub edit_balance :Chained('base') :PathPart('balance/edit') :Args(0) {
+sub edit_balance :Chained('base_restricted') :PathPart('balance/edit') :Args(0) {
     my ($self, $c) = @_;
 
     my $balance = $c->stash->{balance};

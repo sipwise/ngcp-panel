@@ -1,4 +1,104 @@
 [%  site_config.title = c.loc('Customers') -%]
+
+<script>
+function hideField(id,iddId) {
+    $("[name='" + id + "']").parents('.control-group').addClass("hidden");
+    $("[name='" + id + ".id']").parents('.control-group').addClass("hidden");
+    $("[id='" + id + ".0']").parents('.control-group').addClass("hidden");
+    if (iddId) {
+        $("[id='" + iddId + "']").parents('.control-group').addClass("hidden");
+    }
+    $("[name='" + id + ".create']").parents('.control-group').addClass("hidden");
+}
+function showField(id,iddId) {
+    $("[name='" + id + "']").parents('.control-group').removeClass("hidden");
+    $("[name='" + id + ".id']").parents('.control-group').removeClass("hidden");
+    $("[id='" + id + ".0']").parents('.control-group').removeClass("hidden");
+    if (iddId) {
+        $("[id='" + iddId + "']").parents('.control-group').removeClass("hidden");
+    }    
+    $("[name='" + id + ".create']").parents('.control-group').removeClass("hidden");
+}
+function switchBillingProfileDefinition(field) {
+    var switched = 0;
+    if (field) {
+        switch (field.value) {
+            case 'id':
+                showField('billing_profile');
+                hideField('billing_profiles','profile_add');
+                hideField('profile_package');
+                switched = 1;
+                break;
+            case 'profiles':
+                hideField('billing_profile');
+                showField('billing_profiles','profile_add');
+                hideField('profile_package');
+                switched = 1;
+                break;
+            case 'package':
+                hideField('billing_profile');
+                hideField('billing_profiles','profile_add');
+                showField('profile_package');
+                switched = 1;
+                break;
+            default:
+            
+                break;
+        }
+    }
+    if (!switched) {
+        hideField('billing_profile');
+        hideField('billing_profiles','profile_add');
+        hideField('profile_package');
+    }
+//    var bootstrapMethodField;
+//    if(!vendorField){//initial load - no vendor field passed at all
+//        bootstrapMethodFields = document.getElementsByName('bootstrap_method');
+//        if(bootstrapMethodFields && bootstrapMethodFields.length){
+//            bootstrapMethodField = bootstrapMethodFields[0];//we will use default defined in Perl module to show linked fields
+//            vendorField = bootstrapMethodField.form['vendor'];//for load after error - we will check if it's value isn't empty
+//        }
+//    }else{
+//       bootstrapMethodField = vendorField.form['bootstrap_method'];
+//    }
+//    var bootstrapMethod='';
+//    if(vendorField && vendorField.value){//onchange and on load after error
+//        var vendor = vendorField.value.toLowerCase();
+//        switch(vendor){
+//            case "cisco":
+//                bootstrapMethod = 'http';
+//                break;
+//            ;
+//            default:
+//                bootstrapMethod = 'redirect_'+vendor;
+//                break;
+//            ;
+//        }
+//        if(bootstrapMethod){
+//            var length = bootstrapMethodField.options.length;
+//            var found = false;
+//            for(var i=0; i < length; i++){
+//                if(bootstrapMethodField.options[i].value == bootstrapMethod){
+//                    bootstrapMethodField.options[i].selected = true;
+//                    found = true;
+//                    break;
+//                }
+//            }
+//            if(!found){
+//                bootstrapMethod = '';
+//            }
+//        }
+//    }
+//    if((!bootstrapMethod) && bootstrapMethodField){ //as said above - for initial load, to use Perl defined select default to show linked fields
+//        bootstrapMethod = bootstrapMethodField.options[bootstrapMethodField.selectedIndex].value;
+//    }
+//    bootstrapDynamicFields(bootstrapMethod);
+}
+$( document ).ready(function() {
+    switchBillingProfileDefinition(document.getElementById('billing_profile_definition'));
+});
+</script>
+
 [%
     helper.name = c.loc('Customer');
     helper.identifier = 'Customer';

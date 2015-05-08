@@ -8,6 +8,7 @@ use HTTP::Status qw(:constants);
 use MooseX::ClassAttribute qw(class_has);
 use File::Find::Rule;
 use JSON qw(to_json);
+use Safe::Isa qw($_isa);
 BEGIN { extends 'Catalyst::Controller'; }
 require Catalyst::ActionRole::ACL;
 require Catalyst::ActionRole::CheckTrailingSlash;
@@ -282,6 +283,22 @@ sub field_to_json : Private {
     } # SWITCH
 }
 
+sub field_to_select_options : Private {
+    my ($self, $field) = @_;
+    return join('|',map {
+        my $value = $_->{value};
+        my $label = $_->{label};
+        my $s = defined $value ? "'".$value."'" : 'null';
+        if (defined $label && length($label)) {
+            if (!defined $value || (lc($value) ne lc($label))) {
+                $s.=' ('.$label.')';
+            }
+        }
+        $s;
+    } @{$field->options});
+    
+}
+
 sub get_collection_properties {
     my ($self, $form) = @_;
 
@@ -298,7 +315,7 @@ sub get_collection_properties {
         next if(defined $renderlist && !grep {/^$name$/} @{ $renderlist });
         my @types = ();
         push @types, 'null' unless ($f->required || $f->validate_when_empty);
-        push @types, $self->field_to_json($f->type);
+        my $type;
         if($f->type =~ /^\+NGCP::Panel::Field::/) {
             if($f->type =~ /E164/) {
                 $name = 'primary_number';
@@ -308,10 +325,18 @@ sub get_collection_properties {
                 $name = 'pbx_group_ids';
             } elsif($f->type =~ /Country$/) {
                 $name = 'country';
-            } elsif($f->type !~ /Regex|EmailList|SubscriberStatusSelect|SubscriberLockSelect|Identifier|PosInteger/) {
+            #} elsif($f->type !~ /Regex|EmailList|SubscriberStatusSelect|SubscriberLockSelect|Identifier|PosInteger/) {
+            #    $name .= '_id';
+            #}
+            } elsif($f->type =~ /Select$/) {
+                $type = $self->field_to_select_options($f);
+            } elsif($f->type !~ /Regex|EmailList|Identifier|PosInteger/) {
                 $name .= '_id';
             }
-        }
+        } elsif ($f->$_isa('HTML::FormHandler::Field::Select')) {
+            $type = $self->field_to_select_options($f);
+        } 
+        push(@types, defined $type ? $type : $self->field_to_json($f->type));
         my $desc;
         if($f->element_attr) {
             $desc = $f->element_attr->{title}->[0];
