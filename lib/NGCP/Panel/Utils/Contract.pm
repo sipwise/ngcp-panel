@@ -5,6 +5,7 @@ use warnings;
 use Sipwise::Base;
 use DBIx::Class::Exception;
 use NGCP::Panel::Utils::DateTime;
+use DateTime::Format::Strptime qw();
 
 sub get_contract_balance {
     my (%params) = @_;
@@ -419,6 +420,231 @@ sub get_contract_calls_rs{
  
     return $calls_rs;
 }
+
+sub prepare_billing_mappings {
+    my (%params) = @_;
+
+    my ($c,$resource,$old_resource,$mappings_to_create,$is_multi_mode,$err_code) = @params{qw/c resource old_resource mappings_to_create is_multi_mode err_code/};
+
+    my $schema = $c->model('DB');
+    if (!defined $err_code || ref $err_code ne 'CODE') {
+        $err_code = sub { return 0; };
+    }
+    
+    #if (defined $resource->{billing_profile_id} && defined $resource->{billing_profiles}) {
+    #    return 0 unless &{$err_code}("Either 'billing_profile_id' or 'billing_profiles' can be specified, not both.");
+    #} elsif (!defined $resource->{billing_profile_id} && !defined $resource->{billing_profiles}) {
+    #    return 0 unless &{$err_code}("Neither 'billing_profile_id' nor 'billing_profiles' specified.");
+    #}
+    
+    #$resource->{contact_id} //= undef;
+    my $reseller_id = undef;
+    if (defined $resource->{contact_id}) {
+        my $contact = $schema->resultset('contacts')->find($resource->{contact_id});
+        if ($contact) {
+            $reseller_id = $contact->reseller_id;
+        }
+    }
+
+    my $product_id = undef;
+    my $prepaid = undef;
+    my $billing_profile_id = undef;
+    if (defined $old_resource) {
+        # TODO: what about changed product, do we allow it?
+        my $billing_mapping = $schema->resultset('billing_mappings')->find($old_resource->{billing_mapping_id});
+        $product_id = $billing_mapping->product->id;
+        $prepaid = $billing_mapping->billing_profile->prepaid;
+        $billing_profile_id = $billing_mapping->billing_profile->id;
+    } else {
+        my $product = $schema->resultset('products')->find({ class => $resource->{type} });
+        if ($product) {
+            $product_id = $product->id;
+        }
+    }
+   
+    if (defined $resource->{billing_profiles}) {
+        if (defined $is_multi_mode && ref $is_multi_mode eq 'SCALAR') {
+            $$is_multi_mode = 1;
+        }      
+        if (ref $resource->{billing_profiles} ne "ARRAY") {
+            return 0 unless &{$err_code}("Invalid field 'billing_profiles'. Must be an array.");
+        }
+        #delete $resource->{billing_profile_id};
+        #my $mappings = delete $resource->{billing_profiles};
+        my %start_dupes = ();
+        my %interval_type_counts = ( open => 0, 'open end' => 0, 'open start' => 0, 'start-end' => 0 );
+        my $dtf = $schema->storage->datetime_parser;
+        my $now = NGCP::Panel::Utils::DateTime::current_local;
+        foreach my $mapping (@{$resource->{billing_profiles}}) {
+            if (ref $mapping ne "HASH") {
+                return 0 unless &{$err_code}("Invalid element in array 'billing_profiles'. Must be an object.");
+            }
+
+            my $start = (defined $mapping->{start} ? NGCP::Panel::Utils::DateTime::from_string($mapping->{start}) : undef);
+            my $stop = (defined $mapping->{stop} ? NGCP::Panel::Utils::DateTime::from_string($mapping->{stop}) : undef);
+
+            if (!defined $start && !defined $stop) { #open interval
+                $interval_type_counts{open} += 1;
+            } elsif (defined $start && !defined $stop) { #open end interval
+                my $start_str = $dtf->format_datetime($start);
+                if ($start <= $now) {
+                    return 0 unless &{$err_code}("'start' timestamp ($start_str) is not in future.");
+                }
+                if (exists $start_dupes{$start_str}) {
+                    $start_dupes{$start_str} += 1;
+                    return 0 unless &{$err_code}("Identical 'start' timestamps ($start_str) not allowed.");
+                } else {
+                    $start_dupes{$start_str} = 1;
+                }
+                $interval_type_counts{'open end'} += 1;
+            } elsif (!defined $start && defined $stop) { #open start interval
+                my $stop_str = $dtf->format_datetime($stop);
+                return 0 unless &{$err_code}("Interval with 'stop' timestamp ($stop_str) but no 'start' timestamp specified.");
+                $interval_type_counts{'open start'} //= 0;
+                $interval_type_counts{'open start'} += 1;                
+            } else { #start-end interval
+                my $start_str = $dtf->format_datetime($start);
+                if ($start <= $now) {
+                    return 0 unless &{$err_code}("'start' timestamp ($start_str) is not in future.");
+                }
+                my $stop_str = $dtf->format_datetime($stop);
+                if ($start >= $stop) {
+                    return 0 unless &{$err_code}("'start' timestamp ($start_str) has to be before 'stop' timestamp ($stop_str).");
+                }
+                if (exists $start_dupes{$start_str}) {
+                    $start_dupes{$start_str} += 1;
+                    return 0 unless &{$err_code}("Identical 'start' timestamps ($start_str) not allowed.");
+                } else {
+                    $start_dupes{$start_str} = 1;
+                }
+                $interval_type_counts{'start-end'} += 1;                                
+            }
+            
+            unless(defined $mapping->{profile_id}) {
+                return 0 unless &{$err_code}("Invalid 'profile_id', not defined.");
+            }
+            my $profile = $schema->resultset('billing_profiles')->find($mapping->{profile_id});
+            unless($profile) {
+                return 0 unless &{$err_code}("Invalid 'profile_id' ($mapping->{profile_id}).");
+            }
+            if (defined $reseller_id && $reseller_id != $profile->reseller_id) {
+                return 0 unless &{$err_code}("The reseller of the contact doesn't match the reseller of the billing profile (" . $profile->name . ").");
+            }
+            if (defined $prepaid) {
+                if ($profile->prepaid != $prepaid) {
+                    return 0 unless &{$err_code}("Switching between prepaid and post-paid billing profiles is not supported.");
+                }
+            } else {
+                $prepaid = $profile->prepaid;
+            }
+            my $network;
+            if (defined $mapping->{network_id}) {
+                $network = $schema->resultset('billing_networks')->find($mapping->{network_id});
+                unless($network) {
+                    return 0 unless &{$err_code}("Invalid 'network_id'.");
+                }
+                if (defined $reseller_id && $reseller_id != $network->reseller_id) {
+                    return 0 unless &{$err_code}("The reseller of the contact doesn't match the reseller of the billing network (" . $network->name . ").");
+                }
+            }
+            # TODO: what about changed product, do we allow it?
+            #my $product_class = delete $mapping->{type};
+            #unless( (defined $product_class ) && ($product_class eq "sipaccount" || $product_class eq "pbxaccount") ) {
+            #    return 0 unless &{$err_code}("Mandatory 'type' parameter is empty or invalid, must be 'sipaccount' or 'pbxaccount'.");
+            #}
+            #my $product = $schema->resultset('products')->find({ class => $product_class });
+            #unless($product) {
+            #    return 0 unless &{$err_code}("Invalid 'type'.");
+            #} else {
+            #    # add product_id just for form check (not part of the actual contract item)
+            #    # and remove it after the check
+            #    $mapping->{product_id} = $product->id;
+            #}
+            push(@$mappings_to_create,{
+                billing_profile_id => $profile->id,
+                network_id => (defined $network ? $network->id : undef),
+                product_id => $product_id,
+                start_date => $start,
+                end_date => $stop,
+            });
+        }
+        if (!defined $old_resource && $interval_type_counts{'open'} > 1) {
+            return 0 unless &{$err_code}("Only a single interval without 'start' and 'stop' timestamps is allowed.");
+        } elsif (!defined $old_resource && $interval_type_counts{'open'} == 0) {
+            return 0 unless &{$err_code}("An interval without 'start' and 'stop' timestamps is required.");            
+        } elsif (defined $old_resource && $interval_type_counts{'open'} > 0) {
+            return 0 unless &{$err_code}("Adding intervals without 'start' and 'stop' timestamps is not allowed.");
+        }
+    } elsif (defined $resource->{billing_profile_id}) {
+        if (defined $is_multi_mode && ref $is_multi_mode eq 'SCALAR') {
+            $$is_multi_mode = 0;
+        }
+        unless(defined $resource->{billing_profile_id}) {
+            return 0 unless &{$err_code}("Invalid 'billing_profile_id', not defined.");
+        }
+        #delete $resource->{billing_profiles};
+        #my $billing_profile_id = delete $resource->{billing_profile_id};
+        my $profile = $schema->resultset('billing_profiles')->find($resource->{billing_profile_id});
+        unless($profile) {
+            return 0 unless &{$err_code}("Invalid 'billing_profile_id'.");
+        }
+        if (defined $reseller_id && $reseller_id != $profile->reseller_id) {
+            return 0 unless &{$err_code}("The reseller of the contact doesn't match the reseller of the billing profile (" . $profile->name . ").");
+        }
+        if ((!defined $old_resource) || $billing_profile_id != $resource->{billing_profile_id}) {
+            push(@$mappings_to_create,{billing_profile_id => $profile->id,
+                network_id => undef,
+                product_id => $product_id,
+                #we don't change the former behaviour in update situations:
+                start_date => (defined $old_resource ? NGCP::Panel::Utils::DateTime::current_local : undef),
+                end_date => undef,
+            });
+        }
+    } 
+    
+    return 1;
+}
+
+sub resource_from_mappings {
+    
+    my ($contract) = @_;
+    
+    my $is_customer = (defined $contract->contact->reseller_id ? 1 : 0);
+    my @mappings_resource = ();
+    
+    my $datetime_fmt = DateTime::Format::Strptime->new(
+        pattern => '%F %T', 
+    ); #validate_forms uses RFC3339 otherwise, which contains the tz offset part
+    
+    foreach my $mapping ($contract->billing_mappings->search({},{ order_by => { '-asc' => 'id'} })->all) {
+        my %m = $mapping->get_inflated_columns;
+        delete $m{id};
+        $m{start} = delete $m{start_date};
+        $m{stop} = delete $m{end_date};
+        $m{start} = $datetime_fmt->format_datetime($m{start}) if defined $m{start};
+        $m{stop} = $datetime_fmt->format_datetime($m{stop}) if defined $m{stop};
+        $m{profile_id} = delete $m{billing_profile_id};
+        delete $m{contract_id};
+        delete $m{product_id};
+        #if (!$is_customer && $m{network_id}) {
+        #    die "bad";
+        #}
+        delete $m{network_id} unless $is_customer;
+        push(@mappings_resource,\%m);
+    }
+    
+    return \@mappings_resource;
+    
+}
+
+sub remove_future_billing_mappings {
+    
+    my ($contract) = @_;
+    
+    $contract->billing_mappings->search({start_date => { '>' => NGCP::Panel::Utils::DateTime::current_local },})->delete;
+    
+}
+
 1;
 
 __END__

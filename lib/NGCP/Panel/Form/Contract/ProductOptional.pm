@@ -9,6 +9,16 @@ has_field 'product' => (
     required => 0,
 );
 
+#has_field 'billing_profiles.product' => (
+#    type => '+NGCP::Panel::Field::Product',
+#    required => 0,
+#    #validate_when_empty => 1,
+#    #element_attr => {
+#    #    rel => ['tooltip'],
+#    #    title => ['The billing profile id used to charge this contract.']
+#    #},
+#);
+
 has_field 'max_subscribers' => (
     type => 'PosInteger',
     label => 'Max Subscribers',
@@ -22,7 +32,7 @@ has_field 'max_subscribers' => (
 has_block 'fields' => (
     tag => 'div',
     class => [qw/modal-body/],
-    render_list => [qw/contact billing_profile profile_add product max_subscribers status external_id invoice_template subscriber_email_template passreset_email_template invoice_email_template vat_rate add_vat/],
+    render_list => [qw/contact billing_profiles profile_add max_subscribers status external_id invoice_template subscriber_email_template passreset_email_template invoice_email_template vat_rate add_vat/],
 );
 
 1;
