@@ -51,35 +51,67 @@ sub process {
     my $totalRecords = $use_rs_cb ? 0 : $rs->count;
 
     # generic searching
+    my %conjunctSearchColumns = ();
     my @searchColumns = ();
     my $searchString = $c->request->params->{sSearch} // "";
     foreach my $col(@{ $cols }) {
+        my ($name,$search_value,$op,$convert);
         # avoid amigious column names if we have the same column in different joined tables
         if($col->{search}){
-            my $name = _get_joined_column_name_($col->{name});
-            my $stmt; 
-            if($col->{literal_sql}){
-                if(!ref $col->{literal_sql}){
-                    #we can't use just accessor because of the count query
-                    $stmt = \[$col->{literal_sql} . " LIKE ?", [ {} => '%'.$searchString.'%'] ];
-                }else{
-                    if($col->{literal_sql}->{format}){
-                        $stmt = \[sprintf($col->{literal_sql}->{format}, " LIKE ?"), [ {} => '%'.$searchString.'%'] ];
+            $op = (defined $col->{comparison_op} ? $col->{comparison_op} : 'like');
+            $convert = ((ref $col->{convert_code} eq 'CODE') ? $col->{convert_code} : sub { return '%'.shift.'%'; });
+            $name = _get_joined_column_name_($col->{name});
+            $search_value = &$convert($searchString);
+            my $stmt;
+            if (defined $search_value) {
+                if($col->{literal_sql}){
+                    if(!ref $col->{literal_sql}){
+                        #we can't use just accessor because of the count query
+                        $stmt = \[$col->{literal_sql} . " $op ?", [ {} => $search_value] ];
+                    }else{
+                        if($col->{literal_sql}->{format}){
+                            $stmt = \[sprintf($col->{literal_sql}->{format}, " $op ?"), [ {} => $search_value] ];
+                        }
                     }
+                }else{
+                    $stmt = { $name => { $op => $search_value } };
                 }
-            }else{
-                $stmt = { $name => { like => '%'.$searchString.'%' } };
             }
             if($stmt){
                 push @searchColumns, $stmt;
             }
+        } else {
+            # searching lower and upper limit columns
+            if ($col->{search_lower_column}) {
+                $op = (defined $col->{comparison_op} ? $col->{comparison_op} : '<=');
+                $convert = ((ref $col->{convert_code} eq 'CODE') ? $col->{convert_code} : sub { return shift; });
+                $name = _get_joined_column_name_($col->{name});
+                $search_value = &$convert($searchString);
+                if (defined $search_value) {
+                    $conjunctSearchColumns{$col->{search_lower_column}} = [] unless exists $conjunctSearchColumns{$col->{search_lower_column}};
+                    push(@{$conjunctSearchColumns{$col->{search_lower_column}}},{$name => { $op => $search_value }});
+                }
+            }
+            if($col->{search_upper_column}) {
+                $op = (defined $col->{comparison_op} ? $col->{comparison_op} : '>=');
+                $convert = ((ref $col->{convert_code} eq 'CODE') ? $col->{convert_code} : sub { return shift; });
+                $name = _get_joined_column_name_($col->{name});
+                $search_value = &$convert($searchString);
+                if (defined $search_value) {
+                    $conjunctSearchColumns{$col->{search_upper_column}} = [] unless exists $conjunctSearchColumns{$col->{search_upper_column}};
+                    push(@{$conjunctSearchColumns{$col->{search_upper_column}}},{$name => { $op => $search_value }});
+                }
+            }
         }
     }
     if($searchString && ! $use_rs_cb) {
+        foreach my $conjunct_column (keys %conjunctSearchColumns) {
+            push(@searchColumns,{ map { %{$_} } @{$conjunctSearchColumns{$conjunct_column}} });
+        }
         $rs = $rs->search([@searchColumns]);
     }
 
-    # data-range searching
+    # date-range searching
     my $from_date_in = $c->request->params->{sSearch_0} // "";
     my $to_date_in = $c->request->params->{sSearch_1} // "";
     my($from_date,$to_date);
@@ -109,6 +141,7 @@ sub process {
             });
         }
     }
+    
     $displayRecords = $use_rs_cb ? 0 : $rs->count;
     for my $sum_col (keys %{ $aggregate_cols }) {
         my $aggregation_method = $aggregate_cols->{$sum_col};

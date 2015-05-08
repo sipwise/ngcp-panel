@@ -8,6 +8,7 @@ use HTTP::Headers qw();
 use HTTP::Status qw(:constants);
 use MooseX::ClassAttribute qw(class_has);
 use NGCP::Panel::Utils::DateTime;
+use NGCP::Panel::Utils::Reseller qw();
 use Path::Tiny qw(path);
 BEGIN { extends 'Catalyst::Controller::ActionRole'; }
 require Catalyst::ActionRole::ACL;
@@ -173,11 +174,16 @@ sub POST :Allow {
             form => $form,
         );
 
-        my $reseller = $schema->resultset('resellers')->find($resource->{reseller_id});
-        unless($reseller) {
-            $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Invalid 'reseller_id'.");
-            last;
-        }
+        #my $reseller = $schema->resultset('resellers')->find($resource->{reseller_id});
+        #unless($reseller) {
+        #    $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Invalid 'reseller_id'.");
+        #    last;
+        #}
+        last unless NGCP::Panel::Utils::Reseller::check_reseller_create_item($c,$resource->{reseller_id},sub {
+            my ($err) = @_;
+            $self->error($c, HTTP_UNPROCESSABLE_ENTITY, $err);
+        });
+        
         my $billing_profile;
         try {
             $billing_profile= $schema->resultset('billing_profiles')->create($resource);

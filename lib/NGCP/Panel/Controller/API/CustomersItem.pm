@@ -9,6 +9,7 @@ use HTTP::Status qw(:constants);
 use MooseX::ClassAttribute qw(class_has);
 use NGCP::Panel::Utils::ValidateJSON qw();
 use NGCP::Panel::Utils::DateTime;
+use NGCP::Panel::Utils::Contract qw();
 use Path::Tiny qw(path);
 use Safe::Isa qw($_isa);
 BEGIN { extends 'Catalyst::Controller::ActionRole'; }
@@ -110,10 +111,32 @@ sub PATCH :Allow {
         last unless $self->resource_exists($c, customer => $customer);
 
         my $old_resource = { $customer->get_inflated_columns };
+        #my $billing_mapping = $customer->billing_mappings->find($customer->get_column('bmid'));
+        #$old_resource->{billing_profile_id} = $billing_mapping->billing_profile_id;
+        #$old_resource->{billing_profiles} = NGCP::Panel::Utils::Contract::resource_from_future_mappings($customer);
+        delete $old_resource->{profile_package_id};
         my $billing_mapping = $customer->billing_mappings->find($customer->get_column('bmid'));
         $old_resource->{billing_profile_id} = $billing_mapping->billing_profile_id;
+        $old_resource->{billing_profile_definition} = undef;          
 
-        my $resource = $self->apply_patch($c, $old_resource, $json);
+        my $resource = $self->apply_patch($c, $old_resource, $json, sub {
+            my ($missing_field,$entity) = @_;
+            #if ($missing_field eq 'billing_profile_id') {
+            #    my $billing_mapping = $customer->billing_mappings->find($customer->get_column('bmid'));
+            #    $entity->{billing_profile_id} = $billing_mapping->billing_profile_id;
+            #    $entity->{billing_profile_definition} //= 'id';
+            #} els
+            if ($missing_field eq 'billing_profiles') {
+                $entity->{billing_profiles} = NGCP::Panel::Utils::Contract::resource_from_future_mappings($customer);
+                $entity->{billing_profile_definition} //= 'profiles';
+            } elsif ($missing_field eq 'profile_package_id') {
+                $entity->{profile_package_id} = $customer->profile_package_id;
+                $entity->{billing_profile_definition} //= 'package';                
+            }
+            #elsif ($missing_field eq 'billing_profile_definition') {
+            #    $entity->{billing_profile_definition} = undef;
+            #}
+        });
         last unless $resource;
 
         my $form = $self->get_form($c);
