@@ -1,0 +1,28 @@
+[% site_config.title = c.loc('Profile Packages') -%]
+[%
+    helper.name = c.loc('Profile Package');
+    helper.identifier = 'packages';
+    helper.data = packages;
+    helper.messages = messages;
+    helper.dt_columns = package_dt_columns;
+    helper.length_change = 1;
+
+    helper.close_target = close_target;
+    helper.create_flag = create_flag;
+    helper.edit_flag = edit_flag;
+    helper.form_object = form;
+    helper.ajax_uri = c.uri_for( c.controller.action_for('ajax') );
+
+    UNLESS c.user.read_only;
+        helper.dt_buttons = [
+            { name = c.loc('Edit'), uri = "/package/'+full.id+'/edit", class = 'btn-small btn-primary', icon = 'icon-edit' },
+            { name = c.loc('Terminate'), uri = "/package/'+full[\"id\"]+'/terminate", class = 'btn-small btn-secondary', icon = 'icon-remove', condition => 'full.contract_cnt == "0"' },            
+        ];
+        helper.top_buttons = [
+            { name = c.loc('Create Profile Package'), uri = c.uri_for('/package/create'), icon = 'icon-star' },
+        ];
+    END;
+
+    PROCESS 'helpers/datatables.tt';
+-%]
+[% # vim: set tabstop=4 syntax=html expandtab: -%]

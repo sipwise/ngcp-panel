@@ -171,37 +171,39 @@ sub POST :Allow {
         );
         last unless $resource;
 
-        unless(defined $resource->{billing_profile_id}) {
-            $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Invalid 'billing_profile_id', not defined.");
-            last;
-        }
-
-
-        $resource->{contact_id} //= undef;
         my $form = $self->get_form($c);
+        $resource->{contact_id} //= undef;
         last unless $self->validate_form(
             c => $c,
             resource => $resource,
             form => $form,
+            exceptions => [ "contact_id", "billing_profile_id" ],
         );
-
-        my $now = NGCP::Panel::Utils::DateTime::current_local;
-        $resource->{create_timestamp} = $now;
-        $resource->{modify_timestamp} = $now;
-        my $contract;
         
-        my $billing_profile_id = delete $resource->{billing_profile_id};
-        my $billing_profile = $schema->resultset('billing_profiles')->find($billing_profile_id);
-        unless($billing_profile) {
-            $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Invalid 'billing_profile_id'.");
-            last;
-        }
+        my $mappings_to_create = [];
+        last unless NGCP::Panel::Utils::Contract::prepare_billing_mappings(
+            c => $c,
+            resource => $resource,
+            old_resource => undef,
+            mappings_to_create => $mappings_to_create,
+            err_code => sub {
+                my ($err) = @_;
+                #$c->log->error($err);
+                $self->error($c, HTTP_UNPROCESSABLE_ENTITY, $err);
+            });
+
         my $product_class = delete $resource->{type};
         my $product = $schema->resultset('products')->find({ class => $product_class });
         unless($product) {
             $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Invalid 'type'.");
             last;
         }
+        
+        my $now = NGCP::Panel::Utils::DateTime::current_local;
+        $resource->{create_timestamp} = $now;
+        $resource->{modify_timestamp} = $now;
+        my $contract;
+        
         try {
             $contract = $schema->resultset('contracts')->create($resource);
         } catch($e) {
@@ -216,13 +218,13 @@ sub POST :Allow {
         }
 
         try {
-            $contract->billing_mappings->create({
-                billing_profile_id => $billing_profile->id,
-                product_id => $product->id,
-            });
+            foreach my $mapping (@$mappings_to_create) {
+                $contract->billing_mappings->create($mapping); 
+            }
+            $contract = $self->contract_by_id($c, $contract->id,1);
             NGCP::Panel::Utils::Contract::create_contract_balance(
                 c => $c,
-                profile => $billing_profile,
+                profile => $contract->billing_mappings->find($contract->get_column('bmid'))->billing_profile, #$billing_profile,
                 contract => $contract,
             );
         } catch($e) {
@@ -234,7 +236,7 @@ sub POST :Allow {
         last unless $self->add_create_journal_item_hal($c,sub {
             my $self = shift;
             my ($c) = @_;
-            my $_contract = $self->contract_by_id($c, $contract->id);
+            my $_contract = $self->contract_by_id($c, $contract->id, 1);
             return $self->hal_from_contract($c,$_contract,$form); });        
 
         $guard->commit;
