@@ -1,4 +1,4 @@
-package NGCP::Panel::Controller::API::CustomersItem;
+package NGCP::Panel::Controller::API::BillingNetworksItem;
 use Sipwise::Base;
 use namespace::sweep;
 use boolean qw(true);
@@ -8,8 +8,6 @@ use HTTP::Headers qw();
 use HTTP::Status qw(:constants);
 use MooseX::ClassAttribute qw(class_has);
 use NGCP::Panel::Utils::ValidateJSON qw();
-use NGCP::Panel::Utils::DateTime;
-use NGCP::Panel::Utils::Contract qw();
 use Path::Tiny qw(path);
 use Safe::Isa qw($_isa);
 BEGIN { extends 'Catalyst::Controller::ActionRole'; }
@@ -17,11 +15,11 @@ require Catalyst::ActionRole::ACL;
 require Catalyst::ActionRole::HTTPMethods;
 require Catalyst::ActionRole::RequireSSL;
 
-with 'NGCP::Panel::Role::API::Customers';
+with 'NGCP::Panel::Role::API::BillingNetworks';
 
-class_has('resource_name', is => 'ro', default => 'customers');
-class_has('dispatch_path', is => 'ro', default => '/api/customers/');
-class_has('relation', is => 'ro', default => 'http://purl.org/sipwise/ngcp-api/#rel-customers');
+class_has('resource_name', is => 'ro', default => 'billingnetworks');
+class_has('dispatch_path', is => 'ro', default => '/api/billingnetworks/');
+class_has('relation', is => 'ro', default => 'http://purl.org/sipwise/ngcp-api/#rel-billingnetworks');
 
 class_has(@{ __PACKAGE__->get_journal_query_params() });
 
@@ -49,22 +47,22 @@ sub auto :Private {
 
     $self->set_body($c);
     $self->log_request($c);
+    return 1;
 }
 
 sub GET :Allow {
     my ($self, $c, $id) = @_;
     {
         last unless $self->valid_id($c, $id);
-        my $customer = $self->customer_by_id($c, $id);
-        last unless $self->resource_exists($c, customer => $customer);
+        my $bn = $self->item_by_id($c, $id);
+        last unless $self->resource_exists($c, billingnetwork => $bn);
 
-        my $hal = $self->hal_from_customer($c, $customer);
+        my $hal = $self->hal_from_item($c, $bn, "billingnetworks");
 
         my $response = HTTP::Response->new(HTTP_OK, undef, HTTP::Headers->new(
             (map { # XXX Data::HAL must be able to generate links with multiple relations
-                s|rel="(http://purl.org/sipwise/ngcp-api/#rel-resellers)"|rel="item $1"|;
-                s/rel=self/rel="item self"/;
-                $_
+                s|rel="(http://purl.org/sipwise/ngcp-api/#rel-resellers)"|rel="item $1"|r
+                =~ s/rel=self/rel="item self"/r;
             } $hal->http_headers),
         ), $hal->as_json);
         $c->response->headers($response->headers);
@@ -101,46 +99,34 @@ sub PATCH :Allow {
         last unless $preference;
 
         my $json = $self->get_valid_patch_data(
-            c => $c, 
+            c => $c,
             id => $id,
             media_type => 'application/json-patch+json',
+            ops => [qw/add replace remove copy/],
         );
         last unless $json;
 
-        my $customer = $self->customer_by_id($c, $id);
-        last unless $self->resource_exists($c, customer => $customer);
-
-        my $old_resource = { $customer->get_inflated_columns };
-        #my $billing_mapping = $customer->billing_mappings->find($customer->get_column('bmid'));
-        #$old_resource->{billing_profile_id} = $billing_mapping->billing_profile_id;
-        #$old_resource->{billing_profiles} = NGCP::Panel::Utils::Contract::resource_from_mappings($customer);
-
-        my $resource = $self->apply_patch($c, $old_resource, $json, sub {
-            my ($missing_field,$entity) = @_;
-            if ($missing_field eq 'billing_profile_id') {
-                my $billing_mapping = $customer->billing_mappings->find($customer->get_column('bmid'));
-                $entity->{billing_profile_id} = $billing_mapping->billing_profile_id;
-            } elsif ($missing_field eq 'billing_profiles') {
-                $entity->{billing_profiles} = NGCP::Panel::Utils::Contract::resource_from_mappings($customer);
-            }
-        });
+        my $bn = $self->item_by_id($c, $id);
+        last unless $self->resource_exists($c, billingnetwork => $bn);
+        my $old_resource = $self->hal_from_item($c, $bn, "billingnetworks")->resource;
+        my $resource = $self->apply_patch($c, $old_resource, $json);
         last unless $resource;
 
         my $form = $self->get_form($c);
-        $customer = $self->update_customer($c, $customer, $old_resource, $resource, $form);
-        last unless $customer;
-        
-        my $hal = $self->hal_from_customer($c, $customer, $form);
-        last unless $self->add_update_journal_item_hal($c,$hal);
+        $bn = $self->update_item($c, $bn, $old_resource, $resource, $form);
+        last unless $bn;
 
-        $guard->commit;
+        my $hal = $self->hal_from_item($c, $bn, "billingnetworks");
+        last unless $self->add_update_journal_item_hal($c,$hal);
+        
+        $guard->commit; 
 
         if ('minimal' eq $preference) {
             $c->response->status(HTTP_NO_CONTENT);
             $c->response->header(Preference_Applied => 'return=minimal');
             $c->response->body(q());
         } else {
-            #my $hal = $self->hal_from_customer($c, $customer, $form);
+            #my $hal = $self->hal_from_item($c, $dset, "destinationsets");
             my $response = HTTP::Response->new(HTTP_OK, undef, HTTP::Headers->new(
                 $hal->http_headers,
             ), $hal->as_json);
@@ -159,21 +145,21 @@ sub PUT :Allow {
         my $preference = $self->require_preference($c);
         last unless $preference;
 
-        my $customer = $self->customer_by_id($c, $id);
-        last unless $self->resource_exists($c, customer => $customer);
+        my $bn = $self->item_by_id($c, $id);
+        last unless $self->resource_exists($c, billingnetwork => $bn);
         my $resource = $self->get_valid_put_data(
             c => $c,
             id => $id,
             media_type => 'application/json',
         );
         last unless $resource;
-        my $old_resource = { $customer->get_inflated_columns };
+        my $old_resource = { $bn->get_inflated_columns };
 
         my $form = $self->get_form($c);
-        $customer = $self->update_customer($c, $customer, $old_resource, $resource, $form);
-        last unless $customer;
+        $bn = $self->update_item($c, $bn, $old_resource, $resource, $form);
+        last unless $bn;
         
-        my $hal = $self->hal_from_customer($c, $customer, $form);
+        my $hal = $self->hal_from_item($c, $bn, "billingnetworks");
         last unless $self->add_update_journal_item_hal($c,$hal);
 
         $guard->commit;
@@ -183,7 +169,7 @@ sub PUT :Allow {
             $c->response->header(Preference_Applied => 'return=minimal');
             $c->response->body(q());
         } else {
-            #my $hal = $self->hal_from_customer($c, $customer, $form);
+            #my $hal = $self->hal_from_item($c, $dset, "destinationsets");
             my $response = HTTP::Response->new(HTTP_OK, undef, HTTP::Headers->new(
                 $hal->http_headers,
             ), $hal->as_json);
@@ -195,25 +181,19 @@ sub PUT :Allow {
     return;
 }
 
-=pod
-# we don't allow to delete customers
 sub DELETE :Allow {
     my ($self, $c, $id) = @_;
     my $guard = $c->model('DB')->txn_scope_guard;
     {
-        my $customer = $self->customer_by_id($c, $id);
-        last unless $self->resource_exists($c, customer => $customer);
-
-        # TODO: do we want to prevent deleting used customers?
-        #my $customer_count = $c->model('DB')->resultset('customers')->search({
-        #    contact_id => $id
-        #});
-        #if($customer_count > 0) {
-        #    $self->error($c, HTTP_LOCKED, "Contact is still in use.");
-        #    last;
-        #} else {
-            $customer->delete;
-        #}
+        my $bn = $self->item_by_id($c, $id);
+        last unless $self->resource_exists($c, billingnetwork => $bn);
+        try {
+            $bn->delete;
+        } catch($e) {
+            $c->log->error("Failed to delete billingnetwork with id '$id': $e");
+            $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "Internal Server Error");
+            last;
+        }
         $guard->commit;
 
         $c->response->status(HTTP_NO_CONTENT);
@@ -221,7 +201,6 @@ sub DELETE :Allow {
     }
     return;
 }
-=cut
 
 sub item_base_journal :Journal {
     my $self = shift @_;
@@ -256,12 +235,13 @@ sub journals_head :Journal {
 sub journalsitem_head :Journal {
     my $self = shift @_;
     return $self->handle_journalsitem_head(@_);
-}   
+}
 
 sub end : Private {
     my ($self, $c) = @_;
 
     $self->log_response($c);
+    return 1;
 }
 
 # vim: set tabstop=4 expandtab:

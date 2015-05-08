@@ -49,13 +49,14 @@ sub check_form_buttons {
     
     $fields = { map {($_, undef)} @$fields }
         if (ref($fields) eq "ARRAY");
-
+        
     my $posted = ($c->request->method eq 'POST');
     delete $form->params->{save} if $posted;
     delete $form->values->{save} if $posted;
 
     if($posted && $form->field('submitid')) {
         my $val = $form->value->{submitid};
+        $val =~ s/\.\d+\././ if defined $val;
         delete $form->params->{submitid};
         delete $form->values->{submitid};
         if(defined $val and exists($fields->{$val}) ) {
