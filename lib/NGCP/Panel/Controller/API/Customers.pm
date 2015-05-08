@@ -202,45 +202,39 @@ sub POST :Allow {
         );
         last unless $resource;
 
+        my $form = $self->get_form($c);
+        $resource->{contact_id} //= undef;
+        last unless $self->validate_form(
+            c => $c,
+            resource => $resource,
+            form => $form,
+            exceptions => [ "contact_id", "billing_profile_id", "profile_package_id" ],
+        );
+
+        my $mappings_to_create = [];
+        last unless NGCP::Panel::Utils::Contract::prepare_billing_mappings(
+            c => $c,
+            resource => $resource,
+            old_resource => undef,
+            mappings_to_create => $mappings_to_create,
+            err_code => sub {
+                my ($err) = @_;
+                #$c->log->error($err);
+                $self->error($c, HTTP_UNPROCESSABLE_ENTITY, $err);
+            });
+        
         my $product_class = delete $resource->{type};
-        unless( (defined $product_class ) && ($product_class eq "sipaccount" || $product_class eq "pbxaccount") ) {
-            $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Mandatory 'type' parameter is empty or invalid, must be 'sipaccount' or 'pbxaccount'.");
-            last;
-        }
         my $product = $schema->resultset('products')->find({ class => $product_class });
         unless($product) {
             $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Invalid 'type'.");
             last;
         }
-        unless(defined $resource->{billing_profile_id}) {
-            $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Invalid 'billing_profile_id', not defined.");
-            last;
-        }
-
-        # add product_id just for form check (not part of the actual contract item)
-        # and remove it after the check
-        $resource->{product_id} = $product->id;
-
-        $resource->{contact_id} //= undef;
-        my $form = $self->get_form($c);
-        last unless $self->validate_form(
-            c => $c,
-            resource => $resource,
-            form => $form,
-        );
-        delete $resource->{product_id};
-
+        
         my $now = NGCP::Panel::Utils::DateTime::current_local;
         $resource->{create_timestamp} = $now;
         $resource->{modify_timestamp} = $now;
         my $customer;
-        
-        my $billing_profile_id = delete $resource->{billing_profile_id};
-        my $billing_profile = $schema->resultset('billing_profiles')->find($billing_profile_id);
-        unless($billing_profile) {
-            $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Invalid 'billing_profile_id'.");
-            last;
-        }
+
         try {
             $customer = $schema->resultset('contracts')->create($resource);
         } catch($e) {
@@ -251,10 +245,6 @@ sub POST :Allow {
 
         unless($customer->contact->reseller_id) {
             $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "The contact_id is not a valid ngcp:customercontacts item, but an ngcp:systemcontacts item");
-            last;
-        }
-        unless($customer->contact->reseller_id == $billing_profile->reseller_id) {
-            $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "The reseller of the contact doesn't match the reseller of the billing profile");
             last;
         }
         if($customer->invoice_template_id && 
@@ -279,13 +269,13 @@ sub POST :Allow {
         }
 
         try {
-            $customer->billing_mappings->create({
-                billing_profile_id => $billing_profile->id,
-                product_id => $product->id,
-            });
+            foreach my $mapping (@$mappings_to_create) {
+                $customer->billing_mappings->create($mapping); 
+            }
+            $customer = $self->customer_by_id($c, $customer->id);
             NGCP::Panel::Utils::Contract::create_contract_balance(
                 c => $c,
-                profile => $billing_profile,
+                profile => $customer->billing_mappings->find($customer->get_column('bmid'))->billing_profile,
                 contract => $customer,
             );
         } catch($e) {
@@ -298,7 +288,7 @@ sub POST :Allow {
             my $self = shift;
             my ($c) = @_;
             my $_customer = $self->customer_by_id($c, $customer->id);
-            return $self->hal_from_customer($c,$_customer,$form); });
+            return $self->hal_from_customer($c,$_customer,$form); }); #$form
 
         $guard->commit;
 

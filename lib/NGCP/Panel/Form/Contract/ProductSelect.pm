@@ -1,7 +1,7 @@
 package NGCP::Panel::Form::Contract::ProductSelect;
 
 use HTML::FormHandler::Moose;
-extends 'NGCP::Panel::Form::Contract::Basic';
+extends 'NGCP::Panel::Form::Contract::Customer';
 
 has_field 'product' => (
     type => '+NGCP::Panel::Field::Product',
@@ -22,7 +22,7 @@ has_field 'max_subscribers' => (
 has_block 'fields' => (
     tag => 'div',
     class => [qw/modal-body/],
-    render_list => [qw/contact billing_profile profile_add product max_subscribers status external_id subscriber_email_template passreset_email_template invoice_email_template invoice_template vat_rate add_vat/],
+    render_list => [qw/contact billing_profile_definition billing_profile billing_profiles profile_add profile_package product max_subscribers status external_id subscriber_email_template passreset_email_template invoice_email_template invoice_template vat_rate add_vat/],
 );
 
 1;
