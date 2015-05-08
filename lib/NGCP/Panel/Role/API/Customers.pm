@@ -14,7 +14,8 @@ use HTTP::Status qw(:constants);
 use NGCP::Panel::Utils::DateTime;
 use NGCP::Panel::Utils::Contract;
 use NGCP::Panel::Utils::Preferences;
-use NGCP::Panel::Form::Contract::ProductOptional;
+#use NGCP::Panel::Form::Contract::ProductOptionalAPI;
+use NGCP::Panel::Form::Contract::CustomerAPI qw();
 
 sub item_rs {
     my ($self, $c) = @_;
@@ -29,7 +30,8 @@ sub item_rs {
 
 sub get_form {
     my ($self, $c) = @_;
-    return NGCP::Panel::Form::Contract::ProductOptional->new;
+    #return NGCP::Panel::Form::Contract::ProductOptionalAPI->new;
+    return NGCP::Panel::Form::Contract::CustomerAPI->new;
 }
 
 sub hal_from_customer {
@@ -37,6 +39,8 @@ sub hal_from_customer {
 
     my $billing_mapping = $customer->billing_mappings->find($customer->get_column('bmid'));
     my $billing_profile_id = $billing_mapping->billing_profile->id;
+    my $future_billing_profiles = NGCP::Panel::Utils::Contract::resource_from_future_mappings($customer);
+    my $billing_profiles = NGCP::Panel::Utils::Contract::resource_from_mappings($customer);    
     my $stime = NGCP::Panel::Utils::DateTime::current_local()->truncate(to => 'month');
     my $etime = $stime->clone->add(months => 1);
     my $contract_balance = $customer->contract_balances
@@ -52,7 +56,7 @@ sub hal_from_customer {
                 contract => $customer,
             );
         } catch($e) {
-            $self->log->error("Failed to create current contract balance for customer contract id '".$customer->id."': $e");
+            $c->log->error("Failed to create current contract balance for customer contract id '".$customer->id."': $e");
             $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "Internal Server Error.");
             return;
         };
@@ -64,6 +68,15 @@ sub hal_from_customer {
 
     my %resource = $customer->get_inflated_columns;
 
+    my @profile_links = ();
+    my @network_links = ();
+    foreach my $mapping ($customer->billing_mappings->all) {
+        push(@profile_links,Data::HAL::Link->new(relation => 'ngcp:billingprofiles', href => sprintf("/api/billingprofiles/%d", $mapping->billing_profile_id)));
+        if ($mapping->network_id) {
+            push(@profile_links,Data::HAL::Link->new(relation => 'ngcp:billingnetworks', href => sprintf("/api/billingnetworks/%d", $mapping->network_id)));
+        }
+    }
+    
     my $hal = Data::HAL->new(
         links => [
             Data::HAL::Link->new(
@@ -77,7 +90,10 @@ sub hal_from_customer {
             Data::HAL::Link->new(relation => 'self', href => sprintf("%s%d", $self->dispatch_path, $customer->id)),
             Data::HAL::Link->new(relation => 'ngcp:customercontacts', href => sprintf("/api/customercontacts/%d", $customer->contact->id)),
             Data::HAL::Link->new(relation => 'ngcp:customerpreferences', href => sprintf("/api/customerpreferences/%d", $customer->id)),
-            Data::HAL::Link->new(relation => 'ngcp:billingprofiles', href => sprintf("/api/billingprofiles/%d", $billing_profile_id)),
+            @profile_links,
+            @network_links,
+            #Data::HAL::Link->new(relation => 'ngcp:billingprofiles', href => sprintf("/api/billingprofiles/%d", $billing_profile_id)),
+            $customer->profile_package_id ? Data::HAL::Link->new(relation => 'ngcp:profilepackages', href => sprintf("/api/profilepackages/%d", $customer->profile_package_id)) : (),
             Data::HAL::Link->new(relation => 'ngcp:customerbalances', href => sprintf("/api/customerbalances/%d", $customer->id)),
             $customer->invoice_template ? (Data::HAL::Link->new(relation => 'ngcp:invoicetemplates', href => sprintf("/api/invoicetemplates/%d", $customer->invoice_template_id))) : (),
             $customer->subscriber_email_template_id ? (Data::HAL::Link->new(relation => 'ngcp:subscriberemailtemplates', href => sprintf("/api/emailtemplates/%d", $customer->subscriber_email_template_id))) : (),
@@ -96,14 +112,18 @@ sub hal_from_customer {
         form => $form,
         resource => \%resource,
         run => 0,
+        exceptions => [ "contact_id", "billing_profile_id", "profile_package_id" ],
     );
 
     # return the virtual "type" instead of the actual product id
-    delete $resource{product_id};
+    #delete $resource{product_id};
     $resource{type} = $billing_mapping->product->class;
+    $resource{billing_profiles} = $future_billing_profiles;
+    $resource{all_billing_profiles} = $billing_profiles;
 
     $resource{id} = int($customer->id);
     $resource{billing_profile_id} = int($billing_profile_id);
+    $resource{billing_profile_definition} = 'id';
     $hal->resource({%resource});
     return $hal;
 }
@@ -117,50 +137,79 @@ sub customer_by_id {
 sub update_customer {
     my ($self, $c, $customer, $old_resource, $resource, $form) = @_;
 
-    my $billing_mapping = $customer->billing_mappings->find($customer->get_column('bmid'));
-    $old_resource->{billing_profile_id} = $billing_mapping->billing_profile_id;
-    $old_resource->{prepaid} =  $billing_mapping->billing_profile->prepaid;
-    unless($resource->{billing_profile_id}) {
-        $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Invalid 'billing_profile_id', not defined");
-        return;
-    }
-
     if ($customer->status eq 'terminated') {
         $self->error($c, HTTP_UNPROCESSABLE_ENTITY, 'Customer is already terminated and cannot be changed.');
         return;
     }
-   
+
+    my $billing_mapping = $customer->billing_mappings->find($customer->get_column('bmid'));
+    my $billing_profile = $billing_mapping->billing_profile;
+    $old_resource->{prepaid} = $billing_profile->prepaid;
+    
     $form //= $self->get_form($c);
     # TODO: for some reason, formhandler lets missing contact_id slip thru
-    $resource->{contact_id} //= undef; 
+    #$resource->{billing_profile_id} //= undef;
+    #$resource->{billing_profiles} //= undef;
+    #$resource->{profile_package_id} //= undef;
+    $resource->{contact_id} //= undef;
+    $resource->{type} //= $billing_mapping->product->class;
     return unless $self->validate_form(
         c => $c,
         form => $form,
         resource => $resource,
+        exceptions => [ "contact_id", "billing_profile_id", "profile_package_id" ],
     );
+
+    my $mappings_to_create = [];
+    my $delete_mappings = 0;
+    return unless NGCP::Panel::Utils::Contract::prepare_billing_mappings(
+        c => $c,
+        resource => $resource,
+        old_resource => $old_resource,
+        mappings_to_create => $mappings_to_create,
+        delete_mappings => \$delete_mappings,
+        err_code => sub {
+            my ($err) = @_;
+            #$c->log->error($err);
+            $self->error($c, HTTP_UNPROCESSABLE_ENTITY, $err);
+        });
+    #delete $resource->{billing_profile_id};
+    #delete $resource->{billing_profiles};
+    #delete $resource->{billing_profile_definition};
+    delete $resource->{type};
+
+    #my $billing_mapping = $customer->billing_mappings->find($customer->get_column('bmid'));
+
+    ##unless($resource->{billing_profile_id}) {
+    ##    $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Invalid 'billing_profile_id', not defined");
+    ##    return;
+    ##}    
+    ##my $billing_profile = $c->model('DB')->resultset('billing_profiles')->find($resource->{billing_profile_id});
+    #if (!$is_multi_bm_mode && (scalar @$mappings_to_create) > 0) {
+    #    #$billing_mapping = $customer->billing_mappings->find($mappings_to_create->[0]->{billing_profile_id});
+    #    $billing_profile = $c->model('DB')->resultset('billing_profiles')->find($mappings_to_create->[0]->{billing_profile_id});
+    #}
+    ##$billing_profile = $c->model('DB')->resultset('billing_profiles')->find($resource->{billing_profile_id});
+    ##unless($billing_profile) {
+    ##    $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Invalid 'billing_profile_id', doesn't exist");
+    ##    return;
+    ##}
+    ##if($old_resource->{billing_profile_id} != $resource->{billing_profile_id}) {
+    ##    unless($billing_profile->reseller_id == $customer->contact->reseller_id) {
+    ##        $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Invalid 'billing_profile_id', reseller doesn't match customer contact reseller");
+    ##        return;
+    ##    }
+    ##    $customer->billing_mappings->create({
+    ##        start_date => NGCP::Panel::Utils::DateTime::current_local,
+    ##        billing_profile_id => $resource->{billing_profile_id},
+    ##        product_id => $billing_mapping->product_id,
+    ##    });
+    ##}
+    ##delete $resource->{billing_profile_id};
 
     my $now = NGCP::Panel::Utils::DateTime::current_local;
     $resource->{modify_timestamp} = $now;
-    my $billing_profile;
-
-    $billing_profile = $c->model('DB')->resultset('billing_profiles')->find($resource->{billing_profile_id});
-    unless($billing_profile) {
-        $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Invalid 'billing_profile_id', doesn't exist");
-        return;
-    }
-    if($old_resource->{billing_profile_id} != $resource->{billing_profile_id}) {
-        unless($billing_profile->reseller_id == $customer->contact->reseller_id) {
-            $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Invalid 'billing_profile_id', reseller doesn't match customer contact reseller");
-            return;
-        }
-        $customer->billing_mappings->create({
-            start_date => NGCP::Panel::Utils::DateTime::current_local,
-            billing_profile_id => $resource->{billing_profile_id},
-            product_id => $billing_mapping->product_id,
-        });
-    }
-    delete $resource->{billing_profile_id};
-
+    
     my $custcontact;
     if($old_resource->{contact_id} != $resource->{contact_id}) {
         $custcontact = $c->model('DB')->resultset('contacts')
@@ -228,59 +277,72 @@ sub update_customer {
         $resource->{terminate_timestamp} = NGCP::Panel::Utils::DateTime::current_local;
     }
 
-    $customer->update($resource);
+    try {
+        $customer->update($resource);
+        NGCP::Panel::Utils::Contract::remove_future_billing_mappings($customer) if $delete_mappings;
+        foreach my $mapping (@$mappings_to_create) {
+            $customer->billing_mappings->create($mapping); 
+        }
+        $customer = $self->customer_by_id($c, $customer->id);
+        $billing_mapping = $customer->billing_mappings->find($customer->get_column('bmid'));
+        $billing_profile = $billing_mapping->billing_profile;        
+        
+        if(($customer->external_id // '') ne $old_ext_id) {
+            foreach my $sub($customer->voip_subscribers->all) {
+                my $prov_sub = $sub->provisioning_voip_subscriber;
+                next unless($prov_sub);
+                NGCP::Panel::Utils::Subscriber::update_preferences(
+                    c => $c,
+                    prov_subscriber => $prov_sub,
+                    preferences => { ext_contract_id => $customer->external_id }
+                );
+            }
+        }
     
-    if(($customer->external_id // '') ne $old_ext_id) {
-        foreach my $sub($customer->voip_subscribers->all) {
-            my $prov_sub = $sub->provisioning_voip_subscriber;
-            next unless($prov_sub);
-            NGCP::Panel::Utils::Subscriber::update_preferences(
+        if($old_resource->{status} ne $resource->{status}) {
+            if($customer->id == 1) {
+                $self->error($c, HTTP_FORBIDDEN, "Cannot set customer status to '".$resource->{status}."' for customer id '1'");
+                return;
+            }
+            NGCP::Panel::Utils::Contract::recursively_lock_contract(
                 c => $c,
-                prov_subscriber => $prov_sub,
-                preferences => { ext_contract_id => $customer->external_id }
+                contract => $customer,
             );
         }
-    }
-
-    if($old_resource->{status} ne $resource->{status}) {
-        if($customer->id == 1) {
-            $self->error($c, HTTP_FORBIDDEN, "Cannot set customer status to '".$resource->{status}."' for customer id '1'");
-            return;
-        }
-        NGCP::Panel::Utils::Contract::recursively_lock_contract(
-            c => $c,
-            contract => $customer,
-        );
-    }
-
-    if($billing_profile) { # check prepaid change if billing profile changed
-        if($old_resource->{prepaid} && !$billing_profile->prepaid) {
-            foreach my $sub($customer->voip_subscribers->all) {
-                my $prov_sub = $sub->provisioning_voip_subscriber;
-                next unless($prov_sub);
-                my $pref = NGCP::Panel::Utils::Preferences::get_usr_preference_rs(
-                    c => $c, attribute => 'prepaid', prov_subscriber => $prov_sub);
-                if($pref->first) {
-                    $pref->first->delete;
+    
+        if($billing_profile) { # check prepaid change if billing profile changed
+            if($old_resource->{prepaid} && !$billing_profile->prepaid) {
+                foreach my $sub($customer->voip_subscribers->all) {
+                    my $prov_sub = $sub->provisioning_voip_subscriber;
+                    next unless($prov_sub);
+                    my $pref = NGCP::Panel::Utils::Preferences::get_usr_preference_rs(
+                        c => $c, attribute => 'prepaid', prov_subscriber => $prov_sub);
+                    if($pref->first) {
+                        $pref->first->delete;
+                    }
                 }
-            }
-        } elsif(!$old_resource->{prepaid} && $billing_profile->prepaid) {
-            foreach my $sub($customer->voip_subscribers->all) {
-                my $prov_sub = $sub->provisioning_voip_subscriber;
-                next unless($prov_sub);
-                my $pref = NGCP::Panel::Utils::Preferences::get_usr_preference_rs(
-                    c => $c, attribute => 'prepaid', prov_subscriber => $prov_sub);
-                if($pref->first) {
-                    $pref->first->update({ value => 1 });
-                } else {
-                    $pref->create({ value => 1 });
+            } elsif(!$old_resource->{prepaid} && $billing_profile->prepaid) {
+                foreach my $sub($customer->voip_subscribers->all) {
+                    my $prov_sub = $sub->provisioning_voip_subscriber;
+                    next unless($prov_sub);
+                    my $pref = NGCP::Panel::Utils::Preferences::get_usr_preference_rs(
+                        c => $c, attribute => 'prepaid', prov_subscriber => $prov_sub);
+                    if($pref->first) {
+                        $pref->first->update({ value => 1 });
+                    } else {
+                        $pref->create({ value => 1 });
+                    }
                 }
             }
         }
-    }
-
-    # TODO: what about changed product, do we allow it?
-
+    
+        # TODO: what about changed product, do we allow it?
+    } catch($e) {
+        $c->log->error("Failed to update customer contract id '".$customer->id."': $e");
+        $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "Internal Server Error.");
+        return;
+    };
+        
     return $customer;
 }
 

@@ -60,6 +60,30 @@ sub process_billing_fees{
     
     return ( \@fees, \@fails, \$text );
 }
+
+sub get_contract_count_stmt {
+    return "select count(distinct c.id) from `billing`.`billing_mappings` bm join `billing`.`contracts` c on c.id = bm.contract_id where bm.`billing_profile_id` = `me`.`id` and c.status != 'terminated' and (bm.end_date is null or bm.end_date >= now())";
+}
+sub get_package_count_stmt {
+    return "select count(distinct pp.id) from `billing`.`package_profile_sets` pps join `billing`.`profile_packages` pp on pp.id = pps.package_id where pps.`profile_id` = `me`.`id` and pp.status != 'terminated'";
+}
+
+sub get_datatable_cols {
+    
+    my ($c) = @_;
+    return (
+        #v_count_used
+        #{ name => "contract_cnt", accessor => "contract_cnt", "search" => 0, "title" => $c->loc("Used (contracts)"),
+        #  literal_sql => get_contract_count_stmt() },
+        #{ name => "package_cnt", accessor => "package_cnt", "search" => 0, "title" => $c->loc("Used (packages)"),
+        #  literal_sql => get_package_count_stmt() },
+        { name => "contract_cnt", "search" => 0, "title" => $c->loc("Used (contracts)"), },
+        { name => "package_cnt", "search" => 0, "title" => $c->loc("Used (packages)"), },        
+        
+    );
+    
+}
+
 1;
 
 =head1 NAME

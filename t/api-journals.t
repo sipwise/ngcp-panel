@@ -109,6 +109,9 @@ my $cfmappings = test_cfmapping($subscriber,$cfdestinationset,$cftimeset);
 
 my $systemsoundset = test_soundset($t,$reseller);
 my $customersoundset = test_soundset($t,$reseller,$customer);
+
+my $billing_network = test_billingnetwork($t,$reseller);
+test_profilepackage($t,$reseller,$billingprofile)
 #prepare ncos levels first for subscriberpreferences! - Unknown ncos_level 'test'
 #my $subscriberpreferences = test_subscriberpreferences($subscriber,$customersoundset,$systemsoundset);
 
@@ -165,6 +168,166 @@ done_testing;
 #    
 #}
 
+sub test_profilepackage {
+    my ($t,$reseller,$profile) = @_;
+    
+    $req = HTTP::Request->new('POST', $uri.'/api/profilepackages/');
+    $req->header('Content-Type' => 'application/json');
+    $req->header('Prefer' => 'return=representation');
+    $req->content(JSON::to_json({
+        name => "test profile package " . $t,
+        description  => "test profile package description " . $t,
+        reseller_id => $reseller->{id},
+        initial_profiles => [{ profile_id => $profile->{id}, }, ]
+    }));
+    $res = $ua->request($req);
+    is($res->code, 201, "POST test profilepackage");
+    my $profilepackage_uri = $uri.'/'.$res->header('Location');
+    $req = HTTP::Request->new('GET', $profilepackage_uri);
+    $res = $ua->request($req);
+    is($res->code, 200, "fetch POSTed profilepackage");
+    my $profilepackage = JSON::from_json($res->decoded_content);
+    
+    _test_item_journal_link('profilepackages',$profilepackage,$profilepackage->{id});
+    _test_journal_options_head('profilepackages',$profilepackage->{id});
+    my $journals = {};
+    my $journal = _test_journal_top_journalitem('profilepackages',$profilepackage->{id},$profilepackage,'create',$journals);
+    _test_journal_options_head('profilepackages',$profilepackage->{id},$journal->{id});
+    
+    $req = HTTP::Request->new('PUT', $profilepackage_uri);
+    $req->header('Content-Type' => 'application/json');
+    $req->header('Prefer' => 'return=representation');
+    $req->content(JSON::to_json({
+        name => "test profile package ".$t." PUT",
+        description  => "test profile package description ".$t." PUT",
+        #reseller_id => $reseller_id,
+        initial_profiles => [{ profile_id => $profile->{id}, }, ],
+    }));
+    $res = $ua->request($req);
+    is($res->code, 200, "PUT test profilepackage");
+    $req = HTTP::Request->new('GET', $profilepackage_uri);
+    $res = $ua->request($req);
+    is($res->code, 200, "fetch PUT test profilepackage");
+    $profilepackage = JSON::from_json($res->decoded_content);
+    
+    _test_item_journal_link('profilepackages',$profilepackage,$profilepackage->{id});    
+    $journal = _test_journal_top_journalitem('profilepackages',$profilepackage->{id},$profilepackage,'update',$journals,$journal);
+    
+    $req = HTTP::Request->new('PATCH', $profilepackage_uri);
+    $req->header('Content-Type' => 'application/json-patch+json');
+    $req->header('Prefer' => 'return=representation');
+    $req->content(JSON::to_json(
+        [ { op => 'replace', path => '/name', value => "test profile package ".$t." PATCH" } ]
+    ));
+    $res = $ua->request($req);
+    is($res->code, 200, "PATCH test profilepackage");
+    $req = HTTP::Request->new('GET', $profilepackage_uri);
+    $res = $ua->request($req);
+    is($res->code, 200, "fetch PATCHed test profilepackage");
+    $profilepackage = JSON::from_json($res->decoded_content);
+
+    _test_item_journal_link('profilepackages',$profilepackage,$profilepackage->{id});    
+    $journal = _test_journal_top_journalitem('profilepackages',$profilepackage->{id},$profilepackage,'update',$journals,$journal);
+
+    _test_journal_collection('profilepackages',$profilepackage->{id},$journals);
+    
+    return $profilepackage;
+    
+}
+
+sub test_billingnetwork {
+    my ($t,$reseller) = @_;
+    
+    my $blocks = [{ip=>'fdfe::5a55:caff:fefa:9089',mask=>128},
+                    {ip=>'fdfe::5a55:caff:fefa:908a'},
+                    {ip=>'fdfe::5a55:caff:fefa:908b',mask=>128},];
+    
+    $req = HTTP::Request->new('POST', $uri.'/api/billingnetworks/');
+    $req->header('Content-Type' => 'application/json');
+    $req->header('Prefer' => 'return=representation');
+    $req->content(JSON::to_json({
+        name => "test billing network ".($t-1),
+        description  => "test billing network description ".($t-1),
+        reseller_id => $reseller->{id},
+        blocks => $blocks,
+    }));
+    $res = $ua->request($req);
+    is($res->code, 201, "POST test billingnetwork");
+    my $billingnetwork_uri = $uri.'/'.$res->header('Location');
+    $req = HTTP::Request->new('GET', $billingnetwork_uri);
+    $res = $ua->request($req);
+    is($res->code, 200, "fetch POSTed billingnetwork");
+    my $billingnetwork = JSON::from_json($res->decoded_content);
+    
+    _test_item_journal_link('billingnetworks',$billingnetwork,$billingnetwork->{id});
+    _test_journal_options_head('billingnetworks',$billingnetwork->{id});
+    my $journals = {};
+    my $journal = _test_journal_top_journalitem('billingnetworks',$billingnetwork->{id},$billingnetwork,'create',$journals);
+    _test_journal_options_head('billingnetworks',$billingnetwork->{id},$journal->{id});
+    
+    $req = HTTP::Request->new('PUT', $billingnetwork_uri);
+    $req->header('Content-Type' => 'application/json');
+    $req->header('Prefer' => 'return=representation');
+    $req->content(JSON::to_json({
+        name => "test billing network ".($t-1)." PUT",
+        description  => "test billing network description ".($t-1)." PUT",
+        reseller_id => $reseller->{id},
+        blocks => $blocks,
+    }));
+    $res = $ua->request($req);
+    is($res->code, 200, "PUT test billingnetwork");
+    $req = HTTP::Request->new('GET', $billingnetwork_uri);
+    $res = $ua->request($req);
+    is($res->code, 200, "fetch PUT test billingnetwork");
+    $billingnetwork = JSON::from_json($res->decoded_content);
+    
+    _test_item_journal_link('billingnetworks',$billingnetwork,$billingnetwork->{id});    
+    $journal = _test_journal_top_journalitem('billingnetworks',$billingnetwork->{id},$billingnetwork,'update',$journals,$journal);
+    
+    $req = HTTP::Request->new('PATCH', $billingnetwork_uri);
+    $req->header('Content-Type' => 'application/json-patch+json');
+    $req->header('Prefer' => 'return=representation');
+    $req->content(JSON::to_json(
+        [ { op => 'replace', path => '/name', value => "test billing network ".($t-1)." PATCH" } ]
+    ));
+    $res = $ua->request($req);
+    is($res->code, 200, "PATCH test billingnetwork");
+    $req = HTTP::Request->new('GET', $billingnetwork_uri);
+    $res = $ua->request($req);
+    is($res->code, 200, "fetch PATCHed test billingnetwork");
+    $billingnetwork = JSON::from_json($res->decoded_content);
+
+    _test_item_journal_link('billingnetworks',$billingnetwork,$billingnetwork->{id});    
+    $journal = _test_journal_top_journalitem('billingnetworks',$billingnetwork->{id},$billingnetwork,'update',$journals,$journal);
+
+    #$req = HTTP::Request->new('DELETE', $billingnetwork_uri);
+    #$res = $ua->request($req);
+    #is($res->code, 204, "delete POSTed test billingnetwork");
+    ##$domain = JSON::from_json($res->decoded_content);
+    #
+    ##$journal = _test_journal_top_journalitem('billingnetworks',$billingnetwork->{id},$billingnetwork,'delete',$journals,$journal);
+    
+    _test_journal_collection('billingnetworks',$billingnetwork->{id},$journals);
+    
+    #$req = HTTP::Request->new('POST', $uri.'/api/billingnetworks/');
+    #$req->header('Content-Type' => 'application/json');
+    #$req->content(JSON::to_json({
+    #    name => "test billing network ".$t,
+    #    description  => "test billing network description ".$t,
+    #    reseller_id => $reseller->{id},
+    #    blocks => $blocks,
+    #}));
+    #$res = $ua->request($req);
+    #is($res->code, 201, "POST another test billingnetwork");
+    #$billingnetwork_uri = $uri.'/'.$res->header('Location');
+    #$req = HTTP::Request->new('GET', $billingnetwork_uri);
+    #$res = $ua->request($req);
+    #is($res->code, 200, "fetch POSTed test billingnetwork");
+    #$billingnetwork = JSON::from_json($res->decoded_content);
+    
+    return $billingnetwork;
+    
+}
 
 sub test_billingzone {
     my ($billingprofile) = @_;

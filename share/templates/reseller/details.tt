@@ -175,12 +175,111 @@
             { name = c.loc('Preferences'), uri = "/domain/'+full.id+'/preferences", class = 'btn-small btn-tertiary', icon = 'icon-list' },
         ];
     END;
+    
+    PROCESS 'helpers/datatables.tt';
+-%]
+            </div>
+        </div>
+    </div>    
+    
+    
+    <div class="accordion-group">
+        <div class="accordion-heading">
+            <a class="accordion-toggle" data-toggle="collapse" data-parent="#reseller_details" href="#collapse_profile">[% c.loc('Billing Profiles') %]</a>
+        </div>
+        <div class="accordion-body collapse" id="collapse_profile">
+            <div class="accordion-inner">
+[%
+    helper.name = c.loc('Billing Profile');
+    helper.identifier = 'profiles';
+    helper.messages = messages;
+    helper.dt_columns = profile_dt_columns;
+    helper.paginate = 'true';
+    helper.filter = 'true';
+    helper.close_target = close_target;
+    helper.create_flag = create_flag;
+    helper.edit_flag = edit_flag;
+    helper.form_object = form;
+    helper.ajax_uri = c.uri_for('/billing/ajax/filter_reseller', reseller.first.id);
 
+    UNLESS c.user.read_only;
+        helper.dt_buttons = [
+            { name = c.loc('Edit'), uri = "/billing/'+full[\"id\"]+'/edit", class = 'btn-small btn-primary', icon = 'icon-edit' },                        
+            { name = c.loc('Terminate'), uri = "/billing/'+full[\"id\"]+'/terminate", class = 'btn-small btn-secondary', icon = 'icon-remove', condition => 'full.contract_cnt == "0" && full.package_cnt == "0"' },
+        ];
+    END;
+    
     PROCESS 'helpers/datatables.tt';
 -%]
             </div>
         </div>
     </div>
+    
+    
+    <div class="accordion-group">
+        <div class="accordion-heading">
+            <a class="accordion-toggle" data-toggle="collapse" data-parent="#reseller_details" href="#collapse_network">[% c.loc('Billing Networks') %]</a>
+        </div>
+        <div class="accordion-body collapse" id="collapse_network">
+            <div class="accordion-inner">
+[%
+    helper.name = c.loc('Billing Network');
+    helper.identifier = 'networks';
+    helper.messages = messages;
+    helper.dt_columns = network_dt_columns;
+    helper.paginate = 'true';
+    helper.filter = 'true';
+    helper.close_target = close_target;
+    helper.create_flag = create_flag;
+    helper.edit_flag = edit_flag;
+    helper.form_object = form;
+    helper.ajax_uri = c.uri_for('/network/ajax/filter_reseller', reseller.first.id);
+
+    UNLESS c.user.read_only;
+        helper.dt_buttons = [
+            { name = c.loc('Edit'), uri = "/network/'+full.id+'/edit", class = 'btn-small btn-primary', icon = 'icon-edit' },
+            { name = c.loc('Terminate'), uri = "/network/'+full[\"id\"]+'/terminate", class = 'btn-small btn-secondary', icon = 'icon-remove', condition => 'full.contract_cnt == "0" && full.package_cnt == "0"' },
+        ];
+    END;
+    
+    PROCESS 'helpers/datatables.tt';
+-%]
+            </div>
+        </div>
+    </div>
+    
+    <div class="accordion-group">
+        <div class="accordion-heading">
+            <a class="accordion-toggle" data-toggle="collapse" data-parent="#reseller_details" href="#collapse_package">[% c.loc('Profile Packages') %]</a>
+        </div>
+        <div class="accordion-body collapse" id="collapse_package">
+            <div class="accordion-inner">
+[%
+    helper.name = c.loc('Profile Package');
+    helper.identifier = 'packages';
+    helper.messages = messages;
+    helper.dt_columns = package_dt_columns;
+    helper.paginate = 'true';
+    helper.filter = 'true';
+    helper.close_target = close_target;
+    helper.create_flag = create_flag;
+    helper.edit_flag = edit_flag;
+    helper.form_object = form;
+    helper.ajax_uri = c.uri_for('/package/ajax/filter_reseller', reseller.first.id);
+
+    UNLESS c.user.read_only;
+        helper.dt_buttons = [
+            { name = c.loc('Edit'), uri = "/package/'+full.id+'/edit", class = 'btn-small btn-primary', icon = 'icon-edit' },
+            { name = c.loc('Terminate'), uri = "/package/'+full[\"id\"]+'/terminate", class = 'btn-small btn-secondary', icon = 'icon-remove', condition => 'full.contract_cnt == "0"' },
+        ];
+    END;
+    
+    PROCESS 'helpers/datatables.tt';
+-%]
+            </div>
+        </div>
+    </div>    
+    
 
     <div class="accordion-group">
         <div class="accordion-heading">
