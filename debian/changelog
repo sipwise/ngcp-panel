@@ -1,3 +1,16 @@
+ngcp-panel (1.7.1.25+0~mr3.7.1.25) unstable; urgency=low
+
+  [ Gerhard Jungwirth ]
+  * [1bb24ba] MT#12813 calllist api: use correct subscriber
+
+  [ Andreas Granig ]
+  * [b89dda0] MT#12219 Add q param to firmware/latest
+  * [e8c7f41] MT#12219 Add q param also to firmware/next
+
+  [ Sipwise Jenkins Builder ]
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Fri, 08 May 2015 10:53:35 +0200
+
 ngcp-panel (1.7.1.24+0~mr3.7.1.24) unstable; urgency=low
 
   [ Alexander Lutay ]
