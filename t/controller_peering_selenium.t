@@ -71,7 +71,7 @@ my $server_rules_uri = $d->get_location;
 diag('Edit Preferences for "mytestserver".');
 sleep 1; #make sure, we are on the right page
 $d->fill_element_ok([css => '#peering_servers_table_filter input', 'thisshouldnotexist']);
-$d->find_ok(css => 'tr > td.dataTables_empty');
+$d->find_ok(css => '#peering_servers_table tr > td.dataTables_empty');
 $d->fill_element_ok([css => '#peering_servers_table_filter input', 'mytestserver']);
 $edit_link = $d->find(xpath => '//table/tbody/tr/td[contains(text(), "mytestserver")]/../td//a[contains(text(),"Preferences")]');
 $row = $d->find(xpath => '//table/tbody/tr/td[contains(text(), "mytestserver")]/..');
@@ -104,7 +104,7 @@ diag('skip was here');
 diag("Delete mytestserver");
 sleep 1; #make sure, we are on the right page
 $d->fill_element_ok([css => '#peering_servers_table_filter input', 'thisshouldnotexist']);
-$d->find_ok(css => 'tr > td.dataTables_empty');
+$d->find_ok(css => '#peering_servers_table tr > td.dataTables_empty');
 $d->fill_element_ok([css => '#peering_servers_table_filter input', 'mytestserver']);
 $row = $d->find(xpath => '(//table/tbody/tr/td[contains(text(), "mytestserver")]/..)[1]');
 ok($row);
