@@ -14,7 +14,7 @@ use HTTP::Status qw(:constants);
 use NGCP::Panel::Utils::DateTime;
 use NGCP::Panel::Utils::Contract;
 use NGCP::Panel::Utils::Preferences;
-use NGCP::Panel::Form::Contract::ProductOptional;
+use NGCP::Panel::Form::Contract::ProductOptionalAPI;
 
 sub item_rs {
     my ($self, $c) = @_;
@@ -29,7 +29,7 @@ sub item_rs {
 
 sub get_form {
     my ($self, $c) = @_;
-    return NGCP::Panel::Form::Contract::ProductOptional->new;
+    return NGCP::Panel::Form::Contract::ProductOptionalAPI->new;
 }
 
 sub hal_from_customer {

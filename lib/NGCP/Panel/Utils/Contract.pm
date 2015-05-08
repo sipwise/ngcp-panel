@@ -419,6 +419,176 @@ sub get_contract_calls_rs{
  
     return $calls_rs;
 }
+
+sub prepare_billing_mappings {
+    my %params = @_;
+
+    #my $c = $params{c};
+    my $resource = $params{resource};
+    my $schema = $params{schema}; #// $c->model('DB');
+    my $old_resource = $params{old_resource};
+    my $mappings_to_create = $params{mappings_to_create};
+    my $err_code = $params{err_code};
+    
+    if (!defined $err_code || ref $err_code ne 'CODE') {
+        $err_code = sub { return 0; };
+    }
+    
+    if (defined $resource->{billing_profile_id} && defined $resource->{billing_profiles}) {
+        return 0 unless &{$err_code}("Either 'billing_profile_id' or 'billing_profiles' can be specified, not both.");
+    } elsif (!defined $resource->{billing_profile_id} && !defined $resource->{billing_profiles}) {
+        return 0 unless &{$err_code}("Neither 'billing_profile_id' nor 'billing_profiles' specified.");
+    }
+    
+    #$resource->{contact_id} //= undef;
+    my $reseller_id = undef;
+    if (defined $resource->{contact_id}) {
+        my $contact = $schema->resultset('contacts')->find($resource->{contact_id});
+        if ($contact) {
+            $reseller_id = $contact->reseller_id;
+        }
+    }
+
+    my $product_id = undef;
+    if (defined $old_resource) 
+        # TODO: what about changed product, do we allow it?
+        my $billing_mapping = $schema->resultset('billing_mappings')->find($old_resource->{billing_mapping_id});
+        $product_id = $billing_mapping->product->id;
+    } else {
+        my $product = $schema->resultset('products')->find({ class => $resource->{type} });
+        if ($product) {
+            $product_id = $product->id;
+        }
+    }
+   
+    if (defined $resource->{billing_profile_id}) {
+        unless(defined $resource->{billing_profile_id}) {
+            return 0 unless &{$err_code}("Invalid 'billing_profile_id', not defined.");
+        }
+        delete $resource->{billing_profiles};
+        my $billing_profile_id = delete $resource->{billing_profile_id};
+        my $profile = $schema->resultset('billing_profiles')->find($billing_profile_id);
+        unless($profile) {
+            return 0 unless &{$err_code}("Invalid 'billing_profile_id'.");
+        }
+        if (defined $reseller_id && $reseller_id != $profile->reseller_id) {
+            return 0 unless &{$err_code}("The reseller of the contact doesn't match the reseller of the billing profile");
+        }
+        push(@$mappings_to_create,{billing_profile_id => $profile->id,
+            #not implemented yet: network_id => undef,
+            product_id => $product_id,
+            #we don't change the former behaviour in update situations:
+            start_date => (defined $old_resource ? NGCP::Panel::Utils::DateTime::current_local : undef),
+            end_date => undef,
+        });
+    } elsif (defined $resource->{billing_profiles}) {
+        if (ref $resource->{billing_profiles} ne "ARRAY") {
+            return 0 unless &{$err_code}("Invalid field 'billing_profiles'. Must be an array.");
+        }
+        delete $resource->{billing_profile_id};
+        my $mappings = delete $resource->{billing_profiles};
+        my %start_dupes = ();
+        my %interval_type_counts = ();
+        my $dtf = $schema->storage->datetime_parser;
+        my $now = NGCP::Panel::Utils::DateTime::current_local;
+        foreach my $mapping (@{$mappings}) {
+            if (ref $mapping ne "HASH") {
+                return 0 unless &{$err_code}("Invalid element in array 'billing_profiles'. Must be an object.");
+            }
+
+            my $start = (defined $mapping->{start} ? NGCP::Panel::Utils::DateTime::from_string($mapping->{start}) : undef);
+            my $stop = (defined $mapping->{stop} ? NGCP::Panel::Utils::DateTime::from_string($mapping->{stop}) : undef);
+
+            if (!defined $start && !defined $stop) { #open interval
+                $interval_type_counts{open} //= 0:
+                $interval_type_counts{open} += 1;
+            } elsif (defined $start && !defined $stop) { #open end interval
+                if ($start <= $now) {
+                    return 0 unless &{$err_code}("'start' timestamp is not in future.");
+                }
+                my $start_str = $dtf->format_datetime($start);
+                if (exists $start_dupes{$start_str) {
+                    $start_dupes{$start_str} += 1;
+                    return 0 unless &{$err_code}("Identical 'start' timestamps not allowed.");
+                } else {
+                    $start_dupes{$start_str} = 1;
+                }
+                $interval_type_counts{'open end'} //= 0:
+                $interval_type_counts{'open end'} += 1;
+            } elsif (!defined $start && defined $stop) { #open start interval
+                return 0 unless &{$err_code}("Interval with 'stop' timestamp but no 'start' timestamp specified.");
+                $interval_type_counts{'open start'} //= 0:
+                $interval_type_counts{'open start'} += 1;                
+            } else { #start-end interval
+                if ($start <= $now) {
+                    return 0 unless &{$err_code}("'start' timestamp is not in future.");
+                }
+                if ($start >= $stop) {
+                    return 0 unless &{$err_code}("'start' timestamp has to be before 'stop' timestamp'.");
+                }
+                my $start_str = $dtf->format_datetime($start);
+                if (exists $start_dupes{$start_str) {
+                    $start_dupes{$start_str} += 1;
+                    return 0 unless &{$err_code}("Identical 'start' timestamps not allowed.");
+                } else {
+                    $start_dupes{$start_str} = 1;
+                }
+                $interval_type_counts{'start-end'} //= 0:
+                $interval_type_counts{'start-end'} += 1;                                
+            }
+            
+            unless(defined $mapping->{profile_id}) {
+                return 0 unless &{$err_code}("Invalid 'profile_id', not defined.");
+            }
+            my $profile = $schema->resultset('billing_profiles')->find($mapping->{profile_id});
+            unless($profile) {
+                return 0 unless &{$err_code}("Invalid 'profile_id'.");
+            }
+            if (defined $reseller_id && $reseller_id != $profile->reseller_id) {
+                return 0 unless &{$err_code}("The reseller of the contact doesn't match the reseller of the billing profile");
+            }
+            my $network;
+            if (defined $mapping->{network_id}) {
+                $network = $schema->resultset('billing_networks')->find($mapping->{network_id});
+                unless($network) {
+                    return 0 unless &{$err_code}("Invalid 'network_id'.");
+                }
+                if (defined $reseller_id && $reseller_id != $network->reseller_id) {
+                    return 0 unless &{$err_code}("The reseller of the contact doesn't match the reseller of the billing network");
+                }
+            }
+            # TODO: what about changed product, do we allow it?
+            #my $product_class = delete $mapping->{type};
+            #unless( (defined $product_class ) && ($product_class eq "sipaccount" || $product_class eq "pbxaccount") ) {
+            #    return 0 unless &{$err_code}("Mandatory 'type' parameter is empty or invalid, must be 'sipaccount' or 'pbxaccount'.");
+            #}
+            #my $product = $schema->resultset('products')->find({ class => $product_class });
+            #unless($product) {
+            #    return 0 unless &{$err_code}("Invalid 'type'.");
+            #} else {
+            #    # add product_id just for form check (not part of the actual contract item)
+            #    # and remove it after the check
+            #    $mapping->{product_id} = $product->id;
+            #}
+            push(@$mappings_to_create,{
+                billing_profile_id => $profile->id,
+                #not implemented yet: network_id => (defined $network ? $network->id : undef),
+                product_id => $product_id,
+                start_date => $start,
+                end_date => $stop,
+            });
+        }
+        if (!defined $old_resource && $interval_type_counts{'open'} != 1) {
+            return 0 unless &{$err_code}("Only a single interval without 'start' and 'stop' timestamps is allowed.");
+        } elsif (defined $old_resource && $interval_type_counts{'open'} > 0) {
+            return 0 unless &{$err_code}("Adding intervals without 'start' and 'stop' timestamps is not allowed.");
+        }        
+        
+    }
+    
+    return 1;
+}
+
 1;
 
 __END__

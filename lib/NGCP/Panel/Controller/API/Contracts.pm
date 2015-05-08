@@ -170,6 +170,18 @@ sub POST :Allow {
             media_type => 'application/json',
         );
         last unless $resource;
+        
+        my $mappings_to_create = [];
+        last unless NGCP::Panel::Utils::Contract::prepare_billing_mappings(
+            resource => $resource,
+            schema => $schema,
+            old_resource => undef,
+            mappings_to_create => $mappings_to_create,
+            err_code => sub {
+                my ($err) = @_;
+                #$c->log->error($err);
+                $self->error($c, HTTP_UNPROCESSABLE_ENTITY, $err);
+            });        
 
         unless(defined $resource->{billing_profile_id}) {
             $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Invalid 'billing_profile_id', not defined.");

@@ -6,6 +6,8 @@ use LWP::UserAgent;
 use JSON qw();
 use Test::More;
 
+my $is_local_env = 1;
+
 my $uri = $ENV{CATALYST_SERVER} || ('https://'.hostfqdn.':4443');
 
 my $valid_ssl_client_cert = $ENV{API_SSL_CLIENT_CERT} || 
@@ -17,11 +19,19 @@ my $ssl_ca_cert = $ENV{API_SSL_CA_CERT} || "/etc/ngcp-panel/api_ssl/api_ca.crt";
 my ($ua, $req, $res);
 $ua = LWP::UserAgent->new;
 
-$ua->ssl_opts(
-    SSL_cert_file => $valid_ssl_client_cert,
-    SSL_key_file  => $valid_ssl_client_key,
-    SSL_ca_file   => $ssl_ca_cert,
-);
+if ($is_local_env) {
+    $ua->ssl_opts(
+        verify_hostname => 0,
+    );
+    $ua->credentials("127.0.0.1:4443", "api_admin_http", 'administrator', 'administrator');
+    #$ua->timeout(500); #useless, need to change the nginx timeout
+} else {
+    $ua->ssl_opts(
+        SSL_cert_file => $valid_ssl_client_cert,
+        SSL_key_file  => $valid_ssl_client_key,
+        SSL_ca_file   => $ssl_ca_cert,
+    );    
+}
 
 # OPTIONS tests
 {
@@ -54,6 +64,20 @@ is($res->code, 201, "create test billing profile");
 # TODO: get id from body once the API returns it
 my $billing_profile_id = $res->header('Location');
 $billing_profile_id =~ s/^.+\/(\d+)$/$1/;
+
+$req = HTTP::Request->new('POST', $uri.'/api/billingprofiles/');
+$req->header('Content-Type' => 'application/json');
+$req->header('Prefer' => 'return=representation');
+$req->content(JSON::to_json({
+    name => "SECOND test profile $t",
+    handle  => "second_testprofile$t",
+    reseller_id => $reseller_id,
+}));
+$res = $ua->request($req);
+is($res->code, 201, "create SECOND test billing profile");
+# TODO: get id from body once the API returns it
+my $second_billing_profile_id = $res->header('Location');
+$second_billing_profile_id =~ s/^.+\/(\d+)$/$1/;
 
 # fetch a system contact for later tests
 $req = HTTP::Request->new('GET', $uri.'/api/systemcontacts/?page=1&rows=1');
@@ -344,6 +368,22 @@ my @allcustomers = ();
     is($mod_contact->{_links}->{self}->{href}, $firstcustomer, "check patched self link");
     is($mod_contact->{_links}->{collection}->{href}, '/api/customers/', "check patched collection link");
     
+    $res = $ua->get($uri.'/api/customers/');
+    #is($res->code, 200, "fetch contacts page");
+    my $old_total_cust_count = JSON::from_json($res->decoded_content)->{total_count};
+    diag('customer collection count before patching billing_profile: ' . $old_total_cust_count);
+    
+    $req->content(JSON::to_json(
+        [ { op => 'replace', path => '/billing_profile_id', value => $second_billing_profile_id } ]
+    ));
+    $res = $ua->request($req);
+    is($res->code, 200, "check patched customer item (different billing_profile)");
+    
+    $res = $ua->get($uri.'/api/customers/');
+    #is($res->code, 200, "fetch contacts page");
+    my $new_total_cust_count = JSON::from_json($res->decoded_content)->{total_count};
+    diag('customer collection count after patching billing_profile: ' . $new_total_cust_count);
+    is($old_total_cust_count,$new_total_cust_count,'check customer collection total count after patching billing profile');
 
     $req->content(JSON::to_json(
         [ { op => 'replace', path => '/status', value => undef } ]

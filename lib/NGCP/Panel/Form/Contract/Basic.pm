@@ -23,9 +23,9 @@ has_field 'contact' => (
     },
 );
 
-has_field 'billing_profile' => (
+has_field 'billing_profiles' => (
     type => 'Repeatable',
-    label => 'Billing Profile',
+    label => 'Billing Profiles',
     setup_for_js => 1,
     do_wrapper => 1,
     do_label => 1,
@@ -36,15 +36,15 @@ has_field 'billing_profile' => (
     wrapper_class => [qw/hfh-rep-block/],
     element_attr => {
         rel => ['tooltip'],
-        title => ['The billing profile id used to charge this contract.']
+        title => ['The billing profile / billing network interval schedule used to charge this contract.']
     },
 );
 
-has_field 'billing_profile.id' => (
+has_field 'billing_profiles.id' => (
     type => 'Hidden',
 );
 
-has_field 'billing_profile.profile' => (
+has_field 'billing_profiles.profile' => (
     type => '+NGCP::Panel::Field::BillingProfile',
     validate_when_empty => 1,
     element_attr => {
@@ -53,23 +53,25 @@ has_field 'billing_profile.profile' => (
     },
 );
 
-has_field 'billing_profile.start' => (
-    type => 'Date',
+has_field 'billing_profiles.start' => (
+    type => '+NGCP::Panel::Field::DateTime',
+    required => 0,
     element_attr => {
         rel => ['tooltip'],
-        title => ['The date when the billing profile gets active.']
+        title => ['The datetime (YYYY-MM-DD HH:mm:ss) when the billing profile gets active.']
     },
 );
 
-has_field 'billing_profile.end' => (
-    type => 'Date',
+has_field 'billing_profiles.stop' => (
+    type => '+NGCP::Panel::Field::DateTime',
+    required => 0,
     element_attr => {
         rel => ['tooltip'],
-        title => ['The date when the billing profile is no longer used.']
+        title => ['The datetime (YYYY-MM-DD HH:mm:ss) when the billing profile is revoked.']
     },
 );
 
-has_field 'billing_profile.rm' => (
+has_field 'billing_profiles.rm' => (
     type => 'RmElement',
     value => 'Remove Profile',
     order => 100,
@@ -78,7 +80,7 @@ has_field 'billing_profile.rm' => (
 
 has_field 'profile_add' => (
     type => 'AddElement',
-    repeatable => 'billing_profile',
+    repeatable => 'billing_profiles',
     value => 'Add Profile',
     element_class => [qw/btn btn-primary pull-right/],
 );
@@ -187,7 +189,7 @@ has_field 'save' => (
 has_block 'fields' => (
     tag => 'div',
     class => [qw/modal-body/],
-    render_list => [qw/contact billing_profile profile_add status external_id subscriber_email_template passreset_email_template invoice_email_template invoice_template vat_rate add_vat/],
+    render_list => [qw/contact billing_profiles profile_add status external_id subscriber_email_template passreset_email_template invoice_email_template invoice_template vat_rate add_vat/],
 );
 
 has_block 'actions' => (

@@ -10,7 +10,7 @@ has_field 'contact.id' => (
     do_wrapper => 0,
     required => 1,
     template => 'helpers/datatables_field.tt',
-    ajax_src => '/contact/ajax_noreseller',
+    ajax_src => '/contact/ajax_noreseller', #another ajax url
     table_titles => ['#', 'First Name', 'Last Name', 'Email'],
     table_fields => ['id', 'firstname', 'lastname', 'email'],
 );
@@ -18,7 +18,7 @@ has_field 'contact.id' => (
 has_block 'fields' => (
     tag => 'div',
     class => [qw/modal-body/],
-    render_list => [qw/contact billing_profile profile_add status external_id/],
+    render_list => [qw/contact billing_profiles profile_add status external_id/],
 );
 
 1;
