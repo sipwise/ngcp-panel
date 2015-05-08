@@ -419,6 +419,134 @@ sub get_contract_calls_rs{
  
     return $calls_rs;
 }
+
+sub prepare_billing_mappings {
+    my %params = @_;
+
+    #my $c = $params{c};
+    my $resource = $params{resource};
+    my $schema = $params{schema}; #// $c->model('DB');
+    my $actual_bmid = $params{bmid};
+    my $mappings_to_create = $params{mappings_to_create};
+    my $err_code = $params{err_code};
+    
+    if (!defined $err_code || ref $err_code ne 'CODE') {
+        $err_code = sub { return 0; };
+    }
+    
+    if (defined $resource->{billing_profile_id} && defined $resource->{billing_profiles}) {
+        return 0 unless &{$err_code}("Either 'billing_profile_id' or 'billing_profiles' can be specified, not both.");
+    } elsif (!defined $resource->{billing_profile_id} && !defined $resource->{billing_profiles}) {
+        return 0 unless &{$err_code}("Neither 'billing_profile_id' nor 'billing_profiles' specified.");
+    }
+    
+    $resource->{contact_id} //= undef;
+    unless(defined $resource->{contact_id}) {
+        return 0 unless &{$err_code}("Invalid 'contact_id', not defined.");
+    }
+    my $contact = $schema->resultset('contacts')->find($resource->{contact_id});
+    unless($contact) {
+        return 0 unless &{$err_code}("Invalid 'contact_id'.");
+    }
+    my $reseller_id = $contact->reseller_id;
+   
+    if (defined $resource->{billing_profile_id}) {
+        unless(defined $resource->{billing_profile_id}) {
+            return 0 unless &{$err_code}("Invalid 'billing_profile_id', not defined.");
+        }
+        delete $resource->{billing_profiles};
+        my $billing_profile_id = delete $resource->{billing_profile_id};
+        my $profile = $schema->resultset('billing_profiles')->find($billing_profile_id);
+        unless($profile) {
+            return 0 unless &{$err_code}("Invalid 'billing_profile_id'.");
+        }
+        if (defined $reseller_id && $reseller_id != $profile->reseller_id) {
+            return 0 unless &{$err_code}("The reseller of the contact doesn't match the reseller of the billing profile");
+        }
+        my $product_class = delete $resource->{type};
+        unless( (defined $product_class ) && ($product_class eq "sipaccount" || $product_class eq "pbxaccount") ) {
+            return 0 unless &{$err_code}("Mandatory 'type' parameter is empty or invalid, must be 'sipaccount' or 'pbxaccount'.");
+        }
+        my $product = $schema->resultset('products')->find({ class => $product_class });
+        unless($product) {
+            return 0 unless &{$err_code}("Invalid 'type'.");
+        } else {
+            # add product_id just for form check (not part of the actual contract item)
+            # and remove it after the check
+            $resource->{product_id} = $product->id;
+        }
+        #product changes are allowed, otherwise ...
+        #my $actual_billing_mapping = $contract->billing_mappings->find($actual_bmid);
+        
+        push(@$mappings_to_create,{billing_profile_id => $profile->id,
+            #not implemented yet: network_id => undef,
+            product_id => $product->id,
+            #we don't break the old behaviour in update situations:
+            start_date => (defined $actual_bmid ? NGCP::Panel::Utils::DateTime::current_local : undef),
+            end_date => undef,
+        });
+    } elsif (defined $resource->{billing_profiles}) {
+        if (ref $resource->{billing_profiles} ne "ARRAY") {
+            return 0 unless &{$err_code}("Invalid field 'billing_profiles'. Must be an array.");
+        }
+        delete $resource->{billing_profile_id};
+        delete $resource->{type};
+        my $mappings = delete $resource->{billing_profiles};
+        foreach my $mapping (@{$mappings}) {
+            if (ref $mapping ne "HASH") {
+                return 0 unless &{$err_code}("Invalid element in array 'billing_profiles'. Must be an object.");
+            }
+            unless(defined $mapping->{profile_id}) {
+                return 0 unless &{$err_code}("Invalid 'profile_id', not defined.");
+            }
+            my $profile = $schema->resultset('billing_profiles')->find($mapping->{profile_id});
+            unless($profile) {
+                return 0 unless &{$err_code}("Invalid 'profile_id'.");
+            }
+            if (defined $reseller_id && $reseller_id != $profile->reseller_id) {
+                return 0 unless &{$err_code}("The reseller of the contact doesn't match the reseller of the billing profile");
+            }
+            my $network;
+            if (defined $mapping->{network_id}) {
+                $network = $schema->resultset('billing_networks')->find($mapping->{network_id});
+                unless($network) {
+                    return 0 unless &{$err_code}("Invalid 'network_id'.");
+                }
+                if (defined $reseller_id && $reseller_id != $network->reseller_id) {
+                    return 0 unless &{$err_code}("The reseller of the contact doesn't match the reseller of the billing network");
+                }
+            }
+            my $product_class = delete $mapping->{type}; #or uniform product from $resource->{type}? in that case we could also keep the old behaviour of not allowing product changes ...
+            #my $actual_billing_mapping = $contract->billing_mappings->find($actual_bmid);
+            unless( (defined $product_class ) && ($product_class eq "sipaccount" || $product_class eq "pbxaccount") ) {
+                return 0 unless &{$err_code}("Mandatory 'type' parameter is empty or invalid, must be 'sipaccount' or 'pbxaccount'.");
+            }
+            my $product = $schema->resultset('products')->find({ class => $product_class });
+            unless($product) {
+                return 0 unless &{$err_code}("Invalid 'type'.");
+            } else {
+                # add product_id just for form check (not part of the actual contract item)
+                # and remove it after the check
+                $mapping->{product_id} = $product->id;
+            }
+            my $start = (defined $mapping->{start} ? NGCP::Panel::Utils::DateTime::from_string($mapping->{start}) : undef);
+            my $stop = (defined $mapping->{stop} ? NGCP::Panel::Utils::DateTime::from_string($mapping->{stop}) : undef);
+            if (defined $start && defined $stop && $start >= $stop) {
+                return 0 unless &{$err_code}("'start' timestamp has to be before 'stop' timestamp'.");
+            }
+            push(@$mappings_to_create,{
+                billing_profile_id => $profile->id,
+                #not implemented yet: network_id => (defined $network ? $network->id : undef),
+                product_id => $product->id,
+                start_date => $start,
+                end_date => $stop,
+            });
+        }
+    }
+    
+    return 1;
+}
+
 1;
 
 __END__
