@@ -36,7 +36,8 @@ sub profile_list :Chained('/') :PathPart('billing') :CaptureArgs(0) {
         { name => "id", "search" => 1, "title" => $c->loc("#") },
         { name => "name", "search" => 1, "title" => $c->loc("Name") },
         { name => "reseller.name", "search" => 1, "title" => $c->loc("Reseller") },
-        { name => "v_count_used", "search" => 0, "title" => $c->loc("Used") },
+        #{ name => "v_count_used", "search" => 0, "title" => $c->loc("Used") },
+        NGCP::Panel::Utils::Billing::get_datatable_cols($c),
     ]);
 
     $c->stash(template => 'billing/list.tt');
@@ -46,11 +47,10 @@ sub _profile_resultset_admin {
     my ($self, $c) = @_;
     my $rs = $c->model('DB')->resultset('billing_profiles')->search({
             'me.status' => { '!=' => 'terminated' },
-            }, {
-            join => { 'billing_mappings' => 'contract_active' },
-            '+select' => { count => 'contract_active.status', -as => 'v_count_used' },
-            'group_by' => [ qw(me.id) ]
-        });
+            },
+            { '+select' => [ { '' => \[ NGCP::Panel::Utils::Billing::get_contract_count_stmt() ] , -as => 'contract_cnt' },
+                           { '' => \[ NGCP::Panel::Utils::Billing::get_package_count_stmt() ] , -as => 'package_cnt' }, ],
+            });
     return $rs;
 }
 
@@ -60,11 +60,10 @@ sub _profile_resultset_reseller {
         ->find($c->user->id)->reseller->billing_profiles
         ->search_rs({
             'me.status' => { '!=' => 'terminated' },
-            }, {
-            join => { 'billing_mappings' => 'contract_active' },
-            '+select' => { count => 'contract_active.status', -as => 'v_count_used' },
-            'group_by' => [ qw(me.id) ]
-        });
+            },
+            { '+select' => [ { '' => \[ NGCP::Panel::Utils::Billing::get_contract_count_stmt() ] , -as => 'contract_cnt' },
+                           { '' => \[ NGCP::Panel::Utils::Billing::get_package_count_stmt() ] , -as => 'package_cnt' }, ],
+            });
     return $rs;
 }
 
@@ -78,6 +77,16 @@ sub ajax :Chained('profile_list') :PathPart('ajax') :Args(0) {
     my $resultset = $c->stash->{profiles_rs};
     NGCP::Panel::Utils::Datatables::process($c, $resultset, $c->stash->{profile_dt_columns});
     
+    $c->detach( $c->view("JSON") );
+}
+
+sub ajax_filter_reseller :Chained('profile_list') :PathPart('ajax/filter_reseller') :Args(1) {
+    my ($self, $c, $reseller_id) = @_;
+
+    my $resultset = $c->stash->{profiles_rs}->search({
+        'me.reseller_id' => $reseller_id,
+    });
+    NGCP::Panel::Utils::Datatables::process($c, $resultset, $c->stash->{profile_dt_columns});
     $c->detach( $c->view("JSON") );
 }
 
@@ -295,6 +304,22 @@ sub terminate :Chained('base') :PathPart('terminate') :Args(0) {
         );
         NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for('/billing'));
     }
+    
+    #todo: again not transactional ...
+    unless($profile->get_column('contract_cnt') == 0) {
+        NGCP::Panel::Utils::Message->error(
+            c => $c,
+            desc => $c->loc('Cannnot terminate billing profile that is still used in profile mappings'),
+        );            
+        NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for('/billing'));
+    }
+    unless($profile->get_column('package_cnt') == 0) {
+        NGCP::Panel::Utils::Message->error(
+            c => $c,
+            desc => $c->loc('Cannnot terminate billing profile that is still used in profile packages'),
+        );            
+        NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for('/billing'));
+    } 
 
     try {
         $profile->update({

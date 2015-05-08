@@ -1,7 +1,7 @@
 package NGCP::Panel::Form::Contract::PeeringReseller;
 
 use HTML::FormHandler::Moose;
-extends 'NGCP::Panel::Form::Contract::Basic';
+extends 'NGCP::Panel::Form::Contract::Base';
 
 has_field 'contact.id' => (
     type => '+NGCP::Panel::Field::DataTable',
@@ -18,7 +18,7 @@ has_field 'contact.id' => (
 has_block 'fields' => (
     tag => 'div',
     class => [qw/modal-body/],
-    render_list => [qw/contact billing_profile profile_add status external_id/],
+    render_list => [qw/contact billing_profiles profile_add status external_id/],
 );
 
 1;

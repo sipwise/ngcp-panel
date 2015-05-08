@@ -39,6 +39,8 @@
         <li><a href="[% c.uri_for('/subscriber') %]">[% c.loc('Subscribers') %]</a></li>
         <li><a href="[% c.uri_for('/subscriberprofile') %]">[% c.loc('Subscriber Profiles') %]</a></li>
         <li><a href="[% c.uri_for('/billing') %]">[% c.loc('Billing') %]</a></li>
+        <li><a href="[% c.uri_for('/network') %]">[% c.loc('Billing Networks') %]</a></li>
+        <li><a href="[% c.uri_for('/package') %]">[% c.loc('Profile Packages') %]</a></li>        
         <li><a href="[% c.uri_for('/invoicetemplate') %]">[% c.loc('Invoice Templates') %]</a></li>
         <li><a href="[% c.uri_for('/invoice') %]">[% c.loc('Invoices') %]</a></li>
         [% IF c.config.features.voucher -%]

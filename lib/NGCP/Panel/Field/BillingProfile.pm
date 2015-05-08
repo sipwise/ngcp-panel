@@ -19,6 +19,7 @@ has_field 'create' => (
     do_label => 0,
     value => 'Create Billing Profile',
     element_class => [qw/btn btn-tertiary pull-right/],
+    element_attr => { onclick => 'this.form.submit();return false;' }, #without this, only the first create button works
 );
 
 1;
