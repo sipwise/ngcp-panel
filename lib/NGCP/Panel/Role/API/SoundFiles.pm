@@ -26,7 +26,7 @@ sub transcode_data {
             $filename, $from_codec, $resource->{codec},
         );
     } catch($e) {
-        $self->log->error("failed to transcode file: $e");
+        $c->log->error("failed to transcode file: $e");
         $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Failed to transcode file");
         return;
     }

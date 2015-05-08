@@ -69,6 +69,15 @@ has_field 'billing_profile.end' => (
     },
 );
 
+#has_field 'billing_profiles.network' => (
+#    type => '+NGCP::Panel::Field::BillingNetwork',
+#    validate_when_empty => 1,
+#    element_attr => {
+#        rel => ['tooltip'],
+#        title => ['The billing network id this profile is restricted to.']
+#    },
+#);
+
 has_field 'billing_profile.rm' => (
     type => 'RmElement',
     value => 'Remove Profile',

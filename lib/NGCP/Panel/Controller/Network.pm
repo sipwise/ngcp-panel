@@ -1,0 +1,342 @@
+package NGCP::Panel::Controller::Network;
+use Sipwise::Base;
+
+
+BEGIN { extends 'Catalyst::Controller'; }
+
+use NGCP::Panel::Form::BillingNetwork::Admin;
+use NGCP::Panel::Form::BillingNetwork::Reseller;
+use NGCP::Panel::Utils::Message;
+use NGCP::Panel::Utils::Navigation;
+use NGCP::Panel::Utils::BillingNetworks qw();
+#use Storable qw();
+
+sub auto :Does(ACL) :ACLDetachTo('/denied_page') :AllowedRole(admin) :AllowedRole(reseller) {
+    my ($self, $c) = @_;
+    $c->log->debug(__PACKAGE__ . '::auto');
+    NGCP::Panel::Utils::Navigation::check_redirect_chain(c => $c);
+    return 1;
+}
+
+sub network_list :Chained('/') :PathPart('network') :CaptureArgs(0) {
+    my ($self, $c) = @_;
+
+    my $dispatch_to = '_network_resultset_' . $c->user->roles;
+    my $network_rs = $self->$dispatch_to($c);
+
+    $c->stash->{network_dt_columns} = NGCP::Panel::Utils::Datatables::set_columns($c, [
+        { name => 'id', search => 1, title => $c->loc('#') },
+        { name => 'reseller.name', search => 1, title => $c->loc('Reseller') },
+        { name => 'name', search => 1, title => $c->loc('Name') },
+        { name => 'blocks', accessor => "blocks", search => 0, title => $c->loc('Network Blocks'), literal_sql =>
+         "concat(left(group_concat(if(billing_network_blocks.mask is null,billing_network_blocks.ip,concat(billing_network_blocks.ip,'/',billing_network_blocks.mask)) separator ', '),30),'...')",'join' => 'billing_network_blocks', group_by => 'me.id'},
+        { name => "billing_network_blocks._ipv4_net_from", search_lower_column => 'ipv4', convert_code => sub {
+            my $q = shift;
+            my ($bytes,$version) = NGCP::Panel::Utils::BillingNetworks::ip_to_bytes($q);
+            return undef if (!defined $bytes || $version != 4);
+            return $bytes;
+            } },
+        { name => "billing_network_blocks._ipv4_net_to", search_upper_column => 'ipv4', convert_code => sub {
+            my $q = shift;
+            my ($bytes,$version) = NGCP::Panel::Utils::BillingNetworks::ip_to_bytes($q);
+            return undef if (!defined $bytes || $version != 4);
+            return $bytes;
+            } },
+        { name => "billing_network_blocks._ipv6_net_from", search_lower_column => 'ipv6', convert_code => sub {
+            my $q = shift;
+            my ($bytes,$version) = NGCP::Panel::Utils::BillingNetworks::ip_to_bytes($q);
+            return undef if (!defined $bytes || $version != 6);
+            return $bytes;
+            } },
+        { name => "billing_network_blocks._ipv6_net_to", search_upper_column => 'ipv6', convert_code => sub {
+            my $q = shift;
+            my ($bytes,$version) = NGCP::Panel::Utils::BillingNetworks::ip_to_bytes($q);
+            return undef if (!defined $bytes || $version != 6);
+            return $bytes;
+            } },
+    ]);
+
+    $c->stash(network_rs   => $network_rs,
+              template => 'network/list.tt');
+}
+
+sub _network_resultset_admin {
+    my ($self, $c) = @_;
+    return $c->model('DB')->resultset('billing_networks');
+}
+
+sub _network_resultset_reseller {
+    my ($self, $c) = @_;
+
+    return $c->model('DB')->resultset('admins')->find(
+            { id => $c->user->id, } )
+        ->reseller
+        ->billing_networks
+        ->search_related('billing_networks');
+}
+
+sub root :Chained('network_list') :PathPart('') :Args(0) {
+    my ($self, $c) = @_;
+}
+
+
+
+sub create :Chained('network_list') :PathPart('create') :Args(0) {
+    my ($self, $c) = @_;
+
+    my $posted = ($c->request->method eq 'POST');
+    my $form;
+    if($c->user->is_superuser) {
+        $form = NGCP::Panel::Form::BillingNetwork::Admin->new;
+    } else {
+        $form = NGCP::Panel::Form::BillingNetwork::Reseller->new;
+        #$form->values->{reseller_id} = $c->user->reseller_id;
+    }
+    #my $params = {};
+    #$params->{reseller}{id} = delete $params->{reseller_id};
+    #$params = $params->merge($c->session->{created_objects});
+    #delete $params->{network} if exists($params->{network}{id});
+    $form->process(
+        posted => $posted,
+        params => $c->request->params,
+        #item => $params,
+    );
+    NGCP::Panel::Utils::Navigation::check_form_buttons(
+        c => $c,
+        form => $form,
+        fields => {
+            'reseller.create' => $c->uri_for('/reseller/create'),
+        },
+        back_uri => $c->req->uri,
+    );    
+    if($posted && $form->validated) {
+        try {
+            my $reseller_id = ($c->user->is_superuser ? $form->values->{reseller}{id} : $c->user->reseller_id);
+            #my $blocks = Storable::dclone($form->values->{blocks});
+            #$self->_prepare_blocks($c,$blocks);
+            
+            $c->model('DB')->schema->txn_do( sub {
+                my $bn = $c->model('DB')->resultset('billing_networks')->create({
+                    reseller_id => $reseller_id,
+                    name => $form->values->{name},
+                    description => $form->values->{description},
+                });
+                for my $block (@{$form->values->{blocks}}) {
+                    $bn->create_related("billing_network_blocks", $block);
+                }
+                $c->session->{created_objects}->{network} = { id => $bn->id };
+                
+                #my $prov_dom = $c->model('DB')->resultset('voip_domains')
+                #    ->create({domain => $form->value->{domain}});
+                #my $new_dom = $c->stash->{dom_rs}
+                #    ->create({domain => $form->value->{domain}});
+                #unless($pbx) {
+                #    $reseller_id = $c->user->is_superuser ? 
+                #        $form->values->{reseller}{id} : $c->user->reseller_id;
+                #} elsif($form->values->{rwr_set}) {
+                #    my $rwr_set = $c->model('DB')->resultset('voip_rewrite_rule_sets')
+                #        ->find($form->values->{rwr_set});
+                #    NGCP::Panel::Utils::Preferences::set_rewrite_preferences(
+                #        c => $c,
+                #        rwrs_result => $rwr_set,
+                #        pref_rs => $prov_dom->voip_dom_preferences,
+                #    ) if($rwr_set);
+                #}
+                #
+                ## for PBX domains, we set outbound_from_display to np_display
+                #if($pbx) {
+                #    my $pref_rs = NGCP::Panel::Utils::Preferences::get_dom_preference_rs(
+                #        c => $c, attribute => 'outbound_from_display', prov_domain => $prov_dom
+                #    );
+                #    unless($pref_rs->first) {
+                #        $pref_rs->create({ value => 'np_display' });
+                #    } else {
+                #        $pref_rs->first->update({ value => 'np_display' });
+                #    }
+                #}
+                #
+                #$new_dom->create_related('domain_resellers', {
+                #    reseller_id => $reseller_id
+                #    });
+                #NGCP::Panel::Utils::Prosody::activate_domain($c, $form->value->{domain})
+                #    unless($c->config->{features}->{debug});
+                #delete $c->session->{created_objects}->{reseller};
+                #$c->session->{created_objects}->{domain} = { id => $new_dom->id };
+            });
+            
+            NGCP::Panel::Utils::Message->info(
+                c => $c,
+                desc => $c->loc('Billing Network successfully created'),
+            );
+        } catch ($e) {
+            NGCP::Panel::Utils::Message->error(
+                c => $c,
+                error => $e,
+                desc  => $c->loc('Failed to create billing network.'),
+            );
+        }
+        NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for('/network'));
+    }
+
+    $c->stash(
+        close_target => $c->uri_for,
+        create_flag => 1,
+        form => $form
+    );
+}
+
+sub base :Chained('/network/network_list') :PathPart('') :CaptureArgs(1) {
+    my ($self, $c, $network_id) = @_;
+
+    unless($network_id && $network_id->is_integer) {
+        $network_id //= '';
+        NGCP::Panel::Utils::Message->error(
+            c => $c,
+            data => { id => $network_id },
+            desc => $c->loc('Invalid billing network id detected'),
+        );
+        $c->response->redirect($c->uri_for());
+        $c->detach;
+        return;
+    }
+
+    my $res = $c->stash->{network_rs}->find($network_id);
+    unless(defined($res)) {
+        NGCP::Panel::Utils::Message->error(
+            c => $c,
+            desc => $c->loc('Billing network does not exist'),
+        );
+        $c->response->redirect($c->uri_for());
+        $c->detach;
+        return;
+    }
+
+    #$c->stash(provisioning_domain_result => $c->model('DB')
+    #    ->resultset('voip_domains')
+    #    ->find({domain => $res->domain}) );
+
+    $c->stash(network        => {$res->get_columns},
+              network_blocks => [ map { { $_->get_columns }; } $res->billing_network_blocks->all ],
+              network_result => $res);
+}
+
+sub edit :Chained('base') :PathPart('edit') :Args(0) {
+    my ($self, $c) = @_;
+
+    my $posted = ($c->request->method eq 'POST');
+    my $form = NGCP::Panel::Form::BillingNetwork::Reseller->new;
+    my $params = $c->stash->{network};
+    $params->{blocks} = $c->stash->{network_blocks};
+    $params->{reseller}{id} = delete $params->{reseller_id};
+    $params = $params->merge($c->session->{created_objects});
+    #if($c->user->is_superuser) {
+    #    $form = NGCP::Panel::Form::BillingNetwork::Admin->new;
+    #} else {
+    #    $form = NGCP::Panel::Form::BillingNetwork::Reseller->new;
+    #}
+    $form->process(
+        posted => $posted,
+        params => $c->request->params,
+        item => $params,
+    );
+    if($posted && $form->validated) {
+
+        try {
+            $c->model('DB')->schema->txn_do( sub {
+                $c->stash->{'network_result'}->update({
+                    #reseller_id => $reseller_id,
+                    name => $form->values->{name},
+                    description => $form->values->{description},
+                });
+                $c->stash->{'network_result'}->billing_network_blocks->delete;
+                for my $block (@{$form->values->{blocks}}) {
+                    $c->stash->{'network_result'}->create_related("billing_network_blocks", $block);
+                }
+            });
+            NGCP::Panel::Utils::Message->info(
+                c => $c,
+                desc  => $c->loc('Billing network successfully updated'),
+            );            
+        } catch ($e) {
+            NGCP::Panel::Utils::Message->error(
+                c => $c,
+                error => $e,
+                desc  => $c->loc('Failed to update billing network.'),
+            );
+            #$c->response->redirect($c->uri_for());
+            #return;
+        }
+
+        NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for('/network'));
+        
+        #$self->_sip_domain_reload($c);
+        #NGCP::Panel::Utils::Message->info(
+        #    c => $c,
+        #    desc => $c->loc('Billing network successfully updated'),
+        #);
+        #$c->response->redirect($c->uri_for());
+        #return;
+    }
+
+    $c->stash(
+        close_target => $c->uri_for,
+        edit_flag => 1,
+        form => $form
+    );
+}
+
+sub delete :Chained('base') :PathPart('delete') :Args(0) {
+    my ($self, $c) = @_;
+
+    my $domain = $c->stash->{'domain_result'}->domain;
+    my $prov_domain = $c->stash->{'provisioning_domain_result'};
+    try {
+        $c->model('DB')->schema->txn_do( sub {
+            #$c->stash->{'domain_result'}->delete;
+            #$prov_domain->voip_dbaliases->delete;
+            #$prov_domain->voip_dom_preferences->delete;
+            #$prov_domain->provisioning_voip_subscribers->delete;
+            #$prov_domain->delete;
+            #NGCP::Panel::Utils::Prosody::deactivate_domain($c, $domain)
+            #    unless($c->config->{features}->{debug});
+        });
+    } catch ($e) {
+        NGCP::Panel::Utils::Message->error(
+            c => $c,
+            error => $e,
+            desc  => $c->loc('Failed to delete domain.'),
+        );
+        $c->response->redirect($c->uri_for());
+        return;
+    }
+
+    #$self->_sip_domain_reload($c);
+    NGCP::Panel::Utils::Message->info(
+        c => $c,
+        data => { $c->stash->{domain_result}->get_inflated_columns },
+        desc => $c->loc('Domain successfully deleted!'),
+    );
+    $c->response->redirect($c->uri_for());
+}
+
+sub ajax :Chained('network_list') :PathPart('ajax') :Args(0) {
+    my ($self, $c) = @_;
+
+    my $resultset = $c->stash->{network_rs};
+    NGCP::Panel::Utils::Datatables::process($c, $resultset, $c->stash->{network_dt_columns});
+    $c->detach( $c->view("JSON") );
+}
+
+sub ajax_filter_reseller :Chained('network_list') :PathPart('ajax/filter_reseller') :Args(1) {
+    my ($self, $c, $reseller_id) = @_;
+
+    my $resultset = $c->stash->{network_rs}->search({
+        'reseller_id' => $reseller_id,
+    });
+    NGCP::Panel::Utils::Datatables::process($c, $resultset, $c->stash->{network_dt_columns});
+    $c->detach( $c->view("JSON") );
+}
+
+__PACKAGE__->meta->make_immutable;
+
+1;

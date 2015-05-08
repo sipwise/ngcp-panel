@@ -170,6 +170,12 @@ div.ngcp-timeset-field div.controls {
     margin: 0 !important;
 }
 
+/* align billing network block elements in one row */
+
+div.ngcp-network-block-row {
+    margin-left: 180px;
+}
+
 /* align cf destination radio group */
 div.ngcp-destination-row {
     margin-left: 180px !important;
