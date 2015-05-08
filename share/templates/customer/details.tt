@@ -139,15 +139,17 @@
                         <tr>
                             <th>[% c.loc('Date') %]</th>
                             <th>[% c.loc('Billing Profile Name') %]</th>
+                            <th>[% c.loc('Billing Network Name') %]</th>
                         </tr>
                     </thead>
                     <tbody>
-                        [% FOR mapping IN contract.billing_mappings.all -%]
+                        [% FOR mapping IN billing_mappings_ordered_result.all -%]
                         <tr class="sw_action_row">
                             <td>
                                 [% mapping.start_date ? mapping.start_date : 'NULL' %] - [% mapping.end_date.defined ? mapping.end_date : 'NULL' %]
                             </td>
                             <td>[% mapping.billing_profile.name %]</td>
+                            <td>[% mapping.network.name %]</td>
                         </tr>
                         [% END -%]
                     </tbody>
