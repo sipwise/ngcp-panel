@@ -1,4 +1,53 @@
 [% site_config.title = c.loc('Contracts') -%]
+
+<script>
+function hideField(id,iddId) {
+    $("[name='" + id + "']").parents('.control-group').addClass("hidden");
+    $("[name='" + id + ".id']").parents('.control-group').addClass("hidden");
+    $("[id='" + id + ".0']").parents('.control-group').addClass("hidden");
+    if (iddId) {
+        $("[id='" + iddId + "']").parents('.control-group').addClass("hidden");
+    }
+    $("[name='" + id + ".create']").parents('.control-group').addClass("hidden");
+}
+function showField(id,iddId) {
+    $("[name='" + id + "']").parents('.control-group').removeClass("hidden");
+    $("[name='" + id + ".id']").parents('.control-group').removeClass("hidden");
+    $("[id='" + id + ".0']").parents('.control-group').removeClass("hidden");
+    if (iddId) {
+        $("[id='" + iddId + "']").parents('.control-group').removeClass("hidden");
+    }    
+    $("[name='" + id + ".create']").parents('.control-group').removeClass("hidden");
+}
+function switchBillingProfileDefinition(field) {
+    var switched = 0;
+    if (field) {
+        switch (field.value) {
+            case 'id':
+                showField('billing_profile');
+                hideField('billing_profiles','profile_add');
+                switched = 1;
+                break;
+            case 'profiles':
+                hideField('billing_profile');
+                showField('billing_profiles','profile_add');
+                switched = 1;
+                break;
+            default:
+            
+                break;
+        }
+    }
+    if (!switched) {
+        hideField('billing_profile');
+        hideField('billing_profiles','profile_add');
+    }
+}
+$( document ).ready(function() {
+    switchBillingProfileDefinition(document.getElementById('billing_profile_definition'));
+});
+</script>
+
 [%
     helper.name = c.loc('Contract');
     IF edit_flag;
