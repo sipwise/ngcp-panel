@@ -60,6 +60,35 @@ sub process_billing_fees{
     
     return ( \@fees, \@fails, \$text );
 }
+
+#sub _get_profile_set_group_stmt {
+#    my ($discriminator) = @_;
+#        my $rs = $c->model('DB')->resultset('billing_profiles')->search({
+#            'me.status' => { '!=' => 'terminated' },
+#            }, {
+#            join => { 'billing_mappings' => 'contract_active' },
+#            '+select' => { count => 'contract_active.status', -as => 'v_count_used' },
+#            'group_by' => [ qw(me.id) ]
+#        });
+#    #ayrrrr
+#    "select count(pp.id) from from `billing`.`package_profile_sets` pps join `billing`.`profile_packages` pp on pp.id = pps.package_id where pps.`profile_id` = `me`.`id` and pp.status != 'terminated' group by pp.id"
+#    my $grp_stmt = "group_concat(if(bn.`name` is null,bp.`name`,concat(bp.`name`,'/',bn.`name`)) separator ', ')";
+#    my $grp_len = 30;
+#    return "select if(length(".$grp_stmt.") > ".$grp_len.", concat(left(".$grp_stmt.", ".$grp_len."), '...'), ".$grp_stmt.") from `billing`.`package_profile_sets` pps join `billing`.`billing_profiles` bp on bp.`id` = pps.`profile_id` left join `billing`.`billing_networks` bn on bn.`id` = pps.`network_id` where pps.`package_id` = `me`.`id` and pps.`discriminator` = '" . $discriminator . "'";
+#}
+#
+#sub get_datatable_cols {
+#    
+#    my ($c) = @_;
+#    return (
+#        { name => "v_count_used", "search" => 0, "title" => $c->loc("Used (act. contracts)") },
+#        { name => "packages_cnt", name => "packages_cnt", "search" => 0, "title" => $c->loc("Active packages"),
+#          literal_sql => "select count(pp.id) from from `billing`.`package_profile_sets` pps join `billing`.`profile_packages` pp on pp.id = pps.package_id where pps.`profile_id` = `me`.`id` and pp.status != 'terminated' group by pp.id" },
+#        
+#    );
+#    
+#}
+
 1;
 
 =head1 NAME

@@ -12,6 +12,7 @@ use Data::HAL qw();
 use Data::HAL::Link qw();
 use HTTP::Status qw(:constants);
 use NGCP::Panel::Utils::DateTime;
+use NGCP::Panel::Utils::Reseller qw();
 use NGCP::Panel::Utils::Contract;
 use NGCP::Panel::Utils::Preferences;
 use NGCP::Panel::Form::BillingProfile::Admin qw();
@@ -103,14 +104,18 @@ sub update_profile {
         resource => $resource,
     );
 
-    if($old_resource->{reseller_id} != $resource->{reseller_id}) {
-        my $reseller = $c->model('DB')->resultset('resellers')
-            ->find($resource->{reseller_id});
-        unless($reseller) {
-            $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Invalid 'reseller_id'");
-            return;
-        }
-    }
+    #if($old_resource->{reseller_id} != $resource->{reseller_id}) {
+    #    my $reseller = $c->model('DB')->resultset('resellers')
+    #        ->find($resource->{reseller_id});
+    #    unless($reseller) {
+    #        $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Invalid 'reseller_id'");
+    #        return;
+    #    }
+    #}
+    return unless NGCP::Panel::Utils::Reseller::check_reseller_update_item($c,$resource->{reseller_id},$old_resource->{reseller_id},sub {
+        my ($err) = @_;
+        $self->error($c, HTTP_UNPROCESSABLE_ENTITY, $err);
+    });    
 
     if(exists $resource->{status} && $resource->{status} eq 'terminated') {
         my $profile_used = {$profile->get_inflated_columns}->{v_count_used};

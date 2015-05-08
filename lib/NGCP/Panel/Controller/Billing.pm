@@ -37,6 +37,7 @@ sub profile_list :Chained('/') :PathPart('billing') :CaptureArgs(0) {
         { name => "name", "search" => 1, "title" => $c->loc("Name") },
         { name => "reseller.name", "search" => 1, "title" => $c->loc("Reseller") },
         { name => "v_count_used", "search" => 0, "title" => $c->loc("Used") },
+        #xxxxx
     ]);
 
     $c->stash(template => 'billing/list.tt');
@@ -78,6 +79,16 @@ sub ajax :Chained('profile_list') :PathPart('ajax') :Args(0) {
     my $resultset = $c->stash->{profiles_rs};
     NGCP::Panel::Utils::Datatables::process($c, $resultset, $c->stash->{profile_dt_columns});
     
+    $c->detach( $c->view("JSON") );
+}
+
+sub ajax_filter_reseller :Chained('profile_list') :PathPart('ajax/filter_reseller') :Args(1) {
+    my ($self, $c, $reseller_id) = @_;
+
+    my $resultset = $c->stash->{profiles_rs}->search({
+        'me.reseller_id' => $reseller_id,
+    });
+    NGCP::Panel::Utils::Datatables::process($c, $resultset, $c->stash->{profile_dt_columns});
     $c->detach( $c->view("JSON") );
 }
 
