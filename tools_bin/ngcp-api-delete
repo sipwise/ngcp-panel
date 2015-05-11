@@ -1,5 +1,8 @@
 #!/bin/sh
 CURL="/usr/bin/curl"
+CREDS="$HOME/.ngcp-api"
+TOOLS="/usr/bin/ngcp-api-tools"
+-f "$TOOLS" && . "$TOOLS"
 
 usage () {
 		cat << EOF
@@ -14,6 +17,7 @@ EOF
 		exit 1
 }
 
+test -z "$APIUSER" && -f "$TOOLS" && importcreds
 test -z "$APIUSER" && APIUSER="administrator:administrator"
 HEADERS="-H 'Connection: close'"
 
