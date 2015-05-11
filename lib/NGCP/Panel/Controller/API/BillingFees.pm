@@ -9,7 +9,7 @@ use HTTP::Status qw(:constants);
 use MooseX::ClassAttribute qw(class_has);
 use NGCP::Panel::Utils::DateTime;
 use Path::Tiny qw(path);
-use Text::CSV_XS;
+use NGCP::Panel::Utils::Billing;
 BEGIN { extends 'Catalyst::Controller::ActionRole'; }
 require Catalyst::ActionRole::ACL;
 require Catalyst::ActionRole::CheckTrailingSlash;
@@ -180,60 +180,23 @@ sub POST :Allow {
         }
 
         if ($data) {
-            # csv bulk upload
-            my $csv = Text::CSV_XS->new({allow_whitespace => 1, binary => 1, keep_meta_info => 1});
-            my @cols = @{ $c->config->{fees_csv}->{element_order} };
-
             if ($resource->{purge_existing}) {
                 $profile->billing_fees->delete;
+                $profile->billing_fees_raw->delete;
             }
-            my @fails = ();
-            my $linenum = 0;
-            my @fees = ();
-            my %zones = ();
 
             try {
-                foreach my $line(split /\r?\n/, $data) {
-                    ++$linenum;
-                    chomp $line;
-                    next unless length $line;
-                    unless($csv->parse($line)) {
-                        push @fails, $linenum;
-                        next;
-                    }
-                    my $row = {};
-                    my @fields = $csv->fields();
-                    unless (scalar @fields == scalar @cols) {
-                        push @fails, $linenum;
-                        next;
-                    }
-                    
-                    for(my $i = 0; $i < @cols; ++$i) {
-                        $row->{$cols[$i]} = $fields[$i];
-                    }
-
-                    my $k = $row->{zone}.'__NGCP__'.$row->{zone_detail};
-                    unless(exists $zones{$k}) {
-                        my $zone = $profile->billing_zones->find_or_create({
-                                zone => $row->{zone},
-                                detail => $row->{zone_detail}
-                            });
-                        $zones{$k} = $zone->id;
-                    }
-                    $row->{billing_zone_id} = $zones{$k};
-                    delete $row->{zone};
-                    delete $row->{zone_detail};
-                    push @fees, $row;
-                }
-                $profile->billing_fees->populate(\@fees);
-
-                my $text = $c->loc('Billing Fee successfully uploaded');
-                if(@fails) {
-                    $text .= $c->loc(", but skipped the following line numbers: ") . (join ", ", @fails);
-                }
-                $c->log->info($text);
+                (my($fees, $fails, $text_success)) = NGCP::Panel::Utils::Billing::process_billing_fees( 
+                    c => $c, 
+                    data => \$data, 
+                    profile => $profile,
+                    schema  => $schema,
+                );
+                
+                $c->log->info( $$text_success );
+                
                 $guard->commit;
-
+                
                 $c->response->status(HTTP_CREATED);
                 $c->response->body(q());
 
