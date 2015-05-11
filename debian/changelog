@@ -1,3 +1,12 @@
+ngcp-panel (1.7.1.26+0~mr3.7.1.26) unstable; urgency=low
+
+  [ Andreas Granig ]
+  * [36bda7a] MT#12385 Add reseller_id to EDR head.
+
+  [ Sipwise Jenkins Builder ]
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Mon, 11 May 2015 14:45:42 +0200
+
 ngcp-panel (1.7.1.25+0~mr3.7.1.25) unstable; urgency=low
 
   [ Gerhard Jungwirth ]
