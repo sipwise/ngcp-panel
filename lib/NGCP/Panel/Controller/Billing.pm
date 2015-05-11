@@ -1,6 +1,5 @@
 package NGCP::Panel::Controller::Billing;
 use Sipwise::Base;
-use Text::CSV_XS;
 use DateTime::Format::ISO8601;
 
 BEGIN { extends 'Catalyst::Controller'; }
@@ -18,6 +17,7 @@ use NGCP::Panel::Utils::Navigation;
 use NGCP::Panel::Utils::Datatables;
 use NGCP::Panel::Utils::Preferences;
 use NGCP::Panel::Utils::DateTime;
+use NGCP::Panel::Utils::Billing;
 
 sub auto :Does(ACL) :ACLDetachTo('/denied_page') :AllowedRole(admin) :AllowedRole(reseller) {
     my ($self, $c) = @_;
@@ -417,9 +417,7 @@ sub fees_upload :Chained('fees_list') :PathPart('upload') :Args(0) {
     my $form = NGCP::Panel::Form::BillingFeeUpload->new;
     my $upload = $c->req->upload('upload_fees');
     my $posted = $c->req->method eq 'POST';
-    my @params = (
-        upload_fees => $posted ? $upload : undef,
-        );
+    my @params = ( upload_fees => $posted ? $upload : undef, );
     $form->process(
         posted => $posted,
         params => { @params },
@@ -430,62 +428,32 @@ sub fees_upload :Chained('fees_list') :PathPart('upload') :Args(0) {
         # TODO: check by formhandler?
         unless($upload) {
             NGCP::Panel::Utils::Message->error(
-                c => $c,
+                c    => $c,
                 desc => $c->loc('No Billing Fee file specified!'),
             );
             $c->response->redirect($c->uri_for($c->stash->{profile}->{id}, 'fees'));
             return;
         }
-
-        my $csv = Text::CSV_XS->new({allow_whitespace => 1, binary => 1, keep_meta_info => 1});
-        my @cols = $c->config->{fees_csv}->{element_order};
-        $csv->column_names (@cols);
         if ($c->req->params->{purge_existing}) {
+            $c->stash->{'profile_result'}->billing_fees_raw->delete;
             $c->stash->{'profile_result'}->billing_fees->delete;
         }
-
-        my @fails = ();
-        my $linenum = 0;
-
-        my @fees = ();
-        my %zones = ();
+        my $data = $upload->slurp;
+        my($fees, $fails, $text_success);
         try {
-            $c->model('DB')->txn_do(sub {
-                while(my $row = $csv->getline_hr($upload->fh)) {
-                    ++$linenum;
-                    if($csv->is_missing(1)) {
-                        push @fails, $linenum;
-                        next;
-                    }
-                    my $k = $row->{zone}.'__NGCP__'.$row->{zone_detail};
-                    unless(exists $zones{$k}) {
-                        my $zone = $c->stash->{'profile_result'}
-                            ->billing_zones
-                            ->find_or_create({
-                                zone => $row->{zone},
-                                detail => $row->{zone_detail}
-                            });
-                        $zones{$k} = $zone->id;
-                    }
-                    $row->{billing_zone_id} = $zones{$k};
-                    delete $row->{zone};
-                    delete $row->{zone_detail};
-                    push @fees, $row;
-                }
-                unless ($csv->eof()) {
-                    die "Some lines could not be parsed. Did not reach eof. Last successful: $linenum.";
-                }
-                $c->stash->{'profile_result'}
-                    ->billing_fees->populate(\@fees);
+            my $schema = $c->model('DB');
+            $schema->txn_do(sub {
+                ( $fees, $fails, $text_success ) = NGCP::Panel::Utils::Billing::process_billing_fees( 
+                    c       => $c, 
+                    data    => \$data, 
+                    profile => $c->stash->{'profile_result'},
+                    schema  => $schema,
+                );
             });
-
-            my $text = $c->loc('Billing Fee successfully uploaded');
-            if(@fails) {
-                $text .= $c->loc(", but skipped the following line numbers: ") . (join ", ", @fails);
-            }
+            
             NGCP::Panel::Utils::Message->info(
-                c => $c,
-                desc => $text,
+                c    => $c,
+                desc => $$text_success,
             );
         } catch($e) {
             NGCP::Panel::Utils::Message->error(
@@ -493,7 +461,7 @@ sub fees_upload :Chained('fees_list') :PathPart('upload') :Args(0) {
                 error => $e,
                 desc => $c->loc('Failed to upload Billing Fees'),
             );
-        };
+        }
 
         $c->response->redirect($c->uri_for($c->stash->{profile}->{id}, 'fees'));
         return;
