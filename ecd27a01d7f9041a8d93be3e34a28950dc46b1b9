@@ -22,6 +22,30 @@
       "revId": "ecd27a01d7f9041a8d93be3e34a28950dc46b1b9",
       "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "3a3291f1_4699966d",
+        "filename": "lib/NGCP/Panel/Utils/Billing.pm",
+        "patchSetId": 1
+      },
+      "lineNbr": 21,
+      "author": {
+        "id": 1000009
+      },
+      "writtenOn": "2015-05-12T12:02:36Z",
+      "side": 1,
+      "message": "We already recieved this content from request variables into local variable. Considering that parse is promised by Text::CSV as more fast that getline_hr, I selected this variant of the code.",
+      "parentUuid": "3a3291f1_262b2a32",
+      "range": {
+        "startLine": 21,
+        "startChar": 4,
+        "endLine": 21,
+        "endChar": 45
+      },
+      "revId": "ecd27a01d7f9041a8d93be3e34a28950dc46b1b9",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
     }
   ]
 }
