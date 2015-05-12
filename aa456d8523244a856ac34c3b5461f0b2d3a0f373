@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "3a3291f1_26b0caf3",
+        "filename": "lib/NGCP/Panel/Controller/API/BillingNetworks.pm",
+        "patchSetId": 2
+      },
+      "lineNbr": 189,
+      "author": {
+        "id": 1000013
+      },
+      "writtenOn": "2015-05-12T08:29:45Z",
+      "side": 1,
+      "message": "no, u\u0027re right nothing. however i saw this pattern of a discrete dto hash several times, e.g. roles/cfdestinationsets.pm",
+      "parentUuid": "3a3291f1_66a6d2c3",
+      "range": {
+        "startLine": 189,
+        "startChar": 18,
+        "endLine": 189,
+        "endChar": 66
+      },
+      "revId": "aa456d8523244a856ac34c3b5461f0b2d3a0f373",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "3a3291f1_e6cac26d",
         "filename": "lib/NGCP/Panel/Utils/Contract.pm",
         "patchSetId": 2
@@ -36,6 +60,30 @@
       "writtenOn": "2015-05-12T05:51:46Z",
       "side": 1,
       "message": "By the way - what is the reason to don\u0027t pass c?",
+      "range": {
+        "startLine": 426,
+        "startChar": 4,
+        "endLine": 426,
+        "endChar": 24
+      },
+      "revId": "aa456d8523244a856ac34c3b5461f0b2d3a0f373",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "3a3291f1_0695ce3f",
+        "filename": "lib/NGCP/Panel/Utils/Contract.pm",
+        "patchSetId": 2
+      },
+      "lineNbr": 426,
+      "author": {
+        "id": 1000013
+      },
+      "writtenOn": "2015-05-12T08:29:45Z",
+      "side": 1,
+      "message": "just a personal choice - no $c in the util \u0027models\u0027, but i see it is used by other subs in this model anyway..",
+      "parentUuid": "3a3291f1_e6cac26d",
       "range": {
         "startLine": 426,
         "startChar": 4,
@@ -71,6 +119,30 @@
     },
     {
       "key": {
+        "uuid": "3a3291f1_c69ea663",
+        "filename": "lib/NGCP/Panel/Utils/Contract.pm",
+        "patchSetId": 2
+      },
+      "lineNbr": 438,
+      "author": {
+        "id": 1000013
+      },
+      "writtenOn": "2015-05-12T08:29:45Z",
+      "side": 1,
+      "message": "this prepare_billing_mappings sub is supposed to take over anything billing_profile related from the caller (api/customers and api/contracts; and panel controllers later on). It validates, sanitizes and transforms values to return them. So this error messages are not redundant.\n\nstill allowing the old \u0027billing_profile_id\u0027 field is an ackward compromise for backward compat. but i can\u0027t see what you mean by a regexp here? the caller can pass a custom \u0027err_code\u0027 callback, to process that error message. this is since api controllers and panel controller have quite different error handling",
+      "parentUuid": "3a3291f1_c6c7c663",
+      "range": {
+        "startLine": 438,
+        "startChar": 24,
+        "endLine": 438,
+        "endChar": 117
+      },
+      "revId": "aa456d8523244a856ac34c3b5461f0b2d3a0f373",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "3a3291f1_a6c4ba5f",
         "filename": "lib/NGCP/Panel/Utils/Contract.pm",
         "patchSetId": 2
@@ -82,6 +154,30 @@
       "writtenOn": "2015-05-12T05:51:46Z",
       "side": 1,
       "message": "It seems to me, that next 100 lines are two methods: process_mapping and check_mapping. And maybe move all checking actions to the top, like:\nif(check_mapping){\n  process_mapping\n}",
+      "range": {
+        "startLine": 488,
+        "startChar": 1,
+        "endLine": 488,
+        "endChar": 47
+      },
+      "revId": "aa456d8523244a856ac34c3b5461f0b2d3a0f373",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "3a3291f1_a69b9a71",
+        "filename": "lib/NGCP/Panel/Utils/Contract.pm",
+        "patchSetId": 2
+      },
+      "lineNbr": 488,
+      "author": {
+        "id": 1000013
+      },
+      "writtenOn": "2015-05-12T08:29:45Z",
+      "side": 1,
+      "message": "well basically this method does both - validation and processing. i thought of separating this, but there is more effort then to reduce the code duplication then. since i hardly saw private module methods somwhere else, my personal rule of thumb became \"just outsource into private method if there will be at least more than one invocation\"",
+      "parentUuid": "3a3291f1_a6c4ba5f",
       "range": {
         "startLine": 488,
         "startChar": 1,
