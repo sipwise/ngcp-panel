@@ -1,11 +1,10 @@
-#!/bin/sh
+#!/bin/bash
 CURL="/usr/bin/curl"
 CREDS="$HOME/.ngcp-api"
-TOOLS="/usr/bin/ngcp-api-tools"
--f "$TOOLS" && . "$TOOLS"
+TOOLS="/usr/share/ngcp-panel-tools/ngcp-api.inc"
 
 usage () {
-		cat << EOF
+	cat << EOF
 Usage: $0 [OPTIONS] <url>
 
 sends a delete request to NGCP REST API
@@ -14,11 +13,16 @@ OPTIONS:
   -h this help
   -v verbose mode
 EOF
-		exit 1
+	exit 1
 }
 
-test -z "$APIUSER" && -f "$TOOLS" && importcreds
-test -z "$APIUSER" && APIUSER="administrator:administrator"
+if [ -z "$APIUSER" ] ; then
+  if [ -f "$TOOLS" ] ; then
+    source "$TOOLS"
+    importcreds
+  fi
+  APIUSER="administrator:administrator"
+fi
 HEADERS="-H 'Connection: close'"
 
 while getopts "hv" OPTION
@@ -38,6 +42,8 @@ done
 shift $(($OPTIND - 1))
 
 URL="$1"
-test -z "$URL" && usage;
+if [ -z "$URL" ] ; then
+	usage
+fi
 
 ${CURL} -i ${VERBOSE} -X DELETE "$HEADERS" --user "$APIUSER" --insecure "$URL"
