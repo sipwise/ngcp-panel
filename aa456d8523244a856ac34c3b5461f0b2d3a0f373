@@ -2,6 +2,29 @@
   "comments": [
     {
       "key": {
+        "uuid": "3a3291f1_66a6d2c3",
+        "filename": "lib/NGCP/Panel/Controller/API/BillingNetworks.pm",
+        "patchSetId": 2
+      },
+      "lineNbr": 189,
+      "author": {
+        "id": 1000009
+      },
+      "writtenOn": "2015-05-12T05:56:12Z",
+      "side": 1,
+      "message": "Is there something excrescent in the resource, that doesn\u0027t allow to pass just $resource to the create?",
+      "range": {
+        "startLine": 189,
+        "startChar": 18,
+        "endLine": 189,
+        "endChar": 66
+      },
+      "revId": "aa456d8523244a856ac34c3b5461f0b2d3a0f373",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "3a3291f1_e6cac26d",
         "filename": "lib/NGCP/Panel/Utils/Contract.pm",
         "patchSetId": 2
