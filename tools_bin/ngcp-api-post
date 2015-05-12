@@ -1,11 +1,10 @@
-#!/bin/sh
+#!/bin/bash
 CURL="/usr/bin/curl"
 CREDS="$HOME/.ngcp-api"
-TOOLS="/usr/bin/ngcp-api-tools"
--f "$TOOLS" && . "$TOOLS"
+TOOLS="/usr/share/ngcp-panel-tools/ngcp-api.inc"
 
 usage () {
-		cat << EOF
+	cat << EOF
 Usage: $0 [OPTIONS] <url> [content-type]
 
 sends a post request to NGCP REST API
@@ -15,11 +14,17 @@ OPTIONS:
   -v verbose mode
   -f read the input info from a file instead of read stdin
 EOF
-		exit 1
+	exit 1
 }
 
-test -z "$APIUSER" && -f "$TOOLS" && importcreds
-test -z "$APIUSER" && APIUSER="administrator:administrator"
+if [ -z "$APIUSER" ] ; then
+	if [ -f "$TOOLS" ] ; then
+		source "$TOOLS"
+		importcreds
+	else
+		APIUSER="administrator:administrator"
+	fi
+fi
 INPUT="-T -"
 
 while getopts "f:hv" OPTION
@@ -47,7 +52,9 @@ done
 shift $(($OPTIND - 1))
 
 URL="$1"
-test -z "$URL" && usage;
+if [ -z "$URL" ] ; then
+	usage
+fi
 CTYPE=${2:-application/json}
 
 ${CURL} -i ${VERBOSE} -X POST \
