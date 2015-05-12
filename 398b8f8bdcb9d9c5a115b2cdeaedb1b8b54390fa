@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "3a3291f1_bb761305",
+        "filename": "lib/NGCP/Panel/Utils/DialogicImg.pm",
+        "patchSetId": 8
+      },
+      "lineNbr": 42,
+      "author": {
+        "id": 1000005
+      },
+      "writtenOn": "2015-05-12T12:19:16Z",
+      "side": 1,
+      "message": "like we discussed, Role::REST::Client only needs a request method.\n\nI\u0027ll probably make use of your suggestion later though, when I get to replace Role::REST::Client completely.",
+      "parentUuid": "3a3291f1_80188685",
+      "range": {
+        "startLine": 30,
+        "startChar": 4,
+        "endLine": 42,
+        "endChar": 6
+      },
+      "revId": "398b8f8bdcb9d9c5a115b2cdeaedb1b8b54390fa",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "3a3291f1_a02b8293",
         "filename": "lib/NGCP/Panel/Utils/DialogicImg.pm",
         "patchSetId": 8
@@ -36,6 +60,30 @@
       "writtenOn": "2015-05-06T17:34:18Z",
       "side": 1,
       "message": "hm, brute force request while that device restarts?\nmaybe better reduce the loop count (e.g. $i \u003c 50) and put a sleep 5 into the loop. or something. if the boot time really takes up to 500 secs.",
+      "range": {
+        "startLine": 1512,
+        "startChar": 4,
+        "endLine": 1515,
+        "endChar": 5
+      },
+      "revId": "398b8f8bdcb9d9c5a115b2cdeaedb1b8b54390fa",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "3a3291f1_06a38e9f",
+        "filename": "lib/NGCP/Panel/Utils/DialogicImg.pm",
+        "patchSetId": 8
+      },
+      "lineNbr": 1515,
+      "author": {
+        "id": 1000005
+      },
+      "writtenOn": "2015-05-12T12:19:16Z",
+      "side": 1,
+      "message": "actually, now that\u0027s wrong again, cause lwp::ua has a different timeout. I\u0027ll update, maybe 20s timeout and loop iteration of 30. There is a problem with this subroutine anyway so it\u0027s currently not exposed to the user interface.",
+      "parentUuid": "3a3291f1_a02b8293",
       "range": {
         "startLine": 1512,
         "startChar": 4,
