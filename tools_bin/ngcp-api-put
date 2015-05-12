@@ -1,7 +1,7 @@
 #!/bin/sh
 CURL="/usr/bin/curl"
 CREDS="$HOME/.ngcp-api"
-TOOLS="/usr/bin/ngcp-api-tools"
+TOOLS="/usr/share/ngcp-panel-tools/ngcp-api.inc"
 -f "$TOOLS" && . "$TOOLS"
 
 usage () {
