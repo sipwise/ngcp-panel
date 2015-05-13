@@ -1,3 +1,13 @@
+ngcp-panel (1.8.1.12+0~mr3.8.1.12) unstable; urgency=low
+
+  [ Andreas Granig ]
+  * [9f53ee5] MT#10537 Fix calllist issues
+  * [64533e7] MT#12385 Add reseller_id to EDR head.
+
+  [ Sipwise Jenkins Builder ]
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Wed, 13 May 2015 18:34:22 +0200
+
 ngcp-panel (1.8.1.11+0~mr3.8.1.11) unstable; urgency=low
 
   [ Gerhard Jungwirth ]
