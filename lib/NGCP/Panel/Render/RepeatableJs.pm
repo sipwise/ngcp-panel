@@ -13,49 +13,79 @@ sub render_repeatable_js {
     my %index;
     my %html;
     my %level;
+    use Data::Printer;
+    my %add_map = ();
+    my %rep_map = ();
+    foreach my $f($self->fields) {
+        # TODO: rather use $f->isa?
+        p $f;
+        if((ref $f) =~ /^HTML::FormHandler::Field::AddElement::/) {
+            print "+++++++++++++++++ a=" . $f->accessor . ", r=" . $f->repeatable . "\n";
+            $add_map{$f->accessor} = $f->repeatable; 
+            $rep_map{$f->repeatable} = $f->accessor;
+        } elsif((ref $f) =~ /^HTML::FormHandler::Field::Repeatable::/) {
+            foreach my $f($f->fields) {
+                if((ref $f) =~ /^HTML::FormHandler::Field::AddElement::/) {
+                    print "2 +++++++++++++++++ a=" . $f->accessor . ", r=" . $f->repeatable . "\n";
+                    $add_map{$f->accessor} = $f->repeatable; 
+                    $rep_map{$f->repeatable} = $f->accessor;
+                }
+            }
+        }
+    }
+    p %add_map;
+    p %rep_map;
+    my $add_map_str = encode_json(\%add_map);
+    my $rep_map_str = encode_json(\%rep_map);
     foreach my $key ( keys %$for_js ) {
         $index{$key} = $for_js->{$key}->{index};
         $html{$key} = $for_js->{$key}->{html};
         $level{$key} = $for_js->{$key}->{level};
     }
     my $index_str = encode_json( \%index );
-    my $html_str = encode_json( \%html );
+    my %encoded_html;
+    use HTML::Entities;
+    while (my ($k,$v) = each %html ) {
+        $encoded_html{$k} = encode_entities($v);
+    }
+    my $html_str = encode_json( \%encoded_html );
     my $level_str = encode_json( \%level );
     my $js = <<EOS;
 <script>
 \$(document).ready(function() {
+  var add_map = $add_map_str;
+  var rep_map = $rep_map_str;
   var rep_index = $index_str;
-  var rep_html = $html_str;
+  var rep_html_enc = $html_str;
+  var rep_html = {};
+  for(var k in rep_html_enc) {
+    rep_html[k] = \$('<textarea/>').html(rep_html_enc[k]).text();  
+  }
+  console.log(rep_html);
   var rep_level = $level_str;
   \$('.add_element').click(on_add_element);
   function on_add_element() {
-    console.log("on_add_element this=", \$(this));
     // get the repeatable id
     var data_rep_id = \$(this).attr('data-rep-id');
-    console.log("data_rep_id=", data_rep_id);
+    var add_id = rep_map[data_rep_id];
 
     var id_re = new RegExp('\.[0-9]+\.');
     var data_rep_id_0 = data_rep_id.replace(id_re, '.0.');
-    console.log("data_rep_id_0=", data_rep_id_0);
     
 
     // create a regex out of index placeholder
     var level = rep_level[data_rep_id_0]
-    console.log("level=", level);
     var re = new RegExp('\{index-' + level + '\}',"g");
     // replace the placeholder in the html with the index
     var index = rep_index[data_rep_id];
     if(index == undefined) index = 1;
-    console.log("index for " + data_rep_id + " is " + index);
     var html = rep_html[data_rep_id_0];
-    console.log("html=", html);
 
     var esc_rep_id = data_rep_id.replace(/[.]/g, '\\\\.');
     var esc_rep_id_0 = data_rep_id_0.replace(/[.]/g, '\\\\.');
 
     id_re = new RegExp(esc_rep_id_0, "g");
     html = html.replace(id_re, data_rep_id);
-    console.log("html replaced=", html);
 
     html = html.replace(re, index);
     // escape dots in element id
@@ -65,11 +95,10 @@ sub render_repeatable_js {
     // increment index of repeatable fields
     index++;
     rep_index[data_rep_id] = index;
-    console.log("rep index " + data_rep_id + "=", rep_index);
-    \$('.add_element').click(on_add_element);
+    //\$('.add_element').click(on_add_element);
 
     // initiate callback if there is a handler for that
-    if(repeatadd_handler) {
+    if(typeof repeatadd_handler !== "undefined" && repeatadd_handler != null) {
     	repeatadd_handler.onAdd(index-1);
     }
   }
