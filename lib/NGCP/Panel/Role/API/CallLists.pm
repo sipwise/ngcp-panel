@@ -116,8 +116,13 @@ sub resource_from_item {
         $intra = 0;
     }
     # out by default
-    $resource->{direction} = (defined $sub && $sub->uuid eq $item->destination_user_id) ?
-        "in" : "out";
+    if(defined $sub && $sub->uuid eq $item->destination_user_id) {
+        $resource->{direction} = "in";
+    } elsif (defined $cust && $item->destination_account_id == $cust->id) {
+        $resource->{direction} = "in";
+    } else {
+        $resource->{direction} = "out";
+    }
 
     my ($src_sub, $dst_sub);
     if($item->source_subscriber && $item->source_subscriber->provisioning_voip_subscriber) {
@@ -127,6 +132,7 @@ sub resource_from_item {
         $dst_sub = $item->destination_subscriber->provisioning_voip_subscriber;
     }
     my ($own_normalize, $other_normalize, $own_domain, $other_domain);
+    my $other_skip_domain = 0;
 
     if($resource->{direction} eq "out") {
         # for pbx out calls, use extension as own cli
@@ -161,8 +167,26 @@ sub resource_from_item {
         }
         $own_domain = $item->destination_domain;
 
+        # rewrite cf to voicemail to "voicemail"
+        if($item->destination_user_in =~ /^vmu/ &&
+           $item->destination_domain_in eq "voicebox.local") {
+            $resource->{other_cli} = "voicemail";
+            $other_normalize = 0;
+            $other_skip_domain = 1;
+        # rewrite cf to conference to "conference"
+        } elsif($item->destination_user_in =~ /^conf=/ &&
+           $item->destination_domain_in eq "conference.local") {
+            $resource->{other_cli} = "conference";
+            $other_normalize = 0;
+            $other_skip_domain = 1;
+        # rewrite cf to auto-attendant to "auto-attendant"
+        } elsif($item->destination_user_in =~ /^auto-attendant$/ &&
+           $item->destination_domain_in eq "app.local") {
+            $resource->{other_cli} = "auto-attendant";
+            $other_normalize = 0;
+            $other_skip_domain = 1;
         # for intra pbx in calls, use extension as other cli
-        if($intra && $src_sub && $src_sub->pbx_extension) {
+        } elsif($intra && $src_sub && $src_sub->pbx_extension) {
             $resource->{other_cli} = $src_sub->pbx_extension;
         # if there is an alias field (e.g. gpp0), use this
         } elsif($item->source_account_id && $c->req->param('alias_field')) {
@@ -190,7 +214,7 @@ sub resource_from_item {
 
     if($resource->{direction} eq "in" && $item->source_clir) {
         $resource->{other_cli} = undef;
-    } elsif($resource->{other_cli} !~ /^\d+$/) {
+    } elsif(!$other_skip_domain && $resource->{other_cli} !~ /^\d+$/) {
         $resource->{other_cli} .= '@'.$other_domain;
     } elsif($other_normalize) {
         $resource->{other_cli} = NGCP::Panel::Utils::Subscriber::apply_rewrite(
