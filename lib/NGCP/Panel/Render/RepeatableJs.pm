@@ -13,30 +13,6 @@ sub render_repeatable_js {
     my %index;
     my %html;
     my %level;
-    use Data::Printer;
-    my %add_map = ();
-    my %rep_map = ();
-    foreach my $f($self->fields) {
-        # TODO: rather use $f->isa?
-        p $f;
-        if((ref $f) =~ /^HTML::FormHandler::Field::AddElement::/) {
-            print "+++++++++++++++++ a=" . $f->accessor . ", r=" . $f->repeatable . "\n";
-            $add_map{$f->accessor} = $f->repeatable; 
-            $rep_map{$f->repeatable} = $f->accessor;
-        } elsif((ref $f) =~ /^HTML::FormHandler::Field::Repeatable::/) {
-            foreach my $f($f->fields) {
-                if((ref $f) =~ /^HTML::FormHandler::Field::AddElement::/) {
-                    print "2 +++++++++++++++++ a=" . $f->accessor . ", r=" . $f->repeatable . "\n";
-                    $add_map{$f->accessor} = $f->repeatable; 
-                    $rep_map{$f->repeatable} = $f->accessor;
-                }
-            }
-        }
-    }
-    p %add_map;
-    p %rep_map;
-    my $add_map_str = encode_json(\%add_map);
-    my $rep_map_str = encode_json(\%rep_map);
     foreach my $key ( keys %$for_js ) {
         $index{$key} = $for_js->{$key}->{index};
         $html{$key} = $for_js->{$key}->{html};
@@ -53,8 +29,6 @@ sub render_repeatable_js {
     my $js = <<EOS;
 <script>
 \$(document).ready(function() {
-  var add_map = $add_map_str;
-  var rep_map = $rep_map_str;
   var rep_index = $index_str;
   var rep_html_enc = $html_str;
   var rep_html = {};
@@ -67,12 +41,10 @@ sub render_repeatable_js {
   function on_add_element() {
     // get the repeatable id
     var data_rep_id = \$(this).attr('data-rep-id');
-    var add_id = rep_map[data_rep_id];
 
     var id_re = new RegExp('\.[0-9]+\.');
     var data_rep_id_0 = data_rep_id.replace(id_re, '.0.');
     
-
     // create a regex out of index placeholder
     var level = rep_level[data_rep_id_0]
     var re = new RegExp('\{index-' + level + '\}',"g");
@@ -95,7 +67,12 @@ sub render_repeatable_js {
     // increment index of repeatable fields
     index++;
     rep_index[data_rep_id] = index;
-    //\$('.add_element').click(on_add_element);
+
+    // unbind first to not fire it multiple times
+    \$('.add_element').unbind('click');
+    // bind click for any add_element elems, also those nested in the
+    // now newly added repeatable
+    \$('.add_element').click(on_add_element);
 
     // initiate callback if there is a handler for that
     if(typeof repeatadd_handler !== "undefined" && repeatadd_handler != null) {
