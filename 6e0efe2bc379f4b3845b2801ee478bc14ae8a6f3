@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "3a3291f1_41f3c00a",
+        "filename": "tools_bin/ngcp-api-delete",
+        "patchSetId": 4
+      },
+      "lineNbr": 24,
+      "author": {
+        "id": 1000005
+      },
+      "writtenOn": "2015-05-13T07:57:26Z",
+      "side": 1,
+      "message": "overwrites, what has been specified by importcreds always",
+      "revId": "6e0efe2bc379f4b3845b2801ee478bc14ae8a6f3",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    }
+  ]
+}
