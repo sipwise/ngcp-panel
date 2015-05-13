@@ -2,7 +2,7 @@
 CURL="/usr/bin/curl"
 CREDS="$HOME/.ngcp-api"
 TOOLS="/usr/bin/ngcp-api-tools"
--f "$TOOLS" && . "$TOOLS"
+test -f "$TOOLS" && . "$TOOLS"
 
 usage () {
 		cat << EOF
