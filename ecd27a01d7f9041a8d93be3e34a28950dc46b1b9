@@ -46,6 +46,30 @@
       "revId": "ecd27a01d7f9041a8d93be3e34a28950dc46b1b9",
       "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "3a3291f1_2149d48b",
+        "filename": "lib/NGCP/Panel/Utils/Billing.pm",
+        "patchSetId": 1
+      },
+      "lineNbr": 21,
+      "author": {
+        "id": 1000013
+      },
+      "writtenOn": "2015-05-15T01:00:26Z",
+      "side": 1,
+      "message": "yes, i see that it already comes in that $$data; the split might just double the whole stuff. since you already have a scalarref, this approach with filehandles for scalars would be possible:\n\nmy $filelike \u003d qq{Line 1\\nLine 2\\nLine etc.\\n};\n open my $fh, \u0027\u003c\u0027, \\$filelike or die $!;\n while (\u003c$fh\u003e) {\n   print\n   }\n close $fh or die $!;\n\nsee http://www.perlmonks.org/?node_id\u003d745018",
+      "parentUuid": "3a3291f1_4699966d",
+      "range": {
+        "startLine": 21,
+        "startChar": 4,
+        "endLine": 21,
+        "endChar": 45
+      },
+      "revId": "ecd27a01d7f9041a8d93be3e34a28950dc46b1b9",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
     }
   ]
 }
