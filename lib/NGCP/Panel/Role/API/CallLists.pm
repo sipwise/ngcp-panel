@@ -46,6 +46,11 @@ sub item_rs {
             join => ['source_subscriber', 'destination_subscriber'],
         });
     }
+    $item_rs = $item_rs->search({
+        -not => [
+            { 'destination_domain_in' => 'vsc.local' },
+        ],
+    });
     return $item_rs;
 }
 
@@ -173,18 +178,21 @@ sub resource_from_item {
             $resource->{other_cli} = "voicemail";
             $other_normalize = 0;
             $other_skip_domain = 1;
+            $resource->{direction} = "out";
         # rewrite cf to conference to "conference"
         } elsif($item->destination_user_in =~ /^conf=/ &&
            $item->destination_domain_in eq "conference.local") {
             $resource->{other_cli} = "conference";
             $other_normalize = 0;
             $other_skip_domain = 1;
+            $resource->{direction} = "out";
         # rewrite cf to auto-attendant to "auto-attendant"
         } elsif($item->destination_user_in =~ /^auto-attendant$/ &&
            $item->destination_domain_in eq "app.local") {
             $resource->{other_cli} = "auto-attendant";
             $other_normalize = 0;
             $other_skip_domain = 1;
+            $resource->{direction} = "out";
         # for intra pbx in calls, use extension as other cli
         } elsif($intra && $src_sub && $src_sub->pbx_extension) {
             $resource->{other_cli} = $src_sub->pbx_extension;
