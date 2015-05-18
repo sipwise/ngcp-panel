@@ -1196,7 +1196,8 @@ sub check_dset_autoattendant_status {
     return $status;
 }
 
-# order: voicemail_echo_number, cli, primary_number, '0'
+# echo-order: voicemail_echo_number, cli, primary_number, uuid
+# cf-order: primary_number, uuid
 sub update_voicemail_number {
     my (%params) = @_;
 
@@ -1206,7 +1207,6 @@ sub update_voicemail_number {
     my $prov_subs = $subscriber->provisioning_voip_subscriber;
     return unless $prov_subs;
     my $voicemail_user = $prov_subs->voicemail_user;
-    my $new_cli;
 
     my $echonumber_pref_rs = NGCP::Panel::Utils::Preferences::get_usr_preference_rs(
         schema => $schema,
@@ -1218,25 +1218,29 @@ sub update_voicemail_number {
         prov_subscriber => $prov_subs,
         attribute => 'cli',
     );
-    if (defined $echonumber_pref_rs->first) {
-        $new_cli = $echonumber_pref_rs->first->value;
-    } elsif (defined $cli_pref_rs->first) {
-        $new_cli = $cli_pref_rs->first->value;
-    } elsif (defined $subscriber->primary_number) {
+
+    my $cf_cli, $echo_cli;
+    if (defined $subscriber->primary_number) {
         my $n = $subscriber->primary_number;
-        $new_cli = $n->cc . ($n->ac // '') . $n->sn;
+        $cf_cli = $echo_cli = $n->cc . ($n->ac // '') . $n->sn;
     } else {
-        $new_cli = $subscriber->uuid;
+        $cf_cli = $echo_cli = $subscriber->uuid;
+    }
+
+    if (defined $echonumber_pref_rs->first) {
+        $echo_cli = $echonumber_pref_rs->first->value;
+    } elsif (defined $cli_pref_rs->first) {
+        $echo_cli = $cli_pref_rs->first->value;
     }
 
     if (defined $voicemail_user) {
-        $voicemail_user->update({ mailbox => $new_cli });
+        $voicemail_user->update({ mailbox => $echo_cli });
     }
 
     for my $cfset ($prov_subs->voip_cf_destination_sets->all) {
         for my $cf ($cfset->voip_cf_destinations->all) {
             if($cf->destination =~ /\@voicebox\.local$/) {
-                $cf->update({ destination => 'sip:vmu'.$new_cli.'@voicebox.local' });
+                $cf->update({ destination => 'sip:vmu'.$cf_cli.'@voicebox.local' });
             }
         }
     }
