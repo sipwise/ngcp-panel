@@ -1,3 +1,12 @@
+ngcp-panel (1.7.1.28+0~mr3.7.1.28) unstable; urgency=low
+
+  [ Andreas Granig ]
+  * [c508b36] MT#10537 API: fix calllist dir for srv calls
+
+  [ Sipwise Jenkins Builder ]
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Tue, 19 May 2015 15:37:54 +0200
+
 ngcp-panel (1.7.1.27+0~mr3.7.1.27) unstable; urgency=low
 
   [ Andreas Granig ]
