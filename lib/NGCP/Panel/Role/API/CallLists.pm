@@ -123,7 +123,8 @@ sub resource_from_item {
     # out by default
     if(defined $sub && $sub->uuid eq $item->destination_user_id) {
         $resource->{direction} = "in";
-    } elsif (defined $cust && $item->destination_account_id == $cust->id) {
+    } elsif (defined $cust && $item->destination_account_id == $cust->id 
+        && ( $item->source_account_id != $cust->id || $item->destination_user_id ) ) {
         $resource->{direction} = "in";
     } else {
         $resource->{direction} = "out";
@@ -242,7 +243,7 @@ sub resource_from_item {
             number => $resource->{other_cli}, direction => "caller_out"
         );
     }
-    if (($sub // $own_sub)->status eq "terminated") {
+    if ( (!($sub // $own_sub)) || (($sub // $own_sub)->status eq "terminated") ) {
         $resource->{own_cli} .= " (terminated)";
     }
     $resource->{status} = $item->call_status;
