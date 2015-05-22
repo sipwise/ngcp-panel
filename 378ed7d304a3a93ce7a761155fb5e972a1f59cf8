@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "3a3291f1_49cac6a2",
+        "filename": "lib/NGCP/Panel/Role/API/CallLists.pm",
+        "patchSetId": 2
+      },
+      "lineNbr": 231,
+      "author": {
+        "id": 1000009
+      },
+      "writtenOn": "2015-05-22T12:17:38Z",
+      "side": 1,
+      "message": "I think here we dont need voip_subscriber method too aready",
+      "range": {
+        "startLine": 231,
+        "startChar": 43,
+        "endLine": 231,
+        "endChar": 68
+      },
+      "revId": "378ed7d304a3a93ce7a761155fb5e972a1f59cf8",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    }
+  ]
+}
