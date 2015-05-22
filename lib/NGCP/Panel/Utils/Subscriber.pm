@@ -1049,6 +1049,11 @@ sub apply_rewrite {
     my ($field, $direction) = split /_/, $dir;
     $dir = "rewrite_".$dir."_dpid";
 
+    unless ($subscriber && $subscriber->provisioning_voip_subscriber) {
+        $c->log->warn('could not apply rewrite: subscriber might have been terminated.');
+        return $callee;
+    }
+
     my $rwr_rs = NGCP::Panel::Utils::Preferences::get_usr_preference_rs(
         c => $c, attribute => $dir,
         prov_subscriber => $subscriber->provisioning_voip_subscriber,
