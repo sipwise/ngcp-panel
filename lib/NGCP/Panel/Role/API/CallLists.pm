@@ -216,6 +216,9 @@ sub resource_from_item {
     if($resource->{own_cli} !~ /^\d+$/) {
         $resource->{own_cli} .= '@'.$own_domain;
     } elsif($own_normalize) {
+        if (($sub // $own_sub)->status eq "terminated") {
+            $resource->{own_cli} .= " (terminated)";
+        }
         $resource->{own_cli} = NGCP::Panel::Utils::Subscriber::apply_rewrite(
             c => $c, subscriber => $sub // $own_sub,
             number => $resource->{own_cli}, direction => "caller_out"
@@ -227,6 +230,9 @@ sub resource_from_item {
     } elsif(!$other_skip_domain && $resource->{other_cli} !~ /^\d+$/) {
         $resource->{other_cli} .= '@'.$other_domain;
     } elsif($other_normalize) {
+        if (($sub // $own_sub)->status eq "terminated") {
+            $resource->{other_cli} .= " (terminated)";
+        }
         $resource->{other_cli} = NGCP::Panel::Utils::Subscriber::apply_rewrite(
             c => $c, subscriber => $sub // $own_sub,
             number => $resource->{other_cli}, direction => "caller_out"
