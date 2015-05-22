@@ -232,6 +232,9 @@ sub resource_from_item {
             number => $resource->{other_cli}, direction => "caller_out"
         );
     }
+    if (($sub // $own_sub)->status eq "terminated") {
+        $resource->{own_cli} .= " (terminated)";
+    }
     $resource->{status} = $item->call_status;
     $resource->{type} = $item->call_type;
 
