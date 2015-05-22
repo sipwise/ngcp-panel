@@ -130,6 +130,8 @@ sub resource_from_item {
     }
 
     my ($src_sub, $dst_sub);
+    my $billing_src_sub = $item->source_subscriber;
+    my $billing_dst_sub = $item->destination_subscriber;
     if($item->source_subscriber && $item->source_subscriber->provisioning_voip_subscriber) {
         $src_sub = $item->source_subscriber->provisioning_voip_subscriber;
     }
@@ -209,13 +211,13 @@ sub resource_from_item {
     }
 
     my $own_sub = ($resource->{direction} eq "out")
-        ? $src_sub
-        : $dst_sub;
+        ? $billing_src_sub
+        : $billing_dst_sub;
     if($resource->{own_cli} !~ /^\d+$/) {
         $resource->{own_cli} .= '@'.$own_domain;
     } elsif($own_normalize) {
         $resource->{own_cli} = NGCP::Panel::Utils::Subscriber::apply_rewrite(
-            c => $c, subscriber => $sub // $own_sub->voip_subscriber,
+            c => $c, subscriber => $sub // $own_sub,
             number => $resource->{own_cli}, direction => "caller_out"
         );
     }
@@ -226,7 +228,7 @@ sub resource_from_item {
         $resource->{other_cli} .= '@'.$other_domain;
     } elsif($other_normalize) {
         $resource->{other_cli} = NGCP::Panel::Utils::Subscriber::apply_rewrite(
-            c => $c, subscriber => $sub // $own_sub->voip_subscriber,
+            c => $c, subscriber => $sub // $own_sub,
             number => $resource->{other_cli}, direction => "caller_out"
         );
     }
