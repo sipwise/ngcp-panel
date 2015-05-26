@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "3a3291f1_8c267cb9",
+        "filename": "lib/NGCP/Panel/Role/API/CallLists.pm",
+        "patchSetId": 2
+      },
+      "lineNbr": 236,
+      "author": {
+        "id": 1000005
+      },
+      "writtenOn": "2015-05-26T11:53:15Z",
+      "side": 1,
+      "message": "I know it\u0027s my part, but don\u0027t you think we could add something like\n\nif(($sub // $own_sub) \u0026\u0026 ...)\n\nto make sure, we don\u0027t fail again randomly?",
+      "revId": "54245adbfe5e64970d17a2161170e79c5461ecff",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    }
+  ]
+}
