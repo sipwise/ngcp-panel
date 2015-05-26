@@ -1,3 +1,18 @@
+ngcp-panel (1.8.1.14+0~mr3.8.1.14) unstable; urgency=low
+
+  [ Andreas Granig ]
+  * [c13a822] MT#10537 Strip sems suffix from cid
+
+  [ Gerhard Jungwirth ]
+  * [c45ee01] MT#12813 fix calllist subscriber retrieval
+
+  [ Irina Peshinskaya ]
+  * [bc88915] MT#12813 Dont set direction to in for empty destination_user_id
+
+  [ Sipwise Jenkins Builder ]
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Tue, 26 May 2015 16:22:02 +0200
+
 ngcp-panel (1.8.1.13+0~mr3.8.1.13) unstable; urgency=low
 
   [ Andreas Granig ]
