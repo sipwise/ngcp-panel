@@ -208,6 +208,16 @@ sub resource_from_item {
         $other_domain = $item->source_domain;
     }
 
+
+    # for inbound calls, always show type call, even if it's
+    # a call forward
+    if($resource->{direction} eq "in") {
+        $resource->{type} = "call";
+    }
+
+    # strip any _b2b-1 and _pbx-1 to allow grouping of calls
+    $resource->{call_id} =~ s/(_b2b-1)|(_pbx-1)//g;
+
     my $own_sub = ($resource->{direction} eq "out")
         ? $src_sub
         : $dst_sub;
