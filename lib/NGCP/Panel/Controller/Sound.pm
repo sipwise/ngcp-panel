@@ -581,42 +581,17 @@ sub handles_edit :Chained('handles_base') :PathPart('edit') {
             my $target_codec = 'WAV';
 
             # clear audio caches
-            SWITCH: for ($file_result->handle->group->name) {
-                /^calling_card$/ && do {
-                    try {
-                        NGCP::Panel::Utils::Sems::clear_audio_cache($c, "appserver", $file_result->set_id, $file_result->handle->name);
-                    } catch ($e) {
-                        NGCP::Panel::Utils::Message->error(
-                            c => $c,
-                            error => "Failed to clear audio cache for " . $file_result->handle->group->name . " at appserver",
-                            desc  => $c->loc('Failed to clear audio cache.'),
-                        );
-                        NGCP::Panel::Utils::Navigation::back_or($c, $c->stash->{handles_base_uri});
-                    }
-                    last SWITCH;
-                };
-                /^(pbx|music_on_hold|voucher_recharge|play_balance|conference|digits)$/ && do {
-                    my $service;
-                    try {
-                        if(!$file_result->set->contract_id) {
-                            $service = "appserver";
-                            NGCP::Panel::Utils::Sems::clear_audio_cache($c, $service, $file_result->set_id, $file_result->handle->name);
-                        } else {
-                            $service = "pbx";
-                            NGCP::Panel::Utils::Sems::clear_audio_cache($c, $service, $file_result->set_id, $file_result->handle->name);
-                        }
-                    } catch ($e) {
-                        NGCP::Panel::Utils::Message->error(
-                            c => $c,
-                            error => "Failed to clear audio cache for " . $file_result->handle->group->name . " on $service",
-                            desc  => $c->loc('Failed to clear audio cache.'),
-                        );
-                        NGCP::Panel::Utils::Navigation::back_or($c, $c->stash->{handles_base_uri});
-                    }
-                    last SWITCH;
-                };
-                # default
-            } # SWITCH
+            my $group_name = $file_result->handle->group->name;
+            try {
+                NGCP::Panel::Utils::Sems::clear_audio_cache($c, $file_result->set_id, $file_result->handle->name, $group_name);
+            } catch ($e) {
+                NGCP::Panel::Utils::Message->error(
+                    c => $c,
+                    error => "Failed to clear audio cache for " . $group_name . " at appserver",
+                    desc  => $c->loc('Failed to clear audio cache.'),
+                );
+                NGCP::Panel::Utils::Navigation::back_or($c, $c->stash->{handles_base_uri});
+            }
 
             if ($file_result->handle->name eq 'music_on_hold' && !$file_result->set->contract_id) {
                 $target_codec = 'PCMA';
