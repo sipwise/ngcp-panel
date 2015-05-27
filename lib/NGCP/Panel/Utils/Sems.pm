@@ -170,6 +170,26 @@ EOF
 }
 
 sub clear_audio_cache {
+    my ($c, $sound_set_id, $handle_name, $group_name) = @_;
+
+    my @services;
+    if ($group_name eq "calling_card") {
+        @services = ("appserver");
+    } elsif ($group_name eq "pbx" )  {
+        @services = ("pbx");
+    } elsif ($group_name eq "digits") {
+        @services = ("pbx", "appserver");
+    } elsif ($group_name =~ /^(|music_on_hold|voucher_recharge|play_balance|conference)$/) {
+        @services = ("appserver");
+    }
+
+    for my $service (@services) {
+        _clear_audio_cache_service($c, $service, $sound_set_id, $handle_name);
+    }
+    return;
+}
+
+sub _clear_audio_cache_service {
     my ($c, $service, $sound_set_id, $handle_name) = @_;
 
     my $dispatcher = NGCP::Panel::Utils::XMLDispatcher->new;
