@@ -175,18 +175,28 @@ sub update_item {
     }
     $resource->{handle_id} = $handle->id;
 
-    SWITCH: for ($handle->group->name) {
-        /^calling_card$/ && do {
-            NGCP::Panel::Utils::Sems::clear_audio_cache($c, "appserver", $set->id, $handle->name);
-            last SWITCH;
-        };
-        /^(pbx|music_on_hold)$/ && do {
-            my $service = $set->contract_id ? "pbx" : "appserver";
+    # clear audio caches
+    my $group_name = $handle->group->name;
+    my @services;
+    if ($group_name eq "calling_card") {
+        @services = ("appserver");
+    } elsif ($group_name eq "pbx" )  {
+        @services = ("pbx");
+    } elsif ($group_name eq "digits") {
+        @services = ("pbx", "appserver");
+    } elsif ($group_name =~ /^(|music_on_hold|voucher_recharge|play_balance|conference)$/) {
+        @services = ("appserver");
+    }
+
+    try {
+        for my $service (@services) {
             NGCP::Panel::Utils::Sems::clear_audio_cache($c, $service, $set->id, $handle->name);
-            last SWITCH;
-        };
-        # default
-    } # SWITCH
+        }
+    } catch ($e) {
+        $c->log->error("Failed to clear audio cache for " . $group_name . " at appserver",);
+        $self->error($c, HTTP_UNPROCESSABLE_ENTITY, 'Failed to clear audio cache.');
+        last;
+    }
 
     if($resource->{handle} eq 'music_on_hold' && !$set->contract_id) {
         $resource->{codec} = 'PCMA';
