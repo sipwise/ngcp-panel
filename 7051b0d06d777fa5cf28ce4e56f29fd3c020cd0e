@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "3a3291f1_470e2d36",
+        "filename": "lib/NGCP/Panel/Controller/Sound.pm",
+        "patchSetId": 1
+      },
+      "lineNbr": 594,
+      "author": {
+        "id": 1000009
+      },
+      "writtenOn": "2015-05-27T09:56:37Z",
+      "side": 1,
+      "message": "Maybe it would be convenient to move this mapping to some utils too? As I can see it is just the same",
+      "range": {
+        "startLine": 584,
+        "startChar": 0,
+        "endLine": 594,
+        "endChar": 13
+      },
+      "revId": "7051b0d06d777fa5cf28ce4e56f29fd3c020cd0e",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    }
+  ]
+}
