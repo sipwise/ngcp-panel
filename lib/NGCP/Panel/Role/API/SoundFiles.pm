@@ -26,7 +26,7 @@ sub transcode_data {
             $filename, $from_codec, $resource->{codec},
         );
     } catch($e) {
-        $self->log->error("failed to transcode file: $e");
+        $c->log->error("failed to transcode file: $e");
         $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Failed to transcode file");
         return;
     }
@@ -175,18 +175,15 @@ sub update_item {
     }
     $resource->{handle_id} = $handle->id;
 
-    SWITCH: for ($handle->group->name) {
-        /^calling_card$/ && do {
-            NGCP::Panel::Utils::Sems::clear_audio_cache($c, "appserver", $set->id, $handle->name);
-            last SWITCH;
-        };
-        /^(pbx|music_on_hold)$/ && do {
-            my $service = $set->contract_id ? "pbx" : "appserver";
-            NGCP::Panel::Utils::Sems::clear_audio_cache($c, $service, $set->id, $handle->name);
-            last SWITCH;
-        };
-        # default
-    } # SWITCH
+    # clear audio caches
+    my $group_name = $handle->group->name;
+    try {
+        NGCP::Panel::Utils::Sems::clear_audio_cache($c, $set->id, $handle->name, $group_name);
+    } catch ($e) {
+        $c->log->error("Failed to clear audio cache for " . $group_name . " at appserver",);
+        $self->error($c, HTTP_UNPROCESSABLE_ENTITY, 'Failed to clear audio cache.');
+        last;
+    }
 
     if($resource->{handle} eq 'music_on_hold' && !$set->contract_id) {
         $resource->{codec} = 'PCMA';
