@@ -2863,8 +2863,7 @@ msgstr ""
 msgid "Failed to change account balance!"
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/Sound.pm:592
-#: lib/NGCP/Panel/Controller/Sound.pm:612
+#: lib/NGCP/Panel/Controller/Sound.pm:591
 msgid "Failed to clear audio cache."
 msgstr "Cancellazione cache audio fallita."
 
@@ -3148,7 +3147,7 @@ msgstr ""
 msgid "Failed to delete rewrite rule set"
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/Sound.pm:695
+#: lib/NGCP/Panel/Controller/Sound.pm:670
 msgid "Failed to delete sound handle"
 msgstr "Eliminazione riferimento suono fallita."
 
@@ -3217,7 +3216,7 @@ msgstr ""
 msgid "Failed to handle preference"
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/Sound.pm:855
+#: lib/NGCP/Panel/Controller/Sound.pm:830
 msgid "Failed to load default sound files."
 msgstr ""
 
@@ -3282,7 +3281,7 @@ msgstr ""
 msgid "Failed to terminate subscriber"
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/Sound.pm:718
+#: lib/NGCP/Panel/Controller/Sound.pm:693
 msgid "Failed to transcode audio file"
 msgstr "Transcodifica file audio fallita."
 
@@ -3423,7 +3422,7 @@ msgstr ""
 msgid "Failed to update rewrite rule set"
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/Sound.pm:669
+#: lib/NGCP/Panel/Controller/Sound.pm:644
 msgid "Failed to update sound handle"
 msgstr "Aggiornamento riferimento suono fallito."
 
@@ -3467,7 +3466,7 @@ msgstr ""
 msgid "Failed to update trusted source"
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/Sound.pm:653
+#: lib/NGCP/Panel/Controller/Sound.pm:628
 msgid "Failed to update uploaded sound handle"
 msgstr "Aggiornamento riferimento suono caricato fallito."
 
@@ -6648,15 +6647,15 @@ msgstr "Id di riferimento suono non esistente"
 msgid "Sound handle not found"
 msgstr "Riferimento suono non trovato"
 
-#: lib/NGCP/Panel/Controller/Sound.pm:689
+#: lib/NGCP/Panel/Controller/Sound.pm:664
 msgid "Sound handle successfully deleted"
 msgstr "Riferimento suono eliminato con successo"
 
-#: lib/NGCP/Panel/Controller/Sound.pm:663
+#: lib/NGCP/Panel/Controller/Sound.pm:638
 msgid "Sound handle successfully updated"
 msgstr "Riferimento suono aggiornato con successo"
 
-#: lib/NGCP/Panel/Controller/Sound.pm:647
+#: lib/NGCP/Panel/Controller/Sound.pm:622
 msgid "Sound handle successfully uploaded"
 msgstr "Riferimento suono caricato con successo"
 
@@ -6672,7 +6671,7 @@ msgstr "Set di suoni creato con successo"
 msgid "Sound set successfully deleted"
 msgstr "Set di suoni eliminato con successo"
 
-#: lib/NGCP/Panel/Controller/Sound.pm:849
+#: lib/NGCP/Panel/Controller/Sound.pm:824
 msgid "Sound set successfully loaded with default files."
 msgstr ""
 
@@ -8666,7 +8665,7 @@ msgstr "Numero massimo delle chiamate contemporanee complessive"
 msgid "Transcode of audio file failed"
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/Sound.pm:633
+#: lib/NGCP/Panel/Controller/Sound.pm:608
 msgid "Transcoding audio file failed"
 msgstr "Transcodifica file audio fallita"
 

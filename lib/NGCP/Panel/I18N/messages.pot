@@ -2256,7 +2256,7 @@ msgstr ""
 msgid "Failed to change account balance!"
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/Sound.pm:592 lib/NGCP/Panel/Controller/Sound.pm:612
+#: lib/NGCP/Panel/Controller/Sound.pm:591
 msgid "Failed to clear audio cache."
 msgstr ""
 
@@ -2534,7 +2534,7 @@ msgstr ""
 msgid "Failed to delete rewrite rule set"
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/Sound.pm:695
+#: lib/NGCP/Panel/Controller/Sound.pm:670
 msgid "Failed to delete sound handle"
 msgstr ""
 
@@ -2602,7 +2602,7 @@ msgstr ""
 msgid "Failed to handle preference"
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/Sound.pm:855
+#: lib/NGCP/Panel/Controller/Sound.pm:830
 msgid "Failed to load default sound files."
 msgstr ""
 
@@ -2664,7 +2664,7 @@ msgstr ""
 msgid "Failed to terminate subscriber"
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/Sound.pm:718
+#: lib/NGCP/Panel/Controller/Sound.pm:693
 msgid "Failed to transcode audio file"
 msgstr ""
 
@@ -2801,7 +2801,7 @@ msgstr ""
 msgid "Failed to update rewrite rule set"
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/Sound.pm:669
+#: lib/NGCP/Panel/Controller/Sound.pm:644
 msgid "Failed to update sound handle"
 msgstr ""
 
@@ -2845,7 +2845,7 @@ msgstr ""
 msgid "Failed to update trusted source"
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/Sound.pm:653
+#: lib/NGCP/Panel/Controller/Sound.pm:628
 msgid "Failed to update uploaded sound handle"
 msgstr ""
 
@@ -5618,15 +5618,15 @@ msgstr ""
 msgid "Sound handle not found"
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/Sound.pm:689
+#: lib/NGCP/Panel/Controller/Sound.pm:664
 msgid "Sound handle successfully deleted"
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/Sound.pm:663
+#: lib/NGCP/Panel/Controller/Sound.pm:638
 msgid "Sound handle successfully updated"
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/Sound.pm:647
+#: lib/NGCP/Panel/Controller/Sound.pm:622
 msgid "Sound handle successfully uploaded"
 msgstr ""
 
@@ -5642,7 +5642,7 @@ msgstr ""
 msgid "Sound set successfully deleted"
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/Sound.pm:849
+#: lib/NGCP/Panel/Controller/Sound.pm:824
 msgid "Sound set successfully loaded with default files."
 msgstr ""
 
@@ -7342,7 +7342,7 @@ msgstr ""
 msgid "Transcode of audio file failed"
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/Sound.pm:633
+#: lib/NGCP/Panel/Controller/Sound.pm:608
 msgid "Transcoding audio file failed"
 msgstr ""
 
