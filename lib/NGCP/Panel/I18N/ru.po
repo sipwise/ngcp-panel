@@ -102,7 +102,7 @@ msgstr ""
 #: lib/NGCP/Panel/Controller/Administrator.pm:29
 #: lib/NGCP/Panel/Controller/Billing.pm:323
 #: lib/NGCP/Panel/Controller/Billing.pm:36
-#: lib/NGCP/Panel/Controller/Billing.pm:684
+#: lib/NGCP/Panel/Controller/Billing.pm:652
 #: lib/NGCP/Panel/Controller/Billing.pm:98
 #: lib/NGCP/Panel/Controller/Contact.pm:32
 #: lib/NGCP/Panel/Controller/Contract.pm:25
@@ -193,9 +193,7 @@ msgstr "создано %1 из максимально доступных %2 аб
 msgid "%1<span class=\"pull-right\">for %2s</span>"
 msgstr "%1<span class=\"pull-right\">для %2s</span>"
 
-#: lib/NGCP/Panel/Controller/API/BillingFees.pm:232
-#: lib/NGCP/Panel/Controller/Billing.pm:484
-#: lib/NGCP/Panel/Controller/Voucher.pm:303
+#: lib/NGCP/Panel/Controller/Voucher.pm:303 lib/NGCP/Panel/Utils/Billing.pm:58
 msgid ", but skipped the following line numbers: "
 msgstr ", но пропущены следующие номера строк: "
 
@@ -803,8 +801,7 @@ msgstr "Цена не существует!"
 msgid "Billing Fee successfully created!"
 msgstr "Цена успешно создана!"
 
-#: lib/NGCP/Panel/Controller/API/BillingFees.pm:230
-#: lib/NGCP/Panel/Controller/Billing.pm:482
+#: lib/NGCP/Panel/Utils/Billing.pm:56
 msgid "Billing Fee successfully uploaded"
 msgstr "Цена успешно обновлена!"
 
@@ -856,7 +853,7 @@ msgstr ""
 msgid "Billing Zone"
 msgstr "Тарифная зона"
 
-#: lib/NGCP/Panel/Controller/Billing.pm:605
+#: lib/NGCP/Panel/Controller/Billing.pm:573
 msgid "Billing Zone successfully created"
 msgstr "Тарифная зона успешно создана"
 
@@ -864,15 +861,15 @@ msgstr "Тарифная зона успешно создана"
 msgid "Billing Zones"
 msgstr "Тарифные зоны"
 
-#: lib/NGCP/Panel/Controller/Billing.pm:552
+#: lib/NGCP/Panel/Controller/Billing.pm:520
 msgid "Billing fee not found!"
 msgstr "Цена не найдена!"
 
-#: lib/NGCP/Panel/Controller/Billing.pm:535
+#: lib/NGCP/Panel/Controller/Billing.pm:503
 msgid "Billing fee successfully changed!"
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/Billing.pm:561
+#: lib/NGCP/Panel/Controller/Billing.pm:529
 msgid "Billing fee successfully deleted!"
 msgstr ""
 
@@ -904,11 +901,11 @@ msgstr ""
 msgid "Billing zone"
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/Billing.pm:645
+#: lib/NGCP/Panel/Controller/Billing.pm:613
 msgid "Billing zone does not exist!"
 msgstr "Тарифная зона не существует!"
 
-#: lib/NGCP/Panel/Controller/Billing.pm:661
+#: lib/NGCP/Panel/Controller/Billing.pm:629
 msgid "Billing zone successfully deleted"
 msgstr "Тарифная зона успешно удалена"
 
@@ -2391,7 +2388,7 @@ msgstr ""
 msgid "Dialogic Settings"
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/Peering.pm:437
+#: lib/NGCP/Panel/Controller/Peering.pm:446
 msgid "Dialogic successfully flashed."
 msgstr ""
 
@@ -2732,7 +2729,7 @@ msgstr ""
 msgid "End"
 msgstr "Конец"
 
-#: lib/NGCP/Panel/Controller/Billing.pm:686
+#: lib/NGCP/Panel/Controller/Billing.pm:654
 msgid "End Date"
 msgstr "Конечная Дата"
 
@@ -2898,7 +2895,7 @@ msgstr ""
 msgid "Failed to create billing voucher"
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/Billing.pm:611
+#: lib/NGCP/Panel/Controller/Billing.pm:579
 msgid "Failed to create billing zone"
 msgstr ""
 
@@ -2967,7 +2964,7 @@ msgstr ""
 msgid "Failed to create peering group"
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/Peering.pm:579
+#: lib/NGCP/Panel/Controller/Peering.pm:588
 msgid "Failed to create peering rule"
 msgstr ""
 
@@ -2997,7 +2994,7 @@ msgstr ""
 msgid "Failed to create sound set"
 msgstr "Не удалось создать набор звуков"
 
-#: lib/NGCP/Panel/Controller/Billing.pm:937
+#: lib/NGCP/Panel/Controller/Billing.pm:905
 msgid "Failed to create special offpeak entry"
 msgstr ""
 
@@ -3050,7 +3047,7 @@ msgstr ""
 msgid "Failed to delete auto attendant slot"
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/Billing.pm:668
+#: lib/NGCP/Panel/Controller/Billing.pm:636
 msgid "Failed to delete billing zone"
 msgstr ""
 
@@ -3107,7 +3104,7 @@ msgstr ""
 msgid "Failed to delete peering group"
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/Peering.pm:681
+#: lib/NGCP/Panel/Controller/Peering.pm:690
 msgid "Failed to delete peering rule"
 msgstr ""
 
@@ -3141,7 +3138,7 @@ msgstr "Не удалось удалить запись"
 msgid "Failed to delete sound set"
 msgstr "Не удалось удалить набор звуков"
 
-#: lib/NGCP/Panel/Controller/Billing.pm:897
+#: lib/NGCP/Panel/Controller/Billing.pm:865
 msgid "Failed to delete special offpeak entry"
 msgstr ""
 
@@ -3177,7 +3174,7 @@ msgstr "Не удалось найти зарегистрированное ус
 msgid "Failed to find voicemail user."
 msgstr "Не удалось найти пользователя голосовой почты."
 
-#: lib/NGCP/Panel/Controller/Peering.pm:443
+#: lib/NGCP/Panel/Controller/Peering.pm:452
 msgid "Failed to flash dialogic"
 msgstr ""
 
@@ -3372,7 +3369,7 @@ msgstr ""
 msgid "Failed to update peering group"
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/Peering.pm:652
+#: lib/NGCP/Panel/Controller/Peering.pm:661
 msgid "Failed to update peering rule"
 msgstr ""
 
@@ -3416,7 +3413,7 @@ msgstr "Не удалось обновить звуковой указатель
 msgid "Failed to update sound set"
 msgstr "Не удалось обновить набор звуков"
 
-#: lib/NGCP/Panel/Controller/Billing.pm:872
+#: lib/NGCP/Panel/Controller/Billing.pm:840
 msgid "Failed to update special offpeak entry"
 msgstr ""
 
@@ -3460,7 +3457,7 @@ msgstr "Не удалось обновить загруженный звуков
 msgid "Failed to update voicemail setting"
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/Billing.pm:494
+#: lib/NGCP/Panel/Controller/Billing.pm:462
 msgid "Failed to upload Billing Fees"
 msgstr "Не удалось загрузить цены"
 
@@ -3638,7 +3635,7 @@ msgstr "Бесплатные минуты"
 msgid "Free-Time Balance"
 msgstr "Баланс бесплатных минут"
 
-#: lib/NGCP/Panel/Controller/Billing.pm:776
+#: lib/NGCP/Panel/Controller/Billing.pm:744
 #: lib/NGCP/Panel/Utils/DbStrings.pm:1173
 msgid "Friday"
 msgstr "Пятница"
@@ -4146,7 +4143,7 @@ msgstr "Обнаружен некорректный id администрато�
 msgid "Invalid billing fee id detected!"
 msgstr "Обнаружен некорректный id для цены в биллинге!"
 
-#: lib/NGCP/Panel/Controller/Billing.pm:633
+#: lib/NGCP/Panel/Controller/Billing.pm:601
 msgid "Invalid billing zone id detected"
 msgstr "Обнаружен некорректный id для тарифной зоны"
 
@@ -4228,11 +4225,11 @@ msgstr "Обнаружен некорректный id блока номеров
 msgid "Invalid password reset attempt."
 msgstr "Не удачная попытка сброса пароля."
 
-#: lib/NGCP/Panel/Controller/Billing.pm:817
+#: lib/NGCP/Panel/Controller/Billing.pm:785
 msgid "Invalid peaktime date id detected!"
 msgstr "Обнаружен некорректный id бизнес-времени (peaktime)"
 
-#: lib/NGCP/Panel/Controller/Peering.pm:600
+#: lib/NGCP/Panel/Controller/Peering.pm:609
 msgid "Invalid peering rule id detected"
 msgstr "Обнаружен некорректный id SIP Транк правила"
 
@@ -4814,7 +4811,7 @@ msgstr "Модель"
 msgid "Model type"
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/Billing.pm:772
+#: lib/NGCP/Panel/Controller/Billing.pm:740
 #: lib/NGCP/Panel/Utils/DbStrings.pm:1129
 msgid "Monday"
 msgstr "Понедельник"
@@ -5015,7 +5012,7 @@ msgstr "Новые сообщения"
 msgid "New Name"
 msgstr "Новое имя"
 
-#: lib/NGCP/Panel/Controller/Billing.pm:434
+#: lib/NGCP/Panel/Controller/Billing.pm:432
 msgid "No Billing Fee file specified!"
 msgstr "Не указан файл с ценами!"
 
@@ -5461,7 +5458,7 @@ msgstr "Политика перебора PBX группы"
 msgid "Pbx hunt timeout"
 msgstr "Таймаут перебора PBX группы"
 
-#: lib/NGCP/Panel/Controller/Billing.pm:830
+#: lib/NGCP/Panel/Controller/Billing.pm:798
 msgid "Peaktime date does not exist!"
 msgstr "Указанное Бизнес-время не существует!"
 
@@ -5523,7 +5520,7 @@ msgstr "SIP Транк группы"
 msgid "Peering Rule"
 msgstr "SIP Транк правил"
 
-#: lib/NGCP/Panel/Controller/Peering.pm:612
+#: lib/NGCP/Panel/Controller/Peering.pm:621
 msgid "Peering Rule does not exist"
 msgstr "SIP Транк правило не существует"
 
@@ -5554,15 +5551,15 @@ msgstr "SIP Транк группа успешно создана"
 msgid "Peering group successfully updated"
 msgstr "SIP Транк группа успешно обновлена"
 
-#: lib/NGCP/Panel/Controller/Peering.pm:646
+#: lib/NGCP/Panel/Controller/Peering.pm:655
 msgid "Peering rule successfully changed"
 msgstr "SIP Транк группа успешно изменена"
 
-#: lib/NGCP/Panel/Controller/Peering.pm:573
+#: lib/NGCP/Panel/Controller/Peering.pm:582
 msgid "Peering rule successfully created"
 msgstr "SIP Транк правило успешно создано"
 
-#: lib/NGCP/Panel/Controller/Peering.pm:675
+#: lib/NGCP/Panel/Controller/Peering.pm:684
 msgid "Peering rule successfully deleted"
 msgstr "SIP Транк правило успешно удалено"
 
@@ -6356,7 +6353,7 @@ msgstr ""
 "Аналогично \"ncos\" но может быть установлено только администраторами и "
 "применяется перед пользовательскими настройками."
 
-#: lib/NGCP/Panel/Controller/Billing.pm:777
+#: lib/NGCP/Panel/Controller/Billing.pm:745
 #: lib/NGCP/Panel/Utils/DbStrings.pm:889
 msgid "Saturday"
 msgstr "Суббота"
@@ -6840,15 +6837,15 @@ msgstr "Исходный идентификатор пользователя"
 msgid "Source uuid"
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/Billing.pm:929
+#: lib/NGCP/Panel/Controller/Billing.pm:897
 msgid "Special offpeak entry successfully created"
 msgstr "Специальная offpeak запись успешно создана"
 
-#: lib/NGCP/Panel/Controller/Billing.pm:890
+#: lib/NGCP/Panel/Controller/Billing.pm:858
 msgid "Special offpeak entry successfully deleted"
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/Billing.pm:864
+#: lib/NGCP/Panel/Controller/Billing.pm:832
 msgid "Special offpeak entry successfully updated"
 msgstr "Специальная offpeak запись успешно обновлена"
 
@@ -6954,7 +6951,7 @@ msgstr "Начало"
 msgid "Start - End"
 msgstr "Начало - Конец"
 
-#: lib/NGCP/Panel/Controller/Billing.pm:685
+#: lib/NGCP/Panel/Controller/Billing.pm:653
 msgid "Start Date"
 msgstr "Дата начала"
 
@@ -7339,7 +7336,7 @@ msgstr "IP авторизация успешно обновлена"
 msgid "Successfully updated voicemail setting"
 msgstr "Настройки голосовой почты успешно обновлены"
 
-#: lib/NGCP/Panel/Controller/Billing.pm:778
+#: lib/NGCP/Panel/Controller/Billing.pm:746
 #: lib/NGCP/Panel/Utils/DbStrings.pm:1241
 msgid "Sunday"
 msgstr "Воскресенье"
@@ -8516,7 +8513,7 @@ msgstr "Время записи сообщения."
 msgid "The time the reminder call is triggered."
 msgstr "Время звонка."
 
-#: lib/NGCP/Panel/Controller/Billing.pm:744
+#: lib/NGCP/Panel/Controller/Billing.pm:712
 msgid "The timerange you wanted to delete does not exist"
 msgstr ""
 
@@ -8601,11 +8598,11 @@ msgstr "Номер версии этой прошивки."
 msgid "The voucher code."
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/Billing.pm:706
+#: lib/NGCP/Panel/Controller/Billing.pm:674
 msgid "This weekday does not exist"
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/Billing.pm:775
+#: lib/NGCP/Panel/Controller/Billing.pm:743
 #: lib/NGCP/Panel/Utils/DbStrings.pm:656
 msgid "Thursday"
 msgstr "Четверг"
@@ -8628,11 +8625,11 @@ msgstr "Периоды"
 msgid "Timeout"
 msgstr "Таймаут"
 
-#: lib/NGCP/Panel/Controller/Billing.pm:733
+#: lib/NGCP/Panel/Controller/Billing.pm:701
 msgid "Timerange has been successfully created"
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/Billing.pm:755
+#: lib/NGCP/Panel/Controller/Billing.pm:723
 msgid "Timerange has been successfully deleted"
 msgstr ""
 
@@ -8699,7 +8696,7 @@ msgstr "IP авторизация"
 msgid "Trusted source entry not found"
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/Billing.pm:773
+#: lib/NGCP/Panel/Controller/Billing.pm:741
 #: lib/NGCP/Panel/Utils/DbStrings.pm:1110
 msgid "Tuesday"
 msgstr "Вторник"
@@ -9028,7 +9025,7 @@ msgstr "Web имя пользователя"
 msgid "Web password successfully recovered, please re-login."
 msgstr "Web пароль успешно восстановлен, пожалуйста войдите повторно."
 
-#: lib/NGCP/Panel/Controller/Billing.pm:774
+#: lib/NGCP/Panel/Controller/Billing.pm:742
 #: lib/NGCP/Panel/Utils/DbStrings.pm:473
 msgid "Wednesday"
 msgstr "Среда"
