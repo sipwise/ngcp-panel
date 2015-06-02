@@ -1,3 +1,16 @@
+ngcp-panel (1.8.1.16+0~mr3.8.1.16) unstable; urgency=low
+
+  [ Gerhard Jungwirth ]
+  * [71bda67] MT#11501 dialogic isdn library
+  * [fc09736] MT#12303 configure dialogic for ss7
+  * [dce84cd] MT#12303 dialogic configure snmp and nfs
+  * [0999500] MT#12303 dialogic use optical link for ss7 and isdn
+  * [f55485a] MT#12303 dialogic client use LWP::UserAgent
+
+  [ Sipwise Jenkins Builder ]
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Tue, 02 Jun 2015 14:47:23 +0200
+
 ngcp-panel (1.8.1.15+0~mr3.8.1.15) unstable; urgency=low
 
   [ Gerhard Jungwirth ]
