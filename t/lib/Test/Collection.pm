@@ -82,6 +82,7 @@ has 'DATA_CREATED' => (
 has 'KEEP_CREATED' =>(
     is => 'rw',
     isa => 'Bool',
+    default => 1,
 );
 has 'URI_CUSTOM' =>(
     is => 'rw',
@@ -311,6 +312,14 @@ sub request_delete{
     my $content = $res->decoded_content ? JSON::from_json($res->decoded_content) : '';
     return($req,$res,$content);
 }
+sub request_get{
+    my($self,$uri) = @_;
+    $uri ||= $self->get_uri_current;
+    my $req = HTTP::Request->new('GET', $uri);
+    my $res = $self->request($req);
+    my $content = $res->decoded_content ? JSON::from_json($res->decoded_content) : '';
+    return wantarray ? ($res, $content, $req) : $res;
+}
 
 ############## end of test machine
 ############## start of test collection
@@ -377,6 +386,14 @@ sub clear_test_data_dependent{
     my($req,$res,$content) = $self->request_delete($self->base_uri.$uri);
     return ('204' eq $res->code);
 }
+sub check_embedded {
+    my($self, $embedded, $check_embedded_cb) = @_;
+    defined $check_embedded_cb and $check_embedded_cb->($embedded);
+    foreach my $embedded_name(@{$self->embedded_resources}){
+        ok(exists $embedded->{_links}->{'ngcp:'.$embedded_name}, "check presence of ngcp:$embedded_name relation");
+    }
+}
+
 sub check_list_collection{
     my($self, $check_embedded_cb) = @_;
     my $nexturi = $self->get_uri_collection."?page=1&rows=5";
@@ -418,18 +435,11 @@ sub check_list_collection{
         ok(((ref $list_collection->{_links}->{$hal_name} eq "ARRAY" ) ||
              (ref $list_collection->{_links}->{$hal_name} eq "HASH" ) ), "check if 'ngcp:".$self->name."' is array/hash-ref");
 
-        my $check_embedded = sub {
-            my($embedded) = @_;
-            defined $check_embedded_cb and $check_embedded_cb->($embedded);
-            foreach my $embedded_name(@{$self->embedded_resources}){
-                ok(exists $embedded->{_links}->{'ngcp:'.$embedded_name}, "check presence of ngcp:$embedded_name relation");
-            }
-        };
 
         # it is really strange - we check that the only element of the _links will be hash - and after this treat _embedded as hash too
         #the only thing that saves us - we really will not get into the if ever
         if(ref $list_collection->{_links}->{$hal_name} eq "HASH") {
-            $check_embedded->($list_collection->{_embedded}->{$hal_name});
+            $self->check_embedded($list_collection->{_embedded}->{$hal_name}, $check_embedded_cb);
             push @href, $list_collection->{_links}->{$hal_name}->{href};
         } else {
             foreach my $item_c(@{ $list_collection->{_links}->{$hal_name} }) {
@@ -437,7 +447,7 @@ sub check_list_collection{
             }
             foreach my $item_c(@{ $list_collection->{_embedded}->{$hal_name} }) {
             # these relations are only there if we have zones/fees, which is not the case with an empty model
-                $check_embedded->($item_c);
+                $self->check_embedded($item_c, $check_embedded_cb);
                 push @href, $item_c->{_links}->{self}->{href};
             }
         }
@@ -515,9 +525,10 @@ sub check_get2put{
     delete $item_first_put->{_embedded};
     # check if put is ok
     (defined $put_data_cb) and $put_data_cb->($item_first_put);
-    my ($put_res,$item_put_result) = $self->request_put( $item_first_put, $uri );
+    my ($put_res,$item_put_result,$put_req) = $self->request_put( $item_first_put, $uri );
     is($put_res->code, 200, "check put successful");
     is_deeply($item_first_get, $item_put_result, "check put if unmodified put returns the same");
+    return ($put_res,$item_put_result,$put_req,$item_first_put);
 }
 sub check_put_bundle{
     my($self) = @_;
