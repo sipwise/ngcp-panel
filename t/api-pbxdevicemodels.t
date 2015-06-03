@@ -11,19 +11,86 @@ use HTTP::Request::Common;
 use JSON;
 use Test::More;
 use Data::Dumper;
-
+use File::Basename;
 
 #init test_machine
 my $fake_data = Test::FakeData->new;
+$fake_data->set_data_from_script({
+    'pbxdevicemodels' => {
+        'data' => {
+            json => {
+                model       => "api_test ATA111",
+                #reseller_id=1 is very default, as is seen from the base initial script
+                #reseller_id => "1",
+                reseller_id => sub { return shift->get_id('resellers',@_); },
+                vendor      =>"Cisco",
+                #3.7relative tests
+                type               => "phone",
+                connectable_models => [],
+                extensions_num     => "2",
+                bootstrap_method   => "http",
+                bootstrap_uri      => "",
+                bootstrap_config_http_sync_method            => "GET",
+                bootstrap_config_http_sync_params            => "[% server.uri %]/\$MA",
+                bootstrap_config_http_sync_uri               => "http=>//[% client.ip %]/admin/resync",
+                bootstrap_config_redirect_panasonic_password => "",
+                bootstrap_config_redirect_panasonic_user     => "",
+                bootstrap_config_redirect_polycom_password   => "",
+                bootstrap_config_redirect_polycom_profile    => "",
+                bootstrap_config_redirect_polycom_user       => "",
+                bootstrap_config_redirect_yealink_password   => "",
+                bootstrap_config_redirect_yealink_user       => "",
+                #TODO:implement checking against this number in the controller and api
+                #/3.7relative tests
+                "linerange"=>[
+                    {
+                        "keys" => [
+                            {y => "390", labelpos => "left", x => "510"},
+                            {y => "350", labelpos => "left", x => "510"}
+                        ],
+                        can_private => "1",
+                        can_shared  => "0",
+                        can_blf     => "0",
+                        name        => "Phone Ports api_test",
+                        #TODO: test duplicate creation #"id"=>1311,
+                    },
+                    {
+                        "keys"=>[
+                            {y => "390", labelpos => "left", x => "510"},
+                            {y => "350", labelpos => "left", x => "510"}
+                        ],
+                        can_private => "1",
+                        can_shared  => "0",
+                        #TODO: If I'm right - now we don't check field values against this, because test for pbxdevice xreation is OK
+                        can_blf     => "0",
+                        name        => "Extra Ports api_test",
+                        #TODO: test duplicate creation #"id"=>1311,
+                    }
+                ]
+            },
+            #TODO: can check big files
+            #front_image => [ dirname($0).'/resources/api_devicemodels_front_image.jpg' ],
+            front_image => [ dirname($0).'/resources/empty.txt' ],
+        },
+        'query' => [ ['model','json','model'] ],
+        'create_special'=> sub {
+            my ($self,$name) = @_;
+            my $prev_params = $self->test_machine->get_cloned('content_type');
+            @{$self->test_machine->content_type}{qw/POST PUT/} = (('multipart/form-data') x 2);
+            $self->test_machine->check_create_correct(1);
+            $self->test_machine->set(%$prev_params);
+        },
+        'no_delete_available' => 1,
+    },
+});
 my $test_machine = Test::Collection->new(
     name => 'pbxdevicemodels',
     embedded => [qw/pbxdevicefirmwares/]
 );
+$test_machine->DATA_ITEM_STORE($fake_data->process('pbxdevicemodels'));
 @{$test_machine->content_type}{qw/POST PUT/}    = (('multipart/form-data') x 2);
 $test_machine->methods->{collection}->{allowed} = {map {$_ => 1} qw(GET HEAD OPTIONS POST)};
 $test_machine->methods->{item}->{allowed}       = {map {$_ => 1} qw(GET HEAD OPTIONS PUT PATCH)};
-$test_machine->KEEP_CREATED( 1 );
-$test_machine->DATA_ITEM_STORE($fake_data->process('pbxdevicemodels'));
 
 
 my $connactable_devices={};
