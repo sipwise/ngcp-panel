@@ -1,3 +1,55 @@
+ngcp-panel (1.8.2.1+0~mr3.8.2.1) unstable; urgency=low
+
+  [ Irina Peshinskaya ]
+  * [4525b0c] MT#11147 Create fake data for the devicemodels and pbxdevices tests
+  * [7065b25] MT#5879 Fix invoice generation script location in the embedded doc
+  * [c403819] MT#11147 Move test libraries to the correct location
+  * [0b23d16] MT#11147 Return test data clearing directly in the db
+  * [5c30d30] MT#11147 use default DB account to clear test data from DB
+  * [55f6eac] MT#11147 Don't use brute-forced test data clearing
+  * [86c771e] MT#11147 Left linking extensions and phones only for phones type
+  * [663221f] MT#12499 Apply default email templates to the created reseller
+  * [bdcb610] MT#12603 Use customer email for the new_subscriber letter
+  * [f20bb18] MT#11549 Fix API search by aliases, broken after optimization
+  * [47cb0d6] MT#11667 Some features to calllist
+  * [619b313] MT#12499 Apply default email templates to the created reseller
+  * [e429922] MT#12813 Dont set direction to in for empty destination_user_id
+
+  [ Gerhard Jungwirth ]
+  * [b30790e] MT#11779 fix subscriber form setting admin flag
+  * [75c4977] MT#11777 filter cloudpbx prefs if no feature
+  * [808b98e] MT#12555 allow port in callforward URIs
+  * [994dd4d] MT#12813 calllist api: use correct subscriber
+  * [1631fb1] MT#12813 fix calllist subscriber retrieval
+  * [676fb8f] MT#13007 Reload correct service for sound handles
+  * [e6569b2] MT#11501 dialogic isdn library
+  * [a300bd5] MT#12303 configure dialogic for ss7
+  * [e9ddd83] MT#12303 dialogic configure snmp and nfs
+  * [720f1fe] MT#12303 dialogic use optical link for ss7 and isdn
+  * [14327b5] MT#12303 dialogic client use LWP::UserAgent
+
+  [ Andreas Granig ]
+  * [0d20c57] MT#12615 Don't filter call_id in calllists API
+  * [0ce70b5] MT#12673 Show ncos and rwr prefs desc in API
+  * [42bc7f3] MT#12701 Show cf ncos in API
+  * [475fed9] MT#10537 Fix calllist issues
+  * [0847884] MT#12385 Add reseller_id to EDR head.
+  * [890c7b0] MT#10537 API: fix calllist dir for srv calls
+  * [9b6734c] MT#12901 Read creds from ~/.ngcp-api
+  * [83c945e] MT#12901 Fix testing for tools
+  * [9f8b4f8] MT#10537 Strip sems suffix from cid
+
+  [ Alexander Lutay ]
+  * [a0947b3] MT#12591 Use root:www-data for default certificate file /etc/ngcp-config/ssl/myserver.crt
+  * [7f15ca9] MT#12897 Improve selenium test stability, check "thisshouldnotexist" with table reference
+
+  [ Victor Seva ]
+  * [0fcd910] MT#12923 tools: move tools_bin/ngcp-api-tools to tools/ngcp-api.inc
+
+  [ Sipwise Jenkins Builder ]
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Wed, 03 Jun 2015 16:36:06 +0200
+
 ngcp-panel (1.8.2.0+0~mr3.8.2.0) unstable; urgency=low
 
   [ Gerhard Jungwirth ]
