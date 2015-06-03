@@ -16,15 +16,32 @@ use Clone qw/clone/;
 use Data::Dumper;
 
 
+has 'local_test' => (
+    is => 'rw',
+    isa => 'Str',
+    default => $ENV{LOCAL_TEST} // '',
+);
+has 'catalyst_config' => (
+    is => 'rw',
+    isa => 'HashRef',
+);
+has 'panel_config' => (
+    is => 'rw',
+    isa => 'HashRef',
+);
 has 'ua' => (
     is => 'rw',
     isa => 'LWP::UserAgent',
-    builder => '_init_ua',
+    lazy => 1,
+    builder => 'init_ua',
 );
 has 'base_uri' => (
     is => 'ro',
     isa => 'Str',
-    default => $ENV{CATALYST_SERVER} || ('https://'.hostfqdn.':4443'),
+    default => sub {
+        $_[0]->{local_test} 
+        ? ( length($_[0]->{local_test})>1 ? $_[0]->{local_test} : 'https://127.0.0.1:4443' ) 
+        : $ENV{CATALYST_SERVER} || ('https://'.hostfqdn.':4443')},
 );
 has 'name' => (
     is => 'rw',
@@ -82,6 +99,7 @@ has 'DATA_CREATED' => (
 has 'KEEP_CREATED' =>(
     is => 'rw',
     isa => 'Bool',
+    default => 1,
 );
 has 'URI_CUSTOM' =>(
     is => 'rw',
@@ -130,24 +148,56 @@ sub get_cloned{
     }
     return $state;
 }
-sub _init_ua {
+sub get_catalyst_config{
     my $self = shift;
-    my $valid_ssl_client_cert = $ENV{API_SSL_CLIENT_CERT} ||
-        "/etc/ngcp-panel/api_ssl/NGCP-API-client-certificate.pem";
-    my $valid_ssl_client_key = $ENV{API_SSL_CLIENT_KEY} ||
-        $valid_ssl_client_cert;
-    my $ssl_ca_cert = $ENV{ API_SSL_CA_CERT} || "/etc/ngcp-panel/api_ssl/api_ca.crt";
+    my $catalyst_config;
+    my $panel_config;
+    if ($self->{local_test}) {
+        for my $path(qw#../ngcp_panel.conf ngcp_panel.conf#) {
+            if(-f $path) {
+                $panel_config = $path;
+                last;
+            }
+        }
+        $panel_config //= '../ngcp_panel.conf';
+        $catalyst_config = Config::General->new($panel_config);   
+    } else {
+        #taken 1:1 from /lib/NGCP/Panel.pm
+        for my $path(qw#/etc/ngcp-panel/ngcp_panel.conf etc/ngcp_panel.conf ngcp_panel.conf#) {
+            if(-f $path) {
+                $panel_config = $path;
+                last;
+            }
+        }
+        $panel_config //= 'ngcp_panel.conf';
+        $catalyst_config = Config::General->new($panel_config);   
+    }
+    my %config = $catalyst_config->getall();
+    $self->{catalyst_config} = \%config;
+    $self->{panel_config} = $panel_config;
+    return $self->{catalyst_config};
+}
+sub init_ua {
+    my $self = shift;
     my $ua = LWP::UserAgent->new;
-    $ua->ssl_opts(
-        SSL_cert_file   => $valid_ssl_client_cert,
-        SSL_key_file    => $valid_ssl_client_key,
-        SSL_ca_file     => $ssl_ca_cert,
-    );
-    #$ua->credentials( $self->base_uri, '', 'administrator', 'administrator' );
-    #$ua->ssl_opts(
-    #    verify_hostname => 0,
-    #    SSL_verify_mode => 0x00,
-    #);
+    if($self->local_test){
+        $ua->credentials( $self->base_uri, '', 'administrator', 'administrator' );
+        $ua->ssl_opts(
+            verify_hostname => 0,
+            SSL_verify_mode => 0x00,
+        );
+    }else{
+        my $valid_ssl_client_cert = $ENV{API_SSL_CLIENT_CERT} ||
+            "/etc/ngcp-panel/api_ssl/NGCP-API-client-certificate.pem";
+        my $valid_ssl_client_key = $ENV{API_SSL_CLIENT_KEY} ||
+            $valid_ssl_client_cert;
+        my $ssl_ca_cert = $ENV{ API_SSL_CA_CERT} || "/etc/ngcp-panel/api_ssl/api_ca.crt";
+        $ua->ssl_opts(
+            SSL_cert_file   => $valid_ssl_client_cert,
+            SSL_key_file    => $valid_ssl_client_key,
+            SSL_ca_file     => $ssl_ca_cert,
+        );
+    }
     return $ua;
 }
 sub clear_data_created{
@@ -186,7 +236,12 @@ sub get_uri_collection{
 }
 sub get_uri_get{
     my($self,$query_string) = @_;
-    return $self->base_uri."/api/".$self->name.'/?'.$query_string;
+    return $self->base_uri."/api/".$self->name.($query_string ? '/?' : '/' ).$query_string;
+}
+sub get_uri{
+    my($self,$add) = @_;
+    $add //= '';
+    return $self->base_uri."/api/".$self->name.'/'.$add;
 }
 sub get_uri_firstitem{
     my($self) = @_;
@@ -228,9 +283,16 @@ sub encode_content{
 sub request{
     my($self,$req) = @_;
     #print $req->as_string;
-    $self->ua->request($req);
+    return $self->ua->request($req);
 }
 
+sub request_process{
+    my($self,$req) = @_;
+    #print $req->as_string;
+    my $res = $self->ua->request($req);
+    my $rescontent = $res->decoded_content ? JSON::from_json($res->decoded_content) : '';
+    return ($res,$rescontent,$req);
+}
 sub get_request_put{
     my($self,$content,$uri) = @_;
     $uri ||= $self->get_uri_current;
@@ -256,8 +318,6 @@ sub request_put{
     $uri ||= $self->get_uri_current;
     my $req = $self->get_request_put( $content, $uri );
     my $res = $self->request($req);
-    #print Dumper $res;
-
     my $rescontent = $res->decoded_content ? JSON::from_json($res->decoded_content) : '';
     return wantarray ? ($res,$rescontent,$req) : $res;
 }
@@ -273,11 +333,15 @@ sub request_patch{
     #print Dumper [$res,$rescontent,$req];
     return wantarray ? ($res,$rescontent,$req) : $res;
 }
-
-sub request_post{
+sub process_data{
     my($self, $data_cb, $data_in, $data_cb_data) = @_;
     my $data = $data_in || clone($self->DATA_ITEM);
     defined $data_cb and $data_cb->($data, $data_cb_data);
+    return $data;
+}
+sub request_post{
+    my($self, $data_cb, $data_in, $data_cb_data) = @_;
+    my $data = $self->process_data($data_cb, $data_in, $data_cb_data);
     my $content = {
         $data->{json} ? ( json => JSON::to_json(delete $data->{json}) ) : (),
         %$data,
@@ -289,7 +353,7 @@ sub request_post{
         Content => $content;
     my $res = $self->request($req);
     my $rescontent = $res->decoded_content ? JSON::from_json($res->decoded_content) : '';
-    return wantarray ? ($res,$rescontent,$req) : $res;
+    return wantarray ? ($res,$rescontent,$req,$content) : $res;
 };
 
 sub request_options{
@@ -310,6 +374,14 @@ sub request_delete{
     my $res = $self->request($req);
     my $content = $res->decoded_content ? JSON::from_json($res->decoded_content) : '';
     return($req,$res,$content);
+}
+sub request_get{
+    my($self,$uri) = @_;
+    $uri ||= $self->get_uri_current;
+    my $req = HTTP::Request->new('GET', $uri);
+    my $res = $self->request($req);
+    my $content = $res->decoded_content ? JSON::from_json($res->decoded_content) : '';
+    return wantarray ? ($res, $content, $req) : $res;
 }
 
 ############## end of test machine
@@ -334,8 +406,8 @@ sub check_options_item{
 }
 sub check_methods{
     my($self, $res, $area) = @_;
-    is($res->code, 200, "check $area options request");
-    my $opts = JSON::from_json($res->decoded_content);
+    my $opts = $res->decoded_content ? JSON::from_json($res->decoded_content) : undef;
+    $self->http_code_msg(200, "check $area options request", $res,$opts);
     my @hopts = split /\s*,\s*/, $res->header('Allow');
     ok(exists $opts->{methods} && ref $opts->{methods} eq "ARRAY", "check for valid 'methods' in body");
     foreach my $opt(keys %{$self->methods->{$area}->{all}} ) {
@@ -349,14 +421,14 @@ sub check_methods{
     }
 }
 sub check_create_correct{
-    my($self, $number, $uniquizer_cb, $keep_created) = @_;
-    if(!$keep_created && !$self->KEEP_CREATED){
+    my($self, $number, $uniquizer_cb) = @_;
+    if(!$self->KEEP_CREATED){
         $self->clear_data_created;
     }
     $self->DATA_CREATED->{ALL} //= {};
     for(my $i = 1; $i <= $number; ++$i) {
         my ($res, $content, $req) = $self->request_post( $uniquizer_cb , undef, { i => $i} );
-        is($res->code, 201, "create test item '".$self->name."' $i");
+        $self->http_code_msg(201, "create test item '".$self->name."' $i",$res,$content);
         my $location = $res->header('Location');
         if($location){
             $self->DATA_CREATED->{ALL}->{$location} = { num => $i, content => $content, res => $res, req => $req, location => $location};
@@ -369,7 +441,7 @@ sub clear_test_data_all{
     my @uris = $uri ? (('ARRAY' eq ref $uri) ? @$uri : ($uri)) : keys $self->DATA_CREATED->{ALL};
     foreach my $del_uri(@uris){
         my($req,$res,$content) = $self->request_delete($self->base_uri.$del_uri);
-        is($res->code, 204, "check delete item $del_uri");
+        $self->http_code_msg(204, "check delete item $del_uri",$res,$content);
     }
 }
 sub clear_test_data_dependent{
@@ -377,15 +449,21 @@ sub clear_test_data_dependent{
     my($req,$res,$content) = $self->request_delete($self->base_uri.$uri);
     return ('204' eq $res->code);
 }
+sub check_embedded {
+    my($self, $embedded, $check_embedded_cb) = @_;
+    defined $check_embedded_cb and $check_embedded_cb->($embedded);
+    foreach my $embedded_name(@{$self->embedded_resources}){
+        ok(exists $embedded->{_links}->{'ngcp:'.$embedded_name}, "check presence of ngcp:$embedded_name relation");
+    }
+}
+
 sub check_list_collection{
     my($self, $check_embedded_cb) = @_;
     my $nexturi = $self->get_uri_collection."?page=1&rows=5";
     my @href = ();
     do {
         #print "nexturi=$nexturi;\n";
-        my $res = $self->ua->get($nexturi);
-        is($res->code, 200, "fetch collection page");
-        my $list_collection = JSON::from_json($res->decoded_content);
+        my ($res,$list_collection) = $self->check_item_get($nexturi);
         my $selfuri = $self->base_uri . $list_collection->{_links}->{self}->{href};
         is($selfuri, $nexturi, "check _links.self.href of collection");
         my $colluri = URI->new($selfuri);
@@ -418,18 +496,11 @@ sub check_list_collection{
         ok(((ref $list_collection->{_links}->{$hal_name} eq "ARRAY" ) ||
              (ref $list_collection->{_links}->{$hal_name} eq "HASH" ) ), "check if 'ngcp:".$self->name."' is array/hash-ref");
 
-        my $check_embedded = sub {
-            my($embedded) = @_;
-            defined $check_embedded_cb and $check_embedded_cb->($embedded);
-            foreach my $embedded_name(@{$self->embedded_resources}){
-                ok(exists $embedded->{_links}->{'ngcp:'.$embedded_name}, "check presence of ngcp:$embedded_name relation");
-            }
-        };
 
         # it is really strange - we check that the only element of the _links will be hash - and after this treat _embedded as hash too
         #the only thing that saves us - we really will not get into the if ever
         if(ref $list_collection->{_links}->{$hal_name} eq "HASH") {
-            $check_embedded->($list_collection->{_embedded}->{$hal_name});
+            $self->check_embedded($list_collection->{_embedded}->{$hal_name}, $check_embedded_cb);
             push @href, $list_collection->{_links}->{$hal_name}->{href};
         } else {
             foreach my $item_c(@{ $list_collection->{_links}->{$hal_name} }) {
@@ -437,7 +508,7 @@ sub check_list_collection{
             }
             foreach my $item_c(@{ $list_collection->{_embedded}->{$hal_name} }) {
             # these relations are only there if we have zones/fees, which is not the case with an empty model
-                $check_embedded->($item_c);
+                $self->check_embedded($item_c, $check_embedded_cb);
                 push @href, $item_c->{_links}->{self}->{href};
             }
         }
@@ -461,8 +532,8 @@ sub check_item_get{
     $uri ||= $self->get_uri_current;
     my $req = HTTP::Request->new('GET', $uri);
     my $res = $self->request($req);
-    is($res->code, 200, "fetch one item");
     my $content = $res->decoded_content ? JSON::from_json($res->decoded_content) : '';
+    $self->http_code_msg(200, "fetch uri: $uri", $res, $content);
     return wantarray ? ($res, $content, $req) : $res;
 }
 
@@ -473,8 +544,8 @@ sub check_put_content_type_empty{
     $req->remove_header('Content-Type');
     $req->remove_header('Prefer');
     $req->header('Prefer' => "return=minimal");
-    my $res = $self->request($req);
-    is($res->code, 415, "check put missing content type");
+    my($res,$content) = $self->request_process($req);
+    $self->http_code_msg(415, "check put missing content type", $res, $content);
 }
 sub check_put_content_type_wrong{
     my($self) = @_;
@@ -482,8 +553,8 @@ sub check_put_content_type_wrong{
     my $req = $self->get_request_put;
     $req->remove_header('Content-Type');
     $req->header('Content-Type' => 'application/xxx');
-    my $res = $self->request($req);
-    is($res->code, 415, "check put invalid content type");
+    my($res,$content) = $self->request_process($req);
+    $self->http_code_msg(415, "check put invalid content type", $res, $content);
 }
 sub check_put_prefer_wrong{
     my($self) = @_;
@@ -491,8 +562,8 @@ sub check_put_prefer_wrong{
     my $req = $self->get_request_put;
     $req->remove_header('Prefer');
     $req->header('Prefer' => "return=invalid");
-    my $res = $self->request($req);
-    is($res->code, 400, "check put invalid prefer");
+    my($res,$content) = $self->request_process($req);
+    $self->http_code_msg(400, "check put invalid prefer", $res, $content);
 }
 
 sub check_put_body_empty{
@@ -501,24 +572,62 @@ sub check_put_body_empty{
     my $req = $self->get_request_put;
     #$req->remove_header('Prefer');
     #$req->header('Prefer' => "return=representation");
-    my $res = $self->request($req);
-    is($res->code, 400, "check put no body");
+    my($res,$content) = $self->request_process($req);
+    $self->http_code_msg(400, "check put no body", $res, $content);
 }
+
 sub check_get2put{
-    my($self,$put_data_cb, $uri) = @_;
+    my($self, $put_data_cb, $uri) = @_;
     #$req->remove_header('Prefer');
     #$req->header('Prefer' => "return=representation");
     # PUT same result again
-    my ($get_res, $item_first_get, $get_req) = $self->check_item_get($uri);
-    my $item_first_put = clone($item_first_get);
-    delete $item_first_put->{_links};
-    delete $item_first_put->{_embedded};
+    my ($res_get, $result_item_get, $req_get) = $self->check_item_get($uri);
+    my $item_put_data = clone($result_item_get);
+    delete $item_put_data->{_links};
+    delete $item_put_data->{_embedded};
     # check if put is ok
-    (defined $put_data_cb) and $put_data_cb->($item_first_put);
-    my ($put_res,$item_put_result) = $self->request_put( $item_first_put, $uri );
-    is($put_res->code, 200, "check put successful");
-    is_deeply($item_first_get, $item_put_result, "check put if unmodified put returns the same");
+    (defined $put_data_cb) and $put_data_cb->($item_put_data);
+    my ($res_put,$result_item_put,$req_put) = $self->request_put( $item_put_data, $uri );
+    $self->http_code_msg(200, "check_get2put: check put successful",$res_put, $result_item_put);
+    is_deeply($result_item_get, $result_item_put, "check_get2put: check put if unmodified put returns the same");
+    return ($res_put,$result_item_put,$req_put,$item_put_data);
 }
+
+sub check_put2get{
+    my($self, $put_data_in, $put_data_cb, $uri) = @_;
+    
+    my $item_put_data = $self->process_data($put_data_cb, $put_data_in);
+    $item_put_data = JSON::to_json($item_put_data);
+    my ($res_put,$result_item_put,$req_put) = $self->request_put( $item_put_data, $uri );
+    $self->http_code_msg(200, "check_put2get: check put successful",$res_put, $result_item_put);
+    
+    my ($res_get, $result_item_get, $req_get) = $self->check_item_get($uri);
+    delete $result_item_get->{_links};
+    delete $result_item_get->{_embedded};
+    my $item_id = delete $result_item_get->{id};
+    $item_put_data = JSON::from_json($item_put_data);
+    is_deeply($item_put_data, $result_item_get, "check_put2get: check PUTed item against POSTed item");
+    $result_item_get->{id} = $item_id;
+    return ($res_put,$result_item_put,$req_put,$item_put_data,$res_get, $result_item_get, $req_get);
+}
+
+sub check_post2get{
+    my($self, $post_data_in, $post_data_cb) = @_;
+    
+    my ($res_post, $result_item_post, $req_post, $item_post_data ) = $self->request_post( $post_data_cb, $post_data_in );
+    $self->http_code_msg(201, "check_post2get: POST item '".$self->name."' for check_post2get", $res_post, $result_item_post);
+    my $location_post = $self->base_uri.($res_post->header('Location') // '');
+    
+    my ($res_get, $result_item_get, $req_get) = $self->request_get( $location_post );
+    $self->http_code_msg(200, "check_post2get: fetch POSTed test '".$self->name."'", $res_get, $result_item_get);
+    delete $result_item_get->{_links};
+    my $item_id = delete $result_item_get->{id};
+    $item_post_data = JSON::from_json($item_post_data);
+    is_deeply($item_post_data, $result_item_get, "check_post2get: check POSTed '".$self->name."' against fetched");
+    $result_item_get->{id} = $item_id;
+    return ($res_post,$result_item_post,$req_post,$item_post_data, $location_post, $result_item_get);
+}
+
 sub check_put_bundle{
     my($self) = @_;
     $self->check_put_content_type_empty;
@@ -529,7 +638,7 @@ sub check_put_bundle{
 sub check_patch_correct{
     my($self,$content) = @_;
     my ($res,$rescontent,$req) = $self->request_patch( $content );
-    is($res->code, 200, "check patched item");
+    $self->http_code_msg(200, "check patched item", $res, $rescontent);
     is($rescontent->{_links}->{self}->{href}, $self->DATA_CREATED->{FIRST}, "check patched self link");
     is($rescontent->{_links}->{collection}->{href}, '/api/'.$self->name.'/', "check patched collection link");
     return ($res,$rescontent,$req);
@@ -540,15 +649,15 @@ sub check_patch_prefer_wrong{
     my $req = $self->get_request_patch;
     $req->remove_header('Prefer');
     $req->header('Prefer' => 'return=minimal');
-    my $res = $self->request($req);
-    is($res->code, 415, "check patch invalid prefer");
+    my ($res,$content) = $self->request_process($req);
+    $self->http_code_msg(415, "check patch invalid prefer", $res, $content);
 }
 sub check_patch_content_type_empty{
     my($self) = @_;
     my $req = $self->get_request_patch;
     $req->remove_header('Content-Type');
-    my $res = $self->request($req);
-    is($res->code, 415, "check patch missing media type");
+    my ($res,$content) = $self->request_process($req);
+    $self->http_code_msg(415, "check patch missing media type", $res, $content);
 }
 
 sub check_patch_content_type_wrong{
@@ -556,14 +665,14 @@ sub check_patch_content_type_wrong{
     my $req = $self->get_request_patch;
     $req->remove_header('Content-Type');
     $req->header('Content-Type' => 'application/xxx');
-    my $res = $self->request($req);
-    is($res->code, 415, "check patch invalid media type");
+    my($res,$content) = $self->request_process($req);
+    $self->http_code_msg(415, "check patch invalid media type", $res, $content);
 }
 
 sub check_patch_body_empty{
     my($self) = @_;
     my ($res,$content,$req) = $self->request_patch;
-    is($res->code, 400, "check patch missing body");
+    $self->http_code_msg(400, "check patch missing body", $res, $content);
     like($content->{message}, qr/is missing a message body/, "check patch missing body response");
 }
 
@@ -572,7 +681,7 @@ sub check_patch_body_notarray{
     my ($res,$content,$req) = $self->request_patch(
         { foo => 'bar' },
     );
-    is($res->code, 400, "check patch no array body");
+    $self->http_code_msg(400, "check patch no array body", $res, $content);
     like($content->{message}, qr/must be an array/, "check patch missing body response");
 }
 
@@ -581,7 +690,7 @@ sub check_patch_op_missed{
     my ($res,$content,$req) = $self->request_patch(
         [{ foo => 'bar' }],
     );
-    is($res->code, 400, "check patch no op in body");
+    $self->http_code_msg(400, "check patch no op in body", $res, $content);
     like($content->{message}, qr/must have an 'op' field/, "check patch no op in body response");
 }
 
@@ -590,7 +699,7 @@ sub check_patch_op_wrong{
     my ($res,$content,$req) = $self->request_patch(
         [{ op => 'bar' }],
     );
-    is($res->code, 400, "check patch invalid op in body");
+    $self->http_code_msg(400, "check patch invalid op in body", $res, $content);
     like($content->{message}, qr/Invalid PATCH op /, "check patch no op in body response");
 }
 
@@ -599,7 +708,7 @@ sub check_patch_opreplace_paramsmiss{
     my ($res,$content,$req) = $self->request_patch(
         [{ op => 'replace' }],
     );
-    is($res->code, 400, "check patch missing fields for op");
+    $self->http_code_msg(400, "check patch missing fields for op", $res, $content);
     like($content->{message}, qr/Missing PATCH keys /, "check patch missing fields for op response");
 }
 
@@ -608,7 +717,7 @@ sub check_patch_opreplace_paramsextra{
     my ($res,$content,$req) = $self->request_patch(
         [{ op => 'replace', path => '/foo', value => 'bar', invalid => 'sna' }],
     );
-    is($res->code, 400, "check patch extra fields for op");
+    $self->http_code_msg(400, "check patch extra fields for op", $res, $content);
     like($content->{message}, qr/Invalid PATCH key /, "check patch extra fields for op response");
 }
 
@@ -639,5 +748,20 @@ sub check_bundle{
 sub hash2params{
     my($self,$hash) = @_;
     return join '&', map {$_.'='.uri_escape($hash->{$_})} keys %{ $hash };
+}
+sub http_code_msg{
+    my($self,$code,$message,$res,$err) = @_;
+    $err //= $res->decoded_content ? JSON::from_json($res->decoded_content) : undef;
+    my $message_res;
+    if ( ($res->code < 300) || ( $code >= 300 ) ) {
+        $message_res = $message;
+    } else {
+        if (defined $err && defined $err->{message}) {
+            $message_res = $message . ' (' . $res->message . ': ' . $err->{message} . ')';
+        } else {
+            $message_res = $message . ' (' . $res->message . ')';
+        }
+    }
+    $code and is($res->code, $code, $message_res);
 }
 1;
