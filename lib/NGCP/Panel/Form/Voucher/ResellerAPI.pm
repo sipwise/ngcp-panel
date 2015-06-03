@@ -1,4 +1,4 @@
-package NGCP::Panel::Form::Voucher::Reseller;
+package NGCP::Panel::Form::Voucher::ResellerAPI;
 
 use HTML::FormHandler::Moose;
 extends 'HTML::FormHandler';
@@ -36,11 +36,11 @@ has_field 'amount' => (
 );
 
 has_field 'valid_until' => (
-    type => '+NGCP::Panel::Field::DatePicker',
+    type => '+NGCP::Panel::Field::DateTime',
     required => 1,
     element_attr => {
         rel => ['tooltip'],
-        title => ['The date until this voucher is valid.']
+        title => ['The date until this voucher is valid (YYYY-MM-DD hh:mm:ss).']
     },
 );
 
@@ -52,31 +52,15 @@ has_field 'customer' => (
     },
 );
 
-
-has_field 'save' => (
-    type => 'Submit',
-    value => 'Save',
-    element_class => [qw/btn btn-primary/],
-    label => '',
-);
-
-has_block 'fields' => (
-    tag => 'div',
-    class => [qw/modal-body/],
-    render_list => [qw/code amount valid_until customer/],
-);
-
-has_block 'actions' => (
-    tag => 'div',
-    class => [qw/modal-footer/],
-    render_list => [qw/save/],
-);
-
 sub validate_valid_until {
     my ($self, $field) = @_;
 
-    unless($field->value =~ /^\d{4}\-\d{2}\-\d{2}$/) {
+    unless($field->value =~ /^(\d{4})\-\d{2}\-\d{2}(T| )\d{2}:\d{2}:\d{2}$/) {
         my $err_msg = 'Invalid date format, must be YYYY-MM-DD';
+        $field->add_error($err_msg);
+    }
+    if(int($1) > 2037) {
+        my $err_msg = 'Invalid date format, YYYY must not be greater than 2037';
         $field->add_error($err_msg);
     }
 }
