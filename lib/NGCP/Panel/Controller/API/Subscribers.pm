@@ -57,6 +57,32 @@ class_has 'query_params' => (
             },
         },
         {
+            param => 'webusername',
+            description => 'Search for specific webuser login credentials (exact match)',
+            query => {
+                first => sub {
+                    my $q = shift;
+                    return { 'provisioning_voip_subscriber.webusername' => $q };
+                },
+                second => sub {
+                    return { join => 'provisioning_voip_subscriber' };
+                },
+            },
+        },
+        {
+            param => 'webpassword',
+            description => 'Search for specific webuser login password (exact match)',
+            query => {
+                first => sub {
+                    my $q = shift;
+                    return { 'provisioning_voip_subscriber.webpassword' => $q };
+                },
+                second => sub {
+                    return { join => 'provisioning_voip_subscriber' };
+                },
+            },
+        },
+        {
             param => 'domain',
             description => 'Filter for subscribers in specific domain',
             query => {
