@@ -47,16 +47,28 @@ sub rpc_https_call{
     my $c = $self->params->{c};
     $c->log->debug( "host=$cfg->{host}; port=$cfg->{port}; path=$cfg->{path}; content=$content;" );
     $c->log->debug( Dumper($cfg->{headers}) );
-    my( $page, $response_code, %reply_headers ) = https_post({
-        'host'    => $cfg->{host},
-        'port'    => $cfg->{port},
-        'path'    => $cfg->{path},
-        'headers' => $cfg->{headers},
-        'Content-Type' => 'text/xml',
-        'content' => $content,
-    },);
+    my( $page, $response_code, %reply_headers, $response_value );
+    eval {
+        local $SIG{ALRM} = sub { die "Connection timeout\n" };
+        alarm(25);
+        ( $page, $response_code, %reply_headers ) = https_post({
+            'host'    => $cfg->{host},
+            'port'    => $cfg->{port},
+            'path'    => $cfg->{path},
+            'headers' => $cfg->{headers},
+            'Content-Type' => 'text/xml',
+            'content' => $content,
+        },);
+        alarm(0);
+    };
+    alarm(0);
+    if ($@ && !$page) {
+        $c->log->debug( "eval error: $@;" );
+        if ($@ =~ /Connection timeout/) {
+            $response_value = 'Connection timeout';
+        }
+    }
     $c->log->info( "response=$response_code; page=$page;" );
-    my $response_value = '';
     if($page){
         my $parser = RPC::XML::ParserFactory->new();
         my $rpc_response = $parser->parse($page);
