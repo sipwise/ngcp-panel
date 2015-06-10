@@ -57,16 +57,30 @@ sub rpc_https_call{
     my $c = $self->params->{c};
     $c->log->debug( "rpc_https_call: host=$cfg->{host}; port=$cfg->{port}; path=$cfg->{path}; content=$content;" );
     #$c->log->debug( Dumper($cfg->{headers}) );
-    my( $page, $response_code, %reply_headers ) = https_post({
-        'host'    => $cfg->{host},
-        'port'    => $cfg->{port},
-        'path'    => $cfg->{path},
-        'headers' => $cfg->{headers},
-        'Content-Type' => 'text/xml',
-        'content' => $content,
-    },);
-    $c->log->info( "rpc_https_call: response=$response_code; page=$page;" );
-    my $response_value = '';
+    my( $page, $response_code, %reply_headers, $response_value );
+    eval {
+        local $SIG{ALRM} = sub { die "Connection timeout" };
+        alarm(25);
+        eval {
+            ( $page, $response_code, %reply_headers ) = https_post({
+                'host'    => $cfg->{host},
+                'port'    => $cfg->{port},
+                'path'    => $cfg->{path},
+                'headers' => $cfg->{headers},
+                'Content-Type' => 'text/xml',
+                'content' => $content,
+            },);
+        }
+        alarm(0);
+        if ($@ && !$page) {
+            $c->log->debug( "eval error: $@;" );
+            if ($@ =~ /Connection timeout/) {
+                $response_value = 'Connection timeout';
+            }
+        }
+    };
+
+    $c->log->info( "response=$response_code; page=$page;" );
     if($page){
         my $rpc_response = $self->parse_rpc_response_page($page);
         $response_value = $self->parse_rpc_response($rpc_response);
