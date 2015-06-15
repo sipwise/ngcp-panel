@@ -214,8 +214,6 @@ sub create_subscriber {
 
         # TODO: check if we find a reseller and contract and domains
 
-        use Data::Printer; p $params;
-
         my $billing_subscriber = $contract->voip_subscribers->create({
             uuid => $uuid_string,
             username => $params->{username},
