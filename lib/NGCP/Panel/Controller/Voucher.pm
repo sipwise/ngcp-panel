@@ -321,7 +321,6 @@ sub voucher_upload :Chained('voucher_list') :PathPart('upload') :Args(0) {
 
                 while(my $row = $csv->getline_hr($upload->fh)) {
                     ++$linenum;
-                    use Data::Printer; p $row;
                     if($csv->is_missing(1)) {
                         push @fails, $linenum;
                         next;
