@@ -175,6 +175,7 @@ sub process {
     for my $row ($rs->all) {
         push @{ $aaData }, _prune_row($cols, $row->get_inflated_columns);
         if (defined $row_func) {
+            my $r = $row_func->($row);
             $aaData->[-1]->put($row_func->($row));
         }
     }

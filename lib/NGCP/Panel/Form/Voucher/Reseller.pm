@@ -81,5 +81,15 @@ sub validate_valid_until {
     }
 }
 
+sub update_fields {
+    my $self = shift;
+    my $c = $self->ctx;
+    return unless $c;
+
+    unless($c->user->billing_data) {
+        $self->field('code')->inactive(1);
+    }
+}
+
 1
 # vim: set tabstop=4 expandtab:

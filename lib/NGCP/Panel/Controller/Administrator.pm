@@ -38,6 +38,7 @@ sub list_admin :PathPart('administrator') :Chained('/') :CaptureArgs(0) {
         { name => "read_only", title => $c->loc("Read Only") },
         { name => "show_passwords", title => $c->loc("Show Passwords") },
         { name => "call_data", title => $c->loc("Show CDRs") },
+        { name => "billing_data", title => $c->loc("Show Billing Info") },
     );
     if($c->user->is_superuser) {
         @{ $cols } =  (@{ $cols },  { name => "lawful_intercept", title => $c->loc("Lawful Intercept") });

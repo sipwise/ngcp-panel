@@ -88,7 +88,6 @@ sub test_voucher {
         reseller_id => $default_reseller_id,
         valid_until => '2037-01-01 12:00:00',
     };
-    p $voucher;
     $req = HTTP::Request->new('POST', $uri.'/api/vouchers/');
     $req->header('Content-Type' => 'application/json');
     $req->content(JSON::to_json($voucher));
@@ -118,7 +117,21 @@ sub test_voucher {
     $voucher_id = delete $put_voucher->{id};
     is_deeply($voucher, $put_voucher, "check PUTed voucher against POSTed voucher");
 
-    p $put_voucher;
+    $req = HTTP::Request->new('PATCH', $voucher_uri);
+    $req->header('Content-Type' => 'application/json-patch+json');
+    $req->header('Prefer' => 'return=representation');
+    $req->content(JSON::to_json([{op=>"replace", path=>"/code", value=>$put_voucher->{code}}]));
+    $res = $ua->request($req);
+    is($res->code, 200, _get_request_test_message("PATCH test voucher"));
+    $req = HTTP::Request->new('GET', $voucher_uri);
+    $res = $ua->request($req);
+    is($res->code, 200, _get_request_test_message("fetch PATCH test voucher"));
+    my $patch_voucher = JSON::from_json($res->decoded_content);
+    delete $patch_voucher->{_links};
+    $voucher_id = delete $patch_voucher->{id};
+    is_deeply($voucher, $patch_voucher, "check PATCHed voucher against POSTed voucher");
+
+
     $req = HTTP::Request->new('POST', $uri.'/api/vouchers/');
     $req->header('Content-Type' => 'application/json');
     $req->content(JSON::to_json($put_voucher));
