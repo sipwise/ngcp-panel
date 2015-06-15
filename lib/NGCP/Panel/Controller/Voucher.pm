@@ -12,6 +12,8 @@ use NGCP::Panel::Utils::Message;
 use NGCP::Panel::Utils::Navigation;
 use NGCP::Panel::Utils::Datatables;
 use NGCP::Panel::Utils::DateTime;
+use NGCP::Panel::Utils::Voucher;
+use Scalar::Util qw/blessed/;
 
 sub auto :Does(ACL) :ACLDetachTo('/denied_page') :AllowedRole(admin) :AllowedRole(reseller) {
     my ($self, $c) = @_;
@@ -34,9 +36,10 @@ sub voucher_list :Chained('/') :PathPart('voucher') :CaptureArgs(0) {
         });
     }
     $c->stash(voucher_rs => $voucher_rs);
+
     $c->stash->{voucher_dt_columns} = NGCP::Panel::Utils::Datatables::set_columns($c, [
         { name => "id", "search" => 1, "title" => $c->loc("#") },
-        { name => "code", "search" => 1, "title" => $c->loc("Code") },
+        $c->user->billing_data ? { name => "code", "search" => 1, "title" => $c->loc("Code") } : (),
         { name => "amount", "search" => 1, "title" => $c->loc("Amount") },
         { name => "reseller.name", "search" => 1, "title" => $c->loc("Reseller") },
         { name => "valid_until", "search" => 1, "title" => $c->loc("Valid Until") },
@@ -55,7 +58,21 @@ sub ajax :Chained('voucher_list') :PathPart('ajax') :Args(0) {
     my ($self, $c) = @_;
     
     my $resultset = $c->stash->{voucher_rs};
-    NGCP::Panel::Utils::Datatables::process($c, $resultset, $c->stash->{voucher_dt_columns});
+    NGCP::Panel::Utils::Datatables::process($c, $resultset, $c->stash->{voucher_dt_columns}, sub {
+        my $row = shift;
+        my $v = { $row->get_inflated_columns };
+        if($c->user->billing_data) {
+            $v->{code} = NGCP::Panel::Utils::Voucher::decrypt_code($c, $row->code);
+        } else {
+            $v->{code} = "<retracted>";
+        }
+        foreach my $k(keys %{ $v }) {
+            if(blessed($v->{$k}) && $v->{$k}->isa('DateTime')) {
+                $v->{$k} = NGCP::Panel::Utils::DateTime::to_string($v->{$k});
+            }
+        }
+        return %{ $v };
+    });
     
     $c->detach( $c->view("JSON") );
 }
@@ -90,6 +107,9 @@ sub base :Chained('voucher_list') :PathPart('') :CaptureArgs(1) {
 sub delete :Chained('base') :PathPart('delete') {
     my ($self, $c) = @_;
 
+    $c->detach('/denied_page')
+        unless($c->user->billing_data);
+
     try {
         $c->stash->{voucher_result}->delete;
         NGCP::Panel::Utils::Message->info(
@@ -111,16 +131,24 @@ sub delete :Chained('base') :PathPart('delete') {
 sub edit :Chained('base') :PathPart('edit') {
     my ($self, $c) = @_;
 
+    $c->detach('/denied_page')
+        unless($c->user->billing_data);
+
     my $posted = ($c->request->method eq 'POST');
     my $form;
     my $params = $c->stash->{voucher};
     $params->{valid_until} =~ s/^(\d{4}\-\d{2}\-\d{2}).*$/$1/;
     $params->{reseller}{id} = delete $params->{reseller_id};
+    if($c->user->billing_data) {
+        $params->{code} = NGCP::Panel::Utils::Voucher::decrypt_code($c, $params->{code});
+    } else {
+        delete $params->{code};
+    }
     $params = $params->merge($c->session->{created_objects});
     if($c->user->is_superuser) {
-        $form = NGCP::Panel::Form::Voucher::Admin->new;
+        $form = NGCP::Panel::Form::Voucher::Admin->new(ctx => $c);
     } else {
-        $form = NGCP::Panel::Form::Voucher::Reseller->new;
+        $form = NGCP::Panel::Form::Voucher::Reseller->new(ctx => $c);
     }
     $form->process(
         posted => $posted,
@@ -151,6 +179,11 @@ sub edit :Chained('base') :PathPart('edit') {
                     ->add(days => 1)->subtract(seconds => 1);
             }
 
+            if($c->user->billing_data) {
+                $form->values->{code} = NGCP::Panel::Utils::Voucher::encrypt_code($c, $form->values->{code});
+            } else {
+                delete $form->values->{code};
+            }
             my $schema = $c->model('DB');
             $schema->txn_do(sub {
                 $c->stash->{voucher_result}->update($form->values);
@@ -178,15 +211,18 @@ sub edit :Chained('base') :PathPart('edit') {
 sub create :Chained('voucher_list') :PathPart('create') :Args(0) {
     my ($self, $c) = @_;
 
+    $c->detach('/denied_page')
+        unless($c->user->billing_data);
+
     my $posted = ($c->request->method eq 'POST');
     my $form;
     my $params = {};
     $params->{reseller}{id} = delete $params->{reseller_id};
     $params = $params->merge($c->session->{created_objects});
     if($c->user->is_superuser) {
-        $form = NGCP::Panel::Form::Voucher::Admin->new;
+        $form = NGCP::Panel::Form::Voucher::Admin->new(ctx => $c);
     } else {
-        $form = NGCP::Panel::Form::Voucher::Reseller->new;
+        $form = NGCP::Panel::Form::Voucher::Reseller->new(ctx => $c);
     }
     $form->process(
         posted => $posted,
@@ -217,6 +253,7 @@ sub create :Chained('voucher_list') :PathPart('create') :Args(0) {
                 $form->values->{valid_until} = NGCP::Panel::Utils::DateTime::from_string($form->values->{valid_until})
                     ->add(days => 1)->subtract(seconds => 1);
             }
+            $form->values->{code} = NGCP::Panel::Utils::Voucher::encrypt_code($c, $form->values->{code});
             my $voucher = $c->model('DB')->resultset('vouchers')->create($form->values);
             $c->session->{created_objects}->{voucher} = { id => $voucher->id };
             delete $c->session->{created_objects}->{reseller};
@@ -240,6 +277,9 @@ sub create :Chained('voucher_list') :PathPart('create') :Args(0) {
 
 sub voucher_upload :Chained('voucher_list') :PathPart('upload') :Args(0) {
     my ($self, $c) = @_;
+
+    $c->detach('/denied_page')
+        unless($c->user->billing_data);
     
     my $form = NGCP::Panel::Form::Voucher::Upload->new;
     my $upload = $c->req->upload('upload_vouchers');
@@ -281,6 +321,7 @@ sub voucher_upload :Chained('voucher_list') :PathPart('upload') :Args(0) {
 
                 while(my $row = $csv->getline_hr($upload->fh)) {
                     ++$linenum;
+                    use Data::Printer; p $row;
                     if($csv->is_missing(1)) {
                         push @fails, $linenum;
                         next;
@@ -290,6 +331,7 @@ sub voucher_upload :Chained('voucher_list') :PathPart('upload') :Args(0) {
                             ->add(days => 1)->subtract(seconds => 1);
                     }
                     $row->{customer_id} = undef if(defined $row->{customer_id} && $row->{customer_id} eq "");
+                    $row->{code} = NGCP::Panel::Utils::Voucher::encrypt_code($c, $row->{code});
                     push @vouchers, $row;
                 }
                 unless ($csv->eof()) {

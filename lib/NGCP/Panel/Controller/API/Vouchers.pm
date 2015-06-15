@@ -138,6 +138,12 @@ sub OPTIONS :Allow {
 sub POST :Allow {
     my ($self, $c) = @_;
 
+    unless($c->user->billing_data) {
+        $c->log->error("user does not have billing data rights");
+        $self->error($c, HTTP_FORBIDDEN, "Unsufficient rights to create voucher");
+        return;
+    }
+
     my $guard = $c->model('DB')->txn_scope_guard;
     {
         my $resource = $self->get_valid_post_data(
@@ -158,7 +164,7 @@ sub POST :Allow {
         }
 
         my $item;
-        my $code = $self->encrypt_code($c, $resource->{code});
+        my $code = NGCP::Panel::Utils::Voucher::encrypt_code($c, $resource->{code});
         $item = $c->model('DB')->resultset('vouchers')->find({
             reseller_id => $resource->{reseller_id},
             code => $code,

@@ -146,6 +146,7 @@ sub base :Chained('list_reseller') :PathPart('') :CaptureArgs(1) {
         { name => "read_only", title => $c->loc('Read-Only') },
         { name => "show_passwords", title => $c->loc('Show Passwords') },
         { name => "call_data", title => $c->loc('Show CDRs') },
+        { name => "billing_data", title => $c->loc('Show Billing Info') },
     ]);
     $c->stash->{customer_dt_columns} = NGCP::Panel::Utils::Datatables::set_columns($c, [
         { name => "id", search => 1, title => $c->loc('#') },

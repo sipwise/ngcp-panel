@@ -55,13 +55,23 @@ has_field 'customer' => (
 sub validate_valid_until {
     my ($self, $field) = @_;
 
-    unless($field->value =~ /^(\d{4})\-\d{2}\-\d{2}(T| )\d{2}:\d{2}:\d{2}$/) {
+    unless($field->value =~ /^(\d{4})\-\d{2}\-\d{2}(T| )\d{2}:\d{2}:\d{2}(\+\d{2}:\d{2})?$/) {
         my $err_msg = 'Invalid date format, must be YYYY-MM-DD';
         $field->add_error($err_msg);
     }
     if(int($1) > 2037) {
         my $err_msg = 'Invalid date format, YYYY must not be greater than 2037';
         $field->add_error($err_msg);
+    }
+}
+
+sub update_fields {
+    my $self = shift;
+    my $c = $self->ctx;
+    return unless $c;
+
+    unless($c->user->billing_data) {
+        $self->field('code')->inactive(1);
     }
 }
 

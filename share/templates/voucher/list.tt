@@ -13,6 +13,7 @@
     helper.ajax_uri = c.uri_for( c.controller.action_for('ajax') );
 
     UNLESS c.user.read_only;
+        IF c.user.billing_data;
         helper.dt_buttons = [
             { name = c.loc('Edit'), uri = "/voucher/'+full[\"id\"]+'/edit", class = 'btn-small btn-primary', icon = 'icon-edit' },
             { name = c.loc('Delete'), uri = "/voucher/'+full[\"id\"]+'/delete", class = 'btn-small btn-secondary', icon = 'icon-trash' },
@@ -21,6 +22,7 @@
             { name = c.loc('Create Billing Voucher'), uri = c.uri_for('/voucher/create'), icon = 'icon-star' },
             { name = c.loc('Upload Vouchers as CSV'), uri = c.uri_for('/voucher/upload'), icon = 'icon-star' },
         ];
+        END;
     END;
 
     PROCESS 'helpers/datatables.tt';

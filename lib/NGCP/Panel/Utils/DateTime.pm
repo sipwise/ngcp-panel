@@ -56,6 +56,15 @@ sub sec_to_hms
     return "$h:$m:$s";
 }
 
+sub to_string
+{
+    my ($dt) = @_;
+    return unless defined ($dt);
+    my $s = $dt->ymd('-') . ' ' . $dt->hms(':');
+    $s .= '.'.$dt->millisecond if $dt->millisecond > 0.0;
+    return $s;
+}
+
 
 1;
 
