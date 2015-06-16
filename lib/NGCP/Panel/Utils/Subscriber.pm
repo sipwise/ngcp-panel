@@ -336,29 +336,6 @@ sub create_subscriber {
         return $billing_subscriber;
     });
 }
-sub update_subscriber_pbx_policy {
-    my (%params) = @_;
-    my $c = $params{c};
-    my $prov_subscriber = $params{prov_subscriber};
-    my $values = $params{values};
-
-   #todo: use update_preferences instead?
-
-    foreach(qw/cloud_pbx_hunt_policy cloud_pbx_hunt_timeout/){
-        my $preference = NGCP::Panel::Utils::Preferences::get_usr_preference_rs(
-            c => $c, 
-            prov_subscriber => $prov_subscriber,
-            attribute => $_
-        );
-        if($preference) {
-            if($preference && $preference->first) {
-                $preference->first->update({ value => $values->{$_} });
-            } else {
-                $preference->create({ value => $values->{$_} });
-            }
-        }
-    }
-}
 sub update_preferences {
     my (%params) = @_;
     my $c = $params{c};
@@ -385,52 +362,134 @@ sub update_preferences {
     return;
 }
 
-sub update_pbx_group_prefs {
+sub get_pbx_subscribers_rs{
     my %params = @_;
 
-    my $c = $params{c};
-    my $schema = $params{schema} // $c->model('DB');
-    my $old_group_id = $params{old_group_id};
-    my $new_group_id = $params{new_group_id};
-    my $username = $params{username};
-    my $domain = $params{domain};
-    my $group_rs = $params{group_rs} // $c->stash->{pbx_groups};
+    my $c           = $params{c};
+    my $schema      = $params{schema} // $c->model('DB');
+    my $ids         = $params{ids} // [];
+    my $customer_id = $params{customer_id} // 0;
+    my $is_group    = $params{is_group};
 
-    return if(defined $old_group_id && defined $new_group_id && $old_group_id == $new_group_id);
-    unless ($group_rs) {
-        $c->log->warn('update_pbx_group_prefs: need a group_rs');
-        return;
-    }
-
-    my $old_grp_subscriber;
-    my $new_grp_subscriber;
-
-    my $uri = "sip:$username\@$domain";
-    if($old_group_id) {
-        $old_grp_subscriber= $group_rs
-                        ->find($old_group_id)
-                        ->provisioning_voip_subscriber;
-        if($old_grp_subscriber) {
-            my $grp_pref_rs = NGCP::Panel::Utils::Preferences::get_usr_preference_rs(
-                c => $c, attribute => 'cloud_pbx_hunt_group', prov_subscriber => $old_grp_subscriber
-            );
-            my $pref = $grp_pref_rs->find({ value => $uri });
-            $pref->delete if($pref);
+    my $rs = $schema->resultset('voip_subscribers')->search_rs(
+        {
+            'status' => { '!=' => 'terminated' },
+            @$ids ? ( 'me.id' => { -in => $ids } ) : (),
+            $customer_id ? ( 'contract_id' => $customer_id ) : (),
+            $is_group ? ( 'provisioning_voip_subscriber.is_pbx_group' => $is_group ) : (),
+        },{
+            join => 'provisioning_voip_subscriber',
         }
+    );
+    return $rs;
+}
+#the method named "item" as it can return both groups or groups members
+sub get_pbx_subscribers_by_ids{
+    my %params = @_;
+
+    my $c           = $params{c};
+    my $schema      = $params{schema} // $c->model('DB');
+    my $ids         = $params{ids} // [];
+    my $customer_id = $params{customer_id} // 0;
+    my $is_group    = $params{is_group};
+    
+    my $pbx_subscribers_rs = get_pbx_subscribers_rs(@_);
+
+    my (@items,@absent_items_ids);
+
+    @items = $pbx_subscribers_rs->all();
+    
+    my %items_ids_exists =  map{ $_->id => 0 } @items;
+    
+    if(@$ids){
+        my $order_hash = { %items_ids_exists };
+        @$order_hash{@$ids} = (1..$#$ids+1);
+        @items = sort { $order_hash->{$a->id} <=> $order_hash->{$b->id} } @items;
     }
-    if($new_group_id) {
-        $new_grp_subscriber = $group_rs
-                        ->find($new_group_id)
-                        ->provisioning_voip_subscriber;
-        if($new_grp_subscriber) {
-            my $grp_pref_rs = NGCP::Panel::Utils::Preferences::get_usr_preference_rs(
-                c => $c, attribute => 'cloud_pbx_hunt_group', prov_subscriber => $new_grp_subscriber
-            );
-            unless($grp_pref_rs->find({ value => $uri })) {
-                $grp_pref_rs->create({ value => $uri });
-            }
-        }
+    
+    if($#items < $#$ids){
+        @absent_items_ids = grep { !exists $items_ids_exists{$_} } @{$params{ids}};
     }
+    
+    return \@items, (( 0 < @absent_items_ids) ? \@absent_items_ids : undef ) ;
+}
+
+sub manage_pbx_groups{
+    my %params = @_;
+
+    my $c               = $params{c};
+    my $schema          = $params{schema} // $c->model('DB');
+    my $group_ids       = $params{group_ids} // [];
+    my $groupmember_ids = $params{groupmember_ids} // [];
+    my $subscriber      = $params{subscriber};
+    my $customer        = $params{customer} // $subscriber->contract;
+
+    my ($groups)  = $params{groups} // ( @$group_ids ? get_pbx_subscribers_by_ids( 
+        c           => $c, 
+        schema      => $schema, 
+        ids         => $group_ids, 
+        customer_id => $customer->id, 
+        is_group    => 1,
+    ) : [] );
+    my ($groupmembers) = $params{groupmembers} // ( @$groupmember_ids ? get_pbx_subscribers_by_ids( 
+        c           => $c, 
+        schema      => $schema, 
+        ids         => $groupmember_ids, 
+        customer_id => $customer->id, 
+        is_group    => 0,
+    ) : [] );
+
+    #delete all old groups, to support correct order
+    my $prov_subscriber = $subscriber->provisioning_voip_subscriber;
+    my $subscriber_uri  = get_pbx_group_member_name( subscriber => $subscriber );
+    my $member_preferences_rs = NGCP::Panel::Utils::Preferences::get_usr_preference_rs(
+        c => $c, 
+        attribute => 'cloud_pbx_hunt_group', 
+    )->search_rs({
+        subscriber_id => { -in => [ $prov_subscriber->voip_pbx_groups->get_column('group_id')->all ] },
+        value         => $subscriber_uri,
+    });
+    
+    $member_preferences_rs->delete;
+    $prov_subscriber->voip_pbx_groups->delete;
+
+    #create new groups
+    foreach my $group(@{ $groups }) {
+        my $group_voip_subscriber = $group->provisioning_voip_subscriber;
+        next unless( $group_voip_subscriber && $group_voip_subscriber->is_pbx_group );
+        $prov_subscriber->voip_pbx_groups->create({
+            group_id => $group_voip_subscriber->id,
+        });
+        my $preferences_rs = NGCP::Panel::Utils::Preferences::get_usr_preference_rs(
+            c               => $c, 
+            attribute       => 'cloud_pbx_hunt_group', 
+            prov_subscriber => $group_voip_subscriber,
+        );
+        $preferences_rs->create({ value => $subscriber_uri });
+    }
+
+    #delete old members to support correct order
+    $prov_subscriber->voip_pbx_group_members->delete;
+    my $group_preferences_rs = NGCP::Panel::Utils::Preferences::get_usr_preference_rs(
+        c => $c, 
+        attribute => 'cloud_pbx_hunt_group', 
+        prov_subscriber => $prov_subscriber,
+    );
+    $group_preferences_rs->delete;
+
+    foreach my $member(@{ $groupmembers }) {
+        my $member_uri = get_pbx_group_member_name( subscriber => $member );
+        $prov_subscriber->voip_pbx_group_members->create({
+            subscriber_id => $member->provisioning_voip_subscriber->id,
+        });
+        $group_preferences_rs->create({ value => $member_uri });
+   }
+}
+sub get_pbx_group_member_name{
+    my %params = @_;
+    my $c               = $params{c};
+    my $subscriber      = $params{subscriber};
+    return "sip:".$subscriber->username."\@".$subscriber->domain->domain;
 }
 
 sub update_subscriber_numbers {
@@ -864,21 +923,12 @@ sub terminate {
             });
         }
         if($prov_subscriber) {
-            foreach my $groups($prov_subscriber->voip_pbx_groups->all) {
-                my $group_sub = $groups->group;
-                update_pbx_group_prefs(
-                    c => $c,
-                    schema => $schema,
-                    old_group_id => $group_sub->voip_subscriber->id,
-                    new_group_id => undef,
-                    username => $prov_subscriber->username,
-                    domain => $prov_subscriber->domain->domain,
-                    group_rs => $schema->resultset('voip_subscribers')->search({
-                            contract_id => $subscriber->contract_id,
-                            status => { '!=' => 'terminated' },
-                        }),
-                );
-            }
+            manage_pbx_groups(
+                c            => $c,
+                schema       => $schema,
+                groups       => [],
+                subscriber   => $subscriber,
+            );
             NGCP::Panel::Utils::Kamailio::delete_location($c, 
                 $prov_subscriber);
             foreach my $pref(qw/allowed_ips_grp man_allowed_ips_grp/) {
@@ -887,8 +937,8 @@ sub terminate {
                 );
                 if($aig_rs && $aig_rs->first) {
                     $c->model('DB')->resultset('voip_allowed_ip_groups')
-				   ->search_rs({ group_id => $aig_rs->first->value })
-				   ->delete;
+                    ->search_rs({ group_id => $aig_rs->first->value })
+                    ->delete;
                 }
             }
 

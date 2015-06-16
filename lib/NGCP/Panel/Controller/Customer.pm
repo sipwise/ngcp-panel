@@ -308,13 +308,12 @@ sub base :Chained('list_customer') :PathPart('') :CaptureArgs(1) {
         join => 'provisioning_voip_subscriber',
     });
     if($c->config->{features}->{cloudpbx}) {
-        $c->stash->{pbx_groups} = $c->model('DB')->resultset('voip_subscribers')->search({
-            contract_id => $contract_id,
-            status => { '!=' => 'terminated' },
-            'provisioning_voip_subscriber.is_pbx_group' => 1,
-        }, {
-            join => 'provisioning_voip_subscriber',
-        });
+        $c->stash->{pbx_groups} = NGCP::Panel::Utils::Subscriber::get_pbx_subscribers_rs(
+            c => $c,
+            schema => $c->model('DB'),
+            customer_id => $contract_id,
+            is_group => 1,
+        );
     }
 
     my $field_devs = [ $c->model('DB')->resultset('autoprov_field_devices')->search({
@@ -643,12 +642,12 @@ sub subscriber_create :Chained('base') :PathPart('subscriber/create') :Args(0) {
             my $schema = $c->model('DB');
             $schema->txn_do(sub {
                 my $preferences = {};
-                my $pbxgroups = [];
+                my $pbx_group_ids = [];
                 if($pbx && !$pbxadmin) {
                     my $pilot = $c->stash->{pilot};
                     $form->params->{domain}{id} = $pilot->domain_id;
                     if ($form->value->{group_select}) {
-                        $pbxgroups = decode_json($form->value->{group_select});
+                        $pbx_group_ids = decode_json($form->value->{group_select});
                     }
                     my $base_number = $pilot->primary_number;
                     if($base_number) {
@@ -711,24 +710,14 @@ sub subscriber_create :Chained('base') :PathPart('subscriber/create') :Args(0) {
                         alias_selected => decode_json($form->value->{alias_select}),
                         sadmin => $c->stash->{pilot},
                     );
-
-                    foreach my $group_id(@{ $pbxgroups }) {
-                        my $group = $c->model('DB')->resultset('voip_subscribers')->find($group_id);
-                        next unless($group && $group->provisioning_voip_subscriber && $group->provisioning_voip_subscriber->is_pbx_group);
-                        $billing_subscriber->provisioning_voip_subscriber->voip_pbx_groups->create({
-                            group_id => $group->provisioning_voip_subscriber->id,
-                        });
-                        NGCP::Panel::Utils::Subscriber::update_pbx_group_prefs(
-                            c => $c,
-                            schema => $schema,
-                            old_group_id => undef,
-                            new_group_id => $group_id,
-                            username => $billing_subscriber->username,
-                            domain => $billing_subscriber->domain->domain,
-                        );
-                    }
+                    NGCP::Panel::Utils::Subscriber::manage_pbx_groups(
+                        c            => $c,
+                        schema       => $schema,
+                        group_ids    => $pbx_group_ids,
+                        customer     => $c->stash->{contract},
+                        subscriber   => $billing_subscriber,
+                    );
                 }
-
             });
 
             delete $c->session->{created_objects}->{domain};
@@ -1070,10 +1059,10 @@ sub pbx_group_edit :Chained('pbx_group_base') :PathPart('edit') :Args(0) {
             $schema->txn_do(sub {
                 my $old_extension = $c->stash->{pbx_group}->provisioning_voip_subscriber->pbx_extension;
                 $c->stash->{pbx_group}->provisioning_voip_subscriber->update($form->params);
-                NGCP::Panel::Utils::Subscriber::update_subscriber_pbx_policy(
+                NGCP::Panel::Utils::Subscriber::update_preferences(
                     c => $c, 
                     prov_subscriber => $c->stash->{pbx_group}->provisioning_voip_subscriber,
-                    'values'   => {
+                    'preferences'   => {
                         cloud_pbx_hunt_policy  => $form->params->{pbx_hunt_policy},
                         cloud_pbx_hunt_timeout => $form->params->{pbx_hunt_timeout},
                     }
