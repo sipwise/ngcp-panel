@@ -219,8 +219,8 @@ sub get_billing_profile {
 sub prepare_resource {
     my ($self, $c, $schema, $resource, $item) = @_;
     
-    my @groups = ();
-    my @groupmembers = ();
+    my $groups = [];
+    my $groupmembers = [];
     my $domain;
     if($resource->{domain}) {
         $domain = $c->model('DB')->resultset('domains')
@@ -361,19 +361,17 @@ sub prepare_resource {
                         $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Invalid pbx_group_ids parameter, must be an array.");
                         return;
                     }
-                    foreach my $group_id(@{ $resource->{pbx_group_ids} }) {
-                        my $group_subscriber = $c->model('DB')->resultset('voip_subscribers')->find({
-                            id => $group_id,
-                            contract_id => $resource->{customer_id},
-                            'provisioning_voip_subscriber.is_pbx_group' => 1,
-                        },{
-                            join => 'provisioning_voip_subscriber',
-                        });
-                        unless($group_subscriber) {
-                            $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Invalid id '$group_id' in pbx_group_ids, does not exist for this customer.");
-                            return;
-                        }
-                        push @groups, $group_subscriber;
+                    my $absent_ids;
+                    ($groups,$absent_ids) = NGCP::Panel::Utils::Subscriber::get_pbx_subscribers_by_ids(
+                        c           => $c,
+                        schema      => $schema,
+                        ids         => $resource->{pbx_group_ids},
+                        customer_id => $resource->{customer_id},
+                        is_group    => 1,
+                    );
+                    if($absent_ids){
+                        $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Invalid id '".$absent_ids->[0]."' in pbx_group_ids, does not exist for this customer.");
+                        return;                
                     }
                 }
             } else {
@@ -385,20 +383,19 @@ sub prepare_resource {
                         $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Invalid pbx_groupmember_ids parameter, must be an array.");
                         return;
                     }
-                    foreach my $sub_id(@{ $resource->{pbx_groupmember_ids} }) {
-                        my $group_subscriber = $c->model('DB')->resultset('voip_subscribers')->find({
-                            id => $sub_id,
-                            contract_id => $resource->{customer_id},
-                            'provisioning_voip_subscriber.is_pbx_group' => 0,
-                        },{
-                            join => 'provisioning_voip_subscriber',
-                        });
-                        unless($group_subscriber) {
-                            $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Invalid id '$sub_id' in pbx_groupmember_ids, does not exist for this customer.");
-                            return;
-                        }
-                        push @groupmembers, $group_subscriber;
+                    my $absent_ids;
+                    ($groupmembers,$absent_ids) = NGCP::Panel::Utils::Subscriber::get_pbx_subscribers_by_ids(
+                        c           => $c,
+                        schema      => $schema,
+                        ids         => $resource->{pbx_groupmember_ids},
+                        customer_id => $resource->{customer_id},
+                        is_group    => 0,
+                    );
+                    if($absent_ids){
+                        $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Invalid id '".$absent_ids->[0]."' in pbx_groupmember_ids, does not exist for this customer.");
+                        return;
                     }
+                   
                 }
             }
         }
@@ -480,8 +477,8 @@ sub prepare_resource {
         customer => $customer,
         alias_numbers => $alias_numbers,
         preferences => $preferences,
-        groups => \@groups,
-        groupmembers => \@groupmembers,
+        groups => $groups,
+        groupmembers => $groupmembers,
     };
 
     return $r;
@@ -633,10 +630,10 @@ sub update_item {
     if($self->is_true($resource->{is_pbx_group})) {
         $provisioning_res->{pbx_hunt_policy} = $resource->{pbx_hunt_policy};
         $provisioning_res->{pbx_hunt_timeout} = $resource->{pbx_hunt_timeout};
-        NGCP::Panel::Utils::Subscriber::update_subscriber_pbx_policy(
+        NGCP::Panel::Utils::Subscriber::update_preferences(
             c => $c, 
             prov_subscriber => $prov_subscriber,
-            'values'   => {
+            'preferences'   => {
                 cloud_pbx_hunt_policy  => $resource->{cloud_pbx_hunt_policy} // $resource->{pbx_hunt_policy},
                 cloud_pbx_hunt_timeout => $resource->{cloud_pbx_hunt_policy} // $resource->{pbx_hunt_timeout},
             }
@@ -665,85 +662,19 @@ sub update_item {
     }
 
     NGCP::Panel::Utils::Subscriber::update_preferences(
-        c => $c, 
+        c => $c,
         prov_subscriber => $prov_subscriber,
         preferences => $preferences,
     );
 
-    my @old_groups = $prov_subscriber->voip_pbx_groups->get_column('group_id')->all;
-    my @new_groups = ();
-    foreach my $group(@{ $groups }) {
-        push @new_groups, $group->provisioning_voip_subscriber->id;
-        unless(grep { $group->provisioning_voip_subscriber->id eq $_ } @old_groups) {
-            $prov_subscriber->voip_pbx_groups->create({
-                group_id => $group->provisioning_voip_subscriber->id,
-            });
-            NGCP::Panel::Utils::Subscriber::update_pbx_group_prefs(
-                c => $c,
-                schema => $schema,
-                old_group_id => undef,
-                new_group_id => $group->id,
-                username => $subscriber->username,
-                domain => $subscriber->domain->domain,
-                group_rs => $schema->resultset('voip_subscribers')->search({
-                    contract_id => $customer->id,
-                    status => { '!=' => 'terminated' },
-                }),
-            );
-        }
-    }
-    foreach my $group_id(@old_groups) {
-        # remove subscriber from group if not there anymore
-        unless(grep { $group_id eq $_ } @new_groups) {
-            my $group = $schema->resultset('provisioning_voip_subscribers')->find($group_id);
-            NGCP::Panel::Utils::Subscriber::update_pbx_group_prefs(
-                c => $c,
-                schema => $schema,
-                old_group_id => $group->voip_subscriber->id,
-                new_group_id => undef,
-                username => $subscriber->username,
-                domain => $subscriber->domain->domain,
-                group_rs => $schema->resultset('voip_subscribers')->search({
-                    contract_id => $customer->id,
-                    status => { '!=' => 'terminated' },
-                }),
-            );
-            $prov_subscriber->voip_pbx_groups->search({
-                group_id => $group_id,
-                subscriber_id => $prov_subscriber->id,
-            })->delete;
-        }
-    }
-
-    my @old_members = $prov_subscriber->voip_pbx_group_members->get_column('subscriber_id')->all;
-    my @new_members = ();
-    my $grp_pref_rs = NGCP::Panel::Utils::Preferences::get_usr_preference_rs(
-        c => $c, attribute => 'cloud_pbx_hunt_group', 
-        prov_subscriber => $prov_subscriber,
+    NGCP::Panel::Utils::Subscriber::manage_pbx_groups(
+        c            => $c,
+        schema       => $schema,
+        groups       => $groups,
+        groupmembers => $groupmembers,
+        customer     => $customer,
+        subscriber   => $subscriber,
     );
-    foreach my $member(@{ $groupmembers }) {
-        my $uri = 'sip:' . $member->username . '@' . $member->domain->domain;
-        push @new_members, $member->provisioning_voip_subscriber->id;
-        unless($prov_subscriber->voip_pbx_group_members->find({
-            subscriber_id => $member->provisioning_voip_subscriber->id,
-        })) {
-            $prov_subscriber->voip_pbx_group_members->create({
-                subscriber_id => $member->provisioning_voip_subscriber->id,
-            });
-            $grp_pref_rs->create({ value => $uri });
-        }
-    }
-    foreach my $old_member_id(@old_members) {
-        unless(grep { $old_member_id eq $_ } @new_members) {
-            my $grp = $prov_subscriber->voip_pbx_group_members
-                ->find({ subscriber_id => $old_member_id });
-            my $oldsub = $grp->subscriber;
-            $grp->delete;
-            $grp_pref_rs->find(
-                { value => 'sip:' . $oldsub->username . '@' . $oldsub->domain->domain }
-            )->delete;
-        }
-    }
 
     return $subscriber;
 }
