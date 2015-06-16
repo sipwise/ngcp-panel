@@ -283,13 +283,12 @@ sub base :Chained('sub_list') :PathPart('') :CaptureArgs(1) {
     ]);
 
     if($c->stash->{billing_mapping}->product->class eq "pbxaccount") {
-        $c->stash->{pbx_groups} = $c->model('DB')->resultset('voip_subscribers')->search({
-            contract_id => $c->stash->{subscriber}->contract->id,
-            status => { '!=' => 'terminated' },
-            'provisioning_voip_subscriber.is_pbx_group' => 1,
-        }, {
-            join => 'provisioning_voip_subscriber',
-        });
+        $c->stash->{pbx_groups} = NGCP::Panel::Utils::Subscriber::get_pbx_subscribers_rs(
+            c => $c,
+            schema => $c->model('DB'),
+            customer_id => $c->stash->{contract}->id ,
+            is_group => 1,
+        );
     }
 }
 
@@ -2388,48 +2387,14 @@ sub edit_master :Chained('master') :PathPart('edit') :Args(0) :Does(ACL) :ACLDet
                         type => $type, old => $old_profile, new => $prov_subscriber->profile_id
                     );
                 }
-
-                my @old_groups = $prov_subscriber->voip_pbx_groups->get_column('group_id')->all;
                 my $new_group_ids = defined $form->value->{group_select} ? 
                     decode_json($form->value->{group_select}) : [];
-                my @new_groups = ();
-                foreach my $group_id(@{ $new_group_ids }) {
-                    # add subscriber to group if not there yet
-                    my $group = $schema->resultset('voip_subscribers')->find($group_id);
-                    next unless($group && $group->provisioning_voip_subscriber && $group->provisioning_voip_subscriber->is_pbx_group);
-                    push @new_groups, $group->provisioning_voip_subscriber->id;
-                    unless(grep { $group->provisioning_voip_subscriber->id eq $_ } @old_groups) {
-                        $prov_subscriber->voip_pbx_groups->create({
-                            group_id => $group->provisioning_voip_subscriber->id,
-                        });
-                        NGCP::Panel::Utils::Subscriber::update_pbx_group_prefs(
-                            c => $c,
-                            schema => $schema,
-                            old_group_id => undef,
-                            new_group_id => $group_id,
-                            username => $subscriber->username,
-                            domain => $subscriber->domain->domain,
-                        );
-                    }
-                }
-                foreach my $group_id(@old_groups) {
-                    # remove subscriber from group if not there anymore
-                    unless(grep { $group_id eq $_ } @new_groups) {
-                        my $group = $schema->resultset('provisioning_voip_subscribers')->find($group_id);
-                        NGCP::Panel::Utils::Subscriber::update_pbx_group_prefs(
-                            c => $c,
-                            schema => $schema,
-                            old_group_id => $group->voip_subscriber->id,
-                            new_group_id => undef,
-                            username => $subscriber->username,
-                            domain => $subscriber->domain->domain,
-                        );
-                        $prov_subscriber->voip_pbx_groups->search({
-                            group_id => $group_id,
-                            subscriber_id => $prov_subscriber->id,
-                        })->delete;
-                    }
-                }
+                NGCP::Panel::Utils::Subscriber::manage_pbx_groups(
+                    c            => $c,
+                    schema       => $schema,
+                    group_ids    => $new_group_ids,
+                    subscriber   => $subscriber,
+                );
 
                 my $old_ext_id = $subscriber->external_id;
                 $subscriber->update({
