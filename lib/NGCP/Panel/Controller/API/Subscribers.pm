@@ -278,6 +278,7 @@ sub POST :Allow {
         my $alias_numbers = $r->{alias_numbers};
         my $preferences = $r->{preferences};
         my $groups = $r->{groups};
+        my $groupmembers = $r->{groupmembers};
         $resource = $r->{resource};
 
         try {
@@ -308,24 +309,14 @@ sub POST :Allow {
                 subscriber_id  => $subscriber->id,
             );
             $subscriber->discard_changes; # reload row because of new number
-
-            foreach my $group(@{ $groups }) {
-                $subscriber->provisioning_voip_subscriber->voip_pbx_groups->create({
-                    group_id => $group->provisioning_voip_subscriber->id,
-                });
-                NGCP::Panel::Utils::Subscriber::update_pbx_group_prefs(
-                    c => $c,
-                    schema => $schema,
-                    old_group_id => undef,
-                    new_group_id => $group->id,
-                    username => $subscriber->username,
-                    domain => $subscriber->domain->domain,
-                    group_rs => $schema->resultset('voip_subscribers')->search({
-                        contract_id => $customer->id,
-                        status => { '!=' => 'terminated' },
-                    }),
-                );
-            }
+            NGCP::Panel::Utils::Subscriber::manage_pbx_groups(
+                c            => $c,
+                schema       => $schema,
+                groups       => $groups,
+                groupmembers => $groupmembers,
+                customer     => $customer,
+                subscriber   => $subscriber,
+            );
 
         } catch(DBIx::Class::Exception $e where { /Duplicate entry '([^']+)' for key 'number_idx'/ }) {
             $e =~ /Duplicate entry '([^']+)' for key 'number_idx'/;
