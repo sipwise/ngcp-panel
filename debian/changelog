@@ -1,3 +1,12 @@
+ngcp-panel (1.8.2.2+0~mr3.8.2.2) unstable; urgency=low
+
+  [ Gerhard Jungwirth ]
+  * [0b6a1d2] MT#13243 api filter by webuser, -password
+
+  [ Sipwise Jenkins Builder ]
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Fri, 19 Jun 2015 14:10:03 +0200
+
 ngcp-panel (1.8.2.1+0~mr3.8.2.1) unstable; urgency=low
 
   [ Irina Peshinskaya ]
