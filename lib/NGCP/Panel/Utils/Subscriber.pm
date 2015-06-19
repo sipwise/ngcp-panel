@@ -1169,7 +1169,7 @@ sub apply_rewrite {
         field => $field,
     }, {
         join => 'ruleset',
-        order_by => { -asc => 'priority' }
+        order_by => { -asc => 'priority' },
     });
     my $cache = {};
     foreach my $r($rule_rs->all) {
@@ -1221,7 +1221,7 @@ sub apply_rewrite {
                     foreach my $v(@{ $val }) {
                         my $tmporig = $orig;
                         $tmporig =~ s/\$avp\(s:calle(?:r|e)_$avp\)/$v/g;
-                        $tmporig =~ s/\$\(avp\(s:calle(?:r|e)_$avp\)\[\*\]\)/$v/g;
+                        $tmporig =~ s/\$\(avp\(s:calle(?:r|e)_$avp\)\[\+\]\)/$v/g;
                         push @{ $field }, $tmporig;
                     }
                 } else {
