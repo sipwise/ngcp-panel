@@ -1,3 +1,12 @@
+ngcp-panel (1.8.1.18+0~mr3.8.1.18) unstable; urgency=low
+
+  [ Irina Peshinskaya ]
+  * [9ae0c88] MT#12937 Replace groups managements different code parts with common methods
+
+  [ Sipwise Jenkins Builder ]
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Fri, 19 Jun 2015 14:09:40 +0200
+
 ngcp-panel (1.8.1.17+0~mr3.8.1.17) unstable; urgency=low
 
   [ Gerhard Jungwirth ]
