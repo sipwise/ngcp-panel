@@ -263,6 +263,7 @@ sub rules_list :Chained('set_base') :PathPart('rules') :CaptureArgs(0) {
     $c->stash(rules_uri => $c->uri_for_action("/rewrite/rules_root", [$c->req->captures->[0]]));
 
     $c->stash(template => 'rewrite/rules_list.tt');
+    return;
 }
 
 sub rules_root :Chained('rules_list') :PathPart('') :Args(0) {
@@ -281,7 +282,7 @@ sub rules_root :Chained('rules_list') :PathPart('') :Args(0) {
             direction => $elem->direction,
             priority => { ($use_next ? '>' : '<') => $elem->priority },
         },{
-            order_by => {($use_next ? '-asc' : '-desc') => 'priority'}
+            order_by => {($use_next ? '-asc' : '-desc') => 'priority'},
         })->first;
         try {
             if ($swap_elem) {
@@ -341,7 +342,7 @@ sub rules_root :Chained('rules_list') :PathPart('') :Args(0) {
         my $mp = $row->match_pattern;
         my $rp = $row->replace_pattern;
         $mp =~ s/\$avp\(s\:(\w+)\)/\${$1}/g;
-        $mp =~ s/\$\(avp\(s\:(\w+)\)\[\*\]\)/\@{$1}/g;
+        $mp =~ s/\$\(avp\(s\:(\w+)\)\[\+\]\)/\@{$1}/g;
         $rp =~ s/\$avp\(s\:(\w+)\)/\${$1}/g;
         $row->match_pattern($mp);
         $row->replace_pattern($rp);
@@ -378,6 +379,7 @@ sub rules_base :Chained('rules_list') :PathPart('') :CaptureArgs(1) {
         NGCP::Panel::Utils::Navigation::back_or($c, $c->stash->{rules_uri});
     }
     $c->stash(rule_result => $res);
+    return;
 }
 
 sub rules_edit :Chained('rules_base') :PathPart('edit') {

@@ -97,7 +97,7 @@ has_block 'actions' => (
 before 'update_model' => sub {
     my $self = shift;
     $self->value->{match_pattern} =~   s/\$\{(\w+)\}/\$avp(s:$1)/g;
-    $self->value->{match_pattern} =~   s/\@\{(\w+)\}/\$(avp(s:$1)[*])/g;
+    $self->value->{match_pattern} =~   s/\@\{(\w+)\}/\$(avp(s:$1)[+])/g;
     $self->value->{replace_pattern} =~ s/\$\{(\w+)\}/\$avp(s:$1)/g;
 };
 
@@ -105,7 +105,7 @@ sub inflate_match_pattern {
     my ($self, $value) = @_;
     
     $value =~ s/\$avp\(s\:(\w+)\)/\${$1}/g;
-    $value =~ s/\$\(avp\(s\:(\w+)\)\[\*\]\)/\@{$1}/g;
+    $value =~ s/\$\(avp\(s\:(\w+)\)\[\+\]\)/\@{$1}/g;
     return $value;
 }
 
