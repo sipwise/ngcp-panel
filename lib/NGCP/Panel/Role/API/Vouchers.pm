@@ -90,6 +90,10 @@ sub update_item {
         form => $form,
         resource => $resource,
     );
+    if($resource->{valid_until} =~ /\+\d{2}:\d{2}$/) {
+        # strip timezone definition
+        $resource->{valid_until} =~ s/\+\d{2}:\d{2}$//;
+    }
     if($c->user->roles eq "admin") {
     } elsif($c->user->roles eq "reseller") {
         $resource->{reseller_id} = $c->user->reseller_id;
