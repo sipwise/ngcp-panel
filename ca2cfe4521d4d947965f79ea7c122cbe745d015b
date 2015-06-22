@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "1a2f8d8d_2bb419f1",
+        "filename": "share/templates/widgets/admin_topmenu_settings.tt",
+        "patchSetId": 1
+      },
+      "lineNbr": 8,
+      "author": {
+        "id": 1000002
+      },
+      "writtenOn": "2015-06-22T12:26:37Z",
+      "side": 1,
+      "message": "ii ??",
+      "revId": "ca2cfe4521d4d947965f79ea7c122cbe745d015b",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    }
+  ]
+}
