@@ -5,8 +5,8 @@
         <b class="caret"></b>
     </a>
     <ul class="dropdown-menu">
-        <li><a href="[% c.uri_for('/api') %]">[% c.loc('API') %]</a></li>
-        <li><a href="[% c.uri_for('/handbook') %]">[% c.loc('Handbook') %]</a></li>
+        <li><a href="[% c.uri_for('/api/') %]">[% c.loc('API') %]</a></li>
+        <li><a href="[% c.uri_for('/handbook/') %]">[% c.loc('Handbook') %]</a></li>
     </ul>
 </li>
 <li class="dropdown">
