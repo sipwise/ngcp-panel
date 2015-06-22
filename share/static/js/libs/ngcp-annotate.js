@@ -14,22 +14,38 @@
       var linkPosition = $el.position();
       var top, left;
       switch(pos) {
-      	case "top":
+        case "top":
           top = linkPosition.top - 5 - $el.outerHeight();
           left = linkPosition.left - $el.outerWidth()/2;
-	  break;
-      	case "bottom":
+          break;
+        case "topleft":
+          top = linkPosition.top - 5 - $el.outerHeight();
+          left = linkPosition.left - $el.outerWidth() + 5 ;
+          break;
+        case "topright":
+          top = linkPosition.top - 5 - $el.outerHeight();
+          left = linkPosition.left - 5 ;
+          break;
+        case "bottom":
           top = linkPosition.top - 15 + $el.outerHeight();
           left = linkPosition.left - $el.outerWidth()/2;
-	  break;
-      	case "left":
+          break;
+        case "bottomleft":
+          top = linkPosition.top - 15 + $el.outerHeight();
+          left = linkPosition.left - $el.outerWidth() + 5 ;
+          break;
+        case "bottomright":
+          top = linkPosition.top - 15 + $el.outerHeight();
+          left = linkPosition.left - 5 ;
+          break;
+        case "left":
           top = linkPosition.top - $el.outerHeight()/2;
           left = linkPosition.left - 5 - $el.outerWidth();
-	  break;
-      	case "right":
+          break;
+        case "right":
           top = linkPosition.top - $el.outerHeight()/2;
           left = linkPosition.left + 5;
-	  break;
+          break;
       }
       $el.css({
         top: top,
