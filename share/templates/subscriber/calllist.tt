@@ -9,6 +9,18 @@
 
 <div class="ngcp-separator"></div>
 
+
+<select id="Calls_table_external_filter">
+<option value="">Show all calls</option>
+<option value="outcoming">Show only outgoing calls</option>
+<option value="incoming">Show incoming calls</option>
+</select>
+<script>
+$('#Calls_table_external_filter').change( function() { $('#Calls_table').dataTable().fnFilter( $(this).val() ); } );
+</script>
+
+<div class="ngcp-separator"></div>
+
 [%
     helper.name = 'Calls';
     helper.dt_columns = calls_dt_columns;
