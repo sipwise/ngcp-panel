@@ -289,6 +289,11 @@ sub base :Chained('sub_list') :PathPart('') :CaptureArgs(1) {
             customer_id => $c->stash->{contract}->id ,
             is_group => 1,
         );
+        $c->stash->{subscriber_pbx_items} = NGCP::Panel::Utils::Subscriber::get_subscriber_pbx_items(
+            c          => $c,
+            schema     => $c->model('DB'),
+            subscriber => $c->stash->{subscriber} ,
+        );
     }
 }
 
@@ -2563,7 +2568,41 @@ sub edit_master :Chained('master') :PathPart('edit') :Args(0) :Does(ACL) :ACLDet
 
 }
 
-sub aliases_ajax :Chained('master') :PathPart('aliases/ajax') :Args(0) :Does(ACL) :ACLDetachTo('/denied_page') :AllowedRole(admin) :AllowedRole(reseller) :AllowedRole(subscriberadmin) {
+sub order_pbx_items :Chained('master') :PathPart('orderpbxitems') :Args(0) :Does(ACL) :ACLDetachTo('/denied_page') :AllowedRole(admin) : AllowedRole(reseller) :AllowedRole(subscriberadmin) {
+    my ($self, $c) = @_;
+
+    my $move_id  = $c->req->params->{move};
+    my $direction = $c->req->params->{where};
+
+    my $subscriber = $c->stash->{subscriber};
+    my $prov_subscriber = $subscriber->provisioning_voip_subscriber;
+    my $items = $c->stash->{subscriber_pbx_items};
+   
+    if(defined $move_id){
+        for( my $i=0; $i <= $#$items; $i++ ){
+            if($move_id == $items->[$i]->id){
+                my $i_subling = $i + ( ( $direction eq 'up' ) ? -1 : 1 );
+                @{$items}[$i,$i_subling] = @{$items}[$i_subling,$i];
+                last;
+            }
+        }
+        NGCP::Panel::Utils::Subscriber::manage_pbx_groups(
+            c          => $c,
+            schema     => $c->model('DB'),
+            subscriber => $subscriber,
+            ( $prov_subscriber->is_pbx_group ? 'groupmembers' : 'groups' ) => $items,
+        );
+    }
+    $c->stash->{subscriber_pbx_items} = NGCP::Panel::Utils::Subscriber::get_subscriber_pbx_items(
+        c          => $c,
+        schema     => $c->model('DB'),
+        subscriber => $subscriber ,
+    );
+    $c->stash->{template} = 'subscriber/pbx_group_items.tt';
+    $c->detach( $c->view('TT') );
+}
+
+sub aliases_ajax :Chained('master') :PathPart('ordergroups') :Args(0) :Does(ACL) :ACLDetachTo('/denied_page') :AllowedRole(admin) :AllowedRole(reseller) :AllowedRole(subscriberadmin) {
     my ($self, $c) = @_;
 
     my $subscriber = $c->stash->{subscriber};
