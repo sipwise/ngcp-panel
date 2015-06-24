@@ -392,13 +392,13 @@ sub get_pbx_subscribers_by_ids{
     my $ids         = $params{ids} // [];
     my $customer_id = $params{customer_id} // 0;
     my $is_group    = $params{is_group};
-    
+
     my $pbx_subscribers_rs = get_pbx_subscribers_rs(@_);
 
     my (@items,@absent_items_ids);
 
     @items = $pbx_subscribers_rs->all();
-    
+   
     my %items_ids_exists =  map{ $_->id => 0 } @items;
     
     if(@$ids){
@@ -406,12 +406,55 @@ sub get_pbx_subscribers_by_ids{
         @$order_hash{@$ids} = (1..$#$ids+1);
         @items = sort { $order_hash->{$a->id} <=> $order_hash->{$b->id} } @items;
     }
-    
+
     if($#items < $#$ids){
         @absent_items_ids = grep { !exists $items_ids_exists{$_} } @{$params{ids}};
     }
     
-    return \@items, (( 0 < @absent_items_ids) ? \@absent_items_ids : undef ) ;
+    return wantarray ? (\@items, (( 0 < @absent_items_ids) ? \@absent_items_ids : undef )) : \@items;
+}
+sub get_subscriber_pbx_items{
+    my %params = @_;
+
+    my $c          = $params{c};
+    my $schema     = $params{schema} // $c->model('DB');
+    my $subscriber = $params{subscriber};
+
+    my $prov_subscriber = $subscriber->provisioning_voip_subscriber;
+    my $items_are_groups = !($prov_subscriber->is_pbx_group);
+    my $ids = get_subscriber_pbx_items_ids(@_);
+    my $items = get_pbx_subscribers_by_ids(
+        c           => $c,
+        schema      => $schema,
+        customer_id => $subscriber->contract->id ,
+        is_group    => $items_are_groups,
+        ids         => $ids,
+    );
+    return wantarray ? ($items, $ids) : $items;
+}
+
+sub get_subscriber_pbx_items_ids{
+    my %params = @_;
+
+    my $c          = $params{c};
+    my $schema     = $params{schema} // $c->model('DB');
+    my $subscriber = $params{subscriber};
+
+    my $prov_subscriber = $subscriber->provisioning_voip_subscriber;
+    my $items_are_groups = !($prov_subscriber->is_pbx_group);
+    my $select_attributes = {
+        'order_by' => 'me.id',
+        'select'   => 'voip_subscriber.id',
+        'as'       => 'voip_subscriber_id',
+        'join'     => { ( $items_are_groups ? 'group' : 'subscriber' ) => 'voip_subscriber'},
+    };
+    my $ids;
+    if($items_are_groups){
+        $ids = [ $prov_subscriber->voip_pbx_groups->search_rs(undef,$select_attributes)->get_column('voip_subscriber_id')->all];
+    }else{
+        $ids = [ $prov_subscriber->voip_pbx_group_members->search_rs(undef,$select_attributes)->get_column('voip_subscriber_id')->all];
+    }
+    return $ids;
 }
 
 sub manage_pbx_groups{
@@ -424,14 +467,14 @@ sub manage_pbx_groups{
     my $subscriber      = $params{subscriber};
     my $customer        = $params{customer} // $subscriber->contract;
 
-    my ($groups)  = $params{groups} // ( @$group_ids ? get_pbx_subscribers_by_ids( 
+    my $groups       = $params{groups} // ( @$group_ids ? get_pbx_subscribers_by_ids( 
         c           => $c, 
         schema      => $schema, 
         ids         => $group_ids, 
         customer_id => $customer->id, 
         is_group    => 1,
     ) : [] );
-    my ($groupmembers) = $params{groupmembers} // ( @$groupmember_ids ? get_pbx_subscribers_by_ids( 
+    my $groupmembers = $params{groupmembers} // ( @$groupmember_ids ? get_pbx_subscribers_by_ids( 
         c           => $c, 
         schema      => $schema, 
         ids         => $groupmember_ids, 
@@ -455,15 +498,15 @@ sub manage_pbx_groups{
 
     #create new groups
     foreach my $group(@{ $groups }) {
-        my $group_voip_subscriber = $group->provisioning_voip_subscriber;
-        next unless( $group_voip_subscriber && $group_voip_subscriber->is_pbx_group );
+        my $group_prov_subscriber = $group->provisioning_voip_subscriber;
+        next unless( $group_prov_subscriber && $group_prov_subscriber->is_pbx_group );
         $prov_subscriber->voip_pbx_groups->create({
-            group_id => $group_voip_subscriber->id,
+            group_id => $group_prov_subscriber->id,
         });
         my $preferences_rs = NGCP::Panel::Utils::Preferences::get_usr_preference_rs(
             c               => $c, 
             attribute       => 'cloud_pbx_hunt_group', 
-            prov_subscriber => $group_voip_subscriber,
+            prov_subscriber => $group_prov_subscriber,
         );
         $preferences_rs->create({ value => $subscriber_uri });
     }
@@ -478,9 +521,11 @@ sub manage_pbx_groups{
     $group_preferences_rs->delete;
 
     foreach my $member(@{ $groupmembers }) {
+        my $member_prov_subscriber = $member->provisioning_voip_subscriber;
+        next unless( $member_prov_subscriber && !$member_prov_subscriber->is_pbx_group );
         my $member_uri = get_pbx_group_member_name( subscriber => $member );
         $prov_subscriber->voip_pbx_group_members->create({
-            subscriber_id => $member->provisioning_voip_subscriber->id,
+            subscriber_id => $member_prov_subscriber->id,
         });
         $group_preferences_rs->create({ value => $member_uri });
    }
