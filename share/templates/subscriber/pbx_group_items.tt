@@ -1,0 +1,39 @@
+
+
+            <table class="table table-bordered table-striped table-highlight table-hover">
+                <thead>
+                    <tr>
+                        <th></th>
+                        <th>#</th>
+                        <th>[%IF subscriber.provisioning_voip_subscriber.is_pbx_group; c.loc('Group member'); ELSE; c.loc('Group'); END%]</th>
+                        <th class="ngcp-actions-column"></th>
+                    </tr>
+                </thead>
+                <tbody>
+                [% FOR item IN subscriber_pbx_items %]
+                    <tr class="sw_action_row">
+                        <td>
+                                [%IF !loop.first() %]
+                                <a href="javascript:process_pbx_items('[%item.id%]','up');void(0);">
+                                    <i class="icon-arrow-up"></i>
+                                </a>
+                                [%END%]
+                                [%IF !loop.last() %]
+                                <a href="javascript:process_pbx_items('[%item.id%]','down');void(0);">
+                                    <i class="icon-arrow-down"></i>
+                                </a>
+                                [%END%]
+                        </td>
+                        <td>[% item.id %]</td>
+                        <td>[% item.username %]@[% item.domain.domain %]</td>
+                        <td class="ngcp-actions-column">
+                            <div class="sw_actions pull-right">
+                                <a class="btn btn-small btn-primary" href="[% c.uri_for_action('/subscriber/details',[item.id]) %]">
+                                    <i class="icon-edit"></i> [% c.loc('Subscriber') %]
+                                </a>
+                            </div>
+                        </td>
+                    </tr>
+                [% END %]
+                </tbody>
+            </table>            

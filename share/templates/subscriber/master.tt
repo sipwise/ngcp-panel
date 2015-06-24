@@ -165,7 +165,9 @@
         c.user.roles == 'subscriberadmin'
     -%]
 
-    <script type="text/javascript" src="/js/background.js"></script>
+
+
+<script type="text/javascript" src="/js/background.js"></script>
 <script>
 function showCallDetails(callId){
     var divId = 'call_details';
@@ -185,14 +187,38 @@ function showCallDetails(callId){
         }
     );
 }
+function process_pbx_items(moveId,direction){
+    var uri = '[%c.uri_for_action('/subscriber/order_pbx_items', [subscriber.id], 'move'=> 'moveId', 'where' => 'direction')%]';
+    uri=uri.replace('moveId', moveId);
+    uri=uri.replace('direction', direction);
+    fetch_into(
+        'pbx_group_items',
+        uri,
+        '',
+        function(){ 
+            mainWrapperInit();
+        }
+    );
+}
 </script>
+    <div class="accordion-group">
+        <div class="accordion-heading">
+            <a class="accordion-toggle" data-toggle="collapse" data-parent="#subscriber_data" href="#collapse_pbx_group_items">[%IF subscriber.provisioning_voip_subscriber.is_pbx_group; c.loc('Group members'); ELSE; c.loc('Groups'); END%]</a>
+        </div>
+        <div class="accordion-body collapse" id="collapse_pbx_group_items">
+            <div class="accordion-inner" id="pbx_group_items">
+[%PROCESS 'subscriber/pbx_group_items.tt' %]  
+            </div>
+        </div>
+    </div>
+    
     <div class="accordion-group">
         <div class="accordion-heading">
             <a class="accordion-toggle" data-toggle="collapse" data-parent="#subscriber_data" href="#collapse_calls">[% c.loc('Call History') %]</a>
         </div>
         <div class="accordion-body collapse" id="collapse_calls">
             <div class="accordion-inner">
-
+ 
 [%PROCESS 'subscriber/call_details_wrapper.tt' %]  
 [%
     helper.name = 'Calls';
