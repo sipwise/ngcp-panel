@@ -1,3 +1,12 @@
+ngcp-panel (1.7.1.32+0~mr3.7.1.32) unstable; urgency=low
+
+  [ Irina Peshinskaya ]
+  * [899abad] MT#13369 Add annotate possibility for narrowly positioned buttons
+
+  [ Sipwise Jenkins Builder ]
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Wed, 24 Jun 2015 17:12:32 +0200
+
 ngcp-panel (1.7.1.31+0~mr3.7.1.31) unstable; urgency=low
 
   [ Irina Peshinskaya ]
