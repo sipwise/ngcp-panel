@@ -35,6 +35,7 @@ has_field 'group_select' => (
     required => 0,
     template => 'helpers/datatables_multifield.tt',
     ajax_src => '/invalid',
+    no_ordering => 1,
     table_titles => ['#', 'Name', 'Extension'],
     table_fields => ['id', 'username', 'provisioning_voip_subscriber_pbx_extension'],
 );
@@ -202,17 +203,20 @@ sub field_list {
         }
     }
     if($self->field('group_select')) {
-        my $sub;
+        my $sub_contract;
+        my $sub_id = 0;
         if($c->stash->{pilot}) {
-            $sub = $c->stash->{pilot};
+            $sub_contract = $c->stash->{pilot};
         } elsif($c->stash->{subscriber}) {
-            $sub = $c->stash->{subscriber};
+            $sub_contract = $c->stash->{subscriber};
         }
-
-        if($sub) {
+        if($c->stash->{subscriber}) {
+            $sub_id = $c->stash->{subscriber}->id;
+        }
+        if($sub_contract) {
             $self->field('group_select')->ajax_src(
-                    $c->uri_for_action("/customer/pbx_group_ajax", [$sub->contract_id])->as_string
-                );
+                $c->uri_for_action("/customer/pbx_group_ajax", [$sub_contract->contract_id], { 'subscriber_id' => $sub_id } )->as_string
+            );
         }
     }
 
