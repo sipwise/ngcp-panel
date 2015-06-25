@@ -1116,6 +1116,8 @@ sub prepare_group_select {
     my @group_options = ();
     my $group_rs = $c->model('DB')->resultset('voip_pbx_groups')->search({
         'subscriber_id' => $subscriber->provisioning_voip_subscriber->id,
+    },{
+        'order_by' => 'me.id',
     });
     unless($unselect) {
         @group_options = map { $_->group->voip_subscriber->id } $group_rs->all;
