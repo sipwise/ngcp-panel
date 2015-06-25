@@ -1,3 +1,13 @@
+ngcp-panel (1.8.1.21+0~mr3.8.1.21) unstable; urgency=low
+
+  [ Irina Peshinskaya ]
+  * [ddbeeaf] MT#12939 Manage pbx groups and members order through the web-Panel
+  * [09bbd8c] MT#12939 Preserve groups order while edit subscriber
+
+  [ Sipwise Jenkins Builder ]
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Thu, 25 Jun 2015 18:14:29 +0200
+
 ngcp-panel (1.8.1.20+0~mr3.8.1.20) unstable; urgency=low
 
   [ Irina Peshinskaya ]
