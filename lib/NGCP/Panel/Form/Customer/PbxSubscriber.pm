@@ -35,6 +35,7 @@ has_field 'group_select' => (
     required => 0,
     template => 'helpers/datatables_multifield.tt',
     ajax_src => '/invalid',
+    no_ordering => 1,
     table_titles => ['#', 'Name', 'Extension'],
     table_fields => ['id', 'username', 'provisioning_voip_subscriber_pbx_extension'],
 );
@@ -211,8 +212,8 @@ sub field_list {
 
         if($sub) {
             $self->field('group_select')->ajax_src(
-                    $c->uri_for_action("/customer/pbx_group_ajax", [$sub->contract_id])->as_string
-                );
+                $c->uri_for_action("/subscriber/pbx_group_ajax", [$sub->id])->as_string
+            );
         }
     }
 
