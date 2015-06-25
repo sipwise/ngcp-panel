@@ -891,11 +891,27 @@ sub subscriber_ajax :Chained('base') :PathPart('subscriber/ajax') :Args(0) {
 
 sub pbx_group_ajax :Chained('base') :PathPart('pbx/group/ajax') :Args(0) {
     my ($self, $c) = @_;
+    my $subscriber_id = $c->req->params->{subscriber_id} // 0;
+    
+    my $subscriber;
+    if($subscriber_id && $subscriber_id->is_integer) {
+        $subscriber = $c->model('DB')->resultset('voip_subscribers')->search({
+            'me.status' => { '!=' => 'terminated' },
+        })->find( { id => $subscriber_id } );
+    }
     my $res = $c->stash->{contract}->voip_subscribers->search({
         'provisioning_voip_subscriber.is_pbx_group' => 1,
-
     },{
-        join => 'provisioning_voip_subscriber',
+        'join' => 'provisioning_voip_subscriber',
+        ( defined $subscriber ? (
+            '+select' => [
+                {'' => \['select voip_pbx_groups.id from provisioning.voip_pbx_groups where voip_pbx_groups.group_id=provisioning_voip_subscriber.id and subscriber_id=?', [ {} => $subscriber->provisioning_voip_subscriber->id ] ], '-as' => 'sort_field' },
+                {'' => \['(select voip_pbx_groups.id from provisioning.voip_pbx_groups where voip_pbx_groups.group_id=provisioning_voip_subscriber.id and subscriber_id=?) is null', [ {} => $subscriber->provisioning_voip_subscriber->id ] ], '-as' => 'sort_field_is_null' },
+            ],
+            '+as' => ['sort_field','sort_field_is_null'],
+            'order_by' => ['sort_field_is_null','sort_field'], )
+            : (),
+        ),
     });
     NGCP::Panel::Utils::Datatables::process($c, $res, $c->stash->{pbxgroup_dt_columns});
     $c->detach( $c->view("JSON") );
