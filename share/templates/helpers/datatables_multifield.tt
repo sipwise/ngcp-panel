@@ -20,27 +20,26 @@ $(document).ready(function() {
         $("#[% hidden_id %]").val( JSON.stringify(Object.keys(checked_fields)) );
     
     });
-
-	$('#[% table_id %]')
-	    .dataTable( {
+    $('#[% table_id %]')
+        .dataTable( {
         "sDom": "<'row-fluid'<'pull-left'r><'pull-right'f>>t<'row-fluid'<'pull-left'i><'pull-right'p>>",
-		"bProcessing": true,
-		"bServerSide": true,
-		"bPaginate": true,
+        "bProcessing": true,
+        "bServerSide": true,
+        "bPaginate": true,
         "sPaginationType": "bootstrap",
-		"bLengthChange": false,
-		"bSort": true,
-		"bInfo": true,
-		"iDisplayLength": 4,
+        "bLengthChange": false,
+        "bSort": [%IF no_ordering; 'false'; ELSE; 'true'; END%],
+        "bInfo": true,
+        "iDisplayLength": 4,
         'iShowPages': 5,
         "oLanguage": {
             "sUrl": "/js/i18n/[% language_file %]"
         },
-		"sAjaxSource": "[% ajax_src %]",
-		
-		"aoColumns": [
+        "sAjaxSource": "[% ajax_src %]",
+        
+        "aoColumns": [
                         [% FOREACH f IN table_fields -%]
-		    		    { 
+                        { 
                            "mData": "[% f %]",
                            "mRender": function ( data, type, full ) {
                                 if(data == null)
@@ -49,13 +48,13 @@ $(document).ready(function() {
                             }
                         },
                         [% END -%]
-		    		    { "mRender": function ( data, type, full ) {
+                        { "mRender": function ( data, type, full ) {
                                 return '<input type="checkbox" value="' + full.id + '"/>';
                             },
                           "mData": null,
                           "bSortable": false
                         }
-		],
+        ],
         "fnRowCallback": function(nRow, aData, iDisplayIndex) {
             nRow.className = "sw_action_row";
             if($(nRow).find("td:first").text() in checked_fields)
@@ -67,7 +66,7 @@ $(document).ready(function() {
         "fnServerParams": function ( aoData ) {
             //aoData.push( {"name":"iIdOnTop","value":"[% value %]"} );
         },
-	} );
+    } );
 
 } );
 </script>

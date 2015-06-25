@@ -2567,6 +2567,32 @@ sub edit_master :Chained('master') :PathPart('edit') :Args(0) :Does(ACL) :ACLDet
     );
 
 }
+sub pbx_group_ajax :Chained('master') :PathPart('pbx/group/ajax') :Args(0) {
+    my ($self, $c) = @_;
+    $c->stash->{pbxgroup_dt_columns} = NGCP::Panel::Utils::Datatables::set_columns($c, [
+        { name => "id", search => 1, title => $c->loc("#") },
+        { name => "username", search => 1, title => $c->loc("Name") },
+        { name => "provisioning_voip_subscriber_pbx_extension", search => 1, title => $c->loc("Extension") },
+        { name => "provisioning_voip_subscriber_pbx_hunt_policy", search => 1, title => $c->loc("Hunt Policy") },
+        { name => "provisioning_voip_subscriber_pbx_hunt_timeout", search => 1, title => $c->loc("Serial Hunt Timeout") },
+    ]);
+    my $res = $c->stash->{contract}->voip_subscribers->search({
+        'provisioning_voip_subscriber.is_pbx_group' => 1,
+    },{
+        '+select' => [
+            {'' => \['select voip_pbx_groups.id from provisioning.voip_pbx_groups where voip_pbx_groups.group_id=provisioning_voip_subscriber.id and subscriber_id=?', [ {} => $c->stash->{subscriber}->provisioning_voip_subscriber->id ] ], '-as' => 'sort_field' },
+            {'' => \['(select voip_pbx_groups.id from provisioning.voip_pbx_groups where voip_pbx_groups.group_id=provisioning_voip_subscriber.id and subscriber_id=?) is null', [ {} => $c->stash->{subscriber}->provisioning_voip_subscriber->id ] ], '-as' => 'sort_field_is_null' },
+            {'' => \['provisioning_voip_subscriber.pbx_extension'], -as => 'provisioning_voip_subscriber_pbx_extension'},
+            {'' => \['provisioning_voip_subscriber.pbx_hunt_policy'], -as => 'provisioning_voip_subscriber_pbx_hunt_policy'},
+            {'' => \['provisioning_voip_subscriber.pbx_hunt_timeout'], -as => 'provisioning_voip_subscriber_pbx_hunt_timeout'},
+        ],
+        '+as' => ['sort_field','sort_field_is_null','provisioning_voip_subscriber_pbx_extension', 'provisioning_voip_subscriber_pbx_hunt_policy','provisioning_voip_subscriber_pbx_hunt_timeout'],
+        'join' => 'provisioning_voip_subscriber',
+        'order_by' => ['sort_field_is_null','sort_field'],
+    });
+    NGCP::Panel::Utils::Datatables::process($c, $res, $c->stash->{pbxgroup_dt_columns});
+    $c->detach( $c->view("JSON") );
+}
 
 sub order_pbx_items :Chained('master') :PathPart('orderpbxitems') :Args(0) :Does(ACL) :ACLDetachTo('/denied_page') :AllowedRole(admin) : AllowedRole(reseller) :AllowedRole(subscriberadmin) {
     my ($self, $c) = @_;
