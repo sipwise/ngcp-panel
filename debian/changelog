@@ -1,3 +1,12 @@
+ngcp-panel (1.7.2.22+0~mr3.7.2.22) unstable; urgency=low
+
+  [ Irina Peshinskaya ]
+  * [7d9e1fd] MT#13269 Make timeout for the remote server access
+
+  [ Sipwise Jenkins Builder ]
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Fri, 26 Jun 2015 21:18:45 +0200
+
 ngcp-panel (1.7.2.21+0~mr3.7.2.21) unstable; urgency=low
 
   [ Irina Peshinskaya ]
