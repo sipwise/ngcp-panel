@@ -32,7 +32,14 @@ has_field 'destinations' => (
     type => 'Repeatable',
     element_attr => {
         rel => ['tooltip'],
-        title => ['An array of destinations, each containing the keys "destination", "timeout", "priority" and "simple_destination".']
+        #http://www.ietf.org/rfc/rfc3880.txt
+        #http://kamailio.org/docs/modules/4.1.x/modules/tm.html
+        title => ['An array of destinations, each containing the keys "destination", "timeout", "priority". ' .
+                  '"destination" is a address to forward a call. ' .
+                  '"timeout" is a time in seconds before call forward to the next destination or give up. ' .
+                  '"priority" is a order of this destiation among others destinations for this forward type. ' .
+                  '"simple_destination" is not a control field and is used only for representation purposes as a simple destination format, e.g. "4312345" if it is a number, or "user@domain" if it is a URI'
+        ]
     },
 );
 
