@@ -63,7 +63,7 @@ has_field 'billing_profiles.start' => (
     type => '+NGCP::Panel::Field::DateTime',
     element_attr => {
         rel => ['tooltip'],
-        title => ['The date when the billing profile gets active.']
+        title => ['The datetime (YYYY-MM-DD HH:mm:ss) when the billing profile gets active.']
     },
 );
 
@@ -71,7 +71,7 @@ has_field 'billing_profiles.end' => (
     type => '+NGCP::Panel::Field::DateTime',
     element_attr => {
         rel => ['tooltip'],
-        title => ['The date when the billing profile is no longer used.']
+        title => ['The datetime (YYYY-MM-DD HH:mm:ss) when the billing profile is revoked.']
     },
 );
 

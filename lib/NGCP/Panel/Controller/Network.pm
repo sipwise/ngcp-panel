@@ -178,6 +178,14 @@ sub edit :Chained('base') :PathPart('edit') :Args(0) {
 
         try {
             $c->model('DB')->schema->txn_do( sub {
+                
+                unless($c->stash->{network_result}->get_column('contract_cnt') == 0) {
+                    die('Cannnot modify billing network that is still used in profile mappings');
+                }
+                unless($c->stash->{network_result}->get_column('package_cnt') == 0) {
+                    die('Cannnot modify billing network that is still used in profile packages');
+                }                 
+                
                 $c->stash->{'network_result'}->update({
                     name => $form->values->{name},
                     description => $form->values->{description},
@@ -247,23 +255,14 @@ sub terminate :Chained('base') :PathPart('terminate') :Args(0) {
     my ($self, $c) = @_;
     my $network = $c->stash->{network_result};
 
-    #todo: putting the network fetch into a transaction wouldn't help since the count columns a prone to phantom reads...
-    unless($network->get_column('contract_cnt') == 0) {
-        NGCP::Panel::Utils::Message->error(
-            c => $c,
-            desc => $c->loc('Cannnot terminate billing network that is still used in profile mappings'),
-        );            
-        NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for('/network'));
-    }
-    unless($network->get_column('package_cnt') == 0) {
-        NGCP::Panel::Utils::Message->error(
-            c => $c,
-            desc => $c->loc('Cannnot terminate billing network that is still used in profile packages'),
-        );            
-        NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for('/network'));
-    } 
-
     try {
+        #todo: putting the network fetch into a transaction wouldn't help since the count columns a prone to phantom reads...
+        unless($network->get_column('contract_cnt') == 0) {
+            die('Cannnot terminate billing network that is still used in profile mappings');
+        }
+        unless($network->get_column('package_cnt') == 0) {
+            die('Cannnot terminate billing network that is still used in profile packages');
+        }
         $network->update({
             status => 'terminated',
             #terminate_timestamp => NGCP::Panel::Utils::DateTime::current_local,

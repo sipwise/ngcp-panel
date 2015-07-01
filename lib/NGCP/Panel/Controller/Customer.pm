@@ -374,11 +374,8 @@ sub base :Chained('list_customer') :PathPart('') :CaptureArgs(1) {
     $c->stash(future_billing_mappings => $future_billing_mappings );
 }
 
-sub base_restricted :Chained('base') :PathPart('') :CaptureArgs(0) {
+sub base_restricted :Chained('base') :PathPart('') :CaptureArgs(0) :Does(ACL) :ACLDetachTo('/denied_page') :AllowedRole(admin) :AllowedRole(reseller) {
     my ($self, $c) = @_;
-    if($c->user->roles eq "subscriberadmin") {
-        $c->detach('/denied_page');
-    }
 }
 
 sub edit :Chained('base_restricted') :PathPart('edit') :Args(0) {

@@ -115,18 +115,18 @@ sub update_profile {
         $self->error($c, HTTP_UNPROCESSABLE_ENTITY, $err);
     });    
 
-    if(exists $resource->{status} && $resource->{status} eq 'terminated') {
+    #if(exists $resource->{status} && $resource->{status} eq 'terminated') {
         unless($profile->get_column('contract_cnt') == 0) {
             $self->error($c, HTTP_UNPROCESSABLE_ENTITY,
-                         "Cannnot terminate billing_profile that is still used in profile mappings of contracts");
+                         "Cannnot modify or terminate billing_profile that is still used in profile mappings of contracts");
             return;
         }
         unless($profile->get_column('package_cnt') == 0) {
             $self->error($c, HTTP_UNPROCESSABLE_ENTITY,
-                         "Cannnot terminate billing_profile that is still used in profile sets of profile packages");
+                         "Cannnot modify or terminate billing_profile that is still used in profile sets of profile packages");
             return;
         }        
-    }
+    #}
 
     my $old_prepaid = $profile->prepaid;
     $profile->update($resource);

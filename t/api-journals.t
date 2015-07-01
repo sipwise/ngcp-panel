@@ -2424,7 +2424,7 @@ sub _test_journal_collection {
                  
         } while($nexturi);
             
-        ok((scalar keys $journals) == 0,"check if journal collection lists all created journal items" . (defined $total_count ? " ($total_count)" : ''));
+        ok((scalar keys %$journals) == 0,"check if journal collection lists all created journal items" . (defined $total_count ? " ($total_count)" : ''));
     }
 }
 

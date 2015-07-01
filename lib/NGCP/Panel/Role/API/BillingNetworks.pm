@@ -119,18 +119,18 @@ sub update_item {
         $self->error($c, HTTP_UNPROCESSABLE_ENTITY, $err);
     });
     
-    if(exists $resource->{status} && $resource->{status} eq 'terminated') {
+    #if(exists $resource->{status} && $resource->{status} eq 'terminated') {
         unless($item->get_column('contract_cnt') == 0) {
             $self->error($c, HTTP_UNPROCESSABLE_ENTITY,
-                         "Cannnot terminate billing_network that is still used in profile mappings of contracts)");
+                         "Cannnot modify or terminate billing_network that is still used in profile mappings of contracts)");
             return;
         }
         unless($item->get_column('package_cnt') == 0) {
             $self->error($c, HTTP_UNPROCESSABLE_ENTITY,
-                         "Cannnot terminate billing_network that is still used in profile sets of profile packages)");
+                         "Cannnot modify or terminate billing_network that is still used in profile sets of profile packages)");
             return;
         }        
-    }
+    #}
    
     return unless $self->prepare_blocks_resource($c,$resource);
     my $blocks = delete $resource->{blocks};
