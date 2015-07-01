@@ -3,6 +3,8 @@ package Test::Collection;
 #testcollection will keep object of the apiclient
 
 use strict;
+use warnings;
+
 use Test::More;
 use Moose;
 use JSON;
@@ -143,7 +145,7 @@ sub _init_ua {
         SSL_key_file    => $valid_ssl_client_key,
         SSL_ca_file     => $ssl_ca_cert,
     );
-    #$ua->credentials( $self->base_uri, '', 'administrator', 'administrator' );
+    # $ua->credentials( $self->base_uri =~ s!^https?://!!r, 'api_admin_http', 'administrator', 'administrator');
     #$ua->ssl_opts(
     #    verify_hostname => 0,
     #    SSL_verify_mode => 0x00,
@@ -366,7 +368,7 @@ sub check_create_correct{
 }
 sub clear_test_data_all{
     my($self,$uri) = @_;
-    my @uris = $uri ? (('ARRAY' eq ref $uri) ? @$uri : ($uri)) : keys $self->DATA_CREATED->{ALL};
+    my @uris = $uri ? (('ARRAY' eq ref $uri) ? @{ $uri } : ($uri)) : keys %{ $self->DATA_CREATED->{ALL} };
     foreach my $del_uri(@uris){
         my($req,$res,$content) = $self->request_delete($self->base_uri.$del_uri);
         is($res->code, 204, "check delete item $del_uri");

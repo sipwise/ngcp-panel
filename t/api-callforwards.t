@@ -57,7 +57,7 @@ my $system_contact_id; #dummy
         is($selfuri, $nexturi, "check _links.self.href of collection");
         my $colluri = URI->new($selfuri);
 
-        ok($collection->{total_count} > 0, "check 'total_count' of collection");
+        cmp_ok($collection->{total_count}, '>', 0, "check 'total_count' of collection");
 
         my %q = $colluri->query_form;
         ok(exists $q{page} && exists $q{rows}, "check existence of 'page' and 'row' in 'self'");
