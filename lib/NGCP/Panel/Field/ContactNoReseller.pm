@@ -14,6 +14,13 @@ has_field 'id' => (
     table_fields => ['id', 'firstname', 'lastname', 'email'],
 );
 
+has_field 'create' => (
+    type => 'Button',
+    do_label => 0,
+    value => 'Create Contact',
+    element_class => [qw/btn btn-tertiary pull-right/],
+);
+
 1;
 
 # vim: set tabstop=4 expandtab:
