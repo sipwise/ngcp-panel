@@ -105,9 +105,9 @@ msgstr ""
 
 #: lib/NGCP/Panel/Controller/Administrator.pm:29
 #: lib/NGCP/Panel/Controller/Billing.pm:107
-#: lib/NGCP/Panel/Controller/Billing.pm:348
+#: lib/NGCP/Panel/Controller/Billing.pm:347
 #: lib/NGCP/Panel/Controller/Billing.pm:36
-#: lib/NGCP/Panel/Controller/Billing.pm:677
+#: lib/NGCP/Panel/Controller/Billing.pm:676
 #: lib/NGCP/Panel/Controller/Contact.pm:32
 #: lib/NGCP/Panel/Controller/Contract.pm:24
 #: lib/NGCP/Panel/Controller/Contract.pm:436
@@ -429,7 +429,7 @@ msgstr "Принять"
 msgid "Access Restrictions"
 msgstr "Ограничения доступа"
 
-#: lib/NGCP/Panel/Controller/Customer.pm:902
+#: lib/NGCP/Panel/Controller/Customer.pm:899
 msgid "Account balance successfully changed!"
 msgstr "Баланс счета успешно изменен!"
 
@@ -877,11 +877,11 @@ msgstr "Биллинг"
 msgid "Billing Fee"
 msgstr "Цена"
 
-#: lib/NGCP/Panel/Controller/Billing.pm:385
+#: lib/NGCP/Panel/Controller/Billing.pm:384
 msgid "Billing Fee does not exist!"
 msgstr "Цена не существует!"
 
-#: lib/NGCP/Panel/Controller/Billing.pm:429
+#: lib/NGCP/Panel/Controller/Billing.pm:428
 msgid "Billing Fee successfully created!"
 msgstr "Цена успешно создана!"
 
@@ -961,11 +961,11 @@ msgstr ""
 msgid "Billing Vouchers successfully uploaded"
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/Billing.pm:352 share/templates/billing/zones.tt:3
+#: lib/NGCP/Panel/Controller/Billing.pm:351 share/templates/billing/zones.tt:3
 msgid "Billing Zone"
 msgstr "Тарифная зона"
 
-#: lib/NGCP/Panel/Controller/Billing.pm:598
+#: lib/NGCP/Panel/Controller/Billing.pm:597
 msgid "Billing Zone successfully created"
 msgstr "Тарифная зона успешно создана"
 
@@ -977,15 +977,15 @@ msgstr "Тарифные зоны"
 msgid "Billing data"
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/Billing.pm:545
+#: lib/NGCP/Panel/Controller/Billing.pm:544
 msgid "Billing fee not found!"
 msgstr "Цена не найдена!"
 
-#: lib/NGCP/Panel/Controller/Billing.pm:528
+#: lib/NGCP/Panel/Controller/Billing.pm:527
 msgid "Billing fee successfully changed!"
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/Billing.pm:554
+#: lib/NGCP/Panel/Controller/Billing.pm:553
 msgid "Billing fee successfully deleted!"
 msgstr ""
 
@@ -993,15 +993,15 @@ msgstr ""
 msgid "Billing network does not exist"
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/Network.pm:241
+#: lib/NGCP/Panel/Controller/Network.pm:249
 msgid "Billing network successfully deleted"
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/Network.pm:274
+#: lib/NGCP/Panel/Controller/Network.pm:273
 msgid "Billing network successfully terminated"
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/Network.pm:192
+#: lib/NGCP/Panel/Controller/Network.pm:200
 msgid "Billing network successfully updated"
 msgstr ""
 
@@ -1013,15 +1013,15 @@ msgstr ""
 msgid "Billing profile id"
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/Billing.pm:274
+#: lib/NGCP/Panel/Controller/Billing.pm:282
 msgid "Billing profile successfully created"
 msgstr "Тариф успешно создан"
 
-#: lib/NGCP/Panel/Controller/Billing.pm:332
+#: lib/NGCP/Panel/Controller/Billing.pm:331
 msgid "Billing profile successfully terminated"
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/Billing.pm:215
+#: lib/NGCP/Panel/Controller/Billing.pm:223
 msgid "Billing profile successfully updated"
 msgstr "Тариф успешно обновлен"
 
@@ -1041,11 +1041,11 @@ msgstr ""
 msgid "Billing zone"
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/Billing.pm:638
+#: lib/NGCP/Panel/Controller/Billing.pm:637
 msgid "Billing zone does not exist!"
 msgstr "Тарифная зона не существует!"
 
-#: lib/NGCP/Panel/Controller/Billing.pm:654
+#: lib/NGCP/Panel/Controller/Billing.pm:653
 msgid "Billing zone successfully deleted"
 msgstr "Тарифная зона успешно удалена"
 
@@ -1401,7 +1401,7 @@ msgstr "Звоню"
 msgid "Callthrough CLIs"
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/Customer.pm:987
+#: lib/NGCP/Panel/Controller/Customer.pm:984
 msgid "Can't create a PBX group without having a pilot subscriber."
 msgstr "Не могу создать PBX группу без основного абонента."
 
@@ -1409,40 +1409,16 @@ msgstr "Не могу создать PBX группу без основного 
 msgid "Cancel"
 msgstr "Отмена"
 
-#: lib/NGCP/Panel/Controller/Network.pm:254
-msgid ""
-"Cannnot terminate billing network that is still used in profile mappings"
-msgstr ""
-
-#: lib/NGCP/Panel/Controller/Network.pm:261
-msgid ""
-"Cannnot terminate billing network that is still used in profile packages"
-msgstr ""
-
-#: lib/NGCP/Panel/Controller/Billing.pm:312
-msgid ""
-"Cannnot terminate billing profile that is still used in profile mappings"
-msgstr ""
-
-#: lib/NGCP/Panel/Controller/Billing.pm:319
-msgid ""
-"Cannnot terminate billing profile that is still used in profile packages"
-msgstr ""
-
-#: lib/NGCP/Panel/Controller/Package.pm:248
-msgid "Cannnot terminate profile package that is still assigned to contracts"
-msgstr ""
-
 #: lib/NGCP/Panel/Controller/Administrator.pm:227
 msgid "Cannot delete myself"
 msgstr "Не могу удалить себя сам"
 
 #: lib/NGCP/Panel/Controller/Contract.pm:232
-#: lib/NGCP/Panel/Controller/Customer.pm:551
+#: lib/NGCP/Panel/Controller/Customer.pm:548
 msgid "Cannot terminate contract with the id 1"
 msgstr "Нельзя удалять контракт с id 1"
 
-#: lib/NGCP/Panel/Controller/Billing.pm:303
+#: lib/NGCP/Panel/Controller/Billing.pm:311
 msgid "Cannot terminate default billing profile with the id 1"
 msgstr ""
 
@@ -2039,7 +2015,7 @@ msgid "Customer #%1 successfully created"
 msgstr "Клиент #%1 успешно создан"
 
 #. ($contract->id)
-#: lib/NGCP/Panel/Controller/Customer.pm:526
+#: lib/NGCP/Panel/Controller/Customer.pm:523
 msgid "Customer #%1 successfully updated"
 msgstr "Клиент #%1 успешно обновлен"
 
@@ -2098,7 +2074,7 @@ msgid ""
 msgstr ""
 "Клиентский Набор Звуков используемый для PBX автоответчика и анонсов клиента."
 
-#: lib/NGCP/Panel/Controller/Customer.pm:577
+#: lib/NGCP/Panel/Controller/Customer.pm:574
 msgid "Customer successfully terminated"
 msgstr "Клиент успешно удален"
 
@@ -2270,7 +2246,7 @@ msgstr "Домен получателя"
 msgid "Destination Number"
 msgstr "Номер Назначения"
 
-#: lib/NGCP/Panel/Controller/Billing.pm:350
+#: lib/NGCP/Panel/Controller/Billing.pm:349
 msgid "Destination Pattern"
 msgstr "Шаблон Назначения"
 
@@ -2933,7 +2909,7 @@ msgstr ""
 msgid "End"
 msgstr "Конец"
 
-#: lib/NGCP/Panel/Controller/Billing.pm:679
+#: lib/NGCP/Panel/Controller/Billing.pm:678
 msgid "End Date"
 msgstr "Конечная Дата"
 
@@ -3056,7 +3032,7 @@ msgstr "Неудачных попыток"
 msgid "Failed to add registered device"
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/Customer.pm:909
+#: lib/NGCP/Panel/Controller/Customer.pm:906
 msgid "Failed to change account balance!"
 msgstr ""
 
@@ -3064,7 +3040,7 @@ msgstr ""
 msgid "Failed to clear audio cache."
 msgstr "Не удалось очистить аудио кэш."
 
-#: lib/NGCP/Panel/Controller/Customer.pm:860
+#: lib/NGCP/Panel/Controller/Customer.pm:857
 msgid "Failed to clear fraud interval"
 msgstr ""
 
@@ -3085,11 +3061,11 @@ msgstr ""
 msgid "Failed to create NCOS pattern"
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/Customer.pm:1236
+#: lib/NGCP/Panel/Controller/Customer.pm:1233
 msgid "Failed to create PBX device"
 msgstr "Не удалось создать PBX устройства"
 
-#: lib/NGCP/Panel/Controller/Customer.pm:1056
+#: lib/NGCP/Panel/Controller/Customer.pm:1053
 msgid "Failed to create PBX group"
 msgstr ""
 
@@ -3105,7 +3081,7 @@ msgstr ""
 msgid "Failed to create billing network."
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/Billing.pm:280
+#: lib/NGCP/Panel/Controller/Billing.pm:288
 msgid "Failed to create billing profile"
 msgstr ""
 
@@ -3113,7 +3089,7 @@ msgstr ""
 msgid "Failed to create billing voucher"
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/Billing.pm:604
+#: lib/NGCP/Panel/Controller/Billing.pm:603
 msgid "Failed to create billing zone"
 msgstr ""
 
@@ -3216,7 +3192,7 @@ msgstr ""
 msgid "Failed to create sound set"
 msgstr "Не удалось создать набор звуков"
 
-#: lib/NGCP/Panel/Controller/Billing.pm:930
+#: lib/NGCP/Panel/Controller/Billing.pm:929
 msgid "Failed to create special offpeak entry"
 msgstr ""
 
@@ -3224,7 +3200,7 @@ msgstr ""
 msgid "Failed to create speed dial slot"
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/Customer.pm:775
+#: lib/NGCP/Panel/Controller/Customer.pm:772
 #: lib/NGCP/Panel/Controller/Subscriber.pm:197
 msgid "Failed to create subscriber"
 msgstr ""
@@ -3257,7 +3233,7 @@ msgstr ""
 msgid "Failed to delete NCOS pattern"
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/Customer.pm:1429
+#: lib/NGCP/Panel/Controller/Customer.pm:1426
 msgid "Failed to delete PBX device"
 msgstr "Не удалось удалить PBX устройство"
 
@@ -3269,11 +3245,11 @@ msgstr ""
 msgid "Failed to delete auto attendant slot"
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/Network.pm:232
+#: lib/NGCP/Panel/Controller/Network.pm:240
 msgid "Failed to delete billing network"
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/Billing.pm:661
+#: lib/NGCP/Panel/Controller/Billing.pm:660
 msgid "Failed to delete billing zone"
 msgstr ""
 
@@ -3364,7 +3340,7 @@ msgstr "Не удалось удалить запись"
 msgid "Failed to delete sound set"
 msgstr "Не удалось удалить набор звуков"
 
-#: lib/NGCP/Panel/Controller/Billing.pm:890
+#: lib/NGCP/Panel/Controller/Billing.pm:889
 msgid "Failed to delete special offpeak entry"
 msgstr ""
 
@@ -3473,20 +3449,20 @@ msgstr "Не удалось сохранить метаданные счёт-ф�
 msgid "Failed to store invoice template"
 msgstr "Не удалось сохранить шаблон счёт-фактуры."
 
-#: lib/NGCP/Panel/Controller/Network.pm:281
+#: lib/NGCP/Panel/Controller/Network.pm:280
 msgid "Failed to terminate billing network"
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/Billing.pm:339
+#: lib/NGCP/Panel/Controller/Billing.pm:338
 msgid "Failed to terminate billing profile"
 msgstr ""
 
 #: lib/NGCP/Panel/Controller/Contract.pm:265
-#: lib/NGCP/Panel/Controller/Customer.pm:584
+#: lib/NGCP/Panel/Controller/Customer.pm:581
 msgid "Failed to terminate contract"
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/Package.pm:268
+#: lib/NGCP/Panel/Controller/Package.pm:266
 msgid "Failed to terminate profile package"
 msgstr ""
 
@@ -3502,8 +3478,8 @@ msgstr ""
 msgid "Failed to transcode audio file"
 msgstr "Не удалось перекодировать звуковой файл"
 
-#: lib/NGCP/Panel/Controller/Customer.pm:1470
-#: lib/NGCP/Panel/Controller/Customer.pm:1487
+#: lib/NGCP/Panel/Controller/Customer.pm:1467
+#: lib/NGCP/Panel/Controller/Customer.pm:1484
 msgid "Failed to trigger config reload via SIP"
 msgstr ""
 
@@ -3519,11 +3495,11 @@ msgstr ""
 msgid "Failed to update NCOS pattern"
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/Customer.pm:1359
+#: lib/NGCP/Panel/Controller/Customer.pm:1356
 msgid "Failed to update PBX device"
 msgstr "Не удалось обновить PBX устройство"
 
-#: lib/NGCP/Panel/Controller/Customer.pm:1154
+#: lib/NGCP/Panel/Controller/Customer.pm:1151
 msgid "Failed to update PBX group"
 msgstr ""
 
@@ -3535,11 +3511,11 @@ msgstr ""
 msgid "Failed to update autoattendant slots"
 msgstr "Не удалось обновить слот автоответчика."
 
-#: lib/NGCP/Panel/Controller/Network.pm:198
+#: lib/NGCP/Panel/Controller/Network.pm:206
 msgid "Failed to update billing network"
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/Billing.pm:221
+#: lib/NGCP/Panel/Controller/Billing.pm:229
 msgid "Failed to update billing profile"
 msgstr ""
 
@@ -3559,7 +3535,7 @@ msgstr ""
 msgid "Failed to update contract"
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/Customer.pm:533
+#: lib/NGCP/Panel/Controller/Customer.pm:530
 msgid "Failed to update customer contract"
 msgstr ""
 
@@ -3623,7 +3599,7 @@ msgstr ""
 msgid "Failed to update preference %1"
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/Package.pm:225
+#: lib/NGCP/Panel/Controller/Package.pm:228
 msgid "Failed to update profile package"
 msgstr ""
 
@@ -3655,7 +3631,7 @@ msgstr "Не удалось обновить звуковой указатель
 msgid "Failed to update sound set"
 msgstr "Не удалось обновить набор звуков"
 
-#: lib/NGCP/Panel/Controller/Billing.pm:865
+#: lib/NGCP/Panel/Controller/Billing.pm:864
 msgid "Failed to update special offpeak entry"
 msgstr ""
 
@@ -3699,7 +3675,7 @@ msgstr "Не удалось обновить загруженный звуков
 msgid "Failed to update voicemail setting"
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/Billing.pm:487
+#: lib/NGCP/Panel/Controller/Billing.pm:486
 msgid "Failed to upload Billing Fees"
 msgstr "Не удалось загрузить цены"
 
@@ -3861,7 +3837,7 @@ msgstr "Блокировать при достижении дневного ли
 msgid "Fraud daily notify"
 msgstr "Информировать при достижении дневного лимита"
 
-#: lib/NGCP/Panel/Controller/Customer.pm:819
+#: lib/NGCP/Panel/Controller/Customer.pm:816
 msgid "Fraud settings successfully changed!"
 msgstr "Настройки информирования о мошенничестве успешно изменены!"
 
@@ -3877,7 +3853,7 @@ msgstr "Бесплатные минуты"
 msgid "Free-Time Balance"
 msgstr "Баланс бесплатных минут"
 
-#: lib/NGCP/Panel/Controller/Billing.pm:769
+#: lib/NGCP/Panel/Controller/Billing.pm:768
 #: lib/NGCP/Panel/Utils/DbStrings.pm:1366
 msgid "Friday"
 msgstr "Пятница"
@@ -4419,7 +4395,7 @@ msgstr ""
 msgid "Invalid administrator id detected"
 msgstr "Обнаружен некорректный id администратора"
 
-#: lib/NGCP/Panel/Controller/Billing.pm:371
+#: lib/NGCP/Panel/Controller/Billing.pm:370
 msgid "Invalid billing fee id detected!"
 msgstr "Обнаружен некорректный id для цены в биллинге!"
 
@@ -4427,7 +4403,7 @@ msgstr "Обнаружен некорректный id для цены в бил
 msgid "Invalid billing network id detected"
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/Billing.pm:626
+#: lib/NGCP/Panel/Controller/Billing.pm:625
 msgid "Invalid billing zone id detected"
 msgstr "Обнаружен некорректный id для тарифной зоны"
 
@@ -4484,8 +4460,8 @@ msgid "Invalid file type detected, only WAV supported"
 msgstr "Обнаружен некорректный тип файла, поддерживается только WAV"
 
 #. ($type)
-#: lib/NGCP/Panel/Controller/Customer.pm:800
-#: lib/NGCP/Panel/Controller/Customer.pm:841
+#: lib/NGCP/Panel/Controller/Customer.pm:797
+#: lib/NGCP/Panel/Controller/Customer.pm:838
 msgid "Invalid fraud interval '%1'!"
 msgstr "Некорректный интервал мошенничества '%1'!"
 
@@ -4513,7 +4489,7 @@ msgstr ""
 msgid "Invalid password reset attempt."
 msgstr "Не удачная попытка сброса пароля."
 
-#: lib/NGCP/Panel/Controller/Billing.pm:810
+#: lib/NGCP/Panel/Controller/Billing.pm:809
 msgid "Invalid peaktime date id detected!"
 msgstr "Обнаружен некорректный id бизнес-времени (peaktime)"
 
@@ -4533,7 +4509,7 @@ msgstr "Обнаружен некорректный id для контракта
 msgid "Invalid profile id detected!"
 msgstr "Обнаружен некорректный id профиля!"
 
-#: lib/NGCP/Panel/Controller/Customer.pm:1390
+#: lib/NGCP/Panel/Controller/Customer.pm:1387
 msgid "Invalid provisioning subscriber id detected."
 msgstr "Обнаружен некорректный id автоконфигурации абонента."
 
@@ -4961,7 +4937,7 @@ msgstr "Мастер"
 msgid "Master Data"
 msgstr "Основные данные"
 
-#: lib/NGCP/Panel/Controller/Billing.pm:351
+#: lib/NGCP/Panel/Controller/Billing.pm:350
 msgid "Match Direction"
 msgstr "Соответствовать направлению"
 
@@ -5047,8 +5023,8 @@ msgid ""
 "to the application server and intra-PBX calls."
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/Customer.pm:613
-#: lib/NGCP/Panel/Controller/Customer.pm:972
+#: lib/NGCP/Panel/Controller/Customer.pm:610
+#: lib/NGCP/Panel/Controller/Customer.pm:969
 msgid "Maximum number of subscribers for this customer reached"
 msgstr "Достигнуто максимальное количество абонентов для этого клиента"
 
@@ -5111,7 +5087,7 @@ msgstr "Модель"
 msgid "Model type"
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/Billing.pm:765
+#: lib/NGCP/Panel/Controller/Billing.pm:764
 #: lib/NGCP/Panel/Utils/DbStrings.pm:1335
 msgid "Monday"
 msgstr "Понедельник"
@@ -5329,7 +5305,7 @@ msgstr "Новые сообщения"
 msgid "New Name"
 msgstr "Новое имя"
 
-#: lib/NGCP/Panel/Controller/Billing.pm:457
+#: lib/NGCP/Panel/Controller/Billing.pm:456
 msgid "No Billing Fee file specified!"
 msgstr "Не указан файл с ценами!"
 
@@ -5610,12 +5586,12 @@ msgstr ""
 msgid "PBX Call Queue"
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/Customer.pm:1249
-#: lib/NGCP/Panel/Controller/Customer.pm:1373
+#: lib/NGCP/Panel/Controller/Customer.pm:1246
+#: lib/NGCP/Panel/Controller/Customer.pm:1370
 msgid "PBX Device"
 msgstr "Устройство PBX"
 
-#: lib/NGCP/Panel/Controller/Customer.pm:1422
+#: lib/NGCP/Panel/Controller/Customer.pm:1419
 msgid "PBX Device successfully deleted"
 msgstr "Устройство PBX успешно удалено"
 
@@ -5627,7 +5603,7 @@ msgstr "Устройства PBX"
 msgid "PBX Extension"
 msgstr "PBX добавочный номер"
 
-#: lib/NGCP/Panel/Controller/Customer.pm:1068
+#: lib/NGCP/Panel/Controller/Customer.pm:1065
 msgid "PBX Group"
 msgstr "Группа PBX"
 
@@ -5646,34 +5622,34 @@ msgstr "Настройки PBX Группы %1@%2"
 msgid "PBX Groups"
 msgstr "Группы PBX"
 
-#: lib/NGCP/Panel/Controller/Customer.pm:1227
+#: lib/NGCP/Panel/Controller/Customer.pm:1224
 msgid "PBX device successfully created"
 msgstr "Устройство PBX успешно создано"
 
-#: lib/NGCP/Panel/Controller/Customer.pm:1350
+#: lib/NGCP/Panel/Controller/Customer.pm:1347
 msgid "PBX device successfully updated"
 msgstr "Устройство PBX успешно обновлено"
 
 #. ($dev_id)
-#: lib/NGCP/Panel/Controller/Customer.pm:1271
+#: lib/NGCP/Panel/Controller/Customer.pm:1268
 msgid "PBX device with id %1 does not exist for this customer."
 msgstr "Не существует устройства PBX с id %1 для данного клиента."
 
 #. ($dev_id)
-#: lib/NGCP/Panel/Controller/Customer.pm:1261
+#: lib/NGCP/Panel/Controller/Customer.pm:1258
 msgid "PBX device with id %1 does not exist."
 msgstr "Не существует устройства PBX с id %1."
 
-#: lib/NGCP/Panel/Controller/Customer.pm:1050
+#: lib/NGCP/Panel/Controller/Customer.pm:1047
 msgid "PBX group successfully created"
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/Customer.pm:1148
+#: lib/NGCP/Panel/Controller/Customer.pm:1145
 msgid "PBX group successfully updated"
 msgstr ""
 
 #. ($group_id)
-#: lib/NGCP/Panel/Controller/Customer.pm:1080
+#: lib/NGCP/Panel/Controller/Customer.pm:1077
 msgid "PBX group with id %1 does not exist."
 msgstr "Не существует группа PBX с id %1"
 
@@ -5787,7 +5763,7 @@ msgstr "Политика перебора PBX группы"
 msgid "Pbx hunt timeout"
 msgstr "Таймаут перебора PBX группы"
 
-#: lib/NGCP/Panel/Controller/Billing.pm:823
+#: lib/NGCP/Panel/Controller/Billing.pm:822
 msgid "Peaktime date does not exist!"
 msgstr "Указанное Бизнес-время не существует!"
 
@@ -6129,11 +6105,11 @@ msgstr ""
 msgid "Profile package successfully created"
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/Package.pm:261
+#: lib/NGCP/Panel/Controller/Package.pm:259
 msgid "Profile package successfully terminated"
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/Package.pm:219
+#: lib/NGCP/Panel/Controller/Package.pm:222
 msgid "Profile package successfully updated"
 msgstr ""
 
@@ -6720,7 +6696,7 @@ msgstr ""
 "Аналогично \"ncos\" но может быть установлено только администраторами и "
 "применяется перед пользовательскими настройками."
 
-#: lib/NGCP/Panel/Controller/Billing.pm:770
+#: lib/NGCP/Panel/Controller/Billing.pm:769
 #: lib/NGCP/Panel/Utils/DbStrings.pm:1206
 msgid "Saturday"
 msgstr "Суббота"
@@ -7081,7 +7057,7 @@ msgstr "Исходная стоимость клиента (центы)"
 msgid "Source IP"
 msgstr "IP источника"
 
-#: lib/NGCP/Panel/Controller/Billing.pm:349
+#: lib/NGCP/Panel/Controller/Billing.pm:348
 msgid "Source Pattern"
 msgstr "Исходный шаблон"
 
@@ -7217,15 +7193,15 @@ msgstr "Исходный идентификатор пользователя"
 msgid "Source uuid"
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/Billing.pm:922
+#: lib/NGCP/Panel/Controller/Billing.pm:921
 msgid "Special offpeak entry successfully created"
 msgstr "Специальная offpeak запись успешно создана"
 
-#: lib/NGCP/Panel/Controller/Billing.pm:883
+#: lib/NGCP/Panel/Controller/Billing.pm:882
 msgid "Special offpeak entry successfully deleted"
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/Billing.pm:857
+#: lib/NGCP/Panel/Controller/Billing.pm:856
 msgid "Special offpeak entry successfully updated"
 msgstr "Специальная offpeak запись успешно обновлена"
 
@@ -7331,7 +7307,7 @@ msgstr "Начало"
 msgid "Start - End"
 msgstr "Начало - Конец"
 
-#: lib/NGCP/Panel/Controller/Billing.pm:678
+#: lib/NGCP/Panel/Controller/Billing.pm:677
 msgid "Start Date"
 msgstr "Дата начала"
 
@@ -7537,7 +7513,7 @@ msgstr "Профиль абонента успешно обновлен"
 msgid "Subscriber status is <b>%1</b>"
 msgstr "Состояние абонента <b>%1</b>"
 
-#: lib/NGCP/Panel/Controller/Customer.pm:769
+#: lib/NGCP/Panel/Controller/Customer.pm:766
 msgid "Subscriber successfully created"
 msgstr ""
 
@@ -7563,7 +7539,7 @@ msgstr "Зарегистрированное устройство успешно
 msgid "Successfully cleared Call Forward"
 msgstr "Перенаправление звонков успешно очищено"
 
-#: lib/NGCP/Panel/Controller/Customer.pm:869
+#: lib/NGCP/Panel/Controller/Customer.pm:866
 msgid "Successfully cleared fraud interval!"
 msgstr "Интервал мошенничества успешно очищен!"
 
@@ -7635,7 +7611,7 @@ msgstr "IP авторизация успешно удалена"
 msgid "Successfully deleted voicemail"
 msgstr "Голосовое сообщение успешно удалено"
 
-#: lib/NGCP/Panel/Controller/Customer.pm:1515
+#: lib/NGCP/Panel/Controller/Customer.pm:1512
 msgid "Successfully redirected request to device"
 msgstr "Запрос к устройству успешно перенаправлен"
 
@@ -7661,7 +7637,7 @@ msgstr "Реселлер успешно удален"
 msgid "Successfully terminated subscriber"
 msgstr "Абонент успешно удален"
 
-#: lib/NGCP/Panel/Controller/Customer.pm:1493
+#: lib/NGCP/Panel/Controller/Customer.pm:1490
 msgid "Successfully triggered config reload via SIP"
 msgstr ""
 
@@ -7725,7 +7701,7 @@ msgstr "IP авторизация успешно обновлена"
 msgid "Successfully updated voicemail setting"
 msgstr "Настройки голосовой почты успешно обновлены"
 
-#: lib/NGCP/Panel/Controller/Billing.pm:771
+#: lib/NGCP/Panel/Controller/Billing.pm:770
 #: lib/NGCP/Panel/Utils/DbStrings.pm:1404
 msgid "Sunday"
 msgstr "Воскресенье"
@@ -9057,7 +9033,7 @@ msgstr "Время записи сообщения."
 msgid "The time the reminder call is triggered."
 msgstr "Время звонка."
 
-#: lib/NGCP/Panel/Controller/Billing.pm:737
+#: lib/NGCP/Panel/Controller/Billing.pm:736
 msgid "The timerange you wanted to delete does not exist"
 msgstr ""
 
@@ -9154,11 +9130,11 @@ msgstr ""
 msgid "This mode determines when balance intervals start."
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/Billing.pm:699
+#: lib/NGCP/Panel/Controller/Billing.pm:698
 msgid "This weekday does not exist"
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/Billing.pm:768
+#: lib/NGCP/Panel/Controller/Billing.pm:767
 #: lib/NGCP/Panel/Utils/DbStrings.pm:1070
 msgid "Thursday"
 msgstr "Четверг"
@@ -9189,11 +9165,11 @@ msgstr ""
 msgid "Timeout"
 msgstr "Таймаут"
 
-#: lib/NGCP/Panel/Controller/Billing.pm:726
+#: lib/NGCP/Panel/Controller/Billing.pm:725
 msgid "Timerange has been successfully created"
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/Billing.pm:748
+#: lib/NGCP/Panel/Controller/Billing.pm:747
 msgid "Timerange has been successfully deleted"
 msgstr ""
 
@@ -9284,7 +9260,7 @@ msgstr "IP авторизация"
 msgid "Trusted source entry not found"
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/Billing.pm:766
+#: lib/NGCP/Panel/Controller/Billing.pm:765
 #: lib/NGCP/Panel/Utils/DbStrings.pm:1325
 msgid "Tuesday"
 msgstr "Вторник"
@@ -9658,7 +9634,7 @@ msgstr "Web имя пользователя"
 msgid "Web password successfully recovered, please re-login."
 msgstr "Web пароль успешно восстановлен, пожалуйста войдите повторно."
 
-#: lib/NGCP/Panel/Controller/Billing.pm:767
+#: lib/NGCP/Panel/Controller/Billing.pm:766
 #: lib/NGCP/Panel/Utils/DbStrings.pm:471
 msgid "Wednesday"
 msgstr "Среда"
