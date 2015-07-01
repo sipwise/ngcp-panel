@@ -208,6 +208,9 @@ sub edit :Chained('base') :PathPart('edit') :Args(0) {
             push(@mappings_to_create,@{delete $form->values->{underrun_profiles}});
             push(@mappings_to_create,@{delete $form->values->{topup_profiles}});            
             $c->model('DB')->schema->txn_do( sub {
+                unless($c->stash->{'package_result'}->get_column('contract_cnt') == 0) {
+                    die('Cannnot modify profile package that is still assigned to contracts');
+                }                
                 my $profile_package = $c->stash->{'package_result'}->update($form->values);
                 $profile_package->profiles->delete;        
                 foreach my $mapping (@mappings_to_create) {
@@ -241,16 +244,11 @@ sub terminate :Chained('base') :PathPart('terminate') :Args(0) {
     my ($self, $c) = @_;
     my $package = $c->stash->{package_result};
 
-    #todo: putting the package fetch into a transaction wouldn't help since the count columns a prone to phantom reads...
-    unless($package->get_column('contract_cnt') == 0) {
-        NGCP::Panel::Utils::Message->error(
-            c => $c,
-            desc => $c->loc('Cannnot terminate profile package that is still assigned to contracts'),
-        );            
-        NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for('/package'));
-    }
-
     try {
+        #todo: putting the package fetch into a transaction wouldn't help since the count columns a prone to phantom reads...
+        unless($package->get_column('contract_cnt') == 0) {
+            die('Cannnot terminate profile package that is still assigned to contracts');
+        }
         $package->update({
             status => 'terminated',
             #terminate_timestamp => NGCP::Panel::Utils::DateTime::current_local,

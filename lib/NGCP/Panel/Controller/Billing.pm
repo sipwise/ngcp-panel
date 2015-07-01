@@ -162,6 +162,14 @@ sub edit :Chained('base') :PathPart('edit') {
 
             my $schema = $c->model('DB');
             $schema->txn_do(sub {
+                
+                unless($c->stash->{profile_result}->get_column('contract_cnt') == 0) {
+                    die('Cannnot modify billing profile that is still used in profile mappings');
+                }
+                unless($c->stash->{profile_result}->get_column('package_cnt') == 0) {
+                    die('Cannnot modify billing profile that is still used in profile packages');
+                } 
+                
                 $c->stash->{profile_result}->update($form->values);
 
                 # if prepaid flag changed, update all subscribers for customers
@@ -305,23 +313,14 @@ sub terminate :Chained('base') :PathPart('terminate') :Args(0) {
         NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for('/billing'));
     }
     
-    #todo: putting the profile fetch into a transaction wouldn't help since the count columns a prone to phantom reads...
-    unless($profile->get_column('contract_cnt') == 0) {
-        NGCP::Panel::Utils::Message->error(
-            c => $c,
-            desc => $c->loc('Cannnot terminate billing profile that is still used in profile mappings'),
-        );            
-        NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for('/billing'));
-    }
-    unless($profile->get_column('package_cnt') == 0) {
-        NGCP::Panel::Utils::Message->error(
-            c => $c,
-            desc => $c->loc('Cannnot terminate billing profile that is still used in profile packages'),
-        );            
-        NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for('/billing'));
-    } 
-
     try {
+        #todo: putting the profile fetch into a transaction wouldn't help since the count columns a prone to phantom reads...
+        unless($profile->get_column('contract_cnt') == 0) {
+            die('Cannnot terminate billing profile that is still used in profile mappings');
+        }
+        unless($profile->get_column('package_cnt') == 0) {
+            die('Cannnot terminate billing profile that is still used in profile packages');
+        } 
         $profile->update({
             status => 'terminated',
             terminate_timestamp => NGCP::Panel::Utils::DateTime::current_local,

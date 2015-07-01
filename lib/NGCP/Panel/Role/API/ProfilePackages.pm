@@ -135,10 +135,10 @@ sub update_item {
         $self->error($c, HTTP_UNPROCESSABLE_ENTITY, $err);
     });
     
-    if(exists $resource->{status} && $resource->{status} eq 'terminated') {
+    #if(exists $resource->{status} && $resource->{status} eq 'terminated') {
         unless($item->get_column('contract_cnt') == 0) {
             $self->error($c, HTTP_UNPROCESSABLE_ENTITY,
-                         "Cannnot terminate profile_package that is still assigned to contracts");
+                         "Cannnot modify or terminate profile_package that is still assigned to contracts");
             return;
         }
         #unless($item->get_column('contract_cnt') == 0) {
@@ -146,7 +146,7 @@ sub update_item {
         #                 "Cannnot terminate billing_network that is still used in profile sets of profile packages");
         #    return;
         #}        
-    }
+    #}
     
     my $mappings_to_create = [];
     return unless NGCP::Panel::Utils::ProfilePackages::prepare_profile_package(
