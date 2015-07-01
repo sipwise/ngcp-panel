@@ -59,7 +59,7 @@ msgstr ""
 msgid "\"Voice Mail\" - An internal flag for the voice_mail pseudo-preference feature to be able to map it do subscriber profiles. Not directly used."
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/Administrator.pm:29 lib/NGCP/Panel/Controller/Billing.pm:107 lib/NGCP/Panel/Controller/Billing.pm:348 lib/NGCP/Panel/Controller/Billing.pm:36 lib/NGCP/Panel/Controller/Billing.pm:677 lib/NGCP/Panel/Controller/Contact.pm:32 lib/NGCP/Panel/Controller/Contract.pm:24 lib/NGCP/Panel/Controller/Contract.pm:436 lib/NGCP/Panel/Controller/Customer.pm:301 lib/NGCP/Panel/Controller/Customer.pm:307 lib/NGCP/Panel/Controller/Customer.pm:316 lib/NGCP/Panel/Controller/Customer.pm:353 lib/NGCP/Panel/Controller/Customer.pm:52 lib/NGCP/Panel/Controller/Customer.pm:99 lib/NGCP/Panel/Controller/Device.pm:104 lib/NGCP/Panel/Controller/Device.pm:117 lib/NGCP/Panel/Controller/Device.pm:43 lib/NGCP/Panel/Controller/Device.pm:58 lib/NGCP/Panel/Controller/Device.pm:74 lib/NGCP/Panel/Controller/Device.pm:88 lib/NGCP/Panel/Controller/Domain.pm:29 lib/NGCP/Panel/Controller/EmailTemplate.pm:33 lib/NGCP/Panel/Controller/Invoice.pm:38 lib/NGCP/Panel/Controller/Invoice.pm:51 lib/NGCP/Panel/Controller/InvoiceTemplate.pm:32 lib/NGCP/Panel/Controller/NCOS.pm:237 lib/NGCP/Panel/Controller/NCOS.pm:29 lib/NGCP/Panel/Controller/Network.pm:26 lib/NGCP/Panel/Controller/NumberBlock.pm:39 lib/NGCP/Panel/Controller/Package.pm:26 lib/NGCP/Panel/Controller/Peering.pm:27 lib/NGCP/Panel/Controller/Peering.pm:80 lib/NGCP/Panel/Controller/Peering.pm:91 lib/NGCP/Panel/Controller/Product.pm:22 lib/NGCP/Panel/Controller/Reseller.pm:133 lib/NGCP/Panel/Controller/Reseller.pm:140 lib/NGCP/Panel/Controller/Reseller.pm:145 lib/NGCP/Panel/Controller/Reseller.pm:155 lib/NGCP/Panel/Controller/Reseller.pm:162 lib/NGCP/Panel/Controller/Reseller.pm:167 lib/NGCP/Panel/Controller/Reseller.pm:173 lib/NGCP/Panel/Controller/Reseller.pm:181 lib/NGCP/Panel/Controller/Reseller.pm:188 lib/NGCP/Panel/Controller/Reseller.pm:38 lib/NGCP/Panel/Controller/Reseller.pm:46 lib/NGCP/Panel/Controller/Rewrite.pm:31 lib/NGCP/Panel/Controller/Subscriber.pm:114 lib/NGCP/Panel/Controller/Subscriber.pm:2050 lib/NGCP/Panel/Controller/Subscriber.pm:2069 lib/NGCP/Panel/Controller/Subscriber.pm:2076 lib/NGCP/Panel/Controller/Subscriber.pm:260 lib/NGCP/Panel/Controller/Subscriber.pm:2618 lib/NGCP/Panel/Controller/Subscriber.pm:265 lib/NGCP/Panel/Controller/Subscriber.pm:270 lib/NGCP/Panel/Controller/Subscriber.pm:280 lib/NGCP/Panel/Controller/SubscriberProfile.pm:330 lib/NGCP/Panel/Controller/SubscriberProfile.pm:39 lib/NGCP/Panel/Controller/Voucher.pm:41 lib/NGCP/Panel/Utils/DbStrings.pm:1233 lib/NGCP/Panel/Utils/Sounds.pm:65 share/templates/customer/details.tt:60
+#: lib/NGCP/Panel/Controller/Administrator.pm:29 lib/NGCP/Panel/Controller/Billing.pm:107 lib/NGCP/Panel/Controller/Billing.pm:347 lib/NGCP/Panel/Controller/Billing.pm:36 lib/NGCP/Panel/Controller/Billing.pm:676 lib/NGCP/Panel/Controller/Contact.pm:32 lib/NGCP/Panel/Controller/Contract.pm:24 lib/NGCP/Panel/Controller/Contract.pm:436 lib/NGCP/Panel/Controller/Customer.pm:301 lib/NGCP/Panel/Controller/Customer.pm:307 lib/NGCP/Panel/Controller/Customer.pm:316 lib/NGCP/Panel/Controller/Customer.pm:353 lib/NGCP/Panel/Controller/Customer.pm:52 lib/NGCP/Panel/Controller/Customer.pm:99 lib/NGCP/Panel/Controller/Device.pm:104 lib/NGCP/Panel/Controller/Device.pm:117 lib/NGCP/Panel/Controller/Device.pm:43 lib/NGCP/Panel/Controller/Device.pm:58 lib/NGCP/Panel/Controller/Device.pm:74 lib/NGCP/Panel/Controller/Device.pm:88 lib/NGCP/Panel/Controller/Domain.pm:29 lib/NGCP/Panel/Controller/EmailTemplate.pm:33 lib/NGCP/Panel/Controller/Invoice.pm:38 lib/NGCP/Panel/Controller/Invoice.pm:51 lib/NGCP/Panel/Controller/InvoiceTemplate.pm:32 lib/NGCP/Panel/Controller/NCOS.pm:237 lib/NGCP/Panel/Controller/NCOS.pm:29 lib/NGCP/Panel/Controller/Network.pm:26 lib/NGCP/Panel/Controller/NumberBlock.pm:39 lib/NGCP/Panel/Controller/Package.pm:26 lib/NGCP/Panel/Controller/Peering.pm:27 lib/NGCP/Panel/Controller/Peering.pm:80 lib/NGCP/Panel/Controller/Peering.pm:91 lib/NGCP/Panel/Controller/Product.pm:22 lib/NGCP/Panel/Controller/Reseller.pm:133 lib/NGCP/Panel/Controller/Reseller.pm:140 lib/NGCP/Panel/Controller/Reseller.pm:145 lib/NGCP/Panel/Controller/Reseller.pm:155 lib/NGCP/Panel/Controller/Reseller.pm:162 lib/NGCP/Panel/Controller/Reseller.pm:167 lib/NGCP/Panel/Controller/Reseller.pm:173 lib/NGCP/Panel/Controller/Reseller.pm:181 lib/NGCP/Panel/Controller/Reseller.pm:188 lib/NGCP/Panel/Controller/Reseller.pm:38 lib/NGCP/Panel/Controller/Reseller.pm:46 lib/NGCP/Panel/Controller/Rewrite.pm:31 lib/NGCP/Panel/Controller/Subscriber.pm:114 lib/NGCP/Panel/Controller/Subscriber.pm:2050 lib/NGCP/Panel/Controller/Subscriber.pm:2069 lib/NGCP/Panel/Controller/Subscriber.pm:2076 lib/NGCP/Panel/Controller/Subscriber.pm:260 lib/NGCP/Panel/Controller/Subscriber.pm:2618 lib/NGCP/Panel/Controller/Subscriber.pm:265 lib/NGCP/Panel/Controller/Subscriber.pm:270 lib/NGCP/Panel/Controller/Subscriber.pm:280 lib/NGCP/Panel/Controller/SubscriberProfile.pm:330 lib/NGCP/Panel/Controller/SubscriberProfile.pm:39 lib/NGCP/Panel/Controller/Voucher.pm:41 lib/NGCP/Panel/Utils/DbStrings.pm:1233 lib/NGCP/Panel/Utils/Sounds.pm:65 share/templates/customer/details.tt:60
 msgid "#"
 msgstr ""
 
@@ -271,7 +271,7 @@ msgstr ""
 msgid "Access Restrictions"
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/Customer.pm:902
+#: lib/NGCP/Panel/Controller/Customer.pm:899
 msgid "Account balance successfully changed!"
 msgstr ""
 
@@ -647,11 +647,11 @@ msgstr ""
 msgid "Billing Fee"
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/Billing.pm:385
+#: lib/NGCP/Panel/Controller/Billing.pm:384
 msgid "Billing Fee does not exist!"
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/Billing.pm:429
+#: lib/NGCP/Panel/Controller/Billing.pm:428
 msgid "Billing Fee successfully created!"
 msgstr ""
 
@@ -715,11 +715,11 @@ msgstr ""
 msgid "Billing Vouchers successfully uploaded"
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/Billing.pm:352 share/templates/billing/zones.tt:3
+#: lib/NGCP/Panel/Controller/Billing.pm:351 share/templates/billing/zones.tt:3
 msgid "Billing Zone"
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/Billing.pm:598
+#: lib/NGCP/Panel/Controller/Billing.pm:597
 msgid "Billing Zone successfully created"
 msgstr ""
 
@@ -731,15 +731,15 @@ msgstr ""
 msgid "Billing data"
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/Billing.pm:545
+#: lib/NGCP/Panel/Controller/Billing.pm:544
 msgid "Billing fee not found!"
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/Billing.pm:528
+#: lib/NGCP/Panel/Controller/Billing.pm:527
 msgid "Billing fee successfully changed!"
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/Billing.pm:554
+#: lib/NGCP/Panel/Controller/Billing.pm:553
 msgid "Billing fee successfully deleted!"
 msgstr ""
 
@@ -747,15 +747,15 @@ msgstr ""
 msgid "Billing network does not exist"
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/Network.pm:241
+#: lib/NGCP/Panel/Controller/Network.pm:249
 msgid "Billing network successfully deleted"
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/Network.pm:274
+#: lib/NGCP/Panel/Controller/Network.pm:273
 msgid "Billing network successfully terminated"
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/Network.pm:192
+#: lib/NGCP/Panel/Controller/Network.pm:200
 msgid "Billing network successfully updated"
 msgstr ""
 
@@ -767,15 +767,15 @@ msgstr ""
 msgid "Billing profile id"
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/Billing.pm:274
+#: lib/NGCP/Panel/Controller/Billing.pm:282
 msgid "Billing profile successfully created"
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/Billing.pm:332
+#: lib/NGCP/Panel/Controller/Billing.pm:331
 msgid "Billing profile successfully terminated"
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/Billing.pm:215
+#: lib/NGCP/Panel/Controller/Billing.pm:223
 msgid "Billing profile successfully updated"
 msgstr ""
 
@@ -795,11 +795,11 @@ msgstr ""
 msgid "Billing zone"
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/Billing.pm:638
+#: lib/NGCP/Panel/Controller/Billing.pm:637
 msgid "Billing zone does not exist!"
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/Billing.pm:654
+#: lib/NGCP/Panel/Controller/Billing.pm:653
 msgid "Billing zone successfully deleted"
 msgstr ""
 
@@ -1069,7 +1069,7 @@ msgstr ""
 msgid "Callthrough CLIs"
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/Customer.pm:987
+#: lib/NGCP/Panel/Controller/Customer.pm:984
 msgid "Can't create a PBX group without having a pilot subscriber."
 msgstr ""
 
@@ -1077,35 +1077,15 @@ msgstr ""
 msgid "Cancel"
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/Network.pm:254
-msgid "Cannnot terminate billing network that is still used in profile mappings"
-msgstr ""
-
-#: lib/NGCP/Panel/Controller/Network.pm:261
-msgid "Cannnot terminate billing network that is still used in profile packages"
-msgstr ""
-
-#: lib/NGCP/Panel/Controller/Billing.pm:312
-msgid "Cannnot terminate billing profile that is still used in profile mappings"
-msgstr ""
-
-#: lib/NGCP/Panel/Controller/Billing.pm:319
-msgid "Cannnot terminate billing profile that is still used in profile packages"
-msgstr ""
-
-#: lib/NGCP/Panel/Controller/Package.pm:248
-msgid "Cannnot terminate profile package that is still assigned to contracts"
-msgstr ""
-
 #: lib/NGCP/Panel/Controller/Administrator.pm:227
 msgid "Cannot delete myself"
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/Contract.pm:232 lib/NGCP/Panel/Controller/Customer.pm:551
+#: lib/NGCP/Panel/Controller/Contract.pm:232 lib/NGCP/Panel/Controller/Customer.pm:548
 msgid "Cannot terminate contract with the id 1"
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/Billing.pm:303
+#: lib/NGCP/Panel/Controller/Billing.pm:311
 msgid "Cannot terminate default billing profile with the id 1"
 msgstr ""
 
@@ -1620,7 +1600,7 @@ msgid "Customer #%1 successfully created"
 msgstr ""
 
 #. ($contract->id)
-#: lib/NGCP/Panel/Controller/Customer.pm:526
+#: lib/NGCP/Panel/Controller/Customer.pm:523
 msgid "Customer #%1 successfully updated"
 msgstr ""
 
@@ -1673,7 +1653,7 @@ msgstr ""
 msgid "Customer specific Sound Set used for PBX auto-attendant prompts, customer-specific announcements etc."
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/Customer.pm:577
+#: lib/NGCP/Panel/Controller/Customer.pm:574
 msgid "Customer successfully terminated"
 msgstr ""
 
@@ -1789,7 +1769,7 @@ msgstr ""
 msgid "Destination Number"
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/Billing.pm:350
+#: lib/NGCP/Panel/Controller/Billing.pm:349
 msgid "Destination Pattern"
 msgstr ""
 
@@ -2320,7 +2300,7 @@ msgstr ""
 msgid "End"
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/Billing.pm:679
+#: lib/NGCP/Panel/Controller/Billing.pm:678
 msgid "End Date"
 msgstr ""
 
@@ -2428,7 +2408,7 @@ msgstr ""
 msgid "Failed to add registered device"
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/Customer.pm:909
+#: lib/NGCP/Panel/Controller/Customer.pm:906
 msgid "Failed to change account balance!"
 msgstr ""
 
@@ -2436,7 +2416,7 @@ msgstr ""
 msgid "Failed to clear audio cache."
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/Customer.pm:860
+#: lib/NGCP/Panel/Controller/Customer.pm:857
 msgid "Failed to clear fraud interval"
 msgstr ""
 
@@ -2456,11 +2436,11 @@ msgstr ""
 msgid "Failed to create NCOS pattern"
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/Customer.pm:1236
+#: lib/NGCP/Panel/Controller/Customer.pm:1233
 msgid "Failed to create PBX device"
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/Customer.pm:1056
+#: lib/NGCP/Panel/Controller/Customer.pm:1053
 msgid "Failed to create PBX group"
 msgstr ""
 
@@ -2476,7 +2456,7 @@ msgstr ""
 msgid "Failed to create billing network."
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/Billing.pm:280
+#: lib/NGCP/Panel/Controller/Billing.pm:288
 msgid "Failed to create billing profile"
 msgstr ""
 
@@ -2484,7 +2464,7 @@ msgstr ""
 msgid "Failed to create billing voucher"
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/Billing.pm:604
+#: lib/NGCP/Panel/Controller/Billing.pm:603
 msgid "Failed to create billing zone"
 msgstr ""
 
@@ -2585,7 +2565,7 @@ msgstr ""
 msgid "Failed to create sound set"
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/Billing.pm:930
+#: lib/NGCP/Panel/Controller/Billing.pm:929
 msgid "Failed to create special offpeak entry"
 msgstr ""
 
@@ -2593,7 +2573,7 @@ msgstr ""
 msgid "Failed to create speed dial slot"
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/Customer.pm:775 lib/NGCP/Panel/Controller/Subscriber.pm:197
+#: lib/NGCP/Panel/Controller/Customer.pm:772 lib/NGCP/Panel/Controller/Subscriber.pm:197
 msgid "Failed to create subscriber"
 msgstr ""
 
@@ -2625,7 +2605,7 @@ msgstr ""
 msgid "Failed to delete NCOS pattern"
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/Customer.pm:1429
+#: lib/NGCP/Panel/Controller/Customer.pm:1426
 msgid "Failed to delete PBX device"
 msgstr ""
 
@@ -2637,11 +2617,11 @@ msgstr ""
 msgid "Failed to delete auto attendant slot"
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/Network.pm:232
+#: lib/NGCP/Panel/Controller/Network.pm:240
 msgid "Failed to delete billing network"
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/Billing.pm:661
+#: lib/NGCP/Panel/Controller/Billing.pm:660
 msgid "Failed to delete billing zone"
 msgstr ""
 
@@ -2730,7 +2710,7 @@ msgstr ""
 msgid "Failed to delete sound set"
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/Billing.pm:890
+#: lib/NGCP/Panel/Controller/Billing.pm:889
 msgid "Failed to delete special offpeak entry"
 msgstr ""
 
@@ -2836,19 +2816,19 @@ msgstr ""
 msgid "Failed to store invoice template"
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/Network.pm:281
+#: lib/NGCP/Panel/Controller/Network.pm:280
 msgid "Failed to terminate billing network"
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/Billing.pm:339
+#: lib/NGCP/Panel/Controller/Billing.pm:338
 msgid "Failed to terminate billing profile"
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/Contract.pm:265 lib/NGCP/Panel/Controller/Customer.pm:584
+#: lib/NGCP/Panel/Controller/Contract.pm:265 lib/NGCP/Panel/Controller/Customer.pm:581
 msgid "Failed to terminate contract"
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/Package.pm:268
+#: lib/NGCP/Panel/Controller/Package.pm:266
 msgid "Failed to terminate profile package"
 msgstr ""
 
@@ -2864,7 +2844,7 @@ msgstr ""
 msgid "Failed to transcode audio file"
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/Customer.pm:1470 lib/NGCP/Panel/Controller/Customer.pm:1487
+#: lib/NGCP/Panel/Controller/Customer.pm:1467 lib/NGCP/Panel/Controller/Customer.pm:1484
 msgid "Failed to trigger config reload via SIP"
 msgstr ""
 
@@ -2880,11 +2860,11 @@ msgstr ""
 msgid "Failed to update NCOS pattern"
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/Customer.pm:1359
+#: lib/NGCP/Panel/Controller/Customer.pm:1356
 msgid "Failed to update PBX device"
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/Customer.pm:1154
+#: lib/NGCP/Panel/Controller/Customer.pm:1151
 msgid "Failed to update PBX group"
 msgstr ""
 
@@ -2896,11 +2876,11 @@ msgstr ""
 msgid "Failed to update autoattendant slots"
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/Network.pm:198
+#: lib/NGCP/Panel/Controller/Network.pm:206
 msgid "Failed to update billing network"
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/Billing.pm:221
+#: lib/NGCP/Panel/Controller/Billing.pm:229
 msgid "Failed to update billing profile"
 msgstr ""
 
@@ -2920,7 +2900,7 @@ msgstr ""
 msgid "Failed to update contract"
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/Customer.pm:533
+#: lib/NGCP/Panel/Controller/Customer.pm:530
 msgid "Failed to update customer contract"
 msgstr ""
 
@@ -2981,7 +2961,7 @@ msgstr ""
 msgid "Failed to update preference %1"
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/Package.pm:225
+#: lib/NGCP/Panel/Controller/Package.pm:228
 msgid "Failed to update profile package"
 msgstr ""
 
@@ -3013,7 +2993,7 @@ msgstr ""
 msgid "Failed to update sound set"
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/Billing.pm:865
+#: lib/NGCP/Panel/Controller/Billing.pm:864
 msgid "Failed to update special offpeak entry"
 msgstr ""
 
@@ -3057,7 +3037,7 @@ msgstr ""
 msgid "Failed to update voicemail setting"
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/Billing.pm:487
+#: lib/NGCP/Panel/Controller/Billing.pm:486
 msgid "Failed to upload Billing Fees"
 msgstr ""
 
@@ -3194,7 +3174,7 @@ msgstr ""
 msgid "Fraud daily notify"
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/Customer.pm:819
+#: lib/NGCP/Panel/Controller/Customer.pm:816
 msgid "Fraud settings successfully changed!"
 msgstr ""
 
@@ -3210,7 +3190,7 @@ msgstr ""
 msgid "Free-Time Balance"
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/Billing.pm:769 lib/NGCP/Panel/Utils/DbStrings.pm:1366
+#: lib/NGCP/Panel/Controller/Billing.pm:768 lib/NGCP/Panel/Utils/DbStrings.pm:1366
 msgid "Friday"
 msgstr ""
 
@@ -3711,7 +3691,7 @@ msgstr ""
 msgid "Invalid administrator id detected"
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/Billing.pm:371
+#: lib/NGCP/Panel/Controller/Billing.pm:370
 msgid "Invalid billing fee id detected!"
 msgstr ""
 
@@ -3719,7 +3699,7 @@ msgstr ""
 msgid "Invalid billing network id detected"
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/Billing.pm:626
+#: lib/NGCP/Panel/Controller/Billing.pm:625
 msgid "Invalid billing zone id detected"
 msgstr ""
 
@@ -3772,7 +3752,7 @@ msgid "Invalid file type detected, only WAV supported"
 msgstr ""
 
 #. ($type)
-#: lib/NGCP/Panel/Controller/Customer.pm:800 lib/NGCP/Panel/Controller/Customer.pm:841
+#: lib/NGCP/Panel/Controller/Customer.pm:797 lib/NGCP/Panel/Controller/Customer.pm:838
 msgid "Invalid fraud interval '%1'!"
 msgstr ""
 
@@ -3800,7 +3780,7 @@ msgstr ""
 msgid "Invalid password reset attempt."
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/Billing.pm:810
+#: lib/NGCP/Panel/Controller/Billing.pm:809
 msgid "Invalid peaktime date id detected!"
 msgstr ""
 
@@ -3820,7 +3800,7 @@ msgstr ""
 msgid "Invalid profile id detected!"
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/Customer.pm:1390
+#: lib/NGCP/Panel/Controller/Customer.pm:1387
 msgid "Invalid provisioning subscriber id detected."
 msgstr ""
 
@@ -4204,7 +4184,7 @@ msgstr ""
 msgid "Master Data"
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/Billing.pm:351
+#: lib/NGCP/Panel/Controller/Billing.pm:350
 msgid "Match Direction"
 msgstr ""
 
@@ -4277,7 +4257,7 @@ msgstr ""
 msgid "Maximum number of overall (incoming and outgoing) concurrent on-net and off-net calls for subscribers within the same Customer account, excluding calls to the application server and intra-PBX calls."
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/Customer.pm:613 lib/NGCP/Panel/Controller/Customer.pm:972
+#: lib/NGCP/Panel/Controller/Customer.pm:610 lib/NGCP/Panel/Controller/Customer.pm:969
 msgid "Maximum number of subscribers for this customer reached"
 msgstr ""
 
@@ -4333,7 +4313,7 @@ msgstr ""
 msgid "Model type"
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/Billing.pm:765 lib/NGCP/Panel/Utils/DbStrings.pm:1335
+#: lib/NGCP/Panel/Controller/Billing.pm:764 lib/NGCP/Panel/Utils/DbStrings.pm:1335
 msgid "Monday"
 msgstr ""
 
@@ -4507,7 +4487,7 @@ msgstr ""
 msgid "New Name"
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/Billing.pm:457
+#: lib/NGCP/Panel/Controller/Billing.pm:456
 msgid "No Billing Fee file specified!"
 msgstr ""
 
@@ -4777,11 +4757,11 @@ msgstr ""
 msgid "PBX Call Queue"
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/Customer.pm:1249 lib/NGCP/Panel/Controller/Customer.pm:1373
+#: lib/NGCP/Panel/Controller/Customer.pm:1246 lib/NGCP/Panel/Controller/Customer.pm:1370
 msgid "PBX Device"
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/Customer.pm:1422
+#: lib/NGCP/Panel/Controller/Customer.pm:1419
 msgid "PBX Device successfully deleted"
 msgstr ""
 
@@ -4793,7 +4773,7 @@ msgstr ""
 msgid "PBX Extension"
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/Customer.pm:1068
+#: lib/NGCP/Panel/Controller/Customer.pm:1065
 msgid "PBX Group"
 msgstr ""
 
@@ -4811,34 +4791,34 @@ msgstr ""
 msgid "PBX Groups"
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/Customer.pm:1227
+#: lib/NGCP/Panel/Controller/Customer.pm:1224
 msgid "PBX device successfully created"
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/Customer.pm:1350
+#: lib/NGCP/Panel/Controller/Customer.pm:1347
 msgid "PBX device successfully updated"
 msgstr ""
 
 #. ($dev_id)
-#: lib/NGCP/Panel/Controller/Customer.pm:1271
+#: lib/NGCP/Panel/Controller/Customer.pm:1268
 msgid "PBX device with id %1 does not exist for this customer."
 msgstr ""
 
 #. ($dev_id)
-#: lib/NGCP/Panel/Controller/Customer.pm:1261
+#: lib/NGCP/Panel/Controller/Customer.pm:1258
 msgid "PBX device with id %1 does not exist."
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/Customer.pm:1050
+#: lib/NGCP/Panel/Controller/Customer.pm:1047
 msgid "PBX group successfully created"
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/Customer.pm:1148
+#: lib/NGCP/Panel/Controller/Customer.pm:1145
 msgid "PBX group successfully updated"
 msgstr ""
 
 #. ($group_id)
-#: lib/NGCP/Panel/Controller/Customer.pm:1080
+#: lib/NGCP/Panel/Controller/Customer.pm:1077
 msgid "PBX group with id %1 does not exist."
 msgstr ""
 
@@ -4946,7 +4926,7 @@ msgstr ""
 msgid "Pbx hunt timeout"
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/Billing.pm:823
+#: lib/NGCP/Panel/Controller/Billing.pm:822
 msgid "Peaktime date does not exist!"
 msgstr ""
 
@@ -5242,11 +5222,11 @@ msgstr ""
 msgid "Profile package successfully created"
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/Package.pm:261
+#: lib/NGCP/Panel/Controller/Package.pm:259
 msgid "Profile package successfully terminated"
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/Package.pm:219
+#: lib/NGCP/Panel/Controller/Package.pm:222
 msgid "Profile package successfully updated"
 msgstr ""
 
@@ -5701,7 +5681,7 @@ msgstr ""
 msgid "Same as \"ncos\", but may only be set by administrators and is applied prior to the user setting."
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/Billing.pm:770 lib/NGCP/Panel/Utils/DbStrings.pm:1206
+#: lib/NGCP/Panel/Controller/Billing.pm:769 lib/NGCP/Panel/Utils/DbStrings.pm:1206
 msgid "Saturday"
 msgstr ""
 
@@ -5998,7 +5978,7 @@ msgstr ""
 msgid "Source IP"
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/Billing.pm:349
+#: lib/NGCP/Panel/Controller/Billing.pm:348
 msgid "Source Pattern"
 msgstr ""
 
@@ -6134,15 +6114,15 @@ msgstr ""
 msgid "Source uuid"
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/Billing.pm:922
+#: lib/NGCP/Panel/Controller/Billing.pm:921
 msgid "Special offpeak entry successfully created"
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/Billing.pm:883
+#: lib/NGCP/Panel/Controller/Billing.pm:882
 msgid "Special offpeak entry successfully deleted"
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/Billing.pm:857
+#: lib/NGCP/Panel/Controller/Billing.pm:856
 msgid "Special offpeak entry successfully updated"
 msgstr ""
 
@@ -6206,7 +6186,7 @@ msgstr ""
 msgid "Start - End"
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/Billing.pm:678
+#: lib/NGCP/Panel/Controller/Billing.pm:677
 msgid "Start Date"
 msgstr ""
 
@@ -6380,7 +6360,7 @@ msgstr ""
 msgid "Subscriber status is <b>%1</b>"
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/Customer.pm:769
+#: lib/NGCP/Panel/Controller/Customer.pm:766
 msgid "Subscriber successfully created"
 msgstr ""
 
@@ -6400,7 +6380,7 @@ msgstr ""
 msgid "Successfully cleared Call Forward"
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/Customer.pm:869
+#: lib/NGCP/Panel/Controller/Customer.pm:866
 msgid "Successfully cleared fraud interval!"
 msgstr ""
 
@@ -6472,7 +6452,7 @@ msgstr ""
 msgid "Successfully deleted voicemail"
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/Customer.pm:1515
+#: lib/NGCP/Panel/Controller/Customer.pm:1512
 msgid "Successfully redirected request to device"
 msgstr ""
 
@@ -6497,7 +6477,7 @@ msgstr ""
 msgid "Successfully terminated subscriber"
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/Customer.pm:1493
+#: lib/NGCP/Panel/Controller/Customer.pm:1490
 msgid "Successfully triggered config reload via SIP"
 msgstr ""
 
@@ -6561,7 +6541,7 @@ msgstr ""
 msgid "Successfully updated voicemail setting"
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/Billing.pm:771 lib/NGCP/Panel/Utils/DbStrings.pm:1404
+#: lib/NGCP/Panel/Controller/Billing.pm:770 lib/NGCP/Panel/Utils/DbStrings.pm:1404
 msgid "Sunday"
 msgstr ""
 
@@ -7641,7 +7621,7 @@ msgstr ""
 msgid "The time the reminder call is triggered."
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/Billing.pm:737
+#: lib/NGCP/Panel/Controller/Billing.pm:736
 msgid "The timerange you wanted to delete does not exist"
 msgstr ""
 
@@ -7737,11 +7717,11 @@ msgstr ""
 msgid "This mode determines when balance intervals start."
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/Billing.pm:699
+#: lib/NGCP/Panel/Controller/Billing.pm:698
 msgid "This weekday does not exist"
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/Billing.pm:768 lib/NGCP/Panel/Utils/DbStrings.pm:1070
+#: lib/NGCP/Panel/Controller/Billing.pm:767 lib/NGCP/Panel/Utils/DbStrings.pm:1070
 msgid "Thursday"
 msgstr ""
 
@@ -7769,11 +7749,11 @@ msgstr ""
 msgid "Timeout"
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/Billing.pm:726
+#: lib/NGCP/Panel/Controller/Billing.pm:725
 msgid "Timerange has been successfully created"
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/Billing.pm:748
+#: lib/NGCP/Panel/Controller/Billing.pm:747
 msgid "Timerange has been successfully deleted"
 msgstr ""
 
@@ -7858,7 +7838,7 @@ msgstr ""
 msgid "Trusted source entry not found"
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/Billing.pm:766 lib/NGCP/Panel/Utils/DbStrings.pm:1325
+#: lib/NGCP/Panel/Controller/Billing.pm:765 lib/NGCP/Panel/Utils/DbStrings.pm:1325
 msgid "Tuesday"
 msgstr ""
 
@@ -8188,7 +8168,7 @@ msgstr ""
 msgid "Web password successfully recovered, please re-login."
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/Billing.pm:767 lib/NGCP/Panel/Utils/DbStrings.pm:471
+#: lib/NGCP/Panel/Controller/Billing.pm:766 lib/NGCP/Panel/Utils/DbStrings.pm:471
 msgid "Wednesday"
 msgstr ""
 
