@@ -192,8 +192,8 @@ msgstr "%1 как %2"
 
 #. (subscriber_count,contract.max_subscribers,                                c.config.features.cloudpbx ? c.loc('(including PBX groups)
 #. (subscriber_count, contract.max_subscribers,                            c.config.features.cloudpbx ? c.loc('(including PBX groups)
-#: share/templates/customer/details.tt:171
-#: share/templates/customer/details.tt:224
+#: share/templates/customer/details.tt:173
+#: share/templates/customer/details.tt:226
 msgid "%1 of maximum %2 subscribers %3 created"
 msgstr "создано %1 из максимально доступных %2 абонентов %3"
 
@@ -902,8 +902,8 @@ msgid "Billing Network Block"
 msgstr ""
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:1213
-#: share/templates/contract/profile_network_mappings_list.tt:7
-#: share/templates/customer/details.tt:142
+#: share/templates/contract/profile_network_mappings_list.tt:8
+#: share/templates/customer/details.tt:143
 msgid "Billing Network Name"
 msgstr ""
 
@@ -928,18 +928,21 @@ msgstr ""
 msgid "Billing Profile"
 msgstr "Тариф"
 
-#: share/templates/contract/profile_mappings_list.tt:6
-#: share/templates/contract/profile_network_mappings_list.tt:6
-#: share/templates/customer/details.tt:141
+#: share/templates/contract/profile_mappings_list.tt:7
+#: share/templates/contract/profile_network_mappings_list.tt:7
+#: share/templates/customer/details.tt:142
 msgid "Billing Profile Name"
 msgstr "Имя тарифа"
+
+#: share/templates/customer/details.tt:133
+msgid "Billing Profile Schedule"
+msgstr ""
 
 #: lib/NGCP/Panel/Controller/Billing.pm:117
 msgid "Billing Profile does not exist!"
 msgstr "Тариф не существует!"
 
-#: share/templates/billing/list.tt:1 share/templates/customer/details.tt:133
-#: share/templates/reseller/details.tt:188
+#: share/templates/billing/list.tt:1 share/templates/reseller/details.tt:188
 #: share/templates/widgets/admin_billing_overview.tt:7
 #: share/templates/widgets/reseller_billing_overview.tt:7
 msgid "Billing Profiles"
@@ -1448,7 +1451,7 @@ msgstr ""
 msgid "Carry over mode"
 msgstr ""
 
-#: share/templates/customer/details.tt:377
+#: share/templates/customer/details.tt:379
 msgid "Cash"
 msgstr "Наличность"
 
@@ -1734,7 +1737,7 @@ msgstr "Контракт #%1"
 msgid "Contract #%1 successfully created"
 msgstr "Контракт #%1 успешно создан"
 
-#: share/templates/customer/details.tt:369
+#: share/templates/customer/details.tt:371
 msgid "Contract Balance"
 msgstr "Баланс контракта"
 
@@ -1855,12 +1858,12 @@ msgstr "Создать новую запись"
 msgid "Create Number Block"
 msgstr "Создать блок номеров"
 
-#: share/templates/customer/details.tt:274
+#: share/templates/customer/details.tt:276
 msgid "Create PBX Device"
 msgstr "Создать PBX Устройство"
 
-#: share/templates/customer/details.tt:227
-#: share/templates/customer/details.tt:236
+#: share/templates/customer/details.tt:229
+#: share/templates/customer/details.tt:238
 msgid "Create PBX Group"
 msgstr "Создать PBX Группу"
 
@@ -1916,7 +1919,7 @@ msgstr "Создать Набор Правил Перезаписи"
 msgid "Create Slot"
 msgstr "Создать Слот"
 
-#: share/templates/customer/details.tt:352 share/templates/sound/list.tt:22
+#: share/templates/customer/details.tt:354 share/templates/sound/list.tt:22
 msgid "Create Sound Set"
 msgstr "Создать Набор Звуков"
 
@@ -1924,8 +1927,8 @@ msgstr "Создать Набор Звуков"
 msgid "Create Special Off-Peak Date"
 msgstr "Создать Специальную Off-Peak Дату"
 
-#: share/templates/customer/details.tt:174
-#: share/templates/customer/details.tt:183
+#: share/templates/customer/details.tt:176
+#: share/templates/customer/details.tt:185
 #: share/templates/subscriber/list.tt:24
 msgid "Create Subscriber"
 msgstr "Создать Абонента"
@@ -1947,7 +1950,7 @@ msgstr "Создать Зону"
 msgid "Currency"
 msgstr "Валюта"
 
-#: share/templates/customer/details.tt:386
+#: share/templates/customer/details.tt:388
 msgid "Current totals"
 msgstr "Итого"
 
@@ -2095,7 +2098,7 @@ msgstr "Клиенты"
 msgid "Daily Fraud Limit"
 msgstr "Дневной Лимит Мошенничества"
 
-#: share/templates/customer/details.tt:459
+#: share/templates/customer/details.tt:461
 msgid "Daily Settings"
 msgstr "Дневные Настройки"
 
@@ -2103,9 +2106,9 @@ msgstr "Дневные Настройки"
 msgid "Dashboard"
 msgstr "Главная"
 
-#: share/templates/contract/profile_mappings_list.tt:5
-#: share/templates/contract/profile_network_mappings_list.tt:5
-#: share/templates/customer/details.tt:140
+#: share/templates/contract/profile_mappings_list.tt:6
+#: share/templates/contract/profile_network_mappings_list.tt:6
+#: share/templates/customer/details.tt:141
 msgid "Date"
 msgstr "Дата"
 
@@ -2150,10 +2153,10 @@ msgstr ""
 #: lib/NGCP/Panel/Utils/DbStrings.pm:528
 #: share/templates/administrator/list.tt:20 share/templates/billing/fees.tt:20
 #: share/templates/billing/peaktimes.tt:71 share/templates/billing/zones.tt:18
-#: share/templates/contact/list.tt:19 share/templates/customer/details.tt:306
-#: share/templates/customer/details.tt:348
-#: share/templates/customer/details.tt:453
-#: share/templates/customer/details.tt:482 share/templates/device/list.tt:123
+#: share/templates/contact/list.tt:19 share/templates/customer/details.tt:308
+#: share/templates/customer/details.tt:350
+#: share/templates/customer/details.tt:455
+#: share/templates/customer/details.tt:484 share/templates/device/list.tt:123
 #: share/templates/device/list.tt:161 share/templates/device/list.tt:200
 #: share/templates/device/list.tt:239 share/templates/device/list.tt:269
 #: share/templates/domain/list.tt:18 share/templates/emailtemplate/list.tt:18
@@ -2213,7 +2216,7 @@ msgstr "Доставить входящие факсы"
 msgid "Deliver Outgoing Faxes"
 msgstr "Доставить исходящие факсы"
 
-#: share/templates/customer/details.tt:548 share/templates/device/list.tt:257
+#: share/templates/customer/details.tt:550 share/templates/device/list.tt:257
 msgid "Deployed Device"
 msgstr "Предоставленное устройство"
 
@@ -2422,10 +2425,10 @@ msgstr "Набор назначений"
 msgid "Detail"
 msgstr "Подробно"
 
-#: share/templates/customer/details.tt:197
-#: share/templates/customer/details.tt:202
-#: share/templates/customer/details.tt:250
-#: share/templates/customer/details.tt:255
+#: share/templates/customer/details.tt:199
+#: share/templates/customer/details.tt:204
+#: share/templates/customer/details.tt:252
+#: share/templates/customer/details.tt:257
 #: share/templates/customer/list.tt:120 share/templates/customer/list.tt:127
 #: share/templates/numberblock/block_list.tt:19
 #: share/templates/peering/list.tt:19 share/templates/peering/list.tt:26
@@ -2482,7 +2485,7 @@ msgid "Device Models"
 msgstr "Модели Устройств"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:829
-#: share/templates/customer/details.tt:283 share/templates/device/list.tt:225
+#: share/templates/customer/details.tt:285 share/templates/device/list.tt:225
 msgid "Device Profile"
 msgstr "Профиль Устройства"
 
@@ -2658,7 +2661,7 @@ msgid "Don't have an account?"
 msgstr "Еще не зарегистрировались?"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:594
-#: share/templates/customer/details.tt:509 share/templates/device/list.tt:163
+#: share/templates/customer/details.tt:511 share/templates/device/list.tt:163
 #: share/templates/device/list.tt:202
 #: share/templates/invoice/invoice_list.tt:18
 #: share/templates/invoice/invoice_list.tt:26
@@ -2721,11 +2724,11 @@ msgstr "добавить E164 диапазон"
 #: share/templates/billing/list.tt:18 share/templates/billing/peaktimes.tt:43
 #: share/templates/billing/peaktimes.tt:70 share/templates/contact/list.tt:18
 #: share/templates/contract/list.tt:70 share/templates/customer/details.tt:25
-#: share/templates/customer/details.tt:309
-#: share/templates/customer/details.tt:347
-#: share/templates/customer/details.tt:393
-#: share/templates/customer/details.tt:449
-#: share/templates/customer/details.tt:478
+#: share/templates/customer/details.tt:311
+#: share/templates/customer/details.tt:349
+#: share/templates/customer/details.tt:395
+#: share/templates/customer/details.tt:451
+#: share/templates/customer/details.tt:480
 #: share/templates/customer/list.tt:118 share/templates/device/list.tt:124
 #: share/templates/device/list.tt:162 share/templates/device/list.tt:201
 #: share/templates/device/list.tt:240 share/templates/emailtemplate/list.tt:17
@@ -3729,8 +3732,8 @@ msgstr "Тип файла"
 msgid "Filename"
 msgstr "Имя файла"
 
-#: share/templates/customer/details.tt:349
-#: share/templates/customer/details.tt:356 share/templates/sound/list.tt:19
+#: share/templates/customer/details.tt:351
+#: share/templates/customer/details.tt:358 share/templates/sound/list.tt:19
 #: share/templates/sound/list.tt:26
 msgid "Files"
 msgstr "Файлы"
@@ -3809,7 +3812,7 @@ msgstr "Отправлять исходящие звонки от пользов
 msgid "Forgot your password?"
 msgstr "Забыли Ваш пароль?"
 
-#: share/templates/customer/details.tt:414
+#: share/templates/customer/details.tt:416
 msgid "Fraud Limits"
 msgstr "Лимит Мошенничества"
 
@@ -3845,7 +3848,7 @@ msgstr "Настройки информирования о мошенничес�
 msgid "Fraud use reseller rates"
 msgstr ""
 
-#: share/templates/customer/details.tt:378
+#: share/templates/customer/details.tt:380
 msgid "Free time"
 msgstr "Бесплатные минуты"
 
@@ -4568,7 +4571,7 @@ msgstr ""
 msgid "Invalid voucher id detected!"
 msgstr ""
 
-#: share/templates/customer/details.tt:502
+#: share/templates/customer/details.tt:504
 #: share/templates/invoice/invoice_list.tt:3
 msgid "Invoice"
 msgstr "Счёт-фактура"
@@ -4652,7 +4655,7 @@ msgstr "Шаблон счёт-фактуры успешно сохранен"
 msgid "Invoice template successfully updated"
 msgstr "Шаблон счёт-фактуры успешно обновлен"
 
-#: share/templates/customer/details.tt:496
+#: share/templates/customer/details.tt:498
 #: share/templates/widgets/admin_topmenu_settings.tt:45
 #: share/templates/widgets/reseller_topmenu_settings.tt:19
 msgid "Invoices"
@@ -4744,7 +4747,7 @@ msgstr "Имя Списка"
 msgid "Liid"
 msgstr ""
 
-#: share/templates/customer/details.tt:422
+#: share/templates/customer/details.tt:424
 msgid "Limit"
 msgstr "Лимит"
 
@@ -4820,7 +4823,7 @@ msgid "Loading..."
 msgstr "Загрузка..."
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:623 lib/NGCP/Panel/Utils/DbStrings.pm:8
-#: share/templates/customer/details.tt:423
+#: share/templates/customer/details.tt:425
 msgid "Lock Level"
 msgstr "Уровень блокировки"
 
@@ -4861,7 +4864,7 @@ msgstr ""
 #: lib/NGCP/Panel/Controller/Device.pm:105
 #: lib/NGCP/Panel/Controller/Device.pm:118
 #: lib/NGCP/Panel/Utils/DbStrings.pm:694
-#: share/templates/customer/details.tt:282
+#: share/templates/customer/details.tt:284
 msgid "MAC Address / Identifier"
 msgstr "MAC адрес / Идентификатор"
 
@@ -4970,8 +4973,8 @@ msgid "Maximum Number of simultaneous participants in one conference room."
 msgstr ""
 
 #. (contract.max_subscribers,                            c.config.features.cloudpbx ? c.loc('(including PBX groups)
-#: share/templates/customer/details.tt:179
-#: share/templates/customer/details.tt:232
+#: share/templates/customer/details.tt:181
+#: share/templates/customer/details.tt:234
 msgid "Maximum number of %1 subscribers %2 created"
 msgstr "Создано максимальное количество абонентов %1 %2"
 
@@ -5104,7 +5107,7 @@ msgstr "Месяц"
 msgid "Monthly Fraud Limit"
 msgstr "Ежемесячный лимит мошенничества"
 
-#: share/templates/customer/details.tt:430
+#: share/templates/customer/details.tt:432
 msgid "Monthly Settings"
 msgstr "Ежемесячные настройки"
 
@@ -5350,7 +5353,7 @@ msgstr "Данный id быстрого набора не найден."
 msgid "No such voicemail file."
 msgstr "Нету такого файла голосовой почты."
 
-#: share/templates/customer/details.tt:717
+#: share/templates/customer/details.tt:719
 msgid "None"
 msgstr ""
 
@@ -5362,7 +5365,7 @@ msgstr "CLI в нормальном виде (обычно E164) звоняще�
 msgid "Not logged in"
 msgstr "Вы не вошли"
 
-#: share/templates/customer/details.tt:424
+#: share/templates/customer/details.tt:426
 msgid "Notify"
 msgstr "Уведомление"
 
@@ -5595,7 +5598,7 @@ msgstr "Устройство PBX"
 msgid "PBX Device successfully deleted"
 msgstr "Устройство PBX успешно удалено"
 
-#: share/templates/customer/details.tt:270
+#: share/templates/customer/details.tt:272
 msgid "PBX Devices"
 msgstr "Устройства PBX"
 
@@ -5617,8 +5620,8 @@ msgstr "PBX Группа %1@%2"
 msgid "PBX Group Preferences for %1@%2"
 msgstr "Настройки PBX Группы %1@%2"
 
-#: share/templates/customer/details.tt:217
-#: share/templates/customer/details.tt:241
+#: share/templates/customer/details.tt:219
+#: share/templates/customer/details.tt:243
 msgid "PBX Groups"
 msgstr "Группы PBX"
 
@@ -5998,11 +6001,11 @@ msgstr ""
 msgid "Preference '"
 msgstr "Настройка '"
 
-#: share/templates/customer/details.tt:198
-#: share/templates/customer/details.tt:203
+#: share/templates/customer/details.tt:200
+#: share/templates/customer/details.tt:205
 #: share/templates/customer/details.tt:21
-#: share/templates/customer/details.tt:251
-#: share/templates/customer/details.tt:256 share/templates/domain/list.tt:19
+#: share/templates/customer/details.tt:253
+#: share/templates/customer/details.tt:258 share/templates/domain/list.tt:19
 #: share/templates/domain/list.tt:26
 #: share/templates/peering/servers_rules.tt:20
 #: share/templates/peering/servers_rules.tt:27
@@ -6885,7 +6888,7 @@ msgstr "Установить лимит для принимаемых Min-SE з�
 msgid "Setting"
 msgstr "Настройка"
 
-#: share/templates/customer/details.tt:539
+#: share/templates/customer/details.tt:541
 #: share/templates/widgets/admin_topmenu_settings.tt:29
 #: share/templates/widgets/reseller_topmenu_settings.tt:4
 #: share/templates/widgets/subscriber_topmenu_settings.tt:4
@@ -6979,7 +6982,7 @@ msgstr "Извините, произошла ошибка, запрошенна�
 msgid "Sorry, an error has occured, requested operation denied!"
 msgstr "Извините, произошла ошибка, запрошенная операция запрещена!"
 
-#: share/templates/customer/details.tt:340 share/templates/sound/list.tt:3
+#: share/templates/customer/details.tt:342 share/templates/sound/list.tt:3
 #: share/templates/widgets/reseller_domain_overview.tt:13
 msgid "Sound Set"
 msgstr "Звуковой набор"
@@ -6990,7 +6993,7 @@ msgstr ""
 "Звуковой набор используемый для системных сообщений, например анонсирование "
 "ошибок или сбоев, и т.д."
 
-#: share/templates/customer/details.tt:334 share/templates/sound/list.tt:1
+#: share/templates/customer/details.tt:336 share/templates/sound/list.tt:1
 #: share/templates/widgets/admin_topmenu_settings.tt:52
 #: share/templates/widgets/reseller_topmenu_settings.tt:25
 msgid "Sound Sets"
@@ -7293,7 +7296,7 @@ msgstr "Быстрый набор"
 msgid "Speeddials"
 msgstr "Быстрый набор"
 
-#: share/templates/customer/details.tt:399
+#: share/templates/customer/details.tt:401
 msgid "Spent this interval"
 msgstr "Использовано на этом интервале"
 
@@ -7324,7 +7327,7 @@ msgid "Start time"
 msgstr "Время начала"
 
 #: lib/NGCP/Panel/Utils/DbStrings.pm:1169
-#: share/templates/customer/details.tt:280
+#: share/templates/customer/details.tt:282
 msgid "Station Name"
 msgstr "Имя станции"
 
@@ -7367,9 +7370,9 @@ msgstr ""
 
 #: lib/NGCP/Panel/Controller/Subscriber.pm:2620
 #: lib/NGCP/Panel/Utils/DbStrings.pm:955
-#: share/templates/customer/details.tt:281
-#: share/templates/customer/details.tt:527
-#: share/templates/customer/details.tt:717
+#: share/templates/customer/details.tt:283
+#: share/templates/customer/details.tt:529
+#: share/templates/customer/details.tt:719
 #: share/templates/subscriber/list.tt:3
 #: share/templates/subscriber/pbx_group_items.tt:32
 #: share/templates/subscriber/preferences.tt:10
@@ -7521,8 +7524,8 @@ msgstr ""
 msgid "Subscriber successfully created!"
 msgstr "Абонент успешно создан!"
 
-#: share/templates/customer/details.tt:164
-#: share/templates/customer/details.tt:188
+#: share/templates/customer/details.tt:166
+#: share/templates/customer/details.tt:190
 #: share/templates/subscriber/list.tt:1
 #: share/templates/widgets/admin_reseller_overview.tt:14
 #: share/templates/widgets/admin_topmenu_settings.tt:39
@@ -7722,7 +7725,7 @@ msgstr "Поддержка Частных Линий"
 msgid "Supports Shared Line"
 msgstr "Поддержка Общих Линий"
 
-#: share/templates/customer/details.tt:313
+#: share/templates/customer/details.tt:315
 msgid "Sync Device"
 msgstr "Синхронизация устройств"
 
@@ -7773,8 +7776,8 @@ msgstr ""
 msgid "Template variables"
 msgstr "Переменные шаблона"
 
-#: share/templates/billing/list.tt:17 share/templates/customer/details.tt:196
-#: share/templates/customer/details.tt:249
+#: share/templates/billing/list.tt:17 share/templates/customer/details.tt:198
+#: share/templates/customer/details.tt:251
 #: share/templates/customer/list.tt:119
 #: share/templates/helpers/datatables.tt:100
 #: share/templates/network/list.tt:19 share/templates/package/list.tt:19
@@ -9803,6 +9806,12 @@ msgstr "Детали Зоны"
 msgid "active"
 msgstr "активен"
 
+#: share/templates/contract/profile_mappings_list.tt:5
+#: share/templates/contract/profile_network_mappings_list.tt:5
+#: share/templates/customer/details.tt:140
+msgid "actual"
+msgstr ""
+
 #: lib/NGCP/Panel/Utils/DbStrings.pm:1358
 msgid "after ring timeout"
 msgstr "после таймаута поднятия трубки"
@@ -9824,8 +9833,8 @@ msgstr "Все права защищены"
 msgid "allowed_ip_grp successfully created"
 msgstr ""
 
-#: share/templates/customer/details.tt:431
-#: share/templates/customer/details.tt:460
+#: share/templates/customer/details.tt:433
+#: share/templates/customer/details.tt:462
 msgid "billing profile default"
 msgstr "По-умолчанию из тарифа"
 
