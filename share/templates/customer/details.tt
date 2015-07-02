@@ -130,13 +130,14 @@
 
     <div class="accordion-group">
         <div class="accordion-heading">
-            <a class="accordion-toggle" data-toggle="collapse" data-parent="#customer_details" href="#collapse_bilprofs">[% c.loc('Billing Profiles') %]</a>
+            <a class="accordion-toggle" data-toggle="collapse" data-parent="#customer_details" href="#collapse_bilprofs">[% c.loc('Billing Profile Schedule') %]</a>
         </div>
         <div class="accordion-body collapse" id="collapse_bilprofs">
             <div class="accordion-inner">
                 <table class="table table-bordered table-striped table-highlight table-hover">
                     <thead>
                         <tr>
+                            <th>[% c.loc('actual') %]</th>
                             <th>[% c.loc('Date') %]</th>
                             <th>[% c.loc('Billing Profile Name') %]</th>
                             <th>[% c.loc('Billing Network Name') %]</th>
@@ -144,7 +145,8 @@
                     </thead>
                     <tbody>
                         [% FOR mapping IN billing_mappings_ordered_result.all -%]
-                        <tr class="sw_action_row">
+                        <tr class="sw_action_row [% IF !mapping.get_column('is_future') -%]ngcp-entry-disabled[% END -%]">
+                            <td>[% IF mapping.get_column('is_actual') -%]*[% END -%]</td>
                             <td>
                                 [% mapping.start_date ? mapping.start_date : 'NULL' %] - [% mapping.end_date.defined ? mapping.end_date : 'NULL' %]
                             </td>

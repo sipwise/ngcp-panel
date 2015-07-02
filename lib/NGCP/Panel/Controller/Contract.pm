@@ -93,7 +93,7 @@ sub base :Chained('contract_list') :PathPart('') :CaptureArgs(1) {
 
     }
     my $now = NGCP::Panel::Utils::DateTime::current_local;
-    my $billing_mappings_ordered = NGCP::Panel::Utils::Contract::billing_mappings_ordered($contract_rs->first->billing_mappings,$now);
+    my $billing_mappings_ordered = NGCP::Panel::Utils::Contract::billing_mappings_ordered($contract_rs->first->billing_mappings,$now,$contract_first->get_column('bmid'));
     my $future_billing_mappings = NGCP::Panel::Utils::Contract::billing_mappings_ordered(NGCP::Panel::Utils::Contract::future_billing_mappings($contract_rs->first->billing_mappings,$now));
     
     $c->stash(contract => $contract_first);

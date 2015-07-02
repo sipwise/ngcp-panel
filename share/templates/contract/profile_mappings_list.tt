@@ -2,6 +2,7 @@
                 <table class="table table-bordered table-striped table-highlight table-hover">
                     <thead>
                         <tr>
+                            <th>[% c.loc('actual') %]</th>
                             <th>[% c.loc('Date') %]</th>
                             <th>[% c.loc('Billing Profile Name') %]</th>
                         </tr>
@@ -10,6 +11,7 @@
                         [% IF billing_mappings_ordered_result.all -%]
                                     [% FOR mapping IN billing_mappings_ordered_result.all -%]
                                     <tr class="sw_action_row [% IF !mapping.get_column('is_future') -%]ngcp-entry-disabled[% END -%]">
+                                        <td>[% IF mapping.get_column('is_actual') -%]*[% END -%]</td>
                                         <td>
                                             [% mapping.start_date ? mapping.start_date : 'NULL' %] - [% mapping.end_date.defined ? mapping.end_date : 'NULL' %]
                                         </td>

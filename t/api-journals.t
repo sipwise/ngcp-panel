@@ -17,7 +17,7 @@ my $json = JSON::PP->new();
 $json->allow_blessed(1);
 $json->convert_blessed(1);
 
-my $is_local_env = 1;
+my $is_local_env = 0;
 my $mysql_sqlstrict = 1; #https://bugtracker.sipwise.com/view.php?id=12565
 my $enable_journal_tests = 1;
 
@@ -1957,11 +1957,23 @@ sub test_reseller {
         [ { op => 'replace', path => '/reseller_id', value => $reseller->{id} } ]
     ));
     $res = $ua->request($req);
-    is($res->code, 200, _get_request_test_message("PATCH test billingprofile"));
+    is($res->code, 422, _get_request_test_message("try to PATCH test billingprofile - change reseller id"));
+    
+    $req = HTTP::Request->new('POST', $uri.'/api/billingprofiles/');
+    $req->header('Content-Type' => 'application/json');
+    $req->header('Prefer' => 'return=representation');
+    $req->content(JSON::to_json({
+        name => "test prof $t res $reseller->{id}",
+        handle  => "testprofile".$t."_res".$reseller->{id},
+        reseller_id => $reseller->{id},
+    }));
+    $res = $ua->request($req);
+    is($res->code, 201, _get_request_test_message("POST another test billing profile"));
+    $billingprofile_uri = $uri.'/'.$res->header('Location');
     $req = HTTP::Request->new('GET', $billingprofile_uri);
     $res = $ua->request($req);
-    is($res->code, 200, _get_request_test_message("fetch PATCHed test billingprofile"));
-    my $billingprofile = JSON::from_json($res->decoded_content);
+    is($res->code, 200, _get_request_test_message("fetch POSTed billing profile"));
+    my $billingprofile = JSON::from_json($res->decoded_content);    
     
     return ($reseller,$billingprofile);
     
