@@ -115,7 +115,8 @@ sub recursively_lock_contract {
     }
 
     # first, change all voip subscribers, in case there are any
-    for my $subscriber($contract->voip_subscribers->all) {
+    # we dont need to set to active, or any other level, already terminated subscribers
+    for my $subscriber($contract->voip_subscribers->search_rs({ 'me.status' => { '!=' => 'terminated' } })->all) {
         $subscriber->update({ status => $status });
         if($status eq 'terminated') {
             NGCP::Panel::Utils::Subscriber::terminate(
