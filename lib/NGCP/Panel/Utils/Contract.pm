@@ -43,6 +43,11 @@ sub create_contract_balance {
     my $profile = $params{profile};
     my $schema = $params{schema} // $c->model('DB');
 
+    my $package;
+    if (defined $contract->contact->reseller_id && ($package = $contract->profile_package)) {
+        
+    }
+    
 
     # first, calculate start and end time of current billing profile
     # (we assume billing interval of 1 month)
@@ -812,15 +817,24 @@ sub resource_from_mappings {
 }
 
 sub billing_mappings_ordered {
-    my ($rs,$now) = @_;
+    my ($rs,$now,$actual_bmid) = @_;
 
     my $dtf;
     $dtf = $rs->result_source->schema->storage->datetime_parser if defined $now;
-   
+    
+    my @select = ();
+    if ($now) {
+        push(@select,{ '' => \[ 'if(`me`.`start_date` is null,0,`me`.`start_date` > ?)', $dtf->format_datetime($now) ], -as => 'is_future' });
+    }
+    if ($actual_bmid) {
+        push(@select,{ '' => \[ '`me`.`id` = ?', $actual_bmid ], -as => 'is_actual' });
+    }
+    
     return $rs->search_rs(
         {},
         { order_by => { '-asc' => ['start_date', 'id']},
-          (defined $now ? ('+select' => { '' => \[ 'if(`me`.`start_date` is null,0,`me`.`start_date` > ?)', $dtf->format_datetime($now) ], -as => 'is_future' }) : ()),
+          (scalar @select == 1 ? ('+select' => $select[0]) : ()),
+          (scalar @select > 1 ? ('+select' => \@select) : ()),
         });
 
 }
