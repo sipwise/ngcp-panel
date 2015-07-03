@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "fa5d592f_27b9ede9",
+        "filename": "lib/NGCP/Panel/Utils/Contract.pm",
+        "patchSetId": 1
+      },
+      "lineNbr": 120,
+      "author": {
+        "id": 1000005
+      },
+      "writtenOn": "2015-07-03T08:45:31Z",
+      "side": 1,
+      "message": "I don\u0027t think you can generalize it like this. As you see in line 126 $status can also be \u0027locked\u0027. I guess using the $status variable could work in case you can make sure no sideeffects are missed.",
+      "revId": "61cb34584de35ccb21502d612815d17ecccb2121",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    }
+  ]
+}
