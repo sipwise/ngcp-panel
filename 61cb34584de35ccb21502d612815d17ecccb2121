@@ -16,6 +16,24 @@
       "revId": "61cb34584de35ccb21502d612815d17ecccb2121",
       "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fa5d592f_c79e9163",
+        "filename": "lib/NGCP/Panel/Utils/Contract.pm",
+        "patchSetId": 1
+      },
+      "lineNbr": 120,
+      "author": {
+        "id": 1000009
+      },
+      "writtenOn": "2015-07-03T09:34:12Z",
+      "side": 1,
+      "message": "I think as we don\u0027t keep provisioning subscriber data (as can be seen from NGCP::Panel::Utils::Subscriber::terminate), and thus can\u0027t restore it, any attempt to make terminated subscriber more alive would be an error.",
+      "parentUuid": "fa5d592f_27b9ede9",
+      "revId": "61cb34584de35ccb21502d612815d17ecccb2121",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
     }
   ]
 }
