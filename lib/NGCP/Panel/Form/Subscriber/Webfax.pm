@@ -18,7 +18,7 @@ has_field 'destination' => (
     required => 1,
     element_attr => {
         rel => ['tooltip'],
-        title => ['The number to send the fax to']
+        title => ['The number to send the fax to'],
     },
 );
 
@@ -33,11 +33,11 @@ has_field 'data' => (
 
 has_field 'faxfile' => (
     type => 'Upload',
-    max_size => 67108864,
+    max_size => '67108864', # 64MB
     label => 'or File',
     element_attr => {
         rel => ['tooltip'],
-        title => ['Supported File Types are TXT, PDF, PS, TIFF']
+        title => ['Supported File Types are TXT, PDF, PS, TIFF'],
     },
 );
 

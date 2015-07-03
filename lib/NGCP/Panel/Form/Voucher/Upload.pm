@@ -15,7 +15,7 @@ sub build_form_element_class { [qw/form-horizontal/] }
 
 has_field 'upload_vouchers' => ( 
     type => 'Upload',
-    max_size => '2000000',
+    max_size => '67108864', # 64MB
 );
 
 has_field 'purge_existing' => (
