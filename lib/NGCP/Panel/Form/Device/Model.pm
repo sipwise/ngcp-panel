@@ -202,7 +202,11 @@ has_field 'linerange.keys.labelpos' => (
     required => 1,
     options => [
         { label => 'top', value => 'top' },
+        { label => 'topleft', value => 'topleft' },
+        { label => 'topright', value => 'topright' },
         { label => 'bottom', value => 'bottom' },
+        { label => 'bottomleft', value => 'bottomleft' },
+        { label => 'bottomright', value => 'bottomright' },
         { label => 'left', value => 'left' },
         { label => 'right', value => 'right' },
     ],
