@@ -227,10 +227,11 @@ sub resource_from_item {
     if($resource->{own_cli} !~ /^\d+$/) {
         $resource->{own_cli} .= '@'.$own_domain;
     } elsif($own_normalize) {
-        $resource->{own_cli} = NGCP::Panel::Utils::Subscriber::apply_rewrite(
-            c => $c, subscriber => $sub // $own_sub,
-            number => $resource->{own_cli}, direction => "caller_out"
-        );
+        if (my $normalized_cli = NGCP::Panel::Utils::Subscriber::apply_rewrite(
+                c => $c, subscriber => $sub // $own_sub,
+                number => $resource->{own_cli}, direction => "caller_out")) {
+            $resource->{own_cli} = $normalized_cli;
+        }
     }
 
     if($resource->{direction} eq "in" && $item->source_clir) {
@@ -238,10 +239,11 @@ sub resource_from_item {
     } elsif(!$other_skip_domain && $resource->{other_cli} !~ /^\d+$/) {
         $resource->{other_cli} .= '@'.$other_domain;
     } elsif($other_normalize) {
-        $resource->{other_cli} = NGCP::Panel::Utils::Subscriber::apply_rewrite(
-            c => $c, subscriber => $sub // $own_sub,
-            number => $resource->{other_cli}, direction => "caller_out"
-        );
+        if (my $normalized_cli = NGCP::Panel::Utils::Subscriber::apply_rewrite(
+                c => $c, subscriber => $sub // $own_sub,
+                number => $resource->{other_cli}, direction => "caller_out")) {
+            $resource->{other_cli} = $normalized_cli;
+        }
     }
     if ( (!($sub // $own_sub)) || (($sub // $own_sub)->status eq "terminated") ) {
         $resource->{own_cli} .= " (terminated)";
