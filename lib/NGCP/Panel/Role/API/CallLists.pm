@@ -146,6 +146,11 @@ sub resource_from_item {
         # for pbx out calls, use extension as own cli
         if($src_sub && $src_sub->pbx_extension) {
             $resource->{own_cli} = $src_sub->pbx_extension;
+        # if there is an alias field (e.g. gpp0), use this
+        } elsif($item->source_account_id && $c->req->param('alias_field')) {
+            my $alias = $item->get_column('source_'.$c->req->param('alias_field'));
+            $resource->{own_cli} = $alias // $item->source_cli;
+            $own_normalize = 1;
         } else {
             $resource->{own_cli} = $item->source_cli;
             $own_normalize = 1;
@@ -169,6 +174,11 @@ sub resource_from_item {
         # for pbx in calls, use extension as own cli
         if($dst_sub && $dst_sub->pbx_extension) {
             $resource->{own_cli} = $dst_sub->pbx_extension;
+        # if there is an alias field (e.g. gpp0), use this
+        } elsif($item->destination_account_id && $c->req->param('alias_field')) {
+            my $alias = $item->get_column('destination_'.$c->req->param('alias_field'));
+            $resource->{own_cli} = $alias // $item->destination_user_in;
+            $own_normalize = 1;
         } else {
             $resource->{own_cli} = $item->destination_user_in;
             $own_normalize = 1;
