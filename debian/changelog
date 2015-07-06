@@ -1,3 +1,17 @@
+ngcp-panel (1.8.1.23+0~mr3.8.1.23) unstable; urgency=low
+
+  [ Gerhard Jungwirth ]
+  * [35c5deb] MT#13659 rename Number Range to Alias Number Range
+  * [c62daa0] MT#13657 allow to change adminflag of pbxpilot
+
+  [ Irina Peshinskaya ]
+  * [5e4223a] MT#13617 Extend position type for linekeys to pass form validation
+  * [ad3d627] MT#13701 Prevent resurrection of the terminated subscribers
+
+  [ Sipwise Jenkins Builder ]
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Mon, 06 Jul 2015 16:43:47 +0200
+
 ngcp-panel (1.8.1.22+0~mr3.8.1.22) unstable; urgency=low
 
   [ Irina Peshinskaya ]
