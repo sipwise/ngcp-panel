@@ -852,10 +852,11 @@ sub _create_generic {
 
 # log: 0: none, 1: short, 2: everything
 # necessary keys: ip_sip, ip_rtp, ip_client, out_codecs
-# optional: in_codecs
+# optional: in_codecs, ip_sip_subnet, ip_rtp_subnet
 # for nfs: ip_nfs_server, nfs_path
 # for snmp: snmp_system_name, snmp_system_location, snmp_system_contact, snmp_community_name
 # for snmp optional: ip_snmp_manager, snmp_version
+# The management IP, the SIP IP and the RTP IP have to be in different subnets
 sub create_general_part_schedule {
     my ($self, $settings, $log) = @_;
 
@@ -919,15 +920,18 @@ sub create_general_part_schedule {
     my $schedule = [
         {name => 'network', options => undef},
         {name => 'interface_collection', options => undef},
-        {name => 'interface', options => undef},
+        {name => 'interface', options => undef}, # Control
+        {name => 'interface', options => undef}, # Data A
         {name => 'ip_address', options => {
             NIIPAddress => $settings->{ip_sip},
             NIIPPhy => 'Services',
+            NIIPSubnet => $settings->{ip_sip_subnet} || '24',
             }},
-        {name => 'interface', options => undef},
+        {name => 'interface', options => undef}, # Data B
         {name => 'ip_address', options => {
             NIIPAddress => $settings->{ip_rtp},
             NIIPPhy => 'Media 0',
+            NIIPSubnet => $settings->{ip_rtp_subnet} || '24',
             }},
         {name => 'facility', options => undef},
         {name => 'packet_facility_collection', options => undef},
