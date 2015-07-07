@@ -428,16 +428,21 @@ sub servers_flash_dialogic :Chained('servers_base') :PathPart('flash/dialogic') 
 
             if ($config->{mode} eq 'sipsip') {
                 $resp = $api->create_all_sipsip($config, sub {
-                    my ($shortlog, $resp) = @_;
-                    $c->write($shortlog);
+                        my ($shortlog, $resp) = @_;
+                        $c->write($shortlog);
                     });
 
             } elsif ($config->{mode} eq 'sipisdn') {
-                $resp = $api->create_all_sipisdn($config, 1);
+                $resp = $api->create_all_sipisdn($config, sub {
+                        my ($shortlog, $resp) = @_;
+                        $c->write($shortlog);
+                    });
 
             } elsif ($config->{mode} eq 'sipss7') {
-                $resp = $api->create_all_sipss7($config, 1);
-
+                $resp = $api->create_all_sipss7($config, sub {
+                        my ($shortlog, $resp) = @_;
+                        $c->write($shortlog);
+                    });
             }
         }
         NGCP::Panel::Utils::Message->info(
