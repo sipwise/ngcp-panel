@@ -225,8 +225,8 @@ sub build_data{
                 reseller_id => sub { return shift->get_id('resellers',@_); },
             },
             'default' => 'billing_profiles',
-            'query' => ['handle'],
             'no_delete_available' => 1,
+            'dependency_requires_recreation' => ['resellers'],
         },
         'subscribers' => {
             'data' => {
@@ -303,7 +303,7 @@ sub build_data{
             'no_delete_available' => 1,
         },
     };
-    #$self->process_data($data);
+    $self->process_data($data);
     return $data;
 }
 sub process_data{
@@ -314,9 +314,9 @@ sub process_data{
             $data = {%$data, %{$data->{$collection_name}->{flavour}->{$self->FLAVOUR}}},
         }
     }
-    $self->clear_db($data);
+    #$self->clear_db($data);
     #incorrect place, leave it for the next timeframe to work on it
-    $self->load_db($data);
+    #$self->load_db($data);
 }
 sub load_db{
     my($self,$data,$collections_slice) = @_;
@@ -390,6 +390,7 @@ sub search_item{
     my $query_string = join('&', map {
             my @deep_keys = ('ARRAY' eq ref $_) ? @$_:($_);
             my $field_name = ( @deep_keys > 1 ) ? shift @deep_keys : $deep_keys[0];
+            #here we don't use get/set _collection_data_fields - we should refer directly to the {json}, if we have {json}
             my $search_value = deepvalue($item->{data},@deep_keys);
             if('CODE' eq ref $search_value){
                 $search_value = $search_value->($self);
@@ -405,7 +406,6 @@ sub search_item{
 
 sub set_data_from_script{
     my($self, $data_in)  = @_;
-    #$self->data->{$collection_name}->{data} = $data;
     while (my($collection_name,$collection_data) = each %$data_in ){
         $self->data->{$collection_name} //= {};
         $self->data->{$collection_name} = {
@@ -445,12 +445,14 @@ sub process{
     my($self, $collection_name, $parents_in)  = @_;
     $self->load_collection_data($collection_name);
     $parents_in //= {};
-    my $parents = {%{$parents_in}};
-    $parents->{$collection_name} //= scalar values %$parents_in;
+    my $parents = {%{$parents_in}};#copy
+    $parents->{$collection_name}->[0] //= scalar values %$parents_in;
     while (my @keys_and_value = reach($self->data->{$collection_name}->{data})){
         my $field_value = pop @keys_and_value;
         if('CODE' eq ref $field_value ){
+            $parents->{$collection_name}->[1] = [@keys_and_value];
             my $value = $field_value->($self,$parents,[@keys_and_value]);
+            #here we don't use get/set _collection_data_fields - we should refer directly to the {json}, if we have {json}
             nest( $self->data->{$collection_name}->{data}, @keys_and_value, $value );
         }
     }
@@ -468,7 +470,7 @@ sub load_collection_data{
 }
 sub get_id{
     my $self = shift;
-    #my( $collection_name, $parents_in, $field_path, $params)  = @_;
+    #my( $collection_name, $parents_in, $params)  = @_;
     my( $collection_name )  = @_;
     $self->load_collection_data($collection_name);
     if( $self->collection_id_exists($collection_name) ){
@@ -485,11 +487,12 @@ sub get_existent_id{
 }
 
 sub create{
-    my($self, $collection_name, $parents_in, $field_path, $params)  = @_;
+    my($self, $collection_name, $parents_in, $params)  = @_;
     $parents_in //= {};
+    #print "collection_name=$collection_name;\n";
     if($parents_in->{$collection_name}){
         if($self->data->{$collection_name}->{default}){
-            $self->data->{$collection_name}->{process_cycled} = {'parents'=>$parents_in,'field_path'=>$field_path};
+            $self->data->{$collection_name}->{process_cycled} = {'parents'=>$parents_in};
             return $self->data_default->{$self->data->{$collection_name}->{default}}->{id};
         }else{
             die('Data absence', Dumper([$collection_name,$parents_in]));
@@ -510,20 +513,39 @@ sub create{
     $self->created->{$collection_name} = [values %{$self->test_machine->DATA_CREATED->{ALL}}];
 
     if($self->data->{$collection_name}->{process_cycled}){
-        my %parents_cycled_ordered = reverse %{$self->data->{$collection_name}->{process_cycled}->{parents}};
-        my $last_parent = -1 + ( scalar values (%parents_cycled_ordered) );
-        my $uri = $self->test_machine->get_uri_collection($parents_cycled_ordered{$last_parent}).$self->get_existent_id($parents_cycled_ordered{$last_parent});
-        $self->test_machine->request_patch([ {
-            op   => 'replace',
-            path => join('/',('',@{$self->data->{$collection_name}->{process_cycled}->{field_path}})),
-            value => $self->get_existent_id($collection_name) } ],
-            $uri
-        );
+        my $parents_cycled = $self->data->{$collection_name}->{process_cycled}->{parents};
+        my $last_parent = ( sort { $parents_cycled->{$b}->[0] <=> $parents_cycled->{$a}->[0] } keys %{$parents_cycled} )[0];
+        if(grep {$collection_name} @{$self->data->{$last_parent}->{dependency_requires_recreation}} ){
+            nest( $self->data->{$last_parent}->{data}, @{$parents_cycled->{$last_parent}->[1]}, $self->get_existent_id($collection_name) );
+            my %parents_temp = %{$parents_cycled};
+            delete $parents_temp{$last_parent};
+            #short note: we don't need update already created collections, because we fell in recursion before creation, 
+            #so no collection keeps wrong, redundant first item reference
+            #so all we need - update "created" field for further get_existent_id, which will be aclled on exit from this "create" function 
+            $self->create($last_parent,{%parents_temp} );
+        }else{
+            my $uri = $self->test_machine->get_uri_collection($last_parent).$self->get_existent_id($last_parent);
+            $self->test_machine->request_patch([ {
+                op   => 'replace',
+                path => join('/',('',@{$parents_cycled->{$last_parent}->[1]})),
+                value => $self->get_existent_id($collection_name) } ],
+                $uri
+            );
+        }
         delete $self->data->{$collection_name}->{process_cycled};
     }
     return $self->get_existent_id($collection_name);
 }
-
+sub set_collection_data_fields{
+    my($self, $collection_name, $fields)  = @_;
+    @{ $self->data->{$collection_name}->{data}->{json} || $self->data->{$collection_name}->{data} }{keys %$fields} = values %$fields;
+}
+sub get_collection_data_fields{
+    my($self, $collection_name, @fields )  = @_;
+    my $data = $self->data->{$collection_name}->{data}->{json} || $self->data->{$collection_name}->{data};
+    my %res = map { $_ => $data->{$_} } @fields;
+    return wantarray ? %res : ( values %res )[0];
+}
 sub collection_id_exists{
     my($self, $collection_name)  = @_;
     return exists $self->loaded->{$collection_name} || exists $self->created->{$collection_name}
