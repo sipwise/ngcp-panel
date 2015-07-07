@@ -25,8 +25,7 @@
 <script type="text/javascript">
 	function call_flash_dialogic (url) {
 		console.log("calling", url);
-
-
+        $("#ngcp-livelog").text('');
 
         var last_response_len = false;
         $.ajax(url, {
@@ -45,6 +44,7 @@
                         last_response_len = response.length;
                     }
                     $("#ngcp-livelog").append(this_response);
+                    $("#ngcp-livelog")[0].scrollIntoView(false);
                     //console.log(this_response);
                 }
             }
@@ -52,11 +52,14 @@
         .done(function(data)
         {
             console.log('Done');
-            $("#ngcp-livelog").append("\nDone.")
+            $("#ngcp-livelog").append("\nDone.\nYou can close this window now.");
+            $("#ngcp-livelog")[0].scrollIntoView(false);
         })
         .fail(function(data)
         {
             console.log('Error: ', data);
+            $("#ngcp-livelog").append("\nError.");
+            $("#ngcp-livelog")[0].scrollIntoView(false);
         });
         console.log('Request Sent');
         $("#ngcp-test-modal").modal('show');
@@ -64,7 +67,7 @@
 	}
 </script>
 
-<div id="ngcp-test-modal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+<div id="ngcp-test-modal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" data-backdrop="static" data-keyboard="false">
   <div class="modal-header">
     <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
     <h3 id="myModalLabel">Flashing Dialogic ...</h3>
