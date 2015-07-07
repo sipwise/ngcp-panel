@@ -46,11 +46,18 @@ my $voucher_uri;
 {
     #todo: move request processing results to separate package inside collection, to don't return these chains
     my($res_post,$result_item_post,$req_post,$content_post_in,$location_post,$content_get) = $test_machine->check_post2get();
-    my($res_put,$result_item_put,$req_put,$item_put_data,$get_res,$result_item_get,$get_req) = $test_machine->check_put2get(undef, undef, $location_post);
-
     $voucher_uri = $location_post;
+    my($res_put,$result_item_put,$req_put,$item_put_data,$get_res,$result_item_get,$get_req) = $test_machine->check_put2get(undef, undef, $voucher_uri);
+
     $voucher = $result_item_get;
-    
+
+    my($res_patch,$patch_voucher) = $test_machine->request_patch(  [ { op => 'replace', path => '/code', value => $result_item_put->{code} } ], $voucher_uri );
+    delete $result_item_put->{_links};
+    delete $result_item_put->{id};
+    delete $patch_voucher->{_links};
+    delete $patch_voucher->{id};
+    is_deeply($result_item_put, $patch_voucher, "check PATCHed voucher against POSTed voucher");
+
     my($res,$result_item,$req) = $test_machine->request_post(undef,$voucher);
     $test_machine->http_code_msg(422, "POST same voucher code again", $res, $result_item);
 }
