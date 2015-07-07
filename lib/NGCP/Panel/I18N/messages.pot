@@ -2557,7 +2557,7 @@ msgstr ""
 msgid "Failed to create reseller"
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/Rewrite.pm:471
+#: lib/NGCP/Panel/Controller/Rewrite.pm:473
 msgid "Failed to create rewrite rule"
 msgstr ""
 
@@ -2698,7 +2698,7 @@ msgstr ""
 msgid "Failed to delete registered device"
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/Rewrite.pm:436
+#: lib/NGCP/Panel/Controller/Rewrite.pm:438
 msgid "Failed to delete rewrite rule"
 msgstr ""
 
@@ -2778,7 +2778,7 @@ msgstr ""
 msgid "Failed to load default sound files."
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/Rewrite.pm:307
+#: lib/NGCP/Panel/Controller/Rewrite.pm:308
 msgid "Failed to move rewrite rule."
 msgstr ""
 
@@ -2981,7 +2981,7 @@ msgstr ""
 msgid "Failed to update reseller branding"
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/Rewrite.pm:411
+#: lib/NGCP/Panel/Controller/Rewrite.pm:413
 msgid "Failed to update rewrite rule"
 msgstr ""
 
@@ -3816,7 +3816,7 @@ msgstr ""
 msgid "Invalid reseller id detected."
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/Rewrite.pm:366
+#: lib/NGCP/Panel/Controller/Rewrite.pm:367
 msgid "Invalid rewrite rule id detected"
 msgstr ""
 
@@ -5488,7 +5488,7 @@ msgstr ""
 msgid "Rewrite Rules for %1"
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/Rewrite.pm:376
+#: lib/NGCP/Panel/Controller/Rewrite.pm:377
 msgid "Rewrite rule does not exist"
 msgstr ""
 
@@ -5512,15 +5512,15 @@ msgstr ""
 msgid "Rewrite rule set successfully updated"
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/Rewrite.pm:465
+#: lib/NGCP/Panel/Controller/Rewrite.pm:467
 msgid "Rewrite rule successfully created"
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/Rewrite.pm:430
+#: lib/NGCP/Panel/Controller/Rewrite.pm:432
 msgid "Rewrite rule successfully deleted"
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/Rewrite.pm:405
+#: lib/NGCP/Panel/Controller/Rewrite.pm:407
 msgid "Rewrite rule successfully updated"
 msgstr ""
 
