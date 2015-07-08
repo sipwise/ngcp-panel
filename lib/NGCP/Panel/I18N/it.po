@@ -2571,7 +2571,7 @@ msgstr ""
 msgid "Dialogic Settings"
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/Peering.pm:446
+#: lib/NGCP/Panel/Controller/Peering.pm:451
 msgid "Dialogic successfully flashed."
 msgstr ""
 
@@ -3175,7 +3175,7 @@ msgstr ""
 msgid "Failed to create peering group"
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/Peering.pm:588
+#: lib/NGCP/Panel/Controller/Peering.pm:593
 msgid "Failed to create peering rule"
 msgstr ""
 
@@ -3323,7 +3323,7 @@ msgstr ""
 msgid "Failed to delete peering group"
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/Peering.pm:690
+#: lib/NGCP/Panel/Controller/Peering.pm:695
 msgid "Failed to delete peering rule"
 msgstr ""
 
@@ -3393,7 +3393,7 @@ msgstr "Ricerca dispositivo registrato fallita."
 msgid "Failed to find voicemail user."
 msgstr "Ricerca utente casella vocale fallita."
 
-#: lib/NGCP/Panel/Controller/Peering.pm:452
+#: lib/NGCP/Panel/Controller/Peering.pm:457
 msgid "Failed to flash dialogic"
 msgstr ""
 
@@ -3600,7 +3600,7 @@ msgstr ""
 msgid "Failed to update peering group"
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/Peering.pm:661
+#: lib/NGCP/Panel/Controller/Peering.pm:666
 msgid "Failed to update peering rule"
 msgstr ""
 
@@ -4504,7 +4504,7 @@ msgstr ""
 msgid "Invalid peaktime date id detected!"
 msgstr "Id data ora di picco non valida!"
 
-#: lib/NGCP/Panel/Controller/Peering.pm:609
+#: lib/NGCP/Panel/Controller/Peering.pm:614
 msgid "Invalid peering rule id detected"
 msgstr "Id regola di peer non valido"
 
@@ -5831,7 +5831,7 @@ msgstr "Gruppi Peer"
 msgid "Peering Rule"
 msgstr "Regola Peer"
 
-#: lib/NGCP/Panel/Controller/Peering.pm:621
+#: lib/NGCP/Panel/Controller/Peering.pm:626
 msgid "Peering Rule does not exist"
 msgstr "Regola peer non esistente"
 
@@ -5862,15 +5862,15 @@ msgstr "Gruppo peer creato con successo"
 msgid "Peering group successfully updated"
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/Peering.pm:655
+#: lib/NGCP/Panel/Controller/Peering.pm:660
 msgid "Peering rule successfully changed"
 msgstr "Regola peer cambiata con successo"
 
-#: lib/NGCP/Panel/Controller/Peering.pm:582
+#: lib/NGCP/Panel/Controller/Peering.pm:587
 msgid "Peering rule successfully created"
 msgstr "Regola peer creata con successo"
 
-#: lib/NGCP/Panel/Controller/Peering.pm:684
+#: lib/NGCP/Panel/Controller/Peering.pm:689
 msgid "Peering rule successfully deleted"
 msgstr "Regola peer eliminata con successo"
 
