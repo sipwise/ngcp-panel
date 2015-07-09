@@ -1,4 +1,4 @@
-package NGCP::Panel::Form::CustomerBalance;
+package NGCP::Panel::Form::Balance::CustomerBalance;
 
 use HTML::FormHandler::Moose;
 extends 'HTML::FormHandler';
@@ -56,7 +56,7 @@ has_block 'actions' => (
 
 =head1 NAME
 
-NGCP::Panel::Form::CustomerBalance
+NGCP::Panel::Form::Balance::CustomerBalance
 
 =head1 DESCRIPTION
 

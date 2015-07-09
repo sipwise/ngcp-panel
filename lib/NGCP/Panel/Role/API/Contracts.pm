@@ -13,14 +13,16 @@ use Data::HAL::Link qw();
 use HTTP::Status qw(:constants);
 use NGCP::Panel::Utils::DateTime;
 use NGCP::Panel::Utils::Contract;
+use NGCP::Panel::Utils::ProfilePackages qw();
 use NGCP::Panel::Form::Contract::ContractAPI qw();
 
 sub item_rs {
-    my ($self, $c, $include_terminated) = @_;
+    my ($self, $c, $include_terminated,$now) = @_;
 
     my $item_rs = NGCP::Panel::Utils::Contract::get_contract_rs(
         schema => $c->model('DB'),
         include_terminated => (defined $include_terminated && $include_terminated ? 1 : 0),
+        now => $now,
     );
     $item_rs = $item_rs->search({
             'contact.reseller_id' => undef
@@ -39,36 +41,41 @@ sub get_form {
 }
 
 sub hal_from_contract {
-    my ($self, $c, $contract, $form) = @_;
+    my ($self, $c, $contract, $form, $now) = @_;
 
     my $billing_mapping = $contract->billing_mappings->find($contract->get_column('bmid'));
     my $billing_profile_id = $billing_mapping->billing_profile_id;
     my $future_billing_profiles = NGCP::Panel::Utils::Contract::resource_from_future_mappings($contract);
     my $billing_profiles = NGCP::Panel::Utils::Contract::resource_from_mappings($contract);
-    my $stime = NGCP::Panel::Utils::DateTime::current_local()->truncate(to => 'month');
-    my $etime = $stime->clone->add(months => 1);
-    my $contract_balance = $contract->contract_balances
-        ->find({
-            start => { '>=' => $stime },
-            end => { '<' => $etime },
-            });
-    unless($contract_balance) {
-        try {
-            NGCP::Panel::Utils::Contract::create_contract_balance(
-                c => $c,
-                profile => $billing_mapping->billing_profile,
-                contract => $contract,
-            );
-        } catch($e) {
-            $c->log->error("Failed to create current contract balance for contract id '".$contract->id."': $e");
-            $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "Internal Server Error.");
-            return;
-        }
-        $contract_balance = $contract->contract_balances->find({
-            start => { '>=' => $stime },
-            end => { '<' => $etime },
-        });
-    }
+    #my $stime = NGCP::Panel::Utils::DateTime::current_local()->truncate(to => 'month');
+    #my $etime = $stime->clone->add(months => 1);
+    #my $contract_balance = $contract->contract_balances
+    #    ->find({
+    #        start => { '>=' => $stime },
+    #        end => { '<' => $etime },
+    #        });
+    #unless($contract_balance) {
+    #    try {
+    #        NGCP::Panel::Utils::Contract::create_contract_balance(
+    #            c => $c,
+    #            profile => $billing_mapping->billing_profile,
+    #            contract => $contract,
+    #        );
+    #    } catch($e) {
+    #        $c->log->error("Failed to create current contract balance for contract id '".$contract->id."': $e");
+    #        $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "Internal Server Error.");
+    #        return;
+    #    }
+    #    $contract_balance = $contract->contract_balances->find({
+    #        start => { '>=' => $stime },
+    #        end => { '<' => $etime },
+    #    });
+    #}
+    
+    #we leave this here to keep the former behaviour: contract balances are also created upon GET api/contracts/4711
+    NGCP::Panel::Utils::ProfilePackages::catchup_contract_balances(c => $c,
+            contract => $contract,
+            now => $now);    
 
     my %resource = $contract->get_inflated_columns;
 
@@ -121,16 +128,18 @@ sub hal_from_contract {
 }
 
 sub contract_by_id {
-    my ($self, $c, $id, $include_terminated) = @_;
-    my $item_rs = $self->item_rs($c,$include_terminated);
+    my ($self, $c, $id, $include_terminated, $now) = @_;
+    my $item_rs = $self->item_rs($c,$include_terminated,$now);
     return $item_rs->find($id);
 }
 
 sub update_contract {
-    my ($self, $c, $contract, $old_resource, $resource, $form) = @_;
+    my ($self, $c, $contract, $old_resource, $resource, $form, $now) = @_;
 
     my $billing_mapping = $contract->billing_mappings->find($contract->get_column('bmid'));
     my $billing_profile = $billing_mapping->billing_profile;
+    
+    my $old_package = $contract->profile_package; 
     
     $form //= $self->get_form($c);
     # TODO: for some reason, formhandler lets missing contact_id slip thru
@@ -143,7 +152,7 @@ sub update_contract {
         exceptions => [ "contact_id", "billing_profile_id" ],
     );
 
-    my $now = NGCP::Panel::Utils::DateTime::current_local;
+    #my $now = NGCP::Panel::Utils::DateTime::current_local;
     
     my $mappings_to_create = [];
     my $delete_mappings = 0;
@@ -182,9 +191,18 @@ sub update_contract {
         foreach my $mapping (@$mappings_to_create) {
             $contract->billing_mappings->create($mapping); 
         }
-        $contract = $self->contract_by_id($c, $contract->id,1);
+        $contract = $self->contract_by_id($c, $contract->id,1,$now);
         $billing_mapping = $contract->billing_mappings->find($contract->get_column('bmid'));
-        $billing_profile = $billing_mapping->billing_profile; 
+        $billing_profile = $billing_mapping->billing_profile;
+        
+        my $balance = NGCP::Panel::Utils::ProfilePackages::catchup_contract_balances(c => $c,
+            contract => $contract,
+            old_package => $old_package,);
+        $balance = NGCP::Panel::Utils::ProfilePackages::resize_actual_contract_balance(c => $c,
+            contract => $contract,
+            old_package => $old_package,
+            balance => $balance,
+            );        
 
         if($old_resource->{status} ne $resource->{status}) {
             if($contract->id == 1) {

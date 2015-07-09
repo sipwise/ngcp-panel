@@ -11,8 +11,9 @@ use TryCatch;
 use Data::HAL qw();
 use Data::HAL::Link qw();
 use HTTP::Status qw(:constants);
-use NGCP::Panel::Form::CustomerBalance;
+use NGCP::Panel::Form::Balance::CustomerBalance;
 use NGCP::Panel::Utils::Contract;
+use NGCP::Panel::Utils::ProfilePackages qw();
 use NGCP::Panel::Utils::DateTime;
 
 sub item_rs {
@@ -32,12 +33,12 @@ sub item_rs {
 
 sub get_form {
     my ($self, $c) = @_;
-    return NGCP::Panel::Form::CustomerBalance->new;
+    return NGCP::Panel::Form::Balance::CustomerBalance->new;
 }
 
 sub hal_from_item {
     my ($self, $c, $item, $form) = @_;
-
+    
     my %resource = $item->get_inflated_columns;
     $resource{cash_balance} /= 100;
 
@@ -73,33 +74,36 @@ sub hal_from_item {
 }
 
 sub item_by_id {
-    my ($self, $c, $id) = @_;
+    my ($self, $c, $id, $now) = @_;
 
-    my $stime = NGCP::Panel::Utils::DateTime::current_local()->truncate(to => 'month');
-    my $etime = $stime->clone->add(months => 1)->subtract(seconds => 1);
+    #my $stime = NGCP::Panel::Utils::DateTime::current_local()->truncate(to => 'month');
+    #my $etime = $stime->clone->add(months => 1)->subtract(seconds => 1);
   
-    my $item_rs = $self->item_rs($c);
-    $item_rs = $item_rs
-        ->search({
-            'me.id' => $id,
-        },{
-            '+select' => 'billing_mappings.id',
-            '+as' => 'bmid',
-        });
+    #my $item_rs = $self->item_rs($c);
+    #$item_rs = $item_rs
+    #    ->search({
+    #        'me.id' => $id,
+    #    },{
+    #        '+select' => 'billing_mappings.id',
+    #        '+as' => 'bmid',
+    #    });
 
+    return NGCP::Panel::Utils::ProfilePackages::get_contract_balance(c => $c,
+        contract => $self->item_rs($c)->find($id),
+        now => $now);
+        
+    #my $item = $item_rs->first;
+    #my $billing_mapping = $item->billing_mappings->find($item->get_column('bmid'));
 
-    my $item = $item_rs->first;
-    my $billing_mapping = $item->billing_mappings->find($item->get_column('bmid'));
+    #my $balance = NGCP::Panel::Utils::Contract::get_contract_balance(
+    #    c => $c,
+    #    contract => $item,
+    #    profile => $billing_mapping->billing_profile,
+    #    stime => $stime,
+    #    etime => $etime,
+    #);
 
-    my $balance = NGCP::Panel::Utils::Contract::get_contract_balance(
-        c => $c,
-        contract => $item,
-        profile => $billing_mapping->billing_profile,
-        stime => $stime,
-        etime => $etime,
-    );
-
-    return $balance;
+    #return $balance;
 }
 
 sub update_item {
