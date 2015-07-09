@@ -45,16 +45,20 @@ sub auto :Private {
 
     $self->set_body($c);
     $self->log_request($c);
+    #$self->apply_fake_time($c);    
 }
 
 sub GET :Allow {
     my ($self, $c, $id) = @_;
+    $c->model('DB')->set_transaction_isolation('READ COMMITTED');
+    my $guard = $c->model('DB')->txn_scope_guard;
     {
         last unless $self->valid_id($c, $id);
         my $item = $self->item_by_id($c, $id);
         last unless $self->resource_exists($c, customerbalance => $item);
 
         my $hal = $self->hal_from_item($c, $item);
+        $guard->commit;
 
         my $response = HTTP::Response->new(HTTP_OK, undef, HTTP::Headers->new(
             (map { # XXX Data::HAL must be able to generate links with multiple relations
@@ -91,6 +95,7 @@ sub OPTIONS :Allow {
 
 sub PATCH :Allow {
     my ($self, $c, $id) = @_;
+    $c->model('DB')->set_transaction_isolation('READ COMMITTED');
     my $guard = $c->model('DB')->txn_scope_guard;
     {
         my $preference = $self->require_preference($c);
@@ -137,6 +142,7 @@ sub PATCH :Allow {
 
 sub PUT :Allow {
     my ($self, $c, $id) = @_;
+    $c->model('DB')->set_transaction_isolation('READ COMMITTED');
     my $guard = $c->model('DB')->txn_scope_guard;
     {
         my $preference = $self->require_preference($c);
@@ -216,6 +222,7 @@ sub journalsitem_head :Journal {
 sub end : Private {
     my ($self, $c) = @_;
 
+    #$self->reset_fake_time($c);
     $self->log_response($c);
 }
 

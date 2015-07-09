@@ -9,6 +9,7 @@ use HTTP::Status qw(:constants);
 use MooseX::ClassAttribute qw(class_has);
 use NGCP::Panel::Utils::DateTime;
 use NGCP::Panel::Utils::Contract;
+use NGCP::Panel::Utils::ProfilePackages qw();
 use Path::Tiny qw(path);
 BEGIN { extends 'Catalyst::Controller::ActionRole'; }
 require Catalyst::ActionRole::ACL;
@@ -88,6 +89,7 @@ sub auto :Private {
 
     $self->set_body($c);
     $self->log_request($c);
+    #$self->apply_fake_time($c);    
     return 1;
 }
 
@@ -95,18 +97,25 @@ sub GET :Allow {
     my ($self, $c) = @_;
     my $page = $c->request->params->{page} // 1;
     my $rows = $c->request->params->{rows} // 10;
+    $c->model('DB')->set_transaction_isolation('READ COMMITTED');
+    my $guard = $c->model('DB')->txn_scope_guard;
     {
-        my $contracts = $self->item_rs($c);
+        my $contracts = $self->item_rs($c)->search_rs(undef,{
+                for => 'update',
+            });
         (my $total_count, $contracts) = $self->paginate_order_collection($c, $contracts);
+        my $now = NGCP::Panel::Utils::DateTime::current_local;
         my (@embedded, @links);
         my $form = $self->get_form($c);
         for my $contract ($contracts->all) {
-            push @embedded, $self->hal_from_contract($c, $contract, $form);
+            #NGCP::Panel::Utils::ProfilePackages::get_contract_balance
+            push @embedded, $self->hal_from_contract($c, $contract, $form, $now);
             push @links, Data::HAL::Link->new(
                 relation => 'ngcp:'.$self->resource_name,
                 href     => sprintf('/%s%d', $c->request->path, $contract->id),
             );
         }
+        $self->delay_commit($c,$guard); #potential db write ops in hal_from
         push @links,
             Data::HAL::Link->new(
                 relation => 'curies',
@@ -114,15 +123,18 @@ sub GET :Allow {
                 name => 'ngcp',
                 templated => true,
             ),
-            Data::HAL::Link->new(relation => 'profile', href => 'http://purl.org/sipwise/ngcp-api/'),
-            Data::HAL::Link->new(relation => 'self', href => sprintf('/%s?page=%s&rows=%s', $c->request->path, $page, $rows));
+            Data::HAL::Link->new(relation => 'profile', href => 'http://purl.org/sipwise/ngcp-api/');
+        
+        push @links, $self->collection_nav_links($page, $rows, $total_count, $c->request->path, $c->request->query_params);
+        
+        #    Data::HAL::Link->new(relation => 'self', href => sprintf('/%s?page=%s&rows=%s', $c->request->path, $page, $rows));
 
-        if(($total_count / $rows) > $page ) {
-            push @links, Data::HAL::Link->new(relation => 'next', href => sprintf('/%s?page=%d&rows=%d', $c->request->path, $page + 1, $rows));
-        }
-        if($page > 1) {
-            push @links, Data::HAL::Link->new(relation => 'prev', href => sprintf('/%s?page=%d&rows=%d', $c->request->path, $page - 1, $rows));
-        }
+        #if(($total_count / $rows) > $page ) {
+        #    push @links, Data::HAL::Link->new(relation => 'next', href => sprintf('/%s?page=%d&rows=%d', $c->request->path, $page + 1, $rows));
+        #}
+        #if($page > 1) {
+        #    push @links, Data::HAL::Link->new(relation => 'prev', href => sprintf('/%s?page=%d&rows=%d', $c->request->path, $page - 1, $rows));
+        #}
 
         my $hal = Data::HAL->new(
             embedded => [@embedded],
@@ -221,12 +233,15 @@ sub POST :Allow {
             foreach my $mapping (@$mappings_to_create) {
                 $contract->billing_mappings->create($mapping); 
             }
-            $contract = $self->contract_by_id($c, $contract->id,1);
-            NGCP::Panel::Utils::Contract::create_contract_balance(
-                c => $c,
-                profile => $contract->billing_mappings->find($contract->get_column('bmid'))->billing_profile, #$billing_profile,
+            $contract = $self->contract_by_id($c, $contract->id,1,$now);
+            NGCP::Panel::Utils::ProfilePackages::create_initial_contract_balance(schema => $schema,
                 contract => $contract,
-            );
+                profile => $contract->billing_mappings->find($contract->get_column('bmid'))->billing_profile,);            
+            #NGCP::Panel::Utils::Contract::create_contract_balance(
+            #    c => $c,
+            #    profile => $contract->billing_mappings->find($contract->get_column('bmid'))->billing_profile, #$billing_profile,
+            #    contract => $contract,
+            #);
         } catch($e) {
             $c->log->error("failed to create contract: $e"); # TODO: user, message, trace, ...
             $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "Failed to create contract.");
@@ -237,7 +252,7 @@ sub POST :Allow {
             my $self = shift;
             my ($c) = @_;
             my $_contract = $self->contract_by_id($c, $contract->id, 1);
-            return $self->hal_from_contract($c,$_contract,$form); });        
+            return $self->hal_from_contract($c,$_contract,$form,$now); });        
 
         $guard->commit;
 
@@ -251,6 +266,7 @@ sub POST :Allow {
 sub end : Private {
     my ($self, $c) = @_;
 
+    #$self->reset_fake_time($c);
     $self->log_response($c);
     return;
 }

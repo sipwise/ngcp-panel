@@ -6,7 +6,7 @@ use JSON qw(decode_json encode_json);
 use IPC::System::Simple qw/capturex EXIT_ANY $EXITVAL/;
 use NGCP::Panel::Form::CustomerMonthlyFraud;
 use NGCP::Panel::Form::CustomerDailyFraud;
-use NGCP::Panel::Form::CustomerBalance;
+use NGCP::Panel::Form::Balance::CustomerBalance;
 use NGCP::Panel::Form::Customer::Subscriber;
 use NGCP::Panel::Form::Customer::PbxAdminSubscriber;
 use NGCP::Panel::Form::Customer::PbxExtensionSubscriber;
@@ -23,6 +23,7 @@ use NGCP::Panel::Utils::DateTime;
 use NGCP::Panel::Utils::Subscriber;
 use NGCP::Panel::Utils::Sounds;
 use NGCP::Panel::Utils::Contract;
+use NGCP::Panel::Utils::ProfilePackages;
 use NGCP::Panel::Utils::DeviceBootstrap;
 use Template;
 
@@ -58,11 +59,14 @@ sub list_customer :Chained('/') :PathPart('customer') :CaptureArgs(0) {
         { name => "status", search => 1, title => $c->loc("Status") },
         { name => "max_subscribers", search => 1, title => $c->loc("Max Number of Subscribers") },
     ]);
-    my $rs = NGCP::Panel::Utils::Contract::get_customer_rs(c => $c);
+    
+    my $now = NGCP::Panel::Utils::DateTime::current_local;
+    my $rs = NGCP::Panel::Utils::Contract::get_customer_rs(c => $c, now => $now);
 
     $c->stash(
         contract_select_rs => $rs,
-        template => 'customer/list.tt'
+        template => 'customer/list.tt',
+        now => $now
     );
 }
 
@@ -178,11 +182,14 @@ sub create :Chained('list_customer') :PathPart('create') :Args(0) {
                         '+as' => 'bmid',
                     })->first;
 
-                NGCP::Panel::Utils::Contract::create_contract_balance(
-                    c => $c,
-                    profile => $contract->billing_mappings->find($contract->get_column('bmid'))->billing_profile, #$billing_profile,
+                NGCP::Panel::Utils::ProfilePackages::create_initial_contract_balance(schema => $schema,
                     contract => $contract,
-                );
+                    profile => $contract->billing_mappings->find($contract->get_column('bmid'))->billing_profile,);                    
+                #NGCP::Panel::Utils::Contract::create_contract_balance(
+                #    c => $c,
+                #    profile => $contract->billing_mappings->find($contract->get_column('bmid'))->billing_profile, #$billing_profile,
+                #    contract => $contract,
+                #);
                 $c->session->{created_objects}->{contract} = { id => $contract->id };
                 delete $c->session->{created_objects}->{contact};
                 delete $c->session->{created_objects}->{billing_profile};
@@ -252,23 +259,20 @@ sub base :Chained('list_customer') :PathPart('') :CaptureArgs(1) {
         NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for('/customer'));
     }
 
-    my $now = NGCP::Panel::Utils::DateTime::current_local;
+    my $now = $c->stash->{now};
     my $billing_mappings_ordered = NGCP::Panel::Utils::Contract::billing_mappings_ordered($contract_rs->first->billing_mappings,$now,$contract_rs->first->get_column('bmid'));
     my $future_billing_mappings = NGCP::Panel::Utils::Contract::billing_mappings_ordered(NGCP::Panel::Utils::Contract::future_billing_mappings($contract_rs->first->billing_mappings,$now));
     my $billing_mapping = $contract_rs->first->billing_mappings->find($contract_rs->first->get_column('bmid'));
 
-    my $stime = $now->clone->truncate(to => 'month');
-    my $etime = $stime->clone->add(months => 1)->subtract(seconds => 1);
-   
     my $balance;
     try {
-        $balance = NGCP::Panel::Utils::Contract::get_contract_balance(
-                    c => $c,
-                    profile => $billing_mapping->billing_profile,
-                    contract => $contract_rs->first,
-                    stime => $stime,
-                    etime => $etime
-        );
+        my $schema = $c->model('DB');
+        $schema->set_transaction_isolation('READ COMMITTED');
+        $schema->txn_do(sub {    
+            $balance = NGCP::Panel::Utils::ProfilePackages::get_contract_balance(c => $c,
+                        contract => $contract_rs->first,
+                        now => $now);
+        });
     } catch($e) {
         NGCP::Panel::Utils::Message->error(
             c => $c,
@@ -276,8 +280,28 @@ sub base :Chained('list_customer') :PathPart('') :CaptureArgs(1) {
             desc  => $c->loc('Failed to get contract balance.'),
         );
         $c->response->redirect($c->uri_for());
-        return;
+        return;      
     }
+    #my $stime = $now->clone->truncate(to => 'month');
+    #my $etime = $stime->clone->add(months => 1)->subtract(seconds => 1);    
+    #my $balance;
+    #try {
+    #    $balance = NGCP::Panel::Utils::Contract::get_contract_balance(
+    #                c => $c,
+    #                profile => $billing_mapping->billing_profile,
+    #                contract => $contract_rs->first,
+    #                stime => $stime,
+    #                etime => $etime
+    #    );
+    #} catch($e) {
+    #    NGCP::Panel::Utils::Message->error(
+    #        c => $c,
+    #        error => $e,
+    #        desc  => $c->loc('Failed to get contract balance.'),
+    #    );
+    #    $c->response->redirect($c->uri_for());
+    #    return;
+    #}
 
     my $product_id = $contract_rs->first->get_column('product_id');
     NGCP::Panel::Utils::Message->error(
@@ -369,7 +393,7 @@ sub base :Chained('list_customer') :PathPart('') :CaptureArgs(1) {
     $c->stash(contract => $contract_first);
     $c->stash(contract_rs => $contract_rs);
     $c->stash(billing_mapping => $billing_mapping );
-    $c->stash(now => $now );
+    #$c->stash(now => $now );
     $c->stash(billing_mappings_ordered_result => $billing_mappings_ordered );
     $c->stash(future_billing_mappings => $future_billing_mappings );
 }
@@ -425,6 +449,7 @@ sub edit :Chained('base_restricted') :PathPart('edit') :Args(0) {
     if($posted && $form->validated) {
         try {
             my $schema = $c->model('DB');
+            $schema->set_transaction_isolation('READ COMMITTED');
             $schema->txn_do(sub {
                 foreach(qw/contact billing_profile profile_package product subscriber_email_template passreset_email_template invoice_email_template invoice_template/){
                     $form->values->{$_.'_id'} = $form->values->{$_}{id} || undef;
@@ -453,6 +478,7 @@ sub edit :Chained('base_restricted') :PathPart('edit') :Args(0) {
                 my $old_prepaid = $billing_mapping->billing_profile->prepaid;
                 my $old_ext_id = $contract->external_id // '';
                 my $old_status = $contract->status;
+                my $old_package = $contract->profile_package; 
                 
                 $contract->update($form->values);
                 NGCP::Panel::Utils::Contract::remove_future_billing_mappings($contract,$now) if $delete_mappings;
@@ -462,6 +488,15 @@ sub edit :Chained('base_restricted') :PathPart('edit') :Args(0) {
                 $contract = $c->stash->{contract_rs}->first;
                 $billing_mapping = $contract->billing_mappings->find($contract->get_column('bmid'));
                 $billing_profile = $billing_mapping->billing_profile;
+
+                my $balance = NGCP::Panel::Utils::ProfilePackages::catchup_contract_balances(c => $c,
+                    contract => $contract,
+                    old_package => $old_package,);
+                $balance = NGCP::Panel::Utils::ProfilePackages::resize_actual_contract_balance(c => $c,
+                    contract => $contract,
+                    old_package => $old_package,
+                    balance => $balance,
+                    );
                 
                 my $new_ext_id = $contract->external_id // '';
 
@@ -873,8 +908,10 @@ sub edit_balance :Chained('base_restricted') :PathPart('balance/edit') :Args(0) 
     my ($self, $c) = @_;
 
     my $balance = $c->stash->{balance};
+    my $contract = $c->stash->{contract};
+    my $now = $c->stash->{now};
     my $posted = ($c->request->method eq 'POST');
-    my $form = NGCP::Panel::Form::CustomerBalance->new;
+    my $form = NGCP::Panel::Form::Balance::CustomerBalance->new;
     my $params = { $balance->get_inflated_columns };
 #        cash_balance => $balance->cash_balance,
 #        free_time_balance => $balance->free_time_balance,
@@ -893,7 +930,14 @@ sub edit_balance :Chained('base_restricted') :PathPart('balance/edit') :Args(0) 
     );
     if($posted && $form->validated) {
         try {
-            $balance->update($form->values); 
+            my $schema = $c->model('DB');
+            $schema->set_transaction_isolation('READ COMMITTED');
+            $schema->txn_do(sub {    
+                $balance = NGCP::Panel::Utils::ProfilePackages::get_contract_balance(c => $c,
+                            contract => $contract,
+                            now => $now);
+                $balance->update($form->values); 
+            });
             NGCP::Panel::Utils::Message->info(
                 c => $c,
                 desc => $c->loc('Account balance successfully changed!'),
@@ -906,11 +950,11 @@ sub edit_balance :Chained('base_restricted') :PathPart('balance/edit') :Args(0) 
                 desc => $c->loc('Failed to change account balance!'),
             );
         }
-        $c->response->redirect($c->uri_for_action("/customer/details", [$c->stash->{contract}->id]));
+        $c->response->redirect($c->uri_for_action("/customer/details", [$contract->id]));
         return;
     }
 
-    $c->stash(close_target => $c->uri_for_action("/customer/details", [$c->stash->{contract}->id]));
+    $c->stash(close_target => $c->uri_for_action("/customer/details", [$contract->id]));
     $c->stash(form => $form);
     $c->stash(edit_flag => 1);
 }

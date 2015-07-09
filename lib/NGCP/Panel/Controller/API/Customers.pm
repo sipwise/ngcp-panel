@@ -9,6 +9,7 @@ use HTTP::Status qw(:constants);
 use MooseX::ClassAttribute qw(class_has);
 use NGCP::Panel::Utils::DateTime;
 use NGCP::Panel::Utils::Contract;
+use NGCP::Panel::Utils::ProfilePackages qw();
 use Path::Tiny qw(path);
 BEGIN { extends 'Catalyst::Controller::ActionRole'; }
 require Catalyst::ActionRole::ACL;
@@ -125,6 +126,7 @@ sub auto :Private {
 
     $self->set_body($c);
     $self->log_request($c);
+    #$self->apply_fake_time($c);    
     return 1;
 }
 
@@ -132,18 +134,24 @@ sub GET :Allow {
     my ($self, $c) = @_;
     my $page = $c->request->params->{page} // 1;
     my $rows = $c->request->params->{rows} // 10;
+    $c->model('DB')->set_transaction_isolation('READ COMMITTED');
+    my $guard = $c->model('DB')->txn_scope_guard;
     {
-        my $customers = $self->item_rs($c);
+        my $customers = $self->item_rs($c)->search_rs(undef,{
+                for => 'update',
+            });
         (my $total_count, $customers) = $self->paginate_order_collection($c, $customers);
+        my $now = NGCP::Panel::Utils::DateTime::current_local;
         my (@embedded, @links);
         my $form = $self->get_form($c);
         for my $customer($customers->all) {
-            push @embedded, $self->hal_from_customer($c, $customer, $form);
+            push @embedded, $self->hal_from_customer($c, $customer, $form, $now);
             push @links, Data::HAL::Link->new(
                 relation => 'ngcp:'.$self->resource_name,
                 href     => sprintf('/%s%d', $c->request->path, $customer->id),
             );
         }
+        $self->delay_commit($c,$guard); #potential db write ops in hal_from
         push @links,
             Data::HAL::Link->new(
                 relation => 'curies',
@@ -272,12 +280,15 @@ sub POST :Allow {
             foreach my $mapping (@$mappings_to_create) {
                 $customer->billing_mappings->create($mapping); 
             }
-            $customer = $self->customer_by_id($c, $customer->id);
-            NGCP::Panel::Utils::Contract::create_contract_balance(
-                c => $c,
-                profile => $customer->billing_mappings->find($customer->get_column('bmid'))->billing_profile,
+            $customer = $self->customer_by_id($c, $customer->id,$now);
+            NGCP::Panel::Utils::ProfilePackages::create_initial_contract_balance(schema => $schema,
                 contract => $customer,
-            );
+                profile => $customer->billing_mappings->find($customer->get_column('bmid'))->billing_profile,);
+            #NGCP::Panel::Utils::Contract::create_contract_balance(
+            #    c => $c,
+            #    profile => $customer->billing_mappings->find($customer->get_column('bmid'))->billing_profile,
+            #    contract => $customer,
+            #);
         } catch($e) {
             $c->log->error("failed to create customer contract: $e"); # TODO: user, message, trace, ...
             $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "Failed to create customer.");
@@ -288,7 +299,7 @@ sub POST :Allow {
             my $self = shift;
             my ($c) = @_;
             my $_customer = $self->customer_by_id($c, $customer->id);
-            return $self->hal_from_customer($c,$_customer,$form); }); #$form
+            return $self->hal_from_customer($c,$_customer,$form, $now); }); #$form
 
         $guard->commit;
 
@@ -302,6 +313,7 @@ sub POST :Allow {
 sub end : Private {
     my ($self, $c) = @_;
 
+    #$self->reset_fake_time($c);
     $self->log_response($c);
     return;
 }

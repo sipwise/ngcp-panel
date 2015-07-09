@@ -16,7 +16,7 @@ use Types::Standard qw(InstanceOf);
 use Regexp::Common qw(delimited); # $RE{delimited}
 use HTTP::Headers::Util qw(split_header_words);
 use NGCP::Panel::Utils::ValidateJSON qw();
-
+#use NGCP::Panel::Utils::DateTime qw();
 use NGCP::Panel::Utils::Journal qw();
 #use boolean qw(true);
 #use Data::HAL qw();
@@ -490,6 +490,34 @@ sub apply_patch {
     return $entity;
 }
 
+#sub apply_fake_time {
+#    my ($self, $c) = @_;
+#    if (exists $ENV{API_FAKE_CLIENT_TIME} && $ENV{API_FAKE_CLIENT_TIME}) {
+#        my $date = $c->request->header('Date');
+#        if ($date) {
+#            my $dt = NGCP::Panel::Utils::DateTime::from_rfc1123_string($date);
+#            if ($dt) {
+#                NGCP::Panel::Utils::DateTime::set_fake_time($dt->epoch);
+#                $c->stash->{is_fake_time} = 1;
+#                $c->log('using date header to fake system time: ' . NGCP::Panel::Utils::DateTime::to_string(NGCP::Panel::Utils::DateTime::current_local));
+#                return;
+#            }
+#        }
+#        NGCP::Panel::Utils::DateTime::set_fake_time();
+#        $c->stash->{is_fake_time} = 0;
+#        $c->log('resetting faked system time: ' . NGCP::Panel::Utils::DateTime::to_string(NGCP::Panel::Utils::DateTime::current_local));        
+#    }
+#}
+
+#sub reset_fake_time {
+#    my ($self, $c) = @_;
+#    if (exists $ENV{API_FAKE_CLIENT_TIME} && $ENV{API_FAKE_CLIENT_TIME} && $c->stash->{fake_time}) {
+#        NGCP::Panel::Utils::DateTime::set_fake_time();
+#        $c->stash->{fake_time} = 0;
+#        $c->log('resetting faked system time: ' . NGCP::Panel::Utils::DateTime::to_string(NGCP::Panel::Utils::DateTime::current_local));
+#    }
+#}
+    
 sub set_body {
     my ($self, $c) = @_;
     #Ctx could be initialized in Root::get_collections - wouldn't it be better?
@@ -609,6 +637,21 @@ sub is_false {
     }
     return 1 unless(defined $val && $val == 1);
     return;
+}
+
+sub delay_commit {
+    my ($self, $c, $guard) = @_;
+    my $allow_delay_commit = 0;
+    my $cfg = $c->config->{api_debug_opts};
+    $allow_delay_commit = ((defined $cfg->{allow_delay_commit}) && $cfg->{allow_delay_commit} ? 1 : 0) if defined $cfg;    
+    if ($allow_delay_commit) {
+        my $delay = $c->request->header('X-Delay-Commit'); #('Expect');
+        if ($delay && $delay =~ /\d+/ && $delay > 0 && $delay < 500) {
+            $c->log->debug('using X-Delay-Commit header to delay db commit for ' . $delay . ' seconds');
+            sleep($delay);
+        }
+    }
+    $guard->commit();
 }
 
 sub add_create_journal_item_hal {
