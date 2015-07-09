@@ -107,7 +107,8 @@ sub PATCH :Allow {
         );
         last unless $json;
 
-        my $contract = $self->contract_by_id($c, $id);
+        my $now = NGCP::Panel::Utils::DateTime::current_local;
+        my $contract = $self->contract_by_id($c, $id, $now);
         last unless $self->resource_exists($c, contract => $contract);
         
         my $old_resource = { $contract->get_inflated_columns };
@@ -126,7 +127,7 @@ sub PATCH :Allow {
         last unless $resource;
 
         my $form = $self->get_form($c);
-        $contract = $self->update_contract($c, $contract, $old_resource, $resource, $form);
+        $contract = $self->update_contract($c, $contract, $old_resource, $resource, $form, $now);
         last unless $contract;
 
         my $hal = $self->hal_from_contract($c, $contract, $form);
@@ -158,7 +159,8 @@ sub PUT :Allow {
         my $preference = $self->require_preference($c);
         last unless $preference;
 
-        my $contract = $self->contract_by_id($c, $id);
+        my $now = NGCP::Panel::Utils::DateTime::current_local;
+        my $contract = $self->contract_by_id($c, $id, $now);
         last unless $self->resource_exists($c, contract => $contract);
         my $resource = $self->get_valid_put_data(
             c => $c,
@@ -171,7 +173,7 @@ sub PUT :Allow {
         $old_resource->{type} = $billing_mapping->product->class;
 
         my $form = $self->get_form($c);
-        $contract = $self->update_contract($c, $contract, $old_resource, $resource, $form);
+        $contract = $self->update_contract($c, $contract, $old_resource, $resource, $form, $now);
         last unless $contract;
         
         my $hal = $self->hal_from_contract($c, $contract, $form);

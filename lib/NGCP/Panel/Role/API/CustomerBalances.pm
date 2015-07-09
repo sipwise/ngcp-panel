@@ -87,7 +87,6 @@ sub item_by_id {
             '+as' => 'bmid',
         });
 
-
     my $item = $item_rs->first;
     my $billing_mapping = $item->billing_mappings->find($item->get_column('bmid'));
 
