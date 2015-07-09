@@ -220,8 +220,8 @@ sub build_data{
         },
         'billingprofiles' => {
             'data' => {
-                name        => 'api_test test profile',
-                handle      => 'api_test_testprofile',
+                name        => 'api_test test profile'.time(),
+                handle      => 'api_test_testprofile'.time(),
                 reseller_id => sub { return shift->get_id('resellers',@_); },
             },
             'default' => 'billing_profiles',
