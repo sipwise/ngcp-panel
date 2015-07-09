@@ -7,6 +7,7 @@ use DBIx::Class::Exception;
 use NGCP::Panel::Utils::DateTime;
 use DateTime::Format::Strptime qw();
 
+
 sub get_contract_balance {
     my (%params) = @_;
     my $c = $params{c};
@@ -34,7 +35,6 @@ sub get_contract_balance {
     return $balance;
 }
 
-
 sub create_contract_balance {
     my %params = @_;
 
@@ -42,12 +42,6 @@ sub create_contract_balance {
     my $contract = $params{contract};
     my $profile = $params{profile};
     my $schema = $params{schema} // $c->model('DB');
-
-    my $package;
-    if (defined $contract->contact->reseller_id && ($package = $contract->profile_package)) {
-        
-    }
-    
 
     # first, calculate start and end time of current billing profile
     # (we assume billing interval of 1 month)
@@ -210,13 +204,14 @@ sub recursively_lock_contract {
 
 sub get_contract_rs {
     my %params = @_;
-    my $schema = $params{schema};
+    my ($schema,$now) = @params{qw/schema now/};
+    $now //= NGCP::Panel::Utils::DateTime::current_local;
     my $dtf = $schema->storage->datetime_parser;
     my $rs = $schema->resultset('contracts')
         ->search({
             $params{include_terminated} ? () : ('me.status' => { '!=' => 'terminated' }),
         },{
-            bind => [ ( $dtf->format_datetime(NGCP::Panel::Utils::DateTime::current_local) ) x 2],
+            bind => [ ( $dtf->format_datetime($now) ) x 2],
             'join' => { 'billing_mappings_actual' => { 'billing_mappings' => 'product'}},
             '+select' => [
                 'billing_mappings.id',
@@ -236,7 +231,7 @@ sub get_contract_rs {
 
 sub get_customer_rs {
     my %params = @_;
-    my $c = $params{c};
+    my ($c,$now) = @params{qw/c now/};
 
     my $customers = get_contract_rs(
         schema => $c->model('DB'),

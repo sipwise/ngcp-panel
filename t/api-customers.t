@@ -10,7 +10,7 @@ use DateTime qw();
 use DateTime::Format::Strptime qw();
 use DateTime::Format::ISO8601 qw();
 
-my $is_local_env = 0;
+my $is_local_env = 1;
 
 my $uri = $ENV{CATALYST_SERVER} || ('https://'.hostfqdn.':4443');
 
@@ -36,6 +36,35 @@ if ($is_local_env) {
         SSL_ca_file   => $ssl_ca_cert,
     );    
 }
+
+my $past = DateTime->new(year => 1000, month => 1, day => 1, hour => 0, minute => 0, second => 0,
+        time_zone => DateTime::TimeZone->new(name => 'UTC')
+    );
+
+my $future = DateTime->new(year => 9999, month => 12, day => 31, hour => 23, minute => 59, second => 59,
+        time_zone => DateTime::TimeZone->new(name => 'UTC')
+    );
+
+my $dtf_blah = DateTime::Format::Strptime->new(
+        pattern => '%F %T', 
+    );
+
+#use DateTime::Infinite;
+#$past = DateTime::Infinite::Past->new();
+#$future = DateTime::Infinite::Future->new();
+
+print $dtf_blah->format_datetime($past) . "\n";
+print $dtf_blah->format_datetime($future) . "\n";
+print $past->epoch() . "\n";
+print $future->epoch() . "\n";
+
+my    $jetzt = DateTime->now(
+        time_zone => DateTime::TimeZone->new(name => 'local')
+    );
+print $future > $jetzt;
+print $future < $jetzt;
+print $past > $jetzt;
+print $past < $jetzt;
 
 # OPTIONS tests
 {

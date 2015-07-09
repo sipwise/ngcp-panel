@@ -29,8 +29,9 @@ sub contract_list :Chained('/') :PathPart('contract') :CaptureArgs(0) {
         { name => "status", search => 1, title => $c->loc("Status") },
     ]);
 
+    my $now = NGCP::Panel::Utils::DateTime::current_local;
     my $rs = NGCP::Panel::Utils::Contract::get_contract_rs(
-        schema => $c->model('DB'));
+        schema => $c->model('DB'),now => $now);
     unless($c->user->is_superuser) {
         $rs = $rs->search({
             'contact.reseller_id' => $c->user->reseller_id,
@@ -46,7 +47,7 @@ sub contract_list :Chained('/') :PathPart('contract') :CaptureArgs(0) {
             ],
         });
     $c->stash(contract_select_rs => $rs);
-
+    $c->stash(now => $now);
     $c->stash(ajax_uri => $c->uri_for_action("/contract/ajax"));
     $c->stash(template => 'contract/list.tt');
 }
@@ -92,7 +93,7 @@ sub base :Chained('contract_list') :PathPart('') :CaptureArgs(1) {
         $billing_mapping->product->handle ne 'PSTN_PEERING')) {
 
     }
-    my $now = NGCP::Panel::Utils::DateTime::current_local;
+    my $now = $c->stash->{now};
     my $billing_mappings_ordered = NGCP::Panel::Utils::Contract::billing_mappings_ordered($contract_rs->first->billing_mappings,$now,$contract_first->get_column('bmid'));
     my $future_billing_mappings = NGCP::Panel::Utils::Contract::billing_mappings_ordered(NGCP::Panel::Utils::Contract::future_billing_mappings($contract_rs->first->billing_mappings,$now));
     
@@ -100,7 +101,7 @@ sub base :Chained('contract_list') :PathPart('') :CaptureArgs(1) {
     $c->stash(contract_rs => $contract_rs);
     $c->stash(billing_mapping => $billing_mapping );
     $c->stash(billing_mappings_ordered_result => $billing_mappings_ordered ); # all billings mappings are displayed in the details page
-    $c->stash(now => $now);
+
     $c->stash(future_billing_mappings => $future_billing_mappings ); # only editable billing mappings are displayed in the edit dialog
     return;
 }
@@ -426,9 +427,9 @@ sub reseller_ajax_contract_filter :Chained('reseller_list') :PathPart('ajax/cont
         $c->response->redirect($c->uri_for());
         return;
     }
-
+    my $now = $c->stash->{now};
     my $rs = NGCP::Panel::Utils::Contract::get_contract_rs(
-            schema => $c->model('DB'))
+            schema => $c->model('DB'), now => $now)
         ->search_rs({
             'me.id' => $contract_id,
         });

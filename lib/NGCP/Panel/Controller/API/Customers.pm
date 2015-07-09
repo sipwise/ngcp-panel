@@ -9,6 +9,7 @@ use HTTP::Status qw(:constants);
 use MooseX::ClassAttribute qw(class_has);
 use NGCP::Panel::Utils::DateTime;
 use NGCP::Panel::Utils::Contract;
+use NGCP::Panel::Utils::ProfilePackages qw();
 use Path::Tiny qw(path);
 BEGIN { extends 'Catalyst::Controller::ActionRole'; }
 require Catalyst::ActionRole::ACL;
@@ -273,11 +274,14 @@ sub POST :Allow {
                 $customer->billing_mappings->create($mapping); 
             }
             $customer = $self->customer_by_id($c, $customer->id);
-            NGCP::Panel::Utils::Contract::create_contract_balance(
-                c => $c,
-                profile => $customer->billing_mappings->find($customer->get_column('bmid'))->billing_profile,
+            NGCP::Panel::Utils::ProfilePackages::create_initial_contract_balance(schema => $schema,
                 contract => $customer,
-            );
+                profile => $customer->billing_mappings->find($customer->get_column('bmid'))->billing_profile,);
+            #NGCP::Panel::Utils::Contract::create_contract_balance(
+            #    c => $c,
+            #    profile => $customer->billing_mappings->find($customer->get_column('bmid'))->billing_profile,
+            #    contract => $customer,
+            #);
         } catch($e) {
             $c->log->error("failed to create customer contract: $e"); # TODO: user, message, trace, ...
             $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "Failed to create customer.");
