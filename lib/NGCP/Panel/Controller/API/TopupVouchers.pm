@@ -145,7 +145,7 @@ sub POST :Allow {
                 used_at => $now,
             });
         } catch($e) {
-            $c->log->error("failed to create vouche topup: $e"); # TODO: user, message, trace, ...
+            $c->log->error("failed to create voucher topup: $e"); # TODO: user, message, trace, ...
             $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "Failed to create voucher topup.");
             last;
         }

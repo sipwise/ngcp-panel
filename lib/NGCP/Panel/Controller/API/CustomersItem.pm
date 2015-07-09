@@ -49,16 +49,20 @@ sub auto :Private {
 
     $self->set_body($c);
     $self->log_request($c);
+    #$self->apply_fake_time($c);    
 }
 
 sub GET :Allow {
     my ($self, $c, $id) = @_;
+    $c->model('DB')->set_transaction_isolation('READ COMMITTED');
+    my $guard = $c->model('DB')->txn_scope_guard;
     {
         last unless $self->valid_id($c, $id);
         my $customer = $self->customer_by_id($c, $id);
         last unless $self->resource_exists($c, customer => $customer);
 
-        my $hal = $self->hal_from_customer($c, $customer);
+        my $hal = $self->hal_from_customer($c, $customer, undef, NGCP::Panel::Utils::DateTime::current_local);
+        $guard->commit; #potential db write ops in hal_from
 
         my $response = HTTP::Response->new(HTTP_OK, undef, HTTP::Headers->new(
             (map { # XXX Data::HAL must be able to generate links with multiple relations
@@ -95,6 +99,7 @@ sub OPTIONS :Allow {
 
 sub PATCH :Allow {
     my ($self, $c, $id) = @_;
+    $c->model('DB')->set_transaction_isolation('READ COMMITTED');
     my $guard = $c->model('DB')->txn_scope_guard;
     {
         my $preference = $self->require_preference($c);
@@ -107,7 +112,8 @@ sub PATCH :Allow {
         );
         last unless $json;
 
-        my $customer = $self->customer_by_id($c, $id);
+        my $now = NGCP::Panel::Utils::DateTime::current_local;
+        my $customer = $self->customer_by_id($c, $id, $now);
         last unless $self->resource_exists($c, customer => $customer);
 
         my $old_resource = { $customer->get_inflated_columns };
@@ -129,10 +135,10 @@ sub PATCH :Allow {
         last unless $resource;
 
         my $form = $self->get_form($c);
-        $customer = $self->update_customer($c, $customer, $old_resource, $resource, $form);
+        $customer = $self->update_customer($c, $customer, $old_resource, $resource, $form, $now);
         last unless $customer;
         
-        my $hal = $self->hal_from_customer($c, $customer, $form);
+        my $hal = $self->hal_from_customer($c, $customer, $form, $now);
         last unless $self->add_update_journal_item_hal($c,$hal);
 
         $guard->commit;
@@ -156,12 +162,14 @@ sub PATCH :Allow {
 
 sub PUT :Allow {
     my ($self, $c, $id) = @_;
+    $c->model('DB')->set_transaction_isolation('READ COMMITTED');
     my $guard = $c->model('DB')->txn_scope_guard;
     {
         my $preference = $self->require_preference($c);
         last unless $preference;
 
-        my $customer = $self->customer_by_id($c, $id);
+        my $now = NGCP::Panel::Utils::DateTime::current_local;
+        my $customer = $self->customer_by_id($c, $id, $now);
         last unless $self->resource_exists($c, customer => $customer);
         my $resource = $self->get_valid_put_data(
             c => $c,
@@ -172,10 +180,10 @@ sub PUT :Allow {
         my $old_resource = { $customer->get_inflated_columns };
 
         my $form = $self->get_form($c);
-        $customer = $self->update_customer($c, $customer, $old_resource, $resource, $form);
+        $customer = $self->update_customer($c, $customer, $old_resource, $resource, $form, $now);
         last unless $customer;
         
-        my $hal = $self->hal_from_customer($c, $customer, $form);
+        my $hal = $self->hal_from_customer($c, $customer, $form,$now);
         last unless $self->add_update_journal_item_hal($c,$hal);
 
         $guard->commit;
@@ -263,6 +271,7 @@ sub journalsitem_head :Journal {
 sub end : Private {
     my ($self, $c) = @_;
 
+    #$self->reset_fake_time($c);
     $self->log_response($c);
 }
 

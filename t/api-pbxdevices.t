@@ -2,8 +2,6 @@
 use strict;
 #use Moose;
 use Sipwise::Base;
-use Test::Collection;
-use Test::FakeData;
 use Net::Domain qw(hostfqdn);
 use LWP::UserAgent;
 use HTTP::Request::Common;
@@ -13,13 +11,21 @@ use Data::Dumper;
 use File::Basename;
 use bignum qw/hex/;
 
+BEGIN {
+    unshift(@INC,'../t/lib');
+}
+use Test::Collection;
+use Test::FakeData;
+
 #init test_machine
 my $test_machine = Test::Collection->new(
     name => 'pbxdevices',
-    embedded => [qw/pbxdeviceprofiles customers/]
+    embedded => [qw/pbxdeviceprofiles customers/],
+    use_cert_login => 0,
 );
 $test_machine->methods->{collection}->{allowed} = {map {$_ => 1} qw(GET HEAD OPTIONS POST)};
 $test_machine->methods->{item}->{allowed}       = {map {$_ => 1} qw(GET HEAD OPTIONS PUT PATCH DELETE)};
+
 my $fake_data =  Test::FakeData->new;
 $fake_data->set_data_from_script({
     'pbxdevices' => {
@@ -46,6 +52,7 @@ $fake_data->set_data_from_script({
         'query' => ['station_name'],
     },
 });
+
 #for item creation test purposes /post request data/
 $test_machine->DATA_ITEM_STORE($fake_data->process('pbxdevices'));
 

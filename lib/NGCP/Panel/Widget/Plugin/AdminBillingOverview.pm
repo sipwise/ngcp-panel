@@ -25,6 +25,7 @@ around handle => sub {
     my $stime = NGCP::Panel::Utils::DateTime::current_local->truncate(to => 'month');
     my $etime = $stime->clone->add(months => 1);
 
+    #how to catchup contract balances of all contracts here?
     $c->stash(
         profiles => $c->model('DB')->resultset('billing_profiles')->search_rs({
             status => { '!=' => 'terminated'},

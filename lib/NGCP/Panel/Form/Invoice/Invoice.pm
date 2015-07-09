@@ -42,6 +42,16 @@ has_field 'period' => (
     required => 1,
 );
 
+#has_field 'balance_interval' => (
+#    type => '+NGCP::Panel::Field::BalanceInterval',
+#    label => 'Balance Interval',
+#    validate_when_empty => 1,
+#    element_attr => {
+#        rel => ['tooltip'],
+#        title => ['The balance interval to create the invoice for.']
+#    },
+#);
+
 has_field 'save' => (
     type => 'Submit',
     value => 'Save',

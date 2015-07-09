@@ -1,4 +1,4 @@
-package NGCP::Panel::Controller::API::CustomerBalances;
+package NGCP::Panel::Controller::API::BalanceIntervals;
 use Sipwise::Base;
 use namespace::sweep;
 use boolean qw(true);
@@ -7,6 +7,7 @@ use Data::HAL::Link qw();
 use HTTP::Headers qw();
 use HTTP::Status qw(:constants);
 use MooseX::ClassAttribute qw(class_has);
+use NGCP::Panel::Utils::ProfilePackages qw();
 use NGCP::Panel::Utils::DateTime;
 use Path::Tiny qw(path);
 use Safe::Isa qw($_isa);
@@ -20,7 +21,7 @@ class_has 'api_description' => (
     is => 'ro',
     isa => 'Str',
     default => 
-        'Defines customer balances to access cash and free time balance.',
+        'Histories of contracts\' cash balance intervals.',
 );
 
 class_has 'query_params' => (
@@ -29,7 +30,7 @@ class_has 'query_params' => (
     default => sub {[
         {
             param => 'reseller_id',
-            description => 'Filter for customer balances belonging to a specific reseller',
+            description => 'Filter for actual balance intervals of customers belonging to a specific reseller',
             query => {
                 first => sub {
                     my $q = shift;
@@ -40,14 +41,47 @@ class_has 'query_params' => (
                 },
             },
         },
+        {
+            param => 'contact_id',
+            description => 'Filter for contracts with a specific contact id',
+            query => {
+                first => sub {
+                    my $q = shift;
+                    { contact_id => $q };
+                },
+                second => sub {},
+            },
+        },
+        {
+            param => 'status',
+            description => 'Filter for contracts with a specific status (except "terminated")',
+            query => {
+                first => sub {
+                    my $q = shift;
+                    { status => $q };
+                },
+                second => sub {},
+            },
+        },
+        {
+            param => 'external_id',
+            description => 'Filter for contracts with a specific external id',
+            query => {
+                first => sub {
+                    my $q = shift;
+                    { 'me.external_id' => { like => $q } };
+                },
+                second => sub {},
+            },
+        },        
     ]},
 );
 
-with 'NGCP::Panel::Role::API::CustomerBalances';
+with 'NGCP::Panel::Role::API::BalanceIntervals';
 
-class_has('resource_name', is => 'ro', default => 'customerbalances');
-class_has('dispatch_path', is => 'ro', default => '/api/customerbalances/');
-class_has('relation', is => 'ro', default => 'http://purl.org/sipwise/ngcp-api/#rel-customerbalances');
+class_has('resource_name', is => 'ro', default => 'balanceintervals');
+class_has('dispatch_path', is => 'ro', default => '/api/balanceintervals/');
+class_has('relation', is => 'ro', default => 'http://purl.org/sipwise/ngcp-api/#rel-balanceintervals');
 
 __PACKAGE__->config(
     action => {
@@ -68,7 +102,7 @@ sub auto :Private {
 
     $self->set_body($c);
     $self->log_request($c);
-    #$self->apply_fake_time($c);
+    #$self->apply_fake_time($c);    
 }
 
 sub GET :Allow {
@@ -78,20 +112,25 @@ sub GET :Allow {
     $c->model('DB')->set_transaction_isolation('READ COMMITTED');
     my $guard = $c->model('DB')->txn_scope_guard;
     {
-        my $items = $self->item_rs($c)->search_rs(undef,{
+        my $contracts = $self->item_rs($c)->search_rs(undef,{
                 for => 'update',
             });
-        (my $total_count, $items) = $self->paginate_order_collection($c, $items);
+        (my $total_count, $contracts) = $self->paginate_order_collection($c, $contracts);
         my $now = NGCP::Panel::Utils::DateTime::current_local;
         my (@embedded, @links);
         my $form = $self->get_form($c);
-        for my $item ($items->all) {
-            my $balance = $self->item_by_id($c, $item->id,$now);
-            push @embedded, $self->hal_from_item($c, $balance, $form);
-            push @links, Data::HAL::Link->new(
-                relation => 'ngcp:'.$self->resource_name,
-                href     => sprintf('/%s%d', $c->request->path, $item->id),
-            );
+        for my $contract ($contracts->all) {
+            my $balance = NGCP::Panel::Utils::ProfilePackages::get_contract_balance(c => $c,
+                contract => $contract,
+                now => $now);
+            #sleep(5);
+            my $hal = $self->hal_from_balance($c, $balance, $form, 0); #we prefer item collection links pointing to the contract's collection instead of this root collection
+            $hal->_forcearray(1);
+            push @embedded, $hal;
+            my $link = Data::HAL::Link->new(relation => 'ngcp:'.$self->resource_name, href     => sprintf('/%s%d/%d', $c->request->path, $contract->id, $balance->id));
+            $link->_forcearray(1);
+            push @links, $link;
+            #push @links, Data::HAL::Link->new(relation => 'collection', href => sprintf("/api/%s/%d/", $self->resource_name, $contract->id));
         }
         $self->delay_commit($c,$guard);
         push @links,
@@ -102,15 +141,8 @@ sub GET :Allow {
                 templated => true,
             ),
             Data::HAL::Link->new(relation => 'profile', href => 'http://purl.org/sipwise/ngcp-api/');
-            
+        
         push @links, $self->collection_nav_links($page, $rows, $total_count, $c->request->path, $c->request->query_params);
-        #    Data::HAL::Link->new(relation => 'self', href => sprintf('/%s?page=%s&rows=%s', $c->request->path, $page, $rows));
-        #if(($total_count / $rows) > $page ) {
-        #    push @links, Data::HAL::Link->new(relation => 'next', href => sprintf('/%s?page=%d&rows=%d', $c->request->path, $page + 1, $rows));
-        #}
-        #if($page > 1) {
-        #    push @links, Data::HAL::Link->new(relation => 'prev', href => sprintf('/%s?page=%d&rows=%d', $c->request->path, $page - 1, $rows));
-        #}
 
         my $hal = Data::HAL->new(
             embedded => [@embedded],

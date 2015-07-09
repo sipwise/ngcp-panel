@@ -13,16 +13,18 @@ use Data::HAL::Link qw();
 use HTTP::Status qw(:constants);
 use NGCP::Panel::Utils::DateTime;
 use NGCP::Panel::Utils::Contract;
+use NGCP::Panel::Utils::ProfilePackages qw();
 use NGCP::Panel::Utils::Preferences;
 use NGCP::Panel::Form::Contract::CustomerAPI qw();
 
 sub item_rs {
-    my ($self, $c) = @_;
+    my ($self, $c, $now) = @_;
 
     # returns a contracts rs filtered based on role
     my $item_rs = NGCP::Panel::Utils::Contract::get_customer_rs(
         c => $c,
         include_terminated => 1,
+        now => $now,
     );
     return $item_rs;
 }
@@ -33,36 +35,41 @@ sub get_form {
 }
 
 sub hal_from_customer {
-    my ($self, $c, $customer, $form) = @_;
+    my ($self, $c, $customer, $form, $now) = @_;
 
     my $billing_mapping = $customer->billing_mappings->find($customer->get_column('bmid'));
     my $billing_profile_id = $billing_mapping->billing_profile->id;
     my $future_billing_profiles = NGCP::Panel::Utils::Contract::resource_from_future_mappings($customer);
     my $billing_profiles = NGCP::Panel::Utils::Contract::resource_from_mappings($customer);    
-    my $stime = NGCP::Panel::Utils::DateTime::current_local()->truncate(to => 'month');
-    my $etime = $stime->clone->add(months => 1);
-    my $contract_balance = $customer->contract_balances
-        ->find({
-            start => { '>=' => $stime },
-            end => { '<' => $etime },
-            });
-    unless($contract_balance) {
-        try {
-            NGCP::Panel::Utils::Contract::create_contract_balance(
-                c => $c,
-                profile => $billing_mapping->billing_profile,
-                contract => $customer,
-            );
-        } catch($e) {
-            $c->log->error("Failed to create current contract balance for customer contract id '".$customer->id."': $e");
-            $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "Internal Server Error.");
-            return;
-        };
-        $contract_balance = $customer->contract_balances->find({
-            start => { '>=' => $stime },
-            end => { '<' => $etime },
-        });
-    }
+    #my $stime = NGCP::Panel::Utils::DateTime::current_local()->truncate(to => 'month');
+    #my $etime = $stime->clone->add(months => 1);
+    #my $contract_balance = $customer->contract_balances
+    #    ->find({
+    #        start => { '>=' => $stime },
+    #        end => { '<' => $etime },
+    #        });
+    #unless($contract_balance) {
+    #    try {
+    #        NGCP::Panel::Utils::Contract::create_contract_balance(
+    #            c => $c,
+    #            profile => $billing_mapping->billing_profile,
+    #            contract => $customer,
+    #        );
+    #    } catch($e) {
+    #        $c->log->error("Failed to create current contract balance for customer contract id '".$customer->id."': $e");
+    #        $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "Internal Server Error.");
+    #        return;
+    #    };
+    #    $contract_balance = $customer->contract_balances->find({
+    #        start => { '>=' => $stime },
+    #        end => { '<' => $etime },
+    #    });
+    #}
+    
+    #we leave this here to keep the former behaviour: contract balances are also created upon GET api/customers/4711
+    NGCP::Panel::Utils::ProfilePackages::catchup_contract_balances(c => $c,
+            contract => $customer,
+            now => $now);
 
     my %resource = $customer->get_inflated_columns;
 
@@ -125,13 +132,13 @@ sub hal_from_customer {
 }
 
 sub customer_by_id {
-    my ($self, $c, $id) = @_;
-    my $customers = $self->item_rs($c);
+    my ($self, $c, $id, $now) = @_;
+    my $customers = $self->item_rs($c,$now);
     return $customers->find($id);
 }
 
 sub update_customer {
-    my ($self, $c, $customer, $old_resource, $resource, $form) = @_;
+    my ($self, $c, $customer, $old_resource, $resource, $form, $now) = @_;
 
     if ($customer->status eq 'terminated') {
         $self->error($c, HTTP_UNPROCESSABLE_ENTITY, 'Customer is already terminated and cannot be changed.');
@@ -140,6 +147,9 @@ sub update_customer {
 
     my $billing_mapping = $customer->billing_mappings->find($customer->get_column('bmid'));
     my $billing_profile = $billing_mapping->billing_profile;
+    
+    my $old_package = $customer->profile_package;    
+
     $old_resource->{prepaid} = $billing_profile->prepaid;
     
     $form //= $self->get_form($c);
@@ -153,7 +163,7 @@ sub update_customer {
         exceptions => [ "contact_id", "billing_profile_id", "profile_package_id" ],
     );
 
-    my $now = NGCP::Panel::Utils::DateTime::current_local;
+    #my $now = NGCP::Panel::Utils::DateTime::current_local;
     
     my $mappings_to_create = [];
     my $delete_mappings = 0;
@@ -246,9 +256,18 @@ sub update_customer {
         foreach my $mapping (@$mappings_to_create) {
             $customer->billing_mappings->create($mapping); 
         }
-        $customer = $self->customer_by_id($c, $customer->id);
+        $customer = $self->customer_by_id($c, $customer->id, $now);
         $billing_mapping = $customer->billing_mappings->find($customer->get_column('bmid'));
-        $billing_profile = $billing_mapping->billing_profile;        
+        $billing_profile = $billing_mapping->billing_profile;
+        
+        my $balance = NGCP::Panel::Utils::ProfilePackages::catchup_contract_balances(c => $c,
+            contract => $customer,
+            old_package => $old_package,);
+        $balance = NGCP::Panel::Utils::ProfilePackages::resize_actual_contract_balance(c => $c,
+            contract => $customer,
+            old_package => $old_package,
+            balance => $balance,
+            );
         
         if(($customer->external_id // '') ne $old_ext_id) {
             foreach my $sub($customer->voip_subscribers->all) {
