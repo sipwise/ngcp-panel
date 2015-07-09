@@ -16,11 +16,12 @@ use NGCP::Panel::Utils::Contract;
 use NGCP::Panel::Form::Contract::ContractAPI qw();
 
 sub item_rs {
-    my ($self, $c, $include_terminated) = @_;
+    my ($self, $c, $include_terminated,$now) = @_;
 
     my $item_rs = NGCP::Panel::Utils::Contract::get_contract_rs(
         schema => $c->model('DB'),
         include_terminated => (defined $include_terminated && $include_terminated ? 1 : 0),
+        now => $now,
     );
     $item_rs = $item_rs->search({
             'contact.reseller_id' => undef
@@ -121,13 +122,13 @@ sub hal_from_contract {
 }
 
 sub contract_by_id {
-    my ($self, $c, $id, $include_terminated) = @_;
-    my $item_rs = $self->item_rs($c,$include_terminated);
+    my ($self, $c, $id, $include_terminated, $now) = @_;
+    my $item_rs = $self->item_rs($c,$include_terminated,$now);
     return $item_rs->find($id);
 }
 
 sub update_contract {
-    my ($self, $c, $contract, $old_resource, $resource, $form) = @_;
+    my ($self, $c, $contract, $old_resource, $resource, $form, $now) = @_;
 
     my $billing_mapping = $contract->billing_mappings->find($contract->get_column('bmid'));
     my $billing_profile = $billing_mapping->billing_profile;
@@ -143,7 +144,7 @@ sub update_contract {
         exceptions => [ "contact_id", "billing_profile_id" ],
     );
 
-    my $now = NGCP::Panel::Utils::DateTime::current_local;
+    #my $now = NGCP::Panel::Utils::DateTime::current_local;
     
     my $mappings_to_create = [];
     my $delete_mappings = 0;
@@ -182,7 +183,7 @@ sub update_contract {
         foreach my $mapping (@$mappings_to_create) {
             $contract->billing_mappings->create($mapping); 
         }
-        $contract = $self->contract_by_id($c, $contract->id,1);
+        $contract = $self->contract_by_id($c, $contract->id,1,$now);
         $billing_mapping = $contract->billing_mappings->find($contract->get_column('bmid'));
         $billing_profile = $billing_mapping->billing_profile; 
 

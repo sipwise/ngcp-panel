@@ -107,7 +107,8 @@ sub PATCH :Allow {
         );
         last unless $json;
 
-        my $customer = $self->customer_by_id($c, $id);
+        my $now = NGCP::Panel::Utils::DateTime::current_local;
+        my $customer = $self->customer_by_id($c, $id, $now);
         last unless $self->resource_exists($c, customer => $customer);
 
         my $old_resource = { $customer->get_inflated_columns };
@@ -129,7 +130,7 @@ sub PATCH :Allow {
         last unless $resource;
 
         my $form = $self->get_form($c);
-        $customer = $self->update_customer($c, $customer, $old_resource, $resource, $form);
+        $customer = $self->update_customer($c, $customer, $old_resource, $resource, $form, $now);
         last unless $customer;
         
         my $hal = $self->hal_from_customer($c, $customer, $form);
@@ -161,7 +162,8 @@ sub PUT :Allow {
         my $preference = $self->require_preference($c);
         last unless $preference;
 
-        my $customer = $self->customer_by_id($c, $id);
+        my $now = NGCP::Panel::Utils::DateTime::current_local;
+        my $customer = $self->customer_by_id($c, $id, $now);
         last unless $self->resource_exists($c, customer => $customer);
         my $resource = $self->get_valid_put_data(
             c => $c,
@@ -172,7 +174,7 @@ sub PUT :Allow {
         my $old_resource = { $customer->get_inflated_columns };
 
         my $form = $self->get_form($c);
-        $customer = $self->update_customer($c, $customer, $old_resource, $resource, $form);
+        $customer = $self->update_customer($c, $customer, $old_resource, $resource, $form, $now);
         last unless $customer;
         
         my $hal = $self->hal_from_customer($c, $customer, $form);

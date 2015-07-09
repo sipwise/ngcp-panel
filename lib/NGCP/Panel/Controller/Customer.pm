@@ -58,11 +58,14 @@ sub list_customer :Chained('/') :PathPart('customer') :CaptureArgs(0) {
         { name => "status", search => 1, title => $c->loc("Status") },
         { name => "max_subscribers", search => 1, title => $c->loc("Max Number of Subscribers") },
     ]);
-    my $rs = NGCP::Panel::Utils::Contract::get_customer_rs(c => $c);
+    
+    my $now = NGCP::Panel::Utils::DateTime::current_local;
+    my $rs = NGCP::Panel::Utils::Contract::get_customer_rs(c => $c, now => $now);
 
     $c->stash(
         contract_select_rs => $rs,
-        template => 'customer/list.tt'
+        template => 'customer/list.tt',
+        now => $now
     );
 }
 
@@ -252,7 +255,7 @@ sub base :Chained('list_customer') :PathPart('') :CaptureArgs(1) {
         NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for('/customer'));
     }
 
-    my $now = NGCP::Panel::Utils::DateTime::current_local;
+    my $now = $c->stash->{now};
     my $billing_mappings_ordered = NGCP::Panel::Utils::Contract::billing_mappings_ordered($contract_rs->first->billing_mappings,$now,$contract_rs->first->get_column('bmid'));
     my $future_billing_mappings = NGCP::Panel::Utils::Contract::billing_mappings_ordered(NGCP::Panel::Utils::Contract::future_billing_mappings($contract_rs->first->billing_mappings,$now));
     my $billing_mapping = $contract_rs->first->billing_mappings->find($contract_rs->first->get_column('bmid'));
@@ -369,7 +372,7 @@ sub base :Chained('list_customer') :PathPart('') :CaptureArgs(1) {
     $c->stash(contract => $contract_first);
     $c->stash(contract_rs => $contract_rs);
     $c->stash(billing_mapping => $billing_mapping );
-    $c->stash(now => $now );
+    #$c->stash(now => $now );
     $c->stash(billing_mappings_ordered_result => $billing_mappings_ordered );
     $c->stash(future_billing_mappings => $future_billing_mappings );
 }

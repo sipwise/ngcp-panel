@@ -31,9 +31,15 @@ has 'panel_config' => (
 );
 has 'ua' => (
     is => 'rw',
+    lazy => 1,
     isa => 'LWP::UserAgent',
     lazy => 1,
     builder => 'init_ua',
+);
+has 'use_cert_login' => (
+    is => 'rw',
+    isa => 'Bool',
+    default => 1,
 );
 has 'base_uri' => (
     is => 'ro',

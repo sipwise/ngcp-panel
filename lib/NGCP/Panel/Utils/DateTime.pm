@@ -2,12 +2,47 @@ package NGCP::Panel::Utils::DateTime;
 
 use Sipwise::Base;
 use DateTime;
+#use DateTime::Infinite;
 use DateTime::Format::ISO8601;
 
 sub current_local {
     return DateTime->now(
         time_zone => DateTime::TimeZone->new(name => 'local')
     );
+}
+
+sub infinite_past {
+    #mysql 5.5: The supported range is '1000-01-01 00:00:00' ...
+    return DateTime->new(year => 1000, month => 1, day => 1, hour => 0, minute => 0, second => 0,
+        time_zone => DateTime::TimeZone->new(name => 'UTC')
+    );
+    #$dt->epoch calls should be okay if perl >= 5.12.0
+}
+
+sub infinite_future {
+    #... to '9999-12-31 23:59:59'
+    return DateTime->new(year => 9999, month => 12, day => 31, hour => 23, minute => 59, second => 59,
+        #applying the 'local' timezone takes too long -> "The current implementation of DateTime::TimeZone
+        #will use a huge amount of memory calculating all the DST changes from now until the future date.
+        #Use UTC or the floating time zone and you will be safe."
+        time_zone => DateTime::TimeZone->new(name => 'UTC')
+        #- with floating timezones, the long conversion takes place when comparing with a 'local' dt
+        #- the error due to leap years/seconds is not relevant in comparisons
+    );
+}
+
+#sub infinite_past {
+#    DateTime::Infinite::Past->new();
+#}
+
+#sub infinite_future {
+#    return DateTime::Infinite::Future->new();
+#}
+
+sub last_day_of_month {
+    my $dt = shift;
+    return DateTime->last_day_of_month(year => $dt->year, month => $dt->month,
+                                       time_zone => DateTime::TimeZone->new(name => 'local'))->day;
 }
 
 sub epoch_local {
