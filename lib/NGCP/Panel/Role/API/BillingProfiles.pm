@@ -64,8 +64,8 @@ sub hal_from_profile {
             Data::HAL::Link->new(relation => 'collection', href => sprintf('/api/%s/', $self->resource_name)),
             Data::HAL::Link->new(relation => 'profile', href => 'http://purl.org/sipwise/ngcp-api/'),
             Data::HAL::Link->new(relation => 'self', href => sprintf("%s%d", $self->dispatch_path, $profile->id)),
-            ( map { Data::HAL::Link->new(relation => 'ngcp:billingfees', href => sprintf("/api/billingfees/%d", $_->id)) } $profile->billing_fees->all ),
-            ( map { Data::HAL::Link->new(relation => 'ngcp:billingzones', href => sprintf("/api/billingzones/%d", $_->id)) } $profile->billing_zones->all ),
+            Data::HAL::Link->new(relation => 'ngcp:billingfees', href => sprintf("/api/billingfees/?billing_profile_id=%d", $profile->id ) ),
+            Data::HAL::Link->new(relation => 'ngcp:billingzones', href => sprintf("/api/billingzones/?billing_profile_id=%d", $profile->id )),
         ],
         relation => 'ngcp:'.$self->resource_name,
     );
@@ -92,6 +92,7 @@ sub profile_by_id {
 
 sub update_profile {
     my ($self, $c, $profile, $old_resource, $resource, $form) = @_;
+
 
     $form //= $self->get_form($c);
     # TODO: for some reason, formhandler lets missing reseller slip thru
