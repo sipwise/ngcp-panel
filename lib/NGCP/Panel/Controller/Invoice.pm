@@ -6,6 +6,7 @@ BEGIN { extends 'Catalyst::Controller'; }
 use NGCP::Panel::Utils::Message;
 use NGCP::Panel::Utils::DateTime;
 use NGCP::Panel::Utils::Contract;
+use NGCP::Panel::Utils::ProfilePackages;
 use NGCP::Panel::Utils::InvoiceTemplate;
 use NGCP::Panel::Utils::Invoice;
 use NGCP::Panel::Form::Invoice::Invoice;
@@ -63,7 +64,8 @@ sub customer_inv_list :Chained('/') :PathPart('invoice/customer') :CaptureArgs(1
             error => "Invalid contract id $contract_id found",
             desc  => $c->loc('Invalid contract id found'),
         );
-        NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for('/sound'));
+        #NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for('/sound'));
+        NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for('/invoice'));
     }
     if($c->user->roles eq "subscriberadmin" && $c->user->account_id != $contract_id) {
         NGCP::Panel::Utils::Message->error(
@@ -71,7 +73,8 @@ sub customer_inv_list :Chained('/') :PathPart('invoice/customer') :CaptureArgs(1
             error => "access violation, subscriberadmin ".$c->user->uuid." with contract id ".$c->user->account_id." tries to access foreign contract id $contract_id",
             desc  => $c->loc('Invalid contract id found'),
         );
-        NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for('/sound'));
+        #NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for('/sound'));
+        NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for('/invoice'));
     }
     my $contract = $c->model('DB')->resultset('contracts')->find($contract_id);
     unless($contract) {
@@ -80,13 +83,15 @@ sub customer_inv_list :Chained('/') :PathPart('invoice/customer') :CaptureArgs(1
             error => "Contract id $contract_id not found",
             desc  => $c->loc('Invalid contract id detected'),
         );
-        NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for('/sound'));
+        #NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for('/sound'));
+        NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for('/invoice'));
     }
 
     $c->stash(inv_rs => $c->model('DB')->resultset('invoices')->search({
         contract_id => $contract->id,
     }));
-    $c->stash(template => 'sound/list.tt');
+    #$c->stash(template => 'sound/list.tt');
+    $c->stash(template => 'invoice/invoice_list.tt');
     return;
 }
 
@@ -155,6 +160,7 @@ sub create :Chained('inv_list') :PathPart('create') :Args() :Does(ACL) :ACLDetac
     if($posted && $form->validated) {
         try {
             my $schema = $c->model('DB');
+            $schema->set_transaction_isolation('READ COMMITTED');
             $schema->txn_do(sub {
                 my $contract_id = $form->values->{contract}{id};
                 my $customer_rs = NGCP::Panel::Utils::Contract::get_customer_rs(c => $c);
@@ -213,6 +219,16 @@ sub create :Chained('inv_list') :PathPart('create') :Args() :Does(ACL) :ACLDetac
                     delete $form->values->{period}
                 )->truncate(to => 'month');
                 my $etime = $stime->clone->add(months => 1)->subtract(seconds => 1);
+                
+                #this has to be refactored  - select a contract balance instead of a "period"
+                my $balance = NGCP::Panel::Utils::ProfilePackages::get_contract_balance(c => $c,
+                        contract => $customer,
+                        stime => $stime,
+                        etime => $etime,);
+                $stime = $balance->start;
+                $etime = $balance->end;
+                my $bm_actual = NGCP::Panel::Utils::ProfilePackages::get_actual_billing_mapping(c => $c, contract => $customer, now => $balance->start);
+                my $billing_profile = $bm_actual->billing_mappings->first->billing_profile;                
 
                 my $zonecalls = NGCP::Panel::Utils::Contract::get_contract_zonesfees(
                     c => $c,
@@ -235,27 +251,25 @@ sub create :Chained('inv_list') :PathPart('create') :Args() :Does(ACL) :ACLDetac
                     $call->{source_customer_cost} += 0.0; # make sure it's a number
                     $call;
                 } $calllist_rs->all ];
-                
-                my $billing_mapping = $customer->billing_mappings->find($customer->get_column('bmid'));
-                my $billing_profile = $billing_mapping->billing_profile;
 
-                my $balance;
-                try {
-                    $balance = NGCP::Panel::Utils::Contract::get_contract_balance(
-                                c => $c,
-                                profile => $billing_profile,
-                                contract => $customer,
-                                stime => $stime,
-                                etime => $etime
-                    );
-                } catch($e) {
-                    NGCP::Panel::Utils::Message->error(
-                        c => $c,
-                        error => $e,
-                        desc  => $c->loc('Failed to get contract balance.'),
-                    );
-                    die;
-                }
+                #my $billing_mapping = $customer->billing_mappings->find($customer->get_column('bmid'));
+                #my $billing_profile = $billing_mapping->billing_profile;
+                #try {
+                #   $balance = NGCP::Panel::Utils::Contract::get_contract_balance(
+                #               c => $c,
+                #               profile => $billing_profile,
+                #               contract => $customer,
+                #               stime => $stime,
+                #               etime => $etime
+                #   );
+                #} catch($e) {
+                #    NGCP::Panel::Utils::Message->error(
+                #        c => $c,
+                #        error => $e,
+                #        desc  => $c->loc('Failed to get contract balance.'),
+                #    );
+                #    die;
+                #}
 
                 my $invoice_amounts = NGCP::Panel::Utils::Invoice::get_invoice_amounts(
                     customer_contract => {$customer->get_inflated_columns},

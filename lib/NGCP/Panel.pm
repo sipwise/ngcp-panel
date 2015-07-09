@@ -1,6 +1,6 @@
 package NGCP::Panel;
-use Moose;
 
+use Moose;
 use Catalyst::Runtime 5.80;
 
 # Set flags and add plugins for the application.

@@ -28,6 +28,17 @@ __PACKAGE__->config(
     connect_info => [],
 );
 
+sub set_transaction_isolation {
+    my ($self,$level) = @_;
+    return $self->storage->dbh_do(
+        sub {
+          my ($storage, $dbh, @args) = @_;
+          $dbh->do("SET TRANSACTION ISOLATION LEVEL " . $args[0]);
+        },
+        $level,
+    );
+}
+
 =head1 NAME
 
 NGCP::Panel::Model::DB - Catalyst DBIC Schema Model

@@ -1,11 +1,14 @@
 package NGCP::Panel::Controller::Root;
 use Sipwise::Base;
+
 BEGIN { extends 'Catalyst::Controller' }
+
+use Scalar::Util qw(blessed);
+use NGCP::Panel::Utils::DateTime qw();
 use DateTime qw();
+use Time::HiRes qw();
 use DateTime::Format::RFC3339 qw();
 use NGCP::Panel::Widget;
-use Scalar::Util qw(blessed);
-use Time::HiRes qw();
 
 #
 # Sets the actions in this controller to be registered with no prefix
@@ -90,6 +93,7 @@ sub auto :Private {
                     }));
                     return;
                 }
+                $self->api_apply_fake_time($c);
                 return 1;
 
 
@@ -118,6 +122,7 @@ sub auto :Private {
                     }));
                     return;
                 }
+                $self->api_apply_fake_time($c);
                 return 1;
             }
         }
@@ -272,6 +277,28 @@ sub emptyajax :Chained('/') :PathPart('emptyajax') :Args(0) {
         sEcho => $c->request->params->{sEcho} // 1,
     );
     $c->detach( $c->view("JSON") );
+}
+
+sub api_apply_fake_time :Private {
+    my ($self, $c) = @_;
+    my $allow_fake_client_time = 0;
+    my $cfg = $c->config->{api_debug_opts};
+    $allow_fake_client_time = ((defined $cfg->{allow_fake_client_time}) && $cfg->{allow_fake_client_time} ? 1 : 0) if defined $cfg;
+    if ($allow_fake_client_time) { #exists $ENV{API_FAKE_CLIENT_TIME} && $ENV{API_FAKE_CLIENT_TIME}) {
+        my $date = $c->request->header('X-Fake-Clienttime'); #('Date');
+        if ($date) {
+            my $dt = NGCP::Panel::Utils::DateTime::from_rfc1123_string($date);
+            if ($dt) {
+                NGCP::Panel::Utils::DateTime::set_fake_time($dt);
+                $c->stash->{is_fake_time} = 1;
+                $c->log->debug('using X-Fake-Clienttime header to fake system time: ' . NGCP::Panel::Utils::DateTime::to_string(NGCP::Panel::Utils::DateTime::current_local));
+                return;
+            }
+        }
+        NGCP::Panel::Utils::DateTime::set_fake_time();
+        $c->stash->{is_fake_time} = 0;
+        #$c->log->debug('resetting faked system time: ' . NGCP::Panel::Utils::DateTime::to_string(NGCP::Panel::Utils::DateTime::current_local));        
+    }
 }
 
 __PACKAGE__->meta->make_immutable;

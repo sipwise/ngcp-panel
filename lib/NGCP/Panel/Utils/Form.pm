@@ -78,7 +78,7 @@ sub validate_entities {
         }
         my $entity = undef;
         eval {
-            $entity = (defined $field->{id} ? $schema->resultset($field->{resultset})->find($field->{id}) : undef);
+            $entity = (defined $field->{id} ? $schema->resultset($field->{resultset})->find({id => $field->{id}},($field->{lock} ? {for => 'update'} : undef)) : undef);
         };
         if ($@) {
             return 0 unless &{$err_code}($@,$field->{hfh_field});
