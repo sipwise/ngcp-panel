@@ -249,6 +249,7 @@ sub handle_api_journals_get {
 
 sub handle_api_journalsitem_get {
     my ($controller,$c,$id) = @_;
+    my $guard = $c->model('DB')->txn_scope_guard;
     {
         my $item_id = $c->stash->{item_id_journal};
         last unless $controller->valid_id($c, $item_id);
@@ -266,10 +267,11 @@ sub handle_api_journalsitem_get {
         if ($journal->resource_id != $item_id) {
             $c->log->error("Journal item '" . $id . "' does not belong to '" . $controller->resource_name . '/' . $item_id . "'");
             $controller->error($c, HTTP_NOT_FOUND, "Entity 'journal' not found.");
-            return;
+            last;
         }
 
         my $hal = hal_from_journal($controller,$c,$journal);
+        $guard->commit;
 
         #my $response = HTTP::Response->new(HTTP_OK, undef, HTTP::Headers->new(
         #    (map { # XXX Data::HAL must be able to generate links with multiple relations

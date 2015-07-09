@@ -330,7 +330,7 @@ sub get_collection_properties {
             #}
             } elsif($f->type =~ /Select$/) {
                 $type = $self->field_to_select_options($f);
-            } elsif($f->type !~ /Regex|EmailList|Identifier|PosInteger/) {
+            } elsif($f->type !~ /Regex|EmailList|Identifier|PosInteger|DateTime/) { #Interval, IPAddress, ...?
                 $name .= '_id';
             }
         } elsif ($f->$_isa('HTML::FormHandler::Field::Select')) {

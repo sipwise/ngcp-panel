@@ -7,6 +7,7 @@ use NGCP::Panel::Form::Contract::PeeringReseller;
 use NGCP::Panel::Utils::Message;
 use NGCP::Panel::Utils::Navigation;
 use NGCP::Panel::Utils::Contract;
+use NGCP::Panel::Utils::ProfilePackages;
 use NGCP::Panel::Utils::Subscriber;
 use NGCP::Panel::Utils::DateTime;
 
@@ -29,8 +30,9 @@ sub contract_list :Chained('/') :PathPart('contract') :CaptureArgs(0) {
         { name => "status", search => 1, title => $c->loc("Status") },
     ]);
 
+    my $now = NGCP::Panel::Utils::DateTime::current_local;
     my $rs = NGCP::Panel::Utils::Contract::get_contract_rs(
-        schema => $c->model('DB'));
+        schema => $c->model('DB'),now => $now);
     unless($c->user->is_superuser) {
         $rs = $rs->search({
             'contact.reseller_id' => $c->user->reseller_id,
@@ -46,7 +48,7 @@ sub contract_list :Chained('/') :PathPart('contract') :CaptureArgs(0) {
             ],
         });
     $c->stash(contract_select_rs => $rs);
-
+    $c->stash(now => $now);
     $c->stash(ajax_uri => $c->uri_for_action("/contract/ajax"));
     $c->stash(template => 'contract/list.tt');
 }
@@ -92,7 +94,7 @@ sub base :Chained('contract_list') :PathPart('') :CaptureArgs(1) {
         $billing_mapping->product->handle ne 'PSTN_PEERING')) {
 
     }
-    my $now = NGCP::Panel::Utils::DateTime::current_local;
+    my $now = $c->stash->{now};
     my $billing_mappings_ordered = NGCP::Panel::Utils::Contract::billing_mappings_ordered($contract_rs->first->billing_mappings,$now,$contract_first->get_column('bmid'));
     my $future_billing_mappings = NGCP::Panel::Utils::Contract::billing_mappings_ordered(NGCP::Panel::Utils::Contract::future_billing_mappings($contract_rs->first->billing_mappings,$now));
     
@@ -100,7 +102,7 @@ sub base :Chained('contract_list') :PathPart('') :CaptureArgs(1) {
     $c->stash(contract_rs => $contract_rs);
     $c->stash(billing_mapping => $billing_mapping );
     $c->stash(billing_mappings_ordered_result => $billing_mappings_ordered ); # all billings mappings are displayed in the details page
-    $c->stash(now => $now);
+
     $c->stash(future_billing_mappings => $future_billing_mappings ); # only editable billing mappings are displayed in the edit dialog
     return;
 }
@@ -155,6 +157,7 @@ sub edit :Chained('base') :PathPart('edit') :Args(0) {
     if($posted && $form->validated) {
         try {
             my $schema = $c->model('DB');
+            $schema->set_transaction_isolation('READ COMMITTED');
             $schema->txn_do(sub {
                 foreach(qw/contact billing_profile/){
                     $form->values->{$_.'_id'} = $form->values->{$_}{id} || undef;
@@ -177,6 +180,7 @@ sub edit :Chained('base') :PathPart('edit') :Args(0) {
                     });                 
                 
                 my $old_status = $contract->status;
+                my $old_package = $contract->profile_package; 
                 
                 $contract->update($form->values);
                 NGCP::Panel::Utils::Contract::remove_future_billing_mappings($contract,$now) if $delete_mappings;
@@ -185,6 +189,15 @@ sub edit :Chained('base') :PathPart('edit') :Args(0) {
                 }
                 $contract = $c->stash->{contract_rs}->first;
                 #$billing_mapping = $contract->billing_mappings->find($contract->get_column('bmid'));
+                
+                my $balance = NGCP::Panel::Utils::ProfilePackages::catchup_contract_balances(c => $c,
+                    contract => $contract,
+                    old_package => $old_package,);
+                $balance = NGCP::Panel::Utils::ProfilePackages::resize_actual_contract_balance(c => $c,
+                    contract => $contract,
+                    old_package => $old_package,
+                    balance => $balance,
+                    );
 
                 if ($is_peering_reseller &&
                     defined $contract->contact->reseller_id) {
@@ -356,11 +369,14 @@ sub peering_create :Chained('peering_list') :PathPart('create') :Args(0) {
                         '+as' => 'bmid',
                     })->first;                
                 
-                NGCP::Panel::Utils::Contract::create_contract_balance(
-                    c => $c,
-                    profile => $contract->billing_mappings->find($contract->get_column('bmid'))->billing_profile, #$billing_profile,
+                NGCP::Panel::Utils::ProfilePackages::create_initial_contract_balance(schema => $schema,
                     contract => $contract,
-                );
+                    profile => $contract->billing_mappings->find($contract->get_column('bmid'))->billing_profile,);  
+                #NGCP::Panel::Utils::Contract::create_contract_balance(
+                #    c => $c,
+                #    profile => $contract->billing_mappings->find($contract->get_column('bmid'))->billing_profile, #$billing_profile,
+                #    contract => $contract,
+                #);
 
                 if (defined $contract->contact->reseller_id) {
                     my $contact_id = $contract->contact->id;
@@ -426,9 +442,9 @@ sub reseller_ajax_contract_filter :Chained('reseller_list') :PathPart('ajax/cont
         $c->response->redirect($c->uri_for());
         return;
     }
-
+    my $now = $c->stash->{now};
     my $rs = NGCP::Panel::Utils::Contract::get_contract_rs(
-            schema => $c->model('DB'))
+            schema => $c->model('DB'), now => $now)
         ->search_rs({
             'me.id' => $contract_id,
         });
@@ -501,11 +517,14 @@ sub reseller_create :Chained('reseller_list') :PathPart('create') :Args(0) {
                         '+as' => 'bmid',
                     })->first;                 
                 
-                NGCP::Panel::Utils::Contract::create_contract_balance(
-                    c => $c,
-                    profile => $contract->billing_mappings->find($contract->get_column('bmid'))->billing_profile, #$billing_profile,
+                NGCP::Panel::Utils::ProfilePackages::create_initial_contract_balance(schema => $schema,
                     contract => $contract,
-                );
+                    profile => $contract->billing_mappings->find($contract->get_column('bmid'))->billing_profile,);  
+                #NGCP::Panel::Utils::Contract::create_contract_balance(
+                #    c => $c,
+                #    profile => $contract->billing_mappings->find($contract->get_column('bmid'))->billing_profile, #$billing_profile,
+                #    contract => $contract,
+                #);
 
                 if (defined $contract->contact->reseller_id) {
                     my $contact_id = $contract->contact->id;

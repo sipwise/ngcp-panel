@@ -10,7 +10,7 @@ use DateTime qw();
 use DateTime::Format::Strptime qw();
 use DateTime::Format::ISO8601 qw();
 
-my $is_local_env = 0;
+my $is_local_env = 1;
 
 my $uri = $ENV{CATALYST_SERVER} || ('https://'.hostfqdn.':4443');
 
