@@ -39,8 +39,8 @@ has 'base_uri' => (
     is => 'ro',
     isa => 'Str',
     default => sub {
-        $_[0]->{local_test} 
-        ? ( length($_[0]->{local_test})>1 ? $_[0]->{local_test} : 'https://127.0.0.1:4443' ) 
+        $_[0]->{local_test}
+        ? ( length($_[0]->{local_test})>1 ? $_[0]->{local_test} : 'https://127.0.0.1:4443' )
         : $ENV{CATALYST_SERVER} || ('https://'.hostfqdn.':4443')},
 );
 has 'name' => (
@@ -160,7 +160,7 @@ sub get_catalyst_config{
             }
         }
         $panel_config //= '../ngcp_panel.conf';
-        $catalyst_config = Config::General->new($panel_config);   
+        $catalyst_config = Config::General->new($panel_config);
     } else {
         #taken 1:1 from /lib/NGCP/Panel.pm
         for my $path(qw#/etc/ngcp-panel/ngcp_panel.conf etc/ngcp_panel.conf ngcp_panel.conf#) {
@@ -170,7 +170,7 @@ sub get_catalyst_config{
             }
         }
         $panel_config //= 'ngcp_panel.conf';
-        $catalyst_config = Config::General->new($panel_config);   
+        $catalyst_config = Config::General->new($panel_config);
     }
     my %config = $catalyst_config->getall();
     $self->{catalyst_config} = \%config;
@@ -595,12 +595,12 @@ sub check_get2put{
 
 sub check_put2get{
     my($self, $put_data_in, $put_data_cb, $uri) = @_;
-    
+
     my $item_put_data = $self->process_data($put_data_cb, $put_data_in);
     $item_put_data = JSON::to_json($item_put_data);
     my ($res_put,$result_item_put,$req_put) = $self->request_put( $item_put_data, $uri );
     $self->http_code_msg(200, "check_put2get: check put successful",$res_put, $result_item_put);
-    
+
     my ($res_get, $result_item_get, $req_get) = $self->check_item_get($uri);
     delete $result_item_get->{_links};
     delete $result_item_get->{_embedded};
@@ -613,11 +613,11 @@ sub check_put2get{
 
 sub check_post2get{
     my($self, $post_data_in, $post_data_cb) = @_;
-    
+
     my ($res_post, $result_item_post, $req_post, $item_post_data ) = $self->request_post( $post_data_cb, $post_data_in );
     $self->http_code_msg(201, "check_post2get: POST item '".$self->name."' for check_post2get", $res_post, $result_item_post);
     my $location_post = $self->base_uri.($res_post->header('Location') // '');
-    
+
     my ($res_get, $result_item_get, $req_get) = $self->request_get( $location_post );
     $self->http_code_msg(200, "check_post2get: fetch POSTed test '".$self->name."'", $res_get, $result_item_get);
     delete $result_item_get->{_links};

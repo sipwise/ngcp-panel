@@ -66,8 +66,8 @@ sub hal_from_profile {
             Data::HAL::Link->new(relation => 'collection', href => sprintf('/api/%s/', $self->resource_name)),
             Data::HAL::Link->new(relation => 'profile', href => 'http://purl.org/sipwise/ngcp-api/'),
             Data::HAL::Link->new(relation => 'self', href => sprintf("%s%d", $self->dispatch_path, $profile->id)),
-            ( map { Data::HAL::Link->new(relation => 'ngcp:billingfees', href => sprintf("/api/billingfees/%d", $_->id)) } $profile->billing_fees->all ),
-            ( map { Data::HAL::Link->new(relation => 'ngcp:billingzones', href => sprintf("/api/billingzones/%d", $_->id)) } $profile->billing_zones->all ),
+            Data::HAL::Link->new(relation => 'ngcp:billingfees', href => sprintf("/api/billingfees/?billing_profile_id=%d", $profile->id ) ),
+            Data::HAL::Link->new(relation => 'ngcp:billingzones', href => sprintf("/api/billingzones/?billing_profile_id=%d", $profile->id )),
             $self->get_journal_relation_link($profile->id),
         ],
         relation => 'ngcp:'.$self->resource_name,
@@ -100,7 +100,7 @@ sub update_profile {
         $self->error($c, HTTP_UNPROCESSABLE_ENTITY, 'Billing profile is already terminated and cannot be changed.');
         return;
     }
-    
+
     $form //= $self->get_form($c);
     # TODO: for some reason, formhandler lets missing reseller slip thru
     $resource->{reseller_id} //= undef;
@@ -113,7 +113,7 @@ sub update_profile {
     return unless NGCP::Panel::Utils::Reseller::check_reseller_update_item($c,$resource->{reseller_id},$old_resource->{reseller_id},sub {
         my ($err) = @_;
         $self->error($c, HTTP_UNPROCESSABLE_ENTITY, $err);
-    });    
+    });
 
     #if(exists $resource->{status} && $resource->{status} eq 'terminated') {
         unless($profile->get_column('contract_cnt') == 0) {
@@ -125,7 +125,7 @@ sub update_profile {
             $self->error($c, HTTP_UNPROCESSABLE_ENTITY,
                          "Cannnot modify or terminate billing_profile that is still used in profile sets of profile packages");
             return;
-        }        
+        }
     #}
 
     my $old_prepaid = $profile->prepaid;
