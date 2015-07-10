@@ -1278,7 +1278,21 @@ sub dev_field_config :Chained('/') :PathPart('device/autoprov/config') :Args() {
     }
 
     my @lines = ();
-    foreach my $linerange($model->autoprov_device_line_ranges->all) {
+    my @field_models = $c->model('DB')->resultset('autoprov_devices')->search_rs({
+            'autoprov_field_device_lines.device_id' => $dev->id,
+        },
+        {
+            'join' => {'autoprov_device_line_ranges' => 'autoprov_field_device_lines'},
+            '+select' => [
+                {'' => \['me.type = ?', [ {} => 'phone' ] ], '-as' => 'is_phone_model' },
+            ],
+            '+as' => ['is_phone_model'],
+
+            'group_by' => 'me.id',
+            'order_by' => { -desc => 'is_phone_model' },
+        }
+    )->all ;
+    foreach my $linerange( map { $_->autoprov_device_line_ranges->all } @field_models ) {
         my $range = {
             name => $linerange->name,
             num_lines => $linerange->num_lines,
