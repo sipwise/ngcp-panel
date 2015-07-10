@@ -1360,7 +1360,9 @@ sub dev_field_config :Chained('/') :PathPart('device/autoprov/config') :Args() {
 
     my $data = $dev->profile->config->data;
     my $processed_data = "";
-    my $t = Template->new;
+    my $t = Template->new({
+        EVAL_PERL => 1,
+    });
     $t->process(\$data, $vars, \$processed_data) || do {
         my $error = $t->error();
         my $msg = "error processing template, type=".$error->type.", info='".$error->info."'";
