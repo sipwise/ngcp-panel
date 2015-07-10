@@ -1,3 +1,13 @@
+ngcp-panel (1.8.1.24+0~mr3.8.1.24) unstable; urgency=low
+
+  [ Gerhard Jungwirth ]
+  * [0058158] MT#12303 dialogic wip logging
+  * [809265b] MT#13815 split dialogic MGM and SIP interface
+
+  [ Sipwise Jenkins Builder ]
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Fri, 10 Jul 2015 15:27:58 +0200
+
 ngcp-panel (1.8.1.23+0~mr3.8.1.23) unstable; urgency=low
 
   [ Gerhard Jungwirth ]
