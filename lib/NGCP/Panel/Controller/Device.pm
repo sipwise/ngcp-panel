@@ -1195,6 +1195,7 @@ sub dev_field_config :Chained('/') :PathPart('device/autoprov/config') :Args() {
     $id =~ s/^([^\=]+)\=0$/$1/;
     $id = lc $id;
     $id =~ s/\-[a-z]+$//;
+    $id =~ s/\-$//g;
 
 =pod
     my $yealink_key;
@@ -1264,6 +1265,16 @@ sub dev_field_config :Chained('/') :PathPart('device/autoprov/config') :Args() {
             panaurl => "$schema://$host:$port/pbx/directory/panasonic",
             yeaurl => "$schema://$host:$port/pbx/directory/yealink?userid=$id",
             name => 'PBX Address Book',
+        },
+        ldap => {
+            tls => $c->config->{ldap}->{tls},
+            ip => $c->config->{ldap}->{ip},
+            port => $c->config->{ldap}->{port},
+            dn => ',dc=hpbx,dc=sipwise,dc=com', # uid=xxx,o=contract-id added below
+            password => '', # set below
+            base => ',dc=hpbx,dc=sipwise,dc=com', # o=contract-id added below
+            nameattr => 'displayName',
+            phoneattr => 'telephoneNumber'
         }
     };
 
@@ -1277,6 +1288,7 @@ sub dev_field_config :Chained('/') :PathPart('device/autoprov/config') :Args() {
         $vars->{firmware}->{maxversion} = $latest_fw->version;
     }
 
+    my $ldap_attr_set = 0;
     my @lines = ();
     foreach my $linerange($model->autoprov_device_line_ranges->all) {
         my $range = {
@@ -1322,6 +1334,12 @@ sub dev_field_config :Chained('/') :PathPart('device/autoprov/config') :Args() {
                 type => $line->line_type,
                 t38 => $t38,
             };
+            if(!$ldap_attr_set && $linerange->name eq "Full Keys" && $line->line_type eq "private") {
+                $vars->{ldap}->{dn} = "uid=".$sub->uuid . ",o=" . $sub->account_id . $vars->{ldap}->{dn};
+                $vars->{ldap}->{base} = "o=" . $sub->account_id . $vars->{ldap}->{base};
+                $vars->{ldap}->{password} = $sub->password;
+                $ldap_attr_set = 1;
+            }
         }
         push @{ $vars->{phone}->{lineranges} }, $range;
     }
