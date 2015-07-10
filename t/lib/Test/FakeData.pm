@@ -423,7 +423,7 @@ sub set_data_from_script{
 
 sub load_data_from_script{
     my($self, $collection_name)  = @_;
-    my $collection_file =  "./api-$collection_name.t";
+    my $collection_file =  dirname($0)."/api-$collection_name.t";
     my $found = 0;
     if(-e $collection_file){
         #dirty hack, part 1. To think about Safe
