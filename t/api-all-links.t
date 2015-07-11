@@ -36,9 +36,9 @@ $ua->ssl_opts(
     my @hopts = split /\s*,\s*/, $res->header('Allow');
 
     my @links = $res->header('Link');
+    my $rex = qr!^</api/[a-z]+/>; rel="collection http://purl\.org/sipwise/ngcp-api/#rel-([a-z]+s|topupcash)"$!;
     foreach my $link(@links) {
-        my $rex = qr!^</api/[a-z]+/>; rel="collection http://purl\.org/sipwise/ngcp-api/#rel-([a-z]+s)"$!;
-        my ($relname) = ($link =~ $rex);
+        (my ($relname)) = ($link =~ $rex);
         # now get this rel
         $req = HTTP::Request->new('OPTIONS', "$uri/api/$relname/");
         $res = $ua->request($req);
