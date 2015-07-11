@@ -1361,7 +1361,7 @@ sub dev_field_config :Chained('/') :PathPart('device/autoprov/config') :Args() {
     my $data = $dev->profile->config->data;
     my $processed_data = "";
     my $t = Template->new({
-        EVAL_PERL => 1,
+        PLUGIN_BASE => 'NGCP::Panel::Template::Plugin',
     });
     $t->process(\$data, $vars, \$processed_data) || do {
         my $error = $t->error();
