@@ -1,3 +1,168 @@
+ngcp-panel (1.9.1.0+0~mr4.0.1.0) unstable; urgency=low
+
+  [ Gerhard Jungwirth ]
+  * [63db8ed] MT#11501 dialogic isdn library
+  * [326b1be] MT#11773 csc fix subscriber-url in topmenu
+  * [63371e4] MT#11637 properly define reseller_id on roles of customercontacts
+  * [a35314d] MT#11827 validate sip uri
+  * [fefc0d4] MT#11775 adapt fax error message
+  * [aabb590] MT#11777 filter cloudpbx prefs if no feature
+  * [702b70c] MT#11709 name button Peaktimes Off-Peaktimes
+  * [9628a32] MT#12303 configure dialogic for ss7
+  * [0232af6] MT#11779 fix subscriber form setting admin flag
+  * [33f5773] MT#12303 dialogic configure snmp and nfs
+  * [7245c38] MT#12303 dialogic use optical link for ss7 and isdn
+  * [d743766] MT#12555 allow port in callforward URIs
+  * [1370ef5] MT#12483 upgrade datatables to version 1.10.5
+  * [da020c9] MT#12813 calllist api: use correct subscriber
+  * [447a08f] MT#12303 dialogic client use LWP::UserAgent
+  * [ffa327b] MT#12905 set cf cli to the primary number
+  * [53ee3a3] MT#12813 fix calllist subscriber retrieval
+  * [9aad021] MT#13007 Reload correct service for sound handles
+  * [2c12d25] MT#12303 dialogic wip logging
+  * [8cb165b] MT#13243 api filter by webuser, -password
+  * [813e471] MT#13659 rename Number Range to Alias Number Range
+  * [7755843] MT#13657 allow to change adminflag of pbxpilot
+  * [469b064] MT#13717 fix apitests related to multi_bil_prof
+  * [8addf64] MT#13777 align upload filesize to 64MB for csv
+  * [5590a10] MT#13329 adapt rewrite rules to new upstream syntax
+  * [85a37fc] MT#13815 split dialogic MGM and SIP interface
+
+  [ Irina Peshinskaya ]
+  * [e8a9f2b] MT#12191 Rename "Add more" button to "Add destination sets"
+  * [de7928e] MT#11147 Remove test hardcodes
+  * [eb049fa] MT#11147 Fix multi ranged field devices creation
+  * [11979e0] MT#11147 Create fake data for the devicemodels and pbxdevices tests
+  * [d6439b7] MT#5879 Fix invoice generation script location in the embedded doc
+  * [64f701f] MT#11147 Create fake data for the devicemodels and pbxdevices tests
+  * [5590b41] MT#11147 Move test libraries to the correct location
+  * [25982e1] MT#11147 Return test data clearing directly in the db
+  * [957b848] MT#11147 use default DB account to clear test data from DB
+  * [76c88a8] MT#11147 Add fields documentation
+  * [9c77c88] MT#11147 Don't use brute-forced test data clearing
+  * [bda844c] MT#10159 Add API call towards MWI on voicemail dir change
+  * [d5964c4] MT12347 In attempt to find correct config location
+  * [d51c331] MT#11147 Left linking extensions and phones only for phones type
+  * [78cf4f1] MT#11009 Form->params => form->values
+  * [0773488] MT#11147 Consider bootstrap_method form field when vendor is unknown
+  * [4970dd6] MT#12499 Apply default email templates to the created reseller
+  * [ae43bec] MT#5879 Document resend and regenerate options in the inv. gen. script
+  * [03aaaa2] MT#11549 Fix API search by aliases, broken after optimization
+  * [1538654] MT#11667 Some features to calllist
+  * [34c05da] MT#12813 Dont set direction to in for empty destination_user_id
+  * [2e2c008] MT#7227 Upload billing_fees into 2 stages, for speed and unique records
+  * [003e717] MT#12937 Replace groups managements different code parts with common methods
+  * [7c9f65a] MT#13369 Add annotate possibility for narrowly positioned buttons
+  * [265d0b6] MT#11667 Add external filter by direction for calls
+  * [558bb1c] MT#12939 Manage pbx groups and members order through the web-Panel
+  * [7ba2dbd] MT#12939 Preserve groups order while edit subscriber
+  * [d0b947c] MT#13269 Make timeout for the remote server access
+  * [dbfff85] MT#13617 Extend position type for linekeys to pass form validation
+  * [d054035] MT#13701 Prevent resurrection of the terminated subscribers
+  * [039fd49] MT#12347 Make necessary changes to keep data in the test scripts
+  * [2581c10] MT#13717 Consider necessity of recreation items with cycled dependency
+  * [90d235c] MT#13717 Avoid duplicate names for billing profiles
+  * [30755dd] MT#6483 Remove billingfees and billingzones direct links
+  * [ba2ad48] MT#13717 Use correct directory for data load from the test scripts
+  * [5d5460f] MT#11147 Add extension lines to field device config template vars
+  * [7616a4c] MT#13717 Add topupcash name as exception to collectionS names format
+  * [83de70c] MT#13717 Further tests adaptation to new collections
+
+  [ Jenkins Git User ]
+  * [c94b4c4] I18N dump: snapshot Thu Mar 19 17:17:14 +0100 2015
+  * [c55460a] I18N dump: snapshot Wed Mar 25 01:15:56 +0100 2015
+  * [bcd2de6] I18N dump: snapshot Tue Mar 31 01:12:43 +0200 2015
+  * [763bb8e] I18N dump: snapshot Wed Apr 01 01:11:19 +0200 2015
+  * [838ad0c] I18N dump: snapshot Thu Apr 02 01:11:22 +0200 2015
+  * [983cee8] I18N dump: snapshot Thu Apr 09 01:11:01 +0200 2015
+  * [c0e8b51] I18N dump: snapshot Thu Apr 16 13:26:44 +0200 2015
+  * [265335a] I18N dump: snapshot Tue Apr 21 01:10:50 +0200 2015
+  * [a78a58d] I18N dump: snapshot Wed Apr 22 01:12:19 +0200 2015
+  * [3aef87e] I18N dump: snapshot Sat Apr 25 01:17:07 +0200 2015
+  * [970fdb2] I18N dump: snapshot Wed Apr 29 01:10:59 +0200 2015
+  * [ccc4ec9] I18N dump: snapshot Sat May 09 01:13:00 +0200 2015
+  * [718113a] I18N dump: snapshot Fri May 29 01:10:15 +0200 2015
+  * [37d4651] I18N dump: snapshot Tue Jun 02 01:11:20 +0200 2015
+  * [91951c2] I18N dump: snapshot Thu Jun 04 01:10:58 +0200 2015
+  * [6c03edd] I18N dump: snapshot Tue Jun 16 01:10:29 +0200 2015
+  * [887e4c1] I18N dump: snapshot Sat Jun 20 01:10:23 +0200 2015
+  * [f85d010] I18N dump: snapshot Sat Jun 27 01:12:09 +0200 2015
+  * [fa07c17] I18N dump: snapshot Wed Jul 01 01:15:57 +0200 2015
+  * [45cd24c] I18N dump: snapshot Thu Jul 02 01:12:49 +0200 2015
+  * [87f57c4] I18N dump: snapshot Fri Jul 03 01:12:59 +0200 2015
+  * [fc0275f] I18N dump: snapshot Sun Jul 05 01:15:33 +0200 2015
+  * [c7db27f] I18N dump: snapshot Wed Jul 08 01:15:10 +0200 2015
+  * [c4bd2bb] I18N dump: snapshot Thu Jul 09 01:12:42 +0200 2015
+
+  [ Andreas Granig ]
+  * [3fd27c9] MT#10869 Add park option to Jitsi config
+  * [1425bf7] MT#10869 Hide account/connection info in jitsi
+  * [db0cb86] MT#12385 Add reseller_id to EDR head.
+  * [92d4bad] MT#12453 Add reseller name to device model table
+  * [5cddb19] MT12347 Terminate module with true value.
+  * [de42a68] MT#12615 Don't filter call_id in calllists API
+  * [1a2a467] MT#12673 Show ncos and rwr prefs desc in API
+  * [38b6ea1] MT#12701 Show cf ncos in API
+  * [6ef25b3] MT#12847 Fix creating pbx pilot subscriber
+  * [2e95fed] MT#12847 Use first range number as primary number
+  * [caac2ce] MT#12847 Use form->params instead of form->values
+  * [98f7a46] MT#12901 Read creds from ~/.ngcp-api
+  * [3701b44] MT#12901 Fix testing for tools
+  * [e8f318d] MT#10537 Fix calllist issues
+  * [8f061a0] MT#10537 API: fix calllist dir for srv calls
+  * [26c561c] MT#10537 Strip sems suffix from cid
+  * [161895c] MT#13203 Add top-menu link to api and handbook
+  * [2c54106] MT#13201 Implement voucher API
+  * [4227fd2] MT#13201 Enhance voucher API.
+  * [b02c92c] MT#13201 Cleanup debug output
+  * [494f8bf] MT#13201 Strip trailing timezone from timestamp
+  * [9004510] MT#12643 Prepare forms for multi-bilprof. WIP.
+  * [abc703a] MT#12643 Fix datatables within repeatable
+  * [d748aa0] MT#12643 Fix adding repeatable element
+  * [915aa91] MT#12643 Fix syntax error in control file
+  * [892c5d7] MT#13919 Add ldap config
+  * [4b1c1ba] MT#13919 Add RC4 encryption and enable raw perl
+  * [521fc6a] MT#13929 Add voucher topup skeleton
+  * [b003cea] MT#13919 Move raw perl from dev config to plugin
+
+  [ Rene Krenn ]
+  * [96c731a] MT#11917 Journaling for first set of resources
+  * [edf5da9] MT#12347 ngcp_panel.conf location for jenkins
+  * [b5dca5e] MT#11917 next batch of API resources w. journal
+  * [83fdc85] MT#11917 include journal in generated API doc page
+  * [3bc8f28] MT#11917 fix typo to re-run tests
+  * [7f69b48] MT#12565 align any form handler 'description' attr
+  * [0d36171] MT#11917 CFTimeSets typos
+  * [bcb6f1e] MT#11917 CFTimeSets
+  * [c411ece] MT#11917 'must-have' api resources complete
+  * [de347c6] MT#11917 non-empty 'description' fields
+  * [bce0058] MT#11917 test enviroment json boolean conversion
+  * [4c8d82a] MT#11917 testcase json conversion
+  * [6803ce7] MT#11917 remove billingzones
+  * [5cab4a0] MT#11917 force JSON::PP for tests
+  * [a750b79] MT#11917 align snapshots in DELETE methods
+  * [2537819] MT#12643 billing networks and multi bill prof WIP
+  * [70936e0] MT#13717 prevent editing profiles and networks
+  * [44dcb0f] MT#13717 missing create (system) contact button
+  * [68d8e45] MT#13717 fix journal tests -  reseller constraint
+
+  [ Alexander Lutay ]
+  * [fc73430] MT#12591 Use root:www-data for default certificate file /etc/ngcp-config/ssl/myserver.crt
+  * [0dcf761] MT#12897 Improve selenium test stability, check "thisshouldnotexist" with table reference
+  * [8d79bfd] MT#10697 clean certfile not being used (c) Andreas
+  * [f46b194] MT#13203 Fixed 404 on handbook URL (cause by missed last slash)
+
+  [ Kirill Solomko ]
+  * [277311b] MT#11225 - add Billing Profile "Fraud use reseller rates" preference
+
+  [ Victor Seva ]
+  * [e68f3cd] MT#12923 tools: move tools_bin/ngcp-api-tools to tools/ngcp-api.inc
+  * [e7be026] MT#13949 generate_ssl_keys.sh: use ssl-cert group
+
+  [ Sipwise Jenkins Builder ]
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Mon, 13 Jul 2015 15:22:29 +0200
+
 ngcp-panel (1.9.0.0+0~mr4.0.0.0) unstable; urgency=low
 
   [ Kirill Solomko ]
