@@ -94,7 +94,7 @@ $test_machine->check_bundle();
 }
 # try to create fee with implicit zone which doesn't exist yet
 {
-    my $t = time;
+    my $t = 1 + time();
     my ($res, $err) = $test_machine->request_post(sub{
         delete $_[0]->{billing_zone_id};
         $_[0]->{billing_zone_zone} = 'apitestzone'.$t;
@@ -127,7 +127,6 @@ $test_machine->check_bundle();
     $test_machine->check_embedded($item_put);
 }
 {
-    my $t = time;
     my($res,$mod_fee) = $test_machine->check_patch_correct( [ { op => 'replace', path => '/direction', value => 'in' } ] );
     is($mod_fee->{direction}, "in", "check patched replace op");
 }
