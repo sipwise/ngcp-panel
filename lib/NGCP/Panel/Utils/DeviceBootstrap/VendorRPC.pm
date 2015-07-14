@@ -135,7 +135,7 @@ sub get_bootstrap_uri{
     my $uri_params = $self->params->{redirect_params}->{sync_params} || '';
     if(!$uri){
         my $cfg = $self->bootstrap_uri_conf();
-        $uri = "$cfg->{schema}://$cfg->{host}:$cfg->{port}/device/autoprov/config/";
+        $uri = "$cfg->{schema}://$cfg->{host}:$cfg->{port}/device/autoprov/bootstrap/";
     }
     $uri .= $uri_params;
     return $self->process_bootstrap_uri($uri);
@@ -169,9 +169,10 @@ sub bootstrap_uri_conf{
     my ($self) = @_;
     my $c = $self->params->{c};
     my $cfg = {
-        schema => $c->config->{deviceprovisioning}->{secure} ? 'https' : 'http',
+        #schema => $c->config->{deviceprovisioning}->{secure} ? 'https' : 'http',
+        schema => 'http', # for bootstrapping, we always use http
         host => $c->config->{deviceprovisioning}->{host} // $c->req->uri->host,
-        port => $c->config->{deviceprovisioning}->{port} // 1444,
+        port => $c->config->{deviceprovisioning}->{bootstrap_port} // 1445,
     };
     return $cfg;
 }
