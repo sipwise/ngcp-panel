@@ -114,12 +114,12 @@ msgstr ""
 #: lib/NGCP/Panel/Controller/Customer.pm:353
 #: lib/NGCP/Panel/Controller/Customer.pm:52
 #: lib/NGCP/Panel/Controller/Customer.pm:99
-#: lib/NGCP/Panel/Controller/Device.pm:104
-#: lib/NGCP/Panel/Controller/Device.pm:117
-#: lib/NGCP/Panel/Controller/Device.pm:43
-#: lib/NGCP/Panel/Controller/Device.pm:58
-#: lib/NGCP/Panel/Controller/Device.pm:74
-#: lib/NGCP/Panel/Controller/Device.pm:88
+#: lib/NGCP/Panel/Controller/Device.pm:106
+#: lib/NGCP/Panel/Controller/Device.pm:119
+#: lib/NGCP/Panel/Controller/Device.pm:45
+#: lib/NGCP/Panel/Controller/Device.pm:60
+#: lib/NGCP/Panel/Controller/Device.pm:76
+#: lib/NGCP/Panel/Controller/Device.pm:90
 #: lib/NGCP/Panel/Controller/Domain.pm:29
 #: lib/NGCP/Panel/Controller/EmailTemplate.pm:33
 #: lib/NGCP/Panel/Controller/Invoice.pm:38
@@ -223,15 +223,15 @@ msgstr "404 - Kein spezialisiertes CSS für diesen Reseller verfügbar"
 msgid "404 - No branding logo available for this reseller"
 msgstr "404 - Kein spezialisiertes Logo für diesen Reseller verfügbar"
 
-#: lib/NGCP/Panel/Controller/Device.pm:498
+#: lib/NGCP/Panel/Controller/Device.pm:500
 msgid "404 - No front image available for the model of this device profile"
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/Device.pm:511
+#: lib/NGCP/Panel/Controller/Device.pm:513
 msgid "404 - No front image available for this device model"
 msgstr "404 - Kein Front-Bild für dieses Geräte-Modell verfügbar"
 
-#: lib/NGCP/Panel/Controller/Device.pm:524
+#: lib/NGCP/Panel/Controller/Device.pm:526
 msgid "404 - No mac image available for this device model"
 msgstr "404 - Kein MAC-Bild für dieses Geräte-Modell verfügbar"
 
@@ -806,7 +806,7 @@ msgstr "Abwesend"
 msgid "BIC/SWIFT"
 msgstr "BIC/SWIFT"
 
-#: lib/NGCP/Panel/Controller/Device.pm:1011
+#: lib/NGCP/Panel/Controller/Device.pm:1013
 msgid "BLF Key"
 msgstr "BLF Taste"
 
@@ -1610,7 +1610,7 @@ msgstr "Firma"
 msgid "Company Reg. Number"
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/Device.pm:94
+#: lib/NGCP/Panel/Controller/Device.pm:96
 msgid "Configuration Version"
 msgstr "Konfigurations-Version"
 
@@ -2002,8 +2002,8 @@ msgstr ""
 msgid "Customer"
 msgstr "Kunde"
 
-#: lib/NGCP/Panel/Controller/Device.pm:107
-#: lib/NGCP/Panel/Controller/Device.pm:120
+#: lib/NGCP/Panel/Controller/Device.pm:109
+#: lib/NGCP/Panel/Controller/Device.pm:122
 #: lib/NGCP/Panel/Controller/Invoice.pm:39
 #: share/templates/subscriber/edit_webpass.tt:33
 #: share/templates/subscriber/master.tt:69
@@ -2039,8 +2039,8 @@ msgstr "Kunden-Details"
 msgid "Customer Details for #%1 (%2)"
 msgstr "Kunden-Details für #%1 (%2)"
 
-#: lib/NGCP/Panel/Controller/Device.pm:108
-#: lib/NGCP/Panel/Controller/Device.pm:121
+#: lib/NGCP/Panel/Controller/Device.pm:110
+#: lib/NGCP/Panel/Controller/Device.pm:123
 #: lib/NGCP/Panel/Controller/Invoice.pm:40
 msgid "Customer Email"
 msgstr "Kunden-Email"
@@ -2476,9 +2476,9 @@ msgstr "Geräte-Firmwares"
 msgid "Device Management"
 msgstr "Geräte-Verwaltung"
 
-#: lib/NGCP/Panel/Controller/Device.pm:61
-#: lib/NGCP/Panel/Controller/Device.pm:77
-#: lib/NGCP/Panel/Controller/Device.pm:92
+#: lib/NGCP/Panel/Controller/Device.pm:63
+#: lib/NGCP/Panel/Controller/Device.pm:79
+#: lib/NGCP/Panel/Controller/Device.pm:94
 #: lib/NGCP/Panel/Utils/DbStrings.pm:674 share/templates/device/list.tt:105
 msgid "Device Model"
 msgstr "Geräte-Modell"
@@ -2496,42 +2496,42 @@ msgstr "Geräte-Profil"
 msgid "Device Profiles"
 msgstr "Geräte-Profile"
 
-#: lib/NGCP/Panel/Controller/Device.pm:60
-#: lib/NGCP/Panel/Controller/Device.pm:76
-#: lib/NGCP/Panel/Controller/Device.pm:91
+#: lib/NGCP/Panel/Controller/Device.pm:62
+#: lib/NGCP/Panel/Controller/Device.pm:78
+#: lib/NGCP/Panel/Controller/Device.pm:93
 #: lib/NGCP/Panel/Utils/DbStrings.pm:1134
 msgid "Device Vendor"
 msgstr "Geräte-Hersteller"
 
-#: lib/NGCP/Panel/Controller/Device.pm:787
+#: lib/NGCP/Panel/Controller/Device.pm:789
 msgid "Device configuration not found"
 msgstr "Geräte-Konfiguration nicht gefunden"
 
-#: lib/NGCP/Panel/Controller/Device.pm:801
+#: lib/NGCP/Panel/Controller/Device.pm:803
 msgid "Device configuration successfully deleted"
 msgstr "Geräte-Konfiguration erfolgreich gelöscht"
 
-#: lib/NGCP/Panel/Controller/Device.pm:614
+#: lib/NGCP/Panel/Controller/Device.pm:616
 msgid "Device firmware not found"
 msgstr "Geräte-Firmware nicht gefunden"
 
-#: lib/NGCP/Panel/Controller/Device.pm:628
+#: lib/NGCP/Panel/Controller/Device.pm:630
 msgid "Device firmware successfully deleted"
 msgstr "Geräte-Firmware erfolgreich gelöscht"
 
-#: lib/NGCP/Panel/Controller/Device.pm:284
+#: lib/NGCP/Panel/Controller/Device.pm:286
 msgid "Device model not found"
 msgstr "Geräte-Modell nicht gefunden"
 
-#: lib/NGCP/Panel/Controller/Device.pm:303
+#: lib/NGCP/Panel/Controller/Device.pm:305
 msgid "Device model successfully deleted"
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/Device.pm:956
+#: lib/NGCP/Panel/Controller/Device.pm:958
 msgid "Device profile not found"
 msgstr "Geräte-Profil nicht gefunden"
 
-#: lib/NGCP/Panel/Controller/Device.pm:1077
+#: lib/NGCP/Panel/Controller/Device.pm:1079
 msgid "Device profile successfully deleted"
 msgstr "Geräte-Profil erfolgreich gelöscht"
 
@@ -3112,19 +3112,19 @@ msgstr ""
 msgid "Failed to create customer contract"
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/Device.pm:758
+#: lib/NGCP/Panel/Controller/Device.pm:760
 msgid "Failed to create device configuration"
 msgstr "Geräte-Konfiguration erstellen fehlgeschlagen."
 
-#: lib/NGCP/Panel/Controller/Device.pm:585
+#: lib/NGCP/Panel/Controller/Device.pm:587
 msgid "Failed to create device firmware"
 msgstr "Geräte-Firmware erstellen fehlgeschlagen."
 
-#: lib/NGCP/Panel/Controller/Device.pm:244
+#: lib/NGCP/Panel/Controller/Device.pm:246
 msgid "Failed to create device model"
 msgstr "Geräte-Modell erstellen fehlgeschlagen."
 
-#: lib/NGCP/Panel/Controller/Device.pm:927
+#: lib/NGCP/Panel/Controller/Device.pm:929
 msgid "Failed to create device profile"
 msgstr "Geräte-Profil erstellen fehlgeschlagen."
 
@@ -3271,19 +3271,19 @@ msgstr ""
 msgid "Failed to delete destination set"
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/Device.pm:807
+#: lib/NGCP/Panel/Controller/Device.pm:809
 msgid "Failed to delete device configuration"
 msgstr "Geräte-Konfiguration löschen fehlgeschlagen."
 
-#: lib/NGCP/Panel/Controller/Device.pm:634
+#: lib/NGCP/Panel/Controller/Device.pm:636
 msgid "Failed to delete device firmware"
 msgstr "Geräte-Firmware löschen fehlgeschlagen."
 
-#: lib/NGCP/Panel/Controller/Device.pm:309
+#: lib/NGCP/Panel/Controller/Device.pm:311
 msgid "Failed to delete device model"
 msgstr "Geräte-Modell löschen fehlgeschlagen."
 
-#: lib/NGCP/Panel/Controller/Device.pm:1083
+#: lib/NGCP/Panel/Controller/Device.pm:1085
 msgid "Failed to delete device profile"
 msgstr "Geräte-Profil löschen fehlgeschlagen."
 
@@ -3549,19 +3549,19 @@ msgstr ""
 msgid "Failed to update destination set"
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/Device.pm:857
+#: lib/NGCP/Panel/Controller/Device.pm:859
 msgid "Failed to update device configuration"
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/Device.pm:689
+#: lib/NGCP/Panel/Controller/Device.pm:691
 msgid "Failed to update device firmware"
 msgstr "Geräte-Firmware aktualisieren fehlgeschlagen."
 
-#: lib/NGCP/Panel/Controller/Device.pm:481
+#: lib/NGCP/Panel/Controller/Device.pm:483
 msgid "Failed to update device model"
 msgstr "Geräte-Modell aktualisieren fehlgeschlagen."
 
-#: lib/NGCP/Panel/Controller/Device.pm:1134
+#: lib/NGCP/Panel/Controller/Device.pm:1136
 msgid "Failed to update device profile"
 msgstr "Geräte-Profil aktualisieren fehlgeschlagen."
 
@@ -3745,8 +3745,8 @@ msgstr "Dateien"
 msgid "Find Subscriber by UUID"
 msgstr "Subscriber anhand UUID finden"
 
-#: lib/NGCP/Panel/Controller/Device.pm:62
-#: lib/NGCP/Panel/Controller/Device.pm:93
+#: lib/NGCP/Panel/Controller/Device.pm:64
+#: lib/NGCP/Panel/Controller/Device.pm:95
 #: lib/NGCP/Panel/Utils/DbStrings.pm:759
 msgid "Firmware File"
 msgstr "Firmware Datei"
@@ -4109,7 +4109,7 @@ msgstr "Hunting-Regel, eine aus serial, parallel, random oder circular."
 msgid "IBAN"
 msgstr "IBAN"
 
-#: lib/NGCP/Panel/Controller/Device.pm:1006
+#: lib/NGCP/Panel/Controller/Device.pm:1008
 msgid "ID"
 msgstr "ID"
 
@@ -4433,19 +4433,19 @@ msgstr "Ungültige Vertrags ID"
 msgid "Invalid customer contract id"
 msgstr "Ungültige Kunden ID"
 
-#: lib/NGCP/Panel/Controller/Device.pm:777
+#: lib/NGCP/Panel/Controller/Device.pm:779
 msgid "Invalid device configuration id"
 msgstr "Ungültige Geräte-Konfigurations ID"
 
-#: lib/NGCP/Panel/Controller/Device.pm:604
+#: lib/NGCP/Panel/Controller/Device.pm:606
 msgid "Invalid device firmware id"
 msgstr "Ungültige Geräte-Firmware ID"
 
-#: lib/NGCP/Panel/Controller/Device.pm:275
+#: lib/NGCP/Panel/Controller/Device.pm:277
 msgid "Invalid device model id"
 msgstr "Ungültige Geräte-Modell ID"
 
-#: lib/NGCP/Panel/Controller/Device.pm:946
+#: lib/NGCP/Panel/Controller/Device.pm:948
 msgid "Invalid device profile id"
 msgstr "Ungültige Geräte-Profil ID"
 
@@ -4860,8 +4860,8 @@ msgstr "Wiederholt abspielen"
 msgid "MAC Address"
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/Device.pm:105
-#: lib/NGCP/Panel/Controller/Device.pm:118
+#: lib/NGCP/Panel/Controller/Device.pm:107
+#: lib/NGCP/Panel/Controller/Device.pm:120
 #: lib/NGCP/Panel/Utils/DbStrings.pm:695
 #: share/templates/customer/details.tt:284
 msgid "MAC Address / Identifier"
@@ -5084,7 +5084,7 @@ msgstr "Mobile Push Gültigkeits-Zeitüberschreitung"
 msgid "Mode"
 msgstr "Modus"
 
-#: lib/NGCP/Panel/Controller/Device.pm:47
+#: lib/NGCP/Panel/Controller/Device.pm:49
 #: lib/NGCP/Panel/Utils/DbStrings.pm:1151
 msgid "Model"
 msgstr "Modell"
@@ -5221,8 +5221,8 @@ msgstr ""
 #: lib/NGCP/Panel/Controller/Customer.pm:302
 #: lib/NGCP/Panel/Controller/Customer.pm:308
 #: lib/NGCP/Panel/Controller/Customer.pm:317
-#: lib/NGCP/Panel/Controller/Device.pm:1007
-#: lib/NGCP/Panel/Controller/Device.pm:90
+#: lib/NGCP/Panel/Controller/Device.pm:1009
+#: lib/NGCP/Panel/Controller/Device.pm:92
 #: lib/NGCP/Panel/Controller/EmailTemplate.pm:35
 #: lib/NGCP/Panel/Controller/InvoiceTemplate.pm:34
 #: lib/NGCP/Panel/Controller/Network.pm:28
@@ -5431,7 +5431,7 @@ msgstr "Nummernblock erfolgreich gelöscht"
 msgid "Number block successfully updated"
 msgstr "Nummernblock erfolgreich aktualisiert"
 
-#: lib/NGCP/Panel/Controller/Device.pm:1008
+#: lib/NGCP/Panel/Controller/Device.pm:1010
 msgid "Number of Lines/Keys"
 msgstr "Anzahl der Leitungen/Tasten"
 
@@ -6049,7 +6049,7 @@ msgstr "Priorität"
 msgid "Priority (q-value)"
 msgstr "Priorität (q-value)"
 
-#: lib/NGCP/Panel/Controller/Device.pm:1009
+#: lib/NGCP/Panel/Controller/Device.pm:1011
 msgid "Private Line"
 msgstr "Private Leitung"
 
@@ -6066,8 +6066,8 @@ msgstr "Produkt"
 msgid "Profile"
 msgstr "Profil"
 
-#: lib/NGCP/Panel/Controller/Device.pm:106
-#: lib/NGCP/Panel/Controller/Device.pm:119
+#: lib/NGCP/Panel/Controller/Device.pm:108
+#: lib/NGCP/Panel/Controller/Device.pm:121
 #: lib/NGCP/Panel/Utils/DbStrings.pm:615
 msgid "Profile Name"
 msgstr "Profil-Name"
@@ -6290,10 +6290,10 @@ msgstr "Ersetzungs-Pattern"
 #: lib/NGCP/Panel/Controller/Billing.pm:38
 #: lib/NGCP/Panel/Controller/Contact.pm:33
 #: lib/NGCP/Panel/Controller/Customer.pm:54
-#: lib/NGCP/Panel/Controller/Device.pm:45
-#: lib/NGCP/Panel/Controller/Device.pm:59
-#: lib/NGCP/Panel/Controller/Device.pm:75
-#: lib/NGCP/Panel/Controller/Device.pm:89
+#: lib/NGCP/Panel/Controller/Device.pm:47
+#: lib/NGCP/Panel/Controller/Device.pm:61
+#: lib/NGCP/Panel/Controller/Device.pm:77
+#: lib/NGCP/Panel/Controller/Device.pm:91
 #: lib/NGCP/Panel/Controller/Domain.pm:30
 #: lib/NGCP/Panel/Controller/EmailTemplate.pm:34
 #: lib/NGCP/Panel/Controller/InvoiceTemplate.pm:33
@@ -6890,7 +6890,7 @@ msgstr "Einstellung"
 msgid "Settings"
 msgstr "Einstellungen"
 
-#: lib/NGCP/Panel/Controller/Device.pm:1010
+#: lib/NGCP/Panel/Controller/Device.pm:1012
 msgid "Shared Line"
 msgstr "Geteilte Leitung"
 
@@ -7542,19 +7542,19 @@ msgstr "Ruf-Weiterleitung erfolgreich gelöscht"
 msgid "Successfully cleared fraud interval!"
 msgstr "Missbrauchs-Intervall erfolgreich zurückgesetzt!"
 
-#: lib/NGCP/Panel/Controller/Device.pm:752
+#: lib/NGCP/Panel/Controller/Device.pm:754
 msgid "Successfully created device configuration"
 msgstr "Geräte-Konfiguration erfolgreich erstellt"
 
-#: lib/NGCP/Panel/Controller/Device.pm:579
+#: lib/NGCP/Panel/Controller/Device.pm:581
 msgid "Successfully created device firmware"
 msgstr "Geräte-Firmware erfolgreich erstellt"
 
-#: lib/NGCP/Panel/Controller/Device.pm:238
+#: lib/NGCP/Panel/Controller/Device.pm:240
 msgid "Successfully created device model"
 msgstr "Geräte-Modell erfolgreich erstellt"
 
-#: lib/NGCP/Panel/Controller/Device.pm:921
+#: lib/NGCP/Panel/Controller/Device.pm:923
 msgid "Successfully created device profile"
 msgstr "Geräte-Profil erfolgreich erstellt"
 
@@ -7656,19 +7656,19 @@ msgstr ""
 msgid "Successfully updated destination set"
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/Device.pm:851
+#: lib/NGCP/Panel/Controller/Device.pm:853
 msgid "Successfully updated device configuration"
 msgstr "Geräte-Konfiguration erfolgreich aktualisiert"
 
-#: lib/NGCP/Panel/Controller/Device.pm:683
+#: lib/NGCP/Panel/Controller/Device.pm:685
 msgid "Successfully updated device firmware"
 msgstr "Geräte-Firmware erfolgreich aktualisiert"
 
-#: lib/NGCP/Panel/Controller/Device.pm:475
+#: lib/NGCP/Panel/Controller/Device.pm:477
 msgid "Successfully updated device model"
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/Device.pm:1128
+#: lib/NGCP/Panel/Controller/Device.pm:1130
 msgid "Successfully updated device profile"
 msgstr "Geräte-Profil erfolgreich aktualisiert"
 
@@ -9254,7 +9254,7 @@ msgstr ""
 msgid "Tuesday"
 msgstr "Dienstag"
 
-#: lib/NGCP/Panel/Controller/Device.pm:44
+#: lib/NGCP/Panel/Controller/Device.pm:46
 #: lib/NGCP/Panel/Controller/InvoiceTemplate.pm:35
 #: lib/NGCP/Panel/Controller/Reseller.pm:169
 #: lib/NGCP/Panel/Utils/DbStrings.pm:1188
@@ -9512,13 +9512,13 @@ msgstr "Werte"
 msgid "Vat rate"
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/Device.pm:46
+#: lib/NGCP/Panel/Controller/Device.pm:48
 #: lib/NGCP/Panel/Utils/DbStrings.pm:939
 msgid "Vendor"
 msgstr "Hersteller"
 
-#: lib/NGCP/Panel/Controller/Device.pm:63
-#: lib/NGCP/Panel/Controller/Device.pm:78
+#: lib/NGCP/Panel/Controller/Device.pm:65
+#: lib/NGCP/Panel/Controller/Device.pm:80
 #: lib/NGCP/Panel/Utils/DbStrings.pm:711
 msgid "Version"
 msgstr "Version"
