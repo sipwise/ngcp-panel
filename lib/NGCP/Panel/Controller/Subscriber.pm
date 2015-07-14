@@ -11,6 +11,7 @@ use NGCP::Panel::Utils::Contract;
 use NGCP::Panel::Utils::Subscriber;
 use NGCP::Panel::Utils::Datatables;
 use NGCP::Panel::Utils::Callflow;
+use NGCP::Panel::Utils::CallList;
 use NGCP::Panel::Utils::Preferences;
 use NGCP::Panel::Utils::Message;
 use NGCP::Panel::Utils::DateTime;
@@ -3031,23 +3032,24 @@ sub ajax_calls :Chained('master') :PathPart('calls/ajax') :Args(0) {
             destination_user_id => $c->stash->{subscriber}->uuid,
         ],
     });
+    my $owner = {
+            subscriber => $c->stash->{subscriber},
+            customer => $c->stash->{subscriber}->contract,
+        };
     NGCP::Panel::Utils::Datatables::process(
         $c, $rs, $c->stash->{calls_dt_columns},
         sub {
             my ($result) = @_;
             my %data = ();
-            if($c->user->roles eq "subscriberadmin" || $c->user->roles eq "subscriber") {
-                $data{duration} = POSIX::ceil($result->duration);
-                $data{source_user} = uri_unescape(NGCP::Panel::Utils::Subscriber::apply_rewrite(
-                    c => $c, subscriber => $c->stash->{subscriber}, number => $result->source_user, direction => 'caller_out'
-                ));
-                $data{destination_user} = uri_unescape(NGCP::Panel::Utils::Subscriber::apply_rewrite(
-                    c => $c, subscriber => $c->stash->{subscriber}, number => $result->destination_user, direction => 'caller_out'
-                ));
+            my $resource = NGCP::Panel::Utils::CallList::process_cdr_item($c, $result, $owner);
+            if ($resource->{direction} eq "out") {
+                $data{source_user} = uri_unescape($resource->{own_cli});
+                $data{destination_user} = uri_unescape($resource->{other_cli});
             } else {
-                $data{source_user} = uri_unescape($result->source_user);
-                $data{destination_user} = uri_unescape($result->destination_user);
+                $data{source_user} = uri_unescape($resource->{other_cli});
+                $data{destination_user} = uri_unescape($resource->{own_cli});
             }
+            $data{customer_cost} = $resource->{customer_cost};
             return %data;
         },
     );
