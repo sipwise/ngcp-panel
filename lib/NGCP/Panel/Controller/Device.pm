@@ -1195,6 +1195,7 @@ sub dev_field_config :Chained('/') :PathPart('device/autoprov/config') :Args() {
     $id =~ s/^([^\=]+)\=0$/$1/;
     $id = lc $id;
     $id =~ s/\-[a-z]+$//;
+    $id =~ s/\-//g;
 
 =pod
     my $yealink_key;
