@@ -4,9 +4,24 @@ package NGCP::Panel::Utils::Device;
 use strict;
 
 sub process_connectable_models{
-    my ($c, $just_created, $devmod, $connectable_models) = @_;
+    my ($c, $just_created, $devmod, $connectable_models_in) = @_;
     my $schema = $c->model('DB');
-    if($connectable_models){
+    if($connectable_models_in){
+        my $connectable_models_ids = [
+            map{
+                my $name_or_id = $_;
+                if( $name_or_id !~ /^\d+$/ ){
+                    (my($vendor,$model_name)) = $name_or_id =~ /^([^ ]+) (.*)$/;
+                    my $model = $schema->resultset('autoprov_devices')->search_rs({
+                        'vendor' => $vendor,
+                        'model'  => $model_name,
+                    })->first;
+                    return $model ? $model->id : () ;
+                }else{
+                    return $name_or_id;
+                }
+            } @$connectable_models_in
+        ];
         my @columns = ('device_id' , 'extension_id');
         if('extension' eq $devmod->type){
         #extension can be connected to other extensions? If I remember right - yes.
@@ -15,7 +30,7 @@ sub process_connectable_models{
             #we defenitely can't connect phone to phone
             my $phone2phone = $schema->resultset('autoprov_devices')->search_rs({
                 'type' => 'phone',
-                'id' => { 'in' => $connectable_models },
+                'id' => { 'in' => $connectable_models_ids },
             });
             if($phone2phone->first){
                 die("Phone can't be connected to the phone as extension.");
@@ -27,7 +42,7 @@ sub process_connectable_models{
                 $columns[0] => $devmod->id,
             })->delete;
         }
-        foreach my $connected_id(@$connectable_models){
+        foreach my $connected_id(@$connectable_models_ids){
             if($devmod->id == $connected_id){
                 die("Device can't be connected to itself as extension.");
             }
