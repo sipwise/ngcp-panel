@@ -1,3 +1,18 @@
+ngcp-panel (1.8.2.10+0~mr3.8.2.10) unstable; urgency=medium
+
+  [ Irina Peshinskaya ]
+  * [30005f0] MT#11147 Add extension lines to field device config template vars
+  * [4c1aae1] MT#6483 Remove billingfees and billingzones direct links
+  * [f34c674] MT#11147 Allow "Vendor ModelName" refer to connectable models
+  * [1c3b98f] MT#13919 Properly strip in-between dashes from mac
+
+  [ Andreas Granig ]
+  * [bec3b6b] MT#11027 Use proper bootstrap path.
+
+  [ Sipwise Jenkins Builder ]
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Wed, 15 Jul 2015 20:48:43 +0200
+
 ngcp-panel (1.8.2.9+0~mr3.8.2.9) unstable; urgency=low
 
   [ Gerhard Jungwirth ]
