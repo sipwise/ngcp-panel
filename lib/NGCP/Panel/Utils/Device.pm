@@ -6,22 +6,27 @@ use strict;
 sub process_connectable_models{
     my ($c, $just_created, $devmod, $connectable_models_in) = @_;
     my $schema = $c->model('DB');
-    if($connectable_models_in){
-        my $connectable_models_ids = [
-            map{
-                my $name_or_id = $_;
-                if( $name_or_id !~ /^\d+$/ ){
-                    (my($vendor,$model_name)) = $name_or_id =~ /^([^ ]+) (.*)$/;
-                    my $model = $schema->resultset('autoprov_devices')->search_rs({
-                        'vendor' => $vendor,
-                        'model'  => $model_name,
-                    })->first;
-                    return $model ? $model->id : () ;
-                }else{
-                    return $name_or_id;
+    $connectable_models_in ||= [];
+    if('ARRAY' ne ref $connectable_models_in){
+        $connectable_models_in = [$connectable_models_in];
+    }
+    if(@$connectable_models_in){
+        my $connectable_models_ids = [];
+        foreach(@$connectable_models_in){
+            my $name_or_id = $_;
+            if( $name_or_id !~ /^\d+$/ ){
+                (my($vendor,$model_name)) = $name_or_id =~ /^([^ ]+) (.*)$/;
+                my $model = $schema->resultset('autoprov_devices')->search_rs({
+                    'vendor' => $vendor,
+                    'model'  => $model_name,
+                })->first;
+                if($model){
+                    push @$connectable_models_ids, $model->id;
                 }
-            } @$connectable_models_in
-        ];
+            }else{
+                push @$connectable_models_ids, $name_or_id;
+            }
+        } 
         my @columns = ('device_id' , 'extension_id');
         if('extension' eq $devmod->type){
         #extension can be connected to other extensions? If I remember right - yes.
