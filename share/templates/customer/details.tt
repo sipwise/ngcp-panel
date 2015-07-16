@@ -717,8 +717,10 @@ function create_ranges_annotations(id,type,ranges){
             var action = '<i class="fa '+(linekeyCurrent ? 'fa-plus-square' : 'fa-user')+' fa-fw"></i> ' +
                 '<select class="subselect" name="line.' + linecmt + '.subscriber_id" id="line.' + linecmt + '.subscriber_id">' + 
                 '<option value="0">'+(linekeyCurrent ? '[% c.loc("Subscriber") %]' : '[% c.loc("None") %]' )+'</option>' +
-[% subs = [] -%]
-[% FOR sub IN subs.merge(pbx_groups.all, subscribers.all) -%]
+[% FOR sub IN subscribers.all -%]
+                '<option value="[% sub.provisioning_voip_subscriber.id %]"'+((linekeyCurrent && linekeyCurrent.subid == '[% sub.provisioning_voip_subscriber.id %]')? ' selected="selected"' : '')+'>[% sub.provisioning_voip_subscriber.display_name ? sub.provisioning_voip_subscriber.display_name : sub.username %][% sub.provisioning_voip_subscriber.pbx_extension.defined ? " (" _ sub.provisioning_voip_subscriber.pbx_extension _ ")" : "" %]</option>' +
+[% END -%]
+[% FOR sub IN pbx_groups.all -%]
                 '<option value="[% sub.provisioning_voip_subscriber.id %]"'+((linekeyCurrent && linekeyCurrent.subid == '[% sub.provisioning_voip_subscriber.id %]')? ' selected="selected"' : '')+'>[% sub.provisioning_voip_subscriber.display_name ? sub.provisioning_voip_subscriber.display_name : sub.username %][% sub.provisioning_voip_subscriber.pbx_extension.defined ? " (" _ sub.provisioning_voip_subscriber.pbx_extension _ ")" : "" %]</option>' +
 [% END -%]
                 '</select>' +
