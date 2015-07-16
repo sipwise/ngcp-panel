@@ -233,7 +233,7 @@ sub resource_from_item {
         );
     }
 
-    if($resource->{direction} eq "in" && $item->source_clir) {
+    if($resource->{direction} eq "in" && $item->source_clir && $intra == 0) {
         $resource->{other_cli} = undef;
     } elsif(!$other_skip_domain && $resource->{other_cli} !~ /^\d+$/) {
         $resource->{other_cli} .= '@'.$other_domain;
