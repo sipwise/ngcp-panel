@@ -1,0 +1,55 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "fa5d592f_ce31fa0c",
+        "filename": "lib/NGCP/Panel/Form/CFDestinationSetAPI.pm",
+        "patchSetId": 3
+      },
+      "lineNbr": 38,
+      "author": {
+        "id": 1000005
+      },
+      "writtenOn": "2015-07-20T08:21:14Z",
+      "side": 1,
+      "message": "an address",
+      "revId": "ba759b36574b992c675c11fa4c5e1984582caf4d",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fa5d592f_ae36c601",
+        "filename": "lib/NGCP/Panel/Form/CFDestinationSetAPI.pm",
+        "patchSetId": 3
+      },
+      "lineNbr": 39,
+      "author": {
+        "id": 1000005
+      },
+      "writtenOn": "2015-07-20T08:21:14Z",
+      "side": 1,
+      "message": "is the duration, how long to try this destination before the call is forwarded to the next destination or given up",
+      "revId": "ba759b36574b992c675c11fa4c5e1984582caf4d",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fa5d592f_8e3b02eb",
+        "filename": "lib/NGCP/Panel/Form/CFDestinationSetAPI.pm",
+        "patchSetId": 3
+      },
+      "lineNbr": 40,
+      "author": {
+        "id": 1000005
+      },
+      "writtenOn": "2015-07-20T08:21:14Z",
+      "side": 1,
+      "message": "an order",
+      "revId": "ba759b36574b992c675c11fa4c5e1984582caf4d",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    }
+  ]
+}
