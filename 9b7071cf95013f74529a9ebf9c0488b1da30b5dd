@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "fa5d592f_8999bc70",
+        "filename": "lib/NGCP/Panel/Role/API/CallLists.pm",
+        "patchSetId": 8
+      },
+      "lineNbr": 114,
+      "author": {
+        "id": 1000004
+      },
+      "writtenOn": "2015-07-20T12:02:18Z",
+      "side": 1,
+      "message": "not sure we need this as it is defined in process_cdr_item() (unless you want to get rid of $resource-\u003e{intra_customer} inside process_cdr_item()",
+      "range": {
+        "startLine": 114,
+        "startChar": 4,
+        "endLine": 114,
+        "endChar": 89
+      },
+      "revId": "9b7071cf95013f74529a9ebf9c0488b1da30b5dd",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    }
+  ]
+}
