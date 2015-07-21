@@ -306,6 +306,9 @@
                                     <a class="btn btn-primary btn-small" href="[% c.uri_for_action("/customer/pbx_device_edit", [contract.id, dev.id]) %]">
                                         <i class="icon-edit"></i> [% c.loc('Edit') %]
                                     </a>
+                                    <a class="btn btn-primary btn-small" href="[% c.uri_for_action("/device/dev_field_config", dev.identifier) %]">
+                                        <i class="icon-edit"></i> [% c.loc('Config') %]
+                                    </a>
                                         [%IF dev.profile.config.device.bootstrap_method == 'http'%]
                                     <a class="btn btn-primary btn-small" href="[% c.uri_for_action("/customer/pbx_device_sync", [contract.id, dev.id]) %]">
                                         <i class="icon-edit"></i> [% c.loc('Sync Device') %]
