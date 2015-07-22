@@ -1,3 +1,25 @@
+ngcp-panel (1.9.2.0+0~mr4.0.2.0) unstable; urgency=medium
+
+  [ Andreas Granig ]
+  * [f843d36] MT#11027 Use proper bootstrap path.
+  * [37de964] MT#13919 Properly strip in-between dashes from mac
+  * [6006ca8] MT#11147 Show subscribers if just one available
+
+  [ Irina Peshinskaya ]
+  * [324f777] MT#11147 Allow "Vendor ModelName" refer to connectable models
+  * [867dba5] MT#11147 Rewrite map to foreach for models names => ids map
+  * [6ce2fd1] MT#13717 Avoid duplicated implicit billing zone name
+  * [bbe9682] MT#13931 Add link to field device config into customer interface
+
+  [ Kirill Solomko ]
+  * [f1189d1] MT#13471 - CallLists: do not anonymise intra calls with source_clir
+  * [66649db] MT#13847 - CallLists: preserve cli if no rewrite rules are found
+  * [ed5d624] MT#13573 - Calllists: use specified alias field for own_cli
+
+  [ Sipwise Jenkins Builder ]
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Thu, 23 Jul 2015 00:03:51 +0200
+
 ngcp-panel (1.9.1.0+0~mr4.0.1.0) unstable; urgency=low
 
   [ Gerhard Jungwirth ]
