@@ -1,3 +1,17 @@
+ngcp-panel (1.8.2.11+0~mr3.8.2.11) unstable; urgency=medium
+
+  [ Andreas Granig ]
+  * [e1bf011] MT#11147 Show subscribers if just one available
+
+  [ Kirill Solomko ]
+  * [b587700] MT#13847 - CallLists: preserve cli if no rewrite rules are found
+  * [4fbec11] MT#13573 - Calllists: use specified alias field for own_cli
+  * [f522c12] MT#13471 - CallLists: do not anonymise intra calls with source_clir
+
+  [ Sipwise Jenkins Builder ]
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Wed, 22 Jul 2015 15:46:09 +0200
+
 ngcp-panel (1.8.2.10+0~mr3.8.2.10) unstable; urgency=medium
 
   [ Irina Peshinskaya ]
