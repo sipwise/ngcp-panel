@@ -19,6 +19,8 @@ require Catalyst::ActionRole::RequireSSL;
 use NGCP::Panel::Utils::Voucher;
 use NGCP::Panel::Utils::DateTime;
 
+use NGCP::Panel::Form::Topup::VoucherAPI;
+
 with 'NGCP::Panel::Role::API';
 
 class_has 'api_description' => (
@@ -94,6 +96,7 @@ sub POST :Allow {
             c => $c,
             resource => $resource,
             form => $form,
+            exceptions => [qw/subscriber_id/],
         );
         if($c->user->roles eq "admin") {
         } elsif($c->user->roles eq "reseller") {
@@ -101,8 +104,6 @@ sub POST :Allow {
         }
 
         my $code = NGCP::Panel::Utils::Voucher::encrypt_code($c, $resource->{code});
-
-        # subscriber_id, voucher_code
 
         try {
             # TODO: add billing.vouchers.active flag for internal/emergency use
@@ -166,12 +167,7 @@ sub end : Private {
 
 sub get_form {
     my ($self, $c) = @_;
-    # TODO: use correct Form
-    if($c->user->roles eq "admin") {
-        #return NGCP::Panel::Form::Voucher::AdminAPI->new;
-    } elsif($c->user->roles eq "reseller") {
-        #return NGCP::Panel::Form::Voucher::ResellerAPI->new;
-    }
+    return NGCP::Panel::Form::Topup::VoucherAPI->new(ctx => $c);
 }
 
 # vim: set tabstop=4 expandtab:
