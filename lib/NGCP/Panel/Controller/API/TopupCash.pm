@@ -16,6 +16,8 @@ require Catalyst::ActionRole::CheckTrailingSlash;
 require Catalyst::ActionRole::HTTPMethods;
 require Catalyst::ActionRole::RequireSSL;
 
+use NGCP::Panel::Form::Topup::CashAPI;
+
 with 'NGCP::Panel::Role::API';
 
 class_has 'api_description' => (
@@ -91,13 +93,18 @@ sub POST :Allow {
             c => $c,
             resource => $resource,
             form => $form,
+            # due to the _id suffix, it would be converted to package.id and subscriber.id in
+            # the validation, so exclude them here
+            exceptions => [qw/package_id subscriber_id/],
         );
         if($c->user->roles eq "admin") {
         } elsif($c->user->roles eq "reseller") {
             $resource->{reseller_id} = $c->user->reseller_id;
         }
 
-        # subscriber_id, voucher_code
+        # subscriber_id, package_id, amount
+
+        # if reseller, check if subscriber_id belongs to the calling reseller
 
         try {
             # update contract balance, update customer package_id, billing profile mappings etc.
@@ -123,12 +130,7 @@ sub end : Private {
 
 sub get_form {
     my ($self, $c) = @_;
-    # TODO: use correct Form
-    if($c->user->roles eq "admin") {
-        #return NGCP::Panel::Form::Voucher::AdminAPI->new;
-    } elsif($c->user->roles eq "reseller") {
-        #return NGCP::Panel::Form::Voucher::ResellerAPI->new;
-    }
+    return NGCP::Panel::Form::Topup::CashAPI->new(ctx => $c);
 }
 
 # vim: set tabstop=4 expandtab:
