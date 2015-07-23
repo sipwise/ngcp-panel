@@ -42,6 +42,11 @@ sub hal_from_item {
     $resource{initial_profiles} = _get_profiles_mappings($item,'initial_profiles');
     $resource{topup_profiles} = _get_profiles_mappings($item,'topup_profiles');
     $resource{underrun_profiles} = _get_profiles_mappings($item,'underrun_profiles');
+    
+    #$resource{initial_balance} /= 100.0 if exists $resource{initial_balance} && defined $resource{initial_balance}; #prevent auto-vivivication..
+    #$resource{service_charge} /= 100.0 if exists $resource{service_charge} && defined $resource{service_charge};
+    #$resource{underrun_lock_threshold} /= 100.0 if exists $resource{underrun_lock_threshold} && defined $resource{underrun_lock_threshold};
+    #$resource{underrun_profile_threshold} /= 100.0 if exists $resource{underrun_profile_threshold} && defined $resource{underrun_profile_threshold};
 
     my @profile_links = ();
     my @network_links = ();
@@ -119,6 +124,11 @@ sub update_item {
     
     delete $resource->{id};
     my $schema = $c->model('DB');
+    
+    #$resource{initial_balance} *= 100.0 if exists $resource{initial_balance} && defined $resource{initial_balance}; #prevent auto-vivivication..
+    #$resource{service_charge} *= 100.0 if exists $resource{service_charge} && defined $resource{service_charge};
+    #$resource{underrun_lock_threshold} *= 100.0 if exists $resource{underrun_lock_threshold} && defined $resource{underrun_lock_threshold};
+    #$resource{underrun_profile_threshold} *= 100.0 if exists $resource{underrun_profile_threshold} && defined $resource{underrun_profile_threshold};
     
     $form //= $self->get_form($c);
     ## TODO: for some reason, formhandler lets missing reseller slip thru

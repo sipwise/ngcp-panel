@@ -15,7 +15,7 @@ has_field 'reseller' => (
 has_block 'fields' => (
     tag => 'div',
     class => [qw/modal-body/],
-    render_list => [qw/reseller code amount valid_until customer/],
+    render_list => [qw/reseller code amount valid_until customer package/],
 );
 
 

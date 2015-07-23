@@ -7,7 +7,9 @@ use Data::HAL::Link qw();
 use HTTP::Headers qw();
 use HTTP::Status qw(:constants);
 use MooseX::ClassAttribute qw(class_has);
+use NGCP::Panel::Utils::Voucher;
 use NGCP::Panel::Utils::DateTime;
+use NGCP::Panel::Utils::ProfilePackages;
 use Path::Tiny qw(path);
 use Safe::Isa qw($_isa);
 BEGIN { extends 'Catalyst::Controller::ActionRole'; }
@@ -15,9 +17,6 @@ require Catalyst::ActionRole::ACL;
 require Catalyst::ActionRole::CheckTrailingSlash;
 require Catalyst::ActionRole::HTTPMethods;
 require Catalyst::ActionRole::RequireSSL;
-
-use NGCP::Panel::Utils::Voucher;
-use NGCP::Panel::Utils::DateTime;
 
 use NGCP::Panel::Form::Topup::VoucherAPI;
 
@@ -83,6 +82,7 @@ sub POST :Allow {
         return;
     }
 
+    $c->model('DB')->set_transaction_isolation('READ COMMITTED');
     my $guard = $c->model('DB')->txn_scope_guard;
     {
         my $resource = $self->get_valid_post_data(
@@ -98,48 +98,58 @@ sub POST :Allow {
             form => $form,
             exceptions => [qw/subscriber_id/],
         );
-        if($c->user->roles eq "admin") {
-        } elsif($c->user->roles eq "reseller") {
-            $resource->{reseller_id} = $c->user->reseller_id;
-        }
+        #my $reseller_id;
+        #if($c->user->roles eq "admin") {
+        #} elsif($c->user->roles eq "reseller") {
+        #    $reseller_id = $c->user->reseller_id;
+        #}
 
         my $code = NGCP::Panel::Utils::Voucher::encrypt_code($c, $resource->{code});
+        my $now = NGCP::Panel::Utils::DateTime::current_local;
+        my $subscriber = $c->model('DB')->resultset('voip_subscribers')->find($resource->{subscriber_id});
+        unless($subscriber) {
+            $self->error($c, HTTP_UNPROCESSABLE_ENTITY, 'Unknown subscriber_id.');
+            last;
+        }
+        my $customer = $subscriber->contract;
+        unless($customer->status eq 'active') {
+            $self->error($c, HTTP_UNPROCESSABLE_ENTITY, 'Customer contract is not active.');
+            last;
+        }
+        unless($customer->contact->reseller) {
+            $self->error($c, HTTP_UNPROCESSABLE_ENTITY, 'Contract is not a customer contract.');
+            last;
+        }
 
+        my $voucher = $c->model('DB')->resultset('vouchers')->find({
+            code => $code,
+            used_by_subscriber_id => undef,
+            valid_until => { '<=' => $now },
+            reseller_id => $customer->contact->reseller_id,
+        },{
+            for => 'update',
+        });
+        unless($voucher) {
+            $self->error($c, HTTP_UNPROCESSABLE_ENTITY, 'Invalid voucher code or already used.');
+            last;                
+        }
+        if($voucher->customer_id && $customer->id != $voucher->customer_id) {
+            $self->error($c, HTTP_UNPROCESSABLE_ENTITY, 'Voucher is reserved for a different customer.');
+            last;                 
+        }        
+        unless($voucher->reseller_id == $customer->contact->reseller_id) {
+            $self->error($c, HTTP_UNPROCESSABLE_ENTITY, 'Voucher belongs to another reseller.');
+            last;                 
+        }
+        # TODO: add and check billing.vouchers.active flag for internal/emergency use
+        
         try {
-            # TODO: add billing.vouchers.active flag for internal/emergency use
-
-            my $now = NGCP::Panel::Utils::DateTime::current_local;
-            my $subscriber = $c->model('DB')->resultset('voip_subscribers')->find($resource->{subscriber_id});
-            unless($subscriber) {
-                # TODO: error
-            }
-            my $customer = $subscriber->contract;
-
-            my $voucher = $c->model('DB')->resultset('voip_subscribers')->find({
-                code => $code,
-                used_by_subscriber_id => undef,
-                valid_until => { '<=' => $now },
-                reseller_id => $customer->contact->reseller_id, # TODO: make unique key code,reseller_id
-            },{
-                for => 'update',
-            });
-            unless($voucher) {
-                # TODO: invalid code or already used
-            }
-
-            if($voucher->customer_id && $customer->id != $voucher->customer_id) {
-                # TODO: error, voucher only to be used by a different customer
-            }
-
-            if($voucher->reseller_id != $customer->contact->reseller_id) {
-                # TODO: error, voucher only to be used by a different customer
-            }
-
-            # TODO: update customer package_id, billing profile mappings etc.
-
-            my $balance = undef; # TODO: get current contract balance
-            $balance->update({ cash_balance => $balance->cash_balance + $voucher->amount });
-
+            my $balance = NGCP::Panel::Utils::ProfilePackages::topup_contract_balance(c => $c,
+                contract => $customer,
+                #old_package => $customer->profile_package,
+                voucher => $voucher,
+                now => $now,
+            );
 
             $voucher->update({
                 used_by_subscriber_id => $subscriber->id,
