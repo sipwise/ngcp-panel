@@ -47,7 +47,8 @@ has_field 'interval_charge' => (
     type => 'Money',
     element_attr => {
         rel => ['tooltip'],
-        title => ['The base fee charged per billing interval (a monthly fixed fee, e.g. 10) in Euro/Dollars/etc. This fee can be used on the invoice.']
+        #title => ['The base fee charged per billing interval (a monthly fixed fee, e.g. 10) in Euro/Dollars/etc. This fee can be used on the invoice.'] #cents???
+        title => ['The base fee charged per billing interval (a monthly fixed fee, e.g. 100) in cents. This fee can be used on the invoice.'] #cents???
     },
     default => '0',
 );
@@ -65,7 +66,8 @@ has_field 'interval_free_cash' => (
     type => 'Money',
     element_attr => {
         rel => ['tooltip'],
-        title => ['The included free money per billing interval (in Euro, Dollars etc., e.g. 10).']
+        #title => ['The included free money per billing interval (in Euro, Dollars etc., e.g. 10).'] #cents???
+        title => ['The included free money per billing interval (in cents, e.g. 10000).']
     },
     default => '0',
 );

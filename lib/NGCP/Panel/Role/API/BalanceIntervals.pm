@@ -67,7 +67,7 @@ sub hal_from_balance {
     my $is_customer = (defined $contract->contact->reseller_id ? 1 : 0);
     my $bm_start = NGCP::Panel::Utils::ProfilePackages::get_actual_billing_mapping(c => $c, contract => $contract, now => $item->start);
     my $profile_at_start = $bm_start->billing_mappings->first->billing_profile;
-    my $invoice = $item->invoice;
+    #my $invoice = $item->invoice;
 
     my %resource = $item->get_inflated_columns;
     $resource{cash_balance} /= 100.0;
@@ -99,7 +99,7 @@ sub hal_from_balance {
                 Data::HAL::Link->new(relation => 'ngcp:customerbalances', href => sprintf("/api/customerbalances/%d", $contract->id)) ) :
                 Data::HAL::Link->new(relation => 'ngcp:contracts', href => sprintf("/api/contracts/%d", $contract->id)) ),
             Data::HAL::Link->new(relation => 'ngcp:billingprofiles', href => sprintf("/api/billingprofiles/%d", $profile_at_start->id)),
-            ($invoice ? Data::HAL::Link->new(relation => 'ngcp:invoices', href => sprintf("/api/invoices/%d", $invoice->id)) : ()),
+            #($invoice ? Data::HAL::Link->new(relation => 'ngcp:invoices', href => sprintf("/api/invoices/%d", $invoice->id)) : ()),
         ],
         relation => 'ngcp:'.$self->resource_name,
     );
