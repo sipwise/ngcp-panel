@@ -42,6 +42,7 @@ sub voucher_list :Chained('/') :PathPart('voucher') :CaptureArgs(0) {
         $c->user->billing_data ? { name => "code", "search" => 1, "title" => $c->loc("Code") } : (),
         { name => "amount", "search" => 1, "title" => $c->loc("Amount") },
         { name => "reseller.name", "search" => 1, "title" => $c->loc("Reseller") },
+        { name => "profile_package.name", "search" => 1, "title" => $c->loc("Profile Package") },
         { name => "valid_until", "search" => 1, "title" => $c->loc("Valid Until") },
         { name => "used_at", "search" => 1, "title" => $c->loc("Used At") },
         { name => "used_by_subscriber.id", "search" => 1, "title" => $c->loc("Used By Subscriber #") },
@@ -139,6 +140,8 @@ sub edit :Chained('base') :PathPart('edit') {
     my $params = $c->stash->{voucher};
     $params->{valid_until} =~ s/^(\d{4}\-\d{2}\-\d{2}).*$/$1/;
     $params->{reseller}{id} = delete $params->{reseller_id};
+    $params->{customer}{id} = delete $params->{customer_id};
+    $params->{package}{id} = delete $params->{package_id};
     if($c->user->billing_data) {
         $params->{code} = NGCP::Panel::Utils::Voucher::decrypt_code($c, $params->{code});
     } else {
@@ -161,6 +164,7 @@ sub edit :Chained('base') :PathPart('edit') {
         fields => {
             'reseller.create' => $c->uri_for('/reseller/create'),
             'customer.create' => $c->uri_for('/customer/create'),
+            'package.create' => $c->uri_for('/package/create'),
         },
         back_uri => $c->req->uri,
     );
@@ -173,7 +177,9 @@ sub edit :Chained('base') :PathPart('edit') {
             }
             delete $form->values->{reseller};
             $form->values->{customer_id} = $form->values->{customer}{id};
+            $form->values->{package_id} = $form->values->{package}{id};
             delete $form->values->{customer};
+            delete $form->values->{package};
             if($form->values->{valid_until} =~ /^\d{4}\-\d{2}\-\d{2}$/) {
                 $form->values->{valid_until} = NGCP::Panel::Utils::DateTime::from_string($form->values->{valid_until})
                     ->add(days => 1)->subtract(seconds => 1);
@@ -190,6 +196,8 @@ sub edit :Chained('base') :PathPart('edit') {
             });
 
             delete $c->session->{created_objects}->{reseller};
+            delete $c->session->{created_objects}->{customer};
+            delete $c->session->{created_objects}->{profile_package};
             NGCP::Panel::Utils::Message->info(
                 c => $c,
                 desc  => $c->loc('Billing voucher successfully updated'),
@@ -235,6 +243,7 @@ sub create :Chained('voucher_list') :PathPart('create') :Args(0) {
         fields => {
             'reseller.create' => $c->uri_for('/reseller/create'),
             'customer.create' => $c->uri_for('/customer/create'),
+            'package.create' => $c->uri_for('/package/create'),
         },
         back_uri => $c->req->uri,
     );
@@ -248,6 +257,8 @@ sub create :Chained('voucher_list') :PathPart('create') :Args(0) {
             delete $form->values->{reseller};
             $form->values->{customer_id} = $form->values->{customer}{id};
             delete $form->values->{customer};
+            $form->values->{package_id} = $form->values->{package}{id};
+            delete $form->values->{package};            
             $form->values->{created_at} = NGCP::Panel::Utils::DateTime::current_local;
             if($form->values->{valid_until} =~ /^\d{4}\-\d{2}\-\d{2}$/) {
                 $form->values->{valid_until} = NGCP::Panel::Utils::DateTime::from_string($form->values->{valid_until})
@@ -257,6 +268,8 @@ sub create :Chained('voucher_list') :PathPart('create') :Args(0) {
             my $voucher = $c->model('DB')->resultset('vouchers')->create($form->values);
             $c->session->{created_objects}->{voucher} = { id => $voucher->id };
             delete $c->session->{created_objects}->{reseller};
+            delete $c->session->{created_objects}->{customer};
+            delete $c->session->{created_objects}->{profile_package};            
             NGCP::Panel::Utils::Message->info(
                 c => $c,
                 desc  => $c->loc('Billing voucher successfully created'),
@@ -330,6 +343,7 @@ sub voucher_upload :Chained('voucher_list') :PathPart('upload') :Args(0) {
                             ->add(days => 1)->subtract(seconds => 1);
                     }
                     $row->{customer_id} = undef if(defined $row->{customer_id} && $row->{customer_id} eq "");
+                    $row->{package_id} = undef if(defined $row->{package_id} && $row->{package_id} eq "");
                     $row->{code} = NGCP::Panel::Utils::Voucher::encrypt_code($c, $row->{code});
                     push @vouchers, $row;
                 }

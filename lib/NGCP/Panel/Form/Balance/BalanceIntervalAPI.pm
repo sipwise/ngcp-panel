@@ -35,14 +35,15 @@ has_field 'billing_profile_id' => (
     },
 );
 
-has_field 'invoice_id' => (
-    type => 'PosInteger',
-    #required => 1,
-    element_attr => {
-        rel => ['tooltip'],
-        title => ['The id of the invoice containing this invoice.']
-    },
-);
+#we leave this out for now
+#has_field 'invoice_id' => (
+#    type => 'PosInteger',
+#    #required => 1,
+#    element_attr => {
+#        rel => ['tooltip'],
+#        title => ['The id of the invoice containing this invoice.']
+#    },
+#);
 
 has_field 'cash_balance' => (
     type => 'Money',

@@ -52,6 +52,14 @@ has_field 'customer' => (
     },
 );
 
+has_field 'package' => (
+    type => '+NGCP::Panel::Field::ProfilePackage',
+    #validate_when_empty => 1,
+    element_attr => {
+        rel => ['tooltip'],
+        title => ['The profile package the customer will switch with the top-up.']
+    },
+);
 
 has_field 'save' => (
     type => 'Submit',
@@ -63,7 +71,7 @@ has_field 'save' => (
 has_block 'fields' => (
     tag => 'div',
     class => [qw/modal-body/],
-    render_list => [qw/code amount valid_until customer/],
+    render_list => [qw/code amount valid_until customer package/],
 );
 
 has_block 'actions' => (

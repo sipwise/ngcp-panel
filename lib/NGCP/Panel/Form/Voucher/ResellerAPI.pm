@@ -61,6 +61,15 @@ has_field 'package_id' => (
     },
 );
 
+has_field 'package' => (
+    type => '+NGCP::Panel::Field::ProfilePackage',
+    #required => 1,
+    element_attr => {
+        rel => ['tooltip'],
+        title => ['The profile package the customer will switch with the top-up.']
+    },
+);
+
 sub validate_valid_until {
     my ($self, $field) = @_;
 
