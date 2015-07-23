@@ -8,6 +8,7 @@ use HTTP::Headers qw();
 use HTTP::Status qw(:constants);
 use MooseX::ClassAttribute qw(class_has);
 use NGCP::Panel::Utils::DateTime;
+use NGCP::Panel::Utils::ProfilePackages;
 use Path::Tiny qw(path);
 use Safe::Isa qw($_isa);
 BEGIN { extends 'Catalyst::Controller::ActionRole'; }
@@ -80,6 +81,7 @@ sub POST :Allow {
         return;
     }
 
+    $c->model('DB')->set_transaction_isolation('READ COMMITTED');
     my $guard = $c->model('DB')->txn_scope_guard;
     {
         my $resource = $self->get_valid_post_data(
@@ -97,17 +99,41 @@ sub POST :Allow {
             # the validation, so exclude them here
             exceptions => [qw/package_id subscriber_id/],
         );
+        my $reseller_id;
         if($c->user->roles eq "admin") {
         } elsif($c->user->roles eq "reseller") {
-            $resource->{reseller_id} = $c->user->reseller_id;
+            $reseller_id = $c->user->reseller_id;
         }
 
         # subscriber_id, package_id, amount
-
+        my $now = NGCP::Panel::Utils::DateTime::current_local;
+        my $subscriber = $c->model('DB')->resultset('voip_subscribers')->find($resource->{subscriber_id});
+        unless($subscriber) {
+            $self->error($c, HTTP_UNPROCESSABLE_ENTITY, 'Unknown subscriber_id.');
+            last;
+        }
+        my $customer = $subscriber->contract;
+        unless($customer->status eq 'active') {
+            $self->error($c, HTTP_UNPROCESSABLE_ENTITY, 'Customer contract is not active.');
+            last;
+        }
+        unless($customer->contact->reseller) {
+            $self->error($c, HTTP_UNPROCESSABLE_ENTITY, 'Contract is not a customer contract.');
+            last;
+        }
         # if reseller, check if subscriber_id belongs to the calling reseller
+        if($reseller_id && $reseller_id != $customer->contact->reseller_id) {
+            $self->error($c, HTTP_UNPROCESSABLE_ENTITY, 'Subscriber customer contract belongs to another reseller.');
+            last;                 
+        }        
 
         try {
-            # update contract balance, update customer package_id, billing profile mappings etc.
+            my $balance = NGCP::Panel::Utils::ProfilePackages::topup_contract_balance(c => $c,
+                contract => $customer,
+                #old_package => $customer->profile_package,
+                amount => $resource->{amount},
+                now => $now,
+            );
         } catch($e) {
             $c->log->error("failed to create cash topup: $e"); # TODO: user, message, trace, ...
             $self->error($c, HTTP_INTERNAL_SERVER_ERROR, "Failed to create cash topup.");

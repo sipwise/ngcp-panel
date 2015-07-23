@@ -54,7 +54,7 @@ has_field 'initial_balance' => (
     type => 'Money',
     element_attr => {
         rel => ['tooltip'],
-        title => ['The initial balance (in the effective profile\'s currency) that will be set for the very first balance interval.']
+        title => ['The initial balance (in cents) that will be set for the very first balance interval.']
     },
 );
 
@@ -160,7 +160,7 @@ has_field 'underrun_lock_threshold' => (
     type => 'Money',
     element_attr => {
         rel => ['tooltip'],
-        title => ['The balance threshold for the underrun lock level to come into effect.']
+        title => ['The balance threshold (in cents) for the underrun lock level to come into effect.']
     },
 );
 
@@ -176,7 +176,7 @@ has_field 'underrun_profile_threshold' => (
     type => 'Money',
     element_attr => {
         rel => ['tooltip'],
-        title => ['The balance threshold for underrun profiles to come into effect.']
+        title => ['The balance threshold (in cents) for underrun profiles to come into effect.']
     },
 );
 
@@ -214,7 +214,7 @@ has_field 'service_charge' => (
     type => 'Money',
     element_attr => {
         rel => ['tooltip'],
-        title => ['The service charge amount will be subtracted from the voucher amount.']
+        title => ['The service charge amount (in cents) will be subtracted from the voucher amount.']
     },
 );
 

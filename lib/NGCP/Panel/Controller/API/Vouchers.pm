@@ -38,6 +38,17 @@ class_has 'query_params' => (
                 second => sub {},
             },
         },
+        {
+            param => 'package_id',
+            description => 'Filter for vouchers belonging to a specific profile package',
+            query => {
+                first => sub {
+                    my $q = shift;
+                    { package_id => $q };
+                },
+                second => sub {},
+            },
+        },        
     ]},
 );
 

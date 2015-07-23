@@ -69,6 +69,8 @@ if ($is_local_env) {
     );    
 }
 
+my $infinite_future;
+
 {
     my $future = NGCP::Panel::Utils::DateTime::infinite_future;
     my $past = NGCP::Panel::Utils::DateTime::infinite_past;
@@ -77,7 +79,8 @@ if ($is_local_env) {
     my $dtf = DateTime::Format::Strptime->new(
         pattern => '%F %T', 
     );
-    is($dtf->format_datetime($future),'9999-12-31 23:59:59','check if infinite future is 9999-12-31 23:59:59');
+    $infinite_future = $dtf->format_datetime($future);
+    is($infinite_future,'9999-12-31 23:59:59','check if infinite future is 9999-12-31 23:59:59');
     is($dtf->format_datetime($past),'1000-01-01 00:00:00','check if infinite past is 1000-01-01 00:00:00');
     
     foreach my $offset ((0,'+'. 80*365*24*60*60 .'s','-'. 80*365*24*60*60 .'s')) {
@@ -118,22 +121,6 @@ if ($is_local_env) {
 my $t = time;
 my $default_reseller_id = 1;
 
-$req = HTTP::Request->new('POST', $uri.'/api/billingprofiles/');
-$req->header('Content-Type' => 'application/json');
-$req->header('Prefer' => 'return=representation');
-$req->content(JSON::to_json({
-    name => "test profile $t",
-    handle  => "testprofile$t",
-    reseller_id => $default_reseller_id,
-}));
-$res = $ua->request($req);
-is($res->code, 201, "POST test billing profile");
-my $billingprofile_uri = $uri.'/'.$res->header('Location');
-$req = HTTP::Request->new('GET', $billingprofile_uri);
-$res = $ua->request($req);
-is($res->code, 200, "fetch POSTed billing profile");
-my $billingprofile = JSON::from_json($res->decoded_content);
-
 # first, create a contact
 $req = HTTP::Request->new('POST', $uri.'/api/customercontacts/');
 $req->header('Content-Type' => 'application/json');
@@ -150,11 +137,94 @@ $res = $ua->request($req);
 is($res->code, 200, "fetch customer contact");
 my $custcontact = JSON::from_json($res->decoded_content);
 
+$req = HTTP::Request->new('POST', $uri.'/api/domains/');
+$req->header('Content-Type' => 'application/json');
+$req->content(JSON::to_json({
+    domain => 'test' . ($t-1) . '.example.org',
+    reseller_id => $default_reseller_id,
+}));
+$res = $ua->request($req);
+is($res->code, 201, "POST test domain");
+$req = HTTP::Request->new('GET', $uri.'/'.$res->header('Location'));
+$res = $ua->request($req);
+is($res->code, 200, "fetch POSTed test domain");
+my $domain = JSON::from_json($res->decoded_content);
+
+
 my %customer_map :shared = ();
 
+my $package_map = {};
+my $voucher_map = {};
+my $subscriber_map = {};
 my $profile_map = {};
 
+my $billingprofile = _create_billing_profile("test_default");
+
 if (_get_allow_fake_client_time()) {
+
+    {
+        my $network_a = _create_billing_network_a();
+        my $network_b = _create_billing_network_b();
+        
+        my $profile_base_any = _create_billing_profile('BASE_ANY');
+        my $profile_base_a = _create_billing_profile('BASE_NETWORK_A');
+        my $profile_base_b = _create_billing_profile('BASE_NETWORK_B');
+        
+        my $profile_silver_a = _create_billing_profile('SILVER_NETWORK_A');
+        my $profile_silver_b = _create_billing_profile('SILVER_NETWORK_B');
+        
+        my $profile_gold_a = _create_billing_profile('GOLD_NETWORK_A');
+        my $profile_gold_b = _create_billing_profile('GOLD_NETWORK_B');          
+
+        my $base_package = _create_base_profile_package($profile_base_any,$profile_base_a,$profile_base_b,$network_a,$network_b);
+        my $silver_package = _create_silver_profile_package($base_package,$profile_silver_a,$profile_silver_b,$network_a,$network_b);
+        my $extension_package = _create_extension_profile_package($base_package,$profile_silver_a,$profile_silver_b,$network_a,$network_b);
+        my $gold_package = _create_gold_profile_package($base_package,$profile_gold_a,$profile_gold_b,$network_a,$network_b);
+
+        _set_time(NGCP::Panel::Utils::DateTime::from_string('2015-06-03 13:00:00'));
+        
+        my $v_silver_1 = _create_voucher(10,'SILVER1'.$t,undef,$silver_package);
+        my $v_extension_1 = _create_voucher(2,'EXTENSION1'.$t,undef,$extension_package);
+        my $v_gold_1 = _create_voucher(20,'GOLD1'.$t,undef,$gold_package);
+
+        _set_time(NGCP::Panel::Utils::DateTime::from_string('2015-06-03 13:00:00'));
+        my $customer_x = _create_customer($base_package);
+        my $subscriber_x = _create_subscriber($customer_x);
+        
+        _set_time(NGCP::Panel::Utils::DateTime::from_string('2015-06-21 13:00:00'));
+        
+        _perform_topup_voucher($subscriber_x,$v_silver_1);
+        
+        _set_time(NGCP::Panel::Utils::DateTime::from_string('2015-07-21 13:00:00'));
+        
+        _check_interval_history($customer_x,[
+            { start => '~2015-06-03 13:00:00', stop => '~2015-06-21 13:00:00', cash => 0, profile => $profile_base_b->{id} },
+            { start => '~2015-06-21 13:00:00', stop => $infinite_future, cash => 8, profile => $profile_silver_b->{id} },
+        ]);
+        
+        #_set_time(NGCP::Panel::Utils::DateTime::from_string('2015-06-03 13:00:00'));
+        #my $customer_y = _create_customer($base_package);
+        #my $subscriber_y = _create_subscriber($customer_y);
+        
+        #_set_time(NGCP::Panel::Utils::DateTime::from_string('2015-03-04 13:00:00'));
+        
+        #_perform_topup_voucher($subscriber,$v_extension_1);        
+        
+    #    #my $voucher = _create_voucher(10,'A'.$t);
+    #    
+    #    #my $customer = _create_customer();
+    #    
+    #    #$voucher = _create_voucher(11,'B'.$t,$customer);
+    #    
+    #    my $prof_package_topup20 = _create_profile_package('topup');
+    #    
+    #    my $voucher = _create_voucher(20,'C'.$t,undef,$prof_package_topup20);
+    
+    
+        _set_time();
+    }
+
+
 
     my $prof_package_create30d = _create_profile_package('create','day',30);
     my $prof_package_1st30d = _create_profile_package('1st','day',30);
@@ -170,11 +240,16 @@ if (_get_allow_fake_client_time()) {
     {
         
         _set_time(NGCP::Panel::Utils::DateTime::from_string('2014-12-30 13:00:00'));
-        
+
+        my $customer_topup = _create_customer($prof_package_topup); #create closest to now        
         my $customer_wo = _create_customer();
         my $customer_create1m = _create_customer($prof_package_create1m);
     
         _set_time(NGCP::Panel::Utils::DateTime::from_string('2015-04-02 02:00:00'));
+
+        _check_interval_history($customer_topup,[
+            { start => '~2014-12-30 13:00:00', stop => $infinite_future},
+        ]);  
         
         _check_interval_history($customer_wo,[
             { start => '2014-12-01 00:00:00', stop => '2014-12-31 23:59:59'},
@@ -189,7 +264,7 @@ if (_get_allow_fake_client_time()) {
             { start => '2015-01-30 00:00:00', stop => '2015-02-27 23:59:59'},
             { start => '2015-02-28 00:00:00', stop => '2015-03-29 23:59:59'},
             { start => '2015-03-30 00:00:00', stop => '2015-04-29 23:59:59'},
-        ]);    
+        ]);
         
         _set_time();
     }
@@ -206,7 +281,7 @@ if (_get_allow_fake_client_time()) {
         
         $ts = '2014-03-01 13:00:00';
         _set_time(NGCP::Panel::Utils::DateTime::from_string($ts));
-    
+        
         _check_interval_history($customer,[
             { start => '2014-01-01 00:00:00', stop => '2014-01-31 23:59:59'},
             { start => '2014-02-01 00:00:00', stop => '2014-02-28 23:59:59'},
@@ -223,7 +298,7 @@ if (_get_allow_fake_client_time()) {
         
         $ts = '2014-04-01 13:00:00';
         _set_time(NGCP::Panel::Utils::DateTime::from_string($ts));
-    
+        
         _check_interval_history($customer,[
             { start => '2014-01-01 00:00:00', stop => '2014-01-31 23:59:59'},
             { start => '2014-02-01 00:00:00', stop => '2014-02-28 23:59:59'},
@@ -273,7 +348,7 @@ if (_get_allow_fake_client_time()) {
         ]);   
         
         _switch_package($customer,$prof_package_1st1m);
-    
+        
         _check_interval_history($customer,[
             { start => '2014-01-01 00:00:00', stop => '2014-01-31 23:59:59'},
             { start => '2014-02-01 00:00:00', stop => '2014-02-28 23:59:59'},
@@ -281,7 +356,7 @@ if (_get_allow_fake_client_time()) {
             { start => '2014-03-07 00:00:00', stop => '2014-04-30 23:59:59'},
             { start => '2014-05-01 00:00:00', stop => '2014-05-31 23:59:59'},
         ]);    
-    
+        
         my $t1 = $ts;    
         $ts = '2014-08-03 13:00:00';
         _set_time(NGCP::Panel::Utils::DateTime::from_string($ts));
@@ -314,7 +389,54 @@ if (_get_allow_fake_client_time()) {
         _check_interval_history($customer,[
             { start => '2014-08-07 00:00:00', stop => '2014-08-20 23:59:59'},
             { start => '2014-08-21 00:00:00', stop => '2014-09-30 23:59:59'},
+        ],NGCP::Panel::Utils::DateTime::from_string($t1));
+        
+        $t1 = $ts;
+        #my $t1 = '2014-09-03 13:00:00';
+        $ts = '2014-10-04 13:00:00';
+        _set_time(NGCP::Panel::Utils::DateTime::from_string($ts));
+        
+        _switch_package($customer,$prof_package_topup);
+
+        _check_interval_history($customer,[
+            { start => '2014-10-01 00:00:00', stop => '~2014-10-04 13:00:00'},
+            { start => '~2014-10-04 13:00:00', stop => $infinite_future},
+        ],NGCP::Panel::Utils::DateTime::from_string($t1));
+        
+        my $voucher = _create_voucher(10,'topup_start_mode_test'.$t,$customer,$prof_package_create1m);
+        my $subscriber = _create_subscriber($customer);
+
+        #_check_interval_history($customer,[
+        #    { start => '2014-10-01 00:00:00', stop => '~2014-10-04 13:00:00'},
+        #    { start => '~2014-10-04 13:00:00', stop => $infinite_future},
+        #],NGCP::Panel::Utils::DateTime::from_string($t1));  
+        
+        _perform_topup_voucher($subscriber,$voucher);
+        
+        _check_interval_history($customer,[
+            { start => '2014-10-01 00:00:00', stop => '~2014-10-04 13:00:00'},
+            { start => '~2014-10-04 13:00:00', stop => '2014-10-06 23:59:59'},
         ],NGCP::Panel::Utils::DateTime::from_string($t1));       
+        
+        $t1 = $ts;
+        $ts = '2014-12-09 13:00:00';
+        _set_time(NGCP::Panel::Utils::DateTime::from_string($ts));
+        
+        _check_interval_history($customer,[
+            { start => '~2014-10-04 13:00:00', stop => '2014-10-06 23:59:59'},
+            { start => '2014-10-07 00:00:00', stop => '2014-11-06 23:59:59'},
+            { start => '2014-11-07 00:00:00', stop => '2014-12-06 23:59:59'},
+            { start => '2014-12-07 00:00:00', stop => '2015-01-06 23:59:59'},
+        ],NGCP::Panel::Utils::DateTime::from_string($t1));
+        
+        _switch_package($customer);
+        
+        _check_interval_history($customer,[
+            { start => '~2014-10-04 13:00:00', stop => '2014-10-06 23:59:59'},
+            { start => '2014-10-07 00:00:00', stop => '2014-11-06 23:59:59'},
+            { start => '2014-11-07 00:00:00', stop => '2014-12-06 23:59:59'},
+            { start => '2014-12-07 00:00:00', stop => '2014-12-31 23:59:59'},
+        ],NGCP::Panel::Utils::DateTime::from_string($t1));        
         
         _set_time();
     }
@@ -422,7 +544,7 @@ sub _check_interval_history {
     my $i = 0;
     my $limit = '';
     $limit = '&start=' . DateTime::Format::ISO8601->parse_datetime($limit_dt) if defined $limit_dt;
-    my $label = 'interval history of contract with ' . ($customer->{profile_package_id} ? 'package ' . $profile_map->{$customer->{profile_package_id}}->{name} : 'no package') . ': ';
+    my $label = 'interval history of contract with ' . ($customer->{profile_package_id} ? 'package ' . $package_map->{$customer->{profile_package_id}}->{name} : 'no package') . ': ';
     my $nexturi = $uri.'/api/balanceintervals/'.$customer->{id}.'/?page=1&rows=10&order_by_direction=asc&order_by=start'.$limit;
     do {
         $req = HTTP::Request->new('GET',$nexturi);
@@ -495,12 +617,39 @@ sub _compare_interval {
     my ($got,$expected,$label) = @_;
     
     if ($expected->{start}) {
-        is(NGCP::Panel::Utils::DateTime::from_string($got->{start}),NGCP::Panel::Utils::DateTime::from_string($expected->{start}),$label . "check interval " . $got->{id} . " start timestmp");
+        #is(NGCP::Panel::Utils::DateTime::from_string($got->{start}),NGCP::Panel::Utils::DateTime::from_string($expected->{start}),$label . "check interval " . $got->{id} . " start timestmp");
+        if (substr($expected->{start},0,1) eq '~') {
+            _is_ts_approx($got->{start},$expected->{start},$label . "check interval " . $got->{id} . " start timestamp");
+        } else {
+            is($got->{start},$expected->{start},$label . "check interval " . $got->{id} . " start timestmp");
+        }
     }
     if ($expected->{stop}) {
-        is(NGCP::Panel::Utils::DateTime::from_string($got->{stop}),NGCP::Panel::Utils::DateTime::from_string($expected->{stop}),$label . "check interval " . $got->{id} . " stop timestmp");
+        #is(NGCP::Panel::Utils::DateTime::from_string($got->{stop}),NGCP::Panel::Utils::DateTime::from_string($expected->{stop}),$label . "check interval " . $got->{id} . " stop timestmp");
+        if (substr($expected->{stop},0,1) eq '~') {
+            _is_ts_approx($got->{stop},$expected->{stop},$label . "check interval " . $got->{id} . " stop timestamp");
+        } else {
+            is($got->{stop},$expected->{stop},$label . "check interval " . $got->{id} . " stop timestmp");
+        }
     }
     
+    if ($expected->{cash}) {
+        is($got->{cash_balance},$expected->{cash},$label . "check interval " . $got->{id} . " cash balance");
+    }
+
+    if ($expected->{profile}) {
+        is($got->{profile_id},$expected->{profile_id},$label . "check interval " . $got->{id} . " billing profile");
+    }    
+    
+}
+
+sub _is_ts_approx {
+    my ($got,$expected,$label) = @_;
+    $got = NGCP::Panel::Utils::DateTime::from_string($got);
+    $expected = NGCP::Panel::Utils::DateTime::from_string(substr($expected,1));
+    my $lower = $expected->clone->subtract(seconds => 5);
+    my $upper = $expected->clone->add(seconds => 5);
+    ok($got >= $lower && $got <= $upper,$label . ' approximately (' . $got . ')');
 }
 
 sub _fetch_intervals_worker {
@@ -573,7 +722,7 @@ sub _switch_package {
         [ { op => 'replace', path => '/profile_package_id', value => ($package ? $package->{id} : undef) } ]
     ));
     $res = $ua->request($req);
-    is($res->code, 200, "patch customer from " . ($customer->{profile_package_id} ? 'package ' . $profile_map->{$customer->{profile_package_id}}->{name} : 'no package') . " to " .
+    is($res->code, 200, "patch customer from " . ($customer->{profile_package_id} ? 'package ' . $package_map->{$customer->{profile_package_id}}->{name} : 'no package') . " to " .
        ($package ? $package->{name} : 'no package'));
     return JSON::from_json($res->decoded_content);
     
@@ -625,10 +774,289 @@ sub _create_profile_package {
     $res = $ua->request($req);
     is($res->code, 200, "fetch POSTed profilepackage - '" . $name . "'");
     my $package = JSON::from_json($res->decoded_content);
-    $profile_map->{$package->{id}} = $package;
+    $package_map->{$package->{id}} = $package;
     return $package;
 
 }
+
+sub _create_billing_network_a {
+    
+    $req = HTTP::Request->new('POST', $uri.'/api/billingnetworks/');
+    $req->header('Content-Type' => 'application/json');
+    $req->header('Prefer' => 'return=representation');
+    $req->content(JSON::to_json({
+        name => "test billing network A ".$t,
+        description  => "test billing network A description ".$t,
+        reseller_id => $default_reseller_id,
+        blocks => [{ip=>'fdfe::5a55:caff:fefa:9089',mask=>128},
+                   {ip=>'fdfe::5a55:caff:fefa:908a'},
+                   {ip=>'fdfe::5a55:caff:fefa:908b',mask=>128},],
+    }));
+    $res = $ua->request($req);
+    is($res->code, 201, "POST test billingnetwork A");
+    $req = HTTP::Request->new('GET', $uri.'/'.$res->header('Location'));
+    $res = $ua->request($req);
+    is($res->code, 200, "fetch POSTed billingnetwork A");
+    my $billingnetwork = JSON::from_json($res->decoded_content);
+}
+
+sub _create_billing_network_b {
+    
+    $req = HTTP::Request->new('POST', $uri.'/api/billingnetworks/');
+    $req->header('Content-Type' => 'application/json');
+    $req->header('Prefer' => 'return=representation');
+    $req->content(JSON::to_json({
+        name => "test billing network B ".$t,
+        description  => "FIRST test billing network B description ".$t,
+        reseller_id => $default_reseller_id,
+        blocks => [{ip=>'10.0.4.7',mask=>26}, #0..63
+                      {ip=>'10.0.4.99',mask=>26}, #64..127
+                      {ip=>'10.0.5.9',mask=>24},
+                        {ip=>'10.0.6.9',mask=>24},],
+    }));
+    $res = $ua->request($req);
+    is($res->code, 201, "POST test billingnetwork B");
+    $req = HTTP::Request->new('GET', $uri.'/'.$res->header('Location'));
+    $res = $ua->request($req);
+    is($res->code, 200, "fetch POSTed billingnetwork B");
+    return JSON::from_json($res->decoded_content);
+}
+
+sub _create_base_profile_package {
+    
+    my ($profile_base_any,$profile_base_a,$profile_base_b,$network_a,$network_b) = @_;
+    $req = HTTP::Request->new('POST', $uri.'/api/profilepackages/');
+    $req->header('Content-Type' => 'application/json');
+    $req->header('Prefer' => 'return=representation');
+    #$req->header('X-Fake-Clienttime' => _get_rfc_1123_now());
+    #my $name = $start_mode . ($interval_unit ? '/' . $interval_value . ' ' . $interval_unit : '');
+    $req->content(JSON::to_json({
+        name => "base profile package " . $t,
+        description  => "base test profile package description " . $t,
+        reseller_id => $default_reseller_id,
+        initial_profiles => [{ profile_id => $profile_base_any->{id}, },
+                             { profile_id => $profile_base_a->{id}, network_id => $network_a->{id} },
+                             { profile_id => $profile_base_b->{id}, network_id => $network_b->{id} }],
+        balance_interval_start_mode => 'topup',
+        balance_interval_value => 1,
+        balance_interval_unit => 'month',
+        carry_over_mode => 'carry_over_timely',
+        timely_duration_value => 1,
+        timely_duration_unit => 'month',
+    }));
+    $res = $ua->request($req);
+    is($res->code, 201, "POST test base profilepackage");
+    my $profilepackage_uri = $uri.'/'.$res->header('Location');
+    $req = HTTP::Request->new('GET', $profilepackage_uri);
+    $req->header('X-Fake-Clienttime' => _get_rfc_1123_now());
+    $res = $ua->request($req);
+    is($res->code, 200, "fetch POSTed base profilepackage");
+    my $package = JSON::from_json($res->decoded_content);
+    $package_map->{$package->{id}} = $package;
+    return $package;        
+    
+}
+
+sub _create_silver_profile_package {
+    
+    my ($base_package,$profile_silver_a,$profile_silver_b,$network_a,$network_b) = @_;
+    $req = HTTP::Request->new('POST', $uri.'/api/profilepackages/');
+    $req->header('Content-Type' => 'application/json');
+    $req->header('Prefer' => 'return=representation');
+    #$req->header('X-Fake-Clienttime' => _get_rfc_1123_now());
+    #my $name = $start_mode . ($interval_unit ? '/' . $interval_value . ' ' . $interval_unit : '');
+    $req->content(JSON::to_json({
+        name => "silver profile package " . $t,
+        description  => "silver test profile package description " . $t,
+        reseller_id => $default_reseller_id,
+        initial_profiles => $base_package->{initial_profiles},
+        balance_interval_start_mode => 'topup',
+        balance_interval_value => 1,
+        balance_interval_unit => 'month',
+        carry_over_mode => 'carry_over_timely',
+        timely_duration_value => 1,
+        timely_duration_unit => 'month',
+        
+        service_charge => 200,
+        topup_profiles => [ #{ profile_id => $profile_silver_any->{id}, },
+                             { profile_id => $profile_silver_a->{id}, network_id => $network_a->{id} } ,        
+                             { profile_id => $profile_silver_b->{id}, network_id => $network_b->{id} } ],        
+    }));
+    $res = $ua->request($req);
+    is($res->code, 201, "POST test silver profilepackage");
+    my $profilepackage_uri = $uri.'/'.$res->header('Location');
+    $req = HTTP::Request->new('GET', $profilepackage_uri);
+    $req->header('X-Fake-Clienttime' => _get_rfc_1123_now());
+    $res = $ua->request($req);
+    is($res->code, 200, "fetch POSTed silver profilepackage");
+    my $package = JSON::from_json($res->decoded_content);
+    $package_map->{$package->{id}} = $package;
+    return $package;        
+    
+}
+
+sub _create_extension_profile_package {
+    
+    my ($base_package,$profile_silver_a,$profile_silver_b,$network_a,$network_b) = @_;
+    $req = HTTP::Request->new('POST', $uri.'/api/profilepackages/');
+    $req->header('Content-Type' => 'application/json');
+    $req->header('Prefer' => 'return=representation');
+    #$req->header('X-Fake-Clienttime' => _get_rfc_1123_now());
+    #my $name = $start_mode . ($interval_unit ? '/' . $interval_value . ' ' . $interval_unit : '');
+    $req->content(JSON::to_json({
+        name => "extension profile package " . $t,
+        description  => "extension test profile package description " . $t,
+        reseller_id => $default_reseller_id,
+        initial_profiles => $base_package->{initial_profiles},
+        balance_interval_start_mode => 'topup',
+        balance_interval_value => 1,
+        balance_interval_unit => 'month',
+        carry_over_mode => 'carry_over_timely',
+        timely_duration_value => 1,
+        timely_duration_unit => 'month',
+        
+        service_charge => 200,
+        topup_profiles => [ #{ profile_id => $profile_silver_any->{id}, },
+                             { profile_id => $profile_silver_a->{id}, network_id => $network_a->{id} } ,        
+                             { profile_id => $profile_silver_b->{id}, network_id => $network_b->{id} } ],      
+    }));
+    $res = $ua->request($req);
+    is($res->code, 201, "POST test extension profilepackage");
+    my $profilepackage_uri = $uri.'/'.$res->header('Location');
+    $req = HTTP::Request->new('GET', $profilepackage_uri);
+    $req->header('X-Fake-Clienttime' => _get_rfc_1123_now());
+    $res = $ua->request($req);
+    is($res->code, 200, "fetch POSTed extension profilepackage");
+    my $package = JSON::from_json($res->decoded_content);
+    $package_map->{$package->{id}} = $package;
+    return $package;        
+    
+}
+
+sub _create_gold_profile_package {
+    
+    my ($base_package,$profile_gold_a,$profile_gold_b,$network_a,$network_b) = @_;
+    $req = HTTP::Request->new('POST', $uri.'/api/profilepackages/');
+    $req->header('Content-Type' => 'application/json');
+    $req->header('Prefer' => 'return=representation');
+    #$req->header('X-Fake-Clienttime' => _get_rfc_1123_now());
+    #my $name = $start_mode . ($interval_unit ? '/' . $interval_value . ' ' . $interval_unit : '');
+    $req->content(JSON::to_json({
+        name => "gold profile package " . $t,
+        description  => "gold test profile package description " . $t,
+        reseller_id => $default_reseller_id,
+        initial_profiles => $base_package->{initial_profiles},
+        balance_interval_start_mode => 'topup',
+        balance_interval_value => 1,
+        balance_interval_unit => 'month',
+        carry_over_mode => 'carry_over',
+        #timely_duration_value => 1,
+        #timely_duration_unit => 'month',
+        
+        service_charge => 500,
+        topup_profiles => [ #{ profile_id => $profile_gold_any->{id}, },
+                             { profile_id => $profile_gold_a->{id}, network_id => $network_a->{id} } ,        
+                             { profile_id => $profile_gold_b->{id}, network_id => $network_b->{id} } ],       
+    }));
+    $res = $ua->request($req);
+    is($res->code, 201, "POST test gold profilepackage");
+    my $profilepackage_uri = $uri.'/'.$res->header('Location');
+    $req = HTTP::Request->new('GET', $profilepackage_uri);
+    $req->header('X-Fake-Clienttime' => _get_rfc_1123_now());
+    $res = $ua->request($req);
+    is($res->code, 200, "fetch POSTed gold profilepackage");
+    my $package = JSON::from_json($res->decoded_content);
+    $package_map->{$package->{id}} = $package;
+    return $package;        
+    
+}
+
+sub _create_voucher {
+    
+    my ($amount,$code,$customer,$package,$valid_until_dt) = @_;
+    my $dtf = DateTime::Format::Strptime->new(
+            pattern => '%F %T', 
+        );        
+    $req = HTTP::Request->new('POST', $uri.'/api/vouchers/');
+    $req->header('Content-Type' => 'application/json');
+    $req->header('X-Fake-Clienttime' => _get_rfc_1123_now());
+    $req->content(JSON::to_json({
+        amount => $amount * 100.0,
+        code => $code,
+        customer_id => ($customer ? $customer->{id} : undef),
+        package_id => ($package ? $package->{id} : undef),
+        reseller_id => $default_reseller_id,
+        valid_until => $dtf->format_datetime($valid_until_dt ? $valid_until_dt : NGCP::Panel::Utils::DateTime::current_local->add(years => 1)),
+    }));
+    $res = $ua->request($req);
+    my $label = 'test voucher (' . ($customer ? 'for customer ' . $customer->{id} : 'no customer') . ', ' . ($package ? 'for package ' . $package->{id} : 'no package') . ')';
+    is($res->code, 201, "create " . $label);
+    $req = HTTP::Request->new('GET', $uri.'/'.$res->header('Location'));
+    $req->header('X-Fake-Clienttime' => _get_rfc_1123_now());
+    $res = $ua->request($req);
+    is($res->code, 200, "fetch " . $label);
+    my $voucher = JSON::from_json($res->decoded_content);
+    $voucher_map->{$voucher->{id}} = $voucher;
+    return $voucher;
+    
+}
+
+sub _create_subscriber {
+    my ($customer) = @_;
+    $req = HTTP::Request->new('POST', $uri.'/api/subscribers/');
+    $req->header('Content-Type' => 'application/json');
+    $req->content(JSON::to_json({
+        domain_id => $domain->{id},
+        username => 'test_customer_subscriber_' . (scalar keys %$subscriber_map) . '_'.$t,
+        password => 'test_customer_subscriber_password',
+        customer_id => $customer->{id},
+        #status => "active",
+    }));
+    $res = $ua->request($req);
+    is($res->code, 201, "POST test subscriber");
+    $req = HTTP::Request->new('GET', $uri.'/'.$res->header('Location'));
+    $res = $ua->request($req);
+    is($res->code, 200, "fetch POSTed test subscriber");
+    my $subscriber = JSON::from_json($res->decoded_content);
+    $subscriber_map->{$subscriber->{id}} = $subscriber;
+    return $subscriber;
+}
+
+sub _perform_topup_voucher {
+    
+    my ($subscriber,$voucher) = @_;
+    $req = HTTP::Request->new('POST', $uri.'/api/topupvouchers/');
+    $req->header('Content-Type' => 'application/json');
+    $req->header('X-Fake-Clienttime' => _get_rfc_1123_now());
+    $req->content(JSON::to_json({
+        code => $voucher->{code},
+        subscriber_id => $subscriber->{id},
+    }));
+    $res = $ua->request($req);
+    is($res->code, 204, "perform topup with voucher " . $voucher->{code});
+    
+}
+
+sub _create_billing_profile {
+    my ($name) = @_;
+    $req = HTTP::Request->new('POST', $uri.'/api/billingprofiles/');
+    $req->header('Content-Type' => 'application/json');
+    $req->header('Prefer' => 'return=representation');
+    $req->content(JSON::to_json({
+        name => $name." $t",
+        handle  => $name."_$t",
+        reseller_id => $default_reseller_id,
+    }));
+    $res = $ua->request($req);
+    is($res->code, 201, "POST test billing profile " . $name);
+    $req = HTTP::Request->new('GET', $uri.'/'.$res->header('Location'));
+    $res = $ua->request($req);
+    is($res->code, 200, "fetch POSTed billing profile" . $name);
+    my $billingprofile = JSON::from_json($res->decoded_content);
+    $profile_map->{$billingprofile->{id}} = $billingprofile;
+    return $billingprofile;
+}
+
 
 sub _get_allow_delay_commit {
     my $allow_delay_commit = 0;

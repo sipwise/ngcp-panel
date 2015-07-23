@@ -39,10 +39,12 @@ has_field 'description' => (
 
 has_field 'initial_balance' => (
     type => 'Money',
-    label => 'Initial Balance', 
+    label => 'Initial Balance',
+    #inflate_method => sub { return $_[1] * 100.0 },
+    #deflate_method => sub { return $_[1] / 100.0 },    
     element_attr => {
         rel => ['tooltip'],
-        title => ['The initial balance (in the effective profile\'s currency) that will be set for the very first balance interval.']
+        title => ['The initial balance (in cents) that will be set for the very first balance interval.']
     },
     default => 0,
 );
@@ -148,10 +150,12 @@ has_field 'notopup_discard_intervals' => (
 
 has_field 'underrun_lock_threshold' => (
     type => 'Money',
-    label => 'Underrun lock threshold', 
+    label => 'Underrun lock threshold',
+    #inflate_method => sub { return $_[1] * 100.0 },
+    #deflate_method => sub { return $_[1] / 100.0 },      
     element_attr => {
         rel => ['tooltip'],
-        title => ['The balance threshold for the underrun lock level to come into effect.']
+        title => ['The balance threshold (in cents) for the underrun lock level to come into effect.']
     },
 );
 
@@ -166,10 +170,12 @@ has_field 'underrun_lock_level' => (
 
 has_field 'underrun_profile_threshold' => (
     type => 'Money',
-    label => 'Underrun profile threshold', 
+    label => 'Underrun profile threshold',
+    #inflate_method => sub { return $_[1] * 100.0 },
+    #deflate_method => sub { return $_[1] / 100.0 },      
     element_attr => {
         rel => ['tooltip'],
-        title => ['The balance threshold for underrun profiles to come into effect.']
+        title => ['The balance threshold (in cents) for underrun profiles to come into effect.']
     },
 );
 
@@ -223,10 +229,12 @@ has_field 'topup_lock_level' => (
 
 has_field 'service_charge' => (
     type => 'Money',
-    label => 'Service Charge', 
+    label => 'Service Charge',
+    #inflate_method => sub { return $_[1] * 100.0 },
+    #deflate_method => sub { return $_[1] / 100.0 },      
     element_attr => {
         rel => ['tooltip'],
-        title => ['The service charge amount will be subtracted from the voucher amount upon every top-up.']
+        title => ['The service charge amount (in cents) will be subtracted from the voucher amount upon every top-up.']
     },
     default => 0,
 );

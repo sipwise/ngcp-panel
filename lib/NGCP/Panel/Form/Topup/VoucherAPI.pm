@@ -24,7 +24,7 @@ has_field 'subscriber_id' => (
     },
 );
 
-has_field 'amount' => (
+has_field 'code' => (
     type => 'Text',
     required => 1,
     maxlength => 128,

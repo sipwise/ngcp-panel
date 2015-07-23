@@ -25,6 +25,11 @@ sub infinite_past {
     #$dt->epoch calls should be okay if perl >= 5.12.0
 }
 
+sub is_infinite_past {
+    my $dt = shift;
+    return $dt->year <= 1000;
+}
+
 sub infinite_future {
     #... to '9999-12-31 23:59:59'
     return DateTime->new(year => 9999, month => 12, day => 31, hour => 23, minute => 59, second => 59,
@@ -35,6 +40,16 @@ sub infinite_future {
         #- with floating timezones, the long conversion takes place when comparing with a 'local' dt
         #- the error due to leap years/seconds is not relevant in comparisons
     );
+}
+
+sub is_infinite_future {
+    my $dt = shift;
+    return $dt->year >= 9999;
+}
+
+sub is_infinite {
+    my $dt = shift;
+    return is_infinite_past($dt) || is_infinite_future($dt);
 }
 
 sub set_fake_time {
