@@ -23,7 +23,7 @@ BEGIN {
 }
 use NGCP::Panel::Utils::DateTime qw();
 
-my $is_local_env = 1;
+my $is_local_env = 0;
 
 
 use Config::General;
@@ -614,7 +614,7 @@ sub _check_interval_history {
     } while($nexturi);
     
     ok($i == $total_count,$label . "check if all expected items are listed");
-    diag(Dumper(\@intervals)) if 1; #$error;
+    diag(Dumper(\@intervals)) if $error;
     
 }
 
