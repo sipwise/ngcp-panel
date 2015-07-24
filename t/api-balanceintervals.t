@@ -13,7 +13,7 @@ use Test::More;
 use Time::Fake;
 use DateTime::Format::Strptime;
 use DateTime::Format::ISO8601;
-
+use Data::Dumper;
 
 use JSON::PP;
 use LWP::Debug;
@@ -23,7 +23,7 @@ BEGIN {
 }
 use NGCP::Panel::Utils::DateTime qw();
 
-my $is_local_env = 0;
+my $is_local_env = 1;
 
 
 use Config::General;
@@ -288,7 +288,7 @@ if (_get_allow_fake_client_time()) {
             { start => '2014-03-01 00:00:00', stop => '2014-03-31 23:59:59'},
         ]);
         
-        _switch_package($customer,$prof_package_create30d);
+        $customer = _switch_package($customer,$prof_package_create30d);
         
         _check_interval_history($customer,[
             { start => '2014-01-01 00:00:00', stop => '2014-01-31 23:59:59'},
@@ -306,7 +306,7 @@ if (_get_allow_fake_client_time()) {
             { start => '2014-03-07 00:00:00', stop => '2014-04-05 23:59:59'},
         ]);
         
-        _switch_package($customer,$prof_package_1st30d);
+        $customer = _switch_package($customer,$prof_package_1st30d);
         
         _check_interval_history($customer,[
             { start => '2014-01-01 00:00:00', stop => '2014-01-31 23:59:59'},
@@ -326,7 +326,7 @@ if (_get_allow_fake_client_time()) {
             { start => '2014-05-01 00:00:00', stop => '2014-05-30 23:59:59'},
         ]);        
         
-        _switch_package($customer,$prof_package_create1m);
+        $customer = _switch_package($customer,$prof_package_create1m);
         
         _check_interval_history($customer,[
             { start => '2014-01-01 00:00:00', stop => '2014-01-31 23:59:59'},
@@ -347,7 +347,7 @@ if (_get_allow_fake_client_time()) {
             { start => '2014-05-01 00:00:00', stop => '2014-06-06 23:59:59'},
         ]);   
         
-        _switch_package($customer,$prof_package_1st1m);
+        $customer = _switch_package($customer,$prof_package_1st1m);
         
         _check_interval_history($customer,[
             { start => '2014-01-01 00:00:00', stop => '2014-01-31 23:59:59'},
@@ -361,7 +361,7 @@ if (_get_allow_fake_client_time()) {
         $ts = '2014-08-03 13:00:00';
         _set_time(NGCP::Panel::Utils::DateTime::from_string($ts));
         
-        _switch_package($customer,$prof_package_create2w);
+        $customer = _switch_package($customer,$prof_package_create2w);
         
         _check_interval_history($customer,[
             { start => '2014-06-01 00:00:00', stop => '2014-06-30 23:59:59'},
@@ -373,7 +373,7 @@ if (_get_allow_fake_client_time()) {
         $ts = '2014-09-03 13:00:00';
         _set_time(NGCP::Panel::Utils::DateTime::from_string($ts));
         
-        _switch_package($customer,$prof_package_1st2w);
+        $customer = _switch_package($customer,$prof_package_1st2w);
         
         _check_interval_history($customer,[
             { start => '2014-08-07 00:00:00', stop => '2014-08-20 23:59:59'},
@@ -384,7 +384,7 @@ if (_get_allow_fake_client_time()) {
         #$ts = '2014-09-03 13:00:00';
         #_set_time(NGCP::Panel::Utils::DateTime::from_string($ts));
         
-        _switch_package($customer);
+        $customer = _switch_package($customer);
         
         _check_interval_history($customer,[
             { start => '2014-08-07 00:00:00', stop => '2014-08-20 23:59:59'},
@@ -396,7 +396,7 @@ if (_get_allow_fake_client_time()) {
         $ts = '2014-10-04 13:00:00';
         _set_time(NGCP::Panel::Utils::DateTime::from_string($ts));
         
-        _switch_package($customer,$prof_package_topup);
+        $customer = _switch_package($customer,$prof_package_topup);
 
         _check_interval_history($customer,[
             { start => '2014-10-01 00:00:00', stop => '~2014-10-04 13:00:00'},
@@ -429,7 +429,7 @@ if (_get_allow_fake_client_time()) {
             { start => '2014-12-07 00:00:00', stop => '2015-01-06 23:59:59'},
         ],NGCP::Panel::Utils::DateTime::from_string($t1));
         
-        _switch_package($customer);
+        $customer = _switch_package($customer);
         
         _check_interval_history($customer,[
             { start => '~2014-10-04 13:00:00', stop => '2014-10-06 23:59:59'},
@@ -543,6 +543,8 @@ sub _check_interval_history {
     #my @got_interval_history = ();
     my $i = 0;
     my $limit = '';
+    my $error = 0;
+    my @intervals;
     $limit = '&start=' . DateTime::Format::ISO8601->parse_datetime($limit_dt) if defined $limit_dt;
     my $label = 'interval history of contract with ' . ($customer->{profile_package_id} ? 'package ' . $package_map->{$customer->{profile_package_id}}->{name} : 'no package') . ': ';
     my $nexturi = $uri.'/api/balanceintervals/'.$customer->{id}.'/?page=1&rows=10&order_by_direction=asc&order_by=start'.$limit;
@@ -557,7 +559,7 @@ sub _check_interval_history {
         is($selfuri, $nexturi, $label . "check _links.self.href of collection");
         my $colluri = URI->new($selfuri);
 
-        ok($collection->{total_count} == $total_count, $label . "check 'total_count' of collection");
+        $error = ok($collection->{total_count} == $total_count, $label . "check 'total_count' of collection") || $error;
 
         my %q = $colluri->query_form;
         ok(exists $q{page} && exists $q{rows}, $label . "check existence of 'page' and 'row' in 'self'");
@@ -602,7 +604,9 @@ sub _check_interval_history {
             #my $fetched = delete $page_items->{$interval->{id}};
             #delete $fetched->{content};
             #is_deeply($interval,$fetched,$label . "compare fetched and embedded item deeply");
-            _compare_interval($interval,$expected_interval_history->[$i],$label);
+            $error = _compare_interval($interval,$expected_interval_history->[$i],$label) || $error;
+            delete $interval->{'_links'};
+            push(@intervals,$interval);
             $i++
         }
         #ok((scalar keys $page_items) == 0,$label . "check if all embedded items are linked");
@@ -610,35 +614,37 @@ sub _check_interval_history {
     } while($nexturi);
     
     ok($i == $total_count,$label . "check if all expected items are listed");
+    diag(Dumper(\@intervals)) if 1; #$error;
     
 }
 
 sub _compare_interval {
     my ($got,$expected,$label) = @_;
     
+    my $error = 0;
     if ($expected->{start}) {
         #is(NGCP::Panel::Utils::DateTime::from_string($got->{start}),NGCP::Panel::Utils::DateTime::from_string($expected->{start}),$label . "check interval " . $got->{id} . " start timestmp");
         if (substr($expected->{start},0,1) eq '~') {
-            _is_ts_approx($got->{start},$expected->{start},$label . "check interval " . $got->{id} . " start timestamp");
+            $error = _is_ts_approx($got->{start},$expected->{start},$label . "check interval " . $got->{id} . " start timestamp") || $error;
         } else {
-            is($got->{start},$expected->{start},$label . "check interval " . $got->{id} . " start timestmp");
+            $error = is($got->{start},$expected->{start},$label . "check interval " . $got->{id} . " start timestmp") || $error;
         }
     }
     if ($expected->{stop}) {
         #is(NGCP::Panel::Utils::DateTime::from_string($got->{stop}),NGCP::Panel::Utils::DateTime::from_string($expected->{stop}),$label . "check interval " . $got->{id} . " stop timestmp");
         if (substr($expected->{stop},0,1) eq '~') {
-            _is_ts_approx($got->{stop},$expected->{stop},$label . "check interval " . $got->{id} . " stop timestamp");
+            $error = _is_ts_approx($got->{stop},$expected->{stop},$label . "check interval " . $got->{id} . " stop timestamp") || $error;
         } else {
-            is($got->{stop},$expected->{stop},$label . "check interval " . $got->{id} . " stop timestmp");
+            $error = is($got->{stop},$expected->{stop},$label . "check interval " . $got->{id} . " stop timestmp") || $error;
         }
     }
     
     if ($expected->{cash}) {
-        is($got->{cash_balance},$expected->{cash},$label . "check interval " . $got->{id} . " cash balance");
+        $error = is($got->{cash_balance},$expected->{cash},$label . "check interval " . $got->{id} . " cash balance") || $error;
     }
 
     if ($expected->{profile}) {
-        is($got->{profile_id},$expected->{profile_id},$label . "check interval " . $got->{id} . " billing profile");
+        $error = is($got->{profile_id},$expected->{profile_id},$label . "check interval " . $got->{id} . " billing profile") || $error;
     }    
     
 }
@@ -649,7 +655,7 @@ sub _is_ts_approx {
     $expected = NGCP::Panel::Utils::DateTime::from_string(substr($expected,1));
     my $lower = $expected->clone->subtract(seconds => 5);
     my $upper = $expected->clone->add(seconds => 5);
-    ok($got >= $lower && $got <= $upper,$label . ' approximately (' . $got . ')');
+    return ok($got >= $lower && $got <= $upper,$label . ' approximately (' . $got . ')');
 }
 
 sub _fetch_intervals_worker {
@@ -724,7 +730,9 @@ sub _switch_package {
     $res = $ua->request($req);
     is($res->code, 200, "patch customer from " . ($customer->{profile_package_id} ? 'package ' . $package_map->{$customer->{profile_package_id}}->{name} : 'no package') . " to " .
        ($package ? $package->{name} : 'no package'));
-    return JSON::from_json($res->decoded_content);
+    $customer = JSON::from_json($res->decoded_content);
+    $customer_map{$customer->{id}} = threads::shared::shared_clone($customer);
+    return $customer;
     
 }
 
