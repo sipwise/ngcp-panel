@@ -24,6 +24,7 @@ $fake_data->set_data_from_script({
             amount => 100,
             code => 'apitestcode',
             customer_id => undef,
+            package_id => undef,
             reseller_id => sub { return shift->get_id('resellers', @_); },,
             valid_until => '2037-01-01 12:00:00',
         },
