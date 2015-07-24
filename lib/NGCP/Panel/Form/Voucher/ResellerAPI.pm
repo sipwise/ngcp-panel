@@ -54,7 +54,7 @@ has_field 'customer' => (
 
 has_field 'package_id' => (
     type => 'PosInteger',
-    required => 1,
+    required => 0,
     element_attr => {
         rel => ['tooltip'],
         title => ['The package this voucher belongs to.']
