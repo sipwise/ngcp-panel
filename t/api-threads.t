@@ -23,6 +23,7 @@ my $t_b = threads->create(sub {
 $t_a->join();
 $t_b->join();
 
+ok(1,'threads joined');
 #ok($t_a + $t_b == 2,'test threads joined');
 
 done_testing;
