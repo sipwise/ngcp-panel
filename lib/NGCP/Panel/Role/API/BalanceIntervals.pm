@@ -72,7 +72,7 @@ sub hal_from_balance {
     my %resource = $item->get_inflated_columns;
     $resource{cash_balance} /= 100.0;
     $resource{cash_debit} = (delete $resource{cash_balance_interval}) / 100.0;
-    $resource{free_time_spent} = delete $resource{free_time_interval};
+    $resource{free_time_spent} = delete $resource{free_time_balance_interval};
     my $datetime_fmt = DateTime::Format::Strptime->new(
         pattern => '%F %T', 
     );
