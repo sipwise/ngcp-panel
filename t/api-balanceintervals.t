@@ -23,7 +23,7 @@ BEGIN {
 }
 use NGCP::Panel::Utils::DateTime qw();
 
-my $is_local_env = 1;
+my $is_local_env = 0;
 
 
 use Config::General;
