@@ -48,6 +48,7 @@ $ua->ssl_opts(
     my $rels = {
         applyrewrites => 1,
         autoattendants => 1,
+        balanceintervals => 1,
         billingfees => 1,
         billingnetworks => 1,
         billingprofiles => 1,
