@@ -105,7 +105,8 @@ has_field 'balance_interval_start_mode' => (
     options => [
         { value => 'create', label => 'upon customer creation' },
         { value => '1st', label => '1st day of month' },
-        { value => 'topup', label => 'restart interval upon top-up' },
+        { value => 'topup_interval', label => 'start interval upon top-up' },
+        { value => 'topup', label => 'new interval for each top-up' },        
     ],
     element_attr => {
         rel => ['tooltip'],

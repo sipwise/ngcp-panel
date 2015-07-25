@@ -161,7 +161,7 @@ my $profile_map = {};
 my $billingprofile = _create_billing_profile("test_default");
 
 if (_get_allow_fake_client_time()) {
-
+    
     {
         my $network_a = _create_billing_network_a();
         my $network_b = _create_billing_network_b();
@@ -175,56 +175,76 @@ if (_get_allow_fake_client_time()) {
         
         my $profile_gold_a = _create_billing_profile('GOLD_NETWORK_A');
         my $profile_gold_b = _create_billing_profile('GOLD_NETWORK_B');          
-
+    
         my $base_package = _create_base_profile_package($profile_base_any,$profile_base_a,$profile_base_b,$network_a,$network_b);
         my $silver_package = _create_silver_profile_package($base_package,$profile_silver_a,$profile_silver_b,$network_a,$network_b);
         my $extension_package = _create_extension_profile_package($base_package,$profile_silver_a,$profile_silver_b,$network_a,$network_b);
         my $gold_package = _create_gold_profile_package($base_package,$profile_gold_a,$profile_gold_b,$network_a,$network_b);
-
-        _set_time(NGCP::Panel::Utils::DateTime::from_string('2015-06-03 13:00:00'));
-        
+    
+        _set_time(NGCP::Panel::Utils::DateTime::from_string('2015-06-05 13:00:00'));
+        my $customer_A = _create_customer($base_package);
+        my $subscriber_A = _create_subscriber($customer_A);
         my $v_silver_1 = _create_voucher(10,'SILVER1'.$t,undef,$silver_package);
-        my $v_extension_1 = _create_voucher(2,'EXTENSION1'.$t,undef,$extension_package);
-        my $v_gold_1 = _create_voucher(20,'GOLD1'.$t,undef,$gold_package);
-
-        _set_time(NGCP::Panel::Utils::DateTime::from_string('2015-06-03 13:00:00'));
-        my $customer_x = _create_customer($base_package);
-        my $subscriber_x = _create_subscriber($customer_x);
         
         _set_time(NGCP::Panel::Utils::DateTime::from_string('2015-06-21 13:00:00'));
         
-        _perform_topup_voucher($subscriber_x,$v_silver_1);
+        _perform_topup_voucher($subscriber_A,$v_silver_1);
         
-        _set_time(NGCP::Panel::Utils::DateTime::from_string('2015-07-21 13:00:00'));
+        _set_time(NGCP::Panel::Utils::DateTime::from_string('2015-10-01 13:00:00'));
         
-        _check_interval_history($customer_x,[
-            { start => '~2015-06-03 13:00:00', stop => '~2015-06-21 13:00:00', cash => 0, profile => $profile_base_b->{id} },
-            { start => '~2015-06-21 13:00:00', stop => $infinite_future, cash => 8, profile => $profile_silver_b->{id} },
+        _check_interval_history($customer_A,[
+            { start => '~2015-06-05 13:00:00', stop => '~2015-06-21 13:00:00', cash => 0, profile => $profile_base_b->{id} },
+            { start => '~2015-06-21 13:00:00', stop => '~2015-07-21 13:00:00', cash => 8, profile => $profile_silver_b->{id} },
+            { start => '~2015-07-21 13:00:00', stop => '~2015-08-21 13:00:00', cash => 0, profile => $profile_silver_b->{id} },
+            { start => '~2015-08-21 13:00:00', stop => '~2015-09-21 13:00:00', cash => 0, profile => $profile_silver_b->{id} },
+            { start => '~2015-09-21 13:00:00', stop => '~2015-10-21 13:00:00', cash => 0, profile => $profile_silver_b->{id} },
+        ]);
+
+        _set_time(NGCP::Panel::Utils::DateTime::from_string('2015-06-05 13:00:00'));
+        my $customer_B = _create_customer($base_package);
+        my $subscriber_B = _create_subscriber($customer_B);
+        my $v_silver_2 = _create_voucher(10,'SILVER2'.$t,undef,$silver_package);
+        my $v_extension_1 = _create_voucher(2,'EXTENSION1'.$t,undef,$extension_package);
+        
+        _set_time(NGCP::Panel::Utils::DateTime::from_string('2015-06-27 13:00:00'));
+        
+        _perform_topup_voucher($subscriber_B,$v_silver_2);
+        
+        _set_time(NGCP::Panel::Utils::DateTime::from_string('2015-07-27 12:00:00'));
+        
+        _perform_topup_voucher($subscriber_B,$v_extension_1);        
+        
+        _set_time(NGCP::Panel::Utils::DateTime::from_string('2015-10-01 13:00:00'));
+        
+        _check_interval_history($customer_B,[
+            { start => '~2015-06-05 13:00:00', stop => '~2015-06-27 13:00:00', cash => 0, profile => $profile_base_b->{id} },
+            { start => '~2015-06-27 13:00:00', stop => '~2015-07-27 13:00:00', cash => 8, profile => $profile_silver_b->{id} },
+            { start => '~2015-07-27 13:00:00', stop => '~2015-08-27 13:00:00', cash => 8, profile => $profile_silver_b->{id} },
+            { start => '~2015-08-27 13:00:00', stop => '~2015-09-27 13:00:00', cash => 0, profile => $profile_silver_b->{id} },
+            { start => '~2015-09-27 13:00:00', stop => '~2015-10-27 13:00:00', cash => 0, profile => $profile_silver_b->{id} },
         ]);
         
-        #_set_time(NGCP::Panel::Utils::DateTime::from_string('2015-06-03 13:00:00'));
-        #my $customer_y = _create_customer($base_package);
-        #my $subscriber_y = _create_subscriber($customer_y);
         
-        #_set_time(NGCP::Panel::Utils::DateTime::from_string('2015-03-04 13:00:00'));
+        _set_time(NGCP::Panel::Utils::DateTime::from_string('2015-06-05 13:00:00'));
+        my $customer_C = _create_customer($base_package);
+        my $subscriber_C = _create_subscriber($customer_C);
+        my $v_gold_1 = _create_voucher(20,'GOLD1'.$t,undef,$gold_package);
         
-        #_perform_topup_voucher($subscriber,$v_extension_1);        
+        _set_time(NGCP::Panel::Utils::DateTime::from_string('2015-07-02 13:00:00'));
         
-    #    #my $voucher = _create_voucher(10,'A'.$t);
-    #    
-    #    #my $customer = _create_customer();
-    #    
-    #    #$voucher = _create_voucher(11,'B'.$t,$customer);
-    #    
-    #    my $prof_package_topup20 = _create_profile_package('topup');
-    #    
-    #    my $voucher = _create_voucher(20,'C'.$t,undef,$prof_package_topup20);
-    
-    
+        _perform_topup_voucher($subscriber_C,$v_gold_1);
+        
+        _set_time(NGCP::Panel::Utils::DateTime::from_string('2015-10-01 13:00:00'));
+        
+        _check_interval_history($customer_C,[
+            { start => '~2015-06-05 13:00:00', stop => '~2015-07-02 13:00:00', cash => 0, profile => $profile_base_b->{id} },
+            { start => '~2015-07-02 13:00:00', stop => '~2015-08-02 13:00:00', cash => 15, profile => $profile_gold_b->{id} },
+            { start => '~2015-08-02 13:00:00', stop => '~2015-09-02 13:00:00', cash => 15, profile => $profile_gold_b->{id} },
+            { start => '~2015-09-02 13:00:00', stop => '~2015-10-02 13:00:00', cash => 15, profile => $profile_gold_b->{id} },
+        ]);
+        
         _set_time();
     }
-
-
 
     my $prof_package_create30d = _create_profile_package('create','day',30);
     my $prof_package_1st30d = _create_profile_package('1st','day',30);
@@ -235,18 +255,18 @@ if (_get_allow_fake_client_time()) {
     my $prof_package_create2w = _create_profile_package('create','week',2);
     my $prof_package_1st2w = _create_profile_package('1st','week',2);
     
-    my $prof_package_topup = _create_profile_package('topup');
+    my $prof_package_topup = _create_profile_package('topup');  
     
     {
-        
+    
         _set_time(NGCP::Panel::Utils::DateTime::from_string('2014-12-30 13:00:00'));
-
+    
         my $customer_topup = _create_customer($prof_package_topup); #create closest to now        
         my $customer_wo = _create_customer();
         my $customer_create1m = _create_customer($prof_package_create1m);
     
         _set_time(NGCP::Panel::Utils::DateTime::from_string('2015-04-02 02:00:00'));
-
+    
         _check_interval_history($customer_topup,[
             { start => '~2014-12-30 13:00:00', stop => $infinite_future},
         ]);  
@@ -403,44 +423,75 @@ if (_get_allow_fake_client_time()) {
             { start => '~2014-10-04 13:00:00', stop => $infinite_future},
         ],NGCP::Panel::Utils::DateTime::from_string($t1));
         
-        my $voucher = _create_voucher(10,'topup_start_mode_test'.$t,$customer,$prof_package_create1m);
+        my $voucher1 = _create_voucher(10,'topup_start_mode_test1'.$t,$customer);
+        my $voucher2 = _create_voucher(10,'topup_start_mode_test2'.$t,$customer,$prof_package_create1m);
         my $subscriber = _create_subscriber($customer);
 
-        #_check_interval_history($customer,[
-        #    { start => '2014-10-01 00:00:00', stop => '~2014-10-04 13:00:00'},
-        #    { start => '~2014-10-04 13:00:00', stop => $infinite_future},
-        #],NGCP::Panel::Utils::DateTime::from_string($t1));  
-        
-        _perform_topup_voucher($subscriber,$voucher);
-        
-        _check_interval_history($customer,[
-            { start => '2014-10-01 00:00:00', stop => '~2014-10-04 13:00:00'},
-            { start => '~2014-10-04 13:00:00', stop => '2014-10-06 23:59:59'},
-        ],NGCP::Panel::Utils::DateTime::from_string($t1));       
-        
         $t1 = $ts;
-        $ts = '2014-12-09 13:00:00';
+        $ts = '2014-10-23 13:00:00';
         _set_time(NGCP::Panel::Utils::DateTime::from_string($ts));
         
         _check_interval_history($customer,[
-            { start => '~2014-10-04 13:00:00', stop => '2014-10-06 23:59:59'},
-            { start => '2014-10-07 00:00:00', stop => '2014-11-06 23:59:59'},
-            { start => '2014-11-07 00:00:00', stop => '2014-12-06 23:59:59'},
-            { start => '2014-12-07 00:00:00', stop => '2015-01-06 23:59:59'},
+            { start => '~2014-10-04 13:00:00', stop => $infinite_future},
+        ],NGCP::Panel::Utils::DateTime::from_string($t1));  
+        
+        _perform_topup_voucher($subscriber,$voucher1);
+        
+        _check_interval_history($customer,[
+           { start => '~2014-10-04 13:00:00', stop => '~2014-10-23 13:00:00'},
+            { start => '~2014-10-23 13:00:00', stop => $infinite_future},
+        ],NGCP::Panel::Utils::DateTime::from_string($t1));       
+        
+        $t1 = $ts;
+        $ts = '2014-11-29 13:00:00';
+        _set_time(NGCP::Panel::Utils::DateTime::from_string($ts));
+        
+        _check_interval_history($customer,[
+            { start => '~2014-10-23 13:00:00', stop => $infinite_future},
         ],NGCP::Panel::Utils::DateTime::from_string($t1));
+        
+        _perform_topup_voucher($subscriber,$voucher2);
+        
+        _check_interval_history($customer,[
+            { start => '~2014-10-23 13:00:00', stop => '2014-12-06 23:59:59'},
+        ],NGCP::Panel::Utils::DateTime::from_string($t1));        
         
         $customer = _switch_package($customer);
         
         _check_interval_history($customer,[
-            { start => '~2014-10-04 13:00:00', stop => '2014-10-06 23:59:59'},
-            { start => '2014-10-07 00:00:00', stop => '2014-11-06 23:59:59'},
-            { start => '2014-11-07 00:00:00', stop => '2014-12-06 23:59:59'},
-            { start => '2014-12-07 00:00:00', stop => '2014-12-31 23:59:59'},
+            { start => '~2014-10-23 13:00:00', stop => '2014-11-30 23:59:59', cash => 20},
         ],NGCP::Panel::Utils::DateTime::from_string($t1));        
         
         _set_time();
     }
 
+    {
+        
+        _set_time(NGCP::Panel::Utils::DateTime::from_string('2015-01-30 13:00:00'));
+        
+        my $package = _create_profile_package('create','month',1,3);
+        my $customer = _create_customer($package);
+        my $subscriber = _create_subscriber($customer);
+        my $v_notopup = _create_voucher(10,'notopup'.$t);
+        
+        _set_time(NGCP::Panel::Utils::DateTime::from_string('2015-02-17 13:00:00'));
+        
+        _perform_topup_voucher($subscriber,$v_notopup);
+        
+        _set_time(NGCP::Panel::Utils::DateTime::from_string('2015-06-01 13:00:00'));
+        
+        _check_interval_history($customer,[
+            { start => '2015-01-30 00:00:00', stop => '2015-02-27 23:59:59', cash => 10, topups => 1 }, #topup
+            { start => '2015-02-28 00:00:00', stop => '2015-03-29 23:59:59', cash => 10, topups => 0 },
+            { start => '2015-03-30 00:00:00', stop => '2015-04-29 23:59:59', cash => 10, topups => 0 },
+            { start => '2015-04-30 00:00:00', stop => '2015-05-29 23:59:59', cash => 10, topups => 0 },
+            { start => '2015-05-30 00:00:00', stop => '2015-06-29 23:59:59', cash => 0, topups => 0 },
+            #{ start => '2015-06-30 00:00:00', stop => '2015-07-29 23:59:59', cash => 0, topups => 0 },
+        ]);        
+        
+        _set_time();
+    }    
+    
     if (_get_allow_delay_commit()) {
         _set_time(NGCP::Panel::Utils::DateTime::current_local->subtract(months => 3));
         _create_customers_threaded(3);
@@ -543,7 +594,7 @@ sub _check_interval_history {
     #my @got_interval_history = ();
     my $i = 0;
     my $limit = '';
-    my $error = 0;
+    my $ok = 1;
     my @intervals;
     $limit = '&start=' . DateTime::Format::ISO8601->parse_datetime($limit_dt) if defined $limit_dt;
     my $label = 'interval history of contract with ' . ($customer->{profile_package_id} ? 'package ' . $package_map->{$customer->{profile_package_id}}->{name} : 'no package') . ': ';
@@ -559,7 +610,7 @@ sub _check_interval_history {
         is($selfuri, $nexturi, $label . "check _links.self.href of collection");
         my $colluri = URI->new($selfuri);
 
-        $error = ok($collection->{total_count} == $total_count, $label . "check 'total_count' of collection") || $error;
+        $ok = ok($collection->{total_count} == $total_count, $label . "check 'total_count' of collection") && $ok;
 
         my %q = $colluri->query_form;
         ok(exists $q{page} && exists $q{rows}, $label . "check existence of 'page' and 'row' in 'self'");
@@ -604,7 +655,7 @@ sub _check_interval_history {
             #my $fetched = delete $page_items->{$interval->{id}};
             #delete $fetched->{content};
             #is_deeply($interval,$fetched,$label . "compare fetched and embedded item deeply");
-            $error = _compare_interval($interval,$expected_interval_history->[$i],$label) || $error;
+            $ok = _compare_interval($interval,$expected_interval_history->[$i],$label) && $ok;
             delete $interval->{'_links'};
             push(@intervals,$interval);
             $i++
@@ -614,38 +665,48 @@ sub _check_interval_history {
     } while($nexturi);
     
     ok($i == $total_count,$label . "check if all expected items are listed");
-    diag(Dumper(\@intervals)) if $error;
+    diag(Dumper(\@intervals)) if !$ok;
     
 }
 
 sub _compare_interval {
     my ($got,$expected,$label) = @_;
     
-    my $error = 0;
+    my $ok = 1;
     if ($expected->{start}) {
         #is(NGCP::Panel::Utils::DateTime::from_string($got->{start}),NGCP::Panel::Utils::DateTime::from_string($expected->{start}),$label . "check interval " . $got->{id} . " start timestmp");
         if (substr($expected->{start},0,1) eq '~') {
-            $error = _is_ts_approx($got->{start},$expected->{start},$label . "check interval " . $got->{id} . " start timestamp") || $error;
+            $ok = _is_ts_approx($got->{start},$expected->{start},$label . "check interval " . $got->{id} . " start timestamp") && $ok;
         } else {
-            $error = is($got->{start},$expected->{start},$label . "check interval " . $got->{id} . " start timestmp") || $error;
+            $ok = is($got->{start},$expected->{start},$label . "check interval " . $got->{id} . " start timestmp") && $ok;
         }
     }
     if ($expected->{stop}) {
         #is(NGCP::Panel::Utils::DateTime::from_string($got->{stop}),NGCP::Panel::Utils::DateTime::from_string($expected->{stop}),$label . "check interval " . $got->{id} . " stop timestmp");
         if (substr($expected->{stop},0,1) eq '~') {
-            $error = _is_ts_approx($got->{stop},$expected->{stop},$label . "check interval " . $got->{id} . " stop timestamp") || $error;
+            $ok = _is_ts_approx($got->{stop},$expected->{stop},$label . "check interval " . $got->{id} . " stop timestamp") && $ok;
         } else {
-            $error = is($got->{stop},$expected->{stop},$label . "check interval " . $got->{id} . " stop timestmp") || $error;
+            $ok = is($got->{stop},$expected->{stop},$label . "check interval " . $got->{id} . " stop timestmp") && $ok;
         }
     }
     
     if ($expected->{cash}) {
-        $error = is($got->{cash_balance},$expected->{cash},$label . "check interval " . $got->{id} . " cash balance") || $error;
+        $ok = is($got->{cash_balance},$expected->{cash},$label . "check interval " . $got->{id} . " cash balance") && $ok;
     }
 
     if ($expected->{profile}) {
-        $error = is($got->{profile_id},$expected->{profile_id},$label . "check interval " . $got->{id} . " billing profile") || $error;
+        $ok = is($got->{profile_id},$expected->{profile_id},$label . "check interval " . $got->{id} . " billing profile") && $ok;
+    }
+    
+    if ($expected->{topups}) {
+        $ok = is($got->{topup_count},$expected->{topups},$label . "check interval " . $got->{id} . " topup count") && $ok;
+    }
+    
+    if ($expected->{timely_topups}) {
+        $ok = is($got->{timely_topup_count},$expected->{timely_topups},$label . "check interval " . $got->{id} . " timely topup count") && $ok;
     }    
+    
+    return $ok;
     
 }
 
@@ -653,8 +714,9 @@ sub _is_ts_approx {
     my ($got,$expected,$label) = @_;
     $got = NGCP::Panel::Utils::DateTime::from_string($got);
     $expected = NGCP::Panel::Utils::DateTime::from_string(substr($expected,1));
-    my $lower = $expected->clone->subtract(seconds => 5);
-    my $upper = $expected->clone->add(seconds => 5);
+    my $epsilon = 10;
+    my $lower = $expected->clone->subtract(seconds => $epsilon);
+    my $upper = $expected->clone->add(seconds => $epsilon);
     return ok($got >= $lower && $got <= $upper,$label . ' approximately (' . $got . ')');
 }
 
@@ -759,20 +821,21 @@ sub _get_rfc_1123_now {
 
 sub _create_profile_package {
 
-    my ($start_mode,$interval_unit,$interval_value) = @_;
+    my ($start_mode,$interval_unit,$interval_value,$notopup_discard_intervals) = @_;
     $req = HTTP::Request->new('POST', $uri.'/api/profilepackages/');
     $req->header('Content-Type' => 'application/json');
     $req->header('Prefer' => 'return=representation');
     $req->header('X-Fake-Clienttime' => _get_rfc_1123_now());
     my $name = $start_mode . ($interval_unit ? '/' . $interval_value . ' ' . $interval_unit : '');
     $req->content(JSON::to_json({
-        name => "test '" . $name . "' profile package " . $t,
-        description  => "test profile package description " . $t,
+        name => "test '" . $name . "' profile package " . (scalar keys %$package_map) . '_' . $t,
+        description  => "test profile package description " . (scalar keys %$package_map) . '_' . $t,
         reseller_id => $default_reseller_id,
         initial_profiles => [{ profile_id => $billingprofile->{id}, }, ],
         balance_interval_start_mode => $start_mode,
         ($interval_unit ? (balance_interval_value => $interval_value,
                             balance_interval_unit => $interval_unit,) : ()),
+        notopup_discard_intervals => $notopup_discard_intervals,
     }));
     $res = $ua->request($req);
     is($res->code, 201, "POST test profilepackage - '" . $name . "'");
@@ -845,7 +908,7 @@ sub _create_base_profile_package {
         initial_profiles => [{ profile_id => $profile_base_any->{id}, },
                              { profile_id => $profile_base_a->{id}, network_id => $network_a->{id} },
                              { profile_id => $profile_base_b->{id}, network_id => $network_b->{id} }],
-        balance_interval_start_mode => 'topup',
+        balance_interval_start_mode => 'topup_interval',
         balance_interval_value => 1,
         balance_interval_unit => 'month',
         carry_over_mode => 'carry_over_timely',
@@ -878,7 +941,7 @@ sub _create_silver_profile_package {
         description  => "silver test profile package description " . $t,
         reseller_id => $default_reseller_id,
         initial_profiles => $base_package->{initial_profiles},
-        balance_interval_start_mode => 'topup',
+        balance_interval_start_mode => 'topup_interval',
         balance_interval_value => 1,
         balance_interval_unit => 'month',
         carry_over_mode => 'carry_over_timely',
@@ -916,7 +979,7 @@ sub _create_extension_profile_package {
         description  => "extension test profile package description " . $t,
         reseller_id => $default_reseller_id,
         initial_profiles => $base_package->{initial_profiles},
-        balance_interval_start_mode => 'topup',
+        balance_interval_start_mode => 'topup_interval',
         balance_interval_value => 1,
         balance_interval_unit => 'month',
         carry_over_mode => 'carry_over_timely',
@@ -954,7 +1017,7 @@ sub _create_gold_profile_package {
         description  => "gold test profile package description " . $t,
         reseller_id => $default_reseller_id,
         initial_profiles => $base_package->{initial_profiles},
-        balance_interval_start_mode => 'topup',
+        balance_interval_start_mode => 'topup_interval',
         balance_interval_value => 1,
         balance_interval_unit => 'month',
         carry_over_mode => 'carry_over',

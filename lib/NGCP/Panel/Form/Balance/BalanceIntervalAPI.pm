@@ -89,6 +89,26 @@ has_field 'free_time_spent' => (
     },
 );
 
+has_field 'topup_count' => (
+    type => 'Integer',
+    #label => 'Free-Time Balance',
+    #required => 1,
+    element_attr => {
+        rel => ['tooltip'],
+        title => ['The number of top-ups performed in this interval.']
+    },
+);
+
+has_field 'timely_topup_count' => (
+    type => 'Integer',
+    #label => 'Free-Time Balance',
+    #required => 1,
+    element_attr => {
+        rel => ['tooltip'],
+        title => ['The number of top-ups performed in the \'timely\' span of this interval.']
+    },
+);
+
 1;
 
 # vim: set tabstop=4 expandtab:
