@@ -23,17 +23,19 @@ use constant _DEFAULT_INITIAL_BALANCE => 0.0;
 use constant _TOPUP_START_MODE => 'topup';
 use constant _1ST_START_MODE => '1st';
 use constant _CREATE_START_MODE => 'create';
-#use constant _TOPUP_INTERVAL_START_MODE => 'topup_interval';
+use constant _TOPUP_INTERVAL_START_MODE => 'topup_interval';
 
 use constant _START_MODE_PRESERVE_EOM => { _TOPUP_START_MODE . '' => 0,
                                      _1ST_START_MODE . '' => 0,
                                      _CREATE_START_MODE . '' => 1};
 
 use constant _DEFAULT_START_MODE => '1st';
-use constant _DEFAULT_PROFILE_INTERVAL_UNIT => 'week';
+use constant _DEFAULT_PROFILE_INTERVAL_UNIT => 'month';
 use constant _DEFAULT_PROFILE_INTERVAL_COUNT => 1;
 use constant _DEFAULT_PROFILE_FREE_TIME => 0;
 use constant _DEFAULT_PROFILE_FREE_CASH => 0.0;
+
+#use constant _DEFAULT_NOTOPUP_DISCARD_INTERVALS => undef;
 
 sub get_contract_balance {
     my %params = @_;
@@ -75,35 +77,35 @@ sub resize_actual_contract_balance {
     } elsif (!defined $old_package && defined $new_package) {
         $old_start_mode = _DEFAULT_START_MODE;
         $new_start_mode = $new_package->balance_interval_start_mode if $new_package->balance_interval_start_mode ne _DEFAULT_START_MODE;
-        $create_next_balance = _TOPUP_START_MODE eq $new_package->balance_interval_start_mode && $is_topup;
+        $create_next_balance = (_TOPUP_START_MODE eq $new_package->balance_interval_start_mode ||
+            _TOPUP_INTERVAL_START_MODE eq $new_package->balance_interval_start_mode) && $is_topup;
     } elsif (defined $old_package && defined $new_package) {
-        if ($old_package->balance_interval_start_mode ne $new_package->balance_interval_start_mode) { #&& $old_package->id != $new_package->id ?
+        if ($old_package->balance_interval_start_mode ne $new_package->balance_interval_start_mode) {
             $old_start_mode = $old_package->balance_interval_start_mode;
             $new_start_mode = $new_package->balance_interval_start_mode;
-            $create_next_balance = _TOPUP_START_MODE eq $new_package->balance_interval_start_mode && $is_topup;
+            $create_next_balance = (_TOPUP_START_MODE eq $new_package->balance_interval_start_mode ||
+               _TOPUP_INTERVAL_START_MODE eq $new_package->balance_interval_start_mode) && $is_topup;
         } elsif (_TOPUP_START_MODE eq $new_package->balance_interval_start_mode && $is_topup) {
             $old_start_mode = _TOPUP_START_MODE;
             $new_start_mode = _TOPUP_START_MODE;
             $create_next_balance = 1;
+        } elsif (_TOPUP_INTERVAL_START_MODE eq $new_package->balance_interval_start_mode && $is_topup
+                 && NGCP::Panel::Utils::DateTime::is_infinite_future($actual_balance->end)) {
+            $old_start_mode = _TOPUP_INTERVAL_START_MODE;
+            $new_start_mode = _TOPUP_INTERVAL_START_MODE;
+            $create_next_balance = 1;
         }
-        #} elsif (_TOPUP_INTERVAL_START_MODE eq $new_package->balance_interval_start_mode && $is_topup) {
-        #    $old_start_mode = _TOPUP_INTERVAL_START_MODE;
-        #    $new_start_mode = _TOPUP_INTERVAL_START_MODE;
-        #    xx$create_next_balance = 1;
-        #}
-        
-        
-        
     }
     
     if ($old_start_mode && $new_start_mode && $actual_balance->start < $now) {
         my $end_of_resized_interval = _get_resized_interval_end(ctime => $now,
                                                                 create_timestamp => $contract->create_timestamp // $contract->modify_timestamp,
-                                                                start_mode => $new_start_mode);
+                                                                start_mode => $new_start_mode,
+                                                                is_topup => $is_topup);
         my $resized_balance_values = _get_resized_balance_values(schema => $schema,
                                                                 balance => $actual_balance,
-                                                                old_start_mode => $old_start_mode,
-                                                                new_start_mode => $new_start_mode,
+                                                                #old_start_mode => $old_start_mode,
+                                                                #new_start_mode => $new_start_mode,
                                                                 etime => $end_of_resized_interval);
         #try {
         #    $schema->txn_do(sub {
@@ -115,7 +117,7 @@ sub resize_actual_contract_balance {
                 if ($create_next_balance) {
                     $actual_balance = catchup_contract_balances(schema => $schema,
                             contract => $contract,
-                            old_package => $old_package,
+                            old_package => $new_package, #$old_package,
                             now => $end_of_resized_interval->clone->add(seconds => 1),
                         );
                 }
@@ -136,6 +138,8 @@ sub resize_actual_contract_balance {
         #};
     }
     
+    
+    
     return $actual_balance;
     
 }
@@ -149,13 +153,23 @@ sub catchup_contract_balances {
     $now //= $contract->modify_timestamp;
     $old_package = $contract->profile_package if !exists $params{old_package};
 
-    my ($start_mode,$interval_unit,$interval_value,$carry_over_mode,$has_package);
+    my ($start_mode,$interval_unit,$interval_value,$carry_over_mode,$has_package,$notopup_expiration);
     
     if (defined $contract->contact->reseller_id && $old_package) {
         $start_mode = $old_package->balance_interval_start_mode;
         $interval_unit = $old_package->balance_interval_unit;
         $interval_value = $old_package->balance_interval_value;
         $carry_over_mode = $old_package->carry_over_mode;
+        my $notopup_discard_intervals = $old_package->notopup_discard_intervals;
+        if ($notopup_discard_intervals) {
+            #take the start of the latest interval where a topup occured,
+            #add the allowed number+1 of the current package' intervals.
+            #the balance is discarded  if the start of the next package
+            #exceed this calculated expiration date.
+            my $last_balance_w_topup = $contract->contract_balances->search({ topup_count => { '>' => 0 } },{ order_by => { '-desc' => 'end'},})->first;
+            $last_balance_w_topup = $contract->contract_balances->search(undef,{ order_by => { '-asc' => 'start'},})->first unless $last_balance_w_topup;
+            $notopup_expiration = _add_interval($last_balance_w_topup->start,$interval_unit,$notopup_discard_intervals + 1) if $last_balance_w_topup;
+        }
         $has_package = 1;
     } else {
         $start_mode = _DEFAULT_START_MODE;
@@ -186,16 +200,17 @@ sub catchup_contract_balances {
                                                       interval_unit => $interval_unit,
                                                       interval_value => $interval_value,
                                                       create => $contract->create_timestamp // $contract->modify_timestamp);
-        
+                    
         my $balance_values = _get_balance_values(schema => $schema,
             stime => $stime,
             etime => $etime,
-            start_mode => $start_mode,
+            #start_mode => $start_mode,
             contract => $contract,
             profile => $profile,
             carry_over_mode => $carry_over_mode,
             last_balance => $last_balance,
             last_profile => $last_profile,
+            notopup_expiration => $notopup_expiration,
         );
         $last_profile = $profile;
         
@@ -280,7 +295,8 @@ sub topup_contract_balance {
         && ($timely_duration_unit = $old_package->timely_duration_unit)
         && ($timely_duration_value = $old_package->timely_duration_value)) {
         my $timely_end;
-        if (_TOPUP_START_MODE ne $old_package->balance_interval_start_mode) {
+        #if (_TOPUP_START_MODE ne $old_package->balance_interval_start_mode) {
+        if (!NGCP::Panel::Utils::DateTime::is_infinite_future($balance->end)) {
             $timely_end = $balance->end;
         } else {
             $timely_end = _add_interval($balance->start,$old_package->balance_interval_unit,$old_package->balance_interval_value,
@@ -292,6 +308,9 @@ sub topup_contract_balance {
         $is_timely = ($now >= $timely_start && $now <= $timely_end ? 1 : 0);
     }
     
+    $balance->update({ topup_count => $balance->topup_count + 1,
+                       timely_topup_count => $balance->timely_topup_count + $is_timely});    
+    
     $balance = resize_actual_contract_balance(c => $c,
         contract => $contract,
         old_package => $old_package,
@@ -300,9 +319,7 @@ sub topup_contract_balance {
         is_topup => 1,
     );            
 
-    $balance->update({ cash_balance => $balance->cash_balance + $topup_amount,
-                       topup_count => $balance->topup_count + 1,
-                       timely_topup_count => $balance->timely_topup_count + $is_timely});
+    $balance->update({ cash_balance => $balance->cash_balance + $topup_amount });
     $balance->discard_changes();
     
     return $balance;
@@ -341,7 +358,7 @@ sub create_initial_contract_balance {
     my $balance_values = _get_balance_values(schema => $schema,
             stime => $stime,
             etime => $etime,
-            start_mode => $start_mode,
+            #start_mode => $start_mode,
             now => $now,
             profile => $profile,
             initial_balance => $initial_balance, # * 100.0,
@@ -372,20 +389,20 @@ sub create_initial_contract_balance {
 
 sub _get_resized_balance_values {
     my %params = @_;
-    my ($c,$balance,$old_start_mode,$new_start_mode,$etime,$schema) = @params{qw/c balance old_start_mode new_start_mode etime schema/};
+    my ($c,$balance,$etime,$schema) = @params{qw/c balance etime schema/};
     
     $schema //= $c->model('DB');
     my ($cash_balance, $free_time_balance) = ($balance->cash_balance,$balance->free_time_balance);
     
     my $contract = $balance->contract;
     my $contract_create = $contract->create_timestamp // $contract->modify_timestamp;
-    if ($balance->start <= $contract_create && $balance->end >= $contract_create) {
+    if ($balance->start <= $contract_create && (NGCP::Panel::Utils::DateTime::is_infinite_future($balance->end) || $balance->end >= $contract_create)) {
         my $bm = get_actual_billing_mapping(schema => $schema, contract => $contract, now => $contract_create); #now => $balance->start); #end); !?
         my $profile = $bm->billing_mappings->first->billing_profile;
-        my $old_ratio = _get_free_ratio($contract_create,$old_start_mode,$balance->start,$balance->end);
+        my $old_ratio = _get_free_ratio($contract_create,$balance->start,$balance->end);
         my $old_free_cash = $old_ratio * ($profile->interval_free_cash // _DEFAULT_PROFILE_FREE_CASH);
         my $old_free_time = $old_ratio * ($profile->interval_free_time // _DEFAULT_PROFILE_FREE_TIME);
-        my $new_ratio = _get_free_ratio($contract_create,$new_start_mode,$balance->start,$etime);
+        my $new_ratio = _get_free_ratio($contract_create,$balance->start,$etime);
         my $new_free_cash = $new_ratio * ($profile->interval_free_cash // _DEFAULT_PROFILE_FREE_CASH);
         my $new_free_time = $new_ratio * ($profile->interval_free_time // _DEFAULT_PROFILE_FREE_TIME);
         $cash_balance = $new_free_cash - $old_free_cash;
@@ -398,7 +415,7 @@ sub _get_resized_balance_values {
 
 sub _get_balance_values {
     my %params = @_;
-    my($c, $profile, $last_profile, $contract, $last_balance, $stime, $etime, $initial_balance, $carry_over_mode, $now, $start_mode, $schema) = @params{qw/c profile last_profile contract last_balance stime etime initial_balance carry_over_mode now start_mode schema/};    
+    my($c, $profile, $last_profile, $contract, $last_balance, $stime, $etime, $initial_balance, $carry_over_mode, $now, $notopup_expiration, $schema) = @params{qw/c profile last_profile contract last_balance stime etime initial_balance carry_over_mode now notopup_expiration schema/};    
     
     $schema //= $c->model('DB');
     $now //= $contract->create_timestamp // $contract->modify_timestamp;
@@ -406,15 +423,17 @@ sub _get_balance_values {
     
     my $ratio;
     if ($last_balance) {
-        if (_CARRY_OVER_MODE eq $carry_over_mode || (_CARRY_OVER_TIMELY_MODE eq $carry_over_mode && $last_balance->timely_topup_count > 0)) {
+        if ((_CARRY_OVER_MODE eq $carry_over_mode
+             || (_CARRY_OVER_TIMELY_MODE eq $carry_over_mode && $last_balance->timely_topup_count > 0)
+            ) && (!$notopup_expiration || $stime < $notopup_expiration)) {
             #if (!defined $last_profile) {
             #    my $bm_last = get_actual_billing_mapping(schema => $schema, contract => $contract, now => $last_balance->start); #end); !?
             #    $last_profile = $bm_last->billing_mappings->first->billing_profile;
             #}
             my $contract_create = $contract->create_timestamp // $contract->modify_timestamp;
             $ratio = 1.0;
-            if ($last_balance->start <= $contract_create && $last_balance->end >= $contract_create) {
-                $ratio = _get_free_ratio($contract_create,$start_mode,$last_balance->start,$last_balance->end);
+            if ($last_balance->start <= $contract_create && $last_balance->end >= $contract_create) { #$last_balance->end is never +inf here
+                $ratio = _get_free_ratio($contract_create,$last_balance->start,$last_balance->end);
             }
             my $old_free_cash = $ratio * ($last_profile->interval_free_cash // _DEFAULT_PROFILE_FREE_CASH);
             $cash_balance = $last_balance->cash_balance;
@@ -426,7 +445,7 @@ sub _get_balance_values {
         $ratio = 1.0;
     } else {
         $cash_balance = (defined $initial_balance ? $initial_balance : _DEFAULT_INITIAL_BALANCE);
-        $ratio = _get_free_ratio($now,$start_mode,$stime, $etime);
+        $ratio = _get_free_ratio($now,$stime, $etime);
     }
     
     my $free_cash = $ratio * ($profile->interval_free_cash // _DEFAULT_PROFILE_FREE_CASH);
@@ -445,8 +464,8 @@ sub _get_balance_values {
 }
 
 sub _get_free_ratio {
-    my ($now,$start_mode,$stime,$etime) = @_;
-    if (_TOPUP_START_MODE ne $start_mode) {
+    my ($now,$stime,$etime) = @_;
+    if (!NGCP::Panel::Utils::DateTime::is_infinite_future($etime)) {
         my $ctime;
         if (defined $now) {
             $ctime = ($now->clone->truncate(to => 'day') > $stime ? $now->clone->truncate(to => 'day') : $now);
@@ -468,29 +487,29 @@ sub _get_balance_interval_start_end {
 
     my ($stime,$etime,$ctime) = (undef,undef,$now // NGCP::Panel::Utils::DateTime::current_local);
     
-    unless ($last_etime) {
+    unless ($last_etime) { #initial interval
         $stime = _get_interval_start($ctime,$start_mode);
     } else {
         $stime = $last_etime->clone->add(seconds => 1);
     }
     
-    if (defined $stime) { #lets crash in the create statement
-        if (_TOPUP_START_MODE ne $start_mode) {
-            $etime = _add_interval($stime,$interval_unit,$interval_value,_START_MODE_PRESERVE_EOM->{$start_mode} ? $create : undef)->subtract(seconds => 1);
-        } else {
-            $etime = NGCP::Panel::Utils::DateTime::infinite_future;
-        }
-        #if (_TOPUP_START_MODE eq $start_mode) {
-        #    $etime = NGCP::Panel::Utils::DateTime::infinite_future;
-        #} elsif (_TOPUP_INTERVAL_START_MODE eq $start_mode) {
-        #    if ($first_balance) {
-        #        $etime = _add_interval($stime,$interval_unit,$interval_value,_START_MODE_PRESERVE_EOM->{$start_mode} ? $first_balance->end : undef)->subtract(seconds => 1);
-        #    } else {
-        #        $etime = NGCP::Panel::Utils::DateTime::infinite_future;
-        #    }
-        #} else {
+    if (defined $stime) {
+        #if (_TOPUP_START_MODE ne $start_mode) {
         #    $etime = _add_interval($stime,$interval_unit,$interval_value,_START_MODE_PRESERVE_EOM->{$start_mode} ? $create : undef)->subtract(seconds => 1);
-        #}        
+        #} else {
+        #    $etime = NGCP::Panel::Utils::DateTime::infinite_future;
+        #}
+        if (_TOPUP_START_MODE eq $start_mode) {
+            $etime = NGCP::Panel::Utils::DateTime::infinite_future;
+        } elsif (_TOPUP_INTERVAL_START_MODE eq $start_mode) {
+            if ($last_etime) {
+                $etime = _add_interval($stime,$interval_unit,$interval_value)->subtract(seconds => 1); #no eom preserve, since we don't store the begin of the first interval
+            } else { #initial interval
+                $etime = NGCP::Panel::Utils::DateTime::infinite_future;
+            }
+        } else {
+            $etime = _add_interval($stime,$interval_unit,$interval_value,_START_MODE_PRESERVE_EOM->{$start_mode} ? $create : undef)->subtract(seconds => 1);
+        }        
     }
     
     return ($stime,$etime);
@@ -498,7 +517,7 @@ sub _get_balance_interval_start_end {
 
 sub _get_resized_interval_end {
     my (%params) = @_;
-    my ($ctime, $create, $start_mode) = @params{qw/ctime create_timestamp start_mode/};    
+    my ($ctime, $create, $start_mode,$is_topup) = @params{qw/ctime create_timestamp start_mode is_topup/};    
     if (_CREATE_START_MODE eq $start_mode) {
         my $start_of_next_interval;
         if ($ctime->day >= $create->day) {
@@ -520,11 +539,14 @@ sub _get_resized_interval_end {
     } elsif (_TOPUP_START_MODE eq $start_mode) {
         return $ctime->clone; #->add(seconds => 1);
         #return NGCP::Panel::Utils::DateTime::infinite_future;
-    }
-    #} elsif (_TOPUP_INTERVAL_START_MODE eq $start_mode) {
-    #    return $ctime->clone; #->add(seconds => 1);
-    #    #return NGCP::Panel::Utils::DateTime::infinite_future;
-    #}    
+    } elsif (_TOPUP_INTERVAL_START_MODE eq $start_mode) {
+        #return $ctime->clone; #->add(seconds => 1);
+        if ($is_topup) {
+            return $ctime->clone; #->add(seconds => 1);
+        } else {
+            return NGCP::Panel::Utils::DateTime::infinite_future;
+        }
+    }    
     return undef;    
 }
 
@@ -536,10 +558,9 @@ sub _get_interval_start {
         return $ctime->clone->truncate(to => 'month');
     } elsif (_TOPUP_START_MODE eq $start_mode) {
         return $ctime->clone; #->truncate(to => 'day');
+    } elsif (_TOPUP_INTERVAL_START_MODE eq $start_mode) {
+        return $ctime->clone; #->truncate(to => 'day');
     }
-    #} elsif (_TOPUP_INTERVAL_START_MODE eq $start_mode) {
-    #    return $ctime->clone; #->truncate(to => 'day');
-    #}
     return undef;
 }
 
@@ -551,7 +572,8 @@ sub _add_interval {
         return $from->clone->add(weeks => $interval_value);
     } elsif ('month' eq $interval_unit) {
         my $to = $from->clone->add(months => $interval_value, end_of_month => 'preserve');
-        #'preserve' mode correction:
+        #DateTime's "preserve" mode would get from 30.Jan to 30.Mar, when adding 2 months
+        #When adding 1 month two times, we get 28.Mar or 29.Mar, so we adjust:
         if (defined $align_eom_dt
             && $to->day > $align_eom_dt->day
             && $from->day == NGCP::Panel::Utils::DateTime::last_day_of_month($from)) {
