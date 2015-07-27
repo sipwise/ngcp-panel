@@ -495,6 +495,20 @@ sub fees_upload :Chained('fees_list') :PathPart('upload') :Args(0) {
     $c->stash(form => $form);
 }
 
+sub fees_download :Chained('fees_list') :PathPart('download') :Args(0) {
+    my ($self, $c) = @_;
+    my $schema = $c->model('DB');
+    my $data = NGCP::Panel::Utils::Billing::combine_billing_fees( 
+        c       => $c, 
+        profile => $c->stash->{'profile_result'},
+        schema  => $schema,
+    );
+    $c->response->header ('Content-Disposition' => 'attachment; filename="billing_fees_'.$c->stash->{profile}->{id}.'.txt"');
+    $c->response->content_type('text/csv');
+    $c->response->body($$data);
+    return;
+}
+
 sub fees_edit :Chained('fees_base') :PathPart('edit') :Args(0) {
     my ($self, $c) = @_;
     
