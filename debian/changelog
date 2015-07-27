@@ -1,3 +1,27 @@
+ngcp-panel (1.9.1.2+0~mr4.0.1.2) unstable; urgency=medium
+
+  [ Rene Krenn ]
+  * [513f8df] MT#13903 balance interval catchup and resize WIP
+  * [462da75] MT#13903 topupvoucher and topupcash
+  * [c3cdfa2] MT#13903 fixes for nightly tests
+  * [0b81f05] MT#13903 add package_id in api-vouchers.t test
+  * [d554421] MT#13903 fix balanceintervals test #1
+  * [b1004d8] MT#13903 fix balanceintervals test #2
+  * [0f67fd8] MT#13903 "topup_interval" start mode impl
+  * [f0fd675] MT#13903 generate melita user story transcript
+  * [236c0be] MT#13903 disable applying profile package
+
+  [ Andreas Granig ]
+  * [18753a4] MT#13903 Add voucher/cash topup forms for API
+  * [ef43ab2] MT#13903 Add package_id to voucher API.
+
+  [ Alexander Lutay ]
+  * [985a7be] MT#13903 Disable test api-balanceintervals.t for Jenkins environment
+
+  [ Sipwise Jenkins Builder ]
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Tue, 28 Jul 2015 00:46:05 +0200
+
 ngcp-panel (1.9.1.1+0~mr4.0.1.1) unstable; urgency=medium
 
   [ Andreas Granig ]
