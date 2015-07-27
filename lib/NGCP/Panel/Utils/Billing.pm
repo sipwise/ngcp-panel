@@ -3,6 +3,7 @@ use strict;
 use warnings;
 
 use Text::CSV_XS;
+use IO::String;
 
 sub process_billing_fees{
     my(%params) = @_;
@@ -60,6 +61,36 @@ sub process_billing_fees{
     
     return ( \@fees, \@fails, \$text );
 }
+
+sub combine_billing_fees{
+    my(%params) = @_;
+    my($c,$profile,$schema) = @params{qw/c profile schema/};
+    
+    my $csv = Text::CSV_XS->new({ allow_whitespace => 1, binary => 1, keep_meta_info => 1 });
+    my @cols = @{ $c->config->{fees_csv}->{element_order} };
+    $csv->column_names(@cols);
+    my $io = IO::String->new();
+
+    my $fees_rs = $profile->billing_fees->search_rs(
+        undef,
+        {
+            '+select' => ['billing_zone.zone','billing_zone.detail'],
+            '+as'     => ['zone','zone_detail'],
+            'join'    => 'billing_zone',
+        }
+    );
+
+    #$csv->print($io, [ @cols ]);
+    #print $io "\n";
+    while (  my $billing_fee_row = $fees_rs->next ){
+        #$csv->print_hr($io, $billing_fee_row->get_inflated_columns);
+        my %billing_fee = $billing_fee_row->get_inflated_columns;
+        $csv->print($io, [ @billing_fee{@cols} ]);
+        print $io "\n";
+    }
+    return $io->string_ref;
+}
+
 
 sub get_contract_count_stmt {
     return "select count(distinct c.id) from `billing`.`billing_mappings` bm join `billing`.`contracts` c on c.id = bm.contract_id where bm.`billing_profile_id` = `me`.`id` and c.status != 'terminated' and (bm.end_date is null or bm.end_date >= now())";
