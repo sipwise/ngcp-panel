@@ -26,9 +26,10 @@ BEGIN {
     unshift(@INC,'../lib');
 }
 use NGCP::Panel::Utils::DateTime qw();
+use NGCP::Panel::Utils::ProfilePackages qw();
 
 my $is_local_env = 0;
-
+my $enable_profile_packages = NGCP::Panel::Utils::ProfilePackages::ENABLE_PROFILE_PACKAGES;
 
 use Config::General;
 my $catalyst_config;
@@ -166,7 +167,7 @@ my $billingprofile = _create_billing_profile("test_default");
 
 my $tb; my $tb_cnt;
 
-if (_get_allow_fake_client_time()) {
+if (_get_allow_fake_client_time() && $enable_profile_packages) {
     
     {
         #_start_recording();
@@ -427,7 +428,7 @@ if (_get_allow_fake_client_time()) {
         _set_time(NGCP::Panel::Utils::DateTime::from_string($ts));
         
         $customer = _switch_package($customer,$prof_package_topup);
-
+        sleep(1); #sigh
         _check_interval_history($customer,[
             { start => '2014-10-01 00:00:00', stop => '~2014-10-04 13:00:00'},
             { start => '~2014-10-04 13:00:00', stop => $infinite_future},
@@ -517,7 +518,7 @@ if (_get_allow_fake_client_time()) {
         my $intervals_a = $t_a->join();
         my $intervals_b = $t_b->join();
         my $t2 = time;
-        is_deeply([ sort { $a->{id} cmp $b->{id} } @{ $intervals_b->{_embedded}->{'ngcp:balanceintervals'} } ],$intervals_a->{_embedded}->{'ngcp:balanceintervals'},'compare interval collection results of threaded requests deeply');
+        is_deeply([ sort { $a->{id} <=> $b->{id} } @{ $intervals_b->{_embedded}->{'ngcp:balanceintervals'} } ],$intervals_a->{_embedded}->{'ngcp:balanceintervals'},'compare interval collection results of threaded requests deeply');
         ok($t2 - $t1 > 2*$delay,'expected delay to assume requests were processed after another');
         
     } else {
@@ -528,7 +529,7 @@ if (_get_allow_fake_client_time()) {
 }
 
 { #test balanceintervals root collection and item
-    _create_customers_threaded(3) unless _get_allow_fake_client_time();
+    _create_customers_threaded(3) unless _get_allow_fake_client_time() && $enable_profile_packages;
     
     my $total_count = (scalar keys %customer_map);
     my $nexturi = $uri.'/api/balanceintervals/?page=1&rows=' . ((not defined $total_count or $total_count <= 2) ? 2 : $total_count - 1) . '&contact_id='.$custcontact->{id};
