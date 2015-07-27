@@ -36,6 +36,7 @@ use constant _DEFAULT_PROFILE_FREE_TIME => 0;
 use constant _DEFAULT_PROFILE_FREE_CASH => 0.0;
 
 #use constant _DEFAULT_NOTOPUP_DISCARD_INTERVALS => undef;
+use constant ENABLE_PROFILE_PACKAGES => 0;
 
 sub get_contract_balance {
     my %params = @_;
@@ -256,7 +257,10 @@ sub topup_contract_balance {
     my $old_package = $contract->profile_package;
     $package = $voucher_package // $old_package;
     my $topup_amount = ($voucher ? $voucher->amount : $amount) // 0.0;
-            
+    
+    $voucher_package = undef unless ENABLE_PROFILE_PACKAGES;
+    $package = undef unless ENABLE_PROFILE_PACKAGES;
+    
     my $mappings_to_create = [];
     if ($package) { #always apply (old or new) topup profiles
         $topup_amount -= $package->service_charge;

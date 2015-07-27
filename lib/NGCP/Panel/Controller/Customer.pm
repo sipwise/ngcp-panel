@@ -153,6 +153,7 @@ sub create :Chained('list_customer') :PathPart('create') :Args(0) {
                     $form->values->{$_.'_id'} = $form->values->{$_}{id} || undef;
                     delete $form->values->{$_};
                 }
+                $form->values->{profile_package_id} = undef unless NGCP::Panel::Utils::ProfilePackages::ENABLE_PROFILE_PACKAGES;
                 $form->values->{create_timestamp} = $form->values->{modify_timestamp} = NGCP::Panel::Utils::DateTime::current_local;
                 $form->values->{external_id} = $form->field('external_id')->value;
                 unless($form->values->{max_subscribers} && length($form->values->{max_subscribers})) {
@@ -455,6 +456,7 @@ sub edit :Chained('base_restricted') :PathPart('edit') :Args(0) {
                     $form->values->{$_.'_id'} = $form->values->{$_}{id} || undef;
                     delete $form->values->{$_};
                 }
+                $form->values->{profile_package_id} = undef unless NGCP::Panel::Utils::ProfilePackages::ENABLE_PROFILE_PACKAGES;
                 $form->values->{modify_timestamp} = $now;
                 $form->values->{external_id} = $form->field('external_id')->value;
                 unless($form->values->{max_subscribers} && length($form->values->{max_subscribers})) {
