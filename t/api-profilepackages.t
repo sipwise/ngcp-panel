@@ -9,7 +9,13 @@ use URI::Escape qw();
 use JSON::PP;
 use LWP::Debug;
 
+BEGIN {
+    unshift(@INC,'../lib');
+}
+use NGCP::Panel::Utils::ProfilePackages qw();
+
 my $is_local_env = 0;
+my $enable_profile_packages = NGCP::Panel::Utils::ProfilePackages::ENABLE_PROFILE_PACKAGES;
 
 my $uri = $ENV{CATALYST_SERVER} || ('https://'.hostfqdn.':4443');
 
@@ -91,7 +97,7 @@ $res = $ua->request($req);
 is($res->code, 200, "fetch POSTed billingnetwork");
 my $billingnetwork = JSON::from_json($res->decoded_content);
 
-{
+if ($enable_profile_packages) {
     $req = HTTP::Request->new('POST', $uri.'/api/profilepackages/');
     $req->header('Content-Type' => 'application/json');
     $req->header('Prefer' => 'return=representation');
@@ -152,7 +158,7 @@ my $billingnetwork = JSON::from_json($res->decoded_content);
     
 }
 
-{
+if ($enable_profile_packages) {
     
     my @profile_packages = ();
     

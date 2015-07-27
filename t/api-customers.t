@@ -10,7 +10,13 @@ use DateTime qw();
 use DateTime::Format::Strptime qw();
 use DateTime::Format::ISO8601 qw();
 
+BEGIN {
+    unshift(@INC,'../lib');
+}
+use NGCP::Panel::Utils::ProfilePackages qw();
+
 my $is_local_env = 0;
+my $enable_profile_packages = NGCP::Panel::Utils::ProfilePackages::ENABLE_PROFILE_PACKAGES;
 
 my $uri = $ENV{CATALYST_SERVER} || ('https://'.hostfqdn.':4443');
 
@@ -737,7 +743,7 @@ my @allcustomers = ();
     
 }
 
-{
+if ($enable_profile_packages) {
     
     $req = HTTP::Request->new('POST', $uri.'/api/billingprofiles/');
     $req->header('Content-Type' => 'application/json');
