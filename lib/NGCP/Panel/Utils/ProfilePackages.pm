@@ -36,7 +36,7 @@ use constant _DEFAULT_PROFILE_FREE_TIME => 0;
 use constant _DEFAULT_PROFILE_FREE_CASH => 0.0;
 
 #use constant _DEFAULT_NOTOPUP_DISCARD_INTERVALS => undef;
-use constant ENABLE_PROFILE_PACKAGES => 0;
+use constant ENABLE_PROFILE_PACKAGES => 1;
 
 sub get_contract_balance {
     my %params = @_;
@@ -676,7 +676,7 @@ sub check_profiles {
     $mappings_counts = {};
     return 0 unless prepare_package_profile_set(c => $c, resource => $resource, field => 'underrun_profiles', mappings_to_create => $mappings_to_create, mappings_counts => $mappings_counts, err_code => $err_code);
     if ($mappings_counts->{count} > 0 && ! defined $resource->{underrun_profile_threshold}) {
-        return 0 unless &{$err_code}("If specifying underung profile mappings, 'underrun_profile_threshold' is required.",'underrun_profile_threshold');
+        return 0 unless &{$err_code}("If specifying underrun profile mappings, 'underrun_profile_threshold' is required.",'underrun_profile_threshold');
     }
     $mappings_counts = {};
     return 0 unless prepare_package_profile_set(c => $c, resource => $resource, field => 'topup_profiles', mappings_to_create => $mappings_to_create, mappings_counts => $mappings_counts, err_code => $err_code);
