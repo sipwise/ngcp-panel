@@ -1,3 +1,12 @@
+ngcp-panel (1.9.1.3+0~mr4.0.1.3) unstable; urgency=medium
+
+  [ Rene Krenn ]
+  * [9c4a641] MT#13903 enable applying profile package
+
+  [ Sipwise Jenkins Builder ]
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Wed, 29 Jul 2015 01:09:18 +0200
+
 ngcp-panel (1.9.1.2+0~mr4.0.1.2) unstable; urgency=medium
 
   [ Rene Krenn ]
