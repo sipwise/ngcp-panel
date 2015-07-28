@@ -103,8 +103,8 @@ has_field 'balance_interval_start_mode' => (
     type => 'Select',
     label => 'Balance Interval Start',
     options => [
-        { value => 'create', label => 'upon customer creation' },
         { value => '1st', label => '1st day of month' },
+        { value => 'create', label => 'upon customer creation' },
         { value => 'topup_interval', label => 'start interval upon top-up' },
         { value => 'topup', label => 'new interval for each top-up' },        
     ],
