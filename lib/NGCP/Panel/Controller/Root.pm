@@ -291,7 +291,8 @@ sub api_apply_fake_time :Private {
             if ($dt) {
                 NGCP::Panel::Utils::DateTime::set_fake_time($dt);
                 $c->stash->{is_fake_time} = 1;
-                $c->log->debug('using X-Fake-Clienttime header to fake system time: ' . NGCP::Panel::Utils::DateTime::to_string(NGCP::Panel::Utils::DateTime::current_local));
+                my $id = $c->request->header('X-Request-Identifier');
+                $c->log->debug('using X-Fake-Clienttime header to fake system time: ' . NGCP::Panel::Utils::DateTime::to_string(NGCP::Panel::Utils::DateTime::current_local) . ($id ? ' - request id: ' . $id : ''));
                 return;
             }
         }
