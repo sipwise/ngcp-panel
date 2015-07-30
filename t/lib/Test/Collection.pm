@@ -2,6 +2,8 @@ package Test::Collection;
 #later package should be split into 2: apiclient and testcollection
 #testcollection will keep object of the apiclient
 
+#export LOCAL_TEST=https://192.168.x.x:yyyy; perl -I {PATH}/ngcp-panel/t/lib/ {PATH}/ngcp-panel/t/api-xxx.t
+
 use strict;
 use Test::More;
 use Moose;
@@ -35,11 +37,6 @@ has 'ua' => (
     isa => 'LWP::UserAgent',
     lazy => 1,
     builder => 'init_ua',
-);
-has 'use_cert_login' => (
-    is => 'rw',
-    isa => 'Bool',
-    default => 1,
 );
 has 'base_uri' => (
     is => 'ro',
