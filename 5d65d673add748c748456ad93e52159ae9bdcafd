@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "fa5d592f_e6e9771b",
+        "filename": "lib/NGCP/Panel/Controller/Package.pm",
+        "patchSetId": 2
+      },
+      "lineNbr": 43,
+      "author": {
+        "id": 1000002
+      },
+      "writtenOn": "2015-07-31T11:09:45Z",
+      "side": 1,
+      "message": "remove commented code here",
+      "revId": "5d65d673add748c748456ad93e52159ae9bdcafd",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    }
+  ]
+}
