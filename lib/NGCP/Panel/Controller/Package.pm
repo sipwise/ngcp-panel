@@ -8,6 +8,7 @@ use NGCP::Panel::Form::ProfilePackage::Reseller;
 use NGCP::Panel::Utils::Message;
 use NGCP::Panel::Utils::Navigation;
 use NGCP::Panel::Utils::ProfilePackages qw();
+use NGCP::Panel::Utils::Voucher qw();
 
 sub auto :Does(ACL) :ACLDetachTo('/denied_page') :AllowedRole(admin) :AllowedRole(reseller) {
     my ($self, $c) = @_;
@@ -38,11 +39,13 @@ sub _package_resultset_admin {
     return $c->model('DB')->resultset('profile_packages')->search_rs(
         undef,
         { group_by => 'me.id',
-         })->search_rs({
-            'me.status' => { '!=' => 'terminated' },
-            },
-            { '+select' => { '' => \[ NGCP::Panel::Utils::ProfilePackages::get_contract_count_stmt() ] , -as => 'contract_cnt' },
-                           #{ '' => \[ NGCP::Panel::Utils::ProfilePackages::get_package_count_stmt() ] , -as => 'package_cnt' },
+         })->search_rs(#{
+            #'me.status' => { '!=' => 'terminated' },
+            #},
+            undef,
+            { '+select' => [ { '' => \[ NGCP::Panel::Utils::ProfilePackages::get_contract_count_stmt() ] , -as => 'contract_cnt' },
+                             { '' => \[ NGCP::Panel::Utils::ProfilePackages::get_voucher_count_stmt() ] , -as => 'voucher_cnt' },
+                             ],
             });
 }
 
@@ -55,11 +58,13 @@ sub _package_resultset_reseller {
         ->search_related('profile_packages')->search_rs(
         undef,
         { group_by => 'me.id',
-         })->search_rs({
-            'me.status' => { '!=' => 'terminated' },
-            },
-            { '+select' => { '' => \[ NGCP::Panel::Utils::ProfilePackages::get_contract_count_stmt() ] , -as => 'contract_cnt' },
-                           #{ '' => \[ NGCP::Panel::Utils::ProfilePackages::get_package_count_stmt() ] , -as => 'package_cnt' },
+         })->search_rs(#{
+            #'me.status' => { '!=' => 'terminated' },
+            #},
+            undef,
+            { '+select' => [ { '' => \[ NGCP::Panel::Utils::ProfilePackages::get_contract_count_stmt() ] , -as => 'contract_cnt' },
+                             { '' => \[ NGCP::Panel::Utils::ProfilePackages::get_voucher_count_stmt() ] , -as => 'voucher_cnt' },
+                             ],
             });
 }
 
@@ -210,7 +215,7 @@ sub edit :Chained('base') :PathPart('edit') :Args(0) {
             $c->model('DB')->schema->txn_do( sub {
                 unless($c->stash->{'package_result'}->get_column('contract_cnt') == 0) {
                     die('Cannnot modify profile package that is still assigned to contracts');
-                }                
+                }
                 my $profile_package = $c->stash->{'package_result'}->update($form->values);
                 $profile_package->profiles->delete;        
                 foreach my $mapping (@mappings_to_create) {
@@ -240,30 +245,31 @@ sub edit :Chained('base') :PathPart('edit') :Args(0) {
     );
 }
 
-sub terminate :Chained('base') :PathPart('terminate') :Args(0) {
+sub delete :Chained('base') :PathPart('delete') :Args(0) {
     my ($self, $c) = @_;
     my $package = $c->stash->{package_result};
 
     try {
         #todo: putting the package fetch into a transaction wouldn't help since the count columns a prone to phantom reads...
         unless($package->get_column('contract_cnt') == 0) {
-            die('Cannnot terminate profile package that is still assigned to contracts');
+            die('Cannnot delete profile package that is still assigned to contracts');
         }
-        $package->update({
-            status => 'terminated',
-            #terminate_timestamp => NGCP::Panel::Utils::DateTime::current_local,
-        });
+        unless($package->get_column('voucher_cnt') == 0) {
+            die('Cannnot delete profile package that is assigned to vouchers');
+        }
+        
+        $package->delete;
         NGCP::Panel::Utils::Message->info(
             c => $c,
             data => $c->stash->{package},
-            desc => $c->loc('Profile package successfully terminated'),
+            desc => $c->loc('Profile package successfully deleted'),
         );
     } catch ($e) {
         NGCP::Panel::Utils::Message->error(
             c => $c,
             error => $e,
             data  => $c->stash->{package},
-            desc  => $c->loc('Failed to terminate profile package'),
+            desc  => $c->loc('Failed to delete profile package'),
         );
     };
     NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for('/package'));
@@ -284,6 +290,85 @@ sub ajax_filter_reseller :Chained('package_list') :PathPart('ajax/filter_reselle
         'me.reseller_id' => $reseller_id,
     });
     NGCP::Panel::Utils::Datatables::process($c, $resultset, $c->stash->{package_dt_columns});
+    $c->detach( $c->view("JSON") );
+}
+
+
+sub details_base :Chained('/') :PathPart('package') :CaptureArgs(1) {
+    my ($self, $c, $package_id) = @_;
+
+    my $dispatch_to = '_package_resultset_' . $c->user->roles;
+    my $package_rs = $self->$dispatch_to($c);
+    
+    unless($package_id && $package_id->is_integer) {
+        $package_id //= '';
+        NGCP::Panel::Utils::Message->error(
+            c => $c,
+            data => { id => $package_id },
+            desc => $c->loc('Invalid package id detected'),
+        );
+        $c->response->redirect($c->uri_for());
+        $c->detach;
+        return;
+    }
+    
+    my $res = $package_rs->find($package_id);
+    unless(defined($res)) {
+        NGCP::Panel::Utils::Message->error(
+            c => $c,
+            desc => $c->loc('Profile package does not exist'),
+        );
+        $c->response->redirect($c->uri_for());
+        $c->detach;
+        return;
+    }
+
+    $c->stash->{profile_set_dt_columns} = NGCP::Panel::Utils::Datatables::set_columns($c, [
+        #{ name => 'id', search => 1, title => $c->loc('#') },
+        { name => 'billing_profile.name', search => 1, title => $c->loc('Billing Profile') },
+        { name => 'billing_network.name', search => 1, title => $c->loc('Billing Network') },
+    ]);
+    $c->stash->{customer_dt_columns} = NGCP::Panel::Utils::Datatables::set_columns($c, [
+        NGCP::Panel::Utils::ProfilePackages::get_customer_datatable_cols($c)
+    ]);
+    $c->stash->{voucher_dt_columns} = NGCP::Panel::Utils::Datatables::set_columns($c, [
+        NGCP::Panel::Utils::Voucher::get_datatable_cols($c,1)
+    ]);    
+    
+    $c->stash(package_result => $res);
+}
+
+sub details :Chained('details_base') :PathPart('details') :Args(0) {
+    my ($self, $c) = @_;
+    $c->stash(template => 'package/details.tt');
+}
+
+sub details_ajax :Chained('details_base') :PathPart('ajax') :CaptureArgs(0)  {
+    my ($self, $c) = @_;
+
+}
+
+sub ajax_initial_profiles :Chained('details_ajax') :PathPart('initial_profiles') :Args(0) {
+    my ($self, $c) = @_;
+
+    my $resultset = $c->stash->{package_result}->initial_profiles;
+    NGCP::Panel::Utils::Datatables::process($c, $resultset, $c->stash->{profile_set_dt_columns});
+    $c->detach( $c->view("JSON") );
+}
+
+sub ajax_topup_profiles :Chained('details_ajax') :PathPart('topup_profiles') :Args(0) {
+    my ($self, $c) = @_;
+
+    my $resultset = $c->stash->{package_result}->topup_profiles;
+    NGCP::Panel::Utils::Datatables::process($c, $resultset, $c->stash->{profile_set_dt_columns});
+    $c->detach( $c->view("JSON") );
+}
+
+sub ajax_underrun_profiles :Chained('details_ajax') :PathPart('underrun_profiles') :Args(0) {
+    my ($self, $c) = @_;
+
+    my $resultset = $c->stash->{package_result}->underrun_profiles;
+    NGCP::Panel::Utils::Datatables::process($c, $resultset, $c->stash->{profile_set_dt_columns});
     $c->detach( $c->view("JSON") );
 }
 

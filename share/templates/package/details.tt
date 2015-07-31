@@ -1,0 +1,156 @@
+[% site_config.title = c.loc('Profile Package Details for [_1]', package_result.name) -%]
+
+<div class="row">
+    <span>
+        <a class="btn btn-primary btn-large" href="[% c.uri_for('/back') %]"><i class="icon-arrow-left"></i> [% c.loc('Back') %]</a>
+    </span>
+</div>
+
+[% back_created = 1 -%]
+
+<div class="ngcp-separator"></div>
+
+<div class="row">
+    [% FOREACH m IN messages -%]
+        <div class="alert alert-[% m.type %]">[% m.text %]</div>
+    [% END -%]
+[% messages = [] -%]
+</div>
+
+<div class="accordion" id="package_details">
+    
+    <div class="accordion-group">
+        <div class="accordion-heading">
+            <a class="accordion-toggle" data-toggle="collapse" data-parent="#package_details" href="#collapse_initial_profile_set">[% c.loc('Initial Billing Profiles/Networks') %]</a>
+        </div>
+        <div class="accordion-body collapse" id="collapse_initial_profile_set">
+            <div class="accordion-inner">
+[%
+    helper.name = c.loc('Billing Profile/Network');
+    helper.identifier = 'initial_profile_set';
+    helper.messages = messages;
+    helper.dt_columns = profile_set_dt_columns;
+    helper.paginate = 'true';
+    helper.filter = 'true';
+    helper.close_target = close_target;
+    helper.create_flag = create_flag;
+    helper.edit_flag = edit_flag;
+    helper.form_object = form;
+    helper.ajax_uri = c.uri_for('/package/' _ package_result.id _ '/ajax/initial_profiles');
+    
+    PROCESS 'helpers/datatables.tt';
+-%]
+            </div>
+        </div>
+    </div>
+    
+    <div class="accordion-group">
+        <div class="accordion-heading">
+            <a class="accordion-toggle" data-toggle="collapse" data-parent="#package_details" href="#collapse_topup_profile_set">[% c.loc('Top-up Billing Profiles/Networks') %]</a>
+        </div>
+        <div class="accordion-body collapse" id="collapse_topup_profile_set">
+            <div class="accordion-inner">
+[%
+    helper.name = c.loc('Billing Profile/Network');
+    helper.identifier = 'topup_profile_set';
+    helper.messages = messages;
+    helper.dt_columns = profile_set_dt_columns;
+    helper.paginate = 'true';
+    helper.filter = 'true';
+    helper.close_target = close_target;
+    helper.create_flag = create_flag;
+    helper.edit_flag = edit_flag;
+    helper.form_object = form;
+    helper.ajax_uri = c.uri_for('/package/' _ package_result.id _ '/ajax/topup_profiles');
+    
+    PROCESS 'helpers/datatables.tt';
+-%]
+            </div>
+        </div>
+    </div>
+    
+    <div class="accordion-group">
+        <div class="accordion-heading">
+            <a class="accordion-toggle" data-toggle="collapse" data-parent="#package_details" href="#collapse_underrun_profile_set">[% c.loc('Underrun Billing Profiles/Networks') %]</a>
+        </div>
+        <div class="accordion-body collapse" id="collapse_underrun_profile_set">
+            <div class="accordion-inner">
+[%
+    helper.name = c.loc('Billing Profile/Network');
+    helper.identifier = 'underrun_profile_set';
+    helper.messages = messages;
+    helper.dt_columns = profile_set_dt_columns;
+    helper.paginate = 'true';
+    helper.filter = 'true';
+    helper.close_target = close_target;
+    helper.create_flag = create_flag;
+    helper.edit_flag = edit_flag;
+    helper.form_object = form;
+    helper.ajax_uri = c.uri_for('/package/' _ package_result.id _ '/ajax/underrun_profiles');
+    
+    PROCESS 'helpers/datatables.tt';
+-%]
+            </div>
+        </div>
+    </div>
+    
+    <div class="accordion-group">
+        <div class="accordion-heading">
+            <a class="accordion-toggle" data-toggle="collapse" data-parent="#package_details" href="#collapse_customers">[% c.loc('Customer Contracts') %]</a>
+        </div>
+        <div class="accordion-body collapse" id="collapse_customers">
+            <div class="accordion-inner">
+[%
+    helper.name = c.loc('Contract');
+    helper.identifier = 'customers';
+    helper.messages = messages;
+    helper.dt_columns = customer_dt_columns;
+    helper.paginate = 'true';
+    helper.filter = 'true';
+    helper.close_target = close_target;
+    helper.create_flag = create_flag;
+    helper.edit_flag = edit_flag;
+    helper.form_object = form;
+    helper.ajax_uri = c.uri_for_action('/customer/ajax_package_filter', package_result.id );
+    
+    PROCESS 'helpers/datatables.tt';
+-%]
+            </div>
+        </div>
+    </div>        
+
+    <div class="accordion-group">
+        <div class="accordion-heading">
+            <a class="accordion-toggle" data-toggle="collapse" data-parent="#package_details" href="#collapse_vouchers">[% c.loc('Vouchers') %]</a>
+        </div>
+        <div class="accordion-body collapse" id="collapse_vouchers">
+            <div class="accordion-inner">
+[%
+    helper.name = c.loc('Voucher');
+    helper.identifier = 'vouchers';
+    helper.messages = messages;
+    helper.dt_columns = voucher_dt_columns;
+    helper.paginate = 'true';
+    helper.filter = 'true';
+    helper.close_target = close_target;
+    helper.create_flag = create_flag;
+    helper.edit_flag = edit_flag;
+    helper.form_object = form;
+    helper.ajax_uri = c.uri_for_action('/voucher/ajax_package_filter', package_result.id );
+    
+    PROCESS 'helpers/datatables.tt';
+-%]
+            </div>
+        </div>
+    </div>        
+
+</div>
+
+[% IF edit_flag || create_flag -%]
+    IF form.has_for_js;
+        form.render_repeatable_js;
+    END;
+    [%PROCESS 'helpers/modal.tt' -%]
+[% END -%]
+
+[% # vim: set tabstop=4 syntax=html expandtab: -%]

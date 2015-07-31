@@ -9,8 +9,8 @@ use Net::Domain qw(hostfqdn);
 use LWP::UserAgent;
 use JSON qw();
 use Test::More;
-#use Storable qw();
-use Time::Fake;
+use Time::HiRes; #prevent warning from Time::Warp
+use Time::Warp qw();
 use DateTime::Format::Strptime;
 use DateTime::Format::ISO8601;
 use Data::Dumper;
@@ -118,9 +118,6 @@ my $infinite_future;
         ok($past->epoch < $fake_now->epoch,$offset_label . 'past is smaller than now (epoch)');
         ok(!($past->epoch > $fake_now->epoch),$offset_label . 'past is not greater than now (epoch)');    
     }
-    #use DateTime::Infinite;
-    #$past = DateTime::Infinite::Past->new();
-    #$future = DateTime::Infinite::Future->new();
     _set_time();
 }
 
@@ -327,7 +324,7 @@ if (_get_allow_fake_client_time() && $enable_profile_packages) {
         $req_identifier = $cnt . '. switch customer ' . $customer->{id} . ' to package ' . $prof_package_create30d->{name}; diag($req_identifier); $cnt++;
         $customer = _switch_package($customer,$prof_package_create30d);
         
-        $req_identifier = $cnt . '. get balance history of customer ' . $customer->{id}; diag($req_identifier); diag($req_identifier); $cnt++;
+        $req_identifier = $cnt . '. get balance history of customer ' . $customer->{id}; diag($req_identifier); $cnt++;
         _check_interval_history($customer,[
             { start => '2014-01-01 00:00:00', stop => '2014-01-31 23:59:59'},
             { start => '2014-02-01 00:00:00', stop => '2014-02-28 23:59:59'},
@@ -459,26 +456,26 @@ if (_get_allow_fake_client_time() && $enable_profile_packages) {
             { start => '~2014-10-04 13:00:00', stop => $infinite_future},
         ],NGCP::Panel::Utils::DateTime::from_string($t1));
         
-        $req_identifier = $cnt . '. create topup_start_mode_test1 voucher'; diag($req_identifier); diag($req_identifier); $cnt++;
+        $req_identifier = $cnt . '. create topup_start_mode_test1 voucher'; diag($req_identifier); $cnt++;
         my $voucher1 = _create_voucher(10,'topup_start_mode_test1'.$t,$customer);
-        $req_identifier = $cnt . '. create topup_start_mode_test2 voucher'; diag($req_identifier); diag($req_identifier); $cnt++;
+        $req_identifier = $cnt . '. create topup_start_mode_test2 voucher'; diag($req_identifier); $cnt++;
         my $voucher2 = _create_voucher(10,'topup_start_mode_test2'.$t,$customer,$prof_package_create1m);
-        $req_identifier = $cnt . '. create subscriber for customer ' . $customer->{id}; diag($req_identifier); diag($req_identifier); $cnt++;
+        $req_identifier = $cnt . '. create subscriber for customer ' . $customer->{id}; diag($req_identifier); $cnt++;
         my $subscriber = _create_subscriber($customer);
 
         $t1 = $ts;
         $ts = '2014-10-23 13:00:00';
         _set_time(NGCP::Panel::Utils::DateTime::from_string($ts));
         
-        $req_identifier = $cnt . '. get balance history of customer ' . $customer->{id}; diag($req_identifier); diag($req_identifier); $cnt++;
+        $req_identifier = $cnt . '. get balance history of customer ' . $customer->{id}; diag($req_identifier); $cnt++;
         _check_interval_history($customer,[
             { start => '~2014-10-04 13:00:00', stop => $infinite_future},
         ],NGCP::Panel::Utils::DateTime::from_string($t1));  
         
-        $req_identifier = $cnt . '. perform topup with voucher ' . $voucher1->{code}; diag($req_identifier); diag($req_identifier); $cnt++;
+        $req_identifier = $cnt . '. perform topup with voucher ' . $voucher1->{code}; diag($req_identifier); $cnt++;
         _perform_topup_voucher($subscriber,$voucher1);
         
-        $req_identifier = $cnt . '. get balance history of customer ' . $customer->{id}; diag($req_identifier); diag($req_identifier); $cnt++;
+        $req_identifier = $cnt . '. get balance history of customer ' . $customer->{id}; diag($req_identifier); $cnt++;
         _check_interval_history($customer,[
            { start => '~2014-10-04 13:00:00', stop => '~2014-10-23 13:00:00'},
             { start => '~2014-10-23 13:00:00', stop => $infinite_future},
@@ -488,23 +485,23 @@ if (_get_allow_fake_client_time() && $enable_profile_packages) {
         $ts = '2014-11-29 13:00:00';
         _set_time(NGCP::Panel::Utils::DateTime::from_string($ts));
         
-        $req_identifier = $cnt . '. get balance history of customer ' . $customer->{id}; diag($req_identifier); diag($req_identifier); $cnt++;
+        $req_identifier = $cnt . '. get balance history of customer ' . $customer->{id}; diag($req_identifier); $cnt++;
         _check_interval_history($customer,[
             { start => '~2014-10-23 13:00:00', stop => $infinite_future},
         ],NGCP::Panel::Utils::DateTime::from_string($t1));
         
-        $req_identifier = $cnt . '. perform topup with voucher ' . $voucher2->{code}; diag($req_identifier); diag($req_identifier); $cnt++;
+        $req_identifier = $cnt . '. perform topup with voucher ' . $voucher2->{code}; diag($req_identifier); $cnt++;
         _perform_topup_voucher($subscriber,$voucher2);
         
-        $req_identifier = $cnt . '. get balance history of customer ' . $customer->{id}; diag($req_identifier); diag($req_identifier); $cnt++;
+        $req_identifier = $cnt . '. get balance history of customer ' . $customer->{id}; diag($req_identifier); $cnt++;
         _check_interval_history($customer,[
             { start => '~2014-10-23 13:00:00', stop => '2014-12-06 23:59:59'},
         ],NGCP::Panel::Utils::DateTime::from_string($t1));        
         
-        $req_identifier = $cnt . '. switch customer ' . $customer->{id} . ' to no package '; diag($req_identifier); diag($req_identifier); $cnt++;
+        $req_identifier = $cnt . '. switch customer ' . $customer->{id} . ' to no package '; diag($req_identifier); $cnt++;
         $customer = _switch_package($customer);
         
-        $req_identifier = $cnt . '. get balance history of customer ' . $customer->{id}; diag($req_identifier); diag($req_identifier); $cnt++;
+        $req_identifier = $cnt . '. get balance history of customer ' . $customer->{id}; diag($req_identifier); $cnt++;
         _check_interval_history($customer,[
             { start => '~2014-10-23 13:00:00', stop => '2014-11-30 23:59:59', cash => 20},
         ],NGCP::Panel::Utils::DateTime::from_string($t1));        
@@ -546,8 +543,6 @@ if (_get_allow_fake_client_time() && $enable_profile_packages) {
         _set_time();
         
         my $t1 = time;
-        #_fetch_intervals_worker(0,'asc');
-        #_fetch_intervals_worker(0,'desc');
         my $delay = 2;
     
         my $t_a = threads->create(\&_fetch_intervals_worker,$delay,'id','asc');
@@ -870,12 +865,11 @@ sub _set_time {
             pattern => '%F %T', 
         );      
     if (defined $o) {
-        $o = $o->epoch if ref $o eq 'DateTime';
-        Time::Fake->offset($o);
+        NGCP::Panel::Utils::DateTime::set_fake_time($o);
         my $now = NGCP::Panel::Utils::DateTime::current_local;  
         diag("applying fake time offset '$o' - current time: " . $dtf->format_datetime($now));
     } else {
-        Time::Fake->reset();
+        NGCP::Panel::Utils::DateTime::set_fake_time();
         my $now = NGCP::Panel::Utils::DateTime::current_local;  
         diag("resetting fake time - current time: " . $dtf->format_datetime($now));
     }
@@ -975,9 +969,6 @@ sub _create_base_profile_package {
     $req = HTTP::Request->new('POST', $uri.'/api/profilepackages/');
     $req->header('Content-Type' => 'application/json');
     $req->header('Prefer' => 'return=representation');
-    #$req->header('X-Fake-Clienttime' => _get_rfc_1123_now());
-    #$req->header('X-Request-Identifier' => $req_identifier) if $req_identifier;
-    #my $name = $start_mode . ($interval_unit ? '/' . $interval_value . ' ' . $interval_unit : '');
     my $req_data = {
         name => "base profile package " . $t,
         description  => "base prof package descr " . $t,
@@ -998,8 +989,6 @@ sub _create_base_profile_package {
     my $profilepackage_uri = $uri.'/'.$res->header('Location');
     my $request = $req;
     $req = HTTP::Request->new('GET', $profilepackage_uri);
-    #$req->header('X-Fake-Clienttime' => _get_rfc_1123_now());
-    #$req->header('X-Request-Identifier' => $req_identifier) if $req_identifier;
     $res = $ua->request($req);
     is($res->code, 200, "fetch POSTed base profilepackage");
     my $package = JSON::from_json($res->decoded_content);
@@ -1015,9 +1004,6 @@ sub _create_silver_profile_package {
     $req = HTTP::Request->new('POST', $uri.'/api/profilepackages/');
     $req->header('Content-Type' => 'application/json');
     $req->header('Prefer' => 'return=representation');
-    #$req->header('X-Fake-Clienttime' => _get_rfc_1123_now());
-    #$req->header('X-Request-Identifier' => $req_identifier) if $req_identifier;
-    #my $name = $start_mode . ($interval_unit ? '/' . $interval_value . ' ' . $interval_unit : '');
     my $req_data = {
         name => "silver profile package " . $t,
         description  => "silver prof package descr " . $t,
@@ -1041,7 +1027,6 @@ sub _create_silver_profile_package {
     my $profilepackage_uri = $uri.'/'.$res->header('Location');
     my $request = $req;
     $req = HTTP::Request->new('GET', $profilepackage_uri);
-    #$req->header('X-Fake-Clienttime' => _get_rfc_1123_now());
     $res = $ua->request($req);
     is($res->code, 200, "fetch POSTed silver profilepackage");
     my $package = JSON::from_json($res->decoded_content);
@@ -1057,8 +1042,6 @@ sub _create_extension_profile_package {
     $req = HTTP::Request->new('POST', $uri.'/api/profilepackages/');
     $req->header('Content-Type' => 'application/json');
     $req->header('Prefer' => 'return=representation');
-    #$req->header('X-Fake-Clienttime' => _get_rfc_1123_now());
-    #my $name = $start_mode . ($interval_unit ? '/' . $interval_value . ' ' . $interval_unit : '');
     my $req_data = {
         name => "extension profile package " . $t,
         description  => "extension prof package descr " . $t,
@@ -1082,7 +1065,6 @@ sub _create_extension_profile_package {
     my $profilepackage_uri = $uri.'/'.$res->header('Location');
     my $request = $req;
     $req = HTTP::Request->new('GET', $profilepackage_uri);
-    #$req->header('X-Fake-Clienttime' => _get_rfc_1123_now());
     $res = $ua->request($req);
     is($res->code, 200, "fetch POSTed extension profilepackage");
     my $package = JSON::from_json($res->decoded_content);
@@ -1098,8 +1080,6 @@ sub _create_gold_profile_package {
     $req = HTTP::Request->new('POST', $uri.'/api/profilepackages/');
     $req->header('Content-Type' => 'application/json');
     $req->header('Prefer' => 'return=representation');
-    #$req->header('X-Fake-Clienttime' => _get_rfc_1123_now());
-    #my $name = $start_mode . ($interval_unit ? '/' . $interval_value . ' ' . $interval_unit : '');
     my $req_data = {
         name => "gold profile package " . $t,
         description  => "gold prof package descr " . $t,
@@ -1123,7 +1103,6 @@ sub _create_gold_profile_package {
     my $profilepackage_uri = $uri.'/'.$res->header('Location');
     my $request = $req;
     $req = HTTP::Request->new('GET', $profilepackage_uri);
-    #$req->header('X-Fake-Clienttime' => _get_rfc_1123_now());
     $res = $ua->request($req);
     is($res->code, 200, "fetch POSTed gold profilepackage");
     my $package = JSON::from_json($res->decoded_content);
@@ -1141,7 +1120,6 @@ sub _create_voucher {
         );        
     $req = HTTP::Request->new('POST', $uri.'/api/vouchers/');
     $req->header('Content-Type' => 'application/json');
-    #$req->header('X-Fake-Clienttime' => _get_rfc_1123_now());
     my $req_data = {
         amount => $amount * 100.0,
         code => $code,
@@ -1156,7 +1134,6 @@ sub _create_voucher {
     is($res->code, 201, "create " . $label);
     my $request = $req;
     $req = HTTP::Request->new('GET', $uri.'/'.$res->header('Location'));
-    #$req->header('X-Fake-Clienttime' => _get_rfc_1123_now());
     $res = $ua->request($req);
     is($res->code, 200, "fetch " . $label);
     my $voucher = JSON::from_json($res->decoded_content);

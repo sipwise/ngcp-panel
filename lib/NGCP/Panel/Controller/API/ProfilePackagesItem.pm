@@ -178,7 +178,37 @@ sub PUT :Allow {
     return;
 }
 
-# we don't allow to DELETE a profile package
+sub DELETE :Allow {
+    my ($self, $c, $id) = @_;
+    my $guard = $c->model('DB')->txn_scope_guard;
+    {
+        last unless $self->valid_id($c, $id);
+        my $package = $self->item_by_id($c, $id);
+        last unless $self->resource_exists($c, profilepackage => $package);
+
+        unless($package->get_column('contract_cnt') == 0) {
+            $self->error($c, HTTP_LOCKED, "Cannnot delete profile package that is still assigned to contracts");
+            last;
+        }
+        unless($package->get_column('voucher_cnt') == 0) {
+            $self->error($c, HTTP_LOCKED, "Cannnot delete profile package that is assigned to vouchers");
+            last;
+        }
+        
+        last unless $self->add_delete_journal_item_hal($c,sub {
+            my $self = shift;
+            my ($c) = @_;
+            #my $_form = $self->get_form($c);
+            return $self->hal_from_item($c, $package, "profilepackages"); });
+        
+        $package->delete;
+        $guard->commit;
+
+        $c->response->status(HTTP_NO_CONTENT);
+        $c->response->body(q());
+    }
+    return;
+}
 
 sub item_base_journal :Journal {
     my $self = shift @_;

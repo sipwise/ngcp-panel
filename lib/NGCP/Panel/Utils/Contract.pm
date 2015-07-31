@@ -765,9 +765,7 @@ sub _check_profile_package {
     unless($package) {
         return 0 unless &{$err_code}("Invalid 'profile_package_id'.",$field);
     }
-    if ($package->status eq 'terminated') {
-        return 0 unless &{$err_code}("Invalid 'profile_package_id', already terminated.",$field);
-    }
+
     if (defined $reseller_id && defined $package->reseller_id && $reseller_id != $package->reseller_id) {
         return 0 unless &{$err_code}("The reseller of the contact doesn't match the reseller of the profile package (" . $package->name . ").",$field);
     }

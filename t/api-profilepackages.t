@@ -144,17 +144,13 @@ if ($enable_profile_packages) {
     is($res->code, 200, "fetch PATCHed test profilepackage");
     $profilepackage = JSON::from_json($res->decoded_content);
 
-    $req = HTTP::Request->new('PATCH', $profilepackage_uri);
-    $req->header('Content-Type' => 'application/json-patch+json');
-    $req->header('Prefer' => 'return=representation');
-    $req->content(JSON::to_json(
-        [ { op => 'replace', path => '/status', value => "terminated" } ]
-    ));
+    $req = HTTP::Request->new('DELETE', $profilepackage_uri);
     $res = $ua->request($req);
-    is($res->code, 200, "terminate test profilepackage");
+    is($res->code, 204, "delete profilepackage");
+    
     $req = HTTP::Request->new('GET', $profilepackage_uri);
     $res = $ua->request($req);
-    is($res->code, 404, "try to fetch terminated test profilepackage");
+    is($res->code, 404, "try to fetch deleted test profilepackage");
     
 }
 
@@ -184,7 +180,7 @@ sub _post_profile_package {
         name => "test profile package ".$i . ' ' . $t,
         description  => "test profile package description ".$i . $t,
         reseller_id => $default_reseller_id,
-        status => 'active',
+        #status => 'active',
         initial_profiles => [{ profile_id => $billingprofile->{id}, network_id => undef },
                              { profile_id => $billingprofile->{id}, network_id => $billingnetwork->{id}}],
         initial_balance => 0.0,

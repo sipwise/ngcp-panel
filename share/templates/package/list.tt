@@ -16,11 +16,16 @@
     UNLESS c.user.read_only;
         helper.dt_buttons = [
             { name = c.loc('Edit'), uri = "/package/'+full.id+'/edit", class = 'btn-small btn-primary', icon = 'icon-edit' },
-            { name = c.loc('Terminate'), uri = "/package/'+full[\"id\"]+'/terminate", class = 'btn-small btn-secondary', icon = 'icon-remove', condition => 'full.contract_cnt == "0"' },            
+            { name = c.loc('Delete'), uri = "/package/'+full[\"id\"]+'/delete", class = 'btn-small btn-secondary', icon = 'icon-remove', condition => 'full.contract_cnt == "0" && full.voucher_cnt == "0"' },
+            { name = c.loc('Details'), uri = "/package/'+full.id+'/details", class = 'btn-small btn-tertiary', icon = 'icon-list' },
         ];
         helper.top_buttons = [
             { name = c.loc('Create Profile Package'), uri = c.uri_for('/package/create'), icon = 'icon-star' },
         ];
+    ELSE;
+        helper.dt_buttons = [
+            { name = c.loc('Details'), uri = "/package/'+full.id+'/details", class = 'btn-small btn-tertiary', icon = 'icon-list' },
+        ];        
     END;
 
     PROCESS 'helpers/datatables.tt';
