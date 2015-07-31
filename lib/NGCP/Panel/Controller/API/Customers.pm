@@ -98,6 +98,17 @@ class_has 'query_params' => (
                 second => sub { },
             },
         },
+        {
+            param => 'package_id',
+            description => 'Filter for customers with specific profile package id',
+            query => {
+                first => sub {
+                    my $q = shift;
+                    { 'me.profile_package_id' => $q };
+                },
+                second => sub { },
+            },
+        },        
     ]},
 );
 
