@@ -41,4 +41,21 @@ sub decrypt_code {
     return $plain;
 }
 
+sub get_datatable_cols {
+    
+    my ($c,$hide_package) = @_;
+    return (
+        { name => "id", "search" => 1, "title" => $c->loc("#") },
+        $c->user->billing_data ? { name => "code", "search" => 1, "title" => $c->loc("Code") } : (),
+        { name => "amount", "search" => 1, "title" => $c->loc("Amount") },
+        { name => "reseller.name", "search" => 1, "title" => $c->loc("Reseller") },
+        $hide_package ? () : { name => "profile_package.name", "search" => 1, "title" => $c->loc("Profile Package") },
+        #{ name => "customer_contact_email", "search" => 1, "title" => $c->loc("Reserved for Customer") },
+        { name => "customer_id", "search" => 1, "title" => $c->loc("For Contract #") },
+        { name => "valid_until", "search" => 1, "title" => $c->loc("Valid Until") },
+        { name => "used_at", "search" => 1, "title" => $c->loc("Used At") },
+        { name => "used_by_subscriber.id", "search" => 1, "title" => $c->loc("Used By Subscriber #") },
+    );
+}
+
 1;

@@ -110,6 +110,29 @@ sub ajax_reseller_filter :Chained('list_customer') :PathPart('ajax/reseller') :A
     $c->detach( $c->view("JSON") );
 }
 
+sub ajax_package_filter :Chained('list_customer') :PathPart('ajax/package') :Args(1) {
+    my ($self, $c, $package_id) = @_;
+
+    unless($package_id && $package_id->is_int) {
+        NGCP::Panel::Utils::Message->error(
+            c     => $c,
+            log   => 'Invalid profile package id detected',
+            desc  => $c->loc('Invalid profile package id detected'),
+        );
+        $c->response->redirect($c->uri_for());
+        return;
+    }
+
+    my $rs = $c->stash->{contract_select_rs}->search_rs({
+        'profile_package_id' => $package_id,
+    },undef);
+    my $package_customer_columns = NGCP::Panel::Utils::Datatables::set_columns($c, [
+        NGCP::Panel::Utils::ProfilePackages::get_customer_datatable_cols($c)
+    ]);
+    NGCP::Panel::Utils::Datatables::process($c, $rs,  $package_customer_columns);
+    $c->detach( $c->view("JSON") );
+}
+
 sub create :Chained('list_customer') :PathPart('create') :Args(0) {
     my ($self, $c) = @_;
 
