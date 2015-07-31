@@ -7,8 +7,7 @@ has '+widget' => (default => ''); # leave this empty, as there is no widget ...
 has 'template' => ( isa => 'Str',
                     is => 'rw',
                     default => 'helpers/datepicker.tt' );
-has 'language_file' => (isa => 'Str', is => 'rw', default => 'dataTables.default.js' );
-has 'date_format_js' => (isa => 'Str', is => 'rw', default => 'yy-mm-dd' );
+has 'date_format_js' => (isa => 'Str', is => 'rw', default => 'yy-mm-dd' );  # this means YYYY-MM-DD
 
 sub render_element {
     my ($self) = @_;
@@ -23,7 +22,7 @@ sub render_element {
         value => $self->value,
         date_format_js => $self->date_format_js,
         errors => $self->errors,
-        language_file => $self->language_file,
+        description => $self->element_attr->{title}[0],
     };
     my $t = new Template({ 
         ABSOLUTE => 1, 

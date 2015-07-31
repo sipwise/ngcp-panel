@@ -12,7 +12,7 @@ sub build_render_list {[qw/submitid fields actions/]}
 sub build_form_element_class { [qw/form-horizontal/] }
 
 has_field 'id' => (
-    type => 'Hidden'
+    type => 'Hidden',
 );
 
 has_field 'code' => (
@@ -21,7 +21,7 @@ has_field 'code' => (
     maxlength => 128,
     element_attr => {
         rel => ['tooltip'],
-        title => ['The voucher code.']
+        title => ['The voucher code.'],
     },
 );
 
@@ -30,7 +30,7 @@ has_field 'amount' => (
     required => 1,
     element_attr => {
         rel => ['tooltip'],
-        title => ['The amount of the voucher in cents of Euro/USD/etc.']
+        title => ['The amount of the voucher in Euro/USD/etc.'],
     },
     default => '0',
 );
@@ -40,7 +40,7 @@ has_field 'valid_until' => (
     required => 1,
     element_attr => {
         rel => ['tooltip'],
-        title => ['The date until this voucher is valid.']
+        title => ['The date until this voucher is valid.'],
     },
 );
 
@@ -48,7 +48,7 @@ has_field 'customer' => (
     type => '+NGCP::Panel::Field::CustomerContract',
     element_attr => {
         rel => ['tooltip'],
-        title => ['The customer contract this voucher can be used by (optional).']
+        title => ['The customer contract this voucher can be used by (optional).'],
     },
 );
 
@@ -57,7 +57,7 @@ has_field 'package' => (
     #validate_when_empty => 1,
     element_attr => {
         rel => ['tooltip'],
-        title => ['The profile package the customer will switch with the top-up.']
+        title => ['The profile package the customer will switch with the top-up.'],
     },
 );
 
@@ -87,6 +87,7 @@ sub validate_valid_until {
         my $err_msg = 'Invalid date format, must be YYYY-MM-DD';
         $field->add_error($err_msg);
     }
+    return;
 }
 
 sub update_fields {
@@ -97,7 +98,8 @@ sub update_fields {
     unless($c->user->billing_data) {
         $self->field('code')->inactive(1);
     }
+    return;
 }
 
-1
+1;
 # vim: set tabstop=4 expandtab:

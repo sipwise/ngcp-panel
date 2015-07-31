@@ -30,7 +30,7 @@ has_field 'amount' => (
     required => 1,
     element_attr => {
         rel => ['tooltip'],
-        title => ['The amount of the voucher in cents of Euro/USD/etc.']
+        title => ['The amount of the voucher in Euro/USD/etc.'],
     },
     default => '0',
 );
