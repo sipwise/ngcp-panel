@@ -29,7 +29,14 @@ sub auto :Does(ACL) :ACLDetachTo('/denied_page') :AllowedRole(admin) :AllowedRol
 sub voucher_list :Chained('/') :PathPart('voucher') :CaptureArgs(0) {
     my ( $self, $c ) = @_;
     
-    my $voucher_rs = $c->model('DB')->resultset('vouchers');
+    my $voucher_rs = $c->model('DB')->resultset('vouchers'); #->search_rs(undef, {
+            #'join' => { 'customer' => 'contact'},
+            #'+select' => [
+            #    'contact.email',
+            #],
+            #'+as' => [
+            #    'customer_contact_email',
+            #],});
     if($c->user->roles eq "reseller") {
         $voucher_rs = $voucher_rs->search({
             reseller_id => $c->user->reseller_id,
@@ -38,14 +45,7 @@ sub voucher_list :Chained('/') :PathPart('voucher') :CaptureArgs(0) {
     $c->stash(voucher_rs => $voucher_rs);
 
     $c->stash->{voucher_dt_columns} = NGCP::Panel::Utils::Datatables::set_columns($c, [
-        { name => "id", "search" => 1, "title" => $c->loc("#") },
-        $c->user->billing_data ? { name => "code", "search" => 1, "title" => $c->loc("Code") } : (),
-        { name => "amount", "search" => 1, "title" => $c->loc("Amount") },
-        { name => "reseller.name", "search" => 1, "title" => $c->loc("Reseller") },
-        { name => "profile_package.name", "search" => 1, "title" => $c->loc("Profile Package") },
-        { name => "valid_until", "search" => 1, "title" => $c->loc("Valid Until") },
-        { name => "used_at", "search" => 1, "title" => $c->loc("Used At") },
-        { name => "used_by_subscriber.id", "search" => 1, "title" => $c->loc("Used By Subscriber #") },
+        NGCP::Panel::Utils::Voucher::get_datatable_cols($c)
     ]);
 
     $c->stash(template => 'voucher/list.tt');
@@ -55,24 +55,41 @@ sub root :Chained('voucher_list') :PathPart('') :Args(0) {
     my ($self, $c) = @_;
 }
 
+sub _process_dt_voucher_rows :Private {
+    my ($c,$row) = @_;
+    my $v = { $row->get_inflated_columns };
+    if($c->user->billing_data) {
+        $v->{code} = NGCP::Panel::Utils::Voucher::decrypt_code($c, $row->code);
+    } else {
+        $v->{code} = "<retracted>";
+    }
+    foreach my $k(keys %{ $v }) {
+        if(blessed($v->{$k}) && $v->{$k}->isa('DateTime')) {
+            $v->{$k} = NGCP::Panel::Utils::DateTime::to_string($v->{$k});
+        }
+    }
+    return %{ $v };
+}
+
 sub ajax :Chained('voucher_list') :PathPart('ajax') :Args(0) {
     my ($self, $c) = @_;
     
     my $resultset = $c->stash->{voucher_rs};
     NGCP::Panel::Utils::Datatables::process($c, $resultset, $c->stash->{voucher_dt_columns}, sub {
         my $row = shift;
-        my $v = { $row->get_inflated_columns };
-        if($c->user->billing_data) {
-            $v->{code} = NGCP::Panel::Utils::Voucher::decrypt_code($c, $row->code);
-        } else {
-            $v->{code} = "<retracted>";
-        }
-        foreach my $k(keys %{ $v }) {
-            if(blessed($v->{$k}) && $v->{$k}->isa('DateTime')) {
-                $v->{$k} = NGCP::Panel::Utils::DateTime::to_string($v->{$k});
-            }
-        }
-        return %{ $v };
+        return _process_dt_voucher_rows($c,$row);
+    });
+    
+    $c->detach( $c->view("JSON") );
+}
+
+sub ajax_package_filter :Chained('voucher_list') :PathPart('ajax/package') :Args(1) {
+    my ($self, $c, $package_id) = @_;
+    
+    my $resultset = $c->stash->{voucher_rs}->search_rs({ package_id => $package_id },undef);
+    NGCP::Panel::Utils::Datatables::process($c, $resultset, $c->stash->{voucher_dt_columns}, sub {
+        my $row = shift;
+        return _process_dt_voucher_rows($c,$row);
     });
     
     $c->detach( $c->view("JSON") );
