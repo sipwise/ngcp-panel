@@ -3,7 +3,9 @@ package NGCP::Panel::Utils::DateTime;
 #use Sipwise::Base; seg fault when creating threads in test scripts
 use strict;
 use warnings;
-use Time::Fake; #load this before any use DateTime
+use Time::HiRes; #prevent warning from Time::Warp
+use Time::Warp;
+#use Time::Fake; #load this before any use DateTime
 use DateTime;
 #use DateTime::Infinite;
 use DateTime::Format::ISO8601;
@@ -11,10 +13,24 @@ use DateTime::Format::Strptime;
 
 use constant RFC_1123_FORMAT_PATTERN => '%a, %d %b %Y %T %Z';
 
+my $is_fake_time = 0;
+
+#sub current_local {
+#    return DateTime->now(
+#        time_zone => DateTime::TimeZone->new(name => 'local')
+#    );
+#}
+
 sub current_local {
-    return DateTime->now(
-        time_zone => DateTime::TimeZone->new(name => 'local')
-    );
+    if ($is_fake_time) {
+        return DateTime->from_epoch(epoch => Time::Warp::time,
+            time_zone => DateTime::TimeZone->new(name => 'local')
+        );
+    } else {
+        return DateTime->now(
+            time_zone => DateTime::TimeZone->new(name => 'local')
+        );
+    }
 }
 
 sub infinite_past {
@@ -52,14 +68,49 @@ sub is_infinite {
     return is_infinite_past($dt) || is_infinite_future($dt);
 }
 
+#sub set_fake_time {
+#    my ($o) = @_;   
+#    if (defined $o) {
+#        Time::Fake->offset(ref $o eq 'DateTime' ? $o->epoch : $o);
+#    } else {
+#        Time::Fake->reset();
+#    }
+#}
+
 sub set_fake_time {
-    my ($o) = @_;   
+    my ($o) = @_;
+    $is_fake_time = 1;
     if (defined $o) {
-        Time::Fake->offset(ref $o eq 'DateTime' ? $o->epoch : $o);
+        #Time::Fake->offset(ref $o eq 'DateTime' ? $o->epoch : $o);
+        if (ref $o eq 'DateTime') {
+            $o = $o->epoch;
+        } else {
+            my %mult = (
+                s => 1,
+                m => 60,
+                h => 60*60,
+                d => 60*60*24,
+                M => 60*60*24*30,
+                y => 60*60*24*365,
+            );
+            
+            if (!$o) {
+                $o = time;
+            } elsif ($o =~ m/^([+-]\d+)([smhdMy]?)$/) {
+                $o = time + $1 * $mult{ $2 || "s" };
+            } elsif ($o !~ m/\D/) {
+                #$t = $t - CORE::time;
+            } else {
+                die("Invalid time offset: '$o'");
+            }
+        }
+        Time::Warp::to($o);
     } else {
-        Time::Fake->reset();
+        #Time::Fake->reset();
+        Time::Warp::reset();
     }
 }
+
 #sub infinite_past {
 #    DateTime::Infinite::Past->new();
 #}

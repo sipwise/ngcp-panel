@@ -91,10 +91,10 @@ sub hal_from_item {
 sub item_rs {
     my ($self, $c) = @_;
 
-    my $item_rs = $c->model('DB')->resultset('profile_packages')->search_rs({ 'me.status' => { '!=' => 'terminated' } });
+    my $item_rs = $c->model('DB')->resultset('profile_packages')->search_rs(); #{ 'me.status' => { '!=' => 'terminated' } });
     my $search_xtra = {
             '+select' => [ { '' => \[ NGCP::Panel::Utils::ProfilePackages::get_contract_count_stmt() ] , -as => 'contract_cnt' },
-                           #{ '' => \[ NGCP::Panel::Utils::ProfilePackages::get_package_count_stmt() ] , -as => 'package_cnt' },
+                           { '' => \[ NGCP::Panel::Utils::ProfilePackages::get_voucher_count_stmt() ] , -as => 'voucher_cnt' },
                            ],
             };       
     if($c->user->roles eq "admin") {
@@ -117,10 +117,10 @@ sub item_by_id {
 sub update_item {
     my ($self, $c, $item, $old_resource, $resource, $form) = @_;
 
-    if ($item->status eq 'terminated') {
-        $self->error($c, HTTP_UNPROCESSABLE_ENTITY, 'Profile package is already terminated and cannot be changed.');
-        return;
-    }
+    #if ($item->status eq 'terminated') {
+    #    $self->error($c, HTTP_UNPROCESSABLE_ENTITY, 'Profile package is already terminated and cannot be changed.');
+    #    return;
+    #}
     
     delete $resource->{id};
     my $schema = $c->model('DB');
@@ -145,17 +145,18 @@ sub update_item {
         $self->error($c, HTTP_UNPROCESSABLE_ENTITY, $err);
     });
     
-    #if(exists $resource->{status} && $resource->{status} eq 'terminated') {
+    
         unless($item->get_column('contract_cnt') == 0) {
             $self->error($c, HTTP_UNPROCESSABLE_ENTITY,
                          "Cannnot modify or terminate profile_package that is still assigned to contracts");
             return;
         }
-        #unless($item->get_column('contract_cnt') == 0) {
-        #    $self->error($c, HTTP_UNPROCESSABLE_ENTITY,
-        #                 "Cannnot terminate billing_network that is still used in profile sets of profile packages");
-        #    return;
-        #}        
+    #if(exists $resource->{status} && $resource->{status} eq 'terminated') {        
+    #    unless($item->get_column('voucher_cnt') == 0) {
+    #        $self->error($c, HTTP_UNPROCESSABLE_ENTITY,
+    #                     "Cannnot terminate profile package that is assigned to vouchers");
+    #        return;
+    #    }        
     #}
     
     my $mappings_to_create = [];

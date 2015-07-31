@@ -175,8 +175,8 @@ sub test_profilepackage {
     $req->header('Content-Type' => 'application/json');
     $req->header('Prefer' => 'return=representation');
     $req->content(JSON::to_json({
-        name => "test profile package " . $t,
-        description  => "test profile package description " . $t,
+        name => "test profile package " . ($t-1),
+        description  => "test profile package description " . ($t-1),
         reseller_id => $reseller->{id},
         initial_profiles => [{ profile_id => $profile->{id}, }, ]
     }));
@@ -198,8 +198,8 @@ sub test_profilepackage {
     $req->header('Content-Type' => 'application/json');
     $req->header('Prefer' => 'return=representation');
     $req->content(JSON::to_json({
-        name => "test profile package ".$t." PUT",
-        description  => "test profile package description ".$t." PUT",
+        name => "test profile package ".($t-1)." PUT",
+        description  => "test profile package description ".($t-1)." PUT",
         #reseller_id => $reseller_id,
         initial_profiles => [{ profile_id => $profile->{id}, }, ],
     }));
@@ -217,7 +217,7 @@ sub test_profilepackage {
     $req->header('Content-Type' => 'application/json-patch+json');
     $req->header('Prefer' => 'return=representation');
     $req->content(JSON::to_json(
-        [ { op => 'replace', path => '/name', value => "test profile package ".$t." PATCH" } ]
+        [ { op => 'replace', path => '/name', value => "test profile package ".($t-1)." PATCH" } ]
     ));
     $res = $ua->request($req);
     is($res->code, 200, "PATCH test profilepackage");
@@ -228,8 +228,31 @@ sub test_profilepackage {
 
     _test_item_journal_link('profilepackages',$profilepackage,$profilepackage->{id});    
     $journal = _test_journal_top_journalitem('profilepackages',$profilepackage->{id},$profilepackage,'update',$journals,$journal);
+    
+    $req = HTTP::Request->new('DELETE', $profilepackage_uri);
+    $res = $ua->request($req);
+    is($res->code, 204, "delete POSTed test profilepackage");
+    
+    $journal = _test_journal_top_journalitem('profilepackages',$profilepackage->{id},$profilepackage,'delete',$journals,$journal);
 
     _test_journal_collection('profilepackages',$profilepackage->{id},$journals);
+    
+    $req = HTTP::Request->new('POST', $uri.'/api/profilepackages/');
+    $req->header('Content-Type' => 'application/json');
+    $req->header('Prefer' => 'return=representation');
+    $req->content(JSON::to_json({
+        name => "test profile package " . $t,
+        description  => "test profile package description " . $t,
+        reseller_id => $reseller->{id},
+        initial_profiles => [{ profile_id => $profile->{id}, }, ]
+    }));
+    $res = $ua->request($req);
+    is($res->code, 201, "POST another test profilepackage");
+    $profilepackage_uri = $uri.'/'.$res->header('Location');
+    $req = HTTP::Request->new('GET', $profilepackage_uri);
+    $res = $ua->request($req);
+    is($res->code, 200, "fetch POSTed profilepackage");
+    $profilepackage = JSON::from_json($res->decoded_content);
     
     return $profilepackage;
     

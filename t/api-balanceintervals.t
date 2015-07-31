@@ -10,7 +10,9 @@ use LWP::UserAgent;
 use JSON qw();
 use Test::More;
 #use Storable qw();
-use Time::Fake;
+#use Time::Fake;
+use Time::HiRes; #prevent warning from Time::Warp
+use Time::Warp qw();
 use DateTime::Format::Strptime;
 use DateTime::Format::ISO8601;
 use Data::Dumper;
@@ -327,7 +329,7 @@ if (_get_allow_fake_client_time() && $enable_profile_packages) {
         $req_identifier = $cnt . '. switch customer ' . $customer->{id} . ' to package ' . $prof_package_create30d->{name}; diag($req_identifier); $cnt++;
         $customer = _switch_package($customer,$prof_package_create30d);
         
-        $req_identifier = $cnt . '. get balance history of customer ' . $customer->{id}; diag($req_identifier); diag($req_identifier); $cnt++;
+        $req_identifier = $cnt . '. get balance history of customer ' . $customer->{id}; diag($req_identifier); $cnt++;
         _check_interval_history($customer,[
             { start => '2014-01-01 00:00:00', stop => '2014-01-31 23:59:59'},
             { start => '2014-02-01 00:00:00', stop => '2014-02-28 23:59:59'},
@@ -459,26 +461,26 @@ if (_get_allow_fake_client_time() && $enable_profile_packages) {
             { start => '~2014-10-04 13:00:00', stop => $infinite_future},
         ],NGCP::Panel::Utils::DateTime::from_string($t1));
         
-        $req_identifier = $cnt . '. create topup_start_mode_test1 voucher'; diag($req_identifier); diag($req_identifier); $cnt++;
+        $req_identifier = $cnt . '. create topup_start_mode_test1 voucher'; diag($req_identifier); $cnt++;
         my $voucher1 = _create_voucher(10,'topup_start_mode_test1'.$t,$customer);
-        $req_identifier = $cnt . '. create topup_start_mode_test2 voucher'; diag($req_identifier); diag($req_identifier); $cnt++;
+        $req_identifier = $cnt . '. create topup_start_mode_test2 voucher'; diag($req_identifier); $cnt++;
         my $voucher2 = _create_voucher(10,'topup_start_mode_test2'.$t,$customer,$prof_package_create1m);
-        $req_identifier = $cnt . '. create subscriber for customer ' . $customer->{id}; diag($req_identifier); diag($req_identifier); $cnt++;
+        $req_identifier = $cnt . '. create subscriber for customer ' . $customer->{id}; diag($req_identifier); $cnt++;
         my $subscriber = _create_subscriber($customer);
 
         $t1 = $ts;
         $ts = '2014-10-23 13:00:00';
         _set_time(NGCP::Panel::Utils::DateTime::from_string($ts));
         
-        $req_identifier = $cnt . '. get balance history of customer ' . $customer->{id}; diag($req_identifier); diag($req_identifier); $cnt++;
+        $req_identifier = $cnt . '. get balance history of customer ' . $customer->{id}; diag($req_identifier); $cnt++;
         _check_interval_history($customer,[
             { start => '~2014-10-04 13:00:00', stop => $infinite_future},
         ],NGCP::Panel::Utils::DateTime::from_string($t1));  
         
-        $req_identifier = $cnt . '. perform topup with voucher ' . $voucher1->{code}; diag($req_identifier); diag($req_identifier); $cnt++;
+        $req_identifier = $cnt . '. perform topup with voucher ' . $voucher1->{code}; diag($req_identifier); $cnt++;
         _perform_topup_voucher($subscriber,$voucher1);
         
-        $req_identifier = $cnt . '. get balance history of customer ' . $customer->{id}; diag($req_identifier); diag($req_identifier); $cnt++;
+        $req_identifier = $cnt . '. get balance history of customer ' . $customer->{id}; diag($req_identifier); $cnt++;
         _check_interval_history($customer,[
            { start => '~2014-10-04 13:00:00', stop => '~2014-10-23 13:00:00'},
             { start => '~2014-10-23 13:00:00', stop => $infinite_future},
@@ -488,23 +490,23 @@ if (_get_allow_fake_client_time() && $enable_profile_packages) {
         $ts = '2014-11-29 13:00:00';
         _set_time(NGCP::Panel::Utils::DateTime::from_string($ts));
         
-        $req_identifier = $cnt . '. get balance history of customer ' . $customer->{id}; diag($req_identifier); diag($req_identifier); $cnt++;
+        $req_identifier = $cnt . '. get balance history of customer ' . $customer->{id}; diag($req_identifier); $cnt++;
         _check_interval_history($customer,[
             { start => '~2014-10-23 13:00:00', stop => $infinite_future},
         ],NGCP::Panel::Utils::DateTime::from_string($t1));
         
-        $req_identifier = $cnt . '. perform topup with voucher ' . $voucher2->{code}; diag($req_identifier); diag($req_identifier); $cnt++;
+        $req_identifier = $cnt . '. perform topup with voucher ' . $voucher2->{code}; diag($req_identifier); $cnt++;
         _perform_topup_voucher($subscriber,$voucher2);
         
-        $req_identifier = $cnt . '. get balance history of customer ' . $customer->{id}; diag($req_identifier); diag($req_identifier); $cnt++;
+        $req_identifier = $cnt . '. get balance history of customer ' . $customer->{id}; diag($req_identifier); $cnt++;
         _check_interval_history($customer,[
             { start => '~2014-10-23 13:00:00', stop => '2014-12-06 23:59:59'},
         ],NGCP::Panel::Utils::DateTime::from_string($t1));        
         
-        $req_identifier = $cnt . '. switch customer ' . $customer->{id} . ' to no package '; diag($req_identifier); diag($req_identifier); $cnt++;
+        $req_identifier = $cnt . '. switch customer ' . $customer->{id} . ' to no package '; diag($req_identifier); $cnt++;
         $customer = _switch_package($customer);
         
-        $req_identifier = $cnt . '. get balance history of customer ' . $customer->{id}; diag($req_identifier); diag($req_identifier); $cnt++;
+        $req_identifier = $cnt . '. get balance history of customer ' . $customer->{id}; diag($req_identifier); $cnt++;
         _check_interval_history($customer,[
             { start => '~2014-10-23 13:00:00', stop => '2014-11-30 23:59:59', cash => 20},
         ],NGCP::Panel::Utils::DateTime::from_string($t1));        
@@ -864,18 +866,34 @@ sub _switch_package {
     
 }
 
+#sub _set_time {
+#    my ($o) = @_;
+#    my $dtf = DateTime::Format::Strptime->new(
+#            pattern => '%F %T', 
+#        );      
+#    if (defined $o) {
+#        $o = $o->epoch if ref $o eq 'DateTime';
+#        Time::Fake->offset($o);
+#        my $now = NGCP::Panel::Utils::DateTime::current_local;  
+#        diag("applying fake time offset '$o' - current time: " . $dtf->format_datetime($now));
+#    } else {
+#        Time::Fake->reset();
+#        my $now = NGCP::Panel::Utils::DateTime::current_local;  
+#        diag("resetting fake time - current time: " . $dtf->format_datetime($now));
+#    }
+#}
+
 sub _set_time {
     my ($o) = @_;
     my $dtf = DateTime::Format::Strptime->new(
             pattern => '%F %T', 
         );      
     if (defined $o) {
-        $o = $o->epoch if ref $o eq 'DateTime';
-        Time::Fake->offset($o);
+        NGCP::Panel::Utils::DateTime::set_fake_time($o);
         my $now = NGCP::Panel::Utils::DateTime::current_local;  
         diag("applying fake time offset '$o' - current time: " . $dtf->format_datetime($now));
     } else {
-        Time::Fake->reset();
+        NGCP::Panel::Utils::DateTime::set_fake_time();
         my $now = NGCP::Panel::Utils::DateTime::current_local;  
         diag("resetting fake time - current time: " . $dtf->format_datetime($now));
     }

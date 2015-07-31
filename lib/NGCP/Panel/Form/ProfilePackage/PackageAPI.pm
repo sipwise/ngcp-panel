@@ -37,17 +37,17 @@ has_field 'description' => (
     },
 );
 
-has_field 'status' => (
-    type => 'Hidden',
-    options => [
-        { value => 'active', label => 'active' },
-        { value => 'terminated', label => 'terminated' },
-    ],
-    element_attr => {
-        rel => ['tooltip'],
-        title => ['The status of this package. Only active profile packages can be assigned to customers/profile packages.']
-    },
-);
+#has_field 'status' => (
+#    type => 'Hidden',
+#    options => [
+#        { value => 'active', label => 'active' },
+#        { value => 'terminated', label => 'terminated' },
+#    ],
+#    element_attr => {
+#        rel => ['tooltip'],
+#        title => ['The status of this package. Only active profile packages can be assigned to customers/profile packages.']
+#    },
+#);
 
 
 has_field 'initial_balance' => (

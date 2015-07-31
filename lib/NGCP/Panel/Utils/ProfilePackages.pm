@@ -782,6 +782,14 @@ sub get_contract_count_stmt {
     return "select count(distinct c.id) from `billing`.`contracts` c where c.`profile_package_id` = `me`.`id` and c.status != 'terminated'";
 }
 
+sub get_voucher_count_stmt {
+    return "select count(distinct v.id) from `billing`.`vouchers` v where v.`package_id` = `me`.`id`"; # and v.`used_by_subscriber_id` is null";
+}
+
+#sub get_unused_voucher_count_stmt {
+#    return "select count(distinct v.id) from `billing`.`vouchers` v where v.`package_id` = `me`.`id` and v.`used_by_subscriber_id` is null";
+#}
+
 sub _get_profile_set_group_stmt {
     my ($discriminator) = @_;
     my $grp_stmt = "group_concat(if(bn.`name` is null,bp.`name`,concat(bp.`name`,'/',bn.`name`)) separator ', ')";
@@ -793,7 +801,8 @@ sub get_datatable_cols {
     
     my ($c) = @_;
     return (
-        { name => "contract_cnt", "search" => 0, "title" => $c->loc("Used (contracts)"), },
+        { name => "contract_cnt", "search" => 0, "title" => $c->loc("Contracts"), },
+        { name => "voucher_cnt", "search" => 0, "title" => $c->loc("Vouchers"), },
         { name => 'initial_profiles_grp', accessor => "initial_profiles_grp", search => 0, title => $c->loc('Initial Profiles'),
          literal_sql => _get_profile_set_group_stmt(INITIAL_PROFILE_DISCRIMINATOR) },
         { name => 'underrun_profiles_grp', accessor => "underrun_profiles_grp", search => 0, title => $c->loc('Underrun Profiles'),
@@ -807,6 +816,18 @@ sub get_datatable_cols {
           literal_sql => 'billing_network.name' },        
     );
     
+}
+
+sub get_customer_datatable_cols {
+    
+    my ($c) = @_;
+    return (
+        { name => "id", search => 1, title => $c->loc("#") },
+        { name => "external_id", search => 1, title => $c->loc("External #") },
+        #{ name => "billing_mappings_actual.billing_mappings.product.name", search => 1, title => $c->loc("Product") },
+        { name => "contact.email", search => 1, title => $c->loc("Contact Email") },
+        { name => "status", search => 1, title => $c->loc("Status") },
+    );
 }
         
 1;

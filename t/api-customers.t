@@ -955,23 +955,29 @@ if ($enable_profile_packages) {
     $res = $ua->request($req);
     is($res->code, 200, "prof-package: terminate customer");
     
-    $req = HTTP::Request->new('PATCH', $profile_package_uri);
-    $req->header('Prefer' => 'return=representation');
-    $req->header('Content-Type' => 'application/json-patch+json');
-    $req->content(JSON::to_json(
-        [ { op => 'replace', path => '/status', value => 'terminated' } ]
-    ));
+    #$req = HTTP::Request->new('PATCH', $profile_package_uri);
+    #$req->header('Prefer' => 'return=representation');
+    #$req->header('Content-Type' => 'application/json-patch+json');
+    #$req->content(JSON::to_json(
+    #    [ { op => 'replace', path => '/status', value => 'terminated' } ]
+    #));
+    #$res = $ua->request($req);
+    #is($res->code, 200, "prof-package: terminate profile package");
+    $req = HTTP::Request->new('DELETE', $profile_package_uri);
     $res = $ua->request($req);
-    is($res->code, 200, "prof-package: terminate profile package");
+    is($res->code, 204, "prof-package: delete profile package");
     
-    $req = HTTP::Request->new('PATCH', $second_profile_package_uri);
-    $req->header('Prefer' => 'return=representation');
-    $req->header('Content-Type' => 'application/json-patch+json');
-    $req->content(JSON::to_json(
-        [ { op => 'replace', path => '/status', value => 'terminated' } ]
-    ));
+    #$req = HTTP::Request->new('PATCH', $second_profile_package_uri);
+    #$req->header('Prefer' => 'return=representation');
+    #$req->header('Content-Type' => 'application/json-patch+json');
+    #$req->content(JSON::to_json(
+    #    [ { op => 'replace', path => '/status', value => 'terminated' } ]
+    #));
+    #$res = $ua->request($req);
+    #is($res->code, 200, "prof-package: terminate second profile package");
+    $req = HTTP::Request->new('DELETE', $second_profile_package_uri);
     $res = $ua->request($req);
-    is($res->code, 200, "prof-package: terminate second profile package");      
+    is($res->code, 204, "prof-package: delete second profile package");    
     
     $req = HTTP::Request->new('PATCH', $uri.'/api/billingprofiles/'.$third_billing_profile_id);
     $req->header('Prefer' => 'return=representation');
