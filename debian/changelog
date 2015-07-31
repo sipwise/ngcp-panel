@@ -1,3 +1,12 @@
+ngcp-panel (1.9.1.4+0~mr4.0.1.4) unstable; urgency=medium
+
+  [ Rene Krenn ]
+  * [f8dc400] MT#14301 deleting prof packages instead of terminating
+
+  [ Sipwise Jenkins Builder ]
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Fri, 31 Jul 2015 14:34:34 +0200
+
 ngcp-panel (1.9.1.3+0~mr4.0.1.3) unstable; urgency=medium
 
   [ Rene Krenn ]
