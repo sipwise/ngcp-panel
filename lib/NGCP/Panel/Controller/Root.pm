@@ -1,5 +1,5 @@
 package NGCP::Panel::Controller::Root;
-use Sipwise::Base;
+use Moose;
 
 BEGIN { extends 'Catalyst::Controller' }
 
@@ -19,8 +19,6 @@ __PACKAGE__->config(namespace => '');
 sub auto :Private {
     my($self, $c) = @_;
 
-    $c->log->debug("*** Root::auto called");
-
     if(defined $c->request->params->{lang} && $c->request->params->{lang} =~ /^\w+$/) {
         $c->log->debug("checking language");
         if($c->request->params->{lang} eq "en") {
@@ -38,9 +36,16 @@ sub auto :Private {
         $c->languages([$c->session->{lang}, "i-default"]);
     } elsif ( $c->req->cookie('ngcp_panel_lang') ) {
         $c->session->{lang} = $c->req->cookie('ngcp_panel_lang')->value;
-    } else {
-        $c->languages([ map { s/^en.*$/i-default/r } @{ $c->languages } ]);
+        $c->languages([$c->session->{lang}, 'i-default']);
+    } else { # if language has not yet be set, set it from config or browser
+        if (defined $c->config->{appearance}{force_language}) {
+            $c->log->debug("lang set by config: " . $c->config->{appearance}{force_language});
+            $c->languages([$c->config->{appearance}{force_language}, 'i-default']);
+        } else {
+            $c->languages([ map { s/^en.*$/i-default/r } @{ $c->languages } ]);
+        }
         $c->session->{lang} = $c->language;
+        $c->log->debug("lang set by browser or config: " . $c->language);
     }
 
     if (
