@@ -82,12 +82,21 @@ has_field 'username' => (
 );
 
 has_field 'domain' => (
+	#fields will be or will be not renamed to the name_id for the API documentation, Anyway, it will be not duplicated, so "or name or id" is not correct
     type => '+NGCP::Panel::Field::Domain',
     label => 'SIP Domain',
     validate_when_empty => 1,
     element_attr => {
         rel => ['tooltip'],
-        title => ['The domain name or domain id this subscriber belongs to.']
+        title => ['The domain id this subscriber belongs to.'],
+        implicit_parameter => {
+			type => "String",
+			required => 0,
+			validate_when_empty => 0,
+			element_attr => {
+				title => ['The domain name this subscriber belongs to.'],
+			},
+		},
     },
 );
 

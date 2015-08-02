@@ -2,6 +2,7 @@ package NGCP::Panel::Controller::API::Root;
 use Sipwise::Base;
 use namespace::sweep;
 use Encode qw(encode);
+use Clone qw/clone/;
 use HTTP::Headers qw();
 use HTTP::Response qw();
 use HTTP::Status qw(:constants);
@@ -298,52 +299,64 @@ sub field_to_select_options : Private {
     } @{$field->options});
     
 }
-
+sub get_field_poperties :Private{
+    my ($self, $field) = @_;
+    my $name = $field->name;
+    return () if (
+        $field->type eq "Hidden" ||
+        $field->type eq "Button" ||
+        $field->type eq "Submit" ||
+        0);
+    my @types = ();
+    push @types, 'null' unless ($field->required || $field->validate_when_empty);
+    my $type;
+    if($field->type =~ /^\+NGCP::Panel::Field::/) {
+        if($field->type =~ /E164/) {
+            $name = 'primary_number';
+        } elsif($field->type =~ /AliasNumber/) {
+            $name = 'alias_numbers';
+        } elsif($field->type =~ /PbxGroupAPI/) {
+            $name = 'pbx_group_ids';
+        } elsif($field->type =~ /Country$/) {
+            $name = 'country';
+        #} elsif($field->type !~ /Regex|EmailList|SubscriberStatusSelect|SubscriberLockSelect|Identifier|PosInteger/) {
+        #    $name .= '_id';
+        #}
+        } elsif($field->type =~ /Select$/) {
+            $type = $self->field_to_select_options($field);
+        } elsif($field->type !~ /Regex|EmailList|Identifier|PosInteger|DateTime/) { #Interval, IPAddress, ...?
+            $name .= '_id';
+        }
+    } elsif ($field->$_isa('HTML::FormHandler::Field::Select')) {
+        $type = $self->field_to_select_options($field);
+    } 
+    push(@types, defined $type ? $type : $self->field_to_json($field->type));
+    my $desc;
+    if($field->element_attr) {
+        $desc = $field->element_attr->{title}->[0];
+    } else {
+        $desc = $name;
+    }
+    return { name => $name, description => $desc, types => \@types };
+}
 sub get_collection_properties {
     my ($self, $form) = @_;
 
     my $renderlist = $form->form->blocks->{fields}->{render_list};
+    my %renderlist = defined $renderlist ? map { $_ => 1 } @{$renderlist} : ();
     
     my @props = ();
     foreach my $f($form->fields) {
         my $name = $f->name;
-        next if (
-            $f->type eq "Hidden" ||
-            $f->type eq "Button" ||
-            $f->type eq "Submit" ||
-            0);
-        next if(defined $renderlist && !grep {/^$name$/} @{ $renderlist });
-        my @types = ();
-        push @types, 'null' unless ($f->required || $f->validate_when_empty);
-        my $type;
-        if($f->type =~ /^\+NGCP::Panel::Field::/) {
-            if($f->type =~ /E164/) {
-                $name = 'primary_number';
-            } elsif($f->type =~ /AliasNumber/) {
-                $name = 'alias_numbers';
-            } elsif($f->type =~ /PbxGroupAPI/) {
-                $name = 'pbx_group_ids';
-            } elsif($f->type =~ /Country$/) {
-                $name = 'country';
-            #} elsif($f->type !~ /Regex|EmailList|SubscriberStatusSelect|SubscriberLockSelect|Identifier|PosInteger/) {
-            #    $name .= '_id';
-            #}
-            } elsif($f->type =~ /Select$/) {
-                $type = $self->field_to_select_options($f);
-            } elsif($f->type !~ /Regex|EmailList|Identifier|PosInteger|DateTime/) { #Interval, IPAddress, ...?
-                $name .= '_id';
+        next if (defined $renderlist && !exists $renderlist{$name});
+        push @props, $self->get_field_poperties($f);
+        if(my $spec = $f->element_attr->{implicit_parameter}){
+            my $f_implicit = clone($f);
+            foreach my $field_attribute (keys %{$spec}){
+                $f_implicit->$field_attribute($spec->{$field_attribute});
             }
-        } elsif ($f->$_isa('HTML::FormHandler::Field::Select')) {
-            $type = $self->field_to_select_options($f);
-        } 
-        push(@types, defined $type ? $type : $self->field_to_json($f->type));
-        my $desc;
-        if($f->element_attr) {
-            $desc = $f->element_attr->{title}->[0];
-        } else {
-            $desc = $name;
+            push @props, $self->get_field_poperties($f_implicit);
         }
-        push @props, { name => $name, description => $desc, types => \@types };
     }
     @props = sort{$a->{name} cmp $b->{name}} @props;
     return \@props;
