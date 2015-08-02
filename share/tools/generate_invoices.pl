@@ -45,6 +45,7 @@ my @opt_spec = (
     'update_contract_balance_nonzero',
     'force_unrated',
     'no_empty',
+    'enable',
     'help|?',
     'man'
 );
@@ -107,7 +108,7 @@ my $logger = Log::Log4perl->get_logger('NGCP::Panel');
         GetOptionsFromString($opt_str, $opt_cfg, @opt_spec);
     }
 }
-
+$opt_cfg->{enable} or die("Invoice generation disabled by default. Current invoice generation will damage billing records.");
 
 my $dbh;
 {
