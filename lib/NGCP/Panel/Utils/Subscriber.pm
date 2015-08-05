@@ -1102,7 +1102,7 @@ sub prepare_alias_select {
         prefetch => 'subscriber',
     });
     for my $num($num_rs->all) {
-        next if ($num->voip_subscribers->first); # is a primary number
+        next if ($num->id == $subscriber->primary_number_id); # is our primary number
         next unless ($num->subscriber_id == $subscriber->id);
         push @alias_nums, { e164 => { cc => $num->cc, ac => $num->ac, sn => $num->sn } };
         unless($unselect) {
