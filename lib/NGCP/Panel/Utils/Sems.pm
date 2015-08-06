@@ -172,14 +172,13 @@ EOF
 sub clear_audio_cache {
     my ($c, $sound_set_id, $handle_name, $group_name) = @_;
 
+    my @pbx = $c->config->{features}->{cloudpbx} ? ('pbx') : ();
     my @services;
-    if ($group_name eq "calling_card") {
-        @services = ("appserver");
-    } elsif ($group_name eq "pbx" )  {
-        @services = ("pbx");
+    if ($group_name eq "pbx" )  {
+        @services = (@pbx);
     } elsif ($group_name eq "digits") {
-        @services = ("pbx", "appserver");
-    } elsif ($group_name =~ /^(|music_on_hold|voucher_recharge|play_balance|conference)$/) {
+        @services = (@pbx, "appserver");
+    } elsif ($group_name =~ /^(|music_on_hold|voucher_recharge|play_balance|conference|calling_card)$/) {
         @services = ("appserver");
     }
 
