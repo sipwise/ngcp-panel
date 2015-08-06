@@ -73,10 +73,10 @@ sub root :Chained('profile_list') :PathPart('') :Args(0) {
 
 sub ajax :Chained('profile_list') :PathPart('ajax') :Args(0) {
     my ($self, $c) = @_;
-    
+
     my $resultset = $c->stash->{profiles_rs};
     NGCP::Panel::Utils::Datatables::process($c, $resultset, $c->stash->{profile_dt_columns});
-    
+
     $c->detach( $c->view("JSON") );
 }
 
@@ -108,7 +108,7 @@ sub base :Chained('profile_list') :PathPart('') :CaptureArgs(1) {
         { name => 'zone', search => 1, title => $c->loc('Zone') },
         { name => 'detail', search => 1, title => $c->loc('Zone Details') },
     ]);
-    
+
     my $res = $c->stash->{profiles_rs}->find($profile_id);
     unless(defined($res)) {
         NGCP::Panel::Utils::Message->error(
@@ -124,13 +124,20 @@ sub base :Chained('profile_list') :PathPart('') :CaptureArgs(1) {
 }
 
 sub edit :Chained('base') :PathPart('edit') {
-    my ($self, $c) = @_;
+    my ($self, $c ) = @_;
+    $c->forward('process_edit', [0] );
+}
+sub process_edit :Private {
+    my ($self, $c, $duplicate) = @_;
 
     my $posted = ($c->request->method eq 'POST');
     my $form;
     my $params = $c->stash->{profile};
     $params->{reseller}{id} = delete $params->{reseller_id};
     $params = $params->merge($c->session->{created_objects});
+    if( $duplicate ) {
+        NGCP::Panel::Utils::Billing::get_billing_profile_uniq_params( params => $params );
+    }
     if($c->user->is_superuser) {
         $form = NGCP::Panel::Form::BillingProfile::Admin->new;
     } else {
@@ -152,7 +159,7 @@ sub edit :Chained('base') :PathPart('edit') {
     if($posted && $form->validated) {
         try {
             if($c->user->is_superuser) {
-                $form->values->{reseller_id} = $form->values->{reseller}{id};   
+                $form->values->{reseller_id} = $form->values->{reseller}{id};
             } else {
                 $form->values->{reseller_id} = $c->user->reseller_id;
             }
@@ -162,14 +169,14 @@ sub edit :Chained('base') :PathPart('edit') {
 
             my $schema = $c->model('DB');
             $schema->txn_do(sub {
-                
+
                 unless($c->stash->{profile_result}->get_column('contract_cnt') == 0) {
                     die('Cannnot modify billing profile that is still used in profile mappings');
                 }
                 unless($c->stash->{profile_result}->get_column('package_cnt') == 0) {
                     die('Cannnot modify billing profile that is still used in profile packages');
-                } 
-                
+                }
+
                 $c->stash->{profile_result}->update($form->values);
 
                 # if prepaid flag changed, update all subscribers for customers
@@ -214,7 +221,7 @@ sub edit :Chained('base') :PathPart('edit') {
                         }
                     }
                 }
-        
+
             });
 
             delete $c->session->{created_objects}->{reseller};
@@ -231,20 +238,33 @@ sub edit :Chained('base') :PathPart('edit') {
         }
         NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for('/billing'));
     }
-
-    $c->stash(edit_flag => 1);
-    $c->stash(form => $form);
+    $c->stash( 'duplicate_flag' => 1 ) if $duplicate;
+    $c->stash( 'edit_flag'      => 1 );
+    $c->stash( 'form'           => $form );
 }
 
 sub create :Chained('profile_list') :PathPart('create') :Args(0) {
     my ($self, $c, $no_reseller) = @_;
+    $c->forward('process_create', [$no_reseller, 0 ]);
+}
+sub duplicate :Chained('base') :PathPart('duplicate') {
+    my ($self, $c, $no_reseller) = @_;
+    my $posted = ($c->request->method eq 'POST');
+    if(!$posted){
+        $c->forward('process_edit', [1] );
+    }else{
+        $c->forward('process_create', [ $no_reseller, 1 ] );
+    }
+}
+sub process_create :Private {
+    my ($self, $c, $no_reseller, $duplicate ) = @_;
 
+    my $schema = $c->model('DB');
     my $posted = ($c->request->method eq 'POST');
     my $form;
     my $params = {};
     $params->{reseller}{id} = delete $params->{reseller_id};
     $params = $params->merge($c->session->{created_objects});
-    # no_reseller - sounds as "!reseller", and thus !$no_reseller => !(!reseller) => reseller, but old code meant axacly admin view for this case, so, we can suppose that no_reseller could be number of reseller
     if($c->user->is_superuser && !$no_reseller) {
         $form = NGCP::Panel::Form::BillingProfile::Admin->new;
     } else {
@@ -268,13 +288,28 @@ sub create :Chained('profile_list') :PathPart('create') :Args(0) {
             if($c->user->is_superuser && $no_reseller) {
                 $form->values->{reseller_id} = $c->user->reseller_id;
             } elsif($c->user->is_superuser) {
-                $form->values->{reseller_id} = $form->values->{reseller}{id};   
+                $form->values->{reseller_id} = $form->values->{reseller}{id};
             } else {
                 $form->values->{reseller_id} = $c->user->reseller_id;
             }
             $form->values->{create_timestamp} = $form->values->{modify_timestamp} = NGCP::Panel::Utils::DateTime::current_local;
             delete $form->values->{reseller};
+            delete $form->values->{id} if $duplicate;
             my $profile = $c->model('DB')->resultset('billing_profiles')->create($form->values);
+
+            if( $duplicate ) {
+
+                NGCP::Panel::Utils::Billing::clone_billing_profile_tackles(
+                    c           => $c,
+                    profile_old => $c->stash->{'profile_result'},
+                    profile_new => $profile,
+                    #profile_new => $c->stash->{profiles_rs}->find(
+                    #    $c->session->{created_objects}->{billing_profile}->{id},
+                    #),
+                    schema      => $schema,
+                );
+            }
+
             $c->session->{created_objects}->{billing_profile} = { id => $profile->id };
             delete $c->session->{created_objects}->{reseller};
             NGCP::Panel::Utils::Message->info(
@@ -298,7 +333,7 @@ sub create :Chained('profile_list') :PathPart('create') :Args(0) {
 sub create_without_reseller :Chained('profile_list') :PathPart('create/noreseller') :Args(0) {
     my ($self, $c) = @_;
 
-    $self->create($c, 1); 
+    $self->create($c, 1);
 }
 
 sub terminate :Chained('base') :PathPart('terminate') :Args(0) {
@@ -312,7 +347,7 @@ sub terminate :Chained('base') :PathPart('terminate') :Args(0) {
         );
         NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for('/billing'));
     }
-    
+
     try {
         #todo: putting the profile fetch into a transaction wouldn't help since the count columns a prone to phantom reads...
         unless($profile->get_column('contract_cnt') == 0) {
@@ -320,7 +355,7 @@ sub terminate :Chained('base') :PathPart('terminate') :Args(0) {
         }
         unless($profile->get_column('package_cnt') == 0) {
             die('Cannnot terminate billing profile that is still used in profile packages');
-        } 
+        }
         $profile->update({
             status => 'terminated',
             terminate_timestamp => NGCP::Panel::Utils::DateTime::current_local,
@@ -372,7 +407,7 @@ sub fees_base :Chained('fees_list') :PathPart('') :CaptureArgs(1) {
         $c->response->redirect($c->uri_for($c->stash->{profile}->{id}, 'fees'));
         return;
     }
-    
+
     my $res = $c->stash->{'profile_result'}->billing_fees
         ->search(undef, {join => 'billing_zone',})
         ->find($fee_id);
@@ -437,7 +472,7 @@ sub fees_create :Chained('fees_list') :PathPart('create') :Args(0) {
 
 sub fees_upload :Chained('fees_list') :PathPart('upload') :Args(0) {
     my ($self, $c) = @_;
-    
+
     my $form = NGCP::Panel::Form::BillingFeeUpload->new;
     my $upload = $c->req->upload('upload_fees');
     my $posted = $c->req->method eq 'POST';
@@ -467,14 +502,14 @@ sub fees_upload :Chained('fees_list') :PathPart('upload') :Args(0) {
         try {
             my $schema = $c->model('DB');
             $schema->txn_do(sub {
-                ( $fees, $fails, $text_success ) = NGCP::Panel::Utils::Billing::process_billing_fees( 
-                    c       => $c, 
-                    data    => \$data, 
+                ( $fees, $fails, $text_success ) = NGCP::Panel::Utils::Billing::process_billing_fees(
+                    c       => $c,
+                    data    => \$data,
                     profile => $c->stash->{'profile_result'},
                     schema  => $schema,
                 );
             });
-            
+
             NGCP::Panel::Utils::Message->info(
                 c    => $c,
                 desc => $$text_success,
@@ -498,8 +533,8 @@ sub fees_upload :Chained('fees_list') :PathPart('upload') :Args(0) {
 sub fees_download :Chained('fees_list') :PathPart('download') :Args(0) {
     my ($self, $c) = @_;
     my $schema = $c->model('DB');
-    my $data = NGCP::Panel::Utils::Billing::combine_billing_fees( 
-        c       => $c, 
+    my $data = NGCP::Panel::Utils::Billing::combine_billing_fees(
+        c       => $c,
         profile => $c->stash->{'profile_result'},
         schema  => $schema,
     );
@@ -511,7 +546,7 @@ sub fees_download :Chained('fees_list') :PathPart('download') :Args(0) {
 
 sub fees_edit :Chained('fees_base') :PathPart('edit') :Args(0) {
     my ($self, $c) = @_;
-    
+
     my $profile_id = $c->stash->{profile}->{id};
     my $posted = ($c->request->method eq 'POST');
     my $params = $c->stash->{fee};
@@ -543,7 +578,7 @@ sub fees_edit :Chained('fees_base') :PathPart('edit') :Args(0) {
         $c->response->redirect($c->uri_for($c->stash->{profile}->{id}, 'fees'));
         return;
     }
-    
+
     $c->stash(edit_fee_flag => 1);
     $c->stash(form => $form);
 }
@@ -571,7 +606,7 @@ sub fees_delete :Chained('fees_base') :PathPart('delete') :Args(0) {
 
 sub zones_list :Chained('base') :PathPart('zones') :CaptureArgs(0) {
     my ($self, $c) = @_;
-    
+
     $c->stash( zones_root_uri =>
         $c->uri_for_action('/billing/zones', [$c->req->captures->[0]])
     );
@@ -588,7 +623,7 @@ sub zones_ajax :Chained('zones_list') :PathPart('ajax') :Args(0) {
 
 sub zones_create :Chained('zones_list') :PathPart('create') :Args(0) {
     my ($self, $c) = @_;
-    
+
     my $form = NGCP::Panel::Form::BillingZone->new;
     my $posted = ($c->request->method eq 'POST');
     $form->process(
@@ -629,7 +664,7 @@ sub zones :Chained('zones_list') :PathPart('') :Args(0) {
 
 sub zones_base :Chained('zones_list') :PathPart('') :CaptureArgs(1) {
     my ($self, $c, $zone_id) = @_;
-    
+
     unless($zone_id && $zone_id->is_integer) {
         $zone_id //= '';
         NGCP::Panel::Utils::Message->error(
@@ -640,7 +675,7 @@ sub zones_base :Chained('zones_list') :PathPart('') :CaptureArgs(1) {
         );
         NGCP::Panel::Utils::Navigation::back_or($c, $c->stash->{zones_root_uri});
     }
-    
+
     my $res = $c->stash->{'profile_result'}->billing_zones
         ->find($zone_id);
     unless(defined($res)) {
@@ -657,7 +692,7 @@ sub zones_base :Chained('zones_list') :PathPart('') :CaptureArgs(1) {
 
 sub zones_delete :Chained('zones_base') :PathPart('delete') :Args(0) {
     my ($self, $c) = @_;
-    
+
     my $zone_info = { $c->stash->{zone_result}->get_inflated_columns };
     try {
         $c->stash->{zone_result}->delete;
@@ -682,7 +717,7 @@ sub peaktimes_list :Chained('base') :PathPart('peaktimes') :CaptureArgs(0) {
     $c->stash(peaktimes_root_uri =>
         $c->uri_for_action('/billing/peaktimes', [$c->req->captures->[0]])
     );
-    
+
     my $rs = $c->stash->{profile_result}->billing_peaktime_weekdays;
     $rs = $rs->search(undef, {order_by => 'start'});
 
@@ -720,7 +755,7 @@ sub peaktime_weekdays_base :Chained('peaktimes_list') :PathPart('weekday') :Capt
 
 sub peaktime_weekdays_edit :Chained('peaktime_weekdays_base') :PathPart('edit') :Args(0) {
     my ($self, $c) = @_;
-    
+
     my $form = NGCP::Panel::Form::BillingPeaktimeWeekdays->new;
     $form->process(
         posted => ($c->request->method eq 'POST'),
@@ -793,7 +828,7 @@ sub load_weekdays {
                 [$c->req->captures->[0], $_]),
         };
     }
-    
+
     foreach my $range ($c->stash->{weekdays_result}->all) {
         push @{ $weekdays[$range->weekday]->{ranges} }, {
             start => $range->start,
@@ -801,7 +836,7 @@ sub load_weekdays {
             id => $range->id,
         }
     }
-    
+
     $c->stash(weekdays => \@weekdays);
 }
 
@@ -815,7 +850,7 @@ sub peaktime_specials_ajax :Chained('peaktimes_list') :PathPart('ajax') :Args(0)
 
 sub peaktime_specials_base :Chained('peaktimes_list') :PathPart('date') :CaptureArgs(1) {
     my ($self, $c, $special_id) = @_;
-    
+
     unless($special_id && $special_id->is_integer) {
         $special_id //= '';
         NGCP::Panel::Utils::Message->error(
@@ -825,7 +860,7 @@ sub peaktime_specials_base :Chained('peaktimes_list') :PathPart('date') :Capture
         $c->response->redirect($c->stash->{peaktimes_root_uri});
         return;
     }
-    
+
     my $res = $c->stash->{'profile_result'}->billing_peaktime_specials
         ->find($special_id);
     unless(defined($res)) {
@@ -909,7 +944,7 @@ sub peaktime_specials_delete :Chained('peaktime_specials_base') :PathPart('delet
 sub peaktime_specials_create :Chained('peaktimes_list') :PathPart('date/create') :Args(0) {
     my ($self, $c) = @_;
     $self->load_weekdays($c);
-    
+
     my $posted = ($c->request->method eq 'POST');
     my $form = NGCP::Panel::Form::BillingPeaktimeSpecial->new;
     my $params = {};
