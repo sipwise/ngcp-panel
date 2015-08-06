@@ -1,3 +1,15 @@
+ngcp-panel (1.8.2.12+0~mr3.8.2.12) unstable; urgency=medium
+
+  [ Gerhard Jungwirth ]
+  * [a689b31] MT#14391 Correctly select alias nums on subscriber edit
+  * [501c2e9] MT#14365 only dispatch to sems-pbx when pbx is enabled
+  * [5fc3f4a] MT#13611 use common logic for cdr display
+  * [d05b437] MT#14383 show suppressed number as Anonymous
+
+  [ Sipwise Jenkins Builder ]
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Thu, 06 Aug 2015 18:34:03 +0200
+
 ngcp-panel (1.8.2.11+0~mr3.8.2.11) unstable; urgency=medium
 
   [ Andreas Granig ]
