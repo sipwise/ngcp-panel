@@ -4,6 +4,8 @@ use warnings;
 
 use Text::CSV_XS;
 use IO::String;
+use NGCP::Schema;
+
 
 sub process_billing_fees{
     my(%params) = @_;
@@ -91,6 +93,83 @@ sub combine_billing_fees{
     return $io->string_ref;
 }
 
+sub clone_billing_profile_tackles{
+    my(%params) = @_;
+    my($c, $profile_old, $profile_new, $schema) = @params{qw/c profile_old profile_new schema/};
+    $schema //= $c->model('DB');
+
+    my %struct_info = (
+        'billing_zones' => 'billing_zones',  
+        'billing_peaktime_weekdays' => 'billing_peaktime_weekdays',  
+        'billing_peaktime_special' => 'billing_peaktime_specials'
+    );
+    while (my ($table_name,$rel_name) = each %struct_info ){
+        my $source = NGCP::Schema->source($table_name);
+        my @columns = grep { !/^billing_profile_id$|^id$/i } $source->columns;
+        my $resultset = $profile_old->$rel_name->search_rs(undef,{
+            'select' => [@columns,{ '' => \[ $profile_new->id], -as => 'billing_profile_id' } ],
+            'as'     => [@columns,'billing_profile_id'],
+        });
+        $resultset->result_class('DBIx::Class::ResultClass::HashRefInflator');
+        my @records = $resultset->all;
+        $profile_new->$rel_name->populate(\@records) if @records;
+        
+        #insert into billing_peaktime_special(billing_profile_id,end,start) select ?,end,start from billing_peaktime_special where billing_profile_id=?, undef, $profile_new->id, $profile_old->id
+        
+        #insert into billing_peaktime_weekdays(billing_profile_id,end,start,weekday) select ?,end,start,weekday from billing_peaktime_weekdays where billing_profile_id=?, undef, $profile_new->id, $profile_old->id
+        
+        #insert into billing_zones(billing_profile_id,zone,detail) select ?,zone,detail from billing_zones where billing_profile_id=?, undef, $profile_new->id, $profile_old->id
+        
+        
+    }
+
+    #insert into billing_fees(billing_profile_id,billing_zone_id,source,destination,direction,type,onpeak_init_rate,onpeak_init_interval,onpeak_follow_rate,onpeak_follow_interval,offpeak_init_rate,offpeak_init_interval,offpeak_follow_rate,offpeak_follow_interval,use_free_time) select ?,bz_new.billing_zone_id,source,destination,direction,type,onpeak_init_rate,onpeak_init_interval,onpeak_follow_rate,onpeak_follow_interval,offpeak_init_rate,offpeak_init_interval,offpeak_follow_rate,offpeak_follow_interval,use_free_time 
+    #from billing_fees 
+    #inner join billing_zones bz_old on billing_fees.billing_zone_id=bz_old.billing_zone_id 
+    #inner join billing_zones bz_new on bz_old.zone=bz_new.zone and bz_old.detail=bz_new.detail and bz_new.billing_profile_id=? where billing_fees.billing_profile_id=?, undef, $profile_new->id, $profile_new->id, $profile_old->id
+
+    my $source = NGCP::Schema->source('billing_fees');
+    my @columns = grep { !/^billing_profile_id$|^id$|^billing_zone_id$/i } $source->columns;
+    my $fees_rs = $profile_old->billing_fees->search_rs(
+        undef,
+        {
+            'select' => [
+                @columns,
+                { '' =>\['bz_new.id'],        -as => 'billing_zone_id' },
+                { '' => \[ $profile_new->id], -as => 'billing_profile_id' } 
+            ],
+            'as'     => [ @columns,'billing_zone_id','billing_profile_id' ],
+            alias => 'me',
+            from  => [
+                { 'me' => 'billing.billing_fees' },
+                [
+                    { 'bz_old' => 'billing.billing_zones', '-join-type' => 'inner' },#!Attention:  -join-type DOESN"T WORK here!!! But in optimistic case, when all billing_zones created successfully - inner, which is default, is sufficient.
+                    [
+                        { 'me.billing_zone_id' => 'bz_old.id' },
+                    ],
+                ],
+                [
+                    { 'bz_new' => 'billing.billing_zones', '-join-type' => 'inner' },#!Attention:  -join-type DOESN"T WORK here!!! But in optimistic case, when all billing_zones created successfully - inner, which is default, is sufficient.
+                    [
+                        {
+                            '-and' => [
+                                {
+                                    'bz_new.zone'   => { -ident => 'bz_old.zone'} ,
+                                    'bz_new.detail' => { -ident => 'bz_old.detail'} ,
+                                    'bz_new.billing_profile_id' => $profile_new->id 
+                                },
+                            ],
+                        },
+                    ],
+                ],
+            ],
+        }
+    );
+    
+    $fees_rs->result_class('DBIx::Class::ResultClass::HashRefInflator');
+    my @records = $fees_rs->all;
+    $profile_new->billing_fees->populate(\@records) if @records;    
+}
 
 sub get_contract_count_stmt {
     return "select count(distinct c.id) from `billing`.`billing_mappings` bm join `billing`.`contracts` c on c.id = bm.contract_id where bm.`billing_profile_id` = `me`.`id` and c.status != 'terminated' and (bm.end_date is null or bm.end_date >= now())";
