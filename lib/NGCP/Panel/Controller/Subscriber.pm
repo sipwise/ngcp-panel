@@ -3042,6 +3042,9 @@ sub ajax_calls :Chained('master') :PathPart('calls/ajax') :Args(0) {
             my ($result) = @_;
             my %data = ();
             my $resource = NGCP::Panel::Utils::CallList::process_cdr_item($c, $result, $owner);
+            if (!defined $resource->{other_cli}) {
+                $resource->{other_cli} = $c->loc('Anonymous');
+            }
             if ($resource->{direction} eq "out") {
                 $data{source_user} = uri_unescape($resource->{own_cli});
                 $data{destination_user} = uri_unescape($resource->{other_cli});
