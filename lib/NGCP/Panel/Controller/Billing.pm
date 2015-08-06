@@ -124,13 +124,25 @@ sub base :Chained('profile_list') :PathPart('') :CaptureArgs(1) {
 }
 
 sub edit :Chained('base') :PathPart('edit') {
-    my ($self, $c) = @_;
+    my ($self, $c ) = @_;
+    $c->forward('process_edit', [0] );
+}
+sub process_edit :Private {
+    my ($self, $c, $duplicate) = @_;
 
     my $posted = ($c->request->method eq 'POST');
     my $form;
     my $params = $c->stash->{profile};
     $params->{reseller}{id} = delete $params->{reseller_id};
     $params = $params->merge($c->session->{created_objects});
+    if( $duplicate ) {
+        my $uniq = '_dup_'.time();
+        my $uniq_length = length($uniq);
+        my %uniq_columns =  ('handle' => 63, 'name' => 31);
+        while(my($column,$limit) = each %uniq_columns){
+            $params->{$column}= substr( $params->{$column}, 0, $limit - $uniq_length ).$uniq ;
+        }
+    }
     if($c->user->is_superuser) {
         $form = NGCP::Panel::Form::BillingProfile::Admin->new;
     } else {
@@ -231,20 +243,33 @@ sub edit :Chained('base') :PathPart('edit') {
         }
         NGCP::Panel::Utils::Navigation::back_or($c, $c->uri_for('/billing'));
     }
-
-    $c->stash(edit_flag => 1);
-    $c->stash(form => $form);
+    $c->stash( 'duplicate_flag' => 1 ) if $duplicate;
+    $c->stash( 'edit_flag'      => 1 );
+    $c->stash( 'form'           => $form );
 }
 
 sub create :Chained('profile_list') :PathPart('create') :Args(0) {
     my ($self, $c, $no_reseller) = @_;
+    $c->forward('process_create', [$no_reseller, 0 ]);
+}
+sub duplicate :Chained('base') :PathPart('duplicate') {
+    my ($self, $c, $no_reseller) = @_;
+    my $posted = ($c->request->method eq 'POST');
+    if(!$posted){
+        $c->forward('process_edit', [1] );
+    }else{
+        $c->forward('process_create', [ $no_reseller, 1 ] );
+    }
+}
+sub process_create :Private {
+    my ($self, $c, $no_reseller, $duplicate ) = @_;
 
+    my $schema = $c->model('DB');
     my $posted = ($c->request->method eq 'POST');
     my $form;
     my $params = {};
     $params->{reseller}{id} = delete $params->{reseller_id};
     $params = $params->merge($c->session->{created_objects});
-    # no_reseller - sounds as "!reseller", and thus !$no_reseller => !(!reseller) => reseller, but old code meant axacly admin view for this case, so, we can suppose that no_reseller could be number of reseller
     if($c->user->is_superuser && !$no_reseller) {
         $form = NGCP::Panel::Form::BillingProfile::Admin->new;
     } else {
@@ -274,7 +299,23 @@ sub create :Chained('profile_list') :PathPart('create') :Args(0) {
             }
             $form->values->{create_timestamp} = $form->values->{modify_timestamp} = NGCP::Panel::Utils::DateTime::current_local;
             delete $form->values->{reseller};
+            delete $form->values->{id} if $duplicate;
             my $profile = $c->model('DB')->resultset('billing_profiles')->create($form->values);
+
+            if( $duplicate ) {
+                
+                NGCP::Panel::Utils::Billing::clone_billing_profile_tackles(
+                    c           => $c, 
+                    profile_old => $c->stash->{'profile_result'},
+                    profile_new => $profile,
+                    #profile_new => $c->stash->{profiles_rs}->find(
+                    #    $c->session->{created_objects}->{billing_profile}->{id},
+                    #),
+                    schema      => $schema,
+                );
+            }
+
+
             $c->session->{created_objects}->{billing_profile} = { id => $profile->id };
             delete $c->session->{created_objects}->{reseller};
             NGCP::Panel::Utils::Message->info(
