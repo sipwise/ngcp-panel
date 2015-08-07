@@ -23,13 +23,13 @@ sub process {
     unless ($use_rs_cb) {
         for my $col(@{ $cols }) {
             if ($col->{show_total}) {
-                $aggregate_cols->{$col->{accessor}} = $col->{show_total};
+                $aggregate_cols->{$col->{accessor}} = [$col->{show_total}, ($col->{literal_sql}) || $col->{accessor}];
             }
             my @parts = split /\./, $col->{name};
             if($col->{literal_sql}) {
                 $rs = $rs->search_rs(undef, {
                     $col->{join} ? ( join => $col->{join} ) : (),
-                    $col->{no_column} ? () : ( 
+                    $col->{no_column} ? () : (
                         '+select' => { '' => \[$col->{literal_sql}], -as => $col->{accessor}  },
                         '+as' => [ $col->{accessor} ],
                     )
@@ -141,11 +141,11 @@ sub process {
             });
         }
     }
-    
+
     $displayRecords = $use_rs_cb ? 0 : $rs->count;
     for my $sum_col (keys %{ $aggregate_cols }) {
-        my $aggregation_method = $aggregate_cols->{$sum_col};
-        $aggregations->{$sum_col} = $rs->get_column($sum_col)->$aggregation_method;
+        my ($aggregation_method, $accessor) = @{ $aggregate_cols->{$sum_col} };
+        $aggregations->{$sum_col} = $rs->get_column(\[$accessor])->$aggregation_method;
     }
 
     # show specific row on top (e.g. if we come back from a newly created entry)

@@ -13,6 +13,7 @@ use NGCP::Panel::Utils::DateTime;
 # provides:
 #     * call_id
 #     * customer_cost
+#     * total_customer_cost
 #     * customer_free_time
 #     * direction
 #     * duration
@@ -34,7 +35,7 @@ sub process_cdr_item {
 
     my $intra = 0;
     if($item->source_user_id && $item->source_account_id == $item->destination_account_id) {
-        $resource->{intra_customer} = JSON::true; # ?????????????
+        $resource->{intra_customer} = JSON::true;
         $intra = 1;
     } else {
         $resource->{intra_customer} = JSON::false;
@@ -185,6 +186,11 @@ sub process_cdr_item {
     $resource->{duration} = NGCP::Panel::Utils::DateTime::sec_to_hms(ceil($item->duration));
     $resource->{customer_cost} = $resource->{direction} eq "out" ?
         $item->source_customer_cost : $item->destination_customer_cost;
+    if ($cust->add_vat) {
+        $resource->{total_customer_cost} = $resource->{customer_cost} * (1 + $cust->vat_rate / 100);
+    } else {
+        $resource->{total_customer_cost} = $resource->{customer_cost};
+    }
     $resource->{customer_free_time} = $resource->{direction} eq "out" ?
         $item->source_customer_free_time : 0;
 
