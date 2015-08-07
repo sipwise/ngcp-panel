@@ -101,6 +101,15 @@ has_field 'customer_cost' => (
     },
 );
 
+has_field 'total_customer_cost' => (
+    type => 'Float',
+    required => 0,
+    element_attr => {
+        rel => ['tooltip'],
+        title => ['Total cost for the customer. VAT is included if applicable.'],
+    },
+);
+
 has_field 'customer_free_time' => (
     type => 'PosInteger',
     required => 0,
