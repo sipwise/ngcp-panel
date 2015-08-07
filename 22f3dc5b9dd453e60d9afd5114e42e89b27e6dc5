@@ -1,0 +1,55 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "fa5d592f_97d667c4",
+        "filename": "lib/NGCP/Panel/Controller/Billing.pm",
+        "patchSetId": 3
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1000005
+      },
+      "writtenOn": "2015-08-07T13:43:55Z",
+      "side": 1,
+      "message": "lgtm",
+      "revId": "22f3dc5b9dd453e60d9afd5114e42e89b27e6dc5",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fa5d592f_b7d16bcf",
+        "filename": "lib/NGCP/Panel/Utils/Billing.pm",
+        "patchSetId": 3
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1000005
+      },
+      "writtenOn": "2015-08-07T13:43:55Z",
+      "side": 1,
+      "message": "do you know about +select and +as?",
+      "revId": "22f3dc5b9dd453e60d9afd5114e42e89b27e6dc5",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fa5d592f_576a2f1b",
+        "filename": "share/templates/helpers/datatables.tt",
+        "patchSetId": 3
+      },
+      "lineNbr": 277,
+      "author": {
+        "id": 1000005
+      },
+      "writtenOn": "2015-08-07T13:43:55Z",
+      "side": 1,
+      "message": "looks good, but we actually don\u0027t need the edit_flag here, right?",
+      "revId": "22f3dc5b9dd453e60d9afd5114e42e89b27e6dc5",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    }
+  ]
+}
