@@ -18,10 +18,9 @@ sub process_billing_fees{
     my $linenum = 0;
     my @fees = ();
     my %zones = ();
-    open my $fh, '<', $data;
+    open(my $fh, '<:encoding(utf8)', $data);
     while ( my $line = <$fh> ){
         ++$linenum;
-        chomp $line;
         next unless length $line;
         unless($csv->parse($line)) {
             push @fails, $linenum;
