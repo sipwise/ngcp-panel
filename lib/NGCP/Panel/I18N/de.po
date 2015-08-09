@@ -205,7 +205,7 @@ msgstr "%1<span class=\"pull-right\">für %2s</span>"
 msgid "(Base) IP Address"
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/Voucher.pm:375 lib/NGCP/Panel/Utils/Billing.pm:59
+#: lib/NGCP/Panel/Controller/Voucher.pm:375 lib/NGCP/Panel/Utils/Billing.pm:58
 msgid ", but skipped the following line numbers: "
 msgstr ", aber folgende Zeilen wurden ignoriert: "
 
@@ -901,7 +901,7 @@ msgstr "Verrechnungskosten-Eintrag existiert nicht!"
 msgid "Billing Fee successfully created!"
 msgstr "Verrechnungskosten-Eintrag erfolgreich erstellt!"
 
-#: lib/NGCP/Panel/Utils/Billing.pm:57
+#: lib/NGCP/Panel/Utils/Billing.pm:56
 msgid "Billing Fee successfully uploaded"
 msgstr "Verrechnungskosten-Eintrag erfolgreich hochgeladen"
 
@@ -9542,12 +9542,12 @@ msgstr "Verwende gültige Alias-Nummer als NPN"
 msgid "Used"
 msgstr ""
 
-#: lib/NGCP/Panel/Utils/Billing.pm:106
+#: lib/NGCP/Panel/Utils/Billing.pm:105
 #: lib/NGCP/Panel/Utils/BillingNetworks.pm:143
 msgid "Used (contracts)"
 msgstr ""
 
-#: lib/NGCP/Panel/Utils/Billing.pm:107
+#: lib/NGCP/Panel/Utils/Billing.pm:106
 #: lib/NGCP/Panel/Utils/BillingNetworks.pm:144
 msgid "Used (packages)"
 msgstr ""
