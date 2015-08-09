@@ -208,7 +208,7 @@ msgstr "%1<span class=\"pull-right\">для %2s</span>"
 msgid "(Base) IP Address"
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/Voucher.pm:375 lib/NGCP/Panel/Utils/Billing.pm:59
+#: lib/NGCP/Panel/Controller/Voucher.pm:375 lib/NGCP/Panel/Utils/Billing.pm:58
 msgid ", but skipped the following line numbers: "
 msgstr ", но пропущены следующие номера строк: "
 
@@ -896,7 +896,7 @@ msgstr "Цена не существует!"
 msgid "Billing Fee successfully created!"
 msgstr "Цена успешно создана!"
 
-#: lib/NGCP/Panel/Utils/Billing.pm:57
+#: lib/NGCP/Panel/Utils/Billing.pm:56
 msgid "Billing Fee successfully uploaded"
 msgstr "Цена успешно обновлена!"
 
@@ -9557,12 +9557,12 @@ msgstr "Использовать корректный дополнительны
 msgid "Used"
 msgstr ""
 
-#: lib/NGCP/Panel/Utils/Billing.pm:106
+#: lib/NGCP/Panel/Utils/Billing.pm:105
 #: lib/NGCP/Panel/Utils/BillingNetworks.pm:143
 msgid "Used (contracts)"
 msgstr ""
 
-#: lib/NGCP/Panel/Utils/Billing.pm:107
+#: lib/NGCP/Panel/Utils/Billing.pm:106
 #: lib/NGCP/Panel/Utils/BillingNetworks.pm:144
 msgid "Used (packages)"
 msgstr ""

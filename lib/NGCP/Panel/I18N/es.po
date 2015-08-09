@@ -194,7 +194,7 @@ msgstr "%1<span class=\"pull-right\">para %2s</span>"
 msgid "(Base) IP Address"
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/Voucher.pm:375 lib/NGCP/Panel/Utils/Billing.pm:59
+#: lib/NGCP/Panel/Controller/Voucher.pm:375 lib/NGCP/Panel/Utils/Billing.pm:58
 msgid ", but skipped the following line numbers: "
 msgstr ", pero omitir los siguientes números: "
 
@@ -889,7 +889,7 @@ msgstr "¡La tarifa no existe!"
 msgid "Billing Fee successfully created!"
 msgstr "¡Tarifa creada con éxito!"
 
-#: lib/NGCP/Panel/Utils/Billing.pm:57
+#: lib/NGCP/Panel/Utils/Billing.pm:56
 msgid "Billing Fee successfully uploaded"
 msgstr "Tarifa subida con éxito"
 
@@ -9522,12 +9522,12 @@ msgstr "Usar CLI alias válido como NPN"
 msgid "Used"
 msgstr ""
 
-#: lib/NGCP/Panel/Utils/Billing.pm:106
+#: lib/NGCP/Panel/Utils/Billing.pm:105
 #: lib/NGCP/Panel/Utils/BillingNetworks.pm:143
 msgid "Used (contracts)"
 msgstr ""
 
-#: lib/NGCP/Panel/Utils/Billing.pm:107
+#: lib/NGCP/Panel/Utils/Billing.pm:106
 #: lib/NGCP/Panel/Utils/BillingNetworks.pm:144
 msgid "Used (packages)"
 msgstr ""
