@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "da6255ed_49040115",
+        "filename": "lib/NGCP/Panel/Controller/Billing.pm",
+        "patchSetId": 6
+      },
+      "lineNbr": 145,
+      "author": {
+        "id": 1000013
+      },
+      "writtenOn": "2015-08-10T09:55:34Z",
+      "side": 1,
+      "message": "could we put this into Utils/billing.pm as well?",
+      "range": {
+        "startLine": 138,
+        "startChar": 4,
+        "endLine": 145,
+        "endChar": 5
+      },
+      "revId": "4acac93ad0a7a57f625fe92484121c59ac9b6fc1",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    }
+  ]
+}
