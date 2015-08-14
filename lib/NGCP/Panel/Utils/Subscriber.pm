@@ -981,8 +981,12 @@ sub terminate {
                 groups       => [],
                 subscriber   => $subscriber,
             );
-            NGCP::Panel::Utils::Kamailio::delete_location($c, 
-                $prov_subscriber);
+            my $auth_prefs = {};
+            NGCP::Panel::Utils::Preferences::get_peer_auth_params($c, $prov_subscriber, $auth_prefs);
+            if(NGCP::Panel::Utils::Preferences::is_peer_auth_active($c, $auth_prefs)){
+                NGCP::Panel::Utils::Sems::delete_peer_registration($c, $prov_subscriber, $auth_prefs);
+            }
+            NGCP::Panel::Utils::Kamailio::delete_location($c, $prov_subscriber);
             foreach my $pref(qw/allowed_ips_grp man_allowed_ips_grp/) {
                 my $aig_rs = NGCP::Panel::Utils::Preferences::get_usr_preference_rs(
                     c => $c, prov_subscriber => $prov_subscriber, attribute => $pref,

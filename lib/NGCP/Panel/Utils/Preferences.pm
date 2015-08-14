@@ -854,23 +854,15 @@ sub get_contract_preference_rs {
 sub get_peer_auth_params {
     my ($c, $prov_subscriber, $prefs) = @_;
 
-    my $rs;
-    $rs = NGCP::Panel::Utils::Preferences::get_usr_preference_rs(
-        c => $c, attribute => 'peer_auth_user', 
-        prov_subscriber => $prov_subscriber);
-    $prefs->{peer_auth_user} = $rs->first ? $rs->first->value : undef;
-    $rs = NGCP::Panel::Utils::Preferences::get_usr_preference_rs(
-        c => $c, attribute => 'peer_auth_realm', 
-        prov_subscriber => $prov_subscriber);
-    $prefs->{peer_auth_realm} = $rs->first ? $rs->first->value : undef;
-    $rs = NGCP::Panel::Utils::Preferences::get_usr_preference_rs(
-        c => $c, attribute => 'peer_auth_pass', 
-        prov_subscriber => $prov_subscriber);
-    $prefs->{peer_auth_pass} = $rs->first ? $rs->first->value : undef;
-    $rs = NGCP::Panel::Utils::Preferences::get_usr_preference_rs(
-        c => $c, attribute => 'peer_auth_register',
-        prov_subscriber => $prov_subscriber);
-    $prefs->{peer_auth_register} = $rs->first ? $rs->first->value : undef;
+    foreach my $attribute (qw/peer_auth_user peer_auth_realm peer_auth_pass peer_auth_register/){
+        my $rs;
+        $rs = NGCP::Panel::Utils::Preferences::get_usr_preference_rs(
+            c => $c, 
+            attribute => $attribute, 
+            prov_subscriber => $prov_subscriber
+        );
+        $prefs->{$attribute} = $rs->first ? $rs->first->value : undef;
+    }
 }
 
 sub is_peer_auth_active {
