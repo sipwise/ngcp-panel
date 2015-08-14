@@ -1,3 +1,12 @@
+ngcp-panel (1.9.1.6+0~mr4.0.1.6) unstable; urgency=medium
+
+  [ Irina Peshinskaya ]
+  * [d3beadb] MT#14597 Fix access to undefined stash value for non pbx product subscribers
+
+  [ Sipwise Jenkins Builder ]
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Sat, 15 Aug 2015 00:18:02 +0200
+
 ngcp-panel (1.9.1.5+0~mr4.0.1.5) unstable; urgency=medium
 
   [ Gerhard Jungwirth ]
