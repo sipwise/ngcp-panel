@@ -2471,7 +2471,7 @@ sub edit_master :Chained('master') :PathPart('edit') :Args(0) :Does(ACL) :ACLDet
                         };
                         if($subscriber->provisioning_voip_subscriber->admin && 
                            !is_deeply($old_number, $new_number)) {
-                            foreach my $sub($c->stash->{subscribers}->all, $c->stash->{pbx_groups}->all) {
+                            foreach my $sub($c->stash->{subscribers}->all, ( $c->stash->{pbx_groups} ? $c->stash->{pbx_groups}->all : () )) {
                                 my $base_pref = NGCP::Panel::Utils::Preferences::get_usr_preference_rs(
                                         c => $c, attribute => 'cloud_pbx_base_cli', 
                                         prov_subscriber => $sub->provisioning_voip_subscriber);
