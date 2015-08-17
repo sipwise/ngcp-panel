@@ -1408,7 +1408,7 @@ sub dev_field_bootstrap :Chained('/') :PathPart('device/autoprov/bootstrap') :Ar
         $did =~ s/^([^\=]+)\=0$/$1/;
         $did = lc $did;
         $did =~ s/\-[a-z]+$//;
-        $id =~ s/\-//g;
+        $did =~ s/\-//g;
         if($did =~ /^[0-9a-f]{12}$/) {
             $c->log->debug("identified bootstrap path part '$did' as valid device id");
             $id = $did;
