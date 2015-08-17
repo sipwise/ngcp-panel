@@ -1,3 +1,12 @@
+ngcp-panel (1.8.2.14+0~mr3.8.2.14) unstable; urgency=medium
+
+  [ Irina Peshinskaya ]
+  * [ed0ae70] MT#14559 Trigger db_reg_agent.removeRegistration on subscriber termination
+
+  [ Sipwise Jenkins Builder ]
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Mon, 17 Aug 2015 18:28:11 +0200
+
 ngcp-panel (1.8.2.13+0~mr3.8.2.13) unstable; urgency=medium
 
   [ Irina Peshinskaya ]
