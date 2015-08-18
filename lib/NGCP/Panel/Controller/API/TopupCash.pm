@@ -125,11 +125,25 @@ sub POST :Allow {
         if($reseller_id && $reseller_id != $customer->contact->reseller_id) {
             $self->error($c, HTTP_UNPROCESSABLE_ENTITY, 'Subscriber customer contract belongs to another reseller.');
             last;                 
-        }        
+        }
+        
+        my $package = undef;
+        if ($resource->{package_id}) {
+            $package = $c->model('DB')->resultset('profile_packages')->find($resource->{package_id});
+            unless($package) {
+                $self->error($c, HTTP_UNPROCESSABLE_ENTITY, 'Unknown profile package ID.');
+                last;  
+            }
+            if($reseller_id && $reseller_id != $package->reseller_id) {
+                $self->error($c, HTTP_UNPROCESSABLE_ENTITY, 'Profile package belongs to another reseller.');
+                last;                 
+            }
+        }
 
         try {
             my $balance = NGCP::Panel::Utils::ProfilePackages::topup_contract_balance(c => $c,
                 contract => $customer,
+                package => $package,
                 #old_package => $customer->profile_package,
                 amount => $resource->{amount},
                 now => $now,

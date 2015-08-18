@@ -163,10 +163,12 @@ my $profile_map = {};
 
 my $billingprofile = _create_billing_profile("test_default");
 
-my $tb; my $tb_cnt;
+my $tb;
+my $tb_cnt;
+my $gantt_events;
 
 if (_get_allow_fake_client_time() && $enable_profile_packages) {
-    
+    #goto THREADED;
     {
         #_start_recording();
         my $network_x = _create_billing_network_x();
@@ -207,7 +209,7 @@ if (_get_allow_fake_client_time() && $enable_profile_packages) {
             { start => '~2015-08-21 13:00:00', stop => '~2015-09-21 13:00:00', cash => 0, profile => $profile_silver_y->{id} },
             { start => '~2015-09-21 13:00:00', stop => '~2015-10-21 13:00:00', cash => 0, profile => $profile_silver_y->{id} },
         ]);
-
+    
         _set_time(NGCP::Panel::Utils::DateTime::from_string('2015-06-05 13:00:00'));
         my $customer_B = _create_customer($base_package,'B');
         my $subscriber_B = _create_subscriber($customer_B,'of customer B');
@@ -244,11 +246,16 @@ if (_get_allow_fake_client_time() && $enable_profile_packages) {
         
         _set_time(NGCP::Panel::Utils::DateTime::from_string('2015-10-01 13:00:00'));
         
+        _perform_topup_cash($subscriber_C,10,$silver_package);
+        
+        _set_time(NGCP::Panel::Utils::DateTime::from_string('2015-11-01 13:00:00'));
+        
         _check_interval_history($customer_C,[
             { start => '~2015-06-05 13:00:00', stop => '~2015-07-02 13:00:00', cash => 0, profile => $profile_base_y->{id} },
             { start => '~2015-07-02 13:00:00', stop => '~2015-08-02 13:00:00', cash => 15, profile => $profile_gold_y->{id} },
             { start => '~2015-08-02 13:00:00', stop => '~2015-09-02 13:00:00', cash => 15, profile => $profile_gold_y->{id} },
-            { start => '~2015-09-02 13:00:00', stop => '~2015-10-02 13:00:00', cash => 15, profile => $profile_gold_y->{id} },
+            { start => '~2015-09-02 13:00:00', stop => '~2015-10-02 13:00:00', cash => 23, profile => $profile_gold_y->{id} },
+            { start => '~2015-10-02 13:00:00', stop => '~2015-11-02 13:00:00', cash => 0, profile => $profile_silver_y->{id} },
         ]);
         
         _set_time();
@@ -264,7 +271,9 @@ if (_get_allow_fake_client_time() && $enable_profile_packages) {
     my $prof_package_create2w = _create_profile_package('create','week',2);
     my $prof_package_1st2w = _create_profile_package('1st','week',2);
     
-    my $prof_package_topup = _create_profile_package('topup');  
+    my $prof_package_topup = _create_profile_package('topup',"month",1);
+    
+    my $prof_package_topup_interval = _create_profile_package('topup_interval',"month",1);  
     
     {
     
@@ -302,55 +311,61 @@ if (_get_allow_fake_client_time() && $enable_profile_packages) {
         my $ts = '2014-01-07 13:00:00';
         _set_time(NGCP::Panel::Utils::DateTime::from_string($ts));
         
+        $gantt_events = [];
+        
         my $cnt = 1;
         $req_identifier = $cnt . '. create customer'; diag($req_identifier); $cnt++;
         my $customer = _create_customer();
+        push(@$gantt_events,{ name => $req_identifier, t => $ts });
     
         $req_identifier = $cnt . '. get balance history of customer ' . $customer->{id}; diag($req_identifier); $cnt++;
         _check_interval_history($customer,[
-            { start => '2014-01-01 00:00:00', stop => '2014-01-31 23:59:59'},
+            { start => '2014-01-01 00:00:00', stop => '2014-01-31 23:59:59', package_id => undef },
         ]);
         
-        $ts = '2014-03-01 13:00:00';
+        $ts = '2014-03-01 13:00:00'; $gantt_events = [];
         _set_time(NGCP::Panel::Utils::DateTime::from_string($ts));
         
         $req_identifier = $cnt . '. get balance history of customer ' . $customer->{id}; diag($req_identifier); $cnt++;
         _check_interval_history($customer,[
-            { start => '2014-01-01 00:00:00', stop => '2014-01-31 23:59:59'},
-            { start => '2014-02-01 00:00:00', stop => '2014-02-28 23:59:59'},
-            { start => '2014-03-01 00:00:00', stop => '2014-03-31 23:59:59'},
+            { start => '2014-01-01 00:00:00', stop => '2014-01-31 23:59:59', package_id => undef },
+            { start => '2014-02-01 00:00:00', stop => '2014-02-28 23:59:59', package_id => undef },
+            { start => '2014-03-01 00:00:00', stop => '2014-03-31 23:59:59', package_id => undef },
         ]);
         
-        $req_identifier = $cnt . '. switch customer ' . $customer->{id} . ' to package ' . $prof_package_create30d->{name}; diag($req_identifier); $cnt++;
+        $req_identifier = $cnt . '. switch customer ' . $customer->{id} . ' to package ' . $prof_package_create30d->{description}; diag($req_identifier); $cnt++;
         $customer = _switch_package($customer,$prof_package_create30d);
+        push(@$gantt_events,{ name => $req_identifier, t => $ts });
         
         $req_identifier = $cnt . '. get balance history of customer ' . $customer->{id}; diag($req_identifier); $cnt++;
         _check_interval_history($customer,[
-            { start => '2014-01-01 00:00:00', stop => '2014-01-31 23:59:59'},
-            { start => '2014-02-01 00:00:00', stop => '2014-02-28 23:59:59'},
-            { start => '2014-03-01 00:00:00', stop => '2014-03-06 23:59:59'},
+            { start => '2014-01-01 00:00:00', stop => '2014-01-31 23:59:59', package_id => undef },
+            { start => '2014-02-01 00:00:00', stop => '2014-02-28 23:59:59', package_id => undef },
+            { start => '2014-03-01 00:00:00', stop => '2014-03-06 23:59:59', package_id => [ undef , $prof_package_create30d->{id} ] },
         ]);     
         
         $ts = '2014-04-01 13:00:00';
+        $gantt_events = [];
         _set_time(NGCP::Panel::Utils::DateTime::from_string($ts));
         
         $req_identifier = $cnt . '. get balance history of customer ' . $customer->{id}; diag($req_identifier); $cnt++;
         _check_interval_history($customer,[
-            { start => '2014-01-01 00:00:00', stop => '2014-01-31 23:59:59'},
-            { start => '2014-02-01 00:00:00', stop => '2014-02-28 23:59:59'},
-            { start => '2014-03-01 00:00:00', stop => '2014-03-06 23:59:59'},
-            { start => '2014-03-07 00:00:00', stop => '2014-04-05 23:59:59'},
+            { start => '2014-01-01 00:00:00', stop => '2014-01-31 23:59:59', package_id => undef },
+            { start => '2014-02-01 00:00:00', stop => '2014-02-28 23:59:59', package_id => undef },
+            { start => '2014-03-01 00:00:00', stop => '2014-03-06 23:59:59', package_id => [ undef , $prof_package_create30d->{id} ] },
+            { start => '2014-03-07 00:00:00', stop => '2014-04-05 23:59:59', package_id => $prof_package_create30d->{id} },
         ]);
         
-        $req_identifier = $cnt . '. switch customer ' . $customer->{id} . ' to package ' . $prof_package_1st30d->{name}; diag($req_identifier); $cnt++;
+        $req_identifier = $cnt . '. switch customer ' . $customer->{id} . ' to package ' . $prof_package_1st30d->{description}; diag($req_identifier); $cnt++;
         $customer = _switch_package($customer,$prof_package_1st30d);
+        push(@$gantt_events,{ name => $req_identifier, t => $ts });
         
         $req_identifier = $cnt . '. get balance history of customer ' . $customer->{id}; diag($req_identifier); $cnt++;
         _check_interval_history($customer,[
-            { start => '2014-01-01 00:00:00', stop => '2014-01-31 23:59:59'},
-            { start => '2014-02-01 00:00:00', stop => '2014-02-28 23:59:59'},
-            { start => '2014-03-01 00:00:00', stop => '2014-03-06 23:59:59'},
-            { start => '2014-03-07 00:00:00', stop => '2014-04-30 23:59:59'},
+            { start => '2014-01-01 00:00:00', stop => '2014-01-31 23:59:59', package_id => undef},
+            { start => '2014-02-01 00:00:00', stop => '2014-02-28 23:59:59', package_id => undef},
+            { start => '2014-03-01 00:00:00', stop => '2014-03-06 23:59:59', package_id => [ undef , $prof_package_create30d->{id} ] },
+            { start => '2014-03-07 00:00:00', stop => '2014-04-30 23:59:59', package_id => [ $prof_package_create30d->{id}, $prof_package_1st30d->{id} ] },
         ]);    
         
         $ts = '2014-05-13 13:00:00';
@@ -358,23 +373,24 @@ if (_get_allow_fake_client_time() && $enable_profile_packages) {
         
         $req_identifier = $cnt . '. get balance history of customer ' . $customer->{id}; diag($req_identifier); $cnt++;
         _check_interval_history($customer,[
-            { start => '2014-01-01 00:00:00', stop => '2014-01-31 23:59:59'},
-            { start => '2014-02-01 00:00:00', stop => '2014-02-28 23:59:59'},
-            { start => '2014-03-01 00:00:00', stop => '2014-03-06 23:59:59'},
-            { start => '2014-03-07 00:00:00', stop => '2014-04-30 23:59:59'},
-            { start => '2014-05-01 00:00:00', stop => '2014-05-30 23:59:59'},
+            { start => '2014-01-01 00:00:00', stop => '2014-01-31 23:59:59', package_id => undef},
+            { start => '2014-02-01 00:00:00', stop => '2014-02-28 23:59:59', package_id => undef},
+            { start => '2014-03-01 00:00:00', stop => '2014-03-06 23:59:59', package_id => [ undef , $prof_package_create30d->{id} ]},
+            { start => '2014-03-07 00:00:00', stop => '2014-04-30 23:59:59', package_id => [ $prof_package_create30d->{id}, $prof_package_1st30d->{id} ]},
+            { start => '2014-05-01 00:00:00', stop => '2014-05-30 23:59:59', package_id => $prof_package_1st30d->{id} },
         ]);        
         
-        $req_identifier = $cnt . '. switch customer ' . $customer->{id} . ' to package ' . $prof_package_create1m->{name}; diag($req_identifier); $cnt++;
+        $req_identifier = $cnt . '. switch customer ' . $customer->{id} . ' to package ' . $prof_package_create1m->{description}; diag($req_identifier); $cnt++;
         $customer = _switch_package($customer,$prof_package_create1m);
+        push(@$gantt_events,{ name => $req_identifier, t => $ts });
         
         $req_identifier = $cnt . '. get balance history of customer ' . $customer->{id}; diag($req_identifier); $cnt++;
         _check_interval_history($customer,[
-            { start => '2014-01-01 00:00:00', stop => '2014-01-31 23:59:59'},
-            { start => '2014-02-01 00:00:00', stop => '2014-02-28 23:59:59'},
-            { start => '2014-03-01 00:00:00', stop => '2014-03-06 23:59:59'},
-            { start => '2014-03-07 00:00:00', stop => '2014-04-30 23:59:59'},
-            { start => '2014-05-01 00:00:00', stop => '2014-06-06 23:59:59'},
+            { start => '2014-01-01 00:00:00', stop => '2014-01-31 23:59:59', package_id => undef},
+            { start => '2014-02-01 00:00:00', stop => '2014-02-28 23:59:59', package_id => undef},
+            { start => '2014-03-01 00:00:00', stop => '2014-03-06 23:59:59', package_id => [ undef , $prof_package_create30d->{id} ]},
+            { start => '2014-03-07 00:00:00', stop => '2014-04-30 23:59:59', package_id => [ $prof_package_create30d->{id}, $prof_package_1st30d->{id} ]},
+            { start => '2014-05-01 00:00:00', stop => '2014-06-06 23:59:59', package_id => [ $prof_package_1st30d->{id}, $prof_package_create1m->{id} ]},
         ]);         
         
         $ts = '2014-05-27 13:00:00';
@@ -382,86 +398,97 @@ if (_get_allow_fake_client_time() && $enable_profile_packages) {
         
         $req_identifier = $cnt . '. get balance history of customer ' . $customer->{id}; diag($req_identifier); $cnt++;
         _check_interval_history($customer,[
-            { start => '2014-01-01 00:00:00', stop => '2014-01-31 23:59:59'},
-            { start => '2014-02-01 00:00:00', stop => '2014-02-28 23:59:59'},
-            { start => '2014-03-01 00:00:00', stop => '2014-03-06 23:59:59'},
-            { start => '2014-03-07 00:00:00', stop => '2014-04-30 23:59:59'},
-            { start => '2014-05-01 00:00:00', stop => '2014-06-06 23:59:59'},
+            { start => '2014-01-01 00:00:00', stop => '2014-01-31 23:59:59', package_id => undef},
+            { start => '2014-02-01 00:00:00', stop => '2014-02-28 23:59:59', package_id => undef},
+            { start => '2014-03-01 00:00:00', stop => '2014-03-06 23:59:59', package_id => [ undef , $prof_package_create30d->{id} ]},
+            { start => '2014-03-07 00:00:00', stop => '2014-04-30 23:59:59', package_id => [ $prof_package_create30d->{id}, $prof_package_1st30d->{id} ]},
+            { start => '2014-05-01 00:00:00', stop => '2014-06-06 23:59:59', package_id => [ $prof_package_1st30d->{id}, $prof_package_create1m->{id} ]},
         ]);   
         
-        $req_identifier = $cnt . '. switch customer ' . $customer->{id} . ' to package ' . $prof_package_1st1m->{name}; diag($req_identifier); $cnt++;
+        $req_identifier = $cnt . '. switch customer ' . $customer->{id} . ' to package ' . $prof_package_1st1m->{description}; diag($req_identifier); $cnt++;
         $customer = _switch_package($customer,$prof_package_1st1m);
+        push(@$gantt_events,{ name => $req_identifier, t => $ts });
         
         $req_identifier = $cnt . '. get balance history of customer ' . $customer->{id}; diag($req_identifier); $cnt++;
         _check_interval_history($customer,[
-            { start => '2014-01-01 00:00:00', stop => '2014-01-31 23:59:59'},
-            { start => '2014-02-01 00:00:00', stop => '2014-02-28 23:59:59'},
-            { start => '2014-03-01 00:00:00', stop => '2014-03-06 23:59:59'},
-            { start => '2014-03-07 00:00:00', stop => '2014-04-30 23:59:59'},
-            { start => '2014-05-01 00:00:00', stop => '2014-05-31 23:59:59'},
+            { start => '2014-01-01 00:00:00', stop => '2014-01-31 23:59:59', package_id => undef},
+            { start => '2014-02-01 00:00:00', stop => '2014-02-28 23:59:59', package_id => undef},
+            { start => '2014-03-01 00:00:00', stop => '2014-03-06 23:59:59', package_id => [ undef , $prof_package_create30d->{id} ]},
+            { start => '2014-03-07 00:00:00', stop => '2014-04-30 23:59:59', package_id => [ $prof_package_create30d->{id}, $prof_package_1st30d->{id} ]},
+            { start => '2014-05-01 00:00:00', stop => '2014-05-31 23:59:59', package_id => [ $prof_package_create30d->{id}, $prof_package_1st30d->{id}, $prof_package_1st1m->{id} ]},
         ]);    
         
-        my $t1 = $ts;    
+        my $t1 = $ts;
+        $gantt_events = [];
         $ts = '2014-08-03 13:00:00';
         _set_time(NGCP::Panel::Utils::DateTime::from_string($ts));
         
-        $req_identifier = $cnt . '. switch customer ' . $customer->{id} . ' to package ' . $prof_package_create2w->{name}; diag($req_identifier); $cnt++;
+        $req_identifier = $cnt . '. switch customer ' . $customer->{id} . ' to package ' . $prof_package_create2w->{description}; diag($req_identifier); $cnt++;
         $customer = _switch_package($customer,$prof_package_create2w);
+        push(@$gantt_events,{ name => $req_identifier, t => $ts });
         
         $req_identifier = $cnt . '. get balance history of customer ' . $customer->{id}; diag($req_identifier); $cnt++;
         _check_interval_history($customer,[
-            { start => '2014-06-01 00:00:00', stop => '2014-06-30 23:59:59'},
-            { start => '2014-07-01 00:00:00', stop => '2014-07-31 23:59:59'},
-            { start => '2014-08-01 00:00:00', stop => '2014-08-06 23:59:59'},
+            { start => '2014-06-01 00:00:00', stop => '2014-06-30 23:59:59', package_id => $prof_package_1st1m->{id}},
+            { start => '2014-07-01 00:00:00', stop => '2014-07-31 23:59:59', package_id => $prof_package_1st1m->{id}},
+            { start => '2014-08-01 00:00:00', stop => '2014-08-06 23:59:59', package_id => [ $prof_package_1st1m->{id}, $prof_package_create2w->{id} ]},
         ],NGCP::Panel::Utils::DateTime::from_string($t1));       
         
         $t1 = $ts;
+        $gantt_events = [];
         $ts = '2014-09-03 13:00:00';
         _set_time(NGCP::Panel::Utils::DateTime::from_string($ts));
         
-        $req_identifier = $cnt . '. switch customer ' . $customer->{id} . ' to package ' . $prof_package_1st2w->{name}; diag($req_identifier); $cnt++;
+        $req_identifier = $cnt . '. switch customer ' . $customer->{id} . ' to package ' . $prof_package_1st2w->{description}; diag($req_identifier); $cnt++;
         $customer = _switch_package($customer,$prof_package_1st2w);
+        push(@$gantt_events,{ name => $req_identifier, t => $ts });
         
         $req_identifier = $cnt . '. get balance history of customer ' . $customer->{id}; diag($req_identifier); $cnt++;
         _check_interval_history($customer,[
-            { start => '2014-08-07 00:00:00', stop => '2014-08-20 23:59:59'},
-            { start => '2014-08-21 00:00:00', stop => '2014-09-30 23:59:59'},
+            { start => '2014-08-07 00:00:00', stop => '2014-08-20 23:59:59', package_id => $prof_package_create2w->{id}},
+            { start => '2014-08-21 00:00:00', stop => '2014-09-30 23:59:59', package_id => [ $prof_package_create2w->{id}, $prof_package_1st2w->{id} ]},
         ],NGCP::Panel::Utils::DateTime::from_string($t1));     
         
         #$t1 = $ts;
         #$ts = '2014-09-03 13:00:00';
         #_set_time(NGCP::Panel::Utils::DateTime::from_string($ts));
         
-        $req_identifier = $cnt . '. switch customer ' . $customer->{id} . ' to no package '; diag($req_identifier); $cnt++;
+        $req_identifier = $cnt . '. switch customer ' . $customer->{id} . ' to no package'; diag($req_identifier); $cnt++;
         $customer = _switch_package($customer);
+        push(@$gantt_events,{ name => $req_identifier, t => $ts });
         
         $req_identifier = $cnt . '. get balance history of customer ' . $customer->{id}; diag($req_identifier); $cnt++;
         _check_interval_history($customer,[
-            { start => '2014-08-07 00:00:00', stop => '2014-08-20 23:59:59'},
-            { start => '2014-08-21 00:00:00', stop => '2014-09-30 23:59:59'},
+            { start => '2014-08-07 00:00:00', stop => '2014-08-20 23:59:59', package_id => $prof_package_create2w->{id}},
+            { start => '2014-08-21 00:00:00', stop => '2014-09-30 23:59:59', package_id => [ $prof_package_create2w->{id}, $prof_package_1st2w->{id}, undef ]},
         ],NGCP::Panel::Utils::DateTime::from_string($t1));
         
         $t1 = $ts;
+        $gantt_events = [];
         #my $t1 = '2014-09-03 13:00:00';
         $ts = '2014-10-04 13:00:00';
         _set_time(NGCP::Panel::Utils::DateTime::from_string($ts));
         
-        $req_identifier = $cnt . '. switch customer ' . $customer->{id} . ' to package ' . $prof_package_topup->{name}; diag($req_identifier); $cnt++;
+        $req_identifier = $cnt . '. switch customer ' . $customer->{id} . ' to package ' . $prof_package_topup->{description}; diag($req_identifier); $cnt++;
         $customer = _switch_package($customer,$prof_package_topup);
+        push(@$gantt_events,{ name => $req_identifier, t => $ts });
         diag("wait a second here");
         sleep(1); #sigh
         $req_identifier = $cnt . '. get balance history of customer ' . $customer->{id}; diag($req_identifier); $cnt++;
         _check_interval_history($customer,[
-            { start => '2014-10-01 00:00:00', stop => '~2014-10-04 13:00:00'},
-            { start => '~2014-10-04 13:00:00', stop => $infinite_future},
+            { start => '2014-10-01 00:00:00', stop => '~2014-10-04 13:00:00', package_id => undef },
+            { start => '~2014-10-04 13:00:00', stop => $infinite_future, package_id => $prof_package_topup->{id}},
         ],NGCP::Panel::Utils::DateTime::from_string($t1));
         
         $req_identifier = $cnt . '. create topup_start_mode_test1 voucher'; diag($req_identifier); $cnt++;
         my $voucher1 = _create_voucher(10,'topup_start_mode_test1'.$t,$customer);
+        push(@$gantt_events,{ name => $req_identifier, t => $ts });
         $req_identifier = $cnt . '. create topup_start_mode_test2 voucher'; diag($req_identifier); $cnt++;
         my $voucher2 = _create_voucher(10,'topup_start_mode_test2'.$t,$customer,$prof_package_create1m);
+        push(@$gantt_events,{ name => $req_identifier, t => $ts });
         $req_identifier = $cnt . '. create subscriber for customer ' . $customer->{id}; diag($req_identifier); $cnt++;
         my $subscriber = _create_subscriber($customer);
+        push(@$gantt_events,{ name => $req_identifier, t => $ts });
 
         $t1 = $ts;
         $ts = '2014-10-23 13:00:00';
@@ -469,45 +496,99 @@ if (_get_allow_fake_client_time() && $enable_profile_packages) {
         
         $req_identifier = $cnt . '. get balance history of customer ' . $customer->{id}; diag($req_identifier); $cnt++;
         _check_interval_history($customer,[
-            { start => '~2014-10-04 13:00:00', stop => $infinite_future},
+            { start => '~2014-10-04 13:00:00', stop => $infinite_future, package_id => $prof_package_topup->{id}},
         ],NGCP::Panel::Utils::DateTime::from_string($t1));  
         
         $req_identifier = $cnt . '. perform topup with voucher ' . $voucher1->{code}; diag($req_identifier); $cnt++;
         _perform_topup_voucher($subscriber,$voucher1);
+        push(@$gantt_events,{ name => $req_identifier, t => $ts });
         
         $req_identifier = $cnt . '. get balance history of customer ' . $customer->{id}; diag($req_identifier); $cnt++;
         _check_interval_history($customer,[
-           { start => '~2014-10-04 13:00:00', stop => '~2014-10-23 13:00:00'},
-            { start => '~2014-10-23 13:00:00', stop => $infinite_future},
+           { start => '~2014-10-04 13:00:00', stop => '~2014-10-23 13:00:00', package_id => $prof_package_topup->{id}},
+            { start => '~2014-10-23 13:00:00', stop => $infinite_future, package_id => $voucher1->{package_id}},
         ],NGCP::Panel::Utils::DateTime::from_string($t1));       
         
         $t1 = $ts;
+        $gantt_events = [];
         $ts = '2014-11-29 13:00:00';
         _set_time(NGCP::Panel::Utils::DateTime::from_string($ts));
         
         $req_identifier = $cnt . '. get balance history of customer ' . $customer->{id}; diag($req_identifier); $cnt++;
         _check_interval_history($customer,[
-            { start => '~2014-10-23 13:00:00', stop => $infinite_future},
+            { start => '~2014-10-23 13:00:00', stop => $infinite_future, package_id => $voucher1->{package_id}},
         ],NGCP::Panel::Utils::DateTime::from_string($t1));
         
         $req_identifier = $cnt . '. perform topup with voucher ' . $voucher2->{code}; diag($req_identifier); $cnt++;
         _perform_topup_voucher($subscriber,$voucher2);
+        push(@$gantt_events,{ name => $req_identifier, t => $ts });
         
         $req_identifier = $cnt . '. get balance history of customer ' . $customer->{id}; diag($req_identifier); $cnt++;
         _check_interval_history($customer,[
-            { start => '~2014-10-23 13:00:00', stop => '2014-12-06 23:59:59'},
+            { start => '~2014-10-23 13:00:00', stop => '2014-12-06 23:59:59', package_id => [$voucher1->{package_id}, $voucher2->{package_id}]},
         ],NGCP::Panel::Utils::DateTime::from_string($t1));        
         
-        $req_identifier = $cnt . '. switch customer ' . $customer->{id} . ' to no package '; diag($req_identifier); $cnt++;
+        $req_identifier = $cnt . '. switch customer ' . $customer->{id} . ' to no package'; diag($req_identifier); $cnt++;
         $customer = _switch_package($customer);
+        push(@$gantt_events,{ name => $req_identifier, t => $ts });
         
         $req_identifier = $cnt . '. get balance history of customer ' . $customer->{id}; diag($req_identifier); $cnt++;
         _check_interval_history($customer,[
-            { start => '~2014-10-23 13:00:00', stop => '2014-11-30 23:59:59', cash => 20},
+            { start => '~2014-10-23 13:00:00', stop => '2014-11-30 23:59:59', cash => 20, package_id => [$voucher1->{package_id}, $voucher2->{package_id}, undef]},
         ],NGCP::Panel::Utils::DateTime::from_string($t1));        
+        
+        $t1 = $ts;
+        $gantt_events = [];
+        $ts = '2015-01-19 13:00:00';
+        _set_time(NGCP::Panel::Utils::DateTime::from_string($ts));
+        
+        $req_identifier = $cnt . '. get balance history of customer ' . $customer->{id}; diag($req_identifier); $cnt++;
+        _check_interval_history($customer,[
+            { start => '2014-12-01 00:00:00', stop => '2014-12-31 23:59:59', package_id => undef},
+            { start => '2015-01-01 00:00:00', stop => '2015-01-31 23:59:59', package_id => undef},
+        ],NGCP::Panel::Utils::DateTime::from_string($t1));
+
+        $req_identifier = $cnt . '. switch customer ' . $customer->{id} . ' to package ' . $prof_package_topup_interval->{description}; diag($req_identifier); $cnt++;
+        $customer = _switch_package($customer,$prof_package_topup_interval);
+        push(@$gantt_events,{ name => $req_identifier, t => $ts });
+
+        _check_interval_history($customer,[
+            { start => '2014-12-01 00:00:00', stop => '2014-12-31 23:59:59', package_id => undef},
+            { start => '2015-01-01 00:00:00', stop => $infinite_future, package_id => [ undef, $prof_package_topup_interval->{id}]},
+        ],NGCP::Panel::Utils::DateTime::from_string($t1));
+       
+        $req_identifier = $cnt . '. create topup_interval_start_mode_test voucher'; diag($req_identifier); $cnt++;
+        my $voucher3 = _create_voucher(15,'topup_interval_start_mode_test'.$t,$customer,$prof_package_topup_interval);
+        push(@$gantt_events,{ name => $req_identifier, t => $ts });
+        
+        $ts = '2015-03-11 13:00:00';
+        _set_time(NGCP::Panel::Utils::DateTime::from_string($ts));
+        
+        $req_identifier = $cnt . '. perform topup with voucher ' . $voucher3->{code}; diag($req_identifier); $cnt++;
+        _perform_topup_voucher($subscriber,$voucher3);
+        push(@$gantt_events,{ name => $req_identifier, t => $ts });
+
+        $req_identifier = $cnt . '. get balance history of customer ' . $customer->{id}; diag($req_identifier); $cnt++;
+        _check_interval_history($customer,[
+            { start => '2014-12-01 00:00:00', stop => '2014-12-31 23:59:59', package_id => undef},
+            { start => '2015-01-01 00:00:00', stop => '~2015-03-11 13:00:00', package_id => [ undef, $prof_package_topup_interval->{id}]},
+            { start => '~2015-03-11 13:00:00', stop => '~2015-04-11 13:00:00', package_id => $prof_package_topup_interval->{id}},
+        ],NGCP::Panel::Utils::DateTime::from_string($t1));    
+
+        $ts = '2015-05-17 13:00:00';
+        _set_time(NGCP::Panel::Utils::DateTime::from_string($ts));
+        
+        _check_interval_history($customer,[
+            { start => '2014-12-01 00:00:00', stop => '2014-12-31 23:59:59', package_id => undef},
+            { start => '2015-01-01 00:00:00', stop => '~2015-03-11 13:00:00', package_id => [ undef, $prof_package_topup_interval->{id}]},
+            { start => '~2015-03-11 13:00:00', stop => '~2015-04-11 13:00:00', package_id => $prof_package_topup_interval->{id}},
+            { start => '~2015-04-11 13:00:00', stop => '~2015-05-11 13:00:00', package_id => $prof_package_topup_interval->{id}},
+            { start => '~2015-05-11 13:00:00', stop => '~2015-06-11 13:00:00', cash => 35, package_id => $prof_package_topup_interval->{id}},
+        ],NGCP::Panel::Utils::DateTime::from_string($t1));         
         
         _set_time();
         undef $req_identifier;
+        undef $gantt_events;
     }
 
     {
@@ -535,8 +616,8 @@ if (_get_allow_fake_client_time() && $enable_profile_packages) {
         ]);        
         
         _set_time();
-    }    
-    
+    }
+    #THREADED:
     if (_get_allow_delay_commit()) {
         _set_time(NGCP::Panel::Utils::DateTime::current_local->subtract(months => 3));
         _create_customers_threaded(3);
@@ -550,12 +631,18 @@ if (_get_allow_fake_client_time() && $enable_profile_packages) {
         my $intervals_a = $t_a->join();
         my $intervals_b = $t_b->join();
         my $t2 = time;
-        is_deeply([ sort { $a->{id} <=> $b->{id} } @{ $intervals_b->{_embedded}->{'ngcp:balanceintervals'} } ],$intervals_a->{_embedded}->{'ngcp:balanceintervals'},'compare interval collection results of threaded requests deeply');
+        #my $got_a = [ sort { $a->{id} <=> $b->{id} } @{ $intervals_b->{_embedded}->{'ngcp:balanceintervals'} } ]; #$a->{contract_id}
+        my $got_asc = $intervals_a->{_embedded}->{'ngcp:balanceintervals'};
+        my $got_desc = $intervals_b->{_embedded}->{'ngcp:balanceintervals'};
+        if (!is_deeply($got_desc,[ reverse @{ $got_asc } ],'compare interval collection results of threaded requests deeply')) {
+             diag(Dumper({asc => $got_asc, desc => $got_desc}));
+        }
         ok($t2 - $t1 > 2*$delay,'expected delay to assume requests were processed after another');
         
     } else {
         diag('allow_delay_commit not set, skipping ...');
     }
+
 } else {
     diag('allow_fake_client_time not set, skipping ...');
 }
@@ -719,6 +806,7 @@ sub _check_interval_history {
     } while($nexturi);
     
     ok($i == $total_count,$label . "check if all expected items are listed");
+    _create_gantt($customer,$expected_interval_history);
     diag(Dumper({last_request => $last_request, collection_requests => \@requests, result_intervals => \@intervals})) if !$ok;
     
 }
@@ -890,7 +978,8 @@ sub _create_profile_package {
     my $name = $start_mode . ($interval_unit ? '/' . $interval_value . ' ' . $interval_unit : '');
     $req->content(JSON::to_json({
         name => "test '" . $name . "' profile package " . (scalar keys %$package_map) . '_' . $t,
-        description  => "test prof package descr " . (scalar keys %$package_map) . '_' . $t,
+        #description  => "test prof package descr " . (scalar keys %$package_map) . '_' . $t,
+        description  => $start_mode . "/" . $interval_value . " " . $interval_unit . "s",
         reseller_id => $default_reseller_id,
         initial_profiles => [{ profile_id => $billingprofile->{id}, }, ],
         balance_interval_start_mode => $start_mode,
@@ -1186,6 +1275,25 @@ sub _perform_topup_voucher {
     
 }
 
+sub _perform_topup_cash {
+    
+    my ($subscriber,$amount,$package) = @_;
+    $req = HTTP::Request->new('POST', $uri.'/api/topupcash/');
+    $req->header('Content-Type' => 'application/json');
+    $req->header('X-Fake-Clienttime' => _get_rfc_1123_now());
+    $req->header('X-Request-Identifier' => $req_identifier) if $req_identifier;
+    my $req_data = {
+        amount => $amount * 100.0,
+        package_id => ($package ? $package->{id} : undef),
+        subscriber_id => $subscriber->{id},
+    };
+    $req->content(JSON::to_json($req_data));
+    $res = $ua->request($req);
+    is($res->code, 204, "perform topup with amount " . $amount . " cents, " . ($package ? 'package id ' . $package->{id} : 'no package'));
+    _record_request("topup by " . $subscriber_map->{$subscriber->{id}}->{_label} . " with " . $amount / 100.0 . " €, " . ($package ? 'package id ' . $package->{id} : 'no package'),$req,$req_data,undef);
+    
+}
+
 sub _create_billing_profile {
     my ($name) = @_;
     $req = HTTP::Request->new('POST', $uri.'/api/billingprofiles/');
@@ -1268,4 +1376,244 @@ sub _get_allow_fake_client_time {
     my $cfg = $config{api_debug_opts};
     $allow_fake_client_time = ((defined $cfg->{allow_fake_client_time}) && $cfg->{allow_fake_client_time} ? 1 : 0) if defined $cfg;
     return $allow_fake_client_time;
+}
+
+#sub _create_gantt_old {
+#    my ($customer,$expected_interval_history) = @_;
+#
+#    if (defined $gantt_events && (scalar @$gantt_events > 0)) {
+#    
+#        use Project::Gantt;
+#        use Project::Gantt::Skin;
+#    
+#        my $skin= new Project::Gantt::Skin(
+#            doTitle         =>      0);
+#     
+#        my $filename = $req_identifier;
+#        $filename =~ s/[^a-z0-9_\-]/_/i;
+#        $filename = '/home/rkrenn/test/gantt/' . $filename . '.png';
+#        my $gantt = new Project::Gantt(
+#            file            =>      $filename,
+#            skin            =>      $skin,
+#            mode            =>      'months',
+#            description     =>      $req_identifier);       
+#
+#        my $dtf = DateTime::Format::Strptime->new(
+#            pattern => '%F %T', 
+#        );
+#        foreach my $balance_interval (@$expected_interval_history) {
+#            my $start = $balance_interval->{start};
+#            $start =~ s/~//;
+#            my $end = $balance_interval->{stop};
+#            if ('9999-12-31 23:59:59' eq $end) {
+#                $end = $dtf->format_datetime(NGCP::Panel::Utils::DateTime::from_string($start)->add(years => 1));
+#            } else {
+#                $end =~ s/~//;   
+#            }
+#            my @packages = ();
+#            if ('ARRAY' eq ref $balance_interval->{package_id}) {
+#                foreach my $package_id (@{$balance_interval->{package_id}}) {
+#                    if (defined $package_id) {
+#                        push(@packages,$package_map->{$package_id}->{description});
+#                    } else {
+#                        push(@packages,"no package");
+#                    }
+#                }
+#            } else {
+#                if (defined $balance_interval->{package_id}) {
+#                    push(@packages,$package_map->{$balance_interval->{package_id}}->{description});
+#                } else {
+#                    push(@packages,"no package");
+#                }
+#            }
+#            my $resource = $gantt->addResource(name => $packages[$#packages]);
+#            $gantt->addTask(
+#            #description     =>      $package->{name},
+#            description     => join(', ',@packages),
+#            resource        =>      $resource,
+#            start           =>      $start,
+#            end             =>      $end);
+#        }
+#        my $event_count = 1;
+#        foreach my $event (@$gantt_events) {
+#            my $resource = $gantt->addResource(name => 'event ' . $event_count);
+#            $gantt->addTask(
+#            #description     =>      $package->{name},
+#            description     => $event->{name},
+#            resource        =>      $resource,
+#            start           =>      $event->{t},
+#            end             =>      $dtf->format_datetime(NGCP::Panel::Utils::DateTime::from_string($event->{t})->add(seconds => 1)),
+#            );
+#            $event_count++;
+#        }
+#        $gantt->display();
+#        return 1;
+#    }
+#    return 0;
+#    
+#}
+
+sub _create_gantt {
+    
+    my ($customer,$expected_interval_history) = @_;
+    
+    #uncomment and adjust this, if you want to create gantt charts of
+    #contract_balances resulting from a test case. this is a only a
+    #proof-of-concept and requires to have ChartDirector library installed.
+    
+    #use lib "/opt/ChartDirector/lib/";
+    #use perlchartdir;
+    #
+    #if (defined $gantt_events && (scalar @$gantt_events > 0)) {
+    #
+    #    my $filename = $req_identifier;
+    #    $filename =~ s/[^a-z0-9_\-]/_/i;
+    #    $filename = '/home/rkrenn/test/gantt/' . $filename . '.png';
+    #    
+    #    my @startDate = ();
+    #    my @endDate = ();
+    #    my @labels = ();
+    #    my @colors = ();
+    #    my @taskNo = ();
+    #    
+    #    my $firstDate = undef;
+    #    my $lastDate = undef;
+    #    
+    #    my $dtf = DateTime::Format::Strptime->new(
+    #        pattern => '%F %T', 
+    #    );        
+    #    
+    #    my $inf_end = 0;
+    #    foreach my $balance_interval (@$expected_interval_history) {
+    #        my $start = $balance_interval->{start};
+    #        $start =~ s/~//;
+    #        my $end = $balance_interval->{stop};
+    #        if ('9999-12-31 23:59:59' eq $end) {
+    #            $end = $dtf->format_datetime(NGCP::Panel::Utils::DateTime::from_string($start)->add(months => 1));
+    #            $inf_end = 1;
+    #        } else {
+    #            $end =~ s/~//;   
+    #        }
+    #        my @packages = ();
+    #        if ('ARRAY' eq ref $balance_interval->{package_id}) {
+    #            foreach my $package_id (@{$balance_interval->{package_id}}) {
+    #                if (defined $package_id) {
+    #                    push(@packages,$package_map->{$package_id}->{description});
+    #                } else {
+    #                    push(@packages,"no package");
+    #                }
+    #            }
+    #        } else {
+    #            if (defined $balance_interval->{package_id}) {
+    #                push(@packages,$package_map->{$balance_interval->{package_id}}->{description});
+    #            } else {
+    #                push(@packages,"no package");
+    #            }
+    #        }
+    #        push(@startDate,perlchartdir::chartTime(split(/[^0-9]+/, $start)));
+    #        $firstDate = $start unless $firstDate;
+    #        push(@endDate,perlchartdir::chartTime(split(/[^0-9]+/, $end)));
+    #        $lastDate = $end;
+    #        push(@labels,join(', ',@packages));
+    #        push(@colors,0xa0a0a0);
+    #        push(@taskNo,scalar @taskNo);
+    #    }
+    #    
+    #    $firstDate = perlchartdir::chartTime(split(/[^0-9]+/,$dtf->format_datetime(NGCP::Panel::Utils::DateTime::from_string($firstDate)->subtract(days => 3)->truncate(to => 'day'))));
+    #    $lastDate = perlchartdir::chartTime(split(/[^0-9]+/,($inf_end ? $lastDate : $dtf->format_datetime(NGCP::Panel::Utils::DateTime::from_string($lastDate)->add(days => 4)->truncate(to => 'day')))));
+    #    
+    #    # Create a XYChart object of size 620 x 280 pixels. Set background color to light blue (ccccff),
+    #    # with 1 pixel 3D border effect.
+    #    #my $c = new XYChart(700, 365, 0xccccff, 0x000000, 1);
+    #    my $c = new XYChart(1300, 700, 0xccccff, 0x000000, 1);
+    #    
+    #    # Set the plotarea at (140, 55) and of size 460 x 200 pixels. Use alternative white/grey background.
+    #    # Enable both horizontal and vertical grids by setting their colors to grey (c0c0c0). Set vertical
+    #    # major grid (represents month boundaries) 2 pixels in width
+    #    #$c->setPlotArea(180, 55, 500, 200, 0xffffff, 0xeeeeee, $perlchartdir::LineColor, 0xc0c0c0, 0xc0c0c0
+    #    $c->setPlotArea(180, 55, 1000, 400, 0xffffff, 0xeeeeee, $perlchartdir::LineColor, 0xc0c0c0, 0xc0c0c0
+    #        )->setGridWidth(2, 1, 1, 1);
+    #    
+    #    # swap the x and y axes to create a horziontal box-whisker chart
+    #    $c->swapXY();
+    #    
+    #    # Set the y-axis scale to be date scale from Aug 16, 2004 to Nov 22, 2004, with ticks every 7 days
+    #    # (1 week)
+    #    $c->yAxis()->setDateScale($firstDate, $lastDate, 86400 * 7, 86400 * 1);
+    #    
+    #    # Set multi-style axis label formatting. Month labels are in Arial Bold font in "mmm d" format.
+    #    # Weekly labels just show the day of month and use minor tick (by using '-' as first character of
+    #    # format string).
+    #    $c->yAxis()->setMultiFormat(perlchartdir::StartOfMonthFilter(), "<*font=arialbd.ttf*>{value|mmm d}",
+    #        perlchartdir::StartOfDayFilter(), "-{value|d}");
+    #    
+    #    # Set the y-axis to shown on the top (right + swapXY = top)
+    #    $c->setYAxisOnRight();
+    #    
+    #    # Set the labels on the x axis
+    #    $c->xAxis()->setLabels(\@labels);
+    #    
+    #    # Reverse the x-axis scale so that it points downwards.
+    #    $c->xAxis()->setReverse();
+    #    
+    #    # Set the horizontal ticks and grid lines to be between the bars
+    #    $c->xAxis()->setTickOffset(0.5);
+    #    
+    #    # Add some symbols to the chart to represent milestones. The symbols are added using scatter layers.
+    #    # We need to specify the task index, date, name, symbol shape, size and color.
+    #    #$c->addScatterLayer([1], [perlchartdir::chartTime(2004, 9, 13)], "Milestone 1",
+    #    #    perlchartdir::Cross2Shape(), 13, 0xffff00);
+    #    #$c->addScatterLayer([3], [perlchartdir::chartTime(2004, 10, 4)], "Milestone 2",
+    #    #    perlchartdir::StarShape(5), 15, 0xff00ff);
+    #    #$c->addScatterLayer([5], [perlchartdir::chartTime(2004, 11, 8)], "Milestone 3",
+    #    #    $perlchartdir::TriangleSymbol, 13, 0xff9933);
+    #    my $event_count = 0;
+    #    my $title = '';
+    #    foreach my $event (@$gantt_events) {
+    #        $title = $event->{name};
+    #        $title =~ s/customer \d+/customer/i;
+    #        $c->addScatterLayer([$#taskNo], [perlchartdir::chartTime(split(/[^0-9]+/, $event->{t}))], $title,
+    #            perlchartdir::Cross2Shape(), 13, 0xffff00) if $event_count % 3 == 0;
+    #        $c->addScatterLayer([$#taskNo], [perlchartdir::chartTime(split(/[^0-9]+/, $event->{t}))], $title,
+    #            perlchartdir::StarShape(5), 15, 0xff00ff) if $event_count % 3 == 1;
+    #        $c->addScatterLayer([$#taskNo], [perlchartdir::chartTime(split(/[^0-9]+/, $event->{t}))], $title,
+    #            $perlchartdir::TriangleSymbol, 13, 0xff9933) if $event_count % 3 == 2;
+    #        $event_count++;
+    #    }  
+    #
+    #    # Add a title to the chart using 15 points Times Bold Itatic font, with white (ffffff) text on a
+    #    # deep blue (000080) background
+    #    $c->addTitle($title, "timesbi.ttf", 15, 0xffffff)->setBackground(0x000080);
+    #    
+    #    # Add a multi-color box-whisker layer to represent the gantt bars
+    #    my $layer = $c->addBoxWhiskerLayer2(\@startDate, \@endDate, undef, undef, undef, \@colors);
+    #    $layer->setXData(\@taskNo);
+    #    $layer->setBorderColor($perlchartdir::SameAsMainColor);
+    #    
+    #    # Divide the plot area height ( = 200 in this chart) by the number of tasks to get the height of
+    #    # each slot. Use 80% of that as the bar height.
+    #    #$layer->setDataWidth(int(200 * 4 / 5 / scalar(@labels)));
+    #    $layer->setDataWidth(int(400 * 4 / 5 / scalar(@labels)));
+    #    
+    #    # Add a legend box at (140, 265) - bottom of the plot area. Use 8pt Arial Bold as the font with
+    #    # auto-grid layout. Set the width to the same width as the plot area. Set the backgorund to grey
+    #    # (dddddd).
+    #    #my $legendBox = $c->addLegend2(180, 265, $perlchartdir::AutoGrid, "arialbd.ttf", 8);
+    #    #my $legendBox = $c->addLegend2(180, 265, $perlchartdir::AutoGrid, "arialbd.ttf", 8);
+    #    my $legendBox = $c->addLegend2(180, 465, $perlchartdir::AutoGrid, "arialbd.ttf", 8);
+    #    $legendBox->setWidth(1001);
+    #    $legendBox->setBackground(0xdddddd);
+    #    
+    #    # The keys for the scatter layers (milestone symbols) will automatically be added to the legend box.
+    #    # We just need to add keys to show the meanings of the bar colors.
+    #    $legendBox->addKey("Balance Intervals", 0xa0a0a0);
+    #    #$legendBox->addKey("Planning Team", 0x0000cc);
+    #    #$legendBox->addKey("Development Team", 0xcc0000);
+    #    
+    #    # Output the chart
+    #    $c->makeChart($filename);
+    #    return 1;
+    #}
+    return 0;
+    
 }
