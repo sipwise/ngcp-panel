@@ -4,7 +4,7 @@ package NGCP::Panel::Utils::DateTime;
 use strict;
 use warnings;
 use Time::HiRes; #prevent warning from Time::Warp
-use Time::Warp;
+use Time::Warp qw();
 #use Time::Fake; #load this before any use DateTime
 use DateTime;
 use DateTime::Format::ISO8601;
