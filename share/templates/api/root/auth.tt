@@ -18,10 +18,10 @@ You can authenticate against the API using your normal <b>NGCP Panel</b> adminis
 
 <h5>Using cURL on the Shell</h5>
 <p>
-With cURL, use <span>--user username:password</span> option to specify your access credentials. Specifying the realm is not needed here.
+With cURL, use <span>--user 'username:password'</span> option to specify your access credentials. Specifying the realm is not needed here.
 
 <code>
-curl -i -X GET --user myuser:mypassword https://example.org:1443/api/
+curl -i -X GET --user 'myuser:mypassword' https://example.org:1443/api/
 </code>
 
 Additionally use the <span>--insecure</span> option if you are testing against a self-signed server certificate.
