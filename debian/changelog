@@ -1,3 +1,12 @@
+ngcp-panel (1.9.1.8+0~mr4.0.1.8) unstable; urgency=medium
+
+  [ Rene Krenn ]
+  * [ec46a0a] MT#14631 topupcash didn't process package id
+
+  [ Sipwise Jenkins Builder ]
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Wed, 19 Aug 2015 19:49:35 +0200
+
 ngcp-panel (1.9.1.7+0~mr4.0.1.7) unstable; urgency=medium
 
   [ Kirill Solomko ]
