@@ -480,7 +480,7 @@ sub edit :Chained('base_restricted') :PathPart('edit') :Args(0) {
                     delete $form->values->{$_};
                 }
                 $form->values->{profile_package_id} = undef unless NGCP::Panel::Utils::ProfilePackages::ENABLE_PROFILE_PACKAGES;
-                $form->values->{modify_timestamp} = $now;
+                $form->values->{modify_timestamp} = $now; #problematic for ON UPDATE current_timestamp columns
                 $form->values->{external_id} = $form->field('external_id')->value;
                 unless($form->values->{max_subscribers} && length($form->values->{max_subscribers})) {
                     $form->values->{max_subscribers} = undef;
@@ -516,11 +516,13 @@ sub edit :Chained('base_restricted') :PathPart('edit') :Args(0) {
 
                 my $balance = NGCP::Panel::Utils::ProfilePackages::catchup_contract_balances(c => $c,
                     contract => $contract,
-                    old_package => $old_package,);
+                    old_package => $old_package,
+                    now => $now);
                 $balance = NGCP::Panel::Utils::ProfilePackages::resize_actual_contract_balance(c => $c,
                     contract => $contract,
                     old_package => $old_package,
                     balance => $balance,
+                    now => $now,
                     );
                 
                 my $new_ext_id = $contract->external_id // '';

@@ -163,7 +163,7 @@ sub edit :Chained('base') :PathPart('edit') :Args(0) {
                     $form->values->{$_.'_id'} = $form->values->{$_}{id} || undef;
                     delete $form->values->{$_};
                 }                
-                $form->values->{modify_timestamp} = $now;
+                $form->values->{modify_timestamp} = $now; #problematic for ON UPDATE current_timestamp columns
                 
                 my $mappings_to_create = [];
                 my $delete_mappings = 0;
@@ -192,11 +192,13 @@ sub edit :Chained('base') :PathPart('edit') :Args(0) {
                 
                 my $balance = NGCP::Panel::Utils::ProfilePackages::catchup_contract_balances(c => $c,
                     contract => $contract,
-                    old_package => $old_package,);
+                    old_package => $old_package,
+                    now => $now);
                 $balance = NGCP::Panel::Utils::ProfilePackages::resize_actual_contract_balance(c => $c,
                     contract => $contract,
                     old_package => $old_package,
                     balance => $balance,
+                    now => $now,
                     );
 
                 if ($is_peering_reseller &&
