@@ -386,7 +386,6 @@ sub search_item{
     if($self->searched->{$collection_name}){
         return @{$self->searched->{$collection_name}};
     }
-    $self->test_machine->name($collection_name);
     my $query_string = join('&', map {
             my @deep_keys = ('ARRAY' eq ref $_) ? @$_:($_);
             my $field_name = ( @deep_keys > 1 ) ? shift @deep_keys : $deep_keys[0];
@@ -398,7 +397,11 @@ sub search_item{
             $field_name.'='.$search_value;
         } @{$item->{query}}
     );
+    my $name_prev = $self->test_machine->{name};
+    $name_prev //= $collection_name;
+    $self->test_machine->name($collection_name);
     my($res, $content, $req) = $self->test_machine->check_item_get($self->test_machine->get_uri_get($query_string));
+    $self->test_machine->name($name_prev);
     #time for memoize?
     $self->searched->{$collection_name} = [$res, $content, $req];
     return ($res, $content, $req);
