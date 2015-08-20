@@ -44,7 +44,7 @@ has_field 'save' => (
 has_block 'fields' => (
     tag => 'div',
     class => [qw/modal-body/],
-    render_list => [qw/id zone detail /],
+    render_list => [qw/id zone detail/],
 );
 
 has_block 'actions' => (

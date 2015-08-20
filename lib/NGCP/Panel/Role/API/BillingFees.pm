@@ -69,6 +69,7 @@ sub hal_from_fee {
         form => $form,
         resource => \%resource,
         run => 0,
+        exceptions => ['billing_profile_id'],
     );
 
     $resource{id} = int($fee->id);

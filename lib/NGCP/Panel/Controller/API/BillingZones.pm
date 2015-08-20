@@ -167,13 +167,12 @@ sub POST :Allow {
         }
 
         my $form = $self->get_form($c);
-        my $billing_profile_id = $resource->{billing_profile_id} // undef;
         last unless $self->validate_form(
             c => $c,
             resource => $resource,
             form => $form,
+            exceptions => ['billing_profile_id'],
         );
-        $resource->{billing_profile_id} = $billing_profile_id;
 
         my $profile = $schema->resultset('billing_profiles')->find($resource->{billing_profile_id});
         unless($profile) {
