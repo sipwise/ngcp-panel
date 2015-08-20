@@ -182,7 +182,7 @@ sub update_customer {
         });
     delete $resource->{type};
 
-    $resource->{modify_timestamp} = $now;
+    $resource->{modify_timestamp} = $now; #problematic for ON UPDATE current_timestamp columns
     
     my $custcontact;
     if($old_resource->{contact_id} != $resource->{contact_id}) {
@@ -263,11 +263,13 @@ sub update_customer {
         
         my $balance = NGCP::Panel::Utils::ProfilePackages::catchup_contract_balances(c => $c,
             contract => $customer,
-            old_package => $old_package,);
+            old_package => $old_package,
+            now => $now); #make balance_intervals.t work
         $balance = NGCP::Panel::Utils::ProfilePackages::resize_actual_contract_balance(c => $c,
             contract => $customer,
             old_package => $old_package,
             balance => $balance,
+            now => $now,
             );
         
         if(($customer->external_id // '') ne $old_ext_id) {
