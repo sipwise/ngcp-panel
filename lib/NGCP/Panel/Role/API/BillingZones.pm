@@ -13,7 +13,7 @@ use Data::HAL::Link qw();
 use HTTP::Status qw(:constants);
 use NGCP::Panel::Utils::DateTime;
 use NGCP::Panel::Utils::Contract;
-use NGCP::Panel::Form::BillingZone qw();
+use NGCP::Panel::Form::BillingZone::API qw();
 
 sub item_rs {
     my ($self, $c) = @_;
@@ -38,7 +38,7 @@ sub item_rs {
 
 sub get_form {
     my ($self, $c) = @_;
-    return NGCP::Panel::Form::BillingZone->new;
+    return NGCP::Panel::Form::BillingZone::API->new;
 }
 
 sub hal_from_zone {
@@ -70,6 +70,7 @@ sub hal_from_zone {
         form => $form,
         resource => \%resource,
         run => 0,
+        exceptions => ['billing_profile_id'],
     );
 
     $resource{id} = int($zone->id);
@@ -97,13 +98,12 @@ sub update_zone {
     }
     $form //= $self->get_form($c);
     # TODO: for some reason, formhandler lets missing profile id
-    my $billing_profile_id = $resource->{billing_profile_id} // undef;
     return unless $self->validate_form(
         c => $c,
         form => $form,
         resource => $resource,
+        exceptions => ['billing_profile_id'],
     );
-    $resource->{billing_profile_id} = $billing_profile_id;
 
     if($old_resource->{billing_profile_id} != $resource->{billing_profile_id}) {
         my $profile = $c->model('DB')->resultset('billing_profiles')

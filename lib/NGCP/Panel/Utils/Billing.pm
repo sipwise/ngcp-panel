@@ -179,7 +179,11 @@ sub clone_billing_profile_tackles{
 
     $fees_rs->result_class('DBIx::Class::ResultClass::HashRefInflator');
     my @records = $fees_rs->all;
-    $profile_new->billing_fees->populate(\@records) if @records;
+    $profile_new->billing_fees_raw->populate(\@records);
+    $schema->storage->dbh_do(sub{
+        my ($storage, $dbh) = @_;
+        $dbh->do("call billing.fill_billing_fees(?)", undef, $profile_new->id );
+    });
 }
 
 sub get_contract_count_stmt {
