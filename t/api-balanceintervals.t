@@ -654,7 +654,7 @@ if (_get_allow_fake_client_time() && $enable_profile_packages) {
     my $nexturi = $uri.'/api/balanceintervals/?page=1&rows=' . ((not defined $total_count or $total_count <= 2) ? 2 : $total_count - 1) . '&contact_id='.$custcontact->{id};
     do {
         $req = HTTP::Request->new('GET',$nexturi);
-        $req->header('X-Fake-Clienttime' => _get_rfc_1123_now());
+        $req->header('X-Fake-Clienttime' => _get_fake_clienttime_now());
         $req->header('X-Request-Identifier' => $req_identifier) if $req_identifier;
         $res = $ua->request($req);
         #$res = $ua->get($nexturi);
@@ -697,7 +697,7 @@ if (_get_allow_fake_client_time() && $enable_profile_packages) {
             #ok(exists $journals->{$journal->{href}},"check page journal item link");
             
             $req = HTTP::Request->new('GET',$uri . $interval_link->{href});
-            $req->header('X-Fake-Clienttime' => _get_rfc_1123_now());
+            $req->header('X-Fake-Clienttime' => _get_fake_clienttime_now());
             $req->header('X-Request-Identifier' => $req_identifier) if $req_identifier;
             
             $res = $ua->request($req);
@@ -737,7 +737,7 @@ sub _check_interval_history {
     my $nexturi = $uri.'/api/balanceintervals/'.$customer->{id}.'/?page=1&rows=10&order_by_direction=asc&order_by=start'.$limit;
     do {
         $req = HTTP::Request->new('GET',$nexturi);
-        $req->header('X-Fake-Clienttime' => _get_rfc_1123_now());
+        $req->header('X-Fake-Clienttime' => _get_fake_clienttime_now());
         $req->header('X-Request-Identifier' => $req_identifier) if $req_identifier;
         $res = $ua->request($req);        
         #$res = $ua->get($nexturi);
@@ -781,7 +781,7 @@ sub _check_interval_history {
         #    #ok(exists $journals->{$journal->{href}},"check page journal item link");
         #    
         #    $req = HTTP::Request->new('GET',$uri . $interval_link->{href});
-        #    $req->header('X-Fake-Clienttime' => _get_rfc_1123_now());
+        #    $req->header('X-Fake-Clienttime' => _get_fake_clienttime_now());
         #    $req->header('X-Request-Identifier' => $req_identifier) if $req_identifier;
         #    $res = $ua->request($req);
         #    is($res->code, 200, $label . "fetch page balance interval item");
@@ -866,7 +866,7 @@ sub _fetch_intervals_worker {
     my ($delay,$sort_column,$dir) = @_;
     diag("starting thread " . threads->tid() . " ...");
     $req = HTTP::Request->new('GET', $uri.'/api/balanceintervals/?order_by='.$sort_column.'&order_by_direction='.$dir.'&contact_id='.$custcontact->{id}.'&rows='.(scalar keys %customer_map));
-    $req->header('X-Fake-Clienttime' => _get_rfc_1123_now());
+    $req->header('X-Fake-Clienttime' => _get_fake_clienttime_now());
     $req->header('X-Request-Identifier' => $req_identifier) if $req_identifier;
     $req->header('X-Delay-Commit' => $delay);
     $res = $ua->request($req);
@@ -897,7 +897,7 @@ sub _create_customer {
     my ($package,$record_label) = @_;
     $req = HTTP::Request->new('POST', $uri.'/api/customers/');
     $req->header('Content-Type' => 'application/json');
-    $req->header('X-Fake-Clienttime' => _get_rfc_1123_now());
+    $req->header('X-Fake-Clienttime' => _get_fake_clienttime_now());
     $req->header('X-Request-Identifier' => $req_identifier) if $req_identifier;
     my $req_data = {
         status => "active",
@@ -915,7 +915,7 @@ sub _create_customer {
     is($res->code, 201, "create " . $label);
     my $request = $req;
     $req = HTTP::Request->new('GET', $uri.'/'.$res->header('Location'));
-    $req->header('X-Fake-Clienttime' => _get_rfc_1123_now());
+    $req->header('X-Fake-Clienttime' => _get_fake_clienttime_now());
     $req->header('X-Request-Identifier' => $req_identifier) if $req_identifier;
     $res = $ua->request($req);
     is($res->code, 200, "fetch " . $label);
@@ -932,7 +932,7 @@ sub _switch_package {
     $req = HTTP::Request->new('PATCH', $uri.'/api/customers/'.$customer->{id});
     $req->header('Prefer' => 'return=representation');
     $req->header('Content-Type' => 'application/json-patch+json');
-    $req->header('X-Fake-Clienttime' => _get_rfc_1123_now());
+    $req->header('X-Fake-Clienttime' => _get_fake_clienttime_now());
     $req->header('X-Request-Identifier' => $req_identifier) if $req_identifier;
 
     $req->content(JSON::to_json(
@@ -963,8 +963,10 @@ sub _set_time {
     }
 }
 
-sub _get_rfc_1123_now {
-    return NGCP::Panel::Utils::DateTime::to_rfc1123_string(NGCP::Panel::Utils::DateTime::current_local);
+sub _get_fake_clienttime_now {
+    #return NGCP::Panel::Utils::DateTime::to_rfc1123_string(NGCP::Panel::Utils::DateTime::current_local);
+    #with rfc1123 there could be a problem if jenkins runner and test host will not have the same (language) locale
+    return NGCP::Panel::Utils::DateTime::to_string(NGCP::Panel::Utils::DateTime::current_local);
 }
 
 sub _create_profile_package {
@@ -973,7 +975,7 @@ sub _create_profile_package {
     $req = HTTP::Request->new('POST', $uri.'/api/profilepackages/');
     $req->header('Content-Type' => 'application/json');
     $req->header('Prefer' => 'return=representation');
-    $req->header('X-Fake-Clienttime' => _get_rfc_1123_now());
+    $req->header('X-Fake-Clienttime' => _get_fake_clienttime_now());
     $req->header('X-Request-Identifier' => $req_identifier) if $req_identifier;
     my $name = $start_mode . ($interval_unit ? '/' . $interval_value . ' ' . $interval_unit : '');
     $req->content(JSON::to_json({
@@ -991,7 +993,7 @@ sub _create_profile_package {
     is($res->code, 201, "POST test profilepackage - '" . $name . "'");
     my $profilepackage_uri = $uri.'/'.$res->header('Location');
     $req = HTTP::Request->new('GET', $profilepackage_uri);
-    $req->header('X-Fake-Clienttime' => _get_rfc_1123_now());
+    $req->header('X-Fake-Clienttime' => _get_fake_clienttime_now());
     $req->header('X-Request-Identifier' => $req_identifier) if $req_identifier;
     $res = $ua->request($req);
     is($res->code, 200, "fetch POSTed profilepackage - '" . $name . "'");
@@ -1262,7 +1264,7 @@ sub _perform_topup_voucher {
     my ($subscriber,$voucher) = @_;
     $req = HTTP::Request->new('POST', $uri.'/api/topupvouchers/');
     $req->header('Content-Type' => 'application/json');
-    $req->header('X-Fake-Clienttime' => _get_rfc_1123_now());
+    $req->header('X-Fake-Clienttime' => _get_fake_clienttime_now());
     $req->header('X-Request-Identifier' => $req_identifier) if $req_identifier;
     my $req_data = {
         code => $voucher->{code},
@@ -1280,7 +1282,7 @@ sub _perform_topup_cash {
     my ($subscriber,$amount,$package) = @_;
     $req = HTTP::Request->new('POST', $uri.'/api/topupcash/');
     $req->header('Content-Type' => 'application/json');
-    $req->header('X-Fake-Clienttime' => _get_rfc_1123_now());
+    $req->header('X-Fake-Clienttime' => _get_fake_clienttime_now());
     $req->header('X-Request-Identifier' => $req_identifier) if $req_identifier;
     my $req_data = {
         amount => $amount * 100.0,

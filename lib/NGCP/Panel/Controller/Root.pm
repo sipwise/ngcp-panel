@@ -292,7 +292,8 @@ sub api_apply_fake_time :Private {
     if ($allow_fake_client_time) { #exists $ENV{API_FAKE_CLIENT_TIME} && $ENV{API_FAKE_CLIENT_TIME}) {
         my $date = $c->request->header('X-Fake-Clienttime'); #('Date');
         if ($date) {
-            my $dt = NGCP::Panel::Utils::DateTime::from_rfc1123_string($date);
+            #my $dt = NGCP::Panel::Utils::DateTime::from_rfc1123_string($date);
+            my $dt = NGCP::Panel::Utils::DateTime::from_string($date);
             if ($dt) {
                 NGCP::Panel::Utils::DateTime::set_fake_time($dt);
                 $c->stash->{is_fake_time} = 1;

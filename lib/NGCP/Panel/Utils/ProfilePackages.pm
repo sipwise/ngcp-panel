@@ -148,12 +148,14 @@ sub resize_actual_contract_balance {
 sub catchup_contract_balances {
     my %params = @_;
     my($c,$contract,$old_package,$now,$schema) = @params{qw/c contract old_package now schema/};
-
+    
     $schema //= $c->model('DB');
     $contract = $schema->resultset('contracts')->find({id => $contract->id},{for => 'update'}); #lock record
     $now //= $contract->modify_timestamp;
     $old_package = $contract->profile_package if !exists $params{old_package};
 
+    $c->log->debug('catchup contract ' . $contract->id . ' contract_balances to now - ' . NGCP::Panel::Utils::DateTime::to_string($now)) if $c;
+    
     my ($start_mode,$interval_unit,$interval_value,$carry_over_mode,$has_package,$notopup_expiration);
     
     if (defined $contract->contact->reseller_id && $old_package) {

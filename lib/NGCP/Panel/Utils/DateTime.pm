@@ -126,6 +126,7 @@ sub from_rfc1123_string {
     my $s = shift;
     
     my $strp = DateTime::Format::Strptime->new(pattern => RFC_1123_FORMAT_PATTERN,
+                                               locale => 'en_US',
                                                on_error => 'undef');
     
     return $strp->parse_datetime($s);
@@ -170,6 +171,7 @@ sub to_rfc1123_string {
     my $dt = shift;
     
     my $strp = DateTime::Format::Strptime->new(pattern => RFC_1123_FORMAT_PATTERN,
+                                               locale => 'en_US',
                                                on_error => 'undef');
     
     return $strp->format_datetime($dt);
