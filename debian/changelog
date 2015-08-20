@@ -1,3 +1,47 @@
+ngcp-panel (1.8.3.1+0~mr3.8.3.1) unstable; urgency=medium
+
+  [ Gerhard Jungwirth ]
+  * [aa7054c] MT#13243 api filter by webuser, -password
+  * [d8d97e1] MT#12905 set cf cli to the primary number
+  * [25affa8] MT#13659 rename Number Range to Alias Number Range
+  * [5c69beb] MT#13657 allow to change adminflag of pbxpilot
+  * [ac0336d] MT#12303 dialogic wip logging
+  * [bf67016] MT#13815 split dialogic MGM and SIP interface
+  * [7758aac] MT#14391 Correctly select alias nums on subscriber edit
+  * [de07468] MT#14365 only dispatch to sems-pbx when pbx is enabled
+  * [ca59214] MT#13611 use common logic for cdr display
+  * [73679ff] MT#14383 show suppressed number as Anonymous
+
+  [ Irina Peshinskaya ]
+  * [cfc71dd] MT#12937 Replace groups managements different code parts with common methods
+  * [ae4300c] MT#11667 Add external filter by direction for calls
+  * [2b4c429] MT#13369 Add annotate possibility for narrowly positioned buttons
+  * [19dc235] MT#12939 Manage pbx groups and members order through the web-Panel
+  * [f87c03a] MT#12939 Preserve groups order while edit subscriber
+  * [4e402b1] MT#13269 Make timeout for the remote server access
+  * [411cccf] MT#13617 Extend position type for linekeys to pass form validation
+  * [e85a7ec] MT#13701 Prevent resurrection of the terminated subscribers
+  * [6611fdd] MT#11147 Add extension lines to field device config template vars
+  * [4e4767f] MT#6483 Remove billingfees and billingzones direct links
+  * [13cb4eb] MT#11147 Allow "Vendor ModelName" refer to connectable models
+  * [2fa550b] MT#14597 Fix access to undefined stash value for non pbx product subscribers
+  * [110df66] MT#14559 Trigger db_reg_agent.removeRegistration on subscriber termination
+  * [d2a631e] MT#14267 Make possible documentation for api fields of the DataTable type
+
+  [ Andreas Granig ]
+  * [5b28901] MT#13919 Properly strip in-between dashes from mac
+  * [72b1d52] MT#11027 Use proper bootstrap path.
+  * [78d0132] MT#11147 Show subscribers if just one available
+
+  [ Kirill Solomko ]
+  * [41670fe] MT#13847 - CallLists: preserve cli if no rewrite rules are found
+  * [bfebd54] MT#13573 - Calllists: use specified alias field for own_cli
+  * [590e1d6] MT#13471 - CallLists: do not anonymise intra calls with source_clir
+
+  [ Sipwise Jenkins Builder ]
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Thu, 20 Aug 2015 23:19:39 +0200
+
 ngcp-panel (1.8.3.0+0~mr3.8.3.0) unstable; urgency=low
 
   [ Irina Peshinskaya ]
