@@ -154,7 +154,7 @@ sub catchup_contract_balances {
     $now //= $contract->modify_timestamp;
     $old_package = $contract->profile_package if !exists $params{old_package};
 
-    $c->log->debug('catchup contract ' . $contract->id . ' contract_balances to now - ' . NGCP::Panel::Utils::DateTime::to_string($now)) if $c;
+    #$c->log->debug('catchup contract ' . $contract->id . ' contract_balances (now = ' . NGCP::Panel::Utils::DateTime::to_string($now) . ')') if $c;
     
     my ($start_mode,$interval_unit,$interval_value,$carry_over_mode,$has_package,$notopup_expiration);
     

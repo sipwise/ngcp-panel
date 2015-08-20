@@ -170,7 +170,7 @@ sub update_contract {
         });
     delete $resource->{type};
 
-    $resource->{modify_timestamp} = $now;
+    $resource->{modify_timestamp} = $now; #problematic for ON UPDATE current_timestamp columns
 
     if($old_resource->{contact_id} != $resource->{contact_id}) {
         my $syscontact = $c->model('DB')->resultset('contacts')
@@ -197,11 +197,13 @@ sub update_contract {
         
         my $balance = NGCP::Panel::Utils::ProfilePackages::catchup_contract_balances(c => $c,
             contract => $contract,
-            old_package => $old_package,);
+            old_package => $old_package,
+            now => $now); #make balance_intervals.t work
         $balance = NGCP::Panel::Utils::ProfilePackages::resize_actual_contract_balance(c => $c,
             contract => $contract,
             old_package => $old_package,
             balance => $balance,
+            now => $now,
             );        
 
         if($old_resource->{status} ne $resource->{status}) {
