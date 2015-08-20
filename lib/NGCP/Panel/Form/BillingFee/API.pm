@@ -4,6 +4,15 @@ use HTML::FormHandler::Moose;
 extends 'NGCP::Panel::Form::BillingFee';
 use Moose::Util::TypeConstraints;
 
+has_field 'billing_profile_id' => (
+    type => 'PosInteger',
+    required => 1,
+    element_attr => {
+        rel => ['tooltip'],
+        title => ['The billing profile this billing fee belongs to.']
+    },
+);
+
 has_field 'purge_existing' => (
     type => 'Boolean',
     element_attr => {
@@ -12,6 +21,7 @@ has_field 'purge_existing' => (
     },
     default => 0,
 );
+
 
 has_block 'fields' => (
     tag => 'div',
