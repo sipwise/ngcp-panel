@@ -207,28 +207,8 @@ sub POST :Allow {
         } else {
             delete $resource->{purge_existing};
             my $form = $self->get_form($c);
-            my $zone;
-
-            # in case of implicit zone declaration (name/detail instead of id),
-            # find or create the zone
-            if(!defined $resource->{billing_zone_id} &&
-               defined $resource->{billing_zone_zone} &&
-               defined $resource->{billing_zone_detail}) {
-
-                $zone = $profile->billing_zones->find({
-                    zone => $resource->{billing_zone_zone},
-                    detail => $resource->{billing_zone_detail},
-                });
-                $zone = $profile->billing_zones->create({
-                    zone => $resource->{billing_zone_zone},
-                    detail => $resource->{billing_zone_detail},
-                }) unless $zone;
-                $resource->{billing_zone_id} = $zone->id;
-                delete $resource->{billing_zone_zone};
-                delete $resource->{billing_zone_detail};
-            } elsif(defined $resource->{billing_zone_id}) {
-                $zone = $profile->billing_zones->find($resource->{billing_zone_id});
-            }
+ 
+            my $zone = $self->get_billing_zone($c,$profile,$resource);
             unless($zone) {
                 $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Invalid 'billing_zone_id'.");
                 last;
