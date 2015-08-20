@@ -60,6 +60,11 @@ sub process_billing_fees{
     return ( \@fees, \@fails, \$text );
 }
 
+    $profile_new->billing_fees_raw->populate(\@records);
+    $schema->storage->dbh_do(sub{
+        my ($storage, $dbh) = @_;
+        $dbh->do("call billing.fill_billing_fees(?)", undef, $profile_new->id );
+    });
 sub get_contract_count_stmt {
     return "select count(distinct c.id) from `billing`.`billing_mappings` bm join `billing`.`contracts` c on c.id = bm.contract_id where bm.`billing_profile_id` = `me`.`id` and c.status != 'terminated' and (bm.end_date is null or bm.end_date >= now())";
 }
