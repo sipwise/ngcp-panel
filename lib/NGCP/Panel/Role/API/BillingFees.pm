@@ -98,41 +98,16 @@ sub update_fee {
         $reseller_id = $c->user->contract->contact->reseller_id;
     }
     $form //= $self->get_form($c);
-    # TODO: for some reason, formhandler lets missing profile/zone id
-    my $billing_profile_id = $resource->{billing_profile_id} // undef;
 
-    # in case of implicit zone declaration (name/detail instead of id),
-    # find or create the zone
-    my $profile;
-    if(!defined $resource->{billing_zone_id} &&
-        defined $resource->{billing_profile_id} &&
-        defined $resource->{billing_zone_zone} &&
-        defined $resource->{billing_zone_detail}) {
 
-        $profile = $c->model('DB')->resultset('billing_profiles')->find($resource->{billing_profile_id});
-        if($profile) {
-            my $zone = $profile->billing_zones->find({
-                zone => $resource->{billing_zone_zone},
-                detail => $resource->{billing_zone_detail},
-            });
-            $zone = $profile->billing_zones->create({
-                zone => $resource->{billing_zone_zone},
-                detail => $resource->{billing_zone_detail},
-            }) unless $zone;
-            $resource->{billing_zone_id} = $zone->id;
-            delete $resource->{billing_zone_zone};
-            delete $resource->{billing_zone_detail};
-        }
-    }
-
-    $resource->{billing_zone_id} //= undef;
     return unless $self->validate_form(
         c => $c,
         form => $form,
         resource => $resource,
+        exceptions => ['billing_profile_id'],
     );
-    $resource->{billing_profile_id} = $billing_profile_id;
 
+    my $profile;
     if(!defined $resource->{billing_profile_id}) {
         $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Invalid 'billing_profile_id'");
         return;
@@ -149,10 +124,8 @@ sub update_fee {
         }
     }
 
+    my $zone = $self->get_billing_zone($c,$profile,$resource);
     if($old_resource->{billing_zone_id} != $resource->{billing_zone_id}) {
-        my $zone = $c->model('DB')->resultset('billing_zones')
-            ->search(billing_profile_id => $resource->{billing_profile_id})
-            ->find($resource->{billing_zone_id});
         unless($zone) {
             $self->error($c, HTTP_UNPROCESSABLE_ENTITY, "Invalid 'billing_zone_id'");
             return;
@@ -163,6 +136,40 @@ sub update_fee {
 
     return $fee;
 }
+sub get_billing_zone{
+    my($self,$c,$profile,$resource) = @_;
 
+    if( (!defined $profile) && defined $resource->{billing_profile_id} ){
+        $profile = $c->model('DB')->resultset('billing_profiles')->find($resource->{billing_profile_id});    
+    }
+    if(!defined $profile){
+        $c->log->debug("in get_billing_zone: no profile;");
+        return;
+    }
+
+    my $zone;
+    
+    # in case of implicit zone declaration (name/detail instead of id),
+    # find or create the zone
+    if( (!defined $resource->{billing_zone_id}) &&
+        defined $resource->{billing_zone_zone} &&
+        defined $resource->{billing_zone_detail}  ) {
+
+        $zone = $profile->billing_zones->find({
+            zone => $resource->{billing_zone_zone},
+            detail => $resource->{billing_zone_detail},
+        });
+        $zone = $profile->billing_zones->create({
+            zone => $resource->{billing_zone_zone},
+            detail => $resource->{billing_zone_detail},
+        }) unless $zone;
+        delete $resource->{billing_zone_zone};
+        delete $resource->{billing_zone_detail};
+        $resource->{billing_zone_id} = $zone->id;
+    }elsif(defined $resource->{billing_zone_id}) {
+        $zone = $profile->billing_zones->find($resource->{billing_zone_id});
+    }
+    return $zone;
+}
 1;
 # vim: set tabstop=4 expandtab:
