@@ -54,19 +54,18 @@ sub process {
     ### Search processing section
     
     # generic searching
-    my $searchString = $c->request->params->{sSearch} // "";
     my @searchColumns = ();
-    my @searchColumnsOr = ();
-    my @searchColumnsAnd = ();
+    #processing single search input - group1 from groups to be joined by 'AND'
+    my $searchString = $c->request->params->{sSearch} // "";
     if($searchString && ! $use_rs_cb) {
+    #for search string from one search input we need to check all columns which contain the 'search' spec (now: qw/search search_lower_column search_upper_column/). so, for example user entered into search input ip address - we don't know that it is ip address, so we check that name like search OR id like search OR search is between network_lower_value and network upper value 
         foreach my $col(@{ $cols }) {
             my ($name,$search_value,$op,$convert);
             # avoid amigious column names if we have the same column in different joined tables
             if($col->{search}){
                 $op = (defined $col->{comparison_op} ? $col->{comparison_op} : 'like');
-                $convert = ((ref $col->{convert_code} eq 'CODE') ? $col->{convert_code} : sub { return '%'.shift.'%'; });
                 $name = _get_joined_column_name_($col->{name});
-                $search_value = &$convert($searchString);
+                $search_value = (ref $col->{convert_code} eq 'CODE') ? $col->{convert_code}->($search_value) : sub { return '%'.shift.'%'; };
                 my $stmt;
                 if (defined $search_value) {
                     if($col->{literal_sql}){
@@ -83,38 +82,69 @@ sub process {
                     }
                 }
                 if($stmt){
-                    push @searchColumnsOr, $stmt;
+                    push @{$searchColumns[0]}, $stmt;
                 }
-            } else {
+            } elsif( $col->{search_lower_column} || $col->{search_upper_column} ) {
                 my %conjunctSearchColumns = ();
                 # searching lower and upper limit columns
-                if ($col->{search_lower_column}) {
-                    $op = (defined $col->{comparison_op} ? $col->{comparison_op} : '<=');
-                    $convert = ((ref $col->{convert_code} eq 'CODE') ? $col->{convert_code} : sub { return shift; });
-                    $name = _get_joined_column_name_($col->{name});
-                    $search_value = &$convert($searchString);
-                    if (defined $search_value) {
-                        $conjunctSearchColumns{$col->{search_lower_column}} = [] unless exists $conjunctSearchColumns{$col->{search_lower_column}};
-                        push(@{$conjunctSearchColumns{$col->{search_lower_column}}},{$name => { $op => $search_value }});
-                    }
-                }
-                if($col->{search_upper_column}) {
-                    $op = (defined $col->{comparison_op} ? $col->{comparison_op} : '>=');
-                    $convert = ((ref $col->{convert_code} eq 'CODE') ? $col->{convert_code} : sub { return shift; });
-                    $name = _get_joined_column_name_($col->{name});
-                    $search_value = &$convert($searchString);
-                    if (defined $search_value) {
-                        $conjunctSearchColumns{$col->{search_upper_column}} = [] unless exists $conjunctSearchColumns{$col->{search_upper_column}};
-                        push(@{$conjunctSearchColumns{$col->{search_upper_column}}},{$name => { $op => $search_value }});
+                foreach $search_spec (qw/search_lower_column search_upper_column/){
+                    if ($col->{$search_spec}) {
+                        $op = (defined $col->{comparison_op} ? $col->{comparison_op} : ( $search_spec eq 'search_lower_column' ? '<=' : '>=') );
+                        $name = _get_joined_column_name_($col->{name});
+                        $search_value = (ref $col->{convert_code} eq 'CODE') ? $col->{convert_code}->($searchString) : $searchString ;
+                        if (defined $search_value) {
+                            $conjunctSearchColumns{$col->{$search_spec}} = [] unless exists $conjunctSearchColumns{$col->{$search_spec}};
+                            push(@{$conjunctSearchColumns{$col->{$search_spec}}},{$name => { $op => $search_value }});
+                        }
                     }
                 }
                 foreach my $conjunct_column (keys %conjunctSearchColumns) {
-                    push @searchColumnsOr, { map { %{$_} } @{$conjunctSearchColumns{$conjunct_column}} };
+                    #...things in arrays are OR'ed, and things in hashes are AND'ed
+
+                    #input: 
+#{ name => "billing_network_blocks._ipv4_net_from", search_lower_column => 'ipv4', convert_code => sub {
+#    return _prepare_query_param_value(shift,4); # <================= this form of call, the same as all below, will return us bytes or undef
+#    } },
+#{ name => "billing_network_blocks._ipv4_net_to", search_upper_column => 'ipv4', convert_code => sub {
+#    return _prepare_query_param_value(shift,4);
+#    } },
+#{ name => "billing_network_blocks._ipv6_net_from", search_lower_column => 'ipv6', convert_code => sub {
+#    return _prepare_query_param_value(shift,6);
+#    } },
+#{ name => "billing_network_blocks._ipv6_net_to", search_upper_column => 'ipv6', convert_code => sub {
+#    return _prepare_query_param_value(shift,6);
+#    } },
+                    #output: 
+                    #1. conjunctSearchColumns = {
+                        #'ipv4' => [
+                            #{ "billing_network_blocks__ipv4_net_to"   => {"<=" => $bytes}}, 
+                            #{ "billing_network_blocks__ipv4_net_from" => {"=>" => $bytes}}
+                        #],
+                        #'ipv6' => [
+                            #{ "billing_network_blocks__ipv6_net_to"   => {"<=" => $bytes}}, 
+                            #{ "billing_network_blocks__ipv6_net_from" => {"=>" => $bytes}}
+                        #]
+                    #}
+                    #2. addition into @searchColumns = (
+                        #{
+                            #"billing_network_blocks__ipv4_net_to"   => {"<=" => $bytes},
+                            #"billing_network_blocks__ipv4_net_from" => {"=>" => $bytes},
+                        #},
+                        #{
+                            #"billing_network_blocks__ipv6_net_to"   => {"<=" => $bytes},
+                            #"billing_network_blocks__ipv6_net_from" => {"=>" => $bytes},
+                        #{
+                    #)
+
+                    push @{$searchColumns[0]}, { map { %{$_} } @{$conjunctSearchColumns{$conjunct_column}} };
                 }
             }
         }
     }
+    #/processing single search input
+    #processing dates search input - group2 from groups to be joined by 'AND'
     {
+        my @dateSearchColumns = ();
         # date-range searching
         my $from_date_in = $c->request->params->{sSearch_0} // "";
         my $to_date_in = $c->request->params->{sSearch_1} // "";
@@ -133,13 +163,14 @@ sub process {
             # avoid amigious column names if we have the same column in different joined tables
             my $name = _get_joined_column_name_($col->{name});
             if($col->{search_from_epoch} && $from_date) {
-                push @searchColumnsAnd, { $name => { '>=' => $col->{search_use_datetime} ? $from_date_in : $from_date->epoch } };
+                push @searchColumns, { $name => { '>=' => $col->{search_use_datetime} ? $from_date_in : $from_date->epoch } };
             }
             if($col->{search_to_epoch} && $to_date) {
-                push @searchColumnsAnd, { $name => { '<=' => $col->{search_use_datetime} ? $to_date_in : $to_date->epoch } };
+                push @searchColumns, { $name => { '<=' => $col->{search_use_datetime} ? $to_date_in : $to_date->epoch } };
             }
         }
     }
+    #/processing dates search input
     if(@searchColumnsOr ){
         if(@searchColumnsAnd){
             @searchColumns = ( { '-and' => \@searchColumns } );
