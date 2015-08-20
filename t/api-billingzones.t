@@ -29,7 +29,7 @@ $fake_data->set_data_from_script({
             zone               => "apitestzone",
             detail             => "api_test zone",
         },
-        'query' => ['zone'],
+        'query' => ['zone','billing_profile_id'],
     },
 });
 
