@@ -105,6 +105,7 @@ sub resource_from_item {
 
     $resource{customer_id} = int(delete $resource{contract_id});
     $resource{id} = int($item->id);
+    $resource{uuid} = $item->uuid;
     $resource{domain} = $item->domain->domain;
 
     return \%resource;
