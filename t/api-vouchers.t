@@ -25,10 +25,10 @@ $fake_data->set_data_from_script({
             code => 'apitestcode',
             customer_id => undef,
             package_id => undef,
-            reseller_id => sub { return shift->get_id('resellers', @_); },,
+            reseller_id => sub { return shift->get_id('resellers', @_); },
             valid_until => '2037-01-01 12:00:00',
         },
-        'query' => ['code'],
+        'query' => ['code','reseller_id'],
     },
 });
 
@@ -36,7 +36,7 @@ $test_machine->DATA_ITEM_STORE($fake_data->process('vouchers'));
 $test_machine->form_data_item( );
 
 # create 3 new vouchers from DATA_ITEM
-$test_machine->check_create_correct( 3, sub{ $_[0]->{code} .= $_[1]->{i} ; } );
+$test_machine->check_create_correct( 3, sub{ $_[0]->{code} .= time().'_'.$_[1]->{i} ; } );
 $test_machine->check_get2put();
 $test_machine->check_bundle();
 

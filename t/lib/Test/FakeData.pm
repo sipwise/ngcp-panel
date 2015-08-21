@@ -11,6 +11,7 @@ use Data::Dumper;
 use Test::DeepHashUtils qw(reach nest deepvalue);
 use Clone qw/clone/;
 use File::Slurp qw/read_file/;
+use URI::Escape;
 
 has 'test_machine' =>(
     is => 'rw',
@@ -323,11 +324,12 @@ sub load_db{
     $data //= $self->data;
     $collections_slice //= [keys %$data];
     foreach my $collection_name( @$collections_slice ){
-        #print "collection_name=$collection_name;\n";
+        #print "load_db: collection_name=$collection_name;\n";
         if((!exists $self->loaded->{$collection_name}) && $data->{$collection_name}->{query}){
             my(undef,$content) = $self->search_item($collection_name,$data);
+            #print Dumper $content;
             if($content->{total_count}){
-                my $values = $content->{_embedded}->{$self->test_machine->get_hal_name};
+                my $values = $content->{_embedded}->{$self->test_machine->get_hal_name($collection_name)};
                 $values = ('HASH' eq ref $values) ? [$values] : $values;
                 $self->loaded->{$collection_name} = [ map {
                     {
@@ -354,7 +356,7 @@ sub clear_db{
         }
         my(undef,$content) = $self->search_item($collection_name,$data);
         if($content->{total_count}){
-            my $values = $content->{_links}->{$self->test_machine->get_hal_name};
+            my $values = $content->{_links}->{$self->test_machine->get_hal_name($collection_name)};
             $values = ('HASH' eq ref $values) ? [$values] : $values;
             my @locations = map {$_->{href}} @$values;
             if($data->{$collection_name}->{no_delete_available}){
@@ -394,14 +396,13 @@ sub search_item{
             if('CODE' eq ref $search_value){
                 $search_value = $search_value->($self);
             }
-            $field_name.'='.$search_value;
+            $field_name.'='.uri_escape($search_value);
         } @{$item->{query}}
     );
     my $name_prev = $self->test_machine->{name};
-    $name_prev //= $collection_name;
     $self->test_machine->name($collection_name);
     my($res, $content, $req) = $self->test_machine->check_item_get($self->test_machine->get_uri_get($query_string));
-    $self->test_machine->name($name_prev);
+    $name_prev and $self->test_machine->name($name_prev);
     #time for memoize?
     $self->searched->{$collection_name} = [$res, $content, $req];
     return ($res, $content, $req);
