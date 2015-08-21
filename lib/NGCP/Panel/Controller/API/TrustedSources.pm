@@ -159,7 +159,7 @@ sub POST :Allow {
         );
 
         my $sub_rs = $c->model('DB')->resultset('voip_subscribers')->search({
-            id => $resource->{subscriber_id},
+            'me.id' => $resource->{subscriber_id}
         });
         if($c->user->roles eq "reseller") {
             $sub_rs = $sub_rs->search({
