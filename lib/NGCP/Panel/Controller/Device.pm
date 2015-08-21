@@ -1615,8 +1615,8 @@ sub dev_field_firmware_version_base :Chained('dev_field_firmware_base') :PathPar
     $c->stash->{fw_rs} = $dev->profile->config->device->autoprov_firmwares;
 }
 
-sub dev_field_firmware_next :Chained('dev_field_firmware_version_base') :PathPart('next') :Args(0) {
-    my ($self, $c) = @_;
+sub dev_field_firmware_next :Chained('dev_field_firmware_version_base') :PathPart('next') :Args {
+    my ($self, $c, $q) = @_;
 
     my $rs = $c->stash->{fw_rs}->search({
         device_id => $c->stash->{dev}->profile->config->device->id,
@@ -1624,9 +1624,12 @@ sub dev_field_firmware_next :Chained('dev_field_firmware_version_base') :PathPar
     }, {
         order_by => { -asc => 'version' },
     });
-    if($c->req->params->{q}) {
+    if(!defined $q && defined $c->req->params->{q}) {
+        $q = $c->req->params->{q};
+    }
+    if(defined $q) {
         $rs = $rs->search({
-            version => { 'like' => $c->req->params->{q} . '%' },
+            version => { 'like' => $q . '%' },
         });
     }
 
@@ -1643,8 +1646,8 @@ sub dev_field_firmware_next :Chained('dev_field_firmware_version_base') :PathPar
     $c->response->body($fw->data);
 }
 
-sub dev_field_firmware_latest :Chained('dev_field_firmware_version_base') :PathPart('latest') :Args(0) {
-    my ($self, $c) = @_;
+sub dev_field_firmware_latest :Chained('dev_field_firmware_version_base') :PathPart('latest') :Args {
+    my ($self, $c, $q) = @_;
 
     my $rs = $c->stash->{fw_rs}->search({
         device_id => $c->stash->{dev}->profile->config->device->id,
@@ -1652,9 +1655,12 @@ sub dev_field_firmware_latest :Chained('dev_field_firmware_version_base') :PathP
     }, {
         order_by => { -desc => 'version' },
     });
-    if($c->req->params->{q}) {
+    if(!defined $q && defined $c->req->params->{q}) {
+        $q = $c->req->params->{q};
+    }
+    if(defined $q) {
         $rs = $rs->search({
-            version => { 'like' => $c->req->params->{q} . '%' },
+            version => { 'like' => $q . '%' },
         });
     }
 
