@@ -366,7 +366,7 @@ sub check_create_correct{
 }
 sub clear_test_data_all{
     my($self,$uri) = @_;
-    my @uris = $uri ? (('ARRAY' eq ref $uri) ? @$uri : ($uri)) : keys $self->DATA_CREATED->{ALL};
+    my @uris = $uri ? (('ARRAY' eq ref $uri) ? @$uri : ($uri)) : keys %{ $self->DATA_CREATED->{ALL} };
     foreach my $del_uri(@uris){
         my($req,$res,$content) = $self->request_delete($self->base_uri.$del_uri);
         is($res->code, 204, "check delete item $del_uri");
