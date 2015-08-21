@@ -44,7 +44,8 @@ has 'base_uri' => (
     default => sub {
         $_[0]->{local_test} 
         ? ( length($_[0]->{local_test})>1 ? $_[0]->{local_test} : 'https://127.0.0.1:4443' ) 
-        : $ENV{CATALYST_SERVER} || ('https://'.hostfqdn.':4443')},
+        : $ENV{CATALYST_SERVER} || ('https://'.hostfqdn.':4443');
+    },
 );
 has 'name' => (
     is => 'rw',
@@ -184,7 +185,11 @@ sub init_ua {
     my $self = shift;
     my $ua = LWP::UserAgent->new;
     if($self->local_test){
-        $ua->credentials( $self->base_uri, '', 'administrator', 'administrator' );
+        my $uri = $self->base_uri;
+        $uri =~ s/^https?:\/\///;
+        my $user = $ENV{API_USER} // 'administrator';
+        my $pass = $ENV{API_PASS} // 'administrator';
+        $ua->credentials( $uri, 'api_admin_http', $user, $pass);
         $ua->ssl_opts(
             verify_hostname => 0,
             SSL_verify_mode => 0x00,
@@ -380,9 +385,11 @@ sub request_delete{
 }
 sub request_get{
     my($self,$uri) = @_;
+    print ">>>>>>>>>>>>>>>>>>>>>> fooooo\n";
     $uri ||= $self->get_uri_current;
     my $req = HTTP::Request->new('GET', $uri);
     my $res = $self->request($req);
+    use Data::Dumper; print Dumper $res;
     my $content = $res->decoded_content ? JSON::from_json($res->decoded_content) : '';
     return wantarray ? ($res, $content, $req) : $res;
 }
@@ -441,7 +448,7 @@ sub check_create_correct{
 }
 sub clear_test_data_all{
     my($self,$uri) = @_;
-    my @uris = $uri ? (('ARRAY' eq ref $uri) ? @$uri : ($uri)) : keys $self->DATA_CREATED->{ALL};
+    my @uris = $uri ? (('ARRAY' eq ref $uri) ? @$uri : ($uri)) : keys %{ $self->DATA_CREATED->{ALL} };
     foreach my $del_uri(@uris){
         my($req,$res,$content) = $self->request_delete($self->base_uri.$del_uri);
         $self->http_code_msg(204, "check delete item $del_uri",$res,$content);
