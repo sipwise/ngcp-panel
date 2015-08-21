@@ -229,8 +229,9 @@ sub get_id_from_created{
     return $id;
 }
 sub get_hal_name{
-    my($self) = @_;
-    return "ngcp:".$self->name;
+    my($self,$name) = @_;
+    $name //= $self->name;
+    return "ngcp:".$name;
 }
 sub restore_uri_custom{
     my($self) = @_;
@@ -243,19 +244,21 @@ sub get_uri_collection{
     return $self->base_uri."/api/".$name.($name ? "/" : "").($self->QUERY_PARAMS ? "?".$self->QUERY_PARAMS : "");
 }
 sub get_uri_get{
-    my($self,$query_string) = @_;
-    return $self->base_uri."/api/".$self->name.($query_string ? '/?' : '/' ).$query_string;
+    my($self,$query_string, $name) = @_;
+    $name //= $self->name;
+    return $self->base_uri."/api/".$name.($query_string ? '/?' : '/' ).$query_string;
 }
 sub get_uri{
-    my($self,$add) = @_;
+    my($self,$add,$name) = @_;
     $add //= '';
-    return $self->base_uri."/api/".$self->name.'/'.$add;
+    $name //= $self->name;
+    return $self->base_uri."/api/".$name.'/'.$add;
 }
 sub get_uri_firstitem{
-    my($self) = @_;
+    my($self,$name) = @_;
     if(!$self->DATA_CREATED->{FIRST}){
         my($res,$list_collection,$req) = $self->check_item_get($self->get_uri_collection."?page=1&rows=1");
-        my $hal_name = $self->get_hal_name;
+        my $hal_name = $self->get_hal_name($name);
         if(ref $list_collection->{_links}->{$hal_name} eq "HASH") {
             $self->DATA_CREATED->{FIRST} = $list_collection->{_links}->{$hal_name}->{href};
         } else {
@@ -291,7 +294,15 @@ sub encode_content{
 sub request{
     my($self,$req) = @_;
     #print $req->as_string;
-    return $self->ua->request($req);
+    my $res = $self->ua->request($req);
+    #draft of the debug mode
+    #if($res->code >= 400){
+    #    print Dumper $req;
+    #    print Dumper $res;
+    #    print Dumper $res->decoded_content ? JSON::from_json($res->decoded_content) : '';;
+    #    die;
+    #}
+    return $res;
 }
 
 sub request_process{
@@ -385,11 +396,9 @@ sub request_delete{
 }
 sub request_get{
     my($self,$uri) = @_;
-    print ">>>>>>>>>>>>>>>>>>>>>> fooooo\n";
     $uri ||= $self->get_uri_current;
     my $req = HTTP::Request->new('GET', $uri);
     my $res = $self->request($req);
-    use Data::Dumper; print Dumper $res;
     my $content = $res->decoded_content ? JSON::from_json($res->decoded_content) : '';
     return wantarray ? ($res, $content, $req) : $res;
 }
