@@ -76,6 +76,7 @@ $ua->ssl_opts(
         interceptions => 1,
         invoices => 1,
         invoicetemplates => 1,
+        maliciouscalls => 1,
         ncoslevels => 1,
         ncospatterns => 1,
         pbxdeviceconfigfiles => 1,
