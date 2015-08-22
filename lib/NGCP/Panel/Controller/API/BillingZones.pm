@@ -37,6 +37,17 @@ class_has 'query_params' => (
                 second => sub {},
             },
         },
+        {
+            param => 'zone',
+            description => 'Filter for zone name',
+            query => {
+                first => sub {
+                    my $q = shift;
+                    { zone => { like => '%'.$q.'%' } };
+                },
+                second => sub {},
+            },
+        },
     ]},
 );
 
