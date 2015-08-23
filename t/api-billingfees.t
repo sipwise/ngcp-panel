@@ -31,7 +31,7 @@ $fake_data->set_data_from_script({
             offpeak_follow_rate     => 0.5,
             offpeak_follow_interval => 30,
         },
-        'query' => ['billing_zone_id'],
+        'query' => ['billing_zone_id','destination','direction','billing_profile_id'],
     },
 });
 my $test_machine = Test::Collection->new(
