@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "da6255ed_c8758233",
+        "filename": "lib/NGCP/Panel/Form/CallList/Subscriber.pm",
+        "patchSetId": 6
+      },
+      "lineNbr": 109,
+      "author": {
+        "id": 1000004
+      },
+      "writtenOn": "2015-08-24T15:11:44Z",
+      "side": 1,
+      "message": "Total cost for the customer. VAT is included if applicable.",
+      "range": {
+        "startLine": 109,
+        "startChar": 19,
+        "endLine": 109,
+        "endChar": 44
+      },
+      "revId": "d05614dfd3c621054bda04c234e2600ef090a3da",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    }
+  ]
+}
