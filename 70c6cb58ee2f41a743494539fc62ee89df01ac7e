@@ -1,0 +1,44 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "da6255ed_f2227900",
+        "filename": "lib/NGCP/Panel/Utils/Datatables.pm",
+        "patchSetId": 4
+      },
+      "lineNbr": 32,
+      "author": {
+        "id": 1000004
+      },
+      "writtenOn": "2015-08-24T11:26:22Z",
+      "side": 1,
+      "message": "cosmetic, trailing space",
+      "range": {
+        "startLine": 32,
+        "startChar": 46,
+        "endLine": 32,
+        "endChar": 47
+      },
+      "revId": "70c6cb58ee2f41a743494539fc62ee89df01ac7e",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "da6255ed_d21f75b6",
+        "filename": "lib/NGCP/Panel/Utils/Datatables.pm",
+        "patchSetId": 4
+      },
+      "lineNbr": 144,
+      "author": {
+        "id": 1000004
+      },
+      "writtenOn": "2015-08-24T11:26:22Z",
+      "side": 1,
+      "message": "cosmetic, trailing space",
+      "revId": "70c6cb58ee2f41a743494539fc62ee89df01ac7e",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    }
+  ]
+}
