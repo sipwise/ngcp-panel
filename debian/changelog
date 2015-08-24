@@ -1,3 +1,21 @@
+ngcp-panel (1.8.1.28+0~mr3.8.1.28) unstable; urgency=medium
+
+  [ Andreas Granig ]
+  * [373b12c] MT#14715 Return uuid in /api/subscribers/
+  * [c8a3f91] MT#14741 Fix reseller ops for /api/trustedsources/
+  * [99fe4b5] MT#14747 Pass fw query as url path.
+
+  [ Irina Peshinskaya ]
+  * [6af2c53] MT#12347 Make necessary changes to keep data in the test scripts
+  * [dec5ac3] MT#13717 Consider necessity of recreation items with cycled dependency
+  * [2f19456] MT#13717 Avoid duplicate names for billing profiles
+  * [3bfb5f6] MT#13717 Use correct directory for data load from the test scripts
+  * [f1b20a6] MT#14741 Add test fixes from the 14653
+
+  [ Sipwise Jenkins Builder ]
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Mon, 24 Aug 2015 16:46:21 +0200
+
 ngcp-panel (1.8.1.27+0~mr3.8.1.27) unstable; urgency=medium
 
   [ Irina Peshinskaya ]
