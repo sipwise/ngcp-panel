@@ -28,7 +28,7 @@ __PACKAGE__->config(
     action => {
         (map { $_ => {
             ACLDetachTo => '/api/root/invalid_user',
-            AllowedRole => [qw/admin reseller/],
+            AllowedRole => [qw/admin/], #admins only for now...
             Args => 1,
             Does => [qw(ACL RequireSSL)],
             Method => $_,
@@ -36,7 +36,7 @@ __PACKAGE__->config(
         } } @{ __PACKAGE__->allowed_methods }),
         @{ __PACKAGE__->get_journal_action_config(__PACKAGE__->resource_name,{
             ACLDetachTo => '/api/root/invalid_user',
-            AllowedRole => [qw/admin reseller/],
+            AllowedRole => [qw/admin/], #admins only for now...
             Does => [qw(ACL RequireSSL)],
         }) }
     },
