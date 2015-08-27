@@ -1098,6 +1098,7 @@ sub pbx_group_create :Chained('base') :PathPart('pbx/group/create') :Args(0) {
                 $preferences->{cloud_pbx_hunt_policy} = $form->values->{pbx_hunt_policy};
                 $preferences->{cloud_pbx_hunt_timeout} = $form->values->{pbx_hunt_timeout};
                 $preferences->{cloud_pbx_ext} = $form->values->{pbx_extension};
+                $preferences->{display_name} = ucfirst($form->values->{username});
                 my $billing_subscriber = NGCP::Panel::Utils::Subscriber::create_subscriber(
                     c => $c,
                     schema => $schema,
