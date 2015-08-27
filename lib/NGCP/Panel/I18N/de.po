@@ -3152,11 +3152,11 @@ msgstr ""
 msgid "Failed to create NCOS pattern"
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/Customer.pm:1304
+#: lib/NGCP/Panel/Controller/Customer.pm:1305
 msgid "Failed to create PBX device"
 msgstr "PBX Gerät erstellen fehlgeschlagen"
 
-#: lib/NGCP/Panel/Controller/Customer.pm:1124
+#: lib/NGCP/Panel/Controller/Customer.pm:1125
 msgid "Failed to create PBX group"
 msgstr ""
 
@@ -3328,7 +3328,7 @@ msgstr ""
 msgid "Failed to delete NCOS pattern"
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/Customer.pm:1497
+#: lib/NGCP/Panel/Controller/Customer.pm:1498
 msgid "Failed to delete PBX device"
 msgstr "PBX Gerät löschen fehlgeschlagen."
 
@@ -3574,8 +3574,8 @@ msgstr ""
 msgid "Failed to transcode audio file"
 msgstr "Audio-Datei umwandeln fehlgeschlagen."
 
-#: lib/NGCP/Panel/Controller/Customer.pm:1538
-#: lib/NGCP/Panel/Controller/Customer.pm:1555
+#: lib/NGCP/Panel/Controller/Customer.pm:1539
+#: lib/NGCP/Panel/Controller/Customer.pm:1556
 msgid "Failed to trigger config reload via SIP"
 msgstr ""
 
@@ -3591,11 +3591,11 @@ msgstr ""
 msgid "Failed to update NCOS pattern"
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/Customer.pm:1427
+#: lib/NGCP/Panel/Controller/Customer.pm:1428
 msgid "Failed to update PBX device"
 msgstr "PBX Gerät aktualisieren fehlgeschlagen."
 
-#: lib/NGCP/Panel/Controller/Customer.pm:1222
+#: lib/NGCP/Panel/Controller/Customer.pm:1223
 msgid "Failed to update PBX group"
 msgstr ""
 
@@ -4622,7 +4622,7 @@ msgstr "Ungültiges Profil ID"
 msgid "Invalid profile package id detected"
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/Customer.pm:1458
+#: lib/NGCP/Panel/Controller/Customer.pm:1459
 msgid "Invalid provisioning subscriber id detected."
 msgstr "Ungültige Provisionining Subscriber ID"
 
@@ -5721,12 +5721,12 @@ msgstr ""
 msgid "PBX Call Queue"
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/Customer.pm:1317
-#: lib/NGCP/Panel/Controller/Customer.pm:1441
+#: lib/NGCP/Panel/Controller/Customer.pm:1318
+#: lib/NGCP/Panel/Controller/Customer.pm:1442
 msgid "PBX Device"
 msgstr "PBX-Gerät"
 
-#: lib/NGCP/Panel/Controller/Customer.pm:1490
+#: lib/NGCP/Panel/Controller/Customer.pm:1491
 msgid "PBX Device successfully deleted"
 msgstr "PBX-Gerät erfolgreich gelöscht"
 
@@ -5738,7 +5738,7 @@ msgstr "PBX-Geräte"
 msgid "PBX Extension"
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/Customer.pm:1136
+#: lib/NGCP/Panel/Controller/Customer.pm:1137
 msgid "PBX Group"
 msgstr "PBX-Gruppe"
 
@@ -5757,34 +5757,34 @@ msgstr "PBX-Gruppen-Einstellungen für %1@%2"
 msgid "PBX Groups"
 msgstr "PBX-Gruppen"
 
-#: lib/NGCP/Panel/Controller/Customer.pm:1295
+#: lib/NGCP/Panel/Controller/Customer.pm:1296
 msgid "PBX device successfully created"
 msgstr "PBX-Gerät erfolgreich erstellt"
 
-#: lib/NGCP/Panel/Controller/Customer.pm:1418
+#: lib/NGCP/Panel/Controller/Customer.pm:1419
 msgid "PBX device successfully updated"
 msgstr "PBX-Gerät erfolgreich aktualisiert"
 
 #. ($dev_id)
-#: lib/NGCP/Panel/Controller/Customer.pm:1339
+#: lib/NGCP/Panel/Controller/Customer.pm:1340
 msgid "PBX device with id %1 does not exist for this customer."
 msgstr "PBX-Gerät mit ID %1 existiert für diesen Kunden nicht."
 
 #. ($dev_id)
-#: lib/NGCP/Panel/Controller/Customer.pm:1329
+#: lib/NGCP/Panel/Controller/Customer.pm:1330
 msgid "PBX device with id %1 does not exist."
 msgstr "PXB-Gerät mit ID %1 existiert nicht."
 
-#: lib/NGCP/Panel/Controller/Customer.pm:1118
+#: lib/NGCP/Panel/Controller/Customer.pm:1119
 msgid "PBX group successfully created"
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/Customer.pm:1216
+#: lib/NGCP/Panel/Controller/Customer.pm:1217
 msgid "PBX group successfully updated"
 msgstr ""
 
 #. ($group_id)
-#: lib/NGCP/Panel/Controller/Customer.pm:1148
+#: lib/NGCP/Panel/Controller/Customer.pm:1149
 msgid "PBX group with id %1 does not exist."
 msgstr "PBX-Gruppe mit ID %1 existiert nicht."
 
@@ -7768,7 +7768,7 @@ msgstr "Vertraute Quelle erfolgreich gelöscht"
 msgid "Successfully deleted voicemail"
 msgstr "Sprachnachricht erfolgreich gelöscht"
 
-#: lib/NGCP/Panel/Controller/Customer.pm:1583
+#: lib/NGCP/Panel/Controller/Customer.pm:1584
 msgid "Successfully redirected request to device"
 msgstr "Anfrage erfolgreich an Gerät umgeleitet"
 
@@ -7798,7 +7798,7 @@ msgstr "Reseller erfolgreich terminiert"
 msgid "Successfully terminated subscriber"
 msgstr "Subscriber erfolgreich terminiert"
 
-#: lib/NGCP/Panel/Controller/Customer.pm:1561
+#: lib/NGCP/Panel/Controller/Customer.pm:1562
 msgid "Successfully triggered config reload via SIP"
 msgstr ""
 
