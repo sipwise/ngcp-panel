@@ -3,6 +3,8 @@ use Sipwise::Base;
 
 use Template;
 use Crypt::Rijndael;
+use Digest::MD5 qw/md5_hex/;
+use Storable qw/freeze/;
 use JSON qw(decode_json encode_json);
 use NGCP::Panel::Form::Device::Model;
 use NGCP::Panel::Form::Device::ModelAdmin;
@@ -1368,6 +1370,11 @@ sub dev_field_config :Chained('/') :PathPart('device/autoprov/config') :Args() {
     }
 
     my $data = $dev->profile->config->data;
+
+    my $var_hash = md5_hex(freeze $vars);
+    my $cfg_hash = md5_hex($data);
+    $vars->{checksum} = md5_hex($var_hash . $cfg_hash);
+
     my $processed_data = "";
     my $t = Template->new({
         PLUGIN_BASE => 'NGCP::Panel::Template::Plugin',
@@ -1422,6 +1429,7 @@ sub dev_field_bootstrap :Chained('/') :PathPart('device/autoprov/bootstrap') :Ar
         $did =~ s/^([^\=]+)\=0$/$1/;
         $did = lc $did;
         $did =~ s/\-[a-z]+$//;
+        $did =~ s/\-//g;
         if($did =~ /^[0-9a-f]{12}$/) {
             $c->log->debug("identified bootstrap path part '$did' as valid device id");
             $id = $did;
