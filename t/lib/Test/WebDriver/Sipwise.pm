@@ -3,22 +3,10 @@ use warnings;
 use strict;
 use Moo;
 use MooseX::Method::Signatures;
-extends 'Test::WebDriver';
+extends 'Selenium::Remote::Driver';
 
-method find(Str $scheme, Str $query) {
-    $self->find_element($query, $scheme);
-}
-
-method findclick(Str $scheme, Str $query) {
-    my $elem = $self->find($scheme, $query);
-    return 0 unless $elem;
-    return 0 unless $elem->is_displayed;
-    $elem->click;
-    return 1;
-}
-
-method select_if_unselected(Str $scheme, Str $query) {
-    my $elem = $self->find($scheme, $query);
+method select_if_unselected(Str $query, Str $scheme = "xpath") {
+    my $elem = $self->find_element($query, $scheme);
     return 0 unless $elem;
     return 0 unless $elem->is_displayed;
     if (! $elem->is_selected() ) {
@@ -27,8 +15,8 @@ method select_if_unselected(Str $scheme, Str $query) {
     return 1;
 }
 
-method findtext(Str $text, Any $ignore) {
-    return $self->find(xpath => "//*[contains(text(),\"$text\")]");
+method find_text(Str $text, Str $scheme = "xpath") {
+    return $self->find_element("//*[contains(text(),\"$text\")]", $scheme);
 }
 
 method save_screenshot() {
@@ -40,12 +28,11 @@ method save_screenshot() {
     close $FH;
 }
 
-method fill_element(ArrayRef $options, Any $ignore) {
-    my ($scheme, $query, $filltext) = @$options;
-    my $elem = $self->find($scheme => $query);
+method fill_element(Str $query, Str $scheme, Str $filltext) {
+    my $elem = $self->find_element($query, $scheme);
     return 0 unless $elem;
     return 0 unless $elem->is_displayed;
-    $elem->clear;
+    $elem->clear();
     $elem->send_keys($filltext);
     return 1;
 }
