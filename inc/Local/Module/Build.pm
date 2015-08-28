@@ -185,7 +185,7 @@ method ACTION_test_servers {
 method ACTION_test_selenium {
     $self->depends_on('code');
     $self->_test_preconditions;
-    $self->test_files('t/*_selenium.t t/admin-login.t');
+    $self->test_files('t/selenium/*.t');
     $self->generic_test(type => 'default');
 }
 
