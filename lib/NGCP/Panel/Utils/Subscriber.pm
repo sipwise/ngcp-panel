@@ -1235,7 +1235,7 @@ sub apply_rewrite {
         $match = [ $match ] if(ref $match ne "ARRAY");
 
         $replace = shift @{ $replace } if(ref $replace eq "ARRAY");
-        $replace =~ s/\\(\d{1})/\$$1/g;
+        $replace =~ s/\\(\d{1})/\${$1}/g;
 
         $replace =~ s/\"/\\"/g;
         $replace = qq{"$replace"};
