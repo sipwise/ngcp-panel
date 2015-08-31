@@ -1,3 +1,12 @@
+ngcp-panel (1.7.1.37+0~mr3.7.1.37) unstable; urgency=medium
+
+  [ Andreas Granig ]
+  * [f1f6796] MT#14747 Pass fw query as url path.
+
+  [ Sipwise Jenkins Builder ]
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Mon, 31 Aug 2015 11:02:43 +0200
+
 ngcp-panel (1.7.1.36+0~mr3.7.1.36) unstable; urgency=medium
 
   [ Irina Peshinskaya ]
