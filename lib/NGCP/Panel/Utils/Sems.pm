@@ -176,9 +176,9 @@ sub clear_audio_cache {
     my @services;
     if ($group_name eq "pbx" )  {
         @services = (@pbx);
-    } elsif ($group_name eq "digits") {
+    } elsif ($group_name =~ /^(music_on_hold|digits)$/) {
         @services = (@pbx, "appserver");
-    } elsif ($group_name =~ /^(|music_on_hold|voucher_recharge|play_balance|conference|calling_card)$/) {
+    } elsif ($group_name =~ /^(voucher_recharge|play_balance|conference|calling_card)$/) {
         @services = ("appserver");
     }
 
