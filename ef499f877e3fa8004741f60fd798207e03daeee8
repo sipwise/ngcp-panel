@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "da6255ed_fc692826",
+        "filename": "lib/NGCP/Panel/Utils/Sems.pm",
+        "patchSetId": 1
+      },
+      "lineNbr": 183,
+      "author": {
+        "id": 1000004
+      },
+      "writtenOn": "2015-08-31T13:46:03Z",
+      "side": 1,
+      "message": "we should move them into the config and define there the lists and change this block of code to be universal. we cannot change here it every time a new app comes that requires the cache to be cleared.",
+      "range": {
+        "startLine": 179,
+        "startChar": 0,
+        "endLine": 183,
+        "endChar": 5
+      },
+      "revId": "ef499f877e3fa8004741f60fd798207e03daeee8",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    }
+  ]
+}
