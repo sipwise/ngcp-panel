@@ -1244,8 +1244,8 @@ sub apply_rewrite {
         $replace = shift @{ $replace } if(ref $replace eq "ARRAY");
         $replace =~ s/\\(\d{1})/\$$1/g;
 
-        $replace =~ s/\"/\\"/g;
-        $replace = qq{"$replace"};
+        $replace =~ s/\'/\\'/g;
+        $replace = qq{'$replace'};
 
         my $found;
         #print ">>>>>>>>>>> apply matches\n";
