@@ -1,3 +1,15 @@
+ngcp-panel (1.7.2.25+0~mr3.7.2.25) unstable; urgency=medium
+
+  [ Gerhard Jungwirth ]
+  * [7163743] MT#14365 only dispatch to sems-pbx when pbx is enabled
+
+  [ Andrew Pogrebennyk ]
+  * [5bd86e2] MT#13007 MT#13251 fix MoH reload
+
+  [ Sipwise Jenkins Builder ]
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Tue, 01 Sep 2015 15:32:50 +0200
+
 ngcp-panel (1.7.2.24+0~mr3.7.2.24) unstable; urgency=medium
 
   [ Irina Peshinskaya ]
