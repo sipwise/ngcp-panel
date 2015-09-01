@@ -1,0 +1,10 @@
+Source: ngcp-panel-tests-selenium
+Section: admin
+Priority: extra
+Maintainer: Sipwise Development Team <support@sipwise.com>
+Build-Depends: libcapture-tiny-perl,
+               libchild-perl,
+               libmoosex-method-signatures-perl,
+               libtrycatch-perl,
+Standards-Version: 3.9.6
+Homepage: http://sipwise.com/
