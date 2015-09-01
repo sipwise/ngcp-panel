@@ -208,7 +208,8 @@ sub create :Chained('list_customer') :PathPart('create') :Args(0) {
 
                 NGCP::Panel::Utils::ProfilePackages::create_initial_contract_balance(schema => $schema,
                     contract => $contract,
-                    profile => $contract->billing_mappings->find($contract->get_column('bmid'))->billing_profile,);                    
+                    #bm_actual => $contract->billing_mappings->find($contract->get_column('bmid')),
+                );
                 #NGCP::Panel::Utils::Contract::create_contract_balance(
                 #    c => $c,
                 #    profile => $contract->billing_mappings->find($contract->get_column('bmid'))->billing_profile, #$billing_profile,
@@ -487,6 +488,7 @@ sub edit :Chained('base_restricted') :PathPart('edit') :Args(0) {
                 }
                 my $mappings_to_create = [];
                 my $delete_mappings = 0;
+                my $set_package = ($form->values->{billing_profile_definition} // 'id') eq 'package';
                 NGCP::Panel::Utils::Contract::prepare_billing_mappings(
                     c => $c,
                     resource => $form->values,
@@ -511,8 +513,6 @@ sub edit :Chained('base_restricted') :PathPart('edit') :Args(0) {
                     $contract->billing_mappings->create($mapping); 
                 }
                 $contract = $c->stash->{contract_rs}->first;
-                $billing_mapping = $contract->billing_mappings->find($contract->get_column('bmid'));
-                $billing_profile = $billing_mapping->billing_profile;
 
                 my $balance = NGCP::Panel::Utils::ProfilePackages::catchup_contract_balances(c => $c,
                     contract => $contract,
@@ -523,7 +523,11 @@ sub edit :Chained('base_restricted') :PathPart('edit') :Args(0) {
                     old_package => $old_package,
                     balance => $balance,
                     now => $now,
+                    profiles_added => ($set_package ? scalar @$mappings_to_create : 0),
                     );
+
+                $billing_mapping = $contract->billing_mappings->find($contract->get_column('bmid'));
+                $billing_profile = $billing_mapping->billing_profile;
                 
                 my $new_ext_id = $contract->external_id // '';
 
@@ -741,6 +745,7 @@ sub subscriber_create :Chained('base_restricted') :PathPart('subscriber/create')
         my $billing_subscriber;
         try {
             my $schema = $c->model('DB');
+            $schema->set_transaction_isolation('READ COMMITTED');
             $schema->txn_do(sub {
                 my $preferences = {};
                 my $pbx_group_ids = [];
@@ -801,6 +806,7 @@ sub subscriber_create :Chained('base_restricted') :PathPart('subscriber/create')
                     admin_default => 0,
                     preferences => $preferences,
                 );
+                NGCP::Panel::Utils::ProfilePackages::underrun_lock_subscriber(c => $c, subscriber => $billing_subscriber);
 
                 if($pbx && !$pbxadmin && $form->value->{alias_select}) {
                     NGCP::Panel::Utils::Subscriber::update_subadmin_sub_aliases(
@@ -963,6 +969,10 @@ sub edit_balance :Chained('base_restricted') :PathPart('balance/edit') :Args(0) 
                 $balance = NGCP::Panel::Utils::ProfilePackages::get_contract_balance(c => $c,
                             contract => $contract,
                             now => $now);
+                $balance = NGCP::Panel::Utils::ProfilePackages::underrun_update_balance(c => $c,
+                    balance =>$balance,
+                    now => $now,
+                    new_cash_balance => $form->values->{cash_balance} );                
                 $balance->update($form->values); 
             });
             NGCP::Panel::Utils::Message->info(
@@ -1076,6 +1086,7 @@ sub pbx_group_create :Chained('base') :PathPart('pbx/group/create') :Args(0) {
     if($posted && $form->validated) {
         try {
             my $schema = $c->model('DB');
+            $schema->set_transaction_isolation('READ COMMITTED');
             $schema->txn_do( sub {
                 my $preferences = {};
                 my $pilot = $c->stash->{pilot};
@@ -1107,6 +1118,7 @@ sub pbx_group_create :Chained('base') :PathPart('pbx/group/create') :Args(0) {
                     admin_default => 0,
                     preferences => $preferences,
                 );
+                NGCP::Panel::Utils::ProfilePackages::underrun_lock_subscriber(c => $c, subscriber => $billing_subscriber);
                 NGCP::Panel::Utils::Events::insert(
                     c => $c, schema => $schema, type => 'start_huntgroup',
                     subscriber => $billing_subscriber, old_status => undef, 
