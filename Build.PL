@@ -28,7 +28,6 @@ my $builder = Local::Module::Build->new(
         'Catalyst::Plugin::Authentication' => 0,
         'Catalyst::Plugin::Authorization::Roles' => 0,
         'Catalyst::Plugin::ConfigLoader' => 0,
-        'Catalyst::Plugin::EnableMiddleware' => 0,
         'Catalyst::Plugin::I18N' => 0,
         'Catalyst::Plugin::Session' => 0,
         'Catalyst::Plugin::Session::Store::FastMmap' => 0,
