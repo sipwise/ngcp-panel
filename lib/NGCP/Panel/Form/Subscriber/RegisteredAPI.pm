@@ -7,6 +7,7 @@ use Moose::Util::TypeConstraints;
 use HTML::FormHandler::Widget::Block::Bootstrap;
 
 has '+widget_wrapper' => ( default => 'Bootstrap' );
+has '+use_fields_for_input_without_param' => ( default => 1 );
 has_field 'submitid' => ( type => 'Hidden' );
 
 has_field 'subscriber_id' => (
@@ -36,22 +37,18 @@ has_field 'expires' => (
     },
 );
 
-has_field 'user_agent' => (
-    type => 'Text',
-    required => 1,
-    element_attr => {
-        rel => ['tooltip'],
-        title => ['The user agent registered at this contact.']
-    },
-);
-
 has_field 'q' => (
     type => 'Float',
-    required => 0,
+    required => 1,
+    range_start => -1,
+    range_end => 1,
+    decimal_symbol => '.',
+    default => 1,
     element_attr => {
         rel => ['tooltip'],
         title => ['The priority (q-value) of the registration.']
     },
+    #validate_method => \&validate_q,
 );
 
 has_field 'nat' => (
@@ -62,7 +59,14 @@ has_field 'nat' => (
         title => ['The registered contact is detected as behind NAT.']
     },
 );
-
+sub validate_q {
+    my ($self,$field) = @_;
+    if(($field->value < -1) || ($field->value > 1)){
+        $field->add_error('Value of "q" must be a float value between -1 and 1'); 
+        return;
+    }
+    return 1;
+}
 =pod
 sub validate {
     my $self = shift;
