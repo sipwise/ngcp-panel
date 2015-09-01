@@ -100,6 +100,7 @@ sub validate_form {
     my $form = $params{form};
     my $run = $params{run} // 1;
     my $exceptions = $params{exceptions} // [];
+    my $form_params = $params{form_params} // {};
     push @{ $exceptions }, "external_id";
 
     my @normalized = ();
@@ -119,7 +120,7 @@ sub validate_form {
 
     if($run) {
         # check keys/vals
-        $form->process(params => $resource, posted => 1);
+        $form->process(params => $resource, posted => 1, %$form_params );
         unless($form->validated) {
             my $e = join '; ', map { 
                 sprintf 'field=\'%s\', input=\'%s\', errors=\'%s\'', 
