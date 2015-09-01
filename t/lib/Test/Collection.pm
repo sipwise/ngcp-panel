@@ -465,6 +465,7 @@ sub clear_test_data_all{
         my($req,$res,$content) = $self->request_delete($self->base_uri.$del_uri);
         $self->http_code_msg(204, "check delete item $del_uri",$res,$content);
     }
+    $self->clear_data_created();
 }
 sub clear_test_data_dependent{
     my($self,$uri) = @_;
@@ -547,6 +548,10 @@ sub check_created_listed{
         delete $created_items->{$_};
     }
     is(scalar(keys %{$created_items}), 0, "check if all created test items have been foundin the list");
+    if(scalar(keys %{$created_items})){
+        print Dumper $created_items;
+        print Dumper $listed;
+    }
 }
 
 sub check_item_get{
