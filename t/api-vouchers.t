@@ -64,7 +64,7 @@ my $voucher_uri;
 }
 {
     my($res,$content) = $test_machine->request_patch(  [ { op => 'replace', path => '/valid_until', value => '2099-01-01 00:00:00' } ] );
-    $test_machine->http_code_msg(422, "check patched invalid billing_zone_id",$res,,$content);
+    $test_machine->http_code_msg(422, "check patched invalid billing_zone_id",$res,$content);
 }
 
 $test_machine->clear_test_data_all();
