@@ -9,6 +9,7 @@ use HTTP::Status qw(:constants);
 use MooseX::ClassAttribute qw(class_has);
 use NGCP::Panel::Utils::ValidateJSON qw();
 use NGCP::Panel::Utils::DateTime;
+use NGCP::Panel::Utils::ProfilePackages qw();
 use Path::Tiny qw(path);
 use Safe::Isa qw($_isa);
 BEGIN { extends 'Catalyst::Controller::ActionRole'; }
@@ -53,12 +54,18 @@ sub auto :Private {
 
 sub GET :Allow {
     my ($self, $c, $id) = @_;
+    $c->model('DB')->set_transaction_isolation('READ COMMITTED');
+    my $guard = $c->model('DB')->txn_scope_guard;
     {
         last unless $self->valid_id($c, $id);
         my $subscriber = $self->item_by_id($c, $id, "subscribers");
         last unless $self->resource_exists($c, subscriberpreference => $subscriber);
 
+        my $balance = NGCP::Panel::Utils::ProfilePackages::get_contract_balance(c => $c,
+                contract => $subscriber->contract,
+            ); #apply underrun lock level
         my $hal = $self->hal_from_item($c, $subscriber, "subscribers");
+        $guard->commit; #potential db write ops in hal_from
 
         my $response = HTTP::Response->new(HTTP_OK, undef, HTTP::Headers->new(
             (map { # XXX Data::HAL must be able to generate links with multiple relations
@@ -94,6 +101,7 @@ sub OPTIONS :Allow {
 
 sub PATCH :Allow {
     my ($self, $c, $id) = @_;
+    $c->model('DB')->set_transaction_isolation('READ COMMITTED');    
     my $guard = $c->model('DB')->txn_scope_guard;
     {
         my $preference = $self->require_preference($c);
@@ -109,6 +117,10 @@ sub PATCH :Allow {
 
         my $subscriber = $self->item_by_id($c, $id, "subscribers");
         last unless $self->resource_exists($c, subscriberpreferences => $subscriber);
+        my $balance = NGCP::Panel::Utils::ProfilePackages::get_contract_balance(c => $c,
+                contract => $subscriber->contract,
+            ); #apply underrun lock level
+        
         my $old_resource = $self->get_resource($c, $subscriber, "subscribers");
         my $resource = $self->apply_patch($c, $old_resource, $json);
         last unless $resource;
@@ -142,6 +154,7 @@ sub PATCH :Allow {
 
 sub PUT :Allow {
     my ($self, $c, $id) = @_;
+    $c->model('DB')->set_transaction_isolation('READ COMMITTED');        
     my $guard = $c->model('DB')->txn_scope_guard;
     {
         my $preference = $self->require_preference($c);
@@ -149,6 +162,9 @@ sub PUT :Allow {
 
         my $subscriber = $self->item_by_id($c, $id, "subscribers");
         last unless $self->resource_exists($c, systemcontact => $subscriber);
+        my $balance = NGCP::Panel::Utils::ProfilePackages::get_contract_balance(c => $c,
+                contract => $subscriber->contract,
+            ); #apply underrun lock level        
         my $resource = $self->get_valid_put_data(
             c => $c,
             id => $id,
