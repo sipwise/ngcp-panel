@@ -544,6 +544,10 @@ sub check_created_listed{
         delete $created_items->{$_};
     }
     is(scalar(keys %{$created_items}), 0, "check if all created test items have been foundin the list");
+    if(scalar(keys %{$created_items})){
+        print Dumper $created_items;
+        print Dumper $listed;
+    }
 }
 
 sub check_item_get{

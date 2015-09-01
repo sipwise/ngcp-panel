@@ -152,6 +152,8 @@ sub update_item {
         form => $form,
         resource => $resource,
         exceptions => [ "subscriber_id" ],
+        run => 1,
+        #form_params => { 'use_fields_for_input_without_param' => 1 },
     );
 
     my $sub = $self->subscriber_from_id($c, $resource->{subscriber_id});
@@ -161,23 +163,30 @@ sub update_item {
         $self->delete_item($c, $item);
     }
     my $cflags = 0;
-    $cflags |= 64 if($resource->{nat});
+    $cflags |= 64 if($form->values->{nat});
     NGCP::Panel::Utils::Kamailio::create_location($c,
         $sub->provisioning_voip_subscriber,
-        $resource->{contact},
-        $resource->{q},
-        $resource->{expires},
+        $form->values->{contact},
+        $form->values->{q},
+        $form->values->{expires},
         0, # flags
         $cflags
     );
-
-    unless($create) {
+    
+    if($create) {
+        NGCP::Panel::Utils::Kamailio::flush($c);
+        my $rs = $self->item_rs($c);
+        my $aor = NGCP::Panel::Utils::Kamailio::get_aor( $c, $sub->provisioning_voip_subscriber );
+        $item = $rs->search_rs(undef, {
+            'me.contact' => $form->values->{contact},
+            'me.aor' => $aor,
+        })->first;
+    }else{
         # we need to reload it since we changed the content via an external
         # xmlrpc call
         $item->discard_changes;
-
-        return $item;
     }
+    return $item;
 }
 
 sub delete_item {
@@ -187,6 +196,7 @@ sub delete_item {
     return unless($sub);
     NGCP::Panel::Utils::Kamailio::delete_location_contact($c,
         $sub, $item->contact);
+    NGCP::Panel::Utils::Kamailio::flush($c);
     return 1;
 }
 
