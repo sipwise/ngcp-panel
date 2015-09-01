@@ -1,34 +1,17 @@
 package NGCP::Panel::Controller::Login;
 
-use Sipwise::Base;
+use Moose;
 
 BEGIN { extends 'Catalyst::Controller'; }
 
 use NGCP::Panel::Form::Login;
-
-=head1 NAME
-
-NGCP::Panel::Controller::Login - Catalyst Controller
-
-=head1 DESCRIPTION
-
-Catalyst Controller.
-
-=head1 METHODS
-
-=cut
-
-
-=head2 index
-
-=cut
 
 sub index :Path Form {
     my ( $self, $c, $realm ) = @_;
 
     $c->log->debug("*** Login::index");
     $realm = 'subscriber' 
-        unless($realm and ($realm eq 'admin' or $realm eq 'reseller'));
+        unless($realm && $realm eq 'admin');
 
     my $posted = ($c->req->method eq 'POST');
     my $form = NGCP::Panel::Form::Login->new;
@@ -115,6 +98,29 @@ sub index :Path Form {
     $c->stash(template => 'login/login.tt');
 }
 
+__PACKAGE__->meta->make_immutable;
+
+1;
+
+__END__
+
+=encoding UTF-8
+
+=head1 NAME
+
+NGCP::Panel::Controller::Login - Catalyst Controller
+
+=head1 DESCRIPTION
+
+Catalyst Controller.
+
+=head1 METHODS
+
+=cut
+
+=head2 index
+
+=cut
 
 =head1 AUTHOR
 
@@ -127,7 +133,4 @@ it under the same terms as Perl itself.
 
 =cut
 
-__PACKAGE__->meta->make_immutable;
-
-1;
 # vim: set tabstop=4 expandtab:
