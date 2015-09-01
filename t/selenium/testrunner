@@ -1,0 +1,53 @@
+#!/bin/bash
+
+if ! [ -f /.dockerinit ]; then
+  echo "Not running inside docker, exiting to avoid data damage." >&2
+  exit 1
+fi
+
+set -e
+set -u
+
+PASSWORD="selenium"
+
+if [ -z "${1:-}" ] ; then
+  echo "Usage: $0 <testsystem>" >&2
+  echo
+  echo "Usage example: $0 192.168.88.162"
+  exit 1
+fi
+
+SERVER="${1}"
+
+# vnc
+echo "Setting VNC password"
+printf '%s\n%s\n\n' "${PASSWORD}" "${PASSWORD}" | vncpasswd >/dev/null
+xvnc_process=$(pgrep -f 'Xvnc4 :99' || true)
+if [ -n "${xvnc_process:-}" ] ; then
+  echo "Warning: existing VNC server found, not restarting Xvnc4 process (PID: $xvnc_process)."
+else
+  echo "Starting VNCserver on display :99"
+  vncserver -geometry 1280x1024 :99
+fi
+
+# selenium
+pkill -f '/usr/bin/java -jar /home/selenium/selenium-server-standalone.jar' || true
+# NOTE: this could silently fail because selenium-server-standalone.jar is missing a daemonize option
+DISPLAY=:99 /usr/bin/java -jar /home/selenium/selenium-server-standalone.jar -trustAllSSLCertificates -log /home/selenium/selenium.log &
+
+echo "################################################################################"
+echo "Finished main setup, now running tests ..."
+echo "Selenium server log file available at /home/selenium/selenium.log"
+echo "Watch at test runs by connecting via VNC (enter password '${PASSWORD}'):"
+echo "vncviewer geometry=1280x1024x16 \$(docker inspect \$(docker ps -l -q) | jq -r '.[0].NetworkSettings.IPAddress'):5999"
+
+RC=0
+CATALYST_SERVER="https://${SERVER}:1443/" prove -v --color -Pretty -l -It/lib t/selenium/*.t | tee -a /code/selenium.pretty || RC=$?
+#CATALYST_SERVER=https://${SERVER}:1443/ prove --formatter TAP::Formatter::JUnit -l -It/lib t/selenium/*.t | tee -a /code/selenium.xml || RC=$?
+echo "Finished test execution, test execution returned with exit code ${RC}."
+for file in /code/selenium.pretty /code/selenium.xml ; do
+  if [ -f "$file" ] ; then
+    echo "Test results available at ${file}"
+  fi
+done
+echo "################################################################################"
