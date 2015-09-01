@@ -35,8 +35,15 @@ sub send_fax {
     } else {
         push @sendfax_args, '-o '.$number;
     }
-    
-    push @sendfax_args, '-h '.($c->config->{faxserver}->{ip} // '127.0.0.1');
+
+    my $hosts_config = $c->config->{faxserver}->{ip};
+    my @hosts;
+    if(ref($hosts_config) eq "ARRAY") {
+        @hosts = @{$hosts_config};
+    } else {
+        @hosts = ($hosts_config // '127.0.0.1',);
+    }
+
     if($args{notify}) {
         push @sendfax_args, '-D';
         push @sendfax_args, "-f '$sender <$args{notify}>'";
@@ -71,13 +78,16 @@ sub send_fax {
     } else {
         $filename = eval { $args{upload}->tempname };
     }
-    push @sendfax_args, $filename;
 
     my $sa = join(' ', @sendfax_args);
-    my $output = `$sendfax $sa 2>&1`;
-    my $exit = $?;
-    unlink $filename;
+    my ($exit,$output);
+    for my $host (@hosts) {
+        $output = `$sendfax $sa -h $host $filename 2>&1`;
+        $exit = $?;
+        last if $exit eq '0';
+    }
 
+    unlink $filename;
     if($exit ne '0') {
         chomp $output;
         die $output."\n";
