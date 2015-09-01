@@ -22,6 +22,30 @@
       "revId": "ef499f877e3fa8004741f60fd798207e03daeee8",
       "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "da6255ed_37a47b56",
+        "filename": "lib/NGCP/Panel/Utils/Sems.pm",
+        "patchSetId": 1
+      },
+      "lineNbr": 183,
+      "author": {
+        "id": 1000005
+      },
+      "writtenOn": "2015-09-01T12:52:19Z",
+      "side": 1,
+      "message": "I don\u0027t know whether that\u0027s necessary here. It\u0027s not something the customer should change, and it\u0027s quite a complex logic to expose in config. I don\u0027t know if it will change often in the future.",
+      "parentUuid": "da6255ed_fc692826",
+      "range": {
+        "startLine": 179,
+        "startChar": 0,
+        "endLine": 183,
+        "endChar": 5
+      },
+      "revId": "ef499f877e3fa8004741f60fd798207e03daeee8",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
     }
   ]
 }
