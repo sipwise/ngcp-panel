@@ -1,3 +1,26 @@
+ngcp-panel (1.9.1.9+0~mr4.0.1.9) unstable; urgency=medium
+
+  [ Andreas Granig ]
+  * [aa5b118] MT#14715 Return uuid in /api/subscribers/
+  * [3f9927e] MT#14741 Fix reseller ops for /api/trustedsources/
+  * [a12aad0] MT#14747 Pass fw query as url path.
+
+  [ Gerhard Jungwirth ]
+  * [0a9fc74] MT#14391 Fix editing aliases without primary number
+  * [2d10809] MT#14107 provide option to force language
+
+  [ Irina Peshinskaya ]
+  * [5c0e413] MT#14653 Don't delete billing_profile_id from API form for HTML::Formhandler
+  * [480014d] MT#14653 Add required field billing_profile_id to billing zone api
+  * [ee4e342] MT#14653 Fix the tests
+
+  [ Andrew Pogrebennyk ]
+  * [dd14c1c] MT#13007 MT#13251 fix MoH reload
+
+  [ Sipwise Jenkins Builder ]
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Tue, 01 Sep 2015 15:35:33 +0200
+
 ngcp-panel (1.9.1.8+0~mr4.0.1.8) unstable; urgency=medium
 
   [ Rene Krenn ]
