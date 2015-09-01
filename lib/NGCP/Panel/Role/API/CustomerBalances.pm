@@ -40,7 +40,7 @@ sub hal_from_item {
     my ($self, $c, $item, $form) = @_;
     
     my %resource = $item->get_inflated_columns;
-    $resource{cash_balance} /= 100;
+    $resource{cash_balance} /= 100.0;
 
     my $hal = Data::HAL->new(
         links => [
@@ -76,38 +76,14 @@ sub hal_from_item {
 sub item_by_id {
     my ($self, $c, $id, $now) = @_;
 
-    #my $stime = NGCP::Panel::Utils::DateTime::current_local()->truncate(to => 'month');
-    #my $etime = $stime->clone->add(months => 1)->subtract(seconds => 1);
-  
-    #my $item_rs = $self->item_rs($c);
-    #$item_rs = $item_rs
-    #    ->search({
-    #        'me.id' => $id,
-    #    },{
-    #        '+select' => 'billing_mappings.id',
-    #        '+as' => 'bmid',
-    #    });
-
     return NGCP::Panel::Utils::ProfilePackages::get_contract_balance(c => $c,
         contract => $self->item_rs($c)->find($id),
         now => $now);
         
-    #my $item = $item_rs->first;
-    #my $billing_mapping = $item->billing_mappings->find($item->get_column('bmid'));
-
-    #my $balance = NGCP::Panel::Utils::Contract::get_contract_balance(
-    #    c => $c,
-    #    contract => $item,
-    #    profile => $billing_mapping->billing_profile,
-    #    stime => $stime,
-    #    etime => $etime,
-    #);
-
-    #return $balance;
 }
 
 sub update_item {
-    my ($self, $c, $item, $old_resource, $resource, $form) = @_;
+    my ($self, $c, $item, $old_resource, $resource, $form, $now) = @_;
 
     $form //= $self->get_form($c);
     return unless $self->validate_form(
@@ -116,7 +92,12 @@ sub update_item {
         resource => $resource,
     );
 
-    $resource->{cash_balance} *= 100;
+    $item = NGCP::Panel::Utils::ProfilePackages::underrun_update_balance(c => $c,
+        balance => $item,
+        now => $now,
+        new_cash_balance => $resource->{cash_balance} * 100.0);
+    
+    $resource->{cash_balance} *= 100.0;
     $item->update($resource);
 
     return $item;
