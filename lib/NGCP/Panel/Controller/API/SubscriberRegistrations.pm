@@ -94,7 +94,9 @@ sub GET :Allow {
     my $rows = $c->request->params->{rows} // 10;
     {
         my $items = $self->item_rs($c);
+        $c->log->debug($items->as_query);
         (my $total_count, $items) = $self->paginate_order_collection($c, $items);
+        $c->log->debug($items->as_query);
         my (@embedded, @links);
         my $form = $self->get_form($c);
         for my $item ($items->all) {
@@ -169,12 +171,11 @@ sub POST :Allow {
 
         my $form = $self->get_form($c);
         my $create = 1;
-        $self->update_item($c, undef, undef, $resource, $form, $create);
-
+        my $item = $self->update_item($c, undef, undef, $resource, $form, $create);
+        last unless $item;
+        
         $c->response->status(HTTP_CREATED);
-        # TODO: can we somehow get our item back from an xmlrpc call? probably not as
-        # it is async
-        #$c->response->header(Location => sprintf('/%s%d', $c->request->path, $item->id));
+        $c->response->header(Location => sprintf('/%s%d', $c->request->path, $item->id));
         $c->response->body(q());
     }
     return;
