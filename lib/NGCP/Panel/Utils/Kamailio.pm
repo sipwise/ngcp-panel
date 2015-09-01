@@ -45,7 +45,7 @@ EOF
 sub create_location {
     my ($c, $prov_subscriber, $contact, $q, $expires, $flags, $cflags) = @_;
 
-    my $aor = $prov_subscriber->username . '@' . $prov_subscriber->domain->domain;
+    my $aor = get_aor($c, $prov_subscriber);
     my $path = $c->config->{sip}->{path} || '<sip:127.0.0.1:5060;lr>';
     if($expires) {
         $expires = NGCP::Panel::Utils::DateTime::from_string($expires)->epoch;
@@ -74,6 +74,22 @@ sub create_location {
 EOF
 }
 
+sub flush {
+    my ($c) = @_;
+
+    my $dispatcher = NGCP::Panel::Utils::XMLDispatcher->new;
+    my $ret = $dispatcher->dispatch($c, "proxy-ng", 1, 1, <<EOF );
+<?xml version="1.0" ?>
+<methodCall>
+<methodName>ul.flush</methodName>
+</methodCall>
+EOF
+}
+
+sub get_aor{
+    my ($c, $prov_subscriber) = @_;
+    return $prov_subscriber->username . '@' . $prov_subscriber->domain->domain;
+}
 1;
 
 # vim: set tabstop=4 expandtab:
