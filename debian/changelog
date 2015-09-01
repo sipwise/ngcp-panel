@@ -1,3 +1,18 @@
+ngcp-panel (1.8.3.3+0~mr3.8.3.3) unstable; urgency=medium
+
+  [ Irina Peshinskaya ]
+  * [0e1e413] MT#14653 Fix the tests
+
+  [ Gerhard Jungwirth ]
+  * [b874a0a] MT#14107 provide option to force language
+
+  [ Andrew Pogrebennyk ]
+  * [81dd665] MT#13007 MT#13251 fix MoH reload
+
+  [ Sipwise Jenkins Builder ]
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Tue, 01 Sep 2015 15:34:29 +0200
+
 ngcp-panel (1.8.3.2+0~mr3.8.3.2) unstable; urgency=medium
 
   [ Andreas Granig ]
