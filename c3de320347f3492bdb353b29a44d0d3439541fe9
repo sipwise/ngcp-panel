@@ -109,6 +109,24 @@
     },
     {
       "key": {
+        "uuid": "da6255ed_faac878e",
+        "filename": "t/ngcp-panel-selenium/admin-login.t",
+        "patchSetId": 4
+      },
+      "lineNbr": 5,
+      "author": {
+        "id": 1000005
+      },
+      "writtenOn": "2015-09-02T12:51:44Z",
+      "side": 1,
+      "message": "Selenium::Remote::Driver::[Addons|Additions|Extensions] sounds good to me. Keep in mind you also have to change the Directory/Filename.",
+      "parentUuid": "da6255ed_fa5487cb",
+      "revId": "c3de320347f3492bdb353b29a44d0d3439541fe9",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "da6255ed_172296b9",
         "filename": "t/ngcp-panel-selenium/admin-login.t",
         "patchSetId": 4
@@ -192,6 +210,115 @@
       "side": 1,
       "message": "ACK",
       "parentUuid": "da6255ed_5a25d3a9",
+      "revId": "c3de320347f3492bdb353b29a44d0d3439541fe9",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "da6255ed_7ab097dd",
+        "filename": "t/ngcp-panel-selenium/admin-login.t",
+        "patchSetId": 4
+      },
+      "lineNbr": 13,
+      "author": {
+        "id": 1000005
+      },
+      "writtenOn": "2015-09-02T12:51:44Z",
+      "side": 1,
+      "message": "are you sure, maximize is the correct way to handle this? Our css settings guarantee a certain view at this resolution, which is also a standard. With maximize you depend on your test machine. And should someone execute the tests on their laptop, they will be different again. Isn\u0027t it all about creating a uniform testing environment?\n\nThe hardcoded values can be factored out to an env variable though. (or to Selenium::Remote::Driver::[Addons|Additions|Extensions])",
+      "parentUuid": "da6255ed_da30a3ea",
+      "revId": "c3de320347f3492bdb353b29a44d0d3439541fe9",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "da6255ed_5ab5d3cb",
+        "filename": "t/ngcp-panel-selenium/admin-login.t",
+        "patchSetId": 4
+      },
+      "lineNbr": 17,
+      "author": {
+        "id": 1000005
+      },
+      "writtenOn": "2015-09-02T12:51:44Z",
+      "side": 1,
+      "message": "thinking about it, we could factor all this out to our package.",
+      "range": {
+        "startLine": 16,
+        "startChar": 0,
+        "endLine": 17,
+        "endChar": 28
+      },
+      "revId": "c3de320347f3492bdb353b29a44d0d3439541fe9",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "da6255ed_3aca1f50",
+        "filename": "t/ngcp-panel-selenium/controller_billing_selenium.t",
+        "patchSetId": 4
+      },
+      "lineNbr": 101,
+      "author": {
+        "id": 1000005
+      },
+      "writtenOn": "2015-09-02T12:51:44Z",
+      "side": 1,
+      "message": "I guess here you trapped into the situation I told you about. you have many commands, but no corresponding test. Do you see why this complicates debugging?",
+      "revId": "c3de320347f3492bdb353b29a44d0d3439541fe9",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "da6255ed_3ad1fffb",
+        "filename": "t/ngcp-panel-selenium/controller_billing_selenium.t",
+        "patchSetId": 4
+      },
+      "lineNbr": 128,
+      "author": {
+        "id": 1000005
+      },
+      "writtenOn": "2015-09-02T12:51:44Z",
+      "side": 1,
+      "message": "sometimes we have\n$d-\u003efind_element(...) and sometimes we have\nok($d-\u003efind_element()) should we unify this? Should I think about a shortcut in our utils package?",
+      "revId": "c3de320347f3492bdb353b29a44d0d3439541fe9",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "da6255ed_ba2bafea",
+        "filename": "t/ngcp-panel-selenium/controller_domain_selenium.t",
+        "patchSetId": 4
+      },
+      "lineNbr": 2,
+      "author": {
+        "id": 1000005
+      },
+      "writtenOn": "2015-09-02T12:51:44Z",
+      "side": 1,
+      "message": "add like",
+      "revId": "c3de320347f3492bdb353b29a44d0d3439541fe9",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "da6255ed_5a039373",
+        "filename": "t/ngcp-panel-selenium/controller_domain_selenium.t",
+        "patchSetId": 4
+      },
+      "lineNbr": 52,
+      "author": {
+        "id": 1000005
+      },
+      "writtenOn": "2015-09-02T12:51:44Z",
+      "side": 1,
+      "message": "like($d-\u003elocation, qr!domain/\\d+/preferences!);\n\nuntested",
       "revId": "c3de320347f3492bdb353b29a44d0d3439541fe9",
       "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
       "unresolved": false
