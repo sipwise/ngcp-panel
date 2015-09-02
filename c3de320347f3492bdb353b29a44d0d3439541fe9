@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "da6255ed_f72ee2a4",
+        "filename": "t/ngcp-panel-selenium/admin-login.t",
+        "patchSetId": 4
+      },
+      "lineNbr": 5,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2015-09-02T08:03:38Z",
+      "side": 1,
+      "message": "At the \"Init\" it might be worth mentioning which test(file) is actually executed?",
+      "revId": "c3de320347f3492bdb353b29a44d0d3439541fe9",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "da6255ed_172296b9",
+        "filename": "t/ngcp-panel-selenium/admin-login.t",
+        "patchSetId": 4
+      },
+      "lineNbr": 13,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2015-09-02T08:03:38Z",
+      "side": 1,
+      "message": "I\u0027m not happy about this hardcoded window size setting here, I\u0027m aware that this was present already but we should try to get rid of it or at least make it globally configurable instead of hardcoding it at several places.",
+      "revId": "c3de320347f3492bdb353b29a44d0d3439541fe9",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    }
+  ]
+}
