@@ -91,6 +91,24 @@
     },
     {
       "key": {
+        "uuid": "da6255ed_fa5487cb",
+        "filename": "t/ngcp-panel-selenium/admin-login.t",
+        "patchSetId": 4
+      },
+      "lineNbr": 5,
+      "author": {
+        "id": 1000001
+      },
+      "writtenOn": "2015-09-02T10:04:51Z",
+      "side": 1,
+      "message": "but it is not  Test::WebDriver anymore.\nit is Selenium::Remote::Driver now.\n\nso, it can be Selenium::Remote::Driver::[Addons|Additions|Extensions] then. \n\nUp 2 Gerhard here",
+      "parentUuid": "da6255ed_fa3367f4",
+      "revId": "c3de320347f3492bdb353b29a44d0d3439541fe9",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "da6255ed_172296b9",
         "filename": "t/ngcp-panel-selenium/admin-login.t",
         "patchSetId": 4
