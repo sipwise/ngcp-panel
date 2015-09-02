@@ -55,6 +55,24 @@
     },
     {
       "key": {
+        "uuid": "da6255ed_3a3a1fce",
+        "filename": "t/ngcp-panel-selenium/admin-login.t",
+        "patchSetId": 4
+      },
+      "lineNbr": 5,
+      "author": {
+        "id": 1000001
+      },
+      "writtenOn": "2015-09-02T09:13:46Z",
+      "side": 1,
+      "message": "but then how should I name those Perl package\n  \nhttps://gerrit.mgm.sipwise.com/#/c/2552/4/t/lib/Test/WebDriver/Sipwise.pm\n\nwhich extends Selenium::Remote::Driver ?",
+      "parentUuid": "da6255ed_ba260fb9",
+      "revId": "c3de320347f3492bdb353b29a44d0d3439541fe9",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "da6255ed_172296b9",
         "filename": "t/ngcp-panel-selenium/admin-login.t",
         "patchSetId": 4
@@ -102,6 +120,24 @@
       "side": 1,
       "message": "Just tested again, works fine for me with:\n\n  $d-\u003emaximize_window();\n\nagainst libselenium-remote-driver-perl 0.26-1~bpo80+1 + iceweasel 38.2.1esr-1~deb8u1.",
       "parentUuid": "da6255ed_7712f263",
+      "revId": "c3de320347f3492bdb353b29a44d0d3439541fe9",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "da6255ed_5a25d3a9",
+        "filename": "t/ngcp-panel-selenium/admin-login.t",
+        "patchSetId": 4
+      },
+      "lineNbr": 13,
+      "author": {
+        "id": 1000001
+      },
+      "writtenOn": "2015-09-02T09:13:46Z",
+      "side": 1,
+      "message": "OK, lets try it when will test selenum in docker tomorrow.",
+      "parentUuid": "da6255ed_9a2b4b82",
       "revId": "c3de320347f3492bdb353b29a44d0d3439541fe9",
       "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
       "unresolved": false
