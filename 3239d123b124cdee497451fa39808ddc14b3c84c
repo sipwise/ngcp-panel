@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "da6255ed_773b12ec",
+        "filename": "lib/NGCP/Panel/Utils/Hylafax.pm",
+        "patchSetId": 4
+      },
+      "lineNbr": 88,
+      "author": {
+        "id": 1000004
+      },
+      "writtenOn": "2015-09-02T07:34:15Z",
+      "side": 1,
+      "message": "We could in my opinion balance it by either using a simple random or pull faxserver stats. For our software fax it does not matter at all but for the hardware fax there is a limitation of 16 active faxes per diva card. In reality however I hardly believe that will ever happen so we can leave it like this for now :)",
+      "range": {
+        "startLine": 84,
+        "startChar": 0,
+        "endLine": 88,
+        "endChar": 5
+      },
+      "revId": "3239d123b124cdee497451fa39808ddc14b3c84c",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    }
+  ]
+}
