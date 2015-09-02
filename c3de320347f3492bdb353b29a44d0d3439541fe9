@@ -37,6 +37,24 @@
     },
     {
       "key": {
+        "uuid": "da6255ed_ba260fb9",
+        "filename": "t/ngcp-panel-selenium/admin-login.t",
+        "patchSetId": 4
+      },
+      "lineNbr": 5,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2015-09-02T08:53:02Z",
+      "side": 1,
+      "message": "Oh right, this is going into the CDATA of the xunit output anyway, nevermind :)\n\nIMO we should get rid of the \"Sipwise\" naming overall, instead make it a Configuration or whatever package (Gerhard? :))",
+      "parentUuid": "da6255ed_5717ee51",
+      "revId": "c3de320347f3492bdb353b29a44d0d3439541fe9",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "da6255ed_172296b9",
         "filename": "t/ngcp-panel-selenium/admin-login.t",
         "patchSetId": 4
@@ -66,6 +84,24 @@
       "side": 1,
       "message": "as far as I know it is not so simple,\nsee https://code.google.com/p/selenium/issues/detail?id\u003d174\n\nI tried to use maximize() while it didn\u0027t work in Firefox for me :-(",
       "parentUuid": "da6255ed_172296b9",
+      "revId": "c3de320347f3492bdb353b29a44d0d3439541fe9",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "da6255ed_9a2b4b82",
+        "filename": "t/ngcp-panel-selenium/admin-login.t",
+        "patchSetId": 4
+      },
+      "lineNbr": 13,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2015-09-02T08:53:02Z",
+      "side": 1,
+      "message": "Just tested again, works fine for me with:\n\n  $d-\u003emaximize_window();\n\nagainst libselenium-remote-driver-perl 0.26-1~bpo80+1 + iceweasel 38.2.1esr-1~deb8u1.",
+      "parentUuid": "da6255ed_7712f263",
       "revId": "c3de320347f3492bdb353b29a44d0d3439541fe9",
       "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
       "unresolved": false
