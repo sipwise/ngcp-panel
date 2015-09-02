@@ -234,6 +234,24 @@
     },
     {
       "key": {
+        "uuid": "da6255ed_5daa6dd5",
+        "filename": "t/ngcp-panel-selenium/admin-login.t",
+        "patchSetId": 4
+      },
+      "lineNbr": 13,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2015-09-02T21:14:02Z",
+      "side": 1,
+      "message": "Hm, good point, indeed. For our build infrastructure we have static, defined and guaranteed resolutions actually and also for the docker approach that would be available, though for development I understand that people have different needs, I think handling that through env variables would be great to have, let\u0027s get this done on the dev meeting!",
+      "parentUuid": "da6255ed_7ab097dd",
+      "revId": "c3de320347f3492bdb353b29a44d0d3439541fe9",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "da6255ed_5ab5d3cb",
         "filename": "t/ngcp-panel-selenium/admin-login.t",
         "patchSetId": 4
@@ -245,6 +263,30 @@
       "writtenOn": "2015-09-02T12:51:44Z",
       "side": 1,
       "message": "thinking about it, we could factor all this out to our package.",
+      "range": {
+        "startLine": 16,
+        "startChar": 0,
+        "endLine": 17,
+        "endChar": 28
+      },
+      "revId": "c3de320347f3492bdb353b29a44d0d3439541fe9",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "da6255ed_3dafb9e5",
+        "filename": "t/ngcp-panel-selenium/admin-login.t",
+        "patchSetId": 4
+      },
+      "lineNbr": 17,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2015-09-02T21:14:02Z",
+      "side": 1,
+      "message": "ACK, this also corresponds to what I did for selenium-ruby back then, like:\n\nhttps://git.mgm.sipwise.com/gitweb/?p\u003dselenium-ruby.git;a\u003dblob;f\u003dlib/helpers/selenium.rb;hb\u003dHEAD\nhttps://git.mgm.sipwise.com/gitweb/?p\u003dselenium-ruby.git;a\u003dblob;f\u003dlib/ngcpconfig/main.rb;hb\u003dHEAD",
+      "parentUuid": "da6255ed_5ab5d3cb",
       "range": {
         "startLine": 16,
         "startChar": 0,
