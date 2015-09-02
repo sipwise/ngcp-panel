@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "da6255ed_5717ee51",
+        "filename": "t/ngcp-panel-selenium/admin-login.t",
+        "patchSetId": 4
+      },
+      "lineNbr": 5,
+      "author": {
+        "id": 1000001
+      },
+      "writtenOn": "2015-09-02T08:15:54Z",
+      "side": 1,
+      "message": "I see no point for this, as all the tests are started/initialised separately. so you never see the output together.\n\nI added those message just understood where the error happens (if any) before or after init Test::WebDriver::Sipwise ,\n\nactually we should rename it to Sipwise::Selenium::Remote::Driver  :-)",
+      "parentUuid": "da6255ed_f72ee2a4",
+      "revId": "c3de320347f3492bdb353b29a44d0d3439541fe9",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "da6255ed_172296b9",
         "filename": "t/ngcp-panel-selenium/admin-login.t",
         "patchSetId": 4
@@ -30,6 +48,24 @@
       "writtenOn": "2015-09-02T08:03:38Z",
       "side": 1,
       "message": "I\u0027m not happy about this hardcoded window size setting here, I\u0027m aware that this was present already but we should try to get rid of it or at least make it globally configurable instead of hardcoding it at several places.",
+      "revId": "c3de320347f3492bdb353b29a44d0d3439541fe9",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "da6255ed_7712f263",
+        "filename": "t/ngcp-panel-selenium/admin-login.t",
+        "patchSetId": 4
+      },
+      "lineNbr": 13,
+      "author": {
+        "id": 1000001
+      },
+      "writtenOn": "2015-09-02T08:15:54Z",
+      "side": 1,
+      "message": "as far as I know it is not so simple,\nsee https://code.google.com/p/selenium/issues/detail?id\u003d174\n\nI tried to use maximize() while it didn\u0027t work in Firefox for me :-(",
+      "parentUuid": "da6255ed_172296b9",
       "revId": "c3de320347f3492bdb353b29a44d0d3439541fe9",
       "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
       "unresolved": false
