@@ -2455,11 +2455,11 @@ sub _test_journal_collection {
                 delete $original->{content};
                 is_deeply($original,$journal,"compare created and embedded journal item deeply");
             }
-            ok((scalar keys $page_journals) == 0,"check if all embedded journal items are linked");
+            ok((scalar keys %{ $page_journals }) == 0,"check if all embedded journal items are linked");
                  
         } while($nexturi);
             
-        ok((scalar keys %$journals) == 0,"check if journal collection lists all created journal items" . (defined $total_count ? " ($total_count)" : ''));
+        ok((scalar keys %{ $journals }) == 0,"check if journal collection lists all created journal items" . (defined $total_count ? " ($total_count)" : ''));
     }
 }
 
