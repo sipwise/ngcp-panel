@@ -712,7 +712,7 @@ if (_get_allow_fake_client_time() && $enable_profile_packages) {
             delete $fetched->{content};
             is_deeply($interval,$fetched,"balanceintervals root collection: compare fetched and embedded item deeply");
         }
-        ok((scalar keys $page_items) == 0,"balanceintervals root collection: check if all embedded items are linked");
+        ok((scalar keys %{ $page_items }) == 0,"balanceintervals root collection: check if all embedded items are linked");
              
     } while($nexturi);
     
