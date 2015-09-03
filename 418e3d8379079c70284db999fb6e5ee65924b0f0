@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "da6255ed_80b63a89",
+        "filename": "t/api-all-links.t",
+        "patchSetId": 2
+      },
+      "lineNbr": 50,
+      "author": {
+        "id": 1000001
+      },
+      "writtenOn": "2015-09-03T21:40:05Z",
+      "side": 1,
+      "message": "AFAIK, grep is not a \"true Perl way\" while fine for me.",
+      "revId": "418e3d8379079c70284db999fb6e5ee65924b0f0",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    }
+  ]
+}
