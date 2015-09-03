@@ -2,6 +2,23 @@
   "comments": [
     {
       "key": {
+        "uuid": "da6255ed_4b2503aa",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 2
+      },
+      "lineNbr": 10,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2015-09-03T23:26:58Z",
+      "side": 1,
+      "message": "this should be s/squeeze/jessie/",
+      "revId": "418e3d8379079c70284db999fb6e5ee65924b0f0",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "da6255ed_80b63a89",
         "filename": "t/api-all-links.t",
         "patchSetId": 2
