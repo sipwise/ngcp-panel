@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "da6255ed_20ad4e32",
+        "filename": "lib/NGCP/Panel/Controller/Device.pm",
+        "patchSetId": 2
+      },
+      "lineNbr": 1272,
+      "author": {
+        "id": 1000001
+      },
+      "writtenOn": "2015-09-03T21:48:51Z",
+      "side": 1,
+      "message": "AFAIK, ldap config doesn\u0027t exist in mr3.8. is it OK?\n\nit works (c) Ira in hjabber",
+      "revId": "936d5dc9a3a487210bb75258ee764c51d9515b43",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    }
+  ]
+}
