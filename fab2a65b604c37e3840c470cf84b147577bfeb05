@@ -1,0 +1,118 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "da6255ed_20866eba",
+        "filename": "t/lib/Selenium/Remote/Driver/Extensions.pm",
+        "patchSetId": 1
+      },
+      "lineNbr": 6,
+      "author": {
+        "id": 1000001
+      },
+      "writtenOn": "2015-09-03T21:37:08Z",
+      "side": 1,
+      "message": "JFMI, why do we need MooseX::Method::Signatures; here?",
+      "range": {
+        "startLine": 6,
+        "startChar": 2,
+        "endLine": 6,
+        "endChar": 3
+      },
+      "revId": "fab2a65b604c37e3840c470cf84b147577bfeb05",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "da6255ed_60a46657",
+        "filename": "t/lib/Selenium/Remote/Driver/Extensions.pm",
+        "patchSetId": 1
+      },
+      "lineNbr": 23,
+      "author": {
+        "id": 1000001
+      },
+      "writtenOn": "2015-09-03T21:37:08Z",
+      "side": 1,
+      "message": "Does ENV available here? I do not know that for sure.",
+      "revId": "fab2a65b604c37e3840c470cf84b147577bfeb05",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "da6255ed_00fc8a3d",
+        "filename": "t/selenium/admin-login.t",
+        "patchSetId": 1
+      },
+      "lineNbr": 18,
+      "author": {
+        "id": 1000001
+      },
+      "writtenOn": "2015-09-03T21:37:08Z",
+      "side": 1,
+      "message": "I believe 16-18 should be moved to function login_ok,\nas it is a check that login has been performed successfully\n\nsuch code identical for all the tests.",
+      "range": {
+        "startLine": 16,
+        "startChar": 0,
+        "endLine": 18,
+        "endChar": 81
+      },
+      "revId": "fab2a65b604c37e3840c470cf84b147577bfeb05",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "da6255ed_e08f36cb",
+        "filename": "t/selenium/admin-login.t",
+        "patchSetId": 1
+      },
+      "lineNbr": 21,
+      "author": {
+        "id": 1000001
+      },
+      "writtenOn": "2015-09-03T21:37:08Z",
+      "side": 1,
+      "message": "please add here\n\n# vim: filetype\u003dperl",
+      "revId": "fab2a65b604c37e3840c470cf84b147577bfeb05",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "da6255ed_00936afb",
+        "filename": "t/selenium/controller_domain.t",
+        "patchSetId": 1
+      },
+      "lineNbr": 31,
+      "author": {
+        "id": 1000001
+      },
+      "writtenOn": "2015-09-03T21:37:08Z",
+      "side": 1,
+      "message": "xpath is default, we probably can delete it here.",
+      "revId": "fab2a65b604c37e3840c470cf84b147577bfeb05",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "da6255ed_c0bc326f",
+        "filename": "t/selenium/controller_reseller.t",
+        "patchSetId": 1
+      },
+      "lineNbr": 51,
+      "author": {
+        "id": 1000001
+      },
+      "writtenOn": "2015-09-03T21:37:08Z",
+      "side": 1,
+      "message": "either quote \u0027id\u0027 or delete line please",
+      "revId": "fab2a65b604c37e3840c470cf84b147577bfeb05",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    }
+  ]
+}

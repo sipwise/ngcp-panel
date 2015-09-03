@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "da6255ed_c09552e5",
+        "filename": "t/lib/Selenium/Remote/Driver/Extensions.pm",
+        "patchSetId": 1
+      },
+      "lineNbr": 22,
+      "author": {
+        "id": 1000001
+      },
+      "writtenOn": "2015-09-03T21:37:08Z",
+      "side": 0,
+      "message": "ACK for now, while I believe we will need it one day.\ncurrent http://search.cpan.org/~aivaturi/Selenium-Remote-Driver/lib/Selenium/Remote/Driver.pm#screenshot doesn\u0027t allow to specify filename to be saved. so it is hard to make several screenshots without name conflict.\n\nSure, drop it for now as current doesn\u0027t support filenames too",
+      "revId": "5879cfe0e15589922824a3ef15602bbc71fd4354",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    }
+  ]
+}
