@@ -1,3 +1,12 @@
+ngcp-panel (1.9.1.10+0~mr4.0.1.10) unstable; urgency=medium
+
+  [ Victor Seva ]
+  * [2257f0a] MT#14767 add missing dependence libcrypt-rc4-perl
+
+  [ Sipwise Jenkins Builder ]
+
+ -- Sipwise Jenkins Builder <jenkins@sipwise.com>  Fri, 04 Sep 2015 13:14:35 +0200
+
 ngcp-panel (1.9.1.9+0~mr4.0.1.9) unstable; urgency=medium
 
   [ Andreas Granig ]
