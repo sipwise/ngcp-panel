@@ -5,7 +5,7 @@ use Test::More;
 
 
 BEGIN {
-    unshift(@INC,'../lib');
+    unshift(@INC,'../../lib');
 }
 use NGCP::Panel::Utils::DateTime qw();
 

@@ -193,7 +193,7 @@ method ACTION_test_api {
     $self->depends_on('code');
     $self->_test_preconditions;
     $self->_download_certs;
-    $self->test_files('t/api-*.t');
+    $self->test_files('t/api-rest/*.t');
     $self->generic_test(type => 'default');
     unlink ($ENV{API_SSL_CLIENT_CERT}, $ENV{API_SSL_CA_CERT}); # created by _download_certs()
 }
