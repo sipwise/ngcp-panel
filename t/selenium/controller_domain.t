@@ -10,12 +10,8 @@ my $d = Selenium::Remote::Driver::Extensions->new (
     'browser_name' => $browsername,
     'proxy' => {'proxyType' => 'system'} );
 
-diag("Loading login page (logout first)");
-$d->set_window_size(1024,1280) if ($browsername ne "htmlunit");
-$d->get("$uri/logout"); # make sure we are logged out
-$d->get("$uri/login");
-$d->set_implicit_wait_timeout(10000);
-$d->default_finder('xpath');
+diag("Initialising browser setup");
+$d->init_browser_setup();
 
 diag("Do Admin Login");
 $d->find_text("Admin Sign In");

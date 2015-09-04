@@ -5,6 +5,19 @@ use Moo;
 use MooseX::Method::Signatures;
 extends 'Selenium::Remote::Driver';
 
+method init_browser_setup() {
+  my $browsername = $ENV{BROWSER_NAME} || "firefox";
+  $self->set_window_position(0, 50) if ($browsername ne "htmlunit");
+  $self->set_window_size(1024,1280) if ($browsername ne "htmlunit");
+
+  $self->default_finder('xpath');
+  $self->set_implicit_wait_timeout(10000);
+
+  my $uri = $ENV{CATALYST_SERVER} || 'http://localhost:3000';
+  $self->get("$uri/logout"); # make sure we are logged out
+  $self->get("$uri/login");
+}
+
 method select_if_unselected(Str $query, Str $scheme = "xpath") {
     my $elem = $self->find_element($query, $scheme);
     return 0 unless $elem;
