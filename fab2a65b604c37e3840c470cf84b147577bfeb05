@@ -120,6 +120,30 @@
     },
     {
       "key": {
+        "uuid": "da6255ed_a6eef689",
+        "filename": "t/lib/Selenium/Remote/Driver/Extensions.pm",
+        "patchSetId": 1
+      },
+      "lineNbr": 18,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2015-09-04T11:15:48Z",
+      "side": 1,
+      "message": "This is much better than what I did, thanks!\n\nCan you please also take care of the window_position, similar to what I did in line 10 of https://gerrit.mgm.sipwise.com/#/c/2592/2/t/lib/Selenium/Remote/Driver/Extensions.pm? In the docker setup the Firefox window is at the wrong position otherwise and it will annoy everywhere :) An environment variable to control that behavior would be absolutely fine for me too.",
+      "parentUuid": "da6255ed_26ce8684",
+      "range": {
+        "startLine": 12,
+        "startChar": 0,
+        "endLine": 18,
+        "endChar": 35
+      },
+      "revId": "fab2a65b604c37e3840c470cf84b147577bfeb05",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "da6255ed_60a46657",
         "filename": "t/lib/Selenium/Remote/Driver/Extensions.pm",
         "patchSetId": 1
