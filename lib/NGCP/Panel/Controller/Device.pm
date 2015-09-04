@@ -1507,7 +1507,9 @@ sub dev_field_bootstrap :Chained('/') :PathPart('device/autoprov/bootstrap') :Ar
 
     my $data = $dev->profile->config->data;
     my $processed_data = "";
-    my $t = Template->new;
+    my $t = Template->new({
+        PLUGIN_BASE => 'NGCP::Panel::Template::Plugin',
+    });
     $t->process(\$data, $vars, \$processed_data) || do {
         my $error = $t->error();
         my $msg = "error processing template, type=".$error->type.", info='".$error->info."'";
