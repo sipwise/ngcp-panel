@@ -49,6 +49,30 @@
     },
     {
       "key": {
+        "uuid": "da6255ed_86941238",
+        "filename": "t/lib/Selenium/Remote/Driver/Extensions.pm",
+        "patchSetId": 1
+      },
+      "lineNbr": 6,
+      "author": {
+        "id": 1000001
+      },
+      "writtenOn": "2015-09-04T10:52:24Z",
+      "side": 1,
+      "message": "Tnx! ack, then!",
+      "parentUuid": "da6255ed_0610224d",
+      "range": {
+        "startLine": 6,
+        "startChar": 2,
+        "endLine": 6,
+        "endChar": 3
+      },
+      "revId": "fab2a65b604c37e3840c470cf84b147577bfeb05",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "da6255ed_26ce8684",
         "filename": "t/lib/Selenium/Remote/Driver/Extensions.pm",
         "patchSetId": 1
@@ -60,6 +84,30 @@
       "writtenOn": "2015-09-04T10:45:08Z",
       "side": 1,
       "message": "what do you think of this? not as explicit as in your review, but with the same effect",
+      "range": {
+        "startLine": 12,
+        "startChar": 0,
+        "endLine": 18,
+        "endChar": 35
+      },
+      "revId": "fab2a65b604c37e3840c470cf84b147577bfeb05",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "da6255ed_c6720a49",
+        "filename": "t/lib/Selenium/Remote/Driver/Extensions.pm",
+        "patchSetId": 1
+      },
+      "lineNbr": 18,
+      "author": {
+        "id": 1000001
+      },
+      "writtenOn": "2015-09-04T10:52:24Z",
+      "side": 1,
+      "message": "up 2 Mika here",
+      "parentUuid": "da6255ed_26ce8684",
       "range": {
         "startLine": 12,
         "startChar": 0,
@@ -155,6 +203,24 @@
       "side": 1,
       "message": "yes, right",
       "parentUuid": "da6255ed_e6e62e44",
+      "revId": "fab2a65b604c37e3840c470cf84b147577bfeb05",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "da6255ed_e6750e33",
+        "filename": "t/lib/Selenium/Remote/Driver/Extensions.pm",
+        "patchSetId": 1
+      },
+      "lineNbr": 23,
+      "author": {
+        "id": 1000001
+      },
+      "writtenOn": "2015-09-04T10:52:24Z",
+      "side": 1,
+      "message": "Tnx!",
+      "parentUuid": "da6255ed_66b47ef2",
       "revId": "fab2a65b604c37e3840c470cf84b147577bfeb05",
       "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
       "unresolved": false
