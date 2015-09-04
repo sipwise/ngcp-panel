@@ -11,7 +11,7 @@ use DateTime::Format::Strptime qw();
 use DateTime::Format::ISO8601 qw();
 
 BEGIN {
-    unshift(@INC,'../lib');
+    unshift(@INC,'../../lib');
 }
 use NGCP::Panel::Utils::ProfilePackages qw();
 

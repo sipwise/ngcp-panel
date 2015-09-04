@@ -9,7 +9,7 @@ use JSON::PP;
 use LWP::Debug;
 
 BEGIN {
-    unshift(@INC,'../lib');
+    unshift(@INC,'../../lib');
 }
 use NGCP::Panel::Utils::Journal qw();
 

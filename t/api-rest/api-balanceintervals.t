@@ -23,7 +23,7 @@ use JSON::PP;
 use LWP::Debug;
 
 BEGIN {
-    unshift(@INC,'../lib');
+    unshift(@INC,'../../lib');
 }
 use NGCP::Panel::Utils::DateTime qw();
 use NGCP::Panel::Utils::ProfilePackages qw();
