@@ -49,6 +49,29 @@
     },
     {
       "key": {
+        "uuid": "da6255ed_26ce8684",
+        "filename": "t/lib/Selenium/Remote/Driver/Extensions.pm",
+        "patchSetId": 1
+      },
+      "lineNbr": 18,
+      "author": {
+        "id": 1000005
+      },
+      "writtenOn": "2015-09-04T10:45:08Z",
+      "side": 1,
+      "message": "what do you think of this? not as explicit as in your review, but with the same effect",
+      "range": {
+        "startLine": 12,
+        "startChar": 0,
+        "endLine": 18,
+        "endChar": 35
+      },
+      "revId": "fab2a65b604c37e3840c470cf84b147577bfeb05",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "da6255ed_60a46657",
         "filename": "t/lib/Selenium/Remote/Driver/Extensions.pm",
         "patchSetId": 1
@@ -114,6 +137,24 @@
       "side": 1,
       "message": "What I meant is that inc/Local/Module/Build.pm takes the argument provided in  the `./Build --server\u003d...` command line and assigns that to `$ENV{CATALYST_SERVER}`.",
       "parentUuid": "da6255ed_c619ea7a",
+      "revId": "fab2a65b604c37e3840c470cf84b147577bfeb05",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "da6255ed_66b47ef2",
+        "filename": "t/lib/Selenium/Remote/Driver/Extensions.pm",
+        "patchSetId": 1
+      },
+      "lineNbr": 23,
+      "author": {
+        "id": 1000005
+      },
+      "writtenOn": "2015-09-04T10:45:08Z",
+      "side": 1,
+      "message": "yes, right",
+      "parentUuid": "da6255ed_e6e62e44",
       "revId": "fab2a65b604c37e3840c470cf84b147577bfeb05",
       "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
       "unresolved": false
