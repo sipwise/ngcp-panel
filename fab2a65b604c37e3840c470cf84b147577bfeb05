@@ -102,6 +102,24 @@
     },
     {
       "key": {
+        "uuid": "da6255ed_e6e62e44",
+        "filename": "t/lib/Selenium/Remote/Driver/Extensions.pm",
+        "patchSetId": 1
+      },
+      "lineNbr": 23,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2015-09-04T10:30:29Z",
+      "side": 1,
+      "message": "What I meant is that inc/Local/Module/Build.pm takes the argument provided in  the `./Build --server\u003d...` command line and assigns that to `$ENV{CATALYST_SERVER}`.",
+      "parentUuid": "da6255ed_c619ea7a",
+      "revId": "fab2a65b604c37e3840c470cf84b147577bfeb05",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "da6255ed_00fc8a3d",
         "filename": "t/selenium/admin-login.t",
         "patchSetId": 1
