@@ -374,7 +374,19 @@
             <a class="accordion-toggle" data-toggle="collapse" data-parent="#customer_details" href="#collapse_balance">[% c.loc('Contract Balance') %]</a>
         </div>
         <div class="accordion-body collapse" id="collapse_balance">
+
             <div class="accordion-inner">
+
+                [% IF (c.user.roles == 'admin' || c.user.roles == 'reseller') && !c.user.read_only -%]
+                <span>
+                    [% IF c.user.billing_data -%]
+                    <a class="btn btn-primary btn-large" href="[% c.uri_for_action("/customer/topup_voucher", [contract.id]) %]"><i class="icon-repeat"></i> [% c.loc('Top-up Voucher') %]</a>
+                    [% END -%]     
+                    <a class="btn btn-primary btn-large" href="[% c.uri_for_action("/customer/topup_cash", [contract.id]) %]"><i class="icon-repeat"></i> [% c.loc('Top-up Cash') %]</a>
+                </span>
+                <div class="ngcp-separator"></div>
+                [% END -%]     
+
                 <table class="table table-bordered table-striped table-highlight table-hover">
                     <thead>
                         <tr>

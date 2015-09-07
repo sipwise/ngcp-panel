@@ -2,6 +2,7 @@ package NGCP::Panel::Utils::Voucher;
 use Sipwise::Base;
 use Crypt::Rijndael;
 use MIME::Base64;
+use NGCP::Panel::Utils::DateTime;
 
 sub encrypt_code {
     my ($c, $plain) = @_;
@@ -39,6 +40,103 @@ sub decrypt_code {
     # remove padding
     $plain =~ s/[\x01-\x1e]*$//;
     return $plain;
+}
+
+sub check_topup {
+    my %params = @_;
+    my ($c,$plain_code,$voucher_id,$now,$subscriber_id,$contract,$package_id,$schema,$err_code,$entities) = @params{qw/c plain_code voucher_id now subscriber_id contract package_id schema err_code entities/};
+    
+    $schema //= $c->model('DB');
+    $now //= NGCP::Panel::Utils::DateTime::current_local;
+    
+    if (!defined $err_code || ref $err_code ne 'CODE') {
+        $err_code = sub { return 0; };
+    }
+
+    my $reseller_id;
+    if($c->user->roles eq "admin") {
+    } elsif($c->user->roles eq "reseller") {
+        $reseller_id = $c->user->reseller_id;
+    }
+
+    if (defined $subscriber_id) {
+        my $subscriber = $schema->resultset('voip_subscribers')->find($subscriber_id);
+        unless($subscriber) {
+            return 0 unless &{$err_code}('Unknown subscriber_id.');
+        }
+        $contract //= $subscriber->contract;
+    }
+    
+    $entities->{contract} = $contract if defined $entities;
+
+    unless($contract->status eq 'active') {
+        return 0 unless &{$err_code}('Customer contract is not active.');
+    }
+    unless($contract->contact->reseller) {
+        return 0 unless &{$err_code}('Contract is not a customer contract.');
+    }
+    
+    # if reseller, check if subscriber_id belongs to the calling reseller
+    if($reseller_id && $reseller_id != $contract->contact->reseller_id) {
+        return 0 unless &{$err_code}('Subscriber customer contract belongs to another reseller.');
+    }
+    
+    if (defined $plain_code || defined $voucher_id) {
+
+        my $voucher;
+        
+        if (defined $plain_code) {
+            $voucher = $schema->resultset('vouchers')->find({
+                code => encrypt_code($c, $plain_code),
+                used_at => undef, #used_by_subscriber_id => undef,
+                valid_until => { '<=' => $now },
+                reseller_id => $contract->contact->reseller_id,
+            },{
+                for => 'update',
+            });
+            unless($voucher) {
+                return 0 unless &{$err_code}('Invalid voucher code or already used.');
+            }
+        } else {
+            $voucher = $schema->resultset('vouchers')->find({
+                id => $voucher_id,
+                used_at => undef, #used_by_subscriber_id => undef,
+                valid_until => { '<=' => $now },
+                reseller_id => $contract->contact->reseller_id,
+            },{
+                for => 'update',
+            });
+            unless($voucher) {
+                return 0 unless &{$err_code}('Invalid voucher ID or already used.');
+            }            
+        }
+
+        if($voucher->customer_id && $contract->id != $voucher->customer_id) {
+            return 0 unless &{$err_code}('Voucher is reserved for a different customer.');
+        }        
+        unless($voucher->reseller_id == $contract->contact->reseller_id) {
+            return 0 unless &{$err_code}('Voucher belongs to another reseller.');
+        }
+        
+        $entities->{voucher} = $voucher if defined $entities;
+    } else {
+        my $package = undef;
+        if (defined $package_id) {
+            $package = $schema->resultset('profile_packages')->find($package_id);
+            unless($package) {
+                return 0 unless &{$err_code}('Unknown profile package ID.');
+            }
+            if(defined $reseller_id && $reseller_id != $package->reseller_id) {
+                return 0 unless &{$err_code}('Profile package belongs to another reseller.');
+            }
+            $entities->{package} = $package if defined $entities;
+        }
+    }
+    
+    # TODO: add and check billing.vouchers.active flag for internal/emergency use
+    
+    return 1;
+    
 }
 
 sub get_datatable_cols {

@@ -173,7 +173,7 @@ sub edit :Chained('base') :PathPart('edit') :Args(0) {
     my ($self, $c) = @_;
 
     my $posted = ($c->request->method eq 'POST');
-    my $form = NGCP::Panel::Form::ProfilePackage::Reseller->new;
+    my $form = NGCP::Panel::Form::ProfilePackage::Reseller->new(ctx => $c);
     my $params = $c->stash->{package};
     $params->{initial_profiles} = $c->stash->{initial_profiles};
     $params->{underrun_profiles} = $c->stash->{underrun_profiles};
