@@ -1,0 +1,55 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "da6255ed_809e3555",
+        "filename": "lib/NGCP/Panel/Controller/Device.pm",
+        "patchSetId": 1
+      },
+      "lineNbr": 1203,
+      "author": {
+        "id": 1000007
+      },
+      "writtenOn": "2015-09-07T15:20:08Z",
+      "side": 1,
+      "message": "Audiocodes say it\u0027s a requirement for the file to end with .ini, so let\u0027s pass them this extension and strip it here.",
+      "revId": "372dfa616daefe7264fd245dc2d4f1d17920e995",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "da6255ed_40a03d90",
+        "filename": "lib/NGCP/Panel/Controller/Device.pm",
+        "patchSetId": 1
+      },
+      "lineNbr": 1262,
+      "author": {
+        "id": 1000007
+      },
+      "writtenOn": "2015-09-07T15:20:08Z",
+      "side": 1,
+      "message": "Snom requires a separate config file just for firmware fetching. Let it pass an ?opt\u003dxxx param here in the URL, and then in the config template we can serve two different configs in one template, depending on the opt param being set.",
+      "revId": "372dfa616daefe7264fd245dc2d4f1d17920e995",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "da6255ed_20ad4989",
+        "filename": "lib/NGCP/Panel/Controller/Device.pm",
+        "patchSetId": 1
+      },
+      "lineNbr": 1391,
+      "author": {
+        "id": 1000007
+      },
+      "writtenOn": "2015-09-07T15:20:08Z",
+      "side": 1,
+      "message": "Template strips trailing \\r\\n chars. Audiocodes claims they need it, so add some here, just to make sure.",
+      "revId": "372dfa616daefe7264fd245dc2d4f1d17920e995",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    }
+  ]
+}
