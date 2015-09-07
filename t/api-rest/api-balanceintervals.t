@@ -26,15 +26,16 @@ BEGIN {
     unshift(@INC,'../../lib');
 }
 use NGCP::Panel::Utils::DateTime qw();
-use NGCP::Panel::Utils::ProfilePackages qw();
+#use NGCP::Panel::Utils::ProfilePackages qw(); #since it depends on Utils::Subscribers and thus Sipwise::Base, importin it causes segfault when creating threads.. 
 
 my $is_local_env = 0;
-my $enable_profile_packages = NGCP::Panel::Utils::ProfilePackages::ENABLE_PROFILE_PACKAGES;
+#my $enable_profile_packages = NGCP::Panel::Utils::ProfilePackages::ENABLE_PROFILE_PACKAGES;
+my $enable_profile_packages = 1;
 
 use Config::General;
 my $catalyst_config;
 if ($is_local_env) {
-    $catalyst_config = Config::General->new("../ngcp_panel.conf");
+    $catalyst_config = Config::General->new("../../ngcp_panel.conf");
 } else {
     #taken 1:1 from /lib/NGCP/Panel.pm
     my $panel_config;
@@ -124,21 +125,80 @@ my $infinite_future;
 my $t = time;
 my $default_reseller_id = 1;
 
-# first, create a contact
 $req = HTTP::Request->new('POST', $uri.'/api/customercontacts/');
 $req->header('Content-Type' => 'application/json');
 $req->content(JSON::to_json({
-    firstname => "cust_contact_first",
-    lastname  => "cust_contact_last",
-    email     => "cust_contact\@custcontact.invalid",
+    firstname => "cust_contact_1_first",
+    lastname  => "cust_contact_1_last",
+    email     => "cust_contact1\@custcontact.invalid",
     reseller_id => $default_reseller_id,
 }));
 $res = $ua->request($req);
-is($res->code, 201, "create customer contact");
+is($res->code, 201, "create customer contact 1");
 $req = HTTP::Request->new('GET', $uri.'/'.$res->header('Location'));
 $res = $ua->request($req);
-is($res->code, 200, "fetch customer contact");
-my $custcontact = JSON::from_json($res->decoded_content);
+is($res->code, 200, "fetch customer contact 1");
+my $custcontact1 = JSON::from_json($res->decoded_content);
+
+$req = HTTP::Request->new('POST', $uri.'/api/customercontacts/');
+$req->header('Content-Type' => 'application/json');
+$req->content(JSON::to_json({
+    firstname => "cust_contact_2_first",
+    lastname  => "cust_contact_2_last",
+    email     => "cust_contact2\@custcontact.invalid",
+    reseller_id => $default_reseller_id,
+}));
+$res = $ua->request($req);
+is($res->code, 201, "create customer contact 2");
+$req = HTTP::Request->new('GET', $uri.'/'.$res->header('Location'));
+$res = $ua->request($req);
+is($res->code, 200, "fetch customer contact 2");
+my $custcontact2 = JSON::from_json($res->decoded_content);
+
+$req = HTTP::Request->new('POST', $uri.'/api/customercontacts/');
+$req->header('Content-Type' => 'application/json');
+$req->content(JSON::to_json({
+    firstname => "cust_contact_3_first",
+    lastname  => "cust_contact_3_last",
+    email     => "cust_contact3\@custcontact.invalid",
+    reseller_id => $default_reseller_id,
+}));
+$res = $ua->request($req);
+is($res->code, 201, "create customer contact 3");
+$req = HTTP::Request->new('GET', $uri.'/'.$res->header('Location'));
+$res = $ua->request($req);
+is($res->code, 200, "fetch customer contact 3");
+my $custcontact3 = JSON::from_json($res->decoded_content);
+
+$req = HTTP::Request->new('POST', $uri.'/api/customercontacts/');
+$req->header('Content-Type' => 'application/json');
+$req->content(JSON::to_json({
+    firstname => "cust_contact_4_first",
+    lastname  => "cust_contact_4_last",
+    email     => "cust_contact4\@custcontact.invalid",
+    reseller_id => $default_reseller_id,
+}));
+$res = $ua->request($req);
+is($res->code, 201, "create customer contact 4");
+$req = HTTP::Request->new('GET', $uri.'/'.$res->header('Location'));
+$res = $ua->request($req);
+is($res->code, 200, "fetch customer contact 4");
+my $custcontact4 = JSON::from_json($res->decoded_content);
+
+$req = HTTP::Request->new('POST', $uri.'/api/customercontacts/');
+$req->header('Content-Type' => 'application/json');
+$req->content(JSON::to_json({
+    firstname => "cust_contact_5_first",
+    lastname  => "cust_contact_5_last",
+    email     => "cust_contact5\@custcontact.invalid",
+    reseller_id => $default_reseller_id,
+}));
+$res = $ua->request($req);
+is($res->code, 201, "create customer contact 5");
+$req = HTTP::Request->new('GET', $uri.'/'.$res->header('Location'));
+$res = $ua->request($req);
+is($res->code, 200, "fetch customer contact 5");
+my $custcontact5 = JSON::from_json($res->decoded_content);
 
 $req = HTTP::Request->new('POST', $uri.'/api/domains/');
 $req->header('Content-Type' => 'application/json');
@@ -155,10 +215,10 @@ my $domain = JSON::from_json($res->decoded_content);
 
 
 my %customer_map :shared = ();
+my %subscriber_map :shared = ();
 
 my $package_map = {};
 my $voucher_map = {};
-my $subscriber_map = {};
 my $profile_map = {};
 
 my $billingprofile = _create_billing_profile("test_default");
@@ -168,7 +228,173 @@ my $tb_cnt;
 my $gantt_events;
 
 if (_get_allow_fake_client_time() && $enable_profile_packages) {
+    
     #goto THREADED;
+    {
+        my $package = _create_profile_package('create','hour',1);
+       
+        _set_time(NGCP::Panel::Utils::DateTime::from_string('2015-09-02 01:59:51'));
+       
+        my $customer = _create_customer($package,'hourly_interval');
+
+        _check_interval_history($customer,[
+            { start => '2015-09-02 00:00:00', stop => '2015-09-02 00:59:59' },
+            { start => '2015-09-02 01:00:00', stop => '2015-09-02 01:59:59' },
+        ]); 
+       
+        sleep(10);
+
+        _check_interval_history($customer,[
+            { start => '2015-09-02 00:00:00', stop => '2015-09-02 00:59:59' },
+            { start => '2015-09-02 01:00:00', stop => '2015-09-02 01:59:59' },
+            { start => '2015-09-02 02:00:00', stop => '2015-09-02 02:59:59' },
+        ]);    
+    
+        _set_time();
+    }
+    
+    {
+        my $profile_initial = _create_billing_profile('UNDERRUN1_INITIAL');
+        my $profile_topup = _create_billing_profile('UNDERRUN1_TOPUP');
+        my $profile_underrun = _create_billing_profile('UNDERRUN1_UNDERRUN');
+
+        my $package = _create_profile_package('1st','month',1, initial_balance => 100,
+                carry_over_mode => 'discard', underrun_lock_threshold => 50, underrun_lock_level => 4, underrun_profile_threshold => 50,
+                initial_profiles => [ { profile_id => $profile_initial->{id}, }, ],
+                topup_profiles => [ { profile_id => $profile_topup->{id}, }, ],
+                underrun_profiles => [ { profile_id => $profile_underrun->{id}, }, ],
+                );        
+        
+        _set_time(NGCP::Panel::Utils::DateTime::from_string('2015-06-14 13:00:00'));
+        
+        my $customer = _create_customer($package,'underrun_1');
+        my $subscriber = _create_subscriber($customer,'of customer underrun_1');
+        
+        _check_interval_history($customer,[
+            { start => '2015-06-01 00:00:00', stop => '2015-06-30 23:59:59', cash => 1, profile => $profile_initial->{id} },
+        ]);
+        is(_get_subscriber_lock_level($subscriber),undef,"check subscriber id " . $subscriber->{id} . " lock level");
+        
+        _set_cash_balance($customer,0.51);
+
+        _check_interval_history($customer,[
+            { start => '2015-06-01 00:00:00', stop => '2015-06-30 23:59:59', cash => 0.51, profile => $profile_initial->{id} },
+        ]);
+        is(_get_subscriber_lock_level($subscriber),undef,"check subscriber id " . $subscriber->{id} . " lock level");
+        
+        _set_cash_balance($customer,0.49);
+        
+        _check_interval_history($customer,[
+            { start => '2015-06-01 00:00:00', stop => '2015-06-30 23:59:59', cash => 0.49, profile => $profile_initial->{id} },
+        ]);
+        is(_get_actual_billing_profile_id($customer),$profile_underrun->{id},"check customer id " . $customer->{id} . " actual billing profile id");
+        is(_get_subscriber_lock_level($subscriber),4,"check subscriber id " . $subscriber->{id} . " lock level");
+        
+        _set_time(NGCP::Panel::Utils::DateTime::from_string('2015-07-14 13:00:00'));
+        
+        _perform_topup_cash($subscriber,0.5);
+
+        _check_interval_history($customer,[
+            { start => '2015-06-01 00:00:00', stop => '2015-06-30 23:59:59', cash => 0.49, profile => $profile_initial->{id} },
+            { start => '2015-07-01 00:00:00', stop => '2015-07-31 23:59:59', cash => 0.5, profile => $profile_underrun->{id} },
+        ]);
+        is(_get_actual_billing_profile_id($customer),$profile_topup->{id},"check customer id " . $customer->{id} . " actual billing profile id");
+        is(_get_subscriber_lock_level($subscriber),4,"check subscriber id " . $subscriber->{id} . " lock level");
+        
+        _set_time();
+        
+    }
+    
+    {
+        #underrun due to switching to package with lower thresholds:
+        my $profile_initial_1 = _create_billing_profile('UNDERRUN2_INITIAL_1');
+        my $profile_underrun_1 = _create_billing_profile('UNDERRUN2_UNDERRUN_1');
+        
+        my $profile_initial_2 = _create_billing_profile('UNDERRUN2_INITIAL_2');
+        my $profile_topup_2 = _create_billing_profile('UNDERRUN2_TOPUP_2');
+        my $profile_underrun_2 = _create_billing_profile('UNDERRUN2_UNDERRUN_2');
+    
+        my $package_1 = _create_profile_package('1st','month',1, initial_balance => 49,
+                carry_over_mode => 'discard', underrun_lock_threshold => 50, underrun_lock_level => 4, underrun_profile_threshold => 52,
+                initial_profiles => [ { profile_id => $profile_initial_1->{id}, }, ],
+                underrun_profiles => [ { profile_id => $profile_underrun_1->{id}, }, ],
+                );
+    
+        my $package_2 = _create_profile_package('topup_interval','month',1, initial_balance => 99,
+            carry_over_mode => 'carry_over', underrun_lock_threshold => 51, underrun_lock_level => 4, underrun_profile_threshold => 51,
+            initial_profiles => [ { profile_id => $profile_initial_2->{id}, }, ],
+            underrun_profiles => [ { profile_id => $profile_underrun_2->{id}, }, ],
+        );
+        _set_time(NGCP::Panel::Utils::DateTime::from_string('2015-01-23 13:00:00'));
+    
+        my $customer = _create_customer($package_1,'1');
+        my $subscriber = _create_subscriber($customer,'of customer 1');
+                
+        _check_interval_history($customer,[
+            { start => '2015-01-01 00:00:00', stop => '2015-01-31 23:59:59', cash => 0.49, profile => $profile_underrun_1->{id} },
+        ]);
+        is(_get_subscriber_lock_level($subscriber),4,"check subscriber id " . $subscriber->{id} . " lock level");
+            
+        _switch_package($customer,$package_2);
+            
+        _set_time(NGCP::Panel::Utils::DateTime::from_string('2015-01-24 13:00:00'));
+            
+        _perform_topup_cash($subscriber,0.01);
+                           
+        _check_interval_history($customer,[
+            { start => '2015-01-01 00:00:00', stop => '~2015-01-24 13:00:00', cash => 0.49, profile => $profile_underrun_1->{id} },
+            { start => '~2015-01-24 13:00:00', stop => '~2015-02-24 13:00:00', cash => 0.5, profile => $profile_underrun_2->{id} },
+        ]);
+        is(_get_subscriber_lock_level($subscriber),4,"check subscriber id " . $subscriber->{id} . " lock level");
+        
+        _set_time();
+    }
+        
+    {
+
+        my $profile_initial = _create_billing_profile('UNDERRUN3_INITIAL');
+        my $profile_topup = _create_billing_profile('UNDERRUN3_TOPUP');
+        my $profile_underrun = _create_billing_profile('UNDERRUN3_UNDERRUN');
+        
+        my $package = _create_profile_package('topup','month',1, 
+                carry_over_mode => 'carry_over', underrun_lock_threshold => 1000, underrun_lock_level => 4, underrun_profile_threshold => 1000,
+                topup_lock_level => 0,
+                initial_profiles => [ { profile_id => $profile_initial->{id}, }, ],
+                topup_profiles => [ { profile_id => $profile_topup->{id}, }, ],
+                underrun_profiles => [ { profile_id => $profile_underrun->{id}, }, ],
+                );
+        
+        _set_time(NGCP::Panel::Utils::DateTime::from_string('2015-07-20 13:00:00'));
+        
+        my $customer = _create_customer($package,'2');
+        my $subscriber = _create_subscriber($customer,'of customer 2');
+        
+        _check_interval_history($customer,[
+            { start => '~2015-07-20 13:00:00', stop => $infinite_future, cash => 0, profile => $profile_underrun->{id} },
+        ]);
+        is(_get_subscriber_lock_level($subscriber),4,"check subscriber id " . $subscriber->{id} . " lock level");
+        
+        _set_time(NGCP::Panel::Utils::DateTime::from_string('2015-07-20 13:00:10'));
+        
+        _perform_topup_cash($subscriber,5);
+        _check_interval_history($customer,[
+            { start => '~2015-07-20 13:00:00', stop => '~2015-07-20 13:00:10', cash => 0, profile => $profile_underrun->{id} },
+            { start => '~2015-07-20 13:00:10', stop => $infinite_future, cash => 5, profile => $profile_underrun->{id} },
+        ]);
+        is(_get_subscriber_lock_level($subscriber),undef,"check subscriber id " . $subscriber->{id} . " lock level");
+        
+        _set_time(NGCP::Panel::Utils::DateTime::from_string('2015-07-20 13:00:20'));
+        _perform_topup_cash($subscriber,5);
+        _check_interval_history($customer,[
+            { start => '~2015-07-20 13:00:00', stop => '~2015-07-20 13:00:10', cash => 0, profile => $profile_underrun->{id} },
+            { start => '~2015-07-20 13:00:10', stop => '~2015-07-20 13:00:20', cash => 5, profile => $profile_underrun->{id} },
+            { start => '~2015-07-20 13:00:20', stop => $infinite_future, cash => 10, profile => $profile_topup->{id} },
+        ]);
+        is(_get_subscriber_lock_level($subscriber),undef,"check subscriber id " . $subscriber->{id} . " lock level");
+        
+        _set_time();
+    }
+    
     {
         #_start_recording();
         my $network_x = _create_billing_network_x();
@@ -595,7 +821,12 @@ if (_get_allow_fake_client_time() && $enable_profile_packages) {
         
         _set_time(NGCP::Panel::Utils::DateTime::from_string('2015-01-30 13:00:00'));
         
-        my $package = _create_profile_package('create','month',1,3);
+        my $profile_underrun = _create_billing_profile('UNDERRUN_NOTOPUP');
+        my $profile_topup = _create_billing_profile('TOPUP_NOTOPUP');
+        my $package = _create_profile_package('create','month',1, notopup_discard_intervals => 3,
+            initial_balance => 0, carry_over_mode => 'carry_over',
+            topup_profiles => [{ profile_id => $profile_topup->{id}, }, ],
+            underrun_profile_threshold => 1, underrun_profiles => [{ profile_id => $profile_underrun->{id}, }, ],);
         my $customer = _create_customer($package);
         my $subscriber = _create_subscriber($customer);
         my $v_notopup = _create_voucher(10,'notopup'.$t);
@@ -607,37 +838,229 @@ if (_get_allow_fake_client_time() && $enable_profile_packages) {
         _set_time(NGCP::Panel::Utils::DateTime::from_string('2015-06-01 13:00:00'));
         
         _check_interval_history($customer,[
-            { start => '2015-01-30 00:00:00', stop => '2015-02-27 23:59:59', cash => 10, topups => 1 }, #topup
-            { start => '2015-02-28 00:00:00', stop => '2015-03-29 23:59:59', cash => 10, topups => 0 },
-            { start => '2015-03-30 00:00:00', stop => '2015-04-29 23:59:59', cash => 10, topups => 0 },
-            { start => '2015-04-30 00:00:00', stop => '2015-05-29 23:59:59', cash => 10, topups => 0 },
-            { start => '2015-05-30 00:00:00', stop => '2015-06-29 23:59:59', cash => 0, topups => 0 },
+            { start => '2015-01-30 00:00:00', stop => '2015-02-27 23:59:59', cash => 10, topups => 1, profile => $profile_underrun->{id} }, #topup
+            { start => '2015-02-28 00:00:00', stop => '2015-03-29 23:59:59', cash => 10, topups => 0, profile => $profile_topup->{id} },
+            { start => '2015-03-30 00:00:00', stop => '2015-04-29 23:59:59', cash => 10, topups => 0, profile => $profile_topup->{id} },
+            { start => '2015-04-30 00:00:00', stop => '2015-05-29 23:59:59', cash => 10, topups => 0, profile => $profile_topup->{id} },
+            { start => '2015-05-30 00:00:00', stop => '2015-06-29 23:59:59', cash => 0, topups => 0, profile => $profile_underrun->{id} },
             #{ start => '2015-06-30 00:00:00', stop => '2015-07-29 23:59:59', cash => 0, topups => 0 },
         ]);        
         
         _set_time();
     }
-    #THREADED:
+
+    THREADED:
+    {
+        my $package = _create_profile_package('topup','month',1, 
+                carry_over_mode => 'carry_over', 
+                );        
+        
+        _set_time(NGCP::Panel::Utils::DateTime::from_string('2015-08-21 13:00:00'));
+        
+        my $customer = _create_customer($package,'multi_topup');
+        my $subscriber_1 = _create_subscriber($customer,'of customer multi_topup');
+        my $subscriber_2 = _create_subscriber($customer,'of customer multi_topup');
+        my $subscriber_3 = _create_subscriber($customer,'of customer multi_topup');
+        
+        _set_time(NGCP::Panel::Utils::DateTime::from_string('2015-08-22 13:00:00'));
+        
+        my $t_a = threads->create(sub { _perform_topup_cash($subscriber_1,2); });
+        sleep(1);
+        my $t_b = threads->create(sub { _perform_topup_cash($subscriber_2,2); });
+        sleep(1);
+        my $t_c = threads->create(sub { _perform_topup_cash($subscriber_3,2); });
+        $t_a->join();
+        $t_b->join();
+        $t_c->join();
+        
+        
+        _check_interval_history($customer,[
+            { start => '~2015-08-21 13:00:00', stop => '~2015-08-22 13:00:00', cash => 0, topups => 1 },
+            { start => '~2015-08-22 13:00:01', stop => '~2015-08-22 13:00:01', cash => 2, topups => 1 },
+            { start => '~2015-08-22 13:00:02', stop => '~2015-08-22 13:00:02', cash => 4, topups => 1 },
+            { start => '~2015-08-22 13:00:03', stop => $infinite_future, cash => 6, topups => 0 },
+            ]);
+        
+        _set_time();
+    }
+    
     if (_get_allow_delay_commit()) {
         _set_time(NGCP::Panel::Utils::DateTime::current_local->subtract(months => 3));
-        _create_customers_threaded(3);
+        _create_customers_threaded(3,undef,undef,$custcontact5);
+        _create_customers_threaded(3,undef,undef,$custcontact2);
+        _set_time();
+
+        my $t1 = time;
+        my $delay = 10; #15;
+    
+        my $t_a = threads->create(\&_fetch_customerbalances_worker,$delay,'id','asc',$custcontact2);
+        my $t_b = threads->create(\&_fetch_customerbalances_worker,$delay,'id','desc',$custcontact2);
+        my $t_c = threads->create(\&_fetch_customerbalances_worker,$delay,'id','asc',$custcontact5);
+        my $intervals_a = $t_a->join();
+        my $intervals_b = $t_b->join();
+        my $intervals_c = $t_c->join();
+        my $t2 = time;
+        #my $got_a = [ sort { $a->{id} <=> $b->{id} } @{ $intervals_b->{_embedded}->{'ngcp:balanceintervals'} } ]; #$a->{contract_id}
+        is($intervals_a->{total_count},3,"check total count of thread a results");
+        is($intervals_b->{total_count},3,"check total count of thread b results");
+        is($intervals_c->{total_count},scalar (grep { $_->{contact_id} == $custcontact5->{id} } values %customer_map),"check total count of thread c results");
+        my $got_asc = $intervals_a->{_embedded}->{'ngcp:customerbalances'};
+        my $got_desc = $intervals_b->{_embedded}->{'ngcp:customerbalances'};
+        if (!is_deeply($got_desc,[ reverse @{ $got_asc } ],'compare customerbalances collection results of threaded requests deeply')) {
+             diag(Dumper({asc => $got_asc, desc => $got_desc}));
+        }
+        ok($t2 - $t1 > 2*$delay,'expected delay to assume customerbalances requests were processed after another');
+        ok($t2 - $t1 < 3*$delay,'expected delay to assume only required contracts were locked');
+
+        $t1 = time;
+        $t_a = threads->create(\&_fetch_customerbalances_worker,$delay,'id','asc',$custcontact2);
+        $t_b = threads->create(\&_fetch_customerbalances_worker,$delay,'id','desc',$custcontact2);
+        $t_c = threads->create(\&_fetch_customerbalances_worker,$delay,'id','asc',$custcontact2);
+        $intervals_a = $t_a->join();
+        $intervals_b = $t_b->join();
+        $intervals_c = $t_c->join();
+        $t2 = time;
+        
+        is($intervals_a->{total_count},3,"check total count of thread a results");
+        is($intervals_b->{total_count},3,"check total count of thread b results");
+        is($intervals_c->{total_count},3,"check total count of thread c results");        
+        
+        ok($t2 - $t1 > 3*$delay,'expected delay to assume customerbalances requests were processed after another');        
+        
+    } else {
+        diag('allow_delay_commit not set, skipping ...');
+    }
+    
+    if (_get_allow_delay_commit()) {
+        _set_time(NGCP::Panel::Utils::DateTime::current_local->subtract(months => 3));
+        _create_customers_threaded(3,undef,undef,$custcontact5);
+        _create_customers_threaded(3,undef,undef,$custcontact3);
         _set_time();
         
         my $t1 = time;
-        my $delay = 2;
+        my $delay = 10; #15;
     
-        my $t_a = threads->create(\&_fetch_intervals_worker,$delay,'id','asc');
-        my $t_b = threads->create(\&_fetch_intervals_worker,$delay,'id','desc');
+        my $t_a = threads->create(\&_fetch_intervals_worker,$delay,'id','asc',$custcontact3);
+        my $t_b = threads->create(\&_fetch_intervals_worker,$delay,'id','desc',$custcontact3);
+        my $t_c = threads->create(\&_fetch_intervals_worker,$delay,'id','desc',$custcontact5);        
         my $intervals_a = $t_a->join();
         my $intervals_b = $t_b->join();
+        my $intervals_c = $t_c->join();
         my $t2 = time;
+        is($intervals_a->{total_count},3,"check total count of thread a results");
+        is($intervals_b->{total_count},3,"check total count of thread b results");
+        is($intervals_c->{total_count},scalar (grep { $_->{contact_id} == $custcontact5->{id} } values %customer_map),"check total count of thread c results");
         #my $got_a = [ sort { $a->{id} <=> $b->{id} } @{ $intervals_b->{_embedded}->{'ngcp:balanceintervals'} } ]; #$a->{contract_id}
         my $got_asc = $intervals_a->{_embedded}->{'ngcp:balanceintervals'};
         my $got_desc = $intervals_b->{_embedded}->{'ngcp:balanceintervals'};
         if (!is_deeply($got_desc,[ reverse @{ $got_asc } ],'compare interval collection results of threaded requests deeply')) {
              diag(Dumper({asc => $got_asc, desc => $got_desc}));
         }
-        ok($t2 - $t1 > 2*$delay,'expected delay to assume requests were processed after another');
+        ok($t2 - $t1 > 2*$delay,'expected delay to assume balanceintervals requests were processed after another');
+        ok($t2 - $t1 < 3*$delay,'expected delay to assume only required contracts were locked');
+
+        $t1 = time;
+        $t_a = threads->create(\&_fetch_intervals_worker,$delay,'id','asc',$custcontact3);
+        $t_b = threads->create(\&_fetch_intervals_worker,$delay,'id','desc',$custcontact3);
+        $t_c = threads->create(\&_fetch_intervals_worker,$delay,'id','desc',$custcontact3);                
+        $intervals_a = $t_a->join();
+        $intervals_b = $t_b->join();
+        $intervals_c = $t_c->join();
+        $t2 = time;
+        
+        is($intervals_a->{total_count},3,"check total count of thread a results");
+        is($intervals_b->{total_count},3,"check total count of thread b results");
+        is($intervals_c->{total_count},3,"check total count of thread c results");        
+        
+        ok($t2 - $t1 > 3*$delay,'expected delay to assume balanceintervals requests were processed after another');        
+        
+        
+    } else {
+        diag('allow_delay_commit not set, skipping ...');
+    }
+    
+    if (_get_allow_delay_commit()) {
+        my $package = _create_profile_package('create','month',1,initial_balance => 1, carry_over_mode => 'discard', underrun_lock_threshold => 1, underrun_lock_level => 4);
+        _set_time(NGCP::Panel::Utils::DateTime::from_string('2015-05-17 13:00:00'));
+        _create_customers_threaded(3,2,$package,$custcontact5);
+        _create_customers_threaded(3,2,$package,$custcontact4);
+        
+        my $t1 = time;
+        my $delay = 10.0; #15.0; #10.0; #2.0;
+        my $t_a = threads->create(\&_fetch_preferences_worker,$delay,'id','asc',$custcontact4);
+        my $t_b = threads->create(\&_fetch_preferences_worker,$delay,'id','desc',$custcontact4);
+        my $t_c = threads->create(\&_fetch_preferences_worker,$delay,'id','desc',$custcontact5);
+        my $prefs_a = $t_a->join();
+        my $prefs_b = $t_b->join();
+        my $prefs_c = $t_c->join();
+        my $t2 = time;
+        is($prefs_a->{total_count},2*3,"check total count of thread a results");
+        is($prefs_b->{total_count},2*3,"check total count of thread b results");
+        is($prefs_c->{total_count},scalar (grep { $customer_map{$_->{customer_id}}->{contact_id} == $custcontact5->{id} } values %subscriber_map),"check total count of thread c results");        
+        my $got_asc = $prefs_a->{_embedded}->{'ngcp:subscriberpreferences'};
+        my $got_desc = $prefs_b->{_embedded}->{'ngcp:subscriberpreferences'};
+        if (!is_deeply($got_desc,[ reverse @{ $got_asc } ],'compare subscriber preference collection results of threaded requests deeply')) {
+             diag(Dumper({asc => $got_asc, desc => $got_desc}));
+        }
+        ok($t2 - $t1 > 2*$delay,'expected delay to assume subscriberpreferences requests were processed after another');
+        ok($t2 - $t1 < 3*$delay,'expected delay to assume only required contracts were locked');
+        for (my $i = 0; $i < 2*3; $i++) {
+            is($got_desc->[$i]->{lock},undef,"check if subscriber is unlocked initially");
+        }
+
+        _set_time(NGCP::Panel::Utils::DateTime::from_string('2015-06-18 13:00:00'));
+        
+        $t1 = time;
+    
+        $t_a = threads->create(\&_fetch_preferences_worker,$delay,'id','asc',$custcontact4);
+        $t_b = threads->create(\&_fetch_preferences_worker,$delay,'id','desc',$custcontact4);
+        $t_c = threads->create(\&_fetch_preferences_worker,$delay,'id','desc',$custcontact5);
+        $prefs_a = $t_a->join();
+        $prefs_b = $t_b->join();
+        $prefs_c = $t_c->join();
+        $t2 = time;
+        is($prefs_a->{total_count},2*3,"check total count of thread a results");
+        is($prefs_b->{total_count},2*3,"check total count of thread b results");
+        is($prefs_c->{total_count},scalar (grep { $customer_map{$_->{customer_id}}->{contact_id} == $custcontact5->{id} } values %subscriber_map),"check total count of thread c results");                
+        $got_asc = $prefs_a->{_embedded}->{'ngcp:subscriberpreferences'};
+        $got_desc = $prefs_b->{_embedded}->{'ngcp:subscriberpreferences'};
+        if (!is_deeply($got_desc,[ reverse @{ $got_asc } ],'compare subscriber preference collection results of threaded requests deeply')) {
+             diag(Dumper({asc => $got_asc, desc => $got_desc}));
+        }
+        ok($t2 - $t1 > 2*$delay,'expected delay to assume subscriberpreferences requests were processed after another');
+        ok($t2 - $t1 < 3*$delay,'expected delay to assume only required contracts were locked');
+        for (my $i = 0; $i < 2*3; $i++) {
+            is($got_desc->[$i]->{lock},4,"check if subscriber is locked now");
+        }
+        
+        $t1 = time;
+        $t_a = threads->create(\&_fetch_preferences_worker,$delay,'id','asc',$custcontact4);
+        $t_b = threads->create(\&_fetch_preferences_worker,$delay,'id','desc',$custcontact4);
+        $t_c = threads->create(\&_fetch_preferences_worker,$delay,'id','desc',$custcontact4);
+        $prefs_a = $t_a->join();
+        $prefs_b = $t_b->join();
+        $prefs_c = $t_c->join();
+        $t2 = time;
+        
+        is($prefs_a->{total_count},2*3,"check total count of thread a results");
+        is($prefs_b->{total_count},2*3,"check total count of thread b results");
+        is($prefs_c->{total_count},2*3,"check total count of thread c results");
+        ok($t2 - $t1 > 3*$delay,'expected delay to assume subscriberpreferences requests were processed after another');        
+
+        $t1 = time;
+        $t_a = threads->create(\&_fetch_preferences_worker,$delay,'id','asc',$custcontact4);
+        sleep($delay/2.0);
+        my $last_customer_id = shift(@{[sort {$b <=> $a} keys %customer_map]});
+        _check_interval_history($customer_map{$last_customer_id},[
+            { start => '2015-05-17 00:00:00', stop => '2015-06-16 23:59:59', cash => 0.01, package_id => $package->{id}, profile => $billingprofile->{id} },
+            { start => '2015-06-17 00:00:00', stop => '2015-07-16 23:59:59', cash => 0, package_id => $package->{id}, profile => $billingprofile->{id} },
+            ]);
+        $t2 = time;
+        $t_a->join();
+
+        ok($t2 - $t1 > $delay,'expected delay to assume subscriberpreferences request locks contracts and an simultaneous access to contract id ' . $last_customer_id . ' is serialized');
+        
+        _set_time();
         
     } else {
         diag('allow_delay_commit not set, skipping ...');
@@ -647,77 +1070,79 @@ if (_get_allow_fake_client_time() && $enable_profile_packages) {
     diag('allow_fake_client_time not set, skipping ...');
 }
 
-{ #test balanceintervals root collection and item
-    _create_customers_threaded(3) unless _get_allow_fake_client_time() && $enable_profile_packages;
-    
-    my $total_count = (scalar keys %customer_map);
-    my $nexturi = $uri.'/api/balanceintervals/?page=1&rows=' . ((not defined $total_count or $total_count <= 2) ? 2 : $total_count - 1) . '&contact_id='.$custcontact->{id};
-    do {
-        $req = HTTP::Request->new('GET',$nexturi);
-        $req->header('X-Fake-Clienttime' => _get_fake_clienttime_now());
-        $req->header('X-Request-Identifier' => $req_identifier) if $req_identifier;
-        $res = $ua->request($req);
-        #$res = $ua->get($nexturi);
-        is($res->code, 200, "balanceintervals root collection: fetch balance intervals collection page");
-        my $collection = JSON::from_json($res->decoded_content);
-        my $selfuri = $uri . $collection->{_links}->{self}->{href};
-        is($selfuri, $nexturi, "balanceintervals root collection: check _links.self.href of collection");
-        my $colluri = URI->new($selfuri);
-
-        ok(defined $total_count ? ($collection->{total_count} == $total_count) : ($collection->{total_count} > 0), "balanceintervals root collection: check 'total_count' of collection");
-
-        my %q = $colluri->query_form;
-        ok(exists $q{page} && exists $q{rows}, "balanceintervals root collection: check existence of 'page' and 'row' in 'self'");
-        my $page = int($q{page});
-        my $rows = int($q{rows});
-        if($page == 1) {
-            ok(!exists $collection->{_links}->{prev}->{href}, "balanceintervals root collection: check absence of 'prev' on first page");
-        } else {
-            ok(exists $collection->{_links}->{prev}->{href}, "balanceintervals root collection: check existence of 'prev'");
-        }
-        if(($collection->{total_count} / $rows) <= $page) {
-            ok(!exists $collection->{_links}->{next}->{href}, "balanceintervals root collection: check absence of 'next' on last page");
-        } else {
-            ok(exists $collection->{_links}->{next}->{href}, "balanceintervals root collection: check existence of 'next'");
-        }
-
-        if($collection->{_links}->{next}->{href}) {
-            $nexturi = $uri . $collection->{_links}->{next}->{href};
-        } else {
-            $nexturi = undef;
-        }
-
-        # TODO: I'd expect that to be an array ref in any case!
-        ok(ref $collection->{_links}->{'ngcp:balanceintervals'} eq "ARRAY", "balanceintervals root collection: check if 'ngcp:balanceintervals' is array");
+for my $custcontact ($custcontact1,$custcontact2,$custcontact3,$custcontact4,$custcontact5) {
+    { #test balanceintervals root collection and item
+        _create_customers_threaded(3,undef,undef,$custcontact); # unless _get_allow_fake_client_time() && $enable_profile_packages;
         
-        my $page_items = {};
-
-        foreach my $interval_link (@{ $collection->{_links}->{'ngcp:balanceintervals'} }) {
-            #delete $customers{$c->{href}};
-            #ok(exists $journals->{$journal->{href}},"check page journal item link");
-            
-            $req = HTTP::Request->new('GET',$uri . $interval_link->{href});
+        my $total_count = scalar grep { $_->{contact_id} == $custcontact->{id} } values %customer_map; #(scalar keys %customer_map);
+        my $nexturi = $uri.'/api/balanceintervals/?page=1&rows=' . ((not defined $total_count or $total_count <= 2) ? 2 : $total_count - 1) . '&contact_id='.$custcontact->{id};
+        do {
+            $req = HTTP::Request->new('GET',$nexturi);
             $req->header('X-Fake-Clienttime' => _get_fake_clienttime_now());
             $req->header('X-Request-Identifier' => $req_identifier) if $req_identifier;
-            
             $res = $ua->request($req);
-            is($res->code, 200, "balanceintervals root collection: fetch page balance interval item");
-            my $interval = JSON::from_json($res->decoded_content);
-            
-            $page_items->{$interval->{id}} = $interval;
-        }
-        foreach my $interval (@{ $collection->{_embedded}->{'ngcp:balanceintervals'} }) {
-            ok(exists $page_items->{$interval->{id}},"balanceintervals root collection: check existence of linked item among embedded");
-            my $fetched = delete $page_items->{$interval->{id}};
-            delete $fetched->{content};
-            is_deeply($interval,$fetched,"balanceintervals root collection: compare fetched and embedded item deeply");
-        }
-        ok((scalar keys %{ $page_items }) == 0,"balanceintervals root collection: check if all embedded items are linked");
-             
-    } while($nexturi);
+            #$res = $ua->get($nexturi);
+            is($res->code, 200, "balanceintervals root collection: fetch balance intervals collection page");
+            my $collection = JSON::from_json($res->decoded_content);
+            my $selfuri = $uri . $collection->{_links}->{self}->{href};
+            is($selfuri, $nexturi, "balanceintervals root collection: check _links.self.href of collection");
+            my $colluri = URI->new($selfuri);
     
+            ok(defined $total_count ? ($collection->{total_count} == $total_count) : ($collection->{total_count} > 0), "balanceintervals root collection: check 'total_count' of collection");
+    
+            my %q = $colluri->query_form;
+            ok(exists $q{page} && exists $q{rows}, "balanceintervals root collection: check existence of 'page' and 'row' in 'self'");
+            my $page = int($q{page});
+            my $rows = int($q{rows});
+            if($page == 1) {
+                ok(!exists $collection->{_links}->{prev}->{href}, "balanceintervals root collection: check absence of 'prev' on first page");
+            } else {
+                ok(exists $collection->{_links}->{prev}->{href}, "balanceintervals root collection: check existence of 'prev'");
+            }
+            if(($collection->{total_count} / $rows) <= $page) {
+                ok(!exists $collection->{_links}->{next}->{href}, "balanceintervals root collection: check absence of 'next' on last page");
+            } else {
+                ok(exists $collection->{_links}->{next}->{href}, "balanceintervals root collection: check existence of 'next'");
+            }
+    
+            if($collection->{_links}->{next}->{href}) {
+                $nexturi = $uri . $collection->{_links}->{next}->{href};
+            } else {
+                $nexturi = undef;
+            }
+    
+            # TODO: I'd expect that to be an array ref in any case!
+            ok(ref $collection->{_links}->{'ngcp:balanceintervals'} eq "ARRAY", "balanceintervals root collection: check if 'ngcp:balanceintervals' is array");
+            
+            my $page_items = {};
+    
+            foreach my $interval_link (@{ $collection->{_links}->{'ngcp:balanceintervals'} }) {
+                #delete $customers{$c->{href}};
+                #ok(exists $journals->{$journal->{href}},"check page journal item link");
+                
+                $req = HTTP::Request->new('GET',$uri . $interval_link->{href});
+                $req->header('X-Fake-Clienttime' => _get_fake_clienttime_now());
+                $req->header('X-Request-Identifier' => $req_identifier) if $req_identifier;
+                
+                $res = $ua->request($req);
+                is($res->code, 200, "balanceintervals root collection: fetch page balance interval item");
+                my $interval = JSON::from_json($res->decoded_content);
+                
+                $page_items->{$interval->{id}} = $interval;
+            }
+            foreach my $interval (@{ $collection->{_embedded}->{'ngcp:balanceintervals'} }) {
+                ok(exists $page_items->{$interval->{id}},"balanceintervals root collection: check existence of linked item among embedded");
+                my $fetched = delete $page_items->{$interval->{id}};
+                delete $fetched->{content};
+                is_deeply($interval,$fetched,"balanceintervals root collection: compare fetched and embedded item deeply");
+            }
+            ok((scalar keys %{ $page_items }) == 0,"balanceintervals root collection: check if all embedded items are linked");
+                 
+        } while($nexturi);
+        
+    }
 }
-
+    
 done_testing;
 
 sub _check_interval_history {
@@ -837,7 +1262,7 @@ sub _compare_interval {
     }
 
     if ($expected->{profile}) {
-        $ok = is($got->{profile_id},$expected->{profile_id},$label . "check interval " . $got->{id} . " billing profile") && $ok;
+        $ok = is($got->{billing_profile_id},$expected->{profile},$label . "check interval " . $got->{id} . " billing profile") && $ok;
     }
     
     if ($expected->{topups}) {
@@ -863,26 +1288,50 @@ sub _is_ts_approx {
 }
 
 sub _fetch_intervals_worker {
-    my ($delay,$sort_column,$dir) = @_;
+    my ($delay,$sort_column,$dir,$custcontact) = @_;
     diag("starting thread " . threads->tid() . " ...");
     $req = HTTP::Request->new('GET', $uri.'/api/balanceintervals/?order_by='.$sort_column.'&order_by_direction='.$dir.'&contact_id='.$custcontact->{id}.'&rows='.(scalar keys %customer_map));
     $req->header('X-Fake-Clienttime' => _get_fake_clienttime_now());
     $req->header('X-Request-Identifier' => $req_identifier) if $req_identifier;
     $req->header('X-Delay-Commit' => $delay);
     $res = $ua->request($req);
-    is($res->code, 200, "thread " . threads->tid() . ": concurrent fetch balanceintervals of " . (scalar keys %customer_map) . " contracts of contact id ".$custcontact->{id} . " in " . $dir . " order");
+    is($res->code, 200, "thread " . threads->tid() . ": concurrent fetch balanceintervals of contracts of contact id ".$custcontact->{id} . " in " . $dir . " order");
     my $result = JSON::from_json($res->decoded_content);
+    #is($result->{total_count},(scalar keys %customer_map),"check total count");
+    diag("finishing thread " . threads->tid() . " ...");
+    return $result;
+}
+
+sub _fetch_customerbalances_worker {
+    my ($delay,$sort_column,$dir,$custcontact) = @_;
+    diag("starting thread " . threads->tid() . " ...");
+    $req = HTTP::Request->new('GET', $uri.'/api/customerbalances/?order_by='.$sort_column.'&order_by_direction='.$dir.'&contact_id='.$custcontact->{id}.'&rows='.(scalar keys %customer_map));
+    $req->header('X-Fake-Clienttime' => _get_fake_clienttime_now());
+    $req->header('X-Request-Identifier' => $req_identifier) if $req_identifier;
+    $req->header('X-Delay-Commit' => $delay);
+    $res = $ua->request($req);
+    is($res->code, 200, "thread " . threads->tid() . ": concurrent fetch customerbalances of contracts of contact id ".$custcontact->{id} . " in " . $dir . " order");
+    my $result = JSON::from_json($res->decoded_content);
+    #is($result->{total_count},(scalar keys %customer_map),"check total count");
     diag("finishing thread " . threads->tid() . " ...");
     return $result;
 }
 
 sub _create_customers_threaded {
-    my ($number_of_customers) = @_;
+    my ($number_of_customers,$subscribers_per_customer,$package,$custcontact) = @_;
     my $t0 = time;
     my @t_cs = ();
     #my $number_of_customers = 3;
     for (1..$number_of_customers) {
-        my $t_c = threads->create(\&_create_customer);
+        my $t_c;
+        $t_c = threads->create(sub {
+            my $customer = _create_customer($package,undef,$custcontact);
+            if (defined $subscribers_per_customer && $subscribers_per_customer > 0) {
+                for (1..$subscribers_per_customer) {
+                    _create_subscriber($customer);
+                }
+            }
+        });
         push(@t_cs,$t_c);
     }
     foreach my $t_c (@t_cs) {
@@ -894,14 +1343,14 @@ sub _create_customers_threaded {
 
 sub _create_customer {
     
-    my ($package,$record_label) = @_;
+    my ($package,$record_label,$custcontact) = @_;
     $req = HTTP::Request->new('POST', $uri.'/api/customers/');
     $req->header('Content-Type' => 'application/json');
     $req->header('X-Fake-Clienttime' => _get_fake_clienttime_now());
     $req->header('X-Request-Identifier' => $req_identifier) if $req_identifier;
     my $req_data = {
         status => "active",
-        contact_id => $custcontact->{id},
+        contact_id => (defined $custcontact ? $custcontact->{id} : $custcontact1->{id}),
         type => "sipaccount",
         ($package ? (billing_profile_definition => 'package',
                      profile_package_id => $package->{id}) :
@@ -971,7 +1420,7 @@ sub _get_fake_clienttime_now {
 
 sub _create_profile_package {
 
-    my ($start_mode,$interval_unit,$interval_value,$notopup_discard_intervals) = @_;
+    my ($start_mode,$interval_unit,$interval_value,@further_opts) = @_; #$notopup_discard_intervals
     $req = HTTP::Request->new('POST', $uri.'/api/profilepackages/');
     $req->header('Content-Type' => 'application/json');
     $req->header('Prefer' => 'return=representation');
@@ -987,7 +1436,8 @@ sub _create_profile_package {
         balance_interval_start_mode => $start_mode,
         ($interval_unit ? (balance_interval_value => $interval_value,
                             balance_interval_unit => $interval_unit,) : ()),
-        notopup_discard_intervals => $notopup_discard_intervals,
+        #notopup_discard_intervals => $notopup_discard_intervals,
+        @further_opts,
     }));
     $res = $ua->request($req);
     is($res->code, 201, "POST test profilepackage - '" . $name . "'");
@@ -1010,7 +1460,7 @@ sub _create_billing_network_x {
     $req->header('Prefer' => 'return=representation');
     my $req_data = {
         name => "test billing network X ".$t,
-        description  => "billing network Y descr ".$t,
+        description  => "billing network X descr ".$t,
         reseller_id => $default_reseller_id,
         blocks => [{ip=>'fdfe::5a55:caff:fefa:9089',mask=>128},
                    {ip=>'fdfe::5a55:caff:fefa:908a'},
@@ -1238,25 +1688,30 @@ sub _create_subscriber {
     my ($customer,$record_label) = @_;
     $req = HTTP::Request->new('POST', $uri.'/api/subscribers/');
     $req->header('Content-Type' => 'application/json');
-    my $req_data = {
-        domain_id => $domain->{id},
-        username => 'cust_subscriber_' . (scalar keys %$subscriber_map) . '_'.$t,
-        password => 'cust_subscriber_password',
-        customer_id => $customer->{id},
-        #status => "active",
-    };
-    $req->content(JSON::to_json($req_data));
-    $res = $ua->request($req);
-    is($res->code, 201, "POST test subscriber");
-    my $request = $req;
-    $req = HTTP::Request->new('GET', $uri.'/'.$res->header('Location'));
-    $res = $ua->request($req);
-    is($res->code, 200, "fetch POSTed test subscriber");
-    my $subscriber = JSON::from_json($res->decoded_content);
-    $subscriber->{_label} = 'subscriber' . ($record_label ? ' ' . $record_label : '');
-    $subscriber_map->{$subscriber->{id}} = $subscriber;
-    _record_request("create " . $subscriber->{_label},$request,$req_data,$subscriber);
-    return $subscriber;
+    $req->header('X-Fake-Clienttime' => _get_fake_clienttime_now());
+    $req->header('X-Request-Identifier' => $req_identifier) if $req_identifier;
+    {
+        lock %subscriber_map; 
+        my $req_data = {
+            domain_id => $domain->{id},
+            username => 'cust_subscriber_' . (scalar keys %subscriber_map) . '_'.$t,
+            password => 'cust_subscriber_password',
+            customer_id => $customer->{id},
+            #status => "active",
+        };
+        $req->content(JSON::to_json($req_data));
+        $res = $ua->request($req);
+        is($res->code, 201, "POST test subscriber");
+        my $request = $req;
+        $req = HTTP::Request->new('GET', $uri.'/'.$res->header('Location'));
+        $res = $ua->request($req);
+        is($res->code, 200, "fetch POSTed test subscriber");
+        my $subscriber = JSON::from_json($res->decoded_content);
+        $subscriber->{_label} = 'subscriber' . ($record_label ? ' ' . $record_label : '');
+        $subscriber_map{$subscriber->{id}} = threads::shared::shared_clone($subscriber);
+        _record_request("create " . $subscriber->{_label},$request,$req_data,$subscriber);
+        return $subscriber;
+    }
 }
 
 sub _perform_topup_voucher {
@@ -1273,7 +1728,7 @@ sub _perform_topup_voucher {
     $req->content(JSON::to_json($req_data));
     $res = $ua->request($req);
     is($res->code, 204, "perform topup with voucher " . $voucher->{code});
-    _record_request("topup by " . $subscriber_map->{$subscriber->{id}}->{_label} . " using " . $voucher->{amount} / 100.0 . " € voucher (code $voucher->{code})",$req,$req_data,undef);
+    _record_request("topup by " . $subscriber_map{$subscriber->{id}}->{_label} . " using " . $voucher->{amount} / 100.0 . " € voucher (code $voucher->{code})",$req,$req_data,undef);
     
 }
 
@@ -1291,8 +1746,8 @@ sub _perform_topup_cash {
     };
     $req->content(JSON::to_json($req_data));
     $res = $ua->request($req);
-    is($res->code, 204, "perform topup with amount " . $amount . " cents, " . ($package ? 'package id ' . $package->{id} : 'no package'));
-    _record_request("topup by " . $subscriber_map->{$subscriber->{id}}->{_label} . " with " . $amount / 100.0 . " €, " . ($package ? 'package id ' . $package->{id} : 'no package'),$req,$req_data,undef);
+    is($res->code, 204, "perform topup with amount " . $amount * 100.0 . " cents, " . ($package ? 'package id ' . $package->{id} : 'no package'));
+    _record_request("topup by " . $subscriber_map{$subscriber->{id}}->{_label} . " with " . $amount / 100.0 . " €, " . ($package ? 'package id ' . $package->{id} : 'no package'),$req,$req_data,undef);
     
 }
 
@@ -1312,11 +1767,48 @@ sub _create_billing_profile {
     my $request = $req;
     $req = HTTP::Request->new('GET', $uri.'/'.$res->header('Location'));
     $res = $ua->request($req);
-    is($res->code, 200, "fetch POSTed billing profile" . $name);
+    is($res->code, 200, "fetch POSTed billing profile " . $name);
     my $billingprofile = JSON::from_json($res->decoded_content);
     $profile_map->{$billingprofile->{id}} = $billingprofile;
     _record_request("create billing profile '$name'",$request,$req_data,$billingprofile);
     return $billingprofile;
+}
+
+sub _get_subscriber_lock_level {
+    my ($subscriber) = @_;
+    $req = HTTP::Request->new('GET', $uri.'/api/subscriberpreferences/'.$subscriber->{id});
+    $req->header('X-Fake-Clienttime' => _get_fake_clienttime_now());
+    $req->header('X-Request-Identifier' => $req_identifier) if $req_identifier;
+    $res = $ua->request($req);
+    is($res->code, 200, "fetch subscriber id " . $subscriber->{id} . " preferences");
+    my $preferences = JSON::from_json($res->decoded_content);
+    return $preferences->{lock};
+}
+
+sub _get_actual_billing_profile_id {
+    my ($customer) = @_;
+    $req = HTTP::Request->new('GET', $uri.'/api/customers/'.$customer->{id});
+    $req->header('X-Fake-Clienttime' => _get_fake_clienttime_now());
+    $req->header('X-Request-Identifier' => $req_identifier) if $req_identifier;
+    $res = $ua->request($req);
+    is($res->code, 200, "fetch customer id " . $customer->{id});
+    my $contract = JSON::from_json($res->decoded_content);
+    return $contract->{billing_profile_id};
+}
+
+sub _fetch_preferences_worker {
+    my ($delay,$sort_column,$dir,$custcontact) = @_;
+    diag("starting thread " . threads->tid() . " ...");
+    $req = HTTP::Request->new('GET', $uri.'/api/subscriberpreferences/?order_by='.$sort_column.'&order_by_direction='.$dir.'&contact_id='.$custcontact->{id}.'&rows='.(scalar keys %subscriber_map));
+    $req->header('X-Fake-Clienttime' => _get_fake_clienttime_now());
+    $req->header('X-Request-Identifier' => $req_identifier) if $req_identifier;
+    $req->header('X-Delay-Commit' => $delay);
+    $res = $ua->request($req);
+    is($res->code, 200, "thread " . threads->tid() . ": concurrent fetch subscriber preferences of contracts of contact id ".$custcontact->{id} . " in " . $dir . " order");
+    my $result = JSON::from_json($res->decoded_content);
+    #is($result->{total_count},(scalar keys %subscriber_map),"check total count");
+    diag("finishing thread " . threads->tid() . " ...");
+    return $result;
 }
 
 sub _record_request {
@@ -1339,6 +1831,23 @@ sub _record_request {
         }
         $tb_cnt++;
     };
+}
+
+sub _set_cash_balance {
+    
+    my ($customer,$new_cash_balance) = @_;
+    $req = HTTP::Request->new('PATCH', $uri.'/api/customerbalances/' . $customer->{id});
+    $req->header('Prefer' => 'return=representation');
+    $req->header('Content-Type' => 'application/json-patch+json');
+    $req->header('X-Fake-Clienttime' => _get_fake_clienttime_now());
+    $req->header('X-Request-Identifier' => $req_identifier) if $req_identifier;
+
+    $req->content(JSON::to_json(
+        [ { op => 'replace', path => '/cash_balance', value => $new_cash_balance } ]
+    ));
+    $res = $ua->request($req);
+    is($res->code, 200, "setting customer id " . $customer->{id} . " cash_balance to " . $new_cash_balance * 100.0 . ' cents');
+    
 }
 
 sub _start_recording {

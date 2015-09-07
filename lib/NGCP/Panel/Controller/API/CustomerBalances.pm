@@ -8,6 +8,7 @@ use HTTP::Headers qw();
 use HTTP::Status qw(:constants);
 use MooseX::ClassAttribute qw(class_has);
 use NGCP::Panel::Utils::DateTime;
+use NGCP::Panel::Utils::ProfilePackages qw();
 use Path::Tiny qw(path);
 use Safe::Isa qw($_isa);
 BEGIN { extends 'Catalyst::Controller::ActionRole'; }
@@ -38,6 +39,39 @@ class_has 'query_params' => (
                 second => sub {
                     { join => 'contact' };
                 },
+            },
+        },  
+        {
+            param => 'contact_id',
+            description => 'Filter for contracts with a specific contact id',
+            query => {
+                first => sub {
+                    my $q = shift;
+                    { contact_id => $q };
+                },
+                second => sub {},
+            },
+        },
+        {
+            param => 'status',
+            description => 'Filter for contracts with a specific status (except "terminated")',
+            query => {
+                first => sub {
+                    my $q = shift;
+                    { status => $q };
+                },
+                second => sub {},
+            },
+        },
+        {
+            param => 'external_id',
+            description => 'Filter for contracts with a specific external id',
+            query => {
+                first => sub {
+                    my $q = shift;
+                    { 'me.external_id' => { like => $q } };
+                },
+                second => sub {},
             },
         },
     ]},
@@ -78,14 +112,15 @@ sub GET :Allow {
     $c->model('DB')->set_transaction_isolation('READ COMMITTED');
     my $guard = $c->model('DB')->txn_scope_guard;
     {
-        my $items = $self->item_rs($c)->search_rs(undef,{
-                for => 'update',
-            });
-        (my $total_count, $items) = $self->paginate_order_collection($c, $items);
         my $now = NGCP::Panel::Utils::DateTime::current_local;
+        my $items_rs = $self->item_rs($c,0,$now);
+        (my $total_count, $items_rs) = $self->paginate_order_collection($c, $items_rs);
+        my $items = NGCP::Panel::Utils::ProfilePackages::lock_contracts(c => $c,
+            rs => $items_rs,
+            contract_id_field => 'id');        
         my (@embedded, @links);
         my $form = $self->get_form($c);
-        for my $item ($items->all) {
+        for my $item (@$items) {
             my $balance = $self->item_by_id($c, $item->id,$now);
             push @embedded, $self->hal_from_item($c, $balance, $form);
             push @links, Data::HAL::Link->new(
