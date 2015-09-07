@@ -234,9 +234,10 @@ sub POST :Allow {
                 $contract->billing_mappings->create($mapping); 
             }
             $contract = $self->contract_by_id($c, $contract->id,1,$now);
-            NGCP::Panel::Utils::ProfilePackages::create_initial_contract_balance(schema => $schema,
+            NGCP::Panel::Utils::ProfilePackages::create_initial_contract_balance(c => $c,
                 contract => $contract,
-                profile => $contract->billing_mappings->find($contract->get_column('bmid'))->billing_profile,);            
+                #bm_actual => $contract->billing_mappings->find($contract->get_column('bmid')),
+            );
             #NGCP::Panel::Utils::Contract::create_contract_balance(
             #    c => $c,
             #    profile => $contract->billing_mappings->find($contract->get_column('bmid'))->billing_profile, #$billing_profile,

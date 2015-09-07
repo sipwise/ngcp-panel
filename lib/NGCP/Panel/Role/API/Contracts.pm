@@ -156,6 +156,7 @@ sub update_contract {
     
     my $mappings_to_create = [];
     my $delete_mappings = 0;
+    my $set_package = ($resource->{billing_profile_definition} // 'id') eq 'package';
     return unless NGCP::Panel::Utils::Contract::prepare_billing_mappings(
         c => $c,
         resource => $resource,
@@ -192,8 +193,6 @@ sub update_contract {
             $contract->billing_mappings->create($mapping); 
         }
         $contract = $self->contract_by_id($c, $contract->id,1,$now);
-        $billing_mapping = $contract->billing_mappings->find($contract->get_column('bmid'));
-        $billing_profile = $billing_mapping->billing_profile;
         
         my $balance = NGCP::Panel::Utils::ProfilePackages::catchup_contract_balances(c => $c,
             contract => $contract,
@@ -204,8 +203,12 @@ sub update_contract {
             old_package => $old_package,
             balance => $balance,
             now => $now,
+            profiles_added => ($set_package ? scalar @$mappings_to_create : 0),
             );        
 
+        $billing_mapping = $contract->billing_mappings->find($contract->get_column('bmid'));
+        $billing_profile = $billing_mapping->billing_profile;            
+            
         if($old_resource->{status} ne $resource->{status}) {
             if($contract->id == 1) {
                 $self->error($c, HTTP_FORBIDDEN, "Cannot set contract status to '".$resource->{status}."' for contract id '1'");

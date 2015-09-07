@@ -6,6 +6,7 @@ use Moose::Util::TypeConstraints;
 
 use HTML::FormHandler::Widget::Block::Bootstrap;
 use DateTime::Format::Strptime qw();
+use Storable qw();
 
 with 'NGCP::Panel::Render::RepeatableJs';
 

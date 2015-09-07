@@ -1,6 +1,7 @@
 package NGCP::Panel::Form::Contract::Customer;
 
 use HTML::FormHandler::Moose;
+use Storable qw();
 extends 'NGCP::Panel::Form::Contract::Base';
 
 has_field 'contact' => (

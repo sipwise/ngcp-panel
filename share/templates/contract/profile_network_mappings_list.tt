@@ -12,7 +12,7 @@
                         [% IF billing_mappings_ordered_result.all -%]
                                     [% FOR mapping IN billing_mappings_ordered_result.all -%]
                                     <tr class="sw_action_row [% IF !mapping.get_column('is_future') -%]ngcp-entry-disabled[% END -%]">
-                                        <td>[% IF mapping.get_column('is_actual') -%]*[% END -%]</td>                                    
+                                        <td><input type="checkbox" disabled="disabled" [% IF mapping.get_column('is_actual') -%]checked="checked"[% END -%]/></td>                                    
                                         <td>
                                             [% mapping.start_date ? mapping.start_date : 'NULL' %] - [% mapping.end_date.defined ? mapping.end_date : 'NULL' %]
                                         </td>

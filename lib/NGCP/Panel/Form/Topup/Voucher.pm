@@ -1,4 +1,4 @@
-package NGCP::Panel::Form::Balance::CustomerBalance;
+package NGCP::Panel::Form::Topup::Voucher;
 
 use HTML::FormHandler::Moose;
 extends 'HTML::FormHandler';
@@ -11,31 +11,18 @@ has_field 'submitid' => ( type => 'Hidden' );
 sub build_render_list {[qw/submitid fields actions/]}
 sub build_form_element_class { [qw/form-horizontal/] }
 
-has_field 'cash_balance' => (
-    type => 'Money',
-    label => 'Cash Balance',
-    required => 1,
-    inflate_method => sub { return $_[1] * 100.0 },
-    deflate_method => sub { return $_[1] / 100.0 },
+has_field 'voucher' => (
+    type => '+NGCP::Panel::Field::Voucher',
+    #validate_when_empty => 1,
     element_attr => {
         rel => ['tooltip'],
-        title => ['The current cash balance of the customer in EUR/USD/etc.']
-    },
-);
-
-has_field 'free_time_balance' => (
-    type => 'Integer',
-    label => 'Free-Time Balance',
-    required => 1,
-    element_attr => {
-        rel => ['tooltip'],
-        title => ['The current free-time balance of the customer in seconds.']
+        title => ['The voucher to topup with.']
     },
 );
 
 has_field 'save' => (
     type => 'Submit',
-    value => 'Save',
+    value => 'Perform top-up',
     element_class => [qw/btn btn-primary/],
     label => '',
 );
@@ -43,7 +30,7 @@ has_field 'save' => (
 has_block 'fields' => (
     tag => 'div',
     class => [qw/modal-body/],
-    render_list => [qw/cash_balance free_time_balance/],
+    render_list => [qw/voucher/],
 );
 
 has_block 'actions' => (
@@ -56,7 +43,7 @@ has_block 'actions' => (
 
 =head1 NAME
 
-NGCP::Panel::Form::Balance::CustomerBalance
+NGCP::Panel::Form::Topup::Cash
 
 =head1 DESCRIPTION
 
