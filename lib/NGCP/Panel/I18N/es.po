@@ -103,12 +103,12 @@ msgstr ""
 #: lib/NGCP/Panel/Controller/Customer.pm:364
 #: lib/NGCP/Panel/Controller/Customer.pm:401
 #: lib/NGCP/Panel/Controller/Customer.pm:53
-#: lib/NGCP/Panel/Controller/Device.pm:106
-#: lib/NGCP/Panel/Controller/Device.pm:119
-#: lib/NGCP/Panel/Controller/Device.pm:45
-#: lib/NGCP/Panel/Controller/Device.pm:60
-#: lib/NGCP/Panel/Controller/Device.pm:76
-#: lib/NGCP/Panel/Controller/Device.pm:90
+#: lib/NGCP/Panel/Controller/Device.pm:107
+#: lib/NGCP/Panel/Controller/Device.pm:120
+#: lib/NGCP/Panel/Controller/Device.pm:46
+#: lib/NGCP/Panel/Controller/Device.pm:61
+#: lib/NGCP/Panel/Controller/Device.pm:77
+#: lib/NGCP/Panel/Controller/Device.pm:91
 #: lib/NGCP/Panel/Controller/Domain.pm:29
 #: lib/NGCP/Panel/Controller/EmailTemplate.pm:33
 #: lib/NGCP/Panel/Controller/Invoice.pm:39
@@ -216,15 +216,15 @@ msgstr ""
 msgid "404 - No branding logo available for this reseller"
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/Device.pm:500
+#: lib/NGCP/Panel/Controller/Device.pm:501
 msgid "404 - No front image available for the model of this device profile"
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/Device.pm:513
+#: lib/NGCP/Panel/Controller/Device.pm:514
 msgid "404 - No front image available for this device model"
 msgstr "404 - No hay imagen frontal disponible para este modelo"
 
-#: lib/NGCP/Panel/Controller/Device.pm:526
+#: lib/NGCP/Panel/Controller/Device.pm:527
 msgid "404 - No mac image available for this device model"
 msgstr "404 - No hay imagen mac disponible para este modelo"
 
@@ -811,7 +811,7 @@ msgstr "Ausente"
 msgid "BIC/SWIFT"
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/Device.pm:1013
+#: lib/NGCP/Panel/Controller/Device.pm:1014
 msgid "BLF Key"
 msgstr "Botón BLF"
 
@@ -1626,7 +1626,7 @@ msgstr ""
 msgid "Config"
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/Device.pm:96
+#: lib/NGCP/Panel/Controller/Device.pm:97
 msgid "Configuration Version"
 msgstr "Versión de Configuración"
 
@@ -2028,8 +2028,8 @@ msgstr ""
 msgid "Customer"
 msgstr "Cliente"
 
-#: lib/NGCP/Panel/Controller/Device.pm:109
-#: lib/NGCP/Panel/Controller/Device.pm:122
+#: lib/NGCP/Panel/Controller/Device.pm:110
+#: lib/NGCP/Panel/Controller/Device.pm:123
 #: lib/NGCP/Panel/Controller/Invoice.pm:40
 #: share/templates/subscriber/edit_webpass.tt:33
 #: share/templates/subscriber/master.tt:69
@@ -2069,8 +2069,8 @@ msgstr "Detalles de Cliente"
 msgid "Customer Details for #%1 (%2)"
 msgstr "Detalles de cliente para #%1 (%2)"
 
-#: lib/NGCP/Panel/Controller/Device.pm:110
-#: lib/NGCP/Panel/Controller/Device.pm:123
+#: lib/NGCP/Panel/Controller/Device.pm:111
+#: lib/NGCP/Panel/Controller/Device.pm:124
 #: lib/NGCP/Panel/Controller/Invoice.pm:41
 msgid "Customer Email"
 msgstr ""
@@ -2510,9 +2510,9 @@ msgstr "Firmwares de Dispositivo"
 msgid "Device Management"
 msgstr "Gestión de Dispositivos"
 
-#: lib/NGCP/Panel/Controller/Device.pm:63
-#: lib/NGCP/Panel/Controller/Device.pm:79
-#: lib/NGCP/Panel/Controller/Device.pm:94
+#: lib/NGCP/Panel/Controller/Device.pm:64
+#: lib/NGCP/Panel/Controller/Device.pm:80
+#: lib/NGCP/Panel/Controller/Device.pm:95
 #: lib/NGCP/Panel/Utils/DbStrings.pm:694 share/templates/device/list.tt:105
 msgid "Device Model"
 msgstr "Modelo de Dispositivo"
@@ -2530,42 +2530,42 @@ msgstr "Perfil de Dispositivo"
 msgid "Device Profiles"
 msgstr "Perfiles de Dispositivo"
 
-#: lib/NGCP/Panel/Controller/Device.pm:62
-#: lib/NGCP/Panel/Controller/Device.pm:78
-#: lib/NGCP/Panel/Controller/Device.pm:93
+#: lib/NGCP/Panel/Controller/Device.pm:63
+#: lib/NGCP/Panel/Controller/Device.pm:79
+#: lib/NGCP/Panel/Controller/Device.pm:94
 #: lib/NGCP/Panel/Utils/DbStrings.pm:1168
 msgid "Device Vendor"
 msgstr "Fabricante de Dispositivo"
 
-#: lib/NGCP/Panel/Controller/Device.pm:789
+#: lib/NGCP/Panel/Controller/Device.pm:790
 msgid "Device configuration not found"
 msgstr "Configuración de Dispositivo no encontrada"
 
-#: lib/NGCP/Panel/Controller/Device.pm:803
+#: lib/NGCP/Panel/Controller/Device.pm:804
 msgid "Device configuration successfully deleted"
 msgstr "Configuración de Dispositivo eliminada con éxito"
 
-#: lib/NGCP/Panel/Controller/Device.pm:616
+#: lib/NGCP/Panel/Controller/Device.pm:617
 msgid "Device firmware not found"
 msgstr "Firmware de Dispositivo no encontrado"
 
-#: lib/NGCP/Panel/Controller/Device.pm:630
+#: lib/NGCP/Panel/Controller/Device.pm:631
 msgid "Device firmware successfully deleted"
 msgstr "Firmware de Dispositivo eliminado con éxito"
 
-#: lib/NGCP/Panel/Controller/Device.pm:286
+#: lib/NGCP/Panel/Controller/Device.pm:287
 msgid "Device model not found"
 msgstr "Modelo de Dispositivo no encontrado"
 
-#: lib/NGCP/Panel/Controller/Device.pm:305
+#: lib/NGCP/Panel/Controller/Device.pm:306
 msgid "Device model successfully deleted"
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/Device.pm:958
+#: lib/NGCP/Panel/Controller/Device.pm:959
 msgid "Device profile not found"
 msgstr "Perfil de Dispositivo no encontrado"
 
-#: lib/NGCP/Panel/Controller/Device.pm:1079
+#: lib/NGCP/Panel/Controller/Device.pm:1080
 msgid "Device profile successfully deleted"
 msgstr "Perfil de Dispositivo eliminado con éxito"
 
@@ -3166,19 +3166,19 @@ msgstr ""
 msgid "Failed to create customer contract"
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/Device.pm:760
+#: lib/NGCP/Panel/Controller/Device.pm:761
 msgid "Failed to create device configuration"
 msgstr "Fallo al crear configuración de dispositivo."
 
-#: lib/NGCP/Panel/Controller/Device.pm:587
+#: lib/NGCP/Panel/Controller/Device.pm:588
 msgid "Failed to create device firmware"
 msgstr "Fallo al crear firmware de dispositivo"
 
-#: lib/NGCP/Panel/Controller/Device.pm:246
+#: lib/NGCP/Panel/Controller/Device.pm:247
 msgid "Failed to create device model"
 msgstr "Fallo al crear modelo de dispositivo"
 
-#: lib/NGCP/Panel/Controller/Device.pm:929
+#: lib/NGCP/Panel/Controller/Device.pm:930
 msgid "Failed to create device profile"
 msgstr "Fallo al crear perfil de dispositivo"
 
@@ -3329,19 +3329,19 @@ msgstr ""
 msgid "Failed to delete destination set"
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/Device.pm:809
+#: lib/NGCP/Panel/Controller/Device.pm:810
 msgid "Failed to delete device configuration"
 msgstr "Fallo al borrar configuración de dispositivo "
 
-#: lib/NGCP/Panel/Controller/Device.pm:636
+#: lib/NGCP/Panel/Controller/Device.pm:637
 msgid "Failed to delete device firmware"
 msgstr "Fallo al borrar firmware de dispositivo"
 
-#: lib/NGCP/Panel/Controller/Device.pm:311
+#: lib/NGCP/Panel/Controller/Device.pm:312
 msgid "Failed to delete device model"
 msgstr "Fallo al borrar modelo de dispositivo"
 
-#: lib/NGCP/Panel/Controller/Device.pm:1085
+#: lib/NGCP/Panel/Controller/Device.pm:1086
 msgid "Failed to delete device profile"
 msgstr "Fallo al borrar perfil de dispositivo"
 
@@ -3608,19 +3608,19 @@ msgstr ""
 msgid "Failed to update destination set"
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/Device.pm:859
+#: lib/NGCP/Panel/Controller/Device.pm:860
 msgid "Failed to update device configuration"
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/Device.pm:691
+#: lib/NGCP/Panel/Controller/Device.pm:692
 msgid "Failed to update device firmware"
 msgstr "Fallo al actualizar firmware de dispositivo"
 
-#: lib/NGCP/Panel/Controller/Device.pm:483
+#: lib/NGCP/Panel/Controller/Device.pm:484
 msgid "Failed to update device model"
 msgstr "Fallo al actualizar modelo de dispositivo"
 
-#: lib/NGCP/Panel/Controller/Device.pm:1136
+#: lib/NGCP/Panel/Controller/Device.pm:1137
 msgid "Failed to update device profile"
 msgstr "Fallo al actualizar perfil de dispositivo"
 
@@ -3806,8 +3806,8 @@ msgstr "Archivos"
 msgid "Find Subscriber by UUID"
 msgstr "Encontrar suscriptor por el UUID"
 
-#: lib/NGCP/Panel/Controller/Device.pm:64
-#: lib/NGCP/Panel/Controller/Device.pm:95
+#: lib/NGCP/Panel/Controller/Device.pm:65
+#: lib/NGCP/Panel/Controller/Device.pm:96
 #: lib/NGCP/Panel/Utils/DbStrings.pm:781
 msgid "Firmware File"
 msgstr "Archivo de Firmware"
@@ -4186,7 +4186,7 @@ msgstr ""
 msgid "IBAN"
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/Device.pm:1008
+#: lib/NGCP/Panel/Controller/Device.pm:1009
 msgid "ID"
 msgstr "ID"
 
@@ -4513,19 +4513,19 @@ msgstr "Id de contrato inválido encontrado"
 msgid "Invalid customer contract id"
 msgstr "Id de contrato de cliente inválido"
 
-#: lib/NGCP/Panel/Controller/Device.pm:779
+#: lib/NGCP/Panel/Controller/Device.pm:780
 msgid "Invalid device configuration id"
 msgstr "Id de configuración de dispositivo inválido"
 
-#: lib/NGCP/Panel/Controller/Device.pm:606
+#: lib/NGCP/Panel/Controller/Device.pm:607
 msgid "Invalid device firmware id"
 msgstr "Id de firmware de dispositivo inválido"
 
-#: lib/NGCP/Panel/Controller/Device.pm:277
+#: lib/NGCP/Panel/Controller/Device.pm:278
 msgid "Invalid device model id"
 msgstr "Id de modelo de dispositivo inválido"
 
-#: lib/NGCP/Panel/Controller/Device.pm:948
+#: lib/NGCP/Panel/Controller/Device.pm:949
 msgid "Invalid device profile id"
 msgstr "Id de perfil de dispositivo inválido"
 
@@ -4944,8 +4944,8 @@ msgstr "Repetir reproducción"
 msgid "MAC Address"
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/Device.pm:107
-#: lib/NGCP/Panel/Controller/Device.pm:120
+#: lib/NGCP/Panel/Controller/Device.pm:108
+#: lib/NGCP/Panel/Controller/Device.pm:121
 #: lib/NGCP/Panel/Utils/DbStrings.pm:716
 #: share/templates/customer/details.tt:284
 msgid "MAC Address / Identifier"
@@ -5178,7 +5178,7 @@ msgstr "Tiempo de espera del Push a Móvil"
 msgid "Mode"
 msgstr "Modo"
 
-#: lib/NGCP/Panel/Controller/Device.pm:49
+#: lib/NGCP/Panel/Controller/Device.pm:50
 #: lib/NGCP/Panel/Utils/DbStrings.pm:1186
 msgid "Model"
 msgstr "Modelo"
@@ -5314,8 +5314,8 @@ msgstr ""
 #: lib/NGCP/Panel/Controller/Customer.pm:350
 #: lib/NGCP/Panel/Controller/Customer.pm:356
 #: lib/NGCP/Panel/Controller/Customer.pm:365
-#: lib/NGCP/Panel/Controller/Device.pm:1009
-#: lib/NGCP/Panel/Controller/Device.pm:92
+#: lib/NGCP/Panel/Controller/Device.pm:1010
+#: lib/NGCP/Panel/Controller/Device.pm:93
 #: lib/NGCP/Panel/Controller/EmailTemplate.pm:35
 #: lib/NGCP/Panel/Controller/InvoiceTemplate.pm:34
 #: lib/NGCP/Panel/Controller/Network.pm:28
@@ -5523,7 +5523,7 @@ msgstr ""
 msgid "Number block successfully updated"
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/Device.pm:1010
+#: lib/NGCP/Panel/Controller/Device.pm:1011
 msgid "Number of Lines/Keys"
 msgstr "Número de Líneas/Botones"
 
@@ -6161,7 +6161,7 @@ msgstr "Prioridad"
 msgid "Priority (q-value)"
 msgstr "Prioridad (valor q)"
 
-#: lib/NGCP/Panel/Controller/Device.pm:1011
+#: lib/NGCP/Panel/Controller/Device.pm:1012
 msgid "Private Line"
 msgstr "Línea privada"
 
@@ -6179,8 +6179,8 @@ msgstr "Producto"
 msgid "Profile"
 msgstr "Perfil"
 
-#: lib/NGCP/Panel/Controller/Device.pm:108
-#: lib/NGCP/Panel/Controller/Device.pm:121
+#: lib/NGCP/Panel/Controller/Device.pm:109
+#: lib/NGCP/Panel/Controller/Device.pm:122
 #: lib/NGCP/Panel/Utils/DbStrings.pm:633
 msgid "Profile Name"
 msgstr "Nombre de perfil"
@@ -6422,10 +6422,10 @@ msgstr ""
 #: lib/NGCP/Panel/Controller/Billing.pm:38
 #: lib/NGCP/Panel/Controller/Contact.pm:33
 #: lib/NGCP/Panel/Controller/Customer.pm:55
-#: lib/NGCP/Panel/Controller/Device.pm:47
-#: lib/NGCP/Panel/Controller/Device.pm:61
-#: lib/NGCP/Panel/Controller/Device.pm:77
-#: lib/NGCP/Panel/Controller/Device.pm:91
+#: lib/NGCP/Panel/Controller/Device.pm:48
+#: lib/NGCP/Panel/Controller/Device.pm:62
+#: lib/NGCP/Panel/Controller/Device.pm:78
+#: lib/NGCP/Panel/Controller/Device.pm:92
 #: lib/NGCP/Panel/Controller/Domain.pm:30
 #: lib/NGCP/Panel/Controller/EmailTemplate.pm:34
 #: lib/NGCP/Panel/Controller/InvoiceTemplate.pm:33
@@ -7037,7 +7037,7 @@ msgstr "Preferencia"
 msgid "Settings"
 msgstr "Preferencias"
 
-#: lib/NGCP/Panel/Controller/Device.pm:1012
+#: lib/NGCP/Panel/Controller/Device.pm:1013
 #, fuzzy
 msgid "Shared Line"
 msgstr "Shared Line"
@@ -7683,19 +7683,19 @@ msgstr "Desvío de llamada eliminado con éxito"
 msgid "Successfully cleared fraud interval!"
 msgstr "Intervalo antifraude eliminado con éxito"
 
-#: lib/NGCP/Panel/Controller/Device.pm:754
+#: lib/NGCP/Panel/Controller/Device.pm:755
 msgid "Successfully created device configuration"
 msgstr "Configuración de dispositivo creada con éxito"
 
-#: lib/NGCP/Panel/Controller/Device.pm:581
+#: lib/NGCP/Panel/Controller/Device.pm:582
 msgid "Successfully created device firmware"
 msgstr "Firmware de dispositivo creado con éxito"
 
-#: lib/NGCP/Panel/Controller/Device.pm:240
+#: lib/NGCP/Panel/Controller/Device.pm:241
 msgid "Successfully created device model"
 msgstr "Modelo de dispositivo creado con éxito"
 
-#: lib/NGCP/Panel/Controller/Device.pm:923
+#: lib/NGCP/Panel/Controller/Device.pm:924
 msgid "Successfully created device profile"
 msgstr "Perfil de dispositivo creado con éxito"
 
@@ -7793,19 +7793,19 @@ msgstr ""
 msgid "Successfully updated destination set"
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/Device.pm:853
+#: lib/NGCP/Panel/Controller/Device.pm:854
 msgid "Successfully updated device configuration"
 msgstr "Configuración de dispositivo modificado con éxito"
 
-#: lib/NGCP/Panel/Controller/Device.pm:685
+#: lib/NGCP/Panel/Controller/Device.pm:686
 msgid "Successfully updated device firmware"
 msgstr "Firmware de dispositivo modificado con éxito"
 
-#: lib/NGCP/Panel/Controller/Device.pm:477
+#: lib/NGCP/Panel/Controller/Device.pm:478
 msgid "Successfully updated device model"
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/Device.pm:1130
+#: lib/NGCP/Panel/Controller/Device.pm:1131
 msgid "Successfully updated device profile"
 msgstr "Perfil de dispositivo modificado con éxito"
 
@@ -9480,7 +9480,7 @@ msgstr ""
 msgid "Tuesday"
 msgstr "Martes"
 
-#: lib/NGCP/Panel/Controller/Device.pm:46
+#: lib/NGCP/Panel/Controller/Device.pm:47
 #: lib/NGCP/Panel/Controller/InvoiceTemplate.pm:35
 #: lib/NGCP/Panel/Controller/Reseller.pm:169
 #: lib/NGCP/Panel/Utils/DbStrings.pm:1224
@@ -9744,13 +9744,13 @@ msgstr "Valores"
 msgid "Vat rate"
 msgstr ""
 
-#: lib/NGCP/Panel/Controller/Device.pm:48
+#: lib/NGCP/Panel/Controller/Device.pm:49
 #: lib/NGCP/Panel/Utils/DbStrings.pm:967
 msgid "Vendor"
 msgstr "Fabricante"
 
-#: lib/NGCP/Panel/Controller/Device.pm:65
-#: lib/NGCP/Panel/Controller/Device.pm:80
+#: lib/NGCP/Panel/Controller/Device.pm:66
+#: lib/NGCP/Panel/Controller/Device.pm:81
 #: lib/NGCP/Panel/Utils/DbStrings.pm:732
 msgid "Version"
 msgstr "Versión"
