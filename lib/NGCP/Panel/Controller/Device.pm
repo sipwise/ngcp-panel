@@ -14,6 +14,7 @@ use NGCP::Panel::Form::Device::Profile;
 use NGCP::Panel::Utils::Navigation;
 use NGCP::Panel::Utils::DeviceBootstrap;
 use NGCP::Panel::Utils::Device;
+use NGCP::Panel::Utils::DateTime;
 
 BEGIN { extends 'Catalyst::Controller'; }
 
@@ -1155,6 +1156,12 @@ sub dev_field_ajax :Chained('base') :PathPart('device/ajax') :Args(0) :Does(ACL)
 
 sub dev_field_config :Chained('/') :PathPart('device/autoprov/config') :Args() {
     my ($self, $c, $id) = @_;
+    my $opt = $c->req->params->{opt};
+
+    delete $c->response->cookies->{ngcp_panel_session};
+    $c->response->headers->remove_header('Connection');
+    $c->response->headers->remove_header('X-Catalyst');
+    $c->response->headers->push_header('Last-Modified' => NGCP::Panel::Utils::DateTime::current_local);
 
     # this is going to be used if we want to do the cert check on the server,
     # the format is like this:
@@ -1193,6 +1200,7 @@ sub dev_field_config :Chained('/') :PathPart('device/autoprov/config') :Args() {
     }
 
     $id =~ s/\.cfg$//;
+    $id =~ s/\.ini$//;
 
     $id =~ s/^([^\=]+)\=0$/$1/;
     $id = lc $id;
@@ -1251,6 +1259,7 @@ sub dev_field_config :Chained('/') :PathPart('device/autoprov/config') :Args() {
     my $port = $c->config->{deviceprovisioning}->{port} // 1444;
 
     my $vars = {
+        opt => $opt,
         config => {
             url => "$schema://$host:$port/device/autoprov/config/$id",
             baseurl => "$schema://$host:$port/device/autoprov/config/",
@@ -1378,6 +1387,9 @@ sub dev_field_config :Chained('/') :PathPart('device/autoprov/config') :Args() {
         $c->response->status(500);
         return;
     };
+    if($model->vendor eq "Audiocodes") {
+        $processed_data .= "\r\n\r\n";
+    }
 
     $c->log->debug("providing config to $id");
     $c->log->debug($processed_data);
@@ -1401,10 +1413,19 @@ sub dev_field_config :Chained('/') :PathPart('device/autoprov/config') :Args() {
 
 sub dev_field_bootstrap :Chained('/') :PathPart('device/autoprov/bootstrap') :Args() {
     my ($self, $c, @id) = @_;
+    my $opt = $c->req->params->{opt};
     my $id;
+
+    delete $c->response->cookies->{ngcp_panel_session};
+    $c->response->headers->remove_header('Connection');
+    $c->response->headers->remove_header('X-Catalyst');
+    $c->response->headers->push_header('Last-Modified' => NGCP::Panel::Utils::DateTime::current_local);
+
+
     foreach my $did (@id) {
         $c->log->debug("checking bootstrap path part '$did'");
         $did =~ s/\.cfg$//;
+        $did =~ s/\.ini$//;
         $did =~ s/^([^\=]+)\=0$/$1/;
         $did = lc $did;
         $did =~ s/\-[a-z]+$//;
@@ -1458,6 +1479,7 @@ sub dev_field_bootstrap :Chained('/') :PathPart('device/autoprov/bootstrap') :Ar
     my $boot_port = $c->config->{deviceprovisioning}->{bootstrap_port} // 1445;
 
     my $vars = {
+        opt => $opt,
         config => {
             url => "$schema://$host:$port/device/autoprov/config/$id",
             baseurl => "$schema://$host:$port/device/autoprov/config/",
@@ -1496,6 +1518,9 @@ sub dev_field_bootstrap :Chained('/') :PathPart('device/autoprov/bootstrap') :Ar
         $c->response->status(500);
         return;
     };
+    if($model->vendor eq "Audiocodes") {
+        $processed_data .= "\r\n\r\n";
+    }
 
     $c->log->debug("providing config to $id");
     $c->log->debug($processed_data);
