@@ -1,48 +1,22 @@
 package Local::Module::Build;
 use Moose qw(around extends);
-use Child qw(child);
-use Capture::Tiny;
 use TryCatch;
-use MooseX::Method::Signatures;
 use LWP::UserAgent;
 extends 'Module::Build';
-
-our ($plackup, $webdriver, @cover_opt, $mysqld);
-
-method wait_socket($host, $port, $timeout=90) {
-    require IO::Socket::IP;
-    my $timer = 0;
-    while (1) {
-        my $sock = IO::Socket::IP->new(
-            PeerHost => $host,
-            PeerPort => $port,
-            Type     => IO::Socket::IP::SOCK_STREAM(),
-        );
-        last if $sock;
-        sleep 1;
-        $timer++;
-        die sprintf('socket %s:%s is not accessible within %d seconds after start', $host, $port, $timeout)
-            if $timer > $timeout;
-    };
-}
-
-sub shutdown_servers {
-    for my $proc ($webdriver, $plackup) {
-        if ($proc) {
-            $proc->kill('TERM');
-        }
-    }
-}
 
 sub _test_preconditions {
     my ($self) = @_;
 
     require Getopt::Long;
     Getopt::Long::Configure('pass_through');
-    my %opt = (server => 'http://localhost:5000', webdriver => 'external');
-    Getopt::Long::GetOptions(\%opt, 'webdriver=s', 'server:s', 'help|?', 'man', 'wd-server=s',
-        'schema-base-dir=s', 'mysqld-port=s', 'mysql-dump=s@', 'no-junit', 'run-server')
-        or die 'could not process command-line options';
+    my %opt = (server => 'http://localhost:1443');
+    Getopt::Long::GetOptions(\%opt, 
+        'server:s',
+        'help|?', 'man',
+        'wd-server=s',
+        'schema-base-dir=s',
+        'no-junit',
+            ) or die 'could not process command-line options';
 
     require Pod::Usage;
     Pod::Usage::pod2usage(-exitval => 1, -input => 'Build.PL') if $opt{help};
@@ -61,56 +35,15 @@ sub _test_preconditions {
 
     if ($opt{'schema-base-dir'}) {
         require blib;
-        blib->import($opt{'schema-base-dir'})
+        blib->import($opt{'schema-base-dir'});
     }
 
     $SIG{'INT'} = sub { exit(1) }; # for clean stopping of servers
 
-    if ($opt{'mysqld-port'} && $opt{'mysql-dump'}) {
-        require Test::mysqld;
-        $mysqld = Test::mysqld->new(
-            my_cnf => {
-                'port' => $opt{'mysqld-port'},
-            },
-        ) or die "couldnt start mysqld";
-        $ENV{NGCP_PANEL_CUSTOM_DSN} = $mysqld->dsn();
-        my $dump_files = join(' ', @{ $opt{'mysql-dump'} });
-        system("cat $dump_files | mysql -uroot --host=127.0.0.1 --port=$opt{'mysqld-port'}");
-        system(qq/echo "GRANT ALL PRIVILEGES ON *.* TO 'sipwise'\@'localhost' WITH GRANT OPTION;" | mysql -uroot --host=127.0.0.1 --port=$opt{'mysqld-port'}/);
-    }
-
-    unless ($opt{webdriver} eq "external") {
-        $webdriver = child { exec $opt{webdriver} };
-        $self->wait_socket(qw(localhost 4444));
-    }
-
-    require URI;
     unless ($opt{server} =~ m|^https?://|) {
         die "Wrong format of server argument, should start with 'http(s)'.";
     }
-    my $uri = URI->new($opt{server});
-
-    if( $opt{'run-server'} ) {
-        require File::Which;
-        $ENV{ NGCP_PANEL_CONFIG_LOCAL_SUFFIX } = "testing";
-        $plackup = child {
-            my $out_fh = IO::File->new("panel_debug_stdout", "w+");
-            my $err_fh = IO::File->new("panel_debug_stderr", "w+");
-            $out_fh->autoflush(1);
-            $err_fh->autoflush(1);
-            local $| = 1;
-            Capture::Tiny::capture {
-            exec $^X,
-                '-Ilib',
-                exists $opt{'schema-base-dir'} ? "-Mblib=$opt{'schema-base-dir'}" : (),
-                @cover_opt,
-                scalar File::Which::which('plackup'),
-                sprintf('--listen=%s:%s', $uri->host, $uri->port),
-                'ngcp_panel.psgi';
-            } stdout => $out_fh, stderr => $err_fh;
-        };
-        $self->wait_socket($uri->host, $uri->port);
-    }
+    $opt{server} =~ s!/$!!;
     
     $ENV{CATALYST_SERVER} = $opt{server};
     if ($self->verbose) {
@@ -150,7 +83,8 @@ around('ACTION_test', sub {
     };
 });
 
-method ACTION_testcover {
+sub ACTION_testcover {
+    my ($self) = @_;
     {
         my @missing;
         for my $module (qw(Devel::Cover sigtrap)) {
@@ -165,31 +99,26 @@ method ACTION_testcover {
     $self->add_to_cleanup('coverage', 'cover_db');
     $self->depends_on('code');
     $self->do_system(qw(cover -delete));
-    @cover_opt = (
+    my @cover_opt = (  # TODO: unused and unsusable currently
         '-Msigtrap "handler", sub { exit }, "normal-signals"',
         '-MDevel::Cover=+ignore,ngcp_panel.psgi,+ignore,plackup',
     );
     $self->depends_on('test');
-    shutdown_servers;
+    #shutdown_servers;
     sleep 5;
     $self->do_system(qw(cover));
 }
 
-method ACTION_test_servers {
-    $self->depends_on('code');
-    $self->_test_preconditions;
-    print "All servers ready for you!\nPress [Enter] to exit.";
-    <STDIN>;
-}
-
-method ACTION_test_selenium {
+sub ACTION_test_selenium {
+    my ($self) = @_;
     $self->depends_on('code');
     $self->_test_preconditions;
     $self->test_files('t/selenium/*.t');
     $self->generic_test(type => 'default');
 }
 
-method ACTION_test_api {
+sub ACTION_test_api {
+    my ($self) = @_;
     $self->depends_on('code');
     $self->_test_preconditions;
     $self->_download_certs;
@@ -198,12 +127,19 @@ method ACTION_test_api {
     unlink ($ENV{API_SSL_CLIENT_CERT}, $ENV{API_SSL_CA_CERT}); # created by _download_certs()
 }
 
-method ACTION_readme {
+sub ACTION_test_generic {
+    my ($self) = @_;
+    $self->depends_on('code');
+    $self->_test_preconditions;
+    $self->_download_certs;
+    $self->generic_test(type => 'default');
+    unlink ($ENV{API_SSL_CLIENT_CERT}, $ENV{API_SSL_CA_CERT}); # created by _download_certs()
+}
+
+sub ACTION_readme {
     require Pod::Readme;
     my $parser = Pod::Readme->new();
     $parser->parse_from_file('Build.PL', 'README');
 }
-
-END { shutdown_servers }
 
 1;
