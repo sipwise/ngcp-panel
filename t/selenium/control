@@ -1,5 +1,3 @@
 Source: ngcp-panel-tests-selenium
-Build-Depends: libcapture-tiny-perl,
-               libchild-perl,
-               libmoosex-method-signatures-perl,
+Build-Depends: libmoosex-method-signatures-perl,
                libtrycatch-perl,
