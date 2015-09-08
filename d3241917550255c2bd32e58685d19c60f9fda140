@@ -36,6 +36,24 @@
     },
     {
       "key": {
+        "uuid": "da6255ed_1603afb9",
+        "filename": "lib/NGCP/Panel/Controller/API/SubscriberPreferences.pm",
+        "patchSetId": 5
+      },
+      "lineNbr": 111,
+      "author": {
+        "id": 1000013
+      },
+      "writtenOn": "2015-09-08T15:29:34Z",
+      "side": 1,
+      "message": "this is nothing else than a -\u003ecommit, but with a sleep before. only in effekt by api-balanceintervals.t, that sends the sleep seconds amount via http header. to provoke a longer-lasting txn, which in turn is then used to check if records are truely locked (which is not so easy to see if \"for update\" is used with joined table statements..",
+      "parentUuid": "da6255ed_56412738",
+      "revId": "d3241917550255c2bd32e58685d19c60f9fda140",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "da6255ed_b6874361",
         "filename": "lib/NGCP/Panel/Controller/API/TopupVouchers.pm",
         "patchSetId": 5
@@ -53,6 +71,24 @@
     },
     {
       "key": {
+        "uuid": "da6255ed_56f927c7",
+        "filename": "lib/NGCP/Panel/Controller/API/TopupVouchers.pm",
+        "patchSetId": 5
+      },
+      "lineNbr": 113,
+      "author": {
+        "id": 1000013
+      },
+      "writtenOn": "2015-09-08T15:29:34Z",
+      "side": 1,
+      "message": "yes, undef is interpreted as false, so no further checks are performed once an error was found. if you would explicitly return 1 here, checks are resumed. while this is not used anywhere yet, the intention is to give the option to gather all errors found. could be useful e.g. in panelUI, to list all errors at once, not one after the other whenever the user retries.",
+      "parentUuid": "da6255ed_b6874361",
+      "revId": "d3241917550255c2bd32e58685d19c60f9fda140",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "da6255ed_5696c795",
         "filename": "lib/NGCP/Panel/Utils/Voucher.pm",
         "patchSetId": 5
@@ -64,6 +100,24 @@
       "writtenOn": "2015-09-08T13:34:17Z",
       "side": 1,
       "message": "I like this in general. But why allow to continue under certain return codes?",
+      "revId": "d3241917550255c2bd32e58685d19c60f9fda140",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "da6255ed_36f6b3d8",
+        "filename": "lib/NGCP/Panel/Utils/Voucher.pm",
+        "patchSetId": 5
+      },
+      "lineNbr": 65,
+      "author": {
+        "id": 1000013
+      },
+      "writtenOn": "2015-09-08T15:29:34Z",
+      "side": 1,
+      "message": "just used this as a standard pattern. see other comment :-)",
+      "parentUuid": "da6255ed_5696c795",
       "revId": "d3241917550255c2bd32e58685d19c60f9fda140",
       "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
       "unresolved": false
