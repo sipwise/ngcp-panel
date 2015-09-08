@@ -1,0 +1,72 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "da6255ed_363eb3b9",
+        "filename": "lib/NGCP/Panel/Controller/API/SubscriberPreferences.pm",
+        "patchSetId": 5
+      },
+      "lineNbr": 104,
+      "author": {
+        "id": 1000005
+      },
+      "writtenOn": "2015-09-08T13:34:17Z",
+      "side": 1,
+      "message": "probably doesn\u0027t make a difference, but \u003d 1 should be sufficient here.",
+      "revId": "d3241917550255c2bd32e58685d19c60f9fda140",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "da6255ed_56412738",
+        "filename": "lib/NGCP/Panel/Controller/API/SubscriberPreferences.pm",
+        "patchSetId": 5
+      },
+      "lineNbr": 111,
+      "author": {
+        "id": 1000005
+      },
+      "writtenOn": "2015-09-08T13:34:17Z",
+      "side": 1,
+      "message": "can you briefly explain this to me?",
+      "revId": "d3241917550255c2bd32e58685d19c60f9fda140",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "da6255ed_b6874361",
+        "filename": "lib/NGCP/Panel/Controller/API/TopupVouchers.pm",
+        "patchSetId": 5
+      },
+      "lineNbr": 113,
+      "author": {
+        "id": 1000005
+      },
+      "writtenOn": "2015-09-08T13:34:17Z",
+      "side": 1,
+      "message": "this returns false, probably make it explicit?",
+      "revId": "d3241917550255c2bd32e58685d19c60f9fda140",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "da6255ed_5696c795",
+        "filename": "lib/NGCP/Panel/Utils/Voucher.pm",
+        "patchSetId": 5
+      },
+      "lineNbr": 65,
+      "author": {
+        "id": 1000005
+      },
+      "writtenOn": "2015-09-08T13:34:17Z",
+      "side": 1,
+      "message": "I like this in general. But why allow to continue under certain return codes?",
+      "revId": "d3241917550255c2bd32e58685d19c60f9fda140",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
+    }
+  ]
+}
