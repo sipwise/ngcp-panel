@@ -22,6 +22,30 @@
       "revId": "973d1f8bc9a175a1ef9c262b7a68fe17c77fdf19",
       "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "da6255ed_56f8077c",
+        "filename": "Build.PL",
+        "patchSetId": 2
+      },
+      "lineNbr": 18,
+      "author": {
+        "id": 1000000
+      },
+      "writtenOn": "2015-09-08T16:49:26Z",
+      "side": 1,
+      "message": "thanks, taken care of in updated patchset",
+      "parentUuid": "da6255ed_960f9fe1",
+      "range": {
+        "startLine": 14,
+        "startChar": 0,
+        "endLine": 18,
+        "endChar": 6
+      },
+      "revId": "973d1f8bc9a175a1ef9c262b7a68fe17c77fdf19",
+      "serverId": "85315e57-5f03-49c3-83f8-201ae2313a75",
+      "unresolved": false
     }
   ]
 }
